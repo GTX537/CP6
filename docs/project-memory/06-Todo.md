@@ -1,5 +1,13 @@
 # 当前待办与优先级
 
+## 2026-10-17：权限 P0 修复已集成，转入登录 P0 准备
+
+[权限修复 PR](https://github.com/GTX537/CP6/pull/248)正常合并，远端 main `be66f70748b1d3185d95629b3a9a7e0b139eeea0` 已核对包含集成提交 `33d7c666284891cc91b6b1cb02895f1a61bc64b9`，范围文件与已验候选一致。#245 原步骤由最终相关回归及有效原生 PostgreSQL 证据覆盖，Issue已关闭；A限定窗口CLOSED。完整WP02-03仍PLANNED/NOT_CHECKED，Owner最终撤权fence、权威版本/字段V1来源、全Main与业务验收仍未完成。
+
+[单份交付报告](../development/evidence/WP02-03/current-permission-consumption/DELIVERY.md)保留原15红测、原PG夹具失败、审查发现的2FA用途绕过及修正6失败/21通过记录；最终37项相关测试通过，原审查者局部复查通过，未受影响PG3及其他结果按来源复用。未因提交/合并重复产品验证。
+
+[公共核心基础优先](../development/planning/20261017-foundation-priority.md)已获批准并执行首项P0交付。下一个是#38登录旧Cookie修复，独立范围已准备但尚未开工；真实DEV验收仍须按Issue条件留证。B/C/D候选保留、普通集成暂停，未收到暂停ACK不冒称已收到。24/375完整任务、0/125业务目标不变。无Actions触发/取消、工作流变更、发包、既有数据库操作或部署。
+
 ## 2026-10-17：权限 P0 候选修正已通过集中审查与局部复查
 
 [单份交付报告](../development/evidence/WP02-03/current-permission-consumption/DELIVERY.md)记录当前主体/tenant绑定、启用角色和实时权限读取。集中审查在原候选发现真实2FA pending可通过的P0，修正提交 `add3373edd1c8d751a9ff2cd32079b4a96b274c1` 已在当前权限边界拒绝用途标记并保留合法正常/平台/impersonation/OIDC访问；原审查者仅复查修正影响，最终Ready to merge: Yes。
