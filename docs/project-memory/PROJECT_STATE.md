@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## 2026-10-16：第十二轮服务签发窗口已登记
+
+[执行计划](../development/dispatch/20261016-wave12/README.md)：已核对最新Main和Handoff无新交付，选择WP02-02真实服务签发/租户有效性/同事务记录为下一轮；唯一COORD实现代理已开始只读准备，准入发布后实施。第十一轮不重做，A/C/D无新窗口。
+
+完整任务24/375 DONE、业务0/125、247 NOT_RUN与41历史引用不变；WP02-02仍IN_PROGRESS/CONFIRMED。本条完成范围是派工/资源登记，功能尚未交付。沿用PostgreSQL与精简验证，无Actions、正式发包、既有库迁移或部署。
+
 ## 2026-10-16：第十一轮服务令牌自撤销局部交付已集成
 
 [237号PR](https://github.com/GTX537/CP6/pull/237)已正常合并，远端main `222f948dbf8003d99f5b8bd51bde97236e62de2e`已核对任务提交祖先关系及全部范围内文件。实现、一次集中审查及三项安装问题的定向修复证据见[单份报告](../development/evidence/WP02-02/service-revocation/DELIVERY.md)。固定Handoff已发布；本局部窗口CLOSED，完整WP02-02仍IN_PROGRESS/CONFIRMED。

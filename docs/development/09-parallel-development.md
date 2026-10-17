@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前分配：[第十二轮真实服务签发租户事务](dispatch/20261016-wave12/README.md)。仅B/WP02-02窗口CONFIRMED，唯一COORD代理已开始只读准备，准入发布后实现。第十一轮CLOSED，A/C/D无新窗口；完整任务与业务验收未提升。
+
 > 当前收口：第十一轮B / WP02-02自撤销局部交付已正常合并并核对远端，窗口CLOSED；见[单份报告](evidence/WP02-02/service-revocation/DELIVERY.md)。完整WP02-02及真实业务验收仍未完成，未自动分配下一窗口。
 
 > 第十一轮集成时点：B / WP02-02服务令牌自撤销候选已完成相关验证与一次集中审查，COORD正在同步共享状态并正常串行合并；见[单份报告](evidence/WP02-02/service-revocation/DELIVERY.md)。完整任务/业务验收未提升，A/C/D没有新窗口。

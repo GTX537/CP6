@@ -158772,6 +158772,11 @@
       "date": "2026-10-16",
       "evidence": "docs/development/evidence/WP02-02/service-revocation/DELIVERY.md",
       "change": "Wave11 service revocation normally merged and remote ancestry/scoped blobs verified; bounded window closed. Full WP02-02 and business acceptance remain unchanged."
+    },
+    {
+      "date": "2026-10-16",
+      "change": "Wave12: sole COORD delegate assigned real service issuance tenant authority and transaction adoption after wave11. Actual read-only preparation started; implementation follows published admission. Full task and business states unchanged.",
+      "evidence": "docs/development/dispatch/20261016-wave12/README.md"
     }
   ],
   "implementation_assessment": {
@@ -160204,49 +160209,51 @@
       "card_anchor": "wp02-02",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD受托B / WP02-02 第十一轮局部交付已集成",
+        "chat_label": "COORD受托B / WP02-02 第十二轮服务签发",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/wp02-02-service-revocation-20261016",
+        "branch": "codex/wp02-02-service-issuance-20261016",
         "worktree": "D:/CP6-worktrees/wp02-02-identity-storage-20261015",
-        "claimed_at": "2026-10-16T11:06:07.316034-04:00",
-        "baseline_sha": "397e56abad335b28396d8dc30df6f6a9be4a49df",
-        "coordination_baseline_sha": "397e56abad335b28396d8dc30df6f6a9be4a49df",
-        "entry_evidence": "docs/development/dispatch/20261016-wave11/WP02-02.md",
-        "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
-        "dispatch_scope": "SERVICE_REVOCATION_TENANT_ADOPTION",
-        "bounded_window_gate": "CLOSED",
+        "claimed_at": "2026-10-17T02:50:13.812011+00:00",
+        "baseline_sha": "6e401945bc05647c94dbe948819cd4a14cd80fe6",
+        "coordination_baseline_sha": "6e401945bc05647c94dbe948819cd4a14cd80fe6",
+        "entry_evidence": "docs/development/dispatch/20261016-wave12/WP02-02.md",
+        "phase": "BOUNDED_IMPLEMENTATION_ASSIGNED",
+        "dispatch_scope": "SERVICE_ISSUANCE_TENANT_ADOPTION",
+        "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
         "allowed_write_paths": [
           "CP6.Core/Persistence/Tenancy/",
           "CP6.Core/Services/CrmIdentity/CrmServiceTokenRecordStore.cs",
-          "CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
           "CP6.Core/Persistence/DatabaseSharedContext.cs",
           "CP6.Persistence.PostgreSql/Tenancy/",
           "CP6.WebApi/Controllers/Sys/CrmOidcController.cs",
           "CP6.WebApi/Services/CrmOidcServiceTokens.cs",
+          "CP6.WebApi/Services/CrmOidcDirectory.cs",
           "CP6.WebApi/Services/ServiceRevocationTenancy/",
+          "CP6.WebApi/Services/ServiceTokenTenancy/",
           "CP6.WebApi/Configuration/CrmIdentityConfiguration.cs",
           "CP6.WebApi/Configuration/ServiceRevocationTenancy/",
+          "CP6.WebApi/Configuration/ServiceTokenTenancy/",
           "CP6.Tests/Persistence/Tenancy/",
-          "CP6.Tests/CrmIdentityRevocationTests.cs",
           "CP6.Tests/CrmIdentityConfigurationTests.cs",
+          "CP6.Tests/CrmIdentityRevocationTests.cs",
           "CP6.Tests/Sys/CrmOidcServiceTokenTests.cs",
+          "CP6.Tests/ServiceTokenConfigurationTests.cs",
           "tools/CP6.TenantStorage/",
-          "docs/development/evidence/WP02-02/service-revocation/"
+          "docs/development/evidence/WP02-02/service-issuance/"
         ],
         "reserved_write_resources": [
           "Main:tenant-storage",
           "Main:ef-model",
           "Main:tenant-storage-provisioning",
-          "Main:service-revocation-source-authority",
-          "Main:service-revocation-owner-transaction",
-          "file:Main:CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
+          "Main:service-token-source-authority",
+          "Main:service-token-owner-transaction",
           "file:Main:CP6.Core/Services/CrmIdentity/CrmServiceTokenRecordStore.cs",
-          "file:Main:CP6.Core/Persistence/DatabaseSharedContext.cs",
-          "file:Main:CP6.WebApi/Controllers/Sys/CrmOidcController.cs",
+          "file:Main:CP6.WebApi/Services/CrmOidcDirectory.cs",
           "file:Main:CP6.WebApi/Services/CrmOidcServiceTokens.cs",
+          "file:Main:CP6.WebApi/Controllers/Sys/CrmOidcController.cs",
           "file:Main:CP6.WebApi/Configuration/CrmIdentityConfiguration.cs"
         ],
         "reserved_postgresql_ports": [
@@ -160257,28 +160264,20 @@
         "formal_publication_authorized": false,
         "existing_database_migration_authorized": false,
         "deployment_authorized": false,
-        "delivery_report": "docs/development/evidence/WP02-02/service-revocation/DELIVERY.md",
+        "delivery_report": "docs/development/evidence/WP02-02/service-issuance/DELIVERY.md",
         "execution_owner": {
           "kind": "coordinator_managed_delegate",
           "coordinator_chat": "01a14537-9073-7482-83dc-109799c39299",
-          "agent": "/root/wave11_revocation",
+          "agent": "/root/wave12_issuance",
           "exclusive": true,
-          "registered_at": "2026-10-16T15:34:08.754579+00:00",
-          "reason": "User requested continuing autonomous progress as an active goal; prior B has no START or uncommitted implementation. One managed delegate now owns the existing window."
+          "registered_at": "2026-10-17T02:50:13.812011+00:00",
+          "reason": "User authorized next round; sole agent starts read-only preparation, implementation after published admission."
         },
         "worker_start_ref": {
           "source": "codex-collaboration",
-          "agent": "/root/wave11_revocation",
-          "received_at": "2026-10-16T15:34:08.754579+00:00",
-          "scope": "Actual receipt and read-only preparation; implementation begins after published owner registration."
-        },
-        "execution_baseline_sha": "04a0f76ec940bdf11299459a100660f9fc7faa0b",
-        "coordinator_received_at": "2026-10-16T16:41:29.008083+00:00",
-        "window_closed_at": "2026-10-16T16:44:47.811477+00:00",
-        "delivery_pr": "https://github.com/GTX537/CP6/pull/237",
-        "handoff_delivery": {
-          "commit": "56952c72cf509e898bf5e3bf199b2f9f41be96de",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261016T164525Z-wave11-service-revocation-delivery/MESSAGE.md"
+          "agent": "/root/wave12_issuance",
+          "received_at": "2026-10-17T02:50:13.812011+00:00",
+          "scope": "Read-only preparation; no code implementation before published admission."
         }
       },
       "blockers": [],
@@ -160628,6 +160627,84 @@
           "existing_database_migration_authorized": false,
           "deployment_authorized": false,
           "delivery_report": "docs/development/evidence/WP02-02/service-revocation/DELIVERY.md"
+        },
+        {
+          "chat_label": "COORD受托B / WP02-02 第十一轮局部交付已集成",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/wp02-02-service-revocation-20261016",
+          "worktree": "D:/CP6-worktrees/wp02-02-identity-storage-20261015",
+          "claimed_at": "2026-10-16T11:06:07.316034-04:00",
+          "baseline_sha": "397e56abad335b28396d8dc30df6f6a9be4a49df",
+          "coordination_baseline_sha": "397e56abad335b28396d8dc30df6f6a9be4a49df",
+          "entry_evidence": "docs/development/dispatch/20261016-wave11/WP02-02.md",
+          "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
+          "dispatch_scope": "SERVICE_REVOCATION_TENANT_ADOPTION",
+          "bounded_window_gate": "CLOSED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "allowed_write_paths": [
+            "CP6.Core/Persistence/Tenancy/",
+            "CP6.Core/Services/CrmIdentity/CrmServiceTokenRecordStore.cs",
+            "CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
+            "CP6.Core/Persistence/DatabaseSharedContext.cs",
+            "CP6.Persistence.PostgreSql/Tenancy/",
+            "CP6.WebApi/Controllers/Sys/CrmOidcController.cs",
+            "CP6.WebApi/Services/CrmOidcServiceTokens.cs",
+            "CP6.WebApi/Services/ServiceRevocationTenancy/",
+            "CP6.WebApi/Configuration/CrmIdentityConfiguration.cs",
+            "CP6.WebApi/Configuration/ServiceRevocationTenancy/",
+            "CP6.Tests/Persistence/Tenancy/",
+            "CP6.Tests/CrmIdentityRevocationTests.cs",
+            "CP6.Tests/CrmIdentityConfigurationTests.cs",
+            "CP6.Tests/Sys/CrmOidcServiceTokenTests.cs",
+            "tools/CP6.TenantStorage/",
+            "docs/development/evidence/WP02-02/service-revocation/"
+          ],
+          "reserved_write_resources": [
+            "Main:tenant-storage",
+            "Main:ef-model",
+            "Main:tenant-storage-provisioning",
+            "Main:service-revocation-source-authority",
+            "Main:service-revocation-owner-transaction",
+            "file:Main:CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
+            "file:Main:CP6.Core/Services/CrmIdentity/CrmServiceTokenRecordStore.cs",
+            "file:Main:CP6.Core/Persistence/DatabaseSharedContext.cs",
+            "file:Main:CP6.WebApi/Controllers/Sys/CrmOidcController.cs",
+            "file:Main:CP6.WebApi/Services/CrmOidcServiceTokens.cs",
+            "file:Main:CP6.WebApi/Configuration/CrmIdentityConfiguration.cs"
+          ],
+          "reserved_postgresql_ports": [
+            55436
+          ],
+          "handoff_branch": "codex/dev-handoff-wp02-02",
+          "actions_authorized": false,
+          "formal_publication_authorized": false,
+          "existing_database_migration_authorized": false,
+          "deployment_authorized": false,
+          "delivery_report": "docs/development/evidence/WP02-02/service-revocation/DELIVERY.md",
+          "execution_owner": {
+            "kind": "coordinator_managed_delegate",
+            "coordinator_chat": "01a14537-9073-7482-83dc-109799c39299",
+            "agent": "/root/wave11_revocation",
+            "exclusive": true,
+            "registered_at": "2026-10-16T15:34:08.754579+00:00",
+            "reason": "User requested continuing autonomous progress as an active goal; prior B has no START or uncommitted implementation. One managed delegate now owns the existing window."
+          },
+          "worker_start_ref": {
+            "source": "codex-collaboration",
+            "agent": "/root/wave11_revocation",
+            "received_at": "2026-10-16T15:34:08.754579+00:00",
+            "scope": "Actual receipt and read-only preparation; implementation begins after published owner registration."
+          },
+          "execution_baseline_sha": "04a0f76ec940bdf11299459a100660f9fc7faa0b",
+          "coordinator_received_at": "2026-10-16T16:41:29.008083+00:00",
+          "window_closed_at": "2026-10-16T16:44:47.811477+00:00",
+          "delivery_pr": "https://github.com/GTX537/CP6/pull/237",
+          "handoff_delivery": {
+            "commit": "56952c72cf509e898bf5e3bf199b2f9f41be96de",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261016T164525Z-wave11-service-revocation-delivery/MESSAGE.md"
+          }
         }
       ],
       "preparation_delivery_history": [
@@ -178250,14 +178327,14 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261016-wave11",
-      "path": "docs/development/dispatch/20261016-wave11/README.md",
-      "baseline_sha": "397e56abad335b28396d8dc30df6f6a9be4a49df",
+      "id": "20261016-wave12",
+      "path": "docs/development/dispatch/20261016-wave12/README.md",
+      "baseline_sha": "6e401945bc05647c94dbe948819cd4a14cd80fe6",
       "coordinator_shared_state_only": true,
-      "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
+      "phase": "BOUNDED_IMPLEMENTATION_ASSIGNED",
       "workers_started": true,
-      "workers_delivered": true,
-      "windows_closed": true,
+      "workers_delivered": false,
+      "windows_closed": false,
       "assigned_chats": [
         "B"
       ],
@@ -178265,9 +178342,7 @@
         "A",
         "C",
         "D"
-      ],
-      "execution_mode": "single_coordinator_managed_delegate",
-      "owner_registration_required_before_code": true
+      ]
     },
     "wave_history": [
       {
@@ -178297,6 +178372,26 @@
         "unassigned_chats": [
           "C"
         ]
+      },
+      {
+        "id": "20261016-wave11",
+        "path": "docs/development/dispatch/20261016-wave11/README.md",
+        "baseline_sha": "397e56abad335b28396d8dc30df6f6a9be4a49df",
+        "coordinator_shared_state_only": true,
+        "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
+        "workers_started": true,
+        "workers_delivered": true,
+        "windows_closed": true,
+        "assigned_chats": [
+          "B"
+        ],
+        "unassigned_chats": [
+          "A",
+          "C",
+          "D"
+        ],
+        "execution_mode": "single_coordinator_managed_delegate",
+        "owner_registration_required_before_code": true
       }
     ]
   },
