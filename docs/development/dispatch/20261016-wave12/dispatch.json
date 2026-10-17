@@ -1,0 +1,57 @@
+{
+  "wave": "20261016-wave12",
+  "baseline_sha": "6e401945bc05647c94dbe948819cd4a14cd80fe6",
+  "issued_at": "2026-10-17T02:50:13.812011+00:00",
+  "tasks": [
+    {
+      "id": "WP02-02",
+      "chat": "B (COORD-managed)",
+      "agent": "/root/wave12_issuance",
+      "repository": "Main",
+      "branch": "codex/wp02-02-service-issuance-20261016",
+      "worktree": "D:/CP6-worktrees/wp02-02-identity-storage-20261015",
+      "baseline_sha": "6e401945bc05647c94dbe948819cd4a14cd80fe6",
+      "mode": "SERVICE_ISSUANCE_TENANT_ADOPTION",
+      "write_paths": [
+        "CP6.Core/Persistence/Tenancy/",
+        "CP6.Core/Services/CrmIdentity/CrmServiceTokenRecordStore.cs",
+        "CP6.Core/Persistence/DatabaseSharedContext.cs",
+        "CP6.Persistence.PostgreSql/Tenancy/",
+        "CP6.WebApi/Controllers/Sys/CrmOidcController.cs",
+        "CP6.WebApi/Services/CrmOidcServiceTokens.cs",
+        "CP6.WebApi/Services/CrmOidcDirectory.cs",
+        "CP6.WebApi/Services/ServiceRevocationTenancy/",
+        "CP6.WebApi/Services/ServiceTokenTenancy/",
+        "CP6.WebApi/Configuration/CrmIdentityConfiguration.cs",
+        "CP6.WebApi/Configuration/ServiceRevocationTenancy/",
+        "CP6.WebApi/Configuration/ServiceTokenTenancy/",
+        "CP6.Tests/Persistence/Tenancy/",
+        "CP6.Tests/CrmIdentityConfigurationTests.cs",
+        "CP6.Tests/CrmIdentityRevocationTests.cs",
+        "CP6.Tests/Sys/CrmOidcServiceTokenTests.cs",
+        "CP6.Tests/ServiceTokenConfigurationTests.cs",
+        "tools/CP6.TenantStorage/",
+        "docs/development/evidence/WP02-02/service-issuance/"
+      ],
+      "exclusive_resources": [
+        "Main:tenant-storage",
+        "Main:ef-model",
+        "Main:tenant-storage-provisioning",
+        "Main:service-token-source-authority",
+        "Main:service-token-owner-transaction",
+        "file:Main:CP6.Core/Services/CrmIdentity/CrmServiceTokenRecordStore.cs",
+        "file:Main:CP6.WebApi/Services/CrmOidcDirectory.cs",
+        "file:Main:CP6.WebApi/Services/CrmOidcServiceTokens.cs",
+        "file:Main:CP6.WebApi/Controllers/Sys/CrmOidcController.cs",
+        "file:Main:CP6.WebApi/Configuration/CrmIdentityConfiguration.cs"
+      ],
+      "handoff": "codex/dev-handoff-wp02-02",
+      "postgresql_port": 55436,
+      "report": "docs/development/evidence/WP02-02/service-issuance/DELIVERY.md"
+    }
+  ],
+  "actions_authorized": false,
+  "publication_authorized": false,
+  "existing_database_migration_authorized": false,
+  "deployment_authorized": false
+}
