@@ -35,6 +35,10 @@ public class CurrentPermissionContext : ICurrentPermissionContext
         var identities = principal?.Identities.Where(i => i.IsAuthenticated).ToArray();
         if (identities is not { Length: 1 })
             throw new CurrentPermissionUnavailableException();
+        // Local access (including impersonation) and OIDC access have no token_use.
+        // Reject pending or undefined purposes, even when carried by another identity.
+        if (principal!.HasClaim(c => c.Type == "token_use"))
+            throw new CurrentPermissionUnavailableException();
         var identity = identities[0];
         // Never splice identifiers from an unauthenticated or second identity.
         if (principal!.Identities.Where(i => !ReferenceEquals(i, identity))

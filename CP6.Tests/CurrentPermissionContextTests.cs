@@ -1,13 +1,25 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
+using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Sys;
+using CP6.Core.Utilities;
 using CP6.Entity.DomainModels.Sys;
+using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CP6.Tests;
 
@@ -127,27 +139,117 @@ public class CurrentPermissionContextTests
         Assert.False(await new PermissionService(sut).HasActionAsync("order", "read"));
     }
 
-    [Fact]
-    public async Task Existing_signed_token_and_matching_subject_alias_remain_usable_without_name()
+    [Theory]
+    [InlineData("ordinary")]
+    [InlineData("without-name")]
+    [InlineData("platform-admin")]
+    [InlineData("impersonation")]
+    public async Task Signed_full_session_access_remains_usable(string session)
     {
         using var db = NewDb();
         var uid = await Seed(db);
-        var secret = Convert.ToHexString(System.Security.Cryptography.RandomNumberGenerator.GetBytes(32));
-        var token = CP6.Core.Utilities.JwtHelper.GenerateToken(uid.ToString(), "old-name", secret,
-            "permission-test", "permission-test", 5, db.CurrentTenantId);
-        var principal = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler().ValidateToken(token,
-            new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-            {
-                ValidIssuer = "permission-test", ValidAudience = "permission-test",
-                IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(secret)),
-                ValidateIssuerSigningKey = true
-            }, out _);
+        var secret = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
+        var token = JwtHelper.GenerateToken(uid.ToString(), "old-name", secret,
+            "permission-test", "permission-test", 5, db.CurrentTenantId,
+            isPlatformAdmin: session == "platform-admin",
+            impersonatorId: session == "impersonation" ? Guid.NewGuid() : null);
+        var principal = ValidateToken(token, secret);
         var identity = (ClaimsIdentity)principal.Identity!;
-        identity.RemoveClaim(identity.FindFirst(ClaimTypes.Name));
-        identity.AddClaim(new Claim("sub", uid.ToString()));
+        if (session == "without-name")
+        {
+            identity.RemoveClaim(identity.FindFirst(ClaimTypes.Name));
+            identity.AddClaim(new Claim("sub", uid.ToString()));
+        }
         var cache = new Moq.Mock<IDistributedCache>(Moq.MockBehavior.Strict);
         // Strict cache rejects every call: current authorization must work without reading/writing it.
-        Assert.True(await new PermissionService(Context(db, principal, cache.Object)).HasActionAsync("order", "read"));
+        var permissions = new PermissionService(Context(db, principal, cache.Object));
+        Assert.True(await permissions.HasActionAsync("order", "read"));
+        Assert.Null(await FilterResult(permissions, principal));
+    }
+
+    [Theory]
+    [InlineData("2fa_verify")]
+    [InlineData("2fa_enroll")]
+    public async Task Signed_pending_token_cannot_authorize_business_action(string purpose)
+    {
+        using var db = NewDb();
+        var uid = await Seed(db);
+        var secret = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
+        var token = JwtHelper.GeneratePendingToken(uid.ToString(), db.CurrentTenantId, purpose,
+            Guid.NewGuid().ToString(), secret, "permission-test", "permission-test", 5);
+        var principal = ValidateToken(token, secret);
+        Assert.True(principal.Identity!.IsAuthenticated);
+        Assert.Null(principal.Identity.Name);
+        var permissions = new PermissionService(Context(db, principal));
+
+        var result = Assert.IsType<ObjectResult>(await FilterResult(permissions, principal));
+        Assert.Equal(StatusCodes.Status403Forbidden, result.StatusCode);
+        Assert.False(await permissions.HasActionAsync("order", "read"));
+    }
+
+    [Theory]
+    [InlineData("", false)]
+    [InlineData("access", false)]
+    [InlineData("future-purpose", false)]
+    [InlineData("2fa_verify", true)]
+    public async Task Token_use_cannot_be_ignored_or_treated_as_an_undefined_full_session(string purpose, bool secondIdentity)
+    {
+        using var db = NewDb();
+        var uid = await Seed(db);
+        var principal = Principal(uid, db.CurrentTenantId);
+        var identity = (ClaimsIdentity)principal.Identity!;
+        if (secondIdentity)
+        {
+            identity = new ClaimsIdentity();
+            principal.AddIdentity(identity);
+        }
+        identity.AddClaim(new Claim("token_use", purpose));
+        var permissions = new PermissionService(Context(db, principal));
+
+        var result = Assert.IsType<ObjectResult>(await FilterResult(permissions, principal));
+        Assert.Equal(StatusCodes.Status403Forbidden, result.StatusCode);
+        Assert.False(await permissions.HasActionAsync("order", "read"));
+    }
+
+    [Fact]
+    public async Task Signed_oidc_access_with_unmapped_subject_remains_usable()
+    {
+        using var db = NewDb();
+        var uid = await Seed(db);
+        using var rsa = RSA.Create(2048);
+        using var crypto = new CrmOidcCrypto(new CrmOidcOptions
+        {
+            Enabled = true, Issuer = "https://permission-test.example", ActiveKeyId = "test",
+            Keys = [new() { Kid = "test", Pem = rsa.ExportRSAPrivateKeyPem() }]
+        });
+        var sid = Guid.NewGuid().ToString();
+        var token = crypto.Sign("CP6.Web", [new Claim("sub", uid.ToString()),
+            new Claim("tenant_id", db.CurrentTenantId.ToString()), new Claim("org_id", db.CurrentTenantId.ToString()),
+            new Claim("sid", sid), new Claim("name", "old-name"), new Claim("jti", sid),
+            new Claim("scope", "openid profile crm")], DateTimeOffset.UtcNow.AddMinutes(5), "at+jwt");
+        var principal = crypto.Validate(token, "CP6.Web", "at+jwt");
+        var permissions = new PermissionService(Context(db, principal));
+
+        Assert.True(await permissions.HasActionAsync("order", "read"));
+        Assert.Null(await FilterResult(permissions, principal));
+    }
+
+    private static ClaimsPrincipal ValidateToken(string token, string secret)
+        => new JwtSecurityTokenHandler().ValidateToken(token, new TokenValidationParameters
+        {
+            ValidIssuer = "permission-test", ValidAudience = "permission-test",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+            ValidateIssuerSigningKey = true, ValidateIssuer = true, ValidateAudience = true,
+            ValidateLifetime = true, RequireSignedTokens = true, RequireExpirationTime = true
+        }, out _);
+
+    private static async Task<IActionResult?> FilterResult(IPermissionService permissions, ClaimsPrincipal principal)
+    {
+        using var services = new ServiceCollection().AddSingleton(permissions).BuildServiceProvider();
+        var http = new DefaultHttpContext { User = principal, RequestServices = services };
+        var context = new AuthorizationFilterContext(new ActionContext(http, new RouteData(), new ActionDescriptor()), []);
+        await new RequirePermissionAttribute("order", "read").OnAuthorizationAsync(context);
+        return context.Result;
     }
 
     [Fact]

@@ -59,3 +59,27 @@ $env:CP6_PERMISSION_PG_BIN = 'C:/Program Files/PostgreSQL/18/bin'
 START 已送达 Handoff `bf7401f9fdd6c86d650de83bcc19dfb590a6ae3a`，路径 `handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261017T041123Z-wave13-start/MESSAGE.md`。P0 通知 `7f0c5cdce73c57997b46a94536173ee33c671bd8`，路径 `.../20261017T041531Z-wave13-p0/MESSAGE.md`（正文手写 UTC 04:19Z 有误，以目录/提交实际 04:15:31Z 为准）。两消息已按固定 SHA 远端回读；后续 DELIVERY 引用最终提交和本报告。
 
 推送前核对候选与远端 main 的 13 个工作流内容一致：12 个仅 workflow_dispatch，唯一 push 仅 `v*.*.*` tag；本任务只推分支。Handoff 仍私有、Actions disabled，候选/默认分支无 workflow。接手时本任务无 Actions 运行；没有触发/重跑/取消 Actions，没有修改触发配置。共享状态、main、生产发布、既有数据库及其他任务范围均未写入。最终远端候选回读及 COORD 收件定位见 Handoff DELIVERY；合并和 Issue 关闭仍待总控完成。
+
+
+## COORD 审查修正：完整会话用途边界
+
+原候选 `aa0a361f93aad67da0bb8ca27c6954d557dd9530` 已完成唯一一次集中 SPEC/QUALITY 审查。审查确认 GUID/tenant 绑定与新鲜读取范围，但发现一项 P0：真实 JwtHelper.GeneratePendingToken 的 `2fa_verify` / `2fa_enroll` 半登录 JWT 使用相同 issuer/audience/key，现有宿主不通用拒绝 token_use；原候选的新 GetAsync 因不要求 Name 而允许它们通过真实 PermissionService/RequirePermission。审查探针的原始失败在 `C:/Users/tt/CP6-planning-reports/20261017-foundation/permission-probe/probe-final.log`；此问题在合并前被发现，原候选没有进入 main。
+
+依据 PR247 / main `8367914d395fc2a6d0cef22d79d34d69cf87de43` 的三文件修正窗口，原用户 A 的分支和证据保留。唯一内部修正代理在 `codex/bug-245-permission-review-fix-20261017` / `D:/CP6-worktrees/wave13-a-review-fix-20261017` 新增回归并实现用途检查，COORD 随后接手验证、报告与提交，二者没有并行写入。修正起点 `d4e7fec854c8b15d9ab03eead2bac106f9e0cf1b` 已包含原候选及登记主线。
+
+实际合法合同核对：JwtHelper 普通/平台/impersonation access、AuthSessionService 与 CRM OIDC at+jwt 均不签发 token_use。GetAsync 在已认证主体检查后拒绝 principal 上任意 token_use，包括 pending、空值、未知值或来自其他 identity 的标记，不臆造名为 access 的用途白名单；正常无 Name 的 GUID/sub 合同保持。该拒绝经原 PermissionService 返回 false、真实 RequirePermission 返回 403。没有改 Program、发行链、模型或业务事务；不宣称通用 JWT 认证层已完成用途隔离。
+
+本次新增原始证据位于 `D:/CP6-local-test/WP02-03/review-fix/`：
+
+- 内部代理的锁定恢复成功，`restore.log` 保留；产物隔离于 artifacts，使用原正式 NuGet 缓存，未修改依赖/锁文件。
+- 修正前新增 CurrentPermissionContextTests 回归为 **6 失败、21 通过、0 跳过**，见 `red.log` / `results/red.trx`。两种真实 pending 的过滤拒绝、未知/空用途及第二 identity 目的边界在旧候选上失败；原始失败保留。
+- COORD 在三文件修正工作树执行相关编译和 CurrentPermissionContextTests、PermissionChainIntegrationTests、RequirePermissionFilterTests、PermissionServiceTests，**37 通过、0 失败、0 跳过**，见 `green.log` / `results/green.trx`。包含真实 pending 签发/验签后拒绝、正常/平台/impersonation access、无 Name 主体、真实 CRM OIDC sub 正对照及原读取回归。无 Name 正例是在真实 access 验签后的 principal 移除显示名再读取；不称为另一次宿主发行验收。
+- 本次只变 claim 入口与对应测试，原原生 PostgreSQL 3项及其余未受影响行为按上文准确来源复用，没有重启数据库、全仓测试或重跑旧夹具。现有 CS1998 / xUnit2017 警告保留，无新增构建/测试失败。成功数量不与原52项直接相加。
+
+COORD 绿测复现命令：
+
+```powershell
+& 'C:/Users/tt/.dotnet/dotnet.exe' test CP6.Tests/CP6.Tests.csproj --no-restore --artifacts-path D:/CP6-local-test/WP02-03/review-fix/artifacts --filter 'FullyQualifiedName~CurrentPermissionContextTests|FullyQualifiedName~PermissionChainIntegrationTests|FullyQualifiedName~RequirePermissionFilterTests|FullyQualifiedName~PermissionServiceTests' --logger 'trx;LogFileName=green.trx' --results-directory D:/CP6-local-test/WP02-03/review-fix/results -p:NuGetAudit=false -v quiet
+```
+
+修正后的原审查者局部复查、正常集成及远端核对由 COORD 接续；不重开第二次全任务审查。完整 WP02-03 / 生产业务验收、Owner 提交前 fence、负载、全 Main 及其他原未覆盖范围保持不变。#245 在远端包含性与原步骤证据核对前仍 Open；无 Actions、发包、既有数据库操作或部署。
