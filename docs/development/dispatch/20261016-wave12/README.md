@@ -11,3 +11,9 @@ S02-00、WP02-01均DONE，正式0.10.3已由Main采用。现有池、目录、�
 独占PG55436，使用新的自有数据根和随机loopback HTTPS端口；占用时换空闲端口，不停止他人进程。执行者只写任务代码和一份报告；COORD同步台账、生成页及四状态文件，正常串行合并和远端核对。相关本地行为验证加一次集中SPEC/QUALITY审查；更正只复查受影响部分，不因SHA/文档重复产品测试。
 
 完整任务24/375 DONE、业务0/125、247 NOT_RUN与41历史引用不变。WP02-02完整任务仍IN_PROGRESS/CONFIRMED；本轮未覆盖的原17PGT、全Main、全域Owner、消费者、既有库迁移及生产验收不能提升。basis v1.2无需重复采纳，独立verifier未配置限制保留。接手时Main queued/in_progress Actions均为零，无取消、触发变更或远程运行授权。
+
+## 签名器范围补充（COORD自主决定）
+
+真实HTTP验证发现，新host虽然在注册时复制签名配置，但controller首次解析仍强制构造共享legacy CrmOidcCrypto，原可变配置可导致首次请求失败；先warmup再变更只能掩盖缺口。现明确增加 `CP6.WebApi/Services/CrmOidcCrypto.cs` 及其独占资源，由同一B执行者添加新profile专用、注册时捕获的不可变签名快照依赖，使首次解析也使用相同issuer/keys。新类型在原已允许的ServiceTokenTenancy目录。
+
+不改Program或依赖；未启用新profile时旧构造、Sign/Validate/Jwks合同保持。只增加首次解析前变更原options的真实HTTP签名/JWKS检查，以及旧构造兼容定向检查，原其他输入未变的成功证据复用。所有改动仍在同一次任务级集中审查中完成。此登记只扩展必要共享文件窗口，不提升实现或业务完成状态。

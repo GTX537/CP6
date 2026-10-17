@@ -160242,7 +160242,8 @@
           "CP6.Tests/Sys/CrmOidcServiceTokenTests.cs",
           "CP6.Tests/ServiceTokenConfigurationTests.cs",
           "tools/CP6.TenantStorage/",
-          "docs/development/evidence/WP02-02/service-issuance/"
+          "docs/development/evidence/WP02-02/service-issuance/",
+          "CP6.WebApi/Services/CrmOidcCrypto.cs"
         ],
         "reserved_write_resources": [
           "Main:tenant-storage",
@@ -160254,7 +160255,8 @@
           "file:Main:CP6.WebApi/Services/CrmOidcDirectory.cs",
           "file:Main:CP6.WebApi/Services/CrmOidcServiceTokens.cs",
           "file:Main:CP6.WebApi/Controllers/Sys/CrmOidcController.cs",
-          "file:Main:CP6.WebApi/Configuration/CrmIdentityConfiguration.cs"
+          "file:Main:CP6.WebApi/Configuration/CrmIdentityConfiguration.cs",
+          "file:Main:CP6.WebApi/Services/CrmOidcCrypto.cs"
         ],
         "reserved_postgresql_ports": [
           55436
@@ -160278,6 +160280,12 @@
           "agent": "/root/wave12_issuance",
           "received_at": "2026-10-17T02:50:13.812011+00:00",
           "scope": "Read-only preparation; no code implementation before published admission."
+        },
+        "scope_extension": {
+          "recorded_at": "2026-10-17T03:09:16.968611+00:00",
+          "path": "CP6.WebApi/Services/CrmOidcCrypto.cs",
+          "reason": "Real first-request DI still constructs shared legacy signer from mutable options; new-profile registration snapshot must also reach that constructor. Same sole owner, no Program/dependency or old-profile semantic change.",
+          "validation": "First-resolution mutation, actual signature/JWKS identity and legacy constructor compatibility; single final task review."
         }
       },
       "blockers": [],
