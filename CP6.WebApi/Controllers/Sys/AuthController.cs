@@ -178,6 +178,8 @@ public class AuthController : LocalizedControllerBase
                 user.Id.ToString(), user.TenantId, purpose, pendingJti,
                 jwtCfg["Secret"]!, jwtCfg["Issuer"]!, jwtCfg["Audience"]!,
                 _sec.TwoFactor.PendingTokenMinutes);
+            // 已验证凭据进入挑战态：先移除旧完整会话，再写入新的 pending/CSRF。
+            _cookies.ClearAuthCookies(Response);
             _cookies.WritePendingCookies(Response, pendingToken, AuthCookieWriter.NewCsrfToken());
             await _audit.LogAsync(SecurityEventType.TwoFactorChallenged, user.Id, user.UserName, request.TenantCode, ClientIp, ClientUa, purpose == "2fa_enroll" ? "enroll" : null);
             return Ok(new { twoFactorRequired = true, mustEnroll = purpose == "2fa_enroll" });
@@ -525,6 +527,7 @@ public class AuthController : LocalizedControllerBase
         // （改密成功 ⇔ 旧凭证全失效；若分两次保存则第二次失败会留下"改密了但旧 refresh 仍可续命"的窗口）
         await _refresh.RevokeAllForUserAsync(uid, saveChanges: false);
         await _context.SaveChangesAsync();   // 一次性原子持久化：裁剪 + 新历史 + 用户更新 + 令牌吊销
+        _cookies.ClearAuthCookies(Response);
 
         // 安全审计（改密成功）
         await _audit.LogAsync(SecurityEventType.PasswordChanged, uid, user.UserName, null, ClientIp, ClientUa);

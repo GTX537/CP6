@@ -114,10 +114,11 @@ public class AuthController2faTests
         Assert.True((bool)v.GetProperty("twoFactorRequired")!.GetValue(ok.Value)!);
         Assert.True((bool)v.GetProperty("mustEnroll")!.GetValue(ok.Value)!);
 
-        var setCookies = ctl.Response.Headers["Set-Cookie"].ToString();
-        Assert.Contains(AuthCookieWriter.PendingCookie, setCookies);
-        Assert.DoesNotContain(AuthCookieWriter.AccessCookie + "=", setCookies); // 防把空清 Cookie 也算
-        Assert.DoesNotContain(AuthCookieWriter.RefreshCookie + "=", setCookies);
+        CopyPendingCookieAcrossRequests(ctl);
+        Assert.True(ctl.Request.Cookies.ContainsKey(AuthCookieWriter.PendingCookie));
+        Assert.True(ctl.Request.Cookies.ContainsKey(AuthCookieWriter.CsrfCookie));
+        Assert.False(ctl.Request.Cookies.ContainsKey(AuthCookieWriter.AccessCookie));
+        Assert.False(ctl.Request.Cookies.ContainsKey(AuthCookieWriter.RefreshCookie));
 
         Assert.Contains(db.Sys_SecurityLogs, l => l.EventType == (int)SecurityEventType.TwoFactorChallenged && l.Reason == "enroll");
     }
