@@ -158842,6 +158842,11 @@
       "date": "2026-10-17",
       "change": "User confirmed existing PostgreSQL CP6DB copy for DEV; actual published API/Web and browser original steps passed, original auth rows unchanged and owned resources disabled/stopped. Issue38 closed. Separately observed/registered P0 dashboard tenant leak257; register original A sole implementation and D read-only/final review for wave15, no START claimed. B/C corrections remain on P0 hold.",
       "evidence": "docs/quality/evidence/issue-38/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-17",
+      "change": "Wave15 A/D actual START and D read-only preparation received. Fixed A candidate22928c9a/Handoff9de55c7 received; existing native PG/HTTP TRX confirms6 passed0 failed0 skipped, no rerun. D reportfd1ee29f/Handoff88bf3beb is preparation only; fixed candidate now satisfies review prerequisite, no second START/ACK. Product integration/DEV not run, Issue257 remains Open; B/C hold and full implementation/business states unchanged.",
+      "evidence": "https://github.com/GTX537/CP6/blob/22928c9ae9ad93172c61e3df5e0353cdaace4af6/docs/quality/evidence/issue-257/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -178883,7 +178888,7 @@
       "path": "docs/development/dispatch/20261017-wave15/README.md",
       "baseline_sha": "84896578b722d7deac50809ff42f5f30f7fd50d1",
       "registered_at": "2026-10-17T14:41:57.805099+00:00",
-      "phase": "P0_DASHBOARD_TENANT_WINDOW_ADMITTED",
+      "phase": "A_DELIVERED_D_COMBINED_REVIEW_PENDING",
       "coordinator_shared_state_only": true,
       "assigned_chats": [
         "A",
@@ -178904,7 +178909,7 @@
         "D"
       ],
       "active_implementation_chats": [],
-      "workers_started": false,
+      "workers_started": true,
       "workers_delivered": false,
       "windows_closed": false,
       "windows": [
@@ -178938,8 +178943,8 @@
           "packet": "A-BUG-257.md",
           "delivery_report": "docs/quality/evidence/issue-257/DELIVERY.md",
           "gate": "CONFIRMED",
-          "worker_start_received": false,
-          "worker_delivery_received": false,
+          "worker_start_received": true,
+          "worker_delivery_received": true,
           "owner": "original user chat A; sole product implementation owner",
           "prerequisite": "Start from latest confirmed remote main after this dispatch is merged; Issue38 code and user-confirmed PG DEV closed. No new authorization to modify existing DEV database.",
           "registered_at": "2026-10-17T14:41:57.805099+00:00",
@@ -178947,7 +178952,26 @@
           "actions_authorized": false,
           "deployment_authorized": false,
           "formal_publication_authorized": false,
-          "existing_database_migration_authorized": false
+          "existing_database_migration_authorized": false,
+          "phase": "FIXED_CANDIDATE_DELIVERED_REVIEW_PENDING",
+          "actual_start_baseline_sha": "f73e985a027080be3c92443cb79b24d83f65509c",
+          "start_handoff": "6cdbf743561e308f52253f84e67b0636b529a274",
+          "delivery_handoff": "9de55c7441830061fc73541c20c562575f4086a5",
+          "candidate_sha": "22928c9ae9ad93172c61e3df5e0353cdaace4af6",
+          "delivery_report_fixed": "https://github.com/GTX537/CP6/blob/22928c9ae9ad93172c61e3df5e0353cdaace4af6/docs/quality/evidence/issue-257/DELIVERY.md",
+          "local_verification": {
+            "source": "D:/CP6-local-test/BUG-257/wave15-a/results/green-subject.trx",
+            "passed": 6,
+            "failed": 0,
+            "skipped": 0,
+            "coordinator_read_existing_trx": true,
+            "coordinator_reran_tests": false,
+            "scope": "isolated PostgreSQL HTTP tenant/cache boundary and two native relation facts; not existing DEV"
+          },
+          "review_completed": false,
+          "ready_to_merge": null,
+          "real_dev": "NOT_RUN",
+          "owned_runtime_stopped": true
         },
         {
           "id": "REVIEW-BUG-257",
@@ -178963,7 +178987,7 @@
           "packet": "D-REVIEW-BUG-257.md",
           "report": "handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-257/REVIEW.md",
           "gate": "PREPARATION_CONFIRMED_REVIEW_AFTER_A_DELIVERY",
-          "worker_start_received": false,
+          "worker_start_received": true,
           "worker_delivery_received": false,
           "owner": "original user chat D; no product edits",
           "review_completed": false,
@@ -178973,11 +178997,22 @@
           "actions_authorized": false,
           "deployment_authorized": false,
           "formal_publication_authorized": false,
-          "existing_database_migration_authorized": false
+          "existing_database_migration_authorized": false,
+          "phase": "PREPARATION_RECEIVED_FIXED_CANDIDATE_AVAILABLE",
+          "actual_start_baseline_sha": "f73e985a027080be3c92443cb79b24d83f65509c",
+          "start_handoff": "ac370a04ee32752fce3e25f248e526e1470f0c43",
+          "preparation_received": true,
+          "preparation_handoff": "88bf3beb6a175a83a79d80ea0ff59f2f43a79a8a",
+          "preparation_report_sha": "fd1ee29f2f584154f7013ee15adebc71e1744f6f",
+          "preparation_report_fixed": "https://github.com/GTX537/CP6.AI-Handoff/blob/fd1ee29f2f584154f7013ee15adebc71e1744f6f/handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-257/REVIEW.md",
+          "review_target_sha": "22928c9ae9ad93172c61e3df5e0353cdaace4af6",
+          "review_prerequisite_satisfied": true,
+          "real_dev": "NOT_RUN",
+          "continuation": "A fixed DELIVERY available; continue the existing single REVIEW without second START or transport ACK. Formal review not yet received."
         }
       ],
       "ordinary_wave13_integration_hold": true,
-      "ordinary_hold_reason": "P0 #257 exposes cross-tenant business data. #38 is closed after user-confirmed PG DEV acceptance.",
+      "ordinary_hold_reason": "P0 #257 fixed candidate22928c9a delivered; D final review, normal integration and actual DEV acceptance remain. #38 stays closed.",
       "next_priority_issue": "https://github.com/GTX537/CP6/issues/257",
       "issue_close_requires_real_dev": true,
       "prepared_corrections": [
@@ -179016,8 +179051,21 @@
         "existing_data_writes_reserved_to_coordinator": true,
         "prior_bug38_result": "PASS",
         "source_sha": "84896578b722d7deac50809ff42f5f30f7fd50d1",
-        "api_web_currently_stopped": true
-      }
+        "api_web_currently_stopped": true,
+        "bug257_real_dev": "NOT_RUN",
+        "environment_reconfirmation_required": false,
+        "next_step": "After D passes and normal code integration, build and verify final API/Web runtime identity; existing PG empty-tenant and alternating-cache browser/HTTP acceptance, owned-resource cleanup. No migration or replacement."
+      },
+      "started_chats": [
+        "A",
+        "D"
+      ],
+      "implementation_deliveries_received": [
+        "A"
+      ],
+      "last_coordinator_receipt_at": "2026-10-17T15:25:45.017808+00:00",
+      "product_integrated": false,
+      "bug257_real_dev": "NOT_RUN"
     },
     "wave_history": [
       {
