@@ -1,5 +1,7 @@
 # CP6 开发总台账
 
+> 最新盘点：[2026-10-17 全项目范围、进度与业务主线排期依据](planning/20261017-project-inventory.md)。用户选择先打通可验收业务主线；当前 P0 优先，正式日历待剩余范围估算。
+
 本台账按用户确认的顺序管理开发：全量评估、拆分大任务、安排批次、临近实施再细拆。范围对应已有125个设计目标；这是开发规划和证据登记，不改变业务合同或历史接受记录。
 
 日常先看[开发进度](03-progress.md)，再看[细分任务进度](07-detailed-tasks.md)、[全部任务卡](10-work-package-tasks.md)、[多对话分配](09-parallel-development.md)、[PostgreSQL基线](08-postgresql-baseline.md)、[实现评估结论](05-implementation-assessment.md)、[首批实施切片](06-first-slices.md)、[14个大任务](01-work-packages.md)、[125目标归属](02-target-coverage.md)和[依赖与开发批次](04-batches.md)。

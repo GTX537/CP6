@@ -158792,6 +158792,16 @@
       "date": "2026-10-17",
       "change": "Wave13 registers four user-started new chats with independent bounded implementation windows; no actual START or product implementation claimed, full task and business states unchanged.",
       "evidence": "docs/development/dispatch/20261017-wave13/README.md"
+    },
+    {
+      "date": "2026-10-17",
+      "change": "Record four actual wave13 STARTs, prioritize confirmed P0 #245 and request ordinary B/C/D pause without claiming acknowledgement; inventory all 375 tasks and adopt user priority of first verifiable business flow. Full task and acceptance states unchanged.",
+      "evidence": "docs/development/planning/20261017-project-inventory.md"
+    },
+    {
+      "date": "2026-10-17",
+      "change": "Inventory follow-up received all four fixed wave13 DELIVERY messages before publication. Candidates are reported, not reviewed or integrated. A security review is next priority; B/C/D ordinary integration and new work stay on P0 hold.",
+      "evidence": "docs/development/planning/20261017-project-inventory.md"
     }
   ],
   "implementation_assessment": {
@@ -160233,11 +160243,11 @@
         "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
         "coordination_baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
         "entry_evidence": "docs/development/dispatch/20261017-wave13/WP02-02.md",
-        "phase": "BOUNDED_IMPLEMENTATION_ASSIGNED",
+        "phase": "CANDIDATE_REPORTED_P0_HOLD",
         "dispatch_scope": "SERVICE_TENANT_ELIGIBILITY_CONTROL",
-        "bounded_window_gate": "CONFIRMED",
+        "bounded_window_gate": "PAUSED",
         "full_task_gate_unchanged": true,
-        "worker_start_received": false,
+        "worker_start_received": true,
         "allowed_write_paths": [
           "CP6.Core/Persistence/Tenancy/ServiceTokenTenantDirectoryControlV1.cs",
           "CP6.Core/Persistence/Tenancy/ServiceRevocationInstallation.cs",
@@ -160264,8 +160274,36 @@
           "kind": "user_started_new_chat",
           "label": "B",
           "exclusive": true,
-          "actual_chat_id_pending_start": true
-        }
+          "actual_chat_id_pending_start": false,
+          "start_identity": "user-started new wave13 B chat; fixed START reference above",
+          "chat_id": "01a1480c-fed2-7e42-bce0-9b3db2477bfe"
+        },
+        "worker_start_ref": {
+          "commit": "4c4f567b720de2fccb342a8ab11fe1e1e237db4c",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261017T041140Z-wave13-start/MESSAGE.md"
+        },
+        "coordinator_received_at": "2026-10-17T04:26:13.652224+00:00",
+        "execution_baseline_sha": "4704592f52172c941e1cb95bdeb3c73f0dd179e8",
+        "scheduling_directive": {
+          "issued_at": "2026-10-17T04:26:13.652224+00:00",
+          "reason": "Confirmed P0 #245 and open P0 #38; BUG-MANAGEMENT requires ordinary development to pause.",
+          "evidence": "docs/development/planning/20261017-project-inventory.md",
+          "executor_pause_ack_received": false,
+          "safe_point_required": true,
+          "preserve_worktree_and_reservations": true,
+          "read_only_preparation_allowed": true,
+          "resume_requires_coordinator_window": true,
+          "candidate_report_received_before_notification": true
+        },
+        "worker_delivery_received": true,
+        "handoff_delivery": {
+          "commit": "65cdf403af1c693711644b6f5a2f44f1cacd965f",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261017T042608Z-wave13-delivery/MESSAGE.md"
+        },
+        "reported_candidate_sha": "e2bfcc0b9b34f94163e8b1a63463997b7abb35b5",
+        "candidate_review_completed": false,
+        "candidate_integrated": false,
+        "delivery_received_at": "2026-10-17T04:28:50.954497+00:00"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -161050,11 +161088,11 @@
         "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
         "coordination_baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
         "entry_evidence": "docs/development/dispatch/20261017-wave13/WP02-03.md",
-        "phase": "BOUNDED_IMPLEMENTATION_ASSIGNED",
+        "phase": "CANDIDATE_REPORTED_REVIEW_PENDING",
         "dispatch_scope": "CURRENT_PERMISSION_CONSUMPTION",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
-        "worker_start_received": false,
+        "worker_start_received": true,
         "allowed_write_paths": [
           "CP6.Core/Services/Sys/CurrentPermissionContext.cs",
           "CP6.Core/Services/Sys/ICurrentPermissionContext.cs",
@@ -161093,8 +161131,31 @@
           "kind": "user_started_new_chat",
           "label": "A",
           "exclusive": true,
-          "actual_chat_id_pending_start": true
-        }
+          "actual_chat_id_pending_start": false,
+          "start_identity": "user-started new wave13 A chat; fixed START reference above",
+          "chat_id_unavailable": true
+        },
+        "worker_start_ref": {
+          "commit": "bf7401f9fdd6c86d650de83bcc19dfb590a6ae3a",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261017T041123Z-wave13-start/MESSAGE.md"
+        },
+        "coordinator_received_at": "2026-10-17T04:26:13.652224+00:00",
+        "execution_baseline_sha": "4704592f52172c941e1cb95bdeb3c73f0dd179e8",
+        "issue": "https://github.com/GTX537/CP6/issues/245",
+        "priority": "P0",
+        "p0_report_ref": {
+          "commit": "7f0c5cdce73c57997b46a94536173ee33c671bd8",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261017T041531Z-wave13-p0/MESSAGE.md"
+        },
+        "worker_delivery_received": true,
+        "handoff_delivery": {
+          "commit": "1196a05caf9166af42fcb8647931a0d82fb4238e",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261017T042211Z-wave13-delivery/MESSAGE.md"
+        },
+        "reported_candidate_sha": "aa0a361f93aad67da0bb8ca27c6954d557dd9530",
+        "candidate_review_completed": false,
+        "candidate_integrated": false,
+        "delivery_received_at": "2026-10-17T04:28:50.954497+00:00"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -161977,11 +162038,11 @@
         "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
         "coordination_baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
         "entry_evidence": "docs/development/dispatch/20261017-wave13/WP02-18.md",
-        "phase": "BOUNDED_IMPLEMENTATION_ASSIGNED",
+        "phase": "CANDIDATE_REPORTED_P0_HOLD",
         "dispatch_scope": "MENU_REFRESH_RECOVERY",
-        "bounded_window_gate": "CONFIRMED",
+        "bounded_window_gate": "PAUSED",
         "full_task_gate_unchanged": true,
-        "worker_start_received": false,
+        "worker_start_received": true,
         "allowed_write_paths": [
           "cp6.web/src/views/pms/MenuView.vue",
           "cp6.web/src/views/pms/MenuView.spec.ts",
@@ -162003,9 +162064,37 @@
           "kind": "user_started_new_chat",
           "label": "D",
           "exclusive": true,
-          "actual_chat_id_pending_start": true
+          "actual_chat_id_pending_start": false,
+          "start_identity": "user-started new wave13 D chat; fixed START reference above",
+          "chat_id_unavailable": true
         },
-        "issue": "https://github.com/GTX537/CP6/issues/243"
+        "issue": "https://github.com/GTX537/CP6/issues/243",
+        "worker_start_ref": {
+          "commit": "6835a38231ef67699d21df52730b7f4dab7ce0ee",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-18/messages/20261017T041447Z-wave13-start/MESSAGE.md"
+        },
+        "coordinator_received_at": "2026-10-17T04:26:13.652224+00:00",
+        "execution_baseline_sha": "4704592f52172c941e1cb95bdeb3c73f0dd179e8",
+        "scheduling_directive": {
+          "issued_at": "2026-10-17T04:26:13.652224+00:00",
+          "reason": "Confirmed P0 #245 and open P0 #38; BUG-MANAGEMENT requires ordinary development to pause.",
+          "evidence": "docs/development/planning/20261017-project-inventory.md",
+          "executor_pause_ack_received": false,
+          "safe_point_required": true,
+          "preserve_worktree_and_reservations": true,
+          "read_only_preparation_allowed": true,
+          "resume_requires_coordinator_window": true,
+          "candidate_report_received_before_notification": true
+        },
+        "worker_delivery_received": true,
+        "handoff_delivery": {
+          "commit": "afbd86defef54c3929ca4aada12c9ec25a91e35c",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-18/messages/20261017T042502Z-wave13-delivery/MESSAGE.md"
+        },
+        "reported_candidate_sha": "59dd7a9c7a0f5511d857743146e18a28fead31bd",
+        "candidate_review_completed": false,
+        "candidate_integrated": false,
+        "delivery_received_at": "2026-10-17T04:28:50.954497+00:00"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -162582,11 +162671,11 @@
         "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
         "coordination_baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
         "entry_evidence": "docs/development/dispatch/20261017-wave13/WP02-28.md",
-        "phase": "BOUNDED_IMPLEMENTATION_ASSIGNED",
+        "phase": "CANDIDATE_REPORTED_P0_HOLD",
         "dispatch_scope": "PUBLISHED_HOST_IDENTITY_VALIDATION",
-        "bounded_window_gate": "CONFIRMED",
+        "bounded_window_gate": "PAUSED",
         "full_task_gate_unchanged": true,
-        "worker_start_received": false,
+        "worker_start_received": true,
         "allowed_write_paths": [
           "eng/wp02-28/",
           "CP6.Tests/Platform/PlatformHostIdentity*.cs",
@@ -162610,8 +162699,36 @@
           "kind": "user_started_new_chat",
           "label": "C",
           "exclusive": true,
-          "actual_chat_id_pending_start": true
-        }
+          "actual_chat_id_pending_start": false,
+          "start_identity": "user-started new wave13 C chat; fixed START reference above",
+          "chat_id_unavailable": true
+        },
+        "worker_start_ref": {
+          "commit": "bf0df79a7b366b7b1c103a0128c930d9743b64fc",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-28/messages/20261017T041153Z-wave13-start/MESSAGE.md"
+        },
+        "coordinator_received_at": "2026-10-17T04:26:13.652224+00:00",
+        "execution_baseline_sha": "4704592f52172c941e1cb95bdeb3c73f0dd179e8",
+        "scheduling_directive": {
+          "issued_at": "2026-10-17T04:26:13.652224+00:00",
+          "reason": "Confirmed P0 #245 and open P0 #38; BUG-MANAGEMENT requires ordinary development to pause.",
+          "evidence": "docs/development/planning/20261017-project-inventory.md",
+          "executor_pause_ack_received": false,
+          "safe_point_required": true,
+          "preserve_worktree_and_reservations": true,
+          "read_only_preparation_allowed": true,
+          "resume_requires_coordinator_window": true,
+          "candidate_report_received_before_notification": true
+        },
+        "worker_delivery_received": true,
+        "handoff_delivery": {
+          "commit": "0434ea724e13db33f624af4a5f76ae11f9845981",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-28/messages/20261017T042207Z-wave13-delivery/MESSAGE.md"
+        },
+        "reported_candidate_sha": "b9f3f30b5bf079074ecfa404db618a20d9ee7a84",
+        "candidate_review_completed": false,
+        "candidate_integrated": false,
+        "delivery_received_at": "2026-10-17T04:28:50.954497+00:00"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -178568,9 +178685,9 @@
       "path": "docs/development/dispatch/20261017-wave13/README.md",
       "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
       "coordinator_shared_state_only": true,
-      "phase": "BOUNDED_IMPLEMENTATION_ASSIGNED",
-      "workers_started": false,
-      "workers_delivered": false,
+      "phase": "P0_PRIORITY_ORDINARY_PAUSE_REQUESTED",
+      "workers_started": true,
+      "workers_delivered": true,
       "windows_closed": false,
       "assigned_chats": [
         "A",
@@ -178578,7 +178695,25 @@
         "C",
         "D"
       ],
-      "unassigned_chats": []
+      "unassigned_chats": [],
+      "active_implementation_chats": [],
+      "ordinary_pause_requested_chats": [
+        "B",
+        "C",
+        "D"
+      ],
+      "ordinary_pause_ack_received": false,
+      "inventory_path": "docs/development/planning/20261017-project-inventory.md",
+      "priority_review_chats": [
+        "A"
+      ],
+      "candidate_reports_received": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "workers_integrated": false
     },
     "wave_history": [
       {
