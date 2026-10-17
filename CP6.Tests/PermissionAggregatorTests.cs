@@ -14,7 +14,11 @@ public class PermissionAggregatorTests
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
             .Options;
-        return new CP6Context(options);
+        var db = new CP6Context(options);
+        db.Sys_Roles.AddRange(new Sys_Role { RoleId = 1, RoleName = "one" },
+            new Sys_Role { RoleId = 2, RoleName = "two" }, new Sys_Role { RoleId = 5, RoleName = "five" });
+        db.SaveChanges();
+        return db;
     }
 
     [Fact]
@@ -69,11 +73,26 @@ public class PermissionAggregatorTests
     }
 
     [Fact]
+    public async Task Build_Excludes_disabled_primary_and_deleted_additional_roles()
+    {
+        using var db = NewDb();
+        var uid = Guid.NewGuid();
+        db.Sys_Users.Add(new Sys_User { Id = uid, UserName = "u", Password = "x", RoleId = 1 });
+        db.Sys_UserRoles.AddRange(new Sys_UserRole { UserId = uid, RoleId = 2 }, new Sys_UserRole { UserId = uid, RoleId = 5 });
+        (await db.Sys_Roles.SingleAsync(r => r.RoleId == 1)).Enable = false;
+        db.Remove(await db.Sys_Roles.SingleAsync(r => r.RoleId == 2));
+        await db.SaveChangesAsync();
+        var aggregator = new PermissionAggregator(db);
+        Assert.Equal(new[] { 5 }, (await aggregator.BuildAsync(uid)).RoleIds);
+        Assert.Equal(new[] { 5 }, (await aggregator.BuildEnabledRolesAsync(uid)).RoleIds);
+    }
+
+    [Fact]
     public async Task Build_UnknownUser_Throws()
     {
         using var db = NewDb();
         var agg = new PermissionAggregator(db);
-        await Assert.ThrowsAsync<InvalidOperationException>(() => agg.BuildAsync(Guid.NewGuid()));
+        await Assert.ThrowsAsync<CurrentPermissionUnavailableException>(() => agg.BuildAsync(Guid.NewGuid()));
     }
 
     [Fact]

@@ -60,6 +60,7 @@ public class PurHighRiskDenialTests
     private static ServiceProvider BuildProvider()
     {
         var db = NewDb();
+        db.Sys_Roles.Add(new Sys_Role { RoleId = 1, RoleName = "reader" });
         db.Sys_Users.Add(new Sys_User { Id = Guid.NewGuid(), UserName = "u", Password = "x", RoleId = 1 });
         // 良性键锚定菜单（pur-po 有 MenuKey 才能 join 出 ActionKeys）
         db.Sys_Menus.Add(new Sys_Menu { MenuId = 702, MenuName = "采购订单", MenuKey = BenignMenu });
@@ -79,7 +80,7 @@ public class PurHighRiskDenialTests
         var http = new DefaultHttpContext
         {
             RequestServices = provider,
-            User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, "u") }, "test"))
+            User = CurrentPermissionContextTests.Principal(db.Sys_Users.Single().Id, db.CurrentTenantId)
         };
         provider.GetRequiredService<IHttpContextAccessor>().HttpContext = http;
         return provider;

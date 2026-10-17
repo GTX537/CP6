@@ -35,6 +35,7 @@ public class PermissionChainIntegrationTests
     {
         var db = NewDb();
         var uid = Guid.NewGuid();
+        db.Sys_Roles.Add(new Sys_Role { RoleId = 1, RoleName = "reader" });
         db.Sys_Users.Add(new Sys_User { Id = uid, UserName = "u", Password = "x", RoleId = 1 });
         db.Sys_Menus.Add(new Sys_Menu { MenuId = 10, MenuName = "受注", MenuKey = "order" });
         db.Sys_RoleActions.Add(new Sys_RoleAction { Id = Guid.NewGuid(), RoleId = 1, MenuId = 10, ActionCode = "export" });
@@ -53,7 +54,7 @@ public class PermissionChainIntegrationTests
         var http = new DefaultHttpContext
         {
             RequestServices = provider,
-            User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, "u") }, "test"))
+            User = CurrentPermissionContextTests.Principal(db.Sys_Users.Single().Id, db.CurrentTenantId)
         };
         provider.GetRequiredService<IHttpContextAccessor>().HttpContext = http;
 

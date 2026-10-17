@@ -41,6 +41,7 @@ public class FourGranularityIntegrationTests
             .Options;
         var db = new CP6Context(options);
         db.Sys_Depts.Add(new Sys_Dept { Id = dept, DeptCode = "A", DeptName = "A", Path = $"/{dept}/" });
+        db.Sys_Roles.Add(new Sys_Role { RoleId = 1, RoleName = "reader" });
         db.Sys_Users.Add(new Sys_User { Id = uid, UserName = "u", Password = "x", RoleId = 1, DeptId = dept });
         db.Sys_Menus.Add(new Sys_Menu { MenuId = 10, MenuName = "受注", MenuKey = "order" });
         db.Sys_RoleActions.Add(new Sys_RoleAction { Id = Guid.NewGuid(), RoleId = 1, MenuId = 10, ActionCode = "query" });   // 仅 query
@@ -67,7 +68,7 @@ public class FourGranularityIntegrationTests
         var http = new DefaultHttpContext
         {
             RequestServices = provider,
-            User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, userName) }, "test"))
+            User = CurrentPermissionContextTests.Principal(db.Sys_Users.Single(u => u.UserName == userName).Id, db.CurrentTenantId)
         };
         provider.GetRequiredService<IHttpContextAccessor>().HttpContext = http;
         return provider;
