@@ -19,7 +19,7 @@
 
 五表从冻结PG baseline operations精确选择：原撤销四表加真实 `public.Sys_Tenants` 的全部13列、PK、租户编码唯一索引及6项容量约束。没有实体/EF模型/历史迁移修改或虚假的完整EF history。安装不根据mapping创建/启用租户；测试由显式control在真实Sys_Tenants写入合成A/B权威行，不冒充生产目录或租户创建生命周期验收。
 
-runtime新增受TenantId RLS约束的ServiceToken INSERT，其余保持原撤销最小权限。Sys_Tenants显式owner-only ACL，避免NULL ACL与授权撤回后的owner ACL表示差异，并未授予runtime目录读权。新profile初装核对普通角色资格、成员关系、所有权、role settings、目标库预带表/列/函数/schema/default ACL。其他自有component数据库的普通权限不是本目标库权限；目标库与全局角色资格继续受控。新seal在旧结构类别之外增加runtime在pg_catalog表/列/函数/schema的显式ACL，旧seal常量原样保留。未知布局、profile/物理身份/目录/权限漂移拒绝。没有旧库overlay、既有数据迁移、增租户、恢复到新物理库或全Main启用。
+runtime新增受TenantId RLS约束的ServiceToken INSERT，其余保持原撤销最小权限。Sys_Tenants显式owner-only ACL，避免NULL ACL与授权撤回后的owner ACL表示差异，并未授予runtime目录读权。新profile初装核对普通角色资格、成员关系、所有权、role settings、目标库预带表/列/函数/schema/default ACL。其他自有component数据库的普通权限不是本目标库权限；目标库与全局角色资格继续受控。新seal在旧结构类别之外记录pg_catalog / pg_*表、列、函数、schema、type的PUBLIC及runtime有效ACL项，按权限和grant option规范化，忽略grantor和NULL/显式owner ACL表示差异。初装以pg_init_privs的initdb记录或acldefault为原生权限基线，拒绝额外PUBLIC权限；合法默认SELECT/EXECUTE/USAGE保留，恢复时有效权限增加或减少均拒绝。information_schema不在此新seal补充范围。旧seal常量原样保留。未知布局、profile/物理身份/目录/权限漂移拒绝。没有旧库overlay、既有数据迁移、增租户、恢复到新物理库或全Main启用。
 
 ## 实际验证及失败记录
 
@@ -55,8 +55,27 @@ CLI辅助脚本首次使用Start-Process -Wait等待了整个postgres进程树�
 
 实际分轮过滤器见TRX对应stdout和上述范围。CLI实际重放脚本 `service-issuance-cli-replay.ps1` 位于私有证据根，使用ProcessStartInfo/redirected stdin/隐藏窗口，读取原canonical request后调用明确版本命令。
 
+## 同次集中审查修正
+
+固定候选 `127abecbebeb5ee2ae67ecc7d7184dc8d9b22bc9` 的集中SPEC/QUALITY审查发现两项P2；先保留真实红测，再在原准入范围修正，没有启动第二次全任务审查或全量回归。
+
+1. 新seal只筛runtime role，漏掉PUBLIC=0，且初装未检查额外系统PUBLIC权限。原候选给pg_authid增加PUBLIC SELECT后，普通tenant的has_table_privilege为true，fresh安装、同请求恢复均被错误接受，seal也未变化。修复仅覆盖pg_catalog / pg_*，按PG原生初始ACL和默认ACL核验fresh额外权限，并将PUBLIC和runtime权限规范化加入新seal；pg_roles默认SELECT、普通函数EXECUTE和schema USAGE继续可用。表/列/函数额外权限，以及移除合法默认权限都能触发恢复拒绝；撤权或还原后seal恢复相等，同一个原请求成功。错误必须是ConfigurationRejected，不将任意异常当安全通过。
+2. 共享安装器曾在包含用户输入的完整SQL上Replace旧schema字串，会把合法数据库`cp6_service_revocation_v1`改成`cp6_service_token_v1`。现仅在固定schema位置插值内部profile常量，用户数据库/login继续使用原QuoteIdentifier值。旧profile取原schema字串，所有旧模板的展开SQL及旧seal常量保持；最终CLI再对旧保存库的原请求恢复验证兼容，不重跑旧整套。
+
+| 原始证据（同一私有证据根） | 结果与范围 |
+| --- | --- |
+| `service-issuance-results/service-issuance-review-public-red.trx`、`service-issuance-review-public-red.log` | 真实1项失败；输出freshRejected=False、sealChanged=False、replayRejected=False、ordinaryTenantRead=true。撤权后SELECT count(*)被42501拒绝，未读取/打印角色或密码字段 |
+| `service-issuance-results/service-issuance-review-identifier-red.trx`、`service-issuance-review-identifier-red.log` | 真实1项失败：3D000 database cp6_service_token_v1 does not exist，确证完整SQL替换误改合法输入 |
+| `service-issuance-results/service-issuance-review-public-green.trx`、`service-issuance-review-public-green.log`、`service-issuance-public-diagnose.log` | 首次修复尝试仍失败，不能算通过。我主动扩大到information_schema，而PG的这些原生SELECT/USAGE没有pg_init_privs行，误拒clean安装；只读对象/权限诊断后由COORD决定收敛至原声明pg_catalog / pg_*范围，未把现有ACL当可信基线 |
+| `service-issuance-results/service-issuance-review-public-green-2.trx`、`service-issuance-review-public-green-2.log` | 1/1通过、0 skip。fresh表和函数额外PUBLIC拒绝；replay表/列/函数额外权限及pg_roles合法默认SELECT移除均拒绝；每次恢复权限后规范化seal相等、同原请求成功 |
+| `service-issuance-results/service-issuance-review-identifier-green.trx`、`service-issuance-review-identifier-green.log` | 1/1通过、0 skip。含旧schema子串的数据库和login原名安装、恢复、普通连接与可信tenant绑定均正确 |
+| `service-issuance-results/service-issuance-review-http-green.trx`、`service-issuance-review-http-green.log` | 最终新seal下原真实HTTP链1/1通过、0 skip：普通租户真实签发/记录/自撤销、跨租户及client隔离、disabled client撤销、最小权限、首次解析前修改legacy options后的签名/JWKS/记录exp一致 |
+| `service-issuance-review-cli-build.log`、`service-issuance-review-cli-replay.log` | 相关CLI构建通过；最终HTTP新root的新profile同请求恢复成功且拒绝IssuerLogin；原旧profile保留库同请求恢复成功、原baseline digest不变，与模板逐处diff核对共同证明旧profile兼容（旧分支仍插入原固定schema，旧seal SQL不变）。新profile恢复证据使用最终新seal库，并非第5轮旧候选库 |
+
+各次新cluster路径保留于对应`service-issuance-review-*-root.txt`，结束核对ownership/postmaster后停止；失败、诊断和成功数据均保留。上述修正影响安装与新seal，旧签名/到期/配置/并发行为仍按前表真实范围复用；最终只补原真实HTTP链的受影响集成验证，不用早期候选库声称新seal恢复成功。
+
 ## 剩余范围
 
 Full17PGT、全Main、普通用户/部门登录与snapshot、真实租户创建/维护生命周期、bootstrap/dispatcher、ERP/ordinary outbox、其他上下文/跨仓宿主、真实业务数据验收、既有数据迁移、环境切换、生产候选、DEV/UAT/PROD均 **NOT_RUN**。这是五表fresh-only service endpoints profile，不能据此开启整个Main。
 
-本执行者未触发/重跑Actions、未取消他人运行、未改workflow/分支保护/依赖，未发包、推送、建PR或部署。完成任务分支完整diff自查与 `git diff --check`，未发现范围外文件、凭据、机器配置或调试输出。旧seal常量、实体、EF模型/快照及历史迁移无改动；55436无监听。COORD负责一次集中SPEC/QUALITY审查、公共状态同步和最终远端集成，结果待实际发生后登记。
+本执行者未触发/重跑Actions、未取消他人运行、未改workflow/分支保护/依赖，未发包、推送、建PR或部署。完成任务分支完整diff自查与 `git diff --check`，未发现范围外文件、凭据、机器配置或调试输出。旧seal常量、实体、EF模型/快照及历史迁移无改动；55436无监听。COORD已完成一次集中SPEC/QUALITY审查，发现的两项P2已按上述审查修正节处理；协调负责修正差异复查、公共状态同步和最终远端集成，结果由实际发生后登记。

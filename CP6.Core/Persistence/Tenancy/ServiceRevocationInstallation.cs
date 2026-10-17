@@ -44,36 +44,36 @@ internal static class ServiceRevocationInstallation
         await using var tx = await connection.BeginTransactionAsync(ct).ConfigureAwait(false);
         TenantLoginDirectoryV1.ValidateArguments(connection, tx, request.Tenants);
         await Execute("SELECT pg_catalog.pg_advisory_xact_lock(1129330260, 2)");
-        await using (var identity = new NpgsqlCommand(Sql("""
+        await using (var identity = new NpgsqlCommand("""
             SELECT r.rolsuper AND session_user=current_user AND d.datdba=r.oid AND d.oid=@oid
               AND c.system_identifier::text=@system AND pg_catalog.host(pg_catalog.inet_server_addr())=@server
               AND pg_catalog.inet_server_port()=@port
             FROM pg_catalog.pg_roles r, pg_catalog.pg_database d, pg_catalog.pg_control_system() c
             WHERE r.rolname=current_user AND d.datname=current_database()
-            """), connection, tx))
+            """, connection, tx))
         {
             identity.Parameters.AddWithValue("oid", NpgsqlTypes.NpgsqlDbType.Oid, request.DatabaseOid);
             identity.Parameters.AddWithValue("system", request.SystemIdentifier); identity.Parameters.AddWithValue("server", request.Server);
             identity.Parameters.AddWithValue("port", request.Port);
             if (await identity.ExecuteScalarAsync(ct).ConfigureAwait(false) is not true) throw TenantStorageBindingV1.Rejected();
         }
-        var exists = await Scalar("SELECT EXISTS(SELECT FROM pg_catalog.pg_namespace WHERE nspname='cp6_service_revocation_v1')") is true;
+        var exists = await Scalar($"SELECT EXISTS(SELECT FROM pg_catalog.pg_namespace WHERE nspname='{schema}')") is true;
         if (exists)
         {
-            if (await Scalar("""
+            if (await Scalar($$"""
                 SELECT EXISTS(SELECT FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
-                  WHERE n.nspname='cp6_service_revocation_v1' AND n.nspowner=current_user::regrole
+                  WHERE n.nspname='{{schema}}' AND n.nspowner=current_user::regrole
                     AND c.relname='installation' AND c.relkind='r' AND c.relowner=current_user::regrole
                     AND NOT c.relrowsecurity AND NOT c.relforcerowsecurity
                     AND NOT EXISTS(SELECT FROM pg_catalog.pg_trigger WHERE tgrelid=c.oid AND NOT tgisinternal)
                     AND NOT EXISTS(SELECT FROM pg_catalog.pg_rewrite WHERE ev_class=c.oid))
                 """) is not true) throw TenantStorageBindingV1.Rejected();
             var actualSeal = await CatalogHash().ConfigureAwait(false);
-            await using var previous = new NpgsqlCommand(Sql("""
-                SELECT issuer_oid FROM cp6_service_revocation_v1.installation
+            await using var previous = new NpgsqlCommand($$"""
+                SELECT issuer_oid FROM {{schema}}.installation
                 WHERE singleton AND installation_id=@id AND canonical=@canonical AND baseline_sha256=@hash AND fingerprint=@seal
                   AND profile=@profile AND database_oid=@oid AND system_identifier=@system AND issuer_name=@issuer
-                """), connection, tx);
+                """, connection, tx);
             previous.Parameters.AddWithValue("canonical", canonical); previous.Parameters.AddWithValue("hash", hash);
             previous.Parameters.AddWithValue("id", request.InstallationId);
             previous.Parameters.AddWithValue("seal", actualSeal);
@@ -89,12 +89,13 @@ internal static class ServiceRevocationInstallation
         // New profile only. No quiet takeover of a partial/full Core baseline or old recovery seal.
         if (await Scalar(TenantEmptyLayoutV1.Sql + " AND NOT EXISTS(SELECT FROM pg_catalog.pg_default_acl)") is not true)
             throw TenantStorageBindingV1.Rejected();
+        if (serviceTokens) await ServiceTokenProfileV1.ValidateFreshPublicAsync(connection, tx, ct).ConfigureAwait(false);
         var issuanceOid = await ValidateIssuer(null, installed: false).ConfigureAwait(false);
         foreach (var login in Logins())
         {
             if (serviceTokens)
                 await ServiceTokenProfileV1.ValidateFreshLoginAsync(connection, tx, login, ct).ConfigureAwait(false);
-            await using var role = new NpgsqlCommand(Sql("""
+            await using var role = new NpgsqlCommand("""
                 SELECT NOT (r.rolsuper OR r.rolbypassrls OR r.rolcreatedb OR r.rolcreaterole OR r.rolreplication)
                   AND r.rolcanlogin AND NOT EXISTS(SELECT FROM pg_catalog.pg_auth_members WHERE member=r.oid OR roleid=r.oid)
                   AND NOT EXISTS(SELECT FROM pg_catalog.pg_database WHERE datdba=r.oid)
@@ -103,7 +104,7 @@ internal static class ServiceRevocationInstallation
                   AND NOT EXISTS(SELECT FROM pg_catalog.pg_proc WHERE proowner=r.oid)
                   AND NOT EXISTS(SELECT FROM pg_catalog.pg_db_role_setting WHERE setrole=r.oid)
                 FROM pg_catalog.pg_roles r WHERE r.rolname=@login
-                """), connection, tx);
+                """, connection, tx);
             role.Parameters.AddWithValue("login", login);
             if (await role.ExecuteScalarAsync(ct).ConfigureAwait(false) is not true) throw TenantStorageBindingV1.Rejected();
         }
@@ -117,26 +118,26 @@ internal static class ServiceRevocationInstallation
             REVOKE CREATE,TEMPORARY ON DATABASE {{Q(request.Database)}} FROM PUBLIC;
             REVOKE ALL ON SCHEMA public,crm_identity,crm_identity_priority,cp6_storage_core,cp6_storage_identity FROM PUBLIC;
             REVOKE ALL ON ALL FUNCTIONS IN SCHEMA public,cp6_storage_core,cp6_storage_identity FROM PUBLIC;
-            CREATE SCHEMA cp6_service_revocation_v1;
-            REVOKE ALL ON SCHEMA cp6_service_revocation_v1 FROM PUBLIC;
-            CREATE TABLE cp6_service_revocation_v1.installation(
+            CREATE SCHEMA {{schema}};
+            REVOKE ALL ON SCHEMA {{schema}} FROM PUBLIC;
+            CREATE TABLE {{schema}}.installation(
               singleton boolean PRIMARY KEY CHECK(singleton),installation_id uuid NOT NULL,profile text NOT NULL,
               database_oid oid NOT NULL,system_identifier text NOT NULL,baseline_sha256 text NOT NULL,
               canonical text NOT NULL,fingerprint text NOT NULL,issuer_oid oid NOT NULL,issuer_name name NOT NULL);
-            REVOKE ALL ON cp6_service_revocation_v1.installation FROM PUBLIC;
-            CREATE FUNCTION cp6_service_revocation_v1.system_identifier() RETURNS text
+            REVOKE ALL ON {{schema}}.installation FROM PUBLIC;
+            CREATE FUNCTION {{schema}}.system_identifier() RETURNS text
             LANGUAGE sql SECURITY DEFINER SET search_path=pg_catalog
             AS 'SELECT system_identifier::text FROM pg_catalog.pg_control_system()';
-            CREATE FUNCTION cp6_service_revocation_v1.fingerprint() RETURNS text
+            CREATE FUNCTION {{schema}}.fingerprint() RETURNS text
             LANGUAGE sql SECURITY DEFINER SET search_path=pg_catalog
             AS $seal$ SELECT upper(encode(sha256(convert_to(({{(serviceTokens ? ServiceTokenProfileV1.CatalogSql : TenantProvisioningCatalog.Sql)}}),'UTF8')),'hex')) $seal$;
-            REVOKE ALL ON ALL FUNCTIONS IN SCHEMA cp6_service_revocation_v1 FROM PUBLIC;
+            REVOKE ALL ON ALL FUNCTIONS IN SCHEMA {{schema}} FROM PUBLIC;
             GRANT CONNECT ON DATABASE {{Q(request.Database)}} TO {{roles}},{{issuer}};
             GRANT USAGE ON SCHEMA public,crm_identity,cp6_storage_core TO {{roles}},{{issuer}};
-            GRANT USAGE ON SCHEMA cp6_tenancy_v1,crm_identity_priority,cp6_storage_identity,cp6_service_revocation_v1 TO {{roles}};
-            GRANT EXECUTE ON FUNCTION cp6_tenancy_v1.current_tenant_id(),cp6_service_revocation_v1.system_identifier(),
-              cp6_service_revocation_v1.fingerprint() TO {{roles}};
-            GRANT SELECT(installation_id,profile,database_oid,singleton,fingerprint) ON cp6_service_revocation_v1.installation TO {{roles}};
+            GRANT USAGE ON SCHEMA cp6_tenancy_v1,crm_identity_priority,cp6_storage_identity,{{schema}} TO {{roles}};
+            GRANT EXECUTE ON FUNCTION cp6_tenancy_v1.current_tenant_id(),{{schema}}.system_identifier(),
+              {{schema}}.fingerprint() TO {{roles}};
+            GRANT SELECT(installation_id,profile,database_oid,singleton,fingerprint) ON {{schema}}.installation TO {{roles}};
             GRANT EXECUTE ON FUNCTION public.cp6_cp936_length_v1(text),cp6_storage_core.set_rowversion_v1() TO {{roles}},{{issuer}};
             GRANT EXECUTE ON FUNCTION cp6_storage_core.advance_identity_generation_v1(),cp6_storage_identity.set_rowversion_v1() TO {{roles}};
             GRANT USAGE ON SEQUENCE cp6_storage_core.rowversion_v1 TO {{roles}},{{issuer}};
@@ -173,20 +174,20 @@ internal static class ServiceRevocationInstallation
         await TenantLoginDirectoryV1.ValidateAsync(connection, tx, request.Tenants, ct).ConfigureAwait(false);
         foreach (var login in Logins())
         {
-            await using var rights = new NpgsqlCommand(Sql("""
+            await using var rights = new NpgsqlCommand("""
                 SELECT NOT pg_catalog.has_database_privilege(@login,current_database(),'CREATE')
                   AND NOT pg_catalog.has_database_privilege(@login,current_database(),'TEMP')
                   AND NOT EXISTS(SELECT FROM pg_catalog.pg_namespace n WHERE n.nspname !~ '^pg_'
                     AND pg_catalog.has_schema_privilege(@login,n.oid,'CREATE'))
-                """), connection, tx);
+                """, connection, tx);
             rights.Parameters.AddWithValue("login", login);
             if (await rights.ExecuteScalarAsync(ct).ConfigureAwait(false) is not true) throw TenantStorageBindingV1.Rejected();
         }
         await ValidateIssuer(issuanceOid, installed: true).ConfigureAwait(false);
         // Keep the old catalog-seal contract; issuance identity and directory data have explicit checks.
-        await using (var save = new NpgsqlCommand(Sql("""
-            INSERT INTO cp6_service_revocation_v1.installation VALUES(true,@id,@profile,@oid,@system,@hash,@canonical,@seal,@issuerOid,@issuer)
-            """), connection, tx))
+        await using (var save = new NpgsqlCommand($$"""
+            INSERT INTO {{schema}}.installation VALUES(true,@id,@profile,@oid,@system,@hash,@canonical,@seal,@issuerOid,@issuer)
+            """, connection, tx))
         {
             save.Parameters.AddWithValue("id", request.InstallationId); save.Parameters.AddWithValue("profile", result.Profile);
             save.Parameters.AddWithValue("oid", NpgsqlTypes.NpgsqlDbType.Oid, request.DatabaseOid); save.Parameters.AddWithValue("system", request.SystemIdentifier);
@@ -200,14 +201,13 @@ internal static class ServiceRevocationInstallation
 
         Task<string> CatalogHash() => serviceTokens ? ServiceTokenProfileV1.HashAsync(connection, tx, ct)
             : TenantProvisioningCatalog.HashAsync(connection, tx, ct);
-        string Sql(string sql) => serviceTokens ? sql.Replace("cp6_service_revocation_v1", schema, StringComparison.Ordinal) : sql;
         IEnumerable<string> Logins() => serviceTokens ? request.Tenants.Select(t => t.Login)
             : request.Tenants.Select(t => t.Login).Append(request.IssuerLogin);
         Task<uint> ValidateIssuer(uint? expected, bool installed) => serviceTokens
             ? Task.FromResult(0u)
             : ServiceRevocationIssuerV1.ValidateAsync(connection, tx, request.IssuerLogin, expected, installed, ct);
-        async Task Execute(string sql) { await using var command = new NpgsqlCommand(Sql(sql), connection, tx); await command.ExecuteNonQueryAsync(ct).ConfigureAwait(false); }
-        async Task<object?> Scalar(string sql) { await using var command = new NpgsqlCommand(Sql(sql), connection, tx); return await command.ExecuteScalarAsync(ct).ConfigureAwait(false); }
+        async Task Execute(string sql) { await using var command = new NpgsqlCommand(sql, connection, tx); await command.ExecuteNonQueryAsync(ct).ConfigureAwait(false); }
+        async Task<object?> Scalar(string sql) { await using var command = new NpgsqlCommand(sql, connection, tx); return await command.ExecuteScalarAsync(ct).ConfigureAwait(false); }
     }
     private static string Q(string identifier) => new NpgsqlCommandBuilder().QuoteIdentifier(identifier);
 }

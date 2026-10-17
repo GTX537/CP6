@@ -8,26 +8,59 @@ internal static class ServiceTokenProfileV1
     internal const string MigrationVersion = "service-token-tenant-rls-v1";
     internal const string Schema = "cp6_service_token_v1";
 
-    // New profile extends the seal to explicit runtime grants on system objects. The legacy seal
-    // remains byte-for-byte unchanged; unrelated grants in another database are outside this layout.
-    internal static string CatalogSql => $$"""
-        SELECT jsonb_build_array(({{TenantProvisioningCatalog.Sql}}),
-          (SELECT coalesce(jsonb_agg(jsonb_build_array(c.oid,c.relacl) ORDER BY c.oid),'[]')
-           FROM pg_catalog.pg_class c WHERE c.relnamespace='pg_catalog'::regnamespace
-             AND EXISTS(SELECT FROM pg_catalog.aclexplode(c.relacl) a
-               WHERE a.grantee IN(SELECT role_oid FROM cp6_tenancy_v1.login_tenant))),
-          (SELECT coalesce(jsonb_agg(jsonb_build_array(p.oid,p.proacl) ORDER BY p.oid),'[]')
-           FROM pg_catalog.pg_proc p WHERE p.pronamespace='pg_catalog'::regnamespace
-             AND EXISTS(SELECT FROM pg_catalog.aclexplode(p.proacl) a
-               WHERE a.grantee IN(SELECT role_oid FROM cp6_tenancy_v1.login_tenant))),
-          (SELECT coalesce(jsonb_agg(jsonb_build_array(c.attrelid,c.attnum,c.attacl) ORDER BY c.attrelid,c.attnum),'[]')
-           FROM pg_catalog.pg_attribute c JOIN pg_catalog.pg_class r ON r.oid=c.attrelid
-           WHERE r.relnamespace='pg_catalog'::regnamespace AND EXISTS(SELECT FROM pg_catalog.aclexplode(c.attacl) a
-             WHERE a.grantee IN(SELECT role_oid FROM cp6_tenancy_v1.login_tenant))),
-          (SELECT coalesce(jsonb_agg(jsonb_build_array(n.oid,n.nspacl) ORDER BY n.oid),'[]')
-           FROM pg_catalog.pg_namespace n WHERE n.nspname ~ '^pg_' AND EXISTS(SELECT FROM pg_catalog.aclexplode(n.nspacl) a
-             WHERE a.grantee IN(SELECT role_oid FROM cp6_tenancy_v1.login_tenant))))::text
+    // PostgreSQL records initdb exceptions in pg_init_privs; absent entries use acldefault.
+    // Compare effective privileges, not ACL array text (GRANT/REVOKE can materialize a NULL ACL).
+    // Scope is pg_catalog / pg_* objects; the legacy catalog and seal remain unchanged.
+    private const string SystemAclObjectsSql = """
+        SELECT 'pg_class'::regclass::oid AS classoid,c.oid AS objoid,0 AS objsubid,
+          c.relacl AS acl,pg_catalog.acldefault((CASE WHEN c.relkind='S' THEN 's' ELSE 'r' END)::"char",c.relowner) AS defaults
+        FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+        WHERE n.nspname ~ '^pg_'
+        UNION ALL
+        SELECT 'pg_class'::regclass::oid,c.oid,a.attnum,a.attacl,pg_catalog.acldefault('c',c.relowner)
+        FROM pg_catalog.pg_attribute a JOIN pg_catalog.pg_class c ON c.oid=a.attrelid
+          JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+        WHERE a.attnum>0 AND NOT a.attisdropped AND (n.nspname ~ '^pg_')
+        UNION ALL
+        SELECT 'pg_proc'::regclass::oid,p.oid,0,p.proacl,pg_catalog.acldefault('f',p.proowner)
+        FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid=p.pronamespace
+        WHERE n.nspname ~ '^pg_'
+        UNION ALL
+        SELECT 'pg_namespace'::regclass::oid,n.oid,0,n.nspacl,pg_catalog.acldefault('n',n.nspowner)
+        FROM pg_catalog.pg_namespace n WHERE n.nspname ~ '^pg_'
+        UNION ALL
+        SELECT 'pg_type'::regclass::oid,t.oid,0,t.typacl,pg_catalog.acldefault('T',t.typowner)
+        FROM pg_catalog.pg_type t JOIN pg_catalog.pg_namespace n ON n.oid=t.typnamespace
+        WHERE n.nspname ~ '^pg_'
         """;
+
+    internal static string CatalogSql => $$"""
+        WITH system_objects AS ({{SystemAclObjectsSql}}), effective AS (
+          SELECT o.classoid,o.objoid,o.objsubid,a.grantee,a.privilege_type,bool_or(a.is_grantable) AS grantable
+          FROM system_objects o CROSS JOIN LATERAL pg_catalog.aclexplode(coalesce(o.acl,o.defaults)) a
+          WHERE a.grantee=0 OR a.grantee IN(SELECT role_oid FROM cp6_tenancy_v1.login_tenant)
+          GROUP BY o.classoid,o.objoid,o.objsubid,a.grantee,a.privilege_type)
+        SELECT jsonb_build_array(({{TenantProvisioningCatalog.Sql}}),
+          (SELECT coalesce(jsonb_agg(jsonb_build_array(classoid,objoid,objsubid,grantee,privilege_type,grantable)
+            ORDER BY classoid,objoid,objsubid,grantee,privilege_type),'[]') FROM effective))::text
+        """;
+
+    internal static async Task ValidateFreshPublicAsync(NpgsqlConnection connection,NpgsqlTransaction tx,CancellationToken ct)
+    {
+        await using var command=new NpgsqlCommand($$"""
+            WITH system_objects AS ({{SystemAclObjectsSql}})
+            SELECT NOT EXISTS(
+              SELECT FROM system_objects o
+              LEFT JOIN pg_catalog.pg_init_privs i ON i.classoid=o.classoid AND i.objoid=o.objoid
+                AND i.objsubid=o.objsubid AND i.privtype='i'
+              CROSS JOIN LATERAL pg_catalog.aclexplode(coalesce(o.acl,o.defaults)) a
+              WHERE a.grantee=0 AND NOT EXISTS(
+                SELECT FROM pg_catalog.aclexplode(coalesce(i.initprivs,o.defaults)) original
+                WHERE original.grantee=0 AND original.privilege_type=a.privilege_type
+                  AND (NOT a.is_grantable OR original.is_grantable)))
+            """,connection,tx);
+        if(await command.ExecuteScalarAsync(ct).ConfigureAwait(false) is not true) throw TenantStorageBindingV1.Rejected();
+    }
 
     internal static async Task<string> HashAsync(NpgsqlConnection connection,NpgsqlTransaction tx,CancellationToken ct)
     {
