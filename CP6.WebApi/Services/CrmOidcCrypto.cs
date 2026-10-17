@@ -13,8 +13,10 @@ public sealed class CrmOidcCrypto : IDisposable
     private readonly string _activeKeyId;
     private readonly TimeProvider _time;
     private readonly Dictionary<string, RSA> _keys;
-    public CrmOidcCrypto(CrmOidcOptions options, TimeProvider? time = null)
+    public CrmOidcCrypto(CrmOidcOptions options, TimeProvider? time = null,
+        ServiceTokenTenancy.ServiceTokenSigningSnapshot? serviceTokenSigning = null)
     {
+        options = serviceTokenSigning?.CreateOptions() ?? options;
         _issuer = options.Issuer;
         _activeKeyId = options.ActiveKeyId;
         _time = time ?? TimeProvider.System;

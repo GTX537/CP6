@@ -15,12 +15,14 @@ namespace CP6.Persistence.PostgreSql.Tenancy;
 /// </summary>
 public static class ServiceRevocationBaselineV1
 {
-    public static string GenerateSql()
+    public static string GenerateSql() => GenerateSql(false);
+
+    internal static string GenerateSql(bool serviceTokens)
     {
         var core = new PostgreSqlCoreBaselineV1();
         var queue = new PostgreSqlIdentityPriorityBaselineV1();
-        static bool CoreTable(string? schema, string table) => schema == "crm_identity" && table is "ServiceToken" or "Snapshot"
-            || schema is null && table == "CrmIdentityTenantGenerations";
+        bool CoreTable(string? schema, string table) => schema == "crm_identity" && table is "ServiceToken" or "Snapshot"
+            || schema is null && (table == "CrmIdentityTenantGenerations" || serviceTokens && table == "Sys_Tenants");
         static bool QueueTable(string? schema, string table) => schema == "crm_identity_priority" && table == "Cp6_OutboxMessage";
         static IEnumerable<MigrationOperation> Select(Migration migration, Func<string?, string, bool> include) =>
             migration.UpOperations.Where(op => op switch
@@ -30,7 +32,7 @@ public static class ServiceRevocationBaselineV1
                 _ => false
             });
         var selected = Select(core, CoreTable).Concat(Select(queue, QueueTable)).ToArray();
-        if (selected.OfType<CreateTableOperation>().Count() != 4)
+        if (selected.OfType<CreateTableOperation>().Count() != (serviceTokens ? 5 : 4))
             throw new InvalidOperationException("Service revocation baseline changed.");
         var builder = new MigrationBuilder("Npgsql.EntityFrameworkCore.PostgreSQL");
         builder.EnsureSchema("crm_identity"); builder.EnsureSchema("crm_identity_priority");

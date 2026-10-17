@@ -48,8 +48,10 @@ public sealed class CrmOidcServiceTokens
     }
 
     internal async Task<CrmOidcServiceTokenIssue> IssueAsync(CrmOidcServiceClient client,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default, StringValues authorization = default)
     {
+        if (_tenantRevocations is { IssuanceEnabled: true })
+            return await _tenantRevocations.IssueAsync(authorization, client, cancellationToken);
         if (!client.Enabled || !client.AllowedScopes.Contains("cp6.services", StringComparer.Ordinal))
             return CrmOidcServiceTokenIssue.Unauthorized;
         var lookupTime = _timeProvider.GetUtcNow();

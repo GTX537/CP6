@@ -45,7 +45,13 @@ internal static class ServiceRevocationConfiguration
     internal static void Register(IServiceCollection services, IConfiguration configuration, CrmOidcOptions oidc,
         CrmIdentityOptions identity, DatabaseOptions database)
     {
-        var section = configuration.GetSection("CrmIdentity:ServiceRevocationTenancy");
+        var tokenSection = configuration.GetSection("CrmIdentity:ServiceTokenTenancy");
+        var legacySection = configuration.GetSection("CrmIdentity:ServiceRevocationTenancy");
+        if (tokenSection.GetValue<bool>("Enabled") && legacySection.GetValue<bool>("Enabled")) throw Rejected();
+        var serviceTokens = tokenSection.GetValue<bool>("Enabled") || tokenSection.Exists() && !legacySection.GetValue<bool>("Enabled");
+        if (tokenSection.Exists() && !tokenSection.GetValue<bool>("Enabled") && tokenSection.GetChildren().Any(x => x.Key != "Enabled")) throw Rejected();
+        if (serviceTokens && legacySection.Exists() && legacySection.GetChildren().Any(x => x.Key != "Enabled")) throw Rejected();
+        var section = serviceTokens ? tokenSection : legacySection;
         if (!section.Exists()) return;
         var options = section.Get<ServiceRevocationOptions>(o => o.ErrorOnUnknownConfiguration = true) ?? throw Rejected();
         if (!options.Enabled)
@@ -84,7 +90,8 @@ internal static class ServiceRevocationConfiguration
                 throw Rejected();
         }
         // Construct now so all routing/options validation occurs at registration, never first traffic.
-        var frozen = ServiceRevocationTenantHost.Freeze(options, oidc, identity);
+        var frozen = ServiceRevocationTenantHost.Freeze(options, oidc, identity, serviceTokens);
+        if (frozen.SigningSnapshot is not null) services.AddSingleton(frozen.SigningSnapshot);
         services.AddSingleton(provider => new ServiceRevocationTenantHost(frozen,
             provider.GetRequiredService<CrmIdentityRuntime>(), provider.GetService<TimeProvider>() ?? TimeProvider.System));
     }

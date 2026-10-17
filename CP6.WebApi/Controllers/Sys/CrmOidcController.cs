@@ -189,7 +189,7 @@ public sealed class CrmOidcController(CrmOidcOptions options, CrmOidcCrypto cryp
             return OAuthError("invalid_client", 401);
         }
         if (form["scope"].ToString() != "cp6.services") return OAuthError("invalid_scope");
-        var issue = await serviceTokens!.IssueAsync(authentication.Client!, Request.HttpContext.RequestAborted);
+        var issue = await serviceTokens!.IssueAsync(authentication.Client!, Request.HttpContext.RequestAborted, Request.Headers.Authorization);
         return issue.Status switch
         {
             CrmOidcServiceTokenIssueStatus.Success => Ok(new
