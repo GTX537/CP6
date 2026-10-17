@@ -158807,6 +158807,11 @@
       "date": "2026-10-17",
       "change": "User accepted public core foundations first, with real CRM consumption and explicit phase exits. Preserve original tasks, dependencies, acceptance and P0 holds; no blanket new implementation admission or completion dates.",
       "evidence": "docs/development/planning/20261017-foundation-priority.md"
+    },
+    {
+      "date": "2026-10-17",
+      "change": "Single combined review reproduced pending-2FA token privilege bypass in A candidate; preserve predecessor and assign one COORD internal correction owner in a fresh branch/worktree with three-file scope. No full-task or business promotion.",
+      "evidence": "docs/development/planning/20261017-foundation-priority.md"
     }
   ],
   "implementation_assessment": {
@@ -161084,39 +161089,24 @@
       "card_anchor": "wp02-03",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "A / WP02-03 第十三轮 现有授权读取的主体绑定、有效角色与缓存限制",
+        "chat_label": "COORD / WP02-03 第十三轮 P0 审查修正",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/wp02-03-current-permission-20261017",
-        "worktree": "D:/CP6-worktrees/wave13-a-permission-20261017",
-        "claimed_at": "2026-10-17T04:04:41.637885+00:00",
-        "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
-        "coordination_baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
-        "entry_evidence": "docs/development/dispatch/20261017-wave13/WP02-03.md",
-        "phase": "CANDIDATE_REPORTED_REVIEW_PENDING",
+        "branch": "codex/bug-245-permission-review-fix-20261017",
+        "worktree": "D:/CP6-worktrees/wave13-a-review-fix-20261017",
+        "claimed_at": "2026-10-17T05:33:38.399869+00:00",
+        "baseline_sha": "6c3720856cb7ddd263614608923dc1e3d007707a",
+        "coordination_baseline_sha": "6c3720856cb7ddd263614608923dc1e3d007707a",
+        "entry_evidence": "docs/development/planning/20261017-foundation-priority.md",
+        "phase": "BOUNDED_REVIEW_CORRECTION_ASSIGNED",
         "dispatch_scope": "CURRENT_PERMISSION_CONSUMPTION",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
-        "worker_start_received": true,
+        "worker_start_received": false,
         "allowed_write_paths": [
           "CP6.Core/Services/Sys/CurrentPermissionContext.cs",
-          "CP6.Core/Services/Sys/ICurrentPermissionContext.cs",
-          "CP6.Core/Services/Sys/PermissionAggregator.cs",
-          "CP6.Core/Services/Sys/IPermissionAggregator.cs",
-          "CP6.Core/Services/Sys/PermissionService.cs",
-          "CP6.Core/Services/Sys/CurrentPermissionUnavailableException.cs",
-          "CP6.Core/Auth/RequirePermissionAttribute.cs",
           "CP6.Tests/CurrentPermissionContextTests.cs",
-          "CP6.Tests/PermissionAggregatorTests.cs",
-          "CP6.Tests/PermissionChainIntegrationTests.cs",
-          "CP6.Tests/RequirePermissionFilterTests.cs",
-          "CP6.Tests/FourGranularityIntegrationTests.cs",
-          "CP6.Tests/StandardRoleSeedTests.cs",
-          "CP6.Tests/PlanPub/PlanPubHighRiskDenialTests.cs",
-          "CP6.Tests/Pur/PurHighRiskDenialTests.cs",
-          "CP6.Tests/DatabaseCompatibility/PermissionsRelationalTests.cs",
-          "CP6.Tests/CurrentPermissionConsumptionPostgreSqlTests.cs",
-          "docs/development/evidence/WP02-03/current-permission-consumption/"
+          "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md"
         ],
         "reserved_write_resources": [
           "Main:current-permission-consumption",
@@ -161133,19 +161123,12 @@
         "deployment_authorized": false,
         "delivery_report": "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md",
         "execution_owner": {
-          "kind": "user_started_new_chat",
-          "label": "A",
+          "kind": "coordinator_internal_agent",
+          "label": "permission_review_fix",
           "exclusive": true,
-          "actual_chat_id_pending_start": false,
-          "start_identity": "user-started new wave13 A chat; fixed START reference above",
-          "chat_id_unavailable": true
+          "predecessor_candidate_preserved": true
         },
-        "worker_start_ref": {
-          "commit": "bf7401f9fdd6c86d650de83bcc19dfb590a6ae3a",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261017T041123Z-wave13-start/MESSAGE.md"
-        },
-        "coordinator_received_at": "2026-10-17T04:26:13.652224+00:00",
-        "execution_baseline_sha": "4704592f52172c941e1cb95bdeb3c73f0dd179e8",
+        "execution_baseline_sha": "cea49edadb0c5ca83bbb545b5e9e130cf152d26b",
         "issue": "https://github.com/GTX537/CP6/issues/245",
         "priority": "P0",
         "p0_report_ref": {
@@ -161158,9 +161141,18 @@
           "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261017T042211Z-wave13-delivery/MESSAGE.md"
         },
         "reported_candidate_sha": "aa0a361f93aad67da0bb8ca27c6954d557dd9530",
-        "candidate_review_completed": false,
+        "candidate_review_completed": true,
         "candidate_integrated": false,
-        "delivery_received_at": "2026-10-17T04:28:50.954497+00:00"
+        "delivery_received_at": "2026-10-17T04:28:50.954497+00:00",
+        "review_result": {
+          "candidate_sha": "aa0a361f93aad67da0bb8ca27c6954d557dd9530",
+          "ready_to_merge": false,
+          "blocking_issue": "P0: actual 2fa_verify/2fa_enroll pending JWTs pass the new GUID/tenant-only current-permission path",
+          "review_report": "C:/Users/tt/CP6-planning-reports/20261017-foundation/permission-review.md",
+          "proof": "C:/Users/tt/CP6-planning-reports/20261017-foundation/permission-probe/probe-final.log",
+          "next_review_scope": "Changed token-purpose rejection and relevant real-token regression only"
+        },
+        "predecessor_execution_closed": true
       },
       "blockers": [],
       "validation_evidence": [],
@@ -161229,6 +161221,85 @@
             "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261016T125937Z-wave10-delivery/MESSAGE.md"
           },
           "window_closed_at": "2026-10-16T13:41:46.626824+00:00"
+        },
+        {
+          "chat_label": "A / WP02-03 第十三轮 现有授权读取的主体绑定、有效角色与缓存限制",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/wp02-03-current-permission-20261017",
+          "worktree": "D:/CP6-worktrees/wave13-a-permission-20261017",
+          "claimed_at": "2026-10-17T04:04:41.637885+00:00",
+          "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
+          "coordination_baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
+          "entry_evidence": "docs/development/dispatch/20261017-wave13/WP02-03.md",
+          "phase": "CANDIDATE_REPORTED_REVIEW_PENDING",
+          "dispatch_scope": "CURRENT_PERMISSION_CONSUMPTION",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "allowed_write_paths": [
+            "CP6.Core/Services/Sys/CurrentPermissionContext.cs",
+            "CP6.Core/Services/Sys/ICurrentPermissionContext.cs",
+            "CP6.Core/Services/Sys/PermissionAggregator.cs",
+            "CP6.Core/Services/Sys/IPermissionAggregator.cs",
+            "CP6.Core/Services/Sys/PermissionService.cs",
+            "CP6.Core/Services/Sys/CurrentPermissionUnavailableException.cs",
+            "CP6.Core/Auth/RequirePermissionAttribute.cs",
+            "CP6.Tests/CurrentPermissionContextTests.cs",
+            "CP6.Tests/PermissionAggregatorTests.cs",
+            "CP6.Tests/PermissionChainIntegrationTests.cs",
+            "CP6.Tests/RequirePermissionFilterTests.cs",
+            "CP6.Tests/FourGranularityIntegrationTests.cs",
+            "CP6.Tests/StandardRoleSeedTests.cs",
+            "CP6.Tests/PlanPub/PlanPubHighRiskDenialTests.cs",
+            "CP6.Tests/Pur/PurHighRiskDenialTests.cs",
+            "CP6.Tests/DatabaseCompatibility/PermissionsRelationalTests.cs",
+            "CP6.Tests/CurrentPermissionConsumptionPostgreSqlTests.cs",
+            "docs/development/evidence/WP02-03/current-permission-consumption/"
+          ],
+          "reserved_write_resources": [
+            "Main:current-permission-consumption",
+            "Main:permission-aggregation",
+            "file:Main:CP6.Core/Auth/RequirePermissionAttribute.cs"
+          ],
+          "reserved_postgresql_ports": [
+            55435
+          ],
+          "handoff_branch": "codex/dev-handoff-wp02-03",
+          "actions_authorized": false,
+          "formal_publication_authorized": false,
+          "existing_database_migration_authorized": false,
+          "deployment_authorized": false,
+          "delivery_report": "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md",
+          "execution_owner": {
+            "kind": "user_started_new_chat",
+            "label": "A",
+            "exclusive": true,
+            "actual_chat_id_pending_start": false,
+            "start_identity": "user-started new wave13 A chat; fixed START reference above",
+            "chat_id_unavailable": true
+          },
+          "worker_start_ref": {
+            "commit": "bf7401f9fdd6c86d650de83bcc19dfb590a6ae3a",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261017T041123Z-wave13-start/MESSAGE.md"
+          },
+          "coordinator_received_at": "2026-10-17T04:26:13.652224+00:00",
+          "execution_baseline_sha": "4704592f52172c941e1cb95bdeb3c73f0dd179e8",
+          "issue": "https://github.com/GTX537/CP6/issues/245",
+          "priority": "P0",
+          "p0_report_ref": {
+            "commit": "7f0c5cdce73c57997b46a94536173ee33c671bd8",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261017T041531Z-wave13-p0/MESSAGE.md"
+          },
+          "worker_delivery_received": true,
+          "handoff_delivery": {
+            "commit": "1196a05caf9166af42fcb8647931a0d82fb4238e",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261017T042211Z-wave13-delivery/MESSAGE.md"
+          },
+          "reported_candidate_sha": "aa0a361f93aad67da0bb8ca27c6954d557dd9530",
+          "candidate_review_completed": false,
+          "candidate_integrated": false,
+          "delivery_received_at": "2026-10-17T04:28:50.954497+00:00"
         }
       ]
     },
@@ -178690,7 +178761,7 @@
       "path": "docs/development/dispatch/20261017-wave13/README.md",
       "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
       "coordinator_shared_state_only": true,
-      "phase": "P0_PRIORITY_ORDINARY_PAUSE_REQUESTED",
+      "phase": "P0_REVIEW_CORRECTION_ASSIGNED",
       "workers_started": true,
       "workers_delivered": true,
       "windows_closed": false,
@@ -178710,7 +178781,7 @@
       "ordinary_pause_ack_received": false,
       "inventory_path": "docs/development/planning/20261017-project-inventory.md",
       "priority_review_chats": [
-        "A"
+        "COORD / permission_review_fix"
       ],
       "candidate_reports_received": [
         "A",
@@ -178718,7 +178789,8 @@
         "C",
         "D"
       ],
-      "workers_integrated": false
+      "workers_integrated": false,
+      "new_chat_A_candidate_preserved": true
     },
     "wave_history": [
       {

@@ -44,3 +44,13 @@ F1/F2 是依赖顺序，实际无冲突片段可以并行。首个真实 CRM Own
 本次接受的是优先顺序和阶段出口，没有承诺具体完工日期、增加发布权限或削减验收。一般任务仅做受影响行为验证和一次任务级集中 SPEC/QUALITY 审查；安全、隔离、并发和事务风险保留必要专项验证。普通文档仅检查 diff、链接与台账一致性。既有成功结果按真实输入复用。
 
 无新增 Actions、正式发包、既有数据迁移、环境切换或生产部署授权。P0/目标环境要求继续遵循 [BUG 管理规则](../../quality/BUG-MANAGEMENT.md)。
+
+## F0 当前限定修正窗口
+
+对 A 的固定候选 `aa0a361f93aad67da0bb8ca27c6954d557dd9530` 已完成一次集中 SPEC/QUALITY 审查，发现唯一阻断：真实 `GeneratePendingToken` 的 `2fa_verify` 和 `2fa_enroll` 半登录 JWT 通过新 GetAsync 的 GUID/tenant 绑定并获得业务权限。已以真实签发/验签和真实 PermissionService/RequirePermission 定向复现；尚未修复，禁止合并该原候选。其他原有效验证已核对并复用，不重做已完成字段权限或整套回归。
+
+本轮由 COORD 内唯一修正代理 `permission_review_fix` 接管修正实施；原用户 A 已交付的分支/worktree 保留，原执行窗口结束，原 A 不并行追加修改或自行合并。新分支 `codex/bug-245-permission-review-fix-20261017`，工作树 `D:/CP6-worktrees/wave13-a-review-fix-20261017`，从已确认 main `6c3720856cb7ddd263614608923dc1e3d007707a` 创建并保留合入原候选的历史，准备 HEAD `cea49edadb0c5ca83bbb545b5e9e130cf152d26b`。实际实施在本登记合入 main 并经 Handoff 发布后开始。
+
+允许修改仅 `CP6.Core/Services/Sys/CurrentPermissionContext.cs`、`CP6.Tests/CurrentPermissionContextTests.cs` 和原单份 `docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md`。拒绝非完整会话用途，保留实际合法无 Name access / sub / tenant 合同；使用真实签发的两种 pending 做拒绝回归，并保留正常 access 正对照。不得扩大到 Program、AuthController、EF/迁移、B/C/D 或其他共享入口。仍预约原权限资源，PG55435保留但默认无需重跑未受影响的数据库测试；不启动新的数据库来验证纯 claim 边界。
+
+修正代理只提交本地修正和更新原交付报告，由原审查者只复查本次影响；COORD 统一同步状态、检查工作流、正常合并及核对远端。#245 与完整任务不提前关闭。#38 目前仅独立只读范围准备，没有实施领取。
