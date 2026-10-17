@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前集成：A/#245 权限候选已完成审查修正及局部复查，准备正常串行合并；见[单份报告](evidence/WP02-03/current-permission-consumption/DELIVERY.md)。原A工作树保留，完整任务与业务未关闭；#38仍待独立开窗，B/C/D普通工作继续暂停。
+
 > 优先顺序已批准：[公共核心基础收口计划](planning/20261017-foundation-priority.md)。四队列职责是后续方向，不自动重派；当前先P0，原候选和窗口状态仍以台账为准。
 
 > 最新协调：[全项目盘点与 P0 优先安排](planning/20261017-project-inventory.md)。wave13 四份真实 START 及四份候选 DELIVERY 已接收、尚未审查集成；A 优先处理 P0 #245，B/C/D 普通窗口暂停指令待执行者回执。以下“尚无 START”等为历史快照，完整任务与业务验收状态仍以台账为准。
