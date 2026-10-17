@@ -158817,6 +158817,11 @@
       "date": "2026-10-17",
       "change": "P0 #245 permission candidate corrected after one combined review: reject all non-full-session token_use markers while preserving current signed access contracts. Targeted follow-up approved, shared state prepared for serial integration; no full task/business promotion.",
       "evidence": "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-17",
+      "change": "Corrected wave13 permission delivery merged through normal PR and verified in remote main; Issue245 closed after reproduction evidence review. A bounded window CLOSED, full task unchanged. Issue38 is next P0; B/C/D ordinary holds remain.",
+      "evidence": "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -161103,9 +161108,9 @@
         "baseline_sha": "6c3720856cb7ddd263614608923dc1e3d007707a",
         "coordination_baseline_sha": "6c3720856cb7ddd263614608923dc1e3d007707a",
         "entry_evidence": "docs/development/planning/20261017-foundation-priority.md",
-        "phase": "BOUNDED_IMPLEMENTATION_VALIDATED_PENDING_INTEGRATION",
+        "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
         "dispatch_scope": "CURRENT_PERMISSION_CONSUMPTION",
-        "bounded_window_gate": "CONFIRMED",
+        "bounded_window_gate": "CLOSED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
         "allowed_write_paths": [
@@ -161149,7 +161154,7 @@
         },
         "reported_candidate_sha": "add3373edd1c8d751a9ff2cd32079b4a96b274c1",
         "candidate_review_completed": true,
-        "candidate_integrated": false,
+        "candidate_integrated": true,
         "delivery_received_at": "2026-10-17T04:28:50.954497+00:00",
         "review_result": {
           "candidate_sha": "aa0a361f93aad67da0bb8ca27c6954d557dd9530",
@@ -161157,7 +161162,8 @@
           "blocking_issue": "P0: actual 2fa_verify/2fa_enroll pending JWTs pass the new GUID/tenant-only current-permission path",
           "review_report": "C:/Users/tt/CP6-planning-reports/20261017-foundation/permission-review.md",
           "proof": "C:/Users/tt/CP6-planning-reports/20261017-foundation/permission-probe/probe-final.log",
-          "next_review_scope": "Changed token-purpose rejection and relevant real-token regression only"
+          "next_review_scope": "Changed token-purpose rejection and relevant real-token regression only",
+          "superseded_by_correction": "add3373edd1c8d751a9ff2cd32079b4a96b274c1"
         },
         "predecessor_execution_closed": true,
         "coordinator_received_at": "2026-10-17T05:52:46.581880+00:00",
@@ -161173,7 +161179,8 @@
           "validation": "修正前新增回归6失败/21通过；修正后当前权限、真实过滤器及权限服务相关37项通过，0失败/跳过",
           "review_report": "C:/Users/tt/CP6-planning-reports/20261017-foundation/permission-review.md",
           "scope": "Original task-level review plus targeted correction follow-up; no second full review."
-        }
+        },
+        "window_closed_at": "2026-10-17T05:56:41.858101+00:00"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -161324,7 +161331,7 @@
         }
       ],
       "wave13_delivery": {
-        "status": "VERIFIED_PENDING_INTEGRATION",
+        "status": "MERGED",
         "source_candidate_sha": "add3373edd1c8d751a9ff2cd32079b4a96b274c1",
         "original_candidate_sha": "aa0a361f93aad67da0bb8ca27c6954d557dd9530",
         "report": "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md",
@@ -161337,7 +161344,12 @@
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
-        "issue": "https://github.com/GTX537/CP6/issues/245"
+        "issue": "https://github.com/GTX537/CP6/issues/245",
+        "pull_request": "https://github.com/GTX537/CP6/pull/248",
+        "remote_main_sha": "be66f70748b1d3185d95629b3a9a7e0b139eeea0",
+        "integrated_source_sha": "33d7c666284891cc91b6b1cb02895f1a61bc64b9",
+        "remote_verified_at": "2026-10-17T05:55:55.322554+00:00",
+        "issue_state": "CLOSED"
       }
     },
     {
@@ -178798,7 +178810,7 @@
       "path": "docs/development/dispatch/20261017-wave13/README.md",
       "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
       "coordinator_shared_state_only": true,
-      "phase": "P0_PERMISSION_VALIDATED_PENDING_INTEGRATION",
+      "phase": "P0_PERMISSION_CLOSED_LOGIN_NEXT",
       "workers_started": true,
       "workers_delivered": true,
       "windows_closed": false,
@@ -178825,7 +178837,9 @@
         "D"
       ],
       "workers_integrated": false,
-      "new_chat_A_candidate_preserved": true
+      "new_chat_A_candidate_preserved": true,
+      "next_priority_issue": "https://github.com/GTX537/CP6/issues/38",
+      "next_issue_implementation_admitted": false
     },
     "wave_history": [
       {

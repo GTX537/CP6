@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 最新收口：A/#245 已通过[正常PR](https://github.com/GTX537/CP6/pull/248)合并并核对远端，限定窗口CLOSED、Issue已关闭。#38是下一P0准备项，B/C/D普通集成继续暂停；完整任务和业务验收未提升。
+
 > 当前集成：A/#245 权限候选已完成审查修正及局部复查，准备正常串行合并；见[单份报告](evidence/WP02-03/current-permission-consumption/DELIVERY.md)。原A工作树保留，完整任务与业务未关闭；#38仍待独立开窗，B/C/D普通工作继续暂停。
 
 > 优先顺序已批准：[公共核心基础收口计划](planning/20261017-foundation-priority.md)。四队列职责是后续方向，不自动重派；当前先P0，原候选和窗口状态仍以台账为准。
