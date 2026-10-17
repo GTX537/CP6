@@ -1,0 +1,17 @@
+{
+  "source": "D:/CP6-local-test/WP02-28/7da18a5de15c451da8464af7daeeaa13/published-host-20261017T041500086418Z/results.json",
+  "sourceSha": "4704592f52172c941e1cb95bdeb3c73f0dd179e8",
+  "receiptSha256": "ddcf438624231ee31a2aceb1006e272dc62d0d975a8bd1e7a6d2bcb98786fb87",
+  "checks": [
+    {
+      "scenario": "missing-runtimeconfig",
+      "rejectedBeforeStart": true,
+      "reason": "Publish closure hash/inventory mismatch"
+    },
+    {
+      "scenario": "platform-identity-tamper",
+      "rejectedBeforeStart": true,
+      "reason": "Publish closure hash/inventory mismatch"
+    }
+  ]
+}
