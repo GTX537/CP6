@@ -31,7 +31,8 @@
         "CP6.Tests/Sys/CrmOidcServiceTokenTests.cs",
         "CP6.Tests/ServiceTokenConfigurationTests.cs",
         "tools/CP6.TenantStorage/",
-        "docs/development/evidence/WP02-02/service-issuance/"
+        "docs/development/evidence/WP02-02/service-issuance/",
+        "CP6.WebApi/Services/CrmOidcCrypto.cs"
       ],
       "exclusive_resources": [
         "Main:tenant-storage",
@@ -43,7 +44,8 @@
         "file:Main:CP6.WebApi/Services/CrmOidcDirectory.cs",
         "file:Main:CP6.WebApi/Services/CrmOidcServiceTokens.cs",
         "file:Main:CP6.WebApi/Controllers/Sys/CrmOidcController.cs",
-        "file:Main:CP6.WebApi/Configuration/CrmIdentityConfiguration.cs"
+        "file:Main:CP6.WebApi/Configuration/CrmIdentityConfiguration.cs",
+        "file:Main:CP6.WebApi/Services/CrmOidcCrypto.cs"
       ],
       "handoff": "codex/dev-handoff-wp02-02",
       "postgresql_port": 55436,
