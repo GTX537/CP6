@@ -1,24 +1,16 @@
 # 第十四轮：登录 P0 修复与候选交叉审查
 
-## 2026-10-17 最新收件与接续
+## 2026-10-17 当前进展：登录修复已集成，等待真实DEV条件
 
-四路真实START均已收件。A已交付固定候选 `09017d7ad14c7647601edac258422365ff81daf9`，Handoff `63c41c66614a62e7213e2b4befd9c8408c8bc3e2`。执行者报告相关50项（含HTTP13）通过，补充断言后只重跑受影响HTTP13；不是63项独立测试。PostgreSQL完整本地浏览器链通过、自有服务已停止；这些是待D核对的原交付，不是COORD重跑。候选尚未合并、#38仍Open、真实DEV NOT_RUN。
+A固定候选 `09017d7ad14c7647601edac258422365ff81daf9` 已通过 [D集中SPEC/QUALITY审查](https://github.com/GTX537/CP6.AI-Handoff/blob/84b6d2de0f7b30d493cf068db94fafc20fb7594b/handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-38/REVIEW.md)，本地Ready to merge = Yes、无阻断；审查交付Handoff `ddc65ece4b922e8c49e9ddc4878a54b7af27f4de` 已回读。[代码PR](https://github.com/GTX537/CP6/pull/255)已正常合并，远端main `17ce6f742bf9aa885f7a293e13c30fcba124ca59` 已核对包含候选且七个范围文件与已验候选一致。D正式审查已完成，不再等待A交付或第二轮完整审查。
 
-D准备报告7c999da8/通知9cb9ada2中的“尚无A固定DELIVERY”是早期读取快照，前置现在已满足。D直接接续原REVIEW-BUG-38窗口，对09017d7a进行唯一一次集中SPEC/QUALITY审查；无需第二START或运输ACK，不能把本次收件称为D已开始审查。A保持唯一修正Owner并待D具体意见，COORD不另派重复审查者。
+本地证据复用：相关认证50项（含HTTP13）通过，补pending断言后的13项为受影响重跑、未变37项复用；完整应用PostgreSQL18.6浏览器链通过。COORD仅完成收件、主线差异/证据适用性和合并后的包含性/文件一致性核对，没有重跑产品测试。HTTP故障注入为InMemory；浏览器verify、enroll由HTTP覆盖；PG状态快照早于最终browser-7，空database-init.log不作为逐项迁移证据。原失败与未验证范围保留。
 
-B已完成对C候选的审查（报告0cf1ad3f，交付f4509fcc）：No，2项P2。C已完成对B候选的审查（报告5c9191f0，交付f9821c9c）：No，1项P2。COORD核对了相关候选源码、本机SDK/Windows进程handle及[微软时间解析规则](https://learn.microsoft.com/en-us/dotnet/standard/datetime/system-text-json-support#support-for-parsing)，不是第二次全任务审查，也没有执行新的产品复现。活动BUG只在GitHub记录：
+**#38仍Open，真实DEV NOT_RUN。** 下一步由COORD确认实际DEV目标/入口、修复后的API/Web完整运行身份、测试租户/普通与管理员账号及允许创建/改密范围，再执行原步骤浏览器验收。现有只读观测仍是2026-10-17T10:31:30Z文档端点19991/18080身份读取失败，未取得新的运行事实。不能以demo或LOCAL_ISOLATED替代DEV；未经具体授权不部署、重启、切Tunnel、迁移或覆盖既有库。
 
-| 原候选 / 拟修正者 | 已登记问题 | 定向修正边界 |
-|---|---|---|
-| B / 原B | [#253](https://github.com/GTX537/CP6/issues/253) 时间原文精度丢失后可能错误CAS | 转换前无损校验Expected/Desired，真实stdin非法精度拒绝且DB不变，保留合法输入 |
-| C / 原C | [#251](https://github.com/GTX537/CP6/issues/251) 忽略的构建输入绕过source绑定 | 实际有效Compile/Content/导入或受控提交源码；定向覆盖忽略.cs/私有JSON |
-| C / 原C | [#252](https://github.com/GTX537/CP6/issues/252) 首次身份探测失败后宿主遗留 | 创建时可靠自有handle清理与等待，保留原失败，不按任意PID终止 |
+四路交付已收齐：A完成本地代码交付，D完成唯一一次集中审查；B对C为No，C对B为No。原B准备[#253](https://github.com/GTX537/CP6/issues/253)原文时间精度/CAS修正，原C准备[#251](https://github.com/GTX537/CP6/issues/251)构建输入绑定及[#252](https://github.com/GTX537/CP6/issues/252)自有进程清理修正。三个P2产品窗口继续NOT_ADMITTED_P0_HOLD；B/C/D原候选普通实施和集成暂停，旧菜单#243不变。后续明确窗口后由原实施者修正、原交叉审查者只复查影响。
 
-这些是候选阻断，不声明已合入main或原发布物已污染。B/C现在仅准备具体修正方案；**三个P2产品修正窗口尚未准入**，原候选普通实施/集成的P0暂停继续。后续明确窗口后由原实施者修正、原交叉审查者仅复查影响；不重复原全套验证，不并行编辑C的共享测试文件。原D菜单候选59dd7a9c/#243保持原状态。
-
-COORD另只读请求了文档所列DEV API19991与Web18080的身份端点，两者均HttpRequestException，当前身份未确认（2026-10-17 10:31:30Z）；不据此宣称所有DEV均不可用，也未启动/替换任何环境。D继续分别给本地代码审查结论与真实DEV缺口；Issue38只能在原DEV条件满足后关闭。
-
-下方为原派工快照；当前状态只以唯一台账及本段为准。没有新权限、Actions、正式发布、部署或既有库操作。
+主线台账/四状态在同一BUG38交付窗口同步，不提升375张完整实现卡或125个业务目标：仍为24/375实现DONE、0/125业务完成。无新Actions运行、工作流变化、正式发包或环境操作。下方为原派工历史，当前状态以本段及roadmap.json为准。
 
 用户于 2026-10-17 要求继续推进并将任务分配给原 A/B/C/D 对话。本轮基于已核对远端 main `4d5c115fde40d507e43f3b56e0e02425241dcecd`：权限 P0 #245 已通过 PR248 修正合并并关闭，PR249 已同步状态。新增准入合并后，A 从当时最新已确认 main 开始，不能回到原 aa0a361f 候选继续开发。
 

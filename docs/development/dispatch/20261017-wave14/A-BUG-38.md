@@ -1,6 +1,6 @@
 # A：首次改密后重新登录 Implementation Plan
 
-> 当前收件：候选 `09017d7ad14c7647601edac258422365ff81daf9` / Handoff63c41c6已收；本地验证报告待D集中审查。A保持唯一修正Owner，保留干净候选，不自合main；#38真实DEV仍NOT_RUN。
+> 当前交付：固定候选09017d7a已通过D审查84b6d2de并经[代码PR](https://github.com/GTX537/CP6/pull/255)合入远端main；源码/相关验证直接复用。A本地代码窗口已交付，无新增修正；#38真实DEV仍NOT_RUN，后续环境窗口另行确认。
 
 > 使用 executing-plans 连续实施；项目精简规则优先。原对话 A 是 BUG-38 唯一实施者，D负责最终一次集中审查，无需另派审查代理。
 
