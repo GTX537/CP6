@@ -31,8 +31,8 @@
 | [S01-12 采用证据与消费者交接](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 已交付 | S01-02, S01-03, S01-04, S01-05, S01-06, S01-07, S01-08, S01-09, S01-10, S01-11 | DESIGN / M | A / S01-12（沿用原S01-11对话） |
 | [S02-00 PostgreSQL 多租户存储与事务布局设计](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 已交付 | 无任务前置，仍需准入核对 | DESIGN / M | B / S02-00 |
 | [WP02-01 Platform可信请求、消息与后台租户上下文](../../docs/development/task-plans/WP02.md#wp02-01) | Platform | 已交付 | S01-02 | CODE / M | C / WP02-01（沿用原S01-06对话） |
-| [WP02-02 Main PostgreSQL租户存储布局与隔离采用](../../docs/development/task-plans/WP02.md#wp02-02) | Main | 开发中 | S02-00, WP02-01 | CODE / M | COORD受托B / WP02-02 第十二轮局部交付已集成 |
-| [WP02-03 Main当前授权与撤权最终门](../../docs/development/task-plans/WP02.md#wp02-03) | Main | 待安排 | WP02-02 | CODE / M | A / WP02-03 第十轮 完整登记域下的字段权限确定性决策 |
+| [WP02-02 Main PostgreSQL租户存储布局与隔离采用](../../docs/development/task-plans/WP02.md#wp02-02) | Main | 开发中 | S02-00, WP02-01 | CODE / M | B / WP02-02 第十三轮 已登记服务租户的资格目录控制命令 |
+| [WP02-03 Main当前授权与撤权最终门](../../docs/development/task-plans/WP02.md#wp02-03) | Main | 待安排 | WP02-02 | CODE / M | A / WP02-03 第十三轮 现有授权读取的主体绑定、有效角色与缓存限制 |
 | [WP02-04 租户创建、暂停恢复与管理审计](../../docs/development/task-plans/WP02.md#wp02-04) | Main | 待安排 | WP02-03 | CODE / M | 未领取 |
 | [WP02-05 Main身份权威快照及完整目录发布](../../docs/development/task-plans/WP02.md#wp02-05) | Main | 待安排 | S01-09, WP02-03, WP02-04 | CODE / M | 未领取 |
 | [WP02-06 CRM身份投影、撤权fence与会话恢复](../../docs/development/task-plans/WP02.md#wp02-06) | CRM | 待安排 | WP02-05, WP02-07 | CODE / M | 未领取 |
@@ -47,7 +47,7 @@
 | [WP02-15 隐私subject目录、导出与擦除编排](../../docs/development/task-plans/WP02.md#wp02-15) | Main | 待安排 | WP02-04, WP02-13, WP02-14 | CODE / M | 未领取 |
 | [WP02-16 编号原命令分配和生成器安全预览](../../docs/development/task-plans/WP02.md#wp02-16) | Main | 待安排 | WP02-10 | CODE / M | D / WP02-16 第九轮 代码生成器安全即时预览 |
 | [WP02-17 多语言维护、发布CAS与客户端精确缓存](../../docs/development/task-plans/WP02.md#wp02-17) | Main | 待安排 | WP02-10, WP02-14 | CODE / M | 未领取 |
-| [WP02-18 工作台菜单CAS与授权KPI查询](../../docs/development/task-plans/WP02.md#wp02-18) | Main | 待安排 | WP02-03 | CODE / M | D / WP02-18 第十轮 工作台真实零值、无权与不可用状态 |
+| [WP02-18 工作台菜单CAS与授权KPI查询](../../docs/development/task-plans/WP02.md#wp02-18) | Main | 待安排 | WP02-03 | CODE / M | D / WP02-18 第十三轮 菜单保存后的列表与当前浏览器导航刷新恢复 |
 | [WP02-19 客户端激活、nonce与身份完成门](../../docs/development/task-plans/WP02.md#wp02-19) | Main | 待安排 | WP02-03, WP02-04 | CODE / M | 未领取 |
 | [WP02-20 客户端升级渠道、签名与失败恢复](../../docs/development/task-plans/WP02.md#wp02-20) | Main | 待安排 | WP02-19, WP02-28 | CODE / M | 未领取 |
 | [WP02-21 后台作业版本、领取终态与恢复](../../docs/development/task-plans/WP02.md#wp02-21) | Main | 待安排 | WP02-08, WP02-10 | CODE / M | 未领取 |
@@ -57,7 +57,7 @@
 | [WP02-25 运行身份、健康与遥测脱敏](../../docs/development/task-plans/WP02.md#wp02-25) | Platform | 已交付 | WP02-01 | CODE / M | D / WP02-25（沿用原WP02-11对话） |
 | [WP02-26 SLO封存、故障注入与精确断言辅助](../../docs/development/task-plans/WP02.md#wp02-26) | Platform | 已交付 | S01-03, S01-04, WP02-25 | CODE / M | D / WP02-26 |
 | [WP02-27 Platform包能力矩阵与不可变信任验证](../../docs/development/task-plans/WP02.md#wp02-27) | Platform | 已交付 | S01-09, WP02-01 | CODE / M | B / WP02-27（沿用原S01-10对话） |
-| [WP02-28 Main宿主实际加载身份与兼容回退验证](../../docs/development/task-plans/WP02.md#wp02-28) | Main | 开发中 | WP02-25, WP02-27 | CODE / M | C / WP02-28 第九轮 Main 实际运行身份与兼容回退判断 |
+| [WP02-28 Main宿主实际加载身份与兼容回退验证](../../docs/development/task-plans/WP02.md#wp02-28) | Main | 开发中 | WP02-25, WP02-27 | CODE / M | C / WP02-28 第十三轮 实际publish制品绑定的本地启动与身份readiness验证器 |
 | [WP02-29 CRM宿主平台合同与观测包采用](../../docs/development/task-plans/WP02.md#wp02-29) | CRM | 待安排 | WP02-09, WP02-11, WP02-12, WP02-25, WP02-27 | CODE / M | 未领取 |
 
 ## WP03 CRM客户经营

@@ -158787,6 +158787,11 @@
       "date": "2026-10-16",
       "evidence": "docs/development/evidence/WP02-02/service-issuance/DELIVERY.md",
       "change": "Wave12 real service issuance normally merged and remote ancestry/scoped blobs verified; bounded window closed, full task and business acceptance unchanged."
+    },
+    {
+      "date": "2026-10-17",
+      "change": "Wave13 registers four user-started new chats with independent bounded implementation windows; no actual START or product implementation claimed, full task and business states unchanged.",
+      "evidence": "docs/development/dispatch/20261017-wave13/README.md"
     }
   ],
   "implementation_assessment": {
@@ -160219,54 +160224,32 @@
       "card_anchor": "wp02-02",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD受托B / WP02-02 第十二轮局部交付已集成",
+        "chat_label": "B / WP02-02 第十三轮 已登记服务租户的资格目录控制命令",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/wp02-02-service-issuance-20261016",
-        "worktree": "D:/CP6-worktrees/wp02-02-identity-storage-20261015",
-        "claimed_at": "2026-10-17T02:50:13.812011+00:00",
-        "baseline_sha": "6e401945bc05647c94dbe948819cd4a14cd80fe6",
-        "coordination_baseline_sha": "6e401945bc05647c94dbe948819cd4a14cd80fe6",
-        "entry_evidence": "docs/development/dispatch/20261016-wave12/WP02-02.md",
-        "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
-        "dispatch_scope": "SERVICE_ISSUANCE_TENANT_ADOPTION",
-        "bounded_window_gate": "CLOSED",
+        "branch": "codex/wp02-02-tenant-eligibility-20261017",
+        "worktree": "D:/CP6-worktrees/wave13-b-tenant-control-20261017",
+        "claimed_at": "2026-10-17T04:04:41.637885+00:00",
+        "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
+        "coordination_baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
+        "entry_evidence": "docs/development/dispatch/20261017-wave13/WP02-02.md",
+        "phase": "BOUNDED_IMPLEMENTATION_ASSIGNED",
+        "dispatch_scope": "SERVICE_TENANT_ELIGIBILITY_CONTROL",
+        "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
-        "worker_start_received": true,
+        "worker_start_received": false,
         "allowed_write_paths": [
-          "CP6.Core/Persistence/Tenancy/",
-          "CP6.Core/Services/CrmIdentity/CrmServiceTokenRecordStore.cs",
-          "CP6.Core/Persistence/DatabaseSharedContext.cs",
-          "CP6.Persistence.PostgreSql/Tenancy/",
-          "CP6.WebApi/Controllers/Sys/CrmOidcController.cs",
-          "CP6.WebApi/Services/CrmOidcServiceTokens.cs",
-          "CP6.WebApi/Services/CrmOidcDirectory.cs",
-          "CP6.WebApi/Services/ServiceRevocationTenancy/",
-          "CP6.WebApi/Services/ServiceTokenTenancy/",
-          "CP6.WebApi/Configuration/CrmIdentityConfiguration.cs",
-          "CP6.WebApi/Configuration/ServiceRevocationTenancy/",
-          "CP6.WebApi/Configuration/ServiceTokenTenancy/",
-          "CP6.Tests/Persistence/Tenancy/",
-          "CP6.Tests/CrmIdentityConfigurationTests.cs",
-          "CP6.Tests/CrmIdentityRevocationTests.cs",
-          "CP6.Tests/Sys/CrmOidcServiceTokenTests.cs",
-          "CP6.Tests/ServiceTokenConfigurationTests.cs",
-          "tools/CP6.TenantStorage/",
-          "docs/development/evidence/WP02-02/service-issuance/",
-          "CP6.WebApi/Services/CrmOidcCrypto.cs"
+          "CP6.Core/Persistence/Tenancy/ServiceTokenTenantDirectoryControlV1.cs",
+          "CP6.Core/Persistence/Tenancy/ServiceRevocationInstallation.cs",
+          "tools/CP6.TenantStorage/Program.cs",
+          "tools/CP6.TenantStorage/README.md",
+          "CP6.Tests/Persistence/Tenancy/ServiceTokenTenantDirectoryControlPostgresTests.cs",
+          "docs/development/evidence/WP02-02/tenant-eligibility-control/"
         ],
         "reserved_write_resources": [
           "Main:tenant-storage",
-          "Main:ef-model",
           "Main:tenant-storage-provisioning",
-          "Main:service-token-source-authority",
-          "Main:service-token-owner-transaction",
-          "file:Main:CP6.Core/Services/CrmIdentity/CrmServiceTokenRecordStore.cs",
-          "file:Main:CP6.WebApi/Services/CrmOidcDirectory.cs",
-          "file:Main:CP6.WebApi/Services/CrmOidcServiceTokens.cs",
-          "file:Main:CP6.WebApi/Controllers/Sys/CrmOidcController.cs",
-          "file:Main:CP6.WebApi/Configuration/CrmIdentityConfiguration.cs",
-          "file:Main:CP6.WebApi/Services/CrmOidcCrypto.cs"
+          "Main:service-tenant-directory-control"
         ],
         "reserved_postgresql_ports": [
           55436
@@ -160276,34 +160259,12 @@
         "formal_publication_authorized": false,
         "existing_database_migration_authorized": false,
         "deployment_authorized": false,
-        "delivery_report": "docs/development/evidence/WP02-02/service-issuance/DELIVERY.md",
+        "delivery_report": "docs/development/evidence/WP02-02/tenant-eligibility-control/DELIVERY.md",
         "execution_owner": {
-          "kind": "coordinator_managed_delegate",
-          "coordinator_chat": "01a14537-9073-7482-83dc-109799c39299",
-          "agent": "/root/wave12_issuance",
+          "kind": "user_started_new_chat",
+          "label": "B",
           "exclusive": true,
-          "registered_at": "2026-10-17T02:50:13.812011+00:00",
-          "reason": "User authorized next round; sole agent starts read-only preparation, implementation after published admission."
-        },
-        "worker_start_ref": {
-          "source": "codex-collaboration",
-          "agent": "/root/wave12_issuance",
-          "received_at": "2026-10-17T02:50:13.812011+00:00",
-          "scope": "Read-only preparation; no code implementation before published admission."
-        },
-        "scope_extension": {
-          "recorded_at": "2026-10-17T03:09:16.968611+00:00",
-          "path": "CP6.WebApi/Services/CrmOidcCrypto.cs",
-          "reason": "Real first-request DI still constructs shared legacy signer from mutable options; new-profile registration snapshot must also reach that constructor. Same sole owner, no Program/dependency or old-profile semantic change.",
-          "validation": "First-resolution mutation, actual signature/JWKS identity and legacy constructor compatibility; single final task review."
-        },
-        "coordinator_received_at": "2026-10-17T03:47:02.495211+00:00",
-        "execution_baseline_sha": "20662e3db55db81bcc4a36d49bad1f4ecb8ce12d",
-        "window_closed_at": "2026-10-17T03:51:25.716466+00:00",
-        "delivery_pr": "https://github.com/GTX537/CP6/pull/241",
-        "handoff_delivery": {
-          "commit": "3bc28edad949d7a7f16e648a450466c8ccdfe171",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261017T035155Z-wave12-service-issuance-delivery/MESSAGE.md"
+          "actual_chat_id_pending_start": true
         }
       },
       "blockers": [],
@@ -160731,6 +160692,94 @@
             "commit": "56952c72cf509e898bf5e3bf199b2f9f41be96de",
             "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261016T164525Z-wave11-service-revocation-delivery/MESSAGE.md"
           }
+        },
+        {
+          "chat_label": "COORD受托B / WP02-02 第十二轮局部交付已集成",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/wp02-02-service-issuance-20261016",
+          "worktree": "D:/CP6-worktrees/wp02-02-identity-storage-20261015",
+          "claimed_at": "2026-10-17T02:50:13.812011+00:00",
+          "baseline_sha": "6e401945bc05647c94dbe948819cd4a14cd80fe6",
+          "coordination_baseline_sha": "6e401945bc05647c94dbe948819cd4a14cd80fe6",
+          "entry_evidence": "docs/development/dispatch/20261016-wave12/WP02-02.md",
+          "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
+          "dispatch_scope": "SERVICE_ISSUANCE_TENANT_ADOPTION",
+          "bounded_window_gate": "CLOSED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "allowed_write_paths": [
+            "CP6.Core/Persistence/Tenancy/",
+            "CP6.Core/Services/CrmIdentity/CrmServiceTokenRecordStore.cs",
+            "CP6.Core/Persistence/DatabaseSharedContext.cs",
+            "CP6.Persistence.PostgreSql/Tenancy/",
+            "CP6.WebApi/Controllers/Sys/CrmOidcController.cs",
+            "CP6.WebApi/Services/CrmOidcServiceTokens.cs",
+            "CP6.WebApi/Services/CrmOidcDirectory.cs",
+            "CP6.WebApi/Services/ServiceRevocationTenancy/",
+            "CP6.WebApi/Services/ServiceTokenTenancy/",
+            "CP6.WebApi/Configuration/CrmIdentityConfiguration.cs",
+            "CP6.WebApi/Configuration/ServiceRevocationTenancy/",
+            "CP6.WebApi/Configuration/ServiceTokenTenancy/",
+            "CP6.Tests/Persistence/Tenancy/",
+            "CP6.Tests/CrmIdentityConfigurationTests.cs",
+            "CP6.Tests/CrmIdentityRevocationTests.cs",
+            "CP6.Tests/Sys/CrmOidcServiceTokenTests.cs",
+            "CP6.Tests/ServiceTokenConfigurationTests.cs",
+            "tools/CP6.TenantStorage/",
+            "docs/development/evidence/WP02-02/service-issuance/",
+            "CP6.WebApi/Services/CrmOidcCrypto.cs"
+          ],
+          "reserved_write_resources": [
+            "Main:tenant-storage",
+            "Main:ef-model",
+            "Main:tenant-storage-provisioning",
+            "Main:service-token-source-authority",
+            "Main:service-token-owner-transaction",
+            "file:Main:CP6.Core/Services/CrmIdentity/CrmServiceTokenRecordStore.cs",
+            "file:Main:CP6.WebApi/Services/CrmOidcDirectory.cs",
+            "file:Main:CP6.WebApi/Services/CrmOidcServiceTokens.cs",
+            "file:Main:CP6.WebApi/Controllers/Sys/CrmOidcController.cs",
+            "file:Main:CP6.WebApi/Configuration/CrmIdentityConfiguration.cs",
+            "file:Main:CP6.WebApi/Services/CrmOidcCrypto.cs"
+          ],
+          "reserved_postgresql_ports": [
+            55436
+          ],
+          "handoff_branch": "codex/dev-handoff-wp02-02",
+          "actions_authorized": false,
+          "formal_publication_authorized": false,
+          "existing_database_migration_authorized": false,
+          "deployment_authorized": false,
+          "delivery_report": "docs/development/evidence/WP02-02/service-issuance/DELIVERY.md",
+          "execution_owner": {
+            "kind": "coordinator_managed_delegate",
+            "coordinator_chat": "01a14537-9073-7482-83dc-109799c39299",
+            "agent": "/root/wave12_issuance",
+            "exclusive": true,
+            "registered_at": "2026-10-17T02:50:13.812011+00:00",
+            "reason": "User authorized next round; sole agent starts read-only preparation, implementation after published admission."
+          },
+          "worker_start_ref": {
+            "source": "codex-collaboration",
+            "agent": "/root/wave12_issuance",
+            "received_at": "2026-10-17T02:50:13.812011+00:00",
+            "scope": "Read-only preparation; no code implementation before published admission."
+          },
+          "scope_extension": {
+            "recorded_at": "2026-10-17T03:09:16.968611+00:00",
+            "path": "CP6.WebApi/Services/CrmOidcCrypto.cs",
+            "reason": "Real first-request DI still constructs shared legacy signer from mutable options; new-profile registration snapshot must also reach that constructor. Same sole owner, no Program/dependency or old-profile semantic change.",
+            "validation": "First-resolution mutation, actual signature/JWKS identity and legacy constructor compatibility; single final task review."
+          },
+          "coordinator_received_at": "2026-10-17T03:47:02.495211+00:00",
+          "execution_baseline_sha": "20662e3db55db81bcc4a36d49bad1f4ecb8ce12d",
+          "window_closed_at": "2026-10-17T03:51:25.716466+00:00",
+          "delivery_pr": "https://github.com/GTX537/CP6/pull/241",
+          "handoff_delivery": {
+            "commit": "3bc28edad949d7a7f16e648a450466c8ccdfe171",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261017T035155Z-wave12-service-issuance-delivery/MESSAGE.md"
+          }
         }
       ],
       "preparation_delivery_history": [
@@ -160992,45 +161041,60 @@
       "card_anchor": "wp02-03",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "A / WP02-03 第十轮 完整登记域下的字段权限确定性决策",
+        "chat_label": "A / WP02-03 第十三轮 现有授权读取的主体绑定、有效角色与缓存限制",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/wp02-03-field-decisions-20261016",
-        "worktree": "D:/CP6-worktrees/wp01-01-trust-stages-20261015",
-        "claimed_at": "2026-10-16T12:41:15.321774+00:00",
-        "baseline_sha": "fd91c40691ab26a463ee09249ec16040a13759d8",
-        "coordination_baseline_sha": "fd91c40691ab26a463ee09249ec16040a13759d8",
-        "entry_evidence": "docs/development/dispatch/20261016-wave10/WP02-03.md",
-        "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
-        "dispatch_scope": "PURE_FIELD_PERMISSION_DECISION",
-        "bounded_window_gate": "CLOSED",
+        "branch": "codex/wp02-03-current-permission-20261017",
+        "worktree": "D:/CP6-worktrees/wave13-a-permission-20261017",
+        "claimed_at": "2026-10-17T04:04:41.637885+00:00",
+        "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
+        "coordination_baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
+        "entry_evidence": "docs/development/dispatch/20261017-wave13/WP02-03.md",
+        "phase": "BOUNDED_IMPLEMENTATION_ASSIGNED",
+        "dispatch_scope": "CURRENT_PERMISSION_CONSUMPTION",
+        "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
-        "worker_start_received": true,
+        "worker_start_received": false,
         "allowed_write_paths": [
-          "CP6.Core/Services/Sys/FieldPermissionDecisionV1.cs",
-          "CP6.Core/Services/Sys/FieldPermissionEvaluatorV1.cs",
-          "CP6.Tests/FieldPermissionDecisionV1Tests.cs",
-          "docs/development/evidence/WP02-03/field-decisions/"
+          "CP6.Core/Services/Sys/CurrentPermissionContext.cs",
+          "CP6.Core/Services/Sys/ICurrentPermissionContext.cs",
+          "CP6.Core/Services/Sys/PermissionAggregator.cs",
+          "CP6.Core/Services/Sys/IPermissionAggregator.cs",
+          "CP6.Core/Services/Sys/PermissionService.cs",
+          "CP6.Core/Services/Sys/CurrentPermissionUnavailableException.cs",
+          "CP6.Core/Auth/RequirePermissionAttribute.cs",
+          "CP6.Tests/CurrentPermissionContextTests.cs",
+          "CP6.Tests/PermissionAggregatorTests.cs",
+          "CP6.Tests/PermissionChainIntegrationTests.cs",
+          "CP6.Tests/RequirePermissionFilterTests.cs",
+          "CP6.Tests/FourGranularityIntegrationTests.cs",
+          "CP6.Tests/StandardRoleSeedTests.cs",
+          "CP6.Tests/PlanPub/PlanPubHighRiskDenialTests.cs",
+          "CP6.Tests/Pur/PurHighRiskDenialTests.cs",
+          "CP6.Tests/DatabaseCompatibility/PermissionsRelationalTests.cs",
+          "CP6.Tests/CurrentPermissionConsumptionPostgreSqlTests.cs",
+          "docs/development/evidence/WP02-03/current-permission-consumption/"
         ],
         "reserved_write_resources": [
-          "Main:field-permission-pure-decision"
+          "Main:current-permission-consumption",
+          "Main:permission-aggregation",
+          "file:Main:CP6.Core/Auth/RequirePermissionAttribute.cs"
         ],
-        "reserved_postgresql_ports": [],
+        "reserved_postgresql_ports": [
+          55435
+        ],
         "handoff_branch": "codex/dev-handoff-wp02-03",
         "actions_authorized": false,
         "formal_publication_authorized": false,
-        "delivery_report": "docs/development/evidence/WP02-03/field-decisions/DELIVERY.md",
-        "worker_start_ref": {
-          "commit": "4f6b90fe364aa188ce7474141dcd40596eb72cc9",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261016T124548Z-wave10-start/MESSAGE.md"
-        },
-        "coordinator_received_at": "2026-10-16T13:40:57.742124+00:00",
-        "execution_baseline_sha": "8823c31421c1346d2750faee8da16d016ff5fc56",
-        "handoff_delivery": {
-          "commit": "e870b32c284f4212b37a9064d4ecb2821e996b5f",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261016T125937Z-wave10-delivery/MESSAGE.md"
-        },
-        "window_closed_at": "2026-10-16T13:41:46.626824+00:00"
+        "existing_database_migration_authorized": false,
+        "deployment_authorized": false,
+        "delivery_report": "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md",
+        "execution_owner": {
+          "kind": "user_started_new_chat",
+          "label": "A",
+          "exclusive": true,
+          "actual_chat_id_pending_start": true
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -161057,7 +161121,50 @@
         "remote_main_sha": "c95c13e51a6c0aba65a813277ee200c9d0900c70",
         "integrated_source_sha": "0c28fcab376a3288022a981244835101568c9261",
         "remote_verified_at": "2026-10-16T13:41:46.626824+00:00"
-      }
+      },
+      "assignment_history": [
+        {
+          "chat_label": "A / WP02-03 第十轮 完整登记域下的字段权限确定性决策",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/wp02-03-field-decisions-20261016",
+          "worktree": "D:/CP6-worktrees/wp01-01-trust-stages-20261015",
+          "claimed_at": "2026-10-16T12:41:15.321774+00:00",
+          "baseline_sha": "fd91c40691ab26a463ee09249ec16040a13759d8",
+          "coordination_baseline_sha": "fd91c40691ab26a463ee09249ec16040a13759d8",
+          "entry_evidence": "docs/development/dispatch/20261016-wave10/WP02-03.md",
+          "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
+          "dispatch_scope": "PURE_FIELD_PERMISSION_DECISION",
+          "bounded_window_gate": "CLOSED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "allowed_write_paths": [
+            "CP6.Core/Services/Sys/FieldPermissionDecisionV1.cs",
+            "CP6.Core/Services/Sys/FieldPermissionEvaluatorV1.cs",
+            "CP6.Tests/FieldPermissionDecisionV1Tests.cs",
+            "docs/development/evidence/WP02-03/field-decisions/"
+          ],
+          "reserved_write_resources": [
+            "Main:field-permission-pure-decision"
+          ],
+          "reserved_postgresql_ports": [],
+          "handoff_branch": "codex/dev-handoff-wp02-03",
+          "actions_authorized": false,
+          "formal_publication_authorized": false,
+          "delivery_report": "docs/development/evidence/WP02-03/field-decisions/DELIVERY.md",
+          "worker_start_ref": {
+            "commit": "4f6b90fe364aa188ce7474141dcd40596eb72cc9",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261016T124548Z-wave10-start/MESSAGE.md"
+          },
+          "coordinator_received_at": "2026-10-16T13:40:57.742124+00:00",
+          "execution_baseline_sha": "8823c31421c1346d2750faee8da16d016ff5fc56",
+          "handoff_delivery": {
+            "commit": "e870b32c284f4212b37a9064d4ecb2821e996b5f",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261016T125937Z-wave10-delivery/MESSAGE.md"
+          },
+          "window_closed_at": "2026-10-16T13:41:46.626824+00:00"
+        }
+      ]
     },
     {
       "id": "WP02-04",
@@ -161861,46 +161968,44 @@
       "card_anchor": "wp02-18",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "D / WP02-18 第十轮 工作台真实零值、无权与不可用状态",
+        "chat_label": "D / WP02-18 第十三轮 菜单保存后的列表与当前浏览器导航刷新恢复",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/wp02-18-dashboard-states-20261016",
-        "worktree": "D:/CP6-worktrees/wp02-16-codegen-preview-20261015",
-        "claimed_at": "2026-10-16T12:41:15.321774+00:00",
-        "baseline_sha": "fd91c40691ab26a463ee09249ec16040a13759d8",
-        "coordination_baseline_sha": "fd91c40691ab26a463ee09249ec16040a13759d8",
-        "entry_evidence": "docs/development/dispatch/20261016-wave10/WP02-18.md",
-        "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
-        "dispatch_scope": "DASHBOARD_CLIENT_LOAD_STATES",
-        "bounded_window_gate": "CLOSED",
+        "branch": "codex/bug-243-menu-refresh-20261017",
+        "worktree": "D:/CP6-worktrees/wave13-d-menu-refresh-20261017",
+        "claimed_at": "2026-10-17T04:04:41.637885+00:00",
+        "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
+        "coordination_baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
+        "entry_evidence": "docs/development/dispatch/20261017-wave13/WP02-18.md",
+        "phase": "BOUNDED_IMPLEMENTATION_ASSIGNED",
+        "dispatch_scope": "MENU_REFRESH_RECOVERY",
+        "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
-        "worker_start_received": true,
+        "worker_start_received": false,
         "allowed_write_paths": [
-          "cp6.web/src/views/dashboard/DashboardView.vue",
-          "cp6.web/src/views/dashboard/dashboardLoadState.ts",
-          "cp6.web/src/views/dashboard/dashboardLoadState.spec.ts",
-          "cp6.web/src/views/dashboard/DashboardView.spec.ts",
-          "docs/development/evidence/WP02-18/dashboard-states/"
+          "cp6.web/src/views/pms/MenuView.vue",
+          "cp6.web/src/views/pms/MenuView.spec.ts",
+          "cp6.web/src/views/pms/menuRefreshRecovery.ts",
+          "cp6.web/src/views/pms/menuRefreshRecovery.spec.ts",
+          "docs/development/evidence/WP02-18/menu-refresh-recovery/"
         ],
         "reserved_write_resources": [
-          "Main:dashboard-client-load-states"
+          "Main:menu-client-refresh-recovery"
         ],
         "reserved_postgresql_ports": [],
         "handoff_branch": "codex/dev-handoff-wp02-18",
         "actions_authorized": false,
         "formal_publication_authorized": false,
-        "delivery_report": "docs/development/evidence/WP02-18/dashboard-states/DELIVERY.md",
-        "worker_start_ref": {
-          "commit": "3d3e94af28f41451539c194ae8f56fc7538a6c15",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-18/messages/20261016T124748Z-start/MESSAGE.md"
+        "existing_database_migration_authorized": false,
+        "deployment_authorized": false,
+        "delivery_report": "docs/development/evidence/WP02-18/menu-refresh-recovery/DELIVERY.md",
+        "execution_owner": {
+          "kind": "user_started_new_chat",
+          "label": "D",
+          "exclusive": true,
+          "actual_chat_id_pending_start": true
         },
-        "coordinator_received_at": "2026-10-16T13:45:11.882841+00:00",
-        "execution_baseline_sha": "8823c31421c1346d2750faee8da16d016ff5fc56",
-        "handoff_delivery": {
-          "commit": "b691f766ddfc48615e5b902db3707447dc596ed9",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-18/messages/20261016T131600Z-delivery/MESSAGE.md"
-        },
-        "window_closed_at": "2026-10-16T13:46:09.448043+00:00"
+        "issue": "https://github.com/GTX537/CP6/issues/243"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -161927,7 +162032,51 @@
         "integrated_source_sha": "e89198f960a61327a623c6b22a0dcb96469d3b22",
         "remote_main_sha": "2b1e90f311afe4475ebe9af5b78dfd81441df824",
         "remote_verified_at": "2026-10-16T13:46:09.448043+00:00"
-      }
+      },
+      "assignment_history": [
+        {
+          "chat_label": "D / WP02-18 第十轮 工作台真实零值、无权与不可用状态",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/wp02-18-dashboard-states-20261016",
+          "worktree": "D:/CP6-worktrees/wp02-16-codegen-preview-20261015",
+          "claimed_at": "2026-10-16T12:41:15.321774+00:00",
+          "baseline_sha": "fd91c40691ab26a463ee09249ec16040a13759d8",
+          "coordination_baseline_sha": "fd91c40691ab26a463ee09249ec16040a13759d8",
+          "entry_evidence": "docs/development/dispatch/20261016-wave10/WP02-18.md",
+          "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
+          "dispatch_scope": "DASHBOARD_CLIENT_LOAD_STATES",
+          "bounded_window_gate": "CLOSED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "allowed_write_paths": [
+            "cp6.web/src/views/dashboard/DashboardView.vue",
+            "cp6.web/src/views/dashboard/dashboardLoadState.ts",
+            "cp6.web/src/views/dashboard/dashboardLoadState.spec.ts",
+            "cp6.web/src/views/dashboard/DashboardView.spec.ts",
+            "docs/development/evidence/WP02-18/dashboard-states/"
+          ],
+          "reserved_write_resources": [
+            "Main:dashboard-client-load-states"
+          ],
+          "reserved_postgresql_ports": [],
+          "handoff_branch": "codex/dev-handoff-wp02-18",
+          "actions_authorized": false,
+          "formal_publication_authorized": false,
+          "delivery_report": "docs/development/evidence/WP02-18/dashboard-states/DELIVERY.md",
+          "worker_start_ref": {
+            "commit": "3d3e94af28f41451539c194ae8f56fc7538a6c15",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-18/messages/20261016T124748Z-start/MESSAGE.md"
+          },
+          "coordinator_received_at": "2026-10-16T13:45:11.882841+00:00",
+          "execution_baseline_sha": "8823c31421c1346d2750faee8da16d016ff5fc56",
+          "handoff_delivery": {
+            "commit": "b691f766ddfc48615e5b902db3707447dc596ed9",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-18/messages/20261016T131600Z-delivery/MESSAGE.md"
+          },
+          "window_closed_at": "2026-10-16T13:46:09.448043+00:00"
+        }
+      ]
     },
     {
       "id": "WP02-19",
@@ -162424,33 +162573,29 @@
       "card_anchor": "wp02-28",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "C / WP02-28 第九轮 Main 实际运行身份与兼容回退判断",
+        "chat_label": "C / WP02-28 第十三轮 实际publish制品绑定的本地启动与身份readiness验证器",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/wp02-28-runtime-identity-20261015",
-        "worktree": "D:/CP6-worktrees/wp02-28-runtime-identity-20261015",
-        "claimed_at": "2026-10-15T15:10:23.577941+00:00",
-        "baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
-        "coordination_baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
-        "entry_evidence": "docs/development/dispatch/20261015-wave9/WP02-28.md",
-        "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
-        "dispatch_scope": "ACTUAL_MAIN_HOST_IDENTITY",
-        "bounded_window_gate": "CLOSED",
-        "full_task_gate_unchanged": false,
-        "worker_start_received": true,
+        "branch": "codex/wp02-28-published-host-20261017",
+        "worktree": "D:/CP6-worktrees/wave13-c-published-host-20261017",
+        "claimed_at": "2026-10-17T04:04:41.637885+00:00",
+        "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
+        "coordination_baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
+        "entry_evidence": "docs/development/dispatch/20261017-wave13/WP02-28.md",
+        "phase": "BOUNDED_IMPLEMENTATION_ASSIGNED",
+        "dispatch_scope": "PUBLISHED_HOST_IDENTITY_VALIDATION",
+        "bounded_window_gate": "CONFIRMED",
+        "full_task_gate_unchanged": true,
+        "worker_start_received": false,
         "allowed_write_paths": [
-          "CP6.WebApi/Configuration/PlatformHostIdentityConfiguration.cs",
-          "CP6.WebApi/Observability/PlatformHostIdentity*.cs",
-          "CP6.WebApi/Health/PlatformHostIdentity*.cs",
-          "CP6.WebApi/Program.cs",
+          "eng/wp02-28/",
           "CP6.Tests/Platform/PlatformHostIdentity*.cs",
           "CP6.Tests/Platform/PlatformHostRollback*.cs",
-          "eng/wp02-28/",
-          "docs/development/evidence/WP02-28/"
+          "docs/development/evidence/WP02-28/published-host/"
         ],
         "reserved_write_resources": [
           "Main:host-package-adoption",
-          "file:Main:CP6.WebApi/Program.cs:identity-registration-and-release-health-only"
+          "Main:published-host-local-validation"
         ],
         "reserved_postgresql_ports": [
           55438
@@ -162458,18 +162603,15 @@
         "handoff_branch": "codex/dev-handoff-wp02-28",
         "actions_authorized": false,
         "formal_publication_authorized": false,
-        "delivery_report": "docs/development/evidence/WP02-28/DELIVERY.md",
-        "worker_start_ref": {
-          "commit": "d84f7096fc6e0879de338bddf080719fc71a06ee",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-28/messages/20261015T155055Z-c-start/MESSAGE.md"
-        },
-        "coordinator_received_at": "2026-10-16T12:22:01.974466+00:00",
-        "execution_baseline_sha": "37d84b4b6eaeefe7e8b35c21df26a8b1f8c119d5",
-        "handoff_delivery": {
-          "commit": "6730a91899ee56fcb79de33d500ecbf3810cbb22",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-28/messages/20261016T120053Z-c-delivery/MESSAGE.md"
-        },
-        "window_closed_at": "2026-10-16T12:24:58.205425+00:00"
+        "existing_database_migration_authorized": false,
+        "deployment_authorized": false,
+        "delivery_report": "docs/development/evidence/WP02-28/published-host/DELIVERY.md",
+        "execution_owner": {
+          "kind": "user_started_new_chat",
+          "label": "C",
+          "exclusive": true,
+          "actual_chat_id_pending_start": true
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -162496,7 +162638,57 @@
         "integrated_source_sha": "0353366f7486f1bb88cb7b341ca65ac8ad303eaf",
         "remote_main_sha": "86d8478db18747cfa95ad57bb6f1c2b06bb22d19",
         "remote_verified_at": "2026-10-16T12:24:58.205425+00:00"
-      }
+      },
+      "assignment_history": [
+        {
+          "chat_label": "C / WP02-28 第九轮 Main 实际运行身份与兼容回退判断",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/wp02-28-runtime-identity-20261015",
+          "worktree": "D:/CP6-worktrees/wp02-28-runtime-identity-20261015",
+          "claimed_at": "2026-10-15T15:10:23.577941+00:00",
+          "baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
+          "coordination_baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
+          "entry_evidence": "docs/development/dispatch/20261015-wave9/WP02-28.md",
+          "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
+          "dispatch_scope": "ACTUAL_MAIN_HOST_IDENTITY",
+          "bounded_window_gate": "CLOSED",
+          "full_task_gate_unchanged": false,
+          "worker_start_received": true,
+          "allowed_write_paths": [
+            "CP6.WebApi/Configuration/PlatformHostIdentityConfiguration.cs",
+            "CP6.WebApi/Observability/PlatformHostIdentity*.cs",
+            "CP6.WebApi/Health/PlatformHostIdentity*.cs",
+            "CP6.WebApi/Program.cs",
+            "CP6.Tests/Platform/PlatformHostIdentity*.cs",
+            "CP6.Tests/Platform/PlatformHostRollback*.cs",
+            "eng/wp02-28/",
+            "docs/development/evidence/WP02-28/"
+          ],
+          "reserved_write_resources": [
+            "Main:host-package-adoption",
+            "file:Main:CP6.WebApi/Program.cs:identity-registration-and-release-health-only"
+          ],
+          "reserved_postgresql_ports": [
+            55438
+          ],
+          "handoff_branch": "codex/dev-handoff-wp02-28",
+          "actions_authorized": false,
+          "formal_publication_authorized": false,
+          "delivery_report": "docs/development/evidence/WP02-28/DELIVERY.md",
+          "worker_start_ref": {
+            "commit": "d84f7096fc6e0879de338bddf080719fc71a06ee",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-28/messages/20261015T155055Z-c-start/MESSAGE.md"
+          },
+          "coordinator_received_at": "2026-10-16T12:22:01.974466+00:00",
+          "execution_baseline_sha": "37d84b4b6eaeefe7e8b35c21df26a8b1f8c119d5",
+          "handoff_delivery": {
+            "commit": "6730a91899ee56fcb79de33d500ecbf3810cbb22",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-28/messages/20261016T120053Z-c-delivery/MESSAGE.md"
+          },
+          "window_closed_at": "2026-10-16T12:24:58.205425+00:00"
+        }
+      ]
     },
     {
       "id": "WP02-29",
@@ -178372,22 +178564,21 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261016-wave12",
-      "path": "docs/development/dispatch/20261016-wave12/README.md",
-      "baseline_sha": "6e401945bc05647c94dbe948819cd4a14cd80fe6",
+      "id": "20261017-wave13",
+      "path": "docs/development/dispatch/20261017-wave13/README.md",
+      "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
       "coordinator_shared_state_only": true,
-      "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
-      "workers_started": true,
-      "workers_delivered": true,
-      "windows_closed": true,
+      "phase": "BOUNDED_IMPLEMENTATION_ASSIGNED",
+      "workers_started": false,
+      "workers_delivered": false,
+      "windows_closed": false,
       "assigned_chats": [
-        "B"
-      ],
-      "unassigned_chats": [
         "A",
+        "B",
         "C",
         "D"
-      ]
+      ],
+      "unassigned_chats": []
     },
     "wave_history": [
       {
@@ -178437,6 +178628,24 @@
         ],
         "execution_mode": "single_coordinator_managed_delegate",
         "owner_registration_required_before_code": true
+      },
+      {
+        "id": "20261016-wave12",
+        "path": "docs/development/dispatch/20261016-wave12/README.md",
+        "baseline_sha": "6e401945bc05647c94dbe948819cd4a14cd80fe6",
+        "coordinator_shared_state_only": true,
+        "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
+        "workers_started": true,
+        "workers_delivered": true,
+        "windows_closed": true,
+        "assigned_chats": [
+          "B"
+        ],
+        "unassigned_chats": [
+          "A",
+          "C",
+          "D"
+        ]
       }
     ]
   },

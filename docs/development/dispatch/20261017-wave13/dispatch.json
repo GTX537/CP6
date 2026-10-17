@@ -1,0 +1,138 @@
+{
+  "version": "CP6-WAVE13-DISPATCH/1",
+  "issued_at": "2026-10-17T04:04:41.637885+00:00",
+  "main_baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
+  "tasks": [
+    {
+      "id": "WP02-03",
+      "chat": "A",
+      "title": "现有授权读取的主体绑定、有效角色与缓存限制",
+      "mode": "CURRENT_PERMISSION_CONSUMPTION",
+      "branch": "codex/wp02-03-current-permission-20261017",
+      "worktree": "D:/CP6-worktrees/wave13-a-permission-20261017",
+      "handoff": "codex/dev-handoff-wp02-03",
+      "write_paths": [
+        "CP6.Core/Services/Sys/CurrentPermissionContext.cs",
+        "CP6.Core/Services/Sys/ICurrentPermissionContext.cs",
+        "CP6.Core/Services/Sys/PermissionAggregator.cs",
+        "CP6.Core/Services/Sys/IPermissionAggregator.cs",
+        "CP6.Core/Services/Sys/PermissionService.cs",
+        "CP6.Core/Services/Sys/CurrentPermissionUnavailableException.cs",
+        "CP6.Core/Auth/RequirePermissionAttribute.cs",
+        "CP6.Tests/CurrentPermissionContextTests.cs",
+        "CP6.Tests/PermissionAggregatorTests.cs",
+        "CP6.Tests/PermissionChainIntegrationTests.cs",
+        "CP6.Tests/RequirePermissionFilterTests.cs",
+        "CP6.Tests/FourGranularityIntegrationTests.cs",
+        "CP6.Tests/StandardRoleSeedTests.cs",
+        "CP6.Tests/PlanPub/PlanPubHighRiskDenialTests.cs",
+        "CP6.Tests/Pur/PurHighRiskDenialTests.cs",
+        "CP6.Tests/DatabaseCompatibility/PermissionsRelationalTests.cs",
+        "CP6.Tests/CurrentPermissionConsumptionPostgreSqlTests.cs",
+        "docs/development/evidence/WP02-03/current-permission-consumption/"
+      ],
+      "resources": [
+        "Main:current-permission-consumption",
+        "Main:permission-aggregation",
+        "file:Main:CP6.Core/Auth/RequirePermissionAttribute.cs"
+      ],
+      "ports": [
+        55435
+      ],
+      "report": "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md",
+      "repository": "Main",
+      "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
+      "window_gate": "CONFIRMED",
+      "start_received": false
+    },
+    {
+      "id": "WP02-02",
+      "chat": "B",
+      "title": "已登记服务租户的资格目录控制命令",
+      "mode": "SERVICE_TENANT_ELIGIBILITY_CONTROL",
+      "branch": "codex/wp02-02-tenant-eligibility-20261017",
+      "worktree": "D:/CP6-worktrees/wave13-b-tenant-control-20261017",
+      "handoff": "codex/dev-handoff-wp02-02",
+      "write_paths": [
+        "CP6.Core/Persistence/Tenancy/ServiceTokenTenantDirectoryControlV1.cs",
+        "CP6.Core/Persistence/Tenancy/ServiceRevocationInstallation.cs",
+        "tools/CP6.TenantStorage/Program.cs",
+        "tools/CP6.TenantStorage/README.md",
+        "CP6.Tests/Persistence/Tenancy/ServiceTokenTenantDirectoryControlPostgresTests.cs",
+        "docs/development/evidence/WP02-02/tenant-eligibility-control/"
+      ],
+      "resources": [
+        "Main:tenant-storage",
+        "Main:tenant-storage-provisioning",
+        "Main:service-tenant-directory-control"
+      ],
+      "ports": [
+        55436
+      ],
+      "report": "docs/development/evidence/WP02-02/tenant-eligibility-control/DELIVERY.md",
+      "repository": "Main",
+      "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
+      "window_gate": "CONFIRMED",
+      "start_received": false
+    },
+    {
+      "id": "WP02-28",
+      "chat": "C",
+      "title": "实际publish制品绑定的本地启动与身份readiness验证器",
+      "mode": "PUBLISHED_HOST_IDENTITY_VALIDATION",
+      "branch": "codex/wp02-28-published-host-20261017",
+      "worktree": "D:/CP6-worktrees/wave13-c-published-host-20261017",
+      "handoff": "codex/dev-handoff-wp02-28",
+      "write_paths": [
+        "eng/wp02-28/",
+        "CP6.Tests/Platform/PlatformHostIdentity*.cs",
+        "CP6.Tests/Platform/PlatformHostRollback*.cs",
+        "docs/development/evidence/WP02-28/published-host/"
+      ],
+      "resources": [
+        "Main:host-package-adoption",
+        "Main:published-host-local-validation"
+      ],
+      "ports": [
+        55438
+      ],
+      "report": "docs/development/evidence/WP02-28/published-host/DELIVERY.md",
+      "repository": "Main",
+      "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
+      "window_gate": "CONFIRMED",
+      "start_received": false
+    },
+    {
+      "id": "WP02-18",
+      "chat": "D",
+      "title": "菜单保存后的列表与当前浏览器导航刷新恢复",
+      "mode": "MENU_REFRESH_RECOVERY",
+      "branch": "codex/bug-243-menu-refresh-20261017",
+      "worktree": "D:/CP6-worktrees/wave13-d-menu-refresh-20261017",
+      "handoff": "codex/dev-handoff-wp02-18",
+      "issue": "https://github.com/GTX537/CP6/issues/243",
+      "write_paths": [
+        "cp6.web/src/views/pms/MenuView.vue",
+        "cp6.web/src/views/pms/MenuView.spec.ts",
+        "cp6.web/src/views/pms/menuRefreshRecovery.ts",
+        "cp6.web/src/views/pms/menuRefreshRecovery.spec.ts",
+        "docs/development/evidence/WP02-18/menu-refresh-recovery/"
+      ],
+      "resources": [
+        "Main:menu-client-refresh-recovery"
+      ],
+      "ports": [],
+      "frontend_port": 5178,
+      "report": "docs/development/evidence/WP02-18/menu-refresh-recovery/DELIVERY.md",
+      "repository": "Main",
+      "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
+      "window_gate": "CONFIRMED",
+      "start_received": false
+    }
+  ],
+  "worker_start_received": false,
+  "actions_authorized": false,
+  "formal_publication_authorized": false,
+  "existing_database_migration_authorized": false,
+  "deployment_authorized": false
+}
