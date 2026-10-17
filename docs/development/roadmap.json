@@ -158822,6 +158822,11 @@
       "date": "2026-10-17",
       "change": "Corrected wave13 permission delivery merged through normal PR and verified in remote main; Issue245 closed after reproduction evidence review. A bounded window CLOSED, full task unchanged. Issue38 is next P0; B/C/D ordinary holds remain.",
       "evidence": "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-17",
+      "change": "User authorized next work for existing A/B/C/D chats. Register sole A BUG38 implementation, B/C cross-review of existing C/B candidates and D acceptance preparation then one BUG38 combined review. No START claimed; ordinary candidate integration hold and full task/business states preserved.",
+      "evidence": "docs/development/dispatch/20261017-wave14/README.md"
     }
   ],
   "implementation_assessment": {
@@ -160323,7 +160328,16 @@
         "reported_candidate_sha": "e2bfcc0b9b34f94163e8b1a63463997b7abb35b5",
         "candidate_review_completed": false,
         "candidate_integrated": false,
-        "delivery_received_at": "2026-10-17T04:28:50.954497+00:00"
+        "delivery_received_at": "2026-10-17T04:28:50.954497+00:00",
+        "candidate_review_assignment": {
+          "wave": "20261017-wave14",
+          "window": "REVIEW-W13-B",
+          "reviewer_chat": "C",
+          "mode": "READ_ONLY_COMBINED_SPEC_QUALITY",
+          "started": false,
+          "completed": false,
+          "implementation_owner_unchanged": true
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -162853,7 +162867,16 @@
         "reported_candidate_sha": "b9f3f30b5bf079074ecfa404db618a20d9ee7a84",
         "candidate_review_completed": false,
         "candidate_integrated": false,
-        "delivery_received_at": "2026-10-17T04:28:50.954497+00:00"
+        "delivery_received_at": "2026-10-17T04:28:50.954497+00:00",
+        "candidate_review_assignment": {
+          "wave": "20261017-wave14",
+          "window": "REVIEW-W13-C",
+          "reviewer_chat": "B",
+          "mode": "READ_ONLY_COMBINED_SPEC_QUALITY",
+          "started": false,
+          "completed": false,
+          "implementation_owner_unchanged": true
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -178806,14 +178829,12 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261017-wave13",
-      "path": "docs/development/dispatch/20261017-wave13/README.md",
-      "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
+      "id": "20261017-wave14",
+      "path": "docs/development/dispatch/20261017-wave14/README.md",
+      "baseline_sha": "4d5c115fde40d507e43f3b56e0e02425241dcecd",
+      "registered_at": "2026-10-17T06:41:13.405991+00:00",
+      "phase": "P0_IMPLEMENTATION_AND_READ_ONLY_REVIEWS_REGISTERED",
       "coordinator_shared_state_only": true,
-      "phase": "P0_PERMISSION_CLOSED_LOGIN_NEXT",
-      "workers_started": true,
-      "workers_delivered": true,
-      "windows_closed": false,
       "assigned_chats": [
         "A",
         "B",
@@ -178821,25 +178842,143 @@
         "D"
       ],
       "unassigned_chats": [],
+      "authorized_implementation_chats": [
+        "A"
+      ],
+      "authorized_review_chats": [
+        "B",
+        "C",
+        "D"
+      ],
       "active_implementation_chats": [],
-      "ordinary_pause_requested_chats": [
-        "B",
-        "C",
-        "D"
+      "workers_started": false,
+      "workers_delivered": false,
+      "windows_closed": false,
+      "windows": [
+        {
+          "id": "BUG-38",
+          "chat": "A",
+          "mode": "IMPLEMENTATION",
+          "title": "首次改密后重新登录与2FA旧Cookie恢复",
+          "issue": "https://github.com/GTX537/CP6/issues/38",
+          "branch": "codex/bug-38-password-relogin-20261017",
+          "worktree": "D:/CP6-worktrees/bug-38-password-relogin-20261017",
+          "write_paths": [
+            "CP6.WebApi/Controllers/Sys/AuthController.cs",
+            "CP6.WebApi/Middleware/MustChangePasswordMiddleware.cs",
+            "CP6.Tests/Sys/AuthControllerChangePasswordTests.cs",
+            "CP6.Tests/Sys/AuthControllerLoginSecurityTests.cs",
+            "CP6.Tests/Sys/AuthController2faTests.cs",
+            "CP6.Tests/Sys/SecurityMiddlewareTests.cs",
+            "CP6.Tests/Sys/PasswordChangeReloginHttpTests.cs",
+            "cp6.web/e2e/password-change-relogin.spec.ts",
+            "cp6.web/playwright.password-change.config.ts",
+            "docs/quality/evidence/issue-38/DELIVERY.md"
+          ],
+          "reserved_write_resources": [
+            "Main:auth-password-relogin",
+            "file:Main:CP6.WebApi/Controllers/Sys/AuthController.cs",
+            "file:Main:CP6.WebApi/Middleware/MustChangePasswordMiddleware.cs",
+            "Main:bug38-http-browser-tests"
+          ],
+          "ports": {
+            "postgresql": 55448,
+            "api": 18238,
+            "web": 15238
+          },
+          "handoff_branch": "codex/dev-handoff-bug38-implementation-20261017",
+          "handoff_worktree": "D:/CP6.AI-Handoff-worktrees/wave14-a-bug38-20261017",
+          "packet": "A-BUG-38.md",
+          "delivery_report": "docs/quality/evidence/issue-38/DELIVERY.md",
+          "gate": "CONFIRMED",
+          "worker_start_received": false,
+          "owner": "existing user chat A; sole implementation owner",
+          "prerequisite": "PR248/249 integrated and source contains add3373e permission correction; implementation starts on latest confirmed main after this admission is integrated.",
+          "registered_at": "2026-10-17T06:41:13.405991+00:00",
+          "baseline_sha": "4d5c115fde40d507e43f3b56e0e02425241dcecd",
+          "actions_authorized": false,
+          "deployment_authorized": false,
+          "formal_publication_authorized": false,
+          "existing_database_migration_authorized": false
+        },
+        {
+          "id": "REVIEW-W13-C",
+          "chat": "B",
+          "mode": "READ_ONLY_COMBINED_REVIEW",
+          "title": "交叉审查C实际publish身份候选",
+          "target_task": "WP02-28",
+          "candidate_sha": "b9f3f30b5bf079074ecfa404db618a20d9ee7a84",
+          "source_worktree": "D:/CP6-worktrees/wave13-c-published-host-20261017",
+          "write_paths": [],
+          "reserved_write_resources": [],
+          "ports": {},
+          "handoff_branch": "codex/dev-handoff-wave14-b-review-20261017",
+          "handoff_worktree": "D:/CP6.AI-Handoff-worktrees/wave14-b-review-20261017",
+          "packet": "B-REVIEW-C.md",
+          "gate": "CONFIRMED_READ_ONLY",
+          "worker_start_received": false,
+          "owner": "existing user chat B; reviewer only",
+          "report": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-C/REVIEW.md",
+          "registered_at": "2026-10-17T06:41:13.405991+00:00",
+          "baseline_sha": "4d5c115fde40d507e43f3b56e0e02425241dcecd",
+          "actions_authorized": false,
+          "deployment_authorized": false,
+          "formal_publication_authorized": false,
+          "existing_database_migration_authorized": false
+        },
+        {
+          "id": "REVIEW-W13-B",
+          "chat": "C",
+          "mode": "READ_ONLY_COMBINED_REVIEW",
+          "title": "交叉审查B租户资格control候选",
+          "target_task": "WP02-02",
+          "candidate_sha": "e2bfcc0b9b34f94163e8b1a63463997b7abb35b5",
+          "source_worktree": "D:/CP6-worktrees/wave13-b-tenant-control-20261017",
+          "write_paths": [],
+          "reserved_write_resources": [],
+          "ports": {},
+          "handoff_branch": "codex/dev-handoff-wave14-c-review-20261017",
+          "handoff_worktree": "D:/CP6.AI-Handoff-worktrees/wave14-c-review-20261017",
+          "packet": "C-REVIEW-B.md",
+          "gate": "CONFIRMED_READ_ONLY",
+          "worker_start_received": false,
+          "owner": "existing user chat C; reviewer only",
+          "report": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-B/REVIEW.md",
+          "registered_at": "2026-10-17T06:41:13.405991+00:00",
+          "baseline_sha": "4d5c115fde40d507e43f3b56e0e02425241dcecd",
+          "actions_authorized": false,
+          "deployment_authorized": false,
+          "formal_publication_authorized": false,
+          "existing_database_migration_authorized": false
+        },
+        {
+          "id": "REVIEW-BUG-38",
+          "chat": "D",
+          "mode": "ACCEPTANCE_PREPARATION_THEN_COMBINED_REVIEW",
+          "title": "#38验收准备及最终集中审查",
+          "target_window": "BUG-38",
+          "candidate_sha": null,
+          "write_paths": [],
+          "reserved_write_resources": [],
+          "ports": {},
+          "handoff_branch": "codex/dev-handoff-bug38-review-20261017",
+          "handoff_worktree": "D:/CP6.AI-Handoff-worktrees/wave14-d-bug38-review-20261017",
+          "packet": "D-REVIEW-BUG-38.md",
+          "gate": "PREPARATION_CONFIRMED_REVIEW_AFTER_A_DELIVERY",
+          "worker_start_received": false,
+          "owner": "existing user chat D; no product edits",
+          "report": "handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-38/REVIEW.md",
+          "registered_at": "2026-10-17T06:41:13.405991+00:00",
+          "baseline_sha": "4d5c115fde40d507e43f3b56e0e02425241dcecd",
+          "actions_authorized": false,
+          "deployment_authorized": false,
+          "formal_publication_authorized": false,
+          "existing_database_migration_authorized": false
+        }
       ],
-      "ordinary_pause_ack_received": false,
-      "inventory_path": "docs/development/planning/20261017-project-inventory.md",
-      "priority_review_chats": [],
-      "candidate_reports_received": [
-        "A",
-        "B",
-        "C",
-        "D"
-      ],
-      "workers_integrated": false,
-      "new_chat_A_candidate_preserved": true,
+      "ordinary_wave13_integration_hold": true,
       "next_priority_issue": "https://github.com/GTX537/CP6/issues/38",
-      "next_issue_implementation_admitted": false
+      "issue_close_requires_real_dev": true
     },
     "wave_history": [
       {
@@ -178907,6 +179046,44 @@
           "C",
           "D"
         ]
+      },
+      {
+        "id": "20261017-wave13",
+        "path": "docs/development/dispatch/20261017-wave13/README.md",
+        "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
+        "coordinator_shared_state_only": true,
+        "phase": "P0_PERMISSION_CLOSED_LOGIN_NEXT",
+        "workers_started": true,
+        "workers_delivered": true,
+        "windows_closed": false,
+        "assigned_chats": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "unassigned_chats": [],
+        "active_implementation_chats": [],
+        "ordinary_pause_requested_chats": [
+          "B",
+          "C",
+          "D"
+        ],
+        "ordinary_pause_ack_received": false,
+        "inventory_path": "docs/development/planning/20261017-project-inventory.md",
+        "priority_review_chats": [],
+        "candidate_reports_received": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "workers_integrated": false,
+        "new_chat_A_candidate_preserved": true,
+        "next_priority_issue": "https://github.com/GTX537/CP6/issues/38",
+        "next_issue_implementation_admitted": false,
+        "superseded_for_scheduling_by": "20261017-wave14",
+        "preserved_candidate_holds": true
       }
     ],
     "development_priority": {
