@@ -11,7 +11,12 @@ using Npgsql;
 
 namespace CP6.Core.Persistence.Tenancy;
 
-internal sealed record ServiceRevocationDatabaseIdentity(Guid Installation, uint DatabaseOid, string SystemIdentifier, string Server, int Port);
+internal sealed record ServiceRevocationDatabaseIdentity(Guid Installation, uint DatabaseOid, string SystemIdentifier, string Server, int Port, bool ServiceTokens = false)
+{
+    internal string Profile => ServiceTokens ? ServiceTokenProfileV1.Profile : ServiceRevocationTransaction.Profile;
+    internal string Migration => ServiceTokens ? ServiceTokenProfileV1.MigrationVersion : ServiceRevocationTransaction.MigrationVersion;
+    internal string Schema => ServiceTokens ? ServiceTokenProfileV1.Schema : "cp6_service_revocation_v1";
+}
 
 /// <summary>Only this bounded adapter may mark a context as a managed revocation participant.</summary>
 internal sealed class ServiceRevocationTransaction : IDisposable
@@ -42,7 +47,7 @@ internal sealed class ServiceRevocationTransaction : IDisposable
         await owner.ExecuteAsync(async (connection, transaction, token) =>
         {
             var binding = owner.CurrentBinding;
-            if (binding.ModelVersion != Profile || binding.MigrationVersion != MigrationVersion || binding.TenantId != tenant
+            if (binding.ModelVersion != databaseIdentity.Profile || binding.MigrationVersion != databaseIdentity.Migration || binding.TenantId != tenant
                 || !binding.QueueDomainRefs.SequenceEqual(["crm_identity_priority"]))
                 throw new TenantStorageException(TenantStorageFailure.BindingRejected);
             // This fence lives until CommitAsync returns; the EF child scope ends earlier.
@@ -62,6 +67,40 @@ internal sealed class ServiceRevocationTransaction : IDisposable
             await db.Database.UseTransactionAsync(transaction, token).ConfigureAwait(false);
             await CrmServiceTokenRecordStore.RevokeInTransactionAsync(db, runtime, issuer, client, tenant, jti, token).ConfigureAwait(false);
             await authorityFence(token).ConfigureAwait(false);
+            return 0;
+        }, ct).ConfigureAwait(false);
+    }
+
+    internal static async Task IssueAsync(TenantStorageTransaction owner, CrmIdentityRuntime runtime,
+        string issuer, string client, Guid tenant, string jti, DateTimeOffset expiry,
+        ServiceRevocationDatabaseIdentity databaseIdentity, Func<CancellationToken, Task> authorityFence,
+        TimeProvider clock, CancellationToken ct)
+    {
+        await owner.ExecuteAsync(async (connection, transaction, token) =>
+        {
+            var binding = owner.CurrentBinding;
+            if (!databaseIdentity.ServiceTokens || binding.ModelVersion != ServiceTokenProfileV1.Profile
+                || binding.MigrationVersion != ServiceTokenProfileV1.MigrationVersion || binding.TenantId != tenant
+                || !binding.QueueDomainRefs.SequenceEqual(["crm_identity_priority"]))
+                throw new TenantStorageException(TenantStorageFailure.BindingRejected);
+            async Task Fence(CancellationToken finalToken)
+            {
+                await CheckTenant(connection, transaction, tenant, finalToken).ConfigureAwait(false);
+                await CheckInstallation(connection, transaction, databaseIdentity, finalToken).ConfigureAwait(false);
+                await ServiceTokenProfileV1.RequireActiveAsync(connection, transaction, clock, finalToken).ConfigureAwait(false);
+                await authorityFence(finalToken).ConfigureAwait(false);
+                if (clock.GetUtcNow() >= expiry) throw new TenantStorageException(TenantStorageFailure.TenantInactive);
+            }
+            owner.SetCommitFence(Fence);
+            using var participant = new ServiceRevocationTransaction(owner, connection, transaction, tenant);
+            await participant._guard.ValidateCurrentAsync(token).ConfigureAwait(false);
+            await Fence(token).ConfigureAwait(false);
+            await using var db = new CP6Context(participant.Options<CP6Context>(DatabaseContextKind.Core).Options,
+                new TenantContext { CurrentTenantId = tenant });
+            Participants.Add(db, participant);
+            await db.Database.UseTransactionAsync(transaction, token).ConfigureAwait(false);
+            await CrmServiceTokenRecordStore.RecordInTransactionAsync(db, runtime, issuer, client, tenant, jti,
+                expiry, token).ConfigureAwait(false);
             return 0;
         }, ct).ConfigureAwait(false);
     }
@@ -120,15 +159,15 @@ internal sealed class ServiceRevocationTransaction : IDisposable
     private static async Task CheckInstallation(NpgsqlConnection connection, NpgsqlTransaction transaction,
         ServiceRevocationDatabaseIdentity expected, CancellationToken ct)
     {
-        await using var command = new NpgsqlCommand("""
+        await using var command = new NpgsqlCommand($$"""
             SELECT i.installation_id=@installation AND i.profile=@profile AND i.database_oid=@oid
-              AND cp6_service_revocation_v1.system_identifier()=@system
+              AND {{expected.Schema}}.system_identifier()=@system
               AND (SELECT oid FROM pg_catalog.pg_database WHERE datname=pg_catalog.current_database())=@oid
               AND pg_catalog.host(pg_catalog.inet_server_addr())=@server AND pg_catalog.inet_server_port()=@port
-              AND i.fingerprint=cp6_service_revocation_v1.fingerprint()
-            FROM cp6_service_revocation_v1.installation i WHERE i.singleton
+              AND i.fingerprint={{expected.Schema}}.fingerprint()
+            FROM {{expected.Schema}}.installation i WHERE i.singleton
             """, connection, transaction);
-        command.Parameters.AddWithValue("installation", expected.Installation); command.Parameters.AddWithValue("profile", Profile);
+        command.Parameters.AddWithValue("installation", expected.Installation); command.Parameters.AddWithValue("profile", expected.Profile);
         command.Parameters.AddWithValue("oid", NpgsqlTypes.NpgsqlDbType.Oid, expected.DatabaseOid);
         command.Parameters.AddWithValue("system", expected.SystemIdentifier); command.Parameters.AddWithValue("server", expected.Server);
         command.Parameters.AddWithValue("port", expected.Port);

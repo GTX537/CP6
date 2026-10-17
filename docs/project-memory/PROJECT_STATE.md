@@ -1,5 +1,15 @@
 # 项目当前状态
 
+## 2026-10-16：第十二轮服务签发候选已核验
+
+实际 client_credentials HTTP 签发在普通租户 PostgreSQL 登录的同一物理事务中读取真实 Sys_Tenants 资格、写入 ServiceToken 并完成提交前核验；FOR SHARE 将停用更新与签发序列化。新鲜隔离库显式选择 service-token-v1，最小权限 helper 仅返回自身资格，签发令牌可在同库真实自撤销；注册时签名快照覆盖首次 DI 解析，旧配置与旧 profile 保持原支持范围。
+
+本地 .NET8 / PostgreSQL18.6 相关构建通过。原始第1轮未受影响的94项旧行为、后续目录/资格边界与双向并发锁场景按报告范围复用；第6轮首次解析签名快照及旧Crypto定向14/14通过。审查修正后PUBLIC权限、合法数据库/login、真实HTTPS签发→记录→自撤销链三项定向回归各1/1通过、零跳过；最终新profile与原旧profile的CLI同请求恢复成功，旧baseline digest保持。原始失败、两项红测和information_schema主动扩范围导致的首次修正失败全部保留；最终权限补充范围收敛为pg_catalog / pg_*。COORD核读原始TRX/日志并确认自有55436已停止；未因提交或合并重跑未受影响测试。
+
+完成一次完整SPEC/QUALITY集中审查，发现PUBLIC系统目录有效权限漏检及全串schema替换误改合法数据库/login两项P2。均已修复：新profile按PG原生初始权限拒绝额外PUBLIC授权，规范化seal支持权限还原后同请求恢复；固定schema插值保留合法外部标识符。原审查者仅复查127abecb..1722b061四文件修正及相关原始证据，最终Ready to merge: Yes，无剩余阻断项。COORD核对允许路径、完整diff检查、失败/成功证据及旧profile兼容；旧seal、实体/EF模型/历史迁移和依赖配置未变。
+
+详见[单份报告](../development/evidence/WP02-02/service-issuance/DELIVERY.md)。当前等待正常PR合并及远端核对，尚未记作远端完成。完整 WP02-02 仍 IN_PROGRESS/CONFIRMED；Full17PGT、全 Main、普通用户/部门登录与 snapshot、真实租户创建/维护、bootstrap/dispatcher、ERP/ordinary outbox、其他Owner/上下文及跨仓宿主、在线授权/配置/密钥/凭据更新、真实业务验收、既有库迁移、环境切换及 DEV/UAT/PROD 均 NOT_RUN。本轮仅完成 fresh-only 五表服务端点采用，不构成全 Main 启用或生产发布。 完整任务24/375 DONE、业务0/125、247 NOT_RUN与41历史引用不变。未触发/取消Actions、未改工作流、未发包、迁移既有库或部署。
+
 ## 第十二轮签名器必要范围补充
 
 已登记[同一实现窗口的单文件扩展](../development/dispatch/20261016-wave12/WP02-02.md)：修复首次DI解析仍依赖可变legacy签名配置的问题。唯一执行者不变，原成功结果按输入范围复用，最后仍为一次集中审查；完整任务及业务状态不变，无Actions或部署。

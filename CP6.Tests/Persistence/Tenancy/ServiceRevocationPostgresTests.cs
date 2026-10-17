@@ -34,8 +34,16 @@ namespace CP6.Tests.Persistence.Tenancy;
 [CollectionDefinition("ServiceRevocationPostgres", DisableParallelization = true)]
 public sealed class ServiceRevocationPostgresCollection : ICollectionFixture<ServiceRevocationPostgresFixture>;
 
-public sealed class ServiceRevocationPostgresFixture : IAsyncLifetime
+public class ServiceRevocationPostgresFixture : IAsyncLifetime
 {
+    internal bool ServiceTokens { get; }
+    public ServiceRevocationPostgresFixture() { }
+    protected ServiceRevocationPostgresFixture(bool serviceTokens) => ServiceTokens = serviceTokens;
+    internal ServiceTokenInstallRequest TokenInstallation => new(Installation.InstallationId, Installation.Server,
+        Installation.Port, Installation.Database, Installation.DatabaseOid, Installation.SystemIdentifier, Installation.Tenants);
+    internal Task<ServiceRevocationInstallResult> Install(NpgsqlConnection control) => ServiceTokens
+        ? ServiceRevocationInstallation.InstallServiceTokenAsync(control, TokenInstallation, Baseline)
+        : ServiceRevocationInstallation.InstallAsync(control, Installation, Baseline);
     internal const string Database = "service_revocation";
     internal static readonly Guid A = TenantStorageContext.A, B = TenantStorageContext.B;
     internal readonly TenantStoragePostgresFixture Server = new();
@@ -60,10 +68,18 @@ public sealed class ServiceRevocationPostgresFixture : IAsyncLifetime
             var system = (string)(await TenantStoragePostgresFixture.Scalar(control, "SELECT system_identifier::text FROM pg_catalog.pg_control_system()"))!;
             Installation = new(Guid.NewGuid(), "127.0.0.1", TenantStoragePostgresFixture.Port, Database, oid, system,
                 "service_issuer", [new(A, "tenant_a"), new(B, "tenant_b")]);
-            Baseline = ServiceRevocationBaselineV1.GenerateSql();
-            await ServiceRevocationInstallation.InstallAsync(control, Installation, Baseline);
-            Assert.Equal(await ServiceRevocationInstallation.InstallAsync(control, Installation, Baseline),
-                await ServiceRevocationInstallation.InstallAsync(control, Installation, Baseline));
+            Baseline = ServiceTokens ? ServiceTokenBaselineV1.GenerateSql() : ServiceRevocationBaselineV1.GenerateSql();
+            await Install(control);
+            Assert.Equal(await Install(control), await Install(control));
+            if (ServiceTokens)
+            {
+                Assert.Equal(0L, await TenantStoragePostgresFixture.Scalar(control, "SELECT count(*) FROM public.\"Sys_Tenants\""));
+                // Explicit fixture control action on the real shared directory; installer creates no tenant data.
+                await TenantStoragePostgresFixture.Sql(control, $"""
+                    INSERT INTO public."Sys_Tenants"("Id","TenantCode","TenantName","Enable","TwoFactorMode","CreateDate")
+                    VALUES('{A}','a','Fixture A',true,0,localtimestamp),('{B}','b','Fixture B',true,0,localtimestamp)
+                    """);
+            }
             Assert.Equal(0L, await TenantStoragePostgresFixture.Scalar(control,
                 "SELECT count(*) FROM pg_catalog.pg_class WHERE relname LIKE '__EFMigrationsHistory%'"));
         }
@@ -99,7 +115,7 @@ public sealed class ServiceRevocationPostgresFixture : IAsyncLifetime
             ["CrmIdentity:Enabled"] = "true", ["CrmIdentity:Tenants:" + A] = "us", ["CrmIdentity:Tenants:" + B] = "eu",
             ["CrmIdentity:ProjectionReaderClientIds:0"] = "client-b", ["Security:Password:ExpiryDays"] = "0"
         };
-        const string p = "CrmIdentity:ServiceRevocationTenancy:";
+        var p = ServiceTokens ? "CrmIdentity:ServiceTokenTenancy:" : "CrmIdentity:ServiceRevocationTenancy:";
         foreach (var item in new Dictionary<string, string?>
         {
             ["Enabled"] = "true", ["HostId"] = "revocation-http", ["Revision"] = "r1",
@@ -155,7 +171,8 @@ internal sealed class RevocationHttpHost(WebApplication app, HttpClient client, 
         builder.Services.AddSingleton<TimeProvider>(clock); builder.Services.AddSingleton(options);
         builder.Services.AddSingleton<CrmOidcCrypto>();
         builder.Services.AddScoped<CrmOidcServiceTokens>();
-        builder.Services.AddSingleton<ICrmOidcServiceDirectory>(new FixtureActiveTenants());
+        if (fixture.ServiceTokens) builder.Services.AddScoped<ICrmOidcServiceDirectory, CrmOidcDirectory>();
+        else builder.Services.AddSingleton<ICrmOidcServiceDirectory>(new FixtureActiveTenants());
         builder.Services.AddScoped<CrmOidcDirectory>();
         builder.Services.AddScoped<ITenantContext, TenantContext>();
         builder.Services.AddSingleton(Mock.Of<ITokenBlacklistService>());

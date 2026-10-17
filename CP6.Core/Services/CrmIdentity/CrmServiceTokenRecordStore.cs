@@ -17,6 +17,20 @@ public sealed class CrmServiceTokenRecordStore(CP6Context db, CrmIdentityRuntime
     {
         if (!runtime.Options.Tenants.ContainsKey(tenantId)) return;
         if (issuer != runtime.Options.Issuer) throw new InvalidOperationException("C02_SERVICE_ISSUER_MISMATCH");
+        await RecordCoreAsync(db, issuer, clientId, tenantId, jti, expiry, cancellationToken);
+    }
+
+    internal static Task RecordInTransactionAsync(CP6Context db, CrmIdentityRuntime runtime,
+        string issuer, string clientId, Guid tenantId, string jti, DateTimeOffset expiry, CancellationToken cancellationToken)
+    {
+        if (db.Database.CurrentTransaction is null || !runtime.Options.Tenants.ContainsKey(tenantId)
+            || issuer != runtime.Options.Issuer) throw new InvalidOperationException("C02_SERVICE_TRANSACTION_REQUIRED");
+        return RecordCoreAsync(db, issuer, clientId, tenantId, jti, expiry, cancellationToken);
+    }
+
+    private static async Task RecordCoreAsync(CP6Context db, string issuer, string clientId, Guid tenantId,
+        string jti, DateTimeOffset expiry, CancellationToken cancellationToken)
+    {
         db.CrmServiceTokenRecords.Add(new CrmServiceTokenRecord
         {
             Issuer = issuer, ClientId = clientId, TenantId = tenantId, Jti = jti, ExpiresAtUtc = expiry

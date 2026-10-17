@@ -8,7 +8,7 @@ internal enum TenantStorageState { Provisioning, Ready, Draining, Unavailable, R
 internal enum TenantStorageFailure
 {
     TrustedContextRequired, ContextChanged, BindingRejected, BindingChanged, ConfigurationRejected,
-    CapacityExceeded, CredentialsUnavailable, ConnectionUnavailable, IdentityRejected, DatabaseRejected, LeaseClosed, OperationInProgress
+    CapacityExceeded, CredentialsUnavailable, ConnectionUnavailable, IdentityRejected, TenantInactive, DatabaseRejected, LeaseClosed, OperationInProgress
 }
 
 /// <summary>No inner exception, raw database message, identity, or credential is propagated.</summary>

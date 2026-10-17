@@ -158777,6 +158777,11 @@
       "date": "2026-10-16",
       "change": "Wave12: sole COORD delegate assigned real service issuance tenant authority and transaction adoption after wave11. Actual read-only preparation started; implementation follows published admission. Full task and business states unchanged.",
       "evidence": "docs/development/dispatch/20261016-wave12/README.md"
+    },
+    {
+      "date": "2026-10-16",
+      "evidence": "docs/development/evidence/WP02-02/service-issuance/DELIVERY.md",
+      "change": "Wave12 real service issuance bounded candidate verified and reviewed for normal serial integration; full task and business acceptance unchanged."
     }
   ],
   "implementation_assessment": {
@@ -160209,7 +160214,7 @@
       "card_anchor": "wp02-02",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD受托B / WP02-02 第十二轮服务签发",
+        "chat_label": "COORD受托B / WP02-02 第十二轮候选已审查待集成",
         "repository": "Main",
         "owning_task_repository": "Main",
         "branch": "codex/wp02-02-service-issuance-20261016",
@@ -160218,7 +160223,7 @@
         "baseline_sha": "6e401945bc05647c94dbe948819cd4a14cd80fe6",
         "coordination_baseline_sha": "6e401945bc05647c94dbe948819cd4a14cd80fe6",
         "entry_evidence": "docs/development/dispatch/20261016-wave12/WP02-02.md",
-        "phase": "BOUNDED_IMPLEMENTATION_ASSIGNED",
+        "phase": "BOUNDED_IMPLEMENTATION_VERIFIED_PENDING_MERGE",
         "dispatch_scope": "SERVICE_ISSUANCE_TENANT_ADOPTION",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -160286,7 +160291,9 @@
           "path": "CP6.WebApi/Services/CrmOidcCrypto.cs",
           "reason": "Real first-request DI still constructs shared legacy signer from mutable options; new-profile registration snapshot must also reach that constructor. Same sole owner, no Program/dependency or old-profile semantic change.",
           "validation": "First-resolution mutation, actual signature/JWKS identity and legacy constructor compatibility; single final task review."
-        }
+        },
+        "coordinator_received_at": "2026-10-17T03:47:02.495211+00:00",
+        "execution_baseline_sha": "20662e3db55db81bcc4a36d49bad1f4ecb8ce12d"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -160790,7 +160797,7 @@
         },
         "receipt": "docs/development/evidence/authorized-adoption-release-20261015/release-receipt.json"
       },
-      "remaining_scope": "本次只采用服务令牌自撤销的可信来源、有限PostgreSQL写集及同事务链路；fresh-only安装不是完整Main数据库。真实租户活跃查询、其他Owner/contexts、普通快照与Outbox、ERP/dispatcher、跨仓消费者、在线授权更新、既有库迁移及原17PGT/业务验收仍未完成。",
+      "remaining_scope": "完整 WP02-02 仍 IN_PROGRESS/CONFIRMED；Full17PGT、全 Main、普通用户/部门登录与 snapshot、真实租户创建/维护、bootstrap/dispatcher、ERP/ordinary outbox、其他Owner/上下文及跨仓宿主、在线授权/配置/密钥/凭据更新、真实业务验收、既有库迁移、环境切换及 DEV/UAT/PROD 均 NOT_RUN。本轮仅完成 fresh-only 五表服务端点采用，不构成全 Main 启用或生产发布。",
       "main_package_adoption": {
         "path": "docs/development/evidence/WP02-02/main-package-adoption/DELIVERY.md",
         "scope": "Main exact formal0.10.3 dependency adoption; not tenant storage or full WP02-02 delivery",
@@ -160927,6 +160934,17 @@
           "commit": "56952c72cf509e898bf5e3bf199b2f9f41be96de",
           "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261016T164525Z-wave11-service-revocation-delivery/MESSAGE.md"
         }
+      },
+      "wave12_delivery": {
+        "status": "VERIFIED_PENDING_REMOTE_MERGE",
+        "source_candidate_sha": "1722b061cc2afae44429e6d3db2e684b31963f1f",
+        "report": "docs/development/evidence/WP02-02/service-issuance/DELIVERY.md",
+        "validation_reused": "本地 .NET8 / PostgreSQL18.6 相关构建通过。原始第1轮未受影响的94项旧行为、后续目录/资格边界与双向并发锁场景按报告范围复用；第6轮首次解析签名快照及旧Crypto定向14/14通过。审查修正后PUBLIC权限、合法数据库/login、真实HTTPS签发→记录→自撤销链三项定向回归各1/1通过、零跳过；最终新profile与原旧profile的CLI同请求恢复成功，旧baseline digest保持。原始失败、两项红测和information_schema主动扩范围导致的首次修正失败全部保留；最终权限补充范围收敛为pg_catalog / pg_*。COORD核读原始TRX/日志并确认自有55436已停止；未因提交或合并重跑未受影响测试。",
+        "review": "完成一次完整SPEC/QUALITY集中审查，发现PUBLIC系统目录有效权限漏检及全串schema替换误改合法数据库/login两项P2。均已修复：新profile按PG原生初始权限拒绝额外PUBLIC授权，规范化seal支持权限还原后同请求恢复；固定schema插值保留合法外部标识符。原审查者仅复查127abecb..1722b061四文件修正及相关原始证据，最终Ready to merge: Yes，无剩余阻断项。COORD核对允许路径、完整diff检查、失败/成功证据及旧profile兼容；旧seal、实体/EF模型/历史迁移和依赖配置未变。",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_17_pgt": "NOT_RUN",
+        "remaining_scope": "完整 WP02-02 仍 IN_PROGRESS/CONFIRMED；Full17PGT、全 Main、普通用户/部门登录与 snapshot、真实租户创建/维护、bootstrap/dispatcher、ERP/ordinary outbox、其他Owner/上下文及跨仓宿主、在线授权/配置/密钥/凭据更新、真实业务验收、既有库迁移、环境切换及 DEV/UAT/PROD 均 NOT_RUN。本轮仅完成 fresh-only 五表服务端点采用，不构成全 Main 启用或生产发布。"
       }
     },
     {
@@ -178339,9 +178357,9 @@
       "path": "docs/development/dispatch/20261016-wave12/README.md",
       "baseline_sha": "6e401945bc05647c94dbe948819cd4a14cd80fe6",
       "coordinator_shared_state_only": true,
-      "phase": "BOUNDED_IMPLEMENTATION_ASSIGNED",
+      "phase": "SERIAL_INTEGRATION",
       "workers_started": true,
-      "workers_delivered": false,
+      "workers_delivered": true,
       "windows_closed": false,
       "assigned_chats": [
         "B"
