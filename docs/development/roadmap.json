@@ -158827,6 +158827,11 @@
       "date": "2026-10-17",
       "change": "User authorized next work for existing A/B/C/D chats. Register sole A BUG38 implementation, B/C cross-review of existing C/B candidates and D acceptance preparation then one BUG38 combined review. No START claimed; ordinary candidate integration hold and full task/business states preserved.",
       "evidence": "docs/development/dispatch/20261017-wave14/README.md"
+    },
+    {
+      "date": "2026-10-17",
+      "change": "Received all four actual wave14 STARTs, A BUG38 candidate09017d7a and B/C completed blocking reviews; D preparation received and fixed A candidate is now available for original single review. Registered three candidate P2 defects in GitHub Issues; corrective implementation remains unadmitted under P0 hold.",
+      "evidence": "docs/development/dispatch/20261017-wave14/README.md"
     }
   ],
   "implementation_assessment": {
@@ -160268,7 +160273,7 @@
         "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
         "coordination_baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
         "entry_evidence": "docs/development/dispatch/20261017-wave13/WP02-02.md",
-        "phase": "CANDIDATE_REPORTED_P0_HOLD",
+        "phase": "REVIEW_BLOCKED_P0_HOLD",
         "dispatch_scope": "SERVICE_TENANT_ELIGIBILITY_CONTROL",
         "bounded_window_gate": "PAUSED",
         "full_task_gate_unchanged": true,
@@ -160326,7 +160331,7 @@
           "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261017T042608Z-wave13-delivery/MESSAGE.md"
         },
         "reported_candidate_sha": "e2bfcc0b9b34f94163e8b1a63463997b7abb35b5",
-        "candidate_review_completed": false,
+        "candidate_review_completed": true,
         "candidate_integrated": false,
         "delivery_received_at": "2026-10-17T04:28:50.954497+00:00",
         "candidate_review_assignment": {
@@ -160334,9 +160339,26 @@
           "window": "REVIEW-W13-B",
           "reviewer_chat": "C",
           "mode": "READ_ONLY_COMBINED_SPEC_QUALITY",
-          "started": false,
-          "completed": false,
+          "started": true,
+          "completed": true,
           "implementation_owner_unchanged": true
+        },
+        "review_result": {
+          "candidate_sha": "e2bfcc0b9b34f94163e8b1a63463997b7abb35b5",
+          "ready_to_merge": false,
+          "review_ref": {
+            "start_commit": "fa0ccd5278734f4826ad9a51861ede5e0d02838d",
+            "start_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-B/messages/20261017T065405Z-start/MESSAGE.md",
+            "delivery_commit": "f9821c9c5655875edb788ec3215ff26ce343e639",
+            "delivery_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-B/messages/20261017T065930Z-delivery/MESSAGE.md",
+            "review_commit": "5c9191f04bc0576fadabd1b059afc311f64e88a2",
+            "review_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-B/REVIEW.md"
+          },
+          "blocking_issue_urls": [
+            "https://github.com/GTX537/CP6/issues/253"
+          ],
+          "coordinator_verification": "Targeted source/SDK/parser-semantics verification only; no duplicate full task review or product tests.",
+          "correction_implementation_admitted": false
         }
       },
       "blockers": [],
@@ -162810,7 +162832,7 @@
         "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
         "coordination_baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
         "entry_evidence": "docs/development/dispatch/20261017-wave13/WP02-28.md",
-        "phase": "CANDIDATE_REPORTED_P0_HOLD",
+        "phase": "REVIEW_BLOCKED_P0_HOLD",
         "dispatch_scope": "PUBLISHED_HOST_IDENTITY_VALIDATION",
         "bounded_window_gate": "PAUSED",
         "full_task_gate_unchanged": true,
@@ -162865,7 +162887,7 @@
           "path": "handoffs/CP6-DEV-20261012/tasks/WP02-28/messages/20261017T042207Z-wave13-delivery/MESSAGE.md"
         },
         "reported_candidate_sha": "b9f3f30b5bf079074ecfa404db618a20d9ee7a84",
-        "candidate_review_completed": false,
+        "candidate_review_completed": true,
         "candidate_integrated": false,
         "delivery_received_at": "2026-10-17T04:28:50.954497+00:00",
         "candidate_review_assignment": {
@@ -162873,9 +162895,27 @@
           "window": "REVIEW-W13-C",
           "reviewer_chat": "B",
           "mode": "READ_ONLY_COMBINED_SPEC_QUALITY",
-          "started": false,
-          "completed": false,
+          "started": true,
+          "completed": true,
           "implementation_owner_unchanged": true
+        },
+        "review_result": {
+          "candidate_sha": "b9f3f30b5bf079074ecfa404db618a20d9ee7a84",
+          "ready_to_merge": false,
+          "review_ref": {
+            "start_commit": "9392b371beed4bbea2b45c025fe97239af280d42",
+            "start_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-C/messages/20261017T065336Z-start/MESSAGE.md",
+            "delivery_commit": "f4509fcca19c6ddaa1cfc295b85dee05b2ea3b34",
+            "delivery_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-C/messages/20261017T070007Z-delivery/MESSAGE.md",
+            "review_commit": "0cf1ad3fd58b590ce6b4be74f2f2f054e9efa892",
+            "review_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-C/REVIEW.md"
+          },
+          "blocking_issue_urls": [
+            "https://github.com/GTX537/CP6/issues/251",
+            "https://github.com/GTX537/CP6/issues/252"
+          ],
+          "coordinator_verification": "Targeted source/SDK/parser-semantics verification only; no duplicate full task review or product tests.",
+          "correction_implementation_admitted": false
         }
       },
       "blockers": [],
@@ -178833,7 +178873,7 @@
       "path": "docs/development/dispatch/20261017-wave14/README.md",
       "baseline_sha": "4d5c115fde40d507e43f3b56e0e02425241dcecd",
       "registered_at": "2026-10-17T06:41:13.405991+00:00",
-      "phase": "P0_IMPLEMENTATION_AND_READ_ONLY_REVIEWS_REGISTERED",
+      "phase": "P0_CANDIDATE_READY_FOR_D_REVIEW",
       "coordinator_shared_state_only": true,
       "assigned_chats": [
         "A",
@@ -178851,7 +178891,7 @@
         "D"
       ],
       "active_implementation_chats": [],
-      "workers_started": false,
+      "workers_started": true,
       "workers_delivered": false,
       "windows_closed": false,
       "windows": [
@@ -178891,7 +178931,7 @@
           "packet": "A-BUG-38.md",
           "delivery_report": "docs/quality/evidence/issue-38/DELIVERY.md",
           "gate": "CONFIRMED",
-          "worker_start_received": false,
+          "worker_start_received": true,
           "owner": "existing user chat A; sole implementation owner",
           "prerequisite": "PR248/249 integrated and source contains add3373e permission correction; implementation starts on latest confirmed main after this admission is integrated.",
           "registered_at": "2026-10-17T06:41:13.405991+00:00",
@@ -178899,7 +178939,23 @@
           "actions_authorized": false,
           "deployment_authorized": false,
           "formal_publication_authorized": false,
-          "existing_database_migration_authorized": false
+          "existing_database_migration_authorized": false,
+          "coordinator_received_at": "2026-10-17T10:33:19.076711+00:00",
+          "handoff_evidence": {
+            "start_commit": "c534cd3fec1dad30e1ef162fc676fb1c358d6748",
+            "start_path": "handoffs/CP6-DEV-20261012/tasks/BUG-38/messages/20261017T065402Z-start/MESSAGE.md",
+            "delivery_commit": "63c41c66614a62e7213e2b4befd9c8408c8bc3e2",
+            "delivery_path": "handoffs/CP6-DEV-20261012/tasks/BUG-38/messages/20261017T071759Z-delivery/MESSAGE.md"
+          },
+          "phase": "CANDIDATE_REPORTED_PENDING_D_REVIEW",
+          "worker_delivery_received": true,
+          "candidate_sha": "09017d7ad14c7647601edac258422365ff81daf9",
+          "candidate_review_completed": false,
+          "candidate_integrated": false,
+          "resources_stopped_reported": true,
+          "local_validation_reported": "50 related tests includes 13 HTTP; final affected 13 re-run passed with unchanged 37 reused; full-app PostgreSQL browser passed. Not 63 independent tests.",
+          "business_acceptance": "NOT_RUN",
+          "real_dev": "NOT_RUN"
         },
         {
           "id": "REVIEW-W13-C",
@@ -178916,7 +178972,7 @@
           "handoff_worktree": "D:/CP6.AI-Handoff-worktrees/wave14-b-review-20261017",
           "packet": "B-REVIEW-C.md",
           "gate": "CONFIRMED_READ_ONLY",
-          "worker_start_received": false,
+          "worker_start_received": true,
           "owner": "existing user chat B; reviewer only",
           "report": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-C/REVIEW.md",
           "registered_at": "2026-10-17T06:41:13.405991+00:00",
@@ -178924,7 +178980,25 @@
           "actions_authorized": false,
           "deployment_authorized": false,
           "formal_publication_authorized": false,
-          "existing_database_migration_authorized": false
+          "existing_database_migration_authorized": false,
+          "coordinator_received_at": "2026-10-17T10:33:19.076711+00:00",
+          "handoff_evidence": {
+            "start_commit": "9392b371beed4bbea2b45c025fe97239af280d42",
+            "start_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-C/messages/20261017T065336Z-start/MESSAGE.md",
+            "delivery_commit": "f4509fcca19c6ddaa1cfc295b85dee05b2ea3b34",
+            "delivery_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-C/messages/20261017T070007Z-delivery/MESSAGE.md",
+            "review_commit": "0cf1ad3fd58b590ce6b4be74f2f2f054e9efa892",
+            "review_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-C/REVIEW.md"
+          },
+          "phase": "COMBINED_REVIEW_COMPLETED_BLOCKED",
+          "worker_delivery_received": true,
+          "review_completed": true,
+          "ready_to_merge": false,
+          "correction_implementation_admitted": false,
+          "blocking_issue_urls": [
+            "https://github.com/GTX537/CP6/issues/251",
+            "https://github.com/GTX537/CP6/issues/252"
+          ]
         },
         {
           "id": "REVIEW-W13-B",
@@ -178941,7 +179015,7 @@
           "handoff_worktree": "D:/CP6.AI-Handoff-worktrees/wave14-c-review-20261017",
           "packet": "C-REVIEW-B.md",
           "gate": "CONFIRMED_READ_ONLY",
-          "worker_start_received": false,
+          "worker_start_received": true,
           "owner": "existing user chat C; reviewer only",
           "report": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-B/REVIEW.md",
           "registered_at": "2026-10-17T06:41:13.405991+00:00",
@@ -178949,7 +179023,24 @@
           "actions_authorized": false,
           "deployment_authorized": false,
           "formal_publication_authorized": false,
-          "existing_database_migration_authorized": false
+          "existing_database_migration_authorized": false,
+          "coordinator_received_at": "2026-10-17T10:33:19.076711+00:00",
+          "handoff_evidence": {
+            "start_commit": "fa0ccd5278734f4826ad9a51861ede5e0d02838d",
+            "start_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-B/messages/20261017T065405Z-start/MESSAGE.md",
+            "delivery_commit": "f9821c9c5655875edb788ec3215ff26ce343e639",
+            "delivery_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-B/messages/20261017T065930Z-delivery/MESSAGE.md",
+            "review_commit": "5c9191f04bc0576fadabd1b059afc311f64e88a2",
+            "review_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-B/REVIEW.md"
+          },
+          "phase": "COMBINED_REVIEW_COMPLETED_BLOCKED",
+          "worker_delivery_received": true,
+          "review_completed": true,
+          "ready_to_merge": false,
+          "correction_implementation_admitted": false,
+          "blocking_issue_urls": [
+            "https://github.com/GTX537/CP6/issues/253"
+          ]
         },
         {
           "id": "REVIEW-BUG-38",
@@ -178957,7 +179048,7 @@
           "mode": "ACCEPTANCE_PREPARATION_THEN_COMBINED_REVIEW",
           "title": "#38验收准备及最终集中审查",
           "target_window": "BUG-38",
-          "candidate_sha": null,
+          "candidate_sha": "09017d7ad14c7647601edac258422365ff81daf9",
           "write_paths": [],
           "reserved_write_resources": [],
           "ports": {},
@@ -178965,7 +179056,7 @@
           "handoff_worktree": "D:/CP6.AI-Handoff-worktrees/wave14-d-bug38-review-20261017",
           "packet": "D-REVIEW-BUG-38.md",
           "gate": "PREPARATION_CONFIRMED_REVIEW_AFTER_A_DELIVERY",
-          "worker_start_received": false,
+          "worker_start_received": true,
           "owner": "existing user chat D; no product edits",
           "report": "handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-38/REVIEW.md",
           "registered_at": "2026-10-17T06:41:13.405991+00:00",
@@ -178973,12 +179064,85 @@
           "actions_authorized": false,
           "deployment_authorized": false,
           "formal_publication_authorized": false,
-          "existing_database_migration_authorized": false
+          "existing_database_migration_authorized": false,
+          "coordinator_received_at": "2026-10-17T10:33:19.076711+00:00",
+          "handoff_evidence": {
+            "start_commit": "873ca01e5f8f53f67f4a13f4ed02febe530641d3",
+            "start_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-38/messages/20261017T065402Z-start/MESSAGE.md",
+            "preparation_commit": "7c999da8b30f923788e29dde4970f51833ee4623",
+            "preparation_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-38/REVIEW.md",
+            "preparation_notice_commit": "9cb9ada25a1f62adac4d2637128144aba912dbaf",
+            "preparation_notice_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-38/messages/20261017T065722Z-preparation/MESSAGE.md"
+          },
+          "phase": "PREPARATION_DELIVERED_FIXED_CANDIDATE_REVIEW_READY",
+          "preparation_received": true,
+          "candidate_handoff": {
+            "start_commit": "c534cd3fec1dad30e1ef162fc676fb1c358d6748",
+            "start_path": "handoffs/CP6-DEV-20261012/tasks/BUG-38/messages/20261017T065402Z-start/MESSAGE.md",
+            "delivery_commit": "63c41c66614a62e7213e2b4befd9c8408c8bc3e2",
+            "delivery_path": "handoffs/CP6-DEV-20261012/tasks/BUG-38/messages/20261017T071759Z-delivery/MESSAGE.md"
+          },
+          "review_dependency_satisfied": true,
+          "candidate_review_started": false,
+          "review_completed": false,
+          "ready_to_merge": null,
+          "real_dev": "NOT_RUN",
+          "second_start_or_ack_required": false
         }
       ],
       "ordinary_wave13_integration_hold": true,
       "next_priority_issue": "https://github.com/GTX537/CP6/issues/38",
-      "issue_close_requires_real_dev": true
+      "issue_close_requires_real_dev": true,
+      "priority_review_chats": [
+        "D"
+      ],
+      "candidate_delivery_received_chats": [
+        "A"
+      ],
+      "completed_review_chats": [
+        "B",
+        "C"
+      ],
+      "preparation_received_chats": [
+        "D"
+      ],
+      "prepared_corrections": [
+        {
+          "issue": "https://github.com/GTX537/CP6/issues/253",
+          "proposed_implementation_owner": "original B",
+          "original_candidate": "e2bfcc0b9b34f94163e8b1a63463997b7abb35b5",
+          "reviewer": "original C",
+          "scope": "Raw Expected/Desired timestamp validation before DateTime conversion, real CLI stdin precision regression and original report. No silent truncation or unrelated tenancy changes.",
+          "implementation_gate": "NOT_ADMITTED_P0_HOLD",
+          "resource_gate": "NOT_ASSIGNED"
+        },
+        {
+          "issue": "https://github.com/GTX537/CP6/issues/251",
+          "proposed_implementation_owner": "original C",
+          "original_candidate": "b9f3f30b5bf079074ecfa404db618a20d9ee7a84",
+          "reviewer": "original B",
+          "scope": "Effective ignored build inputs/source binding and targeted ignored .cs/private JSON regression; no fake receipt regeneration.",
+          "implementation_gate": "NOT_ADMITTED_P0_HOLD",
+          "resource_gate": "NOT_ASSIGNED"
+        },
+        {
+          "issue": "https://github.com/GTX537/CP6/issues/252",
+          "proposed_implementation_owner": "original C",
+          "original_candidate": "b9f3f30b5bf079074ecfa404db618a20d9ee7a84",
+          "reviewer": "original B",
+          "scope": "Owned child handle cleanup after initial process identity failure and targeted failure regression; no arbitrary PID termination.",
+          "implementation_gate": "NOT_ADMITTED_P0_HOLD",
+          "resource_gate": "NOT_ASSIGNED"
+        }
+      ],
+      "dev_readonly_observation": {
+        "observed_at_utc": "2026-10-17T10:31:30.4805062Z",
+        "api": "http://127.0.0.1:19991/health/release",
+        "web": "http://127.0.0.1:18080/release.json",
+        "result": "IDENTITY_NOT_VERIFIED",
+        "failure_type": "HttpRequestException",
+        "scope": "Only document-declared local DEV endpoints; no login, password change, deployment, restart or DB action. Does not establish that all DEV locations are unavailable."
+      }
     },
     "wave_history": [
       {

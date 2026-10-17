@@ -1,5 +1,7 @@
 # A：首次改密后重新登录 Implementation Plan
 
+> 当前收件：候选 `09017d7ad14c7647601edac258422365ff81daf9` / Handoff63c41c6已收；本地验证报告待D集中审查。A保持唯一修正Owner，保留干净候选，不自合main；#38真实DEV仍NOT_RUN。
+
 > 使用 executing-plans 连续实施；项目精简规则优先。原对话 A 是 BUG-38 唯一实施者，D负责最终一次集中审查，无需另派审查代理。
 
 **Goal：** 改密后浏览器进入干净未登录态，持旧强制改密 Cookie 的合法重登和2FA挑战可恢复，业务与安全守卫保持有效。

@@ -1,5 +1,25 @@
 # 第十四轮：登录 P0 修复与候选交叉审查
 
+## 2026-10-17 最新收件与接续
+
+四路真实START均已收件。A已交付固定候选 `09017d7ad14c7647601edac258422365ff81daf9`，Handoff `63c41c66614a62e7213e2b4befd9c8408c8bc3e2`。执行者报告相关50项（含HTTP13）通过，补充断言后只重跑受影响HTTP13；不是63项独立测试。PostgreSQL完整本地浏览器链通过、自有服务已停止；这些是待D核对的原交付，不是COORD重跑。候选尚未合并、#38仍Open、真实DEV NOT_RUN。
+
+D准备报告7c999da8/通知9cb9ada2中的“尚无A固定DELIVERY”是早期读取快照，前置现在已满足。D直接接续原REVIEW-BUG-38窗口，对09017d7a进行唯一一次集中SPEC/QUALITY审查；无需第二START或运输ACK，不能把本次收件称为D已开始审查。A保持唯一修正Owner并待D具体意见，COORD不另派重复审查者。
+
+B已完成对C候选的审查（报告0cf1ad3f，交付f4509fcc）：No，2项P2。C已完成对B候选的审查（报告5c9191f0，交付f9821c9c）：No，1项P2。COORD核对了相关候选源码、本机SDK/Windows进程handle及[微软时间解析规则](https://learn.microsoft.com/en-us/dotnet/standard/datetime/system-text-json-support#support-for-parsing)，不是第二次全任务审查，也没有执行新的产品复现。活动BUG只在GitHub记录：
+
+| 原候选 / 拟修正者 | 已登记问题 | 定向修正边界 |
+|---|---|---|
+| B / 原B | [#253](https://github.com/GTX537/CP6/issues/253) 时间原文精度丢失后可能错误CAS | 转换前无损校验Expected/Desired，真实stdin非法精度拒绝且DB不变，保留合法输入 |
+| C / 原C | [#251](https://github.com/GTX537/CP6/issues/251) 忽略的构建输入绕过source绑定 | 实际有效Compile/Content/导入或受控提交源码；定向覆盖忽略.cs/私有JSON |
+| C / 原C | [#252](https://github.com/GTX537/CP6/issues/252) 首次身份探测失败后宿主遗留 | 创建时可靠自有handle清理与等待，保留原失败，不按任意PID终止 |
+
+这些是候选阻断，不声明已合入main或原发布物已污染。B/C现在仅准备具体修正方案；**三个P2产品修正窗口尚未准入**，原候选普通实施/集成的P0暂停继续。后续明确窗口后由原实施者修正、原交叉审查者仅复查影响；不重复原全套验证，不并行编辑C的共享测试文件。原D菜单候选59dd7a9c/#243保持原状态。
+
+COORD另只读请求了文档所列DEV API19991与Web18080的身份端点，两者均HttpRequestException，当前身份未确认（2026-10-17 10:31:30Z）；不据此宣称所有DEV均不可用，也未启动/替换任何环境。D继续分别给本地代码审查结论与真实DEV缺口；Issue38只能在原DEV条件满足后关闭。
+
+下方为原派工快照；当前状态只以唯一台账及本段为准。没有新权限、Actions、正式发布、部署或既有库操作。
+
 用户于 2026-10-17 要求继续推进并将任务分配给原 A/B/C/D 对话。本轮基于已核对远端 main `4d5c115fde40d507e43f3b56e0e02425241dcecd`：权限 P0 #245 已通过 PR248 修正合并并关闭，PR249 已同步状态。新增准入合并后，A 从当时最新已确认 main 开始，不能回到原 aa0a361f 候选继续开发。
 
 | 原对话 | 本轮窗口 | 立即可做 | 依赖与交付 |
