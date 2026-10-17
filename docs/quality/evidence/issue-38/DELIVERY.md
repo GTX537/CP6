@@ -1,5 +1,21 @@
 # BUG-38 — wave14 A DELIVERY
 
+## COORD真实DEV验收 — 2026-10-17
+
+用户先指定本机CP6DB，核对其为SQL Server后，明确选择现有PostgreSQL副本 `cp6db_pg_test_20261004_acc202d6` 作为本次DEV。**#38真实DEV PASS，Issue已关闭**；[Issue证据](https://github.com/GTX537/CP6/issues/38#issuecomment-6235180773)。这是用户选定的既有本机DEV，不是把原A隔离夹具改名，也不是Azure/GHCR推广。
+
+从干净独立工作树的main `84896578b722d7deac50809ff42f5f30f7fd50d1` 实际publish API并build Web，源码包含已审查候选09017d7a；私有api/web-build-manifest记录261/449个文件SHA-256。实际进程API19991/Web18080和两个身份端点均为该完整SHA，发布物在收尾再次核对未变。PostgreSQL18.6/5432，688表、四条已应用history与当前代码一致；Startup=Api、SkipDatabaseInitialization=true、SkipHostedServices=true，无迁移/初始化/原库覆盖。CSRF=true、loopback HTTP/Secure=false、CrmOidc=false，背景投递/外联关闭。
+
+私有证据根 `D:/CP6-local-test/BUG-38/dev-cp6db-pg-20261017/`（ACL仅当前用户/SYSTEM）：构建日志/文件清单、runtime-identity.json、browser-2.log及browser-results-2、post-browser-verification.json、dev-acceptance.json、owned-processes-stopped.json。浏览器实际发布页面/真实API/既有PG，单流程1通过、0失败/跳过，约31.3秒：专用管理员临时密码→首次改密→同会话重登→实际表单创建普通用户；普通用户首次改密→重登；四Cookie清理、旧Cookie重注入下公开语言/管理拒绝、跨租户画像/JWT、TOTP pending替换完整会话均通过。固定原spec只替换自有账号/tenant/端口并转译到私有执行目录，未改产品或共享测试。
+
+首轮browser.log/browser-results保留：新建专用管理员角色只有角色/菜单，缺user:query/add，实际创建用户返回403且页面明确显示权限拒绝。定向核对角色操作表后，仅给该自有角色增加这两项授权；只重置自有管理员并换新测试密码，保留密码历史，再跑同一失败链成功。没有放宽产品授权或修改既有管理员。
+
+收尾原10用户、4租户及原角色/菜单关联的行数/内容指纹保持；688表、四条迁移历史不变。新增4测试账号和2测试租户已停用，自有refresh全部吊销；API/Web按保留的原进程handle停止，端口释放，既有PostgreSQL服务/数据库保留。上述计数是数据保护核对，不代表所有业务数据的全库回归。原50认证/HTTP13结果仍按原来源复用。
+
+最终截图另显示新空租户看到其他租户订单；只读核对其订单0行、其他租户24行，源码发现全局查询及缓存，已独立登记[P0 #257](https://github.com/GTX537/CP6/issues/257)。含业务行截图仅本机保留，不上传。它不撤销#38登录修复结论，但阻止普通开发恢复；完整业务/隔离、HTTPS/OIDC enabled及生产门禁均不提升。无Actions、工作流变化、Tunnel或生产部署。
+
+以下为前次集成及A交付历史，其中DEV NOT_RUN/Open为当时状态，现由本节接续。
+
 ## COORD集成记录 — 2026-10-17
 
 固定候选 `09017d7ad14c7647601edac258422365ff81daf9` 已经 [D的一次集中SPEC/QUALITY审查](https://github.com/GTX537/CP6.AI-Handoff/blob/84b6d2de0f7b30d493cf068db94fafc20fb7594b/handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-38/REVIEW.md)通过：本地Ready to merge = Yes，无阻断；交付 `ddc65ece4b922e8c49e9ddc4878a54b7af27f4de` 已回读。[正常代码PR](https://github.com/GTX537/CP6/pull/255)合入远端main `17ce6f742bf9aa885f7a293e13c30fcba124ca59` 后，COORD核对候选包含性及本任务七个文件与候选的精确一致性。候选基线f85cf46c到合并前主线cb7d3274仅有协调文档变化，产品/依赖未漂移，复用下方有效验证，没有重新运行产品测试。共享台账与四状态在本交付窗口同步。

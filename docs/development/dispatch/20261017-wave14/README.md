@@ -1,5 +1,7 @@
 # 第十四轮：登录 P0 修复与候选交叉审查
 
+> 本轮收尾：#38已通过用户确认的既有PostgreSQL DEV并关闭；A/D交付完成。新发现仪表盘隔离P0 #257，当前派工转至[第十五轮](../20261017-wave15/README.md)。下方为本轮历史状态。
+
 ## 2026-10-17 当前进展：登录修复已集成，等待真实DEV条件
 
 A固定候选 `09017d7ad14c7647601edac258422365ff81daf9` 已通过 [D集中SPEC/QUALITY审查](https://github.com/GTX537/CP6.AI-Handoff/blob/84b6d2de0f7b30d493cf068db94fafc20fb7594b/handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-38/REVIEW.md)，本地Ready to merge = Yes、无阻断；审查交付Handoff `ddc65ece4b922e8c49e9ddc4878a54b7af27f4de` 已回读。[代码PR](https://github.com/GTX537/CP6/pull/255)已正常合并，远端main `17ce6f742bf9aa885f7a293e13c30fcba124ca59` 已核对包含候选且七个范围文件与已验候选一致。D正式审查已完成，不再等待A交付或第二轮完整审查。

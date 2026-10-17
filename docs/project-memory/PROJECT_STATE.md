@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## 2026-10-17：登录P0真实DEV通过并关闭，转入仪表盘隔离P0
+
+[#38](https://github.com/GTX537/CP6/issues/38)已关闭：[单份DELIVERY](../quality/evidence/issue-38/DELIVERY.md)记录用户确认的本机PostgreSQL副本DEV、main84896578实际发布身份和浏览器原步骤通过。首轮专用角色缺user:query/add被拒，修正仅本次角色的两项权限后重跑通过；产品未变，原失败保留。原10用户、4租户及角色/菜单关联指纹、688表和四历史不变；新增测试账号/租户停用、refresh吊销、API/Web停止，既有PG服务保留。认证50项等原证据复用，无全仓重复测试。
+
+真实页面另显示新空租户读取其他租户订单，源码/数据库核对全局查询和缓存，独立登记[P0 #257](https://github.com/GTX537/CP6/issues/257)。[第十五轮](../development/dispatch/20261017-wave15/README.md)登记原A唯一修复、原D准备与一次集中审查；尚无实际START。B/C三个P2修正和原候选普通集成继续暂停，当前原因是#257。375完整任务/125业务目标不提升，仍24/375 DONE、0/125业务完成。
+
+无Actions启动/取消、工作流变更、原库迁移/覆盖、Tunnel或生产部署。测试账号写入仅发生在用户选定PG副本中的本次专用租户；不宣称业务隔离、HTTPS/OIDC enabled或生产验收通过。
+
 ## 2026-10-17：登录P0本地修复已集成，真实DEV待确认
 
 [BUG38代码PR](https://github.com/GTX537/CP6/pull/255)正常合并；远端main `17ce6f742bf9aa885f7a293e13c30fcba124ca59` 已核对包含A固定候选 `09017d7ad14c7647601edac258422365ff81daf9`，范围文件与已验候选一致。[D最终集中审查](https://github.com/GTX537/CP6.AI-Handoff/blob/84b6d2de0f7b30d493cf068db94fafc20fb7594b/handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-38/REVIEW.md)本地Ready to merge = Yes、无阻断，交付ddc65ece已收；本任务单份[DELIVERY](../quality/evidence/issue-38/DELIVERY.md)追加集成记录。
