@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前分配：[第十三轮四个新对话执行包](dispatch/20261017-wave13/README.md)。A当前授权读取、B服务租户资格control、C实际publish启动身份、D菜单刷新恢复；四个限定窗口CONFIRMED，尚无真实START。第十二轮CLOSED，完整任务与业务验收未提升，COORD统一共享状态与串行合并。
+
 > 当前收口：[第十二轮真实服务签发交付](evidence/WP02-02/service-issuance/DELIVERY.md)已正常合并并核对远端，B限定窗口CLOSED；完整WP02-02及业务验收未完成，A/C/D无新窗口。
 
 > 当前集成：第十二轮B / WP02-02真实服务签发候选已完成相关验证及一次集中审查，正在同步状态并正常串行合并；见[报告](evidence/WP02-02/service-issuance/DELIVERY.md)。完整任务/业务验收未提升，A/C/D无新窗口。

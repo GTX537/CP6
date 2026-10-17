@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## 2026-10-17：第十三轮四个新对话窗口已登记
+
+[四任务执行入口](../development/dispatch/20261017-wave13/README.md)：A当前授权读取、B服务租户资格control CLI、C真实publish宿主身份验证、D菜单刷新恢复（关联Issue #243）。用户手动粘贴至四个新对话；限定窗口CONFIRMED，尚未收到实际START，未执行新产品实现。COORD独占共享状态与串行合并，各任务不依赖本轮他人的候选。
+
+第十二轮已交付工作不重复。完整任务24/375 DONE、业务0/125、247 NOT_RUN与41历史引用不变；A/D完整任务PLANNED/NOT_CHECKED，B/C IN_PROGRESS/CONFIRMED，各自完整前置及未验收范围保留。PostgreSQL、相关本地验证及一次任务级集中审查继续生效。无Actions、正式发包、既有库迁移或部署。
+
 ## 2026-10-16：第十二轮真实服务签发局部交付已集成
 
 [241号PR](https://github.com/GTX537/CP6/pull/241)正常合并，远端main `1f52f3bf27cc13a4ad51df3d2b6bcfd0f6810fe1`已核对任务祖先关系及全部范围文件。实际 client_credentials HTTP 签发在普通租户 PostgreSQL 登录的同一物理事务中读取真实 Sys_Tenants 资格、写入 ServiceToken 并完成提交前核验；FOR SHARE 将停用更新与签发序列化。新鲜隔离库显式选择 service-token-v1，最小权限 helper 仅返回自身资格，签发令牌可在同库真实自撤销；注册时签名快照覆盖首次 DI 解析，旧配置与旧 profile 保持原支持范围。
