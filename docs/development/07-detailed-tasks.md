@@ -32,7 +32,7 @@
 | [S02-00 PostgreSQL 多租户存储与事务布局设计](../../docs/superpowers/plans/2026-10-11-s01-task-breakdown.md) | Main | 已交付 | 无任务前置，仍需准入核对 | DESIGN / M | B / S02-00 |
 | [WP02-01 Platform可信请求、消息与后台租户上下文](../../docs/development/task-plans/WP02.md#wp02-01) | Platform | 已交付 | S01-02 | CODE / M | C / WP02-01（沿用原S01-06对话） |
 | [WP02-02 Main PostgreSQL租户存储布局与隔离采用](../../docs/development/task-plans/WP02.md#wp02-02) | Main | 开发中 | S02-00, WP02-01 | CODE / M | B / WP02-02 第十三轮 已登记服务租户的资格目录控制命令 |
-| [WP02-03 Main当前授权与撤权最终门](../../docs/development/task-plans/WP02.md#wp02-03) | Main | 待安排 | WP02-02 | CODE / M | A / WP02-03 第十三轮 现有授权读取的主体绑定、有效角色与缓存限制 |
+| [WP02-03 Main当前授权与撤权最终门](../../docs/development/task-plans/WP02.md#wp02-03) | Main | 待安排 | WP02-02 | CODE / M | COORD / WP02-03 第十三轮 P0 审查修正 |
 | [WP02-04 租户创建、暂停恢复与管理审计](../../docs/development/task-plans/WP02.md#wp02-04) | Main | 待安排 | WP02-03 | CODE / M | 未领取 |
 | [WP02-05 Main身份权威快照及完整目录发布](../../docs/development/task-plans/WP02.md#wp02-05) | Main | 待安排 | S01-09, WP02-03, WP02-04 | CODE / M | 未领取 |
 | [WP02-06 CRM身份投影、撤权fence与会话恢复](../../docs/development/task-plans/WP02.md#wp02-06) | CRM | 待安排 | WP02-05, WP02-07 | CODE / M | 未领取 |
