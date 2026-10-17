@@ -1,9 +1,12 @@
 using System.Text.Json;
+using CP6.Core.Services.Common;
+using CP6.Core.Services.Sys;
 using CP6.Core.Utilities;
 using CP6.WebApi.Controllers.Sys;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using Xunit.Abstractions;
 
 namespace CP6.Tests.DatabaseCompatibility;
@@ -18,7 +21,10 @@ public sealed class DashboardRelationalTests(Wp5ReportsRelationalFixture fixture
         await fixture.RequireEmptyReportTablesAsync();
         await using var connection = fixture.CreateConnection();
         using var services = new ServiceCollection().AddDistributedMemoryCache().BuildServiceProvider();
-        var controller = new DashboardController(connection, new CacheService(services.GetRequiredService<IDistributedCache>()));
+        // This fact tests native empty-query/DTO behavior; real request binding is covered by DashboardTenantIsolationTests.
+        var permissions = new Mock<ICurrentPermissionContext>();
+        permissions.Setup(p => p.GetAsync()).ReturnsAsync(new UserPermissionContext { UserId = Guid.NewGuid() });
+        var controller = new DashboardController(connection, new CacheService(services.GetRequiredService<IDistributedCache>()), new TenantContext(), permissions.Object);
         var response = Assert.IsType<OkObjectResult>(await controller.GetSummary());
         var body = JsonSerializer.SerializeToElement(response.Value);
         var summary = body.GetProperty("Summary").Deserialize<DashboardController.SummaryDto>();

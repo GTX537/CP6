@@ -3,6 +3,8 @@ using System.Globalization;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Core.Persistence;
+using CP6.Core.Services.Common;
+using CP6.Core.Services.Sys;
 using CP6.Core.Services.Mes;
 using CP6.Core.Utilities;
 using CP6.Entity;
@@ -17,11 +19,12 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using Xunit.Abstractions;
 
 namespace CP6.Tests.DatabaseCompatibility;
 
-// These assertions preserve the existing reports' global scope; they do not exercise HTTP authorization.
+// MES retains its existing report scope; dashboard is tenant-scoped. These facts do not exercise HTTP authorization.
 [Collection(Wp5ReportsRelationalCollection.Name)]
 public sealed class ReportParityRelationalTests(Wp5ReportsRelationalFixture fixture, ITestOutputHelper output)
 {
@@ -115,14 +118,14 @@ public sealed class ReportParityRelationalTests(Wp5ReportsRelationalFixture fixt
     }
 
     [Wp5ReportsFact]
-    public async Task Dashboard_preserves_global_kpis_recent_top_eight_soft_deleted_rows_and_cache()
+    public async Task Dashboard_preserves_tenant_kpis_recent_top_eight_soft_deleted_rows_and_cache()
     {
         output.WriteLine(fixture.SetupSummary);
         await using var owned = new OwnedReportRows(fixture);
         await owned.InitializeAsync();
         var today = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Unspecified);
         var month = new DateTime(today.Year, today.Month, 1);
-        var orders = Enumerable.Range(0, 8).Select(i => owned.Order(i % 2 == 0 ? owned.A : owned.B,
+        var orders = Enumerable.Range(0, 8).Select(i => owned.Order(owned.A,
             today.AddHours(i + 1), i + 0.125m, deleted: i == 7)).ToList();
         orders.Add(owned.Order(owned.B, today.AddDays(1), 80.25m));
         orders.Add(owned.Order(owned.A, month, 90.5m));
@@ -144,22 +147,24 @@ public sealed class ReportParityRelationalTests(Wp5ReportsRelationalFixture fixt
         await using var connection = fixture.CreateConnection();
         using var services = new ServiceCollection().AddDistributedMemoryCache().BuildServiceProvider();
         var cache = new CacheService(services.GetRequiredService<IDistributedCache>());
-        var controller = new DashboardController(connection, cache);
+        var permissions = new Mock<ICurrentPermissionContext>();
+        permissions.Setup(p => p.GetAsync()).ReturnsAsync(new UserPermissionContext { UserId = Guid.NewGuid() });
+        var controller = new DashboardController(connection, cache, new TenantContext { CurrentTenantId = owned.A }, permissions.Object);
         var first = await DashboardAsync(controller);
-        var todayCount = 9 + (month == today ? 1 : 0);
-        Assert.Equal(new DashboardController.SummaryDto(todayCount, 10, 4, 2, 2, 2, 3, 3), first.Summary);
-        AssertRecentOrders(orders, first.RecentOrders);
-        Assert.Equal(new DashboardController.StatusCountDto[] { new(1, 1), new(4, 2), new(5, 1), new(6, 1), new(9, 1) }, first.WorkOrderStatus);
+        var todayCount = 8 + (month == today ? 1 : 0);
+        Assert.Equal(new DashboardController.SummaryDto(todayCount, 9, 2, 1, 1, 1, 2, 1), first.Summary);
+        AssertRecentOrders(orders.Where(o => o.TenantId == owned.A), first.RecentOrders);
+        Assert.Equal(new DashboardController.StatusCountDto[] { new(1, 1), new(4, 1), new(9, 1) }, first.WorkOrderStatus);
 
-        var added = owned.Order(owned.B, today.AddDays(2), 123.45678901m);
+        var added = owned.Order(owned.A, today.AddDays(2), 123.45678901m);
         await owned.SaveAsync(added);
         var cached = await DashboardAsync(controller);
         Assert.Equal(JsonSerializer.Serialize(first), JsonSerializer.Serialize(cached));
-        await cache.RemoveAsync(CacheService.DashboardKey);
+        await cache.RemoveAsync(CacheService.DashboardKey(owned.A));
         var refreshed = await DashboardAsync(controller);
-        Assert.Equal(first.Summary with { TodayOrders = todayCount + 1, MonthOrders = 11 }, refreshed.Summary);
+        Assert.Equal(first.Summary with { TodayOrders = todayCount + 1, MonthOrders = 10 }, refreshed.Summary);
         orders.Add(added);
-        AssertRecentOrders(orders, refreshed.RecentOrders);
+        AssertRecentOrders(orders.Where(o => o.TenantId == owned.A), refreshed.RecentOrders);
         Assert.Equal(first.WorkOrderStatus, refreshed.WorkOrderStatus);
         Assert.Equal(today, DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Unspecified));
     }

@@ -21,7 +21,8 @@ public class CacheService
     // 缓存 Key 前缀常量（方便管理和批量清除）
     public const string LangKeyPrefix = "lang:";    // lang:zh-CN, lang:en
     public const string DictKeyPrefix = "dict:";     // dict:gender, dict:article_type
-    public const string DashboardKey = "dashboard:summary";
+    // Versioned tenant scope; never reuse the former global dashboard:summary entry.
+    public static string DashboardKey(Guid tenantId) => $"dashboard:summary:tenant:v1:{tenantId:D}";
 
     public CacheService(IDistributedCache cache)
     {

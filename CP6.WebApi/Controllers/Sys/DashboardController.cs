@@ -1,4 +1,6 @@
 using System.Data;
+using CP6.Core.Services.Common;
+using CP6.Core.Services.Sys;
 using CP6.Core.Utilities;
 using Dapper;
 using Microsoft.AspNetCore.Authorization;
@@ -23,11 +25,15 @@ public class DashboardController : ControllerBase
 {
     private readonly IDbConnection _db;
     private readonly CacheService _cache;
+    private readonly ITenantContext _tenant;
+    private readonly ICurrentPermissionContext _permissions;
 
-    public DashboardController(IDbConnection db, CacheService cache)
+    public DashboardController(IDbConnection db, CacheService cache, ITenantContext tenant, ICurrentPermissionContext permissions)
     {
         _db = db;
         _cache = cache;
+        _tenant = tenant;
+        _permissions = permissions;
     }
 
     private bool IsPostgreSql => _db switch
@@ -43,8 +49,15 @@ public class DashboardController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetSummary()
     {
+        // A nonempty TenantContext alone is not trusted: missing claims fall back to DefaultTenant.
+        // Validate the authenticated GUID/tenant and enabled persisted user even on a warm cache hit.
+        var tenantId = _tenant.CurrentTenantId;
+        try { await _permissions.GetAsync(); }
+        catch (CurrentPermissionUnavailableException) { return Forbid(); }
+        if (tenantId == Guid.Empty || tenantId != _tenant.CurrentTenantId) return Forbid();
+
         var postgres = IsPostgreSql;
-        var result = await _cache.GetOrSetAsync(CacheService.DashboardKey, async () =>
+        var result = await _cache.GetOrSetAsync(CacheService.DashboardKey(tenantId), async () =>
         {
             var today = DateTime.Today;
             var monthStart = new DateTime(today.Year, today.Month, 1);
@@ -52,31 +65,32 @@ public class DashboardController : ControllerBase
             // ───── 核心 KPI（一次往返聚合）─────
             const string kpiSql = @"
                 SELECT
-                    (SELECT COUNT(*) FROM T_Order        WHERE CreateDate >= @Today)                              AS TodayOrders,
-                    (SELECT COUNT(*) FROM T_Order        WHERE CreateDate >= @MonthStart)                         AS MonthOrders,
-                    (SELECT COUNT(*) FROM T_WorkOrder    WHERE Status BETWEEN 1 AND 5)                            AS ActiveWorkOrders,
-                    (SELECT COUNT(*) FROM T_WorkOrder    WHERE Status IN (4,6) AND ActualEndDate >= @MonthStart)  AS MonthCompleted,
-                    (SELECT COUNT(*) FROM T_OutboundOrder WHERE Status BETWEEN 1 AND 3)                           AS PendingOutbound,
-                    (SELECT COUNT(*) FROM T_Stock        WHERE AvailableQty <= 0)                                 AS StockWarnings,
-                    (SELECT COUNT(*) FROM T_ProductMaster WHERE Status = 0)
-                        + (SELECT COUNT(*) FROM T_StockTake WHERE Status = 3)                                     AS PendingApprovals,
-                    (SELECT COUNT(*) FROM T_ProductMaster)                                                        AS TotalProducts";
+                    (SELECT COUNT(*) FROM T_Order        WHERE TenantId = @TenantId AND CreateDate >= @Today)     AS TodayOrders,
+                    (SELECT COUNT(*) FROM T_Order        WHERE TenantId = @TenantId AND CreateDate >= @MonthStart) AS MonthOrders,
+                    (SELECT COUNT(*) FROM T_WorkOrder    WHERE TenantId = @TenantId AND Status BETWEEN 1 AND 5)   AS ActiveWorkOrders,
+                    (SELECT COUNT(*) FROM T_WorkOrder    WHERE TenantId = @TenantId AND Status IN (4,6) AND ActualEndDate >= @MonthStart) AS MonthCompleted,
+                    (SELECT COUNT(*) FROM T_OutboundOrder WHERE TenantId = @TenantId AND Status BETWEEN 1 AND 3)  AS PendingOutbound,
+                    (SELECT COUNT(*) FROM T_Stock        WHERE TenantId = @TenantId AND AvailableQty <= 0)        AS StockWarnings,
+                    (SELECT COUNT(*) FROM T_ProductMaster WHERE TenantId = @TenantId AND Status = 0)
+                        + (SELECT COUNT(*) FROM T_StockTake WHERE TenantId = @TenantId AND Status = 3)             AS PendingApprovals,
+                    (SELECT COUNT(*) FROM T_ProductMaster WHERE TenantId = @TenantId)                             AS TotalProducts";
 
-            // Preserve the existing global scope, application wall-clock boundaries and int DTO contract.
+            // Preserve application wall-clock boundaries, soft-delete semantics and the int DTO contract.
             const string postgresKpiSql = """
                 SELECT
-                    (SELECT COUNT(*)::integer FROM public."T_Order" WHERE "CreateDate">=@Today) AS "TodayOrders",
-                    (SELECT COUNT(*)::integer FROM public."T_Order" WHERE "CreateDate">=@MonthStart) AS "MonthOrders",
-                    (SELECT COUNT(*)::integer FROM public."T_WorkOrder" WHERE "Status" BETWEEN 1 AND 5) AS "ActiveWorkOrders",
-                    (SELECT COUNT(*)::integer FROM public."T_WorkOrder" WHERE "Status" IN (4,6) AND "ActualEndDate">=@MonthStart) AS "MonthCompleted",
-                    (SELECT COUNT(*)::integer FROM public."T_OutboundOrder" WHERE "Status" BETWEEN 1 AND 3) AS "PendingOutbound",
-                    (SELECT COUNT(*)::integer FROM public."T_Stock" WHERE "AvailableQty"<=0) AS "StockWarnings",
-                    (SELECT COUNT(*)::integer FROM public."T_ProductMaster" WHERE "Status"=0)
-                        +(SELECT COUNT(*)::integer FROM public."T_StockTake" WHERE "Status"=3) AS "PendingApprovals",
-                    (SELECT COUNT(*)::integer FROM public."T_ProductMaster") AS "TotalProducts"
+                    (SELECT COUNT(*)::integer FROM public."T_Order" WHERE "TenantId"=@TenantId AND "CreateDate">=@Today) AS "TodayOrders",
+                    (SELECT COUNT(*)::integer FROM public."T_Order" WHERE "TenantId"=@TenantId AND "CreateDate">=@MonthStart) AS "MonthOrders",
+                    (SELECT COUNT(*)::integer FROM public."T_WorkOrder" WHERE "TenantId"=@TenantId AND "Status" BETWEEN 1 AND 5) AS "ActiveWorkOrders",
+                    (SELECT COUNT(*)::integer FROM public."T_WorkOrder" WHERE "TenantId"=@TenantId AND "Status" IN (4,6) AND "ActualEndDate">=@MonthStart) AS "MonthCompleted",
+                    (SELECT COUNT(*)::integer FROM public."T_OutboundOrder" WHERE "TenantId"=@TenantId AND "Status" BETWEEN 1 AND 3) AS "PendingOutbound",
+                    (SELECT COUNT(*)::integer FROM public."T_Stock" WHERE "TenantId"=@TenantId AND "AvailableQty"<=0) AS "StockWarnings",
+                    (SELECT COUNT(*)::integer FROM public."T_ProductMaster" WHERE "TenantId"=@TenantId AND "Status"=0)
+                        +(SELECT COUNT(*)::integer FROM public."T_StockTake" WHERE "TenantId"=@TenantId AND "Status"=3) AS "PendingApprovals",
+                    (SELECT COUNT(*)::integer FROM public."T_ProductMaster" WHERE "TenantId"=@TenantId) AS "TotalProducts"
                 """;
             var summary = await _db.QueryFirstAsync<SummaryDto>(postgres ? postgresKpiSql : kpiSql, new
             {
+                TenantId = tenantId,
                 Today = postgres ? DateTime.SpecifyKind(today, DateTimeKind.Unspecified) : today,
                 MonthStart = postgres ? DateTime.SpecifyKind(monthStart, DateTimeKind.Unspecified) : monthStart
             });
@@ -86,28 +100,32 @@ public class DashboardController : ControllerBase
                 SELECT TOP 8
                     WebOrderNo, CustomerCd, Quantity, OrderDate, ShipStatus
                 FROM T_Order
+                WHERE TenantId = @TenantId
                 ORDER BY CreateDate DESC";
             const string postgresRecentOrdersSql = """
                 SELECT "WebOrderNo", "CustomerCd", "Quantity", "OrderDate", "ShipStatus"
                 FROM public."T_Order"
+                WHERE "TenantId" = @TenantId
                 ORDER BY "CreateDate" DESC
                 LIMIT 8
                 """;
-            var recentOrders = (await _db.QueryAsync<RecentOrderDto>(postgres ? postgresRecentOrdersSql : recentOrdersSql)).ToList();
+            var recentOrders = (await _db.QueryAsync<RecentOrderDto>(postgres ? postgresRecentOrdersSql : recentOrdersSql, new { TenantId = tenantId })).ToList();
 
             // ───── 製造指図ステータス分布 ─────
             const string woStatusSql = @"
                 SELECT Status, COUNT(*) AS Count
                 FROM T_WorkOrder
+                WHERE TenantId = @TenantId
                 GROUP BY Status
                 ORDER BY Status";
             const string postgresWoStatusSql = """
                 SELECT "Status", COUNT(*)::integer AS "Count"
                 FROM public."T_WorkOrder"
+                WHERE "TenantId" = @TenantId
                 GROUP BY "Status"
                 ORDER BY "Status"
                 """;
-            var workOrderStatus = (await _db.QueryAsync<StatusCountDto>(postgres ? postgresWoStatusSql : woStatusSql)).ToList();
+            var workOrderStatus = (await _db.QueryAsync<StatusCountDto>(postgres ? postgresWoStatusSql : woStatusSql, new { TenantId = tenantId })).ToList();
 
             return new DashboardData(summary, recentOrders, workOrderStatus);
         }, TimeSpan.FromMinutes(1));
