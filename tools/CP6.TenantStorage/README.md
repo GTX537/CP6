@@ -75,7 +75,7 @@ This limited profile supports the bounded issuance-record/revocation chain, not 
 
 `CP6.TenantStorage install-service-token-v1 --stdin` explicitly installs **service-token-v1** / **service-token-tenant-rls-v1** in a fresh isolated database. Use the revocation input shape above **without `IssuerLogin`**; unknown fields (including that old field) are rejected. There is no separate cross-tenant issuance writer. The private-input, control-identity, physical-target, empty-layout and same-request recovery rules still apply. The installation uses `cp6_service_token_v1.installation`, without changing either older profile or stamping full EF migration history. This profile cannot overlay or upgrade an older installation.
 
-The baseline selects the original five tables: the four revocation tables plus the real shared `public.Sys_Tenants`, including its complete frozen columns, types, capacity constraints, primary key and unique tenant-code index. The installer does not seed tenant data or enable tenants from storage mappings. A separate controlled directory operation must supply the actual tenant rows; this command does not implement tenant creation or maintenance.
+The baseline selects the original five tables: the four revocation tables plus the real shared `public.Sys_Tenants`, including its complete frozen columns, types, capacity constraints, primary key and unique tenant-code index. The installer does not seed tenant data or enable tenants from storage mappings. The versioned directory control command below can supply eligibility rows for already registered service tenants; the installer does not implement tenant creation or maintenance.
 
 Tenant logins retain ordinary role eligibility and no membership, ownership, role settings or DDL/TEMP rights. They gain tenant-constrained ServiceToken INSERT in addition to the original revocation grants. They receive no direct Sys_Tenants SELECT, UPDATE or directory enumeration. A fixed, no-argument SECURITY DEFINER helper uses authenticated `session_user` through the protected mapping, returns only that tenant's Enable/ExpireDate, and holds `FOR SHARE` on its row through the enclosing commit. The function is owned by the installation control owner, has an explicit search path and fully qualified object references; runtime gets only EXECUTE. The table remains shared and is not globally tenant-filtered. Original `ExpireDate` uses server-local wall time stored as `timestamp without time zone`; null means no deadline and equality is expired. The application reads its clock after obtaining the row lock and again before commit, rather than using a transaction-start timestamp.
 
@@ -86,3 +86,52 @@ Enable only `CrmIdentity:ServiceTokenTenancy`, using the same explicit fields li
 The dedicated host freezes the signing inputs and the service-client/organization/tenant/region registration. Actual Basic credentials create a short-lived Service actor with an issuance-specific purpose. Issuance additionally requires the frozen client Enabled, cp6.services scope and CrmEnabled organization; self-revocation retains its separate permission and continues for disabled clients. The ordinary tenant connection performs real directory lookup, ServiceToken recording and final configuration/source/tenant/token-expiry checks in one physical PostgreSQL transaction. Successful signing and confirmed commit precede the token response. Concurrent tenant-disable UPDATE is serialized by the row lock. Configuration changes continue to require stopping ingress and draining every instance before controlled update/restart; this is not a live revocation protocol.
 
 The original issuance API has no idempotency key. A lost response after commit leaves a persisted token record; retry is a new issuance with a new jti, not recovery of the original token. Self-revocation keeps its existing persisted-result behavior. This five-table profile supports only the bounded service endpoints, not full Main startup, browser/user login, bootstrap/dispatch, or production acceptance. See [the issuance delivery report](../../docs/development/evidence/WP02-02/service-issuance/DELIVERY.md).
+
+## Registered service tenant directory control v1
+
+`CP6.TenantStorage service-token-tenant-directory-control-v1 --stdin` operates on exactly one already registered tenant in an existing `service-token-v1` installation. It accepts one JSON document (at most 16,384 characters), only on redirected private stdin. Do not put secrets in arguments, shell history, environment-wide configuration, source control or logs. Unknown/duplicate properties are rejected. The installation object must be the original approved installation request, including the complete original tenant/login mapping; there is no caller-supplied seal or fingerprint.
+
+Example `inspect` input (substitute the approved physical identity, original mappings and private control credentials):
+
+```json
+{
+  "Request": {
+    "Installation": {
+      "InstallationId": "11111111-1111-4111-8111-111111111111",
+      "Server": "192.0.2.10",
+      "Port": 5432,
+      "Database": "explicit_issuance_database",
+      "DatabaseOid": 12345,
+      "SystemIdentifier": "trusted-numeric-cluster-identity",
+      "Tenants": [{ "TenantId": "22222222-2222-4222-8222-222222222222", "Login": "precreated_tenant_login" }]
+    },
+    "TenantId": "22222222-2222-4222-8222-222222222222",
+    "Operation": "inspect"
+  },
+  "AdminUsername": "separate_database_owner",
+  "AdminPassword": "private-control-secret",
+  "SslMode": "VerifyFull"
+}
+```
+
+Keep `Installation`, `TenantId` and credentials unchanged when choosing an operation:
+
+| Operation | Additional Request fields | Result |
+| --- | --- | --- |
+| `inspect` | None | `CURRENT` with this tenant's Id/code/name/eligibility, or `MISSING`. No enumeration or inferred enablement. |
+| `initialize` | `TenantCode`, `TenantName`, `Desired: { "Enable": true, "ExpireDate": null }` | `INITIALIZED`, `ALREADY_EXISTS` with the unchanged current row, or `CODE_CONFLICT`. Never overwrites an existing row, even when the requested values differ. |
+| `set-eligibility` | `Expected: { "Enable": true, "ExpireDate": null }`, `Desired: { "Enable": false, "ExpireDate": null }` | `UPDATED`, `CAS_CONFLICT` with the observed current row, or `MISSING`. Only Enable/ExpireDate and original Modifier/ModifyDate metadata change. |
+
+Both `Enable` and `ExpireDate` must be explicitly present in every eligibility object; null is an explicit unlimited deadline, not an omitted CAS condition. CAS compares both old fields using PostgreSQL `IS NOT DISTINCT FROM`. Timestamp strings are finite **local wall times without an offset**, for example `"2030-10-17T12:34:56.123456"`. UTC `Z`, offsets, .NET infinity sentinels and sub-microsecond input are rejected rather than converted or rounded. Existing helper semantics remain unchanged: equality is expired, null is unlimited; TimeZoneId is not consulted and expiry does not automatically set Enable=false.
+
+Code and name must be nonblank, valid Unicode without NUL, within the frozen 50/200 UTF-16-unit capacities. The command does not trim or change case. The original `bpchar` / `cp6_ci_as_provider_v1` unique index decides equality, including case and trailing-space equivalence. Initialization uses the registered TenantId as Id, explicit desired eligibility, TwoFactorMode=0, nullable optional fields, database-local CreateDate and authenticated control login as Creator. It does not create an admin, role, credential or mapping. Control metadata records the database login, not a natural-person business audit identity.
+
+Every operation uses one unpooled physical control connection and transaction. The authenticated login must be the independent installation owner, a superuser and database owner, with session_user=current_user. Numeric endpoint, database/OID/cluster identity, protected installation ownership, original canonical inputs, compiled baseline hash, unchanged profile/seal and exact role OID/name/tenant mapping are checked before DML and again before commit. No runtime/default business connection is used. The old installer and its recovery contract are unchanged.
+
+Shared installation/directory advisory locks and table SHARE locks pin protected rows while remaining compatible with runtime readers. A database-local transaction advisory lock per tenant serializes missing-row initialization; the original PK/code unique constraints also arbitrate external INSERT races. `FOR UPDATE` on the exact Sys_Tenants row naturally waits for the issuance helper's `FOR SHARE` and holds the row through commit. Other tenant readers can continue. Lock timeout is 15 seconds, statement timeout 60 seconds and CLI timeout three minutes. Use the existing quiet administration policy for configuration/DDL changes; these locks do not fence arbitrary concurrent superuser changes to roles or schemas.
+
+Success/conflict JSON on stdout has `Contract`, `Outcome`, `Current`; failure JSON on stderr has `Contract`, `Outcome`, sanitized `Code`. Exit 0 means a completed observation (`CURRENT`/`MISSING`) or acknowledged write (`INITIALIZED`/`UPDATED`), 3 means an observed conflict (`ALREADY_EXISTS`/`CODE_CONFLICT`/`CAS_CONFLICT`), 1 means rejected input or acknowledged precommit rollback (`NOT_APPLIED`), 4 means `UNKNOWN`. Usage errors remain exit 2. `MISSING` during set-eligibility is an observation with no write; callers must check Outcome rather than only exit code.
+
+**No request idempotency or original-result recovery is provided.** Commit errors, unacknowledged rollback, or output loss after execution are classified conservatively as `UNKNOWN`; a killed process or lost output may prevent any classification from reaching the caller and must also be treated as unknown. Do not automatically retry an uncertain write. Inspect reports current state only, cannot prove whether a particular request committed, and cannot recover its original result. CAS can still succeed after ABA (old state → different state → old state); repeat initialize returns the current row, not a saved result. A durable request/result slot requires a separate versioned design. The installer's same-input recovery instructions above do not apply to this control command.
+
+This is limited eligibility-directory DML, not full tenant lifecycle, TenantAdminService, business audit, online configuration/credential updates, schema migration or full Main acceptance. See the [control delivery report](../../docs/development/evidence/WP02-02/tenant-eligibility-control/DELIVERY.md).
