@@ -79,3 +79,9 @@ CLI辅助脚本首次使用Start-Process -Wait等待了整个postgres进程树�
 Full17PGT、全Main、普通用户/部门登录与snapshot、真实租户创建/维护生命周期、bootstrap/dispatcher、ERP/ordinary outbox、其他上下文/跨仓宿主、真实业务数据验收、既有数据迁移、环境切换、生产候选、DEV/UAT/PROD均 **NOT_RUN**。这是五表fresh-only service endpoints profile，不能据此开启整个Main。
 
 本执行者未触发/重跑Actions、未取消他人运行、未改workflow/分支保护/依赖，未发包、推送、建PR或部署。完成任务分支完整diff自查与 `git diff --check`，未发现范围外文件、凭据、机器配置或调试输出。旧seal常量、实体、EF模型/快照及历史迁移无改动；55436无监听。COORD已完成一次集中SPEC/QUALITY审查，发现的两项P2已按上述审查修正节处理；协调负责修正差异复查、公共状态同步和最终远端集成，结果由实际发生后登记。
+
+## COORD 集中审查与接收
+
+完成一次完整SPEC/QUALITY集中审查，发现PUBLIC系统目录有效权限漏检及全串schema替换误改合法数据库/login两项P2。均已修复：新profile按PG原生初始权限拒绝额外PUBLIC授权，规范化seal支持权限还原后同请求恢复；固定schema插值保留合法外部标识符。原审查者仅复查127abecb..1722b061四文件修正及相关原始证据，最终Ready to merge: Yes，无剩余阻断项。COORD核对允许路径、完整diff检查、失败/成功证据及旧profile兼容；旧seal、实体/EF模型/历史迁移和依赖配置未变。
+
+固定候选 `1722b061cc2afae44429e6d3db2e684b31963f1f` 已核对允许范围、原始验证及剩余边界。共享状态单独同步，不因提交/合并重复产品验证；实际远端结果在合并后登记。
