@@ -24,8 +24,8 @@ namespace CP6.Tests.PlanPub;
 /// 一个**已登录但无该操作权**的用户经生产 <see cref="RequirePermissionAttribute"/> 请求高危端点 → 断言 403。
 ///
 /// 关于「无认证 401」口径取舍（照 M-PUR T3 裁定）：本仓 [Authorize] 认证层（401）在 HTTP 传输层，
-/// 进程内 <c>RequirePermission</c> 过滤器不经它；且 <c>CurrentPermissionContext.GetAsync</c> 对无 Identity.Name
-/// 会 throw "未登录"（非返回 401）。故遵循 brief 明列的可行口径「**无权限身份 → 403**」——与既有三先例
+/// 进程内 <c>RequirePermission</c> 过滤器不经它；且 <c>CurrentPermissionContext.GetAsync</c> 对无有效认证主体
+/// 会抛出不可用异常，由 PermissionService 转为拒绝（非返回 401）。故遵循 brief 明列的可行口径「**无权限身份 → 403**」——与既有三先例
 /// 逐字一致（授一无关键放行 + 目标键 403）。
 ///
 /// 高危 3 键（真相源 §三：plan-mrp:run / plan-mrp:convert / pub-codegen:save）以**测试内独立字面量**声明；
@@ -59,6 +59,7 @@ public class PlanPubHighRiskDenialTests
     private static ServiceProvider BuildProvider()
     {
         var db = NewDb();
+        db.Sys_Roles.Add(new Sys_Role { RoleId = 1, RoleName = "reader" });
         db.Sys_Users.Add(new Sys_User { Id = Guid.NewGuid(), UserName = "u", Password = "x", RoleId = 1 });
         // 良性键锚定菜单（pub-seq 有 MenuKey 才能 join 出 ActionKeys；MenuId 112 = 采番规则）
         db.Sys_Menus.Add(new Sys_Menu { MenuId = 112, MenuName = "采番规则", MenuKey = BenignMenu });
@@ -78,7 +79,7 @@ public class PlanPubHighRiskDenialTests
         var http = new DefaultHttpContext
         {
             RequestServices = provider,
-            User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, "u") }, "test"))
+            User = CurrentPermissionContextTests.Principal(db.Sys_Users.Single().Id, db.CurrentTenantId)
         };
         provider.GetRequiredService<IHttpContextAccessor>().HttpContext = http;
         return provider;
