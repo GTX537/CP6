@@ -1,5 +1,13 @@
 # AI 可读变更日志
 
+## 2026-10-17：BUG257固定候选已收，D集中审查待接续
+
+A候选 `22928c9ae9ad93172c61e3df5e0353cdaace4af6` 已推送，Handoff `9de55c7441830061fc73541c20c562575f4086a5` 已远端回读；[单份DELIVERY](https://github.com/GTX537/CP6/blob/22928c9ae9ad93172c61e3df5e0353cdaace4af6/docs/quality/evidence/issue-257/DELIVERY.md)范围严格为登记六文件。COORD读取原始green-subject.trx核对真实PG/HTTP **6通过、0失败、0跳过**，包括四条HTTP隔离/缓存边界与两个原生关系测试；只复用原结果，未重跑产品测试。原失败及夹具修正保留，不将RED中空用户GUID冒充合法主体正向证据。A独立PG/API/Web端口已释放，既有PG服务运行，未操作DEV数据。
+
+A真实START6cdbf743、D真实STARTac370a04均登记。[D单份REVIEW](https://github.com/GTX537/CP6.AI-Handoff/blob/fd1ee29f2f584154f7013ee15adebc71e1744f6f/handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-257/REVIEW.md)及Handoff `88bf3beb6a175a83a79d80ea0ff59f2f43a79a8a` 当前仅只读准备，尚未给候选Ready to merge。A固定交付已满足原审查前置，D直接在原REVIEW接续一次集中SPEC/QUALITY，不需第二START/ACK。总控收件核对不代替该正式审查。
+
+[#257](https://github.com/GTX537/CP6/issues/257)保持Open，修复代码尚未合并，真实DEV为NOT_RUN；D通过后由COORD正常集成并在已确认PG副本验证空租户/交替缓存。#38保持Closed。B/C三个P2与旧候选普通实施/集成继续暂停；完整任务24/375 DONE、业务0/125不提升。无Actions启动/取消、工作流修改、数据库迁移或生产部署。
+
 ## 2026-10-17：登录P0真实DEV通过并关闭，转入仪表盘隔离P0
 
 [#38](https://github.com/GTX537/CP6/issues/38)已关闭：[单份DELIVERY](../quality/evidence/issue-38/DELIVERY.md)记录用户确认的本机PostgreSQL副本DEV、main84896578实际发布身份和浏览器原步骤通过。首轮专用角色缺user:query/add被拒，修正仅本次角色的两项权限后重跑通过；产品未变，原失败保留。原10用户、4租户及角色/菜单关联指纹、688表和四历史不变；新增测试账号/租户停用、refresh吊销、API/Web停止，既有PG服务保留。认证50项等原证据复用，无全仓重复测试。
