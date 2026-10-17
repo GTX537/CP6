@@ -1,5 +1,19 @@
 # BUG-257 — wave15 A 实施交付
 
+## COORD集中审查、集成与真实DEV收尾 — 2026-10-17
+
+固定候选 `22928c9ae9ad93172c61e3df5e0353cdaace4af6` 经 [D唯一集中SPEC/QUALITY审查](https://github.com/GTX537/CP6.AI-Handoff/blob/68f574242b847daeb1c898a33b97c78c3c071c4c/handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-257/REVIEW.md) 通过，本地Ready to merge=Yes，无阻断；最终Handoff `86a91bec81aebd3a1e004df84209020aa68132d4` 已回读。[代码PR260](https://github.com/GTX537/CP6/pull/260)正常合并，远端main `47b690631350f845c16a60f6fc79214cf0ef0b7d` 包含候选且六个范围文件精确一致。候选基线之后只有协调文档变化，产品/依赖未漂移；原6执行/6通过/0失败/0跳过PG/HTTP结果复用，未因合并SHA重跑。D明确的RED空GUID、直构权限mock、测试pending JWT范围继续保留。
+
+**[#257真实DEV PASS并关闭](https://github.com/GTX537/CP6/issues/257#issuecomment-6236220376)。** 用户已确认的本机PostgreSQL18.6副本 `cp6db_pg_test_20261004_acc202d6`（127.0.0.1:5432）用于本次验收。干净工作树从上述合并main实际publish API/build Web，261/449个发布文件SHA-256已记录；API19991/Web18080实际进程及两个身份端点均匹配完整SHA。Startup=Api，SkipDatabaseInitialization/SkipHostedServices=true，CSRF=true，loopback HTTP Cookie Secure=false，OIDC和外联/后台服务关闭；无迁移、初始化、原库覆盖或现有服务替换。
+
+一次真实浏览器场景约24.2秒通过：3个专用非平台账号经实际页面登录，httpOnly Cookie的tenant与账号一致；专用A/B各1/2条测试订单，C为空。页面及11次Cookie接口读取均符合各tenant，C全部KPI为0且订单/工单列表为空。预热后仅在A新增一条自有订单，C/B/A/B/C/A交替读仍各自保持旧缓存；query/header不能选其他tenant。停用A后原暖缓存Cookie立即403，B/C继续200，匿名401。该观测补足完整Program、Cookie与实际发布页面，未重复#38改密/2FA全链。其他WMS卡片无权限提示保持拒绝，不当作该业务块已验收。
+
+私有证据根 `D:/CP6-local-test/BUG-257/dev-cp6db-pg-20261017/`，ACL仅当前用户/SYSTEM：build日志及api/web-build-manifest、runtime-identity、browser.log/browser-result与3张页面截图、original-before/final指纹、schema-before/final、cleanup和dev-acceptance。脚本fixture.py/browser.cjs记录可复现的自有数据与验证步骤；run/db配置含凭据，不上传。截图不作为公共资料复制。
+
+收尾4条自有测试订单精确移除，3账号/3租户停用、自有refresh吊销；API/Web按原process handle停止、端口释放，原PG服务保留。原认证五表和业务六表的非自有行计数/指纹、688表与四条迁移历史不变；发布文件哈希未变。仅校验这些相关表，不宣称全库/全业务、Redis、SQL Server、HTTPS/OIDC enabled或生产验收。
+
+无Actions启动/取消、工作流变化、Tunnel或生产部署。本次P0暂停解除；后续任务仍按独立准入窗口与Issue优先级调度，完整375任务/125业务验收不提升。以下为A原始交付，其中待审查/DEV NOT_RUN/Open为当时状态。
+
 2026-10-17；原 A 唯一实施 Owner；[Issue #257](https://github.com/GTX537/CP6/issues/257) 保持 Open。本报告所在提交为候选，固定完整 SHA 由本任务 Handoff DELIVERY 指向；尚待原 D 集中审查、COORD 集成与真实 DEV 验收。
 
 ## 基线与范围

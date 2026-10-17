@@ -1,5 +1,7 @@
 # 第十五轮：仪表盘租户隔离P0
 
+> 本轮已关闭：D最终审查通过、PR260集成与真实PG DEV隔离验收完成，#257 Closed，P0暂停解除。[下一轮P1 #132](../20261017-wave16/README.md)已登记原A/D；下方为历史收件和准入。
+
 ## 2026-10-17：BUG257固定候选已收，D集中审查待接续
 
 A候选 `22928c9ae9ad93172c61e3df5e0353cdaace4af6` 已推送，Handoff `9de55c7441830061fc73541c20c562575f4086a5` 已远端回读；[单份DELIVERY](https://github.com/GTX537/CP6/blob/22928c9ae9ad93172c61e3df5e0353cdaace4af6/docs/quality/evidence/issue-257/DELIVERY.md)范围严格为登记六文件。COORD读取原始green-subject.trx核对真实PG/HTTP **6通过、0失败、0跳过**，包括四条HTTP隔离/缓存边界与两个原生关系测试；只复用原结果，未重跑产品测试。原失败及夹具修正保留，不将RED中空用户GUID冒充合法主体正向证据。A独立PG/API/Web端口已释放，既有PG服务运行，未操作DEV数据。
