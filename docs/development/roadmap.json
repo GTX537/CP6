@@ -158802,6 +158802,11 @@
       "date": "2026-10-17",
       "change": "Inventory follow-up received all four fixed wave13 DELIVERY messages before publication. Candidates are reported, not reviewed or integrated. A security review is next priority; B/C/D ordinary integration and new work stay on P0 hold.",
       "evidence": "docs/development/planning/20261017-project-inventory.md"
+    },
+    {
+      "date": "2026-10-17",
+      "change": "User accepted public core foundations first, with real CRM consumption and explicit phase exits. Preserve original tasks, dependencies, acceptance and P0 holds; no blanket new implementation admission or completion dates.",
+      "evidence": "docs/development/planning/20261017-foundation-priority.md"
     }
   ],
   "implementation_assessment": {
@@ -178782,7 +178787,36 @@
           "D"
         ]
       }
-    ]
+    ],
+    "development_priority": {
+      "id": "FOUNDATION_CORE_FIRST_20261017",
+      "accepted_at": "2026-10-17T05:28:48.952050+00:00",
+      "authorization": "User explicitly accepted core foundations first, followed by a verifiable business flow.",
+      "path": "docs/development/planning/20261017-foundation-priority.md",
+      "stages": [
+        "P0_CLOSURE",
+        "CORE_TENANCY_IDENTITY",
+        "REAL_OWNER_TRANSACTIONS",
+        "CRM_INQUIRY_ACCEPTANCE",
+        "BUSINESS_EXPANSION"
+      ],
+      "core_task_ids": [
+        "WP02-02",
+        "WP02-03",
+        "WP02-04",
+        "WP02-05",
+        "WP02-06",
+        "WP02-09",
+        "WP02-10",
+        "WP02-28",
+        "WP02-29"
+      ],
+      "first_business_target": "CRM-INQ-01",
+      "whole_wp02_completion_required_before_business": false,
+      "full_task_and_acceptance_gates_unchanged": true,
+      "new_implementation_windows_authorized_by_this_plan": false,
+      "calendar_estimates_pending": true
+    }
   },
   "acceptance_basis": {
     "manifest": {

@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-17：公共核心基础优先已获批准
+
+用户批准[公共核心基础优先](../development/planning/20261017-foundation-priority.md)，已同步调度政策和阶段出口。任务、直接依赖、完整验收与PostgreSQL/精简验证规则保持；本次文档仅做差异、链接、台账一致性检查，没有产品测试、Actions、发包、旧库迁移或部署。
+
 ## 2026-10-17：全项目盘点与 P0 优先安排
 
 [全项目盘点](../development/planning/20261017-project-inventory.md)核对 14 工作包、125 目标、375 任务；用户选择先打通一条可验收业务主线。24 DONE、2 IN_PROGRESS、349 PLANNED 不变，局部交付与完整业务验收分别记录。已读取四个 wave13 新对话的真实 START，随后收到四份固定候选 DELIVERY，均尚未总控审查或集成。

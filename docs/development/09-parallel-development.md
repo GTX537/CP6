@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 优先顺序已批准：[公共核心基础收口计划](planning/20261017-foundation-priority.md)。四队列职责是后续方向，不自动重派；当前先P0，原候选和窗口状态仍以台账为准。
+
 > 最新协调：[全项目盘点与 P0 优先安排](planning/20261017-project-inventory.md)。wave13 四份真实 START 及四份候选 DELIVERY 已接收、尚未审查集成；A 优先处理 P0 #245，B/C/D 普通窗口暂停指令待执行者回执。以下“尚无 START”等为历史快照，完整任务与业务验收状态仍以台账为准。
 
 > 当前分配：[第十三轮四个新对话执行包](dispatch/20261017-wave13/README.md)。A当前授权读取、B服务租户资格control、C实际publish启动身份、D菜单刷新恢复；四个限定窗口CONFIRMED，尚无真实START。第十二轮CLOSED，完整任务与业务验收未提升，COORD统一共享状态与串行合并。
