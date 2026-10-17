@@ -158832,6 +158832,11 @@
       "date": "2026-10-17",
       "change": "Received all four actual wave14 STARTs, A BUG38 candidate09017d7a and B/C completed blocking reviews; D preparation received and fixed A candidate is now available for original single review. Registered three candidate P2 defects in GitHub Issues; corrective implementation remains unadmitted under P0 hold.",
       "evidence": "docs/development/dispatch/20261017-wave14/README.md"
+    },
+    {
+      "date": "2026-10-17",
+      "change": "Accepted D final combined review84b6d2de/notificationddc65ece for BUG38 candidate09017d7a, merged through https://github.com/GTX537/CP6/pull/255 and verified remote main 17ce6f742bf9aa885f7a293e13c30fcba124ca59. Local code integrated, DEV NOT_RUN and Issue38 Open; ordinary integration and three P2 correction windows stay on hold. No full task/business state uplift.",
+      "evidence": "docs/quality/evidence/issue-38/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -178873,7 +178878,7 @@
       "path": "docs/development/dispatch/20261017-wave14/README.md",
       "baseline_sha": "4d5c115fde40d507e43f3b56e0e02425241dcecd",
       "registered_at": "2026-10-17T06:41:13.405991+00:00",
-      "phase": "P0_CANDIDATE_READY_FOR_D_REVIEW",
+      "phase": "P0_LOCAL_CODE_INTEGRATED_DEV_PENDING",
       "coordinator_shared_state_only": true,
       "assigned_chats": [
         "A",
@@ -178892,7 +178897,7 @@
       ],
       "active_implementation_chats": [],
       "workers_started": true,
-      "workers_delivered": false,
+      "workers_delivered": true,
       "windows_closed": false,
       "windows": [
         {
@@ -178947,15 +178952,32 @@
             "delivery_commit": "63c41c66614a62e7213e2b4befd9c8408c8bc3e2",
             "delivery_path": "handoffs/CP6-DEV-20261012/tasks/BUG-38/messages/20261017T071759Z-delivery/MESSAGE.md"
           },
-          "phase": "CANDIDATE_REPORTED_PENDING_D_REVIEW",
+          "phase": "LOCAL_CODE_INTEGRATED_DEV_PENDING",
           "worker_delivery_received": true,
           "candidate_sha": "09017d7ad14c7647601edac258422365ff81daf9",
-          "candidate_review_completed": false,
-          "candidate_integrated": false,
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
           "resources_stopped_reported": true,
           "local_validation_reported": "50 related tests includes 13 HTTP; final affected 13 re-run passed with unchanged 37 reused; full-app PostgreSQL browser passed. Not 63 independent tests.",
           "business_acceptance": "NOT_RUN",
-          "real_dev": "NOT_RUN"
+          "real_dev": "NOT_RUN",
+          "local_code_ready_to_merge": true,
+          "integration": {
+            "source_sha": "09017d7ad14c7647601edac258422365ff81daf9",
+            "main_sha": "17ce6f742bf9aa885f7a293e13c30fcba124ca59",
+            "pr": "https://github.com/GTX537/CP6/pull/255",
+            "remote_verified_at": "2026-10-17T12:31:18.179014+00:00",
+            "scope": "Local code only. Exact scoped blob equality and candidate ancestry verified after normal PR merge; original effective validation reused. DEV and Issue closure are separate."
+          },
+          "final_review": {
+            "reviewer": "original D",
+            "review_commit": "84b6d2de0f7b30d493cf068db94fafc20fb7594b",
+            "review_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-38/REVIEW.md",
+            "delivery_commit": "ddc65ece4b922e8c49e9ddc4878a54b7af27f4de",
+            "ready_to_merge": true,
+            "blocking_findings": 0,
+            "real_dev": "NOT_RUN"
+          }
         },
         {
           "id": "REVIEW-W13-C",
@@ -179065,16 +179087,20 @@
           "deployment_authorized": false,
           "formal_publication_authorized": false,
           "existing_database_migration_authorized": false,
-          "coordinator_received_at": "2026-10-17T10:33:19.076711+00:00",
+          "coordinator_received_at": "2026-10-17T12:31:51.442144+00:00",
           "handoff_evidence": {
             "start_commit": "873ca01e5f8f53f67f4a13f4ed02febe530641d3",
             "start_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-38/messages/20261017T065402Z-start/MESSAGE.md",
             "preparation_commit": "7c999da8b30f923788e29dde4970f51833ee4623",
             "preparation_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-38/REVIEW.md",
             "preparation_notice_commit": "9cb9ada25a1f62adac4d2637128144aba912dbaf",
-            "preparation_notice_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-38/messages/20261017T065722Z-preparation/MESSAGE.md"
+            "preparation_notice_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-38/messages/20261017T065722Z-preparation/MESSAGE.md",
+            "review_commit": "84b6d2de0f7b30d493cf068db94fafc20fb7594b",
+            "review_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-38/REVIEW.md",
+            "delivery_commit": "ddc65ece4b922e8c49e9ddc4878a54b7af27f4de",
+            "delivery_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-38/messages/20261017T110405Z-review/MESSAGE.md"
           },
-          "phase": "PREPARATION_DELIVERED_FIXED_CANDIDATE_REVIEW_READY",
+          "phase": "COMBINED_REVIEW_COMPLETED_READY",
           "preparation_received": true,
           "candidate_handoff": {
             "start_commit": "c534cd3fec1dad30e1ef162fc676fb1c358d6748",
@@ -179083,25 +179109,25 @@
             "delivery_path": "handoffs/CP6-DEV-20261012/tasks/BUG-38/messages/20261017T071759Z-delivery/MESSAGE.md"
           },
           "review_dependency_satisfied": true,
-          "candidate_review_started": false,
-          "review_completed": false,
-          "ready_to_merge": null,
+          "candidate_review_started": true,
+          "review_completed": true,
+          "ready_to_merge": true,
           "real_dev": "NOT_RUN",
-          "second_start_or_ack_required": false
+          "second_start_or_ack_required": false,
+          "worker_delivery_received": true
         }
       ],
       "ordinary_wave13_integration_hold": true,
       "next_priority_issue": "https://github.com/GTX537/CP6/issues/38",
       "issue_close_requires_real_dev": true,
-      "priority_review_chats": [
-        "D"
-      ],
+      "priority_review_chats": [],
       "candidate_delivery_received_chats": [
         "A"
       ],
       "completed_review_chats": [
         "B",
-        "C"
+        "C",
+        "D"
       ],
       "preparation_received_chats": [
         "D"
@@ -179142,6 +179168,21 @@
         "result": "IDENTITY_NOT_VERIFIED",
         "failure_type": "HttpRequestException",
         "scope": "Only document-declared local DEV endpoints; no login, password change, deployment, restart or DB action. Does not establish that all DEV locations are unavailable."
+      },
+      "dev_acceptance": {
+        "phase": "TARGET_CONFIRMATION_REQUIRED",
+        "real_dev": "NOT_RUN",
+        "code_pr": "https://github.com/GTX537/CP6/pull/255",
+        "code_main_sha": "17ce6f742bf9aa885f7a293e13c30fcba124ca59",
+        "required_inputs": [
+          "Confirmed actual DEV target and accessible entry",
+          "API and Web current full source identity containing the fix",
+          "Authorized test tenant/accounts and user creation/password change scope",
+          "Applicable CSRF/Cookie/CrmOidc configuration and original-step browser smoke evidence"
+        ],
+        "deployment_authorized": false,
+        "existing_database_migration_authorized": false,
+        "note": "Do not relabel LOCAL_ISOLATED or demo as DEV; any existing environment change requires its own concrete scope and authorization."
       }
     },
     "wave_history": [

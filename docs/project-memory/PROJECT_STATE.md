@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## 2026-10-17：登录P0本地修复已集成，真实DEV待确认
+
+[BUG38代码PR](https://github.com/GTX537/CP6/pull/255)正常合并；远端main `17ce6f742bf9aa885f7a293e13c30fcba124ca59` 已核对包含A固定候选 `09017d7ad14c7647601edac258422365ff81daf9`，范围文件与已验候选一致。[D最终集中审查](https://github.com/GTX537/CP6.AI-Handoff/blob/84b6d2de0f7b30d493cf068db94fafc20fb7594b/handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-38/REVIEW.md)本地Ready to merge = Yes、无阻断，交付ddc65ece已收；本任务单份[DELIVERY](../quality/evidence/issue-38/DELIVERY.md)追加集成记录。
+
+复用已审查的相关认证50项（含HTTP13）、补断言后受影响HTTP13及完整应用PostgreSQL浏览器证据；主线只有协调文档漂移，未变代码/依赖不重复验证。COORD仅执行集成包含性/范围一致性及文档台账检查，不将复用称为新运行。原失败和HTTP/浏览器/PG证据边界保留。
+
+下一步为[#38](https://github.com/GTX537/CP6/issues/38)真实DEV验收：确认目标/入口、包含修复的API/Web身份和测试账号/租户及创建改密范围。DEV NOT_RUN，Issue保持Open；B/C的3项P2修正及原候选普通实施/集成继续P0暂停。完整任务24/375、业务0/125不变，无Actions、工作流变更、部署、Tunnel或既有数据库操作。
+
 ## 2026-10-17：A登录候选已交付，交叉审查阻断已登记
 
 [第十四轮最新收件](../development/dispatch/20261017-wave14/README.md)已同步四路真实START与固定消息。A候选09017d7a待D一次集中审查；D的“仍无DELIVERY”是早期快照，现可按原窗口接续，无第二START/ACK。A报告50项相关认证成功（含HTTP13），后续仅受影响13项复跑；本地PostgreSQL完整浏览器成功、资源已停止。COORD没有重跑这些结果，也没有合并A或关闭#38。
