@@ -1,0 +1,75 @@
+{
+  "version": "CP6-WAVE15-DISPATCH/1",
+  "issued_at": "2026-10-17T14:41:57.805099+00:00",
+  "main_baseline_sha": "84896578b722d7deac50809ff42f5f30f7fd50d1",
+  "scope": "immutable admission snapshot; actual status only roadmap.json",
+  "windows": [
+    {
+      "id": "BUG-257",
+      "chat": "A",
+      "mode": "IMPLEMENTATION",
+      "title": "仪表盘可信租户过滤与缓存隔离",
+      "issue": "https://github.com/GTX537/CP6/issues/257",
+      "branch": "codex/bug-257-dashboard-tenant-20261017",
+      "worktree": "D:/CP6-worktrees/bug-257-dashboard-tenant-20261017",
+      "write_paths": [
+        "CP6.WebApi/Controllers/Sys/DashboardController.cs",
+        "CP6.Core/Utilities/CacheService.cs",
+        "CP6.Tests/DatabaseCompatibility/DashboardRelationalTests.cs",
+        "CP6.Tests/DatabaseCompatibility/ReportParityRelationalTests.cs",
+        "CP6.Tests/Sys/DashboardTenantIsolationTests.cs",
+        "docs/quality/evidence/issue-257/DELIVERY.md"
+      ],
+      "reserved_write_resources": [
+        "Main:dashboard-tenant-query-cache",
+        "file:Main:CP6.Core/Utilities/CacheService.cs"
+      ],
+      "ports": {
+        "postgresql": 55449,
+        "api": 18257,
+        "web": 15257
+      },
+      "handoff_branch": "codex/dev-handoff-bug257-implementation-20261017",
+      "handoff_worktree": "D:/CP6.AI-Handoff-worktrees/wave15-a-bug257-20261017",
+      "packet": "A-BUG-257.md",
+      "delivery_report": "docs/quality/evidence/issue-257/DELIVERY.md",
+      "gate": "CONFIRMED",
+      "worker_start_received": false,
+      "worker_delivery_received": false,
+      "owner": "original user chat A; sole product implementation owner",
+      "prerequisite": "Start from latest confirmed remote main after this dispatch is merged; Issue38 code and user-confirmed PG DEV closed. No new authorization to modify existing DEV database.",
+      "registered_at": "2026-10-17T14:41:57.805099+00:00",
+      "baseline_sha": "84896578b722d7deac50809ff42f5f30f7fd50d1",
+      "actions_authorized": false,
+      "deployment_authorized": false,
+      "formal_publication_authorized": false,
+      "existing_database_migration_authorized": false
+    },
+    {
+      "id": "REVIEW-BUG-257",
+      "chat": "D",
+      "mode": "READ_ONLY_PREPARATION_THEN_COMBINED_REVIEW",
+      "title": "仪表盘租户隔离准备与一次集中审查",
+      "target_window": "BUG-257",
+      "write_paths": [],
+      "reserved_write_resources": [],
+      "ports": {},
+      "handoff_branch": "codex/dev-handoff-bug257-review-20261017",
+      "handoff_worktree": "D:/CP6.AI-Handoff-worktrees/wave15-d-bug257-review-20261017",
+      "packet": "D-REVIEW-BUG-257.md",
+      "report": "handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-257/REVIEW.md",
+      "gate": "PREPARATION_CONFIRMED_REVIEW_AFTER_A_DELIVERY",
+      "worker_start_received": false,
+      "worker_delivery_received": false,
+      "owner": "original user chat D; no product edits",
+      "review_completed": false,
+      "ready_to_merge": null,
+      "registered_at": "2026-10-17T14:41:57.805099+00:00",
+      "baseline_sha": "84896578b722d7deac50809ff42f5f30f7fd50d1",
+      "actions_authorized": false,
+      "deployment_authorized": false,
+      "formal_publication_authorized": false,
+      "existing_database_migration_authorized": false
+    }
+  ]
+}
