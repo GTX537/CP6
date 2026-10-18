@@ -91,10 +91,11 @@ public class CurrentPermissionContext : ICurrentPermissionContext
     {
         try
         {
+            var cancellationToken = _http.HttpContext?.RequestAborted ?? CancellationToken.None;
             if (userId == Guid.Empty || !await _db.Sys_Users.AsNoTracking()
-                .AnyAsync(u => u.Id == userId && u.Enable))
+                .AnyAsync(u => u.Id == userId && u.Enable, cancellationToken))
                 throw new CurrentPermissionUnavailableException();
-            return await _aggregator.BuildAsync(userId);
+            return await _aggregator.BuildAsync(userId, cancellationToken);
         }
         catch (CurrentPermissionUnavailableException) { throw; }
         catch (OperationCanceledException) when (_http.HttpContext?.RequestAborted.IsCancellationRequested == true) { throw; }

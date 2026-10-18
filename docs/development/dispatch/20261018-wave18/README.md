@@ -1,5 +1,7 @@
 # 第十八轮：公共基础单对话持续实施计划
 
+> W18-01 当前进展：真实并发复现确认 P0 [#275](https://github.com/GTX537/CP6/issues/275)，已以 PostgreSQL 单语句快照修复。最终9项原生PG、46项权限、2项CRM投影通过且无跳过；取消与尾空格问题的失败记录保留。[单份交付/作者自审](../../evidence/WP02-03/consistent-permission-read/DELIVERY.md)可供正常集成，尚未合并/关闭Issue。W18-02/03/04未开工，持续目标仍active。
+
 > 执行方式：按 executing-plans 在当前总控对话串行实施；用户明确要求不再分派新对话或子代理。任务状态以 `docs/development/roadmap.json` 为唯一来源，本文固定范围、顺序和验收条件。
 
 **目标：** 在未来24小时优先完成当前授权读取、租户管理强审计、身份快照与消息一致性三个公共基础切片，并完成相关PostgreSQL/HTTP验收及逐任务正常合并。
@@ -44,7 +46,8 @@
 
 - `CP6.Core/Services/Sys/CurrentPermissionContext.cs`
 - `CP6.Core/Services/Sys/PermissionAggregator.cs`
-- 必要的单一读取事务辅助文件 `CP6.Core/Services/Sys/PermissionReadTransaction.cs`
+- `CP6.Core/Services/Sys/IPermissionAggregator.cs`（保留原入口，增加显式取消重载）
+- PostgreSQL单语句读取辅助文件 `CP6.Core/Services/Sys/PostgreSqlPermissionReader.cs`
 - `CP6.Tests/CurrentPermissionContextTests.cs`
 - `CP6.Tests/PermissionAggregatorTests.cs`
 - `CP6.Tests/CurrentPermissionConsumptionPostgreSqlTests.cs`
@@ -107,3 +110,9 @@ $env:CP6_PERMISSION_PG_ROOT='D:/CP6-local-test/wave18/permission-consumption-'+[
 ## 当前登记
 
 计划与W18-01范围已由当前总控按用户授权登记。W18-01在本规划正常合并后开始实现；W18-02/03/04保持顺序待开工，由同一总控核对最新前置后直接接续，不要求离开的用户重复批准。每次实质范围变化更新本计划和台账。当前尚无本轮产品修改、测试成功或业务验收声明。
+
+## W18-01实施选择（2026-10-18）
+
+真实PG已复现并登记P0 [#275](https://github.com/GTX537/CP6/issues/275)，在同一窗口优先修复；分支改为 `codex/bug-275-permission-snapshot`，最新main基线仍d60ccef1。使用一条参数化SELECT读取完整授权事实，SQL标识符来自EF元数据，所有租户表显式绑定当前可信TenantId；数组分别聚合，避免多集合笛卡尔膨胀。JSON仅在数据库与内部读取器之间承载原始字段，不扩成外部合同。普通READ COMMITTED读取每次使用一个新语句快照；既有调用者事务由调用者控制，不新建、提交、回滚或重试其事务。既有REPEATABLE READ/SERIALIZABLE仍受调用者原快照时点约束，不将其旧快照宣称为提交时当前授权，完整Owner最终门留待对应任务。
+
+请求取消验证需要把RequestAborted传到实际授权SQL，增加聚合器取消重载并保留原单参数入口；这是本窗口取消/资源边界的必要实现，不改HTTP、数据库模型或正式包合同。已核对仓内唯一实现为PermissionAggregator，无其他实现者或该接口的mock。

@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Data;
+using System.Data.Common;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.AccessControl;
@@ -20,9 +22,11 @@ using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Sys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Tests;
 
@@ -160,7 +164,7 @@ public sealed class CurrentPermissionPostgresFixture : IAsyncLifetime
         await File.WriteAllTextAsync(Path.Combine(_root, "stopped.txt"), "Owned instance stopped; database and failure logs retained.");
     }
 
-    internal CP6Context Context(Guid tenant, string databaseName)
+    internal CP6Context Context(Guid tenant, string databaseName, params IInterceptor[] interceptors)
     {
         var connection = new NpgsqlConnectionStringBuilder
         {
@@ -169,6 +173,7 @@ public sealed class CurrentPermissionPostgresFixture : IAsyncLifetime
         };
         var options = DatabaseContextOptions.Configure(new DbContextOptionsBuilder<CP6Context>(),
             new DatabaseOptions(DatabaseProvider.PostgreSql), connection.ConnectionString);
+        options.AddInterceptors(interceptors);
         return new CP6Context(options.Options, new TenantContext { CurrentTenantId = tenant });
     }
 
@@ -214,6 +219,246 @@ public sealed class CurrentPermissionPostgresFixture : IAsyncLifetime
 [Collection("CurrentPermissionPostgres")]
 public sealed class CurrentPermissionConsumptionPostgreSqlTests(CurrentPermissionPostgresFixture fixture)
 {
+    [CurrentPermissionPostgresFact]
+    public async Task Concurrent_role_revocation_cannot_create_a_permission_that_never_existed()
+    {
+        var tenant = Guid.NewGuid();
+        var databaseName = await fixture.CreateTables(tenant);
+        await using var seed = fixture.Context(tenant, databaseName);
+        var uid = await CurrentPermissionContextTests.Seed(seed);
+        var actionTable = seed.Model.FindEntityType(typeof(Sys_RoleAction))!.GetTableName()!;
+        var sql = seed.GetService<ISqlGenerationHelper>();
+        var interleave = new BeforeActionRead(sql.DelimitIdentifier(actionTable), async cancellationToken =>
+        {
+            await using var writer = fixture.Context(tenant, databaseName);
+            (await writer.Sys_Roles.SingleAsync(r => r.RoleId == 1, cancellationToken)).Enable = false;
+            writer.Sys_RoleActions.Add(new Sys_RoleAction
+            {
+                Id = Guid.NewGuid(), RoleId = 1, MenuId = 10, ActionCode = "export"
+            });
+            // Both changes commit together: export has never belonged to an enabled role.
+            await writer.SaveChangesAsync(cancellationToken);
+        });
+        await using var reader = fixture.Context(tenant, databaseName, interleave);
+        var current = CurrentPermissionContextTests.Context(reader,
+            CurrentPermissionContextTests.Principal(uid, tenant));
+
+        var snapshot = await current.GetAsync();
+
+        Assert.True(interleave.Executed);
+        Assert.DoesNotContain("order:export", snapshot.ActionKeys);
+        // Either committed view is valid: the old read-only role or the new disabled role.
+        Assert.All(snapshot.ActionKeys, action => Assert.Equal("order:read", action));
+        // The next read must open a fresh view rather than retain the prior transaction.
+        Assert.Empty((await current.GetAsync()).ActionKeys);
+        Assert.Null(reader.Database.CurrentTransaction);
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task Action_scope_and_field_visibility_follow_the_same_committed_view()
+    {
+        var tenant = Guid.NewGuid();
+        var databaseName = await fixture.CreateTables(tenant);
+        await using var seed = fixture.Context(tenant, databaseName);
+        var uid = await CurrentPermissionContextTests.Seed(seed);
+        seed.Sys_RoleDataScopes.Add(new Sys_RoleDataScope { RoleId = 1, ResourceKey = "order", ScopeType = 5 });
+        seed.Sys_RoleFieldPerms.Add(new Sys_RoleFieldPerm { RoleId = 1, ResourceKey = "order", FieldName = "Cost", Access = 3 });
+        await seed.SaveChangesAsync();
+        var fieldTable = seed.Model.FindEntityType(typeof(Sys_RoleFieldPerm))!.GetTableName()!;
+        var interleave = new BeforeActionRead(seed.GetService<ISqlGenerationHelper>().DelimitIdentifier(fieldTable), async ct =>
+        {
+            await using var writer = fixture.Context(tenant, databaseName);
+            (await writer.Sys_RoleActions.SingleAsync(ct)).ActionCode = "export";
+            (await writer.Sys_RoleDataScopes.SingleAsync(ct)).ScopeType = 1;
+            (await writer.Sys_RoleFieldPerms.SingleAsync(ct)).Access = 1;
+            await writer.SaveChangesAsync(ct);
+        });
+        await using var reader = fixture.Context(tenant, databaseName, interleave);
+        var snapshot = await new PermissionAggregator(reader).BuildEnabledRolesAsync(uid);
+        Assert.True(interleave.Executed);
+        if (snapshot.ActionKeys.Contains("order:read"))
+        {
+            Assert.Equal(5, snapshot.DataScopes["order"]);
+            Assert.Equal(3, snapshot.FieldPerms["order"]["Cost"]);
+        }
+        else
+        {
+            Assert.Equal(new[] { "order:export" }, snapshot.ActionKeys);
+            Assert.Equal(1, snapshot.DataScopes["order"]);
+            Assert.Equal(1, snapshot.FieldPerms["order"]["Cost"]);
+        }
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task Caller_transaction_is_not_committed_and_read_committed_refreshes_each_call()
+    {
+        var tenant = Guid.NewGuid();
+        var databaseName = await fixture.CreateTables(tenant);
+        await using var db = fixture.Context(tenant, databaseName);
+        var uid = await CurrentPermissionContextTests.Seed(db);
+        await using var transaction = await db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
+        (await db.Sys_Users.SingleAsync()).NickName = "uncommitted caller value";
+        await db.SaveChangesAsync();
+        var current = CurrentPermissionContextTests.Context(db, CurrentPermissionContextTests.Principal(uid, tenant));
+        Assert.Contains("order:read", (await current.PrewarmAsync(uid)).ActionKeys);
+        await using (var other = fixture.Context(tenant, databaseName))
+        {
+            Assert.Null((await other.Sys_Users.AsNoTracking().SingleAsync()).NickName);
+            (await other.Sys_Roles.SingleAsync()).Enable = false;
+            await other.SaveChangesAsync();
+        }
+        Assert.Empty((await current.GetAsync()).ActionKeys);
+        Assert.Same(transaction, db.Database.CurrentTransaction);
+        await transaction.RollbackAsync();
+        await using var observer = fixture.Context(tenant, databaseName);
+        Assert.Null((await observer.Sys_Users.AsNoTracking().SingleAsync()).NickName);
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task Caller_repeatable_read_keeps_its_snapshot_without_mixing_later_permissions()
+    {
+        var tenant = Guid.NewGuid();
+        var databaseName = await fixture.CreateTables(tenant);
+        await using var db = fixture.Context(tenant, databaseName);
+        var uid = await CurrentPermissionContextTests.Seed(db);
+        var current = CurrentPermissionContextTests.Context(db, CurrentPermissionContextTests.Principal(uid, tenant));
+        await using (var transaction = await db.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead))
+        {
+            Assert.Contains("order:read", (await current.GetAsync()).ActionKeys);
+            await using var writer = fixture.Context(tenant, databaseName);
+            (await writer.Sys_Roles.SingleAsync()).Enable = false;
+            writer.Sys_RoleActions.Add(new Sys_RoleAction { RoleId = 1, MenuId = 10, ActionCode = "export" });
+            await writer.SaveChangesAsync();
+            // This is the caller's old coherent snapshot, explicitly not commit-time authority.
+            Assert.Equal(new[] { "order:read" }, (await current.GetAsync()).ActionKeys);
+            Assert.Same(transaction, db.Database.CurrentTransaction);
+            await transaction.RollbackAsync();
+        }
+        Assert.Empty((await current.GetAsync()).ActionKeys);
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task Stored_text_and_original_aggregation_are_preserved_without_cross_tenant_fields()
+    {
+        var tenant = Guid.NewGuid();
+        var databaseName = await fixture.CreateTables(tenant);
+        await using var db = fixture.Context(tenant, databaseName);
+        var uid = await CurrentPermissionContextTests.Seed(db);
+        var department = Guid.NewGuid();
+        const string resource = "资源'\"  ", field = "Cost  ";
+        var user = await db.Sys_Users.SingleAsync();
+        user.UserName = "用户'\"  "; user.DeptId = department;
+        db.Sys_Depts.Add(new Sys_Dept { Id = department, DeptCode = "A", DeptName = "A", Path = "/部门/  " });
+        (await db.Sys_Menus.SingleAsync()).MenuKey = "menu  ";
+        (await db.Sys_RoleActions.SingleAsync()).ActionCode = "read  ";
+        db.Sys_Roles.Add(new Sys_Role { RoleId = 2, RoleName = "additional" });
+        db.Sys_UserRoles.AddRange(new Sys_UserRole { UserId = uid, RoleId = 1 }, new Sys_UserRole { UserId = uid, RoleId = 2 });
+        db.Sys_RoleDataScopes.AddRange(
+            new Sys_RoleDataScope { RoleId = 1, ResourceKey = resource, ScopeType = 4, CustomDeptIds = $"{department},invalid" },
+            new Sys_RoleDataScope { RoleId = 2, ResourceKey = resource, ScopeType = 2 });
+        db.Sys_RoleFieldPerms.AddRange(
+            new Sys_RoleFieldPerm { RoleId = 1, ResourceKey = resource, FieldName = field, Access = 3 },
+            new Sys_RoleFieldPerm { RoleId = 2, ResourceKey = resource, FieldName = field, Access = 2 });
+        await db.SaveChangesAsync();
+        await using (var foreign = fixture.Context(Guid.NewGuid(), databaseName))
+        {
+            foreign.Sys_Roles.Add(new Sys_Role { RoleId = 1, RoleName = "foreign" });
+            foreign.Sys_RoleDataScopes.Add(new Sys_RoleDataScope { RoleId = 1, ResourceKey = resource, ScopeType = 5 });
+            foreign.Sys_RoleFieldPerms.Add(new Sys_RoleFieldPerm { RoleId = 1, ResourceKey = resource, FieldName = field, Access = 1 });
+            await foreign.SaveChangesAsync();
+        }
+        var actual = await new PermissionAggregator(db).BuildAsync(uid);
+        Assert.Equal(await db.Sys_Users.AsNoTracking().Select(x => x.UserName).SingleAsync(), actual.UserName);
+        Assert.Equal(await db.Sys_Depts.AsNoTracking().Select(x => x.Path).SingleAsync(), actual.DeptPath);
+        Assert.Contains((await db.Sys_Menus.Select(x => x.MenuKey).SingleAsync())!, actual.MenuKeys);
+        var originalAction = await (from a in db.Sys_RoleActions
+            join m in db.Sys_Menus on a.MenuId equals m.MenuId
+            select m.MenuKey + ":" + a.ActionCode).SingleAsync();
+        Assert.Equal(new[] { originalAction }, actual.ActionKeys);
+        Assert.Equal(new[] { 1, 2 }, actual.RoleIds);
+        Assert.Equal(4, actual.DataScopes[resource]);
+        Assert.Equal(new[] { department }, actual.CustomDeptIds[resource]);
+        Assert.Equal(2, actual.FieldPerms[resource][field]);
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task Request_cancellation_interrupts_a_native_lock_wait_and_releases_the_reader()
+    {
+        var tenant = Guid.NewGuid();
+        var databaseName = await fixture.CreateTables(tenant);
+        await using var seed = fixture.Context(tenant, databaseName);
+        var uid = await CurrentPermissionContextTests.Seed(seed);
+        var table = seed.Model.FindEntityType(typeof(Sys_RoleAction))!.GetTableName()!;
+        var quoted = seed.GetService<ISqlGenerationHelper>().DelimitIdentifier(table);
+        var started = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
+        await using var locker = await fixture.OpenOwnerAsync(databaseName);
+        await using var locked = await locker.BeginTransactionAsync();
+        await CurrentPermissionPostgresFixture.Sql(locker, "LOCK TABLE public." + quoted + " IN ACCESS EXCLUSIVE MODE");
+        await using var reader = fixture.Context(tenant, databaseName, new CaptureCommand(quoted, started));
+        using var cancelled = new CancellationTokenSource();
+        var http = new DefaultHttpContext { User = CurrentPermissionContextTests.Principal(uid, tenant), RequestAborted = cancelled.Token };
+        var current = new CurrentPermissionContext(new HttpContextAccessor { HttpContext = http },
+            CurrentPermissionContextTests.Cache(), reader, new PermissionAggregator(reader));
+        var reading = current.GetAsync();
+        var released = false;
+        try
+        {
+            var pid = await started.Task.WaitAsync(TimeSpan.FromSeconds(10));
+            var waiting = false;
+            for (var attempt = 0; attempt < 100 && !waiting; attempt++)
+            {
+                await using var probe = new NpgsqlCommand("SELECT wait_event_type='Lock' FROM pg_catalog.pg_stat_activity WHERE pid=@pid", locker);
+                probe.Parameters.AddWithValue("pid", pid);
+                waiting = await probe.ExecuteScalarAsync() is true;
+                if (!waiting) await Task.Delay(20);
+            }
+            Assert.True(waiting, "The actual PostgreSQL permission query must be waiting on the owned relation lock.");
+            await cancelled.CancelAsync();
+            var finished = await Task.WhenAny(reading, Task.Delay(TimeSpan.FromSeconds(3))) == reading;
+            await locked.RollbackAsync();
+            released = true;
+            if (!finished) await reading; // Always release and drain the native query before the assertion.
+            Assert.True(finished, "Request cancellation must interrupt the blocked permission read.");
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await reading);
+            Assert.Null(reader.Database.CurrentTransaction);
+            Assert.Equal(ConnectionState.Closed, reader.Database.GetDbConnection().State);
+            http.RequestAborted = CancellationToken.None;
+            Assert.Contains("order:read", (await current.GetAsync()).ActionKeys);
+        }
+        finally
+        {
+            if (!released) await locked.RollbackAsync();
+            try { await reading; } catch (OperationCanceledException) { }
+        }
+    }
+
+    private sealed class CaptureCommand(string quotedTable, TaskCompletionSource<int> started) : DbCommandInterceptor
+    {
+        public override ValueTask<InterceptionResult<DbDataReader>> ReaderExecutingAsync(DbCommand command,
+            CommandEventData eventData, InterceptionResult<DbDataReader> result, CancellationToken cancellationToken = default)
+        {
+            if (command.CommandText.Contains(quotedTable, StringComparison.Ordinal))
+                started.TrySetResult(((NpgsqlConnection)command.Connection!).ProcessID);
+            return ValueTask.FromResult(result);
+        }
+    }
+
+    private sealed class BeforeActionRead(string quotedTable, Func<CancellationToken, Task> change) : DbCommandInterceptor
+    {
+        private int _executed;
+        internal bool Executed => _executed != 0;
+
+        public override async ValueTask<InterceptionResult<DbDataReader>> ReaderExecutingAsync(
+            DbCommand command, CommandEventData eventData, InterceptionResult<DbDataReader> result,
+            CancellationToken cancellationToken = default)
+        {
+            if (command.CommandText.Contains(quotedTable, StringComparison.Ordinal)
+                && Interlocked.CompareExchange(ref _executed, 1, 0) == 0)
+                await change(cancellationToken);
+            return result;
+        }
+    }
+
     [CurrentPermissionPostgresFact]
     public async Task Committed_changes_are_observed_despite_tracked_entities_and_old_cache()
     {

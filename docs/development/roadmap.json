@@ -161258,21 +161258,22 @@
         "chat_label": "COORD / W18-01 当前授权读取一致性",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/wave18-permission-read-20261018",
+        "branch": "codex/bug-275-permission-snapshot",
         "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
         "claimed_at": "2026-10-18T15:11:46.139874+00:00",
         "baseline_sha": "b4516ce3b2e4098347ee9a0d89322fcd561a5da9",
         "coordination_baseline_sha": "b4516ce3b2e4098347ee9a0d89322fcd561a5da9",
         "entry_evidence": "docs/development/dispatch/20261018-wave18/README.md",
-        "phase": "REGISTERED_NOT_STARTED",
+        "phase": "VALIDATED_READY_TO_INTEGRATE",
         "dispatch_scope": "CONSISTENT_CURRENT_PERMISSION_READ",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
-        "worker_start_received": false,
+        "worker_start_received": true,
         "allowed_write_paths": [
           "CP6.Core/Services/Sys/CurrentPermissionContext.cs",
           "CP6.Core/Services/Sys/PermissionAggregator.cs",
-          "CP6.Core/Services/Sys/PermissionReadTransaction.cs",
+          "CP6.Core/Services/Sys/IPermissionAggregator.cs",
+          "CP6.Core/Services/Sys/PostgreSqlPermissionReader.cs",
           "CP6.Tests/CurrentPermissionContextTests.cs",
           "CP6.Tests/PermissionAggregatorTests.cs",
           "CP6.Tests/CurrentPermissionConsumptionPostgreSqlTests.cs",
@@ -161296,8 +161297,18 @@
           "chat_id": "01a14537-9073-7482-83dc-109799c39299",
           "subagents": false
         },
-        "candidate_review_completed": false,
-        "candidate_integrated": false
+        "candidate_review_completed": true,
+        "candidate_integrated": false,
+        "worker_start_ref": {
+          "commit": "f802116a4e006b18c982336108ff010b12ec76d1",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261018T151553Z-wave18-start/MESSAGE.md",
+          "kind": "START",
+          "at": "2026-10-18T15:15:53.418500+00:00"
+        },
+        "execution_baseline_sha": "d60ccef1b32a042b664c452ba2137a573bb1fbea",
+        "issue": "https://github.com/GTX537/CP6/issues/275",
+        "priority": "P0",
+        "review_mode": "Combined SPEC/QUALITY author self-review; sole coordinator, no independent reviewer"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -161306,7 +161317,7 @@
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
-      "remaining_scope": "Owner提交前撤权fence、权威版本与registry/映射签认、字段V1真实来源采用、运行时缓存协议/负载容量及全Main/跨仓业务采用未验收；当前读取不提供跨语句一致快照。完整WP02-03保持PLANNED/NOT_CHECKED，WP02-02完整前置保留。",
+      "remaining_scope": "当前PostgreSQL权限单语句一致性候选已验证，待正常合并及远端核对；Owner提交前撤权fence、权威版本与registry/映射签认、字段V1真实来源采用、运行时缓存协议/负载容量及全Main/跨仓业务采用未验收。调用者RR旧快照不等于当前提交授权。完整WP02-03保持PLANNED/NOT_CHECKED，WP02-02完整前置保留。",
       "wave10_delivery": {
         "status": "MERGED",
         "source_candidate_sha": "d29721d20e3ddc4eac46e9b40434e3b680326605",
@@ -161551,6 +161562,15 @@
         "integrated_source_sha": "33d7c666284891cc91b6b1cb02895f1a61bc64b9",
         "remote_verified_at": "2026-10-17T05:55:55.322554+00:00",
         "issue_state": "CLOSED"
+      },
+      "wave18_delivery": {
+        "status": "VALIDATED_NOT_INTEGRATED",
+        "issue": "https://github.com/GTX537/CP6/issues/275",
+        "report": "docs/development/evidence/WP02-03/consistent-permission-read/DELIVERY.md",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "review": "Single combined SPEC/QUALITY author self-review; no independent reviewer",
+        "validation": "9 native PostgreSQL + 46 affected permissions + 2 CRM projection, all pass/no skipped; RED/failure records preserved"
       }
     },
     {
@@ -179164,7 +179184,7 @@
       "path": "docs/development/dispatch/20261018-wave18/README.md",
       "baseline_sha": "b4516ce3b2e4098347ee9a0d89322fcd561a5da9",
       "registered_at": "2026-10-18T15:11:46.139874+00:00",
-      "phase": "SINGLE_COORDINATOR_PLAN_REGISTERED",
+      "phase": "W18_01_VALIDATED_READY_TO_INTEGRATE",
       "coordinator_shared_state_only": false,
       "assigned_chats": [
         "COORD"
@@ -179175,8 +179195,10 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [],
-      "workers_started": false,
+      "active_implementation_chats": [
+        "COORD"
+      ],
+      "workers_started": true,
       "workers_delivered": false,
       "windows_closed": false,
       "product_integrated": false,
@@ -179188,17 +179210,18 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "REGISTERED_NOT_STARTED",
+          "phase": "VALIDATED_READY_TO_INTEGRATE",
           "estimated_hours": [
             3,
             5
           ],
-          "worker_start_received": false,
-          "worker_delivery_received": false,
+          "worker_start_received": true,
+          "worker_delivery_received": true,
           "write_paths": [
             "CP6.Core/Services/Sys/CurrentPermissionContext.cs",
             "CP6.Core/Services/Sys/PermissionAggregator.cs",
-            "CP6.Core/Services/Sys/PermissionReadTransaction.cs",
+            "CP6.Core/Services/Sys/IPermissionAggregator.cs",
+            "CP6.Core/Services/Sys/PostgreSqlPermissionReader.cs",
             "CP6.Tests/CurrentPermissionContextTests.cs",
             "CP6.Tests/PermissionAggregatorTests.cs",
             "CP6.Tests/CurrentPermissionConsumptionPostgreSqlTests.cs",
@@ -179217,7 +179240,38 @@
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
           "full_task_completed": false,
-          "business_acceptance": "NOT_RUN"
+          "business_acceptance": "NOT_RUN",
+          "actual_start_ref": {
+            "commit": "f802116a4e006b18c982336108ff010b12ec76d1",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261018T151553Z-wave18-start/MESSAGE.md",
+            "kind": "START",
+            "at": "2026-10-18T15:15:53.418500+00:00"
+          },
+          "actual_start_baseline_sha": "d60ccef1b32a042b664c452ba2137a573bb1fbea",
+          "branch": "codex/bug-275-permission-snapshot",
+          "issue": "https://github.com/GTX537/CP6/issues/275",
+          "priority": "P0",
+          "validation": {
+            "red": "1 failed, 0 passed, 0 skipped; unexpected order:export confirmed in TRX",
+            "evidence_root": "D:/CP6-local-test/wave18/w18-01",
+            "postgres_root": "D:/CP6-local-test/wave18/permission-consumption-red-20261018T151837Z",
+            "owned_postgresql_stopped": true,
+            "final_postgresql": "9 passed, 0 failed, 0 skipped",
+            "related_permissions": "46 passed, 0 failed, 0 skipped",
+            "crm_projection": "2 passed, 0 failed, 0 skipped",
+            "final_evidence": [
+              "pg-green-20261018T153237Z.json",
+              "related-green-20261018T153523Z.json",
+              "crm-green-20261018T153624Z.json",
+              "text-followup-20261018T153841Z.json"
+            ],
+            "scope": "Native component fixtures and affected permission/CRM contracts; not ordinary database identity/RLS or real business acceptance",
+            "reuse": "After test-only non-null annotation, the affected native text test rebuilt/passed once; other 56 unchanged successes reused, not rerun."
+          },
+          "candidate_review_completed": true,
+          "candidate_integrated": false,
+          "review_mode": "Combined SPEC/QUALITY author self-review; sole coordinator, no independent reviewer",
+          "delivery_report": "docs/development/evidence/WP02-03/consistent-permission-read/DELIVERY.md"
         },
         {
           "id": "W18-02",
@@ -179319,7 +179373,14 @@
       },
       "user_authority": "User requested wave18 foundation-first, current chat only, 24-hour task list and persistent goal; goal created before implementation.",
       "review_mode": "One combined task-level SPEC/QUALITY self-review by sole coordinator; explicitly not an independent reviewer.",
-      "next_action": "After planning PR merges, create codex/wave18-permission-read-20261018 from current remote main in released directory and record one real START."
+      "next_action": "Normally merge W18-01, verify remote main and close #275 before admitting W18-02; persistent goal remains active.",
+      "started_chats": [
+        "COORD"
+      ],
+      "ordinary_development_hold": true,
+      "blocking_issue_urls": [
+        "https://github.com/GTX537/CP6/issues/275"
+      ]
     },
     "wave_history": [
       {

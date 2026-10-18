@@ -8,4 +8,7 @@ public interface IPermissionAggregator
 {
     /// <summary>聚合启用用户存在且启用的主/附加角色；菜单/操作并集、数据范围MAX、字段存行MIN。</summary>
     Task<UserPermissionContext> BuildAsync(Guid userId);
+
+    /// <summary>Same read with cancellation propagated to the actual database commands.</summary>
+    Task<UserPermissionContext> BuildAsync(Guid userId, CancellationToken cancellationToken);
 }

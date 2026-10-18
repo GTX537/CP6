@@ -15,15 +15,20 @@ public class PermissionAggregator : IPermissionAggregator
     /// <summary>Compatibility alias for CRM: all permission reads now require enabled persisted roles.</summary>
     public Task<UserPermissionContext> BuildEnabledRolesAsync(Guid userId) => BuildAsync(userId);
 
-    public async Task<UserPermissionContext> BuildAsync(Guid userId)
+    public Task<UserPermissionContext> BuildAsync(Guid userId) => BuildAsync(userId, CancellationToken.None);
+
+    public async Task<UserPermissionContext> BuildAsync(Guid userId, CancellationToken cancellationToken)
     {
-        var user = await _db.Sys_Users.AsNoTracking().SingleOrDefaultAsync(u => u.Id == userId && u.Enable)
+        if (_db.Database.IsNpgsql())
+            return await PostgreSqlPermissionReader.ReadAsync(_db, userId, cancellationToken);
+
+        var user = await _db.Sys_Users.AsNoTracking().SingleOrDefaultAsync(u => u.Id == userId && u.Enable, cancellationToken)
                    ?? throw new CurrentPermissionUnavailableException();
         var assigned = await _db.Sys_UserRoles.AsNoTracking().Where(ur => ur.UserId == userId)
-            .Select(ur => ur.RoleId).ToListAsync();
+            .Select(ur => ur.RoleId).ToListAsync(cancellationToken);
         if (user.RoleId is int primary) assigned.Add(primary);
         var roleIds = await _db.Sys_Roles.AsNoTracking().Where(r => r.Enable && assigned.Contains(r.RoleId))
-            .Select(r => r.RoleId).ToListAsync();
+            .Select(r => r.RoleId).ToListAsync(cancellationToken);
         var ctx = new UserPermissionContext
         {
             UserId = userId,
@@ -34,7 +39,7 @@ public class PermissionAggregator : IPermissionAggregator
         // 章03 本部门 / 及下级 所需的部门定位
         if (user.DeptId is Guid did)
         {
-            var dept = await _db.Sys_Depts.AsNoTracking().SingleOrDefaultAsync(d => d.Id == did);
+            var dept = await _db.Sys_Depts.AsNoTracking().SingleOrDefaultAsync(d => d.Id == did, cancellationToken);
             ctx.DeptId = did;
             ctx.DeptPath = dept?.Path ?? "";
         }
@@ -44,18 +49,18 @@ public class PermissionAggregator : IPermissionAggregator
                 .Where(rm => roleIds.Contains(rm.RoleId))
                 .Join(_db.Sys_Menus.AsNoTracking(), rm => rm.MenuId, m => m.MenuId, (rm, m) => m.MenuKey)
                 .Where(k => k != null)
-                .ToListAsync())
+                .ToListAsync(cancellationToken))
             .Select(k => k!)
             .ToHashSet();
 
-        await FillActionKeysAsync(ctx, roleIds);   // 章02（B 阶段）
-        await FillDataScopesAsync(ctx, roleIds);   // 章03（C 阶段）
-        await FillFieldPermsAsync(ctx, roleIds);   // 章04（D 阶段）
+        await FillActionKeysAsync(ctx, roleIds, cancellationToken);   // 章02（B 阶段）
+        await FillDataScopesAsync(ctx, roleIds, cancellationToken);   // 章03（C 阶段）
+        await FillFieldPermsAsync(ctx, roleIds, cancellationToken);   // 章04（D 阶段）
         return ctx;
     }
 
     // ───── 章02 操作权并集（B 阶段）─────
-    private async Task FillActionKeysAsync(UserPermissionContext ctx, List<int> roleIds)
+    private async Task FillActionKeysAsync(UserPermissionContext ctx, List<int> roleIds, CancellationToken cancellationToken)
     {
         // "menuKey:actionCode" 并集；过滤未配 MenuKey 的菜单（否则会拼出脏键 ":action"）
         ctx.ActionKeys = (await (
@@ -63,14 +68,14 @@ public class PermissionAggregator : IPermissionAggregator
                 join m in _db.Sys_Menus.AsNoTracking() on ra.MenuId equals m.MenuId
                 where m.MenuKey != null
                 select m.MenuKey + ":" + ra.ActionCode)
-            .ToListAsync())
+            .ToListAsync(cancellationToken))
             .ToHashSet();
     }
 
     // ───── 章03 数据范围最宽聚合（C 阶段）─────
-    private async Task FillDataScopesAsync(UserPermissionContext ctx, List<int> roleIds)
+    private async Task FillDataScopesAsync(UserPermissionContext ctx, List<int> roleIds, CancellationToken cancellationToken)
     {
-        var rows = await _db.Sys_RoleDataScopes.AsNoTracking().Where(ds => roleIds.Contains(ds.RoleId)).ToListAsync();
+        var rows = await _db.Sys_RoleDataScopes.AsNoTracking().Where(ds => roleIds.Contains(ds.RoleId)).ToListAsync(cancellationToken);
         // 同资源多角色取 MAX ScopeType（最宽）
         ctx.DataScopes = rows.GroupBy(d => d.ResourceKey)
             .ToDictionary(g => g.Key, g => g.Max(x => x.ScopeType));
@@ -80,7 +85,7 @@ public class PermissionAggregator : IPermissionAggregator
             .ToDictionary(g => g.Key, g => g.SelectMany(x => ParseGuids(x.CustomDeptIds)).Distinct().ToList());
     }
 
-    private static IEnumerable<Guid> ParseGuids(string? csv)
+    internal static IEnumerable<Guid> ParseGuids(string? csv)
     {
         if (string.IsNullOrWhiteSpace(csv)) yield break;
         foreach (var part in csv.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
@@ -88,10 +93,10 @@ public class PermissionAggregator : IPermissionAggregator
     }
 
     // ───── 章04 字段权限最宽聚合（D 阶段）─────
-    private async Task FillFieldPermsAsync(UserPermissionContext ctx, List<int> roleIds)
+    private async Task FillFieldPermsAsync(UserPermissionContext ctx, List<int> roleIds, CancellationToken cancellationToken)
     {
         // 同字段多角色取 MIN Access（最可见：1可读写 < 2只读 < 3隐藏）
-        ctx.FieldPerms = (await _db.Sys_RoleFieldPerms.AsNoTracking().Where(fp => roleIds.Contains(fp.RoleId)).ToListAsync())
+        ctx.FieldPerms = (await _db.Sys_RoleFieldPerms.AsNoTracking().Where(fp => roleIds.Contains(fp.RoleId)).ToListAsync(cancellationToken))
             .GroupBy(fp => fp.ResourceKey)
             .ToDictionary(
                 g => g.Key,
