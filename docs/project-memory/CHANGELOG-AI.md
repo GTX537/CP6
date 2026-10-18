@@ -1,5 +1,17 @@
 # AI 可读变更日志
 
+## 2026-10-18：W18-02 / BUG277 候选已验证，待正常集成
+
+租户create/update/suspend/reactivate与必需管理审计已在同一保存/事务内；失败整体回滚，caller先前工作保留，取消能打断真实锁等待。原生PG/HTTP12项及相关27项去重通过，失败原件保留；真实HTTP平台三道闸与审计失败500/无业务残留已验证。[单份DELIVERY](../development/evidence/WP02-04/tenant-management-audit/DELIVERY.md)包含一次集中SPEC/QUALITY作者自审及默认菜单局部补验，无剩余阻断。
+
+当前#277仍Open，候选尚未正常合并；下一步远端核对后关闭并接续W18-03。普通登录审计不变，未新增幂等恢复；失败DbContext不可直接重试。完整WP02-04/10、普通数据库身份RLS、真实业务/DEV/生产状态未提升。8个自有PG实例与临时HTTP已结束；无Actions、既有DB、部署或新增/删除worktree。持续目标active，W18-03/04仍待串行实施；以下“取消/HTTP待执行”为历史时点。
+
+## 2026-10-18：W18-01 已交付，W18-02 强审计开工
+
+W18-01候选 `d0805b6d28a65d199886b0f2d8c370d3588aa092` 已经[正常PR276](https://github.com/GTX537/CP6/pull/276)合入远端main `f58080a06df806b00e4f7da0ba2a64404253ee6b`，12个范围文件完全一致；[#275已关闭](https://github.com/GTX537/CP6/issues/275#issuecomment-6251826942)。真实PG9项、权限46项、CRM投影2项去重通过，最后测试注解修正仅局部验证1项；源日志和5个已停止实例保留。作者集中自审及[单份交付](../development/evidence/WP02-03/consistent-permission-read/DELIVERY.md)范围不变，未重复原成功验证。以下待合并/Issue Open为历史时点。
+
+同一总控从最新main在原目录切 `codex/wave18-tenant-management-audit-20261018`，W18-02真实START经Handoff `3fb4e89a2ec059e4562ea231d6d4e81a7e89fc75`发布回读；源码已确认管理业务先保存、后best-effort审计缺口，下一步原生PG失败复现。写集/PG55435已登记，公共CP6Context事务段保留给W18-03；普通登录审计合同保持。无新增/删除worktree、Actions、既有DB或部署操作。完整任务/业务验收未提升，持续目标active，W18-03/04仍待串行实施。
+
 ## 2026-10-18：W18-01 / P0 BUG275 修复验证通过，待集成
 
 第十八轮首项真实PG并发复现确认[#275](https://github.com/GTX537/CP6/issues/275)：旧读取可组合出从未有效授予的动作。已改为单语句一致快照并传播请求取消，保留主体/tenant、MIN/MAX、合法尾空格及调用者事务所有权。9项原生PG、46项权限、2项CRM投影通过，无失败/跳过；原RED、文本和取消失败均保留。[单份DELIVERY](../development/evidence/WP02-03/consistent-permission-read/DELIVERY.md)包含一次集中SPEC/QUALITY作者自审，无剩余阻断；不称独立审查。

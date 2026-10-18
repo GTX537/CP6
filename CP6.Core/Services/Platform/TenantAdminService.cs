@@ -10,27 +10,21 @@ namespace CP6.Core.Services.Platform;
 /// <summary>
 /// <see cref="ITenantAdminService"/> 实现（多租户合规 #5 块①）。
 /// <para>建租户原子（R9-a）：<c>Sys_Tenant</c> + 首个 admin 用户走单 <c>SaveChangesAsync</c>，EF 单事务包裹。</para>
-/// <para>带外审计（TenantCreated/Updated/Suspended/Reactivated）经 <see cref="TenantScope"/> 强制落平台租户（R5）。</para>
+/// <para>必需管理审计（TenantCreated/Updated/Suspended/Reactivated）显式落平台租户，与业务同事务。</para>
 /// </summary>
 public class TenantAdminService : ITenantAdminService
 {
     private readonly CP6Context _db;
     private readonly IPasswordHasher _hasher;
-    private readonly ISecurityAuditService _audit;
-    private readonly ITenantContext _tenant;
     private readonly ICurrentUserAccessor? _current;
 
     public TenantAdminService(
         CP6Context db,
         IPasswordHasher hasher,
-        ISecurityAuditService audit,
-        ITenantContext tenant,
         ICurrentUserAccessor? current = null)
     {
         _db = db;
         _hasher = hasher;
-        _audit = audit;
-        _tenant = tenant;
         _current = current;
     }
 
@@ -73,10 +67,11 @@ public class TenantAdminService : ITenantAdminService
         return new TenantDetail(t.Id, t.TenantCode, t.TenantName, t.Enable, t.ExpireDate, t.Remark, userCount, t.TimeZoneId);
     }
 
-    public async Task<CreateTenantResult> CreateAsync(string code, string name, DateTime? expire, string? remark, string adminUserName)
+    public async Task<CreateTenantResult> CreateAsync(string code, string name, DateTime? expire, string? remark, string adminUserName,
+        CancellationToken cancellationToken = default)
     {
         // 1. 编码冲突校验（共享表，不需要 IgnoreQueryFilters）。
-        if (await _db.Sys_Tenants.AnyAsync(t => t.TenantCode == code))
+        if (await _db.Sys_Tenants.AnyAsync(t => t.TenantCode == code, cancellationToken))
             throw new InvalidOperationException("E-SEC-033");
 
         // 2. 新租户。
@@ -124,7 +119,7 @@ public class TenantAdminService : ITenantAdminService
             .Where(rm => rm.TenantId == TenantContext.DefaultTenant && rm.RoleId == 1)
             .Select(rm => rm.MenuId)
             .Distinct()
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
         var adminMenus = defaultAdminMenuIds
             .Select(mid => new Sys_RoleMenu { TenantId = tenant.Id, RoleId = 1, MenuId = mid })
             .ToList();
@@ -134,22 +129,17 @@ public class TenantAdminService : ITenantAdminService
         _db.Sys_Roles.Add(adminRole);
         _db.Sys_RoleMenus.AddRange(adminMenus);
         _db.Sys_Users.Add(admin);
-        await _db.SaveChangesAsync();
-
-        // 6. 带外审计落平台租户（R5）。
-        using (new TenantScope(_tenant, TenantContext.DefaultTenant))
-        {
-            await _audit.LogAsync(SecurityEventType.TenantCreated, _current?.UserId, _current?.UserName,
-                code, null, null, $"admin={adminUserName}");
-        }
+        StageManagementAudit(SecurityEventType.TenantCreated, tenant, $"admin={adminUserName}");
+        await SaveManagementChangesAsync(cancellationToken);
 
         // 7. 临时明文仅本次返回。
         return new CreateTenantResult(tenant.Id, adminUserName, tempPwd);
     }
 
-    public async Task UpdateAsync(Guid id, string name, DateTime? expire, string? remark, string? timeZoneId = null)
+    public async Task UpdateAsync(Guid id, string name, DateTime? expire, string? remark, string? timeZoneId = null,
+        CancellationToken cancellationToken = default)
     {
-        var t = await _db.Sys_Tenants.FirstOrDefaultAsync(x => x.Id == id)
+        var t = await _db.Sys_Tenants.FirstOrDefaultAsync(x => x.Id == id, cancellationToken)
             ?? throw new InvalidOperationException("E-SEC-032");
         // E-T2：TimeZoneId 保存前校验（E-WF-028 家族）。空串/空白 → 清空（沿用 app 默认）；
         // 非空且不可解析（既非 IANA 亦非 Windows id）→ 拒绝保存，不落任一字段。
@@ -164,29 +154,60 @@ public class TenantAdminService : ITenantAdminService
         t.ExpireDate = expire;
         t.Remark = remark;
         t.TimeZoneId = normalizedTz;
-        await _db.SaveChangesAsync();
-
-        using (new TenantScope(_tenant, TenantContext.DefaultTenant))
-        {
-            await _audit.LogAsync(SecurityEventType.TenantUpdated, _current?.UserId, _current?.UserName,
-                t.TenantCode, null, null, null);
-        }
+        StageManagementAudit(SecurityEventType.TenantUpdated, t);
+        await SaveManagementChangesAsync(cancellationToken);
     }
 
-    public async Task SuspendAsync(Guid id) => await SetEnableAsync(id, false, SecurityEventType.TenantSuspended);
+    public Task SuspendAsync(Guid id, CancellationToken cancellationToken = default)
+        => SetEnableAsync(id, false, SecurityEventType.TenantSuspended, cancellationToken);
 
-    public async Task ReactivateAsync(Guid id) => await SetEnableAsync(id, true, SecurityEventType.TenantReactivated);
+    public Task ReactivateAsync(Guid id, CancellationToken cancellationToken = default)
+        => SetEnableAsync(id, true, SecurityEventType.TenantReactivated, cancellationToken);
 
-    private async Task SetEnableAsync(Guid id, bool enable, SecurityEventType evt)
+    private async Task SetEnableAsync(Guid id, bool enable, SecurityEventType evt, CancellationToken cancellationToken)
     {
-        var t = await _db.Sys_Tenants.FirstOrDefaultAsync(x => x.Id == id)
+        var t = await _db.Sys_Tenants.FirstOrDefaultAsync(x => x.Id == id, cancellationToken)
             ?? throw new InvalidOperationException("E-SEC-032");
         t.Enable = enable;
-        await _db.SaveChangesAsync();
+        StageManagementAudit(evt, t);
+        await SaveManagementChangesAsync(cancellationToken);
+    }
 
-        using (new TenantScope(_tenant, TenantContext.DefaultTenant))
+    private void StageManagementAudit(SecurityEventType type, Sys_Tenant target, string? detail = null)
+        => _db.Sys_SecurityLogs.Add(new Sys_SecurityLog
         {
-            await _audit.LogAsync(evt, _current?.UserId, _current?.UserName, t.TenantCode, null, null, null);
+            TenantId = TenantContext.DefaultTenant,
+            UserId = _current?.UserId,
+            UserName = _current?.UserName,
+            RequestTenantCode = target.TenantCode,
+            EventType = (int)type,
+            Reason = $"tenant={target.Id:D}" + (detail is null ? "" : $";{detail}"),
+            CreatedAt = DateTime.Now
+        });
+
+    private async Task SaveManagementChangesAsync(CancellationToken cancellationToken)
+    {
+        // CP6Context owns the complete business/identity/field-audit transaction when none exists.
+        // In a caller transaction, protect its prior work even if the field-audit phase fails later.
+        var caller = _db.Database.IsRelational() ? _db.Database.CurrentTransaction : null;
+        if (caller is null)
+        {
+            await _db.SaveChangesAsync(cancellationToken);
+            return;
+        }
+        if (!caller.SupportsSavepoints)
+            throw new InvalidOperationException("TENANT_MANAGEMENT_REQUIRES_SAVEPOINTS");
+        var savepoint = "tenant_admin_" + Guid.NewGuid().ToString("N");
+        await caller.CreateSavepointAsync(savepoint, cancellationToken);
+        try
+        {
+            await _db.SaveChangesAsync(cancellationToken);
+            await caller.ReleaseSavepointAsync(savepoint, cancellationToken);
+        }
+        catch
+        {
+            await caller.RollbackToSavepointAsync(savepoint, CancellationToken.None);
+            throw;
         }
     }
 
