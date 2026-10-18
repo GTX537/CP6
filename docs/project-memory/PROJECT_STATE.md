@@ -1,5 +1,15 @@
 # 项目当前状态
 
+## 2026-10-18：总控独占接手R132-01，原D继续局部复查
+
+用户要求继续推进。远端A仍为325dc769/Handoff8ff05c67，原A工作树干净，未观察到修正开工或交付；原D仍为9ff8c9f的No结论。当前工具无法唤醒原用户对话，COORD按总控权限接手本项定向修正，作为唯一产品写入者；原A保留原候选和工作树，不再并写R132-01。此调整不是原A已接受消息或已开始修正的事实。
+
+本登记正常合并后，从最新确认main创建 `codex/bug-132-http413-correction-20261018` / `D:/CP6-worktrees/bug-132-http413-correction-20261018`，以可审计cherry-pick承接固定325dc769，再修正端点超限错误映射。原13项写集和18232/15232资源转由COORD独占；Program、公共中间件、依赖、数据库仍只读。实现前再次核对原A无变化及端口空闲，如有并行冲突先停下协调。
+
+先在HTTP夹具加入实际Space错误层，复现超限返回500，再做端点局部修复；覆盖exact1MiB200、声明长度/chunked超1字节413、ProblemDetails body/content type、超限无runtime调用及非目标异常不被吞。复用未变前端35/InMemory9等有效证据，只补受影响HTTP/合同。原D在固定修正交付后只复查R132-01及影响，原REVIEW接续，无第二START/ACK或完整审查。
+
+本次仅所有权登记，不宣称修正已完成；#132和R132-01保持Open，产品未合并。无数据库/真实DEV新增门禁，无Actions、数据库操作或部署。完整任务24/375 DONE、业务0/125不提升。
+
 ## 2026-10-18：BUG132集中审查暂不可合并，原A接续定向修正
 
 D已对固定候选 `325dc7693edf09ec0c9175c68554e4e3c72b2af0` 完成一次集中SPEC/QUALITY；[原REVIEW更新](https://github.com/GTX537/CP6.AI-Handoff/blob/88c89e639cfa1b1da6d98ed84d96f172cf6022f3/handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-132/REVIEW.md)和Handoff `9ff8c9f243b6446272e5b15e5c7901719126b349` 已远端回读。**Ready to merge：No；P2阻断R132-01。** 源码显示实际SpaceDesignProblemDetailsMiddleware把超限绑定异常改为500/SPACE_INTERNAL_ERROR，而原HTTP fixture省略了该层，未证明声明的413/ProblemDetails合同。此为源码审查结论，D和COORD未新执行实际应用探针；不代表大小限制被绕过。
