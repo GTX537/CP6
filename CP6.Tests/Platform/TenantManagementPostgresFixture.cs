@@ -9,6 +9,7 @@ using CP6.Core.Services.Sys;
 using CP6.Core.Utilities;
 using CP6.WebApi.Controllers;
 using CP6.WebApi.Controllers.Platform;
+using CP6.WebApi.Controllers.Sys;
 using CP6.WebApi.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -90,11 +91,13 @@ public sealed class TenantManagementPostgresFixture : IAsyncLifetime
 internal sealed class TenantManagementHttpHost(WebApplication app, HttpClient client, string secret) : IAsyncDisposable
 {
     internal HttpClient Client => client;
+    internal IServiceProvider Services => app.Services;
     internal string Token(Guid actor, Guid tenant, bool platform = true, bool impersonation = false)
         => JwtHelper.GenerateToken(actor.ToString(), "operator", secret, "tenant-component", "tenant-component", 5,
             tenant, isPlatformAdmin: platform, impersonatorId: impersonation ? Guid.NewGuid() : null);
 
-    internal static async Task<TenantManagementHttpHost> Start(TenantManagementPostgresFixture fixture)
+    internal static async Task<TenantManagementHttpHost> Start(TenantManagementPostgresFixture fixture,
+        CrmIdentityRuntime? identity = null, bool includeRoles = false)
     {
         var secret = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = "TenantManagementComponent", Args = [] });
@@ -102,11 +105,18 @@ internal sealed class TenantManagementHttpHost(WebApplication app, HttpClient cl
         builder.WebHost.ConfigureKestrel(options => options.Listen(IPAddress.Loopback, 0));
         var services = builder.Services;
         services.AddScoped<ITenantContext, TenantContext>();
-        services.AddScoped(sp => fixture.Context(sp.GetRequiredService<ITenantContext>()));
+        services.AddScoped(sp => fixture.Context(sp.GetRequiredService<ITenantContext>(), identity));
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
         services.AddScoped<IPasswordHasher>(_ => new BCryptPasswordHasher(4));
         services.AddScoped<ITenantAdminService, TenantAdminService>();
+        if (includeRoles)
+        {
+            services.AddDistributedMemoryCache();
+            services.AddScoped<IPermissionAggregator, PermissionAggregator>();
+            services.AddScoped<ICurrentPermissionContext, CurrentPermissionContext>();
+            services.AddScoped<IPermissionService, PermissionService>();
+        }
         services.AddSingleton<IStringLocalizer>(EchoStringLocalizer.Instance);
         services.Configure<SecurityOptions>(options => options.Csrf.Enabled = true);
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -120,7 +130,7 @@ internal sealed class TenantManagementHttpHost(WebApplication app, HttpClient cl
         });
         services.AddAuthorization();
         services.AddControllers().AddApplicationPart(typeof(TenantController).Assembly)
-            .ConfigureApplicationPartManager(manager => manager.FeatureProviders.Add(new OnlyTenant()));
+            .ConfigureApplicationPartManager(manager => manager.FeatureProviders.Add(new OnlySelectedControllers(includeRoles)));
         var app = builder.Build();
         app.UseRouting(); app.UseAuthentication(); app.UseMiddleware<TenantMiddleware>();
         app.UseMiddleware<BizExceptionMiddleware>(); app.UseMiddleware<CsrfMiddleware>();
@@ -136,11 +146,12 @@ internal sealed class TenantManagementHttpHost(WebApplication app, HttpClient cl
 
     public async ValueTask DisposeAsync() { client.Dispose(); await app.StopAsync(); await app.DisposeAsync(); }
 
-    private sealed class OnlyTenant : IApplicationFeatureProvider<ControllerFeature>
+    private sealed class OnlySelectedControllers(bool includeRoles) : IApplicationFeatureProvider<ControllerFeature>
     {
         public void PopulateFeature(IEnumerable<ApplicationPart> parts, ControllerFeature feature)
         {
-            foreach (var controller in feature.Controllers.Where(x => x.AsType() != typeof(TenantController)).ToArray())
+            foreach (var controller in feature.Controllers.Where(x => x.AsType() != typeof(TenantController)
+                && (!includeRoles || x.AsType() != typeof(RoleController))).ToArray())
                 feature.Controllers.Remove(controller);
         }
     }
