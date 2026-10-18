@@ -1,4 +1,58 @@
-# WP02-28 第十三轮 C：实际 publish 本地启动与身份验证
+# WP02-28：实际 publish 本地验证与第十七轮定向修正
+
+## 第十七轮 C / FIX-W13-C：#251、#252 修正交付
+
+2026-10-18（America/New_York）。总控已解除旧 P0 普通集成暂停并通过 PR267 准入；本次只修正原 B 审查的两处边界，独立交付给 B/COORD 做局部复查，不能据此关闭完整 WP02-28 或宣称业务/发布验收。
+
+- 最新已核 main/origin/main：`2f20834af3e0192cdb0d0fda404f0fc398be592d`。新工作树 `D:/CP6-worktrees/wave17-c-publish-boundary-20261018`，分支 `codex/bugs251-252-publish-boundary-20261018`；总控从该 main 承接原候选后准备 HEAD `68990978579163cb8bb8f9e3fd524e7242c40be4`。原分支/工作树保留。
+- 本次工具/回归提交：`4f2b61f0109662c86558ae29d3defd96e710c16a`。含本报告的最终候选由 Handoff DELIVERY 固定引用；报告变更不触发重复 publish。
+- 续接同一任务的一次 PROGRESS：Handoff `4b3fbca13df55ee139e9e1552014d87816526619`，`handoffs/CP6-DEV-20261012/tasks/WP02-28/messages/20261018T134113Z-wave17-progress/MESSAGE.md`，已安全发布并回读。准入固定 Handoff 为 `6344b2dec8c68c5603e8d7894db5ca70299fc6fe`；没有重复 START/等待运输 ACK。
+
+### 修正行为
+
+**#251**：构建不再读工作树。工具从指定完整 Git 提交枚举 WebApi 的项目引用闭包及显式 contracts 内容 glob，将固定树的原始文件导出至新私有目录。逐文件核对 Git blob，拒绝链接/submodule、已提交 bin/obj、导出遗漏/转换；命令级关闭 archive 的 autocrlf，避免改变原始字节。忽略的 `.cs`、私有 JSON 和旧 bin/obj 完全不会从工作树拷入；不会通过重扫污染输出生成“干净源码”收据。
+
+受控导出只支持当前可审查的 SDK/声明式项目形态；显式 Import/Target/UsingTask、动态或越界引用、自定义额外 props/targets/user/rsp、项目属性注入等失败关闭，不用单文件名黑名单。固定 root Directory.Build.props、显式已提交 NuGet.config、隔离 MSBuild 继承环境/用户扩展路径，禁父目录 targets/central package props/auto response，生成明确选择本机 .NET8 SDK 的 global.json。此工具不是任意 MSBuild 工程的通用沙箱；未来新增构建形态需要评估输入边界。SDK 与 locked NuGet 包仍是独立工具/依赖来源，不称为 Main 提交文件。
+
+restore/publish 的工作目录均为导出目录，项目输出从空 bin/obj 生成；构建后再次确认原始导出文件未改。收据保留完整输出清单/正式包来源/实际命令和日志摘要，增加导出目录、文件数/集合摘要及 SDK 记录。仍兼容验证原固定收据，原收据 pin 和全部 JSON/log 字节未改。
+
+**#252**：finally 使用 Popen 创建时持有的 Windows 进程 handle 终止并等待自有子进程，不依赖再次 CIM 查询或按任意 PID 打开进程。首次身份失败仍抛出原异常，completed 保持 false；清理异常记录 cleanupFailureType，不能覆盖已有 failureType/原异常，processStopped 在确认退出前保持 false。正常路径仍须确认退出与 listener 关闭才能 completed。
+
+### 实际定向验证与失败保留
+
+原件统一位于 `D:/CP6-local-test/WP02-28/wave17-c-corrections/`，本报告直接引用，不复制新一套日志/清单入仓。
+
+- `red-behavior-tests.log`：原实现出现预期的 1 failure / 2 errors，分别是 build cwd 仍包含忽略 `.cs`、首次身份失败被第二次查询异常覆盖。测试 teardown 用各自创建 handle 回收短命子进程，没有遗留服务。更早 `red-tests.log` 包含首次测试夹具拦截 git subprocess 的问题；改正夹具后才以 red-behavior 为缺陷证据，两份都保留。
+- `final-tests.log`：**11 passed**。保留原 6 项工具覆盖，新增固定提交导出排除忽略输入/旧输出、真实 SDK Compile/Content 求值、父目录配置及环境注入隔离、越界 Import/ProjectReference 拒绝，以及两项真实短命 Python 子进程故障路径。SDK 求值先证明旧工作树纳入 `tmp/Uncommitted.cs` 和 `appsettings.Development.json`，再证明新导出仅含提交输入；不借 mock 宣称实际 SDK 行为。模拟 publish 的测试收据仅是夹具，不是实际制品证据。
+- `publish-run.log`、`publish-verified-run.log`：两次真实操作在源码预检阶段分别因 NuGet.config 大小写假设、archive CRLF 字节转换被拒绝，**均未调用 restore/publish、未写收据**。修正后使用新的输出目录；失败目录和日志原样保留。没有覆盖旧证据或将失败改称成功。
+- `publish-fixed-run.log`：之后仅一次真实 locked restore + Release `dotnet publish`，退出码均为 0。保留原 NU1902/NU1903、CS1998 警告，不称作生产漏洞检查通过。
+
+实际发布私有根为 `D:/CP6-local-test/WP02-28/ab0f05ce88ac408cb28a6c0c8b51e589`；仅创建 ACL 受限 owner marker/settings/源码/构建输出，**没有初始化 PostgreSQL，没有创建数据库或启动宿主/HTTP**。原 marker 中的端口/数据库命名是既有路径校验合同，本轮未使用这些资源。
+
+| 本次真实 publish 绑定 | 实际值 |
+| --- | --- |
+| 产品源码 SHA | `68990978579163cb8bb8f9e3fd524e7242c40be4`（总控准备提交；不是修正工具提交/报告提交重新构建） |
+| SDK / 导出文件数 | .NET SDK 8.0.424 / 2,105 个固定提交文件 |
+| 实际输出 | 私有根 `publish-fixed/`；260 文件、180 个闭包必需文件，五包独立正式期望匹配 |
+| 入口 DLL SHA-256 | `2ef0c9048b729814c8a945ed880661e2837aac43ac5ac2834f5bcf2011ffdd46` |
+| 收据原件 | 私有根 `publish-fixed.receipt.json`；完整输出清单、原始命令、工作目录、日志摘要与正式包来源均在此 |
+| 独立收据 pin | `fecb9403d6a7bc80b596a5cf302a9688cf51fec090f6bcfb8c7ccb46b9f8e99c` |
+| 原始构建日志 | 同根 `publish-fixed.restore.log`、`publish-fixed.publish.log`、`publish-fixed.build.json` |
+
+复现工具回归：`python -B -X utf8 -m unittest discover -s eng/wp02-28 -p test_published_host.py -v`，使用本机 Python 3.13；包含实际 .NET8 SDK 求值和无数据库/HTTP的自有短命子进程。再次做 publish 必须使用新 owner/私有输出并保留新 pin；本轮已经完成一次真实 publish，无需为后续提交 SHA 重跑。
+
+### 复用与交接
+
+下文第十三轮的真实 publish、五包 Matched、旧授权矩阵及资源停止仍仅证明原 source `4704592f...` 的当时结果；本轮未再执行宿主端点或数据库验证，不能称当前 main 宿主已验证。原 JSON/log 字节及全部证据 Git blob 均与原候选一致；`.gitattributes` 的工作树 CRLF 为既有 checkout 规则，不改变 blob 或证据文件。本轮新增 source export 并不重签旧 receipt。
+
+自检覆盖最终工具、回归、原始证据保留及报告差异；相对准备 HEAD 只改登记的四个文件，未动 pg_resource/verify_host/Program/模型/项目/锁/原 JSON-log/共享状态。未增加 SQL Server 验证。本分支与 origin/main 的 13 份 workflow 相同：12 份仅 workflow_dispatch，r2-candidate 只匹配版本 tag；只推普通分支。任务运行列表为空，无需取消，没有触发/修改 Actions。Handoff 私有、Actions disabled、默认/资料分支无 workflow。
+
+原审查者 B 接收 #251/#252 定向复查，COORD 负责共享状态、正常合并、远端包含性与 Issue 关闭。原 NOT_RUN（两版本正向回退、schema/driver、真实 serviceHTTP、完整业务采用、正式制品与部署）保留；本地 source-bound publish 不提升 production trust。B 的 #253 固定交付到达后，C 在原 REVIEW-W13-B 中另做局部复查，不阻塞本修正独立交付。
+
+---
+
+# 第十三轮原交付记录（以下均为历史执行范围）
+
 
 本窗口已实现、完成相关本地验证，候选提交和 Handoff DELIVERY 固定引用由通信提交给出；共享状态、一次任务级集中审查及串行合并交 COORD。完整 WP02-28 仍为 IN_PROGRESS/CONFIRMED。此结果只证明实际 publish 制品的本地诊断启动与身份一致，不代表生产发布或业务 readiness。
 
@@ -38,7 +92,7 @@ Windows、Python 3.13、现有 .NET8 SDK 和 PostgreSQL18。每次创建全新 o
 $py = 'C:/Users/tt/AppData/Roaming/uv/python/cpython-3.13-windows-x86_64-none/python.exe'
 $owner = [guid]::NewGuid().ToString('N')
 $root = "D:/CP6-local-test/WP02-28/$owner"
-$source = (git rev-parse HEAD).Trim()
+$source = (git -c core.longpaths=true rev-parse HEAD).Trim()
 $cache = 'D:/CP6-local-test/WP02-02/adopt-a1/n'
 & $py -B -X utf8 eng/wp02-28/pg_resource.py create $owner
 if ($LASTEXITCODE -ne 0) { throw 'Resource creation failed; inspect retained private logs' }
