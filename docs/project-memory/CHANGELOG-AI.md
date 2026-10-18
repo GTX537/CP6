@@ -1,5 +1,15 @@
 # AI 可读变更日志
 
+## 2026-10-18：BUG132固定交付已收，等待D集中审查
+
+A候选 `325dc7693edf09ec0c9175c68554e4e3c72b2af0`、Handoff `8ff05c67e42e6b78335afc07cf785e561b54a8d0` 已远端回读；[单份DELIVERY](https://github.com/GTX537/CP6/blob/325dc7693edf09ec0c9175c68554e4e3c72b2af0/docs/quality/evidence/issue-132/DELIVERY.md)限登记的10个路径，基线为main `1e29931374626a492ca92e848b8d8fcaf871eddf`，工作树干净。库存查询改为完整精确集合的有界POST，保留旧GET；产品代码尚未集成。
+
+COORD读取原始日志/TRX，核对前端 **35**、HTTP/OpenAPI **61**、InMemory服务 **9** 项通过，各0失败、0跳过，未重跑。前端最终来源为锁定依赖Vitest4.1.11，早先4.1.9结果不计作最终证据；HTTP使用真实Kestrel/Cookie/CSRF及受控权限与runtime数据，服务测试使用EF InMemory/记录源，不冒充PostgreSQL或真实WMS验证。A自有18232/15232均无监听。
+
+A真实START `b7b618df`、D真实START `2b45642d` 已登记。[D原REVIEW](https://github.com/GTX537/CP6.AI-Handoff/blob/843dcc019ea311bc18ac186f5ad397c865f9ff2e/handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-132/REVIEW.md)及准备消息 `603df33948af18de597f2e733374b6d21db333fe` 仅为只读准备，尚无Ready to merge结论；“尚无A固定交付”的前置现已满足。原D直接对固定候选在同一REVIEW接续一次集中SPEC/QUALITY，不重复START/ACK或新增报告；总控收件不代替正式审查。
+
+[#132](https://github.com/GTX537/CP6/issues/132)保持Open，待D结论后正常集成和原Issue验收核对。本轮不新增数据库或真实DEV门禁。#38/#257保持Closed，P0暂停已解除；B/C原P2修正仍待各自窗口，旧菜单候选未变。完整任务24/375 DONE、业务0/125不提升。无Actions运行/取消、工作流变更、数据库操作或部署。
+
 ## 2026-10-17：仪表盘租户P0已完成真实DEV并关闭，转入P1库存传输
 
 [#257](https://github.com/GTX537/CP6/issues/257)已Closed：[PR260](https://github.com/GTX537/CP6/pull/260)合入D审查通过的22928c9a，远端main47b69063核对候选文件一致；[单份DELIVERY](../quality/evidence/issue-257/DELIVERY.md)记录真实PG DEV验收。实际发布API/Web身份和文件哈希匹配，3个页面登录账号的空租户、精确订单及交替暖缓存通过；停用主体403、匿名401。原6项PG/HTTP结果复用，未重复测试。

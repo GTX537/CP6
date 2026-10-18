@@ -158852,6 +158852,11 @@
       "date": "2026-10-17",
       "change": "D approved fixed BUG257 candidate; normal PR260 integrated source22928c9a into main47b69063. Actual published API/Web + existing user-confirmed PG DEV three-tenant Cookie/browser and alternating-cache acceptance passed; owned resources cleaned, original rows/schema unchanged; Issue257 closed. P0 hold lifted. Admit original A P1 BUG132 precise inventory transport and D preparation/combined review; no actual START. B/C candidate correction windows remain unassigned; full task/business states unchanged.",
       "evidence": "docs/quality/evidence/issue-257/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-18",
+      "change": "Wave16 actual A/D START and D preparation received. A fixed candidate325dc769/Handoff8ff05c6 received; original logs confirm frontend35 (locked Vitest4.1.11), HTTP/OpenAPI61 and InMemory service9 passed, each0 failed0 skipped; no rerun. D843dcc01/Handoff603df339 is preparation only; fixed delivery now satisfies review prerequisite, continue original REVIEW without new START/ACK. Product not integrated, Issue132 Open; no additional DB/real DEV gate. Prior P0s38/257 remain closed, B/C correction windows not admitted, full task/business states unchanged.",
+      "evidence": "https://github.com/GTX537/CP6/blob/325dc7693edf09ec0c9175c68554e4e3c72b2af0/docs/quality/evidence/issue-132/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -178893,7 +178898,7 @@
       "path": "docs/development/dispatch/20261017-wave16/README.md",
       "baseline_sha": "47b690631350f845c16a60f6fc79214cf0ef0b7d",
       "registered_at": "2026-10-17T16:03:57.328321+00:00",
-      "phase": "P1_PRECISE_INVENTORY_TRANSPORT_ADMITTED",
+      "phase": "A_DELIVERED_D_COMBINED_REVIEW_PENDING",
       "coordinator_shared_state_only": true,
       "assigned_chats": [
         "A",
@@ -178914,7 +178919,7 @@
         "D"
       ],
       "active_implementation_chats": [],
-      "workers_started": false,
+      "workers_started": true,
       "workers_delivered": false,
       "windows_closed": false,
       "windows": [
@@ -178958,12 +178963,49 @@
           "owner": "original A; sole implementation and additive inventory API contract editor",
           "registered_at": "2026-10-17T16:03:57.328321+00:00",
           "baseline_sha": "47b690631350f845c16a60f6fc79214cf0ef0b7d",
-          "worker_start_received": false,
-          "worker_delivery_received": false,
+          "worker_start_received": true,
+          "worker_delivery_received": true,
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
-          "prerequisite": "Create from latest confirmed main after admission merges; new window, actual START once. No old rejected patch replay."
+          "prerequisite": "Create from latest confirmed main after admission merges; new window, actual START once. No old rejected patch replay.",
+          "phase": "FIXED_CANDIDATE_DELIVERED_REVIEW_PENDING",
+          "actual_start_baseline_sha": "1e29931374626a492ca92e848b8d8fcaf871eddf",
+          "start_handoff": "b7b618df6d0b771ab58382aa0a6444d2ac3e1d77",
+          "delivery_handoff": "8ff05c67e42e6b78335afc07cf785e561b54a8d0",
+          "candidate_sha": "325dc7693edf09ec0c9175c68554e4e3c72b2af0",
+          "delivery_report_fixed": "https://github.com/GTX537/CP6/blob/325dc7693edf09ec0c9175c68554e4e3c72b2af0/docs/quality/evidence/issue-132/DELIVERY.md",
+          "local_verification": {
+            "http_openapi": {
+              "source": "D:\\CP6-local-test\\BUG-132\\wave16-a\\results\\http-contract-final.trx",
+              "passed": 61,
+              "failed": 0,
+              "skipped": 0,
+              "scope": "3 real Kestrel HTTP and 58 OpenAPI/GET client contract tests; controlled permission/runtime data, no persistent authorization or DB chain"
+            },
+            "service_inmemory": {
+              "source": "D:\\CP6-local-test\\BUG-132\\wave16-a\\results\\runtime-inmemory.trx",
+              "passed": 9,
+              "failed": 0,
+              "skipped": 0,
+              "scope": "real runtime with EF InMemory and recording WMS source; not PostgreSQL or actual WMS"
+            },
+            "frontend": {
+              "source": "D:\\CP6-local-test\\BUG-132\\wave16-a\\frontend-locked-final.log",
+              "passed": 35,
+              "failed": 0,
+              "skipped": 0,
+              "vitest": "4.1.11",
+              "scope": "locked dependency snapshot, runtime API and StockOverlay tests; prior Vitest 4.1.9 result is not final evidence"
+            },
+            "coordinator_read_existing_logs": true,
+            "coordinator_reran_tests": false
+          },
+          "review_completed": false,
+          "ready_to_merge": null,
+          "owned_runtime_stopped": true,
+          "database_validation_required": false,
+          "real_dev_validation_required": false
         },
         {
           "id": "REVIEW-BUG-132",
@@ -178984,12 +179026,24 @@
           "ready_to_merge": null,
           "registered_at": "2026-10-17T16:03:57.328321+00:00",
           "baseline_sha": "47b690631350f845c16a60f6fc79214cf0ef0b7d",
-          "worker_start_received": false,
+          "worker_start_received": true,
           "worker_delivery_received": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
-          "prerequisite": "Create from latest confirmed main after admission merges; new window, actual START once. No old rejected patch replay."
+          "prerequisite": "Create from latest confirmed main after admission merges; new window, actual START once. No old rejected patch replay.",
+          "phase": "PREPARATION_RECEIVED_FIXED_CANDIDATE_AVAILABLE",
+          "actual_start_baseline_sha": "1e29931374626a492ca92e848b8d8fcaf871eddf",
+          "start_handoff": "2b45642defd3bc77ab6622cb9d3832cab221061d",
+          "preparation_received": true,
+          "preparation_handoff": "603df33948af18de597f2e733374b6d21db333fe",
+          "preparation_report_sha": "843dcc019ea311bc18ac186f5ad397c865f9ff2e",
+          "preparation_report_fixed": "https://github.com/GTX537/CP6.AI-Handoff/blob/843dcc019ea311bc18ac186f5ad397c865f9ff2e/handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-132/REVIEW.md",
+          "review_target_sha": "325dc7693edf09ec0c9175c68554e4e3c72b2af0",
+          "review_prerequisite_satisfied": true,
+          "database_validation_required": false,
+          "real_dev_validation_required": false,
+          "continuation": "A fixed DELIVERY available; continue existing single REVIEW with combined SPEC/QUALITY, no second START or transport ACK. Formal review not yet received."
         }
       ],
       "ordinary_wave13_integration_hold": false,
@@ -179024,7 +179078,18 @@
           "resource_gate": "NOT_ASSIGNED"
         }
       ],
-      "ordinary_candidate_integration_gate": "P0 hold lifted; no automatic merge. Original B/C corrections still need explicit windows and blocker resolution; menu candidate unchanged."
+      "ordinary_candidate_integration_gate": "P0 hold lifted; no automatic merge. Original B/C corrections still need explicit windows and blocker resolution; menu candidate unchanged.",
+      "started_chats": [
+        "A",
+        "D"
+      ],
+      "implementation_deliveries_received": [
+        "A"
+      ],
+      "last_coordinator_receipt_at": "2026-10-18T07:52:36.785901+00:00",
+      "product_integrated": false,
+      "bug132_database_validation": "NOT_REQUIRED_FOR_REGISTERED_SCOPE",
+      "bug132_real_dev_validation": "NOT_REQUIRED_FOR_REGISTERED_SCOPE"
     },
     "wave_history": [
       {
