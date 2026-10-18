@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-18：第十七轮恢复公共基础候选收口
+
+P0/P1队列已闭环，当前四个Open均P2。本轮B修正#253原始期限精度（自有PG55436/真实CLI），C同窗口修正#251/#252源码绑定与自有进程清理；沿原B/C交叉报告只复查变化。D补菜单候选锁定Vitest4.1.11证据，A准备并在固定交付后完成一次集中审查。详见[本轮执行包](../development/dispatch/20261018-wave17/README.md)。
+
+准入不等于开工：尚无本轮实际PROGRESS/START或新候选。新产品分支由总控在准入后从最新main承接原提交，旧候选保留。只跑具体受影响验证；C默认无PG/HTTP，D默认仅相关组件测试，原有效证据复用。375任务状态与125业务验收未提升；共享状态/串行合并由COORD独占，无Actions、现有数据库操作或部署。
+
 ## 2026-10-18：BUG132已集成并关闭，第十六轮收尾
 
 [#132](https://github.com/GTX537/CP6/issues/132#issuecomment-6250315486)已Closed。[D原报告局部复查](https://github.com/GTX537/CP6.AI-Handoff/blob/c84c6da6e2bf1ee570513dacf3e03248a8910f00/handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-132/REVIEW.md)确认e83593a3可合并、R132-01解除；[正常PR265](https://github.com/GTX537/CP6/pull/265)已合入，远端main `5a29b6b106aa3b4bf267811371771d9209bb80fd` 包含候选且17个范围文件一致。[单份DELIVERY](https://github.com/GTX537/CP6/blob/e83593a3ddd5ffd1ac0614b943eaf3358483989d/docs/quality/evidence/issue-132/DELIVERY.md)保留完整精确集合、有界POST、旧GET兼容及实际错误层413修正证据。
