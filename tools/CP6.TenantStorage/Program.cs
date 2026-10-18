@@ -6,9 +6,11 @@ using Npgsql;
 // No arbitrary connection string, default business connection, password argument, or startup hook.
 var serviceToken = args.SequenceEqual(["install-service-token-v1", "--stdin"]);
 var revocation = args.SequenceEqual(["install-service-revocation-v1", "--stdin"]);
-if ((!args.SequenceEqual(["provision", "--stdin"]) && !revocation && !serviceToken) || !Console.IsInputRedirected)
+var tenantControl = args.SequenceEqual(["service-token-tenant-directory-control-v1", "--stdin"]);
+var controlExecutionStarted = false;
+if ((!args.SequenceEqual(["provision", "--stdin"]) && !revocation && !serviceToken && !tenantControl) || !Console.IsInputRedirected)
 {
-    Console.Error.WriteLine("Usage: CP6.TenantStorage provision|install-service-revocation-v1|install-service-token-v1 --stdin (one bounded JSON document on redirected standard input).");
+    Console.Error.WriteLine("Usage: CP6.TenantStorage provision|install-service-revocation-v1|install-service-token-v1|service-token-tenant-directory-control-v1 --stdin (one bounded JSON document on redirected standard input).");
     return 2;
 }
 try
@@ -26,6 +28,27 @@ try
     using var document = JsonDocument.Parse(buffer.AsMemory(0,size));
     if (document.RootElement.ValueKind != JsonValueKind.Object || !Unique(document.RootElement))
         throw new TenantProvisioningException("input-rejected");
+    if (tenantControl)
+    {
+        RequireLosslessTenantDeadlines(document.RootElement);
+        var command = document.Deserialize<TenantControlInput>(new JsonSerializerOptions
+        { UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow }) ?? throw new TenantProvisioningException("input-rejected");
+        if (command.Request?.Installation is not { } target || string.IsNullOrWhiteSpace(command.AdminUsername)
+            || string.IsNullOrEmpty(command.AdminPassword) || !Enum.TryParse<SslMode>(command.SslMode, false, out var controlSsl)
+            || controlSsl is not (SslMode.VerifyFull or SslMode.Disable)) throw new TenantProvisioningException("input-rejected");
+        await using var control = new NpgsqlConnection(new NpgsqlConnectionStringBuilder
+        {
+            Host = target.Server, Port = target.Port, Database = target.Database,
+            Username = command.AdminUsername, Password = command.AdminPassword, SslMode = controlSsl,
+            Pooling = false, Enlist = false, SearchPath = "pg_catalog", Options = " ", IncludeErrorDetail = false,
+            Timeout = 10, CommandTimeout = 65, ApplicationName = "CP6.TenantStorage.TenantDirectoryControlV1"
+        }.ConnectionString);
+        controlExecutionStarted = true;
+        var controlled = await new ServiceTokenTenantDirectoryControlV1().ExecuteAsync(control, command.Request,
+            CP6.Persistence.PostgreSql.Tenancy.ServiceTokenBaselineV1.GenerateSql(), timeout.Token);
+        Console.WriteLine(JsonSerializer.Serialize(controlled));
+        return controlled.Outcome is "CURRENT" or "MISSING" or "INITIALIZED" or "UPDATED" ? 0 : 3;
+    }
     if (revocation || serviceToken)
     {
         var tokenInput = serviceToken ? document.Deserialize<ServiceTokenInput>(new JsonSerializerOptions
@@ -71,15 +94,43 @@ try
     Console.WriteLine(JsonSerializer.Serialize(result));
     return 0;
 }
-catch (TenantProvisioningException error)
+catch (ServiceTokenTenantControlException error)
+{
+    Console.Error.WriteLine(JsonSerializer.Serialize(new { Contract = ServiceTokenTenantDirectoryControlV1.Contract, error.Outcome, Code = error.Message }));
+    return error.Outcome == "UNKNOWN" ? 4 : 1;
+}
+catch (TenantProvisioningException error) when (!tenantControl)
 {
     Console.Error.WriteLine(error.Message);
     return 1;
 }
 catch
 {
+    if (tenantControl)
+    {
+        Console.Error.WriteLine(JsonSerializer.Serialize(new { Contract = ServiceTokenTenantDirectoryControlV1.Contract,
+            Outcome = controlExecutionStarted ? "UNKNOWN" : "NOT_APPLIED", Code = controlExecutionStarted ? "execution-or-output-lost" : "input-rejected" }));
+        return controlExecutionStarted ? 4 : 1;
+    }
     Console.Error.WriteLine("Tenant storage provisioning rejected: input-or-execution-rejected. Retry uncertain execution with the same operation and input.");
     return 1;
+}
+
+static void RequireLosslessTenantDeadlines(JsonElement root)
+{
+    if (!root.TryGetProperty("Request", out var request) || request.ValueKind != JsonValueKind.Object) return;
+    foreach (var name in new[] { "Expected", "Desired" })
+    {
+        if (!request.TryGetProperty(name, out var eligibility) || eligibility.ValueKind != JsonValueKind.Object
+            || !eligibility.TryGetProperty("ExpireDate", out var expiry) || expiry.ValueKind != JsonValueKind.String) continue;
+        // Decode JSON escapes, but inspect every original fractional digit before DateTime truncates after digit seven.
+        // The existing deserializer and control validation retain responsibility for syntax, null, kind and finite range.
+        var text = expiry.GetString()!;
+        var dot = text.IndexOf('.');
+        if (dot < 0) continue;
+        for (var i = dot + 7; i < text.Length && text[i] is >= '0' and <= '9'; i++)
+            if (text[i] != '0') throw new TenantProvisioningException("input-rejected");
+    }
 }
 
 static bool Unique(JsonElement element) => element.ValueKind switch
@@ -94,3 +145,4 @@ internal sealed record ProvisioningInput(TenantProvisioningRequest Request,strin
 internal sealed record RevocationInput(ServiceRevocationInstallRequest Request,string AdminUsername,string AdminPassword,string SslMode="VerifyFull");
 
 internal sealed record ServiceTokenInput(ServiceTokenInstallRequest Request,string AdminUsername,string AdminPassword,string SslMode="VerifyFull");
+internal sealed record TenantControlInput(ServiceTokenTenantControlRequestV1 Request,string AdminUsername,string AdminPassword,string SslMode="VerifyFull");
