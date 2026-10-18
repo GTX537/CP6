@@ -6,12 +6,14 @@ directory' command. Formal Platform expectations come from pinned nupkg bytes.
 """
 import argparse
 import io
+import hashlib
 import json
 import os
 from pathlib import Path, PurePosixPath
 import re
 import subprocess
 import zipfile
+import xml.etree.ElementTree as ET
 
 import pg_resource as pg
 from verify_host import ROOT, DOTNET, PACKAGE_IDS, digest, write
@@ -24,7 +26,7 @@ SCHEMA = 'CP6-LOCAL-PUBLISH/1'
 
 
 def git(*args):
-    return subprocess.check_output(['git', *args], cwd=ROOT, creationflags=pg.NO_WINDOW)
+    return subprocess.check_output(['git', '-c', 'core.longpaths=true', *args], cwd=ROOT, creationflags=pg.NO_WINDOW)
 
 
 def safe_relative(value):
@@ -128,19 +130,148 @@ def verify(directory, receipt_path, receipt_sha256, source, cache):
     return receipt
 
 
-def clean_source(source):
-    pg.require(git('rev-parse', 'HEAD').decode().strip() == source, 'Source SHA is not checked-out HEAD')
-    # Documentation checkout absences and this verifier do not enter WebApi build.
-    paths = ['.', ':!docs', ':!eng/wp02-28']
-    pg.require(not git('diff', '--name-only', 'HEAD', '--', *paths).strip(), 'Build source has tracked changes')
-    pg.require(not git('ls-files', '--others', '--exclude-standard', '--', *paths).strip(),
-               'Untracked build inputs are not source-bound')
-    # Local/Development JSON is implicitly published by the Web SDK, even if gitignored.
-    pg.require(not list((ROOT / 'CP6.WebApi').glob('appsettings.Local*.json')), 'Private source configuration present')
+def source_export(source, destination):
+    """Export the supported WebApi build graph from Git objects, never the checkout.
+
+    Deliberately reject custom MSBuild imports/tasks/dynamic paths: they require a
+    separately reviewed input boundary. SDK and locked NuGet assets remain tools,
+    not files claimed to be part of the Main source commit.
+    """
+    pg.require(re.fullmatch('[0-9a-f]{40}', source), 'Full source SHA required')
+    pg.require(git('rev-parse', source + '^{commit}').decode().strip() == source, 'Source must be a commit')
+    tree = {}
+    for record in git('ls-tree', '-rz', source).split(b'\0'):
+        if record:
+            metadata, name = record.split(b'\t', 1)
+            mode, kind, oid = metadata.decode().split()
+            tree[name.decode('utf-8')] = (mode, kind, oid)
+    def read(name):
+        pg.require(name in tree and tree[name][0] in ('100644', '100755'), 'Missing/plain source file required: ' + name)
+        return git('cat-file', 'blob', tree[name][2])
+    def relative(base, value):
+        pg.require(value and not any(c in value for c in '$@%;:') and not value.startswith(('/', '\\')),
+                   'Dynamic or external build input is unsupported')
+        parts = list(PurePosixPath(base).parent.parts)
+        for part in value.replace('\\', '/').split('/'):
+            if part == '..':
+                pg.require(parts, 'Build input escapes committed source')
+                parts.pop()
+            elif part not in ('', '.'):
+                parts.append(part)
+        return '/'.join(parts)
+    projects, prefixes = set(), set()
+    allowed_properties = {'TargetFramework', 'Nullable', 'ImplicitUsings', 'RestorePackagesWithLockFile'}
+    def inspect(name, project=False):
+        xml = ET.fromstring(read(name))
+        pg.require(xml.tag == 'Project' and set(xml.attrib) <= {'Sdk'}, 'Unsupported build definition')
+        if project:
+            pg.require(xml.get('Sdk') in ('Microsoft.NET.Sdk', 'Microsoft.NET.Sdk.Web'), 'Unsupported SDK')
+        else:
+            pg.require(not xml.attrib, 'Directory props cannot select SDK')
+        for group in xml:
+            pg.require(group.tag in ('PropertyGroup', 'ItemGroup') and set(group.attrib) <= {'Condition'},
+                       'Custom build imports/tasks are unsupported')
+            condition = group.get('Condition', '')
+            comparison = r"'\$\(MSBuildProjectName\)'\s*==\s*'[A-Za-z0-9_.-]+'"
+            pg.require(not condition or re.fullmatch(comparison + r'(?:\s+Or\s+' + comparison + r')*', condition),
+                       'External/dynamic build condition unsupported')
+            pg.require(project or group.tag == 'PropertyGroup', 'Directory props items unsupported')
+            for item in group:
+                if group.tag == 'PropertyGroup':
+                    pg.require(item.tag in allowed_properties and not item.attrib and len(item) == 0
+                               and not any(c in (item.text or '') for c in '$@%;'), 'Unsupported build property')
+                else:
+                    pg.require(item.tag in ('PackageReference', 'FrameworkReference', 'InternalsVisibleTo', 'ProjectReference', 'Content'),
+                               'Unsupported build item')
+                    attributes = {'Include'}
+                    metadata = set()
+                    if item.tag == 'PackageReference':
+                        attributes.add('Version')
+                        metadata = {'IncludeAssets', 'PrivateAssets'}
+                    elif item.tag == 'Content':
+                        attributes |= {'Link', 'CopyToOutputDirectory', 'CopyToPublishDirectory'}
+                    pg.require(set(item.attrib) <= attributes and all(child.tag in metadata and not child.attrib for child in item),
+                               'Unsupported build item metadata')
+                    # No per-project property injection or external task/import metadata.
+                    pg.require(not any('$' in value or '@' in value for value in item.attrib.values())
+                               and all(len(child) == 0 and not any(c in (child.text or '') for c in '$@') for child in item),
+                               'Dynamic build item unsupported')
+                    if item.tag == 'ProjectReference':
+                        target = relative(name, item.get('Include'))
+                        pg.require(target.endswith('.csproj') and '*' not in target, 'Unsupported project reference')
+                        visit(target)
+                    elif item.tag == 'Content':
+                        target = relative(name, item.get('Include'))
+                        pg.require(target.endswith('/**/*') and '*' not in target[:-5], 'Unsupported content glob')
+                        prefixes.add(target[:-4])
+    def visit(name):
+        if name not in projects:
+            projects.add(name)
+            prefixes.add(str(PurePosixPath(name).parent) + '/')
+            inspect(name, project=True)
+    visit('CP6.WebApi/CP6.WebApi.csproj')
+    pg.require(not {'Directory.Build.targets', 'Directory.Packages.props'} & tree.keys(),
+               'Additional root build imports unsupported')
+    configs = [name for name in tree if name.casefold() == 'nuget.config']
+    pg.require(len(configs) == 1, 'Exactly one committed root NuGet config required')
+    roots = {configs[0]}
+    read(configs[0])
+    if 'Directory.Build.props' in tree:
+        inspect('Directory.Build.props')
+        roots.add('Directory.Build.props')
+    selected = {name: entry for name, entry in tree.items() if name in roots or any(name.startswith(p) for p in prefixes)}
+    for name, (mode, kind, oid) in selected.items():
+        safe_relative(name)
+        pg.require(mode in ('100644', '100755') and kind == 'blob', 'Source links/submodules unsupported')
+        pg.require(not {'bin', 'obj'} & {part.lower() for part in PurePosixPath(name).parts}, 'Committed build outputs unsupported')
+        if name.lower().endswith(('.props', '.targets', '.csproj', '.rsp', '.user')):
+            pg.require(name in projects or name == 'Directory.Build.props', 'Additional build imports unsupported: ' + name)
+    destination = Path(destination).absolute()
+    pg.require(not destination.exists() and destination.resolve() == destination, 'Source export must be fresh and unredirected')
+    destination.mkdir()
+    # archive output is checked against object IDs (including export-ignore/subst).
+    archive = git('-c', 'core.autocrlf=false', 'archive', '--format=zip', source, '--', *sorted(roots | {p.rstrip('/') for p in prefixes}))
+    files = {}
+    with zipfile.ZipFile(io.BytesIO(archive)) as z:
+        for member in z.infolist():
+            if member.is_dir():
+                continue
+            name = member.filename
+            safe_relative(name)
+            pg.require(name in selected and name not in files, 'Unexpected exported file')
+            data = z.read(member)
+            oid = hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest()
+            pg.require(oid == selected[name][2], 'Exported bytes differ from Git object')
+            target = destination / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(data)
+            files[name] = digest(data)
+    pg.require(set(files) == set(selected), 'Incomplete source export')
+    return files
+
+
+def build_context(snapshot, cache):
+    # Pin local .NET8 SDK selection; no ancestor global.json or user MSBuild hooks.
+    versions = [p.name for p in (DOTNET.parent / 'sdk').iterdir() if re.fullmatch(r'8\.0\.\d+', p.name)]
+    pg.require(versions, 'Local .NET8 SDK required')
+    sdk = max(versions, key=lambda v: tuple(map(int, v.split('.'))))
+    write(snapshot / 'global.json', {'sdk': {'version': sdk, 'rollForward': 'disable', 'allowPrerelease': False}})
+    home = snapshot.parent / (snapshot.name + '.home')
+    home.mkdir()
+    allowed = {'SYSTEMROOT', 'WINDIR', 'COMSPEC', 'PATH', 'PATHEXT', 'TEMP', 'TMP',
+               'USERPROFILE', 'APPDATA', 'LOCALAPPDATA', 'PROGRAMFILES', 'PROGRAMFILES(X86)', 'PROGRAMDATA'}
+    env = {k: v for k, v in os.environ.items() if k.upper() in allowed}
+    env.update(NUGET_PACKAGES=str(Path(cache).resolve()), DOTNET_NOLOGO='1', DOTNET_CLI_HOME=str(home),
+               DOTNET_CLI_TELEMETRY_OPTOUT='1', DOTNET_SKIP_FIRST_TIME_EXPERIENCE='1', DOTNET_MULTILEVEL_LOOKUP='0')
+    flags = ['-noAutoResponse', '-p:MSBuildEnableWorkloadResolver=false', '-p:ImportDirectoryBuildTargets=false',
+             '-p:ImportDirectoryPackagesProps=false', '-p:MSBuildUserExtensionsPath=' + str(home),
+             '-p:DirectoryBuildPropsPath=' + str(snapshot / 'Directory.Build.props')]
+    if not (snapshot / 'Directory.Build.props').exists():
+        flags.append('-p:ImportDirectoryBuildProps=false')
+    return env, flags, sdk
 
 
 def publish(c, directory, source, cache):
-    clean_source(source)
     root = pg.validate_paths(c)
     directory = Path(directory).absolute()
     pg.require(directory.parent == root and directory.resolve() == directory and not directory.exists(),
@@ -149,24 +280,28 @@ def publish(c, directory, source, cache):
     directory.mkdir()
     receipt_path = root / (directory.name + '.receipt.json')
     pg.require(not receipt_path.exists(), 'Publish receipt already exists')
-    env = dict(os.environ, NUGET_PACKAGES=str(Path(cache).resolve()), DOTNET_NOLOGO='1')
+    snapshot = root / (directory.name + '.source')
+    source_files = source_export(source, snapshot)
+    env, flags, sdk = build_context(snapshot, cache)
+    config = next(p for p in snapshot.iterdir() if p.name.casefold() == 'nuget.config')
     commands = [
-        [str(DOTNET), 'restore', 'CP6.WebApi/CP6.WebApi.csproj', '--locked-mode'],
+        [str(DOTNET), 'restore', 'CP6.WebApi/CP6.WebApi.csproj', '--locked-mode', '--configfile', str(config), *flags],
         [str(DOTNET), 'publish', 'CP6.WebApi/CP6.WebApi.csproj', '--no-restore', '-c', 'Release',
          '-o', str(directory), '-p:UseAppHost=false', '-p:SourceRevisionId=' + source,
-         '-warnaserror:MSB3277'],
+         '-warnaserror:MSB3277', *flags],
     ]
     logs = []
     for label, command in zip(('restore', 'publish'), commands):
         logfile = root / (directory.name + '.' + label + '.log')
         with logfile.open('wb') as output:
-            result = subprocess.run(command, cwd=ROOT, env=env, stdout=output,
+            result = subprocess.run(command, cwd=snapshot, env=env, stdout=output,
                                     stderr=subprocess.STDOUT, creationflags=pg.NO_WINDOW)
-        logs.append({'command': command, 'log': str(logfile), 'sha256': digest(logfile.read_bytes()),
+        logs.append({'command': command, 'workingDirectory': str(snapshot), 'log': str(logfile), 'sha256': digest(logfile.read_bytes()),
                      'exitCode': result.returncode})
         write(root / (directory.name + '.build.json'), {'sourceSha': source, 'steps': logs})
         pg.require(result.returncode == 0, label + ' failed; private build log retained')
-    clean_source(source)
+    pg.require(all(digest((snapshot / name).read_bytes()) == sha for name, sha in source_files.items()),
+               'Committed export changed during build')
     files = inventory(directory)
     required = closure(directory)
     for module in expected:
@@ -174,6 +309,8 @@ def publish(c, directory, source, cache):
                    'Published Platform DLL differs from formal package')
     receipt = {'schema': SCHEMA, 'sourceSha': source, 'entry': ENTRY,
                'publishDirectory': str(directory), 'publishExitCode': 0, 'build': logs,
+               'sourceExport': {'directory': str(snapshot), 'fileCount': len(source_files), 'sdk': sdk,
+                                'filesSha256': digest(json.dumps(source_files, sort_keys=True).encode())},
                'files': files, 'requiredFiles': required, 'expectedModules': expected,
                'formalPackages': provenance, 'scope': 'local diagnostic publish; no production release authority'}
     write(receipt_path, receipt)

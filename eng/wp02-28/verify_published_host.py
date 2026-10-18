@@ -123,7 +123,7 @@ def run(args):
     runroot.mkdir()
     results = {'sourceSha': args.source_sha, 'receiptSha256': args.receipt_sha256,
                'entrySha256': receipt['files'][artifact.ENTRY], 'completed': False,
-               'diagnosticStartupPassed': False, 'identityReadiness': {'status': 'Unknown', 'ready': False},
+               'diagnosticStartupPassed': False, 'processStopped': False, 'identityReadiness': {'status': 'Unknown', 'ready': False},
                'scope': 'actual published local process, minimal authorization fixture; no business readiness',
                'databaseIdentity': {k: owned[k] for k in ('SystemIdentifier', 'Database', 'Oid', 'Owner', 'Port')}}
     process = native = port = None
@@ -189,9 +189,8 @@ def run(args):
         try:
             if process is not None:
                 if process.poll() is None:
-                    current = process_identity(process.pid)
-                    pg.require(native is not None and current['Started'] == native['Started']
-                               and current['Command'] == native['Command'], 'Refuse stop: process identity changed')
+                    # Popen owns the Windows creation handle, even if the first CIM
+                    # identity query failed. Never reopen/kill an arbitrary PID.
                     process.terminate()
                     process.wait(timeout=15)
                 results['processStopped'] = process.poll() is not None
@@ -203,7 +202,8 @@ def run(args):
                                         and results['processStopped'] and results.get('listenerClosed', False))
         except Exception as exc:
             results['cleanupFailureType'] = type(exc).__name__
-            raise
+            if 'failureType' not in results:
+                raise  # Otherwise keep the original validation/startup exception.
         finally:
             if output: output.close()
             if error: error.close()
