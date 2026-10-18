@@ -158885,7 +158885,7 @@
     },
     {
       "date": "2026-10-18",
-      "change": "Received actual wave17 A START and B/C/D PROGRESS on fixed admission baseline2f20834a; corrections/evidence update started, D fixed candidate3bc3d3c8 received via2af18458: locked Vitest4.1.11 targeted23/23, only original DELIVERY changed; original A preparation3e0b584d ready to continue one review, final approval pending. User requested bounded disk use: read-only inventory107 CP6/46 Handoff worktrees, reused completed COORD directory for a fresh task branch, planned fixed slots and first5 clean merged docs worktrees (~5.2GiB logical) for later reclaim. No deletion, product tests, Actions or database operation by COORD. Full task/business states unchanged.",
+      "change": "Received actual wave17 A START and B/C/D PROGRESS on fixed admission baseline2f20834a; corrections/evidence update started, D fixed candidate3bc3d3c8 received via2af18458: locked Vitest4.1.11 targeted23/23, only original DELIVERY changed; original A preparation3e0b584d ready to continue one review, final approval pending. User requested bounded disk use: read-only inventory107 CP6/46 Handoff worktrees, reused completed COORD directory for a fresh task branch, planned fixed slots and first5 clean merged docs worktrees (~5.2GiB logical) for later reclaim. No deletion, product tests, Actions or database operation by COORD. Full task/business states unchanged. B correction836de524 received viaff88448c: real stdin/PostgreSQL targeted5 pass with original RED3 failures retained; original C targeted recheck pending, no inferred merge approval.",
       "evidence": "docs/development/planning/20261018-workspace-storage.md"
     }
   ],
@@ -160328,7 +160328,7 @@
         "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
         "coordination_baseline_sha": "3f80c1110dc6c59c4da829c5a05f429fc6aa5794",
         "entry_evidence": "docs/development/dispatch/20261018-wave17/B-BUG-253.md",
-        "phase": "CORRECTION_IN_PROGRESS",
+        "phase": "CORRECTION_DELIVERED_RECHECK_PENDING",
         "dispatch_scope": "SERVICE_TENANT_ELIGIBILITY_CONTROL",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -160423,7 +160423,7 @@
           "baseline_sha": "4704592f52172c941e1cb95bdeb3c73f0dd179e8"
         },
         "correction_started_observed": true,
-        "correction_delivery_received": false,
+        "correction_delivery_received": true,
         "correction_window": "BUG-253",
         "correction_start_ref": {
           "commit": "711e700640648e67d7cd2c5247895ff794afc7e5",
@@ -160431,7 +160431,13 @@
           "kind": "PROGRESS",
           "at": "2026-10-18T13:41:04Z"
         },
-        "correction_coordinator_received_at": "2026-10-18T13:46:31.423466+00:00"
+        "correction_coordinator_received_at": "2026-10-18T13:46:31.423466+00:00",
+        "correction_delivery_ref": {
+          "commit": "ff88448c262a86c4ca7c1b7a848f20e1776a0818",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261018T134903Z-wave17-delivery/MESSAGE.md",
+          "candidate_sha": "836de52470cdff8ce594766d5d05e191535ab218",
+          "at": "2026-10-18T13:49:03Z"
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -179024,7 +179030,6 @@
         "C"
       ],
       "active_implementation_chats": [
-        "B",
         "C"
       ],
       "workers_started": true,
@@ -179111,12 +179116,12 @@
           "registered_at": "2026-10-18T13:26:58.542479+00:00",
           "coordination_baseline_sha": "3f80c1110dc6c59c4da829c5a05f429fc6aa5794",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
           "execution_baseline_rule": "COORD prepares fresh task worktree from latest confirmed main after this admission merges; exact preparation SHA in Handoff. Preserve original candidates. Preparation is not START or review approval.",
-          "phase": "CORRECTION_IN_PROGRESS",
+          "phase": "DELIVERED_C_RECHECK_PENDING",
           "resume_protocol": "Same existing task, no second START/transport ACK gate. On actual correction/validation start, publish one PROGRESS with current owner and baseline; do not claim execution at admission.",
           "actual_start_ref": {
             "commit": "711e700640648e67d7cd2c5247895ff794afc7e5",
@@ -179124,7 +179129,13 @@
             "kind": "PROGRESS",
             "at": "2026-10-18T13:41:04Z"
           },
-          "actual_start_baseline_sha": "2f20834af3e0192cdb0d0fda404f0fc398be592d"
+          "actual_start_baseline_sha": "2f20834af3e0192cdb0d0fda404f0fc398be592d",
+          "delivery_ref": {
+            "commit": "ff88448c262a86c4ca7c1b7a848f20e1776a0818",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261018T134903Z-wave17-delivery/MESSAGE.md",
+            "candidate_sha": "836de52470cdff8ce594766d5d05e191535ab218",
+            "at": "2026-10-18T13:49:03Z"
+          }
         },
         {
           "id": "FIX-W13-C",
@@ -179276,8 +179287,9 @@
         "D"
       ],
       "active_evidence_update_chats": [],
-      "last_coordinator_receipt_at": "2026-10-18T13:49:50.260699+00:00",
+      "last_coordinator_receipt_at": "2026-10-18T13:52:52.927790+00:00",
       "delivered_chats": [
+        "B",
         "D"
       ]
     },
