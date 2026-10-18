@@ -1,4 +1,20 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace CP6.Space.Contracts;
+
+/// <summary>
+/// Exact inventory selection. Empty means no locations; missing/null is invalid.
+/// The runtime service validates at most 10,000 distinct, nonempty identities in
+/// one current Published scope. Duplicate entries do not consume that limit.
+/// </summary>
+public sealed record SpaceWmsRuntimeInventoryQueryRequest
+{
+    [Required]
+    public IReadOnlyList<Guid> LocationLogicalIds { get; init; } = null!;
+
+    // Accommodates 10,000 GUIDs with JSON overhead while bounding parsing work.
+    public const int MaxBodyBytes = 1_048_576;
+}
 
 public sealed record SpaceWmsRuntimeSourceDto(
     string Kind,

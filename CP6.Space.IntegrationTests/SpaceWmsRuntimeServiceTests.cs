@@ -555,6 +555,61 @@ public sealed class SpaceWmsRuntimeServiceTests
     }
 
     [Fact]
+    public async Task Large_site_exact_inventory_subset_preserves_current_published_source_and_tenant()
+    {
+        var execution = Execution();
+        var clock = new TestClock();
+        var options = new DbContextOptionsBuilder<SpaceContext>().UseInMemoryDatabase(Guid.NewGuid().ToString("N")).Options;
+        await using var context = new SpaceContext(options, execution, clock);
+        var seeded = await SeedPublishedAsync(context,
+            Enumerable.Range(1, 10_001).Select(i => $"L-{i:00000}").ToArray());
+        var source = new RecordingRuntimeSource
+        {
+            InventoryItems = seeded.LocationIds.Select((id, i) =>
+                new SpaceWmsInventoryItem(id, $"L-{i + 1:00000}", 1.23456789m, 0, null, null, null)).ToArray()
+        };
+        var service = CreateService(context, execution, clock, seeded.SiteId, source);
+        foreach (var count in new[] { 0, 101, 10_000 })
+        {
+            source.ResetCalls();
+            var selected = seeded.LocationIds.Take(count).ToArray();
+            var response = await service.QueryInventoryAsync(seeded.SiteId, selected.Concat(selected).ToArray());
+            Assert.Equal(selected.Order(), response.Items.Select(i => i.LocationLogicalId).Order());
+            Assert.Equal(seeded.PublishedVersionId, response.PublishedVersionId);
+            Assert.Equal(source.RuntimeDataSourceId, response.Source.DataSourceId);
+            Assert.All(response.Items, i => Assert.Equal(1.23456789m, i.PhysicalQuantity));
+            Assert.Equal(count, source.InventoryBatchSizes.Sum());
+        }
+        source.ResetCalls();
+        var missing = await Assert.ThrowsAsync<SpaceProblemException>(() =>
+            service.QueryInventoryAsync(seeded.SiteId, [seeded.LocationIds[0], Guid.NewGuid()]));
+        Assert.Equal(404, missing.StatusCode);
+        var invalid = await Assert.ThrowsAsync<SpaceProblemException>(() => service.QueryInventoryAsync(seeded.SiteId, [Guid.Empty]));
+        Assert.Equal(400, invalid.StatusCode);
+        await Assert.ThrowsAsync<InvalidOperationException>(() => service.QueryInventoryAsync(Guid.NewGuid(), [seeded.LocationIds[0]]));
+        var otherTenant = Execution();
+        await using var foreignContext = new SpaceContext(options, otherTenant, clock);
+        var foreignService = CreateService(foreignContext, otherTenant, clock, seeded.SiteId, source);
+        var forbiddenTenant = await Assert.ThrowsAsync<SpaceProblemException>(() => foreignService.QueryInventoryAsync(seeded.SiteId, [seeded.LocationIds[0]]));
+        Assert.Equal(404, forbiddenTenant.StatusCode);
+        Assert.Empty(source.InventoryBatchSizes);
+
+        var model = await context.Models.SingleAsync();
+        var next = SpaceModelVersion.CreateDraft(execution.TenantId, model.Id, 2, "Next Published");
+        context.Versions.Add(next);
+        next.BeginValidation(); next.MarkReady(Hash, "space-v1", Hash);
+        next.BeginPublishing(); next.MarkPublished(execution.ActorId, Now);
+        model.SetPublishedVersion(next, Hash);
+        await context.SaveChangesAsync();
+        var stale = await Assert.ThrowsAsync<SpaceProblemException>(() => service.QueryInventoryAsync(seeded.SiteId, [seeded.LocationIds[0]]));
+        Assert.Equal(404, stale.StatusCode);
+        var empty = await service.QueryInventoryAsync(seeded.SiteId, []);
+        Assert.Equal(next.Id, empty.PublishedVersionId);
+        Assert.Empty(empty.Items);
+        Assert.Empty(source.InventoryBatchSizes);
+    }
+
+    [Fact]
     public async Task Current_published_native_and_adopted_identity_collision_fails_before_wms()
     {
         var execution = Execution();

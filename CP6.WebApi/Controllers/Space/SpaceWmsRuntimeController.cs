@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using CP6.Core.Auth;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
@@ -50,6 +51,17 @@ namespace CP6.WebApi.Controllers.Space;
 public sealed class SpaceWmsRuntimeController(
     ISpaceWmsRuntimeService runtime) : ControllerBase
 {
+    [HttpPost("inventory")]
+    [RequestSizeLimit(SpaceWmsRuntimeInventoryQueryRequest.MaxBodyBytes)]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
+    [ProducesResponseType<SpaceWmsRuntimeInventoryResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status413PayloadTooLarge, "application/problem+json")]
+    public Task<SpaceWmsRuntimeInventoryResponse> QueryInventory(
+        Guid siteId,
+        [FromBody, Required] SpaceWmsRuntimeInventoryQueryRequest request,
+        CancellationToken cancellationToken = default) =>
+        runtime.QueryInventoryAsync(siteId, request.LocationLogicalIds, cancellationToken);
+
     [HttpGet("inventory")]
     [RequirePermission(
         "space",
