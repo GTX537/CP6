@@ -1,5 +1,17 @@
 # 当前待办与优先级
 
+## 2026-10-18：W18-03 / BUG279 候选已验证，待正常集成
+
+修复锁后复用旧跟踪快照导致撤权遗漏版本/优先消息的P0；原生PG原步骤红绿，真实捕获/并发/隔离/回滚13项与相关捕获/合同50项去重通过。单份[DELIVERY](../development/evidence/WP02-05/identity-consistency/DELIVERY.md)包含全部失败与复用来源及一次集中SPEC/QUALITY作者自审，无剩余阻断。当前#279保持Open，正常PR和远端核对待执行；W18-04随后串联HTTP。
+
+完整WP02-05、CRM消费/目录、所有writer提交前撤权fence、普通身份RLS及业务/生产验收未提升。6个自有PG停止，既有库未动，无Actions、新工作树或子代理；持续目标active。下方旧进展保留历史时点。
+
+## 2026-10-18：W18-02 已交付，W18-03 身份一致性开工
+
+W18-02候选 `cfa30476fa10445ea70c5995e9ce5fe4d527f708` 已经[正常PR278](https://github.com/GTX537/CP6/pull/278)合入远端main `d77d8c030ee2fd17b8e2f6c8e24d476112d5f0d9`，15个范围文件一致；[#277已关闭](https://github.com/GTX537/CP6/issues/277#issuecomment-6252111391)。39项去重成功与集中作者自审按[单份DELIVERY](../development/evidence/WP02-04/tenant-management-audit/DELIVERY.md)复用，不重跑未变产品。8个自有PG及HTTP已结束，无Actions、既有DB或部署操作。下方待合并/Issue Open为历史时点。
+
+同一总控从最新main在原目录开启W18-03，START经Handoff `a6cc53751a6062fe93cf1582a9c8e9d9e2f2235b` 发布回读，登记身份捕获/快照/公共SaveChanges串行写集及PG55435。首先复现锁后旧跟踪快照风险，尚无新BUG结论或产品通过；复用已合入PG夹具，新增/删除worktree均0。完整WP02-05目录协议、CRM投影、最终撤权fence及业务/生产未提升；持续目标active，W18-04仍待接续。
+
 ## 2026-10-18：W18-02 / BUG277 候选已验证，待正常集成
 
 租户create/update/suspend/reactivate与必需管理审计已在同一保存/事务内；失败整体回滚，caller先前工作保留，取消能打断真实锁等待。原生PG/HTTP12项及相关27项去重通过，失败原件保留；真实HTTP平台三道闸与审计失败500/无业务残留已验证。[单份DELIVERY](../development/evidence/WP02-04/tenant-management-audit/DELIVERY.md)包含一次集中SPEC/QUALITY作者自审及默认菜单局部补验，无剩余阻断。

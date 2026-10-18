@@ -164,14 +164,39 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
                 throw new TimeoutException("C02_SNAPSHOT_LOCK_TIMEOUT");
         }
         var tracked = db.CrmIdentitySnapshots.Local.SingleOrDefault(x => x.TenantId == tenant && x.AggregateId == aggregate);
-        if (tracked is not null) return tracked;
         var snapshots = db.Database.IsNpgsql()
             ? db.CrmIdentitySnapshots.FromSqlInterpolated($"""
                 SELECT * FROM crm_identity."Snapshot"
                 WHERE "TenantId"={tenant} AND "AggregateId"=CAST({aggregate} AS bpchar) FOR UPDATE
                 """)
             : db.CrmIdentitySnapshots.FromSqlInterpolated($"SELECT * FROM crm_identity.Snapshot WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={tenant} AND AggregateId={aggregate}");
-        return await snapshots.SingleOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+        // A tracked query would resolve to the old instance even after acquiring the lock.
+        // Compare/deduplicate against the locked database version, including its concurrency token.
+        var current = await snapshots.AsNoTracking().SingleOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+        if (tracked is null)
+        {
+            if (current is not null) db.CrmIdentitySnapshots.Attach(current);
+            return current;
+        }
+
+        var entry = db.Entry(tracked);
+        if (entry.State == EntityState.Unchanged)
+        {
+            if (current is null) { entry.State = EntityState.Detached; return null; }
+            entry.CurrentValues.SetValues(current);
+            entry.OriginalValues.SetValues(current);
+            entry.State = EntityState.Unchanged;
+            return tracked;
+        }
+
+        // Repeated writes before SaveChanges may already have staged a version in this transaction.
+        // Preserve that work only while its original stored version still matches the locked row.
+        if (entry.State == EntityState.Added && current is null) return tracked;
+        if (entry.State == EntityState.Modified && current is not null &&
+            entry.OriginalValues.GetValue<int>(nameof(CrmIdentitySnapshot.Version)) == current.Version &&
+            entry.OriginalValues.GetValue<byte[]>(nameof(CrmIdentitySnapshot.RowVersion)).SequenceEqual(current.RowVersion))
+            return tracked;
+        throw new DbUpdateConcurrencyException("C02_SNAPSHOT_TRACKING_CONFLICT");
     }
 
     private async Task RevokeBrowserGrantsAsync(Guid tenant, Guid? user, Guid? family, CancellationToken cancellationToken)
