@@ -1,5 +1,28 @@
 # WP02-18 · 第十三轮 D 菜单刷新恢复
 
+## 2026-10-18 第十七轮：锁定依赖补证
+
+按[第十七轮D执行包](../../../dispatch/20261018-wave17/D-BUG-243-VALIDATION.md)与协调[6344b2de](https://github.com/GTX537/CP6.AI-Handoff/blob/6344b2dec8c68c5603e8d7894db5ca70299fc6fe/handoffs/CP6-DEV-20261012/waves/20261018-wave17.md)，本轮仅补原23项组件测试使用Vitest4.1.9而锁文件要求4.1.11的证据缺口。以下原交付与失败记录保持历史范围，不改称新执行。
+
+新工作树`D:/CP6-worktrees/wave17-d-menu-validation-20261018`，分支`codex/bug243-locked-validation-20261018`。开工及交付前核对main/origin/main为`2f20834af3e0192cdb0d0fda404f0fc398be592d`；准备提交`8d646b1db2ee224a878610445b8e9e5945145f88`从该main承接原候选`59dd7a9c7a0f5511d857743146e18a28fead31bd`。本次最终候选为本报告所在提交，由Handoff DELIVERY固定完整SHA；相对准备提交仅本报告改变。真实补证PROGRESS [47ce9a0f](https://github.com/GTX537/CP6.AI-Handoff/blob/47ce9a0ff893f184931c0c5bb730dc4d76ee7ac6/handoffs/CP6-DEV-20261012/tasks/WP02-18/messages/20261018T134027Z-wave17-progress/MESSAGE.md)已发布并远端回读，未重复START/ACK。
+
+用`git archive`从固定准备提交导出整个受版本控制的`cp6.web`到全新私有根`D:/CP6-local-test/WP02-18/menu-refresh-wave17-20261018/snapshot/cp6.web`，没有复用其他工作树的node_modules。副本内实际执行：
+
+```powershell
+npm ci --ignore-scripts --no-audit --no-fund
+npm test -- src/views/pms/MenuView.spec.ts
+```
+
+Node v20.19.0、npm10.8.2。安装退出0，现有lock安装426包，保留glob弃用warning；测试实际使用**Vitest4.1.11，23通过、0失败、0跳过，退出0**。覆盖原独立GET恢复、禁止重放写入、写入未确认、草稿和旧响应/身份变化及画像合法性，未改测试或产品来取得通过。
+
+原始记录在该私有根：`npm-ci.log`、`tests-locked.log`、`versions.log`、`input-check.log`。核对整个前端快照的870个受控输入与固定Git内容一致（Windows CRLF按LF规范化；无内容差异），包含MenuView/helper/spec及其相关导入、package/lock、Vitest/TypeScript/Vite配置。初次直接比较字节发现的是归档CRLF与Git LF差异，随后区分换行并核对，没有修改源码或锁文件。实际安装Vitest4.1.11、Vite8.1.5、Vue3.5.32、TypeScript6.0.2、vue-tsc3.2.6、plugin-vue6.0.5、test-utils2.4.11、jsdom29.1.1、Element Plus2.13.6、Pinia3.0.4、vue-i18n11.3.2均与该lock对应。
+
+MenuView/helper/spec、相关store/API/HTTP、Layout、package/lock/config与原59dd7a9c相同；当前主线带入的前端差异为库存传输和认证E2E文件，不影响本菜单窗口。页面运行源码及依赖声明未改，Vite/Vue与原页面记录版本相同；因此复用下文原RED、真实页面`page-fixed-03.log`（PASS、pageErrors=0）及原`type-check-final.log`，**没有重跑页面或type-check，不宣称整条新main已type-check**。旧4.1.9的23通过保留历史，本次4.1.11结果补齐当前候选组件证据；没有全前端测试/build、后端/数据库、实际DEV或生产验收。
+
+补证未发现产品问题，仅更新这一份DELIVERY；不修改菜单产品/helper/spec、package/lock或共享状态。候选/main workflow tree仍为`3355235636fd45116f5445fca32fc65e49f13003`，复用原12个手动入口与1个仅v*.*.* tag触发分析，本次普通分支不带tag；任务Actions列表空，取消0、触发变更0、远程运行0。没有启用5178或其他端口、既有服务/数据库。固定补证交原A做一次集中SPEC/QUALITY，D不自批可合并；Issue243保持Open，完整WP02-18与业务状态不提升，集成/远端核对及关闭由COORD负责。
+
+## 原第十三轮交付记录
+
 关联 [Issue #243](https://github.com/GTX537/CP6/issues/243)。仅交付已准入的菜单客户端恢复窗口，完整 WP02-18 仍为 PLANNED / NOT_CHECKED。分支 `codex/bug-243-menu-refresh-20261017`，工作树 `D:/CP6-worktrees/wave13-d-menu-refresh-20261017`；开工和交付前 fetch 均核对 HEAD 基线、local main、origin/main 为 `4704592f52172c941e1cb95bdeb3c73f0dd179e8`。候选提交由 Handoff DELIVERY 固定引用，避免本报告自引用。
 
 真实 START 已发布并远端回读：[6835a38231ef67699d21df52730b7f4dab7ce0ee](https://github.com/GTX537/CP6.AI-Handoff/blob/6835a38231ef67699d21df52730b7f4dab7ce0ee/handoffs/CP6-DEV-20261012/tasks/WP02-18/messages/20261017T041447Z-wave13-start/MESSAGE.md)。执行者为用户新开启的第十三轮 D 对话；按已确认窗口连续实施，没有等待重复 ACK。
