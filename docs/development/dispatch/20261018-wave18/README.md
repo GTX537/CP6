@@ -1,5 +1,7 @@
 # 第十八轮：公共基础单对话持续实施计划
 
+> W18-02经PR278已合入main `d77d8c030ee2fd17b8e2f6c8e24d476112d5f0d9`，#277关闭；W18-03真实START已登记，以下旧候选时点保留。
+
 > 已交付W18-01：PR276 / main `f58080a06df806b00e4f7da0ba2a64404253ee6b`，#275关闭。W18-02实际START已发布；沿同一目录与单总控串行接续。下方旧候选状态保留为历史。
 
 > W18-01 当前进展：真实并发复现确认 P0 [#275](https://github.com/GTX537/CP6/issues/275)，已以 PostgreSQL 单语句快照修复。最终9项原生PG、46项权限、2项CRM投影通过且无跳过；取消与尾空格问题的失败记录保留。[单份交付/作者自审](../../evidence/WP02-03/consistent-permission-read/DELIVERY.md)可供正常集成，尚未合并/关闭Issue。W18-02/03/04未开工，持续目标仍active。
@@ -92,7 +94,7 @@ $env:CP6_PERMISSION_PG_ROOT='D:/CP6-local-test/wave18/permission-consumption-'+[
 - [x] 管理事件在业务保存前加入同一工作单元；平台审计准确落平台租户，不因修改请求TenantContext污染业务身份。审计失败与业务/身份快照一并回滚；普通认证审计沿原行为。
 - [x] 真实PG制造审计插入失败和晚阶段失败，检查Tenant、admin、role/menus及身份事件没有半保存；正例事件各一次、操作人/目标准确，取消不泄漏事务。
 - [x] 检查既有调用者事务、重复请求与UNKNOWN边界。未新增持久请求槽时不宣称幂等恢复，不因超时自动重试创建。
-- [ ] 一份DELIVERY、集中自审、相关HTTP验证和正常合并。
+- [x] 一份DELIVERY、集中自审、相关HTTP验证和正常合并。
 
 ## W18-03：身份权威快照、版本与Outbox一致性
 
@@ -100,12 +102,15 @@ $env:CP6_PERMISSION_PG_ROOT='D:/CP6-local-test/wave18/permission-consumption-'+[
 
 计划写集：`CP6.Core/Services/CrmIdentity/IdentityChangeCapture.cs`、`IdentitySnapshotWriter.cs`、`IdentityPermissionSnapshot.cs`及必要的`CP6.Core/EFDbContext/CP6Context.cs`事务段；`CP6.Tests/CrmIdentityChangeCaptureTests.cs`、`CrmIdentityRevocationTests.cs`及新增PostgreSQL专项文件。公共事务段只在此串行窗口编辑，不更改不相关模型、迁移或包版本。
 
-- [ ] 按最新main建立用户主/附角色、部门移动/停用、角色变更的真实捕获矩阵，核对同事务最终事实和版本分配；已满足项直接引用，不重写。
-- [ ] 对发现的遗漏、旧跟踪值、并发版本或失败回滚缺口先建立实际失败回归，再修正最小范围。若没有产品缺口，保留实际验证交付，不为制造改动而重构。
-- [ ] 两连接竞争同聚合首版本/后续版本；验证单调版本、准确最终内容、无同版本异内容；晚阶段快照或Outbox失败时业务、版本及消息全部回滚。
-- [ ] 用户/部门/角色跨租户数据不可进入另一租户快照；禁用事件走既有优先队列，同一物理事务无孤立消息。服务token已验范围不重复运行。
-- [ ] 该交付只证明Main提供者的实际范围；CRM健康投影、完整目录协议、所有writer的授权epoch/fence仍单列，不由Main测试替代。
+- [x] 按最新main建立用户主/附角色、部门移动/停用、角色变更的真实捕获矩阵，核对同事务最终事实和版本分配；已满足项直接引用，不重写。
+- [x] 对发现的遗漏、旧跟踪值、并发版本或失败回滚缺口先建立实际失败回归，再修正最小范围。若没有产品缺口，保留实际验证交付，不为制造改动而重构。
+- [x] 两连接竞争同聚合首版本/后续版本；验证单调版本、准确最终内容、无同版本异内容；晚阶段快照或Outbox失败时业务、版本及消息全部回滚。
+- [x] 用户/部门/角色跨租户数据不可进入另一租户快照；禁用事件走既有优先队列，同一物理事务无孤立消息。服务token已验范围不重复运行。
+- [x] 该交付只证明Main提供者的实际范围；CRM健康投影、完整目录协议、所有writer的授权epoch/fence仍单列，不由Main测试替代。
 - [ ] 一份DELIVERY、集中自审、正常合并与远端核对。
+
+
+> #279候选验证及集中作者自审完成，63项去重通过；[单份DELIVERY](../../evidence/WP02-05/identity-consistency/DELIVERY.md)。正常合并/远端核对仍待执行，Issue保持Open。
 
 ## W18-04：串联验收与收尾
 

@@ -161613,7 +161613,7 @@
         "claimed_at": "2026-10-18T15:42:15.632020+00:00",
         "baseline_sha": "f58080a06df806b00e4f7da0ba2a64404253ee6b",
         "entry_evidence": "docs/development/dispatch/20261018-wave18/README.md",
-        "phase": "VALIDATED_READY_TO_INTEGRATE",
+        "phase": "CLOSED",
         "dispatch_scope": "TENANT_MANAGEMENT_REQUIRED_AUDIT_ATOMICITY",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -161634,13 +161634,8 @@
           "CP6.Tests/Platform/TenantManagementPostgresFixture.cs",
           "docs/development/evidence/WP02-04/tenant-management-audit/DELIVERY.md"
         ],
-        "reserved_write_resources": [
-          "Main:tenant-management-writes",
-          "Main:mandatory-management-audit"
-        ],
-        "reserved_postgresql_ports": [
-          55435
-        ],
+        "reserved_write_resources": [],
+        "reserved_postgresql_ports": [],
         "actions_authorized": false,
         "formal_publication_authorized": false,
         "existing_database_migration_authorized": false,
@@ -161652,7 +161647,7 @@
           "subagents": false
         },
         "candidate_review_completed": true,
-        "candidate_integrated": false,
+        "candidate_integrated": true,
         "issue": "https://github.com/GTX537/CP6/issues/277",
         "priority": "P1",
         "latest_progress_ref": {
@@ -161660,7 +161655,11 @@
           "path": "handoffs/CP6-DEV-20261012/tasks/WP02-04/messages/20261018T155648Z-wave18-progress/MESSAGE.md",
           "at": "2026-10-18T15:56:48.692095+00:00"
         },
-        "review_mode": "Single combined SPEC/QUALITY author self-review; no independent reviewer"
+        "review_mode": "Single combined SPEC/QUALITY author self-review; no independent reviewer",
+        "source_candidate_sha": "cfa30476fa10445ea70c5995e9ce5fe4d527f708",
+        "remote_main_sha": "d77d8c030ee2fd17b8e2f6c8e24d476112d5f0d9",
+        "pull_request": "https://github.com/GTX537/CP6/pull/278",
+        "issue_state": "CLOSED"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -161670,13 +161669,21 @@
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "wave18_delivery": {
-        "status": "VALIDATED_NOT_INTEGRATED",
+        "status": "MERGED",
         "issue": "https://github.com/GTX537/CP6/issues/277",
         "report": "docs/development/evidence/WP02-04/tenant-management-audit/DELIVERY.md",
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "review": "Single combined SPEC/QUALITY author self-review",
-        "validation": "39 unique passed: 12 native PG/HTTP + 27 related; actual RED and failure records preserved"
+        "validation": "39 unique passed: 12 native PG/HTTP + 27 related; actual RED and failure records preserved",
+        "source_candidate_sha": "cfa30476fa10445ea70c5995e9ce5fe4d527f708",
+        "remote_main_sha": "d77d8c030ee2fd17b8e2f6c8e24d476112d5f0d9",
+        "pull_request": "https://github.com/GTX537/CP6/pull/278",
+        "issue_state": "CLOSED",
+        "handoff": {
+          "commit": "a6cc53751a6062fe93cf1582a9c8e9d9e2f2235b",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-04/messages/20261018T161016Z-wave18-delivery/MESSAGE.md"
+        }
       }
     },
     {
@@ -161703,14 +161710,76 @@
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-05",
       "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "assignment": {
+        "chat_label": "COORD / W18-03 身份快照版本与Outbox一致性",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/bug-279-identity-consistency",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-10-18T16:10:16.382406+00:00",
+        "baseline_sha": "d77d8c030ee2fd17b8e2f6c8e24d476112d5f0d9",
+        "entry_evidence": "docs/development/dispatch/20261018-wave18/README.md",
+        "phase": "VALIDATED_READY_TO_INTEGRATE",
+        "dispatch_scope": "IDENTITY_FACT_VERSION_OUTBOX_CONSISTENCY",
+        "bounded_window_gate": "CONFIRMED",
+        "full_task_gate_unchanged": true,
+        "worker_start_received": true,
+        "worker_start_ref": {
+          "commit": "a6cc53751a6062fe93cf1582a9c8e9d9e2f2235b",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261018T161016Z-wave18-start/MESSAGE.md",
+          "kind": "START",
+          "at": "2026-10-18T16:10:16.382406+00:00"
+        },
+        "allowed_write_paths": [
+          "CP6.Core/Services/CrmIdentity/IdentityChangeCapture.cs",
+          "CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
+          "CP6.Core/Services/CrmIdentity/IdentityPermissionSnapshot.cs",
+          "CP6.Core/EFDbContext/CP6Context.cs",
+          "CP6.Tests/CrmIdentityChangeCaptureTests.cs",
+          "CP6.Tests/CrmIdentityRevocationTests.cs",
+          "CP6.Tests/CrmIdentityConsistencyPostgreSqlTests.cs",
+          "docs/development/evidence/WP02-05/identity-consistency/DELIVERY.md"
+        ],
+        "reserved_write_resources": [
+          "Main:identity-projection",
+          "Main:identity-change-capture",
+          "Main:core-savechanges-transaction"
+        ],
+        "reserved_postgresql_ports": [
+          55435
+        ],
+        "actions_authorized": false,
+        "formal_publication_authorized": false,
+        "existing_database_migration_authorized": false,
+        "deployment_authorized": false,
+        "delivery_report": "docs/development/evidence/WP02-05/identity-consistency/DELIVERY.md",
+        "execution_owner": {
+          "kind": "current_coordinator_chat",
+          "chat_id": "01a14537-9073-7482-83dc-109799c39299",
+          "subagents": false
+        },
+        "candidate_review_completed": true,
+        "candidate_integrated": false,
+        "issue_url": "https://github.com/GTX537/CP6/issues/279",
+        "issue_state": "OPEN",
+        "review_mode": "Single combined SPEC/QUALITY author self-review; no independent reviewer"
+      },
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "wave18_delivery": {
+        "status": "VALIDATED_NOT_INTEGRATED",
+        "issue": "https://github.com/GTX537/CP6/issues/279",
+        "report": "docs/development/evidence/WP02-05/identity-consistency/DELIVERY.md",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "review": "Single combined SPEC/QUALITY author self-review",
+        "validation": "63 unique passed: 13 native PG + 50 related; actual RED and failure records preserved"
+      }
     },
     {
       "id": "WP02-06",
@@ -179257,7 +179326,7 @@
       "path": "docs/development/dispatch/20261018-wave18/README.md",
       "baseline_sha": "b4516ce3b2e4098347ee9a0d89322fcd561a5da9",
       "registered_at": "2026-10-18T15:11:46.139874+00:00",
-      "phase": "W18_02_VALIDATED_READY_TO_INTEGRATE",
+      "phase": "W18_03_VALIDATED_READY_TO_INTEGRATE",
       "coordinator_shared_state_only": false,
       "assigned_chats": [
         "COORD"
@@ -179353,7 +179422,7 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "VALIDATED_READY_TO_INTEGRATE",
+          "phase": "CLOSED",
           "estimated_hours": [
             5,
             7
@@ -179372,14 +179441,8 @@
           ],
           "planned_scope_ref": "docs/development/dispatch/20261018-wave18/README.md",
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "reserved_write_resources": [
-            "Main:tenant-management-writes",
-            "Main:mandatory-management-audit"
-          ],
-          "ports": {
-            "postgresql": 55435,
-            "http": "Owned Kestrel loopback dynamic port (0); no new dependency or existing listener"
-          },
+          "reserved_write_resources": [],
+          "ports": {},
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
@@ -179417,9 +179480,14 @@
             "at": "2026-10-18T15:56:48.692095+00:00"
           },
           "candidate_review_completed": true,
-          "candidate_integrated": false,
+          "candidate_integrated": true,
           "delivery_report": "docs/development/evidence/WP02-04/tenant-management-audit/DELIVERY.md",
-          "review_mode": "Single combined SPEC/QUALITY author self-review; no independent reviewer"
+          "review_mode": "Single combined SPEC/QUALITY author self-review; no independent reviewer",
+          "source_candidate_sha": "cfa30476fa10445ea70c5995e9ce5fe4d527f708",
+          "remote_main_sha": "d77d8c030ee2fd17b8e2f6c8e24d476112d5f0d9",
+          "pull_request": "https://github.com/GTX537/CP6/pull/278",
+          "issue_state": "CLOSED",
+          "window_closed": true
         },
         {
           "id": "W18-03",
@@ -179427,24 +179495,63 @@
           "title": "身份权威快照与Outbox一致性",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "gate": "SEQUENTIAL_PENDING",
-          "phase": "REGISTERED_NOT_STARTED",
+          "gate": "CONFIRMED",
+          "phase": "VALIDATED_READY_TO_INTEGRATE",
           "estimated_hours": [
             4,
             6
           ],
-          "worker_start_received": false,
-          "worker_delivery_received": false,
-          "write_paths": [],
+          "worker_start_received": true,
+          "worker_delivery_received": true,
+          "write_paths": [
+            "CP6.Core/Services/CrmIdentity/IdentityChangeCapture.cs",
+            "CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
+            "CP6.Core/Services/CrmIdentity/IdentityPermissionSnapshot.cs",
+            "CP6.Core/EFDbContext/CP6Context.cs",
+            "CP6.Tests/CrmIdentityChangeCaptureTests.cs",
+            "CP6.Tests/CrmIdentityRevocationTests.cs",
+            "CP6.Tests/CrmIdentityConsistencyPostgreSqlTests.cs",
+            "docs/development/evidence/WP02-05/identity-consistency/DELIVERY.md"
+          ],
           "planned_scope_ref": "docs/development/dispatch/20261018-wave18/README.md",
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "reserved_write_resources": [],
-          "ports": {},
+          "reserved_write_resources": [
+            "Main:identity-projection",
+            "Main:identity-change-capture",
+            "Main:core-savechanges-transaction"
+          ],
+          "ports": {
+            "postgresql": 55435
+          },
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
           "full_task_completed": false,
-          "business_acceptance": "NOT_RUN"
+          "business_acceptance": "NOT_RUN",
+          "branch": "codex/bug-279-identity-consistency",
+          "actual_start_baseline_sha": "d77d8c030ee2fd17b8e2f6c8e24d476112d5f0d9",
+          "actual_start_ref": {
+            "commit": "a6cc53751a6062fe93cf1582a9c8e9d9e2f2235b",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261018T161016Z-wave18-start/MESSAGE.md",
+            "kind": "START",
+            "at": "2026-10-18T16:10:16.382406+00:00"
+          },
+          "issue_url": "https://github.com/GTX537/CP6/issues/279",
+          "issue_state": "OPEN",
+          "candidate_review_completed": true,
+          "candidate_integrated": false,
+          "delivery_report": "docs/development/evidence/WP02-05/identity-consistency/DELIVERY.md",
+          "review_mode": "Single combined SPEC/QUALITY author self-review; no independent reviewer",
+          "validation": {
+            "final_native": "13 unique native PG passed; 9 new + 4 affected existing rollback",
+            "final_related": "50 capture/contract passed",
+            "unique_passed": 63,
+            "remaining": [
+              "normal integration and remote verification"
+            ],
+            "report": "docs/development/evidence/WP02-05/identity-consistency/DELIVERY.md",
+            "owned_postgresql_stopped": true
+          }
         },
         {
           "id": "W18-04",
@@ -179496,13 +179603,13 @@
       },
       "user_authority": "User requested wave18 foundation-first, current chat only, 24-hour task list and persistent goal; goal created before implementation.",
       "review_mode": "One combined task-level SPEC/QUALITY self-review by sole coordinator; explicitly not an independent reviewer.",
-      "next_action": "Normally integrate #277, verify remote main and close Issue; then admit W18-03 identity consistency on latest baseline.",
+      "next_action": "Normally integrate #279, verify remote main and close Issue; admit W18-04 PostgreSQL/HTTP cross-slice validation on latest baseline.",
       "started_chats": [
         "COORD"
       ],
       "ordinary_development_hold": true,
       "blocking_issue_urls": [
-        "https://github.com/GTX537/CP6/issues/277"
+        "https://github.com/GTX537/CP6/issues/279"
       ]
     },
     "wave_history": [
