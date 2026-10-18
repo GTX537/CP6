@@ -1,5 +1,6 @@
 import http from '../http'
 import type {
+  SpaceRuntimeInventoryQueryRequest,
   SpaceRuntimeInventoryLocateQuery,
   SpaceRuntimeInventoryLocateResponse,
   SpaceRuntimeInventoryResponse,
@@ -161,13 +162,12 @@ export const spaceRuntimeApi = {
     )
   },
   inventory(siteId: string, locationLogicalIds: readonly string[]) {
-    const params = new URLSearchParams()
-    for (const locationLogicalId of new Set(locationLogicalIds)) {
-      params.append('locationLogicalId', locationLogicalId)
+    const request: SpaceRuntimeInventoryQueryRequest = {
+      locationLogicalIds: [...new Set(locationLogicalIds)],
     }
-    return http.get<unknown, SpaceRuntimeInventoryResponse>(
-      `/space/design/v1/sites/${siteId}/runtime/inventory`,
-      { params },
+    return http.post<unknown, SpaceRuntimeInventoryResponse>(
+      `/space/design/v1/sites/${encodeURIComponent(siteId)}/runtime/inventory`,
+      request,
     )
   },
   locateInventory(siteId: string, criteria: SpaceRuntimeInventoryLocateQuery) {

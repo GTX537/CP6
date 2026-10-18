@@ -1,9 +1,11 @@
+using System.ComponentModel.DataAnnotations;
 using CP6.Core.Auth;
 using CP6.Space.Application;
 using CP6.Space.Contracts;
 using CP6.WebApi.OpenApi;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace CP6.WebApi.Controllers.Space;
 
@@ -50,6 +52,18 @@ namespace CP6.WebApi.Controllers.Space;
 public sealed class SpaceWmsRuntimeController(
     ISpaceWmsRuntimeService runtime) : ControllerBase
 {
+    [HttpPost("inventory")]
+    [InventoryBodyLimitProblem]
+    [RequestSizeLimit(SpaceWmsRuntimeInventoryQueryRequest.MaxBodyBytes)]
+    [RequirePermission("space", "model:read", UseProblemDetails = true)]
+    [ProducesResponseType<SpaceWmsRuntimeInventoryResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status413PayloadTooLarge, "application/problem+json")]
+    public Task<SpaceWmsRuntimeInventoryResponse> QueryInventory(
+        Guid siteId,
+        [FromBody, Required] SpaceWmsRuntimeInventoryQueryRequest request,
+        CancellationToken cancellationToken = default) =>
+        runtime.QueryInventoryAsync(siteId, request.LocationLogicalIds, cancellationToken);
+
     [HttpGet("inventory")]
     [RequirePermission(
         "space",
@@ -138,4 +152,34 @@ public sealed class SpaceWmsRuntimeController(
             siteId,
             taskId,
             cancellationToken);
+}
+
+// Model binding reads the body before the action runs. Keep the transport
+// rejection local to this endpoint instead of letting the Space catch-all
+// middleware turn Kestrel's 413 into an internal server error.
+[AttributeUsage(AttributeTargets.Method)]
+internal sealed class InventoryBodyLimitProblemAttribute : ExceptionFilterAttribute
+{
+    public override void OnException(ExceptionContext context)
+    {
+        if (context.Exception is not BadHttpRequestException
+            { StatusCode: StatusCodes.Status413PayloadTooLarge }
+            || context.HttpContext.Response.HasStarted)
+        {
+            return;
+        }
+
+        context.Result = new ObjectResult(new ProblemDetails
+        {
+            Status = StatusCodes.Status413PayloadTooLarge,
+            Title = "Request body is too large.",
+            Type = "https://www.rfc-editor.org/rfc/rfc9110.html#section-15.5.14",
+            Instance = context.HttpContext.Request.Path,
+        })
+        {
+            StatusCode = StatusCodes.Status413PayloadTooLarge,
+            ContentTypes = { "application/problem+json" },
+        };
+        context.ExceptionHandled = true;
+    }
 }

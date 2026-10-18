@@ -1012,3 +1012,8 @@ export interface SpaceDispatchOutcomeEvaluation {
   benefitBoundary: SpaceDispatchBenefitBoundary
   limitations: string[]
 }
+
+export interface SpaceRuntimeInventoryQueryRequest {
+  /** Exact selection; [] is empty, never an unfiltered site query. */
+  locationLogicalIds: string[]
+}
