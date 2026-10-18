@@ -158902,6 +158902,11 @@
       "date": "2026-10-18",
       "change": "Wave18 authorized by user as a single-coordinator 24-hour rolling foundation goal. Register consistent current-permission reads first; queue tenant strong-audit atomicity, identity snapshot/Outbox consistency, and bounded PG/HTTP integration. Reuse released physical directory with a new branch per task; no new chat/subagent/worktree. Preserve full task/target/business states; no product execution claimed by planning.",
       "evidence": "docs/development/dispatch/20261018-wave18/README.md"
+    },
+    {
+      "date": "2026-10-18",
+      "change": "Wave19 user-authorized single-coordinator persistent goal: identity directory consistency, ordinary PostgreSQL read-only isolation, trusted-connection read adapter, affected integration and closure. Reuse existing directory; archive closed wave18 and preserve full-task/target/business states. No product execution claimed by planning.",
+      "evidence": "docs/development/dispatch/20261018-wave19/README.md"
     }
   ],
   "implementation_assessment": {
@@ -161711,55 +161716,47 @@
       "card_anchor": "wp02-05",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W18-03 身份快照版本与Outbox一致性",
+        "chat_label": "COORD / W19-01 身份目录一致性",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/bug-279-identity-consistency",
-        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-        "claimed_at": "2026-10-18T16:10:16.382406+00:00",
-        "baseline_sha": "d77d8c030ee2fd17b8e2f6c8e24d476112d5f0d9",
-        "entry_evidence": "docs/development/dispatch/20261018-wave18/README.md",
-        "phase": "CLOSED",
-        "dispatch_scope": "IDENTITY_FACT_VERSION_OUTBOX_CONSISTENCY",
+        "branch": "codex/wave19-directory-consistency-20261018",
+        "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+        "claimed_at": "2026-10-18T23:51:13.953441+00:00",
+        "baseline_sha": "4233a204002a57da5fb9355a47c10a4f8d45bbd7",
+        "coordination_baseline_sha": "4233a204002a57da5fb9355a47c10a4f8d45bbd7",
+        "entry_evidence": "docs/development/dispatch/20261018-wave19/README.md",
+        "phase": "REGISTERED_NOT_STARTED",
+        "dispatch_scope": "IDENTITY_DIRECTORY_READ_CONSISTENCY",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
-        "worker_start_received": true,
-        "worker_start_ref": {
-          "commit": "a6cc53751a6062fe93cf1582a9c8e9d9e2f2235b",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261018T161016Z-wave18-start/MESSAGE.md",
-          "kind": "START",
-          "at": "2026-10-18T16:10:16.382406+00:00"
-        },
+        "worker_start_received": false,
         "allowed_write_paths": [
-          "CP6.Core/Services/CrmIdentity/IdentityChangeCapture.cs",
-          "CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
-          "CP6.Core/Services/CrmIdentity/IdentityPermissionSnapshot.cs",
-          "CP6.Core/EFDbContext/CP6Context.cs",
-          "CP6.Tests/CrmIdentityChangeCaptureTests.cs",
-          "CP6.Tests/CrmIdentityRevocationTests.cs",
-          "CP6.Tests/CrmIdentityConsistencyPostgreSqlTests.cs",
-          "docs/development/evidence/WP02-05/identity-consistency/DELIVERY.md"
+          "CP6.Core/Services/CrmIdentity/IdentitySnapshotReader.cs",
+          "CP6.Core/Services/CrmIdentity/IdentityBootstrapService.cs",
+          "CP6.Tests/CrmIdentityDirectoryPostgreSqlTests.cs",
+          "CP6.Tests/Platform/TenantManagementPostgresFixture.cs",
+          "docs/development/evidence/WP02-05/directory-consistency/DELIVERY.md"
         ],
-        "reserved_write_resources": [],
-        "reserved_postgresql_ports": [],
+        "reserved_write_resources": [
+          "Main:identity-projection",
+          "Main:identity-directory-reader"
+        ],
+        "reserved_postgresql_ports": [
+          55435
+        ],
+        "handoff_branch": "codex/dev-coordination-20261012",
         "actions_authorized": false,
         "formal_publication_authorized": false,
         "existing_database_migration_authorized": false,
         "deployment_authorized": false,
-        "delivery_report": "docs/development/evidence/WP02-05/identity-consistency/DELIVERY.md",
+        "delivery_report": "docs/development/evidence/WP02-05/directory-consistency/DELIVERY.md",
         "execution_owner": {
           "kind": "current_coordinator_chat",
           "chat_id": "01a14537-9073-7482-83dc-109799c39299",
           "subagents": false
         },
-        "candidate_review_completed": true,
-        "candidate_integrated": true,
-        "issue_url": "https://github.com/GTX537/CP6/issues/279",
-        "issue_state": "CLOSED",
-        "review_mode": "Single combined SPEC/QUALITY author self-review; no independent reviewer",
-        "source_candidate_sha": "865a5b7b2f28c881efb8b377f1825acc3c3ed248",
-        "remote_main_sha": "58bdd59de191d3dd576c1fb5546a30a123abe74a",
-        "pull_request": "https://github.com/GTX537/CP6/pull/280"
+        "candidate_review_completed": false,
+        "candidate_integrated": false
       },
       "blockers": [],
       "validation_evidence": [],
@@ -161784,7 +161781,60 @@
           "commit": "b9292f5d9d4a38eb3bc51d41d8393d057591a835",
           "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261018T162700Z-wave18-delivery/MESSAGE.md"
         }
-      }
+      },
+      "assignment_history": [
+        {
+          "chat_label": "COORD / W18-03 身份快照版本与Outbox一致性",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/bug-279-identity-consistency",
+          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "claimed_at": "2026-10-18T16:10:16.382406+00:00",
+          "baseline_sha": "d77d8c030ee2fd17b8e2f6c8e24d476112d5f0d9",
+          "entry_evidence": "docs/development/dispatch/20261018-wave18/README.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "IDENTITY_FACT_VERSION_OUTBOX_CONSISTENCY",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "worker_start_ref": {
+            "commit": "a6cc53751a6062fe93cf1582a9c8e9d9e2f2235b",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261018T161016Z-wave18-start/MESSAGE.md",
+            "kind": "START",
+            "at": "2026-10-18T16:10:16.382406+00:00"
+          },
+          "allowed_write_paths": [
+            "CP6.Core/Services/CrmIdentity/IdentityChangeCapture.cs",
+            "CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
+            "CP6.Core/Services/CrmIdentity/IdentityPermissionSnapshot.cs",
+            "CP6.Core/EFDbContext/CP6Context.cs",
+            "CP6.Tests/CrmIdentityChangeCaptureTests.cs",
+            "CP6.Tests/CrmIdentityRevocationTests.cs",
+            "CP6.Tests/CrmIdentityConsistencyPostgreSqlTests.cs",
+            "docs/development/evidence/WP02-05/identity-consistency/DELIVERY.md"
+          ],
+          "reserved_write_resources": [],
+          "reserved_postgresql_ports": [],
+          "actions_authorized": false,
+          "formal_publication_authorized": false,
+          "existing_database_migration_authorized": false,
+          "deployment_authorized": false,
+          "delivery_report": "docs/development/evidence/WP02-05/identity-consistency/DELIVERY.md",
+          "execution_owner": {
+            "kind": "current_coordinator_chat",
+            "chat_id": "01a14537-9073-7482-83dc-109799c39299",
+            "subagents": false
+          },
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "issue_url": "https://github.com/GTX537/CP6/issues/279",
+          "issue_state": "CLOSED",
+          "review_mode": "Single combined SPEC/QUALITY author self-review; no independent reviewer",
+          "source_candidate_sha": "865a5b7b2f28c881efb8b377f1825acc3c3ed248",
+          "remote_main_sha": "58bdd59de191d3dd576c1fb5546a30a123abe74a",
+          "pull_request": "https://github.com/GTX537/CP6/pull/280"
+        }
+      ]
     },
     {
       "id": "WP02-06",
@@ -179327,12 +179377,12 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261018-wave18",
-      "path": "docs/development/dispatch/20261018-wave18/README.md",
-      "baseline_sha": "b4516ce3b2e4098347ee9a0d89322fcd561a5da9",
-      "registered_at": "2026-10-18T15:11:46.139874+00:00",
-      "phase": "CLOSED",
-      "coordinator_shared_state_only": true,
+      "id": "20261018-wave19",
+      "path": "docs/development/dispatch/20261018-wave19/README.md",
+      "baseline_sha": "4233a204002a57da5fb9355a47c10a4f8d45bbd7",
+      "registered_at": "2026-10-18T23:51:13.953441+00:00",
+      "phase": "SINGLE_COORDINATOR_PLAN_REGISTERED",
+      "coordinator_shared_state_only": false,
       "assigned_chats": [
         "COORD"
       ],
@@ -179343,334 +179393,149 @@
         "COORD"
       ],
       "active_implementation_chats": [],
-      "workers_started": true,
-      "workers_delivered": true,
-      "windows_closed": true,
-      "product_integrated": true,
+      "workers_started": false,
+      "workers_delivered": false,
+      "windows_closed": false,
+      "product_integrated": false,
       "windows": [
         {
-          "id": "W18-01",
-          "task_id": "WP02-03",
-          "title": "当前授权读取一致性",
+          "id": "W19-01",
+          "task_id": "WP02-05",
+          "title": "身份目录读取与bootstrap就绪一致性",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "CLOSED",
+          "phase": "REGISTERED_NOT_STARTED",
           "estimated_hours": [
             3,
-            5
+            4
           ],
-          "worker_start_received": true,
-          "worker_delivery_received": true,
+          "worker_start_received": false,
+          "worker_delivery_received": false,
           "write_paths": [
-            "CP6.Core/Services/Sys/CurrentPermissionContext.cs",
-            "CP6.Core/Services/Sys/PermissionAggregator.cs",
-            "CP6.Core/Services/Sys/IPermissionAggregator.cs",
-            "CP6.Core/Services/Sys/PostgreSqlPermissionReader.cs",
-            "CP6.Tests/CurrentPermissionContextTests.cs",
-            "CP6.Tests/PermissionAggregatorTests.cs",
-            "CP6.Tests/CurrentPermissionConsumptionPostgreSqlTests.cs",
-            "docs/development/evidence/WP02-03/consistent-permission-read/DELIVERY.md"
+            "CP6.Core/Services/CrmIdentity/IdentitySnapshotReader.cs",
+            "CP6.Core/Services/CrmIdentity/IdentityBootstrapService.cs",
+            "CP6.Tests/CrmIdentityDirectoryPostgreSqlTests.cs",
+            "CP6.Tests/Platform/TenantManagementPostgresFixture.cs",
+            "docs/development/evidence/WP02-05/directory-consistency/DELIVERY.md"
           ],
-          "planned_scope_ref": "docs/development/dispatch/20261018-wave18/README.md",
-          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "reserved_write_resources": [],
-          "ports": {},
+          "planned_scope_ref": "docs/development/dispatch/20261018-wave19/README.md",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "reserved_write_resources": [
+            "Main:identity-projection",
+            "Main:identity-directory-reader"
+          ],
+          "ports": {
+            "postgresql": 55435
+          },
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
           "full_task_completed": false,
-          "business_acceptance": "NOT_RUN",
-          "actual_start_ref": {
-            "commit": "f802116a4e006b18c982336108ff010b12ec76d1",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261018T151553Z-wave18-start/MESSAGE.md",
-            "kind": "START",
-            "at": "2026-10-18T15:15:53.418500+00:00"
-          },
-          "actual_start_baseline_sha": "d60ccef1b32a042b664c452ba2137a573bb1fbea",
-          "branch": "codex/bug-275-permission-snapshot",
-          "issue": "https://github.com/GTX537/CP6/issues/275",
-          "priority": "P0",
-          "validation": {
-            "red": "1 failed, 0 passed, 0 skipped; unexpected order:export confirmed in TRX",
-            "evidence_root": "D:/CP6-local-test/wave18/w18-01",
-            "postgres_root": "D:/CP6-local-test/wave18/permission-consumption-red-20261018T151837Z",
-            "owned_postgresql_stopped": true,
-            "final_postgresql": "9 passed, 0 failed, 0 skipped",
-            "related_permissions": "46 passed, 0 failed, 0 skipped",
-            "crm_projection": "2 passed, 0 failed, 0 skipped",
-            "final_evidence": [
-              "pg-green-20261018T153237Z.json",
-              "related-green-20261018T153523Z.json",
-              "crm-green-20261018T153624Z.json",
-              "text-followup-20261018T153841Z.json"
-            ],
-            "scope": "Native component fixtures and affected permission/CRM contracts; not ordinary database identity/RLS or real business acceptance",
-            "reuse": "After test-only non-null annotation, the affected native text test rebuilt/passed once; other 56 unchanged successes reused, not rerun."
-          },
-          "candidate_review_completed": true,
-          "candidate_integrated": true,
-          "review_mode": "Combined SPEC/QUALITY author self-review; sole coordinator, no independent reviewer",
-          "delivery_report": "docs/development/evidence/WP02-03/consistent-permission-read/DELIVERY.md",
-          "remote_main_sha": "f58080a06df806b00e4f7da0ba2a64404253ee6b",
-          "source_candidate_sha": "d0805b6d28a65d199886b0f2d8c370d3588aa092",
-          "pull_request": "https://github.com/GTX537/CP6/pull/276",
-          "issue_state": "CLOSED",
-          "window_closed": true
+          "business_acceptance": "NOT_RUN"
         },
         {
-          "id": "W18-02",
-          "task_id": "WP02-04",
-          "title": "租户管理与强审计同事务",
+          "id": "W19-02",
+          "task_id": "WP02-02",
+          "title": "身份目录普通数据库账号只读租户隔离",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "gate": "CONFIRMED",
-          "phase": "CLOSED",
+          "gate": "SEQUENTIAL_PENDING",
+          "phase": "REGISTERED_NOT_STARTED",
           "estimated_hours": [
             5,
             7
           ],
-          "worker_start_received": true,
-          "worker_delivery_received": true,
-          "write_paths": [
-            "CP6.Core/Services/Platform/TenantAdminService.cs",
-            "CP6.Core/Services/Platform/ITenantAdminService.cs",
-            "CP6.WebApi/Controllers/Platform/TenantController.cs",
-            "CP6.Tests/Platform/TenantAdminServiceTests.cs",
-            "CP6.Tests/Platform/TenantControllerTests.cs",
-            "CP6.Tests/Platform/TenantManagementAuditPostgreSqlTests.cs",
-            "CP6.Tests/Platform/TenantManagementPostgresFixture.cs",
-            "docs/development/evidence/WP02-04/tenant-management-audit/DELIVERY.md"
-          ],
-          "planned_scope_ref": "docs/development/dispatch/20261018-wave18/README.md",
-          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "worker_start_received": false,
+          "worker_delivery_received": false,
+          "write_paths": [],
+          "planned_scope_ref": "docs/development/dispatch/20261018-wave19/README.md",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "reserved_write_resources": [],
           "ports": {},
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
           "full_task_completed": false,
-          "business_acceptance": "NOT_RUN",
-          "branch": "codex/bug-277-tenant-management-audit",
-          "actual_start_baseline_sha": "f58080a06df806b00e4f7da0ba2a64404253ee6b",
-          "actual_start_ref": {
-            "commit": "3fb4e89a2ec059e4562ea231d6d4e81a7e89fc75",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-04/messages/20261018T154215Z-wave18-start/MESSAGE.md",
-            "at": "2026-10-18T15:42:15.632020+00:00",
-            "kind": "START"
-          },
-          "issue": "https://github.com/GTX537/CP6/issues/277",
-          "priority": "P1",
-          "validation": {
-            "red": "1 failed, 0 passed, 0 skipped; required audit rejected but create returned success and committed tenant/user/role",
-            "evidence_root": "D:/CP6-local-test/wave18/w18-02",
-            "postgres_root": "D:/CP6-local-test/wave18/permission-consumption-w18-02-audit-red-20261018T154409Z",
-            "owned_postgresql_stopped": true,
-            "management_postgresql": "6 passed, 0 failed/skipped",
-            "identity_rollback_postgresql": "4 passed, 0 failed/skipped",
-            "related_service_controller_audit": "21 passed, 0 failed/skipped; direct controller calls, not HTTP",
-            "platform_filter": "6 passed, 0 failed/skipped; not full HTTP",
-            "remaining": [
-              "normal integration and remote verification"
-            ],
-            "final_native": "12 unique native PG/HTTP scenarios passed, 0 failures/skips; per-run inputs and reuse in DELIVERY",
-            "final_related": "27 related cases passed, 0 failed/skipped",
-            "report": "docs/development/evidence/WP02-04/tenant-management-audit/DELIVERY.md"
-          },
-          "latest_progress_ref": {
-            "commit": "6c51afba89447216e1a6c7f81c4fed3cc66a4ba6",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-04/messages/20261018T155648Z-wave18-progress/MESSAGE.md",
-            "at": "2026-10-18T15:56:48.692095+00:00"
-          },
-          "candidate_review_completed": true,
-          "candidate_integrated": true,
-          "delivery_report": "docs/development/evidence/WP02-04/tenant-management-audit/DELIVERY.md",
-          "review_mode": "Single combined SPEC/QUALITY author self-review; no independent reviewer",
-          "source_candidate_sha": "cfa30476fa10445ea70c5995e9ce5fe4d527f708",
-          "remote_main_sha": "d77d8c030ee2fd17b8e2f6c8e24d476112d5f0d9",
-          "pull_request": "https://github.com/GTX537/CP6/pull/278",
-          "issue_state": "CLOSED",
-          "window_closed": true
+          "business_acceptance": "NOT_RUN"
         },
         {
-          "id": "W18-03",
+          "id": "W19-03",
           "task_id": "WP02-05",
-          "title": "身份权威快照与Outbox一致性",
+          "title": "可信租户连接的目录读取适配",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "gate": "CONFIRMED",
-          "phase": "CLOSED",
+          "gate": "SEQUENTIAL_PENDING",
+          "phase": "REGISTERED_NOT_STARTED",
           "estimated_hours": [
             4,
             6
           ],
-          "worker_start_received": true,
-          "worker_delivery_received": true,
-          "write_paths": [
-            "CP6.Core/Services/CrmIdentity/IdentityChangeCapture.cs",
-            "CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
-            "CP6.Core/Services/CrmIdentity/IdentityPermissionSnapshot.cs",
-            "CP6.Core/EFDbContext/CP6Context.cs",
-            "CP6.Tests/CrmIdentityChangeCaptureTests.cs",
-            "CP6.Tests/CrmIdentityRevocationTests.cs",
-            "CP6.Tests/CrmIdentityConsistencyPostgreSqlTests.cs",
-            "docs/development/evidence/WP02-05/identity-consistency/DELIVERY.md"
-          ],
-          "planned_scope_ref": "docs/development/dispatch/20261018-wave18/README.md",
-          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "worker_start_received": false,
+          "worker_delivery_received": false,
+          "write_paths": [],
+          "planned_scope_ref": "docs/development/dispatch/20261018-wave19/README.md",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "reserved_write_resources": [],
           "ports": {},
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
           "full_task_completed": false,
-          "business_acceptance": "NOT_RUN",
-          "branch": "codex/bug-279-identity-consistency",
-          "actual_start_baseline_sha": "d77d8c030ee2fd17b8e2f6c8e24d476112d5f0d9",
-          "actual_start_ref": {
-            "commit": "a6cc53751a6062fe93cf1582a9c8e9d9e2f2235b",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261018T161016Z-wave18-start/MESSAGE.md",
-            "kind": "START",
-            "at": "2026-10-18T16:10:16.382406+00:00"
-          },
-          "issue_url": "https://github.com/GTX537/CP6/issues/279",
-          "issue_state": "CLOSED",
-          "candidate_review_completed": true,
-          "candidate_integrated": true,
-          "delivery_report": "docs/development/evidence/WP02-05/identity-consistency/DELIVERY.md",
-          "review_mode": "Single combined SPEC/QUALITY author self-review; no independent reviewer",
-          "validation": {
-            "final_native": "13 unique native PG passed; 9 new + 4 affected existing rollback",
-            "final_related": "50 capture/contract passed",
-            "unique_passed": 63,
-            "remaining": [
-              "normal integration and remote verification"
-            ],
-            "report": "docs/development/evidence/WP02-05/identity-consistency/DELIVERY.md",
-            "owned_postgresql_stopped": true
-          },
-          "source_candidate_sha": "865a5b7b2f28c881efb8b377f1825acc3c3ed248",
-          "remote_main_sha": "58bdd59de191d3dd576c1fb5546a30a123abe74a",
-          "pull_request": "https://github.com/GTX537/CP6/pull/280",
-          "window_closed": true
+          "business_acceptance": "NOT_RUN"
         },
         {
-          "id": "W18-04",
+          "id": "W19-04",
           "task_id": null,
-          "title": "PostgreSQL与HTTP串联验收及收尾",
+          "title": "普通身份目录链路验收及集成收尾",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "gate": "CONFIRMED",
-          "phase": "CLOSED",
+          "gate": "SEQUENTIAL_PENDING",
+          "phase": "REGISTERED_NOT_STARTED",
           "estimated_hours": [
-            2,
+            3,
             4
           ],
-          "worker_start_received": true,
-          "worker_delivery_received": true,
-          "write_paths": [
-            "CP6.Tests/Platform/TenantManagementPostgresFixture.cs",
-            "CP6.Tests/Platform/FoundationIntegrationPostgreSqlTests.cs",
-            "docs/development/evidence/WAVE18/foundation-integration/DELIVERY.md"
-          ],
-          "planned_scope_ref": "docs/development/dispatch/20261018-wave18/README.md",
-          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "worker_start_received": false,
+          "worker_delivery_received": false,
+          "write_paths": [],
+          "planned_scope_ref": "docs/development/dispatch/20261018-wave19/README.md",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "reserved_write_resources": [],
           "ports": {},
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
           "full_task_completed": false,
-          "business_acceptance": "NOT_RUN",
-          "branch": "codex/wave18-foundation-integration-20261018",
-          "actual_start_baseline_sha": "58bdd59de191d3dd576c1fb5546a30a123abe74a",
-          "actual_start_ref": {
-            "commit": "b9292f5d9d4a38eb3bc51d41d8393d057591a835",
-            "path": "handoffs/CP6-DEV-20261012/tasks/COORD/messages/20261018T162700Z-wave18-integration-start/MESSAGE.md",
-            "kind": "START",
-            "at": "2026-10-18T16:27:00.278815+00:00"
-          },
-          "delivery_report": "docs/development/evidence/WAVE18/foundation-integration/DELIVERY.md",
-          "candidate_review_completed": true,
-          "candidate_integrated": true,
-          "review_mode": "Single combined SPEC/QUALITY author self-review; no independent reviewer",
-          "validation": {
-            "unique_passed": 3,
-            "native_http": "2 new cross-slice + 1 affected existing host scenario",
-            "failed_remaining": 0,
-            "skipped": 0,
-            "owned_postgresql_stopped": true,
-            "owned_http_stopped": true,
-            "remaining": []
-          },
-          "window_closed": true,
-          "source_candidate_sha": "b85700a8cbb8e5f705cf748c009a6821d977140b",
-          "remote_main_sha": "f9a1496ce54c46cbbf6197cf8afd9675ae0cba63",
-          "pull_request": "https://github.com/GTX537/CP6/pull/281",
-          "delivery_ref": {
-            "commit": "2e61d1de816e9d333f5f2d5feddb66419300d3a3",
-            "path": "handoffs/CP6-DEV-20261012/tasks/COORD/messages/20261018T163602Z-wave18-delivery/MESSAGE.md"
-          }
+          "business_acceptance": "NOT_RUN"
         }
       ],
-      "integration_order": "W18-01 -> W18-02 -> W18-03 -> W18-04; normal per-task merge and latest-main verification before next task branch.",
+      "integration_order": "W19-01 -> W19-02 -> W19-03 -> W19-04; normal per-task merge and latest-main verification before the next task branch.",
       "execution_owner": {
         "kind": "current_coordinator_chat",
         "chat_id": "01a14537-9073-7482-83dc-109799c39299",
         "subagents": false
       },
       "horizon": {
-        "started_at": "2026-10-18T15:08:30Z",
-        "checkpoint_at": "2026-10-19T15:08:30Z",
+        "started_at": "2026-10-18T23:49:21Z",
+        "checkpoint_at": "2026-10-19T23:49:21Z",
+        "timezone": "America/New_York",
         "estimated_hours": [
-          16,
+          18,
           24
         ],
         "deadline_is_not_completion": true
       },
-      "completion_scope": "Three bounded Main foundation deliveries plus affected PG/HTTP integration; not full WP02/F1/F2, full tenant RLS adoption, CRM Owner fence or business/production acceptance.",
+      "completion_scope": "Bounded Main directory consistency, read-only ordinary-principal isolation and trusted connection consumption plus affected integration. Not full Main RLS, frozen full directory protocol, CRM consumption, Owner final revocation fence or business/production acceptance.",
       "storage": {
-        "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0,
         "deleted_worktrees": 0,
         "raw_evidence_preserved": true
       },
-      "user_authority": "User requested wave18 foundation-first, current chat only, 24-hour task list and persistent goal; goal created before implementation.",
-      "review_mode": "One combined task-level SPEC/QUALITY self-review by sole coordinator; explicitly not an independent reviewer.",
-      "next_action": "Wave18 bounded deliveries are complete. Next foundation windows require separate scope/admission: ordinary database identity/RLS, full directory and CRM adoption, or shared final authorization fence. No worker assigned automatically.",
-      "started_chats": [
-        "COORD"
-      ],
-      "ordinary_development_hold": false,
-      "blocking_issue_urls": [],
-      "closed_at": "2026-10-18T16:36:02.452477+00:00",
-      "latest_handoff": {
-        "commit": "2e61d1de816e9d333f5f2d5feddb66419300d3a3",
-        "path": "handoffs/CP6-DEV-20261012/tasks/COORD/messages/20261018T163602Z-wave18-delivery/MESSAGE.md"
-      },
-      "source_main_sha": "f9a1496ce54c46cbbf6197cf8afd9675ae0cba63",
-      "completion_evidence": {
-        "bounded_windows": 4,
-        "normal_prs": [
-          "https://github.com/GTX537/CP6/pull/276",
-          "https://github.com/GTX537/CP6/pull/278",
-          "https://github.com/GTX537/CP6/pull/280",
-          "https://github.com/GTX537/CP6/pull/281"
-        ],
-        "issues_closed": [
-          275,
-          277,
-          279
-        ],
-        "owned_postgresql_instances_stopped": 21,
-        "owned_http_stopped": true,
-        "new_worktrees": 0,
-        "deleted_worktrees": 0,
-        "actions_runs": 0,
-        "full_wp02_complete": false,
-        "business_acceptance": "NOT_RUN",
-        "goal_completion_condition": "This final documentation closure must be normally merged and remote verified, with final Handoff published, before the assistant marks the goal complete."
-      }
+      "user_authority": "User explicitly requested wave19 remaining foundations, current chat only, 24-hour task list and persistent goal. Goal active from 2026-10-18T23:49:21Z.",
+      "review_mode": "One combined task-level SPEC/QUALITY author self-review by sole coordinator; not an independent reviewer.",
+      "next_action": "Merge planning normally, create W19-01 branch from latest main in the same clean directory, publish one real START, then reproduce and fix directory consistency risks."
     },
     "wave_history": [
       {
@@ -181043,6 +180908,352 @@
           243
         ],
         "continuation": "Wave17 closed. Continue bounded F1 identity/tenant lifecycle and F2 real Owner transactions only via a subsequent registered window, reusing released directories; no automatic full-task/business acceptance or production authority."
+      },
+      {
+        "id": "20261018-wave18",
+        "path": "docs/development/dispatch/20261018-wave18/README.md",
+        "baseline_sha": "b4516ce3b2e4098347ee9a0d89322fcd561a5da9",
+        "registered_at": "2026-10-18T15:11:46.139874+00:00",
+        "phase": "CLOSED",
+        "coordinator_shared_state_only": true,
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "workers_delivered": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W18-01",
+            "task_id": "WP02-03",
+            "title": "当前授权读取一致性",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "gate": "CONFIRMED",
+            "phase": "CLOSED",
+            "estimated_hours": [
+              3,
+              5
+            ],
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "write_paths": [
+              "CP6.Core/Services/Sys/CurrentPermissionContext.cs",
+              "CP6.Core/Services/Sys/PermissionAggregator.cs",
+              "CP6.Core/Services/Sys/IPermissionAggregator.cs",
+              "CP6.Core/Services/Sys/PostgreSqlPermissionReader.cs",
+              "CP6.Tests/CurrentPermissionContextTests.cs",
+              "CP6.Tests/PermissionAggregatorTests.cs",
+              "CP6.Tests/CurrentPermissionConsumptionPostgreSqlTests.cs",
+              "docs/development/evidence/WP02-03/consistent-permission-read/DELIVERY.md"
+            ],
+            "planned_scope_ref": "docs/development/dispatch/20261018-wave18/README.md",
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "reserved_write_resources": [],
+            "ports": {},
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "existing_database_operations_authorized": false,
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actual_start_ref": {
+              "commit": "f802116a4e006b18c982336108ff010b12ec76d1",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261018T151553Z-wave18-start/MESSAGE.md",
+              "kind": "START",
+              "at": "2026-10-18T15:15:53.418500+00:00"
+            },
+            "actual_start_baseline_sha": "d60ccef1b32a042b664c452ba2137a573bb1fbea",
+            "branch": "codex/bug-275-permission-snapshot",
+            "issue": "https://github.com/GTX537/CP6/issues/275",
+            "priority": "P0",
+            "validation": {
+              "red": "1 failed, 0 passed, 0 skipped; unexpected order:export confirmed in TRX",
+              "evidence_root": "D:/CP6-local-test/wave18/w18-01",
+              "postgres_root": "D:/CP6-local-test/wave18/permission-consumption-red-20261018T151837Z",
+              "owned_postgresql_stopped": true,
+              "final_postgresql": "9 passed, 0 failed, 0 skipped",
+              "related_permissions": "46 passed, 0 failed, 0 skipped",
+              "crm_projection": "2 passed, 0 failed, 0 skipped",
+              "final_evidence": [
+                "pg-green-20261018T153237Z.json",
+                "related-green-20261018T153523Z.json",
+                "crm-green-20261018T153624Z.json",
+                "text-followup-20261018T153841Z.json"
+              ],
+              "scope": "Native component fixtures and affected permission/CRM contracts; not ordinary database identity/RLS or real business acceptance",
+              "reuse": "After test-only non-null annotation, the affected native text test rebuilt/passed once; other 56 unchanged successes reused, not rerun."
+            },
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "review_mode": "Combined SPEC/QUALITY author self-review; sole coordinator, no independent reviewer",
+            "delivery_report": "docs/development/evidence/WP02-03/consistent-permission-read/DELIVERY.md",
+            "remote_main_sha": "f58080a06df806b00e4f7da0ba2a64404253ee6b",
+            "source_candidate_sha": "d0805b6d28a65d199886b0f2d8c370d3588aa092",
+            "pull_request": "https://github.com/GTX537/CP6/pull/276",
+            "issue_state": "CLOSED",
+            "window_closed": true
+          },
+          {
+            "id": "W18-02",
+            "task_id": "WP02-04",
+            "title": "租户管理与强审计同事务",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "gate": "CONFIRMED",
+            "phase": "CLOSED",
+            "estimated_hours": [
+              5,
+              7
+            ],
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "write_paths": [
+              "CP6.Core/Services/Platform/TenantAdminService.cs",
+              "CP6.Core/Services/Platform/ITenantAdminService.cs",
+              "CP6.WebApi/Controllers/Platform/TenantController.cs",
+              "CP6.Tests/Platform/TenantAdminServiceTests.cs",
+              "CP6.Tests/Platform/TenantControllerTests.cs",
+              "CP6.Tests/Platform/TenantManagementAuditPostgreSqlTests.cs",
+              "CP6.Tests/Platform/TenantManagementPostgresFixture.cs",
+              "docs/development/evidence/WP02-04/tenant-management-audit/DELIVERY.md"
+            ],
+            "planned_scope_ref": "docs/development/dispatch/20261018-wave18/README.md",
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "reserved_write_resources": [],
+            "ports": {},
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "existing_database_operations_authorized": false,
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "branch": "codex/bug-277-tenant-management-audit",
+            "actual_start_baseline_sha": "f58080a06df806b00e4f7da0ba2a64404253ee6b",
+            "actual_start_ref": {
+              "commit": "3fb4e89a2ec059e4562ea231d6d4e81a7e89fc75",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-04/messages/20261018T154215Z-wave18-start/MESSAGE.md",
+              "at": "2026-10-18T15:42:15.632020+00:00",
+              "kind": "START"
+            },
+            "issue": "https://github.com/GTX537/CP6/issues/277",
+            "priority": "P1",
+            "validation": {
+              "red": "1 failed, 0 passed, 0 skipped; required audit rejected but create returned success and committed tenant/user/role",
+              "evidence_root": "D:/CP6-local-test/wave18/w18-02",
+              "postgres_root": "D:/CP6-local-test/wave18/permission-consumption-w18-02-audit-red-20261018T154409Z",
+              "owned_postgresql_stopped": true,
+              "management_postgresql": "6 passed, 0 failed/skipped",
+              "identity_rollback_postgresql": "4 passed, 0 failed/skipped",
+              "related_service_controller_audit": "21 passed, 0 failed/skipped; direct controller calls, not HTTP",
+              "platform_filter": "6 passed, 0 failed/skipped; not full HTTP",
+              "remaining": [
+                "normal integration and remote verification"
+              ],
+              "final_native": "12 unique native PG/HTTP scenarios passed, 0 failures/skips; per-run inputs and reuse in DELIVERY",
+              "final_related": "27 related cases passed, 0 failed/skipped",
+              "report": "docs/development/evidence/WP02-04/tenant-management-audit/DELIVERY.md"
+            },
+            "latest_progress_ref": {
+              "commit": "6c51afba89447216e1a6c7f81c4fed3cc66a4ba6",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-04/messages/20261018T155648Z-wave18-progress/MESSAGE.md",
+              "at": "2026-10-18T15:56:48.692095+00:00"
+            },
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "delivery_report": "docs/development/evidence/WP02-04/tenant-management-audit/DELIVERY.md",
+            "review_mode": "Single combined SPEC/QUALITY author self-review; no independent reviewer",
+            "source_candidate_sha": "cfa30476fa10445ea70c5995e9ce5fe4d527f708",
+            "remote_main_sha": "d77d8c030ee2fd17b8e2f6c8e24d476112d5f0d9",
+            "pull_request": "https://github.com/GTX537/CP6/pull/278",
+            "issue_state": "CLOSED",
+            "window_closed": true
+          },
+          {
+            "id": "W18-03",
+            "task_id": "WP02-05",
+            "title": "身份权威快照与Outbox一致性",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "gate": "CONFIRMED",
+            "phase": "CLOSED",
+            "estimated_hours": [
+              4,
+              6
+            ],
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "write_paths": [
+              "CP6.Core/Services/CrmIdentity/IdentityChangeCapture.cs",
+              "CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
+              "CP6.Core/Services/CrmIdentity/IdentityPermissionSnapshot.cs",
+              "CP6.Core/EFDbContext/CP6Context.cs",
+              "CP6.Tests/CrmIdentityChangeCaptureTests.cs",
+              "CP6.Tests/CrmIdentityRevocationTests.cs",
+              "CP6.Tests/CrmIdentityConsistencyPostgreSqlTests.cs",
+              "docs/development/evidence/WP02-05/identity-consistency/DELIVERY.md"
+            ],
+            "planned_scope_ref": "docs/development/dispatch/20261018-wave18/README.md",
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "reserved_write_resources": [],
+            "ports": {},
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "existing_database_operations_authorized": false,
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "branch": "codex/bug-279-identity-consistency",
+            "actual_start_baseline_sha": "d77d8c030ee2fd17b8e2f6c8e24d476112d5f0d9",
+            "actual_start_ref": {
+              "commit": "a6cc53751a6062fe93cf1582a9c8e9d9e2f2235b",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261018T161016Z-wave18-start/MESSAGE.md",
+              "kind": "START",
+              "at": "2026-10-18T16:10:16.382406+00:00"
+            },
+            "issue_url": "https://github.com/GTX537/CP6/issues/279",
+            "issue_state": "CLOSED",
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "delivery_report": "docs/development/evidence/WP02-05/identity-consistency/DELIVERY.md",
+            "review_mode": "Single combined SPEC/QUALITY author self-review; no independent reviewer",
+            "validation": {
+              "final_native": "13 unique native PG passed; 9 new + 4 affected existing rollback",
+              "final_related": "50 capture/contract passed",
+              "unique_passed": 63,
+              "remaining": [
+                "normal integration and remote verification"
+              ],
+              "report": "docs/development/evidence/WP02-05/identity-consistency/DELIVERY.md",
+              "owned_postgresql_stopped": true
+            },
+            "source_candidate_sha": "865a5b7b2f28c881efb8b377f1825acc3c3ed248",
+            "remote_main_sha": "58bdd59de191d3dd576c1fb5546a30a123abe74a",
+            "pull_request": "https://github.com/GTX537/CP6/pull/280",
+            "window_closed": true
+          },
+          {
+            "id": "W18-04",
+            "task_id": null,
+            "title": "PostgreSQL与HTTP串联验收及收尾",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "gate": "CONFIRMED",
+            "phase": "CLOSED",
+            "estimated_hours": [
+              2,
+              4
+            ],
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "write_paths": [
+              "CP6.Tests/Platform/TenantManagementPostgresFixture.cs",
+              "CP6.Tests/Platform/FoundationIntegrationPostgreSqlTests.cs",
+              "docs/development/evidence/WAVE18/foundation-integration/DELIVERY.md"
+            ],
+            "planned_scope_ref": "docs/development/dispatch/20261018-wave18/README.md",
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "reserved_write_resources": [],
+            "ports": {},
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "existing_database_operations_authorized": false,
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "branch": "codex/wave18-foundation-integration-20261018",
+            "actual_start_baseline_sha": "58bdd59de191d3dd576c1fb5546a30a123abe74a",
+            "actual_start_ref": {
+              "commit": "b9292f5d9d4a38eb3bc51d41d8393d057591a835",
+              "path": "handoffs/CP6-DEV-20261012/tasks/COORD/messages/20261018T162700Z-wave18-integration-start/MESSAGE.md",
+              "kind": "START",
+              "at": "2026-10-18T16:27:00.278815+00:00"
+            },
+            "delivery_report": "docs/development/evidence/WAVE18/foundation-integration/DELIVERY.md",
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "review_mode": "Single combined SPEC/QUALITY author self-review; no independent reviewer",
+            "validation": {
+              "unique_passed": 3,
+              "native_http": "2 new cross-slice + 1 affected existing host scenario",
+              "failed_remaining": 0,
+              "skipped": 0,
+              "owned_postgresql_stopped": true,
+              "owned_http_stopped": true,
+              "remaining": []
+            },
+            "window_closed": true,
+            "source_candidate_sha": "b85700a8cbb8e5f705cf748c009a6821d977140b",
+            "remote_main_sha": "f9a1496ce54c46cbbf6197cf8afd9675ae0cba63",
+            "pull_request": "https://github.com/GTX537/CP6/pull/281",
+            "delivery_ref": {
+              "commit": "2e61d1de816e9d333f5f2d5feddb66419300d3a3",
+              "path": "handoffs/CP6-DEV-20261012/tasks/COORD/messages/20261018T163602Z-wave18-delivery/MESSAGE.md"
+            }
+          }
+        ],
+        "integration_order": "W18-01 -> W18-02 -> W18-03 -> W18-04; normal per-task merge and latest-main verification before next task branch.",
+        "execution_owner": {
+          "kind": "current_coordinator_chat",
+          "chat_id": "01a14537-9073-7482-83dc-109799c39299",
+          "subagents": false
+        },
+        "horizon": {
+          "started_at": "2026-10-18T15:08:30Z",
+          "checkpoint_at": "2026-10-19T15:08:30Z",
+          "estimated_hours": [
+            16,
+            24
+          ],
+          "deadline_is_not_completion": true
+        },
+        "completion_scope": "Three bounded Main foundation deliveries plus affected PG/HTTP integration; not full WP02/F1/F2, full tenant RLS adoption, CRM Owner fence or business/production acceptance.",
+        "storage": {
+          "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "new_worktrees": 0,
+          "deleted_worktrees": 0,
+          "raw_evidence_preserved": true
+        },
+        "user_authority": "User requested wave18 foundation-first, current chat only, 24-hour task list and persistent goal; goal created before implementation.",
+        "review_mode": "One combined task-level SPEC/QUALITY self-review by sole coordinator; explicitly not an independent reviewer.",
+        "next_action": "Wave18 bounded deliveries are complete. Next foundation windows require separate scope/admission: ordinary database identity/RLS, full directory and CRM adoption, or shared final authorization fence. No worker assigned automatically.",
+        "started_chats": [
+          "COORD"
+        ],
+        "ordinary_development_hold": false,
+        "blocking_issue_urls": [],
+        "closed_at": "2026-10-18T16:36:02.452477+00:00",
+        "latest_handoff": {
+          "commit": "2e61d1de816e9d333f5f2d5feddb66419300d3a3",
+          "path": "handoffs/CP6-DEV-20261012/tasks/COORD/messages/20261018T163602Z-wave18-delivery/MESSAGE.md"
+        },
+        "source_main_sha": "f9a1496ce54c46cbbf6197cf8afd9675ae0cba63",
+        "completion_evidence": {
+          "bounded_windows": 4,
+          "normal_prs": [
+            "https://github.com/GTX537/CP6/pull/276",
+            "https://github.com/GTX537/CP6/pull/278",
+            "https://github.com/GTX537/CP6/pull/280",
+            "https://github.com/GTX537/CP6/pull/281"
+          ],
+          "issues_closed": [
+            275,
+            277,
+            279
+          ],
+          "owned_postgresql_instances_stopped": 21,
+          "owned_http_stopped": true,
+          "new_worktrees": 0,
+          "deleted_worktrees": 0,
+          "actions_runs": 0,
+          "full_wp02_complete": false,
+          "business_acceptance": "NOT_RUN",
+          "goal_completion_condition": "This final documentation closure must be normally merged and remote verified, with final Handoff published, before the assistant marks the goal complete."
+        }
       }
     ],
     "development_priority": {
