@@ -1,5 +1,15 @@
 # BUG-132 — wave16 实施交付
 
+## 2026-10-18：D复查通过、主线集成及Issue关闭（当前结论）
+
+**[#132已关闭](https://github.com/GTX537/CP6/issues/132#issuecomment-6250315486)，第十六轮完成。** [原D集中审查及局部复查](https://github.com/GTX537/CP6.AI-Handoff/blob/c84c6da6e2bf1ee570513dacf3e03248a8910f00/handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-132/REVIEW.md)确认固定候选 `e83593a3ddd5ffd1ac0614b943eaf3358483989d` 本地Ready to merge Yes，R132-01解除、无剩余阻断；最终Handoff `da4473069d5e38fdaee39b69f20ca49eb5d03125` 已远端回读。原完整审查加一次修正局部复查沿用同一REVIEW，没有第二START/ACK或重复完整审查。
+
+[正常代码PR265](https://github.com/GTX537/CP6/pull/265)已合并，远端main `5a29b6b106aa3b4bf267811371771d9209bb80fd` 包含该候选，全部17个范围文件与候选精确一致。修复前URL/POST失败、站点10,001位置中合法0/101/10,000精确子集、去重/SiteAccess/Current Published/StockOverlay、请求大小和兼容GET/SDK均有原有效证据，满足Issue要求的源码/受影响前端及HTTP合同验收。保留单次有界POST和完整选择，不改查整站、不截断、不静默fallback。
+
+沿用本报告原日志/TRX：锁定Vitest4.1.11前端35、修正HTTP/OpenAPI65、InMemory服务9通过，各0失败/跳过；HTTP修前RED2保留。原简化宿主61项中的413结论由含实际Space错误层的65项补齐，不重复相加。chunked14格式字节仅适用于该单chunk夹具；生产上限未改。主线产品文件与已验证候选一致，本次只做集成一致性、Issue条件和文档/台账验证，未因SHA变化重跑产品测试。
+
+本Issue没有强制待补的数据库/真实DEV门禁；受控HTTP及InMemory证据不代表整条应用持久权限、真实WMS/PG、实际浏览器或生产验收。自有fixture此前已停止，未操作既有数据库或替换运行服务，无Actions启动/取消、工作流变更或部署。原A候选325dc769及其干净工作树保留；本轮实现/审查窗口关闭、资源预约释放，后续B/C修正仍需各自准入。完整375任务/125业务验收不提升。以下待审查/Open记录均为历史，以本节为准。
+
 ## 2026-10-18：COORD接手R132-01修正，待原D局部复查
 
 所有权通过[PR264](https://github.com/GTX537/CP6/pull/264)和[协调96a625d4](https://github.com/GTX537/CP6.AI-Handoff/blob/96a625d40bee0f775e6e699d4765a51f86e0a93b/handoffs/CP6-DEV-20261012/waves/20261017-wave16.md)转为COORD独占。原A的325dc769分支及干净工作树保留。新分支 `codex/bug-132-http413-correction-20261018` 从main `24f97b03011dc09c741c5f25d7463bd9f54a1fbc` 创建，以 `5db1cb56c527a42bfe9a8c6fadd4fd15894c46d5` 可审计cherry-pick承接A候选。本次修正只改原Controller、HTTP测试和本报告；Program、公共中间件与大小上限不变。
