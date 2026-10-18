@@ -80,23 +80,54 @@ public sealed class SpaceWmsInventoryQueryTests
         Assert.Single(host.Calls);
     }
 
-    [Fact]
-    public async Task Post_body_and_server_request_line_have_hard_byte_boundaries()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Post_body_limit_returns_problem_details_through_space_error_middleware(bool chunked)
     {
         await using var host = await Host.Start();
         const string json = "{\"locationLogicalIds\":[]}";
-        var exact = json.PadRight(SpaceWmsRuntimeInventoryQueryRequest.MaxBodyBytes);
-        using var accepted = await host.Send(exact);
+        // StreamingJson writes one chunk. At this size its five hex digits,
+        // two CRLF pairs and terminating "0\r\n\r\n" add 14 wire bytes.
+        // Kestrel counts chunk framing as well as payload against its limit.
+        var payloadBytes = SpaceWmsRuntimeInventoryQueryRequest.MaxBodyBytes - (chunked ? 14 : 0);
+        var exact = json.PadRight(payloadBytes);
+        using var accepted = await host.Send(exact, chunked: chunked);
         Assert.Equal(HttpStatusCode.OK, accepted.StatusCode);
-        using var rejected = await host.Send(exact + " ");
+        using var rejected = await host.Send(exact + " ", chunked: chunked);
         Assert.Equal(HttpStatusCode.RequestEntityTooLarge, rejected.StatusCode);
-        using var chunked = await host.Send(exact + " ", chunked: true);
-        Assert.Equal(HttpStatusCode.RequestEntityTooLarge, chunked.StatusCode);
+        Assert.Equal("application/problem+json", rejected.Content.Headers.ContentType?.MediaType);
+        using var problem = JsonDocument.Parse(await rejected.Content.ReadAsStringAsync());
+        Assert.Equal(413, problem.RootElement.GetProperty("status").GetInt32());
+        Assert.False(string.IsNullOrWhiteSpace(problem.RootElement.GetProperty("title").GetString()));
         Assert.Single(host.Calls);
+    }
 
+    [Fact]
+    public async Task Server_request_line_keeps_its_existing_byte_boundary()
+    {
+        await using var host = await Host.Start();
         // Default Kestrel request-line bound (includes CRLF); no existing server is contacted.
         Assert.Contains("401", await host.RawGet(8_192));
         Assert.Contains("414", await host.RawGet(8_193));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Non_size_exceptions_keep_the_existing_space_error_response(bool badRequest)
+    {
+        Exception failure = badRequest
+            ? new BadHttpRequestException("Controlled non-size request failure.", 400)
+            : new InvalidOperationException("Controlled runtime failure.");
+        await using var host = await Host.Start(failure);
+        using var response = await host.Send("{\"locationLogicalIds\":[]}");
+        Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+        Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
+        using var problem = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        Assert.Equal(500, problem.RootElement.GetProperty("status").GetInt32());
+        Assert.Equal("SPACE_INTERNAL_ERROR", problem.RootElement.GetProperty("code").GetString());
+        Assert.Single(host.Calls);
     }
 
     private sealed class OnlyRuntime : IApplicationFeatureProvider<ControllerFeature>
@@ -122,7 +153,7 @@ public sealed class SpaceWmsInventoryQueryTests
         private HttpClient client = null!;
         private string Route => $"/api/space/design/v1/sites/{Site}/runtime/inventory";
 
-        public static async Task<Host> Start()
+        public static async Task<Host> Start(Exception? runtimeFailure = null)
         {
             var host = new Host();
             var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = "InventoryTransportTests", Args = [] });
@@ -146,6 +177,7 @@ public sealed class SpaceWmsInventoryQueryTests
                 mock.Setup(s => s.QueryInventoryAsync(host.Site, It.IsAny<IReadOnlyCollection<Guid>?>(), It.IsAny<CancellationToken>()))
                     .Returns((Guid site, IReadOnlyCollection<Guid>? ids, CancellationToken ct) => {
                         host.Calls.Add((ids?.ToArray(), sp.GetRequiredService<ITenantContext>().CurrentTenantId));
+                        if (runtimeFailure is not null) throw runtimeFailure;
                         var now = DateTimeOffset.UtcNow;
                         return Task.FromResult(new SpaceWmsRuntimeInventoryResponse(site, host.Published, "fixture",
                             new("Simulated", "fixture-adapter", "fixture-source", now, now, 0, 0, true, true), []));
@@ -160,7 +192,9 @@ public sealed class SpaceWmsInventoryQueryTests
             services.AddControllers().AddApplicationPart(typeof(SpaceWmsRuntimeController).Assembly).ConfigureApplicationPartManager(m => m.FeatureProviders.Add(new OnlyRuntime()));
             host.app = builder.Build();
             host.app.UseRouting(); host.app.UseAuthentication(); host.app.UseMiddleware<TenantMiddleware>();
-            host.app.UseMiddleware<BizExceptionMiddleware>(); host.app.UseMiddleware<CsrfMiddleware>();
+            host.app.UseMiddleware<BizExceptionMiddleware>();
+            host.app.UseMiddleware<SpaceDesignProblemDetailsMiddleware>();
+            host.app.UseMiddleware<CsrfMiddleware>();
             host.app.UseAuthorization(); host.app.MapControllers();
             try { await host.app.StartAsync(); }
             catch { await host.app.DisposeAsync(); throw; }

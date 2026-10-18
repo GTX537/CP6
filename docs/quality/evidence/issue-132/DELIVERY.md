@@ -1,4 +1,32 @@
-# BUG-132 — wave16 A 实施交付
+# BUG-132 — wave16 实施交付
+
+## 2026-10-18：COORD接手R132-01修正，待原D局部复查
+
+所有权通过[PR264](https://github.com/GTX537/CP6/pull/264)和[协调96a625d4](https://github.com/GTX537/CP6.AI-Handoff/blob/96a625d40bee0f775e6e699d4765a51f86e0a93b/handoffs/CP6-DEV-20261012/waves/20261017-wave16.md)转为COORD独占。原A的325dc769分支及干净工作树保留。新分支 `codex/bug-132-http413-correction-20261018` 从main `24f97b03011dc09c741c5f25d7463bd9f54a1fbc` 创建，以 `5db1cb56c527a42bfe9a8c6fadd4fd15894c46d5` 可审计cherry-pick承接A候选。本次修正只改原Controller、HTTP测试和本报告；Program、公共中间件与大小上限不变。
+
+[D集中审查](https://github.com/GTX537/CP6.AI-Handoff/blob/88c89e639cfa1b1da6d98ed84d96f172cf6022f3/handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-132/REVIEW.md)指出的绑定超限异常原由Space中间件改为500。现库存POST安装局部异常过滤器，在响应尚未开始且BadHttpRequestException状态为413时返回413/application/problem+json；其他异常继续原Space映射。过滤器覆盖绑定阶段，旧GET和其他端点不安装它，权限/CSRF/精确集合语义不变。
+
+HTTP夹具加入实际Space错误层，保持BizException → SpaceDesignProblemDetails → CSRF → Authorization/MVC相对顺序。仍为真实Kestrel/JWT Cookie/绑定及受控权限、runtime数据，不称整个应用或持久权限/数据库验收。
+
+私有证据 `D:/CP6-local-test/BUG-132/coord-r132-01/`：
+
+| 来源 | 本次实际执行结果 |
+|---|---|
+| results/red-wire-boundaries.trx / red-wire-boundaries.log | 2失败：声明长度与chunked合法边界均先通过200；超1传输字节均预期413、实际500。修复前RED。 |
+| results/green-http-contract.trx / green-http-contract.log | **65通过、0失败、0跳过**：7项HTTP行为及58项OpenAPI/旧客户端合同。两种传输合法/超限、413内容类型/body/status、超限无runtime调用均通过；非413 BadHttpRequestException和普通runtime异常保留500/SPACE_INTERNAL_ERROR，原权限/CSRF/JSON/精确集合/GET及请求行边界通过。 |
+| restore.log | RestoreLockedMode=true、NuGetAudit=false恢复成功，之后--no-restore；编译受影响项目及必要依赖，保留既有analyzer warnings。 |
+
+额外边界事实：最初 `red-actual-pipeline` 与 `red-pipeline-diagnostic` 均2失败，其中新加chunked正向曾把1MiB纯载荷误当1MiB传输量。核对[.NET 8 Kestrel源码](https://github.com/dotnet/aspnetcore/blob/v8.0.0/src/Servers/Kestrel/Core/src/Internal/Http/Http1ChunkedEncodingMessageBody.cs)确认其计数包括chunk格式。本夹具一次Write发送一个chunk，五位十六进制长度与格式共14字节，所以chunked合法边界为1,048,562载荷字节+14格式字节，超1载荷字节即超传输上限；声明长度合法边界仍为1,048,576载荷字节。未改既有上限或缩小10,000唯一GUID合法集合，原失败保留且不当作最终正例。
+
+```powershell
+dotnet test CP6.Tests/CP6.Tests.csproj --no-restore --filter 'FullyQualifiedName~SpaceWmsInventoryQueryTests|FullyQualifiedName~SpaceDesignV1OpenApiTests' --logger 'trx;LogFileName=green-http-contract.trx' --results-directory D:/CP6-local-test/BUG-132/coord-r132-01/results
+```
+
+复用原A锁定Vitest4.1.11前端35、InMemory服务9及D对未变范围的审查，未重跑前端/内存或全仓。原61项通过保留，但其中413结果限遗漏Space层的简化宿主，现由定向结果补齐。未变产品和依赖相对325dc769核对一致；文档变化不触发产品重跑。
+
+HTTP18232已停止，15232未启动，两个端口释放。无数据库、实际浏览器/DEV、Actions或部署；#132保持Open，产品未合并，R132-01等待原D局部复查，不自批Ready to merge。以下是原A交付历史，当前修正以本节及固定Handoff为准。
+
+## 原A交付记录
 
 2026-10-18，原 A 唯一实施 Owner；[Issue132](https://github.com/GTX537/CP6/issues/132) 保持 Open。候选为本报告所在提交，完整固定 SHA 由 A Handoff DELIVERY 指向。待原 D 一次集中 SPEC/QUALITY，再由 COORD 正常集成、核对远端与按 Issue 原条件关闭。
 
