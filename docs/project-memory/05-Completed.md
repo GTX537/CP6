@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-18：BUG132已集成并关闭，第十六轮收尾
+
+[#132](https://github.com/GTX537/CP6/issues/132#issuecomment-6250315486)已Closed。[D原报告局部复查](https://github.com/GTX537/CP6.AI-Handoff/blob/c84c6da6e2bf1ee570513dacf3e03248a8910f00/handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-132/REVIEW.md)确认e83593a3可合并、R132-01解除；[正常PR265](https://github.com/GTX537/CP6/pull/265)已合入，远端main `5a29b6b106aa3b4bf267811371771d9209bb80fd` 包含候选且17个范围文件一致。[单份DELIVERY](https://github.com/GTX537/CP6/blob/e83593a3ddd5ffd1ac0614b943eaf3358483989d/docs/quality/evidence/issue-132/DELIVERY.md)保留完整精确集合、有界POST、旧GET兼容及实际错误层413修正证据。
+
+复用前端35、修正HTTP/OpenAPI65和InMemory9通过结果，各0失败/跳过；修前失败和原61项的宿主限制保留，不重复产品测试。Issue原条件满足，无新增数据库/真实DEV门禁，也不宣称该类验收已通过。台账本轮实现/审查窗口关闭、资源预约释放；原A候选保留，B/C旧阻断修正仍需独立准入，375任务/125业务状态不提升。Actions启动/取消/触发变更均0，无数据库操作、现有服务替换或部署。以下Open/待审查内容是历史。
+
 ## 2026-10-18：总控已交付R132-01修正，待原D局部复查
 
 修正代码 `40a2d2b292df001cea4c338600ffb958e4381ae7` 已完成本地定向验证，见[原单份DELIVERY](https://github.com/GTX537/CP6/blob/40a2d2b292df001cea4c338600ffb958e4381ae7/docs/quality/evidence/issue-132/DELIVERY.md)。仅库存POST局部处理绑定阶段的413异常，公共中间件/Program/请求上限未改。HTTP夹具加入实际Space错误层；修前2项预期413/实际500的RED保留，修后HTTP/OpenAPI65通过、0失败/跳过（7行为+58合同）。非目标异常保留原500映射，合法边界200、超限413/ProblemDetails及无runtime调用均通过。
