@@ -165,8 +165,8 @@ public sealed class SpaceDesignV1OpenApiTests
             .Select(operation =>
                 operation.Value.GetProperty("operationId").GetString())
             .ToArray();
-        Assert.Equal(150, operationIds.Length);
-        Assert.Equal(150, operationIds.Distinct().Count());
+        Assert.Equal(151, operationIds.Length);
+        Assert.Equal(151, operationIds.Distinct().Count());
         Assert.Contains("GetCapability", operationIds);
         Assert.Contains("ReplaceProviderConfiguration", operationIds);
         Assert.Contains("GetPolicy", operationIds);
@@ -1405,6 +1405,7 @@ public sealed class SpaceDesignV1OpenApiTests
                 "GetTasks",
                 "GetWarehouseOverview",
                 "LocateInventory",
+                "QueryInventory",
             ],
             actions.Select(action => action.ActionName));
         Assert.All(
@@ -1412,6 +1413,23 @@ public sealed class SpaceDesignV1OpenApiTests
             action => Assert.Equal(
                 "SpaceWmsRuntime",
                 action.ControllerName));
+    }
+
+    [Fact]
+    public void Inventory_post_requires_an_explicit_guid_selection_and_preserves_get_response()
+    {
+        using var document = ReadContract();
+        var root = document.RootElement;
+        var inventory = root.GetProperty("paths").GetProperty("/api/space/design/v1/sites/{siteId}/runtime/inventory");
+        var post = inventory.GetProperty("post");
+        Assert.Equal("QueryInventory", post.GetProperty("operationId").GetString());
+        Assert.True(post.GetProperty("requestBody").GetProperty("required").GetBoolean());
+        Assert.True(post.GetProperty("responses").TryGetProperty("413", out _));
+        Assert.Equal(inventory.GetProperty("get").GetProperty("responses").GetProperty("200").GetRawText(),
+            post.GetProperty("responses").GetProperty("200").GetRawText());
+        var schema = root.GetProperty("components").GetProperty("schemas").GetProperty("CP6.Space.Contracts.SpaceWmsRuntimeInventoryQueryRequest");
+        Assert.Contains(schema.GetProperty("required").EnumerateArray(), p => p.GetString() == "locationLogicalIds");
+        Assert.Equal("uuid", schema.GetProperty("properties").GetProperty("locationLogicalIds").GetProperty("items").GetProperty("format").GetString());
     }
 
     [Theory]
