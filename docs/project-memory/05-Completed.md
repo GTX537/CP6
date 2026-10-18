@@ -1,5 +1,17 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-18：W18-04串联验收已通过，待正常集成与最终收尾
+
+真实Role/Tenant控制器、当前权限、管理审计和身份快照/两类Outbox的PG/HTTP串联最终3项通过，包含旧token/缓存撤权、跨租户隔离和数据库拒绝后的整体回滚。单份[DELIVERY](../development/evidence/WAVE18/foundation-integration/DELIVERY.md)含实际夹具失败/局部复验与一次集中SPEC/QUALITY作者自审，无剩余阻断。仅测试配置/覆盖有变，无新产品改动；三项前置代码已远端合入，#275/#277/#279均Closed。
+
+两轮自有PG和HTTP均停止。正常PR、远端核对及全轮台账/Handoff最终收尾尚待执行，目标仍active；完整WP02/F1/F2、普通RLS、CRM消费/目录与Owner最终门、真实DEV/业务/生产不提升。新增工作树/子代理/Actions/既有DB操作均0。
+
+## 2026-10-18：W18-03已交付，W18-04串联验收开工
+
+W18-03候选 `865a5b7b2f28c881efb8b377f1825acc3c3ed248` 经[正常PR280](https://github.com/GTX537/CP6/pull/280)合入远端main `58bdd59de191d3dd576c1fb5546a30a123abe74a`，10个范围文件一致；[#279关闭](https://github.com/GTX537/CP6/issues/279#issuecomment-6252281925)。63项去重通过及集中作者自审按[单份DELIVERY](../development/evidence/WP02-05/identity-consistency/DELIVERY.md)保留真实范围，6个自有PG停止。下方“待合并/Open”为历史时点。
+
+W18-04从最新main在原目录串行START，Handoff `b9292f5d9d4a38eb3bc51d41d8393d057591a835` 已发布回读；只补真实Tenant/Role控制器、权限读取、管理审计和身份消息跨切片PG/HTTP。当前尚无W18-04通过声明。无新工作树、子代理、Actions或既有DB操作；完整WP02、RLS、CRM消费、Owner最终门及业务/生产未提升，持续目标active。
+
 ## 2026-10-18：W18-03 / BUG279 候选已验证，待正常集成
 
 修复锁后复用旧跟踪快照导致撤权遗漏版本/优先消息的P0；原生PG原步骤红绿，真实捕获/并发/隔离/回滚13项与相关捕获/合同50项去重通过。单份[DELIVERY](../development/evidence/WP02-05/identity-consistency/DELIVERY.md)包含全部失败与复用来源及一次集中SPEC/QUALITY作者自审，无剩余阻断。当前#279保持Open，正常PR和远端核对待执行；W18-04随后串联HTTP。
