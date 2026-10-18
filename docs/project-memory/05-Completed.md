@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-18：第十八轮四项公共基础有限交付完成
+
+当前产品/验收远端main `f9a1496ce54c46cbbf6197cf8afd9675ae0cba63` 包含本轮PR276/278/280/281。当前授权一致读、租户管理强审计、身份快照/版本/Outbox及PG/HTTP串联四窗口均已合入并核对；#275/#277/#279已关闭。各窗口57/39/63/3项成功证据分别保留（有交叠，不累加），单份汇总入口为[W18-04 DELIVERY](../development/evidence/WAVE18/foundation-integration/DELIVERY.md)，含三个前置报告链接和实际边界。任务级SPEC/QUALITY均由唯一总控集中作者自审，不称独立审查。
+
+全轮21个自有PG及临时HTTP已停止、端口释放；未动根7项用户资料。工作树新增/删除0，复用同一目录和构建缓存；未触发Actions、修改既有库或部署。Handoff交付 `2e61d1de816e9d333f5f2d5feddb66419300d3a3` 已回读；最后文档收尾正常合入/远端核对和最终Handoff后才结束持续目标。下方进行中状态仅为历史时点。
+
+完整WP02/F1/F2、普通身份RLS、完整目录/CRM采用、Owner提交前撤权fence及真实DEV/业务/生产保持未完成。下一轮先限定其中一个公共基础窗口再登记，不自动扩成全库schema改造或给A/B/C/D派工。
+
 ## 2026-10-18：W18-04串联验收已通过，待正常集成与最终收尾
 
 真实Role/Tenant控制器、当前权限、管理审计和身份快照/两类Outbox的PG/HTTP串联最终3项通过，包含旧token/缓存撤权、跨租户隔离和数据库拒绝后的整体回滚。单份[DELIVERY](../development/evidence/WAVE18/foundation-integration/DELIVERY.md)含实际夹具失败/局部复验与一次集中SPEC/QUALITY作者自审，无剩余阻断。仅测试配置/覆盖有变，无新产品改动；三项前置代码已远端合入，#275/#277/#279均Closed。

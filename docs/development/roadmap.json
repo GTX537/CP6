@@ -179331,8 +179331,8 @@
       "path": "docs/development/dispatch/20261018-wave18/README.md",
       "baseline_sha": "b4516ce3b2e4098347ee9a0d89322fcd561a5da9",
       "registered_at": "2026-10-18T15:11:46.139874+00:00",
-      "phase": "W18_04_VALIDATED_READY_TO_INTEGRATE",
-      "coordinator_shared_state_only": false,
+      "phase": "CLOSED",
+      "coordinator_shared_state_only": true,
       "assigned_chats": [
         "COORD"
       ],
@@ -179342,13 +179342,11 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [
-        "COORD"
-      ],
+      "active_implementation_chats": [],
       "workers_started": true,
-      "workers_delivered": false,
-      "windows_closed": false,
-      "product_integrated": false,
+      "workers_delivered": true,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W18-01",
@@ -179563,7 +179561,7 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "VALIDATED_READY_TO_INTEGRATE",
+          "phase": "CLOSED",
           "estimated_hours": [
             2,
             4
@@ -179577,14 +179575,8 @@
           ],
           "planned_scope_ref": "docs/development/dispatch/20261018-wave18/README.md",
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "reserved_write_resources": [
-            "Main:wave18-test-host",
-            "Main:wave18-integration-evidence"
-          ],
-          "ports": {
-            "postgresql": 55435,
-            "http": "owned loopback dynamic"
-          },
+          "reserved_write_resources": [],
+          "ports": {},
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
@@ -179600,7 +179592,7 @@
           },
           "delivery_report": "docs/development/evidence/WAVE18/foundation-integration/DELIVERY.md",
           "candidate_review_completed": true,
-          "candidate_integrated": false,
+          "candidate_integrated": true,
           "review_mode": "Single combined SPEC/QUALITY author self-review; no independent reviewer",
           "validation": {
             "unique_passed": 3,
@@ -179609,10 +179601,15 @@
             "skipped": 0,
             "owned_postgresql_stopped": true,
             "owned_http_stopped": true,
-            "remaining": [
-              "normal integration and remote verification",
-              "final ledger and Handoff closure"
-            ]
+            "remaining": []
+          },
+          "window_closed": true,
+          "source_candidate_sha": "b85700a8cbb8e5f705cf748c009a6821d977140b",
+          "remote_main_sha": "f9a1496ce54c46cbbf6197cf8afd9675ae0cba63",
+          "pull_request": "https://github.com/GTX537/CP6/pull/281",
+          "delivery_ref": {
+            "commit": "2e61d1de816e9d333f5f2d5feddb66419300d3a3",
+            "path": "handoffs/CP6-DEV-20261012/tasks/COORD/messages/20261018T163602Z-wave18-delivery/MESSAGE.md"
           }
         }
       ],
@@ -179640,12 +179637,40 @@
       },
       "user_authority": "User requested wave18 foundation-first, current chat only, 24-hour task list and persistent goal; goal created before implementation.",
       "review_mode": "One combined task-level SPEC/QUALITY self-review by sole coordinator; explicitly not an independent reviewer.",
-      "next_action": "Normally integrate bounded HTTP/PG evidence, verify remote main; complete final ledger/four-state/Handoff closure before completing the goal.",
+      "next_action": "Wave18 bounded deliveries are complete. Next foundation windows require separate scope/admission: ordinary database identity/RLS, full directory and CRM adoption, or shared final authorization fence. No worker assigned automatically.",
       "started_chats": [
         "COORD"
       ],
       "ordinary_development_hold": false,
-      "blocking_issue_urls": []
+      "blocking_issue_urls": [],
+      "closed_at": "2026-10-18T16:36:02.452477+00:00",
+      "latest_handoff": {
+        "commit": "2e61d1de816e9d333f5f2d5feddb66419300d3a3",
+        "path": "handoffs/CP6-DEV-20261012/tasks/COORD/messages/20261018T163602Z-wave18-delivery/MESSAGE.md"
+      },
+      "source_main_sha": "f9a1496ce54c46cbbf6197cf8afd9675ae0cba63",
+      "completion_evidence": {
+        "bounded_windows": 4,
+        "normal_prs": [
+          "https://github.com/GTX537/CP6/pull/276",
+          "https://github.com/GTX537/CP6/pull/278",
+          "https://github.com/GTX537/CP6/pull/280",
+          "https://github.com/GTX537/CP6/pull/281"
+        ],
+        "issues_closed": [
+          275,
+          277,
+          279
+        ],
+        "owned_postgresql_instances_stopped": 21,
+        "owned_http_stopped": true,
+        "new_worktrees": 0,
+        "deleted_worktrees": 0,
+        "actions_runs": 0,
+        "full_wp02_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "goal_completion_condition": "This final documentation closure must be normally merged and remote verified, with final Handoff published, before the assistant marks the goal complete."
+      }
     },
     "wave_history": [
       {
