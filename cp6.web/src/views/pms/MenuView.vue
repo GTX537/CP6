@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="loading" class="menu-workspace">
+  <div class="menu-workspace">
     <header class="workspace-heading">
       <div>
         <span class="heading-eyebrow">系统管理 / 菜单结构</span>
@@ -9,13 +9,13 @@
       <div class="heading-actions">
         <span v-if="structureDirty" class="dirty-state"><i />树结构尚未保存</span>
         <el-button :icon="View" @click="previewVisible = true">预览导航</el-button>
-        <el-button :icon="Refresh" :loading="loading" @click="refreshData">刷新</el-button>
+        <el-button :icon="Refresh" :loading="loading" :disabled="writing || identityChanged" @click="refreshData">刷新</el-button>
         <el-button
           v-permission="'menu:edit'"
           type="primary"
           :icon="Check"
           :loading="savingStructure"
-          :disabled="!structureDirty"
+          :disabled="!structureDirty || writing || identityChanged"
           @click="saveStructure"
         >
           保存树结构
@@ -23,7 +23,24 @@
       </div>
     </header>
 
-    <section class="menu-editor-frame">
+    <section v-if="writeState !== 'idle' || listNeedsRecovery || navigationNeedsRecovery || navigationLoading || identityChanged" class="refresh-recovery" aria-live="polite">
+      <p v-if="identityChanged" role="alert">登录身份或会话已变化，请重新打开菜单页面后继续。当前草稿未自动提交。</p>
+      <p v-else-if="writeState === 'confirmed'">写入已确认成功。列表与当前浏览器导航的刷新状态如下。</p>
+      <p v-else-if="writeState === 'uncertain'" role="alert">未确认写入结果，请先核实后再决定是否提交；读取恢复不会再次提交菜单。</p>
+      <p v-else-if="writeState === 'writing'">正在提交菜单…</p>
+      <div v-if="listNeedsRecovery">
+        <span>列表待刷新；现有节点与草稿已保留。</span>
+        <el-button :disabled="writing || identityChanged" @click="refreshData">重试列表读取</el-button>
+      </div>
+      <div v-else-if="writeState === 'confirmed'">{{ loading ? '列表正在刷新…' : '列表已刷新' }}</div>
+      <div v-if="navigationNeedsRecovery">
+        <span>当前浏览器导航待刷新。</span>
+        <el-button :disabled="writing || identityChanged" @click="refreshActiveNavigation">重试导航读取</el-button>
+      </div>
+      <div v-else-if="navigationLoading || writeState === 'confirmed'">{{ navigationLoading ? '当前浏览器导航正在刷新…' : '当前浏览器导航已刷新' }}</div>
+    </section>
+
+    <section v-loading="loading" class="menu-editor-frame" :inert="writing || identityChanged">
       <aside class="tree-panel">
         <div class="tree-heading">
           <div><strong>MENU 菜单树</strong><small>支持任意层级 · 拖拽调整</small></div>
@@ -305,7 +322,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
@@ -334,6 +351,8 @@ import {
 import { menuApi, type MenuItem, type MenuTreePosition } from '@/api/sys/menu'
 import { authApi } from '@/api/sys/auth'
 import { usePermissionStore } from '@/stores/permission'
+import { usePlatformStore } from '@/stores/platform'
+import { createMenuReadRecovery, readNavigationMenus } from './menuRefreshRecovery'
 
 interface MenuNode extends MenuItem {
   children: MenuNode[]
@@ -354,15 +373,41 @@ type NodeFilter = 'all' | 'folder' | 'page'
 
 const { t } = useI18n()
 const permissionStore = usePermissionStore()
+const platformStore = usePlatformStore()
 const treeRef = ref<any>()
 const formRef = ref<FormInstance>()
 const menuTree = ref<MenuNode[]>([])
 const selectedId = ref<number | null>(null)
 const keyword = ref('')
 const nodeFilter = ref<NodeFilter>('all')
-const loading = ref(false)
 const savingStructure = ref(false)
 const savingDetails = ref(false)
+const deleting = ref(false)
+const writing = computed(() => savingStructure.value || savingDetails.value || deleting.value)
+const writeState = ref<'idle' | 'writing' | 'confirmed' | 'uncertain'>('idle')
+const identityChanged = ref(false)
+let disposed = false
+function identitySnapshot() {
+  return JSON.stringify([localStorage.getItem('cp6_authed'), localStorage.getItem('userName'),
+    localStorage.getItem('menus'), localStorage.getItem('cp6_isPlatformAdmin'),
+    sessionStorage.getItem('cp6_impersonating'), platformStore.isPlatformAdmin, platformStore.impersonating])
+}
+let identity = identitySnapshot()
+function checkIdentity() {
+  if (disposed || identityChanged.value) return false
+  if (identitySnapshot() === identity) return true
+  identityChanged.value = true
+  listRecovery.invalidate()
+  navigationRecovery.invalidate()
+  return false
+}
+const listRecovery = createMenuReadRecovery(checkIdentity)
+const navigationRecovery = createMenuReadRecovery(checkIdentity)
+const loading = computed(() => listRecovery.state.value === 'loading')
+const navigationLoading = computed(() => navigationRecovery.state.value === 'loading')
+const listNeedsRecovery = computed(() => ['failed', 'pending'].includes(listRecovery.state.value))
+const navigationNeedsRecovery = computed(() => ['failed', 'pending'].includes(navigationRecovery.state.value))
+watch(identitySnapshot, checkIdentity, { flush: 'sync' })
 const structureDirty = ref(false)
 const formDirty = ref(false)
 const isCreating = ref(false)
@@ -564,10 +609,13 @@ async function confirmDiscardForm() {
 }
 
 async function loadData(preferredId?: number | null) {
-  loading.value = true
-  try {
-    const items = await menuApi.getAll()
-    menuTree.value = buildTree(items)
+  if (writing.value || !checkIdentity()) return
+  const draft = draftSnapshot()
+  await listRecovery.run(() => menuApi.getAll(), items => {
+    // Confirmation covers the draft at request start, not edits made afterwards.
+    if (draft !== draftSnapshot()) return false
+    const tree = buildTree(items)
+    menuTree.value = tree
     structureDirty.value = false
     const nextId = preferredId ?? selectedId.value
     const nextNode = nextId === null ? null : findNode(menuTree.value, nextId)?.node
@@ -578,12 +626,16 @@ async function loadData(preferredId?: number | null) {
       isCreating.value = false
       formDirty.value = false
     }
-  } finally {
-    loading.value = false
-  }
+  })
+}
+
+function draftSnapshot() {
+  return JSON.stringify([editorForm, menuTree.value, selectedId.value, isCreating.value, formDirty.value, structureDirty.value])
 }
 
 async function refreshData() {
+  if (writing.value || !checkIdentity()) return
+  const draft = draftSnapshot()
   if (structureDirty.value || formDirty.value) {
     try {
       await ElMessageBox.confirm('刷新会放弃尚未保存的树结构和节点内容。', '确认刷新', { type: 'warning' })
@@ -591,6 +643,7 @@ async function refreshData() {
       return
     }
   }
+  if (draft !== draftSnapshot() || writing.value || !checkIdentity()) return
   await loadData(selectedId.value)
 }
 
@@ -638,12 +691,13 @@ function resetEditor() {
 }
 
 async function saveDetails() {
-  if (!formRef.value) return
+  if (!formRef.value || writing.value || !checkIdentity()) return
   if (structureDirty.value) {
     ElMessage.warning('请先保存树结构，再保存节点内容。')
     return
   }
-  await formRef.value.validate()
+  try { await formRef.value.validate() } catch { return }
+  if (writing.value || !checkIdentity()) return
   editorForm.menuName = editorForm.menuName.trim()
 
   if (isCreating.value && findNode(menuTree.value, editorForm.menuId)) {
@@ -652,22 +706,51 @@ async function saveDetails() {
   }
 
   savingDetails.value = true
+  beginWrite()
+  const payload = toMenuItem(editorForm)
+  const creating = isCreating.value
+  await nextTick()
+  const draft = draftSnapshot()
   try {
-    const payload = toMenuItem(editorForm)
-    if (isCreating.value) {
-      await menuApi.add(payload)
-      ElMessage.success(t('table.addSuccess'))
-    } else {
-      await menuApi.update(payload)
-      ElMessage.success(t('table.editSuccess'))
+    if (!checkIdentity()) return
+    if (creating) await menuApi.add(payload)
+    else await menuApi.update(payload)
+    if (!checkIdentity()) return
+    writeState.value = 'confirmed'
+    ElMessage.success(t(creating ? 'table.addSuccess' : 'table.editSuccess'))
+    if (draft === draftSnapshot()) {
+      formDirty.value = false
+      isCreating.value = false
+      // Preserve the acknowledged node locally if the subsequent list GET fails.
+      const node = findNode(menuTree.value, payload.menuId)?.node
+      if (node) Object.assign(node, payload)
+      else {
+        const parent = payload.parentId === null ? null : findNode(menuTree.value, payload.parentId)?.node
+        const siblings = parent?.children ?? menuTree.value
+        siblings.push({ ...payload, children: [] })
+      }
+      selectedId.value = payload.menuId
     }
-    formDirty.value = false
-    isCreating.value = false
-    await loadData(payload.menuId)
-    await refreshActiveNavigation()
+  } catch {
+    if (checkIdentity()) writeState.value = 'uncertain'
   } finally {
     savingDetails.value = false
   }
+  if (checkIdentity() && writeState.value === 'confirmed') await refreshAfterWrite(payload.menuId)
+}
+
+function beginWrite() {
+  writeState.value = 'writing'
+  listRecovery.invalidate()
+  navigationRecovery.invalidate()
+}
+
+async function refreshAfterWrite(preferredId?: number | null) {
+  // Neither read waits for the other; retaining a new draft does not block navigation.
+  await Promise.all([
+    formDirty.value || structureDirty.value ? Promise.resolve() : loadData(preferredId),
+    refreshActiveNavigation(),
+  ])
 }
 
 function collectPositions(nodes: MenuNode[], parentId: number | null = null, output: MenuTreePosition[] = []) {
@@ -698,19 +781,27 @@ function allowDrop() {
 }
 
 async function saveStructure() {
-  if (!structureDirty.value) return
+  if (!structureDirty.value || writing.value || !checkIdentity()) return
   savingStructure.value = true
+  beginWrite()
+  const positions = collectPositions(menuTree.value)
+  const savedTree = JSON.stringify(menuTree.value)
   try {
-    await menuApi.updateTree(collectPositions(menuTree.value))
-    structureDirty.value = false
-    await refreshActiveNavigation()
+    await menuApi.updateTree(positions)
+    if (!checkIdentity()) return
+    if (savedTree === JSON.stringify(menuTree.value)) structureDirty.value = false
+    writeState.value = 'confirmed'
     ElMessage.success('菜单树结构已保存')
+  } catch {
+    if (checkIdentity()) writeState.value = 'uncertain'
   } finally {
     savingStructure.value = false
   }
+  if (checkIdentity() && writeState.value === 'confirmed') await refreshAfterWrite(selectedId.value)
 }
 
 async function deleteSelected() {
+  if (writing.value || !checkIdentity()) return
   const node = selectedNode.value
   if (!node) return
   if (structureDirty.value) {
@@ -722,16 +813,26 @@ async function deleteSelected() {
   const ids: number[] = []
   walkTree([node], item => ids.push(item.menuId))
   const childText = ids.length > 1 ? `及其 ${ids.length - 1} 个下级节点` : ''
-  await ElMessageBox.confirm(`确定删除“${node.menuName}”${childText}吗？此操作不可恢复。`, t('table.tip'), {
+  const draft = draftSnapshot()
+  try { await ElMessageBox.confirm(`确定删除“${node.menuName}”${childText}吗？此操作不可恢复。`, t('table.tip'), {
     type: 'warning',
     confirmButtonText: '删除',
     confirmButtonClass: 'el-button--danger',
-  })
+  }) } catch { return }
+  if (draft !== draftSnapshot() || writing.value || !checkIdentity()) return
   const parentId = selectedInfo.value?.parent?.menuId ?? null
-  await menuApi.del(ids)
-  ElMessage.success(t('table.deleteSuccess'))
-  await loadData(parentId)
-  await refreshActiveNavigation()
+  deleting.value = true
+  beginWrite()
+  try {
+    await menuApi.del(ids)
+    if (!checkIdentity()) return
+    writeState.value = 'confirmed'
+    if (draft === draftSnapshot()) formDirty.value = false
+    ElMessage.success(t('table.deleteSuccess'))
+  } catch {
+    if (checkIdentity()) writeState.value = 'uncertain'
+  } finally { deleting.value = false }
+  if (checkIdentity() && writeState.value === 'confirmed') await refreshAfterWrite(parentId)
 }
 
 function setExpanded(expanded: boolean) {
@@ -772,16 +873,30 @@ async function focusNode(node: MenuNode) {
 }
 
 async function refreshActiveNavigation() {
-  try {
-    const profile: any = await authApi.profile()
-    localStorage.setItem('menus', JSON.stringify(profile.menus || []))
+  if (writing.value || !checkIdentity()) return
+  await navigationRecovery.run(() => authApi.profile(), profile => {
+    const menus = readNavigationMenus(profile)
+    localStorage.setItem('menus', JSON.stringify(menus))
+    // Our own publication must not invalidate the concurrent list read.
+    identity = identitySnapshot()
     window.dispatchEvent(new Event('cp6-menu-updated'))
-  } catch {
-    // 菜单保存已经成功；导航画像失败时由下次登录重新加载。
-  }
+  })
 }
 
-onMounted(() => loadData())
+onMounted(() => {
+  window.addEventListener('storage', checkIdentity)
+  window.addEventListener('focus', checkIdentity)
+  window.addEventListener('cp6-menu-updated', checkIdentity)
+  void loadData()
+})
+onBeforeUnmount(() => {
+  disposed = true
+  listRecovery.invalidate()
+  navigationRecovery.invalidate()
+  window.removeEventListener('storage', checkIdentity)
+  window.removeEventListener('focus', checkIdentity)
+  window.removeEventListener('cp6-menu-updated', checkIdentity)
+})
 </script>
 
 <style scoped>
@@ -791,6 +906,16 @@ onMounted(() => loadData())
   margin: 0 auto;
   color: var(--cp-ink);
 }
+
+.refresh-recovery {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border: 1px solid var(--cp-line);
+  border-radius: 8px;
+  background: var(--cp-card);
+}
+.refresh-recovery p { margin: 0 0 8px; }
+.refresh-recovery > div { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 6px; }
 
 .workspace-heading {
   min-height: 92px;
