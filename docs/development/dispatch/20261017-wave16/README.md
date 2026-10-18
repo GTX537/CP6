@@ -1,5 +1,17 @@
 # 第十六轮：P1 Space库存精确范围传输
 
+## 2026-10-18：BUG132集中审查暂不可合并，原A接续定向修正
+
+D已对固定候选 `325dc7693edf09ec0c9175c68554e4e3c72b2af0` 完成一次集中SPEC/QUALITY；[原REVIEW更新](https://github.com/GTX537/CP6.AI-Handoff/blob/88c89e639cfa1b1da6d98ed84d96f172cf6022f3/handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-132/REVIEW.md)和Handoff `9ff8c9f243b6446272e5b15e5c7901719126b349` 已远端回读。**Ready to merge：No；P2阻断R132-01。** 源码显示实际SpaceDesignProblemDetailsMiddleware把超限绑定异常改为500/SPACE_INTERNAL_ERROR，而原HTTP fixture省略了该层，未证明声明的413/ProblemDetails合同。此为源码审查结论，D和COORD未新执行实际应用探针；不代表大小限制被绕过。
+
+原A在同一BUG132分支及既有写集接续修正，无第二START/ACK。优先端点局部处理绑定阶段异常；Program和公共中间件保持只读。定向HTTP fixture纳入实际Space错误层及相对顺序，保留RED→GREEN：恰好1MiB为200，Content-Length/chunked超1字节均413、application/problem+json及body状态符合合同，超限不调用runtime，非目标异常行为不变。仍只更新原DELIVERY，固定交付后D在原REVIEW仅复查该修正及影响。
+
+原前端35、HTTP/OpenAPI61、InMemory9通过记录保留；其中413结果限简化宿主，不能算实际管线通过。未变前端/内存与其余有效证据复用，只补受影响HTTP/合同及必要编译。本轮不新增数据库或真实DEV门禁，不重做全仓测试或完整审查。
+
+[#132](https://github.com/GTX537/CP6/issues/132)保持Open，产品未集成；R132-01作为本Issue候选阻断记录，不另建重复Issue。#38/#257保持Closed，B/C修正仍待各自窗口；完整任务24/375 DONE、业务0/125不提升。无Actions运行/取消、工作流变更、数据库操作或部署。
+
+以下为此前收件与原准入记录，当前状态以上述记录和roadmap为准。
+
 ## 2026-10-18：BUG132固定交付已收，等待D集中审查
 
 A候选 `325dc7693edf09ec0c9175c68554e4e3c72b2af0`、Handoff `8ff05c67e42e6b78335afc07cf785e561b54a8d0` 已远端回读；[单份DELIVERY](https://github.com/GTX537/CP6/blob/325dc7693edf09ec0c9175c68554e4e3c72b2af0/docs/quality/evidence/issue-132/DELIVERY.md)限登记的10个路径，基线为main `1e29931374626a492ca92e848b8d8fcaf871eddf`，工作树干净。库存查询改为完整精确集合的有界POST，保留旧GET；产品代码尚未集成。
