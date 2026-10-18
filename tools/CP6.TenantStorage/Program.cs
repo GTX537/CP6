@@ -30,6 +30,7 @@ try
         throw new TenantProvisioningException("input-rejected");
     if (tenantControl)
     {
+        RequireLosslessTenantDeadlines(document.RootElement);
         var command = document.Deserialize<TenantControlInput>(new JsonSerializerOptions
         { UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow }) ?? throw new TenantProvisioningException("input-rejected");
         if (command.Request?.Installation is not { } target || string.IsNullOrWhiteSpace(command.AdminUsername)
@@ -113,6 +114,23 @@ catch
     }
     Console.Error.WriteLine("Tenant storage provisioning rejected: input-or-execution-rejected. Retry uncertain execution with the same operation and input.");
     return 1;
+}
+
+static void RequireLosslessTenantDeadlines(JsonElement root)
+{
+    if (!root.TryGetProperty("Request", out var request) || request.ValueKind != JsonValueKind.Object) return;
+    foreach (var name in new[] { "Expected", "Desired" })
+    {
+        if (!request.TryGetProperty(name, out var eligibility) || eligibility.ValueKind != JsonValueKind.Object
+            || !eligibility.TryGetProperty("ExpireDate", out var expiry) || expiry.ValueKind != JsonValueKind.String) continue;
+        // Decode JSON escapes, but inspect every original fractional digit before DateTime truncates after digit seven.
+        // The existing deserializer and control validation retain responsibility for syntax, null, kind and finite range.
+        var text = expiry.GetString()!;
+        var dot = text.IndexOf('.');
+        if (dot < 0) continue;
+        for (var i = dot + 7; i < text.Length && text[i] is >= '0' and <= '9'; i++)
+            if (text[i] != '0') throw new TenantProvisioningException("input-rejected");
+    }
 }
 
 static bool Unique(JsonElement element) => element.ValueKind switch

@@ -273,6 +273,81 @@ public sealed class ServiceTokenTenantDirectoryControlPostgresTests(ServiceToken
         finally { await Reset(); }
     }
 
+    [TenantStoragePostgresFact]
+    public Task Actual_stdin_Expected_deadline_preserves_original_precision() => RawDeadline("set-eligibility", "Expected");
+
+    [TenantStoragePostgresFact]
+    public Task Actual_stdin_Desired_deadline_preserves_original_precision() => RawDeadline("set-eligibility", "Desired");
+
+    [TenantStoragePostgresFact]
+    public Task Actual_stdin_initialize_deadline_preserves_original_precision() => RawDeadline("initialize", "Desired");
+
+    private async Task RawDeadline(string operation, string member)
+    {
+        await Reset();
+        try
+        {
+            const string local = "2030-10-17T12:34:56";
+            var expiry = new DateTime(2030, 10, 17, 12, 34, 56).AddTicks(1234560);
+            JsonNode Input(ServiceTokenTenantControlRequestV1 request) => JsonSerializer.SerializeToNode(new
+            {
+                Request = request, AdminUsername = "fixture_owner",
+                AdminPassword = postgres.Server.ProvisioningAdminPassword, SslMode = "Disable"
+            })!;
+            // Prove the same real CLI credentials/physical installation can write before testing rejection.
+            var seeded = await Cli(Input(Set(true, null, true, expiry)).ToJsonString());
+            Assert.Equal(0, seeded.Exit); Assert.Contains("UPDATED", seeded.Output);
+            if (operation == "initialize") await Delete(A);
+            var input = Input(operation == "initialize" ? Initialize(A) : Set(true, expiry, false, expiry));
+            await using var owner = await postgres.Owner();
+            Task<object?> Rows() => TenantStoragePostgresFixture.Scalar(owner,
+                "SELECT jsonb_agg(to_jsonb(t) ORDER BY t.\"Id\")::text FROM public.\"Sys_Tenants\" t");
+            var before = await Rows();
+            foreach (var fraction in new[] { ".12345601", ".1234560000000001", ".1234561", ".1234560\\u0031" })
+            {
+                var invalid = input.DeepClone(); invalid["Request"]![member]!["ExpireDate"] = local + ".12345601";
+                // Include a JSON-escaped final digit: validation must inspect the decoded original value.
+                var raw = invalid.ToJsonString().Replace(local + ".12345601", local + fraction, StringComparison.Ordinal);
+                var result = await Cli(raw);
+                var after = await Rows();
+                Assert.True(Equals(before, after), $"{operation}/{member} {fraction}: exit={result.Exit}; stdout={result.Output}; directory changed");
+                Assert.Equal(1, result.Exit); Assert.Equal("", result.Output);
+                var rejected = JsonNode.Parse(result.Error)!;
+                Assert.Equal("NOT_APPLIED", rejected["Outcome"]!.GetValue<string>());
+                Assert.Equal("input-rejected", rejected["Code"]!.GetValue<string>());
+                Assert.DoesNotContain(postgres.Server.ProvisioningAdminPassword, result.Error);
+            }
+            // Six digits and equivalent 7/16-digit trailing-zero forms must all remain valid.
+            foreach (var fraction in new[] { ".123456", ".1234560", ".1234560000000000" })
+            {
+                if (operation == "initialize") await Delete(A);
+                else
+                {
+                    var current = (await Run(Inspect())).Current!.Eligibility;
+                    Assert.Equal("UPDATED", (await Run(Set(current.Enable, current.ExpireDate, true, expiry))).Outcome);
+                }
+                var valid = input.DeepClone(); valid["Request"]![member]!["ExpireDate"] = local + fraction;
+                var result = await Cli(valid.ToJsonString());
+                Assert.Equal(0, result.Exit); Assert.Equal("", result.Error);
+                Assert.Equal(operation == "initialize" ? "INITIALIZED" : "UPDATED", JsonNode.Parse(result.Output)!["Outcome"]!.GetValue<string>());
+                var currentRow = (await Run(Inspect())).Current!;
+                Assert.Equal(expiry, currentRow.Eligibility.ExpireDate);
+                Assert.Equal(operation == "initialize", currentRow.Eligibility.Enable);
+            }
+            // Explicit null remains unlimited, including a null Expected CAS value.
+            if (operation == "initialize") await Delete(A);
+            else
+            {
+                var current = (await Run(Inspect())).Current!.Eligibility;
+                Assert.Equal("UPDATED", (await Run(Set(current.Enable, current.ExpireDate, true, null))).Outcome);
+            }
+            var unlimited = Input(operation == "initialize" ? Initialize(A) : Set(true, null, false, null));
+            Assert.Equal(0, (await Cli(unlimited.ToJsonString())).Exit);
+            Assert.Null((await Run(Inspect())).Current!.Eligibility.ExpireDate);
+        }
+        finally { await Reset(); }
+    }
+
     private Task<NpgsqlConnection> Runtime(bool b = false) => TenantStoragePostgresFixture.OpenRawAsync(b ? "tenant_b" : "tenant_a",
         b ? postgres.Server.PasswordB : postgres.Server.PasswordA, ServiceRevocationPostgresFixture.Database);
     private static async Task<bool> Eligibility(NpgsqlConnection connection, NpgsqlTransaction tx)

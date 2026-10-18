@@ -1,5 +1,7 @@
 # WP02-02 / 第十三轮 B：已登记服务租户资格目录控制
 
+> 本报告保留第十三轮原始交付，末节接续 2026-10-18 第十七轮 #253 原始期限精度修正。原 7 项结果不覆盖后来发现的原文截断漏洞；新失败与通过证据分别记录，不改写历史。
+
 2026-10-17。本窗口执行者为用户启动的新 Codex 对话 B（会话标识 `01a1480c-fed2-7e42-bce0-9b3db2477bfe`）。分支 `codex/wp02-02-tenant-eligibility-20261017`，工作树 `D:/CP6-worktrees/wave13-b-tenant-control-20261017`。开工 fetch 后 HEAD/main/origin/main 均为 `4704592f52172c941e1cb95bdeb3c73f0dd179e8`，包含准入规划基线 `86b07dec1050f948cfb07d8916d618166bdefed4`。
 
 产品与测试提交：`c098e29a0869e1235112b91f5f3eb2afb2594ddc`。本报告随后作为同一任务的文档提交保存；包含本报告的最终候选 SHA 由 Handoff DELIVERY 固定引用。候选交给 COORD 做一次集中 SPEC/QUALITY 审查、共享状态同步和串行合并；本报告不声称远端 main 已包含候选，也不关闭完整 WP02-02。
@@ -59,3 +61,42 @@ $env:CP6_TENANT_CONTROL_CLI='D:/CP6-worktrees/wave13-b-tenant-control-20261017/t
 开工时该任务分支 Actions run list 为空，无需取消。候选与 `origin/main` 的 13 份 workflow 内容一致：12 份仅 workflow_dispatch，r2-candidate 仅 `v*.*.*` tag push；本次只推任务分支、不推 tag，无 workflow/依赖触发修改、无主动远程运行。Handoff 仓仍私有、Actions disabled、候选/默认分支无 workflows；只追加本人任务消息，远端回读后才称送达。
 
 未验证/未交付：完整租户创建生命周期、在线配置或角色/凭据更新、任意并发 superuser DDL fencing、持久请求原结果恢复、业务审计、全 Main 启动/宿主采用、原 17 PGT、真实业务/生产验收、正式制品或部署。现有数据库未迁移、未替换；新实例只是合成租户的自有真实数据库组件验证。完整 WP02-02 仍 IN_PROGRESS/CONFIRMED，不提升业务验收。共享状态、最终集中审查、串行 PR 合并及远端 main 核对由 COORD 接续；保留本任务分支/worktree。
+
+## 第十七轮接续：#253 原始期限精度修正（2026-10-18）
+
+原 B 同一会话接续，依据协调 Handoff `6344b2dec8c68c5603e8d7894db5ca70299fc6fe` / `waves/20261018-wave17.md` 和已合入执行包 `B-BUG-253.md`。最新 fetch 核对 Main/main/origin/main=`2f20834af3e0192cdb0d0fda404f0fc398be592d`；新工作树 `D:/CP6-worktrees/wave17-b-tenant-time-20261018`、分支 `codex/bug253-tenant-time-20261018`，COORD 准备 HEAD=`0565bc42f31e1871f6ed7568be1de2f574fe9672`，由最新 main 承接原实现/报告，开工干净。原候选和工作树保留。实际修正开始的 PROGRESS=`711e700640648e67d7cd2c5247895ff794afc7e5`，已发布/远端回读，没有第二 START 或等待 ACK。修正最终固定候选由 Handoff DELIVERY 引用。
+
+原 C 的 [REVIEW-W13-B R1](https://github.com/GTX537/CP6.AI-Handoff/blob/5c9191f04bc0576fadabd1b059afc311f64e88a2/handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-B/REVIEW.md) 指出默认 DateTime 解析丢弃第七位之后的小数，转换后的 ticks 无法证明原文精度。本次在 tenant-control 的 `Deserialize<TenantControlInput>` **之前**检查原 JsonDocument 中 Expected/Desired.ExpireDate 的解码字符串（含 JSON escapes），第六位之后出现任一非零小数位即拒绝；initialize 的 Desired 同样覆盖。默认 JSON 时间语法、显式 null、有限无 offset 本地时间及 Core 检查保留；7/16 位等值尾零不因文本长度被拒绝。
+
+产品修正仅为 Program.cs 的入口检查，CLI README 补充行为说明；新增回归只在原 `ServiceTokenTenantDirectoryControlPostgresTests.cs`。Core 控制/CAS/事务、安装/profile/seal/helper、模型/迁移、项目/锁文件和公共依赖均未改变。拒绝在 controlExecutionStarted 前发生，exit=1、NOT_APPLIED/input-rejected；UNKNOWN、无自动重试、inspect 不是原结果恢复的边界不变。
+
+### 真实失败 → 修正通过
+
+所有本次证据原件保留在 `D:/CP6-local-test/WP02-02/bug253-ae39c19e63a248938563566a83012f7f/`，不复制日志或另造报告。使用 .NET 8 SDK、PostgreSQL 18.6、原私有包缓存 `D:/CP6-local-test/WP02-02/adopt-a1/n`。正常 fixture 真实安装 service-token profile，核实际 cluster/database/映射、使用合法独立 control 身份；每个新增场景先由同一实际 apphost/redirected stdin 完成合法写入，再测精度拒绝，没有用坏身份/坏实例抢先拒绝或跳过数据库。
+
+| 原件 | 实际结果与范围 |
+| --- | --- |
+| `restore-cli.log`、`restore-tests.log`；`build-cli-before.log`、`build-tests.log` | 两根 locked restore 及 CLI/Tests 必要依赖构建成功，0 编译错误。未改 NuGet 配置或锁文件；既有 NU1902/NU1903、async/analyzer 警告保留。 |
+| `test-red.log`、`red/red.trx` | 修正前 CLI + 新回归：3 failed、0 passed、0 skipped。Expected/Desired/initialize 的 `.12345601` 均实际返回 exit=0、UPDATED/INITIALIZED，结果期限截成 `.123456`，完整目录发生变化，触发预期回归失败。失败日志与数据库原件保留。 |
+| `build-cli-after.log` | 加入原文校验后 CLI 构建成功，0 error；测试代码/测试程序集未变，未重复构建。 |
+| `test-green.log`、`green/green.trx` | 2026-10-18 09:45:17–09:46:38 America/New_York：5 passed、0 failed、0 skipped。3 个新增真实 stdin 场景，加原 stdin 合同及 null-safe CAS/期限场景；不重跑未变的全套。 |
+
+三个新增场景均验证 `.12345601`、第十六位非零 `.1234560000000001`、非零第七位 `.1234561` 和原 JSON 中转义尾位 `.1234560\u0031` 拒绝，且整个 Sys_Tenants 目录（所有列、其他租户和修改元数据）保持不变。相同合法身份与安装下，`.123456`、`.1234560`、`.1234560000000000` 均成功并保持准确微秒值，显式 null 也成功；Expected 的合法精度由实际 CAS 匹配证明，Desired/initialize 由实际写后读取证明。原 stdin 用例再次验证缺失/重复/未知字段、冲突和初始化结果；原期限用例再次验证有限值、Kind、typed sub-microsecond、null-safe CAS 和 helper 到期边界。
+
+两次运行均用端口 55436，互不复用实例：`red-root.txt` 指向新子根 `tenant-connections-7c7ab30369da4f67bfbb4341513e4b32`；`green-root.txt` 指向 `tenant-connections-b074b232b8c842949a58bb5555a6f107`，二者都在上述 bug253 私有根内。沿原 fixture 要求保留子根前缀，没有扩大 fixture 写集。原 marker/data_directory/postmaster 身份核对后分别停止，stopped.txt 和服务器关闭日志均存在，postmaster.pid 已移除；收尾 55436 无 listener。没有连接 5432/CP6DB、重启原已停止实例或操作其他对话资源。
+
+复现时沿本报告原环境变量与 locked restore/build 方式，将 CLI 路径指向 wave17 新工作树；每轮指定不存在的 `D:/CP6-local-test/WP02-02/bug253-<new-owner>/tenant-connections-<new-owner>`，运行：
+
+```powershell
+& C:/Users/tt/.dotnet/dotnet.exe test CP6.Tests/CP6.Tests.csproj --no-build --no-restore --filter 'FullyQualifiedName~ServiceTokenTenantDirectoryControlPostgresTests.Actual_stdin_|FullyQualifiedName~ServiceTokenTenantDirectoryControlPostgresTests.Actual_private_stdin_|FullyQualifiedName~ServiceTokenTenantDirectoryControlPostgresTests.Null_safe_CAS_' --logger 'trx;LogFileName=green.trx' --results-directory '<new-private-evidence-directory>' -v:q
+```
+
+修正前复现只选三个 `Actual_stdin_` 新场景并使用由准备提交 Program.cs 构建的未修正 CLI；红测结束后才重建含原文校验的 CLI。测试证据绑定上述实际源码范围，不把原第十三轮宿主/旧证据说成本轮重新执行。
+
+### 复用、定向复查与剩余边界
+
+已比较原 `4704592f..2f20834a` 的 tenancy Core、PostgreSQL baseline、原安装 fixture 与 CLI 相关路径无漂移；准备提交准确承接原候选。本次相对准备提交仅登记的四个文件变化，Core/profile/seal/项目/依赖零差异。原 7 项中的并发/锁、实例身份、初始化容量及回滚/UNKNOWN 等未变证据继续按第十三轮原范围复用；两项受影响旧测试实际重跑如上。执行者检查修正 diff、完整分支写集、原文本解码/分数位置/拒绝阶段、日志与敏感信息范围，diff --check 通过。原 C 在同一 REVIEW-W13-B 只复查本次修正和定向回归，不自行签发完整任务或业务完成。
+
+本次产品分支 Actions 列表为空，无需取消；workflow/依赖内容与 origin/main 未变，12 份手动入口和仅 tag 的 r2-candidate 规则复用核对。仅正常任务分支 push、不推 tag/建 PR/触发 Actions，无触发修改。Handoff 私有、Actions disabled、默认/本资料分支无 workflow；资料消息正常 push 并远端回读。共享状态、Issue253 关闭、正常 PR 集成和远端包含性由 COORD 负责；原 C 的 #251/#252 固定交付后另在原 REVIEW-W13-C 接续局部复查，不阻塞本修正独立交付。
+
+完整 WP02-02、租户生命周期/实际 Owner 消费、持久请求恢复、全宿主/业务/DEV/生产验收仍未完成；本轮未启动 HTTP 宿主、迁移现有数据库、正式发包或部署。这里证明真实 PostgreSQL 组件与 CLI 边界修正，不是实际业务租户验收；保留分支/工作树和全部失败证据。
