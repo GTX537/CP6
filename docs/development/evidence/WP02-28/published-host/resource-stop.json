@@ -1,0 +1,42 @@
+{
+  "database": {
+    "SystemIdentifier": "7697484797195025204",
+    "DataDirectory": "D:/CP6-local-test/WP02-28/7da18a5de15c451da8464af7daeeaa13/data",
+    "Port": 55438,
+    "Database": "cp6_wp0228_20261017_7da18a5d",
+    "Oid": "16385",
+    "DatabaseOwner": "wp0228_admin_7da18a5d",
+    "Principal": "wp0228_admin_7da18a5d",
+    "RuntimeIdentity": {
+      "Principal": "wp0228_runtime_7da18a5d",
+      "Database": "cp6_wp0228_20261017_7da18a5d",
+      "Port": 55438,
+      "Owner": "7da18a5de15c451da8464af7daeeaa13",
+      "Marker": "CP6-WP02-28:7da18a5de15c451da8464af7daeeaa13",
+      "Superuser": false,
+      "CreateDatabase": false,
+      "CreateRole": false,
+      "Inherit": false,
+      "BypassRls": false,
+      "CreateSchema": false,
+      "CreateFixture": false
+    },
+    "Owner": "7da18a5de15c451da8464af7daeeaa13",
+    "Marker": "CP6-WP02-28:7da18a5de15c451da8464af7daeeaa13",
+    "RunDirectory": "D:\\CP6-local-test\\WP02-28\\7da18a5de15c451da8464af7daeeaa13"
+  },
+  "processBeforeStop": {
+    "Command": "\"C:/Program Files/PostgreSQL/18/bin/postgres.exe\"  -D \"D:/CP6-local-test/WP02-28/7da18a5de15c451da8464af7daeeaa13/data\"  ",
+    "Executable": "C:\\Program Files\\PostgreSQL\\18\\bin\\postgres.exe",
+    "Pid": 25092,
+    "Started": "2026-10-17T04:12:25.1088439Z",
+    "Ports": [
+      {
+        "LocalAddress": "127.0.0.1",
+        "LocalPort": 55438
+      }
+    ]
+  },
+  "portClosed": true,
+  "postmasterPidRemoved": true
+}

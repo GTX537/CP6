@@ -1,0 +1,159 @@
+{
+  "sourceSha": "4704592f52172c941e1cb95bdeb3c73f0dd179e8",
+  "receiptSha256": "ddcf438624231ee31a2aceb1006e272dc62d0d975a8bd1e7a6d2bcb98786fb87",
+  "entrySha256": "fe6c41088505a9023fbc0104343392c40f7e0a3dc726bb5d552373984e60cdb1",
+  "completed": true,
+  "diagnosticStartupPassed": true,
+  "identityReadiness": {
+    "status": "Matched",
+    "ready": true,
+    "loadedCount": 5,
+    "unloadedCount": 0
+  },
+  "scope": "actual published local process, minimal authorization fixture; no business readiness",
+  "databaseIdentity": {
+    "SystemIdentifier": "7697484797195025204",
+    "Database": "cp6_wp0228_20261017_7da18a5d",
+    "Oid": "16385",
+    "Owner": "7da18a5de15c451da8464af7daeeaa13",
+    "Port": 55438
+  },
+  "process": {
+    "Ports": [
+      {
+        "LocalAddress": "127.0.0.1",
+        "LocalPort": 54549
+      }
+    ],
+    "Command": "C:\\Users\\tt\\.dotnet\\dotnet.exe D:\\CP6-local-test\\WP02-28\\7da18a5de15c451da8464af7daeeaa13\\publish\\CP6.WebApi.dll --contentRoot D:\\CP6-local-test\\WP02-28\\7da18a5de15c451da8464af7daeeaa13\\published-host-20261017T041654990708Z",
+    "Started": "2026-10-17T04:16:55.6652070Z",
+    "Pid": 35820,
+    "Executable": "C:\\Users\\tt\\.dotnet\\dotnet.exe"
+  },
+  "platformIdentity": {
+    "processId": 35820,
+    "processStartedAtUtc": "2026-10-17T04:16:55.665207+00:00",
+    "capturedAtUtc": "2026-10-17T04:17:07.2690246+00:00",
+    "identityStatus": "Matched",
+    "modules": [
+      {
+        "packageId": "CP6.Platform.Abstractions",
+        "status": "Matched",
+        "expected": {
+          "packageVersion": "0.10.3",
+          "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+          "assemblySha256": "3f1faedbfbc9310385599ebfd9cfba178454a632a6fdbce24dd2fb8f765430f6"
+        },
+        "observed": {
+          "assemblyVersion": "0.8.0.0",
+          "informationalVersion": "0.8.0-alpha.2",
+          "declaredPackageVersion": "0.10.3",
+          "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+          "assemblySha256": "3f1faedbfbc9310385599ebfd9cfba178454a632a6fdbce24dd2fb8f765430f6",
+          "loadedMvid": "9882db99-ca70-4777-8d83-01d8311dbdbe",
+          "backingMvid": "9882db99-ca70-4777-8d83-01d8311dbdbe",
+          "defaultLoadContext": true
+        },
+        "reasonCodes": []
+      },
+      {
+        "packageId": "CP6.Platform.AspNetCore",
+        "status": "Matched",
+        "expected": {
+          "packageVersion": "0.10.3",
+          "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+          "assemblySha256": "a62ece70951c6336b043d21cafceb44c2adad29097384020c021582d155cf511"
+        },
+        "observed": {
+          "assemblyVersion": "0.8.0.0",
+          "informationalVersion": "0.8.0-alpha.2",
+          "declaredPackageVersion": "0.10.3",
+          "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+          "assemblySha256": "a62ece70951c6336b043d21cafceb44c2adad29097384020c021582d155cf511",
+          "loadedMvid": "c79f071d-b72c-45ae-9b56-ee74f4e02822",
+          "backingMvid": "c79f071d-b72c-45ae-9b56-ee74f4e02822",
+          "defaultLoadContext": true
+        },
+        "reasonCodes": []
+      },
+      {
+        "packageId": "CP6.Platform.Contracts",
+        "status": "Matched",
+        "expected": {
+          "packageVersion": "0.10.3",
+          "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+          "assemblySha256": "d7f23fcaae9415c361d4a59011b0c31c6546ba3784f00fb5b25da634383946bd"
+        },
+        "observed": {
+          "assemblyVersion": "0.8.0.0",
+          "informationalVersion": "0.8.0-alpha.2",
+          "declaredPackageVersion": "0.10.3",
+          "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+          "assemblySha256": "d7f23fcaae9415c361d4a59011b0c31c6546ba3784f00fb5b25da634383946bd",
+          "loadedMvid": "7a606f29-e89d-4dc7-972d-ab14790446a0",
+          "backingMvid": "7a606f29-e89d-4dc7-972d-ab14790446a0",
+          "defaultLoadContext": true
+        },
+        "reasonCodes": []
+      },
+      {
+        "packageId": "CP6.Platform.EntityFramework",
+        "status": "Matched",
+        "expected": {
+          "packageVersion": "0.10.3",
+          "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+          "assemblySha256": "0f21b8393dc42aa03482f2d95a3d9f2810ffc385121a55d242106a5c2a9fe6ba"
+        },
+        "observed": {
+          "assemblyVersion": "0.8.0.0",
+          "informationalVersion": "0.8.0-alpha.2",
+          "declaredPackageVersion": "0.10.3",
+          "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+          "assemblySha256": "0f21b8393dc42aa03482f2d95a3d9f2810ffc385121a55d242106a5c2a9fe6ba",
+          "loadedMvid": "240eccb7-f776-4eb4-9a23-0ad9e3dbb43b",
+          "backingMvid": "240eccb7-f776-4eb4-9a23-0ad9e3dbb43b",
+          "defaultLoadContext": true
+        },
+        "reasonCodes": []
+      },
+      {
+        "packageId": "CP6.Platform.Messaging",
+        "status": "Matched",
+        "expected": {
+          "packageVersion": "0.10.3",
+          "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+          "assemblySha256": "67faec00c2beac7b749db6e1e5ea5868a57c0711b558f63de02611ae58566be4"
+        },
+        "observed": {
+          "assemblyVersion": "0.8.0.0",
+          "informationalVersion": "0.8.0-alpha.2",
+          "declaredPackageVersion": "0.10.3",
+          "sourceSha": "1277da5e0a20c6d96f0a95d0e9b4f20e0008332a",
+          "assemblySha256": "67faec00c2beac7b749db6e1e5ea5868a57c0711b558f63de02611ae58566be4",
+          "loadedMvid": "75c808d8-401d-4a4b-9ea6-720934b8c0e5",
+          "backingMvid": "75c808d8-401d-4a4b-9ea6-720934b8c0e5",
+          "defaultLoadContext": true
+        },
+        "reasonCodes": []
+      }
+    ],
+    "reasonCodes": [],
+    "rollback": {
+      "allowed": false,
+      "status": "Unknown",
+      "reasonCode": "COMPATIBILITY_EVIDENCE_MISSING"
+    },
+    "runtimeQualification": "Unknown",
+    "businessAcceptance": "Unknown",
+    "trustState": "Unknown"
+  },
+  "release": {
+    "version": "local-publish-diagnostic",
+    "gitSha": "4704592f52172c941e1cb95bdeb3c73f0dd179e8",
+    "apiImageDigest": "unknown",
+    "webImageDigest": "unknown",
+    "latestMigration": null
+  },
+  "processStopped": true,
+  "listenerClosed": true
+}

@@ -1,0 +1,11 @@
+test_closure_accepts_complete_output_and_rejects_missing_runtime_assets (test_published_host.PublishTests.test_closure_accepts_complete_output_and_rejects_missing_runtime_assets) ... ok
+test_even_repinned_output_cannot_self_attest_platform_identity (test_published_host.PublishTests.test_even_repinned_output_cannot_self_attest_platform_identity) ... ok
+test_extra_or_changed_output_is_not_rebaselined (test_published_host.PublishTests.test_extra_or_changed_output_is_not_rebaselined) ... ok
+test_pin_source_and_exact_path_are_required (test_published_host.PublishTests.test_pin_source_and_exact_path_are_required) ... ok
+test_preflight_denial_never_starts_process_or_writes_database (test_published_host.PublishTests.test_preflight_denial_never_starts_process_or_writes_database) ... ok
+test_loaded_mismatch_or_wrong_process_is_refused_unloaded_remains_unknown (test_published_host.ReadinessTests.test_loaded_mismatch_or_wrong_process_is_refused_unloaded_remains_unknown) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.689s
+
+OK
