@@ -1,5 +1,7 @@
 # 第十八轮：公共基础单对话持续实施计划
 
+> 已交付W18-01：PR276 / main `f58080a06df806b00e4f7da0ba2a64404253ee6b`，#275关闭。W18-02实际START已发布；沿同一目录与单总控串行接续。下方旧候选状态保留为历史。
+
 > W18-01 当前进展：真实并发复现确认 P0 [#275](https://github.com/GTX537/CP6/issues/275)，已以 PostgreSQL 单语句快照修复。最终9项原生PG、46项权限、2项CRM投影通过且无跳过；取消与尾空格问题的失败记录保留。[单份交付/作者自审](../../evidence/WP02-03/consistent-permission-read/DELIVERY.md)可供正常集成，尚未合并/关闭Issue。W18-02/03/04未开工，持续目标仍active。
 
 > 执行方式：按 executing-plans 在当前总控对话串行实施；用户明确要求不再分派新对话或子代理。任务状态以 `docs/development/roadmap.json` 为唯一来源，本文固定范围、顺序和验收条件。
@@ -55,12 +57,12 @@
 
 步骤与验收：
 
-- [ ] 固定普通请求、登录Prewarm、CRM聚合调用及已有事务边界；核对既有授权算法、取消和异常处理。
-- [ ] 在原PG夹具加入受控并发：读到旧角色后，另一连接一次提交角色撤回与权限改变，再继续原读取。先证明当前多语句READ COMMITTED是否产生数据库从未存在的授权组合；保留实际RED。
-- [ ] 让相关PG读取在同一一致快照内完成。明确自有事务和调用者事务的所有权：不提交/回滚调用者事务，不以无效隔离级别冒充一致性，不自动重放含副作用的调用者事务。若隔离级别或调用链要求超出写集，先更新本窗口技术方案再实施。
-- [ ] 验证下一次调用观察已提交撤权；A/B租户、失效用户、真实pending token拒绝、正常access及旧缓存限制仍保持。不能把一次快照内允许称为提交前授权保证。
-- [ ] 定向运行 `CurrentPermissionContextTests`、`PermissionAggregatorTests` 和实际变化涉及的过滤器测试；原生PG运行 `CurrentPermissionConsumptionPostgreSqlTests`，要求选中场景无跳过。未受影响的历史证据按来源复用。
-- [ ] 完整任务diff集中自审、报告/共享状态、正常PR合并与远端核对。
+- [x] 固定普通请求、登录Prewarm、CRM聚合调用及已有事务边界；核对既有授权算法、取消和异常处理。
+- [x] 在原PG夹具加入受控并发：读到旧角色后，另一连接一次提交角色撤回与权限改变，再继续原读取。先证明当前多语句READ COMMITTED是否产生数据库从未存在的授权组合；保留实际RED。
+- [x] 让相关PG读取在同一一致快照内完成。明确自有事务和调用者事务的所有权：不提交/回滚调用者事务，不以无效隔离级别冒充一致性，不自动重放含副作用的调用者事务。若隔离级别或调用链要求超出写集，先更新本窗口技术方案再实施。
+- [x] 验证下一次调用观察已提交撤权；A/B租户、失效用户、真实pending token拒绝、正常access及旧缓存限制仍保持。不能把一次快照内允许称为提交前授权保证。
+- [x] 定向运行 `CurrentPermissionContextTests`、`PermissionAggregatorTests` 和实际变化涉及的过滤器测试；原生PG运行 `CurrentPermissionConsumptionPostgreSqlTests`，要求选中场景无跳过。未受影响的历史证据按来源复用。
+- [x] 完整任务diff集中自审、报告/共享状态、正常PR合并与远端核对。
 
 复现入口（在本窗口工作目录，环境变量使用自有新根）：
 
@@ -75,15 +77,21 @@ $env:CP6_PERMISSION_PG_ROOT='D:/CP6-local-test/wave18/permission-consumption-'+[
 
 ## W18-02：租户管理强审计共同事务
 
-源码事实：TenantAdminService当前先SaveChanges，再通过best-effort ISecurityAuditService记录管理事件。SecurityAuditService明确吞掉审计失败；这不能满足新设计要求的管理强审计同commit。
+> 当前候选验证/作者集中自审完成，[单份DELIVERY](../../evidence/WP02-04/tenant-management-audit/DELIVERY.md)记录39项去重通过；正常合并与远端核对尚待执行，#277保持Open。下方15:54Z为历史进展。
+
+实施基线事实（现已修正）：TenantAdminService原先SaveChanges，再通过best-effort ISecurityAuditService记录管理事件。SecurityAuditService明确吞掉审计失败；这不能满足新设计要求的管理强审计同commit。
+
+进展补充（15:54Z）：#277真实RED已确认，原生PG管理6项+身份后阶段4项、相关21项+平台闸6项已通过；取消与真正HTTP尚待执行。现有锁定依赖没有TestServer，采用自有Kestrel loopback动态端口，未增加依赖。
+
+冻结补充（2026-10-18 15:42Z）：ITenantAdminService的兼容取消入口、TenantController实际HTTP取消传播、原TenantControllerTests和新TenantManagementAuditPostgreSqlTests / TenantManagementPostgresFixture纳入本窗口。复用已存在的PG服务器生命周期，不新增工作树；平台审计显式TenantId，不改变请求租户上下文。
 
 计划写集：`CP6.Core/Services/Platform/TenantAdminService.cs`、必要的同目录管理审计辅助文件、`CP6.Tests/Platform/TenantAdminServiceTests.cs`及新增同目录PostgreSQL事务回归；真实调用需要时核对`CP6.WebApi/Controllers/Platform/TenantController.cs`。实现前以实际文件存在性和调用合同冻结最终写集；不修改普通登录审计的best-effort合同。
 
-- [ ] 从W18-01后的最新main创建独立分支，登记本窗口与实际前置。
-- [ ] 对create/update/suspend/reactivate分别核对平台三道权限闸、现有身份捕获、事务/savepoint及Sys_SecurityLog租户盖章。
-- [ ] 管理事件在业务保存前加入同一工作单元；平台审计准确落平台租户，不因修改请求TenantContext污染业务身份。审计失败与业务/身份快照一并回滚；普通认证审计沿原行为。
-- [ ] 真实PG制造审计插入失败和晚阶段失败，检查Tenant、admin、role/menus及身份事件没有半保存；正例事件各一次、操作人/目标准确，取消不泄漏事务。
-- [ ] 检查既有调用者事务、重复请求与UNKNOWN边界。未新增持久请求槽时不宣称幂等恢复，不因超时自动重试创建。
+- [x] 从W18-01后的最新main创建独立分支，登记本窗口与实际前置。
+- [x] 对create/update/suspend/reactivate分别核对平台三道权限闸、现有身份捕获、事务/savepoint及Sys_SecurityLog租户盖章。
+- [x] 管理事件在业务保存前加入同一工作单元；平台审计准确落平台租户，不因修改请求TenantContext污染业务身份。审计失败与业务/身份快照一并回滚；普通认证审计沿原行为。
+- [x] 真实PG制造审计插入失败和晚阶段失败，检查Tenant、admin、role/menus及身份事件没有半保存；正例事件各一次、操作人/目标准确，取消不泄漏事务。
+- [x] 检查既有调用者事务、重复请求与UNKNOWN边界。未新增持久请求槽时不宣称幂等恢复，不因超时自动重试创建。
 - [ ] 一份DELIVERY、集中自审、相关HTTP验证和正常合并。
 
 ## W18-03：身份权威快照、版本与Outbox一致性

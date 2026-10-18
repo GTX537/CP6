@@ -29,7 +29,7 @@ public class TenantControllerTests
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
         var db = new CP6Context(options, tenant);
-        var svc = new TenantAdminService(db, new RealHasher(), new SecurityAuditService(db), tenant);
+        var svc = new TenantAdminService(db, new RealHasher());
         return (new TenantController(svc), svc, db);
     }
 

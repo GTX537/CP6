@@ -39,8 +39,7 @@ public class TenantAdminServiceTests
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
         var db = new CP6Context(options, tenant);   // 注入同一 TenantContext → StampTenant 读它
-        var audit = new SecurityAuditService(db);
-        var svc = new TenantAdminService(db, hasher ?? new RealHasher(), audit, tenant);
+        var svc = new TenantAdminService(db, hasher ?? new RealHasher());
         return (svc, db, tenant);
     }
 
@@ -104,7 +103,7 @@ public class TenantAdminServiceTests
     // ── R9-a 原子回滚：Hash 抛异常 → CreateAsync 抛 + Sys_Tenant 行不落库。
     // 注意（InMemory 限制）：此处 Hash 在任何 Add/SaveChanges 之前抛，故租户从未被 Add，
     // "不存在" 平凡成立；InMemory 约束弱、无法可靠触发"第二实体 SaveChanges 失败"路径，
-    // 真实事务回滚由生产 SqlServer 单 SaveChanges 保证（见服务注释）。本测固化"建租户失败零残留"不变量。
+    // 真实事务回滚见 TenantManagementAuditPostgreSqlTests；本测只证明哈希阶段失败不产生持久效果。
     [Fact]
     public async Task Create_WhenHashThrows_NoTenantRowPersisted()
     {

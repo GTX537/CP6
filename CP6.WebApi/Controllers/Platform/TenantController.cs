@@ -42,11 +42,11 @@ public class TenantController : ControllerBase
 
     /// <summary>建租户（原子开通首个 admin）。返回一次性临时密码（TempPassword 仅本次可见）。</summary>
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateTenantRequest req)
+    public async Task<IActionResult> Create([FromBody] CreateTenantRequest req, CancellationToken cancellationToken = default)
     {
         try
         {
-            var result = await _svc.CreateAsync(req.Code, req.Name, req.Expire, req.Remark, req.AdminUserName);
+            var result = await _svc.CreateAsync(req.Code, req.Name, req.Expire, req.Remark, req.AdminUserName, cancellationToken);
             return Ok(result);
         }
         catch (InvalidOperationException ex)
@@ -57,11 +57,11 @@ public class TenantController : ControllerBase
 
     /// <summary>改租户（名称/到期/备注）。不存在 → E-SEC-032。</summary>
     [HttpPut("{id:guid}")]
-    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateTenantRequest req)
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateTenantRequest req, CancellationToken cancellationToken = default)
     {
         try
         {
-            await _svc.UpdateAsync(id, req.Name, req.Expire, req.Remark, req.TimeZoneId);
+            await _svc.UpdateAsync(id, req.Name, req.Expire, req.Remark, req.TimeZoneId, cancellationToken);
             return Ok(new { code = 0 });
         }
         catch (InvalidOperationException ex)
@@ -72,11 +72,11 @@ public class TenantController : ControllerBase
 
     /// <summary>停用租户（Enable=false → 该租户用户登录被拒）。</summary>
     [HttpPost("{id:guid}/suspend")]
-    public async Task<IActionResult> Suspend(Guid id)
+    public async Task<IActionResult> Suspend(Guid id, CancellationToken cancellationToken = default)
     {
         try
         {
-            await _svc.SuspendAsync(id);
+            await _svc.SuspendAsync(id, cancellationToken);
             return Ok(new { code = 0 });
         }
         catch (InvalidOperationException ex)
@@ -87,11 +87,11 @@ public class TenantController : ControllerBase
 
     /// <summary>重启用租户（Enable=true）。</summary>
     [HttpPost("{id:guid}/reactivate")]
-    public async Task<IActionResult> Reactivate(Guid id)
+    public async Task<IActionResult> Reactivate(Guid id, CancellationToken cancellationToken = default)
     {
         try
         {
-            await _svc.ReactivateAsync(id);
+            await _svc.ReactivateAsync(id, cancellationToken);
             return Ok(new { code = 0 });
         }
         catch (InvalidOperationException ex)
