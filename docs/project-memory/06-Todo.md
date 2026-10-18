@@ -1,5 +1,13 @@
 # 当前待办与优先级
 
+## 2026-10-18：第十七轮收尾，四项Issue均已关闭
+
+原A最终审查134c283/be1e4dc批准菜单候选3bc3d3c8；原B局部复查a7d24cd8/82df565批准发布工具候选aec0e965、解除#251/#252。C经[正常代码PR](https://github.com/GTX537/CP6/pull/271)、D经[正常代码PR](https://github.com/GTX537/CP6/pull/272)逐项合入，远端产品main `8146d5e4063a1ae702e7639dc00f2df0ba29a37d` 包含两候选且范围文件一致。#251/#252/#243原完成条件已核对并Closed；此前#253经PR269关闭。本轮所有实现/审查窗口与资源预约关闭，原候选/证据/目录保留。
+
+复用原11项工具回归和一次实际publish、锁定Vitest4.1.11的23项组件测试及原页面/type-check；失败记录保持。新publish source仍68990978，原宿主/HTTP仍4704592f；菜单仍本地API夹具，未改称最新main宿主、整仓type-check或真实业务通过。总控只做集成一致性及文档/台账检查，无重复产品运行、Actions或数据库/部署操作。
+
+完整WP02-02/18/28、375任务/125业务状态不提升；F1身份/租户生命周期及F2真实Owner事务仍按后续有限窗口推进。总控继续复用既有目录切独立分支，本次新增/删除worktree均0；旧目录回收计划未执行。以下Open/待审查/待合并是历史时点。
+
 ## 2026-10-18：BUG253已集成并关闭，C/D继续审查收口
 
 [#253已Closed](https://github.com/GTX537/CP6/issues/253#issuecomment-6250839015)。[原C定向复查](https://github.com/GTX537/CP6.AI-Handoff/blob/46c8ee9de5b1d85f0dd316fa389f492301ef5e52/handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-B/REVIEW.md)解除R1，固定候选836de524通过[正常PR269](https://github.com/GTX537/CP6/pull/269)合入远端main `6be28cb56ffa5cca4d29cfc26d935d769daf3535`；五个范围文件与已验证候选一致。原合法实例/身份的真实stdin/PG回归5通过、0失败/跳过，RED3与原7项未变证据保留真实范围，不因合并SHA变化重复运行。B产品窗口与PG55436预约释放；原始证据、候选和目录暂保留，B继续原REVIEW-W13-C局部复查。

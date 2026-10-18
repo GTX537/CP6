@@ -1,5 +1,13 @@
 # WP02-28：实际 publish 本地验证与第十七轮定向修正
 
+## 2026-10-18 总控集成收尾（当前结论）
+
+**本窗口已正常集成，[#251](https://github.com/GTX537/CP6/issues/251#issuecomment-6251365810)、[#252](https://github.com/GTX537/CP6/issues/252#issuecomment-6251366820)已Closed；完整WP02任务、真实业务及生产验收未完成。** [原审查最终结论](https://github.com/GTX537/CP6.AI-Handoff/blob/a7d24cd8c42fb6d07fecb563446ad2778ba1e694/handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-C/REVIEW.md)为Ready to merge Yes，固定候选 `aec0e965a5419031a4d0089c8fb8da42f563356f` 无阻断，Handoff `82df565f156b32751038e5076537d68a55bfc0f8` 已远端回读。原报告接续完成，没有重复START或完整审查。
+
+[正常代码PR](https://github.com/GTX537/CP6/pull/271)已合入；合并时main `c2061699d917042e85149b50bd58f8ddfbb3aadd`，总控再核最终产品main `8146d5e4063a1ae702e7639dc00f2df0ba29a37d` 同时包含C/D候选，完整11个范围文件与固定候选一致。复用本报告原11项工具回归及一次真实locked restore/publish；原缺陷失败、两次导出预检失败均保留。实际新publish source仍是68990978579163cb8bb8f9e3fd524e7242c40be4，pin仍为fecb9403d6a7bc80b596a5cf302a9688cf51fec090f6bcfb8c7ccb46b9f8e99c；原宿主/HTTP保持4704592f历史范围，不把新main称为实际宿主已验。
+
+本次集成只核对源码/证据适用范围、无冲突的合并结果和Issue原完成条件；没有因SHA变化重跑产品、publish、PG/HTTP或页面。原报告/原始字节继续保留，发布物未重新签发。第十七轮本窗口写集/预约释放，目录按存储计划保留并待显式重新分配，没有删除或新建工作树。无Actions运行/取消/触发变更、既有数据库或部署操作。以下待审查/待合并/Open是历史时点，不能覆盖本节当前结论。
+
 ## 第十七轮 C / FIX-W13-C：#251、#252 修正交付
 
 2026-10-18（America/New_York）。总控已解除旧 P0 普通集成暂停并通过 PR267 准入；本次只修正原 B 审查的两处边界，独立交付给 B/COORD 做局部复查，不能据此关闭完整 WP02-28 或宣称业务/发布验收。
