@@ -1,5 +1,13 @@
 # WP02-18 · 第十三轮 D 菜单刷新恢复
 
+## 2026-10-18 总控集成收尾（当前结论）
+
+**本窗口已正常集成，[#243](https://github.com/GTX537/CP6/issues/243#issuecomment-6251367902)已Closed；完整WP02任务、真实业务及生产验收未完成。** [原审查最终结论](https://github.com/GTX537/CP6.AI-Handoff/blob/134c28304944f1949ca7f0e5226041b01c80649d/handoffs/CP6-DEV-20261012/tasks/REVIEW-BUG-243/REVIEW.md)为Ready to merge Yes，固定候选 `3bc3d3c86cc143e9f8c51100cdf875ff1a8e449d` 无阻断，Handoff `be1e4dc9b54b092ecc78b89feed7bee4270b2ca6` 已远端回读。原报告接续完成，没有重复START或完整审查。
+
+[正常代码PR](https://github.com/GTX537/CP6/pull/272)已合入；合并时main `8146d5e4063a1ae702e7639dc00f2df0ba29a37d`，总控再核最终产品main `8146d5e4063a1ae702e7639dc00f2df0ba29a37d` 同时包含C/D候选，完整5个范围文件与固定候选一致。复用锁定Vitest4.1.11的23项通过证据、原页面两条故障及修复后的独立GET/Layout消费/草稿保护检查，以及原type-check范围；原4.1.9记录和失败保留历史，不称作整条新main type-check或真实DEV通过。
+
+本次集成只核对源码/证据适用范围、无冲突的合并结果和Issue原完成条件；没有因SHA变化重跑产品、publish、PG/HTTP或页面。原报告/原始字节继续保留，发布物未重新签发。第十七轮本窗口写集/预约释放，目录按存储计划保留并待显式重新分配，没有删除或新建工作树。无Actions运行/取消/触发变更、既有数据库或部署操作。以下待审查/待合并/Open是历史时点，不能覆盖本节当前结论。
+
 ## 2026-10-18 第十七轮：锁定依赖补证
 
 按[第十七轮D执行包](../../../dispatch/20261018-wave17/D-BUG-243-VALIDATION.md)与协调[6344b2de](https://github.com/GTX537/CP6.AI-Handoff/blob/6344b2dec8c68c5603e8d7894db5ca70299fc6fe/handoffs/CP6-DEV-20261012/waves/20261018-wave17.md)，本轮仅补原23项组件测试使用Vitest4.1.9而锁文件要求4.1.11的证据缺口。以下原交付与失败记录保持历史范围，不改称新执行。
