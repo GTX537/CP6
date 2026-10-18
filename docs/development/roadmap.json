@@ -158887,6 +158887,11 @@
       "date": "2026-10-18",
       "change": "Received actual wave17 A START and B/C/D PROGRESS on fixed admission baseline2f20834a; corrections/evidence update started, D fixed candidate3bc3d3c8 received via2af18458: locked Vitest4.1.11 targeted23/23, only original DELIVERY changed; original A preparation3e0b584d ready to continue one review, final approval pending. User requested bounded disk use: read-only inventory107 CP6/46 Handoff worktrees, reused completed COORD directory for a fresh task branch, planned fixed slots and first5 clean merged docs worktrees (~5.2GiB logical) for later reclaim. No deletion, product tests, Actions or database operation by COORD. Full task/business states unchanged. B correction836de524 received viaff88448c: real stdin/PostgreSQL targeted5 pass with original RED3 failures retained; original C targeted recheck pending, no inferred merge approval.",
       "evidence": "docs/development/planning/20261018-workspace-storage.md"
+    },
+    {
+      "date": "2026-10-18",
+      "change": "BUG253 original C targeted recheck46c8ee9d approved836de524; normal PR269 integrated with remote exact-scope verification and original stdin/PG completion conditions, Issue253 Closed. Release B product/PG55436 reservations; B continues original C review. Receive C aec0e965 via5f9d5d12 for B targeted recheck; D3bc3d3c8 still awaits A final review. Reuse original evidence, no product rerun/Actions/deployment. Reuse COORD directory for independent closeout branch, no new or removed worktrees; full task/business unchanged.",
+      "evidence": "docs/development/evidence/WP02-02/tenant-eligibility-control/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -160328,9 +160333,9 @@
         "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
         "coordination_baseline_sha": "3f80c1110dc6c59c4da829c5a05f429fc6aa5794",
         "entry_evidence": "docs/development/dispatch/20261018-wave17/B-BUG-253.md",
-        "phase": "CORRECTION_DELIVERED_RECHECK_PENDING",
+        "phase": "BOUNDED_CONTROL_INTEGRATED_BUG253_CLOSED",
         "dispatch_scope": "SERVICE_TENANT_ELIGIBILITY_CONTROL",
-        "bounded_window_gate": "CONFIRMED",
+        "bounded_window_gate": "CLOSED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
         "allowed_write_paths": [
@@ -160339,13 +160344,8 @@
           "CP6.Tests/Persistence/Tenancy/ServiceTokenTenantDirectoryControlPostgresTests.cs",
           "docs/development/evidence/WP02-02/tenant-eligibility-control/DELIVERY.md"
         ],
-        "reserved_write_resources": [
-          "Main:tenant-storage",
-          "Main:service-tenant-directory-control"
-        ],
-        "reserved_postgresql_ports": [
-          55436
-        ],
+        "reserved_write_resources": [],
+        "reserved_postgresql_ports": [],
         "handoff_branch": "codex/dev-handoff-wp02-02",
         "actions_authorized": false,
         "formal_publication_authorized": false,
@@ -160383,9 +160383,9 @@
           "commit": "65cdf403af1c693711644b6f5a2f44f1cacd965f",
           "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261017T042608Z-wave13-delivery/MESSAGE.md"
         },
-        "reported_candidate_sha": "e2bfcc0b9b34f94163e8b1a63463997b7abb35b5",
+        "reported_candidate_sha": "836de52470cdff8ce594766d5d05e191535ab218",
         "candidate_review_completed": true,
-        "candidate_integrated": false,
+        "candidate_integrated": true,
         "delivery_received_at": "2026-10-17T04:28:50.954497+00:00",
         "candidate_review_assignment": {
           "wave": "20261017-wave14",
@@ -160397,24 +160397,24 @@
           "implementation_owner_unchanged": true,
           "continuation_wave": "20261018-wave17",
           "continuation_mode": "TARGETED_RECHECK_AFTER_CORRECTION",
-          "new_full_review_required": false
+          "new_full_review_required": false,
+          "targeted_recheck_completed": true,
+          "final_review_sha": "46c8ee9de5b1d85f0dd316fa389f492301ef5e52",
+          "final_handoff_sha": "73e6bd256a4115ebb1f4276d06ee314f7cfe5de6"
         },
         "review_result": {
-          "candidate_sha": "e2bfcc0b9b34f94163e8b1a63463997b7abb35b5",
-          "ready_to_merge": false,
+          "candidate_sha": "836de52470cdff8ce594766d5d05e191535ab218",
+          "ready_to_merge": true,
           "review_ref": {
-            "start_commit": "fa0ccd5278734f4826ad9a51861ede5e0d02838d",
-            "start_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-B/messages/20261017T065405Z-start/MESSAGE.md",
-            "delivery_commit": "f9821c9c5655875edb788ec3215ff26ce343e639",
-            "delivery_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-B/messages/20261017T065930Z-delivery/MESSAGE.md",
-            "review_commit": "5c9191f04bc0576fadabd1b059afc311f64e88a2",
-            "review_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-B/REVIEW.md"
+            "review_commit": "46c8ee9de5b1d85f0dd316fa389f492301ef5e52",
+            "review_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-B/REVIEW.md",
+            "delivery_commit": "73e6bd256a4115ebb1f4276d06ee314f7cfe5de6"
           },
-          "blocking_issue_urls": [
+          "blocking_issue_urls": [],
+          "resolved_issue_urls": [
             "https://github.com/GTX537/CP6/issues/253"
           ],
-          "coordinator_verification": "Targeted source/SDK/parser-semantics verification only; no duplicate full task review or product tests.",
-          "correction_implementation_admitted": true
+          "coordinator_verification": "Original full SPEC/QUALITY plus targeted recheck reused; remote main contains exact five scoped blobs and current main only advanced coordination docs. No repeated product tests."
         },
         "historical_wave13_assignment": {
           "branch": "codex/wp02-02-tenant-eligibility-20261017",
@@ -160437,7 +160437,39 @@
           "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261018T134903Z-wave17-delivery/MESSAGE.md",
           "candidate_sha": "836de52470cdff8ce594766d5d05e191535ab218",
           "at": "2026-10-18T13:49:03Z"
-        }
+        },
+        "historical_review_results": [
+          {
+            "candidate_sha": "e2bfcc0b9b34f94163e8b1a63463997b7abb35b5",
+            "ready_to_merge": false,
+            "review_ref": {
+              "start_commit": "fa0ccd5278734f4826ad9a51861ede5e0d02838d",
+              "start_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-B/messages/20261017T065405Z-start/MESSAGE.md",
+              "delivery_commit": "f9821c9c5655875edb788ec3215ff26ce343e639",
+              "delivery_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-B/messages/20261017T065930Z-delivery/MESSAGE.md",
+              "review_commit": "5c9191f04bc0576fadabd1b059afc311f64e88a2",
+              "review_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-B/REVIEW.md"
+            },
+            "blocking_issue_urls": [
+              "https://github.com/GTX537/CP6/issues/253"
+            ],
+            "coordinator_verification": "Targeted source/SDK/parser-semantics verification only; no duplicate full task review or product tests.",
+            "correction_implementation_admitted": true
+          }
+        ],
+        "product_main_sha": "6be28cb56ffa5cca4d29cfc26d935d769daf3535",
+        "product_pr": "https://github.com/GTX537/CP6/pull/269",
+        "bounded_window_closed": true,
+        "resource_reservations_released": true,
+        "issue_state": "CLOSED",
+        "issue_close_evidence": "https://github.com/GTX537/CP6/issues/253#issuecomment-6250839015",
+        "released_write_resources": [
+          "Main:tenant-storage",
+          "Main:service-tenant-directory-control"
+        ],
+        "released_postgresql_ports": [
+          55436
+        ]
       },
       "blockers": [],
       "validation_evidence": [],
@@ -162951,7 +162983,7 @@
         "baseline_sha": "86b07dec1050f948cfb07d8916d618166bdefed4",
         "coordination_baseline_sha": "3f80c1110dc6c59c4da829c5a05f429fc6aa5794",
         "entry_evidence": "docs/development/dispatch/20261018-wave17/C-BUG-251-252.md",
-        "phase": "CORRECTION_IN_PROGRESS",
+        "phase": "CORRECTION_DELIVERED_RECHECK_PENDING",
         "dispatch_scope": "PUBLISHED_HOST_IDENTITY_VALIDATION",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -163044,7 +163076,7 @@
           "baseline_sha": "4704592f52172c941e1cb95bdeb3c73f0dd179e8"
         },
         "correction_started_observed": true,
-        "correction_delivery_received": false,
+        "correction_delivery_received": true,
         "correction_window": "FIX-W13-C",
         "correction_start_ref": {
           "commit": "4b3fbca13df55ee139e9e1552014d87816526619",
@@ -163052,7 +163084,13 @@
           "kind": "PROGRESS",
           "at": "2026-10-18T13:41:13.163002Z"
         },
-        "correction_coordinator_received_at": "2026-10-18T13:46:31.423466+00:00"
+        "correction_coordinator_received_at": "2026-10-18T13:46:31.423466+00:00",
+        "correction_delivery_ref": {
+          "commit": "5f9d5d128e1c727f1f013187e570e3f7769e9c4b",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-28/messages/20261018T135201Z-wave17-delivery/MESSAGE.md",
+          "candidate_sha": "aec0e965a5419031a4d0089c8fb8da42f563356f",
+          "at": "2026-10-18T13:52:01.787861Z"
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -179009,7 +179047,7 @@
       "path": "docs/development/dispatch/20261018-wave17/README.md",
       "baseline_sha": "3f80c1110dc6c59c4da829c5a05f429fc6aa5794",
       "registered_at": "2026-10-18T13:26:58.542479+00:00",
-      "phase": "CORRECTIONS_AND_MENU_REVIEW_IN_PROGRESS",
+      "phase": "BUG253_CLOSED_C_D_REVIEW_PENDING",
       "coordinator_shared_state_only": true,
       "assigned_chats": [
         "A",
@@ -179018,7 +179056,6 @@
         "D"
       ],
       "authorized_implementation_chats": [
-        "B",
         "C"
       ],
       "authorized_evidence_update_chats": [
@@ -179029,9 +179066,7 @@
         "B",
         "C"
       ],
-      "active_implementation_chats": [
-        "C"
-      ],
+      "active_implementation_chats": [],
       "workers_started": true,
       "workers_delivered": false,
       "windows_closed": false,
@@ -179092,18 +179127,13 @@
             "CP6.Tests/Persistence/Tenancy/ServiceTokenTenantDirectoryControlPostgresTests.cs",
             "docs/development/evidence/WP02-02/tenant-eligibility-control/DELIVERY.md"
           ],
-          "reserved_write_resources": [
-            "Main:tenant-storage",
-            "Main:service-tenant-directory-control"
-          ],
-          "ports": {
-            "postgresql": 55436
-          },
+          "reserved_write_resources": [],
+          "ports": {},
           "packet": "B-BUG-253.md",
           "handoff_branch": "codex/dev-handoff-wp02-02",
           "handoff_worktree": "D:/CP6.AI-Handoff-worktrees/wp02-02-prep-20261014",
           "delivery_report": "docs/development/evidence/WP02-02/tenant-eligibility-control/DELIVERY.md",
-          "gate": "CONFIRMED",
+          "gate": "PRODUCT_CLOSED_REVIEW_CONTINUATION_ACTIVE",
           "reviewer_chat": "C",
           "review_continuation": {
             "target": "FIX-W13-C",
@@ -179111,7 +179141,15 @@
             "handoff_branch": "codex/dev-handoff-wave14-b-review-20261017",
             "handoff_worktree": "D:/CP6.AI-Handoff-worktrees/wave14-b-review-20261017",
             "review_sha": "0cf1ad3fd58b590ce6b4be74f2f2f054e9efa892",
-            "mode": "TARGETED_RECHECK_AFTER_C_DELIVERY_NO_SECOND_START"
+            "mode": "TARGETED_RECHECK_AFTER_C_DELIVERY_NO_SECOND_START",
+            "target_candidate_sha": "aec0e965a5419031a4d0089c8fb8da42f563356f",
+            "delivery_ref": {
+              "commit": "5f9d5d128e1c727f1f013187e570e3f7769e9c4b",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-28/messages/20261018T135201Z-wave17-delivery/MESSAGE.md",
+              "candidate_sha": "aec0e965a5419031a4d0089c8fb8da42f563356f",
+              "at": "2026-10-18T13:52:01.787861Z"
+            },
+            "phase": "FIXED_INPUT_READY"
           },
           "registered_at": "2026-10-18T13:26:58.542479+00:00",
           "coordination_baseline_sha": "3f80c1110dc6c59c4da829c5a05f429fc6aa5794",
@@ -179121,7 +179159,7 @@
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
           "execution_baseline_rule": "COORD prepares fresh task worktree from latest confirmed main after this admission merges; exact preparation SHA in Handoff. Preserve original candidates. Preparation is not START or review approval.",
-          "phase": "DELIVERED_C_RECHECK_PENDING",
+          "phase": "PRODUCT_CLOSED_REVIEW_CONTINUATION_ACTIVE",
           "resume_protocol": "Same existing task, no second START/transport ACK gate. On actual correction/validation start, publish one PROGRESS with current owner and baseline; do not claim execution at admission.",
           "actual_start_ref": {
             "commit": "711e700640648e67d7cd2c5247895ff794afc7e5",
@@ -179135,6 +179173,39 @@
             "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261018T134903Z-wave17-delivery/MESSAGE.md",
             "candidate_sha": "836de52470cdff8ce594766d5d05e191535ab218",
             "at": "2026-10-18T13:49:03Z"
+          },
+          "product_integrated": true,
+          "product_main_sha": "6be28cb56ffa5cca4d29cfc26d935d769daf3535",
+          "product_pr": "https://github.com/GTX537/CP6/pull/269",
+          "candidate_sha": "836de52470cdff8ce594766d5d05e191535ab218",
+          "issue_state": "CLOSED",
+          "issue_closed_at": "2026-10-18T14:04:41Z",
+          "issue_close_evidence": "https://github.com/GTX537/CP6/issues/253#issuecomment-6250839015",
+          "review_completed": true,
+          "ready_to_merge": true,
+          "review_result": {
+            "candidate_sha": "836de52470cdff8ce594766d5d05e191535ab218",
+            "ready_to_merge": true,
+            "review_ref": {
+              "review_commit": "46c8ee9de5b1d85f0dd316fa389f492301ef5e52",
+              "review_path": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-B/REVIEW.md",
+              "delivery_commit": "73e6bd256a4115ebb1f4276d06ee314f7cfe5de6"
+            },
+            "blocking_issue_urls": [],
+            "resolved_issue_urls": [
+              "https://github.com/GTX537/CP6/issues/253"
+            ],
+            "coordinator_verification": "Original full SPEC/QUALITY plus targeted recheck reused; remote main contains exact five scoped blobs and current main only advanced coordination docs. No repeated product tests."
+          },
+          "product_window_closed": true,
+          "resource_reservations_released": true,
+          "closed_product_at": "2026-10-18T14:04:23.985236+00:00",
+          "released_write_resources": [
+            "Main:tenant-storage",
+            "Main:service-tenant-directory-control"
+          ],
+          "released_ports": {
+            "postgresql": 55436
           }
         },
         {
@@ -179170,18 +179241,22 @@
             "original_report": "handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-B/REVIEW.md",
             "handoff_branch": "codex/dev-handoff-wave14-c-review-20261017",
             "handoff_worktree": "D:/CP6.AI-Handoff-worktrees/wave14-c-review-20261017",
-            "review_sha": "5c9191f04bc0576fadabd1b059afc311f64e88a2",
-            "mode": "TARGETED_RECHECK_AFTER_B_DELIVERY_NO_SECOND_START"
+            "review_sha": "46c8ee9de5b1d85f0dd316fa389f492301ef5e52",
+            "mode": "TARGETED_RECHECK_AFTER_B_DELIVERY_NO_SECOND_START",
+            "review_delivery_sha": "73e6bd256a4115ebb1f4276d06ee314f7cfe5de6",
+            "phase": "COMPLETED_YES",
+            "completed": true,
+            "target_candidate_sha": "836de52470cdff8ce594766d5d05e191535ab218"
           },
           "registered_at": "2026-10-18T13:26:58.542479+00:00",
           "coordination_baseline_sha": "3f80c1110dc6c59c4da829c5a05f429fc6aa5794",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
           "execution_baseline_rule": "COORD prepares fresh task worktree from latest confirmed main after this admission merges; exact preparation SHA in Handoff. Preserve original candidates. Preparation is not START or review approval.",
-          "phase": "CORRECTION_IN_PROGRESS",
+          "phase": "DELIVERED_B_RECHECK_PENDING",
           "resume_protocol": "Same existing task, no second START/transport ACK gate. On actual correction/validation start, publish one PROGRESS with current owner and baseline; do not claim execution at admission.",
           "actual_start_ref": {
             "commit": "4b3fbca13df55ee139e9e1552014d87816526619",
@@ -179189,7 +179264,13 @@
             "kind": "PROGRESS",
             "at": "2026-10-18T13:41:13.163002Z"
           },
-          "actual_start_baseline_sha": "2f20834af3e0192cdb0d0fda404f0fc398be592d"
+          "actual_start_baseline_sha": "2f20834af3e0192cdb0d0fda404f0fc398be592d",
+          "delivery_ref": {
+            "commit": "5f9d5d128e1c727f1f013187e570e3f7769e9c4b",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-28/messages/20261018T135201Z-wave17-delivery/MESSAGE.md",
+            "candidate_sha": "aec0e965a5419031a4d0089c8fb8da42f563356f",
+            "at": "2026-10-18T13:52:01.787861Z"
+          }
         },
         {
           "id": "BUG-243-LOCKED-VALIDATION",
@@ -179258,8 +179339,10 @@
           "original_candidate": "e2bfcc0b9b34f94163e8b1a63463997b7abb35b5",
           "reviewer": "original C",
           "scope": "Raw Expected/Desired timestamp validation before DateTime conversion, real CLI stdin precision regression and original report. No silent truncation or unrelated tenancy changes.",
-          "implementation_gate": "ADMITTED_WAVE17",
-          "resource_gate": "ASSIGNED_WAVE17"
+          "implementation_gate": "CLOSED_INTEGRATED",
+          "resource_gate": "RELEASED",
+          "candidate_sha": "836de52470cdff8ce594766d5d05e191535ab218",
+          "issue_state": "CLOSED"
         },
         {
           "issue": "https://github.com/GTX537/CP6/issues/251",
@@ -179287,10 +179370,14 @@
         "D"
       ],
       "active_evidence_update_chats": [],
-      "last_coordinator_receipt_at": "2026-10-18T13:52:52.927790+00:00",
+      "last_coordinator_receipt_at": "2026-10-18T14:04:23.985236+00:00",
       "delivered_chats": [
         "B",
+        "C",
         "D"
+      ],
+      "product_windows_integrated": [
+        "BUG-253"
       ]
     },
     "wave_history": [

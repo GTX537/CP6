@@ -1,5 +1,13 @@
 # WP02-02 / 第十三轮 B：已登记服务租户资格目录控制
 
+## 2026-10-18 总控集成收尾（当前结论）
+
+**本窗口代码已集成，Issue253已关闭；完整WP02-02和业务验收未完成。** [原C复查](https://github.com/GTX537/CP6.AI-Handoff/blob/46c8ee9de5b1d85f0dd316fa389f492301ef5e52/handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-B/REVIEW.md)对836de524给出Ready to merge Yes，R1解除；最终Handoff `73e6bd256a4115ebb1f4276d06ee314f7cfe5de6` 已读取。原报告集中审查加局部复查沿用同一份REVIEW，不重复START或完整审查。
+
+[正常PR269](https://github.com/GTX537/CP6/pull/269)合入远端main `6be28cb56ffa5cca4d29cfc26d935d769daf3535`，已核对候选提交包含性及完整五文件Git内容一致。CLI原始精度/显式null/有限本地时间与CAS边界按本报告五项实际PG/真实stdin成功证据验收，原RED3保留；原七项未变行为沿用真实来源。主线只增加协调文档，无相关实现/依赖漂移，未重复构建或数据库测试。[Issue关闭记录](https://github.com/GTX537/CP6/issues/253#issuecomment-6250839015)核对了原完成条件。
+
+只释放本产品窗口写集及PG55436预约，原B仍可执行已登记的C候选局部复查。原始证据、两个停止实例及候选目录保留，没有清理或重新启动。无Actions/触发变更、已有数据库操作或部署；真实业务/DEV、完整租户生命周期和持久请求结果恢复仍未验收。下文待合并/Open为历史，原失败和成功范围不改写。
+
 > 本报告保留第十三轮原始交付，末节接续 2026-10-18 第十七轮 #253 原始期限精度修正。原 7 项结果不覆盖后来发现的原文截断漏洞；新失败与通过证据分别记录，不改写历史。
 
 2026-10-17。本窗口执行者为用户启动的新 Codex 对话 B（会话标识 `01a1480c-fed2-7e42-bce0-9b3db2477bfe`）。分支 `codex/wp02-02-tenant-eligibility-20261017`，工作树 `D:/CP6-worktrees/wave13-b-tenant-control-20261017`。开工 fetch 后 HEAD/main/origin/main 均为 `4704592f52172c941e1cb95bdeb3c73f0dd179e8`，包含准入规划基线 `86b07dec1050f948cfb07d8916d618166bdefed4`。

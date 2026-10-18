@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-18：BUG253已集成并关闭，C/D继续审查收口
+
+[#253已Closed](https://github.com/GTX537/CP6/issues/253#issuecomment-6250839015)。[原C定向复查](https://github.com/GTX537/CP6.AI-Handoff/blob/46c8ee9de5b1d85f0dd316fa389f492301ef5e52/handoffs/CP6-DEV-20261012/tasks/REVIEW-W13-B/REVIEW.md)解除R1，固定候选836de524通过[正常PR269](https://github.com/GTX537/CP6/pull/269)合入远端main `6be28cb56ffa5cca4d29cfc26d935d769daf3535`；五个范围文件与已验证候选一致。原合法实例/身份的真实stdin/PG回归5通过、0失败/跳过，RED3与原7项未变证据保留真实范围，不因合并SHA变化重复运行。B产品窗口与PG55436预约释放；原始证据、候选和目录暂保留，B继续原REVIEW-W13-C局部复查。
+
+C固定候选aec0e965已通过Handoff5f9d5d12交B复查#251/#252；其报告记录11项工具回归和一次真实publish，尚待原B结论，不预先关闭Issue。D固定候选3bc3d3c8及锁定23项补证已交A，原集中审查最终结论待回。A/B/C/D不重复START/ACK。完整WP02-02/18/28及375任务/125业务状态不提升，当前待审查不转为业务通过。
+
+沿[存储计划](../development/planning/20261018-workspace-storage.md)，本收尾继续复用原COORD目录创建独立分支，新增/删除工作树均0。文档/台账检查通过；无产品重跑、Actions、既有数据库/服务操作或部署。以下原候选Open/不可合并/待复查记录为历史时点。
+
 ## 2026-10-18：四对话已开工，协调目录改为复用
 
 第十七轮A真实START及B/C/D实际PROGRESS已回读：A准备菜单集中审查、B修#253、C修#251/#252、D补#243锁定依赖证据。台账已登记实际开始。随后收到D固定候选3bc3d3c8（Handoff2af18458），锁定Vitest4.1.11相关23项通过，仅原DELIVERY改变；A准备报告3e0b584d已到，接续同次集中审查，最终可合并结论待回。B随后交付#253修正836de524（Handoffff88448c），真实stdin/PG定向5通过、保留原3项RED失败，待原C局部复查；C自身#251/#252修正仍在进行。写集/端口/Owner不变。
