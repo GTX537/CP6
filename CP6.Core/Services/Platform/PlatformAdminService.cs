@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Auth;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Sys;
@@ -13,6 +14,8 @@ namespace CP6.Core.Services.Platform;
 /// <para>防自锁死（E-SEC-037）：撤销目标若本身是启用中的平台超管，且为<b>最后一个</b>启用超管 → 拒绝，
 /// 防平台失去全部超管入口。撤非超管/已停用超管为允许操作。</para>
 /// <para>带外审计（PlatformAdminGranted/Revoked）经 <see cref="TenantScope"/> 强制落平台租户（R5）。</para>
+/// <para>PostgreSQL 授撤必须有已认证的完整平台主体；在管理员根事务内重读并锁定当前调用人，
+/// 与目标更新和必要审计同事务。无请求主体的直接服务调用拒绝，不隐式视为系统授权。</para>
 /// </summary>
 public class PlatformAdminService : IPlatformAdminService
 {
@@ -89,6 +92,7 @@ public class PlatformAdminService : IPlatformAdminService
     private Task ChangePostgreSqlAsync(Guid userId, bool grant)
         => PlatformAdminMutationV1.ExecuteAsync(_db, async ct =>
         {
+            var actor = await PlatformAdminAuthorization.RequireAsync(_db, _http?.HttpContext?.User, ct, lockActor: true);
             var target = await _db.Sys_Users.IgnoreQueryFilters().SingleOrDefaultAsync(x => x.Id == userId, ct)
                 ?? throw new InvalidOperationException("E-SEC-032");
             // Existing unchanged tracking may predate another committed administrator operation.
@@ -104,8 +108,8 @@ public class PlatformAdminService : IPlatformAdminService
             {
                 TenantId = TenantContext.DefaultTenant,
                 EventType = (int)(grant ? SecurityEventType.PlatformAdminGranted : SecurityEventType.PlatformAdminRevoked),
-                UserId = _current?.UserId,
-                UserName = _current?.UserName is { Length: > 100 } name ? name[..100] : _current?.UserName,
+                UserId = actor.Id,
+                UserName = actor.UserName.Length > 100 ? actor.UserName[..100] : actor.UserName,
                 Reason = $"target={target.UserName}",
                 CreatedAt = DateTime.Now
             });

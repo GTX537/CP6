@@ -97,7 +97,8 @@ internal sealed class TenantManagementHttpHost(WebApplication app, HttpClient cl
             tenant, isPlatformAdmin: platform, impersonatorId: impersonation ? Guid.NewGuid() : null);
 
     internal static async Task<TenantManagementHttpHost> Start(TenantManagementPostgresFixture fixture,
-        CrmIdentityRuntime? identity = null, bool includeRoles = false, bool includePlatformAdmins = false)
+        CrmIdentityRuntime? identity = null, bool includeRoles = false, bool includePlatformAdmins = false,
+        IInterceptor? interceptor = null)
     {
         var secret = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = "TenantManagementComponent", Args = [] });
@@ -105,7 +106,8 @@ internal sealed class TenantManagementHttpHost(WebApplication app, HttpClient cl
         builder.WebHost.ConfigureKestrel(options => options.Listen(IPAddress.Loopback, 0));
         var services = builder.Services;
         services.AddScoped<ITenantContext, TenantContext>();
-        services.AddScoped(sp => fixture.Context(sp.GetRequiredService<ITenantContext>(), identity));
+        services.AddScoped(sp => fixture.Context(sp.GetRequiredService<ITenantContext>(), identity,
+            interceptor is null ? [] : [interceptor]));
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
         services.AddScoped<IPasswordHasher>(_ => new BCryptPasswordHasher(4));

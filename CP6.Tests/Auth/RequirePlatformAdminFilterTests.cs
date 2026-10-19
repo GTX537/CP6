@@ -21,7 +21,7 @@ public class RequirePlatformAdminFilterTests
     private static ClaimsPrincipal MakeUser(params (string type, string value)[] claims)
     {
         var identity = new ClaimsIdentity(
-            claims.Select(c => new Claim(c.type, c.value)),
+            claims.Select(c => new Claim(c.type, c.value)).Append(new Claim("tenant_id", TenantContext.DefaultTenant.ToString())),
             authenticationType: "Test");
         return new ClaimsPrincipal(identity);
     }
@@ -164,5 +164,53 @@ public class RequirePlatformAdminFilterTests
         }
 
         Assert.Equal(x, tenant.CurrentTenantId);
+    }
+
+    [Theory]
+    [InlineData("anonymous")]
+    [InlineData("two_authenticated")]
+    [InlineData("shadow_subject")]
+    [InlineData("shadow_platform")]
+    [InlineData("conflicting_subject")]
+    [InlineData("conflicting_tenant")]
+    [InlineData("missing_tenant")]
+    [InlineData("empty_subject")]
+    [InlineData("2fa_verify")]
+    [InlineData("2fa_enroll")]
+    [InlineData("unknown_purpose")]
+    [InlineData("platform_conflict")]
+    [InlineData("restricted")]
+    public async Task Incomplete_or_ambiguous_platform_actor_is_rejected(string kind)
+    {
+        using var db = TestHelper.CreateInMemoryContext(); var uid = Guid.NewGuid();
+        SeedUser(db, uid, true, true);
+        var principal = MakeUser((ClaimTypes.NameIdentifier, uid.ToString()), ("is_platform_admin", "true"));
+        var identity = (ClaimsIdentity)principal.Identity!;
+        switch (kind)
+        {
+            case "anonymous": principal = new ClaimsPrincipal(new ClaimsIdentity(identity.Claims)); break;
+            case "two_authenticated": principal.AddIdentity(new ClaimsIdentity([], "other")); break;
+            case "shadow_subject": principal.AddIdentity(new ClaimsIdentity([new Claim("sub", uid.ToString())])); break;
+            case "shadow_platform": principal.AddIdentity(new ClaimsIdentity([new Claim("is_platform_admin", "true")])); break;
+            case "conflicting_subject": identity.AddClaim(new Claim("sub", Guid.NewGuid().ToString())); break;
+            case "conflicting_tenant": identity.AddClaim(new Claim("tenant_id", Guid.NewGuid().ToString())); break;
+            case "missing_tenant": identity.RemoveClaim(identity.FindFirst("tenant_id")!); break;
+            case "empty_subject": identity.RemoveClaim(identity.FindFirst(ClaimTypes.NameIdentifier)!); identity.AddClaim(new Claim("sub", Guid.Empty.ToString())); break;
+            case "platform_conflict": identity.AddClaim(new Claim("is_platform_admin", "false")); break;
+            case "restricted": identity.AddClaim(new Claim("must_change_password", "true")); break;
+            default: identity.AddClaim(new Claim("token_use", kind)); break;
+        }
+        var ctx = MakeCtx(db, principal); await new RequirePlatformAdminAttribute().OnAuthorizationAsync(ctx);
+        Assert.Equal("E-SEC-031", MessageOf(ctx.Result));
+    }
+
+    [Fact]
+    public async Task Sub_only_without_name_and_consistent_duplicate_binding_remains_valid()
+    {
+        using var db = TestHelper.CreateInMemoryContext(); var uid = Guid.NewGuid(); SeedUser(db, uid, true, true);
+        var principal = MakeUser(("sub", uid.ToString()), ("is_platform_admin", "true"));
+        var ctx = MakeCtx(db, principal); await new RequirePlatformAdminAttribute().OnAuthorizationAsync(ctx); Assert.Null(ctx.Result);
+        ((ClaimsIdentity)principal.Identity!).AddClaim(new Claim(ClaimTypes.NameIdentifier, uid.ToString("N")));
+        await new RequirePlatformAdminAttribute().OnAuthorizationAsync(ctx); Assert.Null(ctx.Result);
     }
 }

@@ -159057,6 +159057,11 @@
       "date": "2026-10-19",
       "change": "W24: single-chat current platform actor binding and final PostgreSQL authority gate, scoped native verification and normal integration; estimated AGENT elapsed 1.5–3h,24h checkpoint; full IAM/CRM/business unchanged.",
       "evidence": "docs/development/dispatch/20261019-wave24/README.md"
+    },
+    {
+      "date": "2026-10-19",
+      "change": "W24-01 BUG315 current platform actor final authority gate and binding ready; 66 effective tests/38 native, author SPEC/QUALITY pass; full authentication/CRM/Owner/business unchanged.",
+      "evidence": "docs/development/evidence/WP02-03/platform-admin-current-actor/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -161631,21 +161636,20 @@
         "chat_label": "COORD / W24-01 当前平台调用人",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/wave24-platform-current-actor-20261019",
+        "branch": "codex/bug-315-platform-current-actor-20261019",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "claimed_at": "2026-10-19T08:18:40.299263+00:00",
-        "baseline_sha": "6c5df760e0d56d3cfb75fd4e919267e5931c8401",
+        "baseline_sha": "d9abec3d8e3797f3ffeb9c42adb29af947c4591e",
         "entry_evidence": "docs/development/dispatch/20261019-wave24/README.md",
-        "phase": "REGISTERED_NOT_STARTED",
+        "phase": "READY_TO_MERGE",
         "dispatch_scope": "PLATFORM_ADMIN_CURRENT_ACTOR",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
-        "worker_start_received": false,
+        "worker_start_received": true,
         "allowed_write_paths": [
           "CP6.Core/Auth/RequirePlatformAdminAttribute.cs",
           "CP6.Core/Auth/PlatformAdminAuthorization.cs",
           "CP6.Core/Services/Platform/PlatformAdminService.cs",
-          "CP6.Core/Services/Platform/PlatformAdminMutationV1.cs",
           "CP6.WebApi/Controllers/Platform/PlatformAdminController.cs",
           "CP6.Tests/Auth/RequirePlatformAdminFilterTests.cs",
           "CP6.Tests/Platform/PlatformAdminCurrentActorPostgreSqlTests.cs",
@@ -161665,8 +161669,21 @@
         "existing_database_migration_authorized": false,
         "deployment_authorized": false,
         "delivery_report": "docs/development/evidence/WP02-03/platform-admin-current-actor/DELIVERY.md",
-        "candidate_review_completed": false,
-        "candidate_integrated": false
+        "candidate_review_completed": true,
+        "candidate_integrated": false,
+        "actual_start_ref": {
+          "commit": "a9f1ed66adadafea999723693059e907cf09bf9b",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T082108Z-wave24-start/MESSAGE.md",
+          "at": "2026-10-19T08:21:08.272462+00:00"
+        },
+        "active_issue": {
+          "number": 315,
+          "url": "https://github.com/GTX537/CP6/issues/315",
+          "priority": "P0",
+          "state": "Open"
+        },
+        "worker_delivery_received": true,
+        "candidate_review_verdict": "READY_TO_MERGE"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -180558,7 +180575,7 @@
       "path": "docs/development/dispatch/20261019-wave24/README.md",
       "baseline_sha": "6c5df760e0d56d3cfb75fd4e919267e5931c8401",
       "registered_at": "2026-10-19T08:18:40.299263+00:00",
-      "phase": "SINGLE_COORDINATOR_PLAN_REGISTERED",
+      "phase": "W24_01_READY_TO_MERGE",
       "coordinator_shared_state_only": false,
       "assigned_chats": [
         "COORD"
@@ -180569,9 +180586,11 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [],
-      "workers_started": false,
-      "workers_delivered": false,
+      "active_implementation_chats": [
+        "COORD"
+      ],
+      "workers_started": true,
+      "workers_delivered": true,
       "windows_closed": false,
       "product_integrated": false,
       "windows": [
@@ -180582,14 +180601,13 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "REGISTERED_NOT_STARTED",
-          "worker_start_received": false,
-          "worker_delivery_received": false,
+          "phase": "READY_TO_MERGE",
+          "worker_start_received": true,
+          "worker_delivery_received": true,
           "write_paths": [
             "CP6.Core/Auth/RequirePlatformAdminAttribute.cs",
             "CP6.Core/Auth/PlatformAdminAuthorization.cs",
             "CP6.Core/Services/Platform/PlatformAdminService.cs",
-            "CP6.Core/Services/Platform/PlatformAdminMutationV1.cs",
             "CP6.WebApi/Controllers/Platform/PlatformAdminController.cs",
             "CP6.Tests/Auth/RequirePlatformAdminFilterTests.cs",
             "CP6.Tests/Platform/PlatformAdminCurrentActorPostgreSqlTests.cs",
@@ -180609,7 +180627,30 @@
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
           "full_task_completed": false,
-          "business_acceptance": "NOT_RUN"
+          "business_acceptance": "NOT_RUN",
+          "actual_start_ref": {
+            "commit": "a9f1ed66adadafea999723693059e907cf09bf9b",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T082108Z-wave24-start/MESSAGE.md",
+            "at": "2026-10-19T08:21:08.272462+00:00"
+          },
+          "actual_start_baseline_sha": "d9abec3d8e3797f3ffeb9c42adb29af947c4591e",
+          "branch": "codex/bug-315-platform-current-actor-20261019",
+          "active_issue": {
+            "number": 315,
+            "url": "https://github.com/GTX537/CP6/issues/315",
+            "priority": "P0",
+            "state": "Open"
+          },
+          "delivery_report": "docs/development/evidence/WP02-03/platform-admin-current-actor/DELIVERY.md",
+          "review": "AUTHOR_SPEC_QUALITY_PASS",
+          "validation": {
+            "effective_passed": 66,
+            "native_postgresql_passed": 38,
+            "unit_passed": 28,
+            "failed_remaining": 0,
+            "skipped_as_pass": 0,
+            "evidence_root": "D:\\CP6-local-test\\wave24\\platform-current-actor"
+          }
         }
       ],
       "execution_owner": {
@@ -180635,7 +180676,13 @@
         "raw_evidence_preserved": true
       },
       "review_mode": "One combined author SPEC/QUALITY, not independent.",
-      "next_action": "Merge scope, publish actual START once, reproduce stale actor and subject binding gaps; register proven bug."
+      "next_action": "Normal PR merge, remote verification, close315 and coordinator closeout; goal active.",
+      "active_issue": {
+        "number": 315,
+        "url": "https://github.com/GTX537/CP6/issues/315",
+        "priority": "P0",
+        "state": "Open"
+      }
     },
     "wave_history": [
       {
