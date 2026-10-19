@@ -1,5 +1,7 @@
 # W25-03 / BUG323 原认证状态连续性
 
+> 已集成：https://github.com/GTX537/CP6/pull/324 / source `1a8d7ac383c6da95abf4d4cdbd8aa5f82a51e3aa` / main `f978d8de9ae90a17bd5655e80662afe0b7aca0bd`，# 323 已关闭。最终组合核对复用本报告有效范围；下文候选措辞保留原交付时点。
+
 ## 交付结论
 
 基线 `ee11bc845ac2581b19b14d218568c8136d5bf7da`，分支 `codex/wave25-03-authentication-state-20261019`。[P0 #323](https://github.com/GTX537/CP6/issues/323)已本地修正，**Ready to merge: Yes**。一次作者集中SPEC/QUALITY无剩余阻断（非独立审查）。167个去重有效相关结果通过：53原生PG/实际HTTP/故障组件，61既有认证单测与组件HTTP，53模型元数据检查；无剩余失败或跳过。测试计数只陈述实际范围，不代表全IAM或业务完成。

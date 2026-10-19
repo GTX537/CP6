@@ -1,5 +1,20 @@
 # 第二十五轮：三个连续公共基础交付
 
+## 第二十五轮三个限定交付已集成
+
+| 窗口 | 正常PR | 修复Issue | 交付范围 |
+|---|---|---|---|
+| W25-01 | [PR320](https://github.com/GTX537/CP6/pull/320) | #319 Closed | 租户创建/修改/暂停/恢复当前actor最终门 |
+| W25-02 | [PR322](https://github.com/GTX537/CP6/pull/322) | #321 Closed | 模拟真身/目标、必要审计与提交后Cookie |
+| W25-03 | [PR324](https://github.com/GTX537/CP6/pull/324) | #323 Closed | 原认证状态访问/refresh消费与精确完成隔离 |
+
+产品远端main `f978d8de9ae90a17bd5655e80662afe0b7aca0bd`；W25-03范围blob一致，W25-01/02未变产品文件已核相同，W25-03实际Program模拟往返构成受影响组合检查；其余有效结果引用各单份DELIVERY。去重280项有效相关通过（113原生PG/HTTP），历史失败完整保留，不作全业务验收。
+
+三个窗口CLOSED、资源释放；16次自有PG均停止，原目录/build/NuGet缓存复用，零新工作树/代理/Actions。D余约41.9GiB，原7项用户资料未动。这里的24小时是交付窗口，不要求空等；初估5–9小时为代理执行时间，实际用时在最终检查点记录。
+
+完整SSO/2FA政策与原proof、所有发行writer共同门、统一family/恢复、剩余IAM引用CAS、CRM投影/Owner及既有环境/真实业务仍未完成。14包/125目标/375任务/247运行NOT_RUN保持。最终文档main/Handoff/检查点核对后关闭外部持续目标，不自动开新窗口。
+
+
 > W25-03候选完成：[DELIVERY](../../evidence/WP02-03/session-authentication-current-state/DELIVERY.md)。#323原access/refresh状态问题修正，167有效相关通过（53原生），作者集中审查无阻断。待正常合并及最终协调收尾，持续目标仍active。
 
 > W25-02已通过[PR322](https://github.com/GTX537/CP6/pull/322)合入远端`ee11bc845ac2581b19b14d218568c8136d5bf7da`，#321关闭。W25-03真实START，复用原目录；本项和组合/状态收尾完成前不结束长目标。
@@ -27,27 +42,27 @@
 
 修改TenantAdminService/TenantController；复用PlatformAdminMutationV1及PlatformAdminAuthorization，必要泛型结果支持限定在原helper。测试TenantManagementCurrentActorPostgreSqlTests，复用/适配TenantManagementPostgresFixture与TenantManagementAuditPostgreSqlTests。单份报告WP02-04/current-actor-final-gate/DELIVERY.md。
 
-- [ ] 实际HTTP filter之后撤权/停用/删除actor，创建/更新/暂停/恢复不得产生效果，先RED并登记实际P0。
-- [ ] PostgreSQL根→actor当前检查与行锁→目标当前读取→一次业务/必要审计，持有到commit；调用方事务savepoint、取消、跟踪恢复沿W23/24现有实现。合法临时密码只在成功后返回；actor审计来自核实持久主体。非PG历史实现保留，不加双库要求。
-- [ ] 双向竞争、caller rollback/失败审计、合法跨tenant管理和原错误边界定向验证；一次作者SPEC/QUALITY、正常PR/远端核对与Issue闭环。
+- [x] 实际HTTP filter之后撤权/停用/删除actor，创建/更新/暂停/恢复不得产生效果，先RED并登记实际P0。
+- [x] PostgreSQL根→actor当前检查与行锁→目标当前读取→一次业务/必要审计，持有到commit；调用方事务savepoint、取消、跟踪恢复沿W23/24现有实现。合法临时密码只在成功后返回；actor审计来自核实持久主体。非PG历史实现保留，不加双库要求。
+- [x] 双向竞争、caller rollback/失败审计、合法跨tenant管理和原错误边界定向验证；一次作者SPEC/QUALITY、正常PR/远端核对与Issue闭环。
 
 ## W25-02：模拟进入退出
 
 前置W25-01正常集成。核对完整SYS-IAM-01模拟接受段和实际ImpersonationService/Controller、JWT/Cookie/blacklist合同，在同一原目录最新main分支实施。允许路径按台账；开工时按实际依赖细化，不能并行改共享门。单份报告WP02-03/impersonation-final-gate/DELIVERY.md。
 
-- [ ] 原生复现入口过滤器与模拟服务之间当前真身/目标变化、审计失败、失败后Cookie或blacklist半完成边界；不把未运行推测写成BUG通过。
-- [ ] 在PG既有平台门内核实actor和目标/tenant，必要审计与可事务化状态一致；输出Cookie/响应在确定提交后。外部blacklist非同事务时明确失败关闭及未知结果，不伪造原子性或重放一次性凭据。
-- [ ] 保留模拟期间平台权挂起、真身/目标tenant各自绑定、退出重新核实平台权、合法无Name输入及既有cookie形态；为后续认证版本校验提供真实发行来源，不用当前状态回填旧认证证明。
-- [ ] 相关实际HTTP/PG正反向、取消/并发/故障验证，一次作者审查和正常集成。
+- [x] 原生复现入口过滤器与模拟服务之间当前真身/目标变化、审计失败、失败后Cookie或blacklist半完成边界；不把未运行推测写成BUG通过。
+- [x] 在PG既有平台门内核实actor和目标/tenant，必要审计与可事务化状态一致；输出Cookie/响应在确定提交后。外部blacklist非同事务时明确失败关闭及未知结果，不伪造原子性或重放一次性凭据。
+- [x] 保留模拟期间平台权挂起、真身/目标tenant各自绑定、退出重新核实平台权、合法无Name输入及既有cookie形态；为后续认证版本校验提供真实发行来源，不用当前状态回填旧认证证明。
+- [x] 相关实际HTTP/PG正反向、取消/并发/故障验证，一次作者审查和正常集成。
 
 ## W25-03：原认证状态连续性
 
 前置W25-02集成。精读S5 SYS-IAM-01 §6/§9、实际Web/Native/AuthSessionService、RefreshTokenService、会话模型及当前JWT消费；已有CRM family保护直接复用，不能重做冒新交付。当前无family分支不能冒已有认证版本保证；旧无足够证据按已接受合同重新认证，禁止以当前user信息补造历史MFA。单份报告WP02-03/session-authentication-current-state/DELIVERY.md。
 
-- [ ] 固定发行/消费入口与既有合法输入；实际验证凭据/AuthenticationEpoch变化、旧refresh及并发轮转问题，登记实证P0。
-- [ ] 补真实发行时的认证状态绑定并在访问/轮转消费时校验，兼容Web/Native/模拟/合法pending和restricted路由；缺证据不洗成当前版本。数据库字段若确需新增，以PG前向迁移和已填隔离副本升级证据交付，既有库不安装。
-- [ ] 维持token-family/device/subject/tenant各自身份，轮转条件更新与replacement同事务，拒绝不返回raw token/正常Cookie，不因普通后置拒绝全撤其他会话；未知提交不自动重放。
-- [ ] 整个实际改变范围一次集中SPEC/QUALITY，当前入口/版本/并发及受影响原native/Web验证；未落实的完整政策/SSO/2FA证据、Owner写门明确保持未完成，不能宣称整个IAM完成。
+- [x] 固定发行/消费入口与既有合法输入；实际验证凭据/AuthenticationEpoch变化、旧refresh及并发轮转问题，登记实证P0。
+- [x] 补真实发行时的认证状态绑定并在访问/轮转消费时校验，兼容Web/Native/模拟/合法pending和restricted路由；缺证据不洗成当前版本。数据库字段若确需新增，以PG前向迁移和已填隔离副本升级证据交付，既有库不安装。
+- [x] 维持token-family/device/subject/tenant各自身份，轮转条件更新与replacement同事务，拒绝不返回raw token/正常Cookie，不因普通后置拒绝全撤其他会话；未知提交不自动重放。
+- [x] 整个实际改变范围一次集中SPEC/QUALITY，当前入口/版本/并发及受影响原native/Web验证；未落实的完整政策/SSO/2FA证据、Owner写门明确保持未完成，不能宣称整个IAM完成。
 
 ## 执行与存储规则
 

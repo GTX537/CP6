@@ -1,5 +1,7 @@
 # W25-02 / BUG321 模拟进入退出最终门
 
+> 已集成：https://github.com/GTX537/CP6/pull/322 / source `f02edd9eb99c3d72be404b25130c1d4e4be40aba` / main `ee11bc845ac2581b19b14d218568c8136d5bf7da`，# 321 已关闭。最终组合核对复用本报告有效范围；下文候选措辞保留原交付时点。
+
 ## 结论
 
 基线 `1974bcb4ee9f179c6539dd032b09329037cd5002`，分支 `codex/wave25-02-impersonation-final-gate-20261019`。[P0 #321](https://github.com/GTX537/CP6/issues/321)本地修正，**Ready to merge: Yes**。一次作者集中SPEC/QUALITY无阻断，非独立审查；83个有效相关结果通过（49原生PG/HTTP、34单测），无剩余失败/跳过。正常PR/远端核对后关闭Issue并继续W25-03；本轮长目标未完成。
