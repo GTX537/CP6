@@ -21646,6 +21646,14 @@ namespace CP6.Persistence.PostgreSql.Migrations.Core
                         .HasColumnType("bpchar")
                         .UseCollation("cp6_ci_as_provider_v1");
 
+                    b.Property<Guid>("AuthenticationPolicyRevision")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<bool?>("QuickSwitchAllowed")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("TwoFactorMode")
                         .HasColumnType("integer");
 
@@ -21802,6 +21810,11 @@ namespace CP6.Persistence.PostgreSql.Migrations.Core
 
                     b.Property<bool>("AllowPasswordFallback")
                         .HasColumnType("boolean");
+
+                    b.Property<Guid>("CredentialRevision")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<Guid>("AuthenticationEpoch")
                         .HasColumnType("uuid");

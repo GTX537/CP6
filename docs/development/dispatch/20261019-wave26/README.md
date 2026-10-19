@@ -1,5 +1,7 @@
 # 第二十六轮：完整认证政策与会话公共基础
 
+> W26-01候选完成：[DELIVERY](../../evidence/WP02-03/authentication-policy-gate/DELIVERY.md)，#327修正，187相关通过/99原生，一次作者SPEC/QUALITY无阻断。待正常合并，随后W26-02/03及收尾，goal仍active。
+
 当前聊天单总控持续执行，三个实施窗口及收尾全部完成才关闭goal。基线`4682b0d8a82efa6cc7a267fc69068bcb6bc3c839`，第二十五轮已完成，活动Issue0、Handoff无新交付。当前用户要求优先完整认证政策，沿S5 SYS-IAM-01 v0.2 §6.1–6.5/§7/§9；不重新登记Target/原任务身份，不提升14包/125目标/375任务/247运行NOT_RUN。
 
 目标开始2026-10-19T10:58:51.471858+00:00，24小时检查点2026-10-20T10:58:51.471858+00:00；估计**本代理实际5–8小时**，故障修正余量约10小时。上一轮实际约1小时43分；本轮跨入口、政策、一次性凭据与事务，估计包含实现、定向验证和交付，不是用户工时，提前完成不空等。
@@ -13,10 +15,10 @@
 
 ## W26-01 政策与完成门
 
-- [ ] 核实际TwoFactorMode/SSO/PasswordPolicy/AllowPasswordFallback/QuickSwitch政策来源，缺失或非法关闭，不以默认0/AutoProvision=true等于批准。
-- [ ] 新增Main受控AuthenticationCompletionGateV1与不可由客户端补造的原proof/政策版本。明确tenant/user/client/device、primary方法/时间、factor、SSO配置及restricted各身份；认证版本不冒业务权限epoch。
-- [ ] PostgreSQL门覆盖tenant/user/凭据/2FA/SSO/政策实际writer；按原平台root/行锁顺序协调，不仅在签JWT时加锁。重复读/Serializable旧快照也不能越过变化。必要PG前向迁移只在自有已填隔离库验证，非PG历史范围保留。
-- [ ] 定向实际PG政策变化、撤权/凭据变化竞争、事务取消/回滚/未知边界，合法路径和来源缺失；一份DELIVERY、一次作者SPEC/QUALITY，正常合并。此窗提供门，入口采用由W26-02/03接续，不提前宣称全部生效。
+- [x] 核实际TwoFactorMode/SSO/PasswordPolicy/AllowPasswordFallback/QuickSwitch政策来源，缺失或非法关闭，不以默认0/AutoProvision=true等于批准。
+- [x] 新增Main受控AuthenticationCompletionGateV1与不可由客户端补造的原proof/政策版本。明确tenant/user/client/device、primary方法/时间、factor、SSO配置及restricted各身份；认证版本不冒业务权限epoch。
+- [x] PostgreSQL门覆盖tenant/user/凭据/2FA/SSO/政策实际writer；按原平台root/行锁顺序协调，不仅在签JWT时加锁。重复读/Serializable旧快照也不能越过变化。必要PG前向迁移只在自有已填隔离库验证，非PG历史范围保留。
+- [x] 定向实际PG政策变化、撤权/凭据变化竞争、事务取消/回滚/未知边界，合法路径和来源缺失；一份DELIVERY、一次作者SPEC/QUALITY，正常合并。此窗提供门，入口采用由W26-02/03接续，不提前宣称全部生效。
 
 预期修改CP6.Core/Services/Sys/AuthenticationCompletion*、认证policy/proof服务及CP6Context映射、PG迁移/快照；仅必要Sys实体扩展，测试CP6.Tests/Platform/AuthenticationPolicyPostgreSqlTests及相关Sys/模型。报告evidence/WP02-03/authentication-policy-gate/DELIVERY.md。
 

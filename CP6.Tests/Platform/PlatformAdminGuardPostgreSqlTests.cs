@@ -280,7 +280,12 @@ public sealed class PlatformAdminGuardPostgreSqlTests(TenantManagementPostgresFi
         await using var db = Context(); var connection = new NpgsqlConnectionStringBuilder(db.Database.GetConnectionString()) { Database = name };
         db.Database.SetConnectionString(connection.ConnectionString);
         await db.GetService<IMigrator>().MigrateAsync("20261002161715_PostgreSqlCoreBaselineV1");
-        var first = User(true); var second = User(true); db.Sys_Users.AddRange(first, second); await db.SaveChangesAsync();
+        var first = User(true); var second = User(true);
+        await using (var oldDb = new BeforeAuthenticationPolicyContext((DbContextOptions<CP6Context>)db.GetService<IDbContextOptions>(), new TenantContext()))
+        {
+            oldDb.Database.SetConnectionString(db.Database.GetConnectionString());
+            oldDb.Sys_Users.AddRange(first, second); await oldDb.SaveChangesAsync();
+        }
         await db.Database.MigrateAsync(); await db.Database.MigrateAsync();
         Assert.Empty(await db.Database.GetPendingMigrationsAsync());
         Assert.Equal(2, await db.Sys_Users.CountAsync(x => x.Enable && x.IsPlatformAdmin));

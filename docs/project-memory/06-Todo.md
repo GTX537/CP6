@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-19：W26-01认证政策与PG完成门候选
+
+#327缺失/非法政策已修正；版本化原proof/当前政策与PG共同根门，实际user/tenant/SSO DML修订覆盖，v3含数据库凭据修订防改回旧值。187相关通过（99原生PG/HTTP），一次作者审查通过。前向迁移仅自有旧数据隔离库；采用需迁移并重新登录。全入口采用/refresh/FullAuth为接续W26-02/03，本goal未完成，完整IAM/CRM/业务未提升。[DELIVERY](../development/evidence/WP02-03/authentication-policy-gate/DELIVERY.md)。
+
 ## 2026-10-19：第二十六轮认证公共基础持续目标
 
 COORD本聊天独立连续推进政策/原proof/PG共同门、Web/Native全部相关认证入口、refresh与共享设备FullAuth；三项和收尾均完成才结束goal。预计代理实际5–8小时，修正余量约10小时，24小时检查点；复用原目录/PG/构建缓存。完整IAM/CRM/Owner/真实业务未提升。[计划](../development/dispatch/20261019-wave26/README.md)。

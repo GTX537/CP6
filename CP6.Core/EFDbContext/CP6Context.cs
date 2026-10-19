@@ -659,6 +659,12 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         // OA 章10 §7 租户注册表：租户编码全局唯一（共享表，不带 TenantId，不参与行级过滤）
         modelBuilder.Entity<Sys_Tenant>()
             .HasIndex(x => x.TenantCode).IsUnique().HasDatabaseName("UX_Sys_Tenant_Code");
+        if (!Database.IsNpgsql())
+        {
+            modelBuilder.Entity<Sys_Tenant>().Ignore(x => x.AuthenticationPolicyRevision);
+            modelBuilder.Entity<Sys_Tenant>().Ignore(x => x.QuickSwitchAllowed);
+            modelBuilder.Entity<Sys_User>().Ignore(x => x.CredentialRevision);
+        }
 
         // PUB 章00 组织模型：部门树索引（B0-D1 本阶段不带 TenantId，DeptCode 单列唯一；多租户后升级为 (TenantId,DeptCode)）
         modelBuilder.Entity<Sys_Dept>(e =>
@@ -2644,6 +2650,10 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         if (Database.IsNpgsql())
         {
             CorePostgreSqlModelConfiguration.Apply(modelBuilder);
+            modelBuilder.Entity<Sys_Tenant>().Property(x => x.AuthenticationPolicyRevision)
+                .HasDefaultValueSql("gen_random_uuid()").ValueGeneratedOnAddOrUpdate();
+            modelBuilder.Entity<Sys_User>().Property(x => x.CredentialRevision)
+                .HasDefaultValueSql("gen_random_uuid()").ValueGeneratedOnAddOrUpdate();
             // New native JSON context has no legacy text padding/collation contract.
             modelBuilder.Entity<Sys_SecurityLog>().Property(x => x.ContextJson).HasColumnType("jsonb").UseCollation(null);
             modelBuilder.Entity<Sys_RefreshToken>().Property(x => x.AuthenticationVersion).HasColumnType("text").UseCollation(null);

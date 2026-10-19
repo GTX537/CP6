@@ -1,4 +1,5 @@
 using System.Data.Common;
+using CP6.Core.EFDbContext;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wms;
@@ -154,9 +155,13 @@ public sealed partial class AuthenticationStatePostgreSqlTests
         await db.GetService<IMigrator>().MigrateAsync("20261019093000_SecurityAuditContextV1");
         var user = Guid.NewGuid(); var id = Guid.NewGuid(); var raw = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
         var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(raw)));
-        db.Sys_Tenants.Add(new Sys_Tenant { Id = tenant.CurrentTenantId, TenantCode = "legacy", TenantName = "legacy" });
-        db.Sys_Users.Add(new Sys_User { Id = user, TenantId = tenant.CurrentTenantId, UserName = "legacy-auth", Password = "fixture", Enable = true });
-        await db.SaveChangesAsync();
+        await using (var oldDb = new BeforeAuthenticationPolicyContext((DbContextOptions<CP6Context>)db.GetService<IDbContextOptions>(), tenant))
+        {
+            oldDb.Database.SetConnectionString(db.Database.GetConnectionString());
+            oldDb.Sys_Tenants.Add(new Sys_Tenant { Id = tenant.CurrentTenantId, TenantCode = "legacy", TenantName = "legacy" });
+            oldDb.Sys_Users.Add(new Sys_User { Id = user, TenantId = tenant.CurrentTenantId, UserName = "legacy-auth", Password = "fixture", Enable = true });
+            await oldDb.SaveChangesAsync();
+        }
         await db.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO public."Sys_RefreshTokens" ("Id","TenantId","UserId","TokenHash","ExpiresAt","ClientKind","CreateDate")
             VALUES ({id},{tenant.CurrentTenantId},{user},{hash},LOCALTIMESTAMP+INTERVAL '1 day','Web',LOCALTIMESTAMP);
