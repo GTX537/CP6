@@ -1,5 +1,7 @@
 # W27-03 / #339：SSO 首次身份映射与原操作恢复
 
+> 已集成：https://github.com/GTX537/CP6/pull/340 / source `056f6d533b7a32390c43d4a6a07a3e9abf9a3667` / main `c86ee22441b0531fad62007e4ee18d3f586910b0`，#339 已关闭。下文保留候选交付时点；本轮最终状态见[总记录](../../../dispatch/20261019-wave27/README.md)。
+
 2026-10-19，COORD 单聊天。基线 `cac31d82117885dd3a265159b3d30eb698d9faf9`；原工作目录，分支 `codex/wave27-03-sso-identity-admission-20261019`。任务级作者 SPEC/QUALITY 完成，局部复查无剩余阻断，Ready to merge: Yes。#339 待正常合并及远端回读后关闭；完整 WP02-03 和真实业务验收未提升。
 
 ## 行为与合同

@@ -1,5 +1,7 @@
 # W27-01：浏览器跨标签页认证与准确恢复
 
+> 已集成：https://github.com/GTX537/CP6/pull/336 / source `e24a3366e609c9d1af7ed564f5623af84cb699c8` / main `098264a08ee25e3f044d202e0e5ade3c98b6dc3a`，#335 已关闭。下文保留候选交付时点；本轮最终状态见[总记录](../../../dispatch/20261019-wave27/README.md)。
+
 基线main `9dd9943033397a5a6604ad307498dfd3aebc519f`，分支`codex/wave27-01-browser-auth-recovery-20261019`，关联[P1 #335](https://github.com/GTX537/CP6/issues/335)。**Ready to merge: Yes**。一次作者集中SPEC/QUALITY及发现问题的局部复查，无剩余阻断；不是独立审查。原3项前端真实失败和2项PG/HTTP失败已修正。
 
 ## 行为与边界

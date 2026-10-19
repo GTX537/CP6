@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## 2026-10-19：第二十七轮公共认证基础三个限定交付已集成
+
+跨标签页认证协调与安全恢复、明确SSO首次身份批准/配置CAS、精确身份初绑/JIT与Main原子映射恢复，通过PR336/338/340正常合入；#335/#337/#339均Closed，产品main `c86ee22441b0531fad62007e4ee18d3f586910b0`。相关PG/真实HTTP、旧填充升级、故障/并发、实际Chrome页面和Native服务验证通过或复用，单份交付/任务、一次作者集中审查，原失败保留，计数不跨轮相加。
+
+23个本轮隔离PG根停止，资源释放；唯一原工作目录/构建/NuGet/零复制前端依赖复用。无新树/代理/Actions、真实租户审批、既有数据库迁移或生产部署。剩余IAM组织/角色/引用CAS、CRM投影与Owner业务采用仍需后续窗口，完整业务与247运行NOT_RUN不提升。最终文档/Handoff/检查点核对后完成本轮goal。[完整记录](../development/dispatch/20261019-wave27/README.md)。
+
 ## 2026-10-19：W27-03 SSO首次身份映射候选
 
 P0 #339已复现并修正：PG按原始字节精确匹配联邦身份。明确批准的初绑/JIT、当前角色/租户/邮箱、Main IdentityChange版本与Outbox/强审计/映射回执同事务；实际SQL与并发SSO不重复抢占，UNKNOWN沿原操作查询或封闭。相关PG/实际HTTP、旧填充迁移、26前端/1Chrome场景/9Native服务验证通过或复用，作者集中审查无阻断。仅隔离资源，全部已停止；无Actions、真实租户批准、既有数据库变更或生产部署。完整IAM/CRM/业务验收不提升。待正常集成及本轮总收尾。[DELIVERY](../development/evidence/WP02-03/sso-identity-admission/DELIVERY.md)。

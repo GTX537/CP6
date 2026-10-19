@@ -159137,6 +159137,11 @@
       "date": "2026-10-19",
       "change": "W27-03 BUG339 exact federated identity fixed; approved first link/JIT, Main identity version/outbox/audit/receipt atomic PG, actual writer uniqueness/revisions and original-operation recovery. Related PG/HTTP/Chrome/Native tests passed/reused; full runtime/real tenant approvals unchanged.",
       "evidence": "docs/development/evidence/WP02-03/sso-identity-admission/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-19",
+      "change": "W27 three bounded windows integrated through PR336/338/340; BUG335/337/339 Closed. Browser cross-tab recovery, explicit first-SSO approval and atomic link/JIT/recovery delivered. Related local evidence reused without sum inflation; owned processes stopped and original workspace reused. Full IAM/CRM/business unchanged.",
+      "evidence": "docs/development/dispatch/20261019-wave27/README.md"
     }
   ],
   "implementation_assessment": {
@@ -161716,7 +161721,7 @@
         "claimed_at": "2026-10-19T15:42:56.658823+00:00",
         "baseline_sha": "cac31d82117885dd3a265159b3d30eb698d9faf9",
         "entry_evidence": "docs/development/dispatch/20261019-wave27/README.md",
-        "phase": "READY_TO_MERGE",
+        "phase": "CLOSED",
         "dispatch_scope": "W27_03",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -161755,12 +161760,8 @@
           "cp6.web/src/views/pms/SsoIdentityRecovery.vue",
           "docs/development/evidence/WP02-03/sso-identity-admission/DELIVERY.md"
         ],
-        "reserved_write_resources": [
-          "Main:identity-authority"
-        ],
-        "reserved_postgresql_ports": [
-          55435
-        ],
+        "reserved_write_resources": [],
+        "reserved_postgresql_ports": [],
         "handoff_branch": "codex/dev-coordination-20261012",
         "actions_authorized": false,
         "formal_publication_authorized": false,
@@ -161768,15 +161769,67 @@
         "deployment_authorized": false,
         "delivery_report": "docs/development/evidence/WP02-03/sso-identity-admission/DELIVERY.md",
         "candidate_review_completed": true,
-        "candidate_integrated": false,
-        "active_issue": {
-          "number": 339,
-          "url": "https://github.com/GTX537/CP6/issues/339",
-          "priority": "P0",
-          "state": "Open"
-        },
+        "candidate_integrated": true,
+        "active_issue": null,
         "worker_delivery_received": true,
-        "candidate_review_verdict": "READY_TO_MERGE"
+        "candidate_review_verdict": "READY_TO_MERGE",
+        "integration": {
+          "result": "PASS",
+          "repository": "GTX537/CP6",
+          "source": "056f6d533b7a32390c43d4a6a07a3e9abf9a3667",
+          "main": "c86ee22441b0531fad62007e4ee18d3f586910b0",
+          "pr": "https://github.com/GTX537/CP6/pull/340",
+          "paths": [
+            "CP6.Client.Core/NativeSsoService.cs",
+            "CP6.Client.Tests/NativeSsoServiceTests.cs",
+            "CP6.Core/EFDbContext/CP6Context.cs",
+            "CP6.Core/Services/Sys/BrowserAuthenticationRecoveryV1.cs",
+            "CP6.Core/Services/Sys/SsoConfigurationAdminV1.cs",
+            "CP6.Core/Services/Sys/SsoIdentityQueriesV1.cs",
+            "CP6.Core/Services/Sys/SsoMappingRecoveryV1.cs",
+            "CP6.Core/Services/Sys/SsoService.IdentityAdmissionV1.cs",
+            "CP6.Core/Services/Sys/SsoService.cs",
+            "CP6.Entity/DomainModels/Sys/SecurityEventType.cs",
+            "CP6.Persistence.PostgreSql/Migrations/Core/20261019155500_SsoIdentityMappingV1.cs",
+            "CP6.Tests/Platform/AuthenticationSsoIdentityAdmissionPostgreSqlTests.cs",
+            "CP6.Tests/Platform/AuthenticationSsoPostgreSqlTests.cs",
+            "CP6.Tests/Platform/SsoAdmissionPolicyPostgreSqlTests.cs",
+            "CP6.WebApi/Controllers/ClientAuthController.cs",
+            "CP6.WebApi/Controllers/Sys/AuthController.cs",
+            "CP6.WebApi/Controllers/Sys/SsoConfigController.cs",
+            "cp6.web/e2e/sso-configuration.spec.ts",
+            "cp6.web/src/auth/browserAuthentication.spec.ts",
+            "cp6.web/src/auth/browserAuthentication.ts",
+            "cp6.web/src/views/pms/SsoConfigView.spec.ts",
+            "cp6.web/src/views/pms/SsoConfigView.vue",
+            "cp6.web/src/views/pms/SsoIdentityRecovery.spec.ts",
+            "cp6.web/src/views/pms/SsoIdentityRecovery.vue",
+            "cp6.web/src/views/pms/SsoLandingView.spec.ts",
+            "cp6.web/src/views/pms/SsoLandingView.vue",
+            "docs/development/07-detailed-tasks.md",
+            "docs/development/dispatch/20261019-wave27/README.md",
+            "docs/development/evidence/WP02-03/sso-identity-admission/DELIVERY.md",
+            "docs/development/roadmap.json",
+            "docs/project-memory/05-Completed.md",
+            "docs/project-memory/06-Todo.md",
+            "docs/project-memory/CHANGELOG-AI.md",
+            "docs/project-memory/PROJECT_STATE.md"
+          ],
+          "observed_at": "2026-10-19T16:28:49.194311+00:00"
+        },
+        "delivery_ref": {
+          "commit": "336fee4f5b9409b7d5fa35b8dbab5cbd5e3d829f",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T163118Z-wave27-03-delivery/MESSAGE.md",
+          "at": "2026-10-19T16:31:18.778315+00:00"
+        },
+        "resolved_issue": {
+          "number": 339,
+          "state": "CLOSED",
+          "url": "https://github.com/GTX537/CP6/issues/339"
+        },
+        "resources_released": true,
+        "closed_at": "2026-10-19T16:32:49.831474+00:00",
+        "full_task_completed": false
       },
       "blockers": [],
       "validation_evidence": [],
@@ -162757,7 +162810,7 @@
           "claimed_at": "2026-10-19T14:00:06.813957+00:00",
           "baseline_sha": "9dd9943033397a5a6604ad307498dfd3aebc519f",
           "entry_evidence": "docs/development/dispatch/20261019-wave27/README.md",
-          "phase": "INTEGRATED",
+          "phase": "CLOSED",
           "dispatch_scope": "W27_01",
           "bounded_window_gate": "CONFIRMED",
           "full_task_gate_unchanged": true,
@@ -162816,12 +162869,7 @@
             "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T140358Z-wave27-01-start/MESSAGE.md",
             "at": "2026-10-19T14:03:58.117560+00:00"
           },
-          "active_issue": {
-            "number": 335,
-            "url": "https://github.com/GTX537/CP6/issues/335",
-            "priority": "P1",
-            "state": "Closed"
-          },
+          "active_issue": null,
           "worker_delivery_received": true,
           "candidate_review_verdict": "READY_TO_MERGE",
           "integration": {
@@ -162881,7 +162929,15 @@
             "commit": "ae27ade2e1a15d07e67e0ef00d912451af19e70a",
             "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T145756Z-wave27-01-delivery/MESSAGE.md",
             "at": "2026-10-19T14:57:56.737943+00:00"
-          }
+          },
+          "resolved_issue": {
+            "number": 335,
+            "state": "CLOSED",
+            "url": "https://github.com/GTX537/CP6/issues/335"
+          },
+          "resources_released": true,
+          "closed_at": "2026-10-19T16:32:49.831474+00:00",
+          "full_task_completed": false
         },
         {
           "chat_label": "COORD / W27-02 SSO首次身份准入批准、配置CAS与当前权限",
@@ -162892,7 +162948,7 @@
           "claimed_at": "2026-10-19T14:58:19.213041+00:00",
           "baseline_sha": "098264a08ee25e3f044d202e0e5ade3c98b6dc3a",
           "entry_evidence": "docs/development/dispatch/20261019-wave27/README.md",
-          "phase": "INTEGRATED",
+          "phase": "CLOSED",
           "dispatch_scope": "W27_02",
           "bounded_window_gate": "CONFIRMED",
           "full_task_gate_unchanged": true,
@@ -162935,12 +162991,7 @@
           "delivery_report": "docs/development/evidence/WP02-03/sso-admission-policy/DELIVERY.md",
           "candidate_review_completed": true,
           "candidate_integrated": true,
-          "active_issue": {
-            "number": 337,
-            "url": "https://github.com/GTX537/CP6/issues/337",
-            "priority": "P1",
-            "state": "Closed"
-          },
+          "active_issue": null,
           "worker_delivery_received": true,
           "candidate_review_verdict": "READY_TO_MERGE",
           "integration": {
@@ -162985,7 +163036,15 @@
             "commit": "b6159b4ccda4516c8f29a1a735b464282d13d3e0",
             "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T154058Z-wave27-02-delivery/MESSAGE.md",
             "at": "2026-10-19T15:40:58.973949+00:00"
-          }
+          },
+          "resolved_issue": {
+            "number": 337,
+            "state": "CLOSED",
+            "url": "https://github.com/GTX537/CP6/issues/337"
+          },
+          "resources_released": true,
+          "closed_at": "2026-10-19T16:32:49.831474+00:00",
+          "full_task_completed": false
         }
       ],
       "wave13_delivery": {
@@ -181562,24 +181621,16 @@
       "path": "docs/development/dispatch/20261019-wave27/README.md",
       "baseline_sha": "82a3440137eddf71bcc75fd1e5e39ea440207b52",
       "registered_at": "2026-10-19T14:00:06.813957+00:00",
-      "phase": "W27_03_READY_TO_MERGE",
+      "phase": "CLOSED",
       "coordinator_shared_state_only": false,
-      "assigned_chats": [
-        "COORD"
-      ],
-      "authorized_implementation_chats": [
-        "COORD"
-      ],
-      "authorized_review_chats": [
-        "COORD"
-      ],
-      "active_implementation_chats": [
-        "COORD"
-      ],
+      "assigned_chats": [],
+      "authorized_implementation_chats": [],
+      "authorized_review_chats": [],
+      "active_implementation_chats": [],
       "workers_started": true,
-      "workers_delivered": false,
-      "windows_closed": false,
-      "product_integrated": false,
+      "workers_delivered": true,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W27-01",
@@ -181588,7 +181639,7 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "INTEGRATED",
+          "phase": "CLOSED",
           "worker_start_received": true,
           "worker_delivery_received": true,
           "write_paths": [
@@ -181647,12 +181698,7 @@
           },
           "actual_start_baseline_sha": "9dd9943033397a5a6604ad307498dfd3aebc519f",
           "branch": "codex/wave27-01-browser-auth-recovery-20261019",
-          "active_issue": {
-            "number": 335,
-            "url": "https://github.com/GTX537/CP6/issues/335",
-            "priority": "P1",
-            "state": "Closed"
-          },
+          "active_issue": null,
           "candidate_review_completed": true,
           "candidate_review_verdict": "READY_TO_MERGE",
           "delivery_report": "docs/development/evidence/WP02-03/authentication-browser-recovery/DELIVERY.md",
@@ -181724,7 +181770,18 @@
             "commit": "ae27ade2e1a15d07e67e0ef00d912451af19e70a",
             "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T145756Z-wave27-01-delivery/MESSAGE.md",
             "at": "2026-10-19T14:57:56.737943+00:00"
-          }
+          },
+          "candidate_sha": "e24a3366e609c9d1af7ed564f5623af84cb699c8",
+          "integration_main_sha": "098264a08ee25e3f044d202e0e5ade3c98b6dc3a",
+          "integration_pr": "https://github.com/GTX537/CP6/pull/336",
+          "resolved_issue": {
+            "number": 335,
+            "state": "CLOSED",
+            "url": "https://github.com/GTX537/CP6/issues/335"
+          },
+          "reserved_postgresql_ports": [],
+          "resources_released": true,
+          "closed_at": "2026-10-19T16:32:49.831474+00:00"
         },
         {
           "id": "W27-02",
@@ -181733,7 +181790,7 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "INTEGRATED",
+          "phase": "CLOSED",
           "worker_start_received": true,
           "worker_delivery_received": true,
           "write_paths": [
@@ -181776,12 +181833,7 @@
           },
           "actual_start_baseline_sha": "098264a08ee25e3f044d202e0e5ade3c98b6dc3a",
           "branch": "codex/wave27-02-sso-admission-policy-20261019",
-          "active_issue": {
-            "number": 337,
-            "url": "https://github.com/GTX537/CP6/issues/337",
-            "priority": "P1",
-            "state": "Closed"
-          },
+          "active_issue": null,
           "candidate_review_completed": true,
           "candidate_review_verdict": "READY_TO_MERGE",
           "delivery_report": "docs/development/evidence/WP02-03/sso-admission-policy/DELIVERY.md",
@@ -181838,7 +181890,18 @@
             "commit": "b6159b4ccda4516c8f29a1a735b464282d13d3e0",
             "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T154058Z-wave27-02-delivery/MESSAGE.md",
             "at": "2026-10-19T15:40:58.973949+00:00"
-          }
+          },
+          "candidate_sha": "764a1840fc2e99c0bc9b1ac0152d23511f8cf510",
+          "integration_main_sha": "cac31d82117885dd3a265159b3d30eb698d9faf9",
+          "integration_pr": "https://github.com/GTX537/CP6/pull/338",
+          "resolved_issue": {
+            "number": 337,
+            "state": "CLOSED",
+            "url": "https://github.com/GTX537/CP6/issues/337"
+          },
+          "reserved_postgresql_ports": [],
+          "resources_released": true,
+          "closed_at": "2026-10-19T16:32:49.831474+00:00"
         },
         {
           "id": "W27-03",
@@ -181847,7 +181910,7 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "READY_TO_MERGE",
+          "phase": "CLOSED",
           "worker_start_received": true,
           "worker_delivery_received": true,
           "write_paths": [
@@ -181881,12 +181944,8 @@
           ],
           "planned_scope_ref": "docs/development/dispatch/20261019-wave27/README.md",
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "reserved_write_resources": [
-            "Main:identity-authority"
-          ],
-          "ports": {
-            "postgresql": 55435
-          },
+          "reserved_write_resources": [],
+          "ports": {},
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
@@ -181900,12 +181959,7 @@
           },
           "actual_start_baseline_sha": "cac31d82117885dd3a265159b3d30eb698d9faf9",
           "branch": "codex/wave27-03-sso-identity-admission-20261019",
-          "active_issue": {
-            "number": 339,
-            "url": "https://github.com/GTX537/CP6/issues/339",
-            "priority": "P0",
-            "state": "Open"
-          },
+          "active_issue": null,
           "candidate_review_completed": true,
           "candidate_review_verdict": "READY_TO_MERGE",
           "delivery_report": "docs/development/evidence/WP02-03/sso-identity-admission/DELIVERY.md",
@@ -181925,6 +181979,67 @@
               "sso-identity-expiry-review-20261019T162253Z",
               "sso-identity-concurrent-callback-20261019T162410Z"
             ]
+          },
+          "candidate_integrated": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "056f6d533b7a32390c43d4a6a07a3e9abf9a3667",
+            "main": "c86ee22441b0531fad62007e4ee18d3f586910b0",
+            "pr": "https://github.com/GTX537/CP6/pull/340",
+            "paths": [
+              "CP6.Client.Core/NativeSsoService.cs",
+              "CP6.Client.Tests/NativeSsoServiceTests.cs",
+              "CP6.Core/EFDbContext/CP6Context.cs",
+              "CP6.Core/Services/Sys/BrowserAuthenticationRecoveryV1.cs",
+              "CP6.Core/Services/Sys/SsoConfigurationAdminV1.cs",
+              "CP6.Core/Services/Sys/SsoIdentityQueriesV1.cs",
+              "CP6.Core/Services/Sys/SsoMappingRecoveryV1.cs",
+              "CP6.Core/Services/Sys/SsoService.IdentityAdmissionV1.cs",
+              "CP6.Core/Services/Sys/SsoService.cs",
+              "CP6.Entity/DomainModels/Sys/SecurityEventType.cs",
+              "CP6.Persistence.PostgreSql/Migrations/Core/20261019155500_SsoIdentityMappingV1.cs",
+              "CP6.Tests/Platform/AuthenticationSsoIdentityAdmissionPostgreSqlTests.cs",
+              "CP6.Tests/Platform/AuthenticationSsoPostgreSqlTests.cs",
+              "CP6.Tests/Platform/SsoAdmissionPolicyPostgreSqlTests.cs",
+              "CP6.WebApi/Controllers/ClientAuthController.cs",
+              "CP6.WebApi/Controllers/Sys/AuthController.cs",
+              "CP6.WebApi/Controllers/Sys/SsoConfigController.cs",
+              "cp6.web/e2e/sso-configuration.spec.ts",
+              "cp6.web/src/auth/browserAuthentication.spec.ts",
+              "cp6.web/src/auth/browserAuthentication.ts",
+              "cp6.web/src/views/pms/SsoConfigView.spec.ts",
+              "cp6.web/src/views/pms/SsoConfigView.vue",
+              "cp6.web/src/views/pms/SsoIdentityRecovery.spec.ts",
+              "cp6.web/src/views/pms/SsoIdentityRecovery.vue",
+              "cp6.web/src/views/pms/SsoLandingView.spec.ts",
+              "cp6.web/src/views/pms/SsoLandingView.vue",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/dispatch/20261019-wave27/README.md",
+              "docs/development/evidence/WP02-03/sso-identity-admission/DELIVERY.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-19T16:28:49.194311+00:00"
+          },
+          "candidate_sha": "056f6d533b7a32390c43d4a6a07a3e9abf9a3667",
+          "integration_main_sha": "c86ee22441b0531fad62007e4ee18d3f586910b0",
+          "integration_pr": "https://github.com/GTX537/CP6/pull/340",
+          "resolved_issue": {
+            "number": 339,
+            "state": "CLOSED",
+            "url": "https://github.com/GTX537/CP6/issues/339"
+          },
+          "reserved_postgresql_ports": [],
+          "resources_released": true,
+          "closed_at": "2026-10-19T16:32:49.831474+00:00",
+          "delivery_ref": {
+            "commit": "336fee4f5b9409b7d5fa35b8dbab5cbd5e3d829f",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T163118Z-wave27-03-delivery/MESSAGE.md",
+            "at": "2026-10-19T16:31:18.778315+00:00"
           }
         }
       ],
@@ -181942,17 +182057,25 @@
           7
         ],
         "contingency_hours": 10,
-        "deadline_is_not_completion": true
+        "deadline_is_not_completion": true,
+        "observed_agent_wall_minutes_before_final_docs": 155
       },
       "completion_scope": "Three complete bounded authentication/browser and SSO admission deliveries plus closeout; no real-tenant approval or existing-environment adoption implied.",
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0,
         "deleted_worktrees": 0,
-        "raw_evidence_preserved": true
+        "raw_evidence_preserved": true,
+        "owned_postgresql_runs_stopped": 23,
+        "free_d_gib_at_closeout": 36.16,
+        "frontend_dependency_mode": "Reused original zero-copy node_modules junction, .NET artifacts/NuGet cache; Native restore reused cached packages. No worktree/dependency copy or cache/user-data deletion."
       },
       "review_mode": "One author SPEC/QUALITY per coherent task; no agents.",
-      "next_action": "Normal merge and remote verification, close339, then wave27 total closeout/Handoff/checkpoint; goal active."
+      "next_action": "Remaining IAM organization/role/reference CAS and CRM projection/local Owner adoption; real tenant issuer/role approval, Main identity runtime adoption and existing DEV forward migration/business acceptance require a separate bounded environment window. No new implementation window opened.",
+      "active_issue": null,
+      "closed_at": "2026-10-19T16:32:49.831474+00:00",
+      "resources_released": true,
+      "goal_closeout": "All three implementation windows integrated; complete external goal only after docs/main/Handoff/checkpoint verification."
     },
     "wave_history": [
       {
