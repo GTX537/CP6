@@ -26,12 +26,32 @@ using Moq;
 namespace CP6.Tests.Platform;
 
 [Collection("TenantManagementPostgres")]
-public sealed class AuthenticationSsoPostgreSqlTests(TenantManagementPostgresFixture server)
+public sealed partial class AuthenticationSsoPostgreSqlTests(TenantManagementPostgresFixture server)
 {
-    [CurrentPermissionPostgresFact]
-    public async Task Web_SSO_requires_original_browser_binding_then_returns_pending_without_auth_cookies()
+    [TenantManagementPostgresTheory]
+    [InlineData("BOUND-subject")]
+    [InlineData("bound-subject ")]
+    public async Task Exact_federated_identity_does_not_adopt_a_case_or_space_variant_subject(string subject)
     {
-        await using var h = await Harness.Create(server, 2, false, false);
+        await using var h = await Harness.Create(server, 0, false, false); h.Subject = subject;
+        var url = await h.Sso.BuildAuthorizeUrlAsync(h.Organization.TenantCode, "https://cp6.test/callback", null);
+        var query = HttpUtility.ParseQueryString(new Uri(url).Query); h.Nonce = query["nonce"]!;
+        var binding = AuthenticationEntryServiceV1.WebBinding(AuthenticationInteractionStoreV1.NewChallenge());
+        await h.Sso.BindStateAsync(query["state"]!, "Web", binding);
+        await Assert.ThrowsAsync<InvalidOperationException>(() => h.Sso.HandleVerifiedCallbackAsync("code", query["state"]!, "https://cp6.test/callback", "Web", binding));
+        Assert.Equal("bound-subject", (await h.Db.Sys_Users.AsNoTracking().SingleAsync(x => x.Id == h.User.Id)).ExternalSubject);
+    }
+    [TenantManagementPostgresTheory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Web_SSO_requires_original_browser_binding_then_returns_pending_without_auth_cookies(bool firstBinding)
+    {
+        await using var h = await Harness.Create(server, 2, false, false, firstBinding);
+        if (firstBinding)
+        {
+            await Approve(h);
+            await h.Db.Sys_Users.Where(x => x.Id == h.User.Id).ExecuteUpdateAsync(s => s.SetProperty(x => x.ExternalSubject, (string?)null));
+        }
         var start = Assert.IsType<OkObjectResult>(await h.Web.SsoAuthorize(h.Organization.TenantCode));
         var url = (string)start.Value!.GetType().GetProperty("authorizeUrl")!.GetValue(start.Value)!;
         var query = HttpUtility.ParseQueryString(new Uri(url).Query); h.Nonce = query["nonce"]!;
@@ -48,6 +68,7 @@ public sealed class AuthenticationSsoPostgreSqlTests(TenantManagementPostgresFix
         Assert.NotEmpty(cookies["cp6_2fa"]); Assert.Empty(cookies["cp6_at"]); Assert.Empty(cookies["cp6_rt"]);
         Assert.False(await h.Db.Sys_RefreshTokens.AnyAsync(x => x.UserId == h.User.Id));
         Assert.False(await h.Db.Sys_SecurityLogs.AnyAsync(x => x.UserId == h.User.Id && x.EventType == (int)SecurityEventType.SsoLoginSuccess));
+        if (firstBinding) Assert.Equal("bound-subject", await h.Db.Sys_Users.AsNoTracking().Where(x => x.Id == h.User.Id).Select(x => x.ExternalSubject).SingleAsync());
     }
 
     [TenantManagementPostgresTheory]
@@ -153,15 +174,19 @@ public sealed class AuthenticationSsoPostgreSqlTests(TenantManagementPostgresFix
         public required ClientAuthController Controller;
         public required CP6.WebApi.Controllers.Sys.AuthController Web;
         public string Nonce = "";
+        public string Subject = "bound-subject";
+        public string? EmailOverride;
+        public string? EmailVerified = "true";
         public int ExchangeCount;
         public bool InvalidSignature;
         private ServiceProvider? provider;
         private MemoryDistributedCache? cache;
 
-        public static async Task<Harness> Create(TenantManagementPostgresFixture server, int mode, bool factor, bool remediation)
+        public static async Task<Harness> Create(TenantManagementPostgresFixture server, int mode, bool factor, bool remediation, bool identity = false,
+            params Microsoft.EntityFrameworkCore.Diagnostics.IInterceptor[] interceptors)
         {
             var tenant = new TenantContext { CurrentTenantId = Guid.NewGuid() };
-            var db = server.Context(tenant);
+            var db = server.Context(tenant, identity ? IdentityRuntime(tenant.CurrentTenantId) : null, interceptors);
             var organization = new Sys_Tenant { Id = tenant.CurrentTenantId, TenantCode = "sso_" + Guid.NewGuid().ToString("N"), TenantName = "SSO", TwoFactorMode = mode };
             var user = new Sys_User { TenantId = organization.Id, UserName = "sso-user", Email = "user@example.test", Enable = true,
                 Password = "unusable-placeholder", PasswordChangedAt = DateTime.Now.AddDays(-365), MustChangePassword = remediation,
@@ -210,8 +235,9 @@ public sealed class AuthenticationSsoPostgreSqlTests(TenantManagementPostgresFix
                 .Returns(() =>
                 {
                     h.ExchangeCount++;
-                    var jwt = new JwtSecurityToken(cfg.Authority, cfg.ClientId, new[] { new Claim("sub", "bound-subject"), new Claim("email", user.Email!),
-                        new Claim("email_verified", "true"), new Claim("nonce", h.Nonce) }, expires: DateTime.UtcNow.AddMinutes(5),
+                    var claims = new List<Claim> { new("sub", h.Subject), new("email", h.EmailOverride ?? user.Email!), new("nonce", h.Nonce) };
+                    if (h.EmailVerified != null) claims.Add(new("email_verified", h.EmailVerified));
+                    var jwt = new JwtSecurityToken(cfg.Authority, cfg.ClientId, claims, expires: DateTime.UtcNow.AddMinutes(5),
                         signingCredentials: new SigningCredentials(h.InvalidSignature ? new SymmetricSecurityKey(RandomNumberGenerator.GetBytes(32)) : key, SecurityAlgorithms.HmacSha256));
                     return Task.FromResult<string?>(new JwtSecurityTokenHandler().WriteToken(jwt));
                 });

@@ -1,5 +1,9 @@
 # 第二十七轮：浏览器认证恢复与SSO首次身份准入实施计划
 
+> W27-03候选完成：[DELIVERY](../../evidence/WP02-03/sso-identity-admission/DELIVERY.md)，#339精确身份问题修正。初绑/JIT、Main原子事务、真实writer/旧填充迁移/UNKNOWN恢复和Web/Native安全输出已验证，作者集中审查无剩余阻断。待正常集成及总收尾，goal active。
+
+> W27-02通过[PR338](https://github.com/GTX537/CP6/pull/338)合入`cac31d82117885dd3a265159b3d30eb698d9faf9`，#337已关闭；W27-03真实START。继续精确身份/邮箱初绑/JIT的Main原子事务及恢复，总目标active。
+
 > W27-02候选完成：[DELIVERY](../../evidence/WP02-03/sso-admission-policy/DELIVERY.md)，#337 CAS/审计已修正；9前端/2浏览器、41项主验证及15/4项定向复查通过。待正常合并后立即继续W27-03，goal active。
 
 > W27-01已通过[PR336](https://github.com/GTX537/CP6/pull/336)合入`098264a08ee25e3f044d202e0e5ade3c98b6dc3a`，#335关闭；W27-02真实START。继续首次身份准入policy/明确批准UI/CAS/强审计，随后W27-03初绑/JIT及总收尾，goal active。
@@ -50,11 +54,11 @@ type CompletionDecision = 'ACTIVE' | 'SECOND_FACTOR_PENDING' | 'ENROLLMENT_REQUI
 
 文件：SsoService.cs及新SsoService.IdentityAdmissionV1.cs，政策/映射receipt服务、PG唯一性与实际writer guard、身份捕获/强审计适配、Web/Native安全结果展示、真实PG受控IdP测试。
 
-- [ ] 精确(tenant,issuer,sub)已绑只取原账户并查唯一性，不跟外部新email改绑；缺policy不挡合法精确分支。唯一same-tenant email初绑须明确允许、email_verified=true、可信claim/当前空绑定，保角色/平台权。残缺冲突/多邮箱/另一绑定拒绝，不转JIT。
-- [ ] 零匹配JIT须AutoProvision+当前批准policy+同tenant启用批准role+业务唯一性。服务端赋tenant/issuer/sub/角色，IsPlatformAdmin=false、无fallback权、随机占位密码，不赋真实本地密码。非法role/用户名冲突不回落Role1。
-- [ ] 配置policy→稳定身份root→当前user/role顺序，在实际Main同事务闭合用户/关联、IdentityChange版本与Outbox、必要审计和映射receipt；实际role/配置/身份改绑writer参加相同门，含普通SQL并发证明。新增迁移只自有旧填充隔离PG。
-- [ ] 映射提交与认证完成两阶段，映射成功非ACTIVE；后续MFA/策略/响应失败保真实映射，下次新SSO精确复用不重复建户。提交UNKNOWN按原绑定/支持权限查准确receipt，未确认不重放code/state、不新ID绕过或删除重建。两个subject抢邮箱/同subject抢用户有单一结果。
-- [ ] 真实验签受控IdP+PG/HTTP五分支、并发writer/回滚/审计/映射成功后认证失败恢复，前端拒绝不暴露候选账户。单份sso-identity-admission/DELIVERY.md、一次作者审查、正常合并；不是企业真实IdP/生产验收。
+- [x] 精确(tenant,issuer,sub)已绑只取原账户并查唯一性，不跟外部新email改绑；缺policy不挡合法精确分支。唯一same-tenant email初绑须明确允许、email_verified=true、可信claim/当前空绑定，保角色/平台权。残缺冲突/多邮箱/另一绑定拒绝，不转JIT。
+- [x] 零匹配JIT须AutoProvision+当前批准policy+同tenant启用批准role+业务唯一性。服务端赋tenant/issuer/sub/角色，IsPlatformAdmin=false、无fallback权、随机占位密码，不赋真实本地密码。非法role/用户名冲突不回落Role1。
+- [x] 配置policy→稳定身份root→当前user/role顺序，在实际Main同事务闭合用户/关联、IdentityChange版本与Outbox、必要审计和映射receipt；实际role/配置/身份改绑writer参加相同门，含普通SQL并发证明。新增迁移只自有旧填充隔离PG。
+- [x] 映射提交与认证完成两阶段，映射成功非ACTIVE；后续MFA/策略/响应失败保真实映射，下次新SSO精确复用不重复建户。提交UNKNOWN按原绑定/支持权限查准确receipt，未确认不重放code/state、不新ID绕过或删除重建。两个subject抢邮箱/同subject抢用户有单一结果。
+- [x] 真实验签受控IdP+PG/HTTP五分支、并发writer/回滚/审计/映射成功后认证失败恢复，前端拒绝不暴露候选账户。单份sso-identity-admission/DELIVERY.md、一次作者审查、正常合并；不是企业真实IdP/生产验收。
 
 ## 共同验证、目录与收尾
 

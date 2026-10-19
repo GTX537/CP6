@@ -78,6 +78,20 @@ public class SsoConfigController : ControllerBase
         if (_admin?.IsPostgreSql != true) throw new SsoConfigurationExceptionV1(503, "SSO_CONFIGURATION_UNAVAILABLE");
         return (object)await _admin.ResolveAsync(id, close, CurrentActor, HttpContext.RequestAborted);
     });
+
+    [HttpGet("identity-operations/{reference}")]
+    [RequirePermission("sys-sso-config", "edit")]
+    public Task<IActionResult> IdentityOperation(string reference) => ResolveIdentity(reference, false);
+
+    [HttpPost("identity-operations/{reference}/close")]
+    [RequirePermission("sys-sso-config", "edit")]
+    public Task<IActionResult> CloseIdentityOperation(string reference) => ResolveIdentity(reference, true);
+
+    private Task<IActionResult> ResolveIdentity(string reference, bool close) => Execute(async () =>
+    {
+        if (_admin?.IsPostgreSql != true) throw new SsoConfigurationExceptionV1(503, "SSO_CONFIGURATION_UNAVAILABLE");
+        return (object)await _admin.ResolveIdentityAsync(reference, close, CurrentActor, HttpContext.RequestAborted);
+    });
     private async Task<Guid> CurrentActor(CancellationToken ct)
     {
         bool current;

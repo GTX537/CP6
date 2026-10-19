@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Sys;
 
-public sealed record BrowserAuthenticationStatusV1(string State, string? Purpose = null, DateTimeOffset? ExpiresAt = null);
+public sealed record BrowserAuthenticationStatusV1(string State, string? Purpose = null, DateTimeOffset? ExpiresAt = null,
+    string? IdentityState = null, string? IdentityOperationRef = null);
 
 /// <summary>Browser-held capabilities fence a late initial request and identify one exact rotation.</summary>
 public sealed class BrowserAuthenticationRecoveryV1(CP6Context db)
@@ -60,6 +61,7 @@ public sealed class BrowserAuthenticationRecoveryV1(CP6Context db)
         try
         {
             await AuthenticationCompletionGateV1.AcquireAsync(db, ct);
+            var mapping = await new SsoMappingRecoveryV1(db).ResolveBrowserAsync(hash, close, ct);
             var row = await db.Database.SqlQuery<Interaction>($"SELECT proof::text AS \"Proof\",purpose AS \"Purpose\",state AS \"State\" FROM cp6_authentication_v1.interactions WHERE challenge_hash={hash}").SingleOrDefaultAsync(ct);
             var proof = row == null ? null : JsonSerializer.Deserialize<AuthenticationProofV1>(row.Proof)!;
             if (proof != null && (proof.ClientKind != "Web" || proof.ClientBinding != hash)) throw new InvalidOperationException("REAUTH_REQUIRED");
@@ -110,7 +112,8 @@ public sealed class BrowserAuthenticationRecoveryV1(CP6Context db)
             }
             else state = "COMPLETION_UNKNOWN";
             ct.ThrowIfCancellationRequested(); committing = true; await tx.CommitAsync(ct);
-            return new(state, state == "PENDING" ? row?.Purpose : null, state == "PENDING" ? proof?.ExpiresAtUtc : null);
+            return new(state, state == "PENDING" ? row?.Purpose : null, state == "PENDING" ? proof?.ExpiresAtUtc : null,
+                mapping?.State, mapping?.OperationRef);
         }
         catch (Exception error)
         {

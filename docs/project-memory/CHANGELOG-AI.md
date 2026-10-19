@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-19：W27-03 SSO首次身份映射候选
+
+P0 #339已复现并修正：PG按原始字节精确匹配联邦身份。明确批准的初绑/JIT、当前角色/租户/邮箱、Main IdentityChange版本与Outbox/强审计/映射回执同事务；实际SQL与并发SSO不重复抢占，UNKNOWN沿原操作查询或封闭。相关PG/实际HTTP、旧填充迁移、26前端/1Chrome场景/9Native服务验证通过或复用，作者集中审查无阻断。仅隔离资源，全部已停止；无Actions、真实租户批准、既有数据库变更或生产部署。完整IAM/CRM/业务验收不提升。待正常集成及本轮总收尾。[DELIVERY](../development/evidence/WP02-03/sso-identity-admission/DELIVERY.md)。
+
 ## 2026-10-19：W27-02 SSO首次身份准入政策候选
 
 #337修正：原配置加入当前原身份/权限、版本CAS、明确邮箱权威批准及角色范围；强审计和不可变原操作回执同PG事务，未知结果仅原操作查询/关闭，密钥不进操作日志或本地存储。9前端/2真实Chrome夹具场景、41项.NET主验证及15/4项局部复查通过/复用，作者集中审查无阻断。原目录/缓存复用、自有进程已停止，无Actions或真实租户批准；W27-03初绑/JIT及总收尾继续，完整IAM/CRM/真实业务未提升。[DELIVERY](../development/evidence/WP02-03/sso-admission-policy/DELIVERY.md)。

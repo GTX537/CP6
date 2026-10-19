@@ -42,6 +42,16 @@ beforeEach(() => {
 })
 
 describe('shared browser authentication Owner', () => {
+  it('preserves a committed SSO mapping outcome when closing a login without activating a session', async () => {
+    const base = handler
+    handler = async config => {
+      if (config.url === '/auth/completion/browser/close') return { state: 'CLOSED', identityState: 'IDENTITY_BOUND', identityOperationRef: 'a'.repeat(64) }
+      return base(config)
+    }
+    await browserSso('tenant')
+    expect(await recoverAuthentication(true)).toEqual({ state: 'CLOSED', identityState: 'IDENTITY_BOUND', identityOperationRef: 'a'.repeat(64) })
+    expect(authenticationSnapshot().phase).toBe('anonymous'); expect(localStorage.getItem('cp6_authed')).toBeNull()
+  })
   it('persists a secret before sending login and exposes only handles in cross-tab UI storage', async () => {
     const result = await browserLogin({ userName: 'user', password: 'never-persist-this' })
     expect(authenticationSnapshot().phase).toBe('active'); expect(localStorage.getItem('cp6_authed')).toBe('1')

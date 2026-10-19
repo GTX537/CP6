@@ -44,4 +44,10 @@ describe('SSO landing uses the server completion state', () => {
     expect(state.recover).toHaveBeenCalledWith(true); expect(state.navigate).not.toHaveBeenCalled()
     expect(view.text()).toContain('尚未确认'); view.unmount()
   })
+  it('reports preserved binding only from Owner recovery and never treats the receipt as login', async () => {
+    state.query = { error: 'ACCOUNT_REMEDIATION_REQUIRED', operationRef: 'a'.repeat(64) }
+    state.recover.mockResolvedValue({ state: 'CLOSED', identityState: 'IDENTITY_BOUND' })
+    const view = render(); await flushPromises()
+    expect(state.navigate).not.toHaveBeenCalled(); expect(view.text()).toContain('原操作编号'); view.unmount()
+  })
 })

@@ -98,7 +98,9 @@ public partial class SsoService : ISsoService
         _state.Consume(state);
 
         // 2. 取租户 SSO 配置 + discovery 端点。
-        var cfg = await _cfg.GetByTenantIdAsync(st.TenantId);
+        var cfg = _db.Database.IsNpgsql()
+            ? await _db.Sys_TenantSsoConfigs.IgnoreQueryFilters().AsNoTracking().SingleOrDefaultAsync(x => x.TenantId == st.TenantId)
+            : await _cfg.GetByTenantIdAsync(st.TenantId);
         if (cfg == null || !cfg.Enabled)
             throw new InvalidOperationException("E-SEC-020");
         var ep = await _disco.GetAsync(cfg.Authority);   // 失败 → E-SEC-028
@@ -148,13 +150,21 @@ public partial class SsoService : ISsoService
         // 6. 租户上下文落定 → 后续按租户查询/写入正确作用域。
         _tenant.CurrentTenantId = st.TenantId;
 
+        if (_db.Database.IsNpgsql())
+        {
+            if (principal.FindAll("sub").Count() != 1 || principal.FindAll("nonce").Count() != 1
+                || principal.FindAll(cfg.EmailClaim).Count() != 1 || principal.FindAll("email_verified").Count() > 1)
+                throw new InvalidOperationException("E-SEC-024");
+            var mapped = await MapPostgreSqlIdentityAsync(originalPolicy!, cfg, ep.Issuer, sub, email,
+                string.Equals(emailVerified, "true", StringComparison.OrdinalIgnoreCase), AuthenticationInteractionStoreV1.Hash(state),
+                clientKind!, clientBinding!, primaryVerifiedAt);
+            return (mapped, originalPolicy!.VerifiedPrimary(mapped, AuthenticationPrimaryMethod.Sso, clientKind!, clientBinding!,
+                AuthenticationInteractionStoreV1.Hash(state), primaryVerifiedAt));
+        }
+
         // 映射（R3 防静默改绑）：
         // a. (TenantId, ExternalProvider=iss, ExternalSubject=sub) 命中 → 直接用。
-        var user = await _db.Sys_Users
-            .FirstOrDefaultAsync(u => u.ExternalProvider == ep.Issuer && u.ExternalSubject == sub);
-
-        if (user == null && _db.Database.IsNpgsql())
-            throw new InvalidOperationException("SSO_IDENTITY_POLICY_UNAVAILABLE");
+        var user = await _db.Sys_Users.FirstOrDefaultAsync(u => u.ExternalProvider == ep.Issuer && u.ExternalSubject == sub);
         if (user == null)
         {
             // b. 邮箱匹配（不区分大小写）。

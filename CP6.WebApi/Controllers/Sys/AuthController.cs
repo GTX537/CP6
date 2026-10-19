@@ -291,7 +291,8 @@ public partial class AuthController : LocalizedControllerBase
         {
             // 失败不写任何认证 Cookie；审计 + 把错误码透到落地屏由前端本地化。
             await _audit.LogAsync(SecurityEventType.SsoLoginFailed, null, null, null, ClientIp, ClientUa, ex.Message);
-            return Redirect($"{landing}?error={Uri.EscapeDataString(ex.Message)}");
+            var mapping = ex is SsoMappingRecoveryRequiredV1 recovery ? "&operationRef=" + Uri.EscapeDataString(recovery.OperationRef) : "";
+            return Redirect($"{landing}?error={Uri.EscapeDataString(ex.Message)}{mapping}");
         }
     }
 

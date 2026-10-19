@@ -34,6 +34,13 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
     private readonly ICurrentUserAccessor? _user;
     private readonly CrmIdentityRuntime? _identity;
 
+    /// <summary>New federation writes require this exact context's atomic identity/outbox adoption.</summary>
+    public void RequireIdentityCapture(Guid tenantId)
+    {
+        if (!Database.IsNpgsql() || _identity?.Options.Tenants.ContainsKey(tenantId) != true)
+            throw new InvalidOperationException("SSO_IDENTITY_WRITER_UNAVAILABLE");
+    }
+
     /// <summary>
     /// 多租户（章10）：可选注入 <see cref="ITenantContext"/>。生产由 DI 注入请求级租户；
     /// 单测/后台用单参构造 → 回退 <see cref="TenantContext.DefaultTenant"/>，故既有测试无需改造。

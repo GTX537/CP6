@@ -28,6 +28,13 @@ public sealed class MemoryPkceVerifierStore : IPkceVerifierStore
         => Task.FromResult(Interlocked.Exchange(ref _value, null));
 }
 
+/// <summary>A support locator from an error callback, never proof of mapping success or authorization.</summary>
+public sealed class NativeSsoMappingRecoveryException(string operationRef)
+    : InvalidOperationException("SSO 身份映射结果待确认，请由本租户管理员查询原操作：" + operationRef)
+{
+    public string OperationRef { get; } = operationRef;
+}
+
 public sealed class NativeSsoService
 {
     private readonly Cp6ApiClient _api;
@@ -71,8 +78,17 @@ public sealed class NativeSsoService
     public async Task<NativeAuthResult> CompleteAsync(Uri callback, CancellationToken ct = default)
     {
         if (!IsExpectedCallback(callback) ||
-            !TryParseQuery(callback.Query, out var query) ||
-            query.ContainsKey("error") ||
+            !TryParseQuery(callback.Query, out var query))
+            throw new InvalidOperationException("E-CLIENT-SSO-CALLBACK");
+        if (query.TryGetValue("error", out var error) && error == "SSO_IDENTITY_MAPPING_UNKNOWN"
+            && !query.ContainsKey("grantCode") && query.TryGetValue("operationRef", out var reference)
+            && reference.Length == 64 && reference.All(Uri.IsHexDigit))
+        {
+            // Deep links are untrusted: do not exchange a grant, consume PKCE, adopt a session,
+            // query other tenants, or automatically close an operation based on this display hint.
+            throw new NativeSsoMappingRecoveryException(reference);
+        }
+        if (query.ContainsKey("error") ||
             !query.TryGetValue("grantCode", out var grantCode) ||
             !IsBase64Url(grantCode))
         {

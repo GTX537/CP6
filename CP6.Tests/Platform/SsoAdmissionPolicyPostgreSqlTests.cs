@@ -15,6 +15,33 @@ public sealed class SsoAdmissionPolicyPostgreSqlTests(TenantManagementPostgresFi
     private const string Password = "Admission1!Password";
 
     [CurrentPermissionPostgresFact]
+    public async Task Actual_identity_mapping_recovery_requires_current_tenant_permission_and_CSRF()
+    {
+        var user = await Seed(); var foreign = await Seed();
+        await using var db = server.Context(new TenantContext { CurrentTenantId = user.TenantId });
+        var policies = new AuthenticationPolicyServiceV1(db, Microsoft.Extensions.Options.Options.Create(new SecurityOptions()));
+        var policy = JsonSerializer.Serialize(await policies.ReadAsync(user.TenantId));
+        var reference = AuthenticationInteractionStoreV1.Hash(Guid.NewGuid().ToString());
+        await db.Database.ExecuteSqlInterpolatedAsync($"INSERT INTO cp6_authentication_v1.sso_states(state_hash,policy,expires_at,client_kind,client_binding,consumed_at) VALUES({reference},{policy}::jsonb,clock_timestamp()+interval '5 minutes','Windows','fixture-device',clock_timestamp())");
+        await using var host = await AuthenticationApiProcess.Start(db.Database.GetConnectionString()!);
+        var cookies = await Login(host, user); var url = "api/sys/sso-config/identity-operations/" + reference;
+        using var anonymous = await host.Send(new HttpRequestMessage(HttpMethod.Get, url)); Assert.Equal(HttpStatusCode.Unauthorized, anonymous.StatusCode);
+        using var other = await host.Send(Get(url, await Login(host, foreign))); Assert.Equal(HttpStatusCode.NotFound, other.StatusCode);
+        using var read = await host.Send(Get(url, cookies)); Assert.Equal(HttpStatusCode.OK, read.StatusCode);
+        Assert.Equal("UNKNOWN", (await read.Content.ReadFromJsonAsync<SsoMappingStatusV1>())!.State);
+        var noCsrf = new HttpRequestMessage(HttpMethod.Post, url + "/close"); AddCookies(noCsrf, cookies); noCsrf.Headers.Remove("X-CSRF-Token");
+        using var refused = await host.Send(noCsrf); Assert.Equal(HttpStatusCode.Forbidden, refused.StatusCode);
+        var close = new HttpRequestMessage(HttpMethod.Post, url + "/close"); AddCookies(close, cookies);
+        using var closed = await host.Send(close); Assert.Equal(HttpStatusCode.OK, closed.StatusCode);
+        Assert.Equal("CLOSED", (await closed.Content.ReadFromJsonAsync<SsoMappingStatusV1>())!.State);
+        Assert.Equal(1, await db.Sys_SecurityLogs.CountAsync(x => x.EventType == (int)SecurityEventType.SsoIdentityMappingClosed));
+        await db.Sys_RoleActions.Where(x => x.RoleId == 17 && x.ActionCode == "edit").ExecuteDeleteAsync();
+        using var denied = await host.Send(Get(url, cookies)); Assert.Equal(HttpStatusCode.Forbidden, denied.StatusCode);
+        await db.Sys_Users.Where(x => x.Id == user.Id).ExecuteUpdateAsync(s => s.SetProperty(x => x.Enable, false));
+        using var stale = await host.Send(Get(url, cookies)); Assert.Equal(HttpStatusCode.Unauthorized, stale.StatusCode);
+    }
+
+    [CurrentPermissionPostgresFact]
     public async Task Actual_SSO_configuration_write_rejects_a_stale_expected_version()
     {
         var user = await Seed(); await using var db = server.Context(new TenantContext { CurrentTenantId = user.TenantId });

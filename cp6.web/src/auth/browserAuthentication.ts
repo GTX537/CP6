@@ -7,7 +7,7 @@ type Attempt = { key: string; kind: 'login' | 'sso' | 'factor' | 'refresh' | 'id
 type RecordV1 = { version: 1; epoch: string; phase: BrowserAuthPhase; attempt?: Attempt;
   originKey?: string; currentKey?: string; purpose?: string; expiresAt?: string; setupIssued?: boolean; factorMethod?: 'email';
   impersonation?: { tenantName: string; userName: string; expiresAt: number } }
-type SafeStatus = { state: string; purpose?: string; expiresAt?: string }
+type SafeStatus = { state: string; purpose?: string; expiresAt?: string; identityState?: string; identityOperationRef?: string }
 const HEADER = 'X-CP6-Authentication-Completion'
 const LOCK = 'cp6-browser-authentication-v1'
 const verifiedProfiles = new WeakMap<object, string>()
@@ -98,13 +98,21 @@ export function requireCurrentSso(result: object): void {
   if (verifiedProfiles.get(result) !== localStorage.getItem(AUTH_EPOCH) || read()?.phase !== 'sso') throw new AuthenticationChangedError()
 }
 
-async function closeRecord(r: RecordV1): Promise<void> {
+async function closeRecord(r: RecordV1): Promise<SafeStatus> {
   const keys = [...new Set([r.attempt?.key, r.originKey, r.currentKey].filter((key): key is string => !!key))]
-  for (const key of keys) await fence(key)
+  const mappings = new Map<string, string>()
+  for (const key of keys) {
+    const result = await status(key, true)
+    if (result.state !== 'CLOSED') throw new AuthenticationRecoveryRequired()
+    if (result.identityState) mappings.set(result.identityOperationRef || '', result.identityState)
+  }
   assertCurrent(r)
   clearProfile()
   save({ version: 1, epoch: r.epoch, phase: 'anonymous' })
   for (const key of keys) await forgetRecoveryCapability(key).catch(() => {})
+  const mapping = [...mappings.entries()][0]
+  return { state: 'CLOSED', identityState: mappings.size > 1 ? 'MULTIPLE_ORIGINAL_OPERATIONS' : mapping?.[1],
+    identityOperationRef: mappings.size === 1 ? mapping?.[0] : undefined }
 }
 
 async function failed(r: RecordV1, error: any, factor = false): Promise<never> {
@@ -200,7 +208,7 @@ export function recoverAuthentication(close = false): Promise<any> {
     if (localStorage.getItem(AUTH_EPOCH) !== expectedEpoch) throw new AuthenticationChangedError()
     const r = read()
     if (!r) throw new AuthenticationRecoveryRequired('没有可确认的原登录记录，请重新打开登录入口。')
-    if (close || r.phase === 'closing') { await closeRecord(r); return { state: 'CLOSED' } }
+    if (close || r.phase === 'closing') return closeRecord(r)
     if (r.attempt?.kind === 'identity' || r.attempt?.kind === 'password') {
       r.phase = 'unknown'; save(r); return { state: 'COMPLETION_UNKNOWN' }
     }

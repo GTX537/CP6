@@ -108,6 +108,13 @@ public sealed class SsoConfigurationAdminV1(CP6Context db, AuthenticationPolicyS
             ?? throw new InvalidOperationException("SSO_IDENTITY_POLICY_UNAVAILABLE");
     }
 
+    public Task<SsoMappingStatusV1> ResolveIdentityAsync(string reference, bool close,
+        Func<CancellationToken, Task<Guid>> currentActor, CancellationToken ct)
+    {
+        if (reference is not { Length: 64 } || !reference.All(Uri.IsHexDigit)) throw Error(400, "SSO_MAPPING_REFERENCE_INVALID");
+        return ExecuteAsync(currentActor, "edit", (actor, token) => new SsoMappingRecoveryV1(db).ResolveForTenantAsync(reference, close, actor, token), ct);
+    }
+
     private async Task<T> ExecuteAsync<T>(Func<CancellationToken,Task<Guid>> currentActor, string action,
         Func<Guid,CancellationToken,Task<T>> body, CancellationToken ct)
     {
