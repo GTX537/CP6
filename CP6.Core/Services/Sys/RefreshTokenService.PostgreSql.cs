@@ -16,6 +16,9 @@ public partial class RefreshTokenService
     // locks retain the logout order. No current value is used to repair missing original evidence.
     private async Task<Sys_User> LockActiveUserAsync(Guid userId, Guid tenantId)
     {
+        // Authentication writers now acquire this root before user/tenant rows. Match that
+        // order even before the full policy adapters are enabled for refresh completion.
+        await AuthenticationCompletionGateV1.AcquireAsync(_db);
         var organization = await _db.Sys_Tenants.FromSqlInterpolated($"SELECT * FROM public.\"Sys_Tenants\" WHERE \"Id\"={tenantId} FOR SHARE")
             .IgnoreQueryFilters().AsNoTracking().SingleOrDefaultAsync();
         // Serialize issuance/rotation for this account so a genuine reuse revocation cannot miss

@@ -194,6 +194,9 @@ public sealed partial class AuthenticationStatePostgreSqlTests(TenantManagementP
             user.TwoFactorEnabled = true; user.TwoFactorSecret = "original-active-factor";
             await db.Sys_Users.Where(x => x.Id == user.Id).ExecuteUpdateAsync(s => s
                 .SetProperty(x => x.TwoFactorEnabled, true).SetProperty(x => x.TwoFactorSecret, user.TwoFactorSecret));
+            // The baseline login occurs after this setup, so read the database-owned revision.
+            // Subsequent changes below must still be rejected against this original login proof.
+            user = await db.Sys_Users.AsNoTracking().SingleAsync(x => x.Id == user.Id);
         }
         var service = new RefreshTokenService(db, Options.Create(new SecurityOptions()), tenant);
         var client = new RefreshTokenClientContext(kind, kind == "Web" ? null : "device", "1");

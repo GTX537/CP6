@@ -159097,6 +159097,11 @@
       "date": "2026-10-19",
       "change": "Wave26 single-COORD long goal: versioned authentication policy/proof/PG gate, Web/native completion adapters, refresh/shared device FullAuth continuity, then integrated closeout. Estimated agent actual 5–8h, contingency 10h within24h; no new worktrees/agents/Actions.",
       "evidence": "docs/development/dispatch/20261019-wave26/README.md"
+    },
+    {
+      "date": "2026-10-19",
+      "change": "W26-01 BUG327 policy unavailable fixed; versioned policy/proof/PG root gate and credential revision v3 ready,187 effective related passed99 native. Entry adapters and FullAuth/refresh continuity remain W26-02/03; full task/runtime unchanged.",
+      "evidence": "docs/development/evidence/WP02-03/authentication-policy-gate/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -161674,21 +161679,29 @@
         "branch": "codex/wave26-01-authentication-policy-20261019",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "claimed_at": "2026-10-19T10:58:51.471858+00:00",
-        "baseline_sha": "4682b0d8a82efa6cc7a267fc69068bcb6bc3c839",
+        "baseline_sha": "afc94bf18e447fdc819b88cb4fc048d9d9eb6258",
         "entry_evidence": "docs/development/dispatch/20261019-wave26/README.md",
-        "phase": "REGISTERED_NOT_STARTED",
+        "phase": "READY_TO_MERGE",
         "dispatch_scope": "W26_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
-        "worker_start_received": false,
+        "worker_start_received": true,
         "allowed_write_paths": [
-          "CP6.Core/Services/Sys/",
-          "CP6.Core/EFDbContext/",
-          "CP6.Entity/DomainModels/Sys/",
-          "CP6.Persistence.PostgreSql/Migrations/Core/",
-          "CP6.Tests/Platform/",
-          "CP6.Tests/Sys/",
-          "CP6.Tests/Persistence/",
+          "CP6.Core/EFDbContext/CP6Context.cs",
+          "CP6.Core/Services/Sys/AuthSessionVersion.cs",
+          "CP6.Core/Services/Sys/AuthenticationPolicyV1.cs",
+          "CP6.Core/Services/Sys/AuthenticationCompletionGateV1.cs",
+          "CP6.Core/Services/Sys/RefreshTokenService.PostgreSql.cs",
+          "CP6.Core/Services/Sys/TwoFactorService.cs",
+          "CP6.Entity/DomainModels/Sys/Sys_Tenant.cs",
+          "CP6.Entity/DomainModels/Sys/Sys_User.cs",
+          "CP6.Persistence.PostgreSql/AuthenticationPolicyGuardPostgreSqlV1.cs",
+          "CP6.Persistence.PostgreSql/Migrations/Core/20261019111000_AuthenticationPolicyGateV1.cs",
+          "CP6.Persistence.PostgreSql/Migrations/Core/CP6ContextModelSnapshot.cs",
+          "CP6.Tests/Platform/AuthenticationPolicyPostgreSqlTests.cs",
+          "CP6.Tests/Platform/AuthenticationStatePostgreSqlTests.cs",
+          "CP6.Tests/Platform/AuthenticationCompletionPostgreSqlTests.cs",
+          "CP6.Tests/Platform/PlatformAdminGuardPostgreSqlTests.cs",
           "docs/development/evidence/WP02-03/authentication-policy-gate/DELIVERY.md"
         ],
         "reserved_write_resources": [
@@ -161703,8 +161716,15 @@
         "existing_database_migration_authorized": false,
         "deployment_authorized": false,
         "delivery_report": "docs/development/evidence/WP02-03/authentication-policy-gate/DELIVERY.md",
-        "candidate_review_completed": false,
-        "candidate_integrated": false
+        "candidate_review_completed": true,
+        "candidate_integrated": false,
+        "actual_start_ref": {
+          "commit": "cbc8d34a0dda26cacb46148ee5cc9200272cc2e0",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T110139Z-wave26-01-start/MESSAGE.md",
+          "at": "2026-10-19T11:01:39.947446+00:00"
+        },
+        "worker_delivery_received": true,
+        "candidate_review_verdict": "READY_TO_MERGE"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -180917,7 +180937,7 @@
       "path": "docs/development/dispatch/20261019-wave26/README.md",
       "baseline_sha": "4682b0d8a82efa6cc7a267fc69068bcb6bc3c839",
       "registered_at": "2026-10-19T10:58:51.471858+00:00",
-      "phase": "SINGLE_COORDINATOR_LONG_GOAL_REGISTERED",
+      "phase": "W26_01_READY_TO_MERGE",
       "coordinator_shared_state_only": false,
       "assigned_chats": [
         "COORD"
@@ -180928,8 +180948,10 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [],
-      "workers_started": false,
+      "active_implementation_chats": [
+        "COORD"
+      ],
+      "workers_started": true,
       "workers_delivered": false,
       "windows_closed": false,
       "product_integrated": false,
@@ -180941,17 +180963,25 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "REGISTERED_NOT_STARTED",
-          "worker_start_received": false,
-          "worker_delivery_received": false,
+          "phase": "READY_TO_MERGE",
+          "worker_start_received": true,
+          "worker_delivery_received": true,
           "write_paths": [
-            "CP6.Core/Services/Sys/",
-            "CP6.Core/EFDbContext/",
-            "CP6.Entity/DomainModels/Sys/",
-            "CP6.Persistence.PostgreSql/Migrations/Core/",
-            "CP6.Tests/Platform/",
-            "CP6.Tests/Sys/",
-            "CP6.Tests/Persistence/",
+            "CP6.Core/EFDbContext/CP6Context.cs",
+            "CP6.Core/Services/Sys/AuthSessionVersion.cs",
+            "CP6.Core/Services/Sys/AuthenticationPolicyV1.cs",
+            "CP6.Core/Services/Sys/AuthenticationCompletionGateV1.cs",
+            "CP6.Core/Services/Sys/RefreshTokenService.PostgreSql.cs",
+            "CP6.Core/Services/Sys/TwoFactorService.cs",
+            "CP6.Entity/DomainModels/Sys/Sys_Tenant.cs",
+            "CP6.Entity/DomainModels/Sys/Sys_User.cs",
+            "CP6.Persistence.PostgreSql/AuthenticationPolicyGuardPostgreSqlV1.cs",
+            "CP6.Persistence.PostgreSql/Migrations/Core/20261019111000_AuthenticationPolicyGateV1.cs",
+            "CP6.Persistence.PostgreSql/Migrations/Core/CP6ContextModelSnapshot.cs",
+            "CP6.Tests/Platform/AuthenticationPolicyPostgreSqlTests.cs",
+            "CP6.Tests/Platform/AuthenticationStatePostgreSqlTests.cs",
+            "CP6.Tests/Platform/AuthenticationCompletionPostgreSqlTests.cs",
+            "CP6.Tests/Platform/PlatformAdminGuardPostgreSqlTests.cs",
             "docs/development/evidence/WP02-03/authentication-policy-gate/DELIVERY.md"
           ],
           "planned_scope_ref": "docs/development/dispatch/20261019-wave26/README.md",
@@ -180967,7 +180997,24 @@
           "existing_database_operations_authorized": false,
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
-          "predecessor": null
+          "predecessor": null,
+          "actual_start_ref": {
+            "commit": "cbc8d34a0dda26cacb46148ee5cc9200272cc2e0",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T110139Z-wave26-01-start/MESSAGE.md",
+            "at": "2026-10-19T11:01:39.947446+00:00"
+          },
+          "actual_start_baseline_sha": "afc94bf18e447fdc819b88cb4fc048d9d9eb6258",
+          "branch": "codex/wave26-01-authentication-policy-20261019",
+          "delivery_report": "docs/development/evidence/WP02-03/authentication-policy-gate/DELIVERY.md",
+          "review": "AUTHOR_SPEC_QUALITY_PASS",
+          "validation": {
+            "effective_passed": 187,
+            "native_postgresql_passed": 99,
+            "other_related_passed": 88,
+            "failed_remaining": 0,
+            "skipped_as_pass": 0,
+            "evidence_root": "D:\\CP6-local-test\\wave26\\foundation"
+          }
         },
         {
           "id": "W26-02",
@@ -181059,7 +181106,7 @@
         "raw_evidence_preserved": true
       },
       "review_mode": "One author SPEC/QUALITY per coherent task; no agents.",
-      "next_action": "Merge plan then START W26-01; all three windows plus closeout required before goal completion."
+      "next_action": "Normal merge/remote verify and close327, immediately START W26-02 then W26-03 and final closeout; goal remains active."
     },
     "wave_history": [
       {

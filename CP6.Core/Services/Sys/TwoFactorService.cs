@@ -39,10 +39,13 @@ public class TwoFactorService : ITwoFactorService
     }
 
     public int ResolveTenantMode(Guid tenantId)
-        => _db.Sys_Tenants.IgnoreQueryFilters()
+    {
+        var mode = _db.Sys_Tenants.IgnoreQueryFilters()
             .Where(t => t.Id == tenantId)
-            .Select(t => t.TwoFactorMode)
+            .Select(t => (int?)t.TwoFactorMode)
             .FirstOrDefault();
+        return mode is >= 0 and <= 2 ? mode.Value : throw new InvalidOperationException("AUTH_POLICY_UNAVAILABLE");
+    }
 
     public bool IsChallengeRequired(Sys_User user, int tenantMode)
         => user.TwoFactorEnabled || tenantMode == 2;

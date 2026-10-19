@@ -82,6 +82,10 @@ public class Sys_User : BaseTenantEntity, IAuditable
     [System.Text.Json.Serialization.JsonIgnore]
     public Guid AuthenticationEpoch { get; set; }
 
+    /// <summary>PostgreSQL-owned revision of credentials/admission fields, including native DML and ABA changes.</summary>
+    [System.Text.Json.Serialization.JsonIgnore, AuditIgnore]
+    public Guid CredentialRevision { get; set; }
+
     // ───── S 类 #3 SSO：联邦身份链 + break-glass ─────
     /// <summary>联邦身份 subject（IdP 的 sub）；与 ExternalProvider 共同唯一定位。null=本地账号。</summary>
     [MaxLength(200)] public string? ExternalSubject { get; set; }
