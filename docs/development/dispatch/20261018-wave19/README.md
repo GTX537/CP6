@@ -1,5 +1,9 @@
 # 第十九轮：身份目录公共基础单对话持续计划
 
+> W19-03候选31项去重通过（14原生PG+17配置），集中作者审查无阻断，四个自有PG停止；[单份DELIVERY](../../evidence/WP02-05/trusted-directory-reader/DELIVERY.md)。正常集成后继续W19-04 HTTP串联。
+
+> W19-02经PR286合入 `c2b808a1e081b20d537a665cef387b90c6b4e164`；Handoff `f201d63ac3f4423c91be83a9b702a255ce9503fa` 回读。W19-03可信连接reader现在START，验证NOT_RUN；下方记录保留历史时点。
+
 > W19-02普通账号三表只读隔离候选已验证，5项原生PG去重通过，包含有效ACL/越权拒绝及普通control下FORCE RLS写入。[单份DELIVERY](../../evidence/WP02-02/identity-directory-isolation/DELIVERY.md)。六个自有PG停止，当前待正常集成；下一窗口为W19-03可信连接目录适配。
 
 > W19-01已通过PR285合入main `85f4776e36f19db16f5c0077f72906d8d3d31441`，#284关闭；Handoff `a2a66b333bf48a9b519bad03461a9a9fd6cc0036` 已回读。W19-02三表普通角色只读隔离真实START，验证尚NOT_RUN；下方待集成状态保留历史时点。

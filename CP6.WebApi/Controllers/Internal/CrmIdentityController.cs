@@ -16,7 +16,7 @@ namespace CP6.WebApi.Controllers.Internal;
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 [Route("/internal/crm/identity")]
 public sealed class CrmIdentityController(CP6Context db, CrmOidcOptions oidc,
-    ICrmOidcServiceDirectory directory, CrmIdentityRuntime? runtime = null, IdentitySnapshotReader? reader = null) : ControllerBase
+    ICrmOidcServiceDirectory directory, CrmIdentityRuntime? runtime = null, IIdentitySnapshotReader? reader = null) : ControllerBase
 {
     public const string Scheme = "C02.Services";
 
@@ -70,7 +70,7 @@ public sealed class CrmIdentityController(CP6Context db, CrmOidcOptions oidc,
         {
             return StatusCode(ex.Message switch
             {
-                "C02_BOOTSTRAP_NOT_READY" => 503,
+                "C02_BOOTSTRAP_NOT_READY" or "C02_IDENTITY_STORE_UNAVAILABLE" => 503,
                 "C02_SNAPSHOT_BOUNDARY_CHANGED" => 409,
                 _ => 400
             }, new { code = ex.Message });
