@@ -159062,6 +159062,11 @@
       "date": "2026-10-19",
       "change": "W24-01 BUG315 current platform actor final authority gate and binding ready; 66 effective tests/38 native, author SPEC/QUALITY pass; full authentication/CRM/Owner/business unchanged.",
       "evidence": "docs/development/evidence/WP02-03/platform-admin-current-actor/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-19",
+      "change": "W24 limited platform actor final authority gate integrated and BUG315Closed. 66 effective validations/38 native, four PG stopped, single author review; complete IAM/CRM/business states unchanged.",
+      "evidence": "docs/development/dispatch/20261019-wave24/README.md"
     }
   ],
   "implementation_assessment": {
@@ -161641,7 +161646,7 @@
         "claimed_at": "2026-10-19T08:18:40.299263+00:00",
         "baseline_sha": "d9abec3d8e3797f3ffeb9c42adb29af947c4591e",
         "entry_evidence": "docs/development/dispatch/20261019-wave24/README.md",
-        "phase": "READY_TO_MERGE",
+        "phase": "CLOSED",
         "dispatch_scope": "PLATFORM_ADMIN_CURRENT_ACTOR",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -161657,12 +161662,8 @@
           "CP6.Tests/Platform/TenantManagementPostgresFixture.cs",
           "docs/development/evidence/WP02-03/platform-admin-current-actor/DELIVERY.md"
         ],
-        "reserved_write_resources": [
-          "Main:identity-authority"
-        ],
-        "reserved_postgresql_ports": [
-          55435
-        ],
+        "reserved_write_resources": [],
+        "reserved_postgresql_ports": [],
         "handoff_branch": "codex/dev-coordination-20261012",
         "actions_authorized": false,
         "formal_publication_authorized": false,
@@ -161670,20 +161671,31 @@
         "deployment_authorized": false,
         "delivery_report": "docs/development/evidence/WP02-03/platform-admin-current-actor/DELIVERY.md",
         "candidate_review_completed": true,
-        "candidate_integrated": false,
+        "candidate_integrated": true,
         "actual_start_ref": {
           "commit": "a9f1ed66adadafea999723693059e907cf09bf9b",
           "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T082108Z-wave24-start/MESSAGE.md",
           "at": "2026-10-19T08:21:08.272462+00:00"
         },
-        "active_issue": {
-          "number": 315,
-          "url": "https://github.com/GTX537/CP6/issues/315",
-          "priority": "P0",
-          "state": "Open"
-        },
+        "active_issue": null,
         "worker_delivery_received": true,
-        "candidate_review_verdict": "READY_TO_MERGE"
+        "candidate_review_verdict": "READY_TO_MERGE",
+        "candidate_sha": "0c4c6ecc5990a27a47db7ae5cfc3bdd431084743",
+        "integration_main_sha": "5a44d92eeffad18ee209a8c6a28c5707295ce6ac",
+        "integration_pr": "https://github.com/GTX537/CP6/pull/316",
+        "delivery_ref": {
+          "commit": "50e20a5ddf07f43b630090a3d5a4d3b8071133da",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T083731Z-wave24-delivery/MESSAGE.md",
+          "at": "2026-10-19T08:37:31.745402+00:00"
+        },
+        "issue_state": "CLOSED",
+        "resolved_issue": {
+          "number": 315,
+          "state": "CLOSED",
+          "url": "https://github.com/GTX537/CP6/issues/315"
+        },
+        "closed_at": "2026-10-19T08:37:44.334082+00:00",
+        "full_task_completed": false
       },
       "blockers": [],
       "validation_evidence": [],
@@ -180575,24 +180587,16 @@
       "path": "docs/development/dispatch/20261019-wave24/README.md",
       "baseline_sha": "6c5df760e0d56d3cfb75fd4e919267e5931c8401",
       "registered_at": "2026-10-19T08:18:40.299263+00:00",
-      "phase": "W24_01_READY_TO_MERGE",
+      "phase": "CLOSED",
       "coordinator_shared_state_only": false,
-      "assigned_chats": [
-        "COORD"
-      ],
-      "authorized_implementation_chats": [
-        "COORD"
-      ],
-      "authorized_review_chats": [
-        "COORD"
-      ],
-      "active_implementation_chats": [
-        "COORD"
-      ],
+      "assigned_chats": [],
+      "authorized_implementation_chats": [],
+      "authorized_review_chats": [],
+      "active_implementation_chats": [],
       "workers_started": true,
       "workers_delivered": true,
-      "windows_closed": false,
-      "product_integrated": false,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W24-01",
@@ -180601,7 +180605,7 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "READY_TO_MERGE",
+          "phase": "CLOSED",
           "worker_start_received": true,
           "worker_delivery_received": true,
           "write_paths": [
@@ -180617,12 +180621,8 @@
           ],
           "planned_scope_ref": "docs/development/dispatch/20261019-wave24/README.md",
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "reserved_write_resources": [
-            "Main:identity-authority"
-          ],
-          "ports": {
-            "postgresql": 55435
-          },
+          "reserved_write_resources": [],
+          "ports": {},
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
@@ -180635,12 +180635,7 @@
           },
           "actual_start_baseline_sha": "d9abec3d8e3797f3ffeb9c42adb29af947c4591e",
           "branch": "codex/bug-315-platform-current-actor-20261019",
-          "active_issue": {
-            "number": 315,
-            "url": "https://github.com/GTX537/CP6/issues/315",
-            "priority": "P0",
-            "state": "Open"
-          },
+          "active_issue": null,
           "delivery_report": "docs/development/evidence/WP02-03/platform-admin-current-actor/DELIVERY.md",
           "review": "AUTHOR_SPEC_QUALITY_PASS",
           "validation": {
@@ -180650,7 +180645,25 @@
             "failed_remaining": 0,
             "skipped_as_pass": 0,
             "evidence_root": "D:\\CP6-local-test\\wave24\\platform-current-actor"
-          }
+          },
+          "candidate_integrated": true,
+          "candidate_sha": "0c4c6ecc5990a27a47db7ae5cfc3bdd431084743",
+          "integration_main_sha": "5a44d92eeffad18ee209a8c6a28c5707295ce6ac",
+          "integration_pr": "https://github.com/GTX537/CP6/pull/316",
+          "delivery_ref": {
+            "commit": "50e20a5ddf07f43b630090a3d5a4d3b8071133da",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T083731Z-wave24-delivery/MESSAGE.md",
+            "at": "2026-10-19T08:37:31.745402+00:00"
+          },
+          "issue_state": "CLOSED",
+          "resolved_issue": {
+            "number": 315,
+            "state": "CLOSED",
+            "url": "https://github.com/GTX537/CP6/issues/315"
+          },
+          "reserved_postgresql_ports": [],
+          "closed_at": "2026-10-19T08:37:44.334082+00:00",
+          "resources_released": true
         }
       ],
       "execution_owner": {
@@ -180676,13 +180689,19 @@
         "raw_evidence_preserved": true
       },
       "review_mode": "One combined author SPEC/QUALITY, not independent.",
-      "next_action": "Normal PR merge, remote verification, close315 and coordinator closeout; goal active.",
-      "active_issue": {
-        "number": 315,
-        "url": "https://github.com/GTX537/CP6/issues/315",
-        "priority": "P0",
-        "state": "Open"
-      }
+      "next_action": "Remaining: full current authentication/session/credential/policy revocation; other platform writer final gates; all IAM authority writers/reference CAS; CRM projection/publication and real Owner adoption; ordinary write role rollout and real business. No new window opened.",
+      "active_issue": null,
+      "closed_at": "2026-10-19T08:37:44.334082+00:00",
+      "resources_released": true,
+      "validation": {
+        "effective_distinct_passed": 66,
+        "native_postgresql_http_passed": 38,
+        "unit_passed": 28,
+        "remaining_failures": 0,
+        "skipped_as_pass": 0,
+        "historical_failures_preserved": true
+      },
+      "goal_closeout": "Implementation integrated; external goal completes after final docs/remote/Handoff/checkpoint."
     },
     "wave_history": [
       {

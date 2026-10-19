@@ -1,5 +1,7 @@
 # W24-01 / BUG315 当前平台调用人最终权限门
 
+> 已集成：[PR316](https://github.com/GTX537/CP6/pull/316)合入远端main `5a44d92eeffad18ee209a8c6a28c5707295ce6ac`，源 `0c4c6ecc5990a27a47db7ae5cfc3bdd431084743`按范围核对一致；#315Closed，Handoff `50e20a5ddf07f43b630090a3d5a4d3b8071133da`已回读。下文候选措辞为原时点记录。
+
 ## 结论
 
 基线 `d9abec3d8e3797f3ffeb9c42adb29af947c4591e`，分支 `codex/bug-315-platform-current-actor-20261019`。[P0 #315](https://github.com/GTX537/CP6/issues/315)已完成本地修正；**Ready to merge: Yes**，一次作者集中SPEC/QUALITY无阻断，非独立审查。66项有效相关验证通过（38原生PG/HTTP、28单测），0失败/跳过。待正常PR合并及远端核对后关闭Issue。
