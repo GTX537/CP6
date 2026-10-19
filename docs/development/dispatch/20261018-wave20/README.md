@@ -1,5 +1,7 @@
 # 第二十轮：目录实际宿主与安装公共基础
 
+> W20-01候选已完成：普通PostgreSQL身份当前授权与v2只读profile，7项原生PG去重通过，集中作者审查无剩余阻断。[单份DELIVERY](../../evidence/WP02-02/directory-authorization/DELIVERY.md)。四个自有PG停止，待正常集成后继续W20-02。
+
 当前总控单对话串行实施；持续目标已于2026-10-19 02:30:42 UTC建立，检查点为America/New_York 2026-10-19 22:30:42（UTC 2026-10-20 02:30:42）。预计16～23小时并留机动；完成就交付，时间到不等于完成。使用brainstorming / writing-plans / executing-plans，用户已授权总控自行决定歧义并连续执行；不另建对话、代理或工作树。
 
 ## 已确认基线与范围

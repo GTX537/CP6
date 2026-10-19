@@ -14,8 +14,12 @@ namespace CP6.Tests.Persistence.Tenancy;
 [CollectionDefinition("IdentityDirectoryPostgres", DisableParallelization = true)]
 public sealed class IdentityDirectoryPostgresCollection : ICollectionFixture<IdentityDirectoryPostgresFixture>;
 
-public sealed class IdentityDirectoryPostgresFixture : IAsyncLifetime
+public class IdentityDirectoryPostgresFixture : IAsyncLifetime
 {
+    protected virtual bool CheckV1Preconditions => true;
+    protected virtual Task Install(NpgsqlConnection connection, NpgsqlTransaction transaction)
+        => IdentityDirectoryRowSecurityV1.InstallAsync(connection, transaction, Logins);
+    protected virtual Task CheckProfilePreconditions(NpgsqlConnection connection) => Task.CompletedTask;
     internal TenantManagementPostgresFixture Server { get; } = new();
     internal readonly string PasswordA = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
     internal readonly string PasswordB = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
@@ -66,9 +70,10 @@ public sealed class IdentityDirectoryPostgresFixture : IAsyncLifetime
                 await db.SaveChangesAsync();
                 await new IdentityBootstrapService(db, runtime).InitializeAsync(id);
             }
+            await CheckProfilePreconditions(owner);
             // Each anomaly is rolled back before the next attempt, so rejection cannot be
             // accidentally satisfied by an already installed directory from an earlier case.
-            foreach (var anomaly in new[]
+            foreach (var anomaly in CheckV1Preconditions ? new[]
             {
                 "GRANT SELECT ON public.\"Sys_Users\" TO directory_a",
                 "GRANT SELECT (\"PayloadJson\") ON crm_identity.\"Snapshot\" TO PUBLIC",
@@ -82,7 +87,7 @@ public sealed class IdentityDirectoryPostgresFixture : IAsyncLifetime
                 "ALTER FUNCTION public.cp6_mes_process_progress_v1() SECURITY DEFINER",
                 "CREATE FUNCTION public.unexpected() RETURNS integer LANGUAGE sql AS 'SELECT 1'",
                 "CREATE SCHEMA cp6_tenancy_v1"
-            })
+            } : [])
             {
                 await using var rejected = await owner.BeginTransactionAsync();
                 await Sql(owner, anomaly);
@@ -93,14 +98,14 @@ public sealed class IdentityDirectoryPostgresFixture : IAsyncLifetime
             }
             await using (var rolledBack = await owner.BeginTransactionAsync())
             {
-                await IdentityDirectoryRowSecurityV1.InstallAsync(owner, rolledBack, Logins);
+                await Install(owner, rolledBack);
                 await rolledBack.RollbackAsync();
             }
             Assert.False(await Scalar<bool>(owner, "SELECT EXISTS(SELECT FROM pg_namespace WHERE nspname='cp6_tenancy_v1')"));
             Assert.False(await Scalar<bool>(owner, "SELECT EXISTS(SELECT FROM pg_roles WHERE rolname='cp6_tenant_lookup_v1')"));
             Assert.False(await Scalar<bool>(owner, "SELECT relrowsecurity FROM pg_class WHERE oid='crm_identity.\"Snapshot\"'::regclass"));
             await using var install = await owner.BeginTransactionAsync();
-            await IdentityDirectoryRowSecurityV1.InstallAsync(owner, install, Logins);
+            await Install(owner, install);
             await install.CommitAsync();
         }
         catch { await Server.DisposeAsync(); throw; }
