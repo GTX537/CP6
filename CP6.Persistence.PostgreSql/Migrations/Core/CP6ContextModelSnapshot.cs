@@ -21483,6 +21483,9 @@ namespace CP6.Persistence.PostgreSql.Migrations.Core
                         .HasColumnType("bpchar")
                         .UseCollation("cp6_ci_as_provider_v1");
 
+                    b.Property<string>("ContextJson")
+                        .HasColumnType("jsonb");
+
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("timestamp without time zone")
                         .HasAnnotation("CP6:TimeContract", "PreservedWallClock");

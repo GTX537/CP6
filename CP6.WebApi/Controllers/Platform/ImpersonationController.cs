@@ -31,6 +31,8 @@ public class ImpersonationController : ControllerBase
             var r = await _svc.StartAsync(req.TenantId, req.UserId, req.Reason, User, Response);
             return Ok(r);
         }
+        catch (PlatformAdminAuthorizationException ex) { throw new BizException(ex.Message, 403); }
+        catch (ImpersonationSwitchUnavailableException ex) { throw new BizException(ex.Message, 503); }
         catch (InvalidOperationException ex)
         {
             throw new BizException(ex.Message);   // E-SEC-032 / E-SEC-035
@@ -47,6 +49,8 @@ public class ImpersonationController : ControllerBase
             var r = await _svc.EndAsync(User, Response);
             return Ok(r);
         }
+        catch (PlatformAdminAuthorizationException ex) { throw new BizException(ex.Message, 403); }
+        catch (ImpersonationSwitchUnavailableException ex) { throw new BizException(ex.Message, 503); }
         catch (InvalidOperationException ex)
         {
             throw new BizException(ex.Message);   // E-SEC-031

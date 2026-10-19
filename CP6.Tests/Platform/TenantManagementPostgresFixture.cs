@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -92,16 +93,20 @@ internal sealed class TenantManagementHttpHost(WebApplication app, HttpClient cl
 {
     internal HttpClient Client => client;
     internal IServiceProvider Services => app.Services;
-    internal string Token(Guid actor, Guid tenant, bool platform = true, bool impersonation = false)
+    internal string Token(Guid actor, Guid tenant, bool platform = true, bool impersonation = false, string? authenticationVersion = null)
         => JwtHelper.GenerateToken(actor.ToString(), "operator", secret, "tenant-component", "tenant-component", 5,
-            tenant, isPlatformAdmin: platform, impersonatorId: impersonation ? Guid.NewGuid() : null);
+            tenant, isPlatformAdmin: platform, impersonatorId: impersonation ? Guid.NewGuid() : null, authenticationVersion: authenticationVersion);
 
     internal static async Task<TenantManagementHttpHost> Start(TenantManagementPostgresFixture fixture,
         CrmIdentityRuntime? identity = null, bool includeRoles = false, bool includePlatformAdmins = false,
-        IInterceptor? interceptor = null)
+        IInterceptor? interceptor = null, bool includeImpersonation = false)
     {
         var secret = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = "TenantManagementComponent", Args = [] });
+        builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
+        {
+            ["JWT:Secret"] = secret, ["JWT:Issuer"] = "tenant-component", ["JWT:Audience"] = "tenant-component"
+        });
         builder.Logging.ClearProviders();
         builder.WebHost.ConfigureKestrel(options => options.Listen(IPAddress.Loopback, 0));
         var services = builder.Services;
@@ -112,7 +117,7 @@ internal sealed class TenantManagementHttpHost(WebApplication app, HttpClient cl
         services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
         services.AddScoped<IPasswordHasher>(_ => new BCryptPasswordHasher(4));
         services.AddScoped<ITenantAdminService, TenantAdminService>();
-        if (includeRoles || includePlatformAdmins)
+        if (includeRoles || includePlatformAdmins || includeImpersonation)
         {
             services.AddDistributedMemoryCache();
             services.AddScoped<IPermissionAggregator, PermissionAggregator>();
@@ -127,6 +132,13 @@ internal sealed class TenantManagementHttpHost(WebApplication app, HttpClient cl
             services.AddSingleton(Moq.Mock.Of<IRefreshTokenService>(Moq.MockBehavior.Strict));
             services.AddSingleton(Moq.Mock.Of<ITwoFactorService>(Moq.MockBehavior.Strict));
         }
+        if (includeImpersonation)
+        {
+            services.AddScoped<ITokenBlacklistService, CacheTokenBlacklistService>();
+            services.AddScoped<ISecurityAuditService, SecurityAuditService>();
+            services.AddScoped<IAuthCookieWriter, AuthCookieWriter>();
+            services.AddScoped<IImpersonationService, ImpersonationService>();
+        }
         services.AddSingleton<IStringLocalizer>(EchoStringLocalizer.Instance);
         services.Configure<SecurityOptions>(options => options.Csrf.Enabled = true);
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -137,10 +149,19 @@ internal sealed class TenantManagementHttpHost(WebApplication app, HttpClient cl
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
                 ValidIssuer = "tenant-component", ValidAudience = "tenant-component"
             };
+            if (includeImpersonation) options.Events = new JwtBearerEvents
+            {
+                OnTokenValidated = async context =>
+                {
+                    var jti = context.Principal?.FindFirst("jti")?.Value;
+                    if (jti is not null && await context.HttpContext.RequestServices.GetRequiredService<ITokenBlacklistService>().IsBlacklistedAsync(jti))
+                        context.Fail("revoked");
+                }
+            };
         });
         services.AddAuthorization();
         services.AddControllers().AddApplicationPart(typeof(TenantController).Assembly)
-            .ConfigureApplicationPartManager(manager => manager.FeatureProviders.Add(new OnlySelectedControllers(includeRoles, includePlatformAdmins)));
+            .ConfigureApplicationPartManager(manager => manager.FeatureProviders.Add(new OnlySelectedControllers(includeRoles, includePlatformAdmins, includeImpersonation)));
         var app = builder.Build();
         app.UseRouting(); app.UseAuthentication(); app.UseMiddleware<TenantMiddleware>();
         app.UseMiddleware<BizExceptionMiddleware>(); app.UseMiddleware<CsrfMiddleware>();
@@ -156,12 +177,13 @@ internal sealed class TenantManagementHttpHost(WebApplication app, HttpClient cl
 
     public async ValueTask DisposeAsync() { client.Dispose(); await app.StopAsync(); await app.DisposeAsync(); }
 
-    private sealed class OnlySelectedControllers(bool includeRoles, bool includePlatformAdmins) : IApplicationFeatureProvider<ControllerFeature>
+    private sealed class OnlySelectedControllers(bool includeRoles, bool includePlatformAdmins, bool includeImpersonation) : IApplicationFeatureProvider<ControllerFeature>
     {
         public void PopulateFeature(IEnumerable<ApplicationPart> parts, ControllerFeature feature)
         {
             foreach (var controller in feature.Controllers.Where(x => x.AsType() != typeof(TenantController)
                 && (!includeRoles || x.AsType() != typeof(RoleController))
+                && (!includeImpersonation || x.AsType() != typeof(ImpersonationController))
                 && (!includePlatformAdmins || (x.AsType() != typeof(PlatformAdminController) && x.AsType() != typeof(UserController)))).ToArray())
                 feature.Controllers.Remove(controller);
         }

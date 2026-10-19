@@ -750,6 +750,7 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         {
             e.HasIndex(x => new { x.EventType, x.CreatedAt });
             e.HasIndex(x => x.UserName);
+            if (!Database.IsNpgsql()) e.Ignore(x => x.ContextJson);
         });
 
         // S 类认证加固 T4：刷新令牌。TokenHash 单列全局唯一（refresh 无租户上下文，
@@ -2634,7 +2635,12 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             e.HasKey(x => x.TenantId);
             e.Property(x => x.TenantId).ValueGeneratedNever();
         });
-        if (Database.IsNpgsql()) CorePostgreSqlModelConfiguration.Apply(modelBuilder);
+        if (Database.IsNpgsql())
+        {
+            CorePostgreSqlModelConfiguration.Apply(modelBuilder);
+            // New native JSON context has no legacy text padding/collation contract.
+            modelBuilder.Entity<Sys_SecurityLog>().Property(x => x.ContextJson).HasColumnType("jsonb").UseCollation(null);
+        }
     }
 
     // ═══════════════════════════════════════════════════════════════════════
