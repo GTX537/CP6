@@ -158987,6 +158987,11 @@
       "date": "2026-10-19",
       "change": "W21-04 actual collector matrix found BUG-300 independent synchronous COUNT; correlated server count fixes cancellation and single-statement observation. 9 native cases pass (4 rechecked/5 reused), original failure runs retained; integration and Issue closure pending.",
       "evidence": "docs/development/evidence/WP02-05/baseline-integration/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-19",
+      "change": "Wave21 four bounded windows CLOSED after PR297/298/299/301 remote inclusion and final product/test blob checks. BUG300 closed after fixed native regression and remote verification. 8 owned PG stopped; full tasks/business gates unchanged. Documentation-only closeout.",
+      "evidence": "docs/development/dispatch/20261019-wave21/README.md"
     }
   ],
   "implementation_assessment": {
@@ -162022,7 +162027,7 @@
         "claimed_at": "2026-10-19T04:59:56.377244+00:00",
         "baseline_sha": "406b9cfbf16dcc82252d5d3505e7a18a47900769",
         "entry_evidence": "docs/development/dispatch/20261019-wave21/README.md",
-        "phase": "VALIDATED_READY_TO_INTEGRATE",
+        "phase": "CLOSED",
         "dispatch_scope": "IDENTITY_BASELINE_INTEGRATION",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -162040,13 +162045,8 @@
           "CP6.Core/Services/CrmIdentity/Baselines/IdentityRawSnapshotReader.cs",
           "docs/development/evidence/WP02-05/baseline-raw-http/DELIVERY.md"
         ],
-        "reserved_write_resources": [
-          "Main:identity-baseline-integration",
-          "Main:identity-directory-reader"
-        ],
-        "reserved_postgresql_ports": [
-          55435
-        ],
+        "reserved_write_resources": [],
+        "reserved_postgresql_ports": [],
         "handoff_branch": "codex/dev-coordination-20261012",
         "actions_authorized": false,
         "formal_publication_authorized": false,
@@ -162054,14 +162054,27 @@
         "deployment_authorized": false,
         "delivery_report": "docs/development/evidence/WP02-05/baseline-integration/DELIVERY.md",
         "candidate_review_completed": true,
-        "candidate_integrated": false,
+        "candidate_integrated": true,
         "related_issue": "https://github.com/GTX537/CP6/issues/300",
         "scope_amendment": {
           "commit": "c4e15606f15df80d9ff71283e7fbff0a9397101b",
           "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T051648Z-wave21-bug300-scope/MESSAGE.md",
           "reason": "Actual cancellation trace exposed independent synchronous COUNT; fix within affected integration window."
         },
-        "review_mode": "Single combined SPEC/QUALITY author self-review; not independent"
+        "review_mode": "Single combined SPEC/QUALITY author self-review; not independent",
+        "ports": {},
+        "integration": {
+          "source": "14a71b641d5be2b3b13481522447788b8be8d48d",
+          "main": "51d6d771b753787daf74b243cc53c183987c90a4",
+          "pr": "https://github.com/GTX537/CP6/pull/301"
+        },
+        "delivery_ref": {
+          "commit": "3b4e57223fe8809ed8efcffb48c05c222883b2de",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T052424Z-wave21-matrix-delivery/MESSAGE.md",
+          "kind": "DELIVERY",
+          "at": "2026-10-19T05:24:24.891571+00:00"
+        },
+        "related_issue_closed": true
       },
       "blockers": [],
       "validation_evidence": [],
@@ -162695,12 +162708,22 @@
         }
       },
       "wave21_baseline_integration_delivery": {
-        "status": "VALIDATED_NOT_INTEGRATED",
+        "status": "INTEGRATED",
         "report": "docs/development/evidence/WP02-05/baseline-integration/DELIVERY.md",
         "issue": 300,
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
-        "validation": "9 unique native cases pass: 4 affected rechecked + 5 unaffected reused; three failure runs retained"
+        "validation": "9 unique native cases pass: 4 affected rechecked + 5 unaffected reused; three failure runs retained",
+        "source": "14a71b641d5be2b3b13481522447788b8be8d48d",
+        "main": "51d6d771b753787daf74b243cc53c183987c90a4",
+        "pr": "https://github.com/GTX537/CP6/pull/301",
+        "handoff": {
+          "commit": "3b4e57223fe8809ed8efcffb48c05c222883b2de",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T052424Z-wave21-matrix-delivery/MESSAGE.md",
+          "kind": "DELIVERY",
+          "at": "2026-10-19T05:24:24.891571+00:00"
+        },
+        "issue_closed": true
       }
     },
     {
@@ -180248,7 +180271,7 @@
       "path": "docs/development/dispatch/20261019-wave21/README.md",
       "baseline_sha": "f552995d36c37ad736d84058df2d2a3ba7085568",
       "registered_at": "2026-10-19T04:18:22.998889+00:00",
-      "phase": "W21_04_VALIDATED_READY_TO_INTEGRATE",
+      "phase": "CLOSED",
       "coordinator_shared_state_only": false,
       "assigned_chats": [
         "COORD"
@@ -180259,12 +180282,10 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [
-        "COORD"
-      ],
+      "active_implementation_chats": [],
       "workers_started": true,
       "workers_delivered": false,
-      "windows_closed": false,
+      "windows_closed": true,
       "product_integrated": false,
       "windows": [
         {
@@ -180468,7 +180489,7 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "VALIDATED_READY_TO_INTEGRATE",
+          "phase": "CLOSED",
           "estimated_hours": [
             3,
             4
@@ -180484,13 +180505,8 @@
           ],
           "planned_scope_ref": "docs/development/dispatch/20261019-wave21/README.md",
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "reserved_write_resources": [
-            "Main:identity-baseline-integration",
-            "Main:identity-directory-reader"
-          ],
-          "ports": {
-            "postgresql": 55435
-          },
+          "reserved_write_resources": [],
+          "ports": {},
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
@@ -180511,7 +180527,7 @@
             "reason": "Actual cancellation trace exposed independent synchronous COUNT; fix within affected integration window."
           },
           "candidate_review_completed": true,
-          "candidate_integrated": false,
+          "candidate_integrated": true,
           "delivery_report": "docs/development/evidence/WP02-05/baseline-integration/DELIVERY.md",
           "review_mode": "Single combined SPEC/QUALITY author self-review; not independent",
           "validation": {
@@ -180524,7 +180540,20 @@
             "owned_clusters": 4,
             "owned_postgresql_stopped": true,
             "scope": "Actual collector/JWT/ordinary PG matrix and BUG-300; no real DEV"
-          }
+          },
+          "reserved_postgresql_ports": [],
+          "integration": {
+            "source": "14a71b641d5be2b3b13481522447788b8be8d48d",
+            "main": "51d6d771b753787daf74b243cc53c183987c90a4",
+            "pr": "https://github.com/GTX537/CP6/pull/301"
+          },
+          "delivery_ref": {
+            "commit": "3b4e57223fe8809ed8efcffb48c05c222883b2de",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T052424Z-wave21-matrix-delivery/MESSAGE.md",
+            "kind": "DELIVERY",
+            "at": "2026-10-19T05:24:24.891571+00:00"
+          },
+          "related_issue_closed": true
         }
       ],
       "integration_order": "W21-01 -> W21-02 -> W21-03 -> W21-04; normal merge and remote verification before each next branch.",
@@ -180552,7 +180581,31 @@
       },
       "user_authority": "User explicitly requested next24h list and persistent goal, current chat only, same PostgreSQL/lean verification/directory reuse rules. Goal active 2026-10-19T04:15:29Z.",
       "review_mode": "One combined task-level author SPEC/QUALITY self-review, not independent.",
-      "next_action": "Normally merge BUG-300 and W21-04 affected matrix, verify remote main, close Issue300, then documentation/Handoff/resource closeout."
+      "next_action": "Remaining foundations: all IAM writer coverage; CRM baseline/incremental consumption and publication; Owner final authorization/revocation fence for real writes; existing-environment upgrade/recovery and full ordinary-login adoption; real DEV/business acceptance. No next implementation window opened.",
+      "closed_at": "2026-10-19T05:24:24.891571+00:00",
+      "bounded_windows_completed": 4,
+      "full_foundation_complete": false,
+      "business_acceptance": "NOT_RUN",
+      "goal_scope": "Four Wave21 bounded windows integrated; external goal completes after this documentation closeout is remotely verified.",
+      "closeout": {
+        "handoff": {
+          "commit": "3b4e57223fe8809ed8efcffb48c05c222883b2de",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T052424Z-wave21-matrix-delivery/MESSAGE.md",
+          "kind": "DELIVERY",
+          "at": "2026-10-19T05:24:24.891571+00:00"
+        },
+        "implementation_main": "51d6d771b753787daf74b243cc53c183987c90a4",
+        "owned_postgresql_stopped": 8,
+        "http_hosts_stopped": true,
+        "new_worktrees": 0,
+        "new_agents": 0,
+        "actions_runs": 0,
+        "open_issues_observed": 0,
+        "bug300_closed": true,
+        "observed_at": "2026-10-19T05:24:24.891571+00:00",
+        "root_user_untracked_preserved": 7,
+        "free_disk_gib_observed": 46.4
+      }
     },
     "wave_history": [
       {

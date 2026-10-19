@@ -1,5 +1,11 @@
 # AI 可读变更日志
 
+## 2026-10-19：第二十一轮四个有限窗口全部合入并关闭
+
+完整基线核验、版本化普通PG原字节读取、有界HTTP采集、真实PG串联及BUG300修正分别经PR297/298/299/301合入。最终实施main `51d6d771b753787daf74b243cc53c183987c90a4`及产品/测试blob核对，Handoff `3b4e57223fe8809ed8efcffb48c05c222883b2de`回读；Issue300修正后关闭，当前活动Issue 0项。四窗口CLOSED、windows_closed=true、无资源占用；[本轮汇总](../development/dispatch/20261019-wave21/README.md)列明证据及范围。
+
+8个自有PG/HTTP停止，新增树/代理/Actions0，根7项资料保留。本次仅文档/台账收尾，远端核对后完成有限持续目标；完整公共基础/全IAM/CRM采用/Owner最终写门、既有环境切换和真实DEV/业务/生产未提升。
+
 ## 2026-10-19：W21-04真实矩阵与BUG-300候选通过
 
 实际产品collector/JWT/普通PG矩阵发现[P0 #300](https://github.com/GTX537/CP6/issues/300)：EF提前同步COUNT使取消与同一SQL观察失效。已改为关联服务器子查询，4项专项复查通过，5项未变成功复用，最终9项有效通过；一次作者SPEC/QUALITY无阻断。[单份DELIVERY](../development/evidence/WP02-05/baseline-integration/DELIVERY.md)保留三次失败及早期报告勘误。
