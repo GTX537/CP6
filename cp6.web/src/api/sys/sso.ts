@@ -1,6 +1,6 @@
 import http from '../http'
 import { browserSso } from '@/auth/browserAuthentication'
-import type { SsoConfig, SsoConfigInput } from '@/types/sys/sso'
+import type { SsoConfig, SsoConfigInput, SsoConfigOperation } from '@/types/sys/sso'
 
 // S 类 #3 SSO（T9）：SSO 授权发起 + 租户配置管理。
 export const ssoApi = {
@@ -14,6 +14,12 @@ export const ssoApi = {
   },
   // upsert 当前租户 SSO 配置（clientSecret 留空=不改）。
   setConfig(input: SsoConfigInput) {
-    return http.put('/sys/sso-config', input)
+    return http.put('/sys/sso-config', input) as Promise<SsoConfigOperation>
+  },
+  getOperation(id: string) {
+    return http.get(`/sys/sso-config/operations/${encodeURIComponent(id)}`) as Promise<SsoConfigOperation>
+  },
+  closeOperation(id: string) {
+    return http.post(`/sys/sso-config/operations/${encodeURIComponent(id)}/close`) as Promise<SsoConfigOperation>
   }
 }

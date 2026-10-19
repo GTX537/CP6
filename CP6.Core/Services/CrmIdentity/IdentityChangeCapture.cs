@@ -98,6 +98,9 @@ public sealed class IdentityChangeCapture
         if (menus.Count == 0) return;
         if (db.Database.IsNpgsql())
         {
+            // Admission writers use the authentication root before any permission fanout lock.
+            // Acquire it here as well so an EF menu edit does not invert that ordering.
+            await CP6.Core.Services.Sys.AuthenticationCompletionGateV1.AcquireAsync(db, cancellationToken).ConfigureAwait(false);
             // RoleAction INSERT/UPDATE/DELETE automatically holds ROW EXCLUSIVE until commit.
             // Fence that whole transaction before discovering affected roles: otherwise an
             // uncommitted new association can publish an old menu key after this edit commits.

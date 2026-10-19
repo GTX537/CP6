@@ -24,6 +24,18 @@ namespace CP6.Tests;
 /// </summary>
 public class OperLogFilterTests
 {
+    [Fact]
+    public async Task Sso_configuration_never_serializes_client_secret_into_operational_transport()
+    {
+        using var db = TestHelper.CreateInMemoryContext();
+        var transport = CreateCapturingTransport(out var published);
+        var filter = new OperLogFilter(db, transport.Object, BuildConfig());
+        var (context, next) = CreateMockContext("PUT", "/api/sys/sso-config", "SsoConfig", "Put");
+        context.ActionArguments["input"] = new CP6.Core.Services.Sys.SsoConfigInput("https://idp.example", "client",
+            "must-not-be-logged", "openid", "email", true, false, false, null);
+        await filter.OnActionExecutionAsync(context, next);
+        Assert.NotNull(published()); Assert.Null(published()!.RequestBody);
+    }
     /// <summary>构造仅含 IncludeGet 开关的配置（默认 false，GET 不记录）。</summary>
     private static IConfiguration BuildConfig(bool includeGet = false)
     {

@@ -11,6 +11,11 @@ export interface SsoConfig {
   autoProvision: boolean
   defaultRoleId: number | null
   hasClientSecret: boolean
+  tenantId: string
+  actorId: string
+  configVersion: string
+  policyVersion: string
+  admissionPolicy: SsoAdmissionPolicy | null
 }
 
 /** PUT /api/sys/sso-config 入参。clientSecret 留空=保留原密文（不修改）。 */
@@ -24,4 +29,39 @@ export interface SsoConfigInput {
   enforced: boolean
   autoProvision: boolean
   defaultRoleId: number | null
+  expectedConfigVersion: string
+  expectedPolicyVersion: string
+  expectedPolicyRef?: string | null
+  operationId: string
+  reason: string
+  admission: SsoAdmissionChange
+}
+
+export interface SsoAdmissionChange {
+  action: 'preserve' | 'approve' | 'revoke'
+  approvedIssuer?: string
+  issuerIsEmailAuthority?: boolean
+  emailClaimSemantic?: 'verified-email'
+  allowInitialEmailLink?: boolean
+  allowJit?: boolean
+  approvedJitRoleIds?: number[]
+}
+export interface SsoAdmissionPolicy {
+  policyRef: string
+  version: string
+  approvedIssuer: string
+  authority: string
+  clientId: string
+  emailClaim: string
+  allowInitialEmailLink: boolean
+  allowJit: boolean
+  approvedJitRoleIds: number[]
+  approvedBy: string
+  approvedAtUtc: string
+}
+export interface SsoConfigOperation {
+  operationId: string
+  state: 'COMMITTED' | 'CLOSED' | 'UNKNOWN'
+  configVersion?: string
+  policyVersion?: string
 }

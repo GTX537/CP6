@@ -50,7 +50,9 @@ public class OperLogFilter : IAsyncActionFilter
             context.HttpContext.Request.Path.StartsWithSegments("/api/space");
 
         string? requestBody = null;
-        if (!isSpace &&
+        // This endpoint writes its own atomic, credential-free security audit. Never serialize its secret.
+        var isSsoConfiguration = context.HttpContext.Request.Path.StartsWithSegments("/api/sys/sso-config");
+        if (!isSpace && !isSsoConfiguration &&
             (method is "POST" or "PUT" or "PATCH" or "DELETE"))
         {
             // シリアライズ不可な引数（CancellationToken / IFormFile / Stream 等）は除外する。

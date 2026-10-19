@@ -14,14 +14,26 @@ public static class AccessTokenAuthentication
     {
         try
         {
-            var services = context.HttpContext.RequestServices;
-            var principal = context.Principal;
+            if (!await IsCurrentAsync(context.HttpContext.RequestServices, context.Principal!, context.HttpContext.RequestAborted))
+                context.Fail("authentication state changed or original evidence missing");
+        }
+        catch (Exception error)
+        {
+            context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
+                .CreateLogger(nameof(AccessTokenAuthentication)).LogWarning("Access state unavailable: {ErrorType}", error.GetType().Name);
+            context.Fail("authentication authority unavailable");
+        }
+    }
+
+    // Sensitive writers call again after acquiring the Owner root: middleware runs before that wait.
+    public static async Task<bool> IsCurrentAsync(IServiceProvider services, ClaimsPrincipal principal, CancellationToken ct)
+    {
             var jti = principal?.FindFirst("jti")?.Value;
             if (string.IsNullOrEmpty(jti) || await services.GetRequiredService<ITokenBlacklistService>().IsBlacklistedAsync(jti))
-            { context.Fail("access token revoked or missing identity"); return; }
+                return false;
             var db = services.GetRequiredService<CP6Context>();
-            if (db.Database.IsNpgsql() && !await CurrentStateAsync(db, services.GetRequiredService<AuthenticationPolicyServiceV1>(), principal!, context.HttpContext.RequestAborted))
-            { context.Fail("authentication state changed or original evidence missing"); return; }
+            if (db.Database.IsNpgsql() && !await CurrentStateAsync(db, services.GetRequiredService<AuthenticationPolicyServiceV1>(), principal!, ct))
+                return false;
             var imp = principal?.FindFirst("impersonator_id")?.Value;
             var family = principal?.FindFirst(imp == null ? "cp6_session" : "impersonator_session")?.Value;
             if (family != null)
@@ -31,16 +43,9 @@ public static class AccessTokenAuthentication
                 if (!Guid.TryParse(subject, out var userId) || !Guid.TryParse(tenant, out var tenantId)
                     || !await services.GetRequiredService<CrmOidcDirectory>().RefreshFamilyMatchesAsync(new CrmOidcGrant
                         { SourceRefreshHash = family, SubjectId = userId, OrganizationId = tenantId }))
-                    context.Fail("browser session revoked");
+                    return false;
             }
-        }
-        catch (Exception error)
-        {
-            // A failed authority/cache read cannot authenticate from a previously valid signature.
-            context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
-                .CreateLogger(nameof(AccessTokenAuthentication)).LogWarning("Access state unavailable: {ErrorType}", error.GetType().Name);
-            context.Fail("authentication authority unavailable");
-        }
+            return true;
     }
 
     private static async Task<bool> CurrentStateAsync(CP6Context db, AuthenticationPolicyServiceV1 policies, ClaimsPrincipal principal, CancellationToken ct)

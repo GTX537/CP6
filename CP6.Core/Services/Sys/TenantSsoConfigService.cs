@@ -35,6 +35,8 @@ public class TenantSsoConfigService : ITenantSsoConfigService
 
     public async Task UpsertAsync(Guid tenantId, SsoConfigInput input)
     {
+        // PostgreSQL mutations must pass the current actor, CAS and atomic audit/receipt boundary.
+        if (_db.Database.IsNpgsql()) throw new InvalidOperationException("SSO_CONFIGURATION_ENVELOPE_REQUIRED");
         var existing = await GetByTenantIdAsync(tenantId);
         if (existing == null)
         {
