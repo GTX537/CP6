@@ -1,5 +1,7 @@
 # W23-01 / BUG308 平台管理员事务保护交付
 
+> 已集成：[PR309](https://github.com/GTX537/CP6/pull/309)，远端main `75fef4ac76e7908abba5592ff8f46e7dacfaf12a`、候选 `d45fef242dd8e070e99890b98d4752bf7906d881`范围核对一致，#308Closed，Handoff `e4c9bfda2b0e0b73250d006615ab1eae594cf650`回读。下方候选措辞保留原时点。
+
 ## 结论
 
 基线 `8deae54898ac7294624082c1b18421a3b558ea64`，分支 `codex/bug-308-platform-admin-transaction-20261019`。原生复现并修正[P0 #308](https://github.com/GTX537/CP6/issues/308)；**本地可合并 Yes**，一次作者集中SPEC/QUALITY无剩余阻断。65项去重有效通过：52原生PG/HTTP、13既有服务/控制器单测；所有失败记录保留。尚待正常合并、远端核对和Issue关闭。

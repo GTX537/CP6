@@ -1,5 +1,14 @@
 # 第二十三轮：平台管理员共同事务保护
 
+## W23-01已集成；接续W23-02创建白名单
+
+W23-01 `d45fef242dd8e070e99890b98d4752bf7906d881` 已经[PR309](https://github.com/GTX537/CP6/pull/309)合入 `75fef4ac76e7908abba5592ff8f46e7dacfaf12a`，#308Closed，Handoff `e4c9bfda2b0e0b73250d006615ab1eae594cf650`远端回读。65项有效验证和全部失败来源见原单份报告。
+
+继续同一24小时目标，新增顺序窗口W23-02：按已接受S5原文第47行，核实Add直接接收Sys_User造成的服务端身份/租户/平台权/认证字段边界；真实HTTP复现后登记Issue并优先修正。采用专用创建白名单，保留合法用户名/密码/昵称/主角色/Enable/部门/经理/邮箱输入及密码处理；Id/TenantId、平台权、认证状态和审计元数据由服务端确定。不会将完整关系CAS/权限最终门宣称完成。
+
+允许路径：UserController、UserCreationBoundaryPostgreSqlTests、原UserControllerPasswordTests、单份WP02-03/user-create-whitelist/DELIVERY。复用当前目录与W23原生HTTP fixture/缓存，55435串行。数据库模式不再扩展，普通SQL Server无需新增验证。实际创建HTTP、危险额外字段、合法正例/跨租户/无权拒绝、相关OpenAPI和旧密码行为是相称检查；作者一次集中审查后正常合并。当前仅登记，测试NOT_RUN；单次真实START在开工时发。
+
+
 > W23-01候选完成：[BUG308单份DELIVERY](../../evidence/WP02-03/platform-admin-transaction/DELIVERY.md)，65项有效通过，作者集中审查无阻断；待正常集成/远端核对。原审查失败与夹具修正均保留。
 
 > 当前优先修正P0 [#308](https://github.com/GTX537/CP6/issues/308)：原生PG复现并发撤销和直接停用/删除可移除最后管理员。分支 `codex/bug-308-platform-admin-transaction-20261019`，沿同一真实START/领取范围，不另起审查或ACK。正常主线合并与远端核对前保持Open。
