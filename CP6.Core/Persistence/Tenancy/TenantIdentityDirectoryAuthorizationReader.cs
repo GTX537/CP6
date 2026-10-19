@@ -6,7 +6,8 @@ namespace CP6.Core.Persistence.Tenancy;
 
 /// <summary>Host-only current authorization facts. The host must authenticate and bind issuer/client/jti
 /// before calling. One SQL snapshot checks tenant and recorded token; this is not an Owner write fence.</summary>
-internal sealed class TenantIdentityDirectoryAuthorizationReader(TenantConnectionManager manager)
+internal sealed class TenantIdentityDirectoryAuthorizationReader(TenantConnectionManager manager,
+    IdentityDirectoryDatabaseIdentity? installedIdentity = null)
 {
     internal async Task<bool> IsAuthorizedAsync(Guid tenant, string issuer, string client, Guid jti,
         DateTimeOffset now, CancellationToken ct = default)
@@ -27,6 +28,8 @@ internal sealed class TenantIdentityDirectoryAuthorizationReader(TenantConnectio
                     using var guard = new TenantEfCommandGuard(transaction, connection, tx, tenant);
                     // Validate and pin the protected LOGIN mapping before the authorization SQL snapshot.
                     await guard.ValidateCurrentAsync(cancellation).ConfigureAwait(false);
+                    if (installedIdentity is not null)
+                        await installedIdentity.ValidateAsync(connection, tx, cancellation).ConfigureAwait(false);
                     await using var command = new NpgsqlCommand("""
                         SELECT EXISTS(SELECT FROM public."Sys_Tenants" t
                           JOIN crm_identity."ServiceToken" s ON s."TenantId"=t."Id"
