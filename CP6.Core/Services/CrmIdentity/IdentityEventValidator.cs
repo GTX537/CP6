@@ -26,8 +26,33 @@ public sealed class IdentityEventValidator : ICp6OutboxEnvelopeValidator, ICp6In
     }
 
     public bool IsValid(ReadOnlyMemory<byte> payload)
+        => IsValidEnvelope(payload, enforceTransportLimit: true);
+
+    // Validate snapshot content through the same pinned schemas and identity semantics. The
+    // temporary envelope is validation-only: it is never an event, message ID or provenance.
+    // Its serialization is not the payload hash input, and its overhead must not shrink the
+    // accepted original data-byte limit. The normal transport entry retains its original limit.
+    public bool IsValidSnapshotData(Guid tenant, IdentityVersion item, string region, ReadOnlyMemory<byte> data)
     {
-        if (payload.Length is 0 or > 1048576) return false;
+        if (data.Length is 0 or > 1048576) return false;
+        try
+        {
+            _ = new System.Text.UTF8Encoding(false, true).GetString(data.Span);
+            using var document = JsonDocument.Parse(data, new JsonDocumentOptions { MaxDepth = 32 });
+            if (!SafeProperties(document.RootElement)) return false;
+            var deleted = document.RootElement.TryGetProperty("deleted", out var tombstone) && tombstone.GetBoolean();
+            if (deleted != item.IsDeleted) return false;
+            var candidate = IdentityEventContracts.Create(tenant, item.AggregateId, item.Version, item.EventType,
+                document.RootElement, region, "baseline-validation", "baseline-validation");
+            return IsValidEnvelope(candidate.Payload, enforceTransportLimit: false);
+        }
+        catch (Exception error) when (error is JsonException or InvalidOperationException or FormatException or ArgumentException)
+        { return false; }
+    }
+
+    private bool IsValidEnvelope(ReadOnlyMemory<byte> payload, bool enforceTransportLimit)
+    {
+        if (payload.IsEmpty || enforceTransportLimit && payload.Length > 1048576) return false;
         try
         {
             using var document = JsonDocument.Parse(payload, new JsonDocumentOptions { MaxDepth = 32 });
