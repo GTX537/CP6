@@ -1,5 +1,22 @@
 # 第二十七轮：浏览器认证恢复与SSO首次身份准入实施计划
 
+## 第二十七轮三个限定交付已集成
+
+| 窗口 | 正常 PR | Issue | 单份交付 |
+|---|---|---|---|
+| W27-01 | [PR336](https://github.com/GTX537/CP6/pull/336) | #335 Closed | [跨标签页认证恢复](../../evidence/WP02-03/authentication-browser-recovery/DELIVERY.md) |
+| W27-02 | [PR338](https://github.com/GTX537/CP6/pull/338) | #337 Closed | [明确准入批准与配置恢复](../../evidence/WP02-03/sso-admission-policy/DELIVERY.md) |
+| W27-03 | [PR340](https://github.com/GTX537/CP6/pull/340) | #339 Closed | [初绑/JIT、Main原子事务及原操作恢复](../../evidence/WP02-03/sso-identity-admission/DELIVERY.md) |
+
+产品远端 main `c86ee22441b0531fad62007e4ee18d3f586910b0`，三个 source 的祖先与各自合并范围已核。跨页退出/迟到响应、配置批准/CAS、精确 issuer/sub、五分支准入、实际角色/身份 writer、Main IdentityChange/Outbox/强审计/回执同事务、UNKNOWN查询封闭和后续MFA衔接已在本轮相关本地测试中验证。每窗一次作者SPEC/QUALITY，必要局部复查；各轮证据有复用/重叠，**不把不同执行计数相加为独立总数**。真实企业IdP/DEV/设备/业务和生产仍NOT_RUN。
+
+三个窗口 CLOSED，当前活动 Issue 0，保留写资源已释放。23 个本轮自有 PG 根停止，PG55435/Web58427无本轮遗留监听，实际HTTP夹具释放。复用唯一工作目录、既有.NET/NuGet和前端零复制junction，无新工作树/代理/Actions或用户资料清理。原7项用户资料未改；D余约36.16GiB。初估本代理4–7小时、余量10小时；至产品集成及收尾准备约155分钟，最终实际耗时记录在完成检查点，提前完成不空等24小时。
+
+后续优先：剩余IAM组织/角色与引用CAS；CRM投影/本地Owner及真实业务主线采用。真实租户 issuer 邮箱权威/角色审批、Main身份runtime配置及既有PostgreSQL副本的前向迁移另设环境窗口，不能把本轮受控批准夹具当真实批准。完整IAM/CRM/Owner/业务验收未完成，14包/125目标/375任务/247运行NOT_RUN保持。
+
+最终文档main、Handoff和检查点核对后完成本轮持续目标；未自动开第28轮。下方过程记录保留原时点，不代表当前仍待合并或运行资源。
+
+
 > W27-03候选完成：[DELIVERY](../../evidence/WP02-03/sso-identity-admission/DELIVERY.md)，#339精确身份问题修正。初绑/JIT、Main原子事务、真实writer/旧填充迁移/UNKNOWN恢复和Web/Native安全输出已验证，作者集中审查无剩余阻断。待正常集成及总收尾，goal active。
 
 > W27-02通过[PR338](https://github.com/GTX537/CP6/pull/338)合入`cac31d82117885dd3a265159b3d30eb698d9faf9`，#337已关闭；W27-03真实START。继续精确身份/邮箱初绑/JIT的Main原子事务及恢复，总目标active。
@@ -66,7 +83,7 @@ type CompletionDecision = 'ACTIVE' | 'SECOND_FACTOR_PENDING' | 'ENROLLMENT_REQUI
 
 三窗串行从各自最新确认main建codex独立分支，唯一物理目录`D:\CP6-worktrees\wave17-dispatch-20261018`，只COORD持Main:identity-authority。真实START一次，不重复ACK；已授权正常PR/Issue/Handoff。每次push/PR核工作流内容/当前路径过滤，不触发Actions。文档只diff/必要链接/台账生成检查，不跑产品测试。
 
-- [ ] 各任务相关验证+一次SPEC/QUALITY、局部问题局部复查；合并核任务source与远端main，输入未变复用。
-- [ ] 最后核组合边界、Issues和远端；台账/四状态/生成页/Handoff同步，关闭已交付窗口并释放资源，写检查点后结束goal。
+- [x] 各任务相关验证+一次SPEC/QUALITY、局部问题局部复查；合并核任务source与远端main，输入未变复用。
+- [x] 最后核组合边界、Issues和远端；台账/四状态/生成页/Handoff同步，关闭已交付窗口并释放资源，写检查点后结束goal。
 
 完整IAM剩余组织/引用CAS、CRM投影/本地Owner/真实业务仍按后续窗口；现有PG副本迁移/生产部署未执行。本轮不会自动为真实tenant批准issuer、角色或身份链接。14包/125目标/375任务/247运行NOT_RUN保持原范围。

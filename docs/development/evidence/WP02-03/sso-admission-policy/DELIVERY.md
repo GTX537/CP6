@@ -1,5 +1,7 @@
 # W27-02 / #337：SSO 首次身份准入政策与配置原操作恢复
 
+> 已集成：https://github.com/GTX537/CP6/pull/338 / source `764a1840fc2e99c0bc9b1ac0152d23511f8cf510` / main `cac31d82117885dd3a265159b3d30eb698d9faf9`，#337 已关闭。下文保留候选交付时点；本轮最终状态见[总记录](../../../dispatch/20261019-wave27/README.md)。
+
 2026-10-19；COORD 单聊天。基线 `098264a08ee25e3f044d202e0e5ade3c98b6dc3a`，原工作目录分支 `codex/wave27-02-sso-admission-policy-20261019`。本窗 Ready to merge: Yes，作者集中 SPEC/QUALITY 及局部复查无剩余阻断。#337 待远端集成核对后关闭。完整 WP02-03 和真实业务验收未提升。
 
 ## 已实现
