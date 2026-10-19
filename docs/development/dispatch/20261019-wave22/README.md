@@ -1,5 +1,16 @@
 # 第二十二轮：Main身份变更写入链路
 
+## 第二十二轮有限范围已完成
+
+写者盘点、已证实捕获缺口修正、实际服务PG/完整采集实证、集中审查与产品集成四个阶段已完成。候选 `7a4e248d5bcbf9f525889b503eba3de621a257a3` 经[PR](https://github.com/GTX537/CP6/pull/305)合入远端main `0b6da3853f3b09a4397ca9f2c6da460b701ba2fb`；Handoff `33d439b768e3af091a2a24a7094e41e30b8cd3a7`回读，BUG304已关闭，当前活动Issue0项。
+
+单份DELIVERY记录21项有效原生验证、所有失败/跳过的实际范围，以及一次作者SPEC/QUALITY。没有独立代理审查。6自有PG及HTTP/testhost停止；新树/代理/Actions0，D余45.75GiB，根7项用户资料保留。文档收尾远端核对后完成外部持续目标，24小时是检查点而不是必须等待时长。
+
+完整公共基础仍未完成：所有IAM策略/非EF写者与授权epoch、CRM基线/增量投影发布、Owner最终写授权门、普通写账号/既有升级恢复及真实业务。未开下一轮实施窗口。
+
+合并后因共享测试夹具输入变化，仅补验两个反向并发案例，2通过；全轮仍21去重有效原生验证。下方引用保留原开工与候选时点。
+
+
 > 候选已完成：写者矩阵、#304 PostgreSQL菜单fanout互斥修正、21项有效原生验证及作者集中审查无阻断。[单份DELIVERY](../../evidence/WP02-05/identity-writer-coverage/DELIVERY.md)。Issue仍Open，待正常合并/远端核对与收尾。
 
 > 当前优先修正P0 [#304](https://github.com/GTX537/CP6/issues/304)：原生PG复现菜单变更遗漏另一事务未提交的角色操作权。分支 `codex/bug-304-identity-menu-fanout-20261019`，沿同一真实START/领取范围，不另起审查或ACK。正常主线合并与远端核对前保持Open。
@@ -25,13 +36,13 @@
 
 ## 实施与验证
 
-- [ ] 按[WP02-05](../../task-plans/WP02.md#wp02-05)、[INT-ID-01](../../../design-handbook/modules/INT-ID-01.md)和既有真实事务设计，追踪实际写者→SaveChanges→capture→snapshot/outbox。读取原生既有证据，避免把静态扫描当运行通过。
-- [ ] 先写能证明缺口的行为回归，再修改 `IdentityChangeCapture.cs`、必要的 `IdentitySnapshotWriter.cs`/`IdentityPermissionSnapshot.cs`/`CP6Context.cs`。合法同租户关联编辑应更新受影响旧/新聚合；稳定主体/租户身份不得通过普通变更迁移。发现活动BUG按Issue规则登记、优先修复并保留失败记录。
-- [ ] `CP6.Tests/CrmIdentityChangeCaptureTests.cs`覆盖新增边界；`CrmIdentityWriterPostgreSqlTests.cs`复用TenantManagementPostgres原生迁移fixture，调用真实服务写入，核对业务事实、精确快照、普通/优先Outbox及失败回滚。使用不同测试租户隔离。
-- [ ] `Persistence/Tenancy/IdentityWriterBaselinePostgresTests.cs`复用配置宿主fixture及真实IdentityBaselineCollector，验证变更后完整原字节结果、跨租户不污染及旧采集边界冲突。不得用手写拼页冒充产品采用。
-- [ ] 定向过滤器 `FullyQualifiedName~CrmIdentityChangeCaptureTests`、`FullyQualifiedName~CrmIdentityWriterPostgreSqlTests`、`FullyQualifiedName~IdentityWriterBaselinePostgresTests`，按风险一次完成相关验证。若修改共用写者，追加既有受影响一致性集合；不扩成全仓测试。
-- [ ] 单份 `docs/development/evidence/WP02-05/identity-writer-coverage/DELIVERY.md`记录实际变化、运行/复用证据、一次作者集中审查及剩余范围。审查修正只局部复查。普通文档仅diff、链接和台账生成检查。
-- [ ] 每个实际完整任务或BUG独立分支，正常PR合并并核对远端后关闭相应状态；本轮最终收尾另用同目录文档分支。没有独立审查者，不声称独立审查。
+- [x] 按[WP02-05](../../task-plans/WP02.md#wp02-05)、[INT-ID-01](../../../design-handbook/modules/INT-ID-01.md)和既有真实事务设计，追踪实际写者→SaveChanges→capture→snapshot/outbox。读取原生既有证据，避免把静态扫描当运行通过。
+- [x] 先写能证明缺口的行为回归，再修改 `IdentityChangeCapture.cs`、必要的 `IdentitySnapshotWriter.cs`/`IdentityPermissionSnapshot.cs`/`CP6Context.cs`。合法同租户关联编辑应更新受影响旧/新聚合；稳定主体/租户身份不得通过普通变更迁移。发现活动BUG按Issue规则登记、优先修复并保留失败记录。
+- [x] `CP6.Tests/CrmIdentityChangeCaptureTests.cs`覆盖新增边界；`CrmIdentityWriterPostgreSqlTests.cs`复用TenantManagementPostgres原生迁移fixture，调用真实服务写入，核对业务事实、精确快照、普通/优先Outbox及失败回滚。使用不同测试租户隔离。
+- [x] `Persistence/Tenancy/IdentityWriterBaselinePostgresTests.cs`复用配置宿主fixture及真实IdentityBaselineCollector，验证变更后完整原字节结果、跨租户不污染及旧采集边界冲突。不得用手写拼页冒充产品采用。
+- [x] 定向过滤器 `FullyQualifiedName~CrmIdentityChangeCaptureTests`、`FullyQualifiedName~CrmIdentityWriterPostgreSqlTests`、`FullyQualifiedName~IdentityWriterBaselinePostgresTests`，按风险一次完成相关验证。若修改共用写者，追加既有受影响一致性集合；不扩成全仓测试。
+- [x] 单份 `docs/development/evidence/WP02-05/identity-writer-coverage/DELIVERY.md`记录实际变化、运行/复用证据、一次作者集中审查及剩余范围。审查修正只局部复查。普通文档仅diff、链接和台账生成检查。
+- [x] 每个实际完整任务或BUG独立分支，正常PR合并并核对远端后关闭相应状态；本轮最终收尾另用同目录文档分支。没有独立审查者，不声称独立审查。
 
 ## 范围与资源
 

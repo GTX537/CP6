@@ -159007,6 +159007,11 @@
       "date": "2026-10-19",
       "change": "W22-01 candidate ready: PG menu fanout transaction fence fixes reproduced BUG304; 21 effective native cases with transparent reuse/failure history, actual services to ordinary-PG HTTP collector; author SPEC/QUALITY pass. Await integration; full gates unchanged.",
       "evidence": "docs/development/evidence/WP02-05/identity-writer-coverage/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-19",
+      "change": "Wave22 bounded writer coverage CLOSED: native BUG304 fix integrated and remotely verified, issue closed; 21 effective PG cases, one author review; 5 owned PG stopped, no new worktree/agent/Actions. Documentation-only closeout, full task/business gates unchanged.",
+      "evidence": "docs/development/dispatch/20261019-wave22/README.md"
     }
   ],
   "implementation_assessment": {
@@ -162042,7 +162047,7 @@
         "claimed_at": "2026-10-19T05:48:43.584949+00:00",
         "baseline_sha": "0b400c8670dbba7a23c6d8f57d0d28e7f9669d43",
         "entry_evidence": "docs/development/dispatch/20261019-wave22/README.md",
-        "phase": "READY_TO_MERGE",
+        "phase": "CLOSED",
         "dispatch_scope": "IDENTITY_WRITER_COVERAGE",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -162057,13 +162062,8 @@
           "CP6.Tests/Persistence/Tenancy/IdentityWriterBaselinePostgresTests.cs",
           "docs/development/evidence/WP02-05/identity-writer-coverage/DELIVERY.md"
         ],
-        "reserved_write_resources": [
-          "Main:identity-projection",
-          "Main:identity-save-pipeline"
-        ],
-        "reserved_postgresql_ports": [
-          55435
-        ],
+        "reserved_write_resources": [],
+        "reserved_postgresql_ports": [],
         "handoff_branch": "codex/dev-coordination-20261012",
         "actions_authorized": false,
         "formal_publication_authorized": false,
@@ -162071,7 +162071,7 @@
         "deployment_authorized": false,
         "delivery_report": "docs/development/evidence/WP02-05/identity-writer-coverage/DELIVERY.md",
         "candidate_review_completed": true,
-        "candidate_integrated": false,
+        "candidate_integrated": true,
         "actual_start_ref": {
           "commit": "ca7fa0dbd2f5ea033c43c46b83f617deee1949b2",
           "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T055134Z-wave22-start/MESSAGE.md",
@@ -162080,7 +162080,20 @@
         },
         "active_issue": 304,
         "worker_delivery_received": true,
-        "candidate_review_verdict": "READY_TO_MERGE"
+        "candidate_review_verdict": "READY_TO_MERGE",
+        "ports": {},
+        "integration": {
+          "source": "7a4e248d5bcbf9f525889b503eba3de621a257a3",
+          "main": "0b6da3853f3b09a4397ca9f2c6da460b701ba2fb",
+          "pr": "https://github.com/GTX537/CP6/pull/305"
+        },
+        "delivery_ref": {
+          "commit": "33d439b768e3af091a2a24a7094e41e30b8cd3a7",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T062122Z-wave22-delivery/MESSAGE.md",
+          "kind": "DELIVERY",
+          "at": "2026-10-19T06:21:22.749596+00:00"
+        },
+        "related_issue_closed": true
       },
       "blockers": [],
       "validation_evidence": [],
@@ -162788,6 +162801,23 @@
           "at": "2026-10-19T05:24:24.891571+00:00"
         },
         "issue_closed": true
+      },
+      "wave22_identity_writer_delivery": {
+        "status": "INTEGRATED",
+        "source": "7a4e248d5bcbf9f525889b503eba3de621a257a3",
+        "main": "0b6da3853f3b09a4397ca9f2c6da460b701ba2fb",
+        "pr": "https://github.com/GTX537/CP6/pull/305",
+        "handoff": {
+          "commit": "33d439b768e3af091a2a24a7094e41e30b8cd3a7",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T062122Z-wave22-delivery/MESSAGE.md",
+          "kind": "DELIVERY",
+          "at": "2026-10-19T06:21:22.749596+00:00"
+        },
+        "report": "docs/development/evidence/WP02-05/identity-writer-coverage/DELIVERY.md",
+        "effective_native_passed": 21,
+        "issue304_closed": true,
+        "full_task_completed": false,
+        "business_acceptance": "NOT_RUN"
       }
     },
     {
@@ -180335,7 +180365,7 @@
       "path": "docs/development/dispatch/20261019-wave22/README.md",
       "baseline_sha": "cc3bd51f0ebfc005b4fb6ebb27abb5b2c632b85d",
       "registered_at": "2026-10-19T05:48:43.584949+00:00",
-      "phase": "W22_01_READY_TO_MERGE",
+      "phase": "CLOSED",
       "coordinator_shared_state_only": false,
       "assigned_chats": [
         "COORD"
@@ -180346,13 +180376,11 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [
-        "COORD"
-      ],
+      "active_implementation_chats": [],
       "workers_started": true,
       "workers_delivered": true,
-      "windows_closed": false,
-      "product_integrated": false,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W22-01",
@@ -180361,7 +180389,7 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "READY_TO_MERGE",
+          "phase": "CLOSED",
           "estimated_hours": [
             13,
             20
@@ -180380,13 +180408,8 @@
           ],
           "planned_scope_ref": "docs/development/dispatch/20261019-wave22/README.md",
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "reserved_write_resources": [
-            "Main:identity-projection",
-            "Main:identity-save-pipeline"
-          ],
-          "ports": {
-            "postgresql": 55435
-          },
+          "reserved_write_resources": [],
+          "ports": {},
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
@@ -180409,7 +180432,21 @@
             "failed_remaining": 0,
             "skipped_as_pass": 0,
             "evidence_root": "D:\\CP6-local-test\\wave22\\writers"
-          }
+          },
+          "candidate_integrated": true,
+          "reserved_postgresql_ports": [],
+          "integration": {
+            "source": "7a4e248d5bcbf9f525889b503eba3de621a257a3",
+            "main": "0b6da3853f3b09a4397ca9f2c6da460b701ba2fb",
+            "pr": "https://github.com/GTX537/CP6/pull/305"
+          },
+          "delivery_ref": {
+            "commit": "33d439b768e3af091a2a24a7094e41e30b8cd3a7",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T062122Z-wave22-delivery/MESSAGE.md",
+            "kind": "DELIVERY",
+            "at": "2026-10-19T06:21:22.749596+00:00"
+          },
+          "related_issue_closed": true
         }
       ],
       "integration_order": "One coherent writer-coverage task; proven bugs take priority and use separate issue branches if necessary. Normal merge/remote verification before closeout.",
@@ -180437,12 +180474,43 @@
       },
       "user_authority": "Explicit next24h persistent goal, current chat only, PostgreSQL/lean verification/directory reuse; ordinary ambiguity decided by COORD.",
       "review_mode": "One combined task-level author SPEC/QUALITY self-review, not independent.",
-      "next_action": "Normal PR/merge and exact remote verification; only then close BUG304 and perform documentation/Handoff/resource closeout. Goal remains active.",
+      "next_action": "Remaining foundations: complete IAM policy/non-EF writer and authority epoch coverage; CRM baseline/incremental projection/publication; Owner final current-authorization/revocation fence; ordinary write-login adoption and existing-environment upgrade/recovery; real DEV/business. No new window opened.",
       "active_issue": {
         "number": 304,
         "url": "https://github.com/GTX537/CP6/issues/304",
-        "state": "OPEN",
+        "state": "CLOSED",
         "priority": "P0"
+      },
+      "closed_at": "2026-10-19T06:21:22.749596+00:00",
+      "bounded_windows_completed": 1,
+      "full_foundation_complete": false,
+      "business_acceptance": "NOT_RUN",
+      "goal_scope": "Wave22 four sequential phases complete within one coherent task, normal remote integration verified. External goal completes after final docs/Handoff verification.",
+      "closeout": {
+        "handoff": {
+          "commit": "33d439b768e3af091a2a24a7094e41e30b8cd3a7",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T062122Z-wave22-delivery/MESSAGE.md",
+          "kind": "DELIVERY",
+          "at": "2026-10-19T06:21:22.749596+00:00"
+        },
+        "implementation_main": "0b6da3853f3b09a4397ca9f2c6da460b701ba2fb",
+        "owned_postgresql_stopped": 6,
+        "http_hosts_stopped": true,
+        "new_worktrees": 0,
+        "new_agents": 0,
+        "actions_runs": 0,
+        "open_issues_observed": 0,
+        "bug304_closed": true,
+        "issue_comment": "https://github.com/GTX537/CP6/issues/304#issuecomment-6261033000",
+        "observed_at": "2026-10-19T06:21:22.749596+00:00",
+        "root_user_untracked_preserved": 7,
+        "free_disk_gib_observed": 45.75,
+        "postmerge_affected_fixture_recheck": {
+          "evidence": "D:\\CP6-local-test\\wave22\\writers\\shared-fixture-input-recheck-20261019T062137Z.json",
+          "passed": 2,
+          "skipped": 0,
+          "reason": "Shared test fixture input changed; recheck only its two previously passed concurrency cases; no product change."
+        }
       }
     },
     "wave_history": [

@@ -1,5 +1,7 @@
 # W22-01 Main身份写者覆盖 / BUG304交付
 
+> 集成回执：候选 `7a4e248d5bcbf9f525889b503eba3de621a257a3` 经[PR](https://github.com/GTX537/CP6/pull/305)合入远端main `0b6da3853f3b09a4397ca9f2c6da460b701ba2fb`，10个范围文件blob和祖先关系已核对；Handoff `33d439b768e3af091a2a24a7094e41e30b8cd3a7`回读。#304已在原步骤/远端核对后关闭。以下“待合并/Issue Open”是候选报告时点。
+
 ## 结论与适用范围
 
 用户要求本对话单独持续补公共基础。基线 `0b400c8670dbba7a23c6d8f57d0d28e7f9669d43`（规划PR303后），分支 `codex/bug-304-identity-menu-fanout-20261019`。本窗口完成实际写者盘点、P0 [#304](https://github.com/GTX537/CP6/issues/304)修正、真实服务/原生PG/普通身份HTTP完整采集证据与一次作者SPEC/QUALITY。**本地可合并：Yes**；Issue待正常合并及远端核对，当前Open。不是完整WP02-05/全IAM覆盖/CRM授权发布/真实业务完成。
@@ -36,6 +38,8 @@
 
 ## 验证记录（精简复用）
 
+合并后局部复查：共享SeedKey夹具输入也影响两个已通过的反向并发案例，因此以最终编译产物补跑这两项（`shared-fixture-input-recheck-20261019T062137Z`），2通过/0跳过。无产品改动，合计仍21去重；未将旧夹具输入结果称为新输入运行。
+
 证据根 `D:/CP6-local-test/wave22/writers`，各次同名JSON/log及results/TRX保留；隔离PG18真实迁移，不用InMemory冒充PG。最终**21项去重有效通过**：10项本轮写者/故障、9项受影响既有一致性、2项实际服务→普通PG/HTTP→产品collector。它们来自下列有明确适用范围的运行，未将重复项累加。
 
 | 运行前缀 | 实际结果与处理 |
@@ -58,6 +62,6 @@ PG测试断言实际阻塞状态，不以固定sleep当作锁成立。正常与�
 
 一次作者SPEC/QUALITY审查覆盖相对最新主线全部产品及测试diff、实际写者调用点、锁模式/顺序与RC新观察、原生回滚/取消、异常隔离、租户谓词、合同不变、失败/跳过真实来源。无剩余阻断，不声称独立审查。原生夹具/编译/运行选择器错误仅局部复查；文档diff、链接、台账与四状态作为提交前检查。
 
-5个自有PG根均有stopped记录，无postmaster.pid；55435/HTTP/testhost释放。复用原唯一工作树、既有串行build/NuGet缓存，无新树/代理。失败根、日志、原用户资料未删除。无Actions触发/取消、workflow/保护变更、既有库操作、SQL Server验收或部署。
+候选阶段5个、收尾局部补验后共6个自有PG根均有stopped记录，无postmaster.pid；55435/HTTP/testhost释放。复用原唯一工作树、既有串行build/NuGet缓存，无新树/代理。失败根、日志、原用户资料未删除。无Actions触发/取消、workflow/保护变更、既有库操作、SQL Server验收或部署。
 
 完整公共基础仍有：所有Main非EF/维护/策略写者与授权epoch、CRM基线/增量投影与发布、Owner新业务效果最终授权/撤权门、普通写账号采用及既有安装升级/恢复、真实DEV/业务/生产。本轮只闭合所列有限写入覆盖与#304；14包/125目标/375任务及247运行NOT_RUN不提升。
