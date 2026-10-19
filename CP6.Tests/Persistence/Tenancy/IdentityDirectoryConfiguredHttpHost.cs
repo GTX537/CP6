@@ -39,14 +39,16 @@ internal sealed class IdentityDirectoryConfiguredHttpHost : IAsyncDisposable
     private readonly IdentityDirectoryConfiguredPostgresFixture _postgres;
     private readonly CrmOidcCrypto _signer;
     private readonly OwnerQueryGuard _owner;
+    private readonly RequestCounters _requests;
     internal HttpClient Client { get; }
     internal CrmOidcOptions Options { get; }
     internal CrmIdentityRuntime Runtime { get; }
     internal IdentityDirectoryTenantHost Host { get; }
     internal int OwnerQueries => _owner.Calls;
+    internal string RequestDiagnostics => $"received={_requests.Received}; aborted={_requests.Aborted}; completed={_requests.Completed}";
     private IdentityDirectoryConfiguredHttpHost(WebApplication app, HttpClient client, IdentityDirectoryConfiguredPostgresFixture postgres,
-        CrmOidcOptions options, CrmIdentityRuntime runtime, IdentityDirectoryTenantHost host, OwnerQueryGuard owner)
-    { _app = app; Client = client; _postgres = postgres; Options = options; Runtime = runtime; Host = host; _owner = owner; _signer = new(options); }
+        CrmOidcOptions options, CrmIdentityRuntime runtime, IdentityDirectoryTenantHost host, OwnerQueryGuard owner, RequestCounters requests)
+    { _app = app; Client = client; _postgres = postgres; Options = options; Runtime = runtime; Host = host; _owner = owner; _requests = requests; _signer = new(options); }
 
     internal static async Task<IdentityDirectoryConfiguredHttpHost> Start(IdentityDirectoryConfiguredPostgresFixture postgres,
         IReadOnlyDictionary<string, string?>? overrides = null, TimeProvider? clock = null)
@@ -105,13 +107,20 @@ internal sealed class IdentityDirectoryConfiguredHttpHost : IAsyncDisposable
             bearer.ConfigurationManager = new StaticConfigurationManager<OpenIdConnectConfiguration>(signing); bearer.MapInboundClaims = false;
         });
         builder.Services.AddControllers().AddApplicationPart(typeof(CrmIdentityController).Assembly);
-        var app = builder.Build(); app.UseAuthentication(); app.UseAuthorization(); app.MapControllers();
+        var app = builder.Build(); var requests = new RequestCounters();
+        app.Use(async (context, next) =>
+        {
+            Interlocked.Increment(ref requests.Received);
+            using var aborted = context.RequestAborted.Register(() => Interlocked.Increment(ref requests.Aborted));
+            try { await next(context); } finally { Interlocked.Increment(ref requests.Completed); }
+        });
+        app.UseAuthentication(); app.UseAuthorization(); app.MapControllers();
         try
         {
             await app.StartAsync();
             var address = app.Services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>()!.Addresses.Single();
             return new(app, new HttpClient { BaseAddress = new(address), Timeout = TimeSpan.FromSeconds(20) }, postgres, options,
-                app.Services.GetRequiredService<CrmIdentityRuntime>(), app.Services.GetRequiredService<IdentityDirectoryTenantHost>(), owner);
+                app.Services.GetRequiredService<CrmIdentityRuntime>(), app.Services.GetRequiredService<IdentityDirectoryTenantHost>(), owner, requests);
         }
         catch { await app.DisposeAsync(); throw; }
     }
@@ -140,6 +149,7 @@ internal sealed class IdentityDirectoryConfiguredHttpHost : IAsyncDisposable
     public async ValueTask DisposeAsync()
     { Client.Dispose(); await _app.StopAsync(); await _app.DisposeAsync(); _signer.Dispose(); }
     private sealed class SigningClock(DateTimeOffset now) : TimeProvider { public override DateTimeOffset GetUtcNow() => now; }
+    private sealed class RequestCounters { internal int Received, Aborted, Completed; }
     private sealed class OwnerQueryGuard : DbCommandInterceptor
     {
         private int _calls;

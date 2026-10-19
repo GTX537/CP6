@@ -1,5 +1,17 @@
 # 当前待办与优先级
 
+## 2026-10-19：W21-04真实矩阵与BUG-300候选通过
+
+实际产品collector/JWT/普通PG矩阵发现[P0 #300](https://github.com/GTX537/CP6/issues/300)：EF提前同步COUNT使取消与同一SQL观察失效。已改为关联服务器子查询，4项专项复查通过，5项未变成功复用，最终9项有效通过；一次作者SPEC/QUALITY无阻断。[单份DELIVERY](../development/evidence/WP02-05/baseline-integration/DELIVERY.md)保留三次失败及早期报告勘误。
+
+候选待正常PR和远端核对后关闭Issue；随后全轮共享状态/Handoff收尾。4个本窗口自有PG及HTTP已停止，无新树/代理/Actions/既有库操作或部署；完整公共基础/CRM/Owner最终门及真实业务未提升，持续目标active。
+
+## 2026-10-19：W21-03已合入，W21-04开工
+
+候选 `e81b04ade25f410bbd7346379fae37d6a1d1ce99` 经[正常PR](https://github.com/GTX537/CP6/pull/299)合入远端main `406b9cfbf16dcc82252d5d3505e7a18a47900769`，范围文件/祖先关系核对，Handoff `43cffcd3dbbe70c7b164c8c47cad4520d1da7188`回读。[单份DELIVERY](../development/evidence/WP02-05/baseline-collector/DELIVERY.md)。有界实际HTTP采集组件和相关验证已交付，准确结果见唯一DELIVERY；作者SPEC/QUALITY无阻断。
+
+同目录从最新main开始W21-04 真实PG/HTTP完整基线验证集成；当前新行为NOT_RUN。无新树/代理/Actions/既有库操作或部署，持续目标active；完整公共基础和真实业务未提升。
+
 ## 2026-10-19：W21-03完整HTTP采集候选通过
 
 产品采集器固定可信来源、禁止重定向、有界读取完整首尾目录及准确原快照，全部一致后才返回不可变基线。35项去重协议/HTTP/取消测试通过，含公开产品构造器真实302拒绝；准确请求匹配及token等待取消补齐后局部6项复查，一次作者SPEC/QUALITY无阻断。[单份DELIVERY](../development/evidence/WP02-05/baseline-collector/DELIVERY.md)。
