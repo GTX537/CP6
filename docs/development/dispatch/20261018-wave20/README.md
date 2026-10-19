@@ -1,5 +1,9 @@
 # 第二十轮：目录实际宿主与安装公共基础
 
+> W20-03实际HTTP宿主候选已验证：18项配置及1条原生PG/HTTP采用链路通过，Owner请求查询0，作者集中审查无阻断；自有PG停止。[单份DELIVERY](../../evidence/WP02-05/directory-host/DELIVERY.md)。待正常集成后继续W20-04矩阵收尾。
+
+> W20-02经PR292合入 `73ddf0b9374e5f09140be4280895d150749f87c5`；Handoff `c155fa0a87ff9e139ebacf8504b33e4c5f427f20` 回读。W20-03实际目录HTTP宿主真实START，验证NOT_RUN。
+
 > W20-02候选已验证：显式安装/只读inspect/身份与结构漂移拒绝、UNKNOWN恢复边界。2条原生PG/CLI生命周期及4个旧CLI入口smoke通过，作者集中审查无阻断；5个自有PG停止。[单份DELIVERY](../../evidence/WP02-02/directory-installation/DELIVERY.md)。待正常集成后继续W20-03实际宿主。
 
 > W20-01经PR291合入 `1b03afcb8ba9b86ea6a9ccc8d45ad5392ba71364`；Handoff `65961b0f8bbf1685fbac07fc93817863d240ad44` 回读。W20-02显式安装/inspect现在真实START，验证NOT_RUN。

@@ -20,6 +20,7 @@ public class IdentityDirectoryPostgresFixture : IAsyncLifetime
     protected virtual Task Install(NpgsqlConnection connection, NpgsqlTransaction transaction)
         => IdentityDirectoryRowSecurityV1.InstallAsync(connection, transaction, Logins);
     protected virtual Task CheckProfilePreconditions(NpgsqlConnection connection) => Task.CompletedTask;
+    protected virtual Task AfterInstallation(NpgsqlConnection connection) => Task.CompletedTask;
     internal TenantManagementPostgresFixture Server { get; } = new();
     internal readonly string PasswordA = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
     internal readonly string PasswordB = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
@@ -104,9 +105,12 @@ public class IdentityDirectoryPostgresFixture : IAsyncLifetime
             Assert.False(await Scalar<bool>(owner, "SELECT EXISTS(SELECT FROM pg_namespace WHERE nspname='cp6_tenancy_v1')"));
             Assert.False(await Scalar<bool>(owner, "SELECT EXISTS(SELECT FROM pg_roles WHERE rolname='cp6_tenant_lookup_v1')"));
             Assert.False(await Scalar<bool>(owner, "SELECT relrowsecurity FROM pg_class WHERE oid='crm_identity.\"Snapshot\"'::regclass"));
-            await using var install = await owner.BeginTransactionAsync();
-            await Install(owner, install);
-            await install.CommitAsync();
+            await using (var install = await owner.BeginTransactionAsync())
+            {
+                await Install(owner, install);
+                await install.CommitAsync();
+            }
+            await AfterInstallation(owner);
         }
         catch { await Server.DisposeAsync(); throw; }
     }

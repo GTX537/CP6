@@ -3,6 +3,7 @@ using System.Security.Claims;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.CrmIdentity;
 using CP6.WebApi.Services;
+using CP6.WebApi.Services.IdentityDirectoryTenancy;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,30 +17,37 @@ namespace CP6.WebApi.Controllers.Internal;
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 [Route("/internal/crm/identity")]
 public sealed class CrmIdentityController(CP6Context db, CrmOidcOptions oidc,
-    ICrmOidcServiceDirectory directory, CrmIdentityRuntime? runtime = null, IIdentitySnapshotReader? reader = null) : ControllerBase
+    ICrmOidcServiceDirectory directory, CrmIdentityRuntime? runtime = null, IIdentitySnapshotReader? reader = null,
+    IdentityDirectoryTenantHost? tenantHost = null) : ControllerBase
 {
     public const string Scheme = "C02.Services";
 
     [HttpGet("versions")]
     public async Task<IActionResult> Versions([FromQuery] string? cursor = null, [FromQuery] int pageSize = 200)
-        => await ReadAsync(async tenant =>
+        => await ReadAsync(async (tenant, currentReader) =>
         {
             if (Request.Query.Any(p => p.Value.Count != 1 || p.Key is not ("cursor" or "pageSize")))
                 return BadRequest(new { code = "C02_INVALID_REQUEST" });
-            return Ok(await reader!.ReadVersionsAsync(tenant, cursor, pageSize, HttpContext.RequestAborted));
+            return Ok(await currentReader.ReadVersionsAsync(tenant, cursor, pageSize, HttpContext.RequestAborted));
         });
 
     [HttpGet("snapshots/{aggregateId}")]
-    public async Task<IActionResult> Snapshot(string aggregateId) => await ReadAsync(async tenant =>
+    public async Task<IActionResult> Snapshot(string aggregateId) => await ReadAsync(async (tenant, currentReader) =>
     {
         if (Request.Query.Count != 0) return BadRequest(new { code = "C02_INVALID_REQUEST" });
-        var snapshot = await reader!.ReadSnapshotAsync(tenant, aggregateId, HttpContext.RequestAborted);
+        var snapshot = await currentReader.ReadSnapshotAsync(tenant, aggregateId, HttpContext.RequestAborted);
         return snapshot is null ? NotFound() : Ok(snapshot);
     });
 
-    private async Task<IActionResult> ReadAsync(Func<Guid, Task<IActionResult>> read)
+    private async Task<IActionResult> ReadAsync(Func<Guid, IIdentitySnapshotReader, Task<IActionResult>> read)
     {
         Response.Headers.CacheControl = "no-store";
+        if (tenantHost is not null)
+        {
+            try { return await tenantHost.ReadAsync(HttpContext, (currentReader, tenant) => read(tenant, currentReader), HttpContext.RequestAborted); }
+            catch (IdentityDirectoryAccessException error) { return error.Authenticated ? Forbid(Scheme) : Challenge(Scheme); }
+            catch (IdentityReadException error) { return ReadFailure(error); }
+        }
         if (runtime is null || reader is null) return NotFound();
         var authentication = await HttpContext.AuthenticateAsync(Scheme);
         if (!authentication.Succeeded || authentication.Principal is null) return Challenge(Scheme);
@@ -64,20 +72,22 @@ public sealed class CrmIdentityController(CP6Context db, CrmOidcOptions oidc,
             if (!await db.CrmServiceTokenRecords.AsNoTracking().AnyAsync(x => x.Issuer == oidc.Issuer && x.Jti == tokenId &&
                 x.TenantId == tenant && x.ClientId == clientId && x.RevokedAtUtc == null && x.ExpiresAtUtc > skewBoundary, HttpContext.RequestAborted))
                 return Forbid(Scheme);
-            return await read(tenant);
+            return await read(tenant, reader);
         }
         catch (IdentityReadException ex)
         {
-            return StatusCode(ex.Message switch
-            {
-                "C02_BOOTSTRAP_NOT_READY" or "C02_IDENTITY_STORE_UNAVAILABLE" => 503,
-                "C02_SNAPSHOT_BOUNDARY_CHANGED" => 409,
-                _ => 400
-            }, new { code = ex.Message });
+            return ReadFailure(ex);
         }
         catch (Exception ex) when (ex is DbException or DbUpdateException or TimeoutException)
         { return StatusCode(503, new { code = "C02_IDENTITY_STORE_UNAVAILABLE" }); }
     }
+
+    private ObjectResult ReadFailure(IdentityReadException error) => StatusCode(error.Message switch
+    {
+        "C02_BOOTSTRAP_NOT_READY" or "C02_IDENTITY_STORE_UNAVAILABLE" => 503,
+        "C02_SNAPSHOT_BOUNDARY_CHANGED" => 409,
+        _ => 400
+    }, new { code = error.Message });
 
     private static string? Single(ClaimsPrincipal principal, string type)
     {
