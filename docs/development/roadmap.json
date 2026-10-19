@@ -159042,6 +159042,16 @@
       "date": "2026-10-19",
       "change": "W23-02 P0 #311 ready: dedicated user-create whitelist and server-owned identity/tenant/security metadata. Actual HTTP RED→GREEN; 17 relevant passes (11 native), one author review. Await normal integration; full gates unchanged.",
       "evidence": "docs/development/evidence/WP02-03/user-create-whitelist/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-19",
+      "change": "Wave23 bounded windows closed: P0 #308 and #311 merged/remote verified/Closed. 77 distinct valid passes (63 native), two author task reviews, 10 owned PG stopped. No new worktree/agents/Actions or existing DB/deployment. Full IAM/business gates remain unchanged.",
+      "evidence": "docs/development/dispatch/20261019-wave23/README.md"
+    },
+    {
+      "date": "2026-10-19",
+      "change": "Wave23 final integration fixture fix: reuse global user menu across HTTP groups; 13 affected tests pass together, total still77/63 native. Product unchanged, 11 owned PG stopped. One local review of this scope only.",
+      "evidence": "docs/development/dispatch/20261019-wave23/README.md"
     }
   ],
   "implementation_assessment": {
@@ -161621,7 +161631,7 @@
         "claimed_at": "2026-10-19T07:49:13.881417+00:00",
         "baseline_sha": "a68d285a31a47ba497909591ef9c5063e117300a",
         "entry_evidence": "docs/development/dispatch/20261019-wave23/README.md",
-        "phase": "READY_TO_MERGE",
+        "phase": "CLOSED",
         "dispatch_scope": "USER_CREATE_WHITELIST",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -161632,12 +161642,8 @@
           "CP6.Tests/Sys/UserControllerPasswordTests.cs",
           "docs/development/evidence/WP02-03/user-create-whitelist/DELIVERY.md"
         ],
-        "reserved_write_resources": [
-          "Main:identity-authority"
-        ],
-        "reserved_postgresql_ports": [
-          55435
-        ],
+        "reserved_write_resources": [],
+        "reserved_postgresql_ports": [],
         "handoff_branch": "codex/dev-coordination-20261012",
         "actions_authorized": false,
         "formal_publication_authorized": false,
@@ -161645,7 +161651,7 @@
         "deployment_authorized": false,
         "delivery_report": "docs/development/evidence/WP02-03/user-create-whitelist/DELIVERY.md",
         "candidate_review_completed": true,
-        "candidate_integrated": false,
+        "candidate_integrated": true,
         "actual_start_ref": {
           "commit": "74627c5b9e4b5c2009d16a2a416f16d9a83c22df",
           "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T075159Z-wave23-02-start/MESSAGE.md",
@@ -161654,7 +161660,18 @@
         },
         "active_issue": 311,
         "worker_delivery_received": true,
-        "candidate_review_verdict": "READY_TO_MERGE"
+        "candidate_review_verdict": "READY_TO_MERGE",
+        "candidate_sha": "4e6ad756570421d45b557f6b27faf0060404c5d4",
+        "integration_main_sha": "db3526b6b1c4f6854c65d0a9fface8030ff63e15",
+        "integration_pr": "https://github.com/GTX537/CP6/pull/312",
+        "delivery_ref": {
+          "commit": "ae77f7df5cc3cb53016606e54a9bd4d6ee709d77",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T080247Z-wave23-02-delivery/MESSAGE.md",
+          "at": "2026-10-19T08:02:47.461170+00:00"
+        },
+        "issue_state": "CLOSED",
+        "closed_at": "2026-10-19T08:02:59.702341+00:00",
+        "full_task_completed": false
       },
       "blockers": [],
       "validation_evidence": [],
@@ -180495,23 +180512,15 @@
       "path": "docs/development/dispatch/20261019-wave23/README.md",
       "baseline_sha": "ae73ad97b5f6327b05d59ccc0031ad4c52662d50",
       "registered_at": "2026-10-19T07:26:08.071840+00:00",
-      "phase": "W23_02_READY_TO_MERGE",
+      "phase": "CLOSED",
       "coordinator_shared_state_only": false,
-      "assigned_chats": [
-        "COORD"
-      ],
-      "authorized_implementation_chats": [
-        "COORD"
-      ],
-      "authorized_review_chats": [
-        "COORD"
-      ],
-      "active_implementation_chats": [
-        "COORD"
-      ],
+      "assigned_chats": [],
+      "authorized_implementation_chats": [],
+      "authorized_review_chats": [],
+      "active_implementation_chats": [],
       "workers_started": true,
       "workers_delivered": true,
-      "windows_closed": false,
+      "windows_closed": true,
       "product_integrated": true,
       "windows": [
         {
@@ -180538,9 +180547,7 @@
           "planned_scope_ref": "docs/development/dispatch/20261019-wave23/README.md",
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "reserved_write_resources": [],
-          "ports": {
-            "postgresql": 55435
-          },
+          "ports": {},
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
@@ -180575,7 +180582,8 @@
             "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T074902Z-wave23-01-delivery/MESSAGE.md",
             "at": "2026-10-19T07:49:02.788350+00:00"
           },
-          "issue_state": "CLOSED"
+          "issue_state": "CLOSED",
+          "resources_released": true
         },
         {
           "id": "W23-02",
@@ -180584,7 +180592,7 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "READY_TO_MERGE",
+          "phase": "CLOSED",
           "worker_start_received": true,
           "worker_delivery_received": true,
           "write_paths": [
@@ -180595,12 +180603,8 @@
           ],
           "planned_scope_ref": "docs/development/dispatch/20261019-wave23/README.md",
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "reserved_write_resources": [
-            "Main:identity-authority"
-          ],
-          "ports": {
-            "postgresql": 55435
-          },
+          "reserved_write_resources": [],
+          "ports": {},
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
@@ -180626,7 +180630,20 @@
             "failed_remaining": 0,
             "skipped_as_pass": 0,
             "evidence_root": "D:\\CP6-local-test\\wave23\\platform-admin"
-          }
+          },
+          "candidate_integrated": true,
+          "candidate_sha": "4e6ad756570421d45b557f6b27faf0060404c5d4",
+          "integration_main_sha": "db3526b6b1c4f6854c65d0a9fface8030ff63e15",
+          "integration_pr": "https://github.com/GTX537/CP6/pull/312",
+          "delivery_ref": {
+            "commit": "ae77f7df5cc3cb53016606e54a9bd4d6ee709d77",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T080247Z-wave23-02-delivery/MESSAGE.md",
+            "at": "2026-10-19T08:02:47.461170+00:00"
+          },
+          "issue_state": "CLOSED",
+          "reserved_postgresql_ports": [],
+          "closed_at": "2026-10-19T08:02:59.702341+00:00",
+          "resources_released": true
         }
       ],
       "integration_order": "One coherent platform-administrator safety task; proven bugs registered and prioritized; normal PR merge and remote verification before closure.",
@@ -180641,7 +180658,7 @@
         "timezone": "America/New_York",
         "deadline_is_not_completion": true
       },
-      "completion_scope": "Platform administrator enabled-survivor invariant across PostgreSQL service/tracked/bulk/direct DML, transactional grant/revoke audit, scoped native concurrency/rollback evidence. Not full IAM authority epoch, authentication completion or all Owner final gates.",
+      "completion_scope": "Bounded PostgreSQL platform administrator survivor/mandatory audit transaction and ordinary user-create server-owned whitelist. Two P0 fixes integrated; not complete IAM/CRM/Owner final authorization or existing environment/business acceptance.",
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0,
@@ -180650,12 +180667,28 @@
       },
       "user_authority": "Explicit next24h persistent goal, current chat only, PostgreSQL/lean verification/directory reuse; ordinary ambiguity decided by COORD.",
       "review_mode": "One task-level combined author SPEC/QUALITY; not independent.",
-      "next_action": "Normal PR merge/remote verification then close BUG311, synchronize round closure and Handoff/checkpoint. Goal remains active until final remote closure.",
-      "active_issue": {
-        "number": 311,
-        "url": "https://github.com/GTX537/CP6/issues/311",
-        "priority": "P0",
-        "state": "OPEN"
+      "next_action": "Remaining foundations: current actor/session authentication and revocation final gate, full IAM authority/writer/reference CAS; CRM baseline/incremental projection/publication; real Owner write adoption; ordinary write-login and existing installation upgrade/recovery; real DEV/business. No new window opened.",
+      "active_issue": null,
+      "closed_at": "2026-10-19T08:02:59.702341+00:00",
+      "resources_released": true,
+      "validation": {
+        "effective_distinct_passed": 77,
+        "native_postgresql_http_passed": 63,
+        "unit_schema_passed": 14,
+        "remaining_failures": 0,
+        "skipped_as_pass": 0,
+        "historical_failures_preserved": true
+      },
+      "goal_closeout": "Code/tasks complete; external goal closes after final documentation merge and remote/Handoff/checkpoint verification.",
+      "closeout_validation": {
+        "reason": "Both newly added HTTP groups share the global unique user menu. Reuse existing menu in administrator fixture and run combined affected group.",
+        "stage": "shared-http-fixture-integration-20261019T080539Z",
+        "passed": 13,
+        "failed": 0,
+        "skipped": 0,
+        "product_changed": false,
+        "owned_postgresql_stopped": 11,
+        "effective_total_unchanged": 77
       }
     },
     "wave_history": [
