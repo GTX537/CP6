@@ -96,6 +96,7 @@
           </el-button>
         </el-form-item>
       </el-form>
+      <SsoIdentityRecovery />
     </el-card>
   </div>
 </template>
@@ -106,6 +107,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { ssoApi } from '@/api/sys/sso'
 import { roleApi } from '@/api/sys/role'
+import SsoIdentityRecovery from './SsoIdentityRecovery.vue'
 import type { SsoConfigInput, SsoAdmissionPolicy } from '@/types/sys/sso'
 import { pendingSsoConfiguration, saveSsoConfiguration, resolveSsoConfiguration, type SsoConfigScope } from '@/auth/ssoConfigurationRecovery'
 

@@ -8,6 +8,19 @@ namespace CP6.Client.Tests;
 
 public sealed class NativeSsoServiceTests
 {
+    [Theory]
+    [InlineData("windows", "cp6-desktop")]
+    [InlineData("android", "cp6-mobile")]
+    public async Task Unknown_mapping_retains_only_a_support_reference_without_consuming_or_adopting(string platform, string scheme)
+    {
+        var store = new MemoryPkceVerifierStore(); await store.WriteAsync("original-verifier");
+        var transport = new SsoHandler(); var sessions = new RecordingSessionService();
+        var service = Create(platform, transport, new RecordingBrowser(), store, sessions);
+        var reference = new string('a', 64);
+        var error = await Assert.ThrowsAsync<NativeSsoMappingRecoveryException>(() => service.CompleteAsync(new Uri($"{scheme}://auth/callback?error=SSO_IDENTITY_MAPPING_UNKNOWN&operationRef={reference}")));
+        Assert.Equal(reference, error.OperationRef); Assert.Contains(reference, error.Message);
+        Assert.Equal("original-verifier", await store.TakeAsync()); Assert.Equal(0, transport.ExchangeCalls); Assert.Null(sessions.Adopted);
+    }
     [Fact]
     public async Task Start_UsesPlatformOwnedRedirectUri()
     {

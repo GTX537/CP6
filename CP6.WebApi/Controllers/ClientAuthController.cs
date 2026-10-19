@@ -309,8 +309,9 @@ public sealed partial class ClientAuthController : ControllerBase
             await _audit.LogAsync(
                 SecurityEventType.SsoLoginFailed, null, null, null,
                 ClientIp, ClientUa, ClientReason(request.Client, ex.Message));
+            var mapping = ex is SsoMappingRecoveryRequiredV1 recovery ? "&operationRef=" + Uri.EscapeDataString(recovery.OperationRef) : "";
             return Redirect(
-                $"{request.RedirectUri}?error={Uri.EscapeDataString(ex.Message)}");
+                $"{request.RedirectUri}?error={Uri.EscapeDataString(ex.Message)}{mapping}");
         }
     }
 

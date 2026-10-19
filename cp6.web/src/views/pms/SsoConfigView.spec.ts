@@ -3,6 +3,7 @@ import { mount, flushPromises } from '@vue/test-utils'
 const api = vi.hoisted(() => ({ getConfig: vi.fn(), setConfig: vi.fn(), getOperation: vi.fn(), closeOperation: vi.fn(), roles: vi.fn(), warning: vi.fn() }))
 vi.mock('@/api/sys/sso', () => ({ ssoApi: api }))
 vi.mock('@/api/sys/role', () => ({ roleApi: { getAll: api.roles } }))
+vi.mock('@/api/http', () => ({ default: { get: vi.fn(), post: vi.fn() } }))
 vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k: string) => k }) }))
 vi.mock('element-plus', async original => ({ ...await original<object>(), ElMessage: { success: vi.fn(), warning: api.warning } }))
 import SsoConfigView from './SsoConfigView.vue'

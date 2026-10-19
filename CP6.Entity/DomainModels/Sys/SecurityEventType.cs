@@ -38,5 +38,7 @@ public enum SecurityEventType
     GdprTenantExported = 27,
     GdprSubjectExported = 28,
     GdprTenantErased = 29,
-    GdprSubjectErased = 30
+    GdprSubjectErased = 30,
+    SsoIdentityLinked = 31,
+    SsoIdentityMappingClosed = 32
 }

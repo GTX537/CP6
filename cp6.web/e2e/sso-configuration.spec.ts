@@ -5,7 +5,7 @@ const config = { tenantId: '00000000-0000-0000-0000-000000000001', actorId: '000
   configVersion: 'fixture-v1', policyVersion: 'none', admissionPolicy: null, authority: 'https://idp.example', clientId: 'fixture-client',
   scopes: 'openid email', emailClaim: 'email', enabled: false, enforced: false, autoProvision: false, defaultRoleId: null, hasClientSecret: true }
 async function fixture(context: BrowserContext) {
-  const writes: any[] = []; const resolutions: string[] = []; let lost = false; let closed = false
+  const writes: any[] = []; const resolutions: string[] = []; let lost = false; let closed = false; const mappingClosed = new Set<string>()
   await context.route('**/__sso-configuration-fixture', route => route.fulfill({ contentType: 'text/html', body: `<!doctype html><html lang="zh"><head><title>SSO configuration fixture</title></head><body><div id="app"></div><script type="module" src="/e2e/sso-configuration-fixture.ts">
     </script></body></html>` }))
   await context.route(url => url.pathname.startsWith('/api/'), async route => {
@@ -20,6 +20,11 @@ async function fixture(context: BrowserContext) {
     if (path.includes('/sso-config/operations/')) {
       resolutions.push(path); const segments = path.split('/'); const close = segments.at(-1) === 'close'; if (close) closed = true
       return send({ operationId: segments.at(close ? -2 : -1), state: closed ? 'CLOSED' : 'UNKNOWN' })
+    }
+    if (path.includes('/sso-config/identity-operations/')) {
+      resolutions.push(path); const segments = path.split('/'), close = segments.at(-1) === 'close', id = segments.at(close ? -2 : -1)!
+      if (close) mappingClosed.add(id)
+      return send({ operationRef: id, state: id.startsWith('a') ? 'USER_PROVISIONED' : mappingClosed.has(id) ? 'CLOSED' : 'UNKNOWN' })
     }
     if (path.toLowerCase().includes('/role/')) return send([{ roleId: 17, roleName: 'Enabled member', enable: true }])
     return send({})
@@ -44,6 +49,20 @@ test('actual approval form starts unapproved and sends explicit authority plus l
     admission: { action: 'approve', issuerIsEmailAuthority: true, approvedIssuer: 'https://idp.example', allowInitialEmailLink: false, allowJit: false } })
   await expect(page.getByText('配置已提交。认证政策已更新，请重新登录后继续操作。')).toBeVisible()
   await expect(page.getByRole('button', { name: '保存', exact: true })).toBeDisabled()
+})
+
+test('identity support recovery preserves a committed account and closes only the queried unknown reference', async ({ context, page }) => {
+  const f = await fixture(context); await page.goto('/__sso-configuration-fixture')
+  const input = page.getByRole('textbox', { name: '身份映射原操作编号' })
+  await input.fill('a'.repeat(64)); await page.getByRole('button', { name: '查询身份映射', exact: true }).click()
+  await expect(page.getByText('原操作已创建账号，账号继续保留。用户可重新发起 SSO。')).toBeVisible()
+  const close = page.getByRole('button', { name: '关闭这次未确认映射', exact: true }); await expect(close).toBeDisabled()
+  await input.fill('b'.repeat(64)); await expect(close).toBeDisabled()
+  await page.getByRole('button', { name: '查询身份映射', exact: true }).click()
+  await expect(page.getByText('原操作结果尚未确认。可明确关闭原操作，或保留编号继续查询。')).toBeVisible()
+  await close.click(); await expect(page.getByText('原操作已关闭，迟到请求不能继续写入。用户可重新发起 SSO。')).toBeVisible()
+  expect(f.writes).toHaveLength(0); expect(f.resolutions.filter(x => x.endsWith('/close'))).toEqual(['/api/sys/sso-config/identity-operations/' + 'b'.repeat(64) + '/close'])
+  await page.locator('.identity-recovery').screenshot({ path: (process.env.CP6_AUTH_BROWSER_RESULTS || 'e2e/results') + '/identity-recovery.png', animations: 'disabled' })
 })
 
 test('unknown save survives another tab and reload, queries and closes only the original operation', async ({ context, page }) => {
