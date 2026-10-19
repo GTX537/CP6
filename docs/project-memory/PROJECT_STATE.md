@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## 2026-10-19：第二十五轮三个限定交付全部集成
+
+租户管理当前actor最终门、模拟当前真身/目标与审计Cookie边界、access/refresh原认证状态与精确完成隔离已通过PR320/322/324正常集成；#319/#321/#323均Closed。产品main `f978d8de9ae90a17bd5655e80662afe0b7aca0bd`，280项去重有效相关通过（113原生PG/HTTP）。逐任务一次作者SPEC/QUALITY，无独立代理；旧失败保留，组合采用实际Program检查与未变证据复用。
+
+16次自有PG停止，原目录/缓存复用，无新树/代理/Actions或既有库/部署操作。新PG审计/认证迁移采用前需安装，认证v2需重新登录；现有环境未变。完整认证政策/全writer门、统一会话、CRM/Owner与真实业务仍未完成，247运行NOT_RUN不提升。最终文档/Handoff/检查点核对后关闭外部goal。[本轮记录](../development/dispatch/20261019-wave25/README.md)。
+
 ## 2026-10-19：W25-03原认证状态候选完成
 
 W25-01/02已正常集成，#319/#321关闭。W25-03 P0 #323补PG原认证状态持久化、访问消费及refresh/完成阶段当前校验，普通失败精确隔离replacement，已验证完整Program Web/native/2FA/restricted/模拟合法路径。167有效相关通过（53原生）；一次作者SPEC/QUALITY无阻断。新前向迁移只安装自有隔离库，采用时须迁移并重新登录；完整认证政策/Owner/真实业务仍未完成。正常合并及最终收尾前长目标持续。[DELIVERY](../development/evidence/WP02-03/session-authentication-current-state/DELIVERY.md)。

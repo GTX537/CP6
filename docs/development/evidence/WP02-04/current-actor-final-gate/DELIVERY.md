@@ -1,5 +1,7 @@
 # W25-01 / BUG319 租户管理当前调用人最终门
 
+> 已集成：https://github.com/GTX537/CP6/pull/320 / source `f9f54ee51c8d237d403a8e0ef2c16eb5ae2e12df` / main `1974bcb4ee9f179c6539dd032b09329037cd5002`，# 319 已关闭。最终组合核对复用本报告有效范围；下文候选措辞保留原交付时点。
+
 ## 结论
 
 基线 `dcf7cb45029af329f13df72a5b0de7fd5d0fa6bb`，分支 `codex/wave25-01-tenant-final-gate-20261019`。[P0 #319](https://github.com/GTX537/CP6/issues/319)本地修正，**Ready to merge: Yes**；一次作者集中 SPEC/QUALITY 无阻断，非独立审查。79项相关验证通过（60原生 PostgreSQL/HTTP、19既有服务/控制器单测），0失败/跳过。正常合并并核对远端main后关闭Issue，继续W25-02/03，整个长目标未完成。
