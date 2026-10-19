@@ -1,5 +1,17 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-19：W21-02版本化原字节读取候选通过
+
+实际普通PG宿主新增目录总数/来源/边界页及原字节快照，保持旧接口；3项原生HTTP和1项无宿主检查通过，游标绑定来源摘要后局部2项复查通过。原字节空白/转义、hash故障、A/B隔离与no-store覆盖，Owner请求查询0，一次作者SPEC/QUALITY无阻断。[单份DELIVERY](../development/evidence/WP02-05/baseline-raw-http/DELIVERY.md)。
+
+四个自有PG及HTTP已停止，待正常PR/远端核对后推进实际HTTP采集。无新树/代理/Actions/既有库操作或部署，持续目标active；完整公共基础/CRM授权采用/Owner最终门及真实业务未提升。
+
+## 2026-10-19：W21-01已合入，W21-02真实读取开工
+
+候选 `5dec6d11031ffceeed01506211721760f5c6dc0e` 经[PR297](https://github.com/GTX537/CP6/pull/297)合入远端main `3209824ef71dc56bc251d92b75ab40463833c970`，范围文件/祖先关系核对，Handoff `692c7c8b95832074456addd66eb902b936299b95`回读。[单份DELIVERY](../development/evidence/WP02-05/baseline-contract/DELIVERY.md)记录25项基线及38项现有合同通过。
+
+同目录从最新main开始W21-02版本化普通PG/HTTP目录及原字节快照；新行为NOT_RUN。无新树/代理/Actions/既有库操作或部署，持续目标active；完整公共基础和真实业务状态未提升。
+
 ## 2026-10-19：W21-01完整基线核验候选通过
 
 已实现来源/原字节/版本/摘要/首尾全集核验和不可变SOURCE_SNAPSHOT结果，失败或取消无部分发布。25项基线行为及38项现有事件合同通过；空键问题局部修正并复查，一次作者SPEC/QUALITY无阻断。[单份DELIVERY](../development/evidence/WP02-05/baseline-contract/DELIVERY.md)保留真实失败与证据复用。

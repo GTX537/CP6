@@ -8,6 +8,13 @@ namespace CP6.Core.Persistence.Tenancy;
 internal sealed record IdentityDirectoryDatabaseIdentity(Guid InstallationId, string Server, int Port, string Database,
     uint DatabaseOid, string SystemIdentifier, string Fingerprint)
 {
+    // v1: SHA-256 of the UTF-8 JSON string array in this exact order, using the fixed
+    // System.Text.Json default escaping. Contains no credential or mutable request data.
+    internal string BaselineSha256 => Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(
+        System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(new[] { "cp6-identity-directory-storage-v1", InstallationId.ToString("D"),
+            Server, Port.ToString(System.Globalization.CultureInfo.InvariantCulture), Database,
+            DatabaseOid.ToString(System.Globalization.CultureInfo.InvariantCulture), SystemIdentifier, Fingerprint }))).ToLowerInvariant();
+
     internal async Task ValidateAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct)
     {
         if (InstallationId == Guid.Empty || DatabaseOid == 0 || string.IsNullOrEmpty(Fingerprint) || Fingerprint.Length != 64 ||

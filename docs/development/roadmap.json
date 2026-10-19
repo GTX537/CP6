@@ -158972,6 +158972,11 @@
       "date": "2026-10-19",
       "change": "W21-01 complete baseline contract/verifier implemented and reviewed. 25 baseline + 38 existing contract cases pass; no PG needed. Integration pending; no full task/business promotion.",
       "evidence": "docs/development/evidence/WP02-05/baseline-contract/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-19",
+      "change": "W21-02 versioned counted directory/raw snapshot endpoints implemented and reviewed: 3 native PG/HTTP + 1 host-absence cases pass. Four owned clusters stopped; integration pending, no full task/business promotion.",
+      "evidence": "docs/development/evidence/WP02-05/baseline-raw-http/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -161999,45 +162004,50 @@
       "card_anchor": "wp02-05",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W21-01 完整目录基线合同",
+        "chat_label": "COORD / W21-02 原字节HTTP",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/wave21-baseline-contract-20261019",
+        "branch": "codex/wave21-baseline-raw-http-20261019",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-19T04:18:22.998889+00:00",
-        "baseline_sha": "2c461f0ddea83bd0deabc469d13aeb17c73c5e9d",
+        "claimed_at": "2026-10-19T04:34:41.548194+00:00",
+        "baseline_sha": "3209824ef71dc56bc251d92b75ab40463833c970",
         "entry_evidence": "docs/development/dispatch/20261019-wave21/README.md",
         "phase": "VALIDATED_READY_TO_INTEGRATE",
-        "dispatch_scope": "IDENTITY_COMPLETE_BASELINE_CONTRACT",
+        "dispatch_scope": "IDENTITY_BASELINE_RAW_HTTP",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
+        "actual_start_ref": {
+          "commit": "692c7c8b95832074456addd66eb902b936299b95",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T043441Z-wave21-raw-http-start/MESSAGE.md",
+          "kind": "START",
+          "at": "2026-10-19T04:34:41.548194+00:00"
+        },
         "allowed_write_paths": [
-          "CP6.Core/Services/CrmIdentity/Baselines/IdentityBaselineContracts.cs",
-          "CP6.Core/Services/CrmIdentity/Baselines/IdentityBaselineVerifier.cs",
-          "CP6.Core/Services/CrmIdentity/IdentityEventValidator.cs",
-          "CP6.Tests/IdentityBaselineTests.cs",
-          "CP6.Tests/CrmIdentityContractTests.cs",
-          "docs/development/evidence/WP02-05/baseline-contract/DELIVERY.md"
+          "CP6.Core/Services/CrmIdentity/Baselines/IIdentityRawSnapshotReader.cs",
+          "CP6.Core/Services/CrmIdentity/Baselines/IdentityRawSnapshotReader.cs",
+          "CP6.Core/Persistence/Tenancy/TenantIdentityDirectoryReader.cs",
+          "CP6.Core/Persistence/Tenancy/IdentityDirectoryDatabaseIdentity.cs",
+          "CP6.WebApi/Controllers/Internal/CrmIdentityController.cs",
+          "CP6.Tests/Persistence/Tenancy/IdentityRawSnapshotHttpPostgresTests.cs",
+          "CP6.Tests/Persistence/Tenancy/IdentityDirectoryConfiguredHttpHost.cs",
+          "docs/development/evidence/WP02-05/baseline-raw-http/DELIVERY.md"
         ],
         "reserved_write_resources": [
-          "Main:identity-baseline-contract"
+          "Main:identity-baseline-http",
+          "Main:identity-directory-reader"
         ],
-        "reserved_postgresql_ports": [],
+        "reserved_postgresql_ports": [
+          55435
+        ],
         "handoff_branch": "codex/dev-coordination-20261012",
         "actions_authorized": false,
         "formal_publication_authorized": false,
         "existing_database_migration_authorized": false,
         "deployment_authorized": false,
-        "delivery_report": "docs/development/evidence/WP02-05/baseline-contract/DELIVERY.md",
+        "delivery_report": "docs/development/evidence/WP02-05/baseline-raw-http/DELIVERY.md",
         "candidate_review_completed": true,
         "candidate_integrated": false,
-        "actual_start_ref": {
-          "commit": "9ab6f805645fc8b31d0d7633016881c7de071c9c",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T042119Z-wave21-start/MESSAGE.md",
-          "kind": "START",
-          "at": "2026-10-19T04:21:19.718010+00:00"
-        },
         "review_mode": "Single combined SPEC/QUALITY author self-review; not independent"
       },
       "blockers": [],
@@ -162384,6 +162394,58 @@
             "kind": "DELIVERY",
             "at": "2026-10-19T04:07:30.625290+00:00"
           }
+        },
+        {
+          "chat_label": "COORD / W21-01 完整目录基线合同",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/wave21-baseline-contract-20261019",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-10-19T04:18:22.998889+00:00",
+          "baseline_sha": "2c461f0ddea83bd0deabc469d13aeb17c73c5e9d",
+          "entry_evidence": "docs/development/dispatch/20261019-wave21/README.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "IDENTITY_COMPLETE_BASELINE_CONTRACT",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "allowed_write_paths": [
+            "CP6.Core/Services/CrmIdentity/Baselines/IdentityBaselineContracts.cs",
+            "CP6.Core/Services/CrmIdentity/Baselines/IdentityBaselineVerifier.cs",
+            "CP6.Core/Services/CrmIdentity/IdentityEventValidator.cs",
+            "CP6.Tests/IdentityBaselineTests.cs",
+            "CP6.Tests/CrmIdentityContractTests.cs",
+            "docs/development/evidence/WP02-05/baseline-contract/DELIVERY.md"
+          ],
+          "reserved_write_resources": [],
+          "reserved_postgresql_ports": [],
+          "handoff_branch": "codex/dev-coordination-20261012",
+          "actions_authorized": false,
+          "formal_publication_authorized": false,
+          "existing_database_migration_authorized": false,
+          "deployment_authorized": false,
+          "delivery_report": "docs/development/evidence/WP02-05/baseline-contract/DELIVERY.md",
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "actual_start_ref": {
+            "commit": "9ab6f805645fc8b31d0d7633016881c7de071c9c",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T042119Z-wave21-start/MESSAGE.md",
+            "kind": "START",
+            "at": "2026-10-19T04:21:19.718010+00:00"
+          },
+          "review_mode": "Single combined SPEC/QUALITY author self-review; not independent",
+          "ports": {},
+          "integration": {
+            "source": "5dec6d11031ffceeed01506211721760f5c6dc0e",
+            "main": "3209824ef71dc56bc251d92b75ab40463833c970",
+            "pr": "https://github.com/GTX537/CP6/pull/297"
+          },
+          "delivery_ref": {
+            "commit": "692c7c8b95832074456addd66eb902b936299b95",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T043441Z-wave21-contract-delivery/MESSAGE.md",
+            "kind": "DELIVERY",
+            "at": "2026-10-19T04:34:41.548194+00:00"
+          }
         }
       ],
       "wave19_directory_delivery": {
@@ -162469,11 +162531,27 @@
         }
       },
       "wave21_baseline_contract_delivery": {
-        "status": "VALIDATED_NOT_INTEGRATED",
+        "status": "INTEGRATED",
         "report": "docs/development/evidence/WP02-05/baseline-contract/DELIVERY.md",
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
-        "validation": "25 baseline + 38 existing contract cases; original RED/failure retained"
+        "validation": "25 baseline + 38 existing contract cases; original RED/failure retained",
+        "source": "5dec6d11031ffceeed01506211721760f5c6dc0e",
+        "main": "3209824ef71dc56bc251d92b75ab40463833c970",
+        "pr": "https://github.com/GTX537/CP6/pull/297",
+        "handoff": {
+          "commit": "692c7c8b95832074456addd66eb902b936299b95",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T043441Z-wave21-contract-delivery/MESSAGE.md",
+          "kind": "DELIVERY",
+          "at": "2026-10-19T04:34:41.548194+00:00"
+        }
+      },
+      "wave21_baseline_raw_http_delivery": {
+        "status": "VALIDATED_NOT_INTEGRATED",
+        "report": "docs/development/evidence/WP02-05/baseline-raw-http/DELIVERY.md",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "validation": "3 native HTTP + 1 host absence pass; original RED retained"
       }
     },
     {
@@ -180021,7 +180099,7 @@
       "path": "docs/development/dispatch/20261019-wave21/README.md",
       "baseline_sha": "f552995d36c37ad736d84058df2d2a3ba7085568",
       "registered_at": "2026-10-19T04:18:22.998889+00:00",
-      "phase": "W21_01_VALIDATED_READY_TO_INTEGRATE",
+      "phase": "W21_02_VALIDATED_READY_TO_INTEGRATE",
       "coordinator_shared_state_only": false,
       "assigned_chats": [
         "COORD"
@@ -180047,7 +180125,7 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "VALIDATED_READY_TO_INTEGRATE",
+          "phase": "CLOSED",
           "estimated_hours": [
             4,
             5
@@ -180064,9 +180142,7 @@
           ],
           "planned_scope_ref": "docs/development/dispatch/20261019-wave21/README.md",
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "reserved_write_resources": [
-            "Main:identity-baseline-contract"
-          ],
+          "reserved_write_resources": [],
           "ports": {},
           "actions_authorized": false,
           "deployment_authorized": false,
@@ -180082,7 +180158,7 @@
           "actual_start_baseline_sha": "2c461f0ddea83bd0deabc469d13aeb17c73c5e9d",
           "branch": "codex/wave21-baseline-contract-20261019",
           "candidate_review_completed": true,
-          "candidate_integrated": false,
+          "candidate_integrated": true,
           "delivery_report": "docs/development/evidence/WP02-05/baseline-contract/DELIVERY.md",
           "review_mode": "Single combined SPEC/QUALITY author self-review; not independent",
           "validation": {
@@ -180093,6 +180169,18 @@
             "evidence_root": "D:\\CP6-local-test\\wave21\\w21-01",
             "postgresql": "NOT_REQUIRED",
             "scope": "In-memory baseline contract/verifier; no actual HTTP collection yet"
+          },
+          "reserved_postgresql_ports": [],
+          "integration": {
+            "source": "5dec6d11031ffceeed01506211721760f5c6dc0e",
+            "main": "3209824ef71dc56bc251d92b75ab40463833c970",
+            "pr": "https://github.com/GTX537/CP6/pull/297"
+          },
+          "delivery_ref": {
+            "commit": "692c7c8b95832074456addd66eb902b936299b95",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T043441Z-wave21-contract-delivery/MESSAGE.md",
+            "kind": "DELIVERY",
+            "at": "2026-10-19T04:34:41.548194+00:00"
           }
         },
         {
@@ -180101,24 +180189,60 @@
           "title": "普通PG实际宿主原字节快照接口",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "gate": "SEQUENTIAL_PENDING",
-          "phase": "REGISTERED_NOT_STARTED",
+          "gate": "CONFIRMED",
+          "phase": "VALIDATED_READY_TO_INTEGRATE",
           "estimated_hours": [
             4,
             6
           ],
-          "worker_start_received": false,
-          "worker_delivery_received": false,
-          "write_paths": [],
+          "worker_start_received": true,
+          "worker_delivery_received": true,
+          "write_paths": [
+            "CP6.Core/Services/CrmIdentity/Baselines/IIdentityRawSnapshotReader.cs",
+            "CP6.Core/Services/CrmIdentity/Baselines/IdentityRawSnapshotReader.cs",
+            "CP6.Core/Persistence/Tenancy/TenantIdentityDirectoryReader.cs",
+            "CP6.Core/Persistence/Tenancy/IdentityDirectoryDatabaseIdentity.cs",
+            "CP6.WebApi/Controllers/Internal/CrmIdentityController.cs",
+            "CP6.Tests/Persistence/Tenancy/IdentityRawSnapshotHttpPostgresTests.cs",
+            "CP6.Tests/Persistence/Tenancy/IdentityDirectoryConfiguredHttpHost.cs",
+            "docs/development/evidence/WP02-05/baseline-raw-http/DELIVERY.md"
+          ],
           "planned_scope_ref": "docs/development/dispatch/20261019-wave21/README.md",
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "reserved_write_resources": [],
-          "ports": {},
+          "reserved_write_resources": [
+            "Main:identity-baseline-http",
+            "Main:identity-directory-reader"
+          ],
+          "ports": {
+            "postgresql": 55435
+          },
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
           "full_task_completed": false,
-          "business_acceptance": "NOT_RUN"
+          "business_acceptance": "NOT_RUN",
+          "actual_start_ref": {
+            "commit": "692c7c8b95832074456addd66eb902b936299b95",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T043441Z-wave21-raw-http-start/MESSAGE.md",
+            "kind": "START",
+            "at": "2026-10-19T04:34:41.548194+00:00"
+          },
+          "actual_start_baseline_sha": "3209824ef71dc56bc251d92b75ab40463833c970",
+          "branch": "codex/wave21-baseline-raw-http-20261019",
+          "candidate_review_completed": true,
+          "candidate_integrated": false,
+          "delivery_report": "docs/development/evidence/WP02-05/baseline-raw-http/DELIVERY.md",
+          "review_mode": "Single combined SPEC/QUALITY author self-review; not independent",
+          "validation": {
+            "native_http_passed": 3,
+            "host_absence_passed": 1,
+            "failed": 0,
+            "skipped": 0,
+            "evidence_root": "D:\\CP6-local-test\\wave21\\w21-02",
+            "owned_clusters": 4,
+            "owned_postgresql_stopped": true,
+            "scope": "Versioned counted directory/raw bytes HTTP; not full collector or DEV"
+          }
         },
         {
           "id": "W21-03",
@@ -180196,7 +180320,7 @@
       },
       "user_authority": "User explicitly requested next24h list and persistent goal, current chat only, same PostgreSQL/lean verification/directory reuse rules. Goal active 2026-10-19T04:15:29Z.",
       "review_mode": "One combined task-level author SPEC/QUALITY self-review, not independent.",
-      "next_action": "Normally integrate baseline contract and verify remote main, then W21-02 versioned raw snapshot and counted directory HTTP in same worktree."
+      "next_action": "Normally integrate raw snapshot/count HTTP, verify remote main, then W21-03 bounded HTTP collector in the same directory."
     },
     "wave_history": [
       {

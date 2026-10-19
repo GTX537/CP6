@@ -1,6 +1,7 @@
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.CrmIdentity;
+using CP6.Core.Services.CrmIdentity.Baselines;
 using CP6.Entity.DomainModels.Sys;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
@@ -15,14 +16,26 @@ namespace CP6.Core.Persistence.Tenancy;
 /// Authentication/current reader authorization remain the host's responsibility.
 /// </summary>
 internal sealed class TenantIdentityDirectoryReader(TenantConnectionManager manager, CrmIdentityRuntime runtime,
-    IDataProtectionProvider protection, IdentityDirectoryDatabaseIdentity? installedIdentity = null) : IIdentitySnapshotReader
+    IDataProtectionProvider protection, IdentityDirectoryDatabaseIdentity? installedIdentity = null) : IIdentitySnapshotReader, IIdentityRawSnapshotReader
 {
     public Task<IdentityVersionPage> ReadVersionsAsync(Guid tenant, string? cursor, int size = 200, CancellationToken cancellationToken = default)
-        => ReadAsync(tenant, (reader, ct) => reader.ReadVersionsAsync(tenant, cursor, size, ct), cancellationToken);
+        => ReadAsync(tenant, (db, ct) => new IdentitySnapshotReader(db, runtime, protection).ReadVersionsAsync(tenant, cursor, size, ct), cancellationToken);
     public Task<IdentitySnapshot?> ReadSnapshotAsync(Guid tenant, string aggregate, CancellationToken cancellationToken = default)
-        => ReadAsync(tenant, (reader, ct) => reader.ReadSnapshotAsync(tenant, aggregate, ct), cancellationToken);
+        => ReadAsync(tenant, (db, ct) => new IdentitySnapshotReader(db, runtime, protection).ReadSnapshotAsync(tenant, aggregate, ct), cancellationToken);
 
-    private async Task<T> ReadAsync<T>(Guid tenant, Func<IdentitySnapshotReader, CancellationToken, Task<T>> action, CancellationToken ct)
+    public Task<IdentityBaselinePageV1> ReadBaselinePageAsync(Guid tenant, string? cursor, int size = 200, CancellationToken ct = default)
+        => ReadAsync(tenant, (db, token) => Raw(db, tenant).ReadBaselinePageAsync(tenant, cursor, size, token), ct);
+    public Task<IdentityRawSnapshotV1?> ReadRawSnapshotAsync(Guid tenant, string aggregate, CancellationToken ct = default)
+        => ReadAsync(tenant, (db, token) => Raw(db, tenant).ReadRawSnapshotAsync(tenant, aggregate, token), ct);
+
+    private IdentityRawSnapshotReader Raw(CP6Context db, Guid tenant)
+    {
+        if (installedIdentity is null || !runtime.Options.Tenants.TryGetValue(tenant, out var region))
+            throw new IdentityReadException("C02_IDENTITY_STORE_UNAVAILABLE");
+        return new(db, runtime, protection, new(tenant, runtime.Options.Issuer, region, runtime.ContractBundleSha256, installedIdentity.BaselineSha256));
+    }
+
+    private async Task<T> ReadAsync<T>(Guid tenant, Func<CP6Context, CancellationToken, Task<T>> action, CancellationToken ct)
     {
         ReadResult<T> result;
         try
@@ -55,12 +68,12 @@ internal sealed class TenantIdentityDirectoryReader(TenantConnectionManager mana
                     await db.Database.UseTransactionAsync(dbTransaction, cancellation).ConfigureAwait(false);
                     try
                     {
-                        return new ReadResult<T>(await action(new IdentitySnapshotReader(db, runtime, protection), cancellation).ConfigureAwait(false), null);
+                        return new ReadResult<T>(await action(db, cancellation).ConfigureAwait(false), null);
                     }
                     // Carry only fixed public contract errors across the storage sanitization boundary.
                     // Unknown exceptions still fail closed through TenantConnectionManager.Safe.
                     catch (IdentityReadException error) when (error.Message is "C02_INVALID_PAGE_SIZE" or "C02_INVALID_CURSOR" or
-                        "C02_INVALID_AGGREGATE" or "C02_BOOTSTRAP_NOT_READY" or "C02_SNAPSHOT_BOUNDARY_CHANGED")
+                        "C02_INVALID_AGGREGATE" or "C02_BOOTSTRAP_NOT_READY" or "C02_SNAPSHOT_BOUNDARY_CHANGED" or "C02_IDENTITY_STORE_UNAVAILABLE")
                     { return new ReadResult<T>(default, error.Message); }
                 }, token).ConfigureAwait(false);
                 if (read.Error is null) await transaction.CommitAsync(token).ConfigureAwait(false);
