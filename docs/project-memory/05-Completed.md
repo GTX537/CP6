@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-18：W20-01目录当前授权最小身份候选通过
+
+独立v2 profile为Sys_Tenants/ServiceToken开放必要列并应用可信LOGIN映射RLS；普通身份当前资格/令牌检查和原目录读取均有原生PG证据。7项去重通过、0剩余失败/跳过；普通control写入、触发器、回滚和v1兼容通过，一次作者SPEC/QUALITY无阻断。[单份DELIVERY](../development/evidence/WP02-02/directory-authorization/DELIVERY.md)保留原RED与复用来源。
+
+候选待正常PR和远端核对，随后进入安装/inspect窗口；当前HTTP宿主尚未切换。四个自有PG停止，无新工作树/代理/Actions/既有库或部署。完整公共基础/CRM/Owner最终门/真实业务不提升，持续目标active。
+
 ## 2026-10-18：第二十轮规划登记完成，产品尚未完成
 
 已核对第十九轮最终main `d70d40ef` / Handoff `dca163c`，旧四窗口Closed。本轮单总控继续[24小时计划](../development/dispatch/20261018-wave20/README.md)：普通PostgreSQL身份当前授权、显式fresh安装/inspect/漂移、实际HTTP宿主、受影响串联与集成收尾。持续目标active，检查点America/New_York 2026-10-19 22:30:42。

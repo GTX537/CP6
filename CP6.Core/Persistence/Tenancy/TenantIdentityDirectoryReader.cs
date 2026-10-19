@@ -29,8 +29,10 @@ internal sealed class TenantIdentityDirectoryReader(TenantConnectionManager mana
         {
             await using var lease = await manager.OpenCurrentAsync(ct).ConfigureAwait(false);
             var binding = lease.CurrentBinding;
-            if (binding.TenantId != tenant || binding.ModelVersion != IdentityDirectoryRowSecurityV1.ModelVersion ||
-                binding.MigrationVersion != IdentityDirectoryRowSecurityV1.MigrationVersion || binding.QueueDomainRefs.Count != 0)
+            var knownProfile = (binding.ModelVersion, binding.MigrationVersion) is
+                (IdentityDirectoryRowSecurityV1.ModelVersion, IdentityDirectoryRowSecurityV1.MigrationVersion) or
+                (IdentityDirectoryAuthorizationV2.ModelVersion, IdentityDirectoryAuthorizationV2.MigrationVersion);
+            if (binding.TenantId != tenant || !knownProfile || binding.QueueDomainRefs.Count != 0)
                 throw new TenantStorageException(TenantStorageFailure.BindingRejected);
             result = await lease.InTransactionAsync(async (transaction, token) =>
             {
