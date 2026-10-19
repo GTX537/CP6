@@ -12,6 +12,7 @@ using System.Net.Http.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
+using System.Security.Claims;
 
 namespace CP6.Tests.Platform;
 
@@ -24,8 +25,8 @@ public sealed class PlatformAdminGuardPostgreSqlTests(TenantManagementPostgresFi
         var ids = await Seed(2);
         await using var first = Context(); await using var second = Context();
         await using var tx = await first.Database.BeginTransactionAsync();
-        await Service(first).RevokeAsync(ids[0]);
-        var pending = Record.ExceptionAsync(() => Service(second).RevokeAsync(ids[1]));
+        await Service(first, ids[0]).RevokeAsync(ids[0]);
+        var pending = Record.ExceptionAsync(() => Service(second, ids[1]).RevokeAsync(ids[1]));
         await CompletedOrWaiting(pending, second);
         await tx.CommitAsync();
         var error = await pending.WaitAsync(TimeSpan.FromSeconds(10));
@@ -51,12 +52,12 @@ public sealed class PlatformAdminGuardPostgreSqlTests(TenantManagementPostgresFi
     [CurrentPermissionPostgresFact]
     public async Task Grant_audit_failure_rolls_back_flag()
     {
-        await Seed(1); await using var db = Context();
+        var actor = (await Seed(1))[0]; await using var db = Context();
         var user = User(false); db.Sys_Users.Add(user); await db.SaveChangesAsync();
         var constraint = "w23_audit_" + Guid.NewGuid().ToString("N");
         await db.Database.ExecuteSqlRawAsync($"ALTER TABLE public.\"Sys_SecurityLogs\" ADD CONSTRAINT \"{constraint}\" CHECK (\"EventType\" <> 23) NOT VALID");
         Exception? error;
-        try { error = await Record.ExceptionAsync(() => Service(db).GrantAsync(user.Id)); }
+        try { error = await Record.ExceptionAsync(() => Service(db, actor).GrantAsync(user.Id)); }
         finally { await db.Database.ExecuteSqlRawAsync($"ALTER TABLE public.\"Sys_SecurityLogs\" DROP CONSTRAINT \"{constraint}\""); }
         await using var read = Context();
         Assert.NotNull(error);
@@ -72,7 +73,7 @@ public sealed class PlatformAdminGuardPostgreSqlTests(TenantManagementPostgresFi
         await using var first = Context(); await using var second = Context();
         await using var tx = await first.Database.BeginTransactionAsync();
         await first.Sys_Users.IgnoreQueryFilters().Where(x => x.Id == ids[0]).ExecuteUpdateAsync(x => x.SetProperty(u => u.Enable, false));
-        var pending = Record.ExceptionAsync(() => Service(second).RevokeAsync(ids[1]));
+        var pending = Record.ExceptionAsync(() => Service(second, ids[1]).RevokeAsync(ids[1]));
         await CompletedOrWaiting(pending, second); Assert.False(pending.IsCompleted);
         if (commit) await tx.CommitAsync(); else await tx.RollbackAsync();
         var error = await pending.WaitAsync(TimeSpan.FromSeconds(10));
@@ -86,7 +87,7 @@ public sealed class PlatformAdminGuardPostgreSqlTests(TenantManagementPostgresFi
     {
         var ids = await Seed(2); await using var first = Context(); await using var second = Context();
         await using var tx = await first.Database.BeginTransactionAsync();
-        await Service(first).RevokeAsync(ids[0]);
+        await Service(first, ids[0]).RevokeAsync(ids[0]);
         var pending = Record.ExceptionAsync(async () => await second.Sys_Users.IgnoreQueryFilters().Where(x => x.Id == ids[1]).ExecuteDeleteAsync());
         await CompletedOrWaiting(pending, second); Assert.False(pending.IsCompleted);
         await tx.CommitAsync();
@@ -102,7 +103,7 @@ public sealed class PlatformAdminGuardPostgreSqlTests(TenantManagementPostgresFi
         var ids = await Seed(2); await using var stale = Context();
         await using var tx = await stale.Database.BeginTransactionAsync(isolation);
         Assert.Equal(2, await stale.Sys_Users.IgnoreQueryFilters().CountAsync(x => x.Enable && x.IsPlatformAdmin));
-        await using (var current = Context()) await Service(current).RevokeAsync(ids[0]);
+        await using (var current = Context()) await Service(current, ids[0]).RevokeAsync(ids[0]);
         var error = await Record.ExceptionAsync(async () => await stale.Sys_Users.IgnoreQueryFilters().Where(x => x.Id == ids[1]).ExecuteDeleteAsync());
         // The non-retrying Npgsql EF strategy wraps transient PostgreSQL errors.
         Assert.Equal(PostgresErrorCodes.SerializationFailure, Assert.IsType<PostgresException>(error?.GetBaseException()).SqlState);
@@ -138,7 +139,7 @@ public sealed class PlatformAdminGuardPostgreSqlTests(TenantManagementPostgresFi
             await using var tx = await db.Database.BeginTransactionAsync();
             var prior = new Sys_SecurityLog { EventType = 0, Reason = Guid.NewGuid().ToString(), CreatedAt = DateTime.Now };
             db.Sys_SecurityLogs.Add(prior); await db.SaveChangesAsync();
-            var error = await Record.ExceptionAsync(() => grant ? Service(db).GrantAsync(target.Id) : Service(db).RevokeAsync(target.Id));
+            var error = await Record.ExceptionAsync(() => grant ? Service(db, ids[1]).GrantAsync(target.Id) : Service(db, ids[1]).RevokeAsync(target.Id));
             Assert.IsType<DbUpdateException>(error); Assert.False(db.ChangeTracker.HasChanges());
             Assert.Equal(before, target.IsPlatformAdmin);
             Assert.Equal(before, await db.Sys_Users.IgnoreQueryFilters().AsNoTracking().Where(x => x.Id == target.Id).Select(x => x.IsPlatformAdmin).SingleAsync());
@@ -153,10 +154,10 @@ public sealed class PlatformAdminGuardPostgreSqlTests(TenantManagementPostgresFi
     {
         var ids = await Seed(2); await using var first = Context(); await using var second = Context();
         await using var tx = await first.Database.BeginTransactionAsync();
-        await Service(first).RevokeAsync(ids[0]);
+        await Service(first, ids[0]).RevokeAsync(ids[0]);
         await using var caller = await second.Database.BeginTransactionAsync();
         using var cancel = new CancellationTokenSource();
-        var http = new HttpContextAccessor { HttpContext = new DefaultHttpContext { RequestAborted = cancel.Token } };
+        var http = new HttpContextAccessor { HttpContext = new DefaultHttpContext { RequestAborted = cancel.Token, User = Principal(ids[1], second.CurrentTenantId) } };
         var service = new PlatformAdminService(second, new SecurityAuditService(second), new TenantContext(), http: http);
         var pending = Record.ExceptionAsync(() => service.RevokeAsync(ids[1]));
         await CompletedOrWaiting(pending, second); Assert.False(pending.IsCompleted); cancel.Cancel();
@@ -170,12 +171,12 @@ public sealed class PlatformAdminGuardPostgreSqlTests(TenantManagementPostgresFi
     {
         var ids = await Seed(2); await using var stale = Context();
         var target = await stale.Sys_Users.IgnoreQueryFilters().SingleAsync(x => x.Id == ids[0]);
-        await using (var writer = Context()) await Service(writer).RevokeAsync(target.Id);
-        await Service(stale).GrantAsync(target.Id); Assert.Equal(2, await Count());
-        await Service(stale).GrantAsync(target.Id); Assert.Equal(2, await Count());
+        await using (var writer = Context()) await Service(writer, ids[1]).RevokeAsync(target.Id);
+        await Service(stale, ids[1]).GrantAsync(target.Id); Assert.Equal(2, await Count());
+        await Service(stale, ids[1]).GrantAsync(target.Id); Assert.Equal(2, await Count());
         await using var tx = await stale.Database.BeginTransactionAsync();
         var before = await stale.Sys_SecurityLogs.IgnoreQueryFilters().CountAsync();
-        await Service(stale).RevokeAsync(target.Id);
+        await Service(stale, ids[1]).RevokeAsync(target.Id);
         Assert.Equal(before + 1, await stale.Sys_SecurityLogs.IgnoreQueryFilters().CountAsync());
         await tx.RollbackAsync();
         await using var read = Context(); Assert.Equal(2, await Count());
@@ -189,7 +190,7 @@ public sealed class PlatformAdminGuardPostgreSqlTests(TenantManagementPostgresFi
         await using (var tx = await db.Database.BeginTransactionAsync())
         {
             await db.Database.ExecuteSqlRawAsync("DELETE FROM cp6_platform_admin_guard_v1.root");
-            var error = await Record.ExceptionAsync(() => Service(db).RevokeAsync(ids[0]));
+            var error = await Record.ExceptionAsync(() => Service(db, ids[0]).RevokeAsync(ids[0]));
             Assert.Equal("PLATFORM_ADMIN_GUARD_UNAVAILABLE", Assert.IsType<PostgresException>(error).MessageText);
             Assert.Equal(0, await db.Database.SqlQuery<int>($"SELECT count(*)::integer AS \"Value\" FROM cp6_platform_admin_guard_v1.root").SingleAsync());
             await tx.RollbackAsync();
@@ -243,8 +244,9 @@ public sealed class PlatformAdminGuardPostgreSqlTests(TenantManagementPostgresFi
     {
         var ids = await Seed(1); var tenant = new TenantContext { CurrentTenantId = Guid.NewGuid() };
         await using var db = server.Context(tenant); var user = User(false); db.Sys_Users.Add(user); await db.SaveChangesAsync();
-        var service = new PlatformAdminService(db, new SecurityAuditService(db), tenant);
-        await service.GrantAsync(user.Id); Assert.Equal(2, await Count());
+        await using (var platform = Context()) await Service(platform, ids[0]).GrantAsync(user.Id);
+        var service = Service(db, user.Id);
+        Assert.Equal(2, await Count());
         await service.RevokeAsync(ids[0]); Assert.Equal(1, await Count());
         Assert.Equal("E-SEC-037", (await Assert.ThrowsAsync<InvalidOperationException>(() => service.RevokeAsync(user.Id))).Message);
         var logs = await db.Sys_SecurityLogs.IgnoreQueryFilters().Where(x => x.Reason == "target=" + user.UserName).ToArrayAsync();
@@ -288,7 +290,12 @@ public sealed class PlatformAdminGuardPostgreSqlTests(TenantManagementPostgresFi
     }
 
     private CP6Context Context() => server.Context(new TenantContext());
-    private static PlatformAdminService Service(CP6Context db) => new(db, new SecurityAuditService(db), new TenantContext());
+    private static PlatformAdminService Service(CP6Context db, Guid actor) => new(db, new SecurityAuditService(db),
+        new TenantContext { CurrentTenantId = db.CurrentTenantId },
+        http: new HttpContextAccessor { HttpContext = new DefaultHttpContext { User = Principal(actor, db.CurrentTenantId) } });
+    private static ClaimsPrincipal Principal(Guid actor, Guid tenant) => new(new ClaimsIdentity([
+        new Claim(ClaimTypes.NameIdentifier, actor.ToString()), new Claim("tenant_id", tenant.ToString()),
+        new Claim("is_platform_admin", "true")], "fixture"));
     private static Sys_User User(bool admin) => new() { Id = Guid.NewGuid(), UserName = "w23_" + Guid.NewGuid().ToString("N"), Password = "fixture", Enable = true, IsPlatformAdmin = admin };
     private async Task<Guid[]> Seed(int count)
     {

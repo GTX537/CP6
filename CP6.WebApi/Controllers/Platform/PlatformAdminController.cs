@@ -33,6 +33,7 @@ public class PlatformAdminController : ControllerBase
             await _svc.GrantAsync(userId);
             return Ok(new { code = 0 });
         }
+        catch (PlatformAdminAuthorizationException ex) { throw new BizException(ex.Message, 403); }
         catch (InvalidOperationException ex)
         {
             throw new BizException(ex.Message);   // E-SEC-032（用户不存在）
@@ -48,6 +49,7 @@ public class PlatformAdminController : ControllerBase
             await _svc.RevokeAsync(userId);
             return Ok(new { code = 0 });
         }
+        catch (PlatformAdminAuthorizationException ex) { throw new BizException(ex.Message, 403); }
         catch (InvalidOperationException ex)
         {
             throw new BizException(ex.Message);   // E-SEC-032 / E-SEC-037

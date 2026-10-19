@@ -1,8 +1,6 @@
-using System.Security.Claims;
 using CP6.Core.EFDbContext;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CP6.Core.Auth;
@@ -15,9 +13,10 @@ namespace CP6.Core.Auth;
 /// <list type="number">
 ///   <item>impersonation 期间挂起平台权（imp 拒优先）→ E-SEC-034。</item>
 ///   <item>claim 快判（无 <c>is_platform_admin=true</c>）→ E-SEC-031。</item>
-///   <item>DB 回查纵深（捕获"已撤销但 token 未过期"）→ E-SEC-031。</item>
+///   <item>完整主体/租户绑定和 DB 回查（捕获"已撤销但 token 未过期"）→ E-SEC-031。</item>
 /// </list>
 /// <para>特性不能构造注入，用 RequestServices 服务定位取 <see cref="CP6Context"/>。</para>
+/// <para>此处是入口检查；PostgreSQL 平台授撤服务另在共同事务内复核并持有调用人权限保护。</para>
 /// </summary>
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
 public sealed class RequirePlatformAdminAttribute : Attribute, IAsyncAuthorizationFilter
@@ -48,19 +47,11 @@ public sealed class RequirePlatformAdminAttribute : Attribute, IAsyncAuthorizati
             return;
         }
 
-        if (!Guid.TryParse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var uid))
+        try
         {
-            Forbid(context, "E-SEC-031");
-            return;
+            await PlatformAdminAuthorization.RequireAsync(db, user, context.HttpContext.RequestAborted);
         }
-
-        var ok = await db.Sys_Users
-            .IgnoreQueryFilters()
-            .AnyAsync(u => u.Id == uid && u.IsPlatformAdmin && u.Enable);
-        if (!ok)
-        {
-            Forbid(context, "E-SEC-031");
-        }
+        catch (PlatformAdminAuthorizationException error) { Forbid(context, error.Message); }
         // pass → 不设 Result，放行管道继续。
     }
 

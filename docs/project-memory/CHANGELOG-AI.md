@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-19：W24-01候选可合并
+
+P0 #315平台授撤最终actor资格检查及主体/tenant绑定已实现，66项有效通过（38原生PG/HTTP），一次作者SPEC/QUALITY无阻断。待正常PR/远端核对，持续目标active；完整认证策略、CRM/Owner和业务不提升。[DELIVERY](../development/evidence/WP02-03/platform-admin-current-actor/DELIVERY.md)。
+
 ## 2026-10-19：第二十四轮持续目标登记
 
 当前COORD单独补平台授撤当前调用人最终权限门；预计代理实际执行1.5–3小时，24小时检查点2026-10-20T08:17:12Z。复用目录/PG/缓存，相关验证加一次作者审查。未新增代理/Actions/既有库操作；完整IAM/CRM/业务不提升。见[计划](../development/dispatch/20261019-wave24/README.md)。
