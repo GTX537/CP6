@@ -10,6 +10,10 @@ using CP6.WebApi.Controllers.Sys;
 using CP6.WebApi.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
@@ -32,27 +36,54 @@ public sealed partial class AuthenticationStatePostgreSqlTests
     public async Task Cancellation_after_completion_commit_quarantines_replacement_before_cookie_output()
     {
         var user = await Seed(); var tenant = new TenantContext { CurrentTenantId = user.TenantId };
-        await using var db = server.Context(tenant); var options = Options.Create(new SecurityOptions());
-        var refresh = new RefreshTokenService(db, options, tenant); var raw = await refresh.IssueAsync(user, null, null);
-        var healthy = await refresh.IssueAsync(user, null, null); using var cancel = new CancellationTokenSource();
-        var wrapper = new Mock<IRefreshTokenService>(MockBehavior.Strict);
-        wrapper.Setup(x => x.RotateForCompletionAsync(raw, It.IsAny<string>(), It.IsAny<string>(), RefreshTokenClientContext.Web))
-            .Returns(() => refresh.RotateForCompletionAsync(raw, null, null, RefreshTokenClientContext.Web));
-        wrapper.Setup(x => x.CompleteRotationAsync(It.IsAny<string>())).Returns<string>(async next =>
-        { await refresh.CompleteRotationAsync(next); cancel.Cancel(); });
-        wrapper.Setup(x => x.RejectCompletionAsync(It.IsAny<string>())).Returns<string>(refresh.RejectCompletionAsync);
-        var sessions = new Mock<IAuthSessionService>();
-        sessions.Setup(x => x.BuildAccessToken(It.IsAny<Sys_User>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>())).Returns("prepared-access");
-        var http = new DefaultHttpContext { RequestAborted = cancel.Token }; http.Request.Headers.Cookie = "cp6_rt=" + raw;
-        var controller = new AuthController(db, new ConfigurationBuilder().Build(), Mock.Of<ICurrentPermissionContext>(), tenant,
-            Mock.Of<IPasswordHasher>(), Mock.Of<IPasswordPolicyService>(), Mock.Of<ILoginSecurityService>(), new SecurityAuditService(db),
-            wrapper.Object, Mock.Of<ITokenBlacklistService>(), new AuthCookieWriter(options), options, Mock.Of<ITenantSsoConfigService>(),
-            Mock.Of<ISsoService>(), Mock.Of<ITwoFactorService>(), Mock.Of<IPendingTokenStore>(), sessions.Object)
-            { ControllerContext = new ControllerContext { HttpContext = http } };
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => controller.Refresh());
-        Assert.False(http.Response.Headers.ContainsKey("Set-Cookie"));
+        await using var db = server.Context(tenant); var refresh = new RefreshTokenService(db, Options.Create(new SecurityOptions()), tenant);
+        var raw = await AuthenticationFixtureSessionV1.IssueAsync(db, refresh, user);
+        var healthy = await AuthenticationFixtureSessionV1.IssueAsync(db, refresh, user);
+        var (next, _) = await refresh.RotateForCompletionAsync(raw, null, null, RefreshTokenClientContext.Web);
+        using var cancel = new CancellationTokenSource(); var wrapper = new Mock<IRefreshTokenService>(MockBehavior.Strict);
+        wrapper.Setup(x => x.CompleteOutputAsync(next)).Returns(async () => { await refresh.CompleteOutputAsync(next); cancel.Cancel(); });
+        wrapper.Setup(x => x.RejectCompletionAsync(next)).Returns(() => refresh.RejectCompletionAsync(next));
+        var http = new DefaultHttpContext { RequestAborted = cancel.Token, RequestServices = new ServiceCollection().AddSingleton(wrapper.Object).BuildServiceProvider() };
+        var output = new MemoryStream(); http.Response.Body = output; http.Response.Headers.SetCookie = "cp6_at=prepared-secret";
+        AuthenticationEntryFailureAttribute.TrackOutput(http, next);
+        var action = new ActionContext(http, new RouteData(), new ActionDescriptor()); var result = new OkResult();
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => new AuthenticationEntryFailureAttribute().OnResultExecutionAsync(
+            new ResultExecutingContext(action, [], result, new object()), async () =>
+            {
+                await http.Response.WriteAsync("prepared-secret-json");
+                return new ResultExecutedContext(action, [], result, new object());
+            }));
+        Assert.Equal(0, output.Length); Assert.False(http.Response.Headers.ContainsKey("Set-Cookie"));
         Assert.Equal(1, await db.Sys_RefreshTokens.IgnoreQueryFilters().CountAsync(x => x.UserId == user.Id && x.CompletionRejectedAtUtc != null));
         Assert.Equal("E-SEC-007", (await Assert.ThrowsAsync<InvalidOperationException>(() => refresh.RotateAsync(raw, null, null))).Message);
+        await refresh.RotateAsync(healthy, null, null);
+    }
+
+    [TenantManagementPostgresTheory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Formatter_failure_never_emits_buffered_secrets_and_unknown_rejection_leaves_pending_isolation(bool quarantineFails)
+    {
+        var user = await Seed(); var tenant = new TenantContext { CurrentTenantId = user.TenantId };
+        await using var db = server.Context(tenant, null, quarantineFails ? [new FailQuarantine()] : []);
+        var refresh = new RefreshTokenService(db, Options.Create(new SecurityOptions()), tenant);
+        var raw = await AuthenticationFixtureSessionV1.IssueAsync(db, refresh, user);
+        var healthy = await AuthenticationFixtureSessionV1.IssueAsync(db, refresh, user);
+        var (next, _) = await refresh.RotateForCompletionAsync(raw, null, null, RefreshTokenClientContext.Web);
+        var http = new DefaultHttpContext { RequestServices = new ServiceCollection().AddSingleton<IRefreshTokenService>(refresh).BuildServiceProvider() };
+        var output = new MemoryStream(); http.Response.Body = output; http.Response.Headers.SetCookie = "cp6_at=prepared-secret";
+        AuthenticationEntryFailureAttribute.TrackOutput(http, next);
+        var action = new ActionContext(http, new RouteData(), new ActionDescriptor());
+        var error = await Record.ExceptionAsync(() => new AuthenticationEntryFailureAttribute().OnResultExecutionAsync(
+            new ResultExecutingContext(action, [], new OkResult(), new object()), async () =>
+            { await http.Response.WriteAsync("partial-secret"); throw new IOException("fixture formatter failed"); }));
+        if (quarantineFails) Assert.Equal("AUTHENTICATION_COMPLETION_OUTCOME_UNKNOWN", Assert.IsType<CP6.WebApi.Localization.BizException>(error).Code);
+        else Assert.IsType<IOException>(error);
+        Assert.Equal(0, output.Length); Assert.False(http.Response.Headers.ContainsKey("Set-Cookie"));
+        var hash = AuthenticationInteractionStoreV1.Hash(next);
+        var row = await db.Sys_RefreshTokens.IgnoreQueryFilters().AsNoTracking().SingleAsync(x => x.TokenHash == hash);
+        Assert.Equal(quarantineFails, row.CompletionPending); Assert.Equal(!quarantineFails, row.CompletionRejectedAtUtc != null);
+        await Assert.ThrowsAsync<InvalidOperationException>(() => refresh.RotateAsync(next, null, null));
         await refresh.RotateAsync(healthy, null, null);
     }
 
@@ -63,7 +94,7 @@ public sealed partial class AuthenticationStatePostgreSqlTests
     {
         var user = await Seed(); var tenant = new TenantContext { CurrentTenantId = user.TenantId };
         await using var issuer = server.Context(tenant); var service = new RefreshTokenService(issuer, Options.Create(new SecurityOptions()), tenant);
-        var raw = await service.IssueAsync(user, null, null); var deadline = DateTime.Now.AddSeconds(2);
+        var raw = await AuthenticationFixtureSessionV1.IssueAsync(issuer, service, user); var deadline = DateTime.Now.AddSeconds(2);
         await issuer.Sys_RefreshTokens.Where(x => x.UserId == user.Id).ExecuteUpdateAsync(s => s.SetProperty(x => x.ExpiresAt, deadline));
         if (duringCompletion)
         {
@@ -94,7 +125,7 @@ public sealed partial class AuthenticationStatePostgreSqlTests
     {
         var user = await Seed(); var tenant = new TenantContext { CurrentTenantId = user.TenantId };
         await using var db = server.Context(tenant); await using var host = await AuthenticationApiProcess.Start(db.Database.GetConnectionString()!);
-        var token = host.Token(user);
+        var token = await host.LoginToken(user);
         async Task<HttpResponseMessage> Post(string path, object body)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, path) { Content = JsonContent.Create(body) };
@@ -122,7 +153,7 @@ public sealed partial class AuthenticationStatePostgreSqlTests
             if (!end) request.Content = JsonContent.Create(new { target.TenantId, UserId = target.Id, Reason = "owned validation" });
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token); return await host.Send(request);
         }
-        using var start = await Switch(host.Token(actor), false); Assert.Equal(HttpStatusCode.OK, start.StatusCode);
+        using var start = await Switch(await host.LoginToken(actor), false); Assert.Equal(HttpStatusCode.OK, start.StatusCode);
         var imp = Cookies(start)["cp6_at"];
         using (var profile = await host.Profile(imp)) Assert.Equal(HttpStatusCode.OK, profile.StatusCode);
         using var end = await Switch(imp, true); Assert.Equal(HttpStatusCode.OK, end.StatusCode);
@@ -141,7 +172,7 @@ public sealed partial class AuthenticationStatePostgreSqlTests
         current.TwoFactorEnrolledAt = current.PasswordChangedAt; await db.SaveChangesAsync();
         await using var read = server.Context(tenant); var stored = await read.Sys_Users.SingleAsync(x => x.Id == user.Id);
         Assert.NotEqual(current.PasswordChangedAt, stored.PasswordChangedAt); Assert.Equal(AuthSessionVersion.For(current), AuthSessionVersion.For(stored));
-        var raw = await new RefreshTokenService(db, Options.Create(new SecurityOptions()), tenant).IssueAsync(current, null, null);
+        var raw = await AuthenticationFixtureSessionV1.IssueAsync(db, new RefreshTokenService(db, Options.Create(new SecurityOptions()), tenant), current);
         await new RefreshTokenService(read, Options.Create(new SecurityOptions()), tenant).RotateAsync(raw, null, null);
     }
 
@@ -174,21 +205,23 @@ public sealed partial class AuthenticationStatePostgreSqlTests
     }
 
     [TenantManagementPostgresTheory]
-    [InlineData(false, false)]
-    [InlineData(true, false)]
-    [InlineData(false, true)]
-    [InlineData(true, true)]
-    public async Task Controller_completion_failure_quarantines_only_replacement_or_returns_unknown(bool native, bool quarantineFails)
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Controller_preparation_failure_rolls_back_rotation_before_any_output(bool native)
     {
         var user = await Seed(); var tenant = new TenantContext { CurrentTenantId = user.TenantId };
-        await using var db = server.Context(tenant, null, quarantineFails ? [new FailQuarantine()] : []);
+        await using var db = server.Context(tenant);
         var options = Options.Create(new SecurityOptions()); var refresh = new RefreshTokenService(db, options, tenant);
         var client = new RefreshTokenClientContext(native ? "Windows" : "Web", native ? "device" : null, "1.0.0");
-        var raw = await refresh.IssueAsync(user, null, null, client); var healthy = await refresh.IssueAsync(user, null, null, client);
+        var raw = await AuthenticationFixtureSessionV1.IssueAsync(db, refresh, user, client); var healthy = await AuthenticationFixtureSessionV1.IssueAsync(db, refresh, user, client);
         var sessions = new Mock<IAuthSessionService>();
         sessions.Setup(x => x.BuildAccessToken(It.IsAny<Sys_User>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>())).Returns("prepared-access");
-        sessions.Setup(x => x.BuildProfileAsync(It.IsAny<Sys_User>(), It.IsAny<bool>())).ThrowsAsync(new IOException("fixture profile failure"));
-        var http = new DefaultHttpContext(); object? result = null;
+        if (native) sessions.Setup(x => x.BuildProfileAsync(It.IsAny<Sys_User>(), It.IsAny<bool>())).ThrowsAsync(new IOException("fixture profile failure"));
+        else sessions.Setup(x => x.BuildProfileAsync(It.IsAny<Sys_User>(), It.IsAny<bool>())).ReturnsAsync(new ClientProfileDto { UserName = user.UserName });
+        var policies = new AuthenticationPolicyServiceV1(db, options);
+        var entries = new AuthenticationEntryServiceV1(db, tenant, new AuthenticationCompletionGateV1(db, policies),
+            new AuthenticationInteractionStoreV1(db), sessions.Object, refresh, Mock.Of<ITwoFactorService>(), Mock.Of<ILoginSecurityService>(), Mock.Of<IClientDeviceService>());
+        var http = new DefaultHttpContext { RequestServices = new ServiceCollection().AddSingleton(entries).BuildServiceProvider() }; object? result = null;
         async Task Invoke()
         {
             if (native)
@@ -215,18 +248,12 @@ public sealed partial class AuthenticationStatePostgreSqlTests
                 http.Request.Headers.Cookie = "cp6_rt=" + raw; result = await controller.Refresh();
             }
         }
-        if (quarantineFails)
-        {
-            await Invoke(); Assert.Equal(503, Assert.IsType<ObjectResult>(result).StatusCode);
-        }
-        else await Assert.ThrowsAsync<IOException>(Invoke);
+        await Assert.ThrowsAsync<IOException>(Invoke);
         Assert.False(http.Response.Headers.ContainsKey("Set-Cookie"));
         await using var read = server.Context(tenant);
         var rows = await read.Sys_RefreshTokens.IgnoreQueryFilters().Where(x => x.UserId == user.Id).ToListAsync();
-        var replacement = Assert.Single(rows, x => x.TokenHash == rows.Single(x => x.ReplacedByTokenHash != null).ReplacedByTokenHash);
-        Assert.Equal(quarantineFails, replacement.CompletionPending);
-        Assert.Equal(!quarantineFails, replacement.CompletionRejectedAtUtc != null);
-        Assert.Equal("E-SEC-007", (await Assert.ThrowsAsync<InvalidOperationException>(() => refresh.RotateAsync(raw, null, null, client))).Message);
+        Assert.Equal(2, rows.Count); Assert.All(rows, x => { Assert.Null(x.RevokedAt); Assert.Null(x.ReplacedByTokenHash); Assert.False(x.CompletionPending); });
+        await refresh.RotateAsync(raw, null, null, client);
         await refresh.RotateAsync(healthy, null, null, client);
     }
 
@@ -235,7 +262,7 @@ public sealed partial class AuthenticationStatePostgreSqlTests
     {
         var user = await Seed(); var tenant = new TenantContext { CurrentTenantId = user.TenantId };
         await using var issuer = server.Context(tenant); var source = new RefreshTokenService(issuer, Options.Create(new SecurityOptions()), tenant);
-        var raw = await source.IssueAsync(user, null, null);
+        var raw = await AuthenticationFixtureSessionV1.IssueAsync(issuer, source, user);
         var barrier = new BeforeReplacement(); await using var db = server.Context(tenant, null, barrier);
         var rotating = new RefreshTokenService(db, Options.Create(new SecurityOptions()), tenant).RotateAsync(raw, null, null);
         await using var writer = server.Context(tenant); Task<int>? write = null;
@@ -252,12 +279,60 @@ public sealed partial class AuthenticationStatePostgreSqlTests
             x => Assert.Equal(AuthSessionVersion.For(user), x.AuthenticationVersion));
     }
 
+    [TenantManagementPostgresTheory]
+    [InlineData("device")]
+    [InlineData("feature")]
+    [InlineData("close")]
+    public async Task Actual_device_policy_and_generation_writers_wait_for_the_rotation_owner(string mutation)
+    {
+        var user = await Seed(); var tenant = new TenantContext { CurrentTenantId = user.TenantId };
+        await using var issuer = server.Context(tenant);
+        issuer.ClientDevices.Add(new CP6.Entity.DomainModels.Wms.ClientDevice { TenantId = user.TenantId, DeviceId = user.Id.ToString(),
+            Platform = "Windows", Status = "Active", DeviceMode = "Personal", PublicKey = "fixture", ActivatedAt = DateTime.UtcNow });
+        issuer.WmsFeatureFlags.Add(new CP6.Entity.DomainModels.Wms.WmsFeatureFlag { TenantId = user.TenantId, WarehouseCd = "race", ProductionMoveEnabled = false });
+        await issuer.SaveChangesAsync();
+        var source = new RefreshTokenService(issuer, Options.Create(new SecurityOptions()), tenant);
+        var client = new RefreshTokenClientContext("Windows", user.Id.ToString(), "1.0.0");
+        var raw = await AuthenticationFixtureSessionV1.IssueAsync(issuer, source, user, client);
+        var healthy = await AuthenticationFixtureSessionV1.IssueAsync(issuer, source, user);
+        var barrier = new BeforeReplacement(); await using var rotatingDb = server.Context(tenant, null, barrier);
+        var rotating = new RefreshTokenService(rotatingDb, Options.Create(new SecurityOptions()), tenant).RotateAsync(raw, null, null, client);
+        await using var writer = server.Context(tenant); Task? write = null;
+        try
+        {
+            await barrier.Entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+            write = mutation switch
+            {
+                "device" => writer.ClientDevices.Where(x => x.DeviceId == client.DeviceId).ExecuteUpdateAsync(s => s.SetProperty(x => x.Status, "Disabled")),
+                "feature" => writer.WmsFeatureFlags.Where(x => x.TenantId == user.TenantId).ExecuteUpdateAsync(s => s.SetProperty(x => x.ProductionMoveEnabled, true)),
+                _ => new RefreshTokenService(writer, Options.Create(new SecurityOptions()), tenant).RejectCompletionAsync(raw)
+            };
+            var until = DateTimeOffset.UtcNow.AddSeconds(8); var blocked = false;
+            while (!write.IsCompleted && DateTimeOffset.UtcNow < until)
+            {
+                var connection = (NpgsqlConnection)writer.Database.GetDbConnection();
+                if (connection.State == System.Data.ConnectionState.Open)
+                {
+                    var pid = connection.ProcessID;
+                    blocked = await issuer.Database.SqlQuery<bool>($"SELECT EXISTS(SELECT 1 FROM pg_stat_activity WHERE pid={pid} AND wait_event_type='Lock') AS \"Value\"").SingleAsync();
+                    if (blocked) break;
+                }
+                await Task.Delay(20);
+            }
+            Assert.True(blocked, "The actual writer must wait for the authentication Owner root.");
+        }
+        finally { barrier.Release.TrySetResult(); }
+        var (next, _) = await rotating; await write!;
+        await Assert.ThrowsAsync<InvalidOperationException>(() => source.RotateAsync(next, null, null, client));
+        await source.RotateAsync(healthy, null, null);
+    }
+
     [CurrentPermissionPostgresFact]
     public async Task Commit_rejection_rolls_back_source_and_does_not_return_replacement()
     {
         var user = await Seed(); var tenant = new TenantContext { CurrentTenantId = user.TenantId };
         await using var db = server.Context(tenant); var service = new RefreshTokenService(db, Options.Create(new SecurityOptions()), tenant);
-        var raw = await service.IssueAsync(user, null, null); var suffix = user.Id.ToString("N");
+        var raw = await AuthenticationFixtureSessionV1.IssueAsync(db, service, user); var suffix = user.Id.ToString("N");
         await db.Database.ExecuteSqlRawAsync($"""
             CREATE FUNCTION public.auth_fail_{suffix}() RETURNS trigger LANGUAGE plpgsql AS $$
             BEGIN RAISE EXCEPTION 'fixture deferred refresh rejection'; END $$;
@@ -277,7 +352,7 @@ public sealed partial class AuthenticationStatePostgreSqlTests
     {
         var user = await Seed(); var tenant = new TenantContext { CurrentTenantId = user.TenantId };
         await using var db = server.Context(tenant); var service = new RefreshTokenService(db, Options.Create(new SecurityOptions()), tenant);
-        var raw = await service.IssueAsync(user, null, null); var (next, _) = await service.RotateForCompletionAsync(raw, null, null, RefreshTokenClientContext.Web);
+        var raw = await AuthenticationFixtureSessionV1.IssueAsync(db, service, user); var (next, _) = await service.RotateForCompletionAsync(raw, null, null, RefreshTokenClientContext.Web);
         await db.Sys_Users.Where(x => x.Id == user.Id).ExecuteUpdateAsync(s => s.SetProperty(x => x.AuthenticationEpoch, Guid.NewGuid()));
         Assert.Equal("E-SEC-007", (await Assert.ThrowsAsync<InvalidOperationException>(() => service.CompleteRotationAsync(next))).Message);
         await service.RejectCompletionAsync(next);
@@ -288,7 +363,7 @@ public sealed partial class AuthenticationStatePostgreSqlTests
     {
         public override ValueTask<InterceptionResult<int>> NonQueryExecutingAsync(DbCommand command, CommandEventData eventData,
             InterceptionResult<int> result, CancellationToken cancellationToken = default)
-            => command.CommandText.StartsWith("UPDATE") && command.CommandText.Contains("\"CompletionRejectedAtUtc\" =")
+            => command.CommandText.StartsWith("WITH RECURSIVE affected") && command.CommandText.Contains("CompletionRejectedAtUtc")
                 ? throw new IOException("fixture quarantine unavailable") : ValueTask.FromResult(result);
     }
     private sealed class BeforeReplacement : SaveChangesInterceptor

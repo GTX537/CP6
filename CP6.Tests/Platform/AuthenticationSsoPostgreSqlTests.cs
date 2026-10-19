@@ -96,6 +96,17 @@ public sealed class AuthenticationSsoPostgreSqlTests(TenantManagementPostgresFix
         Assert.Equal(AuthenticationEntryServiceV1.Binding(client), evidence.Primary.ClientBinding);
         Assert.NotNull(evidence.Primary.SsoConfigurationVersion);
         Assert.Equal(enabledFactor || mode == 2, evidence.Factor != null);
+        // The controller seam stops before MVC; confirm its pending output through the actual Owner adapter.
+        await h.Refresh.CompleteOutputAsync(exchanged.Session.RefreshToken);
+        var (rotated, _) = await h.Refresh.RotateAsync(exchanged.Session.RefreshToken, null, null,
+            new RefreshTokenClientContext(client.ClientKind, client.DeviceId, client.AppVersion));
+        var carried = (await new AuthenticationInteractionStoreV1(h.Db).ReadSessionByRefreshAsync(AuthenticationInteractionStoreV1.Hash(rotated)))!.Parse();
+        Assert.Equal(evidence, carried); // Expired placeholder password never replaces the original SSO/factor proof.
+        var recovery = new NativeCompletionRecoveryRequest { Kind = "native-grant", Credential = grant, CodeVerifier = verifier, Client = client };
+        Assert.Equal("COMPLETED", (await h.Controller.CompletionStatus(recovery)).Value!.State);
+        Assert.Equal("CLOSED", (await h.Controller.CloseCompletion(recovery)).Value!.State);
+        await Assert.ThrowsAsync<InvalidOperationException>(() => h.Refresh.RotateAsync(rotated, null, null,
+            new RefreshTokenClientContext(client.ClientKind, client.DeviceId, client.AppVersion)));
         await Assert.ThrowsAsync<CP6.WebApi.Localization.BizException>(() => h.Controller.SsoExchange(request));
         Assert.Equal(1, h.ExchangeCount);
     }
@@ -138,6 +149,7 @@ public sealed class AuthenticationSsoPostgreSqlTests(TenantManagementPostgresFix
         public required Sys_User User;
         public required Sys_Tenant Organization;
         public required SsoService Sso;
+        public required RefreshTokenService Refresh;
         public required ClientAuthController Controller;
         public required CP6.WebApi.Controllers.Sys.AuthController Web;
         public string Nonce = "";
@@ -193,7 +205,7 @@ public sealed class AuthenticationSsoPostgreSqlTests(TenantManagementPostgresFix
                 new PasswordPolicyService(db, options, hasher), login, audit, refresh, new CacheTokenBlacklistService(cache), new AuthCookieWriter(options),
                 options, configs.Object, sso, twoFactor, new PendingTokenStore(cache, options), sessions.Object)
                 { ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { RequestServices = services } } };
-            var h = new Harness { Db = db, User = user, Organization = organization, Sso = sso, Controller = controller, Web = web, provider = services, cache = cache };
+            var h = new Harness { Db = db, User = user, Organization = organization, Sso = sso, Refresh = refresh, Controller = controller, Web = web, provider = services, cache = cache };
             tokens.Setup(x => x.ExchangeCodeForIdTokenAsync(It.IsAny<OidcEndpoints>(), It.IsAny<Sys_TenantSsoConfig>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(() =>
                 {

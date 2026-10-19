@@ -79,6 +79,12 @@ public sealed class AuthenticationEntryPostgreSqlTests(TenantManagementPostgresF
             Assert.Equal(1, await db.Sys_RefreshTokens.CountAsync(x => x.UserId == user.Id));
             var row = await db.Sys_RefreshTokens.AsNoTracking().SingleAsync(x => x.UserId == user.Id);
             Assert.Equal(new DateTimeOffset(row.ExpiresAt).ToUniversalTime(), evidence.OriginalExpiresAtUtc);
+            using var refreshed = await host.Send(Post("api/auth/refresh", new { }, cookies));
+            Assert.Equal(HttpStatusCode.OK, refreshed.StatusCode);
+            var renewed = Cookies(refreshed);
+            var carried = (await new AuthenticationInteractionStoreV1(db).ReadSessionByRefreshAsync(AuthenticationInteractionStoreV1.Hash(renewed["cp6_rt"])))!.Parse();
+            Assert.Equal(evidence, carried);
+            using var profile = await host.Profile(renewed["cp6_at"]); Assert.Equal(HttpStatusCode.OK, profile.StatusCode);
             using var replay = await host.Send(Post("api/auth/2fa/enroll", new { code }, pending)); Assert.False(replay.IsSuccessStatusCode);
         }
         finally { foreach (var response in attempts) response.Dispose(); }

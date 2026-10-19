@@ -149,7 +149,7 @@ public sealed partial class ClientAuthController : ControllerBase
 
         _tenant.CurrentTenantId = user.TenantId;
         if (originalProof != null) return await PgNativeResultAsync(() => Entries.BeginAsync(originalProof,
-            AuthenticationInteractionStoreV1.NewChallenge(), request.Client, ClientIp, ClientUa, null, HttpContext.RequestAborted));
+            AuthenticationRecoveryBindingV1.Challenge(Request), request.Client, ClientIp, ClientUa, null, HttpContext.RequestAborted, deferOutput: true));
         var mode = _twoFactor.ResolveTenantMode(user.TenantId);
         if (_twoFactor.IsChallengeRequired(user, mode))
         {
@@ -186,7 +186,7 @@ public sealed partial class ClientAuthController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<NativeAuthResult>> TwoFactorEnroll(NativeTwoFactorRequest request)
     {
-        if (_db.Database.IsNpgsql()) return await PgNativeResultAsync(() => Entries.CompleteFactorAsync(request.ChallengeToken, request.Client, true, "totp", request.Code, ClientIp, ClientUa, null, HttpContext.RequestAborted));
+        if (_db.Database.IsNpgsql()) return await PgNativeResultAsync(() => Entries.CompleteFactorAsync(request.ChallengeToken, request.Client, true, "totp", request.Code, ClientIp, ClientUa, null, HttpContext.RequestAborted, deferOutput: true));
         var (user, challenge, _) = await ReadChallengeAsync(request, "2fa_enroll");
         if (!await _twoFactor.ConfirmEnrollmentAsync(user, request.Code))
         {
@@ -208,7 +208,7 @@ public sealed partial class ClientAuthController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<NativeAuthResult>> TwoFactorVerify(NativeTwoFactorRequest request)
     {
-        if (_db.Database.IsNpgsql()) return await PgNativeResultAsync(() => Entries.CompleteFactorAsync(request.ChallengeToken, request.Client, false, request.Method, request.Code, ClientIp, ClientUa, null, HttpContext.RequestAborted));
+        if (_db.Database.IsNpgsql()) return await PgNativeResultAsync(() => Entries.CompleteFactorAsync(request.ChallengeToken, request.Client, false, request.Method, request.Code, ClientIp, ClientUa, null, HttpContext.RequestAborted, deferOutput: true));
         var (user, challenge, _) = await ReadChallengeAsync(request, "2fa_verify");
         try { _loginSecurity.EnsureNotLocked(user); }
         catch (InvalidOperationException) { throw new BizException("E-SEC-002"); }
@@ -329,8 +329,8 @@ public sealed partial class ClientAuthController : ControllerBase
             {
                 if (grant.Proof == null || grant.Proof.UserId != grant.UserId || grant.Proof.TenantId != grant.TenantId)
                     throw new InvalidOperationException("AUTH_PRIMARY_PROOF_REQUIRED");
-                return await PgNativeResultAsync(() => Entries.BeginAsync(grant.Proof, AuthenticationInteractionStoreV1.NewChallenge(),
-                    request.Client, ClientIp, ClientUa, null, HttpContext.RequestAborted));
+                return await PgNativeResultAsync(() => Entries.BeginAsync(grant.Proof, AuthenticationRecoveryBindingV1.NativeGrant(request.GrantCode, request.CodeVerifier),
+                    request.Client, ClientIp, ClientUa, null, HttpContext.RequestAborted, deferOutput: true));
             }
             _tenant.CurrentTenantId = grant.TenantId;
             var user = await _db.Sys_Users.IgnoreQueryFilters()
@@ -351,6 +351,7 @@ public sealed partial class ClientAuthController : ControllerBase
     public async Task<ActionResult<TokenSessionDto>> Refresh(NativeRefreshRequest request)
     {
         ValidateClient(request.Client);
+        if (_db.Database.IsNpgsql()) return await PgNativeRefreshAsync(request);
         try
         {
             var (raw, user) = await _refreshTokens.RotateForCompletionAsync(
@@ -451,6 +452,7 @@ public sealed partial class ClientAuthController : ControllerBase
         }
 
         var badge = request.BadgeNo.Trim();
+        var originalPolicy = _db.Database.IsNpgsql() ? await Policies.ReadAsync(tenant.Id, ct) : null;
         var user = await _db.Sys_Users.IgnoreQueryFilters()
             .FirstOrDefaultAsync(x => x.TenantId == tenant.Id
                                       && x.BadgeNo == badge
@@ -460,6 +462,12 @@ public sealed partial class ClientAuthController : ControllerBase
                     && _hasher.Verify(request.Pin, user.QuickPinHash);
         if (!valid)
         {
+            await using var failureTransaction = _db.Database.IsNpgsql() ? await _db.Database.BeginTransactionAsync(ct) : null;
+            if (failureTransaction != null)
+            {
+                await AuthenticationCompletionGateV1.AcquireAsync(_db, ct);
+                await _db.Entry(device).ReloadAsync(ct);
+            }
             device.QuickSwitchFailureCount++;
             if (device.QuickSwitchFailureCount >= 5)
             {
@@ -471,9 +479,18 @@ public sealed partial class ClientAuthController : ControllerBase
                 SecurityEventType.LoginFailed, user?.Id, user?.UserName,
                 tenant.TenantCode, ClientIp, ClientUa,
                 ClientReason(request.Client, "quick-switch-failed"));
+            if (failureTransaction != null) await failureTransaction.CommitAsync(ct);
             throw new BizException(device.QuickSwitchFailureCount >= 5
                 ? "WM-DEVICE-FULL-AUTH-REQUIRED"
                 : "WM-DEVICE-PIN-INVALID");
+        }
+
+        if (originalPolicy != null)
+        {
+            var proof = originalPolicy.VerifiedPrimary(user!, AuthenticationPrimaryMethod.QuickSwitchPin,
+                request.Client.ClientKind, AuthenticationEntryServiceV1.Binding(request.Client), Guid.NewGuid().ToString("N"), DateTimeOffset.UtcNow);
+            return await PgNativeResultAsync(() => Entries.BeginAsync(proof, AuthenticationRecoveryBindingV1.Challenge(Request),
+                request.Client, ClientIp, ClientUa, null, ct, deferOutput: true));
         }
 
         device.QuickSwitchFailureCount = 0;

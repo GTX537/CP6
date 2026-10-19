@@ -23,6 +23,14 @@ public class NativeChallengeRequest
     public ClientContextDto Client { get; set; } = new();
 }
 
+public sealed class NativeCompletionRecoveryRequest
+{
+    public string Kind { get; set; } = string.Empty;
+    public string Credential { get; set; } = string.Empty;
+    public string? CodeVerifier { get; set; }
+    public ClientContextDto Client { get; set; } = new();
+}
+
 public sealed class NativeTwoFactorRequest : NativeChallengeRequest
 {
     public string Code { get; set; } = string.Empty;

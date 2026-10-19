@@ -76,7 +76,7 @@ public sealed class AuthenticationAuthorityV1(AuthenticationProofV1 proof, Authe
     public AuthenticationPolicyV1 Policy { get; } = policy;
     public Sys_User User { get; } = user;
 
-    public AuthenticationDecisionV1 Decide(AuthenticationFactorEvidenceV1? factor = null, bool refresh = false)
+    public AuthenticationDecisionV1 Decide(AuthenticationFactorEvidenceV1? factor = null, bool refresh = false, bool persistedSession = false)
     {
         var now = DateTimeOffset.UtcNow;
         if (Proof.PrimaryMethod == AuthenticationPrimaryMethod.QuickSwitchPin
@@ -93,7 +93,7 @@ public sealed class AuthenticationAuthorityV1(AuthenticationProofV1 proof, Authe
                 || factor.UserId != User.Id || factor.ClientBinding != Proof.ClientBinding
                 || factor.AuthenticationVersion != AuthSessionVersion.For(User) || string.IsNullOrWhiteSpace(factor.EvidenceRef)
                 || factor.VerifiedAtUtc < Proof.PrimaryVerifiedAtUtc || factor.VerifiedAtUtc > now
-                || (!refresh && factor.VerifiedAtUtc.AddMinutes(Policy.InteractionMinutes) <= now))
+                || (!refresh && !persistedSession && factor.VerifiedAtUtc.AddMinutes(Policy.InteractionMinutes) <= now))
                 throw new InvalidOperationException("REAUTH_REQUIRED");
         }
         var passwordExpired = Proof.PrimaryMethod != AuthenticationPrimaryMethod.Sso && Policy.PasswordExpiryDays > 0

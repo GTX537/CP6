@@ -21,6 +21,7 @@ public partial class ImpersonationService
         {
             var actor = await PlatformAdminAuthorization.RequireAsync(_db, current, ct, lockActor: true);
             if (actor.MustChangePassword || Single(identity, "cp6_auth_version") != actor.AuthenticationVersion) DenySwitch();
+            var originalSession = await RequireOriginalSessionAsync(identity, await LockedUserAsync(actor.Id, ct), ct);
             await LockedTenantAsync(actor.TenantId, ct);
             var targetTenant = await LockedTenantAsync(tenantId, ct);
             var targetId = userId ?? await _db.Sys_Users.IgnoreQueryFilters().AsNoTracking()
@@ -37,6 +38,7 @@ public partial class ImpersonationService
                 impersonatorAuthenticationVersion: actor.AuthenticationVersion, impersonatorSessionReference: SessionReference(identity, "cp6_session"));
             var menus = await CurrentMenusAsync(target, ct);
             var cookies = PrepareCookies(token);
+            await new AuthenticationInteractionStoreV1(_db).AliasAccessAsync(jti, originalSession.RefreshHash, ct);
             StageSwitchAudit(SecurityEventType.ImpersonationStarted, actor.Id, actor.UserName, actor.TenantId, target,
                 targetTenant.TenantCode, reason, jti, new DateTimeOffset(new JwtSecurityTokenHandler().ReadJwtToken(token).ValidTo));
             return new PreparedSwitch<ImpersonationStartResult>(
@@ -57,6 +59,7 @@ public partial class ImpersonationService
             if (actor is null || actor.TenantId != actorTenant || !actor.Enable || !actor.IsPlatformAdmin || actor.MustChangePassword
                 || Single(identity, "impersonator_auth_version") != AuthSessionVersion.For(actor)) DenySwitch();
             await LockedTenantAsync(actorTenant, ct);
+            var originalSession = await RequireOriginalSessionAsync(identity, actor, ct);
             var target = await LockedUserAsync(effectiveId, ct);
             if (target is null || target.TenantId != effectiveTenant || !target.Enable
                 || Single(identity, "cp6_auth_version") != AuthSessionVersion.For(target)) DenySwitch();
@@ -66,6 +69,7 @@ public partial class ImpersonationService
                 _sec.Token.AccessTokenMinutes, actorTenant, jti, mustChangePassword: false, isPlatformAdmin: true,
                 authenticationVersion: Single(identity, "impersonator_auth_version"), sessionReference: SessionReference(identity, "impersonator_session"));
             var menus = await CurrentMenusAsync(actor, ct); var cookies = PrepareCookies(token);
+            await new AuthenticationInteractionStoreV1(_db).AliasAccessAsync(jti, originalSession.RefreshHash, ct);
             StageSwitchAudit(SecurityEventType.ImpersonationEnded, actor.Id, actor.UserName, actorTenant, target!,
                 targetTenant.TenantCode, null, Single(identity, "jti"), DateTimeOffset.FromUnixTimeSeconds(long.Parse(Single(identity, "exp"))));
             return new PreparedSwitch<ImpersonationEndResult>(new(menus), cookies, actorTenant, jti, _sec.Token.AccessTokenMinutes);
@@ -125,6 +129,17 @@ public partial class ImpersonationService
         if (cookies.Length != 1 || !cookies[0].StartsWith(AuthCookieWriter.AccessCookie + "=", StringComparison.Ordinal))
             throw new ImpersonationSwitchUnavailableException("IMPERSONATION_COOKIE_PREPARATION_FAILED");
         return cookies;
+    }
+
+    private async Task<AuthenticationInteractionStoreV1.AuthenticationSessionRow> RequireOriginalSessionAsync(
+        ClaimsIdentity identity, Sys_User? actor, CancellationToken ct)
+    {
+        if (actor == null) DenySwitch();
+        var receipt = await new AuthenticationInteractionStoreV1(_db).ReadSessionAsync(Single(identity, "jti"), ct);
+        await new AuthenticationSessionAuthorityV1(_db, new AuthenticationPolicyServiceV1(_db,
+            Microsoft.Extensions.Options.Options.Create(_sec))).ValidateAsync(receipt, actor!, false, ct);
+        if (receipt!.Parse().Restricted) DenySwitch();
+        return receipt;
     }
 
     private async Task<Sys_Tenant> LockedTenantAsync(Guid id, CancellationToken ct)

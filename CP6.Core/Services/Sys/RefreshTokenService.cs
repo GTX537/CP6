@@ -22,6 +22,7 @@ public partial class RefreshTokenService : IRefreshTokenService
     private readonly TokenOptions _t;
     private readonly ITenantContext _tenant;
     private readonly IConfiguration? _configuration;
+    private readonly AuthenticationPolicyServiceV1 _authenticationPolicies;
 
     public RefreshTokenService(CP6Context db, IOptions<SecurityOptions> opt, ITenantContext tenant, IConfiguration? configuration = null)
     {
@@ -29,6 +30,7 @@ public partial class RefreshTokenService : IRefreshTokenService
         _t = opt.Value.Token;
         _tenant = tenant;
         _configuration = configuration;
+        _authenticationPolicies = new(db, opt);
     }
 
     private static string NewRaw() => Base64Url(RandomNumberGenerator.GetBytes(32));
@@ -198,6 +200,7 @@ public partial class RefreshTokenService : IRefreshTokenService
 
     public async Task RevokeAsync(string rawToken)
     {
+        if (_db.Database.IsNpgsql()) { await RevokeOriginPostgreSqlAsync(rawToken); return; }
         var hash = HashOf(rawToken);
         var row = await _db.Sys_RefreshTokens.IgnoreQueryFilters().FirstOrDefaultAsync(r => r.TokenHash == hash);
         if (row is { RevokedAt: null })

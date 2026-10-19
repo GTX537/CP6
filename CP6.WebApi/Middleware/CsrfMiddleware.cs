@@ -32,7 +32,13 @@ public class CsrfMiddleware
             // 浏览器 Cookie 请求即使命中同一路由，因无 Authorization: Bearer 仍须双提交校验。
             var explicitBearer = ctx.Request.Headers.Authorization.ToString()
                 .StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase);
+            // Recovery with a client-held attempt secret consumes that header exclusively, never ambient cookies.
+            var explicitCompletion = (path.Equals("/api/auth/completion/status", StringComparison.OrdinalIgnoreCase)
+                || path.Equals("/api/auth/completion/close", StringComparison.OrdinalIgnoreCase))
+                && ctx.Request.Headers.TryGetValue(CP6.WebApi.Services.AuthenticationRecoveryBindingV1.Header, out var attempt)
+                && attempt.Count == 1 && attempt[0] is { Length: 64 } key && key.All(Uri.IsHexDigit);
             if (!explicitBearer
+                && !explicitCompletion
                 && !IsExempt(path)
                 && UnsafeMethods.Contains(ctx.Request.Method.ToUpperInvariant()))
             {
@@ -88,7 +94,9 @@ public class CsrfMiddleware
             "/api/client-auth/2fa/email-otp",
             "/api/client-auth/sso/start",
             "/api/client-auth/sso/exchange",
-            "/api/client-auth/refresh"
+            "/api/client-auth/refresh",
+            "/api/client-auth/completion/status",
+            "/api/client-auth/completion/close"
         }.Any(x => path.Equals(x, StringComparison.OrdinalIgnoreCase));
 
     /// <summary>形状精确匹配 /api/oa/flow-triggers/{guid}/fire：前缀+字面 /fire 尾+中段须为单一 GUID 段

@@ -31,7 +31,7 @@ public sealed class ImpersonationPostgreSqlTests(TenantManagementPostgresFixture
     {
         var (actor, target) = await Seed(); var barrier = new BeforeStart();
         await using var host = await TenantManagementHttpHost.Start(server, interceptor: barrier, includeImpersonation: true);
-        using var request = StartRequest(host.Token(actor.Id, actor.TenantId, authenticationVersion: AuthSessionVersion.For(actor)), target);
+        using var request = StartRequest(host.Token(actor.Id, actor.TenantId, authenticationVersion: AuthSessionVersion.For(actor), jti: actor.Id.ToString()), target);
         var pending = host.Client.SendAsync(request);
         try
         {
@@ -52,7 +52,7 @@ public sealed class ImpersonationPostgreSqlTests(TenantManagementPostgresFixture
     {
         var (actor, target) = await Seed();
         await using var host = await TenantManagementHttpHost.Start(server, includeImpersonation: true);
-        var token = host.Token(actor.Id, actor.TenantId, authenticationVersion: AuthSessionVersion.For(actor));
+        var token = host.Token(actor.Id, actor.TenantId, authenticationVersion: AuthSessionVersion.For(actor), jti: actor.Id.ToString());
         if (end)
         {
             using var start = StartRequest(token, target); using var success = await host.Client.SendAsync(start);
@@ -77,7 +77,7 @@ public sealed class ImpersonationPostgreSqlTests(TenantManagementPostgresFixture
     {
         var (actor, target) = await Seed();
         await using var host = await TenantManagementHttpHost.Start(server, includeImpersonation: true);
-        var token = host.Token(actor.Id, actor.TenantId, authenticationVersion: AuthSessionVersion.For(actor));
+        var token = host.Token(actor.Id, actor.TenantId, authenticationVersion: AuthSessionVersion.For(actor), jti: actor.Id.ToString());
         if (end)
         {
             using var start = StartRequest(token, target); using var success = await host.Client.SendAsync(start);
@@ -109,7 +109,7 @@ public sealed class ImpersonationPostgreSqlTests(TenantManagementPostgresFixture
             await seed.SaveChangesAsync();
         }
         await using var host = await TenantManagementHttpHost.Start(server, includeImpersonation: true);
-        var source = host.Token(actor.Id, actor.TenantId, authenticationVersion: AuthSessionVersion.For(actor));
+        var source = host.Token(actor.Id, actor.TenantId, authenticationVersion: AuthSessionVersion.For(actor), jti: actor.Id.ToString());
         var reason = new string('理', 512);
         using var start = StartRequest(source, target, reason); using var response = await host.Client.SendAsync(start);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -159,7 +159,7 @@ public sealed class ImpersonationPostgreSqlTests(TenantManagementPostgresFixture
     {
         var (actor, target) = await Seed(); var barrier = new BeforeAudit();
         await using var host = await TenantManagementHttpHost.Start(server, interceptor: barrier, includeImpersonation: true);
-        using var request = StartRequest(host.Token(actor.Id, actor.TenantId, authenticationVersion: AuthSessionVersion.For(actor)), target);
+        using var request = StartRequest(host.Token(actor.Id, actor.TenantId, authenticationVersion: AuthSessionVersion.For(actor), jti: actor.Id.ToString()), target);
         var switching = host.Client.SendAsync(request); await using var writer = Context(actor.TenantId);
         Task<int>? mutation = null;
         try
@@ -305,7 +305,7 @@ public sealed class ImpersonationPostgreSqlTests(TenantManagementPostgresFixture
     private static ClaimsPrincipal Principal(Sys_User actor)
         => new(new ClaimsIdentity([new Claim("sub", actor.Id.ToString()), new Claim("tenant_id", actor.TenantId.ToString()),
             new Claim("is_platform_admin", "true"), new Claim("cp6_auth_version", AuthSessionVersion.For(actor)),
-            new Claim("jti", Guid.NewGuid().ToString()), new Claim("exp", DateTimeOffset.UtcNow.AddMinutes(10).ToUnixTimeSeconds().ToString())], "fixture"));
+            new Claim("jti", actor.Id.ToString()), new Claim("exp", DateTimeOffset.UtcNow.AddMinutes(10).ToUnixTimeSeconds().ToString())], "fixture"));
     private sealed class ControlledBlacklist : ITokenBlacklistService
     {
         internal HashSet<string> Retired { get; } = [];
@@ -368,7 +368,7 @@ public sealed class ImpersonationPostgreSqlTests(TenantManagementPostgresFixture
             if (change == "expired") await update.Sys_Tenants.Where(x => x.Id == target.TenantId).ExecuteUpdateAsync(x => x.SetProperty(t => t.ExpireDate, DateTime.Now.AddDays(-1)));
         }
         await using var host = await TenantManagementHttpHost.Start(server, includeImpersonation: true);
-        using var request = StartRequest(host.Token(actor.Id, actor.TenantId, authenticationVersion: AuthSessionVersion.For(actor)), target);
+        using var request = StartRequest(host.Token(actor.Id, actor.TenantId, authenticationVersion: AuthSessionVersion.For(actor), jti: actor.Id.ToString()), target);
         using var response = await host.Client.SendAsync(request);
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode); Assert.Contains(code, await response.Content.ReadAsStringAsync());
         Assert.False(response.Headers.Contains("Set-Cookie")); await AssertNoAudit(actor.Id, SecurityEventType.ImpersonationStarted);
@@ -382,7 +382,7 @@ public sealed class ImpersonationPostgreSqlTests(TenantManagementPostgresFixture
     {
         var (actor, target) = await Seed();
         await using var host = await TenantManagementHttpHost.Start(server, includeImpersonation: true);
-        using var request = StartRequest(host.Token(actor.Id, actor.TenantId, authenticationVersion: AuthSessionVersion.For(actor)), target);
+        using var request = StartRequest(host.Token(actor.Id, actor.TenantId, authenticationVersion: AuthSessionVersion.For(actor), jti: actor.Id.ToString()), target);
         using var response = await host.Client.SendAsync(request); Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         await using (var update = Context(actor.TenantId))
         {
@@ -412,7 +412,7 @@ public sealed class ImpersonationPostgreSqlTests(TenantManagementPostgresFixture
     {
         var (actor, target) = await Seed();
         await using var host = await TenantManagementHttpHost.Start(server, includeImpersonation: true);
-        using var request = StartRequest(host.Token(actor.Id, actor.TenantId, authenticationVersion: AuthSessionVersion.For(actor)), target);
+        using var request = StartRequest(host.Token(actor.Id, actor.TenantId, authenticationVersion: AuthSessionVersion.For(actor), jti: actor.Id.ToString()), target);
         request.Content = JsonContent.Create(new { TenantId = target.TenantId, UserId = (Guid?)null });
         using var response = await host.Client.SendAsync(request); Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Equal(target.Id, (await response.Content.ReadFromJsonAsync<ImpersonationStartResult>())!.UserId);
@@ -423,7 +423,7 @@ public sealed class ImpersonationPostgreSqlTests(TenantManagementPostgresFixture
     {
         var (actor, target) = await Seed(); var barrier = new BeforeStart();
         await using var host = await TenantManagementHttpHost.Start(server, interceptor: barrier, includeImpersonation: true);
-        var token = host.Token(actor.Id, actor.TenantId, authenticationVersion: AuthSessionVersion.For(actor));
+        var token = host.Token(actor.Id, actor.TenantId, authenticationVersion: AuthSessionVersion.For(actor), jti: actor.Id.ToString());
         using var first = StartRequest(token, target); var pending = host.Client.SendAsync(first);
         try
         {
@@ -441,10 +441,13 @@ public sealed class ImpersonationPostgreSqlTests(TenantManagementPostgresFixture
         var actualTenant = Guid.NewGuid(); var effectiveTenant = Guid.NewGuid(); await using var db = Context(actualTenant);
         db.Sys_Tenants.AddRange(new Sys_Tenant { Id = actualTenant, TenantCode = "a_" + actualTenant.ToString("N"), TenantName = "actor" },
             new Sys_Tenant { Id = effectiveTenant, TenantCode = "e_" + effectiveTenant.ToString("N"), TenantName = "effective" });
-        var actor = new Sys_User { Id = Guid.NewGuid(), TenantId = actualTenant, UserName = "actor", Password = "fixture", IsPlatformAdmin = true, Enable = true };
+        var actor = new Sys_User { Id = Guid.NewGuid(), TenantId = actualTenant, UserName = "actor", Password = new BCryptPasswordHasher(4).Hash(AuthenticationFixtureSessionV1.Password), IsPlatformAdmin = true, Enable = true };
         var target = new Sys_User { Id = Guid.NewGuid(), TenantId = effectiveTenant, UserName = "effective", Password = "fixture", RoleId = 1, Enable = true, MustChangePassword = true };
         db.Sys_Users.AddRange(actor, target, new Sys_User { Id = Guid.NewGuid(), UserName = "recovery", Password = "fixture", IsPlatformAdmin = true, Enable = true });
-        await db.SaveChangesAsync(); return (actor, target);
+        await db.SaveChangesAsync();
+        await AuthenticationFixtureSessionV1.IssueAsync(db, new RefreshTokenService(db, Options.Create(new SecurityOptions()),
+            new TenantContext { CurrentTenantId = actualTenant }), actor, jti: actor.Id.ToString());
+        return (actor, target);
     }
     private static HttpRequestMessage StartRequest(string token, Sys_User target, string reason = "support investigation")
     {
