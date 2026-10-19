@@ -1,5 +1,9 @@
 # 第二十一轮：完整目录基线取得与核验
 
+> W21-04已发现并修正[BUG-300](https://github.com/GTX537/CP6/issues/300)：关联服务器计数恢复同一SQL观察和取消。最终9项原生PG/HTTP有效通过（4专项复查+5复用），作者集中审查无阻断。[单份DELIVERY](../../evidence/WP02-05/baseline-integration/DELIVERY.md)。待正常集成、Issue与全轮收尾，目标仍active。
+
+> W21-03经正常PR合入 `406b9cfbf16dcc82252d5d3505e7a18a47900769`，Handoff `43cffcd3dbbe70c7b164c8c47cad4520d1da7188`回读；W21-04真实START，新行为NOT_RUN。
+
 > W21-03候选通过：完整首尾目录/准确原快照、有界HTTP/严格JSON/取消等35项去重通过，作者集中审查无阻断。[单份DELIVERY](../../evidence/WP02-05/baseline-collector/DELIVERY.md)。未启动PG，测试HTTP已停止；待正常集成。
 
 > W21-02经正常PR合入 `18d36ced499f4846ea6e50bda5e200182b5cbb06`，Handoff `95516e0df1602040292ed94f75483ed63cf359ce`回读；W21-03真实START，新行为NOT_RUN。

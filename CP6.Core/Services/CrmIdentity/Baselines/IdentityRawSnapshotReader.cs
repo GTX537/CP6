@@ -32,7 +32,9 @@ internal sealed class IdentityRawSnapshotReader(CP6Context db, CrmIdentityRuntim
             select new
             {
                 Boundary = (long?)generation.Generation ?? 0,
-                Count = all.LongCount(),
+                // Correlate with the outer state. Counting a captured IQueryable here is
+                // evaluated synchronously during EF parameter extraction, before this SQL.
+                Count = db.CrmIdentitySnapshots.LongCount(x => x.TenantId == state.TenantId),
                 Item = snapshot == null ? null : new IdentityVersion(snapshot.AggregateId, snapshot.EventType,
                     snapshot.Version, snapshot.PayloadSha256, snapshot.IsDeleted)
             }).ToArrayAsync(ct).ConfigureAwait(false);

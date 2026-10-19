@@ -158982,6 +158982,11 @@
       "date": "2026-10-19",
       "change": "W21-03 bounded HTTP collector implemented and reviewed: 35 unique cases pass, including owned real HTTP redirect rejection. No PG needed; actual PG integration and closeout remain.",
       "evidence": "docs/development/evidence/WP02-05/baseline-collector/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-19",
+      "change": "W21-04 actual collector matrix found BUG-300 independent synchronous COUNT; correlated server count fixes cancellation and single-statement observation. 9 native cases pass (4 rechecked/5 reused), original failure runs retained; integration and Issue closure pending.",
+      "evidence": "docs/development/evidence/WP02-05/baseline-integration/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -162009,42 +162014,53 @@
       "card_anchor": "wp02-05",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W21-03 有界实际HTTP完整基线采集",
+        "chat_label": "COORD / W21-04 真实PG/HTTP完整基线验证集成",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/wave21-baseline-collector-20261019",
+        "branch": "codex/bug-300-baseline-count-cancellation",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-19T04:44:36.279814+00:00",
-        "baseline_sha": "18d36ced499f4846ea6e50bda5e200182b5cbb06",
+        "claimed_at": "2026-10-19T04:59:56.377244+00:00",
+        "baseline_sha": "406b9cfbf16dcc82252d5d3505e7a18a47900769",
         "entry_evidence": "docs/development/dispatch/20261019-wave21/README.md",
         "phase": "VALIDATED_READY_TO_INTEGRATE",
-        "dispatch_scope": "IDENTITY_BASELINE_HTTP_COLLECTOR",
+        "dispatch_scope": "IDENTITY_BASELINE_INTEGRATION",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
         "actual_start_ref": {
-          "commit": "95516e0df1602040292ed94f75483ed63cf359ce",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T044436Z-wave21-collector-start/MESSAGE.md",
+          "commit": "43cffcd3dbbe70c7b164c8c47cad4520d1da7188",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T045956Z-wave21-matrix-start/MESSAGE.md",
           "kind": "START",
-          "at": "2026-10-19T04:44:36.279814+00:00"
+          "at": "2026-10-19T04:59:56.377244+00:00"
         },
         "allowed_write_paths": [
-          "CP6.Core/Services/CrmIdentity/Baselines/IdentityBaselineCollector.cs",
-          "CP6.Tests/IdentityBaselineCollectorTests.cs",
-          "docs/development/evidence/WP02-05/baseline-collector/DELIVERY.md"
+          "CP6.Tests/Persistence/Tenancy/IdentityBaselineHttpPostgresTests.cs",
+          "CP6.Tests/Persistence/Tenancy/IdentityDirectoryConfiguredHttpHost.cs",
+          "docs/development/evidence/WP02-05/baseline-integration/DELIVERY.md",
+          "CP6.Core/Services/CrmIdentity/Baselines/IdentityRawSnapshotReader.cs",
+          "docs/development/evidence/WP02-05/baseline-raw-http/DELIVERY.md"
         ],
         "reserved_write_resources": [
-          "Main:identity-baseline-collector"
+          "Main:identity-baseline-integration",
+          "Main:identity-directory-reader"
         ],
-        "reserved_postgresql_ports": [],
+        "reserved_postgresql_ports": [
+          55435
+        ],
         "handoff_branch": "codex/dev-coordination-20261012",
         "actions_authorized": false,
         "formal_publication_authorized": false,
         "existing_database_migration_authorized": false,
         "deployment_authorized": false,
-        "delivery_report": "docs/development/evidence/WP02-05/baseline-collector/DELIVERY.md",
+        "delivery_report": "docs/development/evidence/WP02-05/baseline-integration/DELIVERY.md",
         "candidate_review_completed": true,
         "candidate_integrated": false,
+        "related_issue": "https://github.com/GTX537/CP6/issues/300",
+        "scope_amendment": {
+          "commit": "c4e15606f15df80d9ff71283e7fbff0a9397101b",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T051648Z-wave21-bug300-scope/MESSAGE.md",
+          "reason": "Actual cancellation trace exposed independent synchronous COUNT; fix within affected integration window."
+        },
         "review_mode": "Single combined SPEC/QUALITY author self-review; not independent"
       },
       "blockers": [],
@@ -162497,6 +162513,55 @@
             "kind": "DELIVERY",
             "at": "2026-10-19T04:44:36.279814+00:00"
           }
+        },
+        {
+          "chat_label": "COORD / W21-03 有界实际HTTP完整基线采集",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/wave21-baseline-collector-20261019",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-10-19T04:44:36.279814+00:00",
+          "baseline_sha": "18d36ced499f4846ea6e50bda5e200182b5cbb06",
+          "entry_evidence": "docs/development/dispatch/20261019-wave21/README.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "IDENTITY_BASELINE_HTTP_COLLECTOR",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "actual_start_ref": {
+            "commit": "95516e0df1602040292ed94f75483ed63cf359ce",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T044436Z-wave21-collector-start/MESSAGE.md",
+            "kind": "START",
+            "at": "2026-10-19T04:44:36.279814+00:00"
+          },
+          "allowed_write_paths": [
+            "CP6.Core/Services/CrmIdentity/Baselines/IdentityBaselineCollector.cs",
+            "CP6.Tests/IdentityBaselineCollectorTests.cs",
+            "docs/development/evidence/WP02-05/baseline-collector/DELIVERY.md"
+          ],
+          "reserved_write_resources": [],
+          "reserved_postgresql_ports": [],
+          "handoff_branch": "codex/dev-coordination-20261012",
+          "actions_authorized": false,
+          "formal_publication_authorized": false,
+          "existing_database_migration_authorized": false,
+          "deployment_authorized": false,
+          "delivery_report": "docs/development/evidence/WP02-05/baseline-collector/DELIVERY.md",
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "review_mode": "Single combined SPEC/QUALITY author self-review; not independent",
+          "ports": {},
+          "integration": {
+            "source": "e81b04ade25f410bbd7346379fae37d6a1d1ce99",
+            "main": "406b9cfbf16dcc82252d5d3505e7a18a47900769",
+            "pr": "https://github.com/GTX537/CP6/pull/299"
+          },
+          "delivery_ref": {
+            "commit": "43cffcd3dbbe70c7b164c8c47cad4520d1da7188",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T045956Z-wave21-baseline-collector-delivery/MESSAGE.md",
+            "kind": "DELIVERY",
+            "at": "2026-10-19T04:59:56.377244+00:00"
+          }
         }
       ],
       "wave19_directory_delivery": {
@@ -162614,11 +162679,28 @@
         }
       },
       "wave21_baseline_collector_delivery": {
-        "status": "VALIDATED_NOT_INTEGRATED",
+        "status": "INTEGRATED",
         "report": "docs/development/evidence/WP02-05/baseline-collector/DELIVERY.md",
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
-        "validation": "35 unique collector cases pass; original RED retained"
+        "validation": "35 unique collector cases pass; original RED retained",
+        "source": "e81b04ade25f410bbd7346379fae37d6a1d1ce99",
+        "main": "406b9cfbf16dcc82252d5d3505e7a18a47900769",
+        "pr": "https://github.com/GTX537/CP6/pull/299",
+        "handoff": {
+          "commit": "43cffcd3dbbe70c7b164c8c47cad4520d1da7188",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T045956Z-wave21-baseline-collector-delivery/MESSAGE.md",
+          "kind": "DELIVERY",
+          "at": "2026-10-19T04:59:56.377244+00:00"
+        }
+      },
+      "wave21_baseline_integration_delivery": {
+        "status": "VALIDATED_NOT_INTEGRATED",
+        "report": "docs/development/evidence/WP02-05/baseline-integration/DELIVERY.md",
+        "issue": 300,
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "validation": "9 unique native cases pass: 4 affected rechecked + 5 unaffected reused; three failure runs retained"
       }
     },
     {
@@ -180166,7 +180248,7 @@
       "path": "docs/development/dispatch/20261019-wave21/README.md",
       "baseline_sha": "f552995d36c37ad736d84058df2d2a3ba7085568",
       "registered_at": "2026-10-19T04:18:22.998889+00:00",
-      "phase": "W21_03_VALIDATED_READY_TO_INTEGRATE",
+      "phase": "W21_04_VALIDATED_READY_TO_INTEGRATE",
       "coordinator_shared_state_only": false,
       "assigned_chats": [
         "COORD"
@@ -180325,7 +180407,7 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "VALIDATED_READY_TO_INTEGRATE",
+          "phase": "CLOSED",
           "estimated_hours": [
             5,
             7
@@ -180339,9 +180421,7 @@
           ],
           "planned_scope_ref": "docs/development/dispatch/20261019-wave21/README.md",
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "reserved_write_resources": [
-            "Main:identity-baseline-collector"
-          ],
+          "reserved_write_resources": [],
           "ports": {},
           "actions_authorized": false,
           "deployment_authorized": false,
@@ -180357,7 +180437,7 @@
           "actual_start_baseline_sha": "18d36ced499f4846ea6e50bda5e200182b5cbb06",
           "branch": "codex/wave21-baseline-collector-20261019",
           "candidate_review_completed": true,
-          "candidate_integrated": false,
+          "candidate_integrated": true,
           "delivery_report": "docs/development/evidence/WP02-05/baseline-collector/DELIVERY.md",
           "review_mode": "Single combined SPEC/QUALITY author self-review; not independent",
           "validation": {
@@ -180367,6 +180447,18 @@
             "evidence_root": "D:\\CP6-local-test\\wave21\\w21-03",
             "postgresql": "NOT_REQUIRED",
             "scope": "HTTP collector protocol plus real loopback redirect rejection; actual PG host collection pending"
+          },
+          "reserved_postgresql_ports": [],
+          "integration": {
+            "source": "e81b04ade25f410bbd7346379fae37d6a1d1ce99",
+            "main": "406b9cfbf16dcc82252d5d3505e7a18a47900769",
+            "pr": "https://github.com/GTX537/CP6/pull/299"
+          },
+          "delivery_ref": {
+            "commit": "43cffcd3dbbe70c7b164c8c47cad4520d1da7188",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T045956Z-wave21-baseline-collector-delivery/MESSAGE.md",
+            "kind": "DELIVERY",
+            "at": "2026-10-19T04:59:56.377244+00:00"
           }
         },
         {
@@ -180375,24 +180467,64 @@
           "title": "受影响PG/HTTP矩阵与全轮收尾",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "gate": "SEQUENTIAL_PENDING",
-          "phase": "REGISTERED_NOT_STARTED",
+          "gate": "CONFIRMED",
+          "phase": "VALIDATED_READY_TO_INTEGRATE",
           "estimated_hours": [
             3,
             4
           ],
-          "worker_start_received": false,
-          "worker_delivery_received": false,
-          "write_paths": [],
+          "worker_start_received": true,
+          "worker_delivery_received": true,
+          "write_paths": [
+            "CP6.Tests/Persistence/Tenancy/IdentityBaselineHttpPostgresTests.cs",
+            "CP6.Tests/Persistence/Tenancy/IdentityDirectoryConfiguredHttpHost.cs",
+            "docs/development/evidence/WP02-05/baseline-integration/DELIVERY.md",
+            "CP6.Core/Services/CrmIdentity/Baselines/IdentityRawSnapshotReader.cs",
+            "docs/development/evidence/WP02-05/baseline-raw-http/DELIVERY.md"
+          ],
           "planned_scope_ref": "docs/development/dispatch/20261019-wave21/README.md",
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "reserved_write_resources": [],
-          "ports": {},
+          "reserved_write_resources": [
+            "Main:identity-baseline-integration",
+            "Main:identity-directory-reader"
+          ],
+          "ports": {
+            "postgresql": 55435
+          },
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
           "full_task_completed": false,
-          "business_acceptance": "NOT_RUN"
+          "business_acceptance": "NOT_RUN",
+          "actual_start_ref": {
+            "commit": "43cffcd3dbbe70c7b164c8c47cad4520d1da7188",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T045956Z-wave21-matrix-start/MESSAGE.md",
+            "kind": "START",
+            "at": "2026-10-19T04:59:56.377244+00:00"
+          },
+          "actual_start_baseline_sha": "406b9cfbf16dcc82252d5d3505e7a18a47900769",
+          "branch": "codex/bug-300-baseline-count-cancellation",
+          "related_issue": "https://github.com/GTX537/CP6/issues/300",
+          "scope_amendment": {
+            "commit": "c4e15606f15df80d9ff71283e7fbff0a9397101b",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T051648Z-wave21-bug300-scope/MESSAGE.md",
+            "reason": "Actual cancellation trace exposed independent synchronous COUNT; fix within affected integration window."
+          },
+          "candidate_review_completed": true,
+          "candidate_integrated": false,
+          "delivery_report": "docs/development/evidence/WP02-05/baseline-integration/DELIVERY.md",
+          "review_mode": "Single combined SPEC/QUALITY author self-review; not independent",
+          "validation": {
+            "unique_native_http_passed": 9,
+            "failed": 0,
+            "skipped": 0,
+            "rechecked_after_fix": 4,
+            "unchanged_success_reused": 5,
+            "evidence_root": "D:\\CP6-local-test\\wave21\\w21-04",
+            "owned_clusters": 4,
+            "owned_postgresql_stopped": true,
+            "scope": "Actual collector/JWT/ordinary PG matrix and BUG-300; no real DEV"
+          }
         }
       ],
       "integration_order": "W21-01 -> W21-02 -> W21-03 -> W21-04; normal merge and remote verification before each next branch.",
@@ -180420,7 +180552,7 @@
       },
       "user_authority": "User explicitly requested next24h list and persistent goal, current chat only, same PostgreSQL/lean verification/directory reuse rules. Goal active 2026-10-19T04:15:29Z.",
       "review_mode": "One combined task-level author SPEC/QUALITY self-review, not independent.",
-      "next_action": "Normally integrate bounded HTTP collector, verify remote main, then W21-04 actual ordinary PG/JWT host collection matrix and closeout."
+      "next_action": "Normally merge BUG-300 and W21-04 affected matrix, verify remote main, close Issue300, then documentation/Handoff/resource closeout."
     },
     "wave_history": [
       {
