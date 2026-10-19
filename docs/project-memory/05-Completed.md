@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-19：第二十轮四个有限窗口全部合入并关闭
+
+普通PG当前授权v2、显式安装/inspect与漂移拒绝、实际配置/JWT可信目录宿主、受影响HTTP/PG矩阵分别经PR291/292/293/294合入；最新实施main `fc8273dc89e7e8f691bfbded8a6113123c2d76fa`，Handoff `cd419653ae95166ad78368f5ca7354a6af0d6bbd` 回读。四窗口CLOSED且无资源占用，windows_closed汇总同步；[本轮汇总](../development/dispatch/20261018-wave20/README.md)列出各项证据和剩余范围。
+
+12个自有PG和HTTP停止，新增worktree/代理/Actions为0，根7项资料保留。此文档收尾只校验台账/diff/链接，远端核对后完成本轮有限持续目标；完整WP02/公共基础、冻结目录/CRM、Owner最终写授权门、既有库切换及真实DEV/业务/生产未提升。
+
 ## 2026-10-19：W20-04实际目录矩阵候选通过
 
 实际配置/JWT/source/authority/普通PG授权和目录HTTP完成7项定向矩阵；含撤销/停用、故障漂移、游标generation、冻结配置、等待时过期及HTTP取消/lease释放。4项有效成功复用，测试ACL恢复顺序修正后3项局部复查通过，产品实现不变；原跳过/失败保留。[单份DELIVERY](../development/evidence/WP02-05/directory-configured-matrix/DELIVERY.md)。
