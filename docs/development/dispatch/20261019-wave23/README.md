@@ -1,5 +1,9 @@
 # 第二十三轮：平台管理员共同事务保护
 
+> W23-02候选完成：[BUG311交付](../../evidence/WP02-03/user-create-whitelist/DELIVERY.md)，专用创建白名单和服务端身份，17项相关验证通过；待正常集成/远端核对。
+
+> W23-02优先修正P0 [#311](https://github.com/GTX537/CP6/issues/311)：3项实际PG/HTTP RED确认普通创建可写平台/租户/认证字段；沿原START，不重复ACK。
+
 ## W23-01已集成；接续W23-02创建白名单
 
 W23-01 `d45fef242dd8e070e99890b98d4752bf7906d881` 已经[PR309](https://github.com/GTX537/CP6/pull/309)合入 `75fef4ac76e7908abba5592ff8f46e7dacfaf12a`，#308Closed，Handoff `e4c9bfda2b0e0b73250d006615ab1eae594cf650`远端回读。65项有效验证和全部失败来源见原单份报告。

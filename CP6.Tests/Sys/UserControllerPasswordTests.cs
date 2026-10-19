@@ -42,7 +42,7 @@ public class UserControllerPasswordTests
     {
         var (ctl, db) = Make();
 
-        var result = await ctl.Add(new Sys_User { UserName = "newuser", Password = "Init1al!" });
+        var result = await ctl.Add(new UserCreateRequest { UserName = "newuser", Password = "Init1al!" });
 
         Assert.IsType<OkObjectResult>(result);
         var u = db.Sys_Users.Single(x => x.UserName == "newuser");
@@ -101,7 +101,7 @@ public class UserControllerPasswordTests
         Assert.False(Validator.TryValidateObject(request, new ValidationContext(request), [], validateAllProperties: true));
         request.UserName = "valid-name"; request.Password = new string('x', 201);
         Assert.False(Validator.TryValidateObject(request, new ValidationContext(request), [], validateAllProperties: true));
-        var create = new Sys_User { UserName = "new-user", Password = "" };
+        var create = new UserCreateRequest { UserName = "new-user", Password = "" };
         Assert.False(Validator.TryValidateObject(create, new ValidationContext(create), [], validateAllProperties: true));
     }
 }
