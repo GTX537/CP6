@@ -1,5 +1,17 @@
 # AI 可读变更日志
 
+## 2026-10-19：W20-04实际目录矩阵候选通过
+
+实际配置/JWT/source/authority/普通PG授权和目录HTTP完成7项定向矩阵；含撤销/停用、故障漂移、游标generation、冻结配置、等待时过期及HTTP取消/lease释放。4项有效成功复用，测试ACL恢复顺序修正后3项局部复查通过，产品实现不变；原跳过/失败保留。[单份DELIVERY](../development/evidence/WP02-05/directory-configured-matrix/DELIVERY.md)。
+
+两个自有PG停止，一次作者集中审查无阻断；待正常集成、远端核对及全轮状态收尾，持续目标active。无新树/代理/Actions/既有库操作或部署，完整WP02/公共基础和真实业务未提升。
+
+## 2026-10-18：W20-03已合入，W20-04矩阵开工
+
+候选 `68785b04fec69a476fe8ddd838835b10e7d38f3e` 经[PR293](https://github.com/GTX537/CP6/pull/293)合入远端main `08820bd53067cac140adc755a2c3373ee9e769ab`，范围文件/祖先关系已核对；18配置及1条原生PG/HTTP产品宿主链路通过，Owner请求查询0，自有实例停止。[单份DELIVERY](../development/evidence/WP02-05/directory-host/DELIVERY.md)，Handoff `64f193a3961d281b0da056b5f4d8f36a89a628cc` 回读。
+
+W20-04复用原目录，验证当前授权/故障/合同/冻结配置/时效取消并收尾；当前矩阵NOT_RUN。持续目标active，完整WP02/目录CRM/Owner最终门与真实业务生产不提升。无新树/代理/Actions/既有库操作或部署。
+
 ## 2026-10-18：W20-03实际目录HTTP宿主候选通过
 
 严格opt-in配置冻结安装身份、普通LOGIN及reader注册；真实JWT经产品verifier/authority绑定可信scope，当前授权及目录读取均走普通PG连接，失败无Owner回退。18配置检查与1条真实PG/HTTP A→B→A链路通过，Owner请求查询0，实例已停止。[单份DELIVERY](../development/evidence/WP02-05/directory-host/DELIVERY.md)保留RED及范围。

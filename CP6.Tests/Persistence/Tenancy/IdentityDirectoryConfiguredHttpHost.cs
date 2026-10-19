@@ -131,11 +131,11 @@ internal sealed class IdentityDirectoryConfiguredHttpHost : IAsyncDisposable
         }
         return (token, id);
     }
-    internal async Task<HttpResponseMessage> Get(string path, string? token)
+    internal async Task<HttpResponseMessage> Get(string path, string? token, CancellationToken ct = default)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, path);
         if (token is not null) request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        return await Client.SendAsync(request);
+        return await Client.SendAsync(request, ct);
     }
     public async ValueTask DisposeAsync()
     { Client.Dispose(); await _app.StopAsync(); await _app.DisposeAsync(); _signer.Dispose(); }
