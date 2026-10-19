@@ -21,6 +21,7 @@ internal static class CorePostgreSqlModelConfiguration
             (typeof(IntegrationEvent), nameof(IntegrationEvent.DeadLetterNotificationLeaseUntilUtc)),
             (typeof(Space_AuditEvent), nameof(Space_AuditEvent.OccurredAtUtc)),
             (typeof(Sys_BrowserSession), nameof(Sys_BrowserSession.LoggedOutAtUtc)),
+            (typeof(Sys_RefreshToken), nameof(Sys_RefreshToken.CompletionRejectedAtUtc)),
             (typeof(Wf_FlowDefVersion), nameof(Wf_FlowDefVersion.PublishedAtUtc)),
             (typeof(Wf_FormDefVersion), nameof(Wf_FormDefVersion.PublishedAtUtc)),
             (typeof(Wf_FormData), nameof(Wf_FormData.SubmittedAtUtc)),

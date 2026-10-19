@@ -550,14 +550,33 @@ public class AuthController : LocalizedControllerBase
         try
         {
             // RotateAsync 内已由令牌回设 _tenant.CurrentTenantId，后续签发/审计按其租户作用域
-            var (newRaw, user) = await _refresh.RotateAsync(raw, ClientIp, ClientUa);
-            var jti = Guid.NewGuid().ToString();
-            var mustChange = user.MustChangePassword || _policy.IsExpired(user);
-            var token = _session.BuildAccessToken(user, jti, mustChange, isPlatformAdmin: user.IsPlatformAdmin);
-            var csrf = AuthCookieWriter.NewCsrfToken();
-            _cookies.WriteAuthCookies(Response, token, newRaw, csrf);
-            await _audit.LogAsync(SecurityEventType.TokenRefreshed, user.Id, user.UserName, null, ClientIp, ClientUa);
-            return Ok(new { code = 0, userName = user.UserName, mustChangePassword = mustChange });
+            var (newRaw, user) = await _refresh.RotateForCompletionAsync(raw, ClientIp, ClientUa, RefreshTokenClientContext.Web);
+            try
+            {
+                var jti = Guid.NewGuid().ToString();
+                var mustChange = user.MustChangePassword || _policy.IsExpired(user);
+                var token = _session.BuildAccessToken(user, jti, mustChange, isPlatformAdmin: user.IsPlatformAdmin);
+                var staged = new DefaultHttpContext();
+                _cookies.WriteAuthCookies(staged.Response, token, newRaw, AuthCookieWriter.NewCsrfToken());
+                var cookies = staged.Response.Headers.SetCookie;
+                if (cookies.Count != 3) throw new InvalidOperationException("AUTHENTICATION_COOKIE_COMPLETION_INVALID");
+                await _audit.LogAsync(SecurityEventType.TokenRefreshed, user.Id, user.UserName, null, ClientIp, ClientUa);
+                HttpContext.RequestAborted.ThrowIfCancellationRequested();
+                if (Response.HasStarted) throw new InvalidOperationException("AUTHENTICATION_RESPONSE_ALREADY_STARTED");
+                await _refresh.CompleteRotationAsync(newRaw);
+                HttpContext.RequestAborted.ThrowIfCancellationRequested();
+                Response.Headers.Append("Set-Cookie", cookies);
+                return Ok(new { code = 0, userName = user.UserName, mustChangePassword = mustChange });
+            }
+            catch
+            {
+                await _refresh.RejectCompletionAsync(newRaw);
+                throw;
+            }
+        }
+        catch (RefreshCompletionUnknownException)
+        {
+            return StatusCode(503, new { code = "AUTHENTICATION_COMPLETION_OUTCOME_UNKNOWN" });
         }
         catch (InvalidOperationException ex)
         {

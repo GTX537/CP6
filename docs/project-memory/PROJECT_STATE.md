@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-19：W25-03原认证状态候选完成
+
+W25-01/02已正常集成，#319/#321关闭。W25-03 P0 #323补PG原认证状态持久化、访问消费及refresh/完成阶段当前校验，普通失败精确隔离replacement，已验证完整Program Web/native/2FA/restricted/模拟合法路径。167有效相关通过（53原生）；一次作者SPEC/QUALITY无阻断。新前向迁移只安装自有隔离库，采用时须迁移并重新登录；完整认证政策/Owner/真实业务仍未完成。正常合并及最终收尾前长目标持续。[DELIVERY](../development/evidence/WP02-03/session-authentication-current-state/DELIVERY.md)。
+
 ## 2026-10-19：W25-01集成，W25-02模拟最终门候选
 
 W25-01经PR320合入远端main1974bcb4，#319关闭。W25-02 P0 #321修正当前真身/目标与原认证状态、必要审计/提交后Cookie及UNKNOWN关闭；新增可空PG jsonb审计上下文，仅在自有隔离已填库升级验证。83有效相关通过（49原生），作者集中审查无阻断。待正常PR/远端核对，继续W25-03及总收尾；完整IAM/模拟FE/业务不提升。[DELIVERY](../development/evidence/WP02-03/impersonation-final-gate/DELIVERY.md)。

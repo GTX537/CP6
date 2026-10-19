@@ -326,34 +326,35 @@ public sealed class ClientAuthController : ControllerBase
         ValidateClient(request.Client);
         try
         {
-            var (raw, user) = await _refreshTokens.RotateAsync(
+            var (raw, user) = await _refreshTokens.RotateForCompletionAsync(
                 request.RefreshToken, ClientIp, ClientUa, ToRefreshContext(request.Client));
             _tenant.CurrentTenantId = user.TenantId;
             try
             {
-                await _devices.EnsureLoginAllowedAsync(
-                    request.Client, user.TenantId, HttpContext.RequestAborted);
+                await _devices.EnsureLoginAllowedAsync(request.Client, user.TenantId, HttpContext.RequestAborted);
+                var mustChange = user.MustChangePassword || _passwordPolicy.IsExpired(user);
+                var token = _sessions.BuildAccessToken(user, Guid.NewGuid().ToString(), mustChange, user.IsPlatformAdmin);
+                var profile = await _sessions.BuildProfileAsync(user, mustChange);
+                await _audit.LogAsync(SecurityEventType.TokenRefreshed, user.Id, user.UserName, null,
+                    ClientIp, ClientUa, ClientReason(request.Client, "refresh"));
+                HttpContext.RequestAborted.ThrowIfCancellationRequested();
+                await _refreshTokens.CompleteRotationAsync(raw);
+                HttpContext.RequestAborted.ThrowIfCancellationRequested();
+                return new TokenSessionDto
+                {
+                    AccessToken = token, AccessExpiresAt = _sessions.AccessExpiresAt,
+                    RefreshToken = raw, RefreshExpiresAt = _sessions.RefreshExpiresAt, Profile = profile
+                };
             }
             catch
             {
-                await _refreshTokens.RevokeAsync(raw);
+                await _refreshTokens.RejectCompletionAsync(raw);
                 throw;
             }
-            var mustChange = user.MustChangePassword || _passwordPolicy.IsExpired(user);
-            var jti = Guid.NewGuid().ToString();
-            var token = _sessions.BuildAccessToken(
-                user, jti, mustChange, user.IsPlatformAdmin);
-            await _audit.LogAsync(
-                SecurityEventType.TokenRefreshed, user.Id, user.UserName, null,
-                ClientIp, ClientUa, ClientReason(request.Client, "refresh"));
-            return new TokenSessionDto
-            {
-                AccessToken = token,
-                AccessExpiresAt = _sessions.AccessExpiresAt,
-                RefreshToken = raw,
-                RefreshExpiresAt = _sessions.RefreshExpiresAt,
-                Profile = await _sessions.BuildProfileAsync(user, mustChange)
-            };
+        }
+        catch (RefreshCompletionUnknownException)
+        {
+            return StatusCode(503, new { code = "AUTHENTICATION_COMPLETION_OUTCOME_UNKNOWN" });
         }
         catch (InvalidOperationException ex)
         {
