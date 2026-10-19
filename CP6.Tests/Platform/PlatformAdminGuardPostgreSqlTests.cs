@@ -205,8 +205,9 @@ public sealed class PlatformAdminGuardPostgreSqlTests(TenantManagementPostgresFi
         if (!await setup.Sys_Tenants.AnyAsync(x => x.Id == TenantContext.DefaultTenant))
             setup.Sys_Tenants.Add(new Sys_Tenant { Id = TenantContext.DefaultTenant, TenantCode = "w23-platform", TenantName = "fixture" });
         setup.Sys_Roles.Add(new Sys_Role { RoleId = 72301, RoleName = "w23-user-editor" });
-        setup.Sys_Menus.Add(new Sys_Menu { MenuId = 72301, MenuKey = "user", MenuName = "fixture" });
-        setup.Sys_RoleActions.AddRange(new Sys_RoleAction { RoleId = 72301, MenuId = 72301, ActionCode = "edit" }, new Sys_RoleAction { RoleId = 72301, MenuId = 72301, ActionCode = "delete" });
+        var menu = await setup.Sys_Menus.SingleOrDefaultAsync(x => x.MenuKey == "user");
+        if (menu is null) { menu = new Sys_Menu { MenuId = 72301, MenuKey = "user", MenuName = "fixture" }; setup.Sys_Menus.Add(menu); }
+        setup.Sys_RoleActions.AddRange(new Sys_RoleAction { RoleId = 72301, MenuId = menu.MenuId, ActionCode = "edit" }, new Sys_RoleAction { RoleId = 72301, MenuId = menu.MenuId, ActionCode = "delete" });
         var admin = await setup.Sys_Users.SingleAsync(x => x.Id == actor); admin.RoleId = 72301; await setup.SaveChangesAsync();
         await using var host = await TenantManagementHttpHost.Start(server, includePlatformAdmins: true);
         var token = host.Token(actor, TenantContext.DefaultTenant);

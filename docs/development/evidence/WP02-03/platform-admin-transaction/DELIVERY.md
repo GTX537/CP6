@@ -1,5 +1,7 @@
 # W23-01 / BUG308 平台管理员事务保护交付
 
+> 最终收尾局部复查：两组新增HTTP测试共用全局唯一user菜单键，修改管理员测试为复用已存在菜单；组合运行 `shared-http-fixture-integration-20261019T080539Z` 13通过/0跳过（含12原生与1schema）。仅集成夹具改动，产品代码不变。全轮仍77去重有效通过/63原生，不重复累加；共11个自有PG停止。
+
 > 已集成：[PR309](https://github.com/GTX537/CP6/pull/309)，远端main `75fef4ac76e7908abba5592ff8f46e7dacfaf12a`、候选 `d45fef242dd8e070e99890b98d4752bf7906d881`范围核对一致，#308Closed，Handoff `e4c9bfda2b0e0b73250d006615ab1eae594cf650`回读。下方候选措辞保留原时点。
 
 ## 结论

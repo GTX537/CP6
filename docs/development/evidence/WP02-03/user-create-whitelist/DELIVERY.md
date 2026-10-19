@@ -1,5 +1,7 @@
 # W23-02 / BUG311 用户创建白名单交付
 
+> 最终收尾局部复查：两组新增HTTP测试共用全局唯一user菜单键，修改管理员测试为复用已存在菜单；组合运行 `shared-http-fixture-integration-20261019T080539Z` 13通过/0跳过（含12原生与1schema）。仅集成夹具改动，产品代码不变。全轮仍77去重有效通过/63原生，不重复累加；共11个自有PG停止。
+
 > 已集成：[PR312](https://github.com/GTX537/CP6/pull/312)，远端main `db3526b6b1c4f6854c65d0a9fface8030ff63e15`、候选 `4e6ad756570421d45b557f6b27faf0060404c5d4`范围核对一致，#311Closed，Handoff `ae77f7df5cc3cb53016606e54a9bd4d6ee709d77`回读。下方候选措辞保留原时点。
 
 ## 结论与范围

@@ -159047,6 +159047,11 @@
       "date": "2026-10-19",
       "change": "Wave23 bounded windows closed: P0 #308 and #311 merged/remote verified/Closed. 77 distinct valid passes (63 native), two author task reviews, 10 owned PG stopped. No new worktree/agents/Actions or existing DB/deployment. Full IAM/business gates remain unchanged.",
       "evidence": "docs/development/dispatch/20261019-wave23/README.md"
+    },
+    {
+      "date": "2026-10-19",
+      "change": "Wave23 final integration fixture fix: reuse global user menu across HTTP groups; 13 affected tests pass together, total still77/63 native. Product unchanged, 11 owned PG stopped. One local review of this scope only.",
+      "evidence": "docs/development/dispatch/20261019-wave23/README.md"
     }
   ],
   "implementation_assessment": {
@@ -180674,7 +180679,17 @@
         "skipped_as_pass": 0,
         "historical_failures_preserved": true
       },
-      "goal_closeout": "Code/tasks complete; external goal closes after final documentation merge and remote/Handoff/checkpoint verification."
+      "goal_closeout": "Code/tasks complete; external goal closes after final documentation merge and remote/Handoff/checkpoint verification.",
+      "closeout_validation": {
+        "reason": "Both newly added HTTP groups share the global unique user menu. Reuse existing menu in administrator fixture and run combined affected group.",
+        "stage": "shared-http-fixture-integration-20261019T080539Z",
+        "passed": 13,
+        "failed": 0,
+        "skipped": 0,
+        "product_changed": false,
+        "owned_postgresql_stopped": 11,
+        "effective_total_unchanged": 77
+      }
     },
     "wave_history": [
       {
