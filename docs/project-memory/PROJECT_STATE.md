@@ -1,5 +1,17 @@
 # 项目当前状态
 
+## 2026-10-18：W19-03可信普通账号目录reader候选已验证
+
+可信连接适配器/DTO接口与单语句PG分页已完成；实际普通A/B连接复用、映射撤销、取消释放、catalog变更丢弃旧结果、无Owner回退及调用者事务均有实证。最终31项去重通过（14原生PG、17配置），无剩余失败/跳过；原实现/编排失败与跳过尝试保留于[单份DELIVERY](../development/evidence/WP02-05/trusted-directory-reader/DELIVERY.md)。一次集中作者SPEC/QUALITY审查无阻断。
+
+当前待正常PR与远端main核对，下一项W19-04实际HTTP串联及本轮收尾。四个自有PG停止，无新增工作树/代理/Actions/既有库/部署。完整WP02、全Main切换、CRM/冻结目录/Owner最终门及业务生产不提升，持续目标active。
+
+## 2026-10-18：W19-02已合入，W19-03可信reader开工
+
+候选 `5f62016a855df254641242117e6dbe0ec7f5ba77` 经[PR286](https://github.com/GTX537/CP6/pull/286)合入远端main `c2b808a1e081b20d537a665cef387b90c6b4e164`，范围文件及祖先关系已核对；五项去重PG通过，六个自有PG停止，[单份DELIVERY](../development/evidence/WP02-02/identity-directory-isolation/DELIVERY.md)保留原始证据。Handoff `f201d63ac3f4423c91be83a9b702a255ce9503fa` 已发布并回读。
+
+W19-03复用原目录，接入可信连接管理器、普通账号与DTO-only目录读取，PostgreSQL分页在单语句内保持一致性。当前验证NOT_RUN；默认Main环境不自动切换，完整WP02/CRM/冻结目录/Owner最终门及业务生产不提升。无新工作树/代理/Actions，持续目标active。
+
 ## 2026-10-18：W19-02普通账号目录只读隔离候选已验证
 
 实际Bootstrap/Snapshot/Generation三表的RLS及最小权限组件已实现。普通A/B账号仅可读本租户，写入/旁路表/升级/伪造上下文均拒绝；普通control继承身份在FORCE RLS下仍能写入并保留版本/代际触发器。原生PG有效5项去重通过，异常前置/安装回滚有实证；一次集中作者SPEC/QUALITY无剩余阻断，原失败全部保留于[单份DELIVERY](../development/evidence/WP02-02/identity-directory-isolation/DELIVERY.md)。

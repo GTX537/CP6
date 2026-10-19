@@ -62,6 +62,7 @@ public static class CrmIdentityConfiguration
         services.AddSingleton(validator);
         services.AddSingleton(provider => new CrmIdentityRuntime(options, validator, provider.GetService<TimeProvider>(), directory));
         services.AddScoped<IdentitySnapshotReader>();
+        services.AddScoped<IIdentitySnapshotReader>(provider => provider.GetRequiredService<IdentitySnapshotReader>());
         services.AddScoped<IdentityBootstrapService>();
         services.AddScoped<ICrmServiceTokenRecordStore, CrmServiceTokenRecordStore>();
         services.AddHostedService<IdentityBootstrapWorker>();

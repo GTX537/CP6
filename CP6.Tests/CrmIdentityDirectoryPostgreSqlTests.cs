@@ -115,13 +115,18 @@ public sealed class CrmIdentityDirectoryPostgreSqlTests(TenantManagementPostgres
         });
         await using var concurrent = server.Context(new TenantContext { CurrentTenantId = a }, null, changed);
         var concurrentReader = new IdentitySnapshotReader(concurrent, runtime, protection);
-        var oldPage = await concurrentReader.ReadVersionsAsync(a, null, 1);
-        Assert.True(changed.Executed); Assert.Equal(first.Boundary, oldPage.Boundary); Assert.Equal(first.Items, oldPage.Items);
-        var stale = await Assert.ThrowsAsync<IdentityReadException>(() => reader.ReadVersionsAsync(a, oldPage.NextCursor, 1));
+        var concurrentPage = await concurrentReader.ReadVersionsAsync(a, null, 1);
+        Assert.True(changed.Executed);
+        // A statement beginning after the writer may see the new generation. Either view
+        // must pair its generation with the corresponding row version, never mix them.
+        Assert.Equal("permission:role:701", Assert.Single(concurrentPage.Items).AggregateId);
+        Assert.Equal(concurrentPage.Boundary == first.Boundary ? 1 : 2, concurrentPage.Items[0].Version);
+        var stale = await Assert.ThrowsAsync<IdentityReadException>(() => reader.ReadVersionsAsync(a, first.NextCursor, 1));
         Assert.Equal("C02_SNAPSHOT_BOUNDARY_CHANGED", stale.Message);
         Assert.Null(db.Database.CurrentTransaction);
         var restart = await reader.ReadVersionsAsync(a, null);
         Assert.NotEqual(first.Boundary, restart.Boundary); Assert.Equal(3, restart.Items.Length); Assert.Null(restart.NextCursor);
+        Assert.Contains(concurrentPage.Boundary, new[] { first.Boundary, restart.Boundary });
         Assert.Equal(2, restart.Items.Single(x => x.AggregateId == "permission:role:701").Version);
     }
 

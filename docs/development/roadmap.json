@@ -158917,6 +158917,11 @@
       "date": "2026-10-18",
       "change": "W19-02 implemented bounded ordinary-principal read-only directory RLS. Five unique native cases passed; six owned clusters stopped. No full task or business promotion; normal integration pending. W19-01 remote integration and issue closure recorded in this coordinator window.",
       "evidence": "docs/development/evidence/WP02-02/identity-directory-isolation/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-18",
+      "change": "W19-03 trusted ordinary-login directory adapter and single-statement PG pagination validated: 31 unique passes, four owned PG roots stopped. Normal integration pending; actual HTTP W19-04, no full task/business promotion. W19-02 remote integration recorded.",
+      "evidence": "docs/development/evidence/WP02-05/trusted-directory-reader/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -160357,7 +160362,7 @@
         "claimed_at": "2026-10-19T00:09:59.246508+00:00",
         "baseline_sha": "85f4776e36f19db16f5c0077f72906d8d3d31441",
         "entry_evidence": "docs/development/dispatch/20261018-wave19/README.md",
-        "phase": "VALIDATED_READY_TO_INTEGRATE",
+        "phase": "CLOSED",
         "dispatch_scope": "READ_ONLY_IDENTITY_DIRECTORY_RLS",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -160375,14 +160380,8 @@
           "CP6.Tests/Persistence/Tenancy/IdentityDirectoryPostgresFixture.cs",
           "docs/development/evidence/WP02-02/identity-directory-isolation/DELIVERY.md"
         ],
-        "reserved_write_resources": [
-          "Main:tenant-storage",
-          "Main:identity-projection",
-          "Main:identity-directory-reader"
-        ],
-        "reserved_postgresql_ports": [
-          55435
-        ],
+        "reserved_write_resources": [],
+        "reserved_postgresql_ports": [],
         "handoff_branch": "codex/dev-coordination-20261012",
         "actions_authorized": false,
         "formal_publication_authorized": false,
@@ -160390,8 +160389,20 @@
         "deployment_authorized": false,
         "delivery_report": "docs/development/evidence/WP02-02/identity-directory-isolation/DELIVERY.md",
         "candidate_review_completed": true,
-        "candidate_integrated": false,
-        "review_mode": "Single combined SPEC/QUALITY author self-review; not independent"
+        "candidate_integrated": true,
+        "review_mode": "Single combined SPEC/QUALITY author self-review; not independent",
+        "ports": {},
+        "integration": {
+          "source": "5f62016a855df254641242117e6dbe0ec7f5ba77",
+          "main": "c2b808a1e081b20d537a665cef387b90c6b4e164",
+          "pr": "https://github.com/GTX537/CP6/pull/286"
+        },
+        "delivery_ref": {
+          "commit": "f201d63ac3f4423c91be83a9b702a255ce9503fa",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261019T004046Z-wave19-isolation-delivery/MESSAGE.md",
+          "kind": "DELIVERY",
+          "at": "2026-10-19T00:40:46.810087+00:00"
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -161289,11 +161300,26 @@
         }
       },
       "wave19_directory_isolation_delivery": {
-        "status": "VALIDATED_NOT_INTEGRATED",
+        "status": "INTEGRATED",
         "report": "docs/development/evidence/WP02-02/identity-directory-isolation/DELIVERY.md",
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
-        "validation": "5 unique native cases passed; initial failures and fixture corrections preserved"
+        "validation": "5 unique native cases passed; initial failures and fixture corrections preserved",
+        "source": "5f62016a855df254641242117e6dbe0ec7f5ba77",
+        "main": "c2b808a1e081b20d537a665cef387b90c6b4e164",
+        "pr": "https://github.com/GTX537/CP6/pull/286"
+      },
+      "wave19_isolation_integration": {
+        "status": "INTEGRATED",
+        "source": "5f62016a855df254641242117e6dbe0ec7f5ba77",
+        "main": "c2b808a1e081b20d537a665cef387b90c6b4e164",
+        "pr": "https://github.com/GTX537/CP6/pull/286",
+        "handoff": {
+          "commit": "f201d63ac3f4423c91be83a9b702a255ce9503fa",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261019T004046Z-wave19-isolation-delivery/MESSAGE.md",
+          "kind": "DELIVERY",
+          "at": "2026-10-19T00:40:46.810087+00:00"
+        }
       }
     },
     {
@@ -161778,63 +161804,53 @@
       "card_anchor": "wp02-05",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W19-01 身份目录一致性",
+        "chat_label": "COORD / W19-03 可信连接目录读取",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/bug-284-directory-readiness",
+        "branch": "codex/wave19-trusted-directory-reader-20261018",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-18T23:51:13.953441+00:00",
-        "baseline_sha": "dd2b37e97022615d5644784a0fe0c67623cbaae0",
-        "coordination_baseline_sha": "4233a204002a57da5fb9355a47c10a4f8d45bbd7",
+        "claimed_at": "2026-10-19T00:40:46.810087+00:00",
+        "baseline_sha": "c2b808a1e081b20d537a665cef387b90c6b4e164",
         "entry_evidence": "docs/development/dispatch/20261018-wave19/README.md",
-        "phase": "CLOSED",
-        "dispatch_scope": "IDENTITY_DIRECTORY_READ_CONSISTENCY",
+        "phase": "VALIDATED_READY_TO_INTEGRATE",
+        "dispatch_scope": "TRUSTED_IDENTITY_DIRECTORY_READER",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
+        "actual_start_ref": {
+          "commit": "f201d63ac3f4423c91be83a9b702a255ce9503fa",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T004046Z-wave19-reader-start/MESSAGE.md",
+          "kind": "START",
+          "at": "2026-10-19T00:40:46.810087+00:00"
+        },
         "allowed_write_paths": [
           "CP6.Core/Services/CrmIdentity/IdentitySnapshotReader.cs",
-          "CP6.Core/Services/CrmIdentity/IdentityBootstrapService.cs",
+          "CP6.Core/Services/CrmIdentity/IIdentitySnapshotReader.cs",
+          "CP6.Core/Persistence/Tenancy/TenantIdentityDirectoryReader.cs",
+          "CP6.Core/Persistence/Tenancy/README.md",
+          "CP6.WebApi/Controllers/Internal/CrmIdentityController.cs",
+          "CP6.WebApi/Configuration/CrmIdentityConfiguration.cs",
+          "CP6.Tests/Persistence/Tenancy/TenantIdentityDirectoryReaderPostgresTests.cs",
+          "CP6.Tests/Persistence/Tenancy/IdentityDirectoryPostgresFixture.cs",
           "CP6.Tests/CrmIdentityDirectoryPostgreSqlTests.cs",
-          "CP6.Tests/Platform/TenantManagementPostgresFixture.cs",
-          "docs/development/evidence/WP02-05/directory-consistency/DELIVERY.md"
+          "docs/development/evidence/WP02-05/trusted-directory-reader/DELIVERY.md"
         ],
-        "reserved_write_resources": [],
-        "reserved_postgresql_ports": [],
+        "reserved_write_resources": [
+          "Main:tenant-storage",
+          "Main:identity-directory-reader"
+        ],
+        "reserved_postgresql_ports": [
+          55435
+        ],
         "handoff_branch": "codex/dev-coordination-20261012",
         "actions_authorized": false,
         "formal_publication_authorized": false,
         "existing_database_migration_authorized": false,
         "deployment_authorized": false,
-        "delivery_report": "docs/development/evidence/WP02-05/directory-consistency/DELIVERY.md",
-        "execution_owner": {
-          "kind": "current_coordinator_chat",
-          "chat_id": "01a14537-9073-7482-83dc-109799c39299",
-          "subagents": false
-        },
+        "delivery_report": "docs/development/evidence/WP02-05/trusted-directory-reader/DELIVERY.md",
         "candidate_review_completed": true,
-        "candidate_integrated": true,
-        "actual_start_ref": {
-          "commit": "96f653bc1fbb8456999665b58828d89ccb33e1e5",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261018T235448Z-wave19-start/MESSAGE.md",
-          "kind": "START",
-          "at": "2026-10-18T23:54:48.305045+00:00"
-        },
-        "issue": "https://github.com/GTX537/CP6/issues/284",
-        "priority": "P0",
-        "review_mode": "Single combined SPEC/QUALITY author self-review; not independent",
-        "ports": {},
-        "integration": {
-          "source": "69fc23c0c4c81411058962861a7376bc775f06e2",
-          "main": "85f4776e36f19db16f5c0077f72906d8d3d31441",
-          "pr": "https://github.com/GTX537/CP6/pull/285"
-        },
-        "delivery_ref": {
-          "commit": "a2a66b333bf48a9b519bad03461a9a9fd6cc0036",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T000959Z-wave19-directory-delivery/MESSAGE.md",
-          "kind": "DELIVERY",
-          "at": "2026-10-19T00:09:59.246508+00:00"
-        }
+        "candidate_integrated": false,
+        "review_mode": "Single combined SPEC/QUALITY author self-review; not independent"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -161911,6 +161927,65 @@
           "source_candidate_sha": "865a5b7b2f28c881efb8b377f1825acc3c3ed248",
           "remote_main_sha": "58bdd59de191d3dd576c1fb5546a30a123abe74a",
           "pull_request": "https://github.com/GTX537/CP6/pull/280"
+        },
+        {
+          "chat_label": "COORD / W19-01 身份目录一致性",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/bug-284-directory-readiness",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-10-18T23:51:13.953441+00:00",
+          "baseline_sha": "dd2b37e97022615d5644784a0fe0c67623cbaae0",
+          "coordination_baseline_sha": "4233a204002a57da5fb9355a47c10a4f8d45bbd7",
+          "entry_evidence": "docs/development/dispatch/20261018-wave19/README.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "IDENTITY_DIRECTORY_READ_CONSISTENCY",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "allowed_write_paths": [
+            "CP6.Core/Services/CrmIdentity/IdentitySnapshotReader.cs",
+            "CP6.Core/Services/CrmIdentity/IdentityBootstrapService.cs",
+            "CP6.Tests/CrmIdentityDirectoryPostgreSqlTests.cs",
+            "CP6.Tests/Platform/TenantManagementPostgresFixture.cs",
+            "docs/development/evidence/WP02-05/directory-consistency/DELIVERY.md"
+          ],
+          "reserved_write_resources": [],
+          "reserved_postgresql_ports": [],
+          "handoff_branch": "codex/dev-coordination-20261012",
+          "actions_authorized": false,
+          "formal_publication_authorized": false,
+          "existing_database_migration_authorized": false,
+          "deployment_authorized": false,
+          "delivery_report": "docs/development/evidence/WP02-05/directory-consistency/DELIVERY.md",
+          "execution_owner": {
+            "kind": "current_coordinator_chat",
+            "chat_id": "01a14537-9073-7482-83dc-109799c39299",
+            "subagents": false
+          },
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "actual_start_ref": {
+            "commit": "96f653bc1fbb8456999665b58828d89ccb33e1e5",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261018T235448Z-wave19-start/MESSAGE.md",
+            "kind": "START",
+            "at": "2026-10-18T23:54:48.305045+00:00"
+          },
+          "issue": "https://github.com/GTX537/CP6/issues/284",
+          "priority": "P0",
+          "review_mode": "Single combined SPEC/QUALITY author self-review; not independent",
+          "ports": {},
+          "integration": {
+            "source": "69fc23c0c4c81411058962861a7376bc775f06e2",
+            "main": "85f4776e36f19db16f5c0077f72906d8d3d31441",
+            "pr": "https://github.com/GTX537/CP6/pull/285"
+          },
+          "delivery_ref": {
+            "commit": "a2a66b333bf48a9b519bad03461a9a9fd6cc0036",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T000959Z-wave19-directory-delivery/MESSAGE.md",
+            "kind": "DELIVERY",
+            "at": "2026-10-19T00:09:59.246508+00:00"
+          }
         }
       ],
       "wave19_directory_delivery": {
@@ -161930,6 +162005,13 @@
           "at": "2026-10-19T00:09:59.246508+00:00"
         },
         "issue_state": "Closed"
+      },
+      "wave19_trusted_reader_delivery": {
+        "status": "VALIDATED_NOT_INTEGRATED",
+        "report": "docs/development/evidence/WP02-05/trusted-directory-reader/DELIVERY.md",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "validation": "31 unique passed (14 native PG + 17 configuration); original failures/skipped attempt preserved"
       }
     },
     {
@@ -179477,7 +179559,7 @@
       "path": "docs/development/dispatch/20261018-wave19/README.md",
       "baseline_sha": "4233a204002a57da5fb9355a47c10a4f8d45bbd7",
       "registered_at": "2026-10-18T23:51:13.953441+00:00",
-      "phase": "W19_02_VALIDATED_READY_TO_INTEGRATE",
+      "phase": "W19_03_VALIDATED_READY_TO_INTEGRATE",
       "coordinator_shared_state_only": false,
       "assigned_chats": [
         "COORD"
@@ -179570,7 +179652,7 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "VALIDATED_READY_TO_INTEGRATE",
+          "phase": "CLOSED",
           "estimated_hours": [
             5,
             7
@@ -179586,14 +179668,8 @@
           ],
           "planned_scope_ref": "docs/development/dispatch/20261018-wave19/README.md",
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "reserved_write_resources": [
-            "Main:tenant-storage",
-            "Main:identity-projection",
-            "Main:identity-directory-reader"
-          ],
-          "ports": {
-            "postgresql": 55435
-          },
+          "reserved_write_resources": [],
+          "ports": {},
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
@@ -179608,7 +179684,7 @@
           "actual_start_baseline_sha": "85f4776e36f19db16f5c0077f72906d8d3d31441",
           "branch": "codex/wave19-directory-isolation-20261018",
           "candidate_review_completed": true,
-          "candidate_integrated": false,
+          "candidate_integrated": true,
           "delivery_report": "docs/development/evidence/WP02-02/identity-directory-isolation/DELIVERY.md",
           "review_mode": "Single combined SPEC/QUALITY author self-review; not independent",
           "validation": {
@@ -179619,6 +179695,18 @@
             "owned_clusters": 6,
             "owned_postgresql_stopped": true,
             "scope": "Real ordinary A/B PostgreSQL read-only directory; not trusted adapter, actual HTTP host or real DEV"
+          },
+          "reserved_postgresql_ports": [],
+          "integration": {
+            "source": "5f62016a855df254641242117e6dbe0ec7f5ba77",
+            "main": "c2b808a1e081b20d537a665cef387b90c6b4e164",
+            "pr": "https://github.com/GTX537/CP6/pull/286"
+          },
+          "delivery_ref": {
+            "commit": "f201d63ac3f4423c91be83a9b702a255ce9503fa",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261019T004046Z-wave19-isolation-delivery/MESSAGE.md",
+            "kind": "DELIVERY",
+            "at": "2026-10-19T00:40:46.810087+00:00"
           }
         },
         {
@@ -179627,24 +179715,63 @@
           "title": "可信租户连接的目录读取适配",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "gate": "SEQUENTIAL_PENDING",
-          "phase": "REGISTERED_NOT_STARTED",
+          "gate": "CONFIRMED",
+          "phase": "VALIDATED_READY_TO_INTEGRATE",
           "estimated_hours": [
             4,
             6
           ],
-          "worker_start_received": false,
-          "worker_delivery_received": false,
-          "write_paths": [],
+          "worker_start_received": true,
+          "worker_delivery_received": true,
+          "write_paths": [
+            "CP6.Core/Services/CrmIdentity/IdentitySnapshotReader.cs",
+            "CP6.Core/Services/CrmIdentity/IIdentitySnapshotReader.cs",
+            "CP6.Core/Persistence/Tenancy/TenantIdentityDirectoryReader.cs",
+            "CP6.Core/Persistence/Tenancy/README.md",
+            "CP6.WebApi/Controllers/Internal/CrmIdentityController.cs",
+            "CP6.WebApi/Configuration/CrmIdentityConfiguration.cs",
+            "CP6.Tests/Persistence/Tenancy/TenantIdentityDirectoryReaderPostgresTests.cs",
+            "CP6.Tests/Persistence/Tenancy/IdentityDirectoryPostgresFixture.cs",
+            "CP6.Tests/CrmIdentityDirectoryPostgreSqlTests.cs",
+            "docs/development/evidence/WP02-05/trusted-directory-reader/DELIVERY.md"
+          ],
           "planned_scope_ref": "docs/development/dispatch/20261018-wave19/README.md",
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "reserved_write_resources": [],
-          "ports": {},
+          "reserved_write_resources": [
+            "Main:tenant-storage",
+            "Main:identity-directory-reader"
+          ],
+          "ports": {
+            "postgresql": 55435
+          },
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
           "full_task_completed": false,
-          "business_acceptance": "NOT_RUN"
+          "business_acceptance": "NOT_RUN",
+          "actual_start_ref": {
+            "commit": "f201d63ac3f4423c91be83a9b702a255ce9503fa",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T004046Z-wave19-reader-start/MESSAGE.md",
+            "kind": "START",
+            "at": "2026-10-19T00:40:46.810087+00:00"
+          },
+          "actual_start_baseline_sha": "c2b808a1e081b20d537a665cef387b90c6b4e164",
+          "branch": "codex/wave19-trusted-directory-reader-20261018",
+          "candidate_review_completed": true,
+          "candidate_integrated": false,
+          "delivery_report": "docs/development/evidence/WP02-05/trusted-directory-reader/DELIVERY.md",
+          "review_mode": "Single combined SPEC/QUALITY author self-review; not independent",
+          "validation": {
+            "unique_passed": 31,
+            "native_pg_passed": 14,
+            "configuration_passed": 17,
+            "failed": 0,
+            "skipped": 0,
+            "evidence_root": "D:\\CP6-local-test\\wave19\\w19-03",
+            "owned_clusters": 4,
+            "owned_postgresql_stopped": true,
+            "scope": "Ordinary trusted DTO adapter and impacted reader/configuration; actual HTTP deferred W19-04"
+          }
         },
         {
           "id": "W19-04",
@@ -179697,7 +179824,7 @@
       },
       "user_authority": "User explicitly requested wave19 remaining foundations, current chat only, 24-hour task list and persistent goal. Goal active from 2026-10-18T23:49:21Z.",
       "review_mode": "One combined task-level SPEC/QUALITY author self-review by sole coordinator; not an independent reviewer.",
-      "next_action": "Normally integrate directory read-only isolation, verify remote main, then W19-03 trusted-connection reader in the same directory."
+      "next_action": "Normally integrate trusted directory reader, verify remote main, then W19-04 actual HTTP composition and round closure."
     },
     "wave_history": [
       {
