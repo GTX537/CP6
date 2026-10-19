@@ -75,6 +75,12 @@ public class TwoFactorService : ITwoFactorService
     public bool VerifyTotp(Sys_User user, string code)
         => !string.IsNullOrEmpty(user.TwoFactorSecret) && _totp.Verify(user.TwoFactorSecret, code);
 
+    public bool TryVerifyTotp(Sys_User user, string code, out long matchedCounter)
+    {
+        matchedCounter = -1;
+        return !string.IsNullOrEmpty(user.TwoFactorSecret) && _totp.TryVerify(user.TwoFactorSecret, code, out matchedCounter);
+    }
+
     private static string OtpStoreKey(string otpKey) => $"sec:2fa:otp:{otpKey}";
     private static string OtpCooldownKey(string otpKey) => $"sec:2fa:otp-cd:{otpKey}";
 

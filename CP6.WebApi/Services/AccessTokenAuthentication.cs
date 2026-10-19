@@ -60,6 +60,14 @@ public static class AccessTokenAuthentication
         var user = await ActiveUserAsync(db, id, tenant, ct);
         if (user == null || Value("cp6_auth_version") != AuthSessionVersion.For(user)
             || Value("must_change_password") is not ("true" or "false")) return false;
+        var receipt = await new AuthenticationInteractionStoreV1(db).ReadSessionAsync(Value("jti")!, ct);
+        if (receipt is { Rejected: true }) return false;
+        if (receipt != null)
+        {
+            var evidence = receipt.Parse();
+            if (evidence.Primary.UserId != id || evidence.Primary.TenantId != tenant
+                || evidence.AuthenticationVersion != Value("cp6_auth_version")) return false;
+        }
         if (Value("impersonator_id") is { } actorText)
         {
             if (!Guid.TryParse(actorText, out var actorId) || actorId == Guid.Empty

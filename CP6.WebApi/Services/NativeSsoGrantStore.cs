@@ -26,6 +26,9 @@ public interface INativeSsoGrantStore
         Guid tenantId,
         CancellationToken ct = default);
 
+    Task<string> CompleteWithProofAsync(string requestId, AuthenticationProofV1 proof, CancellationToken ct = default)
+        => throw new InvalidOperationException("AUTH_PRIMARY_PROOF_REQUIRED");
+
     Task<NativeSsoGrant> ConsumeGrantAsync(
         string grantCode,
         string verifier,
@@ -42,7 +45,8 @@ public sealed record NativeSsoGrant(
     Guid UserId,
     Guid TenantId,
     string RedirectUri,
-    ClientContextDto Client);
+    ClientContextDto Client,
+    AuthenticationProofV1? Proof = null);
 
 /// <summary>二次 PKCE 原生 SSO grant；请求和授权码均落 IDistributedCache、短期且一次性。</summary>
 public sealed class NativeSsoGrantStore : INativeSsoGrantStore
@@ -93,11 +97,18 @@ public sealed class NativeSsoGrantStore : INativeSsoGrantStore
             : JsonSerializer.Deserialize<NativeSsoRequest>(json);
     }
 
-    public async Task<string> CompleteAsync(
+    public Task<string> CompleteAsync(string requestId, Guid userId, Guid tenantId, CancellationToken ct = default)
+        => CompleteCoreAsync(requestId, userId, tenantId, null, ct);
+
+    public Task<string> CompleteWithProofAsync(string requestId, AuthenticationProofV1 proof, CancellationToken ct = default)
+        => CompleteCoreAsync(requestId, proof.UserId, proof.TenantId, proof, ct);
+
+    private async Task<string> CompleteCoreAsync(
         string requestId,
         Guid userId,
         Guid tenantId,
-        CancellationToken ct = default)
+        AuthenticationProofV1? proof,
+        CancellationToken ct)
     {
         var requestKey = RequestKey(requestId);
         var requestJson = await _cache.GetAsync(requestKey, ct);
@@ -106,6 +117,8 @@ public sealed class NativeSsoGrantStore : INativeSsoGrantStore
             : JsonSerializer.Deserialize<NativeSsoRequest>(requestJson);
         if (request is null)
             throw new InvalidOperationException("E-SEC-022");
+        if (proof != null && (proof.ClientKind != request.Client.ClientKind || proof.ClientBinding != AuthenticationEntryServiceV1.Binding(request.Client)))
+            throw new InvalidOperationException("E-SEC-024");
         if (!await _cache.RemoveIfValueMatchesAsync(
                 requestKey,
                 requestJson!,
@@ -116,7 +129,7 @@ public sealed class NativeSsoGrantStore : INativeSsoGrantStore
 
         var code = WebEncoders.Base64UrlEncode(RandomNumberGenerator.GetBytes(32));
         var grant = new NativeSsoGrant(
-            userId, tenantId, request.RedirectUri, request.Client);
+            userId, tenantId, request.RedirectUri, request.Client, proof);
         await _cache.SetAsync(
             GrantKey(code),
             JsonSerializer.Serialize(new GrantEnvelope(grant, request.CodeChallenge)),

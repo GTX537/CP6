@@ -23,7 +23,7 @@ namespace CP6.WebApi.Controllers.Sys;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController : LocalizedControllerBase
+public partial class AuthController : LocalizedControllerBase
 {
     private readonly CP6Context _context;
     private readonly IConfiguration _config;
@@ -126,6 +126,8 @@ public class AuthController : LocalizedControllerBase
             throw new BizException("E-SEC-002");
         }
 
+        var originalPolicy = _context.Database.IsNpgsql() ? await Policies.ReadAsync(user.TenantId, HttpContext.RequestAborted) : null;
+        var originalChallenge = AuthenticationInteractionStoreV1.NewChallenge();
         // 3. 验证密码（BCrypt 哈希对比）
         if (!_hasher.Verify(request.Password, user.Password))
         {
@@ -136,6 +138,9 @@ public class AuthController : LocalizedControllerBase
             await _audit.LogAsync(evt, user.Id, user.UserName, request.TenantCode, ClientIp, ClientUa, "wrong password");
             throw new BizException("E-SEC-001");
         }
+
+        var originalProof = originalPolicy?.VerifiedPrimary(user, AuthenticationPrimaryMethod.Password, "Web",
+            AuthenticationEntryServiceV1.WebBinding(originalChallenge), Guid.NewGuid().ToString("N"), DateTimeOffset.UtcNow);
 
         // 账号被禁用：密码虽对也拒（E-SEC-003，五语 seed 归 T8）+ 审计
         if (!user.Enable)
@@ -164,6 +169,8 @@ public class AuthController : LocalizedControllerBase
 
         // 章10：确定当前请求租户为该用户的租户 → 后续权限聚合/菜单查询按其租户正确作用域
         _tenant.CurrentTenantId = user.TenantId;
+
+        if (originalProof != null) return await PgWebBeginAsync(originalProof, originalChallenge);
 
         // #2 2FA（T6）：用户已启用 2FA 或租户强制 → 写 pending 半登录态，不签发完整 access/refresh。
         //   purpose=2fa_enroll(强制租户且未启用 → 必须先扫码绑定) / 2fa_verify(已启用 → 输码即可)。
@@ -233,6 +240,14 @@ public class AuthController : LocalizedControllerBase
         try
         {
             var url = await _sso.BuildAuthorizeUrlAsync(tenantCode, SsoRedirectUri(), returnUrl);
+            if (_context.Database.IsNpgsql())
+            {
+                var challenge = AuthenticationInteractionStoreV1.NewChallenge();
+                var state = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(new Uri(url).Query)["state"].ToString();
+                await _sso.BindStateAsync(state, "Web", AuthenticationEntryServiceV1.WebBinding(challenge));
+                Response.Cookies.Append("cp6_sso", challenge, new CookieOptions { HttpOnly = true, Secure = _sec.Cookie.Secure,
+                    SameSite = SameSiteMode.Lax, Path = _sec.Sso.CallbackPath, MaxAge = TimeSpan.FromMinutes(_sec.Sso.StateMinutes) });
+            }
             return Ok(new { authorizeUrl = url });
         }
         catch (InvalidOperationException ex)
@@ -252,6 +267,14 @@ public class AuthController : LocalizedControllerBase
         var landing = $"{FrontendBase()}{_sec.Sso.PostLoginRedirect}";
         try
         {
+            if (_context.Database.IsNpgsql())
+            {
+                var challenge = Request.Cookies["cp6_sso"];
+                if (string.IsNullOrEmpty(challenge)) throw new InvalidOperationException("E-SEC-022");
+                var proof = await _sso.HandleVerifiedCallbackAsync(code, state, SsoRedirectUri(), "Web", AuthenticationEntryServiceV1.WebBinding(challenge));
+                Response.Cookies.Delete("cp6_sso", new CookieOptions { HttpOnly = true, Secure = _sec.Cookie.Secure, SameSite = SameSiteMode.Lax, Path = _sec.Sso.CallbackPath });
+                return await PgWebBeginAsync(proof, challenge, landing);
+            }
             var user = await _sso.HandleCallbackAsync(code, state, SsoRedirectUri());
             _tenant.CurrentTenantId = user.TenantId;   // HandleCallback 已设，防御再设
 
@@ -282,7 +305,13 @@ public class AuthController : LocalizedControllerBase
     {
         var uid = (await _perm.GetAsync()).UserId;
         var user = await _context.Sys_Users.FirstAsync(u => u.Id == uid);
-        var mustChange = user.MustChangePassword || _policy.IsExpired(user);
+        var originalSso = false;
+        if (_context.Database.IsNpgsql())
+        {
+            var receipt = await new AuthenticationInteractionStoreV1(_context).ReadSessionAsync(User.FindFirst("jti")!.Value, HttpContext.RequestAborted);
+            originalSso = receipt?.Parse().Primary.PrimaryMethod == AuthenticationPrimaryMethod.Sso;
+        }
+        var mustChange = user.MustChangePassword || !originalSso && _policy.IsExpired(user);
         return Ok(await _session.BuildProfileAsync(user, mustChange));
     }
 
@@ -351,6 +380,7 @@ public class AuthController : LocalizedControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> TwoFactorSetup()
     {
+        if (_context.Database.IsNpgsql()) return Ok(await Entries.SetupAsync(await PgPendingAsync("2fa_enroll"), null, HttpContext.RequestAborted));
         var (user, _, _) = await ReadPendingAsync();
         string uri;
         try { uri = _2fa.BeginEnrollment(user); }
@@ -364,6 +394,7 @@ public class AuthController : LocalizedControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> TwoFactorEnroll([FromBody] TwoFactorCodeRequest req)
     {
+        if (_context.Database.IsNpgsql()) return await PgWebFactorAsync(true, "totp", req.Code);
         var (user, jti, _) = await ReadPendingAsync("2fa_enroll");
         if (!await _2fa.ConfirmEnrollmentAsync(user, req.Code))
         {
@@ -379,6 +410,7 @@ public class AuthController : LocalizedControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> TwoFactorVerify([FromBody] TwoFactorVerifyRequest req)
     {
+        if (_context.Database.IsNpgsql()) return await PgWebFactorAsync(false, req.Method, req.Code);
         var (user, jti, _) = await ReadPendingAsync("2fa_verify");
 
         try { _login.EnsureNotLocked(user); }
@@ -408,6 +440,7 @@ public class AuthController : LocalizedControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> TwoFactorEmailOtp()
     {
+        if (_context.Database.IsNpgsql()) { await Entries.SendEmailAsync(await PgPendingAsync("2fa_verify"), null, HttpContext.RequestAborted); return Ok(new { code = 0 }); }
         var (user, jti, purpose) = await ReadPendingAsync();
         if (purpose == "2fa_enroll") throw new BizException("E-SEC-014");
         try { await _2fa.SendEmailOtpAsync(user, jti); }

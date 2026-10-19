@@ -26,6 +26,7 @@ public interface ITwoFactorService
 
     /// <summary>TOTP 验码（不消费状态，纯函数）。</summary>
     bool VerifyTotp(Sys_User user, string code);
+    bool TryVerifyTotp(Sys_User user, string code, out long matchedCounter) { matchedCounter = -1; return false; }
 
     /// <summary>发送邮件 OTP（otpKey=pendingJti 或 self:{uid}）。无邮箱→E-SEC-015；命中冷却→E-SEC-016；发送失败→E-SEC-018。</summary>
     Task SendEmailOtpAsync(Sys_User user, string otpKey);

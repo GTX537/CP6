@@ -1,0 +1,95 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using CP6.Core.Services.Sys;
+using CP6.Core.Utilities;
+using CP6.WebApi.Services;
+using CP6.WebApi.Localization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+
+namespace CP6.WebApi.Controllers.Sys;
+
+[AuthenticationEntryFailure]
+public partial class AuthController
+{
+    private AuthenticationEntryServiceV1 Entries => HttpContext.RequestServices.GetRequiredService<AuthenticationEntryServiceV1>();
+    private AuthenticationPolicyServiceV1 Policies => HttpContext.RequestServices.GetRequiredService<AuthenticationPolicyServiceV1>();
+
+    private Task<IActionResult> PgWebBeginAsync(AuthenticationProofV1 proof, string challenge, string? landing = null)
+        => PgWebOutputAsync(stage => Entries.BeginAsync(proof, challenge, null, ClientIp, ClientUa, stage, HttpContext.RequestAborted), landing);
+
+    private async Task<IActionResult> PgWebFactorAsync(bool enroll, string? method, string code)
+    {
+        var challenge = await PgPendingAsync(enroll ? "2fa_enroll" : "2fa_verify");
+        return await PgWebOutputAsync(stage => Entries.CompleteFactorAsync(challenge, null, enroll, method, code,
+            ClientIp, ClientUa, stage, HttpContext.RequestAborted));
+    }
+
+    private async Task<IActionResult> PgWebOutputAsync(Func<Action<AuthenticationEntryResultV1>, Task<AuthenticationEntryResultV1>> action, string? landing = null)
+    {
+        AuthenticationEntryResultV1? committed = null;
+        try
+        {
+            var staged = new DefaultHttpContext();
+            committed = await action(result =>
+            {
+                HttpContext.RequestAborted.ThrowIfCancellationRequested();
+                if (Response.HasStarted) throw new InvalidOperationException("AUTH_RESPONSE_ALREADY_STARTED");
+                if (result.Session is { } session)
+                {
+                    _cookies.WriteAuthCookies(staged.Response, session.AccessToken, session.RefreshToken, AuthCookieWriter.NewCsrfToken());
+                    _cookies.ClearPendingCookies(staged.Response);
+                }
+                else
+                {
+                    var jwt = _config.GetSection("JWT");
+                    var token = JwtHelper.GeneratePendingToken(result.Proof.UserId.ToString(), result.Proof.TenantId, result.Purpose!, result.Challenge!,
+                        jwt["Secret"]!, jwt["Issuer"]!, jwt["Audience"]!, _sec.TwoFactor.PendingTokenMinutes);
+                    _cookies.ClearAuthCookies(staged.Response);
+                    _cookies.WritePendingCookies(staged.Response, token, AuthCookieWriter.NewCsrfToken());
+                }
+            });
+            HttpContext.RequestAborted.ThrowIfCancellationRequested();
+            if (Response.HasStarted) throw new InvalidOperationException("AUTH_RESPONSE_ALREADY_STARTED");
+            Response.Headers.Append("Set-Cookie", staged.Response.Headers.SetCookie);
+            if (landing != null) return Redirect(committed.Session == null ? landing + "?challenge=" + committed.Purpose : landing);
+            return committed.Session == null ? Ok(new { twoFactorRequired = true, mustEnroll = committed.Purpose == "2fa_enroll" }) : Ok(committed.Session.Profile);
+        }
+        catch (RefreshCompletionUnknownException) { return StatusCode(503, new { code = "AUTHENTICATION_COMPLETION_OUTCOME_UNKNOWN" }); }
+        catch (Exception error)
+        {
+            if (committed != null) await Entries.RejectOutputAsync(committed);
+            if (error is InvalidOperationException)
+            {
+                if (landing != null) return Redirect(landing + "?error=" + Uri.EscapeDataString(error.Message));
+                throw AuthenticationEntryFailureAttribute.ToBusiness(error.Message);
+            }
+            throw;
+        }
+    }
+
+    private async Task<string> PgPendingAsync(string purpose)
+    {
+        try
+        {
+            var raw = Request.Cookies[AuthCookieWriter.PendingCookie];
+            if (string.IsNullOrEmpty(raw)) throw new InvalidOperationException();
+            var cfg = _config.GetSection("JWT");
+            var principal = new JwtSecurityTokenHandler().ValidateToken(raw, new TokenValidationParameters
+            {
+                ValidateIssuer = true, ValidateAudience = true, ValidateLifetime = true, ValidateIssuerSigningKey = true,
+                ValidIssuer = cfg["Issuer"], ValidAudience = cfg["Audience"], ClockSkew = TimeSpan.Zero,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(cfg["Secret"]!))
+            }, out _);
+            var challenge = principal.FindFirstValue("jti") ?? throw new InvalidOperationException();
+            var pending = await Entries.ReadAsync(challenge, null, purpose, HttpContext.RequestAborted);
+            if (principal.FindFirstValue(ClaimTypes.NameIdentifier) != pending.Proof.UserId.ToString()
+                || principal.FindFirstValue("tenant_id") != pending.Proof.TenantId.ToString()
+                || principal.FindFirstValue("token_use") != pending.Purpose) throw new InvalidOperationException();
+            return challenge;
+        }
+        catch (OperationCanceledException) { throw; }
+        catch { throw new BizException("E-SEC-013"); }
+    }
+}
