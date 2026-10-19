@@ -1,5 +1,7 @@
 # 第二十一轮：完整目录基线取得与核验
 
+> W21-01候选通过：25项基线行为及38项现有合同通过，原失败保留且局部修正；一次作者集中审查无阻断。[单份DELIVERY](../../evidence/WP02-05/baseline-contract/DELIVERY.md)。待正常集成，持续目标active。
+
 > 执行：当前COORD用executing-plans单对话串行完成下列任务；用户授权歧义由总控决定，沿项目精简验证规则。writing-plans/brainstorming用于上下文与合同核对，不另开代理、工作树或审批回合。
 
 **目标：** 基于现有Main身份权威和普通PostgreSQL目录宿主，完整取得、验证并冻结当前C02目录结果，供后续消费者采用。
@@ -33,17 +35,18 @@ Main/main/origin/main `f552995d36c37ad736d84058df2d2a3ba7085568`；W20四窗口/
 
 文件：新增 `CP6.Core/Services/CrmIdentity/Baselines/IdentityBaselineContracts.cs`、`IdentityBaselineVerifier.cs`、`CP6.Tests/IdentityBaselineTests.cs`；必要接入 `IdentityEventValidator.cs`及相关`CrmIdentityContractTests.cs`；单份报告 `docs/development/evidence/WP02-05/baseline-contract/DELIVERY.md`。
 
-- [ ] 固定source tuple：TenantId、准确Issuer、Region、ContractBundleSha256、安装身份摘要；调用方从可信配置提供预期值，不能信任首个响应自报来源。
-- [ ] 定义版本化raw snapshot：源身份、boundary、原aggregate/type/int version/hash/deleted、canonical base64原UTF-8字节。只复制原数据，不重新序列化后冒称相同字节。
-- [ ] 实现有界核验builder：首轮目录唯一且合法；逐项原字节/hash/schema/tenant/aggregate/version/tombstone完全匹配；末轮boundary与集合相同才Complete。重复、漏项、未知类型、不同来源或边界都拒绝。错误后builder不可继续发布。
-- [ ] 产出只读拥有副本的基线、确定性内容摘要和显式SOURCE_SNAPSHOT来源；不含虚构运输message/raw-envelope摘要或原撤权时间。重新传递同对象/条目顺序不改变内容身份。
-- [ ] 定向自动化验证原字节、恶意/不完整/冲突输入、修改调用者集合不能改变结果、取消无结果；复用事件schema及语义检查。schema校验可构造仅验证用载体，绝不持久化为真实事件来源；不能以新包装长度缩小原合法payload。
+- [x] 固定source tuple：TenantId、准确Issuer、Region、ContractBundleSha256、安装身份摘要；调用方从可信配置提供预期值，不能信任首个响应自报来源。
+- [x] 定义版本化raw snapshot：源身份、boundary、原aggregate/type/int version/hash/deleted、canonical base64原UTF-8字节。只复制原数据，不重新序列化后冒称相同字节。版本化目录页另带同一观察的源端TotalCount，首轮/末轮均核对条目数，避免提前终止或缺页被当作完整集合。
+- [x] 实现有界核验builder：首轮目录唯一且合法；逐项原字节/hash/schema/tenant/aggregate/version/tombstone完全匹配；末轮boundary与集合相同才Complete。重复、漏项、未知类型、不同来源或边界都拒绝。错误后builder不可继续发布。
+- [x] 产出只读拥有副本的基线、确定性内容摘要和显式SOURCE_SNAPSHOT来源；不含虚构运输message/raw-envelope摘要或原撤权时间。重新传递同对象/条目顺序不改变内容身份。
+- [x] 定向自动化验证原字节、恶意/不完整/冲突输入、修改调用者集合不能改变结果、取消无结果；复用事件schema及语义检查。schema校验可构造仅验证用载体，绝不持久化为真实事件来源；不能以新包装长度缩小原合法payload。
 
 ### W21-02：原字节HTTP读取
 
 文件范围：新增Core `Baselines/IIdentityRawSnapshotReader.cs`及原字节reader，扩展 `TenantIdentityDirectoryReader.cs`、必要host source描述、`CrmIdentityController.cs`；定向测试复用 `IdentityDirectoryConfiguredHttpHost.cs`/原生fixture。报告 `WP02-05/baseline-raw-http/DELIVERY.md`。
 
 - [ ] 新路由 `/internal/crm/identity/directory/v1/snapshots/{aggregateId}` 仅在真实普通身份宿主启用时开放；继续当前JWT、租户/令牌授权、固定安装期望、no-store与受控400/404/503。
+- [ ] 配套 `/internal/crm/identity/directory/v1/versions` 返回冻结source、boundary、TotalCount、条目和cursor；分页及总数同一SQL观察。新版本字段补足可验证完整性，旧versions接口保持原合同。
 - [ ] 在受管普通连接事务中，以单个SQL观察Bootstrap+generation+准确snapshot；返回原PayloadJson的严格UTF-8编码与其原摘要，暴露冻结可信source，不提供任意tenant/database参数。
 - [ ] 验证A/B隔离、原字节（含空白/转义）、原hash不符拒绝、未配置不可用、Owner查询0；保留旧versions/snapshots行为，未改存储结构或seal。
 

@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 2026-10-19：W21-01完整基线核验候选通过
+
+已实现来源/原字节/版本/摘要/首尾全集核验和不可变SOURCE_SNAPSHOT结果，失败或取消无部分发布。25项基线行为及38项现有事件合同通过；空键问题局部修正并复查，一次作者SPEC/QUALITY无阻断。[单份DELIVERY](../development/evidence/WP02-05/baseline-contract/DELIVERY.md)保留真实失败与证据复用。
+
+待正常PR/远端核对后推进版本化普通PG/HTTP读取。未启动PG/HTTP，无新树/代理/Actions/既有库操作或部署；完整公共基础、CRM授权采用、Owner最终门及真实业务未提升，持续目标active。
+
 ## 2026-10-19：第二十一轮持续目标与四窗口登记
 
 已核对W20最终main `f552995d`、Handoff `30439c2`及四窗口关闭。本轮[24小时计划](../development/dispatch/20261019-wave21/README.md)为完整基线合同、原字节普通PG/HTTP读取、有界首尾完整目录采集、验证集成收尾。持续目标active，检查点UTC2026-10-20 04:15:29（纽约00:15:29）。
