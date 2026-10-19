@@ -1,5 +1,9 @@
 # 第二十三轮：平台管理员共同事务保护
 
+> W23-01候选完成：[BUG308单份DELIVERY](../../evidence/WP02-03/platform-admin-transaction/DELIVERY.md)，65项有效通过，作者集中审查无阻断；待正常集成/远端核对。原审查失败与夹具修正均保留。
+
+> 当前优先修正P0 [#308](https://github.com/GTX537/CP6/issues/308)：原生PG复现并发撤销和直接停用/删除可移除最后管理员。分支 `codex/bug-308-platform-admin-transaction-20261019`，沿同一真实START/领取范围，不另起审查或ACK。正常主线合并与远端核对前保持Open。
+
 本对话单独执行，复用现有目录。持续目标从2026-10-19T07:24:41Z开始，24小时检查点2026-10-20T07:24:41Z（纽约03:24:41）；提前完成即交付，时限不替代完成证据。基线main/origin/main `ae73ad97b5f6327b05d59ccc0031ad4c52662d50`，W22已收尾；当前Issue0、无本任务Actions。
 
 ## 顺序任务与退出条件

@@ -2,6 +2,8 @@ using CP6.Core.Auth;
 using System.ComponentModel.DataAnnotations;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Sys;
+using CP6.Core.Services.Platform;
+using CP6.WebApi.Localization;
 using CP6.Entity.DomainModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -103,7 +105,7 @@ public class UserController : LocalizedControllerBase
             await _refresh.RevokeAllForUserAsync(existing.Id, saveChanges: false);
         }
 
-        await _context.SaveChangesAsync();
+        await SaveUserChangesAsync();
         return Ok(new { existing.Id, existing.UserName, existing.NickName, existing.RoleId, existing.Enable });
     }
 
@@ -125,8 +127,15 @@ public class UserController : LocalizedControllerBase
     {
         var entities = await _context.Sys_Users.Where(u => ids.Contains(u.Id)).ToListAsync();
         _context.Sys_Users.RemoveRange(entities);
-        var count = await _context.SaveChangesAsync();
+        var count = await SaveUserChangesAsync();
         return Ok(new { count });
+    }
+
+    private async Task<int> SaveUserChangesAsync()
+    {
+        try { return await _context.SaveChangesAsync(HttpContext?.RequestAborted ?? CancellationToken.None); }
+        catch (DbUpdateException error) when (PlatformAdminMutationV1.IsSurvivorViolation(error))
+        { throw new BizException("E-SEC-037"); }
     }
 }
 
