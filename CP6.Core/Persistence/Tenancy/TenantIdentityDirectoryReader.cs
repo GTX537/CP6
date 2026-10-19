@@ -15,7 +15,7 @@ namespace CP6.Core.Persistence.Tenancy;
 /// Authentication/current reader authorization remain the host's responsibility.
 /// </summary>
 internal sealed class TenantIdentityDirectoryReader(TenantConnectionManager manager, CrmIdentityRuntime runtime,
-    IDataProtectionProvider protection) : IIdentitySnapshotReader
+    IDataProtectionProvider protection, IdentityDirectoryDatabaseIdentity? installedIdentity = null) : IIdentitySnapshotReader
 {
     public Task<IdentityVersionPage> ReadVersionsAsync(Guid tenant, string? cursor, int size = 200, CancellationToken cancellationToken = default)
         => ReadAsync(tenant, (reader, ct) => reader.ReadVersionsAsync(tenant, cursor, size, ct), cancellationToken);
@@ -32,13 +32,19 @@ internal sealed class TenantIdentityDirectoryReader(TenantConnectionManager mana
             var knownProfile = (binding.ModelVersion, binding.MigrationVersion) is
                 (IdentityDirectoryRowSecurityV1.ModelVersion, IdentityDirectoryRowSecurityV1.MigrationVersion) or
                 (IdentityDirectoryAuthorizationV2.ModelVersion, IdentityDirectoryAuthorizationV2.MigrationVersion);
-            if (binding.TenantId != tenant || !knownProfile || binding.QueueDomainRefs.Count != 0)
+            if (binding.TenantId != tenant || !knownProfile || binding.QueueDomainRefs.Count != 0 ||
+                (installedIdentity is not null && binding.ModelVersion != IdentityDirectoryAuthorizationV2.ModelVersion))
                 throw new TenantStorageException(TenantStorageFailure.BindingRejected);
             result = await lease.InTransactionAsync(async (transaction, token) =>
             {
                 var read = await transaction.ExecuteAsync(async (connection, dbTransaction, cancellation) =>
                 {
                     using var guard = new TenantEfCommandGuard(transaction, connection, dbTransaction, tenant);
+                    if (installedIdentity is not null)
+                    {
+                        await guard.ValidateCurrentAsync(cancellation).ConfigureAwait(false);
+                        await installedIdentity.ValidateAsync(connection, dbTransaction, cancellation).ConfigureAwait(false);
+                    }
                     var options = new DbContextOptionsBuilder<CP6Context>()
                         .UseNpgsql(connection, contextOwnsConnection: false)
                         .ReplaceService<IMigrationsSqlGenerator, PostgreSqlPrerequisiteMigrationsSqlGenerator>()

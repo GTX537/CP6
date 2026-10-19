@@ -7,10 +7,13 @@ using Npgsql;
 var serviceToken = args.SequenceEqual(["install-service-token-v1", "--stdin"]);
 var revocation = args.SequenceEqual(["install-service-revocation-v1", "--stdin"]);
 var tenantControl = args.SequenceEqual(["service-token-tenant-directory-control-v1", "--stdin"]);
+var directoryInstall = args.SequenceEqual(["install-identity-directory-v2", "--stdin"]);
+var directoryInspect = args.SequenceEqual(["inspect-identity-directory-v2", "--stdin"]);
+var directoryControl = directoryInstall || directoryInspect;
 var controlExecutionStarted = false;
-if ((!args.SequenceEqual(["provision", "--stdin"]) && !revocation && !serviceToken && !tenantControl) || !Console.IsInputRedirected)
+if ((!args.SequenceEqual(["provision", "--stdin"]) && !revocation && !serviceToken && !tenantControl && !directoryControl) || !Console.IsInputRedirected)
 {
-    Console.Error.WriteLine("Usage: CP6.TenantStorage provision|install-service-revocation-v1|install-service-token-v1|service-token-tenant-directory-control-v1 --stdin (one bounded JSON document on redirected standard input).");
+    Console.Error.WriteLine("Usage: CP6.TenantStorage provision|install-service-revocation-v1|install-service-token-v1|service-token-tenant-directory-control-v1|install-identity-directory-v2|inspect-identity-directory-v2 --stdin (one bounded JSON document on redirected standard input).");
     return 2;
 }
 try
@@ -28,6 +31,26 @@ try
     using var document = JsonDocument.Parse(buffer.AsMemory(0,size));
     if (document.RootElement.ValueKind != JsonValueKind.Object || !Unique(document.RootElement))
         throw new TenantProvisioningException("input-rejected");
+    if (directoryControl)
+    {
+        var command = document.Deserialize<DirectoryInput>(new JsonSerializerOptions
+        { UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow }) ?? throw new TenantProvisioningException("input-rejected");
+        if (command.Request is not { } target || string.IsNullOrWhiteSpace(command.AdminUsername) || string.IsNullOrEmpty(command.AdminPassword)
+            || !Enum.TryParse<SslMode>(command.SslMode, false, out var directorySsl) || directorySsl is not (SslMode.VerifyFull or SslMode.Disable))
+            throw new TenantProvisioningException("input-rejected");
+        await using var control = new NpgsqlConnection(new NpgsqlConnectionStringBuilder
+        {
+            Host = target.Server, Port = target.Port, Database = target.Database, Username = command.AdminUsername,
+            Password = command.AdminPassword, SslMode = directorySsl, Pooling = false, Enlist = false,
+            SearchPath = "pg_catalog", Options = " ", IncludeErrorDetail = false, Timeout = 10, CommandTimeout = 65,
+            ApplicationName = "CP6.TenantStorage.IdentityDirectoryV2"
+        }.ConnectionString);
+        controlExecutionStarted = true;
+        var installation = new IdentityDirectoryInstallationV2();
+        var directoryResult = directoryInstall ? await installation.InstallAsync(control, target, timeout.Token)
+            : await installation.InspectAsync(control, target, timeout.Token);
+        Console.WriteLine(JsonSerializer.Serialize(directoryResult)); return 0;
+    }
     if (tenantControl)
     {
         RequireLosslessTenantDeadlines(document.RootElement);
@@ -99,13 +122,25 @@ catch (ServiceTokenTenantControlException error)
     Console.Error.WriteLine(JsonSerializer.Serialize(new { Contract = ServiceTokenTenantDirectoryControlV1.Contract, error.Outcome, Code = error.Message }));
     return error.Outcome == "UNKNOWN" ? 4 : 1;
 }
-catch (TenantProvisioningException error) when (!tenantControl)
+catch (IdentityDirectoryInstallationException error)
+{
+    Console.Error.WriteLine(JsonSerializer.Serialize(new { Contract = IdentityDirectoryInstallationV2.Contract, error.Outcome, Code = error.Message }));
+    return error.Outcome == "UNKNOWN" ? 4 : 1;
+}
+catch (TenantProvisioningException error) when (!tenantControl && !directoryControl)
 {
     Console.Error.WriteLine(error.Message);
     return 1;
 }
 catch
 {
+    if (directoryControl)
+    {
+        Console.Error.WriteLine(JsonSerializer.Serialize(new { Contract = IdentityDirectoryInstallationV2.Contract,
+            Outcome = controlExecutionStarted ? directoryInstall ? "UNKNOWN" : "UNAVAILABLE" : "NOT_APPLIED",
+            Code = controlExecutionStarted ? "execution-or-output-lost" : "input-rejected" }));
+        return controlExecutionStarted && directoryInstall ? 4 : 1;
+    }
     if (tenantControl)
     {
         Console.Error.WriteLine(JsonSerializer.Serialize(new { Contract = ServiceTokenTenantDirectoryControlV1.Contract,
@@ -146,3 +181,4 @@ internal sealed record RevocationInput(ServiceRevocationInstallRequest Request,s
 
 internal sealed record ServiceTokenInput(ServiceTokenInstallRequest Request,string AdminUsername,string AdminPassword,string SslMode="VerifyFull");
 internal sealed record TenantControlInput(ServiceTokenTenantControlRequestV1 Request,string AdminUsername,string AdminPassword,string SslMode="VerifyFull");
+internal sealed record DirectoryInput(IdentityDirectoryInstallRequestV2 Request,string AdminUsername,string AdminPassword,string SslMode="VerifyFull");

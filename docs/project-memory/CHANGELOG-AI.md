@@ -1,5 +1,17 @@
 # AI 可读变更日志
 
+## 2026-10-18：W20-02显式安装/检查候选通过
+
+目录v2具备显式fresh安装、只读inspect、实际database/OID/cluster身份和结构/权限/映射漂移检查；普通reader可绑定冻结回执，失败无Owner回退。真实CLI与原生PG两条完整生命周期通过（含取消rollback、漂移拒绝、提交回执丢失UNKNOWN后inspect），4个旧CLI入口仅做无数据库输入冒烟。[单份DELIVERY](../development/evidence/WP02-02/directory-installation/DELIVERY.md)保留原失败及范围。
+
+一次作者SPEC/QUALITY无剩余阻断，5个自有PG停止；候选待正常PR/远端核对，随后W20-03实际HTTP配置。无新工作树/代理/Actions/既有库操作或部署，完整任务与真实业务不提升，持续目标active。
+
+## 2026-10-18：W20-01已合入，W20-02安装检查开工
+
+候选 `5541e086d52dabfcffced1835729c6811e8aa81b` 经[PR291](https://github.com/GTX537/CP6/pull/291)合入远端main `1b03afcb8ba9b86ea6a9ccc8d45ad5392ba71364`，范围文件/祖先关系核对完成；7项PG去重通过、4个自有实例停止，[单份DELIVERY](../development/evidence/WP02-02/directory-authorization/DELIVERY.md)保留证据。Handoff `65961b0f8bbf1685fbac07fc93817863d240ad44` 已发布并回读。
+
+W20-02复用原目录实现显式安装、只读inspect、目标身份/结构漂移及UNKNOWN恢复边界，当前验证NOT_RUN。实际HTTP采用仍待后续。无新工作树/代理/Actions/既有库操作或部署，持续目标active；完整任务与业务状态不提升。
+
 ## 2026-10-18：W20-01目录当前授权最小身份候选通过
 
 独立v2 profile为Sys_Tenants/ServiceToken开放必要列并应用可信LOGIN映射RLS；普通身份当前资格/令牌检查和原目录读取均有原生PG证据。7项去重通过、0剩余失败/跳过；普通control写入、触发器、回滚和v1兼容通过，一次作者SPEC/QUALITY无阻断。[单份DELIVERY](../development/evidence/WP02-02/directory-authorization/DELIVERY.md)保留原RED与复用来源。
