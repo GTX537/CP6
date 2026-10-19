@@ -1,5 +1,14 @@
 # 第二十四轮：平台授撤当前调用人最终权限门
 
+## 第二十四轮限定交付已完成
+
+P0 #315当前平台调用人最终门经[PR316](https://github.com/GTX537/CP6/pull/316)合入远端main `5a44d92eeffad18ee209a8c6a28c5707295ce6ac`，候选 `0c4c6ecc5990a27a47db7ae5cfc3bdd431084743`范围核对一致，IssueClosed。66项有效相关验证通过：38原生PG/HTTP、28单测，所有原RED保留。一次作者SPEC/QUALITY，无独立代理。
+
+窗口CLOSED、无资源占用；4自有PG停止，原目录/缓存复用，零新工作树/代理/Actions。D余约44.01GiB，原7项用户资料未动。最终收尾PR/远端/Handoff/检查点后完成外部goal；初估1.5–3小时是代理耗时，提前完成即交付。
+
+下一优先：完整当前认证/会话/凭据和政策撤权，其他平台写入口最终门、全IAM写者/引用CAS，CRM投影发布及业务Owner采用；既有环境安装/普通写账号与真实业务仍未完成。完整WP02和247运行NOT_RUN不提升，未自动开新窗口。
+
+
 > 候选完成：[单份DELIVERY](../../evidence/WP02-03/platform-admin-current-actor/DELIVERY.md)，66项有效通过/38原生PG，作者SPEC/QUALITY无阻断；#315待正常合并与远端核对。
 
 > 已确认P0 [#315](https://github.com/GTX537/CP6/issues/315)：5项PG/HTTP RED，入口filter后撤权/停用/删除、错tenant与无认证主体均未拒绝；沿原START优先修正。

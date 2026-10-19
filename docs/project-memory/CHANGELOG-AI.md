@@ -1,5 +1,11 @@
 # AI 可读变更日志
 
+## 2026-10-19：第二十四轮限定目标已集成
+
+P0 #315平台授撤当前actor最终权限门和主体/tenant绑定已通过PR316合入远端main `5a44d92eeffad18ee209a8c6a28c5707295ce6ac`，原步骤与远端核对完成、IssueClosed。66项有效相关验证（38原生PG/HTTP），一次作者SPEC/QUALITY无阻断。四个自有PG停止，复用原目录，零新树/代理/Actions，D余约44.01GiB。
+
+完整认证版本/会话/政策撤权、其他平台写入口最终门、CRM/Owner与业务仍未完成；247运行NOT_RUN不提升。最终文档远端/Handoff/检查点后关闭外部goal。[本轮记录](../development/dispatch/20261019-wave24/README.md)。
+
 ## 2026-10-19：W24-01候选可合并
 
 P0 #315平台授撤最终actor资格检查及主体/tenant绑定已实现，66项有效通过（38原生PG/HTTP），一次作者SPEC/QUALITY无阻断。待正常PR/远端核对，持续目标active；完整认证策略、CRM/Owner和业务不提升。[DELIVERY](../development/evidence/WP02-03/platform-admin-current-actor/DELIVERY.md)。
