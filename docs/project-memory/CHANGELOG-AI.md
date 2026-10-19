@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-19：W23-01集成，继续创建白名单
+
+BUG308经PR309合入远端main并关闭，65项有效验证、Handoff已核对。当前单总控在同一24小时目标中登记W23-02，按已接受S5补普通用户创建白名单及服务端身份字段；尚未运行该窗口验证。继续复用目录，完整IAM/业务与既有环境安装未提升。[计划](../development/dispatch/20261019-wave23/README.md)。
+
 ## 2026-10-19：W23-01候选通过，待集成
 
 平台管理员末名保护与授撤审计原子保存已实现，65项去重有效通过（52原生PG/HTTP、13既有单测）。新前向迁移仅自有隔离库执行；作者一次SPEC/QUALITY无阻断。#308待正常合并及远端核对，持续目标active；全IAM/业务及既有环境安装未提升。[DELIVERY](../development/evidence/WP02-03/platform-admin-transaction/DELIVERY.md)。
