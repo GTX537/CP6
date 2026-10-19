@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-19：W25-01集成，W25-02模拟最终门候选
+
+W25-01经PR320合入远端main1974bcb4，#319关闭。W25-02 P0 #321修正当前真身/目标与原认证状态、必要审计/提交后Cookie及UNKNOWN关闭；新增可空PG jsonb审计上下文，仅在自有隔离已填库升级验证。83有效相关通过（49原生），作者集中审查无阻断。待正常PR/远端核对，继续W25-03及总收尾；完整IAM/模拟FE/业务不提升。[DELIVERY](../development/evidence/WP02-03/impersonation-final-gate/DELIVERY.md)。
+
 ## 2026-10-19：W25-01租户管理最终门候选
 
 P0 #319已在既有PG管理员根内重读并锁定当前actor，四种租户写入及必要审计共同提交。79相关通过（60原生PG/HTTP），作者集中审查无阻断；待正常PR/远端核对。W25-02/03仍待执行，长目标active，完整业务不提升。[DELIVERY](../development/evidence/WP02-04/current-actor-final-gate/DELIVERY.md)。

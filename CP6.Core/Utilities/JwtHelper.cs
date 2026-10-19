@@ -37,7 +37,11 @@ public class JwtHelper
         bool mustChangePassword = false,
         bool isPlatformAdmin = false,
         Guid? impersonatorId = null,
-        string? authenticationVersion = null)
+        string? authenticationVersion = null,
+        Guid? impersonatorTenantId = null,
+        string? impersonatorAuthenticationVersion = null,
+        string? sessionReference = null,
+        string? impersonatorSessionReference = null)
     {
         // 1. 把用户信息放入 Claims（Token 中携带的数据）。tenant_id 供 TenantMiddleware 解析当前租户（章10）
         var claims = new List<Claim>
@@ -56,6 +60,10 @@ public class JwtHelper
         if (isPlatformAdmin) claims.Add(new Claim("is_platform_admin", "true"));
         if (impersonatorId.HasValue) claims.Add(new Claim("impersonator_id", impersonatorId.Value.ToString()));
         if (authenticationVersion != null) claims.Add(new Claim("cp6_auth_version", authenticationVersion));
+        if (impersonatorTenantId.HasValue) claims.Add(new Claim("impersonator_tenant_id", impersonatorTenantId.Value.ToString()));
+        if (impersonatorAuthenticationVersion != null) claims.Add(new Claim("impersonator_auth_version", impersonatorAuthenticationVersion));
+        if (sessionReference != null) claims.Add(new Claim("cp6_session", sessionReference));
+        if (impersonatorSessionReference != null) claims.Add(new Claim("impersonator_session", impersonatorSessionReference));
 
         // 2. 用密钥创建签名凭证
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));

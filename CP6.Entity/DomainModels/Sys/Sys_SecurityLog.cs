@@ -24,6 +24,9 @@ public class Sys_SecurityLog : BaseTenantEntity
     /// <summary>原因/备注（如 "user not found" / "wrong password"）</summary>
     [MaxLength(256)] public string? Reason { get; set; }
 
+    /// <summary>PostgreSQL structured security-event context; never stores raw authentication credentials.</summary>
+    public string? ContextJson { get; set; }
+
     /// <summary>客户端 IP</summary>
     [MaxLength(64)] public string? ClientIp { get; set; }
 

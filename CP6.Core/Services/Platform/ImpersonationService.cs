@@ -20,7 +20,7 @@ namespace CP6.Core.Services.Platform;
 /// 经 <c>IgnoreQueryFilters</c> 跨租户读目标用户角色与角色菜单（Sys_UserRole/Sys_RoleMenu 均带 TenantId 受全局过滤，
 /// 后者按目标租户显式钉住；Sys_Menu 全局表无过滤）。</para>
 /// </summary>
-public class ImpersonationService : IImpersonationService
+public partial class ImpersonationService : IImpersonationService
 {
     private readonly CP6Context _db;
     private readonly ITokenBlacklistService _blacklist;
@@ -50,6 +50,7 @@ public class ImpersonationService : IImpersonationService
 
     public async Task<ImpersonationStartResult> StartAsync(Guid tenantId, Guid? userId, string? reason, ClaimsPrincipal current, HttpResponse response)
     {
+        if (_db.Database.IsNpgsql()) return await StartPostgreSqlAsync(tenantId, userId, reason, current, response);
         // 1. 目标租户必须存在且启用。
         var targetTenant = await _db.Sys_Tenants.FirstOrDefaultAsync(t => t.Id == tenantId && t.Enable)
             ?? throw new InvalidOperationException("E-SEC-032");
@@ -108,6 +109,7 @@ public class ImpersonationService : IImpersonationService
 
     public async Task<ImpersonationEndResult> EndAsync(ClaimsPrincipal current, HttpResponse response)
     {
+        if (_db.Database.IsNpgsql()) return await EndPostgreSqlAsync(current, response);
         // 1. 必须处于 impersonation 态（带 impersonator_id claim）。
         var impClaim = current.FindFirst("impersonator_id");
         if (impClaim == null)

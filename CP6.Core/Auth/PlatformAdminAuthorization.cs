@@ -1,13 +1,14 @@
 using System.Security.Claims;
 using CP6.Core.EFDbContext;
 using Microsoft.EntityFrameworkCore;
+using CP6.Core.Services.Sys;
 
 namespace CP6.Core.Auth;
 
 /// <summary>Current platform actor binding. This does not replace session authentication policy.</summary>
 internal static class PlatformAdminAuthorization
 {
-    internal sealed record Actor(Guid Id, string UserName);
+    internal sealed record Actor(Guid Id, string UserName, Guid TenantId, string AuthenticationVersion, bool MustChangePassword);
 
     internal static async Task<Actor> RequireAsync(CP6Context db, ClaimsPrincipal? principal,
         CancellationToken ct, bool lockActor = false)
@@ -38,7 +39,7 @@ internal static class PlatformAdminAuthorization
         }
         var actor = await query.SingleOrDefaultAsync(ct);
         if (actor is null || actor.TenantId != tenant || !actor.Enable || !actor.IsPlatformAdmin) Deny();
-        return new Actor(actor!.Id, actor.UserName);
+        return new Actor(actor!.Id, actor.UserName, actor.TenantId, AuthSessionVersion.For(actor), actor.MustChangePassword);
     }
 
     private static bool IsAuthorityClaim(Claim claim) => claim.Type is ClaimTypes.NameIdentifier or "sub"
