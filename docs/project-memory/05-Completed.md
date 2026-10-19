@@ -1,5 +1,17 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-19：W21-03完整HTTP采集候选通过
+
+产品采集器固定可信来源、禁止重定向、有界读取完整首尾目录及准确原快照，全部一致后才返回不可变基线。35项去重协议/HTTP/取消测试通过，含公开产品构造器真实302拒绝；准确请求匹配及token等待取消补齐后局部6项复查，一次作者SPEC/QUALITY无阻断。[单份DELIVERY](../development/evidence/WP02-05/baseline-collector/DELIVERY.md)。
+
+未启动PG，测试HTTP已停止；待正常集成后进入真实PG宿主采集矩阵。无新树/代理/Actions/既有库操作或部署，持续目标active；完整公共基础/CRM授权采用/Owner最终门和真实业务未提升。
+
+## 2026-10-19：W21-02已合入，W21-03开工
+
+候选 `845d574ca54a0a8c062d168217b37f9976907adc` 经[正常PR](https://github.com/GTX537/CP6/pull/298)合入远端main `18d36ced499f4846ea6e50bda5e200182b5cbb06`，范围文件/祖先关系核对，Handoff `95516e0df1602040292ed94f75483ed63cf359ce`回读。[单份DELIVERY](../development/evidence/WP02-05/baseline-raw-http/DELIVERY.md)。3项原生PG/HTTP及1项无宿主检查通过，4个自有PG停止，作者SPEC/QUALITY无阻断。
+
+同目录从最新main开始W21-03 有界实际HTTP完整基线采集；当前新行为NOT_RUN。无新树/代理/Actions/既有库操作或部署，持续目标active；完整公共基础和真实业务未提升。
+
 ## 2026-10-19：W21-02版本化原字节读取候选通过
 
 实际普通PG宿主新增目录总数/来源/边界页及原字节快照，保持旧接口；3项原生HTTP和1项无宿主检查通过，游标绑定来源摘要后局部2项复查通过。原字节空白/转义、hash故障、A/B隔离与no-store覆盖，Owner请求查询0，一次作者SPEC/QUALITY无阻断。[单份DELIVERY](../development/evidence/WP02-05/baseline-raw-http/DELIVERY.md)。

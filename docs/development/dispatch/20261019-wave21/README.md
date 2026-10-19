@@ -1,5 +1,9 @@
 # 第二十一轮：完整目录基线取得与核验
 
+> W21-03候选通过：完整首尾目录/准确原快照、有界HTTP/严格JSON/取消等35项去重通过，作者集中审查无阻断。[单份DELIVERY](../../evidence/WP02-05/baseline-collector/DELIVERY.md)。未启动PG，测试HTTP已停止；待正常集成。
+
+> W21-02经正常PR合入 `18d36ced499f4846ea6e50bda5e200182b5cbb06`，Handoff `95516e0df1602040292ed94f75483ed63cf359ce`回读；W21-03真实START，新行为NOT_RUN。
+
 > W21-02候选通过：3项原生PG/HTTP和1项无宿主检查，原字节/来源/总数/旧合同验证，作者集中审查无阻断。[单份DELIVERY](../../evidence/WP02-05/baseline-raw-http/DELIVERY.md)。四个自有PG停止，待正常集成。
 
 > W21-01经PR297合入 `3209824ef71dc56bc251d92b75ab40463833c970`，Handoff `692c7c8b95832074456addd66eb902b936299b95`已回读；W21-02真实读取START，新行为NOT_RUN。
@@ -58,10 +62,10 @@ Main/main/origin/main `f552995d36c37ad736d84058df2d2a3ba7085568`；W20四窗口/
 
 新增 `Baselines/IdentityBaselineCollector.cs`及相关配置/HTTP源适配、`CP6.Tests/IdentityBaselineCollectorTests.cs`；报告 `WP02-05/baseline-collector/DELIVERY.md`。
 
-- [ ] 可信固定base URI/来源、服务认证提供者与HTTP client；不从payload决定目的地。拒绝重定向与非预期来源，测试loopback显式隔离配置，不回退Owner或匿名读取。
-- [ ] 串行页大小≤200，检测重复cursor/aggregate、响应超限、最多100万条；每份原payload≤原事件允许的1MiB，累计原字节默认上限256MiB，全部使用有界响应读取，超限整体失败而非截断后称完整。部署可选择更低运行预算，预算不是源数据合法性变化。
-- [ ] 完整首轮目录→所有准确raw snapshots→完整末轮目录；boundary只等值比较，不当全局水位排序；失败/409/401/403/503/取消无部分基线，不自动重放或产生授权。
-- [ ] 全成功才返回W21-01不可变结果；调用方保存/发布策略由消费者任务负责，本轮不写CRM投影或READY。
+- [x] 可信固定base URI/来源、服务认证提供者与HTTP client；不从payload决定目的地。拒绝重定向与非预期来源，测试loopback显式隔离配置，不回退Owner或匿名读取。
+- [x] 串行页大小≤200，检测重复cursor/aggregate、响应超限、最多100万条；每份原payload≤原事件允许的1MiB，累计原字节默认上限256MiB，全部使用有界响应读取，超限整体失败而非截断后称完整。部署可选择更低运行预算，预算不是源数据合法性变化。
+- [x] 完整首轮目录→所有准确raw snapshots→完整末轮目录；boundary只等值比较，不当全局水位排序；失败/409/401/403/503/取消无部分基线，不自动重放或产生授权。
+- [x] 全成功才返回W21-01不可变结果；调用方保存/发布策略由消费者任务负责，本轮不写CRM投影或READY。
 
 ### W21-04：串联及收尾
 
