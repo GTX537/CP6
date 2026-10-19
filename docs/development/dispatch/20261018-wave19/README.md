@@ -1,5 +1,9 @@
 # 第十九轮：身份目录公共基础单对话持续计划
 
+> W19-02普通账号三表只读隔离候选已验证，5项原生PG去重通过，包含有效ACL/越权拒绝及普通control下FORCE RLS写入。[单份DELIVERY](../../evidence/WP02-02/identity-directory-isolation/DELIVERY.md)。六个自有PG停止，当前待正常集成；下一窗口为W19-03可信连接目录适配。
+
+> W19-01已通过PR285合入main `85f4776e36f19db16f5c0077f72906d8d3d31441`，#284关闭；Handoff `a2a66b333bf48a9b519bad03461a9a9fd6cc0036` 已回读。W19-02三表普通角色只读隔离真实START，验证尚NOT_RUN；下方待集成状态保留历史时点。
+
 > W19-01 / #284候选已通过11项原生PG及一次集中作者自审，两个真实RED保留。[单份DELIVERY](../../evidence/WP02-05/directory-consistency/DELIVERY.md)。正常PR/远端核对待执行，当前Issue保持Open；之后串行进入W19-02。四个自有PG停止，无新worktree/Actions。
 
 执行者为当前总控，使用 writing-plans / executing-plans，在当前对话独自串行实施。用户要求先列未来24小时任务并设持续目标；目标已于2026-10-18 23:49:21 UTC建立（America/New_York 19:49:21）。检查点为2026-10-19 19:49:21当地时间，估算18～24小时含约3小时修正机动；时间到不等于完成。

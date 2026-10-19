@@ -1,5 +1,17 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-18：W19-02普通账号目录只读隔离候选已验证
+
+实际Bootstrap/Snapshot/Generation三表的RLS及最小权限组件已实现。普通A/B账号仅可读本租户，写入/旁路表/升级/伪造上下文均拒绝；普通control继承身份在FORCE RLS下仍能写入并保留版本/代际触发器。原生PG有效5项去重通过，异常前置/安装回滚有实证；一次集中作者SPEC/QUALITY无剩余阻断，原失败全部保留于[单份DELIVERY](../development/evidence/WP02-02/identity-directory-isolation/DELIVERY.md)。
+
+当前待正常PR/远端main核对，随后W19-03接可信连接实际读取。六个自有PG停止，无新worktree/代理/Actions/既有库或部署。完整WP02、全Main切换/冻结目录/CRM/Owner最终门和真实业务生产未提升；持续目标active。
+
+## 2026-10-18：W19-01已合入，W19-02普通角色隔离开工
+
+候选 `69fc23c0c4c81411058962861a7376bc775f06e2` 经[PR285](https://github.com/GTX537/CP6/pull/285)正常合入远端main `85f4776e36f19db16f5c0077f72906d8d3d31441`，10份范围文件/祖先关系已核对；#284关闭。11项PG与集中作者审查按[单份DELIVERY](../development/evidence/WP02-05/directory-consistency/DELIVERY.md)保留。Handoff `a2a66b333bf48a9b519bad03461a9a9fd6cc0036` 已发布并回读，四个自有PG停止。
+
+W19-02沿原目录从最新main真实START，仅三张身份目录表的普通账号只读RLS/有效ACL、可信login映射及对应PG验证。当前尚无本窗口通过声明；主线/现有数据库不自动切换，完整WP02/冻结目录/CRM/Owner最终门和真实业务生产不提升。无新worktree/代理/Actions，持续目标active。
+
 ## 2026-10-18：W19-01目录就绪一致性候选已验证
 
 P0[#284](https://github.com/GTX537/CP6/issues/284)两个实际并发失败已修正：PG单条查询同时读取就绪与内容；bootstrap锁后刷新真实marker及RowVersion。原生PG相关11项去重通过、0失败/跳过，含分页代际切换、取消/事务、Outbox回滚和双等待者重建。单份[DELIVERY](../development/evidence/WP02-05/directory-consistency/DELIVERY.md)含红绿来源与一次集中SPEC/QUALITY作者自审，无剩余阻断。
