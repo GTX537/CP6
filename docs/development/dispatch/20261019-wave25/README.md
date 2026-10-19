@@ -1,5 +1,9 @@
 # 第二十五轮：三个连续公共基础交付
 
+> W25-03候选完成：[DELIVERY](../../evidence/WP02-03/session-authentication-current-state/DELIVERY.md)。#323原access/refresh状态问题修正，167有效相关通过（53原生），作者集中审查无阻断。待正常合并及最终协调收尾，持续目标仍active。
+
+> W25-02已通过[PR322](https://github.com/GTX537/CP6/pull/322)合入远端`ee11bc845ac2581b19b14d218568c8136d5bf7da`，#321关闭。W25-03真实START，复用原目录；本项和组合/状态收尾完成前不结束长目标。
+
 > W25-02候选完成：[DELIVERY](../../evidence/WP02-03/impersonation-final-gate/DELIVERY.md)，#321及锁等待过期边界已修正，83有效相关通过/49原生；一次作者审查无阻断。待正常合并，随后W25-03，长目标继续。
 
 > W25-02实证P0 #321：5项实际HTTP RED。为保原备注容量并明确actual/effective/session，登记可空PG jsonb审计字段及前向迁移/快照；仅自有已填隔离库验证，不操作既有库。原认证版本/tenant/会话引用通过已认证签名来源传递，不能回填旧证明。

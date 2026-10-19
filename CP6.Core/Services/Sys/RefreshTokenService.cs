@@ -16,7 +16,7 @@ namespace CP6.Core.Services.Sys;
 /// ③重用检测（已吊销令牌再次提交即视为盗用，吊销该用户整条链）；④TokenHash 单列全局唯一，
 /// refresh 时无租户上下文按 TokenHash + IgnoreQueryFilters 跨租户精确命中，再由令牌回设租户上下文。
 /// </summary>
-public class RefreshTokenService : IRefreshTokenService
+public partial class RefreshTokenService : IRefreshTokenService
 {
     private readonly CP6Context _db;
     private readonly TokenOptions _t;
@@ -41,6 +41,7 @@ public class RefreshTokenService : IRefreshTokenService
     public async Task<string> IssueAsync(
         Sys_User user, string? ip, string? ua, RefreshTokenClientContext client)
     {
+        if (_db.Database.IsNpgsql()) return await IssuePostgreSqlAsync(user, ip, ua, client);
         var raw = NewRaw();
         Guid? browserSessionId = null;
         if (_configuration?.GetValue<bool>("CrmOidc:Enabled") == true && client.ClientKind == "Web")
@@ -75,6 +76,7 @@ public class RefreshTokenService : IRefreshTokenService
     public async Task<(string newToken, Sys_User user)> RotateAsync(
         string rawToken, string? ip, string? ua, RefreshTokenClientContext client)
     {
+        if (_db.Database.IsNpgsql()) return await RotatePostgreSqlAsync(rawToken, ip, ua, client);
         var hash = HashOf(rawToken);
         // 无租户上下文：按 TokenHash 跨租户查（全局唯一索引；IgnoreQueryFilters 白名单——令牌本身即凭证）
         var row = await _db.Sys_RefreshTokens.IgnoreQueryFilters().AsNoTracking().FirstOrDefaultAsync(r => r.TokenHash == hash);

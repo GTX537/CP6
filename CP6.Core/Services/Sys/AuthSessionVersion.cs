@@ -8,7 +8,12 @@ namespace CP6.Core.Services.Sys;
 public static class AuthSessionVersion
 {
     public static string For(Sys_User user) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(
-        string.Join('|', user.AuthenticationEpoch.ToString(), user.Password,
-            user.PasswordChangedAt?.Ticks.ToString(), user.TwoFactorEnabled.ToString(),
-            user.TwoFactorEnrolledAt?.Ticks.ToString(), user.ExternalProvider, user.ExternalSubject))));
+        System.Text.Json.JsonSerializer.Serialize(new object?[] { "cp6-auth-state-v2",
+            user.AuthenticationEpoch, user.Password, StoredTicks(user.PasswordChangedAt),
+            user.TwoFactorEnabled, StoredTicks(user.TwoFactorEnrolledAt), user.TwoFactorEnabled ? user.TwoFactorSecret : null,
+            user.ExternalProvider, user.ExternalSubject, user.QuickPinHash, user.MustChangePassword }))));
+
+    // PostgreSQL stores microseconds. A just-persisted tracked entity can still carry .NET's
+    // final 100 ns digit; hash the same persisted instant before and after a database read.
+    private static long? StoredTicks(DateTime? value) => value is { } time ? time.Ticks / 10 * 10 : null;
 }

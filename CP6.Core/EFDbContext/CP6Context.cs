@@ -758,6 +758,12 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         // 不升级为 (TenantId, TokenHash)。UserId 为非唯一查询索引（RevokeAllForUser 用）。
         modelBuilder.Entity<Sys_RefreshToken>(e =>
         {
+            if (!Database.IsNpgsql())
+            {
+                e.Ignore(x => x.AuthenticationVersion);
+                e.Ignore(x => x.CompletionRejectedAtUtc);
+                e.Ignore(x => x.CompletionPending);
+            }
             e.HasIndex(x => x.TokenHash).IsUnique().HasDatabaseName("UX_Sys_RefreshToken_TokenHash");
             e.HasIndex(x => x.UserId);
             e.HasIndex(x => x.BrowserSessionId);
@@ -2640,6 +2646,7 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             CorePostgreSqlModelConfiguration.Apply(modelBuilder);
             // New native JSON context has no legacy text padding/collation contract.
             modelBuilder.Entity<Sys_SecurityLog>().Property(x => x.ContextJson).HasColumnType("jsonb").UseCollation(null);
+            modelBuilder.Entity<Sys_RefreshToken>().Property(x => x.AuthenticationVersion).HasColumnType("text").UseCollation(null);
         }
     }
 

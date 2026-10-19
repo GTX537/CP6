@@ -29,6 +29,15 @@ public class Sys_RefreshToken : BaseTenantEntity
     /// <summary>Opt-in Web login family. Null preserves pre-bridge and native refresh behavior.</summary>
     public Guid? BrowserSessionId { get; set; }
 
+    /// <summary>Original issuer's credential-state version. Null requires reauthentication; rotation never backfills it.</summary>
+    public string? AuthenticationVersion { get; set; }
+
+    /// <summary>Durable rejection of this exact replacement after rotation, distinct from a reuse attack.</summary>
+    public DateTime? CompletionRejectedAtUtc { get; set; }
+
+    /// <summary>Rotation committed, but controller completion has not yet passed. Never replay as a reuse attack.</summary>
+    public bool CompletionPending { get; set; }
+
     /// <summary>签发时客户端 IP</summary>
     [MaxLength(64)] public string? CreatedIp { get; set; }
 

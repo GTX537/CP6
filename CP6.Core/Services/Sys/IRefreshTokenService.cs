@@ -25,6 +25,14 @@ public interface IRefreshTokenService
     /// <summary>吊销单个令牌（登出用）。令牌不存在或已吊销则静默。</summary>
     Task RevokeAsync(string rawToken);
 
+    /// <summary>Quarantine only the newly rotated token when completion cannot be delivered.</summary>
+    Task RejectCompletionAsync(string rawToken) => RevokeAsync(rawToken);
+
+    /// <summary>HTTP consumers keep the replacement pending until all post-rotation gates pass.</summary>
+    Task<(string newToken, Sys_User user)> RotateForCompletionAsync(string raw, string? ip, string? ua, RefreshTokenClientContext client)
+        => RotateAsync(raw, ip, ua, client);
+    Task CompleteRotationAsync(string rawToken) => Task.CompletedTask;
+
     /// <summary>
     /// 吊销某用户全部有效令牌（改密 / 重用检测 / 管理员强制下线用）。
     /// <paramref name="saveChanges"/>=false 时仅把吊销变更入轨不落库，供调用方与其它写入合并一次原子保存

@@ -159082,6 +159082,11 @@
       "date": "2026-10-19",
       "change": "W25-01 integrated PR320/main1974bcb4 and #319 closed. W25-02 BUG321 PG impersonation current actor/target, original authentication evidence, mandatory structured audit and post-commit cookie ready; 83 effective passed/49 native; W25-03 outstanding.",
       "evidence": "docs/development/evidence/WP02-03/impersonation-final-gate/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-19",
+      "change": "W25-02 integrated PR322/main ee11bc84, #321 closed. W25-03 BUG323 original access/refresh state, PG rotation/HTTP completion and actual Program compatibility ready; 167 effective passed (53 native), full authentication policy/Owner/business unchanged.",
+      "evidence": "docs/development/evidence/WP02-03/session-authentication-current-state/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -161653,32 +161658,41 @@
       "card_anchor": "wp02-03",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W25-02 模拟进入退出当前身份及审计Cookie边界",
+        "chat_label": "COORD / W25-03 访问与refresh原认证状态绑定",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/wave25-02-impersonation-final-gate-20261019",
+        "branch": "codex/wave25-03-authentication-state-20261019",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-19T08:56:46.233363+00:00",
-        "baseline_sha": "1974bcb4ee9f179c6539dd032b09329037cd5002",
+        "claimed_at": "2026-10-19T09:45:20.913368+00:00",
+        "baseline_sha": "ee11bc845ac2581b19b14d218568c8136d5bf7da",
         "entry_evidence": "docs/development/dispatch/20261019-wave25/README.md",
         "phase": "READY_TO_MERGE",
-        "dispatch_scope": "W25_02",
+        "dispatch_scope": "W25_03",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
+        "actual_start_ref": {
+          "commit": "930c00241e2524ff22442b2d5f5cb9e98c59b207",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T094520Z-wave25-03-start/MESSAGE.md",
+          "at": "2026-10-19T09:45:20.913368+00:00"
+        },
         "allowed_write_paths": [
-          "CP6.Core/Auth/PlatformAdminAuthorization.cs",
           "CP6.Core/EFDbContext/CP6Context.cs",
-          "CP6.Core/Services/Platform/ImpersonationService.cs",
-          "CP6.Core/Services/Platform/ImpersonationService.PostgreSql.cs",
-          "CP6.Core/Utilities/JwtHelper.cs",
-          "CP6.Entity/DomainModels/Sys/Sys_SecurityLog.cs",
-          "CP6.Persistence.PostgreSql/Migrations/Core/20261019093000_SecurityAuditContextV1.cs",
+          "CP6.Core/Persistence/CorePostgreSqlModelConfiguration.cs",
+          "CP6.Core/Services/Sys/AuthSessionVersion.cs",
+          "CP6.Core/Services/Sys/IRefreshTokenService.cs",
+          "CP6.Core/Services/Sys/RefreshTokenService.cs",
+          "CP6.Core/Services/Sys/RefreshTokenService.PostgreSql.cs",
+          "CP6.Entity/DomainModels/Sys/Sys_RefreshToken.cs",
           "CP6.Persistence.PostgreSql/Migrations/Core/CP6ContextModelSnapshot.cs",
-          "CP6.Tests/Platform/TenantManagementPostgresFixture.cs",
-          "CP6.Tests/Platform/ImpersonationPostgreSqlTests.cs",
-          "CP6.WebApi/Controllers/Platform/ImpersonationController.cs",
-          "docs/development/evidence/WP02-03/impersonation-final-gate/DELIVERY.md"
+          "CP6.Persistence.PostgreSql/Migrations/Core/20261019101500_RefreshAuthenticationStateV1.cs",
+          "CP6.WebApi/Controllers/ClientAuthController.cs",
+          "CP6.WebApi/Controllers/Sys/AuthController.cs",
+          "CP6.WebApi/Program.cs",
+          "CP6.WebApi/Services/AccessTokenAuthentication.cs",
+          "CP6.Tests/Platform/AuthenticationStatePostgreSqlTests.cs",
+          "CP6.Tests/Platform/AuthenticationCompletionPostgreSqlTests.cs",
+          "docs/development/evidence/WP02-03/session-authentication-current-state/DELIVERY.md"
         ],
         "reserved_write_resources": [
           "Main:identity-authority"
@@ -161691,17 +161705,12 @@
         "formal_publication_authorized": false,
         "existing_database_migration_authorized": false,
         "deployment_authorized": false,
-        "delivery_report": "docs/development/evidence/WP02-03/impersonation-final-gate/DELIVERY.md",
+        "delivery_report": "docs/development/evidence/WP02-03/session-authentication-current-state/DELIVERY.md",
         "candidate_review_completed": true,
         "candidate_integrated": false,
-        "actual_start_ref": {
-          "commit": "c0bd26582c18abee8116ad162fba31d46fbb5b4b",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T091748Z-wave25-02-start/MESSAGE.md",
-          "at": "2026-10-19T09:17:48.346939+00:00"
-        },
         "active_issue": {
-          "number": 321,
-          "url": "https://github.com/GTX537/CP6/issues/321",
+          "number": 323,
+          "url": "https://github.com/GTX537/CP6/issues/323",
           "priority": "P0",
           "state": "Open"
         },
@@ -162160,6 +162169,91 @@
           },
           "closed_at": "2026-10-19T08:37:44.334082+00:00",
           "full_task_completed": false
+        },
+        {
+          "chat_label": "COORD / W25-02 模拟进入退出当前身份及审计Cookie边界",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/wave25-02-impersonation-final-gate-20261019",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-10-19T08:56:46.233363+00:00",
+          "baseline_sha": "1974bcb4ee9f179c6539dd032b09329037cd5002",
+          "entry_evidence": "docs/development/dispatch/20261019-wave25/README.md",
+          "phase": "INTEGRATED",
+          "dispatch_scope": "W25_02",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "allowed_write_paths": [
+            "CP6.Core/Auth/PlatformAdminAuthorization.cs",
+            "CP6.Core/EFDbContext/CP6Context.cs",
+            "CP6.Core/Services/Platform/ImpersonationService.cs",
+            "CP6.Core/Services/Platform/ImpersonationService.PostgreSql.cs",
+            "CP6.Core/Utilities/JwtHelper.cs",
+            "CP6.Entity/DomainModels/Sys/Sys_SecurityLog.cs",
+            "CP6.Persistence.PostgreSql/Migrations/Core/20261019093000_SecurityAuditContextV1.cs",
+            "CP6.Persistence.PostgreSql/Migrations/Core/CP6ContextModelSnapshot.cs",
+            "CP6.Tests/Platform/TenantManagementPostgresFixture.cs",
+            "CP6.Tests/Platform/ImpersonationPostgreSqlTests.cs",
+            "CP6.WebApi/Controllers/Platform/ImpersonationController.cs",
+            "docs/development/evidence/WP02-03/impersonation-final-gate/DELIVERY.md"
+          ],
+          "reserved_write_resources": [],
+          "reserved_postgresql_ports": [],
+          "handoff_branch": "codex/dev-coordination-20261012",
+          "actions_authorized": false,
+          "formal_publication_authorized": false,
+          "existing_database_migration_authorized": false,
+          "deployment_authorized": false,
+          "delivery_report": "docs/development/evidence/WP02-03/impersonation-final-gate/DELIVERY.md",
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "actual_start_ref": {
+            "commit": "c0bd26582c18abee8116ad162fba31d46fbb5b4b",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T091748Z-wave25-02-start/MESSAGE.md",
+            "at": "2026-10-19T09:17:48.346939+00:00"
+          },
+          "active_issue": {
+            "number": 321,
+            "url": "https://github.com/GTX537/CP6/issues/321",
+            "priority": "P0",
+            "state": "Closed"
+          },
+          "worker_delivery_received": true,
+          "candidate_review_verdict": "READY_TO_MERGE",
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "f02edd9eb99c3d72be404b25130c1d4e4be40aba",
+            "main": "ee11bc845ac2581b19b14d218568c8136d5bf7da",
+            "pr": "https://github.com/GTX537/CP6/pull/322",
+            "paths": [
+              "CP6.Core/Auth/PlatformAdminAuthorization.cs",
+              "CP6.Core/EFDbContext/CP6Context.cs",
+              "CP6.Core/Services/Platform/ImpersonationService.PostgreSql.cs",
+              "CP6.Core/Services/Platform/ImpersonationService.cs",
+              "CP6.Core/Utilities/JwtHelper.cs",
+              "CP6.Entity/DomainModels/Sys/Sys_SecurityLog.cs",
+              "CP6.Persistence.PostgreSql/Migrations/Core/20261019093000_SecurityAuditContextV1.cs",
+              "CP6.Persistence.PostgreSql/Migrations/Core/CP6ContextModelSnapshot.cs",
+              "CP6.Tests/Platform/ImpersonationPostgreSqlTests.cs",
+              "CP6.Tests/Platform/TenantManagementPostgresFixture.cs",
+              "CP6.WebApi/Controllers/Platform/ImpersonationController.cs",
+              "docs/development/dispatch/20261019-wave25/README.md",
+              "docs/development/evidence/WP02-03/impersonation-final-gate/DELIVERY.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-19T09:39:15.432643+00:00"
+          },
+          "delivery_ref": {
+            "commit": "9c528b4297954d6f81cb0d02553a0db6347a5577",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T094438Z-wave25-02-delivery/MESSAGE.md",
+            "at": "2026-10-19T09:44:38.177824+00:00"
+          }
         }
       ],
       "wave13_delivery": {
@@ -180733,7 +180827,7 @@
       "path": "docs/development/dispatch/20261019-wave25/README.md",
       "baseline_sha": "93738f84265d3199e8da2129436f23669da8a5e7",
       "registered_at": "2026-10-19T08:56:46.233363+00:00",
-      "phase": "W25_02_READY_TO_MERGE",
+      "phase": "W25_03_READY_TO_MERGE",
       "coordinator_shared_state_only": false,
       "assigned_chats": [
         "COORD"
@@ -180839,7 +180933,7 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "READY_TO_MERGE",
+          "phase": "INTEGRATED",
           "worker_start_received": true,
           "worker_delivery_received": true,
           "write_paths": [
@@ -180858,12 +180952,8 @@
           ],
           "planned_scope_ref": "docs/development/dispatch/20261019-wave25/README.md",
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "reserved_write_resources": [
-            "Main:identity-authority"
-          ],
-          "ports": {
-            "postgresql": 55435
-          },
+          "reserved_write_resources": [],
+          "ports": {},
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
@@ -180881,7 +180971,7 @@
             "number": 321,
             "url": "https://github.com/GTX537/CP6/issues/321",
             "priority": "P0",
-            "state": "Open"
+            "state": "Closed"
           },
           "scope_refinement": "Preserve original reason capacity and record actual/effective/session context in nullable PG jsonb security-audit column, forward migration on owned fixture only. Original authentication version/tenant/session claims are carried, not fabricated from an old token.",
           "delivery_report": "docs/development/evidence/WP02-03/impersonation-final-gate/DELIVERY.md",
@@ -180893,6 +180983,40 @@
             "failed_remaining": 0,
             "skipped_as_pass": 0,
             "evidence_root": "D:\\CP6-local-test\\wave25\\foundation"
+          },
+          "candidate_integrated": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "f02edd9eb99c3d72be404b25130c1d4e4be40aba",
+            "main": "ee11bc845ac2581b19b14d218568c8136d5bf7da",
+            "pr": "https://github.com/GTX537/CP6/pull/322",
+            "paths": [
+              "CP6.Core/Auth/PlatformAdminAuthorization.cs",
+              "CP6.Core/EFDbContext/CP6Context.cs",
+              "CP6.Core/Services/Platform/ImpersonationService.PostgreSql.cs",
+              "CP6.Core/Services/Platform/ImpersonationService.cs",
+              "CP6.Core/Utilities/JwtHelper.cs",
+              "CP6.Entity/DomainModels/Sys/Sys_SecurityLog.cs",
+              "CP6.Persistence.PostgreSql/Migrations/Core/20261019093000_SecurityAuditContextV1.cs",
+              "CP6.Persistence.PostgreSql/Migrations/Core/CP6ContextModelSnapshot.cs",
+              "CP6.Tests/Platform/ImpersonationPostgreSqlTests.cs",
+              "CP6.Tests/Platform/TenantManagementPostgresFixture.cs",
+              "CP6.WebApi/Controllers/Platform/ImpersonationController.cs",
+              "docs/development/dispatch/20261019-wave25/README.md",
+              "docs/development/evidence/WP02-03/impersonation-final-gate/DELIVERY.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-19T09:39:15.432643+00:00"
+          },
+          "delivery_ref": {
+            "commit": "9c528b4297954d6f81cb0d02553a0db6347a5577",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T094438Z-wave25-02-delivery/MESSAGE.md",
+            "at": "2026-10-19T09:44:38.177824+00:00"
           }
         },
         {
@@ -180901,36 +181025,65 @@
           "title": "访问与refresh原认证状态绑定",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "gate": "WAITING_PREDECESSOR_INTEGRATION",
-          "phase": "REGISTERED_NOT_STARTED",
-          "worker_start_received": false,
-          "worker_delivery_received": false,
+          "gate": "CONFIRMED",
+          "phase": "READY_TO_MERGE",
+          "worker_start_received": true,
+          "worker_delivery_received": true,
           "write_paths": [
-            "CP6.Core/Services/Sys/RefreshTokenService.cs",
-            "CP6.Core/Services/Sys/AuthSessionVersion.cs",
-            "CP6.Core/Services/Sys/CurrentPermissionContext.cs",
-            "CP6.WebApi/Services/AuthSessionService.cs",
-            "CP6.WebApi/Program.cs",
-            "CP6.WebApi/Controllers/Sys/AuthController.cs",
-            "CP6.WebApi/Controllers/ClientAuthController.cs",
-            "CP6.Core/Utilities/JwtHelper.cs",
-            "CP6.Entity/DomainModels/Sys/Sys_RefreshToken.cs",
             "CP6.Core/EFDbContext/CP6Context.cs",
-            "CP6.Persistence.PostgreSql/Migrations/Core/",
-            "CP6.Tests/Sys/",
-            "CP6.Tests/Auth/",
+            "CP6.Core/Persistence/CorePostgreSqlModelConfiguration.cs",
+            "CP6.Core/Services/Sys/AuthSessionVersion.cs",
+            "CP6.Core/Services/Sys/IRefreshTokenService.cs",
+            "CP6.Core/Services/Sys/RefreshTokenService.cs",
+            "CP6.Core/Services/Sys/RefreshTokenService.PostgreSql.cs",
+            "CP6.Entity/DomainModels/Sys/Sys_RefreshToken.cs",
+            "CP6.Persistence.PostgreSql/Migrations/Core/CP6ContextModelSnapshot.cs",
+            "CP6.Persistence.PostgreSql/Migrations/Core/20261019101500_RefreshAuthenticationStateV1.cs",
+            "CP6.WebApi/Controllers/ClientAuthController.cs",
+            "CP6.WebApi/Controllers/Sys/AuthController.cs",
+            "CP6.WebApi/Program.cs",
+            "CP6.WebApi/Services/AccessTokenAuthentication.cs",
+            "CP6.Tests/Platform/AuthenticationStatePostgreSqlTests.cs",
+            "CP6.Tests/Platform/AuthenticationCompletionPostgreSqlTests.cs",
             "docs/development/evidence/WP02-03/session-authentication-current-state/DELIVERY.md"
           ],
           "planned_scope_ref": "docs/development/dispatch/20261019-wave25/README.md",
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "reserved_write_resources": [],
-          "ports": {},
+          "reserved_write_resources": [
+            "Main:identity-authority"
+          ],
+          "ports": {
+            "postgresql": 55435
+          },
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
-          "predecessor": "W25-02"
+          "predecessor": "W25-02",
+          "actual_start_ref": {
+            "commit": "930c00241e2524ff22442b2d5f5cb9e98c59b207",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T094520Z-wave25-03-start/MESSAGE.md",
+            "at": "2026-10-19T09:45:20.913368+00:00"
+          },
+          "actual_start_baseline_sha": "ee11bc845ac2581b19b14d218568c8136d5bf7da",
+          "branch": "codex/wave25-03-authentication-state-20261019",
+          "active_issue": {
+            "number": 323,
+            "url": "https://github.com/GTX537/CP6/issues/323",
+            "priority": "P0",
+            "state": "Open"
+          },
+          "delivery_report": "docs/development/evidence/WP02-03/session-authentication-current-state/DELIVERY.md",
+          "review": "AUTHOR_SPEC_QUALITY_PASS",
+          "validation": {
+            "effective_passed": 167,
+            "native_postgresql_passed": 53,
+            "other_related_passed": 114,
+            "failed_remaining": 0,
+            "skipped_as_pass": 0,
+            "evidence_root": "D:\\CP6-local-test\\wave25\\foundation"
+          }
         }
       ],
       "execution_owner": {
@@ -180956,7 +181109,7 @@
         "raw_evidence_preserved": true
       },
       "review_mode": "One author SPEC/QUALITY per coherent task, no independent agents.",
-      "next_action": "Normal merge/remote verification and close321, then W25-03 authentication-state continuity and final closeout; long goal active."
+      "next_action": "Normal merge/remote verification and close323, then combined evidence/resource/ledger/Handoff/checkpoint closeout. Goal remains active until closeout."
     },
     "wave_history": [
       {

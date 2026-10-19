@@ -916,25 +916,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 }
                 return Task.CompletedTask;
             },
-            OnTokenValidated = async ctx =>
-            {
-                var jti = ctx.Principal?.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Jti)?.Value;
-                if (!string.IsNullOrEmpty(jti))
-                {
-                    var bl = ctx.HttpContext.RequestServices
-                        .GetRequiredService<CP6.Core.Services.Sys.ITokenBlacklistService>();
-                    if (await bl.IsBlacklistedAsync(jti)) ctx.Fail("token blacklisted");
-                }
-                if (ctx.Principal?.FindFirst("cp6_session")?.Value is { } family
-                    && Guid.TryParse(ctx.Principal.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out var subject)
-                    && Guid.TryParse(ctx.Principal.FindFirst("tenant_id")?.Value, out var organization))
-                {
-                    var directory = ctx.HttpContext.RequestServices.GetRequiredService<CP6.WebApi.Services.CrmOidcDirectory>();
-                    if (!await directory.RefreshFamilyMatchesAsync(new CP6.WebApi.Services.CrmOidcGrant
-                        { SourceRefreshHash = family, SubjectId = subject, OrganizationId = organization }))
-                        ctx.Fail("browser session revoked");
-                }
-            }
+            OnTokenValidated = CP6.WebApi.Services.AccessTokenAuthentication.ValidateAsync
         };
     });
 builder.Services.AddAuthorization();

@@ -21049,6 +21049,16 @@ namespace CP6.Persistence.PostgreSql.Migrations.Core
                         .HasColumnType("bpchar")
                         .UseCollation("cp6_ci_as_provider_v1");
 
+                    b.Property<string>("AuthenticationVersion")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CompletionRejectedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasAnnotation("CP6:TimeContract", "UtcInstant");
+
+                    b.Property<bool>("CompletionPending")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("timestamp without time zone")
                         .HasAnnotation("CP6:TimeContract", "PreservedWallClock");
