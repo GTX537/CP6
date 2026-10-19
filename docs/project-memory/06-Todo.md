@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-19：W22-01候选通过，待集成
+
+实际写者盘点与P0 #304菜单并发fanout修正完成，21项去重原生PG验证有效通过（本轮写者10、受影响既有9、实际服务/普通PG HTTP采集2）。原失败/跳过保留且不算通过；作者集中SPEC/QUALITY无阻断。Issue待正常合并及远端核对后关闭，持续目标active。5自有PG停止，无新树/代理/Actions/既有库操作。完整WP02/全IAM/CRM发布/Owner最终门及真实业务不提升。[单份DELIVERY](../development/evidence/WP02-05/identity-writer-coverage/DELIVERY.md)。
+
 ## 2026-10-19：第二十二轮持续目标登记
 
 当前COORD单独执行Main IAM写者盘点、捕获缺口修正、实际服务PG/目录实证和正常集成收尾；预计13～20小时，24小时检查点2026-10-20T05:41:46Z。复用原目录与缓存，无新树/代理/Actions。W21已完成不重复；全WP02/CRM发布/Owner最终写门及真实业务验收不提升。详见[本轮计划](../development/dispatch/20261019-wave22/README.md)。

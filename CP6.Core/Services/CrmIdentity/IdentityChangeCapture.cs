@@ -1,6 +1,8 @@
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Sys;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using System.Data;
 
 namespace CP6.Core.Services.CrmIdentity;
 
@@ -94,6 +96,20 @@ public sealed class IdentityChangeCapture
     internal async Task ExpandBeforeSaveAsync(CP6Context db, CrmIdentityOptions options, CancellationToken cancellationToken)
     {
         if (menus.Count == 0) return;
+        if (db.Database.IsNpgsql())
+        {
+            // RoleAction INSERT/UPDATE/DELETE automatically holds ROW EXCLUSIVE until commit.
+            // Fence that whole transaction before discovering affected roles: otherwise an
+            // uncommitted new association can publish an old menu key after this edit commits.
+            // The following SELECT needs a fresh snapshot after any lock wait; a caller's
+            // repeatable snapshot cannot safely discover the newly committed associations.
+            var transaction = db.Database.CurrentTransaction
+                ?? throw new InvalidOperationException("C02_MENU_FANOUT_REQUIRES_TRANSACTION");
+            if (transaction.GetDbTransaction().IsolationLevel is not (IsolationLevel.ReadCommitted or IsolationLevel.ReadUncommitted))
+                throw new InvalidOperationException("C02_MENU_FANOUT_REQUIRES_READ_COMMITTED");
+            await db.Database.ExecuteSqlRawAsync(
+                """LOCK TABLE public."Sys_RoleAction" IN SHARE ROW EXCLUSIVE MODE""", cancellationToken).ConfigureAwait(false);
+        }
         var ids = menus.ToArray();
         var tenants = options.Tenants.Keys.ToArray();
         var roles = await db.Sys_RoleActions.IgnoreQueryFilters().AsNoTracking()
