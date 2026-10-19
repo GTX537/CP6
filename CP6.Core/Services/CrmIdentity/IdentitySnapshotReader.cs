@@ -49,8 +49,26 @@ public sealed class IdentitySnapshotReader(CP6Context db, CrmIdentityRuntime run
     {
         if (aggregate.Length is < 1 or > 128 || aggregate.Any(c => !char.IsAsciiLetterOrDigit(c) && c is not ('.' or '_' or ':' or '-')))
             throw new IdentityReadException("C02_INVALID_AGGREGATE");
-        await RequireReadyAsync(tenant, cancellationToken);
-        var row = await db.CrmIdentitySnapshots.AsNoTracking().SingleOrDefaultAsync(x => x.TenantId == tenant && x.AggregateId == aggregate, cancellationToken);
+        CP6.Entity.DomainModels.Sys.CrmIdentitySnapshot? row;
+        if (db.Database.IsNpgsql())
+        {
+            if (!runtime.Options.Tenants.ContainsKey(tenant)) throw new IdentityReadException("C02_BOOTSTRAP_NOT_READY");
+            // One PG statement sees readiness and contents in the same committed snapshot,
+            // including inside a caller-owned ReadCommitted transaction. The left join preserves
+            // the distinction between an unavailable directory and a ready but absent aggregate.
+            var ready = await (from state in db.CrmIdentityBootstrapStates.AsNoTracking()
+                where state.TenantId == tenant && state.CompletedAtUtc != null && state.ContractBundleSha256 == runtime.ContractBundleSha256
+                from snapshot in db.CrmIdentitySnapshots.AsNoTracking()
+                    .Where(x => x.TenantId == tenant && x.AggregateId == aggregate).DefaultIfEmpty()
+                select new { Snapshot = snapshot }).SingleOrDefaultAsync(cancellationToken);
+            if (ready is null) throw new IdentityReadException("C02_BOOTSTRAP_NOT_READY");
+            row = ready.Snapshot;
+        }
+        else
+        {
+            await RequireReadyAsync(tenant, cancellationToken);
+            row = await db.CrmIdentitySnapshots.AsNoTracking().SingleOrDefaultAsync(x => x.TenantId == tenant && x.AggregateId == aggregate, cancellationToken);
+        }
         if (row is null) return null;
         using var data = JsonDocument.Parse(row.PayloadJson);
         return new(row.TenantId, row.AggregateId, row.EventType, row.Version, row.PayloadSha256, row.IsDeleted, data.RootElement.Clone());

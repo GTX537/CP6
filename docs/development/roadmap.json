@@ -158907,6 +158907,11 @@
       "date": "2026-10-18",
       "change": "Wave19 user-authorized single-coordinator persistent goal: identity directory consistency, ordinary PostgreSQL read-only isolation, trusted-connection read adapter, affected integration and closure. Reuse existing directory; archive closed wave18 and preserve full-task/target/business states. No product execution claimed by planning.",
       "evidence": "docs/development/dispatch/20261018-wave19/README.md"
+    },
+    {
+      "date": "2026-10-18",
+      "change": "W19-01 fixed stale identity directory readiness (#284); 11 unique native PG cases passed after two actual RED paths. Four owned clusters stopped. Full task/business states unchanged; pending normal integration.",
+      "evidence": "docs/development/evidence/WP02-05/directory-consistency/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -161719,17 +161724,17 @@
         "chat_label": "COORD / W19-01 身份目录一致性",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/wave19-directory-consistency-20261018",
+        "branch": "codex/bug-284-directory-readiness",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "claimed_at": "2026-10-18T23:51:13.953441+00:00",
-        "baseline_sha": "4233a204002a57da5fb9355a47c10a4f8d45bbd7",
+        "baseline_sha": "dd2b37e97022615d5644784a0fe0c67623cbaae0",
         "coordination_baseline_sha": "4233a204002a57da5fb9355a47c10a4f8d45bbd7",
         "entry_evidence": "docs/development/dispatch/20261018-wave19/README.md",
-        "phase": "REGISTERED_NOT_STARTED",
+        "phase": "VALIDATED_READY_TO_INTEGRATE",
         "dispatch_scope": "IDENTITY_DIRECTORY_READ_CONSISTENCY",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
-        "worker_start_received": false,
+        "worker_start_received": true,
         "allowed_write_paths": [
           "CP6.Core/Services/CrmIdentity/IdentitySnapshotReader.cs",
           "CP6.Core/Services/CrmIdentity/IdentityBootstrapService.cs",
@@ -161755,8 +161760,17 @@
           "chat_id": "01a14537-9073-7482-83dc-109799c39299",
           "subagents": false
         },
-        "candidate_review_completed": false,
-        "candidate_integrated": false
+        "candidate_review_completed": true,
+        "candidate_integrated": false,
+        "actual_start_ref": {
+          "commit": "96f653bc1fbb8456999665b58828d89ccb33e1e5",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261018T235448Z-wave19-start/MESSAGE.md",
+          "kind": "START",
+          "at": "2026-10-18T23:54:48.305045+00:00"
+        },
+        "issue": "https://github.com/GTX537/CP6/issues/284",
+        "priority": "P0",
+        "review_mode": "Single combined SPEC/QUALITY author self-review; not independent"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -161834,7 +161848,15 @@
           "remote_main_sha": "58bdd59de191d3dd576c1fb5546a30a123abe74a",
           "pull_request": "https://github.com/GTX537/CP6/pull/280"
         }
-      ]
+      ],
+      "wave19_directory_delivery": {
+        "status": "VALIDATED_NOT_INTEGRATED",
+        "issue": 284,
+        "report": "docs/development/evidence/WP02-05/directory-consistency/DELIVERY.md",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "validation": "11 unique native PG passed; 2 RED failures preserved"
+      }
     },
     {
       "id": "WP02-06",
@@ -179381,7 +179403,7 @@
       "path": "docs/development/dispatch/20261018-wave19/README.md",
       "baseline_sha": "4233a204002a57da5fb9355a47c10a4f8d45bbd7",
       "registered_at": "2026-10-18T23:51:13.953441+00:00",
-      "phase": "SINGLE_COORDINATOR_PLAN_REGISTERED",
+      "phase": "W19_01_VALIDATED_READY_TO_INTEGRATE",
       "coordinator_shared_state_only": false,
       "assigned_chats": [
         "COORD"
@@ -179392,8 +179414,10 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [],
-      "workers_started": false,
+      "active_implementation_chats": [
+        "COORD"
+      ],
+      "workers_started": true,
       "workers_delivered": false,
       "windows_closed": false,
       "product_integrated": false,
@@ -179405,13 +179429,13 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "REGISTERED_NOT_STARTED",
+          "phase": "VALIDATED_READY_TO_INTEGRATE",
           "estimated_hours": [
             3,
             4
           ],
-          "worker_start_received": false,
-          "worker_delivery_received": false,
+          "worker_start_received": true,
+          "worker_delivery_received": true,
           "write_paths": [
             "CP6.Core/Services/CrmIdentity/IdentitySnapshotReader.cs",
             "CP6.Core/Services/CrmIdentity/IdentityBootstrapService.cs",
@@ -179432,7 +179456,31 @@
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
           "full_task_completed": false,
-          "business_acceptance": "NOT_RUN"
+          "business_acceptance": "NOT_RUN",
+          "actual_start_ref": {
+            "commit": "96f653bc1fbb8456999665b58828d89ccb33e1e5",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261018T235448Z-wave19-start/MESSAGE.md",
+            "kind": "START",
+            "at": "2026-10-18T23:54:48.305045+00:00"
+          },
+          "actual_start_baseline_sha": "dd2b37e97022615d5644784a0fe0c67623cbaae0",
+          "branch": "codex/bug-284-directory-readiness",
+          "issue": "https://github.com/GTX537/CP6/issues/284",
+          "priority": "P0",
+          "candidate_review_completed": true,
+          "candidate_integrated": false,
+          "delivery_report": "docs/development/evidence/WP02-05/directory-consistency/DELIVERY.md",
+          "review_mode": "Single combined SPEC/QUALITY author self-review; not independent",
+          "validation": {
+            "unique_native_passed": 11,
+            "failed": 0,
+            "skipped": 0,
+            "red": "2 actual readiness failures preserved",
+            "evidence_root": "D:\\CP6-local-test\\wave19\\w19-01",
+            "owned_postgresql_stopped": true,
+            "owned_clusters": 4,
+            "scope": "Native PG component; ordinary identity/HTTP/real DEV not executed"
+          }
         },
         {
           "id": "W19-02",
@@ -179535,7 +179583,7 @@
       },
       "user_authority": "User explicitly requested wave19 remaining foundations, current chat only, 24-hour task list and persistent goal. Goal active from 2026-10-18T23:49:21Z.",
       "review_mode": "One combined task-level SPEC/QUALITY author self-review by sole coordinator; not an independent reviewer.",
-      "next_action": "Merge planning normally, create W19-01 branch from latest main in the same clean directory, publish one real START, then reproduce and fix directory consistency risks."
+      "next_action": "Normal PR merge and remote verification for #284, then reuse the same directory for W19-02 ordinary-principal directory isolation."
     },
     "wave_history": [
       {
