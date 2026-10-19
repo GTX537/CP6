@@ -49,7 +49,9 @@ public sealed class IdentityBootstrapService(CP6Context db, CrmIdentityRuntime r
                 SELECT * FROM crm_identity."Bootstrap" WHERE "TenantId"={tenant} FOR UPDATE
                 """)
             : db.CrmIdentityBootstrapStates.FromSqlInterpolated($"SELECT * FROM crm_identity.Bootstrap WITH (UPDLOCK,HOLDLOCK) WHERE TenantId={tenant}");
-        var state = await states.SingleOrDefaultAsync(cancellationToken);
+        var state = db.Database.IsNpgsql()
+            ? await LoadStoredStateAsync(states, tenant, cancellationToken)
+            : await states.SingleOrDefaultAsync(cancellationToken);
         if (state?.CompletedAtUtc is not null && state.ContractBundleSha256 == runtime.ContractBundleSha256)
         {
             await transaction.CommitAsync(cancellationToken);
@@ -74,5 +76,29 @@ public sealed class IdentityBootstrapService(CP6Context db, CrmIdentityRuntime r
         state.CompletedAtUtc = runtime.Clock.GetUtcNow();
         await db.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
+    }
+
+    private async Task<CrmIdentityBootstrapState?> LoadStoredStateAsync(IQueryable<CrmIdentityBootstrapState> states,
+        Guid tenant, CancellationToken cancellationToken)
+    {
+        // FOR UPDATE must refresh the decision facts as well as lock the row. A tracking query
+        // would return an earlier completed marker without replacing its values or RowVersion.
+        var current = await states.AsNoTracking().SingleOrDefaultAsync(cancellationToken);
+        var tracked = db.ChangeTracker.Entries<CrmIdentityBootstrapState>().SingleOrDefault(x => x.Entity.TenantId == tenant);
+        if (tracked is not null)
+        {
+            // Bootstrap owns its transaction; pending caller marker changes are not its work.
+            if (tracked.State != EntityState.Unchanged) throw new DbUpdateConcurrencyException("C02_BOOTSTRAP_TRACKING_CONFLICT");
+            if (current is null) tracked.State = EntityState.Detached;
+            else
+            {
+                tracked.CurrentValues.SetValues(current);
+                tracked.OriginalValues.SetValues(current);
+                tracked.State = EntityState.Unchanged;
+                return tracked.Entity;
+            }
+        }
+        if (current is not null) db.CrmIdentityBootstrapStates.Attach(current);
+        return current;
     }
 }

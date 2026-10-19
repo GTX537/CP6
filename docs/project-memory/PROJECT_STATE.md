@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## 2026-10-18：W19-01目录就绪一致性候选已验证
+
+P0[#284](https://github.com/GTX537/CP6/issues/284)两个实际并发失败已修正：PG单条查询同时读取就绪与内容；bootstrap锁后刷新真实marker及RowVersion。原生PG相关11项去重通过、0失败/跳过，含分页代际切换、取消/事务、Outbox回滚和双等待者重建。单份[DELIVERY](../development/evidence/WP02-05/directory-consistency/DELIVERY.md)含红绿来源与一次集中SPEC/QUALITY作者自审，无剩余阻断。
+
+正常PR/远端main核对尚待执行，#284保持Open。四个自有PG已停止，原目录复用，无新worktree/子代理/Actions或既有DB操作。后续W19-02普通角色只读RLS继续串行，持续目标active；完整WP02、冻结目录协议/CRM采用/Owner最终门及真实业务/生产不提升。
+
 ## 2026-10-18：第十九轮持续目标已建立，单总控串行
 
 已核对第十八轮最终main `4233a204002a57da5fb9355a47c10a4f8d45bbd7` 与Handoff `decade3db5ed8db54f41d90b216f438e6012cae0`。用户明确要求下一24小时仍由本对话独自推进，已建立持续目标和[四窗口计划](../development/dispatch/20261018-wave19/README.md)：目录/就绪一致性、普通数据库账号只读隔离、可信连接读取适配、受影响PG/HTTP串联与逐项集成。检查点为America/New_York 2026-10-19 19:49:21；预计18～24小时含修正，未完成不能因到时提升状态。
