@@ -1,5 +1,9 @@
 # 第二十一轮：完整目录基线取得与核验
 
+> W21-02候选通过：3项原生PG/HTTP和1项无宿主检查，原字节/来源/总数/旧合同验证，作者集中审查无阻断。[单份DELIVERY](../../evidence/WP02-05/baseline-raw-http/DELIVERY.md)。四个自有PG停止，待正常集成。
+
+> W21-01经PR297合入 `3209824ef71dc56bc251d92b75ab40463833c970`，Handoff `692c7c8b95832074456addd66eb902b936299b95`已回读；W21-02真实读取START，新行为NOT_RUN。
+
 > W21-01候选通过：25项基线行为及38项现有合同通过，原失败保留且局部修正；一次作者集中审查无阻断。[单份DELIVERY](../../evidence/WP02-05/baseline-contract/DELIVERY.md)。待正常集成，持续目标active。
 
 > 执行：当前COORD用executing-plans单对话串行完成下列任务；用户授权歧义由总控决定，沿项目精简验证规则。writing-plans/brainstorming用于上下文与合同核对，不另开代理、工作树或审批回合。
@@ -45,10 +49,10 @@ Main/main/origin/main `f552995d36c37ad736d84058df2d2a3ba7085568`；W20四窗口/
 
 文件范围：新增Core `Baselines/IIdentityRawSnapshotReader.cs`及原字节reader，扩展 `TenantIdentityDirectoryReader.cs`、必要host source描述、`CrmIdentityController.cs`；定向测试复用 `IdentityDirectoryConfiguredHttpHost.cs`/原生fixture。报告 `WP02-05/baseline-raw-http/DELIVERY.md`。
 
-- [ ] 新路由 `/internal/crm/identity/directory/v1/snapshots/{aggregateId}` 仅在真实普通身份宿主启用时开放；继续当前JWT、租户/令牌授权、固定安装期望、no-store与受控400/404/503。
-- [ ] 配套 `/internal/crm/identity/directory/v1/versions` 返回冻结source、boundary、TotalCount、条目和cursor；分页及总数同一SQL观察。新版本字段补足可验证完整性，旧versions接口保持原合同。
-- [ ] 在受管普通连接事务中，以单个SQL观察Bootstrap+generation+准确snapshot；返回原PayloadJson的严格UTF-8编码与其原摘要，暴露冻结可信source，不提供任意tenant/database参数。
-- [ ] 验证A/B隔离、原字节（含空白/转义）、原hash不符拒绝、未配置不可用、Owner查询0；保留旧versions/snapshots行为，未改存储结构或seal。
+- [x] 新路由 `/internal/crm/identity/directory/v1/snapshots/{aggregateId}` 仅在真实普通身份宿主启用时开放；继续当前JWT、租户/令牌授权、固定安装期望、no-store与受控400/404/503。
+- [x] 配套 `/internal/crm/identity/directory/v1/versions` 返回冻结source、boundary、TotalCount、条目和cursor；分页及总数同一SQL观察。新版本字段补足可验证完整性，旧versions接口保持原合同。
+- [x] 在受管普通连接事务中，以单个SQL观察Bootstrap+generation+准确snapshot；返回原PayloadJson的严格UTF-8编码与其原摘要，暴露冻结可信source，不提供任意tenant/database参数。
+- [x] 验证A/B隔离、原字节（含空白/转义）、原hash不符拒绝、未配置不可用、Owner查询0；保留旧versions/snapshots行为，未改存储结构或seal。
 
 ### W21-03：完整采集
 

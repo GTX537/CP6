@@ -2,6 +2,7 @@ using System.Data.Common;
 using System.Security.Claims;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.CrmIdentity;
+using CP6.Core.Services.CrmIdentity.Baselines;
 using CP6.WebApi.Services;
 using CP6.WebApi.Services.IdentityDirectoryTenancy;
 using Microsoft.AspNetCore.Authentication;
@@ -21,6 +22,34 @@ public sealed class CrmIdentityController(CP6Context db, CrmOidcOptions oidc,
     IdentityDirectoryTenantHost? tenantHost = null) : ControllerBase
 {
     public const string Scheme = "C02.Services";
+
+    [HttpGet("directory/v1/versions")]
+    public async Task<IActionResult> BaselineVersions([FromQuery] string? cursor = null, [FromQuery] int pageSize = 200)
+    {
+        Response.Headers.CacheControl = "no-store";
+        if (tenantHost is null) return NotFound();
+        return await ReadAsync(async (tenant, currentReader) =>
+        {
+            if (Request.Query.Any(p => p.Value.Count != 1 || p.Key is not ("cursor" or "pageSize")))
+                return BadRequest(new { code = "C02_INVALID_REQUEST" });
+            return currentReader is IIdentityRawSnapshotReader raw
+                ? Ok(await raw.ReadBaselinePageAsync(tenant, cursor, pageSize, HttpContext.RequestAborted)) : NotFound();
+        });
+    }
+
+    [HttpGet("directory/v1/snapshots/{aggregateId}")]
+    public async Task<IActionResult> RawSnapshot(string aggregateId)
+    {
+        Response.Headers.CacheControl = "no-store";
+        if (tenantHost is null) return NotFound();
+        return await ReadAsync(async (tenant, currentReader) =>
+        {
+            if (Request.Query.Count != 0) return BadRequest(new { code = "C02_INVALID_REQUEST" });
+            if (currentReader is not IIdentityRawSnapshotReader raw) return NotFound();
+            var snapshot = await raw.ReadRawSnapshotAsync(tenant, aggregateId, HttpContext.RequestAborted);
+            return snapshot is null ? NotFound() : Ok(snapshot);
+        });
+    }
 
     [HttpGet("versions")]
     public async Task<IActionResult> Versions([FromQuery] string? cursor = null, [FromQuery] int pageSize = 200)
