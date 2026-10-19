@@ -24,6 +24,19 @@ public partial class AuthController
     [HttpPost("completion/close"), AllowAnonymous]
     public Task<IActionResult> CloseCompletion() => PgCompletionRecoveryAsync(true);
 
+    [HttpPost("completion/browser/status"), AllowAnonymous]
+    public Task<IActionResult> BrowserCompletionStatus() => BrowserRecoveryAsync(false);
+
+    [HttpPost("completion/browser/close"), AllowAnonymous]
+    public Task<IActionResult> BrowserCloseCompletion() => BrowserRecoveryAsync(true);
+
+    private async Task<IActionResult> BrowserRecoveryAsync(bool close)
+    {
+        if (!Request.Headers.ContainsKey(AuthenticationRecoveryBindingV1.Header)) throw new InvalidOperationException("REAUTH_REQUIRED");
+        var key = AuthenticationRecoveryBindingV1.Challenge(Request);
+        return Ok(await new BrowserAuthenticationRecoveryV1(_context).ResolveAsync(key, close, HttpContext.RequestAborted));
+    }
+
     private async Task<IActionResult> PgCompletionRecoveryAsync(bool close)
     {
         string credential, kind;
@@ -65,7 +78,8 @@ public partial class AuthController
                 if (Response.HasStarted) throw new InvalidOperationException("AUTH_RESPONSE_ALREADY_STARTED");
                 _cookies.WriteAuthCookies(staged.Response, result.AccessToken, result.RefreshToken, AuthCookieWriter.NewCsrfToken());
                 if (staged.Response.Headers.SetCookie.Count != 3) throw new InvalidOperationException("AUTHENTICATION_COOKIE_COMPLETION_INVALID");
-            }, HttpContext.RequestAborted, deferOutput: true);
+            }, HttpContext.RequestAborted, deferOutput: true,
+                browserAttempt: Request.Headers.ContainsKey(AuthenticationRecoveryBindingV1.Header) ? AuthenticationRecoveryBindingV1.Challenge(Request) : null);
             HttpContext.RequestAborted.ThrowIfCancellationRequested();
             Response.Headers.Append("Set-Cookie", staged.Response.Headers.SetCookie);
             AuthenticationEntryFailureAttribute.TrackOutput(HttpContext, committed.RefreshToken);
@@ -148,6 +162,8 @@ public partial class AuthController
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(cfg["Secret"]!))
             }, out _);
             var challenge = principal.FindFirstValue("jti") ?? throw new InvalidOperationException();
+            if (Request.Headers.ContainsKey(AuthenticationRecoveryBindingV1.Header)
+                && AuthenticationRecoveryBindingV1.Challenge(Request) != challenge) throw new InvalidOperationException();
             var pending = await Entries.ReadAsync(challenge, null, purpose, HttpContext.RequestAborted);
             if (principal.FindFirstValue(ClaimTypes.NameIdentifier) != pending.Proof.UserId.ToString()
                 || principal.FindFirstValue("tenant_id") != pending.Proof.TenantId.ToString()

@@ -35,6 +35,8 @@
           </el-button>
         </el-form-item>
       </el-form>
+      <p v-if="setupError" role="alert">{{ setupError }}</p>
+      <PendingAuthenticationActions />
     </el-card>
   </div>
 </template>
@@ -46,9 +48,8 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import QRCode from 'qrcode'
 import { twoFactorApi } from '@/api/sys/twoFactor'
-import { addDynamicRoutes } from '@/router'
-import { usePlatformStore } from '@/stores/platform'
-import { resumeOidcReturn } from '../oidcReturn'
+import { navigateAuthentication } from '@/auth/navigation'
+import PendingAuthenticationActions from '@/auth/PendingAuthenticationActions.vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -58,33 +59,20 @@ const secret = ref('')
 const qrDataUrl = ref('')
 const initializing = ref(true)
 const loading = ref(false)
+const setupError = ref('')
 
 onMounted(async () => {
   try {
     const res = await twoFactorApi.setup()
     secret.value = res.secret
     qrDataUrl.value = await QRCode.toDataURL(res.otpauthUri, { width: 200, margin: 1 })
-  } catch {
-    // E-SEC-013/017 等由 http.ts 拦截器统一提示
+  } catch (error: any) {
+    setupError.value = error?.response?.data?.message ? t(error.response.data.message) : error?.message || '绑定材料生成结果未确认，请检查状态。'
   } finally {
     initializing.value = false
   }
 })
 
-// 与 LoginView 登录成功后处理对称：置非敏感登录态标志 + 存用户/菜单 + 挂动态路由 + 进首页。
-function completeLogin(res: any) {
-  localStorage.setItem('cp6_authed', '1')
-  localStorage.setItem('cp6_mustChangePwd', res.mustChangePassword ? '1' : '')
-  localStorage.setItem('cp6_isPlatformAdmin', res.isPlatformAdmin ? '1' : '')   // #5 带外平台区入口标志
-  usePlatformStore().refreshFlag()
-  localStorage.setItem('userName', res.userName)
-  localStorage.setItem('nickName', res.nickName || res.userName)
-  const menus = res.menus || []
-  localStorage.setItem('menus', JSON.stringify(menus))
-  addDynamicRoutes(menus)
-  if (!res.mustChangePassword && resumeOidcReturn()) return
-  router.push(res.mustChangePassword ? '/sys/change-password' : '/')
-}
 
 async function handleEnroll() {
   if (!code.value.trim()) {
@@ -94,10 +82,11 @@ async function handleEnroll() {
   loading.value = true
   try {
     const res: any = await twoFactorApi.enroll({ code: code.value.trim() })
-    completeLogin(res)
-  } catch {
-    // E-SEC-011/013 由拦截器统一提示
+    navigateAuthentication(res)
+  } catch (error: any) {
+    ElMessage.error(error?.response?.data?.message ? t(error.response.data.message) : error?.message || '绑定结果未确认，请检查状态。')
   } finally {
+    code.value = ''
     loading.value = false
   }
 }

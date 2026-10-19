@@ -1,11 +1,12 @@
 import http from '../http'
+import { browserSso } from '@/auth/browserAuthentication'
 import type { SsoConfig, SsoConfigInput } from '@/types/sys/sso'
 
 // S 类 #3 SSO（T9）：SSO 授权发起 + 租户配置管理。
 export const ssoApi = {
   // 按租户构建 OIDC authorize URL（后端 discovery + PKCE + state），返 { authorizeUrl }。匿名。
   authorize(tenantCode: string, returnUrl?: string) {
-    return http.get('/auth/sso/authorize', { params: { tenantCode, returnUrl } }) as Promise<{ authorizeUrl: string }>
+    return browserSso(tenantCode, returnUrl)
   },
   // 查当前租户 SSO 配置投影（无密文）。
   getConfig() {

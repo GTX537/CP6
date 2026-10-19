@@ -1,4 +1,5 @@
 import http from '../http'
+import { browserFactor } from '@/auth/browserAuthentication'
 import type {
   TwoFactorSetupResult,
   TwoFactorStatus,
@@ -15,19 +16,19 @@ export const twoFactorApi = {
   // ── 登录阶段 ──────────────────────────────────────────────
   // 入会准备：开新密钥 → 返 otpauthUri + secret（前端渲二维码 + 手输备选）。已启用拒 E-SEC-017。
   setup() {
-    return http.post('/auth/2fa/setup') as Promise<TwoFactorSetupResult>
+    return browserFactor('setup') as Promise<TwoFactorSetupResult>
   },
   // 入会确认：验码通过 → 置 Enabled + 完成登录（后端写 auth cookies）。
   enroll(data: { code: string }) {
-    return http.post('/auth/2fa/enroll', data)
+    return browserFactor('enroll', data)
   },
   // 挑战验证：method=totp / email → 通过则完成登录。失败 E-SEC-011。
   verify(data: { code: string; method: TwoFactorMethod }) {
-    return http.post('/auth/2fa/verify', data)
+    return browserFactor('verify', data)
   },
   // 发送邮件 OTP（仅 verify 态；enroll 态调用直接拒 E-SEC-014）。
   emailOtp() {
-    return http.post('/auth/2fa/email-otp')
+    return browserFactor('email-otp')
   },
 
   // ── 自助阶段（登录后）─────────────────────────────────────

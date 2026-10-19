@@ -309,8 +309,9 @@ import { ElMessage } from 'element-plus'
 import { authApi } from '@/api/sys/auth'
 import { ssoApi } from '@/api/sys/sso'
 import { langOptions, changeLang } from '@/i18n'
-import { addDynamicRoutes } from '@/router'
-import { usePlatformStore } from '@/stores/platform'
+import { navigateAuthentication } from '@/auth/navigation'
+import { authenticationSnapshot, recoverAuthentication, requireCurrentSso } from '@/auth/browserAuthentication'
+import { identityStamp, requireIdentity } from '@/auth/identity'
 import { getLoginExperienceCopy } from './loginExperience'
 import { rememberOidcReturn, resumeOidcReturn } from './oidcReturn'
 
@@ -320,8 +321,15 @@ const hasOidcReturn = rememberOidcReturn(new URLSearchParams(window.location.sea
 onMounted(async () => {
   // A same-origin profile request can use Strict cookies omitted from the initial cross-site navigation.
   if (!hasOidcReturn || new URLSearchParams(window.location.search).get('oidc_reauthenticate') === '1') return
+  const snapshot = authenticationSnapshot()
+  if (!['active', 'restricted', 'anonymous'].includes(snapshot.phase)) return
+  // An explicitly closed browser record must never silently resume an old ambient cookie.
+  if (snapshot.phase === 'anonymous' && localStorage.getItem('cp6_browser_auth_v1')) return
+  const stamp = identityStamp()
   try {
-    const profile: any = await authApi.profile({ passive: true })
+    const profile: any = snapshot.phase === 'active' || snapshot.phase === 'restricted'
+      ? (await recoverAuthentication()).profile : await authApi.profile({ passive: true })
+    requireIdentity(stamp)
     if (!profile.mustChangePassword) resumeOidcReturn()
   } catch { /* Continue the normal password/SSO/2FA login flow. */ }
 })
@@ -440,35 +448,11 @@ async function handleLogin() {
   loginSuccess.value = false
   try {
     const res: any = await authApi.login(form.value)
-    // 租户要求 2FA 时后端只写 pending cookie，不在前端设置已登录标志。
-    if (res?.twoFactorRequired === true) {
-      loginSuccess.value = true
-      router.push(res.mustEnroll === true ? '/sys/2fa-enroll' : '/sys/2fa-challenge')
-      return
-    }
-
-    // token 由后端写入 httpOnly cookie；前端只保存非敏感的界面状态。
-    localStorage.setItem('cp6_authed', '1')
-    localStorage.setItem('cp6_mustChangePwd', res.mustChangePassword ? '1' : '')
-    localStorage.setItem('cp6_isPlatformAdmin', res.isPlatformAdmin ? '1' : '')
-    usePlatformStore().refreshFlag()
-    localStorage.setItem('userName', res.userName)
-    localStorage.setItem('nickName', res.nickName || res.userName)
-    const menus = res.menus || []
-    localStorage.setItem('menus', JSON.stringify(menus))
-    addDynamicRoutes(menus)
-    ElMessage.success(t('login.success'))
+    navigateAuthentication(res)
     loginSuccess.value = true
-
-    if (res.mustChangePassword) {
-      router.push('/sys/change-password')
-      return
-    }
-
-    sessionStorage.setItem('cp6-login-transition', 'pending')
-    if (resumeOidcReturn()) return
-    router.push('/')
+    if (!res?.twoFactorRequired) ElMessage.success(t('login.success'))
   } catch (err: any) {
+    ElMessage.error(err?.response?.data?.message ? t(err.response.data.message) : (err?.message || '登录未完成，请检查当前状态。'))
     // 同名用户存在于多个租户时，后端要求用户补充租户编码。
     if (err?.response?.data?.needTenant) {
       showTenant.value = true
@@ -495,10 +479,11 @@ async function handleSsoLogin() {
 
   ssoLoading.value = true
   try {
-    const { authorizeUrl } = await ssoApi.authorize(tenantCode)
-    window.location.href = authorizeUrl
-  } catch {
-    // API 错误由全局 HTTP 拦截器统一提示。
+    const result = await ssoApi.authorize(tenantCode)
+    requireCurrentSso(result)
+    window.location.href = result.authorizeUrl
+  } catch (error: any) {
+    ElMessage.error(error?.response?.data?.message || error?.message || '统一登录未完成，请检查当前状态。')
     ssoLoading.value = false
   }
 }

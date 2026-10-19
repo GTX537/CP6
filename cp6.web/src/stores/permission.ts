@@ -10,10 +10,13 @@ import { rolePermApi } from '@/api/sys/rolePerm'
 export const usePermissionStore = defineStore('permission', () => {
   const actionKeys = ref<Set<string>>(new Set())
   const loaded = ref(false)
+  let generation = 0
 
   async function loadMyActions() {
+    const expected = generation
     try {
       const keys = await rolePermApi.myActions()
+      if (expected !== generation) return
       actionKeys.value = new Set(keys)
       loaded.value = true
     } catch {
@@ -26,6 +29,7 @@ export const usePermissionStore = defineStore('permission', () => {
   }
 
   function reset() {
+    generation++
     actionKeys.value = new Set()
     loaded.value = false
   }

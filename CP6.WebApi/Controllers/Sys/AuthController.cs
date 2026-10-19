@@ -303,6 +303,9 @@ public partial class AuthController : LocalizedControllerBase
     [Authorize]
     public async Task<IActionResult> Profile()
     {
+        if (Request.Headers.ContainsKey(AuthenticationRecoveryBindingV1.Header))
+            await new BrowserAuthenticationRecoveryV1(_context).RequireProfileAsync(AuthenticationRecoveryBindingV1.Challenge(Request),
+                User.FindFirst("jti")?.Value, HttpContext.RequestAborted);
         var uid = (await _perm.GetAsync()).UserId;
         var user = await _context.Sys_Users.FirstAsync(u => u.Id == uid);
         var originalSso = false;

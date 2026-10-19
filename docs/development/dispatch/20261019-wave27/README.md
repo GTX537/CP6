@@ -1,5 +1,7 @@
 # 第二十七轮：浏览器认证恢复与SSO首次身份准入实施计划
 
+> W27-01候选完成：[DELIVERY](../../evidence/WP02-03/authentication-browser-recovery/DELIVERY.md)，#335原失败已修正；55前端/6真实浏览器场景通过，PG/实际HTTP边界与一次作者审查通过。待正常合并，立即继续W27-02/03和总收尾，goal active。
+
 执行者：当前COORD聊天，使用executing-plans；不派代理、不新建物理工作树。目标：闭合S5 SYS-IAM-01 v0.2 §6.5、§7.1/7.3的前端恢复与首次身份准入，必要的当前权限/角色引用和真实writer共同门随对应窗口完成。架构沿W26 PostgreSQL认证root、原proof、完成回执与IdentityChange，不另造身份权威。技术为Vue/TypeScript、ASP.NET Core/EF、PostgreSQL18及本地定向验证。
 
 最新确认main `82a3440137eddf71bcc75fd1e5e39ea440207b52`；第26轮三窗已闭环，Handoff `6de4f959`已回读，活动Issue0、无在跑Actions。原S5设计位于根目录用户归档（只读），§6.5规定UNKNOWN需原交互查询/准确封闭，§7.1规定显式准入和五分支。此计划不把原DEV/AC标NOT_RUN变成通过，也不预批准任何真实tenant/issuer/role。
@@ -17,11 +19,11 @@
 
 文件：新增cp6.web/src/auth/集中协调与必要UI，采用api/http.ts、api/sys/auth.ts、LoginView、SSO landing、2FA challenge/enroll、App/router与登出入口。必要后端修改限定AuthenticationCompletionRecoveryV1/AuthenticationRecoveryBindingV1、AuthController/完成服务、相关PG迁移/HTTP测试；只为安全恢复绑定/输出状态所需，不重写W26主门。
 
-- [ ] 先用现HTTP拦截器/实际页面复现每Tab独立refresh、401重放写请求、旧响应复活已退出状态及初始响应丢失没有交互凭据的问题；实证BUG按Issues记录，原有效后端证据复用。
-- [ ] 全部相关认证写入口共用浏览器协调器：同源跨Tab互斥、共享epoch/attempt身份、可信profile当前确认、退出/切人先使旧epoch失效，迟到响应不能写菜单或进入业务。凭据不进URL/日志/广播；不把localStorage UI旗标当授权。锁/存储不可用有明确关闭恢复路径，不以不原子localStorage锁假装互斥。
-- [ ] 原客户端256位交互秘密安全保存后才发初始请求；登录/SSO/pending/refresh生命周期与server安全status/close匹配。优先用实际收到的session核profile；未交付则封闭准确attempt后才重新登录。UNKNOWN/UNAVAILABLE保持隔离，不新ID重放成功OTP/code；因子明确未消费错误可按原政策重试。
-- [ ] 通用HTTP仅在明确未提交且身份未变的安全读取恢复，不自动重放业务写；原operationId/业务UNKNOWN保留给业务Owner。401/403/503和pending/restricted/active分开。多Tab退出/切人清用户、菜单、平台/代理等旧数据。
-- [ ] 相关Vitest、typecheck、真实多页面浏览器夹具；必要实际Program/PG丢响应/绑定回归。单份authentication-browser-recovery/DELIVERY.md、一次作者SPEC/QUALITY、正常PR集成。
+- [x] 先用现HTTP拦截器/实际页面复现每Tab独立refresh、401重放写请求、旧响应复活已退出状态及初始响应丢失没有交互凭据的问题；实证BUG按Issues记录，原有效后端证据复用。
+- [x] 全部相关认证写入口共用浏览器协调器：同源跨Tab互斥、共享epoch/attempt身份、可信profile当前确认、退出/切人先使旧epoch失效，迟到响应不能写菜单或进入业务。凭据不进URL/日志/广播；不把localStorage UI旗标当授权。锁/存储不可用有明确关闭恢复路径，不以不原子localStorage锁假装互斥。
+- [x] 原客户端256位交互秘密安全保存后才发初始请求；登录/SSO/pending/refresh生命周期与server安全status/close匹配。优先用实际收到的session核profile；未交付则封闭准确attempt后才重新登录。UNKNOWN/UNAVAILABLE保持隔离，不新ID重放成功OTP/code；因子明确未消费错误可按原政策重试。
+- [x] 通用HTTP仅在明确未提交且身份未变的安全读取恢复，不自动重放业务写；原operationId/业务UNKNOWN保留给业务Owner。401/403/503和pending/restricted/active分开。多Tab退出/切人清用户、菜单、平台/代理等旧数据。
+- [x] 相关Vitest、typecheck、真实多页面浏览器夹具；必要实际Program/PG丢响应/绑定回归。单份authentication-browser-recovery/DELIVERY.md、一次作者SPEC/QUALITY、正常PR集成。
 
 核心结果模型按服务端安全状态消费，不能返回JWT/refresh历史秘密：
 ```ts

@@ -159122,6 +159122,11 @@
       "date": "2026-10-19",
       "change": "Wave27 single-COORD continued goal: browser cross-tab authentication/recovery, explicit versioned SSO identity admission approval/config CAS, initial link/JIT transactional adoption and safe mapping recovery. Estimated agent actual4–7h, contingency10h within24h. No new worktrees/agents/Actions or real tenant approval.",
       "evidence": "docs/development/dispatch/20261019-wave27/README.md"
+    },
+    {
+      "date": "2026-10-19",
+      "change": "W27-01 BUG335 fixed: shared browser authentication/epoch and original capability persistence, safe status/closure, no business write replay, actual cookie identity switching, PG exact binding/fences/audit.55 frontend and6 browser effective passed;68 main .NET plus7 final boundary passed/reused. Once author review. W27-02/03 remain; full runtime acceptance unchanged.",
+      "evidence": "docs/development/evidence/WP02-03/authentication-browser-recovery/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -161699,23 +161704,50 @@
         "branch": "codex/wave27-01-browser-auth-recovery-20261019",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "claimed_at": "2026-10-19T14:00:06.813957+00:00",
-        "baseline_sha": "82a3440137eddf71bcc75fd1e5e39ea440207b52",
+        "baseline_sha": "9dd9943033397a5a6604ad307498dfd3aebc519f",
         "entry_evidence": "docs/development/dispatch/20261019-wave27/README.md",
-        "phase": "REGISTERED_NOT_STARTED",
+        "phase": "READY_TO_MERGE",
         "dispatch_scope": "W27_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
-        "worker_start_received": false,
+        "worker_start_received": true,
         "allowed_write_paths": [
-          "cp6.web/src/",
-          "CP6.WebApi/Services/",
-          "CP6.WebApi/Controllers/Sys/",
-          "CP6.WebApi/Middleware/",
-          "CP6.Core/Services/Sys/",
-          "CP6.Entity/DTOs/",
-          "CP6.Persistence.PostgreSql/Migrations/Core/",
-          "CP6.Tests/Platform/",
-          "CP6.Tests/Sys/",
+          "CP6.Core/Services/Sys/AuthenticationInteractionStoreV1.cs",
+          "CP6.Core/Services/Sys/BrowserAuthenticationRecoveryV1.cs",
+          "CP6.Persistence.PostgreSql/Migrations/Core/20261019141000_BrowserAuthenticationRecoveryV1.cs",
+          "CP6.Tests/Platform/AuthenticationContinuityPostgreSqlTests.cs",
+          "CP6.WebApi/Controllers/Sys/AuthController.AuthenticationV1.cs",
+          "CP6.WebApi/Controllers/Sys/AuthController.cs",
+          "CP6.WebApi/Middleware/CsrfMiddleware.cs",
+          "CP6.WebApi/Services/AuthenticationEntryServiceV1.cs",
+          "cp6.web/e2e/authentication-recovery.spec.ts",
+          "cp6.web/playwright.authentication-recovery.config.ts",
+          "cp6.web/src/App.vue",
+          "cp6.web/src/api/http.authRecovery.spec.ts",
+          "cp6.web/src/api/http.ts",
+          "cp6.web/src/api/platform/impersonation.ts",
+          "cp6.web/src/api/sys/auth.probe.spec.ts",
+          "cp6.web/src/api/sys/auth.ts",
+          "cp6.web/src/api/sys/sso.ts",
+          "cp6.web/src/api/sys/twoFactor.ts",
+          "cp6.web/src/auth/AuthenticationBoundary.vue",
+          "cp6.web/src/auth/PendingAuthenticationActions.vue",
+          "cp6.web/src/auth/browserAuthentication.spec.ts",
+          "cp6.web/src/auth/browserAuthentication.ts",
+          "cp6.web/src/auth/identity.ts",
+          "cp6.web/src/auth/navigation.ts",
+          "cp6.web/src/auth/recoveryCapabilities.ts",
+          "cp6.web/src/components/ImpersonationBanner.vue",
+          "cp6.web/src/stores/permission.authRecovery.spec.ts",
+          "cp6.web/src/stores/permission.ts",
+          "cp6.web/src/stores/platform.ts",
+          "cp6.web/src/views/LayoutView.vue",
+          "cp6.web/src/views/LoginView.vue",
+          "cp6.web/src/views/platform/ImpersonationView.vue",
+          "cp6.web/src/views/pms/SsoLandingView.spec.ts",
+          "cp6.web/src/views/pms/SsoLandingView.vue",
+          "cp6.web/src/views/pms/TwoFactorChallengeView.vue",
+          "cp6.web/src/views/pms/TwoFactorEnrollView.vue",
           "docs/development/evidence/WP02-03/authentication-browser-recovery/DELIVERY.md"
         ],
         "reserved_write_resources": [
@@ -161730,8 +161762,21 @@
         "existing_database_migration_authorized": false,
         "deployment_authorized": false,
         "delivery_report": "docs/development/evidence/WP02-03/authentication-browser-recovery/DELIVERY.md",
-        "candidate_review_completed": false,
-        "candidate_integrated": false
+        "candidate_review_completed": true,
+        "candidate_integrated": false,
+        "actual_start_ref": {
+          "commit": "3949462145d513c36a3c8d746daac47cf06e756f",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T140358Z-wave27-01-start/MESSAGE.md",
+          "at": "2026-10-19T14:03:58.117560+00:00"
+        },
+        "active_issue": {
+          "number": 335,
+          "url": "https://github.com/GTX537/CP6/issues/335",
+          "priority": "P1",
+          "state": "Open"
+        },
+        "worker_delivery_received": true,
+        "candidate_review_verdict": "READY_TO_MERGE"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -181278,7 +181323,7 @@
       "path": "docs/development/dispatch/20261019-wave27/README.md",
       "baseline_sha": "82a3440137eddf71bcc75fd1e5e39ea440207b52",
       "registered_at": "2026-10-19T14:00:06.813957+00:00",
-      "phase": "SINGLE_COORDINATOR_LONG_GOAL_REGISTERED",
+      "phase": "W27_01_READY_TO_MERGE",
       "coordinator_shared_state_only": false,
       "assigned_chats": [
         "COORD"
@@ -181289,8 +181334,10 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [],
-      "workers_started": false,
+      "active_implementation_chats": [
+        "COORD"
+      ],
+      "workers_started": true,
       "workers_delivered": false,
       "windows_closed": false,
       "product_integrated": false,
@@ -181302,19 +181349,46 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "REGISTERED_NOT_STARTED",
-          "worker_start_received": false,
-          "worker_delivery_received": false,
+          "phase": "READY_TO_MERGE",
+          "worker_start_received": true,
+          "worker_delivery_received": true,
           "write_paths": [
-            "cp6.web/src/",
-            "CP6.WebApi/Services/",
-            "CP6.WebApi/Controllers/Sys/",
-            "CP6.WebApi/Middleware/",
-            "CP6.Core/Services/Sys/",
-            "CP6.Entity/DTOs/",
-            "CP6.Persistence.PostgreSql/Migrations/Core/",
-            "CP6.Tests/Platform/",
-            "CP6.Tests/Sys/",
+            "CP6.Core/Services/Sys/AuthenticationInteractionStoreV1.cs",
+            "CP6.Core/Services/Sys/BrowserAuthenticationRecoveryV1.cs",
+            "CP6.Persistence.PostgreSql/Migrations/Core/20261019141000_BrowserAuthenticationRecoveryV1.cs",
+            "CP6.Tests/Platform/AuthenticationContinuityPostgreSqlTests.cs",
+            "CP6.WebApi/Controllers/Sys/AuthController.AuthenticationV1.cs",
+            "CP6.WebApi/Controllers/Sys/AuthController.cs",
+            "CP6.WebApi/Middleware/CsrfMiddleware.cs",
+            "CP6.WebApi/Services/AuthenticationEntryServiceV1.cs",
+            "cp6.web/e2e/authentication-recovery.spec.ts",
+            "cp6.web/playwright.authentication-recovery.config.ts",
+            "cp6.web/src/App.vue",
+            "cp6.web/src/api/http.authRecovery.spec.ts",
+            "cp6.web/src/api/http.ts",
+            "cp6.web/src/api/platform/impersonation.ts",
+            "cp6.web/src/api/sys/auth.probe.spec.ts",
+            "cp6.web/src/api/sys/auth.ts",
+            "cp6.web/src/api/sys/sso.ts",
+            "cp6.web/src/api/sys/twoFactor.ts",
+            "cp6.web/src/auth/AuthenticationBoundary.vue",
+            "cp6.web/src/auth/PendingAuthenticationActions.vue",
+            "cp6.web/src/auth/browserAuthentication.spec.ts",
+            "cp6.web/src/auth/browserAuthentication.ts",
+            "cp6.web/src/auth/identity.ts",
+            "cp6.web/src/auth/navigation.ts",
+            "cp6.web/src/auth/recoveryCapabilities.ts",
+            "cp6.web/src/components/ImpersonationBanner.vue",
+            "cp6.web/src/stores/permission.authRecovery.spec.ts",
+            "cp6.web/src/stores/permission.ts",
+            "cp6.web/src/stores/platform.ts",
+            "cp6.web/src/views/LayoutView.vue",
+            "cp6.web/src/views/LoginView.vue",
+            "cp6.web/src/views/platform/ImpersonationView.vue",
+            "cp6.web/src/views/pms/SsoLandingView.spec.ts",
+            "cp6.web/src/views/pms/SsoLandingView.vue",
+            "cp6.web/src/views/pms/TwoFactorChallengeView.vue",
+            "cp6.web/src/views/pms/TwoFactorEnrollView.vue",
             "docs/development/evidence/WP02-03/authentication-browser-recovery/DELIVERY.md"
           ],
           "planned_scope_ref": "docs/development/dispatch/20261019-wave27/README.md",
@@ -181330,7 +181404,33 @@
           "existing_database_operations_authorized": false,
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
-          "predecessor": null
+          "predecessor": null,
+          "actual_start_ref": {
+            "commit": "3949462145d513c36a3c8d746daac47cf06e756f",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T140358Z-wave27-01-start/MESSAGE.md",
+            "at": "2026-10-19T14:03:58.117560+00:00"
+          },
+          "actual_start_baseline_sha": "9dd9943033397a5a6604ad307498dfd3aebc519f",
+          "branch": "codex/wave27-01-browser-auth-recovery-20261019",
+          "active_issue": {
+            "number": 335,
+            "url": "https://github.com/GTX537/CP6/issues/335",
+            "priority": "P1",
+            "state": "Open"
+          },
+          "candidate_review_completed": true,
+          "candidate_review_verdict": "READY_TO_MERGE",
+          "delivery_report": "docs/development/evidence/WP02-03/authentication-browser-recovery/DELIVERY.md",
+          "validation": {
+            "frontend_effective_passed": 55,
+            "browser_effective_passed": 6,
+            "dotnet_main_run_passed": 68,
+            "dotnet_final_boundary_passed": 7,
+            "failed_remaining": 0,
+            "skipped_as_pass": 0,
+            "evidence_root": "D:\\CP6-local-test\\wave27\\foundation"
+          },
+          "scope_refinement": "Actual shared-cookie impersonation, business request shared locks, precise browser closure audit and browser test/config are necessary original cross-tab identity/recovery boundaries. No second Owner or external environment change."
         },
         {
           "id": "W27-02",
@@ -181423,7 +181523,7 @@
         "raw_evidence_preserved": true
       },
       "review_mode": "One author SPEC/QUALITY per coherent task; no agents.",
-      "next_action": "Merge plan then START W27-01; all three windows and closeout required before goal completion."
+      "next_action": "Normal merge and remote verify, close335, then immediately W27-02 explicit SSO admission policy and W27-03 transactional adoption; goal active."
     },
     "wave_history": [
       {

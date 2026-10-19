@@ -226,7 +226,7 @@ public sealed class AuthenticationEntryServiceV1(CP6Context db, ITenantContext t
     }
 
     public Task<TokenSessionDto> RefreshAsync(string raw, ClientContextDto? client, string? ip, string? ua,
-        Action<TokenSessionDto>? stage, CancellationToken ct, bool deferOutput = false)
+        Action<TokenSessionDto>? stage, CancellationToken ct, bool deferOutput = false, string? browserAttempt = null)
     {
         if (client != null) ClientContextValidator.Validate(client);
         return refresh.RotateWithAuthenticationAsync(raw, ip, ua,
@@ -234,6 +234,11 @@ public sealed class AuthenticationEntryServiceV1(CP6Context db, ITenantContext t
             async (rotation, token) =>
             {
                 if (client != null) await devices.EnsureLoginAllowedAsync(client, rotation.User.TenantId, token);
+                if (browserAttempt != null)
+                {
+                    if (client != null) throw new InvalidOperationException("REAUTH_REQUIRED");
+                    await new BrowserAuthenticationRecoveryV1(db).RecordRotationAsync(browserAttempt, rotation.RawToken, token);
+                }
                 var access = sessions.BuildAccessToken(rotation.User, rotation.AccessJti, false, rotation.User.IsPlatformAdmin);
                 var profile = await sessions.BuildProfileAsync(rotation.User, false);
                 Audit(rotation.User, SecurityEventType.TokenRefreshed, rotation.Evidence.Primary, ip, ua);

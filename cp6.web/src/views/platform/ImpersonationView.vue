@@ -45,13 +45,11 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { tenantApi } from '@/api/platform/tenant'
 import { impersonationApi } from '@/api/platform/impersonation'
-import { usePlatformStore } from '@/stores/platform'
-import { addDynamicRoutes } from '@/router'
+import { requireCurrentProfile } from '@/auth/browserAuthentication'
 import type { TenantRow } from '@/types/platform/platform'
 
 const { t } = useI18n()
 const router = useRouter()
-const store = usePlatformStore()
 
 const tenants = ref<TenantRow[]>([])
 const tenantsLoading = ref(false)
@@ -81,24 +79,14 @@ async function doStart() {
       userId: form.userId.trim() || null,
       reason: form.reason.trim() || null
     })
-    // R8：以目标用户身份建立 imp 会话 → sessionStorage 态 + 替换 localStorage menus + 重建路由 + 进首页。
-    store.setImpersonation({
-      tenantName: res.tenantName,
-      userName: res.userName,
-      expiresAt: Date.now() + res.expiresInMinutes * 60000
-    })
-    const menus = res.menus || []
-    localStorage.setItem('menus', JSON.stringify(menus))
-    addDynamicRoutes(menus)
+    requireCurrentProfile(res)
     ElMessage.success(t('platform.impersonation.bannerActive', {
       tenantName: res.tenantName,
       userName: res.userName
     }))
     router.push('/dashboard')
-    // 路由表已重建（addDynamicRoutes 重设 layout children + 平台区）；刷新以挂回目标用户菜单 + 横幅。
-    window.location.reload()
-  } catch {
-    // E-SEC-032 / E-SEC-035 由拦截器提示
+  } catch (error: any) {
+    ElMessage.error(error?.response?.data?.message || error?.message || '身份切换结果未确认。')
   } finally {
     starting.value = false
   }

@@ -19,6 +19,166 @@ public sealed class AuthenticationContinuityPostgreSqlTests(TenantManagementPost
     private const string Password = "Continuity1!Password";
 
     [CurrentPermissionPostgresFact]
+    public async Task Browser_known_closure_and_required_audit_commit_together_and_retry_does_not_duplicate_audit()
+    {
+        var user = await Seed(); await using var db = server.Context(new TenantContext { CurrentTenantId = user.TenantId });
+        await using var host = await AuthenticationApiProcess.Start(db.Database.GetConnectionString()!);
+        var key = AuthenticationInteractionStoreV1.NewChallenge();
+        var login = Post("api/auth/login", new { user.UserName, Password, TenantCode = "continuity_" + user.TenantId.ToString("N") });
+        login.Headers.Add(AuthenticationRecoveryBindingV1.Header, key);
+        using var logged = await host.Send(login); var cookies = Cookies(logged);
+        var fn = "browser_audit_" + Guid.NewGuid().ToString("N");
+        await db.Database.ExecuteSqlRawAsync($"CREATE FUNCTION public.{fn}() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.\"UserId\"='{user.Id}'::uuid AND NEW.\"EventType\"={(int)SecurityEventType.Logout} THEN RAISE EXCEPTION 'injected closure audit failure'; END IF; RETURN NEW; END $$; CREATE TRIGGER {fn} BEFORE INSERT ON public.\"Sys_SecurityLogs\" FOR EACH ROW EXECUTE FUNCTION public.{fn}()");
+        async Task<HttpResponseMessage> Close()
+        {
+            var request = Post("api/auth/completion/browser/close", new {}); request.Headers.Add(AuthenticationRecoveryBindingV1.Header, key);
+            return await host.Send(request);
+        }
+        try
+        {
+            using var failed = await Close(); Assert.False(failed.IsSuccessStatusCode);
+            using var stillOpen = await host.Profile(cookies["cp6_at"]); Assert.Equal(HttpStatusCode.OK, stillOpen.StatusCode);
+        }
+        finally { await db.Database.ExecuteSqlRawAsync($"DROP TRIGGER {fn} ON public.\"Sys_SecurityLogs\"; DROP FUNCTION public.{fn}()"); }
+        using (var closed = await Close()) Assert.Equal(HttpStatusCode.OK, closed.StatusCode);
+        using (var repeated = await Close()) Assert.Equal(HttpStatusCode.OK, repeated.StatusCode);
+        using var denied = await host.Profile(cookies["cp6_at"]); Assert.Equal(HttpStatusCode.Unauthorized, denied.StatusCode);
+        var audit = Assert.Single(await db.Sys_SecurityLogs.AsNoTracking().Where(x => x.UserId == user.Id && x.Reason == "browser authentication closure").ToListAsync());
+        Assert.DoesNotContain(key, audit.ContextJson!); Assert.DoesNotContain(cookies["cp6_rt"], audit.ContextJson!);
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task Browser_recovery_requires_explicit_exact_capability_and_does_not_broaden_CSRF_exemption()
+    {
+        var user = await Seed(); await using var db = server.Context(new TenantContext { CurrentTenantId = user.TenantId });
+        await using var host = await AuthenticationApiProcess.Start(db.Database.GetConnectionString()!);
+        var key = AuthenticationInteractionStoreV1.NewChallenge();
+        foreach (var sample in new[] { ("api/auth/completion/browser/status", (string?)null),
+            ("api/auth/completion/browser/close", "short"), ("api/auth/completion/browser/close/extra", key),
+            ("api/auth/completion/browser/status/", key) })
+        {
+            var request = Post(sample.Item1, new {});
+            if (sample.Item2 != null) request.Headers.Add(AuthenticationRecoveryBindingV1.Header, sample.Item2);
+            using var denied = await host.Send(request); Assert.Equal(HttpStatusCode.Forbidden, denied.StatusCode);
+        }
+        var multiple = Post("api/auth/completion/browser/close", new {});
+        multiple.Headers.Add(AuthenticationRecoveryBindingV1.Header, new[] { key, key });
+        using (var denied = await host.Send(multiple)) Assert.Equal(HttpStatusCode.Forbidden, denied.StatusCode);
+        var missing = Post("api/auth/completion/browser/status", new {}); missing.Headers.Add(AuthenticationRecoveryBindingV1.Header, key);
+        using var unavailable = await host.Send(missing); Assert.Equal(HttpStatusCode.OK, unavailable.StatusCode);
+        Assert.Equal("UNAVAILABLE", (await unavailable.Content.ReadFromJsonAsync<BrowserAuthenticationStatusV1>())!.State);
+        Assert.False(unavailable.Headers.Contains("Set-Cookie"));
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task Browser_origin_recovery_follows_actual_impersonation_alias_and_closes_the_original_family()
+    {
+        var actor = await Seed(); await using var db = server.Context(new TenantContext { CurrentTenantId = actor.TenantId });
+        await db.Sys_Users.Where(x => x.Id == actor.Id).ExecuteUpdateAsync(s => s.SetProperty(x => x.IsPlatformAdmin, true));
+        var targetTenant = new Sys_Tenant { Id = Guid.NewGuid(), TenantCode = "browser_target_" + Guid.NewGuid().ToString("N"), TenantName = "Target" };
+        var target = new Sys_User { TenantId = targetTenant.Id, UserName = "browser-target", Password = "not-a-login-hash", Enable = true };
+        db.Sys_Tenants.Add(targetTenant); db.Sys_Users.Add(target); await db.SaveChangesAsync();
+        await using var host = await AuthenticationApiProcess.Start(db.Database.GetConnectionString()!);
+        var key = AuthenticationInteractionStoreV1.NewChallenge();
+        var login = Post("api/auth/login", new { actor.UserName, Password, TenantCode = "continuity_" + actor.TenantId.ToString("N") });
+        login.Headers.Add(AuthenticationRecoveryBindingV1.Header, key);
+        using var logged = await host.Send(login); Assert.Equal(HttpStatusCode.OK, logged.StatusCode); var cookies = Cookies(logged);
+        using var started = await host.Send(Post("api/platform/impersonation/start", new { TenantId = targetTenant.Id, UserId = target.Id, Reason = "browser boundary regression" }, cookies));
+        Assert.Equal(HttpStatusCode.OK, started.StatusCode);
+        foreach (var pair in Cookies(started)) cookies[pair.Key] = pair.Value;
+        async Task<string> Profile()
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/auth/profile");
+            request.Headers.Add("Cookie", "cp6_at=" + cookies["cp6_at"]); request.Headers.Add(AuthenticationRecoveryBindingV1.Header, key);
+            using var response = await host.Send(request); Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            return JsonDocument.Parse(await response.Content.ReadAsStringAsync()).RootElement.GetProperty("userName").GetString()!;
+        }
+        Assert.Equal(target.UserName, await Profile());
+        using var ended = await host.Send(Post("api/platform/impersonation/end", new {}, cookies)); Assert.Equal(HttpStatusCode.OK, ended.StatusCode);
+        foreach (var pair in Cookies(ended)) cookies[pair.Key] = pair.Value;
+        Assert.Equal(actor.UserName, await Profile());
+        var close = Post("api/auth/completion/browser/close", new {}); close.Headers.Add(AuthenticationRecoveryBindingV1.Header, key);
+        using var closed = await host.Send(close); Assert.Equal(HttpStatusCode.OK, closed.StatusCode);
+        using var denied = await host.Profile(cookies["cp6_at"]); Assert.Equal(HttpStatusCode.Unauthorized, denied.StatusCode);
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task Browser_rotation_capability_matches_exact_output_and_closes_only_its_generation()
+    {
+        var user = await Seed(); await using var db = server.Context(new TenantContext { CurrentTenantId = user.TenantId });
+        await using var host = await AuthenticationApiProcess.Start(db.Database.GetConnectionString()!);
+        using var login = await host.Send(Post("api/auth/login", new { user.UserName, Password, TenantCode = "continuity_" + user.TenantId.ToString("N") }));
+        var old = Cookies(login);
+        using var healthyLogin = await host.Send(Post("api/auth/login", new { user.UserName, Password, TenantCode = "continuity_" + user.TenantId.ToString("N") }));
+        var healthy = Cookies(healthyLogin);
+        var key = AuthenticationInteractionStoreV1.NewChallenge();
+        var refresh = Post("api/auth/refresh", new {}, old); refresh.Headers.Add(AuthenticationRecoveryBindingV1.Header, key);
+        using var rotated = await host.Send(refresh); Assert.Equal(HttpStatusCode.OK, rotated.StatusCode); var next = Cookies(rotated);
+        foreach (var sample in new[] { (old, HttpStatusCode.Unauthorized), (next, HttpStatusCode.OK), (healthy, HttpStatusCode.Unauthorized) })
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/auth/profile");
+            request.Headers.Add("Cookie", "cp6_at=" + sample.Item1["cp6_at"]); request.Headers.Add(AuthenticationRecoveryBindingV1.Header, key);
+            using var profile = await host.Send(request); Assert.Equal(sample.Item2, profile.StatusCode);
+        }
+        var close = Post("api/auth/completion/browser/close", new {}); close.Headers.Add(AuthenticationRecoveryBindingV1.Header, key);
+        using var closed = await host.Send(close); Assert.Equal(HttpStatusCode.OK, closed.StatusCode);
+        using var rejected = await host.Profile(next["cp6_at"]); Assert.Equal(HttpStatusCode.Unauthorized, rejected.StatusCode);
+        using var untouched = await host.Profile(healthy["cp6_at"]); Assert.Equal(HttpStatusCode.OK, untouched.StatusCode);
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task Browser_pending_factor_cookie_must_match_its_original_recovery_capability()
+    {
+        var user = await Seed(); await using var db = server.Context(new TenantContext { CurrentTenantId = user.TenantId });
+        await db.Sys_Tenants.Where(x => x.Id == user.TenantId).ExecuteUpdateAsync(s => s.SetProperty(x => x.TwoFactorMode, 2));
+        await using var host = await AuthenticationApiProcess.Start(db.Database.GetConnectionString()!);
+        var key = AuthenticationInteractionStoreV1.NewChallenge();
+        var login = Post("api/auth/login", new { user.UserName, Password, TenantCode = "continuity_" + user.TenantId.ToString("N") }); login.Headers.Add(AuthenticationRecoveryBindingV1.Header, key);
+        using var pending = await host.Send(login); Assert.Equal(HttpStatusCode.OK, pending.StatusCode); var cookies = Cookies(pending);
+        var wrong = Post("api/auth/2fa/setup", new {}, cookies); wrong.Headers.Add(AuthenticationRecoveryBindingV1.Header, AuthenticationInteractionStoreV1.NewChallenge());
+        using var denied = await host.Send(wrong); Assert.False(denied.IsSuccessStatusCode);
+        var right = Post("api/auth/2fa/setup", new {}, cookies); right.Headers.Add(AuthenticationRecoveryBindingV1.Header, key);
+        using var allowed = await host.Send(right); Assert.Equal(HttpStatusCode.OK, allowed.StatusCode);
+        var status = Post("api/auth/completion/browser/status", new {}); status.Headers.Add(AuthenticationRecoveryBindingV1.Header, key);
+        using var result = await host.Send(status); var safe = (await result.Content.ReadFromJsonAsync<BrowserAuthenticationStatusV1>())!;
+        Assert.Equal("PENDING", safe.State); Assert.Equal("2fa_enroll", safe.Purpose); Assert.True(safe.ExpiresAt > DateTimeOffset.UtcNow);
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task Browser_profile_must_match_the_original_attempt_not_an_old_valid_cookie()
+    {
+        var user = await Seed(); await using var db = server.Context(new TenantContext { CurrentTenantId = user.TenantId });
+        await using var host = await AuthenticationApiProcess.Start(db.Database.GetConnectionString()!);
+        var key = AuthenticationInteractionStoreV1.NewChallenge();
+        var login = Post("api/auth/login", new { user.UserName, Password, TenantCode = "continuity_" + user.TenantId.ToString("N") });
+        login.Headers.Add(AuthenticationRecoveryBindingV1.Header, key);
+        using var logged = await host.Send(login); Assert.Equal(HttpStatusCode.OK, logged.StatusCode); var cookies = Cookies(logged);
+        var wrong = new HttpRequestMessage(HttpMethod.Get, "api/auth/profile");
+        wrong.Headers.Add("Cookie", "cp6_at=" + cookies["cp6_at"]);
+        wrong.Headers.Add(AuthenticationRecoveryBindingV1.Header, AuthenticationInteractionStoreV1.NewChallenge());
+        using var unrelated = await host.Send(wrong); Assert.Equal(HttpStatusCode.Unauthorized, unrelated.StatusCode);
+        var right = new HttpRequestMessage(HttpMethod.Get, "api/auth/profile"); right.Headers.Add("Cookie", "cp6_at=" + cookies["cp6_at"]);
+        right.Headers.Add(AuthenticationRecoveryBindingV1.Header, key);
+        using var own = await host.Send(right); Assert.Equal(HttpStatusCode.OK, own.StatusCode);
+    }
+
+    [CurrentPermissionPostgresFact]
+    public async Task Browser_can_fence_an_unknown_attempt_before_a_late_login_registers_it()
+    {
+        var user = await Seed(); await using var db = server.Context(new TenantContext { CurrentTenantId = user.TenantId });
+        await using var host = await AuthenticationApiProcess.Start(db.Database.GetConnectionString()!);
+        var key = AuthenticationInteractionStoreV1.NewChallenge();
+        var close = Post("api/auth/completion/browser/close", new {}); close.Headers.Add(AuthenticationRecoveryBindingV1.Header, key);
+        using var closed = await host.Send(close); Assert.Equal(HttpStatusCode.OK, closed.StatusCode);
+        Assert.Equal("CLOSED", (await closed.Content.ReadFromJsonAsync<AuthenticationRecoveryStatusV1>())!.State);
+        var late = Post("api/auth/login", new { user.UserName, Password, TenantCode = "continuity_" + user.TenantId.ToString("N") });
+        late.Headers.Add(AuthenticationRecoveryBindingV1.Header, key);
+        using var denied = await host.Send(late); Assert.Equal(HttpStatusCode.Unauthorized, denied.StatusCode);
+        using var fresh = await host.Send(Post("api/auth/login", new { user.UserName, Password, TenantCode = "continuity_" + user.TenantId.ToString("N") }));
+        Assert.Equal(HttpStatusCode.OK, fresh.StatusCode);
+    }
+
+    [CurrentPermissionPostgresFact]
     public async Task Actual_Web_completion_status_closes_undelivered_attempt_without_reissuing_secrets()
     {
         var user = await Seed(); await using var db = server.Context(new TenantContext { CurrentTenantId = user.TenantId });
