@@ -1,5 +1,17 @@
 # 项目当前状态
 
+## 2026-10-18：W20-03实际目录HTTP宿主候选通过
+
+严格opt-in配置冻结安装身份、普通LOGIN及reader注册；真实JWT经产品verifier/authority绑定可信scope，当前授权及目录读取均走普通PG连接，失败无Owner回退。18配置检查与1条真实PG/HTTP A→B→A链路通过，Owner请求查询0，实例已停止。[单份DELIVERY](../development/evidence/WP02-05/directory-host/DELIVERY.md)保留RED及范围。
+
+一次作者SPEC/QUALITY无阻断，候选待正常PR/远端核对，W20-04补矩阵及收尾。持续目标active；完整任务/真实业务未提升，无新树/代理/Actions/既有库操作或部署。
+
+## 2026-10-18：W20-02已合入，W20-03实际HTTP宿主开工
+
+候选 `8a39779211b5347cd83669e09266a289832bd476` 经[PR292](https://github.com/GTX537/CP6/pull/292)合入远端main `73ddf0b9374e5f09140be4280895d150749f87c5`，范围文件/祖先关系已核对；两条PG/CLI生命周期与四个旧CLI入口smoke通过，五个自有实例停止。[单份DELIVERY](../development/evidence/WP02-02/directory-installation/DELIVERY.md)保留证据，Handoff `c155fa0a87ff9e139ebacf8504b33e4c5f427f20` 发布并回读。
+
+W20-03复用原目录，实施严格opt-in配置、实际JWT之后可信scope/authority、普通身份当前授权与目录读取。当前验证NOT_RUN；W20-04补矩阵收尾。完整WP02/CRM/Owner最终门与真实业务生产不提升；无新工作树/代理/Actions/既有库操作，持续目标active。
+
 ## 2026-10-18：W20-02显式安装/检查候选通过
 
 目录v2具备显式fresh安装、只读inspect、实际database/OID/cluster身份和结构/权限/映射漂移检查；普通reader可绑定冻结回执，失败无Owner回退。真实CLI与原生PG两条完整生命周期通过（含取消rollback、漂移拒绝、提交回执丢失UNKNOWN后inspect），4个旧CLI入口仅做无数据库输入冒烟。[单份DELIVERY](../development/evidence/WP02-02/directory-installation/DELIVERY.md)保留原失败及范围。
