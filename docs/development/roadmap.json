@@ -158927,6 +158927,11 @@
       "date": "2026-10-18",
       "change": "W19-04 local HTTP/JWT/current authorization/trusted ordinary directory composition passed 4 unique scenarios; author review no blockers. Three owned PG clusters and HTTP hosts stopped. Normal integration and bounded round closure pending; no real DEV/full task promotion.",
       "evidence": "docs/development/evidence/WP02-05/directory-http-integration/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-18",
+      "change": "Wave19 four bounded windows CLOSED after PR285/286/287/288 remote inclusion and final product/test blob verification. 17 owned PG roots stopped, no Actions/new worktrees, active Issues empty. Full WP02/real business gates unchanged. Documentation-only closeout; no repeated product tests.",
+      "evidence": "docs/development/dispatch/20261018-wave19/README.md"
     }
   ],
   "implementation_assessment": {
@@ -161817,7 +161822,7 @@
         "claimed_at": "2026-10-19T01:05:43.511051+00:00",
         "baseline_sha": "525b16052f1c8edbe39d0e53eea69720d0de54a8",
         "entry_evidence": "docs/development/dispatch/20261018-wave19/README.md",
-        "phase": "VALIDATED_READY_TO_INTEGRATE",
+        "phase": "CLOSED",
         "dispatch_scope": "DIRECTORY_HTTP_INTEGRATION",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -161833,12 +161838,8 @@
           "CP6.Tests/Persistence/Tenancy/IdentityDirectoryHttpHost.cs",
           "docs/development/evidence/WP02-05/directory-http-integration/DELIVERY.md"
         ],
-        "reserved_write_resources": [
-          "Main:identity-directory-reader"
-        ],
-        "reserved_postgresql_ports": [
-          55435
-        ],
+        "reserved_write_resources": [],
+        "reserved_postgresql_ports": [],
         "handoff_branch": "codex/dev-coordination-20261012",
         "actions_authorized": false,
         "formal_publication_authorized": false,
@@ -161846,8 +161847,20 @@
         "deployment_authorized": false,
         "delivery_report": "docs/development/evidence/WP02-05/directory-http-integration/DELIVERY.md",
         "candidate_review_completed": true,
-        "candidate_integrated": false,
-        "review_mode": "Single combined SPEC/QUALITY author self-review; not independent"
+        "candidate_integrated": true,
+        "review_mode": "Single combined SPEC/QUALITY author self-review; not independent",
+        "ports": {},
+        "integration": {
+          "source": "d4396724a7687b08f83142c923e22446053397d8",
+          "main": "279248a25ab757a134968dea872e373820b16196",
+          "pr": "https://github.com/GTX537/CP6/pull/288"
+        },
+        "delivery_ref": {
+          "commit": "f5f23c3c2af2f4fef336c1c3cec67a33e23c885b",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T011639Z-wave19-http-delivery/MESSAGE.md",
+          "kind": "DELIVERY",
+          "at": "2026-10-19T01:16:39.587418+00:00"
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -162076,11 +162089,20 @@
         }
       },
       "wave19_http_delivery": {
-        "status": "VALIDATED_NOT_INTEGRATED",
+        "status": "INTEGRATED",
         "report": "docs/development/evidence/WP02-05/directory-http-integration/DELIVERY.md",
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
-        "validation": "4 unique HTTP/native PG scenarios passed; 3 original successes reused, auth expectation fixed from exact SDK source"
+        "validation": "4 unique HTTP/native PG scenarios passed; 3 original successes reused, auth expectation fixed from exact SDK source",
+        "source": "d4396724a7687b08f83142c923e22446053397d8",
+        "main": "279248a25ab757a134968dea872e373820b16196",
+        "pr": "https://github.com/GTX537/CP6/pull/288",
+        "handoff": {
+          "commit": "f5f23c3c2af2f4fef336c1c3cec67a33e23c885b",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T011639Z-wave19-http-delivery/MESSAGE.md",
+          "kind": "DELIVERY",
+          "at": "2026-10-19T01:16:39.587418+00:00"
+        }
       }
     },
     {
@@ -179628,7 +179650,7 @@
       "path": "docs/development/dispatch/20261018-wave19/README.md",
       "baseline_sha": "4233a204002a57da5fb9355a47c10a4f8d45bbd7",
       "registered_at": "2026-10-18T23:51:13.953441+00:00",
-      "phase": "W19_04_VALIDATED_READY_TO_INTEGRATE",
+      "phase": "CLOSED",
       "coordinator_shared_state_only": false,
       "assigned_chats": [
         "COORD"
@@ -179856,7 +179878,7 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "VALIDATED_READY_TO_INTEGRATE",
+          "phase": "CLOSED",
           "estimated_hours": [
             3,
             4
@@ -179870,13 +179892,8 @@
           ],
           "planned_scope_ref": "docs/development/dispatch/20261018-wave19/README.md",
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "reserved_write_resources": [
-            "Main:identity-directory-reader"
-          ],
-          "ports": {
-            "postgresql": 55435,
-            "http": "loopback ephemeral per owned host"
-          },
+          "reserved_write_resources": [],
+          "ports": {},
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
@@ -179891,7 +179908,7 @@
           "actual_start_baseline_sha": "525b16052f1c8edbe39d0e53eea69720d0de54a8",
           "branch": "codex/wave19-directory-http-integration-20261018",
           "candidate_review_completed": true,
-          "candidate_integrated": false,
+          "candidate_integrated": true,
           "delivery_report": "docs/development/evidence/WP02-05/directory-http-integration/DELIVERY.md",
           "review_mode": "Single combined SPEC/QUALITY author self-review; not independent",
           "validation": {
@@ -179903,6 +179920,18 @@
             "owned_postgresql_stopped": true,
             "http_hosts_stopped": true,
             "scope": "Real local JWT/SQL authority/fixture trusted context/ordinary directory; not real DEV or production host configuration"
+          },
+          "reserved_postgresql_ports": [],
+          "integration": {
+            "source": "d4396724a7687b08f83142c923e22446053397d8",
+            "main": "279248a25ab757a134968dea872e373820b16196",
+            "pr": "https://github.com/GTX537/CP6/pull/288"
+          },
+          "delivery_ref": {
+            "commit": "f5f23c3c2af2f4fef336c1c3cec67a33e23c885b",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T011639Z-wave19-http-delivery/MESSAGE.md",
+            "kind": "DELIVERY",
+            "at": "2026-10-19T01:16:39.587418+00:00"
           }
         }
       ],
@@ -179931,7 +179960,30 @@
       },
       "user_authority": "User explicitly requested wave19 remaining foundations, current chat only, 24-hour task list and persistent goal. Goal active from 2026-10-18T23:49:21Z.",
       "review_mode": "One combined task-level SPEC/QUALITY author self-review by sole coordinator; not an independent reviewer.",
-      "next_action": "Normally integrate HTTP composition evidence, verify remote main, synchronize bounded round closure and stop owned resources."
+      "next_action": "Next bounded proposal: production-grade directory HTTP host/configuration and minimal authorization-query identity with explicit installation/upgrade/drift contract; then immutable full-directory protocol/CRM consumption. Owner final revocation/write fence and real DEV remain separate. No new implementation is claimed or opened by this closeout.",
+      "closed_at": "2026-10-19T01:16:39.587418+00:00",
+      "bounded_windows_completed": 4,
+      "full_foundation_complete": false,
+      "business_acceptance": "NOT_RUN",
+      "goal_scope": "The four agreed wave19 windows are integrated; complete the external goal only after this closeout commit is remotely verified.",
+      "closeout": {
+        "handoff": {
+          "commit": "f5f23c3c2af2f4fef336c1c3cec67a33e23c885b",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T011639Z-wave19-http-delivery/MESSAGE.md",
+          "kind": "DELIVERY",
+          "at": "2026-10-19T01:16:39.587418+00:00"
+        },
+        "implementation_main": "279248a25ab757a134968dea872e373820b16196",
+        "owned_postgresql_stopped": 17,
+        "http_hosts_stopped": true,
+        "new_worktrees": 0,
+        "new_agents": 0,
+        "actions_runs": 0,
+        "open_issues_observed": 0,
+        "observed_at": "2026-10-19T01:16:39.587418+00:00",
+        "root_user_untracked_preserved": 7,
+        "free_disk_gib_observed": 48.73
+      }
     },
     "wave_history": [
       {
