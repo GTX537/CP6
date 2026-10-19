@@ -1,5 +1,9 @@
 # 第二十七轮：浏览器认证恢复与SSO首次身份准入实施计划
 
+> W27-02候选完成：[DELIVERY](../../evidence/WP02-03/sso-admission-policy/DELIVERY.md)，#337 CAS/审计已修正；9前端/2浏览器、41项主验证及15/4项定向复查通过。待正常合并后立即继续W27-03，goal active。
+
+> W27-01已通过[PR336](https://github.com/GTX537/CP6/pull/336)合入`098264a08ee25e3f044d202e0e5ade3c98b6dc3a`，#335关闭；W27-02真实START。继续首次身份准入policy/明确批准UI/CAS/强审计，随后W27-03初绑/JIT及总收尾，goal active。
+
 > W27-01候选完成：[DELIVERY](../../evidence/WP02-03/authentication-browser-recovery/DELIVERY.md)，#335原失败已修正；55前端/6真实浏览器场景通过，PG/实际HTTP边界与一次作者审查通过。待正常合并，立即继续W27-02/03和总收尾，goal active。
 
 执行者：当前COORD聊天，使用executing-plans；不派代理、不新建物理工作树。目标：闭合S5 SYS-IAM-01 v0.2 §6.5、§7.1/7.3的前端恢复与首次身份准入，必要的当前权限/角色引用和真实writer共同门随对应窗口完成。架构沿W26 PostgreSQL认证root、原proof、完成回执与IdentityChange，不另造身份权威。技术为Vue/TypeScript、ASP.NET Core/EF、PostgreSQL18及本地定向验证。
@@ -37,10 +41,10 @@ type CompletionDecision = 'ACTIVE' | 'SECOND_FACTOR_PENDING' | 'ENROLLMENT_REQUI
 
 文件：Core/Sys/SsoIdentityAdmissionPolicyV1、TenantSsoConfigService与输入合同，WebApi/Sys/SsoConfigController，PG私有policy/配置操作回执及revision迁移；FE SsoConfigView、api/types/sys/sso、相关测试。采用已存在sys-sso-config:query/edit资源，在当前可信tenant/actor受控配置边界显式批准；不凭前端管理员旗标。新增审批权限若原合同要求则沿权威权限定义统一登记，不能暗设真实批准者。
 
-- [ ] 新准入保存policyRef/version、approved issuer/client、EmailClaim可信邮箱语义、allowInitialEmailLink/allowJit/approvedJitRoleIds、邮箱身份权威认可；默认未批准/禁用。界面明确展示批准与普通配置区别，必须显式勾选范围和理由，不将AutoProvision默认true当批准，不回传secret。
-- [ ] 当前actor权限/租户与原认证版本在同PG root内复核；expectedConfigVersion/policyVersion、operationId/reason形成配置CAS和准确回执。空secret保留；角色必须当前同tenant可用且被批准。冲突412重载，结果未知查原操作，不自动换ID提交。
-- [ ] policy/配置/role/user实际writer遵共同门及revision；启用新JIT/改默认role需当前批准，撤销准入阻止在途新身份；强审计与变更同事务。普通配置变动不会静默复制旧批准到新issuer/client。
-- [ ] 定向PG权限撤销/配置竞争/审计失败/角色非法/secret保留、FE批准提示/错误恢复和类型检查。单份sso-admission-policy/DELIVERY.md、一次作者审查、正常合并。此窗交付可供W27-03消费的政策，不冒初绑已采用。
+- [x] 新准入保存policyRef/version、approved issuer/client、EmailClaim可信邮箱语义、allowInitialEmailLink/allowJit/approvedJitRoleIds、邮箱身份权威认可；默认未批准/禁用。界面明确展示批准与普通配置区别，必须显式勾选范围和理由，不将AutoProvision默认true当批准，不回传secret。
+- [x] 当前actor权限/租户与原认证版本在同PG root内复核；expectedConfigVersion/policyVersion、operationId/reason形成配置CAS和准确回执。空secret保留；角色必须当前同tenant可用且被批准。冲突412重载，结果未知查原操作，不自动换ID提交。
+- [x] policy/配置/role/user实际writer遵共同门及revision；启用新JIT/改默认role需当前批准，撤销准入阻止在途新身份；强审计与变更同事务。普通配置变动不会静默复制旧批准到新issuer/client。
+- [x] 定向PG权限撤销/配置竞争/审计失败/角色非法/secret保留、FE批准提示/错误恢复和类型检查。单份sso-admission-policy/DELIVERY.md、一次作者审查、正常合并。此窗交付可供W27-03消费的政策，不冒初绑已采用。
 
 ## W27-03 原SSO映射五分支完整采用
 

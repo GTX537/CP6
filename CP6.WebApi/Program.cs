@@ -842,6 +842,7 @@ builder.Services.AddDataProtection()
     .PersistKeysToDbContext<CP6.Core.EFDbContext.CP6Context>()
     .SetApplicationName("CP6");
 builder.Services.AddScoped<CP6.Core.Services.Sys.ITenantSsoConfigService, CP6.Core.Services.Sys.TenantSsoConfigService>();
+builder.Services.AddScoped<CP6.Core.Services.Sys.SsoConfigurationAdminV1>();
 // S 类 #3 SSO（T3）：state/nonce/PKCE 一次性暂态（IDistributedCache）
 builder.Services.AddScoped<CP6.Core.Services.Sys.ISsoStateStore, CP6.Core.Services.Sys.SsoStateStore>();
 // S 类 #3 SSO（T4/T5/T6）：discovery seam（OidcDiscovery 内部 static ConcurrentDictionary 缓存 ConfigurationManager，

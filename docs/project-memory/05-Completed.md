@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-19：W27-02 SSO首次身份准入政策候选
+
+#337修正：原配置加入当前原身份/权限、版本CAS、明确邮箱权威批准及角色范围；强审计和不可变原操作回执同PG事务，未知结果仅原操作查询/关闭，密钥不进操作日志或本地存储。9前端/2真实Chrome夹具场景、41项.NET主验证及15/4项局部复查通过/复用，作者集中审查无阻断。原目录/缓存复用、自有进程已停止，无Actions或真实租户批准；W27-03初绑/JIT及总收尾继续，完整IAM/CRM/真实业务未提升。[DELIVERY](../development/evidence/WP02-03/sso-admission-policy/DELIVERY.md)。
+
 ## 2026-10-19：W27-01浏览器跨标签页认证恢复候选
 
 #335修正：原能力先存IndexedDB、Web Locks/共享epoch、准确profile/status/close、退出及身份切换清旧数据，业务写不重放，2FA刷新不重建secret。必要PG屏障/准确轮转映射及关闭审计同事务；55前端/6真实Chrome夹具场景通过，68项.NET主验证及7项最终边界通过/复用，作者集中审查无剩余阻断。W27-02/03及收尾仍待执行，完整IAM/CRM/真实业务未提升。[DELIVERY](../development/evidence/WP02-03/authentication-browser-recovery/DELIVERY.md)。

@@ -37,4 +37,21 @@ public record SsoConfigInput(
     bool Enabled,
     bool Enforced,
     bool AutoProvision,
-    int? DefaultRoleId);
+    int? DefaultRoleId)
+{
+    public string? ExpectedConfigVersion { get; init; }
+    public string? ExpectedPolicyVersion { get; init; }
+    public Guid? ExpectedPolicyRef { get; init; }
+    public Guid OperationId { get; init; }
+    public string? Reason { get; init; }
+    public SsoAdmissionChangeV1? Admission { get; init; }
+}
+
+public sealed record SsoAdmissionChangeV1(string Action = "preserve", string? ApprovedIssuer = null,
+    bool IssuerIsEmailAuthority = false, string? EmailClaimSemantic = null,
+    bool AllowInitialEmailLink = false, bool AllowJit = false, int[]? ApprovedJitRoleIds = null);
+
+public sealed record SsoIdentityAdmissionPolicyV1(Guid PolicyRef, Guid Version, string Authority,
+    string ApprovedIssuer, string ClientId, string EmailClaim, string EmailClaimSemantic,
+    bool IssuerIsEmailAuthority, bool AllowInitialEmailLink, bool AllowJit, int[] ApprovedJitRoleIds,
+    Guid ApprovedBy, DateTimeOffset ApprovedAtUtc);
