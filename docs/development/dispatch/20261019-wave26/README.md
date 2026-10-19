@@ -1,5 +1,22 @@
 # 第二十六轮：完整认证政策与会话公共基础
 
+## 第二十六轮三个限定交付已集成
+
+| 窗口 | 正常PR | Issue | 单份交付/有效验证 |
+|---|---|---|---|
+| W26-01 | [PR328](https://github.com/GTX537/CP6/pull/328) | #327 Closed | [政策、原proof与共同PG完成门](../../evidence/WP02-03/authentication-policy-gate/DELIVERY.md)：187通过，99原生PG |
+| W26-02 | [PR330](https://github.com/GTX537/CP6/pull/330) | #329 Closed | [Web/Native交互入口](../../evidence/WP02-03/authentication-entry-completion/DELIVERY.md)：101通过，63原生PG，type-check通过 |
+| W26-03 | [PR332](https://github.com/GTX537/CP6/pull/332) | #331 Closed | [会话/设备/精确完成恢复](../../evidence/WP02-03/authentication-session-continuity/DELIVERY.md)：153通过，106原生PG |
+
+产品远端main `0b65bb396c1704c41a5d2ddc8740aaff06edaab2`，各source祖先与各自合并时任务范围blob已核。最终产品W26-03范围一致；其相关政策、原交互、SSO、当前会话、模拟、CSRF和设备/并发/旧库迁移结果构成受影响组合验证。三个窗口用例有重叠，**不得相加当作独立总数**。每项一次作者SPEC/QUALITY，发现问题只局部复查；全部原失败保留，无剩余失败或跳过，无独立审查代理或全业务验收。
+
+三个窗口CLOSED，资源释放；22次自有PG全停止、55435无监听。复用唯一工作目录、wave18构建、NuGet和已核锁文件的零复制node_modules junction，零新树/代理/Actions，原7项用户资料保留。D余约38.85GiB。初估本代理5–8小时、余量10小时，至产品集成/本次收尾准备约174分钟；最终耗时记录在完成检查点，24小时是完成窗口，提前完成不空等。
+
+后续优先：客户端保存原交互秘密/跨Tab恢复与UNKNOWN协调；SSO首次身份明确准入和批准UI；剩余IAM引用CAS及CRM投影/本地Owner业务最终门。现有DEV采用本轮前向迁移并重新登录、普通/管理员真实业务冒烟另设环境窗口。本轮未操作既有PostgreSQL副本或生产。完整IAM/CRM/Owner/真实业务不宣称完成，14包/125目标/375任务/247运行NOT_RUN保持。
+
+最终文档main、Handoff和检查点核对后关闭本轮持续目标；未自动开第27轮。下方过程记录保留其原时点，不代表当前仍待合并或运行资源。
+
+
 > W26-03候选完成：[DELIVERY](../../evidence/WP02-03/authentication-session-continuity/DELIVERY.md)。#331原缺口修正，153有效通过/106原生PG；一次作者SPEC/QUALITY无剩余阻断。正常合并后总收尾，goal active。
 
 > W26-02已通过[正常PR](https://github.com/GTX537/CP6/pull/330)合入`7833a58db53531181da13fd656e4837e71222e0d`，#329关闭。W26-03真实START，原refresh/current-access/device与精确完成状态恢复接续，随后总收尾，goal active。

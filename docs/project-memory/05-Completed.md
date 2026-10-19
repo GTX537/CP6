@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-19：第二十六轮认证公共基础三个限定交付已集成
+
+政策/原proof与PG共同门、Web/Native密码/SSO/2FA交互完成、原会话/当前政策/共享设备及精确失败恢复通过PR328/330/332正常集成；#327/#329/#331均Closed。产品main `0b65bb396c1704c41a5d2ddc8740aaff06edaab2`。各窗口187/101/153有效通过（重叠不相加），最新153含106原生PG；一次作者SPEC/QUALITY/任务，旧失败保留。
+
+22次自有PG停止，资源释放，原目录/构建/NuGet/零复制前端依赖复用，零新工作树/代理/Actions或既有库/部署操作。前向迁移与重新登录尚未应用既有环境。完整FE跨Tab恢复/SSO新身份批准/剩余IAM引用CAS/CRM与Owner/真实业务仍未完成，247运行NOT_RUN不提升。最终文档/Handoff/检查点核对后关闭本轮goal。[本轮完整记录](../development/dispatch/20261019-wave26/README.md)。
+
 ## 2026-10-19：W26-03原会话、共享设备及准确完成恢复候选
 
 #331修正；原认证/政策/SSO/因子证据贯穿refresh/access与合法模拟绑定，实际设备writer版本/原12小时窗口，精确generation关闭、持久pending和实际formatter缓冲输出，原交互秘密绑定的安全查询/关闭。153有效通过（106PG），一次作者审查及局部复查通过。完整FE跨Tab/未批准SSO新身份/CRM/Owner/真实业务未提升；正常合并后W26总收尾，goal仍active。[DELIVERY](../development/evidence/WP02-03/authentication-session-continuity/DELIVERY.md)。

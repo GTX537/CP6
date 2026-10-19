@@ -1,5 +1,7 @@
 # W26-03：原认证会话、设备窗口与准确完成恢复
 
+> 已集成：https://github.com/GTX537/CP6/pull/332 / source `4d75c61d824d934d0fe665307b229c0e8df107c6` / main `0b65bb396c1704c41a5d2ddc8740aaff06edaab2`，#331 已关闭。下文保留候选交付时点；本轮最终状态见[总记录](../../../dispatch/20261019-wave26/README.md)。
+
 基线main `7833a58db53531181da13fd656e4837e71222e0d`，分支`codex/wave26-03-authentication-continuity-20261019`。**Ready to merge: Yes**；一次作者集中SPEC/QUALITY及发现问题的局部复查，无剩余阻断，非独立审查。[P0 #331](https://github.com/GTX537/CP6/issues/331)原4项真实PG/HTTP失败已修正。153个去重有效相关结果通过，含106原生PostgreSQL、47相关单测，0剩余失败或跳过。旧失败、复用来源及采用范围保留。
 
 ## 改变的行为

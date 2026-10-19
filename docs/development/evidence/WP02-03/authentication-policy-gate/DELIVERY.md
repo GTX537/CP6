@@ -1,5 +1,7 @@
 # W26-01：认证政策版本与 PostgreSQL 完成门
 
+> 已集成：https://github.com/GTX537/CP6/pull/328 / source `2a093ba3386cb8d9f7b74ea99749215ebcbfd5a0` / main `15b61f577e56fbff99acd98c066c49cec9d2ebd5`，#327 已关闭。下文保留候选交付时点；本轮最终状态见[总记录](../../../dispatch/20261019-wave26/README.md)。
+
 基线main `afc94bf18e447fdc819b88cb4fc048d9d9eb6258`，分支`codex/wave26-01-authentication-policy-20261019`。**Ready to merge: Yes**；[P1 #327](https://github.com/GTX537/CP6/issues/327)已修正。一次作者集中SPEC/QUALITY无剩余阻断，非独立审查。187去重有效相关结果通过，99原生PG/HTTP、88相关单测/历史模型元数据，0剩余失败/跳过。所有原失败保留。
 
 ## 改变的行为
