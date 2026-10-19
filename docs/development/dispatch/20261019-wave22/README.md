@@ -1,5 +1,9 @@
 # 第二十二轮：Main身份变更写入链路
 
+> 候选已完成：写者矩阵、#304 PostgreSQL菜单fanout互斥修正、21项有效原生验证及作者集中审查无阻断。[单份DELIVERY](../../evidence/WP02-05/identity-writer-coverage/DELIVERY.md)。Issue仍Open，待正常合并/远端核对与收尾。
+
+> 当前优先修正P0 [#304](https://github.com/GTX537/CP6/issues/304)：原生PG复现菜单变更遗漏另一事务未提交的角色操作权。分支 `codex/bug-304-identity-menu-fanout-20261019`，沿同一真实START/领取范围，不另起审查或ACK。正常主线合并与远端核对前保持Open。
+
 > 执行：当前COORD单对话串行使用writing-plans/executing-plans，按项目精简验证节奏。复用已释放目录，不创建代理、聊天或worktree。
 
 **目标：** 盘点实际Main IAM写入入口，补已证实的捕获边界，以真实服务和PostgreSQL证明业务事实、快照、版本、Outbox同事务，并由既有完整采集器读取结果。

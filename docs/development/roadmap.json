@@ -158997,6 +158997,16 @@
       "date": "2026-10-19",
       "change": "Wave22 single-COORD persistent goal: audit actual IAM writers, repair proven capture boundaries, real PostgreSQL service/atomicity/baseline validation, normal integration and closeout. One coherent task, four sequential work phases; full business gates unchanged.",
       "evidence": "docs/development/dispatch/20261019-wave22/README.md"
+    },
+    {
+      "date": "2026-10-19",
+      "change": "W22 native PostgreSQL proves P0 #304: menu fanout misses an uncommitted new RoleAction. Current branch from confirmed main renamed for this single bug. Fix limited to PG fanout transaction fence; unrelated development paused.",
+      "evidence": "https://github.com/GTX537/CP6/issues/304"
+    },
+    {
+      "date": "2026-10-19",
+      "change": "W22-01 candidate ready: PG menu fanout transaction fence fixes reproduced BUG304; 21 effective native cases with transparent reuse/failure history, actual services to ordinary-PG HTTP collector; author SPEC/QUALITY pass. Await integration; full gates unchanged.",
+      "evidence": "docs/development/evidence/WP02-05/identity-writer-coverage/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -162027,16 +162037,16 @@
         "chat_label": "COORD / W22-01 Main身份写者覆盖",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/wave22-identity-writer-coverage-20261019",
+        "branch": "codex/bug-304-identity-menu-fanout-20261019",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "claimed_at": "2026-10-19T05:48:43.584949+00:00",
-        "baseline_sha": "cc3bd51f0ebfc005b4fb6ebb27abb5b2c632b85d",
+        "baseline_sha": "0b400c8670dbba7a23c6d8f57d0d28e7f9669d43",
         "entry_evidence": "docs/development/dispatch/20261019-wave22/README.md",
-        "phase": "REGISTERED_NOT_STARTED",
+        "phase": "READY_TO_MERGE",
         "dispatch_scope": "IDENTITY_WRITER_COVERAGE",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
-        "worker_start_received": false,
+        "worker_start_received": true,
         "allowed_write_paths": [
           "CP6.Core/Services/CrmIdentity/IdentityChangeCapture.cs",
           "CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
@@ -162060,8 +162070,17 @@
         "existing_database_migration_authorized": false,
         "deployment_authorized": false,
         "delivery_report": "docs/development/evidence/WP02-05/identity-writer-coverage/DELIVERY.md",
-        "candidate_review_completed": false,
-        "candidate_integrated": false
+        "candidate_review_completed": true,
+        "candidate_integrated": false,
+        "actual_start_ref": {
+          "commit": "ca7fa0dbd2f5ea033c43c46b83f617deee1949b2",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T055134Z-wave22-start/MESSAGE.md",
+          "kind": "START",
+          "at": "2026-10-19T05:51:34.679905+00:00"
+        },
+        "active_issue": 304,
+        "worker_delivery_received": true,
+        "candidate_review_verdict": "READY_TO_MERGE"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -180316,7 +180335,7 @@
       "path": "docs/development/dispatch/20261019-wave22/README.md",
       "baseline_sha": "cc3bd51f0ebfc005b4fb6ebb27abb5b2c632b85d",
       "registered_at": "2026-10-19T05:48:43.584949+00:00",
-      "phase": "SINGLE_COORDINATOR_PLAN_REGISTERED",
+      "phase": "W22_01_READY_TO_MERGE",
       "coordinator_shared_state_only": false,
       "assigned_chats": [
         "COORD"
@@ -180327,9 +180346,11 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [],
-      "workers_started": false,
-      "workers_delivered": false,
+      "active_implementation_chats": [
+        "COORD"
+      ],
+      "workers_started": true,
+      "workers_delivered": true,
       "windows_closed": false,
       "product_integrated": false,
       "windows": [
@@ -180340,13 +180361,13 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "REGISTERED_NOT_STARTED",
+          "phase": "READY_TO_MERGE",
           "estimated_hours": [
             13,
             20
           ],
-          "worker_start_received": false,
-          "worker_delivery_received": false,
+          "worker_start_received": true,
+          "worker_delivery_received": true,
           "write_paths": [
             "CP6.Core/Services/CrmIdentity/IdentityChangeCapture.cs",
             "CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
@@ -180370,7 +180391,25 @@
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
           "full_task_completed": false,
-          "business_acceptance": "NOT_RUN"
+          "business_acceptance": "NOT_RUN",
+          "actual_start_ref": {
+            "commit": "ca7fa0dbd2f5ea033c43c46b83f617deee1949b2",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T055134Z-wave22-start/MESSAGE.md",
+            "kind": "START",
+            "at": "2026-10-19T05:51:34.679905+00:00"
+          },
+          "actual_start_baseline_sha": "0b400c8670dbba7a23c6d8f57d0d28e7f9669d43",
+          "branch": "codex/bug-304-identity-menu-fanout-20261019",
+          "active_issue": 304,
+          "scope_note": "Same registered capture/transaction task; proven BUG304 first. Tenant reassignment guard not added without an actual accepted writer path; remaining axes recorded in DELIVERY.",
+          "delivery_report": "docs/development/evidence/WP02-05/identity-writer-coverage/DELIVERY.md",
+          "review": "AUTHOR_SPEC_QUALITY_PASS",
+          "validation": {
+            "native_postgresql_effective_passed": 21,
+            "failed_remaining": 0,
+            "skipped_as_pass": 0,
+            "evidence_root": "D:\\CP6-local-test\\wave22\\writers"
+          }
         }
       ],
       "integration_order": "One coherent writer-coverage task; proven bugs take priority and use separate issue branches if necessary. Normal merge/remote verification before closeout.",
@@ -180398,7 +180437,13 @@
       },
       "user_authority": "Explicit next24h persistent goal, current chat only, PostgreSQL/lean verification/directory reuse; ordinary ambiguity decided by COORD.",
       "review_mode": "One combined task-level author SPEC/QUALITY self-review, not independent.",
-      "next_action": "Merge registered plan, publish one actual START, audit and exercise real IAM writers before changes."
+      "next_action": "Normal PR/merge and exact remote verification; only then close BUG304 and perform documentation/Handoff/resource closeout. Goal remains active.",
+      "active_issue": {
+        "number": 304,
+        "url": "https://github.com/GTX537/CP6/issues/304",
+        "state": "OPEN",
+        "priority": "P0"
+      }
     },
     "wave_history": [
       {
