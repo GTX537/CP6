@@ -11,10 +11,12 @@ public class TotpService : ITotpService
         var iss = Uri.EscapeDataString(_o.Issuer); var u = Uri.EscapeDataString(userName);
         return $"otpauth://totp/{iss}:{u}?secret={secret}&issuer={iss}&period=30&digits=6";
     }
-    public bool Verify(string secret, string code)
+    public bool Verify(string secret, string code) => TryVerify(secret, code, out _);
+    public bool TryVerify(string secret, string code, out long matchedCounter)
     {
+        matchedCounter = -1;
         if (string.IsNullOrWhiteSpace(code)) return false;
-        try { return new Totp(Base32Encoding.ToBytes(secret)).VerifyTotp(code, out _, new VerificationWindow(previous: _o.CodeWindow, future: _o.CodeWindow)); }
+        try { return new Totp(Base32Encoding.ToBytes(secret)).VerifyTotp(code, out matchedCounter, new VerificationWindow(previous: _o.CodeWindow, future: _o.CodeWindow)); }
         catch { return false; }
     }
 }

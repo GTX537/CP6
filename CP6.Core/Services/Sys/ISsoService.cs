@@ -8,6 +8,10 @@ namespace CP6.Core.Services.Sys;
 /// </summary>
 public interface ISsoService
 {
+    Task BindStateAsync(string state, string clientKind, string clientBinding)
+        => throw new InvalidOperationException("AUTH_PRIMARY_PROOF_REQUIRED");
+    Task<AuthenticationProofV1> HandleVerifiedCallbackAsync(string code, string state, string redirectUri, string clientKind, string clientBinding)
+        => throw new InvalidOperationException("AUTH_PRIMARY_PROOF_REQUIRED");
     /// <summary>
     /// 构造跳转 IdP 的 authorize URL（含 PKCE S256 + state/nonce）。
     /// 租户无配置或未启用 → InvalidOperationException("E-SEC-020")；discovery 不可达 → "E-SEC-028"。

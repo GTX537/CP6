@@ -8,6 +8,8 @@ namespace CP6.Core.Services.Sys;
 /// </summary>
 public interface IRefreshTokenService
 {
+    Task<string> IssueWithinAuthenticationAsync(Sys_User user, string? ip, string? ua, RefreshTokenClientContext client)
+        => throw new InvalidOperationException("AUTH_SESSION_AUTHORITY_UNAVAILABLE");
     /// <summary>签发新刷新令牌，返回原始令牌（仅此一次明文返回，须写入 httpOnly cookie）。</summary>
     Task<string> IssueAsync(Sys_User user, string? ip, string? ua);
     Task<string> IssueAsync(Sys_User user, string? ip, string? ua, RefreshTokenClientContext client)

@@ -1,5 +1,9 @@
 # 第二十六轮：完整认证政策与会话公共基础
 
+> W26-02候选完成：[DELIVERY](../../evidence/WP02-03/authentication-entry-completion/DELIVERY.md)，#329修正，101相关有效通过（63原生PG/HTTP），一次作者SPEC/QUALITY无剩余阻断。正常合并后接续W26-03，goal仍active。
+
+> W26-01已通过[PR328](https://github.com/GTX537/CP6/pull/328)合入`15b61f577e56fbff99acd98c066c49cec9d2ebd5`，#327关闭。W26-02真实START，含一次性交互/完成回执必要PG模型及Web/Native输出适配；随后W26-03和总收尾，goal active。
+
 > W26-01候选完成：[DELIVERY](../../evidence/WP02-03/authentication-policy-gate/DELIVERY.md)，#327修正，187相关通过/99原生，一次作者SPEC/QUALITY无阻断。待正常合并，随后W26-02/03及收尾，goal仍active。
 
 当前聊天单总控持续执行，三个实施窗口及收尾全部完成才关闭goal。基线`4682b0d8a82efa6cc7a267fc69068bcb6bc3c839`，第二十五轮已完成，活动Issue0、Handoff无新交付。当前用户要求优先完整认证政策，沿S5 SYS-IAM-01 v0.2 §6.1–6.5/§7/§9；不重新登记Target/原任务身份，不提升14包/125目标/375任务/247运行NOT_RUN。
@@ -24,11 +28,11 @@
 
 ## W26-02 全部相关发行入口
 
-- [ ] 从最新main复用原目录；先核AuthController、ClientAuthController、AuthSessionService、SsoService/state、NativeSsoGrantStore、PendingTokenStore/2FA现行为。
-- [ ] 密码/SSO第一因子生成真实proof后统一决定；外部SSO不替本地2FA，Mode2未绑定需enroll，pending无普通session。SSO明确MustChange返回补救，不能以占位密码年龄迫使设置本地密码。
-- [ ] pending原policy/版本/交互绑定、一次性完成及专属enrollment旧新epoch转换；准备密钥被替换/管理员reset/并发消费拒绝。code/state/grant/OTP已消费不能自动重放，未知不回传历史秘密。
-- [ ] session注册/refresh记录/必要回执确定提交后才输出Web三Cookie或Native会话；restricted遵现已采用白名单，不冒ACTIVE/FullAuth。必要Web挑战landing适配同站安全状态，保NativeAuthResult pending Session=null合同。
-- [ ] 实际Program HTTP和受控SSO适配、PG故障/并发、相关原前端/Native合同；一份DELIVERY、一次作者审查，正常合并。
+- [x] 从最新main复用原目录；先核AuthController、ClientAuthController、AuthSessionService、SsoService/state、NativeSsoGrantStore、PendingTokenStore/2FA现行为。
+- [x] 密码/SSO第一因子生成真实proof后统一决定；外部SSO不替本地2FA，Mode2未绑定需enroll，pending无普通session。SSO明确MustChange返回补救，不能以占位密码年龄迫使设置本地密码。
+- [x] pending原policy/版本/交互绑定、一次性完成及专属enrollment旧新epoch转换；准备密钥被替换/管理员reset/并发消费拒绝。code/state/grant/OTP已消费不能自动重放，未知不回传历史秘密。
+- [x] session注册/refresh记录/必要回执确定提交后才输出Web三Cookie或Native会话；restricted遵现已采用白名单，不冒ACTIVE/FullAuth。必要Web挑战landing适配同站安全状态，保NativeAuthResult pending Session=null合同。
+- [x] 实际Program HTTP和受控SSO适配、PG故障/并发、相关原前端/Native合同；一份DELIVERY、一次作者审查，正常合并。
 
 报告evidence/WP02-03/authentication-entry-completion/DELIVERY.md。新SSO身份准入政策、完整FE跨Tab/安全状态恢复、CRM本地session仍以实际覆盖范围记录，不擅自虚构批准或原始proof。
 

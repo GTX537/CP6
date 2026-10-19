@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-19：W26-02交互认证完成候选
+
+#329旧pending/跨设备问题修正；Web/native密码、SSO、2FA交互共同PG门，原proof/浏览器设备绑定、单次TOTP/lease/准备revision及专属enroll转换，session注册/必要审计同提交。101有效相关通过（63PG）、type-check通过，一次作者审查通过。SSO缺明确新身份准入策略只拒新绑定/JIT，不虚构批准。W26-03 refresh/access当前政策、设备FullAuth及精确失败恢复继续；完整IAM/CRM/业务未提升，goal active。[DELIVERY](../development/evidence/WP02-03/authentication-entry-completion/DELIVERY.md)。
+
 ## 2026-10-19：W26-01认证政策与PG完成门候选
 
 #327缺失/非法政策已修正；版本化原proof/当前政策与PG共同根门，实际user/tenant/SSO DML修订覆盖，v3含数据库凭据修订防改回旧值。187相关通过（99原生PG/HTTP），一次作者审查通过。前向迁移仅自有旧数据隔离库；采用需迁移并重新登录。全入口采用/refresh/FullAuth为接续W26-02/03，本goal未完成，完整IAM/CRM/业务未提升。[DELIVERY](../development/evidence/WP02-03/authentication-policy-gate/DELIVERY.md)。

@@ -44,6 +44,11 @@ function backToLogin() {
 
 onMounted(async () => {
   if (errorCode.value) return
+  if (route.query.challenge === '2fa_enroll' || route.query.challenge === '2fa_verify') {
+    localStorage.removeItem('cp6_authed')
+    await router.replace(route.query.challenge === '2fa_enroll' ? '/sys/2fa-enroll' : '/sys/2fa-challenge')
+    return
+  }
   try {
     // R4：落地页加载后由 JS 发起同站 XHR（withCredentials），SameSite=Strict 放行 cp6_at——
     // 这正是落地中转的目的（回调 302 写 Cookie 后不在跨站导航链上消费 Cookie）。

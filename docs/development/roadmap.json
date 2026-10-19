@@ -159102,6 +159102,11 @@
       "date": "2026-10-19",
       "change": "W26-01 BUG327 policy unavailable fixed; versioned policy/proof/PG root gate and credential revision v3 ready,187 effective related passed99 native. Entry adapters and FullAuth/refresh continuity remain W26-02/03; full task/runtime unchanged.",
       "evidence": "docs/development/evidence/WP02-03/authentication-policy-gate/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-19",
+      "change": "W26-02 BUG329 fixed; Web/native password/SSO/pending use original-proof PG completion, durable one-use factor/preparation and session receipts.101 effective related passed63 PG; once author review. W26-03 all-session/device/current-policy/recovery remains. Full business/runtime unchanged.",
+      "evidence": "docs/development/evidence/WP02-03/authentication-entry-completion/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -161673,36 +161678,49 @@
       "card_anchor": "wp02-03",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W26-01 版本化政策、原认证证据与PG共同完成门",
+        "chat_label": "COORD / W26-02 Web/Native全部相关认证发行入口采用",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/wave26-01-authentication-policy-20261019",
+        "branch": "codex/wave26-02-authentication-entries-20261019",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-19T10:58:51.471858+00:00",
-        "baseline_sha": "afc94bf18e447fdc819b88cb4fc048d9d9eb6258",
+        "claimed_at": "2026-10-19T11:27:17.293128+00:00",
+        "baseline_sha": "15b61f577e56fbff99acd98c066c49cec9d2ebd5",
         "entry_evidence": "docs/development/dispatch/20261019-wave26/README.md",
         "phase": "READY_TO_MERGE",
-        "dispatch_scope": "W26_01",
+        "dispatch_scope": "W26_02",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
+        "actual_start_ref": {
+          "commit": "fe1920fc012896c84883eb886dc88268b38342bc",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T112717Z-wave26-02-start/MESSAGE.md",
+          "at": "2026-10-19T11:27:17.293128+00:00"
+        },
         "allowed_write_paths": [
-          "CP6.Core/EFDbContext/CP6Context.cs",
-          "CP6.Core/Services/Sys/AuthSessionVersion.cs",
-          "CP6.Core/Services/Sys/AuthenticationPolicyV1.cs",
-          "CP6.Core/Services/Sys/AuthenticationCompletionGateV1.cs",
+          "CP6.Core/Services/Sys/AuthenticationInteractionStoreV1.cs",
+          "CP6.Core/Services/Sys/IRefreshTokenService.cs",
+          "CP6.Core/Services/Sys/ISsoService.cs",
+          "CP6.Core/Services/Sys/ITotpService.cs",
+          "CP6.Core/Services/Sys/ITwoFactorService.cs",
           "CP6.Core/Services/Sys/RefreshTokenService.PostgreSql.cs",
+          "CP6.Core/Services/Sys/SsoService.cs",
+          "CP6.Core/Services/Sys/SsoService.AuthenticationV1.cs",
+          "CP6.Core/Services/Sys/TotpService.cs",
           "CP6.Core/Services/Sys/TwoFactorService.cs",
-          "CP6.Entity/DomainModels/Sys/Sys_Tenant.cs",
-          "CP6.Entity/DomainModels/Sys/Sys_User.cs",
-          "CP6.Persistence.PostgreSql/AuthenticationPolicyGuardPostgreSqlV1.cs",
-          "CP6.Persistence.PostgreSql/Migrations/Core/20261019111000_AuthenticationPolicyGateV1.cs",
-          "CP6.Persistence.PostgreSql/Migrations/Core/CP6ContextModelSnapshot.cs",
-          "CP6.Tests/Platform/AuthenticationPolicyPostgreSqlTests.cs",
-          "CP6.Tests/Platform/AuthenticationStatePostgreSqlTests.cs",
-          "CP6.Tests/Platform/AuthenticationCompletionPostgreSqlTests.cs",
-          "CP6.Tests/Platform/PlatformAdminGuardPostgreSqlTests.cs",
-          "docs/development/evidence/WP02-03/authentication-policy-gate/DELIVERY.md"
+          "CP6.Persistence.PostgreSql/Migrations/Core/20261019114500_AuthenticationInteractionsV1.cs",
+          "CP6.WebApi/Controllers/ClientAuthController.cs",
+          "CP6.WebApi/Controllers/ClientAuthController.AuthenticationV1.cs",
+          "CP6.WebApi/Controllers/Sys/AuthController.cs",
+          "CP6.WebApi/Controllers/Sys/AuthController.AuthenticationV1.cs",
+          "CP6.WebApi/Program.cs",
+          "CP6.WebApi/Services/AccessTokenAuthentication.cs",
+          "CP6.WebApi/Services/AuthenticationEntryServiceV1.cs",
+          "CP6.WebApi/Services/AuthenticationEntryFailureAttribute.cs",
+          "CP6.WebApi/Services/NativeSsoGrantStore.cs",
+          "CP6.Tests/Platform/AuthenticationEntryPostgreSqlTests.cs",
+          "CP6.Tests/Platform/AuthenticationSsoPostgreSqlTests.cs",
+          "cp6.web/src/views/pms/SsoLandingView.vue",
+          "cp6.web/src/views/pms/SsoLandingView.spec.ts"
         ],
         "reserved_write_resources": [
           "Main:identity-authority"
@@ -161715,13 +161733,14 @@
         "formal_publication_authorized": false,
         "existing_database_migration_authorized": false,
         "deployment_authorized": false,
-        "delivery_report": "docs/development/evidence/WP02-03/authentication-policy-gate/DELIVERY.md",
+        "delivery_report": "docs/development/evidence/WP02-03/authentication-entry-completion/DELIVERY.md",
         "candidate_review_completed": true,
         "candidate_integrated": false,
-        "actual_start_ref": {
-          "commit": "cbc8d34a0dda26cacb46148ee5cc9200272cc2e0",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T110139Z-wave26-01-start/MESSAGE.md",
-          "at": "2026-10-19T11:01:39.947446+00:00"
+        "active_issue": {
+          "number": 329,
+          "url": "https://github.com/GTX537/CP6/issues/329",
+          "priority": "P0",
+          "state": "Open"
         },
         "worker_delivery_received": true,
         "candidate_review_verdict": "READY_TO_MERGE"
@@ -162360,6 +162379,99 @@
             "commit": "6aa695bbe2ab7efdec0046afb81597bdb8e4a1ea",
             "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T102955Z-wave25-03-delivery/MESSAGE.md",
             "at": "2026-10-19T10:29:55.802854+00:00"
+          }
+        },
+        {
+          "chat_label": "COORD / W26-01 版本化政策、原认证证据与PG共同完成门",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/wave26-01-authentication-policy-20261019",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-10-19T10:58:51.471858+00:00",
+          "baseline_sha": "afc94bf18e447fdc819b88cb4fc048d9d9eb6258",
+          "entry_evidence": "docs/development/dispatch/20261019-wave26/README.md",
+          "phase": "INTEGRATED",
+          "dispatch_scope": "W26_01",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "allowed_write_paths": [
+            "CP6.Core/EFDbContext/CP6Context.cs",
+            "CP6.Core/Services/Sys/AuthSessionVersion.cs",
+            "CP6.Core/Services/Sys/AuthenticationPolicyV1.cs",
+            "CP6.Core/Services/Sys/AuthenticationCompletionGateV1.cs",
+            "CP6.Core/Services/Sys/RefreshTokenService.PostgreSql.cs",
+            "CP6.Core/Services/Sys/TwoFactorService.cs",
+            "CP6.Entity/DomainModels/Sys/Sys_Tenant.cs",
+            "CP6.Entity/DomainModels/Sys/Sys_User.cs",
+            "CP6.Persistence.PostgreSql/AuthenticationPolicyGuardPostgreSqlV1.cs",
+            "CP6.Persistence.PostgreSql/Migrations/Core/20261019111000_AuthenticationPolicyGateV1.cs",
+            "CP6.Persistence.PostgreSql/Migrations/Core/CP6ContextModelSnapshot.cs",
+            "CP6.Tests/Platform/AuthenticationPolicyPostgreSqlTests.cs",
+            "CP6.Tests/Platform/AuthenticationStatePostgreSqlTests.cs",
+            "CP6.Tests/Platform/AuthenticationCompletionPostgreSqlTests.cs",
+            "CP6.Tests/Platform/PlatformAdminGuardPostgreSqlTests.cs",
+            "docs/development/evidence/WP02-03/authentication-policy-gate/DELIVERY.md"
+          ],
+          "reserved_write_resources": [],
+          "reserved_postgresql_ports": [],
+          "handoff_branch": "codex/dev-coordination-20261012",
+          "actions_authorized": false,
+          "formal_publication_authorized": false,
+          "existing_database_migration_authorized": false,
+          "deployment_authorized": false,
+          "delivery_report": "docs/development/evidence/WP02-03/authentication-policy-gate/DELIVERY.md",
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "actual_start_ref": {
+            "commit": "cbc8d34a0dda26cacb46148ee5cc9200272cc2e0",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T110139Z-wave26-01-start/MESSAGE.md",
+            "at": "2026-10-19T11:01:39.947446+00:00"
+          },
+          "worker_delivery_received": true,
+          "candidate_review_verdict": "READY_TO_MERGE",
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "2a093ba3386cb8d9f7b74ea99749215ebcbfd5a0",
+            "main": "15b61f577e56fbff99acd98c066c49cec9d2ebd5",
+            "pr": "https://github.com/GTX537/CP6/pull/328",
+            "paths": [
+              "CP6.Core/EFDbContext/CP6Context.cs",
+              "CP6.Core/Services/Sys/AuthSessionVersion.cs",
+              "CP6.Core/Services/Sys/AuthenticationCompletionGateV1.cs",
+              "CP6.Core/Services/Sys/AuthenticationPolicyV1.cs",
+              "CP6.Core/Services/Sys/RefreshTokenService.PostgreSql.cs",
+              "CP6.Core/Services/Sys/TwoFactorService.cs",
+              "CP6.Entity/DomainModels/Sys/Sys_Tenant.cs",
+              "CP6.Entity/DomainModels/Sys/Sys_User.cs",
+              "CP6.Persistence.PostgreSql/AuthenticationPolicyGuardPostgreSqlV1.cs",
+              "CP6.Persistence.PostgreSql/Migrations/Core/20261019111000_AuthenticationPolicyGateV1.cs",
+              "CP6.Persistence.PostgreSql/Migrations/Core/CP6ContextModelSnapshot.cs",
+              "CP6.Tests/Platform/AuthenticationCompletionPostgreSqlTests.cs",
+              "CP6.Tests/Platform/AuthenticationPolicyPostgreSqlTests.cs",
+              "CP6.Tests/Platform/AuthenticationStatePostgreSqlTests.cs",
+              "CP6.Tests/Platform/PlatformAdminGuardPostgreSqlTests.cs",
+              "docs/development/dispatch/20261019-wave26/README.md",
+              "docs/development/evidence/WP02-03/authentication-policy-gate/DELIVERY.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-19T11:24:22.907777+00:00"
+          },
+          "delivery_ref": {
+            "commit": "c07a22dc8d6773652b9159c3e16abea1bd1affba",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T112657Z-wave26-01-delivery/MESSAGE.md",
+            "at": "2026-10-19T11:26:57.543039+00:00"
+          },
+          "active_issue": {
+            "number": 327,
+            "url": "https://github.com/GTX537/CP6/issues/327",
+            "priority": "P1",
+            "state": "Closed"
           }
         }
       ],
@@ -180937,7 +181049,7 @@
       "path": "docs/development/dispatch/20261019-wave26/README.md",
       "baseline_sha": "4682b0d8a82efa6cc7a267fc69068bcb6bc3c839",
       "registered_at": "2026-10-19T10:58:51.471858+00:00",
-      "phase": "W26_01_READY_TO_MERGE",
+      "phase": "W26_02_READY_TO_MERGE",
       "coordinator_shared_state_only": false,
       "assigned_chats": [
         "COORD"
@@ -180963,7 +181075,7 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "READY_TO_MERGE",
+          "phase": "INTEGRATED",
           "worker_start_received": true,
           "worker_delivery_received": true,
           "write_paths": [
@@ -180986,12 +181098,8 @@
           ],
           "planned_scope_ref": "docs/development/dispatch/20261019-wave26/README.md",
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "reserved_write_resources": [
-            "Main:identity-authority"
-          ],
-          "ports": {
-            "postgresql": 55435
-          },
+          "reserved_write_resources": [],
+          "ports": {},
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
@@ -181014,6 +181122,50 @@
             "failed_remaining": 0,
             "skipped_as_pass": 0,
             "evidence_root": "D:\\CP6-local-test\\wave26\\foundation"
+          },
+          "candidate_integrated": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "2a093ba3386cb8d9f7b74ea99749215ebcbfd5a0",
+            "main": "15b61f577e56fbff99acd98c066c49cec9d2ebd5",
+            "pr": "https://github.com/GTX537/CP6/pull/328",
+            "paths": [
+              "CP6.Core/EFDbContext/CP6Context.cs",
+              "CP6.Core/Services/Sys/AuthSessionVersion.cs",
+              "CP6.Core/Services/Sys/AuthenticationCompletionGateV1.cs",
+              "CP6.Core/Services/Sys/AuthenticationPolicyV1.cs",
+              "CP6.Core/Services/Sys/RefreshTokenService.PostgreSql.cs",
+              "CP6.Core/Services/Sys/TwoFactorService.cs",
+              "CP6.Entity/DomainModels/Sys/Sys_Tenant.cs",
+              "CP6.Entity/DomainModels/Sys/Sys_User.cs",
+              "CP6.Persistence.PostgreSql/AuthenticationPolicyGuardPostgreSqlV1.cs",
+              "CP6.Persistence.PostgreSql/Migrations/Core/20261019111000_AuthenticationPolicyGateV1.cs",
+              "CP6.Persistence.PostgreSql/Migrations/Core/CP6ContextModelSnapshot.cs",
+              "CP6.Tests/Platform/AuthenticationCompletionPostgreSqlTests.cs",
+              "CP6.Tests/Platform/AuthenticationPolicyPostgreSqlTests.cs",
+              "CP6.Tests/Platform/AuthenticationStatePostgreSqlTests.cs",
+              "CP6.Tests/Platform/PlatformAdminGuardPostgreSqlTests.cs",
+              "docs/development/dispatch/20261019-wave26/README.md",
+              "docs/development/evidence/WP02-03/authentication-policy-gate/DELIVERY.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-19T11:24:22.907777+00:00"
+          },
+          "delivery_ref": {
+            "commit": "c07a22dc8d6773652b9159c3e16abea1bd1affba",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T112657Z-wave26-01-delivery/MESSAGE.md",
+            "at": "2026-10-19T11:26:57.543039+00:00"
+          },
+          "active_issue": {
+            "number": 327,
+            "url": "https://github.com/GTX537/CP6/issues/327",
+            "priority": "P1",
+            "state": "Closed"
           }
         },
         {
@@ -181022,9 +181174,9 @@
           "title": "Web/Native全部相关认证发行入口采用",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "gate": "WAITING_PREDECESSOR_INTEGRATION",
-          "phase": "REGISTERED_NOT_STARTED",
-          "worker_start_received": false,
+          "gate": "CONFIRMED",
+          "phase": "READY_TO_MERGE",
+          "worker_start_received": true,
           "worker_delivery_received": false,
           "write_paths": [
             "CP6.Core/Services/Sys/",
@@ -181034,19 +181186,54 @@
             "CP6.WebApi/Program.cs",
             "CP6.Core/Utilities/JwtHelper.cs",
             "CP6.Tests/",
-            "cp6-web/",
-            "docs/development/evidence/WP02-03/authentication-entry-completion/DELIVERY.md"
+            "cp6.web/",
+            "docs/development/evidence/WP02-03/authentication-entry-completion/DELIVERY.md",
+            "CP6.Core/EFDbContext/",
+            "CP6.Core/Persistence/",
+            "CP6.Entity/DomainModels/Sys/",
+            "CP6.Persistence.PostgreSql/Migrations/Core/"
           ],
           "planned_scope_ref": "docs/development/dispatch/20261019-wave26/README.md",
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "reserved_write_resources": [],
-          "ports": {},
+          "reserved_write_resources": [
+            "Main:identity-authority"
+          ],
+          "ports": {
+            "postgresql": 55435
+          },
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
-          "predecessor": "W26-01"
+          "predecessor": "W26-01",
+          "actual_start_ref": {
+            "commit": "fe1920fc012896c84883eb886dc88268b38342bc",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T112717Z-wave26-02-start/MESSAGE.md",
+            "at": "2026-10-19T11:27:17.293128+00:00"
+          },
+          "actual_start_baseline_sha": "15b61f577e56fbff99acd98c066c49cec9d2ebd5",
+          "branch": "codex/wave26-02-authentication-entries-20261019",
+          "scope_refinement": "Server-owned interaction/completion receipt persistence and necessary PG forward migration, exact JWT completion-state consumption and Web same-site challenge landing are part of one-shot/commit-output scope. No existing DB installation.",
+          "active_issue": {
+            "number": 329,
+            "url": "https://github.com/GTX537/CP6/issues/329",
+            "priority": "P0",
+            "state": "Open"
+          },
+          "candidate_review_completed": true,
+          "candidate_review_verdict": "READY_TO_MERGE",
+          "delivery_report": "docs/development/evidence/WP02-03/authentication-entry-completion/DELIVERY.md",
+          "validation": {
+            "effective_passed": 101,
+            "native_postgresql_passed": 63,
+            "related_unit_passed": 33,
+            "web_passed": 5,
+            "typecheck": "PASS",
+            "failed_remaining": 0,
+            "skipped_as_pass": 0,
+            "evidence_root": "D:\\CP6-local-test\\wave26\\foundation"
+          }
         },
         {
           "id": "W26-03",
@@ -181106,7 +181293,7 @@
         "raw_evidence_preserved": true
       },
       "review_mode": "One author SPEC/QUALITY per coherent task; no agents.",
-      "next_action": "Normal merge/remote verify and close327, immediately START W26-02 then W26-03 and final closeout; goal remains active."
+      "next_action": "Normal merge/remote verify and close329, immediately START W26-03 original refresh/access/device continuity and precise completion recovery, then final closeout; goal active."
     },
     "wave_history": [
       {

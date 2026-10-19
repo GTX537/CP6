@@ -15,7 +15,7 @@ namespace CP6.Core.Services.Sys;
 /// T4：<see cref="BuildAuthorizeUrlAsync"/>（discovery + PKCE + state 落库）。
 /// T5：<see cref="HandleCallbackAsync"/>（换码 + 验 ID Token 签名/iss/aud/exp/nonce + 映射 6a~c/JIT）。
 /// </summary>
-public class SsoService : ISsoService
+public partial class SsoService : ISsoService
 {
     private readonly ITenantSsoConfigService _cfg;
     private readonly ISsoStateStore _state;
@@ -28,7 +28,7 @@ public class SsoService : ISsoService
 
     public SsoService(ITenantSsoConfigService cfg, ISsoStateStore state, IOidcDiscovery disco,
                       ISsoTokenClient token, CP6Context db, ISecurityAuditService audit,
-                      ITenantContext tenant, IPasswordHasher hasher)
+                      ITenantContext tenant, IPasswordHasher hasher, AuthenticationPolicyServiceV1? policies = null, Microsoft.Extensions.Options.IOptions<SecurityOptions>? security = null)
     {
         _cfg = cfg;
         _state = state;
@@ -38,6 +38,8 @@ public class SsoService : ISsoService
         _audit = audit;
         _tenant = tenant;
         _hasher = hasher;
+        _policies = policies;
+        _security = security?.Value;
     }
 
     public async Task<string> BuildAuthorizeUrlAsync(string tenantCode, string redirectUri, string? returnUrl)
@@ -46,6 +48,7 @@ public class SsoService : ISsoService
         if (cfg == null || !cfg.Enabled)
             throw new InvalidOperationException("E-SEC-020");
 
+        if (_db.Database.IsNpgsql()) return await BuildPostgreSqlAuthorizeAsync(cfg.TenantId, redirectUri, returnUrl);
         var ep = await _disco.GetAsync(cfg.Authority);   // 不可达 → E-SEC-028
 
         var nonce = Guid.NewGuid().ToString("N");
@@ -70,10 +73,28 @@ public class SsoService : ISsoService
     /// </summary>
     public async Task<Sys_User> HandleCallbackAsync(string code, string state, string redirectUri)
     {
+        if (_db.Database.IsNpgsql()) throw new InvalidOperationException("AUTH_PRIMARY_PROOF_REQUIRED");
+        return (await HandleCallbackCoreAsync(code, state, redirectUri, null, null)).User;
+    }
+
+    public async Task<AuthenticationProofV1> HandleVerifiedCallbackAsync(string code, string state, string redirectUri, string clientKind, string clientBinding)
+        => (await HandleCallbackCoreAsync(code, state, redirectUri, clientKind, clientBinding)).Proof
+            ?? throw new InvalidOperationException("AUTH_PRIMARY_PROOF_REQUIRED");
+
+    private async Task<(Sys_User User, AuthenticationProofV1? Proof)> HandleCallbackCoreAsync(string code, string state, string redirectUri, string? clientKind, string? clientBinding)
+    {
         // 1. state 校验 + 一次性消费（防 CSRF/重放）。无论后续成败均已 Consume。
         var st = _state.Get(state);
         if (st == null)
             throw new InvalidOperationException("E-SEC-022");
+        AuthenticationPolicyV1? originalPolicy = null;
+        if (_db.Database.IsNpgsql())
+        {
+            originalPolicy = await ConsumePostgreSqlStateAsync(state, clientKind!, clientBinding!);
+            if (originalPolicy.TenantId != st.TenantId || _policies == null
+                || (await _policies.ReadAsync(st.TenantId)).Version != originalPolicy.Version)
+                throw new InvalidOperationException("REAUTH_REQUIRED");
+        }
         _state.Consume(state);
 
         // 2. 取租户 SSO 配置 + discovery 端点。
@@ -114,6 +135,7 @@ public class SsoService : ISsoService
         if (principal.FindFirstValue("nonce") != st.Nonce)
             throw new InvalidOperationException("E-SEC-024");
 
+        var primaryVerifiedAt = DateTimeOffset.UtcNow;
         // 5. 提取 sub / email / email_verified。
         var sub = principal.FindFirstValue("sub");
         if (string.IsNullOrEmpty(sub))
@@ -131,6 +153,8 @@ public class SsoService : ISsoService
         var user = await _db.Sys_Users
             .FirstOrDefaultAsync(u => u.ExternalProvider == ep.Issuer && u.ExternalSubject == sub);
 
+        if (user == null && _db.Database.IsNpgsql())
+            throw new InvalidOperationException("SSO_IDENTITY_POLICY_UNAVAILABLE");
         if (user == null)
         {
             // b. 邮箱匹配（不区分大小写）。
@@ -199,6 +223,8 @@ public class SsoService : ISsoService
             throw new InvalidOperationException("E-SEC-027");
 
         // 8. 返用户（不签发会话；控制器统一签 JWT/Cookie）。
-        return user;
+        var proof = originalPolicy?.VerifiedPrimary(user, AuthenticationPrimaryMethod.Sso,
+            clientKind!, clientBinding!, AuthenticationInteractionStoreV1.Hash(state), primaryVerifiedAt);
+        return (user, proof);
     }
 }

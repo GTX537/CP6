@@ -6,6 +6,24 @@ namespace CP6.Core.Services.Sys;
 
 public partial class RefreshTokenService
 {
+    // Called only inside the common completion transaction; never commits independently.
+    public async Task<string> IssueWithinAuthenticationAsync(Sys_User user, string? ip, string? ua, RefreshTokenClientContext client)
+    {
+        await AuthenticationCompletionGateV1.AcquireAsync(_db);
+        if (_db.CurrentTenantId != user.TenantId) throw new InvalidOperationException("AUTH_SESSION_AUTHORITY_UNAVAILABLE");
+        var raw = NewRaw(); Guid? familyId = null;
+        var version = AuthSessionVersion.For(user);
+        if (_configuration?.GetValue<bool>("CrmOidc:Enabled") == true && client.ClientKind == "Web")
+        {
+            var family = new Sys_BrowserSession { Id = Guid.NewGuid(), UserId = user.Id,
+                TenantId = user.TenantId, AuthenticationVersion = version };
+            familyId = family.Id; _db.Sys_BrowserSessions.Add(family);
+        }
+        var row = NewRow(user, client, raw, ip, ua, familyId, version);
+        row.ExpiresAt = new DateTime(row.ExpiresAt.Ticks / 10 * 10, row.ExpiresAt.Kind);
+        _db.Sys_RefreshTokens.Add(row);
+        return raw;
+    }
     private void RequireOwnedCleanTransaction()
     {
         if (_db.Database.CurrentTransaction != null || _db.ChangeTracker.HasChanges())

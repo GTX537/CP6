@@ -815,6 +815,10 @@ builder.Services.AddSingleton<
 // S 类认证加固（T1）：Security 配置 + BCrypt 密码哈希服务
 builder.Services.Configure<CP6.Core.Services.Sys.SecurityOptions>(builder.Configuration.GetSection("Security"));
 builder.Services.AddScoped<CP6.WebApi.Services.IAuthSessionService, CP6.WebApi.Services.AuthSessionService>();
+builder.Services.AddScoped<CP6.Core.Services.Sys.AuthenticationPolicyServiceV1>();
+builder.Services.AddScoped<CP6.Core.Services.Sys.AuthenticationCompletionGateV1>();
+builder.Services.AddScoped<CP6.Core.Services.Sys.AuthenticationInteractionStoreV1>();
+builder.Services.AddScoped<CP6.WebApi.Services.AuthenticationEntryServiceV1>();
 builder.Services.AddScoped<CP6.WebApi.Services.INativeSsoGrantStore, CP6.WebApi.Services.NativeSsoGrantStore>();
 // 工厂注册显式选 IOptions 构造器：BCryptPasswordHasher 有 (int=11) 与 (IOptions) 两个公共构造器，
 // 内置容器无法择一（Development 下 ValidateOnBuild + EF 设计时构建都会报 ambiguous）。工厂绕开构造器选择。

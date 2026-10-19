@@ -21,7 +21,7 @@ namespace CP6.WebApi.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/client-auth")]
-public sealed class ClientAuthController : ControllerBase
+public sealed partial class ClientAuthController : ControllerBase
 {
     private readonly CP6Context _db;
     private readonly ITenantContext _tenant;
@@ -126,6 +126,7 @@ public sealed class ClientAuthController : ControllerBase
             throw new BizException("E-SEC-002");
         }
 
+        var originalPolicy = _db.Database.IsNpgsql() ? await Policies.ReadAsync(user.TenantId, HttpContext.RequestAborted) : null;
         if (!_hasher.Verify(request.Password, user.Password))
         {
             await _loginSecurity.RecordFailureAsync(user);
@@ -134,6 +135,8 @@ public sealed class ClientAuthController : ControllerBase
                 ClientIp, ClientUa, ClientReason(request.Client, "wrong password"));
             throw new BizException("E-SEC-001");
         }
+        var originalProof = originalPolicy?.VerifiedPrimary(user, AuthenticationPrimaryMethod.Password, request.Client.ClientKind,
+            AuthenticationEntryServiceV1.Binding(request.Client), Guid.NewGuid().ToString("N"), DateTimeOffset.UtcNow);
         if (!user.Enable) throw new BizException("E-SEC-003");
 
         var tenantState = await _db.Sys_Tenants.IgnoreQueryFilters()
@@ -145,6 +148,8 @@ public sealed class ClientAuthController : ControllerBase
             throw new BizException("E-SEC-021");
 
         _tenant.CurrentTenantId = user.TenantId;
+        if (originalProof != null) return await PgNativeResultAsync(() => Entries.BeginAsync(originalProof,
+            AuthenticationInteractionStoreV1.NewChallenge(), request.Client, ClientIp, ClientUa, null, HttpContext.RequestAborted));
         var mode = _twoFactor.ResolveTenantMode(user.TenantId);
         if (_twoFactor.IsChallengeRequired(user, mode))
         {
@@ -168,6 +173,7 @@ public sealed class ClientAuthController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> TwoFactorSetup(NativeChallengeRequest request)
     {
+        if (_db.Database.IsNpgsql()) return Ok(await Entries.SetupAsync(request.ChallengeToken, request.Client, HttpContext.RequestAborted));
         var (user, _, _) = await ReadChallengeAsync(request, expectedPurpose: "2fa_enroll");
         string uri;
         try { uri = _twoFactor.BeginEnrollment(user); }
@@ -180,6 +186,7 @@ public sealed class ClientAuthController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<NativeAuthResult>> TwoFactorEnroll(NativeTwoFactorRequest request)
     {
+        if (_db.Database.IsNpgsql()) return await PgNativeResultAsync(() => Entries.CompleteFactorAsync(request.ChallengeToken, request.Client, true, "totp", request.Code, ClientIp, ClientUa, null, HttpContext.RequestAborted));
         var (user, challenge, _) = await ReadChallengeAsync(request, "2fa_enroll");
         if (!await _twoFactor.ConfirmEnrollmentAsync(user, request.Code))
         {
@@ -201,6 +208,7 @@ public sealed class ClientAuthController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<NativeAuthResult>> TwoFactorVerify(NativeTwoFactorRequest request)
     {
+        if (_db.Database.IsNpgsql()) return await PgNativeResultAsync(() => Entries.CompleteFactorAsync(request.ChallengeToken, request.Client, false, request.Method, request.Code, ClientIp, ClientUa, null, HttpContext.RequestAborted));
         var (user, challenge, _) = await ReadChallengeAsync(request, "2fa_verify");
         try { _loginSecurity.EnsureNotLocked(user); }
         catch (InvalidOperationException) { throw new BizException("E-SEC-002"); }
@@ -232,6 +240,7 @@ public sealed class ClientAuthController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> TwoFactorEmailOtp(NativeChallengeRequest request)
     {
+        if (_db.Database.IsNpgsql()) { await Entries.SendEmailAsync(request.ChallengeToken, request.Client, HttpContext.RequestAborted); return Ok(new { code = 0 }); }
         var (user, challenge, purpose) = await ReadChallengeAsync(request);
         if (purpose == "2fa_enroll") throw new BizException("E-SEC-014");
         try { await _twoFactor.SendEmailOtpAsync(user, challenge); }
@@ -254,6 +263,11 @@ public sealed class ClientAuthController : ControllerBase
                 HttpContext.RequestAborted);
             var url = await _sso.BuildAuthorizeUrlAsync(
                 request.TenantCode, NativeSsoCallbackUri(), requestId);
+            if (_db.Database.IsNpgsql())
+            {
+                var state = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(new Uri(url).Query)["state"].ToString();
+                await _sso.BindStateAsync(state, request.Client.ClientKind, AuthenticationEntryServiceV1.Binding(request.Client));
+            }
             return new NativeSsoStartResponse { AuthorizeUrl = url };
         }
         catch (InvalidOperationException ex) { throw new BizException(ex.Message); }
@@ -273,6 +287,12 @@ public sealed class ClientAuthController : ControllerBase
 
         try
         {
+            if (_db.Database.IsNpgsql())
+            {
+                var proof = await _sso.HandleVerifiedCallbackAsync(code, state, NativeSsoCallbackUri(), request.Client.ClientKind, AuthenticationEntryServiceV1.Binding(request.Client));
+                var preparedGrant = await _nativeGrants.CompleteWithProofAsync(requestId, proof, HttpContext.RequestAborted);
+                return Redirect($"{request.RedirectUri}?grantCode={Uri.EscapeDataString(preparedGrant)}");
+            }
             var user = await _sso.HandleCallbackAsync(code, state, NativeSsoCallbackUri());
             var grant = await _nativeGrants.CompleteAsync(
                 requestId,
@@ -305,6 +325,13 @@ public sealed class ClientAuthController : ControllerBase
                 request.CodeVerifier,
                 request.Client,
                 HttpContext.RequestAborted);
+            if (_db.Database.IsNpgsql())
+            {
+                if (grant.Proof == null || grant.Proof.UserId != grant.UserId || grant.Proof.TenantId != grant.TenantId)
+                    throw new InvalidOperationException("AUTH_PRIMARY_PROOF_REQUIRED");
+                return await PgNativeResultAsync(() => Entries.BeginAsync(grant.Proof, AuthenticationInteractionStoreV1.NewChallenge(),
+                    request.Client, ClientIp, ClientUa, null, HttpContext.RequestAborted));
+            }
             _tenant.CurrentTenantId = grant.TenantId;
             var user = await _db.Sys_Users.IgnoreQueryFilters()
                 .FirstOrDefaultAsync(x => x.Id == grant.UserId && x.TenantId == grant.TenantId)
