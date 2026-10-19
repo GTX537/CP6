@@ -30,8 +30,9 @@ public sealed class TenantManagementAuditPostgreSqlTests(TenantManagementPostgre
         await EnsureDefaultAdminMenu();
         var requestTenant = Guid.NewGuid();
         var tenant = new TenantContext { CurrentTenantId = requestTenant };
+        var actor = await SeedActor(tenant);
         await using var db = server.Context(tenant);
-        var service = new TenantAdminService(db, new TestHasher());
+        var service = Service(db, actor);
         var before = await Counts(db);
         var logTable = db.Model.FindEntityType(typeof(Sys_SecurityLog))!.GetTableName()!;
         var quoted = db.GetService<ISqlGenerationHelper>().DelimitIdentifier(logTable, "public");
@@ -53,8 +54,9 @@ public sealed class TenantManagementAuditPostgreSqlTests(TenantManagementPostgre
     public async Task Audit_rejection_rolls_back_each_existing_tenant_change(string operation)
     {
         var tenant = new TenantContext { CurrentTenantId = Guid.NewGuid() };
+        var actor = await SeedActor(tenant);
         await using var db = server.Context(tenant);
-        var service = new TenantAdminService(db, new TestHasher());
+        var service = Service(db, actor);
         var code = "T" + Guid.NewGuid().ToString("N");
         var created = await service.CreateAsync(code, "original", null, "original remark", "admin");
         if (operation == "reactivate") await service.SuspendAsync(created.TenantId);
@@ -85,14 +87,9 @@ public sealed class TenantManagementAuditPostgreSqlTests(TenantManagementPostgre
         await EnsureDefaultAdminMenu();
         var tenant = new TenantContext { CurrentTenantId = Guid.NewGuid() };
         var requestTenant = tenant.CurrentTenantId;
-        var actor = Guid.NewGuid();
-        var principal = new ClaimsPrincipal(new ClaimsIdentity(new[]
-        {
-            new Claim(ClaimTypes.NameIdentifier, actor.ToString()), new Claim(ClaimTypes.Name, "platform operator")
-        }, "fixture"));
-        var current = new CurrentUserAccessor(new HttpContextAccessor { HttpContext = new DefaultHttpContext { User = principal } });
+        var actor = await SeedActor(tenant);
         await using var db = server.Context(tenant);
-        var service = new TenantAdminService(db, new BCryptPasswordHasher(4), current);
+        var service = Service(db, actor, new BCryptPasswordHasher(4));
         var code = "T" + Guid.NewGuid().ToString("N");
         var created = await service.CreateAsync(code, "original", null, null, "admin");
         await service.UpdateAsync(created.TenantId, "changed", new DateTime(2030, 1, 1), "remark", "UTC");
@@ -119,6 +116,23 @@ public sealed class TenantManagementAuditPostgreSqlTests(TenantManagementPostgre
         Assert.Null(db.Database.CurrentTransaction);
     }
 
+    private async Task<Guid> SeedActor(ITenantContext tenant)
+    {
+        await using var db = server.Context(tenant);
+        var actor = new Sys_User { Id = Guid.NewGuid(), UserName = "platform operator", Password = "fixture-only-hash", Enable = true, IsPlatformAdmin = true };
+        db.Sys_Users.Add(actor); await db.SaveChangesAsync(); return actor.Id;
+    }
+
+    private static TenantAdminService Service(CP6Context db, Guid actor, IPasswordHasher? hasher = null)
+    {
+        // No Name claim: the required audit must use the persisted actor's name.
+        var principal = new ClaimsPrincipal(new ClaimsIdentity([
+            new Claim("sub", actor.ToString()), new Claim("tenant_id", db.CurrentTenantId.ToString()),
+            new Claim("is_platform_admin", "true")], "fixture"));
+        return new TenantAdminService(db, hasher ?? new TestHasher(),
+            http: new HttpContextAccessor { HttpContext = new DefaultHttpContext { User = principal } });
+    }
+
     private async Task EnsureDefaultAdminMenu()
     {
         await using var db = server.Context(new TenantContext());
@@ -135,8 +149,9 @@ public sealed class TenantManagementAuditPostgreSqlTests(TenantManagementPostgre
     public async Task Caller_transaction_keeps_prior_work_after_late_field_audit_failure()
     {
         var tenant = new TenantContext { CurrentTenantId = Guid.NewGuid() };
+        var actor = await SeedActor(tenant);
         await using var db = server.Context(tenant);
-        var service = new TenantAdminService(db, new TestHasher());
+        var service = Service(db, actor);
         var code = "T" + Guid.NewGuid().ToString("N");
         var prior = await service.CreateAsync(code + "P", "prior", null, null, "admin");
         var target = await service.CreateAsync(code, "original", null, null, "admin");
@@ -165,13 +180,14 @@ public sealed class TenantManagementAuditPostgreSqlTests(TenantManagementPostgre
     public async Task Identity_stage_failure_rolls_back_management_audit_and_business(string stage)
     {
         var tenant = new TenantContext { CurrentTenantId = Guid.NewGuid() };
+        var actor = await SeedActor(tenant);
         var code = "T" + Guid.NewGuid().ToString("N");
         Guid id;
         await using (var seed = server.Context(tenant))
-            id = (await new TenantAdminService(seed, new TestHasher()).CreateAsync(code, "original", null, null, "admin")).TenantId;
+            id = (await Service(seed, actor).CreateAsync(code, "original", null, null, "admin")).TenantId;
         var runtime = Runtime(id);
         await using (var initial = server.Context(tenant, runtime))
-            await new TenantAdminService(initial, new TestHasher()).UpdateAsync(id, "original", new DateTime(2030, 1, 1), null);
+            await Service(initial, actor).UpdateAsync(id, "original", new DateTime(2030, 1, 1), null);
         var before = await IdentityState(tenant, id);
         await using var db = server.Context(tenant, runtime);
         var table = stage switch
@@ -182,7 +198,7 @@ public sealed class TenantManagementAuditPostgreSqlTests(TenantManagementPostgre
         };
         var constraint = "fail_" + stage + "_" + id.ToString("N");
         await FixtureDdl(db, $"ALTER TABLE {table} ADD CONSTRAINT {constraint} CHECK (\"TenantId\" <> '{id:D}'::uuid) NOT VALID");
-        var service = new TenantAdminService(db, new TestHasher());
+        var service = Service(db, actor);
         var error = await Record.ExceptionAsync(() => stage == "priority_outbox"
             ? service.SuspendAsync(id)
             : service.UpdateAsync(id, "must rollback", new DateTime(2031, 1, 1), "must rollback"));
@@ -195,14 +211,15 @@ public sealed class TenantManagementAuditPostgreSqlTests(TenantManagementPostgre
     public async Task Caller_rollback_removes_management_audit_snapshot_and_priority_message_together()
     {
         var tenant = new TenantContext { CurrentTenantId = Guid.NewGuid() };
+        var actor = await SeedActor(tenant);
         var code = "T" + Guid.NewGuid().ToString("N");
         Guid id;
         await using (var seed = server.Context(tenant))
-            id = (await new TenantAdminService(seed, new TestHasher()).CreateAsync(code, "original", null, null, "admin")).TenantId;
+            id = (await Service(seed, actor).CreateAsync(code, "original", null, null, "admin")).TenantId;
         var before = await IdentityState(tenant, id);
         await using var db = server.Context(tenant, Runtime(id));
         await using var transaction = await db.Database.BeginTransactionAsync();
-        await new TenantAdminService(db, new TestHasher()).SuspendAsync(id);
+        await Service(db, actor).SuspendAsync(id);
         Assert.Same(transaction, db.Database.CurrentTransaction);
         Assert.False((await db.Sys_Tenants.AsNoTracking().SingleAsync(x => x.Id == id)).Enable);
         Assert.Equal(1, (await db.CrmIdentitySnapshots.SingleAsync(x => x.TenantId == id)).Version);
@@ -219,6 +236,7 @@ public sealed class TenantManagementAuditPostgreSqlTests(TenantManagementPostgre
     public async Task Cancellation_interrupts_actual_audit_lock_wait_and_rolls_back_creation()
     {
         var tenant = new TenantContext { CurrentTenantId = Guid.NewGuid() };
+        var actor = await SeedActor(tenant);
         var reached = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
         await using var locker = server.Context(tenant);
         var before = await Counts(locker);
@@ -228,7 +246,7 @@ public sealed class TenantManagementAuditPostgreSqlTests(TenantManagementPostgre
         await using var db = server.Context(tenant, null, new CaptureAuditCommand(table, reached));
         using var cancel = new CancellationTokenSource();
         var code = "C" + Guid.NewGuid().ToString("N");
-        var creating = new TenantAdminService(db, new TestHasher()).CreateAsync(code, "cancelled", null, null, "admin", cancel.Token);
+        var creating = Service(db, actor).CreateAsync(code, "cancelled", null, null, "admin", cancel.Token);
         var released = false;
         try
         {

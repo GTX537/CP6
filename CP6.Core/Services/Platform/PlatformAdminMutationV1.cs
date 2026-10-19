@@ -9,7 +9,10 @@ internal static class PlatformAdminMutationV1
 {
     // A stable database row also serializes the native DML triggers. Updating it (rather than
     // only locking it) rejects a stale repeatable-read snapshot with PostgreSQL 40001.
-    internal static async Task ExecuteAsync(CP6Context db, Func<CancellationToken, Task> mutation, CancellationToken ct)
+    internal static Task ExecuteAsync(CP6Context db, Func<CancellationToken, Task> mutation, CancellationToken ct)
+        => ExecuteAsync(db, async token => { await mutation(token); return true; }, ct);
+
+    internal static async Task<T> ExecuteAsync<T>(CP6Context db, Func<CancellationToken, Task<T>> mutation, CancellationToken ct)
     {
         if (db.ChangeTracker.HasChanges())
             throw new InvalidOperationException("PLATFORM_ADMIN_REQUIRES_CLEAN_CONTEXT");
@@ -24,9 +27,10 @@ internal static class PlatformAdminMutationV1
         {
             if (caller is not null) { await caller.CreateSavepointAsync(savepoint, ct); saved = true; }
             await db.Database.SqlQueryRaw<long>("SELECT cp6_platform_admin_guard_v1.acquire() AS \"Value\"").SingleAsync(ct);
-            await mutation(ct);
+            var result = await mutation(ct);
             if (owned is not null) await owned.CommitAsync(ct);
             else await caller!.ReleaseSavepointAsync(savepoint, ct);
+            return result;
         }
         catch (Exception error)
         {

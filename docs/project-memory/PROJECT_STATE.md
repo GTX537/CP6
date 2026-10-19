@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-19：W25-01租户管理最终门候选
+
+P0 #319已在既有PG管理员根内重读并锁定当前actor，四种租户写入及必要审计共同提交。79相关通过（60原生PG/HTTP），作者集中审查无阻断；待正常PR/远端核对。W25-02/03仍待执行，长目标active，完整业务不提升。[DELIVERY](../development/evidence/WP02-04/current-actor-final-gate/DELIVERY.md)。
+
 ## 2026-10-19：第二十五轮长持续目标登记
 
 单总控依次完成租户管理当前actor事务、模拟登录进入退出边界、访问/refresh原认证状态绑定；全部三项及收尾完成才关闭goal。预计代理5–9小时、24小时检查点2026-10-20T08:54:40Z。复用原目录与PG/构建缓存，无新代理/Actions/既有库操作。完整IAM/CRM/Owner/业务不提升。[计划](../development/dispatch/20261019-wave25/README.md)。

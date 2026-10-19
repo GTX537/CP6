@@ -1,9 +1,11 @@
 using System.Security.Cryptography;
+using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Sys;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 
 namespace CP6.Core.Services.Platform;
 
@@ -17,15 +19,18 @@ public class TenantAdminService : ITenantAdminService
     private readonly CP6Context _db;
     private readonly IPasswordHasher _hasher;
     private readonly ICurrentUserAccessor? _current;
+    private readonly IHttpContextAccessor? _http;
 
     public TenantAdminService(
         CP6Context db,
         IPasswordHasher hasher,
-        ICurrentUserAccessor? current = null)
+        ICurrentUserAccessor? current = null,
+        IHttpContextAccessor? http = null)
     {
         _db = db;
         _hasher = hasher;
         _current = current;
+        _http = http;
     }
 
     public async Task<PagedResult<TenantRow>> ListAsync(string? keyword, bool? enable, int page, int pageSize)
@@ -67,8 +72,12 @@ public class TenantAdminService : ITenantAdminService
         return new TenantDetail(t.Id, t.TenantCode, t.TenantName, t.Enable, t.ExpireDate, t.Remark, userCount, t.TimeZoneId);
     }
 
-    public async Task<CreateTenantResult> CreateAsync(string code, string name, DateTime? expire, string? remark, string adminUserName,
+    public Task<CreateTenantResult> CreateAsync(string code, string name, DateTime? expire, string? remark, string adminUserName,
         CancellationToken cancellationToken = default)
+        => MutateAsync((actor, ct) => CreateCoreAsync(code, name, expire, remark, adminUserName, actor, ct), cancellationToken);
+
+    private async Task<CreateTenantResult> CreateCoreAsync(string code, string name, DateTime? expire, string? remark,
+        string adminUserName, PlatformAdminAuthorization.Actor? actor, CancellationToken cancellationToken)
     {
         // 1. 编码冲突校验（共享表，不需要 IgnoreQueryFilters）。
         if (await _db.Sys_Tenants.AnyAsync(t => t.TenantCode == code, cancellationToken))
@@ -129,18 +138,21 @@ public class TenantAdminService : ITenantAdminService
         _db.Sys_Roles.Add(adminRole);
         _db.Sys_RoleMenus.AddRange(adminMenus);
         _db.Sys_Users.Add(admin);
-        StageManagementAudit(SecurityEventType.TenantCreated, tenant, $"admin={adminUserName}");
+        StageManagementAudit(SecurityEventType.TenantCreated, tenant, actor, $"admin={adminUserName}");
         await SaveManagementChangesAsync(cancellationToken);
 
         // 7. 临时明文仅本次返回。
         return new CreateTenantResult(tenant.Id, adminUserName, tempPwd);
     }
 
-    public async Task UpdateAsync(Guid id, string name, DateTime? expire, string? remark, string? timeZoneId = null,
+    public Task UpdateAsync(Guid id, string name, DateTime? expire, string? remark, string? timeZoneId = null,
         CancellationToken cancellationToken = default)
+        => MutateAsync((actor, ct) => UpdateCoreAsync(id, name, expire, remark, timeZoneId, actor, ct), cancellationToken);
+
+    private async Task UpdateCoreAsync(Guid id, string name, DateTime? expire, string? remark, string? timeZoneId,
+        PlatformAdminAuthorization.Actor? actor, CancellationToken cancellationToken)
     {
-        var t = await _db.Sys_Tenants.FirstOrDefaultAsync(x => x.Id == id, cancellationToken)
-            ?? throw new InvalidOperationException("E-SEC-032");
+        var t = await CurrentTargetAsync(id, cancellationToken);
         // E-T2：TimeZoneId 保存前校验（E-WF-028 家族）。空串/空白 → 清空（沿用 app 默认）；
         // 非空且不可解析（既非 IANA 亦非 Windows id）→ 拒绝保存，不落任一字段。
         var normalizedTz = string.IsNullOrWhiteSpace(timeZoneId) ? null : timeZoneId.Trim();
@@ -154,36 +166,64 @@ public class TenantAdminService : ITenantAdminService
         t.ExpireDate = expire;
         t.Remark = remark;
         t.TimeZoneId = normalizedTz;
-        StageManagementAudit(SecurityEventType.TenantUpdated, t);
+        StageManagementAudit(SecurityEventType.TenantUpdated, t, actor);
         await SaveManagementChangesAsync(cancellationToken);
     }
 
     public Task SuspendAsync(Guid id, CancellationToken cancellationToken = default)
-        => SetEnableAsync(id, false, SecurityEventType.TenantSuspended, cancellationToken);
+        => MutateAsync((actor, ct) => SetEnableAsync(id, false, SecurityEventType.TenantSuspended, actor, ct), cancellationToken);
 
     public Task ReactivateAsync(Guid id, CancellationToken cancellationToken = default)
-        => SetEnableAsync(id, true, SecurityEventType.TenantReactivated, cancellationToken);
+        => MutateAsync((actor, ct) => SetEnableAsync(id, true, SecurityEventType.TenantReactivated, actor, ct), cancellationToken);
 
-    private async Task SetEnableAsync(Guid id, bool enable, SecurityEventType evt, CancellationToken cancellationToken)
+    private async Task SetEnableAsync(Guid id, bool enable, SecurityEventType evt, PlatformAdminAuthorization.Actor? actor, CancellationToken cancellationToken)
     {
-        var t = await _db.Sys_Tenants.FirstOrDefaultAsync(x => x.Id == id, cancellationToken)
-            ?? throw new InvalidOperationException("E-SEC-032");
+        var t = await CurrentTargetAsync(id, cancellationToken);
         t.Enable = enable;
-        StageManagementAudit(evt, t);
+        StageManagementAudit(evt, t, actor);
         await SaveManagementChangesAsync(cancellationToken);
     }
 
-    private void StageManagementAudit(SecurityEventType type, Sys_Tenant target, string? detail = null)
+    private Task MutateAsync(Func<PlatformAdminAuthorization.Actor?, CancellationToken, Task> mutation, CancellationToken ct)
+        => MutateAsync(async (actor, token) => { await mutation(actor, token); return true; }, ct);
+
+    private Task<T> MutateAsync<T>(Func<PlatformAdminAuthorization.Actor?, CancellationToken, Task<T>> mutation, CancellationToken ct)
+    {
+        if (!_db.Database.IsNpgsql()) return mutation(null, ct);
+        // Current actor authorization and all effects share the existing administrator
+        // root transaction. A create result is returned only after the owned commit.
+        return PlatformAdminMutationV1.ExecuteAsync(_db, async token =>
+        {
+            var actor = await PlatformAdminAuthorization.RequireAsync(_db, _http?.HttpContext?.User, token, lockActor: true);
+            return await mutation(actor, token);
+        }, ct);
+    }
+
+    private async Task<Sys_Tenant> CurrentTargetAsync(Guid id, CancellationToken ct)
+    {
+        var target = await _db.Sys_Tenants.SingleOrDefaultAsync(x => x.Id == id, ct)
+            ?? throw new InvalidOperationException("E-SEC-032");
+        if (_db.Database.IsNpgsql())
+        {
+            await _db.Entry(target).ReloadAsync(ct);
+            if (_db.Entry(target).State == EntityState.Detached) throw new InvalidOperationException("E-SEC-032");
+        }
+        return target;
+    }
+
+    private void StageManagementAudit(SecurityEventType type, Sys_Tenant target, PlatformAdminAuthorization.Actor? actor, string? detail = null)
         => _db.Sys_SecurityLogs.Add(new Sys_SecurityLog
         {
             TenantId = TenantContext.DefaultTenant,
-            UserId = _current?.UserId,
-            UserName = _current?.UserName,
+            UserId = actor?.Id ?? _current?.UserId,
+            UserName = AuditName(actor?.UserName ?? _current?.UserName),
             RequestTenantCode = target.TenantCode,
             EventType = (int)type,
             Reason = $"tenant={target.Id:D}" + (detail is null ? "" : $";{detail}"),
             CreatedAt = DateTime.Now
         });
+
+    private static string? AuditName(string? name) => name is { Length: > 100 } ? name[..100] : name;
 
     private async Task SaveManagementChangesAsync(CancellationToken cancellationToken)
     {

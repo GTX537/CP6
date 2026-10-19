@@ -49,6 +49,7 @@ public class TenantController : ControllerBase
             var result = await _svc.CreateAsync(req.Code, req.Name, req.Expire, req.Remark, req.AdminUserName, cancellationToken);
             return Ok(result);
         }
+        catch (PlatformAdminAuthorizationException ex) { throw new BizException(ex.Message, StatusCodes.Status403Forbidden); }
         catch (InvalidOperationException ex)
         {
             throw new BizException(ex.Message);   // E-SEC-033（编码冲突）
@@ -64,6 +65,7 @@ public class TenantController : ControllerBase
             await _svc.UpdateAsync(id, req.Name, req.Expire, req.Remark, req.TimeZoneId, cancellationToken);
             return Ok(new { code = 0 });
         }
+        catch (PlatformAdminAuthorizationException ex) { throw new BizException(ex.Message, StatusCodes.Status403Forbidden); }
         catch (InvalidOperationException ex)
         {
             throw new BizException(ex.Message);   // E-SEC-032（不存在）/ E-WF-028（时区不可解析）
@@ -79,6 +81,7 @@ public class TenantController : ControllerBase
             await _svc.SuspendAsync(id, cancellationToken);
             return Ok(new { code = 0 });
         }
+        catch (PlatformAdminAuthorizationException ex) { throw new BizException(ex.Message, StatusCodes.Status403Forbidden); }
         catch (InvalidOperationException ex)
         {
             throw new BizException(ex.Message);   // E-SEC-032
@@ -94,6 +97,7 @@ public class TenantController : ControllerBase
             await _svc.ReactivateAsync(id, cancellationToken);
             return Ok(new { code = 0 });
         }
+        catch (PlatformAdminAuthorizationException ex) { throw new BizException(ex.Message, StatusCodes.Status403Forbidden); }
         catch (InvalidOperationException ex)
         {
             throw new BizException(ex.Message);   // E-SEC-032
