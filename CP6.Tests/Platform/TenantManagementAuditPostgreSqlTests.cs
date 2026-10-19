@@ -278,7 +278,13 @@ public sealed class TenantManagementAuditPostgreSqlTests(TenantManagementPostgre
     {
         var tenant = new TenantContext { CurrentTenantId = Guid.NewGuid() };
         var actor = new Sys_User { UserName = "operator", Password = "fixture-only-hash", IsPlatformAdmin = true };
-        await using (var seed = server.Context(tenant)) { seed.Sys_Users.Add(actor); await seed.SaveChangesAsync(); }
+        await using (var seed = server.Context(tenant))
+        {
+            // This case tests revocation of the request actor, not removal of the last
+            // platform administrator. Keep an independent recovery administrator.
+            seed.Sys_Users.AddRange(actor, new Sys_User { UserName = "recovery", Password = "fixture-only-hash", IsPlatformAdmin = true });
+            await seed.SaveChangesAsync();
+        }
         await using var host = await TenantManagementHttpHost.Start(server);
         var code = "H" + Guid.NewGuid().ToString("N");
         object Request(string suffix) => new { Code = code + suffix, Name = "HTTP tenant", AdminUserName = "admin" };

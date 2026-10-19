@@ -97,7 +97,7 @@ internal sealed class TenantManagementHttpHost(WebApplication app, HttpClient cl
             tenant, isPlatformAdmin: platform, impersonatorId: impersonation ? Guid.NewGuid() : null);
 
     internal static async Task<TenantManagementHttpHost> Start(TenantManagementPostgresFixture fixture,
-        CrmIdentityRuntime? identity = null, bool includeRoles = false)
+        CrmIdentityRuntime? identity = null, bool includeRoles = false, bool includePlatformAdmins = false)
     {
         var secret = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = "TenantManagementComponent", Args = [] });
@@ -110,12 +110,20 @@ internal sealed class TenantManagementHttpHost(WebApplication app, HttpClient cl
         services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
         services.AddScoped<IPasswordHasher>(_ => new BCryptPasswordHasher(4));
         services.AddScoped<ITenantAdminService, TenantAdminService>();
-        if (includeRoles)
+        if (includeRoles || includePlatformAdmins)
         {
             services.AddDistributedMemoryCache();
             services.AddScoped<IPermissionAggregator, PermissionAggregator>();
             services.AddScoped<ICurrentPermissionContext, CurrentPermissionContext>();
             services.AddScoped<IPermissionService, PermissionService>();
+        }
+        if (includePlatformAdmins)
+        {
+            services.AddScoped<ISecurityAuditService, SecurityAuditService>();
+            services.AddScoped<IPlatformAdminService, PlatformAdminService>();
+            // These dependencies are not called by the tested no-password user update/delete.
+            services.AddSingleton(Moq.Mock.Of<IRefreshTokenService>(Moq.MockBehavior.Strict));
+            services.AddSingleton(Moq.Mock.Of<ITwoFactorService>(Moq.MockBehavior.Strict));
         }
         services.AddSingleton<IStringLocalizer>(EchoStringLocalizer.Instance);
         services.Configure<SecurityOptions>(options => options.Csrf.Enabled = true);
@@ -130,7 +138,7 @@ internal sealed class TenantManagementHttpHost(WebApplication app, HttpClient cl
         });
         services.AddAuthorization();
         services.AddControllers().AddApplicationPart(typeof(TenantController).Assembly)
-            .ConfigureApplicationPartManager(manager => manager.FeatureProviders.Add(new OnlySelectedControllers(includeRoles)));
+            .ConfigureApplicationPartManager(manager => manager.FeatureProviders.Add(new OnlySelectedControllers(includeRoles, includePlatformAdmins)));
         var app = builder.Build();
         app.UseRouting(); app.UseAuthentication(); app.UseMiddleware<TenantMiddleware>();
         app.UseMiddleware<BizExceptionMiddleware>(); app.UseMiddleware<CsrfMiddleware>();
@@ -146,12 +154,13 @@ internal sealed class TenantManagementHttpHost(WebApplication app, HttpClient cl
 
     public async ValueTask DisposeAsync() { client.Dispose(); await app.StopAsync(); await app.DisposeAsync(); }
 
-    private sealed class OnlySelectedControllers(bool includeRoles) : IApplicationFeatureProvider<ControllerFeature>
+    private sealed class OnlySelectedControllers(bool includeRoles, bool includePlatformAdmins) : IApplicationFeatureProvider<ControllerFeature>
     {
         public void PopulateFeature(IEnumerable<ApplicationPart> parts, ControllerFeature feature)
         {
             foreach (var controller in feature.Controllers.Where(x => x.AsType() != typeof(TenantController)
-                && (!includeRoles || x.AsType() != typeof(RoleController))).ToArray())
+                && (!includeRoles || x.AsType() != typeof(RoleController))
+                && (!includePlatformAdmins || (x.AsType() != typeof(PlatformAdminController) && x.AsType() != typeof(UserController)))).ToArray())
                 feature.Controllers.Remove(controller);
         }
     }

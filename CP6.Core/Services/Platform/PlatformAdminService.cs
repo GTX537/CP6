@@ -3,6 +3,7 @@ using CP6.Core.Services.Common;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Sys;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 
 namespace CP6.Core.Services.Platform;
 
@@ -19,17 +20,20 @@ public class PlatformAdminService : IPlatformAdminService
     private readonly ISecurityAuditService _audit;
     private readonly ITenantContext _tenant;
     private readonly ICurrentUserAccessor? _current;
+    private readonly IHttpContextAccessor? _http;
 
     public PlatformAdminService(
         CP6Context db,
         ISecurityAuditService audit,
         ITenantContext tenant,
-        ICurrentUserAccessor? current = null)
+        ICurrentUserAccessor? current = null,
+        IHttpContextAccessor? http = null)
     {
         _db = db;
         _audit = audit;
         _tenant = tenant;
         _current = current;
+        _http = http;
     }
 
     public async Task<List<PlatformAdminRow>> ListAsync()
@@ -43,6 +47,7 @@ public class PlatformAdminService : IPlatformAdminService
 
     public async Task GrantAsync(Guid userId)
     {
+        if (_db.Database.IsNpgsql()) { await ChangePostgreSqlAsync(userId, grant: true); return; }
         var u = await _db.Sys_Users.IgnoreQueryFilters().FirstOrDefaultAsync(x => x.Id == userId)
             ?? throw new InvalidOperationException("E-SEC-032");
 
@@ -58,6 +63,7 @@ public class PlatformAdminService : IPlatformAdminService
 
     public async Task RevokeAsync(Guid userId)
     {
+        if (_db.Database.IsNpgsql()) { await ChangePostgreSqlAsync(userId, grant: false); return; }
         var target = await _db.Sys_Users.IgnoreQueryFilters().FirstOrDefaultAsync(x => x.Id == userId)
             ?? throw new InvalidOperationException("E-SEC-032");
 
@@ -79,4 +85,30 @@ public class PlatformAdminService : IPlatformAdminService
                 null, null, null, $"target={target.UserName}");
         }
     }
+
+    private Task ChangePostgreSqlAsync(Guid userId, bool grant)
+        => PlatformAdminMutationV1.ExecuteAsync(_db, async ct =>
+        {
+            var target = await _db.Sys_Users.IgnoreQueryFilters().SingleOrDefaultAsync(x => x.Id == userId, ct)
+                ?? throw new InvalidOperationException("E-SEC-032");
+            // Existing unchanged tracking may predate another committed administrator operation.
+            await _db.Entry(target).ReloadAsync(ct);
+            if (_db.Entry(target).State == EntityState.Detached) throw new InvalidOperationException("E-SEC-032");
+            if (!grant && target.Enable && target.IsPlatformAdmin
+                && !await _db.Sys_Users.IgnoreQueryFilters().AnyAsync(x => x.Id != userId && x.Enable && x.IsPlatformAdmin, ct))
+                throw new InvalidOperationException("E-SEC-037");
+            target.IsPlatformAdmin = grant;
+            // This privileged mutation requires durable audit. Keep the legacy best-effort
+            // login audit service unchanged; persist this record with the flag and field audit.
+            _db.Sys_SecurityLogs.Add(new Sys_SecurityLog
+            {
+                TenantId = TenantContext.DefaultTenant,
+                EventType = (int)(grant ? SecurityEventType.PlatformAdminGranted : SecurityEventType.PlatformAdminRevoked),
+                UserId = _current?.UserId,
+                UserName = _current?.UserName is { Length: > 100 } name ? name[..100] : _current?.UserName,
+                Reason = $"target={target.UserName}",
+                CreatedAt = DateTime.Now
+            });
+            await _db.SaveChangesAsync(ct);
+        }, _http?.HttpContext?.RequestAborted ?? CancellationToken.None);
 }
