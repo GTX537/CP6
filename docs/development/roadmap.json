@@ -159112,6 +159112,11 @@
       "date": "2026-10-19",
       "change": "W26-03 BUG331 fixed: persisted original proof/current policy on refresh/access/impersonation, actual device writers/window invalidation, precise lineage closure, buffered pending output and secret-bound safe recovery.153 effective passed106 PG; once author review. Full client cross-tab/CRM/Owner/business unchanged; final closeout remains.",
       "evidence": "docs/development/evidence/WP02-03/authentication-session-continuity/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-19",
+      "change": "W26 three bounded authentication windows integrated via PR328/330/332; BUG327/329/331Closed. Per-window187/101/153 effective passed with overlap, latest153 includes106 PG.22 owned PG stopped, workspace/caches reused. Full client recovery/SSO admission/CRM/Owner/business unchanged.",
+      "evidence": "docs/development/dispatch/20261019-wave26/README.md"
     }
   ],
   "implementation_assessment": {
@@ -161691,7 +161696,7 @@
         "claimed_at": "2026-10-19T12:35:30.431024+00:00",
         "baseline_sha": "7833a58db53531181da13fd656e4837e71222e0d",
         "entry_evidence": "docs/development/dispatch/20261019-wave26/README.md",
-        "phase": "READY_TO_MERGE",
+        "phase": "CLOSED",
         "dispatch_scope": "W26_03",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -161732,12 +161737,8 @@
           "CP6.WebApi/Services/AuthenticationEntryServiceV1.cs",
           "CP6.WebApi/Services/AuthenticationRecoveryBindingV1.cs"
         ],
-        "reserved_write_resources": [
-          "Main:identity-authority"
-        ],
-        "reserved_postgresql_ports": [
-          55435
-        ],
+        "reserved_write_resources": [],
+        "reserved_postgresql_ports": [],
         "handoff_branch": "codex/dev-coordination-20261012",
         "actions_authorized": false,
         "formal_publication_authorized": false,
@@ -161745,15 +161746,70 @@
         "deployment_authorized": false,
         "delivery_report": "docs/development/evidence/WP02-03/authentication-session-continuity/DELIVERY.md",
         "candidate_review_completed": true,
-        "candidate_integrated": false,
-        "active_issue": {
-          "number": 331,
-          "url": "https://github.com/GTX537/CP6/issues/331",
-          "priority": "P0",
-          "state": "Open"
-        },
+        "candidate_integrated": true,
+        "active_issue": null,
         "worker_delivery_received": true,
-        "candidate_review_verdict": "READY_TO_MERGE"
+        "candidate_review_verdict": "READY_TO_MERGE",
+        "integration": {
+          "result": "PASS",
+          "repository": "GTX537/CP6",
+          "source": "4d75c61d824d934d0fe665307b229c0e8df107c6",
+          "main": "0b65bb396c1704c41a5d2ddc8740aaff06edaab2",
+          "pr": "https://github.com/GTX537/CP6/pull/332",
+          "paths": [
+            "CP6.Core/Services/Platform/ImpersonationService.PostgreSql.cs",
+            "CP6.Core/Services/Sys/AuthenticationCompletionRecoveryV1.cs",
+            "CP6.Core/Services/Sys/AuthenticationDeviceAuthorityV1.cs",
+            "CP6.Core/Services/Sys/AuthenticationInteractionStoreV1.cs",
+            "CP6.Core/Services/Sys/AuthenticationPolicyV1.cs",
+            "CP6.Core/Services/Sys/AuthenticationSessionAuthorityV1.cs",
+            "CP6.Core/Services/Sys/IRefreshTokenService.cs",
+            "CP6.Core/Services/Sys/RefreshTokenService.PostgreSql.cs",
+            "CP6.Core/Services/Sys/RefreshTokenService.cs",
+            "CP6.Core/Services/Wms/ClientDeviceService.cs",
+            "CP6.Entity/DTOs/Client/ClientAuthDtos.cs",
+            "CP6.Persistence.PostgreSql/Migrations/Core/20261019125500_AuthenticationContinuityV1.cs",
+            "CP6.Tests/Platform/AuthenticationCompletionPostgreSqlTests.cs",
+            "CP6.Tests/Platform/AuthenticationContinuityPostgreSqlTests.cs",
+            "CP6.Tests/Platform/AuthenticationEntryPostgreSqlTests.cs",
+            "CP6.Tests/Platform/AuthenticationFixtureSessionV1.cs",
+            "CP6.Tests/Platform/AuthenticationSsoPostgreSqlTests.cs",
+            "CP6.Tests/Platform/AuthenticationStatePostgreSqlTests.cs",
+            "CP6.Tests/Platform/ImpersonationPostgreSqlTests.cs",
+            "CP6.Tests/Platform/TenantManagementPostgresFixture.cs",
+            "CP6.WebApi/Controllers/ClientAuthController.AuthenticationV1.cs",
+            "CP6.WebApi/Controllers/ClientAuthController.cs",
+            "CP6.WebApi/Controllers/Sys/AuthController.AuthenticationV1.cs",
+            "CP6.WebApi/Controllers/Sys/AuthController.cs",
+            "CP6.WebApi/Middleware/CsrfMiddleware.cs",
+            "CP6.WebApi/Services/AccessTokenAuthentication.cs",
+            "CP6.WebApi/Services/AuthenticationEntryFailureAttribute.cs",
+            "CP6.WebApi/Services/AuthenticationEntryServiceV1.cs",
+            "CP6.WebApi/Services/AuthenticationRecoveryBindingV1.cs",
+            "docs/development/07-detailed-tasks.md",
+            "docs/development/dispatch/20261019-wave26/README.md",
+            "docs/development/evidence/WP02-03/authentication-session-continuity/DELIVERY.md",
+            "docs/development/roadmap.json",
+            "docs/project-memory/05-Completed.md",
+            "docs/project-memory/06-Todo.md",
+            "docs/project-memory/CHANGELOG-AI.md",
+            "docs/project-memory/PROJECT_STATE.md"
+          ],
+          "observed_at": "2026-10-19T13:48:05.710235+00:00"
+        },
+        "delivery_ref": {
+          "commit": "2a07a8c7fad9fc769920eddc9a2469a9dd55d1f9",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T135027Z-wave26-03-delivery/MESSAGE.md",
+          "at": "2026-10-19T13:50:27.239500+00:00"
+        },
+        "resolved_issue": {
+          "number": 331,
+          "state": "CLOSED",
+          "url": "https://github.com/GTX537/CP6/issues/331"
+        },
+        "resources_released": true,
+        "closed_at": "2026-10-19T13:50:42.019233+00:00",
+        "full_task_completed": false
       },
       "blockers": [],
       "validation_evidence": [],
@@ -162400,7 +162456,7 @@
           "claimed_at": "2026-10-19T10:58:51.471858+00:00",
           "baseline_sha": "afc94bf18e447fdc819b88cb4fc048d9d9eb6258",
           "entry_evidence": "docs/development/dispatch/20261019-wave26/README.md",
-          "phase": "INTEGRATED",
+          "phase": "CLOSED",
           "dispatch_scope": "W26_01",
           "bounded_window_gate": "CONFIRMED",
           "full_task_gate_unchanged": true,
@@ -162477,12 +162533,15 @@
             "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T112657Z-wave26-01-delivery/MESSAGE.md",
             "at": "2026-10-19T11:26:57.543039+00:00"
           },
-          "active_issue": {
+          "active_issue": null,
+          "resolved_issue": {
             "number": 327,
-            "url": "https://github.com/GTX537/CP6/issues/327",
-            "priority": "P1",
-            "state": "Closed"
-          }
+            "state": "CLOSED",
+            "url": "https://github.com/GTX537/CP6/issues/327"
+          },
+          "resources_released": true,
+          "closed_at": "2026-10-19T13:50:42.019233+00:00",
+          "full_task_completed": false
         },
         {
           "chat_label": "COORD / W26-02 Web/Native全部相关认证发行入口采用",
@@ -162493,7 +162552,7 @@
           "claimed_at": "2026-10-19T11:27:17.293128+00:00",
           "baseline_sha": "15b61f577e56fbff99acd98c066c49cec9d2ebd5",
           "entry_evidence": "docs/development/dispatch/20261019-wave26/README.md",
-          "phase": "INTEGRATED",
+          "phase": "CLOSED",
           "dispatch_scope": "W26_02",
           "bounded_window_gate": "CONFIRMED",
           "full_task_gate_unchanged": true,
@@ -162539,12 +162598,7 @@
           "delivery_report": "docs/development/evidence/WP02-03/authentication-entry-completion/DELIVERY.md",
           "candidate_review_completed": true,
           "candidate_integrated": true,
-          "active_issue": {
-            "number": 329,
-            "url": "https://github.com/GTX537/CP6/issues/329",
-            "priority": "P0",
-            "state": "Closed"
-          },
+          "active_issue": null,
           "worker_delivery_received": true,
           "candidate_review_verdict": "READY_TO_MERGE",
           "integration": {
@@ -162593,7 +162647,15 @@
             "commit": "6c70a08b3a1d126f60b993e743785bd4a48c5a1c",
             "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T123508Z-wave26-02-delivery/MESSAGE.md",
             "at": "2026-10-19T12:35:08.856569+00:00"
-          }
+          },
+          "resolved_issue": {
+            "number": 329,
+            "state": "CLOSED",
+            "url": "https://github.com/GTX537/CP6/issues/329"
+          },
+          "resources_released": true,
+          "closed_at": "2026-10-19T13:50:42.019233+00:00",
+          "full_task_completed": false
         }
       ],
       "wave13_delivery": {
@@ -181170,24 +181232,16 @@
       "path": "docs/development/dispatch/20261019-wave26/README.md",
       "baseline_sha": "4682b0d8a82efa6cc7a267fc69068bcb6bc3c839",
       "registered_at": "2026-10-19T10:58:51.471858+00:00",
-      "phase": "W26_03_READY_TO_MERGE",
+      "phase": "CLOSED",
       "coordinator_shared_state_only": false,
-      "assigned_chats": [
-        "COORD"
-      ],
-      "authorized_implementation_chats": [
-        "COORD"
-      ],
-      "authorized_review_chats": [
-        "COORD"
-      ],
-      "active_implementation_chats": [
-        "COORD"
-      ],
+      "assigned_chats": [],
+      "authorized_implementation_chats": [],
+      "authorized_review_chats": [],
+      "active_implementation_chats": [],
       "workers_started": true,
-      "workers_delivered": false,
-      "windows_closed": false,
-      "product_integrated": false,
+      "workers_delivered": true,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W26-01",
@@ -181196,7 +181250,7 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "INTEGRATED",
+          "phase": "CLOSED",
           "worker_start_received": true,
           "worker_delivery_received": true,
           "write_paths": [
@@ -181282,12 +181336,18 @@
             "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T112657Z-wave26-01-delivery/MESSAGE.md",
             "at": "2026-10-19T11:26:57.543039+00:00"
           },
-          "active_issue": {
+          "active_issue": null,
+          "candidate_sha": "2a093ba3386cb8d9f7b74ea99749215ebcbfd5a0",
+          "integration_main_sha": "15b61f577e56fbff99acd98c066c49cec9d2ebd5",
+          "integration_pr": "https://github.com/GTX537/CP6/pull/328",
+          "resolved_issue": {
             "number": 327,
-            "url": "https://github.com/GTX537/CP6/issues/327",
-            "priority": "P1",
-            "state": "Closed"
-          }
+            "state": "CLOSED",
+            "url": "https://github.com/GTX537/CP6/issues/327"
+          },
+          "reserved_postgresql_ports": [],
+          "resources_released": true,
+          "closed_at": "2026-10-19T13:50:42.019233+00:00"
         },
         {
           "id": "W26-02",
@@ -181296,9 +181356,9 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "INTEGRATED",
+          "phase": "CLOSED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "write_paths": [
             "CP6.Core/Services/Sys/",
             "CP6.WebApi/Controllers/Sys/",
@@ -181332,12 +181392,7 @@
           "actual_start_baseline_sha": "15b61f577e56fbff99acd98c066c49cec9d2ebd5",
           "branch": "codex/wave26-02-authentication-entries-20261019",
           "scope_refinement": "Server-owned interaction/completion receipt persistence and necessary PG forward migration, exact JWT completion-state consumption and Web same-site challenge landing are part of one-shot/commit-output scope. No existing DB installation.",
-          "active_issue": {
-            "number": 329,
-            "url": "https://github.com/GTX537/CP6/issues/329",
-            "priority": "P0",
-            "state": "Closed"
-          },
+          "active_issue": null,
           "candidate_review_completed": true,
           "candidate_review_verdict": "READY_TO_MERGE",
           "delivery_report": "docs/development/evidence/WP02-03/authentication-entry-completion/DELIVERY.md",
@@ -181398,7 +181453,18 @@
             "commit": "6c70a08b3a1d126f60b993e743785bd4a48c5a1c",
             "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T123508Z-wave26-02-delivery/MESSAGE.md",
             "at": "2026-10-19T12:35:08.856569+00:00"
-          }
+          },
+          "candidate_sha": "9b6ca06bbc40390024bbc8919c5a6dfc05289bc3",
+          "integration_main_sha": "7833a58db53531181da13fd656e4837e71222e0d",
+          "integration_pr": "https://github.com/GTX537/CP6/pull/330",
+          "resolved_issue": {
+            "number": 329,
+            "state": "CLOSED",
+            "url": "https://github.com/GTX537/CP6/issues/329"
+          },
+          "reserved_postgresql_ports": [],
+          "resources_released": true,
+          "closed_at": "2026-10-19T13:50:42.019233+00:00"
         },
         {
           "id": "W26-03",
@@ -181407,9 +181473,9 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "READY_TO_MERGE",
+          "phase": "CLOSED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "write_paths": [
             "CP6.Core/Services/Sys/",
             "CP6.Core/Services/Wms/",
@@ -181434,12 +181500,8 @@
           ],
           "planned_scope_ref": "docs/development/dispatch/20261019-wave26/README.md",
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "reserved_write_resources": [
-            "Main:identity-authority"
-          ],
-          "ports": {
-            "postgresql": 55435
-          },
+          "reserved_write_resources": [],
+          "ports": {},
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
@@ -181454,12 +181516,7 @@
           "actual_start_baseline_sha": "7833a58db53531181da13fd656e4837e71222e0d",
           "branch": "codex/wave26-03-authentication-continuity-20261019",
           "scope_refinement": "Original-proof refresh/current-access/device gates, precise output rejection/lineage and safe CompletionStatus/Owner closure per S5 6.5; same authenticated interaction binding, no raw-token recovery or automatic new-ID retry. Necessary PG migration only owned isolation. Actual actor-session receipt adoption requires existing ImpersonationService adapter; safe recovery requires exact CSRF middleware paths. Both are original W26-03 access/simulation/recovery scope, single Owner, no new external dependency.",
-          "active_issue": {
-            "number": 331,
-            "url": "https://github.com/GTX537/CP6/issues/331",
-            "priority": "P0",
-            "state": "Open"
-          },
+          "active_issue": null,
           "candidate_review_completed": true,
           "candidate_review_verdict": "READY_TO_MERGE",
           "delivery_report": "docs/development/evidence/WP02-03/authentication-session-continuity/DELIVERY.md",
@@ -181470,6 +181527,70 @@
             "failed_remaining": 0,
             "skipped_as_pass": 0,
             "evidence_root": "D:\\CP6-local-test\\wave26\\foundation"
+          },
+          "candidate_integrated": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "4d75c61d824d934d0fe665307b229c0e8df107c6",
+            "main": "0b65bb396c1704c41a5d2ddc8740aaff06edaab2",
+            "pr": "https://github.com/GTX537/CP6/pull/332",
+            "paths": [
+              "CP6.Core/Services/Platform/ImpersonationService.PostgreSql.cs",
+              "CP6.Core/Services/Sys/AuthenticationCompletionRecoveryV1.cs",
+              "CP6.Core/Services/Sys/AuthenticationDeviceAuthorityV1.cs",
+              "CP6.Core/Services/Sys/AuthenticationInteractionStoreV1.cs",
+              "CP6.Core/Services/Sys/AuthenticationPolicyV1.cs",
+              "CP6.Core/Services/Sys/AuthenticationSessionAuthorityV1.cs",
+              "CP6.Core/Services/Sys/IRefreshTokenService.cs",
+              "CP6.Core/Services/Sys/RefreshTokenService.PostgreSql.cs",
+              "CP6.Core/Services/Sys/RefreshTokenService.cs",
+              "CP6.Core/Services/Wms/ClientDeviceService.cs",
+              "CP6.Entity/DTOs/Client/ClientAuthDtos.cs",
+              "CP6.Persistence.PostgreSql/Migrations/Core/20261019125500_AuthenticationContinuityV1.cs",
+              "CP6.Tests/Platform/AuthenticationCompletionPostgreSqlTests.cs",
+              "CP6.Tests/Platform/AuthenticationContinuityPostgreSqlTests.cs",
+              "CP6.Tests/Platform/AuthenticationEntryPostgreSqlTests.cs",
+              "CP6.Tests/Platform/AuthenticationFixtureSessionV1.cs",
+              "CP6.Tests/Platform/AuthenticationSsoPostgreSqlTests.cs",
+              "CP6.Tests/Platform/AuthenticationStatePostgreSqlTests.cs",
+              "CP6.Tests/Platform/ImpersonationPostgreSqlTests.cs",
+              "CP6.Tests/Platform/TenantManagementPostgresFixture.cs",
+              "CP6.WebApi/Controllers/ClientAuthController.AuthenticationV1.cs",
+              "CP6.WebApi/Controllers/ClientAuthController.cs",
+              "CP6.WebApi/Controllers/Sys/AuthController.AuthenticationV1.cs",
+              "CP6.WebApi/Controllers/Sys/AuthController.cs",
+              "CP6.WebApi/Middleware/CsrfMiddleware.cs",
+              "CP6.WebApi/Services/AccessTokenAuthentication.cs",
+              "CP6.WebApi/Services/AuthenticationEntryFailureAttribute.cs",
+              "CP6.WebApi/Services/AuthenticationEntryServiceV1.cs",
+              "CP6.WebApi/Services/AuthenticationRecoveryBindingV1.cs",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/dispatch/20261019-wave26/README.md",
+              "docs/development/evidence/WP02-03/authentication-session-continuity/DELIVERY.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-19T13:48:05.710235+00:00"
+          },
+          "candidate_sha": "4d75c61d824d934d0fe665307b229c0e8df107c6",
+          "integration_main_sha": "0b65bb396c1704c41a5d2ddc8740aaff06edaab2",
+          "integration_pr": "https://github.com/GTX537/CP6/pull/332",
+          "resolved_issue": {
+            "number": 331,
+            "state": "CLOSED",
+            "url": "https://github.com/GTX537/CP6/issues/331"
+          },
+          "reserved_postgresql_ports": [],
+          "resources_released": true,
+          "closed_at": "2026-10-19T13:50:42.019233+00:00",
+          "delivery_ref": {
+            "commit": "2a07a8c7fad9fc769920eddc9a2469a9dd55d1f9",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261019T135027Z-wave26-03-delivery/MESSAGE.md",
+            "at": "2026-10-19T13:50:27.239500+00:00"
           }
         }
       ],
@@ -181487,17 +181608,43 @@
           8
         ],
         "contingency_hours": 10,
-        "deadline_is_not_completion": true
+        "deadline_is_not_completion": true,
+        "observed_agent_wall_minutes_before_final_docs": 174
       },
       "completion_scope": "Three coherent authentication deliveries and integrated closeout. Full IAM organization/permissions, CRM/Owner adoption and real business acceptance remain separate.",
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0,
         "deleted_worktrees": 0,
-        "raw_evidence_preserved": true
+        "raw_evidence_preserved": true,
+        "owned_postgresql_runs_stopped": 22,
+        "free_d_gib_at_closeout": 38.85,
+        "frontend_dependency_mode": "Reused existing zero-copy node_modules junction, exact lock verified; no dependency copy or cache deletion."
       },
       "review_mode": "One author SPEC/QUALITY per coherent task; no agents.",
-      "next_action": "Normal merge and remote verification; close331, publish delivery, then all-window state/resource/Handoff/checkpoint closeout before completing active goal."
+      "next_action": "Full frontend cross-tab completion recovery and explicit new-SSO-identity admission policy/UI; remaining IAM authority/reference CAS and CRM projection/local Owner adoption; existing DEV forward migration and real business acceptance require their own bounded window. No new implementation window opened.",
+      "active_issue": null,
+      "closed_at": "2026-10-19T13:50:42.019233+00:00",
+      "resources_released": true,
+      "validation": {
+        "per_window_effective_passed": [
+          187,
+          101,
+          153
+        ],
+        "per_window_native_postgresql_passed": [
+          99,
+          63,
+          106
+        ],
+        "counts_overlap_do_not_sum": true,
+        "final_continuity_effective_passed": 153,
+        "final_continuity_native_postgresql_passed": 106,
+        "remaining_failures": 0,
+        "skipped_as_pass": 0,
+        "historical_failures_preserved": true
+      },
+      "goal_closeout": "All three implementation windows integrated. External goal completes only after final docs/main/Handoff/checkpoint verification."
     },
     "wave_history": [
       {

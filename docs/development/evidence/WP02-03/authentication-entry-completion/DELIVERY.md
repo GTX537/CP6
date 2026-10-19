@@ -1,5 +1,7 @@
 # W26-02：Web / Native 交互认证完成
 
+> 已集成：https://github.com/GTX537/CP6/pull/330 / source `9b6ca06bbc40390024bbc8919c5a6dfc05289bc3` / main `7833a58db53531181da13fd656e4837e71222e0d`，#329 已关闭。下文保留候选交付时点；本轮最终状态见[总记录](../../../dispatch/20261019-wave26/README.md)。
+
 基线main `15b61f577e56fbff99acd98c066c49cec9d2ebd5`，分支`codex/wave26-02-authentication-entries-20261019`。**Ready to merge: Yes**，一次作者集中SPEC/QUALITY及修改部分复查无剩余阻断，非独立审查。[P0 #329](https://github.com/GTX537/CP6/issues/329)原步骤已修正。101项去重有效相关结果：63原生PostgreSQL/HTTP、33相关单测、5前端组件/continuation，0剩余失败或跳过；类型检查通过。原失败和复用范围保留。
 
 ## 改变的行为
