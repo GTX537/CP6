@@ -127,7 +127,7 @@ public partial class AuthController : LocalizedControllerBase
         }
 
         var originalPolicy = _context.Database.IsNpgsql() ? await Policies.ReadAsync(user.TenantId, HttpContext.RequestAborted) : null;
-        var originalChallenge = AuthenticationInteractionStoreV1.NewChallenge();
+        var originalChallenge = AuthenticationRecoveryBindingV1.Challenge(Request);
         // 3. 验证密码（BCrypt 哈希对比）
         if (!_hasher.Verify(request.Password, user.Password))
         {
@@ -242,7 +242,7 @@ public partial class AuthController : LocalizedControllerBase
             var url = await _sso.BuildAuthorizeUrlAsync(tenantCode, SsoRedirectUri(), returnUrl);
             if (_context.Database.IsNpgsql())
             {
-                var challenge = AuthenticationInteractionStoreV1.NewChallenge();
+                var challenge = AuthenticationRecoveryBindingV1.Challenge(Request);
                 var state = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(new Uri(url).Query)["state"].ToString();
                 await _sso.BindStateAsync(state, "Web", AuthenticationEntryServiceV1.WebBinding(challenge));
                 Response.Cookies.Append("cp6_sso", challenge, new CookieOptions { HttpOnly = true, Secure = _sec.Cookie.Secure,
@@ -580,6 +580,7 @@ public partial class AuthController : LocalizedControllerBase
         var raw = Request.Cookies[AuthCookieWriter.RefreshCookie];
         if (string.IsNullOrEmpty(raw))
             throw new BizException("E-SEC-007");
+        if (_context.Database.IsNpgsql()) return await PgRefreshAsync(raw);
         try
         {
             // RotateAsync 内已由令牌回设 _tenant.CurrentTenantId，后续签发/审计按其租户作用域

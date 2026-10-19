@@ -20,7 +20,7 @@ public static class AccessTokenAuthentication
             if (string.IsNullOrEmpty(jti) || await services.GetRequiredService<ITokenBlacklistService>().IsBlacklistedAsync(jti))
             { context.Fail("access token revoked or missing identity"); return; }
             var db = services.GetRequiredService<CP6Context>();
-            if (db.Database.IsNpgsql() && !await CurrentStateAsync(db, principal!, context.HttpContext.RequestAborted))
+            if (db.Database.IsNpgsql() && !await CurrentStateAsync(db, services.GetRequiredService<AuthenticationPolicyServiceV1>(), principal!, context.HttpContext.RequestAborted))
             { context.Fail("authentication state changed or original evidence missing"); return; }
             var imp = principal?.FindFirst("impersonator_id")?.Value;
             var family = principal?.FindFirst(imp == null ? "cp6_session" : "impersonator_session")?.Value;
@@ -43,7 +43,7 @@ public static class AccessTokenAuthentication
         }
     }
 
-    private static async Task<bool> CurrentStateAsync(CP6Context db, ClaimsPrincipal principal, CancellationToken ct)
+    private static async Task<bool> CurrentStateAsync(CP6Context db, AuthenticationPolicyServiceV1 policies, ClaimsPrincipal principal, CancellationToken ct)
     {
         var identities = principal.Identities.Where(x => x.IsAuthenticated).ToArray();
         if (identities.Length != 1) return false;
@@ -61,12 +61,10 @@ public static class AccessTokenAuthentication
         if (user == null || Value("cp6_auth_version") != AuthSessionVersion.For(user)
             || Value("must_change_password") is not ("true" or "false")) return false;
         var receipt = await new AuthenticationInteractionStoreV1(db).ReadSessionAsync(Value("jti")!, ct);
-        if (receipt is { Rejected: true }) return false;
-        if (receipt != null)
+        if (Value("impersonator_id") == null)
         {
-            var evidence = receipt.Parse();
-            if (evidence.Primary.UserId != id || evidence.Primary.TenantId != tenant
-                || evidence.AuthenticationVersion != Value("cp6_auth_version")) return false;
+            await new AuthenticationSessionAuthorityV1(db, policies).ValidateAsync(receipt, user, refresh: false, ct);
+            if (receipt!.Parse().Restricted != (Value("must_change_password") == "true")) return false;
         }
         if (Value("impersonator_id") is { } actorText)
         {
@@ -74,8 +72,10 @@ public static class AccessTokenAuthentication
                 || !Guid.TryParse(Value("impersonator_tenant_id"), out var actorTenant) || actorTenant == Guid.Empty
                 || Value("is_platform_admin") != null || Value("cp6_session") != null) return false;
             var actor = await ActiveUserAsync(db, actorId, actorTenant, ct);
-            return actor is { IsPlatformAdmin: true, MustChangePassword: false }
-                && Value("impersonator_auth_version") == AuthSessionVersion.For(actor);
+            if (actor is not { IsPlatformAdmin: true, MustChangePassword: false }
+                || Value("impersonator_auth_version") != AuthSessionVersion.For(actor)) return false;
+            await new AuthenticationSessionAuthorityV1(db, policies).ValidateAsync(receipt, actor, refresh: false, ct);
+            return !receipt!.Parse().Restricted;
         }
         return Value("impersonator_tenant_id") == null && Value("impersonator_auth_version") == null && Value("impersonator_session") == null
             && (!user.MustChangePassword || Value("must_change_password") == "true")

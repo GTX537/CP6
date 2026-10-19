@@ -29,7 +29,7 @@ public sealed partial class AuthenticationStatePostgreSqlTests(TenantManagementP
         var user = await Seed();
         await using var db = server.Context(new TenantContext { CurrentTenantId = user.TenantId });
         await using var host = await AuthenticationApiProcess.Start(db.Database.GetConnectionString()!);
-        var token = host.Token(user);
+        var token = await host.LoginToken(user);
         using (var valid = await host.Profile(token)) Assert.Equal(HttpStatusCode.OK, valid.StatusCode);
         await db.Sys_Users.Where(x => x.Id == user.Id).ExecuteUpdateAsync(s => s.SetProperty(x => x.Password, "changed"));
         using var rejected = await host.Profile(token);
@@ -94,7 +94,7 @@ public sealed partial class AuthenticationStatePostgreSqlTests(TenantManagementP
         var user = await Seed(); var tenant = new TenantContext { CurrentTenantId = user.TenantId };
         await using var db = server.Context(tenant); await using var host = await AuthenticationApiProcess.Start(db.Database.GetConnectionString()!);
         using (var noProof = await host.Profile(host.Token(user, ""))) Assert.Equal(HttpStatusCode.Unauthorized, noProof.StatusCode);
-        var token = host.Token(user);
+        var token = await host.LoginToken(user);
         await db.Sys_Tenants.Where(x => x.Id == user.TenantId).ExecuteUpdateAsync(s => s.SetProperty(x => x.Enable, false));
         using (var disabled = await host.Profile(token)) Assert.Equal(HttpStatusCode.Unauthorized, disabled.StatusCode);
         await db.Sys_Tenants.Where(x => x.Id == user.TenantId).ExecuteUpdateAsync(s => s.SetProperty(x => x.Enable, true));
@@ -110,7 +110,7 @@ public sealed partial class AuthenticationStatePostgreSqlTests(TenantManagementP
         var user = await Seed(); var tenant = new TenantContext { CurrentTenantId = user.TenantId };
         await using var issuer = server.Context(tenant); var config = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string,string?> { ["CrmOidc:Enabled"] = family.ToString() }).Build();
         var source = new RefreshTokenService(issuer, Options.Create(new SecurityOptions()), tenant, config);
-        var raw = await source.IssueAsync(user, null, null); await source.IssueAsync(user, null, null);
+        var raw = await AuthenticationFixtureSessionV1.IssueAsync(issuer, source, user); await AuthenticationFixtureSessionV1.IssueAsync(issuer, source, user);
         var barrier = new ObserveBoth();
         await using var first = server.Context(tenant, null, barrier); await using var second = server.Context(tenant, null, barrier);
         async Task<(string? Raw, string? Error)> Attempt(CP6Context db)
@@ -131,7 +131,7 @@ public sealed partial class AuthenticationStatePostgreSqlTests(TenantManagementP
     {
         var user = await Seed(); var tenant = new TenantContext { CurrentTenantId = user.TenantId };
         await using var db = server.Context(tenant); var service = new RefreshTokenService(db, Options.Create(new SecurityOptions()), tenant);
-        var raw = await service.IssueAsync(user, null, null); var healthy = await service.IssueAsync(user, null, null);
+        var raw = await AuthenticationFixtureSessionV1.IssueAsync(db, service, user); var healthy = await AuthenticationFixtureSessionV1.IssueAsync(db, service, user);
         var (next, _) = await service.RotateForCompletionAsync(raw, null, null, RefreshTokenClientContext.Web);
         Assert.Equal("E-SEC-007", (await Assert.ThrowsAsync<InvalidOperationException>(() => service.RotateAsync(raw, null, null))).Message);
         Assert.Equal("E-SEC-007", (await Assert.ThrowsAsync<InvalidOperationException>(() => service.RotateAsync(next, null, null))).Message);
@@ -150,7 +150,7 @@ public sealed partial class AuthenticationStatePostgreSqlTests(TenantManagementP
     {
         var user = await Seed(); var tenant = new TenantContext { CurrentTenantId = user.TenantId };
         await using var db = server.Context(tenant); var service = new RefreshTokenService(db, Options.Create(new SecurityOptions()), tenant);
-        var raw = await service.IssueAsync(user, null, null); await service.IssueAsync(user, null, null);
+        var raw = await AuthenticationFixtureSessionV1.IssueAsync(db, service, user); await AuthenticationFixtureSessionV1.IssueAsync(db, service, user);
         Assert.Equal("E-SEC-024", (await Assert.ThrowsAsync<InvalidOperationException>(() => service.RotateAsync(raw, null, null,
             new RefreshTokenClientContext("Windows", "device", "1")))).Message);
         await db.Sys_RefreshTokens.IgnoreQueryFilters().Where(x => x.UserId == user.Id).ExecuteUpdateAsync(s => s.SetProperty(x => x.AuthenticationVersion, (string?)null));
@@ -191,7 +191,7 @@ public sealed partial class AuthenticationStatePostgreSqlTests(TenantManagementP
         await using var db = server.Context(tenant);
         if (change == "factor")
         {
-            user.TwoFactorEnabled = true; user.TwoFactorSecret = "original-active-factor";
+            user.TwoFactorEnabled = true; user.TwoFactorSecret = "JBSWY3DPEHPK3PXP";
             await db.Sys_Users.Where(x => x.Id == user.Id).ExecuteUpdateAsync(s => s
                 .SetProperty(x => x.TwoFactorEnabled, true).SetProperty(x => x.TwoFactorSecret, user.TwoFactorSecret));
             // The baseline login occurs after this setup, so read the database-owned revision.
@@ -200,7 +200,7 @@ public sealed partial class AuthenticationStatePostgreSqlTests(TenantManagementP
         }
         var service = new RefreshTokenService(db, Options.Create(new SecurityOptions()), tenant);
         var client = new RefreshTokenClientContext(kind, kind == "Web" ? null : "device", "1");
-        var raw = await service.IssueAsync(user, null, null, client);
+        var raw = await AuthenticationFixtureSessionV1.IssueAsync(db, service, user, client);
         await using (var writer = server.Context(tenant))
         {
             var users = writer.Sys_Users.Where(x => x.Id == user.Id);
@@ -222,7 +222,7 @@ public sealed partial class AuthenticationStatePostgreSqlTests(TenantManagementP
     {
         var tenant = Guid.NewGuid(); await using var db = server.Context(new TenantContext { CurrentTenantId = tenant });
         db.Sys_Tenants.Add(new Sys_Tenant { Id = tenant, TenantCode = "auth_" + tenant.ToString("N"), TenantName = "auth" });
-        var user = new Sys_User { Id = Guid.NewGuid(), TenantId = tenant, UserName = "auth-user", Password = "original", Enable = true };
+        var user = new Sys_User { Id = Guid.NewGuid(), TenantId = tenant, UserName = "auth-user", Password = new BCryptPasswordHasher(4).Hash(AuthenticationFixtureSessionV1.Password), Enable = true };
         db.Sys_Users.Add(user); await db.SaveChangesAsync(); return user;
     }
 }
@@ -235,6 +235,13 @@ internal sealed class AuthenticationApiProcess(Process process, HttpClient clien
     internal string Token(Sys_User user, string? version = null) => JwtHelper.GenerateToken(user.Id.ToString(), user.UserName,
         secret, "auth-state-component", "auth-state-component", 5, user.TenantId,
         mustChangePassword: user.MustChangePassword, isPlatformAdmin: user.IsPlatformAdmin, authenticationVersion: version ?? AuthSessionVersion.For(user));
+    internal async Task<string> LoginToken(Sys_User user)
+    {
+        using var response = await client.PostAsJsonAsync("api/auth/login", new { user.UserName,
+            Password = AuthenticationFixtureSessionV1.Password, TenantCode = "auth_" + user.TenantId.ToString("N") });
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        return response.Headers.GetValues("Set-Cookie").Single(x => x.StartsWith("cp6_at=", StringComparison.Ordinal)).Split(';')[0][7..];
+    }
     internal Task<HttpResponseMessage> Profile(string token)
     {
         var request = new HttpRequestMessage(HttpMethod.Get, "api/auth/profile");

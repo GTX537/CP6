@@ -93,9 +93,9 @@ internal sealed class TenantManagementHttpHost(WebApplication app, HttpClient cl
 {
     internal HttpClient Client => client;
     internal IServiceProvider Services => app.Services;
-    internal string Token(Guid actor, Guid tenant, bool platform = true, bool impersonation = false, string? authenticationVersion = null)
+    internal string Token(Guid actor, Guid tenant, bool platform = true, bool impersonation = false, string? authenticationVersion = null, string? jti = null)
         => JwtHelper.GenerateToken(actor.ToString(), "operator", secret, "tenant-component", "tenant-component", 5,
-            tenant, isPlatformAdmin: platform, impersonatorId: impersonation ? Guid.NewGuid() : null, authenticationVersion: authenticationVersion);
+            tenant, jti: jti, isPlatformAdmin: platform, impersonatorId: impersonation ? Guid.NewGuid() : null, authenticationVersion: authenticationVersion);
 
     internal static async Task<TenantManagementHttpHost> Start(TenantManagementPostgresFixture fixture,
         CrmIdentityRuntime? identity = null, bool includeRoles = false, bool includePlatformAdmins = false,

@@ -232,12 +232,15 @@ public sealed class ClientDeviceService : IClientDeviceService
             .AnyAsync(x => x.TenantId == tenantId
                            && !x.IsDeleted
                            && x.ProductionMoveEnabled, ct);
-        if (!enabled) return;
         var device = await _db.ClientDevices.IgnoreQueryFilters()
             .FirstOrDefaultAsync(x => x.TenantId == tenantId
-                                      && !x.IsDeleted
-                                      && x.DeviceId == client.DeviceId, ct)
-            ?? throw new InvalidOperationException("WM-DEVICE-NOT-ACTIVATED");
+                                      && x.DeviceId == client.DeviceId, ct);
+        if (device == null)
+        {
+            if (enabled) throw new InvalidOperationException("WM-DEVICE-NOT-ACTIVATED");
+            return;
+        }
+        if (device.IsDeleted) throw new InvalidOperationException("WM-DEVICE-NOT-ACTIVATED");
         EnsureActive(device);
         if (!string.Equals(device.Platform, NormalizePlatform(client.ClientKind),
                 StringComparison.Ordinal))

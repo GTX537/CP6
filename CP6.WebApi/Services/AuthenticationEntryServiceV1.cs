@@ -23,7 +23,7 @@ public sealed class AuthenticationEntryServiceV1(CP6Context db, ITenantContext t
     public static string WebBinding(string challenge) => AuthenticationInteractionStoreV1.Hash(challenge);
 
     public Task<AuthenticationEntryResultV1> BeginAsync(AuthenticationProofV1 proof, string challenge,
-        ClientContextDto? client, string? ip, string? ua, Action<AuthenticationEntryResultV1>? stage, CancellationToken ct)
+        ClientContextDto? client, string? ip, string? ua, Action<AuthenticationEntryResultV1>? stage, CancellationToken ct, bool deferOutput = false)
     {
         tenant.CurrentTenantId = proof.TenantId;
         RequireClient(proof, challenge, client);
@@ -47,7 +47,7 @@ public sealed class AuthenticationEntryServiceV1(CP6Context db, ITenantContext t
             {
                 var lease = Guid.NewGuid();
                 await store.ClaimAsync(proof.CompletionRef, lease, token);
-                result = await IssueAsync(authority, null, null, client, ip, ua, token);
+                result = await IssueAsync(authority, null, null, client, ip, ua, token, deferOutput);
                 await store.FinishAsync(proof.CompletionRef, lease, true, token);
             }
             stage?.Invoke(result);
@@ -94,7 +94,7 @@ public sealed class AuthenticationEntryServiceV1(CP6Context db, ITenantContext t
 
     public async Task<AuthenticationEntryResultV1> CompleteFactorAsync(string challenge, ClientContextDto? client,
         bool enroll, string? method, string code, string? ip, string? ua,
-        Action<AuthenticationEntryResultV1>? stage, CancellationToken ct)
+        Action<AuthenticationEntryResultV1>? stage, CancellationToken ct, bool deferOutput = false)
     {
         var pending = await ReadAsync(challenge, client, enroll ? "2fa_enroll" : "2fa_verify", ct);
         var lease = Guid.NewGuid();
@@ -147,7 +147,7 @@ public sealed class AuthenticationEntryServiceV1(CP6Context db, ITenantContext t
                 }
                 var factor = verified with { AuthenticationVersion = AuthSessionVersion.For(a.User) };
                 Audit(a.User, enroll ? SecurityEventType.TwoFactorEnrolled : SecurityEventType.TwoFactorVerified, a.Proof, ip, ua);
-                var result = await IssueAsync(a, factor, transition, client, ip, ua, token);
+                var result = await IssueAsync(a, factor, transition, client, ip, ua, token, deferOutput);
                 await store.FinishAsync(a.Proof.CompletionRef, lease, true, token);
                 stage?.Invoke(result);
                 return result;
@@ -173,7 +173,7 @@ public sealed class AuthenticationEntryServiceV1(CP6Context db, ITenantContext t
 
     private async Task<AuthenticationEntryResultV1> IssueAsync(AuthenticationAuthorityV1 authority,
         AuthenticationFactorEvidenceV1? factor, Guid? transition, ClientContextDto? client,
-        string? ip, string? ua, CancellationToken ct)
+        string? ip, string? ua, CancellationToken ct, bool deferOutput)
     {
         var decision = authority.Decide(factor);
         if (decision is not (AuthenticationDecisionV1.SessionAllowed or AuthenticationDecisionV1.PasswordChangeRequired))
@@ -181,7 +181,22 @@ public sealed class AuthenticationEntryServiceV1(CP6Context db, ITenantContext t
         var restricted = decision == AuthenticationDecisionV1.PasswordChangeRequired;
         // Existing native clients have no restricted-session flow; they must never enter business UI with one.
         if (client != null && restricted) throw new InvalidOperationException("AUTH_RESTRICTED_SESSION_UNAVAILABLE");
-        if (client != null) await devices.EnsureLoginAllowedAsync(client, authority.User.TenantId, ct);
+        var deviceAuthority = new AuthenticationDeviceAuthorityV1(db);
+        AuthenticationDeviceEvidenceV1? deviceEvidence = client == null ? null : await deviceAuthority.CaptureAsync(authority.User.TenantId, client, ct);
+        if (client != null)
+        {
+            await devices.EnsureLoginAllowedAsync(client, authority.User.TenantId, ct);
+            if (authority.Proof.PrimaryMethod == AuthenticationPrimaryMethod.QuickSwitchPin)
+            {
+                deviceEvidence = deviceEvidence! with { SharedWindow = await deviceAuthority.RequireWindowAsync(authority.User.TenantId,
+                    deviceEvidence!, authority.Proof.PolicyVersion, ct) };
+                var device = await devices.GetQuickSwitchDeviceAsync(client, authority.User.TenantId, ct);
+                await db.Entry(device).ReloadAsync(ct);
+                device = await devices.GetQuickSwitchDeviceAsync(client, authority.User.TenantId, ct);
+                device.QuickSwitchFailureCount = 0; device.CurrentUser = authority.User.UserName;
+                device.LastSeenAt = DateTime.UtcNow;
+            }
+        }
         var jti = Guid.NewGuid().ToString();
         var access = sessions.BuildAccessToken(authority.User, jti, restricted, authority.User.IsPlatformAdmin);
         var profile = await sessions.BuildProfileAsync(authority.User, restricted);
@@ -189,11 +204,15 @@ public sealed class AuthenticationEntryServiceV1(CP6Context db, ITenantContext t
         var raw = await refresh.IssueWithinAuthenticationAsync(authority.User, ip, ua,
             client == null ? RefreshTokenClientContext.Web : new(client.ClientKind, client.DeviceId, client.AppVersion));
         var issuedRow = db.Sys_RefreshTokens.Local.Single(x => x.TokenHash == AuthenticationInteractionStoreV1.Hash(raw));
+        issuedRow.CompletionPending = deferOutput;
         var expires = new DateTimeOffset(issuedRow.ExpiresAt).ToUniversalTime();
-        await store.SaveSessionAsync(raw, jti, new(authority.Proof, AuthSessionVersion.For(authority.User), factor,
-            transition, restricted, DateTimeOffset.UtcNow, expires), ct);
-        if (client != null && !restricted)
+        if (client != null && !restricted && authority.Proof.PrimaryMethod != AuthenticationPrimaryMethod.QuickSwitchPin)
+        {
             await devices.MarkFullAuthenticationAsync(client, authority.User.TenantId, authority.User.UserName, ct);
+            await deviceAuthority.RecordWindowAsync(authority.Proof, deviceEvidence!, ct);
+        }
+        await store.SaveSessionAsync(raw, jti, new(authority.Proof, AuthSessionVersion.For(authority.User), factor,
+            transition, restricted, DateTimeOffset.UtcNow, expires, deviceEvidence), ct);
         Audit(authority.User, authority.Proof.PrimaryMethod == AuthenticationPrimaryMethod.Sso
             ? SecurityEventType.SsoLoginSuccess : SecurityEventType.LoginSuccess, authority.Proof, ip, ua);
         return new(authority.Proof, null, null, new TokenSessionDto { AccessToken = access, AccessExpiresAt = sessions.AccessExpiresAt,
@@ -203,8 +222,26 @@ public sealed class AuthenticationEntryServiceV1(CP6Context db, ITenantContext t
     public async Task RejectOutputAsync(AuthenticationEntryResultV1 result)
     {
         if (result.Session == null) return;
-        await store.RejectAsync(result.Proof.CompletionRef);
         await refresh.RejectCompletionAsync(result.Session.RefreshToken);
+    }
+
+    public Task<TokenSessionDto> RefreshAsync(string raw, ClientContextDto? client, string? ip, string? ua,
+        Action<TokenSessionDto>? stage, CancellationToken ct, bool deferOutput = false)
+    {
+        if (client != null) ClientContextValidator.Validate(client);
+        return refresh.RotateWithAuthenticationAsync(raw, ip, ua,
+            client == null ? RefreshTokenClientContext.Web : new(client.ClientKind, client.DeviceId, client.AppVersion),
+            async (rotation, token) =>
+            {
+                if (client != null) await devices.EnsureLoginAllowedAsync(client, rotation.User.TenantId, token);
+                var access = sessions.BuildAccessToken(rotation.User, rotation.AccessJti, false, rotation.User.IsPlatformAdmin);
+                var profile = await sessions.BuildProfileAsync(rotation.User, false);
+                Audit(rotation.User, SecurityEventType.TokenRefreshed, rotation.Evidence.Primary, ip, ua);
+                var result = new TokenSessionDto { AccessToken = access, AccessExpiresAt = sessions.AccessExpiresAt,
+                    RefreshToken = rotation.RawToken, RefreshExpiresAt = rotation.RefreshExpiresAtUtc, Profile = profile };
+                stage?.Invoke(result);
+                return result;
+            }, ct, deferOutput);
     }
 
     private void Audit(Sys_User user, SecurityEventType type, AuthenticationProofV1 proof, string? ip, string? ua)

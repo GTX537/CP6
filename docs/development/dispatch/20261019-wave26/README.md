@@ -1,5 +1,9 @@
 # 第二十六轮：完整认证政策与会话公共基础
 
+> W26-03候选完成：[DELIVERY](../../evidence/WP02-03/authentication-session-continuity/DELIVERY.md)。#331原缺口修正，153有效通过/106原生PG；一次作者SPEC/QUALITY无剩余阻断。正常合并后总收尾，goal active。
+
+> W26-02已通过[正常PR](https://github.com/GTX537/CP6/pull/330)合入`7833a58db53531181da13fd656e4837e71222e0d`，#329关闭。W26-03真实START，原refresh/current-access/device与精确完成状态恢复接续，随后总收尾，goal active。
+
 > W26-02候选完成：[DELIVERY](../../evidence/WP02-03/authentication-entry-completion/DELIVERY.md)，#329修正，101相关有效通过（63原生PG/HTTP），一次作者SPEC/QUALITY无剩余阻断。正常合并后接续W26-03，goal仍active。
 
 > W26-01已通过[PR328](https://github.com/GTX537/CP6/pull/328)合入`15b61f577e56fbff99acd98c066c49cec9d2ebd5`，#327关闭。W26-02真实START，含一次性交互/完成回执必要PG模型及Web/Native输出适配；随后W26-03和总收尾，goal active。
@@ -38,10 +42,10 @@
 
 ## W26-03 会话与设备连续性
 
-- [ ] refresh持久原SessionAuthenticationEvidence并原值传递；当前policy/SSO/凭据变化或缺证据重新认证，不在刷新端开启新MFA，不洗原验证时间/强度。
-- [ ] 原family→token锁序、单胜轮转、精确pending/rejected/UNKNOWN隔离复用W25；仅受影响风险增加验证，不误撤其他健康设备。
-- [ ] QuickSwitchAllowed显式版本化Owner来源缺失则关闭；目标MFA/Mode2/强制SSO/改密拒绝quick-switch，保原共享窗口截止。完整新交互且设备当前active才同完成责任设置FullAuth；refresh/切人绝不延长。
-- [ ] 当前access政策消费/模拟合法绑定按实际影响接续；注册/完成失败和设备竞争专项测试，保当前Cookie/DTO合法形态。一份DELIVERY、一次审查、正常合并。
+- [x] refresh持久原SessionAuthenticationEvidence并原值传递；当前policy/SSO/凭据变化或缺证据重新认证，不在刷新端开启新MFA，不洗原验证时间/强度。
+- [x] 原family→token锁序、单胜轮转、精确pending/rejected/UNKNOWN隔离复用W25；仅受影响风险增加验证，不误撤其他健康设备。
+- [x] QuickSwitchAllowed显式版本化Owner来源缺失则关闭；目标MFA/Mode2/强制SSO/改密拒绝quick-switch，保原共享窗口截止。完整新交互且设备当前active才同完成责任设置FullAuth；refresh/切人绝不延长。
+- [x] 当前access政策消费/模拟合法绑定按实际影响接续；注册/完成失败和设备竞争专项测试，保当前Cookie/DTO合法形态。一份DELIVERY、一次审查、正常合并。
 
 报告evidence/WP02-03/authentication-session-continuity/DELIVERY.md。最终核已合入范围组合风险、远端main/Issue、台账四状态/生成页/Handoff；资源停止与检查点后关闭goal。完整IAM组织授权、CRM/Owner采用及真实业务验收不在本轮冒称完成。
 

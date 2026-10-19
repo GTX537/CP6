@@ -8,6 +8,10 @@ namespace CP6.Core.Services.Sys;
 /// </summary>
 public interface IRefreshTokenService
 {
+    Task<T> RotateWithAuthenticationAsync<T>(string raw, string? ip, string? ua, RefreshTokenClientContext client,
+        Func<AuthenticationRotationV1, CancellationToken, Task<T>> complete, CancellationToken ct = default, bool deferOutput = false)
+        => throw new InvalidOperationException("AUTH_SESSION_AUTHORITY_UNAVAILABLE");
+    Task CompleteOutputAsync(string rawToken) => throw new InvalidOperationException("AUTH_SESSION_AUTHORITY_UNAVAILABLE");
     Task<string> IssueWithinAuthenticationAsync(Sys_User user, string? ip, string? ua, RefreshTokenClientContext client)
         => throw new InvalidOperationException("AUTH_SESSION_AUTHORITY_UNAVAILABLE");
     /// <summary>签发新刷新令牌，返回原始令牌（仅此一次明文返回，须写入 httpOnly cookie）。</summary>
@@ -46,6 +50,9 @@ public interface IRefreshTokenService
     Task RevokeAllForDeviceAsync(Guid tenantId, string deviceId, bool saveChanges = true)
         => Task.CompletedTask;
 }
+
+public sealed record AuthenticationRotationV1(string RawToken, string AccessJti, Sys_User User,
+    SessionAuthenticationEvidenceV1 Evidence, DateTimeOffset RefreshExpiresAtUtc);
 
 /// <summary>刷新令牌的非敏感客户端画像，用于设备级审计和会话追踪。</summary>
 public record RefreshTokenClientContext(string ClientKind, string? DeviceId, string? AppVersion)

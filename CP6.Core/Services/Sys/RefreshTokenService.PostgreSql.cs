@@ -94,18 +94,36 @@ public partial class RefreshTokenService
     public Task<(string newToken, Sys_User user)> RotateForCompletionAsync(string raw, string? ip, string? ua, RefreshTokenClientContext client)
         => _db.Database.IsNpgsql() ? RotatePostgreSqlAsync(raw, ip, ua, client, pendingCompletion: true) : RotateAsync(raw, ip, ua, client);
 
-    private async Task<(string newToken, Sys_User user)> RotatePostgreSqlAsync(string raw, string? ip, string? ua, RefreshTokenClientContext client, bool pendingCompletion = false)
+    private Task<(string newToken, Sys_User user)> RotatePostgreSqlAsync(string raw, string? ip, string? ua, RefreshTokenClientContext client, bool pendingCompletion = false)
+        => RotateAuthenticatedAsync(raw, ip, ua, client,
+            (rotation, _) => Task.FromResult((rotation.RawToken, rotation.User)), pendingCompletion, CancellationToken.None);
+
+    public Task<T> RotateWithAuthenticationAsync<T>(string raw, string? ip, string? ua, RefreshTokenClientContext client,
+        Func<AuthenticationRotationV1, CancellationToken, Task<T>> complete, CancellationToken ct = default, bool deferOutput = false)
+        => RotateAuthenticatedAsync(raw, ip, ua, client, complete, deferOutput, ct);
+
+    private async Task<T> RotateAuthenticatedAsync<T>(string raw, string? ip, string? ua, RefreshTokenClientContext client,
+        Func<AuthenticationRotationV1, CancellationToken, Task<T>> complete, bool pendingCompletion, CancellationToken ct)
     {
         RequireOwnedCleanTransaction(); var hash = HashOf(raw);
         var observed = await _db.Sys_RefreshTokens.IgnoreQueryFilters().AsNoTracking().SingleOrDefaultAsync(x => x.TokenHash == hash);
         if (observed == null || observed.ExpiresAt <= DateTime.Now) throw new InvalidOperationException("E-SEC-007");
         await using var tx = await _db.Database.BeginTransactionAsync();
         Sys_RefreshToken? replacement = null; var commitAttempted = false; var committed = false;
+        var original = _db.ChangeTracker.Entries().ToDictionary(x => x.Entity, x => x.CurrentValues.Clone());
         try
         {
             var user = await LockActiveUserAsync(observed.UserId, observed.TenantId);
             if (string.IsNullOrEmpty(observed.AuthenticationVersion) || observed.AuthenticationVersion != AuthSessionVersion.For(user))
                 throw new InvalidOperationException("E-SEC-007");
+            var store = new AuthenticationInteractionStoreV1(_db);
+            var receipt = await store.ReadSessionByRefreshAsync(hash, ct);
+            var authority = new AuthenticationSessionAuthorityV1(_db, _authenticationPolicies);
+            await authority.ValidateAsync(receipt, user, refresh: true, ct);
+            var evidence = receipt!.Parse();
+            if (evidence.Primary.ClientKind != observed.ClientKind) throw new InvalidOperationException("REAUTH_REQUIRED");
+            if (observed.ClientKind != "Web" && evidence.Device?.DeviceId != observed.DeviceId)
+                throw new InvalidOperationException("REAUTH_REQUIRED");
             if (observed.BrowserSessionId.HasValue) await RequireBrowserSessionAsync(observed, user, lockForRotation: true);
             var row = await _db.Sys_RefreshTokens.FromSqlInterpolated($"SELECT * FROM public.\"Sys_RefreshTokens\" WHERE \"Id\"={observed.Id} FOR UPDATE")
                 .IgnoreQueryFilters().AsNoTracking().SingleOrDefaultAsync();
@@ -127,27 +145,42 @@ public partial class RefreshTokenService
                     throw new InvalidOperationException("E-SEC-007");
                 await _db.Sys_RefreshTokens.IgnoreQueryFilters().Where(x => x.UserId == user.Id && x.TenantId == user.TenantId && x.RevokedAt == null)
                     .ExecuteUpdateAsync(s => s.SetProperty(x => x.RevokedAt, DateTime.Now));
+                await _db.Database.ExecuteSqlInterpolatedAsync($"UPDATE cp6_authentication_v1.session_evidence s SET rejected_at=clock_timestamp() FROM public.\"Sys_RefreshTokens\" r WHERE r.\"TokenHash\"=s.refresh_hash AND r.\"UserId\"={user.Id} AND r.\"TenantId\"={user.TenantId}", ct);
                 commitAttempted = true; await tx.CommitAsync(); committed = true;
                 throw new InvalidOperationException("E-SEC-008");
             }
             _tenant.CurrentTenantId = user.TenantId;
             var nextRaw = NewRaw(); replacement = NewRow(user, client, nextRaw, ip, ua, row.BrowserSessionId, row.AuthenticationVersion!);
+            replacement.ExpiresAt = new DateTime(Math.Min(replacement.ExpiresAt.Ticks, evidence.OriginalExpiresAtUtc.LocalDateTime.Ticks) / 10 * 10, replacement.ExpiresAt.Kind);
             replacement.CompletionPending = pendingCompletion;
             await _db.Sys_RefreshTokens.IgnoreQueryFilters().Where(x => x.Id == row.Id && x.RevokedAt == null)
                 .ExecuteUpdateAsync(s => s.SetProperty(x => x.RevokedAt, DateTime.Now).SetProperty(x => x.ReplacedByTokenHash, replacement.TokenHash));
             _db.Sys_RefreshTokens.Add(replacement); await _db.SaveChangesAsync();
+            var jti = Guid.NewGuid().ToString();
+            await store.SaveSessionAsync(nextRaw, jti, evidence, ct, hash);
+            var result = await complete(new(nextRaw, jti, user, evidence, new DateTimeOffset(replacement.ExpiresAt).ToUniversalTime()), ct);
+            await _db.SaveChangesAsync(ct);
             // Lock waits and persistence can consume the remaining source lifetime.
             if (row.ExpiresAt <= DateTime.Now) throw new InvalidOperationException("E-SEC-007");
             await RequireCurrentTenantLifetimeAsync(user.TenantId);
+            await authority.ValidateAsync(receipt, user, refresh: true, ct);
+            ct.ThrowIfCancellationRequested();
             commitAttempted = true; await tx.CommitAsync(); committed = true;
-            return (nextRaw, user);
+            return result;
         }
         catch (Exception error)
         {
             if (committed) throw;
             try { await tx.RollbackAsync(CancellationToken.None); }
             catch (Exception rollback) { throw new RefreshCompletionUnknownException(new AggregateException(error, rollback)); }
-            finally { if (replacement != null) _db.Entry(replacement).State = EntityState.Detached; }
+            finally
+            {
+                foreach (var entry in _db.ChangeTracker.Entries().ToArray())
+                {
+                    if (!original.TryGetValue(entry.Entity, out var values)) entry.State = EntityState.Detached;
+                    else { entry.CurrentValues.SetValues(values); entry.OriginalValues.SetValues(values); entry.State = EntityState.Unchanged; }
+                }
+            }
             if (commitAttempted) throw new RefreshCompletionUnknownException(error);
             throw;
         }
@@ -158,13 +191,22 @@ public partial class RefreshTokenService
         if (!_db.Database.IsNpgsql()) { await RevokeAsync(rawToken); return; }
         try
         {
-            var hash = HashOf(rawToken);
-            // One atomic statement, no request cancellation: persist the rejection even after disconnect.
-            if (await _db.Sys_RefreshTokens.IgnoreQueryFilters().Where(x => x.TokenHash == hash)
-                .ExecuteUpdateAsync(s => s.SetProperty(x => x.RevokedAt, DateTime.Now)
-                    .SetProperty(x => x.CompletionPending, false)
-                    .SetProperty(x => x.CompletionRejectedAtUtc, DateTime.UtcNow), CancellationToken.None) != 1)
+            await using var tx = await _db.Database.BeginTransactionAsync(CancellationToken.None);
+            // Reject this generation and its descendants under the same root as rotation.
+            if (await new AuthenticationInteractionStoreV1(_db).RejectGenerationAsync(HashOf(rawToken), false, CancellationToken.None) == 0)
                 throw new InvalidOperationException("Replacement missing during completion rejection.");
+            await tx.CommitAsync(CancellationToken.None);
+        }
+        catch (Exception error) { throw new RefreshCompletionUnknownException(error); }
+    }
+
+    private async Task RevokeOriginPostgreSqlAsync(string raw)
+    {
+        try
+        {
+            await using var tx = await _db.Database.BeginTransactionAsync();
+            await new AuthenticationInteractionStoreV1(_db).RejectGenerationAsync(HashOf(raw), true, CancellationToken.None);
+            await tx.CommitAsync();
         }
         catch (Exception error) { throw new RefreshCompletionUnknownException(error); }
     }
@@ -175,7 +217,10 @@ public partial class RefreshTokenService
         if (expiry <= DateTime.Now) throw new InvalidOperationException("E-SEC-007");
     }
 
-    public async Task CompleteRotationAsync(string rawToken)
+    public Task CompleteRotationAsync(string rawToken) => CompleteOutputPostgreSqlAsync(rawToken, true);
+    public Task CompleteOutputAsync(string rawToken) => CompleteOutputPostgreSqlAsync(rawToken, false);
+
+    private async Task CompleteOutputPostgreSqlAsync(string rawToken, bool requireRotation)
     {
         if (!_db.Database.IsNpgsql()) return;
         RequireOwnedCleanTransaction(); var hash = HashOf(rawToken);
@@ -186,6 +231,9 @@ public partial class RefreshTokenService
         {
             var user = await LockActiveUserAsync(row.UserId, row.TenantId);
             if (row.AuthenticationVersion != AuthSessionVersion.For(user)) throw new InvalidOperationException("E-SEC-007");
+            var parent = await _db.Database.SqlQuery<string?>($"SELECT parent_refresh_hash AS \"Value\" FROM cp6_authentication_v1.session_evidence WHERE refresh_hash={hash}").SingleAsync();
+            await new AuthenticationSessionAuthorityV1(_db, _authenticationPolicies).ValidateAsync(
+                await new AuthenticationInteractionStoreV1(_db).ReadSessionByRefreshAsync(hash), user, requireRotation || parent != null);
             if (row.BrowserSessionId.HasValue) await RequireBrowserSessionAsync(row, user, lockForRotation: true);
             if (await _db.Sys_RefreshTokens.IgnoreQueryFilters().Where(x => x.Id == row.Id && x.CompletionPending
                     && x.CompletionRejectedAtUtc == null && x.RevokedAt == null && x.ExpiresAt > DateTime.Now)
@@ -195,7 +243,7 @@ public partial class RefreshTokenService
             var sourceExpiry = await _db.Sys_RefreshTokens.IgnoreQueryFilters().AsNoTracking().Where(x =>
                     x.UserId == row.UserId && x.TenantId == row.TenantId && x.ReplacedByTokenHash == hash)
                 .Select(x => (DateTime?)x.ExpiresAt).SingleOrDefaultAsync();
-            if (sourceExpiry == null || sourceExpiry <= DateTime.Now || row.ExpiresAt <= DateTime.Now)
+            if ((requireRotation || parent != null) && sourceExpiry == null || sourceExpiry <= DateTime.Now || row.ExpiresAt <= DateTime.Now)
                 throw new InvalidOperationException("E-SEC-007");
             await RequireCurrentTenantLifetimeAsync(row.TenantId);
             commitAttempted = true; await tx.CommitAsync();
