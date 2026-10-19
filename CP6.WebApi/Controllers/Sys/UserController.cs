@@ -62,16 +62,22 @@ public class UserController : LocalizedControllerBase
 
     [HttpPost]
     [RequirePermission("user", "add")]
-    public async Task<IActionResult> Add([FromBody] Sys_User entity)
+    public async Task<IActionResult> Add([FromBody] UserCreateRequest request)
     {
-        if (await _context.Sys_Users.AnyAsync(u => u.UserName == entity.UserName))
+        if (await _context.Sys_Users.AnyAsync(u => u.UserName == request.UserName))
             return BadRequest(new { message = Localizer["用户名已存在"] });
 
-        // S 类认证加固 T7：建用户密码落 BCrypt（消除明文写入），管理员设初始密码 → 首登强制改密
-        entity.Password = _hasher.Hash(entity.Password);
-        entity.PasswordChangedAt = DateTime.Now;
-        entity.MustChangePassword = true;
-        entity.CreateDate = DateTime.Now;
+        // Ordinary user:add never grants platform or authentication authority. Construct a
+        // new identity from the explicit input contract; entity/security/audit fields are not bound.
+        var entity = new Sys_User
+        {
+            Id = Guid.NewGuid(), TenantId = _context.CurrentTenantId,
+            UserName = request.UserName, NickName = request.NickName, RoleId = request.RoleId,
+            Enable = request.Enable, DeptId = request.DeptId, ManagerId = request.ManagerId, Email = request.Email,
+            Password = _hasher.Hash(request.Password), PasswordChangedAt = DateTime.Now,
+            MustChangePassword = true, IsPlatformAdmin = false,
+            Creator = HttpContext?.User.Identity?.Name, CreateDate = DateTime.Now
+        };
         _context.Sys_Users.Add(entity);
         await _context.SaveChangesAsync();
         return Ok(new { entity.Id, entity.UserName, entity.NickName, entity.RoleId, entity.Enable });
@@ -137,6 +143,19 @@ public class UserController : LocalizedControllerBase
         catch (DbUpdateException error) when (PlatformAdminMutationV1.IsSurvivorViolation(error))
         { throw new BizException("E-SEC-037"); }
     }
+}
+
+/// <summary>Ordinary creation input. Identity, tenant, authentication state and audit metadata are server owned.</summary>
+public sealed class UserCreateRequest
+{
+    [Required, MaxLength(100)] public string UserName { get; set; } = "";
+    [Required, MaxLength(200)] public string Password { get; set; } = "";
+    [MaxLength(100)] public string? NickName { get; set; }
+    public int? RoleId { get; set; }
+    public bool Enable { get; set; } = true;
+    public Guid? DeptId { get; set; }
+    public Guid? ManagerId { get; set; }
+    [MaxLength(100)] public string? Email { get; set; }
 }
 
 /// <summary>Editing identity attributes does not require resetting the user's password.</summary>
