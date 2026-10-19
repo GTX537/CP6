@@ -158952,6 +158952,11 @@
       "date": "2026-10-18",
       "change": "W20-03 strict opt-in actual directory host with product JWT source/authority and installed ordinary PG identity. 18 config cases plus one native HTTP lifecycle passed; one owned PG stopped. Broader matrix W20-04, full task/business unchanged.",
       "evidence": "docs/development/evidence/WP02-05/directory-host/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-19",
+      "change": "W20-04 actual configured HTTP/native PG matrix: seven unique passes with four unchanged results reused and three affected rechecks. Runner skip and fixture ACL-order recovery failures preserved. Product unchanged; two owned PG stopped. Normal integration and final closure pending.",
+      "evidence": "docs/development/evidence/WP02-05/directory-configured-matrix/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -161979,40 +161984,32 @@
       "card_anchor": "wp02-05",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W20-03 实际目录HTTP宿主",
+        "chat_label": "COORD / W20-04 实际目录矩阵与收尾",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/wave20-directory-host-20261018",
+        "branch": "codex/wave20-directory-matrix-20261018",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-19T03:35:03.633717+00:00",
-        "baseline_sha": "73ddf0b9374e5f09140be4280895d150749f87c5",
+        "claimed_at": "2026-10-19T03:58:46.067222+00:00",
+        "baseline_sha": "08820bd53067cac140adc755a2c3373ee9e769ab",
         "entry_evidence": "docs/development/dispatch/20261018-wave20/README.md",
         "phase": "VALIDATED_READY_TO_INTEGRATE",
-        "dispatch_scope": "IDENTITY_DIRECTORY_ACTUAL_HTTP_HOST",
+        "dispatch_scope": "IDENTITY_DIRECTORY_ACTUAL_HTTP_MATRIX",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
         "actual_start_ref": {
-          "commit": "c155fa0a87ff9e139ebacf8504b33e4c5f427f20",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T033503Z-wave20-host-start/MESSAGE.md",
+          "commit": "64f193a3961d281b0da056b5f4d8f36a89a628cc",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T035846Z-wave20-matrix-start/MESSAGE.md",
           "kind": "START",
-          "at": "2026-10-19T03:35:03.633717+00:00"
+          "at": "2026-10-19T03:58:46.067222+00:00"
         },
         "allowed_write_paths": [
-          "CP6.WebApi/Configuration/IdentityDirectoryTenancy/IdentityDirectoryConfiguration.cs",
-          "CP6.WebApi/Services/IdentityDirectoryTenancy/IdentityDirectoryTenantHost.cs",
-          "CP6.WebApi/Configuration/CrmIdentityConfiguration.cs",
-          "CP6.WebApi/Controllers/Internal/CrmIdentityController.cs",
-          "CP6.Core/Persistence/Tenancy/README.md",
-          "CP6.Tests/IdentityDirectoryConfigurationTests.cs",
           "CP6.Tests/Persistence/Tenancy/IdentityDirectoryConfiguredHttpHost.cs",
-          "CP6.Tests/Persistence/Tenancy/IdentityDirectoryConfiguredHttpPostgresTests.cs",
-          "CP6.Tests/Persistence/Tenancy/IdentityDirectoryPostgresFixture.cs",
-          "docs/development/evidence/WP02-05/directory-host/DELIVERY.md"
+          "CP6.Tests/Persistence/Tenancy/IdentityDirectoryConfiguredHttpMatrixTests.cs",
+          "docs/development/evidence/WP02-05/directory-configured-matrix/DELIVERY.md"
         ],
         "reserved_write_resources": [
-          "Main:identity-directory-http",
-          "Main:identity-directory-profile"
+          "Main:identity-directory-http"
         ],
         "reserved_postgresql_ports": [
           55435
@@ -162022,7 +162019,7 @@
         "formal_publication_authorized": false,
         "existing_database_migration_authorized": false,
         "deployment_authorized": false,
-        "delivery_report": "docs/development/evidence/WP02-05/directory-host/DELIVERY.md",
+        "delivery_report": "docs/development/evidence/WP02-05/directory-configured-matrix/DELIVERY.md",
         "candidate_review_completed": true,
         "candidate_integrated": false,
         "review_mode": "Single combined SPEC/QUALITY author self-review; not independent"
@@ -162266,6 +162263,62 @@
             "kind": "DELIVERY",
             "at": "2026-10-19T01:16:39.587418+00:00"
           }
+        },
+        {
+          "chat_label": "COORD / W20-03 实际目录HTTP宿主",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/wave20-directory-host-20261018",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-10-19T03:35:03.633717+00:00",
+          "baseline_sha": "73ddf0b9374e5f09140be4280895d150749f87c5",
+          "entry_evidence": "docs/development/dispatch/20261018-wave20/README.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "IDENTITY_DIRECTORY_ACTUAL_HTTP_HOST",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "actual_start_ref": {
+            "commit": "c155fa0a87ff9e139ebacf8504b33e4c5f427f20",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T033503Z-wave20-host-start/MESSAGE.md",
+            "kind": "START",
+            "at": "2026-10-19T03:35:03.633717+00:00"
+          },
+          "allowed_write_paths": [
+            "CP6.WebApi/Configuration/IdentityDirectoryTenancy/IdentityDirectoryConfiguration.cs",
+            "CP6.WebApi/Services/IdentityDirectoryTenancy/IdentityDirectoryTenantHost.cs",
+            "CP6.WebApi/Configuration/CrmIdentityConfiguration.cs",
+            "CP6.WebApi/Controllers/Internal/CrmIdentityController.cs",
+            "CP6.Core/Persistence/Tenancy/README.md",
+            "CP6.Tests/IdentityDirectoryConfigurationTests.cs",
+            "CP6.Tests/Persistence/Tenancy/IdentityDirectoryConfiguredHttpHost.cs",
+            "CP6.Tests/Persistence/Tenancy/IdentityDirectoryConfiguredHttpPostgresTests.cs",
+            "CP6.Tests/Persistence/Tenancy/IdentityDirectoryPostgresFixture.cs",
+            "docs/development/evidence/WP02-05/directory-host/DELIVERY.md"
+          ],
+          "reserved_write_resources": [],
+          "reserved_postgresql_ports": [],
+          "handoff_branch": "codex/dev-coordination-20261012",
+          "actions_authorized": false,
+          "formal_publication_authorized": false,
+          "existing_database_migration_authorized": false,
+          "deployment_authorized": false,
+          "delivery_report": "docs/development/evidence/WP02-05/directory-host/DELIVERY.md",
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "review_mode": "Single combined SPEC/QUALITY author self-review; not independent",
+          "ports": {},
+          "integration": {
+            "source": "68785b04fec69a476fe8ddd838835b10e7d38f3e",
+            "main": "08820bd53067cac140adc755a2c3373ee9e769ab",
+            "pr": "https://github.com/GTX537/CP6/pull/293"
+          },
+          "delivery_ref": {
+            "commit": "64f193a3961d281b0da056b5f4d8f36a89a628cc",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T035846Z-wave20-host-delivery/MESSAGE.md",
+            "kind": "DELIVERY",
+            "at": "2026-10-19T03:58:46.067222+00:00"
+          }
         }
       ],
       "wave19_directory_delivery": {
@@ -162319,11 +162372,27 @@
         }
       },
       "wave20_directory_host_delivery": {
-        "status": "VALIDATED_NOT_INTEGRATED",
+        "status": "INTEGRATED",
         "report": "docs/development/evidence/WP02-05/directory-host/DELIVERY.md",
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
-        "validation": "18 configuration cases and one actual PG/HTTP adoption lifecycle passed; RED retained"
+        "validation": "18 configuration cases and one actual PG/HTTP adoption lifecycle passed; RED retained",
+        "source": "68785b04fec69a476fe8ddd838835b10e7d38f3e",
+        "main": "08820bd53067cac140adc755a2c3373ee9e769ab",
+        "pr": "https://github.com/GTX537/CP6/pull/293",
+        "handoff": {
+          "commit": "64f193a3961d281b0da056b5f4d8f36a89a628cc",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T035846Z-wave20-host-delivery/MESSAGE.md",
+          "kind": "DELIVERY",
+          "at": "2026-10-19T03:58:46.067222+00:00"
+        }
+      },
+      "wave20_directory_matrix_delivery": {
+        "status": "VALIDATED_NOT_INTEGRATED",
+        "report": "docs/development/evidence/WP02-05/directory-configured-matrix/DELIVERY.md",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "validation": "Seven targeted native PG/actual HTTP cases passed after affected-only recheck; prior skip/failures retained"
       }
     },
     {
@@ -179871,7 +179940,7 @@
       "path": "docs/development/dispatch/20261018-wave20/README.md",
       "baseline_sha": "d70d40efc6c85601d8c71e9c8b6a9393d2c93a3b",
       "registered_at": "2026-10-19T02:34:30.760355+00:00",
-      "phase": "W20_03_VALIDATED_READY_TO_INTEGRATE",
+      "phase": "W20_04_VALIDATED_READY_TO_INTEGRATE",
       "coordinator_shared_state_only": false,
       "assigned_chats": [
         "COORD"
@@ -180031,7 +180100,7 @@
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "gate": "CONFIRMED",
-          "phase": "VALIDATED_READY_TO_INTEGRATE",
+          "phase": "CLOSED",
           "estimated_hours": [
             4,
             6
@@ -180052,13 +180121,8 @@
           ],
           "planned_scope_ref": "docs/development/dispatch/20261018-wave20/README.md",
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "reserved_write_resources": [
-            "Main:identity-directory-http",
-            "Main:identity-directory-profile"
-          ],
-          "ports": {
-            "postgresql": 55435
-          },
+          "reserved_write_resources": [],
+          "ports": {},
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
@@ -180073,7 +180137,7 @@
           "actual_start_baseline_sha": "73ddf0b9374e5f09140be4280895d150749f87c5",
           "branch": "codex/wave20-directory-host-20261018",
           "candidate_review_completed": true,
-          "candidate_integrated": false,
+          "candidate_integrated": true,
           "delivery_report": "docs/development/evidence/WP02-05/directory-host/DELIVERY.md",
           "review_mode": "Single combined SPEC/QUALITY author self-review; not independent",
           "validation": {
@@ -180085,32 +180149,74 @@
             "owned_clusters": 1,
             "owned_postgresql_stopped": true,
             "scope": "Actual product JWT/source/authority/controller and ordinary PG A/B reads; broader matrix W20-04"
+          },
+          "reserved_postgresql_ports": [],
+          "integration": {
+            "source": "68785b04fec69a476fe8ddd838835b10e7d38f3e",
+            "main": "08820bd53067cac140adc755a2c3373ee9e769ab",
+            "pr": "https://github.com/GTX537/CP6/pull/293"
+          },
+          "delivery_ref": {
+            "commit": "64f193a3961d281b0da056b5f4d8f36a89a628cc",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T035846Z-wave20-host-delivery/MESSAGE.md",
+            "kind": "DELIVERY",
+            "at": "2026-10-19T03:58:46.067222+00:00"
           }
         },
         {
           "id": "W20-04",
-          "task_id": null,
+          "task_id": "WP02-05",
           "title": "受影响PG/HTTP/CLI验收与本轮收尾",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "gate": "SEQUENTIAL_PENDING",
-          "phase": "REGISTERED_NOT_STARTED",
+          "gate": "CONFIRMED",
+          "phase": "VALIDATED_READY_TO_INTEGRATE",
           "estimated_hours": [
             3,
             4
           ],
-          "worker_start_received": false,
-          "worker_delivery_received": false,
-          "write_paths": [],
+          "worker_start_received": true,
+          "worker_delivery_received": true,
+          "write_paths": [
+            "CP6.Tests/Persistence/Tenancy/IdentityDirectoryConfiguredHttpHost.cs",
+            "CP6.Tests/Persistence/Tenancy/IdentityDirectoryConfiguredHttpMatrixTests.cs",
+            "docs/development/evidence/WP02-05/directory-configured-matrix/DELIVERY.md"
+          ],
           "planned_scope_ref": "docs/development/dispatch/20261018-wave20/README.md",
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "reserved_write_resources": [],
-          "ports": {},
+          "reserved_write_resources": [
+            "Main:identity-directory-http"
+          ],
+          "ports": {
+            "postgresql": 55435
+          },
           "actions_authorized": false,
           "deployment_authorized": false,
           "existing_database_operations_authorized": false,
           "full_task_completed": false,
-          "business_acceptance": "NOT_RUN"
+          "business_acceptance": "NOT_RUN",
+          "actual_start_ref": {
+            "commit": "64f193a3961d281b0da056b5f4d8f36a89a628cc",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-05/messages/20261019T035846Z-wave20-matrix-start/MESSAGE.md",
+            "kind": "START",
+            "at": "2026-10-19T03:58:46.067222+00:00"
+          },
+          "actual_start_baseline_sha": "08820bd53067cac140adc755a2c3373ee9e769ab",
+          "branch": "codex/wave20-directory-matrix-20261018",
+          "candidate_review_completed": true,
+          "candidate_integrated": false,
+          "delivery_report": "docs/development/evidence/WP02-05/directory-configured-matrix/DELIVERY.md",
+          "review_mode": "Single combined SPEC/QUALITY author self-review; not independent",
+          "validation": {
+            "native_http_matrix_passed": 7,
+            "failed": 0,
+            "skipped": 0,
+            "evidence_root": "D:\\CP6-local-test\\wave20\\w20-04",
+            "owned_clusters": 2,
+            "owned_postgresql_stopped": true,
+            "reuse": "Four unchanged passes from first native matrix, three affected passes from recheck; prior CLI/config/profile evidence reused",
+            "scope": "Actual configured product JWT/source/authority/ordinary PG HTTP; isolated fixtures, not DEV/business"
+          }
         }
       ],
       "integration_order": "W20-01 -> W20-02 -> W20-03 -> W20-04; normal merge and remote verification before next task branch.",
@@ -180138,7 +180244,7 @@
       },
       "user_authority": "User explicitly requested next 24-hour remaining-foundation list and persistent goal, current chat only; goal active 2026-10-19T02:30:42Z.",
       "review_mode": "One combined task-level author SPEC/QUALITY self-review, not independent review.",
-      "next_action": "Normally integrate actual opt-in HTTP host, verify remote main, then W20-04 targeted matrix and closure in same directory."
+      "next_action": "Normally integrate affected matrix, verify remote main, then close all four bounded windows and goal after final shared-state/Handoff/resource checks."
     },
     "wave_history": [
       {

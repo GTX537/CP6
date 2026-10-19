@@ -1,5 +1,9 @@
 # 第二十轮：目录实际宿主与安装公共基础
 
+> W20-04实际产品宿主/普通PG矩阵7项最终通过；原跳过/失败保留，4项成功复用、3项局部复查通过，产品未变。两个自有PG停止。[单份DELIVERY](../../evidence/WP02-05/directory-configured-matrix/DELIVERY.md)。待正常集成与全轮状态收尾。
+
+> W20-03经PR293合入 `08820bd53067cac140adc755a2c3373ee9e769ab`，Handoff `64f193a3961d281b0da056b5f4d8f36a89a628cc` 回读；W20-04实际矩阵与收尾START，当前NOT_RUN。
+
 > W20-03实际HTTP宿主候选已验证：18项配置及1条原生PG/HTTP采用链路通过，Owner请求查询0，作者集中审查无阻断；自有PG停止。[单份DELIVERY](../../evidence/WP02-05/directory-host/DELIVERY.md)。待正常集成后继续W20-04矩阵收尾。
 
 > W20-02经PR292合入 `73ddf0b9374e5f09140be4280895d150749f87c5`；Handoff `c155fa0a87ff9e139ebacf8504b33e4c5f427f20` 回读。W20-03实际目录HTTP宿主真实START，验证NOT_RUN。
