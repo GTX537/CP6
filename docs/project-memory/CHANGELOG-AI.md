@@ -1,5 +1,11 @@
 # AI 可读变更日志
 
+## 2026-10-18：第十九轮四个有限窗口全部合入并关闭
+
+目录一致性(#284 Closed)、普通账号三表隔离、可信DTO读取、真实HTTP/PG串联分别经PR285/286/287/288合入，最新实施main `279248a25ab757a134968dea872e373820b16196`；Handoff `f5f23c3c2af2f4fef336c1c3cec67a33e23c885b` 回读。每项相关验证及一次作者集中审查闭环，未重复未变成功范围。[本轮汇总](../development/dispatch/20261018-wave19/README.md)列出独立证据和下一候选。
+
+17个自有PG及HTTP停止；新增worktree/代理/Actions为0，根7项用户资料保留。此文档收尾不启动产品测试，远端核对后完成外部持续目标；完整WP02/公共基础、生产宿主/环境切换、CRM/冻结目录/Owner最终门、真实DEV及业务生产未提升。
+
 ## 2026-10-18：W19-04 HTTP/PG串联候选已验证
 
 真实JwtBearer/原控制器与当前授权SQL/fixture可信上下文/普通账号目录链路4项场景去重通过，0剩余失败或跳过。覆盖A/B、当前撤销/租户停用、游标409、输入400、读权限撤销及not-ready503；HTTP no-store和错误体有效。原测试预期错误按锁定SDK源码修正，无产品改动。[单份DELIVERY](../development/evidence/WP02-05/directory-http-integration/DELIVERY.md)明确授权查询fixture_owner、目录directory_a/b；一次集中作者审查无阻断。
