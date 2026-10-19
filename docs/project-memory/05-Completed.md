@@ -1,5 +1,17 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-18：W19-04 HTTP/PG串联候选已验证
+
+真实JwtBearer/原控制器与当前授权SQL/fixture可信上下文/普通账号目录链路4项场景去重通过，0剩余失败或跳过。覆盖A/B、当前撤销/租户停用、游标409、输入400、读权限撤销及not-ready503；HTTP no-store和错误体有效。原测试预期错误按锁定SDK源码修正，无产品改动。[单份DELIVERY](../development/evidence/WP02-05/directory-http-integration/DELIVERY.md)明确授权查询fixture_owner、目录directory_a/b；一次集中作者审查无阻断。
+
+当前待正常PR/远端main核对及本轮四窗口收尾。三个自有PG及HTTP宿主停止，继续复用原工作目录/输出，无Actions/既有库/部署/代理。完整公共基础、生产host配置与全Main切换、CRM/冻结目录/Owner最终门、真实DEV和业务生产均未提升；持续目标active。
+
+## 2026-10-18：W19-03已合入，W19-04 HTTP串联开工
+
+候选 `90ea548999c0b82f12a00b94a2e0df3941cd6bcf` 经[PR287](https://github.com/GTX537/CP6/pull/287)合入远端main `525b16052f1c8edbe39d0e53eea69720d0de54a8`，16份范围文件及祖先关系已核对。31项去重验证与作者集中审查见[单份DELIVERY](../development/evidence/WP02-05/trusted-directory-reader/DELIVERY.md)，四个PG已停止。Handoff `f72b56518405ea9b21dc0445e507d2b387879fdd` 已发布并远端回读。
+
+W19-04复用原目录，在隔离宿主串联真实JWT/数据库授权/可信context/普通账号目录，分别记录控制授权查询与普通目录身份；当前验证NOT_RUN。默认Main不切换，无新工作树/代理/Actions/既有库/部署；完整WP02和业务生产不提升，持续目标active。
+
 ## 2026-10-18：W19-03可信普通账号目录reader候选已验证
 
 可信连接适配器/DTO接口与单语句PG分页已完成；实际普通A/B连接复用、映射撤销、取消释放、catalog变更丢弃旧结果、无Owner回退及调用者事务均有实证。最终31项去重通过（14原生PG、17配置），无剩余失败/跳过；原实现/编排失败与跳过尝试保留于[单份DELIVERY](../development/evidence/WP02-05/trusted-directory-reader/DELIVERY.md)。一次集中作者SPEC/QUALITY审查无阻断。

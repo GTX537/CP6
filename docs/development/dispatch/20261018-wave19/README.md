@@ -1,5 +1,9 @@
 # 第十九轮：身份目录公共基础单对话持续计划
 
+> W19-04真实HTTP/PG串联候选4项去重通过，集中作者审查无阻断，三个自有PG及HTTP宿主停止。[单份DELIVERY](../../evidence/WP02-05/directory-http-integration/DELIVERY.md)。正常集成后同步本轮四窗口关闭；完整公共基础和业务验收不提升。
+
+> W19-03经PR287合入 `525b16052f1c8edbe39d0e53eea69720d0de54a8`；Handoff `f72b56518405ea9b21dc0445e507d2b387879fdd` 回读。W19-04 HTTP串联/本轮收尾真实START，验证NOT_RUN。
+
 > W19-03候选31项去重通过（14原生PG+17配置），集中作者审查无阻断，四个自有PG停止；[单份DELIVERY](../../evidence/WP02-05/trusted-directory-reader/DELIVERY.md)。正常集成后继续W19-04 HTTP串联。
 
 > W19-02经PR286合入 `c2b808a1e081b20d537a665cef387b90c6b4e164`；Handoff `f201d63ac3f4423c91be83a9b702a255ce9503fa` 回读。W19-03可信连接reader现在START，验证NOT_RUN；下方记录保留历史时点。
