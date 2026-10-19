@@ -51,6 +51,7 @@
           {{ t('sec.2fa.sendEmailCode') }}
         </button>
       </div>
+      <PendingAuthenticationActions />
     </el-card>
   </div>
 </template>
@@ -62,32 +63,18 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { twoFactorApi } from '@/api/sys/twoFactor'
 import type { TwoFactorMethod } from '@/types/sys/twoFactor'
-import { addDynamicRoutes } from '@/router'
-import { usePlatformStore } from '@/stores/platform'
-import { resumeOidcReturn } from '../oidcReturn'
+import { navigateAuthentication } from '@/auth/navigation'
+import PendingAuthenticationActions from '@/auth/PendingAuthenticationActions.vue'
+import { authenticationSnapshot } from '@/auth/browserAuthentication'
 
 const { t } = useI18n()
 const router = useRouter()
 
 const code = ref('')
-const method = ref<TwoFactorMethod>('totp')
+const method = ref<TwoFactorMethod>(authenticationSnapshot().factorMethod || 'totp')
 const loading = ref(false)
 const sending = ref(false)
 
-// 与 LoginView 登录成功后处理对称：置非敏感登录态标志 + 存用户/菜单 + 挂动态路由 + 进首页。
-function completeLogin(res: any) {
-  localStorage.setItem('cp6_authed', '1')
-  localStorage.setItem('cp6_mustChangePwd', res.mustChangePassword ? '1' : '')
-  localStorage.setItem('cp6_isPlatformAdmin', res.isPlatformAdmin ? '1' : '')   // #5 带外平台区入口标志
-  usePlatformStore().refreshFlag()
-  localStorage.setItem('userName', res.userName)
-  localStorage.setItem('nickName', res.nickName || res.userName)
-  const menus = res.menus || []
-  localStorage.setItem('menus', JSON.stringify(menus))
-  addDynamicRoutes(menus)
-  if (!res.mustChangePassword && resumeOidcReturn()) return
-  router.push(res.mustChangePassword ? '/sys/change-password' : '/')
-}
 
 async function handleVerify() {
   if (!code.value.trim()) {
@@ -97,10 +84,11 @@ async function handleVerify() {
   loading.value = true
   try {
     const res: any = await twoFactorApi.verify({ code: code.value.trim(), method: method.value })
-    completeLogin(res)
-  } catch {
-    // 错误（E-SEC-011/013/002 等）由 http.ts 拦截器统一提示
+    navigateAuthentication(res)
+  } catch (error: any) {
+    ElMessage.error(error?.response?.data?.message ? t(error.response.data.message) : error?.message || '验证未完成。')
   } finally {
+    code.value = ''
     loading.value = false
   }
 }
@@ -113,8 +101,8 @@ async function switchToEmail() {
     method.value = 'email'
     code.value = ''
     ElMessage.success(t('sec.2fa.emailSent'))
-  } catch {
-    // E-SEC-014/015/016/018 由拦截器统一提示
+  } catch (error: any) {
+    ElMessage.error(error?.response?.data?.message ? t(error.response.data.message) : error?.message || '验证码发送结果未确认。')
   } finally {
     sending.value = false
   }
@@ -125,8 +113,8 @@ async function resendEmail() {
   try {
     await twoFactorApi.emailOtp()
     ElMessage.success(t('sec.2fa.emailSent'))
-  } catch {
-    // 同上
+  } catch (error: any) {
+    ElMessage.error(error?.response?.data?.message ? t(error.response.data.message) : error?.message || '验证码发送结果未确认。')
   } finally {
     sending.value = false
   }

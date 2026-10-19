@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-19：W27-01浏览器跨标签页认证恢复候选
+
+#335修正：原能力先存IndexedDB、Web Locks/共享epoch、准确profile/status/close、退出及身份切换清旧数据，业务写不重放，2FA刷新不重建secret。必要PG屏障/准确轮转映射及关闭审计同事务；55前端/6真实Chrome夹具场景通过，68项.NET主验证及7项最终边界通过/复用，作者集中审查无剩余阻断。W27-02/03及收尾仍待执行，完整IAM/CRM/真实业务未提升。[DELIVERY](../development/evidence/WP02-03/authentication-browser-recovery/DELIVERY.md)。
+
 ## 2026-10-19：第二十七轮浏览器恢复与SSO准入持续目标
 
 单COORD依次执行前端跨Tab安全恢复、SSO明确准入批准/配置CAS、初绑/JIT五分支与同PG映射回执/身份变化/强审计。预计代理实际4–7小时、故障余量10小时、24小时检查窗口；三窗及收尾全部完成再结束goal。原目录/缓存复用，无新代理/工作树/Actions；不自动批准真实tenant，不提升完整IAM/CRM/Owner/业务。[计划](../development/dispatch/20261019-wave27/README.md)。

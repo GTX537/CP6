@@ -4,6 +4,10 @@ import http from '../http'
 import { authApi } from './auth'
 
 const effects = vi.hoisted(() => ({ push: vi.fn(), error: vi.fn() }))
+const recovery = vi.hoisted(() => ({ refresh: vi.fn().mockRejectedValue(new Error('expired')) }))
+vi.mock('@/auth/browserAuthentication', async importOriginal => ({
+  ...await importOriginal<typeof import('@/auth/browserAuthentication')>(), refreshAuthentication: recovery.refresh,
+}))
 vi.mock('@/router', () => ({ default: { push: effects.push } }))
 vi.mock('element-plus', () => ({ ElMessage: { error: effects.error } }))
 vi.mock('@/i18n', () => ({ default: { global: { t: (key: string) => key } } }))
@@ -14,6 +18,7 @@ afterEach(() => {
   axios.defaults.adapter = original
   http.defaults.adapter = originalHttp
   vi.clearAllMocks()
+  localStorage.clear(); sessionStorage.clear()
 })
 
 describe('login page session probe', () => {
@@ -46,7 +51,8 @@ describe('login page session probe', () => {
   it('keeps refresh and expired-session handling for normal protected requests', async () => {
     const calls = transport(401)
     await expect(authApi.profile()).rejects.toBeDefined()
-    expect(calls).toEqual(['/auth/profile', '/auth/refresh'])
+    expect(calls).toEqual(['/auth/profile'])
+    expect(recovery.refresh).toHaveBeenCalledOnce()
     expect(effects.push).toHaveBeenCalledWith('/login')
     expect(effects.error).toHaveBeenCalled()
   })

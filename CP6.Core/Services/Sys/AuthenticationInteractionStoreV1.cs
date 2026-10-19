@@ -25,6 +25,7 @@ public sealed class AuthenticationInteractionStoreV1(CP6Context db)
     public async Task<int> InsertAsync(AuthenticationProofV1 proof, string challenge, string purpose, CancellationToken ct)
     {
         RequireTransaction();
+        if (proof.ClientKind == "Web") await new BrowserAuthenticationRecoveryV1(db).RequireOpenAsync(challenge, ct);
         if (await db.Database.ExecuteSqlInterpolatedAsync($"INSERT INTO cp6_authentication_v1.interactions(completion_id,challenge_hash,proof,purpose,state) VALUES ({proof.CompletionRef},{Hash(challenge)},{JsonSerializer.Serialize(proof)}::jsonb,{purpose},'pending') ON CONFLICT DO NOTHING", ct) != 1)
             throw new InvalidOperationException("REAUTH_REQUIRED");
         return 1;

@@ -24,10 +24,8 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { authApi } from '@/api/sys/auth'
-import { addDynamicRoutes } from '@/router'
-import { usePlatformStore } from '@/stores/platform'
-import { resumeOidcReturn } from '../oidcReturn'
+import { recoverAuthentication } from '@/auth/browserAuthentication'
+import { navigateAuthentication } from '@/auth/navigation'
 
 const { t, te } = useI18n()
 const route = useRoute()
@@ -43,33 +41,18 @@ function backToLogin() {
 }
 
 onMounted(async () => {
-  if (errorCode.value) return
-  if (route.query.challenge === '2fa_enroll' || route.query.challenge === '2fa_verify') {
-    localStorage.removeItem('cp6_authed')
-    await router.replace(route.query.challenge === '2fa_enroll' ? '/sys/2fa-enroll' : '/sys/2fa-challenge')
-    return
-  }
   try {
-    // R4：落地页加载后由 JS 发起同站 XHR（withCredentials），SameSite=Strict 放行 cp6_at——
-    // 这正是落地中转的目的（回调 302 写 Cookie 后不在跨站导航链上消费 Cookie）。
-    const res: any = await authApi.profile()
-    localStorage.setItem('cp6_authed', '1')
-    localStorage.setItem('cp6_mustChangePwd', res.mustChangePassword ? '1' : '')
-    localStorage.setItem('cp6_isPlatformAdmin', res.isPlatformAdmin ? '1' : '')   // #5 带外平台区入口标志
-    usePlatformStore().refreshFlag()
-    localStorage.setItem('userName', res.userName)
-    localStorage.setItem('nickName', res.nickName || res.userName)
-    const menus = res.menus || []
-    localStorage.setItem('menus', JSON.stringify(menus))
-    addDynamicRoutes(menus)
-    // SSO 登录也尊重强制改密（理论上 SSO 用户不会触发，但保持与密码登录守卫一致）
-    if (!res.mustChangePassword && resumeOidcReturn()) return
-    router.replace(res.mustChangePassword ? '/sys/change-password' : '/')
+    // The query is only a display hint. Owner status and the original attempt decide the next page.
+    if (errorCode.value) { await recoverAuthentication(true); return }
+    const result = await recoverAuthentication()
+    if (result.profile) navigateAuthentication(result.profile)
+    else if (result.state === 'PENDING') navigateAuthentication({ twoFactorRequired: true })
+    else errorCode.value = '登录结果尚未确认，请检查状态或结束原交互。'
   } catch {
-    // profile 失败（cookie 缺失/过期）→ 视为登录失败，落错误态。
-    errorCode.value = 'E-SEC-022'
+    errorCode.value = '登录结果尚未确认，请检查状态或结束原交互。'
   }
 })
+
 </script>
 
 <style scoped>

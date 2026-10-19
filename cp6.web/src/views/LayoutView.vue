@@ -351,18 +351,11 @@ onBeforeUnmount(() => {
 })
 
 async function handleLogout() {
-  // T9：先让后端清三 Cookie + 黑名单当前 access jti（失败也继续本地清理）
-  try {
-    await authApi.logout()
-  } catch {
-    // 后端清理失败（如 token 已失效）不阻断本地登出
-  }
-  localStorage.clear()              // 含 cp6_isPlatformAdmin
-  platformStore.clearImpersonation() // 清 sessionStorage cp6_impersonating + 内存态
-  platformStore.refreshFlag()        // 同步 isPlatformAdmin=false（localStorage 已清）
-  resetRoutes()
+  // Invalidation is immediate; unresolved server closure stays visible in the shared recovery boundary.
+  try { await authApi.logout() } catch { /* Keep the original recovery record. */ }
   router.push('/login')
 }
+
 </script>
 
 <style scoped>

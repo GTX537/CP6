@@ -34,7 +34,9 @@ public class CsrfMiddleware
                 .StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase);
             // Recovery with a client-held attempt secret consumes that header exclusively, never ambient cookies.
             var explicitCompletion = (path.Equals("/api/auth/completion/status", StringComparison.OrdinalIgnoreCase)
-                || path.Equals("/api/auth/completion/close", StringComparison.OrdinalIgnoreCase))
+                || path.Equals("/api/auth/completion/close", StringComparison.OrdinalIgnoreCase)
+                || path.Equals("/api/auth/completion/browser/status", StringComparison.OrdinalIgnoreCase)
+                || path.Equals("/api/auth/completion/browser/close", StringComparison.OrdinalIgnoreCase))
                 && ctx.Request.Headers.TryGetValue(CP6.WebApi.Services.AuthenticationRecoveryBindingV1.Header, out var attempt)
                 && attempt.Count == 1 && attempt[0] is { Length: 64 } key && key.All(Uri.IsHexDigit);
             if (!explicitBearer
