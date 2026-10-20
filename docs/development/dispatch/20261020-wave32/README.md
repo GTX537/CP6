@@ -16,7 +16,8 @@ COORD当前聊天独立；基线`ad4313f8ce0aea9840189d015c0ddadf6b03551e`，开
 - [x] 新鲜READ COMMITTED事务先取得与普通撤权writer共用的PG authority根，再锁定业务行；所有同单传播、金额、审批状态及工作流意图原子提交。提交前重读权限/有效期，旧事务、脏上下文、故障不能降级放行。
 - [x] 工作流意图与业务同库落盘；原真实注册仅日志桩，不能以桩输出当外部成功。正式POWER EGG投递及46项映射仍需独立采用，不在本窗接真实外部系统。
 - [x] 保留decimal精度、缺失行结果和RowVersion并发合同；拒绝时整个意图无部分写入。不吞掉失败，未知提交结果明确不可自动重放。
-- [ ] 必要PG前向迁移仅运行于自有隔离实例。定向验证与一次作者审查、单份DELIVERY、正常PR远端采用、roadmap/四状态/Handoff及manage finish；停止自有服务并安全回收本轮可再生data。
+- [x] 必要PG前向迁移仅运行于自有隔离实例；完成定向验证、一次作者审查、单份DELIVERY、产品PR远端采用及Handoff。自有服务停止、本轮可再生data安全回收。
+- [ ] 本提交的最终台账/四状态文档PR合并后，调用原W32-01的manage finish；最终实际结果记录在管理登记与PR收尾评论。此复选框为提交时点，不提前声称自身收尾已执行。
 
 范围为现有单价订正写操作的Owner接线和最终效果门。读取/导出及其他Order写入口、CRM持久采用、未映射部门范围和真实业务验收不提升；不宣称全部IAM完成。已有字段计算/可信来源证据按输入变化复用。无Actions、既有环境迁移、真实tenant审批或生产部署；125目标/247真实运行保持。
 
@@ -25,3 +26,18 @@ COORD当前聊天独立；基线`ad4313f8ce0aea9840189d015c0ddadf6b03551e`，开
 原认证/会话在锁内及提交前复查；传播行的金额/审批一致性、原生业务键比较、未删除/已删除明细锁定、页面真实工作流状态和UNKNOWN/确认跨身份防重放，均属于这一Owner写入意图的必要闭环，同一W32-01分支连续完成。没有另开业务方向、任务分支或席位。
 
 [P0#365](https://github.com/GTX537/CP6/issues/365)已在原分支修正。最终49项后端/原生PG/实际宿主+9项前端通过，类型检查通过，0最终失败/跳过。[单份DELIVERY](../../evidence/WP02-03/order-price-correction-owner/DELIVERY.md)。自有服务已停，5处data回收且失败证据保留。待正常PR、Handoff和同分支文档收尾后再finish；不为每次进度新增分支。
+
+## 远端采用与本任务收尾
+
+|项目|实际核对结果|分支和固定席位|
+|---|---|---|
+|W32-01产品|[PR #366](https://github.com/GTX537/CP6/pull/366)已合并；source`85a3475a3da3e653f64c9d1752335380c362459c`，remote main`f39351c22ac62def3a6502f43529141b4b0fc10d`，改动文件blob一致；#365已按原步骤回归及远端采用后关闭|本文件继续在原codex/w32-01、DEV-1完成最后文档PR；合并后调用同一任务finish|
+|W32-HANDOFF|[PR #8](https://github.com/GTX537/CP6.AI-Handoff/pull/8)已合入默认目标；source`0021ddac034d880175bc24d428b41bf611c609e5`，目标`09d3f559bb031c735f2a69ac6b2e0b0f6c75eff9`|codex/w32-handoff本地/远端已删除；DEV-2干净detached，已释放|
+
+本轮限定的单价订正Owner映射、实际业务写入接线和最终撤权门已集成。49项相关.NET/原生PG/实际Program、9项Vitest4.1.11及最终类型检查通过，最终0失败/跳过；一次作者SPEC/QUALITY无本窗阻断。此最后文档未改变产品/依赖/环境，直接复用原验证，只查台账结构、差异和链接。
+
+自有PG/API已停止；五处自有生成data已安全回收，逻辑570849903字节（0.532GiB），清理时段D盘实际空闲增加573251584字节（0.534GiB）。日志、TRX及初始失败保留；不将磁盘其他活动算作本任务逻辑回收。
+
+本提交如实记录写入时点：Main仍持有W32-01席位，仅为本提交的正常PR/finish；不能由提交自身提前证明未来合并或释放。最终实际“分支处置、工作区、席位”查既有管理登记`D:/CP6/.git/cp6-workspaces/state.json`、最后PR收尾评论及`C:/Users/tt/CP6-planning-reports/20261017-foundation/wave32-final-verification.json`。不另开W32-CLOSE任务或分支。INTEGRATION-1空闲，零新树/clone/整仓副本/代理。
+
+仍待ERP部门与IAM可信映射、Order其余读/写/导出、跨重载operation恢复、POWER EGG正式报文/真实投递、CRM Owner采用及真实业务验收。完整WP02-03、125目标/247真实运行不提升，不重开冻结方向。无Actions、既有环境迁移、真实tenant审批或生产部署。原估计本代理3–4.5小时/故障余量6小时；最终耗时在真实finish后报告，不等待满24小时。

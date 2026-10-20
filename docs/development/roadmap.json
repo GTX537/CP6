@@ -159252,6 +159252,11 @@
       "date": "2026-10-20",
       "change": "W32 Main order price correction Owner mapping and final PostgreSQL fence ready; P0#365 original failures fixed,49 backend/native/actual HTTP+9 frontend pass. Same task branch for final docs; no new workspace.",
       "evidence": "docs/development/evidence/WP02-03/order-price-correction-owner/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-20",
+      "change": "W32 product https://github.com/GTX537/CP6/pull/366 and Handoff https://github.com/GTX537/CP6.AI-Handoff/pull/8 integrated; #365 closed.49 backend/native PG/actual HTTP and9 frontend tests plus typecheck pass. Handoff branch deleted/seat released; original W32-01 remains active solely for this final documentation PR before finish. Full business acceptance unchanged.",
+      "evidence": "docs/development/dispatch/20261020-wave32/README.md"
     }
   ],
   "implementation_assessment": {
@@ -161831,7 +161836,7 @@
         "claimed_at": "2026-10-20T10:26:11.503790+00:00",
         "baseline_sha": "ad4313f8ce0aea9840189d015c0ddadf6b03551e",
         "entry_evidence": "docs/development/dispatch/20261020-wave32/README.md",
-        "phase": "READY_FOR_INTEGRATION",
+        "phase": "CLOSED",
         "dispatch_scope": "W32_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -161855,21 +161860,15 @@
           "cp6.web/src/types/erp/order.ts",
           "docs/codemap-erp/"
         ],
-        "reserved_write_resources": [
-          "Main:identity-authority",
-          "Main:order-price-correction",
-          "Main:Core-PG-migration"
-        ],
-        "reserved_postgresql_ports": [
-          55435
-        ],
+        "reserved_write_resources": [],
+        "reserved_postgresql_ports": [],
         "handoff_branch": "codex/w32-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": false,
+        "candidate_integrated": true,
         "resources_released": false,
         "full_task_completed": false,
         "local_ready_to_merge": true,
@@ -161879,7 +161878,41 @@
         "business_acceptance": "NOT_RUN",
         "issues": [
           365
-        ]
+        ],
+        "integration": {
+          "result": "PASS",
+          "repository": "GTX537/CP6",
+          "source": "85a3475a3da3e653f64c9d1752335380c362459c",
+          "main": "f39351c22ac62def3a6502f43529141b4b0fc10d",
+          "pr": "https://github.com/GTX537/CP6/pull/366",
+          "observed_at": "2026-10-20T11:13:22.999523+00:00"
+        },
+        "delivery_ref": {
+          "commit": "0021ddac034d880175bc24d428b41bf611c609e5",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T111737Z-wave32-delivery/MESSAGE.md",
+          "at": "2026-10-20T11:17:37.610307+00:00",
+          "pr": 8,
+          "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/8",
+          "base": "codex/t02c-entry-handoff-20260921"
+        },
+        "runtime_resources_released": true,
+        "lifecycle_snapshot": {
+          "observed_at": "2026-10-20T11:20:26.190171+00:00",
+          "main_task": "CP6:W32-01",
+          "main_branch": "codex/w32-01",
+          "main_status": "active-final-documentation",
+          "main_seat_released": false,
+          "main_finish_required": true,
+          "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
+          "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave32-final-verification.json",
+          "handoff_seat_released": true,
+          "note": "Product integrated. Same task branch carries this final documentation PR; after its verified merge call finish and record actual branch/seat disposition in the manager and closing PR comment. No extra coordination branch."
+        },
+        "active_issues": [],
+        "closed_issues": [
+          365
+        ],
+        "product_closed_at": "2026-10-20T11:13:22.999523+00:00"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -163965,11 +163998,22 @@
         }
       },
       "wave32_delivery": {
-        "status": "READY_FOR_INTEGRATION",
+        "status": "MERGED",
         "report": "docs/development/evidence/WP02-03/order-price-correction-owner/DELIVERY.md",
         "validation": "49 related .NET/native PG/actual Program and9 Vitest4.1.11 pass; final typecheck passes;0 final failed/skipped; original failures retained",
         "full_task_complete": false,
-        "business_acceptance": "NOT_RUN"
+        "business_acceptance": "NOT_RUN",
+        "source_candidate_sha": "85a3475a3da3e653f64c9d1752335380c362459c",
+        "remote_main_sha": "f39351c22ac62def3a6502f43529141b4b0fc10d",
+        "pull_request": "https://github.com/GTX537/CP6/pull/366",
+        "handoff": {
+          "commit": "0021ddac034d880175bc24d428b41bf611c609e5",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T111737Z-wave32-delivery/MESSAGE.md",
+          "at": "2026-10-20T11:17:37.610307+00:00",
+          "pr": 8,
+          "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/8",
+          "base": "codex/t02c-entry-handoff-20260921"
+        }
       }
     },
     {
@@ -182507,7 +182551,7 @@
       "path": "docs/development/dispatch/20261020-wave32/README.md",
       "baseline_sha": "ad4313f8ce0aea9840189d015c0ddadf6b03551e",
       "registered_at": "2026-10-20T10:26:11.503790+00:00",
-      "phase": "READY_FOR_INTEGRATION",
+      "phase": "CLOSED",
       "assigned_chats": [
         "COORD"
       ],
@@ -182517,12 +182561,10 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [
-        "COORD"
-      ],
+      "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": false,
-      "product_integrated": false,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W32-01",
@@ -182530,7 +182572,7 @@
           "title": "受注单价订正Owner写入与最终撤权门",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "READY_FOR_INTEGRATION",
+          "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "actual_start_ref": {
@@ -182547,7 +182589,7 @@
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "candidate_integrated": false,
+          "candidate_integrated": true,
           "local_ready_to_merge": true,
           "delivery_evidence": "docs/development/evidence/WP02-03/order-price-correction-owner/DELIVERY.md",
           "validation": "49 related .NET/native PG/actual Program and9 Vitest4.1.11 pass; final typecheck passes;0 final failed/skipped; original failures retained",
@@ -182555,7 +182597,42 @@
           "issues": [
             365
           ],
-          "scope_refinement": "Bounded original-session revalidation, native business-key semantics, propagation money/approval consistency and truthful workflow/unknown UI are necessary to this one Owner write task. No second implementation branch or workspace."
+          "scope_refinement": "Bounded original-session revalidation, native business-key semantics, propagation money/approval consistency and truthful workflow/unknown UI are necessary to this one Owner write task. No second implementation branch or workspace.",
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "85a3475a3da3e653f64c9d1752335380c362459c",
+            "main": "f39351c22ac62def3a6502f43529141b4b0fc10d",
+            "pr": "https://github.com/GTX537/CP6/pull/366",
+            "observed_at": "2026-10-20T11:13:22.999523+00:00"
+          },
+          "delivery_ref": {
+            "commit": "0021ddac034d880175bc24d428b41bf611c609e5",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T111737Z-wave32-delivery/MESSAGE.md",
+            "at": "2026-10-20T11:17:37.610307+00:00",
+            "pr": 8,
+            "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/8",
+            "base": "codex/t02c-entry-handoff-20260921"
+          },
+          "runtime_resources_released": true,
+          "resources_released": false,
+          "lifecycle_snapshot": {
+            "observed_at": "2026-10-20T11:20:26.190171+00:00",
+            "main_task": "CP6:W32-01",
+            "main_branch": "codex/w32-01",
+            "main_status": "active-final-documentation",
+            "main_seat_released": false,
+            "main_finish_required": true,
+            "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
+            "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave32-final-verification.json",
+            "handoff_seat_released": true,
+            "note": "Product integrated. Same task branch carries this final documentation PR; after its verified merge call finish and record actual branch/seat disposition in the manager and closing PR comment. No extra coordination branch."
+          },
+          "active_issues": [],
+          "closed_issues": [
+            365
+          ],
+          "product_closed_at": "2026-10-20T11:13:22.999523+00:00"
         }
       ],
       "horizon": {
@@ -182571,7 +182648,28 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Normal product PR, Handoff and same-task-branch final documentation; then finish both fixed seats, no extra coordination branch"
+      "next_action": "W32 bounded order price correction Owner/write fence is integrated. Finish original W32-01 after this documentation PR. Next bounded work: trusted ERP department/IAM mapping, remaining Order operations, durable operation recovery, real workflow adapter or CRM Owner adoption according to accepted contracts; do not repeat completed W27-W32 or restart frozen directions.",
+      "product_closed_at": "2026-10-20T11:13:22.999523+00:00",
+      "handoff_integration": {
+        "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/8",
+        "commit": "09d3f559bb031c735f2a69ac6b2e0b0f6c75eff9",
+        "target_head": "09d3f559bb031c735f2a69ac6b2e0b0f6c75eff9"
+      },
+      "handoff_resources_released": true,
+      "handoff_branch_disposition": "deleted-local-and-remote",
+      "lifecycle_snapshot": {
+        "observed_at": "2026-10-20T11:20:26.190171+00:00",
+        "main_task": "CP6:W32-01",
+        "main_branch": "codex/w32-01",
+        "main_status": "active-final-documentation",
+        "main_seat_released": false,
+        "main_finish_required": true,
+        "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
+        "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave32-final-verification.json",
+        "handoff_seat_released": true,
+        "note": "Product integrated. Same task branch carries this final documentation PR; after its verified merge call finish and record actual branch/seat disposition in the manager and closing PR comment. No extra coordination branch."
+      }
     },
     "wave_history": [
       {
