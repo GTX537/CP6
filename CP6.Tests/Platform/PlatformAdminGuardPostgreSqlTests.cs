@@ -221,8 +221,21 @@ public sealed class PlatformAdminGuardPostgreSqlTests(TenantManagementPostgresFi
             Assert.Contains("E-SEC-037", await response.Content.ReadAsStringAsync());
         }
         await Rejected(HttpMethod.Post, $"api/platform/admin/{actor}/revoke");
-        await Rejected(HttpMethod.Put, "api/user", new { Id = actor, UserName = admin.UserName, Enable = false, RoleId = 72301 });
-        await Rejected(HttpMethod.Delete, "api/user", new[] { actor });
+        // Versionless legacy user writes now stop at the IAM command contract. The complete
+        // current-session/versioned survivor path is covered by IamUserAssignmentsPostgreSqlTests.
+        using (var edit = new HttpRequestMessage(HttpMethod.Put, "api/user"))
+        {
+            edit.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            edit.Content = JsonContent.Create(new { Id = actor, UserName = admin.UserName, Enable = false, RoleId = 72301 });
+            using var rejected = await host.Client.SendAsync(edit); Assert.Equal(HttpStatusCode.BadRequest, rejected.StatusCode);
+            Assert.Contains("IAM_COMMAND_ENVELOPE_REQUIRED", await rejected.Content.ReadAsStringAsync());
+        }
+        using (var deletion = new HttpRequestMessage(HttpMethod.Delete, "api/user"))
+        {
+            deletion.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token); deletion.Content = JsonContent.Create(new[] { actor });
+            using var rejected = await host.Client.SendAsync(deletion); Assert.Equal(HttpStatusCode.Conflict, rejected.StatusCode);
+            Assert.Contains("IAM_DELETE_REQUIRES_RETENTION_REVIEW", await rejected.Content.ReadAsStringAsync());
+        }
         Assert.Equal(1, await Count());
         var target = User(false); setup.Sys_Users.Add(target); await setup.SaveChangesAsync();
         foreach (var operation in new[] { "grant", "revoke" })
