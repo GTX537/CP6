@@ -22,25 +22,25 @@ W27跨标签页认证恢复(PR336)、明确SSO首次身份审批(PR338)、初绑
 - [x] 复现旧入口不核角色/部门/经理有效引用和缺CAS；保留真实失败。
 - [x] 白名单创建/编辑、主附角色同保存，合法null；角色停用历史保留但不新授，跨tenant/失效引用拒绝。引用版本含ABA，当前actor等根锁后重验。
 - [x] 原密码服务与明确reset政策、refresh吊销同事务；不暴露密码/身份秘密。审计、IdentityChange/Outbox与回执同提交；UNKNOWN按原operation查询/封闭。
-- [x] PG实际writer并发、失权、引用变化、事务故障/原操作恢复及HTTP相关行为验证。一次作者SPEC/QUALITY、单份DELIVERY就绪；正常PR合并、finish待实际核对。
+- [x] PG实际writer并发、失权、引用变化、事务故障/原操作恢复及HTTP相关行为验证。一次作者SPEC/QUALITY、单份DELIVERY就绪；正常PR347合并及finish已核对。
 
 ## W28-02（组织API与页面同窗）
 
 文件：DeptService/DeptController/UserOrg适配、必要PG组织revision与writer门；Dept DTO及相关PG/HTTP测试。父/leader/null/停用祖先语义按原设计；整树诊断不把孤儿升root用于权限。
 
-- [ ] 原树版本、预览影响、自身/子孙成环和跨tenant引用检查；提交再核版本。
-- [ ] 同事务移动整子树，拒绝子部门/用户/已知自定义scope等引用删除；缺业务删除/hold权威时明确关闭破坏性入口，不默认级联。
-- [ ] 实际writer加入共同门与版本，既有Main身份传播和scope当前判定；历史审批快照不改。
-- [ ] PG并发树更新/回滚/原操作恢复；单份交付、集中审查、合并与finish。
+- [x] 原树版本、预览影响、自身/子孙成环和跨tenant引用检查；提交再核版本。
+- [x] 同事务移动整子树，拒绝子部门/用户/已知自定义scope等引用删除；缺业务删除/hold权威时明确关闭破坏性入口，不默认级联。
+- [x] 实际writer加入共同门与版本，既有Main身份传播和scope当前判定；历史审批快照不改。
+- [x] PG并发树更新/回滚/原操作恢复；单份交付、集中审查、合并与finish。
 
 ## W28-03（并入W28-02）与收尾
 
 文件：cp6.web/src/views/pms/UserView.vue、DeptTreeView.vue，相关api/types与行为测试；复用已有跨标签页认证协调器。
 
-- [ ] 主附角色一致选择、停用项历史展示；412保非敏感草稿，重载后明确重新确认；结果未知保原operation，不生成新ID盲重放。
-- [ ] 移动预览/确认、失败/迟到响应/切换主体保护，只有确认成功才显示已保存；不声称CRM投影已同步。
-- [ ] 相关Vitest/typecheck/真实页面夹具，按变化选择PG/HTTP组合回归；复用未变W27认证结果。
-- [ ] 同步roadmap与生成页、四状态、Handoff；每项正常合并后停止自有进程、精确清理任务分支并释放席位。最终核无遗留写入者。
+- [x] 主附角色一致选择、停用项历史展示；412保非敏感草稿，重载后明确重新确认；结果未知保原operation，不生成新ID盲重放。
+- [x] 移动预览/确认、失败/迟到响应/切换主体保护，只有确认成功才显示已保存；不声称CRM投影已同步。
+- [x] 相关Vitest/typecheck/真实页面夹具，按变化选择PG/HTTP组合回归；复用未变W27认证结果。
+- [x] 同步roadmap与生成页、四状态、Handoff；每项正常合并后停止自有进程、精确清理任务分支并释放席位。最终核无遗留写入者。
 
 ## 环境及真实边界
 
@@ -54,4 +54,18 @@ W28-01：PR347，源`9eb79591380f8190afdb0272c9e84b73fc111984`，main`1593d57383
 
 ## 范围与验证接续
 
-W28-02的组织页面与API同分支交付；原W28-03恢复/组合验证已在同一窗口完成，不创建codex/w28-03。已完成当前用户/组织页面冲突、原操作UNKNOWN、跨Tab与身份撤销保护，以及Main当前CRM输出/审批路由组合验证。50项唯一有效.NET/PG/HTTP、14Vitest、5Chrome夹具、vue-tsc通过/复用；一次作者集中审查无阻断，原失败保留。所有本窗测试进程已停止。剩余步骤是正常PR、远端核对、finish及本轮协调资料最终同步。
+W28-02的组织页面与API同分支交付；原W28-03恢复/组合验证已在同一窗口完成，不创建codex/w28-03。已完成当前用户/组织页面冲突、原操作UNKNOWN、跨Tab与身份撤销保护，以及Main当前CRM输出/审批路由组合验证。50项唯一有效.NET/PG/HTTP、14Vitest、5Chrome夹具、vue-tsc通过/复用；一次作者集中审查无阻断，原失败保留。所有本窗测试进程已停止。产品正常PR、远端核对及finish现已完成；本提交同步最终协调资料，随后该文档任务自身执行正常PR/finish。
+
+## 最终交付与实际处置（2026-10-20）
+
+| 项目 | 合入与证据 | 分支、工作区、席位实际结果 |
+|---|---|---|
+| W28-01 | [PR347](https://github.com/GTX537/CP6/pull/347)，源`9eb79591380f8190afdb0272c9e84b73fc111984`，main`1593d573837e46a579074ed3224f47f59d9ce5f0`；[单份交付](../../evidence/WP02-03/iam-user-assignments/DELIVERY.md) | #346 Closed；本地/远端codex/w28-01已删除；DEV-1干净detached并释放后复用 |
+| W28-02+03 | [PR349](https://github.com/GTX537/CP6/pull/349)，源`695d7dbc2662928a1b65712b2fdab59da9c0333a`，main`f9dd8a444fc385ef6295c088cde59f27ffbb330b`；[单份交付](../../evidence/WP02-03/organization-administration/DELIVERY.md) | #348 Closed；本地/远端codex/w28-02已删除；DEV-1干净detached并释放；未创建codex/w28-03 |
+| W28-HANDOFF | [PR3](https://github.com/GTX537/CP6.AI-Handoff/pull/3)，源`0a5413ca5af2429e75a4400a68486b374255bd2d`，默认分支合并`0cb04802f7602d61b9baa9c8cfd8f5a25b8fabc7` | codex/w28-handoff本地/远端已删除；DEV-2干净detached，席位已释放 |
+
+最终W28-CLOSEOUT只处理本表、roadmap、生成页与四状态文件；经start在已释放DEV-1从产品main领取，不新增目录。它的最终PR/source/finish结果记录在统一管理登记和最终聊天回执，不能用本文预先声称该提交自身已合并。固定INTEGRATION-1始终空闲。所有产品PG/HTTP/Vite停止，原失败证据保留，四仓配额2+1保持。
+
+验证结论：用户窗77有效.NET、7Vitest、2Chrome；组织/组合窗50唯一有效.NET/PG/HTTP、14Vitest、5Chrome、vue-tsc通过/复用。跨窗存在重叠，不汇总成虚增总数。一次作者SPEC/QUALITY/完整任务，无剩余阻断；本最终文档只做diff、链接和台账生成校验，不重跑产品验证。没有Actions运行、真实租户SSO批准、既有环境迁移或生产部署。
+
+原估计是本代理6–9小时（故障余量12小时），实际产品与Handoff完成于约05:31Z，自04:05Z起约86分钟，提前完成；最终台账PR/finish后才关闭持续目标。W27跨Tab认证与首次SSO批准已复用，本轮没有重做。完整IAM剩余角色生命周期/业务引用与保留权威、CRM/Owner正式采用和真实业务验收仍需后续独立窗口；247运行场景保持NOT_RUN，不把这些限定交付改称整包完成。

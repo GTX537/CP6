@@ -159167,6 +159167,11 @@
       "date": "2026-10-20",
       "change": "W28-02+03 versioned organization/healthy scopes and user/org recovery ready together; original W28-03 folded into the same branch. Related evidence passed; full business unchanged.",
       "evidence": "docs/development/evidence/WP02-03/organization-administration/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-20",
+      "change": "W28 product windows closed: PR347/349 merged, issues346/348 closed, exact task branches deleted and DEV-1 released. W28-03 included in original W28-02 branch. Handoff PR3 merged/default verified and DEV-2 released. Final coordination documentation closes separately; full business states unchanged.",
+      "evidence": "docs/development/dispatch/20261020-wave28/README.md"
     }
   ],
   "implementation_assessment": {
@@ -161746,7 +161751,7 @@
         "claimed_at": "2026-10-20T04:59:50.107413+00:00",
         "baseline_sha": "1593d573837e46a579074ed3224f47f59d9ce5f0",
         "entry_evidence": "docs/development/dispatch/20261020-wave28/README.md",
-        "phase": "READY_TO_MERGE",
+        "phase": "CLOSED",
         "dispatch_scope": "W28_02_03",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -161769,25 +161774,78 @@
           "docs/project-memory/",
           "cp6.web/"
         ],
-        "reserved_write_resources": [
-          "Main:identity-authority"
-        ],
-        "reserved_postgresql_ports": [
-          55435
-        ],
+        "reserved_write_resources": [],
+        "reserved_postgresql_ports": [],
         "handoff_branch": "codex/w28-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": false,
-        "resources_released": false,
+        "candidate_integrated": true,
+        "resources_released": true,
         "full_task_completed": false,
         "delivery_report": "docs/development/evidence/WP02-03/organization-administration/DELIVERY.md",
-        "active_issue": {
+        "integration": {
+          "result": "PASS",
+          "repository": "GTX537/CP6",
+          "source": "695d7dbc2662928a1b65712b2fdab59da9c0333a",
+          "main": "f9dd8a444fc385ef6295c088cde59f27ffbb330b",
+          "pr": "https://github.com/GTX537/CP6/pull/349",
+          "paths": [
+            "CP6.Core/Services/Sys/DataScopeFilter.cs",
+            "CP6.Core/Services/Sys/DeptService.cs",
+            "CP6.Core/Services/Sys/IamAdministrationV1.cs",
+            "CP6.Core/Services/Sys/IamDepartmentAdministrationV1.cs",
+            "CP6.Core/Services/Sys/PostgreSqlOrganizationV1.cs",
+            "CP6.Core/Services/Sys/PostgreSqlPermissionReader.cs",
+            "CP6.Core/Services/Wf/ApproverResolver.cs",
+            "CP6.Entity/DTOs/Sys/DeptDtos.cs",
+            "CP6.Tests/CrmIdentityWriterPostgreSqlTests.cs",
+            "CP6.Tests/CurrentPermissionConsumptionPostgreSqlTests.cs",
+            "CP6.Tests/Persistence/Tenancy/IdentityWriterBaselinePostgresTests.cs",
+            "CP6.Tests/Platform/IamAdministrationTestSession.cs",
+            "CP6.Tests/Platform/IamOrganizationCommandsPostgreSqlTests.cs",
+            "CP6.Tests/Platform/IamOrganizationHttpPostgreSqlTests.cs",
+            "CP6.Tests/Platform/IamOrganizationPostgreSqlTests.cs",
+            "CP6.WebApi/Controllers/Sys/DeptController.cs",
+            "CP6.WebApi/Controllers/Sys/IamDepartmentController.cs",
+            "CP6.WebApi/Program.cs",
+            "CP6.WebApi/Services/CrmOidcDirectory.cs",
+            "cp6.web/e2e/iam-departments-fixture.ts",
+            "cp6.web/e2e/iam-departments.spec.ts",
+            "cp6.web/playwright.authentication-recovery.config.ts",
+            "cp6.web/src/api/sys/iam.ts",
+            "cp6.web/src/views/pms/DeptTreeView.spec.ts",
+            "cp6.web/src/views/pms/DeptTreeView.vue",
+            "cp6.web/src/views/pms/UserView.spec.ts",
+            "cp6.web/src/views/pms/UserView.vue",
+            "docs/development/07-detailed-tasks.md",
+            "docs/development/09-parallel-development.md",
+            "docs/development/dispatch/20261020-wave28/README.md",
+            "docs/development/evidence/WP02-03/organization-administration/DELIVERY.md",
+            "docs/development/roadmap.json",
+            "docs/project-memory/05-Completed.md",
+            "docs/project-memory/06-Todo.md",
+            "docs/project-memory/CHANGELOG-AI.md",
+            "docs/project-memory/PROJECT_STATE.md"
+          ],
+          "observed_at": "2026-10-20T05:27:45.885002+00:00"
+        },
+        "delivery_ref": {
+          "commit": "0a5413ca5af2429e75a4400a68486b374255bd2d",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T052910Z-wave28-delivery/MESSAGE.md",
+          "at": "2026-10-20T05:29:10.897569+00:00",
+          "pr": 3,
+          "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/3",
+          "base": "codex/t02c-entry-handoff-20260921"
+        },
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse",
+        "closed_at": "2026-10-20T05:28:23.182697+00:00",
+        "resolved_issue": {
           "number": 348,
-          "state": "OPEN",
+          "state": "CLOSED",
           "url": "https://github.com/GTX537/CP6/issues/348"
         }
       },
@@ -181857,7 +181915,7 @@
       "path": "docs/development/dispatch/20261020-wave28/README.md",
       "baseline_sha": "85fd27e3bf619a541a9fece2be32d6dbf8a89f53",
       "registered_at": "2026-10-20T04:11:17.794307+00:00",
-      "phase": "W28_02_03_READY_TO_MERGE",
+      "phase": "CLOSED",
       "assigned_chats": [
         "COORD"
       ],
@@ -181867,12 +181925,10 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [
-        "COORD"
-      ],
+      "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": false,
-      "product_integrated": false,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W28-01",
@@ -181972,7 +182028,7 @@
           "title": "组织树并发、引用与原操作恢复",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "READY_TO_MERGE",
+          "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worker_delivery_received": true,
@@ -181989,15 +182045,73 @@
             "at": "2026-10-20T04:59:50.107413+00:00"
           },
           "baseline_sha": "1593d573837e46a579074ed3224f47f59d9ce5f0",
-          "resources_released": false,
+          "resources_released": true,
           "candidate_review_completed": true,
           "delivery_report": "docs/development/evidence/WP02-03/organization-administration/DELIVERY.md",
-          "active_issue": {
-            "number": 348,
-            "state": "OPEN",
-            "url": "https://github.com/GTX537/CP6/issues/348"
+          "local_validation": "50 unique effective .NET/PG/HTTP,14 Vitest,5 Chrome,vue-tsc build; see DELIVERY",
+          "candidate_integrated": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "695d7dbc2662928a1b65712b2fdab59da9c0333a",
+            "main": "f9dd8a444fc385ef6295c088cde59f27ffbb330b",
+            "pr": "https://github.com/GTX537/CP6/pull/349",
+            "paths": [
+              "CP6.Core/Services/Sys/DataScopeFilter.cs",
+              "CP6.Core/Services/Sys/DeptService.cs",
+              "CP6.Core/Services/Sys/IamAdministrationV1.cs",
+              "CP6.Core/Services/Sys/IamDepartmentAdministrationV1.cs",
+              "CP6.Core/Services/Sys/PostgreSqlOrganizationV1.cs",
+              "CP6.Core/Services/Sys/PostgreSqlPermissionReader.cs",
+              "CP6.Core/Services/Wf/ApproverResolver.cs",
+              "CP6.Entity/DTOs/Sys/DeptDtos.cs",
+              "CP6.Tests/CrmIdentityWriterPostgreSqlTests.cs",
+              "CP6.Tests/CurrentPermissionConsumptionPostgreSqlTests.cs",
+              "CP6.Tests/Persistence/Tenancy/IdentityWriterBaselinePostgresTests.cs",
+              "CP6.Tests/Platform/IamAdministrationTestSession.cs",
+              "CP6.Tests/Platform/IamOrganizationCommandsPostgreSqlTests.cs",
+              "CP6.Tests/Platform/IamOrganizationHttpPostgreSqlTests.cs",
+              "CP6.Tests/Platform/IamOrganizationPostgreSqlTests.cs",
+              "CP6.WebApi/Controllers/Sys/DeptController.cs",
+              "CP6.WebApi/Controllers/Sys/IamDepartmentController.cs",
+              "CP6.WebApi/Program.cs",
+              "CP6.WebApi/Services/CrmOidcDirectory.cs",
+              "cp6.web/e2e/iam-departments-fixture.ts",
+              "cp6.web/e2e/iam-departments.spec.ts",
+              "cp6.web/playwright.authentication-recovery.config.ts",
+              "cp6.web/src/api/sys/iam.ts",
+              "cp6.web/src/views/pms/DeptTreeView.spec.ts",
+              "cp6.web/src/views/pms/DeptTreeView.vue",
+              "cp6.web/src/views/pms/UserView.spec.ts",
+              "cp6.web/src/views/pms/UserView.vue",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/09-parallel-development.md",
+              "docs/development/dispatch/20261020-wave28/README.md",
+              "docs/development/evidence/WP02-03/organization-administration/DELIVERY.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-20T05:27:45.885002+00:00"
           },
-          "local_validation": "50 unique effective .NET/PG/HTTP,14 Vitest,5 Chrome,vue-tsc build; see DELIVERY"
+          "delivery_ref": {
+            "commit": "0a5413ca5af2429e75a4400a68486b374255bd2d",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T052910Z-wave28-delivery/MESSAGE.md",
+            "at": "2026-10-20T05:29:10.897569+00:00",
+            "pr": 3,
+            "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/3",
+            "base": "codex/t02c-entry-handoff-20260921"
+          },
+          "branch_disposition": "deleted-local-and-remote",
+          "workspace_status": "fixed-seat-detached-for-reuse",
+          "closed_at": "2026-10-20T05:28:23.182697+00:00",
+          "resolved_issue": {
+            "number": 348,
+            "state": "CLOSED",
+            "url": "https://github.com/GTX537/CP6/issues/348"
+          }
         },
         {
           "id": "W28-03",
@@ -182005,7 +182119,7 @@
           "title": "用户组织页面冲突/UNKNOWN恢复与总收尾",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "READY_TO_MERGE",
+          "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worker_delivery_received": true,
@@ -182018,15 +182132,73 @@
           "deployment_authorized": false,
           "candidate_review_completed": true,
           "delivery_report": "docs/development/evidence/WP02-03/organization-administration/DELIVERY.md",
-          "resources_released": false,
-          "active_issue": {
-            "number": 348,
-            "state": "OPEN",
-            "url": "https://github.com/GTX537/CP6/issues/348"
-          },
+          "resources_released": true,
           "local_validation": "50 unique effective .NET/PG/HTTP,14 Vitest,5 Chrome,vue-tsc build; see DELIVERY",
           "combined_into": "W28-02",
-          "scope_decision": "User/organization recovery and composition ship with organization API in one original branch; no separate W28-03 branch or workspace."
+          "scope_decision": "User/organization recovery and composition ship with organization API in one original branch; no separate W28-03 branch or workspace.",
+          "candidate_integrated": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "695d7dbc2662928a1b65712b2fdab59da9c0333a",
+            "main": "f9dd8a444fc385ef6295c088cde59f27ffbb330b",
+            "pr": "https://github.com/GTX537/CP6/pull/349",
+            "paths": [
+              "CP6.Core/Services/Sys/DataScopeFilter.cs",
+              "CP6.Core/Services/Sys/DeptService.cs",
+              "CP6.Core/Services/Sys/IamAdministrationV1.cs",
+              "CP6.Core/Services/Sys/IamDepartmentAdministrationV1.cs",
+              "CP6.Core/Services/Sys/PostgreSqlOrganizationV1.cs",
+              "CP6.Core/Services/Sys/PostgreSqlPermissionReader.cs",
+              "CP6.Core/Services/Wf/ApproverResolver.cs",
+              "CP6.Entity/DTOs/Sys/DeptDtos.cs",
+              "CP6.Tests/CrmIdentityWriterPostgreSqlTests.cs",
+              "CP6.Tests/CurrentPermissionConsumptionPostgreSqlTests.cs",
+              "CP6.Tests/Persistence/Tenancy/IdentityWriterBaselinePostgresTests.cs",
+              "CP6.Tests/Platform/IamAdministrationTestSession.cs",
+              "CP6.Tests/Platform/IamOrganizationCommandsPostgreSqlTests.cs",
+              "CP6.Tests/Platform/IamOrganizationHttpPostgreSqlTests.cs",
+              "CP6.Tests/Platform/IamOrganizationPostgreSqlTests.cs",
+              "CP6.WebApi/Controllers/Sys/DeptController.cs",
+              "CP6.WebApi/Controllers/Sys/IamDepartmentController.cs",
+              "CP6.WebApi/Program.cs",
+              "CP6.WebApi/Services/CrmOidcDirectory.cs",
+              "cp6.web/e2e/iam-departments-fixture.ts",
+              "cp6.web/e2e/iam-departments.spec.ts",
+              "cp6.web/playwright.authentication-recovery.config.ts",
+              "cp6.web/src/api/sys/iam.ts",
+              "cp6.web/src/views/pms/DeptTreeView.spec.ts",
+              "cp6.web/src/views/pms/DeptTreeView.vue",
+              "cp6.web/src/views/pms/UserView.spec.ts",
+              "cp6.web/src/views/pms/UserView.vue",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/09-parallel-development.md",
+              "docs/development/dispatch/20261020-wave28/README.md",
+              "docs/development/evidence/WP02-03/organization-administration/DELIVERY.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-20T05:27:45.885002+00:00"
+          },
+          "delivery_ref": {
+            "commit": "0a5413ca5af2429e75a4400a68486b374255bd2d",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T052910Z-wave28-delivery/MESSAGE.md",
+            "at": "2026-10-20T05:29:10.897569+00:00",
+            "pr": 3,
+            "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/3",
+            "base": "codex/t02c-entry-handoff-20260921"
+          },
+          "branch_disposition": "deleted-local-and-remote",
+          "workspace_status": "fixed-seat-detached-for-reuse",
+          "closed_at": "2026-10-20T05:28:23.182697+00:00",
+          "resolved_issue": {
+            "number": 348,
+            "state": "CLOSED",
+            "url": "https://github.com/GTX537/CP6/issues/348"
+          }
         }
       ],
       "horizon": {
@@ -182042,7 +182214,18 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Normal PR integration, remote adoption, exact finish; final coordination/Handoff closure."
+      "next_action": "Next independently scoped IAM role lifecycle/reference-retention or CRM/Owner adoption task requires fresh start/confirmed dependencies; no automatic production/real-tenant action.",
+      "closed_at": "2026-10-20T05:32:01.107776+00:00",
+      "handoff_integration": {
+        "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/3",
+        "commit": "0cb04802f7602d61b9baa9c8cfd8f5a25b8fabc7",
+        "target_head": "0cb04802f7602d61b9baa9c8cfd8f5a25b8fabc7"
+      },
+      "handoff_resources_released": true,
+      "handoff_branch_disposition": "deleted-local-and-remote",
+      "coordination_closeout_task": "W28-CLOSEOUT",
+      "coordination_closeout_status": "Final documentation PR and manager finish required; no business task remains active."
     },
     "wave_history": [
       {

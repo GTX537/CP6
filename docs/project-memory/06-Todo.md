@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 2026-10-20：第二十八轮限定公共基础已集成并收尾
+
+用户角色/部门/经理合法引用与原子CAS（PR347）、组织版本/预览/移动/当前范围与用户组织页面恢复（PR349）已正常合入，产品main `f9dd8a444fc385ef6295c088cde59f27ffbb330b`。#346/#348 Closed。各窗77/50有效.NET、7/14Vitest、2/5真实Chrome夹具与类型检查通过/复用，跨窗重叠不相加；一次作者集中审查，原失败保留。W27跨Tab/SSO首次身份批准复用，不重复实施。
+
+两产品分支本地/远端准确清理，DEV-1各窗已释放；Handoff PR3默认分支`0cb04802f7602d61b9baa9c8cfd8f5a25b8fabc7`已回读、分支清理、DEV-2释放。零新工作树/代理/完整副本；自有PG/HTTP/Vite停止，Actions/真实租户审批/既有库迁移/生产均未运行。最终协调文档在同一DEV-1执行W28-CLOSEOUT并由统一finish记录自身PR/释放。完整IAM角色生命周期/保留权威、CRM/Owner及真实业务不提升。[本轮交付与处置](../development/dispatch/20261020-wave28/README.md)。
+
 ## 2026-10-20：W28-02+03 组织与页面恢复候选
 
 W28-01已通过PR347合入1593d573，#346关闭、任务分支已清理且原席位释放。组织CAS/预览/原子移动与原操作恢复、健康祖先权限/当前CRM投影/审批、组织页面与用户失权清理现合并为W28-02原分支交付；#348待正常集成。50有效.NET/PG/HTTP、14前端、5真实Chrome夹具及typecheck通过/复用，作者集中审查无阻断；自有PG/HTTP/Vite停止。DEV-1候选与DEV-2 Handoff待正常PR/finish；零新树/Actions/真实环境操作。完整IAM/CRM/业务状态不提升。[DELIVERY](../development/evidence/WP02-03/organization-administration/DELIVERY.md)。
