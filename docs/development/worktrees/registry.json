@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-20T02:10:31.195075+00:00",
+  "updated_at": "2026-10-20T02:39:06.141129+00:00",
   "scope": "GTX537 CP6 family only",
   "owner": "COORD",
   "limits": {
@@ -78,5 +78,39 @@
   ],
   "admission": "开工核对实际登记；占满时排队；历史待判断目录不构成额外活动配额。",
   "retained_inventory": "inventory-backlog-20261020.md",
-  "task_registry_note": "本文件只管理工作区占用；产品任务状态仍以 docs/development/roadmap.json 为准。"
+  "task_registry_note": "本文件只管理工作区占用；产品任务状态仍以 docs/development/roadmap.json 为准。",
+  "retained_non_workspaces": [
+    {
+      "path": "C:/Users/tt/.codex/worktrees/cp6-crm-public-contract-sync-20260814",
+      "owner": "COORD",
+      "purpose": "Policy-blocked empty parent / original historical Handoff START; no active development task",
+      "logical_bytes": 0,
+      "blocking_reason": "Automatic approval review rejected the batch deletion before execution: blocked by policy; tool gave no more specific reason. No bypass attempted.",
+      "next_action": "May be removed manually if desired; no source worktree or branch integration remains."
+    },
+    {
+      "path": "C:/Users/tt/.codex/worktrees/cp6-crm-saas-public-sync",
+      "owner": "COORD",
+      "purpose": "Policy-blocked empty parent / original historical Handoff START; no active development task",
+      "logical_bytes": 0,
+      "blocking_reason": "Automatic approval review rejected the batch deletion before execution: blocked by policy; tool gave no more specific reason. No bypass attempted.",
+      "next_action": "May be removed manually if desired; no source worktree or branch integration remains."
+    },
+    {
+      "path": "C:/Users/tt/.codex/worktrees/crm-saas-v1-freeze",
+      "owner": "COORD",
+      "purpose": "Policy-blocked empty parent / original historical Handoff START; no active development task",
+      "logical_bytes": 0,
+      "blocking_reason": "Automatic approval review rejected the batch deletion before execution: blocked by policy; tool gave no more specific reason. No bypass attempted.",
+      "next_action": "May be removed manually if desired; no source worktree or branch integration remains."
+    },
+    {
+      "path": "D:/CP6.AI-Handoff-worktrees/wp02-26",
+      "owner": "COORD",
+      "purpose": "Policy-blocked empty parent / original historical Handoff START; no active development task",
+      "logical_bytes": 2589,
+      "blocking_reason": "Automatic approval review rejected the batch deletion before execution: blocked by policy; tool gave no more specific reason. No bypass attempted.",
+      "next_action": "May be removed manually if desired; no source worktree or branch integration remains."
+    }
+  ]
 }
