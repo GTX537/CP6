@@ -5,8 +5,8 @@
       <el-button @click="loadList">查询</el-button>
       <el-button v-permission="'user:add'" type="primary" :disabled="!!pending" @click="openEditor()">新增用户</el-button>
     </div>
-    <el-alert v-if="notice" :title="notice" :closable="false" role="status" />
-    <div v-if="pending" class="recovery" role="status">
+    <el-alert v-if="notice && !visible" :title="notice" :closable="false" role="status" />
+    <div v-if="pending && !visible" class="recovery" role="status">
       上一次操作尚待核对。查询结果或封闭原操作后才能再次保存。
       <el-button :disabled="busy" @click="resolve(false)">查询原操作</el-button>
       <el-button :disabled="busy" @click="resolve(true)">封闭原操作</el-button>
@@ -23,6 +23,12 @@
     <el-pagination v-model:current-page="page" :page-size="20" :total="total" layout="prev, pager, next, total" @current-change="loadList" />
     <p>停用保留历史身份；删除需通过受控留存审查。</p>
     <el-dialog v-model="visible" :title="draft.id ? '编辑用户与角色' : '新增用户'" width="660px" :close-on-click-modal="false" @closed="clearPassword">
+      <el-alert v-if="notice && visible" :title="notice" :closable="false" role="status" />
+      <div v-if="pending && visible" class="recovery" role="status">
+        上一次操作尚待核对。查询结果或封闭原操作后才能再次保存。
+        <el-button :disabled="busy" @click="resolve(false)">查询原操作</el-button>
+        <el-button :disabled="busy" @click="resolve(true)">封闭原操作</el-button>
+      </div>
       <form v-if="editor" @submit.prevent="save">
         <label>用户名 <input v-model="draft.userName" required maxlength="100" :disabled="!!pending" /></label>
         <label>显示名 <input v-model="draft.nickName" maxlength="100" :disabled="!!pending" /></label>

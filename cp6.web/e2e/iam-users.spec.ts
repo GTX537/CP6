@@ -49,3 +49,16 @@ test('lost save is recovered by another real tab after reload without any second
   expect(await other.evaluate(() => JSON.stringify(localStorage))).not.toContain('Synthetic1!Password')
   await other.screenshot({ path: (process.env.CP6_AUTH_BROWSER_RESULTS || 'e2e/results') + '/iam-operation-closed.png', animations: 'disabled' })
 })
+
+test('user recovery remains actionable inside the open modal after response loss', async ({ context, page }) => {
+  const f = await fixture(context); f.lose(); await page.goto('/__iam-users-fixture')
+  await page.getByRole('button', { name: '新增用户' }).click()
+  await page.getByLabel('用户名', { exact: true }).fill('fixture-user')
+  await page.getByLabel('初始密码').fill('Synthetic1!Password'); await page.getByLabel('变更理由').fill('Owned modal recovery')
+  await page.getByRole('button', { name: '确认保存' }).click()
+  const close = page.getByRole('dialog').getByRole('button', { name: '封闭原操作' })
+  await expect(close).toBeVisible(); await close.click()
+  await page.getByRole('button', { name: '重新读取并保留草稿' }).click()
+  await expect(page.getByLabel('用户名', { exact: true })).toHaveValue('fixture-user')
+  await expect(page.getByLabel('初始密码')).toHaveValue(''); expect(f.writes).toHaveLength(1)
+})

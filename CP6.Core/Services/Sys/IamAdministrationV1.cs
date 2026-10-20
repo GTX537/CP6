@@ -20,7 +20,7 @@ public record IamCommandV1
 }
 
 public sealed record IamOperationV1(Guid OperationId, string Kind, string State, Guid? EntityId = null,
-    string? Version = null, string? ReferencesVersion = null, string? TreeVersion = null);
+    string? Version = null, string? ReferencesVersion = null, string? TreeVersion = null, int? RoleId = null);
 
 /// <summary>Main's existing authentication root serializes actual reference writers and current authorization.</summary>
 public sealed class IamAdministrationV1(CP6Context db, ICurrentPermissionContext permissions, IDataProtectionProvider protection)
@@ -61,7 +61,10 @@ public sealed class IamAdministrationV1(CP6Context db, ICurrentPermissionContext
         // Covers ABA and ordinary SQL writers, including role permissions and user memberships.
         // Conservative tenant-wide CAS: unrelated reference changes require a fresh confirmation too.
         var rows = await db.Database.SqlQuery<RevisionRow>($"SELECT object_key AS \"Key\", revision AS \"Revision\" FROM cp6_authentication_v1.identity_admission_revisions WHERE tenant_id={db.CurrentTenantId} ORDER BY object_key COLLATE \"C\"").ToListAsync(ct);
-        return AuthenticationPolicyServiceV1.Hash(rows);
+        // The existing authentication revision also covers SSO default-role and approval ABA.
+        var policy=await db.Sys_Tenants.IgnoreQueryFilters().AsNoTracking().Where(x=>x.Id==db.CurrentTenantId)
+            .Select(x=>x.AuthenticationPolicyRevision).SingleAsync(ct);
+        return AuthenticationPolicyServiceV1.Hash(new {policy,rows});
     }
 
     public async Task<string> Version(string key, CancellationToken ct)
@@ -108,14 +111,15 @@ public sealed class IamAdministrationV1(CP6Context db, ICurrentPermissionContext
         },ct);
     }
 
-    public void Audit(Guid actor, Guid operation, string kind, string reason, Guid? entity)
+    public void Audit(Guid actor, Guid operation, string kind, string reason, Guid? entity, int? roleId = null)
         => db.Sys_SecurityLogs.Add(new Sys_SecurityLog { TenantId=db.CurrentTenantId,UserId=actor,
             EventType=(int)SecurityEventType.IamAdministrationChanged, CreatedAt=DateTime.Now,Reason=reason,
-            ContextJson=JsonSerializer.Serialize(new { operationId=operation,kind,entityId=entity }) });
+            ContextJson=JsonSerializer.Serialize(new { operationId=operation,kind,entityId=entity,roleId }) });
 
     public static string Permission(string kind) => kind switch
     {
         "user-create" => "user:add", "user-update" or "user-roles" or "user-org" => "user:edit",
+        "role-create" => "role:add", "role-update" => "role:edit", "role-delete" => "role:delete",
         "dept-create" => "pub-dept:add", "dept-update" or "dept-move" or "dept-leader" => "pub-dept:edit",
         "dept-delete" => "pub-dept:delete", _ => throw Error(400,"IAM_OPERATION_KIND_INVALID")
     };

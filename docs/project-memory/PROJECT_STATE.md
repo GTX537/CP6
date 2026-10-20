@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-20：W29-01 角色生命周期与页面恢复候选
+
+版本化角色白名单/启停、当前权限与角色/引用CAS、SSO ABA、原子回执和角色页面恢复就绪。实际用户弹窗恢复缺口同窗修复。61相关.NET/PG/HTTP、12Vitest、6实际Chrome夹具、typecheck通过；作者集中审查在本窗范围无阻断。#351/#352待正常集成；固定身份v1的完整整数域差异#353仍Open，不能宣称全域支持。自有PG/HTTP/Vite停止，DEV-1候选与DEV-2 Handoff待正常PR/finish，随后复用原DEV-1开展W29-02授权编辑。无新树/Actions/部署，完整IAM/CRM/Owner/业务状态不提升。[DELIVERY](../development/evidence/WP02-03/role-administration/DELIVERY.md)。
+
 ## 2026-10-20：第二十八轮限定公共基础已集成并收尾
 
 用户角色/部门/经理合法引用与原子CAS（PR347）、组织版本/预览/移动/当前范围与用户组织页面恢复（PR349）已正常合入，产品main `f9dd8a444fc385ef6295c088cde59f27ffbb330b`。#346/#348 Closed。各窗77/50有效.NET、7/14Vitest、2/5真实Chrome夹具与类型检查通过/复用，跨窗重叠不相加；一次作者集中审查，原失败保留。W27跨Tab/SSO首次身份批准复用，不重复实施。

@@ -846,6 +846,7 @@ builder.Services.AddScoped<CP6.Core.Services.Sys.SsoConfigurationAdminV1>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.IamAdministrationV1>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.IamUserAdministrationV1>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.IamDepartmentAdministrationV1>();
+builder.Services.AddScoped<CP6.Core.Services.Sys.IamRoleAdministrationV1>();
 // S 类 #3 SSO（T3）：state/nonce/PKCE 一次性暂态（IDistributedCache）
 builder.Services.AddScoped<CP6.Core.Services.Sys.ISsoStateStore, CP6.Core.Services.Sys.SsoStateStore>();
 // S 类 #3 SSO（T4/T5/T6）：discovery seam（OidcDiscovery 内部 static ConcurrentDictionary 缓存 ConfigurationManager，
