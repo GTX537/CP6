@@ -3,6 +3,11 @@ namespace CP6.Entity.DTOs.Sys;
 /// <summary>部门 CRUD 请求 DTO（PUB 章00）</summary>
 public class DeptDto
 {
+    public Guid OperationId { get; set; }
+    public string? ExpectedVersion { get; set; }
+    public string? ExpectedReferencesVersion { get; set; }
+    public string? ExpectedTreeVersion { get; set; }
+    public string? Reason { get; set; }
     public Guid? Id { get; set; }
     public Guid? ParentId { get; set; }
     public string DeptCode { get; set; } = string.Empty;

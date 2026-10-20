@@ -16,6 +16,7 @@ public class DeptService : IDeptService
 
     public async Task<Guid> CreateAsync(DeptDto d, Guid? parentId, string? user)
     {
+        RequireLegacyWriter();
         if (await _db.Sys_Depts.AnyAsync(x => x.DeptCode == d.DeptCode))
             throw new InvalidOperationException("E-PUB-001");   // 部门编码已存在
 
@@ -48,6 +49,7 @@ public class DeptService : IDeptService
 
     public async Task UpdateAsync(Guid id, DeptDto d, string? user)
     {
+        RequireLegacyWriter();
         var e = await _db.Sys_Depts.FindAsync(id)
                 ?? throw new InvalidOperationException("E-PUB-001");
         // DeptCode 只读（建后不可改，被引用）；改名称/负责人/排序/启用
@@ -62,6 +64,7 @@ public class DeptService : IDeptService
 
     public async Task MoveAsync(Guid id, Guid? newParentId, string? user)
     {
+        RequireLegacyWriter();
         var dept = await _db.Sys_Depts.FindAsync(id)
                    ?? throw new InvalidOperationException("E-PUB-001");
 
@@ -92,6 +95,7 @@ public class DeptService : IDeptService
 
     public async Task DeleteAsync(Guid id)
     {
+        RequireLegacyWriter();
         if (await _db.Sys_Depts.AnyAsync(x => x.ParentId == id))
             throw new InvalidOperationException("E-PUB-002");   // 有子部门
         if (await _db.Sys_Users.AnyAsync(x => x.DeptId == id))
@@ -107,6 +111,7 @@ public class DeptService : IDeptService
 
     public async Task SetLeaderAsync(Guid id, Guid? leaderId, string? user)
     {
+        RequireLegacyWriter();
         var e = await _db.Sys_Depts.FindAsync(id)
                 ?? throw new InvalidOperationException("E-PUB-001");
         e.LeaderId = leaderId;
@@ -131,6 +136,8 @@ public class DeptService : IDeptService
     public async Task<List<DeptTreeNode>> TreeAsync()
     {
         var all = await _db.Sys_Depts.OrderBy(x => x.Sort).ToListAsync();
+        if(_db.Database.IsNpgsql())
+        {var map=all.ToDictionary(x=>x.Id);all=all.Where(x=>IamDepartmentAdministrationV1.StructureValid(x.Id,map)).ToList();}
 
         var leaderIds = all.Where(d => d.LeaderId != null).Select(d => d.LeaderId!.Value).Distinct().ToList();
         var leaders = await _db.Sys_Users
@@ -159,4 +166,6 @@ public class DeptService : IDeptService
         }
         return roots;
     }
+    private void RequireLegacyWriter()
+    {if(_db.Database.IsNpgsql())throw IamAdministrationV1.Error(400,"IAM_VERSIONED_COMMAND_REQUIRED");}
 }

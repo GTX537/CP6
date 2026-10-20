@@ -80,13 +80,17 @@ watch(() => [...draft.roleIds], ids => { if (draft.roleId !== null && !ids.inclu
 function clearPassword() { draft.password = '' }
 function syncPending() { pending.value = scope.value ? pendingIamOperation(scope.value) : null }
 function errorMessage(error: any) { return error?.response?.data?.code || error?.message || '操作失败，请核对状态后继续。' }
+function fail(error: any, suffix = '') {
+  if ([401, 403].includes(error?.response?.status)) clearPage('当前身份或权限不可用，已清除页面资料；请重新进入。')
+  else notice.value = errorMessage(error) + suffix
+}
 async function loadList() {
   const request = ++listGeneration, stamp = identityStamp()
   try {
     const value: any = await userApi.getList({ page: page.value, pageSize: 20, keyword: keyword.value })
     requireIdentity(stamp); if (request !== listGeneration) return
     rows.value = value.rows || []; total.value = value.total || 0
-  } catch (error) { if (request === listGeneration) notice.value = errorMessage(error) }
+  } catch (error) { if (request === listGeneration) fail(error) }
 }
 async function openEditor(id?: string, keepDraft = false) {
   const request = ++generation, stamp = identityStamp(); busy.value = true; clearPassword()
@@ -102,7 +106,7 @@ async function openEditor(id?: string, keepDraft = false) {
     draft.expectedVersion = value.user?.version || 'absent'; draft.expectedReferencesVersion = value.referencesVersion
     conflict.value = false; visible.value = true
     if (keepDraft) notice.value = '已读取当前版本并保留非敏感草稿，请核对角色与组织选择后再次确认。'
-  } catch (error) { if (request === generation) notice.value = errorMessage(error) }
+  } catch (error) { if (request === generation) fail(error) }
   finally { if (request === generation) busy.value = false }
 }
 async function reloadDraft() { await openEditor(draft.id, true) }
@@ -115,7 +119,7 @@ async function save() {
     requireIdentity(stamp); if (request !== generation) return
     if (result.state === 'COMMITTED') { visible.value = false; notice.value = 'Main 已保存。下游投影状态需由对应系统确认。'; await loadList() }
   } catch (error: any) {
-    if (request === generation) { conflict.value = error?.response?.status === 412; notice.value = `${errorMessage(error)}；请查询或封闭原操作。` }
+    if (request === generation) { conflict.value = error?.response?.status === 412; fail(error, '；请查询或封闭原操作。') }
   } finally { input.password = undefined; clearPassword(); if (request === generation) { syncPending(); busy.value = false } }
 }
 async function resolve(close: boolean) {
@@ -126,22 +130,25 @@ async function resolve(close: boolean) {
     if (result.state === 'COMMITTED') { visible.value = false; notice.value = '原操作已在 Main 保存，不再重放。'; await loadList() }
     else if (result.state === 'CLOSED') { conflict.value = true; notice.value = '原操作已封闭。请重新读取当前版本，核对草稿后再保存。' }
     else notice.value = '尚未确认原操作结果；可继续查询或封闭，不能重新保存。'
-  } catch (error) { if (request === generation) notice.value = errorMessage(error) }
+  } catch (error) { if (request === generation) fail(error) }
   finally { if (request === generation) { syncPending(); busy.value = false } }
 }
 let currentStamp = identityStamp()
+function clearPage(text: string) {
+  generation++; listGeneration++; clearPassword(); Object.assign(draft, empty()); draft.id = undefined
+  rows.value = []; total.value = 0; editor.value = null; scope.value = null; pending.value = null; visible.value = false; busy.value = false
+  conflict.value = false; resetPassword.value = false; notice.value = text
+}
 function changed() {
   if (identityStamp() === currentStamp) { try { syncPending() } catch (error) { notice.value = errorMessage(error) }; return }
-  currentStamp = identityStamp(); generation++; listGeneration++; clearPassword(); Object.assign(draft, empty()); draft.id = undefined
-  rows.value = []; total.value = 0; editor.value = null; scope.value = null; pending.value = null; visible.value = false; busy.value = false
-  notice.value = '登录身份已改变，请重新进入用户管理。'
+  currentStamp = identityStamp(); clearPage('登录身份已改变，请重新进入用户管理。')
 }
 onMounted(async () => {
   window.addEventListener(AUTH_EVENT, changed); window.addEventListener('storage', changed)
   const request = generation, stamp = identityStamp()
   try { const value = await iamApi.userEditor(); requireIdentity(stamp); if (request === generation) { scope.value = value; syncPending() } }
-  catch (error) { notice.value = errorMessage(error) }
-  await loadList()
+  catch (error) { if (request === generation) fail(error) }
+  if (request === generation) await loadList()
 })
 onBeforeUnmount(() => { generation++; listGeneration++; clearPassword(); window.removeEventListener(AUTH_EVENT, changed); window.removeEventListener('storage', changed) })
 </script>

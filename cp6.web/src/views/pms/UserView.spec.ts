@@ -21,6 +21,11 @@ beforeEach(() => {
 })
 afterEach(() => { view?.unmount(); view = undefined })
 describe('user administration', () => {
+  it('clears the form and list after current permission is withdrawn', async () => {
+    const vm = await render(); await vm.openEditor(); vm.draft.userName = 'sensitive'; vm.draft.password = 'secret'
+    api.saveUser.mockRejectedValue({ response: { status: 403 } }); await vm.save()
+    expect(vm.editor).toBeNull(); expect(vm.visible).toBe(false); expect(vm.draft.userName).toBe(''); expect(vm.rows).toEqual([])
+  })
   it('keeps nonsecret draft after CAS conflict and closes the original before loading new versions', async () => {
     const vm = await render(); await vm.openEditor(); vm.draft.userName = 'draft'; vm.draft.password = 'secret'; vm.draft.roleIds = [71]; vm.draft.roleId = 71; vm.draft.reason = 'approved'
     api.saveUser.mockRejectedValue({ response: { status: 412, data: { code: 'IAM_REFERENCES_CHANGED' } } }); await vm.save(); await flushPromises()

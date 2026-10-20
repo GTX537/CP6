@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-20：W28-02+03 组织与页面恢复候选
+
+W28-01已通过PR347合入1593d573，#346关闭、任务分支已清理且原席位释放。组织CAS/预览/原子移动与原操作恢复、健康祖先权限/当前CRM投影/审批、组织页面与用户失权清理现合并为W28-02原分支交付；#348待正常集成。50有效.NET/PG/HTTP、14前端、5真实Chrome夹具及typecheck通过/复用，作者集中审查无阻断；自有PG/HTTP/Vite停止。DEV-1候选与DEV-2 Handoff待正常PR/finish；零新树/Actions/真实环境操作。完整IAM/CRM/业务状态不提升。[DELIVERY](../development/evidence/WP02-03/organization-administration/DELIVERY.md)。
+
 ## 2026-10-20：W28-01 用户角色与组织引用候选
 
 BUG346：主附角色/同tenant部门经理引用、实际writer CAS、原子身份Outbox与准确操作回执、用户页面跨Tab/冲突恢复已实现。77项有效.NET、7前端、2实际Chrome夹具通过/复用，旧填充PG迁移及一次作者SPEC/QUALITY通过，原失败保留。候选等待正常PR与finish；W28-02组织树、W28-03页面/总收尾持续执行。固定DEV-1/2复用，无新树/代理/Actions或真实环境操作，完整IAM/CRM/业务未提升。[DELIVERY](../development/evidence/WP02-03/iam-user-assignments/DELIVERY.md)。

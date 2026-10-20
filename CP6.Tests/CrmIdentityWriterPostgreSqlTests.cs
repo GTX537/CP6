@@ -171,21 +171,24 @@ public sealed class CrmIdentityWriterPostgreSqlTests(TenantManagementPostgresFix
         var aggregate = $"user:{user.Id:D}";
         var first = await UserData(writer, tenant, aggregate); Assert.Equal(new[] { "role:71", "role:72" }, first.Roles); Assert.Equal(2, first.Version);
         await memberships.SetUser(user.Id, [72], 72); Assert.Equal(new[] { "role:72" }, (await UserData(writer, tenant, aggregate)).Roles);
-        var service = new DeptService(writer); var code = tenant.ToString("N");
-        var parent = await service.CreateAsync(new() { DeptCode = code + "p", DeptName = "parent" }, null, "fixture");
-        var child = await service.CreateAsync(new() { DeptCode = code + "c", DeptName = "child" }, null, "fixture");
-        var grandchild = await service.CreateAsync(new() { DeptCode = code + "g", DeptName = "grandchild" }, child, "fixture");
-        await service.MoveAsync(child, parent, "fixture");
+        var service = memberships; var code = tenant.ToString("N");
+        var parent = await service.CreateDepartment(code + "p", "parent");
+        var child = await service.CreateDepartment(code + "c", "child");
+        var grandchild = await service.CreateDepartment(code + "g", "grandchild", child);
+        await service.MoveDepartment(child, parent);
         var grand = await writer.CrmIdentitySnapshots.AsNoTracking().SingleAsync(x => x.TenantId == tenant && x.AggregateId == $"department:{grandchild:D}");
         var grandData = JsonSerializer.Deserialize<DepartmentIdentityData>(grand.PayloadJson, IdentityEventContracts.Json)!;
         Assert.Equal($"/{parent:D}/{child:D}/{grandchild:D}/", grandData.Path); Assert.Equal(2, grandData.Version);
         await memberships.SetUser(user.Id, department: child, email: "fixture@example.test");
         Assert.Equal(child, (await UserData(writer, tenant, aggregate)).DeptId);
-        await service.SetLeaderAsync(child, user.Id, "fixture");
+        await service.SetLeader(child, user.Id);
         var beforeDisplay = (await UserData(writer, tenant, aggregate)).Version;
         await memberships.SetUser(user.Id, department: child, email: "changed@example.test");
         Assert.Equal(beforeDisplay, (await UserData(writer, tenant, aggregate)).Version);
-        await service.DeleteAsync(grandchild);
+        // Ordinary deletion remains closed until complete retention authority exists.
+        await Assert.ThrowsAsync<IamAdministrationExceptionV1>(async () => await service.Departments.ChangeAsync("dept-delete", await service.DepartmentCommand(grandchild), service.Actor, default));
+        // Explicit fixture control writer still proves immutable identity tombstone propagation.
+        writer.Sys_Depts.Remove(await writer.Sys_Depts.SingleAsync(x => x.Id == grandchild)); await writer.SaveChangesAsync();
         var deleted = await writer.CrmIdentitySnapshots.AsNoTracking().SingleAsync(x => x.TenantId == tenant && x.AggregateId == $"department:{grandchild:D}");
         Assert.True(deleted.IsDeleted); Assert.Equal(3, deleted.Version);
         await AssertLatest(tenant, aggregate); await AssertLatest(tenant, $"department:{grandchild:D}");

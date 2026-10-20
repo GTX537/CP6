@@ -1,5 +1,6 @@
 using CP6.Core.EFDbContext;
 using CP6.Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Sys;
 
@@ -13,6 +14,21 @@ public class DataScopeFilter : IDataScopeFilter
         where T : class, IDataScoped
     {
         var scope = ctx.DataScopes.TryGetValue(resource, out var s) ? s : DataScopeRegistry.DefaultScope(resource);
+        if (_db.Database.IsNpgsql() && scope is 2 or 3 or 4)
+        {
+            var healthy=PostgreSqlOrganizationV1.Healthy(_db);
+            if(scope==4)
+            {
+                var custom=ctx.CustomDeptIds.GetValueOrDefault(resource,[]);
+                return query.Where(x=>x.DeptId!=null && custom.Contains(x.DeptId.Value) && healthy.Any(d=>d.Id==x.DeptId));
+            }
+            // Read the actual user relationship and both paths in this query snapshot. A cached
+            // empty/old path or a department move between permission read and query grants nothing extra.
+            var sources=_db.Sys_Users.Where(u=>u.Id==ctx.UserId && u.Enable);
+            if(scope==2)return query.Where(x=>x.DeptId!=null && sources.Any(u=>u.DeptId==x.DeptId) && healthy.Any(d=>d.Id==x.DeptId));
+            return query.Where(x=>x.DeptId!=null && healthy.Any(d=>d.Id==x.DeptId &&
+                healthy.Any(root=>sources.Any(u=>u.DeptId==root.Id) && d.Path.StartsWith(root.Path))));
+        }
         switch (scope)
         {
             case 5:   // 全部

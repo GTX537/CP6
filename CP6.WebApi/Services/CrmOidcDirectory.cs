@@ -114,7 +114,9 @@ public sealed class CrmOidcDirectory(CP6Context db, ITenantContext tenant, IToke
         var permissions = await new PermissionAggregator(db).BuildEnabledRolesAsync(user.Id);
         var mapping = options.Organizations.Single(o => o.TenantId == user.TenantId && o.CrmEnabled);
         var organizationName = await db.Sys_Tenants.Where(t => t.Id == user.TenantId).Select(t => t.TenantName).SingleAsync();
-        var departments = await db.Sys_Depts.AsNoTracking().Where(d => d.Enable).ToListAsync();
+        var organization = await db.Sys_Depts.AsNoTracking().ToDictionaryAsync(d=>d.Id);
+        var departments = organization.Values.Where(d=>db.Database.IsNpgsql()
+            ? IamUserAdministrationV1.DepartmentAvailable(d.Id,organization) : d.Enable).ToList();
         var ownDepartment = departments.SingleOrDefault(d => d.Id == user.DeptId);
         var scope = permissions.DataScopes.GetValueOrDefault("crm-lead", 1);
         var departmentIds = scope switch

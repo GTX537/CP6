@@ -348,7 +348,7 @@ public sealed class CurrentPermissionConsumptionPostgreSqlTests(CurrentPermissio
         const string resource = "资源'\"  ", field = "Cost  ";
         var user = await db.Sys_Users.SingleAsync();
         user.UserName = "用户'\"  "; user.DeptId = department;
-        db.Sys_Depts.Add(new Sys_Dept { Id = department, DeptCode = "A", DeptName = "A", Path = "/部门/  " });
+        db.Sys_Depts.Add(new Sys_Dept { Id = department, DeptCode = "A", DeptName = "部门  ", Path = $"/{department}/" });
         (await db.Sys_Menus.SingleAsync()).MenuKey = "menu  ";
         (await db.Sys_RoleActions.SingleAsync()).ActionCode = "read  ";
         db.Sys_Roles.Add(new Sys_Role { RoleId = 2, RoleName = "additional" });
@@ -466,7 +466,8 @@ public sealed class CurrentPermissionConsumptionPostgreSqlTests(CurrentPermissio
         var databaseName = await fixture.CreateTables(tenant);
         await using var reader = fixture.Context(tenant, databaseName);
         var uid = await CurrentPermissionContextTests.Seed(reader);
-        var dept = new Sys_Dept { Id = Guid.NewGuid(), DeptCode = "A", DeptName = "A", Path = "/old/" };
+        var deptId = Guid.NewGuid();var newParent=Guid.NewGuid();
+        var dept = new Sys_Dept { Id = deptId, DeptCode = "A", DeptName = "A", Path = $"/{deptId}/" };
         reader.Sys_Depts.Add(dept);
         (await reader.Sys_Users.SingleAsync()).DeptId = dept.Id;
         reader.Sys_Roles.Add(new Sys_Role { RoleId = 2, RoleName = "additional" });
@@ -505,12 +506,13 @@ public sealed class CurrentPermissionConsumptionPostgreSqlTests(CurrentPermissio
         Assert.DoesNotContain("order:export", (await current.GetAsync()).ActionKeys);
         await Change(async db =>
         {
-            (await db.Sys_Depts.SingleAsync()).Path = "/new/";
+            var moved=await db.Sys_Depts.SingleAsync();moved.ParentId=newParent;moved.Path=$"/{newParent}/{deptId}/";
+            db.Sys_Depts.Add(new(){Id=newParent,DeptCode="B",DeptName="B",Path=$"/{newParent}/"});
             (await db.Sys_RoleDataScopes.SingleAsync(r => r.RoleId == 1)).ScopeType = 1;
             (await db.Sys_RoleFieldPerms.SingleAsync(r => r.RoleId == 1)).Access = 2;
         });
         var narrowed = await current.GetAsync();
-        Assert.Equal("/new/", narrowed.DeptPath);
+        Assert.Equal($"/{newParent}/{deptId}/", narrowed.DeptPath);
         Assert.Equal(1, narrowed.DataScopes["order"]);
         Assert.Equal(2, narrowed.FieldPerms["order"]["Cost"]);
         await Change(async db => db.Remove(await db.Sys_RoleActions.SingleAsync(r => r.RoleId == 1)));
@@ -529,7 +531,7 @@ public sealed class CurrentPermissionConsumptionPostgreSqlTests(CurrentPermissio
         // Reader retains its original tracked values throughout; no ChangeTracker.Clear/Reload hid the regression.
         Assert.True(reader.Sys_Users.Local.Single().Enable);
         Assert.Equal(1, reader.Sys_Users.Local.Single().RoleId);
-        Assert.Equal("/old/", reader.Sys_Depts.Local.Single().Path);
+        Assert.Equal($"/{deptId}/", reader.Sys_Depts.Local.Single().Path);
     }
 
     [CurrentPermissionPostgresFact]

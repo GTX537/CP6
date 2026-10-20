@@ -20,7 +20,7 @@ public record IamCommandV1
 }
 
 public sealed record IamOperationV1(Guid OperationId, string Kind, string State, Guid? EntityId = null,
-    string? Version = null, string? ReferencesVersion = null);
+    string? Version = null, string? ReferencesVersion = null, string? TreeVersion = null);
 
 /// <summary>Main's existing authentication root serializes actual reference writers and current authorization.</summary>
 public sealed class IamAdministrationV1(CP6Context db, ICurrentPermissionContext permissions, IDataProtectionProvider protection)
