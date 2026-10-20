@@ -453,6 +453,8 @@ export interface OrderPriceCorrectionBatchUpdateDto {
 }
 
 export interface OrderPriceCorrectionBatchResultDto {
+  /** AwaitingAdapter is a persisted intent, not successful external workflow delivery. */
+  workflowDeliveryState?: 'AwaitingAdapter'
   updatedCount: number
   wfRequestedCount: number
   conflictedKeys: string[]

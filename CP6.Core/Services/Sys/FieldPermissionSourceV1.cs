@@ -7,13 +7,17 @@ namespace CP6.Core.Services.Sys;
 /// </summary>
 internal sealed class FieldPermissionSourceV1(
     Guid tenant, Guid subject, string resource, string registryVersion, string sourceVersion,
-    IEnumerable<string> fields, IEnumerable<FieldPermissionRoleV1> roles, IEnumerable<FieldPermissionRowV1> rows)
+    IEnumerable<string> fields, IEnumerable<FieldPermissionRoleV1> roles, IEnumerable<FieldPermissionRowV1> rows,
+    DateTime? tenantExpiresAt = null)
 {
     public Guid TenantId { get; } = tenant;
     public Guid SubjectId { get; } = subject;
     public string Resource { get; } = resource;
     public string RegistryVersion { get; } = registryVersion;
     public string SourcePermissionVersion { get; } = sourceVersion;
+    // Local timestamp semantics match the existing tenant expiry column. A commit consumer
+    // must still compare this deadline with the clock after any awaited validation.
+    public DateTime? TenantExpiresAt { get; } = tenantExpiresAt;
     public IReadOnlyList<string> Fields { get; } = Array.AsReadOnly(fields.ToArray());
     public IReadOnlyList<FieldPermissionRoleV1> Roles { get; } = Array.AsReadOnly(roles.ToArray());
     public IReadOnlyList<FieldPermissionRowV1> Rows { get; } = Array.AsReadOnly(rows.ToArray());

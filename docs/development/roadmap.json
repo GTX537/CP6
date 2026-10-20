@@ -159242,6 +159242,16 @@
       "date": "2026-10-20",
       "change": "W31 product https://github.com/GTX537/CP6/pull/363 and Handoff https://github.com/GTX537/CP6.AI-Handoff/pull/7 integrated; task branches deleted and fixed seats released.50 distinct local/native PG pass. Final coordination uses original DEV-1; full business unchanged.",
       "evidence": "docs/development/dispatch/20261020-wave31/README.md"
+    },
+    {
+      "date": "2026-10-20",
+      "change": "W32 sole COORD: existing order price correction Owner mapping and PostgreSQL commit fence, atomic batch/workflow intent; fixed seats; agent estimate3–4.5h/6h contingency. Full business unchanged.",
+      "evidence": "docs/development/dispatch/20261020-wave32/README.md"
+    },
+    {
+      "date": "2026-10-20",
+      "change": "W32 Main order price correction Owner mapping and final PostgreSQL fence ready; P0#365 original failures fixed,49 backend/native/actual HTTP+9 frontend pass. Same task branch for final docs; no new workspace.",
+      "evidence": "docs/development/evidence/WP02-03/order-price-correction-owner/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -161813,84 +161823,63 @@
       "card_anchor": "wp02-03",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W31-01",
+        "chat_label": "COORD / W32-01",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/w31-01",
+        "branch": "codex/w32-01",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-20T09:41:25.148265+00:00",
-        "baseline_sha": "439c164084f8aa911645fbe56b46810f745d64dc",
-        "entry_evidence": "docs/development/dispatch/20261020-wave31/README.md",
-        "phase": "CLOSED",
-        "dispatch_scope": "W31_01",
+        "claimed_at": "2026-10-20T10:26:11.503790+00:00",
+        "baseline_sha": "ad4313f8ce0aea9840189d015c0ddadf6b03551e",
+        "entry_evidence": "docs/development/dispatch/20261020-wave32/README.md",
+        "phase": "READY_FOR_INTEGRATION",
+        "dispatch_scope": "W32_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
         "actual_start_ref": {
-          "commit": "719bd8767d02124c4607e4207692e853d60e5399",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T094125Z-wave31-start/MESSAGE.md",
-          "at": "2026-10-20T09:41:25.148265+00:00"
+          "commit": "a70d8c0454baa5d46ea32caaa97efa750a87716e",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T102611Z-wave32-start/MESSAGE.md",
+          "at": "2026-10-20T10:26:11.503790+00:00"
         },
         "allowed_write_paths": [
-          "CP6.Core/Services/Sys/",
+          "CP6.Core/",
+          "CP6.Entity/",
+          "CP6.Persistence.PostgreSql/",
+          "CP6.WebApi/",
           "CP6.Tests/",
           "docs/development/",
-          "docs/project-memory/"
+          "docs/project-memory/",
+          "docs/design-handbook/",
+          "cp6.web/src/views/erp/OrderPriceCorrectionView.vue",
+          "cp6.web/src/views/erp/OrderPriceCorrectionView.spec.ts",
+          "cp6.web/src/types/erp/order.ts",
+          "docs/codemap-erp/"
         ],
-        "reserved_write_resources": [],
-        "reserved_postgresql_ports": [],
-        "handoff_branch": "codex/w31-handoff",
+        "reserved_write_resources": [
+          "Main:identity-authority",
+          "Main:order-price-correction",
+          "Main:Core-PG-migration"
+        ],
+        "reserved_postgresql_ports": [
+          55435
+        ],
+        "handoff_branch": "codex/w32-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": true,
-        "resources_released": true,
+        "candidate_integrated": false,
+        "resources_released": false,
         "full_task_completed": false,
         "local_ready_to_merge": true,
-        "delivery_evidence": "docs/development/evidence/WP02-03/trusted-field-source/DELIVERY.md",
-        "validation": "50 distinct related .NET/native PostgreSQL cases passed,0 final failed/skipped; old evidence reused, initial failures retained",
-        "review": "One task-level author SPEC/QUALITY; no scoped blocker; internal source does not approve Owner mappings or replace effect fence",
+        "delivery_evidence": "docs/development/evidence/WP02-03/order-price-correction-owner/DELIVERY.md",
+        "validation": "49 related .NET/native PG/actual Program and9 Vitest4.1.11 pass; final typecheck passes;0 final failed/skipped; original failures retained",
+        "review": "One task-level author SPEC/QUALITY; scoped Owner write adapter and PostgreSQL commit fence; no remaining scoped blocker",
         "business_acceptance": "NOT_RUN",
-        "issues": [],
-        "integration": {
-          "result": "PASS",
-          "repository": "GTX537/CP6",
-          "source": "419cf032ec3b36074398924409ce0a76c91c1b7c",
-          "main": "fc49e6d4fb0e75f00ed51913f1e998aa4b793d54",
-          "pr": "https://github.com/GTX537/CP6/pull/363",
-          "paths": [
-            "CP6.Core/Services/Sys/CurrentFieldPermissionSourceReaderV1.cs",
-            "CP6.Core/Services/Sys/CurrentPermissionContext.cs",
-            "CP6.Core/Services/Sys/FieldPermissionSourceV1.cs",
-            "CP6.Tests/FieldPermissionSourceBoundaryTests.cs",
-            "CP6.Tests/Platform/FieldPermissionSourcePostgreSqlTests.cs",
-            "docs/development/07-detailed-tasks.md",
-            "docs/development/09-parallel-development.md",
-            "docs/development/dispatch/20261020-wave31/README.md",
-            "docs/development/evidence/WP02-03/trusted-field-source/DELIVERY.md",
-            "docs/development/roadmap.json",
-            "docs/project-memory/05-Completed.md",
-            "docs/project-memory/06-Todo.md",
-            "docs/project-memory/CHANGELOG-AI.md",
-            "docs/project-memory/PROJECT_STATE.md"
-          ],
-          "observed_at": "2026-10-20T09:53:50.148402+00:00"
-        },
-        "delivery_ref": {
-          "commit": "3ac68bea392e73af3a659121d888770f3e00614b",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T095535Z-wave31-delivery/MESSAGE.md",
-          "at": "2026-10-20T09:55:35.250752+00:00",
-          "pr": 7,
-          "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/7",
-          "base": "codex/t02c-entry-handoff-20260921"
-        },
-        "branch_disposition": "deleted-local-and-remote",
-        "workspace_status": "fixed-seat-detached-for-reuse",
-        "seat_released": true,
-        "closed_at": "2026-10-20T09:55:18.663468+00:00",
-        "active_issues": []
+        "issues": [
+          365
+        ]
       },
       "blockers": [],
       "validation_evidence": [],
@@ -163817,6 +163806,86 @@
               "url": "https://github.com/GTX537/CP6/issues/360"
             }
           ]
+        },
+        {
+          "chat_label": "COORD / W31-01",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/w31-01",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-10-20T09:41:25.148265+00:00",
+          "baseline_sha": "439c164084f8aa911645fbe56b46810f745d64dc",
+          "entry_evidence": "docs/development/dispatch/20261020-wave31/README.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "W31_01",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "actual_start_ref": {
+            "commit": "719bd8767d02124c4607e4207692e853d60e5399",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T094125Z-wave31-start/MESSAGE.md",
+            "at": "2026-10-20T09:41:25.148265+00:00"
+          },
+          "allowed_write_paths": [
+            "CP6.Core/Services/Sys/",
+            "CP6.Tests/",
+            "docs/development/",
+            "docs/project-memory/"
+          ],
+          "reserved_write_resources": [],
+          "reserved_postgresql_ports": [],
+          "handoff_branch": "codex/w31-handoff",
+          "actions_authorized": false,
+          "deployment_authorized": false,
+          "existing_database_migration_authorized": false,
+          "worker_delivery_received": true,
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "resources_released": true,
+          "full_task_completed": false,
+          "local_ready_to_merge": true,
+          "delivery_evidence": "docs/development/evidence/WP02-03/trusted-field-source/DELIVERY.md",
+          "validation": "50 distinct related .NET/native PostgreSQL cases passed,0 final failed/skipped; old evidence reused, initial failures retained",
+          "review": "One task-level author SPEC/QUALITY; no scoped blocker; internal source does not approve Owner mappings or replace effect fence",
+          "business_acceptance": "NOT_RUN",
+          "issues": [],
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "419cf032ec3b36074398924409ce0a76c91c1b7c",
+            "main": "fc49e6d4fb0e75f00ed51913f1e998aa4b793d54",
+            "pr": "https://github.com/GTX537/CP6/pull/363",
+            "paths": [
+              "CP6.Core/Services/Sys/CurrentFieldPermissionSourceReaderV1.cs",
+              "CP6.Core/Services/Sys/CurrentPermissionContext.cs",
+              "CP6.Core/Services/Sys/FieldPermissionSourceV1.cs",
+              "CP6.Tests/FieldPermissionSourceBoundaryTests.cs",
+              "CP6.Tests/Platform/FieldPermissionSourcePostgreSqlTests.cs",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/09-parallel-development.md",
+              "docs/development/dispatch/20261020-wave31/README.md",
+              "docs/development/evidence/WP02-03/trusted-field-source/DELIVERY.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-20T09:53:50.148402+00:00"
+          },
+          "delivery_ref": {
+            "commit": "3ac68bea392e73af3a659121d888770f3e00614b",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T095535Z-wave31-delivery/MESSAGE.md",
+            "at": "2026-10-20T09:55:35.250752+00:00",
+            "pr": 7,
+            "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/7",
+            "base": "codex/t02c-entry-handoff-20260921"
+          },
+          "branch_disposition": "deleted-local-and-remote",
+          "workspace_status": "fixed-seat-detached-for-reuse",
+          "seat_released": true,
+          "closed_at": "2026-10-20T09:55:18.663468+00:00",
+          "active_issues": []
         }
       ],
       "wave13_delivery": {
@@ -163894,6 +163963,13 @@
           "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/7",
           "base": "codex/t02c-entry-handoff-20260921"
         }
+      },
+      "wave32_delivery": {
+        "status": "READY_FOR_INTEGRATION",
+        "report": "docs/development/evidence/WP02-03/order-price-correction-owner/DELIVERY.md",
+        "validation": "49 related .NET/native PG/actual Program and9 Vitest4.1.11 pass; final typecheck passes;0 final failed/skipped; original failures retained",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN"
       }
     },
     {
@@ -182427,11 +182503,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261020-wave31",
-      "path": "docs/development/dispatch/20261020-wave31/README.md",
-      "baseline_sha": "439c164084f8aa911645fbe56b46810f745d64dc",
-      "registered_at": "2026-10-20T09:41:25.148265+00:00",
-      "phase": "CLOSED",
+      "id": "20261020-wave32",
+      "path": "docs/development/dispatch/20261020-wave32/README.md",
+      "baseline_sha": "ad4313f8ce0aea9840189d015c0ddadf6b03551e",
+      "registered_at": "2026-10-20T10:26:11.503790+00:00",
+      "phase": "READY_FOR_INTEGRATION",
       "assigned_chats": [
         "COORD"
       ],
@@ -182441,105 +182517,61 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [],
+      "active_implementation_chats": [
+        "COORD"
+      ],
       "workers_started": true,
-      "windows_closed": true,
-      "product_integrated": true,
+      "windows_closed": false,
+      "product_integrated": false,
       "windows": [
         {
-          "id": "W31-01",
+          "id": "W32-01",
           "task_id": "WP02-03",
-          "title": "字段权限可信PostgreSQL来源",
+          "title": "受注单价订正Owner写入与最终撤权门",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "CLOSED",
+          "phase": "READY_FOR_INTEGRATION",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "actual_start_ref": {
-            "commit": "719bd8767d02124c4607e4207692e853d60e5399",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T094125Z-wave31-start/MESSAGE.md",
-            "at": "2026-10-20T09:41:25.148265+00:00"
+            "commit": "a70d8c0454baa5d46ea32caaa97efa750a87716e",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T102611Z-wave32-start/MESSAGE.md",
+            "at": "2026-10-20T10:26:11.503790+00:00"
           },
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w31-01",
-          "planned_scope_ref": "docs/development/dispatch/20261020-wave31/README.md",
+          "branch": "codex/w32-01",
+          "planned_scope_ref": "docs/development/dispatch/20261020-wave32/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "candidate_integrated": true,
+          "candidate_integrated": false,
           "local_ready_to_merge": true,
-          "delivery_evidence": "docs/development/evidence/WP02-03/trusted-field-source/DELIVERY.md",
-          "validation": "50 distinct related .NET/native PostgreSQL cases passed,0 final failed/skipped; old evidence reused, initial failures retained",
-          "review": "One task-level author SPEC/QUALITY; no scoped blocker; internal source does not approve Owner mappings or replace effect fence",
-          "issues": [],
-          "integration": {
-            "result": "PASS",
-            "repository": "GTX537/CP6",
-            "source": "419cf032ec3b36074398924409ce0a76c91c1b7c",
-            "main": "fc49e6d4fb0e75f00ed51913f1e998aa4b793d54",
-            "pr": "https://github.com/GTX537/CP6/pull/363",
-            "paths": [
-              "CP6.Core/Services/Sys/CurrentFieldPermissionSourceReaderV1.cs",
-              "CP6.Core/Services/Sys/CurrentPermissionContext.cs",
-              "CP6.Core/Services/Sys/FieldPermissionSourceV1.cs",
-              "CP6.Tests/FieldPermissionSourceBoundaryTests.cs",
-              "CP6.Tests/Platform/FieldPermissionSourcePostgreSqlTests.cs",
-              "docs/development/07-detailed-tasks.md",
-              "docs/development/09-parallel-development.md",
-              "docs/development/dispatch/20261020-wave31/README.md",
-              "docs/development/evidence/WP02-03/trusted-field-source/DELIVERY.md",
-              "docs/development/roadmap.json",
-              "docs/project-memory/05-Completed.md",
-              "docs/project-memory/06-Todo.md",
-              "docs/project-memory/CHANGELOG-AI.md",
-              "docs/project-memory/PROJECT_STATE.md"
-            ],
-            "observed_at": "2026-10-20T09:53:50.148402+00:00"
-          },
-          "delivery_ref": {
-            "commit": "3ac68bea392e73af3a659121d888770f3e00614b",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T095535Z-wave31-delivery/MESSAGE.md",
-            "at": "2026-10-20T09:55:35.250752+00:00",
-            "pr": 7,
-            "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/7",
-            "base": "codex/t02c-entry-handoff-20260921"
-          },
-          "resources_released": true,
-          "branch_disposition": "deleted-local-and-remote",
-          "workspace_status": "fixed-seat-detached-for-reuse",
-          "seat_released": true,
-          "closed_at": "2026-10-20T09:55:18.663468+00:00",
-          "active_issues": []
+          "delivery_evidence": "docs/development/evidence/WP02-03/order-price-correction-owner/DELIVERY.md",
+          "validation": "49 related .NET/native PG/actual Program and9 Vitest4.1.11 pass; final typecheck passes;0 final failed/skipped; original failures retained",
+          "review": "One task-level author SPEC/QUALITY; scoped Owner write adapter and PostgreSQL commit fence; no remaining scoped blocker",
+          "issues": [
+            365
+          ],
+          "scope_refinement": "Bounded original-session revalidation, native business-key semantics, propagation money/approval consistency and truthful workflow/unknown UI are necessary to this one Owner write task. No second implementation branch or workspace."
         }
       ],
       "horizon": {
-        "started_at": "2026-10-20T09:41:25.148265+00:00",
-        "checkpoint_at": "2026-10-21T09:41:25.148265+00:00",
+        "started_at": "2026-10-20T10:26:11.503790+00:00",
+        "checkpoint_at": "2026-10-21T10:26:11.503790+00:00",
         "estimated_agent_wall_time_hours": [
-          1.75,
-          2.75
+          3,
+          4.5
         ],
-        "contingency_hours": 4
+        "contingency_hours": 6
       },
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W31 trusted PostgreSQL field source closed. Remaining accepted Owner mapping approval/real business consumer adoption and effect commit revocation fences, CRM persistent adoption require separate bounded implementation. Full IAM/business/production not complete; do not repeat completed W27-W31 or restart frozen directions.",
-      "closed_at": "2026-10-20T09:58:10.709863+00:00",
-      "handoff_integration": {
-        "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
-        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/7",
-        "commit": "cd8804c30fd19b2f9c880ce2f5dc23e769250dff",
-        "target_head": "cd8804c30fd19b2f9c880ce2f5dc23e769250dff"
-      },
-      "handoff_resources_released": true,
-      "handoff_branch_disposition": "deleted-local-and-remote",
-      "coordination_closeout_task": "W31-CLOSE",
-      "coordination_closeout_status": "Final documentation PR and manager finish required; product/Handoff already finished."
+      "next_action": "Normal product PR, Handoff and same-task-branch final documentation; then finish both fixed seats, no extra coordination branch"
     },
     "wave_history": [
       {
@@ -187922,6 +187954,121 @@
         "handoff_resources_released": true,
         "handoff_branch_disposition": "deleted-local-and-remote",
         "coordination_closeout_task": "W30-CLOSE",
+        "coordination_closeout_status": "Final documentation PR and manager finish required; product/Handoff already finished."
+      },
+      {
+        "id": "20261020-wave31",
+        "path": "docs/development/dispatch/20261020-wave31/README.md",
+        "baseline_sha": "439c164084f8aa911645fbe56b46810f745d64dc",
+        "registered_at": "2026-10-20T09:41:25.148265+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W31-01",
+            "task_id": "WP02-03",
+            "title": "字段权限可信PostgreSQL来源",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "actual_start_ref": {
+              "commit": "719bd8767d02124c4607e4207692e853d60e5399",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T094125Z-wave31-start/MESSAGE.md",
+              "at": "2026-10-20T09:41:25.148265+00:00"
+            },
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w31-01",
+            "planned_scope_ref": "docs/development/dispatch/20261020-wave31/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "local_ready_to_merge": true,
+            "delivery_evidence": "docs/development/evidence/WP02-03/trusted-field-source/DELIVERY.md",
+            "validation": "50 distinct related .NET/native PostgreSQL cases passed,0 final failed/skipped; old evidence reused, initial failures retained",
+            "review": "One task-level author SPEC/QUALITY; no scoped blocker; internal source does not approve Owner mappings or replace effect fence",
+            "issues": [],
+            "integration": {
+              "result": "PASS",
+              "repository": "GTX537/CP6",
+              "source": "419cf032ec3b36074398924409ce0a76c91c1b7c",
+              "main": "fc49e6d4fb0e75f00ed51913f1e998aa4b793d54",
+              "pr": "https://github.com/GTX537/CP6/pull/363",
+              "paths": [
+                "CP6.Core/Services/Sys/CurrentFieldPermissionSourceReaderV1.cs",
+                "CP6.Core/Services/Sys/CurrentPermissionContext.cs",
+                "CP6.Core/Services/Sys/FieldPermissionSourceV1.cs",
+                "CP6.Tests/FieldPermissionSourceBoundaryTests.cs",
+                "CP6.Tests/Platform/FieldPermissionSourcePostgreSqlTests.cs",
+                "docs/development/07-detailed-tasks.md",
+                "docs/development/09-parallel-development.md",
+                "docs/development/dispatch/20261020-wave31/README.md",
+                "docs/development/evidence/WP02-03/trusted-field-source/DELIVERY.md",
+                "docs/development/roadmap.json",
+                "docs/project-memory/05-Completed.md",
+                "docs/project-memory/06-Todo.md",
+                "docs/project-memory/CHANGELOG-AI.md",
+                "docs/project-memory/PROJECT_STATE.md"
+              ],
+              "observed_at": "2026-10-20T09:53:50.148402+00:00"
+            },
+            "delivery_ref": {
+              "commit": "3ac68bea392e73af3a659121d888770f3e00614b",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T095535Z-wave31-delivery/MESSAGE.md",
+              "at": "2026-10-20T09:55:35.250752+00:00",
+              "pr": 7,
+              "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/7",
+              "base": "codex/t02c-entry-handoff-20260921"
+            },
+            "resources_released": true,
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true,
+            "closed_at": "2026-10-20T09:55:18.663468+00:00",
+            "active_issues": []
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-20T09:41:25.148265+00:00",
+          "checkpoint_at": "2026-10-21T09:41:25.148265+00:00",
+          "estimated_agent_wall_time_hours": [
+            1.75,
+            2.75
+          ],
+          "contingency_hours": 4
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W31 trusted PostgreSQL field source closed. Remaining accepted Owner mapping approval/real business consumer adoption and effect commit revocation fences, CRM persistent adoption require separate bounded implementation. Full IAM/business/production not complete; do not repeat completed W27-W31 or restart frozen directions.",
+        "closed_at": "2026-10-20T09:58:10.709863+00:00",
+        "handoff_integration": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/7",
+          "commit": "cd8804c30fd19b2f9c880ce2f5dc23e769250dff",
+          "target_head": "cd8804c30fd19b2f9c880ce2f5dc23e769250dff"
+        },
+        "handoff_resources_released": true,
+        "handoff_branch_disposition": "deleted-local-and-remote",
+        "coordination_closeout_task": "W31-CLOSE",
         "coordination_closeout_status": "Final documentation PR and manager finish required; product/Handoff already finished."
       }
     ],

@@ -50,12 +50,14 @@
         <el-form-item>
           <el-button type="primary" @click="search" :loading="loading">{{ t('sales.btn.search') }}</el-button>
           <el-button @click="resetQuery">{{ t('sales.btn.clear') }}</el-button>
-          <el-button v-permission="'erp-order-price-correction:correct'" type="success" @click="onSubmit" :loading="submitting" :disabled="selectedRows.length === 0">
+          <el-button v-permission="'erp-order-price-correction:correct'" type="success" @click="onSubmit" :loading="submitting" :disabled="selectedRows.length === 0 || outcomeUnknown">
             {{ t('sales.pc.updateSelected') }}（{{ selectedRows.length }}）
           </el-button>
         </el-form-item>
       </el-form>
     </el-card>
+
+    <el-alert v-if="submitNotice" :title="submitNotice" type="warning" show-icon :closable="false" />
 
     <!-- 結果 -->
     <el-card shadow="never">
@@ -130,7 +132,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
@@ -138,6 +140,7 @@ const { t } = useI18n()
 import { Warning } from '@element-plus/icons-vue'
 import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import { orderApi } from '@/api/erp/order'
+import { AUTH_EVENT, AuthenticationChangedError, identityStamp, requireIdentity } from '@/auth/identity'
 import type {
   OrderPriceCorrectionQueryDto,
   OrderPriceCorrectionItemDto,
@@ -151,7 +154,22 @@ const rows = ref<OrderPriceCorrectionItemDto[]>([])
 const total = ref(0)
 const loading = ref(false)
 const submitting = ref(false)
+const outcomeUnknown = ref(false)
+const submitNotice = ref('')
 const selectedRows = ref<OrderPriceCorrectionItemDto[]>([])
+let pageIdentity = identityStamp()
+function identityChanged() {
+  if (pageIdentity === identityStamp()) return
+  pageIdentity = identityStamp()
+  resetQuery()
+  submitNotice.value = t('ログイン状態が変わりました。現在のアカウントで再検索してください。')
+}
+window.addEventListener(AUTH_EVENT, identityChanged)
+window.addEventListener('storage', identityChanged)
+onBeforeUnmount(() => {
+  window.removeEventListener(AUTH_EVENT, identityChanged)
+  window.removeEventListener('storage', identityChanged)
+})
 
 function isRowSelected(row: OrderPriceCorrectionItemDto): boolean {
   return selectedRows.value.includes(row)
@@ -190,39 +208,77 @@ function resetQuery() {
 }
 
 async function onSubmit() {
+  if (submitting.value || outcomeUnknown.value) return
   if (selectedRows.value.length === 0) {
     ElMessage.warning(t('sales.err.E10009'))
     return
   }
+  const request = {
+    items: selectedRows.value.map(r => ({
+      webOrderNo: r.webOrderNo,
+      webOrderDetailNo: r.webOrderDetailNo,
+      individualUnitPriceAfter: r.individualUnitPriceAfter,
+      setUnitPriceAfter: r.setUnitPriceAfter,
+      specialPriceFlg: r.specialPriceFlg,
+      priceChangeReason: r.priceChangeReason,
+      rowVersion: r.rowVersion,
+    })),
+  }
+  const submittedIdentity = identityStamp()
+  let attempted = false
+  submitting.value = true
   try {
     await ElMessageBox.confirm(
       t('{n} 件の単価訂正を実行します。よろしいですか？', { n: selectedRows.value.length }),
       t('確認'), { type: 'warning' },
     )
-  } catch { return }
+  } catch { submitting.value = false; return }
 
-  submitting.value = true
+  submitNotice.value = ''
   try {
-    const res = await orderApi.batchUpdatePrice({
-      items: selectedRows.value.map(r => ({
-        webOrderNo: r.webOrderNo,
-        webOrderDetailNo: r.webOrderDetailNo,
-        individualUnitPriceAfter: r.individualUnitPriceAfter,
-        setUnitPriceAfter: r.setUnitPriceAfter,
-        specialPriceFlg: r.specialPriceFlg,
-        priceChangeReason: r.priceChangeReason,
-        rowVersion: r.rowVersion,
-      })),
-    })
+    requireIdentity(submittedIdentity)
+    attempted = true
+    const res = await orderApi.batchUpdatePrice(request)
+    requireIdentity(submittedIdentity)
+    if (res.code !== 0 || !res.data) throw new Error('Price correction result unavailable')
     if (res.code === 0 && res.data) {
-      ElMessage.success(t('更新: {updated} 件 / WF 起票: {wf} 件', { updated: res.data.updatedCount, wf: res.data.wfRequestedCount }))
+      ElMessage.success(t(
+        res.data.workflowDeliveryState === 'AwaitingAdapter'
+          ? '更新: {updated} 件 / 承認依頼保存: {wf} 件（外部送信待ち）'
+          : '更新: {updated} 件 / WF 起票: {wf} 件',
+        { updated: res.data.updatedCount, wf: res.data.wfRequestedCount },
+      ))
       if (res.data.conflictedKeys.length > 0) {
         ElMessage.warning(t('競合: {keys}', { keys: res.data.conflictedKeys.join(', ') }))
       }
       await search()
       selectedRows.value = []
     }
-  } catch { /* */ } finally {
+  } catch (error: unknown) {
+    if (error instanceof AuthenticationChangedError) {
+      resetQuery()
+      outcomeUnknown.value ||= attempted
+      submitNotice.value = t('ログイン状態が変わりました。元の更新は再送していません。送信済みの場合は元のアカウントで保存状態を確認してください。')
+      return
+    }
+    const response = (error as { response?: { status?: number; data?: { message?: string } } })?.response
+    const status = response?.status
+    const knownUnavailable = ['AUTHORITY_FENCE_UNAVAILABLE', 'OWNER_SCOPE_MAPPING_UNAVAILABLE'].includes(response?.data?.message || '')
+    if (!status || (status >= 500 && !knownUnavailable)) {
+      outcomeUnknown.value = true
+      submitNotice.value = t('更新結果を確認できません。受注と承認依頼の保存状態を確認してください。この画面からは再送できません。')
+    } else if (status === 401) {
+      submitNotice.value = t('ログインが無効になりました。再ログイン後に受注の状態を確認してください。更新は再送していません。')
+    } else if (status === 409) {
+      submitNotice.value = t('他の処理によって受注が更新されました。入力内容を控えてから再検索してください。')
+    } else if (status === 403) {
+      submitNotice.value = t('現在の権限では更新できません。入力内容は保持されています。')
+    } else if (knownUnavailable) {
+      submitNotice.value = t('現在のデータ範囲または権限を確認できないため更新できません。管理者に確認してください。')
+    } else {
+      submitNotice.value = t('更新は完了していません。入力内容を確認してください。')
+    }
+  } finally {
     submitting.value = false
   }
 }

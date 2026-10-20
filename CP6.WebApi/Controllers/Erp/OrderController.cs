@@ -1,5 +1,6 @@
 using CP6.Core.Auth;
 using CP6.Core.Services;
+using CP6.Core.Services.Erp;
 using CP6.Entity.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -233,6 +234,10 @@ public class OrderController : LocalizedControllerBase
         {
             var result = await _service.BatchUpdatePriceAsync(req, CurrentUser);
             return Ok(new { code = 0, message = "OK", data = result });
+        }
+        catch (OrderPriceCorrectionException ex)
+        {
+            return StatusCode(ex.Status, new { code = ex.Status, message = ex.Message, retryable = false });
         }
         catch (DbUpdateConcurrencyException)
         {

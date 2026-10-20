@@ -25,6 +25,7 @@ public class OrderService : IOrderService
     private readonly IMesBridgeHook _mesBridge;
     private readonly IOrderCancelBridgeHook _cancelBridge;
     private readonly IFxRateService? _fxRate;
+    private readonly OrderPriceCorrectionOwnerV1? _priceCorrectionOwner;
     /// <summary>WebOrderNo 採番プレフィックス（業務 ID 識別子）</summary>
     private const string WebOrderPrefix = "WO";
     private const string McNullVal = "MCNULLVAL";
@@ -37,7 +38,8 @@ public class OrderService : IOrderService
         IWmsBridgeHook wmsBridge,
         IMesBridgeHook? mesBridge = null,
         IOrderCancelBridgeHook? cancelBridge = null,
-        IFxRateService? fxRate = null)
+        IFxRateService? fxRate = null,
+        OrderPriceCorrectionOwnerV1? priceCorrectionOwner = null)
     {
         _db = db;
         _powerEgg = powerEgg;
@@ -45,6 +47,7 @@ public class OrderService : IOrderService
         _mesBridge = mesBridge ?? new NoOpMesBridgeHook();
         _cancelBridge = cancelBridge ?? new NoOpOrderCancelBridgeHook();
         _fxRate = fxRate;
+        _priceCorrectionOwner = priceCorrectionOwner;
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -956,6 +959,13 @@ public class OrderService : IOrderService
     public async Task<OrderPriceCorrectionBatchResultDto> BatchUpdatePriceAsync(
         OrderPriceCorrectionBatchUpdateDto request, string? userName)
     {
+        if (_db.Database.IsNpgsql())
+        {
+            if (_priceCorrectionOwner?.Owns(_db) != true)
+                throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503);
+            return await _priceCorrectionOwner.ExecuteAsync(request);
+        }
+        // Historical non-PostgreSQL behavior remains for existing consumers/tests only.
         var result = new OrderPriceCorrectionBatchResultDto();
         if (request.Items.Count == 0) return result;
 

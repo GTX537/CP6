@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 2026-10-20：W32 单价订正 Owner 与最终撤权门候选
+
+实际PG写入口接入版本化Owner字段/对象/动作映射、原会话重查、持锁到提交及业务/审批意图原子保存；#365原步骤已回归。49项后端/原生PG/实际宿主、9项前端与类型检查通过，0最终失败/跳过；一次作者审查无本窗阻断。
+
+原DEV-1/DEV-2复用、自有服务停止、5处生成data回收。正常PR/Handoff和原任务分支收尾后finish，不另开进度分支。部门映射、其他Order用途/业务恢复、外部工作流和CRM/真实业务仍未完成；125目标/247运行不提升。无Actions/既有环境迁移/生产。[DELIVERY](../development/evidence/WP02-03/order-price-correction-owner/DELIVERY.md)。
+
 ## 2026-10-20：W31 已集成并完成产品/Handoff席位收尾
 
 字段权限可信PG来源通过[产品PR](https://github.com/GTX537/CP6/pull/363)合入，main`fc49e6d4fb0e75f00ed51913f1e998aa4b793d54`；[Handoff PR](https://github.com/GTX537/CP6.AI-Handoff/pull/7)已合入默认分支。50不同相关.NET/原生PG通过，0最终失败/跳过；一次作者审查无阻断。产品/Handoff分支已定向删除、固定席位释放，自有PG停止、生成data回收，证据保留。

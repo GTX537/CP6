@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W32](dispatch/20261020-wave32/README.md)，COORD单聊天Owner单价订正写入与最终撤权门候选就绪；同任务分支完成PR/收尾，无新派工/工作树。
+
 > 当前：[W31收尾](dispatch/20261020-wave31/README.md)，字段可信来源产品/Handoff已集成、分支清理和固定席位释放；最后协调W31-CLOSE待自身正常PR/finish。下项依真实剩余合同，不重复W27–31；四仓合计2+1。
 
 > 当前：[W30收尾](dispatch/20261020-wave30/README.md)，产品PR361/Handoff PR6已集成，#360 Closed，任务分支清理/固定席位释放；仅最后协调W30-CLOSE待自身正常PR/finish。下项按真实剩余合同领取，不重复W27–W30，四仓合计2+1。

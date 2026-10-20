@@ -190,6 +190,8 @@ foreach (var probe in woProbes.Where(p => p.AutoCancellable)) {
 
 ## 単価订正 — GET price-correction/list ＋ PUT price-correction/batch（PA090）
 
+2026-10-20 PostgreSQL 写入口已由 `OrderPriceCorrectionOwnerV1` 接管：当前字段/对象/操作与最终撤权事务门、同单传播与金额/审批意图原子保存。审批意图为 AwaitingAdapter，不代表外部起票。见[版本化 Owner 映射](../design-handbook/remediation/main-order-price-correction-owner-v1.md)；下方旧逐行源码描述保留为历史非 PG 路径，不作为新 PG 写入及工作流成功依据。读入口仍在原范围。
+
 **前端**：`/order-price-correction`（`router/index.ts:71` → `OrderPriceCorrectionView.vue`，baseCd 必填 `:6`）。`search`（`:156-172`）；选中行才可编辑单价单元格（`isRowSelected` 控 `:disabled`）。`onSubmit`（`:184-220`）`batchUpdatePrice({ items: 选中行映射 after价/specialPriceFlg/priceChangeReason/rowVersion })`，结果 `更新:{updated} / WF起票:{wf}`，`conflictedKeys` 有则 warning。api `searchPriceCorrection`/`batchUpdatePrice`（`order.ts:166-178`）。
 **后端**
 - Controller 检索（`OrderController.cs:195-214`）FROM≤TO + 数量/金额 FROM≤TO（`E10036`）；批量（`:227-244`）catch `DbUpdateConcurrency→409 W10002`。
