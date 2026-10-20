@@ -569,6 +569,8 @@ public class OrderPriceCorrectionBatchUpdateDto
 /// <summary>PA090 バッチ更新結果（POWER EGG WF 起票件数を含む）</summary>
 public class OrderPriceCorrectionBatchResultDto
 {
+    /// <summary>AwaitingAdapter means durable local intent only, not external workflow delivery.</summary>
+    public string? WorkflowDeliveryState { get; set; }
     public int UpdatedCount { get; set; }
     public int WfRequestedCount { get; set; }
     public List<string> ConflictedKeys { get; set; } = new();

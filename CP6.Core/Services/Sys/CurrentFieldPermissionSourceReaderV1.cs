@@ -43,7 +43,7 @@ internal sealed class CurrentFieldPermissionSourceReaderV1(
             // Existing ordinary SQL writer triggers advance these revisions, including ABA.
             var sql = $$"""
                 WITH field_subject AS MATERIALIZED (
-                    SELECT u."Id", u."RoleId", u."TenantId", t."AuthenticationPolicyRevision",
+                    SELECT u."Id", u."RoleId", u."TenantId", t."AuthenticationPolicyRevision", t."ExpireDate",
                         v.revision AS user_revision
                     FROM {{Table<Sys_User>()}} u
                     JOIN {{Table<Sys_Tenant>()}} t ON t."Id"=u."TenantId"
@@ -64,7 +64,7 @@ internal sealed class CurrentFieldPermissionSourceReaderV1(
                 )
                 SELECT pg_catalog.jsonb_build_object(
                     'TenantId',u."TenantId",'UserId',u."Id",'UserRevision',u.user_revision,
-                    'PolicyRevision',u."AuthenticationPolicyRevision",
+                    'PolicyRevision',u."AuthenticationPolicyRevision",'TenantExpiresAt',u."ExpireDate",
                     'Roles',COALESCE((SELECT pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
                         'RoleId',r."RoleId",'Revision',r.revision) ORDER BY r."RoleId") FROM field_roles r),'[]'::jsonb),
                     'Rows',COALESCE((SELECT pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
@@ -85,6 +85,7 @@ internal sealed class CurrentFieldPermissionSourceReaderV1(
             if (snapshot is null || snapshot.TenantId != db.CurrentTenantId || snapshot.UserId != subject
                 || snapshot.UserRevision is null || snapshot.UserRevision == Guid.Empty
                 || snapshot.PolicyRevision is null || snapshot.PolicyRevision == Guid.Empty
+                || snapshot.TenantExpiresAt <= DateTime.Now
                 || snapshot.Roles is null || snapshot.Rows is null
                 || snapshot.Roles.Any(r => r.Revision is null || r.Revision == Guid.Empty))
                 throw new CurrentPermissionUnavailableException();
@@ -93,7 +94,7 @@ internal sealed class CurrentFieldPermissionSourceReaderV1(
             var source = new FieldPermissionSourceV1(snapshot.TenantId, subject, resource, registryVersion,
                 sourceVersion, definitions.Select(f => f.Name),
                 snapshot.Roles.Select(r => new FieldPermissionRoleV1(r.RoleId, r.Revision!.Value.ToString("D"), true)),
-                snapshot.Rows);
+                snapshot.Rows, snapshot.TenantExpiresAt);
             // Validate source structure using the same accepted algorithm; no use is granted by
             // this check. The actual consumer must separately supply Owner-approved mappings.
             if (!source.Evaluate(source.Versions("source-validation-only"), "source-validation-only", [], []).IsAvailable)
@@ -106,6 +107,6 @@ internal sealed class CurrentFieldPermissionSourceReaderV1(
     }
 
     private sealed record Role(int RoleId, Guid? Revision);
-    private sealed record Snapshot(Guid TenantId, Guid UserId, Guid? UserRevision, Guid? PolicyRevision,
+    private sealed record Snapshot(Guid TenantId, Guid UserId, Guid? UserRevision, Guid? PolicyRevision, DateTime? TenantExpiresAt,
         Role[] Roles, FieldPermissionRowV1[] Rows);
 }
