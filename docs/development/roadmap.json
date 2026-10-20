@@ -159182,6 +159182,16 @@
       "date": "2026-10-20",
       "change": "W29-01 role lifecycle and shared recovery ready; current authority/SSO reference CAS, safe retained identity, actual modal recovery. Fixed-v1 nonpositive role projection gap remains issue353; full business unchanged.",
       "evidence": "docs/development/evidence/WP02-03/role-administration/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-20",
+      "change": "W29-01 integrated PR354 and exactly finished; existing DEV-1 re-leased for W29-02. Tenant menu-action catalog writer gate/revisions within planned necessary migration scope.",
+      "evidence": "docs/development/dispatch/20261020-wave29/README.md"
+    },
+    {
+      "date": "2026-10-20",
+      "change": "W29-02 closed role policy commands/catalog CAS and shared pages ready; 78 related native cases,19 Vitest,4 Chrome. Issue355 pending integration;353 remains pinned cross-repository contract gap; full business unchanged.",
+      "evidence": "docs/development/evidence/WP02-03/role-policy-administration/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -161753,23 +161763,23 @@
       "card_anchor": "wp02-03",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W29-01 role lifecycle",
+        "chat_label": "COORD / W29-02 closed role policies",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/w29-01",
+        "branch": "codex/w29-02",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-20T05:42:07.068923+00:00",
-        "baseline_sha": "563850b2db83bff6587109e5f636be7df2642847",
+        "claimed_at": "2026-10-20T06:06:24.366575+00:00",
+        "baseline_sha": "b4c60e5c54ec9db2913bdbe670bcd27485971587",
         "entry_evidence": "docs/development/dispatch/20261020-wave29/README.md",
         "phase": "READY_TO_MERGE",
-        "dispatch_scope": "W29_01",
+        "dispatch_scope": "W29_02",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
         "actual_start_ref": {
-          "commit": "7db564c0f91afa8539448dc2c1eac6a2156e38a3",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T054207Z-wave29-start/MESSAGE.md",
-          "at": "2026-10-20T05:42:07.068923+00:00"
+          "commit": "6b7f27eab2e89e3e1f8fd0c3399ccec07eb881d3",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T060624Z-wave29-role-delivery-policy-start/MESSAGE.md",
+          "at": "2026-10-20T06:06:24.366575+00:00"
         },
         "allowed_write_paths": [
           "CP6.Core/Services/Sys/",
@@ -161779,7 +161789,9 @@
           "CP6.Tests/",
           "cp6.web/",
           "docs/development/",
-          "docs/project-memory/"
+          "docs/project-memory/",
+          "CP6.Persistence.PostgreSql/Migrations/Core/",
+          "CP6.Core/Persistence/Tenancy/"
         ],
         "reserved_write_resources": [
           "Main:identity-authority"
@@ -161796,17 +161808,12 @@
         "candidate_integrated": false,
         "resources_released": false,
         "full_task_completed": false,
-        "delivery_report": "docs/development/evidence/WP02-03/role-administration/DELIVERY.md",
+        "delivery_report": "docs/development/evidence/WP02-03/role-policy-administration/DELIVERY.md",
         "active_issues": [
           {
-            "number": 351,
+            "number": 355,
             "state": "OPEN",
-            "url": "https://github.com/GTX537/CP6/issues/351"
-          },
-          {
-            "number": 352,
-            "state": "OPEN",
-            "url": "https://github.com/GTX537/CP6/issues/352"
+            "url": "https://github.com/GTX537/CP6/issues/355"
           }
         ]
       },
@@ -163407,6 +163414,69 @@
             "state": "CLOSED",
             "url": "https://github.com/GTX537/CP6/issues/348"
           }
+        },
+        {
+          "chat_label": "COORD / W29-01 role lifecycle",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/w29-01",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-10-20T05:42:07.068923+00:00",
+          "baseline_sha": "563850b2db83bff6587109e5f636be7df2642847",
+          "entry_evidence": "docs/development/dispatch/20261020-wave29/README.md",
+          "phase": "INTEGRATED",
+          "dispatch_scope": "W29_01",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "actual_start_ref": {
+            "commit": "7db564c0f91afa8539448dc2c1eac6a2156e38a3",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T054207Z-wave29-start/MESSAGE.md",
+            "at": "2026-10-20T05:42:07.068923+00:00"
+          },
+          "allowed_write_paths": [
+            "CP6.Core/Services/Sys/",
+            "CP6.Entity/DTOs/Sys/",
+            "CP6.WebApi/Controllers/Sys/",
+            "CP6.WebApi/Program.cs",
+            "CP6.Tests/",
+            "cp6.web/",
+            "docs/development/",
+            "docs/project-memory/"
+          ],
+          "reserved_write_resources": [
+            "Main:identity-authority"
+          ],
+          "reserved_postgresql_ports": [
+            55435
+          ],
+          "handoff_branch": "codex/w29-handoff",
+          "actions_authorized": false,
+          "deployment_authorized": false,
+          "existing_database_migration_authorized": false,
+          "worker_delivery_received": true,
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "resources_released": true,
+          "full_task_completed": false,
+          "delivery_report": "docs/development/evidence/WP02-03/role-administration/DELIVERY.md",
+          "active_issues": [
+            {
+              "number": 351,
+              "state": "OPEN",
+              "url": "https://github.com/GTX537/CP6/issues/351"
+            },
+            {
+              "number": 352,
+              "state": "OPEN",
+              "url": "https://github.com/GTX537/CP6/issues/352"
+            }
+          ],
+          "merged_pr": 354,
+          "source_sha": "a99779d0cabe5a224b0f1489bdb3a9a8abc230bc",
+          "remote_main_sha": "b4c60e5c54ec9db2913bdbe670bcd27485971587",
+          "branch_disposition": "deleted-local-and-remote",
+          "seat_released": true
         }
       ],
       "wave13_delivery": {
@@ -181983,7 +182053,7 @@
       "path": "docs/development/dispatch/20261020-wave29/README.md",
       "baseline_sha": "563850b2db83bff6587109e5f636be7df2642847",
       "registered_at": "2026-10-20T05:42:07.068923+00:00",
-      "phase": "W29_01_READY_TO_MERGE",
+      "phase": "W29_02_READY_TO_MERGE",
       "assigned_chats": [
         "COORD"
       ],
@@ -182006,7 +182076,7 @@
           "title": "角色生命周期/版本/引用与页面恢复",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "READY_TO_MERGE",
+          "phase": "INTEGRATED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worker_delivery_received": true,
@@ -182027,12 +182097,12 @@
           "active_issues": [
             {
               "number": 351,
-              "state": "OPEN",
+              "state": "CLOSED",
               "url": "https://github.com/GTX537/CP6/issues/351"
             },
             {
               "number": 352,
-              "state": "OPEN",
+              "state": "CLOSED",
               "url": "https://github.com/GTX537/CP6/issues/352"
             }
           ],
@@ -182044,7 +182114,13 @@
             }
           ],
           "local_validation": "61 .NET/PG/HTTP,12 Vitest,6 real Chrome fixtures,vue-tsc build; see single DELIVERY",
-          "resources_released": false
+          "resources_released": true,
+          "candidate_integrated": true,
+          "merged_pr": 354,
+          "source_sha": "a99779d0cabe5a224b0f1489bdb3a9a8abc230bc",
+          "remote_main_sha": "b4c60e5c54ec9db2913bdbe670bcd27485971587",
+          "branch_disposition": "deleted-local-and-remote",
+          "seat_released": true
         },
         {
           "id": "W29-02",
@@ -182052,17 +182128,34 @@
           "title": "菜单动作/数据范围/字段权限封闭编辑与页面",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "REGISTERED_NOT_STARTED",
-          "gate": "WAITING_PREDECESSOR_INTEGRATION",
-          "worker_start_received": false,
-          "worker_delivery_received": false,
+          "phase": "READY_TO_MERGE",
+          "gate": "CONFIRMED",
+          "worker_start_received": true,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w29-02",
           "planned_scope_ref": "docs/development/dispatch/20261020-wave29/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
-          "deployment_authorized": false
+          "deployment_authorized": false,
+          "actual_start_ref": {
+            "commit": "6b7f27eab2e89e3e1f8fd0c3399ccec07eb881d3",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T060624Z-wave29-role-delivery-policy-start/MESSAGE.md",
+            "at": "2026-10-20T06:06:24.366575+00:00"
+          },
+          "baseline_sha": "b4c60e5c54ec9db2913bdbe670bcd27485971587",
+          "candidate_review_completed": true,
+          "delivery_report": "docs/development/evidence/WP02-03/role-policy-administration/DELIVERY.md",
+          "active_issues": [
+            {
+              "number": 355,
+              "state": "OPEN",
+              "url": "https://github.com/GTX537/CP6/issues/355"
+            }
+          ],
+          "local_validation": "78 unique .NET/PG/HTTP,19 Vitest,4 real Chrome fixtures,vue-tsc; see DELIVERY",
+          "resources_released": false
         },
         {
           "id": "W29-03",
@@ -182096,7 +182189,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Normal PR and exact lifecycle finish for W29-01, then reuse DEV-1 for W29-02; issue353 remains explicit cross-repository contract gap."
+      "next_action": "Normal PR/remote adoption and finish W29-02; W29-03 closes composition evidence, Handoff and lifecycle without new product scope."
     },
     "wave_history": [
       {

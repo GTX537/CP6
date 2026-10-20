@@ -122,6 +122,7 @@ public class RoleController : LocalizedControllerBase
     [RequirePermission("role", "edit")]
     public async Task<IActionResult> SaveRoleMenus(int roleId, [FromBody] int[] menuIds)
     {
+        if (_context.Database.IsNpgsql()) return BadRequest(new { code = "IAM_VERSIONED_POLICY_COMMAND_REQUIRED", endpoint = "/api/iam/role-policies" });
         // 1. 删除旧的映射（P0-T3 补口：全局过滤限定当前租户——A 改角色菜单不再串改 B 的同号角色）
         var oldMappings = _context.Sys_RoleMenus.Where(rm => rm.RoleId == roleId);
         _context.Sys_RoleMenus.RemoveRange(oldMappings);

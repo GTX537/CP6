@@ -32,6 +32,7 @@ public class RolePermService : IRolePermService
 
     public async Task SaveMenuActionsAsync(int menuId, List<MenuActionDto> actions, string? @operator)
     {
+        if (_db.Database.IsNpgsql()) throw new IamAdministrationExceptionV1(400,"IAM_VERSIONED_POLICY_COMMAND_REQUIRED");
         actions ??= new();
         var existing = await _db.Sys_MenuActions.Where(a => a.MenuId == menuId).ToListAsync();
         var targetCodes = actions.Select(a => a.ActionCode).ToHashSet();
@@ -72,6 +73,7 @@ public class RolePermService : IRolePermService
 
     public async Task SaveRolePermAsync(int roleId, RolePermDto dto, string? @operator)
     {
+        if (_db.Database.IsNpgsql()) throw new IamAdministrationExceptionV1(400,"IAM_VERSIONED_POLICY_COMMAND_REQUIRED");
         var menuIds = (dto.MenuIds ?? new()).Distinct().ToList();
         var menuSet = menuIds.ToHashSet();
         var actions = dto.Actions ?? new();
@@ -130,6 +132,7 @@ public class RolePermService : IRolePermService
 
     public async Task SaveRoleDataScopesAsync(int roleId, List<RoleDataScopeDto> items, string? @operator)
     {
+        if (_db.Database.IsNpgsql()) throw new IamAdministrationExceptionV1(400,"IAM_VERSIONED_POLICY_COMMAND_REQUIRED");
         items ??= new();
         foreach (var it in items)
         {
@@ -185,6 +188,7 @@ public class RolePermService : IRolePermService
 
     public async Task SaveRoleFieldPermsAsync(int roleId, List<RoleFieldPermDto> items, string? @operator)
     {
+        if (_db.Database.IsNpgsql()) throw new IamAdministrationExceptionV1(400,"IAM_VERSIONED_POLICY_COMMAND_REQUIRED");
         items ??= new();
         foreach (var it in items)
             if (!FieldRegistry.Has(it.ResourceKey, it.FieldName))

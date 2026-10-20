@@ -1,6 +1,7 @@
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Sys;
+using CP6.Entity.DTOs.Sys;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -12,7 +13,33 @@ internal sealed class IamAdministrationTestSession(CP6Context db, Guid actorId)
 {
     internal Task<Guid> Actor(CancellationToken ct) => Task.FromResult(actorId);
     internal IamAdministrationV1 Authority {get;} = new(db, Mock.Of<ICurrentPermissionContext>(p => p.GetAsync() == Task.FromResult(
-        new UserPermissionContext { UserId=actorId,ActionKeys=new(){"user:query","user:edit","pub-dept:query","pub-dept:add","pub-dept:edit","pub-dept:delete"} })), new EphemeralDataProtectionProvider());
+        new UserPermissionContext { UserId=actorId,ActionKeys=new(){"user:query","user:edit","pub-dept:query","pub-dept:add","pub-dept:edit","pub-dept:delete",
+            "pub-role-perm:query","pub-role-perm:edit","pub-data-scope:query","pub-data-scope:edit","pub-field-perm:query","pub-field-perm:edit"} })), new EphemeralDataProtectionProvider());
+    internal static async Task<IamAdministrationTestSession> ForPolicy(CP6Context db)
+    {
+        if(!await db.Sys_Tenants.AnyAsync(x=>x.Id==db.CurrentTenantId))
+            db.Sys_Tenants.Add(new(){Id=db.CurrentTenantId,TenantCode=db.CurrentTenantId.ToString("N"),TenantName="owned policy fixture"});
+        var actor=new Sys_User{UserName="policy-"+Guid.NewGuid().ToString("N"),Password="owned fixture",Enable=true};
+        db.Sys_Users.Add(actor);await db.SaveChangesAsync();db.ChangeTracker.Clear();return new(db,actor.Id);
+    }
+    internal IamRolePolicyAdministrationV1 Policies=>new(db,Authority);
+    internal async Task<IamRolePolicyCommandV1> PolicyCommand(string mode,int role)
+    {
+        db.ChangeTracker.Clear();var e=await Policies.ReadAsync(mode,role,Actor,default);
+        return new(){OperationId=Guid.NewGuid(),ExpectedVersion=e.Version,ExpectedReferencesVersion=e.ReferencesVersion,
+            ExpectedCatalogVersion=e.Catalog.Version,Reason="owned real policy writer",MenuIds=e.Function.MenuIds,Actions=e.Function.Actions,
+            Scopes=e.Catalog.Scopes.Select(x=>new RoleDataScopeDto{ResourceKey=x.Key,ScopeType=x.Default}).ToList()};
+    }
+    internal async Task SetRolePermissions(int role,RolePermDto value)
+        =>await Policies.ChangeAsync("actions",role,(await PolicyCommand("actions",role)) with{MenuIds=value.MenuIds,Actions=value.Actions},Actor,default);
+    internal async Task SetRoleScopes(int role,List<RoleDataScopeDto> value)
+    {
+        var command=await PolicyCommand("scopes",role);
+        foreach(var row in value){command.Scopes!.RemoveAll(x=>x.ResourceKey==row.ResourceKey);command.Scopes.Add(row);}
+        await Policies.ChangeAsync("scopes",role,command,Actor,default);
+    }
+    internal async Task SetRoleFields(int role,string resource,List<RoleFieldPermDto> value)
+        =>await Policies.ChangeAsync("fields",role,(await PolicyCommand("fields",role)) with{ResourceKey=resource,Fields=value},Actor,default);
     internal async Task SetUser(Guid userId, int[]? roles=null, int? primary=null, Guid? department=null, string? email=null)
     {
         if(!await db.Sys_Tenants.AnyAsync(x=>x.Id==db.CurrentTenantId))

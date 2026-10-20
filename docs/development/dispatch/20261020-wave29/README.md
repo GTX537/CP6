@@ -43,3 +43,11 @@ W27跨Tab认证/SSO首次批准与映射、W28用户引用/组织CAS已合入，
 ## W29-01 交付窗口
 
 角色安全写入及实际页面候选已就绪；61相关.NET/PG/HTTP、12Vitest、6Chrome、typecheck通过。#351/#352待正常PR集成后关闭；#353固定跨仓v1整数域缺口保持Open。单份[DELIVERY](../../evidence/WP02-03/role-administration/DELIVERY.md)记录准确范围。作者集中审查无本窗阻断，未宣称完整角色/IAM合同、跨仓Owner或真实业务完成。组合验证W29-03已部分随本窗执行。自有PG/HTTP/Vite已停止，等待manage finish释放后复用原目录，不创建新树。
+
+## W29-02 实际开工
+
+W29-01已通过PR354合入远端b4c60e5c，#351/#352关闭；manage finish核实本地/远端任务分支清除、固定席位释放。原DEV-1已从此基线领取W29-02。Sys_MenuAction是tenant定义，实际writer尚无共同门/目录revision；本窗按原计划补必要前向迁移及普通安装兼容，不安装到既有环境。#353仍Open。
+
+## W29-02 交付窗口
+
+封闭授权编辑、原操作恢复和实际页面已就绪；78不同.NET/PG/HTTP、19Vitest、4Chrome、typecheck通过。单份[DELIVERY](../../evidence/WP02-03/role-policy-administration/DELIVERY.md)记录升级保留与普通数据库身份验证。#355待正常集成关闭，#353仍Open。W29-03组合验证已随两项产品任务执行，不另造纯测试分支；后续仅正常PR、远端采用和分支/席位处置及总台账收尾。自有PG/HTTP/Vite停止，无新树/代理/Actions/既有DB迁移。
