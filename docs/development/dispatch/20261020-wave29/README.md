@@ -76,3 +76,20 @@ W29-01已通过PR354合入远端b4c60e5c，#351/#352关闭；manage finish核实
 ## #353 交付窗口
 
 固定v1身份域缺口已用独立v2合同补齐，旧v1字节与正整数身份保持。Main创建/授权/分配、SSO首次身份、版本粘性/撤销与baseline共174项不同.NET/PG通过；CRM61项实际消费/合同、14Vitest和类型检查通过。CRM PR95已先合入并清理分支、释放DEV-2；Main待正常PR/远端采用及finish。#353待集成关闭，完整IAM/CRM/Owner/真实业务状态不提升；无Actions、真实租户审批或环境部署。[DELIVERY](../development/evidence/WP02-03/integer-role-identity/DELIVERY.md)。
+
+
+## #353 实际合入与总收尾
+
+| 仓库 | 已核对远端采用 | 分支／工作区／席位 |
+|---|---|---|
+| CRM | [PR95](https://github.com/GTX537/CP6.CRM/pull/95)；源`725f3fa22aaa15d21c244e0bde004ae6acdd9791`；main`c420cf9e0711bc0c5529d2f709708a57533b341a` | codex/w29-353本地/远端删除，DEV-2释放后按bind回Handoff |
+| Main | [PR358](https://github.com/GTX537/CP6/pull/358)；源`7502c87d6cdb236f6456a002291d8079747f4dcf`；main`27b8f8763c9f84961b2496bca9303920fa3d5c62` | codex/w29-353本地/远端删除，DEV-1干净detached并释放 |
+| Handoff | [PR5](https://github.com/GTX537/CP6.AI-Handoff/pull/5)；源`be1874cba0f020042dc8aa4237c99959641e9cca`；默认目标`210b411cf1cc61fa7d77e35dbeb0e4827fc0ffe9` | 原codex/w29-353-handoff曾推送后deferred释放，跨仓实施后resume；现在本地/远端删除，DEV-2干净detached并释放 |
+
+#353已Closed；旧v1字节保持，完整Int32通过版本化v2及消费者先采用解决。Main174项不同.NET/原生PG、CRM61项实际消费/合同、14Vitest、typecheck通过；两仓单份DELIVERY保存真实范围、初始失败和复查。原W29/W27浏览器及认证恢复证据按未变范围复用。CRM数据库Inbox/session实际持久化、完整Owner及真实业务仍未执行，不提升125目标/247真实运行状态。无Actions、既有环境迁移、真实租户审批或生产部署。
+
+统一manage已记录上表三任务正常PR采用/精确引用删除/席位释放。当前最终协调文档任务W29-353-CLOSE复用原DEV-1，从产品main领取；仅同步本计划、原交付报告、台账/生成页和四状态，无新业务实现。本提交不预先证明自身合并；其PR/source及finish最终结果以统一管理登记和最终聊天为准。INTEGRATION-1保持空闲；固定2开发+1集成，无额外物理目录/完整clone/源码副本。
+
+本轮15个已停止且ownership/process/reparse核对通过的临时PG测试data目录已回收；不触及既有PG环境/SQL Server/Docker。所有原测试日志、失败、TRX及必要跨仓事件文件保留。初次回收遇到只编译失败、从未建立实例的记录路径时安全停止；之前5个data已移除但字节计量未持久化，不能补称实测。接续10个data实测逻辑释放1301216054字节（1.212GiB），该接续期间D盘实际空闲变化1307766784字节（1.218GiB）；只是后10个小计，不当作全部15个精确总释放。证据`D:/CP6-local-test/wave29/foundation/owned-testdata-cleanup.json`。
+
+本轮原估计我实际3–5小时，#353追加估计1–3小时；当前自05:40Z约127分钟，#353自06:50Z约57分钟。最终远端/席位核对后报告实际总耗时，不为等待24小时而空转。
