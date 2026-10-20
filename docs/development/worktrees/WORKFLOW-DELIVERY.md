@@ -28,7 +28,7 @@ Python3.13执行`-B -m unittest discover -s tools/worktrees -p "test_*.py"`：**
 | CP6.Platform | [79](https://github.com/GTX537/CP6.Platform/pull/79) | `79b421b5` | `a89e90eb` | 本任务本地/远端分支删除；DEV-2释放后替换 |
 | CP6.AI-Handoff | [2](https://github.com/GTX537/CP6.AI-Handoff/pull/2) | `c4d28de0` | `822aa0b0` | 本任务本地/远端分支删除；DEV-2保留detached且释放 |
 
-CP6自身的准确源/目标提交及最终释放由承载本报告的同一PR最终说明和`D:/CP6/.git/cp6-workspaces/state.json`核对，避免为回填自身提交SHA再建收尾分支。本次仅处置`codex/wgov-20261020`任务引用，未重新删除上轮历史恢复分支。四主目录保留；DEV-1、DEV-2、INTEGRATION-1留作复用；所有交付必须明确报告分支处置、目录状态、席位释放。
+CP6自身的准确源/目标提交及最终释放由[本次PR345最终说明](https://github.com/GTX537/CP6/pull/345)和`D:/CP6/.git/cp6-workspaces/state.json`核对，避免为回填自身提交SHA再建收尾分支。本次仅处置`codex/wgov-20261020`任务引用，未重新删除上轮历史恢复分支。四主目录保留；DEV-1、DEV-2、INTEGRATION-1留作复用；所有交付必须明确报告分支处置、目录状态、席位释放。
 
 推送/PR/合并前检查源和受保护目标的工作流及路径过滤：CRM/Platform手动入口，Handoff无workflow，CP6沿用手动/受保护tag及未命中本次路径的窄PR检查。未调度Actions，也不将本地验证伪装远端成功。
 
