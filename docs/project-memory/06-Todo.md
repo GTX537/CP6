@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-20：W29-02 封闭授权编辑候选
+
+角色菜单/动作、数据范围、字段配置采用共同门内当前授权、角色/引用/注册域CAS和原子操作回执；实际目录writer前向迁移与普通PG基线验证通过。三个授权页及旧菜单页接入同一安全恢复入口。78不同.NET/PG/HTTP、19Vitest、4实际Chrome夹具及typecheck通过；集中作者审查无本窗阻断。#355待正常PR集成；#353固定跨仓角色身份域差异仍Open。自有进程停止，原DEV-1/DEV-2待正常finish释放；无新树/Actions/部署。完整IAM/CRM/Owner/业务未提升。[DELIVERY](../development/evidence/WP02-03/role-policy-administration/DELIVERY.md)。
+
 ## 2026-10-20：W29-01 角色生命周期与页面恢复候选
 
 版本化角色白名单/启停、当前权限与角色/引用CAS、SSO ABA、原子回执和角色页面恢复就绪。实际用户弹窗恢复缺口同窗修复。61相关.NET/PG/HTTP、12Vitest、6实际Chrome夹具、typecheck通过；作者集中审查在本窗范围无阻断。#351/#352待正常集成；固定身份v1的完整整数域差异#353仍Open，不能宣称全域支持。自有PG/HTTP/Vite停止，DEV-1候选与DEV-2 Handoff待正常PR/finish，随后复用原DEV-1开展W29-02授权编辑。无新树/Actions/部署，完整IAM/CRM/Owner/业务状态不提升。[DELIVERY](../development/evidence/WP02-03/role-administration/DELIVERY.md)。

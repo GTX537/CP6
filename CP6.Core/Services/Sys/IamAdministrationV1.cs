@@ -120,6 +120,8 @@ public sealed class IamAdministrationV1(CP6Context db, ICurrentPermissionContext
     {
         "user-create" => "user:add", "user-update" or "user-roles" or "user-org" => "user:edit",
         "role-create" => "role:add", "role-update" => "role:edit", "role-delete" => "role:delete",
+        "role-policy-actions" => "pub-role-perm:edit", "role-policy-scopes" => "pub-data-scope:edit",
+        "role-policy-fields" => "pub-field-perm:edit", "menu-actions" => "pub-role-perm:edit",
         "dept-create" => "pub-dept:add", "dept-update" or "dept-move" or "dept-leader" => "pub-dept:edit",
         "dept-delete" => "pub-dept:delete", _ => throw Error(400,"IAM_OPERATION_KIND_INVALID")
     };

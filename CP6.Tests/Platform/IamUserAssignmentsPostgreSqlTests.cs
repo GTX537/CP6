@@ -186,6 +186,34 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests(TenantManagementPo
     }
 
     [CurrentPermissionPostgresFact]
+    public async Task Policy_forward_migration_backfills_existing_catalog_without_rewriting_grants()
+    {
+        var tenant=new TenantContext{CurrentTenantId=Guid.NewGuid()};await using var template=server.Context(tenant);
+        var databaseName="iam_catalog_legacy_"+Guid.NewGuid().ToString("N");
+        await template.Database.ExecuteSqlRawAsync("CREATE DATABASE "+databaseName);
+        var connection=new NpgsqlConnectionStringBuilder(template.Database.GetConnectionString()){Database=databaseName};
+        var database=new DatabaseOptions(DatabaseProvider.PostgreSql);var profile=DatabaseMigrationProfile.For(database,DatabaseContextKind.Core);
+        await using var db=new CP6Context(DatabaseContextOptions.Configure(new DbContextOptionsBuilder<CP6Context>(),database,connection.ConnectionString,
+            profile.MigrationsAssembly,profile.HistoryTable,profile.HistorySchema).Options,tenant);
+        var migrator=db.GetService<IMigrator>();await migrator.MigrateAsync("20261020042000_IamAdministrationV1");
+        db.Sys_Tenants.Add(new(){Id=tenant.CurrentTenantId,TenantCode="legacy-catalog",TenantName="legacy"});
+        db.Sys_Roles.Add(new(){RoleId=91,RoleName="retained"});
+        db.Sys_Menus.Add(new(){MenuId=991,MenuKey="retained",MenuName="retained"});
+        db.Sys_MenuActions.Add(new(){MenuId=991,ActionCode="read",ActionName="Read"});
+        db.Sys_RoleMenus.Add(new(){RoleId=91,MenuId=991});
+        db.Sys_RoleActions.Add(new(){RoleId=91,MenuId=991,ActionCode="read"});
+        await db.SaveChangesAsync();db.ChangeTracker.Clear();
+        var roleRevision=await db.Database.SqlQueryRaw<Guid>("SELECT revision AS \"Value\" FROM cp6_authentication_v1.identity_admission_revisions WHERE object_key='role:91'").SingleAsync();
+        await migrator.MigrateAsync();
+        var catalogRevision=await db.Database.SqlQueryRaw<Guid>("SELECT revision AS \"Value\" FROM cp6_authentication_v1.identity_admission_revisions WHERE object_key='permission-catalog'").SingleAsync();
+        Assert.Equal(roleRevision,await db.Database.SqlQueryRaw<Guid>("SELECT revision AS \"Value\" FROM cp6_authentication_v1.identity_admission_revisions WHERE object_key='role:91'").SingleAsync());
+        Assert.Equal("read",(await db.Sys_RoleActions.SingleAsync()).ActionCode);
+        Assert.Equal(991,(await db.Sys_RoleMenus.SingleAsync()).MenuId);
+        await db.Sys_MenuActions.ExecuteUpdateAsync(x=>x.SetProperty(a=>a.ActionName,"Revised"));
+        Assert.NotEqual(catalogRevision,await db.Database.SqlQueryRaw<Guid>("SELECT revision AS \"Value\" FROM cp6_authentication_v1.identity_admission_revisions WHERE object_key='permission-catalog'").SingleAsync());
+    }
+
+    [CurrentPermissionPostgresFact]
     public async Task Explicit_password_reset_and_refresh_revocation_roll_back_together_or_commit_together()
     {
         var fault=new ReceiptFault();await using var h=await Seed(fault);

@@ -34,8 +34,8 @@ public class RolePermController : ControllerBase
     [RequirePermission("pub-role-perm", "edit")]
     public async Task<IActionResult> SaveMenuActions(int menuId, [FromBody] List<MenuActionDto> actions)
     {
-        await _svc.SaveMenuActionsAsync(menuId, actions, CurrentUser);
-        return Ok2();
+        try { await _svc.SaveMenuActionsAsync(menuId, actions, CurrentUser); return Ok2(); }
+        catch (IamAdministrationExceptionV1 e) { return StatusCode(e.Status,new{code=e.Message}); }
     }
 
     /// <summary>当前用户的全部操作键（前端 v-permission 数据源）</summary>

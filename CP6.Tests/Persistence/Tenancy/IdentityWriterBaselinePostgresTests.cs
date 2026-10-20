@@ -30,13 +30,13 @@ public sealed class IdentityWriterBaselinePostgresTests(IdentityDirectoryConfigu
         var department = await iam.CreateDepartment("w22-baseline", "fixture department");
         await iam.SetUser(user.Id, department: department);
         writer.Sys_Menus.Add(new Sys_Menu { MenuId = 72301, MenuName = "baseline permission", MenuKey = "crm-w22-baseline" }); await writer.SaveChangesAsync();
-        var permissions = new RolePermService(writer, current);
-        await permissions.SaveRolePermAsync(777, new() { MenuIds = [72301], Actions = [new() { MenuId = 72301, ActionCode = "read" }] }, "fixture");
+        writer.Sys_MenuActions.Add(new(){MenuId=72301,ActionCode="read",ActionName="Read"});await writer.SaveChangesAsync();writer.ChangeTracker.Clear();
+        await iam.SetRolePermissions(777, new() { MenuIds = [72301], Actions = [new() { MenuId = 72301, ActionCode = "read" }] });
         var after = await collectorA.CollectAsync();
         await ExactStoredBytes(after, A);
         var projectedUser = Data<UserIdentityData>(after, $"user:{user.Id:D}"); Assert.Equal(new[] { "role:777" }, projectedUser.Roles); Assert.Equal(department, projectedUser.DeptId);
         Assert.Equal("crm-w22-baseline", Assert.Single(Data<PermissionIdentityData>(after, "permission:role:777").Grants).Resource);
-        await permissions.SaveRolePermAsync(777, new(), "fixture");
+        await iam.SetRolePermissions(777, new());
         var removed = await collectorA.CollectAsync(); Assert.Empty(Data<PermissionIdentityData>(removed, "permission:role:777").Grants);
         Assert.NotEqual(after.Boundary, removed.Boundary); await ExactStoredBytes(removed, A);
         var afterB = await collectorB.CollectAsync(); Assert.Equal(beforeB.ContentSha256, afterB.ContentSha256); Assert.Equal(beforeB.Boundary, afterB.Boundary);
@@ -44,7 +44,7 @@ public sealed class IdentityWriterBaselinePostgresTests(IdentityDirectoryConfigu
     }
 
     [CurrentPermissionPostgresFact]
-    public async Task Fixed_menu_fanout_reaches_public_collector_after_real_role_service_commits()
+    public async Task Fixed_menu_fanout_reaches_public_collector_after_raw_role_writer_commits()
     {
         await using var host = await IdentityDirectoryConfiguredHttpHost.Start(postgres);
         await using (var setup = Writer(host, B))
@@ -52,8 +52,11 @@ public sealed class IdentityWriterBaselinePostgresTests(IdentityDirectoryConfigu
             setup.Sys_Menus.Add(new Sys_Menu { MenuId = 72302, MenuName = "concurrent baseline", MenuKey = "crm-w22-before" }); await setup.SaveChangesAsync();
         }
         await using var role = Writer(host, B); await using var roleTx = await role.Database.BeginTransactionAsync();
-        await new RolePermService(role, Mock.Of<ICurrentPermissionContext>()).SaveRolePermAsync(777,
-            new() { MenuIds = [72302], Actions = [new() { MenuId = 72302, ActionCode = "read" }] }, "fixture");
+        // Explicit low-level writer preserves the caller-owned transaction fanout regression;
+        // the preceding test exercises the actual versioned service's owned atomic transaction.
+        role.Sys_RoleMenus.Add(new(){RoleId=777,MenuId=72302});
+        role.Sys_RoleActions.Add(new(){RoleId=777,MenuId=72302,ActionCode="read"});
+        await role.SaveChangesAsync();
         await using var menu = Writer(host, B); await menu.Database.OpenConnectionAsync();
         (await menu.Sys_Menus.SingleAsync(x => x.MenuId == 72302)).MenuKey = "crm-w22-after";
         using var cancel = new CancellationTokenSource(TimeSpan.FromSeconds(15)); var pending = menu.SaveChangesAsync(cancel.Token);

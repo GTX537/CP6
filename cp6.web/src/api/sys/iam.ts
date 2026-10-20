@@ -4,6 +4,7 @@ export interface IamScope { tenantId: string; actorId: string }
 export type IamKind = 'user-create' | 'user-update' | 'user-roles' | 'user-org'
   | 'dept-create' | 'dept-update' | 'dept-move' | 'dept-leader' | 'dept-delete'
   | 'role-create' | 'role-update' | 'role-delete'
+  | 'role-policy-actions' | 'role-policy-scopes' | 'role-policy-fields' | 'menu-actions'
 export interface IamOperation { operationId: string; kind: IamKind; state: 'COMMITTED' | 'CLOSED' | 'UNKNOWN'; entityId?: string; roleId?: number; version?: string; referencesVersion?: string; treeVersion?: string }
 export interface IamUser { id: string; userName: string; nickName: string | null; enable: boolean; roleId: number | null; roleIds: number[]; deptId: string | null; managerId: string | null; email: string | null; version: string; mustChangePassword: boolean; locked: boolean }
 export interface IamUserEditor extends IamScope {
@@ -44,7 +45,8 @@ export const iamApi = {
     throw new Error('未支持的组织操作。')
   },
   async resolve(operationId: string, kind: IamKind, close = false): Promise<IamOperation> {
-    const path = `/iam/${kind.startsWith('role-') ? 'roles' : kind.startsWith('dept-') ? 'departments' : 'users'}/operations/${operationId}${close ? '/close' : ''}`
+    const group = kind.startsWith('role-policy-') || kind === 'menu-actions' ? 'role-policies' : kind.startsWith('role-') ? 'roles' : kind.startsWith('dept-') ? 'departments' : 'users'
+    const path = `/iam/${group}/operations/${operationId}${close ? '/close' : ''}`
     return await (close ? http.post(path, null, { params: { kind } }) : http.get(path, { params: { kind } })) as unknown as IamOperation
   }
 }

@@ -62,21 +62,25 @@ public sealed class CrmIdentityWriterPostgreSqlTests(TenantManagementPostgresFix
     {
         var tenant = Guid.NewGuid(); var runtime = Runtime(tenant); var menuId = delete ? 72203 : 72202;
         await SeedPermission(tenant, runtime, menuId, withAction: false);
+        await using var actionWriter = Context(tenant, runtime);
+        var session = await IamAdministrationTestSession.ForPolicy(actionWriter);
+        var command = (await session.PolicyCommand("actions",71)) with {MenuIds=[menuId],Actions=Permission(menuId).Actions};
         await using var menuWriter = Context(tenant, runtime);
         await using var menuTx = await menuWriter.Database.BeginTransactionAsync();
         var menu = await menuWriter.Sys_Menus.SingleAsync(x => x.MenuId == menuId);
         if (delete) menuWriter.Remove(menu); else menu.MenuKey = "crm-w22-renamed";
         await menuWriter.SaveChangesAsync();
-        await using var actionWriter = Context(tenant, runtime);
         await actionWriter.Database.OpenConnectionAsync();
-        var service = new RolePermService(actionWriter, Mock.Of<ICurrentPermissionContext>());
-        var pending = service.SaveRolePermAsync(71, Permission(menuId), "fixture");
+        var pending = session.Policies.ChangeAsync("actions",71,command,session.Actor,default);
         try
         {
             await CompletedOrWaiting(pending, actionWriter); Assert.False(pending.IsCompleted);
-            await menuTx.CommitAsync(); await pending;
+            await menuTx.CommitAsync();
+            Assert.Equal(412,(await Assert.ThrowsAsync<IamAdministrationExceptionV1>(()=>pending)).Status);
         }
-        finally { if (!pending.IsCompleted) await menuTx.RollbackAsync(); await pending; }
+        finally { if (!pending.IsCompleted) { await menuTx.RollbackAsync(); try { await pending; } catch(IamAdministrationExceptionV1){} } }
+        if(delete)Assert.Equal("IAM_MENU_UNAVAILABLE",(await Assert.ThrowsAsync<IamAdministrationExceptionV1>(()=>session.SetRolePermissions(71,Permission(menuId)))).Message);
+        else await session.SetRolePermissions(71,Permission(menuId));
         await using var observer = Context(tenant);
         var data = await PermissionData(observer, tenant);
         if (delete) Assert.Empty(data.Grants); else Assert.Equal("crm-w22-renamed", Assert.Single(data.Grants).Resource);
@@ -200,16 +204,18 @@ public sealed class CrmIdentityWriterPostgreSqlTests(TenantManagementPostgresFix
         var tenant = Guid.NewGuid(); var foreign = Guid.NewGuid(); var runtime = Runtime(tenant, foreign); const int menuId = 72209;
         await SeedPermission(tenant, runtime, menuId, withAction: false);
         await using (var other = Context(foreign, runtime)) { other.Sys_Roles.Add(new Sys_Role { RoleId = 71, RoleName = "foreign" }); await other.SaveChangesAsync(); }
-        await using var writer = Context(tenant, runtime); var service = new RolePermService(writer, Mock.Of<ICurrentPermissionContext>());
-        await service.SaveRolePermAsync(71, Permission(menuId), "fixture");
+        await using var writer = Context(tenant, runtime); var service = await IamAdministrationTestSession.ForPolicy(writer);
+        await service.SetRolePermissions(71, Permission(menuId));
         var dept = Guid.NewGuid();
-        await service.SaveRoleDataScopesAsync(71, [new() { ResourceKey = SeedKey(menuId), ScopeType = 4, CustomDeptIds = [dept] }], "fixture");
+        writer.Sys_Depts.Add(new(){Id=dept,DeptCode="owned",DeptName="owned",Path=$"/{dept:D}/"});await writer.SaveChangesAsync();
+        DataScopeRegistry.Register(SeedKey(menuId),"owned",[1,2,3,4,5],1);
+        await service.SetRoleScopes(71, [new() { ResourceKey = SeedKey(menuId), ScopeType = 4, CustomDeptIds = [dept] }]);
         FieldRegistry.Register(SeedKey(menuId), new FieldRegistry.Field("cost", "Cost"));
-        await service.SaveRoleFieldPermsAsync(71, [new() { ResourceKey = SeedKey(menuId), FieldName = "cost", Access = 3 }], "fixture");
+        await service.SetRoleFields(71, SeedKey(menuId), [new() { ResourceKey = SeedKey(menuId), FieldName = "cost", Access = 3 }]);
         var data = await PermissionData(writer, tenant); var grant = Assert.Single(data.Grants);
         Assert.Equal(4, grant.Scope); Assert.Equal(new[] { dept }, grant.DeptIds); Assert.Equal(new[] { new IdentityFieldPermission("cost", 3) }, grant.Fields);
         Assert.Equal(1, (await PermissionData(writer, foreign)).Version); Assert.Empty((await PermissionData(writer, foreign)).Grants);
-        await service.SaveRolePermAsync(71, new(), "fixture"); Assert.Empty((await PermissionData(writer, tenant)).Grants);
+        await service.SetRolePermissions(71, new()); Assert.Empty((await PermissionData(writer, tenant)).Grants);
         await AssertLatest(tenant, "permission:role:71");
     }
 
@@ -218,6 +224,7 @@ public sealed class CrmIdentityWriterPostgreSqlTests(TenantManagementPostgresFix
         await using var db = Context(tenant, runtime);
         db.Sys_Menus.Add(new Sys_Menu { MenuId = menuId, MenuName = "fixture", MenuKey = SeedKey(menuId) });
         db.Sys_Roles.Add(new Sys_Role { RoleId = 71, RoleName = "fixture" });
+        db.Sys_MenuActions.Add(new(){MenuId=menuId,ActionCode="read",ActionName="Read"});
         if (withAction) db.Sys_RoleActions.Add(new Sys_RoleAction { RoleId = 71, MenuId = menuId, ActionCode = "read" });
         await db.SaveChangesAsync();
     }

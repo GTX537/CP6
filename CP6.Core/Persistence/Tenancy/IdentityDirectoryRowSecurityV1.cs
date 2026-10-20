@@ -83,6 +83,7 @@ internal static class IdentityDirectoryRowSecurityV1
                     pg_catalog.to_regprocedure('cp6_authentication_v1.bump_admission_revision(uuid,text)'),
                     pg_catalog.to_regprocedure('cp6_authentication_v1.admission_revision_writer()'),
                     pg_catalog.to_regprocedure('cp6_authentication_v1.organization_revision_writer()'),
+                    pg_catalog.to_regprocedure('cp6_authentication_v1.permission_catalog_writer()'),
                     pg_catalog.to_regprocedure('cp6_storage_identity.set_rowversion_v1()')]) known(oid) WHERE known.oid=p.oid)
                   OR EXISTS(SELECT FROM pg_catalog.aclexplode(coalesce(p.proacl,pg_catalog.acldefault('f',p.proowner))) a
                     WHERE a.grantee<>p.proowner AND NOT(n.nspname NOT IN ('cp6_authentication_v1','cp6_platform_admin_guard_v1')
