@@ -1,5 +1,11 @@
 # AI 可读变更日志
 
+## 2026-10-20：第二十九轮限定公共基础已集成并收尾
+
+角色安全生命周期与页面恢复[PR354](https://github.com/GTX537/CP6/pull/354)、封闭授权编辑/目录版本/完整资源矩阵和页面[PR356](https://github.com/GTX537/CP6/pull/356)正常合入，产品main`c762505cc8c4047bb1faf2166364bb22a2c344b8`。#351/#352/#355 Closed。角色窗61相关.NET、12Vitest、6Chrome；授权窗78不同.NET/PG/HTTP、19Vitest、4Chrome及类型检查通过，跨窗不相加。每任务一次作者SPEC/QUALITY，原失败保留；W27跨Tab认证/SSO首次批准与映射复用。
+
+产品两分支本地/远端已清理、DEV-1释放；Handoff PR4默认目标`d3c58b92ee02356143951994222e7ccc4131d653`已回读、分支清理、DEV-2释放。零新树/代理/完整副本，自有PG/HTTP/Vite停止。最终协调W29-CLOSE在同一DEV-1正常PR/finish后记录自身释放。#353完整int角色身份跨仓版本兼容仍Open，0/负数不是成功创建；完整IAM/CRM/Owner/真实业务不提升。无Actions/真实租户审批/既有库迁移/生产。[本轮处置](../development/dispatch/20261020-wave29/README.md)。
+
 ## 2026-10-20：W29-02 封闭授权编辑候选
 
 角色菜单/动作、数据范围、字段配置采用共同门内当前授权、角色/引用/注册域CAS和原子操作回执；实际目录writer前向迁移与普通PG基线验证通过。三个授权页及旧菜单页接入同一安全恢复入口。78不同.NET/PG/HTTP、19Vitest、4实际Chrome夹具及typecheck通过；集中作者审查无本窗阻断。#355待正常PR集成；#353固定跨仓角色身份域差异仍Open。自有进程停止，原DEV-1/DEV-2待正常finish释放；无新树/Actions/部署。完整IAM/CRM/Owner/业务未提升。[DELIVERY](../development/evidence/WP02-03/role-policy-administration/DELIVERY.md)。
