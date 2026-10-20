@@ -34,6 +34,7 @@ public class UserRoleService : IUserRoleService
 
     public async Task SaveAsync(Guid userId, List<int> roleIds, int? primaryRoleId, string? @operator)
     {
+        if (_db.Database.IsNpgsql()) throw IamAdministrationV1.Error(400, "IAM_VERSIONED_COMMAND_REQUIRED");
         roleIds = (roleIds ?? new()).Distinct().ToList();
         if (primaryRoleId is int p && !roleIds.Contains(p))
             throw new InvalidOperationException("E-PUB-011");   // 主角色必须在角色集合内
@@ -66,6 +67,7 @@ public class UserRoleService : IUserRoleService
 
     public async Task<int> MigrateAsync()
     {
+        if (_db.Database.IsNpgsql()) throw IamAdministrationV1.Error(409, "IAM_CONTROLLED_MIGRATION_REQUIRED");
         var users = await _db.Sys_Users
             .Where(u => u.RoleId != null)
             .Select(u => new { u.Id, u.RoleId })

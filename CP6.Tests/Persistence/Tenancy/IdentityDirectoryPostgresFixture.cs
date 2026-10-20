@@ -87,6 +87,9 @@ public class IdentityDirectoryPostgresFixture : IAsyncLifetime
                 "GRANT UPDATE ON pg_catalog.pg_class TO PUBLIC",
                 "ALTER FUNCTION public.cp6_mes_process_progress_v1() SECURITY DEFINER",
                 "CREATE FUNCTION public.unexpected() RETURNS integer LANGUAGE sql AS 'SELECT 1'",
+                "CREATE FUNCTION cp6_authentication_v1.unexpected() RETURNS integer LANGUAGE sql AS 'SELECT 1'",
+                "GRANT EXECUTE ON FUNCTION cp6_authentication_v1.organization_revision_writer() TO PUBLIC",
+                "ALTER FUNCTION cp6_authentication_v1.acquire() SECURITY DEFINER",
                 "CREATE SCHEMA cp6_tenancy_v1"
             } : [])
             {

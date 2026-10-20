@@ -248,7 +248,7 @@ internal sealed class AuthenticationApiProcess(Process process, HttpClient clien
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         return client.SendAsync(request);
     }
-    internal static async Task<AuthenticationApiProcess> Start(string connection)
+    internal static async Task<AuthenticationApiProcess> Start(string connection, IReadOnlyDictionary<string,string>? environment = null)
     {
         var directory = Path.Combine(Environment.GetEnvironmentVariable("CP6_PERMISSION_PG_ROOT")!, "actual-api", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(directory);
@@ -268,6 +268,7 @@ internal sealed class AuthenticationApiProcess(Process process, HttpClient clien
             ["Security__Cookie__Secure"] = "false", ["Security__Csrf__Enabled"] = "true", ["CrmOidc__Enabled"] = "false"
             , ["Space__Files__RootPath"] = Path.Combine(directory, "space-files")
         }) start.Environment[pair.Key] = pair.Value;
+        if (environment != null) foreach (var pair in environment) start.Environment[pair.Key] = pair.Value;
         var ready = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
         var log = new StringBuilder(); var child = new Process { StartInfo = start, EnableRaisingEvents = true };
         void Read(string? line)

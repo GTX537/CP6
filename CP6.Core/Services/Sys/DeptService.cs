@@ -117,6 +117,7 @@ public class DeptService : IDeptService
 
     public async Task SetUserOrgAsync(Guid userId, UserOrgDto d, string? user)
     {
+        if (_db.Database.IsNpgsql()) throw IamAdministrationV1.Error(400, "IAM_VERSIONED_COMMAND_REQUIRED");
         var u = await _db.Sys_Users.FindAsync(userId)
                 ?? throw new InvalidOperationException("用户不存在");
         u.DeptId = d.DeptId;

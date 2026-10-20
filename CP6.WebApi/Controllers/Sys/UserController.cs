@@ -8,6 +8,7 @@ using CP6.Entity.DomainModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using CP6.WebApi.Services;
 
 namespace CP6.WebApi.Controllers.Sys;
 
@@ -20,13 +21,15 @@ public class UserController : LocalizedControllerBase
     private readonly IPasswordHasher _hasher;
     private readonly IRefreshTokenService _refresh;
     private readonly ITwoFactorService _2fa;
+    private readonly IamUserAdministrationV1? _admin;
 
-    public UserController(CP6Context context, IPasswordHasher hasher, IRefreshTokenService refresh, ITwoFactorService twoFa)
+    public UserController(CP6Context context, IPasswordHasher hasher, IRefreshTokenService refresh, ITwoFactorService twoFa, IamUserAdministrationV1? admin = null)
     {
         _context = context;
         _hasher = hasher;
         _refresh = refresh;
         _2fa = twoFa;
+        _admin = admin;
     }
 
     [HttpGet]
@@ -64,6 +67,10 @@ public class UserController : LocalizedControllerBase
     [RequirePermission("user", "add")]
     public async Task<IActionResult> Add([FromBody] UserCreateRequest request)
     {
+        if (_context.Database.IsNpgsql()) return await Versioned("user-create", new IamUserCommandV1
+        { OperationId=request.OperationId,ExpectedVersion=request.ExpectedVersion,ExpectedReferencesVersion=request.ExpectedReferencesVersion,
+            Reason=request.Reason,UserName=request.UserName,NickName=request.NickName,Password=request.Password,RoleId=request.RoleId,
+            RoleIds=request.RoleIds,Enable=request.Enable,DeptId=request.DeptId,ManagerId=request.ManagerId,Email=request.Email });
         if (await _context.Sys_Users.AnyAsync(u => u.UserName == request.UserName))
             return BadRequest(new { message = Localizer["用户名已存在"] });
 
@@ -87,6 +94,10 @@ public class UserController : LocalizedControllerBase
     [RequirePermission("user", "edit")]
     public async Task<IActionResult> Update([FromBody] UserUpdateRequest entity)
     {
+        if (_context.Database.IsNpgsql()) return await Versioned("user-update", new IamUserCommandV1
+        { Id=entity.Id,OperationId=entity.OperationId,ExpectedVersion=entity.ExpectedVersion,ExpectedReferencesVersion=entity.ExpectedReferencesVersion,
+            Reason=entity.Reason,UserName=entity.UserName,NickName=entity.NickName,Password=entity.Password,RoleId=entity.RoleId,
+            RoleIds=entity.RoleIds,Enable=entity.Enable,DeptId=entity.DeptId,ManagerId=entity.ManagerId,Email=entity.Email });
         var existing = await _context.Sys_Users.FindAsync(entity.Id);
         if (existing == null)
             return NotFound();
@@ -131,6 +142,7 @@ public class UserController : LocalizedControllerBase
     [RequirePermission("user", "delete")]
     public async Task<IActionResult> Delete([FromBody] Guid[] ids)
     {
+        if (_context.Database.IsNpgsql()) return Conflict(new { code = "IAM_DELETE_REQUIRES_RETENTION_REVIEW", alternative = "disable" });
         var entities = await _context.Sys_Users.Where(u => ids.Contains(u.Id)).ToListAsync();
         _context.Sys_Users.RemoveRange(entities);
         var count = await SaveUserChangesAsync();
@@ -143,11 +155,23 @@ public class UserController : LocalizedControllerBase
         catch (DbUpdateException error) when (PlatformAdminMutationV1.IsSurvivorViolation(error))
         { throw new BizException("E-SEC-037"); }
     }
+    private Task<IActionResult> Versioned(string kind,IamUserCommandV1 command)
+        => IamAdministrationHttpV1.Execute(this,async () =>
+        {
+            IamAdministrationV1.Validate(command);
+            if (_admin == null) throw new IamAdministrationExceptionV1(503,"IAM_AUTHORITY_UNAVAILABLE");
+            return (object)await _admin.ChangeAsync(kind,command,ct=>IamAdministrationHttpV1.CurrentActor(HttpContext,ct),HttpContext.RequestAborted);
+        });
 }
 
 /// <summary>Ordinary creation input. Identity, tenant, authentication state and audit metadata are server owned.</summary>
 public sealed class UserCreateRequest
 {
+    public Guid OperationId { get; set; }
+    public string? ExpectedVersion { get; set; }
+    public string? ExpectedReferencesVersion { get; set; }
+    public string? Reason { get; set; }
+    public int[]? RoleIds { get; set; }
     [Required, MaxLength(100)] public string UserName { get; set; } = "";
     [Required, MaxLength(200)] public string Password { get; set; } = "";
     [MaxLength(100)] public string? NickName { get; set; }
@@ -161,6 +185,11 @@ public sealed class UserCreateRequest
 /// <summary>Editing identity attributes does not require resetting the user's password.</summary>
 public sealed class UserUpdateRequest
 {
+    public Guid OperationId { get; set; }
+    public string? ExpectedVersion { get; set; }
+    public string? ExpectedReferencesVersion { get; set; }
+    public string? Reason { get; set; }
+    public int[]? RoleIds { get; set; }
     public Guid Id { get; set; }
     [Required, MaxLength(100)] public string UserName { get; set; } = "";
     [MaxLength(200)] public string? Password { get; set; }
