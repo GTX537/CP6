@@ -29,4 +29,16 @@ class InventorySafety(unittest.TestCase):
         if inventory.os.name=='nt':
             self.assertEqual(inventory.norm('D:/CP6-worktrees/example'),inventory.norm('\\\\?\\D:\\CP6-worktrees\\example'))
 
+    def test_unregistered_source_copy_is_reported_without_assuming_ownership(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder);copy=root/'old-copy';copy.mkdir();source=copy/'source.cs';source.write_bytes(b'original')
+            registered=root/'retained';registered.mkdir();(registered/'file').write_bytes(b'kept')
+            nested=root/'other-project'/'repo';nested.mkdir(parents=True);(nested/'.git').mkdir()
+            rows=inventory.unregistered_candidates([root],[{'path':str(registered)}])
+            self.assertEqual(len(rows),1)
+            self.assertEqual(rows[0]['path'],str(copy))
+            self.assertIsNone(rows[0]['repository'])
+            self.assertEqual(rows[0]['logical_bytes'],8)
+            self.assertEqual(source.read_bytes(),b'original')
+
 if __name__=='__main__':unittest.main()

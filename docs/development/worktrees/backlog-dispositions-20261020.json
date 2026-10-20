@@ -6846,5 +6846,398 @@
       "disposition": "frozen-history",
       "evidence": "Current accepted X3/ENG-REV-01 freezes V2/T06/old-WP0. These TestOnly V2 probes/source candidate are preserved without adopting obsolete baseline into current product. Original byte snapshot requires its original parent; no new implementation or tests claimed. Historical evidence preserved separately; no DB/Docker actions."
     }
-  ]
+  ],
+  "unregistered_directories": [
+    {
+      "path": "D:\\CP6-worktrees\\c04a-release-smoke-final",
+      "removed": true,
+      "logical_bytes": 2454,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\c04a-release-smoke-final-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\c04a-restore-attempt-2",
+      "removed": true,
+      "logical_bytes": 105270,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\c04a-restore-attempt-2-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\c04a-restore-attempt-3",
+      "removed": true,
+      "logical_bytes": 315077,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\c04a-restore-attempt-3-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\c04a-restore-final",
+      "removed": true,
+      "logical_bytes": 315513,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\c04a-restore-final-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\c04a-restored-acceptance-1",
+      "removed": true,
+      "logical_bytes": 0,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\c04a-restored-acceptance-1-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\c04a-restored-acceptance-2",
+      "removed": true,
+      "logical_bytes": 9935,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\c04a-restored-acceptance-2-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\c04a-restored-acceptance-final",
+      "removed": true,
+      "logical_bytes": 10022,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\c04a-restored-acceptance-final-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\c04a-source-before-replay-fix",
+      "removed": true,
+      "logical_bytes": 111466,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\c04a-source-before-replay-fix-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\crm-test-token-fixture-results",
+      "removed": true,
+      "logical_bytes": 13106,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\crm-test-token-fixture-results-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\p05-publication-artifact-33192773875",
+      "removed": true,
+      "logical_bytes": 481152,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\p05-publication-artifact-33192773875-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\p08-alpha2-publication-verify-33320840180",
+      "removed": true,
+      "logical_bytes": 1076111,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\p08-alpha2-publication-verify-33320840180-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-cad-exception-redraw",
+      "removed": true,
+      "logical_bytes": 1133760315,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-cad-exception-redraw-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-cad-exception-split",
+      "removed": true,
+      "logical_bytes": 1125651451,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-cad-exception-split-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-cad-inventory-overrides",
+      "removed": true,
+      "logical_bytes": 805259093,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-cad-inventory-overrides-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-cad-provider-qualification",
+      "removed": true,
+      "logical_bytes": 1124022481,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-cad-provider-qualification-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-cad-provider-routing",
+      "removed": true,
+      "logical_bytes": 1122503381,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-cad-provider-routing-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-cad-provider-version-fence",
+      "removed": true,
+      "logical_bytes": 1146789568,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-cad-provider-version-fence-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-cad-start-wizard",
+      "removed": true,
+      "logical_bytes": 1468382113,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-cad-start-wizard-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-canvas-drag-move",
+      "removed": true,
+      "logical_bytes": 827114107,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-canvas-drag-move-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-draft-summary",
+      "removed": true,
+      "logical_bytes": 630434433,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-draft-summary-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-layout-bulk-coding",
+      "removed": true,
+      "logical_bytes": 1120344131,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-layout-bulk-coding-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-layout-command-v1",
+      "removed": true,
+      "logical_bytes": 1446331600,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-layout-command-v1-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-layout-update-delete",
+      "removed": true,
+      "logical_bytes": 1124105526,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-layout-update-delete-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-layout-workbench-create",
+      "removed": true,
+      "logical_bytes": 478878391,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-layout-workbench-create-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-published-viewer-boundary",
+      "removed": true,
+      "logical_bytes": 1130834517,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-published-viewer-boundary-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-source-removal",
+      "removed": true,
+      "logical_bytes": 482549993,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-source-removal-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-studio-3d-interaction",
+      "removed": true,
+      "logical_bytes": 487209713,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-studio-3d-interaction-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-studio-accessibility-ga",
+      "removed": true,
+      "logical_bytes": 479230262,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-studio-accessibility-ga-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-studio-cad-apply-history",
+      "removed": true,
+      "logical_bytes": 808450414,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-studio-cad-apply-history-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-studio-correction-lock",
+      "removed": true,
+      "logical_bytes": 1126253585,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-studio-correction-lock-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-studio-excel-apply-history",
+      "removed": true,
+      "logical_bytes": 1126377875,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-studio-excel-apply-history-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-studio-excel-cad-catalog",
+      "removed": true,
+      "logical_bytes": 1194118790,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-studio-excel-cad-catalog-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-studio-excel-compensation-history",
+      "removed": true,
+      "logical_bytes": 1473948039,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-studio-excel-compensation-history-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-studio-excel-upload-flow",
+      "removed": true,
+      "logical_bytes": 828269680,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-studio-excel-upload-flow-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-studio-final-ux-requirements",
+      "removed": true,
+      "logical_bytes": 804462116,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-studio-final-ux-requirements-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-studio-object-copy",
+      "removed": true,
+      "logical_bytes": 1125780316,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-studio-object-copy-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-studio-path-e2e",
+      "removed": true,
+      "logical_bytes": 479261479,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-studio-path-e2e-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-studio-static-component-library",
+      "removed": true,
+      "logical_bytes": 804440932,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-studio-static-component-library-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-studio-underlay-calibration-workflow",
+      "removed": true,
+      "logical_bytes": 804457955,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-studio-underlay-calibration-workflow-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-studio-underlay-layer-controls",
+      "removed": true,
+      "logical_bytes": 804425723,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-studio-underlay-layer-controls-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-studio-v13-core",
+      "removed": true,
+      "logical_bytes": 1280322779,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-studio-v13-core-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-template-draft-apply",
+      "removed": true,
+      "logical_bytes": 630420623,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-template-draft-apply-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-tenant-cad-mapping-profiles",
+      "removed": true,
+      "logical_bytes": 1146018182,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-tenant-cad-mapping-profiles-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-upload-reuse-notice",
+      "removed": true,
+      "logical_bytes": 480863178,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-upload-reuse-notice-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    },
+    {
+      "path": "D:\\CP6-worktrees\\space-viewer-ga-benchmark",
+      "removed": true,
+      "logical_bytes": 479861408,
+      "archive_commit": "af333064a1539d8f186eae10b6a329c73744a127",
+      "preservation_manifest": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\backlog-preserved\\space-viewer-ga-benchmark-unregistered.json",
+      "disposition": "Main-equivalent source / superseded catalog field-renaming and SourceFence drafts / original validation evidence preserved; see closeout report."
+    }
+  ],
+  "policy_retained_directories": [
+    {
+      "path": "C:/Users/tt/.codex/worktrees/cp6-crm-public-contract-sync-20260814",
+      "bytes": 0,
+      "reason": "Automatic approval review rejected the batch deletion before execution: blocked by policy; tool gave no more specific reason. No bypass attempted.",
+      "next_action": "May be removed manually if desired; no source worktree or branch integration remains.",
+      "must_retain_workspace": false
+    },
+    {
+      "path": "C:/Users/tt/.codex/worktrees/cp6-crm-saas-public-sync",
+      "bytes": 0,
+      "reason": "Automatic approval review rejected the batch deletion before execution: blocked by policy; tool gave no more specific reason. No bypass attempted.",
+      "next_action": "May be removed manually if desired; no source worktree or branch integration remains.",
+      "must_retain_workspace": false
+    },
+    {
+      "path": "C:/Users/tt/.codex/worktrees/crm-saas-v1-freeze",
+      "bytes": 0,
+      "reason": "Automatic approval review rejected the batch deletion before execution: blocked by policy; tool gave no more specific reason. No bypass attempted.",
+      "next_action": "May be removed manually if desired; no source worktree or branch integration remains.",
+      "must_retain_workspace": false
+    },
+    {
+      "path": "D:/CP6.AI-Handoff-worktrees/wp02-26",
+      "bytes": 2589,
+      "reason": "Automatic approval review rejected the batch deletion before execution: blocked by policy; tool gave no more specific reason. No bypass attempted.",
+      "next_action": "May be removed manually if desired; no source worktree or branch integration remains.",
+      "must_retain_workspace": false
+    }
+  ],
+  "final_observed_at": "2026-10-20T02:39:06.141129+00:00"
 }

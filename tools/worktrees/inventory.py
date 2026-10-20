@@ -74,6 +74,30 @@ def size_scan(root, allroots):
                     except OSError as e2:errors.append(str(e2))
         except OSError as e:errors.append(str(e))
     return dict(logical_bytes=total,file_count=files,categories=dict(groups),scan_errors=errors,reparse_points=links,nested_roots=nested)
+
+def unregistered_candidates(containers, records):
+    """Report physical leftovers without assuming repository ownership or deletion safety."""
+    known={norm(r['path']) for r in records};result=[];seen=set()
+    for container in containers:
+        c=Path(container)
+        if not c.is_dir() or c.is_symlink() or getattr(c,'is_junction',lambda:False)():continue
+        try:
+            children=list(c.iterdir())
+        except OSError as e:
+            result.append(dict(path=str(c),classification='unregistered-scan-error',error=str(e)));continue
+        for p in children:
+            key=norm(p)
+            if not p.is_dir() or key in seen or any(k==key or k.startswith(key+'/') for k in known):continue
+            seen.add(key)
+            if p.is_symlink() or getattr(p,'is_junction',lambda:False)():
+                result.append(dict(path=str(p),classification='unregistered-link',repository=None));continue
+            try:
+                # A Git copy, including an excluded repository, is handled by origin discovery.
+                if find_copies(p):continue
+                result.append(dict(path=str(p),classification='unregistered-needs-provenance',repository=None,**size_scan(p,known)))
+            except OSError as e:
+                result.append(dict(path=str(p),classification='unregistered-scan-error',error=str(e)))
+    return result
 def processes():
     if os.name!='nt':return [],'not available on this platform'
     r=subprocess.run(['powershell','-NoProfile','-Command','Get-CimInstance Win32_Process | Select-Object ProcessId,Name,CommandLine,ExecutablePath | ConvertTo-Json -Compress'],capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=60)
@@ -119,6 +143,11 @@ def markdown(data):
         clean=lambda s:str(s).replace('|','/').replace('\n',' ')
         text.append('| '+' | '.join(map(clean,[r['repository'],r['path'],round(r['logical_bytes']/2**30,3),r.get('branch','')+' / '+r.get('head',r.get('HEAD',''))[:12],str(len(r.get('status',[])))+' / '+str(len(r.get('ignored',[]))),r.get('unique_to_current_remote_heads_count','?'),r['classification'],r.get('task_hint','')]))+' |')
     text+=['','*独有提交是相对于当前服务器已广告且本地有对象的分支；远端对象缺失时可能高估。详见 JSON 中完整状态、忽略目录、远端保存引用、任务线索、进程引用和错误。保存到远端不自动代表任务结束。没有任何自动删除。','']
+    if data.get('unregistered_candidates'):
+        text+=['## 未登记实体目录（归属待核实）','','这些目录没有可直接核对的 Git origin，未计入已核实仓库容量；需核对历史来源、独有文件和任务后处置，不能因缺少登记而忽略或自动删除。','','| 路径 | 逻辑 GiB | 状态 |','|---|---:|---|']
+        for r in data['unregistered_candidates']:
+            text.append('| '+r['path'].replace('|','/')+' | '+str(round(r.get('logical_bytes',0)/2**30,3))+' | '+r['classification']+' |')
+        text.append('')
     return '\n'.join(text)
 def main():
     ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--root',action='append');ap.add_argument('--container',action='append');ap.add_argument('--active',action='append',default=[]);ap.add_argument('--output',type=Path);ap.add_argument('--workers',type=int,default=4);ap.add_argument('--registry',type=Path);args=ap.parse_args()
@@ -142,6 +171,7 @@ def main():
             if len(results)%10==0:print(f'Inventoried {len(results)}/{len(records)}',file=sys.stderr,flush=True)
     data=dict(observed_at=datetime.datetime.now(datetime.timezone.utc).isoformat(),measurement='Logical file lengths, no reparse traversal; nested inventoried roots excluded from parents. Hardlinks may be counted per path. Not allocated disk size or a deletion recommendation.',process_query_error=perror,process_limit='Command/executable references are clues, not proof that an idle editor has no open handles. Normal git worktree remove must still be used without force.',repositories=list(commons.values()),remote_probes=refs,excluded=exclusions,worktrees=sorted(results,key=lambda x:(x['repository'],x['path'])),volumes={v:dict(zip(['total','used','free'],shutil.disk_usage(v+':/'))) for v in ['C','D'] if Path(v+':/').exists()})
     data['registry_path']=str(registry_path) if registry else None
+    data['unregistered_candidates']=unregistered_candidates(args.container or DEFAULT_CONTAINERS,records)
     data['total_logical_bytes']=sum(x['logical_bytes'] for x in results);data['classifications']=dict(collections.Counter(x['classification'] for x in results))
     if args.output:
         args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');args.output.with_suffix('.md').write_text(markdown(data),encoding='utf-8')

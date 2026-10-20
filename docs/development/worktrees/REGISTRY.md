@@ -1,6 +1,6 @@
 # CP6 固定工作区登记
 
-负责人 COORD；BACKLOG-20261020 已实际处理历史成果，原登记198个目录收敛为7个。完整业务处置、实际测试、合并、恢复位置和空间测量见 [收尾报告](BACKLOG-CLOSEOUT-20261020.md)，当前路径见 [清单](inventory-backlog-20261020.md)；机器规则见 [registry.json](registry.json)。
+负责人 COORD；BACKLOG-20261020 已实际处理历史成果，原登记198个目录收敛为7个，另回收34个无Git源码副本和11个证据目录。仅有4处共2589字节残留因自动审批拒绝删除而保留，详见清单。完整业务处置、实际测试、合并、恢复位置和空间测量见 [收尾报告](BACKLOG-CLOSEOUT-20261020.md)，当前路径见 [清单](inventory-backlog-20261020.md)；机器规则见 [registry.json](registry.json)。
 
 | 用途 | 路径 | Owner |
 |---|---|---|
@@ -21,7 +21,7 @@
 python -B D:/CP6/tools/worktrees/inventory.py --output C:/Users/tt/CP6-planning-reports/20261017-foundation/worktrees-current.json
 ```
 
-[脚本](../../../tools/worktrees/inventory.py)默认只读。核查4个指定仓库、登记工作树、工作树容器、旧嵌套clone/worktree入口和客户端目录；必须通过origin白名单。地方副本的本地origin/所有者差异需要显式核实，不自动加入信任或授权删除。指定输出只写报告，不执行fetch/remove/prune。
+[脚本](../../../tools/worktrees/inventory.py)默认只读。核查4个指定仓库、登记工作树、工作树容器、旧嵌套clone/worktree入口和客户端目录；必须通过origin白名单。地方副本的本地origin/所有者差异需要显式核实，不自动加入信任或授权删除。指定输出只写报告，不执行fetch/remove/prune。没有Git元数据的实体目录也单独报告，不能仅以登记为空宣称容器已清空。
 
 ## 历史与客户端
 
