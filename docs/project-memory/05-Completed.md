@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-20：W33 部门可信映射与PA090 Owner已集成
+
+[产品PR #369](https://github.com/GTX537/CP6/pull/369)已合入远端main`d58b65cb16608c310ec3fb64a3185d13680760a5`，[Handoff PR #9](https://github.com/GTX537/CP6.AI-Handoff/pull/9)已合入默认目标，P0 #368回归及远端采用后关闭。101不同相关PG/HTTP/IAM、27Vitest与类型检查通过，0最终失败/跳过；一次作者审查无本窗阻断。
+
+Handoff任务分支删除、DEV-2释放；自有服务停止，6处生成data回收0.744GiB。原W33-01分支继续本次最后文档PR后finish释放DEV-1，提交本身不预先证明未来收尾。零新树/额外收尾分支/代理。剩余其他Order CRUD/导出Owner、业务operation恢复、正式工作流/CRM及真实验收保持；125目标/247运行不提升，无Actions/既有环境迁移/真实tenant审批/生产。[报告](../development/evidence/WP02-03/order-department-owner/DELIVERY.md)。
+
 ## 2026-10-20：W33 部门可信映射与PA090 Owner候选
 
 显式租户订单部门绑定、管理页/CAS/审计/跨Tab恢复，以及本部门/下级/custom Owner范围已接通；列表和金额计算补齐query/字段Read、防筛选泄漏与失权页面清空，#368原步骤已回归。101相关PG/HTTP/IAM、27Vitest和类型检查通过，0最终失败/跳过；一次作者审查无本窗阻断。
