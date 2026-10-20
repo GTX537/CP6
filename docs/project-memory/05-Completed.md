@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-20：W29-353 完整整数身份兼容候选
+
+固定v1身份域缺口已用独立v2合同补齐，旧v1字节与正整数身份保持。Main创建/授权/分配、SSO首次身份、版本粘性/撤销与baseline共174项不同.NET/PG通过；CRM61项实际消费/合同、14Vitest和类型检查通过。CRM PR95已先合入并清理分支、释放DEV-2；Main待正常PR/远端采用及finish。#353待集成关闭，完整IAM/CRM/Owner/真实业务状态不提升；无Actions、真实租户审批或环境部署。[DELIVERY](../development/evidence/WP02-03/integer-role-identity/DELIVERY.md)。
+
 ## 2026-10-20：第二十九轮限定公共基础已集成并收尾
 
 角色安全生命周期与页面恢复[PR354](https://github.com/GTX537/CP6/pull/354)、封闭授权编辑/目录版本/完整资源矩阵和页面[PR356](https://github.com/GTX537/CP6/pull/356)正常合入，产品main`c762505cc8c4047bb1faf2166364bb22a2c344b8`。#351/#352/#355 Closed。角色窗61相关.NET、12Vitest、6Chrome；授权窗78不同.NET/PG/HTTP、19Vitest、4Chrome及类型检查通过，跨窗不相加。每任务一次作者SPEC/QUALITY，原失败保留；W27跨Tab认证/SSO首次批准与映射复用。

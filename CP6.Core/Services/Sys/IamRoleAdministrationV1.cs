@@ -1,3 +1,4 @@
+using CP6.Core.Services.CrmIdentity;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Sys;
@@ -29,7 +30,7 @@ public sealed class IamRoleAdministrationV1(CP6Context db,IamAdministrationV1 au
             var rows=await db.Sys_Roles.AsNoTracking().OrderBy(x=>x.OrderNo).ThenBy(x=>x.RoleId).ToListAsync(token);
             var views=new List<IamRoleViewV1>();
             foreach(var r in rows)views.Add(new(r.RoleId,r.RoleName,r.Description,r.Enable,r.OrderNo,r.CreateDate,
-                await authority.Version("role:"+r.RoleId,token)));
+                await authority.Version(IdentityEventContracts.RoleSubject(r.RoleId),token)));
             return new IamRoleEditorV1(db.CurrentTenantId,who,await authority.ReferencesVersion(token),views.ToArray());
         },ct);
     public Task<IamRoleReferencesV1> ReferencesAsync(int id,Func<CancellationToken,Task<Guid>> actor,CancellationToken ct)
@@ -50,7 +51,7 @@ public sealed class IamRoleAdministrationV1(CP6Context db,IamAdministrationV1 au
             var row=await db.Sys_Roles.SingleOrDefaultAsync(x=>x.RoleId==command.RoleId,token);
             if(kind=="role-create" && row!=null)throw Error(409,"IAM_ROLE_EXISTS");
             if(kind!="role-create" && row==null)throw Error(404,"IAM_ROLE_NOT_FOUND");
-            var version=await authority.Version("role:"+command.RoleId,token);
+            var version=await authority.Version(IdentityEventContracts.RoleSubject(command.RoleId),token);
             if(version!=command.ExpectedVersion || command.ExpectedReferencesVersion!=await authority.ReferencesVersion(token))
                 throw Error(412,"IAM_REFERENCES_CHANGED");
             if(kind=="role-delete")
@@ -77,7 +78,7 @@ public sealed class IamRoleAdministrationV1(CP6Context db,IamAdministrationV1 au
             try{await db.SaveChangesAsync(token);}
             catch(InvalidOperationException e) when(e.Message is "C02_UNKNOWN_IDENTITY_AGGREGATE" or "C02_IDENTITY_CONTRACT_INVALID")
             {throw Error(503,"IAM_IDENTITY_CONTRACT_UNAVAILABLE");}
-            var result=new IamOperationV1(command.OperationId,kind,"COMMITTED",Version:await authority.Version("role:"+command.RoleId,token),
+            var result=new IamOperationV1(command.OperationId,kind,"COMMITTED",Version:await authority.Version(IdentityEventContracts.RoleSubject(command.RoleId),token),
                 ReferencesVersion:await authority.ReferencesVersion(token),RoleId:command.RoleId);
             await authority.Store(who,command,result,token);return result;
         },ct);

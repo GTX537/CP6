@@ -67,18 +67,19 @@ public sealed class IdentityEventValidator : ICp6OutboxEnvelopeValidator, ICp6In
             var expected = root.GetProperty("type").GetString() switch
             {
                 IdentityEventContracts.TenantChanged => "tenant:" + tenant,
-                IdentityEventContracts.UserChanged => "user:" + data.GetProperty("userId").GetString(),
+                IdentityEventContracts.UserChanged or IdentityEventContracts.UserChangedV2 => "user:" + data.GetProperty("userId").GetString(),
                 IdentityEventContracts.DepartmentChanged => "department:" + data.GetProperty("deptId").GetString(),
-                IdentityEventContracts.PermissionChanged => "permission:" + data.GetProperty("subjectId").GetString(),
-                IdentityEventContracts.TokenRevoked when data.GetProperty("issuer").GetString() == issuer
+                IdentityEventContracts.PermissionChanged or IdentityEventContracts.PermissionChangedV2 => "permission:" + data.GetProperty("subjectId").GetString(),
+                IdentityEventContracts.TokenRevoked or IdentityEventContracts.TokenRevokedV2 when data.GetProperty("issuer").GetString() == issuer
                     => IdentityEventContracts.TokenAggregate(issuer, data.GetProperty("jti").GetString()!),
                 _ => null
             };
             if (expected is null || aggregate != expected) return false;
             if (data.TryGetProperty("deleted", out var tombstone) && tombstone.GetBoolean() &&
                 (!data.TryGetProperty("enabled", out var enabled) || enabled.GetBoolean())) return false;
-            if (data.TryGetProperty("roles", out var roles) && roles.EnumerateArray().Any(r => !ValidSubject(r.GetString()!, allowService: false))) return false;
-            if (data.TryGetProperty("subjectId", out var subject) && !ValidSubject(subject.GetString()!, allowService: true)) return false;
+            var fullIntegerRole = IdentityEventContracts.IsFullIntegerRoleVersion(root.GetProperty("type").GetString());
+            if (data.TryGetProperty("roles", out var roles) && roles.EnumerateArray().Any(r => !ValidSubject(r.GetString()!, false, fullIntegerRole))) return false;
+            if (data.TryGetProperty("subjectId", out var subject) && !ValidSubject(subject.GetString()!, true, fullIntegerRole)) return false;
             if (root.GetProperty("type").GetString() == IdentityEventContracts.DepartmentChanged)
             {
                 var segments = data.GetProperty("path").GetString()!.Split('/', StringSplitOptions.RemoveEmptyEntries);
@@ -89,7 +90,7 @@ public sealed class IdentityEventValidator : ICp6OutboxEnvelopeValidator, ICp6In
                 if (parent.ValueKind == JsonValueKind.Null ? segments.Length != 1 :
                     segments.Length < 2 || segments[^2] != parent.GetString()) return false;
             }
-            if (root.GetProperty("type").GetString() == IdentityEventContracts.PermissionChanged)
+            if (IdentityEventContracts.IsPermissionChanged(root.GetProperty("type").GetString()))
             {
                 var grants = data.GetProperty("grants").EnumerateArray().ToArray();
                 if (grants.Select(g => (g.GetProperty("resource").GetString(), g.GetProperty("action").GetString()))
@@ -139,9 +140,10 @@ public sealed class IdentityEventValidator : ICp6OutboxEnvelopeValidator, ICp6In
             !SensitiveNames.Contains(p.Name.Replace("_", "").Replace("-", "")) && SafeProperties(p.Value));
     }
 
-    private static bool ValidSubject(string subject, bool allowService)
+    private static bool ValidSubject(string subject, bool allowService, bool fullIntegerRole)
     {
-        if (subject.StartsWith("role:", StringComparison.Ordinal)) return int.TryParse(subject[5..], out var role) && role > 0;
+        if (subject.StartsWith("role:", StringComparison.Ordinal))
+            return IdentityEventContracts.TryRoleSubject(subject, out var role) && (fullIntegerRole || role > 0);
         if (subject.StartsWith("user:", StringComparison.Ordinal)) return Guid.TryParseExact(subject[5..], "D", out var user) && user != Guid.Empty;
         return allowService && subject.StartsWith("service:", StringComparison.Ordinal);
     }

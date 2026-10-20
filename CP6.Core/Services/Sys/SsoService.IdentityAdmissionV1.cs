@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using CP6.Core.Services.CrmIdentity;
 using CP6.Entity.DomainModels.Sys;
 using Microsoft.EntityFrameworkCore;
 
@@ -165,7 +166,7 @@ public partial class SsoService
             throw new InvalidOperationException("SSO_JIT_APPROVAL_REQUIRED");
         if (await _db.Sys_Users.IgnoreQueryFilters().AsNoTracking().AnyAsync(x => x.TenantId == tenant && x.UserName == email))
             throw new InvalidOperationException("SSO_IDENTITY_CONFLICT");
-        return new("JIT", allocatedUser ?? Guid.NewGuid(), role, null, await Revision(tenant, "role:" + role), policy.PolicyRef, policy.Version);
+        return new("JIT", allocatedUser ?? Guid.NewGuid(), role, null, await Revision(tenant, IdentityEventContracts.RoleSubject(role)), policy.PolicyRef, policy.Version);
     }
     private Task<Guid> Revision(Guid tenant, string key) => _db.Database.SqlQuery<Guid>($"SELECT revision AS \"Value\" FROM cp6_authentication_v1.identity_admission_revisions WHERE tenant_id={tenant} AND object_key={key}").SingleAsync();
     private static void RequireActive(Sys_User user)

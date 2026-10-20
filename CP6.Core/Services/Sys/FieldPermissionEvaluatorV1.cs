@@ -82,7 +82,7 @@ internal static class FieldPermissionEvaluatorV1
         var fields = input.Fields.ToHashSet(StringComparer.Ordinal);
         if (input.Fields.Any(string.IsNullOrWhiteSpace) || fields.Count != input.Fields.Count) errors.Add("REGISTRY_FIELDS_INVALID");
         foreach (var role in input.Roles)
-            if (role is null || role.RoleId <= 0 || string.IsNullOrWhiteSpace(role.Version) || !role.IsEffective)
+            if (role is null || string.IsNullOrWhiteSpace(role.Version) || !role.IsEffective)
                 errors.Add("EFFECTIVE_ROLE_INVALID");
         if (errors.Count != 0) return errors;
 

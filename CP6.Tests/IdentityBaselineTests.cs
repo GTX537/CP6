@@ -43,11 +43,14 @@ public sealed class IdentityBaselineTests
     [InlineData("department.changed")]
     [InlineData("permission.changed")]
     [InlineData("token.revoked")]
-    public void All_pinned_identity_types_preserve_snapshot_only_provenance(string name)
+    [InlineData("user.changed", 2)]
+    [InlineData("permission.changed", 2)]
+    [InlineData("token.revoked", 2)]
+    public void All_pinned_identity_types_preserve_snapshot_only_provenance(string name, int major = 1)
     {
         var runtime = Runtime(); var source = Source(runtime);
         var bundle = Cp6ContractBundle.Load(Path.Combine(AppContext.BaseDirectory, "contracts/events/platform"));
-        var entry = bundle.Entries.Single(x => x.EventType == "com.gtx537.platform." + name + ".v1");
+        var entry = bundle.Entries.Single(x => x.EventType == "com.gtx537.platform." + name + ".v" + major);
         var example = JsonNode.Parse(File.ReadAllBytes(bundle.GetAssetPath(entry.Examples.Single(x => x.Name == "valid").Path)))!;
         var data = example["data"]!; var aggregate = example["aggregateid"]!.GetValue<string>();
         if (name == "token.revoked")

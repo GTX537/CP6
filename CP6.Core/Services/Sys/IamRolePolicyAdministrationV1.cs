@@ -1,3 +1,4 @@
+using CP6.Core.Services.CrmIdentity;
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Sys;
 using CP6.Entity.DTOs.Sys;
@@ -56,7 +57,7 @@ public sealed partial class IamRolePolicyAdministrationV1(CP6Context db,IamAdmin
             if(scopes.Any(s=>!catalog.Scopes.Any(x=>x.Key==s.ResourceKey && x.Supports.Contains(s.ScopeType))))warnings.Add("IAM_UNREGISTERED_STORED_SCOPES");
             if(fields.Any(f=>!catalog.Fields.Any(x=>x.Key==f.ResourceKey && x.Fields.Any(d=>d.Name==f.FieldName)) || f.Access is <1 or >3))warnings.Add("IAM_UNREGISTERED_STORED_FIELDS");
             return new IamRolePolicyEditorV1(db.CurrentTenantId,who,mode,roleId,
-                roleId==null?"absent":await authority.Version("role:"+roleId,token),await authority.ReferencesVersion(token),roles,
+                roleId==null?"absent":await authority.Version(IdentityEventContracts.RoleSubject(roleId.Value),token),await authority.ReferencesVersion(token),roles,
                 catalog with{Menus=mode=="actions"?catalog.Menus:[],Actions=mode=="actions"?catalog.Actions:[],
                     Scopes=mode=="scopes"?catalog.Scopes:[],Departments=mode=="scopes"?catalog.Departments:[],Fields=mode=="fields"?catalog.Fields:[]},
                 function,scopes,fields,warnings.ToArray());
@@ -73,7 +74,7 @@ public sealed partial class IamRolePolicyAdministrationV1(CP6Context db,IamAdmin
             var original=await authority.Original(who,kind,bound,token);if(original!=null)return original;
             if(!await db.Sys_Roles.AnyAsync(x=>x.RoleId==roleId,token))throw Error(404,"IAM_ROLE_NOT_FOUND");
             var catalog=await Catalog(token);
-            if(command.ExpectedVersion!=await authority.Version("role:"+roleId,token)
+            if(command.ExpectedVersion!=await authority.Version(IdentityEventContracts.RoleSubject(roleId),token)
                 || command.ExpectedReferencesVersion!=await authority.ReferencesVersion(token)
                 || command.ExpectedCatalogVersion!=catalog.Version)throw Error(412,"IAM_REFERENCES_CHANGED");
             if(mode=="actions")await SetActions(roleId,command,catalog,who,token);
@@ -84,7 +85,7 @@ public sealed partial class IamRolePolicyAdministrationV1(CP6Context db,IamAdmin
             try{await db.SaveChangesAsync(token);}
             catch(InvalidOperationException e) when(e.Message is "C02_UNKNOWN_IDENTITY_AGGREGATE" or "C02_IDENTITY_CONTRACT_INVALID")
             {throw Error(503,"IAM_IDENTITY_CONTRACT_UNAVAILABLE");}
-            var result=new IamOperationV1(command.OperationId,kind,"COMMITTED",Version:await authority.Version("role:"+roleId,token),
+            var result=new IamOperationV1(command.OperationId,kind,"COMMITTED",Version:await authority.Version(IdentityEventContracts.RoleSubject(roleId),token),
                 ReferencesVersion:await authority.ReferencesVersion(token),RoleId:roleId);
             await authority.Store(who,bound,result,token);return result;
         },ct);

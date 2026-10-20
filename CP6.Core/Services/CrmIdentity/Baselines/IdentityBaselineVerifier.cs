@@ -93,8 +93,7 @@ public sealed class IdentityBaselineVerifier
             ct.ThrowIfCancellationRequested();
             if (result.Count >= _limits.MaximumItems) throw new IdentityBaselineException("C02_BASELINE_LIMIT_EXCEEDED");
             if (item is null || !Text(item.AggregateId, 128) || item.AggregateId.Any(c => !char.IsAsciiLetterOrDigit(c) && c is not ('.' or '_' or ':' or '-')) ||
-                item.Version < 1 || !Hash(item.PayloadSha256) || item.EventType is not (IdentityEventContracts.TenantChanged or IdentityEventContracts.UserChanged or
-                    IdentityEventContracts.DepartmentChanged or IdentityEventContracts.PermissionChanged or IdentityEventContracts.TokenRevoked) ||
+                item.Version < 1 || !Hash(item.PayloadSha256) || !IdentityEventContracts.IsSupported(item.EventType) ||
                 !result.TryAdd(item.AggregateId, item)) throw Invalid();
             if (result.Count > count) throw new IdentityBaselineException("C02_BASELINE_INCOMPLETE");
         }

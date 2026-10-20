@@ -31,6 +31,13 @@ beforeEach(() => {
 })
 afterEach(() => { view?.unmount(); view = undefined })
 describe('closed role policy editor', () => {
+  it('loads and saves zero role as a selected identity', async () => {
+    api.read.mockImplementation(async mode => ({ ...snapshot(mode, 0), roles: [{ roleId: 0, roleName: 'Zero', enable: true }] }))
+    const vm = await render('actions'); await vm.load(0); vm.reason = 'approved zero'
+    expect(view!.find('form').exists()).toBe(true)
+    await vm.save()
+    expect(api.save.mock.calls[0]![1]).toBe(0)
+  })
   it('preserves navigation ancestors and removes descendant grants when a parent is unchecked', async () => {
     const vm = await render('actions')
     vm.editor.catalog.menus.push({ menuId: 2, menuName: 'Child', menuKey: 'child', parentId: 1, enable: true })

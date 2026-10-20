@@ -55,11 +55,12 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
                 .Where(x => x.TenantId == tenant && x.UserId == userId).Select(x => x.RoleId).ToListAsync(cancellationToken).ConfigureAwait(false);
             if (row?.RoleId is int primary) roles.Add(primary);
             data = new UserIdentityData(tenant, userId, row?.DeptId, row?.Enable == true, 0,
-                row is null ? [] : roles.Distinct().Order().Select(r => $"role:{r}").ToArray(), row?.ManagerId,
+                row is null ? [] : roles.Distinct().Order().Select(IdentityEventContracts.RoleSubject).ToArray(), row?.ManagerId,
                 row?.AuthenticationEpoch ?? Guid.Empty, row?.MustChangePassword == true, Utc(row?.PasswordChangedAt),
                 runtime.Options.PasswordMaxAgeDays > 0 ? Utc(row?.PasswordChangedAt?.AddDays(runtime.Options.PasswordMaxAgeDays)) : null,
                 Utc(row?.LockedUntil));
-            type = IdentityEventContracts.UserChanged;
+            type = previous?.EventType == IdentityEventContracts.UserChangedV2 || row is not null && roles.Any(r => r <= 0)
+                ? IdentityEventContracts.UserChangedV2 : IdentityEventContracts.UserChanged;
             deleted = row is null;
         }
         else if (aggregate.StartsWith("department:", StringComparison.Ordinal) && Guid.TryParseExact(aggregate[11..], "D", out var departmentId))
@@ -71,10 +72,11 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
             type = IdentityEventContracts.DepartmentChanged;
             deleted = row is null;
         }
-        else if (aggregate.StartsWith("permission:role:", StringComparison.Ordinal) && int.TryParse(aggregate[16..], out var roleId) && roleId > 0)
+        else if (aggregate.StartsWith("permission:", StringComparison.Ordinal) && IdentityEventContracts.TryRoleSubject(aggregate[11..], out var roleId))
         {
             data = await IdentityPermissionSnapshot.ReadAsync(db, tenant, roleId, cancellationToken).ConfigureAwait(false);
-            type = IdentityEventContracts.PermissionChanged;
+            type = roleId <= 0 || previous?.EventType == IdentityEventContracts.PermissionChangedV2
+                ? IdentityEventContracts.PermissionChangedV2 : IdentityEventContracts.PermissionChanged;
             deleted = !await db.Sys_Roles.IgnoreQueryFilters().AnyAsync(x => x.TenantId == tenant && x.RoleId == roleId, cancellationToken).ConfigureAwait(false);
         }
         else throw new InvalidOperationException("C02_UNKNOWN_IDENTITY_AGGREGATE");
@@ -88,7 +90,10 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
         if (!runtime.Options.Tenants.ContainsKey(tenant)) return;
         var aggregate = IdentityEventContracts.TokenAggregate(runtime.Options.Issuer, jti);
         var previous = await LoadLockedAsync(tenant, aggregate, cancellationToken).ConfigureAwait(false);
-        await WriteDataAsync(tenant, aggregate, IdentityEventContracts.TokenRevoked,
+        var type = previous?.EventType == IdentityEventContracts.TokenRevokedV2
+            || IdentityEventContracts.TryRoleSubject(subject, out var role) && role <= 0
+            ? IdentityEventContracts.TokenRevokedV2 : IdentityEventContracts.TokenRevoked;
+        await WriteDataAsync(tenant, aggregate, type,
             new TokenRevokedIdentityData(tenant, runtime.Options.Issuer, jti, subject, expiry, 0),
             false, previous, cancellationToken).ConfigureAwait(false);
     }
@@ -139,7 +144,7 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
         snapshot.UpdatedAtUtc = runtime.Clock.GetUtcNow();
         if (previous is null) db.CrmIdentitySnapshots.Add(snapshot);
 
-        var priority = type == IdentityEventContracts.TokenRevoked || data["enabled"]?.GetValue<bool>() == false;
+        var priority = IdentityEventContracts.IsTokenRevoked(type) || data["enabled"]?.GetValue<bool>() == false;
         if (!priority)
         {
             new Cp6OutboxStore<CP6Context>(db, runtime.Validator, runtime.Clock).Enqueue(envelope);

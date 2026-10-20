@@ -17,7 +17,7 @@ using Npgsql;
 namespace CP6.Tests;
 
 [Collection("TenantManagementPostgres")]
-public sealed class CrmIdentityWriterPostgreSqlTests(TenantManagementPostgresFixture server)
+public sealed partial class CrmIdentityWriterPostgreSqlTests(TenantManagementPostgresFixture server)
 {
     [CurrentPermissionPostgresFact]
     public async Task Menu_change_cannot_miss_a_concurrent_uncommitted_role_action()

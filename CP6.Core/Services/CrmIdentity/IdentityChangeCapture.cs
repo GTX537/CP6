@@ -51,7 +51,7 @@ public sealed class IdentityChangeCapture
                     capture.Targets.Add((dept.TenantId, $"department:{dept.Id:D}"));
                     break;
                 case Sys_Role role when options.Tenants.ContainsKey(role.TenantId) && Changed(nameof(role.Enable)):
-                    capture.Targets.Add((role.TenantId, $"permission:role:{role.RoleId}"));
+                    capture.Targets.Add((role.TenantId, "permission:" + IdentityEventContracts.RoleSubject(role.RoleId)));
                     break;
                 case Sys_UserRole membership when options.Tenants.ContainsKey(membership.TenantId):
                     capture.Targets.Add((membership.TenantId, $"user:{membership.UserId:D}"));
@@ -59,22 +59,22 @@ public sealed class IdentityChangeCapture
                         capture.Targets.Add((membership.TenantId, $"user:{entry.OriginalValues.GetValue<Guid>(nameof(membership.UserId)):D}"));
                     break;
                 case Sys_RoleAction action when options.Tenants.ContainsKey(action.TenantId):
-                    capture.Targets.Add((action.TenantId, $"permission:role:{action.RoleId}"));
+                    capture.Targets.Add((action.TenantId, "permission:" + IdentityEventContracts.RoleSubject(action.RoleId)));
                     if (entry.State == EntityState.Modified)
-                        capture.Targets.Add((action.TenantId, $"permission:role:{entry.OriginalValues.GetValue<int>(nameof(action.RoleId))}"));
+                        capture.Targets.Add((action.TenantId, "permission:" + IdentityEventContracts.RoleSubject(entry.OriginalValues.GetValue<int>(nameof(action.RoleId)))));
                     break;
                 case Sys_RoleDataScope scope when options.Tenants.ContainsKey(scope.TenantId):
-                    capture.Targets.Add((scope.TenantId, $"permission:role:{scope.RoleId}"));
+                    capture.Targets.Add((scope.TenantId, "permission:" + IdentityEventContracts.RoleSubject(scope.RoleId)));
                     if (entry.State == EntityState.Modified)
-                        capture.Targets.Add((scope.TenantId, $"permission:role:{entry.OriginalValues.GetValue<int>(nameof(scope.RoleId))}"));
+                        capture.Targets.Add((scope.TenantId, "permission:" + IdentityEventContracts.RoleSubject(entry.OriginalValues.GetValue<int>(nameof(scope.RoleId)))));
                     break;
                 case Sys_RoleFieldPerm field when options.Tenants.ContainsKey(field.TenantId):
-                    capture.Targets.Add((field.TenantId, $"permission:role:{field.RoleId}"));
+                    capture.Targets.Add((field.TenantId, "permission:" + IdentityEventContracts.RoleSubject(field.RoleId)));
                     if (entry.State == EntityState.Modified)
-                        capture.Targets.Add((field.TenantId, $"permission:role:{entry.OriginalValues.GetValue<int>(nameof(field.RoleId))}"));
+                        capture.Targets.Add((field.TenantId, "permission:" + IdentityEventContracts.RoleSubject(entry.OriginalValues.GetValue<int>(nameof(field.RoleId)))));
                     break;
                 case Sys_RoleMenu roleMenu when options.Tenants.ContainsKey(roleMenu.TenantId):
-                    capture.Targets.Add((roleMenu.TenantId, $"permission:role:{roleMenu.RoleId}"));
+                    capture.Targets.Add((roleMenu.TenantId, "permission:" + IdentityEventContracts.RoleSubject(roleMenu.RoleId)));
                     break;
                 case Sys_Menu menu when Changed(nameof(menu.MenuKey)):
                     capture.menus.Add(menu.MenuId);
@@ -118,7 +118,7 @@ public sealed class IdentityChangeCapture
         var roles = await db.Sys_RoleActions.IgnoreQueryFilters().AsNoTracking()
             .Where(x => ids.Contains(x.MenuId) && tenants.Contains(x.TenantId))
             .Select(x => new { x.TenantId, x.RoleId }).Distinct().ToListAsync(cancellationToken).ConfigureAwait(false);
-        foreach (var role in roles) Targets.Add((role.TenantId, $"permission:role:{role.RoleId}"));
+        foreach (var role in roles) Targets.Add((role.TenantId, "permission:" + IdentityEventContracts.RoleSubject(role.RoleId)));
     }
 
     public void AddTenantTombstones(Guid tenantId, IEnumerable<Guid> users, IEnumerable<Guid> departments, IEnumerable<int> roles)
@@ -127,6 +127,6 @@ public sealed class IdentityChangeCapture
         DisabledTenants.Add(tenantId);
         foreach (var user in users) Targets.Add((tenantId, $"user:{user:D}"));
         foreach (var department in departments) Targets.Add((tenantId, $"department:{department:D}"));
-        foreach (var role in roles) Targets.Add((tenantId, $"permission:role:{role}"));
+        foreach (var role in roles) Targets.Add((tenantId, "permission:" + IdentityEventContracts.RoleSubject(role)));
     }
 }

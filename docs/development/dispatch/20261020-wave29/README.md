@@ -68,3 +68,11 @@ W29-01已通过PR354合入远端b4c60e5c，#351/#352关闭；manage finish核实
 **剩余事项不是完成声明**：#353固定身份v1正整数subject与自定义int角色域差异仍Open；本轮0/int.MinValue角色创建是明确503和全事务回滚，不能称支持完整整数域。下一独立公共基础窗口需先核权威版本规则，形成不改变Owner或既有正数身份的版本化合同，再依赖顺序串行采用Main writer与CRM reader并验证边界/旧消费者拒绝；仅保留Git/Issue即可，无须占用工作树。本轮没有重新启动冻结PRIV物理删除，完整IAM/CRM/Owner及真实业务验收未完成。
 
 原估计本代理实际3–5小时、故障余量8小时；产品和Handoff于本次记录时（06:43Z）已完成，自05:40Z起约63分钟。提前完成限定窗口不需要等满24小时；最终协调PR和finish后再报告总耗时。
+
+## 持续目标接续：#353
+
+原限定窗口已收尾；完整int角色仍存在合同缺口，现由本聊天在同一24小时目标内继续[版本化兼容窗口](ROLE-INTEGER-COMPATIBILITY.md)，新增预计1–3小时。旧成功证据及处置保留；零新工作树，DEV-2按管理入口先释放再跨仓替换。
+
+## #353 交付窗口
+
+固定v1身份域缺口已用独立v2合同补齐，旧v1字节与正整数身份保持。Main创建/授权/分配、SSO首次身份、版本粘性/撤销与baseline共174项不同.NET/PG通过；CRM61项实际消费/合同、14Vitest和类型检查通过。CRM PR95已先合入并清理分支、释放DEV-2；Main待正常PR/远端采用及finish。#353待集成关闭，完整IAM/CRM/Owner/真实业务状态不提升；无Actions、真实租户审批或环境部署。[DELIVERY](../development/evidence/WP02-03/integer-role-identity/DELIVERY.md)。

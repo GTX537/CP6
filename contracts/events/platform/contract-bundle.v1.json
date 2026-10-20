@@ -1,5 +1,5 @@
 {
-  "bundleVersion": "1.0.0",
+  "bundleVersion": "1.1.0",
   "cloudEventsSpecVersion": "1.0",
   "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
   "entries": [
@@ -195,6 +195,123 @@
           "path": "token-revoked/v1/examples/pii-negative.json",
           "valid": false,
           "sha256": "ddc1f5cd5147cbe1c892b52054377e81d4633072db433b581bba9c0c0040e513"
+        }
+      ]
+    },
+    {
+      "eventType": "com.gtx537.platform.user.changed.v2",
+      "schemaVersion": "2.0.0",
+      "schemaId": "https://contracts.cp6.uk/events/platform/user-changed/v2/schema.json",
+      "schemaPath": "user-changed/v2/schema.json",
+      "schemaSha256": "a5dcac61aedce17f270edad6e9908e2037e74d5e5cfcf06fd582dab6f93ca74b",
+      "examples": [
+        {
+          "name": "valid",
+          "path": "user-changed/v2/examples/valid.json",
+          "valid": true,
+          "sha256": "6d7a7772b7eca0cdd996a9bf028671e71f23ea9f21c03fe57169194cb3bf7ee9"
+        },
+        {
+          "name": "missing-required",
+          "path": "user-changed/v2/examples/missing-required.json",
+          "valid": false,
+          "sha256": "a607db641b19150bc08b814f3924dcadfbdef54d2bae5d4047e0c1a2f60aa93d"
+        },
+        {
+          "name": "unknown-optional",
+          "path": "user-changed/v2/examples/unknown-optional.json",
+          "valid": true,
+          "sha256": "8e4e1a9883c2e6bde01e5fef77167a66fa28104b633026803690398fe08c9c0c"
+        },
+        {
+          "name": "wrong-type",
+          "path": "user-changed/v2/examples/wrong-type.json",
+          "valid": false,
+          "sha256": "9fb4b5dfa694dbfb8786b5e5a1da9d7da99303d4bca9a25e27cfc63f296d65f3"
+        },
+        {
+          "name": "pii-negative",
+          "path": "user-changed/v2/examples/pii-negative.json",
+          "valid": false,
+          "sha256": "1288706357c5da8b5a3f93a4960cc932e49925e9e28fd95fcbe6358ca5b609c1"
+        }
+      ]
+    },
+    {
+      "eventType": "com.gtx537.platform.permission.changed.v2",
+      "schemaVersion": "2.0.0",
+      "schemaId": "https://contracts.cp6.uk/events/platform/permission-changed/v2/schema.json",
+      "schemaPath": "permission-changed/v2/schema.json",
+      "schemaSha256": "fbe831041b6da784df7c7763ad572a1e71cec0f2b683a3bc0bb6ec155a52814a",
+      "examples": [
+        {
+          "name": "valid",
+          "path": "permission-changed/v2/examples/valid.json",
+          "valid": true,
+          "sha256": "71bf53bf2b36b9f34a829c664ab93f39401743ff1a511495c63d147c4ca1ce0d"
+        },
+        {
+          "name": "missing-required",
+          "path": "permission-changed/v2/examples/missing-required.json",
+          "valid": false,
+          "sha256": "ae2891d5300cc09a3da356f68f8fef7fbf2231f265f2461b4d17c1a315bdca0c"
+        },
+        {
+          "name": "unknown-optional",
+          "path": "permission-changed/v2/examples/unknown-optional.json",
+          "valid": true,
+          "sha256": "3116c78148a66f1eb1c3fa721e3c6e35dbd710d37426a5d39f7e6b0d323fa027"
+        },
+        {
+          "name": "wrong-type",
+          "path": "permission-changed/v2/examples/wrong-type.json",
+          "valid": false,
+          "sha256": "93d9320c6588c677a45e01e76e362044762d48c42e77877c21d5c7af69b6b32c"
+        },
+        {
+          "name": "pii-negative",
+          "path": "permission-changed/v2/examples/pii-negative.json",
+          "valid": false,
+          "sha256": "b500fd815e186d5f21bf520e4f4334039e0f7ff218b79e59c626d4f725d9c533"
+        }
+      ]
+    },
+    {
+      "eventType": "com.gtx537.platform.token.revoked.v2",
+      "schemaVersion": "2.0.0",
+      "schemaId": "https://contracts.cp6.uk/events/platform/token-revoked/v2/schema.json",
+      "schemaPath": "token-revoked/v2/schema.json",
+      "schemaSha256": "24685b0451f549f8636b18f6781395622efeee0598d9e45106d68fed000001db",
+      "examples": [
+        {
+          "name": "valid",
+          "path": "token-revoked/v2/examples/valid.json",
+          "valid": true,
+          "sha256": "f6b08ccd64aec03bb0a155495dc7fdeef789d6c6ceac027aab1837c4b4ba0ab5"
+        },
+        {
+          "name": "missing-required",
+          "path": "token-revoked/v2/examples/missing-required.json",
+          "valid": false,
+          "sha256": "31aaec5b6fad44fa8c91fe8a4599302a0c84fd7b1a15da7832181fed4020ec86"
+        },
+        {
+          "name": "unknown-optional",
+          "path": "token-revoked/v2/examples/unknown-optional.json",
+          "valid": true,
+          "sha256": "0e0766b5f3159239f5a90d4821899e8eb663f8239d7686719c7bc1776a99b5c5"
+        },
+        {
+          "name": "wrong-type",
+          "path": "token-revoked/v2/examples/wrong-type.json",
+          "valid": false,
+          "sha256": "d6ab7d7451f3550bdbccfb6cbf3442fcc98b054b73295e717b89637fd8d16633"
+        },
+        {
+          "name": "pii-negative",
+          "path": "token-revoked/v2/examples/pii-negative.json",
+          "valid": false,
+          "sha256": "6d5734b62c2d613ac36aed6ae56b97d84ea3f709917712d496435e28f6527bab"
         }
       ]
     }
