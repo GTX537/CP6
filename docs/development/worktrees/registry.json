@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-20T00:38:28.362528+00:00",
+  "updated_at": "2026-10-20T02:10:31.195075+00:00",
   "scope": "GTX537 CP6 family only",
   "owner": "COORD",
   "limits": {
@@ -42,10 +42,10 @@
     {
       "id": "DEV-1",
       "path": "D:/CP6-worktrees/wave17-dispatch-20261018",
-      "status": "reserved",
+      "status": "ready",
       "owner": "COORD",
-      "task": "WORKSPACE-20261020",
-      "purpose": "总控固定串行开发/治理席位；本轮治理交付后保留复用，每次重新核对任务成果及新基线",
+      "task": null,
+      "purpose": "总控固定串行开发/治理席位；BACKLOG-20261020 收尾 PR 完成后复用，下一任务须核对新基线",
       "reclaim_condition": "上项任务结束；提交已合入目标或完整推送并回读；无待保留本地文件；进程停止；总控决定保留复用或正常 git worktree remove。固定席位每次交付仍做同样核对。"
     },
     {
@@ -72,11 +72,11 @@
       "status": "ready",
       "owner": "COORD",
       "task": null,
-      "purpose": "原S02-00任务已结束，现固定为集成/验证目录；2026-10-20已切 detached c7ae8c1d，无业务改动",
+      "purpose": "固定集成/验证目录；已有业务成果在远端主线，交付后同步最新已确认 main；下一任务独立分支",
       "reclaim_condition": "上项任务结束；提交已合入目标或完整推送并回读；无待保留本地文件；进程停止；总控决定保留复用或正常 git worktree remove。固定席位每次交付仍做同样核对。"
     }
   ],
   "admission": "开工核对实际登记；占满时排队；历史待判断目录不构成额外活动配额。",
-  "retained_inventory": "inventory-20261020.md",
+  "retained_inventory": "inventory-backlog-20261020.md",
   "task_registry_note": "本文件只管理工作区占用；产品任务状态仍以 docs/development/roadmap.json 为准。"
 }
