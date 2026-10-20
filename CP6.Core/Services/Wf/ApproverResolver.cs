@@ -73,8 +73,23 @@ public class ApproverResolver : IApproverResolver
     /// <summary>从发起人部门沿 ParentId 上溯，取首个有效 LeaderId 对应的启用用户。</summary>
     private async Task<ApproverResolveResult> DeptLeaderAsync(ApproverResolveContext ctx)
     {
-        var user = await _db.Sys_Users.FirstOrDefaultAsync(u => u.Id == ctx.StarterUserId);
+        var user = await _db.Sys_Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == ctx.StarterUserId);
         if (user?.DeptId is not Guid did) return ApproverResolveResult.Unres("发起人无部门");
+
+        if(_db.Database.IsNpgsql())
+        {
+            if(!user.Enable)return ApproverResolveResult.Unres("发起人已停用");
+            var all=await _db.Sys_Depts.AsNoTracking().ToDictionaryAsync(x=>x.Id);
+            if(!CP6.Core.Services.Sys.IamUserAdministrationV1.DepartmentAvailable(did,all))return ApproverResolveResult.Unres("部门依赖异常或停用，需人工指派");
+            Guid? current=did;
+            while(current!=null)
+            {
+                var node=all[current.Value];
+                if(node.LeaderId is Guid leaderId && await _db.Sys_Users.AsNoTracking().AnyAsync(x=>x.Id==leaderId && x.Enable))return ApproverResolveResult.Ok(leaderId);
+                current=node.ParentId;
+            }
+            return ApproverResolveResult.Unres("沿部门树未找到有效负责人，需人工指派");
+        }
 
         var dept = await _db.Sys_Depts.FirstOrDefaultAsync(d => d.Id == did && d.Enable);
         while (dept != null)

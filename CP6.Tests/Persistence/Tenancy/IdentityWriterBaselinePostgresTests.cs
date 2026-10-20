@@ -27,7 +27,7 @@ public sealed class IdentityWriterBaselinePostgresTests(IdentityDirectoryConfigu
         writer.Sys_Users.Add(user); await writer.SaveChangesAsync();
         var iam = new CP6.Tests.Platform.IamAdministrationTestSession(writer, user.Id);
         await iam.SetUser(user.Id, [777], 777);
-        var department = await new DeptService(writer).CreateAsync(new() { DeptCode = "w22-baseline", DeptName = "fixture department" }, null, "fixture");
+        var department = await iam.CreateDepartment("w22-baseline", "fixture department");
         await iam.SetUser(user.Id, department: department);
         writer.Sys_Menus.Add(new Sys_Menu { MenuId = 72301, MenuName = "baseline permission", MenuKey = "crm-w22-baseline" }); await writer.SaveChangesAsync();
         var permissions = new RolePermService(writer, current);

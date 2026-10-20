@@ -24,7 +24,7 @@ W27跨标签页认证恢复(PR336)、明确SSO首次身份审批(PR338)、初绑
 - [x] 原密码服务与明确reset政策、refresh吊销同事务；不暴露密码/身份秘密。审计、IdentityChange/Outbox与回执同提交；UNKNOWN按原operation查询/封闭。
 - [x] PG实际writer并发、失权、引用变化、事务故障/原操作恢复及HTTP相关行为验证。一次作者SPEC/QUALITY、单份DELIVERY就绪；正常PR合并、finish待实际核对。
 
-## W28-02
+## W28-02（组织API与页面同窗）
 
 文件：DeptService/DeptController/UserOrg适配、必要PG组织revision与writer门；Dept DTO及相关PG/HTTP测试。父/leader/null/停用祖先语义按原设计；整树诊断不把孤儿升root用于权限。
 
@@ -33,7 +33,7 @@ W27跨标签页认证恢复(PR336)、明确SSO首次身份审批(PR338)、初绑
 - [ ] 实际writer加入共同门与版本，既有Main身份传播和scope当前判定；历史审批快照不改。
 - [ ] PG并发树更新/回滚/原操作恢复；单份交付、集中审查、合并与finish。
 
-## W28-03 与收尾
+## W28-03（并入W28-02）与收尾
 
 文件：cp6.web/src/views/pms/UserView.vue、DeptTreeView.vue，相关api/types与行为测试；复用已有跨标签页认证协调器。
 
@@ -47,3 +47,11 @@ W27跨标签页认证恢复(PR336)、明确SSO首次身份审批(PR338)、初绑
 四仓合计2开发+1集成：DEV-1 `D:/CP6-worktrees/wave17-dispatch-20261018`仅当前产品任务，DEV-2 `D:/CP6-worktrees/dev-2`仅W28-HANDOFF；集成席位空闲。均已通过统一manage入口，不新建目录、源码副本或依赖包。复用已有NuGet/.NET输出及前端node_modules junction，相关PG实例在既有本地测试根内隔离且每次停止；原失败日志保留。
 
 不触发Actions，不替真实租户批准issuer/角色，不安装既有环境迁移，不做生产部署。完整IAM/CRM/Owner和原业务验收仍按真实范围NOT_RUN；本轮不扩展CRM消费和隐私删除需求。
+
+## 实际窗口接续
+
+W28-01：PR347，源`9eb79591380f8190afdb0272c9e84b73fc111984`，main`1593d573837e46a579074ed3224f47f59d9ce5f0`；#346 Closed，77有效.NET/7前端/2Chrome+typecheck。codex/w28-01本地/远端已删除，DEV-1干净释放后经start重新领取W28-02；没有增加物理目录。Handoff 470495412bcaf65b3802f479ef1752b11a795973。
+
+## 范围与验证接续
+
+W28-02的组织页面与API同分支交付；原W28-03恢复/组合验证已在同一窗口完成，不创建codex/w28-03。已完成当前用户/组织页面冲突、原操作UNKNOWN、跨Tab与身份撤销保护，以及Main当前CRM输出/审批路由组合验证。50项唯一有效.NET/PG/HTTP、14Vitest、5Chrome夹具、vue-tsc通过/复用；一次作者集中审查无阻断，原失败保留。所有本窗测试进程已停止。剩余步骤是正常PR、远端核对、finish及本轮协调资料最终同步。

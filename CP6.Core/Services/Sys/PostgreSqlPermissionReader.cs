@@ -30,7 +30,7 @@ internal static class PostgreSqlPermissionReader
         // to text before collecting them would silently trim values. Only the final JSON is text.
         // Independent aggregates avoid multiplying menus, actions, scopes and fields together.
         var sql = $$"""
-            WITH permission_user AS MATERIALIZED (
+            WITH RECURSIVE {{PostgreSqlOrganizationV1.HealthyCte(Table<Sys_Dept>(),"@permission_tenant")}}, permission_user AS MATERIALIZED (
                 SELECT u."Id", u."UserName", u."DeptId", u."RoleId"
                 FROM {{Table<Sys_User>()}} u
                 WHERE u."TenantId" = @permission_tenant AND u."Id" = @permission_user AND u."Enable"
@@ -44,9 +44,9 @@ internal static class PostgreSqlPermissionReader
                           AND ur."RoleId" = r."RoleId"))
             )
             SELECT pg_catalog.jsonb_build_object(
-                'UserId', u."Id", 'UserName', u."UserName", 'DeptId', u."DeptId",
-                'DeptPath', COALESCE((SELECT d."Path" FROM {{Table<Sys_Dept>()}} d
-                    WHERE d."TenantId" = @permission_tenant AND d."Id" = u."DeptId"), ''),
+                'UserId', u."Id", 'UserName', u."UserName", 'DeptId', (SELECT d."Id" FROM healthy_departments d WHERE d."Id"=u."DeptId"),
+                'DeptPath', COALESCE((SELECT d."Path" FROM healthy_departments d WHERE d."Id" = u."DeptId"), ''),
+                'HealthyDepartmentIds', COALESCE((SELECT pg_catalog.jsonb_agg(d."Id") FROM healthy_departments d),'[]'::jsonb),
                 'RoleIds', COALESCE((SELECT pg_catalog.jsonb_agg(r."RoleId" ORDER BY r."RoleId")
                     FROM permission_roles r), '[]'::jsonb),
                 'MenuKeys', COALESCE((SELECT pg_catalog.jsonb_agg(m."MenuKey")
@@ -93,14 +93,14 @@ internal static class PostgreSqlPermissionReader
                 .ToDictionary(g => g.Key, g => g.Max(x => x.ScopeType)),
             CustomDeptIds = snapshot.DataScopes.Where(x => x.ScopeType == 4).GroupBy(x => x.ResourceKey)
                 .ToDictionary(g => g.Key, g => g.SelectMany(x => PermissionAggregator.ParseGuids(x.CustomDeptIds))
-                    .Distinct().ToList()),
+                    .Where(snapshot.HealthyDepartmentIds.Contains).Distinct().ToList()),
             FieldPerms = snapshot.FieldPerms.GroupBy(x => x.ResourceKey)
                 .ToDictionary(g => g.Key, g => g.GroupBy(x => x.FieldName)
                     .ToDictionary(f => f.Key, f => f.Min(x => x.Access)))
         };
     }
 
-    private sealed record Snapshot(Guid UserId, string UserName, Guid? DeptId, string DeptPath,
+    private sealed record Snapshot(Guid UserId, string UserName, Guid? DeptId, string DeptPath, Guid[] HealthyDepartmentIds,
         int[] RoleIds, string[] MenuKeys, string[] ActionKeys, DataScope[] DataScopes, FieldPermission[] FieldPerms);
     private sealed record DataScope(string ResourceKey, int ScopeType, string? CustomDeptIds);
     private sealed record FieldPermission(string ResourceKey, string FieldName, int Access);
