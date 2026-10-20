@@ -21,6 +21,16 @@ beforeEach(() => {
 })
 afterEach(() => { view?.unmount(); view = undefined })
 describe('user administration', () => {
+  it('submits the selected zero primary role without turning it into no assignment', async () => {
+    api.userEditor.mockResolvedValue({ ...structuredClone(value), roles: [{ roleId: 0, roleName: 'Zero', enable: true }] })
+    api.saveUser.mockImplementation(async (_input, id) => ({ operationId: id, kind: 'user-create', state: 'COMMITTED' }))
+    const vm = await render(); await vm.openEditor()
+    await view!.get('fieldset input[type="checkbox"]').setValue(true)
+    await view!.get('select[aria-label="主角色"]').setValue('0')
+    vm.draft.userName = 'zero-user'; vm.draft.password = 'Password1!'; vm.draft.reason = 'approved zero'
+    await vm.save()
+    expect(api.saveUser.mock.calls[0]![0]).toMatchObject({ roleId: 0, roleIds: [0] })
+  })
   it('clears the form and list after current permission is withdrawn', async () => {
     const vm = await render(); await vm.openEditor(); vm.draft.userName = 'sensitive'; vm.draft.password = 'secret'
     api.saveUser.mockRejectedValue({ response: { status: 403 } }); await vm.save()

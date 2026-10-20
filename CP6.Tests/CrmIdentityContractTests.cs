@@ -74,7 +74,71 @@ public class CrmIdentityContractTests
         Assert.False(validator.Validate(envelope with { AggregateVersion = 8 }).IsValid);
     }
 
-    private static JsonObject Example(string name) => JsonNode.Parse(File.ReadAllBytes(Bundle.GetAssetPath(
-        Bundle.Entries.Single(x => x.EventType == "com.gtx537.platform." + name + ".v1")
+    [Theory]
+    [InlineData("role:-2147483648", true)]
+    [InlineData("role:-1", true)]
+    [InlineData("role:0", true)]
+    [InlineData("role:1", true)]
+    [InlineData("role:2147483647", true)]
+    [InlineData("role:-2147483649", false)]
+    [InlineData("role:2147483648", false)]
+    [InlineData("role:-0", false)]
+    [InlineData("role:+1", false)]
+    [InlineData("role:01", false)]
+    [InlineData("role:-01", false)]
+    [InlineData("role: 0", false)]
+    public void Full_integer_contract_preserves_exact_identity_and_rejects_aliases(string subject, bool valid)
+    {
+        foreach (var type in new[] { "user.changed", "permission.changed", "token.revoked" })
+        {
+            var node = Example(type, 2);
+            if (type == "user.changed") node["data"]!["roles"] = new JsonArray(subject);
+            else node["data"]!["subjectId"] = subject;
+            if (type == "permission.changed")
+            {
+                node["aggregateid"] = "permission:" + subject;
+                node["subject"] = $"tenants/{node["tenantid"]!.GetValue<string>()}/permission:{subject}";
+            }
+            Assert.Equal(valid, validator.IsValid(Encoding.UTF8.GetBytes(node.ToJsonString())));
+        }
+    }
+
+    [Fact]
+    public void Role_subject_is_canonical_even_when_current_culture_uses_a_different_negative_sign()
+    {
+        var original=System.Globalization.CultureInfo.CurrentCulture;
+        try
+        {
+            var custom=(System.Globalization.CultureInfo)System.Globalization.CultureInfo.InvariantCulture.Clone();
+            custom.NumberFormat.NegativeSign="~";System.Globalization.CultureInfo.CurrentCulture=custom;
+            Assert.Equal("role:-2147483648",IdentityEventContracts.RoleSubject(int.MinValue));
+            Assert.True(IdentityEventContracts.TryRoleSubject("role:-2147483648",out var role));Assert.Equal(int.MinValue,role);
+            Assert.False(IdentityEventContracts.TryRoleSubject("role:~1",out _));
+        }
+        finally{System.Globalization.CultureInfo.CurrentCulture=original;}
+    }
+
+    [Fact]
+    public void V1_stays_positive_and_old_consumer_rejects_v2_instead_of_losing_roles()
+    {
+        using var legacy = new LegacyIdentityBundle();
+        var oldConsumer = new IdentityEventValidator(legacy.Bundle, Issuer);
+        foreach (var type in new[] { "user.changed", "permission.changed", "token.revoked" })
+        {
+            Assert.True(oldConsumer.IsValid(Encoding.UTF8.GetBytes(Example(type).ToJsonString())));
+            var v2 = Encoding.UTF8.GetBytes(Example(type, 2).ToJsonString());
+            Assert.True(validator.IsValid(v2));
+            Assert.False(oldConsumer.IsValid(v2));
+            var unknown = Example(type, 2); unknown["type"] = "com.gtx537.platform." + type + ".v3";
+            Assert.False(validator.IsValid(Encoding.UTF8.GetBytes(unknown.ToJsonString())));
+            var mismatch = Example(type, 2); mismatch["schemaversion"] = "1.0.0";
+            Assert.False(validator.IsValid(Encoding.UTF8.GetBytes(mismatch.ToJsonString())));
+        }
+        var user = Example("user.changed"); user["data"]!["roles"] = new JsonArray("role:0");
+        Assert.False(validator.IsValid(Encoding.UTF8.GetBytes(user.ToJsonString())));
+    }
+
+    private static JsonObject Example(string name, int major = 1) => JsonNode.Parse(File.ReadAllBytes(Bundle.GetAssetPath(
+        Bundle.Entries.Single(x => x.EventType == "com.gtx537.platform." + name + ".v" + major)
             .Examples.Single(x => x.Name == "valid").Path)))!.AsObject();
 }

@@ -61,7 +61,7 @@ public sealed class IamUserAdministrationV1(CP6Context db,IamAdministrationV1 au
             if (string.IsNullOrWhiteSpace(input.UserName) || input.UserName.Length>100 || input.NickName?.Length>100
                 || input.Email?.Length>100 || input.Password?.Length>200 || create && string.IsNullOrEmpty(input.Password)) throw Error(400,"IAM_USER_INPUT_INVALID");
         }
-        if (kind != "user-org" && (input.RoleIds == null || input.RoleIds.Length>100 || input.RoleIds.Any(x=>x<=0))) throw Error(400,"IAM_ROLE_SET_REQUIRED");
+        if (kind != "user-org" && (input.RoleIds == null || input.RoleIds.Length>100)) throw Error(400,"IAM_ROLE_SET_REQUIRED");
         if (input.Email?.Length>100) throw Error(400,"IAM_USER_INPUT_INVALID");
         var command=input with { RoleIds=input.RoleIds?.Distinct().Order().ToArray() };
         return authority.ExecuteAsync(Permission(kind),actor,async (who,token) =>

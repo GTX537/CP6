@@ -56,6 +56,20 @@ public class FieldPermissionDecisionV1Tests
     }
 
     [Fact]
+    public void Effective_role_identity_keeps_the_complete_int_domain()
+    {
+        foreach(var id in new[]{int.MinValue,-1,0,1,int.MaxValue})
+        {
+            var role=new FieldPermissionRoleV1(id,"current-role",true);
+            var row=Row(id,2) with{RoleVersion=role.Version};
+            var decision=FieldPermissionEvaluatorV1.Evaluate(Input([row],roles:[role]));
+            Assert.True(decision.IsAvailable,string.Join(",",decision.Errors));
+            Assert.Equal(2,decision.Fields["Cost"].Access);
+            Assert.False(decision.Fields["Cost"].CanWrite);
+        }
+    }
+
+    [Fact]
     public void Incomplete_registry_roles_unknown_fields_access_and_versions_never_default_to_allow()
     {
         var bad = new[]

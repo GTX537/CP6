@@ -10,7 +10,7 @@ internal static class IdentityPermissionSnapshot
     {
         var enabled = await db.Sys_Roles.IgnoreQueryFilters().AnyAsync(
             x => x.TenantId == tenant && x.RoleId == roleId && x.Enable, cancellationToken).ConfigureAwait(false);
-        if (!enabled) return new(tenant, $"role:{roleId}", false, 0, []);
+        if (!enabled) return new(tenant, IdentityEventContracts.RoleSubject(roleId), false, 0, []);
         var actions = await (from a in db.Sys_RoleActions.IgnoreQueryFilters().AsNoTracking()
             join m in db.Sys_Menus.AsNoTracking() on a.MenuId equals m.MenuId
             where a.TenantId == tenant && a.RoleId == roleId && m.MenuKey != null && m.MenuKey.StartsWith("crm-")
@@ -31,6 +31,6 @@ internal static class IdentityPermissionSnapshot
                 .OrderBy(x => x.Key, StringComparer.Ordinal).Select(x => new IdentityFieldPermission(x.Key, x.Min(f => f.Access))).ToArray();
             return new IdentityGrant(action.Resource, action.Action, scope, departments, access);
         }).ToArray();
-        return new(tenant, $"role:{roleId}", true, 0, grants);
+        return new(tenant, IdentityEventContracts.RoleSubject(roleId), true, 0, grants);
     }
 }

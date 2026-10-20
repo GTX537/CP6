@@ -1,6 +1,6 @@
 # 多对话任务分配与交付
 
-> 当前：[第二十九轮最终交付](dispatch/20261020-wave29/README.md)。PR354/356与Handoff PR4已合入，产品/Handoff分支清理、席位释放；W29-CLOSE最终协调文档正常PR/finish后关闭限定窗口。#353跨仓整数域合同仍Open；下项重新经start领取，禁止重做W27/W28或新增目录。
+> 当前：[W29完整整数身份兼容](dispatch/20261020-wave29/ROLE-INTEGER-COMPATIBILITY.md)，原W29窗口已收尾；CRM PR95已采用并释放，Main候选待正常合入、#353关闭及Handoff/席位总收尾。单聊天、四仓合计2+1，禁止重复已完成实现或新增目录。
 
 > 当前执行入口：[分支与工作区统一政策](worktrees/POLICY.md) / [命令及固定席位](worktrees/REGISTRY.md)。四仓合计2开发+1集成；所有写入任务必须start领取、finish释放，旧轮次目录仅为历史。
 

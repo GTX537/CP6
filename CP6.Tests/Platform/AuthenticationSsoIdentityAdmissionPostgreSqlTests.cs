@@ -35,13 +35,13 @@ public sealed partial class AuthenticationSsoPostgreSqlTests
         options.Tenants.Add(tenant, "us");
         return new(options, new IdentityEventValidator(Cp6ContractBundle.Load(Path.Combine(AppContext.BaseDirectory, "contracts/events/platform")), issuer));
     }
-    private static async Task Approve(Harness h, bool link = true, bool jit = true)
+    private static async Task Approve(Harness h, bool link = true, bool jit = true, int role = 71)
     {
-        h.Db.Sys_Roles.Add(new Sys_Role { TenantId = h.User.TenantId, RoleId = 71, RoleName = "Approved default" });
+        h.Db.Sys_Roles.Add(new Sys_Role { TenantId = h.User.TenantId, RoleId = role, RoleName = "Approved default" });
         await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear();
-        await h.Db.Sys_TenantSsoConfigs.Where(x => x.TenantId == h.User.TenantId).ExecuteUpdateAsync(s => s.SetProperty(x => x.DefaultRoleId, 71));
+        await h.Db.Sys_TenantSsoConfigs.Where(x => x.TenantId == h.User.TenantId).ExecuteUpdateAsync(s => s.SetProperty(x => x.DefaultRoleId, role));
         var p = new SsoIdentityAdmissionPolicyV1(Guid.NewGuid(), Guid.NewGuid(), "https://issuer.example.test", "https://issuer.example.test",
-            "cp6", "email", "verified-email", true, link, jit, [71], Guid.NewGuid(), DateTimeOffset.UtcNow);
+            "cp6", "email", "verified-email", true, link, jit, [role], Guid.NewGuid(), DateTimeOffset.UtcNow);
         var json = JsonSerializer.Serialize(p);
         await h.Db.Database.ExecuteSqlInterpolatedAsync($"INSERT INTO cp6_authentication_v1.sso_admission_policies(tenant_id,document) VALUES({h.User.TenantId},{json})");
     }
@@ -53,6 +53,23 @@ public sealed partial class AuthenticationSsoPostgreSqlTests
         await h.Sso.BindStateAsync(query["state"]!, "Web", binding);
         return (AuthenticationInteractionStoreV1.Hash(query["state"]!),
             () => h.Sso.HandleVerifiedCallbackAsync("code", query["state"]!, "https://cp6.test/callback", "Web", binding), key);
+    }
+
+    [TenantManagementPostgresTheory]
+    [InlineData(0)]
+    [InlineData(int.MinValue)]
+    public async Task Approved_first_SSO_identity_keeps_zero_and_negative_default_roles(int role)
+    {
+        await using var h=await Harness.Create(server,0,false,false,true);await Approve(h,role:role);
+        h.Subject="integer-subject";h.EmailOverride="integer@example.test";
+        var operation=await Start(h);var proof=await operation.Callback();
+        var user=await h.Db.Sys_Users.AsNoTracking().SingleAsync(x=>x.Id==proof.UserId);
+        Assert.Equal(role,user.RoleId);Assert.False(user.IsPlatformAdmin);
+        var snapshot=await h.Db.CrmIdentitySnapshots.AsNoTracking().SingleAsync(x=>x.AggregateId=="user:"+user.Id.ToString("D"));
+        Assert.Equal(IdentityEventContracts.UserChangedV2,snapshot.EventType);
+        Assert.Equal(IdentityEventContracts.RoleSubject(role),JsonDocument.Parse(snapshot.PayloadJson).RootElement.GetProperty("roles")[0].GetString());
+        Assert.False(await h.Db.Sys_RefreshTokens.AnyAsync(x=>x.UserId==user.Id));
+        Assert.Equal(user.Id,(await (await Start(h)).Callback()).UserId);
     }
 
     [TenantManagementPostgresTheory]

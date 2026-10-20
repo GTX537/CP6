@@ -39,9 +39,10 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         Assert.Equal(2,await h.Db.Sys_SecurityLogs.CountAsync(x=>x.EventType==(int)SecurityEventType.IamAdministrationChanged));
     }
     [CurrentPermissionPostgresFact]
-    public async Task Role_integer_inputs_outside_pinned_projection_contract_are_not_reclassified_or_partially_written()
+    public async Task Legacy_v1_only_projection_rejects_new_role_domain_without_partial_business_writes()
     {
-        await using var h=await Seed();var s=RoleSession(h);
+        using var legacy=new LegacyIdentityBundle();
+        await using var h=await SeedWithBundle(legacy.Bundle);var s=RoleSession(h);
         foreach(var id in new[]{int.MinValue,0})
         {
             var command=await RoleCommand(h,id);
