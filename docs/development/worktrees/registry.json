@@ -1,10 +1,10 @@
 {
-  "schema_version": 1,
-  "updated_at": "2026-10-20T02:39:06.141129+00:00",
+  "schema_version": 2,
+  "updated_at": "2026-10-20T03:13:44.867875+00:00",
   "scope": "GTX537 CP6 family only",
   "owner": "COORD",
   "limits": {
-    "development_worktrees": 3,
+    "development_worktrees": 2,
     "integration_worktrees": 1,
     "per_repository_primary": 1
   },
@@ -14,70 +14,72 @@
       "origin": "https://github.com/GTX537/CP6.git",
       "path": "D:/CP6",
       "owner": "COORD",
-      "purpose": "主线集成及用户资料保留"
+      "purpose": "主线集成及用户资料保留",
+      "target": "main"
     },
     {
       "repository": "CP6.CRM",
       "origin": "https://github.com/GTX537/CP6.CRM.git",
       "path": "D:/CP6.CRM",
       "owner": "COORD",
-      "purpose": "CRM指定主目录"
+      "purpose": "CRM指定主目录",
+      "target": "main"
     },
     {
       "repository": "CP6.Platform",
       "origin": "https://github.com/GTX537/CP6.Platform.git",
       "path": "D:/CP6/CP6.Platform",
       "owner": "COORD",
-      "purpose": "Platform指定主目录；保留原构建证据"
+      "purpose": "Platform指定主目录；保留原构建证据",
+      "target": "main"
     },
     {
       "repository": "CP6.AI-Handoff",
       "origin": "https://github.com/GTX537/CP6.AI-Handoff.git",
       "path": "D:/CP6.AI-Handoff",
       "owner": "COORD",
-      "purpose": "Handoff默认资料分支主目录"
+      "purpose": "Handoff默认资料分支主目录",
+      "target": "codex/t02c-entry-handoff-20260921"
     }
   ],
   "slots": [
     {
       "id": "DEV-1",
       "path": "D:/CP6-worktrees/wave17-dispatch-20261018",
-      "status": "ready",
+      "status": "fixed",
       "owner": "COORD",
       "task": null,
-      "purpose": "总控固定串行开发/治理席位；BACKLOG-20261020 收尾 PR 完成后复用，下一任务须核对新基线",
-      "reclaim_condition": "上项任务结束；提交已合入目标或完整推送并回读；无待保留本地文件；进程停止；总控决定保留复用或正常 git worktree remove。固定席位每次交付仍做同样核对。"
+      "purpose": "固定开发席位；跨仓须先释放再bind替换",
+      "reclaim_condition": "上项任务结束；提交已合入目标或完整推送并回读；无待保留本地文件；进程停止；总控决定保留复用或正常 git worktree remove。固定席位每次交付仍做同样核对。",
+      "repository": "CP6",
+      "kind": "development"
     },
     {
       "id": "DEV-2",
-      "path": "D:/CP6.AI-Handoff-worktrees/dev-coordination-20261012",
-      "status": "ready",
+      "path": "D:/CP6-worktrees/dev-2",
+      "status": "fixed",
       "owner": "COORD",
       "task": null,
-      "purpose": "固定Handoff资料席位；资料写入也计开发额度",
-      "reclaim_condition": "上项任务结束；提交已合入目标或完整推送并回读；无待保留本地文件；进程停止；总控决定保留复用或正常 git worktree remove。固定席位每次交付仍做同样核对。"
-    },
-    {
-      "id": "DEV-3",
-      "path": null,
-      "status": "unallocated",
-      "owner": "COORD",
-      "task": null,
-      "purpose": "空闲额度；先从确认安全的存量认领，不能自行新建",
-      "reclaim_condition": "上项任务结束；提交已合入目标或完整推送并回读；无待保留本地文件；进程停止；总控决定保留复用或正常 git worktree remove。固定席位每次交付仍做同样核对。"
+      "purpose": "固定开发席位；跨仓须先释放再bind替换",
+      "reclaim_condition": "上项任务结束；提交已合入目标或完整推送并回读；无待保留本地文件；进程停止；总控决定保留复用或正常 git worktree remove。固定席位每次交付仍做同样核对。",
+      "repository": "CP6.AI-Handoff",
+      "kind": "development",
+      "replacement_path": "D:/CP6-worktrees/dev-2"
     },
     {
       "id": "INTEGRATION-1",
       "path": "D:/CP6-worktrees/s02-00-20261012",
-      "status": "ready",
+      "status": "fixed",
       "owner": "COORD",
       "task": null,
-      "purpose": "固定集成/验证目录；已有业务成果在远端主线，交付后同步最新已确认 main；下一任务独立分支",
-      "reclaim_condition": "上项任务结束；提交已合入目标或完整推送并回读；无待保留本地文件；进程停止；总控决定保留复用或正常 git worktree remove。固定席位每次交付仍做同样核对。"
+      "purpose": "固定集成验证席位",
+      "reclaim_condition": "上项任务结束；提交已合入目标或完整推送并回读；无待保留本地文件；进程停止；总控决定保留复用或正常 git worktree remove。固定席位每次交付仍做同样核对。",
+      "repository": "CP6",
+      "kind": "integration"
     }
   ],
-  "admission": "开工核对实际登记；占满时排队；历史待判断目录不构成额外活动配额。",
-  "retained_inventory": "inventory-backlog-20261020.md",
+  "admission": "Mandatory manage.ps1 status/start/resume/finish; shared OS lock; no automatic stale lease expiry",
+  "retained_inventory": "REGISTRY.md; runtime status via manage.ps1 (prior inventory is historical)",
   "task_registry_note": "本文件只管理工作区占用；产品任务状态仍以 docs/development/roadmap.json 为准。",
   "retained_non_workspaces": [
     {
@@ -112,5 +114,54 @@
       "blocking_reason": "Automatic approval review rejected the batch deletion before execution: blocked by policy; tool gave no more specific reason. No bypass attempted.",
       "next_action": "May be removed manually if desired; no source worktree or branch integration remains."
     }
-  ]
+  ],
+  "runtime": "CP6 Git common dir / cp6-workspaces/state.json; do not use per-worktree copies",
+  "scan_containers": [
+    "D:/CP6-worktrees",
+    "D:/CP6.CRM-worktrees",
+    "D:/CP6.Platform-worktrees",
+    "D:/CP6.AI-Handoff-worktrees",
+    "D:/CP6/CP6.CRM",
+    "D:/CP6/tmp/clones",
+    "D:/CP6/tmp/worktrees",
+    "D:/CP6/.claude/worktrees",
+    "C:/Users/tt/.codex/worktrees"
+  ],
+  "capacity": {
+    "paths": [
+      "D:/CP6",
+      "D:/CP6.CRM",
+      "D:/CP6.AI-Handoff",
+      "D:/CP6-worktrees",
+      "D:/CP6.CRM-worktrees",
+      "D:/CP6.Platform-worktrees",
+      "D:/CP6.AI-Handoff-worktrees",
+      "C:/Users/tt/CP6-planning-reports/20261017-foundation",
+      "C:/Users/tt/.gstack/projects/GTX537-CP6",
+      "C:/Users/tt/.codex/worktrees/cp6-crm-public-contract-sync-20260814",
+      "C:/Users/tt/.codex/worktrees/cp6-crm-saas-public-sync",
+      "C:/Users/tt/.codex/worktrees/crm-saas-v1-freeze"
+    ],
+    "warn_total_gib": 60,
+    "warn_seat_gib": 8,
+    "min_free_gib": {
+      "C:/": 25,
+      "D:/": 50
+    },
+    "baseline_note": "Measured WGOV scope including existing C planning archives; not comparable to previous registered-tree-only subtotal",
+    "baseline_logical_bytes": 54928714067,
+    "baseline_disks": {
+      "C:/": {
+        "total": 483826593792,
+        "used": 386914799616,
+        "free": 96911794176
+      },
+      "D:/": {
+        "total": 537939759104,
+        "used": 316566372352,
+        "free": 221373386752
+      }
+    },
+    "baseline_at": "2026-10-20T03:15:04.979306+00:00"
+  }
 }
