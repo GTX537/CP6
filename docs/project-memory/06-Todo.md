@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-20：W30 菜单动作维护与授权目录候选
+
+已接通既有功能权限页的菜单动作定义维护、版本/引用冲突与原操作跨Tab恢复；字段/范围目录改为隔离快照并由实际宿主启动封存，修复#360。56不同.NET/PG/HTTP、20Vitest、3实际Chrome夹具和typecheck通过，一次作者SPEC/QUALITY无本窗阻断。自有服务停止，三处生成测试data回收且原失败保留。待正常PR/远端采用及manage finish；零新树/代理/副本，无Actions或部署，完整IAM/Owner/真实业务不提升。[DELIVERY](../development/evidence/WP02-03/menu-action-administration/DELIVERY.md)。
+
 ## 2026-10-20：W29 完整整数身份补口已集成收尾
 
 原角色/授权PR354/356基础上，CRM [PR95](https://github.com/GTX537/CP6.CRM/pull/95)先采用兼容消费者，Main [PR358](https://github.com/GTX537/CP6/pull/358)随后合入完整Int32角色身份v2；旧v1合同字节保留，#353 Closed。174不同Main .NET/PG、61 CRM消费/合同、14Vitest与typecheck通过，原W27跨Tab/SSO、W29页面证据按范围复用，未冒称重跑。Handoff [PR5](https://github.com/GTX537/CP6.AI-Handoff/pull/5)已合入；本地/远端三任务分支清理、固定席位释放。15个本轮隔离测试库生成data已回收、日志保留，零额外目录/clone/代理。

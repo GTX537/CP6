@@ -8,19 +8,18 @@ public static class DataScopeRegistry
 {
     public record Resource(string Key, string Name, int[] Supports, int Default);
 
-    private static readonly Dictionary<string, Resource> _map = new();
-
-    /// <summary>注册一个数据权限资源（幂等覆盖）。</summary>
+    /// <summary>启动期注册；宿主封存后只允许内容相同的幂等注册。</summary>
     public static void Register(string key, string name, int[] supports, int @default)
-        => _map[key] = new Resource(key, name, supports, @default);
+        => AuthorizationCatalogV1.Store.RegisterScope(key, name, supports, @default);
 
     /// <summary>全部已注册资源（配置页用）。</summary>
-    public static IReadOnlyCollection<Resource> All => _map.Values;
+    public static IReadOnlyCollection<Resource> All => Array.AsReadOnly(AuthorizationCatalogV1.Capture().Scopes.Values
+        .Select(x => new Resource(x.Key, x.Name, x.Supports.ToArray(), x.Default)).ToArray());
 
     /// <summary>资源未在角色配置中出现时的默认范围（未注册资源回落 1=本人，最严）。</summary>
-    public static int DefaultScope(string key) => _map.TryGetValue(key, out var r) ? r.Default : 1;
+    public static int DefaultScope(string key) => AuthorizationCatalogV1.Capture().Scopes.TryGetValue(key, out var r) ? r.Default : 1;
 
     /// <summary>校验某范围类型是否被该资源支持（未注册资源放行，由上层决定）。</summary>
     public static bool Supports(string key, int scopeType)
-        => !_map.TryGetValue(key, out var r) || r.Supports.Contains(scopeType);
+        => !AuthorizationCatalogV1.Capture().Scopes.TryGetValue(key, out var r) || r.Supports.Contains(scopeType);
 }

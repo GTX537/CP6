@@ -8,19 +8,17 @@ public static class FieldRegistry
 {
     public record Field(string Name, string Label);
 
-    private static readonly Dictionary<string, List<Field>> _map = new();
-
-    /// <summary>注册某资源的可控字段（幂等覆盖）。</summary>
-    public static void Register(string resourceKey, params Field[] fields) => _map[resourceKey] = fields.ToList();
+    /// <summary>启动期注册；宿主封存后只允许内容相同的幂等注册。</summary>
+    public static void Register(string resourceKey, params Field[] fields) => AuthorizationCatalogV1.Store.RegisterFields(resourceKey, fields);
 
     /// <summary>某资源的可控字段列表。</summary>
     public static IReadOnlyList<Field> Fields(string resourceKey) =>
-        _map.TryGetValue(resourceKey, out var l) ? l : new List<Field>();
+        AuthorizationCatalogV1.Capture().Fields.TryGetValue(resourceKey, out var l) ? l : Array.Empty<Field>();
 
     /// <summary>字段是否在该资源注册表内。</summary>
     public static bool Has(string resourceKey, string field) =>
-        _map.TryGetValue(resourceKey, out var l) && l.Any(f => f.Name == field);
+        AuthorizationCatalogV1.Capture().Fields.TryGetValue(resourceKey, out var l) && l.Any(f => f.Name == field);
 
     /// <summary>全部已注册资源键。</summary>
-    public static IReadOnlyCollection<string> Resources => _map.Keys;
+    public static IReadOnlyCollection<string> Resources => Array.AsReadOnly(AuthorizationCatalogV1.Capture().Fields.Keys.ToArray());
 }
