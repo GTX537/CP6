@@ -3,7 +3,8 @@ import http from '../http'
 export interface IamScope { tenantId: string; actorId: string }
 export type IamKind = 'user-create' | 'user-update' | 'user-roles' | 'user-org'
   | 'dept-create' | 'dept-update' | 'dept-move' | 'dept-leader' | 'dept-delete'
-export interface IamOperation { operationId: string; kind: IamKind; state: 'COMMITTED' | 'CLOSED' | 'UNKNOWN'; entityId?: string; version?: string; referencesVersion?: string; treeVersion?: string }
+  | 'role-create' | 'role-update' | 'role-delete'
+export interface IamOperation { operationId: string; kind: IamKind; state: 'COMMITTED' | 'CLOSED' | 'UNKNOWN'; entityId?: string; roleId?: number; version?: string; referencesVersion?: string; treeVersion?: string }
 export interface IamUser { id: string; userName: string; nickName: string | null; enable: boolean; roleId: number | null; roleIds: number[]; deptId: string | null; managerId: string | null; email: string | null; version: string; mustChangePassword: boolean; locked: boolean }
 export interface IamUserEditor extends IamScope {
   referencesVersion: string; user: IamUser | null
@@ -17,7 +18,17 @@ export interface IamDepartmentEditor extends IamScope { treeVersion: string; ref
 export interface IamDepartmentInput { id?: string; parentId: string | null; deptCode: string; deptName: string; leaderId: string | null; sort: number; enable: boolean; expectedVersion: string; expectedTreeVersion: string; expectedReferencesVersion: string; reason: string; previewVersion?: string }
 export interface IamDepartmentPreview { id: string; oldParentId: string | null; newParentId: string | null; treeVersion: string; referencesVersion: string; version: string; affectedDescendantCount: number; affectedUsersCount: number; scopeRefs: { roleId: number; resourceKey: string; scopeType: number }[]; approvalRouteWarnings: string[]; previewVersion: string }
 export interface IamDepartmentReferences { id: string; childCount: number; userCount: number; scopeRefs: IamDepartmentPreview['scopeRefs']; deletionAllowed: boolean; unverifiedReferenceCategories: string[] }
+export interface IamRole { roleId: number; roleName: string; description: string | null; enable: boolean; orderNo: number; createDate: string; version: string }
+export interface IamRoleEditor extends IamScope { referencesVersion: string; roles: IamRole[] }
+export interface IamRoleInput { roleId: number; roleName: string; description: string | null; enable: boolean; orderNo: number; expectedVersion: string; expectedReferencesVersion: string; reason: string }
+export interface IamRoleReferences { roleId: number; primaryUsers: number; additionalUsers: number; menus: number; actions: number; dataScopes: number; fields: number; ssoDefaults: number; ssoApproved: boolean; deletionAllowed: boolean; unverifiedReferenceCategories: string[] }
 export const iamApi = {
+  async roleEditor(): Promise<IamRoleEditor> { return await http.get('/iam/roles/editor') as unknown as IamRoleEditor },
+  async roleReferences(id: number): Promise<IamRoleReferences> { return await http.get(`/iam/roles/${id}/references`) as unknown as IamRoleReferences },
+  async saveRole(input: IamRoleInput, create: boolean, operationId: string): Promise<IamOperation> {
+    const body = { ...input, operationId }
+    return await (create ? http.post('/iam/roles', body) : http.put(`/iam/roles/${input.roleId}`, body)) as unknown as IamOperation
+  },
   async userEditor(id?: string): Promise<IamUserEditor> { return await http.get('/iam/users/editor', { params: { id } }) as unknown as IamUserEditor },
   async saveUser(input: IamUserInput, operationId: string): Promise<IamOperation> {
     return await (input.id ? http.put(`/iam/users/${input.id}`, { ...input, operationId }) : http.post('/iam/users', { ...input, operationId })) as unknown as IamOperation
@@ -33,7 +44,7 @@ export const iamApi = {
     throw new Error('未支持的组织操作。')
   },
   async resolve(operationId: string, kind: IamKind, close = false): Promise<IamOperation> {
-    const path = `/iam/${kind.startsWith('dept-') ? 'departments' : 'users'}/operations/${operationId}${close ? '/close' : ''}`
+    const path = `/iam/${kind.startsWith('role-') ? 'roles' : kind.startsWith('dept-') ? 'departments' : 'users'}/operations/${operationId}${close ? '/close' : ''}`
     return await (close ? http.post(path, null, { params: { kind } }) : http.get(path, { params: { kind } })) as unknown as IamOperation
   }
 }

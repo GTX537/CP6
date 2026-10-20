@@ -55,6 +55,7 @@ public class RoleController : LocalizedControllerBase
     [RequirePermission("role", "add")]
     public async Task<IActionResult> Add([FromBody] Sys_Role entity)
     {
+        if (_context.Database.IsNpgsql()) return BadRequest(new { code = "IAM_VERSIONED_ROLE_COMMAND_REQUIRED", endpoint = "/api/iam/roles" });
         // P0 终审 #1：TenantId 是不可信输入——StampTenant 仅在 TenantId==Guid.Empty 时盖章，
         // body 携带的他租非空 Guid 会被放行 → 跨租户写注入。控制器边界强制盖当前租户。
         entity.TenantId = _context.CurrentTenantId;
@@ -68,6 +69,7 @@ public class RoleController : LocalizedControllerBase
     [RequirePermission("role", "edit")]
     public async Task<IActionResult> Update([FromBody] Sys_Role entity)
     {
+        if (_context.Database.IsNpgsql()) return BadRequest(new { code = "IAM_VERSIONED_ROLE_COMMAND_REQUIRED", endpoint = "/api/iam/roles" });
         // #4 字段审计 T4：先查后改（替 attach-as-Modified），令 Modified diff 准确。
         // 仅拷可编辑列；RoleId(PK) 与 CreateDate 刻意不动（无 Creator/Modifier）。
         // P0-T3：复合主键 (TenantId,RoleId) 后不能用单参 FindAsync；按 RoleId 查（全局过滤自动限定当前租户）。
@@ -88,6 +90,7 @@ public class RoleController : LocalizedControllerBase
     [RequirePermission("role", "delete")]
     public async Task<IActionResult> Delete([FromBody] int[] ids)
     {
+        if (_context.Database.IsNpgsql()) return Conflict(new { code = "IAM_ROLE_RETENTION_REVIEW_REQUIRED", endpoint = "/api/iam/roles" });
         var entities = await _context.Sys_Roles.Where(r => ids.Contains(r.RoleId)).ToListAsync();
         _context.Sys_Roles.RemoveRange(entities);
         // 同时删除关联的权限映射（P0-T3 补口：Sys_RoleMenu 已租户化，全局过滤限定当前租户——

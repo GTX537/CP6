@@ -1,6 +1,6 @@
 # 多对话任务分配与交付
 
-> 当前：[第二十八轮最终交付](dispatch/20261020-wave28/README.md)。PR347/349与Handoff PR3已合入，产品/Handoff分支已清理、对应席位已释放；最终协调文档W28-CLOSEOUT正常PR/finish后关闭本轮。下一业务窗口重新通过start领取，禁止重领已完成W27/W28或自行新增工作树。
+> 当前：[第二十九轮持续目标](dispatch/20261020-wave29/README.md)，COORD本聊天单独执行；W29-01角色生命周期候选就绪，正常集成后原DEV-1复用W29-02。固定v1整数域缺口#353保持Open，四仓合计2+1。
 
 > 当前执行入口：[分支与工作区统一政策](worktrees/POLICY.md) / [命令及固定席位](worktrees/REGISTRY.md)。四仓合计2开发+1集成；所有写入任务必须start领取、finish释放，旧轮次目录仅为历史。
 
