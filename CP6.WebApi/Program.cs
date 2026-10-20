@@ -536,6 +536,7 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("crm-opportunity", "CRM 商机"
 CP6.Core.Services.Sys.FieldRegistry.Register("order",
     new CP6.Core.Services.Sys.FieldRegistry.Field("UnitPrice", "単価"),
     new CP6.Core.Services.Sys.FieldRegistry.Field("Amount", "金額"));
+CP6.Core.Services.Sys.AuthorizationCatalogV1.Seal();
 
 // 共享用量内核（見積与 MRP 共消费，spec §4）
 builder.Services.AddScoped<CP6.Core.Services.Common.IMaterialUsageCalculator, CP6.Core.Services.Common.MaterialUsageCalculator>();

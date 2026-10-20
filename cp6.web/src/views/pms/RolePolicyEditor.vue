@@ -1,6 +1,8 @@
 <template>
-  <section :aria-label="title" :aria-busy="loading || writing">
+  <MenuActionEditor v-if="editingDefinitions" @back="returnFromDefinitions" />
+  <section v-else :aria-label="title" :aria-busy="loading || writing">
     <h2>{{ title }}</h2>
+    <el-button v-if="mode === 'actions'" v-permission="'pub-role-perm:query'" :disabled="loading || writing || !!pending" @click="editingDefinitions = true">菜单动作定义</el-button>
     <div class="toolbar">
       <label>角色 <select v-model="selectedRoleId" aria-label="角色" :disabled="writing || !!pending" @change="load(selectedRoleId ?? undefined)">
         <option :value="null">请选择角色</option>
@@ -75,7 +77,10 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { iamPolicyApi, type IamPolicyEditor, type IamPolicyInput, type IamPolicyMode, type PolicyAction, type PolicyScope, type PolicyField } from '@/api/sys/iamPolicy'
 import { pendingIamOperation, resolveIamOperation, saveIamOperation, type PendingIamOperation } from '@/auth/iamOperationRecovery'
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
+import MenuActionEditor from './MenuActionEditor.vue'
 const props = defineProps<{ mode: IamPolicyMode }>()
+const editingDefinitions = ref(false)
+function returnFromDefinitions() { editingDefinitions.value = false; void load(selectedRoleId.value ?? undefined) }
 const title = computed(() => ({ actions: '角色功能权限', scopes: '角色数据范围', fields: '角色字段权限' })[props.mode])
 const permission = computed(() => ({ actions: 'pub-role-perm:edit', scopes: 'pub-data-scope:edit', fields: 'pub-field-perm:edit' })[props.mode])
 const scopeNames: Record<number, string> = { 1: '本人', 2: '本部门', 3: '本部门及下级', 4: '自定义部门', 5: '全部' }

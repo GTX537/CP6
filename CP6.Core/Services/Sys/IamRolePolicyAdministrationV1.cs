@@ -95,9 +95,10 @@ public sealed partial class IamRolePolicyAdministrationV1(CP6Context db,IamAdmin
         var menus=await db.Sys_Menus.AsNoTracking().OrderBy(x=>x.MenuId).Select(x=>new IamPolicyMenuV1(x.MenuId,x.MenuName,x.MenuKey,x.ParentId,x.Enable)).ToArrayAsync(ct);
         var actions=await db.Sys_MenuActions.AsNoTracking().OrderBy(x=>x.MenuId).ThenBy(x=>x.ActionCode)
             .Select(x=>new MenuActionFullDto{MenuId=x.MenuId,ActionCode=x.ActionCode,ActionName=x.ActionName,Sort=x.Sort}).ToArrayAsync(ct);
-        var scopes=DataScopeRegistry.All.OrderBy(x=>x.Key,StringComparer.Ordinal).Select(x=>new DataScopeResourceDto{Key=x.Key,Name=x.Name,Default=x.Default,Supports=x.Supports.ToArray()}).ToArray();
-        var fields=FieldRegistry.Resources.Order(StringComparer.Ordinal).Select(key=>new FieldResourceDto{Key=key,
-            Fields=FieldRegistry.Fields(key).OrderBy(x=>x.Name,StringComparer.Ordinal).Select(x=>new FieldDefDto{Name=x.Name,Label=x.Label}).ToList()}).ToArray();
+        var definitions=AuthorizationCatalogV1.Capture();
+        var scopes=definitions.Scopes.Values.OrderBy(x=>x.Key,StringComparer.Ordinal).Select(x=>new DataScopeResourceDto{Key=x.Key,Name=x.Name,Default=x.Default,Supports=x.Supports.ToArray()}).ToArray();
+        var fields=definitions.Fields.OrderBy(x=>x.Key,StringComparer.Ordinal).Select(pair=>new FieldResourceDto{Key=pair.Key,
+            Fields=pair.Value.OrderBy(x=>x.Name,StringComparer.Ordinal).Select(x=>new FieldDefDto{Name=x.Name,Label=x.Label}).ToList()}).ToArray();
         if(scopes.Any(x=>x.Supports.Length==0 || x.Supports.Any(v=>v is <1 or >5)||!x.Supports.Contains(x.Default))
             || fields.Any(x=>x.Fields.Select(f=>f.Name).Distinct(StringComparer.Ordinal).Count()!=x.Fields.Count))throw Error(503,"IAM_CATALOG_UNAVAILABLE");
         var all=await db.Sys_Depts.AsNoTracking().ToDictionaryAsync(x=>x.Id,ct);

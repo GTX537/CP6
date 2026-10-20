@@ -21,7 +21,21 @@ export interface IamPolicyInput {
   expectedVersion: string; expectedReferencesVersion: string; expectedCatalogVersion: string; reason: string
   menuIds?: number[]; actions?: PolicyAction[]; scopes?: PolicyScope[]; resourceKey?: string; fields?: PolicyField[]
 }
+export interface MenuActionDefinition { actionCode: string; actionName: string; sort: number }
+export interface IamMenuActionEditor extends IamScope {
+  menuId: number; version: string; referencesVersion: string; catalogVersion: string; actions: MenuActionDefinition[]
+}
+export interface IamMenuActionInput {
+  menuId: number; expectedVersion: string; expectedReferencesVersion: string; expectedCatalogVersion: string
+  reason: string; actions: MenuActionDefinition[]
+}
 export const iamPolicyApi = {
+  async readMenuActions(menuId: number): Promise<IamMenuActionEditor> {
+    return await http.get(`/iam/role-policies/menu-actions/${menuId}/editor`) as unknown as IamMenuActionEditor
+  },
+  async saveMenuActions(input: IamMenuActionInput, operationId: string): Promise<IamOperation> {
+    return await http.put(`/iam/role-policies/menu-actions/${input.menuId}`, { ...input, operationId }) as unknown as IamOperation
+  },
   async read(mode: IamPolicyMode, roleId?: number): Promise<IamPolicyEditor> {
     return await http.get(`/iam/role-policies/${mode}/editor`, { params: { roleId } }) as unknown as IamPolicyEditor
   },

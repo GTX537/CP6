@@ -172,11 +172,11 @@ public class RolePermService : IRolePermService
     // ───── 章04 字段权限配置 ─────
 
     public List<FieldResourceDto> GetFieldResources() =>
-        FieldRegistry.Resources
-            .Select(key => new FieldResourceDto
+        AuthorizationCatalogV1.Capture().Fields
+            .Select(pair => new FieldResourceDto
             {
-                Key = key,
-                Fields = FieldRegistry.Fields(key).Select(f => new FieldDefDto { Name = f.Name, Label = f.Label }).ToList()
+                Key = pair.Key,
+                Fields = pair.Value.Select(f => new FieldDefDto { Name = f.Name, Label = f.Label }).ToList()
             })
             .OrderBy(r => r.Key)
             .ToList();
