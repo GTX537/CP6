@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## 2026-10-20：W30 已正常集成并释放产品/Handoff席位
+
+菜单动作实际维护与目录不可变快照/启动封存已通过[PR361](https://github.com/GTX537/CP6/pull/361)合入，main`8978ea1a95694f0bcdef9b5fb8193368d3aae39d`，#360 Closed；56不同.NET/PG/HTTP、20Vitest、3Chrome和typecheck通过。[Handoff PR6](https://github.com/GTX537/CP6.AI-Handoff/pull/6)已合入默认分支。产品/Handoff任务分支均本地/远端删除，固定席位释放；自有服务停止、3处生成测试data回收且日志保留，零新树/副本/代理。
+
+最终纯文档W30-CLOSE复用原DEV-1，其PR/finish以最终管理登记为准。完整字段真实来源/映射与Owner最终门、CRM持久采用及业务验收仍未完成；不提升125目标/247运行。无Actions、真实tenant审批、既有迁移或生产部署。[收尾及后续边界](../development/dispatch/20261020-wave30/README.md)。
+
 ## 2026-10-20：W30 菜单动作维护与授权目录候选
 
 已接通既有功能权限页的菜单动作定义维护、版本/引用冲突与原操作跨Tab恢复；字段/范围目录改为隔离快照并由实际宿主启动封存，修复#360。56不同.NET/PG/HTTP、20Vitest、3实际Chrome夹具和typecheck通过，一次作者SPEC/QUALITY无本窗阻断。自有服务停止，三处生成测试data回收且原失败保留。待正常PR/远端采用及manage finish；零新树/代理/副本，无Actions或部署，完整IAM/Owner/真实业务不提升。[DELIVERY](../development/evidence/WP02-03/menu-action-administration/DELIVERY.md)。
