@@ -50,3 +50,18 @@ W27全认证/跨Tab底座、W29 writer/版本和W30封存目录的未变范围�
 DEV-1/DEV-2原席位复用，INTEGRATION-1空闲，无新树/clone/全副本/代理。产品PR、Handoff及本任务同分支文档收尾后调用manage finish；实际分支/席位结论随后追加，候选不提前宣称释放。
 
 仍待：ERP部门与IAM映射、Order其余读/写/导出、业务operation恢复、POWER EGG真实投递及报文、CRM跨库Owner采用与真实业务验收。本窗不建立Redis/跨库分布式事务，不自动推广既有环境。完整WP02-03、125目标/247真实运行保持；无Actions、真实租户批准或生产部署。
+
+## 远端采用与本任务收尾
+
+|项目|实际核对结果|分支和固定席位|
+|---|---|---|
+|W32-01产品|[PR #366](https://github.com/GTX537/CP6/pull/366)已合并；source`85a3475a3da3e653f64c9d1752335380c362459c`，remote main`f39351c22ac62def3a6502f43529141b4b0fc10d`，改动文件blob一致；#365已按原步骤回归及远端采用后关闭|本文件继续在原codex/w32-01、DEV-1完成最后文档PR；合并后调用同一任务finish|
+|W32-HANDOFF|[PR #8](https://github.com/GTX537/CP6.AI-Handoff/pull/8)已合入默认目标；source`0021ddac034d880175bc24d428b41bf611c609e5`，目标`09d3f559bb031c735f2a69ac6b2e0b0f6c75eff9`|codex/w32-handoff本地/远端已删除；DEV-2干净detached，已释放|
+
+本轮限定的单价订正Owner映射、实际业务写入接线和最终撤权门已集成。49项相关.NET/原生PG/实际Program、9项Vitest4.1.11及最终类型检查通过，最终0失败/跳过；一次作者SPEC/QUALITY无本窗阻断。此最后文档未改变产品/依赖/环境，直接复用原验证，只查台账结构、差异和链接。
+
+自有PG/API已停止；五处自有生成data已安全回收，逻辑570849903字节（0.532GiB），清理时段D盘实际空闲增加573251584字节（0.534GiB）。日志、TRX及初始失败保留；不将磁盘其他活动算作本任务逻辑回收。
+
+本提交如实记录写入时点：Main仍持有W32-01席位，仅为本提交的正常PR/finish；不能由提交自身提前证明未来合并或释放。最终实际“分支处置、工作区、席位”查既有管理登记`D:/CP6/.git/cp6-workspaces/state.json`、最后PR收尾评论及`C:/Users/tt/CP6-planning-reports/20261017-foundation/wave32-final-verification.json`。不另开W32-CLOSE任务或分支。INTEGRATION-1空闲，零新树/clone/整仓副本/代理。
+
+仍待ERP部门与IAM可信映射、Order其余读/写/导出、跨重载operation恢复、POWER EGG正式报文/真实投递、CRM Owner采用及真实业务验收。完整WP02-03、125目标/247真实运行不提升，不重开冻结方向。无Actions、既有环境迁移、真实tenant审批或生产部署。原估计本代理3–4.5小时/故障余量6小时；最终耗时在真实finish后报告，不等待满24小时。
