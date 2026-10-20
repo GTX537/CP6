@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W31](dispatch/20261020-wave31/README.md)，COORD本聊天字段权限可信来源已就绪，待正常集成/固定席位收尾；无新派工，W27–30不重复。
+
 > 当前：[W30收尾](dispatch/20261020-wave30/README.md)，产品PR361/Handoff PR6已集成，#360 Closed，任务分支清理/固定席位释放；仅最后协调W30-CLOSE待自身正常PR/finish。下项按真实剩余合同领取，不重复W27–W30，四仓合计2+1。
 
 > 当前：[W29最终处置](dispatch/20261020-wave29/README.md)。角色/授权及#353已通过Main PR354/356/358、CRM PR95和Handoff PR4/5集成，任务分支清理/固定席位释放；最后协调文档W29-353-CLOSE正常PR/finish后关闭本目标。下项从真实剩余范围重新经start领取，不重复W27/W28/W29；四仓合计2+1。

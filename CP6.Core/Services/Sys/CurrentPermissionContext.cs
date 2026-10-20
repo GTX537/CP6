@@ -29,9 +29,15 @@ public class CurrentPermissionContext : ICurrentPermissionContext
         _aggregator = aggregator;
     }
 
-    public async Task<UserPermissionContext> GetAsync()
+    public async Task<UserPermissionContext> GetAsync() => await ReadAsync(RequireCurrentUser(_db, _http));
+
+    // Internal new-policy source entry. Legacy masks keep their existing aggregation semantics.
+    internal Task<FieldPermissionSourceV1> GetFieldSourceAsync(string resource, CancellationToken ct = default)
+        => new CurrentFieldPermissionSourceReaderV1(_db, _http).ReadAsync(resource, ct);
+
+    internal static Guid RequireCurrentUser(CP6Context db, IHttpContextAccessor http)
     {
-        var principal = _http.HttpContext?.User;
+        var principal = http.HttpContext?.User;
         var identities = principal?.Identities.Where(i => i.IsAuthenticated).ToArray();
         if (identities is not { Length: 1 })
             throw new CurrentPermissionUnavailableException();
@@ -46,9 +52,9 @@ public class CurrentPermissionContext : ICurrentPermissionContext
             throw new CurrentPermissionUnavailableException();
         var userId = ReadIdentifier(identity.Claims.Where(c => c.Type is ClaimTypes.NameIdentifier or "sub"));
         var tenantId = ReadIdentifier(identity.FindAll("tenant_id"));
-        if (tenantId != _db.CurrentTenantId)
+        if (tenantId != db.CurrentTenantId)
             throw new CurrentPermissionUnavailableException();
-        return await ReadAsync(userId);
+        return userId;
     }
 
     // Compatibility entry for login callers: build fresh, without caching a future allow.

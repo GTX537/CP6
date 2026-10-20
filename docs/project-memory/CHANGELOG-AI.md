@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-20：W31 字段权限可信PG来源候选
+
+当前主体绑定、同SQL有效角色/原始字段行/持久revision、封存域和原计算器接线已实现；50不同相关.NET/原生PG测试通过，0最终失败/跳过。一次作者集中审查无本窗阻断；自有实例停止，生成data回收且失败证据保留。待正常PR/远端采用与manage finish，固定席位复用、零新树/代理/副本。具体Owner映射签认/业务接线与最终撤权门、CRM持久采用仍未完成；完整IAM/125目标/247运行不提升，无Actions/既有环境迁移/生产。[DELIVERY](../development/evidence/WP02-03/trusted-field-source/DELIVERY.md)。
+
 ## 2026-10-20：W30 已正常集成并释放产品/Handoff席位
 
 菜单动作实际维护与目录不可变快照/启动封存已通过[PR361](https://github.com/GTX537/CP6/pull/361)合入，main`8978ea1a95694f0bcdef9b5fb8193368d3aae39d`，#360 Closed；56不同.NET/PG/HTTP、20Vitest、3Chrome和typecheck通过。[Handoff PR6](https://github.com/GTX537/CP6.AI-Handoff/pull/6)已合入默认分支。产品/Handoff任务分支均本地/远端删除，固定席位释放；自有服务停止、3处生成测试data回收且日志保留，零新树/副本/代理。

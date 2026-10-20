@@ -159227,6 +159227,16 @@
       "date": "2026-10-20",
       "change": "W30 PR361 and Handoff PR6 integrated; issue360 Closed; product/Handoff branches deleted and fixed seats released. Final documentation closeout uses the same DEV-1.56 distinct local tests,20 Vitest,3 Chrome/typecheck; full business unchanged.",
       "evidence": "docs/development/dispatch/20261020-wave30/README.md"
+    },
+    {
+      "date": "2026-10-20",
+      "change": "W31 sole COORD: trusted field permission PostgreSQL source and existing calculator binding; fixed seats; actual agent estimate1.75–2.75h/4h contingency. Full business unchanged.",
+      "evidence": "docs/development/dispatch/20261020-wave31/README.md"
+    },
+    {
+      "date": "2026-10-20",
+      "change": "W31 trusted field PostgreSQL source and calculator binding ready;50 distinct related native/local tests pass; real Owner mappings/effect fences not claimed. Fixed seats reused and generated test data reclaimed.",
+      "evidence": "docs/development/evidence/WP02-03/trusted-field-source/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -161798,103 +161808,51 @@
       "card_anchor": "wp02-03",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W30-01",
+        "chat_label": "COORD / W31-01",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/w30-01",
+        "branch": "codex/w31-01",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-20T08:33:28.516444+00:00",
-        "baseline_sha": "b7641dee6d1fb5150acc3bb20b152ca9954b3078",
-        "entry_evidence": "docs/development/dispatch/20261020-wave30/README.md",
-        "phase": "CLOSED",
-        "dispatch_scope": "W30_01",
+        "claimed_at": "2026-10-20T09:41:25.148265+00:00",
+        "baseline_sha": "439c164084f8aa911645fbe56b46810f745d64dc",
+        "entry_evidence": "docs/development/dispatch/20261020-wave31/README.md",
+        "phase": "READY_FOR_INTEGRATION",
+        "dispatch_scope": "W31_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
         "actual_start_ref": {
-          "commit": "c3c9b976b9dda71b852d926b9c498eb2915633dc",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T083328Z-wave30-start/MESSAGE.md",
-          "at": "2026-10-20T08:33:28.516444+00:00"
+          "commit": "719bd8767d02124c4607e4207692e853d60e5399",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T094125Z-wave31-start/MESSAGE.md",
+          "at": "2026-10-20T09:41:25.148265+00:00"
         },
         "allowed_write_paths": [
           "CP6.Core/Services/Sys/",
-          "CP6.WebApi/Program.cs",
           "CP6.Tests/",
-          "cp6.web/",
           "docs/development/",
           "docs/project-memory/"
         ],
-        "reserved_write_resources": [],
-        "reserved_postgresql_ports": [],
-        "handoff_branch": "codex/w30-handoff",
+        "reserved_write_resources": [
+          "Main:identity-authority"
+        ],
+        "reserved_postgresql_ports": [
+          55435
+        ],
+        "handoff_branch": "codex/w31-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": true,
-        "resources_released": true,
+        "candidate_integrated": false,
+        "resources_released": false,
         "full_task_completed": false,
         "local_ready_to_merge": true,
-        "delivery_evidence": "docs/development/evidence/WP02-03/menu-action-administration/DELIVERY.md",
-        "validation": "56 distinct .NET/PG/HTTP,20 Vitest,3 Chrome and vue-tsc pass; failures retained; no skipped final evidence",
-        "review": "Single task-level author SPEC/QUALITY; final immutable-cache follow-up checked with targeted tests; no outstanding scoped blocker",
+        "delivery_evidence": "docs/development/evidence/WP02-03/trusted-field-source/DELIVERY.md",
+        "validation": "50 distinct related .NET/native PostgreSQL cases passed,0 final failed/skipped; old evidence reused, initial failures retained",
+        "review": "One task-level author SPEC/QUALITY; no scoped blocker; internal source does not approve Owner mappings or replace effect fence",
         "business_acceptance": "NOT_RUN",
-        "issues": [
-          360
-        ],
-        "integration": {
-          "result": "PASS",
-          "repository": "GTX537/CP6",
-          "source": "8c18dd5a870e19880130990bf9a3b952f689509e",
-          "main": "8978ea1a95694f0bcdef9b5fb8193368d3aae39d",
-          "pr": "https://github.com/GTX537/CP6/pull/361",
-          "paths": [
-            "CP6.Core/Services/Sys/AuthorizationCatalogV1.cs",
-            "CP6.Core/Services/Sys/DataScopeRegistry.cs",
-            "CP6.Core/Services/Sys/FieldRegistry.cs",
-            "CP6.Core/Services/Sys/IamRolePolicyAdministrationV1.cs",
-            "CP6.Core/Services/Sys/RolePermService.cs",
-            "CP6.Tests/Platform/IamMenuActionsPostgreSqlTests.cs",
-            "CP6.Tests/Sys/AuthorizationCatalogTests.cs",
-            "CP6.WebApi/Program.cs",
-            "cp6.web/e2e/iam-menu-actions.spec.ts",
-            "cp6.web/playwright.authentication-recovery.config.ts",
-            "cp6.web/src/api/sys/iamPolicy.ts",
-            "cp6.web/src/views/pms/MenuActionEditor.spec.ts",
-            "cp6.web/src/views/pms/MenuActionEditor.vue",
-            "cp6.web/src/views/pms/RolePolicyEditor.vue",
-            "docs/development/07-detailed-tasks.md",
-            "docs/development/09-parallel-development.md",
-            "docs/development/dispatch/20261020-wave30/README.md",
-            "docs/development/evidence/WP02-03/menu-action-administration/DELIVERY.md",
-            "docs/development/roadmap.json",
-            "docs/project-memory/05-Completed.md",
-            "docs/project-memory/06-Todo.md",
-            "docs/project-memory/CHANGELOG-AI.md",
-            "docs/project-memory/PROJECT_STATE.md"
-          ],
-          "observed_at": "2026-10-20T08:52:31.970641+00:00"
-        },
-        "delivery_ref": {
-          "commit": "5d5bf2d73808c355dde76575bab5afea14808349",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T085410Z-wave30-delivery/MESSAGE.md",
-          "at": "2026-10-20T08:54:10.027162+00:00",
-          "pr": 6,
-          "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/6",
-          "base": "codex/t02c-entry-handoff-20260921"
-        },
-        "branch_disposition": "deleted-local-and-remote",
-        "workspace_status": "fixed-seat-detached-for-reuse",
-        "seat_released": true,
-        "closed_at": "2026-10-20T08:53:17.695718+00:00",
-        "active_issues": [
-          {
-            "number": 360,
-            "state": "CLOSED",
-            "url": "https://github.com/GTX537/CP6/issues/360"
-          }
-        ]
+        "issues": []
       },
       "blockers": [],
       "validation_evidence": [],
@@ -163722,6 +163680,105 @@
             }
           ],
           "deferred_issues": []
+        },
+        {
+          "chat_label": "COORD / W30-01",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/w30-01",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-10-20T08:33:28.516444+00:00",
+          "baseline_sha": "b7641dee6d1fb5150acc3bb20b152ca9954b3078",
+          "entry_evidence": "docs/development/dispatch/20261020-wave30/README.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "W30_01",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "actual_start_ref": {
+            "commit": "c3c9b976b9dda71b852d926b9c498eb2915633dc",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T083328Z-wave30-start/MESSAGE.md",
+            "at": "2026-10-20T08:33:28.516444+00:00"
+          },
+          "allowed_write_paths": [
+            "CP6.Core/Services/Sys/",
+            "CP6.WebApi/Program.cs",
+            "CP6.Tests/",
+            "cp6.web/",
+            "docs/development/",
+            "docs/project-memory/"
+          ],
+          "reserved_write_resources": [],
+          "reserved_postgresql_ports": [],
+          "handoff_branch": "codex/w30-handoff",
+          "actions_authorized": false,
+          "deployment_authorized": false,
+          "existing_database_migration_authorized": false,
+          "worker_delivery_received": true,
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "resources_released": true,
+          "full_task_completed": false,
+          "local_ready_to_merge": true,
+          "delivery_evidence": "docs/development/evidence/WP02-03/menu-action-administration/DELIVERY.md",
+          "validation": "56 distinct .NET/PG/HTTP,20 Vitest,3 Chrome and vue-tsc pass; failures retained; no skipped final evidence",
+          "review": "Single task-level author SPEC/QUALITY; final immutable-cache follow-up checked with targeted tests; no outstanding scoped blocker",
+          "business_acceptance": "NOT_RUN",
+          "issues": [
+            360
+          ],
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "8c18dd5a870e19880130990bf9a3b952f689509e",
+            "main": "8978ea1a95694f0bcdef9b5fb8193368d3aae39d",
+            "pr": "https://github.com/GTX537/CP6/pull/361",
+            "paths": [
+              "CP6.Core/Services/Sys/AuthorizationCatalogV1.cs",
+              "CP6.Core/Services/Sys/DataScopeRegistry.cs",
+              "CP6.Core/Services/Sys/FieldRegistry.cs",
+              "CP6.Core/Services/Sys/IamRolePolicyAdministrationV1.cs",
+              "CP6.Core/Services/Sys/RolePermService.cs",
+              "CP6.Tests/Platform/IamMenuActionsPostgreSqlTests.cs",
+              "CP6.Tests/Sys/AuthorizationCatalogTests.cs",
+              "CP6.WebApi/Program.cs",
+              "cp6.web/e2e/iam-menu-actions.spec.ts",
+              "cp6.web/playwright.authentication-recovery.config.ts",
+              "cp6.web/src/api/sys/iamPolicy.ts",
+              "cp6.web/src/views/pms/MenuActionEditor.spec.ts",
+              "cp6.web/src/views/pms/MenuActionEditor.vue",
+              "cp6.web/src/views/pms/RolePolicyEditor.vue",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/09-parallel-development.md",
+              "docs/development/dispatch/20261020-wave30/README.md",
+              "docs/development/evidence/WP02-03/menu-action-administration/DELIVERY.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-20T08:52:31.970641+00:00"
+          },
+          "delivery_ref": {
+            "commit": "5d5bf2d73808c355dde76575bab5afea14808349",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T085410Z-wave30-delivery/MESSAGE.md",
+            "at": "2026-10-20T08:54:10.027162+00:00",
+            "pr": 6,
+            "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/6",
+            "base": "codex/t02c-entry-handoff-20260921"
+          },
+          "branch_disposition": "deleted-local-and-remote",
+          "workspace_status": "fixed-seat-detached-for-reuse",
+          "seat_released": true,
+          "closed_at": "2026-10-20T08:53:17.695718+00:00",
+          "active_issues": [
+            {
+              "number": 360,
+              "state": "CLOSED",
+              "url": "https://github.com/GTX537/CP6/issues/360"
+            }
+          ]
         }
       ],
       "wave13_delivery": {
@@ -163781,6 +163838,13 @@
           "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/6",
           "base": "codex/t02c-entry-handoff-20260921"
         }
+      },
+      "wave31_delivery": {
+        "status": "READY_FOR_INTEGRATION",
+        "report": "docs/development/evidence/WP02-03/trusted-field-source/DELIVERY.md",
+        "validation": "50 distinct related .NET/native PostgreSQL cases passed,0 final failed/skipped; old evidence reused, initial failures retained",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN"
       }
     },
     {
@@ -182314,11 +182378,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261020-wave30",
-      "path": "docs/development/dispatch/20261020-wave30/README.md",
-      "baseline_sha": "b7641dee6d1fb5150acc3bb20b152ca9954b3078",
-      "registered_at": "2026-10-20T08:33:28.516444+00:00",
-      "phase": "CLOSED",
+      "id": "20261020-wave31",
+      "path": "docs/development/dispatch/20261020-wave31/README.md",
+      "baseline_sha": "439c164084f8aa911645fbe56b46810f745d64dc",
+      "registered_at": "2026-10-20T09:41:25.148265+00:00",
+      "phase": "READY_FOR_INTEGRATION",
       "assigned_chats": [
         "COORD"
       ],
@@ -182328,122 +182392,58 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [],
+      "active_implementation_chats": [
+        "COORD"
+      ],
       "workers_started": true,
-      "windows_closed": true,
-      "product_integrated": true,
+      "windows_closed": false,
+      "product_integrated": false,
       "windows": [
         {
-          "id": "W30-01",
+          "id": "W31-01",
           "task_id": "WP02-03",
-          "title": "菜单动作维护与授权目录一致性",
+          "title": "字段权限可信PostgreSQL来源",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "CLOSED",
+          "phase": "READY_FOR_INTEGRATION",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "actual_start_ref": {
-            "commit": "c3c9b976b9dda71b852d926b9c498eb2915633dc",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T083328Z-wave30-start/MESSAGE.md",
-            "at": "2026-10-20T08:33:28.516444+00:00"
+            "commit": "719bd8767d02124c4607e4207692e853d60e5399",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T094125Z-wave31-start/MESSAGE.md",
+            "at": "2026-10-20T09:41:25.148265+00:00"
           },
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w30-01",
-          "planned_scope_ref": "docs/development/dispatch/20261020-wave30/README.md",
+          "branch": "codex/w31-01",
+          "planned_scope_ref": "docs/development/dispatch/20261020-wave31/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "candidate_integrated": true,
+          "candidate_integrated": false,
           "local_ready_to_merge": true,
-          "delivery_evidence": "docs/development/evidence/WP02-03/menu-action-administration/DELIVERY.md",
-          "validation": "56 distinct .NET/PG/HTTP,20 Vitest,3 Chrome and vue-tsc pass; failures retained; no skipped final evidence",
-          "review": "Single task-level author SPEC/QUALITY; final immutable-cache follow-up checked with targeted tests; no outstanding scoped blocker",
-          "issues": [
-            360
-          ],
-          "integration": {
-            "result": "PASS",
-            "repository": "GTX537/CP6",
-            "source": "8c18dd5a870e19880130990bf9a3b952f689509e",
-            "main": "8978ea1a95694f0bcdef9b5fb8193368d3aae39d",
-            "pr": "https://github.com/GTX537/CP6/pull/361",
-            "paths": [
-              "CP6.Core/Services/Sys/AuthorizationCatalogV1.cs",
-              "CP6.Core/Services/Sys/DataScopeRegistry.cs",
-              "CP6.Core/Services/Sys/FieldRegistry.cs",
-              "CP6.Core/Services/Sys/IamRolePolicyAdministrationV1.cs",
-              "CP6.Core/Services/Sys/RolePermService.cs",
-              "CP6.Tests/Platform/IamMenuActionsPostgreSqlTests.cs",
-              "CP6.Tests/Sys/AuthorizationCatalogTests.cs",
-              "CP6.WebApi/Program.cs",
-              "cp6.web/e2e/iam-menu-actions.spec.ts",
-              "cp6.web/playwright.authentication-recovery.config.ts",
-              "cp6.web/src/api/sys/iamPolicy.ts",
-              "cp6.web/src/views/pms/MenuActionEditor.spec.ts",
-              "cp6.web/src/views/pms/MenuActionEditor.vue",
-              "cp6.web/src/views/pms/RolePolicyEditor.vue",
-              "docs/development/07-detailed-tasks.md",
-              "docs/development/09-parallel-development.md",
-              "docs/development/dispatch/20261020-wave30/README.md",
-              "docs/development/evidence/WP02-03/menu-action-administration/DELIVERY.md",
-              "docs/development/roadmap.json",
-              "docs/project-memory/05-Completed.md",
-              "docs/project-memory/06-Todo.md",
-              "docs/project-memory/CHANGELOG-AI.md",
-              "docs/project-memory/PROJECT_STATE.md"
-            ],
-            "observed_at": "2026-10-20T08:52:31.970641+00:00"
-          },
-          "delivery_ref": {
-            "commit": "5d5bf2d73808c355dde76575bab5afea14808349",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T085410Z-wave30-delivery/MESSAGE.md",
-            "at": "2026-10-20T08:54:10.027162+00:00",
-            "pr": 6,
-            "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/6",
-            "base": "codex/t02c-entry-handoff-20260921"
-          },
-          "resources_released": true,
-          "branch_disposition": "deleted-local-and-remote",
-          "workspace_status": "fixed-seat-detached-for-reuse",
-          "seat_released": true,
-          "closed_at": "2026-10-20T08:53:17.695718+00:00",
-          "active_issues": [
-            {
-              "number": 360,
-              "state": "CLOSED",
-              "url": "https://github.com/GTX537/CP6/issues/360"
-            }
-          ]
+          "delivery_evidence": "docs/development/evidence/WP02-03/trusted-field-source/DELIVERY.md",
+          "validation": "50 distinct related .NET/native PostgreSQL cases passed,0 final failed/skipped; old evidence reused, initial failures retained",
+          "review": "One task-level author SPEC/QUALITY; no scoped blocker; internal source does not approve Owner mappings or replace effect fence",
+          "issues": []
         }
       ],
       "horizon": {
-        "started_at": "2026-10-20T08:33:28.516444+00:00",
-        "checkpoint_at": "2026-10-21T08:33:28.516444+00:00",
+        "started_at": "2026-10-20T09:41:25.148265+00:00",
+        "checkpoint_at": "2026-10-21T09:41:25.148265+00:00",
         "estimated_agent_wall_time_hours": [
-          3,
-          4.5
+          1.75,
+          2.75
         ],
-        "contingency_hours": 6
+        "contingency_hours": 4
       },
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W30 menu action administration and startup catalog consistency closed. Select remaining accepted Main field authority/mapping consumption and Owner final-effect gates or CRM persistent-consumer adoption in a separate bounded window; do not reopen W27-W30 completed scope or frozen directions. Full IAM/business/production not complete.",
-      "closed_at": "2026-10-20T08:57:07.708144+00:00",
-      "handoff_integration": {
-        "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
-        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/6",
-        "commit": "926c24cc5d19ae516aaf7042496658ec814f7c7d",
-        "target_head": "926c24cc5d19ae516aaf7042496658ec814f7c7d"
-      },
-      "handoff_resources_released": true,
-      "handoff_branch_disposition": "deleted-local-and-remote",
-      "coordination_closeout_task": "W30-CLOSE",
-      "coordination_closeout_status": "Final documentation PR and manager finish required; product/Handoff already finished."
+      "next_action": "Normal product PR and manager finish; Handoff and final coordination on existing seats"
     },
     "wave_history": [
       {
@@ -187695,6 +187695,138 @@
         "handoff_branch_disposition": "deleted-local-and-remote",
         "coordination_closeout_task": "W29-353-CLOSE",
         "coordination_closeout_status": "Final documentation PR and manager finish required; all product/Handoff windows already finished."
+      },
+      {
+        "id": "20261020-wave30",
+        "path": "docs/development/dispatch/20261020-wave30/README.md",
+        "baseline_sha": "b7641dee6d1fb5150acc3bb20b152ca9954b3078",
+        "registered_at": "2026-10-20T08:33:28.516444+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W30-01",
+            "task_id": "WP02-03",
+            "title": "菜单动作维护与授权目录一致性",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "actual_start_ref": {
+              "commit": "c3c9b976b9dda71b852d926b9c498eb2915633dc",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T083328Z-wave30-start/MESSAGE.md",
+              "at": "2026-10-20T08:33:28.516444+00:00"
+            },
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w30-01",
+            "planned_scope_ref": "docs/development/dispatch/20261020-wave30/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "local_ready_to_merge": true,
+            "delivery_evidence": "docs/development/evidence/WP02-03/menu-action-administration/DELIVERY.md",
+            "validation": "56 distinct .NET/PG/HTTP,20 Vitest,3 Chrome and vue-tsc pass; failures retained; no skipped final evidence",
+            "review": "Single task-level author SPEC/QUALITY; final immutable-cache follow-up checked with targeted tests; no outstanding scoped blocker",
+            "issues": [
+              360
+            ],
+            "integration": {
+              "result": "PASS",
+              "repository": "GTX537/CP6",
+              "source": "8c18dd5a870e19880130990bf9a3b952f689509e",
+              "main": "8978ea1a95694f0bcdef9b5fb8193368d3aae39d",
+              "pr": "https://github.com/GTX537/CP6/pull/361",
+              "paths": [
+                "CP6.Core/Services/Sys/AuthorizationCatalogV1.cs",
+                "CP6.Core/Services/Sys/DataScopeRegistry.cs",
+                "CP6.Core/Services/Sys/FieldRegistry.cs",
+                "CP6.Core/Services/Sys/IamRolePolicyAdministrationV1.cs",
+                "CP6.Core/Services/Sys/RolePermService.cs",
+                "CP6.Tests/Platform/IamMenuActionsPostgreSqlTests.cs",
+                "CP6.Tests/Sys/AuthorizationCatalogTests.cs",
+                "CP6.WebApi/Program.cs",
+                "cp6.web/e2e/iam-menu-actions.spec.ts",
+                "cp6.web/playwright.authentication-recovery.config.ts",
+                "cp6.web/src/api/sys/iamPolicy.ts",
+                "cp6.web/src/views/pms/MenuActionEditor.spec.ts",
+                "cp6.web/src/views/pms/MenuActionEditor.vue",
+                "cp6.web/src/views/pms/RolePolicyEditor.vue",
+                "docs/development/07-detailed-tasks.md",
+                "docs/development/09-parallel-development.md",
+                "docs/development/dispatch/20261020-wave30/README.md",
+                "docs/development/evidence/WP02-03/menu-action-administration/DELIVERY.md",
+                "docs/development/roadmap.json",
+                "docs/project-memory/05-Completed.md",
+                "docs/project-memory/06-Todo.md",
+                "docs/project-memory/CHANGELOG-AI.md",
+                "docs/project-memory/PROJECT_STATE.md"
+              ],
+              "observed_at": "2026-10-20T08:52:31.970641+00:00"
+            },
+            "delivery_ref": {
+              "commit": "5d5bf2d73808c355dde76575bab5afea14808349",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T085410Z-wave30-delivery/MESSAGE.md",
+              "at": "2026-10-20T08:54:10.027162+00:00",
+              "pr": 6,
+              "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/6",
+              "base": "codex/t02c-entry-handoff-20260921"
+            },
+            "resources_released": true,
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true,
+            "closed_at": "2026-10-20T08:53:17.695718+00:00",
+            "active_issues": [
+              {
+                "number": 360,
+                "state": "CLOSED",
+                "url": "https://github.com/GTX537/CP6/issues/360"
+              }
+            ]
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-20T08:33:28.516444+00:00",
+          "checkpoint_at": "2026-10-21T08:33:28.516444+00:00",
+          "estimated_agent_wall_time_hours": [
+            3,
+            4.5
+          ],
+          "contingency_hours": 6
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W30 menu action administration and startup catalog consistency closed. Select remaining accepted Main field authority/mapping consumption and Owner final-effect gates or CRM persistent-consumer adoption in a separate bounded window; do not reopen W27-W30 completed scope or frozen directions. Full IAM/business/production not complete.",
+        "closed_at": "2026-10-20T08:57:07.708144+00:00",
+        "handoff_integration": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/6",
+          "commit": "926c24cc5d19ae516aaf7042496658ec814f7c7d",
+          "target_head": "926c24cc5d19ae516aaf7042496658ec814f7c7d"
+        },
+        "handoff_resources_released": true,
+        "handoff_branch_disposition": "deleted-local-and-remote",
+        "coordination_closeout_task": "W30-CLOSE",
+        "coordination_closeout_status": "Final documentation PR and manager finish required; product/Handoff already finished."
       }
     ],
     "development_priority": {
