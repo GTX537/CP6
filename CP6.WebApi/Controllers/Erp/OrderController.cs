@@ -195,6 +195,8 @@ public class OrderController : LocalizedControllerBase
 
     /// <summary>単価訂正対象一覧 — GET /api/orders/price-correction/list</summary>
     [HttpGet("price-correction/list")]
+    [RequirePermission("erp-order-price-correction", "query")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public async Task<IActionResult> SearchPriceCorrection([FromQuery] OrderPriceCorrectionQueryDto query)
     {
         if (!ValidateFromTo(query.OrderDateFrom, query.OrderDateTo, out var msg)) return BadRequest(new { code = 400, message = Localizer[msg] });
@@ -209,6 +211,10 @@ public class OrderController : LocalizedControllerBase
             var (rows, total) = await _service.SearchPriceCorrectionsAsync(query);
             return Ok(new { code = 0, message = "OK", data = new { rows, total } });
         }
+        catch (OrderPriceCorrectionException ex)
+        {
+            return StatusCode(ex.Status, new { code = ex.Status, message = ex.Message, retryable = false });
+        }
         catch (InvalidOperationException ex)
         {
             return BadRequest(new { code = 400, message = ex.Message });
@@ -217,12 +223,21 @@ public class OrderController : LocalizedControllerBase
 
     /// <summary>金額リアルタイム計算 — GET /api/orders/price-correction/{webOrderNo}/{detailNo}/amount</summary>
     [HttpGet("price-correction/{webOrderNo}/{detailNo}/amount")]
+    [RequirePermission("erp-order-price-correction", "query")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public async Task<IActionResult> CalcAmount(
         string webOrderNo, int detailNo,
         [FromQuery] decimal? indPrice, [FromQuery] decimal? setPrice)
     {
-        var amount = await _service.CalcAmountAsync(webOrderNo, detailNo, indPrice, setPrice);
-        return Ok(new { code = 0, message = "OK", data = new { amount } });
+        try
+        {
+            var amount = await _service.CalcAmountAsync(webOrderNo, detailNo, indPrice, setPrice);
+            return Ok(new { code = 0, message = "OK", data = new { amount } });
+        }
+        catch (OrderPriceCorrectionException ex)
+        {
+            return StatusCode(ex.Status, new { code = ex.Status, message = ex.Message, retryable = false });
+        }
     }
 
     /// <summary>単価訂正バッチ更新 — PUT /api/orders/price-correction/batch</summary>

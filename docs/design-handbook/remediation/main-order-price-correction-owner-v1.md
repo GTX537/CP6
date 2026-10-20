@@ -1,5 +1,7 @@
 # Main 受注单价订正 Owner 写入映射 v1
 
+> W33接续：[Owner读写映射v2](main-order-price-correction-owner-v2.md)已增加显式部门绑定、列表/计算Read及改价说明Write。以下保留W32实际交付时的范围，不能作为v2当前能力或未完成项清单。
+
 本映射归 Main ERP 代码 Owner 维护，W32 由用户授权的 COORD 在当前聊天实施并作一次任务级 SPEC/QUALITY。它把既有 [SYS-IAM-01 §5](../modules/SYS-IAM-01.md) 接到 `PUT /api/orders/price-correction/batch` / `OrderService.BatchUpdatePriceAsync` 的 PostgreSQL 路径。版本为 `Main.Order.PriceCorrection.Write.v1`，领域为完整封存的 `order`（UnitPrice、Amount）。
 
 这里的 OwnerApproved 是该版本代码适配器的维护批准，来源是本文件及同任务实现、审查和交付；不是浏览器参数、测试夹具批准、真实租户政策批准或正式业务验收签名。更改路径、依赖、适用操作或对象边界必须升级映射并重新作对应审查。不得拿此映射批准整个 Order 域或 CRM。

@@ -426,7 +426,10 @@ export interface OrderPriceCorrectionItemDto {
   individualUnitPriceAfter?: number
   setUnitPriceAfter?: number
   specialPriceFlg?: string
-  provisionalPriceFlg: boolean
+  provisionalPriceFlg: boolean | null
+  priceReadable?: boolean
+  amountReadable?: boolean
+  priceWritable?: boolean
   priceChangeReason?: string
   amount?: number
   consignedSalesFlg?: string

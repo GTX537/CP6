@@ -841,10 +841,24 @@ public class OrderService : IOrderService
 
     public async Task<(List<OrderPriceCorrectionItemDto>, int)> SearchPriceCorrectionsAsync(OrderPriceCorrectionQueryDto query)
     {
+        if (_db.Database.IsNpgsql())
+        {
+            if (_priceCorrectionOwner?.Owns(_db) != true)
+                throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503);
+            return await _priceCorrectionOwner.ReadListAsync(query, SearchPriceCorrectionsCoreAsync);
+        }
+        return await SearchPriceCorrectionsCoreAsync(query, _db.OrderDetails.AsNoTracking().Where(x => !x.IsDeleted),
+            true, true, true, CancellationToken.None);
+    }
+
+    private async Task<(List<OrderPriceCorrectionItemDto>, int)> SearchPriceCorrectionsCoreAsync(
+        OrderPriceCorrectionQueryDto query, IQueryable<OrderDetail> scopedRows,
+        bool canReadPrice, bool canReadAmount, bool canWritePrice, CancellationToken ct)
+    {
         if (string.IsNullOrWhiteSpace(query.BaseCd))
             throw new InvalidOperationException("E10022: 拠点を指定してください。");
 
-        var q = _db.OrderDetails.AsNoTracking().Where(x => !x.IsDeleted);
+        var q = scopedRows;
 
         if (!string.IsNullOrWhiteSpace(query.CustomerCd))
             q = q.Where(x => string.Compare(x.HaibaiNo2 ?? "", query.CustomerCd) >= 0);
@@ -886,7 +900,7 @@ public class OrderService : IOrderService
             if (int.TryParse(query.ApprovalStatus, out var s)) q = q.Where(x => x.ApprovalStatus == s);
         }
 
-        var total = await q.CountAsync();
+        var total = await q.CountAsync(ct);
         if (query.MaxRows.HasValue && total > query.MaxRows.Value)
             throw new InvalidOperationException($"E10013: 検索件数が上限 {query.MaxRows.Value} 件を超えています（{total} 件）");
 
@@ -899,7 +913,10 @@ public class OrderService : IOrderService
                 ApprovalStatus = x.ApprovalStatus,
                 CustomerCd = x.HaibaiNo2,
                 SalesPersonCd = null,
-                OrderSheetNo = null,
+                OrderSheetNo = _db.Orders.Where(o => !o.IsDeleted && o.WebOrderNo == x.WebOrderNo)
+                    .Select(o => o.OrderSheetNo).FirstOrDefault(),
+                OrderDate = _db.Orders.Where(o => !o.IsDeleted && o.WebOrderNo == x.WebOrderNo)
+                    .Select(o => o.OrderDate).FirstOrDefault(),
                 HaibaiNo1 = x.HaibaiNo1,
                 DefectiveHaibaiNo = x.DefectiveHaibaiNo,
                 ProductCd = x.ProductCd,
@@ -919,15 +936,18 @@ public class OrderService : IOrderService
                 SlitterFlow = x.SheetDimF,
                 Quantity = x.Quantity,
                 QtyUnit = x.QtyUnit,
-                IndividualUnitPriceBefore = x.IndividualUnitPrice,
-                SetUnitPriceBefore = x.SetUnitPrice,
+                IndividualUnitPriceBefore = canReadPrice ? x.IndividualUnitPrice : null,
+                SetUnitPriceBefore = canReadPrice ? x.SetUnitPrice : null,
                 UnitPriceUnit = x.UnitPriceUnit,
-                IndividualUnitPriceAfter = x.IndividualUnitPrice,
-                SetUnitPriceAfter = x.SetUnitPrice,
-                SpecialPriceFlg = x.SpecialPriceFlg,
-                ProvisionalPriceFlg = x.ProvisionalPriceFlg,
-                PriceChangeReason = x.PriceChangeReason,
-                Amount = x.Amount,
+                IndividualUnitPriceAfter = canReadPrice ? x.IndividualUnitPrice : null,
+                SetUnitPriceAfter = canReadPrice ? x.SetUnitPrice : null,
+                SpecialPriceFlg = canReadPrice ? x.SpecialPriceFlg : null,
+                ProvisionalPriceFlg = canReadPrice ? x.ProvisionalPriceFlg : null,
+                PriceChangeReason = canReadPrice ? x.PriceChangeReason : null,
+                Amount = canReadAmount ? x.Amount : null,
+                PriceReadable = canReadPrice,
+                AmountReadable = canReadAmount,
+                PriceWritable = canWritePrice,
                 ConsignedSalesFlg = x.ConsignedSalesFlg,
                 SlipNote = x.SlipNote,
                 DeliveryNote = x.DeliveryNote,
@@ -935,23 +955,12 @@ public class OrderService : IOrderService
                 WebOrderDetailNo = x.WebOrderDetailNo,
                 RowVersion = x.RowVersion,
             })
-            .ToListAsync();
+            .ToListAsync(ct);
 
-        // 受注日 / 担当 を Order/取引先マスタからフェッチして埋める
-        var webOrderNos = rows.Select(r => r.WebOrderNo).Distinct().ToList();
-        var headers = await _db.Orders.AsNoTracking()
-            .Where(o => webOrderNos.Contains(o.WebOrderNo))
-            .Select(o => new { o.WebOrderNo, o.OrderDate, o.OrderSheetNo, o.CustomerCd })
-            .ToListAsync();
-        var headerMap = headers.ToDictionary(h => h.WebOrderNo);
+        // Header lookup above stays in native SQL equality and the same authorized result query.
         for (int i = 0; i < rows.Count; i++)
         {
             rows[i].RowNo = (query.Page - 1) * query.PageSize + i + 1;
-            if (headerMap.TryGetValue(rows[i].WebOrderNo, out var h))
-            {
-                rows[i].OrderDate = h.OrderDate;
-                rows[i].OrderSheetNo = h.OrderSheetNo;
-            }
         }
         return (rows, total);
     }
@@ -1048,6 +1057,12 @@ public class OrderService : IOrderService
 
     public async Task<decimal> CalcAmountAsync(string webOrderNo, int detailNo, decimal? newIndPrice, decimal? newSetPrice)
     {
+        if (_db.Database.IsNpgsql())
+        {
+            if (_priceCorrectionOwner?.Owns(_db) != true)
+                throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503);
+            return await _priceCorrectionOwner.CalculateAsync(webOrderNo, detailNo, newIndPrice, newSetPrice);
+        }
         // 仕様書 §PA090 NO.33：個別売=数量×個別単価 / セット売=数量×セット単価
         var d = await _db.OrderDetails.AsNoTracking()
             .Where(x => x.WebOrderNo == webOrderNo && x.WebOrderDetailNo == detailNo && !x.IsDeleted)

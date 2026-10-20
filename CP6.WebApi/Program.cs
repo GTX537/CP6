@@ -850,6 +850,7 @@ builder.Services.AddScoped<CP6.Core.Services.Sys.SsoConfigurationAdminV1>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.IamAdministrationV1>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.IamUserAdministrationV1>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.IamDepartmentAdministrationV1>();
+builder.Services.AddScoped<CP6.Core.Services.Sys.IamOrderDepartmentMappingV1>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.IamRoleAdministrationV1>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.IamRolePolicyAdministrationV1>();
 // S 类 #3 SSO（T3）：state/nonce/PKCE 一次性暂态（IDistributedCache）

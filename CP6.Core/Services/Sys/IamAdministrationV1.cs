@@ -31,8 +31,9 @@ public sealed class IamAdministrationV1(CP6Context db, ICurrentPermissionContext
     public async Task<T> ExecuteAsync<T>(string permission, Func<CancellationToken,Task<Guid>> currentActor,
         Func<Guid,CancellationToken,Task<T>> body, CancellationToken ct)
     {
-        if (!IsPostgreSql || db.Database.CurrentTransaction != null || db.ChangeTracker.HasChanges()) throw Error(503,"IAM_AUTHORITY_UNAVAILABLE");
-        await using var tx = await db.Database.BeginTransactionAsync(ct); var attempted = false;
+        if (!IsPostgreSql || db.Database.CurrentTransaction != null || System.Transactions.Transaction.Current != null
+            || db.ChangeTracker.HasChanges()) throw Error(503,"IAM_AUTHORITY_UNAVAILABLE");
+        await using var tx = await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted,ct); var attempted = false;
         try
         {
             await AuthenticationCompletionGateV1.AcquireAsync(db,ct);
@@ -122,7 +123,7 @@ public sealed class IamAdministrationV1(CP6Context db, ICurrentPermissionContext
         "role-create" => "role:add", "role-update" => "role:edit", "role-delete" => "role:delete",
         "role-policy-actions" => "pub-role-perm:edit", "role-policy-scopes" => "pub-data-scope:edit",
         "role-policy-fields" => "pub-field-perm:edit", "menu-actions" => "pub-role-perm:edit",
-        "dept-create" => "pub-dept:add", "dept-update" or "dept-move" or "dept-leader" => "pub-dept:edit",
+        "dept-create" => "pub-dept:add", "dept-update" or "dept-move" or "dept-leader" or "dept-order-mapping" => "pub-dept:edit",
         "dept-delete" => "pub-dept:delete", _ => throw Error(400,"IAM_OPERATION_KIND_INVALID")
     };
     public static IamAdministrationExceptionV1 Error(int status,string code) => new(status,code);
