@@ -8,8 +8,15 @@ using Microsoft.AspNetCore.Mvc;
 namespace CP6.WebApi.Controllers.Sys;
 
 [ApiController,Route("api/iam/departments"),Authorize]
-public sealed class IamDepartmentController(IamDepartmentAdministrationV1 departments,IamAdministrationV1 authority):ControllerBase
+public sealed class IamDepartmentController(IamDepartmentAdministrationV1 departments,IamAdministrationV1 authority,
+    IamOrderDepartmentMappingV1 orderMappings):ControllerBase
 {
+    [HttpGet("order-mappings"),RequirePermission("pub-dept","query")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+    public Task<IActionResult> OrderMappings()=>Run(async()=>await orderMappings.ReadAsync(Actor,HttpContext.RequestAborted));
+    [HttpPost("order-mappings"),RequirePermission("pub-dept","edit")]
+    public Task<IActionResult> ChangeOrderMapping(IamOrderDepartmentCommandV1 command)
+        =>Run(async()=>await orderMappings.ChangeAsync(command,Actor,HttpContext.RequestAborted));
     [HttpGet("editor"),RequirePermission("pub-dept","query")]
     public Task<IActionResult> Editor()=>Run(async()=>await departments.ReadAsync(Actor,HttpContext.RequestAborted));
     [HttpGet("{id:guid}/preview"),RequirePermission("pub-dept","edit")]

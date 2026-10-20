@@ -13,12 +13,12 @@ using Npgsql;
 namespace CP6.Core.Services.Erp;
 
 /// <summary>
-/// Main ERP Owner adapter for PA090 writes only. The HTTP authorization filter is an early
+/// Main ERP Owner adapter for PA090 reads and writes. The HTTP authorization filter is an early
 /// check, never the authority for this commit. No remote effects execute inside this gate.
 /// </summary>
-public sealed class OrderPriceCorrectionOwnerV1
+public sealed partial class OrderPriceCorrectionOwnerV1
 {
-    internal const string MappingVersion = "Main.Order.PriceCorrection.Write.v1";
+    internal const string MappingVersion = "Main.Order.PriceCorrection.Owner.v2";
     private readonly CP6Context db;
     private readonly IHttpContextAccessor http;
     private readonly Func<CancellationToken, Task<Guid>> currentActor;
@@ -35,22 +35,32 @@ public sealed class OrderPriceCorrectionOwnerV1
 
     internal bool Owns(CP6Context context) => ReferenceEquals(db, context);
 
-    // Owner-controlled, versioned paths. No read/export/download grant is supplied.
+    // Owner-controlled, versioned PA090 paths. No export/download grant is supplied.
     // Approval here means this bounded repository-owned adapter, not external tenant approval.
     private static readonly FieldPermissionMappingV1[] Mappings =
     [
         new("UnitPrice", FieldPermissionUseV1.Write, "/items/*/individualUnitPriceAfter", true, []),
         new("UnitPrice", FieldPermissionUseV1.Write, "/items/*/setUnitPriceAfter", true, []),
         new("UnitPrice", FieldPermissionUseV1.Write, "/items/*/specialPriceFlg", true, []),
+        new("UnitPrice", FieldPermissionUseV1.Write, "/items/*/priceChangeReason", true, []),
         new("UnitPrice", FieldPermissionUseV1.Write, "/effects/orderDetails/*/setUnitPrice", true, []),
         new("UnitPrice", FieldPermissionUseV1.Write, "/effects/orderDetails/*/provisionalPriceFlg", true, []),
-        new("Amount", FieldPermissionUseV1.Write, "/effects/orderDetails/*/amount", true, ["UnitPrice"])
+        new("Amount", FieldPermissionUseV1.Write, "/effects/orderDetails/*/amount", true, ["UnitPrice"]),
+        new("UnitPrice", FieldPermissionUseV1.Read, "/rows/*/individualUnitPriceBefore", true, []),
+        new("UnitPrice", FieldPermissionUseV1.Read, "/rows/*/individualUnitPriceAfter", true, []),
+        new("UnitPrice", FieldPermissionUseV1.Read, "/rows/*/setUnitPriceBefore", true, []),
+        new("UnitPrice", FieldPermissionUseV1.Read, "/rows/*/setUnitPriceAfter", true, []),
+        new("UnitPrice", FieldPermissionUseV1.Read, "/rows/*/specialPriceFlg", true, []),
+        new("UnitPrice", FieldPermissionUseV1.Read, "/rows/*/provisionalPriceFlg", true, []),
+        new("UnitPrice", FieldPermissionUseV1.Read, "/rows/*/priceChangeReason", true, []),
+        new("Amount", FieldPermissionUseV1.Read, "/rows/*/amount", true, ["UnitPrice"]),
+        new("Amount", FieldPermissionUseV1.Read, "/calculation/amount", true, ["UnitPrice"])
     ];
 
     private sealed record Authority(UserPermissionContext Actor, FieldPermissionSourceV1 Source,
-        FieldPermissionDecisionV1 Decision, int Scope);
+        FieldPermissionDecisionV1 Decision, int Scope, string OrganizationVersion);
 
-    private async Task<Authority> ReadAuthority(CancellationToken ct)
+    private async Task<Authority> ReadAuthority(CancellationToken ct, bool reading = false)
     {
         try
         {
@@ -65,36 +75,51 @@ public sealed class OrderPriceCorrectionOwnerV1
             var actor = await PostgreSqlPermissionReader.ReadAsync(db, source.SubjectId, ct);
             if (!actor.RoleIds.Order().SequenceEqual(source.Roles.Select(r => r.RoleId).Order()))
                 throw new CurrentPermissionUnavailableException();
-            if (!actor.ActionKeys.Contains("erp-order-price-correction:correct"))
-                throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
             var operations = await (from action in db.Sys_MenuActions.AsNoTracking()
                                     join menu in db.Sys_Menus.AsNoTracking() on action.MenuId equals menu.MenuId
                                     where menu.Enable && menu.MenuKey == "erp-order-price-correction"
                                     select new { menu.MenuKey, action.ActionCode }).ToArrayAsync(ct);
-            if (!operations.Any(x => x.MenuKey == "erp-order-price-correction" && x.ActionCode == "correct"))
+            bool Can(string action) => actor.ActionKeys.Contains("erp-order-price-correction:" + action)
+                && operations.Any(x => x.MenuKey == "erp-order-price-correction" && x.ActionCode == action);
+            if (!Can(reading ? "query" : "correct"))
                 throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
             var type = actor.DataScopes.GetValueOrDefault("order", scope.Default);
-            if (!scope.Supports.Contains(type) || type is not (1 or 5))
-                // ERP's OrderDepartment is a legacy string, not an IAM DeptId. Do not guess.
+            if (!scope.Supports.Contains(type) || type is < 1 or > 5
+                || type is 2 or 3 && actor.DeptId == null)
                 throw new OrderPriceCorrectionException("OWNER_SCOPE_MAPPING_UNAVAILABLE", 503);
-            var constraints = source.Fields.Select(f => new FieldPermissionConstraintsV1(f, FieldPermissionUseV1.Write,
-                FieldPermissionCheckV1.Allowed, FieldPermissionCheckV1.Allowed,
+            var constraints = source.Fields.SelectMany(f => new[] { FieldPermissionUseV1.Read, FieldPermissionUseV1.Write }
+                .Select(use => new FieldPermissionConstraintsV1(f, use,
+                Can(use == FieldPermissionUseV1.Read ? "query" : "correct") ? FieldPermissionCheckV1.Allowed : FieldPermissionCheckV1.Denied,
+                FieldPermissionCheckV1.Allowed,
                 FieldPermissionCheckV1.Allowed, FieldPermissionCheckV1.NotApplicable,
                 FieldPermissionCheckV1.NotApplicable, FieldPermissionCheckV1.NotApplicable,
-                FieldPermissionCheckV1.Allowed));
+                FieldPermissionCheckV1.Allowed)));
             var decision = source.Evaluate(source.Versions(MappingVersion), MappingVersion, Mappings, constraints);
             if (!decision.IsAvailable) throw new CurrentPermissionUnavailableException();
-            return new(actor, source, decision, type);
+            return new(actor, source, decision, type, await OrderDepartmentScopeV1.Version(db, ct));
         }
         catch (CurrentPermissionUnavailableException error)
         { throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503, error); }
     }
 
-    private static void RequireObject(Authority authority, OrderDetail row, IReadOnlySet<Guid> owned)
+    private sealed record ObjectScope(HashSet<Guid> Allowed, HashSet<Guid> Mapped);
+    private async Task<ObjectScope> Objects(Authority authority, Guid[] ids, CancellationToken ct)
+    {
+        var allowed = (await OrderDepartmentScopeV1.Query(db, authority.Actor, authority.Scope).AsNoTracking()
+            .Where(d => ids.Contains(d.Id)).Select(d => d.Id).ToArrayAsync(ct)).ToHashSet();
+        var mapped = authority.Scope is 2 or 3 or 4
+            ? (await OrderDepartmentScopeV1.Query(db, authority.Actor, authority.Scope, true).AsNoTracking()
+                .Where(d => ids.Contains(d.Id)).Select(d => d.Id).ToArrayAsync(ct)).ToHashSet() : allowed;
+        return new(allowed, mapped);
+    }
+    private static void RequireObject(Authority authority, OrderDetail row, ObjectScope objects)
     {
         if (row.TenantId != authority.Source.TenantId || row.IsDeleted
-            || (authority.Scope == 1 && !owned.Contains(row.Id)))
+            || (authority.Scope is 1 or 5 && !objects.Allowed.Contains(row.Id)))
             throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN", 403);
+        if (authority.Scope is 2 or 3 or 4 && !objects.Mapped.Contains(row.Id))
+            throw new OrderPriceCorrectionException("OWNER_SCOPE_MAPPING_UNAVAILABLE", 503);
+        if (!objects.Allowed.Contains(row.Id)) throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN", 403);
     }
 
     private static void RequireWrite(Authority authority, string field)
@@ -162,9 +187,7 @@ public sealed class OrderPriceCorrectionOwnerV1
             var ids = byId.Keys.ToArray();
             // Preserve the established database semantics of Creator/UserName and business keys,
             // including the provider's case-insensitive collation and bpchar trailing spaces.
-            var owned = authority.Scope == 1 && !string.IsNullOrEmpty(authority.Actor.UserName)
-                ? (await db.OrderDetails.AsNoTracking().Where(d => ids.Contains(d.Id) && d.Creator == authority.Actor.UserName)
-                    .Select(d => d.Id).ToListAsync(ct)).ToHashSet() : [];
+            var objects = await Objects(authority, ids, ct);
             var affected = new HashSet<OrderDetail>();
             var selected = new HashSet<OrderDetail>();
             var propagation = new List<(string Number, decimal Price)>();
@@ -174,7 +197,7 @@ public sealed class OrderPriceCorrectionOwnerV1
                     && d.WebOrderDetailNo == item.WebOrderDetailNo && !d.IsDeleted).Select(d => (Guid?)d.Id).SingleOrDefaultAsync(ct);
                 if (id is null || !byId.TryGetValue(id.Value, out var row))
                 { result.ConflictedKeys.Add($"{item.WebOrderNo}-{item.WebOrderDetailNo}"); continue; }
-                RequireObject(authority, row, owned);
+                RequireObject(authority, row, objects);
                 if (item.RowVersion is { Length: > 0 } version
                     && !version.AsSpan().SequenceEqual(db.Entry(row).OriginalValues.GetValue<byte[]>(nameof(row.RowVersion))))
                     throw new DbUpdateConcurrencyException("Order price correction version conflict.");
@@ -196,7 +219,7 @@ public sealed class OrderPriceCorrectionOwnerV1
                     if (!byId.TryGetValue(id, out var row))
                         throw new OrderPriceCorrectionException("OWNER_OBJECT_CHANGED", 409);
                     if (row.SetUnitPrice == change.Price) continue;
-                    RequireObject(authority, row, owned);
+                    RequireObject(authority, row, objects);
                     row.SetUnitPrice = change.Price; affected.Add(row);
                 }
             }
@@ -209,7 +232,8 @@ public sealed class OrderPriceCorrectionOwnerV1
                 var priceChanged = row.IndividualUnitPrice != before.GetValue<decimal?>(nameof(row.IndividualUnitPrice))
                     || row.SetUnitPrice != before.GetValue<decimal?>(nameof(row.SetUnitPrice))
                     || row.SpecialPriceFlg != before.GetValue<string?>(nameof(row.SpecialPriceFlg));
-                if (priceChanged || row.ProvisionalPriceFlg != before.GetValue<bool>(nameof(row.ProvisionalPriceFlg)))
+                if (priceChanged || row.ProvisionalPriceFlg != before.GetValue<bool>(nameof(row.ProvisionalPriceFlg))
+                    || row.PriceChangeReason != before.GetValue<string?>(nameof(row.PriceChangeReason)))
                     RequireWrite(authority, "UnitPrice");
                 // Money invariant also covers siblings changed by the same set-price intent.
                 row.Amount = (row.Quantity ?? 0m) * (row.SalesPriceDiv == "1"
@@ -246,9 +270,11 @@ public sealed class OrderPriceCorrectionOwnerV1
             // must roll back every business row and intent. No old allow/cache fallback.
             var final = await ReadAuthority(ct);
             if (final.Source.SourcePermissionVersion != authority.Source.SourcePermissionVersion
-                || final.Source.RegistryVersion != authority.Source.RegistryVersion || final.Scope != authority.Scope)
+                || final.Source.RegistryVersion != authority.Source.RegistryVersion || final.Scope != authority.Scope
+                || final.OrganizationVersion != authority.OrganizationVersion)
                 throw new OrderPriceCorrectionException("AUTHORITY_CHANGED", 403);
-            foreach (var row in affected) RequireObject(final, row, owned);
+            var finalObjects = await Objects(final, ids, ct);
+            foreach (var row in affected) RequireObject(final, row, finalObjects);
             // Reconsume original login/session evidence after the final permission reads too.
             if (await currentActor(ct) != authority.Source.SubjectId)
                 throw new OrderPriceCorrectionException("REAUTH_REQUIRED", 401);

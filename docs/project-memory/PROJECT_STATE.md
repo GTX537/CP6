@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## 2026-10-20：W33 部门可信映射与PA090 Owner候选
+
+显式租户订单部门绑定、管理页/CAS/审计/跨Tab恢复，以及本部门/下级/custom Owner范围已接通；列表和金额计算补齐query/字段Read、防筛选泄漏与失权页面清空，#368原步骤已回归。101相关PG/HTTP/IAM、27Vitest和类型检查通过，0最终失败/跳过；一次作者审查无本窗阻断。
+
+自有服务停止、6处data回收；原DEV-1/DEV-2待正常PR及同分支最后文档后finish。其余Order CRUD/导出、业务operation恢复、外部工作流/CRM和真实验收仍未完成；125目标/247运行不提升。零新树/代理/副本，无Actions/既有环境迁移/真实tenant审批/生产。[DELIVERY](../development/evidence/WP02-03/order-department-owner/DELIVERY.md)。
+
 ## 2026-10-20：W32 Owner单价订正与最终撤权门已集成
 
 [产品PR #366](https://github.com/GTX537/CP6/pull/366)已合入远端main`f39351c22ac62def3a6502f43529141b4b0fc10d`，[Handoff PR #8](https://github.com/GTX537/CP6.AI-Handoff/pull/8)已合入默认分支；P0 #365经真实PG原步骤回归、实际HTTP及远端采用核对后关闭。49项后端/原生PG/实际宿主、9项前端及类型检查通过，0最终失败/跳过；一次作者审查无本窗阻断。

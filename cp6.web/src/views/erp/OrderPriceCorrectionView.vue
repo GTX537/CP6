@@ -68,7 +68,7 @@
         </CpTag>
       </div>
       <el-table :data="rows" border stripe size="small" style="width: 100%" max-height="600" @selection-change="onSelectionChange">
-        <el-table-column type="selection" width="50" />
+        <el-table-column type="selection" width="50" :selectable="canEditRow" />
         <el-table-column prop="rowNo" label="No" width="60" align="center" />
         <el-table-column :label="t('状態')" width="80" align="center">
           <template #default="{ row }">
@@ -86,35 +86,35 @@
         <el-table-column prop="customerDeliveryDate" :label="t('客先納期')" width="100" />
         <el-table-column prop="quantity" :label="t('数量')" width="100" align="right" />
         <el-table-column prop="qtyUnit" :label="t('単位')" width="60" />
-        <el-table-column prop="individualUnitPriceBefore" :label="t('個別単価(変更前)')" width="130" align="right" />
-        <el-table-column prop="setUnitPriceBefore" :label="t('セット単価(変更前)')" width="130" align="right" />
+        <el-table-column v-if="showPrices" prop="individualUnitPriceBefore" :label="t('個別単価(変更前)')" width="130" align="right" />
+        <el-table-column v-if="showPrices" prop="setUnitPriceBefore" :label="t('セット単価(変更前)')" width="130" align="right" />
         <el-table-column prop="unitPriceUnit" :label="t('単位')" width="60" />
-        <el-table-column :label="t('個別単価(変更後)')" width="140">
+        <el-table-column v-if="showPrices" :label="t('個別単価(変更後)')" width="140">
           <template #default="{ row }">
             <el-input-number v-model="row.individualUnitPriceAfter" :disabled="!isRowSelected(row)" :precision="4" :controls="false" size="small" style="width: 130px" />
           </template>
         </el-table-column>
-        <el-table-column :label="t('セット単価(変更後)')" width="140">
+        <el-table-column v-if="showPrices" :label="t('セット単価(変更後)')" width="140">
           <template #default="{ row }">
             <el-input-number v-model="row.setUnitPriceAfter" :disabled="!isRowSelected(row)" :precision="4" :controls="false" size="small" style="width: 130px" />
           </template>
         </el-table-column>
-        <el-table-column :label="t('特値')" width="60" align="center">
+        <el-table-column v-if="showPrices" :label="t('特値')" width="60" align="center">
           <template #default="{ row }">
             <el-checkbox v-model="row.specialPriceFlg" true-value="1" false-value="0" :disabled="!isRowSelected(row)" />
           </template>
         </el-table-column>
-        <el-table-column :label="t('仮単価')" width="60" align="center">
+        <el-table-column v-if="showPrices" :label="t('仮単価')" width="60" align="center">
           <template #default="{ row }">
             <el-icon v-if="row.provisionalPriceFlg" class="prov-warn"><Warning /></el-icon>
           </template>
         </el-table-column>
-        <el-table-column :label="t('単価変更理由')" min-width="180">
+        <el-table-column v-if="showPrices" :label="t('単価変更理由')" min-width="180">
           <template #default="{ row }">
             <el-input v-model="row.priceChangeReason" :disabled="!isRowSelected(row)" size="small" />
           </template>
         </el-table-column>
-        <el-table-column prop="amount" :label="t('金額')" width="130" align="right" />
+        <el-table-column v-if="showAmounts" prop="amount" :label="t('金額')" width="130" align="right" />
       </el-table>
 
       <el-pagination
@@ -132,7 +132,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onBeforeUnmount } from 'vue'
+import { ref, reactive, computed, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
@@ -157,6 +157,9 @@ const submitting = ref(false)
 const outcomeUnknown = ref(false)
 const submitNotice = ref('')
 const selectedRows = ref<OrderPriceCorrectionItemDto[]>([])
+const showPrices = computed(() => rows.value.some(row => row.priceReadable !== false))
+const showAmounts = computed(() => rows.value.some(row => row.amountReadable !== false))
+let searchGeneration = 0
 let pageIdentity = identityStamp()
 function identityChanged() {
   if (pageIdentity === identityStamp()) return
@@ -167,16 +170,20 @@ function identityChanged() {
 window.addEventListener(AUTH_EVENT, identityChanged)
 window.addEventListener('storage', identityChanged)
 onBeforeUnmount(() => {
+  searchGeneration++
   window.removeEventListener(AUTH_EVENT, identityChanged)
   window.removeEventListener('storage', identityChanged)
 })
 
 function isRowSelected(row: OrderPriceCorrectionItemDto): boolean {
-  return selectedRows.value.includes(row)
+  return canEditRow(row) && selectedRows.value.includes(row)
 }
 
+function canEditRow(row: OrderPriceCorrectionItemDto): boolean {
+  return row.priceWritable !== false && row.priceReadable !== false && !outcomeUnknown.value
+}
 function onSelectionChange(sel: OrderPriceCorrectionItemDto[]) {
-  selectedRows.value = sel
+  selectedRows.value = sel.filter(canEditRow)
 }
 
 async function search() {
@@ -184,27 +191,41 @@ async function search() {
     ElMessage.warning(t('sales.err.E10022') + ': ' + t('sales.term.base'))
     return
   }
+  const generation = ++searchGeneration, stamp = identityStamp()
+  clearResults()
   loading.value = true
   try {
-    const res = await orderApi.searchPriceCorrection(query)
+    const res = await orderApi.searchPriceCorrection({ ...query })
+    requireIdentity(stamp)
+    if (generation !== searchGeneration) return
     if (res.code === 0 && res.data) {
       rows.value = res.data.rows
       total.value = res.data.total
       if (rows.value.length === 0) ElMessage.info(t('sales.err.E10008'))
     }
-  } catch { /* */ } finally {
-    loading.value = false
+  } catch {
+    if (generation === searchGeneration) {
+      clearResults()
+      submitNotice.value = t('現在の検索結果を確認できません。権限と検索条件を確認して再検索してください。')
+    }
+  } finally {
+    if (generation === searchGeneration) loading.value = false
   }
 }
 
+function clearResults() {
+  rows.value = []
+  total.value = 0
+  selectedRows.value = []
+}
 function resetQuery() {
+  searchGeneration++
+  loading.value = false
   Object.keys(query).forEach(k => {
     if (k !== 'page' && k !== 'pageSize') (query as any)[k] = undefined
   })
   query.page = 1
-  rows.value = []
-  total.value = 0
-  selectedRows.value = []
+  clearResults()
 }
 
 async function onSubmit() {
@@ -213,6 +234,7 @@ async function onSubmit() {
     ElMessage.warning(t('sales.err.E10009'))
     return
   }
+  if (selectedRows.value.some(row => !canEditRow(row))) return
   const request = {
     items: selectedRows.value.map(r => ({
       webOrderNo: r.webOrderNo,
@@ -268,12 +290,15 @@ async function onSubmit() {
       outcomeUnknown.value = true
       submitNotice.value = t('更新結果を確認できません。受注と承認依頼の保存状態を確認してください。この画面からは再送できません。')
     } else if (status === 401) {
+      resetQuery()
       submitNotice.value = t('ログインが無効になりました。再ログイン後に受注の状態を確認してください。更新は再送していません。')
     } else if (status === 409) {
       submitNotice.value = t('他の処理によって受注が更新されました。入力内容を控えてから再検索してください。')
     } else if (status === 403) {
-      submitNotice.value = t('現在の権限では更新できません。入力内容は保持されています。')
+      resetQuery()
+      submitNotice.value = t('現在の権限では更新できません。以前の資料は消去しました。再検索して現在の権限を確認してください。')
     } else if (knownUnavailable) {
+      resetQuery()
       submitNotice.value = t('現在のデータ範囲または権限を確認できないため更新できません。管理者に確認してください。')
     } else {
       submitNotice.value = t('更新は完了していません。入力内容を確認してください。')

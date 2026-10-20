@@ -14,7 +14,9 @@ async function render() {
   view = mount(OrderPriceCorrectionView, { global: { directives: { loading: {}, permission: {} }, stubs: {
     ElCard: { template: '<div><slot /></div>' }, ElForm: { template: '<div><slot /></div>' },
     ElFormItem: { template: '<div><slot /></div>' }, ElInput: true, ElInputNumber: true, ElDatePicker: true,
-    ElCheckbox: true, ElTable: true, ElTableColumn: true, ElPagination: true, ElIcon: true, CpTag: true,
+    ElCheckbox: true, ElTable: { template: '<div><slot /></div>' },
+    ElTableColumn: { props: ['label'], template: '<span data-column>{{label}}</span>' },
+    ElPagination: true, ElIcon: true, CpTag: true,
     ElButton: { props: ['disabled'], template: '<button :disabled="disabled"><slot /></button>' },
     ElAlert: { props: ['title'], template: '<p role="status">{{title}}</p>' },
   } } })
@@ -45,7 +47,7 @@ describe('price correction write outcome', () => {
     vm.resetQuery(); await vm.onSubmit(); expect(api.batchUpdatePrice).toHaveBeenCalledTimes(1)
     expect(vm.outcomeUnknown).toBe(true)
   })
-  it.each([401, 409])('shows a known %s refusal and keeps input without replay', async status => {
+  it.each([409])('shows a known %s refusal and keeps input without replay', async status => {
     const vm = await render(); api.batchUpdatePrice.mockRejectedValue({ response: { status } })
     await vm.onSubmit()
     expect(vm.submitNotice).toBeTruthy(); expect(vm.outcomeUnknown).toBe(false)
@@ -76,5 +78,47 @@ describe('price correction write outcome', () => {
     confirm(); await pending
     expect(api.batchUpdatePrice).not.toHaveBeenCalled()
     expect(vm.outcomeUnknown).toBe(false); expect(vm.submitNotice).toBeTruthy()
+  })
+  it('rejects readonly selection even when a table emits it', async () => {
+    const vm = await render()
+    vm.onSelectionChange([{ webOrderNo: 'READONLY', webOrderDetailNo: 1, priceWritable: false, individualUnitPriceAfter: 4 }])
+    expect(vm.selectedRows).toEqual([])
+    await vm.onSubmit(); expect(api.batchUpdatePrice).not.toHaveBeenCalled()
+  })
+  it('removes price and amount columns when the current response hides those fields', async () => {
+    const vm = await render()
+    vm.rows = [{ priceReadable: true, amountReadable: true }]; await flushPromises()
+    expect(view!.findAll('[data-column]').some(c => c.text() === '個別単価(変更前)')).toBe(true)
+    api.searchPriceCorrection.mockResolvedValueOnce({ code: 0, data: { rows: [{ priceReadable: false, amountReadable: false, priceWritable: false }], total: 1 } })
+    await vm.search(); await flushPromises()
+    const columns = view!.findAll('[data-column]').map(c => c.text())
+    expect(columns).not.toContain('個別単価(変更前)')
+    expect(columns).not.toContain('金額')
+    expect(columns).toContain('数量')
+  })
+  it('clears sensitive rows and selection when a query loses permission', async () => {
+    const vm = await render(); vm.rows = [...vm.selectedRows]; vm.total = 1
+    api.searchPriceCorrection.mockRejectedValueOnce({ response: { status: 403 } })
+    await vm.search()
+    expect(vm.rows).toEqual([]); expect(vm.selectedRows).toEqual([]); expect(vm.total).toBe(0)
+  })
+  it('never restores old query data after an identity change or a newer search', async () => {
+    const vm = await render(); let finish!: (value: unknown) => void
+    api.searchPriceCorrection.mockImplementationOnce(() => new Promise(resolve => { finish = resolve }))
+    const prior = vm.search()
+    localStorage.setItem(AUTH_EPOCH, crypto.randomUUID()); window.dispatchEvent(new Event(AUTH_EVENT))
+    finish({ code: 0, data: { rows: [{ individualUnitPriceAfter: 999 }], total: 1 } }); await prior
+    expect(vm.rows).toEqual([]); expect(vm.selectedRows).toEqual([])
+    vm.query.baseCd = 'B'
+    api.searchPriceCorrection.mockImplementationOnce(() => new Promise(resolve => { finish = resolve }))
+    const old = vm.search(); await vm.search()
+    finish({ code: 0, data: { rows: [{ individualUnitPriceAfter: 888 }], total: 1 } }); await old
+    expect(vm.rows).toEqual([])
+  })
+  it.each([401, 403])('clears protected data after known %s withdrawal without replay', async status => {
+    const vm = await render(); vm.rows = [...vm.selectedRows]
+    api.batchUpdatePrice.mockRejectedValue({ response: { status } }); await vm.onSubmit()
+    expect(vm.rows).toEqual([]); expect(vm.selectedRows).toEqual([])
+    expect(api.batchUpdatePrice).toHaveBeenCalledTimes(1); expect(vm.outcomeUnknown).toBe(false)
   })
 })

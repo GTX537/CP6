@@ -534,7 +534,11 @@ public class OrderPriceCorrectionItemDto
     /// <summary>セット単価（変更後 — 編集対象）</summary>
     public decimal? SetUnitPriceAfter { get; set; }
     public string? SpecialPriceFlg { get; set; }
-    public bool ProvisionalPriceFlg { get; set; }
+    public bool? ProvisionalPriceFlg { get; set; }
+    /// <summary>Read-result hints only. The write Owner always rechecks current permission.</summary>
+    public bool PriceReadable { get; set; } = true;
+    public bool AmountReadable { get; set; } = true;
+    public bool PriceWritable { get; set; } = true;
     public string? PriceChangeReason { get; set; }
     public decimal? Amount { get; set; }
     public string? ConsignedSalesFlg { get; set; }
