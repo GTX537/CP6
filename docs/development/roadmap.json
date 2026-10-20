@@ -159207,6 +159207,11 @@
       "date": "2026-10-20",
       "change": "W29-353 versioned full-int identity consumer adopted in CRM PR95; Main producer/IAM/SSO boundary verified and ready. Full business states unchanged.",
       "evidence": "docs/development/evidence/WP02-03/integer-role-identity/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-20",
+      "change": "W29-353 consumer-first CRM PR95/Main PR358/Handoff PR5 integrated and exact task branches/slots finished; issue353 Closed. Entire bounded W29 objective complete after final coordination PR; full business states unchanged.",
+      "evidence": "docs/development/dispatch/20261020-wave29/README.md"
     }
   ],
   "implementation_assessment": {
@@ -161786,7 +161791,7 @@
         "claimed_at": "2026-10-20T06:53:58.160985+00:00",
         "baseline_sha": "cf186bdb0fa77402a64626513b8c16a1f85fc3a5",
         "entry_evidence": "docs/development/dispatch/20261020-wave29/ROLE-INTEGER-COMPATIBILITY.md",
-        "phase": "READY_TO_MERGE",
+        "phase": "CLOSED",
         "dispatch_scope": "W29_353",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -161806,12 +161811,8 @@
           "docs/development/",
           "docs/project-memory/"
         ],
-        "reserved_write_resources": [
-          "Main:identity-authority"
-        ],
-        "reserved_postgresql_ports": [
-          55435
-        ],
+        "reserved_write_resources": [],
+        "reserved_postgresql_ports": [],
         "handoff_branch": "codex/w29-353-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
@@ -161860,7 +161861,92 @@
             "tests/CP6.CRM.UnitTests/IdentityRevocationOriginTests.cs"
           ],
           "observed_at": "2026-10-20T07:29:00.772721+00:00"
-        }
+        },
+        "candidate_integrated": true,
+        "integration": {
+          "result": "PASS",
+          "repository": "GTX537/CP6",
+          "source": "7502c87d6cdb236f6456a002291d8079747f4dcf",
+          "main": "27b8f8763c9f84961b2496bca9303920fa3d5c62",
+          "pr": "https://github.com/GTX537/CP6/pull/358",
+          "paths": [
+            "CP6.Core/Services/CrmIdentity/Baselines/IdentityBaselineVerifier.cs",
+            "CP6.Core/Services/CrmIdentity/IdentityBootstrapService.cs",
+            "CP6.Core/Services/CrmIdentity/IdentityChangeCapture.cs",
+            "CP6.Core/Services/CrmIdentity/IdentityEventContracts.cs",
+            "CP6.Core/Services/CrmIdentity/IdentityEventValidator.cs",
+            "CP6.Core/Services/CrmIdentity/IdentityPermissionSnapshot.cs",
+            "CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
+            "CP6.Core/Services/Sys/FieldPermissionEvaluatorV1.cs",
+            "CP6.Core/Services/Sys/IamRoleAdministrationV1.cs",
+            "CP6.Core/Services/Sys/IamRolePolicyAdministrationV1.cs",
+            "CP6.Core/Services/Sys/IamUserAdministrationV1.cs",
+            "CP6.Core/Services/Sys/SsoService.IdentityAdmissionV1.cs",
+            "CP6.Tests/CrmIdentityContractTests.cs",
+            "CP6.Tests/CrmIdentityIntegerWriterPostgreSqlTests.cs",
+            "CP6.Tests/CrmIdentityWriterPostgreSqlTests.cs",
+            "CP6.Tests/FieldPermissionDecisionV1Tests.cs",
+            "CP6.Tests/IdentityBaselineTests.cs",
+            "CP6.Tests/LegacyIdentityBundle.cs",
+            "CP6.Tests/Platform/AuthenticationSsoIdentityAdmissionPostgreSqlTests.cs",
+            "CP6.Tests/Platform/IamIntegerRolePostgreSqlTests.cs",
+            "CP6.Tests/Platform/IamRoleAdministrationPostgreSqlTests.cs",
+            "CP6.Tests/Platform/IamUserAssignmentsPostgreSqlTests.cs",
+            "contracts/events/platform/contract-bundle.v1.json",
+            "contracts/events/platform/permission-changed/v2/examples/missing-required.json",
+            "contracts/events/platform/permission-changed/v2/examples/pii-negative.json",
+            "contracts/events/platform/permission-changed/v2/examples/unknown-optional.json",
+            "contracts/events/platform/permission-changed/v2/examples/valid.json",
+            "contracts/events/platform/permission-changed/v2/examples/wrong-type.json",
+            "contracts/events/platform/permission-changed/v2/schema.json",
+            "contracts/events/platform/token-revoked/v2/examples/missing-required.json",
+            "contracts/events/platform/token-revoked/v2/examples/pii-negative.json",
+            "contracts/events/platform/token-revoked/v2/examples/unknown-optional.json",
+            "contracts/events/platform/token-revoked/v2/examples/valid.json",
+            "contracts/events/platform/token-revoked/v2/examples/wrong-type.json",
+            "contracts/events/platform/token-revoked/v2/schema.json",
+            "contracts/events/platform/user-changed/v2/examples/missing-required.json",
+            "contracts/events/platform/user-changed/v2/examples/pii-negative.json",
+            "contracts/events/platform/user-changed/v2/examples/unknown-optional.json",
+            "contracts/events/platform/user-changed/v2/examples/valid.json",
+            "contracts/events/platform/user-changed/v2/examples/wrong-type.json",
+            "contracts/events/platform/user-changed/v2/schema.json",
+            "cp6.web/src/views/pms/RolePolicyEditor.spec.ts",
+            "cp6.web/src/views/pms/UserView.spec.ts",
+            "docs/development/07-detailed-tasks.md",
+            "docs/development/09-parallel-development.md",
+            "docs/development/dispatch/20261020-wave29/README.md",
+            "docs/development/dispatch/20261020-wave29/ROLE-INTEGER-COMPATIBILITY.md",
+            "docs/development/evidence/WP02-03/integer-role-identity/DELIVERY.md",
+            "docs/development/roadmap.json",
+            "docs/project-memory/05-Completed.md",
+            "docs/project-memory/06-Todo.md",
+            "docs/project-memory/CHANGELOG-AI.md",
+            "docs/project-memory/PROJECT_STATE.md"
+          ],
+          "observed_at": "2026-10-20T07:36:51.251182+00:00"
+        },
+        "delivery_ref": {
+          "commit": "be1874cba0f020042dc8aa4237c99959641e9cca",
+          "path": "handoffs/CP6-DEV-20261012/tasks/BUG-353/messages/20261020T074337Z-delivery/MESSAGE.md",
+          "at": "2026-10-20T07:43:37.144104+00:00",
+          "pr": 5,
+          "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/5",
+          "base": "codex/t02c-entry-handoff-20260921"
+        },
+        "resources_released": true,
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse",
+        "seat_released": true,
+        "closed_at": "2026-10-20T07:38:33.450318+00:00",
+        "active_issues": [
+          {
+            "number": 353,
+            "state": "CLOSED",
+            "url": "https://github.com/GTX537/CP6/issues/353"
+          }
+        ],
+        "deferred_issues": []
       },
       "blockers": [],
       "validation_evidence": [],
@@ -182098,7 +182184,7 @@
       "path": "docs/development/dispatch/20261020-wave29/README.md",
       "baseline_sha": "563850b2db83bff6587109e5f636be7df2642847",
       "registered_at": "2026-10-20T05:42:07.068923+00:00",
-      "phase": "W29_353_READY_TO_MERGE",
+      "phase": "CLOSED",
       "assigned_chats": [
         "COORD"
       ],
@@ -182108,11 +182194,9 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [
-        "COORD"
-      ],
+      "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": false,
+      "windows_closed": true,
       "product_integrated": true,
       "windows": [
         {
@@ -182430,7 +182514,7 @@
           "title": "完整整数角色身份版本化兼容",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "READY_TO_MERGE",
+          "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worker_delivery_received": true,
@@ -182449,7 +182533,7 @@
           "active_issues": [
             {
               "number": 353,
-              "state": "OPEN",
+              "state": "CLOSED",
               "url": "https://github.com/GTX537/CP6/issues/353"
             }
           ],
@@ -182497,7 +182581,84 @@
             "observed_at": "2026-10-20T07:29:00.772721+00:00"
           },
           "crm_seat_released": true,
-          "local_validation": "174 distinct Main .NET/PG cases;61 CRM consumer cases;14 Vitest;vue-tsc;see DELIVERY"
+          "local_validation": "174 distinct Main .NET/PG cases;61 CRM consumer cases;14 Vitest;vue-tsc;see DELIVERY",
+          "candidate_integrated": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "7502c87d6cdb236f6456a002291d8079747f4dcf",
+            "main": "27b8f8763c9f84961b2496bca9303920fa3d5c62",
+            "pr": "https://github.com/GTX537/CP6/pull/358",
+            "paths": [
+              "CP6.Core/Services/CrmIdentity/Baselines/IdentityBaselineVerifier.cs",
+              "CP6.Core/Services/CrmIdentity/IdentityBootstrapService.cs",
+              "CP6.Core/Services/CrmIdentity/IdentityChangeCapture.cs",
+              "CP6.Core/Services/CrmIdentity/IdentityEventContracts.cs",
+              "CP6.Core/Services/CrmIdentity/IdentityEventValidator.cs",
+              "CP6.Core/Services/CrmIdentity/IdentityPermissionSnapshot.cs",
+              "CP6.Core/Services/CrmIdentity/IdentitySnapshotWriter.cs",
+              "CP6.Core/Services/Sys/FieldPermissionEvaluatorV1.cs",
+              "CP6.Core/Services/Sys/IamRoleAdministrationV1.cs",
+              "CP6.Core/Services/Sys/IamRolePolicyAdministrationV1.cs",
+              "CP6.Core/Services/Sys/IamUserAdministrationV1.cs",
+              "CP6.Core/Services/Sys/SsoService.IdentityAdmissionV1.cs",
+              "CP6.Tests/CrmIdentityContractTests.cs",
+              "CP6.Tests/CrmIdentityIntegerWriterPostgreSqlTests.cs",
+              "CP6.Tests/CrmIdentityWriterPostgreSqlTests.cs",
+              "CP6.Tests/FieldPermissionDecisionV1Tests.cs",
+              "CP6.Tests/IdentityBaselineTests.cs",
+              "CP6.Tests/LegacyIdentityBundle.cs",
+              "CP6.Tests/Platform/AuthenticationSsoIdentityAdmissionPostgreSqlTests.cs",
+              "CP6.Tests/Platform/IamIntegerRolePostgreSqlTests.cs",
+              "CP6.Tests/Platform/IamRoleAdministrationPostgreSqlTests.cs",
+              "CP6.Tests/Platform/IamUserAssignmentsPostgreSqlTests.cs",
+              "contracts/events/platform/contract-bundle.v1.json",
+              "contracts/events/platform/permission-changed/v2/examples/missing-required.json",
+              "contracts/events/platform/permission-changed/v2/examples/pii-negative.json",
+              "contracts/events/platform/permission-changed/v2/examples/unknown-optional.json",
+              "contracts/events/platform/permission-changed/v2/examples/valid.json",
+              "contracts/events/platform/permission-changed/v2/examples/wrong-type.json",
+              "contracts/events/platform/permission-changed/v2/schema.json",
+              "contracts/events/platform/token-revoked/v2/examples/missing-required.json",
+              "contracts/events/platform/token-revoked/v2/examples/pii-negative.json",
+              "contracts/events/platform/token-revoked/v2/examples/unknown-optional.json",
+              "contracts/events/platform/token-revoked/v2/examples/valid.json",
+              "contracts/events/platform/token-revoked/v2/examples/wrong-type.json",
+              "contracts/events/platform/token-revoked/v2/schema.json",
+              "contracts/events/platform/user-changed/v2/examples/missing-required.json",
+              "contracts/events/platform/user-changed/v2/examples/pii-negative.json",
+              "contracts/events/platform/user-changed/v2/examples/unknown-optional.json",
+              "contracts/events/platform/user-changed/v2/examples/valid.json",
+              "contracts/events/platform/user-changed/v2/examples/wrong-type.json",
+              "contracts/events/platform/user-changed/v2/schema.json",
+              "cp6.web/src/views/pms/RolePolicyEditor.spec.ts",
+              "cp6.web/src/views/pms/UserView.spec.ts",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/09-parallel-development.md",
+              "docs/development/dispatch/20261020-wave29/README.md",
+              "docs/development/dispatch/20261020-wave29/ROLE-INTEGER-COMPATIBILITY.md",
+              "docs/development/evidence/WP02-03/integer-role-identity/DELIVERY.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-20T07:36:51.251182+00:00"
+          },
+          "delivery_ref": {
+            "commit": "be1874cba0f020042dc8aa4237c99959641e9cca",
+            "path": "handoffs/CP6-DEV-20261012/tasks/BUG-353/messages/20261020T074337Z-delivery/MESSAGE.md",
+            "at": "2026-10-20T07:43:37.144104+00:00",
+            "pr": 5,
+            "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/5",
+            "base": "codex/t02c-entry-handoff-20260921"
+          },
+          "resources_released": true,
+          "branch_disposition": "deleted-local-and-remote",
+          "workspace_status": "fixed-seat-detached-for-reuse",
+          "seat_released": true,
+          "closed_at": "2026-10-20T07:38:33.450318+00:00"
         }
       ],
       "horizon": {
@@ -182513,18 +182674,18 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "CRM consumer adopted and released; normal Main PR, exact remote adoption, issue353 and lifecycle closeout, Handoff resume/delivery.",
-      "closed_at": "2026-10-20T06:43:16.456711+00:00",
+      "next_action": "W29 selected IAM role/policy/integer-identity windows closed; no automatic reopening. Next foundation window must select still-approved gaps from current Main/CRM authority and acceptance ledger, preserving frozen directions and PostgreSQL. Full IAM/CRM/Owner/real business remains incomplete; no deployment or real-tenant action.",
+      "closed_at": "2026-10-20T07:47:23.963916+00:00",
       "handoff_integration": {
         "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
-        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/4",
-        "commit": "d3c58b92ee02356143951994222e7ccc4131d653",
-        "target_head": "d3c58b92ee02356143951994222e7ccc4131d653"
+        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/5",
+        "commit": "210b411cf1cc61fa7d77e35dbeb0e4827fc0ffe9",
+        "target_head": "210b411cf1cc61fa7d77e35dbeb0e4827fc0ffe9"
       },
       "handoff_resources_released": true,
       "handoff_branch_disposition": "deleted-local-and-remote",
-      "coordination_closeout_task": "W29-CLOSE",
-      "coordination_closeout_status": "Final documentation PR and manager finish required; product windows and Handoff already closed."
+      "coordination_closeout_task": "W29-353-CLOSE",
+      "coordination_closeout_status": "Final documentation PR and manager finish required; all product/Handoff windows already finished."
     },
     "wave_history": [
       {

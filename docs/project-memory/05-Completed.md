@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-20：W29 完整整数身份补口已集成收尾
+
+原角色/授权PR354/356基础上，CRM [PR95](https://github.com/GTX537/CP6.CRM/pull/95)先采用兼容消费者，Main [PR358](https://github.com/GTX537/CP6/pull/358)随后合入完整Int32角色身份v2；旧v1合同字节保留，#353 Closed。174不同Main .NET/PG、61 CRM消费/合同、14Vitest与typecheck通过，原W27跨Tab/SSO、W29页面证据按范围复用，未冒称重跑。Handoff [PR5](https://github.com/GTX537/CP6.AI-Handoff/pull/5)已合入；本地/远端三任务分支清理、固定席位释放。15个本轮隔离测试库生成data已回收、日志保留，零额外目录/clone/代理。
+
+最终协调W29-353-CLOSE在原DEV-1仅同步此记录，正常PR及finish结果以管理登记/最终交付为准。完整IAM剩余权威范围、CRM数据库/Owner及125目标/247真实运行不提升；无Actions、真实租户审批、既有环境迁移或生产部署。[实际处置与剩余边界](../development/dispatch/20261020-wave29/README.md)。
+
 ## 2026-10-20：W29-353 完整整数身份兼容候选
 
 固定v1身份域缺口已用独立v2合同补齐，旧v1字节与正整数身份保持。Main创建/授权/分配、SSO首次身份、版本粘性/撤销与baseline共174项不同.NET/PG通过；CRM61项实际消费/合同、14Vitest和类型检查通过。CRM PR95已先合入并清理分支、释放DEV-2；Main待正常PR/远端采用及finish。#353待集成关闭，完整IAM/CRM/Owner/真实业务状态不提升；无Actions、真实租户审批或环境部署。[DELIVERY](../development/evidence/WP02-03/integer-role-identity/DELIVERY.md)。
