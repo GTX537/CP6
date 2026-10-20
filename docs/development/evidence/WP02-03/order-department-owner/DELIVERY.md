@@ -45,3 +45,13 @@ PG使用正式迁移/触发器：显式绑定、合法原生代码、跨tenant�
 四仓合计2开发+1集成，复用原DEV-1/DEV-2，INTEGRATION-1空闲；零新树/clone/完整副本。产品正常PR后，同一分支完成最终状态文档；Handoff同一原分支交付并合并。最后manage finish定向处置本地/远端任务分支、保留固定目录并释放席位，不能在候选阶段提前声称释放。
 
 完整WP02-03、其余Order业务Owner、CRM持久消费、正式外部工作流及真实验收未完成。125目标/247真实运行保持NOT_RUN范围，无Actions、既有环境迁移、真实tenant审批或生产部署。
+
+## 远端采用及原任务分支收尾
+
+产品[PR #369](https://github.com/GTX537/CP6/pull/369)已合并，source`0be5e9bfff0d2711d5dfcd8769e3c4fb9bd4d978`、远端main`d58b65cb16608c310ec3fb64a3185d13680760a5`，全部改动blob一致；#368原步骤回归与远端采用后已关闭。[Handoff PR #9](https://github.com/GTX537/CP6.AI-Handoff/pull/9)已合入默认目标，source`917f33c9696ca504f808aa6d05ff414dc5738677`、目标`33042e048195b7dc5e535cfee145ad43f734a9f6`；Handoff任务分支已定向删除，DEV-2干净detached并释放。
+
+101个不同相关PG/HTTP/IAM、27前端及类型检查通过，0最终失败/跳过；一次作者SPEC/QUALITY无本窗阻断。此最后文档没有改变产品/依赖/环境，复用成功证据，仅检查台账结构、差异和链接。自有PG/API停止，6处生成data逻辑回收798421171字节（0.744GiB），清理时段D盘实际空闲增加801910784字节（0.747GiB）；日志/失败保留。
+
+本提交仍在原codex/w33-01、DEV-1完成最后正常PR；之后调用manage finish。它不能提前证明自己的未来合并/释放。最终分支处置、工作区状态及席位结果以管理登记`D:/CP6/.git/cp6-workspaces/state.json`、最后PR收尾评论及`C:/Users/tt/CP6-planning-reports/20261017-foundation/wave33-final-verification.json`为准，不另开收尾任务或分支。INTEGRATION-1空闲，零新树/clone/完整副本/代理。
+
+剩余Other Order CRUD/导出/下载Owner、跨重载业务operation恢复、正式POWER EGG报文/投递、CRM持久Owner和真实业务验收。完整WP02-03及125目标/247真实运行不提升。无Actions、既有环境迁移、真实tenant批准或生产部署。原估计本代理160–260分钟、故障余量6小时；实际耗时在真实finish后报告，不等待满24小时。
