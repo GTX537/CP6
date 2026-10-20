@@ -18,10 +18,23 @@ COORD当前聊天单独执行，沿用writing-plans / executing-plans和已有S5
 - [x] 先复现注册表输入数组/返回列表可修改权威、活集合变化与非法定义接受；同一捕获包含字段和范围。返回不可变/隔离数据，验证非法定义不会替换已存在合法定义。
 - [x] 字段与范围仅启动期注册，宿主完成注册后封存；相同重复注册兼容，改变定义拒绝。配置写入继续校验精确目录版本，不改变旧MIN/default/Scope MAX规则。未宣称业务Owner映射/当前字段最终门已完成。
 - [x] PostgreSQL实际API补菜单动作CSRF/引用/当前权限/CAS/回执覆盖，输入未变的既有测试直接复用；新页面相关Vitest4.1.11、类型、Chrome，不全仓/SQLServer/Actions。
-- [ ] 完整diff一次作者SPEC/QUALITY；单份DELIVERY；按正常PR合并、精确远端采用、四状态/roadmap/Handoff同步；manage finish删除已核实任务本地/远端分支，固定目录detached释放。自有服务停止，保留失败日志。
+- [x] 完整diff一次作者SPEC/QUALITY；单份DELIVERY；按正常PR合并、精确远端采用、四状态/roadmap/Handoff同步；manage finish删除已核实任务本地/远端分支，固定目录detached释放。自有服务停止，保留失败日志。
 
 修改范围：Core Sys授权目录和已有政策读取、WebApi启动目录封存、前端授权页/菜单动作组件/API/恢复相关测试、对应PG测试、协调文档。无依赖升级、正式包发布、既有环境迁移、真实tenant审批或生产部署；完整WP02-03/IAM/CRM/Owner及125目标/247真实运行状态不提升。
 
 ## 候选交付
 
 W30-01已实现并通过56项不同.NET/原生PG/HTTP、20Vitest、3Chrome和类型检查；单份[DELIVERY](../../evidence/WP02-03/menu-action-administration/DELIVERY.md)。#360待集成。一次作者SPEC/QUALITY无本窗阻断，自有进程已停止、三处生成测试data回收，等待正常PR/远端核对、Handoff及席位收尾。
+
+## 实际集成与收尾
+
+| 项目 | 已核对远端采用 | 分支、工作区和席位 |
+|---|---|---|
+| W30-01 | [PR361](https://github.com/GTX537/CP6/pull/361)；source`8c18dd5a870e19880130990bf9a3b952f689509e`；main`8978ea1a95694f0bcdef9b5fb8193368d3aae39d`；#360 Closed | codex/w30-01本地/远端删除；DEV-1干净detached，已释放 |
+| W30-HANDOFF | [PR6](https://github.com/GTX537/CP6.AI-Handoff/pull/6)；source`5d5bf2d73808c355dde76575bab5afea14808349`；默认目标`926c24cc5d19ae516aaf7042496658ec814f7c7d` | codex/w30-handoff本地/远端删除；DEV-2干净detached，已释放 |
+
+56项不同.NET/PG/HTTP、20Vitest、3Chrome受控实际页面和类型检查通过；一次作者SPEC/QUALITY与最后缓存变更的局部复查，无剩余本窗阻断。原失败和有效复用范围保留在单份DELIVERY。自有服务停止，3处生成测试data回收；逻辑388990614字节（0.362GiB），回收时段D盘实际空闲增加390737920字节（0.364GiB），不把逻辑量与磁盘实测混为一谈。
+
+最后协调任务W30-CLOSE经start复用刚释放的DEV-1，仅同步台账/本报告及四状态；本提交不预先证明自身采用，其正常PR和finish结果以最终管理登记和聊天交付为准。INTEGRATION-1空闲；零新树/clone/整仓副本/代理，保留原依赖缓存和用户资料。没有Actions或触发配置变动、既有数据库迁移、真实tenant审批或生产部署。
+
+本轮限定任务完成；完整IAM/公共基础尚未完成。下一窗口应核实Main字段决定的真实来源/映射消费、业务Owner效果提交前当前撤权门、CRM数据库持久消费等剩余接受合同后再领取，不重复W27–W30，不重新启动冻结方向。125目标/247真实运行保持原状态。原预计本代理3–4.5小时/故障余量6小时；精确总耗时在最后远端/席位核对后报告，不等待满24小时。
