@@ -25,9 +25,10 @@ public sealed class IdentityWriterBaselinePostgresTests(IdentityDirectoryConfigu
         await using var writer = Writer(host, A); var current = Mock.Of<ICurrentPermissionContext>();
         var user = new Sys_User { UserName = "baseline-writer", Password = "fixture-only" };
         writer.Sys_Users.Add(user); await writer.SaveChangesAsync();
-        await new UserRoleService(writer, current).SaveAsync(user.Id, [777], 777, "fixture");
+        var iam = new CP6.Tests.Platform.IamAdministrationTestSession(writer, user.Id);
+        await iam.SetUser(user.Id, [777], 777);
         var department = await new DeptService(writer).CreateAsync(new() { DeptCode = "w22-baseline", DeptName = "fixture department" }, null, "fixture");
-        await new DeptService(writer).SetUserOrgAsync(user.Id, new() { DeptId = department }, "fixture");
+        await iam.SetUser(user.Id, department: department);
         writer.Sys_Menus.Add(new Sys_Menu { MenuId = 72301, MenuName = "baseline permission", MenuKey = "crm-w22-baseline" }); await writer.SaveChangesAsync();
         var permissions = new RolePermService(writer, current);
         await permissions.SaveRolePermAsync(777, new() { MenuIds = [72301], Actions = [new() { MenuId = 72301, ActionCode = "read" }] }, "fixture");

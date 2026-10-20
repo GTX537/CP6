@@ -161782,7 +161782,12 @@
           "cp6.web/src/auth/iamOperationRecovery.ts",
           "cp6.web/src/views/pms/UserView.spec.ts",
           "docs/development/dispatch/20261020-wave28/README.md",
-          "docs/development/evidence/WP02-03/iam-user-assignments/DELIVERY.md"
+          "docs/development/evidence/WP02-03/iam-user-assignments/DELIVERY.md",
+          "CP6.Core/Persistence/Tenancy/IdentityDirectoryRowSecurityV1.cs",
+          "CP6.Tests/CrmIdentityWriterPostgreSqlTests.cs",
+          "CP6.Tests/Persistence/Tenancy/IdentityDirectoryPostgresFixture.cs",
+          "CP6.Tests/Persistence/Tenancy/IdentityWriterBaselinePostgresTests.cs",
+          "CP6.Tests/Platform/IamAdministrationTestSession.cs"
         ],
         "reserved_write_resources": [
           "Main:identity-authority"
@@ -181756,7 +181761,7 @@
           },
           "delivery_report": "docs/development/evidence/WP02-03/iam-user-assignments/DELIVERY.md",
           "candidate_review_completed": true,
-          "local_validation": "70 unique effective .NET cases, 7 frontend, 2 Chrome; exact sources in DELIVERY",
+          "local_validation": "77 unique effective .NET cases, 7 frontend, 2 Chrome; directory install compatibility and isolation included",
           "active_issue": {
             "number": 346,
             "state": "OPEN",

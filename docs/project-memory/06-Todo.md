@@ -2,7 +2,7 @@
 
 ## 2026-10-20：W28-01 用户角色与组织引用候选
 
-BUG346：主附角色/同tenant部门经理引用、实际writer CAS、原子身份Outbox与准确操作回执、用户页面跨Tab/冲突恢复已实现。70项有效.NET、7前端、2实际Chrome夹具通过/复用，旧填充PG迁移及一次作者SPEC/QUALITY通过，原失败保留。候选等待正常PR与finish；W28-02组织树、W28-03页面/总收尾持续执行。固定DEV-1/2复用，无新树/代理/Actions或真实环境操作，完整IAM/CRM/业务未提升。[DELIVERY](../development/evidence/WP02-03/iam-user-assignments/DELIVERY.md)。
+BUG346：主附角色/同tenant部门经理引用、实际writer CAS、原子身份Outbox与准确操作回执、用户页面跨Tab/冲突恢复已实现。77项有效.NET、7前端、2实际Chrome夹具通过/复用，旧填充PG迁移及一次作者SPEC/QUALITY通过，原失败保留。候选等待正常PR与finish；W28-02组织树、W28-03页面/总收尾持续执行。固定DEV-1/2复用，无新树/代理/Actions或真实环境操作，完整IAM/CRM/业务未提升。[DELIVERY](../development/evidence/WP02-03/iam-user-assignments/DELIVERY.md)。
 
 > 2026-10-20 WGOV-20261020：四仓合计额度改为2开发+1集成；统一start/status/finish、原子占用、准确PR采用证明和定向任务分支清理已实现，24项相关验证通过，另三仓规则PR已正常合并。本仓通过同一管理PR完成发布和席位释放，最终结果以[单份交付](../development/worktrees/WORKFLOW-DELIVERY.md)及实时登记为准。客户端仍需关闭新聊天Worktree开关并手动配置自动清理；原生Git/文件复制不受脚本拦截。未重开历史清理、改业务功能、操作数据库或触发Actions，业务验收状态不提升。
 

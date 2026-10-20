@@ -16,12 +16,16 @@
 
 证据根D:/CP6-local-test/wave28/foundation；日志/TRX原件保留。全部为本机隔离PG18、实际Program HTTP或受控前端夹具，未运行真实租户/CRM业务验收。
 
-- 定向.NET/PG/HTTP最终有效覆盖 **70个唯一用例通过**，0剩余失败/跳过。复用同输入成功结果，不把多次运行相加；来源：iam-user-http-audit-20261020T043102Z, iam-user-reset-20261020T043432Z, iam-user-existing-contracts-20261020T044013Z, iam-user-survivor-review-20261020T044212Z, iam-user-migration-review-20261020T044340Z。其中existing-contracts首次13过/1失败是重复菜单键夹具，survivor-review修正夹具后3/3覆盖该失败及原安全断言。
+- 定向.NET/PG/HTTP最终有效覆盖 **77个唯一用例通过**，0剩余失败/跳过。复用同输入成功结果，不把多次运行相加；来源：iam-user-http-audit-20261020T043102Z, iam-user-reset-20261020T043432Z, iam-user-existing-contracts-20261020T044013Z, iam-user-survivor-review-20261020T044212Z, iam-user-migration-review-20261020T044340Z。其中existing-contracts首次13过/1失败是重复菜单键夹具，survivor-review修正夹具后3/3覆盖该失败及原安全断言。
 - 最初红测iam-user-red-20261020T041236Z真实复现无版本失效角色保存；iam-user-http首次实际中间件日志泄露密码失败，修正IAM及旧用户请求体日志排除，audit复查通过。编译/浏览器定位失败保留，未冒充通过。
 - 实际PG覆盖角色/跨tenant/部门祖先/经理引用、主附角色和身份Outbox同事务、ABA/并发writer、失权重验、显式密码reset与吊销回滚、回执失败全回滚、提交ack丢失原回执/关闭屏障、旧路由/CSRF/会话、末名平台管理员保护、已有部门数据前向安装不改写原树。
 - 相关Vitest 7/7（iam-user-final-component），实际vue-tsc --build通过（iam-user-final-typecheck）；首次--noEmit空references命令不计有效验证。
 - 实际Chrome页面夹具2/2（iam-user-browser-label）：主附角色合并请求，跨Tab占用、断网后只查/关闭原操作。初次冷加载及label定位失败保留；修正精确aria-label后通过，截图已检查。
 - W27已合并认证跨Tab/SSO批准/首次身份映射证据按未变范围复用，本窗不重跑整套。未运行全仓测试、SQL Server、Actions、真实DEV、生产或CRM投影；既有NU1902/NU1903依赖告警未扩展无关升级。
+
+后续旧调用点复查追加7个有效用例（计入上方77，不重复相加）：iam-user-writer-compat-20261020T045126Z身份传播1通过；另一个fixture同根冲突失败，拆为串行独立隔离根。iam-user-baseline-compat-20261020T045225Z暴露目录安装旧白名单拒绝当前认证函数；补入准确签名、仍拒绝非Owner/SECURITY DEFINER/未知函数，并对认证私有函数要求无PUBLIC执行授权。iam-user-baseline-install-20261020T045429Z真实版本化用户写入→普通目录收集1通过；iam-user-directory-isolation-20261020T045546Z目录隔离5通过，初始化含新增私有函数/公开执行/提权函数异常拒绝。未扩大目录读写授权或自动采用旧安装；原结构seal继续绑定函数定义和权限。两个旧服务测试改走版本化入口，保留快照、Outbox、跨tenant和展示字段不增版本断言；无效自经理夹具改为合法null。
+
+此局部安装兼容修正属于实际身份传播采用阻断，已审查准确签名及最小权限；原失败全部保留。新增源码范围是目录fresh安装前置和两个writer测试，不涉及既有环境迁移。
 
 ## 一次作者SPEC/QUALITY与处置
 

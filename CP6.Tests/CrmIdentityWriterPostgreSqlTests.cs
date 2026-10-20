@@ -167,10 +167,10 @@ public sealed class CrmIdentityWriterPostgreSqlTests(TenantManagementPostgresFix
         var user = new Sys_User { UserName = "writer-user", Password = "fixture-only" };
         writer.Sys_Users.Add(user); writer.Sys_Roles.AddRange(new Sys_Role { RoleId = 71, RoleName = "one" }, new Sys_Role { RoleId = 72, RoleName = "two" });
         await writer.SaveChangesAsync();
-        var memberships = new UserRoleService(writer, current); await memberships.SaveAsync(user.Id, [71, 72, 72], 71, "fixture");
+        var memberships = new CP6.Tests.Platform.IamAdministrationTestSession(writer, user.Id); await memberships.SetUser(user.Id, [71, 72, 72], 71);
         var aggregate = $"user:{user.Id:D}";
         var first = await UserData(writer, tenant, aggregate); Assert.Equal(new[] { "role:71", "role:72" }, first.Roles); Assert.Equal(2, first.Version);
-        await memberships.SaveAsync(user.Id, [72], 72, "fixture"); Assert.Equal(new[] { "role:72" }, (await UserData(writer, tenant, aggregate)).Roles);
+        await memberships.SetUser(user.Id, [72], 72); Assert.Equal(new[] { "role:72" }, (await UserData(writer, tenant, aggregate)).Roles);
         var service = new DeptService(writer); var code = tenant.ToString("N");
         var parent = await service.CreateAsync(new() { DeptCode = code + "p", DeptName = "parent" }, null, "fixture");
         var child = await service.CreateAsync(new() { DeptCode = code + "c", DeptName = "child" }, null, "fixture");
@@ -179,11 +179,11 @@ public sealed class CrmIdentityWriterPostgreSqlTests(TenantManagementPostgresFix
         var grand = await writer.CrmIdentitySnapshots.AsNoTracking().SingleAsync(x => x.TenantId == tenant && x.AggregateId == $"department:{grandchild:D}");
         var grandData = JsonSerializer.Deserialize<DepartmentIdentityData>(grand.PayloadJson, IdentityEventContracts.Json)!;
         Assert.Equal($"/{parent:D}/{child:D}/{grandchild:D}/", grandData.Path); Assert.Equal(2, grandData.Version);
-        await service.SetUserOrgAsync(user.Id, new() { DeptId = child, ManagerId = user.Id, Email = "fixture@example.test" }, "fixture");
+        await memberships.SetUser(user.Id, department: child, email: "fixture@example.test");
         Assert.Equal(child, (await UserData(writer, tenant, aggregate)).DeptId);
         await service.SetLeaderAsync(child, user.Id, "fixture");
         var beforeDisplay = (await UserData(writer, tenant, aggregate)).Version;
-        await service.SetUserOrgAsync(user.Id, new() { DeptId = child, ManagerId = user.Id, Email = "changed@example.test" }, "fixture");
+        await memberships.SetUser(user.Id, department: child, email: "changed@example.test");
         Assert.Equal(beforeDisplay, (await UserData(writer, tenant, aggregate)).Version);
         await service.DeleteAsync(grandchild);
         var deleted = await writer.CrmIdentitySnapshots.AsNoTracking().SingleAsync(x => x.TenantId == tenant && x.AggregateId == $"department:{grandchild:D}");

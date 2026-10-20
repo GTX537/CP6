@@ -63,9 +63,30 @@ internal static class IdentityDirectoryRowSecurityV1
                     pg_catalog.to_regprocedure('cp6_storage_core.set_rowversion_v1()'),
                     pg_catalog.to_regprocedure('cp6_storage_core.advance_identity_generation_v1()'),
                     pg_catalog.to_regprocedure('cp6_storage_core.guard_journal_line_v1()'),
+                    pg_catalog.to_regprocedure('cp6_platform_admin_guard_v1.acquire()'),
+                    pg_catalog.to_regprocedure('cp6_platform_admin_guard_v1.before_change()'),
+                    pg_catalog.to_regprocedure('cp6_platform_admin_guard_v1.after_change()'),
+                    pg_catalog.to_regprocedure('cp6_authentication_v1.acquire()'),
+                    pg_catalog.to_regprocedure('cp6_authentication_v1.before_change()'),
+                    pg_catalog.to_regprocedure('cp6_authentication_v1.credential_revision()'),
+                    pg_catalog.to_regprocedure('cp6_authentication_v1.policy_revision()'),
+                    pg_catalog.to_regprocedure('cp6_authentication_v1.sso_revision()'),
+                    pg_catalog.to_regprocedure('cp6_authentication_v1.track_preparation()'),
+                    pg_catalog.to_regprocedure('cp6_authentication_v1.track_device()'),
+                    pg_catalog.to_regprocedure('cp6_authentication_v1.track_device_policy()'),
+                    pg_catalog.to_regprocedure('cp6_authentication_v1.close_revoked_origin()'),
+                    pg_catalog.to_regprocedure('cp6_authentication_v1.require_open_browser_attempt()'),
+                    pg_catalog.to_regprocedure('cp6_authentication_v1.sso_admission_revision()'),
+                    pg_catalog.to_regprocedure('cp6_authentication_v1.sso_operation_immutable()'),
+                    pg_catalog.to_regprocedure('cp6_authentication_v1.federated_key_writer()'),
+                    pg_catalog.to_regprocedure('cp6_authentication_v1.username_admission_writer()'),
+                    pg_catalog.to_regprocedure('cp6_authentication_v1.bump_admission_revision(uuid,text)'),
+                    pg_catalog.to_regprocedure('cp6_authentication_v1.admission_revision_writer()'),
+                    pg_catalog.to_regprocedure('cp6_authentication_v1.organization_revision_writer()'),
                     pg_catalog.to_regprocedure('cp6_storage_identity.set_rowversion_v1()')]) known(oid) WHERE known.oid=p.oid)
                   OR EXISTS(SELECT FROM pg_catalog.aclexplode(coalesce(p.proacl,pg_catalog.acldefault('f',p.proowner))) a
-                    WHERE a.grantee<>p.proowner AND NOT(a.grantee=0 AND a.privilege_type='EXECUTE' AND NOT a.is_grantable))))
+                    WHERE a.grantee<>p.proowner AND NOT(n.nspname NOT IN ('cp6_authentication_v1','cp6_platform_admin_guard_v1')
+                      AND a.grantee=0 AND a.privilege_type='EXECUTE' AND NOT a.is_grantable))))
               AND pg_catalog.to_regprocedure('public.cp6_cp936_length_v1(text)') IS NOT NULL
               AND pg_catalog.to_regprocedure('public.cp6_text_range_v1(text,text)') IS NOT NULL
             """);
