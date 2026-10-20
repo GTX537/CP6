@@ -159142,6 +159142,11 @@
       "date": "2026-10-19",
       "change": "W27 three bounded windows integrated through PR336/338/340; BUG335/337/339 Closed. Browser cross-tab recovery, explicit first-SSO approval and atomic link/JIT/recovery delivered. Related local evidence reused without sum inflation; owned processes stopped and original workspace reused. Full IAM/CRM/business unchanged.",
       "evidence": "docs/development/dispatch/20261019-wave27/README.md"
+    },
+    {
+      "date": "2026-10-20",
+      "change": "Workspace-only governance: reclaim 59 verified completed trees; 3 development + 1 integration shared slots; preserve uncertain local evidence and product/acceptance states.",
+      "evidence": "docs/development/worktrees/REGISTRY.md"
     }
   ],
   "implementation_assessment": {
