@@ -8,7 +8,7 @@ from pathlib import Path
 
 ALLOWED = {'cp6': 'CP6', 'cp6.crm': 'CP6.CRM', 'cp6.platform': 'CP6.Platform', 'cp6.ai-handoff': 'CP6.AI-Handoff'}
 DEFAULT_ROOTS = ['D:/CP6', 'D:/CP6.CRM', 'D:/CP6/CP6.Platform', 'D:/CP6.AI-Handoff']
-DEFAULT_CONTAINERS = ['D:/CP6-worktrees', 'D:/CP6.CRM-worktrees', 'D:/CP6.Platform-worktrees', 'D:/CP6.AI-Handoff-worktrees', str(Path.home()/'.codex/worktrees')]
+DEFAULT_CONTAINERS = ['D:/CP6-worktrees', 'D:/CP6.CRM-worktrees', 'D:/CP6.Platform-worktrees', 'D:/CP6.AI-Handoff-worktrees', 'D:/CP6/CP6.CRM', 'D:/CP6/tmp/clones', 'D:/CP6/tmp/worktrees', 'D:/CP6/.claude/worktrees', str(Path.home()/'.codex/worktrees')]
 
 def norm(p):
     value=os.path.normcase(os.path.abspath(p)).replace('\\', '/').casefold()
