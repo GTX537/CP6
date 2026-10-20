@@ -159192,6 +159192,11 @@
       "date": "2026-10-20",
       "change": "W29-02 closed role policy commands/catalog CAS and shared pages ready; 78 related native cases,19 Vitest,4 Chrome. Issue355 pending integration;353 remains pinned cross-repository contract gap; full business unchanged.",
       "evidence": "docs/development/evidence/WP02-03/role-policy-administration/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-20",
+      "change": "W29 product PR354/356 integrated, issues351/352/355 Closed; Handoff PR4 adopted. Exact product/Handoff branches removed, fixed seats released. W29-03 composition included in original product tasks. Issue353 explicitly remains Open; full business unchanged.",
+      "evidence": "docs/development/dispatch/20261020-wave29/README.md"
     }
   ],
   "implementation_assessment": {
@@ -161771,7 +161776,7 @@
         "claimed_at": "2026-10-20T06:06:24.366575+00:00",
         "baseline_sha": "b4c60e5c54ec9db2913bdbe670bcd27485971587",
         "entry_evidence": "docs/development/dispatch/20261020-wave29/README.md",
-        "phase": "READY_TO_MERGE",
+        "phase": "CLOSED",
         "dispatch_scope": "W29_02",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -161793,27 +161798,90 @@
           "CP6.Persistence.PostgreSql/Migrations/Core/",
           "CP6.Core/Persistence/Tenancy/"
         ],
-        "reserved_write_resources": [
-          "Main:identity-authority"
-        ],
-        "reserved_postgresql_ports": [
-          55435
-        ],
+        "reserved_write_resources": [],
+        "reserved_postgresql_ports": [],
         "handoff_branch": "codex/w29-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": false,
-        "resources_released": false,
+        "candidate_integrated": true,
+        "resources_released": true,
         "full_task_completed": false,
         "delivery_report": "docs/development/evidence/WP02-03/role-policy-administration/DELIVERY.md",
         "active_issues": [
           {
             "number": 355,
-            "state": "OPEN",
+            "state": "CLOSED",
             "url": "https://github.com/GTX537/CP6/issues/355"
+          }
+        ],
+        "integration": {
+          "result": "PASS",
+          "repository": "GTX537/CP6",
+          "source": "0a2bc718de2a89e36712632e691889fa32037b92",
+          "main": "c762505cc8c4047bb1faf2166364bb22a2c344b8",
+          "pr": "https://github.com/GTX537/CP6/pull/356",
+          "paths": [
+            "CP6.Core/Persistence/Tenancy/IdentityDirectoryRowSecurityV1.cs",
+            "CP6.Core/Services/Sys/IamAdministrationV1.cs",
+            "CP6.Core/Services/Sys/IamMenuActionAdministrationV1.cs",
+            "CP6.Core/Services/Sys/IamRolePolicyAdministrationV1.cs",
+            "CP6.Core/Services/Sys/RolePermService.cs",
+            "CP6.Persistence.PostgreSql/Migrations/Core/20261020061000_IamPermissionCatalogV1.cs",
+            "CP6.Tests/CrmIdentityWriterPostgreSqlTests.cs",
+            "CP6.Tests/Persistence/Tenancy/IdentityWriterBaselinePostgresTests.cs",
+            "CP6.Tests/Platform/IamAdministrationTestSession.cs",
+            "CP6.Tests/Platform/IamRolePolicyHttpPostgreSqlTests.cs",
+            "CP6.Tests/Platform/IamRolePolicyLegacyPostgreSqlTests.cs",
+            "CP6.Tests/Platform/IamRolePolicyPostgreSqlTests.cs",
+            "CP6.Tests/Platform/IamUserAssignmentsPostgreSqlTests.cs",
+            "CP6.WebApi/Controllers/Sys/IamRolePolicyController.cs",
+            "CP6.WebApi/Controllers/Sys/RoleController.cs",
+            "CP6.WebApi/Controllers/Sys/RolePermController.cs",
+            "CP6.WebApi/Program.cs",
+            "cp6.web/e2e/iam-role-policies-fixture.ts",
+            "cp6.web/e2e/iam-role-policies.spec.ts",
+            "cp6.web/playwright.authentication-recovery.config.ts",
+            "cp6.web/src/api/sys/iam.ts",
+            "cp6.web/src/api/sys/iamPolicy.ts",
+            "cp6.web/src/auth/iamOperationRecovery.ts",
+            "cp6.web/src/views/pms/DataScopeView.vue",
+            "cp6.web/src/views/pms/FieldPermView.vue",
+            "cp6.web/src/views/pms/PermissionView.vue",
+            "cp6.web/src/views/pms/RolePermView.vue",
+            "cp6.web/src/views/pms/RolePolicyEditor.spec.ts",
+            "cp6.web/src/views/pms/RolePolicyEditor.vue",
+            "docs/development/07-detailed-tasks.md",
+            "docs/development/09-parallel-development.md",
+            "docs/development/dispatch/20261020-wave29/README.md",
+            "docs/development/evidence/WP02-03/role-policy-administration/DELIVERY.md",
+            "docs/development/roadmap.json",
+            "docs/project-memory/05-Completed.md",
+            "docs/project-memory/06-Todo.md",
+            "docs/project-memory/CHANGELOG-AI.md",
+            "docs/project-memory/PROJECT_STATE.md"
+          ],
+          "observed_at": "2026-10-20T06:37:05.607441+00:00"
+        },
+        "delivery_ref": {
+          "commit": "3d97c6faa74e9957346da15638893c49c49d82ca",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T063856Z-wave29-delivery/MESSAGE.md",
+          "at": "2026-10-20T06:38:56.136350+00:00",
+          "pr": 4,
+          "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/4",
+          "base": "codex/t02c-entry-handoff-20260921"
+        },
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse",
+        "seat_released": true,
+        "closed_at": "2026-10-20T06:38:27.296899+00:00",
+        "deferred_issues": [
+          {
+            "number": 353,
+            "state": "OPEN",
+            "reason": "Versioned full-int identity contract needs cross-repository scope and adoption; no claim of full IAM completion"
           }
         ]
       },
@@ -182053,7 +182121,7 @@
       "path": "docs/development/dispatch/20261020-wave29/README.md",
       "baseline_sha": "563850b2db83bff6587109e5f636be7df2642847",
       "registered_at": "2026-10-20T05:42:07.068923+00:00",
-      "phase": "W29_02_READY_TO_MERGE",
+      "phase": "CLOSED",
       "assigned_chats": [
         "COORD"
       ],
@@ -182063,12 +182131,10 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [
-        "COORD"
-      ],
+      "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": false,
-      "product_integrated": false,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W29-01",
@@ -182076,7 +182142,7 @@
           "title": "角色生命周期/版本/引用与页面恢复",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "INTEGRATED",
+          "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worker_delivery_received": true,
@@ -182120,7 +182186,52 @@
           "source_sha": "a99779d0cabe5a224b0f1489bdb3a9a8abc230bc",
           "remote_main_sha": "b4c60e5c54ec9db2913bdbe670bcd27485971587",
           "branch_disposition": "deleted-local-and-remote",
-          "seat_released": true
+          "seat_released": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "a99779d0cabe5a224b0f1489bdb3a9a8abc230bc",
+            "main": "b4c60e5c54ec9db2913bdbe670bcd27485971587",
+            "pr": "https://github.com/GTX537/CP6/pull/354",
+            "paths": [
+              "CP6.Core/Services/Sys/IamAdministrationV1.cs",
+              "CP6.Core/Services/Sys/IamRoleAdministrationV1.cs",
+              "CP6.Tests/Platform/IamRoleAdministrationHttpPostgreSqlTests.cs",
+              "CP6.Tests/Platform/IamRoleAdministrationPostgreSqlTests.cs",
+              "CP6.WebApi/Controllers/Sys/IamRoleController.cs",
+              "CP6.WebApi/Controllers/Sys/RoleController.cs",
+              "CP6.WebApi/Program.cs",
+              "cp6.web/e2e/iam-roles-fixture.ts",
+              "cp6.web/e2e/iam-roles.spec.ts",
+              "cp6.web/e2e/iam-users.spec.ts",
+              "cp6.web/playwright.authentication-recovery.config.ts",
+              "cp6.web/src/api/sys/iam.ts",
+              "cp6.web/src/auth/iamOperationRecovery.ts",
+              "cp6.web/src/views/pms/RoleView.spec.ts",
+              "cp6.web/src/views/pms/RoleView.vue",
+              "cp6.web/src/views/pms/UserView.vue",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/09-parallel-development.md",
+              "docs/development/dispatch/20261020-wave29/README.md",
+              "docs/development/evidence/WP02-03/role-administration/DELIVERY.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-20T06:03:42.699029+00:00"
+          },
+          "delivery_ref": {
+            "commit": "3d97c6faa74e9957346da15638893c49c49d82ca",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T063856Z-wave29-delivery/MESSAGE.md",
+            "at": "2026-10-20T06:38:56.136350+00:00",
+            "pr": 4,
+            "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/4",
+            "base": "codex/t02c-entry-handoff-20260921"
+          },
+          "workspace_status": "fixed-seat-detached-for-reuse",
+          "closed_at": "2026-10-20T06:04:31.855068+00:00"
         },
         {
           "id": "W29-02",
@@ -182128,7 +182239,7 @@
           "title": "菜单动作/数据范围/字段权限封闭编辑与页面",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "READY_TO_MERGE",
+          "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worker_delivery_received": true,
@@ -182150,12 +182261,73 @@
           "active_issues": [
             {
               "number": 355,
-              "state": "OPEN",
+              "state": "CLOSED",
               "url": "https://github.com/GTX537/CP6/issues/355"
             }
           ],
           "local_validation": "78 unique .NET/PG/HTTP,19 Vitest,4 real Chrome fixtures,vue-tsc; see DELIVERY",
-          "resources_released": false
+          "resources_released": true,
+          "candidate_integrated": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "0a2bc718de2a89e36712632e691889fa32037b92",
+            "main": "c762505cc8c4047bb1faf2166364bb22a2c344b8",
+            "pr": "https://github.com/GTX537/CP6/pull/356",
+            "paths": [
+              "CP6.Core/Persistence/Tenancy/IdentityDirectoryRowSecurityV1.cs",
+              "CP6.Core/Services/Sys/IamAdministrationV1.cs",
+              "CP6.Core/Services/Sys/IamMenuActionAdministrationV1.cs",
+              "CP6.Core/Services/Sys/IamRolePolicyAdministrationV1.cs",
+              "CP6.Core/Services/Sys/RolePermService.cs",
+              "CP6.Persistence.PostgreSql/Migrations/Core/20261020061000_IamPermissionCatalogV1.cs",
+              "CP6.Tests/CrmIdentityWriterPostgreSqlTests.cs",
+              "CP6.Tests/Persistence/Tenancy/IdentityWriterBaselinePostgresTests.cs",
+              "CP6.Tests/Platform/IamAdministrationTestSession.cs",
+              "CP6.Tests/Platform/IamRolePolicyHttpPostgreSqlTests.cs",
+              "CP6.Tests/Platform/IamRolePolicyLegacyPostgreSqlTests.cs",
+              "CP6.Tests/Platform/IamRolePolicyPostgreSqlTests.cs",
+              "CP6.Tests/Platform/IamUserAssignmentsPostgreSqlTests.cs",
+              "CP6.WebApi/Controllers/Sys/IamRolePolicyController.cs",
+              "CP6.WebApi/Controllers/Sys/RoleController.cs",
+              "CP6.WebApi/Controllers/Sys/RolePermController.cs",
+              "CP6.WebApi/Program.cs",
+              "cp6.web/e2e/iam-role-policies-fixture.ts",
+              "cp6.web/e2e/iam-role-policies.spec.ts",
+              "cp6.web/playwright.authentication-recovery.config.ts",
+              "cp6.web/src/api/sys/iam.ts",
+              "cp6.web/src/api/sys/iamPolicy.ts",
+              "cp6.web/src/auth/iamOperationRecovery.ts",
+              "cp6.web/src/views/pms/DataScopeView.vue",
+              "cp6.web/src/views/pms/FieldPermView.vue",
+              "cp6.web/src/views/pms/PermissionView.vue",
+              "cp6.web/src/views/pms/RolePermView.vue",
+              "cp6.web/src/views/pms/RolePolicyEditor.spec.ts",
+              "cp6.web/src/views/pms/RolePolicyEditor.vue",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/09-parallel-development.md",
+              "docs/development/dispatch/20261020-wave29/README.md",
+              "docs/development/evidence/WP02-03/role-policy-administration/DELIVERY.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-20T06:37:05.607441+00:00"
+          },
+          "delivery_ref": {
+            "commit": "3d97c6faa74e9957346da15638893c49c49d82ca",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T063856Z-wave29-delivery/MESSAGE.md",
+            "at": "2026-10-20T06:38:56.136350+00:00",
+            "pr": 4,
+            "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/4",
+            "base": "codex/t02c-entry-handoff-20260921"
+          },
+          "branch_disposition": "deleted-local-and-remote",
+          "workspace_status": "fixed-seat-detached-for-reuse",
+          "seat_released": true,
+          "closed_at": "2026-10-20T06:38:27.296899+00:00"
         },
         {
           "id": "W29-03",
@@ -182163,17 +182335,115 @@
           "title": "组合验证/集中审查及生命周期收尾",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "REGISTERED_NOT_STARTED",
-          "gate": "WAITING_PREDECESSOR_INTEGRATION",
-          "worker_start_received": false,
-          "worker_delivery_received": false,
+          "phase": "CLOSED",
+          "gate": "CONFIRMED",
+          "worker_start_received": true,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": null,
           "planned_scope_ref": "docs/development/dispatch/20261020-wave29/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
-          "deployment_authorized": false
+          "deployment_authorized": false,
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "resources_released": true,
+          "branch_disposition": "Composition verification delivered in original W29-01 and W29-02; no separate business branch",
+          "integration": [
+            {
+              "result": "PASS",
+              "repository": "GTX537/CP6",
+              "source": "a99779d0cabe5a224b0f1489bdb3a9a8abc230bc",
+              "main": "b4c60e5c54ec9db2913bdbe670bcd27485971587",
+              "pr": "https://github.com/GTX537/CP6/pull/354",
+              "paths": [
+                "CP6.Core/Services/Sys/IamAdministrationV1.cs",
+                "CP6.Core/Services/Sys/IamRoleAdministrationV1.cs",
+                "CP6.Tests/Platform/IamRoleAdministrationHttpPostgreSqlTests.cs",
+                "CP6.Tests/Platform/IamRoleAdministrationPostgreSqlTests.cs",
+                "CP6.WebApi/Controllers/Sys/IamRoleController.cs",
+                "CP6.WebApi/Controllers/Sys/RoleController.cs",
+                "CP6.WebApi/Program.cs",
+                "cp6.web/e2e/iam-roles-fixture.ts",
+                "cp6.web/e2e/iam-roles.spec.ts",
+                "cp6.web/e2e/iam-users.spec.ts",
+                "cp6.web/playwright.authentication-recovery.config.ts",
+                "cp6.web/src/api/sys/iam.ts",
+                "cp6.web/src/auth/iamOperationRecovery.ts",
+                "cp6.web/src/views/pms/RoleView.spec.ts",
+                "cp6.web/src/views/pms/RoleView.vue",
+                "cp6.web/src/views/pms/UserView.vue",
+                "docs/development/07-detailed-tasks.md",
+                "docs/development/09-parallel-development.md",
+                "docs/development/dispatch/20261020-wave29/README.md",
+                "docs/development/evidence/WP02-03/role-administration/DELIVERY.md",
+                "docs/development/roadmap.json",
+                "docs/project-memory/05-Completed.md",
+                "docs/project-memory/06-Todo.md",
+                "docs/project-memory/CHANGELOG-AI.md",
+                "docs/project-memory/PROJECT_STATE.md"
+              ],
+              "observed_at": "2026-10-20T06:03:42.699029+00:00"
+            },
+            {
+              "result": "PASS",
+              "repository": "GTX537/CP6",
+              "source": "0a2bc718de2a89e36712632e691889fa32037b92",
+              "main": "c762505cc8c4047bb1faf2166364bb22a2c344b8",
+              "pr": "https://github.com/GTX537/CP6/pull/356",
+              "paths": [
+                "CP6.Core/Persistence/Tenancy/IdentityDirectoryRowSecurityV1.cs",
+                "CP6.Core/Services/Sys/IamAdministrationV1.cs",
+                "CP6.Core/Services/Sys/IamMenuActionAdministrationV1.cs",
+                "CP6.Core/Services/Sys/IamRolePolicyAdministrationV1.cs",
+                "CP6.Core/Services/Sys/RolePermService.cs",
+                "CP6.Persistence.PostgreSql/Migrations/Core/20261020061000_IamPermissionCatalogV1.cs",
+                "CP6.Tests/CrmIdentityWriterPostgreSqlTests.cs",
+                "CP6.Tests/Persistence/Tenancy/IdentityWriterBaselinePostgresTests.cs",
+                "CP6.Tests/Platform/IamAdministrationTestSession.cs",
+                "CP6.Tests/Platform/IamRolePolicyHttpPostgreSqlTests.cs",
+                "CP6.Tests/Platform/IamRolePolicyLegacyPostgreSqlTests.cs",
+                "CP6.Tests/Platform/IamRolePolicyPostgreSqlTests.cs",
+                "CP6.Tests/Platform/IamUserAssignmentsPostgreSqlTests.cs",
+                "CP6.WebApi/Controllers/Sys/IamRolePolicyController.cs",
+                "CP6.WebApi/Controllers/Sys/RoleController.cs",
+                "CP6.WebApi/Controllers/Sys/RolePermController.cs",
+                "CP6.WebApi/Program.cs",
+                "cp6.web/e2e/iam-role-policies-fixture.ts",
+                "cp6.web/e2e/iam-role-policies.spec.ts",
+                "cp6.web/playwright.authentication-recovery.config.ts",
+                "cp6.web/src/api/sys/iam.ts",
+                "cp6.web/src/api/sys/iamPolicy.ts",
+                "cp6.web/src/auth/iamOperationRecovery.ts",
+                "cp6.web/src/views/pms/DataScopeView.vue",
+                "cp6.web/src/views/pms/FieldPermView.vue",
+                "cp6.web/src/views/pms/PermissionView.vue",
+                "cp6.web/src/views/pms/RolePermView.vue",
+                "cp6.web/src/views/pms/RolePolicyEditor.spec.ts",
+                "cp6.web/src/views/pms/RolePolicyEditor.vue",
+                "docs/development/07-detailed-tasks.md",
+                "docs/development/09-parallel-development.md",
+                "docs/development/dispatch/20261020-wave29/README.md",
+                "docs/development/evidence/WP02-03/role-policy-administration/DELIVERY.md",
+                "docs/development/roadmap.json",
+                "docs/project-memory/05-Completed.md",
+                "docs/project-memory/06-Todo.md",
+                "docs/project-memory/CHANGELOG-AI.md",
+                "docs/project-memory/PROJECT_STATE.md"
+              ],
+              "observed_at": "2026-10-20T06:37:05.607441+00:00"
+            }
+          ],
+          "delivery_ref": {
+            "commit": "3d97c6faa74e9957346da15638893c49c49d82ca",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261020T063856Z-wave29-delivery/MESSAGE.md",
+            "at": "2026-10-20T06:38:56.136350+00:00",
+            "pr": 4,
+            "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/4",
+            "base": "codex/t02c-entry-handoff-20260921"
+          },
+          "closed_at": "2026-10-20T06:43:16.456711+00:00"
         }
       ],
       "horizon": {
@@ -182189,7 +182459,18 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Normal PR/remote adoption and finish W29-02; W29-03 closes composition evidence, Handoff and lifecycle without new product scope."
+      "next_action": "Next bounded public-foundation task: issue353 versioned full-int role identity compatibility across authoritative contract, Main writer and CRM reader; preserve existing positive identities and full rollback. Full IAM/Owner/real business remains incomplete; no automatic real-tenant or deployment action.",
+      "closed_at": "2026-10-20T06:43:16.456711+00:00",
+      "handoff_integration": {
+        "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/4",
+        "commit": "d3c58b92ee02356143951994222e7ccc4131d653",
+        "target_head": "d3c58b92ee02356143951994222e7ccc4131d653"
+      },
+      "handoff_resources_released": true,
+      "handoff_branch_disposition": "deleted-local-and-remote",
+      "coordination_closeout_task": "W29-CLOSE",
+      "coordination_closeout_status": "Final documentation PR and manager finish required; product windows and Handoff already closed."
     },
     "wave_history": [
       {
