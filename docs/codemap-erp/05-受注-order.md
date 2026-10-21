@@ -1,5 +1,7 @@
 # 05 · 受注 Order（PA070/080/090）— 主线核心
 
+> 2026-10-21 W36：[订单取消Owner](../design-handbook/remediation/main-order-cancel-owner-v1.md)接实际库存/制造关联；当前权限、原生范围、受控事务/保存点及最终撤权，保留部分结果。表写锁成本与提交后best-effort边界见合同；不代表独立WMS/MES写入或持久投递已完成。下方旧取消描述为历史范围。
+
 > 2026-10-21 W35：[普通写入Owner](../design-handbook/remediation/main-order-write-owner-v1.md)已接Create/Update/Delete，完整对象/字段写权限、原子事务及最终撤权；仅已有创建桥接在提交确认后best-effort执行，取消级联未采用。以下旧源码描述保留历史范围。
 
 > 2026-10-21 W34：普通订单列表/详情/手配号查询、CSV及报表已新增内部Owner读取用途；[当前合同](../design-handbook/remediation/main-order-read-owner-v1.md)。四个新动作只登记目录，不自动给角色授予权限；报表POST不再属于无权限点豁免。原写入权限与其余入口范围保持。以下早期计数/GET豁免是历史范围，不覆盖W33/W34新增Owner。

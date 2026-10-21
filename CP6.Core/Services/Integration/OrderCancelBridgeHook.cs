@@ -20,7 +20,7 @@ namespace CP6.Core.Services.Integration;
 ///
 /// この順序により、在庫整合（AllocatedQty/PhysicalQty）が二重解除されない。
 /// </remarks>
-public class OrderCancelBridgeHook : IOrderCancelBridgeHook
+public partial class OrderCancelBridgeHook : IOrderCancelBridgeHook
 {
     private readonly CP6Context _db;
     private readonly IWorkOrderService _woService;
@@ -42,6 +42,8 @@ public class OrderCancelBridgeHook : IOrderCancelBridgeHook
     public async Task<OrderCancelHookResult> OnOrderCancelledAsync(
         string webOrderNo, bool force, string? userName, Guid correlationId)
     {
+        if (_db.Database.IsNpgsql())
+            throw new CP6.Core.Services.Erp.OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
         // ───── 1. 関連 WorkOrder を探索 ─────
         var relatedWos = await _db.WorkOrders
             .Where(w => w.WebOrderNo == webOrderNo && !w.IsDeleted)

@@ -435,7 +435,12 @@ public partial class OrderService : IOrderService
     //  Phase 6 受注取消 — 状態機 + Bridge Hook 反向級联
     // ═══════════════════════════════════════════════════════════
 
-    public async Task<OrderCancelResult> CancelAsync(string webOrderNo, string reason, bool force, string? userName)
+    public Task<OrderCancelResult> CancelAsync(string webOrderNo, string reason, bool force, string? userName)
+        => _db.Database.IsNpgsql() ? CancelOwnedAsync(webOrderNo, reason, force)
+            : CancelCoreAsync(webOrderNo, reason, force, userName);
+
+    private async Task<OrderCancelResult> CancelCoreAsync(string webOrderNo, string reason, bool force, string? userName,
+        Func<bool, Guid, Task<OrderCancelHookResult>>? ownedHook = null)
     {
         if (string.IsNullOrWhiteSpace(webOrderNo))
             throw new ArgumentException("webOrderNo required", nameof(webOrderNo));
@@ -461,11 +466,13 @@ public partial class OrderService : IOrderService
                 $"PA-MSG-CANCEL-003: 出荷実績あり (ShipStatus={order.ShipStatus}) — 取消不可");
 
         // ───── 1段階：探査モード ─────
-        var probe = await _cancelBridge.OnOrderCancelledAsync(webOrderNo, force: false, userName, correlationId);
+        var probe = ownedHook == null
+            ? await _cancelBridge.OnOrderCancelledAsync(webOrderNo, force: false, userName, correlationId)
+            : await ownedHook(false, correlationId);
 
         var allAutoCancellable =
-            probe.WorkOrders.All(w => w.AutoCancellable)
-            && probe.Outbounds.All(o => o.AutoCancellable);
+            probe.WorkOrders.All(w => w.AutoCancellable || w.Cancelled == true)
+            && probe.Outbounds.All(o => o.AutoCancellable || o.Cancelled == true);
 
         if (!force && !allAutoCancellable)
         {
@@ -474,7 +481,9 @@ public partial class OrderService : IOrderService
         }
 
         // ───── 2段階：実施モード ─────
-        var cascade = await _cancelBridge.OnOrderCancelledAsync(webOrderNo, force: true, userName, correlationId);
+        var cascade = ownedHook == null
+            ? await _cancelBridge.OnOrderCancelledAsync(webOrderNo, force: true, userName, correlationId)
+            : await ownedHook(true, correlationId);
 
         // ───── Order ヘッダ更新 ─────
         var now = DateTime.Now;

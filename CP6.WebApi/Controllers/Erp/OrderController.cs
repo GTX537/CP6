@@ -397,7 +397,7 @@ public class OrderController : LocalizedControllerBase
     /// 受注取消 — POST /api/orders/{webOrderNo}/cancel
     /// </summary>
     /// <remarks>
-    /// force=false（既定）: 探査モード — 関連 WO/Outbound の現状を返すのみ、DB 未変更。
+    /// force=false（既定）: 全関連項目が取消可能なら実施。半路状態ならDB未変更で確認を返す。
     ///   半路状態あれば Outcome=NeedsDecision、画面で確認後 force=true で再呼出。
     /// force=true: 強制実施 — Bridge Hook 経由で全自動取消可能な WO/Outbound を取消。
     /// </remarks>
@@ -422,7 +422,7 @@ public class OrderCancelRequest
     public string Reason { get; set; } = string.Empty;
 
     /// <summary>
-    /// false=探査モード（DB 未変更、半路状態あれば NeedsDecision を返す）/
+    /// false=全項目取消可能なら実施、半路状態あればDB未変更で NeedsDecision /
     /// true=強制実施（半路状態でも自動取消可能な項目は全部取消）
     /// </summary>
     public bool Force { get; set; } = false;

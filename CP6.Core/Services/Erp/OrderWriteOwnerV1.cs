@@ -3,6 +3,8 @@ using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Erp;
+using CP6.Entity.DomainModels.Mes;
+using CP6.Entity.DomainModels.Wms;
 using CP6.Entity.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -62,24 +64,26 @@ public sealed class OrderWriteOwnerV1
                 Can(action) ? FieldPermissionCheckV1.Allowed : FieldPermissionCheckV1.Denied,
                 FieldPermissionCheckV1.Allowed, FieldPermissionCheckV1.Allowed, FieldPermissionCheckV1.NotApplicable,
                 FieldPermissionCheckV1.NotApplicable, FieldPermissionCheckV1.NotApplicable, FieldPermissionCheckV1.Allowed)));
-        var decision = source.Evaluate(source.Versions(MappingVersion), MappingVersion, Mappings, constraints);
+        var mapping = action == "cancel" ? "Main.Order.Cancel.Owner.v1" : MappingVersion;
+        var decision = source.Evaluate(source.Versions(mapping), mapping, Mappings, constraints);
         if (!decision.IsAvailable) throw new CurrentPermissionUnavailableException();
         return new(actor, source, decision, type, await OrderDepartmentScopeV1.Version(db, ct));
     }
 
     private static bool Business(object entity) => entity is Order or OrderDetail or OrderProcess or OrderProcessNote or OrderMaterial;
+    private static bool CancellationBusiness(object entity) => entity is WorkOrder or OutboundOrder or OutboundOrderDetail or Stock or StockTransaction or WmsSequence;
     internal async Task<Result> ExecuteAsync(string action, string? number, OrderDto? request,
         Func<OrderDto?, string, Task<string>> body, CancellationToken ct = default)
     {
         using var linked = CancellationTokenSource.CreateLinkedTokenSource(ct, http.HttpContext?.RequestAborted ?? CancellationToken.None);
         ct=linked.Token; ct.ThrowIfCancellationRequested();
-        if (action is not ("add" or "edit" or "del") || !db.Database.IsNpgsql() || db.Database.CurrentTransaction != null
+        if (action is not ("add" or "edit" or "del" or "cancel") || !db.Database.IsNpgsql() || db.Database.CurrentTransaction != null
             || System.Transactions.Transaction.Current != null || db.ChangeTracker.HasChanges()
-            || db.ChangeTracker.Entries().Any(e => Business(e.Entity)))
+            || db.ChangeTracker.Entries().Any(e => Business(e.Entity) || action == "cancel" && CancellationBusiness(e.Entity)))
             throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503);
         // Freeze the entire nested graph before any authority or row-lock wait.
         var frozen = request == null ? null : JsonSerializer.Deserialize<OrderDto>(JsonSerializer.SerializeToUtf8Bytes(request));
-        if (action != "del" && (frozen?.Details == null || frozen.Details.Count is < 1 or > OrderService.MaxDetailLimit
+        if (action is not ("del" or "cancel") && (frozen?.Details == null || frozen.Details.Count is < 1 or > OrderService.MaxDetailLimit
             || frozen.Details.Any(d => d == null || d.Processes == null || d.ProcessNotes == null || d.Materials == null
                 || d.Processes.Any(p => p == null) || d.ProcessNotes.Any(p => p == null) || d.Materials.Any(p => p == null))
             || string.IsNullOrWhiteSpace(frozen.CustomerCd) || string.IsNullOrWhiteSpace(frozen.OrderType)))
@@ -121,7 +125,7 @@ public sealed class OrderWriteOwnerV1
             Exception? rollbackFailure=null;
             if (tx!=null) try { await tx.RollbackAsync(CancellationToken.None); } catch(Exception failure) { rollbackFailure=failure; }
             if (committing || rollbackFailure!=null)
-                throw new OrderPriceCorrectionException("ORDER_WRITE_OUTCOME_UNKNOWN",503,
+                throw new OrderPriceCorrectionException(action == "cancel" ? "ORDER_CANCEL_OUTCOME_UNKNOWN" : "ORDER_WRITE_OUTCOME_UNKNOWN",503,
                     rollbackFailure==null ? error : new AggregateException(error,rollbackFailure));
             if (error is OrderPriceCorrectionException or DbUpdateConcurrencyException) throw;
             if (error is OperationCanceledException && ct.IsCancellationRequested) throw;
@@ -137,8 +141,9 @@ public sealed class OrderWriteOwnerV1
     }
     private static void RequireFields(Authority authority,string action)
     {
-        // Logical deletion has its own action and object grant, and never changes price/amount values.
-        if(action!="del" && (!authority.Decision.Fields["UnitPrice"].CanWrite || !authority.Decision.Fields["Amount"].CanWrite))
+        // Deletion/cancellation have independent actions and never write price/amount values.
+        // Cancellation delegates only stored reservation release and state transitions; no price data is returned.
+        if(action is not ("del" or "cancel") && (!authority.Decision.Fields["UnitPrice"].CanWrite || !authority.Decision.Fields["Amount"].CanWrite))
             throw new OrderPriceCorrectionException("FIELD_WRITE_FORBIDDEN",403);
     }
     private async Task RequireObject(Authority authority,string number,bool deleted,CancellationToken ct)

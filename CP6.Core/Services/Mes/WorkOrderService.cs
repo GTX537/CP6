@@ -348,6 +348,8 @@ public class WorkOrderService : IWorkOrderService
     //  ME020 Phase 6 — 受注取消連動：指図取消
     // ═══════════════════════════════════════════════════════════
 
+    internal bool OwnsCancellation(CP6Context db) => ReferenceEquals(_db,db);
+
     public async Task<bool> CancelAsync(string workOrderNo, string reason, string? userName)
     {
         if (string.IsNullOrWhiteSpace(workOrderNo))
