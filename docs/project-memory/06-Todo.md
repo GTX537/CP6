@@ -1,5 +1,12 @@
 # 当前待办与优先级
 
+## 2026-10-21：W37 独立制造／出库Owner候选
+
+WorkOrder/Outbound当前原会话Owner、独立动作/完整对象/可信订单部门/实际仓库区域和字段用途已接线，输入冻结及最终撤权贯穿受控PG事务。原桥只获具体父项的内部生成委托；库存/流水/序号/子图一致提交，UNKNOWN不重放，通知/原ERP/FIN桥确认提交后best-effort。四页面防重复、旧身份/目标响应和读回误重提。实际适用164项.NET成功（143复用+21定向PG/HTTP）、9前端及完整typecheck通过；一次作者审查发现的错误转换/NoOp路由/页面对象观察问题已修正。[DELIVERY](../development/evidence/WP02-03/operations-owner/DELIVERY.md)。
+
+本窗只覆盖两个主服务/控制器；独立无订单部门绑定、其他WMS/MES入口、持久operation/投递和真实验收仍独立，125目标/247运行不提升。10处自有测试data已回收；正常PR/Handoff/原分支finish待执行。零新树/副本/代理，无Actions/现有环境迁移/真实tenant授权/生产。
+
+
 ## 2026-10-21：W36 订单取消级联Owner已集成
 
 [产品PR #378](https://github.com/GTX537/CP6/pull/378)已合入远端main`d8c9f549e9733ee6c76b68f5120064826e7c8bfd`，[Handoff PR #12](https://github.com/GTX537/CP6.AI-Handoff/pull/12)已合入默认目标，#377回归及远端采用后关闭。119相关.NET（含原生PG/HTTP）、18前端及类型检查通过，最终0失败/跳过；一次作者审查发现的状态/数量矛盾已修正验证。
@@ -346,7 +353,7 @@ W20-02复用原目录实现显式安装、只读inspect、目标身份/结构漂
 
 ## 2026-10-18：第二十轮持续目标与四窗口登记
 
-已核对第十九轮最终main `d70d40ef` / Handoff `dca163c`，旧四窗口Closed。本轮单总控继续[24小时计划](../development/dispatch/20261018-wave20/README.md)：普通PostgreSQL身份当前授权、显式fresh安装/inspect/漂移、实际HTTP宿主、受影响串联与集成收尾。持续目标active，检查点America/New_York 2026-10-19 22:30:42。
+已核对第十九轮最终main `d70d40ef` / Handoff `dca164c`，旧四窗口Closed。本轮单总控继续[24小时计划](../development/dispatch/20261018-wave20/README.md)：普通PostgreSQL身份当前授权、显式fresh安装/inspect/漂移、实际HTTP宿主、受影响串联与集成收尾。持续目标active，检查点America/New_York 2026-10-19 22:30:42。
 
 W20-01有限窗口已登记，规划合入后真实START；当前没有本轮产品通过结果。只复用原目录/缓存，PG唯一、精简验证与一次作者集中审查；无新代理/工作树、Actions、既有库修改或部署。完整公共基础/CRM/Owner最终门/真实业务仍未完成，下方旧时点记录保留。
 
@@ -991,15 +998,15 @@ PLM-ITER/REL原验收历史缺口不能找回，S00补订明确版本的替代�
 
 普通PG API/worker临时guard已移除，仅在同一部署使用所选Provider及连接；旧记录中“guard保留”是当时状态。R2/GHCR正式门禁和SQL生产基线不变，未启动/取消远程Actions、修改触发/保护、切换既有环境或部署生产。已有SQL数据搬迁、同实例混库及外部CRM全面改造不在此目标内。
 
-## 2026-10-04：BUG163 已交付，WP6 接入当前版本验收
+## 2026-10-04：BUG164 已交付，WP6 接入当前版本验收
 
-[BUG163](https://github.com/GTX537/CP6/issues/163) 已由 [PR164](https://github.com/GTX537/CP6/pull/164) 正常合入远端 main `6322ac152cab7d462719169fb0301f49e9ee39ba` 并关闭，WP6 已接入。WMS 原八项＋新增十七项两库各25/25、零失败/跳过；合并后两库各3/3。两个修复测试库及原 WP6 SQL 失败库均已普通 DROP 并确认不存在；SQL 实际持续会话超时拒绝、短暂会话自行结束后清理通过，原 Failed summary 与 core/WMS TRX 字节保持。[专项记录](../audits/2026-10-03-bug-163-wms-local-transactions/README.md)保留111份原件及36份交付、冒烟、清理原件。
+[BUG164](https://github.com/GTX537/CP6/issues/164) 已由 [PR164](https://github.com/GTX537/CP6/pull/164) 正常合入远端 main `6322ac152cab7d462719169fb0301f49e9ee39ba` 并关闭，WP6 已接入。WMS 原八项＋新增十七项两库各25/25、零失败/跳过；合并后两库各3/3。两个修复测试库及原 WP6 SQL 失败库均已普通 DROP 并确认不存在；SQL 实际持续会话超时拒绝、短暂会话自行结束后清理通过，原 Failed summary 与 core/WMS TRX 字节保持。[专项记录](../audits/2026-10-03-bug-164-wms-local-transactions/README.md)保留111份原件及36份交付、冒烟、清理原件。
 
 当前必需清单只扩展 WMS 为25项，其他61入口不变。最终入口仍为 PG Matrix34、SQL Matrix37、两库 Application各17，共105个适用入口；使用新的 `wms-local-transaction-fix` 运行目录。编译输入已改变，需当前代码七项构建及新的完整双库验收；后续 SQL 可在源码与完整运行文件逐字节一致后复用 PG 的真实构建，两库应用使用同一新发布产物。此前 PG Matrix34/34、旧发布物应用17/17保留历史来源，不代称当前最终验收。WP6 与父任务#134仍未完成；最终恢复审计、集中审查、归档与正常远端交付待完成。没有启动远程 Actions、改变生产门禁或部署既有环境。下方记录保留历史时点。
 
-## 2026-10-03 历史快照（BUG163 合并前）：WMS 事务修复本地通过，交付待完成
+## 2026-10-03 历史快照（BUG164 合并前）：WMS 事务修复本地通过，交付待完成
 
-最新进展（2026-10-03，BUG163 Open）：WMS LPN 四处和 Label 两处自建 ambient 事务已修复为独立调用时的 DbContext 本地 ReadCommitted 事务，保留调用方已有本地事务所有权及预打开连接的 ambient Required/abort 语义。有效种子 RED SQL17=3P/14F、PG17=10P/7F；修复后两库原8＋新17各25/25，零失败/跳过，2492源码输入与同一构建运行文件核对，一次事务专项审查无P0/P1/P2阻断；111份公共原件及原始/中间失败保留，见[BUG163本地证据](../audits/2026-10-03-bug-163-wms-local-transactions/README.md)。正常远端交付、合并后冒烟及三份自有库（修复两库与原WP6 SQL一库）清理尚待完成；父Issue134/WP6仍Open，最终双库Matrix/Application与恢复验收需要适用修复后的源码。未启动远程Actions，未变更生产门禁或部署环境。
+最新进展（2026-10-03，BUG164 Open）：WMS LPN 四处和 Label 两处自建 ambient 事务已修复为独立调用时的 DbContext 本地 ReadCommitted 事务，保留调用方已有本地事务所有权及预打开连接的 ambient Required/abort 语义。有效种子 RED SQL17=3P/14F、PG17=10P/7F；修复后两库原8＋新17各25/25，零失败/跳过，2492源码输入与同一构建运行文件核对，一次事务专项审查无P0/P1/P2阻断；111份公共原件及原始/中间失败保留，见[BUG164本地证据](../audits/2026-10-03-bug-164-wms-local-transactions/README.md)。正常远端交付、合并后冒烟及三份自有库（修复两库与原WP6 SQL一库）清理尚待完成；父Issue134/WP6仍Open，最终双库Matrix/Application与恢复验收需要适用修复后的源码。未启动远程Actions，未变更生产门禁或部署环境。
 
 ## 2026-10-03：BUG161 已交付，WP6 继续最终双库验收
 
@@ -1160,7 +1167,7 @@ SQL 完整目录发现四条 Order 外键缺失，由独立 [BUG #141](https://g
 
 ## 2026-10-02：DB-COMPAT-01 WP1 待正常 PR 交付，随后执行 WP2
 
-[Issue #134](https://github.com/GTX537/CP6/issues/134) 是本对话持续目标，六阶段按[计划](../superpowers/plans/2026-10-02-database-compatibility.md)推进。WP1 本地门禁已完成：配置测试 **133/133，零跳过**（含原 38 项，不重复相加）；SQL **28 Passed / 1 NotApplicable / 0 Failed / 0 Blocked**，PG **31 Passed / 1 Rejected / 0 Failed / 0 Blocked**。两库相同源码与实际运行二进制 fingerprint 为 `0F0B443961674D40B8163768225AE12D1A55CD18F28FCE0D5F16BB0CB91C6BB3`，固定实际 Platform **0.10.2**。已选定 PG 数据库生成 **8 字节 bytea token** 与独立持久化 tenant generation / v2 cursor，并完成真实 `40001` 和严格 UTC 试验；见[WP1 决策](../audits/database-compatibility/WP1-DECISIONS.md)及[探针证据](../audits/database-compatibility/WP1-PROBE.md)。
+[Issue #134](https://github.com/GTX537/CP6/issues/134) 是本对话持续目标，六阶段按[计划](../superpowers/plans/2026-10-02-database-compatibility.md)推进。WP1 本地门禁已完成：配置测试 **133/133，零跳过**（含原 38 项，不重复相加）；SQL **28 Passed / 1 NotApplicable / 0 Failed / 0 Blocked**，PG **31 Passed / 1 Rejected / 0 Failed / 0 Blocked**。两库相同源码与实际运行二进制 fingerprint 为 `0F0B443961674D40B8164768225AE12D1A55CD18F28FCE0D5F16BB0CB91C6BB3`，固定实际 Platform **0.10.2**。已选定 PG 数据库生成 **8 字节 bytea token** 与独立持久化 tenant generation / v2 cursor，并完成真实 `40001` 和严格 UTC 试验；见[WP1 决策](../audits/database-compatibility/WP1-DECISIONS.md)及[探针证据](../audits/database-compatibility/WP1-PROBE.md)。
 
 任务负责人已凭准确库名、owner 标记及 **0 对象 / 0 连接**清理两库，无 FORCE 或会话终止，专用 PG 角色保留。当前尚未远端合并；下一步按正常 PR 流程交付 WP1，核对远端 main 包含性后，从最新已确认主线创建独立 WP2 分支。
 
@@ -1580,7 +1587,7 @@ C01 的实际密码/PKCE、服务令牌、固定 Platform/CRM 消费者、严格
 
 ## P10 最新阻塞：cosign 原生扫描不满足漏洞门禁（2026-09-08 UTC）
 
-- [x] 安全诊断 PR #89 正常合入 `a41711dd55a093ab0ed127d599e0e7bcf11d548d` 且七项 PR/五个 main 工作流成功；新 run `34234554610` attempt 1 定位 CRM pull-request 403，owner 调整后 attempt 2 完成真实输入收集、1634 项全量测试和 OCI push。
+- [x] 安全诊断 PR #89 正常合入 `a41711dd55a093ab0ed127d599e0e7bcf11d548d` 且七项 PR/五个 main 工作流成功；新 run `34234554610` attempt 1 定位 CRM pull-request 403，owner 调整后 attempt 2 完成真实输入收集、1644 项全量测试和 OCI push。
 - [x] 复现并在任务分支修正 Trivy `--image-src registry` 为 `remote`；8/8 wiring 回归和已有镜像的原生远端扫描建立证据。未合入 main，不算完整交付。
 - [ ] 先由 owner 决定 cosign 依赖修复路径：当前官方最新 3.1.3 内存在 1 CRITICAL / 14 HIGH，尚无更新官方二进制。自建补丁版或改变分发来源需要受审供应链决定，禁止忽略、过滤或移除被扫描工具规避门禁。
 - [ ] 完成获批修复的真实扫描、签名兼容与完整 suite，再按正常 PR/exact-main 门禁交付；只有已知阻塞排除后才请求新 validation 和 owner 审批，不重复运行已知失败的组合。

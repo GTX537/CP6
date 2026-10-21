@@ -56,7 +56,7 @@ public class MesPermissionSeedTests
     }
 
     [Fact]
-    public void EnsureSeeded_SeedsExactly25TuplesPerTenant_ForBothMenuAndRoleAction()
+    public void EnsureSeeded_AddsOwnerCatalogWithoutGrantingNewAuthority_PerTenant()
     {
         using var db = NewDb();
         SeedTenantsAndMenus(db);
@@ -71,14 +71,15 @@ public class MesPermissionSeedTests
                 .Where(x => x.TenantId == tid && x.RoleId == 1).ToList();
 
             // 元组闭环计数：每租户各得全套 25。
-            Assert.Equal(25, menuActions.Count);
+            Assert.Equal(27, menuActions.Count);
             Assert.Equal(25, roleActions.Count);
 
             // 逐元组精确匹配（漏种 0 / 多种 0）。
             var maSet = menuActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
             var raSet = roleActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
             var expected = ExpectedTuples.ToHashSet();
-            Assert.Equal(expected, maSet);
+            Assert.Equal(expected.Concat(new[]{(302,"query"),(302,"cancel")}).ToHashSet(), maSet);
+            Assert.DoesNotContain(roleActions,a=>a.MenuId==302 && a.ActionCode is "query" or "cancel");
             Assert.Equal(expected, raSet);
         }
     }
@@ -98,7 +99,7 @@ public class MesPermissionSeedTests
         Assert.Equal(ra1, db.Sys_RoleActions.IgnoreQueryFilters().Count());
 
         // 2 租户 × 25 元组 = 50。
-        Assert.Equal(50, ma1);
+        Assert.Equal(54, ma1);
         Assert.Equal(50, ra1);
     }
 
@@ -150,5 +151,17 @@ public class MesPermissionSeedTests
 
         Assert.Equal(0, db.Sys_MenuActions.IgnoreQueryFilters().Count());
         Assert.Equal(0, db.Sys_RoleActions.IgnoreQueryFilters().Count());
+    }
+
+    [Fact]
+    public void Outbound_query_catalog_is_idempotent_and_does_not_grant_admin_or_other_roles()
+    {
+        using var db=NewDb();SeedTenantsAndMenus(db);WmsMenuSeed.EnsureSeeded(db);
+        WmsPermissionSeed.EnsureSeeded(db);WmsPermissionSeed.EnsureSeeded(db);
+        foreach(var tid in new[]{TenantA,TenantB})
+        {
+            Assert.Single(db.Sys_MenuActions.IgnoreQueryFilters().Where(a=>a.TenantId==tid && a.MenuId==408 && a.ActionCode=="query"));
+            Assert.Empty(db.Sys_RoleActions.IgnoreQueryFilters().Where(a=>a.TenantId==tid && a.MenuId==408 && a.ActionCode=="query"));
+        }
     }
 }

@@ -1,5 +1,7 @@
 # WMS 写端点 × 权限键清单（M-WMS Task 1 真相源）
 
+> W37（2026-10-21）补充：[Operations Owner v1](../design-handbook/remediation/main-operations-owner-v1.md)要求制造/出库query目录及MES服务cancel目录，新增目录不自动授予任何角色；制造next-seq改用POST，保留带CSRF的GET别名。历史写动作/计数是原轮次范围，当前C#种子区分OwnerActions与历史Actions，不能按“GET无权限”旧约定移除此窗query。
+
 > 生成于 2026-07-10。本表是 M-WMS 横切接线波的**唯一真相源**：T2（`Sys_MenuAction`/`Sys_RoleAction` 逐租户种子）与 T3（逐端点贴 `[RequirePermission("menu_key","action")]`）均以本表为准。
 > 依据：`docs/architecture/00-横切接线规范.md` 第一章（功能级四粒度）+ 样板 `CP6.WebApi/Controllers/Space/LocationPublishController.cs` + 现有 `docs/seeds/wms-menu-seed.sql`（48 条菜单，**均缺 MenuKey**——这正是本波要补的）。
 > **本任务只产出本文档，不改任何控制器/种子/测试代码。**

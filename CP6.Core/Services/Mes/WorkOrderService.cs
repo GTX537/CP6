@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Mes;
 using CP6.Entity.DTOs.Mes;
 using Microsoft.EntityFrameworkCore;
@@ -8,15 +9,17 @@ namespace CP6.Core.Services.Mes;
 /// <summary>
 /// MSBBME020 / 030 — 製造指図 業務サービス実装
 /// </summary>
-public class WorkOrderService : IWorkOrderService
+public partial class WorkOrderService : IWorkOrderService
 {
     private readonly CP6Context _db;
     private readonly IMesSequenceService _seq;
     private readonly IWmsBridgeHook _wmsBridge;
+    private readonly OperationsOwnerV1? _owner;
     private const string WorkOrderSeqKey = "WO";
 
-    public WorkOrderService(CP6Context db, IMesSequenceService seq, IWmsBridgeHook wmsBridge)
+    public WorkOrderService(CP6Context db, IMesSequenceService seq, IWmsBridgeHook wmsBridge, OperationsOwnerV1? owner = null)
     {
+        _owner = owner;
         _db = db;
         _seq = seq;
         _wmsBridge = wmsBridge;
@@ -26,7 +29,7 @@ public class WorkOrderService : IWorkOrderService
     //  Read
     // ═══════════════════════════════════════════════════════════
 
-    public async Task<WorkOrderDto?> GetByNoAsync(string workOrderNo)
+    private async Task<WorkOrderDto?> GetByNoCoreAsync(string workOrderNo)
     {
         var wo = await _db.WorkOrders.AsNoTracking()
             .FirstOrDefaultAsync(x => x.WorkOrderNo == workOrderNo && !x.IsDeleted);
@@ -55,9 +58,9 @@ public class WorkOrderService : IWorkOrderService
         return dto;
     }
 
-    public async Task<PagedResultDto<WorkOrderDto>> SearchAsync(WorkOrderSearchQuery q)
+    private async Task<PagedResultDto<WorkOrderDto>> SearchCoreAsync(WorkOrderSearchQuery q, IQueryable<WorkOrder>? allowed = null)
     {
-        var query = _db.WorkOrders.AsNoTracking().Where(x => !x.IsDeleted);
+        var query = (allowed ?? _db.WorkOrders.AsNoTracking()).Where(x => !x.IsDeleted);
 
         if (!string.IsNullOrWhiteSpace(q.BaseCd)) query = query.Where(x => x.BaseCd == q.BaseCd);
         if (!string.IsNullOrWhiteSpace(q.WorkOrderNo)) query = query.Where(x => x.WorkOrderNo.Contains(q.WorkOrderNo));
@@ -143,9 +146,9 @@ public class WorkOrderService : IWorkOrderService
     //  Create / Update / Delete
     // ═══════════════════════════════════════════════════════════
 
-    public async Task<string> CreateAsync(WorkOrderDto dto, string? userName)
+    private async Task<string> CreateCoreAsync(WorkOrderDto dto, string? userName, bool owned = false)
     {
-        await using var tx = await _db.Database.BeginTransactionAsync();
+        await using var tx = owned ? null : await _db.Database.BeginTransactionAsync();
 
         var no = await _seq.NextAsync(WorkOrderSeqKey);
         var now = DateTime.Now;
@@ -218,11 +221,11 @@ public class WorkOrderService : IWorkOrderService
         }
 
         await _db.SaveChangesAsync();
-        await tx.CommitAsync();
+        if (tx != null) await tx.CommitAsync();
         return no;
     }
 
-    public async Task UpdateAsync(string workOrderNo, WorkOrderDto dto, string? userName)
+    private async Task UpdateCoreAsync(string workOrderNo, WorkOrderDto dto, string? userName, bool owned = false)
     {
         var wo = await _db.WorkOrders.FirstOrDefaultAsync(x => x.WorkOrderNo == workOrderNo && !x.IsDeleted)
             ?? throw new InvalidOperationException("ME-MSG-043");
@@ -230,7 +233,7 @@ public class WorkOrderService : IWorkOrderService
         if (wo.Status != 0 && wo.Status != 1)
             throw new InvalidOperationException("ME-MSG-042"); // このステータスでは操作できません
 
-        await using var tx = await _db.Database.BeginTransactionAsync();
+        await using var tx = owned ? null : await _db.Database.BeginTransactionAsync();
         var now = DateTime.Now;
 
         wo.OrderNo1 = dto.OrderNo1;
@@ -301,10 +304,10 @@ public class WorkOrderService : IWorkOrderService
         }
 
         await _db.SaveChangesAsync();
-        await tx.CommitAsync();
+        if (tx != null) await tx.CommitAsync();
     }
 
-    public async Task DeleteAsync(string workOrderNo, byte[]? rowVersion, string? userName)
+    private async Task DeleteCoreAsync(string workOrderNo, byte[]? rowVersion, string? userName)
     {
         var wo = await _db.WorkOrders.FirstOrDefaultAsync(x => x.WorkOrderNo == workOrderNo && !x.IsDeleted)
             ?? throw new InvalidOperationException("ME-MSG-043");
@@ -320,7 +323,7 @@ public class WorkOrderService : IWorkOrderService
         await _db.SaveChangesAsync();
     }
 
-    public async Task IssueAsync(string workOrderNo, string? userName)
+    private async Task IssueCoreAsync(string workOrderNo, string? userName, bool deferBridge = false)
     {
         var wo = await _db.WorkOrders.FirstOrDefaultAsync(x => x.WorkOrderNo == workOrderNo && !x.IsDeleted)
             ?? throw new InvalidOperationException("ME-MSG-043");
@@ -339,10 +342,10 @@ public class WorkOrderService : IWorkOrderService
         await _db.SaveChangesAsync();
 
         // WM-3.5：WMS 自動展開フック（best-effort、失敗しても発行は成功とする）
-        await _wmsBridge.OnWorkOrderIssuedAsync(workOrderNo, userName);
+        if (!deferBridge) await _wmsBridge.OnWorkOrderIssuedAsync(workOrderNo, userName);
     }
 
-    public Task<string> NextSequenceAsync() => _seq.NextAsync(WorkOrderSeqKey);
+
 
     // ═══════════════════════════════════════════════════════════
     //  ME020 Phase 6 — 受注取消連動：指図取消
@@ -350,7 +353,7 @@ public class WorkOrderService : IWorkOrderService
 
     internal bool OwnsCancellation(CP6Context db) => ReferenceEquals(_db,db);
 
-    public async Task<bool> CancelAsync(string workOrderNo, string reason, string? userName)
+    private async Task<bool> CancelCoreAsync(string workOrderNo, string reason, string? userName)
     {
         if (string.IsNullOrWhiteSpace(workOrderNo))
             throw new ArgumentException("workOrderNo required", nameof(workOrderNo));
@@ -383,7 +386,7 @@ public class WorkOrderService : IWorkOrderService
     //  ME020 — 受注 → 指図 自動展開
     // ═══════════════════════════════════════════════════════════
 
-    public async Task<List<string>> ExpandFromOrderAsync(ExpandFromOrderRequest req, string? userName)
+    private async Task<List<string>> ExpandFromOrderCoreAsync(ExpandFromOrderRequest req, string? userName, bool owned = false)
     {
         if (string.IsNullOrWhiteSpace(req.WebOrderNo))
             throw new InvalidOperationException("ME-MSG-001"); // 手配NOが未入力です
@@ -400,7 +403,7 @@ public class WorkOrderService : IWorkOrderService
 
         var createdNos = new List<string>();
 
-        await using var tx = await _db.Database.BeginTransactionAsync();
+        await using var tx = owned ? null : await _db.Database.BeginTransactionAsync();
         var now = DateTime.Now;
 
         foreach (var d in details)
@@ -492,7 +495,7 @@ public class WorkOrderService : IWorkOrderService
         }
 
         await _db.SaveChangesAsync();
-        await tx.CommitAsync();
+        if (tx != null) await tx.CommitAsync();
         return createdNos;
     }
 

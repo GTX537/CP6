@@ -1,5 +1,7 @@
 # MES 写端点 × 権限键清单（M-MES Task 1 真相源）
 
+> W37（2026-10-21）补充：[Operations Owner v1](../design-handbook/remediation/main-operations-owner-v1.md)要求制造/出库query目录及MES服务cancel目录，新增目录不自动授予任何角色；制造next-seq改用POST，保留带CSRF的GET别名。历史写动作/计数是原轮次范围，当前C#种子区分OwnerActions与历史Actions，不能按“GET无权限”旧约定移除此窗query。
+
 > 生成于 2026-07-12。本表是 **M-MES 横切接线波的唯一真相源**：T2（`Sys_MenuAction`/`Sys_RoleAction` 逐租户种子 + 菜单 MenuKey 回填/显式赋值）、T3（逐端点贴 `[RequirePermission("menu-key","action")]`）、T4（反射 fail-closed 测试）均以本表为准。
 > 依据：`docs/architecture/00-横切接线规范.md` 第一章（功能级四粒度）+ 同型先例 `docs/seeds/erp-permission-keys.md` / `docs/seeds/wms-permission-keys.md`（格式基准）+ 现有 MES 菜单种子 `CP6.WebApi/Program.cs` MenuId 300–315 + 逐 Service 实现读证的只读 POST 豁免判定。
 > 扫描范围：`CP6.WebApi/Controllers/Mes/` 下 **全部 11 个控制器**（计划口径 10，实扫 11，差异见 §七）。

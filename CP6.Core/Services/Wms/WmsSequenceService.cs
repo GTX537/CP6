@@ -15,6 +15,8 @@ public class WmsSequenceService : IWmsSequenceService
     /// <summary>全期間スコープを表す番兵（永不重置）</summary>
     private const string GlobalScope = "*";
 
+    internal bool Owns(CP6Context context)=>ReferenceEquals(_db,context);
+
     public async Task<string> NextAsync(string prefix, DateTime? date = null)
     {
         var d = (date ?? DateTime.Today).Date;

@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration;
 using CP6.Core.Services.Fin;
 using CP6.Entity.DomainModels;
 using CP6.Entity.DomainModels.Mes;
@@ -16,7 +17,7 @@ namespace CP6.Core.Services.Wms;
 /// FIFO + 期限優先 引当：Stock を ReceiveDate ASC, ExpiryDate ASC で抽出して順次採用。
 /// 第一版では 1 明細 = 1 ロット の引当に限定（単一 Stock 行で必要量を確保できないと例外）。
 /// </remarks>
-public class OutboundService : IOutboundService
+public partial class OutboundService : IOutboundService
 {
     private readonly CP6Context _db;
     private readonly IWmsSequenceService _seq;
@@ -28,6 +29,7 @@ public class OutboundService : IOutboundService
     private readonly IMaterialShortageNotifier? _shortageNotifier;
     private readonly IOutboundRoutingService? _routing;
 
+    private readonly OperationsOwnerV1? _owner;
     private const string OrderPrefix = "OUT";
     private const string PackagePrefix = "PKG";
 
@@ -40,8 +42,10 @@ public class OutboundService : IOutboundService
         IMaterialShortageService? shortage = null,
         IMaterialShortageNotifier? shortageNotifier = null,
         IOutboundRoutingService? routing = null,
-        IFinBridgeHook? finBridge = null)
+        IFinBridgeHook? finBridge = null,
+        OperationsOwnerV1? owner = null)
     {
+        _owner = owner;
         _db = db;
         _seq = seq;
         _stock = stock;
@@ -57,9 +61,9 @@ public class OutboundService : IOutboundService
     //  CRUD
     // ═══════════════════════════════════════════════════════════
 
-    public async Task<List<OutboundOrder>> SearchOrdersAsync(OutboundOrderSearchQuery q)
+    private async Task<List<OutboundOrder>> SearchOrdersCoreAsync(OutboundOrderSearchQuery q, IQueryable<OutboundOrder>? allowed = null)
     {
-        var query = _db.OutboundOrders.AsNoTracking().Where(x => !x.IsDeleted);
+        var query = (allowed ?? _db.OutboundOrders.AsNoTracking()).Where(x => !x.IsDeleted);
         if (!string.IsNullOrWhiteSpace(q.OutboundNo)) query = query.Where(x => x.OutboundNo.Contains(q.OutboundNo));
         if (q.OutboundType.HasValue) query = query.Where(x => x.OutboundType == q.OutboundType.Value);
         if (q.Status.HasValue) query = query.Where(x => x.Status == q.Status.Value);
@@ -77,7 +81,7 @@ public class OutboundService : IOutboundService
             .ToListAsync();
     }
 
-    public async Task<OutboundOrderDto?> GetOrderAsync(string outboundNo)
+    private async Task<OutboundOrderDto?> GetOrderCoreAsync(string outboundNo)
     {
         var h = await _db.OutboundOrders.AsNoTracking()
             .FirstOrDefaultAsync(x => x.OutboundNo == outboundNo && !x.IsDeleted);
@@ -123,7 +127,7 @@ public class OutboundService : IOutboundService
         };
     }
 
-    public async Task<string> CreateOrderAsync(OutboundOrderDto dto, string? userName)
+    private async Task<string> CreateOrderCoreAsync(OutboundOrderDto dto, string? userName)
     {
         ValidateOrder(dto);
         var no = await _seq.NextAsync(OrderPrefix);
@@ -172,7 +176,7 @@ public class OutboundService : IOutboundService
         return Task.CompletedTask;
     }
 
-    public async Task UpdateOrderAsync(string outboundNo, OutboundOrderDto dto, string? userName)
+    private async Task UpdateOrderCoreAsync(string outboundNo, OutboundOrderDto dto, string? userName)
     {
         var header = await _db.OutboundOrders
             .FirstOrDefaultAsync(x => x.OutboundNo == outboundNo && !x.IsDeleted)
@@ -221,7 +225,7 @@ public class OutboundService : IOutboundService
         await _db.SaveChangesAsync();
     }
 
-    public async Task DeleteOrderAsync(string outboundNo, string? userName)
+    private async Task DeleteOrderCoreAsync(string outboundNo, string? userName)
     {
         var header = await _db.OutboundOrders
             .FirstOrDefaultAsync(x => x.OutboundNo == outboundNo && !x.IsDeleted)
@@ -236,7 +240,7 @@ public class OutboundService : IOutboundService
         await _db.SaveChangesAsync();
     }
 
-    public async Task ConfirmOrderAsync(string outboundNo, string? userName)
+    private async Task ConfirmOrderCoreAsync(string outboundNo, string? userName)
     {
         var header = await _db.OutboundOrders
             .FirstOrDefaultAsync(x => x.OutboundNo == outboundNo && !x.IsDeleted)
@@ -255,8 +259,6 @@ public class OutboundService : IOutboundService
         await _db.SaveChangesAsync();
     }
 
-    public Task CancelOrderAsync(string outboundNo, string? userName)
-        => CancelCoreAsync(outboundNo,userName,false);
 
     internal bool OwnsCancellation(CP6Context db) => ReferenceEquals(_db,db)
         && _stock is StockMovementService stock && stock.Owns(db);
@@ -282,7 +284,8 @@ public class OutboundService : IOutboundService
             throw new InvalidOperationException("WM-MSG-043: 完了済の指示は取消不可");
 
         // 引当済の場合は UNRSV で在庫を戻す
-        if (header.Status == OutboundOrderStatus.Allocated || header.Status == OutboundOrderStatus.Picking)
+        if (header.Status == OutboundOrderStatus.Allocated || header.Status == OutboundOrderStatus.Picking
+            || (deferEffects && header.Status == OutboundOrderStatus.PartialAllocated))
         {
             var details = await _db.OutboundOrderDetails
                 .Where(d => d.OutboundNo == outboundNo && !d.IsDeleted)
@@ -331,7 +334,7 @@ public class OutboundService : IOutboundService
     //  StartPicking — Allocated → Picking 状态遷移
     // ═══════════════════════════════════════════════════════════
 
-    public async Task StartPickingAsync(string outboundNo, string? userName)
+    private async Task StartPickingCoreAsync(string outboundNo, string? userName)
     {
         var header = await _db.OutboundOrders
             .FirstOrDefaultAsync(x => x.OutboundNo == outboundNo && !x.IsDeleted)
@@ -354,9 +357,9 @@ public class OutboundService : IOutboundService
     /// 指定倉庫内で、需要量を単一ロットで賄える在庫を FEFO（期限→受入日→ロット）で 1 行探す。
     /// QC・リコール・所有者・利用可能数の各条件は従来と同一。多倉庫ルーティングの各倉庫評価で使用。
     /// </summary>
-    private Task<Stock?> FindCandidateStockAsync(string warehouseCd, string productCd, decimal needed)
+    private Task<Stock?> FindCandidateStockAsync(string warehouseCd, string productCd, decimal needed, OperationsAccessV1? access = null)
     {
-        return _db.Stocks
+        return (access == null ? _db.Stocks : access.Stocks(_db.Stocks))
             .Where(s => s.ProductCd == productCd
                         && s.WarehouseCd == warehouseCd
                         && !s.IsDeleted
@@ -378,7 +381,7 @@ public class OutboundService : IOutboundService
             .FirstOrDefaultAsync();
     }
 
-    public async Task AllocateAsync(string outboundNo, string? userName)
+    private async Task AllocateCoreAsync(string outboundNo, string? userName, OperationsAccessV1? access = null, List<Func<Task>>? effects = null)
     {
         var header = await _db.OutboundOrders
             .FirstOrDefaultAsync(x => x.OutboundNo == outboundNo && !x.IsDeleted)
@@ -409,7 +412,7 @@ public class OutboundService : IOutboundService
             string chosenWarehouse = header.WarehouseCd;
             foreach (var wh in candidateWarehouses)
             {
-                candidate = await FindCandidateStockAsync(wh, d.ProductCd, needed);
+                candidate = await FindCandidateStockAsync(wh, d.ProductCd, needed, access);
                 if (candidate != null)
                 {
                     chosenWarehouse = wh;
@@ -437,7 +440,8 @@ public class OutboundService : IOutboundService
                     });
                     if (_shortageNotifier != null)
                     {
-                        await _shortageNotifier.NotifyAsync(header.WorkOrderNo ?? "", d.ProductCd, needed);
+                        if(effects == null) await _shortageNotifier.NotifyAsync(header.WorkOrderNo ?? "", d.ProductCd, needed);
+                        else effects.Add(()=>_shortageNotifier.NotifyAsync(header.WorkOrderNo ?? "", d.ProductCd, needed));
                     }
                     anyShortage = true;
                     continue;
@@ -485,7 +489,7 @@ public class OutboundService : IOutboundService
     //  Ship（出庫確定）
     // ═══════════════════════════════════════════════════════════
 
-    public async Task<string?> ShipAsync(string outboundNo, ShipRequest req, string? userName)
+    private async Task<string?> ShipCoreAsync(string outboundNo, ShipRequest req, string? userName, List<Func<Task>>? effects = null)
     {
         var header = await _db.OutboundOrders
             .FirstOrDefaultAsync(x => x.OutboundNo == outboundNo && !x.IsDeleted)
@@ -560,13 +564,13 @@ public class OutboundService : IOutboundService
 
         await _db.SaveChangesAsync();
 
-        try { await _notifier.NotifyOutboundShippedAsync(outboundNo, packageNo); }
+        try { if(effects==null) await _notifier.NotifyOutboundShippedAsync(outboundNo, packageNo); else effects.Add(()=>_notifier.NotifyOutboundShippedAsync(outboundNo,packageNo)); }
         catch { /* best-effort */ }
 
         // WMS→ERP 接缝：出荷区分の出庫確定 → 受注へ出荷実績を回写（best-effort）
         if (header.OutboundType == OutboundType.Shipping && !string.IsNullOrWhiteSpace(header.WebOrderNo))
         {
-            try { await _erpBridge.OnShipmentConfirmedAsync(outboundNo, userName); }
+            try { if(effects==null) await _erpBridge.OnShipmentConfirmedAsync(outboundNo, userName); else effects.Add(()=>_erpBridge.OnShipmentConfirmedAsync(outboundNo,userName)); }
             catch { /* best-effort：回写失敗は出荷確定を失敗させない */ }
         }
 
@@ -578,7 +582,7 @@ public class OutboundService : IOutboundService
             {
                 var finReq = await BuildFinInvoiceRequestAsync(header, details, shippedByLine);
                 if (finReq.Lines.Count > 0)
-                    await _finBridge.OnShipmentConfirmedAsync(finReq, userName);
+                    { if(effects==null) await _finBridge.OnShipmentConfirmedAsync(finReq, userName); else effects.Add(()=>_finBridge.OnShipmentConfirmedAsync(finReq,userName)); }
             }
             catch { /* best-effort：自動開票失敗は出荷確定を失敗させない */ }
         }
@@ -637,12 +641,14 @@ public class OutboundService : IOutboundService
     //  自動展開
     // ═══════════════════════════════════════════════════════════
 
-    public async Task<string> CreateFromWorkOrderAsync(string workOrderNo, string? userName)
+    private async Task<string> CreateFromWorkOrderCoreAsync(string workOrderNo, string? userName, bool owned = false)
     {
         // 二重生成防止
         var existing = await _db.OutboundOrders
             .Where(x => x.WorkOrderNo == workOrderNo && !x.IsDeleted && x.Status != OutboundOrderStatus.Cancelled)
             .FirstOrDefaultAsync();
+        if (existing != null && owned)
+            throw new CP6.Core.Services.Erp.OrderPriceCorrectionException("OUTBOUND_SOURCE_ALREADY_GENERATED",409);
         if (existing != null)
             throw new InvalidOperationException($"WM-MSG-043: 既に該当指図 [{workOrderNo}] の材料出庫指示 [{existing.OutboundNo}] が生成されています");
 
@@ -682,11 +688,13 @@ public class OutboundService : IOutboundService
         return no;
     }
 
-    public async Task<string> CreateFromOrderAsync(string webOrderNo, string? userName)
+    private async Task<string> CreateFromOrderCoreAsync(string webOrderNo, string? userName, bool owned = false)
     {
         var existing = await _db.OutboundOrders
             .Where(x => x.WebOrderNo == webOrderNo && !x.IsDeleted && x.Status != OutboundOrderStatus.Cancelled)
             .FirstOrDefaultAsync();
+        if (existing != null && owned)
+            throw new CP6.Core.Services.Erp.OrderPriceCorrectionException("OUTBOUND_SOURCE_ALREADY_GENERATED",409);
         if (existing != null)
             throw new InvalidOperationException($"WM-MSG-043: 既に該当受注 [{webOrderNo}] の出荷指示 [{existing.OutboundNo}] が生成されています");
 

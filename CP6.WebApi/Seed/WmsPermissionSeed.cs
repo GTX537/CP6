@@ -123,6 +123,8 @@ public static class WmsPermissionSeed
     /// 逐租户幂等播种 WMS 全部权限点 + 授管理员（RoleId=1）。
     /// 须在 <see cref="WmsMenuSeed.EnsureSeeded"/> 之后调用（锚定菜单行须先在）。
     /// </summary>
+    // W37 catalog additions never grant roles automatically.
+    private static readonly (int MenuId,string Code,string Name)[] OwnerActions=[(408,"query","读取出库单")];
     public static void EnsureSeeded(CP6Context db)
     {
         // Sys_Tenant 为共享表（BaseEntity，非行级过滤）：Id 即 TenantId。
@@ -132,6 +134,11 @@ public static class WmsPermissionSeed
         var changed = false;
         foreach (var tid in tenantIds)
         {
+            foreach(var (menuId,code,name) in OwnerActions)
+            {
+                if(!db.Sys_MenuActions.IgnoreQueryFilters().Any(x=>x.TenantId==tid && x.MenuId==menuId && x.ActionCode==code))
+                {db.Sys_MenuActions.Add(new(){TenantId=tid,MenuId=menuId,ActionCode=code,ActionName=name});changed=true;}
+            }
             foreach (var (menuId, code, name) in Actions)
             {
                 // IgnoreQueryFilters：跨租户可见，避免默认租户作用域误判其他租户既存行缺失而重复插。

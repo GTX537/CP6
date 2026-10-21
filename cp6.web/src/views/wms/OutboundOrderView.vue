@@ -1,5 +1,6 @@
 <template>
   <div class="wms-outbound-order">
+    <el-alert v-if="intent.error.value" :title="intent.error.value" type="warning" :closable="false" />
     <el-card shadow="never">
       <template #header>
         <div class="card-hd">
@@ -150,7 +151,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
@@ -162,7 +164,7 @@ import { formatQty as fmtQty } from '@/utils/format'
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
-const saving = ref(false)
+
 
 const statusMap = computed<Record<number, string>>(() => ({
   0: t('wms.outbound.status.draft'),
@@ -186,6 +188,11 @@ const initialForm = (): OutboundOrder => ({
 })
 
 const form = reactive<OutboundOrder>(initialForm())
+let reads = 0, revision = 0
+watch(form, () => { revision++ }, { deep: true, flush: 'sync' })
+function resetForm() { for (const key of Object.keys(form)) delete (form as any)[key]; Object.assign(form, initialForm()) }
+const intent = useOperationsIntent(() => { reads++; resetForm(); shipDialog.value = false })
+const saving = intent.busy
 const isNew = computed(() => !form.outboundNo)
 const editable = computed(() => form.status === 0)
 const canConfirm = computed(() => !isNew.value && form.status === 0)
@@ -214,86 +221,70 @@ function removeLine(idx: number) {
 }
 
 async function loadByNo(no: string) {
-  const res = await outboundOrderApi.get(no)
-  Object.assign(form, res.data)
-  form.plannedDate = form.plannedDate?.slice(0, 10)
+  const token = intent.capture(), id = ++reads, edit = revision
+  try {
+    const res = await outboundOrderApi.get(no)
+    if (!intent.current(token) || id !== reads || revision !== edit) return
+    resetForm(); Object.assign(form, res.data); form.plannedDate = form.plannedDate?.slice(0, 10)
+  } catch {
+    if (intent.current(token) && id === reads) ElMessage.warning(t('読込できませんでした。保存結果は一覧で確認してください。'))
+  }
 }
 
 async function onSave() {
   if (form.details.length === 0) { ElMessage.warning(t('wms.inbound.msg.noDetail')); return }
-  saving.value = true
+  const token = intent.begin(); if (!token) return
+  const draft = JSON.parse(JSON.stringify(form)) as OutboundOrder, edit = revision
   try {
-    if (isNew.value) {
-      const res = await outboundOrderApi.create(form)
-      ElMessage.success(t('wms.common.success'))
+    if (!draft.outboundNo) {
+      const res = await outboundOrderApi.create(draft)
+      if (!intent.current(token)) return
       form.outboundNo = res.data.outboundNo
-      router.replace({ path: '/wms/outbound-order', query: { no: form.outboundNo } })
-    } else {
-      await outboundOrderApi.update(form.outboundNo!, form)
-      ElMessage.success(t('wms.common.success'))
-      await loadByNo(form.outboundNo!)
-    }
-  } finally { saving.value = false }
-}
-
-async function onConfirm() {
-  try {
-    await ElMessageBox.confirm(t('wms.inbound.msg.confirmAsk'), t('wms.common.confirm'), { type: 'warning' })
-    await outboundOrderApi.confirm(form.outboundNo!)
+    } else await outboundOrderApi.update(draft.outboundNo, draft)
+    if (!intent.current(token)) return
     ElMessage.success(t('wms.common.success'))
-    await loadByNo(form.outboundNo!)
-  } catch { /* */ }
+    if (draft.outboundNo && revision === edit) await loadByNo(draft.outboundNo)
+  } catch (e) { intent.failed(token, e) } finally { intent.finish(token) }
 }
 
-async function onAllocate() {
+async function transition(action: 'confirm' | 'allocate' | 'cancel' | 'delete', message: string) {
+  const token = intent.begin(); if (!token) return
+  const no = form.outboundNo
   try {
-    await ElMessageBox.confirm(t('wms.outbound.msg.allocateAsk'), t('wms.common.confirm'), { type: 'warning' })
-    await outboundOrderApi.allocate(form.outboundNo!)
-    ElMessage.success(t('wms.outbound.msg.allocateOk'))
-    await loadByNo(form.outboundNo!)
-  } catch { /* */ }
+    await ElMessageBox.confirm(t(message), t('wms.common.confirm'), { type: 'warning' })
+    if (!no || !intent.current(token) || no !== form.outboundNo) return
+    await outboundOrderApi[action](no)
+    if (!intent.current(token)) return
+    ElMessage.success(t('wms.common.success'))
+    if (action === 'delete') { resetForm(); await router.push('/wms/outbound-order-list') }
+    else {
+      if (action === 'confirm') form.status = 1
+      if (action === 'cancel') form.status = 9
+      await loadByNo(no)
+    }
+  } catch (e) { intent.failed(token, e) } finally { intent.finish(token) }
 }
-
-function onShipClick() { shipDialog.value = true }
-
+const onConfirm = () => transition('confirm', 'wms.inbound.msg.confirmAsk')
+const onAllocate = () => transition('allocate', 'wms.outbound.msg.allocateAsk')
+const onCancel = () => transition('cancel', 'wms.outbound.msg.cancelAsk')
+const onDelete = () => transition('delete', 'wms.inbound.msg.deleteAsk')
+function onShipClick() { if (!saving.value && !intent.uncertain.value) shipDialog.value = true }
 async function onConfirmShip() {
-  saving.value = true
+  const token = intent.begin(); if (!token) return
+  const no = form.outboundNo, request = JSON.parse(JSON.stringify(shipReq)) as ShipRequest
   try {
-    const res = await outboundOrderApi.ship(form.outboundNo!, shipReq)
-    if (res.data.packageNo) {
-      ElMessage.success(t('wms.outbound.msg.shipOkPkg', { no: res.data.packageNo }))
-    } else {
-      ElMessage.success(t('wms.outbound.msg.shipOkMat'))
-    }
-    shipDialog.value = false
-    await loadByNo(form.outboundNo!)
-  } finally { saving.value = false }
+    if (!no) return
+    const res = await outboundOrderApi.ship(no, request)
+    if (!intent.current(token)) return
+    ElMessage.success(res.data.packageNo ? t('wms.outbound.msg.shipOkPkg', { no: res.data.packageNo }) : t('wms.outbound.msg.shipOkMat'))
+    form.status = 4; shipDialog.value = false; await loadByNo(no)
+  } catch (e) { intent.failed(token, e) } finally { intent.finish(token) }
 }
-
-async function onCancel() {
-  try {
-    await ElMessageBox.confirm(t('wms.outbound.msg.cancelAsk'), t('wms.common.confirm'), { type: 'warning' })
-    await outboundOrderApi.cancel(form.outboundNo!)
-    ElMessage.success(t('wms.common.success'))
-    await loadByNo(form.outboundNo!)
-  } catch { /* */ }
-}
-
-async function onDelete() {
-  try {
-    await ElMessageBox.confirm(t('wms.inbound.msg.deleteAsk'), t('wms.common.confirm'), { type: 'warning' })
-    await outboundOrderApi.delete(form.outboundNo!)
-    ElMessage.success(t('wms.common.success'))
-    router.push('/wms/outbound-order-list')
-  } catch { /* */ }
-}
-
 function goBack() { router.push('/wms/outbound-order-list') }
-
-onMounted(async () => {
-  const no = route.query.no as string | undefined
-  if (no) await loadByNo(no)
-})
+watch(() => route.query.no, async (no) => {
+  intent.invalidate(); reads++; resetForm(); shipDialog.value = false
+  if (typeof no === 'string' && no) await loadByNo(no)
+}, { immediate: true })
 </script>
 
 <style scoped>

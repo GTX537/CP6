@@ -22,9 +22,13 @@ public partial class OrderService
         });
         // Preserve the existing best-effort create hooks only after a confirmed authorized commit.
         // A hook failure cannot turn a known committed order into a retryable create failure.
-        try { await _wmsBridge.OnOrderCreatedAsync(result.Number,result.UserName); }
+        try { if(_wmsBridge is CP6.Core.Services.Wms.WmsBridgeHook wms)
+                await wms.OnOrderCreatedOwnedAsync(result.Delegation!);
+            else await _wmsBridge.OnOrderCreatedAsync(result.Number,result.UserName); }
         catch(Exception error) { _logger.LogError(error,"WMS create hook failed after committed order {Number}",result.Number); }
-        try { await _mesBridge.OnOrderCreatedAsync(result.Number,result.UserName); }
+        try { if(_mesBridge is CP6.Core.Services.Mes.MesBridgeHook mes)
+                await mes.OnOrderCreatedOwnedAsync(result.Delegation!);
+            else await _mesBridge.OnOrderCreatedAsync(result.Number,result.UserName); }
         catch(Exception error) { _logger.LogError(error,"MES create hook failed after committed order {Number}",result.Number); }
         return result.Number;
     }

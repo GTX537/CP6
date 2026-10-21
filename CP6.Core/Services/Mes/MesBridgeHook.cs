@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels;
 using CP6.Entity.DTOs.Mes;
 using Microsoft.Extensions.Logging;
@@ -23,14 +24,16 @@ public class MesBridgeHook : BridgeHookBase, IMesBridgeHook
         _woService = woService;
     }
 
-    public async Task<MesBridgeResult> OnOrderCreatedAsync(string webOrderNo, string? userName)
+    public Task<MesBridgeResult> OnOrderCreatedAsync(string webOrderNo,string? userName)=>OnOrderCreatedCore(webOrderNo,userName,null);
+    internal Task<MesBridgeResult> OnOrderCreatedOwnedAsync(OperationsDelegationV1 ticket)=>OnOrderCreatedCore(ticket.Number,ticket.Actor,ticket);
+    private async Task<MesBridgeResult> OnOrderCreatedCore(string webOrderNo,string? userName,OperationsDelegationV1? ticket)
     {
         var corrId = Guid.NewGuid();
         var payload = new { webOrderNo, userName };
         try
         {
-            var nos = await _woService.ExpandFromOrderAsync(
-                new ExpandFromOrderRequest { WebOrderNo = webOrderNo }, userName);
+            var nos=ticket==null?await _woService.ExpandFromOrderAsync(new ExpandFromOrderRequest {WebOrderNo=webOrderNo},userName)
+                :await (_woService as WorkOrderService ?? throw new InvalidOperationException("DELEGATION_OWNER_UNAVAILABLE")).ExpandDelegatedAsync(ticket);
             Logger.LogInformation("[MES-Bridge] 受注 {Order} → 製造指図 {Count} 件自動展開（{Nos}）",
                 webOrderNo, nos.Count, string.Join(",", nos));
             await PersistEventAsync("ERP", "MES", nameof(OnOrderCreatedAsync),

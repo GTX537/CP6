@@ -35,7 +35,8 @@ public class StockMovementService : IStockMovementService
         _finBridge = finBridge ?? new NoOpStockFinBridge();
     }
 
-    internal bool Owns(CP6Context db) => ReferenceEquals(_db,db);
+    internal bool Owns(CP6Context db) => ReferenceEquals(_db,db)
+        && _seq is WmsSequenceService sequence && sequence.Owns(db);
     internal async Task PublishCommittedCancellationAsync(StockTransaction transaction)
     {
         try { await _finBridge.OnStockMovedAsync(transaction,transaction.RelatedType??"",transaction.OperatorCd); } catch { /* existing best-effort bridge */ }

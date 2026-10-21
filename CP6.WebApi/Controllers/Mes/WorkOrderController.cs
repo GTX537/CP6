@@ -12,6 +12,8 @@ namespace CP6.WebApi.Controllers.Mes;
 [ApiController]
 [Route("api/mes/work-orders")]
 [Authorize]
+[CP6.WebApi.Controllers.Erp.OrderOwnerResult]
+[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class WorkOrderController : ControllerBase
 {
     private readonly IWorkOrderService _service;
@@ -21,7 +23,9 @@ public class WorkOrderController : ControllerBase
     private string? CurrentUser => User?.Identity?.Name;
 
     /// <summary>採番取得 — GET /api/mes/work-orders/next-seq</summary>
-    [HttpGet("next-seq")]
+    [HttpGet("next-seq")] // Legacy alias retains CSRF protection; preferred client uses POST.
+    [HttpPost("next-seq")]
+    [RequirePermission("mes-work-order", "add")]
     public async Task<IActionResult> GetNextSeq()
     {
         var seq = await _service.NextSequenceAsync();
@@ -30,6 +34,7 @@ public class WorkOrderController : ControllerBase
 
     /// <summary>ME030 — 一覧検索 GET /api/mes/work-orders</summary>
     [HttpGet]
+    [RequirePermission("mes-work-order", "query")]
     public async Task<IActionResult> Search([FromQuery] WorkOrderSearchQuery query)
     {
         var r = await _service.SearchAsync(query);
@@ -38,6 +43,7 @@ public class WorkOrderController : ControllerBase
 
     /// <summary>ME020 — 単条 GET /api/mes/work-orders/{no}</summary>
     [HttpGet("{no}")]
+    [RequirePermission("mes-work-order", "query")]
     public async Task<IActionResult> Get(string no)
     {
         var dto = await _service.GetByNoAsync(no);
@@ -55,7 +61,7 @@ public class WorkOrderController : ControllerBase
             var no = await _service.CreateAsync(dto, CurrentUser);
             return Ok(new { code = 0, message = "ME-MSG-041", data = new { workOrderNo = no } });
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException)
         {
             return BadRequest(new { code = 400, message = ex.Message });
         }
@@ -71,7 +77,7 @@ public class WorkOrderController : ControllerBase
             await _service.UpdateAsync(no, dto, CurrentUser);
             return Ok(new { code = 0, message = "ME-MSG-041" });
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException)
         {
             return BadRequest(new { code = 400, message = ex.Message });
         }
@@ -87,7 +93,7 @@ public class WorkOrderController : ControllerBase
             await _service.DeleteAsync(no, body?.RowVersion, CurrentUser);
             return Ok(new { code = 0, message = "ME-MSG-041" });
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException)
         {
             return BadRequest(new { code = 400, message = ex.Message });
         }
@@ -103,7 +109,7 @@ public class WorkOrderController : ControllerBase
             await _service.IssueAsync(no, CurrentUser);
             return Ok(new { code = 0, message = "ME-MSG-041" });
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException)
         {
             return BadRequest(new { code = 400, message = ex.Message });
         }
@@ -119,7 +125,7 @@ public class WorkOrderController : ControllerBase
             var nos = await _service.ExpandFromOrderAsync(req, CurrentUser);
             return Ok(new { code = 0, message = "ME-MSG-041", data = new { workOrderNos = nos } });
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException)
         {
             return BadRequest(new { code = 400, message = ex.Message });
         }

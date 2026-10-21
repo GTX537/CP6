@@ -44,7 +44,7 @@ type Api<T> = { code: number; message: string; data: T }
 export const workOrderApi = {
   /** 採番取得 */
   getNextSequence() {
-    return http.get<any, Api<{ sequence: string }>>('/mes/work-orders/next-seq')
+    return http.post<any, Api<{ sequence: string }>>('/mes/work-orders/next-seq')
   },
 
   /** ME030 — 一覧検索 */

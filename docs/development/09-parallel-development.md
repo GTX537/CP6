@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W37](dispatch/20261021-wave37/README.md)，独立制造/出库Owner候选已验证，#380待正常PR及远端采用；原DEV-1/DEV-2收尾。旧轮次为历史快照。
+
 > 当前：[W36收尾](dispatch/20261021-wave36/README.md)，订单取消库存/制造级联Owner已集成，#377关闭；Handoff席位释放，原W36-01最后文档PR后finish。无新派工/工作树；旧“当前”段落为历史快照。
 
 > 当前：[W35收尾](dispatch/20261021-wave35/README.md)，普通订单创建/修改/删除Owner已集成，#374关闭；Handoff席位释放，原W35-01最后文档PR后finish。无新派工/工作树；旧“当前”段落为历史快照。
