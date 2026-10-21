@@ -220,7 +220,7 @@ public class OrderController : LocalizedControllerBase
         {
             return StatusCode(ex.Status, new { code = ex.Status, message = ex.Message, retryable = false });
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException)
         {
             return BadRequest(new { code = 400, message = ex.Message });
         }
@@ -295,7 +295,7 @@ public class OrderController : LocalizedControllerBase
             var no = await _service.CreateAsync(dto, CurrentUser);
             return await CompletedWrite(no);
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException)
         {
             return BadRequest(new { code = 400, message = ex.Message });
         }
@@ -324,7 +324,7 @@ public class OrderController : LocalizedControllerBase
                 msgId = "MSG-W10002"
             });
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException)
         {
             return BadRequest(new { code = 400, message = ex.Message });
         }
@@ -341,7 +341,7 @@ public class OrderController : LocalizedControllerBase
             if (!string.IsNullOrEmpty(rowVersion))
             {
                 try { rv = Convert.FromBase64String(rowVersion); }
-                catch { rv = null; }
+                catch (FormatException) { return BadRequest(new { code = 400, message = "ORDER_ROW_VERSION_INVALID" }); }
             }
             await _service.DeleteAsync(webOrderNo, rv, CurrentUser);
             return Ok(new { code = 0, message = "OK" });

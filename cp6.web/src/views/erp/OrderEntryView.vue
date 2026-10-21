@@ -63,7 +63,7 @@
       <div class="btn-row">
         <el-button v-if="store.currentStep > 1" @click="onPrev">{{ t('sales.btn.prev') }}</el-button>
         <el-button v-if="store.currentStep < 3" type="primary" @click="onNext">{{ t('sales.btn.next') }}</el-button>
-        <el-button v-if="canSave" v-permission="'erp-order:add'" type="success" :loading="saving" @click="onSave">{{ t('sales.btn.save') }}</el-button>
+        <el-button v-if="canSave" :key="store.isNew ? 'create' : 'edit'" type="success" :loading="saving" @click="onSave">{{ t('sales.btn.save') }}</el-button>
         <el-button v-if="store.isDelete" v-permission="'erp-order:del'" type="danger" :loading="saving" @click="onDelete">{{ t('sales.btn.delete') }}</el-button>
         <el-button @click="onReset">{{ t('sales.btn.clear') }}</el-button>
       </div>
@@ -78,6 +78,7 @@ import { ref, computed, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useOrderStore } from '@/stores/order'
+import { usePermissionStore } from '@/stores/permission'
 import { OrderOperationType } from '@/types/erp/order'
 import { orderApi } from '@/api/erp/order'
 import Step1HeaderAndDetails from './order/Step1HeaderAndDetails.vue'
@@ -111,7 +112,9 @@ onBeforeUnmount(() => {
 })
 
 const hasNoOrder = computed(() => !store.order.webOrderNo)
-const canSave = computed(() => store.canEdit)
+const permissions = usePermissionStore()
+// Vue must own this conditional node: a directive that removes it cannot restore it when New changes to Edit.
+const canSave = computed(() => store.canEdit && (!permissions.loaded || permissions.has(store.isNew ? 'erp-order:add' : 'erp-order:edit')))
 
 const opModel = computed({
   get: () => store.operationType,
@@ -202,68 +205,70 @@ function validateAll(): boolean {
 async function onSave() {
   if (saving.value || loading.value || !validateAll()) return
   const stamp = identityStamp(), id = generation
-  // 与信チェック（W：確認後続行可）
-  try {
-    const totalAmount = store.order.details.reduce((s, d) => s + (d.amount ?? 0), 0)
-    const credit = await orderApi.creditCheck(store.order.customerCd, totalAmount)
-    if (credit.code === 0 && credit.data?.isOver) {
-      try {
-        await ElMessageBox.confirm(credit.data.message ?? t('与信限度額を超えています。受注継続しますか？'), t('確認'), {
-          confirmButtonText: t('はい'), cancelButtonText: t('いいえ'), type: 'warning',
-        })
-      } catch { return }
-    }
-  } catch { /* 無視可：与信 API 失敗時 */ }
-
-  if (id !== generation || stamp !== identityStamp()) return
+  const dto = JSON.parse(JSON.stringify(store.buildDto())) as ReturnType<typeof store.buildDto>
+  const creating = store.isNew, editing = store.isEdit, number = store.order.webOrderNo
   saving.value = true
   try {
-    const dto = store.buildDto()
-    if (store.isNew) {
-      const res = await orderApi.create(dto)
-      requireIdentity(stamp)
-      if (id !== generation) return
-      if (res.code === 0 && !res.data) { store.reset(); ElMessage.success(t('保存しました。詳細は現在読み取れません。再送信せず、権限を確認してください。')); return }
-      if (res.code === 0 && res.data) {
-        store.loadFromDto(res.data)
-        store.setOperationType(OrderOperationType.Edit)
-        ElMessage.success(t('sales.msg.saveSuccess'))
+    // Hold the single write slot across credit checks and confirmation too.
+    try {
+      const total = dto.details.reduce((sum, detail) => sum + (detail.amount ?? 0), 0)
+      const credit = await orderApi.creditCheck(dto.customerCd, total)
+      if (id !== generation || stamp !== identityStamp()) return
+      if (credit.code === 0 && credit.data?.isOver) {
+        try {
+          await ElMessageBox.confirm(credit.data.message ?? t('与信限度額を超えています。受注継続しますか？'), t('確認'), {
+            confirmButtonText: t('はい'), cancelButtonText: t('いいえ'), type: 'warning',
+          })
+        } catch { return }
       }
-    } else if (store.isEdit && store.order.webOrderNo) {
-      const res = await orderApi.update(store.order.webOrderNo, dto)
-      requireIdentity(stamp)
-      if (id !== generation) return
-      if (res.code === 0 && !res.data) { store.reset(); ElMessage.success(t('保存しました。詳細は現在読み取れません。再送信せず、権限を確認してください。')); return }
-      if (res.code === 0 && res.data) {
-        store.loadFromDto(res.data)
-        ElMessage.success(t('sales.msg.saveSuccess'))
-      }
+    } catch { /* Existing advisory credit check; server write authorization remains mandatory. */ }
+    if (id !== generation || stamp !== identityStamp()) return
+    if (JSON.stringify(store.buildDto()) !== JSON.stringify(dto)) {
+      ElMessage.warning(t('内容が変更されたため保存を中止しました。変更内容を確認して保存してください。'))
+      return
     }
+    const result = creating ? await orderApi.create(dto) : editing && number ? await orderApi.update(number, dto) : null
+    requireIdentity(stamp)
+    if (id !== generation || !result || result.code !== 0) return
+    if (!result.data) {
+      store.reset()
+      ElMessage.success(t('保存しました。詳細は現在読み取れません。再送信せず、権限を確認してください。'))
+      return
+    }
+    if (JSON.stringify(store.buildDto()) !== JSON.stringify(dto)) {
+      // This exact write committed, but later edits must remain an unsaved draft of that order.
+      store.order.webOrderNo = result.data.webOrderNo
+      store.order.rowVersion = result.data.rowVersion
+      if (creating) store.setOperationType(OrderOperationType.Edit)
+      store.markDirty()
+      ElMessage.warning(t('送信した内容は保存されました。その後の変更は未保存のまま保持しています。'))
+      return
+    }
+    store.loadFromDto(result.data)
+    if (creating) store.setOperationType(OrderOperationType.Edit)
+    ElMessage.success(t('sales.msg.saveSuccess'))
   } catch {
-    /* http interceptor */
-  } finally {
-    saving.value = false
-  }
+    /* HTTP interceptor reports the error; never automatically replay a write. */
+  } finally { saving.value = false }
 }
 
 async function onDelete() {
-  if (!store.order.webOrderNo) return
-  try {
-    await ElMessageBox.confirm(
-      t('Web受注NO {no} を削除します（軟削除）。よろしいですか？', { no: store.order.webOrderNo }),
-      t('削除確認'), { type: 'warning' },
-    )
-  } catch { return }
+  if (saving.value || loading.value || !store.order.webOrderNo) return
+  const stamp = identityStamp(), id = generation
+  const number = store.order.webOrderNo, version = store.order.rowVersion
   saving.value = true
   try {
-    const res = await orderApi.remove(store.order.webOrderNo, store.order.rowVersion)
-    if (res.code === 0) {
-      ElMessage.success(t('sales.msg.deleteSuccess'))
-      store.reset()
-    }
-  } catch { /* */ } finally {
-    saving.value = false
-  }
+    try {
+      await ElMessageBox.confirm(t('Web受注NO {no} を削除します（軟削除）。よろしいですか？', { no: number }),
+        t('削除確認'), { type: 'warning' })
+    } catch { return }
+    if (id !== generation || stamp !== identityStamp()) return
+    const result = await orderApi.remove(number, version)
+    requireIdentity(stamp)
+    if (id !== generation) return
+    if (result.code === 0) { ElMessage.success(t('sales.msg.deleteSuccess')); store.reset() }
+  } catch { /* No replay; the current draft must not be cleared by a failed/old request. */ }
+  finally { saving.value = false }
 }
 
 async function onReset() {

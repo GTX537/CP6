@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia, disposePinia, type Pinia } from 'pinia'
 const api = vi.hoisted(() => ({ searchList: vi.fn(), exportListCsv: vi.fn(), getByWebOrderNo: vi.fn(),
-  lookupByHaibaiNo: vi.fn(), creditCheck: vi.fn(), create: vi.fn(), update: vi.fn() }))
+  lookupByHaibaiNo: vi.fn(), creditCheck: vi.fn(), create: vi.fn(), update: vi.fn(), remove: vi.fn() }))
 const messages = vi.hoisted(() => ({ success: vi.fn(), warning: vi.fn(), error: vi.fn(), confirm: vi.fn() }))
 vi.mock('@/api/http', () => ({ default: { get: vi.fn(), post: vi.fn(), put: vi.fn(), delete: vi.fn() } }))
 vi.mock('@/api/erp/order', () => ({ orderApi: api }))
@@ -12,13 +12,17 @@ vi.mock('vue-router', () => ({ useRouter: () => ({ push: vi.fn() }) }))
 import OrderListView from './OrderListView.vue'
 import OrderEntryView from './OrderEntryView.vue'
 import { AUTH_EVENT, AUTH_EPOCH } from '@/auth/identity'
+import { permission } from '@/directives/permission'
+import { usePermissionStore } from '@/stores/permission'
+import { OrderOperationType } from '@/types/erp/order'
 
 let pinia: Pinia
 let view: ReturnType<typeof mount> | undefined
-function render(entry = false): any {
+function render(entry = false, realPermissions = false): any {
   pinia = createPinia()
+  if (realPermissions) { const p = usePermissionStore(pinia); p.actionKeys = new Set(['erp-order:edit']); p.loaded = true }
   view = mount(entry ? OrderEntryView : OrderListView, { global: { plugins: [pinia],
-    directives: { loading: {}, permission: {} }, stubs: {
+    directives: { loading: {}, permission: realPermissions ? permission : {} }, stubs: {
       CpListPage: { props: ['columns', 'fetch'], template: '<div><span v-for="c in columns" :key="c.prop" data-column>{{c.prop}}</span><slot name="toolbar" /></div>' },
       ElCard: { template: '<div><slot /></div>' }, ElSteps: true, ElStep: true, ElInput: true,
       ElTag: true, ElForm: { template: '<div><slot /></div>' }, ElFormItem: { template: '<div><slot /></div>' },
@@ -112,4 +116,58 @@ describe('ordinary Order protected reads', () => {
     expect(api.create).toHaveBeenCalledTimes(1); expect(vm.store.order.details).toEqual([])
     expect(messages.success).toHaveBeenCalled()
   })
+  it('takes the save lock before credit awaits', async () => {
+    const vm=render(true); vm.store.loadFromDto(document)
+    let resolve!: (value: unknown) => void
+    api.creditCheck.mockImplementationOnce(()=>new Promise(r=>{resolve=r}))
+    api.create.mockResolvedValue({code:0,data:null,webOrderNo:'SAVED',readbackUnavailable:true})
+    const first=vm.onSave(); const duplicate=vm.onSave()
+    resolve({code:0,data:{isOver:false}}); await Promise.all([first,duplicate])
+    expect(api.creditCheck).toHaveBeenCalledTimes(1); expect(api.create).toHaveBeenCalledTimes(1)
+    expect(api.create.mock.calls[0]![0].details[0].amount).toBe(34)
+  })
+  it('does not send a pending delete confirmation after identity changes', async () => {
+    const vm=render(true); vm.store.loadFromDto(document)
+    let resolve!: (value: unknown) => void
+    messages.confirm.mockImplementationOnce(()=>new Promise(r=>{resolve=r}))
+    const old=vm.onDelete(); await vm.onDelete(); changeIdentity()
+    resolve('confirm'); await old
+    expect(api.remove).not.toHaveBeenCalled(); expect(messages.confirm).toHaveBeenCalledTimes(1)
+  })
+  it('does not reset a new draft when an older delete completes', async () => {
+    const vm=render(true); vm.store.loadFromDto(document)
+    let resolve!: (value: unknown) => void
+    api.remove.mockImplementationOnce(()=>new Promise(r=>{resolve=r}))
+    const old=vm.onDelete(); await flushPromises()
+    vm.onNewClick(); vm.store.order.customerCd='NEW-DRAFT'
+    resolve({code:0}); await old
+    expect(vm.store.order.customerCd).toBe('NEW-DRAFT'); expect(messages.success).not.toHaveBeenCalled()
+  })
+
+  it('keeps edits made during credit checks and cancels the stale save', async () => {
+    const vm=render(true); vm.store.loadFromDto(document)
+    let resolve!: (value: unknown) => void
+    api.creditCheck.mockImplementationOnce(()=>new Promise(r=>{resolve=r}))
+    const old=vm.onSave(); vm.store.order.customerCd='CHANGED'
+    resolve({code:0,data:{isOver:false}}); await old
+    expect(api.create).not.toHaveBeenCalled(); expect(vm.store.order.customerCd).toBe('CHANGED')
+  })
+  it('preserves edits made after submission while binding the committed order identity', async () => {
+    const vm=render(true); vm.store.loadFromDto(document)
+    let resolve!: (value: unknown) => void
+    api.create.mockImplementationOnce(()=>new Promise(r=>{resolve=r}))
+    const old=vm.onSave(); await flushPromises(); vm.store.order.customerCd='UNSAVED'
+    resolve({code:0,data:{...document,webOrderNo:'COMMITTED',rowVersion:'VERSION'}}); await old
+    expect(vm.store.order.customerCd).toBe('UNSAVED');expect(vm.store.order.webOrderNo).toBe('COMMITTED')
+    expect(vm.store.order.rowVersion).toBe('VERSION');expect(vm.store.isEdit).toBe(true);expect(vm.store.isDirty).toBe(true)
+    expect(messages.warning).toHaveBeenCalled();expect(api.create).toHaveBeenCalledTimes(1)
+  })
+
+  it('shows edit for an edit-only actor after the create button was removed', async () => {
+    const vm=render(true,true)
+    expect(view!.text()).not.toContain('sales.btn.save')
+    vm.store.loadFromDto(document);vm.store.setOperationType(OrderOperationType.Edit);await flushPromises()
+    expect(view!.text()).toContain('sales.btn.save')
+  })
+
 })

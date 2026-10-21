@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## 2026-10-21：W35 普通订单写入Owner候选
+
+Create/Update/Delete已接当前动作/字段Write/可信部门与对象/最终撤权及原子事务，保留原业务行Owner和精度，创建桥接仅在已确认提交后执行。#374原失败回归，69相关.NET（含PG/HTTP）、14前端及类型检查通过；一次作者审查无本窗阻断。[DELIVERY](../development/evidence/WP02-03/order-write-owner/DELIVERY.md)。
+
+取消级联、其他读取/计算/追踪、持久operation、外部workflow/CRM和真实验收仍未完成；125目标/247运行不提升。原任务分支正常PR/Handoff和最终席位收尾待执行，无Actions/新树/生产部署。
+
 ## 2026-10-21：W34 普通订单读取Owner已集成
 
 [产品PR #372](https://github.com/GTX537/CP6/pull/372)已合入远端main`a0dfe9df034f1d99b6fb60583959c678279ff0b1`，[Handoff PR #10](https://github.com/GTX537/CP6.AI-Handoff/pull/10)已合入默认目标，#371回归及远端采用后关闭。70相关.NET（含PG/HTTP）、49前端和类型检查通过，0最终未解决失败/跳过；一次作者审查无本窗阻断。
