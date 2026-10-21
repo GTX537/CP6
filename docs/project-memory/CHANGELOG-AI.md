@@ -1,10 +1,10 @@
 # AI 可读变更日志
 
-## 2026-10-21：W38 报工／入库Owner候选
+## 2026-10-21：W38 报工／入库Owner已集成
 
-MES报工/工时和WMS入库/收货当前原会话Owner及事务基础已实现；逐材料反冲补偿、限定完成委托、原生关系/合法精度和六页面意图保护。90项去重相关.NET成功：20项本轮原生PG/实际HTTP、18项既有Owner PG/HTTP及52项兼容/权限测试；17项Vitest（8新+9既有）及完整vue-tsc --build退出0。最终适用集合0失败/跳过。 一次作者审查及局部修正完成；[DELIVERY](../development/evidence/WP02-03/production-inbound-owner/DELIVERY.md)。
+[产品PR #384](https://github.com/GTX537/CP6/pull/384)合入远端main`8f15c5d5a333b54b99fe0fc7d5ea50fbbec2f176`，[Handoff PR #14](https://github.com/GTX537/CP6.AI-Handoff/pull/14)合入默认资料目标，#383回归及远端采用后关闭。90项去重相关.NET成功（20本轮原生PG/实际HTTP、18既有Owner PG/HTTP、52兼容/权限），17项Vitest（8新+9既有）及完整类型检查通过；三记录复用83项有效成功、最后7项局部复测，最终适用集合0失败/跳过；作者审查及局部复查无本窗剩余阻断。[DELIVERY](../development/evidence/WP02-03/production-inbound-owner/DELIVERY.md)。
 
-#383待远端采用；7处停止的自有PG生成data已回收约0.753GiB，原失败保留。原DEV-1/DEV-2正常PR后finish，尚未释放；W37不重做。其他WMS/MES入口、部门绑定、持久恢复/投递和真实验收仍独立，125/247不提升。无Actions、既有环境迁移、真实授权或部署。
+DEV-2分支删除、席位释放；自有PG/API停止，7处生成data回收约0.753GiB。原W38-01最后文档PR后finish，实际结果见登记和最终PR说明，不提前宣称自身未来释放。其他WMS/MES入口（盘点/看板等）、无订单对象正式部门绑定、采购/财务自身Owner、持久operation/outbox与可靠投递、正式workflow/CRM及真实DEV/UAT仍独立，125/247不提升。零新树/副本/代理，无Actions/既有环境迁移/真实授权/生产；W37不重复。
 
 ## 2026-10-21：W37 独立制造／出库Owner已集成
 
