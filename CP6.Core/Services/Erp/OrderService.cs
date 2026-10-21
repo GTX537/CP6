@@ -5,6 +5,8 @@ using CP6.Core.Services.ErpIntegration;
 using CP6.Entity.DomainModels;
 using CP6.Entity.DTOs;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace CP6.Core.Services.Erp;
 
@@ -27,6 +29,8 @@ public partial class OrderService : IOrderService
     private readonly IFxRateService? _fxRate;
     private readonly OrderPriceCorrectionOwnerV1? _priceCorrectionOwner;
     private readonly OrderReadOwnerV1? _readOwner;
+    private readonly OrderWriteOwnerV1? _writeOwner;
+    private readonly ILogger<OrderService> _logger;
     /// <summary>WebOrderNo 採番プレフィックス（業務 ID 識別子）</summary>
     private const string WebOrderPrefix = "WO";
     private const string McNullVal = "MCNULLVAL";
@@ -40,7 +44,7 @@ public partial class OrderService : IOrderService
         IMesBridgeHook? mesBridge = null,
         IOrderCancelBridgeHook? cancelBridge = null,
         IFxRateService? fxRate = null,
-        OrderPriceCorrectionOwnerV1? priceCorrectionOwner = null, OrderReadOwnerV1? readOwner = null)
+        OrderPriceCorrectionOwnerV1? priceCorrectionOwner = null, OrderReadOwnerV1? readOwner = null, OrderWriteOwnerV1? writeOwner = null, ILogger<OrderService>? logger = null)
     {
         _db = db;
         _powerEgg = powerEgg;
@@ -50,6 +54,8 @@ public partial class OrderService : IOrderService
         _fxRate = fxRate;
         _priceCorrectionOwner = priceCorrectionOwner;
         _readOwner = readOwner;
+        _writeOwner = writeOwner;
+        _logger = logger ?? NullLogger<OrderService>.Instance;
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -113,7 +119,8 @@ public partial class OrderService : IOrderService
     //  登録（POST）
     // ═══════════════════════════════════════════════════════════
 
-    public Task<string> CreateAsync(OrderDto dto, string? userName) => CreateCoreAsync(dto, userName, null);
+    public Task<string> CreateAsync(OrderDto dto, string? userName) => _db.Database.IsNpgsql()
+        ? CreateOwnedAsync(dto) : CreateCoreAsync(dto, userName, null);
 
     internal Task<string> CreateForIntegrationAsync(OrderDto dto, ErpOrderOrigin origin)
     {
@@ -123,7 +130,7 @@ public partial class OrderService : IOrderService
         return CreateCoreAsync(dto, "crm-integration", origin);
     }
 
-    private async Task<string> CreateCoreAsync(OrderDto dto, string? userName, ErpOrderOrigin? origin)
+    private async Task<string> CreateCoreAsync(OrderDto dto, string? userName, ErpOrderOrigin? origin, bool deferBridges = false)
     {
         if (dto.Details.Count == 0)
             throw new InvalidOperationException("登録する明細がありません。");
@@ -258,7 +265,7 @@ public partial class OrderService : IOrderService
         await _db.SaveChangesAsync();
 
         // C03 queues durable post-commit work in the caller's transaction; no bridge can escape it.
-        if (origin is not null) return webOrderNo;
+        if (origin is not null || deferBridges) return webOrderNo;
 
         // WM-3.5：WMS 自動展開フック（best-effort、失敗しても受注作成は成功とする）
         await _wmsBridge.OnOrderCreatedAsync(webOrderNo, userName);
@@ -273,7 +280,10 @@ public partial class OrderService : IOrderService
     //  訂正（PUT）
     // ═══════════════════════════════════════════════════════════
 
-    public async Task UpdateAsync(string webOrderNo, OrderDto dto, string? userName)
+    public Task UpdateAsync(string webOrderNo, OrderDto dto, string? userName) => _db.Database.IsNpgsql()
+        ? UpdateOwnedAsync(webOrderNo, dto) : UpdateCoreAsync(webOrderNo, dto, userName);
+
+    private async Task UpdateCoreAsync(string webOrderNo, OrderDto dto, string? userName, bool preserveOwners = false)
     {
         var entity = await _db.Orders
             .FirstOrDefaultAsync(x => x.WebOrderNo == webOrderNo && !x.IsDeleted)
@@ -282,6 +292,9 @@ public partial class OrderService : IOrderService
         if (dto.RowVersion != null && dto.RowVersion.Length > 0)
             _db.Entry(entity).Property(x => x.RowVersion).OriginalValue = dto.RowVersion;
 
+        // The Owner locked this complete graph. Capture the stored line identity before replacement.
+        var previous = preserveOwners ? await _db.OrderDetails.AsNoTracking().Where(d => d.WebOrderNo == webOrderNo)
+            .ToDictionaryAsync(d => d.WebOrderDetailNo) : null;
         var now = DateTime.Now;
 
         // ヘッダー更新（mc 連携キー / Status / McTransferFlg は変更しない；6.1 仕様）
@@ -321,13 +334,16 @@ public partial class OrderService : IOrderService
         _db.OrderMaterials.RemoveRange(oldMaterials);
         _db.OrderDetails.RemoveRange(oldDetails);
 
+        // Flush deletion before inserting equal alternate keys; the Owner transaction encloses both.
+        if (preserveOwners) await _db.SaveChangesAsync();
         var detailNo = 0;
         foreach (var d in dto.Details)
         {
             detailNo++;
             d.WebOrderNo = webOrderNo;
             d.WebOrderDetailNo = detailNo;
-            d.HaibaiNo1 ??= $"{webOrderNo}-{detailNo:D3}";
+            d.HaibaiNo1 ??= previous?.GetValueOrDefault(detailNo) is { } oldLine
+                ? oldLine.HaibaiNo1 : $"{webOrderNo}-{detailNo:D3}";
             d.HaibaiNo2 ??= dto.CustomerCd;
             d.HaibaiNo3 ??= d.ProjectNoParent;
             d.OrderType ??= dto.OrderType;
@@ -337,6 +353,7 @@ public partial class OrderService : IOrderService
             ent.CreateDate = now;
             ent.Modifier = userName;
             ent.ModifyDate = now;
+            if (previous != null) PreserveOrderDetailAuthority(ent, previous.GetValueOrDefault(detailNo));
             // mc 連携キーは保持（既に mc 側で確定している場合）
             _db.OrderDetails.Add(ent);
 
@@ -373,7 +390,10 @@ public partial class OrderService : IOrderService
     //  削除（DELETE）— 軟削除
     // ═══════════════════════════════════════════════════════════
 
-    public async Task DeleteAsync(string webOrderNo, byte[]? rowVersion, string? userName)
+    public Task DeleteAsync(string webOrderNo, byte[]? rowVersion, string? userName) => _db.Database.IsNpgsql()
+        ? DeleteOwnedAsync(webOrderNo, rowVersion) : DeleteCoreAsync(webOrderNo, rowVersion, userName);
+
+    private async Task DeleteCoreAsync(string webOrderNo, byte[]? rowVersion, string? userName)
     {
         var entity = await _db.Orders
             .FirstOrDefaultAsync(x => x.WebOrderNo == webOrderNo && !x.IsDeleted)
