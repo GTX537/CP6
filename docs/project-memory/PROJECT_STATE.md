@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## 2026-10-21：W34 普通订单读取Owner已集成
+
+[产品PR #372](https://github.com/GTX537/CP6/pull/372)已合入远端main`a0dfe9df034f1d99b6fb60583959c678279ff0b1`，[Handoff PR #10](https://github.com/GTX537/CP6.AI-Handoff/pull/10)已合入默认目标，#371回归及远端采用后关闭。70相关.NET（含PG/HTTP）、49前端和类型检查通过，0最终未解决失败/跳过；一次作者审查无本窗阻断。
+
+Handoff分支删除、DEV-2释放；自有进程停止，4处生成data逻辑回收0.427GiB。原W34-01完成本次最后文档PR后finish，不能预先声称自身未来释放。普通写Owner、其他读取/计算/追踪入口、业务operation、外部workflow/CRM与真实验收仍未完成；125目标/247运行不提升。零新树/副本/代理，无Actions/既有环境迁移/真实tenant审批/生产。[DELIVERY](../development/evidence/WP02-03/order-read-owner/DELIVERY.md)。
+
 ## 2026-10-21：W34 普通订单读取Owner候选
 
 复用W33可信部门，列表／整单详情／手配号查询、CSV／报表已接独立当前动作、对象与字段用途、最终撤权；新增权限目录不自动授予角色。原生精度／子图、前端失权与同身份草稿保护保持。#371原步骤回归；70相关.NET（含PG/HTTP）、49前端和类型检查通过，一次作者审查无本窗阻断。
