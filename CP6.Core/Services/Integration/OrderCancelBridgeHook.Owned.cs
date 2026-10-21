@@ -111,7 +111,7 @@ public partial class OrderCancelBridgeHook
                 {
                     if(row.CompletedQty!=0 || row.DefectQty!=0 || row.ActualStartDate!=null)
                         throw new InvalidOperationException("CANCEL_ALREADY_PROCESSED");
-                    await owner._woService.CancelAsync(row.WorkOrderNo,"受注取消連動",actor);
+                    await ((WorkOrderService)owner._woService).CancelFromOrderAsync(row.WorkOrderNo,"受注取消連動",actor);
                 });
                 probe.Message=probe.Cancelled==true?"Cancelled":"CANCEL_CHILD_FAILED";
             }

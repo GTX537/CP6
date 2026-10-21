@@ -14,6 +14,8 @@ public class OutboundRoutingService : IOutboundRoutingService
         _db = db;
     }
 
+    internal bool Owns(CP6Context context) => ReferenceEquals(_db, context);
+
     /// <inheritdoc />
     public async Task<List<string>> ResolveCandidateWarehousesAsync(
         string? customerCd,

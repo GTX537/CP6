@@ -536,6 +536,10 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("crm-opportunity", "CRM 商机"
 CP6.Core.Services.Sys.FieldRegistry.Register("order",
     new CP6.Core.Services.Sys.FieldRegistry.Field("UnitPrice", "単価"),
     new CP6.Core.Services.Sys.FieldRegistry.Field("Amount", "金額"));
+CP6.Core.Services.Sys.DataScopeRegistry.Register("mes-work-order", "製造指図", new[] { 1, 2, 3, 4, 5 }, 1);
+CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-outbound-order", "出庫指示", new[] { 1, 2, 3, 4, 5 }, 1);
+CP6.Core.Services.Sys.FieldRegistry.Register("mes-work-order");
+CP6.Core.Services.Sys.FieldRegistry.Register("wms-outbound-order", new CP6.Core.Services.Sys.FieldRegistry.Field("UnitPrice", "単価"));
 CP6.Core.Services.Sys.AuthorizationCatalogV1.Seal();
 
 // 共享用量内核（見積与 MRP 共消费，spec §4）
@@ -576,6 +580,9 @@ builder.Services.AddScoped(sp => new OrderReadOwnerV1(sp.GetRequiredService<CP6C
     sp.GetRequiredService<IHttpContextAccessor>(), ct => CP6.WebApi.Services.OrderPriceCorrectionAuthenticationV1
         .CurrentActor(sp.GetRequiredService<IHttpContextAccessor>().HttpContext, ct)));
 builder.Services.AddScoped(sp => new OrderWriteOwnerV1(sp.GetRequiredService<CP6Context>(),
+    sp.GetRequiredService<IHttpContextAccessor>(), ct => CP6.WebApi.Services.OrderPriceCorrectionAuthenticationV1
+        .CurrentActor(sp.GetRequiredService<IHttpContextAccessor>().HttpContext, ct)));
+builder.Services.AddScoped(sp => new CP6.Core.Services.Integration.OperationsOwnerV1(sp.GetRequiredService<CP6Context>(),
     sp.GetRequiredService<IHttpContextAccessor>(), ct => CP6.WebApi.Services.OrderPriceCorrectionAuthenticationV1
         .CurrentActor(sp.GetRequiredService<IHttpContextAccessor>().HttpContext, ct)));
 builder.Services.AddScoped<IUnshippedOrderService, UnshippedOrderService>();

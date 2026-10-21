@@ -138,7 +138,7 @@ public class MesPermissionAttributeTests
             "变更端点权限点缺失/键不合约定/豁免冲突:\n" + string.Join("\n", offenders));
 
         // 收口断言：贴点 28 + 豁免命中 2 = 全 30 非GET端点，精确吻合真相源 §七。
-        Assert.Equal(28, taggedCount);
+        Assert.Equal(29, taggedCount); // W37 next-seq POST is a state-changing add action.
         Assert.Equal(2, exemptHit.Count);
     }
 
@@ -170,7 +170,7 @@ public class MesPermissionAttributeTests
     }
 
     [Fact]
-    public void NoReadOnlyGetAction_HasRequirePermission()
+    public void WorkOrderReads_RequireIndependentQuery_WhileLegacyUnadoptedReadsRemainUnchanged()
     {
         // 只读误贴防护：纯 HttpGet（且非变更）端点不应带 [RequirePermission]（本波未给 GET 贴）。
         var offenders = new List<string>();
@@ -178,6 +178,11 @@ public class MesPermissionAttributeTests
         foreach (var m in ActionMethods(c))
         {
             var readOnly = IsGet(m) && !IsMutating(m);
+            if(c==typeof(WorkOrderController) && readOnly)
+            {
+                Assert.Equal(("mes-work-order","query"),ReadPermission(m));
+                continue;
+            }
             if (readOnly && ReadPermission(m) != null)
                 offenders.Add($"{Key(c, m)}：只读 GET 端点误贴 [RequirePermission]");
         }

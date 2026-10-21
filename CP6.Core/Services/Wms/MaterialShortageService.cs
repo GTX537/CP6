@@ -14,6 +14,8 @@ public class MaterialShortageService : IMaterialShortageService
         _db = db;
     }
 
+    internal bool Owns(CP6Context db) => ReferenceEquals(_db, db);
+
     public async Task<MaterialShortage> CreateAsync(MaterialShortage entity)
     {
         if (entity.Id == Guid.Empty)

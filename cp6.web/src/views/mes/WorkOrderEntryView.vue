@@ -1,5 +1,6 @@
 <template>
   <div class="work-order-entry">
+    <el-alert v-if="intent.error.value" :title="intent.error.value" type="warning" :closable="false" />
     <el-card shadow="never">
       <template #header>
         <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -32,7 +33,8 @@
       <!-- 第1页 -->
       <WoStep1BasicInfo
         v-show="step === 0"
-        v-model="form"
+        :model-value="form"
+        @update:model-value="value => Object.assign(form, value)"
         :is-edit="isEdit"
         @expand-from-order="onExpandFromOrder"
       />
@@ -61,7 +63,8 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
-import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { workOrderApi } from '@/api/mes/mes'
@@ -73,7 +76,7 @@ import WoStep3MaterialConfirm from './work-order/steps/WoStep3MaterialConfirm.vu
 const route = useRoute()
 const router = useRouter()
 const step = ref(0)
-const saving = ref(false)
+
 
 const emptyForm = (): WorkOrderDto => ({
   workOrderNo: '',
@@ -104,6 +107,10 @@ const emptyForm = (): WorkOrderDto => ({
 })
 
 const form = reactive<WorkOrderDto>(emptyForm())
+let reads = 0, revision = 0
+watch(form, () => { revision++ }, { deep: true, flush: 'sync' })
+const intent = useOperationsIntent(() => { reads++; Object.assign(form, emptyForm()); step.value = 0 })
+const saving = intent.busy
 
 const isEdit = computed(() => !!form.workOrderNo)
 const canIssue = computed(() => isEdit.value && (form.status === 0 || form.status === 1))
@@ -116,33 +123,27 @@ function getStatusColor(v: number) {
 }
 
 async function loadByNo(no: string) {
-  const res = await workOrderApi.get(no)
-  if (res.code === 0 && res.data) {
-    Object.assign(form, emptyForm())
-    Object.assign(form, res.data)
+  const token = intent.capture(), id = ++reads, edit = revision
+  try {
+    const res = await workOrderApi.get(no)
+    if (!intent.current(token) || id !== reads || edit !== revision) return
+    if (res.code === 0 && res.data) Object.assign(form, emptyForm(), res.data)
+  } catch {
+    if (intent.current(token) && id === reads) ElMessage.warning(t('読込できませんでした。保存結果は一覧で確認してください。'))
   }
 }
 
 async function onExpandFromOrder(webOrderNo: string) {
+  const token = intent.begin(); if (!token) return
   try {
-    await ElMessageBox.confirm(
-      t('受注 {webOrderNo} から製造指図を自動展開します。よろしいですか？', { webOrderNo }),
-      t('確認'),
-      { type: 'info' }
-    )
-    saving.value = true
+    await ElMessageBox.confirm(t('受注 {webOrderNo} から製造指図を自動展開します。よろしいですか？', { webOrderNo }), t('確認'), { type: 'info' })
+    if (!intent.current(token)) return
     const res = await workOrderApi.expandFromOrder({ webOrderNo, priority: 1 })
+    if (!intent.current(token)) return
     const nos = res.data?.workOrderNos || []
-    const first = nos[0]
-    if (first) {
-      ElMessage.success(t('{count}件の指図を作成しました：{nos}', { count: nos.length, nos: nos.join(', ') }))
-      await loadByNo(first)
-    }
-  } catch (e) {
-    // cancelled
-  } finally {
-    saving.value = false
-  }
+    ElMessage.success(t('{count}件の指図を作成しました：{nos}', { count: nos.length, nos: nos.join(', ') }))
+    if (nos[0]) { form.workOrderNo = nos[0]; await loadByNo(nos[0]) }
+  } catch (e) { intent.failed(token, e) } finally { intent.finish(token) }
 }
 
 function validateStep1(): boolean {
@@ -194,48 +195,38 @@ function next() {
 async function onSave() {
   if (!validateStep1()) { step.value = 0; return }
   if (!validateStep2()) { step.value = 1; return }
-  saving.value = true
+  const token = intent.begin(); if (!token) return
+  const draft = JSON.parse(JSON.stringify(form)) as WorkOrderDto, edit = revision
   try {
-    if (isEdit.value) {
-      await workOrderApi.update(form.workOrderNo, form)
-      ElMessage.success(t('ME-MSG-041: 保存が完了しました'))
-      await loadByNo(form.workOrderNo)
-    } else {
-      const res = await workOrderApi.create(form)
-      const no = res.data?.workOrderNo
-      ElMessage.success(t('ME-MSG-041: 保存が完了しました（{no}）', { no }))
-      if (no) await loadByNo(no)
+    if (draft.workOrderNo) await workOrderApi.update(draft.workOrderNo, draft)
+    else {
+      const res = await workOrderApi.create(draft)
+      if (!intent.current(token)) return
+      // Preserve the committed identity even when a separate query permission/readback fails.
+      if (res.data?.workOrderNo) form.workOrderNo = res.data.workOrderNo
     }
-  } finally {
-    saving.value = false
-  }
+    if (!intent.current(token)) return
+    ElMessage.success(t('ME-MSG-041: 保存が完了しました'))
+    if (draft.workOrderNo && revision === edit) await loadByNo(draft.workOrderNo)
+  } catch (e) { intent.failed(token, e) } finally { intent.finish(token) }
 }
 
 async function onIssue() {
+  const token = intent.begin(); if (!token) return
+  const no = form.workOrderNo
   try {
-    await ElMessageBox.confirm(t('指図を発行します。発行後は基本情報・工程・材料の編集ができません。よろしいですか？'), t('確認'), {
-      type: 'warning',
-    })
-    saving.value = true
-    await workOrderApi.issue(form.workOrderNo)
-    ElMessage.success(t('指図を発行しました'))
-    await loadByNo(form.workOrderNo)
-  } catch (e) {
-    // cancelled
-  } finally {
-    saving.value = false
-  }
+    await ElMessageBox.confirm(t('指図を発行します。発行後は基本情報・工程・材料の編集ができません。よろしいですか？'), t('確認'), { type: 'warning' })
+    if (!intent.current(token) || no !== form.workOrderNo) return
+    await workOrderApi.issue(no)
+    if (!intent.current(token)) return
+    form.status = 2; ElMessage.success(t('指図を発行しました')); await loadByNo(no)
+  } catch (e) { intent.failed(token, e) } finally { intent.finish(token) }
 }
 
-onMounted(async () => {
-  const no = route.query.no as string | undefined
-  if (no) await loadByNo(no)
-})
-
 watch(() => route.query.no, async (no) => {
-  if (no) await loadByNo(no as string)
-  else Object.assign(form, emptyForm())
-})
+  intent.invalidate(); reads++; Object.assign(form, emptyForm())
+  if (typeof no === 'string' && no) await loadByNo(no)
+}, { immediate: true })
 </script>
 
 <style scoped>

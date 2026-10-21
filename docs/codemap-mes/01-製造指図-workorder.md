@@ -1,5 +1,7 @@
 # 01 · 製造指図 WorkOrder（ME020/030）— MES 枢纽
 
+> 2026-10-21 W37：对应主服务/控制器已采用[独立制造/出库Owner](../design-handbook/remediation/main-operations-owner-v1.md)。当前权限/对象/字段、PG事务与最后撤权、受限父项生成及页面意图见该合同；以下历史描述不代表其他入口已经接Owner，也不代表持久财务投递或真实验收。
+
 > 先读 [`README.md` §0/§1](README.md) 与 [`codemap-erp/README.md` §0](../codemap-erp/README.md)。全部 `文件:行号` 与代码片段 2026-06-22 实测、逐字引用。
 
 ## 0. 架构定位

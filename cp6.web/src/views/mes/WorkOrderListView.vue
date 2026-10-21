@@ -1,6 +1,7 @@
 <template>
   <div class="work-order-list">
     <!-- 検索条件 -->
+    <el-alert v-if="intent.error.value" :title="intent.error.value" type="warning" :closable="false" />
     <el-card shadow="never" class="search-card">
       <el-form :model="query" label-width="100px" size="small" inline>
         <el-form-item :label="t('拠点CD')">
@@ -148,6 +149,7 @@
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 import { ref, reactive, onMounted } from 'vue'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { workOrderApi } from '@/api/mes/mes'
@@ -162,6 +164,8 @@ const router = useRouter()
 const loading = ref(false)
 const total = ref(0)
 const rows = ref<WorkOrderDto[]>([])
+let searches = 0
+const intent = useOperationsIntent(() => { searches++; rows.value = []; total.value = 0; loading.value = false })
 
 const defaultQuery = (): WorkOrderSearchQuery => ({
   baseCd: '',
@@ -196,13 +200,17 @@ function formatDate(v?: string | null) {
 }
 
 async function search() {
+  const id = ++searches, token = intent.capture()
   loading.value = true
   try {
-    const res = await workOrderApi.search(query)
+    const res = await workOrderApi.search(JSON.parse(JSON.stringify(query)))
+    if (!intent.current(token) || id !== searches) return
     rows.value = res.data?.items || []
     total.value = res.data?.total || 0
+  } catch {
+    if (intent.current(token) && id === searches) { rows.value = []; total.value = 0 }
   } finally {
-    loading.value = false
+    if (intent.current(token) && id === searches) loading.value = false
   }
 }
 
@@ -224,16 +232,20 @@ function goResult(row: WorkOrderDto) {
 }
 
 async function onDelete(row: WorkOrderDto) {
+  const token = intent.begin(); if (!token) return
+  const no = row.workOrderNo
   try {
     await ElMessageBox.confirm(t('指図 {workOrderNo} を削除しますか？', { workOrderNo: row.workOrderNo }), t('確認'), {
       type: 'warning',
     })
-    await workOrderApi.delete(row.workOrderNo)
+    if (!intent.current(token)) return
+    await workOrderApi.delete(no)
+    if (!intent.current(token)) return
     ElMessage.success(t('削除しました'))
     search()
   } catch (e: any) {
-    if (e === 'cancel') return
-  }
+    intent.failed(token, e)
+  } finally { intent.finish(token) }
 }
 
 function exportCsv() {

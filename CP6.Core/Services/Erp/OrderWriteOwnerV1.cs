@@ -1,4 +1,5 @@
 using System.Data;
+using CP6.Core.Services.Integration;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Sys;
@@ -35,7 +36,7 @@ public sealed class OrderWriteOwnerV1
         .Append(new("Amount", FieldPermissionUseV1.Write, "/details/*/amount", true, ["UnitPrice"])).ToArray();
     private sealed record Authority(UserPermissionContext Actor, FieldPermissionSourceV1 Source,
         FieldPermissionDecisionV1 Decision, int Scope, string OrganizationVersion);
-    internal sealed record Result(string Number, string UserName);
+    internal sealed record Result(string Number, string UserName, OperationsDelegationV1? Delegation = null);
 
     private async Task<Authority> AuthorityAsync(string action, CancellationToken ct)
     {
@@ -118,7 +119,8 @@ public sealed class OrderWriteOwnerV1
             if (final.Source.TenantExpiresAt<=DateTime.Now) throw new OrderPriceCorrectionException("AUTHORITY_CHANGED",403);
             ct.ThrowIfCancellationRequested(); committing=true;
             await tx.CommitAsync(ct);
-            return new(saved,authority.Actor.UserName);
+            return new(saved,authority.Actor.UserName,action=="add"?new(db,db.CurrentTenantId,authority.Source.SubjectId,
+                authority.Actor.UserName,"order","add",saved,authority.Source.SourcePermissionVersion):null);
         }
         catch (Exception error)
         {

@@ -42,7 +42,9 @@ public class CsrfMiddleware
             if (!explicitBearer
                 && !explicitCompletion
                 && !IsExempt(path)
-                && UnsafeMethods.Contains(ctx.Request.Method.ToUpperInvariant()))
+                && (UnsafeMethods.Contains(ctx.Request.Method.ToUpperInvariant())
+                    || (HttpMethods.IsGet(ctx.Request.Method) || HttpMethods.IsHead(ctx.Request.Method))
+                        && path.TrimEnd('/').Equals("/api/mes/work-orders/next-seq",StringComparison.OrdinalIgnoreCase)))
             {
                 var cookie = ctx.Request.Cookies[AuthCookieWriter.CsrfCookie];
                 var header = ctx.Request.Headers["X-CSRF-Token"].ToString();

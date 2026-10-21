@@ -12,7 +12,9 @@
       <el-button type="warning" @click="bridgeDialog = true">{{ t('wms.outbound.bridge.title') }}</el-button>
     </template>
 
+    <el-alert v-if="intent.error.value" :title="intent.error.value" type="warning" :closable="false" />
     <CpListPage
+      :key="intent.epoch.value"
       :columns="columns"
       :fetch="fetchList"
       :search-fields="searchFields"
@@ -50,6 +52,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
@@ -70,7 +73,9 @@ const total = ref<number>()
 const bridgeDialog = ref(false)
 const bridgeWoNo = ref('')
 const bridgeOrderNo = ref('')
-const bridging = ref(false)
+const intent = useOperationsIntent(() => { total.value = 0; bridgeDialog.value = false; bridgeWoNo.value = ''; bridgeOrderNo.value = '' })
+const bridging = intent.busy
+let searches = 0
 
 // —— 码值映射（i18n 反应式） ——
 const typeMap = computed<Record<number, string>>(() => ({
@@ -145,6 +150,7 @@ const searchFields = computed<FilterField[]>(() => [
 // —— 取数：包装 outboundOrderApi.search；后端返回扁平数组且无 total → 客户端分页 ——
 const PAGE_CAP = 500
 const fetchList: ListFetch<OutboundOrder> = async ({ page, size, filters }) => {
+  const token = intent.capture(), id = ++searches
   const f = filters as Record<string, unknown>
   const q: OutboundOrderSearchQuery = { pageSize: PAGE_CAP }
   if (f.outboundNo) q.outboundNo = String(f.outboundNo)
@@ -154,6 +160,7 @@ const fetchList: ListFetch<OutboundOrder> = async ({ page, size, filters }) => {
   if (f.webOrderNo) q.webOrderNo = String(f.webOrderNo)
   if (f.customerCd) q.customerCd = String(f.customerCd)
   const res = await outboundOrderApi.search(q)
+  if (!intent.current(token) || id !== searches) return { rows: [], total: 0 }
   const all = res.data || []
   const start = (page - 1) * size
   return { rows: all.slice(start, start + size), total: all.length }
@@ -165,25 +172,29 @@ function goEdit(row: OutboundOrder) { router.push({ path: '/wms/outbound-order',
 
 async function onBridgeWo() {
   if (!bridgeWoNo.value) return
-  bridging.value = true
+  const token = intent.begin(); if (!token) return
+  const number = bridgeWoNo.value
   try {
-    const res = await outboundOrderApi.fromWorkOrder(bridgeWoNo.value)
+    const res = await outboundOrderApi.fromWorkOrder(number)
+    if (!intent.current(token)) return
     ElMessage.success(t('wms.outbound.bridge.expanded', { no: res.data.outboundNo }))
     bridgeDialog.value = false
     bridgeWoNo.value = ''
     router.push({ path: '/wms/outbound-order', query: { no: res.data.outboundNo } })
-  } finally { bridging.value = false }
+  } catch (e) { intent.failed(token, e) } finally { intent.finish(token) }
 }
 
 async function onBridgeOrder() {
   if (!bridgeOrderNo.value) return
-  bridging.value = true
+  const token = intent.begin(); if (!token) return
+  const number = bridgeOrderNo.value
   try {
-    const res = await outboundOrderApi.fromOrder(bridgeOrderNo.value)
+    const res = await outboundOrderApi.fromOrder(number)
+    if (!intent.current(token)) return
     ElMessage.success(t('wms.outbound.bridge.expanded', { no: res.data.outboundNo }))
     bridgeDialog.value = false
     bridgeOrderNo.value = ''
     router.push({ path: '/wms/outbound-order', query: { no: res.data.outboundNo } })
-  } finally { bridging.value = false }
+  } catch (e) { intent.failed(token, e) } finally { intent.finish(token) }
 }
 </script>

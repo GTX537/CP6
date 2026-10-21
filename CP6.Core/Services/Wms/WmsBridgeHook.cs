@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels;
 using Microsoft.Extensions.Logging;
 
@@ -27,13 +28,16 @@ public class WmsBridgeHook : BridgeHookBase, IWmsBridgeHook
         _inbound = inbound;
     }
 
-    public async Task<WmsBridgeResult> OnWorkOrderIssuedAsync(string workOrderNo, string? userName)
+    public Task<WmsBridgeResult> OnWorkOrderIssuedAsync(string workOrderNo,string? userName)=>OnWorkOrderIssuedCore(workOrderNo,userName,null);
+    internal Task<WmsBridgeResult> OnWorkOrderIssuedOwnedAsync(OperationsDelegationV1 ticket)=>OnWorkOrderIssuedCore(ticket.Number,ticket.Actor,ticket);
+    private async Task<WmsBridgeResult> OnWorkOrderIssuedCore(string workOrderNo,string? userName,OperationsDelegationV1? ticket)
     {
         var corrId = Guid.NewGuid();
         var payload = new { workOrderNo, userName };
         try
         {
-            var no = await _outbound.CreateFromWorkOrderAsync(workOrderNo, userName);
+            var no = ticket==null?await _outbound.CreateFromWorkOrderAsync(workOrderNo,userName)
+                :await (_outbound as OutboundService ?? throw new InvalidOperationException("DELEGATION_OWNER_UNAVAILABLE")).CreateDelegatedAsync(ticket);
             Logger.LogInformation("[WMS-Bridge] WO {Wo} → 材料出庫指示 {OutboundNo} 自動生成", workOrderNo, no);
             await PersistEventAsync("MES", "WMS", nameof(OnWorkOrderIssuedAsync),
                 workOrderNo, no, IntegrationEventStatus.Success, null, corrId, payload, userName);
@@ -55,13 +59,16 @@ public class WmsBridgeHook : BridgeHookBase, IWmsBridgeHook
         }
     }
 
-    public async Task<WmsBridgeResult> OnOrderCreatedAsync(string webOrderNo, string? userName)
+    public Task<WmsBridgeResult> OnOrderCreatedAsync(string webOrderNo,string? userName)=>OnOrderCreatedCore(webOrderNo,userName,null);
+    internal Task<WmsBridgeResult> OnOrderCreatedOwnedAsync(OperationsDelegationV1 ticket)=>OnOrderCreatedCore(ticket.Number,ticket.Actor,ticket);
+    private async Task<WmsBridgeResult> OnOrderCreatedCore(string webOrderNo,string? userName,OperationsDelegationV1? ticket)
     {
         var corrId = Guid.NewGuid();
         var payload = new { webOrderNo, userName };
         try
         {
-            var no = await _outbound.CreateFromOrderAsync(webOrderNo, userName);
+            var no = ticket==null?await _outbound.CreateFromOrderAsync(webOrderNo,userName)
+                :await (_outbound as OutboundService ?? throw new InvalidOperationException("DELEGATION_OWNER_UNAVAILABLE")).CreateDelegatedAsync(ticket);
             Logger.LogInformation("[WMS-Bridge] 受注 {Order} → 出荷指示 {OutboundNo} 自動生成", webOrderNo, no);
             await PersistEventAsync("ERP", "WMS", nameof(OnOrderCreatedAsync),
                 webOrderNo, no, IntegrationEventStatus.Success, null, corrId, payload, userName);

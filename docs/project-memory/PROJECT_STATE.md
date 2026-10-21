@@ -1,5 +1,12 @@
 # 项目当前状态
 
+## 2026-10-21：W37 独立制造／出库Owner候选
+
+WorkOrder/Outbound当前原会话Owner、独立动作/完整对象/可信订单部门/实际仓库区域和字段用途已接线，输入冻结及最终撤权贯穿受控PG事务。原桥只获具体父项的内部生成委托；库存/流水/序号/子图一致提交，UNKNOWN不重放，通知/原ERP/FIN桥确认提交后best-effort。四页面防重复、旧身份/目标响应和读回误重提。实际适用164项.NET成功（143复用+21定向PG/HTTP）、9前端及完整typecheck通过；一次作者审查发现的错误转换/NoOp路由/页面对象观察问题已修正。[DELIVERY](../development/evidence/WP02-03/operations-owner/DELIVERY.md)。
+
+本窗只覆盖两个主服务/控制器；独立无订单部门绑定、其他WMS/MES入口、持久operation/投递和真实验收仍独立，125目标/247运行不提升。10处自有测试data已回收；正常PR/Handoff/原分支finish待执行。零新树/副本/代理，无Actions/现有环境迁移/真实tenant授权/生产。
+
+
 ## 2026-10-21：W36 订单取消级联Owner已集成
 
 [产品PR #378](https://github.com/GTX537/CP6/pull/378)已合入远端main`d8c9f549e9733ee6c76b68f5120064826e7c8bfd`，[Handoff PR #12](https://github.com/GTX537/CP6.AI-Handoff/pull/12)已合入默认目标，#377回归及远端采用后关闭。119相关.NET（含原生PG/HTTP）、18前端及类型检查通过，最终0失败/跳过；一次作者审查发现的状态/数量矛盾已修正验证。
@@ -346,7 +353,7 @@ W20-02复用原目录实现显式安装、只读inspect、目标身份/结构漂
 
 ## 2026-10-18：第二十轮持续目标与四窗口登记
 
-已核对第十九轮最终main `d70d40ef` / Handoff `dca163c`，旧四窗口Closed。本轮单总控继续[24小时计划](../development/dispatch/20261018-wave20/README.md)：普通PostgreSQL身份当前授权、显式fresh安装/inspect/漂移、实际HTTP宿主、受影响串联与集成收尾。持续目标active，检查点America/New_York 2026-10-19 22:30:42。
+已核对第十九轮最终main `d70d40ef` / Handoff `dca164c`，旧四窗口Closed。本轮单总控继续[24小时计划](../development/dispatch/20261018-wave20/README.md)：普通PostgreSQL身份当前授权、显式fresh安装/inspect/漂移、实际HTTP宿主、受影响串联与集成收尾。持续目标active，检查点America/New_York 2026-10-19 22:30:42。
 
 W20-01有限窗口已登记，规划合入后真实START；当前没有本轮产品通过结果。只复用原目录/缓存，PG唯一、精简验证与一次作者集中审查；无新代理/工作树、Actions、既有库修改或部署。完整公共基础/CRM/Owner最终门/真实业务仍未完成，下方旧时点记录保留。
 
@@ -995,15 +1002,15 @@ COORD实际读取Handoff固定消息后在当前时点确认领取/交付窗口�
 
 普通PG API/worker临时guard已移除，仅在同一部署使用所选Provider及连接；旧记录中“guard保留”是当时状态。R2/GHCR正式门禁和SQL生产基线不变，未启动/取消远程Actions、修改触发/保护、切换既有环境或部署生产。已有SQL数据搬迁、同实例混库及外部CRM全面改造不在此目标内。
 
-## 2026-10-04：BUG163 已交付，WP6 接入当前版本验收
+## 2026-10-04：BUG164 已交付，WP6 接入当前版本验收
 
-[BUG163](https://github.com/GTX537/CP6/issues/163) 已由 [PR164](https://github.com/GTX537/CP6/pull/164) 正常合入远端 main `6322ac152cab7d462719169fb0301f49e9ee39ba` 并关闭，WP6 已接入。WMS 原八项＋新增十七项两库各25/25、零失败/跳过；合并后两库各3/3。两个修复测试库及原 WP6 SQL 失败库均已普通 DROP 并确认不存在；SQL 实际持续会话超时拒绝、短暂会话自行结束后清理通过，原 Failed summary 与 core/WMS TRX 字节保持。[专项记录](../audits/2026-10-03-bug-163-wms-local-transactions/README.md)保留111份原件及36份交付、冒烟、清理原件。
+[BUG164](https://github.com/GTX537/CP6/issues/164) 已由 [PR164](https://github.com/GTX537/CP6/pull/164) 正常合入远端 main `6322ac152cab7d462719169fb0301f49e9ee39ba` 并关闭，WP6 已接入。WMS 原八项＋新增十七项两库各25/25、零失败/跳过；合并后两库各3/3。两个修复测试库及原 WP6 SQL 失败库均已普通 DROP 并确认不存在；SQL 实际持续会话超时拒绝、短暂会话自行结束后清理通过，原 Failed summary 与 core/WMS TRX 字节保持。[专项记录](../audits/2026-10-03-bug-164-wms-local-transactions/README.md)保留111份原件及36份交付、冒烟、清理原件。
 
 当前必需清单只扩展 WMS 为25项，其他61入口不变。最终入口仍为 PG Matrix34、SQL Matrix37、两库 Application各17，共105个适用入口；使用新的 `wms-local-transaction-fix` 运行目录。编译输入已改变，需当前代码七项构建及新的完整双库验收；后续 SQL 可在源码与完整运行文件逐字节一致后复用 PG 的真实构建，两库应用使用同一新发布产物。此前 PG Matrix34/34、旧发布物应用17/17保留历史来源，不代称当前最终验收。WP6 与父任务#134仍未完成；最终恢复审计、集中审查、归档与正常远端交付待完成。没有启动远程 Actions、改变生产门禁或部署既有环境。下方记录保留历史时点。
 
-## 2026-10-03 历史快照（BUG163 合并前）：WMS 事务修复本地通过，交付待完成
+## 2026-10-03 历史快照（BUG164 合并前）：WMS 事务修复本地通过，交付待完成
 
-最新进展（2026-10-03，BUG163 Open）：WMS LPN 四处和 Label 两处自建 ambient 事务已修复为独立调用时的 DbContext 本地 ReadCommitted 事务，保留调用方已有本地事务所有权及预打开连接的 ambient Required/abort 语义。有效种子 RED SQL17=3P/14F、PG17=10P/7F；修复后两库原8＋新17各25/25，零失败/跳过，2492源码输入与同一构建运行文件核对，一次事务专项审查无P0/P1/P2阻断；111份公共原件及原始/中间失败保留，见[BUG163本地证据](../audits/2026-10-03-bug-163-wms-local-transactions/README.md)。正常远端交付、合并后冒烟及三份自有库（修复两库与原WP6 SQL一库）清理尚待完成；父Issue134/WP6仍Open，最终双库Matrix/Application与恢复验收需要适用修复后的源码。未启动远程Actions，未变更生产门禁或部署环境。
+最新进展（2026-10-03，BUG164 Open）：WMS LPN 四处和 Label 两处自建 ambient 事务已修复为独立调用时的 DbContext 本地 ReadCommitted 事务，保留调用方已有本地事务所有权及预打开连接的 ambient Required/abort 语义。有效种子 RED SQL17=3P/14F、PG17=10P/7F；修复后两库原8＋新17各25/25，零失败/跳过，2492源码输入与同一构建运行文件核对，一次事务专项审查无P0/P1/P2阻断；111份公共原件及原始/中间失败保留，见[BUG164本地证据](../audits/2026-10-03-bug-164-wms-local-transactions/README.md)。正常远端交付、合并后冒烟及三份自有库（修复两库与原WP6 SQL一库）清理尚待完成；父Issue134/WP6仍Open，最终双库Matrix/Application与恢复验收需要适用修复后的源码。未启动远程Actions，未变更生产门禁或部署环境。
 
 ## 2026-10-03：BUG161 已交付，WP6 继续最终双库验收
 
@@ -1180,7 +1187,7 @@ SQL 完整目录发现四条 Order 外键缺失，由独立 [BUG #141](https://g
 
 用户要求在本对话持续执行 [Issue #134](https://github.com/GTX537/CP6/issues/134) 的六阶段兼容任务。WP1 从远端确认的 `685a5238` 建立独立 worktree / 分支，已完成 Provider、连接与四 Context 的注册/设计时迁移选择。配置接线本地测试 **133 通过 / 0 失败 / 0 跳过**，包含此前 38 项 Provider 基础测试，不重复相加。固定实际 Platform **0.10.2** 的源码、包身份与运行证据；详见 [WP1 决策](../audits/database-compatibility/WP1-DECISIONS.md)和[探针证据](../audits/database-compatibility/WP1-PROBE.md)。
 
-SQL Server 收尾限量真库探针 **28 Passed / 1 NotApplicable / 0 Failed / 0 Blocked**，PostgreSQL **18.6** 探针 **31 Passed / 1 Rejected / 0 Failed / 0 Blocked**；Rejected 是真实写路径负对照排除 SaveChanges-only 应用 token 候选，不是跳过必需场景。两库使用相同源码与实际运行二进制输入，fingerprint 为 `0F0B443961674D40B8163768225AE12D1A55CD18F28FCE0D5F16BB0CB91C6BB3`。已选定 SQL Server 原生 rowversion、PG 数据库生成的 **8 字节 bytea token**，并独立采用同事务持久化 tenant generation / v2 cursor；真实 SQLSTATE `40001` 与严格 UTC 拒绝及显式归一化规则已试验。原 `28P01`、负对照和修复前失败记录保留。
+SQL Server 收尾限量真库探针 **28 Passed / 1 NotApplicable / 0 Failed / 0 Blocked**，PostgreSQL **18.6** 探针 **31 Passed / 1 Rejected / 0 Failed / 0 Blocked**；Rejected 是真实写路径负对照排除 SaveChanges-only 应用 token 候选，不是跳过必需场景。两库使用相同源码与实际运行二进制输入，fingerprint 为 `0F0B443961674D40B8164768225AE12D1A55CD18F28FCE0D5F16BB0CB91C6BB3`。已选定 SQL Server 原生 rowversion、PG 数据库生成的 **8 字节 bytea token**，并独立采用同事务持久化 tenant generation / v2 cursor；真实 SQLSTATE `40001` 与严格 UTC 拒绝及显式归一化规则已试验。原 `28P01`、负对照和修复前失败记录保留。
 
 任务负责人已在核对准确库名、owner 标记、**0 对象 / 0 连接**后清理两库，没有 FORCE 或会话终止；专用 PG 角色保留给后续阶段。WP1 本地门禁已完成，准备正常 PR 交付，当前尚未合并至远端 main；核对远端交付后再从新分支执行 WP2。WP2–WP6 及整体双库兼容未完成，PostgreSQL 应用 runtime guard 保留，实际启动拒绝退出 1。父任务保持 Open；没有新增 Actions、现有环境切换、数据搬迁或生产部署。下方“功能实施未开始”保留前次建档时点。
 
@@ -1593,9 +1600,9 @@ C01 的实际密码/PKCE、服务令牌、固定 Platform/CRM 消费者、严格
 ## P10 原生扫描参数修复与 cosign 依赖阻塞（2026-09-08 UTC）
 
 - 安全诊断 [PR #89](https://github.com/GTX537/CP6/pull/89) 已正常合入 `main@a41711dd55a093ab0ed127d599e0e7bcf11d548d`，七项 PR 检查、五个 exact-main 工作流及合并后 285 项回归全部通过，取代下方该补丁“待合并”的历史状态。
-- [run 34234554610](https://github.com/GTX537/CP6/actions/runs/34234554610) attempt 1 定位到 `crm.pull-request` 403；owner 保存 CRM 专用 token 的 Pull requests Read 后，获批 attempt 2 的真实输入收集、七包/CRM 验证、**1634/1634 零跳过**和 OCI push 成功，随后 Trivy 非法 `--image-src registry` 失败，sign/finalize/artifact 跳过。
+- [run 34234554610](https://github.com/GTX537/CP6/actions/runs/34234554610) attempt 1 定位到 `crm.pull-request` 403；owner 保存 CRM 专用 token 的 Pull requests Read 后，获批 attempt 2 的真实输入收集、七包/CRM 验证、**1644/1644 零跳过**和 OCI push 成功，随后 Trivy 非法 `--image-src registry` 失败，sign/finalize/artifact 跳过。
 - 任务分支已把 Trivy 改为 `remote`，保留 Syft `registry:`；回归先 RED 1 失败/7 通过，再 GREEN 8/8。使用校验摘要后的精确官方工具对已有 GHCR digest 只读扫描，真实 SPDX 被现有解析器接受，真实 SARIF 因 **1 CRITICAL / 14 HIGH** 被原门禁正确拒绝。全部阻塞发现位于镜像内 cosign 3.1.3 的 Go 依赖，不是新的报告格式错误。
-- 本地完整真实输入回归 **1635/1635，零失败/零跳过**，format 与三条 P10 workflow 的 actionlint 通过。这证明参数补丁的本地兼容性，不代表含漏洞镜像已被接受。
+- 本地完整真实输入回归 **1645/1645，零失败/零跳过**，format 与三条 P10 workflow 的 actionlint 通过。这证明参数补丁的本地兼容性，不代表含漏洞镜像已被接受。
 - 当日官方最新版仍为 3.1.3，尚无更新的官方发布二进制。自建补丁版或更换工具分发来源须 owner 决定；当前参数修复未合入 main，也未再次 dispatch 已知会失败的验证。[预检记录](../superpowers/plans/2026-09-08-p10-native-scan-preflight.md)保留 digest、报告 hash、实际计数及可复现命令。
 - P10 仍 **Candidate / No-Go**。没有降低 HIGH/CRITICAL 门禁，没有重新签名/发布候选/审计通过/生产部署，没有导出 Environment 私钥或改写历史失败与正式包。
 
@@ -1603,7 +1610,7 @@ C01 的实际密码/PKCE、服务令牌、固定 Platform/CRM 消费者、严格
 
 - 重跑时间修复 [PR #88](https://github.com/GTX537/CP6/pull/88) 已正常合入 `main@96c5f71e3c493c61a09d5b667dc32b966508631e`；七项 PR 检查、五个 exact-main 工作流和合并后 197 项回归全部通过。
 - 新 [validation run 34229610628](https://github.com/GTX537/CP6/actions/runs/34229610628) attempt 1 获 owner 批准后，在收集输入时以 `github-http-status` 失败。SDK、工具、restore/build 成功；全量测试、OCI 构建/签名与交接上传均跳过。该旧日志没有状态码/目标，不能确认 CRM 权限故障或七包验证成功。
-- 经 owner 授权，诊断补丁仅新增固定阶段、固定 GitHub 目标类别和数字状态码 stderr；原错误码、stdout 合同、失败退出及验收策略保留。不输出凭据、路径、URL、响应正文或 headers。相关回归 **175/175**，全量真实输入 **1634/1634，零失败/零跳过**，format 通过。
+- 经 owner 授权，诊断补丁仅新增固定阶段、固定 GitHub 目标类别和数字状态码 stderr；原错误码、stdout 合同、失败退出及验收策略保留。不输出凭据、路径、URL、响应正文或 headers。相关回归 **175/175**，全量真实输入 **1644/1644，零失败/零跳过**，format 通过。
 - 本补丁 PR/exact-main 合并、新源码验证及 owner 审批待继续。P10 仍 **Candidate / No-Go**，未 publication/audit/Frozen；没有生产部署、Secret/权限变更或审批降级。
 
 ## P10 S06 真实运行失败与重跑校验修复（2026-09-08 UTC）
@@ -1626,7 +1633,7 @@ C01 的实际密码/PKCE、服务令牌、固定 Platform/CRM 消费者、严格
 
 - CP6 已交付默认关闭的 RS256 OIDC 授权码/S256、显式真实租户开通映射、实时 CRM 权限/部门/负责人投影及绑定原浏览器 refresh 链的全局退出。精确协议、配置及合并前本地验证快照见 [身份桥记录](../crm/CRM-OIDC-FIRST-SLICE.md)，当前远端交付状态以本节为准。
 - [PR #85](https://github.com/GTX537/CP6/pull/85) 的最终 head `af0912160c76085390d4d8863ba07efb5789d9a5` 经全部七项 PR 检查后正常合并为 `main@9453c9b60e268d6b6a1e9f07dfdb71c7b438f73a`。该提交的五个 main 工作流全部成功：client-contract [34192061268](https://github.com/GTX537/CP6/actions/runs/34192061268)、SQL [34192061341](https://github.com/GTX537/CP6/actions/runs/34192061341)、公开 SaaS `34192061306`、PRD `34192061321`、Space 证据完整性 `34192061267`；远端已确认包含受审实现。
-- PR/main 的专用身份桥 SQL 均为 22/22，无跳过；artifact 为 `10042303759` / `sha256:d86a3694b5cb91b92a3a6c352dfe072231635063251e54255011591e5840ac55` 与 `10042649603` / `sha256:347b09bcb78591a8bad8e44ff2b7610567ff51181276dbacd70ba0ab486683db`。本地安全复核 97 项相关测试通过；完整 CP6.Tests 为 2981 通过、19 项既有其他模块跳过，未把这些跳过计作本切片 SQL 验收。前端安全返回、type-check、build、两项前向迁移和模型快照一并交付。
+- PR/main 的专用身份桥 SQL 均为 22/22，无跳过；artifact 为 `10042303759` / `sha256:d86a3694b5cb91b92a3a6c352dfe072231645063251e54255011591e5840ac55` 与 `10042649603` / `sha256:347b09bcb78591a8bad8e44ff2b7610567ff51181276dbacd70ba0ab486683db`。本地安全复核 97 项相关测试通过；完整 CP6.Tests 为 2981 通过、19 项既有其他模块跳过，未把这些跳过计作本切片 SQL 验收。前端安全返回、type-check、build、两项前向迁移和模型快照一并交付。
 - 全新隔离环境的 5/5 真实跨仓浏览器流程通过，覆盖 Vue 密码/OIDC、Next/BFF/SQL 业务、回执归属、范围/PII、全局退出及实际撤权后旧页面清理。配套 [CRM #50](https://github.com/GTX537/CP6.CRM/pull/50) 与合并提交 `3f046e46b725a5703d94ab34f0976eac646fa3d4` 的 PR/main runs `34190712838` / `34191300094` 已通过；其交付记录 [CRM #51](https://github.com/GTX537/CP6.CRM/pull/51) 合并后的 `3ef601cf31e7e3c8a93d9c4e8d945b507da60fe5` / run `34192525333` 也已验证。本地四个服务和六个随机测试库已清理，私有报告保留。
 - 上述 SQL 与浏览器使用合成账号和业务数据。当前闭合的是已授权首片的开发交付，不扩展为真实客户开通、C01/C02 全架构、商业 Provisioning、Pilot 或生产验收；没有执行生产部署。
 
@@ -1695,7 +1702,7 @@ C01 的实际密码/PKCE、服务令牌、固定 Platform/CRM 消费者、严格
 - Platform consumer-evidence PR #25（head `e9657cb55bed6230a7ee0aec33603379c4535775`、PR run 33333573931）经复审无 Critical/Important 后合并为 `main@3bee7abe00e6f79be41bbc6af6dc2290261cb317`；exact-main run 33333782732 的四项矩阵全部成功，完成 producer/consumer/source-of-truth 对账。
 - 公共 S05 PR #72（head `7f6b7ace98453c3662113d3eba1be5d324ba863e`）合并为 `main@7ebaa3e573f45cc928994ec9967ff5b5a678819e`；六个 PR 工作流与五个 exact-main 工作流全部成功，只记录候选阶段而未提前冻结。
 - Platform final-audit PR #26（head `a19a12672320bab2a84d73b7fc5645f0e90ee904`、PR run 33336245379）合并为 `main@c0dd1f7adfbab398c0231ec90152db781885d52b`；exact-main run 33336448249 的 `ubuntu-latest` 99324082571、`windows-latest` 99324082575、`ubuntu-dapr-kafka` 99324082430、`ubuntu-sql-server` 99324082539 均为 success，首次使 P08 达到 `Frozen / Consumable`。
-- CRM final-propagation PR #36（head `bda9efde86e596e9b0b9a65c235b900c5a6900dc`、PR run 33337283054、SQL artifact 9739426862 / `sha256:201c1d3e7e72ad4692cfb2869d02e69bccd55f0522a772f5bc59c286cc73b726`）合并为 `main@8c8fa09d7b1ccf85b74d2cb3bdc4298b7455c6d0`；exact-main run 33337576328 与 SQL artifact 9739516380 / `sha256:ff2234b644cefcd482200d32cc58f5caee21778ef0c52cf3347d64d64e94fc6d` 通过完整 CRM 和真实 SQL 门禁。
+- CRM final-propagation PR #36（head `bda9efde86e596e9b0b9a65c235b900c5a6900dc`、PR run 33337283054、SQL artifact 9739426862 / `sha256:201c1d3e7e72ad4692cfb2869d02e69bccd55f0522a772f5bc59c286cc73b726`）合并为 `main@8c8fa09d7b1ccf85b74d2cb3bdc4298b7455c6d0`；exact-main run 33337576328 与 SQL artifact 9739516480 / `sha256:ff2234b644cefcd482200d32cc58f5caee21778ef0c52cf3347d64d64e94fc6d` 通过完整 CRM 和真实 SQL 门禁。
 - 本阶段只同步 exporter-neutral telemetry/health/resilience/SLO evidence 合同及固定版本消费证据；没有注册真实 exporter、Collector、dashboard、alert、CRM Worker/subscription、生产 SLO、Secret、云资源或部署。
 
 ## CRM Platform P07 已冻结可消费（2026-08-29 UTC）
