@@ -11,6 +11,8 @@ namespace CP6.WebApi.Controllers.Wms;
 [ApiController]
 [Route("api/wms/inbound-order")]
 [Authorize]
+[CP6.WebApi.Controllers.Erp.OrderOwnerResult]
+[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class InboundOrderController : ControllerBase
 {
     private readonly IInboundService _svc;
@@ -19,6 +21,7 @@ public class InboundOrderController : ControllerBase
     private string? CurrentUser => User?.Identity?.Name;
 
     [HttpGet]
+    [RequirePermission("wms-inbound-order", "query")]
     public async Task<IActionResult> Search([FromQuery] InboundOrderSearchQuery q)
     {
         var list = await _svc.SearchOrdersAsync(q);
@@ -26,6 +29,7 @@ public class InboundOrderController : ControllerBase
     }
 
     [HttpGet("{no}")]
+    [RequirePermission("wms-inbound-order", "query")]
     public async Task<IActionResult> Get(string no)
     {
         var dto = await _svc.GetOrderAsync(no);
@@ -42,7 +46,7 @@ public class InboundOrderController : ControllerBase
             var no = await _svc.CreateOrderAsync(dto, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071", data = new { inboundNo = no } });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPut("{no}")]
@@ -54,7 +58,7 @@ public class InboundOrderController : ControllerBase
             await _svc.UpdateOrderAsync(no, dto, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071" });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpDelete("{no}")]
@@ -66,7 +70,7 @@ public class InboundOrderController : ControllerBase
             await _svc.DeleteOrderAsync(no, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071" });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/confirm")]
@@ -78,7 +82,7 @@ public class InboundOrderController : ControllerBase
             await _svc.ConfirmOrderAsync(no, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071" });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/cancel")]
@@ -90,6 +94,6 @@ public class InboundOrderController : ControllerBase
             await _svc.CancelOrderAsync(no, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071" });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 }

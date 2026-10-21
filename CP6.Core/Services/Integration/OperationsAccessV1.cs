@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Integration;
 
-internal sealed class OperationsAccessV1(CP6Context db,OperationsOwnerV1 owner,OperationsOwnerV1.Authority authority)
+internal sealed partial class OperationsAccessV1(CP6Context db,OperationsOwnerV1 owner,OperationsOwnerV1.Authority authority)
 {
     internal List<OperationsOwnerV1.Authority> Authorities {get;}=[authority];
     private readonly List<Func<CancellationToken,Task>> finals=[];
@@ -24,6 +24,17 @@ internal sealed class OperationsAccessV1(CP6Context db,OperationsOwnerV1 owner,O
             if(!await OrderDepartmentScopeV1.Headers(db,authority.Actor,authority.Scope,false).AnyAsync(o=>o.WebOrderNo==ticket.Number && o.CancelledAt==null,ct)
                 || await db.OrderDetails.AnyAsync(d=>d.WebOrderNo==ticket.Number && !details.Contains(d.Id),ct))
                 throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN",403);
+        }
+        else if(ticket.Resource==OperationsOwnerV1.Production)
+        {
+            await RequireProductionWorkOrder(ticket.Number,ct);
+            if(!await db.WorkOrders.AnyAsync(w=>w.WorkOrderNo==ticket.Number && !w.IsDeleted
+                && w.Status==WorkOrderStatus.Completed && w.CompletedQty==ticket.CompletedQuantity,ct)
+                || !await db.ProductionResults.AnyAsync(r=>r.Id==ticket.CompletionResultId && r.WorkOrderNo==ticket.Number
+                    && !r.IsDeleted && r.ResultType==4 && r.Creator==Actor,ct))
+                throw new OrderPriceCorrectionException("DELEGATION_FORBIDDEN",403);
+            var parent=await db.WorkOrders.AsNoTracking().SingleAsync(w=>w.WorkOrderNo==ticket.Number,ct);
+            await RequireActiveAssociations(parent.WebOrderNo,null,ct);
         }
         else
         {

@@ -1,8 +1,10 @@
 <template>
   <div class="wms-inbound-receipt">
+    <el-alert v-if="intent.error.value" :title="intent.error.value" type="warning" :closable="false" />
     <el-card shadow="never">
       <template #header><span style="font-weight: 600">{{ t('wms.receipt.title') }}（{{ mode === 'direct' ? t('wms.receipt.modeDirect') : t('wms.receipt.modeRef') }}）</span></template>
 
+      <el-alert v-if="form.receiptNo" :title="form.receiptNo" type="success" :closable="false" />
       <el-form :model="form" label-width="160px" size="small">
         <el-row :gutter="16">
           <el-col :span="8">
@@ -99,14 +101,15 @@
     <el-affix position="bottom" :offset="0">
       <div class="action-bar">
         <el-button @click="goBack">{{ t('wms.common.back') }}</el-button>
-        <el-button v-permission="'wms-inbound-receipt:post'" type="primary" @click="onConfirm" :loading="saving">{{ t('wms.receipt.btn.confirmReceive') }}</el-button>
+        <el-button v-permission="'wms-inbound-receipt:post'" type="primary" @click="onConfirm" :loading="saving" :disabled="!!form.receiptNo || intent.uncertain.value">{{ t('wms.receipt.btn.confirmReceive') }}</el-button>
       </div>
     </el-affix>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { reactive, computed, watch } from 'vue'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
@@ -117,7 +120,7 @@ import type { InboundReceipt, InboundReceiptDetail } from '@/types/wms/wms'
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
-const saving = ref(false)
+
 
 const initialForm = (): InboundReceipt => ({
   sourceType: 'PURCHASE',
@@ -126,6 +129,11 @@ const initialForm = (): InboundReceipt => ({
 })
 
 const form = reactive<InboundReceipt>(initialForm())
+let reads = 0, revision = 0
+watch(form, () => { revision++ }, { deep: true, flush: 'sync' })
+function resetForm() { for (const key of Object.keys(form)) delete (form as any)[key]; Object.assign(form, initialForm()) }
+const intent = useOperationsIntent(() => { reads++; resetForm() })
+const saving = intent.busy
 const mode = computed(() => (form.inboundNo ? 'order' : 'direct'))
 
 function addLine() {
@@ -137,9 +145,11 @@ function removeLine(idx: number) {
 }
 
 async function loadOrder() {
-  if (!form.inboundNo) return
+  if (!form.inboundNo || saving.value || form.receiptNo) return
+  const token = intent.capture(), id = ++reads, edit = revision, no = form.inboundNo
   try {
-    const res = await inboundOrderApi.get(form.inboundNo)
+    const res = await inboundOrderApi.get(no)
+    if (!intent.current(token) || id !== reads || edit !== revision || no !== form.inboundNo) return
     const order = res.data
     if (order.status !== 1 && order.status !== 2) {
       ElMessage.warning(t('wms.receipt.msg.invalidStatus'))
@@ -158,7 +168,7 @@ async function loadOrder() {
         unitPrice: d.unitPrice,
       } as InboundReceiptDetail))
     ElMessage.success(t('wms.receipt.msg.loadOk', { n: form.details.length }))
-  } catch { /* */ }
+  } catch { if (intent.current(token) && id === reads) ElMessage.warning(t('読込できませんでした。権限と対象を確認してください。')) }
 }
 
 async function onConfirm() {
@@ -170,23 +180,24 @@ async function onConfirm() {
       return
     }
   }
-  saving.value = true
+  if (form.receiptNo) return
+  const token = intent.begin(); if (!token) return
+  const draft = JSON.parse(JSON.stringify(form)) as InboundReceipt
   try {
-    const res = await inboundReceiptApi.confirm(form)
+    const res = await inboundReceiptApi.confirm(draft)
+    if (!intent.current(token)) return
+    form.receiptNo = res.data.receiptNo; form.status = 1
     ElMessage.success(`${t('wms.common.success')}: ${res.data.receiptNo}`)
-    router.push('/wms/inbound-order-list')
-  } finally { saving.value = false }
+    // Keep the confirmed receipt number visible, even if the user has edited a new draft.
+  } catch (e) { intent.failed(token, e) } finally { intent.finish(token) }
 }
 
 function goBack() { router.back() }
 
-onMounted(async () => {
-  const inboundNo = route.query.inboundNo as string | undefined
-  if (inboundNo) {
-    form.inboundNo = inboundNo
-    await loadOrder()
-  }
-})
+watch(() => route.query.inboundNo, async (no) => {
+  intent.invalidate(); reads++; resetForm()
+  if (typeof no === 'string' && no) { form.inboundNo = no; await loadOrder() }
+}, { immediate: true })
 </script>
 
 <style scoped>

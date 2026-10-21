@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,9 +13,10 @@ namespace CP6.Core.Services.Wms;
 /// 採番：IN = 入庫予定、RC = 入庫実績、TXN = StockMovementService 経由で発行される在庫履歴NO。
 /// 確定処理は StockMovementService.ApplyAsync(IN) を明細件数分呼ぶ。
 /// </remarks>
-public class InboundService : IInboundService
+public partial class InboundService : IInboundService
 {
     private readonly CP6Context _db;
+    private readonly OperationsOwnerV1? _owner;
     private readonly IWmsSequenceService _seq;
     private readonly IStockMovementService _stock;
     private readonly IWmsNotifier _notifier;
@@ -22,8 +24,9 @@ public class InboundService : IInboundService
     private const string OrderPrefix = "IN";
     private const string ReceiptPrefix = "RC";
 
-    public InboundService(CP6Context db, IWmsSequenceService seq, IStockMovementService stock, IWmsNotifier? notifier = null)
+    public InboundService(CP6Context db, IWmsSequenceService seq, IStockMovementService stock, IWmsNotifier? notifier = null, OperationsOwnerV1? owner = null)
     {
+        _owner = owner;
         _db = db;
         _seq = seq;
         _stock = stock;
@@ -34,9 +37,9 @@ public class InboundService : IInboundService
     //  WM030 入庫予定
     // ═══════════════════════════════════════════════════════════
 
-    public async Task<List<InboundOrder>> SearchOrdersAsync(InboundOrderSearchQuery q)
+    private async Task<List<InboundOrder>> SearchOrdersCoreAsync(InboundOrderSearchQuery q, IQueryable<InboundOrder>? allowed = null)
     {
-        var query = _db.InboundOrders.AsNoTracking().Where(x => !x.IsDeleted);
+        var query = (allowed ?? _db.InboundOrders.AsNoTracking()).Where(x => !x.IsDeleted);
         if (!string.IsNullOrWhiteSpace(q.InboundNo)) query = query.Where(x => x.InboundNo.Contains(q.InboundNo));
         if (!string.IsNullOrWhiteSpace(q.SupplierCd)) query = query.Where(x => x.SupplierCd == q.SupplierCd);
         if (!string.IsNullOrWhiteSpace(q.WarehouseCd)) query = query.Where(x => x.WarehouseCd == q.WarehouseCd);
@@ -51,7 +54,7 @@ public class InboundService : IInboundService
             .ToListAsync();
     }
 
-    public async Task<InboundOrderDto?> GetOrderAsync(string inboundNo)
+    private async Task<InboundOrderDto?> GetOrderCoreAsync(string inboundNo)
     {
         var h = await _db.InboundOrders.AsNoTracking()
             .FirstOrDefaultAsync(x => x.InboundNo == inboundNo && !x.IsDeleted);
@@ -89,7 +92,7 @@ public class InboundService : IInboundService
         };
     }
 
-    public async Task<string> CreateOrderAsync(InboundOrderDto dto, string? userName)
+    private async Task<string> CreateOrderCoreAsync(InboundOrderDto dto, string? userName)
     {
         ValidateOrder(dto);
         var no = await _seq.NextAsync(OrderPrefix);
@@ -132,7 +135,7 @@ public class InboundService : IInboundService
         return no;
     }
 
-    public async Task UpdateOrderAsync(string inboundNo, InboundOrderDto dto, string? userName)
+    private async Task UpdateOrderCoreAsync(string inboundNo, InboundOrderDto dto, string? userName)
     {
         var header = await _db.InboundOrders
             .FirstOrDefaultAsync(x => x.InboundNo == inboundNo && !x.IsDeleted)
@@ -181,7 +184,7 @@ public class InboundService : IInboundService
         await _db.SaveChangesAsync();
     }
 
-    public async Task DeleteOrderAsync(string inboundNo, string? userName)
+    private async Task DeleteOrderCoreAsync(string inboundNo, string? userName)
     {
         var header = await _db.InboundOrders
             .FirstOrDefaultAsync(x => x.InboundNo == inboundNo && !x.IsDeleted)
@@ -196,7 +199,7 @@ public class InboundService : IInboundService
         await _db.SaveChangesAsync();
     }
 
-    public async Task ConfirmOrderAsync(string inboundNo, string? userName)
+    private async Task ConfirmOrderCoreAsync(string inboundNo, string? userName)
     {
         var header = await _db.InboundOrders
             .FirstOrDefaultAsync(x => x.InboundNo == inboundNo && !x.IsDeleted)
@@ -216,7 +219,7 @@ public class InboundService : IInboundService
         await _db.SaveChangesAsync();
     }
 
-    public async Task CancelOrderAsync(string inboundNo, string? userName)
+    private async Task CancelOrderCoreAsync(string inboundNo, string? userName)
     {
         var header = await _db.InboundOrders
             .FirstOrDefaultAsync(x => x.InboundNo == inboundNo && !x.IsDeleted)
@@ -235,9 +238,9 @@ public class InboundService : IInboundService
     //  WM040 入庫実績
     // ═══════════════════════════════════════════════════════════
 
-    public async Task<List<InboundReceipt>> SearchReceiptsAsync(InboundReceiptSearchQuery q)
+    private async Task<List<InboundReceipt>> SearchReceiptsCoreAsync(InboundReceiptSearchQuery q, IQueryable<InboundReceipt>? allowed = null)
     {
-        var query = _db.InboundReceipts.AsNoTracking().Where(x => !x.IsDeleted);
+        var query = (allowed ?? _db.InboundReceipts.AsNoTracking()).Where(x => !x.IsDeleted);
         if (!string.IsNullOrWhiteSpace(q.ReceiptNo)) query = query.Where(x => x.ReceiptNo.Contains(q.ReceiptNo));
         if (!string.IsNullOrWhiteSpace(q.InboundNo)) query = query.Where(x => x.InboundNo == q.InboundNo);
         if (!string.IsNullOrWhiteSpace(q.WorkOrderNo)) query = query.Where(x => x.WorkOrderNo == q.WorkOrderNo);
@@ -253,7 +256,7 @@ public class InboundService : IInboundService
             .ToListAsync();
     }
 
-    public async Task<InboundReceiptDto?> GetReceiptAsync(string receiptNo)
+    private async Task<InboundReceiptDto?> GetReceiptCoreAsync(string receiptNo)
     {
         var h = await _db.InboundReceipts.AsNoTracking()
             .FirstOrDefaultAsync(x => x.ReceiptNo == receiptNo && !x.IsDeleted);
@@ -294,7 +297,7 @@ public class InboundService : IInboundService
         };
     }
 
-    public async Task<string> ConfirmReceiptAsync(InboundReceiptDto dto, string? userName)
+    private async Task<string> ConfirmReceiptCoreAsync(InboundReceiptDto dto, string? userName, bool owned = false)
     {
         ValidateReceipt(dto);
 
@@ -412,7 +415,7 @@ public class InboundService : IInboundService
             }
         }
 
-        try { await _notifier.NotifyInboundReceivedAsync(receiptNo, dto.WarehouseCd); }
+        try { if(!owned) await _notifier.NotifyInboundReceivedAsync(receiptNo, dto.WarehouseCd); }
         catch { /* best-effort */ }
 
         return receiptNo;
@@ -423,7 +426,7 @@ public class InboundService : IInboundService
     private const string FinishedGoodsWarehouse = "W01";       // 既定完成品倉庫（OutboundService と整合）
     private const string FinishedGoodsLocation = "W01-FG";     // 既定完成品受入ロケーション
 
-    public async Task<string> CreateFinishedGoodsFromWorkOrderAsync(string workOrderNo, decimal goodQty, string? userName)
+    private async Task<string> CreateFinishedGoodsFromWorkOrderCoreAsync(string workOrderNo, decimal goodQty, string? userName, bool owned = false)
     {
         if (string.IsNullOrWhiteSpace(workOrderNo))
             throw new InvalidOperationException("指図NOは必須です");
@@ -462,7 +465,7 @@ public class InboundService : IInboundService
                 }
             }
         };
-        return await ConfirmReceiptAsync(dto, userName);
+        return await ConfirmReceiptCoreAsync(dto, userName, owned);
     }
 
     // ───────── バリデーション ─────────

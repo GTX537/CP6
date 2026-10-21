@@ -1,6 +1,7 @@
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Wms;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Erp;
 using CP6.Entity.DomainModels.Mes;
 using CP6.Entity.DomainModels.Wms;
@@ -10,8 +11,9 @@ using Microsoft.Extensions.Logging;
 namespace CP6.Core.Services.Mes;
 
 /// <inheritdoc/>
-public class BackflushService : IBackflushService
+public partial class BackflushService : IBackflushService
 {
+    private readonly OperationsOwnerV1? _owner;
     private readonly CP6Context _db;
     private readonly IStockMovementService _stock;
     private readonly IMaterialUsageCalculator _usage;
@@ -30,8 +32,9 @@ public class BackflushService : IBackflushService
         IStockMovementService stock,
         IMaterialUsageCalculator usage,
         IMaterialShortageNotifier? shortageNotifier = null,
-        ILogger<BackflushService>? logger = null)
+        ILogger<BackflushService>? logger = null, OperationsOwnerV1? owner = null)
     {
+        _owner = owner;
         _db = db;
         _stock = stock;
         _usage = usage;
@@ -39,7 +42,7 @@ public class BackflushService : IBackflushService
         _logger = logger;
     }
 
-    public async Task BackflushAsync(string workOrderNo, string? userName)
+    private async Task BackflushCoreAsync(string workOrderNo, string? userName)
     {
         if (string.IsNullOrWhiteSpace(workOrderNo)) return;
 

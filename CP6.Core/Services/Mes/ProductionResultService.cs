@@ -1,4 +1,6 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration;
+using CP6.Core.Services.Wms;
 using CP6.Entity.DomainModels.Mes;
 using CP6.Entity.DTOs.Mes;
 using Microsoft.EntityFrameworkCore;
@@ -12,9 +14,10 @@ namespace CP6.Core.Services.Mes;
 /// <remarks>
 /// 実績種別：1=開始 2=中断 3=中断解除 4=完了 5=数量報告
 /// </remarks>
-public class ProductionResultService : IProductionResultService
+public partial class ProductionResultService : IProductionResultService
 {
     private readonly CP6Context _db;
+    private readonly OperationsOwnerV1? _owner;
     private readonly IMesSequenceService _seq;
     private readonly IWorkOrderService _woService;
     private readonly IMesNotifier _notifier;
@@ -24,8 +27,9 @@ public class ProductionResultService : IProductionResultService
     private readonly ILogger<ProductionResultService>? _logger;
     private const string ResultSeqKey = "PR";
 
-    public ProductionResultService(CP6Context db, IMesSequenceService seq, IWorkOrderService woService, IMesNotifier notifier, IWmsBridgeHook wmsBridge, IBackflushService? backflush = null, IFinBridgeHook? finBridge = null, ILogger<ProductionResultService>? logger = null)
+    public ProductionResultService(CP6Context db, IMesSequenceService seq, IWorkOrderService woService, IMesNotifier notifier, IWmsBridgeHook wmsBridge, IBackflushService? backflush = null, IFinBridgeHook? finBridge = null, ILogger<ProductionResultService>? logger = null, OperationsOwnerV1? owner = null)
     {
+        _owner = owner;
         _db = db;
         _seq = seq;
         _woService = woService;
@@ -40,8 +44,9 @@ public class ProductionResultService : IProductionResultService
     /// 工時再計算専用の軽量コンストラクタ（spec §4.3）。
     /// RecalculateProcessHoursAsync は _db のみ使用するため、他依存無しで利用可能。
     /// </summary>
-    public ProductionResultService(CP6Context db)
+    public ProductionResultService(CP6Context db, OperationsOwnerV1? owner = null)
     {
+        _owner = owner;
         _db = db;
         _seq = null!;
         _woService = null!;
@@ -53,9 +58,9 @@ public class ProductionResultService : IProductionResultService
     //  ME050 — 実績一覧
     // ═══════════════════════════════════════════════════════════
 
-    public async Task<PagedResultDto<ProductionResultDto>> SearchAsync(ProductionResultSearchQuery q)
+    private async Task<PagedResultDto<ProductionResultDto>> SearchCoreAsync(ProductionResultSearchQuery q, IQueryable<ProductionResult>? allowed=null)
     {
-        var query = _db.ProductionResults.AsNoTracking().Where(x => !x.IsDeleted);
+        var query = (allowed ?? _db.ProductionResults.AsNoTracking()).Where(x => !x.IsDeleted);
 
         if (!string.IsNullOrWhiteSpace(q.WorkOrderNo)) query = query.Where(x => x.WorkOrderNo == q.WorkOrderNo);
         if (!string.IsNullOrWhiteSpace(q.ProcessCd)) query = query.Where(x => x.ProcessCd == q.ProcessCd);
@@ -112,21 +117,21 @@ public class ProductionResultService : IProductionResultService
     // ═══════════════════════════════════════════════════════════
 
     public Task<string> StartAsync(ProductionResultRequest req, string? userName) =>
-        WriteAsync(req, userName, 1);
+        WriteOwnedAsync(req, userName, 1);
 
     public Task<string> SuspendAsync(ProductionResultRequest req, string? userName) =>
-        WriteAsync(req, userName, 2);
+        WriteOwnedAsync(req, userName, 2);
 
     public Task<string> ResumeAsync(ProductionResultRequest req, string? userName) =>
-        WriteAsync(req, userName, 3);
+        WriteOwnedAsync(req, userName, 3);
 
     public Task<string> CompleteAsync(ProductionResultRequest req, string? userName) =>
-        WriteAsync(req, userName, 4);
+        WriteOwnedAsync(req, userName, 4);
 
     public Task<string> ReportAsync(ProductionResultRequest req, string? userName) =>
-        WriteAsync(req, userName, 5);
+        WriteOwnedAsync(req, userName, 5);
 
-    private async Task<string> WriteAsync(ProductionResultRequest req, string? userName, int resultType)
+    private async Task<string> WriteCoreAsync(ProductionResultRequest req, string? userName, int resultType, List<Func<Task>>? effects=null, OperationsAccessV1? access=null)
     {
         if (string.IsNullOrWhiteSpace(req.WorkOrderNo)) throw new InvalidOperationException("ME-MSG-001");
         if (string.IsNullOrWhiteSpace(req.OperatorCd)) throw new InvalidOperationException("ME-MSG-011");
@@ -144,7 +149,7 @@ public class ProductionResultService : IProductionResultService
         var now = DateTime.Now;
         var justCompleted = false; // 本実績で全工程完了に遷移したか（WMS完成品入庫トリガ）
 
-        await using var tx = await _db.Database.BeginTransactionAsync();
+        await using var tx = effects==null ? await _db.Database.BeginTransactionAsync() : null;
 
         // 各種ルール
         switch (resultType)
@@ -248,7 +253,14 @@ public class ProductionResultService : IProductionResultService
         _db.ProductionResults.Add(pr);
 
         await _db.SaveChangesAsync();
-        await tx.CommitAsync();
+        if(effects!=null)
+        {
+            if(resultType is 4 or 5)await RecalculateProcessHoursCoreAsync(req.WorkOrderNo,req.ProcessCd,req.TaskCd ?? proc.TaskCd,userName);
+            var ticket=justCompleted ? access!.Delegate(wo.WorkOrderNo) with { CompletionResultId=pr.Id, CompletedQuantity=wo.CompletedQty } : null;
+            effects.Add(()=>PublishOwnedResult(req,resultType,wo.Status,ticket));
+            return resultNo;
+        }
+        await tx!.CommitAsync();
 
         // SignalR 実時間推送（コミット後）
         try
@@ -297,22 +309,21 @@ public class ProductionResultService : IProductionResultService
         try
         {
             if (resultType == 4 || resultType == 5)
-                await RecalculateProcessHoursAsync(req.WorkOrderNo, req.ProcessCd, req.TaskCd ?? proc.TaskCd, userName);
+                await RecalculateProcessHoursCoreAsync(req.WorkOrderNo, req.ProcessCd, req.TaskCd ?? proc.TaskCd, userName);
         }
         catch { /* 工時派生失敗は報工本体に影響させない（後続報工で再計算） */ }
 
         return resultNo;
     }
 
-    public Task<WorkOrderDto?> GetWorkOrderSummaryAsync(string workOrderNo)
-        => _woService.GetByNoAsync(workOrderNo);
+
 
     // ═══════════════════════════════════════════════════════════
     //  A2 §4.3 — 報工後の工序双工時派生物化
     // ═══════════════════════════════════════════════════════════
 
     /// <summary>報工後に重算し工序双工時を物化（spec §4.3）。覆盖態(IsHourOverridden)はスキップ。</summary>
-    public async Task RecalculateProcessHoursAsync(string workOrderNo, string processCd, string? taskCd, string? user)
+    private async Task RecalculateProcessHoursCoreAsync(string workOrderNo, string processCd, string? taskCd, string? user)
     {
         var wop = await _db.Set<WorkOrderProcess>()
             .FirstOrDefaultAsync(x => x.WorkOrderNo == workOrderNo && x.ProcessCd == processCd

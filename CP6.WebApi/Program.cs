@@ -539,6 +539,12 @@ CP6.Core.Services.Sys.FieldRegistry.Register("order",
 CP6.Core.Services.Sys.DataScopeRegistry.Register("mes-work-order", "製造指図", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-outbound-order", "出庫指示", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.FieldRegistry.Register("mes-work-order");
+foreach(var resource in new[]{"mes-production-result","wms-inbound-order","wms-inbound-receipt"})
+{
+    CP6.Core.Services.Sys.DataScopeRegistry.Register(resource,resource,new[]{1,2,3,4,5},1);
+    if(resource=="mes-production-result")CP6.Core.Services.Sys.FieldRegistry.Register(resource);
+    else CP6.Core.Services.Sys.FieldRegistry.Register(resource,new CP6.Core.Services.Sys.FieldRegistry.Field("UnitPrice","単価"));
+}
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-outbound-order", new CP6.Core.Services.Sys.FieldRegistry.Field("UnitPrice", "単価"));
 CP6.Core.Services.Sys.AuthorizationCatalogV1.Seal();
 

@@ -1,5 +1,7 @@
 <template>
   <div class="production-result-entry">
+    <el-alert v-if="savedResultNo" :title="savedResultNo" type="success" :closable="false" />
+    <el-alert v-if="intent.error.value" :title="intent.error.value" type="warning" :closable="false" />
     <!-- 上部：指図サマリ -->
     <el-card shadow="never" class="header-card">
       <template #header>
@@ -119,12 +121,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
-import { workOrderApi, productionResultApi } from '@/api/mes/mes'
+import { productionResultApi } from '@/api/mes/mes'
 import {
   WORK_ORDER_STATUS_OPTIONS,
   PROCESS_STATUS_OPTIONS,
@@ -140,7 +143,10 @@ const operatorCd = ref('')
 const workOrder = ref<WorkOrderDto | null>(null)
 
 const dialogVisible = ref(false)
-const submitting = ref(false)
+let reads = 0, revision = 0
+const savedResultNo = ref('')
+const intent = useOperationsIntent(() => { reads++; workOrder.value = null; workOrderNo.value = ''; operatorCd.value = ''; dialogVisible.value = false; resetForm(); savedResultNo.value = '' })
+const submitting = intent.busy
 const resultType = ref<1 | 2 | 3 | 4 | 5>(1)
 const currentProcessName = ref('')
 
@@ -159,6 +165,8 @@ const form = reactive<ProductionResultRequest>({
   machineCd: null,
   resultNote: null,
 })
+
+watch(form, () => { revision++ }, { deep: true, flush: 'sync' })
 
 const dialogTitle = computed(() => {
   const map: Record<number, string> = { 1: t('工程開始'), 2: t('工程中断'), 3: t('中断解除'), 4: t('工程完了'), 5: t('数量追加報告') }
@@ -190,16 +198,18 @@ async function loadWorkOrder() {
     ElMessage.warning(t('指図NOを入力してください'))
     return
   }
-  const res = await workOrderApi.get(workOrderNo.value)
-  if (res.code === 0 && res.data) {
-    workOrder.value = res.data
-    if (res.data.status < 2) {
-      ElMessage.warning(t('発行前の指図です。実績入力できません。'))
-    }
+  const no = workOrderNo.value, token = intent.capture(), id = ++reads
+  try {
+    const res = await productionResultApi.getWorkOrderSummary(no)
+    if (!intent.current(token) || id !== reads || no !== workOrderNo.value) return
+    workOrder.value = res.code === 0 && res.data ? res.data : null
+  } catch {
+    if (intent.current(token) && id === reads) { workOrder.value = null; ElMessage.warning(t('読込できませんでした。保存結果は実績一覧で確認してください。')) }
   }
 }
 
 function openDialog(row: WorkOrderProcessDto, type: 1 | 2 | 3 | 4 | 5) {
+  if (submitting.value || intent.uncertain.value || !workOrder.value) return
   resultType.value = type
   currentProcessName.value = row.processName || ''
   form.workOrderNo = workOrder.value!.workOrderNo
@@ -240,7 +250,8 @@ async function submit() {
     ElMessage.error(t('中断理由を入力してください'))
     return
   }
-  submitting.value = true
+  const token = intent.begin(); if (!token) return
+  const draft = JSON.parse(JSON.stringify(form)) as ProductionResultRequest, type = resultType.value, edit = revision
   try {
     const fn = {
       1: productionResultApi.start,
@@ -248,23 +259,21 @@ async function submit() {
       3: productionResultApi.resume,
       4: productionResultApi.complete,
       5: productionResultApi.report,
-    }[resultType.value]
-    const res = await fn(form)
+    }[type]
+    const res = await fn(draft)
+    if (!intent.current(token)) return
+    savedResultNo.value = res.data?.resultNo || ''
     ElMessage.success(t('ME-MSG-041: 保存しました（{resultNo}）', { resultNo: res.data?.resultNo }))
-    dialogVisible.value = false
-    await loadWorkOrder()
-  } finally {
-    submitting.value = false
-  }
+    if (revision === edit) dialogVisible.value = false
+    if (draft.workOrderNo === workOrderNo.value) await loadWorkOrder()
+  } catch (e) { intent.failed(token, e) } finally { intent.finish(token) }
 }
 
-onMounted(async () => {
-  const no = route.query.no as string | undefined
-  if (no) {
-    workOrderNo.value = no
-    await loadWorkOrder()
-  }
-})
+watch(workOrderNo, () => { intent.invalidate(); reads++; workOrder.value = null; dialogVisible.value = false; resetForm(); savedResultNo.value = '' }, { flush: 'sync' })
+watch(() => route.query.no, async (no) => {
+  workOrderNo.value = typeof no === 'string' ? no : ''
+  if (workOrderNo.value) await loadWorkOrder()
+}, { immediate: true })
 </script>
 
 <style scoped>

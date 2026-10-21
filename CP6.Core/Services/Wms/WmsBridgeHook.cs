@@ -90,13 +90,19 @@ public class WmsBridgeHook : BridgeHookBase, IWmsBridgeHook
         }
     }
 
-    public async Task<WmsBridgeResult> OnProductionCompletedAsync(string workOrderNo, decimal goodQty, string? userName)
+    public Task<WmsBridgeResult> OnProductionCompletedAsync(string workOrderNo, decimal goodQty, string? userName)
+        =>OnProductionCompletedCore(workOrderNo,goodQty,userName,null);
+    internal Task<WmsBridgeResult> OnProductionCompletedOwnedAsync(OperationsDelegationV1 ticket)
+        =>OnProductionCompletedCore(ticket.Number,ticket.CompletedQuantity??0,ticket.Actor,ticket);
+    private async Task<WmsBridgeResult> OnProductionCompletedCore(string workOrderNo,decimal goodQty,string? userName,OperationsDelegationV1? ticket)
     {
         var corrId = Guid.NewGuid();
         var payload = new { workOrderNo, goodQty, userName };
         try
         {
-            var no = await _inbound.CreateFinishedGoodsFromWorkOrderAsync(workOrderNo, goodQty, userName);
+            if(ticket!=null && !ReferenceEquals(Db,ticket.Context))throw new InvalidOperationException("DELEGATION_OWNER_UNAVAILABLE");
+            var no = ticket==null ? await _inbound.CreateFinishedGoodsFromWorkOrderAsync(workOrderNo, goodQty, userName)
+                : await (_inbound as InboundService ?? throw new InvalidOperationException("DELEGATION_OWNER_UNAVAILABLE")).ReceiveCompletedAsync(ticket);
             Logger.LogInformation("[WMS-Bridge] 指図 {Wo} 完了 → 完成品入庫 {ReceiptNo} 自動生成（良品 {Qty}）", workOrderNo, no, goodQty);
             await PersistEventAsync("MES", "WMS", nameof(OnProductionCompletedAsync),
                 workOrderNo, no, IntegrationEventStatus.Success, null, corrId, payload, userName);

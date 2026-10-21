@@ -11,6 +11,8 @@ namespace CP6.WebApi.Controllers.Wms;
 [ApiController]
 [Route("api/wms/inbound-receipt")]
 [Authorize]
+[CP6.WebApi.Controllers.Erp.OrderOwnerResult]
+[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class InboundReceiptController : ControllerBase
 {
     private readonly IInboundService _svc;
@@ -19,6 +21,7 @@ public class InboundReceiptController : ControllerBase
     private string? CurrentUser => User?.Identity?.Name;
 
     [HttpGet]
+    [RequirePermission("wms-inbound-receipt", "query")]
     public async Task<IActionResult> Search([FromQuery] InboundReceiptSearchQuery q)
     {
         var list = await _svc.SearchReceiptsAsync(q);
@@ -26,6 +29,7 @@ public class InboundReceiptController : ControllerBase
     }
 
     [HttpGet("{no}")]
+    [RequirePermission("wms-inbound-receipt", "query")]
     public async Task<IActionResult> Get(string no)
     {
         var dto = await _svc.GetReceiptAsync(no);
@@ -44,7 +48,7 @@ public class InboundReceiptController : ControllerBase
             return Ok(new { code = 0, message = "WM-MSG-071", data = new { receiptNo = no } });
         }
         catch (InsufficientStockException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
-        catch (InvalidOperationException ex)  { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException)  { return BadRequest(new { code = 400, message = ex.Message }); }
         catch (ArgumentException ex)          { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 }

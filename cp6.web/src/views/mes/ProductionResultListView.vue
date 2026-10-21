@@ -1,5 +1,6 @@
 <template>
   <div class="production-result-list">
+    <el-alert v-if="intent.error.value" :title="intent.error.value" type="warning" :closable="false" />
     <el-card shadow="never" class="search-card">
       <el-form :model="query" label-width="100px" size="small" inline>
         <el-form-item :label="t('指図NO')">
@@ -89,6 +90,7 @@
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 import { ref, reactive, onMounted } from 'vue'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
 import { ElMessage } from 'element-plus'
 import { productionResultApi } from '@/api/mes/mes'
 import { RESULT_TYPE_OPTIONS, type ProductionResultDto, type ProductionResultSearchQuery } from '@/types/mes/mes'
@@ -96,6 +98,8 @@ import { RESULT_TYPE_OPTIONS, type ProductionResultDto, type ProductionResultSea
 const loading = ref(false)
 const rows = ref<ProductionResultDto[]>([])
 const total = ref(0)
+let searches = 0
+const intent = useOperationsIntent(() => { searches++; rows.value = []; total.value = 0; loading.value = false })
 
 const defaultQuery = (): ProductionResultSearchQuery => ({
   workOrderNo: '',
@@ -121,13 +125,17 @@ function formatDateTime(v?: string | null) {
 }
 
 async function search() {
+  const token = intent.capture(), id = ++searches
   loading.value = true
   try {
-    const res = await productionResultApi.search(query)
+    const res = await productionResultApi.search(JSON.parse(JSON.stringify(query)))
+    if (!intent.current(token) || id !== searches) return
     rows.value = res.data?.items || []
     total.value = res.data?.total || 0
+  } catch {
+    if (intent.current(token) && id === searches) { rows.value = []; total.value = 0 }
   } finally {
-    loading.value = false
+    if (intent.current(token) && id === searches) loading.value = false
   }
 }
 

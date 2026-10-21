@@ -1,5 +1,7 @@
 # 02 · 製造実績 ProductionResult（ME040/050）
 
+> 2026-10-21 W38：当前PostgreSQL入口采用[报工／入库Owner v1](../design-handbook/remediation/main-production-inbound-owner-v1.md)，涵盖独立权限/完整图、报工及整笔收货事务、逐材料反冲、限定完成委托和六页面意图。手工部分入库、追加数量及合法精度保留；下文行号、无Owner/逐行提交/全删重建叙述属于历史实现，不代表当前PG路径。采购整单、持久投递和真实验收未因此完成。
+
 > 先读 [`README.md` §0/§1](README.md)。全部 `文件:行号` 与代码片段 2026-06-22 实测、逐字引用。
 
 ## 0. 架构定位

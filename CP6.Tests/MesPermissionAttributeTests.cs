@@ -170,9 +170,9 @@ public class MesPermissionAttributeTests
     }
 
     [Fact]
-    public void WorkOrderReads_RequireIndependentQuery_WhileLegacyUnadoptedReadsRemainUnchanged()
+    public void AdoptedOwnerReads_RequireIndependentQuery_WhileLegacyUnadoptedReadsRemainUnchanged()
     {
-        // 只读误贴防护：纯 HttpGet（且非变更）端点不应带 [RequirePermission]（本波未给 GET 贴）。
+        // Adopted service Owners require explicit query; untouched legacy endpoints retain their historical contract.
         var offenders = new List<string>();
         foreach (var c in MesControllers)
         foreach (var m in ActionMethods(c))
@@ -181,6 +181,11 @@ public class MesPermissionAttributeTests
             if(c==typeof(WorkOrderController) && readOnly)
             {
                 Assert.Equal(("mes-work-order","query"),ReadPermission(m));
+                continue;
+            }
+            if(c==typeof(ProductionResultController) && readOnly)
+            {
+                Assert.Equal(("mes-production-result","query"),ReadPermission(m));
                 continue;
             }
             if (readOnly && ReadPermission(m) != null)

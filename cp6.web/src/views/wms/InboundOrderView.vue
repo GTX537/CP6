@@ -1,5 +1,6 @@
 <template>
   <div class="wms-inbound-order">
+    <el-alert v-if="intent.error.value" :title="intent.error.value" type="warning" :closable="false" />
     <el-card shadow="never" class="header-card">
       <template #header>
         <div style="display: flex; align-items: center; gap: 12px">
@@ -103,7 +104,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { reactive, computed, watch } from 'vue'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
@@ -115,7 +117,7 @@ import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
-const saving = ref(false)
+
 
 const statusMap = computed<Record<number, string>>(() => ({
   0: t('wms.inbound.status.draft'),
@@ -138,6 +140,11 @@ const initialForm = (): InboundOrder => ({
 })
 
 const form = reactive<InboundOrder>(initialForm())
+let reads = 0, revision = 0
+watch(form, () => { revision++ }, { deep: true, flush: 'sync' })
+function resetForm() { for (const key of Object.keys(form)) delete (form as any)[key]; Object.assign(form, initialForm()) }
+const intent = useOperationsIntent(() => { reads++; resetForm() })
+const saving = intent.busy
 const isNew = computed(() => !form.inboundNo)
 const editable = computed(() => form.status === 0)
 const canConfirm = computed(() => !isNew.value && form.status === 0)
@@ -159,60 +166,54 @@ function removeLine(idx: number) {
 }
 
 async function loadByNo(no: string) {
-  const res = await inboundOrderApi.get(no)
-  Object.assign(form, res.data)
-  form.expectedArrivalDate = form.expectedArrivalDate?.slice(0, 10)
+  const token = intent.capture(), id = ++reads, edit = revision
+  try {
+    const res = await inboundOrderApi.get(no)
+    if (!intent.current(token) || id !== reads || edit !== revision) return
+    resetForm(); Object.assign(form, res.data); form.expectedArrivalDate = form.expectedArrivalDate?.slice(0, 10)
+  } catch { if (intent.current(token) && id === reads) ElMessage.warning(t('読込できませんでした。保存結果は一覧で確認してください。')) }
 }
-
 async function onSave() {
   if (form.details.length === 0) { ElMessage.warning(t('wms.inbound.msg.noDetail')); return }
-  saving.value = true
+  const token = intent.begin(); if (!token) return
+  const draft = JSON.parse(JSON.stringify(form)) as InboundOrder, edit = revision
   try {
-    if (isNew.value) {
-      const res = await inboundOrderApi.create(form)
-      ElMessage.success(t('wms.common.success'))
+    if (!draft.inboundNo) {
+      const res = await inboundOrderApi.create(draft)
+      if (!intent.current(token)) return
       form.inboundNo = res.data.inboundNo
-      router.replace({ path: '/wms/inbound-order', query: { no: form.inboundNo } })
-    } else {
-      await inboundOrderApi.update(form.inboundNo!, form)
-      ElMessage.success(t('wms.common.success'))
-      await loadByNo(form.inboundNo!)
+    } else await inboundOrderApi.update(draft.inboundNo, draft)
+    if (!intent.current(token)) return
+    ElMessage.success(t('wms.common.success'))
+    if (draft.inboundNo && revision === edit) await loadByNo(draft.inboundNo)
+  } catch (e) { intent.failed(token, e) } finally { intent.finish(token) }
+}
+async function transition(action: 'confirm' | 'cancel' | 'delete', message: string) {
+  const token = intent.begin(); if (!token) return
+  const no = form.inboundNo, edit = revision
+  try {
+    await ElMessageBox.confirm(t(message), t('wms.common.confirm'), { type: 'warning' })
+    if (!no || !intent.current(token) || no !== form.inboundNo) return
+    await inboundOrderApi[action](no)
+    if (!intent.current(token)) return
+    ElMessage.success(t('wms.common.success'))
+    if (action === 'delete') { resetForm(); await router.push('/wms/inbound-order-list') }
+    else {
+      const unchanged = revision === edit
+      form.status = action === 'confirm' ? 1 : 9
+      if (unchanged) await loadByNo(no)
     }
-  } finally { saving.value = false }
+  } catch (e) { intent.failed(token, e) } finally { intent.finish(token) }
 }
-
-async function onConfirm() {
-  try {
-    await ElMessageBox.confirm(t('wms.inbound.msg.confirmAsk'), t('wms.common.confirm'), { type: 'warning' })
-    await inboundOrderApi.confirm(form.inboundNo!)
-    ElMessage.success(t('wms.common.success'))
-    await loadByNo(form.inboundNo!)
-  } catch { /* */ }
-}
-async function onCancel() {
-  try {
-    await ElMessageBox.confirm(t('wms.inbound.msg.cancelAsk'), t('wms.common.confirm'), { type: 'warning' })
-    await inboundOrderApi.cancel(form.inboundNo!)
-    ElMessage.success(t('wms.common.success'))
-    await loadByNo(form.inboundNo!)
-  } catch { /* */ }
-}
-async function onDelete() {
-  try {
-    await ElMessageBox.confirm(t('wms.inbound.msg.deleteAsk'), t('wms.common.confirm'), { type: 'warning' })
-    await inboundOrderApi.delete(form.inboundNo!)
-    ElMessage.success(t('wms.common.success'))
-    router.push('/wms/inbound-order-list')
-  } catch { /* */ }
-}
-
+const onConfirm = () => transition('confirm', 'wms.inbound.msg.confirmAsk')
+const onCancel = () => transition('cancel', 'wms.inbound.msg.cancelAsk')
+const onDelete = () => transition('delete', 'wms.inbound.msg.deleteAsk')
 function goBack() { router.push('/wms/inbound-order-list') }
 function goReceive() { router.push({ path: '/wms/inbound-receipt', query: { inboundNo: form.inboundNo } }) }
-
-onMounted(async () => {
-  const no = route.query.no as string | undefined
-  if (no) await loadByNo(no)
-})
+watch(() => route.query.no, async (no) => {
+  intent.invalidate(); reads++; resetForm()
+  if (typeof no === 'string' && no) await loadByNo(no)
+}, { immediate: true })
 </script>
 
 <style scoped>
