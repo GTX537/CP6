@@ -69,8 +69,13 @@ public static class ErpPermissionSeed
         (220, "add", "新建"), (220, "edit", "编辑"), (220, "del", "删除"),
     };
 
+    // Catalog only; unlike the historical write Actions, these confer no automatic role grant.
+    private static readonly (int MenuId, string Code, string Name)[] ReadActions = [
+        (207, "query", "查询订单列表"), (207, "export", "导出订单列表"),
+        (207, "download", "下载订单报表"), (208, "query", "读取完整订单") ];
+
     /// <summary>
-    /// 逐租户幂等播种 ERP 全部权限点 + 授管理员（RoleId=1）。
+    /// 逐租户登记 ERP 权限点；仅历史写Actions授管理员（RoleId=1），ReadActions只登记目录。
     /// 须在 <see cref="ErpMenuSeed.EnsureSeeded"/> 之后调用（锚定菜单行须先在）。
     /// </summary>
     public static void EnsureSeeded(CP6Context db)
@@ -82,6 +87,16 @@ public static class ErpPermissionSeed
         var changed = false;
         foreach (var tid in tenantIds)
         {
+            // W34 read-use catalog only: current tenant administrators explicitly assign grants.
+            // No new role authority is inferred from menu visibility or existing write grants.
+            foreach (var (menuId, code, name) in ReadActions)
+            {
+                if (!db.Sys_MenuActions.IgnoreQueryFilters().Any(x => x.TenantId == tid && x.MenuId == menuId && x.ActionCode == code))
+                {
+                    db.Sys_MenuActions.Add(new() { TenantId = tid, MenuId = menuId, ActionCode = code, ActionName = name });
+                    changed = true;
+                }
+            }
             foreach (var (menuId, code, name) in Actions)
             {
                 // IgnoreQueryFilters：跨租户可见，避免默认租户作用域误判其他租户既存行缺失而重复插。

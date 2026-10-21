@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-21：W34 普通订单读取Owner候选
+
+复用W33可信部门，列表／整单详情／手配号查询、CSV／报表已接独立当前动作、对象与字段用途、最终撤权；新增权限目录不自动授予角色。原生精度／子图、前端失权与同身份草稿保护保持。#371原步骤回归；70相关.NET（含PG/HTTP）、49前端和类型检查通过，一次作者审查无本窗阻断。
+
+原DEV-1／DEV-2正常PR及同分支最后文档后finish，零新树／副本／代理；4处自有生成data回收，证据保留。普通写Owner、其他读取入口、业务operation、外部workflow／CRM及真实验收仍未完成；125目标／247运行不提升，无Actions或部署。[DELIVERY](../development/evidence/WP02-03/order-read-owner/DELIVERY.md)。
+
 ## 2026-10-20：W33 部门可信映射与PA090 Owner已集成
 
 [产品PR #369](https://github.com/GTX537/CP6/pull/369)已合入远端main`d58b65cb16608c310ec3fb64a3185d13680760a5`，[Handoff PR #9](https://github.com/GTX537/CP6.AI-Handoff/pull/9)已合入默认目标，P0 #368回归及远端采用后关闭。101不同相关PG/HTTP/IAM、27Vitest与类型检查通过，0最终失败/跳过；一次作者审查无本窗阻断。

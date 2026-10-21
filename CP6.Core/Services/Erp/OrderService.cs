@@ -17,7 +17,7 @@ namespace CP6.Core.Services.Erp;
 /// - 子表更新は「全削除 → 全挿入」方式（PA050 と同じ；楽観锁は親で担当）
 /// - mcframe7 連携無し環境では isEditable / 仕掛 / 与信 はスタブ実装
 /// </remarks>
-public class OrderService : IOrderService
+public partial class OrderService : IOrderService
 {
     private readonly CP6Context _db;
     private readonly IPowerEggWorkflowService _powerEgg;
@@ -26,6 +26,7 @@ public class OrderService : IOrderService
     private readonly IOrderCancelBridgeHook _cancelBridge;
     private readonly IFxRateService? _fxRate;
     private readonly OrderPriceCorrectionOwnerV1? _priceCorrectionOwner;
+    private readonly OrderReadOwnerV1? _readOwner;
     /// <summary>WebOrderNo 採番プレフィックス（業務 ID 識別子）</summary>
     private const string WebOrderPrefix = "WO";
     private const string McNullVal = "MCNULLVAL";
@@ -39,7 +40,7 @@ public class OrderService : IOrderService
         IMesBridgeHook? mesBridge = null,
         IOrderCancelBridgeHook? cancelBridge = null,
         IFxRateService? fxRate = null,
-        OrderPriceCorrectionOwnerV1? priceCorrectionOwner = null)
+        OrderPriceCorrectionOwnerV1? priceCorrectionOwner = null, OrderReadOwnerV1? readOwner = null)
     {
         _db = db;
         _powerEgg = powerEgg;
@@ -48,13 +49,18 @@ public class OrderService : IOrderService
         _cancelBridge = cancelBridge ?? new NoOpOrderCancelBridgeHook();
         _fxRate = fxRate;
         _priceCorrectionOwner = priceCorrectionOwner;
+        _readOwner = readOwner;
     }
 
     // ═══════════════════════════════════════════════════════════
     //  詳細取得
     // ═══════════════════════════════════════════════════════════
 
-    public async Task<OrderDto?> GetByWebOrderNoAsync(string webOrderNo, bool includeDeleted = false)
+    public Task<OrderDto?> GetByWebOrderNoAsync(string webOrderNo, bool includeDeleted = false)
+        => _db.Database.IsNpgsql() ? ReadOrderAsync(webOrderNo, includeDeleted)
+            : GetByWebOrderNoCoreAsync(webOrderNo, includeDeleted);
+
+    private async Task<OrderDto?> GetByWebOrderNoCoreAsync(string webOrderNo, bool includeDeleted = false)
     {
         var headerQ = _db.Orders.AsNoTracking().Where(x => x.WebOrderNo == webOrderNo);
         if (!includeDeleted) headerQ = headerQ.Where(x => !x.IsDeleted);
@@ -83,17 +89,19 @@ public class OrderService : IOrderService
 
         var dto = HeaderToDto(header);
 
+        // Native queries/FKs already bind each child to this order and its unique detail number.
+        // Repeating CLR equality on bpchar/case-insensitive keys would drop valid child rows.
         foreach (var d in details)
         {
             var ddto = DetailToDto(d);
             ddto.Processes = processes
-                .Where(p => p.WebOrderNo == d.WebOrderNo && p.WebOrderDetailNo == d.WebOrderDetailNo && p.ProductCd == d.ProductCd)
+                .Where(p => p.WebOrderDetailNo == d.WebOrderDetailNo)
                 .Select(ProcessToDto).ToList();
             ddto.ProcessNotes = notes
-                .Where(p => p.WebOrderNo == d.WebOrderNo && p.WebOrderDetailNo == d.WebOrderDetailNo && p.ProductCd == d.ProductCd)
+                .Where(p => p.WebOrderDetailNo == d.WebOrderDetailNo)
                 .Select(ProcessNoteToDto).ToList();
             ddto.Materials = materials
-                .Where(m => m.WebOrderNo == d.WebOrderNo && m.WebOrderDetailNo == d.WebOrderDetailNo && m.ProductCd == d.ProductCd)
+                .Where(m => m.WebOrderDetailNo == d.WebOrderDetailNo)
                 .Select(MaterialToDto).ToList();
             dto.Details.Add(ddto);
         }
@@ -513,7 +521,11 @@ public class OrderService : IOrderService
         }).ToList();
     }
 
-    public async Task<OrderDto?> LookupByHaibaiNoAsync(string? haibaiNo1, string? haibaiNo2, string? haibaiNo3)
+    public Task<OrderDto?> LookupByHaibaiNoAsync(string? haibaiNo1, string? haibaiNo2, string? haibaiNo3)
+        => _db.Database.IsNpgsql() ? ReadHaibaiAsync(haibaiNo1, haibaiNo2, haibaiNo3)
+            : LookupByHaibaiNoCoreAsync(haibaiNo1, haibaiNo2, haibaiNo3);
+
+    private async Task<OrderDto?> LookupByHaibaiNoCoreAsync(string? haibaiNo1, string? haibaiNo2, string? haibaiNo3)
     {
         // 仕様書 §5.2：手配NO検索（13+18 フィールドを引入）
         var q = _db.OrderDetails.AsNoTracking().Where(x => !x.IsDeleted);
@@ -771,9 +783,12 @@ public class OrderService : IOrderService
             ["slipNote"] = "SlipNote",
         };
 
-    public async Task<(List<OrderListItemDto>, int)> SearchOrdersAsync(OrderQueryDto query)
+    public Task<(List<OrderListItemDto>, int)> SearchOrdersAsync(OrderQueryDto query)
+        => _db.Database.IsNpgsql() ? ReadOrderListAsync(query) : SearchOrdersCoreAsync(query);
+
+    private async Task<(List<OrderListItemDto>, int)> SearchOrdersCoreAsync(OrderQueryDto query, IQueryable<OrderDetail>? scope = null)
     {
-        var q = BuildOrderListQuery(query);
+        var q = BuildOrderListQuery(query, scope);
         var total = await q.CountAsync();
 
         var ordered = QuerySort.Apply(q, query.SortField, query.SortOrder, OrderSortMap,
@@ -796,12 +811,17 @@ public class OrderService : IOrderService
         return (page, total);
     }
 
-    public async Task<byte[]> ExportListCsvAsync(OrderQueryDto query)
+    public Task<byte[]> ExportListCsvAsync(OrderQueryDto query)
+        => _db.Database.IsNpgsql() ? ReadOrderCsvAsync(query) : ExportListCsvCoreAsync(query);
+
+    private async Task<byte[]> ExportListCsvCoreAsync(OrderQueryDto query, IQueryable<OrderDetail>? scope = null,
+        bool price = true, bool amount = true)
     {
-        var q = BuildOrderListQuery(query);
+        var q = BuildOrderListQuery(query, scope);
         var rows = await ProjectListAsync(q.OrderBy(x => x.HaibaiNo2).ThenBy(x => x.HaibaiNo1)
             .ThenBy(x => x.WebOrderNo).ThenBy(x => x.WebOrderDetailNo));
         NumberRows(rows);
+        MaskOrderRows(rows, price, amount);
 
         var sb = new StringBuilder();
         sb.AppendLine("NO,得意先,担当,得意先名,担当者名,注文書NO,手配NO1,不適合手配NO,注文NO(mc),受注日,客先納期,製品CD,品目CD,製品区分(大),CP品名/構成,段,表(構成),中(構成),裏(構成),全判巾,全判流れ,スリ巾,スリ流れ,数量単位,数量,個別単価,セット単価,単価単位,受注金額,預り売上,伝票備考,納入備考,WEB受注NO,WEB受注明細NO");
@@ -816,11 +836,11 @@ public class OrderService : IOrderService
                 CsvE(r.ProductCd), CsvE(r.ItemCd), CsvE(r.ProductCatBigName ?? r.ProductCatBig),
                 CsvE(r.CpItemOrComposition), CsvE(r.SheetFlute),
                 CsvE(r.CompositionF), CsvE(r.CompositionC), CsvE(r.CompositionB),
-                r.FullSheetWidth?.ToString("0.##") ?? "", r.FullSheetFlow?.ToString("0.##") ?? "",
-                r.SlitterWidth?.ToString("0.##") ?? "", r.SlitterFlow?.ToString("0.##") ?? "",
-                CsvE(r.QtyUnit), r.Quantity?.ToString("0.##") ?? "",
-                r.IndividualUnitPrice?.ToString("0.####") ?? "", r.SetUnitPrice?.ToString("0.####") ?? "",
-                CsvE(r.UnitPriceUnit), r.Amount?.ToString("0.####") ?? "",
+                r.FullSheetWidth?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "", r.FullSheetFlow?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "",
+                r.SlitterWidth?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "", r.SlitterFlow?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "",
+                CsvE(r.QtyUnit), r.Quantity?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "",
+                r.IndividualUnitPrice?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "", r.SetUnitPrice?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "",
+                CsvE(r.UnitPriceUnit), r.Amount?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "",
                 CsvE(r.ConsignedSalesFlg), CsvE(r.SlipNote), CsvE(r.DeliveryNote),
                 CsvE(r.WebOrderNo), r.WebOrderDetailNo.ToString(),
             }));
@@ -1142,7 +1162,11 @@ public class OrderService : IOrderService
         return (true, ltSum, null);
     }
 
-    public async Task<byte[]> ExportOrderReportPdfAsync(IEnumerable<string> webOrderDetailKeys)
+    public Task<byte[]> ExportOrderReportPdfAsync(IEnumerable<string> webOrderDetailKeys)
+        => _db.Database.IsNpgsql() ? ReadOrderReportAsync(webOrderDetailKeys)
+            : ExportOrderReportCoreAsync(webOrderDetailKeys);
+
+    private async Task<byte[]> ExportOrderReportCoreAsync(IEnumerable<string> webOrderDetailKeys, IQueryable<OrderDetail>? scope = null)
     {
         // 仕様書 §PA080 受注伝票 PDF 発行
         // 簡易実装：選択行の受注情報を プレーンテキスト→ "PDFっぽい" バイナリ化
@@ -1161,7 +1185,7 @@ public class OrderService : IOrderService
             if (!int.TryParse(parts[^1], out var detailNo)) continue;
             var webOrderNo = string.Join('-', parts[..^1]);
 
-            var d = await _db.OrderDetails.AsNoTracking()
+            var d = await (scope ?? _db.OrderDetails.AsNoTracking())
                 .FirstOrDefaultAsync(x => x.WebOrderNo == webOrderNo
                                        && x.WebOrderDetailNo == detailNo
                                        && !x.IsDeleted);
@@ -1184,9 +1208,9 @@ public class OrderService : IOrderService
     //  Helper：PA080 リスト構築
     // ═══════════════════════════════════════════════════════════
 
-    private IQueryable<OrderDetail> BuildOrderListQuery(OrderQueryDto query)
+    private IQueryable<OrderDetail> BuildOrderListQuery(OrderQueryDto query, IQueryable<OrderDetail>? scope = null)
     {
-        var q = _db.OrderDetails.AsNoTracking().Where(x => query.IncludeDeleted == true || !x.IsDeleted);
+        var q = (scope ?? _db.OrderDetails.AsNoTracking()).Where(x => query.IncludeDeleted == true || !x.IsDeleted);
 
         // ヘッダー条件は WebOrderNo を介して絞り込み
         var hq = _db.Orders.AsNoTracking().Where(o => query.IncludeDeleted == true || !o.IsDeleted);
@@ -1268,7 +1292,9 @@ public class OrderService : IOrderService
 
     private async Task<List<OrderListItemDto>> ProjectListAsync(IQueryable<OrderDetail> q)
     {
-        var rows = await q.Select(x => new OrderListItemDto
+        var rows = await (from x in q
+            join header in _db.Orders.AsNoTracking() on x.WebOrderNo equals header.WebOrderNo
+            select new OrderListItemDto
         {
             CustomerCd = x.HaibaiNo2,
             OrderSheetNo = null,
@@ -1299,28 +1325,8 @@ public class OrderService : IOrderService
             DeliveryNote = x.DeliveryNote,
             WebOrderNo = x.WebOrderNo,
             WebOrderDetailNo = x.WebOrderDetailNo,
+            CurrencyCd = header.CurrencyCd, FxRate = header.FxRate,
         }).ToListAsync();
-
-        // 多通貨（Gap 4.3）：通貨・凍結レートはヘッダ側にあるため補完
-        var nos = rows.Select(r => r.WebOrderNo).Distinct().ToList();
-        if (nos.Count > 0)
-        {
-            var headers = await _db.Orders.AsNoTracking()
-                .Where(o => nos.Contains(o.WebOrderNo))
-                .Select(o => new { o.WebOrderNo, o.CurrencyCd, o.FxRate })
-                .ToListAsync();
-            var map = headers
-                .GroupBy(h => h.WebOrderNo)
-                .ToDictionary(g => g.Key, g => g.First());
-            foreach (var r in rows)
-            {
-                if (map.TryGetValue(r.WebOrderNo, out var h))
-                {
-                    r.CurrencyCd = h.CurrencyCd;
-                    r.FxRate = h.FxRate;
-                }
-            }
-        }
 
         return rows;
     }

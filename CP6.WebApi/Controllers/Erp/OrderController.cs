@@ -14,6 +14,7 @@ namespace CP6.WebApi.Controllers.Erp;
 [ApiController]
 [Route("api/orders")]
 [Authorize]
+[OrderOwnerResult]
 public class OrderController : LocalizedControllerBase
 {
     private readonly IOrderService _service;
@@ -39,6 +40,7 @@ public class OrderController : LocalizedControllerBase
 
     /// <summary>手配NO検索（既存受注を引入）— GET /api/orders/by-haibai-no</summary>
     [HttpGet("by-haibai-no")]
+    [RequirePermission("erp-order", "query")]
     public async Task<IActionResult> GetByHaibaiNo([FromQuery] string? no1, [FromQuery] string? no2, [FromQuery] string? no3)
     {
         if (string.IsNullOrWhiteSpace(no1) && string.IsNullOrWhiteSpace(no2) && string.IsNullOrWhiteSpace(no3))
@@ -159,6 +161,7 @@ public class OrderController : LocalizedControllerBase
 
     /// <summary>受注一覧 検索 — GET /api/orders/list</summary>
     [HttpGet("list")]
+    [RequirePermission("order-list", "query")]
     public async Task<IActionResult> SearchList([FromQuery] OrderQueryDto query)
     {
         // FROM≦TO バリデーション（E10036）
@@ -171,6 +174,7 @@ public class OrderController : LocalizedControllerBase
 
     /// <summary>受注一覧 CSV 出力 — GET /api/orders/list/export.csv</summary>
     [HttpGet("list/export.csv")]
+    [RequirePermission("order-list", "export")]
     public async Task<IActionResult> ExportListCsv([FromQuery] OrderQueryDto query)
     {
         var bytes = await _service.ExportListCsvAsync(query);
@@ -180,6 +184,7 @@ public class OrderController : LocalizedControllerBase
 
     /// <summary>受注伝票 PDF 発行 — POST /api/orders/report</summary>
     [HttpPost("report")]
+    [RequirePermission("order-list", "download")]
     public async Task<IActionResult> ExportReport([FromBody] ReportRequest req)
     {
         if (req?.Keys == null || req.Keys.Count == 0)
@@ -271,6 +276,7 @@ public class OrderController : LocalizedControllerBase
 
     /// <summary>受注詳細取得 — GET /api/orders/{webOrderNo}</summary>
     [HttpGet("{webOrderNo}")]
+    [RequirePermission("erp-order", "query")]
     public async Task<IActionResult> Get(string webOrderNo, [FromQuery] bool includeDeleted = false)
     {
         var dto = await _service.GetByWebOrderNoAsync(webOrderNo, includeDeleted);
@@ -287,8 +293,7 @@ public class OrderController : LocalizedControllerBase
         try
         {
             var no = await _service.CreateAsync(dto, CurrentUser);
-            var fresh = await _service.GetByWebOrderNoAsync(no);
-            return Ok(new { code = 0, message = "OK", data = fresh });
+            return await CompletedWrite(no);
         }
         catch (InvalidOperationException ex)
         {
@@ -304,8 +309,7 @@ public class OrderController : LocalizedControllerBase
         try
         {
             await _service.UpdateAsync(webOrderNo, dto, CurrentUser);
-            var fresh = await _service.GetByWebOrderNoAsync(webOrderNo);
-            return Ok(new { code = 0, message = "OK", data = fresh });
+            return await CompletedWrite(webOrderNo);
         }
         catch (KeyNotFoundException ex)
         {
@@ -354,6 +358,21 @@ public class OrderController : LocalizedControllerBase
                 message = Localizer["W10002: 更新対象が他の処理によって更新されています"],
                 msgId = "MSG-W10002"
             });
+        }
+    }
+
+    // The write has already committed. A separately denied readback must not invite write replay.
+    private async Task<IActionResult> CompletedWrite(string number)
+    {
+        try
+        {
+            var fresh = await _service.GetByWebOrderNoAsync(number);
+            return Ok(new { code = 0, message = "OK", data = fresh, webOrderNo = number, readbackUnavailable = fresh == null });
+        }
+        catch (OrderPriceCorrectionException)
+        {
+            return Ok(new { code = 0, message = "WRITE_COMMITTED_READBACK_UNAVAILABLE", data = (OrderDto?)null,
+                webOrderNo = number, readbackUnavailable = true });
         }
     }
 

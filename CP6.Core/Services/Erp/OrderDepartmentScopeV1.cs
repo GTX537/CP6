@@ -11,7 +11,20 @@ namespace CP6.Core.Services.Erp;
 /// <summary>Trusted stored header code, never request/claim department. Caller holds the current authority root.</summary>
 internal static class OrderDepartmentScopeV1
 {
-    internal static IQueryable<OrderDetail> Query(CP6Context db, UserPermissionContext actor, int scope, bool mappingOnly = false)
+    internal static IQueryable<OrderDetail> Query(CP6Context db, UserPermissionContext actor, int scope, bool mappingOnly = false, bool includeDeleted = false, bool readLocks = false)
+    {
+        var (sql, args) = Sql(db, actor, scope, mappingOnly, includeDeleted, false, readLocks);
+        return db.OrderDetails.FromSqlRaw(sql, args);
+    }
+
+    internal static IQueryable<Order> Headers(CP6Context db, UserPermissionContext actor, int scope, bool includeDeleted)
+    {
+        var (sql, args) = Sql(db, actor, scope, false, includeDeleted, true, false);
+        return db.Orders.FromSqlRaw(sql, args);
+    }
+
+    private static (string, object[]) Sql(CP6Context db, UserPermissionContext actor, int scope,
+        bool mappingOnly, bool includeDeleted, bool headers, bool readLocks)
     {
         string Table<T>()
         {
@@ -31,7 +44,7 @@ internal static class OrderDepartmentScopeV1
         };
         var condition = scope switch
         {
-            1 => """@owner_name<>'' AND d."Creator"=@owner_name""",
+            1 => headers ? """@owner_name<>'' AND o."Creator"=@owner_name""" : """@owner_name<>'' AND d."Creator"=@owner_name""",
             5 => "TRUE",
             _ => $$"""
                 EXISTS (SELECT FROM cp6_order_owner_v1.department_mappings m
@@ -40,16 +53,20 @@ internal static class OrderDepartmentScopeV1
                     AND {{department}})
                 """
         };
-        return db.OrderDetails.FromSqlRaw($$"""
+        var from = headers ? $"{Table<Order>()} o" : $"{Table<OrderDetail>()} d JOIN {Table<Order>()} o ON d.\"TenantId\"=o.\"TenantId\" AND d.\"WebOrderNo\"=o.\"WebOrderNo\"";
+        var alias = headers ? "o" : "d";
+        var deleted = includeDeleted ? "TRUE" : headers ? "NOT o.\"IsDeleted\"" : "NOT d.\"IsDeleted\" AND NOT o.\"IsDeleted\"";
+        var locking = readLocks ? "FOR SHARE OF d,o" : "";
+        return ($$"""
             WITH RECURSIVE {{PostgreSqlOrganizationV1.HealthyCte(PostgreSqlOrganizationV1.Table(db), "@owner_tenant")}}
-            SELECT d.* FROM {{Table<OrderDetail>()}} d JOIN {{Table<Order>()}} o
-              ON d."TenantId"=o."TenantId" AND d."WebOrderNo"=o."WebOrderNo"
-            WHERE d."TenantId"=@owner_tenant AND NOT d."IsDeleted" AND NOT o."IsDeleted" AND {{condition}}
-            """,
+            SELECT {{alias}}.* FROM {{from}}
+            WHERE {{alias}}."TenantId"=@owner_tenant AND {{deleted}} AND {{condition}}
+            {{locking}}
+            """, [
             new NpgsqlParameter("owner_tenant", db.CurrentTenantId),
             new NpgsqlParameter("owner_name", actor.UserName ?? ""),
             new NpgsqlParameter("owner_department", actor.DeptId ?? Guid.Empty),
-            new NpgsqlParameter("owner_custom", actor.CustomDeptIds.GetValueOrDefault("order", []).ToArray()));
+            new NpgsqlParameter("owner_custom", actor.CustomDeptIds.GetValueOrDefault("order", []).ToArray())]);
     }
 
     internal static async Task<string> Version(CP6Context db, CancellationToken ct)

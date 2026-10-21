@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, onScopeDispose } from 'vue'
+import { AUTH_EVENT, identityStamp } from '@/auth/identity'
 import { OrderOperationType } from '@/types/erp/order'
 import type {
   OrderDto,
@@ -43,6 +44,18 @@ export function emptyOrderDetail(rowNo: number, productCd = ''): OrderDetailDto 
  * 仕様書 §11 T_Order / T_OrderDetail / T_OrderProcess / T_OrderProcessNote / T_OrderMaterial 5 表 1-shot。
  */
 export const useOrderStore = defineStore('order', () => {
+  let boundIdentity = identityStamp()
+  function ensureCurrentIdentity() {
+    if (boundIdentity !== identityStamp()) reset()
+  }
+  // The store can outlive its page. Keep same-identity drafts across navigation,
+  // but clear protected documents even when the page is not mounted.
+  window.addEventListener(AUTH_EVENT, ensureCurrentIdentity)
+  window.addEventListener('storage', ensureCurrentIdentity)
+  onScopeDispose(() => {
+    window.removeEventListener(AUTH_EVENT, ensureCurrentIdentity)
+    window.removeEventListener('storage', ensureCurrentIdentity)
+  })
   // ───── 操作モード / ナビゲーション ─────
   const operationType = ref<OrderOperationType>(OrderOperationType.New)
   const currentStep = ref<1 | 2 | 3>(1)
@@ -116,6 +129,7 @@ export const useOrderStore = defineStore('order', () => {
 
   /** ストアを初期状態にリセット */
   function reset() {
+    boundIdentity = identityStamp()
     operationType.value = OrderOperationType.New
     currentStep.value = 1
     order.value = emptyOrder()
@@ -237,6 +251,7 @@ export const useOrderStore = defineStore('order', () => {
     canEdit,
     isPkEditable,
     // actions
+    ensureCurrentIdentity,
     setOperationType,
     setStep,
     loadFromDto,
