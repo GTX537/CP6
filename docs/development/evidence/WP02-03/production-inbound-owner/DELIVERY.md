@@ -1,6 +1,6 @@
 # W38-01 报工／入库 Owner：单份交付
 
-2026-10-21；COORD本聊天单人；原DEV-1/codex/w38-01，基线`6d97c1a33ce835775364973675b78ee8d1b07ddb`。W37真实合并/清理/席位释放已核实，本轮不重复其交付。[计划](../../../dispatch/20261021-wave38/README.md)、[Owner v1](../../../../design-handbook/remediation/main-production-inbound-owner-v1.md)、[P0 #383](https://github.com/GTX537/CP6/issues/383)。本地Ready to merge Yes；远端采用与席位释放待实际核对。
+2026-10-21；COORD本聊天单人；原DEV-1/codex/w38-01，基线`6d97c1a33ce835775364973675b78ee8d1b07ddb`。W37真实合并/清理/席位释放已核实，本轮不重复其交付。[计划](../../../dispatch/20261021-wave38/README.md)、[Owner v1](../../../../design-handbook/remediation/main-production-inbound-owner-v1.md)、[P0 #383](https://github.com/GTX537/CP6/issues/383)。产品和Handoff已采用；原任务最后文档/席位处置见下文及最终实际证明。
 
 ## 改动与合同
 
@@ -42,3 +42,15 @@ ProductionResultService/BackflushService/InboundService及三个主控制器采�
 7处本轮停止的PG生成data回收808394074逻辑字节（0.753GiB），清理时段D盘实际空闲增加812425216字节；另2次编译失败未创建实例。日志/TRX/原失败及ownership保留。清理只在核对绝对边界、ownership/stopped、无进程及无重解析点后进行；未删用户文件、既有数据库或复用缓存。
 
 DEV-1产品和DEV-2 Handoff原固定路径，INTEGRATION-1空闲，零新树/clone/副本/代理。原分支在正常PR、远端采用和状态文档同步后manage finish；候选阶段席位仍占用，不能预称释放。根工作区原未跟踪资料保留。无Actions取消/触发/重跑、workflow改动、现有数据库迁移、真实tenant授权或生产部署。原代理估计4–7小时、故障余量10小时，实际时间在最终finish后核对。
+
+## 远端采用及原任务分支收尾
+
+产品[PR #384](https://github.com/GTX537/CP6/pull/384)正常合并，source`7db2fcf9ba8eb160bf5f8316d397baa6e82bbda3`、远端main`8f15c5d5a333b54b99fe0fc7d5ea50fbbec2f176`，46项任务文件blob一致，主目录已快进；#383原故障复测和远端采用后关闭。[Handoff PR #14](https://github.com/GTX537/CP6.AI-Handoff/pull/14)正常合入默认资料目标，source`e11fdd961c72cf57cf8dcd86f5d307821d80976a`、目标`bab6aa8832c7a0bc3da22ef9dfffce6176451a8c`；资料分支已定向删除，DEV-2干净detached且已释放。
+
+90项去重相关.NET成功（20本轮原生PG/实际HTTP、18既有Owner PG/HTTP、52兼容/权限），17项Vitest（8新+9既有）及完整类型检查通过；三记录复用83项有效成功、最后7项局部复测，最终适用集合0失败/跳过；一次作者审查及局部复查无本窗剩余阻断。最后文档不改产品/依赖/环境，复用这些证据，仅检查差异、链接、台账及采用范围。自有PG/API停止；7处生成data回收808394074逻辑字节（0.753GiB），清理时段D盘空闲增加812425216字节，日志/TRX/原失败/ownership保留。
+
+此提交仍在原codex/w38-01、DEV-1；最后正常PR后调用manage finish，不能提前证明自己的未来合并/席位释放。实际完成以管理登记`D:/CP6/.git/cp6-workspaces/state.json`、最后PR说明和`C:/Users/tt/CP6-planning-reports/20261017-foundation/wave38-final-verification.json`为准；零新树/clone/副本/额外收尾分支/代理。根主目录用户未跟踪资料保留，INTEGRATION-1空闲。
+
+首次提交自动派生的Git压缩持续约15分钟；已核对完整父子进程归属后仅停止其pack-objects子进程，原提交正常返回并保留对象文件。`git fsck --connectivity-only --no-reflogs`退出0，引用与远端采用完好。后续命令仅用单次maintenance.auto=false防止再次派生，不改仓库或全局配置。
+
+本报工/入库主服务窗口已完成；其他WMS/MES入口（盘点/看板等）、无订单对象正式部门绑定、采购/财务自身Owner、持久operation/outbox与可靠投递、正式workflow/CRM及真实DEV/UAT仍独立。完整WP02-03、125目标及247运行不提升。短表锁串行化与best-effort边界保留；无Actions、workflow变更、既有环境迁移、真实授权或生产部署。代理原估计4–7小时（故障余量10小时），实际耗时在真实finish后核对；W37已实际finish，不重复。

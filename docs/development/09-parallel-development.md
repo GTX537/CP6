@@ -1,6 +1,6 @@
 # 多对话任务分配与交付
 
-> 当前：[W38报工与入库Owner](dispatch/20261021-wave38/README.md)，候选已验证，#383待正常PR与远端采用；原DEV-1/DEV-2待finish。W37已finish，不重复。
+> 当前：[W38收尾](dispatch/20261021-wave38/README.md)，报工/入库Owner已集成，#383关闭；DEV-2释放，原W38-01最后文档PR后finish。实际收尾以管理登记/最终PR说明为准；旧轮次为历史快照，W37不重复。
 
 > 当前：[W37收尾](dispatch/20261021-wave37/README.md)，独立制造/出库主服务Owner已集成，#380关闭；Handoff席位释放，原W37-01最后文档PR后finish。无新派工/工作树；旧“当前”段落为历史快照。
 
