@@ -159312,6 +159312,11 @@
       "date": "2026-10-21",
       "change": "W36 cancel cascade Owner candidate: current authority, stock/savepoint/manufacturing consistency and final revocation;119 related .NET/18 web/typecheck pass. One author review with state/quantity fix. #377 open until remote adoption; whole business unchanged.",
       "evidence": "docs/development/dispatch/20261021-wave36/README.md"
+    },
+    {
+      "date": "2026-10-21",
+      "change": "W36 product https://github.com/GTX537/CP6/pull/378 and Handoff https://github.com/GTX537/CP6.AI-Handoff/pull/12 adopted;#377 closed.119 related .NET including PG/HTTP+18 frontend/typecheck pass. Handoff branch/seat released; original W36-01 carries final docs before finish. Whole business unchanged.",
+      "evidence": "docs/development/dispatch/20261021-wave36/README.md"
     }
   ],
   "implementation_assessment": {
@@ -161891,7 +161896,7 @@
         "claimed_at": "2026-10-21T12:07:14.632076+00:00",
         "baseline_sha": "f54402d0703e3b15fa67036358b1ce383930cad9",
         "entry_evidence": "docs/development/dispatch/20261021-wave36/README.md",
-        "phase": "READY_FOR_INTEGRATION",
+        "phase": "CLOSED",
         "dispatch_scope": "W36_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -161914,32 +161919,79 @@
           "docs/codemap-erp/",
           "docs/seeds/"
         ],
-        "reserved_write_resources": [
-          "Main:identity-authority",
-          "Main:organization-mapping",
-          "Main:order-cancel-owner",
-          "Main:wms-cancel-stock",
-          "Main:mes-cancel",
-          "Main:order-frontend"
-        ],
-        "reserved_postgresql_ports": [
-          55435
-        ],
+        "reserved_write_resources": [],
+        "reserved_postgresql_ports": [],
         "handoff_branch": "codex/w36-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": false,
+        "candidate_integrated": true,
         "resources_released": false,
         "full_task_completed": false,
         "local_ready_to_merge": true,
         "delivery_report": "docs/development/evidence/WP02-03/order-cancel-owner/DELIVERY.md",
-        "active_issues": [
+        "active_issues": [],
+        "runtime_resources_released": true,
+        "integration": {
+          "result": "PASS",
+          "repository": "GTX537/CP6",
+          "source": "a6e58a19df1de2ce1c97c3701f3da8a697c54814",
+          "main": "d8c9f549e9733ee6c76b68f5120064826e7c8bfd",
+          "pr": "https://github.com/GTX537/CP6/pull/378",
+          "paths": [
+            "CP6.Core/Services/Erp/OrderService.CancelOwner.cs",
+            "CP6.Core/Services/Erp/OrderService.cs",
+            "CP6.Core/Services/Erp/OrderWriteOwnerV1.cs",
+            "CP6.Core/Services/Integration/IOrderCancelBridgeHook.cs",
+            "CP6.Core/Services/Integration/OrderCancelBridgeHook.Owned.cs",
+            "CP6.Core/Services/Integration/OrderCancelBridgeHook.cs",
+            "CP6.Core/Services/Mes/WorkOrderService.cs",
+            "CP6.Core/Services/Wms/OutboundService.cs",
+            "CP6.Core/Services/Wms/StockMovementService.cs",
+            "CP6.Tests/Erp/OrderCancelPostgreSqlTests.cs",
+            "CP6.WebApi/Controllers/Erp/OrderController.cs",
+            "cp6.web/src/views/erp/OrderCancelDialog.vue",
+            "cp6.web/src/views/erp/OrderCancelOwner.spec.ts",
+            "docs/codemap-erp/05-受注-order.md",
+            "docs/design-handbook/remediation/main-order-cancel-owner-v1.md",
+            "docs/development/07-detailed-tasks.md",
+            "docs/development/09-parallel-development.md",
+            "docs/development/dispatch/20261021-wave36/README.md",
+            "docs/development/evidence/WP02-03/order-cancel-owner/DELIVERY.md",
+            "docs/development/roadmap.json",
+            "docs/project-memory/05-Completed.md",
+            "docs/project-memory/06-Todo.md",
+            "docs/project-memory/CHANGELOG-AI.md",
+            "docs/project-memory/PROJECT_STATE.md"
+          ],
+          "observed_at": "2026-10-21T12:36:46.760941+00:00"
+        },
+        "delivery_ref": {
+          "commit": "ea5af396bdb7efdd713e949cba18fd036436dea8",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261021T123724Z-wave36-delivery/MESSAGE.md",
+          "at": "2026-10-21T12:37:24.557952+00:00",
+          "pr": 12,
+          "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/12",
+          "base": "codex/t02c-entry-handoff-20260921"
+        },
+        "lifecycle_snapshot": {
+          "observed_at": "2026-10-21T12:38:45.510603+00:00",
+          "main_task": "CP6:W36-01",
+          "main_branch": "codex/w36-01",
+          "main_status": "active-final-documentation",
+          "main_seat_released": false,
+          "main_finish_required": true,
+          "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
+          "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave36-final-verification.json",
+          "handoff_seat_released": true,
+          "note": "Same W36-01 task branch carries final docs; verified merge is followed by finish and an actual disposition PR comment. No extra branch."
+        },
+        "closed_issues": [
           377
         ],
-        "runtime_resources_released": true
+        "product_closed_at": "2026-10-21T12:36:46.760941+00:00"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -164533,11 +164585,22 @@
         }
       },
       "wave36_delivery": {
-        "status": "READY_FOR_INTEGRATION",
+        "status": "MERGED",
         "report": "docs/development/evidence/WP02-03/order-cancel-owner/DELIVERY.md",
         "validation": "119 related .NET including native PostgreSQL/actual Program HTTP;18 Vitest4.1.11 and typecheck pass;0 final failures/skips",
         "full_task_complete": false,
-        "business_acceptance": "NOT_RUN"
+        "business_acceptance": "NOT_RUN",
+        "source_candidate_sha": "a6e58a19df1de2ce1c97c3701f3da8a697c54814",
+        "remote_main_sha": "d8c9f549e9733ee6c76b68f5120064826e7c8bfd",
+        "pull_request": "https://github.com/GTX537/CP6/pull/378",
+        "handoff": {
+          "commit": "ea5af396bdb7efdd713e949cba18fd036436dea8",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261021T123724Z-wave36-delivery/MESSAGE.md",
+          "at": "2026-10-21T12:37:24.557952+00:00",
+          "pr": 12,
+          "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/12",
+          "base": "codex/t02c-entry-handoff-20260921"
+        }
       }
     },
     {
@@ -183075,7 +183138,7 @@
       "path": "docs/development/dispatch/20261021-wave36/README.md",
       "baseline_sha": "f54402d0703e3b15fa67036358b1ce383930cad9",
       "registered_at": "2026-10-21T12:07:14.632076+00:00",
-      "phase": "W36_01_READY_FOR_INTEGRATION",
+      "phase": "CLOSED",
       "assigned_chats": [
         "COORD"
       ],
@@ -183085,12 +183148,10 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [
-        "COORD"
-      ],
+      "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": false,
-      "product_integrated": false,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W36-01",
@@ -183098,7 +183159,7 @@
           "title": "订单取消库存制造级联Owner",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "READY_FOR_INTEGRATION",
+          "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "actual_start_ref": {
@@ -183117,11 +183178,69 @@
           "candidate_review_completed": true,
           "local_ready_to_merge": true,
           "delivery_report": "docs/development/evidence/WP02-03/order-cancel-owner/DELIVERY.md",
-          "active_issues": [
+          "active_issues": [],
+          "runtime_resources_released": true,
+          "validation": "119 related .NET including native PostgreSQL/actual Program HTTP;18 Vitest4.1.11 and typecheck pass;0 final failures/skips",
+          "candidate_integrated": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "a6e58a19df1de2ce1c97c3701f3da8a697c54814",
+            "main": "d8c9f549e9733ee6c76b68f5120064826e7c8bfd",
+            "pr": "https://github.com/GTX537/CP6/pull/378",
+            "paths": [
+              "CP6.Core/Services/Erp/OrderService.CancelOwner.cs",
+              "CP6.Core/Services/Erp/OrderService.cs",
+              "CP6.Core/Services/Erp/OrderWriteOwnerV1.cs",
+              "CP6.Core/Services/Integration/IOrderCancelBridgeHook.cs",
+              "CP6.Core/Services/Integration/OrderCancelBridgeHook.Owned.cs",
+              "CP6.Core/Services/Integration/OrderCancelBridgeHook.cs",
+              "CP6.Core/Services/Mes/WorkOrderService.cs",
+              "CP6.Core/Services/Wms/OutboundService.cs",
+              "CP6.Core/Services/Wms/StockMovementService.cs",
+              "CP6.Tests/Erp/OrderCancelPostgreSqlTests.cs",
+              "CP6.WebApi/Controllers/Erp/OrderController.cs",
+              "cp6.web/src/views/erp/OrderCancelDialog.vue",
+              "cp6.web/src/views/erp/OrderCancelOwner.spec.ts",
+              "docs/codemap-erp/05-受注-order.md",
+              "docs/design-handbook/remediation/main-order-cancel-owner-v1.md",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/09-parallel-development.md",
+              "docs/development/dispatch/20261021-wave36/README.md",
+              "docs/development/evidence/WP02-03/order-cancel-owner/DELIVERY.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-21T12:36:46.760941+00:00"
+          },
+          "delivery_ref": {
+            "commit": "ea5af396bdb7efdd713e949cba18fd036436dea8",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261021T123724Z-wave36-delivery/MESSAGE.md",
+            "at": "2026-10-21T12:37:24.557952+00:00",
+            "pr": 12,
+            "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/12",
+            "base": "codex/t02c-entry-handoff-20260921"
+          },
+          "resources_released": false,
+          "lifecycle_snapshot": {
+            "observed_at": "2026-10-21T12:38:45.510603+00:00",
+            "main_task": "CP6:W36-01",
+            "main_branch": "codex/w36-01",
+            "main_status": "active-final-documentation",
+            "main_seat_released": false,
+            "main_finish_required": true,
+            "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
+            "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave36-final-verification.json",
+            "handoff_seat_released": true,
+            "note": "Same W36-01 task branch carries final docs; verified merge is followed by finish and an actual disposition PR comment. No extra branch."
+          },
+          "closed_issues": [
             377
           ],
-          "runtime_resources_released": true,
-          "validation": "119 related .NET including native PostgreSQL/actual Program HTTP;18 Vitest4.1.11 and typecheck pass;0 final failures/skips"
+          "product_closed_at": "2026-10-21T12:36:46.760941+00:00"
         }
       ],
       "horizon": {
@@ -183137,7 +183256,28 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Normal product PR, verify remote adoption, close #377, Handoff and original-task documentation then managed finish"
+      "next_action": "W36 Order cancellation cascade Owner adopted. Finish original W36-01 after final docs PR. Remaining independent MES/WMS writers, other reads/calculation/tracing, durable operation/notification recovery, formal workflow/CRM and real acceptance; do not repeat completed waves or restart frozen directions.",
+      "product_closed_at": "2026-10-21T12:36:46.760941+00:00",
+      "handoff_integration": {
+        "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/12",
+        "commit": "c9f647bdf118b9513fc16043a88a8a5454ba8392",
+        "target_head": "c9f647bdf118b9513fc16043a88a8a5454ba8392"
+      },
+      "handoff_resources_released": true,
+      "handoff_branch_disposition": "deleted-local-and-remote",
+      "lifecycle_snapshot": {
+        "observed_at": "2026-10-21T12:38:45.510603+00:00",
+        "main_task": "CP6:W36-01",
+        "main_branch": "codex/w36-01",
+        "main_status": "active-final-documentation",
+        "main_seat_released": false,
+        "main_finish_required": true,
+        "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
+        "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave36-final-verification.json",
+        "handoff_seat_released": true,
+        "note": "Same W36-01 task branch carries final docs; verified merge is followed by finish and an actual disposition PR comment. No extra branch."
+      }
     },
     "wave_history": [
       {
