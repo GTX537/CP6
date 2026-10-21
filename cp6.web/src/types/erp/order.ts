@@ -326,6 +326,8 @@ export interface OrderQueryDto {
 }
 
 export interface OrderListItemDto {
+  priceReadable?: boolean
+  amountReadable?: boolean
   rowNo: number
   customerCd?: string
   salesPersonCd?: string

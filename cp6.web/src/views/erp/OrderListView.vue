@@ -12,7 +12,9 @@
   <div class="order-list">
     <CpListPage
       ref="listRef"
+      :key="viewEpoch"
       lazy
+      clear-on-load
       :columns="columns"
       :fetch="fetchList"
       :search-fields="searchFields"
@@ -58,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
@@ -68,6 +70,7 @@ import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import CpTag from '@/components/base/CpTag.vue'
 import { orderApi } from '@/api/erp/order'
 import type { OrderQueryDto, OrderListItemDto } from '@/types/erp/order'
+import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import OrderCancelDialog from './OrderCancelDialog.vue'
 
 const { t } = useI18n()
@@ -76,6 +79,23 @@ const router = useRouter()
 const listRef = ref<ListPageExpose>()
 const total = ref<number>()
 const exporting = ref(false)
+const viewEpoch = ref(0)
+const showPrices = ref(false), showAmounts = ref(false)
+let generation = 0, exportGeneration = 0, pageIdentity = identityStamp()
+function identityChanged() {
+  if (pageIdentity === identityStamp()) return
+  pageIdentity = identityStamp()
+  generation++; exportGeneration++; viewEpoch.value++
+  total.value = 0; exporting.value = false; showPrices.value = false; showAmounts.value = false
+  lastFilters.value = {}; lastSort.value = {}; cancelDialogVisible.value = false
+}
+window.addEventListener(AUTH_EVENT, identityChanged)
+window.addEventListener('storage', identityChanged)
+onBeforeUnmount(() => {
+  generation++; exportGeneration++
+  window.removeEventListener(AUTH_EVENT, identityChanged)
+  window.removeEventListener('storage', identityChanged)
+})
 
 // —— toolbar checkbox（#15）——
 const onlyConsignedSales = ref(false)
@@ -104,7 +124,7 @@ function onCancelled() {
   listRef.value?.reload()
 }
 
-const columns = computed<ListColumn<OrderListItemDto>[]>(() => [
+const columns = computed<ListColumn<OrderListItemDto>[]>(() => ([
   { prop: 'rowNo', label: t('sales.list.no'), width: 60, align: 'center' },
   { prop: 'customerCd', label: t('sales.term.customer'), width: 100, sortable: 'custom' },
   { prop: 'customerName', label: t('sales.term.customer') + t('sales.term.bpName').slice(-1), width: 160 },
@@ -130,7 +150,8 @@ const columns = computed<ListColumn<OrderListItemDto>[]>(() => [
   { prop: 'consigned', label: t('預り売上'), width: 80, align: 'center' },
   { prop: 'slipNote', label: t('伝票備考'), minWidth: 160, sortable: 'custom' },
   { prop: '_action', label: t('操作'), width: 230, align: 'center', fixed: 'right' },
-])
+] as ListColumn<OrderListItemDto>[]).filter(c =>
+  !['individualUnitPrice', 'setUnitPrice'].includes(c.prop) ? c.prop !== 'amount' || showAmounts.value : showPrices.value))
 
 const filterLabels = computed(() => ({
   search: t('sales.btn.search'),
@@ -174,19 +195,33 @@ function buildQuery(filters: Record<string, unknown>, sortField?: string, sortOr
 }
 
 const fetchList: ListFetch<OrderListItemDto> = async ({ page, size, filters, sortField, sortOrder }) => {
-  lastFilters.value = filters
+  const id = ++generation, stamp = identityStamp()
+  lastFilters.value = { ...filters }
   lastSort.value = { sortField, sortOrder }
   const q = buildQuery(filters, sortField, sortOrder)
-  const res = await orderApi.searchList({ ...q, page, pageSize: size })
-  if (res.code === 0 && res.data) return { rows: res.data.rows, total: res.data.total }
+  try {
+    const res = await orderApi.searchList({ ...q, page, pageSize: size })
+    requireIdentity(stamp)
+    if (id !== generation) return { rows: [], total: 0 }
+    if (res.code === 0 && res.data) {
+      showPrices.value = res.data.rows.some(r => r.priceReadable !== false)
+      showAmounts.value = res.data.rows.some(r => r.amountReadable !== false)
+      return { rows: res.data.rows, total: res.data.total }
+    }
+  } catch { /* The HTTP interceptor reports failure; never retain previously protected rows. */ }
+  if (id === generation) { showPrices.value = false; showAmounts.value = false; cancelDialogVisible.value = false }
   return { rows: [], total: 0 }
 }
 
 async function onExportCsv() {
+  if (exporting.value) return
+  const id = ++exportGeneration, stamp = identityStamp()
   exporting.value = true
   try {
     const q = buildQuery(lastFilters.value, lastSort.value.sortField, lastSort.value.sortOrder)
     const blob = await orderApi.exportListCsv(q) as unknown as Blob
+    requireIdentity(stamp)
+    if (id !== exportGeneration) return
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
@@ -194,7 +229,7 @@ async function onExportCsv() {
     a.click()
     URL.revokeObjectURL(url)
   } catch { /* interceptor toast */ } finally {
-    exporting.value = false
+    if (id === exportGeneration) exporting.value = false
   }
 }
 

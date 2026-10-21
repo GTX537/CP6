@@ -572,6 +572,9 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped(sp => new OrderPriceCorrectionOwnerV1(sp.GetRequiredService<CP6Context>(),
     sp.GetRequiredService<IHttpContextAccessor>(), ct => CP6.WebApi.Services.OrderPriceCorrectionAuthenticationV1
         .CurrentActor(sp.GetRequiredService<IHttpContextAccessor>().HttpContext, ct)));
+builder.Services.AddScoped(sp => new OrderReadOwnerV1(sp.GetRequiredService<CP6Context>(),
+    sp.GetRequiredService<IHttpContextAccessor>(), ct => CP6.WebApi.Services.OrderPriceCorrectionAuthenticationV1
+        .CurrentActor(sp.GetRequiredService<IHttpContextAccessor>().HttpContext, ct)));
 builder.Services.AddScoped<IUnshippedOrderService, UnshippedOrderService>();
 builder.Services.AddScoped<ICreditNoteService, CreditNoteService>();
 builder.Services.AddScoped<IBridgeHealthService, BridgeHealthService>();

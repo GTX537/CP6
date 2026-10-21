@@ -61,7 +61,6 @@ public class ErpPermissionAttributeTests
         "OrderController.CalcLeadTime",         // §四#1 纯营业日逆算，Task.FromResult，无 _db 触碰
         "OrderController.CalcProductCategory",  // §四#2 仅 ProductMasters.AsNoTracking 读，无 SaveChanges
         "OrderController.CalcMaterials",        // §四#3 BOM 展开纯读投影 DTO
-        "OrderController.ExportReport",         // §四#4 受注伝票导出，AsNoTracking 读→拼文本 bytes
         "EstimateCalcController.Calculate",     // §四#5 计算引擎仅写内存 DTO List，无 _db.Add/SaveChanges；2026-07-12 已撤销 [AllowAnonymous]，需登录但不贴权限键（见 Calculate_AllowAnonymousRevoked_RequiresAuth）
         "PlateMoldController.Label",            // §四#6 ラベル CSV 生成，AsNoTracking 读
         "CreditNoteController.Search",          // §四#7 CreditNoteService 全类无写，纯分页查询
@@ -138,18 +137,18 @@ public class ErpPermissionAttributeTests
                 offenders.Add($"{key}：既贴 [RequirePermission] 又在豁免清单，二者互斥");
 
             taggedCount++;
-            if (!MenuPattern.IsMatch(perm.Value.menu))
+            if (!MenuPattern.IsMatch(perm.Value.menu) && !(key == "OrderController.ExportReport" && perm.Value.menu == "order-list" && perm.Value.action == "download"))
                 offenders.Add($"{key}：menu '{perm.Value.menu}' 不符约定 ^erp-[a-z0-9-]+$");
-            if (!ActionVocabulary.Contains(perm.Value.action))
+            if (!ActionVocabulary.Contains(perm.Value.action) && !(key == "OrderController.ExportReport" && perm.Value.action == "download"))
                 offenders.Add($"{key}：action '{perm.Value.action}' 不在真相源 action 集（疑似 typo，须显式加入）");
         }
 
         Assert.True(offenders.Count == 0,
             "变更端点权限点缺失/键不合约定/豁免冲突:\n" + string.Join("\n", offenders));
 
-        // 收口断言：贴点 39 + 豁免命中 11 = 全 50 变更端点，精确吻合真相源 §七。
-        Assert.Equal(39, taggedCount);
-        Assert.Equal(11, exemptHit.Count);
+        // W34 promotes the report to explicit Download: 40 guarded + 10 remaining exemptions = 50.
+        Assert.Equal(40, taggedCount);
+        Assert.Equal(10, exemptHit.Count);
     }
 
     [Theory]
@@ -202,7 +201,7 @@ public class ErpPermissionAttributeTests
         }
 
         Assert.True(stale.Count == 0, "只读 POST 豁免清单已陈旧:\n" + string.Join("\n", stale));
-        Assert.Equal(11, ReadOnlyPostExemptions.Count);
+        Assert.Equal(10, ReadOnlyPostExemptions.Count);
     }
 
     [Fact]
@@ -222,17 +221,28 @@ public class ErpPermissionAttributeTests
     }
 
     [Fact]
-    public void NoReadOnlyGetAction_HasRequirePermission()
+    public void OrderOwnerGets_KeepTheirExplicitReadActions_OtherHistoricalGetsRemainUnchanged()
     {
-        // 只读误贴防护：纯 HttpGet（且非变更）端点不应带 [RequirePermission]（本波未给 GET 贴）。
+        // W33/W34 deliberately protect these reads. Keep the exact mapping, not a GET-wide exemption.
+        var expected = new Dictionary<string, (string, string)> {
+            ["OrderController.GetByHaibaiNo"] = ("erp-order", "query"),
+            ["OrderController.Get"] = ("erp-order", "query"),
+            ["OrderController.SearchList"] = ("order-list", "query"),
+            ["OrderController.ExportListCsv"] = ("order-list", "export"),
+            ["OrderController.SearchPriceCorrection"] = ("erp-order-price-correction", "query"),
+            ["OrderController.CalcAmount"] = ("erp-order-price-correction", "query") };
+        var seen = new HashSet<string>();
         var offenders = new List<string>();
         foreach (var c in ErpControllers)
         foreach (var m in ActionMethods(c))
         {
             var readOnly = IsGet(m) && !IsMutating(m);
+            if (readOnly && expected.TryGetValue(Key(c,m), out var required))
+            { Assert.Equal(required, ReadPermission(m)); seen.Add(Key(c,m)); continue; }
             if (readOnly && ReadPermission(m) != null)
                 offenders.Add($"{Key(c, m)}：只读 GET 端点误贴 [RequirePermission]");
         }
+        Assert.Equal(expected.Keys.Order(), seen.Order());
         Assert.True(offenders.Count == 0, "只读端点误贴权限点:\n" + string.Join("\n", offenders));
     }
 }

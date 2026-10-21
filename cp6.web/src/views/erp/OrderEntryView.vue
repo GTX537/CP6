@@ -74,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useOrderStore } from '@/stores/order'
@@ -84,16 +84,31 @@ import Step1HeaderAndDetails from './order/Step1HeaderAndDetails.vue'
 import Step2BasicInfo from './order/Step2BasicInfo.vue'
 import Step3ProcessInfo from './order/Step3ProcessInfo.vue'
 import { useBreakpoint } from '@/composables/useBreakpoint'
+import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import CpTag from '@/components/base/CpTag.vue'
 
 const { t } = useI18n()
 const store = useOrderStore()
+store.ensureCurrentIdentity()
 const { isMobile } = useBreakpoint()
 
 const searchNo = ref('')
 const searchHaibaiNo1 = ref('')
 const loading = ref(false)
 const saving = ref(false)
+let generation = 0, pageIdentity = identityStamp()
+function identityChanged() {
+  if (pageIdentity === identityStamp()) return
+  pageIdentity = identityStamp(); generation++
+  store.reset(); searchNo.value = ''; searchHaibaiNo1.value = ''; loading.value = false
+}
+window.addEventListener(AUTH_EVENT, identityChanged)
+window.addEventListener('storage', identityChanged)
+onBeforeUnmount(() => {
+  generation++
+  window.removeEventListener(AUTH_EVENT, identityChanged)
+  window.removeEventListener('storage', identityChanged)
+})
 
 const hasNoOrder = computed(() => !store.order.webOrderNo)
 const canSave = computed(() => store.canEdit)
@@ -123,33 +138,31 @@ const opTagType = computed<'primary' | 'warning' | 'danger' | 'info' | 'success'
 })
 
 async function onLoad() {
-  loading.value = true
-  try {
-    if (searchNo.value) {
-      const res = await orderApi.getByWebOrderNo(searchNo.value)
-      if (res.code === 0 && res.data) {
-        store.loadFromDto(res.data)
-        store.setOperationType(OrderOperationType.Edit)
-        ElMessage.success(t('sales.msg.loadSuccess'))
-      }
-    } else if (searchHaibaiNo1.value) {
-      const res = await orderApi.lookupByHaibaiNo(searchHaibaiNo1.value)
-      if (res.code === 0 && res.data) {
-        store.loadFromDto(res.data)
-        store.setOperationType(OrderOperationType.Edit)
-        ElMessage.success(t('sales.msg.loadSuccess'))
-      }
-    } else {
-      ElMessage.warning(t('Web受注NO または 手配NO1 を入力してください'))
-    }
-  } catch {
-    /* http interceptor */
-  } finally {
-    loading.value = false
+  if (!searchNo.value && !searchHaibaiNo1.value) {
+    ElMessage.warning(t('Web受注NO または 手配NO1 を入力してください')); return
   }
+  const id = ++generation, stamp = identityStamp()
+  const number = searchNo.value, haibai = searchHaibaiNo1.value
+  if (store.isDirty) {
+    try { await ElMessageBox.confirm(t('sales.msg.unsavedChanges'), t('sales.msg.confirmTitle'), { type: 'warning' }) }
+    catch { return }
+    if (id !== generation || stamp !== identityStamp()) return
+  }
+  store.reset(); loading.value = true
+  try {
+    const res = number ? await orderApi.getByWebOrderNo(number) : await orderApi.lookupByHaibaiNo(haibai)
+    requireIdentity(stamp)
+    if (id !== generation) return
+    if (res.code === 0 && res.data) {
+      store.loadFromDto(res.data); store.setOperationType(OrderOperationType.Edit)
+      ElMessage.success(t('sales.msg.loadSuccess'))
+    }
+  } catch { /* Previous protected data was cleared before reading. */ }
+  finally { if (id === generation) loading.value = false }
 }
 
 function onNewClick() {
+  generation++; loading.value = false
   store.reset()
   store.setOperationType(OrderOperationType.New)
 }
@@ -187,7 +200,8 @@ function validateAll(): boolean {
 }
 
 async function onSave() {
-  if (!validateAll()) return
+  if (saving.value || loading.value || !validateAll()) return
+  const stamp = identityStamp(), id = generation
   // 与信チェック（W：確認後続行可）
   try {
     const totalAmount = store.order.details.reduce((s, d) => s + (d.amount ?? 0), 0)
@@ -201,11 +215,15 @@ async function onSave() {
     }
   } catch { /* 無視可：与信 API 失敗時 */ }
 
+  if (id !== generation || stamp !== identityStamp()) return
   saving.value = true
   try {
     const dto = store.buildDto()
     if (store.isNew) {
       const res = await orderApi.create(dto)
+      requireIdentity(stamp)
+      if (id !== generation) return
+      if (res.code === 0 && !res.data) { store.reset(); ElMessage.success(t('保存しました。詳細は現在読み取れません。再送信せず、権限を確認してください。')); return }
       if (res.code === 0 && res.data) {
         store.loadFromDto(res.data)
         store.setOperationType(OrderOperationType.Edit)
@@ -213,6 +231,9 @@ async function onSave() {
       }
     } else if (store.isEdit && store.order.webOrderNo) {
       const res = await orderApi.update(store.order.webOrderNo, dto)
+      requireIdentity(stamp)
+      if (id !== generation) return
+      if (res.code === 0 && !res.data) { store.reset(); ElMessage.success(t('保存しました。詳細は現在読み取れません。再送信せず、権限を確認してください。')); return }
       if (res.code === 0 && res.data) {
         store.loadFromDto(res.data)
         ElMessage.success(t('sales.msg.saveSuccess'))
@@ -251,6 +272,7 @@ async function onReset() {
       await ElMessageBox.confirm(t('sales.msg.unsavedChanges'), t('sales.msg.confirmTitle'), { type: 'warning' })
     } catch { return }
   }
+  generation++; loading.value = false
   store.reset()
   searchNo.value = ''
   searchHaibaiNo1.value = ''

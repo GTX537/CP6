@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W34](dispatch/20261021-wave34/README.md)，单COORD普通订单读取Owner候选就绪；正常PR及原分支收尾，无新派工／工作树。早期当前段落为历史快照。
+
 > 当前：[W33收尾](dispatch/20261020-wave33/README.md)，部门可信映射及PA090 Owner读写已集成，#368关闭；Handoff席位释放，原W33-01最后文档PR后finish。无新派工/工作树；旧“当前”段落为历史快照。
 
 > 当前：[W32收尾](dispatch/20261020-wave32/README.md)，Owner单价订正与最终撤权门产品/Handoff已集成，#365关闭；Handoff席位已释放，原W32-01分支完成本提交正常PR后finish。无新派工/分支/树；后续按真实剩余合同及实时席位登记开工。

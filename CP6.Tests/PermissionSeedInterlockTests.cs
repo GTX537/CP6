@@ -90,7 +90,9 @@ public class PermissionSeedInterlockTests
         {
             var field = st.GetField("Actions", BindingFlags.NonPublic | BindingFlags.Static)
                         ?? throw new InvalidOperationException($"{st.Name} 无 private static Actions 字段——种子形状变更须同步本测试");
-            var arr = (Array)field.GetValue(null)!;
+            var arr = ((Array)field.GetValue(null)!).Cast<object>();
+            if (st.GetField("ReadActions", BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null) is Array read)
+                arr = arr.Concat(read.Cast<object>());
             foreach (var element in arr)
             {
                 var tuple = (ITuple)element!;
@@ -129,7 +131,7 @@ public class PermissionSeedInterlockTests
         "ERP", new[] { "CP6.WebApi.Controllers.Erp" },
         new()
         {
-            ["erp-estimate-calc"] = 202, ["erp-quotation"] = 204, ["erp-product"] = 206, ["erp-order"] = 208,
+            ["order-list"] = 207, ["erp-estimate-calc"] = 202, ["erp-quotation"] = 204, ["erp-product"] = 206, ["erp-order"] = 208,
             ["erp-order-price-correction"] = 209, ["erp-fsc-checklist"] = 210, ["erp-business-partner"] = 212,
             ["erp-sheet-unit-price"] = 213, ["erp-plate-mold"] = 215, ["erp-backorder"] = 218, ["erp-fx-rate"] = 220,
         },

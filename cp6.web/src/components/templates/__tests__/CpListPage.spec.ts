@@ -10,6 +10,17 @@ function makeFetch(rows = [{ no: 'SHP-1', qty: 1000 }]) {
   return vi.fn().mockResolvedValue({ rows, total: rows.length })
 }
 describe('CpListPage', () => {
+  it('clearOnLoad removes protected rows while rechecking and after failure', async () => {
+    let reject!: (error: Error) => void
+    const f = makeFetch()
+    const w = mount(CpListPage, { props: { columns: cols, fetch: f, clearOnLoad: true } })
+    await flushPromises(); expect(w.text()).toContain('SHP-1')
+    f.mockImplementationOnce(() => new Promise((_resolve, fail) => { reject = fail }))
+    const read = (w.vm as any).reload(); await nextTick()
+    expect(w.text()).not.toContain('SHP-1')
+    reject(new Error('forbidden')); await read; await flushPromises()
+    expect(w.text()).not.toContain('SHP-1'); w.unmount()
+  })
   it('mounted 自动调用 fetch(page=1)', async () => {
     const f = makeFetch(); mount(CpListPage, { props: { columns: cols, fetch: f } })
     await flushPromises()

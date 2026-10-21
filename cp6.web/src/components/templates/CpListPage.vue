@@ -113,6 +113,8 @@ const props = withDefaults(defineProps<{
   highlightCurrentRow?: boolean
   paginated?: boolean
   lazy?: boolean
+  /** Protected readers clear old data while current authority is being checked. Default preserves existing pages. */
+  clearOnLoad?: boolean
   filterLabels?: FilterBarLabels
   emptyText?: string
 }>(), { highlightCurrentRow: true, paginated: true, lazy: false })
@@ -148,6 +150,7 @@ const UNPAGED_SIZE = 1000
 let seq = 0
 async function load() {
   const id = ++seq
+  if (props.clearOnLoad) { rows.value = []; total.value = 0; emit('total-change', 0) }
   loading.value = true
   try {
     const res = await props.fetch({

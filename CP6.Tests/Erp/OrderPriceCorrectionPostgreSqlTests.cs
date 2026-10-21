@@ -29,7 +29,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests(TenantManagement
         // Controlled service fixture. The companion HTTP cases use actual Program/login/session evidence.
         internal OrderPriceCorrectionOwnerV1 Owner => new(Db, new HttpContextAccessor { HttpContext = Http },
             _ => Task.FromResult(User), Catalog.Capture);
-        internal OrderService Service => new(Db, Workflow, new NoOpWmsBridgeHook(), priceCorrectionOwner: Owner);
+        internal OrderService Service => new(Db, Workflow, new NoOpWmsBridgeHook(), priceCorrectionOwner: Owner,
+            readOwner: new OrderReadOwnerV1(Db, new HttpContextAccessor { HttpContext = Http }, _ => Task.FromResult(User), Catalog.Capture));
         internal OrderPriceCorrectionBatchUpdateDto Request(decimal price = 4m) => new()
         {
             Items = [new() { WebOrderNo = Number, WebOrderDetailNo = 1,

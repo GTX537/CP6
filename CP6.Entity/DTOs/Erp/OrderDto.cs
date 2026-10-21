@@ -393,6 +393,8 @@ public class OrderQueryDto
 /// <summary>PA080 一覧 1 行（31列）</summary>
 public class OrderListItemDto
 {
+    public bool PriceReadable { get; set; } = true;
+    public bool AmountReadable { get; set; } = true;
     public int RowNo { get; set; }
     public string? CustomerCd { get; set; }
     public string? SalesPersonCd { get; set; }
