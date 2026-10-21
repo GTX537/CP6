@@ -159327,6 +159327,11 @@
       "date": "2026-10-21",
       "change": "W37 independent WorkOrder/Outbound Owner candidate; bounded parent delegation, final authority/stock transaction, actual HTTP transport and UI intent.164 unique related .NET success (143 reused+21 current unique),9 web/typecheck pass. #380 pending adoption; no full business uplift.",
       "evidence": "docs/development/dispatch/20261021-wave37/README.md"
+    },
+    {
+      "date": "2026-10-21",
+      "change": "W37 product https://github.com/GTX537/CP6/pull/381 and Handoff https://github.com/GTX537/CP6.AI-Handoff/pull/13 adopted;#380 closed.164 unique related .NET (143 reused+21 current PG/HTTP),9 UI/typecheck pass. Handoff branch/seat released; original W37-01 final docs before finish. Whole business unchanged.",
+      "evidence": "docs/development/dispatch/20261021-wave37/README.md"
     }
   ],
   "implementation_assessment": {
@@ -161906,7 +161911,7 @@
         "claimed_at": "2026-10-21T13:45:26.166523+00:00",
         "baseline_sha": "fb31d246c42644511d12ad22931c6a4832dc6f7a",
         "entry_evidence": "docs/development/dispatch/20261021-wave37/README.md",
-        "phase": "READY_FOR_INTEGRATION",
+        "phase": "CLOSED",
         "dispatch_scope": "W37_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -161929,32 +161934,105 @@
           "docs/codemap-erp/",
           "docs/seeds/"
         ],
-        "reserved_write_resources": [
-          "Main:identity-authority",
-          "Main:organization-mapping",
-          "Main:operations-owner",
-          "Main:wms-outbound-stock",
-          "Main:mes-work-order",
-          "Main:operations-frontend"
-        ],
-        "reserved_postgresql_ports": [
-          55435
-        ],
+        "reserved_write_resources": [],
+        "reserved_postgresql_ports": [],
         "handoff_branch": "codex/w37-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": false,
+        "candidate_integrated": true,
         "resources_released": false,
         "full_task_completed": false,
         "local_ready_to_merge": true,
         "delivery_report": "docs/development/evidence/WP02-03/operations-owner/DELIVERY.md",
-        "active_issues": [
+        "active_issues": [],
+        "runtime_resources_released": true,
+        "integration": {
+          "result": "PASS",
+          "repository": "GTX537/CP6",
+          "source": "55b761e97b9e44b5f73dedd44f477addad753288",
+          "main": "bef201e6ed821a79b5b9a63f8581c61630e0aa7a",
+          "pr": "https://github.com/GTX537/CP6/pull/381",
+          "paths": [
+            "CP6.Core/Services/Erp/OrderService.WriteOwner.cs",
+            "CP6.Core/Services/Erp/OrderWriteOwnerV1.cs",
+            "CP6.Core/Services/Integration/OperationsAccessV1.cs",
+            "CP6.Core/Services/Integration/OperationsDelegationV1.cs",
+            "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
+            "CP6.Core/Services/Integration/OrderCancelBridgeHook.Owned.cs",
+            "CP6.Core/Services/Mes/MesBridgeHook.cs",
+            "CP6.Core/Services/Mes/MesSequenceService.cs",
+            "CP6.Core/Services/Mes/WorkOrderService.Owner.cs",
+            "CP6.Core/Services/Mes/WorkOrderService.cs",
+            "CP6.Core/Services/Wms/MaterialShortageService.cs",
+            "CP6.Core/Services/Wms/OutboundRoutingService.cs",
+            "CP6.Core/Services/Wms/OutboundService.Owner.cs",
+            "CP6.Core/Services/Wms/OutboundService.cs",
+            "CP6.Core/Services/Wms/StockMovementService.cs",
+            "CP6.Core/Services/Wms/WmsBridgeHook.cs",
+            "CP6.Core/Services/Wms/WmsSequenceService.cs",
+            "CP6.Tests/Erp/OperationsOwnerBoundariesPostgreSqlTests.cs",
+            "CP6.Tests/Erp/OperationsOwnerHttpPostgreSqlTests.cs",
+            "CP6.Tests/Erp/OperationsOwnerPostgreSqlTests.cs",
+            "CP6.Tests/Erp/OperationsOwnerStockPostgreSqlTests.cs",
+            "CP6.Tests/MesPermissionAttributeTests.cs",
+            "CP6.Tests/MesPermissionSeedTests.cs",
+            "CP6.WebApi/Controllers/Mes/WorkOrderController.cs",
+            "CP6.WebApi/Controllers/Wms/OutboundOrderController.cs",
+            "CP6.WebApi/Middleware/CsrfMiddleware.cs",
+            "CP6.WebApi/Program.cs",
+            "CP6.WebApi/Seed/MesPermissionSeed.cs",
+            "CP6.WebApi/Seed/WmsPermissionSeed.cs",
+            "cp6.web/src/api/mes/mes.ts",
+            "cp6.web/src/composables/useOperationsIntent.ts",
+            "cp6.web/src/views/mes/WorkOrderEntryView.vue",
+            "cp6.web/src/views/mes/WorkOrderListView.vue",
+            "cp6.web/src/views/wms/OperationsOwner.spec.ts",
+            "cp6.web/src/views/wms/OutboundOrderListView.vue",
+            "cp6.web/src/views/wms/OutboundOrderView.vue",
+            "docs/codemap-mes/01-製造指図-workorder.md",
+            "docs/codemap-wms/03-出庫-出荷.md",
+            "docs/design-handbook/remediation/main-operations-owner-v1.md",
+            "docs/development/07-detailed-tasks.md",
+            "docs/development/09-parallel-development.md",
+            "docs/development/dispatch/20261021-wave37/README.md",
+            "docs/development/evidence/WP02-03/operations-owner/DELIVERY.md",
+            "docs/development/roadmap.json",
+            "docs/project-memory/05-Completed.md",
+            "docs/project-memory/06-Todo.md",
+            "docs/project-memory/CHANGELOG-AI.md",
+            "docs/project-memory/PROJECT_STATE.md",
+            "docs/seeds/mes-permission-keys.md",
+            "docs/seeds/wms-permission-keys.md"
+          ],
+          "observed_at": "2026-10-21T14:45:04.499137+00:00"
+        },
+        "delivery_ref": {
+          "commit": "7f56d1eddd060073ca6b46d8ea3d524cbc5884f4",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261021T144631Z-wave37-delivery/MESSAGE.md",
+          "at": "2026-10-21T14:46:31.450560+00:00",
+          "pr": 13,
+          "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/13",
+          "base": "codex/t02c-entry-handoff-20260921"
+        },
+        "lifecycle_snapshot": {
+          "observed_at": "2026-10-21T14:48:55.832583+00:00",
+          "main_task": "CP6:W37-01",
+          "main_branch": "codex/w37-01",
+          "main_status": "active-final-documentation",
+          "main_seat_released": false,
+          "main_finish_required": true,
+          "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
+          "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave37-final-verification.json",
+          "handoff_seat_released": true,
+          "note": "Original W37-01 carries final docs; final PR adoption is followed by managed finish and an actual disposition PR comment. No extra branch."
+        },
+        "closed_issues": [
           380
         ],
-        "runtime_resources_released": true
+        "product_closed_at": "2026-10-21T14:45:04.499137+00:00"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -164672,11 +164750,22 @@
         }
       },
       "wave37_delivery": {
-        "status": "READY_FOR_INTEGRATION",
+        "status": "MERGED",
         "report": "docs/development/evidence/WP02-03/operations-owner/DELIVERY.md",
         "validation": "164 unique related .NET successes:143 unchanged reused+21 unique PG/HTTP from20-case and2-case passing runs (1 overlap);9 Vitest4.1.11;full typecheck0. No final failure/skip.",
         "full_task_complete": false,
-        "business_acceptance": "NOT_RUN"
+        "business_acceptance": "NOT_RUN",
+        "source_candidate_sha": "55b761e97b9e44b5f73dedd44f477addad753288",
+        "remote_main_sha": "bef201e6ed821a79b5b9a63f8581c61630e0aa7a",
+        "pull_request": "https://github.com/GTX537/CP6/pull/381",
+        "handoff": {
+          "commit": "7f56d1eddd060073ca6b46d8ea3d524cbc5884f4",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261021T144631Z-wave37-delivery/MESSAGE.md",
+          "at": "2026-10-21T14:46:31.450560+00:00",
+          "pr": 13,
+          "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/13",
+          "base": "codex/t02c-entry-handoff-20260921"
+        }
       }
     },
     {
@@ -183214,7 +183303,7 @@
       "path": "docs/development/dispatch/20261021-wave37/README.md",
       "baseline_sha": "fb31d246c42644511d12ad22931c6a4832dc6f7a",
       "registered_at": "2026-10-21T13:45:26.166523+00:00",
-      "phase": "W37_01_READY_FOR_INTEGRATION",
+      "phase": "CLOSED",
       "assigned_chats": [
         "COORD"
       ],
@@ -183224,12 +183313,10 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [
-        "COORD"
-      ],
+      "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": false,
-      "product_integrated": false,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W37-01",
@@ -183237,7 +183324,7 @@
           "title": "独立制造与出库指令Owner",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "READY_FOR_INTEGRATION",
+          "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "actual_start_ref": {
@@ -183256,11 +183343,95 @@
           "candidate_review_completed": true,
           "local_ready_to_merge": true,
           "delivery_report": "docs/development/evidence/WP02-03/operations-owner/DELIVERY.md",
-          "active_issues": [
+          "active_issues": [],
+          "runtime_resources_released": true,
+          "validation": "164 unique related .NET successes:143 unchanged reused+21 unique PG/HTTP from20-case and2-case passing runs (1 overlap);9 Vitest4.1.11;full typecheck0. No final failure/skip.",
+          "candidate_integrated": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "55b761e97b9e44b5f73dedd44f477addad753288",
+            "main": "bef201e6ed821a79b5b9a63f8581c61630e0aa7a",
+            "pr": "https://github.com/GTX537/CP6/pull/381",
+            "paths": [
+              "CP6.Core/Services/Erp/OrderService.WriteOwner.cs",
+              "CP6.Core/Services/Erp/OrderWriteOwnerV1.cs",
+              "CP6.Core/Services/Integration/OperationsAccessV1.cs",
+              "CP6.Core/Services/Integration/OperationsDelegationV1.cs",
+              "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
+              "CP6.Core/Services/Integration/OrderCancelBridgeHook.Owned.cs",
+              "CP6.Core/Services/Mes/MesBridgeHook.cs",
+              "CP6.Core/Services/Mes/MesSequenceService.cs",
+              "CP6.Core/Services/Mes/WorkOrderService.Owner.cs",
+              "CP6.Core/Services/Mes/WorkOrderService.cs",
+              "CP6.Core/Services/Wms/MaterialShortageService.cs",
+              "CP6.Core/Services/Wms/OutboundRoutingService.cs",
+              "CP6.Core/Services/Wms/OutboundService.Owner.cs",
+              "CP6.Core/Services/Wms/OutboundService.cs",
+              "CP6.Core/Services/Wms/StockMovementService.cs",
+              "CP6.Core/Services/Wms/WmsBridgeHook.cs",
+              "CP6.Core/Services/Wms/WmsSequenceService.cs",
+              "CP6.Tests/Erp/OperationsOwnerBoundariesPostgreSqlTests.cs",
+              "CP6.Tests/Erp/OperationsOwnerHttpPostgreSqlTests.cs",
+              "CP6.Tests/Erp/OperationsOwnerPostgreSqlTests.cs",
+              "CP6.Tests/Erp/OperationsOwnerStockPostgreSqlTests.cs",
+              "CP6.Tests/MesPermissionAttributeTests.cs",
+              "CP6.Tests/MesPermissionSeedTests.cs",
+              "CP6.WebApi/Controllers/Mes/WorkOrderController.cs",
+              "CP6.WebApi/Controllers/Wms/OutboundOrderController.cs",
+              "CP6.WebApi/Middleware/CsrfMiddleware.cs",
+              "CP6.WebApi/Program.cs",
+              "CP6.WebApi/Seed/MesPermissionSeed.cs",
+              "CP6.WebApi/Seed/WmsPermissionSeed.cs",
+              "cp6.web/src/api/mes/mes.ts",
+              "cp6.web/src/composables/useOperationsIntent.ts",
+              "cp6.web/src/views/mes/WorkOrderEntryView.vue",
+              "cp6.web/src/views/mes/WorkOrderListView.vue",
+              "cp6.web/src/views/wms/OperationsOwner.spec.ts",
+              "cp6.web/src/views/wms/OutboundOrderListView.vue",
+              "cp6.web/src/views/wms/OutboundOrderView.vue",
+              "docs/codemap-mes/01-製造指図-workorder.md",
+              "docs/codemap-wms/03-出庫-出荷.md",
+              "docs/design-handbook/remediation/main-operations-owner-v1.md",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/09-parallel-development.md",
+              "docs/development/dispatch/20261021-wave37/README.md",
+              "docs/development/evidence/WP02-03/operations-owner/DELIVERY.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md",
+              "docs/seeds/mes-permission-keys.md",
+              "docs/seeds/wms-permission-keys.md"
+            ],
+            "observed_at": "2026-10-21T14:45:04.499137+00:00"
+          },
+          "delivery_ref": {
+            "commit": "7f56d1eddd060073ca6b46d8ea3d524cbc5884f4",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261021T144631Z-wave37-delivery/MESSAGE.md",
+            "at": "2026-10-21T14:46:31.450560+00:00",
+            "pr": 13,
+            "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/13",
+            "base": "codex/t02c-entry-handoff-20260921"
+          },
+          "resources_released": false,
+          "lifecycle_snapshot": {
+            "observed_at": "2026-10-21T14:48:55.832583+00:00",
+            "main_task": "CP6:W37-01",
+            "main_branch": "codex/w37-01",
+            "main_status": "active-final-documentation",
+            "main_seat_released": false,
+            "main_finish_required": true,
+            "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
+            "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave37-final-verification.json",
+            "handoff_seat_released": true,
+            "note": "Original W37-01 carries final docs; final PR adoption is followed by managed finish and an actual disposition PR comment. No extra branch."
+          },
+          "closed_issues": [
             380
           ],
-          "runtime_resources_released": true,
-          "validation": "164 unique related .NET successes:143 unchanged reused+21 unique PG/HTTP from20-case and2-case passing runs (1 overlap);9 Vitest4.1.11;full typecheck0. No final failure/skip."
+          "product_closed_at": "2026-10-21T14:45:04.499137+00:00"
         }
       ],
       "horizon": {
@@ -183276,7 +183447,28 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Normal product PR/adoption,close #380,Handoff and original-task final docs then finish."
+      "next_action": "W37 WorkOrder/Outbound main Owner window adopted. Finish original W37-01 after final docs PR. Remaining: other WMS/MES endpoints, independent department binding, durable operation/outbox, formal workflow/CRM and real acceptance. Do not repeat completed work or restart frozen directions.",
+      "product_closed_at": "2026-10-21T14:45:04.499137+00:00",
+      "handoff_integration": {
+        "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/13",
+        "commit": "12d1d4cef10bceac49c17f8245332b7888fb710d",
+        "target_head": "12d1d4cef10bceac49c17f8245332b7888fb710d"
+      },
+      "handoff_resources_released": true,
+      "handoff_branch_disposition": "deleted-local-and-remote",
+      "lifecycle_snapshot": {
+        "observed_at": "2026-10-21T14:48:55.832583+00:00",
+        "main_task": "CP6:W37-01",
+        "main_branch": "codex/w37-01",
+        "main_status": "active-final-documentation",
+        "main_seat_released": false,
+        "main_finish_required": true,
+        "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
+        "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave37-final-verification.json",
+        "handoff_seat_released": true,
+        "note": "Original W37-01 carries final docs; final PR adoption is followed by managed finish and an actual disposition PR comment. No extra branch."
+      }
     },
     "wave_history": [
       {
