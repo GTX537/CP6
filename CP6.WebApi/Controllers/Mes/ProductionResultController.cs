@@ -12,6 +12,8 @@ namespace CP6.WebApi.Controllers.Mes;
 [ApiController]
 [Route("api/mes/production-results")]
 [Authorize]
+[CP6.WebApi.Controllers.Erp.OrderOwnerResult]
+[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class ProductionResultController : ControllerBase
 {
     private readonly IProductionResultService _service;
@@ -22,6 +24,7 @@ public class ProductionResultController : ControllerBase
 
     /// <summary>ME050 — 一覧検索 GET /api/mes/production-results</summary>
     [HttpGet]
+    [RequirePermission("mes-production-result", "query")]
     public async Task<IActionResult> Search([FromQuery] ProductionResultSearchQuery query)
     {
         var r = await _service.SearchAsync(query);
@@ -30,6 +33,7 @@ public class ProductionResultController : ControllerBase
 
     /// <summary>ME040 — 指図 + 全工程の現在状況取得 GET /api/mes/production-results/work-order/{no}</summary>
     [HttpGet("work-order/{no}")]
+    [RequirePermission("mes-production-result", "query")]
     public async Task<IActionResult> GetWorkOrderSummary(string no)
     {
         var dto = await _service.GetWorkOrderSummaryAsync(no);
@@ -69,7 +73,7 @@ public class ProductionResultController : ControllerBase
             var resultNo = await action(req, CurrentUser);
             return Ok(new { code = 0, message = "ME-MSG-041", data = new { resultNo } });
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException)
         {
             return BadRequest(new { code = 400, message = ex.Message });
         }

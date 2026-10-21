@@ -12,6 +12,7 @@
     </template>
 
     <CpListPage
+      :key="intent.epoch.value"
       :columns="columns"
       :fetch="fetchList"
       :search-fields="searchFields"
@@ -28,6 +29,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
@@ -41,6 +43,8 @@ const router = useRouter()
 const { t } = useI18n()
 
 const total = ref<number>()
+let searches = 0
+const intent = useOperationsIntent(() => { searches++; total.value = 0 })
 
 const statusMap = computed<Record<number, string>>(() => ({
   0: t('wms.inbound.status.draft'),
@@ -98,6 +102,7 @@ const searchFields = computed<FilterField[]>(() => [
 
 const PAGE_CAP = 500
 const fetchList: ListFetch<InboundOrder> = async ({ page, size, filters }) => {
+  const token = intent.capture(), id = ++searches
   const f = filters as Record<string, unknown>
   const q: InboundOrderSearchQuery = { pageSize: PAGE_CAP }
   if (f.inboundNo) q.inboundNo = String(f.inboundNo)
@@ -107,6 +112,7 @@ const fetchList: ListFetch<InboundOrder> = async ({ page, size, filters }) => {
   if (f.arrivalFrom) q.arrivalFrom = String(f.arrivalFrom) // valueFormat 已保证 YYYY-MM-DD 字符串
   if (f.arrivalTo) q.arrivalTo = String(f.arrivalTo)
   const res = await inboundOrderApi.search(q)
+  if (!intent.current(token) || id !== searches) return { rows: [], total: 0 }
   const all = res.data || []
   const start = (page - 1) * size
   return { rows: all.slice(start, start + size), total: all.length }

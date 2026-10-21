@@ -1,5 +1,11 @@
 # AI 可读变更日志
 
+## 2026-10-21：W38 报工／入库Owner候选
+
+MES报工/工时和WMS入库/收货当前原会话Owner及事务基础已实现；逐材料反冲补偿、限定完成委托、原生关系/合法精度和六页面意图保护。90项去重相关.NET成功：20项本轮原生PG/实际HTTP、18项既有Owner PG/HTTP及52项兼容/权限测试；17项Vitest（8新+9既有）及完整vue-tsc --build退出0。最终适用集合0失败/跳过。 一次作者审查及局部修正完成；[DELIVERY](../development/evidence/WP02-03/production-inbound-owner/DELIVERY.md)。
+
+#383待远端采用；7处停止的自有PG生成data已回收约0.753GiB，原失败保留。原DEV-1/DEV-2正常PR后finish，尚未释放；W37不重做。其他WMS/MES入口、部门绑定、持久恢复/投递和真实验收仍独立，125/247不提升。无Actions、既有环境迁移、真实授权或部署。
+
 ## 2026-10-21：W37 独立制造／出库Owner已集成
 
 [产品PR #381](https://github.com/GTX537/CP6/pull/381)已合入远端main`bef201e6ed821a79b5b9a63f8581c61630e0aa7a`，[Handoff PR #13](https://github.com/GTX537/CP6.AI-Handoff/pull/13)已合入默认目标，#380回归及远端采用后关闭。164项去重相关.NET成功（143项未变证据复用+21项当前PG/实际HTTP）、9项Vitest4.1.11页面及完整vue-tsc --build通过，最终适用集合0失败/跳过；一次作者审查与局部复查无剩余本窗阻断。

@@ -10,10 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Core.Services.Integration;
 
-/// <summary>Current original-session authority for independent manufacturing and outbound operations.</summary>
+/// <summary>Current original-session authority for independent manufacturing, reporting, outbound and inbound operations.</summary>
 public sealed class OperationsOwnerV1
 {
-    internal const string Mes = "mes-work-order", Outbound = "wms-outbound-order";
+    internal const string Mes = "mes-work-order", Outbound = "wms-outbound-order",
+        Production = "mes-production-result", Inbound = "wms-inbound-order", Receipt = "wms-inbound-receipt";
     internal const string Mapping = "Main.Operations.Owner.v1";
     private readonly CP6Context db;
     private readonly IHttpContextAccessor http;
@@ -34,7 +35,7 @@ public sealed class OperationsOwnerV1
         var subject=await currentActor(ct);var definition=catalog();
         if(!definition.IsSealed || !definition.Scopes.TryGetValue(resource,out var scope))throw new CurrentPermissionUnavailableException();
         var source=await new CurrentFieldPermissionSourceReaderV1(db,http,()=>definition).ReadAsync(resource,ct);
-        var expected=resource==Outbound?new[]{"UnitPrice"}:resource==Mes?Array.Empty<string>():new[]{"Amount","UnitPrice"};
+        var expected=resource is Outbound or Inbound or Receipt?new[]{"UnitPrice"}:resource is Mes or Production?Array.Empty<string>():new[]{"Amount","UnitPrice"};
         if(!source.Fields.Order(StringComparer.Ordinal).SequenceEqual(expected))throw new CurrentPermissionUnavailableException();
         if(source.SubjectId!=subject)throw new OrderPriceCorrectionException("REAUTH_REQUIRED",401);
         var actor=await PostgreSqlPermissionReader.ReadAsync(db,subject,ct);
@@ -62,7 +63,7 @@ public sealed class OperationsOwnerV1
         Func<OperationsAccessV1,CancellationToken,Task<T>> body,CancellationToken ct=default, OperationsDelegationV1? delegation=null)
     {
         using var linked=CancellationTokenSource.CreateLinkedTokenSource(ct,http.HttpContext?.RequestAborted??CancellationToken.None);ct=linked.Token;
-        if(resource is not (Mes or Outbound) || !db.Database.IsNpgsql() || db.Database.CurrentTransaction!=null
+        if(resource is not (Mes or Outbound or Production or Inbound or Receipt) || !db.Database.IsNpgsql() || db.Database.CurrentTransaction!=null
             || System.Transactions.Transaction.Current!=null || db.ChangeTracker.HasChanges()
             || db.ChangeTracker.Entries().Any(e=>IsBusiness(e.Entity.GetType().Name)))
             throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
@@ -73,9 +74,8 @@ public sealed class OperationsOwnerV1
             tx=await db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted,ct);
             await AuthenticationCompletionGateV1.AcquireAsync(db,ct);
             await LockGraph(write,ct);
-            if(delegation!=null && (!write || action!="add" || !ReferenceEquals(delegation.Context,db)
-                || delegation.Tenant!=db.CurrentTenantId || !(delegation.Resource=="order" && delegation.Action=="add"
-                    || delegation.Resource==Mes && delegation.Action=="issue" && resource==Outbound)))
+            if(delegation!=null && (!write || !ReferenceEquals(delegation.Context,db)
+                || delegation.Tenant!=db.CurrentTenantId || !AllowsDelegation(resource,action,delegation)))
                 throw new OrderPriceCorrectionException("DELEGATION_FORBIDDEN",403);
             var authority=await AuthorityAsync(delegation?.Resource??resource,delegation?.Action??action,ct);
             var access=new OperationsAccessV1(db,this,authority);
@@ -118,7 +118,13 @@ public sealed class OperationsOwnerV1
     }
     private static readonly string[] BusinessTables=["Order","OrderDetail","OrderProcess","OrderMaterial","OrderProcessNote",
         "WorkOrder","WorkOrderProcess","WorkOrderMaterial","OutboundOrder","OutboundOrderDetail","Stock","StockTransaction",
-        "WmsSequence","MesSequence","ShippingPackage","MaterialShortage"];
+        "WmsSequence","MesSequence","ShippingPackage","MaterialShortage","ProductionResult",
+        "InboundOrder","InboundOrderDetail","InboundReceipt","InboundReceiptDetail"];
+    private static bool AllowsDelegation(string resource,string action,OperationsDelegationV1 ticket)
+        => action=="add" && (ticket.Resource=="order" && ticket.Action=="add" && resource is Mes or Outbound
+            || ticket.Resource==Mes && ticket.Action=="issue" && resource==Outbound)
+        || ticket.Resource==Production && ticket.Action=="complete" && ticket.CompletionResultId!=null
+            && (resource==Receipt && action=="post" || resource==Production && action=="backflush");
     private static bool IsBusiness(string name)=>BusinessTables.Contains(name);
     private async Task LockGraph(bool write,CancellationToken ct)
     {
@@ -132,7 +138,7 @@ public sealed class OperationsOwnerV1
         }
         await db.Database.ExecuteSqlRawAsync("LOCK TABLE "+string.Join(",",BusinessTables.Select(Name).Distinct().Order(StringComparer.Ordinal))
             +(write?" IN SHARE ROW EXCLUSIVE MODE":" IN SHARE MODE"),ct);
-        await db.Database.ExecuteSqlRawAsync("LOCK TABLE "+string.Join(",",new[]{"WmsRoleScope","Location","Warehouse","OutboundRoutingRule","StockTake","StockTakeDetail","ProductProcess","ProductMaterial"}
+        await db.Database.ExecuteSqlRawAsync("LOCK TABLE "+string.Join(",",new[]{"WmsRoleScope","Location","Warehouse","OutboundRoutingRule","StockTake","StockTakeDetail","ProductProcess","ProductMaterial","ProductMaster","MasterGenericCode"}
             .Select(Name).Distinct().Order(StringComparer.Ordinal))+" IN SHARE MODE",ct);
     }
 }

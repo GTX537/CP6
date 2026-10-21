@@ -1,5 +1,7 @@
 <template>
   <div class="wms-prod-inbound">
+    <el-alert v-if="savedReceiptNo" :title="savedReceiptNo" type="success" :closable="false" />
+    <el-alert v-if="intent.error.value" :title="intent.error.value" type="warning" :closable="false" />
     <el-row :gutter="12">
       <!-- 左：簡易入庫フォーム -->
       <el-col :xs="24" :md="14">
@@ -105,6 +107,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, nextTick, onMounted } from 'vue'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
 import { ElMessage } from 'element-plus'
 import { Box, Aim, Check, List, Refresh } from '@element-plus/icons-vue'
 import { useI18n } from 'vue-i18n'
@@ -114,7 +117,7 @@ import type { InboundReceipt } from '@/types/wms/wms'
 import { formatDateTimeCell } from '@/utils/format'
 
 const { t } = useI18n()
-const saving = ref(false)
+
 const woInputRef = ref()
 
 const form = reactive({
@@ -140,6 +143,11 @@ watch(() => form.quality, (q) => {
 })
 
 const recent = ref<InboundReceipt[]>([])
+const savedReceiptNo = ref('')
+let reads = 0, revision = 0
+const intent = useOperationsIntent(() => { reads++; reset(); form.quality = 'GOOD'; form.warehouseCd = 'W03'; form.locationCd = ''; recent.value = []; savedReceiptNo.value = '' })
+const saving = intent.busy
+watch(form, () => { revision++ }, { deep: true, flush: 'sync' })
 
 function onWoEnter() {
   // WO 入力 → 製品コード入力欄にフォーカス移動（実 MES 連携は将来拡張）
@@ -157,10 +165,12 @@ function genLot() {
 }
 
 async function reload() {
+  const token = intent.capture(), id = ++reads
   try {
     const r = await inboundReceiptApi.search({ pageSize: 20 })
+    if (!intent.current(token) || id !== reads) return
     recent.value = (r.data || []).filter(x => x.sourceType === 'PRODUCTION').slice(0, 20)
-  } catch { /* */ }
+  } catch { if (intent.current(token) && id === reads) recent.value = [] }
 }
 
 function reset() {
@@ -179,32 +189,35 @@ async function onConfirm() {
     ElMessage.warning(t('wms.common.required'))
     return
   }
-  saving.value = true
+  const token = intent.begin(); if (!token) return
+  const draft = JSON.parse(JSON.stringify(form)) as typeof form, edit = revision
   try {
     const dto: InboundReceipt = {
       sourceType: 'PRODUCTION',
-      workOrderNo: form.workOrderNo || undefined,
+      workOrderNo: draft.workOrderNo || undefined,
       receiveDateTime: new Date().toISOString(),
-      warehouseCd: form.warehouseCd,
+      warehouseCd: draft.warehouseCd,
       status: 1, // Confirmed
-      remarks: form.remarks || undefined,
+      remarks: draft.remarks || undefined,
       details: [{
         lineNo: 1,
-        productCd: form.productCd,
-        productName: form.productName || undefined,
-        lotNo: form.lotNo,
-        receivedQty: form.receivedQty,
-        locationCd: form.locationCd,
-        expiryDate: form.expiryDate,
+        productCd: draft.productCd,
+        productName: draft.productName || undefined,
+        lotNo: draft.lotNo,
+        receivedQty: draft.receivedQty,
+        locationCd: draft.locationCd,
+        expiryDate: draft.expiryDate,
       }],
     }
     const res = await inboundReceiptApi.confirm(dto)
+    if (!intent.current(token)) return
+    savedReceiptNo.value = res.data.receiptNo
     ElMessage.success(`${t('wms.common.success')}: ${res.data.receiptNo}`)
-    reset()
+    if (revision === edit) reset()
     await reload()
   } catch (e: any) {
-    ElMessage.error(e?.response?.data?.message || e?.message || 'Error')
-  } finally { saving.value = false }
+    intent.failed(token, e)
+  } finally { intent.finish(token) }
 }
 
 onMounted(() => {

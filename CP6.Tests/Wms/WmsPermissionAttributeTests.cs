@@ -19,7 +19,7 @@ public class WmsPermissionAttributeTests
 
     private static readonly HashSet<string> ActionVocabulary = new()
     {
-        "view", "add", "edit", "del",
+        "view", "query", "add", "edit", "del",
         "adjust", "move",
         "confirm", "cancel", "submit", "approve",
         "allocate", "pick", "ship", "post",
@@ -49,7 +49,7 @@ public class WmsPermissionAttributeTests
 
     private static readonly HashSet<string> ReadOnlyActionVocabulary = new()
     {
-        "view",
+        "view", "query",
         "barcode-manage",
         "device-manage",
         "analytics",
@@ -139,6 +139,10 @@ public class WmsPermissionAttributeTests
         {
             var readOnly = IsGet(method) && !IsMutating(method);
             var permission = ReadPermission(method);
+            var ownerResource = controller == typeof(InboundOrderController) ? "wms-inbound-order"
+                : controller == typeof(InboundReceiptController) ? "wms-inbound-receipt"
+                : controller == typeof(OutboundOrderController) ? "wms-outbound-order" : null;
+            if(readOnly && ownerResource != null) Assert.Equal((ownerResource,"query"),permission);
             if (readOnly
                 && permission is not null
                 && !ReadOnlyActionVocabulary.Contains(permission.Value.action))

@@ -33,9 +33,9 @@ public class WmsReceiveServiceAdapter : IWmsReceiveService
             SupplierCd = request.SupplierId,
             WarehouseCd = warehouse,
             ExpectedArrivalDate = DateTime.Now,
-            Details = request.Lines.Select(l => new InboundOrderDetailDto
+            Details = request.Lines.Select((l, index) => new InboundOrderDetailDto
             {
-                LineNo = l.PoLineNo, ProductCd = l.ItemId, ExpectedQty = l.Qty,
+                LineNo = index + 1, ProductCd = l.ItemId, ExpectedQty = l.Qty,
             }).ToList(),
         }, userName);
 
@@ -48,9 +48,10 @@ public class WmsReceiveServiceAdapter : IWmsReceiveService
             InboundNo = inboundNo,
             SourceType = InboundSourceType.Purchase,
             WarehouseCd = warehouse,
-            Details = request.Lines.Select(l => new InboundReceiptDetailDto
+            Details = request.Lines.Select((l, index) => new InboundReceiptDetailDto
             {
-                LineNo = l.PoLineNo, RefOrderLineNo = l.PoLineNo, ProductCd = l.ItemId,
+                // InboundService numbers its own plan lines; a partial PO selection need not be contiguous.
+                LineNo = index + 1, RefOrderLineNo = index + 1, ProductCd = l.ItemId,
                 LotNo = "", ReceivedQty = l.Qty, LocationCd = ReceivingLocation,
             }).ToList(),
         }, userName);

@@ -29,6 +29,12 @@ public partial class WorkOrderService : IWorkOrderService
     //  Read
     // ═══════════════════════════════════════════════════════════
 
+    internal bool Owns(CP6Context context)=>ReferenceEquals(_db,context);
+    internal async Task<WorkOrderDto?> ReadProductionSummaryAsync(string number,OperationsAccessV1 access)
+    {
+        await access.RequireSourceWorkOrder(number,CancellationToken.None);
+        return await GetByNoCoreAsync(number);
+    }
     private async Task<WorkOrderDto?> GetByNoCoreAsync(string workOrderNo)
     {
         var wo = await _db.WorkOrders.AsNoTracking()
