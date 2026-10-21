@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## 2026-10-21：W36 订单取消级联Owner已集成
+
+[产品PR #378](https://github.com/GTX537/CP6/pull/378)已合入远端main`d8c9f549e9733ee6c76b68f5120064826e7c8bfd`，[Handoff PR #12](https://github.com/GTX537/CP6.AI-Handoff/pull/12)已合入默认目标，#377回归及远端采用后关闭。119相关.NET（含原生PG/HTTP）、18前端及类型检查通过，最终0失败/跳过；一次作者审查发现的状态/数量矛盾已修正验证。
+
+Handoff分支删除、DEV-2释放；自有进程停止，6处生成data逻辑回收0.642GiB。原W36-01完成本次最后文档PR后finish，不能预先声称自身未来释放。取消Owner及直接依赖已完成，独立MES/WMS入口、其他读取/计算/追踪、持久operation/通知、外部workflow/CRM和真实验收仍独立；125目标/247运行不提升。表锁成本与best-effort边界明确。零新树/副本/代理，无Actions/既有环境迁移/真实tenant审批/生产。[DELIVERY](../development/evidence/WP02-03/order-cancel-owner/DELIVERY.md)。
+
 ## 2026-10-21：W36 订单取消级联Owner候选
 
 Order.cancel已接当前原会话、独立动作与完整对象/可信部门；库存预留释放/流水/明细/制造及订单状态处于受控PG事务，子项保存点防半笔释放，最终撤权整笔拒绝，UNKNOWN不重放。保留部分结果与原精度，财务/通知在确认提交后best-effort。前端冻结意图、拒绝重复及过时响应。119相关.NET（含原生PG/HTTP）、18前端及类型检查通过；一次作者审查发现的状态/数量矛盾已修复。[DELIVERY](../development/evidence/WP02-03/order-cancel-owner/DELIVERY.md)。
