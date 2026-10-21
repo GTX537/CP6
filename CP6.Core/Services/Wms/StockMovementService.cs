@@ -35,6 +35,13 @@ public class StockMovementService : IStockMovementService
         _finBridge = finBridge ?? new NoOpStockFinBridge();
     }
 
+    internal bool Owns(CP6Context db) => ReferenceEquals(_db,db);
+    internal async Task PublishCommittedCancellationAsync(StockTransaction transaction)
+    {
+        try { await _finBridge.OnStockMovedAsync(transaction,transaction.RelatedType??"",transaction.OperatorCd); } catch { /* existing best-effort bridge */ }
+        try { await _notifier.NotifyStockChangedAsync(new StockChangedEvent { TxnNo=transaction.TxnNo,TxnType=transaction.TxnType,TxnAt=transaction.TxnDateTime,WarehouseCd=transaction.WarehouseCd,LocationCd=transaction.LocationCd,ProductCd=transaction.ProductCd,LotNo=transaction.LotNo,Qty=transaction.Qty,RelatedNo=transaction.RelatedNo,OperatorCd=transaction.OperatorCd }); } catch { /* existing best-effort notification */ }
+    }
+
     public Task<string> ApplyAsync(StockMovementRequest req, CancellationToken ct = default)
         => ApplyInternalAsync(req, publishWhenCommitted: true, ct);
 

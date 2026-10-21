@@ -255,7 +255,24 @@ public class OutboundService : IOutboundService
         await _db.SaveChangesAsync();
     }
 
-    public async Task CancelOrderAsync(string outboundNo, string? userName)
+    public Task CancelOrderAsync(string outboundNo, string? userName)
+        => CancelCoreAsync(outboundNo,userName,false);
+
+    internal bool OwnsCancellation(CP6Context db) => ReferenceEquals(_db,db)
+        && _stock is StockMovementService stock && stock.Owns(db);
+    internal Task CancelFromOrderAsync(string outboundNo,string userName)
+    {
+        if(!_db.Database.IsNpgsql() || _db.Database.CurrentTransaction==null)
+            throw new CP6.Core.Services.Erp.OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
+        return CancelCoreAsync(outboundNo,userName,true);
+    }
+    internal async Task PublishOrderCancellationAsync(string outboundNo,bool shipping,string actor,IReadOnlyList<StockTransaction> transactions)
+    {
+        foreach(var transaction in transactions)
+            await ((StockMovementService)_stock).PublishCommittedCancellationAsync(transaction);
+        if(shipping) await _finBridge.OnShipmentCancelledAsync(outboundNo,actor);
+    }
+    private async Task CancelCoreAsync(string outboundNo,string? userName,bool deferEffects)
     {
         var header = await _db.OutboundOrders
             .FirstOrDefaultAsync(x => x.OutboundNo == outboundNo && !x.IsDeleted)
@@ -303,7 +320,7 @@ public class OutboundService : IOutboundService
         //  跨模块照会せず無条件点火し、発票の有無は Fin 側で判定させる（低耦合）。B.1 の Shipping 門槛と対称。
         //  現状態機では Completed（開票済の可能性あり）は取消不可のため、実質「出荷前取消」の空振り紅冲が主だが、
         //  空振りは消費端が Skipped で吸収する。紅冲失敗は取消をブロックしない（_erpBridge 先例に倣う）。
-        if (header.OutboundType == OutboundType.Shipping)
+        if (!deferEffects && header.OutboundType == OutboundType.Shipping)
         {
             try { await _finBridge.OnShipmentCancelledAsync(outboundNo, userName); }
             catch { /* best-effort：紅冲失敗は取消を失敗させない */ }

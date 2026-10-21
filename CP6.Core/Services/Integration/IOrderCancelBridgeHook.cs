@@ -15,7 +15,9 @@ namespace CP6.Core.Services.Integration;
 ///   - **設定で無効化可**：appsettings.json の <c>OrderCancelBridge:Enabled=false</c> で
 ///     <see cref="NoOpOrderCancelBridgeHook"/> に切替
 ///
-/// ERP はこのインタフェースのみ依存し、MES の WorkOrderService / WMS の OutboundService 内部には触れない。
+/// PostgreSQLではOrderServiceのMain.Order.Cancel.Owner.v1内部経路を使用する。
+/// 旧公開Bridgeの直接呼出は拒否し、権限失効はbest-effortに降格しない。
+/// 子操作保存点・親COMMIT後の通知・部分結果の境界は同Owner契約を参照。
 /// </remarks>
 public interface IOrderCancelBridgeHook
 {

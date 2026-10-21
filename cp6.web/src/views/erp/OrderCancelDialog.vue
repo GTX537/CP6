@@ -1,6 +1,6 @@
 <!--
   Phase 6 受注取消ダイアログ
-  - 1段階：探查 (force=false) — DB 不变、列出关联 WO/Outbound 现状
+  - 1段階：force=false — 全部可取消时直接执行；有半路状态时返回确认列表
   - 2段階：半路状态 → 营业看了再决定 force=true 强制取消
 -->
 <template>
@@ -103,7 +103,7 @@
           v-if="step === 'input'"
           type="primary"
           :loading="loading"
-          :disabled="!reason.trim()"
+          :disabled="loading || uncertain || !reason.trim()"
           @click="onProbe"
         >
           {{ t('sales.cancel.btnProbe') }}
@@ -113,6 +113,7 @@
           v-if="step === 'decision'"
           type="danger"
           :loading="loading"
+          :disabled="loading || uncertain"
           @click="onForceConfirm"
         >
           {{ t('sales.cancel.btnForce') }}
@@ -123,7 +124,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onBeforeUnmount, ref, watch } from 'vue'
+import { AUTH_EVENT, identityStamp } from '@/auth/identity'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { orderApi } from '@/api/erp/order'
@@ -150,59 +152,63 @@ const reason = ref('')
 const loading = ref(false)
 const result = ref<OrderCancelResult | null>(null)
 
-watch(() => props.modelValue, v => (visible.value = v))
-watch(visible, v => emit('update:modelValue', v))
+const uncertain = ref(false)
+let generation = 0, pageIdentity = identityStamp()
+type CancelIntent = { number: string; reason: string; identity: string }
+let decision: CancelIntent | null = null
 
 function reset() {
-  step.value = 'input'
-  reason.value = ''
-  result.value = null
-  loading.value = false
+  generation++
+  step.value = 'input'; reason.value = ''; result.value = null; loading.value = false
+  decision = null; uncertain.value = false
 }
+watch(() => props.modelValue, v => { if (v !== visible.value) reset(); visible.value = v }, { flush: 'sync' })
+watch(() => props.webOrderNo, reset, { flush: 'sync' })
+watch(visible, v => { if (!v) reset(); emit('update:modelValue', v) })
+function identityChanged() {
+  if (pageIdentity === identityStamp()) return
+  pageIdentity = identityStamp(); reset(); visible.value = false
+}
+window.addEventListener(AUTH_EVENT, identityChanged)
+window.addEventListener('storage', identityChanged)
+onBeforeUnmount(() => {
+  generation++
+  window.removeEventListener(AUTH_EVENT, identityChanged)
+  window.removeEventListener('storage', identityChanged)
+})
 
-async function onProbe() {
-  if (!reason.value.trim()) return
+async function submit(force: boolean) {
+  if (loading.value || uncertain.value || !visible.value) return
+  if (force && (step.value !== 'decision' || !decision)) return
+  if (!force && (step.value !== 'input' || !reason.value.trim())) return
+  const intent = force ? decision! : { number: props.webOrderNo, reason: reason.value.trim(), identity: identityStamp() }
+  if (!intent.number || intent.number !== props.webOrderNo || intent.identity !== identityStamp()) { reset(); return }
   loading.value = true
+  const id = ++generation
+  const current = () => id === generation && visible.value && intent.number === props.webOrderNo && intent.identity === identityStamp()
   try {
-    const res = await orderApi.cancel(props.webOrderNo, reason.value.trim(), false)
-    if (res.code !== 0 || !res.data) {
-      ElMessage.error(res.message || 'Unknown error')
-      return
-    }
+    const res = await orderApi.cancel(intent.number, intent.reason, force)
+    if (!current()) return
+    if (res.code !== 0 || !res.data) { ElMessage.error(res.message || 'Unknown error'); return }
     result.value = res.data
-    if (res.data.outcome === 'Cancelled' || res.data.outcome === 'PartiallyCancelled') {
-      step.value = 'done'
-      emit('cancelled')
-    } else if (res.data.outcome === 'NeedsDecision') {
-      step.value = 'decision'
-    } else {
-      // Rejected
-      step.value = 'done'
+    if (res.data.outcome === 'NeedsDecision') { decision = intent; step.value = 'decision' }
+    else {
+      decision = null; step.value = 'done'
+      if (res.data.outcome === 'Cancelled' || res.data.outcome === 'PartiallyCancelled') emit('cancelled')
     }
-  } catch (e: any) {
-    ElMessage.error(e?.message ?? 'Network error')
+  } catch (error: any) {
+    if (!current()) return
+    const code = String(error?.response?.data?.message ?? error?.message ?? '')
+    // No automatic or repeated submit after an uncertain transport/commit result.
+    uncertain.value = !error?.response || code.includes('ORDER_CANCEL_OUTCOME_UNKNOWN')
+    decision = null; result.value = null; step.value = 'input'
+    ElMessage.error(uncertain.value ? '取消结果尚未确认，请关闭并刷新订单状态后再操作。' : code || '取消未完成')
   } finally {
-    loading.value = false
+    if (id === generation) loading.value = false
   }
 }
-
-async function onForceConfirm() {
-  loading.value = true
-  try {
-    const res = await orderApi.cancel(props.webOrderNo, reason.value.trim(), true)
-    if (res.code !== 0 || !res.data) {
-      ElMessage.error(res.message || 'Unknown error')
-      return
-    }
-    result.value = res.data
-    step.value = 'done'
-    emit('cancelled')
-  } catch (e: any) {
-    ElMessage.error(e?.message ?? 'Network error')
-  } finally {
-    loading.value = false
-  }
-}
+async function onProbe() { await submit(false) }
+async function onForceConfirm() { await submit(true) }
 
 // 状态码 → ラベル（暫定 inline、後で i18n key にしてもよい）
 function woStatusLabel(s: number): string {
