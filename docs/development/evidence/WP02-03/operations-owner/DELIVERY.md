@@ -1,6 +1,6 @@
 # W37-01 独立制造／出库 Owner：单份交付
 
-2026-10-21；COORD本聊天单人，原DEV-1/codex/w37-01；基线`fb31d246c42644511d12ad22931c6a4832dc6f7a`。[计划](../../../dispatch/20261021-wave37/README.md)、[Owner v1](../../../../design-handbook/remediation/main-operations-owner-v1.md)、[P0 #380](https://github.com/GTX537/CP6/issues/380)。本地Ready to merge Yes，实际远端采用及席位处置待本任务后续核对。
+2026-10-21；COORD本聊天单人，原DEV-1/codex/w37-01；基线`fb31d246c42644511d12ad22931c6a4832dc6f7a`。[计划](../../../dispatch/20261021-wave37/README.md)、[Owner v1](../../../../design-handbook/remediation/main-operations-owner-v1.md)、[P0 #380](https://github.com/GTX537/CP6/issues/380)。产品及Handoff已正常合入，原任务最后文档/席位处置见下文与最终PR实际收尾评论。
 
 ## 实际实现
 
@@ -44,3 +44,13 @@ WorkOrderService及OutboundService的全部现有公开入口接当前原会话O
 10处本轮自有PG生成data累计回收1152009755逻辑字节（1.073GiB）；两个清理窗口实测D盘空闲增加合计1157378048字节（1.078GiB），跨两窗口及中间测试的实际空闲净变化1040855040字节。核对ownership、stopped标记、进程、绝对路径及重解析点后仅清理可再生data；日志/TRX/失败及必要资料保留。既有数据库/用户文件/缓存未清理。
 
 沿用DEV-1产品及DEV-2 Handoff，INTEGRATION-1空闲；四仓合计2开发+1集成，零新工作树/clone/整仓副本/代理。原任务分支经正常PR、远端采用、最后文档后manage finish；候选阶段不预称分支删除/席位已释放。代理原估计180–360分钟，实际执行时间在最终finish后核对。无Actions、现有数据库迁移、真实租户授权或生产部署。
+
+## 远端采用及原任务分支收尾
+
+产品[PR #381](https://github.com/GTX537/CP6/pull/381)正常合并，source`55b761e97b9e44b5f73dedd44f477addad753288`、远端main`bef201e6ed821a79b5b9a63f8581c61630e0aa7a`，任务改动blob一致；#380原故障回归及远端采用后关闭。[Handoff PR #13](https://github.com/GTX537/CP6.AI-Handoff/pull/13)合入默认目标，source`7f56d1eddd060073ca6b46d8ea3d524cbc5884f4`、目标`12d1d4cef10bceac49c17f8245332b7888fb710d`；资料分支已定向删除，DEV-2干净detached并释放。
+
+164项去重相关.NET成功（143项未变证据复用+21项当前PG/实际HTTP）、9项Vitest4.1.11页面及完整vue-tsc --build通过，最终适用集合0失败/跳过；一次作者审查及发现问题的局部复查无剩余本窗阻断。最后文档不改产品/依赖/环境，复用上述证据，仅查差异、链接及台账。自有PG/API停止；10处自有生成data逻辑回收1152009755字节（1.073GiB）；两个清理窗口D盘空闲增量合计1157378048字节（1.078GiB），跨两窗口及中间测试的空闲净变化1040855040字节；日志/TRX/原失败保留。
+
+本提交仍使用原codex/w37-01、DEV-1，最后正常PR后调用manage finish。当前提交不能提前证明自己的未来合并和释放；实际结果以管理登记`D:/CP6/.git/cp6-workspaces/state.json`、最后PR收尾评论及`C:/Users/tt/CP6-planning-reports/20261017-foundation/wave37-final-verification.json`为准。INTEGRATION-1空闲；零新树/clone/完整副本/额外收尾分支/代理。
+
+本独立制造／出库主服务Owner窗口已完成；其他WMS/MES入口（报工/入库/盘点/看板）、无订单关联对象的正式部门绑定、持久operation/outbox及可靠财务投递、正式workflow/CRM和真实DEV/UAT仍独立。表锁跨租户串行化成本及通知/ERP/FIN best-effort边界保持；完整WP02-03、125目标/247运行不提升。无Actions、既有环境迁移、真实tenant授权或生产部署。代理原估计180–360分钟，实际耗时在真实finish后核对。

@@ -1,11 +1,10 @@
 # 已完成能力与近期里程碑
 
-## 2026-10-21：W37 独立制造／出库Owner候选
+## 2026-10-21：W37 独立制造／出库Owner已集成
 
-WorkOrder/Outbound当前原会话Owner、独立动作/完整对象/可信订单部门/实际仓库区域和字段用途已接线，输入冻结及最终撤权贯穿受控PG事务。原桥只获具体父项的内部生成委托；库存/流水/序号/子图一致提交，UNKNOWN不重放，通知/原ERP/FIN桥确认提交后best-effort。四页面防重复、旧身份/目标响应和读回误重提。实际适用164项.NET成功（143复用+21定向PG/HTTP）、9前端及完整typecheck通过；一次作者审查发现的错误转换/NoOp路由/页面对象观察问题已修正。[DELIVERY](../development/evidence/WP02-03/operations-owner/DELIVERY.md)。
+[产品PR #381](https://github.com/GTX537/CP6/pull/381)已合入远端main`bef201e6ed821a79b5b9a63f8581c61630e0aa7a`，[Handoff PR #13](https://github.com/GTX537/CP6.AI-Handoff/pull/13)已合入默认目标，#380回归及远端采用后关闭。164项去重相关.NET成功（143项未变证据复用+21项当前PG/实际HTTP）、9项Vitest4.1.11页面及完整vue-tsc --build通过，最终适用集合0失败/跳过；一次作者审查与局部复查无剩余本窗阻断。
 
-本窗只覆盖两个主服务/控制器；独立无订单部门绑定、其他WMS/MES入口、持久operation/投递和真实验收仍独立，125目标/247运行不提升。10处自有测试data已回收；正常PR/Handoff/原分支finish待执行。零新树/副本/代理，无Actions/现有环境迁移/真实tenant授权/生产。
-
+Handoff分支删除、DEV-2释放；自有进程停止，10处生成data逻辑回收1.073GiB。原W37-01完成最后文档PR后finish，不能预先声称自身未来释放。WorkOrder/Outbound主服务及控制器Owner窗口已完成；其他WMS/MES入口（报工/入库/盘点/看板）、无订单关联对象的正式部门绑定、持久operation/outbox及可靠财务投递、正式workflow/CRM和真实DEV/UAT仍独立，125目标/247运行不提升。表锁成本与best-effort边界明确。零新树/副本/代理，无Actions/既有环境迁移/真实tenant授权/生产。[DELIVERY](../development/evidence/WP02-03/operations-owner/DELIVERY.md)。
 
 ## 2026-10-21：W36 订单取消级联Owner已集成
 
