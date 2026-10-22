@@ -10,6 +10,8 @@ namespace CP6.WebApi.Controllers.Mes;
 [ApiController]
 [Route("api/mes/planning-board")]
 [Authorize]
+[CP6.WebApi.Controllers.Erp.OrderOwnerResult]
+[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class PlanningBoardController : ControllerBase
 {
     private readonly IPlanningBoardService _service;
@@ -19,6 +21,7 @@ public class PlanningBoardController : ControllerBase
 
     /// <summary>ガントチャート用 Bar 一覧</summary>
     [HttpGet]
+    [RequirePermission("mes-planning-board", "query")]
     public async Task<IActionResult> GetBars([FromQuery] PlanningBoardQuery query)
     {
         var bars = await _service.GetBarsAsync(query);
@@ -27,11 +30,17 @@ public class PlanningBoardController : ControllerBase
 
     /// <summary>KPI サマリ</summary>
     [HttpGet("kpi")]
+    [RequirePermission("mes-planning-board", "query")]
     public async Task<IActionResult> GetKpi([FromQuery] PlanningBoardQuery query)
     {
         var kpi = await _service.GetKpiAsync(query);
         return Ok(new { code = 0, message = "OK", data = kpi });
     }
+
+    [HttpGet("capture")]
+    [RequirePermission("mes-planning-board", "query")]
+    public async Task<IActionResult> Capture([FromQuery] PlanningBoardQuery query)
+        => Ok(new { code = 0, message = "OK", data = await _service.CaptureAsync(query) });
 
     /// <summary>ドラッグ後 日時更新</summary>
     [HttpPut("reschedule")]
@@ -43,7 +52,7 @@ public class PlanningBoardController : ControllerBase
             await _service.RescheduleAsync(req, CurrentUser);
             return Ok(new { code = 0, message = "ME-MSG-041" });
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException)
         {
             return BadRequest(new { code = 400, message = ex.Message });
         }

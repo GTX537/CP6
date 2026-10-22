@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Mes;
 using CP6.Entity.DTOs;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace CP6.Core.Services.Mes;
 
 /// <inheritdoc />
-public class PlanAchievementService : IPlanAchievementService
+public partial class PlanAchievementService : IPlanAchievementService
 {
     private static readonly string[] CsvHeader =
     [
@@ -25,17 +26,18 @@ public class PlanAchievementService : IPlanAchievementService
 
     private readonly CP6Context _db;
 
-    public PlanAchievementService(CP6Context db)
+    private readonly OperationsOwnerV1? _owner;
+    public PlanAchievementService(CP6Context db, OperationsOwnerV1? owner = null)
     {
-        _db = db;
+        _db = db; _owner = owner;
     }
 
-    public async Task<PlanAchievementSummaryDto> GetSummaryAsync(PlanAchievementQuery query, CancellationToken ct = default)
+    private async Task<PlanAchievementSummaryDto> GetSummaryCoreAsync(PlanAchievementQuery query, CancellationToken ct = default, IQueryable<WorkOrder>? owned = null)
     {
         query ??= new PlanAchievementQuery();
         var groupBy = NormalizeGroupBy(query.GroupBy);
 
-        var woQuery = _db.WorkOrders.AsNoTracking()
+        var woQuery = (owned ?? _db.WorkOrders.AsNoTracking())
             .Where(x => !x.IsDeleted && x.Status != WorkOrderStatus.Cancelled && x.ProductionQty > 0);
 
         if (query.OnlyCompleted)
@@ -95,9 +97,9 @@ public class PlanAchievementService : IPlanAchievementService
         };
     }
 
-    public async Task<byte[]> ExportCsvAsync(PlanAchievementQuery query, CancellationToken ct = default)
+    private async Task<byte[]> ExportCsvCoreAsync(PlanAchievementQuery query, CancellationToken ct = default, IQueryable<WorkOrder>? owned = null)
     {
-        var summary = await GetSummaryAsync(query, ct);
+        var summary = await GetSummaryCoreAsync(query, ct, owned);
         var sb = new StringBuilder();
         sb.AppendLine(string.Join(",", CsvHeader));
         foreach (var row in summary.Rows)
@@ -107,9 +109,9 @@ public class PlanAchievementService : IPlanAchievementService
                 Csv(row.GroupKey),
                 Csv(row.GroupLabel),
                 row.WorkOrderCount.ToString(CultureInfo.InvariantCulture),
-                FormatDecimal(row.PlannedQty),
-                FormatDecimal(row.GoodQty),
-                FormatDecimal(row.DefectQty),
+                FormatQuantity(row.PlannedQty),
+                FormatQuantity(row.GoodQty),
+                FormatQuantity(row.DefectQty),
                 FormatDecimal(row.AchievementRate),
                 FormatDecimal(row.DefectRate),
                 row.OnTargetCount.ToString(CultureInfo.InvariantCulture),
@@ -182,10 +184,13 @@ public class PlanAchievementService : IPlanAchievementService
     private static string Csv(string? value)
     {
         var text = value ?? string.Empty;
+        if (text.TrimStart() is { Length: > 0 } trimmed && "=+-@".Contains(trimmed[0])) text = "'" + text;
         return text.Contains(',') || text.Contains('"') || text.Contains('\r') || text.Contains('\n')
             ? $"\"{text.Replace("\"", "\"\"")}\""
             : text;
     }
+
+    private static string FormatQuantity(decimal value) => value.ToString("0.########", CultureInfo.InvariantCulture);
 
     private static string FormatDecimal(decimal value) => value.ToString("0.####", CultureInfo.InvariantCulture);
 

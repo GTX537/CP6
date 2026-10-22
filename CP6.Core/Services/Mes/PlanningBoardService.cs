@@ -1,4 +1,6 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration;
+using CP6.Entity.DomainModels.Mes;
 using CP6.Entity.DTOs.Mes;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,14 +9,16 @@ namespace CP6.Core.Services.Mes;
 /// <summary>
 /// MSBBME010 — 生産計画ボード 業務サービス実装
 /// </summary>
-public class PlanningBoardService : IPlanningBoardService
+public partial class PlanningBoardService : IPlanningBoardService
 {
     private readonly CP6Context _db;
-    public PlanningBoardService(CP6Context db) => _db = db;
+    private readonly OperationsOwnerV1? _owner;
+    public PlanningBoardService(CP6Context db, OperationsOwnerV1? owner = null) { _db = db; _owner = owner; }
 
-    public async Task<List<PlanningBarDto>> GetBarsAsync(PlanningBoardQuery q)
+    private async Task<List<PlanningBarDto>> GetBarsCoreAsync(PlanningBoardQuery q, IQueryable<WorkOrder>? owned = null, CancellationToken ct = default)
     {
         var procQ = _db.WorkOrderProcesses.AsNoTracking().Where(p => !p.IsDeleted);
+        if (owned != null) procQ = procQ.Where(p => owned.Any(w => w.WorkOrderNo == p.WorkOrderNo));
 
         if (!string.IsNullOrWhiteSpace(q.ProcessCd)) procQ = procQ.Where(p => p.ProcessCd == q.ProcessCd);
         if (!string.IsNullOrWhiteSpace(q.WgCd)) procQ = procQ.Where(p => p.WgCd == q.WgCd);
@@ -31,11 +35,11 @@ public class PlanningBoardService : IPlanningBoardService
                 (p.ActualStartTime <= to && (p.ActualEndTime ?? to) >= from));
         }
 
-        var procs = await procQ.OrderBy(p => p.WorkOrderNo).ThenBy(p => p.SortOrder).ToListAsync();
+        var procs = await procQ.OrderBy(p => p.WorkOrderNo).ThenBy(p => p.SortOrder).ToListAsync(ct);
         if (procs.Count == 0) return new();
 
         var woNos = procs.Select(p => p.WorkOrderNo).Distinct().ToList();
-        var wos = await _db.WorkOrders.AsNoTracking()
+        var wos = await (owned ?? _db.WorkOrders.AsNoTracking())
             .Where(w => woNos.Contains(w.WorkOrderNo) && !w.IsDeleted
                 && (string.IsNullOrEmpty(q.BaseCd) || w.BaseCd == q.BaseCd))
             .Select(w => new
@@ -43,7 +47,7 @@ public class PlanningBoardService : IPlanningBoardService
                 w.WorkOrderNo, w.ProductCd, w.ProductName, w.CustomerCd,
                 w.Status, w.Priority, w.DeliveryDate,
             })
-            .ToDictionaryAsync(w => w.WorkOrderNo);
+            .ToDictionaryAsync(w => w.WorkOrderNo, ct);
 
         return procs
             .Where(p => wos.ContainsKey(p.WorkOrderNo))
@@ -79,7 +83,7 @@ public class PlanningBoardService : IPlanningBoardService
             .ToList();
     }
 
-    public async Task<PlanningKpiDto> GetKpiAsync(PlanningBoardQuery q)
+    private async Task<PlanningKpiDto> GetKpiCoreAsync(PlanningBoardQuery q)
     {
         var today = DateTime.Today;
         var woQ = _db.WorkOrders.AsNoTracking().Where(w => !w.IsDeleted && w.Status != 9);
@@ -122,7 +126,7 @@ public class PlanningBoardService : IPlanningBoardService
         };
     }
 
-    public async Task RescheduleAsync(RescheduleRequest req, string? userName)
+    private async Task RescheduleCoreAsync(RescheduleRequest req, string? userName)
     {
         var p = await _db.WorkOrderProcesses.FirstOrDefaultAsync(x => x.Id == req.Id && !x.IsDeleted)
             ?? throw new InvalidOperationException("ME-MSG-043");
@@ -147,7 +151,7 @@ public class PlanningBoardService : IPlanningBoardService
     /// <summary>
     /// 自動配置：未着手の工程を、所属指図の優先度＋納期で並べ、号機別に連続配置
     /// </summary>
-    public async Task<int> AutoArrangeAsync(AutoArrangeRequest req, string? userName)
+    private async Task<int> AutoArrangeCoreAsync(AutoArrangeRequest req, string? userName, CancellationToken ct = default)
     {
         var procQ = _db.WorkOrderProcesses.Where(p => !p.IsDeleted && p.ProcessStatus == 0);
         if (!string.IsNullOrWhiteSpace(req.WgCd)) procQ = procQ.Where(p => p.WgCd == req.WgCd);
@@ -160,7 +164,7 @@ public class PlanningBoardService : IPlanningBoardService
         var wos = await _db.WorkOrders.AsNoTracking()
             .Where(w => woNos.Contains(w.WorkOrderNo) && !w.IsDeleted)
             .Select(w => new { w.WorkOrderNo, w.Priority, w.DeliveryDate })
-            .ToDictionaryAsync(w => w.WorkOrderNo);
+            .ToDictionaryAsync(w => w.WorkOrderNo, ct);
 
         // 優先度降順（3=特急 → 2=急ぎ → 1=通常）、納期昇順
         var ordered = procs

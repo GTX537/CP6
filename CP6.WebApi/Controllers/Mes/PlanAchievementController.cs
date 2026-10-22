@@ -1,4 +1,5 @@
 using CP6.Core.Services.Mes;
+using CP6.Core.Auth;
 using CP6.Entity.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,8 @@ namespace CP6.WebApi.Controllers.Mes;
 [ApiController]
 [Route("api/mes/plan-achievement")]
 [Authorize]
+[CP6.WebApi.Controllers.Erp.OrderOwnerResult]
+[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class PlanAchievementController : ControllerBase
 {
     private readonly IPlanAchievementService _service;
@@ -21,6 +24,7 @@ public class PlanAchievementController : ControllerBase
     }
 
     [HttpPost("summary")]
+    [RequirePermission("mes-plan-achievement", "query")]
     public async Task<IActionResult> Summary([FromBody] PlanAchievementQuery? query, CancellationToken ct)
     {
         var data = await _service.GetSummaryAsync(query ?? new PlanAchievementQuery(), ct);
@@ -28,6 +32,7 @@ public class PlanAchievementController : ControllerBase
     }
 
     [HttpPost("export-csv")]
+    [RequirePermission("mes-plan-achievement", "export")]
     public async Task<IActionResult> ExportCsv([FromBody] PlanAchievementQuery? query, CancellationToken ct)
     {
         var bytes = await _service.ExportCsvAsync(query ?? new PlanAchievementQuery(), ct);
