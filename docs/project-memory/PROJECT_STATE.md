@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## 2026-10-22：W42可信部门绑定候选已验证
+
+库存、流水、盘点和无订单生产指示四类显式部门绑定与现有Owner消费已实现；100项去重相关.NET通过（12项新增PG/实际HTTP、88项既有Owner/订单绑定），25项Vitest（新增绑定9、既有页面13、原操作恢复3），完整vue-tsc -b通过；所需范围0失败/跳过。一次作者审查完成，[DELIVERY](../development/evidence/WP02-03/standalone-department/DELIVERY.md)保留原失败；正常合并/远端采用/原分支finish待执行。
+
+七天目标ACTIVE；W41已实际收尾，W42为D2首批，正式RMA适配/Owner及新对象创建归属仍独立。完整卡/125目标/247运行不提升；固定目录、PG、自有进程停止和生成data定向回收，无新树/代理/Actions/既有环境迁移/生产。
+
 ## 2026-10-22：七天一期D1质量Owner已集成
 
 [产品PR #393](https://github.com/GTX537/CP6/pull/393)与[Handoff PR #17](https://github.com/GTX537/CP6.AI-Handoff/pull/17)核对远端采用，#392关闭。106项去重相关.NET（16本轮PG/实际HTTP、67既有Owner、23兼容/权限）、20项Vitest与完整类型检查通过；原失败与误选无关测试保留，所需范围0失败/跳过；一次作者审查及定向复查完成。[DELIVERY](../development/evidence/WP02-03/quality-owners/DELIVERY.md)。

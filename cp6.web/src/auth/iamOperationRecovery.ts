@@ -3,7 +3,7 @@ import { identityStamp, requireIdentity } from './identity'
 
 export interface PendingIamOperation { operationId: string; kind: IamKind; entityId?: string }
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-const kinds: IamKind[] = ['user-create', 'user-update', 'user-roles', 'user-org', 'dept-create', 'dept-update', 'dept-move', 'dept-leader', 'dept-delete', 'dept-order-mapping', 'role-create', 'role-update', 'role-delete', 'role-policy-actions', 'role-policy-scopes', 'role-policy-fields', 'menu-actions']
+const kinds: IamKind[] = ['user-create', 'user-update', 'user-roles', 'user-org', 'dept-create', 'dept-update', 'dept-move', 'dept-leader', 'dept-delete', 'dept-order-mapping', 'dept-standalone-mapping', 'role-create', 'role-update', 'role-delete', 'role-policy-actions', 'role-policy-scopes', 'role-policy-fields', 'menu-actions']
 function key(scope: IamScope) {
   if (!uuid.test(scope.tenantId) || !uuid.test(scope.actorId)) throw new Error('无法确认当前用户和租户。')
   return `cp6_iam_operation_v1:${scope.tenantId}:${scope.actorId}`

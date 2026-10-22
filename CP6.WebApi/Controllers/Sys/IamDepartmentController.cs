@@ -9,8 +9,18 @@ namespace CP6.WebApi.Controllers.Sys;
 
 [ApiController,Route("api/iam/departments"),Authorize]
 public sealed class IamDepartmentController(IamDepartmentAdministrationV1 departments,IamAdministrationV1 authority,
-    IamOrderDepartmentMappingV1 orderMappings):ControllerBase
+    IamOrderDepartmentMappingV1 orderMappings, IamStandaloneDepartmentMappingV1 standaloneMappings):ControllerBase
 {
+    [HttpGet("standalone-mappings"),RequirePermission("pub-dept","query")]
+    [ResponseCache(NoStore=true,Location=ResponseCacheLocation.None)]
+    public Task<IActionResult> StandaloneMappings()=>Run(async()=>await standaloneMappings.ReadAsync(Actor,HttpContext.RequestAborted));
+    [HttpGet("standalone-objects"),RequirePermission("pub-dept","query")]
+    [ResponseCache(NoStore=true,Location=ResponseCacheLocation.None)]
+    public Task<IActionResult> StandaloneObjects(string kind,string search)
+        =>Run(async()=>await standaloneMappings.FindObjectsAsync(kind,search,Actor,HttpContext.RequestAborted));
+    [HttpPost("standalone-mappings"),RequirePermission("pub-dept","edit")]
+    public Task<IActionResult> ChangeStandaloneMapping(IamStandaloneDepartmentCommandV1 command)
+        =>Run(async()=>await standaloneMappings.ChangeAsync(command,Actor,HttpContext.RequestAborted));
     [HttpGet("order-mappings"),RequirePermission("pub-dept","query")]
     [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public Task<IActionResult> OrderMappings()=>Run(async()=>await orderMappings.ReadAsync(Actor,HttpContext.RequestAborted));
