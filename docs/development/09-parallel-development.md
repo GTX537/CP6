@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W46 / P1 #404](dispatch/20261022-wave46/README.md)，本聊天单人核验并修复WMS真实SignalR租户作用域；W37–W45已实际finish。
+
 > 当前：七天D3前置 [W45 / P0 #401](dispatch/20261022-wave45/README.md)，产品PR402/Handoff21已采用，原分支最后文档后finish/关闭Issue401；COORD本聊天单人继续D3。W37–W44已实际finish，不重复。
 
 > 当前：七天目标D4 [W44库存原操作恢复](dispatch/20261022-wave44/README.md)已采用，原分支最后文档后finish；本聊天单人。W37–W43均已实际finish；正式Transfer/REP/RMA/SCHED与可靠外部投递前置保留。
