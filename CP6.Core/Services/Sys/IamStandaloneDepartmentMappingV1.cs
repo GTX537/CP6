@@ -99,7 +99,7 @@ public sealed class IamStandaloneDepartmentMappingV1(CP6Context db, IamAdministr
         }, ct);
     }
 
-    private static readonly string[] Kinds = ["stock", "stock-transaction", "stocktake", "work-order"];
+    private static readonly string[] Kinds = ["stock", "stock-transaction", "stocktake", "work-order", "machine"];
     public sealed record ObjectChoice { public Guid Id { get; init; } public string Name { get; init; } = ""; }
     public Task<ObjectChoice[]> FindObjectsAsync(string kind, string search,
         Func<CancellationToken, Task<Guid>> actor, CancellationToken ct)
@@ -122,6 +122,8 @@ public sealed class IamStandaloneDepartmentMappingV1(CP6Context db, IamAdministr
         "stocktake" => db.StockTakes.AsNoTracking().Where(x => !x.IsDeleted).Select(x => new ObjectChoice { Id=x.Id,Name=x.StockTakeNo }),
         "work-order" => db.WorkOrders.AsNoTracking().Where(x => !x.IsDeleted && (x.WebOrderNo == null || x.WebOrderNo == ""))
             .Select(x => new ObjectChoice { Id=x.Id,Name=x.WorkOrderNo }),
+        "machine" => db.Machines.AsNoTracking().Where(x => !x.IsDeleted)
+            .Select(x => new ObjectChoice { Id=x.Id,Name=x.MachineCd + " / " + x.MachineName }),
         _ => throw Error(400, "STANDALONE_LOOKUP_INPUT_INVALID")
     };
 

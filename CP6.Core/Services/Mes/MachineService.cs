@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Mes;
 using CP6.Entity.DTOs.Mes;
 using Microsoft.EntityFrameworkCore;
@@ -6,27 +7,29 @@ using Microsoft.EntityFrameworkCore;
 namespace CP6.Core.Services.Mes;
 
 /// <summary>設備管理サービス実装</summary>
-public class MachineService : IMachineService
+public partial class MachineService : IMachineService
 {
     private readonly CP6Context _db;
     private readonly IMesSequenceService _seq;
     private readonly IMesNotifier _notifier;
+    private readonly OperationsOwnerV1? _owner;
     private const string DowntimeSeqKey = "DT";
 
-    public MachineService(CP6Context db, IMesSequenceService seq, IMesNotifier notifier)
+    public MachineService(CP6Context db, IMesSequenceService seq, IMesNotifier notifier, OperationsOwnerV1? owner = null)
     {
         _db = db;
         _seq = seq;
         _notifier = notifier;
+        _owner = owner;
     }
 
     // ═══════════════════════════════════════════════════════════
     //  設備マスタ
     // ═══════════════════════════════════════════════════════════
 
-    public async Task<List<MachineDto>> SearchAsync(MachineSearchQuery q)
+    private async Task<List<MachineDto>> SearchCoreAsync(MachineSearchQuery q, OperationsAccessV1? access = null, CancellationToken ct = default)
     {
-        var query = _db.Machines.AsNoTracking().Where(x => !x.IsDeleted);
+        var query = access?.Machines() ?? _db.Machines.AsNoTracking().Where(x => !x.IsDeleted);
 
         if (!string.IsNullOrWhiteSpace(q.MachineCd)) query = query.Where(x => x.MachineCd.Contains(q.MachineCd));
         if (!string.IsNullOrWhiteSpace(q.ProcessCd)) query = query.Where(x => x.ProcessCd == q.ProcessCd);
@@ -39,7 +42,13 @@ public class MachineService : IMachineService
 
         // 現在稼働指図情報の補完
         var machineCds = machines.Select(m => m.MachineCd).ToList();
-        var activeProcs = await _db.WorkOrderProcesses.AsNoTracking()
+        var processes = _db.WorkOrderProcesses.AsNoTracking();
+        if (access != null)
+        {
+            var visibleOrders = await access.OptionalMachineOrders(ct);
+            processes = processes.Where(p => visibleOrders.Any(w => w.WorkOrderNo == p.WorkOrderNo));
+        }
+        var activeProcs = await processes
             .Where(p => !p.IsDeleted && p.ProcessStatus == 1 && p.MachineCd != null && machineCds.Contains(p.MachineCd!))
             .Select(p => new { p.MachineCd, p.WorkOrderNo, p.ProcessCd })
             .ToListAsync();
@@ -47,7 +56,8 @@ public class MachineService : IMachineService
 
         // 本日 OEE 補完
         var today = DateTime.Today;
-        var todayOee = await _db.OeeDailies.AsNoTracking()
+        // PostgreSQL does not expose legacy OEE aggregates before the independent OEE Owner is adopted.
+        var todayOee = access != null ? new Dictionary<string, decimal>() : await _db.OeeDailies.AsNoTracking()
             .Where(o => o.OeeDate == today && machineCds.Contains(o.MachineCd))
             .ToDictionaryAsync(o => o.MachineCd, o => o.Oee);
 
@@ -64,13 +74,13 @@ public class MachineService : IMachineService
         }).ToList();
     }
 
-    public async Task<MachineDto?> GetByCdAsync(string machineCd)
+    private async Task<MachineDto?> GetByCdCoreAsync(string machineCd)
     {
         var m = await _db.Machines.AsNoTracking().FirstOrDefaultAsync(x => x.MachineCd == machineCd && !x.IsDeleted);
         return m == null ? null : ToDto(m);
     }
 
-    public async Task<string> CreateAsync(MachineDto dto, string? userName)
+    private async Task<string> CreateCoreAsync(MachineDto dto, string? userName)
     {
         if (string.IsNullOrWhiteSpace(dto.MachineCd)) throw new InvalidOperationException("ME-MSG-001");
         if (string.IsNullOrWhiteSpace(dto.MachineName)) throw new InvalidOperationException("ME-MSG-031");
@@ -105,7 +115,7 @@ public class MachineService : IMachineService
         return dto.MachineCd;
     }
 
-    public async Task UpdateAsync(string machineCd, MachineDto dto, string? userName)
+    private async Task UpdateCoreAsync(string machineCd, MachineDto dto, string? userName)
     {
         var m = await _db.Machines.FirstOrDefaultAsync(x => x.MachineCd == machineCd && !x.IsDeleted)
             ?? throw new InvalidOperationException("ME-MSG-043");
@@ -131,7 +141,7 @@ public class MachineService : IMachineService
         await _db.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(string machineCd, string? userName)
+    private async Task DeleteCoreAsync(string machineCd, string? userName)
     {
         var m = await _db.Machines.FirstOrDefaultAsync(x => x.MachineCd == machineCd && !x.IsDeleted)
             ?? throw new InvalidOperationException("ME-MSG-043");
@@ -141,7 +151,7 @@ public class MachineService : IMachineService
         await _db.SaveChangesAsync();
     }
 
-    public async Task ChangeStatusAsync(string machineCd, int status, string? userName)
+    private async Task ChangeStatusCoreAsync(string machineCd, int status, string? userName, bool notify = true)
     {
         var m = await _db.Machines.FirstOrDefaultAsync(x => x.MachineCd == machineCd && !x.IsDeleted)
             ?? throw new InvalidOperationException("ME-MSG-043");
@@ -149,16 +159,16 @@ public class MachineService : IMachineService
         m.Modifier = userName;
         m.ModifyDate = DateTime.Now;
         await _db.SaveChangesAsync();
-        try { await _notifier.NotifyMachineStatusChangedAsync(machineCd, status); } catch { }
+        if (notify) try { await _notifier.NotifyMachineStatusChangedAsync(machineCd, status); } catch { }
     }
 
     // ═══════════════════════════════════════════════════════════
     //  停止記録
     // ═══════════════════════════════════════════════════════════
 
-    public async Task<PagedResultDto<MachineDowntimeDto>> SearchDowntimesAsync(DowntimeSearchQuery q)
+    private async Task<PagedResultDto<MachineDowntimeDto>> SearchDowntimesCoreAsync(DowntimeSearchQuery q, IQueryable<MachineDowntime>? authorized = null)
     {
-        var query = _db.MachineDowntimes.AsNoTracking().Where(x => !x.IsDeleted);
+        var query = authorized ?? _db.MachineDowntimes.AsNoTracking().Where(x => !x.IsDeleted);
 
         if (!string.IsNullOrWhiteSpace(q.MachineCd)) query = query.Where(x => x.MachineCd == q.MachineCd);
         if (q.DateFrom.HasValue) query = query.Where(x => x.StartTime >= q.DateFrom);
@@ -193,7 +203,7 @@ public class MachineService : IMachineService
         };
     }
 
-    public async Task<string> RegisterDowntimeAsync(MachineDowntimeDto dto, string? userName)
+    private async Task<string> RegisterDowntimeCoreAsync(MachineDowntimeDto dto, string? userName, bool notify = true)
     {
         if (string.IsNullOrWhiteSpace(dto.MachineCd)) throw new InvalidOperationException("ME-MSG-001");
 
@@ -234,7 +244,7 @@ public class MachineService : IMachineService
         }
 
         await _db.SaveChangesAsync();
-        try
+        if (notify) try
         {
             await _notifier.NotifyDowntimeRegisteredAsync(no, dto.MachineCd, dto.DowntimeType);
             if (machine != null) await _notifier.NotifyMachineStatusChangedAsync(machine.MachineCd, machine.Status);
@@ -243,7 +253,7 @@ public class MachineService : IMachineService
         return no;
     }
 
-    public async Task CloseDowntimeAsync(string downtimeNo, DateTime endTime, string? recoveryOperatorCd, string? userName)
+    private async Task CloseDowntimeCoreAsync(string downtimeNo, DateTime endTime, string? recoveryOperatorCd, string? userName)
     {
         var dt = await _db.MachineDowntimes.FirstOrDefaultAsync(x => x.DowntimeNo == downtimeNo && !x.IsDeleted)
             ?? throw new InvalidOperationException("ME-MSG-043");

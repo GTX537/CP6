@@ -72,7 +72,7 @@ public static class MesPermissionSeed
     /// 须在 <see cref="MesMenuSeed.EnsureSeeded"/> 之后调用（锚定菜单行须先在）。
     /// </summary>
     // W37–W39 Owner catalog additions never grant roles automatically.
-    private static readonly (int MenuId,string Code,string Name)[] OwnerActions=[(309,"query","读取MES看板"),(308,"query","读取不良记录来源"),(302,"query","读取制造工单"),(302,"cancel","取消制造工单"),(304,"query","读取报工"),(304,"recalculate","重算报工工时"),(304,"backflush","补偿材料倒冲")];
+    private static readonly (int MenuId,string Code,string Name)[] OwnerActions=[(310,"query","读取设备与停机记录"),(309,"query","读取MES看板"),(308,"query","读取不良记录来源"),(302,"query","读取制造工单"),(302,"cancel","取消制造工单"),(304,"query","读取报工"),(304,"recalculate","重算报工工时"),(304,"backflush","补偿材料倒冲")];
     public static void EnsureSeeded(CP6Context db)
     {
         // Sys_Tenant 为共享表（BaseEntity，非行级过滤）：Id 即 TenantId。

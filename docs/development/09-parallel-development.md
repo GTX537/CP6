@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W47设备/停机Owner](dispatch/20261022-wave47/README.md)，本聊天单人；W37–W46已实际finish，不重复。
+
 > 当前：[W46 / P1 #404](dispatch/20261022-wave46/README.md)，产品PR405/Handoff22已采用，原任务最后文档后finish/Issue404关闭；本聊天继续D3；W37–W45已实际finish。
 
 > 当前：七天D3前置 [W45 / P0 #401](dispatch/20261022-wave45/README.md)，产品PR402/Handoff21已采用，原分支最后文档后finish/关闭Issue401；COORD本聊天单人继续D3。W37–W44已实际finish，不重复。
