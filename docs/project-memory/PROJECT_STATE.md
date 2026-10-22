@@ -1,10 +1,10 @@
 # 项目当前状态
 
-## 2026-10-22：W40 MES不良记录Owner候选
+## 2026-10-22：W40 MES不良记录Owner已集成
 
-独立query/add/edit/del/分类引用、完整工单和可选检验图、当前原会话/动作/可信部门/来源、原子序号/提交及UNKNOWN、实际HTTP和页面意图已实现；看板不良来源同步图范围。83项去重相关.NET成功：12项本轮原生PG/实际HTTP、55项既有Owner PG/HTTP、16项MES兼容/审计/权限；7项Vitest及完整vue-tsc --build通过。最终适用集合0失败/跳过。一次作者审查及定向复查完成。[DELIVERY](../development/evidence/WP02-03/defect-owner/DELIVERY.md)。
+[产品PR #390](https://github.com/GTX537/CP6/pull/390)合入远端main`e3d3087f760fe59400f1371f8da360d5179e16e6`，[Handoff PR #16](https://github.com/GTX537/CP6.AI-Handoff/pull/16)合入默认资料目标，#389原步骤复测与采用后关闭。83项去重相关.NET成功（12本轮原生PG/实际HTTP、55既有Owner、16兼容/权限/审计），7项Vitest及完整类型检查通过；真实来源和复用范围见单份交付，最终适用集合0失败/跳过；作者审查及定向复查完成。[DELIVERY](../development/evidence/WP02-03/defect-owner/DELIVERY.md)。
 
-#389待正常PR和远端采用；自有PG/API停止、5处生成data回收约0.538GiB，原失败保留；原DEV-1/DEV-2待finish，根资料保留。WMS库存QC/入库检验、MES品质检验自身Owner及补充/退货/设备/OEE/计划等独立入口、无订单正式部门绑定、采购/财务自身Owner、持久operation/outbox、可靠投递、workflow/CRM和真实DEV/UAT仍独立；125/247不提升，无Actions/迁移/授权/生产。W39不重做。
+DEV-2分支删除、席位释放；自有PG/API停止，5处生成data回收约0.538GiB。原W40-01最后文档PR后finish，真实分支/席位和实际耗时见管理登记/最终PR，不提前宣称未来释放。WMS库存QC/入库检验、MES品质检验自身Owner及补充/退货/设备/OEE/计划等独立入口、无订单部门绑定、采购/财务自身Owner、持久operation/outbox和可靠投递、workflow/CRM及真实DEV/UAT仍独立，125/247不提升。零新树/副本/代理；无Actions/既有环境迁移/真实授权/生产，W39不重做。
 
 ## 2026-10-21：W39 盘点、独立库存与看板Owner已集成
 
