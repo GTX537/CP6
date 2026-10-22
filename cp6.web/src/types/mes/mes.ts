@@ -411,6 +411,15 @@ export interface PlanningBoardQuery {
   baseCd?: string
 }
 
+export interface PlanningBoardCaptureDto {
+  readId: string
+  readAt: string
+  mode: string
+  canApplySchedule: boolean
+  bars: PlanningBarDto[]
+  kpi: PlanningKpiDto
+}
+
 export interface PlanningKpiDto {
   totalOrders: number
   inProgressOrders: number

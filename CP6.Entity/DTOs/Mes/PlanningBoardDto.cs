@@ -1,5 +1,16 @@
 namespace CP6.Entity.DTOs.Mes;
 
+/// <summary>One current legacy read, not a formal persisted SCHED capture or write capability.</summary>
+public class PlanningBoardCaptureDto
+{
+    public Guid ReadId { get; set; } = Guid.NewGuid();
+    public DateTimeOffset ReadAt { get; set; }
+    public string Mode { get; set; } = "LEGACY_READ_ONLY";
+    public bool CanApplySchedule { get; set; }
+    public List<PlanningBarDto> Bars { get; set; } = [];
+    public PlanningKpiDto Kpi { get; set; } = new();
+}
+
 /// <summary>生産計画ボード ガントチャート 1 本の Bar</summary>
 public class PlanningBarDto
 {

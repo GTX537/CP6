@@ -1,5 +1,9 @@
 # MES 写端点 × 権限键清单（M-MES Task 1 真相源）
 
+## 2026-10-22 W49 计划入口增量
+
+计划看板301的三个GET（bars/kpi/capture）要求`mes-planning-board:query`；达成率313的summary/export-csv两个只读POST分别要求`mes-plan-achievement:query`与`export`，导出服务同时核对query。这两个POST不再属于旧豁免。新增目录幂等登记，不自动授角色；PG服务同时交叉工单/报工独立来源范围并在返回前再核现权。旧reschedule/arrange动作不替代正式SCHED前置，PG历史数据按已接受合同保持LEGACY_READ_ONLY。[本窗交付](../development/evidence/WP02-03/planning-owner/DELIVERY.md)。下文历史计数和旧豁免仅保留原轮次范围。
+
 ## 2026-10-21 W39 当前Owner增量
 
 菜单416显式wms-dashboard、309显式mes-dashboard。新增query目录：403库存、415盘点、416 WMS看板、309 MES看板、308不良来源；幂等登记且不自动赋予角色。下文原轮次表格/SQL留作历史范围，本增量以当前MenuSeed/PermissionSeed为准。[Owner v1](../design-handbook/remediation/main-stocktake-dashboard-owner-v1.md)。

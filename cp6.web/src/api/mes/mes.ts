@@ -15,6 +15,7 @@ import type {
   PlanningBarDto,
   PlanningBoardQuery,
   PlanningKpiDto,
+  PlanningBoardCaptureDto,
   RescheduleRequest,
   AutoArrangeRequest,
   MesDashboardSummaryDto,
@@ -208,6 +209,9 @@ export const defectRecordApi = {
 // MSBBME010 — 生産計画ボード
 // ─────────────────────────────────────────────────────────────
 export const planningBoardApi = {
+  capture(query: PlanningBoardQuery) {
+    return http.get<any, Api<PlanningBoardCaptureDto>>('/mes/planning-board/capture', { params: query, paramsSerializer: { indexes: null } })
+  },
   getBars(query: PlanningBoardQuery) {
     return http.get<any, Api<PlanningBarDto[]>>('/mes/planning-board', {
       params: query,

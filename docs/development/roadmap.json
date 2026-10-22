@@ -159497,6 +159497,16 @@
       "date": "2026-10-22",
       "change": "W48 close; OEE current Owner, complete source authorization, transactional immutable evidence and trusted tenant worker;31 related NET/6Vitest/types;seven-day ACTIVE.",
       "evidence": "docs/development/dispatch/20261022-wave48/README.md"
+    },
+    {
+      "date": "2026-10-22",
+      "change": "W48 finished56.28min and Issue410 closed;W49 Planning/achievement current Owner, scoped capture/export and accepted legacy read-only prerequisites admitted.",
+      "evidence": "docs/development/dispatch/20261022-wave49/README.md"
+    },
+    {
+      "date": "2026-10-22",
+      "change": "W49 candidate; Planning/Achievement current Owner, scoped capture/export and accepted legacy read-only fence;related local validation;seven-day ACTIVE.",
+      "evidence": "docs/development/dispatch/20261022-wave49/README.md"
     }
   ],
   "implementation_assessment": {
@@ -162068,113 +162078,62 @@
       "card_anchor": "wp02-03",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W48-01",
+        "chat_label": "COORD / W49-01",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/w48-01",
+        "branch": "codex/w49-01",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-22T09:15:11.859125+00:00",
-        "baseline_sha": "e5702415665a4beaa41623d4a0bbd8ce41ca42a5",
-        "entry_evidence": "docs/development/dispatch/20261022-wave48/README.md",
-        "phase": "CLOSED",
-        "dispatch_scope": "W48_01",
+        "claimed_at": "2026-10-22T10:15:11.224128+00:00",
+        "baseline_sha": "2f135d6b91d520cbe0c431df677654f5611aabb4",
+        "entry_evidence": "docs/development/dispatch/20261022-wave49/README.md",
+        "phase": "LOCAL_VALIDATED_PENDING_INTEGRATION",
+        "dispatch_scope": "W49_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
         "actual_start_ref": {
-          "commit": "e8a17f6e61f48b46022fd32f990a8ea013fc4ea5",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261022T091828Z-wave48-start/MESSAGE.md",
-          "at": "2026-10-22T09:18:28.087975+00:00"
+          "commit": "7af629ea1c3a06a26c419043a2a2609601df1396",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261022T101856Z-wave49-start/MESSAGE.md",
+          "at": "2026-10-22T10:18:56.864821+00:00"
         },
         "allowed_write_paths": [
           "CP6.Core/Services/Integration/",
           "CP6.Core/Services/Mes/",
-          "CP6.Entity/DTOs/Mes/",
-          "CP6.Entity/DomainModels/Mes/",
+          "CP6.Entity/DTOs/",
           "CP6.Persistence.PostgreSql/",
           "CP6.WebApi/Program.cs",
-          "CP6.WebApi/Controllers/Mes/OeeController.cs",
+          "CP6.WebApi/Controllers/Mes/",
           "CP6.WebApi/Seed/",
-          "CP6.WebApi/BackgroundServices/OeeCalculationService.cs",
           "CP6.Tests/",
           "cp6.web/src/views/mes/",
           "cp6.web/src/types/mes/",
           "cp6.web/src/api/mes/",
           "docs/development/",
           "docs/project-memory/",
-          "docs/design-handbook/remediation/"
+          "docs/design-handbook/remediation/",
+          "docs/seeds/"
         ],
-        "reserved_write_resources": [],
-        "reserved_postgresql_ports": [],
-        "handoff_branch": "codex/w48-handoff",
+        "reserved_write_resources": [
+          "Main:operations-owner",
+          "Main:planning-achievement-source",
+          "Main:PG-migrations",
+          "Main:Program-seeds"
+        ],
+        "reserved_postgresql_ports": [
+          55435
+        ],
+        "handoff_branch": "codex/w49-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": true,
+        "candidate_integrated": false,
         "resources_released": false,
         "full_task_completed": false,
-        "worker_delivery_ref": "docs/development/evidence/WP02-03/oee-owner/DELIVERY.md",
-        "validation": "31项相关.NET用例通过（按TRX testId保留最新定向结果，含PG/真实HTTP/后台事务/种子/权限），6项Vitest与完整vue-tsc -b通过",
-        "runtime_resources_released": true,
-        "integration": {
-          "result": "PASS",
-          "repository": "GTX537/CP6",
-          "source": "f4958debb891cbed296ed81df9afa3bf010c8edc",
-          "main": "bee338101c5bb99161c91fba8fb55f069a2b0435",
-          "target": "main",
-          "pr": "https://github.com/GTX537/CP6/pull/411",
-          "paths": [
-            "CP6.Core/Services/Integration/OperationsAccessV1.Oee.cs",
-            "CP6.Core/Services/Integration/OperationsOwnerV1.OeeWorker.cs",
-            "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
-            "CP6.Core/Services/Mes/OeeEvidenceV1.cs",
-            "CP6.Core/Services/Mes/OeeService.Owner.cs",
-            "CP6.Core/Services/Mes/OeeService.cs",
-            "CP6.Entity/DTOs/Mes/MachineDto.cs",
-            "CP6.Persistence.PostgreSql/Migrations/Core/20261022093500_OeeLegacyEvidenceV1.cs",
-            "CP6.Tests/BackgroundServices/OeeCalculationServiceTests.cs",
-            "CP6.Tests/Erp/OeeOwnerPostgreSqlTests.cs",
-            "CP6.Tests/MesPermissionAttributeTests.cs",
-            "CP6.Tests/MesPermissionSeedTests.cs",
-            "CP6.WebApi/BackgroundServices/OeeCalculationService.cs",
-            "CP6.WebApi/Controllers/Mes/OeeController.cs",
-            "CP6.WebApi/Program.cs",
-            "CP6.WebApi/Seed/MesPermissionSeed.cs",
-            "cp6.web/src/types/mes/mes.ts",
-            "cp6.web/src/views/mes/OeeAnalysisView.vue",
-            "cp6.web/src/views/mes/OeeOwner.spec.ts",
-            "docs/development/07-detailed-tasks.md",
-            "docs/development/09-parallel-development.md",
-            "docs/development/dispatch/20261022-wave48/README.md",
-            "docs/development/evidence/WP02-03/oee-owner/DELIVERY.md",
-            "docs/development/planning/20261022-seven-day-delivery.md",
-            "docs/development/roadmap.json",
-            "docs/project-memory/05-Completed.md",
-            "docs/project-memory/06-Todo.md",
-            "docs/project-memory/CHANGELOG-AI.md",
-            "docs/project-memory/PROJECT_STATE.md"
-          ],
-          "observed_at": "2026-10-22T10:04:32.546738+00:00"
-        },
-        "delivery_ref": {
-          "commit": "01959b4c349698ddd609e81c72dc2740a5673de8",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261022T100525Z-wave48-delivery/MESSAGE.md",
-          "at": "2026-10-22T10:05:25.110524+00:00",
-          "base": "codex/t02c-entry-handoff-20260921",
-          "branch": "codex/w48-handoff",
-          "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/24"
-        },
-        "lifecycle_snapshot": {
-          "at": "2026-10-22T10:08:10.478209+00:00",
-          "main_task": "CP6:W48-01",
-          "main_seat_released": false,
-          "main_finish_required": true,
-          "handoff_seat_released": true,
-          "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave48-final-verification.json",
-          "live_source": "D:/CP6/.git/cp6-workspaces/state.json"
-        }
+        "worker_delivery_ref": "docs/development/evidence/WP02-03/planning-owner/DELIVERY.md",
+        "validation": "34项相关.NET用例、8项Vitest及完整vue-tsc -b通过；同一testId复用最新有效结果，未把旧执行改称新执行",
+        "runtime_resources_released": true
       },
       "blockers": [],
       "validation_evidence": [],
@@ -165693,6 +165652,116 @@
             "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave47-final-verification.json",
             "live_source": "D:/CP6/.git/cp6-workspaces/state.json"
           }
+        },
+        {
+          "chat_label": "COORD / W48-01",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/w48-01",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-10-22T09:15:11.859125+00:00",
+          "baseline_sha": "e5702415665a4beaa41623d4a0bbd8ce41ca42a5",
+          "entry_evidence": "docs/development/dispatch/20261022-wave48/README.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "W48_01",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "actual_start_ref": {
+            "commit": "e8a17f6e61f48b46022fd32f990a8ea013fc4ea5",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261022T091828Z-wave48-start/MESSAGE.md",
+            "at": "2026-10-22T09:18:28.087975+00:00"
+          },
+          "allowed_write_paths": [
+            "CP6.Core/Services/Integration/",
+            "CP6.Core/Services/Mes/",
+            "CP6.Entity/DTOs/Mes/",
+            "CP6.Entity/DomainModels/Mes/",
+            "CP6.Persistence.PostgreSql/",
+            "CP6.WebApi/Program.cs",
+            "CP6.WebApi/Controllers/Mes/OeeController.cs",
+            "CP6.WebApi/Seed/",
+            "CP6.WebApi/BackgroundServices/OeeCalculationService.cs",
+            "CP6.Tests/",
+            "cp6.web/src/views/mes/",
+            "cp6.web/src/types/mes/",
+            "cp6.web/src/api/mes/",
+            "docs/development/",
+            "docs/project-memory/",
+            "docs/design-handbook/remediation/"
+          ],
+          "reserved_write_resources": [],
+          "reserved_postgresql_ports": [],
+          "handoff_branch": "codex/w48-handoff",
+          "actions_authorized": false,
+          "deployment_authorized": false,
+          "existing_database_migration_authorized": false,
+          "worker_delivery_received": true,
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "resources_released": true,
+          "full_task_completed": false,
+          "worker_delivery_ref": "docs/development/evidence/WP02-03/oee-owner/DELIVERY.md",
+          "validation": "31项相关.NET用例通过（按TRX testId保留最新定向结果，含PG/真实HTTP/后台事务/种子/权限），6项Vitest与完整vue-tsc -b通过",
+          "runtime_resources_released": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "f4958debb891cbed296ed81df9afa3bf010c8edc",
+            "main": "bee338101c5bb99161c91fba8fb55f069a2b0435",
+            "target": "main",
+            "pr": "https://github.com/GTX537/CP6/pull/411",
+            "paths": [
+              "CP6.Core/Services/Integration/OperationsAccessV1.Oee.cs",
+              "CP6.Core/Services/Integration/OperationsOwnerV1.OeeWorker.cs",
+              "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
+              "CP6.Core/Services/Mes/OeeEvidenceV1.cs",
+              "CP6.Core/Services/Mes/OeeService.Owner.cs",
+              "CP6.Core/Services/Mes/OeeService.cs",
+              "CP6.Entity/DTOs/Mes/MachineDto.cs",
+              "CP6.Persistence.PostgreSql/Migrations/Core/20261022093500_OeeLegacyEvidenceV1.cs",
+              "CP6.Tests/BackgroundServices/OeeCalculationServiceTests.cs",
+              "CP6.Tests/Erp/OeeOwnerPostgreSqlTests.cs",
+              "CP6.Tests/MesPermissionAttributeTests.cs",
+              "CP6.Tests/MesPermissionSeedTests.cs",
+              "CP6.WebApi/BackgroundServices/OeeCalculationService.cs",
+              "CP6.WebApi/Controllers/Mes/OeeController.cs",
+              "CP6.WebApi/Program.cs",
+              "CP6.WebApi/Seed/MesPermissionSeed.cs",
+              "cp6.web/src/types/mes/mes.ts",
+              "cp6.web/src/views/mes/OeeAnalysisView.vue",
+              "cp6.web/src/views/mes/OeeOwner.spec.ts",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/09-parallel-development.md",
+              "docs/development/dispatch/20261022-wave48/README.md",
+              "docs/development/evidence/WP02-03/oee-owner/DELIVERY.md",
+              "docs/development/planning/20261022-seven-day-delivery.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-22T10:04:32.546738+00:00"
+          },
+          "delivery_ref": {
+            "commit": "01959b4c349698ddd609e81c72dc2740a5673de8",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261022T100525Z-wave48-delivery/MESSAGE.md",
+            "at": "2026-10-22T10:05:25.110524+00:00",
+            "base": "codex/t02c-entry-handoff-20260921",
+            "branch": "codex/w48-handoff",
+            "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/24"
+          },
+          "lifecycle_snapshot": {
+            "at": "2026-10-22T10:08:10.478209+00:00",
+            "main_task": "CP6:W48-01",
+            "main_seat_released": false,
+            "main_finish_required": true,
+            "handoff_seat_released": true,
+            "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave48-final-verification.json",
+            "live_source": "D:/CP6/.git/cp6-workspaces/state.json"
+          },
+          "lifecycle_complete": true
         }
       ],
       "wave13_delivery": {
@@ -166062,7 +166131,23 @@
           "base": "codex/t02c-entry-handoff-20260921",
           "branch": "codex/w48-handoff",
           "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/24"
-        }
+        },
+        "lifecycle_complete": true,
+        "actual_agent_minutes": 56.28,
+        "final_main_sha": "2f135d6b91d520cbe0c431df677654f5611aabb4",
+        "final_pr": 412,
+        "branches_deleted": true,
+        "seats_released": true,
+        "verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave48-final-verification.json",
+        "issue_closed": true
+      },
+      "wave49_delivery": {
+        "status": "LOCAL_VALIDATED_PENDING_INTEGRATION",
+        "issue": 413,
+        "report": "docs/development/evidence/WP02-03/planning-owner/DELIVERY.md",
+        "validation": "34项相关.NET用例、8项Vitest及完整vue-tsc -b通过；同一testId复用最新有效结果，未把旧执行改称新执行",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN"
       }
     },
     {
@@ -184836,11 +184921,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261022-wave48",
-      "path": "docs/development/dispatch/20261022-wave48/README.md",
-      "baseline_sha": "e5702415665a4beaa41623d4a0bbd8ce41ca42a5",
-      "registered_at": "2026-10-22T09:18:28.087975+00:00",
-      "phase": "CLOSED",
+      "id": "20261022-wave49",
+      "path": "docs/development/dispatch/20261022-wave49/README.md",
+      "baseline_sha": "2f135d6b91d520cbe0c431df677654f5611aabb4",
+      "registered_at": "2026-10-22T10:18:56.864821+00:00",
+      "phase": "W49_01_LOCAL_VALIDATED_PENDING_INTEGRATION",
       "assigned_chats": [
         "COORD"
       ],
@@ -184850,101 +184935,44 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [],
+      "active_implementation_chats": [
+        "COORD"
+      ],
       "workers_started": true,
-      "windows_closed": true,
-      "product_integrated": true,
+      "windows_closed": false,
+      "product_integrated": false,
       "windows": [
         {
-          "id": "W48-01",
+          "id": "W49-01",
           "task_id": "WP02-03",
-          "title": "OEE独立Owner、完整来源授权与可信后台入口",
-          "lifecycle_task": "W48-01",
+          "title": "计划看板/达成率独立Owner、同范围读取及导出边界",
+          "lifecycle_task": "W49-01",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "CLOSED",
+          "phase": "LOCAL_VALIDATED_PENDING_INTEGRATION",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "actual_start_ref": {
-            "commit": "e8a17f6e61f48b46022fd32f990a8ea013fc4ea5",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261022T091828Z-wave48-start/MESSAGE.md",
-            "at": "2026-10-22T09:18:28.087975+00:00"
+            "commit": "7af629ea1c3a06a26c419043a2a2609601df1396",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261022T101856Z-wave49-start/MESSAGE.md",
+            "at": "2026-10-22T10:18:56.864821+00:00"
           },
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w48-01",
-          "planned_scope_ref": "docs/development/dispatch/20261022-wave48/README.md",
+          "branch": "codex/w49-01",
+          "planned_scope_ref": "docs/development/dispatch/20261022-wave49/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "worker_delivery_ref": "docs/development/evidence/WP02-03/oee-owner/DELIVERY.md",
-          "validation": "31项相关.NET用例通过（按TRX testId保留最新定向结果，含PG/真实HTTP/后台事务/种子/权限），6项Vitest与完整vue-tsc -b通过",
-          "runtime_resources_released": true,
-          "candidate_integrated": true,
-          "integration": {
-            "result": "PASS",
-            "repository": "GTX537/CP6",
-            "source": "f4958debb891cbed296ed81df9afa3bf010c8edc",
-            "main": "bee338101c5bb99161c91fba8fb55f069a2b0435",
-            "target": "main",
-            "pr": "https://github.com/GTX537/CP6/pull/411",
-            "paths": [
-              "CP6.Core/Services/Integration/OperationsAccessV1.Oee.cs",
-              "CP6.Core/Services/Integration/OperationsOwnerV1.OeeWorker.cs",
-              "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
-              "CP6.Core/Services/Mes/OeeEvidenceV1.cs",
-              "CP6.Core/Services/Mes/OeeService.Owner.cs",
-              "CP6.Core/Services/Mes/OeeService.cs",
-              "CP6.Entity/DTOs/Mes/MachineDto.cs",
-              "CP6.Persistence.PostgreSql/Migrations/Core/20261022093500_OeeLegacyEvidenceV1.cs",
-              "CP6.Tests/BackgroundServices/OeeCalculationServiceTests.cs",
-              "CP6.Tests/Erp/OeeOwnerPostgreSqlTests.cs",
-              "CP6.Tests/MesPermissionAttributeTests.cs",
-              "CP6.Tests/MesPermissionSeedTests.cs",
-              "CP6.WebApi/BackgroundServices/OeeCalculationService.cs",
-              "CP6.WebApi/Controllers/Mes/OeeController.cs",
-              "CP6.WebApi/Program.cs",
-              "CP6.WebApi/Seed/MesPermissionSeed.cs",
-              "cp6.web/src/types/mes/mes.ts",
-              "cp6.web/src/views/mes/OeeAnalysisView.vue",
-              "cp6.web/src/views/mes/OeeOwner.spec.ts",
-              "docs/development/07-detailed-tasks.md",
-              "docs/development/09-parallel-development.md",
-              "docs/development/dispatch/20261022-wave48/README.md",
-              "docs/development/evidence/WP02-03/oee-owner/DELIVERY.md",
-              "docs/development/planning/20261022-seven-day-delivery.md",
-              "docs/development/roadmap.json",
-              "docs/project-memory/05-Completed.md",
-              "docs/project-memory/06-Todo.md",
-              "docs/project-memory/CHANGELOG-AI.md",
-              "docs/project-memory/PROJECT_STATE.md"
-            ],
-            "observed_at": "2026-10-22T10:04:32.546738+00:00"
-          },
-          "delivery_ref": {
-            "commit": "01959b4c349698ddd609e81c72dc2740a5673de8",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261022T100525Z-wave48-delivery/MESSAGE.md",
-            "at": "2026-10-22T10:05:25.110524+00:00",
-            "base": "codex/t02c-entry-handoff-20260921",
-            "branch": "codex/w48-handoff",
-            "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/24"
-          },
-          "resources_released": false,
-          "lifecycle_snapshot": {
-            "at": "2026-10-22T10:08:10.478209+00:00",
-            "main_task": "CP6:W48-01",
-            "main_seat_released": false,
-            "main_finish_required": true,
-            "handoff_seat_released": true,
-            "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave48-final-verification.json",
-            "live_source": "D:/CP6/.git/cp6-workspaces/state.json"
-          }
+          "worker_delivery_ref": "docs/development/evidence/WP02-03/planning-owner/DELIVERY.md",
+          "validation": "34项相关.NET用例、8项Vitest及完整vue-tsc -b通过；同一testId复用最新有效结果，未把旧执行改称新执行",
+          "runtime_resources_released": true
         }
       ],
       "horizon": {
-        "started_at": "2026-10-22T09:15:11.859125+00:00",
+        "started_at": "2026-10-22T10:15:11.224128+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
           90,
@@ -184956,24 +184984,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Finish final docs and Issue410; continue Planning independent Owners.",
-      "handoff_integration": {
-        "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
-        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/24",
-        "commit": "cb2769fb5f816b7c1e37d0e760e1028aa67b0aa9",
-        "target_head": "cb2769fb5f816b7c1e37d0e760e1028aa67b0aa9"
-      },
-      "handoff_resources_released": true,
-      "handoff_branch_disposition": "deleted-local-and-remote",
-      "lifecycle_snapshot": {
-        "at": "2026-10-22T10:08:10.478209+00:00",
-        "main_task": "CP6:W48-01",
-        "main_seat_released": false,
-        "main_finish_required": true,
-        "handoff_seat_released": true,
-        "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave48-final-verification.json",
-        "live_source": "D:/CP6/.git/cp6-workspaces/state.json"
-      }
+      "next_action": "Adopt Planning/Achievement independent Owners and legacy read-only fence; finish branches/seats then continue seven-day foundations."
     },
     "wave_history": [
       {
@@ -192848,6 +192859,152 @@
           "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave47-final-verification.json",
           "live_source": "D:/CP6/.git/cp6-workspaces/state.json"
         }
+      },
+      {
+        "id": "20261022-wave48",
+        "path": "docs/development/dispatch/20261022-wave48/README.md",
+        "baseline_sha": "e5702415665a4beaa41623d4a0bbd8ce41ca42a5",
+        "registered_at": "2026-10-22T09:18:28.087975+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W48-01",
+            "task_id": "WP02-03",
+            "title": "OEE独立Owner、完整来源授权与可信后台入口",
+            "lifecycle_task": "W48-01",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "actual_start_ref": {
+              "commit": "e8a17f6e61f48b46022fd32f990a8ea013fc4ea5",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261022T091828Z-wave48-start/MESSAGE.md",
+              "at": "2026-10-22T09:18:28.087975+00:00"
+            },
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w48-01",
+            "planned_scope_ref": "docs/development/dispatch/20261022-wave48/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "worker_delivery_ref": "docs/development/evidence/WP02-03/oee-owner/DELIVERY.md",
+            "validation": "31项相关.NET用例通过（按TRX testId保留最新定向结果，含PG/真实HTTP/后台事务/种子/权限），6项Vitest与完整vue-tsc -b通过",
+            "runtime_resources_released": true,
+            "candidate_integrated": true,
+            "integration": {
+              "result": "PASS",
+              "repository": "GTX537/CP6",
+              "source": "f4958debb891cbed296ed81df9afa3bf010c8edc",
+              "main": "bee338101c5bb99161c91fba8fb55f069a2b0435",
+              "target": "main",
+              "pr": "https://github.com/GTX537/CP6/pull/411",
+              "paths": [
+                "CP6.Core/Services/Integration/OperationsAccessV1.Oee.cs",
+                "CP6.Core/Services/Integration/OperationsOwnerV1.OeeWorker.cs",
+                "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
+                "CP6.Core/Services/Mes/OeeEvidenceV1.cs",
+                "CP6.Core/Services/Mes/OeeService.Owner.cs",
+                "CP6.Core/Services/Mes/OeeService.cs",
+                "CP6.Entity/DTOs/Mes/MachineDto.cs",
+                "CP6.Persistence.PostgreSql/Migrations/Core/20261022093500_OeeLegacyEvidenceV1.cs",
+                "CP6.Tests/BackgroundServices/OeeCalculationServiceTests.cs",
+                "CP6.Tests/Erp/OeeOwnerPostgreSqlTests.cs",
+                "CP6.Tests/MesPermissionAttributeTests.cs",
+                "CP6.Tests/MesPermissionSeedTests.cs",
+                "CP6.WebApi/BackgroundServices/OeeCalculationService.cs",
+                "CP6.WebApi/Controllers/Mes/OeeController.cs",
+                "CP6.WebApi/Program.cs",
+                "CP6.WebApi/Seed/MesPermissionSeed.cs",
+                "cp6.web/src/types/mes/mes.ts",
+                "cp6.web/src/views/mes/OeeAnalysisView.vue",
+                "cp6.web/src/views/mes/OeeOwner.spec.ts",
+                "docs/development/07-detailed-tasks.md",
+                "docs/development/09-parallel-development.md",
+                "docs/development/dispatch/20261022-wave48/README.md",
+                "docs/development/evidence/WP02-03/oee-owner/DELIVERY.md",
+                "docs/development/planning/20261022-seven-day-delivery.md",
+                "docs/development/roadmap.json",
+                "docs/project-memory/05-Completed.md",
+                "docs/project-memory/06-Todo.md",
+                "docs/project-memory/CHANGELOG-AI.md",
+                "docs/project-memory/PROJECT_STATE.md"
+              ],
+              "observed_at": "2026-10-22T10:04:32.546738+00:00"
+            },
+            "delivery_ref": {
+              "commit": "01959b4c349698ddd609e81c72dc2740a5673de8",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261022T100525Z-wave48-delivery/MESSAGE.md",
+              "at": "2026-10-22T10:05:25.110524+00:00",
+              "base": "codex/t02c-entry-handoff-20260921",
+              "branch": "codex/w48-handoff",
+              "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/24"
+            },
+            "resources_released": false,
+            "lifecycle_snapshot": {
+              "at": "2026-10-22T10:08:10.478209+00:00",
+              "main_task": "CP6:W48-01",
+              "main_seat_released": false,
+              "main_finish_required": true,
+              "handoff_seat_released": true,
+              "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave48-final-verification.json",
+              "live_source": "D:/CP6/.git/cp6-workspaces/state.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-22T09:15:11.859125+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            90,
+            150
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Finish final docs and Issue410; continue Planning independent Owners.",
+        "handoff_integration": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/24",
+          "commit": "cb2769fb5f816b7c1e37d0e760e1028aa67b0aa9",
+          "target_head": "cb2769fb5f816b7c1e37d0e760e1028aa67b0aa9"
+        },
+        "handoff_resources_released": true,
+        "handoff_branch_disposition": "deleted-local-and-remote",
+        "lifecycle_snapshot": {
+          "at": "2026-10-22T10:08:10.478209+00:00",
+          "main_task": "CP6:W48-01",
+          "main_seat_released": false,
+          "main_finish_required": true,
+          "handoff_seat_released": true,
+          "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave48-final-verification.json",
+          "live_source": "D:/CP6/.git/cp6-workspaces/state.json"
+        },
+        "lifecycle_complete": true,
+        "actual_agent_minutes": 56.28,
+        "branches_deleted": true,
+        "seats_released": true,
+        "final_main_sha": "2f135d6b91d520cbe0c431df677654f5611aabb4",
+        "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave48-final-verification.json"
       }
     ],
     "development_priority": {
@@ -192937,15 +193094,15 @@
         },
         {
           "id": "D3",
-          "phase": "PARTIALLY_ADOPTED",
+          "phase": "IMPLEMENTING",
           "full_business_acceptance": false,
-          "current_window": "W48-01",
-          "prerequisite_adjustment": "W47 Machine Owner and explicit machine department mapping adopted; OEE complete-source authority and trusted worker next, legacy profile only.",
+          "current_window": "W49-01",
+          "prerequisite_adjustment": "W48 OEE adopted; Planning legacy source read and achievement query/export next. Accepted SCHED legacy read-only and actual Root/RES adoption prerequisites remain binding.",
           "adopted_window": "W48-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/402",
           "report": "docs/development/evidence/WP02-03/mes-realtime/DELIVERY.md",
           "remaining": "Planning/PlanAchievement independent Owners and actual reference boundaries; formal RES/PERF remains NOT_RUN.",
-          "last_window_actual_agent_minutes": 62.52,
+          "last_window_actual_agent_minutes": 56.28,
           "last_branches_deleted": true,
           "last_seats_released": true
         },

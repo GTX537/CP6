@@ -1,5 +1,7 @@
 <template>
   <div class="planning-board">
+    <el-alert v-if="readMode === 'LEGACY_READ_ONLY'" :title="t('現在の計画は参照専用です。改期・設備変更は正式な排程手続きの利用開始後に行えます。')" type="info" :closable="false" />
+    <el-alert v-if="intent.error.value" :title="intent.error.value" type="warning" :closable="false" />
     <!-- 検索 + KPI -->
     <el-card shadow="never" class="header-card">
       <el-form :model="query" inline size="small">
@@ -33,7 +35,7 @@
         <el-form-item>
           <el-button type="primary" :loading="loading" @click="reload">{{ t('検索') }}</el-button>
           <el-button @click="resetQuery">{{ t('クリア') }}</el-button>
-          <el-button v-permission="'mes-planning-board:arrange'" type="warning" :icon="MagicStick" :loading="arranging" @click="onAutoArrange">{{ t('自動配置') }}</el-button>
+          <el-button v-permission="'mes-planning-board:arrange'" type="warning" :icon="MagicStick" :loading="arranging" :disabled="!canApplySchedule || intent.uncertain.value" @click="onAutoArrange">{{ t('自動配置') }}</el-button>
         </el-form-item>
       </el-form>
 
@@ -134,7 +136,7 @@
 
     <!-- バー編集 ダイアログ -->
     <el-dialog v-model="dialogVisible" :title="t('工程編集')" width="500px">
-      <el-form v-if="editing" :model="editing" label-width="120px" size="small">
+      <el-form v-if="editing" :model="editing" :disabled="!canEdit" label-width="120px" size="small">
         <el-form-item :label="t('指図NO')">
           <el-tag>{{ editing.workOrderNo }}</el-tag>
         </el-form-item>
@@ -165,9 +167,11 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
-import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { ref, reactive, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { MagicStick } from '@element-plus/icons-vue'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
+import { usePermissionStore } from '@/stores/permission'
 import { planningBoardApi } from '@/api/mes/mes'
 import {
   PROCESS_STATUS_OPTIONS,
@@ -176,6 +180,10 @@ import {
   type PlanningKpiDto,
 } from '@/types/mes/mes'
 
+const permission = usePermissionStore()
+const intent = useOperationsIntent(clearProtected)
+const readMode = ref(''), canApplySchedule = ref(false)
+let readSequence = 0, refreshTimer: number | undefined
 const loading = ref(false)
 const arranging = ref(false)
 const saving = ref(false)
@@ -201,9 +209,9 @@ const defaultQuery = (): PlanningBoardQuery => ({
 })
 const query = reactive<PlanningBoardQuery>(defaultQuery())
 
-watch(dateRange, ([from, to]) => {
-  query.dateFrom = from
-  query.dateTo = to
+watch(dateRange, range => {
+  query.dateFrom = range?.[0]
+  query.dateTo = range?.[1]
 })
 
 const viewMode = ref<'day' | 'week' | 'month'>('day')
@@ -327,18 +335,34 @@ function barTooltip(b: PlanningBarDto): string {
 // ──────────────────────────────────────
 // CRUD
 // ──────────────────────────────────────
+function emptyKpi(): PlanningKpiDto { return { totalOrders: 0, inProgressOrders: 0, completedOrders: 0, delayedOrders: 0, completionRate: 0, avgDelayDays: 0 } }
+function stopPolling() { if (refreshTimer !== undefined) window.clearInterval(refreshTimer); refreshTimer = undefined }
+function clearProtected() {
+  readSequence++; stopPolling(); bars.value = []; kpi.value = emptyKpi(); editing.value = null; dialogVisible.value = false
+  readMode.value = ''; canApplySchedule.value = false; loading.value = false; saving.value = false; arranging.value = false
+}
+function failed(error: any, writeSettled = false) {
+  if (![401, 403].includes(error?.response?.status)) return false
+  const unresolved = intent.uncertain.value || (!writeSettled && intent.busy.value)
+  intent.invalidate(); clearProtected()
+  if (unresolved) { intent.uncertain.value = true; intent.error.value = '処理結果を確認できません。再送せず、対象の最新状態を確認してください。' }
+  return true
+}
 async function reload() {
+  const token = intent.capture(), request = ++readSequence, selection = JSON.stringify(query), input = JSON.parse(selection)
   loading.value = true
   try {
-    const [barsRes, kpiRes] = await Promise.all([
-      planningBoardApi.getBars(query),
-      planningBoardApi.getKpi(query),
-    ])
-    bars.value = barsRes.data || []
-    kpi.value = kpiRes.data || kpi.value
-  } finally {
-    loading.value = false
-  }
+    const result = await planningBoardApi.capture(input)
+    if (!intent.current(token) || request !== readSequence || selection !== JSON.stringify(query)) return
+    bars.value = result.data?.bars || []; kpi.value = result.data?.kpi || emptyKpi()
+    readMode.value = result.data?.mode || ''; canApplySchedule.value = result.data?.canApplySchedule === true
+    if (!intent.uncertain.value && !intent.busy.value) intent.error.value = ''
+    if (refreshTimer === undefined) refreshTimer = window.setInterval(() => { void reload() }, 60000)
+  } catch (error) {
+    if (intent.current(token) && request === readSequence && selection === JSON.stringify(query)) {
+      if (!failed(error)) { clearProtected(); intent.error.value = '最新の計画を取得できません。再検索してください。' }
+    }
+  } finally { if (intent.current(token) && request === readSequence) loading.value = false }
 }
 
 function resetQuery() {
@@ -347,18 +371,19 @@ function resetQuery() {
 }
 
 async function onAutoArrange() {
+  if (!canApplySchedule.value || !permission.loaded || !permission.has('mes-planning-board:arrange')) return
+  const token = intent.begin(); if (!token) return
+  const input = { baseDate: new Date().toISOString().slice(0, 10), wgCd: query.wgCd, processCd: query.processCd, defaultHoursPerJob: 2 }
   try {
     await ElMessageBox.confirm(t('未着手の工程に対し優先度+納期で自動配置します。続行しますか？'), t('確認'), { type: 'info' })
+    if (!intent.current(token) || !canApplySchedule.value || !permission.has('mes-planning-board:arrange')) return
     arranging.value = true
-    const res = await planningBoardApi.autoArrange({
-      baseDate: new Date().toISOString().slice(0, 10),
-      wgCd: query.wgCd,
-      processCd: query.processCd,
-      defaultHoursPerJob: 2,
-    })
-    ElMessage.success(t('{n}件の工程を自動配置しました', { n: res.data?.changed ?? 0 }))
-    await reload()
-  } catch (e) { /* cancelled */ } finally { arranging.value = false }
+    const result = await planningBoardApi.autoArrange(input)
+    if (!intent.current(token)) return
+    ElMessage.success(t('{n}件の工程を自動配置しました', { n: result.data?.changed ?? 0 }))
+    intent.finish(token); await reload()
+  } catch (error) { if (intent.current(token) && !failed(error, true)) intent.failed(token, error) }
+  finally { if (intent.current(token)) arranging.value = false; intent.finish(token) }
 }
 
 // ──────────────────────────────────────
@@ -366,7 +391,7 @@ async function onAutoArrange() {
 // ──────────────────────────────────────
 const dialogVisible = ref(false)
 const editing = ref<PlanningBarDto | null>(null)
-const canEdit = computed(() => editing.value?.processStatus === 0)
+const canEdit = computed(() => canApplySchedule.value && !intent.uncertain.value && editing.value?.processStatus === 0 && permission.loaded && permission.has('mes-planning-board:reschedule'))
 
 function onBarClick(b: PlanningBarDto) {
   editing.value = { ...b }
@@ -374,32 +399,22 @@ function onBarClick(b: PlanningBarDto) {
 }
 
 async function onReschedule() {
-  if (!editing.value) return
-  if (!editing.value.planStartTime || !editing.value.planEndTime) {
-    ElMessage.error(t('計画日時を入力してください'))
-    return
-  }
+  if (!editing.value || !canEdit.value) return
+  if (!editing.value.planStartTime || !editing.value.planEndTime) { ElMessage.error(t('計画日時を入力してください')); return }
+  const token = intent.begin(); if (!token) return
+  const input = { id: editing.value.id, planStartTime: editing.value.planStartTime, planEndTime: editing.value.planEndTime, machineCd: editing.value.machineCd }
   saving.value = true
   try {
-    await planningBoardApi.reschedule({
-      id: editing.value.id,
-      planStartTime: editing.value.planStartTime,
-      planEndTime: editing.value.planEndTime,
-      machineCd: editing.value.machineCd,
-    })
-    ElMessage.success(t('ME-MSG-041: 保存しました'))
-    dialogVisible.value = false
-    await reload()
-  } finally {
-    saving.value = false
-  }
+    await planningBoardApi.reschedule(input)
+    if (!intent.current(token)) return
+    ElMessage.success(t('ME-MSG-041: 保存しました')); dialogVisible.value = false
+    intent.finish(token); await reload()
+  } catch (error) { if (intent.current(token) && !failed(error, true)) intent.failed(token, error) }
+  finally { if (intent.current(token)) saving.value = false; intent.finish(token) }
 }
 
-onMounted(() => {
-  reload()
-  // 60 秒間隔で自動更新
-  setInterval(reload, 60000)
-})
+onMounted(() => { void reload() })
+onBeforeUnmount(stopPolling)
 </script>
 
 <style scoped>

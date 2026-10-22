@@ -1,5 +1,7 @@
 <template>
   <div class="plan-achievement">
+    <el-alert :title="t('既存の製造指図累計に基づく参考集計です。')" type="info" :closable="false" />
+    <el-alert v-if="readError" :title="readError" type="warning" :closable="false" />
     <div class="page-header">
       <h2>{{ t('mes.planAchievement.title') }}</h2>
       <el-button :icon="Refresh" circle :loading="loading" @click="loadSummary" />
@@ -30,7 +32,7 @@
           <el-button type="primary" :icon="Search" :loading="loading" @click="search">
             {{ t('mes.planAchievement.btn.search') }}
           </el-button>
-          <el-button :icon="Download" :loading="exporting" @click="exportCsv">
+          <el-button v-permission="'mes-plan-achievement:export'" :icon="Download" :loading="exporting" @click="exportCsv">
             {{ t('mes.planAchievement.btn.exportCsv') }}
           </el-button>
           <el-button :icon="RefreshLeft" @click="resetQuery">{{ t('mes.planAchievement.btn.reset') }}</el-button>
@@ -121,6 +123,8 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { Download, Refresh, RefreshLeft, Search } from '@element-plus/icons-vue'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
+import { usePermissionStore } from '@/stores/permission'
 import { planAchievementApi } from '@/api/mes/planAchievement'
 import { formatQty as fmtQty } from '@/utils/format'
 import type { PlanAchievementGroupBy, PlanAchievementQuery, PlanAchievementSummary } from '@/types/mes/planAchievement'
@@ -143,29 +147,37 @@ const summary = reactive<PlanAchievementSummary>({
   onTargetCount: 0,
   rows: [],
 })
+const permission = usePermissionStore()
+const intent = useOperationsIntent(clearProtected)
+const readError = ref('')
+let readSequence = 0, exportSequence = 0
 const loading = ref(false)
 const exporting = ref(false)
 
 const rows = computed(() => summary.rows || [])
 const chartRows = computed(() => rows.value.slice(0, 12))
 
+function clearProtected() {
+  readSequence++; exportSequence++; loading.value = false; exporting.value = false; readError.value = ''
+  Object.assign(summary, { totalWorkOrders: 0, totalPlannedQty: 0, totalGoodQty: 0, totalDefectQty: 0, achievementRate: 0, defectRate: 0, onTargetCount: 0, rows: [] })
+}
+function fail(error: any) {
+  if ([401, 403].includes(error?.response?.status)) { intent.invalidate(); clearProtected() }
+  readError.value = '最新の集計を取得できません。権限と検索条件を確認してください。'
+}
 async function loadSummary() {
+  const token = intent.capture(), request = ++readSequence, input = toPayload(), selection = JSON.stringify(input)
   loading.value = true
   try {
-    const res = await planAchievementApi.summary(toPayload())
-    Object.assign(summary, {
-      totalWorkOrders: res.data?.totalWorkOrders ?? 0,
-      totalPlannedQty: res.data?.totalPlannedQty ?? 0,
-      totalGoodQty: res.data?.totalGoodQty ?? 0,
-      totalDefectQty: res.data?.totalDefectQty ?? 0,
-      achievementRate: res.data?.achievementRate ?? 0,
-      defectRate: res.data?.defectRate ?? 0,
-      onTargetCount: res.data?.onTargetCount ?? 0,
-      rows: res.data?.rows ?? [],
-    })
-  } finally {
-    loading.value = false
-  }
+    const result = await planAchievementApi.summary(input)
+    if (!intent.current(token) || request !== readSequence || selection !== JSON.stringify(toPayload())) return
+    Object.assign(summary, { totalWorkOrders: result.data?.totalWorkOrders ?? 0, totalPlannedQty: result.data?.totalPlannedQty ?? 0,
+      totalGoodQty: result.data?.totalGoodQty ?? 0, totalDefectQty: result.data?.totalDefectQty ?? 0,
+      achievementRate: result.data?.achievementRate ?? 0, defectRate: result.data?.defectRate ?? 0, onTargetCount: result.data?.onTargetCount ?? 0, rows: result.data?.rows ?? [] })
+    readError.value = ''
+  } catch (error) {
+    if (intent.current(token) && request === readSequence && selection === JSON.stringify(toPayload())) { clearProtected(); fail(error) }
+  } finally { if (intent.current(token) && request === readSequence) loading.value = false }
 }
 
 function search() {
@@ -183,19 +195,18 @@ function resetQuery() {
 }
 
 async function exportCsv() {
+  if (exporting.value || !permission.loaded || !permission.has('mes-plan-achievement:export') || !permission.has('mes-plan-achievement:query')) return
+  const token = intent.capture(), request = ++exportSequence, input = toPayload(), selection = JSON.stringify(input)
   exporting.value = true
   try {
-    const blob = (await planAchievementApi.exportCsv(toPayload())) as unknown as Blob
+    const blob = (await planAchievementApi.exportCsv(input)) as unknown as Blob
+    if (!intent.current(token) || request !== exportSequence || selection !== JSON.stringify(toPayload())) return
     const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `plan-achievement_${new Date().toISOString().slice(0, 10)}.csv`
-    a.click()
-    URL.revokeObjectURL(url)
+    try { const a = document.createElement('a'); a.href = url; a.download = `plan-achievement_${new Date().toISOString().slice(0, 10)}.csv`; a.click() }
+    finally { URL.revokeObjectURL(url) }
     ElMessage.success(t('mes.planAchievement.msg.exported'))
-  } finally {
-    exporting.value = false
-  }
+  } catch (error) { if (intent.current(token) && request === exportSequence) fail(error) }
+  finally { if (intent.current(token) && request === exportSequence) exporting.value = false }
 }
 
 function toPayload(): PlanAchievementQuery {
