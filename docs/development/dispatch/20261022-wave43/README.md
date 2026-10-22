@@ -20,4 +20,14 @@ Main窗口`docs/development/dispatch/20261022-wave43/README.md`；总计划`docs
 
 ## 候选验证
 
-43项去重相关.NET通过（11项新增PG/真实HTTP，32项既有PA090权限/范围/精度/竞争回归），16项Vitest通过，完整vue-tsc -b通过。作者集中审查及定向修复完成；[DELIVERY](../../evidence/WP02-10/main-original-operation/DELIVERY.md)。正常远端采用/分支及finish待执行。
+43项去重相关.NET通过（11项新增PG/真实HTTP，32项既有PA090权限/范围/精度/竞争回归），16项Vitest通过，完整vue-tsc -b通过。作者集中审查及定向修复完成；[DELIVERY](../../evidence/WP02-10/main-original-operation/DELIVERY.md)。产品及Handoff已采用，原分支最后文档/实际finish见下文。
+
+## 远端采用与原分支收尾
+
+[产品PR #397](https://github.com/GTX537/CP6/pull/397)正常合并，source`1ed6753ee3e946e6c6eb44ae58c8c0ccb598f7e0`、远端main`8d7001fc6c6b537bcba35b50ad0fc9941bb07e8d`，23项任务文件blob一致。[Handoff PR #19](https://github.com/GTX537/CP6.AI-Handoff/pull/19)采用source`fe53b4b7cfa45a27ea3897135924c4755ff7cdc7`、目标`d9e43509b5bddcd8c9b5f74e39d17a775b736dad`，3项资料blob一致；准确Handoff本地/远端分支已删除，DEV-2干净detached并释放。
+
+43项去重相关.NET（11新增PG/实际HTTP、32既有PA090）、16项Vitest及完整类型检查通过；原失败保留，所需范围通过。合并未改变产品输入，复用真实成功结果；最后文档只查diff/链接/台账。PG/API停止、5处生成data回收571773920字节，原日志和失败保留。本分支Actions0运行，无取消项或触发修改。
+
+此快照 2026-10-22T06:31:27.045360+00:00 仍在原DEV-1/codex/w43-01做最后文档；正常最终PR后manage finish，不提前声明自身采用/释放。准确分支处置、工作区和席位结果及实际耗时见最终PR、实时管理登记与`C:/Users/tt/CP6-planning-reports/20261017-foundation/wave43-final-verification.json`。原估2–4h按真实finish校正。
+
+七天目标ACTIVE，D1完成，D2与D4各首批已采用；继续D4可靠投递/实际Owner前置。旧batch非恢复、workflow AwaitingAdapter与Platform正式采用边界保留，不将局部原日志充当REP/RMA/SCHED的完整共同事务证明。125目标/247运行及整卡不提升，根用户资料保留，无新树/代理/Actions/既有环境迁移/生产部署，W37–W42不重复。

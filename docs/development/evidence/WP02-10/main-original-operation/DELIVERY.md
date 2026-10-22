@@ -1,6 +1,6 @@
 # W43-01：Main 原命令日志与 PA090 恢复首批交付
 
-七天一期D4先行 / WP02-10限定窗口；COORD本聊天单人。Main基线`c91a50796a4bdb2acf4360b74900aee445e3ffc6`，固定DEV-1/codex/w43-01、DEV-2/codex/w43-handoff。当前候选本地验证及一次作者集中SPEC/QUALITY完成，正常PR/远端采用与实际finish待执行。
+七天一期D4先行 / WP02-10限定窗口；COORD本聊天单人。Main基线`c91a50796a4bdb2acf4360b74900aee445e3ffc6`，固定DEV-1/codex/w43-01、DEV-2/codex/w43-handoff。产品及Handoff已采用，原分支最后文档/实际finish见下文。
 
 ## 行为与审查
 
@@ -33,3 +33,13 @@
 原Workflow仍AwaitingAdapter，Main journal不是Platform Inbox/OutboxV2切换、broker投递、POWER EGG 46字段或任何外部业务成功。完整WP02-10/PLT-DEL、其他Owner writer、RMA MainUow/收货适配、REP Transfer及SCHED资源重绑、正式数据库角色/政策/保留与真实验收都保持未完成。七天目标D4首批完成后继续；D2/D3不因依赖顺序调整而勾选。
 
 自有PG/API停止；5个数据目录按ownership/绝对路径/无进程及重解析点核验后回收571773920字节；原日志/TRX/失败/ownership和缓存保留。分支正常采用后准确删除、固定席位finish；当前仍占DEV-1/2、集成席位空闲。无新树/代理/Actions/既有环境迁移/生产部署，无触发修改/取消项，125目标/247运行与整卡完成数不提升。预计2–4h，实际按最终finish校正。
+
+## 远端采用与原分支收尾
+
+[产品PR #397](https://github.com/GTX537/CP6/pull/397)正常合并，source`1ed6753ee3e946e6c6eb44ae58c8c0ccb598f7e0`、远端main`8d7001fc6c6b537bcba35b50ad0fc9941bb07e8d`，23项任务文件blob一致。[Handoff PR #19](https://github.com/GTX537/CP6.AI-Handoff/pull/19)采用source`fe53b4b7cfa45a27ea3897135924c4755ff7cdc7`、目标`d9e43509b5bddcd8c9b5f74e39d17a775b736dad`，3项资料blob一致；准确Handoff本地/远端分支已删除，DEV-2干净detached并释放。
+
+43项去重相关.NET（11新增PG/实际HTTP、32既有PA090）、16项Vitest及完整类型检查通过；原失败保留，所需范围通过。合并未改变产品输入，复用真实成功结果；最后文档只查diff/链接/台账。PG/API停止、5处生成data回收571773920字节，原日志和失败保留。本分支Actions0运行，无取消项或触发修改。
+
+此快照 2026-10-22T06:31:27.045360+00:00 仍在原DEV-1/codex/w43-01做最后文档；正常最终PR后manage finish，不提前声明自身采用/释放。准确分支处置、工作区和席位结果及实际耗时见最终PR、实时管理登记与`C:/Users/tt/CP6-planning-reports/20261017-foundation/wave43-final-verification.json`。原估2–4h按真实finish校正。
+
+七天目标ACTIVE，D1完成，D2与D4各首批已采用；继续D4可靠投递/实际Owner前置。旧batch非恢复、workflow AwaitingAdapter与Platform正式采用边界保留，不将局部原日志充当REP/RMA/SCHED的完整共同事务证明。125目标/247运行及整卡不提升，根用户资料保留，无新树/代理/Actions/既有环境迁移/生产部署，W37–W42不重复。

@@ -77,3 +77,8 @@ W42实际39.91分钟，PR395/396与Handoff18已远端采用，两任务分支删
 REP正式Transfer/SourceDemand、RMA prepare/commit/query/seal、SCHED资源重绑定均缺实际采用接线。按已授权七天计划提前D4的原命令/事务基础；D2/D3未完成。Platform Inbox是投递/投影原语，不替业务命令日志；本窗不伪造其接收采用或工作流发送成功。
 
 [W43](../dispatch/20261022-wave43/README.md)预计2–4h，Main原命令日志与PA090真实业务/页面恢复先行；完整可靠投递仍为下一前置，不据此勾选D4完成。
+
+
+## D4首批采用检查点
+
+W43 Main journal/PA090原命令与页面恢复由PR397/Handoff19采用，43相关.NET、16Vitest与类型检查通过；DEV-2释放，原DEV-1最后文档后finish。D4整阶段尚未完成，可靠投递及实际消费者采用继续推进；D2/D3前置保留，七天目标保持ACTIVE。

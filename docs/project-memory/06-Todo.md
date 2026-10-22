@@ -1,10 +1,10 @@
 # 当前待办与优先级
 
-## 2026-10-22：W43 Main原操作恢复候选已验证
+## 2026-10-22：W43 Main原操作恢复已集成
 
-PA090真实有版本命令/页面采用持久原命令，业务/审计/意图同事务；UNKNOWN只查原键，close防迟到写，当前读权限独立于新写。43项去重相关.NET通过（11项新增PG/真实HTTP，32项既有PA090权限/范围/精度/竞争回归），16项Vitest通过，完整vue-tsc -b通过。作者审查完成；[DELIVERY](../development/evidence/WP02-10/main-original-operation/DELIVERY.md)保留准确失败。正常PR采用/分支清理/席位finish待执行。
+[产品PR #397](https://github.com/GTX537/CP6/pull/397)与[Handoff PR #19](https://github.com/GTX537/CP6.AI-Handoff/pull/19)远端采用；Main journal与PA090实际命令/页面的同事务原结果、当前授权恢复和close已交付。43项去重相关.NET（11新增PG/实际HTTP、32既有PA090）、16项Vitest及完整类型检查通过；原失败保留，所需范围通过；一次作者审查完成，[DELIVERY](../development/evidence/WP02-10/main-original-operation/DELIVERY.md)保留原失败。
 
-七天目标ACTIVE，W42实际39.91分钟并已收尾；D4首批先行，外部工作流/Platform投递与其他Owner仍未采用，D2/D3前置保留。125目标/247运行及完整任务不提升；固定目录、PG、无Actions/既有迁移/生产。
+DEV-2分支准确清理/释放，PG/API停止，生成data回收约545MiB。原W43-01最后文档PR后finish，准确生命周期/耗时见管理记录和最终PR。七天目标ACTIVE，D4首批已采用，继续可靠投递/实际Owner前置；旧batch与workflow AwaitingAdapter、Platform/其他业务未采用边界保留。125/247及整卡不提升，无新树/代理/Actions/既有迁移/生产。W37–W42已实际收尾。
 
 ## 2026-10-22：W42可信部门绑定已集成
 
