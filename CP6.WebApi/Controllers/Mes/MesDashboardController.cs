@@ -1,3 +1,4 @@
+using CP6.Core.Auth;
 using CP6.Core.Services.Mes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,8 @@ namespace CP6.WebApi.Controllers.Mes;
 [ApiController]
 [Route("api/mes/dashboard")]
 [Authorize]
+[CP6.WebApi.Controllers.Erp.OrderOwnerResult]
+[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class MesDashboardController : ControllerBase
 {
     private readonly IMesDashboardService _service;
@@ -19,6 +22,7 @@ public class MesDashboardController : ControllerBase
     }
 
     [HttpGet("summary")]
+    [RequirePermission("mes-dashboard", "query")]
     public async Task<IActionResult> Summary()
     {
         var s = await _service.GetSummaryAsync();
@@ -26,6 +30,7 @@ public class MesDashboardController : ControllerBase
     }
 
     [HttpGet("process-progress")]
+    [RequirePermission("mes-dashboard", "query")]
     public async Task<IActionResult> ProcessProgress()
     {
         var rows = await _service.GetProcessProgressAsync();
@@ -33,6 +38,7 @@ public class MesDashboardController : ControllerBase
     }
 
     [HttpGet("delay-alerts")]
+    [RequirePermission("mes-dashboard", "query")]
     public async Task<IActionResult> DelayAlerts([FromQuery] int top = 50)
     {
         var rows = await _service.GetDelayAlertsAsync(top);
@@ -40,6 +46,7 @@ public class MesDashboardController : ControllerBase
     }
 
     [HttpGet("daily-trend")]
+    [RequirePermission("mes-dashboard", "query")]
     public async Task<IActionResult> DailyTrend([FromQuery] int days = 30)
     {
         var rows = await _service.GetDailyTrendAsync(days);
@@ -47,6 +54,7 @@ public class MesDashboardController : ControllerBase
     }
 
     [HttpGet("defect-top5")]
+    [RequirePermission("mes-dashboard", "query")]
     public async Task<IActionResult> DefectTop5()
     {
         var rows = await _service.GetDefectTop5Async();
@@ -54,6 +62,7 @@ public class MesDashboardController : ControllerBase
     }
 
     [HttpGet("recent-completed")]
+    [RequirePermission("mes-dashboard", "query")]
     public async Task<IActionResult> RecentCompleted([FromQuery] int top = 10)
     {
         var rows = await _service.GetRecentCompletedAsync(top);
@@ -61,6 +70,7 @@ public class MesDashboardController : ControllerBase
     }
 
     [HttpGet("machine-heatmap")]
+    [RequirePermission("mes-dashboard", "query")]
     public async Task<IActionResult> MachineHeatmap([FromQuery] int days = 7)
     {
         var rows = await _service.GetMachineHeatmapAsync(days);
@@ -74,6 +84,7 @@ public class MesDashboardController : ControllerBase
 
     /// <summary>SP 版 本日サマリ — usp_GetMesDashboardSummary</summary>
     [HttpGet("summary/sp")]
+    [RequirePermission("mes-dashboard", "query")]
     public async Task<IActionResult> SummarySp()
     {
         var sw = System.Diagnostics.Stopwatch.StartNew();
@@ -84,6 +95,7 @@ public class MesDashboardController : ControllerBase
 
     /// <summary>SP 版 日別推移 — usp_GetMesDailyTrend</summary>
     [HttpGet("daily-trend/sp")]
+    [RequirePermission("mes-dashboard", "query")]
     public async Task<IActionResult> DailyTrendSp([FromQuery] int days = 30)
     {
         var sw = System.Diagnostics.Stopwatch.StartNew();
@@ -94,6 +106,7 @@ public class MesDashboardController : ControllerBase
 
     /// <summary>SP 版 工程別進捗 — usp_GetMesProcessProgress</summary>
     [HttpGet("process-progress/sp")]
+    [RequirePermission("mes-dashboard", "query")]
     public async Task<IActionResult> ProcessProgressSp()
     {
         var sw = System.Diagnostics.Stopwatch.StartNew();

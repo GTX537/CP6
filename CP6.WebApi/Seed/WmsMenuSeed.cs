@@ -53,7 +53,7 @@ public static class WmsMenuSeed
         (413, "梱包・出荷確定",       "/wms/packaging",            "Suitcase",       400, 413, null),
         (414, "棚卸 一覧",            "/wms/stock-take-list",      "Coordinate",     400, 414, null),
         (415, "棚卸 作業",            "/wms/stock-take",           "Operation",      400, 415, "wms-stocktake"),
-        (416, "WMSダッシュボード",    "/wms/dashboard",            "DataAnalysis",   400, 416, null),
+        (416, "WMSダッシュボード",    "/wms/dashboard",            "DataAnalysis",   400, 416, "wms-dashboard"),
         (417, "材料欠品管理",         "/wms/material-shortage",    "Warning",        400, 417, "wms-material-shortage"),
         // 429=在庫QC（品質保留/放行）：StockQcController（/api/wms/stock-qc）原无菜单行，T1 标注【菜单缺】。
         // MenuId 418 已被 backlog 的波次拣货计划保留，故取 429；OrderNo=418 使其在 在庫 コア簇内显示。

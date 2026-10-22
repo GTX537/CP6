@@ -18,18 +18,20 @@ namespace CP6.Core.Services.Wms;
 /// EF Core の InMemory プロバイダはトランザクション・RowVersion を限定的にのみサポートするため、
 /// 単体テストでは AllowNegative 判定など論理レベルのみ検証する。
 /// </remarks>
-public class StockMovementService : IStockMovementService
+public partial class StockMovementService : IStockMovementService
 {
     private readonly CP6Context _db;
     private readonly IWmsSequenceService _seq;
     private readonly IWmsNotifier _notifier;
     private readonly IStockFinBridge _finBridge;
+    private readonly OperationsOwnerV1? _owner;
     private const string TxnPrefix = "TXN";
 
     public StockMovementService(CP6Context db, IWmsSequenceService seq, IWmsNotifier? notifier = null,
-        IStockFinBridge? finBridge = null)
+        IStockFinBridge? finBridge = null, OperationsOwnerV1? owner = null)
     {
         _db = db;
+        _owner = owner;
         _seq = seq;
         _notifier = notifier ?? new NoOpWmsNotifier();
         _finBridge = finBridge ?? new NoOpStockFinBridge();
@@ -43,13 +45,13 @@ public class StockMovementService : IStockMovementService
         try { await _notifier.NotifyStockChangedAsync(new StockChangedEvent { TxnNo=transaction.TxnNo,TxnType=transaction.TxnType,TxnAt=transaction.TxnDateTime,WarehouseCd=transaction.WarehouseCd,LocationCd=transaction.LocationCd,ProductCd=transaction.ProductCd,LotNo=transaction.LotNo,Qty=transaction.Qty,RelatedNo=transaction.RelatedNo,OperatorCd=transaction.OperatorCd }); } catch { /* existing best-effort notification */ }
     }
 
-    public Task<string> ApplyAsync(StockMovementRequest req, CancellationToken ct = default)
+    private Task<string> ApplyCoreAsync(StockMovementRequest req, CancellationToken ct = default)
         => ApplyInternalAsync(req, publishWhenCommitted: true, ct);
 
     private async Task<string> ApplyInternalAsync(
         StockMovementRequest req,
         bool publishWhenCommitted,
-        CancellationToken ct)
+        CancellationToken ct, bool stockTakeApproval = false)
     {
         Validate(req);
 
@@ -61,7 +63,7 @@ public class StockMovementService : IStockMovementService
         // RSV/UNRSV は引当のみで物理数を動かさないため凍結対象外。
         // 反冲（OUT/ISSUE, AllowNegativeOverride）も凍結ロケーションでは拒否＝盘点基线正确性优先
         //（反冲は best-effort：呼出側 C.1/C.2 の二重闸が吞错＋归集跳过で吸収し後補償可能）。
-        var isStockTakeAdj = req.TxnType == WmsTxnType.ADJ && req.RelatedType == "STOCKTAKE";
+        var isStockTakeAdj = stockTakeApproval || (!_db.Database.IsNpgsql() && req.TxnType == WmsTxnType.ADJ && req.RelatedType == "STOCKTAKE");
         if (!isStockTakeAdj
             && (req.TxnType is WmsTxnType.IN or WmsTxnType.OUT or WmsTxnType.MOVE or WmsTxnType.ADJ)
             && await IsLocationFrozenAsync(req.WarehouseCd, req.LocationCd, ct))
@@ -190,7 +192,7 @@ public class StockMovementService : IStockMovementService
         }
     }
 
-    public async Task<(string OutTxnNo, string InTxnNo)> MoveAsync(StockMoveRequest req, CancellationToken ct = default)
+    private async Task<(string OutTxnNo, string InTxnNo)> MoveCoreAsync(StockMoveRequest req, CancellationToken ct = default)
     {
         if (req.Qty <= 0)
             throw new ArgumentException("WM-MSG-011: 移動数量は0より大きい値を指定してください。");

@@ -14,20 +14,26 @@ namespace CP6.WebApi.Controllers.Wms;
 [ApiController]
 [Route("api/wms/stock")]
 [Authorize]
+[CP6.WebApi.Controllers.Erp.OrderOwnerResult]
+[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class StockController : ControllerBase
 {
     private readonly CP6Context _db;
     private readonly IStockMovementService _mover;
-    public StockController(CP6Context db, IStockMovementService mover)
+    private readonly StockOperationsService? _reads;
+    public StockController(CP6Context db, IStockMovementService mover, StockOperationsService? reads=null)
     {
         _db = db;
+        _reads=reads;
         _mover = mover;
     }
 
+    private StockOperationsService Reads=>_reads??throw new CP6.Core.Services.Erp.OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
     private string? CurrentUser => User?.Identity?.Name;
 
     /// <summary>在庫照会（多条件 + ページング簡易版）</summary>
     [HttpGet]
+    [RequirePermission("wms-stock", "query")]
     public async Task<IActionResult> Search(
         [FromQuery] string? warehouseCd,
         [FromQuery] string? locationCd,
@@ -39,6 +45,12 @@ public class StockController : ControllerBase
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 50)
     {
+        if(_db.Database.IsNpgsql())
+        {
+            var result=await Reads.SearchAsync(new(){WarehouseCd=warehouseCd,LocationCd=locationCd,ProductCd=productCd,LotNo=lotNo,
+                OwnerType=ownerType,OwnerCd=ownerCd,HasStockOnly=hasStockOnly,Page=page,PageSize=pageSize},HttpContext.RequestAborted);
+            return Ok(new {code=0,message="OK",data=result});
+        }
         var q = _db.Stocks.AsNoTracking().Where(x => !x.IsDeleted);
 
         if (!string.IsNullOrWhiteSpace(warehouseCd)) q = q.Where(x => x.WarehouseCd == warehouseCd);
@@ -61,8 +73,10 @@ public class StockController : ControllerBase
 
     /// <summary>在庫の変動履歴照会</summary>
     [HttpGet("{stockId:guid}/history")]
+    [RequirePermission("wms-stock", "query")]
     public async Task<IActionResult> History(Guid stockId, [FromQuery] int days = 90)
     {
+        if(_db.Database.IsNpgsql())return Ok(new{code=0,message="OK",data=await Reads.HistoryAsync(stockId,days,HttpContext.RequestAborted)});
         var s = await _db.Stocks.AsNoTracking().FirstOrDefaultAsync(x => x.Id == stockId);
         if (s == null) return NotFound(new { code = 404, message = "WM-MSG-070" });
 
@@ -123,6 +137,7 @@ public class StockController : ControllerBase
 
     /// <summary>トランザクション一覧（伝票NO / 期間検索）</summary>
     [HttpGet("transactions")]
+    [RequirePermission("wms-stock", "query")]
     public async Task<IActionResult> Transactions(
         [FromQuery] string? productCd,
         [FromQuery] string? lotNo,
@@ -132,6 +147,8 @@ public class StockController : ControllerBase
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 100)
     {
+        if(_db.Database.IsNpgsql())return Ok(new{code=0,message="OK",data=await Reads.TransactionsAsync(new(){
+            ProductCd=productCd,LotNo=lotNo,TxnType=txnType,From=from,To=to,Page=page,PageSize=pageSize},HttpContext.RequestAborted)});
         var q = _db.StockTransactions.AsNoTracking().Where(t => !t.IsDeleted);
         if (!string.IsNullOrWhiteSpace(productCd)) q = q.Where(t => t.ProductCd == productCd);
         if (!string.IsNullOrWhiteSpace(lotNo)) q = q.Where(t => t.LotNo == lotNo);

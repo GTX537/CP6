@@ -3,6 +3,8 @@ using CP6.Core.Utilities;
 using CP6.WebApi.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Localization;
+using CP6.Core.EFDbContext;
+using Microsoft.EntityFrameworkCore;
 
 namespace CP6.WebApi.Services;
 
@@ -20,17 +22,19 @@ public class SignalRWmsNotifier : IWmsNotifier
     private readonly INotificationPublisher _notifier;
     private readonly ILogger<SignalRWmsNotifier> _logger;
     private readonly IStringLocalizer _localizer;
+    private readonly CP6Context? _db;
 
     public SignalRWmsNotifier(
         IHubContext<WmsHub> hub,
         INotificationPublisher notifier,
         ILogger<SignalRWmsNotifier> logger,
-        IStringLocalizer localizer)
+        IStringLocalizer localizer,CP6Context? db=null)
     {
         _hub = hub;
         _notifier = notifier;
         _logger = logger;
         _localizer = localizer;
+        _db=db;
     }
 
     /// <summary>業務通知を best-effort で発行（失敗しても本処理・SignalR 配信は止めない）。</summary>
@@ -49,6 +53,7 @@ public class SignalRWmsNotifier : IWmsNotifier
 
     public async Task NotifyStockChangedAsync(StockChangedEvent evt)
     {
+        if(await InvalidateOwnedInventory())return;
         // 未过滤客户端走通用组；已订阅客户端只走仓库/产品过滤组，避免重复事件。
         await _hub.Clients.Group(WmsHub.GeneralGroup).SendAsync("StockChanged", evt);
         if (!string.IsNullOrEmpty(evt.WarehouseCd))
@@ -59,8 +64,9 @@ public class SignalRWmsNotifier : IWmsNotifier
 
     public async Task NotifyInboundReceivedAsync(string receiptNo, string warehouseCd)
     {
+        var owned=await InvalidateOwnedInventory();
         var payload = new { receiptNo, warehouseCd, at = DateTime.Now };
-        await Task.WhenAll(
+        if(!owned)await Task.WhenAll(
             _hub.Clients.Group(WmsHub.GeneralGroup).SendAsync("InboundReceived", payload),
             _hub.Clients.Group($"wh:{warehouseCd}").SendAsync("InboundReceived", payload)
         );
@@ -79,7 +85,7 @@ public class SignalRWmsNotifier : IWmsNotifier
     public async Task NotifyOutboundShippedAsync(string outboundNo, string? packageNo)
     {
         var payload = new { outboundNo, packageNo, at = DateTime.Now };
-        await _hub.Clients.All.SendAsync("OutboundShipped", payload);
+        if(!await InvalidateOwnedInventory())await _hub.Clients.All.SendAsync("OutboundShipped", payload);
 
         await PublishBusinessAsync(new BusinessNotification
         {
@@ -97,7 +103,7 @@ public class SignalRWmsNotifier : IWmsNotifier
     public async Task NotifyStockTakeCompletedAsync(string stockTakeNo, int diffLines)
     {
         var payload = new { stockTakeNo, diffLines, at = DateTime.Now };
-        await _hub.Clients.All.SendAsync("StockTakeCompleted", payload);
+        if(!await InvalidateOwnedInventory())await _hub.Clients.All.SendAsync("StockTakeCompleted", payload);
 
         // 差異ありは注意喚起 → Warning、差異なしは Info
         await PublishBusinessAsync(new BusinessNotification
@@ -109,5 +115,14 @@ public class SignalRWmsNotifier : IWmsNotifier
             Source = "WMS",
             RefNo = stockTakeNo
         });
+    }
+    // V1 contains no document numbers, product, location, quantity, price or actor.
+    // The receiving page obtains current authorized rows through the independent query Owner.
+    private async Task<bool> InvalidateOwnedInventory()
+    {
+        if(_db?.Database.IsNpgsql()!=true)return false;
+        if(_db.CurrentTenantId==Guid.Empty)throw new InvalidOperationException("Trusted inventory tenant required.");
+        await _hub.Clients.Group(WmsHub.InventoryGroup(_db.CurrentTenantId)).SendAsync("InventoryInvalidatedV1");
+        return true;
     }
 }

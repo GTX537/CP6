@@ -141,7 +141,10 @@ public class WmsPermissionAttributeTests
             var permission = ReadPermission(method);
             var ownerResource = controller == typeof(InboundOrderController) ? "wms-inbound-order"
                 : controller == typeof(InboundReceiptController) ? "wms-inbound-receipt"
-                : controller == typeof(OutboundOrderController) ? "wms-outbound-order" : null;
+                : controller == typeof(OutboundOrderController) ? "wms-outbound-order"
+                : controller == typeof(StockController) ? "wms-stock"
+                : controller == typeof(StockTakeController) ? "wms-stocktake"
+                : controller == typeof(WmsDashboardController) ? "wms-dashboard" : null;
             if(readOnly && ownerResource != null) Assert.Equal((ownerResource,"query"),permission);
             if (readOnly
                 && permission is not null

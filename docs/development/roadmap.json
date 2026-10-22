@@ -159347,6 +159347,16 @@
       "date": "2026-10-21",
       "change": "W38 product https://github.com/GTX537/CP6/pull/384 and Handoff https://github.com/GTX537/CP6.AI-Handoff/pull/14 adopted;#383 closed.90 related .NET/17 UI/typecheck pass. Handoff branch/seat released; original W38-01 final docs before finish. Full business acceptance unchanged.",
       "evidence": "docs/development/dispatch/20261021-wave38/README.md"
+    },
+    {
+      "date": "2026-10-21",
+      "change": "W39 sole COORD: stocktake/inventory/dashboard Owner; fixed seats; agent estimate120–210min/5h contingency; W38 actual finish verified. Whole business acceptance unchanged.",
+      "evidence": "docs/development/dispatch/20261021-wave39/README.md"
+    },
+    {
+      "date": "2026-10-21",
+      "change": "W39 stocktake/inventory/dashboard Owner local candidate validated;123 related .NET/68 UI/full typecheck; one author review;#386 pending adoption. Full business acceptance unchanged.",
+      "evidence": "docs/development/dispatch/20261021-wave39/README.md"
     }
   ],
   "implementation_assessment": {
@@ -161918,28 +161928,27 @@
       "card_anchor": "wp02-03",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W38-01",
+        "chat_label": "COORD / W39-01",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/w38-01",
+        "branch": "codex/w39-01",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-21T15:04:41.913030+00:00",
-        "baseline_sha": "6d97c1a33ce835775364973675b78ee8d1b07ddb",
-        "entry_evidence": "docs/development/dispatch/20261021-wave38/README.md",
-        "phase": "CLOSED",
-        "dispatch_scope": "W38_01",
+        "claimed_at": "2026-10-21T23:50:57.836481+00:00",
+        "baseline_sha": "c465d257074d1164b7de07585538761627c24bc3",
+        "entry_evidence": "docs/development/dispatch/20261021-wave39/README.md",
+        "phase": "LOCAL_VALIDATED_PENDING_INTEGRATION",
+        "dispatch_scope": "W39_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
         "actual_start_ref": {
-          "commit": "3071c4de01213eaab917658b8bbf730fd9c7ea79",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261021T150441Z-wave38-start/MESSAGE.md",
-          "at": "2026-10-21T15:04:41.913030+00:00"
+          "commit": "805ac61e0382b8564ec8cc3fa331aae01b382d42",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261021T235057Z-wave39-start/MESSAGE.md",
+          "at": "2026-10-21T23:50:57.836481+00:00"
         },
         "allowed_write_paths": [
           "CP6.Core/",
           "CP6.Entity/",
-          "CP6.Persistence.PostgreSql/",
           "CP6.WebApi/",
           "CP6.Tests/",
           "cp6.web/src/",
@@ -161950,55 +161959,30 @@
           "docs/codemap-wms/",
           "docs/seeds/"
         ],
-        "reserved_write_resources": [],
-        "reserved_postgresql_ports": [],
-        "handoff_branch": "codex/w38-handoff",
+        "reserved_write_resources": [
+          "Main:identity-authority",
+          "Main:operations-owner",
+          "Main:wms-stocktake-stock",
+          "Main:mes-wms-dashboard",
+          "Main:operations-frontend"
+        ],
+        "reserved_postgresql_ports": [
+          55435
+        ],
+        "handoff_branch": "codex/w39-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": true,
+        "candidate_integrated": false,
         "resources_released": false,
         "full_task_completed": false,
-        "local_ready_to_merge": true,
-        "delivery_report": "docs/development/evidence/WP02-03/production-inbound-owner/DELIVERY.md",
-        "active_issues": [],
-        "runtime_resources_released": true,
-        "integration": {
-          "result": "PASS",
-          "repository": "GTX537/CP6",
-          "source": "7db2fcf9ba8eb160bf5f8316d397baa6e82bbda3",
-          "main": "8f15c5d5a333b54b99fe0fc7d5ea50fbbec2f176",
-          "target": "main",
-          "pr": "https://github.com/GTX537/CP6/pull/384",
-          "observed_at": "2026-10-21T15:46:55.380256+00:00"
-        },
-        "delivery_ref": {
-          "commit": "e11fdd961c72cf57cf8dcd86f5d307821d80976a",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261021T154925Z-wave38-delivery/MESSAGE.md",
-          "at": "2026-10-21T15:49:25.264119+00:00",
-          "base": "codex/t02c-entry-handoff-20260921",
-          "branch": "codex/w38-handoff",
-          "pr": 14,
-          "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/14"
-        },
-        "lifecycle_snapshot": {
-          "observed_at": "2026-10-21T15:57:34.371203+00:00",
-          "main_task": "CP6:W38-01",
-          "main_branch": "codex/w38-01",
-          "main_status": "active-final-documentation",
-          "main_seat_released": false,
-          "main_finish_required": true,
-          "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
-          "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave38-final-verification.json",
-          "handoff_seat_released": true,
-          "note": "Original task branch carries final docs; final PR adoption is followed by managed finish and actual disposition in final PR body. No extra branch."
-        },
-        "closed_issues": [
-          383
-        ],
-        "product_closed_at": "2026-10-21T15:46:55.380256+00:00"
+        "worker_delivery_ref": "docs/development/evidence/WP02-03/stocktake-dashboard-owner/DELIVERY.md",
+        "validation": "123项去重相关.NET成功：14项本轮原生PG/实际HTTP、38项既有Owner PG/HTTP、71项库存兼容/权限；68项Vitest（10本轮页面、17既有Owner页面、41列表组件）和完整vue-tsc --build通过。最终适用集合0失败/跳过",
+        "active_issues": [
+          386
+        ]
       },
       "blockers": [],
       "validation_evidence": [],
@@ -164679,6 +164663,89 @@
             380
           ],
           "product_closed_at": "2026-10-21T14:45:04.499137+00:00"
+        },
+        {
+          "chat_label": "COORD / W38-01",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/w38-01",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-10-21T15:04:41.913030+00:00",
+          "baseline_sha": "6d97c1a33ce835775364973675b78ee8d1b07ddb",
+          "entry_evidence": "docs/development/dispatch/20261021-wave38/README.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "W38_01",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "actual_start_ref": {
+            "commit": "3071c4de01213eaab917658b8bbf730fd9c7ea79",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261021T150441Z-wave38-start/MESSAGE.md",
+            "at": "2026-10-21T15:04:41.913030+00:00"
+          },
+          "allowed_write_paths": [
+            "CP6.Core/",
+            "CP6.Entity/",
+            "CP6.Persistence.PostgreSql/",
+            "CP6.WebApi/",
+            "CP6.Tests/",
+            "cp6.web/src/",
+            "docs/development/",
+            "docs/project-memory/",
+            "docs/design-handbook/",
+            "docs/codemap-mes/",
+            "docs/codemap-wms/",
+            "docs/seeds/"
+          ],
+          "reserved_write_resources": [],
+          "reserved_postgresql_ports": [],
+          "handoff_branch": "codex/w38-handoff",
+          "actions_authorized": false,
+          "deployment_authorized": false,
+          "existing_database_migration_authorized": false,
+          "worker_delivery_received": true,
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "resources_released": false,
+          "full_task_completed": false,
+          "local_ready_to_merge": true,
+          "delivery_report": "docs/development/evidence/WP02-03/production-inbound-owner/DELIVERY.md",
+          "active_issues": [],
+          "runtime_resources_released": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "7db2fcf9ba8eb160bf5f8316d397baa6e82bbda3",
+            "main": "8f15c5d5a333b54b99fe0fc7d5ea50fbbec2f176",
+            "target": "main",
+            "pr": "https://github.com/GTX537/CP6/pull/384",
+            "observed_at": "2026-10-21T15:46:55.380256+00:00"
+          },
+          "delivery_ref": {
+            "commit": "e11fdd961c72cf57cf8dcd86f5d307821d80976a",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261021T154925Z-wave38-delivery/MESSAGE.md",
+            "at": "2026-10-21T15:49:25.264119+00:00",
+            "base": "codex/t02c-entry-handoff-20260921",
+            "branch": "codex/w38-handoff",
+            "pr": 14,
+            "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/14"
+          },
+          "lifecycle_snapshot": {
+            "observed_at": "2026-10-21T15:57:34.371203+00:00",
+            "main_task": "CP6:W38-01",
+            "main_branch": "codex/w38-01",
+            "main_status": "active-final-documentation",
+            "main_seat_released": false,
+            "main_finish_required": true,
+            "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
+            "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave38-final-verification.json",
+            "handoff_seat_released": true,
+            "note": "Original task branch carries final docs; final PR adoption is followed by managed finish and actual disposition in final PR body. No extra branch."
+          },
+          "closed_issues": [
+            383
+          ],
+          "product_closed_at": "2026-10-21T15:46:55.380256+00:00"
         }
       ],
       "wave13_delivery": {
@@ -164883,6 +164950,14 @@
           "pr": 14,
           "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/14"
         }
+      },
+      "wave39_delivery": {
+        "status": "LOCAL_VALIDATED_PENDING_INTEGRATION",
+        "report": "docs/development/evidence/WP02-03/stocktake-dashboard-owner/DELIVERY.md",
+        "contract": "docs/design-handbook/remediation/main-stocktake-dashboard-owner-v1.md",
+        "validation": "123项去重相关.NET成功：14项本轮原生PG/实际HTTP、38项既有Owner PG/HTTP、71项库存兼容/权限；68项Vitest（10本轮页面、17既有Owner页面、41列表组件）和完整vue-tsc --build通过。最终适用集合0失败/跳过",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN"
       }
     },
     {
@@ -183416,11 +183491,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261021-wave38",
-      "path": "docs/development/dispatch/20261021-wave38/README.md",
-      "baseline_sha": "6d97c1a33ce835775364973675b78ee8d1b07ddb",
-      "registered_at": "2026-10-21T15:04:41.913030+00:00",
-      "phase": "CLOSED",
+      "id": "20261021-wave39",
+      "path": "docs/development/dispatch/20261021-wave39/README.md",
+      "baseline_sha": "c465d257074d1164b7de07585538761627c24bc3",
+      "registered_at": "2026-10-21T23:50:57.836481+00:00",
+      "phase": "W39_01_LOCAL_VALIDATED_PENDING_INTEGRATION",
       "assigned_chats": [
         "COORD"
       ],
@@ -183430,112 +183505,57 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [],
+      "active_implementation_chats": [
+        "COORD"
+      ],
       "workers_started": true,
-      "windows_closed": true,
-      "product_integrated": true,
+      "windows_closed": false,
+      "product_integrated": false,
       "windows": [
         {
-          "id": "W38-01",
+          "id": "W39-01",
           "task_id": "WP02-03",
-          "title": "MES报工/工时派生、WMS入库计划与收货独立Owner，以及直接倒冲/成品入库的受限内部委托和事务基础",
+          "title": "盘点、独立库存查询/调整/移动和WMS/MES看板Owner及必要冻结/事务/字段聚合基础",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "CLOSED",
+          "phase": "LOCAL_VALIDATED_PENDING_INTEGRATION",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "actual_start_ref": {
-            "commit": "3071c4de01213eaab917658b8bbf730fd9c7ea79",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261021T150441Z-wave38-start/MESSAGE.md",
-            "at": "2026-10-21T15:04:41.913030+00:00"
+            "commit": "805ac61e0382b8564ec8cc3fa331aae01b382d42",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261021T235057Z-wave39-start/MESSAGE.md",
+            "at": "2026-10-21T23:50:57.836481+00:00"
           },
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w38-01",
-          "planned_scope_ref": "docs/development/dispatch/20261021-wave38/README.md",
+          "branch": "codex/w39-01",
+          "planned_scope_ref": "docs/development/dispatch/20261021-wave39/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "local_ready_to_merge": true,
-          "delivery_report": "docs/development/evidence/WP02-03/production-inbound-owner/DELIVERY.md",
-          "active_issues": [],
-          "runtime_resources_released": true,
-          "validation": "90项去重相关.NET成功：20项本轮原生PG/实际HTTP、18项既有Owner PG/HTTP及52项兼容/权限测试；17项Vitest（8新+9既有）及完整vue-tsc --build退出0。最终适用集合0失败/跳过。",
-          "candidate_integrated": true,
-          "integration": {
-            "result": "PASS",
-            "repository": "GTX537/CP6",
-            "source": "7db2fcf9ba8eb160bf5f8316d397baa6e82bbda3",
-            "main": "8f15c5d5a333b54b99fe0fc7d5ea50fbbec2f176",
-            "target": "main",
-            "pr": "https://github.com/GTX537/CP6/pull/384",
-            "observed_at": "2026-10-21T15:46:55.380256+00:00"
-          },
-          "delivery_ref": {
-            "commit": "e11fdd961c72cf57cf8dcd86f5d307821d80976a",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261021T154925Z-wave38-delivery/MESSAGE.md",
-            "at": "2026-10-21T15:49:25.264119+00:00",
-            "base": "codex/t02c-entry-handoff-20260921",
-            "branch": "codex/w38-handoff",
-            "pr": 14,
-            "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/14"
-          },
-          "resources_released": false,
-          "lifecycle_snapshot": {
-            "observed_at": "2026-10-21T15:57:34.371203+00:00",
-            "main_task": "CP6:W38-01",
-            "main_branch": "codex/w38-01",
-            "main_status": "active-final-documentation",
-            "main_seat_released": false,
-            "main_finish_required": true,
-            "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
-            "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave38-final-verification.json",
-            "handoff_seat_released": true,
-            "note": "Original task branch carries final docs; final PR adoption is followed by managed finish and actual disposition in final PR body. No extra branch."
-          },
-          "closed_issues": [
-            383
-          ],
-          "product_closed_at": "2026-10-21T15:46:55.380256+00:00"
+          "worker_delivery_ref": "docs/development/evidence/WP02-03/stocktake-dashboard-owner/DELIVERY.md",
+          "validation": "123项去重相关.NET成功：14项本轮原生PG/实际HTTP、38项既有Owner PG/HTTP、71项库存兼容/权限；68项Vitest（10本轮页面、17既有Owner页面、41列表组件）和完整vue-tsc --build通过。最终适用集合0失败/跳过",
+          "active_issues": [
+            386
+          ]
         }
       ],
       "horizon": {
-        "started_at": "2026-10-21T15:04:41.913030+00:00",
-        "checkpoint_at": "2026-10-22T15:04:41.913030+00:00",
+        "started_at": "2026-10-21T23:50:57.836481+00:00",
+        "checkpoint_at": "2026-10-22T23:50:57.836481+00:00",
         "estimated_agent_wall_time_minutes": [
-          240,
-          420
+          120,
+          210
         ],
-        "contingency_hours": 10
+        "contingency_hours": 5
       },
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W38 production/inbound Owner adopted. Original W38-01 final docs PR then managed finish; actual final proof resolves this snapshot. Next: other WMS/MES entry points, formal standalone department binding, durable operations/delivery and real acceptance. Do not repeat W37/W38 completed work.",
-      "product_closed_at": "2026-10-21T15:46:55.380256+00:00",
-      "handoff_integration": {
-        "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
-        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/14",
-        "commit": "bab6aa8832c7a0bc3da22ef9dfffce6176451a8c",
-        "target_head": "bab6aa8832c7a0bc3da22ef9dfffce6176451a8c"
-      },
-      "handoff_resources_released": true,
-      "handoff_branch_disposition": "deleted-local-and-remote",
-      "lifecycle_snapshot": {
-        "observed_at": "2026-10-21T15:57:34.371203+00:00",
-        "main_task": "CP6:W38-01",
-        "main_branch": "codex/w38-01",
-        "main_status": "active-final-documentation",
-        "main_seat_released": false,
-        "main_finish_required": true,
-        "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
-        "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave38-final-verification.json",
-        "handoff_seat_released": true,
-        "note": "Original task branch carries final docs; final PR adoption is followed by managed finish and actual disposition in final PR body. No extra branch."
-      }
+      "next_action": "Normal PR, verify remote adoption, close #386, Handoff delivery, original-branch final docs and managed finish."
     },
     "wave_history": [
       {
@@ -189941,6 +189961,128 @@
           "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave37-final-verification.json",
           "handoff_seat_released": true,
           "note": "Original W37-01 carries final docs; final PR adoption is followed by managed finish and an actual disposition PR comment. No extra branch."
+        }
+      },
+      {
+        "id": "20261021-wave38",
+        "path": "docs/development/dispatch/20261021-wave38/README.md",
+        "baseline_sha": "6d97c1a33ce835775364973675b78ee8d1b07ddb",
+        "registered_at": "2026-10-21T15:04:41.913030+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W38-01",
+            "task_id": "WP02-03",
+            "title": "MES报工/工时派生、WMS入库计划与收货独立Owner，以及直接倒冲/成品入库的受限内部委托和事务基础",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "actual_start_ref": {
+              "commit": "3071c4de01213eaab917658b8bbf730fd9c7ea79",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261021T150441Z-wave38-start/MESSAGE.md",
+              "at": "2026-10-21T15:04:41.913030+00:00"
+            },
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w38-01",
+            "planned_scope_ref": "docs/development/dispatch/20261021-wave38/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "local_ready_to_merge": true,
+            "delivery_report": "docs/development/evidence/WP02-03/production-inbound-owner/DELIVERY.md",
+            "active_issues": [],
+            "runtime_resources_released": true,
+            "validation": "90项去重相关.NET成功：20项本轮原生PG/实际HTTP、18项既有Owner PG/HTTP及52项兼容/权限测试；17项Vitest（8新+9既有）及完整vue-tsc --build退出0。最终适用集合0失败/跳过。",
+            "candidate_integrated": true,
+            "integration": {
+              "result": "PASS",
+              "repository": "GTX537/CP6",
+              "source": "7db2fcf9ba8eb160bf5f8316d397baa6e82bbda3",
+              "main": "8f15c5d5a333b54b99fe0fc7d5ea50fbbec2f176",
+              "target": "main",
+              "pr": "https://github.com/GTX537/CP6/pull/384",
+              "observed_at": "2026-10-21T15:46:55.380256+00:00"
+            },
+            "delivery_ref": {
+              "commit": "e11fdd961c72cf57cf8dcd86f5d307821d80976a",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261021T154925Z-wave38-delivery/MESSAGE.md",
+              "at": "2026-10-21T15:49:25.264119+00:00",
+              "base": "codex/t02c-entry-handoff-20260921",
+              "branch": "codex/w38-handoff",
+              "pr": 14,
+              "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/14"
+            },
+            "resources_released": false,
+            "lifecycle_snapshot": {
+              "observed_at": "2026-10-21T15:57:34.371203+00:00",
+              "main_task": "CP6:W38-01",
+              "main_branch": "codex/w38-01",
+              "main_status": "active-final-documentation",
+              "main_seat_released": false,
+              "main_finish_required": true,
+              "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
+              "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave38-final-verification.json",
+              "handoff_seat_released": true,
+              "note": "Original task branch carries final docs; final PR adoption is followed by managed finish and actual disposition in final PR body. No extra branch."
+            },
+            "closed_issues": [
+              383
+            ],
+            "product_closed_at": "2026-10-21T15:46:55.380256+00:00"
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-21T15:04:41.913030+00:00",
+          "checkpoint_at": "2026-10-22T15:04:41.913030+00:00",
+          "estimated_agent_wall_time_minutes": [
+            240,
+            420
+          ],
+          "contingency_hours": 10
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W38 production/inbound Owner adopted. Original W38-01 final docs PR then managed finish; actual final proof resolves this snapshot. Next: other WMS/MES entry points, formal standalone department binding, durable operations/delivery and real acceptance. Do not repeat W37/W38 completed work.",
+        "product_closed_at": "2026-10-21T15:46:55.380256+00:00",
+        "handoff_integration": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/14",
+          "commit": "bab6aa8832c7a0bc3da22ef9dfffce6176451a8c",
+          "target_head": "bab6aa8832c7a0bc3da22ef9dfffce6176451a8c"
+        },
+        "handoff_resources_released": true,
+        "handoff_branch_disposition": "deleted-local-and-remote",
+        "lifecycle_snapshot": {
+          "observed_at": "2026-10-21T15:57:34.371203+00:00",
+          "main_task": "CP6:W38-01",
+          "main_branch": "codex/w38-01",
+          "main_status": "active-final-documentation",
+          "main_seat_released": false,
+          "main_finish_required": true,
+          "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
+          "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave38-final-verification.json",
+          "handoff_seat_released": true,
+          "note": "Original task branch carries final docs; final PR adoption is followed by managed finish and actual disposition in final PR body. No extra branch."
         }
       }
     ],

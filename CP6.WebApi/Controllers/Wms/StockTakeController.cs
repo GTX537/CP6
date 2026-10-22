@@ -11,6 +11,8 @@ namespace CP6.WebApi.Controllers.Wms;
 [ApiController]
 [Route("api/wms/stock-take")]
 [Authorize]
+[CP6.WebApi.Controllers.Erp.OrderOwnerResult]
+[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class StockTakeController : ControllerBase
 {
     private readonly IStockTakeService _svc;
@@ -19,6 +21,7 @@ public class StockTakeController : ControllerBase
     private string? CurrentUser => User?.Identity?.Name;
 
     [HttpGet]
+    [RequirePermission("wms-stocktake", "query")]
     public async Task<IActionResult> Search([FromQuery] StockTakeSearchQuery q)
     {
         var list = await _svc.SearchAsync(q);
@@ -26,6 +29,7 @@ public class StockTakeController : ControllerBase
     }
 
     [HttpGet("{no}")]
+    [RequirePermission("wms-stocktake", "query")]
     public async Task<IActionResult> Get(string no)
     {
         var dto = await _svc.GetAsync(no);
@@ -43,7 +47,7 @@ public class StockTakeController : ControllerBase
             var no = await _svc.CreatePlanAsync(dto, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071", data = new { stockTakeNo = no } });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     /// <summary>カウント開始（status 0→1）</summary>
@@ -56,7 +60,7 @@ public class StockTakeController : ControllerBase
             await _svc.StartCountAsync(no, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071" });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     /// <summary>カウント値一括更新</summary>
@@ -69,7 +73,7 @@ public class StockTakeController : ControllerBase
             await _svc.UpdateCountsAsync(no, inputs ?? new(), CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071" });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     /// <summary>差異確認移行（status 1→2/3）</summary>
@@ -82,7 +86,7 @@ public class StockTakeController : ControllerBase
             await _svc.SubmitForReviewAsync(no, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071" });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     /// <summary>承認 + ADJ 反映（status →4 完了）</summary>
@@ -95,7 +99,7 @@ public class StockTakeController : ControllerBase
             await _svc.ApproveAndApplyAsync(no, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071" });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     /// <summary>取消（status →9）</summary>
@@ -108,6 +112,6 @@ public class StockTakeController : ControllerBase
             await _svc.CancelAsync(no, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071" });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 }

@@ -64,8 +64,8 @@ public static class MesMenuSeed
         // ── 不良品管理（单页，锚定） ─────────────────────────────
         (308, "不良品管理",           "/mes/defect",                   "Warning",     300, 308, "mes-defect"),
 
-        // ── GET-only 看板（留 null，不承载权限） ─────────────────
-        (309, "MESダッシュボード",     "/mes/dashboard",                "PieChart",    300, 309, null),
+        // ── 看板独立query锚点（W39） ─────────────────
+        (309, "MESダッシュボード",     "/mes/dashboard",                "PieChart",    300, 309, "mes-dashboard"),
 
         // ── 設備管理（★命门2：RoutePath /mes/machine-list，显式赋 mes-machine 而非回填 mes-machine-list）─
         (310, "設備管理",             "/mes/machine-list",             "Monitor",     300, 310, "mes-machine"),

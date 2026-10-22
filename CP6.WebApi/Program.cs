@@ -546,6 +546,14 @@ foreach(var resource in new[]{"mes-production-result","wms-inbound-order","wms-i
     else CP6.Core.Services.Sys.FieldRegistry.Register(resource,new CP6.Core.Services.Sys.FieldRegistry.Field("UnitPrice","単価"));
 }
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-outbound-order", new CP6.Core.Services.Sys.FieldRegistry.Field("UnitPrice", "単価"));
+foreach(var resource in new[]{"wms-stock","wms-stocktake","wms-dashboard","mes-dashboard","mes-defect"})
+{
+    CP6.Core.Services.Sys.DataScopeRegistry.Register(resource,resource,new[]{1,2,3,4,5},1);
+    var fields=resource=="wms-stock"?new[]{"UnitPrice"}:resource=="wms-stocktake"?new[]{"Amount","UnitPrice"}:
+        resource=="wms-dashboard"?new[]{"Amount"}:Array.Empty<string>();
+    CP6.Core.Services.Sys.FieldRegistry.Register(resource,fields.Select(f=>new CP6.Core.Services.Sys.FieldRegistry.Field(f,f)).ToArray());
+}
+
 CP6.Core.Services.Sys.AuthorizationCatalogV1.Seal();
 
 // 共享用量内核（見積与 MRP 共消费，spec §4）
@@ -620,7 +628,8 @@ builder.Services.AddScoped<CP6.Core.Services.Mes.IProductionResultService, CP6.C
 builder.Services.AddScoped<CP6.Core.Services.Mes.IQualityInspectionService, CP6.Core.Services.Mes.QualityInspectionService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.IDefectRecordService, CP6.Core.Services.Mes.DefectRecordService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.IPlanningBoardService, CP6.Core.Services.Mes.PlanningBoardService>();
-builder.Services.AddScoped<CP6.Core.Services.Mes.IMesDashboardService, CP6.Core.Services.Mes.MesDashboardService>();
+builder.Services.AddScoped<CP6.Core.Services.Mes.MesDashboardService>();
+builder.Services.AddScoped<CP6.Core.Services.Mes.IMesDashboardService>(sp=>sp.GetRequiredService<CP6.Core.Services.Mes.MesDashboardService>());
 builder.Services.AddScoped<CP6.Core.Services.Mes.IMachineService, CP6.Core.Services.Mes.MachineService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.IOeeService, CP6.Core.Services.Mes.OeeService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.MesDashboardDapperService>();
@@ -655,6 +664,7 @@ else
 }
 
 // 4.11 MSBBWM090 + WM-DASH WMS Phase 4 棚卸・ダッシュボード
+builder.Services.AddScoped<CP6.Core.Services.Wms.StockOperationsService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IStockTakeService, CP6.Core.Services.Wms.StockTakeService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsDashboardService, CP6.Core.Services.Wms.WmsDashboardService>();
 

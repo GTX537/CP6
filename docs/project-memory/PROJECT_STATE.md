@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## 2026-10-21：W39 盘点、库存调整与看板Owner候选
+
+当前原会话Owner、独立动作/来源字段/完整对象范围、盘点与库存整笔原子性、冻结快照及五页面保护已实现；PG实时通道改为tenant组无明细刷新信号。123项去重相关.NET成功：14项本轮原生PG/实际HTTP、38项既有Owner PG/HTTP、71项库存兼容/权限；68项Vitest（10本轮页面、17既有Owner页面、41列表组件）和完整vue-tsc --build通过。最终适用集合0失败/跳过；一次作者审查及局部复查完成。[DELIVERY](../development/evidence/WP02-03/stocktake-dashboard-owner/DELIVERY.md)。
+
+#386待正常PR/远端采用；5处停止PG生成data回收约0.536GiB。原DEV-1/DEV-2待finish；根资料保留，W38不重做。其他WMS/MES独立入口（QC、补充、退货、设备/OEE、计划等）、无订单对象正式部门绑定、采购/财务自身Owner、持久operation/outbox、可靠投递、正式workflow/CRM及真实DEV/UAT仍独立，125/247不提升；无Actions、既有数据库迁移、真实授权或生产。
+
 ## 2026-10-21：W38 报工／入库Owner已集成
 
 [产品PR #384](https://github.com/GTX537/CP6/pull/384)合入远端main`8f15c5d5a333b54b99fe0fc7d5ea50fbbec2f176`，[Handoff PR #14](https://github.com/GTX537/CP6.AI-Handoff/pull/14)合入默认资料目标，#383回归及远端采用后关闭。90项去重相关.NET成功（20本轮原生PG/实际HTTP、18既有Owner PG/HTTP、52兼容/权限），17项Vitest（8新+9既有）及完整类型检查通过；三记录复用83项有效成功、最后7项局部复测，最终适用集合0失败/跳过；作者审查及局部复查无本窗剩余阻断。[DELIVERY](../development/evidence/WP02-03/production-inbound-owner/DELIVERY.md)。

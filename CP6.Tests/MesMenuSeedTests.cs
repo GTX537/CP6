@@ -31,6 +31,7 @@ public class MesMenuSeedTests
         ("mes-production-result", 304),
         ("mes-quality-inspection", 306),
         ("mes-defect", 308),
+        ("mes-dashboard", 309),
         ("mes-machine", 310),
         ("mes-oee", 311),
         ("mes-plan-achievement", 313),
@@ -39,7 +40,7 @@ public class MesMenuSeedTests
     };
 
     [Fact]
-    public void EnsureSeeded_AnchorsAll10KeysToExpectedMenuIds()
+    public void EnsureSeeded_AnchorsOwnerKeysToExpectedMenuIds()
     {
         using var db = NewDb();
         MesMenuSeed.EnsureSeeded(db);
@@ -73,7 +74,7 @@ public class MesMenuSeedTests
         // Sys_Menus.MenuKey 有 IS NOT NULL 过滤唯一索引；一域两页禁共键。断言锚定键各占一行。
         var keyed = db.Sys_Menus.Where(m => m.MenuKey != null).Select(m => m.MenuKey!).ToList();
         Assert.Equal(keyed.Count, keyed.Distinct().Count());
-        Assert.Equal(10, keyed.Count);
+        Assert.Equal(11, keyed.Count);
     }
 
     [Fact]
@@ -117,9 +118,9 @@ public class MesMenuSeedTests
         using var db = NewDb();
         MesMenuSeed.EnsureSeeded(db);
 
-        // 父行 300 + 一覧页（303/305/307）+ GET-only 看板（309 dashboard / 312 control-tower）
+        // 父行 300 + 一覧页（303/305/307）+ 尚未采用独立 Owner 的 control-tower（312）。
         // 不承载权限：MenuKey 留 null（交由回填派生后缀键，无 action 引用、无害）。
-        foreach (var id in new[] { 300, 303, 305, 307, 309, 312 })
+        foreach (var id in new[] { 300, 303, 305, 307, 312 })
         {
             var m = db.Sys_Menus.Single(x => x.MenuId == id);
             Assert.Null(m.MenuKey);

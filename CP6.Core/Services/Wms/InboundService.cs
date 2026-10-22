@@ -340,7 +340,7 @@ public partial class InboundService : IInboundService
         foreach (var d in dto.Details)
         {
             // StockMovementService 経由で IN トランザクションを発行
-            var txnNo = await _stock.ApplyAsync(new StockMovementRequest
+            var txnNo = await ApplyStockFromParentAsync(new StockMovementRequest
             {
                 TxnType = WmsTxnType.IN,
                 WarehouseCd = dto.WarehouseCd,
@@ -505,4 +505,8 @@ public partial class InboundService : IInboundService
                 throw new InvalidOperationException($"WM-MSG-031: 行 {i + 1}: 受入数量は0より大きい値を入力してください");
         }
     }
+    private Task<string> ApplyStockFromParentAsync(StockMovementRequest request)
+        => _db.Database.IsNpgsql()
+            ? ((StockMovementService)_stock).ApplyWithinOwnerAsync(request)
+            : _stock.ApplyAsync(request);
 }

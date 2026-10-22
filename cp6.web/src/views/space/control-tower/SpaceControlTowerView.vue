@@ -318,6 +318,8 @@ async function rebuildAbc() {
 
 let hub: signalR.HubConnection | null = null
 let stockHandler: ((payload: StockChangedPayload) => void) | null = null
+let inventoryInvalidated: (() => void) | null = null
+let inventoryRefreshTimer: ReturnType<typeof setTimeout> | null = null
 let disposeState: (() => void) | null = null
 let realtimeInitialized = false
 const dirtyBatcher = new DirtyLocationBatcher(
@@ -337,6 +339,16 @@ async function setupRealtime() {
       dirtyBatcher.add(payload.locationCd)
     }
     hub.on('StockChanged', stockHandler)
+    inventoryInvalidated = () => {
+      if (inventoryRefreshTimer) return
+      inventoryRefreshTimer = setTimeout(() => {
+        inventoryRefreshTimer = null
+        colorCacheEpoch++; overlayCache.clear()
+        void (async () => { await loadTower(); await applyOverlay(false) })()
+          .catch(() => ElMessage.warning(t('实时库存刷新失败，等待下一次校准')))
+      }, 250)
+    }
+    hub.on('InventoryInvalidatedV1', inventoryInvalidated)
     let connectedOnce = false
     disposeState = onWmsConnectionState((state) => {
       liveConnected.value = state === signalR.HubConnectionState.Connected
@@ -354,6 +366,9 @@ async function setupRealtime() {
   } catch {
     realtimeInitialized = false
     if (hub && stockHandler) hub.off('StockChanged', stockHandler)
+    if (hub && inventoryInvalidated) hub.off('InventoryInvalidatedV1', inventoryInvalidated)
+    if (inventoryRefreshTimer) clearTimeout(inventoryRefreshTimer)
+    inventoryRefreshTimer = null
     if (warehouse) void unsubscribeWarehouse(warehouse)
     disposeState?.()
     disposeState = null
@@ -432,7 +447,9 @@ onBeforeUnmount(() => {
   if (clockTimer) window.clearInterval(clockTimer)
   if (cycleTimer) window.clearInterval(cycleTimer)
   dirtyBatcher.dispose()
+  if (inventoryRefreshTimer) clearTimeout(inventoryRefreshTimer)
   if (hub && stockHandler) hub.off('StockChanged', stockHandler)
+  if (hub && inventoryInvalidated) hub.off('InventoryInvalidatedV1', inventoryInvalidated)
   if (tower.value?.warehouseCd) void unsubscribeWarehouse(tower.value.warehouseCd)
   disposeState?.()
   realtimeInitialized = false

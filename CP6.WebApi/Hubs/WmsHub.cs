@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Authorization;
+using CP6.Core.EFDbContext;
+using CP6.Core.Services.Wms;
+using Microsoft.EntityFrameworkCore;
 
 namespace CP6.WebApi.Hubs;
 
@@ -27,13 +30,25 @@ public class WmsHub : Hub
     public const string GeneralGroup = "wms:all";
     private const string FilterGroupsKey = "wms:filter-groups";
     private readonly ILogger<WmsHub> _logger;
-    public WmsHub(ILogger<WmsHub> logger) => _logger = logger;
+    private readonly CP6Context? _db;
+    private readonly StockOperationsService? _owner;
+    public WmsHub(ILogger<WmsHub> logger,CP6Context? db=null,StockOperationsService? owner=null)
+    { _logger=logger;_db=db;_owner=owner; }
+    public static string InventoryGroup(Guid tenantId)=>$"inventory:v1:tenant:{tenantId:N}";
+    private Task AuthorizeInventory()=>_owner?.AuthorizeUpdatesAsync(Context.ConnectionAborted)
+        ??throw new HubException("AUTHORITY_FENCE_UNAVAILABLE");
 
     public static string TenantGroup(Guid tenantId) => $"tenant:{tenantId:N}";
 
     public override async Task OnConnectedAsync()
     {
         _logger.LogInformation("WMS Hub 接続: {ConnectionId}", Context.ConnectionId);
+        if(_db?.Database.IsNpgsql()==true)
+        {
+            await AuthorizeInventory();
+            await Groups.AddToGroupAsync(Context.ConnectionId,InventoryGroup(_db.CurrentTenantId));
+            await base.OnConnectedAsync();return;
+        }
         var tenantClaim = Context.User?.FindFirst("tenant_id")?.Value;
         if (Guid.TryParse(tenantClaim, out var tenantId))
             await Groups.AddToGroupAsync(Context.ConnectionId, TenantGroup(tenantId));
@@ -76,6 +91,7 @@ public class WmsHub : Hub
 
     private async Task SubscribeFilterAsync(string group)
     {
+        if(_db?.Database.IsNpgsql()==true){await AuthorizeInventory();return;}
         var groups = FilterGroups;
         if (!groups.Add(group)) return;
         if (groups.Count == 1)
@@ -85,6 +101,7 @@ public class WmsHub : Hub
 
     private async Task UnsubscribeFilterAsync(string group)
     {
+        if(_db?.Database.IsNpgsql()==true)return;
         var groups = FilterGroups;
         if (!groups.Remove(group)) return;
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, group);

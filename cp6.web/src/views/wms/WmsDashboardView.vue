@@ -5,6 +5,7 @@
 -->
 <template>
   <div class="wms-dashboard">
+    <el-alert v-if="Object.keys(readErrors).length" :title="Object.values(readErrors)[0]" type="warning" :closable="false" />
     <el-row :gutter="12">
       <el-col :span="6">
         <CpStatCard :label="t('wms.dashboard.kpi.totalValue')" :value="`¥${formatMoney(kpi.totalStockValue)}`"
@@ -168,6 +169,8 @@
 </template>
 
 <script setup lang="ts">
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
+import { stockApi } from '@/api/wms/stock'
 import { ref, reactive, onMounted, onBeforeUnmount, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
@@ -201,10 +204,29 @@ const trendMax = computed(() => {
 function heightOf(qty: number): number { return Math.max(2, (Math.abs(qty) / trendMax.value) * 100) }
 function formatMoney(n: number): string { return formatQty(Math.round(Number(n) || 0), 0) }
 
-async function loadKpi() { const r = await wmsDashboardApi.kpi(); Object.assign(kpi, r.data) }
-async function loadTrend() { const r = await wmsDashboardApi.trend(trendDays.value); trend.value = r.data }
-async function loadWarehouseValue() { const r = await wmsDashboardApi.warehouseValue(); warehouseValue.value = r.data }
-async function loadAlerts() { const r = await wmsDashboardApi.alerts(); Object.assign(alerts, r.data) }
+function clearKpi() { Object.keys(kpi).forEach(key => (kpi as any)[key] = 0) }
+function clearAlerts() { Object.assign(alerts, { expiryAlerts: [], delayedInbounds: [], pendingApprovalStockTakeCount: 0 }) }
+const intent = useOperationsIntent(() => { clearKpi(); clearAlerts(); trend.value = []; warehouseValue.value = []; events.value = []; Object.keys(readErrors).forEach(key => delete readErrors[key]) })
+const readErrors = reactive<Record<string, string>>({})
+const generations: Record<string, number> = {}
+async function readPanel<T>(key: string, request: () => Promise<{ data: T }>, apply: (data: T) => void, clear: () => void) {
+  const token = intent.capture(), id = (generations[key] ?? 0) + 1
+  generations[key] = id; delete readErrors[key]
+  try {
+    const response = await request()
+    if (!intent.current(token) || generations[key] !== id) return
+    apply(response.data)
+  } catch {
+    if (intent.current(token) && generations[key] === id) { clear(); readErrors[key] = '読込できませんでした。権限と最新状態を確認してください。' }
+  }
+}
+const loadKpi = () => readPanel('kpi', () => wmsDashboardApi.kpi(), data => Object.assign(kpi, data), clearKpi)
+const loadTrend = () => { const days = trendDays.value; return readPanel('trend', () => wmsDashboardApi.trend(days), data => { if (days === trendDays.value) trend.value = data }, () => { trend.value = [] }) }
+const loadWarehouseValue = () => readPanel('value', () => wmsDashboardApi.warehouseValue(), data => { warehouseValue.value = data }, () => { warehouseValue.value = [] })
+const loadAlerts = () => readPanel('alerts', () => wmsDashboardApi.alerts(), data => Object.assign(alerts, data), clearAlerts)
+const loadEvents = () => readPanel('events', () => stockApi.transactions({ page: 1, pageSize: 50 }), data => {
+  events.value = data.items.map(row => ({ ...row, txnAt: row.txnDateTime })) as StockChangedPayload[]
+}, () => { events.value = [] })
 
 // ─── SignalR リアルタイム ─────────────────────────
 const events = ref<StockChangedPayload[]>([])
@@ -243,7 +265,7 @@ function scheduleKpiReload() {
   if (kpiReloadTimer) return
   kpiReloadTimer = window.setTimeout(async () => {
     kpiReloadTimer = null
-    await Promise.all([loadKpi(), loadAlerts()])
+    await Promise.all([loadKpi(), loadAlerts(), loadEvents()])
   }, 300)
 }
 
@@ -251,32 +273,26 @@ let conn: signalR.HubConnection | null = null
 const handlers: Array<[string, (...args: any[]) => void]> = []
 
 onMounted(async () => {
-  await Promise.all([loadKpi(), loadTrend(), loadWarehouseValue(), loadAlerts()])
+  const token = intent.capture()
+  await Promise.all([loadKpi(), loadTrend(), loadWarehouseValue(), loadAlerts(), loadEvents()])
+  if (!intent.current(token)) return
 
   conn = getWmsConnection()
   conn.onreconnecting(() => { rtState.value = signalR.HubConnectionState.Reconnecting })
   conn.onreconnected(() => { rtState.value = signalR.HubConnectionState.Connected })
   conn.onclose(() => { rtState.value = signalR.HubConnectionState.Disconnected })
 
-  const onStock = (evt: StockChangedPayload) => {
-    events.value.unshift(evt)
-    if (events.value.length > 50) events.value = events.value.slice(0, 50)
-    scheduleKpiReload()
-  }
-  const onInbound = (evt: InboundReceivedPayload) => {
-    ElMessage.success(t('wms.dashboard.realtime.toastInbound', { no: evt.receiptNo }))
-    scheduleKpiReload()
-  }
-  const onOutbound = (evt: OutboundShippedPayload) => {
-    ElMessage.success(t('wms.dashboard.realtime.toastOutbound', { no: evt.outboundNo }))
-    scheduleKpiReload()
-  }
+  // Events only invalidate. Business details always come from current Owner queries.
+  const onStock = () => scheduleKpiReload()
+  const onInbound = () => scheduleKpiReload()
+  const onOutbound = () => scheduleKpiReload()
+  conn.on('InventoryInvalidatedV1', onStock); handlers.push(['InventoryInvalidatedV1', onStock])
   conn.on('StockChanged', onStock); handlers.push(['StockChanged', onStock])
   conn.on('InboundReceived', onInbound); handlers.push(['InboundReceived', onInbound])
   conn.on('OutboundShipped', onOutbound); handlers.push(['OutboundShipped', onOutbound])
 
   await startWmsConnection()
-  rtState.value = conn.state
+  if (intent.current(token)) rtState.value = conn.state
 })
 
 onBeforeUnmount(() => {

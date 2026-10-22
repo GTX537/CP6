@@ -12,18 +12,19 @@ namespace CP6.Core.Services.Wms;
 /// 第一版は EF Core 集計のみ。大規模化したら Dapper or SqlView へ移行予定。
 /// 滞留品 = 90 日以内に IN/OUT/ADJ どれも発生していない Stock。
 /// </remarks>
-public class WmsDashboardService : IWmsDashboardService
+public partial class WmsDashboardService : IWmsDashboardService
 {
     private readonly CP6Context _db;
-    public WmsDashboardService(CP6Context db) => _db = db;
+    private readonly CP6.Core.Services.Integration.OperationsOwnerV1? _owner;
+    public WmsDashboardService(CP6Context db, CP6.Core.Services.Integration.OperationsOwnerV1? owner=null) { _db=db; _owner=owner; }
 
-    public async Task<WmsKpiDto> GetKpiAsync()
+    private async Task<WmsKpiDto> GetKpiCoreAsync(WmsDashboardData? data=null)
     {
         var today = DateTime.Today;
         var ninetyDaysAgo = today.AddDays(-90);
 
         // 在庫サマリ
-        var stockSummary = await _db.Stocks.AsNoTracking()
+        var stockSummary = await (data?.Stocks ?? _db.Stocks.AsNoTracking())
             .Where(s => !s.IsDeleted && s.PhysicalQty != 0m)
             .GroupBy(_ => 1)
             .Select(g => new
@@ -36,14 +37,14 @@ public class WmsDashboardService : IWmsDashboardService
             .FirstOrDefaultAsync();
 
         // 90 日以内に動いた ProductCd
-        var movedProducts = await _db.StockTransactions.AsNoTracking()
+        var movedProducts = await (data?.StockTransactions ?? _db.StockTransactions.AsNoTracking())
             .Where(t => t.TxnDateTime >= ninetyDaysAgo && !t.IsDeleted)
             .Select(t => t.ProductCd)
             .Distinct()
             .ToListAsync();
         var movedSet = new HashSet<string>(movedProducts);
 
-        var allActiveSkus = await _db.Stocks.AsNoTracking()
+        var allActiveSkus = await (data?.Stocks ?? _db.Stocks.AsNoTracking())
             .Where(s => !s.IsDeleted && s.PhysicalQty > 0m)
             .Select(s => s.ProductCd)
             .Distinct()
@@ -51,13 +52,13 @@ public class WmsDashboardService : IWmsDashboardService
         var stagnantCount = allActiveSkus.Count(p => !movedSet.Contains(p));
 
         // 今日の予定
-        var todayInbound = await _db.InboundOrders.AsNoTracking()
+        var todayInbound = await (data?.InboundOrders ?? _db.InboundOrders.AsNoTracking())
             .CountAsync(x => !x.IsDeleted
                 && x.ExpectedArrivalDate.Date == today
                 && (x.Status == InboundOrderStatus.Confirmed
                     || x.Status == InboundOrderStatus.PartialReceived));
 
-        var todayShipping = await _db.OutboundOrders.AsNoTracking()
+        var todayShipping = await (data?.OutboundOrders ?? _db.OutboundOrders.AsNoTracking())
             .CountAsync(x => !x.IsDeleted
                 && x.OutboundType == OutboundType.Shipping
                 && x.PlannedDate.Date == today
@@ -65,7 +66,7 @@ public class WmsDashboardService : IWmsDashboardService
                     || x.Status == OutboundOrderStatus.Allocated
                     || x.Status == OutboundOrderStatus.Picking));
 
-        var openStockTakes = await _db.StockTakes.AsNoTracking()
+        var openStockTakes = await (data?.StockTakes ?? _db.StockTakes.AsNoTracking())
             .CountAsync(x => !x.IsDeleted
                 && x.Status != StockTakeStatus.Completed
                 && x.Status != StockTakeStatus.Cancelled);
@@ -83,12 +84,12 @@ public class WmsDashboardService : IWmsDashboardService
         };
     }
 
-    public async Task<List<WmsTrendPoint>> GetTransactionTrendAsync(int days = 30)
+    private async Task<List<WmsTrendPoint>> GetTransactionTrendCoreAsync(int days = 30,WmsDashboardData? data=null)
     {
         var fromDate = DateTime.Today.AddDays(-days + 1);
         var toDate = DateTime.Today.AddDays(1);
 
-        var rawData = await _db.StockTransactions.AsNoTracking()
+        var rawData = await (data?.StockTransactions ?? _db.StockTransactions.AsNoTracking())
             .Where(t => t.TxnDateTime >= fromDate && t.TxnDateTime < toDate && !t.IsDeleted)
             .GroupBy(t => new { Date = t.TxnDateTime.Date, t.TxnType })
             .Select(g => new { g.Key.Date, g.Key.TxnType, Qty = g.Sum(x => Math.Abs(x.Qty)) })
@@ -113,9 +114,9 @@ public class WmsDashboardService : IWmsDashboardService
         return result;
     }
 
-    public async Task<List<WmsWarehouseValueDto>> GetWarehouseValueAsync()
+    private async Task<List<WmsWarehouseValueDto>> GetWarehouseValueCoreAsync(WmsDashboardData? data=null)
     {
-        var stockByWh = await _db.Stocks.AsNoTracking()
+        var stockByWh = await (data?.Stocks ?? _db.Stocks.AsNoTracking())
             .Where(s => !s.IsDeleted && s.PhysicalQty != 0m)
             .GroupBy(s => s.WarehouseCd)
             .Select(g => new
@@ -139,13 +140,13 @@ public class WmsDashboardService : IWmsDashboardService
         }).OrderByDescending(x => x.StockValue).ToList();
     }
 
-    public async Task<WmsAlertSummaryDto> GetAlertsAsync()
+    private async Task<WmsAlertSummaryDto> GetAlertsCoreAsync(WmsDashboardData? data=null)
     {
         var today = DateTime.Today;
         var expiryThreshold = today.AddDays(30);
 
         // 賞味期限間近（30 日以内）
-        var expiryItems = await _db.Stocks.AsNoTracking()
+        var expiryItems = await (data?.Stocks ?? _db.Stocks.AsNoTracking())
             .Where(s => !s.IsDeleted
                 && s.PhysicalQty > 0m
                 && s.ExpiryDate != null
@@ -159,15 +160,13 @@ public class WmsDashboardService : IWmsDashboardService
                 WarehouseCd = s.WarehouseCd,
                 LocationCd = s.LocationCd,
                 ExpiryDate = s.ExpiryDate,
-                DaysUntilExpiry = s.ExpiryDate.HasValue
-                    ? EF.Functions.DateDiffDay(today, s.ExpiryDate.Value)
-                    : 0,
+                DaysUntilExpiry = 0,
                 PhysicalQty = s.PhysicalQty,
             })
             .ToListAsync();
 
         // 入庫予定遅延
-        var delayedInbounds = await _db.InboundOrders.AsNoTracking()
+        var delayedInbounds = await (data?.InboundOrders ?? _db.InboundOrders.AsNoTracking())
             .Where(x => !x.IsDeleted
                 && x.ExpectedArrivalDate < today
                 && (x.Status == InboundOrderStatus.Confirmed
@@ -179,12 +178,15 @@ public class WmsDashboardService : IWmsDashboardService
                 InboundNo = x.InboundNo,
                 SupplierName = x.SupplierName,
                 ExpectedArrivalDate = x.ExpectedArrivalDate,
-                DelayDays = EF.Functions.DateDiffDay(x.ExpectedArrivalDate, today),
+                DelayDays = 0,
                 Status = x.Status,
             })
             .ToListAsync();
 
-        var pendingApproval = await _db.StockTakes.AsNoTracking()
+        foreach(var row in expiryItems)row.DaysUntilExpiry=row.ExpiryDate.HasValue?(row.ExpiryDate.Value.Date-today).Days:0;
+        foreach(var row in delayedInbounds)row.DelayDays=(today-row.ExpectedArrivalDate.Date).Days;
+
+        var pendingApproval = await (data?.StockTakes ?? _db.StockTakes.AsNoTracking())
             .CountAsync(x => !x.IsDeleted && x.Status == StockTakeStatus.AwaitingApproval);
 
         return new WmsAlertSummaryDto
