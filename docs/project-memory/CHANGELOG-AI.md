@@ -1,10 +1,10 @@
 # AI 可读变更日志
 
-## 2026-10-22：W42可信部门绑定候选已验证
+## 2026-10-22：W42可信部门绑定已集成
 
-库存、流水、盘点和无订单生产指示四类显式部门绑定与现有Owner消费已实现；100项去重相关.NET通过（12项新增PG/实际HTTP、88项既有Owner/订单绑定），25项Vitest（新增绑定9、既有页面13、原操作恢复3），完整vue-tsc -b通过；所需范围0失败/跳过。一次作者审查完成，[DELIVERY](../development/evidence/WP02-03/standalone-department/DELIVERY.md)保留原失败；正常合并/远端采用/原分支finish待执行。
+[产品PR #395](https://github.com/GTX537/CP6/pull/395)与[Handoff PR #18](https://github.com/GTX537/CP6.AI-Handoff/pull/18)远端采用：四类显式部门绑定、IAM维护与现有Owner原生范围已交付。100项去重相关.NET（12新增PG/实际HTTP、88既有Owner/订单绑定）、25项Vitest与完整类型检查通过；原失败保留，所需范围0失败/跳过；一次作者审查完成，[DELIVERY](../development/evidence/WP02-03/standalone-department/DELIVERY.md)保留原失败。
 
-七天目标ACTIVE；W41已实际收尾，W42为D2首批，正式RMA适配/Owner及新对象创建归属仍独立。完整卡/125目标/247运行不提升；固定目录、PG、自有进程停止和生成data定向回收，无新树/代理/Actions/既有环境迁移/生产。
+DEV-2分支准确清理/释放，PG/API停止、生成data回收约442MiB。原W42-01最后文档PR后finish，准确生命周期/耗时见管理记录和最终PR。七天目标ACTIVE；D2首批已采用，继续补充或D3正式前置核对；RMA适配/MainUow/效果Owner及新对象创建归属保留。125/247及整卡不提升，无新树/代理/Actions/既有迁移/生产。W37–W41已实际收尾，不重复。
 
 ## 2026-10-22：七天一期D1质量Owner已集成
 

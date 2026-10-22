@@ -64,3 +64,8 @@ W41 PR393/394和Handoff17已采用，实际60.92分钟、任务席位53.90分钟
 最新WMS-RMA-01要求正式WMS-IN-RMA-ADAPTER-1 prepare/commit/query/seal及databaseBinding/MainUow采用证明；五类终端处置仍REQUIRED_FENCED、effectOwner=null，商业/财务效果另属Owner。旧RmaService直接库存/随机贷项不能冒充采用。D2先交付独立可信范围；RMA接线待真实前置，必要时提前D4。
 
 D2首批[W42](../dispatch/20261022-wave42/README.md)绑定四类既有对象，预计实际2–3h：stock / stock-transaction / stocktake / work-order。已关联订单的对象不被新映射覆盖；新建、入库及RMA另核前置。总35–55h为初估，将按后续真实出口修正，不机械等待日历。
+
+
+## D2首批采用检查点
+
+W42四类独立对象绑定由PR395/Handoff18采用，100项相关.NET、25项页面/恢复和类型检查通过；DEV-2释放，原DEV-1最后文档后finish。D2尚未整阶段完成，正式RMA前置与新对象创建归属保留，下一窗口核对补充或D3直接前置，必要时提前D4。持续目标保持ACTIVE。
