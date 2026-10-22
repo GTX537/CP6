@@ -1,6 +1,6 @@
 # W42-01 交付：独立对象可信部门绑定
 
-七天目标D2首批 / WP02-03；COORD本聊天单人。基线`02caf602ab8a81d307001484cae52c46f9ff91f5`；固定DEV-1/codex/w42-01、DEV-2/codex/w42-handoff。当前本地验证与一次作者集中审查完成，正常PR/远端采用/分支及席位收尾待实际核对。
+七天目标D2首批 / WP02-03；COORD本聊天单人。基线`02caf602ab8a81d307001484cae52c46f9ff91f5`；固定DEV-1/codex/w42-01、DEV-2/codex/w42-handoff。产品及Handoff已采用；原分支最后文档/实际finish见下文。
 
 ## 实现与审查
 
@@ -30,3 +30,13 @@
 部门范围创建新对象、入库计划/收货/QC、新流水自动归属及跨业务继承另需各Owner合同与共同事务；本批不自动授予。RMA正式收货适配/databaseBinding/MainUow/商业财务与效果Owner前置未满足，五类REQUIRED_FENCED不解除。W42只完成D2独立基础，D2整阶段未完；七天目标保持ACTIVE，继续直接前置明确的窗口。
 
 自有PG/API停止；经ownership、绝对路径、无进程/重解析点核验，回收生成data 463871282 字节，日志/TRX/失败/ownership及有用缓存保留。两个固定席位待实际采用后finish，INTEGRATION-1空闲，根用户资料保留。零新树/clone/代理/Actions/既有环境迁移/生产部署，无取消项/触发修改。W37–W41不重复；125目标/247运行及整卡状态不提升。预估2–3h，实际按最终finish修正。
+
+## 远端采用与原分支收尾
+
+[产品PR #395](https://github.com/GTX537/CP6/pull/395)正常合并，source`c09b2a4977a6c98f8707a8355c75e3be270632ee`、远端main`98d8d00c5ed39c14683ec97d90899edccdfcf32b`，26项任务文件blob一致。[Handoff PR #18](https://github.com/GTX537/CP6.AI-Handoff/pull/18)采用source`3b4377969cd384a7a8df13078298af188e02c885`、目标`567cef9e8c99b1ced784934c58eb18afab2f4822`。准确Handoff本地/远端分支已删除，DEV-2干净detached并释放。
+
+100项去重相关.NET（12新增PG/实际HTTP、88既有Owner/订单绑定）、25项Vitest与完整类型检查通过；原失败保留，所需范围0失败/跳过。合并未改变产品输入，复用真实成功结果；最后文档只查diff/链接/台账。PG/API停止、4处生成data回收463871282字节，原日志和失败保留。本分支Actions0运行，无取消项或触发修改。
+
+此快照 2026-10-22T05:47:39.146153+00:00 仍在原DEV-1/codex/w42-01做最后文档；正常最终PR后manage finish，不提前声明自身采用/释放。准确分支处置、工作区和席位结果及实际耗时见最终PR、实时管理登记与`C:/Users/tt/CP6-planning-reports/20261017-foundation/wave42-final-verification.json`。原估2–3h按真实finish修正。
+
+七天目标ACTIVE，D1完成，D2首批已采用；接续补充或D3设备/OEE/计划入口，先核最新正式合同和共享事务前置，必要时提前D4。RMA适配/MainUow/效果Owner及新对象归属仍未完成；不以包装旧直接库存/贷项实现冒充正式采用。125目标/247运行及整卡不提升。固定路径复用，根用户资料保留，无新树/代理/Actions/既有环境迁移/生产部署，W37–W41不重复。

@@ -1,6 +1,6 @@
 # 多对话任务分配与交付
 
-> 当前：七天目标D2 [W42可信部门绑定](dispatch/20261022-wave42/README.md)，单人；W37–W41均已实际finish。RMA按正式适配/Owner前置后续采用。
+> 当前：七天目标D2首批 [W42可信部门绑定](dispatch/20261022-wave42/README.md)已采用，原分支最后文档后finish；单人；W37–W41均已实际finish。RMA按正式适配/Owner前置后续采用。
 
 > 当前：[七天一期持续目标](planning/20261022-seven-day-delivery.md)，COORD单人；[D1/W41质量Owner](dispatch/20261022-wave41/README.md)已采用，DEV-2释放；原W41-01最后文档/finish后直接D2，W37–W40已实际finish。
 
