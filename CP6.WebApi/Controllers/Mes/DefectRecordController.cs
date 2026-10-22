@@ -1,4 +1,5 @@
 using CP6.Core.Auth;
+using CP6.Core.Services.Erp;
 using CP6.Core.Services.Mes;
 using CP6.Entity.DTOs.Mes;
 using Microsoft.AspNetCore.Authorization;
@@ -12,6 +13,8 @@ namespace CP6.WebApi.Controllers.Mes;
 [ApiController]
 [Route("api/mes/defects")]
 [Authorize]
+[CP6.WebApi.Controllers.Erp.OrderOwnerResult]
+[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class DefectRecordController : ControllerBase
 {
     private readonly IDefectRecordService _service;
@@ -22,6 +25,7 @@ public class DefectRecordController : ControllerBase
 
     /// <summary>ME080 — 一覧</summary>
     [HttpGet]
+    [RequirePermission("mes-defect", "query")]
     public async Task<IActionResult> Search([FromQuery] DefectRecordSearchQuery query)
     {
         var r = await _service.SearchAsync(query);
@@ -30,6 +34,7 @@ public class DefectRecordController : ControllerBase
 
     /// <summary>ME080 — 単条</summary>
     [HttpGet("{no}")]
+    [RequirePermission("mes-defect", "query")]
     public async Task<IActionResult> Get(string no)
     {
         var dto = await _service.GetByNoAsync(no);
@@ -47,7 +52,7 @@ public class DefectRecordController : ControllerBase
             var no = await _service.CreateAsync(dto, CurrentUser);
             return Ok(new { code = 0, message = "ME-MSG-041", data = new { defectNo = no } });
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException)
         {
             return BadRequest(new { code = 400, message = ex.Message });
         }
@@ -63,7 +68,7 @@ public class DefectRecordController : ControllerBase
             await _service.UpdateAsync(no, dto, CurrentUser);
             return Ok(new { code = 0, message = "ME-MSG-041" });
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException)
         {
             return BadRequest(new { code = 400, message = ex.Message });
         }
@@ -79,7 +84,7 @@ public class DefectRecordController : ControllerBase
             await _service.DeleteAsync(no, CurrentUser);
             return Ok(new { code = 0, message = "ME-MSG-041" });
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException)
         {
             return BadRequest(new { code = 400, message = ex.Message });
         }
@@ -87,6 +92,7 @@ public class DefectRecordController : ControllerBase
 
     /// <summary>ME080 — 不良分類マスタ 一覧</summary>
     [HttpGet("categories")]
+    [RequirePermission("mes-defect", "query")]
     public async Task<IActionResult> GetCategories()
     {
         var rows = await _service.GetAllCategoriesAsync();

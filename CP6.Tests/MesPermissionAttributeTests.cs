@@ -193,6 +193,11 @@ public class MesPermissionAttributeTests
                 Assert.Equal(("mes-dashboard","query"),ReadPermission(m));
                 continue;
             }
+            if(c==typeof(DefectRecordController) && readOnly)
+            {
+                Assert.Equal(("mes-defect","query"),ReadPermission(m));
+                continue;
+            }
             if (readOnly && ReadPermission(m) != null)
                 offenders.Add($"{Key(c, m)}：只读 GET 端点误贴 [RequirePermission]");
         }

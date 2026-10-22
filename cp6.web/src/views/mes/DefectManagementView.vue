@@ -1,5 +1,8 @@
 <template>
   <div class="defect-management">
+    <el-alert v-if="intent.error.value" :title="intent.error.value" type="error" :closable="false" />
+    <el-alert v-if="readError" :title="readError" type="warning" :closable="false" />
+    <el-alert v-if="lastSavedNo" :title="t('保存済み: {no}', { no: lastSavedNo })" type="success" :closable="false" />
     <el-card shadow="never" class="search-card">
       <el-form :model="query" label-width="100px" size="small" inline>
         <el-form-item :label="t('不良NO')">
@@ -98,8 +101,8 @@
     </el-card>
 
     <!-- 編集ダイアログ -->
-    <el-dialog v-model="dialogVisible" :title="form.defectNo ? t('不良品 編集') : t('不良品 手動起票')" width="800px" @closed="resetForm">
-      <el-form :model="form" label-width="110px" size="small">
+    <el-dialog v-model="dialogVisible" :title="form.defectNo ? t('不良品 編集') : t('不良品 手動起票')" width="800px" :before-close="closeDialog" @closed="onDialogClosed">
+      <el-form :model="form" label-width="110px" size="small" :disabled="saving || intent.uncertain.value">
         <el-row :gutter="16">
           <el-col :span="12">
             <el-form-item :label="t('指図NO')" required>
@@ -138,7 +141,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item :label="t('不良数')" required>
-              <el-input-number v-model="form.defectQty" :min="0" :precision="2" style="width: 100%;" />
+              <el-input-number v-model="form.defectQty" :min="0" :precision="8" style="width: 100%;" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -191,8 +194,8 @@
         </el-row>
       </el-form>
       <template #footer>
-        <el-button @click="dialogVisible = false">{{ t('キャンセル') }}</el-button>
-        <el-button type="primary" :loading="saving" @click="onSave">{{ t('保存') }}</el-button>
+        <el-button :disabled="saving" @click="dialogVisible = false">{{ t('キャンセル') }}</el-button>
+        <el-button type="primary" :loading="saving" :disabled="intent.uncertain.value" @click="onSave">{{ t('保存') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -201,7 +204,8 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { defectRecordApi } from '@/api/mes/mes'
 import {
@@ -212,7 +216,15 @@ import {
 } from '@/types/mes/mes'
 
 const loading = ref(false)
-const saving = ref(false)
+const intent = useOperationsIntent(() => {
+  listReads++; detailReads++; categoryReads++; loading.value = false
+  rows.value = []; total.value = 0; allCategories.value = []; dialogVisible.value = false
+  resetForm(); Object.assign(query, defaultQuery()); lastSavedNo.value = ''; readError.value = ''
+})
+const saving = intent.busy
+const lastSavedNo = ref(''), readError = ref('')
+let listReads = 0, detailReads = 0, categoryReads = 0, revision = 0
+let rowsToken = intent.capture()
 const rows = ref<DefectRecordDto[]>([])
 const total = ref(0)
 
@@ -273,6 +285,7 @@ const emptyForm = (): DefectRecordDto => ({
 })
 
 const form = reactive<DefectRecordDto>(emptyForm())
+watch(form, () => { revision++ }, { deep: true, flush: 'sync' })
 
 function getStatusLabel(v: number) { return t(DEFECT_STATUS_OPTIONS.find(o => o.value === v)?.label ?? `${v}`) }
 function getStatusColor(v: number) { return DEFECT_STATUS_OPTIONS.find(o => o.value === v)?.color ?? '#909399' }
@@ -282,13 +295,20 @@ function onCategoryChange() { query.detailCd = '' }
 function onFormCategoryChange() { form.detailCd = '' }
 
 async function search() {
+  const token = intent.capture(), request = ++listReads
+  const input = JSON.parse(JSON.stringify(query))
+  rows.value = []; total.value = 0; readError.value = ''
   loading.value = true
   try {
-    const res = await defectRecordApi.search(query)
+    const res = await defectRecordApi.search(input)
+    if (!intent.current(token) || request !== listReads) return
     rows.value = res.data?.items || []
     total.value = res.data?.total || 0
+    rowsToken = token
+  } catch {
+    if (intent.current(token) && request === listReads) readError.value = t('一覧を取得できません。権限と最新状態を確認してください。')
   } finally {
-    loading.value = false
+    if (intent.current(token) && request === listReads) loading.value = false
   }
 }
 
@@ -298,53 +318,83 @@ function reset() {
 }
 
 function openCreate() {
+  if (saving.value || intent.uncertain.value) return
+  detailReads++
   Object.assign(form, emptyForm())
   dialogVisible.value = true
 }
 
 async function openEdit(row: DefectRecordDto) {
-  const res = await defectRecordApi.get(row.defectNo)
-  if (res.code === 0 && res.data) {
-    Object.assign(form, emptyForm(), res.data)
-    dialogVisible.value = true
+  if (saving.value || intent.uncertain.value) return
+  const token = intent.capture(), request = ++detailReads, no = row.defectNo
+  resetForm(); dialogVisible.value = false; readError.value = ''
+  try {
+    const res = await defectRecordApi.get(no)
+    if (!intent.current(token) || request !== detailReads) return
+    if (res.code === 0 && res.data) {
+      Object.assign(form, emptyForm(), res.data); dialogVisible.value = true
+    }
+  } catch {
+    if (intent.current(token) && request === detailReads) readError.value = t('単票を取得できません。権限と最新状態を確認してください。')
   }
 }
 
 function resetForm() {
   Object.assign(form, emptyForm())
 }
+function closeDialog(done: () => void) { if (!saving.value) { detailReads++; done() } }
+function onDialogClosed() { if (!dialogVisible.value) resetForm() }
 
 async function onSave() {
   if (!form.workOrderNo) { ElMessage.error(t('指図NOを入力してください')); return }
   if (!form.categoryCd) { ElMessage.error(t('ME-MSG-030: 不良分類が未選択です')); return }
   if (!form.defectDescription) { ElMessage.error(t('ME-MSG-031: 不良内容が未入力です')); return }
 
-  saving.value = true
+  const token = intent.begin(); if (!token) return
+  detailReads++
+  const input: DefectRecordDto = JSON.parse(JSON.stringify(form)), edit = revision
   try {
-    if (form.defectNo) {
-      await defectRecordApi.update(form.defectNo, form)
+    let no = input.defectNo
+    if (no) {
+      await defectRecordApi.update(no, input)
+      if (!intent.current(token)) return
       ElMessage.success(t('ME-MSG-041: 更新しました'))
     } else {
-      const res = await defectRecordApi.create(form)
+      const res = await defectRecordApi.create(input)
+      if (!intent.current(token)) return
+      no = res.data?.defectNo ?? ''
       ElMessage.success(t('ME-MSG-041: 起票しました（{defectNo}）', { defectNo: res.data?.defectNo }))
     }
-    dialogVisible.value = false
-    search()
+    lastSavedNo.value = no
+    const unchanged = edit === revision
+    if (form.defectNo === input.defectNo) form.defectNo = no
+    if (unchanged) dialogVisible.value = false
+    await search()
+  } catch (error) {
+    intent.failed(token, error)
   } finally {
-    saving.value = false
+    intent.finish(token)
   }
 }
 
 async function onDelete(row: DefectRecordDto) {
+  const token = intent.begin(); if (!token) return
+  detailReads++
+  const no = row.defectNo
   try {
-    await ElMessageBox.confirm(t('不良 {defectNo} を削除しますか？', { defectNo: row.defectNo }), t('確認'), { type: 'warning' })
-    await defectRecordApi.delete(row.defectNo)
+    await ElMessageBox.confirm(t('不良 {defectNo} を削除しますか？', { defectNo: no }), t('確認'), { type: 'warning' })
+    if (!intent.current(token)) return
+    await defectRecordApi.delete(no)
+    if (!intent.current(token)) return
     ElMessage.success(t('削除しました'))
-    search()
-  } catch (e) { /* cancelled */ }
+    if (form.defectNo === no) { detailReads++; resetForm(); dialogVisible.value = false }
+    await search()
+  } catch (error) { intent.failed(token, error) }
+  finally { intent.finish(token) }
 }
 
 function exportCsv() {
+  if (!intent.current(rowsToken)) { rows.value = []; total.value = 0; return }
   if (rows.value.length === 0) { ElMessage.warning(t('検索結果がありません')); return }
   const headers = [t('不良NO'), t('ステータス'), t('指図NO'), t('製品名'), t('工程'), t('大分類'), t('小分類'), t('不良数'), t('発生日'), t('発見者'), t('担当者'), t('処置期限'), t('完了日'), t('検査NO'), t('不良内容'), t('原因分析'), t('是正処置')]
   const lines = rows.value.map(r => [
@@ -364,11 +414,17 @@ function exportCsv() {
   URL.revokeObjectURL(url)
 }
 
-onMounted(async () => {
-  const res = await defectRecordApi.getCategories()
-  allCategories.value = res.data || []
-  search()
-})
+async function loadCategories() {
+  const token = intent.capture(), request = ++categoryReads
+  allCategories.value = []
+  try {
+    const res = await defectRecordApi.getCategories()
+    if (intent.current(token) && request === categoryReads) allCategories.value = res.data || []
+  } catch {
+    if (intent.current(token) && request === categoryReads) readError.value = t('不良分類を取得できません。権限と最新状態を確認してください。')
+  }
+}
+onMounted(() => { void loadCategories(); void search() })
 </script>
 
 <style scoped>
