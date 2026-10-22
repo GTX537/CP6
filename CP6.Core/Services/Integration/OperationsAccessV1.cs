@@ -86,7 +86,9 @@ internal sealed partial class OperationsAccessV1(CP6Context db,OperationsOwnerV1
         else if(a.Scope!=5)
         {
             var numbers=DepartmentOrders(a).Select(o=>o.WebOrderNo);
-            rows=rows.Where(w=>w.WebOrderNo!=null && numbers.Contains(w.WebOrderNo));
+            var standalone=StandaloneDepartmentScopeV1.Objects(db,a,"work-order");
+            rows=rows.Where(w=>w.WebOrderNo!=null && w.WebOrderNo!="" && numbers.Contains(w.WebOrderNo)
+                || (w.WebOrderNo==null || w.WebOrderNo=="") && standalone.Contains(w.Id));
         }
         // Native stored references must identify a live source if present; no inference from code casing.
         return rows.Where(w=>w.WebOrderNo==null || w.WebOrderNo=="" || db.Orders.Any(o=>o.WebOrderNo==w.WebOrderNo && !o.IsDeleted));

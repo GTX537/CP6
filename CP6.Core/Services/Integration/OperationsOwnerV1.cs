@@ -60,7 +60,7 @@ public sealed class OperationsOwnerV1
             FieldPermissionCheckV1.NotApplicable,FieldPermissionCheckV1.NotApplicable,FieldPermissionCheckV1.Allowed,FieldPermissionCheckV1.Allowed)));
         var decision=source.Evaluate(source.Versions(Mapping),Mapping,mappings,constraints);
         if(!decision.IsAvailable)throw new CurrentPermissionUnavailableException();
-        return new(resource,action,actor,source,decision,type,await OrderDepartmentScopeV1.Version(db,ct));
+        return new(resource,action,actor,source,decision,type,await StandaloneDepartmentScopeV1.Version(db,ct));
     }
 
     internal async Task<T> ExecuteAsync<T>(string resource,string action,bool write,

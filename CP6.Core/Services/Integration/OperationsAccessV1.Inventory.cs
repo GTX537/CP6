@@ -26,14 +26,14 @@ internal sealed partial class OperationsAccessV1
     {
         rows??=db.Stocks.AsNoTracking().Where(s=>!s.IsDeleted);
         if(authority.Scope==1)rows=rows.Where(s=>s.Creator==Actor);
-        else if(authority.Scope!=5)rows=rows.Where(s=>false); // No accepted department binding on stock.
+        else if(authority.Scope!=5) { var ids=StandaloneDepartmentScopeV1.Objects(db,authority,"stock"); rows=rows.Where(s=>ids.Contains(s.Id)); }
         return Stocks(rows);
     }
     internal IQueryable<StockTransaction> InventoryTransactions(IQueryable<StockTransaction>? rows=null)
     {
         rows??=db.StockTransactions.AsNoTracking().Where(s=>!s.IsDeleted);
         if(authority.Scope==1)rows=rows.Where(s=>s.Creator==Actor);
-        else if(authority.Scope!=5)rows=rows.Where(s=>false);
+        else if(authority.Scope!=5) { var ids=StandaloneDepartmentScopeV1.Objects(db,authority,"stock-transaction"); rows=rows.Where(s=>ids.Contains(s.Id)); }
         if(authority.Actor.RoleIds.Contains(1))return rows;
         var grants=db.WmsRoleScopes.Where(g=>authority.Actor.RoleIds.Contains(g.RoleId));
         return rows.Where(s=>grants.Any(g=>(g.WarehouseCd=="*" || g.WarehouseCd==s.WarehouseCd)
@@ -55,7 +55,15 @@ internal sealed partial class OperationsAccessV1
         var rows=db.StockTakes.AsNoTracking().Where(s=>!s.IsDeleted);
         var details=db.StockTakeDetails.AsNoTracking();
         if(authority.Scope==1)rows=rows.Where(s=>s.Creator==Actor && !details.Any(d=>d.StockTakeNo==s.StockTakeNo && (d.Creator==null || d.Creator!=Actor)));
-        else if(authority.Scope!=5)rows=rows.Where(s=>false);
+        else if(authority.Scope!=5)
+        {
+            var ids=StandaloneDepartmentScopeV1.Objects(db,authority,"stocktake");
+            var stocks=InventoryStocks();
+            // Header membership alone cannot expose or adjust a stock outside the same current department scope.
+            rows=rows.Where(s=>ids.Contains(s.Id) && !details.Any(d=>d.StockTakeNo==s.StockTakeNo
+                && !stocks.Any(t=>t.Id==d.StockId && t.WarehouseCd==d.WarehouseCd && t.LocationCd==d.LocationCd
+                    && t.ProductCd==d.ProductCd && t.LotNo==d.LotNo)));
+        }
         if(authority.Actor.RoleIds.Contains(1))return rows;
         var grants=db.WmsRoleScopes.Where(g=>authority.Actor.RoleIds.Contains(g.RoleId));
         var allowed=details.Where(d=>grants.Any(g=>(g.WarehouseCd=="*" || g.WarehouseCd==d.WarehouseCd)

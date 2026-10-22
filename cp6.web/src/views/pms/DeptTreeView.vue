@@ -7,6 +7,8 @@
       <el-button v-permission="'pub-dept:query'" :disabled="busy || visible" @click="mappingVisible = !mappingVisible">订单部门绑定</el-button>
     </div>
     <OrderDepartmentMappings v-if="mappingVisible" />
+    <el-button v-permission="'pub-dept:query'" :disabled="busy || visible" @click="standaloneVisible = !standaloneVisible">独立对象部门绑定</el-button>
+    <StandaloneDepartmentMappings v-if="standaloneVisible" />
     <el-alert v-if="notice && !visible" :title="notice" :closable="false" role="status" />
     <div v-if="pending && !visible" class="recovery" role="status">
       有待核对的原操作。先查询或封闭，不能重复保存或再次移动。
@@ -85,12 +87,13 @@ import { iamApi, type IamDepartment, type IamDepartmentEditor, type IamDepartmen
 import { pendingIamOperation, resolveIamOperation, saveIamOperation, type PendingIamOperation } from '@/auth/iamOperationRecovery'
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import OrderDepartmentMappings from './OrderDepartmentMappings.vue'
+import StandaloneDepartmentMappings from './StandaloneDepartmentMappings.vue'
 
 type Mode = 'dept-create' | 'dept-update' | 'dept-move'
 type Node = IamDepartment & { children: Node[] }
 const editor = ref<IamDepartmentEditor | null>(null), scope = ref<IamScope | null>(null), pending = ref<PendingIamOperation | null>(null)
 const busy = ref(false), visible = ref(false), notice = ref(''), conflict = ref(false), mode = ref<Mode>('dept-create')
-const mappingVisible = ref(false)
+const mappingVisible = ref(false), standaloneVisible = ref(false)
 const preview = ref<IamDepartmentPreview | null>(null), references = ref<IamDepartmentReferences | null>(null), referencesVisible = ref(false)
 const originalParent = ref<string | null>(null), originalLeader = ref<string | null>(null)
 const empty = (): IamDepartmentInput => ({ parentId: null, deptCode: '', deptName: '', leaderId: null, sort: 0, enable: true, expectedVersion: 'absent', expectedTreeVersion: '', expectedReferencesVersion: '', reason: '' })

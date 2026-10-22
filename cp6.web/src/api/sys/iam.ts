@@ -2,7 +2,7 @@ import http from '../http'
 
 export interface IamScope { tenantId: string; actorId: string }
 export type IamKind = 'user-create' | 'user-update' | 'user-roles' | 'user-org'
-  | 'dept-create' | 'dept-update' | 'dept-move' | 'dept-leader' | 'dept-delete' | 'dept-order-mapping'
+  | 'dept-create' | 'dept-update' | 'dept-move' | 'dept-leader' | 'dept-delete' | 'dept-order-mapping' | 'dept-standalone-mapping'
   | 'role-create' | 'role-update' | 'role-delete'
   | 'role-policy-actions' | 'role-policy-scopes' | 'role-policy-fields' | 'menu-actions'
 export interface IamOperation { operationId: string; kind: IamKind; state: 'COMMITTED' | 'CLOSED' | 'UNKNOWN'; entityId?: string; roleId?: number; version?: string; referencesVersion?: string; treeVersion?: string }
@@ -19,6 +19,11 @@ export interface IamDepartmentEditor extends IamScope { treeVersion: string; ref
 export interface IamDepartmentInput { id?: string; parentId: string | null; deptCode: string; deptName: string; leaderId: string | null; sort: number; enable: boolean; expectedVersion: string; expectedTreeVersion: string; expectedReferencesVersion: string; reason: string; previewVersion?: string }
 export interface IamDepartmentPreview { id: string; oldParentId: string | null; newParentId: string | null; treeVersion: string; referencesVersion: string; version: string; affectedDescendantCount: number; affectedUsersCount: number; scopeRefs: { roleId: number; resourceKey: string; scopeType: number }[]; approvalRouteWarnings: string[]; previewVersion: string }
 export interface IamDepartmentReferences { id: string; childCount: number; userCount: number; scopeRefs: IamDepartmentPreview['scopeRefs']; deletionAllowed: boolean; unverifiedReferenceCategories: string[] }
+export type StandaloneKind = 'stock' | 'stock-transaction' | 'stocktake' | 'work-order'
+export interface IamStandaloneMapping { id: string; objectKind: StandaloneKind; objectId: string; objectName?: string; departmentId: string; enabled: boolean; available: boolean; version: string }
+export interface IamStandaloneMappingEditor extends IamScope { referencesVersion: string; mappings: IamStandaloneMapping[]; departments: { id: string; name: string; available: boolean }[] }
+export interface IamStandaloneMappingInput { id?: string; objectKind: StandaloneKind; objectId: string; departmentId: string; enabled: boolean; expectedVersion: string; expectedReferencesVersion: string; reason: string }
+export interface StandaloneObjectChoice { id: string; name: string }
 export interface IamOrderMapping { id: string; code: string; departmentId: string; enabled: boolean; available: boolean; version: string; orderCount: number }
 export interface IamOrderMappingEditor extends IamScope { referencesVersion: string; mappings: IamOrderMapping[]; departments: { id: string; name: string; available: boolean }[] }
 export interface IamOrderMappingInput { id?: string; code: string; departmentId: string; enabled: boolean; expectedVersion: string; expectedReferencesVersion: string; reason: string }
@@ -27,6 +32,13 @@ export interface IamRoleEditor extends IamScope { referencesVersion: string; rol
 export interface IamRoleInput { roleId: number; roleName: string; description: string | null; enable: boolean; orderNo: number; expectedVersion: string; expectedReferencesVersion: string; reason: string }
 export interface IamRoleReferences { roleId: number; primaryUsers: number; additionalUsers: number; menus: number; actions: number; dataScopes: number; fields: number; ssoDefaults: number; ssoApproved: boolean; deletionAllowed: boolean; unverifiedReferenceCategories: string[] }
 export const iamApi = {
+  async standaloneMappings(): Promise<IamStandaloneMappingEditor> { return await http.get('/iam/departments/standalone-mappings') as unknown as IamStandaloneMappingEditor },
+  async standaloneObjects(kind: StandaloneKind, search: string): Promise<StandaloneObjectChoice[]> {
+    return await http.get('/iam/departments/standalone-objects', { params: { kind, search } }) as unknown as StandaloneObjectChoice[]
+  },
+  async saveStandaloneMapping(input: IamStandaloneMappingInput, operationId: string): Promise<IamOperation> {
+    return await http.post('/iam/departments/standalone-mappings', { ...input, operationId }) as unknown as IamOperation
+  },
   async orderMappings(): Promise<IamOrderMappingEditor> { return await http.get('/iam/departments/order-mappings') as unknown as IamOrderMappingEditor },
   async saveOrderMapping(input: IamOrderMappingInput, operationId: string): Promise<IamOperation> {
     return await http.post('/iam/departments/order-mappings', { ...input, operationId }) as unknown as IamOperation
