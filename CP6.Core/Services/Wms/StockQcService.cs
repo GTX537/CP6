@@ -1,22 +1,25 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace CP6.Core.Services.Wms;
 
-public class StockQcService : IStockQcService
+public partial class StockQcService : IStockQcService
 {
     private readonly CP6Context _db;
     private readonly ILogger<StockQcService> _logger;
+    private readonly OperationsOwnerV1? _owner;
 
-    public StockQcService(CP6Context db, ILogger<StockQcService> logger)
+    public StockQcService(CP6Context db, ILogger<StockQcService> logger, OperationsOwnerV1? owner=null)
     {
         _db = db;
         _logger = logger;
+        _owner = owner;
     }
 
-    public async Task<Stock> SetStockQcStatusAsync(Guid stockId, string newStatus, string? reason, string? userName)
+    private async Task<Stock> SetStockQcStatusCoreAsync(Guid stockId, string newStatus, string? reason, string? userName)
     {
         ValidateStatus(newStatus);
 
@@ -37,7 +40,7 @@ public class StockQcService : IStockQcService
         return stock;
     }
 
-    public async Task<int> MarkLinkedStockByWorkOrderAsync(string workOrderNo, string newStatus, string? reason, string? userName)
+    private async Task<int> MarkLinkedStockByWorkOrderCoreAsync(string workOrderNo, string newStatus, string? reason, string? userName)
     {
         ValidateStatus(newStatus);
 

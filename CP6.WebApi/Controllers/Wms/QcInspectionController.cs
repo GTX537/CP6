@@ -9,6 +9,8 @@ namespace CP6.WebApi.Controllers.Wms;
 [ApiController]
 [Route("api/wms/qc-inspection")]
 [Authorize]
+[CP6.WebApi.Controllers.Erp.OrderOwnerResult]
+[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class QcInspectionController : ControllerBase
 {
     private readonly IQcInspectionService _svc;
@@ -17,6 +19,7 @@ public class QcInspectionController : ControllerBase
     private string? CurrentUser => User?.Identity?.Name;
 
     [HttpGet]
+    [RequirePermission("wms-qc-inspection", "query")]
     public async Task<IActionResult> Search([FromQuery] QcInspectionSearchQuery q)
     {
         var list = await _svc.SearchAsync(q);
@@ -24,6 +27,7 @@ public class QcInspectionController : ControllerBase
     }
 
     [HttpGet("{no}")]
+    [RequirePermission("wms-qc-inspection", "query")]
     public async Task<IActionResult> Get(string no)
     {
         var dto = await _svc.GetAsync(no);
@@ -41,7 +45,7 @@ public class QcInspectionController : ControllerBase
             var no = await _svc.CreateFromInboundAsync(inboundNo, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071", data = new { inspectionNo = no } });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     /// <summary>直入検品作成</summary>
@@ -54,7 +58,7 @@ public class QcInspectionController : ControllerBase
             var no = await _svc.CreateDirectAsync(dto, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071", data = new { inspectionNo = no } });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     /// <summary>検査結果保存（status 0→1 自動）</summary>
@@ -67,7 +71,7 @@ public class QcInspectionController : ControllerBase
             await _svc.SaveItemsAsync(no, items, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071" });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     /// <summary>最終判定（PASS の場合は InboundReceipt 自動生成）</summary>
@@ -81,7 +85,7 @@ public class QcInspectionController : ControllerBase
             return Ok(new { code = 0, message = "WM-MSG-071", data = r });
         }
         catch (InsufficientStockException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/cancel")]
@@ -93,6 +97,6 @@ public class QcInspectionController : ControllerBase
             await _svc.CancelAsync(no, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071" });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 }

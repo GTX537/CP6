@@ -9,10 +9,13 @@ internal sealed partial class OperationsAccessV1
 {
     private readonly Dictionary<string,OperationsAccessV1> sources=[];
     internal async Task<OperationsAccessV1> SourceAsync(string resource,CancellationToken ct)
+        =>await ActionAsync(resource,"query",ct);
+    internal async Task<OperationsAccessV1> ActionAsync(string resource,string action,CancellationToken ct)
     {
-        if(sources.TryGetValue(resource,out var found))return found;
-        var source=await owner.AuthorityAsync(resource,"query",ct);Authorities.Add(source);
-        return sources[resource]=new(db,owner,source);
+        var key=resource+":"+action;
+        if(sources.TryGetValue(key,out var found))return found;
+        var source=await owner.AuthorityAsync(resource,action,ct);Authorities.Add(source);
+        return sources[key]=new(db,owner,source,Authorities);
     }
     internal bool AmountReadable=>authority.Fields.Fields.TryGetValue("Amount",out var field) && field.CanRead;
     internal void RequireAmountRead()

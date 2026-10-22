@@ -8,6 +8,8 @@
 -->
 <template>
   <div class="wms-qc">
+    <el-alert v-if="intent.error.value || readError" :title="intent.error.value || readError" type="warning" :closable="false" />
+    <p v-if="lastSavedNo">{{ t('確定済の検品NO') }}: {{ lastSavedNo }}</p>
     <!-- ───── 一覧 ───── -->
     <CpPageShell v-if="mode === 'list'" :title="t('wms.qc.title')" :count="total">
       <template #actions>
@@ -60,22 +62,22 @@
           </el-table-column>
           <el-table-column :label="t('wms.qc.col.receivedQty')" width="120">
             <template #default="{ row }">
-              <el-input-number v-model="row.receivedQty" :min="0" :precision="2" :disabled="!editable" controls-position="right" style="width: 100%" />
+              <el-input-number v-model="row.receivedQty" :min="0" :precision="8" :disabled="!editable" controls-position="right" style="width: 100%" />
             </template>
           </el-table-column>
           <el-table-column :label="t('wms.qc.col.acceptedQty')" width="120">
             <template #default="{ row }">
-              <el-input-number v-model="row.acceptedQty" :min="0" :precision="2" :disabled="!editable" controls-position="right" style="width: 100%" />
+              <el-input-number v-model="row.acceptedQty" :min="0" :precision="8" :disabled="!editable" controls-position="right" style="width: 100%" />
             </template>
           </el-table-column>
           <el-table-column :label="t('wms.qc.col.rejectedQty')" width="120">
             <template #default="{ row }">
-              <el-input-number v-model="row.rejectedQty" :min="0" :precision="2" :disabled="!editable" controls-position="right" style="width: 100%" />
+              <el-input-number v-model="row.rejectedQty" :min="0" :precision="8" :disabled="!editable" controls-position="right" style="width: 100%" />
             </template>
           </el-table-column>
           <el-table-column :label="t('wms.qc.col.pendingQty')" width="120">
             <template #default="{ row }">
-              <el-input-number v-model="row.pendingQty" :min="0" :precision="2" :disabled="!editable" controls-position="right" style="width: 100%" />
+              <el-input-number v-model="row.pendingQty" :min="0" :precision="8" :disabled="!editable" controls-position="right" style="width: 100%" />
             </template>
           </el-table-column>
           <el-table-column :label="t('wms.qc.col.defectReason')" width="160">
@@ -88,7 +90,7 @@
 
       <el-affix position="bottom" :offset="0">
         <div class="action-bar">
-          <el-button @click="mode = 'list'">{{ t('wms.common.back') }}</el-button>
+          <el-button @click="backToList">{{ t('wms.common.back') }}</el-button>
           <el-button v-if="editable" type="primary" @click="onSaveItems" :loading="saving">{{ t('wms.common.save') }}</el-button>
           <el-button v-if="canJudge" v-permission="'wms-qc-inspection:judge'" type="success" @click="onJudgeClick">{{ t('wms.qc.btn.judge') }}</el-button>
           <el-button v-if="canCancel" type="danger" plain @click="onCancel">{{ t('wms.outbound.btn.cancel') }}</el-button>
@@ -134,7 +136,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
@@ -145,6 +147,7 @@ import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import { qcInspectionApi } from '@/api/wms/qcInspection'
 import type { QcInspection, QcInspectionSearchQuery, QcJudgeRequest } from '@/types/wms/wms'
 import { formatQty } from '@/utils/format'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
 
 const { t } = useI18n()
 
@@ -152,11 +155,19 @@ const mode = ref<'list' | 'detail'>('list')
 const total = ref<number>()
 
 const current = ref<QcInspection | null>(null)
-const saving = ref(false)
+const readError = ref(''), lastSavedNo = ref('')
+let detailReads = 0, detailRevision = 0, judgeTarget = ''
+const intent = useOperationsIntent(() => {
+  detailReads++; current.value = null; mode.value = 'list'; total.value = undefined
+  bridgeDialog.value = false; bridgeInboundNo.value = ''; judgeDialog.value = false
+  readError.value = ''; lastSavedNo.value = ''; judgeTarget = ''
+})
+const saving = intent.busy
+watch(current, () => { detailRevision++ }, { deep: true, flush: 'sync' })
 
 const bridgeDialog = ref(false)
 const bridgeInboundNo = ref('')
-const bridging = ref(false)
+const bridging = intent.busy
 
 const judgeDialog = ref(false)
 const judgeForm = reactive<QcJudgeRequest>({ finalJudgement: 'PASS' })
@@ -224,8 +235,9 @@ const fetchList: ListFetch<QcInspection> = async ({ filters }) => {
   if (f.inboundNo) q.inboundNo = String(f.inboundNo)
   if (f.status !== undefined && f.status !== '') q.status = Number(f.status)
   if (f.finalJudgement) q.finalJudgement = String(f.finalJudgement)
+  const token = intent.capture()
   const all = (await qcInspectionApi.search(q)).data || []
-  return { rows: all, total: all.length }
+  return intent.current(token) ? { rows: all, total: all.length } : { rows: [], total: 0 }
 }
 
 // —— 詳細（基本情報 → CpDetailPanel） ——
@@ -242,65 +254,96 @@ const detailItems = computed<DetailItem[]>(() => {
   ]
 })
 
-async function openDetail(no?: string) {
-  if (!no) return
-  const res = await qcInspectionApi.get(no)
-  current.value = res.data
-  mode.value = 'detail'
+async function refreshDetail(no: string, preserve = false) {
+  const token = intent.capture(), request = ++detailReads
+  if (!preserve) current.value = null
+  const revision = detailRevision
+  readError.value = ''
+  try {
+    const res = await qcInspectionApi.get(no)
+    if (!intent.current(token) || request !== detailReads || revision !== detailRevision) return
+    current.value = res.data; mode.value = 'detail'
+  } catch {
+    if (intent.current(token) && request === detailReads) readError.value = t('読込できませんでした。権限を確認してください。')
+  }
 }
-
+async function openDetail(no?: string) {
+  if (!no || saving.value) return
+  judgeDialog.value = false; judgeTarget = ''
+  await refreshDetail(no)
+}
+function backToList() {
+  if (saving.value) return
+  detailReads++; current.value = null; mode.value = 'list'; judgeDialog.value = false; judgeTarget = ''
+}
 async function onBridge() {
   if (!bridgeInboundNo.value) return
-  bridging.value = true
+  const token = intent.begin(); if (!token) return
+  const number = bridgeInboundNo.value
+  detailReads++
   try {
-    const res = await qcInspectionApi.createFromInbound(bridgeInboundNo.value)
+    const res = await qcInspectionApi.createFromInbound(number)
+    if (!intent.current(token)) return
+    lastSavedNo.value = res.data.inspectionNo
     bridgeDialog.value = false
-    bridgeInboundNo.value = ''
-    await openDetail(res.data.inspectionNo)
+    if (bridgeInboundNo.value === number) bridgeInboundNo.value = ''
     ElMessage.success(t('wms.common.success'))
-  } finally { bridging.value = false }
+    await refreshDetail(res.data.inspectionNo)
+  } catch (error) { intent.failed(token, error) }
+  finally { intent.finish(token) }
 }
-
 async function onSaveItems() {
   if (!current.value) return
-  saving.value = true
+  const token = intent.begin(); if (!token) return
+  const number = current.value.inspectionNo!, items = JSON.parse(JSON.stringify(current.value.items)), revision = detailRevision
+  detailReads++
   try {
-    await qcInspectionApi.saveItems(current.value.inspectionNo!, current.value.items)
-    ElMessage.success(t('wms.common.success'))
-    await openDetail(current.value.inspectionNo!)
-  } finally { saving.value = false }
+    await qcInspectionApi.saveItems(number, items)
+    if (!intent.current(token)) return
+    lastSavedNo.value = number; ElMessage.success(t('wms.common.success'))
+    if (current.value?.inspectionNo === number && revision === detailRevision) await refreshDetail(number, true)
+  } catch (error) { intent.failed(token, error) }
+  finally { intent.finish(token) }
 }
-
 function onJudgeClick() {
-  judgeForm.finalJudgement = 'PASS'
-  judgeForm.reason = ''
-  judgeForm.acceptWarehouseCd = undefined
+  if (saving.value || intent.uncertain.value || !current.value) return
+  judgeTarget = current.value.inspectionNo!
+  judgeForm.finalJudgement = 'PASS'; judgeForm.reason = ''; judgeForm.acceptWarehouseCd = undefined
   judgeDialog.value = true
 }
-
 async function onJudgeConfirm() {
-  if (!current.value) return
-  saving.value = true
+  if (!current.value || !judgeTarget || current.value.inspectionNo !== judgeTarget) return
+  const token = intent.begin(); if (!token) return
+  const number = judgeTarget, input = JSON.parse(JSON.stringify(judgeForm)), revision = detailRevision
+  detailReads++
   try {
-    const res = await qcInspectionApi.judge(current.value.inspectionNo!, judgeForm)
-    if (res.data.generatedReceiptNo) {
-      ElMessage.success(`${t('wms.common.success')}: ${res.data.generatedReceiptNo}`)
-    } else {
-      ElMessage.success(t('wms.common.success'))
+    const res = await qcInspectionApi.judge(number, input)
+    if (!intent.current(token)) return
+    lastSavedNo.value = number; judgeDialog.value = false
+    ElMessage.success(`${t('wms.common.success')}${res.data.generatedReceiptNo ? ': ' + res.data.generatedReceiptNo : ''}`)
+    if (current.value?.inspectionNo === number) {
+      const unchanged = revision === detailRevision
+      current.value.status = 2; current.value.finalJudgement = input.finalJudgement
+      current.value.generatedReceiptNo = res.data.generatedReceiptNo
+      if (unchanged) await refreshDetail(number, true)
     }
-    judgeDialog.value = false
-    await openDetail(current.value.inspectionNo!)
-  } finally { saving.value = false }
+  } catch (error) { intent.failed(token, error) }
+  finally { intent.finish(token) }
 }
-
 async function onCancel() {
   if (!current.value) return
+  const token = intent.begin(); if (!token) return
+  const number = current.value.inspectionNo!
+  detailReads++
   try {
     await ElMessageBox.confirm(t('wms.inbound.msg.cancelAsk'), t('wms.common.confirm'), { type: 'warning' })
-    await qcInspectionApi.cancel(current.value.inspectionNo!)
-    ElMessage.success(t('wms.common.success'))
-    await openDetail(current.value.inspectionNo!)
-  } catch { /* */ }
+    if (!intent.current(token) || current.value?.inspectionNo !== number) return
+    await qcInspectionApi.cancel(number)
+    if (!intent.current(token)) return
+    lastSavedNo.value = number; ElMessage.success(t('wms.common.success'))
+    if (current.value?.inspectionNo === number) { current.value.status = 9; await refreshDetail(number, true) }
+  } catch (error) { intent.failed(token, error) }
+  finally { intent.finish(token) }
 }
 </script>
 

@@ -1,5 +1,7 @@
 <template>
   <div class="quality-inspection-entry">
+    <el-alert v-if="intent.error.value || readError" :title="intent.error.value || readError" type="warning" :closable="false" />
+    <p v-if="lastSavedNo">{{ t('確定済の検査NO') }}: {{ lastSavedNo }}</p>
     <el-card shadow="never">
       <template #header>
         <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -77,12 +79,12 @@
           </el-col>
           <el-col :span="6">
             <el-form-item :label="t('検査対象数量')">
-              <el-input-number v-model="form.inspectionQty" :min="0" :precision="0" style="width: 100%;" />
+              <el-input-number v-model="form.inspectionQty" :min="0" :precision="8" style="width: 100%;" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item :label="t('サンプル数')">
-              <el-input-number v-model="form.sampleQty" :min="0" :precision="0" style="width: 100%;" />
+              <el-input-number v-model="form.sampleQty" :min="0" :precision="8" style="width: 100%;" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -204,6 +206,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { Search, Plus, MagicStick, Download } from '@element-plus/icons-vue'
@@ -220,7 +223,8 @@ import {
 
 const route = useRoute()
 const { t } = useI18n()
-const saving = ref(false)
+const readError = ref(''), lastSavedNo = ref('')
+let detailReads = 0, workReads = 0, templateReads = 0, revision = 0
 const templateCodes = ref<string[]>([])
 const workOrderProcesses = ref<WorkOrderProcessDto[]>([])
 
@@ -249,6 +253,13 @@ const emptyForm = (): QualityInspectionDto => ({
 })
 
 const form = reactive<QualityInspectionDto>(emptyForm())
+const intent = useOperationsIntent(() => {
+  detailReads++; workReads++; templateReads++
+  Object.assign(form, emptyForm()); templateCodes.value = []; workOrderProcesses.value = []
+  readError.value = ''; lastSavedNo.value = ''
+})
+const saving = intent.busy
+watch(form, () => { revision++ }, { deep: true, flush: 'sync' })
 const isEdit = computed(() => !!form.inspectionNo)
 
 function getResultLabel(v: number | null | undefined) {
@@ -260,51 +271,52 @@ function getResultColor(v: number | null | undefined) {
 
 async function loadWorkOrder() {
   if (!form.workOrderNo) return
-  const res = await workOrderApi.get(form.workOrderNo)
-  if (res.code === 0 && res.data) {
-    form.productCd = res.data.productCd
-    form.productName = res.data.productName || ''
-    workOrderProcesses.value = res.data.processes || []
-    if (form.inspectionQty == null) form.inspectionQty = res.data.completedQty
-  }
+  const token = intent.capture(), request = ++workReads, number = form.workOrderNo
+  workOrderProcesses.value = []; form.productCd = ''; form.productName = ''
+  try {
+    const res = await workOrderApi.get(number)
+    if (!intent.current(token) || request !== workReads || form.workOrderNo !== number) return
+    if (res.code === 0 && res.data) {
+      form.productCd = res.data.productCd; form.productName = res.data.productName || ''
+      workOrderProcesses.value = res.data.processes || []
+      if (form.inspectionQty == null) form.inspectionQty = res.data.completedQty
+    }
+  } catch { if (intent.current(token) && request === workReads) readError.value = t('読込できませんでした。権限を確認してください。') }
 }
-
 async function loadTemplateCodes() {
-  const res = await qualityInspectionApi.getAllTemplateCodes()
-  templateCodes.value = res.data || []
+  const token = intent.capture()
+  templateCodes.value = []
+  try {
+    const res = await qualityInspectionApi.getAllTemplateCodes()
+    if (intent.current(token)) templateCodes.value = res.data || []
+  } catch { if (intent.current(token)) readError.value = t('読込できませんでした。権限を確認してください。') }
 }
-
 async function loadTemplate() {
-  if (!form.templateCd) return
-  const res = await qualityInspectionApi.getTemplate(form.templateCd)
-  const tpl = res.data || []
-  if (tpl.length === 0) {
-    ElMessage.warning(t('テンプレートに項目がありません'))
-    return
-  }
-  form.items = tpl.map(t => ({
-    inspectionNo: '',
-    itemSeqNo: t.itemSeqNo,
-    itemName: t.itemName,
-    inspectionMethod: t.inspectionMethod,
-    standardValue: t.standardValue,
-    upperLimit: t.upperLimit,
-    lowerLimit: t.lowerLimit,
-    measuredValue: null,
-    measuredText: null,
-    result: null,
-    unit: t.unit,
-    remarks: null,
-  }))
-  ElMessage.success(t('{cnt}件の項目を引入しました', { cnt: tpl.length }))
+  if (!form.templateCd || saving.value || intent.uncertain.value) return
+  const token = intent.capture(), request = ++templateReads, code = form.templateCd, edit = revision
+  try {
+    const res = await qualityInspectionApi.getTemplate(code)
+    if (!intent.current(token) || request !== templateReads || edit !== revision || form.templateCd !== code) return
+    const tpl = res.data || []
+    if (tpl.length === 0) { ElMessage.warning(t('テンプレートに項目がありません')); return }
+    form.items = tpl.map(t => ({ inspectionNo: '', itemSeqNo: t.itemSeqNo, itemName: t.itemName,
+      inspectionMethod: t.inspectionMethod, standardValue: t.standardValue, upperLimit: t.upperLimit,
+      lowerLimit: t.lowerLimit, measuredValue: null, measuredText: null, result: null, unit: t.unit, remarks: null }))
+    ElMessage.success(t('{cnt}件の項目を引入しました', { cnt: tpl.length }))
+  } catch { if (intent.current(token) && request === templateReads) readError.value = t('読込できませんでした。権限を確認してください。') }
 }
-
-async function loadByNo(no: string) {
-  const res = await qualityInspectionApi.get(no)
-  if (res.code === 0 && res.data) {
-    Object.assign(form, emptyForm(), res.data)
-    if (form.workOrderNo) await loadWorkOrder()
-  }
+async function loadByNo(no: string, preserve = false) {
+  const token = intent.capture(), request = ++detailReads
+  if (!preserve) { workReads++; templateReads++; Object.assign(form, emptyForm()); workOrderProcesses.value = [] }
+  const edit = revision; readError.value = ''
+  try {
+    const res = await qualityInspectionApi.get(no)
+    if (!intent.current(token) || request !== detailReads || edit !== revision) return
+    if (res.code === 0 && res.data) {
+      Object.assign(form, emptyForm(), res.data)
+      if (form.workOrderNo) await loadWorkOrder()
+    }
+  } catch { if (intent.current(token) && request === detailReads) readError.value = t('読込できませんでした。権限を確認してください。') }
 }
 
 function addItem() {
@@ -372,27 +384,34 @@ async function onSave() {
     ElMessage.warning(t('ME-MSG-022: 未入力の検査項目があります（このまま保存します）'))
   }
 
-  saving.value = true
+  const token = intent.begin(); if (!token) return
+  detailReads++; templateReads++; workReads++
+  const input: QualityInspectionDto = JSON.parse(JSON.stringify(form)), edit = revision
   try {
-    if (isEdit.value) {
-      await qualityInspectionApi.update(form.inspectionNo, form)
-      ElMessage.success(t('ME-MSG-041: 保存が完了しました'))
-      await loadByNo(form.inspectionNo)
-    } else {
-      const res = await qualityInspectionApi.create(form)
-      const no = res.data?.inspectionNo
-      ElMessage.success(t('ME-MSG-041: 保存が完了しました（{no}）', { no }))
-      if (no) await loadByNo(no)
-    }
-  } finally {
-    saving.value = false
-  }
+    let no = input.inspectionNo
+    if (no) await qualityInspectionApi.update(no, input)
+    else { const res = await qualityInspectionApi.create(input); no = res.data?.inspectionNo || '' }
+    if (!intent.current(token)) return
+    lastSavedNo.value = no
+    const unchanged = edit === revision
+    if (form.inspectionNo === input.inspectionNo) form.inspectionNo = no
+    ElMessage.success(t('ME-MSG-041: 保存が完了しました（{no}）', { no }))
+    if (no && unchanged) await loadByNo(no, true)
+  } catch (error) { intent.failed(token, error) }
+  finally { intent.finish(token) }
 }
 
 watch(() => form.items.map(i => i.result).join(','), computeStats)
+watch(() => route.query.no, no => {
+  if (saving.value) return
+  if (no) void loadByNo(String(no))
+  else { detailReads++; workReads++; templateReads++; Object.assign(form, emptyForm()); workOrderProcesses.value = [] }
+})
 
 onMounted(async () => {
+  const token = intent.capture()
   await loadTemplateCodes()
+  if (!intent.current(token)) return
   const no = route.query.no as string | undefined
   if (no) await loadByNo(no)
 })

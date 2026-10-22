@@ -106,6 +106,7 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
 import { ElMessage } from 'element-plus'
 import { qualityInspectionApi } from '@/api/mes/mes'
 import {
@@ -120,6 +121,9 @@ const router = useRouter()
 const loading = ref(false)
 const rows = ref<QualityInspectionDto[]>([])
 const total = ref(0)
+let listReads = 0
+const intent = useOperationsIntent(() => { listReads++; rows.value = []; total.value = 0; loading.value = false })
+let rowsToken = intent.capture()
 
 const defaultQuery = (): QualityInspectionSearchQuery => ({
   inspectionNo: '',
@@ -146,14 +150,14 @@ function formatDate(v?: string | null) { return v ? v.substring(0, 10) : '' }
 function formatDateTime(v?: string | null) { return v ? v.substring(0, 16).replace('T', ' ') : '' }
 
 async function search() {
-  loading.value = true
+  const token = intent.capture(), request = ++listReads, input = JSON.parse(JSON.stringify(query))
+  rows.value = []; total.value = 0; loading.value = true
   try {
-    const res = await qualityInspectionApi.search(query)
-    rows.value = res.data?.items || []
-    total.value = res.data?.total || 0
-  } finally {
-    loading.value = false
-  }
+    const res = await qualityInspectionApi.search(input)
+    if (!intent.current(token) || request !== listReads) return
+    rows.value = res.data?.items || []; total.value = res.data?.total || 0; rowsToken = token
+  } catch { if (intent.current(token) && request === listReads) ElMessage.warning(t('読込できませんでした。権限を確認してください。')) }
+  finally { if (intent.current(token) && request === listReads) loading.value = false }
 }
 
 function reset() {
@@ -167,6 +171,7 @@ function goDetail(row: QualityInspectionDto) {
 }
 
 function exportCsv() {
+  if (!intent.current(rowsToken)) { rows.value = []; total.value = 0; return }
   if (rows.value.length === 0) {
     ElMessage.warning(t('検索結果がありません'))
     return

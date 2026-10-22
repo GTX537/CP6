@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration;
 using CP6.Core.Services.Wms;
 using CP6.Entity.DomainModels.Mes;
 using CP6.Entity.DomainModels.Wms;
@@ -21,29 +22,31 @@ namespace CP6.Core.Services.Mes;
 ///   ELSE 手動判定
 /// 総合：全項目合格→1=合格、1項目でも不合格→2=不合格、保留含→9=保留
 /// </remarks>
-public class QualityInspectionService : IQualityInspectionService
+public partial class QualityInspectionService : IQualityInspectionService
 {
     private readonly CP6Context _db;
     private readonly IMesSequenceService _seq;
     private readonly IStockQcService? _stockQc;
     private readonly ILogger<QualityInspectionService> _logger;
+    private readonly OperationsOwnerV1? _owner;
     private const string QcSeqKey = "QC";
 
     public QualityInspectionService(
         CP6Context db,
         IMesSequenceService seq,
         IStockQcService? stockQc = null,
-        ILogger<QualityInspectionService>? logger = null)
+        ILogger<QualityInspectionService>? logger = null, OperationsOwnerV1? owner=null)
     {
         _db = db;
+        _owner = owner;
         _seq = seq;
         _stockQc = stockQc;
         _logger = logger ?? NullLogger<QualityInspectionService>.Instance;
     }
 
-    public async Task<QualityInspectionDto?> GetByNoAsync(string inspectionNo)
+    private async Task<QualityInspectionDto?> GetByNoCoreAsync(string inspectionNo, IQueryable<QualityInspection>? allowed=null)
     {
-        var qi = await _db.QualityInspections.AsNoTracking()
+        var qi = await (allowed ?? _db.QualityInspections.AsNoTracking())
             .FirstOrDefaultAsync(x => x.InspectionNo == inspectionNo && !x.IsDeleted);
         if (qi == null) return null;
 
@@ -75,9 +78,9 @@ public class QualityInspectionService : IQualityInspectionService
         return dto;
     }
 
-    public async Task<PagedResultDto<QualityInspectionDto>> SearchAsync(QualityInspectionSearchQuery q)
+    private async Task<PagedResultDto<QualityInspectionDto>> SearchCoreAsync(QualityInspectionSearchQuery q, IQueryable<QualityInspection>? allowed=null)
     {
-        var query = _db.QualityInspections.AsNoTracking().Where(x => !x.IsDeleted);
+        var query = (allowed ?? _db.QualityInspections.AsNoTracking()).Where(x => !x.IsDeleted);
 
         if (!string.IsNullOrWhiteSpace(q.InspectionNo)) query = query.Where(x => x.InspectionNo.Contains(q.InspectionNo));
         if (!string.IsNullOrWhiteSpace(q.WorkOrderNo)) query = query.Where(x => x.WorkOrderNo.Contains(q.WorkOrderNo));
@@ -97,33 +100,27 @@ public class QualityInspectionService : IQualityInspectionService
             .Skip((page - 1) * size).Take(size)
             .ToListAsync();
 
-        var nos = items.Select(x => x.InspectionNo).ToList();
-        var itemStat = await _db.QualityInspectionItems.AsNoTracking()
-            .Where(i => nos.Contains(i.InspectionNo) && !i.IsDeleted)
-            .GroupBy(i => i.InspectionNo)
-            .Select(g => new
-            {
-                InspectionNo = g.Key,
-                Total = g.Count(),
-                Pass = g.Count(x => x.Result == 1),
-            })
-            .ToDictionaryAsync(x => x.InspectionNo);
-
-        var woNos = items.Select(x => x.WorkOrderNo).Distinct().ToList();
-        var woMap = await _db.WorkOrders.AsNoTracking()
-            .Where(w => woNos.Contains(w.WorkOrderNo))
-            .Select(w => new { w.WorkOrderNo, w.ProductCd, w.ProductName })
-            .ToDictionaryAsync(w => w.WorkOrderNo);
+        var ids = items.Select(x => x.Id).ToArray();
+        // Native database reference equality also applies when stored keys differ in spelling.
+        var itemStat = await _db.QualityInspections.AsNoTracking().Where(q => ids.Contains(q.Id))
+            .Select(q => new { q.Id,
+                Total = _db.QualityInspectionItems.Count(i => i.InspectionNo == q.InspectionNo && !i.IsDeleted),
+                Pass = _db.QualityInspectionItems.Count(i => i.InspectionNo == q.InspectionNo && !i.IsDeleted && i.Result == 1) })
+            .ToDictionaryAsync(x => x.Id);
+        var woMap = await (from inspection in _db.QualityInspections.AsNoTracking()
+            join w in _db.WorkOrders.AsNoTracking() on inspection.WorkOrderNo equals w.WorkOrderNo
+            where ids.Contains(inspection.Id)
+            select new { inspection.Id, w.ProductCd, w.ProductName }).ToDictionaryAsync(x => x.Id);
 
         var dtos = items.Select(x =>
         {
             var dto = ToDto(x);
-            if (woMap.TryGetValue(x.WorkOrderNo, out var w))
+            if (woMap.TryGetValue(x.Id, out var w))
             {
                 dto.ProductCd = w.ProductCd;
                 dto.ProductName = w.ProductName;
             }
-            if (itemStat.TryGetValue(x.InspectionNo, out var s))
+            if (itemStat.TryGetValue(x.Id, out var s))
             {
                 dto.ItemCount = s.Total;
                 dto.PassCount = s.Pass;
@@ -138,7 +135,7 @@ public class QualityInspectionService : IQualityInspectionService
         };
     }
 
-    public async Task<string> CreateAsync(QualityInspectionDto dto, string? userName)
+    private async Task<string> CreateCoreAsync(QualityInspectionDto dto, string? userName, bool owned=false)
     {
         if (string.IsNullOrWhiteSpace(dto.WorkOrderNo)) throw new InvalidOperationException("ME-MSG-020");
         if (string.IsNullOrWhiteSpace(dto.InspectorCd)) throw new InvalidOperationException("ME-MSG-021");
@@ -149,7 +146,7 @@ public class QualityInspectionService : IQualityInspectionService
         if (dto.OverallResult == 2 && !dto.DispositionAction.HasValue)
             throw new InvalidOperationException("ME-MSG-023");
 
-        await using var tx = await _db.Database.BeginTransactionAsync();
+        await using var tx = owned ? null : await _db.Database.BeginTransactionAsync();
         var no = await _seq.NextAsync(QcSeqKey);
         var now = DateTime.Now;
 
@@ -229,9 +226,9 @@ public class QualityInspectionService : IQualityInspectionService
         }
 
         await _db.SaveChangesAsync();
-        await tx.CommitAsync();
+        if(tx!=null)await tx.CommitAsync();
 
-        if (qi.OverallResult == 2 && !string.IsNullOrWhiteSpace(qi.WorkOrderNo))
+        if (!owned && qi.OverallResult == 2 && !string.IsNullOrWhiteSpace(qi.WorkOrderNo))
         {
             await TryMarkLinkedStockFailedAsync(qi.WorkOrderNo, no, userName);
         }
@@ -239,7 +236,7 @@ public class QualityInspectionService : IQualityInspectionService
         return no;
     }
 
-    public async Task UpdateAsync(string inspectionNo, QualityInspectionDto dto, string? userName)
+    private async Task UpdateCoreAsync(string inspectionNo, QualityInspectionDto dto, string? userName, bool owned=false)
     {
         var qi = await _db.QualityInspections.FirstOrDefaultAsync(x => x.InspectionNo == inspectionNo && !x.IsDeleted)
             ?? throw new InvalidOperationException("ME-MSG-043");
@@ -248,7 +245,7 @@ public class QualityInspectionService : IQualityInspectionService
         if (dto.OverallResult == 2 && !dto.DispositionAction.HasValue)
             throw new InvalidOperationException("ME-MSG-023");
 
-        await using var tx = await _db.Database.BeginTransactionAsync();
+        await using var tx = owned ? null : await _db.Database.BeginTransactionAsync();
         var now = DateTime.Now;
 
         qi.WorkOrderNo = dto.WorkOrderNo;
@@ -273,6 +270,7 @@ public class QualityInspectionService : IQualityInspectionService
         int seq = 1;
         foreach (var it in dto.Items ?? new())
         {
+            var originalItem = owned ? oldItems.FirstOrDefault(x => x.ItemSeqNo == (it.ItemSeqNo > 0 ? it.ItemSeqNo : seq)) : null;
             _db.QualityInspectionItems.Add(new QualityInspectionItem
             {
                 InspectionNo = inspectionNo,
@@ -287,17 +285,17 @@ public class QualityInspectionService : IQualityInspectionService
                 Result = it.Result,
                 Unit = it.Unit,
                 Remarks = it.Remarks,
-                Creator = userName,
-                CreateDate = now,
+                Creator = originalItem != null ? originalItem.Creator : userName,
+                CreateDate = originalItem?.CreateDate ?? now,
             });
             seq++;
         }
 
         await _db.SaveChangesAsync();
-        await tx.CommitAsync();
+        if(tx!=null)await tx.CommitAsync();
     }
 
-    public async Task<List<InspectionTemplateDto>> GetTemplateAsync(string templateCd)
+    private async Task<List<InspectionTemplateDto>> GetTemplateCoreAsync(string templateCd)
     {
         var rows = await _db.InspectionTemplates.AsNoTracking()
             .Where(t => t.TemplateCd == templateCd && t.ActiveFlg && !t.IsDeleted)
@@ -306,7 +304,7 @@ public class QualityInspectionService : IQualityInspectionService
         return rows.Select(ToDto).ToList();
     }
 
-    public async Task<List<string>> GetAllTemplateCodesAsync()
+    private async Task<List<string>> GetAllTemplateCodesCoreAsync()
     {
         return await _db.InspectionTemplates.AsNoTracking()
             .Where(t => t.ActiveFlg && !t.IsDeleted)

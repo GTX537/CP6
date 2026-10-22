@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[七天一期持续目标](planning/20261022-seven-day-delivery.md)，COORD单人；[D1/W41质量Owner](dispatch/20261022-wave41/README.md)候选已验证，待远端采用/finish后继续D2，W37–W40已实际finish。
+
 > 当前：[W40收尾](dispatch/20261022-wave40/README.md)，不良记录Owner已集成、#389关闭；DEV-2释放，原W40-01最后文档PR后finish。真实收尾以管理登记/最终PR说明为准，W39不重复。
 
 > 当前：[W39收尾](dispatch/20261021-wave39/README.md)，盘点/库存/看板Owner已集成，#386关闭；DEV-2释放，原W39-01最后文档PR后finish。真实收尾以管理登记/最终PR说明为准；W38不重复。
