@@ -159462,6 +159462,11 @@
       "date": "2026-10-22",
       "change": "W46 BUG404 candidate; actual WMS hub tenant binding repaired, eight related local tests; seven-day ACTIVE, whole counts unchanged.",
       "evidence": "docs/development/dispatch/20261022-wave46/README.md"
+    },
+    {
+      "date": "2026-10-22",
+      "change": "W46 BUG404 close; actual WMS hub tenant binding repaired, eight related local tests; seven-day ACTIVE, whole counts unchanged.",
+      "evidence": "docs/development/dispatch/20261022-wave46/README.md"
     }
   ],
   "implementation_assessment": {
@@ -162041,7 +162046,7 @@
         "claimed_at": "2026-10-22T07:47:04Z",
         "baseline_sha": "97b56ae91da46af4dc55fec784aa9e483e696c1b",
         "entry_evidence": "docs/development/dispatch/20261022-wave46/README.md",
-        "phase": "LOCAL_VALIDATED_PENDING_INTEGRATION",
+        "phase": "CLOSED",
         "dispatch_scope": "W46_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -162057,25 +162062,62 @@
           "docs/development/",
           "docs/project-memory/"
         ],
-        "reserved_write_resources": [
-          "Main:wms-realtime",
-          "Main:stock-read-authority"
-        ],
-        "reserved_postgresql_ports": [
-          55435
-        ],
+        "reserved_write_resources": [],
+        "reserved_postgresql_ports": [],
         "handoff_branch": "codex/w46-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": false,
+        "candidate_integrated": true,
         "resources_released": false,
         "full_task_completed": false,
         "worker_delivery_ref": "docs/development/evidence/WP02-03/wms-hub-scope/DELIVERY.md",
         "validation": "8项相关.NET通过（6项PG/实际HTTP-WebSocket与通知边界、2项旧路由兼容）；无前端变更，不重复前端验证",
-        "runtime_resources_released": true
+        "runtime_resources_released": true,
+        "integration": {
+          "result": "PASS",
+          "repository": "GTX537/CP6",
+          "source": "c09ee7f4bf32b735f98b45e8164d7a1fd84d45f9",
+          "main": "883709c885d6b13ca272c211f8dde06a7cbd939f",
+          "target": "main",
+          "pr": "https://github.com/GTX537/CP6/pull/405",
+          "paths": [
+            "CP6.Tests/Erp/MesRealtimeOwnerPostgreSqlTests.cs",
+            "CP6.Tests/Erp/StocktakeDashboardBoundariesPostgreSqlTests.cs",
+            "CP6.WebApi/Hubs/WmsHub.cs",
+            "docs/development/07-detailed-tasks.md",
+            "docs/development/09-parallel-development.md",
+            "docs/development/dispatch/20261022-wave46/README.md",
+            "docs/development/evidence/WP02-03/wms-hub-scope/DELIVERY.md",
+            "docs/development/planning/20261022-seven-day-delivery.md",
+            "docs/development/roadmap.json",
+            "docs/project-memory/05-Completed.md",
+            "docs/project-memory/06-Todo.md",
+            "docs/project-memory/CHANGELOG-AI.md",
+            "docs/project-memory/PROJECT_STATE.md"
+          ],
+          "observed_at": "2026-10-22T07:58:14.331615+00:00"
+        },
+        "delivery_ref": {
+          "commit": "d5ced62b53dc502690df1ce75dade0e0f8ef2b3b",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261022T075819Z-wave46-delivery/MESSAGE.md",
+          "at": "2026-10-22T07:58:19.924869+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w46-handoff",
+          "pr": 22,
+          "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/22"
+        },
+        "lifecycle_snapshot": {
+          "at": "2026-10-22T08:00:48.891124+00:00",
+          "main_task": "CP6:BUG-404-WMS-HUB",
+          "main_seat_released": false,
+          "main_finish_required": true,
+          "handoff_seat_released": true,
+          "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave46-final-verification.json",
+          "live_source": "D:/CP6/.git/cp6-workspaces/state.json"
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -165710,12 +165752,24 @@
         }
       },
       "wave46_delivery": {
-        "status": "LOCAL_VALIDATED_PENDING_INTEGRATION",
+        "status": "MERGED",
         "issue": 404,
         "report": "docs/development/evidence/WP02-03/wms-hub-scope/DELIVERY.md",
         "validation": "8项相关.NET通过（6项PG/实际HTTP-WebSocket与通知边界、2项旧路由兼容）；无前端变更，不重复前端验证",
         "full_task_complete": false,
-        "business_acceptance": "NOT_RUN"
+        "business_acceptance": "NOT_RUN",
+        "source_candidate_sha": "c09ee7f4bf32b735f98b45e8164d7a1fd84d45f9",
+        "remote_main_sha": "883709c885d6b13ca272c211f8dde06a7cbd939f",
+        "pull_request": "https://github.com/GTX537/CP6/pull/405",
+        "handoff": {
+          "commit": "d5ced62b53dc502690df1ce75dade0e0f8ef2b3b",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261022T075819Z-wave46-delivery/MESSAGE.md",
+          "at": "2026-10-22T07:58:19.924869+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w46-handoff",
+          "pr": 22,
+          "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/22"
+        }
       }
     },
     {
@@ -184493,7 +184547,7 @@
       "path": "docs/development/dispatch/20261022-wave46/README.md",
       "baseline_sha": "97b56ae91da46af4dc55fec784aa9e483e696c1b",
       "registered_at": "2026-10-22T07:49:10.357212+00:00",
-      "phase": "W46_01_LOCAL_VALIDATED_PENDING_INTEGRATION",
+      "phase": "CLOSED",
       "assigned_chats": [
         "COORD"
       ],
@@ -184503,12 +184557,10 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [
-        "COORD"
-      ],
+      "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": false,
-      "product_integrated": false,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W46-01",
@@ -184518,7 +184570,7 @@
           "lifecycle_task": "BUG-404-WMS-HUB",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "LOCAL_VALIDATED_PENDING_INTEGRATION",
+          "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "actual_start_ref": {
@@ -184537,7 +184589,51 @@
           "candidate_review_completed": true,
           "worker_delivery_ref": "docs/development/evidence/WP02-03/wms-hub-scope/DELIVERY.md",
           "validation": "8项相关.NET通过（6项PG/实际HTTP-WebSocket与通知边界、2项旧路由兼容）；无前端变更，不重复前端验证",
-          "runtime_resources_released": true
+          "runtime_resources_released": true,
+          "candidate_integrated": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "c09ee7f4bf32b735f98b45e8164d7a1fd84d45f9",
+            "main": "883709c885d6b13ca272c211f8dde06a7cbd939f",
+            "target": "main",
+            "pr": "https://github.com/GTX537/CP6/pull/405",
+            "paths": [
+              "CP6.Tests/Erp/MesRealtimeOwnerPostgreSqlTests.cs",
+              "CP6.Tests/Erp/StocktakeDashboardBoundariesPostgreSqlTests.cs",
+              "CP6.WebApi/Hubs/WmsHub.cs",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/09-parallel-development.md",
+              "docs/development/dispatch/20261022-wave46/README.md",
+              "docs/development/evidence/WP02-03/wms-hub-scope/DELIVERY.md",
+              "docs/development/planning/20261022-seven-day-delivery.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-22T07:58:14.331615+00:00"
+          },
+          "delivery_ref": {
+            "commit": "d5ced62b53dc502690df1ce75dade0e0f8ef2b3b",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261022T075819Z-wave46-delivery/MESSAGE.md",
+            "at": "2026-10-22T07:58:19.924869+00:00",
+            "base": "codex/t02c-entry-handoff-20260921",
+            "branch": "codex/w46-handoff",
+            "pr": 22,
+            "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/22"
+          },
+          "resources_released": false,
+          "lifecycle_snapshot": {
+            "at": "2026-10-22T08:00:48.891124+00:00",
+            "main_task": "CP6:BUG-404-WMS-HUB",
+            "main_seat_released": false,
+            "main_finish_required": true,
+            "handoff_seat_released": true,
+            "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave46-final-verification.json",
+            "live_source": "D:/CP6/.git/cp6-workspaces/state.json"
+          }
         }
       ],
       "horizon": {
@@ -184553,7 +184649,24 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Normal adoption and managed finish; close Issue404 after proof; continue D3 Machine/OEE."
+      "next_action": "Final docs then managed finish and Issue404 close; continue D3 Machine/OEE without repeating W37-W46.",
+      "handoff_integration": {
+        "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/22",
+        "commit": "ad787e92495ad409e96358190bf9939753fb1ddb",
+        "target_head": "ad787e92495ad409e96358190bf9939753fb1ddb"
+      },
+      "handoff_resources_released": true,
+      "handoff_branch_disposition": "deleted-local-and-remote",
+      "lifecycle_snapshot": {
+        "at": "2026-10-22T08:00:48.891124+00:00",
+        "main_task": "CP6:BUG-404-WMS-HUB",
+        "main_seat_released": false,
+        "main_finish_required": true,
+        "handoff_seat_released": true,
+        "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave46-final-verification.json",
+        "live_source": "D:/CP6/.git/cp6-workspaces/state.json"
+      }
     },
     "wave_history": [
       {
@@ -192250,10 +192363,10 @@
           "full_business_acceptance": false,
           "current_window": "W46-01",
           "prerequisite_adjustment": "Verify and correct WmsHub real DI tenant binding before further realtime reliance; Machine/OEE Owner remains next.",
-          "adopted_window": "W45-01",
+          "adopted_window": "W46-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/402",
           "report": "docs/development/evidence/WP02-03/mes-realtime/DELIVERY.md",
-          "remaining": "Machine/OEE/Planning independent Owners remain unadopted; check actual WmsHub scope before further realtime reliance.",
+          "remaining": "Machine/OEE/Planning independent Owners remain next; MES/WMS actual realtime scope now verified.",
           "last_window_actual_agent_minutes": 33.04,
           "last_branches_deleted": true,
           "last_seats_released": true

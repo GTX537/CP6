@@ -21,3 +21,9 @@ COORD本聊天单人；七天一期前置。Main基线`97b56ae91da46af4dc55fec78
 本修复只恢复已有库存Owner的真实连接准入，未改变库存业务、旧数据库历史或正式WMS合同。已撤权旧连接仍可能收到无参数提示；不承诺即时断开，不把提示当可靠投递。设备/OEE/计划独立Owner仍下一窗口，整卡/125目标/247运行不提升；七天持续目标ACTIVE。
 
 产品正常PR、Handoff采用及Issue关闭待收尾；DEV-1/2仍属于本窗，集成席空闲。准确分支删除/工作区与席位finish见最终PR/管理登记。无新树/既有迁移/生产，根用户资料保留。
+
+## 远端采用与原任务收尾
+
+产品[PR405](https://github.com/GTX537/CP6/pull/405)和[Handoff22](https://github.com/GTX537/CP6.AI-Handoff/pull/22)采用，source`c09ee7f4bf32b735f98b45e8164d7a1fd84d45f9`、远端main`883709c885d6b13ca272c211f8dde06a7cbd939f`；13任务文件一致。Handoff source`d5ced62b53dc502690df1ce75dade0e0f8ef2b3b`、目标`ad787e92495ad409e96358190bf9939753fb1ddb`，3项资料一致，DEV-2准确分支删除/席位释放。
+
+8项相关.NET通过（6项PG/实际HTTP-WebSocket与通知边界、2项旧路由兼容）；无前端变更，不重复前端验证。产品未变复用上述实际证据；最后文档仅diff/链接/台账检查。原DEV-1最后文档正常PR后finish、关闭Issue404；未提前声明释放。实际分支/工作区/席位/耗时见最终PR、实时登记与`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave46-final-verification.json`。无Actions/触发变更/既有迁移/生产；七天目标ACTIVE，继续设备/OEE/计划独立Owner，不提升整卡/125目标/247运行。
