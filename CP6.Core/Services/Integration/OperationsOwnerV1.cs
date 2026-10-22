@@ -66,7 +66,7 @@ public sealed class OperationsOwnerV1
         Func<OperationsAccessV1,CancellationToken,Task<T>> body,CancellationToken ct=default, OperationsDelegationV1? delegation=null)
     {
         using var linked=CancellationTokenSource.CreateLinkedTokenSource(ct,http.HttpContext?.RequestAborted??CancellationToken.None);ct=linked.Token;
-        if(resource is not (Mes or Outbound or Production or Inbound or Receipt or Stock or StockTake or WmsDashboard or MesDashboard) || !db.Database.IsNpgsql() || db.Database.CurrentTransaction!=null
+        if(resource is not (Mes or Outbound or Production or Inbound or Receipt or Stock or StockTake or WmsDashboard or MesDashboard or Defect) || !db.Database.IsNpgsql() || db.Database.CurrentTransaction!=null
             || System.Transactions.Transaction.Current!=null || db.ChangeTracker.HasChanges()
             || db.ChangeTracker.Entries().Any(e=>IsBusiness(e.Entity.GetType().Name)))
             throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
@@ -122,7 +122,7 @@ public sealed class OperationsOwnerV1
     private static readonly string[] BusinessTables=["Order","OrderDetail","OrderProcess","OrderMaterial","OrderProcessNote",
         "WorkOrder","WorkOrderProcess","WorkOrderMaterial","OutboundOrder","OutboundOrderDetail","Stock","StockTransaction",
         "WmsSequence","MesSequence","ShippingPackage","MaterialShortage","ProductionResult",
-        "InboundOrder","InboundOrderDetail","InboundReceipt","InboundReceiptDetail","StockTake","StockTakeDetail","DefectRecord"];
+        "InboundOrder","InboundOrderDetail","InboundReceipt","InboundReceiptDetail","StockTake","StockTakeDetail","DefectRecord","QualityInspection","QualityInspectionItem"];
     private static bool AllowsDelegation(string resource,string action,OperationsDelegationV1 ticket)
         => action=="add" && (ticket.Resource=="order" && ticket.Action=="add" && resource is Mes or Outbound
             || ticket.Resource==Mes && ticket.Action=="issue" && resource==Outbound)

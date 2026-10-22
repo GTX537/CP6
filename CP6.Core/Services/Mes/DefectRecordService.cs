@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Mes;
 using CP6.Entity.DTOs.Mes;
 using Microsoft.EntityFrameworkCore;
@@ -11,23 +12,25 @@ namespace CP6.Core.Services.Mes;
 /// <remarks>
 /// ステータス遷移：0=起票済 → 1=分析中 → 2=是正中 → 3=完了
 /// </remarks>
-public class DefectRecordService : IDefectRecordService
+public partial class DefectRecordService : IDefectRecordService
 {
     private readonly CP6Context _db;
     private readonly IMesSequenceService _seq;
     private readonly IMesNotifier _notifier;
+    private readonly OperationsOwnerV1? _owner;
     private const string DfSeqKey = "DF";
 
-    public DefectRecordService(CP6Context db, IMesSequenceService seq, IMesNotifier notifier)
+    public DefectRecordService(CP6Context db, IMesSequenceService seq, IMesNotifier notifier, OperationsOwnerV1? owner=null)
     {
         _db = db;
         _seq = seq;
         _notifier = notifier;
+        _owner = owner;
     }
 
-    public async Task<DefectRecordDto?> GetByNoAsync(string defectNo)
+    private async Task<DefectRecordDto?> GetByNoCoreAsync(string defectNo,IQueryable<DefectRecord>? scoped=null)
     {
-        var x = await _db.DefectRecords.AsNoTracking()
+        var x = await (scoped??_db.DefectRecords.AsNoTracking())
             .FirstOrDefaultAsync(d => d.DefectNo == defectNo && !d.IsDeleted);
         if (x == null) return null;
         var dto = ToDto(x);
@@ -35,9 +38,9 @@ public class DefectRecordService : IDefectRecordService
         return dto;
     }
 
-    public async Task<PagedResultDto<DefectRecordDto>> SearchAsync(DefectRecordSearchQuery q)
+    private async Task<PagedResultDto<DefectRecordDto>> SearchCoreAsync(DefectRecordSearchQuery q,IQueryable<DefectRecord>? scoped=null)
     {
-        var query = _db.DefectRecords.AsNoTracking().Where(x => !x.IsDeleted);
+        var query = (scoped??_db.DefectRecords.AsNoTracking()).Where(x => !x.IsDeleted);
 
         if (!string.IsNullOrWhiteSpace(q.DefectNo)) query = query.Where(x => x.DefectNo.Contains(q.DefectNo));
         if (!string.IsNullOrWhiteSpace(q.WorkOrderNo)) query = query.Where(x => x.WorkOrderNo.Contains(q.WorkOrderNo));
@@ -67,7 +70,7 @@ public class DefectRecordService : IDefectRecordService
         };
     }
 
-    public async Task<string> CreateAsync(DefectRecordDto dto, string? userName)
+    private async Task<string> CreateCoreAsync(DefectRecordDto dto, string? userName,bool notify=true)
     {
         if (string.IsNullOrWhiteSpace(dto.WorkOrderNo)) throw new InvalidOperationException("ME-MSG-020");
         if (string.IsNullOrWhiteSpace(dto.CategoryCd)) throw new InvalidOperationException("ME-MSG-030");
@@ -100,12 +103,12 @@ public class DefectRecordService : IDefectRecordService
         });
         await _db.SaveChangesAsync();
 
-        try { await _notifier.NotifyDefectIssuedAsync(no, dto.WorkOrderNo, dto.CategoryCd); } catch { }
+        if(notify)try { await _notifier.NotifyDefectIssuedAsync(no, dto.WorkOrderNo, dto.CategoryCd); } catch { }
 
         return no;
     }
 
-    public async Task UpdateAsync(string defectNo, DefectRecordDto dto, string? userName)
+    private async Task UpdateCoreAsync(string defectNo, DefectRecordDto dto, string? userName)
     {
         var x = await _db.DefectRecords.FirstOrDefaultAsync(d => d.DefectNo == defectNo && !d.IsDeleted)
             ?? throw new InvalidOperationException("ME-MSG-043");
@@ -137,7 +140,7 @@ public class DefectRecordService : IDefectRecordService
         await _db.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(string defectNo, string? userName)
+    private async Task DeleteCoreAsync(string defectNo, string? userName)
     {
         var x = await _db.DefectRecords.FirstOrDefaultAsync(d => d.DefectNo == defectNo && !d.IsDeleted)
             ?? throw new InvalidOperationException("ME-MSG-043");
@@ -147,7 +150,7 @@ public class DefectRecordService : IDefectRecordService
         await _db.SaveChangesAsync();
     }
 
-    public async Task<List<DefectCategoryDto>> GetAllCategoriesAsync()
+    private async Task<List<DefectCategoryDto>> GetAllCategoriesCoreAsync()
     {
         return await _db.DefectCategories.AsNoTracking()
             .Where(x => x.ActiveFlg && !x.IsDeleted)
@@ -173,6 +176,23 @@ public class DefectRecordService : IDefectRecordService
     {
         var list = dtos.ToList();
         if (list.Count == 0) return;
+
+        if(_db.Database.IsNpgsql())
+        {
+            // Match stored business keys in PostgreSQL, then join the page by stable entity IDs.
+            var ids=list.Select(d=>d.Id).ToArray();
+            var values=await _db.DefectRecords.AsNoTracking().Where(d=>ids.Contains(d.Id)).Select(d=>new
+            {
+                d.Id,
+                ProductCd=_db.WorkOrders.Where(w=>w.WorkOrderNo==d.WorkOrderNo && !w.IsDeleted).Select(w=>w.ProductCd).FirstOrDefault(),
+                ProductName=_db.WorkOrders.Where(w=>w.WorkOrderNo==d.WorkOrderNo && !w.IsDeleted).Select(w=>w.ProductName).FirstOrDefault(),
+                CategoryName=_db.DefectCategories.Where(c=>!c.IsDeleted && c.CategoryCd==d.CategoryCd).OrderBy(c=>c.SortOrder).ThenBy(c=>c.DetailCd).Select(c=>c.CategoryName).FirstOrDefault(),
+                DetailName=_db.DefectCategories.Where(c=>!c.IsDeleted && c.CategoryCd==d.CategoryCd && d.DetailCd!=null && d.DetailCd!="" && c.DetailCd==d.DetailCd).Select(c=>c.DetailName).FirstOrDefault()
+            }).ToDictionaryAsync(d=>d.Id);
+            foreach(var dto in list)if(values.TryGetValue(dto.Id,out var value))
+            {dto.ProductCd=value.ProductCd;dto.ProductName=value.ProductName;dto.CategoryName=value.CategoryName;dto.DetailName=value.DetailName;}
+            return;
+        }
 
         // 製品名・工程名
         var woNos = list.Select(d => d.WorkOrderNo).Distinct().ToList();

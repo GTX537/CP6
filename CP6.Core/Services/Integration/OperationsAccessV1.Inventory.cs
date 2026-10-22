@@ -76,6 +76,7 @@ internal sealed partial class OperationsAccessV1
     internal IQueryable<DefectRecord> DashboardDefects()
     {
         var orders=DashboardWorkOrders();
-        return db.DefectRecords.AsNoTracking().Where(d=>!d.IsDeleted && orders.Any(w=>w.WorkOrderNo==d.WorkOrderNo));
+        // The aggregate source must honor the same optional inspection graph as the independent Owner.
+        return Defects(this).Where(d=>orders.Any(w=>w.WorkOrderNo==d.WorkOrderNo));
     }
 }
