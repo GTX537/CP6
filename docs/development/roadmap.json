@@ -159432,6 +159432,11 @@
       "date": "2026-10-22",
       "change": "W44 inventory original operations locally validated38 related .NET/3 client; current ID disclosure and close fenced. Formal Transfer and reliable delivery remain unadopted; seven-day ACTIVE.",
       "evidence": "docs/development/dispatch/20261022-wave44/README.md"
+    },
+    {
+      "date": "2026-10-22",
+      "change": "W44 product PR399/Handoff20 adopted; Handoff exact branch/seat released. Original task final docs then finish; D4 remains partial, seven-day ACTIVE, whole counts unchanged.",
+      "evidence": "docs/development/dispatch/20261022-wave44/README.md"
     }
   ],
   "implementation_assessment": {
@@ -166813,7 +166818,7 @@
         "claimed_at": "2026-10-22T06:43:13Z",
         "baseline_sha": "3ed818471dad9fd68b4b49971de72b20886c9caf",
         "entry_evidence": "docs/development/dispatch/20261022-wave44/README.md",
-        "phase": "LOCAL_VALIDATED_PENDING_INTEGRATION",
+        "phase": "CLOSED",
         "dispatch_scope": "W44_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -166834,26 +166839,72 @@
           "docs/project-memory/",
           "docs/design-handbook/"
         ],
-        "reserved_write_resources": [
-          "Main:owner-unit-of-work",
-          "Main:identity-authority",
-          "Main:stock-movement"
-        ],
-        "reserved_postgresql_ports": [
-          55435
-        ],
+        "reserved_write_resources": [],
+        "reserved_postgresql_ports": [],
         "handoff_branch": "codex/w44-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": false,
+        "candidate_integrated": true,
         "resources_released": false,
         "full_task_completed": false,
         "runtime_resources_released": true,
         "worker_delivery_ref": "docs/development/evidence/WP02-10/stock-original-operation/DELIVERY.md",
-        "validation": "38项去重相关.NET通过（10项新增PG/真实HTTP、28项既有库存/Owner边界），3项客户端Vitest及完整vue-tsc -b通过"
+        "validation": "38项去重相关.NET通过（10项新增PG/真实HTTP、28项既有库存/Owner边界），3项客户端Vitest及完整vue-tsc -b通过",
+        "integration": {
+          "result": "PASS",
+          "repository": "GTX537/CP6",
+          "source": "acdfcafccb942da4eedef059d31973feafee1902",
+          "main": "1fc7a349af49f013f8792ab333ba23b82ea8b6d8",
+          "target": "main",
+          "pr": "https://github.com/GTX537/CP6/pull/399",
+          "paths": [
+            "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
+            "CP6.Core/Services/Wms/StockMovementService.OriginalOperations.cs",
+            "CP6.Core/Services/Wms/StockOriginalOperationsV1.cs",
+            "CP6.Tests/Erp/StockOriginalOperationPostgreSqlTests.cs",
+            "CP6.WebApi/Controllers/Wms/StockController.cs",
+            "cp6.web/src/api/wms/stock.spec.ts",
+            "cp6.web/src/api/wms/stock.ts",
+            "cp6.web/src/types/wms/wms.ts",
+            "docs/design-handbook/remediation/stock-original-operation-v1.md",
+            "docs/development/07-detailed-tasks.md",
+            "docs/development/09-parallel-development.md",
+            "docs/development/dispatch/20261022-wave44/README.md",
+            "docs/development/evidence/WP02-10/stock-original-operation/DELIVERY.md",
+            "docs/development/planning/20261022-seven-day-delivery.md",
+            "docs/development/roadmap.json",
+            "docs/project-memory/05-Completed.md",
+            "docs/project-memory/06-Todo.md",
+            "docs/project-memory/CHANGELOG-AI.md",
+            "docs/project-memory/PROJECT_STATE.md"
+          ],
+          "observed_at": "2026-10-22T06:58:37.116055+00:00"
+        },
+        "delivery_ref": {
+          "commit": "75c832473a21fe7c0dd74f3c04c9a036f777a4d1",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261022T065925Z-wave44-delivery/MESSAGE.md",
+          "at": "2026-10-22T06:59:25.996582+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w44-handoff",
+          "pr": 20,
+          "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/20"
+        },
+        "lifecycle_snapshot": {
+          "observed_at": "2026-10-22T07:02:16.933941+00:00",
+          "main_task": "CP6:W44-01",
+          "main_branch": "codex/w44-01",
+          "main_status": "active-final-documentation",
+          "main_seat_released": false,
+          "main_finish_required": true,
+          "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
+          "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave44-final-verification.json",
+          "handoff_seat_released": true,
+          "note": "Final docs on original branch then normal PR and managed finish; seven-day goal ACTIVE."
+        },
+        "product_closed_at": "2026-10-22T06:58:37.116055+00:00"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -166987,12 +167038,24 @@
         }
       ],
       "wave44_delivery": {
-        "status": "LOCAL_VALIDATED_PENDING_INTEGRATION",
+        "status": "MERGED",
         "report": "docs/development/evidence/WP02-10/stock-original-operation/DELIVERY.md",
         "contract": "docs/design-handbook/remediation/stock-original-operation-v1.md",
         "validation": "38项去重相关.NET通过（10项新增PG/真实HTTP、28项既有库存/Owner边界），3项客户端Vitest及完整vue-tsc -b通过",
         "full_task_complete": false,
-        "business_acceptance": "NOT_RUN"
+        "business_acceptance": "NOT_RUN",
+        "source_candidate_sha": "acdfcafccb942da4eedef059d31973feafee1902",
+        "remote_main_sha": "1fc7a349af49f013f8792ab333ba23b82ea8b6d8",
+        "pull_request": "https://github.com/GTX537/CP6/pull/399",
+        "handoff": {
+          "commit": "75c832473a21fe7c0dd74f3c04c9a036f777a4d1",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261022T065925Z-wave44-delivery/MESSAGE.md",
+          "at": "2026-10-22T06:59:25.996582+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w44-handoff",
+          "pr": 20,
+          "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/20"
+        }
       }
     },
     {
@@ -184234,7 +184297,7 @@
       "path": "docs/development/dispatch/20261022-wave44/README.md",
       "baseline_sha": "3ed818471dad9fd68b4b49971de72b20886c9caf",
       "registered_at": "2026-10-22T06:44:48.915061+00:00",
-      "phase": "W44_01_LOCAL_VALIDATED_PENDING_INTEGRATION",
+      "phase": "CLOSED",
       "assigned_chats": [
         "COORD"
       ],
@@ -184244,12 +184307,10 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [
-        "COORD"
-      ],
+      "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": false,
-      "product_integrated": false,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W44-01",
@@ -184257,7 +184318,7 @@
           "title": "库存调整/移动实际 Owner 的持久原操作与查询/关闭恢复",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "LOCAL_VALIDATED_PENDING_INTEGRATION",
+          "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "actual_start_ref": {
@@ -184276,7 +184337,61 @@
           "candidate_review_completed": true,
           "worker_delivery_ref": "docs/development/evidence/WP02-10/stock-original-operation/DELIVERY.md",
           "validation": "38项去重相关.NET通过（10项新增PG/真实HTTP、28项既有库存/Owner边界），3项客户端Vitest及完整vue-tsc -b通过",
-          "runtime_resources_released": true
+          "runtime_resources_released": true,
+          "candidate_integrated": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "acdfcafccb942da4eedef059d31973feafee1902",
+            "main": "1fc7a349af49f013f8792ab333ba23b82ea8b6d8",
+            "target": "main",
+            "pr": "https://github.com/GTX537/CP6/pull/399",
+            "paths": [
+              "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
+              "CP6.Core/Services/Wms/StockMovementService.OriginalOperations.cs",
+              "CP6.Core/Services/Wms/StockOriginalOperationsV1.cs",
+              "CP6.Tests/Erp/StockOriginalOperationPostgreSqlTests.cs",
+              "CP6.WebApi/Controllers/Wms/StockController.cs",
+              "cp6.web/src/api/wms/stock.spec.ts",
+              "cp6.web/src/api/wms/stock.ts",
+              "cp6.web/src/types/wms/wms.ts",
+              "docs/design-handbook/remediation/stock-original-operation-v1.md",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/09-parallel-development.md",
+              "docs/development/dispatch/20261022-wave44/README.md",
+              "docs/development/evidence/WP02-10/stock-original-operation/DELIVERY.md",
+              "docs/development/planning/20261022-seven-day-delivery.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-22T06:58:37.116055+00:00"
+          },
+          "delivery_ref": {
+            "commit": "75c832473a21fe7c0dd74f3c04c9a036f777a4d1",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261022T065925Z-wave44-delivery/MESSAGE.md",
+            "at": "2026-10-22T06:59:25.996582+00:00",
+            "base": "codex/t02c-entry-handoff-20260921",
+            "branch": "codex/w44-handoff",
+            "pr": 20,
+            "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/20"
+          },
+          "resources_released": false,
+          "lifecycle_snapshot": {
+            "observed_at": "2026-10-22T07:02:16.933941+00:00",
+            "main_task": "CP6:W44-01",
+            "main_branch": "codex/w44-01",
+            "main_status": "active-final-documentation",
+            "main_seat_released": false,
+            "main_finish_required": true,
+            "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
+            "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave44-final-verification.json",
+            "handoff_seat_released": true,
+            "note": "Final docs on original branch then normal PR and managed finish; seven-day goal ACTIVE."
+          },
+          "product_closed_at": "2026-10-22T06:58:37.116055+00:00"
         }
       ],
       "horizon": {
@@ -184292,7 +184407,28 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Normal PR and Handoff adoption, exact branch cleanup/finish, continue active seven-day next direct prerequisite."
+      "next_action": "W44 inventory original operation adopted; final docs PR then finish. Continue next direct prerequisite of seven-day goal; no repeat W37-W44.",
+      "product_closed_at": "2026-10-22T06:58:37.116055+00:00",
+      "handoff_integration": {
+        "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/20",
+        "commit": "13bc845c445095603878ef2a560559af0b02e6bf",
+        "target_head": "13bc845c445095603878ef2a560559af0b02e6bf"
+      },
+      "handoff_resources_released": true,
+      "handoff_branch_disposition": "deleted-local-and-remote",
+      "lifecycle_snapshot": {
+        "observed_at": "2026-10-22T07:02:16.933941+00:00",
+        "main_task": "CP6:W44-01",
+        "main_branch": "codex/w44-01",
+        "main_status": "active-final-documentation",
+        "main_seat_released": false,
+        "main_finish_required": true,
+        "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
+        "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave44-final-verification.json",
+        "handoff_seat_released": true,
+        "note": "Final docs on original branch then normal PR and managed finish; seven-day goal ACTIVE."
+      }
     },
     "wave_history": [
       {
@@ -191697,17 +191833,21 @@
         },
         {
           "id": "D4",
-          "phase": "IMPLEMENTING",
+          "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
           "current_window": "W44-01",
           "prerequisite_adjustment": "REP正式Transfer/SourceDemand、RMA prepare/commit/query/seal、SCHED资源重绑定均缺实际采用接线。按已授权七天计划提前D4的原命令/事务基础；D2/D3未完成。Platform Inbox是投递/投影原语，不替业务命令日志；本窗不伪造其接收采用或工作流发送成功。",
-          "adopted_window": "W43-01",
-          "product_pr": "https://github.com/GTX537/CP6/pull/397",
-          "report": "docs/development/evidence/WP02-10/main-original-operation/DELIVERY.md",
-          "remaining": "Reliable delivery/Outbox adoption, approved workflow adapter or other actual business route; other Owner transaction seams, REP/RMA/SCHED actual adapters remain separate.",
+          "adopted_window": "W44-01",
+          "product_pr": "https://github.com/GTX537/CP6/pull/399",
+          "report": "docs/development/evidence/WP02-10/stock-original-operation/DELIVERY.md",
+          "remaining": "Reliable Outbox and actual consumer adoption; formal Transfer/REP/RMA/SCHED contracts remain distinct; inventory page recovery not adopted.",
           "prior_window_actual_agent_minutes": 34.94,
           "prior_branches_deleted": true,
-          "prior_seats_released": true
+          "prior_seats_released": true,
+          "adopted_windows": [
+            "W43-01",
+            "W44-01"
+          ]
         },
         {
           "id": "D5",

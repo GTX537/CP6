@@ -1,6 +1,6 @@
 # W44-01：库存调整/移动原操作恢复
 
-WP02-10 / 七天一期D4限定窗口；COORD本聊天单人。Main基线`3ed818471dad9fd68b4b49971de72b20886c9caf`，DEV-1 `codex/w44-01`、DEV-2 `codex/w44-handoff`；预计实际1–2h，按真实finish修正。W43实际34.94分钟且已完成分支清理/席位释放，W37–W43不重复。本窗当前本地验证和集中审查完成，正常远端采用/最终finish待执行。
+WP02-10 / 七天一期D4限定窗口；COORD本聊天单人。Main基线`3ed818471dad9fd68b4b49971de72b20886c9caf`，DEV-1 `codex/w44-01`、DEV-2 `codex/w44-handoff`；预计实际1–2h，按真实finish修正。W43实际34.94分钟且已完成分支清理/席位释放，W37–W43不重复。产品和Handoff已采用，原分支最后文档及实际finish见下文。
 
 ## 改动与一次集中审查
 
@@ -31,3 +31,13 @@ StockMovementService的新版本独立命令使用固定operationId。既有实�
 此为既有库存Owner的原结果采用，不完成正式WMS-TRANSFER Root/Claim/capacity/SourceDemand、REP、RMA或SCHED。Finance bridge与通知仍best-effort，确认丢失后可能未发送；原结果不证明外部处理，不主动重发。可靠Outbox/实际消费者与正式角色/环境/保留政策仍另窗。部门映射没有自动继承到新流水；缺真实映射时原结果当前披露拒绝。旧无键HTTP/父Owner原语不回填为可恢复操作。
 
 自有PG/API停止；3个生成data按ownership/绝对边界/无进程/无重解析点核验回收346049312字节，日志/TRX/ownership及可复用缓存保留。当前原DEV-1/2待正常PR采用与finish，INTEGRATION-1空闲，无新增目录。七天目标ACTIVE，D4仍PARTIALLY_ADOPTED；完整任务、125目标及247运行验收不提升。无Actions触发/取消/工作流变更、既有环境迁移或生产部署；根用户资料保留。
+
+## 远端采用与原分支收尾
+
+[产品PR #399](https://github.com/GTX537/CP6/pull/399)正常合并，source`acdfcafccb942da4eedef059d31973feafee1902`、远端main`1fc7a349af49f013f8792ab333ba23b82ea8b6d8`，19项任务文件blob一致。[Handoff PR #20](https://github.com/GTX537/CP6.AI-Handoff/pull/20)采用source`75c832473a21fe7c0dd74f3c04c9a036f777a4d1`、目标`13bc845c445095603878ef2a560559af0b02e6bf`，3项资料blob一致；准确Handoff本地/远端分支已删除，DEV-2干净detached并释放。
+
+38项去重相关.NET（10新增PG/实际HTTP、28既有库存/Owner边界）、3项客户端Vitest及完整类型检查通过。产品输入合并未变，复用真实成功结果；最后文档仅diff/链接/台账检查。自有PG/API停止，3处生成data回收346049312字节，日志/TRX/ownership保留。本任务分支Actions0运行，无取消项/触发修改。
+
+此快照 2026-10-22T07:02:16.933941+00:00 原DEV-1/codex/w44-01仍做最后采用文档；正常最终PR后manage finish，不提前声明自身释放。准确分支处置、工作区状态、席位与实际耗时见最终PR、实时管理登记及`C:/Users/tt/CP6-planning-reports/20261017-foundation/wave44-final-verification.json`。原估1–2h按真实finish修正。
+
+七天目标ACTIVE，D1完成、D2/D4局部采用；继续其余直接前置。库存原结果不是正式Transfer/REP/RMA/SCHED或可靠财务投递，客户端API采用不等于页面恢复。125目标/247运行及整卡不提升，无新树/代理/Actions/既有环境迁移/生产，根用户资料保留。W37–W43已实际收尾不重复。

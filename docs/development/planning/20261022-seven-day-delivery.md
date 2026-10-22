@@ -90,3 +90,8 @@ W43实际34.94分钟、PR397/398/Handoff19采用、两分支删除/席位释放�
 REP需要的正式Root/Claim/Transfer、RMA正式适配器与SCHED资源重绑定尚未实际采用。本窗扩展D4已采用Main journal到库存单腿/双腿事务，不作为正式TRANSFER/REP采用；Finance bridge仍为提交后best-effort，不能借原结果恢复重新发送或宣称可靠投递。
 
 [W44](../dispatch/20261022-wave44/README.md)预计1–2h；库存实际Owner原命令与查询/关闭API，精确对象当前授权，无页面采用或可靠外部投递声明。
+
+
+## D4库存采用检查点
+
+W44库存原命令/原结果/查询与close由PR399/Handoff20采用，38相关.NET、3客户端Vitest与完整类型检查通过；DEV-2释放，原DEV-1最后文档后finish。D4仍PARTIALLY_ADOPTED，可靠Outbox/消费者与正式Transfer等前置保留；现有页面没有采用库存命令，七天目标保持ACTIVE。
