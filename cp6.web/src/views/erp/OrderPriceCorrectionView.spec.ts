@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
-const api = vi.hoisted(() => ({ batchUpdatePrice: vi.fn(), searchPriceCorrection: vi.fn() }))
+const api = vi.hoisted(() => ({ batchUpdatePrice: vi.fn(), searchPriceCorrection: vi.fn(),
+  priceCorrectionOperationScope: vi.fn(), readPriceCorrectionOperation: vi.fn(), closePriceCorrectionOperation: vi.fn() }))
 const messages = vi.hoisted(() => ({ success: vi.fn(), warning: vi.fn(), info: vi.fn(), error: vi.fn(), confirm: vi.fn() }))
 vi.mock('@/api/erp/order', () => ({ orderApi: api }))
 vi.mock('element-plus', () => ({ ElMessage: messages, ElMessageBox: { confirm: messages.confirm } }))
@@ -10,6 +11,8 @@ import OrderPriceCorrectionView from './OrderPriceCorrectionView.vue'
 import { AUTH_EPOCH, AUTH_EVENT } from '@/auth/identity'
 
 let view: ReturnType<typeof mount> | undefined
+const scope = { tenantId: 'df198df2-d232-4ac2-9d96-1e06992ed59d', actorId: '2184c0a9-e830-4bbc-bf27-e7b26ff4f1f1' }
+const pendingKey = `cp6_price_operation_v1:${scope.tenantId}:${scope.actorId}`
 async function render() {
   view = mount(OrderPriceCorrectionView, { global: { directives: { loading: {}, permission: {} }, stubs: {
     ElCard: { template: '<div><slot /></div>' }, ElForm: { template: '<div><slot /></div>' },
@@ -29,7 +32,10 @@ async function render() {
 }
 beforeEach(() => {
   localStorage.clear()
+  Object.defineProperty(navigator, 'locks', { configurable: true, value: { request: (_key: string, _options: unknown, action: () => unknown) => action() } })
   vi.clearAllMocks(); api.batchUpdatePrice.mockReset(); messages.confirm.mockReset().mockResolvedValue('confirm')
+  api.priceCorrectionOperationScope.mockReset().mockResolvedValue({ code: 0, data: scope })
+  api.readPriceCorrectionOperation.mockReset(); api.closePriceCorrectionOperation.mockReset()
   api.searchPriceCorrection.mockResolvedValue({ code: 0, data: { rows: [], total: 0 } })
 })
 afterEach(() => { view?.unmount(); view = undefined })
@@ -58,8 +64,8 @@ describe('price correction write outcome', () => {
     const vm = await render()
     let confirm!: () => void
     messages.confirm.mockImplementation(() => new Promise<void>(resolve => { confirm = resolve }))
-    api.batchUpdatePrice.mockResolvedValue({ code: 0, data: { updatedCount: 1, wfRequestedCount: 2,
-      conflictedKeys: [], workflowDeliveryState: 'AwaitingAdapter' } })
+    api.batchUpdatePrice.mockImplementation(async request => ({ code: 0, data: { operationId: request.operationId, updatedCount: 1, wfRequestedCount: 2,
+      conflictedKeys: [], workflowDeliveryState: 'AwaitingAdapter' } }))
     const first = vm.onSubmit(); await vm.onSubmit(); expect(messages.confirm).toHaveBeenCalledTimes(1)
     vm.selectedRows[0].individualUnitPriceAfter = 99
     confirm(); await first
@@ -120,5 +126,51 @@ describe('price correction write outcome', () => {
     api.batchUpdatePrice.mockRejectedValue({ response: { status } }); await vm.onSubmit()
     expect(vm.rows).toEqual([]); expect(vm.selectedRows).toEqual([])
     expect(api.batchUpdatePrice).toHaveBeenCalledTimes(1); expect(vm.outcomeUnknown).toBe(false)
+  })
+  it('recovers the original committed result after a lost response and never reexecutes', async () => {
+    const vm = await render(); api.batchUpdatePrice.mockRejectedValue(new Error('lost'))
+    await vm.onSubmit(); const id = localStorage.getItem(pendingKey)!
+    expect(id).toBeTruthy(); expect(localStorage.getItem(pendingKey)).not.toContain('draft')
+    api.readPriceCorrectionOperation.mockResolvedValue({ code: 0, data: { operationId: id, state: 'COMMITTED', result: { operationId: id, updatedCount: 1 } } })
+    await vm.recoverOperation(false)
+    expect(api.readPriceCorrectionOperation).toHaveBeenCalledWith(id); expect(api.batchUpdatePrice).toHaveBeenCalledTimes(1)
+    expect(localStorage.getItem(pendingKey)).toBeNull(); expect(vm.outcomeUnknown).toBe(false)
+    expect(vm.submitNotice).toContain('外部送信待ち'); expect(vm.rows).toEqual([])
+  })
+  it('retains UNKNOWN through remount and allows only an explicit fenced close', async () => {
+    let vm = await render(); api.batchUpdatePrice.mockRejectedValue(new Error('lost')); await vm.onSubmit()
+    const id = localStorage.getItem(pendingKey)!
+    view!.unmount(); vm = await render(); expect(vm.pendingOperation).toBe(id)
+    api.readPriceCorrectionOperation.mockResolvedValue({ code: 0, data: { operationId: id, state: 'UNKNOWN' } })
+    await vm.recoverOperation(false); expect(vm.outcomeUnknown).toBe(true); expect(localStorage.getItem(pendingKey)).toBe(id)
+    api.closePriceCorrectionOperation.mockResolvedValue({ code: 0, data: { operationId: id, state: 'CLOSED' } })
+    await vm.recoverOperation(true)
+    expect(api.closePriceCorrectionOperation).toHaveBeenCalledWith(id); expect(vm.pendingOperation).toBeNull()
+    expect(api.batchUpdatePrice).toHaveBeenCalledTimes(1)
+  })
+  it('keeps the original reference on read denial and rejects a mismatched result', async () => {
+    const vm = await render(); api.batchUpdatePrice.mockRejectedValue(new Error('lost')); await vm.onSubmit()
+    const id = localStorage.getItem(pendingKey)!
+    api.readPriceCorrectionOperation.mockRejectedValueOnce({ response: { status: 403 } })
+    await vm.recoverOperation(false); expect(localStorage.getItem(pendingKey)).toBe(id); expect(vm.selectedRows).toEqual([])
+    api.readPriceCorrectionOperation.mockResolvedValueOnce({ code: 0, data: { operationId: crypto.randomUUID(), state: 'CLOSED' } })
+    await vm.recoverOperation(false); expect(localStorage.getItem(pendingKey)).toBe(id)
+  })
+  it('ignores late recovery from the previous identity and preserves its stored reference', async () => {
+    const vm = await render(); api.batchUpdatePrice.mockRejectedValue(new Error('lost')); await vm.onSubmit()
+    const id = localStorage.getItem(pendingKey)!
+    let finish!: (value: unknown) => void
+    api.readPriceCorrectionOperation.mockImplementationOnce(() => new Promise(resolve => { finish = resolve }))
+    const reading = vm.recoverOperation(false)
+    api.priceCorrectionOperationScope.mockResolvedValue({ code: 0, data: { ...scope, actorId: crypto.randomUUID() } })
+    localStorage.setItem(AUTH_EPOCH, crypto.randomUUID()); window.dispatchEvent(new Event(AUTH_EVENT)); await flushPromises()
+    finish({ code: 0, data: { operationId: id, state: 'COMMITTED', result: { operationId: id, updatedCount: 999 } } }); await reading
+    expect(localStorage.getItem(pendingKey)).toBe(id); expect(vm.submitNotice).not.toContain('999'); expect(vm.pendingOperation).toBeNull()
+  })
+  it('fails closed before sending when storage locks are unavailable or the original reference is corrupt', async () => {
+    const vm = await render(); Object.defineProperty(navigator, 'locks', { configurable: true, value: undefined })
+    await vm.onSubmit(); expect(api.batchUpdatePrice).not.toHaveBeenCalled()
+    view!.unmount(); localStorage.setItem(pendingKey, 'broken'); const next = await render()
+    await next.onSubmit(); expect(api.batchUpdatePrice).not.toHaveBeenCalled(); expect(next.operationScope).toBeNull()
   })
 })
