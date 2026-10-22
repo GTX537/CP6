@@ -245,6 +245,38 @@ public class OrderController : LocalizedControllerBase
         }
     }
 
+    // Versioned original-command profile; legacy batch remains its historical non-recoverable contract.
+    [HttpPut("price-correction/commands/v1")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+    public async Task<IActionResult> ExecutePriceCorrectionCommand([FromBody] OrderPriceCorrectionCommandV1 request,
+        [FromServices] OrderPriceCorrectionOwnerV1 owner, CancellationToken ct)
+    {
+        // Owner distinguishes new-write authorization from current original-result read authorization.
+        try { return Ok(new { code=0,message="OK",data=await owner.ExecuteCommandAsync(request,ct) }); }
+        catch(DbUpdateConcurrencyException) { return Conflict(new { code=409,message="PRICE_CORRECTION_VERSION_CONFLICT" }); }
+    }
+
+    [HttpGet("price-correction/operations/v1/{operation:guid}")]
+    [RequirePermission("erp-order-price-correction", "query")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+    public async Task<IActionResult> ReadPriceCorrectionOperation(Guid operation,
+        [FromServices] OrderPriceCorrectionOwnerV1 owner, CancellationToken ct)
+        => Ok(new { code=0,message="OK",data=await owner.ReadOperationAsync(operation,ct) });
+
+    [HttpGet("price-correction/operations/v1/scope")]
+    [RequirePermission("erp-order-price-correction", "query")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+    public async Task<IActionResult> PriceCorrectionOperationScope(
+        [FromServices] OrderPriceCorrectionOwnerV1 owner, CancellationToken ct)
+        => Ok(new { code=0,message="OK",data=await owner.OperationScopeAsync(ct) });
+
+    [HttpPost("price-correction/operations/v1/{operation:guid}/close")]
+    [RequirePermission("erp-order-price-correction", "query")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+    public async Task<IActionResult> ClosePriceCorrectionOperation(Guid operation,
+        [FromServices] OrderPriceCorrectionOwnerV1 owner, CancellationToken ct)
+        => Ok(new { code=0,message="OK",data=await owner.CloseOperationAsync(operation,ct) });
+
     /// <summary>単価訂正バッチ更新 — PUT /api/orders/price-correction/batch</summary>
     [HttpPut("price-correction/batch")]
     [RequirePermission("erp-order-price-correction", "correct")]

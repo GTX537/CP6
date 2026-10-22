@@ -170,10 +170,19 @@ export const orderApi = {
     )
   },
 
-  batchUpdatePrice(req: OrderPriceCorrectionBatchUpdateDto) {
+  batchUpdatePrice(req: OrderPriceCorrectionBatchUpdateDto & { operationId: string }) {
     return http.put<any, ApiResult<OrderPriceCorrectionBatchResultDto>>(
-      '/orders/price-correction/batch',
+      '/orders/price-correction/commands/v1',
       req
     )
+  },
+  priceCorrectionOperationScope() {
+    return http.get<any, ApiResult<import('@/types/erp/order').PriceCorrectionOperationScope>>('/orders/price-correction/operations/v1/scope')
+  },
+  readPriceCorrectionOperation(id: string) {
+    return http.get<any, ApiResult<import('@/types/erp/order').PriceCorrectionOperation>>(`/orders/price-correction/operations/v1/${encodeURIComponent(id)}`)
+  },
+  closePriceCorrectionOperation(id: string) {
+    return http.post<any, ApiResult<import('@/types/erp/order').PriceCorrectionOperation>>(`/orders/price-correction/operations/v1/${encodeURIComponent(id)}/close`)
   },
 }

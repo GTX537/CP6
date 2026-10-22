@@ -572,9 +572,18 @@ public class OrderPriceCorrectionBatchUpdateDto
     public List<OrderPriceCorrectionUpdateDto> Items { get; set; } = new();
 }
 
+public sealed class OrderPriceCorrectionCommandV1 : OrderPriceCorrectionBatchUpdateDto
+{
+    public Guid OperationId { get; set; }
+}
+public sealed record OrderPriceCorrectionOperationV1(Guid OperationId, string State,
+    OrderPriceCorrectionBatchResultDto? Result = null);
+public sealed record OrderPriceCorrectionOperationScopeV1(Guid TenantId, Guid ActorId);
+
 /// <summary>PA090 バッチ更新結果（POWER EGG WF 起票件数を含む）</summary>
 public class OrderPriceCorrectionBatchResultDto
 {
+    public Guid? OperationId { get; set; }
     /// <summary>AwaitingAdapter means durable local intent only, not external workflow delivery.</summary>
     public string? WorkflowDeliveryState { get; set; }
     public int UpdatedCount { get; set; }

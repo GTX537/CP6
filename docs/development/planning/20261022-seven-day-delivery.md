@@ -69,3 +69,11 @@ D2首批[W42](../dispatch/20261022-wave42/README.md)绑定四类既有对象，�
 ## D2首批采用检查点
 
 W42四类独立对象绑定由PR395/Handoff18采用，100项相关.NET、25项页面/恢复和类型检查通过；DEV-2释放，原DEV-1最后文档后finish。D2尚未整阶段完成，正式RMA前置与新对象创建归属保留，下一窗口核对补充或D3直接前置，必要时提前D4。持续目标保持ACTIVE。
+
+## W42实际收尾 / D4前置提前
+
+W42实际39.91分钟，PR395/396与Handoff18已远端采用，两任务分支删除，固定席位实际释放。D2仍PARTIALLY_ADOPTED。
+
+REP正式Transfer/SourceDemand、RMA prepare/commit/query/seal、SCHED资源重绑定均缺实际采用接线。按已授权七天计划提前D4的原命令/事务基础；D2/D3未完成。Platform Inbox是投递/投影原语，不替业务命令日志；本窗不伪造其接收采用或工作流发送成功。
+
+[W43](../dispatch/20261022-wave43/README.md)预计2–4h，Main原命令日志与PA090真实业务/页面恢复先行；完整可靠投递仍为下一前置，不据此勾选D4完成。

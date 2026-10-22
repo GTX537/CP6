@@ -2,6 +2,7 @@ using System.Data;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Sys;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Erp;
 using CP6.Entity.DTOs;
 using Microsoft.AspNetCore.Http;
@@ -128,8 +129,12 @@ public sealed partial class OrderPriceCorrectionOwnerV1
             throw new OrderPriceCorrectionException("FIELD_WRITE_FORBIDDEN", 403);
     }
 
-    public async Task<OrderPriceCorrectionBatchResultDto> ExecuteAsync(OrderPriceCorrectionBatchUpdateDto request,
+    public Task<OrderPriceCorrectionBatchResultDto> ExecuteAsync(OrderPriceCorrectionBatchUpdateDto request,
         CancellationToken ct = default)
+        => ExecuteCoreAsync(request,ct,null);
+
+    private async Task<OrderPriceCorrectionBatchResultDto> ExecuteCoreAsync(OrderPriceCorrectionBatchUpdateDto request,
+        CancellationToken ct, Guid? operation)
     {
         using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(ct,
             http.HttpContext?.RequestAborted ?? CancellationToken.None);
@@ -148,6 +153,7 @@ public sealed partial class OrderPriceCorrectionOwnerV1
             IndividualUnitPriceAfter = x.IndividualUnitPriceAfter, SetUnitPriceAfter = x.SetUnitPriceAfter,
             SpecialPriceFlg = x.SpecialPriceFlg, PriceChangeReason = x.PriceChangeReason, RowVersion = x.RowVersion?.ToArray()
         }).ToArray();
+        var commandInput=MainOwnerOperationJournalV1.Encode(new { contract=CommandContract,items });
         var original = db.ChangeTracker.Entries().Select(e => e.Entity).ToHashSet(ReferenceEqualityComparer.Instance);
         await using var tx = await db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, ct);
         var committing = false;
@@ -156,8 +162,14 @@ public sealed partial class OrderPriceCorrectionOwnerV1
             // Same transaction root as ordinary/raw-SQL authority writers; retain through COMMIT.
             // Explicit READ COMMITTED prevents a caller's old repeatable-read authorization snapshot.
             await AuthenticationCompletionGateV1.AcquireAsync(db, ct);
+            var journal=new MainOwnerOperationJournalV1(db);
+            if(operation is Guid originalId && await journal.Read(OperationOwner,originalId,ct) is { } saved)
+            {
+                var replay=await DiscloseOriginal(saved,originalId,commandInput,ct);
+                ct.ThrowIfCancellationRequested();committing=true;await tx.CommitAsync(ct);return replay;
+            }
             var authority = await ReadAuthority(ct);
-            var result = new OrderPriceCorrectionBatchResultDto { WorkflowDeliveryState = "AwaitingAdapter" };
+            var result = new OrderPriceCorrectionBatchResultDto { OperationId=operation, WorkflowDeliveryState = "AwaitingAdapter" };
             var numbers = items.Select(x => x.WebOrderNo).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
             var rows = new List<OrderDetail>();
             if (numbers.Length != 0)
@@ -224,11 +236,17 @@ public sealed partial class OrderPriceCorrectionOwnerV1
                 }
             }
 
-            var batch = Guid.NewGuid();
+            var batch = operation ?? Guid.NewGuid();
+            var audit=new List<object>();
             var now = DateTime.Now;
             foreach (var row in affected.OrderBy(r => r.WebOrderNo, StringComparer.Ordinal).ThenBy(r => r.WebOrderDetailNo))
             {
                 var before = db.Entry(row).OriginalValues;
+                audit.Add(new { row.Id, before=new { individual=before.GetValue<decimal?>(nameof(row.IndividualUnitPrice)),
+                    set=before.GetValue<decimal?>(nameof(row.SetUnitPrice)),amount=before.GetValue<decimal?>(nameof(row.Amount)),
+                    special=before.GetValue<string?>(nameof(row.SpecialPriceFlg)),reason=before.GetValue<string?>(nameof(row.PriceChangeReason)) },
+                    after=new { row.IndividualUnitPrice,row.SetUnitPrice,row.SpecialPriceFlg,row.PriceChangeReason,
+                        amount=(row.Quantity??0m)*(row.SalesPriceDiv=="1"?row.IndividualUnitPrice??0m:row.SetUnitPrice??0m) } });
                 var priceChanged = row.IndividualUnitPrice != before.GetValue<decimal?>(nameof(row.IndividualUnitPrice))
                     || row.SetUnitPrice != before.GetValue<decimal?>(nameof(row.SetUnitPrice))
                     || row.SpecialPriceFlg != before.GetValue<string?>(nameof(row.SpecialPriceFlg));
@@ -266,6 +284,11 @@ public sealed partial class OrderPriceCorrectionOwnerV1
                 }
             }
             await db.SaveChangesAsync(ct);
+            if(operation is Guid operationId)
+                await journal.Store(OperationOwner,CommandContract,operationId,authority.Source.SubjectId,commandInput,
+                    result,affected.Select(r=>r.Id).Order().ToArray(),
+                    new { batch,authority.Source.SubjectId,authority.Source.RegistryVersion,authority.Source.SourcePermissionVersion,
+                        authority.OrganizationVersion,changes=audit },ct);
             // Recheck after writes as well: time expiry, canceled request and authority faults
             // must roll back every business row and intent. No old allow/cache fallback.
             var final = await ReadAuthority(ct);

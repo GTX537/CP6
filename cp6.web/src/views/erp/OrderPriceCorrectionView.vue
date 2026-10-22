@@ -50,7 +50,7 @@
         <el-form-item>
           <el-button type="primary" @click="search" :loading="loading">{{ t('sales.btn.search') }}</el-button>
           <el-button @click="resetQuery">{{ t('sales.btn.clear') }}</el-button>
-          <el-button v-permission="'erp-order-price-correction:correct'" type="success" @click="onSubmit" :loading="submitting" :disabled="selectedRows.length === 0 || outcomeUnknown">
+          <el-button v-permission="'erp-order-price-correction:correct'" type="success" @click="onSubmit" :loading="submitting" :disabled="selectedRows.length === 0 || outcomeUnknown || !!pendingOperation || !operationScope">
             {{ t('sales.pc.updateSelected') }}（{{ selectedRows.length }}）
           </el-button>
         </el-form-item>
@@ -58,6 +58,12 @@
     </el-card>
 
     <el-alert v-if="submitNotice" :title="submitNotice" type="warning" show-icon :closable="false" />
+    <div v-if="pendingOperation" style="margin: 12px 0">
+      <span>{{ t('確認待ちの操作') }}: {{ pendingOperation }}</span>
+      <el-button @click="recoverOperation(false)" :disabled="submitting || recovering">{{ t('元の結果を確認') }}</el-button>
+      <el-button @click="recoverOperation(true)" :disabled="submitting || recovering">{{ t('未完了の操作を封じる') }}</el-button>
+    </div>
+    <el-button v-else-if="!operationScope" @click="loadOperationScope">{{ t('現在のユーザーを確認') }}</el-button>
 
     <!-- 結果 -->
     <el-card shadow="never">
@@ -132,7 +138,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onBeforeUnmount } from 'vue'
+import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
@@ -141,9 +147,11 @@ import { Warning } from '@element-plus/icons-vue'
 import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import { orderApi } from '@/api/erp/order'
 import { AUTH_EVENT, AuthenticationChangedError, identityStamp, requireIdentity } from '@/auth/identity'
+import { pendingPriceOperation, withPriceOperation, completePriceOperation } from '@/auth/priceCorrectionRecovery'
 import type {
   OrderPriceCorrectionQueryDto,
   OrderPriceCorrectionItemDto,
+  PriceCorrectionOperationScope,
 } from '@/types/erp/order'
 
 const query = reactive<OrderPriceCorrectionQueryDto>({
@@ -157,6 +165,58 @@ const submitting = ref(false)
 const outcomeUnknown = ref(false)
 const submitNotice = ref('')
 const selectedRows = ref<OrderPriceCorrectionItemDto[]>([])
+const operationScope = ref<PriceCorrectionOperationScope | null>(null)
+const pendingOperation = ref<string | null>(null)
+const recovering = ref(false)
+let mounted = true
+async function loadOperationScope() {
+  const stamp = identityStamp()
+  try {
+    const response = await orderApi.priceCorrectionOperationScope(); requireIdentity(stamp)
+    if (!mounted) return
+    if (response.code !== 0 || !response.data) throw new Error('Scope unavailable')
+    const pending = pendingPriceOperation(response.data)
+    operationScope.value = response.data; pendingOperation.value = pending
+    outcomeUnknown.value = !!pending
+  } catch {
+    if (mounted && stamp === identityStamp()) {
+      operationScope.value = null
+      submitNotice.value = t('現在のユーザーと元の操作を確認できません。保存前に再確認してください。')
+    }
+  }
+}
+onMounted(loadOperationScope)
+async function recoverOperation(close: boolean) {
+  if (!operationScope.value || submitting.value || recovering.value) return
+  const scope = operationScope.value, stamp = identityStamp()
+  recovering.value = true
+  try {
+    if (close) await ElMessageBox.confirm(t('未完了の元の操作を封じます。すでに保存済みの場合は元の結果を表示します。'), t('確認'))
+    requireIdentity(stamp)
+    const result = await withPriceOperation(scope, false, async (id, originalStamp) => {
+      const response = await (close ? orderApi.closePriceCorrectionOperation(id) : orderApi.readPriceCorrectionOperation(id))
+      requireIdentity(originalStamp)
+      if (response.code !== 0 || !response.data || response.data.operationId !== id
+        || !['COMMITTED', 'CLOSED', 'UNKNOWN'].includes(response.data.state)
+        || response.data.state === 'COMMITTED' && response.data.result?.operationId !== id) throw new Error('Original result mismatch')
+      if (response.data.state !== 'UNKNOWN') completePriceOperation(scope, id, originalStamp)
+      return response.data
+    })
+    requireIdentity(stamp); if (!mounted) return
+    pendingOperation.value = pendingPriceOperation(scope); outcomeUnknown.value = result.state === 'UNKNOWN'
+    submitNotice.value = result.state === 'UNKNOWN' ? t('元の結果は未確認です。未実行とは判断できません。再送せず確認を続けてください。')
+      : result.state === 'CLOSED' ? t('元の操作を封じました。再検索して新しい変更を準備できます。')
+      : t('元の更新を確認しました。更新: {updated} 件 / 承認依頼: {wf} 件（外部送信待ち）。',
+        { updated: result.result!.updatedCount, wf: result.result!.wfRequestedCount })
+    if (result.state === 'COMMITTED' && result.result!.conflictedKeys?.length)
+      ElMessage.warning(t('競合: {keys}', { keys: result.result!.conflictedKeys.join(', ') }))
+    if (result.state !== 'UNKNOWN') clearResults()
+  } catch {
+    if (mounted && stamp === identityStamp()) {
+      clearResults(); submitNotice.value = t('元の結果を確認できません。現在の権限を確認してください。操作は再送していません。')
+    }
+  } finally { if (mounted && stamp === identityStamp()) recovering.value = false }
+}
 const showPrices = computed(() => rows.value.some(row => row.priceReadable !== false))
 const showAmounts = computed(() => rows.value.some(row => row.amountReadable !== false))
 let searchGeneration = 0
@@ -164,12 +224,15 @@ let pageIdentity = identityStamp()
 function identityChanged() {
   if (pageIdentity === identityStamp()) return
   pageIdentity = identityStamp()
+  operationScope.value = null; pendingOperation.value = null; outcomeUnknown.value = false; recovering.value = false
   resetQuery()
+  void loadOperationScope()
   submitNotice.value = t('ログイン状態が変わりました。現在のアカウントで再検索してください。')
 }
 window.addEventListener(AUTH_EVENT, identityChanged)
 window.addEventListener('storage', identityChanged)
 onBeforeUnmount(() => {
+  mounted = false
   searchGeneration++
   window.removeEventListener(AUTH_EVENT, identityChanged)
   window.removeEventListener('storage', identityChanged)
@@ -229,7 +292,7 @@ function resetQuery() {
 }
 
 async function onSubmit() {
-  if (submitting.value || outcomeUnknown.value) return
+  if (submitting.value || outcomeUnknown.value || pendingOperation.value || !operationScope.value) return
   if (selectedRows.value.length === 0) {
     ElMessage.warning(t('sales.err.E10009'))
     return
@@ -247,6 +310,7 @@ async function onSubmit() {
     })),
   }
   const submittedIdentity = identityStamp()
+  const scope = operationScope.value
   let attempted = false
   submitting.value = true
   try {
@@ -256,12 +320,21 @@ async function onSubmit() {
     )
   } catch { submitting.value = false; return }
 
-  submitNotice.value = ''
   try {
     requireIdentity(submittedIdentity)
-    attempted = true
-    const res = await orderApi.batchUpdatePrice(request)
+    submitNotice.value = ''
+    const res = await withPriceOperation(scope, true, async (operationId, stamp) => {
+      pendingOperation.value = operationId
+      attempted = true
+      const response = await orderApi.batchUpdatePrice({ ...request, operationId })
+      requireIdentity(stamp)
+      if (response.code !== 0 || response.data?.operationId !== operationId) throw new Error('Original result mismatch')
+      completePriceOperation(scope, operationId, stamp)
+      return response
+    })
     requireIdentity(submittedIdentity)
+    if (!mounted) return
+    pendingOperation.value = pendingPriceOperation(scope)
     if (res.code !== 0 || !res.data) throw new Error('Price correction result unavailable')
     if (res.code === 0 && res.data) {
       ElMessage.success(t(
@@ -277,10 +350,16 @@ async function onSubmit() {
       selectedRows.value = []
     }
   } catch (error: unknown) {
+    if (!mounted || submittedIdentity !== identityStamp()) return
     if (error instanceof AuthenticationChangedError) {
       resetQuery()
-      outcomeUnknown.value ||= attempted
       submitNotice.value = t('ログイン状態が変わりました。元の更新は再送していません。送信済みの場合は元のアカウントで保存状態を確認してください。')
+      return
+    }
+    if (!attempted) {
+      try { pendingOperation.value = pendingPriceOperation(scope) } catch { operationScope.value = null }
+      outcomeUnknown.value = !!pendingOperation.value
+      submitNotice.value = t('保存前の確認を完了できません。元の操作とブラウザーの保存機能を確認してください。更新は送信していません。')
       return
     }
     const response = (error as { response?: { status?: number; data?: { message?: string } } })?.response
@@ -288,7 +367,7 @@ async function onSubmit() {
     const knownUnavailable = ['AUTHORITY_FENCE_UNAVAILABLE', 'OWNER_SCOPE_MAPPING_UNAVAILABLE'].includes(response?.data?.message || '')
     if (!status || (status >= 500 && !knownUnavailable)) {
       outcomeUnknown.value = true
-      submitNotice.value = t('更新結果を確認できません。受注と承認依頼の保存状態を確認してください。この画面からは再送できません。')
+      submitNotice.value = t('更新結果を確認できません。元の結果を確認してください。操作は再送しません。')
     } else if (status === 401) {
       resetQuery()
       submitNotice.value = t('ログインが無効になりました。再ログイン後に受注の状態を確認してください。更新は再送していません。')

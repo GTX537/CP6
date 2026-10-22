@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 2026-10-22：W43 Main原操作恢复候选已验证
+
+PA090真实有版本命令/页面采用持久原命令，业务/审计/意图同事务；UNKNOWN只查原键，close防迟到写，当前读权限独立于新写。43项去重相关.NET通过（11项新增PG/真实HTTP，32项既有PA090权限/范围/精度/竞争回归），16项Vitest通过，完整vue-tsc -b通过。作者审查完成；[DELIVERY](../development/evidence/WP02-10/main-original-operation/DELIVERY.md)保留准确失败。正常PR采用/分支清理/席位finish待执行。
+
+七天目标ACTIVE，W42实际39.91分钟并已收尾；D4首批先行，外部工作流/Platform投递与其他Owner仍未采用，D2/D3前置保留。125目标/247运行及完整任务不提升；固定目录、PG、无Actions/既有迁移/生产。
+
 ## 2026-10-22：W42可信部门绑定已集成
 
 [产品PR #395](https://github.com/GTX537/CP6/pull/395)与[Handoff PR #18](https://github.com/GTX537/CP6.AI-Handoff/pull/18)远端采用：四类显式部门绑定、IAM维护与现有Owner原生范围已交付。100项去重相关.NET（12新增PG/实际HTTP、88既有Owner/订单绑定）、25项Vitest与完整类型检查通过；原失败保留，所需范围0失败/跳过；一次作者审查完成，[DELIVERY](../development/evidence/WP02-03/standalone-department/DELIVERY.md)保留原失败。

@@ -159407,6 +159407,16 @@
       "date": "2026-10-22",
       "change": "W42 product PR395 and Handoff PR18 adopted; Handoff exact branch and seat released. Original W42 final docs then finish; D2 first tranche only, continuous goal ACTIVE, whole business counts unchanged.",
       "evidence": "docs/development/dispatch/20261022-wave42/README.md"
+    },
+    {
+      "date": "2026-10-22",
+      "change": "W42 actually finished39.91min; advance D4 W43 Main original command/PA090 recovery foundation. REP/RMA/SCHED prerequisites retained, full targets/runtime unchanged.",
+      "evidence": "docs/development/dispatch/20261022-wave43/README.md"
+    },
+    {
+      "date": "2026-10-22",
+      "change": "W43 Main original journal and actual PA090 versioned command/recovery locally validated; legacy batch, full Platform delivery and other Owners remain separate. Seven-day active, full counts unchanged.",
+      "evidence": "docs/development/dispatch/20261022-wave43/README.md"
     }
   ],
   "implementation_assessment": {
@@ -166779,14 +166789,74 @@
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-10",
       "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "assignment": {
+        "chat_label": "COORD / W43-01",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/w43-01",
+        "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+        "claimed_at": "2026-10-22T05:58:27Z",
+        "baseline_sha": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
+        "entry_evidence": "docs/development/dispatch/20261022-wave43/README.md",
+        "phase": "LOCAL_VALIDATED_PENDING_INTEGRATION",
+        "dispatch_scope": "W43_01",
+        "bounded_window_gate": "CONFIRMED",
+        "full_task_gate_unchanged": true,
+        "worker_start_received": true,
+        "actual_start_ref": {
+          "commit": "95be41edc55c0fa7c2516aa1ba225d0aa0bd0ccc",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261022T060044Z-wave43-start/MESSAGE.md",
+          "at": "2026-10-22T06:00:44.269929+00:00"
+        },
+        "allowed_write_paths": [
+          "CP6.Core/Services/Integration/",
+          "CP6.Core/Services/Erp/",
+          "CP6.Entity/DTOs/",
+          "CP6.Persistence.PostgreSql/Migrations/Core/",
+          "CP6.WebApi/Controllers/Erp/",
+          "CP6.Tests/",
+          "cp6.web/src/",
+          "docs/development/",
+          "docs/project-memory/",
+          "docs/design-handbook/"
+        ],
+        "reserved_write_resources": [
+          "Main:owner-unit-of-work",
+          "Main:identity-authority",
+          "Main:PA090",
+          "Main:PostgreSQL-migration-history"
+        ],
+        "reserved_postgresql_ports": [
+          55435
+        ],
+        "handoff_branch": "codex/w43-handoff",
+        "actions_authorized": false,
+        "deployment_authorized": false,
+        "existing_database_migration_authorized": false,
+        "worker_delivery_received": true,
+        "candidate_review_completed": true,
+        "candidate_integrated": false,
+        "resources_released": false,
+        "full_task_completed": false,
+        "worker_delivery_ref": "docs/development/evidence/WP02-10/main-original-operation/DELIVERY.md",
+        "validation": "43项去重相关.NET通过（11项新增PG/真实HTTP，32项既有PA090权限/范围/精度/竞争回归），16项Vitest通过，完整vue-tsc -b通过",
+        "runtime_resources_released": true
+      },
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "wave43_delivery": {
+        "status": "LOCAL_VALIDATED_PENDING_INTEGRATION",
+        "report": "docs/development/evidence/WP02-10/main-original-operation/DELIVERY.md",
+        "contract": "docs/design-handbook/remediation/main-owner-operation-journal-v1.md",
+        "validation": "43项去重相关.NET通过（11项新增PG/真实HTTP，32项既有PA090权限/范围/精度/竞争回归），16项Vitest通过，完整vue-tsc -b通过",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN"
+      }
     },
     {
       "id": "WP02-11",
@@ -184023,11 +184093,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261022-wave42",
-      "path": "docs/development/dispatch/20261022-wave42/README.md",
-      "baseline_sha": "02caf602ab8a81d307001484cae52c46f9ff91f5",
-      "registered_at": "2026-10-22T05:24:53.552722+00:00",
-      "phase": "CLOSED",
+      "id": "20261022-wave43",
+      "path": "docs/development/dispatch/20261022-wave43/README.md",
+      "baseline_sha": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
+      "registered_at": "2026-10-22T06:00:44.269929+00:00",
+      "phase": "W43_01_LOCAL_VALIDATED_PENDING_INTEGRATION",
       "assigned_chats": [
         "COORD"
       ],
@@ -184037,106 +184107,47 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [],
+      "active_implementation_chats": [
+        "COORD"
+      ],
       "workers_started": true,
-      "windows_closed": true,
-      "product_integrated": true,
+      "windows_closed": false,
+      "product_integrated": false,
       "windows": [
         {
-          "id": "W42-01",
-          "task_id": "WP02-03",
-          "title": "无订单对象可信部门绑定：库存、不可变库存流水、盘点、无订单生产指示",
+          "id": "W43-01",
+          "task_id": "WP02-10",
+          "title": "Main 原命令日志与订单单价订正原结果恢复首批采用",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "CLOSED",
+          "phase": "LOCAL_VALIDATED_PENDING_INTEGRATION",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "actual_start_ref": {
-            "commit": "a8110e49aac262302e2655ff84c9d9c4a62cbaa5",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261022T052453Z-wave42-start/MESSAGE.md",
-            "at": "2026-10-22T05:24:53.552722+00:00"
+            "commit": "95be41edc55c0fa7c2516aa1ba225d0aa0bd0ccc",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261022T060044Z-wave43-start/MESSAGE.md",
+            "at": "2026-10-22T06:00:44.269929+00:00"
           },
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w42-01",
-          "planned_scope_ref": "docs/development/dispatch/20261022-wave42/README.md",
+          "branch": "codex/w43-01",
+          "planned_scope_ref": "docs/development/dispatch/20261022-wave43/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "worker_delivery_ref": "docs/development/evidence/WP02-03/standalone-department/DELIVERY.md",
-          "validation": "100项去重相关.NET通过（12项新增PG/实际HTTP、88项既有Owner/订单绑定），25项Vitest（新增绑定9、既有页面13、原操作恢复3），完整vue-tsc -b通过；所需范围0失败/跳过",
-          "runtime_resources_released": true,
-          "candidate_integrated": true,
-          "integration": {
-            "result": "PASS",
-            "repository": "GTX537/CP6",
-            "source": "c09b2a4977a6c98f8707a8355c75e3be270632ee",
-            "main": "98d8d00c5ed39c14683ec97d90899edccdfcf32b",
-            "target": "main",
-            "pr": "https://github.com/GTX537/CP6/pull/395",
-            "paths": [
-              "CP6.Core/Services/Integration/OperationsAccessV1.Inventory.cs",
-              "CP6.Core/Services/Integration/OperationsAccessV1.cs",
-              "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
-              "CP6.Core/Services/Integration/StandaloneDepartmentScopeV1.cs",
-              "CP6.Core/Services/Sys/IamAdministrationV1.cs",
-              "CP6.Core/Services/Sys/IamStandaloneDepartmentMappingV1.cs",
-              "CP6.Persistence.PostgreSql/Migrations/Core/20261022053000_StandaloneDepartmentMappingV1.cs",
-              "CP6.Tests/Erp/StandaloneDepartmentPostgreSqlTests.cs",
-              "CP6.WebApi/Controllers/Sys/IamDepartmentController.cs",
-              "CP6.WebApi/Program.cs",
-              "cp6.web/src/api/sys/iam.ts",
-              "cp6.web/src/auth/iamOperationRecovery.ts",
-              "cp6.web/src/views/pms/DeptTreeView.vue",
-              "cp6.web/src/views/pms/StandaloneDepartmentMappings.spec.ts",
-              "cp6.web/src/views/pms/StandaloneDepartmentMappings.vue",
-              "docs/design-handbook/remediation/main-standalone-department-binding-v1.md",
-              "docs/development/07-detailed-tasks.md",
-              "docs/development/09-parallel-development.md",
-              "docs/development/dispatch/20261022-wave42/README.md",
-              "docs/development/evidence/WP02-03/standalone-department/DELIVERY.md",
-              "docs/development/planning/20261022-seven-day-delivery.md",
-              "docs/development/roadmap.json",
-              "docs/project-memory/05-Completed.md",
-              "docs/project-memory/06-Todo.md",
-              "docs/project-memory/CHANGELOG-AI.md",
-              "docs/project-memory/PROJECT_STATE.md"
-            ],
-            "observed_at": "2026-10-22T05:43:39.587794+00:00"
-          },
-          "delivery_ref": {
-            "commit": "3b4377969cd384a7a8df13078298af188e02c885",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261022T054423Z-wave42-delivery/MESSAGE.md",
-            "at": "2026-10-22T05:44:23.195255+00:00",
-            "base": "codex/t02c-entry-handoff-20260921",
-            "branch": "codex/w42-handoff",
-            "pr": 18,
-            "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/18"
-          },
-          "resources_released": false,
-          "lifecycle_snapshot": {
-            "observed_at": "2026-10-22T05:47:39.146153+00:00",
-            "main_task": "CP6:W42-01",
-            "main_branch": "codex/w42-01",
-            "main_status": "active-final-documentation",
-            "main_seat_released": false,
-            "main_finish_required": true,
-            "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
-            "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave42-final-verification.json",
-            "handoff_seat_released": true,
-            "note": "Original branch final docs then normal PR and managed finish. D2 only first tranche; seven-day goal continues."
-          },
-          "product_closed_at": "2026-10-22T05:43:39.587794+00:00"
+          "worker_delivery_ref": "docs/development/evidence/WP02-10/main-original-operation/DELIVERY.md",
+          "validation": "43项去重相关.NET通过（11项新增PG/真实HTTP，32项既有PA090权限/范围/精度/竞争回归），16项Vitest通过，完整vue-tsc -b通过",
+          "runtime_resources_released": true
         }
       ],
       "horizon": {
-        "started_at": "2026-10-22T05:09:28Z",
+        "started_at": "2026-10-22T05:58:27Z",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
           120,
-          180
+          240
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -184144,28 +184155,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W42 trusted standalone binding adopted; original final docs PR then finish. Continue active seven-day goal with actual D2/D3 prerequisites. RMA requires formal adapter/Uow/effect Owner; no repeat W37-W42.",
-      "product_closed_at": "2026-10-22T05:43:39.587794+00:00",
-      "handoff_integration": {
-        "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
-        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/18",
-        "commit": "567cef9e8c99b1ced784934c58eb18afab2f4822",
-        "target_head": "567cef9e8c99b1ced784934c58eb18afab2f4822"
-      },
-      "handoff_resources_released": true,
-      "handoff_branch_disposition": "deleted-local-and-remote",
-      "lifecycle_snapshot": {
-        "observed_at": "2026-10-22T05:47:39.146153+00:00",
-        "main_task": "CP6:W42-01",
-        "main_branch": "codex/w42-01",
-        "main_status": "active-final-documentation",
-        "main_seat_released": false,
-        "main_finish_required": true,
-        "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
-        "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave42-final-verification.json",
-        "handoff_seat_released": true,
-        "note": "Original branch final docs then normal PR and managed finish. D2 only first tranche; seven-day goal continues."
-      }
+      "next_action": "Normal PR, remote adoption, Handoff, exact branch cleanup/finish; continue D4 dependencies within active seven-day goal."
     },
     "wave_history": [
       {
@@ -191175,6 +191165,158 @@
           "handoff_seat_released": true,
           "note": "Original branch carries final docs; normal final PR then managed finish. Exact disposition/elapsed in runtime proof. Continue D2 under same goal."
         }
+      },
+      {
+        "id": "20261022-wave42",
+        "path": "docs/development/dispatch/20261022-wave42/README.md",
+        "baseline_sha": "02caf602ab8a81d307001484cae52c46f9ff91f5",
+        "registered_at": "2026-10-22T05:24:53.552722+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W42-01",
+            "task_id": "WP02-03",
+            "title": "无订单对象可信部门绑定：库存、不可变库存流水、盘点、无订单生产指示",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "actual_start_ref": {
+              "commit": "a8110e49aac262302e2655ff84c9d9c4a62cbaa5",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261022T052453Z-wave42-start/MESSAGE.md",
+              "at": "2026-10-22T05:24:53.552722+00:00"
+            },
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w42-01",
+            "planned_scope_ref": "docs/development/dispatch/20261022-wave42/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "worker_delivery_ref": "docs/development/evidence/WP02-03/standalone-department/DELIVERY.md",
+            "validation": "100项去重相关.NET通过（12项新增PG/实际HTTP、88项既有Owner/订单绑定），25项Vitest（新增绑定9、既有页面13、原操作恢复3），完整vue-tsc -b通过；所需范围0失败/跳过",
+            "runtime_resources_released": true,
+            "candidate_integrated": true,
+            "integration": {
+              "result": "PASS",
+              "repository": "GTX537/CP6",
+              "source": "c09b2a4977a6c98f8707a8355c75e3be270632ee",
+              "main": "98d8d00c5ed39c14683ec97d90899edccdfcf32b",
+              "target": "main",
+              "pr": "https://github.com/GTX537/CP6/pull/395",
+              "paths": [
+                "CP6.Core/Services/Integration/OperationsAccessV1.Inventory.cs",
+                "CP6.Core/Services/Integration/OperationsAccessV1.cs",
+                "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
+                "CP6.Core/Services/Integration/StandaloneDepartmentScopeV1.cs",
+                "CP6.Core/Services/Sys/IamAdministrationV1.cs",
+                "CP6.Core/Services/Sys/IamStandaloneDepartmentMappingV1.cs",
+                "CP6.Persistence.PostgreSql/Migrations/Core/20261022053000_StandaloneDepartmentMappingV1.cs",
+                "CP6.Tests/Erp/StandaloneDepartmentPostgreSqlTests.cs",
+                "CP6.WebApi/Controllers/Sys/IamDepartmentController.cs",
+                "CP6.WebApi/Program.cs",
+                "cp6.web/src/api/sys/iam.ts",
+                "cp6.web/src/auth/iamOperationRecovery.ts",
+                "cp6.web/src/views/pms/DeptTreeView.vue",
+                "cp6.web/src/views/pms/StandaloneDepartmentMappings.spec.ts",
+                "cp6.web/src/views/pms/StandaloneDepartmentMappings.vue",
+                "docs/design-handbook/remediation/main-standalone-department-binding-v1.md",
+                "docs/development/07-detailed-tasks.md",
+                "docs/development/09-parallel-development.md",
+                "docs/development/dispatch/20261022-wave42/README.md",
+                "docs/development/evidence/WP02-03/standalone-department/DELIVERY.md",
+                "docs/development/planning/20261022-seven-day-delivery.md",
+                "docs/development/roadmap.json",
+                "docs/project-memory/05-Completed.md",
+                "docs/project-memory/06-Todo.md",
+                "docs/project-memory/CHANGELOG-AI.md",
+                "docs/project-memory/PROJECT_STATE.md"
+              ],
+              "observed_at": "2026-10-22T05:43:39.587794+00:00"
+            },
+            "delivery_ref": {
+              "commit": "3b4377969cd384a7a8df13078298af188e02c885",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261022T054423Z-wave42-delivery/MESSAGE.md",
+              "at": "2026-10-22T05:44:23.195255+00:00",
+              "base": "codex/t02c-entry-handoff-20260921",
+              "branch": "codex/w42-handoff",
+              "pr": 18,
+              "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/18"
+            },
+            "resources_released": false,
+            "lifecycle_snapshot": {
+              "observed_at": "2026-10-22T05:47:39.146153+00:00",
+              "main_task": "CP6:W42-01",
+              "main_branch": "codex/w42-01",
+              "main_status": "active-final-documentation",
+              "main_seat_released": false,
+              "main_finish_required": true,
+              "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
+              "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave42-final-verification.json",
+              "handoff_seat_released": true,
+              "note": "Original branch final docs then normal PR and managed finish. D2 only first tranche; seven-day goal continues."
+            },
+            "product_closed_at": "2026-10-22T05:43:39.587794+00:00"
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-22T05:09:28Z",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            120,
+            180
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W42 trusted standalone binding adopted; original final docs PR then finish. Continue active seven-day goal with actual D2/D3 prerequisites. RMA requires formal adapter/Uow/effect Owner; no repeat W37-W42.",
+        "product_closed_at": "2026-10-22T05:43:39.587794+00:00",
+        "handoff_integration": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/18",
+          "commit": "567cef9e8c99b1ced784934c58eb18afab2f4822",
+          "target_head": "567cef9e8c99b1ced784934c58eb18afab2f4822"
+        },
+        "handoff_resources_released": true,
+        "handoff_branch_disposition": "deleted-local-and-remote",
+        "lifecycle_snapshot": {
+          "observed_at": "2026-10-22T05:47:39.146153+00:00",
+          "main_task": "CP6:W42-01",
+          "main_branch": "codex/w42-01",
+          "main_status": "active-final-documentation",
+          "main_seat_released": false,
+          "main_finish_required": true,
+          "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
+          "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave42-final-verification.json",
+          "handoff_seat_released": true,
+          "note": "Original branch final docs then normal PR and managed finish. D2 only first tranche; seven-day goal continues."
+        },
+        "lifecycle_actual": {
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "branches_deleted": true,
+          "actual_agent_minutes": 39.91,
+          "proof": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave42-final-verification.json"
+        }
       }
     ],
     "development_priority": {
@@ -191233,7 +191375,7 @@
         35,
         55
       ],
-      "current_stage": "D2",
+      "current_stage": "D4",
       "stages": [
         {
           "id": "D1",
@@ -191256,7 +191398,11 @@
           "adopted_window": "W42-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/395",
           "report": "docs/development/evidence/WP02-03/standalone-department/DELIVERY.md",
-          "remaining": "Replenishment independent Owner, formal RMA adapter/Uow/effect Owner adoption, new-object creation and remaining inbound scope contracts; exact next window gated."
+          "remaining": "Replenishment independent Owner, formal RMA adapter/Uow/effect Owner adoption, new-object creation and remaining inbound scope contracts; exact next window gated.",
+          "actual_agent_minutes": 39.91,
+          "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
+          "branches_deleted": true,
+          "seats_released": true
         },
         {
           "id": "D3",
@@ -191265,8 +191411,10 @@
         },
         {
           "id": "D4",
-          "phase": "PLANNED",
-          "full_business_acceptance": false
+          "phase": "IMPLEMENTING",
+          "full_business_acceptance": false,
+          "current_window": "W43-01",
+          "prerequisite_adjustment": "REP正式Transfer/SourceDemand、RMA prepare/commit/query/seal、SCHED资源重绑定均缺实际采用接线。按已授权七天计划提前D4的原命令/事务基础；D2/D3未完成。Platform Inbox是投递/投影原语，不替业务命令日志；本窗不伪造其接收采用或工作流发送成功。"
         },
         {
           "id": "D5",
@@ -191286,7 +191434,7 @@
       ],
       "scope": "Quality + bounded WMS/MES Owners; Main durable operation; CRM identity/first Owner; inquiry prerequisites/form/submit; related integration. Exact prerequisite gates retained.",
       "no_agents": true,
-      "next_stage": "D2"
+      "next_stage": "D4"
     }
   },
   "acceptance_basis": {

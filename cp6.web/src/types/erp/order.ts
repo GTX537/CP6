@@ -458,12 +458,16 @@ export interface OrderPriceCorrectionBatchUpdateDto {
 }
 
 export interface OrderPriceCorrectionBatchResultDto {
+  operationId?: string
   /** AwaitingAdapter is a persisted intent, not successful external workflow delivery. */
   workflowDeliveryState?: 'AwaitingAdapter'
   updatedCount: number
   wfRequestedCount: number
   conflictedKeys: string[]
 }
+
+export interface PriceCorrectionOperationScope { tenantId: string; actorId: string }
+export interface PriceCorrectionOperation { operationId: string; state: 'COMMITTED' | 'CLOSED' | 'UNKNOWN'; result?: OrderPriceCorrectionBatchResultDto }
 
 // ─────────────────── 業務ルール結果 ───────────────────
 
