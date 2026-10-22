@@ -19,6 +19,15 @@ beforeEach(() => {
 })
 afterEach(() => { view?.unmount(); view = undefined })
 describe('explicit standalone department binding', () => {
+  it('selects a real machine identity and submits its explicit department binding', async () => {
+    const vm = await render(); await vm.open()
+    await view!.get('[aria-label="对象类型"]').setValue('machine')
+    api.standaloneObjects.mockResolvedValue([{ id: 'machine-uuid', name: 'MC1 / Verified machine' }])
+    vm.search = 'MC1'; await vm.findObjects(); expect(api.standaloneObjects).toHaveBeenCalledWith('machine', 'MC1')
+    vm.draft.objectId = 'machine-uuid'; vm.draft.departmentId = dept; vm.draft.reason = 'Verified equipment owner'
+    api.saveStandaloneMapping.mockImplementation(async (_input, operationId) => ({ operationId, kind: 'dept-standalone-mapping', state: 'COMMITTED', entityId: id }))
+    await vm.save(); expect(api.saveStandaloneMapping.mock.calls[0]![0]).toMatchObject({ objectKind: 'machine', objectId: 'machine-uuid', departmentId: dept })
+  })
   it('shows impact, preserves the original code and explicitly submits target, reason and CAS', async () => {
     const vm = await render(); expect(view!.text()).toContain('Sales team'); expect(view!.text()).toContain('W/L/P/LOT')
     await vm.open(id); expect(view!.get<HTMLSelectElement>('[aria-label="对象类型"]').element.disabled).toBe(true)

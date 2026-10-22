@@ -1,5 +1,6 @@
 <template>
   <div class="machine-list">
+    <el-alert v-if="intent.error.value" :title="intent.error.value" type="warning" :closable="false" show-icon />
     <el-card shadow="never" class="search-card">
       <el-form :model="query" inline size="small">
         <el-form-item :label="t('設備CD')">
@@ -180,8 +181,8 @@
       </el-form>
       <template #footer>
         <el-button @click="dialogVisible = false">{{ t('キャンセル') }}</el-button>
-        <el-button v-if="isEdit" v-permission="'mes-machine:edit'" type="primary" :loading="saving" @click="onSave">{{ t('保存') }}</el-button>
-        <el-button v-else type="primary" :loading="saving" @click="onSave">{{ t('保存') }}</el-button>
+        <el-button v-if="isEdit" v-permission="'mes-machine:edit'" type="primary" :loading="saving" :disabled="intent.uncertain.value" @click="onSave">{{ t('保存') }}</el-button>
+        <el-button v-else v-permission="'mes-machine:add'" type="primary" :loading="saving" :disabled="intent.uncertain.value" @click="onSave">{{ t('保存') }}</el-button>
       </template>
     </el-dialog>
 
@@ -214,7 +215,7 @@
       </el-form>
       <template #footer>
         <el-button @click="dtDialogVisible = false">{{ t('キャンセル') }}</el-button>
-        <el-button type="primary" :loading="saving" @click="onRegisterDowntime">{{ t('登録') }}</el-button>
+        <el-button v-permission="'mes-machine:downtime'" type="primary" :loading="saving" :disabled="intent.uncertain.value" @click="onRegisterDowntime">{{ t('登録') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -223,7 +224,9 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
+import { usePermissionStore } from '@/stores/permission'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Check } from '@element-plus/icons-vue'
 import { machineApi } from '@/api/mes/mes'
@@ -236,7 +239,7 @@ import {
 } from '@/types/mes/mes'
 
 const loading = ref(false)
-const saving = ref(false)
+const permissions = usePermissionStore()
 const rows = ref<MachineDto[]>([])
 
 const defaultQuery = (): MachineSearchQuery => ({
@@ -270,81 +273,100 @@ function getStatusColor(v: number) { return MACHINE_STATUS_OPTIONS.find(o => o.v
 function getLight(v: number) { return MACHINE_STATUS_OPTIONS.find(o => o.value === v)?.light ?? 'gray' }
 function formatDate(v?: string | null) { return v ? v.substring(0, 10) : '' }
 
+const intent = useOperationsIntent(clearProtected)
+const saving = intent.busy
+let listSequence = 0, detailSequence = 0
+function clearProtected() {
+  listSequence++; detailSequence++; rows.value = []; loading.value = false
+  dialogVisible.value = false; dtDialogVisible.value = false
+  Object.assign(form, emptyForm()); Object.assign(dtForm, emptyDt())
+}
+function allowed(action: string) { return permissions.loaded && permissions.has(`mes-machine:${action}`) }
+function forbidden(error: any, writeSettled = false) {
+  if ([401, 403].includes(error?.response?.status)) {
+    const unresolved = intent.uncertain.value || (!writeSettled && intent.busy.value)
+    intent.invalidate(); clearProtected()
+    if (unresolved) {
+      intent.uncertain.value = true
+      intent.error.value = '処理結果を確認できません。再送せず、対象の最新状態を確認してください。'
+    }
+    return true
+  }
+  return false
+}
 async function search() {
+  const token = intent.capture(), request = ++listSequence
   loading.value = true
   try {
-    const res = await machineApi.search(query)
-    rows.value = res.data || []
-  } finally {
-    loading.value = false
-  }
-}
-
-function reset() {
-  Object.assign(query, defaultQuery())
-  search()
-}
-
-function openCreate() {
-  Object.assign(form, emptyForm())
-  isEdit.value = false
-  dialogVisible.value = true
-}
-
-function openEdit(row: MachineDto) {
-  Object.assign(form, emptyForm(), row)
-  isEdit.value = true
-  dialogVisible.value = true
-}
-
-function resetForm() { Object.assign(form, emptyForm()) }
-
-async function onSave() {
-  if (!form.machineCd || !form.machineName) {
-    ElMessage.error(t('設備CDと設備名は必須です'))
-    return
-  }
-  saving.value = true
-  try {
-    if (isEdit.value) {
-      await machineApi.update(form.machineCd, form)
-      ElMessage.success(t('ME-MSG-041: 更新しました'))
-    } else {
-      await machineApi.create(form)
-      ElMessage.success(t('ME-MSG-041: 登録しました'))
+    const res = await machineApi.search({ ...query, statuses: [...(query.statuses || [])] })
+    if (intent.current(token) && request === listSequence) rows.value = res.data || []
+  } catch (error) {
+    if (intent.current(token) && request === listSequence) {
+      rows.value = []; forbidden(error)
     }
-    dialogVisible.value = false
-    search()
-  } finally {
-    saving.value = false
-  }
+  } finally { if (intent.current(token) && request === listSequence) loading.value = false }
 }
-
+function reset() { Object.assign(query, defaultQuery()); void search() }
+function openCreate() {
+  if (!allowed('add') || intent.busy.value || intent.uncertain.value) return
+  detailSequence++; Object.assign(form, emptyForm()); isEdit.value = false; dialogVisible.value = true
+}
+async function openEdit(row: MachineDto) {
+  if (!allowed('edit') || intent.busy.value || intent.uncertain.value) return
+  const token = intent.capture(), request = ++detailSequence
+  dialogVisible.value = false; Object.assign(form, emptyForm())
+  try {
+    const result = await machineApi.get(row.machineCd)
+    if (!intent.current(token) || request !== detailSequence || !result.data) return
+    Object.assign(form, emptyForm(), result.data); isEdit.value = true; dialogVisible.value = true
+  } catch (error) { if (intent.current(token) && request === detailSequence) forbidden(error) }
+}
+function resetForm() { detailSequence++; Object.assign(form, emptyForm()) }
+async function onSave() {
+  const edit = isEdit.value
+  if (!allowed(edit ? 'edit' : 'add')) return
+  if (!form.machineCd || !form.machineName) { ElMessage.error(t('設備CDと設備名は必須です')); return }
+  const token = intent.begin(); if (!token) return
+  const input = { ...form }
+  try {
+    if (edit) await machineApi.update(input.machineCd, input)
+    else await machineApi.create(input)
+    if (!intent.current(token)) return
+    ElMessage.success(t(edit ? 'ME-MSG-041: 更新しました' : 'ME-MSG-041: 登録しました')); dialogVisible.value = false; void search()
+  } catch (error) {
+    if (intent.current(token) && !forbidden(error, true)) intent.failed(token, error)
+  } finally { intent.finish(token) }
+}
 async function onDelete(row: MachineDto) {
+  if (!allowed('del')) return
+  const token = intent.begin(); if (!token) return
+  const code = row.machineCd
   try {
-    await ElMessageBox.confirm(t('設備 {machineCd} を削除しますか？', { machineCd: row.machineCd }), t('確認'), { type: 'warning' })
-    await machineApi.delete(row.machineCd)
-    ElMessage.success(t('削除しました'))
-    search()
-  } catch (e) { /* cancelled */ }
+    await ElMessageBox.confirm(t('設備 {machineCd} を削除しますか？', { machineCd: code }), t('確認'), { type: 'warning' })
+    if (!intent.current(token) || !allowed('del')) return
+    await machineApi.delete(code)
+    if (!intent.current(token)) return
+    ElMessage.success(t('削除しました')); void search()
+  } catch (error) {
+    if (intent.current(token) && !forbidden(error, true)) intent.failed(token, error)
+  } finally { intent.finish(token) }
 }
-
 function openDowntime(row: MachineDto) {
-  Object.assign(dtForm, emptyDt(), { machineCd: row.machineCd })
-  dtDialogVisible.value = true
+  if (!allowed('downtime') || intent.busy.value || intent.uncertain.value) return
+  Object.assign(dtForm, emptyDt(), { machineCd: row.machineCd }); dtDialogVisible.value = true
 }
-
 async function onRegisterDowntime() {
-  if (!dtForm.machineCd) return
-  saving.value = true
+  if (!allowed('downtime') || !dtForm.machineCd) return
+  const token = intent.begin(); if (!token) return
+  const input = { ...dtForm }
   try {
-    const res = await machineApi.registerDowntime(dtForm)
+    const res = await machineApi.registerDowntime(input)
+    if (!intent.current(token)) return
     ElMessage.success(t('登録しました（{downtimeNo}）', { downtimeNo: res.data?.downtimeNo }))
-    dtDialogVisible.value = false
-    search()
-  } finally {
-    saving.value = false
-  }
+    dtDialogVisible.value = false; void search()
+  } catch (error) {
+    if (intent.current(token) && !forbidden(error, true)) intent.failed(token, error)
+  } finally { intent.finish(token) }
 }
 
 onMounted(() => { search() })

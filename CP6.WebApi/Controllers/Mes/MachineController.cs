@@ -10,6 +10,8 @@ namespace CP6.WebApi.Controllers.Mes;
 [ApiController]
 [Route("api/mes/machines")]
 [Authorize]
+[CP6.WebApi.Controllers.Erp.OrderOwnerResult]
+[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class MachineController : ControllerBase
 {
     private readonly IMachineService _service;
@@ -18,6 +20,7 @@ public class MachineController : ControllerBase
     private string? CurrentUser => User?.Identity?.Name;
 
     [HttpGet]
+    [RequirePermission("mes-machine", "query")]
     public async Task<IActionResult> Search([FromQuery] MachineSearchQuery query)
     {
         var r = await _service.SearchAsync(query);
@@ -25,6 +28,7 @@ public class MachineController : ControllerBase
     }
 
     [HttpGet("{cd}")]
+    [RequirePermission("mes-machine", "query")]
     public async Task<IActionResult> Get(string cd)
     {
         var dto = await _service.GetByCdAsync(cd);
@@ -41,7 +45,7 @@ public class MachineController : ControllerBase
             var cd = await _service.CreateAsync(dto, CurrentUser);
             return Ok(new { code = 0, message = "ME-MSG-041", data = new { machineCd = cd } });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPut("{cd}")]
@@ -53,7 +57,7 @@ public class MachineController : ControllerBase
             await _service.UpdateAsync(cd, dto, CurrentUser);
             return Ok(new { code = 0, message = "ME-MSG-041" });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpDelete("{cd}")]
@@ -65,7 +69,7 @@ public class MachineController : ControllerBase
             await _service.DeleteAsync(cd, CurrentUser);
             return Ok(new { code = 0, message = "ME-MSG-041" });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     /// <summary>設備状態変更</summary>
@@ -78,12 +82,13 @@ public class MachineController : ControllerBase
             await _service.ChangeStatusAsync(cd, req.Status, CurrentUser);
             return Ok(new { code = 0, message = "ME-MSG-041" });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     // ─────── 停止記録 ───────
 
     [HttpGet("downtimes")]
+    [RequirePermission("mes-machine", "query")]
     public async Task<IActionResult> SearchDowntimes([FromQuery] DowntimeSearchQuery query)
     {
         var r = await _service.SearchDowntimesAsync(query);
@@ -99,7 +104,7 @@ public class MachineController : ControllerBase
             var no = await _service.RegisterDowntimeAsync(dto, CurrentUser);
             return Ok(new { code = 0, message = "ME-MSG-041", data = new { downtimeNo = no } });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("downtimes/{no}/close")]
@@ -111,7 +116,7 @@ public class MachineController : ControllerBase
             await _service.CloseDowntimeAsync(no, req.EndTime, req.RecoveryOperatorCd, CurrentUser);
             return Ok(new { code = 0, message = "ME-MSG-041" });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     public class ChangeStatusRequest { public int Status { get; set; } }

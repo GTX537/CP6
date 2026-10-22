@@ -1,5 +1,11 @@
 # AI 可读变更日志
 
+## 2026-10-22：W47设备/停机Owner候选已验证
+
+设备/停机独立Owner、精确UUID部门绑定、同事务写入及页面保护已验证；38项相关.NET用例通过（按TRX testId合并定向复查，含PG/实际HTTP/并发/迁移/种子），21项Vitest通过、其中5项修改后定向复查通过，完整vue-tsc -b通过。正常PR/Handoff、Issue407关闭和准确分支/席位finish待执行。
+
+[DELIVERY](../development/evidence/WP02-03/machine-owner/DELIVERY.md)。七天目标ACTIVE；OEE/计划Owner下一窗口，正式RES/PERF仍未采用；整卡/125目标/247运行不提升。
+
 ## 2026-10-22：W46 WMS实时作用域已采用
 
 产品[PR405](https://github.com/GTX537/CP6/pull/405)和[Handoff22](https://github.com/GTX537/CP6.AI-Handoff/pull/22)采用，source`c09ee7f4bf32b735f98b45e8164d7a1fd84d45f9`、远端main`883709c885d6b13ca272c211f8dde06a7cbd939f`；13任务文件一致。Handoff source`d5ced62b53dc502690df1ce75dade0e0f8ef2b3b`、目标`ad787e92495ad409e96358190bf9939753fb1ddb`，3项资料一致，DEV-2准确分支删除/席位释放。

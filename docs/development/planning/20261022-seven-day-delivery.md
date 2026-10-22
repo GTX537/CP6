@@ -116,3 +116,7 @@ W45实际33.04分钟，PR402/403/Handoff21采用、Issue401关闭、两分支删
 产品[PR405](https://github.com/GTX537/CP6/pull/405)和[Handoff22](https://github.com/GTX537/CP6.AI-Handoff/pull/22)采用，source`c09ee7f4bf32b735f98b45e8164d7a1fd84d45f9`、远端main`883709c885d6b13ca272c211f8dde06a7cbd939f`；13任务文件一致。Handoff source`d5ced62b53dc502690df1ce75dade0e0f8ef2b3b`、目标`ad787e92495ad409e96358190bf9939753fb1ddb`，3项资料一致，DEV-2准确分支删除/席位释放。
 
 8项相关.NET通过（6项PG/实际HTTP-WebSocket与通知边界、2项旧路由兼容）；无前端变更，不重复前端验证；原任务最后文档后finish/Issue404关闭；下一窗口设备/OEE，七天目标ACTIVE。
+
+## W46实际收尾 / W47设备Owner
+
+W46实际15.94分钟、PR405/406/Handoff22采用、Issue404关闭、两分支删除/席位释放。W47先补设备/停机Owner和machine精确UUID部门绑定，预计90–150分钟；OEE独立计算及可信后台下一窗口，正式RES/PERF仍未采用，七天目标ACTIVE。

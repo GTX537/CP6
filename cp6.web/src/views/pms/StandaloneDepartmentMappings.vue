@@ -30,7 +30,7 @@
           <option value="" disabled>请选择已核实的对象</option>
           <option v-for="row in objects" :key="row.id" :value="row.id">{{ row.name }}</option>
         </select></label>
-        <p>最多显示50项。库存可按仓库、库位、产品或批号查找；其他对象按业务单号查找。</p>
+        <p>最多显示50项。库存可按仓库、库位、产品或批号查找；设备可按设备编号或名称查找；其他对象按业务单号查找。</p>
       </template>
       <p v-else>当前对象：{{ editor.mappings.find(row => row.id === draft.id)?.objectName || '对象已不可用' }}</p>
       <label>组织部门 <select v-model="draft.departmentId" aria-label="组织部门" required :disabled="busy || !!pending">
@@ -61,7 +61,7 @@ const empty = (): IamStandaloneMappingInput => ({ objectKind: 'stock', objectId:
 const draft = reactive(empty())
 const kinds: { value: StandaloneKind; label: string }[] = [
   { value: 'stock', label: '库存' }, { value: 'stock-transaction', label: '库存流水' },
-  { value: 'stocktake', label: '盘点单' }, { value: 'work-order', label: '无订单生产指示' }
+  { value: 'stocktake', label: '盘点单' }, { value: 'work-order', label: '无订单生产指示' }, { value: 'machine', label: '设备' }
 ]
 const search = ref(''), objects = ref<StandaloneObjectChoice[]>([])
 function kindName(kind: StandaloneKind) { return kinds.find(row => row.value === kind)?.label || kind }
