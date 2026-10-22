@@ -1,6 +1,6 @@
 # W40-01 交付：MES不良记录独立 Owner
 
-COORD本聊天单人；基线`4ace44a582a4fcd605de38e4716031019603b4b8`；任务分支codex/w40-01，原DEV-1；Handoff codex/w40-handoff，原DEV-2。关联[Issue #389](https://github.com/GTX537/CP6/issues/389)。本地Ready to merge Yes；远端采用、分支与席位处置待实际核对。
+COORD本聊天单人；基线`4ace44a582a4fcd605de38e4716031019603b4b8`；任务分支codex/w40-01，原DEV-1；Handoff codex/w40-handoff，原DEV-2。关联[Issue #389](https://github.com/GTX537/CP6/issues/389)。产品和Handoff已采用；原任务最后文档与席位处置见下文及最终实际证明。
 
 ## 实现和审查
 
@@ -29,3 +29,13 @@ DefectRecordService分页/单票/分类、手工创建/修改/删除接入当前
 5处自有PG/API已停止；按ownership、绝对目录边界、无进程/重解析点核对后回收生成data 577860693字节（0.538GiB）；原失败/日志/TRX/ownership保留。固定DEV-1/DEV-2待采用后finish，INTEGRATION-1空闲；零新树/clone/副本/代理，根用户未跟踪资料保留。
 
 预计代理实际60–100分钟，故障余量3小时，24小时窗口内完成；实际耗时最终以管理finish核对。WMS库存QC/入库检验、MES品质检验自身Owner及补充/退货/设备/OEE/计划等独立入口、无订单正式部门绑定、采购/财务自身Owner、持久operation/outbox、可靠投递、workflow/CRM和真实DEV/UAT仍独立；完整WP02-03、125目标/247运行验收不提升。无Actions取消/触发/重跑、workflow变更、既有数据库迁移、真实权限授予或生产部署。W37–W39不重复。
+
+## 远端采用及原分支收尾
+
+产品[PR #390](https://github.com/GTX537/CP6/pull/390)正常合并，source`4256ed318a86370a14154cc0cade013ddeb8c718`、远端main`e3d3087f760fe59400f1371f8da360d5179e16e6`，21项任务文件blob一致，主目录安全快进；#389原步骤复测与远端核对后关闭。[Handoff PR #16](https://github.com/GTX537/CP6.AI-Handoff/pull/16)正常合入默认资料目标，source`4700c01724fadf968fa4a9328dac76607adbd95f`、目标`ae7791814e723e9260340055e813cc5943a7496f`；资料分支已准确删除，DEV-2干净detached且席位已释放。
+
+83项去重相关.NET成功（12本轮原生PG/实际HTTP、55既有Owner、16兼容/权限/审计），7项Vitest及完整类型检查通过；真实来源和复用范围见单份交付，最终适用集合0失败/跳过；一次作者SPEC/QUALITY及定向复查无本窗剩余阻断。最后文档不改产品/依赖/环境，复用成功证据，仅检查diff/链接/台账和采用范围。自有PG/API停止，5处生成data回收577860693字节（0.538GiB），原失败及日志/TRX/ownership保留。
+
+本提交在原codex/w40-01、DEV-1；最后正常PR后manage finish，不提前宣称自身未来采用/释放。实际结果以`D:/CP6/.git/cp6-workspaces/state.json`、最后PR说明和`C:/Users/tt/CP6-planning-reports/20261017-foundation/wave40-final-verification.json`为准。预计实际60–100分钟；目标于2026-10-22T02:38:49+00:00开始，当前文档快照2026-10-22T03:21:02.768606+00:00，最后finish记录实际耗时。
+
+零新树/clone/源码副本/额外收尾分支/代理，根用户资料保留、INTEGRATION-1空闲。WMS库存QC/入库检验、MES品质检验自身Owner及补充/退货/设备/OEE/计划等独立入口、无订单部门绑定、采购/财务自身Owner、持久operation/outbox和可靠投递、workflow/CRM及真实DEV/UAT仍独立；完整WP02-03、125目标/247运行不提升。无Actions、workflow变更、既有数据库迁移、真实授权或生产部署。W39不重复。
