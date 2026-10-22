@@ -1,8 +1,8 @@
 # 已完成能力与近期里程碑
 
-## 2026-10-22：W47设备/停机Owner候选已验证
+## 2026-10-22：W47设备/停机Owner已采用
 
-设备/停机独立Owner、精确UUID部门绑定、同事务写入及页面保护已验证；38项相关.NET用例通过（按TRX testId合并定向复查，含PG/实际HTTP/并发/迁移/种子），21项Vitest通过、其中5项修改后定向复查通过，完整vue-tsc -b通过。正常PR/Handoff、Issue407关闭和准确分支/席位finish待执行。
+产品[PR](https://github.com/GTX537/CP6/pull/408)和[Handoff](https://github.com/GTX537/CP6.AI-Handoff/pull/23)已采用，source`9295ebac050bb43c3330638a59e27e71dc2ef8b2`、远端main`276e05aeeed41c560777e1d73ced49d0108387b1`，26任务文件blob一致；Handoff source`0536f372b2507fe7dceb85aa6a12e98fe881f8a5`、目标`722cc9d6a9034d181cd26d0ec07e186d24327b6c`，DEV-2准确分支删除/席位释放。
 
 [DELIVERY](../development/evidence/WP02-03/machine-owner/DELIVERY.md)。七天目标ACTIVE；OEE/计划Owner下一窗口，正式RES/PERF仍未采用；整卡/125目标/247运行不提升。
 
