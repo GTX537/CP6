@@ -11,6 +11,8 @@ public partial class MesDashboardService
     private sealed record MesDashboardData(IQueryable<WorkOrder> WorkOrders,IQueryable<WorkOrderProcess> WorkOrderProcesses,
         IQueryable<ProductionResult> ProductionResults,IQueryable<DefectRecord> DefectRecords);
     private OperationsOwnerV1 Owner=>_owner?.Owns(_db)==true?_owner:throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
+    public Task AuthorizeUpdatesAsync(CancellationToken ct=default)
+        =>Owner.ExecuteAsync(OperationsOwnerV1.MesDashboard,"query",false,(_,_)=>Task.FromResult(true),ct,readOnlyAuthorityFence:true);
     private async Task<MesDashboardData> Data(OperationsAccessV1 a,bool work,bool production,bool defect,CancellationToken ct)
     {
         var orders=a.DashboardWorkOrders();

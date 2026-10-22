@@ -7,7 +7,7 @@ import * as signalR from '@microsoft/signalr'
  * 用法：
  *   import { getMesHub, startMesHub } from '@/utils/mesHub'
  *   const hub = getMesHub()
- *   hub.on('ProductionReported', payload => { ... })
+ *   hub.on('MesInvalidatedV1', () => { ... }) // Re-read through the current HTTP Owner.
  *   await startMesHub()
  */
 
@@ -29,16 +29,21 @@ export async function startMesHub() {
   if (conn.state === signalR.HubConnectionState.Disconnected) {
     try {
       await conn.start()
+      if (connection !== conn) {
+        await conn.stop()
+        return
+      }
       console.log('[MES Hub] Connected')
     } catch (err) {
-      console.warn('[MES Hub] Connect failed, will retry:', err)
+      console.warn('[MES Hub] Connect failed:', err)
     }
   }
 }
 
 export async function stopMesHub() {
-  if (connection) {
-    try { await connection.stop() } catch { /* ignore */ }
-    connection = null
+  const conn = connection
+  connection = null
+  if (conn) {
+    try { await conn.stop() } catch { /* ignore */ }
   }
 }

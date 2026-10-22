@@ -229,7 +229,7 @@ public sealed partial class AuthenticationStatePostgreSqlTests(TenantManagementP
 
 // Starts the actual Program, routes, authentication events and middleware against this run's owned PG database.
 // No existing appsettings/DEV process or port is used. The child process is always stopped on disposal.
-internal sealed class AuthenticationApiProcess(Process process, HttpClient client, string secret) : IAsyncDisposable
+internal sealed class AuthenticationApiProcess(Process process, HttpClient client, string secret, Action saveLog) : IAsyncDisposable
 {
     internal Task<HttpResponseMessage> Send(HttpRequestMessage request) => client.SendAsync(request);
     internal string Token(Sys_User user, string? version = null) => JwtHelper.GenerateToken(user.Id.ToString(), user.UserName,
@@ -286,7 +286,8 @@ internal sealed class AuthenticationApiProcess(Process process, HttpClient clien
             child.BeginOutputReadLine(); child.BeginErrorReadLine();
             var url = await ready.Task.WaitAsync(TimeSpan.FromSeconds(40));
             return new AuthenticationApiProcess(child, new HttpClient(new HttpClientHandler { UseCookies = false })
-                { BaseAddress = new Uri(url), Timeout = TimeSpan.FromSeconds(15) }, secret);
+                { BaseAddress = new Uri(url), Timeout = TimeSpan.FromSeconds(15) }, secret,
+                () => { lock(log) File.WriteAllText(Path.Combine(directory, "runtime.log"), log.ToString()); });
         }
         catch
         {
@@ -300,5 +301,6 @@ internal sealed class AuthenticationApiProcess(Process process, HttpClient clien
     {
         client.Dispose(); if (!process.HasExited) process.Kill(entireProcessTree: true);
         await process.WaitForExitAsync(); process.Dispose();
+        saveLog();
     }
 }
