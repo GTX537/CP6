@@ -577,6 +577,8 @@ export interface DowntimeSearchQuery {
 }
 
 export interface OeeDailyDto {
+  calculationProfile?: string
+  sourceEvidenceVersion?: string | null
   id?: string
   oeeDate: string
   machineCd: string

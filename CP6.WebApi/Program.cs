@@ -546,7 +546,7 @@ foreach(var resource in new[]{"mes-production-result","wms-inbound-order","wms-i
     else CP6.Core.Services.Sys.FieldRegistry.Register(resource,new CP6.Core.Services.Sys.FieldRegistry.Field("UnitPrice","単価"));
 }
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-outbound-order", new CP6.Core.Services.Sys.FieldRegistry.Field("UnitPrice", "単価"));
-foreach(var resource in new[]{"wms-stock","wms-stocktake","wms-dashboard","mes-dashboard","mes-defect","wms-stock-qc","wms-qc-inspection","mes-quality-inspection","mes-machine"})
+foreach(var resource in new[]{"wms-stock","wms-stocktake","wms-dashboard","mes-dashboard","mes-defect","wms-stock-qc","wms-qc-inspection","mes-quality-inspection","mes-machine","mes-oee"})
 {
     CP6.Core.Services.Sys.DataScopeRegistry.Register(resource,resource,new[]{1,2,3,4,5},1);
     var fields=resource=="wms-stock"?new[]{"UnitPrice"}:resource=="wms-stocktake"?new[]{"Amount","UnitPrice"}:
@@ -631,7 +631,9 @@ builder.Services.AddScoped<CP6.Core.Services.Mes.IPlanningBoardService, CP6.Core
 builder.Services.AddScoped<CP6.Core.Services.Mes.MesDashboardService>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.IMesDashboardService>(sp=>sp.GetRequiredService<CP6.Core.Services.Mes.MesDashboardService>());
 builder.Services.AddScoped<CP6.Core.Services.Mes.IMachineService, CP6.Core.Services.Mes.MachineService>();
-builder.Services.AddScoped<CP6.Core.Services.Mes.IOeeService, CP6.Core.Services.Mes.OeeService>();
+builder.Services.AddScoped<CP6.Core.Services.Mes.OeeService>();
+builder.Services.AddScoped<CP6.Core.Services.Mes.IOeeService>(sp => sp.GetRequiredService<CP6.Core.Services.Mes.OeeService>());
+builder.Services.AddScoped<CP6.Core.Services.Integration.IOeeWorkerV1>(sp => sp.GetRequiredService<CP6.Core.Services.Mes.OeeService>());
 builder.Services.AddScoped<CP6.Core.Services.Mes.MesDashboardDapperService>();
 // Gap 3.3 生産計画達成率レポート
 builder.Services.AddScoped<CP6.Core.Services.Mes.IPlanAchievementService, CP6.Core.Services.Mes.PlanAchievementService>();

@@ -76,6 +76,8 @@ public class DowntimeSearchQuery
 /// <summary>OEE 日次 DTO</summary>
 public class OeeDailyDto
 {
+    public string CalculationProfile { get; set; } = "LEGACY_CALC_V1";
+    public string? SourceEvidenceVersion { get; set; }
     public Guid Id { get; set; }
     public DateTime OeeDate { get; set; }
     public string MachineCd { get; set; } = string.Empty;

@@ -1,5 +1,6 @@
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Mes;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DTOs.Mes;
 using CP6.WebApi.BackgroundServices;
 using Microsoft.Extensions.DependencyInjection;
@@ -74,7 +75,7 @@ public sealed class OeeCalculationServiceTests
         services.AddSingleton<ITenantEnumerator>(
             new OneTenantEnumerator(Guid.NewGuid()));
         services.AddScoped<ITenantContext, TenantContext>();
-        services.AddScoped<IOeeService, StubOeeService>();
+        services.AddScoped<IOeeWorkerV1, StubOeeService>();
         return services.BuildServiceProvider(
             new ServiceProviderOptions
             {
@@ -126,7 +127,7 @@ public sealed class OeeCalculationServiceTests
         }
     }
 
-    private sealed class StubOeeService : IOeeService
+    private sealed class StubOeeService : IOeeWorkerV1
     {
         private readonly OeeState _state;
 
@@ -134,20 +135,8 @@ public sealed class OeeCalculationServiceTests
 
         public Task<int> RecalculateAsync(
             OeeRecalcRequest req,
-            string? userName)
+            Guid enumeratedTenant, CancellationToken ct)
             => _state.RecalculateAsync();
-
-        public Task<List<OeeDailyDto>> SearchAsync(OeeSearchQuery query)
-            => throw new NotSupportedException();
-
-        public Task<List<OeeDailyDto>> CalculateTodayAsync(
-            string? machineCd = null)
-            => throw new NotSupportedException();
-
-        public Task<Dictionary<string, List<OeeDailyDto>>> GetTrendAsync(
-            int days,
-            string? machineCd)
-            => throw new NotSupportedException();
     }
 
     private sealed class CapturingLogger<T> : ILogger<T>

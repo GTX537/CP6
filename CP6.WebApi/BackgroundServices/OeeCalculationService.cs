@@ -1,4 +1,5 @@
 using CP6.Core.Services.Mes;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DTOs.Mes;
 
 namespace CP6.WebApi.BackgroundServices;
@@ -48,15 +49,15 @@ public class OeeCalculationService : BackgroundService
                 // 章10 §5 按租户循环：各租户独立作用域重算其 OEE（T_OeeDaily 是 BaseBizEntity，按租户隔离）
                 await TenantScopeRunner.ForEachTenantAsync(_scopeFactory, async (sp, tenantId, ct) =>
                 {
-                    var oee = sp.GetRequiredService<IOeeService>();
+                    var oee = sp.GetRequiredService<IOeeWorkerV1>();
 
                     if (recalcYesterday)
                     {
-                        var ny = await oee.RecalculateAsync(new OeeRecalcRequest { TargetDate = yesterday }, "OeeWorker");
+                        var ny = await oee.RecalculateAsync(new OeeRecalcRequest { TargetDate = yesterday }, tenantId, ct);
                         _logger.LogInformation("前日 OEE 再計算完了 租户 {Tenant}：{Date} {Count}件", tenantId, yesterday.ToString("yyyy-MM-dd"), ny);
                     }
 
-                    var n = await oee.RecalculateAsync(new OeeRecalcRequest { TargetDate = today }, "OeeWorker");
+                    var n = await oee.RecalculateAsync(new OeeRecalcRequest { TargetDate = today }, tenantId, ct);
                     _logger.LogDebug("本日 OEE 再計算 租户 {Tenant}：{Count}件", tenantId, n);
                 }, _logger, stoppingToken);
 
