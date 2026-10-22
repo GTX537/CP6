@@ -118,6 +118,28 @@ public partial class InboundService
         await PublishReceipt(no,FinishedGoodsWarehouse,effects);return no;
     }
     private void CaptureStock(List<StockTransaction> target)=>target.AddRange(_db.ChangeTracker.Entries<StockTransaction>().Select(e=>e.Entity));
+    internal async Task<string> ReceiveInspectionWithinOwnerAsync(OperationsAccessV1 parent,string inspection,InboundReceiptDto dto,List<StockTransaction> effects,CancellationToken ct)
+    {
+        parent.RequireQualityParent(_db,OperationsOwnerV1.InboundQc,"judge");
+        _=Owner;_=StockOwner;ValidateOwnedReceipt(dto);
+        var header=await _db.QcInspections.SingleAsync(q=>q.InspectionNo==inspection && !q.IsDeleted,ct);
+        var lines=await _db.QcInspectionItems.AsNoTracking().Where(d=>d.InspectionNo==inspection && !d.IsDeleted && d.AcceptedQty>0).OrderBy(d=>d.LineNo).ToArrayAsync(ct);
+        if(header.Status!=QcInspectionStatus.Judged || header.FinalJudgement!=QcInspectionJudgement.Pass || header.GeneratedReceiptNo!=null
+            || dto.InboundNo!=header.InboundNo || dto.WorkOrderNo!=null || dto.SourceType!=InboundSourceType.Purchase || lines.Length!=dto.Details.Count
+            || lines.Where((d,i)=>dto.Details[i].ProductCd!=d.ProductCd || dto.Details[i].ReceivedQty!=d.AcceptedQty
+                || dto.Details[i].UnitPrice!=null || dto.Details[i].RefOrderLineNo!=null).Any())
+            throw new OrderPriceCorrectionException("INTERNAL_QUALITY_CAPABILITY_REQUIRED",403);
+        var access=await parent.ActionAsync(OperationsOwnerV1.Receipt,"post",ct);access.RequirePriceWrite();dto.OperatorCd=access.Actor;
+        foreach(var line in dto.Details)await access.RequireLocation(dto.WarehouseCd,line.LocationCd,ct);
+        await RequireReceiptSources(dto,access,ct);
+        var number=await ConfirmReceiptCoreAsync(dto,access.Actor,true);CaptureStock(effects);
+        parent.AtCommit(async t=>
+        {
+            await RequireReceiptSources(dto,access,t);await access.RequireReceipt(number,t);
+        });
+        return number;
+    }
+    internal Task PublishInspectionReceiptAsync(string number,string warehouse,List<StockTransaction> effects)=>PublishReceipt(number,warehouse,effects);
     private async Task PublishReceipt(string no,string warehouse,List<StockTransaction> effects)
     {
         foreach(var effect in effects)await StockOwner.PublishCommittedCancellationAsync(effect);

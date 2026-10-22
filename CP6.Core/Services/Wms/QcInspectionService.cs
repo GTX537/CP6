@@ -1,27 +1,30 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Wms;
 
 /// <summary>入荷検品サービス実装</summary>
-public class QcInspectionService : IQcInspectionService
+public partial class QcInspectionService : IQcInspectionService
 {
     private readonly CP6Context _db;
     private readonly IWmsSequenceService _seq;
     private readonly IInboundService _inbound;
+    private readonly OperationsOwnerV1? _owner;
     private const string Prefix = "QC";
 
-    public QcInspectionService(CP6Context db, IWmsSequenceService seq, IInboundService inbound)
+    public QcInspectionService(CP6Context db, IWmsSequenceService seq, IInboundService inbound, OperationsOwnerV1? owner=null)
     {
         _db = db;
         _seq = seq;
         _inbound = inbound;
+        _owner = owner;
     }
 
-    public async Task<List<QcInspection>> SearchAsync(QcInspectionSearchQuery q)
+    private async Task<List<QcInspection>> SearchCoreAsync(QcInspectionSearchQuery q, IQueryable<QcInspection>? allowed=null)
     {
-        var query = _db.QcInspections.AsNoTracking().Where(x => !x.IsDeleted);
+        var query = (allowed ?? _db.QcInspections.AsNoTracking()).Where(x => !x.IsDeleted);
         if (!string.IsNullOrWhiteSpace(q.InspectionNo)) query = query.Where(x => x.InspectionNo.Contains(q.InspectionNo));
         if (!string.IsNullOrWhiteSpace(q.InboundNo)) query = query.Where(x => x.InboundNo == q.InboundNo);
         if (!string.IsNullOrWhiteSpace(q.SupplierCd)) query = query.Where(x => x.SupplierCd == q.SupplierCd);
@@ -37,9 +40,9 @@ public class QcInspectionService : IQcInspectionService
             .ToListAsync();
     }
 
-    public async Task<QcInspectionDto?> GetAsync(string inspectionNo)
+    private async Task<QcInspectionDto?> GetCoreAsync(string inspectionNo, IQueryable<QcInspection>? allowed=null)
     {
-        var h = await _db.QcInspections.AsNoTracking().FirstOrDefaultAsync(x => x.InspectionNo == inspectionNo && !x.IsDeleted);
+        var h = await (allowed ?? _db.QcInspections.AsNoTracking()).FirstOrDefaultAsync(x => x.InspectionNo == inspectionNo && !x.IsDeleted);
         if (h == null) return null;
         var items = await _db.QcInspectionItems.AsNoTracking()
             .Where(d => d.InspectionNo == inspectionNo && !d.IsDeleted)
@@ -68,7 +71,7 @@ public class QcInspectionService : IQcInspectionService
         };
     }
 
-    public async Task<string> CreateFromInboundAsync(string inboundNo, string? userName)
+    private async Task<string> CreateFromInboundCoreAsync(string inboundNo, string? userName)
     {
         var inbound = await _db.InboundOrders.AsNoTracking()
             .FirstOrDefaultAsync(x => x.InboundNo == inboundNo && !x.IsDeleted)
@@ -112,7 +115,7 @@ public class QcInspectionService : IQcInspectionService
         return no;
     }
 
-    public async Task<string> CreateDirectAsync(QcInspectionDto dto, string? userName)
+    private async Task<string> CreateDirectCoreAsync(QcInspectionDto dto, string? userName)
     {
         if (dto.Items.Count == 0) throw new InvalidOperationException("WM-MSG-020: 明細がありません");
         var no = await _seq.NextAsync(Prefix);
@@ -142,7 +145,7 @@ public class QcInspectionService : IQcInspectionService
         return no;
     }
 
-    public async Task SaveItemsAsync(string inspectionNo, List<QcInspectionItemDto> items, string? userName)
+    private async Task SaveItemsCoreAsync(string inspectionNo, List<QcInspectionItemDto> items, string? userName)
     {
         var h = await _db.QcInspections.FirstOrDefaultAsync(x => x.InspectionNo == inspectionNo && !x.IsDeleted)
             ?? throw new InvalidOperationException("WM-MSG-070");
@@ -177,7 +180,7 @@ public class QcInspectionService : IQcInspectionService
         await _db.SaveChangesAsync();
     }
 
-    public async Task<JudgeResult> JudgeAsync(string inspectionNo, JudgeRequest req, string? userName)
+    private async Task<JudgeResult> JudgeCoreAsync(string inspectionNo, JudgeRequest req, string? userName, Func<InboundReceiptDto,Task<string>>? receive=null)
     {
         var h = await _db.QcInspections.FirstOrDefaultAsync(x => x.InspectionNo == inspectionNo && !x.IsDeleted)
             ?? throw new InvalidOperationException("WM-MSG-070");
@@ -230,7 +233,7 @@ public class QcInspectionService : IQcInspectionService
                             ? req.AcceptLocations[i] : $"{warehouseCd}-RCV",
                     }).ToList(),
                 };
-                receiptNo = await _inbound.ConfirmReceiptAsync(receiptDto, userName);
+                receiptNo = receive==null ? await _inbound.ConfirmReceiptAsync(receiptDto, userName) : await receive(receiptDto);
                 h.GeneratedReceiptNo = receiptNo;
             }
         }
@@ -239,7 +242,7 @@ public class QcInspectionService : IQcInspectionService
         return new JudgeResult { FinalJudgement = req.FinalJudgement, GeneratedReceiptNo = receiptNo };
     }
 
-    public async Task CancelAsync(string inspectionNo, string? userName)
+    private async Task CancelCoreAsync(string inspectionNo, string? userName)
     {
         var h = await _db.QcInspections.FirstOrDefaultAsync(x => x.InspectionNo == inspectionNo && !x.IsDeleted)
             ?? throw new InvalidOperationException("WM-MSG-070");

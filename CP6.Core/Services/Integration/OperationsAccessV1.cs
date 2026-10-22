@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Integration;
 
-internal sealed partial class OperationsAccessV1(CP6Context db,OperationsOwnerV1 owner,OperationsOwnerV1.Authority authority)
+internal sealed partial class OperationsAccessV1(CP6Context db,OperationsOwnerV1 owner,OperationsOwnerV1.Authority authority,List<OperationsOwnerV1.Authority>? participants=null)
 {
-    internal List<OperationsOwnerV1.Authority> Authorities {get;}=[authority];
+    internal List<OperationsOwnerV1.Authority> Authorities {get;}=participants??[authority];
     private readonly List<Func<CancellationToken,Task>> finals=[];
     internal OperationsDelegationV1 Delegate(string number)=>new(db,db.CurrentTenantId,authority.Source.SubjectId,
         Actor,authority.Resource,authority.Action,number,authority.Source.SourcePermissionVersion);

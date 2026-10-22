@@ -12,6 +12,8 @@ namespace CP6.WebApi.Controllers.Mes;
 [ApiController]
 [Route("api/mes/inspections")]
 [Authorize]
+[CP6.WebApi.Controllers.Erp.OrderOwnerResult]
+[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class QualityInspectionController : ControllerBase
 {
     private readonly IQualityInspectionService _service;
@@ -22,6 +24,7 @@ public class QualityInspectionController : ControllerBase
 
     /// <summary>ME070 — 一覧</summary>
     [HttpGet]
+    [RequirePermission("mes-quality-inspection", "query")]
     public async Task<IActionResult> Search([FromQuery] QualityInspectionSearchQuery query)
     {
         var r = await _service.SearchAsync(query);
@@ -30,6 +33,7 @@ public class QualityInspectionController : ControllerBase
 
     /// <summary>ME060 — 単条</summary>
     [HttpGet("{no}")]
+    [RequirePermission("mes-quality-inspection", "query")]
     public async Task<IActionResult> Get(string no)
     {
         var dto = await _service.GetByNoAsync(no);
@@ -47,7 +51,7 @@ public class QualityInspectionController : ControllerBase
             var no = await _service.CreateAsync(dto, CurrentUser);
             return Ok(new { code = 0, message = "ME-MSG-041", data = new { inspectionNo = no } });
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException)
         {
             return BadRequest(new { code = 400, message = ex.Message });
         }
@@ -63,7 +67,7 @@ public class QualityInspectionController : ControllerBase
             await _service.UpdateAsync(no, dto, CurrentUser);
             return Ok(new { code = 0, message = "ME-MSG-041" });
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException)
         {
             return BadRequest(new { code = 400, message = ex.Message });
         }
@@ -71,6 +75,7 @@ public class QualityInspectionController : ControllerBase
 
     /// <summary>ME060 — 検査項目テンプレート取得</summary>
     [HttpGet("templates/{cd}")]
+    [RequirePermission("mes-quality-inspection", "query")]
     public async Task<IActionResult> GetTemplate(string cd)
     {
         var rows = await _service.GetTemplateAsync(cd);
@@ -79,6 +84,7 @@ public class QualityInspectionController : ControllerBase
 
     /// <summary>ME060 — 全テンプレートCD一覧</summary>
     [HttpGet("templates")]
+    [RequirePermission("mes-quality-inspection", "query")]
     public async Task<IActionResult> GetAllTemplates()
     {
         var rows = await _service.GetAllTemplateCodesAsync();

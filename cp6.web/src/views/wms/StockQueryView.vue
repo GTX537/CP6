@@ -125,7 +125,7 @@ import { formatQty as fmtQty } from '@/utils/format'
 const { t } = useI18n()
 
 const total = ref<number>()
-const intent = useOperationsIntent(() => { reads++; historyReads++; total.value = 0; historyVisible.value = false; historyStock.value = null; historyTxns.value = []; qcDialogVisible.value = false; qcTarget.value = null })
+const intent = useOperationsIntent(() => { reads++; historyReads++; total.value = 0; historyVisible.value = false; historyStock.value = null; historyTxns.value = []; qcDialogVisible.value = false; qcTarget.value = null; qcSaving.value = false })
 let reads = 0, historyReads = 0
 const listRef = ref<ListPageExpose | null>(null)
 function reloadList() { listRef.value?.reload() }
@@ -224,6 +224,7 @@ const qcReason = ref('')
 const qcSaving = ref(false)
 
 function openQcDialog(row: Stock) {
+  if (intent.busy.value || intent.uncertain.value) return
   qcTarget.value = row
   qcNewStatus.value = row.qcStatus || 'PENDING'
   qcReason.value = ''
@@ -231,8 +232,8 @@ function openQcDialog(row: Stock) {
 }
 async function onQcSave() {
   if (!qcTarget.value || !qcNewStatus.value) return
-  const token = intent.capture(), target = qcTarget.value, status = qcNewStatus.value, reason = qcReason.value
-  if (qcSaving.value) return
+  const token = intent.begin(); if (!token) return
+  const target = qcTarget.value, status = qcNewStatus.value, reason = qcReason.value
   qcSaving.value = true
   try {
     const res = await stockApi.setQcStatus(target.id, status, reason || undefined)
@@ -246,9 +247,11 @@ async function onQcSave() {
       ElMessage.error(res.message || 'Unknown error')
     }
   } catch (e: any) {
-    if (intent.current(token)) ElMessage.error(e?.message ?? 'Network error')
+    intent.failed(token, e)
+    if (intent.current(token)) ElMessage.error(intent.error.value || e?.message || 'Network error')
   } finally {
-    qcSaving.value = false
+    if (intent.current(token)) qcSaving.value = false
+    intent.finish(token)
   }
 }
 </script>
