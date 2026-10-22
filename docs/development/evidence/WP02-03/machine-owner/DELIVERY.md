@@ -27,3 +27,9 @@ COORD本聊天单人；Main基线`6bada0cf13eeabcb8b25dab485e5c20435941258`，DE
 正式MES-RES-01资源/能力版本、Claim/StageA-B，MES-PERF-01 Owner快照/实际运行/OEE发布与SCHED适配仍未采用。旧默认480、状态启发式、字符串关联和单表OeeDaily不被认作正式合同。全任务24/375、125目标0交付、247运行NOT_RUN不因本窗口提升。
 
 下一步正常产品PR与Handoff采用、原任务最后状态PR、远端blob核对，再定向删除两个准确分支并manage finish。DEV-1/2仅本窗占用，集成席空闲，根用户未跟踪资料保留。Issue407在远端采用及生命周期完成后关闭；完成后连续推进OEE/计划Owner，不终止七天目标。
+
+## 远端采用与原任务收尾
+
+产品[PR](https://github.com/GTX537/CP6/pull/408)和[Handoff](https://github.com/GTX537/CP6.AI-Handoff/pull/23)已采用，source`9295ebac050bb43c3330638a59e27e71dc2ef8b2`、远端main`276e05aeeed41c560777e1d73ced49d0108387b1`，26任务文件blob一致；Handoff source`0536f372b2507fe7dceb85aa6a12e98fe881f8a5`、目标`722cc9d6a9034d181cd26d0ec07e186d24327b6c`，DEV-2准确分支删除/席位释放。
+
+38项相关.NET用例通过（按TRX testId合并定向复查，含PG/实际HTTP/并发/迁移/种子），21项Vitest通过、其中5项修改后定向复查通过，完整vue-tsc -b通过，仅最后文档diff/链接/台账检查；原DEV-1最后文档PR后finish、关闭Issue407。分支/工作区/席位/实际耗时以最终PR、实时登记及`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave47-final-verification.json`为准，未提前声明释放。七天目标ACTIVE，下一OEE/计划Owner，正式范围与整体计数不提升。
