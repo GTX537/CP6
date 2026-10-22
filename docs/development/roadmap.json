@@ -159447,6 +159447,11 @@
       "date": "2026-10-22",
       "change": "W45 BUG401 local realtime isolation and lifecycle fix validated; actual WebSocket revealed/fixed Hub tenant scope. Machine/OEE independent Owner still pending; seven-day ACTIVE.",
       "evidence": "docs/development/dispatch/20261022-wave45/README.md"
+    },
+    {
+      "date": "2026-10-22",
+      "change": "W45 BUG401 product PR402/Handoff21 adopted; Handoff exact branch/seat released. Original final docs/finish then Issue close; seven-day ACTIVE, full counts unchanged.",
+      "evidence": "docs/development/dispatch/20261022-wave45/README.md"
     }
   ],
   "implementation_assessment": {
@@ -162026,7 +162031,7 @@
         "claimed_at": "2026-10-22T07:10:38Z",
         "baseline_sha": "c0a720c5905c7dcb58be9e5026445ee5e78162d3",
         "entry_evidence": "docs/development/dispatch/20261022-wave45/README.md",
-        "phase": "LOCAL_VALIDATED_PENDING_INTEGRATION",
+        "phase": "CLOSED",
         "dispatch_scope": "W45_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -162048,26 +162053,72 @@
           "CP6.Tests/Platform/AuthenticationStatePostgreSqlTests.cs",
           "cp6.web/src/utils/mesHub.spec.ts"
         ],
-        "reserved_write_resources": [
-          "Main:mes-realtime",
-          "Main:mes-dashboard-read",
-          "Main:original-session-authority"
-        ],
-        "reserved_postgresql_ports": [
-          55435
-        ],
+        "reserved_write_resources": [],
+        "reserved_postgresql_ports": [],
         "handoff_branch": "codex/w45-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": false,
+        "candidate_integrated": true,
         "resources_released": false,
         "full_task_completed": false,
         "worker_delivery_ref": "docs/development/evidence/WP02-03/mes-realtime/DELIVERY.md",
         "validation": "31项去重相关.NET通过（4项新增PG/真实HTTP与WebSocket，其余既有库存看板/CSRF边界），8项Vitest及完整vue-tsc -b通过",
-        "runtime_resources_released": true
+        "runtime_resources_released": true,
+        "integration": {
+          "result": "PASS",
+          "repository": "GTX537/CP6",
+          "source": "277cc3091093ee12ac692f876a68f1d97a747d6e",
+          "main": "a817ede56e079d354161e99e865bdbf56c2123f9",
+          "target": "main",
+          "pr": "https://github.com/GTX537/CP6/pull/402",
+          "paths": [
+            "CP6.Core/Services/Mes/MesDashboardService.Owner.cs",
+            "CP6.Tests/Erp/MesRealtimeOwnerPostgreSqlTests.cs",
+            "CP6.Tests/Platform/AuthenticationStatePostgreSqlTests.cs",
+            "CP6.WebApi/Hubs/MesHub.cs",
+            "CP6.WebApi/Services/SignalRMesNotifier.cs",
+            "cp6.web/src/utils/mesHub.spec.ts",
+            "cp6.web/src/utils/mesHub.ts",
+            "cp6.web/src/views/mes/ControlTowerOwner.spec.ts",
+            "cp6.web/src/views/mes/ControlTowerView.vue",
+            "docs/development/07-detailed-tasks.md",
+            "docs/development/09-parallel-development.md",
+            "docs/development/dispatch/20261022-wave45/README.md",
+            "docs/development/evidence/WP02-03/mes-realtime/DELIVERY.md",
+            "docs/development/planning/20261022-seven-day-delivery.md",
+            "docs/development/roadmap.json",
+            "docs/project-memory/05-Completed.md",
+            "docs/project-memory/06-Todo.md",
+            "docs/project-memory/CHANGELOG-AI.md",
+            "docs/project-memory/PROJECT_STATE.md"
+          ],
+          "observed_at": "2026-10-22T07:37:30.711564+00:00"
+        },
+        "delivery_ref": {
+          "commit": "9507d2b162694e955a33e034f2c862b73b6a8001",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261022T073823Z-wave45-delivery/MESSAGE.md",
+          "at": "2026-10-22T07:38:23.717873+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w45-handoff",
+          "pr": 21,
+          "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/21"
+        },
+        "lifecycle_snapshot": {
+          "observed_at": "2026-10-22T07:41:38.664837+00:00",
+          "main_task": "CP6:BUG-401-MES-REALTIME",
+          "main_branch": "codex/bug-401-mes-realtime",
+          "main_status": "active-final-documentation",
+          "main_seat_released": false,
+          "main_finish_required": true,
+          "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
+          "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave45-final-verification.json",
+          "handoff_seat_released": true,
+          "note": "Final docs on original branch then normal PR/managed finish and Issue401 close; seven-day ACTIVE."
+        },
+        "product_closed_at": "2026-10-22T07:37:30.711564+00:00"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -165584,12 +165635,24 @@
         }
       },
       "wave45_delivery": {
-        "status": "LOCAL_VALIDATED_PENDING_INTEGRATION",
+        "status": "MERGED",
         "issue": 401,
         "report": "docs/development/evidence/WP02-03/mes-realtime/DELIVERY.md",
         "validation": "31项去重相关.NET通过（4项新增PG/真实HTTP与WebSocket，其余既有库存看板/CSRF边界），8项Vitest及完整vue-tsc -b通过",
         "full_task_complete": false,
-        "business_acceptance": "NOT_RUN"
+        "business_acceptance": "NOT_RUN",
+        "source_candidate_sha": "277cc3091093ee12ac692f876a68f1d97a747d6e",
+        "remote_main_sha": "a817ede56e079d354161e99e865bdbf56c2123f9",
+        "pull_request": "https://github.com/GTX537/CP6/pull/402",
+        "handoff": {
+          "commit": "9507d2b162694e955a33e034f2c862b73b6a8001",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261022T073823Z-wave45-delivery/MESSAGE.md",
+          "at": "2026-10-22T07:38:23.717873+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w45-handoff",
+          "pr": 21,
+          "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/21"
+        }
       }
     },
     {
@@ -184367,7 +184430,7 @@
       "path": "docs/development/dispatch/20261022-wave45/README.md",
       "baseline_sha": "c0a720c5905c7dcb58be9e5026445ee5e78162d3",
       "registered_at": "2026-10-22T07:12:49.679447+00:00",
-      "phase": "W45_01_LOCAL_VALIDATED_PENDING_INTEGRATION",
+      "phase": "CLOSED",
       "assigned_chats": [
         "COORD"
       ],
@@ -184377,12 +184440,10 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [
-        "COORD"
-      ],
+      "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": false,
-      "product_integrated": false,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W45-01",
@@ -184392,7 +184453,7 @@
           "lifecycle_task": "BUG-401-MES-REALTIME",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "LOCAL_VALIDATED_PENDING_INTEGRATION",
+          "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "actual_start_ref": {
@@ -184411,7 +184472,61 @@
           "candidate_review_completed": true,
           "worker_delivery_ref": "docs/development/evidence/WP02-03/mes-realtime/DELIVERY.md",
           "validation": "31项去重相关.NET通过（4项新增PG/真实HTTP与WebSocket，其余既有库存看板/CSRF边界），8项Vitest及完整vue-tsc -b通过",
-          "runtime_resources_released": true
+          "runtime_resources_released": true,
+          "candidate_integrated": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "277cc3091093ee12ac692f876a68f1d97a747d6e",
+            "main": "a817ede56e079d354161e99e865bdbf56c2123f9",
+            "target": "main",
+            "pr": "https://github.com/GTX537/CP6/pull/402",
+            "paths": [
+              "CP6.Core/Services/Mes/MesDashboardService.Owner.cs",
+              "CP6.Tests/Erp/MesRealtimeOwnerPostgreSqlTests.cs",
+              "CP6.Tests/Platform/AuthenticationStatePostgreSqlTests.cs",
+              "CP6.WebApi/Hubs/MesHub.cs",
+              "CP6.WebApi/Services/SignalRMesNotifier.cs",
+              "cp6.web/src/utils/mesHub.spec.ts",
+              "cp6.web/src/utils/mesHub.ts",
+              "cp6.web/src/views/mes/ControlTowerOwner.spec.ts",
+              "cp6.web/src/views/mes/ControlTowerView.vue",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/09-parallel-development.md",
+              "docs/development/dispatch/20261022-wave45/README.md",
+              "docs/development/evidence/WP02-03/mes-realtime/DELIVERY.md",
+              "docs/development/planning/20261022-seven-day-delivery.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-22T07:37:30.711564+00:00"
+          },
+          "delivery_ref": {
+            "commit": "9507d2b162694e955a33e034f2c862b73b6a8001",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261022T073823Z-wave45-delivery/MESSAGE.md",
+            "at": "2026-10-22T07:38:23.717873+00:00",
+            "base": "codex/t02c-entry-handoff-20260921",
+            "branch": "codex/w45-handoff",
+            "pr": 21,
+            "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/21"
+          },
+          "resources_released": false,
+          "lifecycle_snapshot": {
+            "observed_at": "2026-10-22T07:41:38.664837+00:00",
+            "main_task": "CP6:BUG-401-MES-REALTIME",
+            "main_branch": "codex/bug-401-mes-realtime",
+            "main_status": "active-final-documentation",
+            "main_seat_released": false,
+            "main_finish_required": true,
+            "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
+            "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave45-final-verification.json",
+            "handoff_seat_released": true,
+            "note": "Final docs on original branch then normal PR/managed finish and Issue401 close; seven-day ACTIVE."
+          },
+          "product_closed_at": "2026-10-22T07:37:30.711564+00:00"
         }
       ],
       "horizon": {
@@ -184427,7 +184542,28 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Normal PR and Handoff adoption, verify original BUG401 reproduction then close Issue, exact branches/finish; continue D3 real Machine/OEE Owners."
+      "next_action": "Final docs and managed finish, close Issue401; continue D3 direct prerequisites without repeat W37-W45.",
+      "product_closed_at": "2026-10-22T07:37:30.711564+00:00",
+      "handoff_integration": {
+        "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/21",
+        "commit": "5bea3df9e38898533dff5943e1e1ee07e86cec73",
+        "target_head": "5bea3df9e38898533dff5943e1e1ee07e86cec73"
+      },
+      "handoff_resources_released": true,
+      "handoff_branch_disposition": "deleted-local-and-remote",
+      "lifecycle_snapshot": {
+        "observed_at": "2026-10-22T07:41:38.664837+00:00",
+        "main_task": "CP6:BUG-401-MES-REALTIME",
+        "main_branch": "codex/bug-401-mes-realtime",
+        "main_status": "active-final-documentation",
+        "main_seat_released": false,
+        "main_finish_required": true,
+        "live_source": "D:/CP6/.git/cp6-workspaces/state.json",
+        "final_verification": "C:/Users/tt/CP6-planning-reports/20261017-foundation/wave45-final-verification.json",
+        "handoff_seat_released": true,
+        "note": "Final docs on original branch then normal PR/managed finish and Issue401 close; seven-day ACTIVE."
+      }
     },
     "wave_history": [
       {
@@ -191972,10 +192108,14 @@
         },
         {
           "id": "D3",
-          "phase": "IMPLEMENTING",
+          "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
           "current_window": "W45-01",
-          "prerequisite_adjustment": "D3设备/OEE前置源码核对发现实际注册SignalRMesNotifier向Clients.All发送工单/数量/设备载荷，MesHub按无租户业务编码加入组且无当前权限准入；唯一页面消费者ControlTower直接展示这些载荷。按BUG规则P0先行，原Machine/OEE完整Owner留下一窗口。"
+          "prerequisite_adjustment": "D3设备/OEE前置源码核对发现实际注册SignalRMesNotifier向Clients.All发送工单/数量/设备载荷，MesHub按无租户业务编码加入组且无当前权限准入；唯一页面消费者ControlTower直接展示这些载荷。按BUG规则P0先行，原Machine/OEE完整Owner留下一窗口。",
+          "adopted_window": "W45-01",
+          "product_pr": "https://github.com/GTX537/CP6/pull/402",
+          "report": "docs/development/evidence/WP02-03/mes-realtime/DELIVERY.md",
+          "remaining": "Machine/OEE/Planning independent Owners remain unadopted; check actual WmsHub scope before further realtime reliance."
         },
         {
           "id": "D4",
