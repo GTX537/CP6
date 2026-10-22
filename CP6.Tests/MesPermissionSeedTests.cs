@@ -71,14 +71,14 @@ public class MesPermissionSeedTests
                 .Where(x => x.TenantId == tid && x.RoleId == 1).ToList();
 
             // 元组闭环计数：每租户各得全套 25。
-            Assert.Equal(30, menuActions.Count);
+            Assert.Equal(32, menuActions.Count);
             Assert.Equal(25, roleActions.Count);
 
             // 逐元组精确匹配（漏种 0 / 多种 0）。
             var maSet = menuActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
             var raSet = roleActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
             var expected = ExpectedTuples.ToHashSet();
-            Assert.Equal(expected.Concat(new[]{(302,"query"),(302,"cancel"),(304,"query"),(304,"recalculate"),(304,"backflush")}).ToHashSet(), maSet);
+            Assert.Equal(expected.Concat(new[]{(302,"query"),(302,"cancel"),(304,"query"),(304,"recalculate"),(304,"backflush"),(308,"query"),(309,"query")}).ToHashSet(), maSet);
             Assert.DoesNotContain(roleActions,a=>a.MenuId==304 && a.ActionCode is "query" or "recalculate" or "backflush");
             Assert.DoesNotContain(roleActions,a=>a.MenuId==302 && a.ActionCode is "query" or "cancel");
             Assert.Equal(expected, raSet);
@@ -100,7 +100,7 @@ public class MesPermissionSeedTests
         Assert.Equal(ra1, db.Sys_RoleActions.IgnoreQueryFilters().Count());
 
         // 2 租户 × 25 元组 = 50。
-        Assert.Equal(60, ma1);
+        Assert.Equal(64, ma1);
         Assert.Equal(50, ra1);
     }
 
@@ -161,7 +161,7 @@ public class MesPermissionSeedTests
         WmsPermissionSeed.EnsureSeeded(db);WmsPermissionSeed.EnsureSeeded(db);
         foreach(var tid in new[]{TenantA,TenantB})
         {
-            foreach(var menu in new[]{405,406,408})
+            foreach(var menu in new[]{403,405,406,408,415,416})
             {
                 Assert.Single(db.Sys_MenuActions.IgnoreQueryFilters().Where(a=>a.TenantId==tid && a.MenuId==menu && a.ActionCode=="query"));
                 Assert.Empty(db.Sys_RoleActions.IgnoreQueryFilters().Where(a=>a.TenantId==tid && a.MenuId==menu && a.ActionCode=="query"));

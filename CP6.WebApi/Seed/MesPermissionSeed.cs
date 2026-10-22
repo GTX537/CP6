@@ -71,8 +71,8 @@ public static class MesPermissionSeed
     /// 逐租户幂等播种 MES 全部权限点 + 授管理员（RoleId=1）。
     /// 须在 <see cref="MesMenuSeed.EnsureSeeded"/> 之后调用（锚定菜单行须先在）。
     /// </summary>
-    // W37/W38 Owner catalog additions never grant roles automatically.
-    private static readonly (int MenuId,string Code,string Name)[] OwnerActions=[(302,"query","读取制造工单"),(302,"cancel","取消制造工单"),(304,"query","读取报工"),(304,"recalculate","重算报工工时"),(304,"backflush","补偿材料倒冲")];
+    // W37–W39 Owner catalog additions never grant roles automatically.
+    private static readonly (int MenuId,string Code,string Name)[] OwnerActions=[(309,"query","读取MES看板"),(308,"query","读取不良记录来源"),(302,"query","读取制造工单"),(302,"cancel","取消制造工单"),(304,"query","读取报工"),(304,"recalculate","重算报工工时"),(304,"backflush","补偿材料倒冲")];
     public static void EnsureSeeded(CP6Context db)
     {
         // Sys_Tenant 为共享表（BaseEntity，非行级过滤）：Id 即 TenantId。

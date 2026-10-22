@@ -57,7 +57,7 @@ public partial class BackflushService
                         var src=await available.OrderByDescending(s=>s.PhysicalQty).FirstOrDefaultAsync(ct);
                         var wh=src?.WarehouseCd??DefaultMaterialWarehouse;var loc=src?.LocationCd??DefaultMaterialLocation;var onHand=src?.PhysicalQty??0;
                         if(ticket==null)await a.RequireLocation(wh,loc,ct);
-                        await _stock.ApplyAsync(new(){TxnType=WmsTxnType.OUT,WarehouseCd=wh,LocationCd=loc,ProductCd=row.MaterialCd,LotNo=src?.LotNo??"",
+                        await ((StockMovementService)_stock).ApplyWithinOwnerAsync(new(){TxnType=WmsTxnType.OUT,WarehouseCd=wh,LocationCd=loc,ProductCd=row.MaterialCd,LotNo=src?.LotNo??"",
                             Qty=qty,UnitCd=row.UsageUnit,UnitPrice=src?.UnitPrice??row.SupplyPrice,RelatedNo=no,RelatedType=BackflushRelatedType,
                             OperatorCd=a.Actor,Remark=$"完工反冲 {no} 工程 {row.ProcessCd} 材料 {row.MaterialCd}",AllowNegativeOverride=true},ct);
                         var mat=await _db.WorkOrderMaterials.SingleOrDefaultAsync(m=>m.WorkOrderNo==no && m.ProcessCd==row.ProcessCd && m.MaterialCd==row.MaterialCd && !m.IsDeleted,ct);

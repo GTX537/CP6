@@ -1,5 +1,6 @@
 <template>
   <div class="mes-dashboard">
+    <el-alert v-if="Object.keys(readErrors).length" :title="Object.values(readErrors)[0]" type="warning" :closable="false" />
     <!-- 本日 KPI -->
     <div class="kpi-row">
       <div class="kpi-card kpi-blue">
@@ -192,6 +193,7 @@
 </template>
 
 <script setup lang="ts">
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
@@ -308,28 +310,37 @@ function formatDate(v?: string | null) { return v ? v.substring(0, 10) : '' }
 function formatDateTime(v?: string | null) { return v ? v.substring(0, 16).replace('T', ' ') : '' }
 
 // ─── load ───
+function clearSummary() { Object.keys(summary).forEach(key => (summary as any)[key] = 0) }
+const intent = useOperationsIntent(() => {
+  clearSummary(); processProgress.value = []; dailyTrend.value = []; defectTop5.value = []; delayAlerts.value = []; recentCompleted.value = []; heatmap.value = []
+  Object.keys(readErrors).forEach(key => delete readErrors[key])
+})
+const readErrors = reactive<Record<string, string>>({})
+const generations: Record<string, number> = {}
+async function readPanel<T>(key: string, request: () => Promise<{ data: T }>, apply: (data: T) => void, clear: () => void) {
+  const token = intent.capture(), id = (generations[key] ?? 0) + 1
+  generations[key] = id; delete readErrors[key]
+  try {
+    const response = await request()
+    if (!intent.current(token) || generations[key] !== id) return
+    apply(response.data)
+  } catch {
+    if (intent.current(token) && generations[key] === id) { clear(); readErrors[key] = '読込できませんでした。権限と最新状態を確認してください。' }
+  }
+}
 async function loadAll() {
-  const [s, pp, da, top5, rc, hm] = await Promise.all([
-    mesDashboardApi.summary(),
-    mesDashboardApi.processProgress(),
-    mesDashboardApi.delayAlerts(50),
-    mesDashboardApi.defectTop5(),
-    mesDashboardApi.recentCompleted(10),
-    mesDashboardApi.machineHeatmap(7),
+  await Promise.all([
+    readPanel('summary', () => mesDashboardApi.summary(), data => Object.assign(summary, data), clearSummary),
+    readPanel('process', () => mesDashboardApi.processProgress(), data => { processProgress.value = data }, () => { processProgress.value = [] }),
+    loadDelay(),
+    readPanel('defect', () => mesDashboardApi.defectTop5(), data => { defectTop5.value = data }, () => { defectTop5.value = [] }),
+    readPanel('recent', () => mesDashboardApi.recentCompleted(10), data => { recentCompleted.value = data }, () => { recentCompleted.value = [] }),
+    readPanel('heatmap', () => mesDashboardApi.machineHeatmap(7), data => { heatmap.value = data }, () => { heatmap.value = [] }),
+    loadTrend(),
   ])
-  Object.assign(summary, s.data || summary)
-  processProgress.value = pp.data || []
-  delayAlerts.value = da.data || []
-  defectTop5.value = top5.data || []
-  recentCompleted.value = rc.data || []
-  heatmap.value = hm.data || []
-  await loadTrend()
 }
-
-async function loadTrend() {
-  const r = await mesDashboardApi.dailyTrend(trendDays.value)
-  dailyTrend.value = r.data || []
-}
+const loadDelay = () => readPanel('delay', () => mesDashboardApi.delayAlerts(50), data => { delayAlerts.value = data }, () => { delayAlerts.value = [] })
+const loadTrend = () => { const days = trendDays.value; return readPanel('trend', () => mesDashboardApi.dailyTrend(days), data => { if (days === trendDays.value) dailyTrend.value = data }, () => { dailyTrend.value = [] }) }
 
 let summaryTimer: number | undefined
 let delayTimer: number | undefined
@@ -339,10 +350,7 @@ onMounted(() => {
   // 60 秒間隔で全体更新
   summaryTimer = window.setInterval(loadAll, 60000)
   // 10 秒間隔で遅延アラート更新
-  delayTimer = window.setInterval(async () => {
-    const r = await mesDashboardApi.delayAlerts(50)
-    delayAlerts.value = r.data || []
-  }, 10000)
+  delayTimer = window.setInterval(loadDelay, 10000)
 })
 
 onBeforeUnmount(() => {

@@ -1,5 +1,9 @@
 # WMS 写端点 × 权限键清单（M-WMS Task 1 真相源）
 
+## 2026-10-21 W39 当前Owner增量
+
+菜单416显式wms-dashboard、309显式mes-dashboard。新增query目录：403库存、415盘点、416 WMS看板、309 MES看板、308不良来源；幂等登记且不自动赋予角色。下文原轮次表格/SQL留作历史范围，本增量以当前MenuSeed/PermissionSeed为准。[Owner v1](../design-handbook/remediation/main-stocktake-dashboard-owner-v1.md)。
+
 > W38（2026-10-21）：[报工／入库Owner v1](../design-handbook/remediation/main-production-inbound-owner-v1.md)增加304 query/recalculate/backflush、405/406 query目录；不自动授予任何角色。Resume仍使用suspend，收货写仍post。历史Actions统计保留范围，当前OwnerActions另列；GET不能据旧规则移除query。
 
 > W37（2026-10-21）补充：[Operations Owner v1](../design-handbook/remediation/main-operations-owner-v1.md)要求制造/出库query目录及MES服务cancel目录，新增目录不自动授予任何角色；制造next-seq改用POST，保留带CSRF的GET别名。历史写动作/计数是原轮次范围，当前C#种子区分OwnerActions与历史Actions，不能按“GET无权限”旧约定移除此窗query。

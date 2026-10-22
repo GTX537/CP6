@@ -16,26 +16,28 @@ namespace CP6.Core.Services.Wms;
 /// WM-MSG-304 で拒否し、OutboundService 引当候補からも除外する（承認自身の ADJ は放行）。
 /// 承認完了 or 取消で状態が遷移すれば活性单クエリが空になり自然解凍される（状態の巻き戻し書込は不要）。
 /// </remarks>
-public class StockTakeService : IStockTakeService
+public partial class StockTakeService : IStockTakeService
 {
     private readonly CP6Context _db;
     private readonly IWmsSequenceService _seq;
     private readonly IStockMovementService _stock;
 
+    private readonly CP6.Core.Services.Integration.OperationsOwnerV1? _owner;
     private const string Prefix = "ST";
 
-    public StockTakeService(CP6Context db, IWmsSequenceService seq, IStockMovementService stock)
+    public StockTakeService(CP6Context db, IWmsSequenceService seq, IStockMovementService stock, CP6.Core.Services.Integration.OperationsOwnerV1? owner = null)
     {
         _db = db;
         _seq = seq;
         _stock = stock;
+        _owner = owner;
     }
 
     // ───────── 検索・参照 ─────────
 
-    public async Task<List<StockTake>> SearchAsync(StockTakeSearchQuery q)
+    private async Task<List<StockTake>> SearchCoreAsync(StockTakeSearchQuery q, IQueryable<StockTake>? allowed = null)
     {
-        var query = _db.StockTakes.AsNoTracking().Where(x => !x.IsDeleted);
+        var query = allowed ?? _db.StockTakes.AsNoTracking().Where(x => !x.IsDeleted);
         if (!string.IsNullOrWhiteSpace(q.StockTakeNo)) query = query.Where(x => x.StockTakeNo.Contains(q.StockTakeNo));
         if (q.Status.HasValue) query = query.Where(x => x.Status == q.Status.Value);
         if (q.StockTakeType.HasValue) query = query.Where(x => x.StockTakeType == q.StockTakeType.Value);
@@ -50,7 +52,7 @@ public class StockTakeService : IStockTakeService
             .ToListAsync();
     }
 
-    public async Task<StockTakeDto?> GetAsync(string stockTakeNo)
+    private async Task<StockTakeDto?> GetCoreAsync(string stockTakeNo)
     {
         var h = await _db.StockTakes.AsNoTracking()
             .FirstOrDefaultAsync(x => x.StockTakeNo == stockTakeNo && !x.IsDeleted);
@@ -102,7 +104,7 @@ public class StockTakeService : IStockTakeService
 
     // ───────── 計画 ─────────
 
-    public async Task<string> CreatePlanAsync(StockTakePlanDto dto, string? userName)
+    private async Task<string> CreatePlanCoreAsync(StockTakePlanDto dto, string? userName)
     {
         if (string.IsNullOrWhiteSpace(dto.TargetWarehouseCd))
             throw new InvalidOperationException("対象倉庫CDは必須です");
@@ -164,7 +166,7 @@ public class StockTakeService : IStockTakeService
 
     // ───────── カウント ─────────
 
-    public async Task StartCountAsync(string stockTakeNo, string? userName)
+    private async Task StartCountCoreAsync(string stockTakeNo, string? userName)
     {
         var h = await GetHeaderAsync(stockTakeNo);
         if (h.Status != StockTakeStatus.Planned)
@@ -177,7 +179,7 @@ public class StockTakeService : IStockTakeService
         await _db.SaveChangesAsync();
     }
 
-    public async Task UpdateCountsAsync(string stockTakeNo, List<StockTakeCountInput> inputs, string? userName)
+    private async Task UpdateCountsCoreAsync(string stockTakeNo, List<StockTakeCountInput> inputs, string? userName)
     {
         var h = await GetHeaderAsync(stockTakeNo);
         if (h.Status != StockTakeStatus.Counting && h.Status != StockTakeStatus.DiffReview
@@ -206,7 +208,7 @@ public class StockTakeService : IStockTakeService
         await _db.SaveChangesAsync();
     }
 
-    public async Task SubmitForReviewAsync(string stockTakeNo, string? userName)
+    private async Task SubmitForReviewCoreAsync(string stockTakeNo, string? userName)
     {
         var h = await GetHeaderAsync(stockTakeNo);
         if (h.Status != StockTakeStatus.Counting)
@@ -253,7 +255,7 @@ public class StockTakeService : IStockTakeService
 
     // ───────── 承認 + ADJ 反映 ─────────
 
-    public async Task ApproveAndApplyAsync(string stockTakeNo, string? userName)
+    private async Task ApproveAndApplyCoreAsync(string stockTakeNo, string? userName, Func<StockMovementRequest,Task<string>>? apply = null)
     {
         var h = await GetHeaderAsync(stockTakeNo);
         if (h.Status != StockTakeStatus.DiffReview && h.Status != StockTakeStatus.AwaitingApproval)
@@ -271,7 +273,7 @@ public class StockTakeService : IStockTakeService
             if (diff != 0m)
             {
                 // ADJ で差異分を反映（正なら IN 効果、負なら OUT 効果）
-                var txnNo = await _stock.ApplyAsync(new StockMovementRequest
+                var txnNo = await (apply ?? (r => _stock.ApplyAsync(r)))(new StockMovementRequest
                 {
                     TxnType = WmsTxnType.ADJ,
                     WarehouseCd = d.WarehouseCd,
@@ -301,7 +303,7 @@ public class StockTakeService : IStockTakeService
         await _db.SaveChangesAsync();
     }
 
-    public async Task CancelAsync(string stockTakeNo, string? userName)
+    private async Task CancelCoreAsync(string stockTakeNo, string? userName)
     {
         var h = await GetHeaderAsync(stockTakeNo);
         if (h.Status == StockTakeStatus.Completed)

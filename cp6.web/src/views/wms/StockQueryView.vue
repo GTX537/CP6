@@ -7,7 +7,7 @@
 -->
 <template>
   <CpPageShell :title="t('wms.stock.title')" :count="total">
-    <CpListPage
+    <CpListPage :key="intent.epoch.value" clear-on-load
       ref="listRef"
       :columns="columns"
       :fetch="fetchList"
@@ -111,6 +111,7 @@
 </template>
 
 <script setup lang="ts">
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
@@ -124,6 +125,8 @@ import { formatQty as fmtQty } from '@/utils/format'
 const { t } = useI18n()
 
 const total = ref<number>()
+const intent = useOperationsIntent(() => { reads++; historyReads++; total.value = 0; historyVisible.value = false; historyStock.value = null; historyTxns.value = []; qcDialogVisible.value = false; qcTarget.value = null })
+let reads = 0, historyReads = 0
 const listRef = ref<ListPageExpose | null>(null)
 function reloadList() { listRef.value?.reload() }
 
@@ -193,7 +196,9 @@ const fetchList: ListFetch<Stock> = async ({ page, size, filters }) => {
   if (f.productCd) q.productCd = String(f.productCd)
   if (f.lotNo) q.lotNo = String(f.lotNo)
   if (f.ownerType) q.ownerType = String(f.ownerType)
+  const token = intent.capture(), id = ++reads
   const res = await stockApi.search(q as never)
+  if (!intent.current(token) || id !== reads) return { rows: [], total: 0 }
   return { rows: res.data.items, total: res.data.total }
 }
 
@@ -202,10 +207,13 @@ const historyVisible = ref(false)
 const historyStock = ref<Stock | null>(null)
 const historyTxns = ref<StockTransaction[]>([])
 async function openHistory(row: Stock) {
-  historyStock.value = row
-  const res = await stockApi.history(row.id, 365)
-  historyTxns.value = res.data.transactions
-  historyVisible.value = true
+  const token = intent.capture(), id = ++historyReads
+  historyStock.value = null; historyTxns.value = []; historyVisible.value = false
+  try {
+    const res = await stockApi.history(row.id, 365)
+    if (!intent.current(token) || id !== historyReads) return
+    historyStock.value = res.data.stock; historyTxns.value = res.data.transactions; historyVisible.value = true
+  } catch { if (intent.current(token) && id === historyReads) ElMessage.warning(t('読込できませんでした。権限を確認してください。')) }
 }
 
 // —— Phase 7 Gap 1.3 QC ステータス設定 ——
@@ -223,9 +231,12 @@ function openQcDialog(row: Stock) {
 }
 async function onQcSave() {
   if (!qcTarget.value || !qcNewStatus.value) return
+  const token = intent.capture(), target = qcTarget.value, status = qcNewStatus.value, reason = qcReason.value
+  if (qcSaving.value) return
   qcSaving.value = true
   try {
-    const res = await stockApi.setQcStatus(qcTarget.value.id, qcNewStatus.value, qcReason.value || undefined)
+    const res = await stockApi.setQcStatus(target.id, status, reason || undefined)
+    if (!intent.current(token) || qcTarget.value?.id !== target.id) return
     if (res.code === 0 && res.data) {
       ElMessage.success(t('wms.stock.qc.savedMsg'))
       qcDialogVisible.value = false
@@ -235,7 +246,7 @@ async function onQcSave() {
       ElMessage.error(res.message || 'Unknown error')
     }
   } catch (e: any) {
-    ElMessage.error(e?.message ?? 'Network error')
+    if (intent.current(token)) ElMessage.error(e?.message ?? 'Network error')
   } finally {
     qcSaving.value = false
   }

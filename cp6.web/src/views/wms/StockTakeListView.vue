@@ -5,11 +5,13 @@
 -->
 <template>
   <CpPageShell :title="t('wms.stocktake.titleList')" :count="total">
+    <el-alert v-if="intent.error.value" :title="intent.error.value" type="warning" :closable="false" />
+    <div v-if="lastSavedNo">{{ lastSavedNo }}</div>
     <template #actions>
-      <el-button @click="openPlan">{{ t('wms.stocktake.btn.snapshot') }}</el-button>
+      <el-button @click="openPlan" :disabled="intent.busy.value || intent.uncertain.value" v-permission="'wms-stocktake:add'">{{ t('wms.stocktake.btn.snapshot') }}</el-button>
     </template>
 
-    <CpListPage
+    <CpListPage :key="intent.epoch.value" clear-on-load
       :columns="columns"
       :fetch="fetchList"
       :search-fields="searchFields"
@@ -23,7 +25,7 @@
       </template>
     </CpListPage>
 
-    <CpFormDialog
+    <CpFormDialog :key="intent.epoch.value"
       v-model="planDialog"
       :title="t('wms.stocktake.btn.snapshot')"
       width="540"
@@ -60,6 +62,7 @@
 </template>
 
 <script setup lang="ts">
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
 import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, type FormRules } from 'element-plus'
@@ -76,6 +79,9 @@ const router = useRouter()
 const { t } = useI18n()
 
 const total = ref<number>()
+const lastSavedNo = ref('')
+const intent = useOperationsIntent(() => { reads++; total.value = 0; planDialog.value = false; lastSavedNo.value = ''; Object.keys(planForm).forEach(key => delete (planForm as any)[key]) })
+let reads = 0
 
 const typeMap = computed<Record<number, string>>(() => ({
   1: t('wms.stocktake.type.full'),
@@ -138,7 +144,9 @@ const fetchList: ListFetch<StockTake> = async ({ page, size, filters }) => {
   if (f.stockTakeType !== undefined && f.stockTakeType !== '') q.stockTakeType = Number(f.stockTakeType)
   if (f.status !== undefined && f.status !== '') q.status = Number(f.status)
   if (f.targetWarehouseCd) q.targetWarehouseCd = String(f.targetWarehouseCd)
+  const token = intent.capture(), id = ++reads
   const res = await stockTakeApi.search(q)
+  if (!intent.current(token) || id !== reads) return { rows: [], total: 0 }
   const all = res.data || []
   const start = (page - 1) * size
   return { rows: all.slice(start, start + size), total: all.length }
@@ -160,6 +168,7 @@ const rules = computed<FormRules>(() => ({
 }))
 
 function openPlan() {
+  if (intent.busy.value || intent.uncertain.value) return
   Object.assign(planForm, {
     stockTakeType: 1,
     plannedDate: new Date().toISOString().slice(0, 10),
@@ -173,8 +182,16 @@ function openPlan() {
 }
 
 async function onCreatePlan() {
-  const res = await stockTakeApi.createPlan(planForm)
-  ElMessage.success(`${t('wms.common.success')}: ${res.data.stockTakeNo}`)
-  router.push({ path: '/wms/stock-take', query: { no: res.data.stockTakeNo } })
+  const token = intent.begin(); if (!token) throw new Error('処理中または結果確認待ちです。')
+  const draft = JSON.parse(JSON.stringify(planForm)) as StockTakePlanRequest
+  let committed = false
+  try {
+    const res = await stockTakeApi.createPlan(draft)
+    if (!intent.current(token)) throw new Error('操作の対象が変わりました。')
+    committed = true
+    lastSavedNo.value = res.data.stockTakeNo
+    ElMessage.success(`${t('wms.common.success')}: ${lastSavedNo.value}`)
+    await router.push({ path: '/wms/stock-take', query: { no: lastSavedNo.value } })
+  } catch (e) { if (!committed) intent.failed(token, e); throw e } finally { intent.finish(token) }
 }
 </script>

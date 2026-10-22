@@ -1,5 +1,9 @@
 # WMS 权限键 → 锚定 MenuId 映射（M-WMS Task 2 产出）
 
+## 2026-10-21 W39 当前Owner增量
+
+菜单416显式wms-dashboard、309显式mes-dashboard。新增query目录：403库存、415盘点、416 WMS看板、309 MES看板、308不良来源；幂等登记且不自动赋予角色。下文原轮次表格/SQL留作历史范围，本增量以当前MenuSeed/PermissionSeed为准。[Owner v1](../design-handbook/remediation/main-stocktake-dashboard-owner-v1.md)。
+
 > 生成于 2026-07-10。**本表是 T3 种 `Sys_RoleAction` 的唯一输入**：为某权限键授某 action，须写
 > `Sys_RoleAction(RoleId, MenuId=下表锚定MenuId, ActionCode=action)`。运行时
 > `PermissionAggregator.FillActionKeysAsync` 以 `Sys_RoleActions join Sys_Menus on MenuId where MenuKey!=null`

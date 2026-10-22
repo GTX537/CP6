@@ -1,5 +1,6 @@
 <template>
   <div class="wms-stock-take">
+    <el-alert v-if="intent.error.value" :title="intent.error.value" type="warning" :closable="false" />
     <el-card shadow="never">
       <template #header>
         <div style="display: flex; align-items: center; gap: 12px">
@@ -80,18 +81,19 @@
     <el-affix position="bottom" :offset="0">
       <div class="action-bar">
         <el-button @click="goBack">{{ t('wms.common.back') }}</el-button>
-        <el-button v-if="canStartCount" type="primary" @click="onStartCount">{{ t('wms.stocktake.btn.startCount') }}</el-button>
-        <el-button v-if="canSaveCounts" type="primary" @click="onSaveCounts" :loading="saving">{{ t('wms.common.save') }}</el-button>
-        <el-button v-if="canSubmit" type="warning" @click="onSubmit">{{ t('wms.stocktake.btn.submitReview') }}</el-button>
-        <el-button v-if="canApprove" v-permission="'wms-stocktake:approve'" type="success" @click="onApprove">{{ t('wms.stocktake.btn.approve') }} + {{ t('wms.stocktake.btn.adjust') }}</el-button>
-        <el-button v-if="canCancel" v-permission="'wms-stocktake:cancel'" type="danger" plain @click="onCancel">{{ t('wms.outbound.btn.cancel') }}</el-button>
+        <el-button v-if="canStartCount" type="primary" @click="onStartCount" :disabled="intent.busy.value || intent.uncertain.value">{{ t('wms.stocktake.btn.startCount') }}</el-button>
+        <el-button v-if="canSaveCounts" type="primary" @click="onSaveCounts" :disabled="intent.busy.value || intent.uncertain.value" :loading="saving">{{ t('wms.common.save') }}</el-button>
+        <el-button v-if="canSubmit" type="warning" @click="onSubmit" :disabled="intent.busy.value || intent.uncertain.value">{{ t('wms.stocktake.btn.submitReview') }}</el-button>
+        <el-button v-if="canApprove" v-permission="'wms-stocktake:approve'" type="success" @click="onApprove" :disabled="intent.busy.value || intent.uncertain.value">{{ t('wms.stocktake.btn.approve') }} + {{ t('wms.stocktake.btn.adjust') }}</el-button>
+        <el-button v-if="canCancel" v-permission="'wms-stocktake:cancel'" type="danger" plain @click="onCancel" :disabled="intent.busy.value || intent.uncertain.value">{{ t('wms.outbound.btn.cancel') }}</el-button>
       </div>
     </el-affix>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
+import { ref, reactive, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
@@ -103,7 +105,10 @@ import { formatQty as fmtQty } from '@/utils/format'
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
-const saving = ref(false)
+const intent = useOperationsIntent(() => { reads++; resetForm() })
+const saving = intent.busy
+let reads = 0, revision = 0
+
 const filterText = ref('')
 
 const statusMap = computed<Record<number, string>>(() => ({
@@ -131,10 +136,12 @@ const form = reactive<StockTake>({
   status: 0, targetWarehouseCd: '', details: [],
 })
 
-const editable = computed(() => form.status === 1)
+watch(form, () => revision++, { deep: true, flush: 'sync' })
+function resetForm() { Object.assign(form, { stockTakeNo: '', stockTakeType: 1, plannedDate: '', status: 0, targetWarehouseCd: '', targetLocationPrefix: '', targetProductCd: '', approvalThresholdAmount: undefined, details: [] }) }
+const editable = computed(() => form.status === 1 && !intent.busy.value && !intent.uncertain.value)
 const canStartCount = computed(() => form.status === 0)
-const canSaveCounts = computed(() => form.status === 1)
-const canSubmit = computed(() => form.status === 1)
+const canSaveCounts = computed(() => form.status === 1 && !intent.busy.value && !intent.uncertain.value)
+const canSubmit = computed(() => form.status === 1 && !intent.busy.value && !intent.uncertain.value)
 const canApprove = computed(() => form.status === 2 || form.status === 3)
 const canCancel = computed(() => form.status !== 4 && form.status !== 9)
 
@@ -169,69 +176,60 @@ function recalcDiff(row: StockTakeDetail) {
   row.diffAmount = row.unitPrice != null ? row.diffQty * Number(row.unitPrice) : undefined
 }
 
-async function load(no: string) {
-  const res = await stockTakeApi.get(no)
-  Object.assign(form, res.data)
+async function load(no: string, preserveDraft = false) {
+  const token = intent.capture(), id = ++reads, edit = revision
+  try {
+    const res = await stockTakeApi.get(no)
+    if (!intent.current(token) || id !== reads || edit !== revision) return
+    resetForm(); Object.assign(form, res.data)
+  } catch {
+    if (intent.current(token) && id === reads) {
+      if (!preserveDraft && edit === revision) { resetForm(); form.stockTakeNo = no }
+      intent.error.value = '読込できませんでした。保存結果は一覧で確認してください。'
+    }
+  }
 }
-
-async function onStartCount() {
-  await stockTakeApi.startCount(form.stockTakeNo)
-  ElMessage.success(t('wms.common.success'))
-  await load(form.stockTakeNo)
+async function transition(action: 'startCount' | 'submit' | 'approve' | 'cancel') {
+  const token = intent.begin(); if (!token) return
+  const no = form.stockTakeNo, edit = revision
+  try {
+    if (action !== 'startCount') await ElMessageBox.confirm(t(action === 'cancel' ? 'wms.inbound.msg.cancelAsk' : 'wms.inbound.msg.confirmAsk'), t('wms.common.confirm'), { type: 'warning' })
+    if (!no || !intent.current(token) || no !== form.stockTakeNo) return
+    await stockTakeApi[action](no)
+    if (!intent.current(token) || no !== form.stockTakeNo) return
+    ElMessage.success(t('wms.common.success'))
+    const unchanged = revision === edit
+    if (action === 'approve') form.status = 4
+    if (action === 'cancel') form.status = 9
+    if (action === 'startCount') form.status = 1
+    if (unchanged) await load(no, true)
+  } catch (e) { intent.failed(token, e) } finally { intent.finish(token) }
 }
-
+const onStartCount = () => transition('startCount')
+const onSubmit = () => transition('submit')
+const onApprove = () => transition('approve')
+const onCancel = () => transition('cancel')
 async function onSaveCounts() {
-  const inputs: StockTakeCountInput[] = form.details
-    .filter(d => d.countedQty != null)
-    .map(d => ({
-      lineNo: d.lineNo,
-      countedQty: Number(d.countedQty),
-      diffReasonCd: d.diffReasonCd,
-      diffReasonText: d.diffReasonText,
-      remarks: d.remarks,
-    }))
-  if (inputs.length === 0) { ElMessage.warning(t('wms.inbound.msg.noDetail')); return }
-  saving.value = true
+  const token = intent.begin(); if (!token) return
+  const no = form.stockTakeNo, edit = revision
+  const inputs: StockTakeCountInput[] = JSON.parse(JSON.stringify(form.details.filter(d => d.countedQty != null).map(d => ({
+    lineNo: d.lineNo, countedQty: Number(d.countedQty), diffReasonCd: d.diffReasonCd, diffReasonText: d.diffReasonText, remarks: d.remarks,
+  }))))
   try {
-    await stockTakeApi.updateCounts(form.stockTakeNo, inputs)
+    if (!inputs.length) { ElMessage.warning(t('wms.inbound.msg.noDetail')); return }
+    await stockTakeApi.updateCounts(no, inputs)
+    if (!intent.current(token) || no !== form.stockTakeNo) return
     ElMessage.success(t('wms.common.success'))
-    await load(form.stockTakeNo)
-  } finally { saving.value = false }
-}
-
-async function onSubmit() {
-  try {
-    await ElMessageBox.confirm(t('wms.inbound.msg.confirmAsk'), t('wms.common.confirm'), { type: 'warning' })
-    await stockTakeApi.submit(form.stockTakeNo)
-    ElMessage.success(t('wms.common.success'))
-    await load(form.stockTakeNo)
-  } catch { /* */ }
-}
-
-async function onApprove() {
-  try {
-    await ElMessageBox.confirm(t('wms.inbound.msg.confirmAsk'), t('wms.common.confirm'), { type: 'warning' })
-    await stockTakeApi.approve(form.stockTakeNo)
-    ElMessage.success(t('wms.common.success'))
-    await load(form.stockTakeNo)
-  } catch { /* */ }
-}
-
-async function onCancel() {
-  try {
-    await ElMessageBox.confirm(t('wms.inbound.msg.cancelAsk'), t('wms.common.confirm'), { type: 'warning' })
-    await stockTakeApi.cancel(form.stockTakeNo)
-    ElMessage.success(t('wms.common.success'))
-    await load(form.stockTakeNo)
-  } catch { /* */ }
+    if (revision === edit) await load(no, true)
+  } catch (e) { intent.failed(token, e) } finally { intent.finish(token) }
 }
 
 function goBack() { router.push('/wms/stock-take-list') }
 
-onMounted(async () => {
-  const no = route.query.no as string
-  if (no) await load(no)
-})
+watch(() => route.query.no, async no => {
+  intent.invalidate(); reads++; resetForm()
+  if (typeof no === 'string' && no) await load(no)
+}, { immediate: true })
 </script>
 
 <style scoped>

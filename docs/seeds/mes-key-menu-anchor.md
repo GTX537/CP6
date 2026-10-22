@@ -1,5 +1,9 @@
 # MES menu-key → 锚定 MenuId 映射（M-MES Task 2 交付，T3b 输入）
 
+## 2026-10-21 W39 当前Owner增量
+
+菜单416显式wms-dashboard、309显式mes-dashboard。新增query目录：403库存、415盘点、416 WMS看板、309 MES看板、308不良来源；幂等登记且不自动赋予角色。下文原轮次表格/SQL留作历史范围，本增量以当前MenuSeed/PermissionSeed为准。[Owner v1](../design-handbook/remediation/main-stocktake-dashboard-owner-v1.md)。
+
 > 生成于 2026-07-12。**正本 = `CP6.WebApi/Seed/MesMenuSeed.cs`**（本表与 `mes-menu-seed.sql` 均为其对照/派生）。
 > 依据真相源 `docs/seeds/mes-permission-keys.md` §二（10 menu-key）/§六（硬前置）。
 > 用途：T3b `Sys_MenuAction`/`Sys_RoleAction` 逐租户种子以本表「键→MenuId」为锚。

@@ -293,7 +293,7 @@ public partial class OutboundService : IOutboundService
             foreach (var d in details.Where(x => x.AllocatedQty > x.ShippedQty))
             {
                 var releaseQty = d.AllocatedQty - d.ShippedQty;
-                await _stock.ApplyAsync(new StockMovementRequest
+                await ApplyStockFromParentAsync(new StockMovementRequest
                 {
                     TxnType = WmsTxnType.UNRSV,
                     WarehouseCd = d.WarehouseCd ?? header.WarehouseCd,
@@ -451,7 +451,7 @@ public partial class OutboundService : IOutboundService
             }
 
             // 引当（RSV）— 実際に引き当てた倉庫(chosenWarehouse)で発行
-            var txnNo = await _stock.ApplyAsync(new StockMovementRequest
+            var txnNo = await ApplyStockFromParentAsync(new StockMovementRequest
             {
                 TxnType = WmsTxnType.RSV,
                 WarehouseCd = chosenWarehouse,
@@ -516,7 +516,7 @@ public partial class OutboundService : IOutboundService
 
             // 出庫（OUT）— OUT が AllocatedQty も同時に減らすので、UNRSV は不要
             //  多倉庫ルーティング：引当時に確定した実倉庫(d.WarehouseCd)から出庫。旧データは header にフォールバック。
-            var txnNo = await _stock.ApplyAsync(new StockMovementRequest
+            var txnNo = await ApplyStockFromParentAsync(new StockMovementRequest
             {
                 TxnType = WmsTxnType.OUT,
                 WarehouseCd = d.WarehouseCd ?? header.WarehouseCd,
@@ -754,4 +754,8 @@ public partial class OutboundService : IOutboundService
                 throw new InvalidOperationException($"WM-MSG-021: 行 {i + 1}: 必要数量は0より大きい値を入力してください");
         }
     }
+    private Task<string> ApplyStockFromParentAsync(StockMovementRequest request)
+        => _db.Database.IsNpgsql()
+            ? ((StockMovementService)_stock).ApplyWithinOwnerAsync(request)
+            : _stock.ApplyAsync(request);
 }
