@@ -31,3 +31,9 @@ OEE对象范围复用W47的实际machine UUID和当前可信部门映射，分�
 下一PlanningBoard/PlanAchievement及其实际引用Owner；正式RES/PERF/SCHED、原操作恢复和部署仍各有前置。全任务24/375、125目标0交付、247运行NOT_RUN不因部分入口提升。
 
 正常产品PR/Handoff采用后，原任务最后状态PR、远端blob核对、准确分支定向删除和manage finish；Issue410在生命周期完成后关闭。DEV-1/2当前仅本窗占用，集成席空闲；根用户未跟踪资料保留。七天目标保持ACTIVE。
+
+## 远端采用与原任务收尾
+
+产品[PR](https://github.com/GTX537/CP6/pull/411)和[Handoff](https://github.com/GTX537/CP6.AI-Handoff/pull/24)已采用，source`f4958debb891cbed296ed81df9afa3bf010c8edc`、远端main`bee338101c5bb99161c91fba8fb55f069a2b0435`，29任务文件blob一致；Handoff source`01959b4c349698ddd609e81c72dc2740a5673de8`、目标`cb2769fb5f816b7c1e37d0e760e1028aa67b0aa9`，DEV-2准确分支删除/席位释放。
+
+31项相关.NET用例通过（按TRX testId保留最新定向结果，含PG/真实HTTP/后台事务/种子/权限），6项Vitest与完整vue-tsc -b通过；最后仅文档diff/链接/台账检查，原DEV-1最后文档PR后finish并关闭Issue410。分支/工作区/席位及实际耗时以最终PR、实时登记与`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave48-final-verification.json`为准，不提前宣称释放。七天目标ACTIVE，下一计划Owner；正式范围与总计数不提升。
