@@ -11,12 +11,12 @@ using Microsoft.EntityFrameworkCore.Storage;
 namespace CP6.Core.Services.Integration;
 
 /// <summary>Current original-session authority for independent manufacturing, reporting, outbound and inbound operations.</summary>
-public sealed class OperationsOwnerV1
+public sealed partial class OperationsOwnerV1
 {
     internal const string Mes = "mes-work-order", Outbound = "wms-outbound-order",
         Production = "mes-production-result", Inbound = "wms-inbound-order", Receipt = "wms-inbound-receipt",
         Stock = "wms-stock", StockTake = "wms-stocktake", WmsDashboard = "wms-dashboard", MesDashboard = "mes-dashboard", Defect = "mes-defect",
-        StockQc = "wms-stock-qc", InboundQc = "wms-qc-inspection", Quality = "mes-quality-inspection", Machine = "mes-machine";
+        StockQc = "wms-stock-qc", InboundQc = "wms-qc-inspection", Quality = "mes-quality-inspection", Machine = "mes-machine", Oee = "mes-oee";
     internal const string Mapping = "Main.Operations.Owner.v1";
     private readonly CP6Context db;
     private readonly IHttpContextAccessor http;
@@ -38,7 +38,7 @@ public sealed class OperationsOwnerV1
         if(!definition.IsSealed || !definition.Scopes.TryGetValue(resource,out var scope))throw new CurrentPermissionUnavailableException();
         var source=await new CurrentFieldPermissionSourceReaderV1(db,http,()=>definition).ReadAsync(resource,ct);
         var expected=resource is Outbound or Inbound or Receipt or Stock?new[]{"UnitPrice"}:
-            resource is Mes or Production or MesDashboard or Defect or StockQc or InboundQc or Quality or Machine?Array.Empty<string>():
+            resource is Mes or Production or MesDashboard or Defect or StockQc or InboundQc or Quality or Machine or Oee?Array.Empty<string>():
             resource==WmsDashboard?new[]{"Amount"}:new[]{"Amount","UnitPrice"};
         if(!source.Fields.Order(StringComparer.Ordinal).SequenceEqual(expected))throw new CurrentPermissionUnavailableException();
         if(source.SubjectId!=subject)throw new OrderPriceCorrectionException("REAUTH_REQUIRED",401);
@@ -68,7 +68,7 @@ public sealed class OperationsOwnerV1
         Func<CancellationToken,Task<string>>? actionAtFence=null,bool readOnlyAuthorityFence=false)
     {
         using var linked=CancellationTokenSource.CreateLinkedTokenSource(ct,http.HttpContext?.RequestAborted??CancellationToken.None);ct=linked.Token;
-        if(resource is not (Mes or Outbound or Production or Inbound or Receipt or Stock or StockTake or WmsDashboard or MesDashboard or Defect or StockQc or InboundQc or Quality or Machine) || !db.Database.IsNpgsql() || db.Database.CurrentTransaction!=null
+        if(resource is not (Mes or Outbound or Production or Inbound or Receipt or Stock or StockTake or WmsDashboard or MesDashboard or Defect or StockQc or InboundQc or Quality or Machine or Oee) || !db.Database.IsNpgsql() || db.Database.CurrentTransaction!=null
             || System.Transactions.Transaction.Current!=null || db.ChangeTracker.HasChanges()
             || readOnlyAuthorityFence && (write || delegation!=null || actionAtFence!=null)
             || db.ChangeTracker.Entries().Any(e=>IsBusiness(e.Entity.GetType().Name)))
@@ -135,7 +135,7 @@ public sealed class OperationsOwnerV1
     private static readonly string[] BusinessTables=["Order","OrderDetail","OrderProcess","OrderMaterial","OrderProcessNote",
         "WorkOrder","WorkOrderProcess","WorkOrderMaterial","OutboundOrder","OutboundOrderDetail","Stock","StockTransaction",
         "WmsSequence","MesSequence","ShippingPackage","MaterialShortage","ProductionResult",
-        "InboundOrder","InboundOrderDetail","InboundReceipt","InboundReceiptDetail","StockTake","StockTakeDetail","DefectRecord","QualityInspection","QualityInspectionItem","QcInspection","QcInspectionItem","Machine","MachineDowntime"];
+        "InboundOrder","InboundOrderDetail","InboundReceipt","InboundReceiptDetail","StockTake","StockTakeDetail","DefectRecord","QualityInspection","QualityInspectionItem","QcInspection","QcInspectionItem","Machine","MachineDowntime","OeeDaily"];
     private static bool AllowsDelegation(string resource,string action,OperationsDelegationV1 ticket)
         => action=="add" && (ticket.Resource=="order" && ticket.Action=="add" && resource is Mes or Outbound
             || ticket.Resource==Mes && ticket.Action=="issue" && resource==Outbound)

@@ -74,7 +74,7 @@ public class MesPermissionSeedTests
             var maSet = menuActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
             var raSet = roleActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
             var expected = ExpectedTuples.ToHashSet();
-            Assert.Equal(expected.Concat(new[]{(302,"query"),(302,"cancel"),(304,"query"),(304,"recalculate"),(304,"backflush"),(308,"query"),(309,"query"),(310,"query")}).ToHashSet(), maSet);
+            Assert.Equal(expected.Concat(new[]{(302,"query"),(302,"cancel"),(304,"query"),(304,"recalculate"),(304,"backflush"),(308,"query"),(309,"query"),(310,"query"),(311,"query")}).ToHashSet(), maSet);
             Assert.DoesNotContain(roleActions,a=>a.MenuId==310 && a.ActionCode=="query");
             Assert.DoesNotContain(roleActions,a=>a.MenuId==304 && a.ActionCode is "query" or "recalculate" or "backflush");
             Assert.DoesNotContain(roleActions,a=>a.MenuId==302 && a.ActionCode is "query" or "cancel");

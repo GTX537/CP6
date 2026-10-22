@@ -10,6 +10,8 @@ namespace CP6.WebApi.Controllers.Mes;
 [ApiController]
 [Route("api/mes/oee")]
 [Authorize]
+[CP6.WebApi.Controllers.Erp.OrderOwnerResult]
+[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class OeeController : ControllerBase
 {
     private readonly IOeeService _service;
@@ -18,6 +20,7 @@ public class OeeController : ControllerBase
     private string? CurrentUser => User?.Identity?.Name;
 
     [HttpGet]
+    [RequirePermission("mes-oee", "query")]
     public async Task<IActionResult> Search([FromQuery] OeeSearchQuery query)
     {
         var r = await _service.SearchAsync(query);
@@ -26,6 +29,7 @@ public class OeeController : ControllerBase
 
     /// <summary>本日リアルタイム OEE（途中計算、保存しない）</summary>
     [HttpGet("today")]
+    [RequirePermission("mes-oee", "query")]
     public async Task<IActionResult> Today([FromQuery] string? machineCd)
     {
         var r = await _service.CalculateTodayAsync(machineCd);
@@ -34,6 +38,7 @@ public class OeeController : ControllerBase
 
     /// <summary>過去 N 日 OEE 推移（折線用、設備別）</summary>
     [HttpGet("trend")]
+    [RequirePermission("mes-oee", "query")]
     public async Task<IActionResult> Trend([FromQuery] int days = 30, [FromQuery] string? machineCd = null)
     {
         var r = await _service.GetTrendAsync(days, machineCd);

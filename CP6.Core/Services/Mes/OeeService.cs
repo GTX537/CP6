@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Mes;
 using CP6.Entity.DTOs.Mes;
 using Microsoft.EntityFrameworkCore;
@@ -14,12 +15,13 @@ namespace CP6.Core.Services.Mes;
 ///   性能(Performance)    = (Good+Defect) / (Capacity × ActualRunHours)
 ///   品質(Quality)        = Good / (Good+Defect)
 /// </remarks>
-public class OeeService : IOeeService
+public partial class OeeService : IOeeService, IOeeWorkerV1
 {
     private readonly CP6Context _db;
-    public OeeService(CP6Context db) => _db = db;
+    private readonly OperationsOwnerV1? _owner;
+    public OeeService(CP6Context db, OperationsOwnerV1? owner = null) { _db = db; _owner = owner; }
 
-    public async Task<List<OeeDailyDto>> SearchAsync(OeeSearchQuery q)
+    private async Task<List<OeeDailyDto>> SearchCoreAsync(OeeSearchQuery q)
     {
         var query = _db.OeeDailies.AsNoTracking().Where(x => !x.IsDeleted);
         if (!string.IsNullOrWhiteSpace(q.MachineCd)) query = query.Where(x => x.MachineCd == q.MachineCd);
@@ -44,7 +46,7 @@ public class OeeService : IOeeService
     /// <summary>
     /// 本日（途中）OEE 計算：保存せず即時返却（リアルタイム表示用）
     /// </summary>
-    public async Task<List<OeeDailyDto>> CalculateTodayAsync(string? machineCd = null)
+    private async Task<List<OeeDailyDto>> CalculateTodayCoreAsync(string? machineCd = null)
     {
         var today = DateTime.Today;
         var tomorrow = today.AddDays(1);
@@ -63,7 +65,7 @@ public class OeeService : IOeeService
     }
 
     /// <summary>指定日 OEE 再計算 + 保存（バッチ・手動）</summary>
-    public async Task<int> RecalculateAsync(OeeRecalcRequest req, string? userName)
+    private async Task<int> RecalculateCoreAsync(OeeRecalcRequest req, string? userName)
     {
         var date = req.TargetDate.Date;
         var nextDay = date.AddDays(1);
@@ -120,7 +122,7 @@ public class OeeService : IOeeService
         return count;
     }
 
-    public async Task<Dictionary<string, List<OeeDailyDto>>> GetTrendAsync(int days, string? machineCd)
+    private async Task<Dictionary<string, List<OeeDailyDto>>> GetTrendCoreAsync(int days, string? machineCd)
     {
         var from = DateTime.Today.AddDays(-days + 1);
         var to = DateTime.Today.AddDays(1);

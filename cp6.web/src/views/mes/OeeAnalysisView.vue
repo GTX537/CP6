@@ -1,5 +1,7 @@
 <template>
   <div class="oee-analysis">
+    <el-alert :title="t('計画時間・停止記録・報工から計算した参考OEEです。入力更新後の保存値は再計算が必要です。')" type="info" :closable="false" />
+    <el-alert v-if="intent.error.value" :title="intent.error.value" type="warning" :closable="false" />
     <el-card shadow="never" class="search-card">
       <el-form inline size="small">
         <el-form-item :label="t('設備CD')">
@@ -13,14 +15,14 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" :loading="loading" @click="loadAll">{{ t('検索') }}</el-button>
-          <el-button v-permission="'mes-oee:recalculate'" type="success" :loading="recalcing" @click="onRecalc">{{ t('本日 OEE 再計算') }}</el-button>
+          <el-button v-permission="'mes-oee:recalculate'" type="success" :loading="recalcing" :disabled="intent.uncertain.value" @click="onRecalc">{{ t('本日 OEE 再計算') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
 
     <!-- 本日 OEE カード -->
     <el-card shadow="never" class="today-card">
-      <template #header>{{ t('本日リアルタイム OEE') }}</template>
+      <template #header>{{ t('本日の参考OEE') }}</template>
       <div class="oee-cards">
         <div v-for="o in todayOee" :key="o.machineCd" class="oee-card">
           <div class="oee-cd">{{ o.machineCd }} {{ o.machineName }}</div>
@@ -31,7 +33,7 @@
             <div>{{ t('品質') }} <strong>{{ o.quality }}%</strong></div>
           </div>
           <div class="oee-detail">
-            <span>{{ t('稼働') }} {{ o.actualRunMinutes }}/{{ o.plannedRunMinutes }}{{ t('分') }}</span>
+            <span>{{ t('推定稼働') }} {{ o.actualRunMinutes }}/{{ o.plannedRunMinutes }}{{ t('分') }}</span>
             <span style="margin-left: 8px;">{{ t('良品') }} {{ o.goodQty }} / {{ t('不良') }} {{ o.defectQty }}</span>
           </div>
         </div>
@@ -98,7 +100,7 @@
         <el-table-column prop="machineCd" :label="t('設備CD')" width="100" />
         <el-table-column prop="machineName" :label="t('設備名')" min-width="160" />
         <el-table-column prop="plannedRunMinutes" :label="t('計画(分)')" width="100" align="right" />
-        <el-table-column prop="actualRunMinutes" :label="t('実稼働(分)')" width="110" align="right" />
+        <el-table-column prop="actualRunMinutes" :label="t('参考稼働(分)')" width="110" align="right" />
         <el-table-column prop="downtimeMinutes" :label="t('停止(分)')" width="100" align="right" />
         <el-table-column prop="goodQty" :label="t('良品')" width="100" align="right" />
         <el-table-column prop="defectQty" :label="t('不良')" width="100" align="right" />
@@ -132,11 +134,13 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { ElMessage } from 'element-plus'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
+import { usePermissionStore } from '@/stores/permission'
 import { machineApi, oeeApi } from '@/api/mes/mes'
 import type { MachineDto, OeeDailyDto } from '@/types/mes/mes'
 
 const loading = ref(false)
-const recalcing = ref(false)
+const permission = usePermissionStore()
 const allMachines = ref<MachineDto[]>([])
 const todayOee = ref<OeeDailyDto[]>([])
 const rows = ref<OeeDailyDto[]>([])
@@ -185,64 +189,93 @@ function oeeColor(v: number) {
 
 function formatDate(v?: string | null) { return v ? v.substring(0, 10) : '' }
 
-async function loadAll() {
-  loading.value = true
-  try {
-    const [t, hist] = await Promise.all([
-      oeeApi.today(machineCd.value || undefined),
-      oeeApi.search({
-        machineCd: machineCd.value,
-        dateFrom: dateRange.value[0],
-        dateTo: dateRange.value[1],
-      }),
-    ])
-    todayOee.value = t.data || []
-    rows.value = hist.data || []
-  } finally {
-    loading.value = false
-  }
-  await loadTrend()
-}
-
-async function loadTrend() {
-  const r = await oeeApi.trend(trendDays.value, machineCd.value || undefined)
-  const data = r.data || {}
-  trendMachines.value = Object.entries(data).map(([cd, pts]) => ({
-    machineCd: cd,
-    points: pts,
-  }))
-}
-
-async function onRecalc() {
-  recalcing.value = true
-  try {
-    const r = await oeeApi.recalculate({
-      targetDate: new Date().toISOString().slice(0, 10),
-      machineCd: machineCd.value,
-    })
-    ElMessage.success(t('{count} 件再計算しました', { count: r.data?.recalculated }))
-    await loadAll()
-  } finally {
-    recalcing.value = false
-  }
-}
-
 let refreshTimer: number | undefined
-
+let readSequence = 0, trendSequence = 0, todaySequence = 0, blocked = false
+const intent = useOperationsIntent(clearProtected)
+const recalcing = intent.busy
+function stopPolling() { if (refreshTimer !== undefined) window.clearInterval(refreshTimer); refreshTimer = undefined }
+function clearProtected() {
+  readSequence++; trendSequence++; todaySequence++; blocked = true; stopPolling(); loading.value = false
+  allMachines.value = []; todayOee.value = []; rows.value = []; trendMachines.value = []
+}
+function selection() { return JSON.stringify([machineCd.value, dateRange.value, trendDays.value]) }
+function fail(error: any, writeSettled = false) {
+  if ([401, 403].includes(error?.response?.status)) {
+    const unresolved = intent.uncertain.value || (!writeSettled && intent.busy.value)
+    intent.invalidate(); clearProtected()
+    if (unresolved) {
+      intent.uncertain.value = true
+      intent.error.value = '処理結果を確認できません。再送せず、対象の最新状態を確認してください。'
+    }
+    return true
+  }
+  return false
+}
+async function pollToday() {
+  if (blocked) return
+  const token = intent.capture(), currentSelection = selection(), request = ++todaySequence, code = machineCd.value
+  try {
+    const result = await oeeApi.today(code || undefined)
+    if (intent.current(token) && !blocked && request === todaySequence && currentSelection === selection()) todayOee.value = result.data || []
+  } catch (error) {
+    if (intent.current(token) && request === todaySequence && currentSelection === selection()) { todayOee.value = []; fail(error) }
+  }
+}
+function startPolling() { if (!blocked && refreshTimer === undefined) refreshTimer = window.setInterval(() => { void pollToday() }, 30000) }
+async function loadAll() {
+  const token = intent.capture(), request = ++readSequence, currentSelection = selection(), code = machineCd.value
+  const period = dateRange.value ? [...dateRange.value] : []
+  const days = trendDays.value
+  todaySequence++; trendSequence++; loading.value = true
+  try {
+    const [today, history, trend] = await Promise.all([
+      oeeApi.today(code || undefined),
+      oeeApi.search({ machineCd: code, dateFrom: period[0], dateTo: period[1] }),
+      oeeApi.trend(days, code || undefined),
+    ])
+    if (!intent.current(token) || request !== readSequence || currentSelection !== selection()) return
+    todayOee.value = today.data || []; rows.value = history.data || []
+    trendMachines.value = Object.entries(trend.data || {}).map(([cd, points]) => ({ machineCd: cd, points }))
+    blocked = false; startPolling()
+  } catch (error) {
+    if (intent.current(token) && request === readSequence && currentSelection === selection()) {
+      todayOee.value = []; rows.value = []; trendMachines.value = []; blocked = true; stopPolling(); fail(error)
+    }
+  } finally { if (intent.current(token) && request === readSequence) loading.value = false }
+}
+async function loadTrend() {
+  const token = intent.capture(), request = ++trendSequence, currentSelection = selection(), code = machineCd.value, days = trendDays.value
+  try {
+    const result = await oeeApi.trend(days, code || undefined)
+    if (intent.current(token) && request === trendSequence && currentSelection === selection())
+      trendMachines.value = Object.entries(result.data || {}).map(([cd, points]) => ({ machineCd: cd, points }))
+  } catch (error) {
+    if (intent.current(token) && request === trendSequence && currentSelection === selection()) { trendMachines.value = []; fail(error) }
+  }
+}
+async function onRecalc() {
+  if (!permission.loaded || !permission.has('mes-oee:recalculate')) return
+  const token = intent.begin(); if (!token) return
+  const input = { targetDate: new Date().toISOString().slice(0, 10), machineCd: machineCd.value }
+  try {
+    const result = await oeeApi.recalculate(input)
+    if (!intent.current(token)) return
+    ElMessage.success(t('{count} 件再計算しました', { count: result.data?.recalculated }))
+    intent.finish(token) // Commit is known before the independent refresh starts.
+    await loadAll()
+  } catch (error) {
+    if (intent.current(token) && !fail(error, true)) intent.failed(token, error)
+  } finally { intent.finish(token) }
+}
 onMounted(async () => {
-  const ms = await machineApi.search({ activeOnly: true })
-  allMachines.value = ms.data || []
-  await loadAll()
-  // 30 秒間隔で本日 OEE 再描画
-  refreshTimer = window.setInterval(async () => {
-    const t = await oeeApi.today(machineCd.value || undefined)
-    todayOee.value = t.data || []
-  }, 30000)
+  const token = intent.capture()
+  try {
+    const result = await machineApi.search({ activeOnly: true })
+    if (!intent.current(token)) return
+    allMachines.value = result.data || []; await loadAll()
+  } catch (error) { if (intent.current(token)) { clearProtected(); fail(error) } }
 })
-
-onBeforeUnmount(() => {
-  if (refreshTimer) clearInterval(refreshTimer)
-})
+onBeforeUnmount(stopPolling)
 </script>
 
 <style scoped>
