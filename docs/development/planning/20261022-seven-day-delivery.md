@@ -106,3 +106,7 @@ W44实际20.83分钟，PR399/400/Handoff20采用、两分支准确删除/席位�
 ## D3安全前置采用检查点
 
 W45 PR402/Handoff21采用MES实时边界修复。4项新增PG/实际HTTP/WebSocket加32项相关回归执行（含1项新测试重跑）均通过；按显示名称去重31项，8项Vitest与完整vue-tsc -b通过；DEV-2释放，原DEV-1最后文档后finish/Issue401关闭。D3仍PARTIALLY_ADOPTED，Machine/OEE/计划独立Owner与WmsHub作用域定向核对继续，七天目标ACTIVE。
+
+## W45实际收尾 / W46前置
+
+W45实际33.04分钟，PR402/403/Handoff21采用、Issue401关闭、两分支删除/席位释放。W46用真实WMS连接核对同类DI租户作用域，必要修复和收尾预计20–40分钟；随后继续设备/OEE独立Owner，七天目标ACTIVE。

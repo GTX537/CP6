@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Authorization;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Wms;
+using CP6.Core.Services.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.WebApi.Hubs;
@@ -32,11 +33,24 @@ public class WmsHub : Hub
     private readonly ILogger<WmsHub> _logger;
     private readonly CP6Context? _db;
     private readonly StockOperationsService? _owner;
-    public WmsHub(ILogger<WmsHub> logger,CP6Context? db=null,StockOperationsService? owner=null)
-    { _logger=logger;_db=db;_owner=owner; }
+    private readonly ITenantContext? _tenant;
+    public WmsHub(ILogger<WmsHub> logger,CP6Context? db=null,StockOperationsService? owner=null,ITenantContext? tenant=null)
+    { _logger=logger;_db=db;_owner=owner;_tenant=tenant; }
     public static string InventoryGroup(Guid tenantId)=>$"inventory:v1:tenant:{tenantId:N}";
-    private Task AuthorizeInventory()=>_owner?.AuthorizeUpdatesAsync(Context.ConnectionAborted)
-        ??throw new HubException("AUTHORITY_FENCE_UNAVAILABLE");
+    private Task AuthorizeInventory()
+    {
+        // SignalR resolves each Hub in a separate scope from TenantMiddleware.
+        // This selects the authenticated connection's tenant, not a client filter;
+        // the Owner still reconsumes its original session and current permissions.
+        var identities=Context.User?.Identities.Where(x=>x.IsAuthenticated).ToArray();
+        var claims=identities is {Length:1}?identities[0].FindAll("tenant_id").ToArray():[];
+        if(claims.Length!=1 || !Guid.TryParse(claims[0].Value,out var tenantId) || tenantId==Guid.Empty)
+            throw new HubException("REAUTH_REQUIRED");
+        if(_tenant!=null)_tenant.CurrentTenantId=tenantId;
+        if(_db?.Database.IsNpgsql()!=true || _db.CurrentTenantId!=tenantId || _owner==null)
+            throw new HubException("AUTHORITY_FENCE_UNAVAILABLE");
+        return _owner.AuthorizeUpdatesAsync(Context.ConnectionAborted);
+    }
 
     public static string TenantGroup(Guid tenantId) => $"tenant:{tenantId:N}";
 

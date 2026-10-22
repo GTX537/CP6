@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-22：W46 WMS实时作用域候选已验证
+
+WMS实际连接拒绝已复现并修复；8项相关.NET通过（6项PG/实际HTTP-WebSocket与通知边界、2项旧路由兼容）；无前端变更，不重复前端验证。正常PR、Handoff、Issue404关闭和准确分支/席位finish待执行。
+
+[DELIVERY](../development/evidence/WP02-03/wms-hub-scope/DELIVERY.md)。七天目标ACTIVE；设备/OEE/计划完整Owner仍未完成，整卡/125目标/247运行不提升。
+
 ## 2026-10-22：W45 MES实时通道修复已集成
 
 [产品PR402](https://github.com/GTX537/CP6/pull/402)和[Handoff PR21](https://github.com/GTX537/CP6.AI-Handoff/pull/21)采用；匿名协商、无租户业务广播和页面旧身份残留已复现并修复。4项新增PG/实际HTTP/WebSocket加32项相关回归执行（含1项新测试重跑）均通过；按显示名称去重31项，8项Vitest与完整vue-tsc -b通过；一次作者集中审查，[DELIVERY](../development/evidence/WP02-03/mes-realtime/DELIVERY.md)提供原始范围与失败来源。

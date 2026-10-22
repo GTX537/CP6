@@ -143,7 +143,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     public async Task Stocktake_dashboard_PG_realtime_joins_only_current_tenant_and_never_pushes_business_payloads()
     {
         await using var h=await Seed();var owner=await GrantStocktakeDashboard(h);
-        var caller=new Mock<HubCallerContext>();caller.SetupGet(c=>c.ConnectionId).Returns("owned-connection");
+        var caller=new Mock<HubCallerContext>();caller.SetupGet(c=>c.ConnectionId).Returns("owned-connection");caller.SetupGet(c=>c.User).Returns(h.Http.User);
         var groups=new Mock<IGroupManager>();var hub=new CP6.WebApi.Hubs.WmsHub(NullLogger<CP6.WebApi.Hubs.WmsHub>.Instance,h.Db,new(h.Db,owner)){Context=caller.Object,Groups=groups.Object};
         await hub.OnConnectedAsync();await hub.SubscribeWarehouse("FOREIGN");
         groups.Verify(g=>g.AddToGroupAsync("owned-connection",CP6.WebApi.Hubs.WmsHub.InventoryGroup(h.Tenant),It.IsAny<CancellationToken>()),Times.Once);

@@ -18,14 +18,21 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
     [CurrentPermissionPostgresFact]
     public async Task Mes_realtime_actual_websocket_current_session_and_permission_revocation()
+        =>await AssertRealtimeSession("mes","SubscribeMachine","SubscribeWorkOrder",309);
+
+    [CurrentPermissionPostgresFact]
+    public async Task Wms_realtime_actual_websocket_current_session_and_permission_revocation()
+        =>await AssertRealtimeSession("wms","SubscribeWarehouse","SubscribeProduct",403);
+
+    private async Task AssertRealtimeSession(string hubName,string firstMethod,string secondMethod,int menu)
     {
         await using var h=await Seed();await GrantStocktakeDashboard(h);
         await using var host=await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!);
         var cookies=await Login(host,h);
-        using var negotiate=await host.Send(OperationsRequest(cookies,HttpMethod.Post,"hubs/mes/negotiate?negotiateVersion=1"));
+        using var negotiate=await host.Send(OperationsRequest(cookies,HttpMethod.Post,$"hubs/{hubName}/negotiate?negotiateVersion=1"));
         Assert.Equal(HttpStatusCode.OK,negotiate.StatusCode);
         using var body=JsonDocument.Parse(await negotiate.Content.ReadAsStringAsync());
-        var address=new UriBuilder(negotiate.RequestMessage!.RequestUri!){Scheme="ws",Path="/hubs/mes",Query="id="+Uri.EscapeDataString(body.RootElement.GetProperty("connectionToken").GetString()!)};
+        var address=new UriBuilder(negotiate.RequestMessage!.RequestUri!){Scheme="ws",Path=$"/hubs/{hubName}",Query="id="+Uri.EscapeDataString(body.RootElement.GetProperty("connectionToken").GetString()!)};
         using var socket=new ClientWebSocket();socket.Options.SetRequestHeader("Cookie",string.Join("; ",cookies.Select(x=>x.Key+"="+x.Value)));
         using var timeout=new CancellationTokenSource(TimeSpan.FromSeconds(20));
         await socket.ConnectAsync(address.Uri,timeout.Token);
@@ -54,16 +61,16 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             }
         }
         await Send(new{protocol="json",version=1});using(var handshake=await Receive())Assert.False(handshake.RootElement.TryGetProperty("error",out _));
-        await Send(new{type=1,invocationId="current",target="SubscribeMachine",arguments=new[]{"CLIENT-CANNOT-SELECT-TENANT"}});
+        await Send(new{type=1,invocationId="current",target=firstMethod,arguments=new[]{"CLIENT-CANNOT-SELECT-TENANT"}});
         using(var current=await Completion("current"))Assert.False(current.RootElement.TryGetProperty("error",out _),current.RootElement.ToString());
-        await h.Db.Sys_RoleActions.Where(a=>a.MenuId==309&&a.ActionCode=="query").ExecuteDeleteAsync();
-        await Send(new{type=1,invocationId="revoked",target="SubscribeWorkOrder",arguments=new[]{"FOREIGN-WO"}});
+        await h.Db.Sys_RoleActions.Where(a=>a.MenuId==menu&&a.ActionCode=="query").ExecuteDeleteAsync();
+        await Send(new{type=1,invocationId="revoked",target=secondMethod,arguments=new[]{"FOREIGN-CODE"}});
         using(var revoked=await Completion("revoked"))Assert.True(revoked.RootElement.TryGetProperty("error",out _));
-        h.Db.Sys_RoleActions.Add(new(){RoleId=72,MenuId=309,ActionCode="query"});await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();
-        await Send(new{type=1,invocationId="restored",target="SubscribeMachine",arguments=new[]{"FOREIGN-MACHINE"}});
+        h.Db.Sys_RoleActions.Add(new(){RoleId=72,MenuId=menu,ActionCode="query"});await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();
+        await Send(new{type=1,invocationId="restored",target=firstMethod,arguments=new[]{"FOREIGN-CODE"}});
         using(var restored=await Completion("restored"))Assert.False(restored.RootElement.TryGetProperty("error",out _));
         await h.Db.Sys_Users.Where(x=>x.Id==h.User).ExecuteUpdateAsync(x=>x.SetProperty(u=>u.Enable,false));
-        await Send(new{type=1,invocationId="session-revoked",target="SubscribeMachine",arguments=new[]{"FOREIGN-MACHINE"}});
+        await Send(new{type=1,invocationId="session-revoked",target=firstMethod,arguments=new[]{"FOREIGN-CODE"}});
         using(var revoked=await Completion("session-revoked"))Assert.True(revoked.RootElement.TryGetProperty("error",out _));
     }
     [CurrentPermissionPostgresFact]
