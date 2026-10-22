@@ -1,8 +1,8 @@
 # AI 可读变更日志
 
-## 2026-10-22：W49计划/达成率Owner候选已验证
+## 2026-10-22：W49计划/达成率Owner已采用
 
-计划看板/达成率独立Owner、同范围capture及安全导出已验证；34项相关.NET用例、8项Vitest及完整vue-tsc -b通过；同一testId复用最新有效结果，未把旧执行改称新执行。正式排程缺Root/WO/RES采用保持LEGACY_READ_ONLY，产品PR/Handoff与准确分支/席位finish待执行。
+产品[PR](https://github.com/GTX537/CP6/pull/414)及[Handoff](https://github.com/GTX537/CP6.AI-Handoff/pull/25)采用，source`d5e8fb07231cdbd5016cb028dd9ea6bab34fec51`、远端main`6cc3c5e3d205b43eded0e398ef673a3a29f5b5b6`，32任务文件blob一致；Handoff source`2ec59c822c266115bc26a50d0463374170133fc4`、目标`942eac113b9c456e37c0fea7ca4137b07eb8f80d`，准确分支删除/DEV-2释放。
 
 [DELIVERY](../development/evidence/WP02-03/planning-owner/DELIVERY.md)。七天目标ACTIVE；正式RES/PERF/SCHED及整卡/125目标/247运行不提升。
 
