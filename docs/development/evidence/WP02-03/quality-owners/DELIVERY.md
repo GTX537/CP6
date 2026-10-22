@@ -1,6 +1,6 @@
 # W41-01 交付：质量独立入口与共同事务
 
-七天计划 D1；COORD 本聊天单人；基线 `f5d9a540513fa2fdea730bcad780cb3ae060cedd`；DEV-1/codex/w41-01 与 DEV-2/codex/w41-handoff。关联 [P0 #392](https://github.com/GTX537/CP6/issues/392)。当前本地验证和集中审查完成，正常 PR/远端采用与席位释放待实际核对。
+七天计划 D1；COORD 本聊天单人；基线 `f5d9a540513fa2fdea730bcad780cb3ae060cedd`；DEV-1/codex/w41-01 与 DEV-2/codex/w41-handoff。关联 [P0 #392](https://github.com/GTX537/CP6/issues/392)。产品和Handoff已采用；原任务最后文档和实际分支/席位收尾见下文。
 
 ## 实现与集中审查
 
@@ -30,3 +30,13 @@
 自有 PG/API 已停止；按 ownership、绝对目录边界、无进程/重解析点核对回收生成 data 578727189 字节，日志/TRX/原失败/ownership 与复用缓存保留。两固定开发席位采用后 finish，INTEGRATION-1空闲；根用户资料保留，零新树/clone/代理。
 
 原估实际4–6小时，实际以管理 finish 记录；七天一期原估35–55小时，D1结束后直接继续补充/退货与无订单可信范围、设备/OEE/计划、Main持久原结果/outbox、CRM身份和真实Owner采用、询盘必要公共支撑/提交与本期集成。完整 WP02-03、125目标/247运行验收不提升。无 Actions 取消/触发/重跑、workflow修改、既有环境迁移或生产部署；W37–W40不重复。短表锁跨租户串行、通知 best-effort 和无订单部门绑定缺口明确保留。
+
+## 远端采用与原分支收尾
+
+[产品PR #393](https://github.com/GTX537/CP6/pull/393)正常合并，source`f4b4afeb37de0e6c1440ee5b1d31811bd8442aea`、远端main`92b2b3584658cfb4e4d80b2255010d77b134dacd`，35项任务文件blob一致，主目录安全快进；#392原步骤复测和采用后关闭。[Handoff PR #17](https://github.com/GTX537/CP6.AI-Handoff/pull/17)正常采用，source`2f3ad318a3e615129651dff4ebd7dcb605bc0c31`、目标`8a6750a9bda48640d85df77557a9a26c68f88845`。Handoff准确本地/远端分支已删除，DEV-2干净detached、席位已释放。
+
+106项去重相关.NET（16本轮PG/实际HTTP、67既有Owner、23兼容/权限）、20项Vitest与完整类型检查通过；原失败与误选无关测试保留，所需范围0失败/跳过。合并未改产品输入，复用实际成功证据；此最后文档只检查diff/链接/台账。自有PG/API停止，5处生成data回收578727189字节，原失败/日志/ownership和缓存保留；Actions本分支0运行、无取消项或触发变更。
+
+本快照 2026-10-22T05:01:07.604673+00:00 仍在原DEV-1/codex/w41-01，最后正常文档PR后manage finish，不提前宣称其自身采用/释放。准确结果与实际耗时见实时管理登记、最终PR和`C:/Users/tt/CP6-planning-reports/20261017-foundation/wave41-final-verification.json`。原D1估4–6h，已用时明显低于估计，最终按真实finish修正。
+
+七天目标保持ACTIVE，随后直接D2补充/退货与可信范围，再D3设备/OEE/计划、D4持久原结果/可靠投递、D5 CRM、D6询盘必要支撑/提交、D7集成。完整WP02-03、125目标/247运行不提升，真实DEV/UAT、生产门禁独立。零新树/clone/代理；根用户资料保留，INTEGRATION-1空闲；W37–W40不重复。
