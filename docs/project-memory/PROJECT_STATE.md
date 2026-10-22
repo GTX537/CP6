@@ -1,10 +1,10 @@
 # 项目当前状态
 
-## 2026-10-22：七天一期D1质量Owner候选已验证
+## 2026-10-22：七天一期D1质量Owner已集成
 
-库存QC/入库检验/MES品质检验独立Owner与关联共同事务、实际HTTP/页面保护已实现，106项去重相关.NET通过（16项本轮PG/实际HTTP、67项既有Owner、23项兼容/权限），20项Vitest（10新增、10既有）及完整vue-tsc --build通过；所需范围0失败/跳过。一次作者审查完成，[DELIVERY](../development/evidence/WP02-03/quality-owners/DELIVERY.md)保留原失败与适用范围；#392待远端采用。
+[产品PR #393](https://github.com/GTX537/CP6/pull/393)与[Handoff PR #17](https://github.com/GTX537/CP6.AI-Handoff/pull/17)核对远端采用，#392关闭。106项去重相关.NET（16本轮PG/实际HTTP、67既有Owner、23兼容/权限）、20项Vitest与完整类型检查通过；原失败与误选无关测试保留，所需范围0失败/跳过；一次作者审查及定向复查完成。[DELIVERY](../development/evidence/WP02-03/quality-owners/DELIVERY.md)。
 
-自有PG/API停止、生成data定向回收；原DEV-1/DEV-2采用后finish。[七天持续目标](../development/planning/20261022-seven-day-delivery.md)保持ACTIVE，随后补充/退货与无订单可信范围、设备/OEE/计划、Main持久原结果/outbox、CRM身份和真实Owner采用、询盘必要公共支撑/提交与本期集成；125/247与完整卡不提升。W37–W40不重复，无新树/代理/Actions/生产。
+DEV-2分支准确清理并释放；自有PG/API停止、生成data回收约552MiB，原失败保留。原W41-01最后文档PR后finish，实际分支/席位/耗时见实时登记与最终PR。[七天持续目标](../development/planning/20261022-seven-day-delivery.md)保持ACTIVE，直接继续D2补充/退货和可信范围，其后按计划推进Main/CRM/询盘与集成；125/247与完整卡不提升。无新树/代理/Actions/既有迁移/生产，W37–W40不重复。
 
 ## 2026-10-22：W40 MES不良记录Owner已集成
 
