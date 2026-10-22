@@ -95,3 +95,9 @@ REP需要的正式Root/Claim/Transfer、RMA正式适配器与SCHED资源重绑�
 ## D4库存采用检查点
 
 W44库存原命令/原结果/查询与close由PR399/Handoff20采用，38相关.NET、3客户端Vitest与完整类型检查通过；DEV-2释放，原DEV-1最后文档后finish。D4仍PARTIALLY_ADOPTED，可靠Outbox/消费者与正式Transfer等前置保留；现有页面没有采用库存命令，七天目标保持ACTIVE。
+
+## W44实际收尾 / D3安全前置
+
+W44实际20.83分钟，PR399/400/Handoff20采用、两分支准确删除/席位释放。D4仍局部采用。D3设备/OEE前置源码核对发现实际注册SignalRMesNotifier向Clients.All发送工单/数量/设备载荷，MesHub按无租户业务编码加入组且无当前权限准入；唯一页面消费者ControlTower直接展示这些载荷。按BUG规则P0先行，原Machine/OEE完整Owner留下一窗口。
+
+[W45](../dispatch/20261022-wave45/README.md)预计45–90分钟；完成后继续设备/OEE独立Owner，不以实时通道修复关闭D3。

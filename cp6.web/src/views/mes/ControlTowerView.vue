@@ -17,6 +17,7 @@
       </div>
     </div>
 
+    <p v-if="readError" role="alert">{{ readError }}</p>
     <!-- 4 象限 -->
     <div class="grid">
       <!-- 左上：KPI -->
@@ -129,6 +130,7 @@ import {
 } from '@/types/mes/mes'
 import { getMesHub, startMesHub, stopMesHub } from '@/utils/mesHub'
 import { formatDateTime } from '@/utils/format'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
 
 const summary = reactive<MesDashboardSummaryDto>({
   inProgressCount: 0, completedCount: 0, totalGoodQty: 0, totalDefectQty: 0,
@@ -137,6 +139,21 @@ const summary = reactive<MesDashboardSummaryDto>({
 const trend = ref<DailyTrendDto[]>([])
 const delayAlerts = ref<DelayAlertDto[]>([])
 const machines = ref<MachineDto[]>([])
+const readError = ref('')
+let blocked = false
+let request = 0
+const intent = useOperationsIntent(() => {
+  blocked = true
+  clearData()
+  readError.value = t('利用者が変更されました。画面を開き直してください。')
+  stopRealtime()
+})
+
+function clearData() {
+  Object.assign(summary, { inProgressCount: 0, completedCount: 0, totalGoodQty: 0,
+    totalDefectQty: 0, defectRate: 0, delayedCount: 0 })
+  trend.value = []; delayAlerts.value = []; machines.value = []; events.value = []
+}
 
 const clock = ref(formatNow())
 const hubConnected = ref(false)
@@ -178,50 +195,63 @@ function pushEvent(type: string, tag: string, msg: string) {
 
 // ─── データ取得 ───
 async function loadAll() {
-  const [s, tr, da, ms] = await Promise.all([
-    mesDashboardApi.summary(),
-    mesDashboardApi.dailyTrend(14),
-    mesDashboardApi.delayAlerts(20),
-    machineApi.search({ activeOnly: true }),
-  ])
-  Object.assign(summary, s.data || summary)
-  trend.value = tr.data || []
-  delayAlerts.value = da.data || []
-  machines.value = ms.data || []
-}
-
-async function refreshMachines() {
-  const ms = await machineApi.search({ activeOnly: true })
-  machines.value = ms.data || []
+  if (blocked) return
+  const token = intent.capture(), sequence = ++request
+  try {
+    const [s, tr, da, ms] = await Promise.all([
+      mesDashboardApi.summary(),
+      mesDashboardApi.dailyTrend(14),
+      mesDashboardApi.delayAlerts(20),
+      machineApi.search({ activeOnly: true }),
+    ])
+    if (!intent.current(token) || sequence !== request || blocked) return
+    clearData()
+    Object.assign(summary, s.data || {})
+    trend.value = tr.data || []
+    delayAlerts.value = da.data || []
+    machines.value = ms.data || []
+    readError.value = ''
+  } catch (error: any) {
+    if (!intent.current(token) || sequence !== request || blocked) return
+    clearData()
+    readError.value = t('最新データを取得できません。権限と接続状態を確認してください。')
+    if ([401, 403].includes(error?.response?.status)) {
+      blocked = true
+      stopRealtime()
+    }
+  }
 }
 
 // ─── SignalR ───
+let registeredHub: ReturnType<typeof getMesHub> | undefined
+const invalidated = async () => {
+  const token = intent.capture()
+  await loadAll()
+  if (intent.current(token) && !blocked && !readError.value)
+    pushEvent('prod', t('更新'), t('最新データを取得しました。'))
+}
 async function setupHub() {
-  const hub = getMesHub()
-  hub.onreconnected(() => { hubConnected.value = true })
-  hub.onreconnecting(() => { hubConnected.value = false })
-  hub.onclose(() => { hubConnected.value = false })
-
-  hub.on('ProductionReported', (p: { workOrderNo: string; processCd: string; goodQty: number; defectQty: number }) => {
-    pushEvent('prod', t('実績'), t('{no} / {process}: 良品 {good} 不良 {defect}', { no: p.workOrderNo, process: p.processCd, good: p.goodQty, defect: p.defectQty }))
-    loadAll() // 軽量再取得
-  })
-  hub.on('DefectIssued', (p: { defectNo: string; workOrderNo: string; categoryCd: string }) => {
-    pushEvent('defect', t('不良'), `${p.defectNo} (${p.categoryCd}) at ${p.workOrderNo}`)
-  })
-  hub.on('MachineStatusChanged', (p: { machineCd: string; newStatus: number }) => {
-    pushEvent('machine', t('設備'), `${p.machineCd} → ${getStatusLabel(p.newStatus)}`)
-    refreshMachines()
-  })
-  hub.on('WorkOrderStatusChanged', (p: { workOrderNo: string; newStatus: number }) => {
-    pushEvent('wo', t('指図'), t('{no} ステータス {status}', { no: p.workOrderNo, status: p.newStatus }))
-  })
-  hub.on('DowntimeRegistered', (p: { downtimeNo: string; machineCd: string; downtimeType: number }) => {
-    pushEvent('downtime', t('停止'), t('{machine} 停止登録 ({no})', { machine: p.machineCd, no: p.downtimeNo }))
-  })
-
+  const token = intent.capture()
+  const hub = registeredHub = getMesHub()
+  const setConnected = (value: boolean) => {
+    if (intent.current(token) && !blocked) hubConnected.value = value
+  }
+  hub.onreconnected(() => { setConnected(true); void invalidated() })
+  hub.onreconnecting(() => setConnected(false))
+  hub.onclose(() => setConnected(false))
+  hub.on('MesInvalidatedV1', invalidated)
   await startMesHub()
-  hubConnected.value = hub.state === 'Connected'
+  setConnected(hub.state === 'Connected')
+}
+function stopRealtime() {
+  hubConnected.value = false
+  if (clockTimer) clearInterval(clockTimer)
+  if (refreshTimer) clearInterval(refreshTimer)
+  if (registeredHub) {
+    registeredHub.off('MesInvalidatedV1', invalidated)
+    registeredHub = undefined
+    void stopMesHub()
+  }
 }
 
 // ─── Clock ───
@@ -245,16 +275,19 @@ function toggleFullscreen() {
 let refreshTimer: number | undefined
 
 onMounted(async () => {
+  const token = intent.capture()
   await loadAll()
+  if (!intent.current(token) || blocked) return
   await setupHub()
+  if (!intent.current(token) || blocked) return
   clockTimer = window.setInterval(() => { clock.value = formatNow() }, 1000)
   refreshTimer = window.setInterval(loadAll, 10000) // 10 秒ポーリングフォールバック
 })
 
 onBeforeUnmount(() => {
-  if (clockTimer) clearInterval(clockTimer)
-  if (refreshTimer) clearInterval(refreshTimer)
-  stopMesHub()
+  blocked = true
+  clearData()
+  stopRealtime()
 })
 </script>
 
