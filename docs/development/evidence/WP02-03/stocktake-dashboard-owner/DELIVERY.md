@@ -1,6 +1,6 @@
 # W39-01 盘点、独立库存与看板 Owner：单份交付
 
-2026-10-21；COORD本聊天单人，原DEV-1/codex/w39-01，基线`c465d257074d1164b7de07585538761627c24bc3`。[计划](../../../dispatch/20261021-wave39/README.md)、[Owner v1](../../../../design-handbook/remediation/main-stocktake-dashboard-owner-v1.md)、[P0 #386](https://github.com/GTX537/CP6/issues/386)。W38合并/准确分支清理/真实席位释放已核对，不重复。本地Ready to merge Yes；远端采用、分支与席位处置待实际核对。
+2026-10-21；COORD本聊天单人，原DEV-1/codex/w39-01，基线`c465d257074d1164b7de07585538761627c24bc3`。[计划](../../../dispatch/20261021-wave39/README.md)、[Owner v1](../../../../design-handbook/remediation/main-stocktake-dashboard-owner-v1.md)、[P0 #386](https://github.com/GTX537/CP6/issues/386)。W38合并/准确分支清理/真实席位释放已核对，不重复。产品和Handoff已采用；原任务最后文档与席位处置见下文及最终实际证明。
 
 ## 改动与审查
 
@@ -38,3 +38,13 @@
 原DEV-1产品、DEV-2资料，INTEGRATION-1空闲，零新树/clone/源码副本/代理。正常PR与远端采用核对后manage finish；候选阶段两开发席位仍占用，不提前宣称释放。根用户未跟踪资料保留。预计实际2–3.5小时、复杂故障余量5小时，最终实际耗时由finish记录核对。
 
 其他WMS/MES独立入口（QC、补充、退货、设备/OEE、计划等）、无订单对象正式部门绑定、采购/财务自身Owner、持久operation/outbox、可靠投递、正式workflow/CRM及真实DEV/UAT仍独立。短表锁跨租户串行化、通知/财务best-effort、无持久重放保护明确保留。完整WP02-03、125目标及247运行验收不提升。无Actions取消/触发/重跑、workflow变更、既有数据库迁移、真实权限授予或生产部署。
+
+## 远端采用及原分支收尾
+
+产品[PR #387](https://github.com/GTX537/CP6/pull/387)正常合并，source`0184a7b5e333b683e5f3cb99ca4f781fa4143152`、远端main`d4a26c8c9401385dad354dde986264e192a97fbb`，56项任务文件blob一致，主目录快进；#386原步骤复测及远端核对后关闭。[Handoff PR #15](https://github.com/GTX537/CP6.AI-Handoff/pull/15)正常合入默认资料目标，source`4a5d39b9735f521e664f50be14b068a8870b5401`、目标`5dbbcfd440e43c542ccc73338385eb4476205cae`；资料分支已准确删除，DEV-2干净detached且席位已释放。
+
+123项去重相关.NET成功（14本轮原生PG/实际HTTP、38既有Owner、71兼容/权限），68项Vitest及完整类型检查通过；真实来源与复用范围见单份交付，最终适用集合0失败/跳过；一次作者SPEC/QUALITY和局部复查无本窗剩余阻断。最后文档不改产品/依赖/环境，复用成功证据，仅检查diff、链接、台账与采用范围。自有PG/API停止；5处生成data回收575457573逻辑字节（0.536GiB），清理时段D盘空闲增加578404352字节，原失败与日志/ownership保留。
+
+本提交在原codex/w39-01、DEV-1；最后正常PR后manage finish，不提前宣称自身未来采用/释放。实际结果以`D:/CP6/.git/cp6-workspaces/state.json`、最后PR说明和`C:/Users/tt/CP6-planning-reports/20261017-foundation/wave39-final-verification.json`为准。预计实际2–3.5小时，最后finish记录实际耗时；目标于2026-10-21T23:48:57Z开始，当前文档快照时间2026-10-22T00:29:54.679795+00:00。
+
+零新树/clone/源码副本/额外收尾分支/代理；根用户资料保留、INTEGRATION-1空闲。其他QC/补充/退货/设备/OEE/计划等WMS/MES独立入口、无订单对象部门绑定、采购/财务自身Owner、持久operation/outbox和可靠投递、正式workflow/CRM及真实DEV/UAT仍独立。完整WP02-03、125目标/247运行不提升。无Actions、workflow变更、既有数据库迁移、真实授权或生产部署。W38不重复。

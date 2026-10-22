@@ -1,10 +1,10 @@
 # 项目当前状态
 
-## 2026-10-21：W39 盘点、库存调整与看板Owner候选
+## 2026-10-21：W39 盘点、独立库存与看板Owner已集成
 
-当前原会话Owner、独立动作/来源字段/完整对象范围、盘点与库存整笔原子性、冻结快照及五页面保护已实现；PG实时通道改为tenant组无明细刷新信号。123项去重相关.NET成功：14项本轮原生PG/实际HTTP、38项既有Owner PG/HTTP、71项库存兼容/权限；68项Vitest（10本轮页面、17既有Owner页面、41列表组件）和完整vue-tsc --build通过。最终适用集合0失败/跳过；一次作者审查及局部复查完成。[DELIVERY](../development/evidence/WP02-03/stocktake-dashboard-owner/DELIVERY.md)。
+[产品PR #387](https://github.com/GTX537/CP6/pull/387)合入远端main`d4a26c8c9401385dad354dde986264e192a97fbb`，[Handoff PR #15](https://github.com/GTX537/CP6.AI-Handoff/pull/15)合入默认资料目标，#386原步骤复测及远端核对后关闭。123项去重相关.NET成功（14本轮原生PG/实际HTTP、38既有Owner、71兼容/权限），68项Vitest及完整类型检查通过；真实来源与复用范围见单份交付，最终适用集合0失败/跳过；作者审查及局部复查完成。[DELIVERY](../development/evidence/WP02-03/stocktake-dashboard-owner/DELIVERY.md)。
 
-#386待正常PR/远端采用；5处停止PG生成data回收约0.536GiB。原DEV-1/DEV-2待finish；根资料保留，W38不重做。其他WMS/MES独立入口（QC、补充、退货、设备/OEE、计划等）、无订单对象正式部门绑定、采购/财务自身Owner、持久operation/outbox、可靠投递、正式workflow/CRM及真实DEV/UAT仍独立，125/247不提升；无Actions、既有数据库迁移、真实授权或生产。
+DEV-2分支删除、席位释放；自有PG/API停止，5处生成data回收约0.536GiB。原W39-01最后文档PR后finish，真实分支/席位和实际耗时见管理登记/最终PR，不提前宣称未来释放。其他QC/补充/退货/设备/OEE/计划等WMS/MES独立入口、无订单对象部门绑定、采购/财务自身Owner、持久operation/outbox和可靠投递、正式workflow/CRM及真实DEV/UAT仍独立，125/247不提升。零新树/副本/代理；无Actions、既有环境迁移、真实授权或生产；W38不重做。
 
 ## 2026-10-21：W38 报工／入库Owner已集成
 
