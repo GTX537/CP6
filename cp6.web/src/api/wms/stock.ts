@@ -5,6 +5,9 @@ import type {
   StockSearchQuery,
   StockMovementRequest,
   StockMoveRequest,
+  StockOperationResult,
+  StockOperation,
+  StockOperationScope,
   WmsApi,
   WmsPaged,
 } from '@/types/wms/wms'
@@ -24,13 +27,24 @@ export const stockApi = {
   },
 
   /** 在庫変動 1 件適用 */
-  apply(req: StockMovementRequest) {
-    return http.post<any, WmsApi<{ txnNo: string }>>('/wms/stock/apply', req)
+  apply(req: StockMovementRequest & { operationId: string }) {
+    return http.post<any, WmsApi<StockOperationResult>>('/wms/stock/commands/v1/apply', req)
   },
 
   /** 棚移動 */
-  move(req: StockMoveRequest) {
-    return http.post<any, WmsApi<{ outTxnNo: string; inTxnNo: string }>>('/wms/stock/move', req)
+  move(req: StockMoveRequest & { operationId: string }) {
+    return http.post<any, WmsApi<StockOperationResult>>('/wms/stock/commands/v1/move', req)
+  },
+
+  operationScope() {
+    return http.get<any, WmsApi<StockOperationScope>>('/wms/stock/operations/v1/scope')
+  },
+  // UNKNOWN is not proof of rollback. Retain the same key; never generate/retry a new operation here.
+  readOperation(operationId: string) {
+    return http.get<any, WmsApi<StockOperation>>(`/wms/stock/operations/v1/${encodeURIComponent(operationId)}`)
+  },
+  closeOperation(operationId: string) {
+    return http.post<any, WmsApi<StockOperation>>(`/wms/stock/operations/v1/${encodeURIComponent(operationId)}/close`)
   },
 
   /** トランザクション一覧 */

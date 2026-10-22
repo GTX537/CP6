@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：七天目标D4 [W44库存原操作恢复](dispatch/20261022-wave44/README.md)，本聊天单人。W37–W43均已实际finish；正式Transfer/REP/RMA/SCHED与可靠外部投递前置保留。
+
 > 当前：七天目标D4首批 [W43 Main原命令恢复](dispatch/20261022-wave43/README.md)已采用，原分支最后文档后finish；本聊天单人。W37–W42均已实际finish；D2/D3完整前置保留。
 
 > 当前：七天目标D2首批 [W42可信部门绑定](dispatch/20261022-wave42/README.md)已采用，原分支最后文档后finish；单人；W37–W41均已实际finish。RMA按正式适配/Owner前置后续采用。

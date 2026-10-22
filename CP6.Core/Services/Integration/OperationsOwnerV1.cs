@@ -64,11 +64,13 @@ public sealed class OperationsOwnerV1
     }
 
     internal async Task<T> ExecuteAsync<T>(string resource,string action,bool write,
-        Func<OperationsAccessV1,CancellationToken,Task<T>> body,CancellationToken ct=default, OperationsDelegationV1? delegation=null)
+        Func<OperationsAccessV1,CancellationToken,Task<T>> body,CancellationToken ct=default, OperationsDelegationV1? delegation=null,
+        Func<CancellationToken,Task<string>>? actionAtFence=null,bool readOnlyAuthorityFence=false)
     {
         using var linked=CancellationTokenSource.CreateLinkedTokenSource(ct,http.HttpContext?.RequestAborted??CancellationToken.None);ct=linked.Token;
         if(resource is not (Mes or Outbound or Production or Inbound or Receipt or Stock or StockTake or WmsDashboard or MesDashboard or Defect or StockQc or InboundQc or Quality) || !db.Database.IsNpgsql() || db.Database.CurrentTransaction!=null
             || System.Transactions.Transaction.Current!=null || db.ChangeTracker.HasChanges()
+            || readOnlyAuthorityFence && (write || delegation!=null || actionAtFence!=null)
             || db.ChangeTracker.Entries().Any(e=>IsBusiness(e.Entity.GetType().Name)))
             throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
         var original=db.ChangeTracker.Entries().Select(e=>e.Entity).ToHashSet(ReferenceEqualityComparer.Instance);
@@ -76,12 +78,22 @@ public sealed class OperationsOwnerV1
         try
         {
             tx=await db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted,ct);
-            await AuthenticationCompletionGateV1.AcquireAsync(db,ct);
+            if(readOnlyAuthorityFence)
+            {
+                // Application read-only recovery still uses native READ COMMITTED row locking.
+                if(!await db.Database.SqlQueryRaw<bool>("""
+                    SELECT singleton AS "Value" FROM cp6_platform_admin_guard_v1.root WHERE singleton FOR SHARE
+                    """).SingleAsync(ct))throw new CurrentPermissionUnavailableException();
+            }
+            else await AuthenticationCompletionGateV1.AcquireAsync(db,ct);
             await LockGraph(write,ct);
             if(delegation!=null && (!write || !ReferenceEquals(delegation.Context,db)
                 || delegation.Tenant!=db.CurrentTenantId || !AllowsDelegation(resource,action,delegation)))
                 throw new OrderPriceCorrectionException("DELEGATION_FORBIDDEN",403);
-            var authority=await AuthorityAsync(delegation?.Resource??resource,delegation?.Action??action,ct);
+            // Original-result lookup occurs only after the same native authority/business fences.
+            // Only the assembly-internal caller selects query for an existing immutable operation.
+            var selectedAction=actionAtFence==null?action:await actionAtFence(ct);
+            var authority=await AuthorityAsync(delegation?.Resource??resource,delegation?.Action??selectedAction,ct);
             var access=new OperationsAccessV1(db,this,authority);
             if(delegation!=null)
             {
