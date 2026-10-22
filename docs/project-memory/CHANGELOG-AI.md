@@ -1,10 +1,10 @@
 # AI 可读变更日志
 
-## 2026-10-22：W45 MES实时通道修复候选已验证
+## 2026-10-22：W45 MES实时通道修复已集成
 
-P0 #401的实际匿名连接/跨租户业务推送与页面旧身份残留已复现并修复。31项去重相关.NET通过（4项新增PG/真实HTTP与WebSocket，其余既有库存看板/CSRF边界），8项Vitest及完整vue-tsc -b通过；一次作者审查完成，[DELIVERY](../development/evidence/WP02-03/mes-realtime/DELIVERY.md)。正常采用/Issue关闭/分支清理与finish待执行。
+[产品PR402](https://github.com/GTX537/CP6/pull/402)和[Handoff PR21](https://github.com/GTX537/CP6.AI-Handoff/pull/21)采用；匿名协商、无租户业务广播和页面旧身份残留已复现并修复。4项新增PG/实际HTTP/WebSocket加32项相关回归执行（含1项新测试重跑）均通过；按显示名称去重31项，8项Vitest与完整vue-tsc -b通过；一次作者集中审查，[DELIVERY](../development/evidence/WP02-03/mes-realtime/DELIVERY.md)提供原始范围与失败来源。
 
-七天目标ACTIVE；D3设备/OEE完整Owner待下一窗口，旧Machine读尚未采用，不提升整卡/125目标/247运行。无Actions/既有迁移/生产。
+DEV-2准确分支清理/释放，自有PG/API停止，生成data回收约655MiB。原DEV-1最后文档PR后finish并关闭Issue401，实际耗时和最终生命周期见管理记录/最终PR。七天目标ACTIVE，D3设备/OEE/计划仍待独立Owner，WmsHub作用域待实测；整卡/125目标/247运行不提升，无Actions/既有迁移/生产。
 
 ## 2026-10-22：W44库存原操作恢复已集成
 

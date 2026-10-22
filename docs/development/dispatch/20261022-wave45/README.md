@@ -14,3 +14,13 @@ Main窗口`docs/development/dispatch/20261022-wave45/README.md`，七天计划`d
 ## 候选验证
 
 31项去重相关.NET通过（4项新增PG/真实HTTP与WebSocket，其余既有库存看板/CSRF边界），8项Vitest及完整vue-tsc -b通过。一次作者集中审查完成；[DELIVERY](../../evidence/WP02-03/mes-realtime/DELIVERY.md)。正常采用/Issue关闭和准确分支/席位finish待执行。
+
+## 远端采用与原分支收尾
+
+[产品PR402](https://github.com/GTX537/CP6/pull/402)已正常合并，source`277cc3091093ee12ac692f876a68f1d97a747d6e`、远端main`a817ede56e079d354161e99e865bdbf56c2123f9`，19项任务文件blob一致。[Handoff PR21](https://github.com/GTX537/CP6.AI-Handoff/pull/21)采用source`9507d2b162694e955a33e034f2c862b73b6a8001`、目标`5bea3df9e38898533dff5943e1e1ee07e86cec73`，3项资料blob一致；准确Handoff本地/远端分支已删除，DEV-2干净detached并释放。
+
+4项新增PG/实际HTTP/WebSocket加32项相关回归执行（含1项新测试重跑）均通过；按显示名称去重31项，8项Vitest与完整vue-tsc -b通过。最终产品输入未变，复用真实成功结果；最后文档只检查diff/链接/台账。原步骤匿名拒绝、租户空载荷、当前权限与停用会话拒绝均已实际复测。Issue401按约定待本任务最后文档和finish后关闭。6处自有PG data回收686906587字节，证据保留；本任务Actions0运行，无取消/触发修改。
+
+此快照2026-10-22T07:41:38.664837+00:00原DEV-1仍在codex/bug-401-mes-realtime做最后文档；正常最终PR后manage finish。分支处置、工作区状态、席位与实际耗时见最终PR、实时登记及`C:/Users/tt/CP6-planning-reports/20261017-foundation/wave45-final-verification.json`；原估45–90min，未提前声明自身释放。
+
+七天目标ACTIVE，D3安全前置局部采用；下一窗口继续设备/OEE/计划实际Owner，并定向核对WmsHub独立作用域。旧Machine HTTP查询、可靠投递与真实环境验收未完成，完整卡/125目标/247运行不提升；无新树/代理/Actions/既有迁移/生产。W37–W44已实际收尾。

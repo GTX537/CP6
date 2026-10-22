@@ -101,3 +101,8 @@ W44库存原命令/原结果/查询与close由PR399/Handoff20采用，38相关.N
 W44实际20.83分钟，PR399/400/Handoff20采用、两分支准确删除/席位释放。D4仍局部采用。D3设备/OEE前置源码核对发现实际注册SignalRMesNotifier向Clients.All发送工单/数量/设备载荷，MesHub按无租户业务编码加入组且无当前权限准入；唯一页面消费者ControlTower直接展示这些载荷。按BUG规则P0先行，原Machine/OEE完整Owner留下一窗口。
 
 [W45](../dispatch/20261022-wave45/README.md)预计45–90分钟；完成后继续设备/OEE独立Owner，不以实时通道修复关闭D3。
+
+
+## D3安全前置采用检查点
+
+W45 PR402/Handoff21采用MES实时边界修复。4项新增PG/实际HTTP/WebSocket加32项相关回归执行（含1项新测试重跑）均通过；按显示名称去重31项，8项Vitest与完整vue-tsc -b通过；DEV-2释放，原DEV-1最后文档后finish/Issue401关闭。D3仍PARTIALLY_ADOPTED，Machine/OEE/计划独立Owner与WmsHub作用域定向核对继续，七天目标ACTIVE。
