@@ -29,3 +29,9 @@ COORD本聊天单人；基线`2f135d6b91d520cbe0c431df677654f5611aabb4`；DEV-1 
 ## 剩余范围与生命周期
 
 正常产品PR、Handoff采用、原任务最后状态PR后，核对远端、准确删除任务分支并manage finish；Issue413在生命周期完成后关闭。当前DEV-1/2仅本窗占用，集成席空闲；根用户未跟踪资产保留。正式RES/PERF/SCHED前置、Main可靠投递及CRM实际身份/共同事务等仍按七天任务继续。整卡24/375、125目标0交付、247运行NOT_RUN不因本窗提升。
+
+## 远端采用与原任务收尾
+
+产品[PR](https://github.com/GTX537/CP6/pull/414)及[Handoff](https://github.com/GTX537/CP6.AI-Handoff/pull/25)采用，source`d5e8fb07231cdbd5016cb028dd9ea6bab34fec51`、远端main`6cc3c5e3d205b43eded0e398ef673a3a29f5b5b6`，32任务文件blob一致；Handoff source`2ec59c822c266115bc26a50d0463374170133fc4`、目标`942eac113b9c456e37c0fea7ca4137b07eb8f80d`，准确分支删除/DEV-2释放。
+
+34项相关.NET用例、8项Vitest及完整vue-tsc -b通过；同一testId复用最新有效结果，未把旧执行改称新执行；最后仅文档diff/链接/台账，DEV-1最后状态PR后finish/Issue413关闭。分支、工作区、席位及实际耗时以最终PR、实时登记与`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave49-final-verification.json`为准，不提前宣称释放。七天目标ACTIVE，继续下一实际前置。
