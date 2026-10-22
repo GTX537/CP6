@@ -169,6 +169,20 @@ export interface StockMoveRequest {
   remark?: string
 }
 
+export interface StockOperationResult {
+  operationId: string
+  kind: 'APPLY' | 'MOVE'
+  txnNo?: string | null
+  outTxnNo?: string | null
+  inTxnNo?: string | null
+}
+export interface StockOperation {
+  operationId: string
+  state: 'COMMITTED' | 'CLOSED' | 'UNKNOWN'
+  result?: StockOperationResult | null
+}
+export interface StockOperationScope { tenantId: string; actorId: string }
+
 // ───────── 入庫予定（WM030） ─────────
 
 export interface InboundOrder {

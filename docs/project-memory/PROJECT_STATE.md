@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## 2026-10-22：W44库存原操作恢复候选已验证
+
+库存调整/移动实际Owner的原命令、同事务原结果、当前精确ID读取和close已实现。38项去重相关.NET通过（10项新增PG/真实HTTP、28项既有库存/Owner边界），3项客户端Vitest及完整vue-tsc -b通过；一次作者审查完成，[DELIVERY](../development/evidence/WP02-10/stock-original-operation/DELIVERY.md)。正常PR/分支清理/席位finish待执行。
+
+W43实际34.94分钟并已收尾；七天目标ACTIVE，D4局部采用。正式Transfer/REP/RMA/SCHED、可靠外部投递及页面采用仍未完成。125目标/247运行与整卡不提升；无Actions/既有迁移/生产。
+
 ## 2026-10-22：W43 Main原操作恢复已集成
 
 [产品PR #397](https://github.com/GTX537/CP6/pull/397)与[Handoff PR #19](https://github.com/GTX537/CP6.AI-Handoff/pull/19)远端采用；Main journal与PA090实际命令/页面的同事务原结果、当前授权恢复和close已交付。43项去重相关.NET（11新增PG/实际HTTP、32既有PA090）、16项Vitest及完整类型检查通过；原失败保留，所需范围通过；一次作者审查完成，[DELIVERY](../development/evidence/WP02-10/main-original-operation/DELIVERY.md)保留原失败。

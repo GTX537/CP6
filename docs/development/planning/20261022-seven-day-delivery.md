@@ -82,3 +82,11 @@ REP正式Transfer/SourceDemand、RMA prepare/commit/query/seal、SCHED资源重�
 ## D4首批采用检查点
 
 W43 Main journal/PA090原命令与页面恢复由PR397/Handoff19采用，43相关.NET、16Vitest与类型检查通过；DEV-2释放，原DEV-1最后文档后finish。D4整阶段尚未完成，可靠投递及实际消费者采用继续推进；D2/D3前置保留，七天目标保持ACTIVE。
+
+## W43实际收尾 / W44库存原操作采用
+
+W43实际34.94分钟、PR397/398/Handoff19采用、两分支删除/席位释放。D4仍PARTIALLY_ADOPTED。
+
+REP需要的正式Root/Claim/Transfer、RMA正式适配器与SCHED资源重绑定尚未实际采用。本窗扩展D4已采用Main journal到库存单腿/双腿事务，不作为正式TRANSFER/REP采用；Finance bridge仍为提交后best-effort，不能借原结果恢复重新发送或宣称可靠投递。
+
+[W44](../dispatch/20261022-wave44/README.md)预计1–2h；库存实际Owner原命令与查询/关闭API，精确对象当前授权，无页面采用或可靠外部投递声明。

@@ -31,6 +31,37 @@ public class StockController : ControllerBase
     private StockOperationsService Reads=>_reads??throw new CP6.Core.Services.Erp.OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
     private string? CurrentUser => User?.Identity?.Name;
 
+    private IStockOriginalOperationsV1 Original=>_mover as IStockOriginalOperationsV1
+        ??throw new CP6.Core.Services.Erp.OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
+
+    // The Owner chooses current query for an original and adjust/move only for a new command.
+    [HttpPost("commands/v1/apply")]
+    public async Task<IActionResult> ApplyCommand([FromBody] StockApplyCommandV1 request,CancellationToken ct)
+    {
+        try { return Ok(new {code=0,message="OK",data=await Original.ApplyCommandAsync(request,ct)}); }
+        catch(InsufficientStockException ex) {return BadRequest(new {code=400,message=ex.Message});}
+        catch(ArgumentException ex) {return BadRequest(new {code=400,message=ex.Message});}
+    }
+    [HttpPost("commands/v1/move")]
+    public async Task<IActionResult> MoveCommand([FromBody] StockMoveCommandV1 request,CancellationToken ct)
+    {
+        try { return Ok(new {code=0,message="OK",data=await Original.MoveCommandAsync(request,ct)}); }
+        catch(InsufficientStockException ex) {return BadRequest(new {code=400,message=ex.Message});}
+        catch(ArgumentException ex) {return BadRequest(new {code=400,message=ex.Message});}
+    }
+    [HttpGet("operations/v1/scope")]
+    [RequirePermission("wms-stock","query")]
+    public async Task<IActionResult> OperationScope(CancellationToken ct)
+        =>Ok(new {code=0,message="OK",data=await Original.OperationScopeAsync(ct)});
+    [HttpGet("operations/v1/{operation:guid}")]
+    [RequirePermission("wms-stock","query")]
+    public async Task<IActionResult> ReadOperation(Guid operation,CancellationToken ct)
+        =>Ok(new {code=0,message="OK",data=await Original.ReadOperationAsync(operation,ct)});
+    [HttpPost("operations/v1/{operation:guid}/close")]
+    [RequirePermission("wms-stock","query")]
+    public async Task<IActionResult> CloseOperation(Guid operation,CancellationToken ct)
+        =>Ok(new {code=0,message="OK",data=await Original.CloseOperationAsync(operation,ct)});
+
     /// <summary>在庫照会（多条件 + ページング簡易版）</summary>
     [HttpGet]
     [RequirePermission("wms-stock", "query")]
