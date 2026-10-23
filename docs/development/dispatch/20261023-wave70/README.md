@@ -27,3 +27,9 @@ DEV-1 `codex/bug-445-rma-owner`；DEV-2 `codex/w70-handoff`；复用固定目录
 ## W70验证完成
 
 20项独立.NET用例通过（19项最终组合运行成功复用、1项异常包装断言修正后复验），7项页面用例、Vue类型检查及相关Main构建通过；无跳过。四个PG停止保留，原始红灯、编译与夹具异常断言失败保留。进入两仓采用及同任务最后收尾；完整RMA不提升，七天目标ACTIVE。
+
+## 实际采用与最后收尾
+
+Main [PR446](https://github.com/GTX537/CP6/pull/446) source `748477dfa7a67d8b5cb8f4b6ba688b07585b2d8e`采用远端main `8080bd7dda999bc2f8593866458a534f469b9631`，24任务路径核对通过。Handoff [PR46](https://github.com/GTX537/CP6.AI-Handoff/pull/46)采用 `8a83015c13b7abc3305928f9ed3200ddc17551a1`，准确任务分支删除、固定树干净detached、finish释放。十四个产品路径与已测提交逐blob相同，复用有效成功结果；最后文档diff和台账生成单独检查。
+
+Main同一任务分支最后状态PR及finish待完成；Issue445在最终远端和生命周期核对后关闭。当前约58.00min，原估90–140min，最终以finish为准，前置只读约6min、子任务不重复累计。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave70-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续REP独立Owner与正式Transfer等前置；D5/D6其余范围保留。
