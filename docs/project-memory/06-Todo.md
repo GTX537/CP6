@@ -1,8 +1,8 @@
 # 当前待办与优先级
 
-## 2026-10-23：W81库龄与效期读取Owner候选通过
+## 2026-10-23：W81库龄与效期读取Owner已采用
 
-Issue464真实PG红灯转绿；23独立.NET用例（17原生PostgreSQL＋6既有InMemory）及27Vue用例通过，无跳过；相关构建与最终vue-tsc类型检查通过。[单份交付](../development/evidence/W81-01/DELIVERY.md)。精确参考观察与真实分页、当前源库存权限交集，旧处置早期503；直接首页库龄消费已同步。正式DISP/Finance及完整验收不提升，4个自有PG停止保留；待两仓采用及分支/席位收尾，七天目标ACTIVE。
+Main [PR465](https://github.com/GTX537/CP6/pull/465) source `4f73c3787ba74f9499b503c342d5fae8d8932966`进入远端main `0252d9e85450f6f2f46d0bc6639fff2cbdde10cc`，38任务路径逐blob核对；23.NET/27Vue及类型检查通过，无跳过。[单份交付](../development/evidence/W81-01/DELIVERY.md)。Handoff [PR57](https://github.com/GTX537/CP6.AI-Handoff/pull/57)采用、准确分支删除、固定树干净detached、finish释放。Main同任务最后状态PR/finish及Issue464关闭待完成，未提前声明释放。4个PG停止保留；当前约17.48min，原估60–90min＋独立前置3min，最终按finish计。正式DISP/Finance、125目标与247验收不提升，七天目标ACTIVE。
 
 ## 2026-10-23：W80 FX26夹具因果链修订已采用
 
