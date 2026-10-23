@@ -722,3 +722,9 @@ W84 Main359/470与Handoff60全部采用，Issue471关闭，35相关用例及类�
 ## W85验证完成
 
 18独立.NET用例（15原生PG、2既有非PG越库行为、1两租户启动种子）及21Vue用例通过，无跳过；相关构建和vue-tsc通过。一次集中审查闭合；部门类型直接消费者api/sys/iam.ts及原组件实际选择/保存回归同窗纳入。旧写零效果、原生双连接读围栏、真实HTTP、503条分页通过；2个实际PG停止保留。进入正常采用与同任务收尾，七天ACTIVE。
+
+## 实际采用与最后收尾
+
+Main [PR475](https://github.com/GTX537/CP6/pull/475) source `a8e2e8a098c3a8ad9e713cd5f8f8c789270631cc`采用远端main `bbf9ae10322d880f68380bdaddc8435280ff7895`，30任务路径逐blob核对；Handoff [PR61](https://github.com/GTX537/CP6.AI-Handoff/pull/61)采用`7fdc5d18e71fc49a0c11b7406f1044727f721abf`，准确分支删除、固定树干净detached、finish释放。20个产品路径与已测提交逐blob一致，复用有效结果，最后文档diff/台账生成单独检查。
+
+Main同任务最终状态PR/finish及Issue474最后关闭待完成；当前约14.70min，原估35–55min＋独立前置2min，实际按finish不重复计Handoff。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave85-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续剩余独立Owner及D5/D6真实前置，正式WP10-32越库执行/Finance仍未采用。

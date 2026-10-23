@@ -35,3 +35,9 @@ SupplierCd/CustomerCd/OperatorCd/Remarks执行当前MIN字段决定；DTO仅显�
 正常Main产品PR→远端逐blob核对→Handoff DELIVERY/合并/finish→同任务Main状态PR/finish。未核最后证明前不提前声称分支删除/席位释放；实际时间以生命周期证明和后继登记为准。
 
 24/375整卡、125目标0完整交付、247正式运行NOT_RUN保持。完整WP10-32及其18AC、XD-G01–06、原IN/OUT/RSV原结果/关闭、完整库存/财务、CRM真实Site/Form Owner/公开受理仍待相应任务。七天目标ACTIVE。W51指定停止data删除曾被自动审批以blocked by policy拒绝，原地保留、不重试。
+
+## 实际采用与最后收尾
+
+Main [PR475](https://github.com/GTX537/CP6/pull/475) source `a8e2e8a098c3a8ad9e713cd5f8f8c789270631cc`采用远端main `bbf9ae10322d880f68380bdaddc8435280ff7895`，30任务路径逐blob核对；Handoff [PR61](https://github.com/GTX537/CP6.AI-Handoff/pull/61)采用`7fdc5d18e71fc49a0c11b7406f1044727f721abf`，准确分支删除、固定树干净detached、finish释放。20个产品路径与已测提交逐blob一致，复用有效结果，最后文档diff/台账生成单独检查。
+
+Main同任务最终状态PR/finish及Issue474最后关闭待完成；当前约14.70min，原估35–55min＋独立前置2min，实际按finish不重复计Handoff。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave85-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续剩余独立Owner及D5/D6真实前置，正式WP10-32越库执行/Finance仍未采用。

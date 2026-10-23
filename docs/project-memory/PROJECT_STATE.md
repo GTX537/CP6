@@ -1,8 +1,8 @@
 # 项目当前状态
 
-## 2026-10-23：W85越库历史观察Owner候选通过
+## 2026-10-23：W85越库历史观察Owner已采用
 
-Issue474真实缺陷红灯转绿；18独立.NET用例（15原生PG、2既有非PG越库行为、1两租户启动种子）及21Vue用例通过，无跳过；相关构建和vue-tsc通过。[单份交付](../development/evidence/W85-01/DELIVERY.md)。当前来源/部门UUID/字段、精确历史读取及服务端分页，旧写在任何效果前拒绝；不把历史状态或引用当真实收发结果。2个PG停止保留，待Main/Handoff采用与分支/席位收尾。完整WP10-32/验收不提升，七天ACTIVE。
+Main [PR475](https://github.com/GTX537/CP6/pull/475) source `a8e2e8a098c3a8ad9e713cd5f8f8c789270631cc`进入远端main `bbf9ae10322d880f68380bdaddc8435280ff7895`，30任务路径逐blob核对；18.NET/21Vue及类型检查通过，无跳过。[单份交付](../development/evidence/W85-01/DELIVERY.md)。Handoff [PR61](https://github.com/GTX537/CP6.AI-Handoff/pull/61)采用、准确分支删除、固定树干净detached、finish释放。Main同任务最后状态PR/finish及Issue474关闭待完成，未提前声明释放。2个PG停止保留；当前约14.70min，原估35–55min＋独立前置2min，最终按finish计。正式WP10-32越库执行/Finance、125目标与247验收不提升，七天目标ACTIVE。
 
 ## 2026-10-23：W84批次追溯与召回标记Owner已采用
 
