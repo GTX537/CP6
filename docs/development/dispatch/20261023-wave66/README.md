@@ -27,3 +27,9 @@ AGENTS/POLICY哈希未变，四仓固定席位容量无告警。Main/Handoff当�
 ## W66验证完成
 
 19项.NET独立用例通过（18项首轮成功复用、1项仅夹具修正后复验），5项页面行为通过，无跳过；相关Main构建通过。三个PG停止保留；原跨tenant文件丢失红灯与夹具42P16失败保留。进入两仓采用及同任务最后收尾；完整文件Owner不提升，七天目标ACTIVE。
+
+## 实际采用与最后收尾
+
+Main [PR440](https://github.com/GTX537/CP6/pull/440) source `6aa764609839a2be32fa91d90d1668c3fbb59b7b`采用远端main `f5bbbb08312170f6eda34f9d8d21582bb515a7bd`，全部20路径exact核对通过。Handoff [PR42](https://github.com/GTX537/CP6.AI-Handoff/pull/42)采用 `11fd7e78c55114c51f5f7ad4c7d10f6681917956`，准确任务分支删除、固定树干净detached、finish释放。十个产品路径与已测提交逐blob相同，未重复成功验证；最后文档diff和台账生成单独检查。
+
+Main同一任务分支最后状态PR及finish待完成；Issue439在最终远端和生命周期核对后关闭。当前约29.88min，原估60–90min，最终以finish为准；前置只读核对约4min，子任务不重复累计。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave66-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续真实Owner前置和D6公共支撑。

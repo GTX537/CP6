@@ -1,8 +1,8 @@
 # AI 可读变更日志
 
-## 2026-10-23：W66附件引用与内容保留候选通过
+## 2026-10-23：W66附件引用与内容保留已采用
 
-Issue439实际PG/磁盘红灯转绿；19项.NET独立用例通过（18项首轮成功复用、1项仅夹具修正后复验），5项页面行为通过，无跳过；相关Main构建通过。[单份交付](../development/evidence/W66-01/DELIVERY.md)。普通解绑不请求物理删除，PG当前tenant/准确Id及caller事务保护；完整文件Owner/引用保留门仍待实施。三个PG停止保留，待两仓采用和准确分支/席位收尾；七天目标ACTIVE。
+Main [PR440](https://github.com/GTX537/CP6/pull/440) / source `6aa764609839a2be32fa91d90d1668c3fbb59b7b`已进入远端main `f5bbbb08312170f6eda34f9d8d21582bb515a7bd`，20任务路径exact核对通过；19.NET/5UI通过（18项.NET首轮复用、1项夹具修正复验），无跳过。[单份交付](../development/evidence/W66-01/DELIVERY.md)。Handoff [PR42](https://github.com/GTX537/CP6.AI-Handoff/pull/42)已采用、准确分支删除、固定树干净detached、finish释放。Main同任务最后状态PR/finish及Issue439关闭待完成，未提前声称席位释放。三个PG停止保留；当前约29.88min，原估60–90min，最终按finish计。完整WP02-14及业务验收不提升，七天目标ACTIVE继续。
 
 ## 2026-10-23：W65采番串行推进已采用
 
