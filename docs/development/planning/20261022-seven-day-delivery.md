@@ -640,3 +640,19 @@ W78 Main459/CRM119/Handoff54全部采用，37独立PG通过，实际27.07min＋�
 Main [PR461](https://github.com/GTX537/CP6/pull/461) source `119e3659d5f773595693a776c7322954b704c92d`采用远端main `c7964dd87ce374aaf4f74b9ea29b50380aab2744`，36任务路径逐blob核对；Handoff [PR55](https://github.com/GTX537/CP6.AI-Handoff/pull/55)采用`7c3fecd3152044582b9adbaac840ba524aa19f59`，准确任务分支删除、固定树干净detached、finish释放。26个产品路径与已测提交逐blob相同，复用有效结果；最后文档diff/台账生成单独检查。
 
 Main同任务分支最终状态PR及finish待完成；Issue460最后远端及生命周期核对后关闭。当前约46.18min，原估120–180min＋独立前置6min，最终按finish，子任务不重复累计。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave79-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，随后继续D5/D6剩余直接前置，完整工艺/成本/Finance仍未采用。
+
+## 2026-10-23：W79全部收尾 / W80夹具因果链修订
+
+W79 Main461/462/Handoff55全部采用，Issue460关闭，62相关用例通过，实际50.30min＋前置约6min，准确分支删除、固定树干净detached、席位释放。[W80](../dispatch/20261023-wave80/README.md)以显式派生版本修复CRM Issue118六条成功配置事件的赢家审计关系，预计55–85min，前置约4min；保留原件、负例及NOT_RUN，实际Owner与公开受理继续待接，七天目标ACTIVE。
+
+## W80实际交付
+
+CRM [PR120](https://github.com/GTX537/CP6.CRM/pull/120)已采用，source `2241b288c8a43a2f0293b0384e8e58d5ed8e224c`，远端main `82d726fbc4ae3d90a0b9cfcbf24b78516829fa17`，14条任务路径exact blob核对通过。[单份产品报告](https://github.com/GTX537/CP6.CRM/blob/82d726fbc4ae3d90a0b9cfcbf24b78516829fa17/docs/development/evidence/W80-01/DELIVERY.md)。14项相关本地用例通过：8派生工具行为、6现有C#严格解码，无跳过；原S01与显式revision只读校验通过，无PG启动/Actions/部署。
+
+显式CRM-INQ-FX26-CAUSATION/20261023-R1从实际INSERT的六个审计/事件对取得赢家因果；原始准确字节、规范winnerAudit、版本profile和全部携带副本pointer可追溯。修正causationid、PayloadHash与状态摘要，事件身份、负例/原201重放零新增效应和其它family保持；不隐式升级原S01/schema，不复制整份大归档。原步骤红灯保留，修订在现有原生事件解码器接受/往返。CRM Issue118远端采用后关闭，Issue109独立保留OPEN。
+
+一次COORD集中SPEC/QUALITY无阻断；无数据库变更，W78原生Outbox行为按原来源复用，不称本轮PG重跑。CRM准确任务分支本地/远端删除、固定树干净detached、finish释放。本窗仍是夹具合同修订，完整当前Owner、Site/Form最终授权、配置激活、公开受理和真实投递未完成；24/375整卡、125目标0完整交付、247运行NOT_RUN保持，七天目标ACTIVE。
+
+W51指定停止data删除曾被自动审批以blocked by policy拒绝，保留不重试。后继继续剩余WMS独立入口Owner和真实CRM公共基础。
+
+Handoff [PR56](https://github.com/GTX537/CP6.AI-Handoff/pull/56)已采用 `ce5783b5e078e4f9cbeb9b7eec7e120284ea6790`，准确分支删除、固定树干净detached、finish释放。Main协调PR/finish尚待本次收尾。登记开工至此约11.96min，原预算55–85min，最终以finish为准、子任务不重复累计；前置只读约4min。
