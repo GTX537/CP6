@@ -5,13 +5,14 @@ using Microsoft.EntityFrameworkCore;
 namespace CP6.Core.Services.Wms;
 
 /// <summary>ロット追溯サービス実装（純クエリ）</summary>
-public class LotTraceService : ILotTraceService
+public partial class LotTraceService : ILotTraceService
 {
     private readonly CP6Context _db;
 
-    public LotTraceService(CP6Context db) => _db = db;
+    private readonly CP6.Core.Services.Integration.OperationsOwnerV1? _owner;
+    public LotTraceService(CP6Context db, CP6.Core.Services.Integration.OperationsOwnerV1? owner = null) { _db = db; _owner = owner; }
 
-    public async Task<LotTraceResult> TraceForwardAsync(string productCd, string lotNo)
+    private async Task<LotTraceResult> TraceForwardCoreAsync(string productCd, string lotNo)
     {
         var nodes = await GetNodesAsync(productCd, lotNo);
         var affected = await ResolveCustomersAsync(nodes);
@@ -25,7 +26,7 @@ public class LotTraceService : ILotTraceService
         };
     }
 
-    public async Task<LotTraceResult> TraceBackwardAsync(string productCd, string lotNo)
+    private async Task<LotTraceResult> TraceBackwardCoreAsync(string productCd, string lotNo)
     {
         var nodes = await GetNodesAsync(productCd, lotNo);
         var affected = await ResolveSuppliersAsync(nodes);
@@ -39,7 +40,7 @@ public class LotTraceService : ILotTraceService
         };
     }
 
-    public async Task<int> SetRecallFlagAsync(string productCd, string lotNo, bool flag, string? userName)
+    private async Task<int> SetRecallFlagCoreAsync(string productCd, string lotNo, bool flag, string? userName)
     {
         var stocks = await _db.Stocks
             .Where(s => s.ProductCd == productCd && s.LotNo == lotNo && !s.IsDeleted)
@@ -54,7 +55,7 @@ public class LotTraceService : ILotTraceService
         return stocks.Count;
     }
 
-    public async Task<LotStockSummary?> GetStockSummaryAsync(string productCd, string lotNo)
+    private async Task<LotStockSummary?> GetStockSummaryCoreAsync(string productCd, string lotNo)
     {
         var stocks = await _db.Stocks.AsNoTracking()
             .Where(s => s.ProductCd == productCd && s.LotNo == lotNo && !s.IsDeleted)

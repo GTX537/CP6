@@ -1,179 +1,110 @@
 <template>
-  <div class="wms-lot-trace">
-    <el-card shadow="never" class="search-card">
-      <el-form inline size="small">
-        <el-form-item :label="t('wms.common.product')">
-          <el-input v-model="productCd" clearable style="width: 160px" />
-        </el-form-item>
-        <el-form-item :label="t('wms.common.lot')">
-          <el-input v-model="lotNo" clearable style="width: 160px" />
-        </el-form-item>
-        <el-form-item :label="t('wms.lotTrace.fld.direction')">
-          <el-radio-group v-model="direction" size="small">
-            <el-radio-button value="FORWARD">{{ t('wms.lotTrace.dir.forward') }}</el-radio-button>
-            <el-radio-button value="BACKWARD">{{ t('wms.lotTrace.dir.backward') }}</el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="trace" :loading="loading">{{ t('wms.lotTrace.btn.trace') }}</el-button>
-          <el-button @click="loadSummary" :disabled="!productCd || !lotNo">{{ t('wms.lotTrace.btn.summary') }}</el-button>
-        </el-form-item>
-      </el-form>
-    </el-card>
-
-    <el-row v-if="summary" :gutter="12" style="margin-bottom: 12px">
-      <el-col :span="24">
-        <el-card shadow="never">
-          <template #header>
-            <div style="display: flex; justify-content: space-between; align-items: center">
-              <span style="font-weight: 600">{{ t('wms.lotTrace.summary.title') }}</span>
-              <el-button v-if="!summary.recallFlag" v-permission="'wms-lot-trace:recall'" type="danger" size="small" @click="setRecall(true)">{{ t('wms.lotTrace.btn.setRecall') }}</el-button>
-              <el-button v-else v-permission="'wms-lot-trace:recall'" type="warning" size="small" @click="setRecall(false)">{{ t('wms.lotTrace.btn.clearRecall') }}</el-button>
-            </div>
-          </template>
-          <el-descriptions :column="4" size="small" border>
-            <el-descriptions-item :label="t('wms.common.product')">{{ summary.productCd }}</el-descriptions-item>
-            <el-descriptions-item :label="t('wms.common.lot')">{{ summary.lotNo }}</el-descriptions-item>
-            <el-descriptions-item :label="t('wms.stock.col.physical')">{{ formatQty(summary.totalPhysicalQty) }}</el-descriptions-item>
-            <el-descriptions-item :label="t('wms.stock.col.available')">{{ formatQty(summary.totalAvailableQty) }}</el-descriptions-item>
-            <el-descriptions-item :label="t('wms.lotTrace.summary.locationCount')">{{ summary.locationCount }}</el-descriptions-item>
-            <el-descriptions-item :label="t('wms.common.expiryDate')">{{ summary.expiryDate?.slice(0, 10) || '—' }}</el-descriptions-item>
-            <el-descriptions-item :label="t('wms.stock.flag.recall')">
-              <CpTag v-if="summary.recallFlag" tone="danger">{{ t('wms.lotTrace.summary.recalled') }}</CpTag>
-              <span v-else>—</span>
-            </el-descriptions-item>
-          </el-descriptions>
-        </el-card>
-      </el-col>
-    </el-row>
-
-    <el-row v-if="result" :gutter="12">
-      <!-- 影响 list（顾客 or 仕入先） -->
-      <el-col :span="10">
-        <el-card shadow="never">
-          <template #header>
-            <span style="font-weight: 600">
-              {{ direction === 'FORWARD' ? t('wms.lotTrace.affected.customers') : t('wms.lotTrace.affected.suppliers') }}
-              <CpTag tone="warn" style="margin-left: 8px">{{ affectedList.length }}</CpTag>
-            </span>
-          </template>
-          <el-empty v-if="affectedList.length === 0" :description="t('wms.lotTrace.affected.none')" />
-          <el-table v-else :data="affectedList" size="small" border max-height="500">
-            <el-table-column v-if="direction === 'FORWARD'" prop="customerCd" :label="t('wms.outbound.fld.customerCd')" width="100" />
-            <el-table-column v-if="direction === 'FORWARD'" prop="customerName" :label="t('wms.outbound.fld.customerName')" min-width="150" show-overflow-tooltip />
-            <el-table-column v-if="direction === 'FORWARD'" prop="outboundNo" :label="t('wms.outbound.fld.no')" width="180" />
-            <el-table-column v-if="direction === 'BACKWARD'" prop="supplierCd" :label="t('wms.inbound.fld.supplierCd')" width="100" />
-            <el-table-column v-if="direction === 'BACKWARD'" prop="supplierName" :label="t('wms.inbound.fld.supplierName')" min-width="150" show-overflow-tooltip />
-            <el-table-column v-if="direction === 'BACKWARD'" prop="inboundNo" :label="t('wms.receipt.title')" width="180" />
-            <el-table-column prop="qty" :label="t('wms.common.qty')" width="100" align="right">
-              <template #default="{ row }">{{ formatQty(row.qty) }}</template>
-            </el-table-column>
-            <el-table-column :label="t('wms.lotTrace.col.at')" width="160">
-              <template #default="{ row }">{{ (row.shippedAt || row.receivedAt)?.replace('T', ' ').slice(0, 16) }}</template>
-            </el-table-column>
-          </el-table>
-        </el-card>
-      </el-col>
-
-      <!-- 时序トランザクション -->
-      <el-col :span="14">
-        <el-card shadow="never">
-          <template #header>
-            <span style="font-weight: 600">
-              {{ t('wms.lotTrace.nodes.title') }}
-              <CpTag tone="muted" style="margin-left: 8px">{{ result.nodes.length }}</CpTag>
-            </span>
-          </template>
-          <el-empty v-if="result.nodes.length === 0" :description="t('wms.common.noSelection')" />
-          <el-timeline v-else>
-            <el-timeline-item v-for="n in result.nodes" :key="n.txnNo"
-                :type="timelineTypeOf(n.txnType)" :timestamp="n.txnAt?.replace('T', ' ').slice(0, 19)">
-              <CpTag :tone="txnTone(n.txnType)">{{ n.txnType }}</CpTag>
-              <span style="margin-left: 8px">{{ n.warehouseCd }} - {{ n.locationCd }}</span>
-              <span :class="n.qty < 0 ? 'qty-out' : 'qty-in'" style="margin-left: 8px; font-weight: 600">
-                {{ n.qty > 0 ? '+' : '' }}{{ formatQty(n.qty) }}
-              </span>
-              <div v-if="n.relatedNo" style="color: var(--cp-muted); font-size: 12px; margin-top: 4px">
-                [{{ n.relatedType }}] {{ n.relatedNo }}
-              </div>
-              <div v-if="n.remark" style="color: var(--cp-text); font-size: 12px; margin-top: 4px">{{ n.remark }}</div>
-            </el-timeline-item>
-          </el-timeline>
-        </el-card>
-      </el-col>
-    </el-row>
-  </div>
+  <CpPageShell title="批次追溯与召回标记" :count="result?.nodes.length">
+    <p>显示当前权限范围内的批次记录，关联对象可能不完整。召回标记不代表实际召回已完成，也不会改变库存数量。</p>
+    <el-form inline @submit.prevent="search">
+      <el-form-item :label="t('wms.common.product')"><el-input v-model="query.productCd" clearable /></el-form-item>
+      <el-form-item :label="t('wms.common.lot')"><el-input v-model="query.lotNo" placeholder="留空表示无批次" clearable /></el-form-item>
+      <el-form-item :label="t('wms.lotTrace.fld.direction')">
+        <el-radio-group v-model="query.direction"><el-radio-button value="FORWARD">流向</el-radio-button><el-radio-button value="BACKWARD">来源</el-radio-button></el-radio-group>
+      </el-form-item>
+      <el-button type="primary" :loading="loading" :disabled="!permitted() || intent.busy.value" @click="search">查询</el-button>
+    </el-form>
+    <p v-if="readError || intent.error.value" role="alert">{{ readError || intent.error.value }}</p>
+    <p v-if="message" role="status">{{ message }}</p>
+    <template v-if="result">
+      <p>{{ result.productCd }} · {{ result.lotNo || '无批次' }} · {{ result.direction === 'FORWARD' ? '流向' : '来源' }}</p>
+      <el-descriptions v-if="result.stock" :column="3" border>
+        <el-descriptions-item label="当前可见物理数量">{{ observationText(result.stock.physicalQty) }}</el-descriptions-item>
+        <el-descriptions-item label="当前可见可用数量">{{ observationText(result.stock.availableQty) }}</el-descriptions-item>
+        <el-descriptions-item label="库存记录数">{{ result.stock.stockCount }}</el-descriptions-item>
+        <el-descriptions-item label="召回标记">{{ recallLabel(result.stock.recallState) }}</el-descriptions-item>
+        <el-descriptions-item label="最早效期">{{ result.stock.expiryDate?.slice(0, 10) ?? '—' }}</el-descriptions-item>
+      </el-descriptions>
+      <p v-else>当前权限范围内没有该批次的库存记录。</p>
+      <div v-if="recallAllowed() && result.stock">
+        <el-button type="danger" :disabled="!canRecall()" @click="setRecall(true)">设置召回标记</el-button>
+        <el-button :disabled="!canRecall()" @click="setRecall(false)">解除召回标记</el-button>
+      </div>
+      <el-table v-if="result.direction === 'FORWARD'" :data="result.customers" border>
+        <el-table-column prop="outboundNo" label="出库单" /><el-table-column prop="customerCd" label="客户代码" />
+        <el-table-column v-if="result.customerNameReadable" prop="customerName" label="客户名称" />
+        <el-table-column label="关联出库数量"><template #default="{ row }">{{ observationText(row.qty) }}</template></el-table-column>
+        <el-table-column prop="shippedAt" label="关联交易时间" />
+      </el-table>
+      <el-table v-else :data="result.suppliers" border>
+        <el-table-column prop="receiptNo" label="收货单" /><el-table-column prop="inboundNo" label="入库计划" />
+        <el-table-column prop="supplierCd" label="供应商代码" /><el-table-column v-if="result.supplierNameReadable" prop="supplierName" label="供应商名称" />
+        <el-table-column label="关联入库数量"><template #default="{ row }">{{ observationText(row.qty) }}</template></el-table-column>
+        <el-table-column prop="receivedAt" label="关联交易时间" />
+      </el-table>
+      <el-table :data="result.nodes" row-key="txnNo" border>
+        <el-table-column prop="txnNo" label="库存交易" /><el-table-column prop="txnType" label="类型" />
+        <el-table-column prop="txnAt" label="时间" /><el-table-column prop="warehouseCd" label="仓库" /><el-table-column prop="locationCd" label="库位" />
+        <el-table-column label="数量"><template #default="{ row }">{{ observationText(row.qty) }}</template></el-table-column>
+        <el-table-column prop="relatedNo" label="记录中的关联单号" />
+        <el-table-column v-if="result.operatorReadable" prop="operatorCd" label="操作人" /><el-table-column v-if="result.remarkReadable" prop="remark" label="备注" />
+      </el-table>
+    </template>
+  </CpPageShell>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import CpTag, { type Tone } from '@/components/base/CpTag.vue'
+import { ElMessageBox } from 'element-plus'
+import CpPageShell from '@/components/templates/CpPageShell.vue'
 import { lotTraceApi } from '@/api/wms/lotTrace'
-import type { LotTraceResult, LotStockSummary } from '@/types/wms/wms'
-import { formatQty } from '@/utils/format'
+import { lotTraceVersion, type LotSnapshot, type LotQuery } from '@/types/wms/lotTraceOwner'
+import { observationText } from '@/utils/inventoryObservation'
+import { usePermissionStore } from '@/stores/permission'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
 
-const { t } = useI18n()
-
-const productCd = ref('')
-const lotNo = ref('')
-const direction = ref<'FORWARD' | 'BACKWARD'>('FORWARD')
-const loading = ref(false)
-
-const result = ref<LotTraceResult | null>(null)
-const summary = ref<LotStockSummary | null>(null)
-
-const affectedList = computed<any[]>(() => {
-  if (!result.value) return []
-  return direction.value === 'FORWARD' ? result.value.affectedCustomers : result.value.affectedSuppliers
-})
-
-// el-timeline-item :type 用 EP type（时间轴圆点色，el-timeline 为特殊组件保留）
-function txnTagOf(t: string): 'success' | 'danger' | 'warning' | 'info' | 'primary' {
-  return ({ IN: 'success', OUT: 'danger', RSV: 'warning', UNRSV: 'info', MOVE: 'primary', ADJ: 'info' } as const)[t as 'IN'] || 'info'
-}
-function timelineTypeOf(t: string): 'success' | 'danger' | 'warning' | 'info' | 'primary' { return txnTagOf(t) }
-// CpTag 用共享 Tone（保色：success→ok / danger→danger / warning→warn / primary→info / info→muted）
-function txnTone(t: string): Tone {
-  return ({ IN: 'ok', OUT: 'danger', RSV: 'warn', UNRSV: 'muted', MOVE: 'info', ADJ: 'muted' } as const)[t as 'IN'] || 'muted'
-}
-
-async function trace() {
-  if (!productCd.value || !lotNo.value) { ElMessage.warning(t('wms.common.required')); return }
-  loading.value = true
+const { t } = useI18n(), permission = usePermissionStore()
+const query = reactive<LotQuery>({ productCd: '', lotNo: '', direction: 'FORWARD' })
+const result = ref<LotSnapshot | null>(null), loading = ref(false), readError = ref(''), message = ref('')
+let sequence = 0
+function clearProtected() { sequence++; result.value = null; loading.value = false; message.value = '' }
+const intent = useOperationsIntent(() => { clearProtected(); readError.value = '身份已变化，请重新查询。' })
+const permitted = () => permission.loaded && permission.has('wms-lot-trace:query') && permission.has('wms-stock:query')
+const recallAllowed = () => permitted() && permission.has('wms-lot-trace:recall')
+const canRecall = () => recallAllowed() && !!result.value?.stock?.recallVersion && !intent.busy.value && !intent.uncertain.value
+const recallLabel = (state: string) => (({ NONE: '未标记', MIXED: '部分已标记', ALL: '全部已标记' } as Record<string, string>)[state] ?? '未知')
+watch(permitted, allowed => { if (!allowed) clearProtected() }, { flush: 'sync' })
+watch(() => [query.productCd, query.lotNo, query.direction], () => clearProtected(), { flush: 'sync' })
+async function load(input: LotQuery) {
+  const token = intent.capture(); clearProtected(); const read = sequence
+  const current = () => intent.current(token) && read === sequence
+  loading.value = true; readError.value = ''
   try {
-    const res = direction.value === 'FORWARD'
-      ? await lotTraceApi.forward(productCd.value, lotNo.value)
-      : await lotTraceApi.backward(productCd.value, lotNo.value)
-    result.value = res.data
-    // 同時に summary も取得
-    try { const s = await lotTraceApi.summary(productCd.value, lotNo.value); summary.value = s.data } catch { summary.value = null }
-  } finally { loading.value = false }
+    if (!permitted() || !input.productCd.trim()) throw new Error('Query unavailable')
+    const response = await lotTraceApi.read({ ...input })
+    if (!current()) return
+    const value = response.data
+    if (!permitted() || response.code !== 0 || value?.version !== lotTraceVersion || value.coverage !== 'AUTHORIZED_LOT_OBSERVATION' ||
+      value.productCd !== input.productCd || value.lotNo !== input.lotNo || value.direction !== input.direction) throw new Error('Read unavailable')
+    result.value = value; intent.uncertain.value = false; intent.error.value = ''
+  } catch { if (current()) { result.value = null; readError.value = '无法读取该批次，请重新查询当前权限范围。' } }
+  finally { if (current()) loading.value = false }
 }
-
-async function loadSummary() {
-  try {
-    const s = await lotTraceApi.summary(productCd.value, lotNo.value)
-    summary.value = s.data
-  } catch { summary.value = null }
-}
-
+function search() { if (!intent.busy.value) void load({ ...query }) }
 async function setRecall(flag: boolean) {
-  if (!productCd.value || !lotNo.value || !summary.value) return
+  if (!canRecall()) return
+  const snapshot = result.value!, recallVersion = snapshot.stock!.recallVersion
+  const token = intent.begin(); if (!token) return
+  let operation = sequence, submitted = false
+  const current = () => intent.current(token) && operation === sequence
   try {
-    const action = flag ? t('wms.lotTrace.btn.setRecall') : t('wms.lotTrace.btn.clearRecall')
-    await ElMessageBox.confirm(`${action}: ${productCd.value} / ${lotNo.value}`, t('wms.common.confirm'), { type: 'warning' })
-    const res = await lotTraceApi.recall(productCd.value, lotNo.value, flag)
-    ElMessage.success(t('wms.lotTrace.msg.recallApplied', { n: res.data.affectedStocks }))
-    await loadSummary()
-  } catch { /* */ }
+    await ElMessageBox.confirm(`${snapshot.productCd} · ${snapshot.lotNo || '无批次'}：${flag ? '设置' : '解除'}召回标记？这不会改变库存数量。`, '确认批次', { type: 'warning' })
+    if (!current() || !recallAllowed() || result.value?.stock?.recallVersion !== recallVersion) return
+    const request = { productCd: snapshot.productCd, lotNo: snapshot.lotNo, recallVersion, flag }
+    clearProtected(); operation = sequence; submitted = true
+    const response = await lotTraceApi.recall(request)
+    if (!current()) return
+    if (!recallAllowed() || response.code !== 0 || response.data?.version !== lotTraceVersion || response.data.productCd !== snapshot.productCd ||
+      response.data.lotNo !== snapshot.lotNo || response.data.flag !== flag) throw new Error('Result unavailable')
+    await load({ productCd: snapshot.productCd, lotNo: snapshot.lotNo, direction: snapshot.direction })
+    if (intent.current(token) && permitted() && result.value) message.value = '召回标记已更新；库存数量未变。'
+  } catch (error) { if (submitted && current()) { intent.failed(token, error); clearProtected() } }
+  finally { intent.finish(token) }
 }
 </script>
-
-<style scoped>
-.wms-lot-trace { padding: 16px; }
-.search-card { margin-bottom: 12px; }
-.qty-in { color: var(--cp-ok); }
-.qty-out { color: var(--cp-danger); }
-</style>

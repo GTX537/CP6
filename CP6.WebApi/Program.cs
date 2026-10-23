@@ -558,6 +558,8 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-rma", "返品管理", new[
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-rma", new[] { "CustomerName", "OperatorCd", "Remarks", "ReturnReason" }
     .Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
 CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-replenish", "補充指示", new[] { 1, 2, 3, 4, 5 }, 1);
+CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-lot-trace", "批次追溯与召回标记", new[] { 1, 2, 3, 4, 5 }, 1);
+CP6.Core.Services.Sys.FieldRegistry.Register("wms-lot-trace", new[] { "OperatorCd", "Remark", "CustomerName", "SupplierName" }.Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
 CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-material-shortage", "材料缺料跟进", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-material-shortage", new[] { new CP6.Core.Services.Sys.FieldRegistry.Field("Remark", "跟进备注") });
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-replenish", new[] { "OperatorCd", "Remarks" }

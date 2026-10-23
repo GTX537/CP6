@@ -700,3 +700,11 @@ W82 Main467/CRM121/Handoff58全部采用，Issue109关闭，21相关用例通过
 Main [PR469](https://github.com/GTX537/CP6/pull/469) source `778338a1048ca9bc41752ac691a27c68b6604013`采用远端main `3b3855ebd2b8125a90e7e1674ada216c8ae95a73`，29任务路径逐blob核对；Handoff [PR59](https://github.com/GTX537/CP6.AI-Handoff/pull/59)采用`6ba2532ea511b004e025170c0c3fee3ec398250d`，准确分支删除、固定树干净detached、finish释放。19个产品路径与已测提交逐blob一致，复用有效结果，最后文档diff/台账生成单独检查。
 
 Main同任务最终状态PR/finish及Issue468最后关闭待完成；当前约16.56min，原估60–90min＋独立前置2min，实际按finish不重复计Handoff。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave83-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续剩余独立Owner及D5/D6真实前置，正式procurement/Finance仍未采用。
+
+## 2026-10-23：W83全部收尾 / W84批次追溯与召回标记Owner
+
+W83 Main469/470与Handoff59全部采用，Issue468关闭，46相关用例及类型检查通过，实际18.75min＋前置2min；两准确分支删除、固定树干净detached、全部席位释放。[W84](../dispatch/20261023-wave84/README.md)修Issue471，预计35–55min，独立前置约2min；批次追溯当前Owner/来源字段范围、精确读与整批版本召回标记，保持实际数量和正式召回执行边界。七天目标ACTIVE。
+
+## W84验证完成
+
+23独立.NET用例（17原生PG、5既有非PG行为、1两租户启动种子）及12Vue用例通过，无跳过；相关构建和vue-tsc通过。集中审查保留合法空批次及精确键；实际双连接仅一个版本胜出，分配阻止/解除恢复、真实HTTP、目录无自动授权通过。4个实际PG停止保留。进入两仓正常采用及同任务最终收尾，七天ACTIVE。

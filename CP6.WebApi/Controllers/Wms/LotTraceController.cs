@@ -9,6 +9,8 @@ namespace CP6.WebApi.Controllers.Wms;
 [ApiController]
 [Route("api/wms/lot-trace")]
 [Authorize]
+[CP6.WebApi.Controllers.Erp.OrderOwnerResult]
+[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class LotTraceController : ControllerBase
 {
     private readonly ILotTraceService _svc;
@@ -18,6 +20,7 @@ public class LotTraceController : ControllerBase
 
     /// <summary>順追溯：指定ロット → 出荷した顧客一覧</summary>
     [HttpGet("forward")]
+    [RequirePermission("wms-lot-trace", "query")]
     public async Task<IActionResult> Forward([FromQuery] string productCd, [FromQuery] string lotNo)
     {
         if (string.IsNullOrWhiteSpace(productCd) || string.IsNullOrWhiteSpace(lotNo))
@@ -28,6 +31,7 @@ public class LotTraceController : ControllerBase
 
     /// <summary>逆追溯：指定ロット → 使用した仕入元</summary>
     [HttpGet("backward")]
+    [RequirePermission("wms-lot-trace", "query")]
     public async Task<IActionResult> Backward([FromQuery] string productCd, [FromQuery] string lotNo)
     {
         if (string.IsNullOrWhiteSpace(productCd) || string.IsNullOrWhiteSpace(lotNo))
@@ -38,6 +42,7 @@ public class LotTraceController : ControllerBase
 
     /// <summary>在庫サマリ（複数倉庫合計、リコールフラグ）</summary>
     [HttpGet("summary")]
+    [RequirePermission("wms-lot-trace", "query")]
     public async Task<IActionResult> Summary([FromQuery] string productCd, [FromQuery] string lotNo)
     {
         var r = await _svc.GetStockSummaryAsync(productCd, lotNo);
@@ -55,6 +60,16 @@ public class LotTraceController : ControllerBase
         var n = await _svc.SetRecallFlagAsync(req.ProductCd, req.LotNo, req.Flag, CurrentUser);
         return Ok(new { code = 0, message = "WM-MSG-071", data = new { affectedStocks = n } });
     }
+
+    [HttpGet("owner-v1")]
+    [RequirePermission("wms-lot-trace", "query")]
+    public async Task<IActionResult> ReadOwner([FromQuery] string productCd, [FromQuery] string? lotNo = "", [FromQuery] string direction = "FORWARD") =>
+        Ok(new { code = 0, message = "OK", data = await _svc.ReadOwnerAsync(productCd, lotNo ?? "", direction) });
+
+    [HttpPost("owner-v1/recall")]
+    [RequirePermission("wms-lot-trace", "recall")]
+    public async Task<IActionResult> RecallOwner([FromBody] CP6.Entity.DTOs.Wms.LotRecallCommandV1 command) =>
+        Ok(new { code = 0, message = "OK", data = await _svc.RecallOwnerAsync(command) });
 
     public class RecallRequest
     {
