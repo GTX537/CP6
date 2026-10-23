@@ -159537,6 +159537,11 @@
       "date": "2026-10-23",
       "change": "W51 CRM PR96 adopted: native PG session and caller-owned token revocation foundation, 14 scoped tests; full identity/Owner adoption remains open; continuous goal active.",
       "evidence": "https://github.com/GTX537/CP6.CRM/blob/48be253dfe3c4b451a9be7eaf9b7ef5f1199086a/docs/development/evidence/W51-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "BUG419: exact fixed migration functions admitted by explicit Main directory installation; six related native checks passed; W52 resumes after remote adoption.",
+      "evidence": "docs/development/evidence/BUG-419/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -167241,6 +167246,15 @@
         "issue304_closed": true,
         "full_task_completed": false,
         "business_acceptance": "NOT_RUN"
+      },
+      "wave52_prerequisite_fix": {
+        "issue": "https://github.com/GTX537/CP6/issues/419",
+        "report": "docs/development/evidence/BUG-419/DELIVERY.md",
+        "status": "VALIDATED_AWAITING_REMOTE_ADOPTION",
+        "branch": "codex/bug-419-directory-owner-outbox",
+        "chat": "COORD",
+        "related_tests_passed": 6,
+        "full_task_completed": false
       }
     },
     {
