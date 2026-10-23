@@ -1,6 +1,8 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using CP6.Core.EFDbContext;
+using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Wms;
 
@@ -11,17 +13,29 @@ public class MaterialShortageNotifier : IMaterialShortageNotifier
 
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<MaterialShortageNotifier> _logger;
+    private readonly CP6Context _db;
 
-    public MaterialShortageNotifier(IServiceProvider serviceProvider, ILogger<MaterialShortageNotifier> logger)
+    public MaterialShortageNotifier(IServiceProvider serviceProvider, ILogger<MaterialShortageNotifier> logger, CP6Context db)
     {
         _serviceProvider = serviceProvider;
         _logger = logger;
+        _db = db;
     }
 
     public async Task NotifyAsync(string workOrderNo, string productCd, decimal requiredQty)
     {
         try
         {
+            if (_db.Database.IsNpgsql())
+            {
+                if (_db.CurrentTenantId == Guid.Empty || _db.Database.CurrentTransaction != null
+                    || System.Transactions.Transaction.Current != null)
+                    throw new InvalidOperationException("Committed trusted shortage notification context required.");
+                // The production IWmsNotifier adapter sends an empty tenant inventory invalidation.
+                // Do not pass document, product, quantity or actor from this legacy notification API.
+                await _serviceProvider.GetRequiredService<IWmsNotifier>().NotifyStockChangedAsync(new StockChangedEvent());
+                return;
+            }
             var hubContext = ResolveWmsHubContext();
             if (hubContext == null)
             {

@@ -686,3 +686,11 @@ CRM [PR121](https://github.com/GTX537/CP6.CRM/pull/121)已采用，source `350d4
 W51指定停止data删除曾被自动审批以blocked by policy拒绝，保留不重试。后继按最新台账继续剩余WMS/MES独立入口Owner与真实CRM公共基础。
 
 Handoff [PR58](https://github.com/GTX537/CP6.AI-Handoff/pull/58)已采用 `fc0c7fa5169574ab083c72522bcc343411fe8656`，准确分支删除、固定树干净detached、finish释放。Main协调PR/finish尚待本次收尾。登记开工至此约14.52min，原预算35–55min，最终以finish为准、子任务不重复累计；独立前置只读约3min。
+
+## 2026-10-23：W82全部收尾 / W83材料缺料Owner
+
+W82 Main467/CRM121/Handoff58全部采用，Issue109关闭，21相关用例通过，实际16.83min＋前置3min；三准确分支删除、固定树干净detached、全部席位释放。[W83](../dispatch/20261023-wave83/README.md)修Issue468，预计60–90min，独立前置约2min；材料缺料独立Owner/来源范围、精确读/CAS与无载荷通知，保父原子创建，正式采购Owner仍待采用。七天目标ACTIVE。
+
+## W83验证完成
+
+37独立.NET用例（21原生PG、15既有非PG行为、1两租户启动种子）及9Vue用例通过，无跳过；相关构建和vue-tsc通过。集中审查补新租户WmsPermissionSeed.OwnerActions登记，不授query角色；范围同任务串行扩展至该直接目录消费者及现有种子行为用例。真实双连接一个版本提交，源权限前过滤/计数和隐藏字段保值通过；5个PG停止保留。进入两仓正常采用及同任务最终收尾，七天ACTIVE。

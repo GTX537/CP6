@@ -1,47 +1,39 @@
+export const materialShortageVersion = 'MATERIAL-SHORTAGE-OWNER/1'
 export type MaterialShortageStatus = 'OPEN' | 'RESOLVED' | 'DISMISSED'
-
 export interface MaterialShortage {
   id: string
+  rowVersion: string
   workOrderNo: string
-  relatedOutboundNo?: string
+  relatedOutboundNo?: string | null
   productCd: string
-  lotNo?: string
-  requiredQty: number
-  availableQty: number
+  lotNo?: string | null
+  requiredQty: string
+  availableQty: string
+  shortQty: string
   detectedAt: string
-  resolvedAt?: string
+  resolvedAt?: string | null
   status: MaterialShortageStatus
-  remark?: string
-  creator?: string
-  createDate?: string
-  modifier?: string
-  modifyDate?: string
+  remark?: string | null
 }
-
 export interface MaterialShortageQuery {
   status?: MaterialShortageStatus | ''
   workOrderNo?: string
   page?: number
   pageSize?: number
 }
-
 export interface MaterialShortageActionRequest {
-  remark?: string
+  rowVersion: string
+  setRemark: boolean
+  remark?: string | null
 }
-
 export interface MaterialShortagePaged {
-  total?: number
-  Total?: number
-  pageIndex?: number
-  PageIndex?: number
-  pageSize?: number
-  PageSize?: number
-  items?: MaterialShortage[]
-  Items?: MaterialShortage[]
+  version: typeof materialShortageVersion
+  total: number
+  openCount: number
+  page: number
+  pageSize: number
+  remarkReadable: boolean
+  remarkWritable: boolean
+  rows: MaterialShortage[]
 }
-
-export interface WmsApi<T> {
-  code: number
-  message: string
-  data: T
-}
+export interface WmsApi<T> { code: number; message: string; data: T }

@@ -24,6 +24,8 @@ public class PrGenerationService : IPrGenerationService
     /// <inheritdoc />
     public async Task<string?> GenerateFromShortageAsync(Guid shortageId, string? userName)
     {
+        if (_db.Database.IsNpgsql())
+            throw new CP6.Core.Services.Erp.OrderPriceCorrectionException("PURCHASE_REQUEST_OWNER_REQUIRED", 503);
         var sh = await _db.MaterialShortages.FirstOrDefaultAsync(s => s.Id == shortageId && !s.IsDeleted);
         if (sh == null) return null;
 

@@ -8,6 +8,8 @@ namespace CP6.WebApi.Controllers.Wms;
 [ApiController]
 [Route("api/wms/material-shortage")]
 [Authorize]
+[CP6.WebApi.Controllers.Erp.OrderOwnerResult]
+[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class MaterialShortageController : ControllerBase
 {
     private readonly IMaterialShortageService _svc;
@@ -17,6 +19,7 @@ public class MaterialShortageController : ControllerBase
     private string? CurrentUser => User?.Identity?.Name;
 
     [HttpGet]
+    [RequirePermission("wms-material-shortage", "query")]
     public async Task<IActionResult> Search([FromQuery] string? status, [FromQuery] string? workOrderNo, [FromQuery] int page = 1, [FromQuery] int pageSize = 50)
         => Ok(new
         {
@@ -44,7 +47,7 @@ public class MaterialShortageController : ControllerBase
         {
             return Conflict(new { code = 409, message = ex.Message });
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException)
         {
             return BadRequest(new { code = 400, message = ex.Message });
         }
@@ -63,11 +66,26 @@ public class MaterialShortageController : ControllerBase
         {
             return Conflict(new { code = 409, message = ex.Message });
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException)
         {
             return BadRequest(new { code = 400, message = ex.Message });
         }
     }
+
+    [HttpGet("owner-v1")]
+    [RequirePermission("wms-material-shortage", "query")]
+    public async Task<IActionResult> SearchOwner([FromQuery] MaterialShortageQuery query) =>
+        Ok(new { code = 0, message = "OK", data = await _svc.SearchOwnerAsync(query) });
+
+    [HttpPost("owner-v1/{id:guid}/resolve")]
+    [RequirePermission("wms-material-shortage", "resolve")]
+    public async Task<IActionResult> ResolveOwner(Guid id, [FromBody] CP6.Entity.DTOs.Wms.MaterialShortageActionV1 command) =>
+        Ok(new { code = 0, message = "OK", data = await _svc.ResolveOwnerAsync(id, command) });
+
+    [HttpPost("owner-v1/{id:guid}/dismiss")]
+    [RequirePermission("wms-material-shortage", "dismiss")]
+    public async Task<IActionResult> DismissOwner(Guid id, [FromBody] CP6.Entity.DTOs.Wms.MaterialShortageActionV1 command) =>
+        Ok(new { code = 0, message = "OK", data = await _svc.DismissOwnerAsync(id, command) });
 
     public class ShortageActionRequest
     {
