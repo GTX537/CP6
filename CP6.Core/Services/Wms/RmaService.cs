@@ -1,5 +1,6 @@
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Wms;
+using CP6.Core.Services.Integration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -7,13 +8,14 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace CP6.Core.Services.Wms;
 
 /// <summary>RMA 返品管理サービス実装</summary>
-public class RmaService : IRmaService
+public partial class RmaService : IRmaService
 {
     private readonly CP6Context _db;
     private readonly IWmsSequenceService _seq;
     private readonly IStockMovementService _stock;
     private readonly IErpBridgeHook _erpBridge;
     private readonly ILogger<RmaService> _logger;
+    private readonly OperationsOwnerV1? _owner;
     private const string Prefix = "RMA";
 
     public RmaService(CP6Context db, IWmsSequenceService seq, IStockMovementService stock)
@@ -26,35 +28,37 @@ public class RmaService : IRmaService
         IWmsSequenceService seq,
         IStockMovementService stock,
         IErpBridgeHook erpBridge,
-        ILogger<RmaService>? logger = null)
+        ILogger<RmaService>? logger = null,
+        OperationsOwnerV1? owner = null)
     {
         _db = db;
         _seq = seq;
         _stock = stock;
         _erpBridge = erpBridge;
         _logger = logger ?? NullLogger<RmaService>.Instance;
+        _owner = owner;
     }
 
-    public async Task<List<RmaHeader>> SearchAsync(RmaSearchQuery q)
+    private async Task<List<RmaHeader>> SearchCoreAsync(RmaSearchQuery q, IQueryable<RmaHeader>? allowed = null, CancellationToken ct = default)
     {
-        var query = _db.RmaHeaders.AsNoTracking().Where(x => !x.IsDeleted);
+        var query = allowed ?? _db.RmaHeaders.AsNoTracking().Where(x => !x.IsDeleted);
         if (!string.IsNullOrWhiteSpace(q.RmaNo)) query = query.Where(x => x.RmaNo.Contains(q.RmaNo));
         if (!string.IsNullOrWhiteSpace(q.CustomerCd)) query = query.Where(x => x.CustomerCd == q.CustomerCd);
         if (!string.IsNullOrWhiteSpace(q.OriginalShippingNo)) query = query.Where(x => x.OriginalShippingNo == q.OriginalShippingNo);
         if (q.Status.HasValue) query = query.Where(x => x.Status == q.Status.Value);
         if (q.AppliedFrom.HasValue) query = query.Where(x => x.AppliedDate >= q.AppliedFrom.Value);
         if (q.AppliedTo.HasValue) query = query.Where(x => x.AppliedDate <= q.AppliedTo.Value);
-        return await query.OrderByDescending(x => x.AppliedDate)
-            .Skip((q.Page - 1) * q.PageSize).Take(q.PageSize).ToListAsync();
+        return await query.OrderByDescending(x => x.AppliedDate).ThenBy(x => x.Id)
+            .Skip((q.Page - 1) * q.PageSize).Take(q.PageSize).ToListAsync(ct);
     }
 
-    public async Task<RmaDto?> GetAsync(string rmaNo)
+    private async Task<RmaDto?> GetCoreAsync(string rmaNo, IQueryable<RmaHeader>? allowed = null, CancellationToken ct = default)
     {
-        var h = await _db.RmaHeaders.AsNoTracking().FirstOrDefaultAsync(x => x.RmaNo == rmaNo && !x.IsDeleted);
+        var h = await (allowed ?? _db.RmaHeaders.AsNoTracking()).FirstOrDefaultAsync(x => x.RmaNo == rmaNo && !x.IsDeleted, ct);
         if (h == null) return null;
         var details = await _db.RmaDetails.AsNoTracking()
             .Where(d => d.RmaNo == rmaNo && !d.IsDeleted)
-            .OrderBy(d => d.LineNo).ToListAsync();
+            .OrderBy(d => d.LineNo).ToListAsync(ct);
         return new RmaDto
         {
             RmaNo = h.RmaNo, CustomerCd = h.CustomerCd, CustomerName = h.CustomerName,
@@ -73,7 +77,7 @@ public class RmaService : IRmaService
         };
     }
 
-    public async Task<string> CreateAsync(RmaDto dto, string? userName)
+    private async Task<string> CreateCoreAsync(RmaDto dto, string? userName)
     {
         if (string.IsNullOrWhiteSpace(dto.CustomerCd))
             throw new InvalidOperationException("客先CDは必須です");
@@ -109,7 +113,7 @@ public class RmaService : IRmaService
         return no;
     }
 
-    public async Task ReceiveAsync(string rmaNo, string? userName)
+    private async Task ReceiveCoreAsync(string rmaNo, string? userName)
     {
         var h = await _db.RmaHeaders.FirstOrDefaultAsync(x => x.RmaNo == rmaNo && !x.IsDeleted)
             ?? throw new InvalidOperationException("WM-MSG-070");
@@ -146,7 +150,7 @@ public class RmaService : IRmaService
         await _db.SaveChangesAsync();
     }
 
-    public async Task StartInspectionAsync(string rmaNo, string? userName)
+    private async Task StartInspectionCoreAsync(string rmaNo, string? userName)
     {
         var h = await _db.RmaHeaders.FirstOrDefaultAsync(x => x.RmaNo == rmaNo && !x.IsDeleted)
             ?? throw new InvalidOperationException("WM-MSG-070");
@@ -157,7 +161,7 @@ public class RmaService : IRmaService
         await _db.SaveChangesAsync();
     }
 
-    public async Task JudgeAndDisposeAsync(string rmaNo, List<RmaDispositionInput> inputs, string? userName)
+    private async Task JudgeAndDisposeCoreAsync(string rmaNo, List<RmaDispositionInput> inputs, string? userName)
     {
         var h = await _db.RmaHeaders.FirstOrDefaultAsync(x => x.RmaNo == rmaNo && !x.IsDeleted)
             ?? throw new InvalidOperationException("WM-MSG-070");
@@ -234,7 +238,7 @@ public class RmaService : IRmaService
         await _db.SaveChangesAsync();
     }
 
-    public async Task CloseAsync(string rmaNo, string? userName)
+    private async Task CloseCoreAsync(string rmaNo, string? userName)
     {
         var h = await _db.RmaHeaders.FirstOrDefaultAsync(x => x.RmaNo == rmaNo && !x.IsDeleted)
             ?? throw new InvalidOperationException("WM-MSG-070");
@@ -259,7 +263,7 @@ public class RmaService : IRmaService
         }
     }
 
-    public async Task CancelAsync(string rmaNo, string? userName)
+    private async Task CancelCoreAsync(string rmaNo, string? userName)
     {
         var h = await _db.RmaHeaders.FirstOrDefaultAsync(x => x.RmaNo == rmaNo && !x.IsDeleted)
             ?? throw new InvalidOperationException("WM-MSG-070");

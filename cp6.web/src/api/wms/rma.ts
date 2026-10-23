@@ -2,6 +2,9 @@ import http from '../http'
 import type { RmaHeader, RmaSearchQuery, RmaDispositionInput, WmsApi } from '@/types/wms/wms'
 
 export const rmaApi = {
+  capabilities() {
+    return http.get<any, WmsApi<{ writesAvailable: boolean; status: string }>>('/wms/rma/capabilities')
+  },
   search(query: RmaSearchQuery = {}) {
     return http.get<any, WmsApi<RmaHeader[]>>('/wms/rma', { params: query })
   },

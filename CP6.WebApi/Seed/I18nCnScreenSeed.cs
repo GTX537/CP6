@@ -9,6 +9,8 @@ public static class I18nCnScreenSeed
 {
     public static readonly Sys_Lang[] Items = new[]
     {
+        new Sys_Lang { LangKey = "退货暂只支持查询，授权、收货和处置功能尚未开通。", ZhCN = "退货暂只支持查询，授权、收货和处置功能尚未开通。", ZhTW = "退貨暫只支援查詢，授權、收貨和處置功能尚未開通。", En = "Returns are currently read-only. Authorization, receipt and disposition are not yet available.", Ja = "返品は現在照会のみです。承認・入庫・処分はまだ利用できません。", Ko = "반품은 현재 조회만 가능합니다. 승인, 입고 및 처분 기능은 아직 사용할 수 없습니다." },
+        new Sys_Lang { LangKey = "退货数据未能读取，请刷新重试。", ZhCN = "退货数据未能读取，请刷新重试。", ZhTW = "退貨資料未能讀取，請重新整理後再試。", En = "Return data could not be loaded. Refresh to try again.", Ja = "返品データを読み込めませんでした。再読み込みしてください。", Ko = "반품 데이터를 불러오지 못했습니다. 새로 고침하여 다시 시도하세요." },
         new Sys_Lang { LangKey = "移除附件引用", ZhCN = "移除附件引用", ZhTW = "移除附件參照", En = "Remove attachment reference", Ja = "添付ファイルの参照を削除", Ko = "첨부 파일 참조 제거" },
         new Sys_Lang { LangKey = "确定移除该附件引用？文件内容不会被永久删除。", ZhCN = "确定移除该附件引用？文件内容不会被永久删除。", ZhTW = "確定移除此附件參照？檔案內容不會被永久刪除。", En = "Remove this attachment reference? This does not permanently delete the file contents.", Ja = "添付ファイルの参照を削除しますか？ファイルの内容は完全には削除されません。", Ko = "이 첨부 파일 참조를 제거할까요? 파일 내용은 영구 삭제되지 않습니다." },
         new Sys_Lang { LangKey = "已移除附件引用", ZhCN = "已移除附件引用", ZhTW = "已移除附件參照", En = "Attachment reference removed", Ja = "添付ファイルの参照を削除しました", Ko = "첨부 파일 참조가 제거되었습니다" },
