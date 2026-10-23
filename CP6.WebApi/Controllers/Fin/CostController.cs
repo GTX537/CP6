@@ -49,6 +49,8 @@ public class CostController : ControllerBase
     /// <summary>归集料工费（料自动吃 MES 真实消耗×BOM单价，工费传标准估算）。</summary>
     [HttpPost("{workOrderNo}/collect")]
     [RequirePermission("fin-cost", "collect")]
+    [CP6.WebApi.Controllers.Erp.OrderOwnerResult]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public async Task<IActionResult> Collect(string workOrderNo, [FromBody] CollectReq req)
         => Fin(await _collect.CollectAsync(workOrderNo, req.LaborStd, req.OverheadStd, CurrentUser));
 

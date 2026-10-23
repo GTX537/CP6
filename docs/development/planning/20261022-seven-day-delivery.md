@@ -626,3 +626,11 @@ CRM [PR119](https://github.com/GTX537/CP6.CRM/pull/119)已采用，source `fcef6
 这仅是原子入队基础；真实当前身份/动作/Site/Form最终门、真实创建与保留批准、Owner宿主/发布权限、投递重试/隔离/状态映射、Preview/Activate、公开Attempt/受理仍待接。没有新包、Actions、生产部署或既有环境迁移。Issue109/118冻结fixture问题保持OPEN，24/375整卡、125目标0完整交付、247运行NOT_RUN不提升，七天目标ACTIVE。W51指定停止data删除曾被自动审批以blocked by policy拒绝，保留不重试。
 
 Handoff [PR54](https://github.com/GTX537/CP6.AI-Handoff/pull/54)已采用 `995822bcff997ff6d7d5e8a2fbf347b0b1ba7609`，准确分支删除、固定树干净detached、finish释放。Main仅剩协调PR/finish，不提前声明释放。登记开工至此约24.61min，原预算50–80min，最终以finish为准、子任务不重复累计；前置只读核对约3min。
+
+## 2026-10-23：W78全部收尾 / W79工作中心与费率Owner
+
+W78 Main459/CRM119/Handoff54全部采用，37独立PG通过，实际27.07min＋前置3min；三准确分支删除、固定树干净detached、席位释放。[W79](../dispatch/20261023-wave79/README.md)修Issue460，预计120–180min；工作中心及费率当前Owner/字段/精确页面传输不冒充完整Finance采用。CRM Site/Form最终门/投递及公开生命周期仍待接，七天目标ACTIVE。
+
+## W79验证完成
+
+37独立.NET（25真实PG、12既有InMemory）＋25Vue通过，无跳过；相关构建及最终Vue类型检查通过。实际既有夹具端口55435，55447预留未用。补Finance Collect这一动作的503/no-store错误接线，保其余财务剩余范围；不改变字段MIN、原生时间语义或完整验收。六PG停止保留，进入两仓采用及同任务收尾，七天目标ACTIVE。

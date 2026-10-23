@@ -36,6 +36,8 @@ public class CostCollectService : ICostCollectService
 
     public async Task<FinResult> CollectAsync(string workOrderNo, decimal laborStd, decimal overheadStd, string user)
     {
+        // Legacy fallback is not a Finance Owner and must not turn authorization failure into estimated costs.
+        if (_db.Database.IsNpgsql()) throw new CP6.Core.Services.Erp.OrderPriceCorrectionException("FINANCE_OWNER_REQUIRED", 503);
         var wo = await _db.Set<WorkOrder>().FirstOrDefaultAsync(w => w.WorkOrderNo == workOrderNo && !w.IsDeleted);
         if (wo == null) return FinResult.Fail("E-FIN-401");
 

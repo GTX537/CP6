@@ -546,11 +546,11 @@ foreach(var resource in new[]{"mes-production-result","wms-inbound-order","wms-i
     else CP6.Core.Services.Sys.FieldRegistry.Register(resource,new CP6.Core.Services.Sys.FieldRegistry.Field("UnitPrice","単価"));
 }
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-outbound-order", new CP6.Core.Services.Sys.FieldRegistry.Field("UnitPrice", "単価"));
-foreach(var resource in new[]{"wms-stock","wms-stocktake","wms-dashboard","mes-dashboard","mes-defect","wms-stock-qc","wms-qc-inspection","mes-quality-inspection","mes-machine","mes-oee","mes-planning-board","mes-plan-achievement"})
+foreach(var resource in new[]{"wms-stock","wms-stocktake","wms-dashboard","mes-dashboard","mes-defect","wms-stock-qc","wms-qc-inspection","mes-quality-inspection","mes-machine","mes-oee","mes-planning-board","mes-plan-achievement","mes-work-center","mes-process-cost-rate"})
 {
     CP6.Core.Services.Sys.DataScopeRegistry.Register(resource,resource,new[]{1,2,3,4,5},1);
     var fields=resource=="wms-stock"?new[]{"UnitPrice"}:resource=="wms-stocktake"?new[]{"Amount","UnitPrice"}:
-        resource=="wms-dashboard"?new[]{"Amount"}:Array.Empty<string>();
+        resource=="wms-dashboard"?new[]{"Amount"}:resource=="mes-process-cost-rate"?new[]{"LaborRate","OverheadRate"}:Array.Empty<string>();
     CP6.Core.Services.Sys.FieldRegistry.Register(resource,fields.Select(f=>new CP6.Core.Services.Sys.FieldRegistry.Field(f,f)).ToArray());
 }
 
