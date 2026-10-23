@@ -1,5 +1,9 @@
 # 多对话任务分配与交付
 
+> 当前：[W76不可变Draft Bundle](dispatch/20261023-wave76/README.md)，本聊天单人；CRM PR116/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W75不重复。
+
+> 当前：[W76不可变Draft Bundle](dispatch/20261023-wave76/README.md)，本聊天单人；W37–W75已finish，不重复。
+
 > 当前：[W75精确来源版本联结](dispatch/20261023-wave75/README.md)，本聊天单人；CRM PR115/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W74不重复。
 
 > 当前：[W75精确来源版本联结](dispatch/20261023-wave75/README.md)，本聊天单人；W37–W74已finish，不重复。
