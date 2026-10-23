@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W57本次采集凭据与可失效发布读模型](dispatch/20261023-wave57/README.md)，本聊天单人；CRM PR102/Handoff已采用，协调分支收尾后继续D5。W37–W56不重复。
+
 > 当前：[W56可信完整基线恢复与真实来源依赖图](dispatch/20261023-wave56/README.md)，本聊天单人；CRM PR101/Handoff已采用，协调分支收尾后继续D5。W37–W55不重复。
 
 > 当前：[W55原始身份来源与正式内容门](dispatch/20261023-wave55/README.md)，本聊天单人；CRM PR100/Handoff已采用，协调分支收尾后继续D5。W37–W54不重复。
