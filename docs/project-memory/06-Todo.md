@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-23：W60不可变日历PG快照已采用
+
+CRM PR105/source `2df15fbb46290b1f5f06c80e52251aca6eee746b`已采用远端main `8be1a856b50aaa68a733b8ca47df1ecd25fbc8a9`；92项相关本地用例及必要编译通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/8be1a856b50aaa68a733b8ca47df1ecd25fbc8a9/docs/development/evidence/W60-01/DELIVERY.md)。原日历身份约束、100ns无损存储、原生不可变守卫和事务采用；真实Owner/激活/公开表单仍待采用。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main当前协调PR/finish待收尾。七天目标ACTIVE，完整业务验收不提升。
+
 ## 2026-10-23：W59询盘投影真实验签已采用
 
 CRM PR104/source `73163779f0a5d4d213cd500023f6629baa849c63`已采用远端main `611e95cfc83928c192070c5b101f2c6b9f202183`；204项相关本地用例及API/Worker构建通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/611e95cfc83928c192070c5b101f2c6b9f202183/docs/development/evidence/W59-01/DELIVERY.md)。可信目录、真实Ed25519与轮换/撤销核查采用，结果CanAuthorize=false；生产信任、字段映射和真实Owner最终门仍待采用。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main当前协调PR/finish待收尾。七天目标ACTIVE，完整业务验收不提升。
