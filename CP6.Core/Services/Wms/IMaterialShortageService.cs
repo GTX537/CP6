@@ -9,6 +9,9 @@ public interface IMaterialShortageService
     Task<PagedResultDto<MaterialShortage>> SearchAsync(MaterialShortageQuery query);
     Task<MaterialShortage> ResolveAsync(Guid id, string? remark, string? userName);
     Task<MaterialShortage> DismissAsync(Guid id, string? remark, string? userName);
+    Task<CP6.Entity.DTOs.Wms.MaterialShortagePageV1> SearchOwnerAsync(MaterialShortageQuery query);
+    Task<CP6.Entity.DTOs.Wms.MaterialShortageRowV1> ResolveOwnerAsync(Guid id, CP6.Entity.DTOs.Wms.MaterialShortageActionV1 command);
+    Task<CP6.Entity.DTOs.Wms.MaterialShortageRowV1> DismissOwnerAsync(Guid id, CP6.Entity.DTOs.Wms.MaterialShortageActionV1 command);
 }
 
 public class MaterialShortageQuery

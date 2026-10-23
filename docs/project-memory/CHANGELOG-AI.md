@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-23：W83物料缺料跟进Owner候选通过
+
+Issue468真实缺陷红灯转绿；37独立.NET用例（21原生PG、15既有非PG行为、1两租户启动种子）及9Vue用例通过，无跳过；相关构建和vue-tsc通过。[单份交付](../development/evidence/W83-01/DELIVERY.md)。来源/字段/版本受控，父原子创建、空租户提示与早期采购拒绝，状态更新不改变库存。新租户只登记query不自动授权，5个自有PG停止保留；待Main/Handoff采用和分支/席位收尾。完整目标/验收不提升，七天ACTIVE。
+
 ## 2026-10-23：W82告知摘要夹具修订已采用
 
 CRM PR121/source `350d4d4261144607985cfb33770f630d09859b0f`已采用远端main `3e69fa188a43d261660fe871103bc2b7b400a674`；21项相关本地用例通过，无跳过，原S01/父/新revision只读校验通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/3e69fa188a43d261660fe871103bc2b7b400a674/docs/development/evidence/W82-01/DELIVERY.md)。告知/内容/展示及状态摘要一致修订，原件/父赢家事件/负例/重放及NOT_RUN保持，Issue109关闭。无PG启动/Actions/部署；真实Owner与公开受理继续待接。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main协调收尾后继续七天目标。

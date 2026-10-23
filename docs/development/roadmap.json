@@ -159892,6 +159892,16 @@
       "date": "2026-10-23",
       "change": "W82 CRM PR121 adopted explicit parented notice hash fixture correction; Issue109 closed;21 local related cases passed. Full Owner and public gaps remain; continuous goal ACTIVE.",
       "evidence": "https://github.com/GTX537/CP6.CRM/blob/3e69fa188a43d261660fe871103bc2b7b400a674/docs/development/evidence/W82-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "W82 lifecycle complete16.83min; W83 Issue468 material shortage Owner, exact read/CAS and scoped empty notification admitted; seven-day ACTIVE.",
+      "evidence": "docs/development/dispatch/20261023-wave83/README.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "W83 Issue468 candidate verified:37 unique.NET/9Vue and typecheck. New-tenant query registration included without grants; full business acceptance unchanged.",
+      "evidence": "docs/development/evidence/W83-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -162463,51 +162473,43 @@
       "card_anchor": "wp02-03",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W81-01",
+        "chat_label": "COORD / W83-01",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/bug-464-inventory-report-owner",
+        "branch": "codex/bug-468-material-shortage-owner",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-23T21:33:46.385120+00:00",
-        "baseline_sha": "c6de50305c82fb4e03664f92c4e5ab432cc60af0",
-        "entry_evidence": "docs/development/dispatch/20261023-wave81/README.md",
-        "phase": "CLOSED",
-        "dispatch_scope": "W81_01",
+        "claimed_at": "2026-10-23T22:15:20.853823+00:00",
+        "baseline_sha": "9f9192152584b0afab5dd7afe3611a5cd4f3e0ce",
+        "entry_evidence": "docs/development/dispatch/20261023-wave83/README.md",
+        "phase": "CANDIDATE_VERIFIED",
+        "dispatch_scope": "W83_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
         "actual_start_ref": {
-          "commit": "309c2d33f0c9fd18ac0d8340488e0b4b9b06d466",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T213503Z-wave81-start/MESSAGE.md",
-          "at": "2026-10-23T21:35:03.170410+00:00"
+          "commit": "852a8d073cd6b3e50433e05ef9f949f996bf0aaa",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T221647Z-wave83-start/MESSAGE.md",
+          "at": "2026-10-23T22:16:47.768475+00:00"
         },
         "allowed_write_paths": [
-          "CP6.Core/Services/Wms/StockDwell*",
-          "CP6.Core/Services/Wms/IStockDwell*",
-          "CP6.Core/Services/Wms/Expiry*",
-          "CP6.Core/Services/Wms/IExpiry*",
-          "CP6.Core/Services/Wms/InventoryReport*",
+          "CP6.Core/Services/Wms/*MaterialShortage*",
+          "CP6.Core/Services/Wms/OutboundService.cs",
+          "CP6.Core/Services/Pur/PrGenerationService.cs",
           "CP6.Core/Services/Integration/Operations*",
-          "CP6.Entity/DTOs/Wms/",
-          "CP6.WebApi/Controllers/Wms/StockDwell*",
-          "CP6.WebApi/Controllers/Wms/Expiry*",
+          "CP6.Entity/DTOs/Wms/MaterialShortage*",
+          "CP6.WebApi/Controllers/Wms/MaterialShortage*",
           "CP6.WebApi/Program.cs",
-          "CP6.WebApi/Seed/WmsPermissionSeed.cs",
           "CP6.Persistence.PostgreSql/Migrations/Core/",
           "CP6.Tests/",
-          "cp6.web/src/views/wms/",
-          "cp6.web/src/api/wms/",
-          "cp6.web/src/types/wms/",
-          "cp6.web/src/utils/",
+          "cp6.web/src/views/wms/MaterialShortage*",
+          "cp6.web/src/api/wms/materialShortage*",
+          "cp6.web/src/types/wms/materialShortage*",
           "docs/development/",
           "docs/project-memory/",
-          "cp6.web/src/views/dashboard/DashboardView.vue",
-          "cp6.web/src/views/dashboard/DashboardView.spec.ts",
-          "cp6.web/src/views/dashboard/dashboardLoadState.ts",
-          "cp6.web/src/views/dashboard/dashboardLoadState.spec.ts"
+          "CP6.WebApi/Seed/WmsPermissionSeed.cs"
         ],
         "reserved_write_resources": [
-          "Main:InventoryReport-Owner",
+          "Main:MaterialShortage-Owner",
           "Main:OperationsOwner",
           "Main:authorization-catalog",
           "Main:PG-migration"
@@ -162515,28 +162517,18 @@
         "reserved_postgresql_ports": [
           55435
         ],
-        "handoff_branch": "codex/w81-handoff",
+        "handoff_branch": "codex/w83-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": true,
-        "resources_released": true,
+        "candidate_integrated": false,
+        "resources_released": false,
         "full_task_completed": false,
-        "issue": "https://github.com/GTX537/CP6/issues/464",
-        "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/0252d9e85450f6f2f46d0bc6639fff2cbdde10cc/docs/development/evidence/W81-01/DELIVERY.md",
-        "direct_consumer_scope_note": "Existing home stock-dwell widget shares the changed API/type; type-check found numeric consumer. COORD same-task serial update includes exact strings, named parser and current identity epoch; no other dashboard behavior added.",
-        "source_candidate_sha": "4f73c3787ba74f9499b503c342d5fae8d8932966",
-        "remote_main_sha": "0252d9e85450f6f2f46d0bc6639fff2cbdde10cc",
-        "pull_request": "https://github.com/GTX537/CP6/pull/465",
-        "handoff_delivery_ref": {
-          "commit": "4b333b7b2c58ff2f9a208384fff7becb2d9b974d",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T214927Z-wave81-delivery/MESSAGE.md",
-          "at": "2026-10-23T21:49:27.205824+00:00",
-          "base": "codex/t02c-entry-handoff-20260921",
-          "branch": "codex/w81-handoff"
-        }
+        "issue": "https://github.com/GTX537/CP6/issues/468",
+        "worker_delivery_ref": "docs/development/evidence/W83-01/DELIVERY.md",
+        "catalog_scope_note": "Author review found new-tenant startup requires query catalog too; serial same-task OwnerActions-only registration without automatic grants, two-tenant seed and HTTP/migration verified."
       },
       "blockers": [],
       "validation_evidence": [],
@@ -166559,6 +166551,82 @@
           },
           "lifecycle_complete": true,
           "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave79-final-verification.json"
+        },
+        {
+          "chat_label": "COORD / W81-01",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/bug-464-inventory-report-owner",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-10-23T21:33:46.385120+00:00",
+          "baseline_sha": "c6de50305c82fb4e03664f92c4e5ab432cc60af0",
+          "entry_evidence": "docs/development/dispatch/20261023-wave81/README.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "W81_01",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "actual_start_ref": {
+            "commit": "309c2d33f0c9fd18ac0d8340488e0b4b9b06d466",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T213503Z-wave81-start/MESSAGE.md",
+            "at": "2026-10-23T21:35:03.170410+00:00"
+          },
+          "allowed_write_paths": [
+            "CP6.Core/Services/Wms/StockDwell*",
+            "CP6.Core/Services/Wms/IStockDwell*",
+            "CP6.Core/Services/Wms/Expiry*",
+            "CP6.Core/Services/Wms/IExpiry*",
+            "CP6.Core/Services/Wms/InventoryReport*",
+            "CP6.Core/Services/Integration/Operations*",
+            "CP6.Entity/DTOs/Wms/",
+            "CP6.WebApi/Controllers/Wms/StockDwell*",
+            "CP6.WebApi/Controllers/Wms/Expiry*",
+            "CP6.WebApi/Program.cs",
+            "CP6.WebApi/Seed/WmsPermissionSeed.cs",
+            "CP6.Persistence.PostgreSql/Migrations/Core/",
+            "CP6.Tests/",
+            "cp6.web/src/views/wms/",
+            "cp6.web/src/api/wms/",
+            "cp6.web/src/types/wms/",
+            "cp6.web/src/utils/",
+            "docs/development/",
+            "docs/project-memory/",
+            "cp6.web/src/views/dashboard/DashboardView.vue",
+            "cp6.web/src/views/dashboard/DashboardView.spec.ts",
+            "cp6.web/src/views/dashboard/dashboardLoadState.ts",
+            "cp6.web/src/views/dashboard/dashboardLoadState.spec.ts"
+          ],
+          "reserved_write_resources": [
+            "Main:InventoryReport-Owner",
+            "Main:OperationsOwner",
+            "Main:authorization-catalog",
+            "Main:PG-migration"
+          ],
+          "reserved_postgresql_ports": [
+            55435
+          ],
+          "handoff_branch": "codex/w81-handoff",
+          "actions_authorized": false,
+          "deployment_authorized": false,
+          "existing_database_migration_authorized": false,
+          "worker_delivery_received": true,
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "resources_released": true,
+          "full_task_completed": false,
+          "issue": "https://github.com/GTX537/CP6/issues/464",
+          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/0252d9e85450f6f2f46d0bc6639fff2cbdde10cc/docs/development/evidence/W81-01/DELIVERY.md",
+          "direct_consumer_scope_note": "Existing home stock-dwell widget shares the changed API/type; type-check found numeric consumer. COORD same-task serial update includes exact strings, named parser and current identity epoch; no other dashboard behavior added.",
+          "source_candidate_sha": "4f73c3787ba74f9499b503c342d5fae8d8932966",
+          "remote_main_sha": "0252d9e85450f6f2f46d0bc6639fff2cbdde10cc",
+          "pull_request": "https://github.com/GTX537/CP6/pull/465",
+          "handoff_delivery_ref": {
+            "commit": "4b333b7b2c58ff2f9a208384fff7becb2d9b974d",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T214927Z-wave81-delivery/MESSAGE.md",
+            "at": "2026-10-23T21:49:27.205824+00:00",
+            "base": "codex/t02c-entry-handoff-20260921",
+            "branch": "codex/w81-handoff"
+          }
         }
       ],
       "wave13_delivery": {
@@ -167132,6 +167200,16 @@
         "final_main_sha": "197a6d8731cc6d2221fb09208a167c81bce1d555",
         "branches_deleted": true,
         "seats_released": true
+      },
+      "wave83_delivery": {
+        "status": "CANDIDATE_VERIFIED",
+        "report": "docs/development/evidence/W83-01/DELIVERY.md",
+        "validation": "37独立.NET用例（21原生PG、15既有非PG行为、1两租户启动种子）及9Vue用例通过，无跳过；相关构建和vue-tsc通过",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "adopted_scope": "Material shortage independent current Owner/source intersections, exact read and CAS followup, parent atomic creation, empty trusted tenant notification and early procurement fence",
+        "issue": "https://github.com/GTX537/CP6/issues/468",
+        "lifecycle_complete": false
       }
     },
     {
@@ -170974,7 +171052,8 @@
           "at": "2026-10-23T22:09:18.703135+00:00",
           "base": "codex/t02c-entry-handoff-20260921",
           "branch": "codex/w82-handoff"
-        }
+        },
+        "lifecycle_complete": true
       },
       "blockers": [],
       "validation_evidence": [],
@@ -171346,19 +171425,23 @@
         "source_candidate_sha": "350d4d4261144607985cfb33770f630d09859b0f",
         "remote_main_sha": "3e69fa188a43d261660fe871103bc2b7b400a674",
         "pull_request": "https://github.com/GTX537/CP6.CRM/pull/121",
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "lifecycle_snapshot": {
           "crm_branch_deleted": true,
           "crm_seat_released": true,
           "handoff_branch_deleted": true,
           "handoff_seat_released": true,
           "main_task": "CP6:W82-COORD",
-          "main_finish_required": true,
-          "main_seat_released": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave82-final-verification.json"
         },
         "test_data_disposition": "No PostgreSQL started; derivation/TRX/original red evidence retained",
-        "closed_issue": "GTX537/CP6.CRM#109"
+        "closed_issue": "GTX537/CP6.CRM#109",
+        "actual_agent_minutes": 16.83,
+        "final_main_sha": "9f9192152584b0afab5dd7afe3611a5cd4f3e0ce",
+        "branches_deleted": true,
+        "seats_released": true
       }
     },
     {
@@ -187162,11 +187245,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261023-wave82",
-      "path": "docs/development/dispatch/20261023-wave82/README.md",
-      "baseline_sha": "197a6d8731cc6d2221fb09208a167c81bce1d555",
-      "registered_at": "2026-10-23T21:57:58.673149+00:00",
-      "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
+      "id": "20261023-wave83",
+      "path": "docs/development/dispatch/20261023-wave83/README.md",
+      "baseline_sha": "9f9192152584b0afab5dd7afe3611a5cd4f3e0ce",
+      "registered_at": "2026-10-23T22:16:47.768475+00:00",
+      "phase": "CANDIDATE_VERIFIED",
       "assigned_chats": [
         "COORD"
       ],
@@ -187178,117 +187261,53 @@
       ],
       "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": true,
-      "product_integrated": true,
+      "windows_closed": false,
+      "product_integrated": false,
       "windows": [
         {
-          "id": "W82-01",
-          "task_id": "WP03-01",
-          "title": "Versioned inquiry notice hash fixture consistency",
+          "id": "W83-01",
+          "task_id": "WP02-03",
+          "title": "材料缺料管理独立Owner、并发与无载荷通知",
+          "lifecycle_task": "BUG-468-MATERIAL-SHORTAGE-OWNER",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "CLOSED",
+          "phase": "CANDIDATE_VERIFIED",
           "gate": "CONFIRMED",
-          "actual_start_ref": {
-            "commit": "b70c0d28bed6c58d05b91d91e86f24e79dd248f3",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T215758Z-wave82-start/MESSAGE.md",
-            "at": "2026-10-23T21:57:58.673149+00:00"
-          },
           "worker_start_received": true,
+          "actual_start_ref": {
+            "commit": "852a8d073cd6b3e50433e05ef9f949f996bf0aaa",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T221647Z-wave83-start/MESSAGE.md",
+            "at": "2026-10-23T22:16:47.768475+00:00"
+          },
           "worker_delivery_received": true,
-          "worktree": "D:\\CP6-worktrees\\dev-2",
-          "branch": "codex/bug-109-inquiry-notice-fixture",
-          "planned_scope_ref": "docs/development/dispatch/20261023-wave82/README.md",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "branch": "codex/bug-468-material-shortage-owner",
+          "planned_scope_ref": "docs/development/dispatch/20261023-wave83/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/3e69fa188a43d261660fe871103bc2b7b400a674/docs/development/evidence/W82-01/DELIVERY.md",
-          "validation": "21项相关本地用例通过：7新派生行为、8父版本回归、6实际C#严格消费者，无跳过；原S01/父/新revision只读校验通过，无PG启动/Actions/部署",
-          "candidate_integrated": true,
-          "integration": {
-            "result": "PASS",
-            "repository": "GTX537/CP6.CRM",
-            "source": "350d4d4261144607985cfb33770f630d09859b0f",
-            "main": "3e69fa188a43d261660fe871103bc2b7b400a674",
-            "target": "main",
-            "pr": "https://github.com/GTX537/CP6.CRM/pull/121",
-            "paths": [
-              "CHANGELOG-AI.md",
-              "contracts/s01/README.md",
-              "contracts/s01/revisions/CRM-INQ-NOTICE-HASH-20261023-R1/README.md",
-              "contracts/s01/revisions/CRM-INQ-NOTICE-HASH-20261023-R1/contract-assertions.json",
-              "contracts/s01/revisions/CRM-INQ-NOTICE-HASH-20261023-R1/profile.json",
-              "docs/development/evidence/W82-01/DELIVERY.md",
-              "docs/project-memory/05-Completed.md",
-              "docs/project-memory/06-Todo.md",
-              "docs/project-memory/PROJECT_STATE.md",
-              "scripts/derive-inquiry-notice-fixture.py",
-              "tests/CP6.CRM.UnitTests/CP6.CRM.UnitTests.csproj",
-              "tests/CP6.CRM.UnitTests/Contracts/InquiryNoticeFixtureTests.cs",
-              "tests/CP6.CRM.UnitTests/Contracts/S01/InquiryNoticeFixtureTests.py"
-            ],
-            "observed_at": "2026-10-23T22:07:43.262072+00:00"
-          },
-          "runtime_resources_released": true,
-          "resources_released": true,
-          "handoff_delivery_ref": {
-            "commit": "a959593be966975ee02a8385e4561a1267d1dcc0",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T220918Z-wave82-delivery/MESSAGE.md",
-            "at": "2026-10-23T22:09:18.703135+00:00",
-            "base": "codex/t02c-entry-handoff-20260921",
-            "branch": "codex/w82-handoff"
-          },
-          "lifecycle_snapshot": {
-            "crm_branch_deleted": true,
-            "crm_seat_released": true,
-            "handoff_branch_deleted": true,
-            "handoff_seat_released": true,
-            "main_task": "CP6:W82-COORD",
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave82-final-verification.json"
-          }
+          "worker_delivery_ref": "docs/development/evidence/W83-01/DELIVERY.md",
+          "validation": "37独立.NET用例（21原生PG、15既有非PG行为、1两租户启动种子）及9Vue用例通过，无跳过；相关构建和vue-tsc通过",
+          "runtime_resources_released": true
         }
       ],
       "horizon": {
-        "started_at": "2026-10-23T21:56:38.502494+00:00",
+        "started_at": "2026-10-23T22:15:20.853823+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          35,
-          55
+          60,
+          90
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
       "storage": {
-        "reuse_worktree": "D:\\CP6-worktrees\\dev-2",
+        "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Finish coordination lifecycle; continue WMS/MES independent Owner and CRM foundations",
-      "validation": "21项相关本地用例通过：7新派生行为、8父版本回归、6实际C#严格消费者，无跳过；原S01/父/新revision只读校验通过，无PG启动/Actions/部署",
-      "lifecycle_complete": false,
-      "handoff_delivery_ref": {
-        "commit": "a959593be966975ee02a8385e4561a1267d1dcc0",
-        "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T220918Z-wave82-delivery/MESSAGE.md",
-        "at": "2026-10-23T22:09:18.703135+00:00",
-        "base": "codex/t02c-entry-handoff-20260921",
-        "branch": "codex/w82-handoff"
-      },
-      "handoff_integration": {
-        "result": "PASS",
-        "repository": "GTX537/CP6.AI-Handoff",
-        "source": "a959593be966975ee02a8385e4561a1267d1dcc0",
-        "main": "fc0c7fa5169574ab083c72522bcc343411fe8656",
-        "target": "codex/t02c-entry-handoff-20260921",
-        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/58",
-        "paths": [
-          "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T215758Z-wave82-start/MESSAGE.md",
-          "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T220918Z-wave82-delivery/MESSAGE.md",
-          "handoffs/CP6-DEV-20261012/waves/20261023-wave82.md"
-        ],
-        "observed_at": "2026-10-23T22:10:18.141335+00:00"
-      }
+      "next_action": "Main product adoption, Handoff delivery, same-task lifecycle close and continue seven-day goal",
+      "validation": "37独立.NET用例（21原生PG、15既有非PG行为、1两租户启动种子）及9Vue用例通过，无跳过；相关构建和vue-tsc通过"
     },
     "wave_history": [
       {
@@ -199845,6 +199864,141 @@
         "seats_released": true,
         "final_main_sha": "197a6d8731cc6d2221fb09208a167c81bce1d555",
         "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave81-final-verification.json"
+      },
+      {
+        "id": "20261023-wave82",
+        "path": "docs/development/dispatch/20261023-wave82/README.md",
+        "baseline_sha": "197a6d8731cc6d2221fb09208a167c81bce1d555",
+        "registered_at": "2026-10-23T21:57:58.673149+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W82-01",
+            "task_id": "WP03-01",
+            "title": "Versioned inquiry notice hash fixture consistency",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "b70c0d28bed6c58d05b91d91e86f24e79dd248f3",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T215758Z-wave82-start/MESSAGE.md",
+              "at": "2026-10-23T21:57:58.673149+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\dev-2",
+            "branch": "codex/bug-109-inquiry-notice-fixture",
+            "planned_scope_ref": "docs/development/dispatch/20261023-wave82/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/3e69fa188a43d261660fe871103bc2b7b400a674/docs/development/evidence/W82-01/DELIVERY.md",
+            "validation": "21项相关本地用例通过：7新派生行为、8父版本回归、6实际C#严格消费者，无跳过；原S01/父/新revision只读校验通过，无PG启动/Actions/部署",
+            "candidate_integrated": true,
+            "integration": {
+              "result": "PASS",
+              "repository": "GTX537/CP6.CRM",
+              "source": "350d4d4261144607985cfb33770f630d09859b0f",
+              "main": "3e69fa188a43d261660fe871103bc2b7b400a674",
+              "target": "main",
+              "pr": "https://github.com/GTX537/CP6.CRM/pull/121",
+              "paths": [
+                "CHANGELOG-AI.md",
+                "contracts/s01/README.md",
+                "contracts/s01/revisions/CRM-INQ-NOTICE-HASH-20261023-R1/README.md",
+                "contracts/s01/revisions/CRM-INQ-NOTICE-HASH-20261023-R1/contract-assertions.json",
+                "contracts/s01/revisions/CRM-INQ-NOTICE-HASH-20261023-R1/profile.json",
+                "docs/development/evidence/W82-01/DELIVERY.md",
+                "docs/project-memory/05-Completed.md",
+                "docs/project-memory/06-Todo.md",
+                "docs/project-memory/PROJECT_STATE.md",
+                "scripts/derive-inquiry-notice-fixture.py",
+                "tests/CP6.CRM.UnitTests/CP6.CRM.UnitTests.csproj",
+                "tests/CP6.CRM.UnitTests/Contracts/InquiryNoticeFixtureTests.cs",
+                "tests/CP6.CRM.UnitTests/Contracts/S01/InquiryNoticeFixtureTests.py"
+              ],
+              "observed_at": "2026-10-23T22:07:43.262072+00:00"
+            },
+            "runtime_resources_released": true,
+            "resources_released": true,
+            "handoff_delivery_ref": {
+              "commit": "a959593be966975ee02a8385e4561a1267d1dcc0",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T220918Z-wave82-delivery/MESSAGE.md",
+              "at": "2026-10-23T22:09:18.703135+00:00",
+              "base": "codex/t02c-entry-handoff-20260921",
+              "branch": "codex/w82-handoff"
+            },
+            "lifecycle_snapshot": {
+              "crm_branch_deleted": true,
+              "crm_seat_released": true,
+              "handoff_branch_deleted": true,
+              "handoff_seat_released": true,
+              "main_task": "CP6:W82-COORD",
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave82-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-23T21:56:38.502494+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            35,
+            55
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\dev-2",
+          "new_worktrees": 0
+        },
+        "next_action": "材料缺料管理独立Owner、并发与无载荷通知",
+        "validation": "21项相关本地用例通过：7新派生行为、8父版本回归、6实际C#严格消费者，无跳过；原S01/父/新revision只读校验通过，无PG启动/Actions/部署",
+        "lifecycle_complete": true,
+        "handoff_delivery_ref": {
+          "commit": "a959593be966975ee02a8385e4561a1267d1dcc0",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T220918Z-wave82-delivery/MESSAGE.md",
+          "at": "2026-10-23T22:09:18.703135+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w82-handoff"
+        },
+        "handoff_integration": {
+          "result": "PASS",
+          "repository": "GTX537/CP6.AI-Handoff",
+          "source": "a959593be966975ee02a8385e4561a1267d1dcc0",
+          "main": "fc0c7fa5169574ab083c72522bcc343411fe8656",
+          "target": "codex/t02c-entry-handoff-20260921",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/58",
+          "paths": [
+            "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T215758Z-wave82-start/MESSAGE.md",
+            "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T220918Z-wave82-delivery/MESSAGE.md",
+            "handoffs/CP6-DEV-20261012/waves/20261023-wave82.md"
+          ],
+          "observed_at": "2026-10-23T22:10:18.141335+00:00"
+        },
+        "actual_agent_minutes": 16.83,
+        "preflight_estimate_minutes": 3,
+        "branches_deleted": true,
+        "seats_released": true,
+        "final_main_sha": "9f9192152584b0afab5dd7afe3611a5cd4f3e0ce",
+        "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave82-final-verification.json"
       }
     ],
     "development_priority": {
@@ -199903,7 +200057,7 @@
         35,
         55
       ],
-      "current_stage": "D6",
+      "current_stage": "D2",
       "stages": [
         {
           "id": "D1",
@@ -199921,8 +200075,8 @@
           "id": "D2",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W81-01",
-          "prerequisite_adjustment": "Issue464 legacy stock observations adopt current independent and source Owner; formal DISP Review/Part/approval/NCR/Finance still required and old PG dispose fenced.",
+          "current_window": "W83-01",
+          "prerequisite_adjustment": "Issue468 material shortage independent Owner/current source scopes and empty notification; preserve real outbound atomic creation, formal procurement separate.",
           "adopted_window": "W42-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/395",
           "report": "docs/development/evidence/WP02-03/standalone-department/DELIVERY.md",
@@ -199931,7 +200085,7 @@
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "Stock dwell and expiry current read Owners adopted; full approved DISP/Finance remains separate. Continue remaining independent Owners and D5/D6 real prerequisites."
+          "next_action": "材料缺料管理独立Owner、并发与无载荷通知"
         },
         {
           "id": "D3",

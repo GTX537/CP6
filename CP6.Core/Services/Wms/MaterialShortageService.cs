@@ -2,21 +2,24 @@ using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Wms;
 using CP6.Entity.DTOs.Mes;
 using Microsoft.EntityFrameworkCore;
+using CP6.Core.Services.Integration;
 
 namespace CP6.Core.Services.Wms;
 
-public class MaterialShortageService : IMaterialShortageService
+public partial class MaterialShortageService : IMaterialShortageService
 {
     private readonly CP6Context _db;
+    private readonly OperationsOwnerV1? _owner;
 
-    public MaterialShortageService(CP6Context db)
+    public MaterialShortageService(CP6Context db, OperationsOwnerV1? owner = null)
     {
         _db = db;
+        _owner = owner;
     }
 
     internal bool Owns(CP6Context db) => ReferenceEquals(_db, db);
 
-    public async Task<MaterialShortage> CreateAsync(MaterialShortage entity)
+    private async Task<MaterialShortage> CreateCoreAsync(MaterialShortage entity)
     {
         if (entity.Id == Guid.Empty)
         {
@@ -40,7 +43,7 @@ public class MaterialShortageService : IMaterialShortageService
         return entity;
     }
 
-    public async Task<PagedResultDto<MaterialShortage>> SearchAsync(MaterialShortageQuery query)
+    private async Task<PagedResultDto<MaterialShortage>> SearchCoreAsync(MaterialShortageQuery query)
     {
         var page = query.Page <= 0 ? 1 : query.Page;
         var pageSize = query.PageSize <= 0 ? 50 : query.PageSize;
@@ -71,10 +74,10 @@ public class MaterialShortageService : IMaterialShortageService
         };
     }
 
-    public async Task<MaterialShortage> ResolveAsync(Guid id, string? remark, string? userName)
+    private async Task<MaterialShortage> ResolveCoreAsync(Guid id, string? remark, string? userName)
         => await TransitionAsync(id, MaterialShortageStatus.Resolved, remark, userName);
 
-    public async Task<MaterialShortage> DismissAsync(Guid id, string? remark, string? userName)
+    private async Task<MaterialShortage> DismissCoreAsync(Guid id, string? remark, string? userName)
         => await TransitionAsync(id, MaterialShortageStatus.Dismissed, remark, userName);
 
     private async Task<MaterialShortage> TransitionAsync(Guid id, string status, string? remark, string? userName)

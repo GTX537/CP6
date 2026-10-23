@@ -424,7 +424,7 @@ public partial class OutboundService : IOutboundService
             {
                 if (header.OutboundType == OutboundType.Material && _shortage != null)
                 {
-                    await _shortage.CreateAsync(new MaterialShortage
+                    var shortage = new MaterialShortage
                     {
                         Id = Guid.NewGuid(),
                         WorkOrderNo = header.WorkOrderNo ?? "",
@@ -437,7 +437,10 @@ public partial class OutboundService : IOutboundService
                         Status = MaterialShortageStatus.Open,
                         Creator = userName ?? "system",
                         CreateDate = DateTime.Now,
-                    });
+                    };
+                    if (access != null)
+                        await ((MaterialShortageService)_shortage).CreateWithinOwnerAsync(shortage, access, CancellationToken.None);
+                    else await _shortage.CreateAsync(shortage);
                     if (_shortageNotifier != null)
                     {
                         if(effects == null) await _shortageNotifier.NotifyAsync(header.WorkOrderNo ?? "", d.ProductCd, needed);
