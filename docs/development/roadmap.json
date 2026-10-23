@@ -159547,6 +159547,11 @@
       "date": "2026-10-23",
       "change": "BUG419: exact fixed migration functions admitted by explicit Main directory installation; six related native checks passed; W52 resumes after remote adoption.",
       "evidence": "docs/development/evidence/BUG-419/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "W52 CRM PR97 adopted: actual complete Main raw baseline and native immutable PG source evidence; Issue419 PR420 fixed source installation and closed after actual cross-repository retest. Continuous goal active; full identity/Owner remains pending.",
+      "evidence": "https://github.com/GTX537/CP6.CRM/blob/248e179cc1b1e9bc31a0f3c09e36f7004a270f6d/docs/development/evidence/W52-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -167255,7 +167260,7 @@
       "wave52_prerequisite_fix": {
         "issue": "https://github.com/GTX537/CP6/issues/419",
         "report": "docs/development/evidence/BUG-419/DELIVERY.md",
-        "status": "REMOTE_ADOPTED",
+        "status": "CLOSED_REMOTE_VERIFIED",
         "branch": "codex/bug-419-directory-owner-outbox",
         "chat": "COORD",
         "related_tests_passed": 6,
@@ -167263,7 +167268,9 @@
         "main_sha": "d961b4f66ce41fd3e10750552f3d09f97691cd1a",
         "pr": 420,
         "branch_deleted": true,
-        "seat_released": true
+        "seat_released": true,
+        "issue_closed": true,
+        "actual_crm_cross_repository_passed": true
       }
     },
     {
@@ -167300,7 +167307,7 @@
         "claimed_at": "2026-10-23T01:38:44.627454+00:00",
         "baseline_sha": "48be253dfe3c4b451a9be7eaf9b7ef5f1199086a",
         "entry_evidence": "docs/development/dispatch/20261023-wave52/README.md",
-        "phase": "IMPLEMENTING",
+        "phase": "CLOSED_BOUNDED_WINDOW",
         "dispatch_scope": "W52_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -167323,11 +167330,16 @@
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
-        "worker_delivery_received": false,
-        "candidate_review_completed": false,
-        "candidate_integrated": false,
-        "resources_released": false,
-        "full_task_completed": false
+        "worker_delivery_received": true,
+        "candidate_review_completed": true,
+        "candidate_integrated": true,
+        "resources_released": true,
+        "full_task_completed": false,
+        "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/248e179cc1b1e9bc31a0f3c09e36f7004a270f6d/docs/development/evidence/W52-01/DELIVERY.md",
+        "source_candidate_sha": "4a26c9d32d52c5cbcf8abdc717de32636847ef2d",
+        "remote_main_sha": "248e179cc1b1e9bc31a0f3c09e36f7004a270f6d",
+        "pull_request": "https://github.com/GTX537/CP6.CRM/pull/97",
+        "lifecycle_complete": true
       },
       "blockers": [],
       "validation_evidence": [],
@@ -167365,6 +167377,43 @@
         "final_main_sha": "4f3f874fb18183b8bc1a432e981518e377fbabb8",
         "branches_deleted": true,
         "seats_released": true
+      },
+      "wave52_delivery": {
+        "status": "MERGED",
+        "report": "https://github.com/GTX537/CP6.CRM/blob/248e179cc1b1e9bc31a0f3c09e36f7004a270f6d/docs/development/evidence/W52-01/DELIVERY.md",
+        "validation": "12个CRM相关用例通过（含真实Main HTTP→CRM独立进程→独立PG），Main跨仓驱动1项通过；驱动/子进程是同一场景；Issue419另6项Main原生/HTTP成功证据复用。无跳过、无Actions、非完整Owner验收",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "adopted_scope": "Actual complete Main raw-baseline consumer and immutable PG source evidence, same caller transaction user-token revocation; no Published/Ready/final Owner gate",
+        "source_candidate_sha": "4a26c9d32d52c5cbcf8abdc717de32636847ef2d",
+        "remote_main_sha": "248e179cc1b1e9bc31a0f3c09e36f7004a270f6d",
+        "pull_request": "https://github.com/GTX537/CP6.CRM/pull/97",
+        "lifecycle_complete": false,
+        "test_data_disposition": "All owned PostgreSQL stopped; failure/success data and logs retained; no W51 rejected-deletion retry",
+        "main_prerequisite": {
+          "issue": 419,
+          "closed": true,
+          "pr": 420,
+          "source": "9d50950bf330142a7367ff038746692233753d57",
+          "main": "d961b4f66ce41fd3e10750552f3d09f97691cd1a",
+          "branches_deleted": true,
+          "seat_released": true
+        },
+        "handoff": {
+          "commit": "fc893f0b7616ee5a0ae77084298bfb65c863ba77",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-06/messages/20261023T021457Z-wave52-delivery/MESSAGE.md",
+          "at": "2026-10-23T02:14:57.030356+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w52-handoff",
+          "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/28",
+          "target_sha": "791c53a8c42ea54583802802aa53ee1e997af931"
+        },
+        "crm_lifecycle_complete": true,
+        "crm_branches_deleted": true,
+        "crm_seat_released": true,
+        "coordination_lifecycle_complete": false,
+        "main_driver_final_validation": "D:\\CP6-local-test\\wave52\\foundation\\baseline-driver-review-regression-20261023T021904Z.log",
+        "main_child_final_validation": "D:\\CP6-local-test\\wave52\\foundation\\cross-results\\b94359c995f34685930eeb6b4bab1929\\actual-main-crm.trx"
       }
     },
     {
@@ -185244,7 +185293,7 @@
       "path": "docs/development/dispatch/20261023-wave52/README.md",
       "baseline_sha": "4f3f874fb18183b8bc1a432e981518e377fbabb8",
       "registered_at": "2026-10-23T01:38:44.627454+00:00",
-      "phase": "W52_01_IMPLEMENTING",
+      "phase": "CLOSED",
       "assigned_chats": [
         "COORD"
       ],
@@ -185254,12 +185303,10 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [
-        "COORD"
-      ],
+      "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": false,
-      "product_integrated": false,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W52-01",
@@ -185267,7 +185314,7 @@
           "title": "CRM verified complete raw baseline and PG source evidence",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "IMPLEMENTING",
+          "phase": "CLOSED",
           "gate": "CONFIRMED",
           "actual_start_ref": {
             "commit": "5469280ba7ed7ce259ed5ef0a0a59871281b91ce",
@@ -185275,14 +185322,47 @@
             "at": "2026-10-23T01:38:44.627454+00:00"
           },
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\dev-2",
           "branch": "codex/w52-01",
           "planned_scope_ref": "docs/development/dispatch/20261023-wave52/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
-          "deployment_authorized": false
+          "deployment_authorized": false,
+          "candidate_review_completed": true,
+          "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/248e179cc1b1e9bc31a0f3c09e36f7004a270f6d/docs/development/evidence/W52-01/DELIVERY.md",
+          "validation": "12个CRM相关用例通过（含真实Main HTTP→CRM独立进程→独立PG），Main跨仓驱动1项通过；驱动/子进程是同一场景；Issue419另6项Main原生/HTTP成功证据复用。无跳过、无Actions、非完整Owner验收",
+          "candidate_integrated": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6.CRM",
+            "source": "4a26c9d32d52c5cbcf8abdc717de32636847ef2d",
+            "main": "248e179cc1b1e9bc31a0f3c09e36f7004a270f6d",
+            "target": "main",
+            "pr": "https://github.com/GTX537/CP6.CRM/pull/97",
+            "observed_at": "2026-10-23T02:12:55.239602+00:00"
+          },
+          "runtime_resources_released": true,
+          "resources_released": true,
+          "delivery_ref": {
+            "commit": "fc893f0b7616ee5a0ae77084298bfb65c863ba77",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-06/messages/20261023T021457Z-wave52-delivery/MESSAGE.md",
+            "at": "2026-10-23T02:14:57.030356+00:00",
+            "base": "codex/t02c-entry-handoff-20260921",
+            "branch": "codex/w52-handoff",
+            "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/28",
+            "target_sha": "791c53a8c42ea54583802802aa53ee1e997af931"
+          },
+          "lifecycle_snapshot": {
+            "at": "2026-10-23T02:20:44.423888+00:00",
+            "crm_seat_released": true,
+            "handoff_seat_released": true,
+            "main_seat_released": false,
+            "main_finish_required": true,
+            "main_task": "CP6:W52-COORD",
+            "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave52-final-verification.json"
+          }
         }
       ],
       "horizon": {
@@ -185298,8 +185378,24 @@
         "reuse_worktree": "D:\\CP6-worktrees\\dev-2",
         "new_worktrees": 0
       },
-      "next_action": "Fix Issue419 on its own current-main branch using deferred/reused DEV-1, then resume W52 CRM native cross-repository baseline validation",
-      "prerequisite_issue": "https://github.com/GTX537/CP6/issues/419"
+      "next_action": "Close W52 Handoff/Main lifecycle, then continue CRM Published/precheckpoint and actual Owner prerequisites",
+      "prerequisite_issue": "https://github.com/GTX537/CP6/issues/419",
+      "validation": "12个CRM相关用例通过（含真实Main HTTP→CRM独立进程→独立PG），Main跨仓驱动1项通过；驱动/子进程是同一场景；Issue419另6项Main原生/HTTP成功证据复用。无跳过、无Actions、非完整Owner验收",
+      "lifecycle_complete": false,
+      "handoff": {
+        "commit": "fc893f0b7616ee5a0ae77084298bfb65c863ba77",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP02-06/messages/20261023T021457Z-wave52-delivery/MESSAGE.md",
+        "at": "2026-10-23T02:14:57.030356+00:00",
+        "base": "codex/t02c-entry-handoff-20260921",
+        "branch": "codex/w52-handoff",
+        "url": "https://github.com/GTX537/CP6.AI-Handoff/pull/28",
+        "target_sha": "791c53a8c42ea54583802802aa53ee1e997af931"
+      },
+      "crm_lifecycle_complete": true,
+      "handoff_lifecycle_complete": true,
+      "coordination_lifecycle_complete": false,
+      "actual_minutes_to_final_coordination": 43.05,
+      "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave52-final-verification.json"
     },
     "wave_history": [
       {
@@ -193682,8 +193778,8 @@
               "at": "2026-10-23T01:29:15.012416+00:00",
               "crm_seat_released": true,
               "handoff_seat_released": true,
-              "main_seat_released": false,
-              "main_finish_required": true,
+              "main_seat_released": true,
+              "main_finish_required": false,
               "main_task": "CP6:W51-COORD",
               "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave51-final-verification.json"
             }
@@ -193848,11 +193944,11 @@
         },
         {
           "id": "D5",
-          "phase": "IMPLEMENTING",
+          "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
           "current_window": "W52-01",
           "prerequisite_adjustment": "CRM remains SQL Server; implement native PostgreSQL session/revocation foundation before complete identity/Inbox/Owner adoption.",
-          "next_action": "CRM PG authority baseline, projection and precheckpoint, then real Owner common transaction; session foundation alone is not authority/final gate"
+          "next_action": "CRM PG Published/projection, all-path PreCheckpoint and actual Owner common transaction; raw source evidence alone grants no final authorization"
         },
         {
           "id": "D6",

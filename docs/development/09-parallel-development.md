@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W52 CRM真实Main基线与PG原证据](dispatch/20261023-wave52/README.md)，本聊天单人；CRM PR97与Main前置修复PR420已采用，Issue419已关闭。W37–W51不重复。
+
 > 当前：[W51 CRM PG会话/撤权基础](dispatch/20261023-wave51/README.md)，本聊天单人，CRM PR96已合并；W37–W50已收尾，不重复。
 
 > 当前：[W50库存原操作Outbox](dispatch/20261022-wave50/README.md)，本聊天单人；W37–W49已实际finish，不重复。

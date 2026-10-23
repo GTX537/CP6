@@ -2,11 +2,11 @@
 
 ## 2026-10-23：BUG419身份目录当前迁移兼容
 
-[Issue419](https://github.com/GTX537/CP6/issues/419)修复已完成6项相关本地PG验证与集中作者审查。身份目录精确准入现行迁移14个业务函数，保留原ACL/拒绝未知与危险定义；[交付报告](../development/evidence/BUG-419/DELIVERY.md)。PR420已核对远端采用，BUG分支删除/DEV-1释放并resume原W52分支；Issue待实际跨仓联通复测关闭。继续W52 CRM完整原始基线。七天目标ACTIVE，不提升完整125目标/247运行验收。
+[Issue419](https://github.com/GTX537/CP6/issues/419)修复已完成6项相关本地PG验证与集中作者审查。身份目录精确准入现行迁移14个业务函数，保留原ACL/拒绝未知与危险定义；[交付报告](../development/evidence/BUG-419/DELIVERY.md)。PR420已核对远端采用，BUG分支删除/DEV-1释放并resume原W52分支；Issue已在实际跨仓联通复测后关闭。继续W52 CRM完整原始基线。七天目标ACTIVE，不提升完整125目标/247运行验收。
 
-## 2026-10-23：W51全部收尾 / W52真实身份基线
+## 2026-10-23：W52真实Main基线与PG原证据已合并
 
-W51 CRM96/Handoff27/Main418已采用；14项相关PG/.NET通过，登记25.51min、前置约8.36min；准确分支删除、固定树干净detached、席位释放。[W52](../development/dispatch/20261023-wave52/README.md)本聊天继续CRM原始完整基线与PG证据，预计90–150min。完整Published/PreCheckpoint/Owner授权仍待后续，七天目标ACTIVE。
+CRM PR97/source `4a26c9d32d52c5cbcf8abdc717de32636847ef2d`已采用远端main `248e179cc1b1e9bc31a0f3c09e36f7004a270f6d`；12项CRM及1项Main驱动通过（同一跨仓场景不重复计算），复用Issue419另6项Main验证。[单份交付](https://github.com/GTX537/CP6.CRM/blob/248e179cc1b1e9bc31a0f3c09e36f7004a270f6d/docs/development/evidence/W52-01/DELIVERY.md)。Issue419 PR420已采用并在实际联通后关闭；其分支/席位已收尾。CRM分支删除、工作区干净detached、finish释放；Handoff PR28也已核对采用并完成准确分支删除/finish释放；Main本协调分支最后合并/finish。完整Published/PreCheckpoint/Owner门待后续，Program未启新组件，完整目标/运行验收不提升，七天目标ACTIVE。
 
 ## 2026-10-23：W51 CRM PostgreSQL会话基础已合并
 
