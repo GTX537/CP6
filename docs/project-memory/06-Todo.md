@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-23：W63配置内容规范化已采用
+
+CRM PR108/source `6c3feacec7a69243a25f6f5a78039922157990ad`已采用远端main `c7662eb196e72ddc8cab6d6c05490b6a310ca172`；12项本地相关用例通过，无跳过；相关API/Worker构建通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/c7662eb196e72ddc8cab6d6c05490b6a310ca172/docs/development/evidence/W63-01/DELIVERY.md)。原规范内容hash复现、精确数字/Unicode和原业务值分别保留；结果不授权/不激活，真实Owner与Bundle保存/公开表单待采用。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main协调PR/finish待收尾。七天目标ACTIVE，完整业务验收不提升。
+
 ## 2026-10-23：W62实际来源跨仓发布集成已采用
 
 CRM PR107/source `54a7886b68ef025f5058861a62abadb0f306247b`已采用远端main `6bb3b43e6d674148af470b4b44aa0b46917f1f47`；1项实际Main/CRM跨进程场景通过，父子不重复计数、无跳过；两仓相关构建通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/6bb3b43e6d674148af470b4b44aa0b46917f1f47/docs/development/evidence/W62-01/DELIVERY.md)。原来源到恢复/发布、实际回滚/提交和租户指针失效已验证；结果仍不授权，真实Owner共同门及公开表单待采用。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main协调PR/finish待收尾。七天目标ACTIVE，完整业务验收不提升。
