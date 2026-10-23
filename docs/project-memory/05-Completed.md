@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-23：W74精确表单版本身份已采用
+
+CRM PR114/source `c04300a5b1c68c4aad78e4a45a29dd3f1b0af8b9`已采用远端main `67f8b28fd9b08b0be67060716e4729e0ba547c93`；29项独立本地PG用例通过，无跳过；相关API/必要依赖构建通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/67f8b28fd9b08b0be67060716e4729e0ba547c93/docs/development/evidence/W74-01/DELIVERY.md)。精确表单版本及真实准备内容绑定已持久化，混合隔离下原生Gate与W68原结果共同事务已实测；新旧内容历史不覆盖，CRM Issue109保持开放；完整Owner/Bundle/audit/outbox与公开受理待接。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main协调PR/finish待收尾。七天目标ACTIVE，完整业务验收不提升。
+
 ## 2026-10-23：W73原生配置对象绑定已采用
 
 CRM PR113/source `7da2543b996806c53f5fa68831b2b61923e2b965`已采用远端main `dc8784583860b78635a89924ad2576ba24a21e78`；27项独立本地PG用例通过，无跳过；相关API/必要依赖构建通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/dc8784583860b78635a89924ad2576ba24a21e78/docs/development/evidence/W73-01/DELIVERY.md)。原生Site/Form/准备Intake及真实租户父关系已持久化，和W68原结果/W69内容共同事务已实测；fixture失败已修复并保留原记录，CRM Issue109保持开放；完整Owner/Bundle/audit/outbox与公开受理待接。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main协调PR/finish待收尾。七天目标ACTIVE，完整业务验收不提升。

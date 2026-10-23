@@ -538,3 +538,19 @@ Save参与调用方RC/Serializable事务和保存点，不commit/隐藏重试。
 本窗仅新namespace显式安装；正式Bundle版本/ConfigurationView、真实Owner最终身份/对象/字段共同门、audit/outbox、Preview/Activate/publicAttempt、隐私保留和Program/HTTP仍待接。CanAuthorize/CanActivate仍false，任意合法ExactJsonNumber未降为有界整数；Issue109保持OPEN。无包变更、既有环境迁移、Actions或部署。24/375整卡、125目标0交付、247运行NOT_RUN保持，七天目标ACTIVE。W51指定停止data删除被自动审批拒绝原因为blocked by policy，保留不重试。
 
 Handoff [PR49](https://github.com/GTX537/CP6.AI-Handoff/pull/49)已采用 `88566612aac8f2493a1456e8bfcd351b5c6ab257`，准确分支删除、固定树干净detached、finish释放。Main仅剩协调PR/finish，不提前声明释放。登记开工至此约17.03min，原预算80–120min，最终以finish为准、子任务不重复累计；前置只读核对约4min。
+
+## 2026-10-23：W73全部收尾 / W74精确表单版本身份
+
+W73 CRM113/Main454/Handoff49全部采用；27独立PG通过，实际19.43min＋前置4min，三条分支删除、固定树干净detached、全部席位释放。[W74](../dispatch/20261023-wave74/README.md)补真实表单/准备内容所绑定的不可变精确版本，预计60–90min，独立前置约2min。完整Owner/Bundle/公开提交仍未采用；七天目标ACTIVE。
+
+## W74实际交付
+
+CRM [PR114](https://github.com/GTX537/CP6.CRM/pull/114)已采用，source `c04300a5b1c68c4aad78e4a45a29dd3f1b0af8b9`，远端main `67f8b28fd9b08b0be67060716e4729e0ba547c93`，10条任务路径exact blob核对通过。[单份产品报告](https://github.com/GTX537/CP6.CRM/blob/67f8b28fd9b08b0be67060716e4729e0ba547c93/docs/development/evidence/W74-01/DELIVERY.md)。29项独立相关本地PG用例通过（25新增+4既有），无跳过，相关API及必要依赖构建成功；真实Owner业务验收NOT_RUN，无Actions。
+
+新增原生不可变表单版本，真实tenant/Form/PreparedIntake关系重读验证。保存任意合法正整数版本的原token和完整规范数值键，不展开巨大指数、不降为int/bigint/有界numeric；摘要仅非唯一查询加速，完整键最终判等。同号等值拼写幂等不覆盖原文，异内容冲突，新版本保留旧内容历史。
+
+原生trigger更新实际每表单Gate后核对版本，四种RC/Serializable混合竞争观察真实transactionid等待，陈旧Serializable返回40001由Owner重建事务。Save参加调用方保存点，不commit/隐藏重试；取消、后续原生SQL错误、原结果共同commit/rollback/重放均通过。最终24+5=29独立PG通过，未重复累计初始两项；一次完整作者SPEC/QUALITY无剩余阻断，自有PG正常停止且数据/红灯/TRX保留。CRM准确任务分支删除、固定树干净detached、finish释放。
+
+这是表单版本前置，正式Intake/Calendar版本来源、完整Bundle/ConfigurationView、真实Owner最终共同门、audit/outbox、Preview/Activate/publicAttempt、隐私保留及Program/HTTP仍待接。CanAuthorize/CanActivate仍false；W60旧日历ContractVersion未冒充正式任意范围版本。Issue109保持OPEN。无新包、既有环境迁移、Actions或部署；24/375整卡、125目标0交付、247运行NOT_RUN保持，七天目标ACTIVE。W51指定停止data删除被自动审批拒绝原因为blocked by policy，保留不重试。
+
+Handoff [PR50](https://github.com/GTX537/CP6.AI-Handoff/pull/50)已采用 `c101b055844f9ef65632eb8726d0634b9db7cc66`，准确分支删除、固定树干净detached、finish释放。Main仅剩协调PR/finish，不提前声明释放。登记开工至此约15.11min，原预算60–90min，最终以finish为准、子任务不重复累计；前置只读核对约2min。

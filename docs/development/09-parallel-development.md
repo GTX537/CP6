@@ -1,5 +1,9 @@
 # 多对话任务分配与交付
 
+> 当前：[W74精确表单版本身份](dispatch/20261023-wave74/README.md)，本聊天单人；CRM PR114/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W73不重复。
+
+> 当前：[W74精确表单版本身份](dispatch/20261023-wave74/README.md)，本聊天单人；W37–W73已finish，不重复。
+
 > 当前：[W73原生配置对象绑定](dispatch/20261023-wave73/README.md)，本聊天单人；CRM PR113/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W72不重复。
 
 > 当前：[W73原生配置对象绑定](dispatch/20261023-wave73/README.md)，本聊天单人；W37–W72已finish，不重复。
