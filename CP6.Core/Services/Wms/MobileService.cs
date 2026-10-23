@@ -1,24 +1,27 @@
+using CP6.Core.Services.Integration;
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Wms;
 
-public class MobileService : IMobileService
+public partial class MobileService : IMobileService
 {
+    private readonly OperationsOwnerV1? _owner;
     private readonly CP6Context _db;
     private readonly IWmsSequenceService _seq;
     private readonly IStockMovementService _stock;
     private const string Prefix = "MTK";
 
-    public MobileService(CP6Context db, IWmsSequenceService seq, IStockMovementService stock)
+    public MobileService(CP6Context db, IWmsSequenceService seq, IStockMovementService stock, OperationsOwnerV1? owner = null)
     {
+        _owner = owner;
         _db = db; _seq = seq; _stock = stock;
     }
 
-    public async Task<List<MobileTask>> GetTasksAsync(MobileTaskQuery q)
+    private async Task<List<MobileTask>> GetTasksCoreAsync(MobileTaskQuery q, IQueryable<MobileTask>? allowed = null, CancellationToken ct = default)
     {
-        var query = _db.MobileTasks.AsNoTracking().Where(x => !x.IsDeleted);
+        var query = allowed ?? _db.MobileTasks.AsNoTracking().Where(x => !x.IsDeleted);
         // 作業者指定時は「本人割当」＋「未割当プール（誰でも取れる）」を両方表示
         if (!string.IsNullOrWhiteSpace(q.AssignedTo)) query = query.Where(x => x.AssignedTo == q.AssignedTo || x.AssignedTo == null);
         if (!string.IsNullOrWhiteSpace(q.TaskType)) query = query.Where(x => x.TaskType == q.TaskType);
@@ -28,15 +31,15 @@ public class MobileService : IMobileService
         return await query
             .OrderBy(x => x.Status)            // 未着手 → 進行中 → 完了
             .ThenBy(x => x.Priority)           // 至急優先
-            .ThenByDescending(x => x.CreateDate)
+            .ThenByDescending(x => x.CreateDate).ThenBy(x => x.Id)
             .Skip((q.Page - 1) * q.PageSize).Take(q.PageSize)
-            .ToListAsync();
+            .ToListAsync(ct);
     }
 
-    public async Task<MobileTask?> GetAsync(string mobileTaskNo)
+    private async Task<MobileTask?> GetCoreAsync(string mobileTaskNo)
         => await _db.MobileTasks.AsNoTracking().FirstOrDefaultAsync(x => x.MobileTaskNo == mobileTaskNo && !x.IsDeleted);
 
-    public async Task<string> CreateAsync(MobileTaskDto dto, string? userName)
+    private async Task<string> CreateCoreAsync(MobileTaskDto dto, string? userName)
     {
         if (string.IsNullOrWhiteSpace(dto.TaskType))
             throw new InvalidOperationException("taskType required");
@@ -61,7 +64,7 @@ public class MobileService : IMobileService
         return no;
     }
 
-    public async Task StartAsync(string mobileTaskNo, string? userName)
+    private async Task StartCoreAsync(string mobileTaskNo, string? userName)
     {
         var task = await Load(mobileTaskNo);
         if (task.Status == MobileTaskStatus.Completed || task.Status == MobileTaskStatus.Cancelled)
@@ -75,7 +78,7 @@ public class MobileService : IMobileService
         }
     }
 
-    public async Task<MobileScanResult> ScanAsync(MobileScanRequest req)
+    private async Task<MobileScanResult> ScanCoreAsync(MobileScanRequest req)
     {
         var code = (req.Barcode ?? string.Empty).Trim();
         var result = new MobileScanResult { Barcode = code };
@@ -134,7 +137,7 @@ public class MobileService : IMobileService
         return result;
     }
 
-    public async Task CompleteAsync(string mobileTaskNo, MobileCompleteRequest req, string? userName)
+    private async Task CompleteCoreAsync(string mobileTaskNo, MobileCompleteRequest req, string? userName)
     {
         var task = await Load(mobileTaskNo);
         if (task.Status == MobileTaskStatus.Completed || task.Status == MobileTaskStatus.Cancelled)
@@ -175,7 +178,7 @@ public class MobileService : IMobileService
         await _db.SaveChangesAsync();
     }
 
-    public async Task CancelAsync(string mobileTaskNo, string? userName)
+    private async Task CancelCoreAsync(string mobileTaskNo, string? userName)
     {
         var task = await Load(mobileTaskNo);
         if (task.Status == MobileTaskStatus.Completed)

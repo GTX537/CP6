@@ -109,7 +109,9 @@
       </el-tab-pane>
 
       <el-tab-pane label="Analytics" name="analytics" v-permission="'wms-mobile:analytics'">
-        <el-row :gutter="12">
+        <el-alert title="Legacy task cohort by creation date; reported status and elapsed time do not verify physical results or net working time." type="info" :closable="false" />
+        <el-alert v-if="analyticsError" :title="analyticsError" type="error" :closable="false" />
+        <el-row v-if="analytics" :gutter="12">
           <el-col v-for="metric in metrics" :key="metric.label" :span="4">
             <el-statistic :title="metric.label" :value="metric.value" />
           </el-col>
@@ -338,6 +340,8 @@
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
+import { usePermissionStore } from '@/stores/permission'
 import { ElMessage, ElMessageBox, type UploadFile } from 'element-plus'
 import QRCode from 'qrcode'
 import { productionApi } from '@/api/wms/production'
@@ -352,6 +356,21 @@ import type {
 
 const tab = ref('rollout')
 const analytics = ref<TaskAnalytics>()
+const analyticsError = ref(''), analyticsPermission = usePermissionStore()
+let analyticsSequence = 0
+const analyticsIntent = useOperationsIntent(() => { analyticsSequence++; analytics.value = undefined; analyticsError.value = 'Identity changed; reload analytics.' })
+async function loadAnalytics() {
+  const token = analyticsIntent.capture(), sequence = ++analyticsSequence
+  analytics.value = undefined; analyticsError.value = ''
+  try {
+    if (!analyticsPermission.loaded || !analyticsPermission.has('wms-mobile:analytics')) throw new Error('Permission required')
+    const result = await productionApi.analytics()
+    if (!analyticsIntent.current(token) || sequence !== analyticsSequence) return
+    if (!result || !Number.isSafeInteger(result.created) || result.timeBasis !== 'LEGACY_CREATED_AT') throw new Error('Analytics unavailable')
+    if (!analyticsPermission.loaded || !analyticsPermission.has('wms-mobile:analytics')) throw new Error('Permission changed')
+    analytics.value = result
+  } catch { if (analyticsIntent.current(token) && sequence === analyticsSequence) analyticsError.value = 'Analytics could not be read; refresh current access.' }
+}
 const featureFlags = ref<WmsFeatureFlag[]>([])
 const featureChanges = ref<WmsFeatureFlagChange[]>([])
 const featureChangeVisible = ref(false)
@@ -388,17 +407,17 @@ const activationForm = reactive({
 })
 const metrics = computed(() => [
   { label: 'Created', value: analytics.value?.created ?? 0 },
-  { label: 'Completed', value: analytics.value?.completed ?? 0 },
-  { label: 'Partial', value: analytics.value?.partiallyCompleted ?? 0 },
+  { label: 'Legacy reported complete', value: analytics.value?.completed ?? 0 },
+  { label: 'Legacy reported partial', value: analytics.value?.partiallyCompleted ?? 0 },
   { label: 'Exceptions', value: analytics.value?.exceptions ?? 0 },
   { label: 'Overdue', value: analytics.value?.overdue ?? 0 },
-  { label: 'Avg minutes', value: analytics.value?.averageMinutes ?? 0 },
+  { label: 'Historical elapsed minutes', value: analytics.value?.durationSampleCount ? analytics.value.averageMinutes : 'No samples' },
 ])
 
 async function loadTab(name: string | number) {
   if (name === 'rollout') await loadFeatureFlags()
   if (name === 'scopes') await loadRoleScopes()
-  if (name === 'analytics') analytics.value = await productionApi.analytics()
+  if (name === 'analytics') await loadAnalytics()
   if (name === 'devices') await loadDevices()
   if (name === 'barcodes') await loadBarcodes()
   if (name === 'serials') await loadSerials()

@@ -560,6 +560,9 @@ CP6.Core.Services.Sys.FieldRegistry.Register("wms-rma", new[] { "CustomerName", 
 CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-replenish", "補充指示", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-replenish", new[] { "OperatorCd", "Remarks" }
     .Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
+CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-mobile", "Mobile tasks", new[] { 1, 2, 3, 4, 5 }, 1);
+CP6.Core.Services.Sys.FieldRegistry.Register("wms-mobile", new[] { "AssignedTo", "ExceptionDescription", "Instruction", "Remarks" }
+    .Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
 CP6.Core.Services.Sys.AuthorizationCatalogV1.Seal();
 
 // 共享用量内核（見積与 MRP 共消费，spec §4）

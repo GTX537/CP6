@@ -1,3 +1,4 @@
+using CP6.Core.Services.Integration;
 using System.Security.Cryptography;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
@@ -9,15 +10,16 @@ using Microsoft.EntityFrameworkCore.Storage;
 namespace CP6.Core.Services.Wms;
 
 /// <summary>
-/// Production MOVE state machine. Inventory, capacity, task state, audit event,
-/// idempotency receipt, and remainder creation share one database transaction.
+/// Legacy MOVE state machine. PostgreSQL public entries are protected in the Owner partial;
+/// unadopted effects cannot reach this legacy transaction implementation.
 /// </summary>
-public sealed class MobileTaskV2Service : IMobileTaskV2Service
+public sealed partial class MobileTaskV2Service : IMobileTaskV2Service
 {
     private const string Prefix = "MTK";
     private static readonly JsonSerializerOptions JsonOptions =
         new(JsonSerializerDefaults.Web);
 
+    private readonly OperationsOwnerV1? _owner;
     private readonly CP6Context _db;
     private readonly IWmsSequenceService _sequence;
     private readonly IStockMovementService _stock;
@@ -29,8 +31,9 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
         IWmsSequenceService sequence,
         IStockMovementService stock,
         IWmsAccessScopeProvider accessScopes,
-        IMobileTaskNotifier? notifier = null)
+        IMobileTaskNotifier? notifier = null, OperationsOwnerV1? owner = null)
     {
+        _owner = owner;
         _db = db;
         _sequence = sequence;
         _stock = stock;
@@ -38,14 +41,14 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
         _notifier = notifier ?? new NoOpMobileTaskNotifier();
     }
 
-    public async Task<PagedResult<MobileTaskV2Dto>> GetTasksAsync(
+    private async Task<PagedResult<MobileTaskV2Dto>> GetTasksCoreAsync(
         MobileTaskV2Query query,
-        CancellationToken ct = default)
+        CancellationToken ct = default, IQueryable<MobileTask>? allowed = null, Action<MobileTask>? project = null)
     {
         query.Page = Math.Max(1, query.Page);
         query.PageSize = Math.Clamp(query.PageSize, 1, 200);
-        var tasks = (await _accessScopes.GetCurrentAsync(ct)).Apply(
-            _db.MobileTasks.AsNoTracking())
+        var tasks = (allowed ?? (await _accessScopes.GetCurrentAsync(ct)).Apply(
+            _db.MobileTasks.AsNoTracking()))
             .Where(x => !x.IsDeleted
                         && x.ContractVersion == 2
                         && x.TaskType == MobileTaskType.Move);
@@ -81,9 +84,11 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
             .ThenBy(x => x.Priority)
             .ThenBy(x => x.DueAt)
             .ThenBy(x => x.CreateDate)
+            .ThenBy(x => x.Id)
             .Skip((query.Page - 1) * query.PageSize)
             .Take(query.PageSize)
             .ToListAsync(ct);
+        if (project != null) foreach (var row in rows) project(row);
         return new PagedResult<MobileTaskV2Dto>
         {
             Items = rows.Select(Map).ToList(),
@@ -93,7 +98,7 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
         };
     }
 
-    public async Task<MobileTaskV2Dto?> GetAsync(
+    private async Task<MobileTaskV2Dto?> GetCoreAsync(
         string taskNo,
         CancellationToken ct = default)
     {
@@ -105,7 +110,7 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
         return task is null ? null : Map(task);
     }
 
-    public async Task<IReadOnlyList<MobileTaskEventDto>> GetEventsAsync(
+    private async Task<IReadOnlyList<MobileTaskEventDto>> GetEventsCoreAsync(
         string taskNo,
         CancellationToken ct = default)
     {
@@ -127,7 +132,7 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
             .ToListAsync(ct);
     }
 
-    public async Task<TaskScanProfileDto> GetScanProfileAsync(
+    private async Task<TaskScanProfileDto> GetScanProfileCoreAsync(
         string taskNo,
         CancellationToken ct = default)
     {
@@ -144,7 +149,7 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
         };
     }
 
-    public async Task<MobileTaskV2Dto> CreateAsync(
+    private async Task<MobileTaskV2Dto> CreateCoreAsync(
         CreateMoveTaskV2Request request,
         string? userName,
         CancellationToken ct = default)
@@ -278,7 +283,7 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
         }
     }
 
-    public async Task<IReadOnlyList<MobileTaskV2Dto>> GetSourceTasksAsync(
+    private async Task<IReadOnlyList<MobileTaskV2Dto>> GetSourceTasksCoreAsync(
         string sourceType,
         string sourceNo,
         CancellationToken ct = default)
@@ -308,7 +313,7 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
             .ToList();
     }
 
-    public async Task<MobileTaskV2Dto> SynchronizePendingSourceTaskAsync(
+    private async Task<MobileTaskV2Dto> SynchronizePendingSourceTaskCoreAsync(
         string taskNo,
         CreateMoveTaskV2Request request,
         string? userName,
@@ -452,8 +457,8 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
         }
     }
 
-    public async Task<IReadOnlyList<MobileTaskV2Dto>>
-        CancelPendingSourceTasksAsync(
+    private async Task<IReadOnlyList<MobileTaskV2Dto>>
+        CancelPendingSourceTasksCoreAsync(
             string sourceType,
             string sourceNo,
             string? userName,
@@ -485,7 +490,7 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
         return await GetSourceTasksAsync(sourceType, sourceNo, ct);
     }
 
-    public Task<MobileTaskV2Dto> AssignAsync(
+    private Task<MobileTaskV2Dto> AssignCoreAsync(
         string taskNo,
         AssignTaskV2Request request,
         string? userName,
@@ -500,7 +505,7 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
                 task.AssignedTo = request.AssignedTo.Trim();
             }, ct);
 
-    public async Task<MobileTaskV2Dto> ClaimAsync(
+    private async Task<MobileTaskV2Dto> ClaimCoreAsync(
         string taskNo,
         ClaimTaskV2Request request,
         string? userName,
@@ -518,7 +523,7 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
             }, ct);
     }
 
-    public async Task<MobileTaskV2Dto> StartAsync(
+    private async Task<MobileTaskV2Dto> StartCoreAsync(
         string taskNo,
         StartTaskV2Request request,
         string? userName,
@@ -536,7 +541,7 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
             }, ct);
     }
 
-    public Task<MobileTaskV2Dto> PauseAsync(
+    private Task<MobileTaskV2Dto> PauseCoreAsync(
         string taskNo,
         PauseTaskRequest request,
         string? userName,
@@ -554,7 +559,7 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
                 task.ScannedQty = 0m;
             }, ct);
 
-    public Task<MobileTaskV2Dto> ReleaseAsync(
+    private Task<MobileTaskV2Dto> ReleaseCoreAsync(
         string taskNo,
         ReleaseTaskRequest request,
         string? userName,
@@ -573,7 +578,7 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
                 task.ScannedQty = 0m;
             }, ct);
 
-    public Task<MobileTaskV2Dto> TakeoverAsync(
+    private Task<MobileTaskV2Dto> TakeoverCoreAsync(
         string taskNo,
         TakeoverTaskRequest request,
         string? userName,
@@ -596,7 +601,7 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
                 task.ScannedQty = 0m;
             }, ct);
 
-    public Task<MobileTaskV2Dto> RaiseExceptionAsync(
+    private Task<MobileTaskV2Dto> RaiseExceptionCoreAsync(
         string taskNo,
         RaiseTaskExceptionRequest request,
         string? userName,
@@ -616,7 +621,7 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
                 task.ScannedQty = 0m;
             }, ct);
 
-    public async Task<MobileTaskV2Dto> ResolveExceptionAsync(
+    private async Task<MobileTaskV2Dto> ResolveExceptionCoreAsync(
         string taskNo,
         ResolveTaskExceptionRequest request,
         string? userName,
@@ -694,7 +699,7 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
         }
     }
 
-    public async Task<ScanResult> ScanAsync(
+    private async Task<ScanResult> ScanCoreAsync(
         string taskNo,
         ScanCommand request,
         string? userName,
@@ -764,7 +769,7 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
         };
     }
 
-    public async Task<MobileTaskV2Dto> CompleteAsync(
+    private async Task<MobileTaskV2Dto> CompleteCoreAsync(
         string taskNo,
         CompleteMoveV2Request request,
         string? userName,
@@ -898,7 +903,7 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
         }
     }
 
-    public async Task<MobileTaskV2Dto> CancelAsync(
+    private async Task<MobileTaskV2Dto> CancelCoreAsync(
         string taskNo,
         CancelTaskV2Request request,
         string? userName,
@@ -948,12 +953,12 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
         }
     }
 
-    public async Task<TaskAnalyticsDto> GetAnalyticsAsync(
+    private async Task<TaskAnalyticsDto> GetAnalyticsCoreAsync(
         TaskAnalyticsQuery query,
-        CancellationToken ct = default)
+        CancellationToken ct = default, IQueryable<MobileTask>? allowed = null)
     {
-        var tasks = (await _accessScopes.GetCurrentAsync(ct)).Apply(
-            _db.MobileTasks.AsNoTracking())
+        var tasks = (allowed ?? (await _accessScopes.GetCurrentAsync(ct)).Apply(
+            _db.MobileTasks.AsNoTracking()))
             .Where(x => !x.IsDeleted && x.ContractVersion == 2);
         if (!string.IsNullOrWhiteSpace(query.WarehouseCd))
             tasks = tasks.Where(x => x.WarehouseCd == query.WarehouseCd);
@@ -982,7 +987,8 @@ public sealed class MobileTaskV2Service : IMobileTaskV2Service
                                       && x.Status is not (MobileTaskStatus.Completed
                                           or MobileTaskStatus.PartiallyCompleted
                                           or MobileTaskStatus.Cancelled)),
-            AverageMinutes = durations.Count == 0 ? 0d : durations.Average()
+            AverageMinutes = durations.Count == 0 ? 0d : durations.Average(),
+            DurationSampleCount = durations.Count
         };
     }
 

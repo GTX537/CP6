@@ -2,6 +2,7 @@ namespace CP6.Core.Services.Wms;
 
 public interface IMobileTaskV2Service
 {
+    Task<MobileTaskCapabilitiesV1> GetCapabilitiesAsync(CancellationToken ct = default);
     Task<PagedResult<MobileTaskV2Dto>> GetTasksAsync(MobileTaskV2Query query, CancellationToken ct = default);
     Task<MobileTaskV2Dto?> GetAsync(string taskNo, CancellationToken ct = default);
     Task<IReadOnlyList<MobileTaskEventDto>> GetEventsAsync(string taskNo, CancellationToken ct = default);
@@ -39,4 +40,10 @@ public interface IMobileTaskV2Service
         string sourceNo,
         string? userName,
         CancellationToken ct = default);
+}
+
+public sealed record MobileTaskCapabilitiesV1(bool WritesAvailable, string Status)
+{
+    public string ReadContract => "MOBILE-LEGACY-READ-1";
+    public bool HistoricalResultsVerified => false;
 }
