@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-23：W67冻结表单内容已采用
+
+CRM PR110/source `ab4a41c828d614058a04dc185299a284be542a56`已采用远端main `969bcc0660d96b41dcad102e1ef555b1c3bc6103`；20项本地相关用例通过，无跳过；相关API/Worker构建通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/969bcc0660d96b41dcad102e1ef555b1c3bc6103/docs/development/evidence/W67-01/DELIVERY.md)。完整表单内容与摘要、原告知及hash分别保留；CRM Issue109原fixture矛盾保持开放；结果不授权/不激活，真实Owner与Bundle保存/公开表单待采用。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main协调PR/finish待收尾。七天目标ACTIVE，完整业务验收不提升。
+
 ## 2026-10-23：W66附件引用与内容保留已采用
 
 Main [PR440](https://github.com/GTX537/CP6/pull/440) / source `6aa764609839a2be32fa91d90d1668c3fbb59b7b`已进入远端main `f5bbbb08312170f6eda34f9d8d21582bb515a7bd`，20任务路径exact核对通过；19.NET/5UI通过（18项.NET首轮复用、1项夹具修正复验），无跳过。[单份交付](../development/evidence/W66-01/DELIVERY.md)。Handoff [PR42](https://github.com/GTX537/CP6.AI-Handoff/pull/42)已采用、准确分支删除、固定树干净detached、finish释放。Main同任务最后状态PR/finish及Issue439关闭待完成，未提前声称席位释放。三个PG停止保留；当前约29.88min，原估60–90min，最终按finish计。完整WP02-14及业务验收不提升，七天目标ACTIVE继续。
