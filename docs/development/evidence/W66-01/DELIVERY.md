@@ -30,3 +30,9 @@ API成功确认仅UNLINKED、physicalDeletion=NOT_REQUESTED，不表示已完成
 Handoff首次start在只读git ls-remote --heads挂起。核实本次孤立Git子树21368/26380/35080后停止，管理脚本正常返回原180秒超时并释放自身锁；未手改登记或抢占席位。重试只增加当次进程低速超时配置、未改全局Git/代理；W66-HANDOFF正常start成功，START仅提交一次。外部协调helper首次分支名断言失败在任何写入前发生，修正为实际w66分支后正常登记。
 
 原估60–90min，实际以Main start到最终finish计算，子任务不重复累计。候选通过，待Main/Handoff正常采用、最后台账与准确分支/席位收尾。七天目标ACTIVE继续。W51准确data删除曾被自动审批拒绝，原因blocked by policy；停止保留且不重试。
+
+## 实际采用与最后收尾
+
+Main [PR440](https://github.com/GTX537/CP6/pull/440) source `6aa764609839a2be32fa91d90d1668c3fbb59b7b`采用远端main `f5bbbb08312170f6eda34f9d8d21582bb515a7bd`，全部20路径exact核对通过。Handoff [PR42](https://github.com/GTX537/CP6.AI-Handoff/pull/42)采用 `11fd7e78c55114c51f5f7ad4c7d10f6681917956`，准确任务分支删除、固定树干净detached、finish释放。十个产品路径与已测提交逐blob相同，未重复成功验证；最后文档diff和台账生成单独检查。
+
+Main同一任务分支最后状态PR及finish待完成；Issue439在最终远端和生命周期核对后关闭。当前约29.88min，原估60–90min，最终以finish为准；前置只读核对约4min，子任务不重复累计。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave66-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续真实Owner前置和D6公共支撑。
