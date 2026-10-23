@@ -1,6 +1,6 @@
 # 多对话任务分配与交付
 
-> 当前：[W79工作中心/费率Owner](dispatch/20261023-wave79/README.md)，本聊天单人，Issue460；W37–W78已finish，不重复。
+> 当前：[W79工作中心/费率Owner](dispatch/20261023-wave79/README.md)，本聊天单人，Main461/Handoff55已采用；同任务最后状态与finish后继续。W37–W78不重复。
 
 > 当前：[W78配置事件原子入队](dispatch/20261023-wave78/README.md)，本聊天单人；CRM PR119/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W77不重复。
 

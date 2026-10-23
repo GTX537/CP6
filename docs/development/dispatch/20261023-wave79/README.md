@@ -24,3 +24,9 @@ DEV-1 `codex/bug-460-workcenter-owner`，DEV-2 `codex/w79-handoff`固定席位�
 ## W79验证完成
 
 37独立.NET（25真实PG、12既有InMemory）＋25Vue通过，无跳过；相关构建及最终Vue类型检查通过。实际既有夹具端口55435，55447预留未用。补Finance Collect这一动作的503/no-store错误接线，保其余财务剩余范围；不改变字段MIN、原生时间语义或完整验收。六PG停止保留，进入两仓采用及同任务收尾，七天目标ACTIVE。
+
+## 实际采用与最后收尾
+
+Main [PR461](https://github.com/GTX537/CP6/pull/461) source `119e3659d5f773595693a776c7322954b704c92d`采用远端main `c7964dd87ce374aaf4f74b9ea29b50380aab2744`，36任务路径逐blob核对；Handoff [PR55](https://github.com/GTX537/CP6.AI-Handoff/pull/55)采用`7c3fecd3152044582b9adbaac840ba524aa19f59`，准确任务分支删除、固定树干净detached、finish释放。26个产品路径与已测提交逐blob相同，复用有效结果；最后文档diff/台账生成单独检查。
+
+Main同任务分支最终状态PR及finish待完成；Issue460最后远端及生命周期核对后关闭。当前约46.18min，原估120–180min＋独立前置6min，最终按finish，子任务不重复累计。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave79-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，随后继续D5/D6剩余直接前置，完整工艺/成本/Finance仍未采用。
