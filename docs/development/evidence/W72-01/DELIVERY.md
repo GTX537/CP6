@@ -35,3 +35,9 @@ START曾拟来源任务同范围读取；集中审查确认sourceType/sourceNo�
 ## 收尾
 
 原估120–180min＋独立前置3min，实际按Main start/finish计，不重复累计Handoff。候选通过后正常Main/Handoff采用与同任务最终状态、准确分支清理及finish释放，未提前声称席位已释放。七天目标ACTIVE，随后继续D5/D6真实CRM Owner/公开表单基础。W51指定停止data删除曾被自动审批以blocked by policy拒绝，目录保留，不重试或绕过。
+
+## 实际采用与最后收尾
+
+Main [PR452](https://github.com/GTX537/CP6/pull/452) source `b3b38164e1d3732053f8241b86580a5d0f184f13`采用远端main `41cef2ffc77464745c18576e0f60108d59a8ec37`，36任务路径核对。Handoff [PR48](https://github.com/GTX537/CP6.AI-Handoff/pull/48)采用 `f833756a86252cd8fefa9d8f9af90c906904ab6e`，准确任务分支删除、固定树干净detached、finish释放。26个产品路径与已测提交逐blob相同，复用有效成功结果；最后文档diff和台账生成单独检查。
+
+Main同一任务分支最后状态PR及finish待完成；Issue451在最终远端和生命周期核对后关闭。当前约25.85min，原估120–180min，最终以finish为准，独立前置约3min，子任务不重复累计。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave72-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续D5/D6真实CRM Owner及公开表单基础，完整S1保持未采用。

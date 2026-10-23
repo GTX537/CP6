@@ -516,3 +516,9 @@ W71 Main449/450、Handoff47全部采用，Issue448关闭，41本地用例及类�
 ## W72验证完成
 
 50项独立.NET（21真实PG、29既有InMemory）及23项Vue通过，无跳过；Vue类型检查和相关构建通过。三个PG停止保留，PG/UI原始红灯保留。来源查询经审查确认关联筛选需真实Source Owner而明确503，未采用为功能完成。进入两仓采用及同任务最后收尾；完整S1与验收不提升，七天目标ACTIVE。
+
+## 实际采用与最后收尾
+
+Main [PR452](https://github.com/GTX537/CP6/pull/452) source `b3b38164e1d3732053f8241b86580a5d0f184f13`采用远端main `41cef2ffc77464745c18576e0f60108d59a8ec37`，36任务路径核对。Handoff [PR48](https://github.com/GTX537/CP6.AI-Handoff/pull/48)采用 `f833756a86252cd8fefa9d8f9af90c906904ab6e`，准确任务分支删除、固定树干净detached、finish释放。26个产品路径与已测提交逐blob相同，复用有效成功结果；最后文档diff和台账生成单独检查。
+
+Main同一任务分支最后状态PR及finish待完成；Issue451在最终远端和生命周期核对后关闭。当前约25.85min，原估120–180min，最终以finish为准，独立前置约3min，子任务不重复累计。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave72-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续D5/D6真实CRM Owner及公开表单基础，完整S1保持未采用。
