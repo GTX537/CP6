@@ -8,11 +8,13 @@ namespace CP6.Core.Services.Wms;
 /// <remarks>
 /// 仕様書 §23。
 /// 1. Plan：到着品を仮置きロケーションに置く前提で予定を作成
-/// 2. Execute：IN（仮置きロケ）→ OUT（同ロケ、出荷ドック）を 1 トランザクションで発行
+/// 2. Legacy Execute issued IN then OUT separately. PostgreSQL requires adopted staged IN/OUT Owners.
 ///    在庫の滞留時間≒0 となる（IN と OUT のタイムスタンプが連続）
 /// </remarks>
 public interface ICrossDockService
 {
+    Task<CP6.Entity.DTOs.Wms.CrossDockPageV1> SearchOwnerAsync(CrossDockSearchQuery q);
+    Task<CP6.Entity.DTOs.Wms.CrossDockObservationV1?> GetOwnerAsync(string xdockNo);
     Task<List<CrossDockOrder>> SearchAsync(CrossDockSearchQuery q);
     Task<CrossDockOrder?> GetAsync(string xdockNo);
     Task<string> CreateAsync(CrossDockOrderDto dto, string? userName);
