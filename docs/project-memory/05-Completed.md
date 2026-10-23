@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-23：W87持久签名信任已采用
+
+CRM PR122/source `f87d5dab2049bed802f77d1ee4e29e1a1122cd81`已采用远端main `1a7f0838c3db87d0b736fbe1c88d4ba9a0b1841f`；33独立相关用例通过（16PG＋17已有签名），实际数据库重启恢复与两个方向锁争用通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/1a7f0838c3db87d0b736fbe1c88d4ba9a0b1841f/docs/development/evidence/W87-01/DELIVERY.md)。持久材料/撤销、原操作重放和同事务当前验签已采用，实际权限生产者/Site/Form Owner及业务最终门待接。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main协调PR/finish待收尾。七天目标ACTIVE，完整业务验收不提升。
+
 ## 2026-10-23：W86库位优化历史观察Owner已采用
 
 Main [PR478](https://github.com/GTX537/CP6/pull/478) source `593b54bdf494d7de949475804677dc694dee15e1`进入远端main `4246689a04513633ee4bd0cb5e29623bbbfb9722`，30任务路径逐blob核对；19.NET/22Vue及类型检查通过，无跳过。[单份交付](../development/evidence/W86-01/DELIVERY.md)。Handoff [PR62](https://github.com/GTX537/CP6.AI-Handoff/pull/62)采用、准确分支删除、固定树干净detached、finish释放。Main同任务最后状态PR/finish及Issue477关闭待完成，未提前声明释放。3个PG停止保留；当前约11.09min，原估35–55min＋独立前置2min，最终按finish计。正式WP10-28/29库位优化执行/Finance、125目标与247验收不提升，七天目标ACTIVE。

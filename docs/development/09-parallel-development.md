@@ -1,5 +1,9 @@
 # 多对话任务分配与交付
 
+> 当前：[W87持久签名信任](dispatch/20261023-wave87/README.md)，本聊天单人；CRM PR122/Handoff已采用，协调收尾后继续实际Owner前置。W37–W86不重复。
+
+> 当前：[W87持久签名信任](dispatch/20261023-wave87/README.md)，本聊天单人；W37–W86已finish，不重复。
+
 > 当前：[W86库位优化历史观察Owner](dispatch/20261023-wave86/README.md)，本聊天单人，Issue477；W37–W85已finish，不重复。
 
 > 当前：[W85越库历史观察Owner](dispatch/20261023-wave85/README.md)，本聊天单人，Issue474；W37–W84已finish，不重复。

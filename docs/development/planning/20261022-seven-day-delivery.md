@@ -717,7 +717,7 @@ Main同任务最终状态PR/finish及Issue471最后关闭待完成；当前约17
 
 ## 2026-10-23：W84全部收尾 / W85越库历史观察Owner
 
-W84 Main359/470与Handoff60全部采用，Issue471关闭，35相关用例及类型检查通过，实际19.73min＋前置2min；两准确分支删除、固定树干净detached、全部席位释放。[W85](../dispatch/20261023-wave85/README.md)修Issue474，预计35–55min，独立前置约2min；越库当前Owner/部门与来源字段范围、精确历史读取和旧写入口围栏；完整分阶段收发编排仍未采用。七天目标ACTIVE。
+W84 Main472/473与Handoff60全部采用，Issue471关闭，35相关用例及类型检查通过，实际19.73min＋前置2min；两准确分支删除、固定树干净detached、全部席位释放。[W85](../dispatch/20261023-wave85/README.md)修Issue474，预计35–55min，独立前置约2min；越库当前Owner/部门与来源字段范围、精确历史读取和旧写入口围栏；完整分阶段收发编排仍未采用。七天目标ACTIVE。
 
 ## W85验证完成
 
@@ -731,7 +731,7 @@ Main同任务最终状态PR/finish及Issue474最后关闭待完成；当前约14
 
 ## 2026-10-23：W85全部收尾 / W86库位优化历史观察Owner
 
-W85 Main399/470与Handoff61全部采用，Issue474关闭，39相关用例及类型检查通过，实际16.82min＋前置2min；两准确分支删除、固定树干净detached、全部席位释放。[W86](../dispatch/20261023-wave86/README.md)修Issue477，预计35–55min，独立前置约2min；库位优化当前历史Owner、完整源披露门、精确原文及旧写零效果；固定cut/Proposal/Transfer仍未采用。七天目标ACTIVE。
+W85 Main475/476与Handoff61全部采用，Issue474关闭，39相关用例及类型检查通过，实际16.82min＋前置2min；两准确分支删除、固定树干净detached、全部席位释放。[W86](../dispatch/20261023-wave86/README.md)修Issue477，预计35–55min，独立前置约2min；库位优化当前历史Owner、完整源披露门、精确原文及旧写零效果；固定cut/Proposal/Transfer仍未采用。七天目标ACTIVE。
 
 ## W86验证完成
 
@@ -742,3 +742,23 @@ W85 Main399/470与Handoff61全部采用，Issue474关闭，39相关用例及类�
 Main [PR478](https://github.com/GTX537/CP6/pull/478) source `593b54bdf494d7de949475804677dc694dee15e1`采用远端main `4246689a04513633ee4bd0cb5e29623bbbfb9722`，30任务路径逐blob核对；Handoff [PR62](https://github.com/GTX537/CP6.AI-Handoff/pull/62)采用`b20c534cad638b669272fd78fb804a86818dfb23`，准确分支删除、固定树干净detached、finish释放。20个产品路径与已测提交逐blob一致，复用有效结果，最后文档diff/台账生成单独检查。
 
 Main同任务最终状态PR/finish及Issue477最后关闭待完成；当前约11.09min，原估35–55min＋独立前置2min，实际按finish不重复计Handoff。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave86-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续剩余独立Owner及D5/D6真实前置，正式WP10-28/29库位优化执行/Finance仍未采用。
+
+## 2026-10-23：W86全部收尾 / W87持久签名信任
+
+W86 Main478/479、Handoff62已采用，Issue477关闭，41独立相关用例通过，实际13.14min＋前置2min，准确分支删除和席位释放已核对。[W87](../dispatch/20261023-wave87/README.md)补齐CRM签名信任持久化、撤销防回退与同事务当前读取，预计50–80min＋独立前置约3min；实际Site/Form Owner与业务最终门仍待接。七天目标ACTIVE。
+
+## W87实际交付
+
+CRM [PR122](https://github.com/GTX537/CP6.CRM/pull/122)已采用，source `f87d5dab2049bed802f77d1ee4e29e1a1122cd81`，远端main `1a7f0838c3db87d0b736fbe1c88d4ba9a0b1841f`，9条任务路径exact blob核对通过。[单份产品报告](https://github.com/GTX537/CP6.CRM/blob/1a7f0838c3db87d0b736fbe1c88d4ba9a0b1841f/docs/development/evidence/W87-01/DELIVERY.md)。33项独立相关用例通过（16原生PG＋17已有签名），无跳过；API及必要依赖构建通过，实际数据库重启恢复；真实Owner验收NOT_RUN，无Actions。
+
+共享宿主公钥目录显式新PG namespace，完整不可变发布、当前head及持久已知材料/撤销墓碑。保留开放ActiveToUtc=null与有限UTC ticks精度；原生完整正文/材料/重复/冲突检查，移除重加或重启不可换材料、恢复撤销。版本CAS和原操作精确重放，历史重放不重新激活；所有写集同调用方事务，无隐式commit/retry。
+
+运行身份只有受限读取函数权限，不为FOR SHARE授予UPDATE。读锁与发布锁共用原生head，锁后数据库时钟和冻结W59真实Ed25519；证据绑定实际连接/事务，重用再查当前时间/版本。CanAuthorize=false；当前身份、实际Site/Form动作/范围/字段和业务最终门仍需后继Owner。共享目录不是租户业务权限，未采用全库租户schema。
+
+一次COORD集中SPEC/QUALITY发现摘要约束漂移漏检，真实红灯修复且保留；最终列/约束/trigger/函数体/安全属性检查通过。33独立相关用例包含实际PG stop/start后的原结果及撤销恢复、两个方向的原生锁阻塞、CAS单赢家、空目录/错绑、回滚/取消、运行角色不可写和数据库时钟过期。自有PG55446最终停止，数据/TRX/红灯/重启证据保留。CRM准确任务分支已删除、固定树干净detached、finish释放。
+
+没有新依赖、Actions、既有环境迁移或部署。实际权限生产者、Site/Form Owner、配置Preview/Activate、公开Attempt/受理/隐私及真实投递仍待接。24/375整卡、125目标0完整交付、247运行NOT_RUN不提升，七天目标ACTIVE。W51指定停止data删除曾由自动审批以blocked by policy拒绝，保留不重试。
+
+Handoff [PR63](https://github.com/GTX537/CP6.AI-Handoff/pull/63)已采用 `49895cb45ffd949d2f6447365f9b0ec66ebb9ece`，准确分支删除、固定树干净detached、finish释放。Main仅剩协调PR/finish，不提前声明释放。登记开工至此约15.99min，原预算50–80min，最终以finish为准、子任务不重复累计；独立前置约3min。
+
+W87协调核对纠正上述W84/W85两处历史摘要PR编号；依据wave84/85-product-delivery及close-delivery已保存远端证明，仅修正引用，不改变历史完成/验证范围。
