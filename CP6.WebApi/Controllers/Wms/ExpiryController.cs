@@ -9,6 +9,7 @@ namespace CP6.WebApi.Controllers.Wms;
 [ApiController]
 [Route("api/wms/expiry")]
 [Authorize]
+[CP6.WebApi.Controllers.Erp.OrderOwnerResult]
 public class ExpiryController : ControllerBase
 {
     private readonly IExpiryService _svc;
@@ -17,7 +18,13 @@ public class ExpiryController : ControllerBase
     private string? CurrentUser => User?.Identity?.Name;
 
     /// <summary>期限切迫 Stock 一覧（既定 30 日以内）</summary>
+    [HttpPost("observation-v1")]
+    [RequirePermission("wms-expiry", "view")]
+    public async Task<IActionResult> Observation([FromBody] CP6.Entity.DTOs.Wms.ExpiryObservationQueryV1 query, CancellationToken ct)
+        => Ok(new { code = 0, message = "OK", data = await _svc.GetObservationAsync(query, ct) });
+
     [HttpGet("expiring")]
+    [RequirePermission("wms-expiry", "view")]
     public async Task<IActionResult> Expiring([FromQuery] int days = 30, [FromQuery] string? warehouseCd = null)
     {
         var list = await _svc.GetExpiringStocksAsync(days, warehouseCd);
@@ -34,6 +41,6 @@ public class ExpiryController : ControllerBase
             var n = await _svc.DisposeAsync(req, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071", data = new { disposed = n } });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 }

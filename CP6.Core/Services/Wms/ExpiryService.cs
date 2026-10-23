@@ -5,18 +5,20 @@ using Microsoft.EntityFrameworkCore;
 namespace CP6.Core.Services.Wms;
 
 /// <summary>賞味期限管理サービス実装</summary>
-public class ExpiryService : IExpiryService
+public partial class ExpiryService : IExpiryService
 {
     private readonly CP6Context _db;
     private readonly IStockMovementService _stock;
 
-    public ExpiryService(CP6Context db, IStockMovementService stock)
+    private readonly CP6.Core.Services.Integration.OperationsOwnerV1? _owner;
+
+    public ExpiryService(CP6Context db, IStockMovementService stock, CP6.Core.Services.Integration.OperationsOwnerV1? owner = null)
     {
-        _db = db;
+        _db = db; _owner = owner;
         _stock = stock;
     }
 
-    public async Task<List<ExpiryStockDto>> GetExpiringStocksAsync(int days = 30, string? warehouseCd = null)
+    private async Task<List<ExpiryStockDto>> GetExpiringStocksCoreAsync(int days = 30, string? warehouseCd = null)
     {
         var threshold = DateTime.Today.AddDays(days);
         var query = _db.Stocks.AsNoTracking()
@@ -49,6 +51,8 @@ public class ExpiryService : IExpiryService
 
     public async Task<int> DisposeAsync(DisposeRequest req, string? userName)
     {
+        // Legacy ADJ does not carry the approved immutable DISP basis or an atomic disposition Owner.
+        if (_db.Database.IsNpgsql()) throw new CP6.Core.Services.Erp.OrderPriceCorrectionException("DISPOSITION_OWNER_REQUIRED", 503);
         if (req.StockIds.Count == 0) return 0;
 
         var stocks = await _db.Stocks.AsNoTracking()

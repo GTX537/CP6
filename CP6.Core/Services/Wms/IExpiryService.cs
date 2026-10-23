@@ -13,6 +13,8 @@ namespace CP6.Core.Services.Wms;
 /// </remarks>
 public interface IExpiryService
 {
+    Task<CP6.Entity.DTOs.Wms.ExpiryObservationV1> GetObservationAsync(CP6.Entity.DTOs.Wms.ExpiryObservationQueryV1 query, CancellationToken ct = default);
+
     /// <summary>期限切迫 Stock 一覧（残日数昇順）</summary>
     Task<List<ExpiryStockDto>> GetExpiringStocksAsync(int days = 30, string? warehouseCd = null);
 

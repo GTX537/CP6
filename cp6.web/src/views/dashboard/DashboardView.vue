@@ -277,12 +277,12 @@
         <h2>
           {{ t('dashboard.stockDwell.title') }}
           <el-tag
-            v-if="stockDwellSummary && stockDwellSummary.over90Qty > 0"
+            v-if="stockDwellSummary && stockDwellSummary.over90Qty !== '0'"
             size="small"
             type="danger"
             style="margin-left: 8px"
           >
-            {{ fmtQty(stockDwellSummary?.over90Qty) }}
+            {{ observationText(stockDwellSummary?.over90Qty) }}
           </el-tag>
         </h2>
         <div class="card-head-controls">
@@ -296,7 +296,7 @@
         <div v-else-if="stockDwellRows.length" class="stock-dwell-widget">
           <div v-for="row in stockDwellRows" :key="row.groupKey" class="stock-dwell-widget-row">
             <span class="stock-dwell-widget-name">{{ row.groupLabel }}</span>
-            <span class="stock-dwell-widget-qty">{{ fmtQty(row.bucketOver90Qty) }}</span>
+            <span class="stock-dwell-widget-qty">{{ observationText(row.bucketOver90Qty) }}</span>
             <el-progress
               :percentage="stockDwellPercent(row.bucketOver90Qty)"
               :stroke-width="12"
@@ -318,6 +318,8 @@ import { useRouter } from 'vue-router'
 import { Refresh, DocumentAdd, Van, List, Grid, Warning, SetUp, Bell } from '@element-plus/icons-vue'
 import { dashboardApi } from '@/api/sys/dashboard'
 import { orderApi } from '@/api/erp/order'
+import { observationText, observationPercent } from '@/utils/inventoryObservation'
+import { AUTH_EVENT, identityStamp } from '@/auth/identity'
 import { stockDwellApi } from '@/api/wms/stockDwell'
 import { formatQty } from '@/utils/format'
 import { getConnection, startConnection } from '@/utils/signalr'
@@ -528,15 +530,15 @@ const stockDwellSummary = computed(() => stockDwellState.value.data)
 const stockDwellLoading = computed(() => stockDwellState.value.status === 'loading')
 const stockDwellRows = computed<StockDwellRow[]>(() =>
   (stockDwellSummary.value?.rows ?? [])
-    .filter(row => row.bucketOver90Qty > 0)
+    .filter(row => row.bucketOver90Qty !== '0')
     .slice(0, 6),
 )
 const maxStockDwellOver90 = computed(() =>
-  Math.max(...stockDwellRows.value.map(row => row.bucketOver90Qty), 1),
+  stockDwellRows.value[0]?.bucketOver90Qty ?? '0',
 )
 
-function stockDwellPercent(qty: number) {
-  return Math.round((qty / maxStockDwellOver90.value) * 100)
+function stockDwellPercent(qty: string) {
+  return observationPercent(qty, maxStockDwellOver90.value) ?? 0
 }
 
 function loadStockDwell() {
@@ -565,6 +567,7 @@ let connection: ReturnType<typeof getConnection> | undefined
 // Existing client signals only; this is not a server permission/tenant version.
 function identitySnapshot() {
   return JSON.stringify([
+    identityStamp(),
     localStorage.getItem('cp6_authed'), localStorage.getItem('userName'),
     localStorage.getItem('menus'), localStorage.getItem('cp6_isPlatformAdmin'),
     platformStore.isPlatformAdmin, platformStore.impersonating,
@@ -609,6 +612,7 @@ function onOperLog() {
 
 onMounted(() => {
   dashboardReady.value = true
+  window.addEventListener(AUTH_EVENT, checkIdentity)
   window.addEventListener('storage', checkIdentity)
   window.addEventListener('focus', checkIdentity)
   window.addEventListener('cp6-menu-updated', checkIdentity)
@@ -635,6 +639,7 @@ onUnmounted(() => {
   unshippedLoader.dispose()
   stockDwellLoader.dispose()
   window.clearTimeout(noticeTimer)
+  window.removeEventListener(AUTH_EVENT, checkIdentity)
   window.removeEventListener('storage', checkIdentity)
   window.removeEventListener('focus', checkIdentity)
   window.removeEventListener('cp6-menu-updated', checkIdentity)

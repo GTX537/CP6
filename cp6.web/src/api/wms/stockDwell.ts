@@ -4,6 +4,6 @@ import type { StockDwellQuery, StockDwellSummary } from '@/types/wms/stockDwell'
 
 export const stockDwellApi = {
   summary(query: StockDwellQuery) {
-    return http.post<any, WmsApi<StockDwellSummary>>('/wms/stock-dwell/summary', query)
+    return http.post<any, WmsApi<StockDwellSummary>>('/wms/stock-dwell/observation-v1', query)
   },
 }

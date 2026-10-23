@@ -5,17 +5,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Wms;
 
-public class StockDwellService : IStockDwellService
+public partial class StockDwellService : IStockDwellService
 {
     private const string SelfGroupKey = "SELF";
     private readonly CP6Context _db;
 
-    public StockDwellService(CP6Context db)
+    private readonly CP6.Core.Services.Integration.OperationsOwnerV1? _owner;
+
+    public StockDwellService(CP6Context db, CP6.Core.Services.Integration.OperationsOwnerV1? owner = null)
     {
-        _db = db;
+        _db = db; _owner = owner;
     }
 
-    public async Task<StockDwellSummaryDto> GetSummaryAsync(StockDwellQuery query, CancellationToken ct = default)
+    private async Task<StockDwellSummaryDto> GetSummaryCoreAsync(StockDwellQuery query, CancellationToken ct = default)
     {
         query ??= new StockDwellQuery();
         var asOfDate = (query.AsOfDate ?? DateTime.Today).Date;

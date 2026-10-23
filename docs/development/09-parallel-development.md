@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W81库龄/效期Owner](dispatch/20261023-wave81/README.md)，本聊天单人，Issue464；W37–W80已finish，不重复。
+
 > 当前：[W80夹具因果链修订](dispatch/20261023-wave80/README.md)，本聊天单人；CRM PR120/Handoff已采用，协调收尾后继续WMS独立Owner与CRM公共基础。W37–W79不重复。
 
 > 当前：[W80夹具因果链修订](dispatch/20261023-wave80/README.md)，本聊天单人；W37–W79已finish，不重复。

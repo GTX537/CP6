@@ -106,11 +106,15 @@ export function parseUnshipped(value: unknown): UnshippedData {
 
 export function parseStockDwell(value: unknown): StockDwellSummary {
   const data = envelope(value)
-  requireValid(text(data.asOfDate) && (data.groupBy === 'product' || data.groupBy === 'customer')
-    && numbers(data, ['totalQty', 'totalValue', 'over90Qty', 'over90Value']))
+  const decimal = (v: unknown) => typeof v === 'string' && /^-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$/.test(v)
+  const reference = (v: unknown) => v === null || decimal(v)
+  requireValid(data.version === 'INVENTORY-OBSERVATION-OWNER/1' && text(data.asOfDate)
+    && (data.groupBy === 'product' || data.groupBy === 'customer')
+    && decimal(data.totalQty) && decimal(data.over90Qty) && reference(data.referenceValue) && reference(data.over90ReferenceValue)
+    && typeof data.referenceReadable === 'boolean' && typeof data.customerNameReadable === 'boolean'
+    && (data.missingPriceCount === null || numeric(data.missingPriceCount)) && data.valuationStatus === 'UNKNOWN' && data.currency === null)
   requireValid(Array.isArray(data.rows) && data.rows.every(row => record(row)
-    && text(row.groupKey) && text(row.groupLabel) && optionalText(row.oldestReceiveDate)
-    && numbers(row, ['totalQty', 'totalValue', 'bucket0To30Qty', 'bucket31To60Qty',
-      'bucket61To90Qty', 'bucketOver90Qty', 'oldestAgeDays'])))
+    && text(row.groupKey) && text(row.groupLabel) && optionalText(row.oldestReceiveDate) && numeric(row.oldestAgeDays)
+    && reference(row.referenceValue) && ['totalQty', 'bucket0To30Qty', 'bucket31To60Qty', 'bucket61To90Qty', 'bucketOver90Qty'].every(key => decimal(row[key]))))
   return data as unknown as StockDwellSummary
 }

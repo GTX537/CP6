@@ -656,3 +656,11 @@ CRM [PR120](https://github.com/GTX537/CP6.CRM/pull/120)已采用，source `2241b
 W51指定停止data删除曾被自动审批以blocked by policy拒绝，保留不重试。后继继续剩余WMS独立入口Owner和真实CRM公共基础。
 
 Handoff [PR56](https://github.com/GTX537/CP6.AI-Handoff/pull/56)已采用 `ce5783b5e078e4f9cbeb9b7eec7e120284ea6790`，准确分支删除、固定树干净detached、finish释放。Main协调PR/finish尚待本次收尾。登记开工至此约11.96min，原预算55–85min，最终以finish为准、子任务不重复累计；前置只读约4min。
+
+## 2026-10-23：W80全部收尾 / W81库龄与效期Owner
+
+W80 Main463/CRM120/Handoff56全部采用，Issue118关闭，14项相关用例通过，实际13.87min＋前置约4min；三准确分支删除、固定树干净detached、全部席位释放。[W81](../dispatch/20261023-wave81/README.md)修Issue464，预计60–90min，前置约3min；库龄/效期读Owner、精确参考观察与旧处置早期拒绝。正式DISP的Review/独立批准/准确Part与NCR/Finance最终门仍未采用，七天目标ACTIVE。
+
+## W81验证完成
+
+23独立.NET用例（17原生PostgreSQL＋6既有InMemory）及27Vue用例通过，无跳过；相关构建与最终vue-tsc类型检查通过。既有Dashboard库龄小组件直接消费改后的API/type，类型检查发现旧number处理；COORD同窗口扩展至该组件/解析器及两份相关测试，精确文本与epoch失效已验证，其余看板域不动。新版days0–365与旧有负天数/午夜过滤分别保真实合同，不把参考算术冒Finance估值。4个自有PG停止保留，进入两仓采用与同任务最终收尾，七天目标ACTIVE。
