@@ -1,5 +1,5 @@
 import http from '../http'
-import type { FieldAuditListItem, FieldAuditTimelineItem } from '@/types/sys/fieldAudit'
+import type { FieldAuditListItem, FieldAuditTimelinePage } from '@/types/sys/fieldAudit'
 
 // #4 字段级审计 T7：字段审计查询（需 sys-field-audit:query 权限，admin 已授）
 export const fieldAuditApi = {
@@ -20,13 +20,14 @@ export const fieldAuditApi = {
     }>
   },
 
-  // 单实体时间线（含完整 changes），返回 {rows}
+  // 当前 Owner 安全时间线；每一页都重新授权，游标不携带授权。
   getRecordTimeline(
     entityName: string,
-    entityKey: string
-  ): Promise<{ rows: FieldAuditTimelineItem[] }> {
+    entityKey: string,
+    afterId?: string
+  ): Promise<FieldAuditTimelinePage> {
     return http.get('/sys/field-audit/record', {
-      params: { entityName, entityKey }
-    }) as unknown as Promise<{ rows: FieldAuditTimelineItem[] }>
+      params: { entityName, entityKey, afterId, pageSize: 100 }
+    }) as unknown as Promise<FieldAuditTimelinePage>
   }
 }

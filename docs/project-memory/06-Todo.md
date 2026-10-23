@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-23：W64字段审计Owner候选通过
+
+Issue433原Changes旁路已由真实PG/HTTP红灯转绿；27项.NET相关用例与6项前端行为用例通过，无跳过；实际PostgreSQL/HTTP红灯已转绿，相关Main构建通过。[单份交付](../development/evidence/W64-01/DELIVERY.md)。首个Machine.Status/ActiveFlg当前Owner安全历史，未知实体关闭详情；原日志保留、两隔离PG已停止。待Main/Handoff采用与同任务最后状态收尾，分支与席位未提前释放。完整WP02-13/业务验收不提升，七天目标ACTIVE。
+
 ## 2026-10-23：W63配置内容规范化已采用
 
 CRM PR108/source `6c3feacec7a69243a25f6f5a78039922157990ad`已采用远端main `c7662eb196e72ddc8cab6d6c05490b6a310ca172`；12项本地相关用例通过，无跳过；相关API/Worker构建通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/c7662eb196e72ddc8cab6d6c05490b6a310ca172/docs/development/evidence/W63-01/DELIVERY.md)。原规范内容hash复现、精确数字/Unicode和原业务值分别保留；结果不授权/不激活，真实Owner与Bundle保存/公开表单待采用。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main协调PR/finish待收尾。七天目标ACTIVE，完整业务验收不提升。

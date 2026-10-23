@@ -34,6 +34,7 @@
       </div>
     </div>
 
+    <el-alert v-if="listError" :title="t(listError)" type="warning" :closable="false" />
     <el-table :data="tableData" v-loading="loading" stripe border style="width: 100%">
       <el-table-column prop="entityName" :label="t('sec.audit.entityName')" width="180" show-overflow-tooltip />
       <el-table-column prop="entityKey" :label="t('sec.audit.entityKey')" width="220" show-overflow-tooltip />
@@ -46,7 +47,9 @@
       </el-table-column>
       <el-table-column prop="userName" :label="t('sec.audit.operator')" width="140" />
       <el-table-column prop="changedAt" :label="t('sec.audit.changedAt')" width="180" :formatter="formatDateTimeCell" />
-      <el-table-column prop="changeCount" :label="t('sec.audit.changeCount')" width="120" align="center" />
+      <el-table-column prop="changeCount" :label="t('sec.audit.changeCount')" width="120" align="center">
+        <template #default="{ row }">{{ row.evidenceStatus === 'UNREADABLE' ? t('sec.audit.unreadable') : row.changeCount }}</template>
+      </el-table-column>
       <el-table-column :label="t('sec.audit.operation')" width="140" fixed="right">
         <template #default="{ row }">
           <el-button type="primary" link size="small" @click="openTimeline(row)">
@@ -80,6 +83,7 @@
           <span class="th-entity">{{ timelineHeader.entityName }}</span>
           <span class="th-key">{{ timelineHeader.entityKey }}</span>
         </div>
+        <el-alert v-if="timelineError" :title="t(timelineError)" type="warning" :closable="false" />
         <el-timeline v-if="timeline.length">
           <el-timeline-item
             v-for="item in timeline"
@@ -90,12 +94,13 @@
           >
             <div class="tl-row">
               <el-tag :type="opTagType(item.operation)" size="small">{{ opLabel(item.operation) }}</el-tag>
-              <span class="tl-operator">{{ item.userName }}</span>
             </div>
             <div class="tl-changes">
-              <template v-if="parseChanges(item.changes).length">
+              <span v-if="item.evidenceStatus === 'UNREADABLE'" class="tl-empty">{{ t('sec.audit.unreadable') }}</span>
+              <span v-else-if="item.evidenceStatus === 'RESTRICTED'" class="tl-empty">{{ t('sec.audit.restricted') }}</span>
+              <template v-if="item.changes.length">
                 <div
-                  v-for="(c, idx) in parseChanges(item.changes)"
+                  v-for="(c, idx) in item.changes"
                   :key="idx"
                   class="tl-change"
                 >
@@ -107,28 +112,28 @@
                   </div>
                 </div>
               </template>
-              <span v-else class="tl-empty">{{ t('sec.audit.noChanges') }}</span>
+              <span v-else-if="item.evidenceStatus === 'READABLE'" class="tl-empty">{{ t('sec.audit.noChanges') }}</span>
             </div>
           </el-timeline-item>
         </el-timeline>
-        <el-empty v-else-if="!timelineLoading" :description="t('sec.audit.noChanges')" />
+        <el-empty v-else-if="!timelineLoading && !timelineError" :description="t('sec.audit.noChanges')" />
+        <el-button v-if="nextCursor" :loading="timelineLoading" @click="loadMore">{{ t('sec.audit.loadMore') }}</el-button>
       </div>
     </el-drawer>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Search } from '@element-plus/icons-vue'
 import { fieldAuditApi } from '@/api/sys/fieldAudit'
 import { formatDateTime, formatDateTimeCell } from '@/utils/format'
+import { AUTH_EVENT, identityStamp } from '@/auth/identity'
 import {
   Operation,
   type FieldAuditListItem,
-  type FieldAuditTimelineItem,
-  type FieldChange,
-  type RawFieldChange
+  type FieldAuditTimelineItem
 } from '@/types/sys/fieldAudit'
 
 const { t } = useI18n()
@@ -138,6 +143,8 @@ const total = ref(0)
 const page = ref(1)
 const pageSize = ref(20)
 const loading = ref(false)
+const listError = ref('')
+let listGeneration = 0, timelineGeneration = 0, alive = true
 
 const filter = reactive<{ entityName: string; userId: string }>({
   entityName: '',
@@ -189,6 +196,9 @@ function opTimelineColor(op: Operation): 'primary' | 'success' | 'warning' | 'da
 }
 
 async function loadData() {
+  const request = ++listGeneration, stamp = identityStamp()
+  const current = () => alive && request === listGeneration && stamp === identityStamp()
+  tableData.value = []; total.value = 0; listError.value = ''
   loading.value = true
   try {
     const res = await fieldAuditApi.getList({
@@ -199,10 +209,16 @@ async function loadData() {
       page: page.value,
       pageSize: pageSize.value
     })
+    if (!current()) return
     tableData.value = res.rows
     total.value = res.total
+  } catch {
+    if (current()) {
+      listError.value = 'sec.audit.unavailable'
+      clearTimeline()
+    }
   } finally {
-    loading.value = false
+    if (current()) loading.value = false
   }
 }
 
@@ -216,34 +232,63 @@ const drawerVisible = ref(false)
 const timelineLoading = ref(false)
 const timeline = ref<FieldAuditTimelineItem[]>([])
 const timelineHeader = ref<{ entityName: string; entityKey: string } | null>(null)
+const timelineError = ref('')
+const nextCursor = ref<string | null>(null)
+
+function clearTimeline() {
+  timelineGeneration++; timeline.value = []; timelineError.value = ''; nextCursor.value = null
+  timelineHeader.value = null; drawerVisible.value = false; timelineLoading.value = false
+}
 
 async function openTimeline(row: FieldAuditListItem) {
+  clearTimeline()
   timelineHeader.value = { entityName: row.entityName, entityKey: row.entityKey }
-  timeline.value = []
   drawerVisible.value = true
+  await readTimeline()
+}
+
+async function loadMore() {
+  if (!nextCursor.value || timelineLoading.value) return
+  await readTimeline(nextCursor.value)
+}
+
+async function readTimeline(afterId?: string) {
+  const header = timelineHeader.value
+  if (!header) return
+  const request = ++timelineGeneration, stamp = identityStamp()
+  const current = () => alive && request === timelineGeneration && stamp === identityStamp()
+  timelineError.value = ''
   timelineLoading.value = true
   try {
-    const res = await fieldAuditApi.getRecordTimeline(row.entityName, row.entityKey)
-    // 按 changedAt 正序（时间线回放：旧→新）
-    timeline.value = [...res.rows].sort(
-      (a, b) => new Date(a.changedAt).getTime() - new Date(b.changedAt).getTime()
-    )
+    const res = await fieldAuditApi.getRecordTimeline(header.entityName, header.entityKey, afterId)
+    if (!current()) return
+    // An older raw-JSON server response must never revive the unsafe rendering path.
+    if (res.projectionVersion !== 'Main.FieldAudit.Machine.Status.v1' || !Array.isArray(res.rows)
+      || res.rows.some(item => !Array.isArray(item.changes)
+        || !['READABLE', 'RESTRICTED', 'UNREADABLE'].includes(item.evidenceStatus))) throw new Error('Unavailable projection')
+    const previous = afterId ? timeline.value : []
+    const ids = new Set(previous.map(item => item.id))
+    timeline.value = [...previous, ...res.rows.filter(item => !ids.has(item.id))]
+    nextCursor.value = res.nextCursor
+  } catch {
+    if (current()) { timeline.value = []; nextCursor.value = null; timelineError.value = 'sec.audit.unavailable' }
   } finally {
-    timelineLoading.value = false
+    if (current()) timelineLoading.value = false
   }
 }
 
-// 防御性解析 changes JSON 串（后端 System.Text.Json → PascalCase Field/Old/New），归一化为小写 field/old/new
-function parseChanges(raw: string): FieldChange[] {
-  if (!raw) return []
-  try {
-    const arr = JSON.parse(raw) as RawFieldChange[]
-    if (!Array.isArray(arr)) return []
-    return arr.map((c) => ({ field: c.Field, old: c.Old, new: c.New }))
-  } catch {
-    return []
-  }
+let identity = identityStamp()
+function identityChanged() {
+  if (identity === identityStamp()) return
+  identity = identityStamp(); listGeneration++; tableData.value = []; total.value = 0
+  loading.value = false; listError.value = ''; clearTimeline()
 }
+window.addEventListener(AUTH_EVENT, identityChanged)
+window.addEventListener('storage', identityChanged)
+onBeforeUnmount(() => {
+  alive = false; listGeneration++; clearTimeline()
+  window.removeEventListener(AUTH_EVENT, identityChanged); window.removeEventListener('storage', identityChanged)
+})
 
 // 空/null 值显示占位
 function formatVal(v: string | null): string {

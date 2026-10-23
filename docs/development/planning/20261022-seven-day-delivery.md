@@ -388,3 +388,11 @@ CRM [PR108](https://github.com/GTX537/CP6.CRM/pull/108)已采用，source `6c3fe
 完整24/375整卡、125目标0交付、247运行NOT_RUN不提升。七天目标ACTIVE，继续真实Owner前置和D6完整保存/公开表单必要基础。W51准确data删除此前自动审批拒绝，原因仅“blocked by policy”；停止保留，无重试绕过。
 
 Handoff [PR39](https://github.com/GTX537/CP6.AI-Handoff/pull/39)已采用 `57384c98558196d1ffab1c21829bb5e1fe75a847`，准确分支删除、固定树干净detached、finish释放。Main仅剩协调PR/finish，不提前声明释放。登记开工至此约17.81min，原预算35–55min，最终以finish为准、子任务不重复累计；前置只读核对约4min。
+
+## 2026-10-23：W63已收尾 / W64字段审计Owner
+
+W63 Main432/CRM108/Handoff39全部采用，实际20.18min、前置约4min；准确分支删除、固定树干净detached、全部席位释放。[W64](../dispatch/20261023-wave64/README.md)优先修Issue433历史原文旁路，首个Machine状态历史当前Owner映射，预计60–90min；完整WP02-13及询盘前置不提升。七天目标ACTIVE。
+
+## W64验证完成
+
+27项.NET相关用例与6项前端行为用例通过，无跳过；实际PostgreSQL/HTTP红灯已转绿，相关Main构建通过；[单份产品报告](../evidence/W64-01/DELIVERY.md)。原问题实际HTTP红灯保留。两个隔离PG停止、数据保留；进入Main/Handoff采用与准确分支/席位收尾。七天目标ACTIVE。
