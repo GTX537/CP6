@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-23：W51 CRM PostgreSQL会话基础已合并
+
+CRM PR96/source `83017508cb2c4a702ab8f5fb3bb62d73d12c96af`已采用远端main `48be253dfe3c4b451a9be7eaf9b7ef5f1199086a`；14项相关PG/.NET通过，一次作者审查完成。[单份交付](https://github.com/GTX537/CP6.CRM/blob/48be253dfe3c4b451a9be7eaf9b7ef5f1199086a/docs/development/evidence/W51-01/DELIVERY.md)详列原生CAS/撤权共同事务和剩余身份门。现有Program尚未切PG；完整卡/125目标/247运行不提升。自有PG已停止，测试data 76,150,437字节因自动审批拒绝准确删除而保留，无绕过。CRM PR96与Handoff PR27均已完成准确分支删除、工作区干净detached和finish释放；Main本协调分支最后合并/finish后继续D5，七天目标ACTIVE。
+
 ## 2026-10-23：W50库存Outbox与可信刷新投递已采用
 
 产品[PR](https://github.com/GTX537/CP6/pull/416)及[Handoff](https://github.com/GTX537/CP6.AI-Handoff/pull/26)采用，source`68a0ecaad7c900ddb1beea591738b6a14457c9be`、远端main`e084e873c7a80dd9023d2f3bce137ecd2554b799`，24任务文件blob一致；Handoff source`bab3da6d4cb12b1f717781ea6200301058f7640e`、目标`9a1c8a0d9a101db87baece381e25e5ef996acb93`，准确分支删除/DEV-2释放。
