@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-23：W50库存Outbox与可信刷新投递候选已验证
+
+库存原操作同事务Outbox、私有受信后台及原编号恢复已验证；22项去重相关.NET/真实PostgreSQL通过，含实际Program/登录/HTTP/WebSocket、共同事务与原编号恢复；无前端改动，未重复前端或全仓验证。真实UNKNOWN保留，SignalR确认不等于客户端ACK/Finance。产品PR/Handoff及准确分支/席位finish待执行。
+
+[DELIVERY](../development/evidence/WP02-10/stock-outbox/DELIVERY.md)。七天目标ACTIVE；完整业务验收/整卡/125目标/247运行不提升。
+
 ## 2026-10-22：W49计划/达成率Owner已采用
 
 产品[PR](https://github.com/GTX537/CP6/pull/414)及[Handoff](https://github.com/GTX537/CP6.AI-Handoff/pull/25)采用，source`d5e8fb07231cdbd5016cb028dd9ea6bab34fec51`、远端main`6cc3c5e3d205b43eded0e398ef673a3a29f5b5b6`，32任务文件blob一致；Handoff source`2ec59c822c266115bc26a50d0463374170133fc4`、目标`942eac113b9c456e37c0fea7ca4137b07eb8f80d`，准确分支删除/DEV-2释放。

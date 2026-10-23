@@ -69,6 +69,7 @@ public partial class StockMovementService : IStockOriginalOperationsV1
             var saved=new StoredStockResult(changed.result,stocks.Select(s=>s.Id).ToArray(),effects.Select(s=>s.Id).ToArray());
             await journal.Store(OperationOwner,OperationContract,operation,a.ActorId,input,saved,saved.StockIds,
                 new {actor=a.ActorId,action,before=changed.before,after=stocks,transactions=effects},t);
+            await Integration.StockOutbox.StockOutboxEnqueueV1.Enqueue(_db,operation,t);
             return changed.result;
         },ct,actionAtFence:async t=>
         {

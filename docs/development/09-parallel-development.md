@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W50库存原操作Outbox](dispatch/20261022-wave50/README.md)，本聊天单人；W37–W49已实际finish，不重复。
+
 > 当前：[W49计划/达成率Owner](dispatch/20261022-wave49/README.md)，本聊天单人；W37–W48已实际finish，不重复。
 
 > 当前：[W48 OEE独立Owner](dispatch/20261022-wave48/README.md)，本聊天单人；W37–W47已实际finish，不重复。
