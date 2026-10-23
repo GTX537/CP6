@@ -1,16 +1,18 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Core.Services.Wms;
 
-public class ReplenishService : IReplenishService
+public partial class ReplenishService : IReplenishService
 {
     private readonly CP6Context _db;
     private readonly IWmsSequenceService _seq;
     private readonly IMobileTaskV2Service _tasks;
     private readonly IWmsAccessScopeProvider _accessScopes;
+    private readonly OperationsOwnerV1? _owner;
     private const string Prefix = "RPL";
     private const string ForwardPrefix = "PIK-";   // ピッキング棚
     private const string ReservePrefix = "RES-";   // 保管棚
@@ -19,33 +21,35 @@ public class ReplenishService : IReplenishService
         CP6Context db,
         IWmsSequenceService seq,
         IMobileTaskV2Service tasks,
-        IWmsAccessScopeProvider accessScopes)
+        IWmsAccessScopeProvider accessScopes,
+        OperationsOwnerV1? owner = null)
     {
         _db = db;
         _seq = seq;
         _tasks = tasks;
         _accessScopes = accessScopes;
+        _owner = owner;
     }
 
-    public async Task<List<ReplenishOrder>> SearchAsync(ReplenishSearchQuery q)
+    private async Task<List<ReplenishOrder>> SearchCoreAsync(ReplenishSearchQuery q, IQueryable<ReplenishOrder>? allowed = null, CancellationToken ct = default)
     {
         q.Page = Math.Max(1, q.Page);
         q.PageSize = Math.Clamp(q.PageSize, 1, 500);
-        var query = await ScopedOrdersAsync(tracking: false);
+        var query = allowed ?? await ScopedOrdersAsync(tracking: false);
         if (!string.IsNullOrWhiteSpace(q.ReplenishNo)) query = query.Where(x => x.ReplenishNo.Contains(q.ReplenishNo));
         if (!string.IsNullOrWhiteSpace(q.ProductCd)) query = query.Where(x => x.ProductCd == q.ProductCd);
         if (!string.IsNullOrWhiteSpace(q.WarehouseCd)) query = query.Where(x => x.WarehouseCd == q.WarehouseCd);
         if (q.Status.HasValue) query = query.Where(x => x.Status == q.Status.Value);
         if (q.Priority.HasValue) query = query.Where(x => x.Priority == q.Priority.Value);
-        return await query.OrderBy(x => x.Priority).ThenByDescending(x => x.CreateDate)
-            .Skip((q.Page - 1) * q.PageSize).Take(q.PageSize).ToListAsync();
+        return await query.OrderBy(x => x.Priority).ThenByDescending(x => x.CreateDate).ThenBy(x => x.Id)
+            .Skip((q.Page - 1) * q.PageSize).Take(q.PageSize).ToListAsync(ct);
     }
 
-    public async Task<ReplenishOrder?> GetAsync(string replenishNo)
-        => await (await ScopedOrdersAsync(tracking: false))
-            .FirstOrDefaultAsync(x => x.ReplenishNo == replenishNo);
+    private async Task<ReplenishOrder?> GetCoreAsync(string replenishNo, IQueryable<ReplenishOrder>? allowed = null, CancellationToken ct = default)
+        => await (allowed ?? await ScopedOrdersAsync(tracking: false))
+            .FirstOrDefaultAsync(x => x.ReplenishNo == replenishNo, ct);
 
-    public async Task<string> CreateAsync(ReplenishOrderDto dto, string? userName)
+    private async Task<string> CreateCoreAsync(ReplenishOrderDto dto, string? userName)
     {
         Validate(dto);
         await EnsureTargetAccessAsync(
@@ -64,7 +68,7 @@ public class ReplenishService : IReplenishService
         return no;
     }
 
-    public async Task UpdateAsync(
+    private async Task UpdateCoreAsync(
         string replenishNo,
         ReplenishOrderDto dto,
         string? userName)
@@ -122,7 +126,7 @@ public class ReplenishService : IReplenishService
         }
     }
 
-    public async Task<int> GenerateBatchAsync(string warehouseCd, decimal minQty, string? userName)
+    private async Task<int> GenerateBatchCoreAsync(string warehouseCd, decimal minQty, string? userName)
     {
         if (string.IsNullOrWhiteSpace(warehouseCd))
             throw new InvalidOperationException("warehouseCd required");
@@ -197,7 +201,7 @@ public class ReplenishService : IReplenishService
         return created;
     }
 
-    public async Task<string> ExecuteAsync(
+    private async Task<string> ExecuteCoreAsync(
         string replenishNo,
         string? userName)
     {
@@ -240,7 +244,7 @@ public class ReplenishService : IReplenishService
         }
     }
 
-    public async Task CancelAsync(string replenishNo, string? userName)
+    private async Task CancelCoreAsync(string replenishNo, string? userName)
     {
         await using var tx = await BeginTransactionAsync();
         try

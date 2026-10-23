@@ -8,11 +8,19 @@
 <template>
   <CpPageShell :title="t('wms.replenish.title')" :count="total">
     <template #actions>
-      <el-button @click="openCreate">{{ t('wms.common.create') }}</el-button>
-      <el-button type="warning" @click="batchDialog = true">{{ t('wms.replenish.btn.genBatch') }}</el-button>
+      <el-button @click="onReload">{{ t('刷新') }}</el-button>
+      <el-button v-permission="'wms-replenish:add'" :disabled="!canWrite('add')" @click="openCreate">{{ t('wms.common.create') }}</el-button>
+      <el-button v-permission="'wms-replenish:generate'" :disabled="!canWrite('generate')" type="warning" @click="openBatch">{{ t('wms.replenish.btn.genBatch') }}</el-button>
     </template>
 
+    <el-alert v-if="!writesAvailable" :title="t('补充指示暂只支持查询，生成和派发功能尚未开通。')" type="info" :closable="false" show-icon />
+    <el-alert v-if="readError || intent.error.value" :title="readError || intent.error.value" type="warning" :closable="false" show-icon />
+    <p>{{ t('最多显示500条，更多记录请缩小查询范围。') }}</p>
     <CpListPage
+      :key="listEpoch"
+      :lazy="reloadRequired"
+      :clear-on-load="true"
+      :empty-text="readError || undefined"
       ref="listRef"
       :columns="columns"
       :fetch="fetchList"
@@ -21,10 +29,10 @@
       @total-change="total = $event"
     >
       <template #col-_action="{ row }">
-        <template v-if="row.status === 0 || row.status === 2">
+        <template v-if="writesAvailable && (row.status === 0 || row.status === 2)">
           <el-button v-permission="'wms-replenish:add'" link type="primary" size="small" @click="openEdit(row)">{{ t('wms.common.edit') }}</el-button>
           <el-button v-if="row.status === 0" v-permission="'wms-replenish:execute'" link type="success" size="small" @click="onExecute(row)">{{ t('wms.kit.btn.execute') }}</el-button>
-          <el-button link type="danger" size="small" @click="onCancel(row)">{{ t('wms.outbound.btn.cancel') }}</el-button>
+          <el-button v-permission="'wms-replenish:cancel'" link type="danger" size="small" @click="onCancel(row)">{{ t('wms.outbound.btn.cancel') }}</el-button>
         </template>
         <span v-else class="cp-dash">—</span>
       </template>
@@ -101,19 +109,31 @@ import { type Tone } from '@/components/base/CpTag.vue'
 import { replenishApi } from '@/api/wms/logistics'
 import type { ReplenishOrder, ReplenishSearchQuery } from '@/types/wms/wms'
 import { formatQty } from '@/utils/format'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
+import { usePermissionStore } from '@/stores/permission'
 
 const { t } = useI18n()
 
 // —— 头部计数 pill ——
 const total = ref<number>()
 const listRef = ref<ListPageExpose>()
-function onReload() { listRef.value?.reload() }
+const writesAvailable = ref(false), readError = ref(''), listEpoch = ref(0), reloadRequired = ref(false)
+let readSequence = 0
+const permission = usePermissionStore()
+const intent = useOperationsIntent(() => {
+  readSequence++; clearForms(); writesAvailable.value = false; total.value = undefined; readError.value = ''
+  reloadRequired.value = true; listEpoch.value++
+})
+const allowed = (action: string) => permission.loaded && permission.has(`wms-replenish:${action}`)
+const writable = (action: string) => writesAvailable.value && allowed(action) && !intent.uncertain.value
+const canWrite = (action: string) => writable(action) && !intent.busy.value
+function onReload() { reloadRequired.value = false; listRef.value?.reload() }
 
 // —— 码值映射（i18n 反应式） ——
 const statusMap = computed<Record<number, string>>(() => ({
   0: t('wms.replenish.status.pending'),
-  1: t('wms.replenish.status.executed'),
-  2: t('wms.outbound.status.allocated'),
+  1: t('旧记录报告完成'),
+  2: t('已派发任务'),
   9: t('wms.replenish.status.cancelled'),
 }))
 const priorityMap = computed<Record<number, string>>(() => ({
@@ -170,16 +190,32 @@ const searchFields = computed<FilterField[]>(() => [
 // —— 取数：包装 replenishApi.search；扁平数组无 total → 客户端分页 ——
 const PAGE_CAP = 500
 const fetchList: ListFetch<ReplenishOrder> = async ({ page, size, filters }) => {
+  const token = intent.capture(), sequence = ++readSequence
+  clearForms(); writesAvailable.value = false; total.value = undefined; readError.value = ''
   const f = filters as Record<string, unknown>
   const q: ReplenishSearchQuery = { pageSize: PAGE_CAP }
   if (f.replenishNo) q.replenishNo = String(f.replenishNo)
   if (f.productCd) q.productCd = String(f.productCd)
   if (f.warehouseCd) q.warehouseCd = String(f.warehouseCd)
   if (f.status !== undefined && f.status !== '') q.status = Number(f.status)
-  const res = await replenishApi.search(q)
-  const all = res.data || []
-  const start = (page - 1) * size
-  return { rows: all.slice(start, start + size), total: all.length }
+  try {
+    if (!allowed('query')) throw new Error('Missing query permission')
+    const capabilities = await replenishApi.capabilities()
+    if (!intent.current(token) || sequence !== readSequence) throw new Error('Stale read')
+    if (capabilities.code !== 0 || typeof capabilities.data?.writesAvailable !== 'boolean') throw new Error('Unavailable capabilities')
+    const res = await replenishApi.search(q)
+    if (!intent.current(token) || sequence !== readSequence || !allowed('query')) throw new Error('Stale read')
+    if (res.code !== 0 || !Array.isArray(res.data)) throw new Error('Unavailable list')
+    writesAvailable.value = capabilities.data.writesAvailable && capabilities.data.status === 'LEGACY'
+    const start = (page - 1) * size
+    return { rows: res.data.slice(start, start + size), total: res.data.length }
+  } catch {
+    if (intent.current(token) && sequence === readSequence) {
+      clearForms(); writesAvailable.value = false; total.value = undefined
+      readError.value = t('补充指示未能读取，请刷新重试。')
+    }
+    throw new Error(t('补充指示未能读取，请刷新重试。'))
+  }
 }
 
 // —— 新規作成弹窗 ——
@@ -197,12 +233,14 @@ const createRules = computed<FormRules>(() => ({
   qty: [{ required: true, message: t('wms.common.required'), trigger: 'change' }],
 }))
 function openCreate() {
+  if (!canWrite('add')) return
   editingNo.value = undefined
   editingRow.value = undefined
   Object.assign(createForm, { priority: 2, productCd: '', warehouseCd: '', fromLocationCd: '', toLocationCd: '', lotNo: '', qty: 0 })
   dialogVisible.value = true
 }
 function openEdit(row: ReplenishOrder) {
+  if (!canWrite('add')) return
   editingNo.value = row.replenishNo
   editingRow.value = row
   Object.assign(createForm, {
@@ -217,16 +255,16 @@ function openEdit(row: ReplenishOrder) {
   dialogVisible.value = true
 }
 async function submitCreate() {
+  if (!canWrite('add')) throw new Error(t('补充指示暂只支持查询，生成和派发功能尚未开通。'))
   const dto: ReplenishOrder = editingRow.value
     ? { ...editingRow.value, ...createForm }
     : { ...createForm, triggerType: 'MANUAL', status: 0 }
-  if (editingNo.value) {
-    await replenishApi.update(editingNo.value, dto)
-    ElMessage.success(t('wms.common.success'))
-    return
-  }
-  const res = await replenishApi.create(dto)
-  ElMessage.success(`${t('wms.common.success')}: ${res.data.replenishNo}`)
+  const body: ReplenishOrder = JSON.parse(JSON.stringify(dto)), no = editingNo.value
+  if (no) return formWrite('add', () => replenishApi.update(no, body), () => ElMessage.success(t('wms.common.success')))
+  return formWrite('add', () => replenishApi.create(body), res => {
+    if (!res.data?.replenishNo) throw new Error('Unavailable result')
+    ElMessage.success(`${t('wms.common.success')}: ${res.data.replenishNo}`)
+  })
 }
 
 // —— バッチ生成弹窗 ——
@@ -236,26 +274,63 @@ const batchRules = computed<FormRules>(() => ({
   warehouseCd: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
 }))
 async function submitBatch() {
-  const res = await replenishApi.generateBatch(batchForm.warehouseCd, batchForm.minQty)
-  ElMessage.success(t('wms.replenish.msg.batchGen', { n: res.data.generated }))
+  const warehouse = batchForm.warehouseCd, quantity = batchForm.minQty
+  return formWrite('generate', () => replenishApi.generateBatch(warehouse, quantity), res => {
+    if (!Number.isInteger(res.data?.generated) || res.data.generated < 0) throw new Error('Unavailable result')
+    ElMessage.success(t('wms.replenish.msg.batchGen', { n: res.data.generated }))
+  })
+}
+
+function openBatch() { if (canWrite('generate')) batchDialog.value = true }
+function clearForms() {
+  dialogVisible.value = false; batchDialog.value = false; editingNo.value = undefined; editingRow.value = undefined
+  Object.assign(createForm, { priority: 2, productCd: '', warehouseCd: '', fromLocationCd: '', toLocationCd: '', lotNo: '', qty: 0 })
+  Object.assign(batchForm, { warehouseCd: '', minQty: 10 })
+}
+async function formWrite<T extends { code: number }>(action: string, send: () => Promise<T>, success: (result: T) => void) {
+  if (!canWrite(action)) throw new Error(t('补充指示暂只支持查询，生成和派发功能尚未开通。'))
+  const token = intent.begin()
+  if (!token) throw new Error('Operation unavailable')
+  try {
+    if (!intent.current(token) || !writable(action)) throw new Error('Operation unavailable')
+    const result = await send()
+    if (!intent.current(token)) throw new Error('Identity changed')
+    if (result.code !== 0) throw new Error('Unavailable result')
+    success(result)
+  } catch (error) { intent.failed(token, error); throw error }
+  finally { intent.finish(token) }
 }
 
 // —— 行操作 ——
 async function onExecute(row: ReplenishOrder) {
+  if (!canWrite('execute') || row.status !== 0 || !row.replenishNo) return
+  const no = row.replenishNo, token = intent.begin()
+  if (!token) return
   try {
     await ElMessageBox.confirm(t('wms.replenish.msg.executeAsk'), t('wms.common.confirm'), { type: 'warning' })
-    const res = await replenishApi.execute(row.replenishNo!)
+    if (!intent.current(token) || !writable('execute')) return
+    const res = await replenishApi.execute(no)
+    if (!intent.current(token)) return
+    if (res.code !== 0 || !res.data?.taskNo) throw new Error('Unavailable result')
     ElMessage.success(`${t('wms.common.success')}: ${res.data.taskNo}`)
     onReload()
-  } catch { /* */ }
+  } catch (error) { intent.failed(token, error) }
+  finally { intent.finish(token) }
 }
 async function onCancel(row: ReplenishOrder) {
+  if (!canWrite('cancel') || (row.status !== 0 && row.status !== 2) || !row.replenishNo) return
+  const no = row.replenishNo, token = intent.begin()
+  if (!token) return
   try {
     await ElMessageBox.confirm(t('wms.inbound.msg.cancelAsk'), t('wms.common.confirm'), { type: 'warning' })
-    await replenishApi.cancel(row.replenishNo!)
+    if (!intent.current(token) || !writable('cancel')) return
+    const res = await replenishApi.cancel(no)
+    if (!intent.current(token)) return
+    if (res.code !== 0) throw new Error('Unavailable result')
     ElMessage.success(t('wms.common.success'))
     onReload()
-  } catch { /* */ }
+  } catch (error) { intent.failed(token, error) }
+  finally { intent.finish(token) }
 }
 </script>
 

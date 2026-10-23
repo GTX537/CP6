@@ -1,5 +1,7 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
+using CP6.Core.Services.Erp;
+using CP6.WebApi.Controllers.Erp;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +11,7 @@ namespace CP6.WebApi.Controllers.Wms;
 [ApiController]
 [Route("api/wms/replenish")]
 [Authorize]
+[OrderOwnerResult]
 public class ReplenishController : ControllerBase
 {
     private readonly IReplenishService _svc;
@@ -16,10 +19,12 @@ public class ReplenishController : ControllerBase
     private string? CurrentUser => User?.Identity?.Name;
 
     [HttpGet]
+    [RequirePermission("wms-replenish", "query")]
     public async Task<IActionResult> Search([FromQuery] ReplenishSearchQuery q)
         => Ok(new { code = 0, message = "OK", data = await _svc.SearchAsync(q) });
 
     [HttpGet("{no}")]
+    [RequirePermission("wms-replenish", "query")]
     public async Task<IActionResult> Get(string no)
     {
         var o = await _svc.GetAsync(no);
@@ -41,7 +46,7 @@ public class ReplenishController : ControllerBase
             return StatusCode(StatusCodes.Status403Forbidden,
                 new { code = ex.Message, message = ex.Message });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPut("{no}")]
@@ -64,7 +69,7 @@ public class ReplenishController : ControllerBase
         {
             return Conflict(new { code = ex.Code, message = ex.Code });
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException)
         {
             return BadRequest(new { code = 400, message = ex.Message });
         }
@@ -85,7 +90,7 @@ public class ReplenishController : ControllerBase
             return StatusCode(StatusCodes.Status403Forbidden,
                 new { code = ex.Message, message = ex.Message });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/execute")]
@@ -112,7 +117,7 @@ public class ReplenishController : ControllerBase
             return Conflict(new { code = ex.Code, message = ex.Code });
         }
         catch (InsufficientStockException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/cancel")]
@@ -129,8 +134,13 @@ public class ReplenishController : ControllerBase
         {
             return Conflict(new { code = ex.Code, message = ex.Code });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
+
+    [HttpGet("capabilities")]
+    [RequirePermission("wms-replenish", "query")]
+    public async Task<IActionResult> Capabilities() =>
+        Ok(new { code = 0, message = "OK", data = await _svc.GetCapabilitiesAsync() });
 
     public class GenerateBatchRequest
     {
