@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-23：W61配置草稿与PG日历绑定已采用
+
+CRM PR106/source `7f7b168864b6b07bb5181e0a0987f39cebb7053a`已采用远端main `42a40ed606c5f457b89fed5feec01274b9799158`；19项去重相关行为及必要编译通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/42a40ed606c5f457b89fed5feec01274b9799158/docs/development/evidence/W61-01/DELIVERY.md)。原配置完整冻结、告知摘要和实际PG日历内容匹配采用；结果不授权/不激活，真实Owner/Bundle保存/公开表单仍待采用。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main当前协调PR/finish待收尾。七天目标ACTIVE，完整业务验收不提升。
+
 ## 2026-10-23：W60不可变日历PG快照已采用
 
 CRM PR105/source `2df15fbb46290b1f5f06c80e52251aca6eee746b`已采用远端main `8be1a856b50aaa68a733b8ca47df1ecd25fbc8a9`；92项相关本地用例及必要编译通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/8be1a856b50aaa68a733b8ca47df1ecd25fbc8a9/docs/development/evidence/W60-01/DELIVERY.md)。原日历身份约束、100ns无损存储、原生不可变守卫和事务采用；真实Owner/激活/公开表单仍待采用。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main当前协调PR/finish待收尾。七天目标ACTIVE，完整业务验收不提升。

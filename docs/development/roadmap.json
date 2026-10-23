@@ -159632,6 +159632,16 @@
       "date": "2026-10-23",
       "change": "W60 CRM PR105 adopted native immutable calendar snapshots, original identity constraints and 100ns facts; 92 related local cases passed. Owner/publication activation remain pending; continuous goal active.",
       "evidence": "https://github.com/GTX537/CP6.CRM/blob/8be1a856b50aaa68a733b8ca47df1ecd25fbc8a9/docs/development/evidence/W60-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "W60 lifecycle complete; W61 admitted exact configuration draft freezing and persisted calendar binding. Full Owner, Bundle persistence and activation remain pending; continuous goal ACTIVE.",
+      "evidence": "docs/development/dispatch/20261023-wave61/README.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "W61 CRM PR106 adopted exact original configuration capture and real persisted calendar content binding; 19 distinct related cases passed. Owner/Bundle write/activation remain pending; continuous goal active.",
+      "evidence": "https://github.com/GTX537/CP6.CRM/blob/42a40ed606c5f457b89fed5feec01274b9799158/docs/development/evidence/W61-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -169801,32 +169811,31 @@
       "card_anchor": "wp03-01",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W60-01",
+        "chat_label": "COORD / W61-01",
         "repository": "CRM",
         "owning_task_repository": "CRM",
-        "branch": "codex/w60-01",
+        "branch": "codex/w61-01",
         "worktree": "D:\\CP6-worktrees\\dev-2",
-        "claimed_at": "2026-10-23T09:15:15.079287+00:00",
-        "baseline_sha": "611e95cfc83928c192070c5b101f2c6b9f202183",
-        "entry_evidence": "docs/development/dispatch/20261023-wave60/README.md",
+        "claimed_at": "2026-10-23T09:47:10.348218+00:00",
+        "baseline_sha": "8be1a856b50aaa68a733b8ca47df1ecd25fbc8a9",
+        "entry_evidence": "docs/development/dispatch/20261023-wave61/README.md",
         "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
-        "dispatch_scope": "W60_01",
+        "dispatch_scope": "W61_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
         "actual_start_ref": {
-          "commit": "1e065d36f913c925ce3dce6345b641bad798070b",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T091515Z-wave60-start/MESSAGE.md",
-          "at": "2026-10-23T09:15:15.079287+00:00"
+          "commit": "b019233b00aeacc02ec0371555e77cb2d8843337",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T094710Z-wave61-start/MESSAGE.md",
+          "at": "2026-10-23T09:47:10.348218+00:00"
         },
         "reserved_write_resources": [
-          "CRM:calendar-postgresql-snapshots",
-          "CRM:dependency-configuration"
+          "CRM:inquiry-configuration-binding"
         ],
         "reserved_postgresql_ports": [
           55437
         ],
-        "handoff_branch": "codex/w60-handoff",
+        "handoff_branch": "codex/w61-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
@@ -169835,16 +169844,16 @@
         "candidate_integrated": true,
         "resources_released": true,
         "full_task_completed": false,
-        "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/8be1a856b50aaa68a733b8ca47df1ecd25fbc8a9/docs/development/evidence/W60-01/DELIVERY.md",
-        "source_candidate_sha": "2df15fbb46290b1f5f06c80e52251aca6eee746b",
-        "remote_main_sha": "8be1a856b50aaa68a733b8ca47df1ecd25fbc8a9",
-        "pull_request": "https://github.com/GTX537/CP6.CRM/pull/105",
+        "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/42a40ed606c5f457b89fed5feec01274b9799158/docs/development/evidence/W61-01/DELIVERY.md",
+        "source_candidate_sha": "7f7b168864b6b07bb5181e0a0987f39cebb7053a",
+        "remote_main_sha": "42a40ed606c5f457b89fed5feec01274b9799158",
+        "pull_request": "https://github.com/GTX537/CP6.CRM/pull/106",
         "handoff_delivery_ref": {
-          "commit": "c5fefb10c77126f8cda944bf9178c7dd6306b142",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T093338Z-wave60-delivery/MESSAGE.md",
-          "at": "2026-10-23T09:33:38.805026+00:00",
+          "commit": "3d1ee7c3f1e806adbf8e03c8e763d34f135f3312",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T100426Z-wave61-delivery/MESSAGE.md",
+          "at": "2026-10-23T10:04:26.835156+00:00",
           "base": "codex/t02c-entry-handoff-20260921",
-          "branch": "codex/w60-handoff"
+          "branch": "codex/w61-handoff"
         }
       },
       "blockers": [],
@@ -169865,18 +169874,45 @@
         "source_candidate_sha": "2df15fbb46290b1f5f06c80e52251aca6eee746b",
         "remote_main_sha": "8be1a856b50aaa68a733b8ca47df1ecd25fbc8a9",
         "pull_request": "https://github.com/GTX537/CP6.CRM/pull/105",
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "lifecycle_snapshot": {
           "crm_branch_deleted": true,
           "crm_seat_released": true,
           "handoff_branch_deleted": true,
           "handoff_seat_released": true,
           "main_task": "CP6:W60-COORD",
-          "main_finish_required": true,
-          "main_seat_released": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave60-final-verification.json"
         },
-        "test_data_disposition": "Two owned PostgreSQL clusters stopped; data and logs retained; no existing database migrated"
+        "test_data_disposition": "Two owned PostgreSQL clusters stopped; data and logs retained; no existing database migrated",
+        "actual_agent_minutes": 36.31,
+        "final_main_sha": "3e9fcede0380952d844822af4681ea8b35ebf673",
+        "branches_deleted": true,
+        "seats_released": true
+      },
+      "wave61_delivery": {
+        "status": "MERGED",
+        "report": "https://github.com/GTX537/CP6.CRM/blob/42a40ed606c5f457b89fed5feec01274b9799158/docs/development/evidence/W61-01/DELIVERY.md",
+        "validation": "19项去重相关行为通过（7项局部最终、12项未受影响的本轮成功）；真实Owner/公开表单验收NOT_RUN，无Actions",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "adopted_scope": "Exact original configuration capture and persisted calendar content binding; no Bundle write or authority",
+        "source_candidate_sha": "7f7b168864b6b07bb5181e0a0987f39cebb7053a",
+        "remote_main_sha": "42a40ed606c5f457b89fed5feec01274b9799158",
+        "pull_request": "https://github.com/GTX537/CP6.CRM/pull/106",
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "crm_branch_deleted": true,
+          "crm_seat_released": true,
+          "handoff_branch_deleted": true,
+          "handoff_seat_released": true,
+          "main_task": "CP6:W61-COORD",
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave61-final-verification.json"
+        },
+        "test_data_disposition": "One owned PostgreSQL cluster stopped; data and logs retained; no existing database migrated"
       }
     },
     {
@@ -185680,10 +185716,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261023-wave60",
-      "path": "docs/development/dispatch/20261023-wave60/README.md",
-      "baseline_sha": "a31c4c180d8ac1101eb6102e6b7c7cedddc65d7a",
-      "registered_at": "2026-10-23T09:15:15.079287+00:00",
+      "id": "20261023-wave61",
+      "path": "docs/development/dispatch/20261023-wave61/README.md",
+      "baseline_sha": "3e9fcede0380952d844822af4681ea8b35ebf673",
+      "registered_at": "2026-10-23T09:47:10.348218+00:00",
       "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -185700,78 +185736,77 @@
       "product_integrated": true,
       "windows": [
         {
-          "id": "W60-01",
+          "id": "W61-01",
           "task_id": "WP03-01",
-          "title": "Native PostgreSQL immutable published calendar snapshot storage",
+          "title": "Exact configuration draft capture and persisted calendar binding",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "1e065d36f913c925ce3dce6345b641bad798070b",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T091515Z-wave60-start/MESSAGE.md",
-            "at": "2026-10-23T09:15:15.079287+00:00"
+            "commit": "b019233b00aeacc02ec0371555e77cb2d8843337",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T094710Z-wave61-start/MESSAGE.md",
+            "at": "2026-10-23T09:47:10.348218+00:00"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\dev-2",
-          "branch": "codex/w60-01",
-          "planned_scope_ref": "docs/development/dispatch/20261023-wave60/README.md",
+          "branch": "codex/w61-01",
+          "planned_scope_ref": "docs/development/dispatch/20261023-wave61/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/8be1a856b50aaa68a733b8ca47df1ecd25fbc8a9/docs/development/evidence/W60-01/DELIVERY.md",
-          "validation": "92项相关本地用例通过（31项真实PG、61项既有日历）；真实Owner/公开表单验收NOT_RUN，无Actions",
+          "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/42a40ed606c5f457b89fed5feec01274b9799158/docs/development/evidence/W61-01/DELIVERY.md",
+          "validation": "19项去重相关行为通过（7项局部最终、12项未受影响的本轮成功）；真实Owner/公开表单验收NOT_RUN，无Actions",
           "candidate_integrated": true,
           "integration": {
             "result": "PASS",
             "repository": "GTX537/CP6.CRM",
-            "source": "2df15fbb46290b1f5f06c80e52251aca6eee746b",
-            "main": "8be1a856b50aaa68a733b8ca47df1ecd25fbc8a9",
+            "source": "7f7b168864b6b07bb5181e0a0987f39cebb7053a",
+            "main": "42a40ed606c5f457b89fed5feec01274b9799158",
             "target": "main",
-            "pr": "https://github.com/GTX537/CP6.CRM/pull/105",
+            "pr": "https://github.com/GTX537/CP6.CRM/pull/106",
             "paths": [
               "CHANGELOG-AI.md",
-              "docs/development/evidence/W60-01/DELIVERY.md",
+              "docs/development/evidence/W61-01/DELIVERY.md",
               "docs/project-memory/05-Completed.md",
               "docs/project-memory/06-Todo.md",
               "docs/project-memory/PROJECT_STATE.md",
-              "src/CP6.CRM.Infrastructure/CP6.CRM.Infrastructure.csproj",
-              "src/CP6.CRM.Infrastructure/Persistence/PostgreSql/CalendarSnapshotSchemaV1.sql",
-              "src/CP6.CRM.Infrastructure/Persistence/PostgreSql/PostgreSqlCalendarSnapshotsV1.cs",
-              "tests/CP6.CRM.IdentityPostgreSqlTests/CalendarSnapshotTests.cs"
+              "src/CP6.CRM.Infrastructure/Inquiry/InquiryConfigurationDraftV1.cs",
+              "tests/CP6.CRM.IdentityPostgreSqlTests/CP6.CRM.IdentityPostgreSqlTests.csproj",
+              "tests/CP6.CRM.IdentityPostgreSqlTests/InquiryConfigurationBindingTests.cs"
             ],
-            "observed_at": "2026-10-23T09:31:34.281962+00:00"
+            "observed_at": "2026-10-23T10:00:48.452684+00:00"
           },
           "runtime_resources_released": true,
           "resources_released": true,
           "handoff_delivery_ref": {
-            "commit": "c5fefb10c77126f8cda944bf9178c7dd6306b142",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T093338Z-wave60-delivery/MESSAGE.md",
-            "at": "2026-10-23T09:33:38.805026+00:00",
+            "commit": "3d1ee7c3f1e806adbf8e03c8e763d34f135f3312",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T100426Z-wave61-delivery/MESSAGE.md",
+            "at": "2026-10-23T10:04:26.835156+00:00",
             "base": "codex/t02c-entry-handoff-20260921",
-            "branch": "codex/w60-handoff"
+            "branch": "codex/w61-handoff"
           },
           "lifecycle_snapshot": {
             "crm_branch_deleted": true,
             "crm_seat_released": true,
             "handoff_branch_deleted": true,
             "handoff_seat_released": true,
-            "main_task": "CP6:W60-COORD",
+            "main_task": "CP6:W61-COORD",
             "main_finish_required": true,
             "main_seat_released": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave60-final-verification.json"
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave61-final-verification.json"
           }
         }
       ],
       "horizon": {
-        "started_at": "2026-10-23T09:15:15.079287+00:00",
+        "started_at": "2026-10-23T09:47:10.348218+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          60,
-          90
+          35,
+          55
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -185780,28 +185815,28 @@
         "new_worktrees": 0
       },
       "next_action": "Finish coordination lifecycle, then continue actual Owner prerequisites and independent D6 public foundations",
-      "validation": "92项相关本地用例通过（31项真实PG、61项既有日历）；真实Owner/公开表单验收NOT_RUN，无Actions",
+      "validation": "19项去重相关行为通过（7项局部最终、12项未受影响的本轮成功）；真实Owner/公开表单验收NOT_RUN，无Actions",
       "lifecycle_complete": false,
       "handoff_delivery_ref": {
-        "commit": "c5fefb10c77126f8cda944bf9178c7dd6306b142",
-        "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T093338Z-wave60-delivery/MESSAGE.md",
-        "at": "2026-10-23T09:33:38.805026+00:00",
+        "commit": "3d1ee7c3f1e806adbf8e03c8e763d34f135f3312",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T100426Z-wave61-delivery/MESSAGE.md",
+        "at": "2026-10-23T10:04:26.835156+00:00",
         "base": "codex/t02c-entry-handoff-20260921",
-        "branch": "codex/w60-handoff"
+        "branch": "codex/w61-handoff"
       },
       "handoff_integration": {
         "result": "PASS",
         "repository": "GTX537/CP6.AI-Handoff",
-        "source": "c5fefb10c77126f8cda944bf9178c7dd6306b142",
-        "main": "d1419def25aad4939e1418956462729364163ff8",
+        "source": "3d1ee7c3f1e806adbf8e03c8e763d34f135f3312",
+        "main": "b83442c4c421211c246266a4805db839d0448865",
         "target": "codex/t02c-entry-handoff-20260921",
-        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/36",
+        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/37",
         "paths": [
-          "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T091515Z-wave60-start/MESSAGE.md",
-          "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T093338Z-wave60-delivery/MESSAGE.md",
-          "handoffs/CP6-DEV-20261012/waves/20261023-wave60.md"
+          "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T094710Z-wave61-start/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T100426Z-wave61-delivery/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/waves/20261023-wave61.md"
         ],
-        "observed_at": "2026-10-23T09:34:51.622282+00:00"
+        "observed_at": "2026-10-23T10:06:17.873954+00:00"
       }
     },
     "wave_history": [
@@ -195319,6 +195354,137 @@
         "seats_released": true,
         "final_main_sha": "a31c4c180d8ac1101eb6102e6b7c7cedddc65d7a",
         "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave59-final-verification.json"
+      },
+      {
+        "id": "20261023-wave60",
+        "path": "docs/development/dispatch/20261023-wave60/README.md",
+        "baseline_sha": "a31c4c180d8ac1101eb6102e6b7c7cedddc65d7a",
+        "registered_at": "2026-10-23T09:15:15.079287+00:00",
+        "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W60-01",
+            "task_id": "WP03-01",
+            "title": "Native PostgreSQL immutable published calendar snapshot storage",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "1e065d36f913c925ce3dce6345b641bad798070b",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T091515Z-wave60-start/MESSAGE.md",
+              "at": "2026-10-23T09:15:15.079287+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\dev-2",
+            "branch": "codex/w60-01",
+            "planned_scope_ref": "docs/development/dispatch/20261023-wave60/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/8be1a856b50aaa68a733b8ca47df1ecd25fbc8a9/docs/development/evidence/W60-01/DELIVERY.md",
+            "validation": "92项相关本地用例通过（31项真实PG、61项既有日历）；真实Owner/公开表单验收NOT_RUN，无Actions",
+            "candidate_integrated": true,
+            "integration": {
+              "result": "PASS",
+              "repository": "GTX537/CP6.CRM",
+              "source": "2df15fbb46290b1f5f06c80e52251aca6eee746b",
+              "main": "8be1a856b50aaa68a733b8ca47df1ecd25fbc8a9",
+              "target": "main",
+              "pr": "https://github.com/GTX537/CP6.CRM/pull/105",
+              "paths": [
+                "CHANGELOG-AI.md",
+                "docs/development/evidence/W60-01/DELIVERY.md",
+                "docs/project-memory/05-Completed.md",
+                "docs/project-memory/06-Todo.md",
+                "docs/project-memory/PROJECT_STATE.md",
+                "src/CP6.CRM.Infrastructure/CP6.CRM.Infrastructure.csproj",
+                "src/CP6.CRM.Infrastructure/Persistence/PostgreSql/CalendarSnapshotSchemaV1.sql",
+                "src/CP6.CRM.Infrastructure/Persistence/PostgreSql/PostgreSqlCalendarSnapshotsV1.cs",
+                "tests/CP6.CRM.IdentityPostgreSqlTests/CalendarSnapshotTests.cs"
+              ],
+              "observed_at": "2026-10-23T09:31:34.281962+00:00"
+            },
+            "runtime_resources_released": true,
+            "resources_released": true,
+            "handoff_delivery_ref": {
+              "commit": "c5fefb10c77126f8cda944bf9178c7dd6306b142",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T093338Z-wave60-delivery/MESSAGE.md",
+              "at": "2026-10-23T09:33:38.805026+00:00",
+              "base": "codex/t02c-entry-handoff-20260921",
+              "branch": "codex/w60-handoff"
+            },
+            "lifecycle_snapshot": {
+              "crm_branch_deleted": true,
+              "crm_seat_released": true,
+              "handoff_branch_deleted": true,
+              "handoff_seat_released": true,
+              "main_task": "CP6:W60-COORD",
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave60-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-23T09:15:15.079287+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            60,
+            90
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\dev-2",
+          "new_worktrees": 0
+        },
+        "next_action": "W61 exact configuration draft and persisted calendar binding",
+        "validation": "92项相关本地用例通过（31项真实PG、61项既有日历）；真实Owner/公开表单验收NOT_RUN，无Actions",
+        "lifecycle_complete": true,
+        "handoff_delivery_ref": {
+          "commit": "c5fefb10c77126f8cda944bf9178c7dd6306b142",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T093338Z-wave60-delivery/MESSAGE.md",
+          "at": "2026-10-23T09:33:38.805026+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w60-handoff"
+        },
+        "handoff_integration": {
+          "result": "PASS",
+          "repository": "GTX537/CP6.AI-Handoff",
+          "source": "c5fefb10c77126f8cda944bf9178c7dd6306b142",
+          "main": "d1419def25aad4939e1418956462729364163ff8",
+          "target": "codex/t02c-entry-handoff-20260921",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/36",
+          "paths": [
+            "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T091515Z-wave60-start/MESSAGE.md",
+            "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T093338Z-wave60-delivery/MESSAGE.md",
+            "handoffs/CP6-DEV-20261012/waves/20261023-wave60.md"
+          ],
+          "observed_at": "2026-10-23T09:34:51.622282+00:00"
+        },
+        "actual_agent_minutes": 36.31,
+        "preflight_estimate_minutes": 10,
+        "branches_deleted": true,
+        "seats_released": true,
+        "final_main_sha": "3e9fcede0380952d844822af4681ea8b35ebf673",
+        "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave60-final-verification.json"
       }
     ],
     "development_priority": {
@@ -195453,7 +195619,7 @@
           "id": "D6",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W60-01",
+          "current_window": "W61-01",
           "next_action": "Continue independent D6 foundations; actual Owner final gate and publication activation remain required"
         },
         {

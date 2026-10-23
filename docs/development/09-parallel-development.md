@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W61配置草稿与PG日历绑定](dispatch/20261023-wave61/README.md)，本聊天单人；CRM PR106/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W60不重复。
+
 > 当前：[W60不可变日历PG快照](dispatch/20261023-wave60/README.md)，本聊天单人；CRM PR105/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W59不重复。
 
 > 当前：[W59询盘投影真实验签](dispatch/20261023-wave59/README.md)，本聊天单人；CRM PR104/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W58不重复。
