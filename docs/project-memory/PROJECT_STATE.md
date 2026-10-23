@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-23：W59询盘投影真实验签已采用
+
+CRM PR104/source `73163779f0a5d4d213cd500023f6629baa849c63`已采用远端main `611e95cfc83928c192070c5b101f2c6b9f202183`；204项相关本地用例及API/Worker构建通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/611e95cfc83928c192070c5b101f2c6b9f202183/docs/development/evidence/W59-01/DELIVERY.md)。可信目录、真实Ed25519与轮换/撤销核查采用，结果CanAuthorize=false；生产信任、字段映射和真实Owner最终门仍待采用。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main当前协调PR/finish待收尾。七天目标ACTIVE，完整业务验收不提升。
+
 ## 2026-10-23：W58真实在线身份与PG当前事实核查已采用
 
 CRM PR103/source `80af97ec22060c1dd32586db4ebb045e71762611`已采用远端main `aaed1098b35cf74fd286099f2bc31b1b9b071f80`；130项相关本地验证通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/aaed1098b35cf74fd286099f2bc31b1b9b071f80/docs/development/evidence/W58-01/DELIVERY.md)。具体OIDC与PG只读当前身份核查、原字段来源已采用；完整字段政策/映射与真实Owner最终门继续D5，CanAuthorize=false。CRM/Handoff准确分支删除、固定树干净detached、finish释放，Main当前协调分支待最终PR/finish。整卡/完整目标/真实验收不提升，七天目标ACTIVE。
