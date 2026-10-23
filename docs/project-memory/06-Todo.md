@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-23：BUG419身份目录当前迁移兼容
+
+[Issue419](https://github.com/GTX537/CP6/issues/419)修复已完成6项相关本地PG验证与集中作者审查。身份目录精确准入现行迁移14个业务函数，保留原ACL/拒绝未知与危险定义；[交付报告](../development/evidence/BUG-419/DELIVERY.md)。PR420已核对远端采用，BUG分支删除/DEV-1释放并resume原W52分支；Issue待实际跨仓联通复测关闭。继续W52 CRM完整原始基线。七天目标ACTIVE，不提升完整125目标/247运行验收。
+
 ## 2026-10-23：W51全部收尾 / W52真实身份基线
 
 W51 CRM96/Handoff27/Main418已采用；14项相关PG/.NET通过，登记25.51min、前置约8.36min；准确分支删除、固定树干净detached、席位释放。[W52](../development/dispatch/20261023-wave52/README.md)本聊天继续CRM原始完整基线与PG证据，预计90–150min。完整Published/PreCheckpoint/Owner授权仍待后续，七天目标ACTIVE。

@@ -159542,6 +159542,11 @@
       "date": "2026-10-23",
       "change": "W51 fully finished; W52 verified raw baseline consumption and same-transaction PG source evidence admitted; seven-day ACTIVE.",
       "evidence": "docs/development/dispatch/20261023-wave52/README.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "BUG419: exact fixed migration functions admitted by explicit Main directory installation; six related native checks passed; W52 resumes after remote adoption.",
+      "evidence": "docs/development/evidence/BUG-419/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -167246,6 +167251,19 @@
         "issue304_closed": true,
         "full_task_completed": false,
         "business_acceptance": "NOT_RUN"
+      },
+      "wave52_prerequisite_fix": {
+        "issue": "https://github.com/GTX537/CP6/issues/419",
+        "report": "docs/development/evidence/BUG-419/DELIVERY.md",
+        "status": "REMOTE_ADOPTED",
+        "branch": "codex/bug-419-directory-owner-outbox",
+        "chat": "COORD",
+        "related_tests_passed": 6,
+        "full_task_completed": false,
+        "main_sha": "d961b4f66ce41fd3e10750552f3d09f97691cd1a",
+        "pr": 420,
+        "branch_deleted": true,
+        "seat_released": true
       }
     },
     {
