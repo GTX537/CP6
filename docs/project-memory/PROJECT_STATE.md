@@ -1,8 +1,8 @@
 # 项目当前状态
 
-## 2026-10-23：W72独立移动任务当前Owner候选通过
+## 2026-10-23：W72独立移动任务当前Owner已采用
 
-Issue451真实PG红灯转绿；50项独立.NET（21真实PG、29既有InMemory）及23项Vue通过，无跳过；Vue类型检查和相关构建通过。[单份交付](../development/evidence/W72-01/DELIVERY.md)。三服务双端范围、当前字段和原生部门绑定；未采用命令/来源查询/scan-profile拒绝。完整S1与业务验收不提升。三个PG停止保留，待两仓采用及准确分支/席位收尾；七天目标ACTIVE。
+Main [PR452](https://github.com/GTX537/CP6/pull/452) source `b3b38164e1d3732053f8241b86580a5d0f184f13`进入远端main `41cef2ffc77464745c18576e0f60108d59a8ec37`，36任务路径逐blob核对通过；50.NET/23Vue及类型检查通过，无跳过。[单份交付](../development/evidence/W72-01/DELIVERY.md)。Handoff [PR48](https://github.com/GTX537/CP6.AI-Handoff/pull/48)采用、准确分支删除、固定树干净detached、finish释放。Main同任务最后状态PR/finish及Issue451关闭待完成，未提前声明席位释放。三个PG停止保留；当前约25.85min，原估120–180min，最终按finish计。完整S1/Source/Device/Claim、125目标和247验收不提升；七天目标ACTIVE。
 
 ## 2026-10-23：W71补充指示当前Owner已采用
 

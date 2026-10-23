@@ -159777,6 +159777,11 @@
       "date": "2026-10-23",
       "change": "W72 Issue451 Mobile current Owner verified:50 unique.NET/23UI; full S1 and runtime acceptance unchanged.",
       "evidence": "docs/development/evidence/W72-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "W72 Main452 exact adoption and Handoff48 verified;50.NET/23UI/typecheck passed. Handoff branch deleted/seat released; Main final finish pending. Full acceptances unchanged.",
+      "evidence": "https://github.com/GTX537/CP6/blob/41cef2ffc77464745c18576e0f60108d59a8ec37/docs/development/evidence/W72-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -162356,7 +162361,7 @@
         "claimed_at": "2026-10-23T17:40:11.035533+00:00",
         "baseline_sha": "3c9b56ceaf66073d780c1dcb82f8bbba87bf0098",
         "entry_evidence": "docs/development/dispatch/20261023-wave72/README.md",
-        "phase": "CANDIDATE_VERIFIED",
+        "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
         "dispatch_scope": "W72_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -162401,11 +162406,21 @@
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": false,
+        "candidate_integrated": true,
         "resources_released": false,
         "full_task_completed": false,
         "issue": "https://github.com/GTX537/CP6/issues/451",
-        "worker_delivery_ref": "docs/development/evidence/W72-01/DELIVERY.md"
+        "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/41cef2ffc77464745c18576e0f60108d59a8ec37/docs/development/evidence/W72-01/DELIVERY.md",
+        "source_candidate_sha": "b3b38164e1d3732053f8241b86580a5d0f184f13",
+        "remote_main_sha": "41cef2ffc77464745c18576e0f60108d59a8ec37",
+        "pull_request": "https://github.com/GTX537/CP6/pull/452",
+        "handoff_delivery_ref": {
+          "commit": "b04442ebc60ba01ec373b41c9aa132872f34da09",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T180353Z-wave72-delivery/MESSAGE.md",
+          "at": "2026-10-23T18:03:53.365972+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w72-handoff"
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -166757,14 +166772,33 @@
         "issue_state": "CLOSED"
       },
       "wave72_delivery": {
-        "status": "CANDIDATE_VERIFIED",
-        "report": "docs/development/evidence/W72-01/DELIVERY.md",
+        "status": "MERGED",
+        "report": "https://github.com/GTX537/CP6/blob/41cef2ffc77464745c18576e0f60108d59a8ec37/docs/development/evidence/W72-01/DELIVERY.md",
         "validation": "50项独立.NET（21真实PG、29既有InMemory）及23项Vue通过，无跳过；Vue类型检查和相关构建通过",
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "adopted_scope": "Current legacy/V1/V2 Mobile Owner with two-sided scope, native department mapping and safe historical reads; unadopted effects/source query/scan-profile refused; full S1 remains absent",
         "issue": "https://github.com/GTX537/CP6/issues/451",
-        "lifecycle_complete": false
+        "lifecycle_complete": false,
+        "source_candidate_sha": "b3b38164e1d3732053f8241b86580a5d0f184f13",
+        "remote_main_sha": "41cef2ffc77464745c18576e0f60108d59a8ec37",
+        "pull_request": "https://github.com/GTX537/CP6/pull/452",
+        "handoff_delivery_ref": {
+          "commit": "b04442ebc60ba01ec373b41c9aa132872f34da09",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T180353Z-wave72-delivery/MESSAGE.md",
+          "at": "2026-10-23T18:03:53.365972+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w72-handoff"
+        },
+        "lifecycle_snapshot": {
+          "handoff_branch_deleted": true,
+          "handoff_seat_released": true,
+          "main_task": "CP6:BUG-451-MOBILE-OWNER",
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave72-final-verification.json"
+        },
+        "test_data_disposition": "Three owned PostgreSQL clusters stopped; data and logs retained"
       }
     },
     {
@@ -186588,7 +186622,7 @@
       "path": "docs/development/dispatch/20261023-wave72/README.md",
       "baseline_sha": "3c9b56ceaf66073d780c1dcb82f8bbba87bf0098",
       "registered_at": "2026-10-23T17:42:46.499324+00:00",
-      "phase": "CANDIDATE_VERIFIED",
+      "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -186600,8 +186634,8 @@
       ],
       "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": false,
-      "product_integrated": false,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W72-01",
@@ -186610,7 +186644,7 @@
           "lifecycle_task": "BUG-451-MOBILE-OWNER",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "CANDIDATE_VERIFIED",
+          "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "actual_start_ref": {
@@ -186627,9 +186661,73 @@
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "worker_delivery_ref": "docs/development/evidence/W72-01/DELIVERY.md",
+          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/41cef2ffc77464745c18576e0f60108d59a8ec37/docs/development/evidence/W72-01/DELIVERY.md",
           "validation": "50项独立.NET（21真实PG、29既有InMemory）及23项Vue通过，无跳过；Vue类型检查和相关构建通过",
-          "runtime_resources_released": true
+          "runtime_resources_released": true,
+          "candidate_integrated": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "b3b38164e1d3732053f8241b86580a5d0f184f13",
+            "main": "41cef2ffc77464745c18576e0f60108d59a8ec37",
+            "target": "main",
+            "pr": "https://github.com/GTX537/CP6/pull/452",
+            "paths": [
+              "CP6.Core/Services/Integration/OperationsAccessV1.Mobile.cs",
+              "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
+              "CP6.Core/Services/Sys/IamStandaloneDepartmentMappingV1.cs",
+              "CP6.Core/Services/Wms/IMobileTaskV2Service.cs",
+              "CP6.Core/Services/Wms/MobileService.Owner.cs",
+              "CP6.Core/Services/Wms/MobileService.cs",
+              "CP6.Core/Services/Wms/MobileTaskV1Service.Owner.cs",
+              "CP6.Core/Services/Wms/MobileTaskV1Service.cs",
+              "CP6.Core/Services/Wms/MobileTaskV2Contracts.cs",
+              "CP6.Core/Services/Wms/MobileTaskV2Service.Owner.cs",
+              "CP6.Core/Services/Wms/MobileTaskV2Service.cs",
+              "CP6.Persistence.PostgreSql/Migrations/Core/20261023175000_MobileDepartmentOwnerV1.cs",
+              "CP6.Tests/Erp/MobileOwnerPostgreSqlTests.cs",
+              "CP6.WebApi/Controllers/Wms/MobileController.cs",
+              "CP6.WebApi/Controllers/Wms/MobileTasksV1Controller.cs",
+              "CP6.WebApi/Controllers/Wms/MobileTasksV2Controller.cs",
+              "CP6.WebApi/Controllers/Wms/TaskAnalyticsController.cs",
+              "CP6.WebApi/Program.cs",
+              "cp6.web/src/api/sys/iam.ts",
+              "cp6.web/src/api/wms/mobile.ts",
+              "cp6.web/src/api/wms/production.ts",
+              "cp6.web/src/views/pms/StandaloneDepartmentMappings.vue",
+              "cp6.web/src/views/wms/MobileTaskView.vue",
+              "cp6.web/src/views/wms/WmsProductionConsole.vue",
+              "cp6.web/src/views/wms/__tests__/MobileAnalyticsOwner.spec.ts",
+              "cp6.web/src/views/wms/__tests__/MobileOwner.spec.ts",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/09-parallel-development.md",
+              "docs/development/dispatch/20261023-wave72/README.md",
+              "docs/development/evidence/W72-01/DELIVERY.md",
+              "docs/development/planning/20261022-seven-day-delivery.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-23T18:03:33.859533+00:00"
+          },
+          "handoff_delivery_ref": {
+            "commit": "b04442ebc60ba01ec373b41c9aa132872f34da09",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T180353Z-wave72-delivery/MESSAGE.md",
+            "at": "2026-10-23T18:03:53.365972+00:00",
+            "base": "codex/t02c-entry-handoff-20260921",
+            "branch": "codex/w72-handoff"
+          },
+          "resources_released": false,
+          "lifecycle_snapshot": {
+            "handoff_branch_deleted": true,
+            "handoff_seat_released": true,
+            "main_task": "CP6:BUG-451-MOBILE-OWNER",
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave72-final-verification.json"
+          }
         }
       ],
       "horizon": {
@@ -186645,8 +186743,30 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Main product adoption, Handoff delivery and same-task lifecycle closure",
-      "validation": "50项独立.NET（21真实PG、29既有InMemory）及23项Vue通过，无跳过；Vue类型检查和相关构建通过"
+      "next_action": "Finish same-branch Main ledger PR and lifecycle; close Issue451 after verification; continue D5/D6 real CRM Owner and public form prerequisites",
+      "validation": "50项独立.NET（21真实PG、29既有InMemory）及23项Vue通过，无跳过；Vue类型检查和相关构建通过",
+      "handoff_delivery_ref": {
+        "commit": "b04442ebc60ba01ec373b41c9aa132872f34da09",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T180353Z-wave72-delivery/MESSAGE.md",
+        "at": "2026-10-23T18:03:53.365972+00:00",
+        "base": "codex/t02c-entry-handoff-20260921",
+        "branch": "codex/w72-handoff"
+      },
+      "handoff_integration": {
+        "result": "PASS",
+        "repository": "GTX537/CP6.AI-Handoff",
+        "source": "b04442ebc60ba01ec373b41c9aa132872f34da09",
+        "main": "f833756a86252cd8fefa9d8f9af90c906904ab6e",
+        "target": "codex/t02c-entry-handoff-20260921",
+        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/48",
+        "paths": [
+          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T174246Z-wave72-start/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T180353Z-wave72-delivery/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/waves/20261023-wave72.md"
+        ],
+        "observed_at": "2026-10-23T18:05:01.616655+00:00"
+      },
+      "lifecycle_complete": false
     },
     "wave_history": [
       {
@@ -197882,7 +198002,7 @@
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "移动任务三组独立入口当前Owner"
+          "next_action": "RMA, Replenish and independent Mobile current read Owners adopted; complete business facts/adapters/S1 remain absent. Continue D5/D6 real CRM Owner and public form foundations."
         },
         {
           "id": "D3",
