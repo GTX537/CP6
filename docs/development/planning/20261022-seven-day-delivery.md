@@ -316,3 +316,21 @@ NSec25.4.0/libsodium1.0.20.1精确固定，nuget.org实际恢复并在Windows x6
 七天目标ACTIVE。继续真实Owner必要前置与D6可独立公共支撑；24/375整卡、125目标0完整交付、247 NOT_RUN不提升。W51准确data删除此前被自动审批拒绝，原因仅“blocked by policy”；停止保留，无重试绕过。
 
 Handoff [PR35](https://github.com/GTX537/CP6.AI-Handoff/pull/35)已采用 `4e6cb8a25ae06931ec590df95384c3abbbfa1f57`，准确本地/远端分支删除、固定树干净detached、finish释放。Main仅剩协调PR/finish，不提前声明释放。登记开工至此约23.17min，原预算90–140min，最终实际以finish为准，不重复累计子任务；此前只读前置约4min。
+
+## 2026-10-23：W59全部收尾 / W60日历不可变PG快照
+
+W59 CRM104/Handoff35/Main428全部采用，204项相关本地验证通过；实际26.70min，准确分支删除、固定树干净detached、全部席位释放。[W60](../dispatch/20261023-wave60/README.md)推进独立日历原生PG存储，预计60–90min；完整字段Owner/最终门及公开表单激活保持未完成。七天目标ACTIVE。
+
+## W60实际交付
+
+CRM [PR105](https://github.com/GTX537/CP6.CRM/pull/105)已采用，source `2df15fbb46290b1f5f06c80e52251aca6eee746b`，远端main `8be1a856b50aaa68a733b8ca47df1ecd25fbc8a9`，9任务路径exact blob核对通过。[单份产品报告](https://github.com/GTX537/CP6.CRM/blob/8be1a856b50aaa68a733b8ca47df1ecd25fbc8a9/docs/development/evidence/W60-01/DELIVERY.md)。92项相关本地用例通过（31项真实PG、61项既有日历）；真实Owner/公开表单验收NOT_RUN，无Actions。
+
+新增显式PostgreSQL不可变日历快照存储，复用原日历codec/publication事实校验；保存原全局ID、租户来源版本、CalendarKey/technical version唯一性及100ns/Unicode/NUL。初始START拟省略来源唯一性，经原运行时schema核对已纠正，不采用错误草案。调用方持有可信tenant和实际外层事务；相同事实复用，冲突拒绝，savepoint恢复，两个事务实际transactionid等待已观察。
+
+原生ENABLE ALWAYS修改/删除/清空保护，核实际catalog/索引/guard/RLS漂移；未知schema不自动采用或迁移。原Domain/codec/生成合同及八份身份SQL、Program不变。它只保存构造好的发布事实，hash不是审批；实际Owner/audit/最终门、激活和公开表单仍待完成。技术版本不冒充业务版本，schema不冒充租户权限隔离。
+
+一次作者完整SPEC/QUALITY通过；最终31项真实PG及未变61项日历回归有效，初始红灯和中间成功均保留不重复累计。两个独有PG集群均正常停止，data/log保留、无PID。CRM准确本地/远端分支删除、固定树干净detached、finish释放。
+
+七天目标ACTIVE，继续D6可独立公共支撑并保留真实业务前置。24/375整卡、125目标0完整交付、247 NOT_RUN不提升。无Actions、既有库迁移或部署。W51准确data删除此前被自动审批拒绝，原因仅“blocked by policy”；停止保留，无重试绕过。
+
+Handoff [PR36](https://github.com/GTX537/CP6.AI-Handoff/pull/36)已采用 `d1419def25aad4939e1418956462729364163ff8`，准确本地/远端分支删除、固定树干净detached、finish释放。Main仅剩协调PR/finish，不提前声明释放。登记开工至此约33.37min，原预算60–90min，最终实际以finish为准，不重复累计子任务；此前只读前置及接续约10min。
