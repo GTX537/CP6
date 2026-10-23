@@ -30,3 +30,9 @@ COORD本聊天单人，2026-10-23T12:08:36.078824+00:00。Main基线`4b129632448
 本窗只关闭Issue436的旧计数重复分配及相连的持久化边界。原命令receipt/同键恢复、业务Owner接入、规则CAS/历史冲突/删除停用、单writer切换、外露号不可回收和灾后恢复仍需后续实施；完整WP02-16 PLANNED/NOT_CHECKED、WP02-10完整前置、24/375整卡、125目标0交付及247 NOT_RUN不提升。
 
 原估50–80min，实际以同任务start到finish计算，子任务不重复累计。候选通过，待Main/Handoff正常采用与最终台账、准确分支删除和finish；不提前宣布席位释放。七天目标ACTIVE继续。W51准确data删除曾被自动审批拒绝，原因blocked by policy；停止保留，无重试绕过。
+
+## 实际采用与最后收尾
+
+Main [PR437](https://github.com/GTX537/CP6/pull/437) source `d721ee65118084b798d66184c3e2ae00e209fdaf`采用远端main `9d40f65cfc332e1543b4c0d762dcf7807042c99b`，全部13路径exact核对通过。Handoff [PR41](https://github.com/GTX537/CP6.AI-Handoff/pull/41)采用 `8e4e41a9b84701059644463e0ec6fe28a6c8d743`，准确任务分支删除、固定树干净detached、finish释放。三个产品路径与已测提交逐blob相同，未重复成功验证；最后文档diff和台账生成单独检查。
+
+Main同一任务分支最后状态PR及finish待完成；Issue436在最终远端和生命周期核对后关闭。当前约35.39min，原估50–80min，最终以finish为准；前置只读核对约4min，子任务不重复累计。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave65-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续真实Owner前置和D6公共支撑。
