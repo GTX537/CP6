@@ -19,6 +19,8 @@ namespace CP6.Core.Services.Wms;
 /// </remarks>
 public interface ILotTraceService
 {
+    Task<CP6.Entity.DTOs.Wms.LotTraceSnapshotV1> ReadOwnerAsync(string product, string lot, string direction);
+    Task<CP6.Entity.DTOs.Wms.LotRecallResultV1> RecallOwnerAsync(CP6.Entity.DTOs.Wms.LotRecallCommandV1 command);
     /// <summary>順追溯：指定ロットがどこに流れたか</summary>
     Task<LotTraceResult> TraceForwardAsync(string productCd, string lotNo);
 

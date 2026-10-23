@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W84批次追溯与召回标记Owner](dispatch/20261023-wave84/README.md)，本聊天单人，Issue471；W37–W83已finish，不重复。
+
 > 当前：[W83材料缺料Owner](dispatch/20261023-wave83/README.md)，本聊天单人，Issue468；W37–W82已finish，不重复。
 
 > 当前：[W82告知摘要夹具修订](dispatch/20261023-wave82/README.md)，本聊天单人；CRM PR121/Handoff已采用，协调收尾后继续WMS/MES独立Owner与CRM公共基础。W37–W81不重复。

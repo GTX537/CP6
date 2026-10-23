@@ -1,17 +1,11 @@
 import http from '../http'
-import type { LotTraceResult, LotStockSummary, WmsApi } from '@/types/wms/wms'
-
+import type { WmsApi } from '@/types/wms/wms'
+import type { LotQuery, LotSnapshot, LotRecallCommand, LotRecallResult } from '@/types/wms/lotTraceOwner'
 export const lotTraceApi = {
-  forward(productCd: string, lotNo: string) {
-    return http.get<any, WmsApi<LotTraceResult>>('/wms/lot-trace/forward', { params: { productCd, lotNo } })
+  read(query: LotQuery) {
+    return http.get<any, WmsApi<LotSnapshot>>('/wms/lot-trace/owner-v1', { params: query })
   },
-  backward(productCd: string, lotNo: string) {
-    return http.get<any, WmsApi<LotTraceResult>>('/wms/lot-trace/backward', { params: { productCd, lotNo } })
-  },
-  summary(productCd: string, lotNo: string) {
-    return http.get<any, WmsApi<LotStockSummary>>('/wms/lot-trace/summary', { params: { productCd, lotNo } })
-  },
-  recall(productCd: string, lotNo: string, flag: boolean) {
-    return http.post<any, WmsApi<{ affectedStocks: number }>>('/wms/lot-trace/recall', { productCd, lotNo, flag })
+  recall(command: LotRecallCommand) {
+    return http.post<any, WmsApi<LotRecallResult>>('/wms/lot-trace/owner-v1/recall', command)
   },
 }

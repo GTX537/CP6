@@ -155,7 +155,7 @@ public class MesPermissionSeedTests
         WmsPermissionSeed.EnsureSeeded(db);WmsPermissionSeed.EnsureSeeded(db);
         foreach(var tid in new[]{TenantA,TenantB})
         {
-            foreach(var menu in new[]{403,405,406,408,415,416,417})
+            foreach(var menu in new[]{403,405,406,408,415,416,417,427})
             {
                 Assert.Single(db.Sys_MenuActions.IgnoreQueryFilters().Where(a=>a.TenantId==tid && a.MenuId==menu && a.ActionCode=="query"));
                 Assert.Empty(db.Sys_RoleActions.IgnoreQueryFilters().Where(a=>a.TenantId==tid && a.MenuId==menu && a.ActionCode=="query"));
