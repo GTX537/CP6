@@ -35,3 +35,9 @@ HTTP统一Owner错误/no-store。页面采用具名版本、精确文本、服�
 候选进入正常Main产品PR，核远端blob后交换Handoff DELIVERY并合并/finish，再同任务Main状态PR/finish。全部核对前不提前声明分支删除/席位释放；实际耗时及最终状态以本地生命周期证明和后继登记为准。
 
 24/375整卡、125目标0完整交付、247正式运行NOT_RUN保持；WP02-03、完整库存/财务/采购、CRM真实Site/Form Owner/公开受理未关闭。七天目标ACTIVE，持续接后续实际前置。W51指定停止data删除曾被自动审批以blocked by policy拒绝，继续原地保留，不重试。
+
+## 实际采用与最后收尾
+
+Main [PR469](https://github.com/GTX537/CP6/pull/469) source `778338a1048ca9bc41752ac691a27c68b6604013`采用远端main `3b3855ebd2b8125a90e7e1674ada216c8ae95a73`，29任务路径逐blob核对；Handoff [PR59](https://github.com/GTX537/CP6.AI-Handoff/pull/59)采用`6ba2532ea511b004e025170c0c3fee3ec398250d`，准确分支删除、固定树干净detached、finish释放。19个产品路径与已测提交逐blob一致，复用有效结果，最后文档diff/台账生成单独检查。
+
+Main同任务最终状态PR/finish及Issue468最后关闭待完成；当前约16.56min，原估60–90min＋独立前置2min，实际按finish不重复计Handoff。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave83-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续剩余独立Owner及D5/D6真实前置，正式procurement/Finance仍未采用。
