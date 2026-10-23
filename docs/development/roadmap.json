@@ -159672,6 +159672,11 @@
       "date": "2026-10-23",
       "change": "W64 Issue433 field audit current Owner and safe Machine status history verified:27.NET/6UI passed. Full task/acceptances unchanged; adoption and finish pending.",
       "evidence": "docs/development/evidence/W64-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "W64 Main434 exact adoption and Handoff delivery verified; 27.NET/6UI passed. Handoff branch deleted and seat released; same Main task final finish pending. Full acceptances unchanged.",
+      "evidence": "https://github.com/GTX537/CP6/blob/a8a31bccdb57fb3a9a87da5aadb99be7b1673653/docs/development/evidence/W64-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -168632,7 +168637,7 @@
         "claimed_at": "2026-10-23T11:20:34.497204+00:00",
         "baseline_sha": "b23e5e111d1f1f77936a76a74ff6acfb707bd067",
         "entry_evidence": "docs/development/dispatch/20261023-wave64/README.md",
-        "phase": "CANDIDATE_VERIFIED",
+        "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
         "dispatch_scope": "W64_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -168665,11 +168670,21 @@
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": false,
+        "candidate_integrated": true,
         "resources_released": false,
         "full_task_completed": false,
         "issue": "https://github.com/GTX537/CP6/issues/433",
-        "worker_delivery_ref": "docs/development/evidence/W64-01/DELIVERY.md"
+        "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/a8a31bccdb57fb3a9a87da5aadb99be7b1673653/docs/development/evidence/W64-01/DELIVERY.md",
+        "source_candidate_sha": "183750bc45f39ce81499a11411914d3cf46de3aa",
+        "remote_main_sha": "a8a31bccdb57fb3a9a87da5aadb99be7b1673653",
+        "pull_request": "https://github.com/GTX537/CP6/pull/434",
+        "handoff_delivery_ref": {
+          "commit": "217106e4e6cad6a23847a6b12c22e76ed6ad7e9c",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-13/messages/20261023T114302Z-wave64-delivery/MESSAGE.md",
+          "at": "2026-10-23T11:43:02.185390+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w64-handoff"
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -168679,14 +168694,33 @@
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "wave64_delivery": {
-        "status": "CANDIDATE_VERIFIED",
-        "report": "docs/development/evidence/W64-01/DELIVERY.md",
+        "status": "MERGED",
+        "report": "https://github.com/GTX537/CP6/blob/a8a31bccdb57fb3a9a87da5aadb99be7b1673653/docs/development/evidence/W64-01/DELIVERY.md",
         "validation": "27项.NET相关用例与6项前端行为用例通过，无跳过；实际PostgreSQL/HTTP红灯已转绿，相关Main构建通过",
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "adopted_scope": "Current Owner field history projection; first Machine Status/ActiveFlg only; all raw fallback closed",
         "issue": "https://github.com/GTX537/CP6/issues/433",
-        "lifecycle_complete": false
+        "lifecycle_complete": false,
+        "source_candidate_sha": "183750bc45f39ce81499a11411914d3cf46de3aa",
+        "remote_main_sha": "a8a31bccdb57fb3a9a87da5aadb99be7b1673653",
+        "pull_request": "https://github.com/GTX537/CP6/pull/434",
+        "handoff_delivery_ref": {
+          "commit": "217106e4e6cad6a23847a6b12c22e76ed6ad7e9c",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-13/messages/20261023T114302Z-wave64-delivery/MESSAGE.md",
+          "at": "2026-10-23T11:43:02.185390+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w64-handoff"
+        },
+        "lifecycle_snapshot": {
+          "handoff_branch_deleted": true,
+          "handoff_seat_released": true,
+          "main_task": "CP6:BUG-433-FIELD-AUDIT-OWNER",
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave64-final-verification.json"
+        },
+        "test_data_disposition": "Two owned PostgreSQL clusters stopped; data and logs retained"
       }
     },
     {
@@ -185910,7 +185944,7 @@
       "path": "docs/development/dispatch/20261023-wave64/README.md",
       "baseline_sha": "b23e5e111d1f1f77936a76a74ff6acfb707bd067",
       "registered_at": "2026-10-23T11:27:59.800088+00:00",
-      "phase": "CANDIDATE_VERIFIED",
+      "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -185922,8 +185956,8 @@
       ],
       "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": false,
-      "product_integrated": false,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W64-01",
@@ -185932,7 +185966,7 @@
           "lifecycle_task": "BUG-433-FIELD-AUDIT-OWNER",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "CANDIDATE_VERIFIED",
+          "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "actual_start_ref": {
@@ -185949,9 +185983,59 @@
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "worker_delivery_ref": "docs/development/evidence/W64-01/DELIVERY.md",
+          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/a8a31bccdb57fb3a9a87da5aadb99be7b1673653/docs/development/evidence/W64-01/DELIVERY.md",
           "validation": "27项.NET相关用例与6项前端行为用例通过，无跳过；实际PostgreSQL/HTTP红灯已转绿，相关Main构建通过",
-          "runtime_resources_released": true
+          "runtime_resources_released": true,
+          "candidate_integrated": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "183750bc45f39ce81499a11411914d3cf46de3aa",
+            "main": "a8a31bccdb57fb3a9a87da5aadb99be7b1673653",
+            "target": "main",
+            "pr": "https://github.com/GTX537/CP6/pull/434",
+            "paths": [
+              "CP6.Core/Services/Sys/FieldAuditChangesV1.cs",
+              "CP6.Core/Services/Sys/FieldAuditReadOwnerV1.cs",
+              "CP6.Tests/Erp/FieldAuditOwnerPostgreSqlTests.cs",
+              "CP6.Tests/Sys/FieldAuditChangesTests.cs",
+              "CP6.Tests/Sys/FieldAuditControllerTests.cs",
+              "CP6.WebApi/Controllers/Sys/FieldAuditController.cs",
+              "CP6.WebApi/Program.cs",
+              "CP6.WebApi/Seed/I18nSecAuditScreenSeed.cs",
+              "cp6.web/src/api/sys/fieldAudit.ts",
+              "cp6.web/src/types/sys/fieldAudit.ts",
+              "cp6.web/src/views/pms/FieldAuditOwner.spec.ts",
+              "cp6.web/src/views/pms/FieldAuditView.vue",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/09-parallel-development.md",
+              "docs/development/dispatch/20261023-wave64/README.md",
+              "docs/development/evidence/W64-01/DELIVERY.md",
+              "docs/development/planning/20261022-seven-day-delivery.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-23T11:41:32.443550+00:00"
+          },
+          "handoff_delivery_ref": {
+            "commit": "217106e4e6cad6a23847a6b12c22e76ed6ad7e9c",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-13/messages/20261023T114302Z-wave64-delivery/MESSAGE.md",
+            "at": "2026-10-23T11:43:02.185390+00:00",
+            "base": "codex/t02c-entry-handoff-20260921",
+            "branch": "codex/w64-handoff"
+          },
+          "resources_released": false,
+          "lifecycle_snapshot": {
+            "handoff_branch_deleted": true,
+            "handoff_seat_released": true,
+            "main_task": "CP6:BUG-433-FIELD-AUDIT-OWNER",
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave64-final-verification.json"
+          }
         }
       ],
       "horizon": {
@@ -185967,8 +186051,31 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Normal Main product adoption, Handoff delivery, same-branch final ledger closeout and lifecycle finish",
-      "validation": "27项.NET相关用例与6项前端行为用例通过，无跳过；实际PostgreSQL/HTTP红灯已转绿，相关Main构建通过"
+      "next_action": "Finish same-branch Main ledger PR and lifecycle; close Issue433 after verification; continue seven-day goal",
+      "validation": "27项.NET相关用例与6项前端行为用例通过，无跳过；实际PostgreSQL/HTTP红灯已转绿，相关Main构建通过",
+      "handoff_delivery_ref": {
+        "commit": "217106e4e6cad6a23847a6b12c22e76ed6ad7e9c",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP02-13/messages/20261023T114302Z-wave64-delivery/MESSAGE.md",
+        "at": "2026-10-23T11:43:02.185390+00:00",
+        "base": "codex/t02c-entry-handoff-20260921",
+        "branch": "codex/w64-handoff"
+      },
+      "handoff_integration": {
+        "result": "PASS",
+        "repository": "GTX537/CP6.AI-Handoff",
+        "source": "217106e4e6cad6a23847a6b12c22e76ed6ad7e9c",
+        "main": "1e877baa5c3ff0523db882c50b89fbd87528e1d7",
+        "target": "codex/t02c-entry-handoff-20260921",
+        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/40",
+        "paths": [
+          "handoffs/CP6-DEV-20261012/tasks/WP02-13/messages/20261023T112759Z-wave64-start/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/tasks/WP02-13/messages/20261023T114302Z-wave64-delivery/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/waves/20261023-wave64.md"
+        ],
+        "observed_at": "2026-10-23T11:47:53.403651+00:00",
+        "method": "REST PR/ref plus exact Git blobs after transient GraphQL TLS timeout"
+      },
+      "lifecycle_complete": false
     },
     "wave_history": [
       {
@@ -196138,7 +196245,7 @@
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
           "current_window": "W64-01",
-          "next_action": "字段审计详情当前Owner门及首个设备安全历史映射",
+          "next_action": "Audit raw-content bypass fixed; continue real Owner prerequisites and independent D6 public foundations",
           "prerequisite_adjustment": "P0 existing audit raw-content bypass first; reuse Machine current Owner for bounded non-PII history. Full WP02-13 and inquiry gates remain unchanged."
         },
         {

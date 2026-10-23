@@ -28,3 +28,9 @@
 ## W64验证完成
 
 27项.NET相关用例与6项前端行为用例通过，无跳过；实际PostgreSQL/HTTP红灯已转绿，相关Main构建通过；[单份产品报告](../../evidence/W64-01/DELIVERY.md)。原问题实际HTTP红灯保留。两个隔离PG停止、数据保留；进入Main/Handoff采用与准确分支/席位收尾。七天目标ACTIVE。
+
+## 实际采用与最后收尾
+
+Main [PR434](https://github.com/GTX537/CP6/pull/434) source `183750bc45f39ce81499a11411914d3cf46de3aa`采用远端main `a8a31bccdb57fb3a9a87da5aadb99be7b1673653`，全部22路径exact核对通过。Handoff [PR40](https://github.com/GTX537/CP6.AI-Handoff/pull/40)采用 `1e877baa5c3ff0523db882c50b89fbd87528e1d7`，准确任务分支删除、固定树干净detached、finish释放。产品12路径与已测试提交逐blob相同，未重复运行成功测试；最后文档diff单独检查，台账生成核对。
+
+Main沿同一任务分支最后状态PR及finish待收尾；Issue433在远端和生命周期最终核对后关闭。当前登记实际约27.46min，预算60–90min，最终以finish为准；前置只读核对约6min，子任务不重复累计。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave64-final-verification.json`。无Actions、迁移或部署。七天持续目标ACTIVE，继续真实Owner前置和D6公共支撑。
