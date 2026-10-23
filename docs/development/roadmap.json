@@ -159902,6 +159902,11 @@
       "date": "2026-10-23",
       "change": "W83 Issue468 candidate verified:37 unique.NET/9Vue and typecheck. New-tenant query registration included without grants; full business acceptance unchanged.",
       "evidence": "docs/development/evidence/W83-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "W83 Main469 exact adoption and Handoff59 verified;37.NET/9UI/typecheck passed. Handoff branch deleted/seat released; Main final finish pending. Full acceptances unchanged.",
+      "evidence": "https://github.com/GTX537/CP6/blob/3b3855ebd2b8125a90e7e1674ada216c8ae95a73/docs/development/evidence/W83-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -162481,7 +162486,7 @@
         "claimed_at": "2026-10-23T22:15:20.853823+00:00",
         "baseline_sha": "9f9192152584b0afab5dd7afe3611a5cd4f3e0ce",
         "entry_evidence": "docs/development/dispatch/20261023-wave83/README.md",
-        "phase": "CANDIDATE_VERIFIED",
+        "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
         "dispatch_scope": "W83_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -162523,12 +162528,22 @@
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": false,
+        "candidate_integrated": true,
         "resources_released": false,
         "full_task_completed": false,
         "issue": "https://github.com/GTX537/CP6/issues/468",
-        "worker_delivery_ref": "docs/development/evidence/W83-01/DELIVERY.md",
-        "catalog_scope_note": "Author review found new-tenant startup requires query catalog too; serial same-task OwnerActions-only registration without automatic grants, two-tenant seed and HTTP/migration verified."
+        "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/3b3855ebd2b8125a90e7e1674ada216c8ae95a73/docs/development/evidence/W83-01/DELIVERY.md",
+        "catalog_scope_note": "Author review found new-tenant startup requires query catalog too; serial same-task OwnerActions-only registration without automatic grants, two-tenant seed and HTTP/migration verified.",
+        "source_candidate_sha": "778338a1048ca9bc41752ac691a27c68b6604013",
+        "remote_main_sha": "3b3855ebd2b8125a90e7e1674ada216c8ae95a73",
+        "pull_request": "https://github.com/GTX537/CP6/pull/469",
+        "handoff_delivery_ref": {
+          "commit": "e09f9232e7c46f24383fc3a8cc38bb44a4ca4506",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T223020Z-wave83-delivery/MESSAGE.md",
+          "at": "2026-10-23T22:30:20.054260+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w83-handoff"
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -167202,14 +167217,33 @@
         "seats_released": true
       },
       "wave83_delivery": {
-        "status": "CANDIDATE_VERIFIED",
-        "report": "docs/development/evidence/W83-01/DELIVERY.md",
+        "status": "MERGED",
+        "report": "https://github.com/GTX537/CP6/blob/3b3855ebd2b8125a90e7e1674ada216c8ae95a73/docs/development/evidence/W83-01/DELIVERY.md",
         "validation": "37独立.NET用例（21原生PG、15既有非PG行为、1两租户启动种子）及9Vue用例通过，无跳过；相关构建和vue-tsc通过",
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "adopted_scope": "Material shortage independent current Owner/source intersections, exact read and CAS followup, parent atomic creation, empty trusted tenant notification and early procurement fence",
         "issue": "https://github.com/GTX537/CP6/issues/468",
-        "lifecycle_complete": false
+        "lifecycle_complete": false,
+        "source_candidate_sha": "778338a1048ca9bc41752ac691a27c68b6604013",
+        "remote_main_sha": "3b3855ebd2b8125a90e7e1674ada216c8ae95a73",
+        "pull_request": "https://github.com/GTX537/CP6/pull/469",
+        "handoff_delivery_ref": {
+          "commit": "e09f9232e7c46f24383fc3a8cc38bb44a4ca4506",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T223020Z-wave83-delivery/MESSAGE.md",
+          "at": "2026-10-23T22:30:20.054260+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w83-handoff"
+        },
+        "lifecycle_snapshot": {
+          "handoff_branch_deleted": true,
+          "handoff_seat_released": true,
+          "main_task": "CP6:BUG-468-MATERIAL-SHORTAGE-OWNER",
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave83-final-verification.json"
+        },
+        "test_data_disposition": "Five owned PostgreSQL clusters stopped; data and logs retained"
       }
     },
     {
@@ -187249,7 +187283,7 @@
       "path": "docs/development/dispatch/20261023-wave83/README.md",
       "baseline_sha": "9f9192152584b0afab5dd7afe3611a5cd4f3e0ce",
       "registered_at": "2026-10-23T22:16:47.768475+00:00",
-      "phase": "CANDIDATE_VERIFIED",
+      "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -187261,8 +187295,8 @@
       ],
       "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": false,
-      "product_integrated": false,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W83-01",
@@ -187271,7 +187305,7 @@
           "lifecycle_task": "BUG-468-MATERIAL-SHORTAGE-OWNER",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "CANDIDATE_VERIFIED",
+          "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "actual_start_ref": {
@@ -187288,9 +187322,66 @@
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "worker_delivery_ref": "docs/development/evidence/W83-01/DELIVERY.md",
+          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/3b3855ebd2b8125a90e7e1674ada216c8ae95a73/docs/development/evidence/W83-01/DELIVERY.md",
           "validation": "37独立.NET用例（21原生PG、15既有非PG行为、1两租户启动种子）及9Vue用例通过，无跳过；相关构建和vue-tsc通过",
-          "runtime_resources_released": true
+          "runtime_resources_released": true,
+          "candidate_integrated": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "778338a1048ca9bc41752ac691a27c68b6604013",
+            "main": "3b3855ebd2b8125a90e7e1674ada216c8ae95a73",
+            "target": "main",
+            "pr": "https://github.com/GTX537/CP6/pull/469",
+            "paths": [
+              "CP6.Core/Services/Integration/OperationsAccessV1.MaterialShortage.cs",
+              "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
+              "CP6.Core/Services/Pur/PrGenerationService.cs",
+              "CP6.Core/Services/Wms/IMaterialShortageService.cs",
+              "CP6.Core/Services/Wms/MaterialShortageNotifier.cs",
+              "CP6.Core/Services/Wms/MaterialShortageService.Owner.cs",
+              "CP6.Core/Services/Wms/MaterialShortageService.cs",
+              "CP6.Core/Services/Wms/OutboundService.cs",
+              "CP6.Entity/DTOs/Wms/MaterialShortageOwnerV1.cs",
+              "CP6.Persistence.PostgreSql/Migrations/Core/20261023222500_MaterialShortageOwnerV1.cs",
+              "CP6.Tests/Erp/MaterialShortageOwnerPostgreSqlTests.cs",
+              "CP6.Tests/MesPermissionSeedTests.cs",
+              "CP6.WebApi/Controllers/Wms/MaterialShortageController.cs",
+              "CP6.WebApi/Program.cs",
+              "CP6.WebApi/Seed/WmsPermissionSeed.cs",
+              "cp6.web/src/api/wms/materialShortage.ts",
+              "cp6.web/src/types/wms/materialShortage.ts",
+              "cp6.web/src/views/wms/MaterialShortageOwner.spec.ts",
+              "cp6.web/src/views/wms/MaterialShortageView.vue",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/09-parallel-development.md",
+              "docs/development/dispatch/20261023-wave83/README.md",
+              "docs/development/evidence/W83-01/DELIVERY.md",
+              "docs/development/planning/20261022-seven-day-delivery.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-23T22:30:12.894848+00:00"
+          },
+          "handoff_delivery_ref": {
+            "commit": "e09f9232e7c46f24383fc3a8cc38bb44a4ca4506",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T223020Z-wave83-delivery/MESSAGE.md",
+            "at": "2026-10-23T22:30:20.054260+00:00",
+            "base": "codex/t02c-entry-handoff-20260921",
+            "branch": "codex/w83-handoff"
+          },
+          "resources_released": false,
+          "lifecycle_snapshot": {
+            "handoff_branch_deleted": true,
+            "handoff_seat_released": true,
+            "main_task": "CP6:BUG-468-MATERIAL-SHORTAGE-OWNER",
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave83-final-verification.json"
+          }
         }
       ],
       "horizon": {
@@ -187306,8 +187397,30 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Main product adoption, Handoff delivery, same-task lifecycle close and continue seven-day goal",
-      "validation": "37独立.NET用例（21原生PG、15既有非PG行为、1两租户启动种子）及9Vue用例通过，无跳过；相关构建和vue-tsc通过"
+      "next_action": "Finish same-branch Main ledger PR/lifecycle, close Issue468 on proof; continue seven-day remaining direct prerequisites",
+      "validation": "37独立.NET用例（21原生PG、15既有非PG行为、1两租户启动种子）及9Vue用例通过，无跳过；相关构建和vue-tsc通过",
+      "handoff_delivery_ref": {
+        "commit": "e09f9232e7c46f24383fc3a8cc38bb44a4ca4506",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T223020Z-wave83-delivery/MESSAGE.md",
+        "at": "2026-10-23T22:30:20.054260+00:00",
+        "base": "codex/t02c-entry-handoff-20260921",
+        "branch": "codex/w83-handoff"
+      },
+      "handoff_integration": {
+        "result": "PASS",
+        "repository": "GTX537/CP6.AI-Handoff",
+        "source": "e09f9232e7c46f24383fc3a8cc38bb44a4ca4506",
+        "main": "6ba2532ea511b004e025170c0c3fee3ec398250d",
+        "target": "codex/t02c-entry-handoff-20260921",
+        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/59",
+        "paths": [
+          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T221647Z-wave83-start/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T223020Z-wave83-delivery/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/waves/20261023-wave83.md"
+        ],
+        "observed_at": "2026-10-23T22:31:05.864138+00:00"
+      },
+      "lifecycle_complete": false
     },
     "wave_history": [
       {
@@ -200085,7 +200198,7 @@
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "材料缺料管理独立Owner、并发与无载荷通知"
+          "next_action": "Material shortage current Owner adopted; full procurement/Finance remains separate. Continue remaining independent Owners and D5/D6 real prerequisites."
         },
         {
           "id": "D3",

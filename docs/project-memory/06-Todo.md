@@ -1,8 +1,8 @@
 # 当前待办与优先级
 
-## 2026-10-23：W83物料缺料跟进Owner候选通过
+## 2026-10-23：W83物料缺料跟进Owner已采用
 
-Issue468真实缺陷红灯转绿；37独立.NET用例（21原生PG、15既有非PG行为、1两租户启动种子）及9Vue用例通过，无跳过；相关构建和vue-tsc通过。[单份交付](../development/evidence/W83-01/DELIVERY.md)。来源/字段/版本受控，父原子创建、空租户提示与早期采购拒绝，状态更新不改变库存。新租户只登记query不自动授权，5个自有PG停止保留；待Main/Handoff采用和分支/席位收尾。完整目标/验收不提升，七天ACTIVE。
+Main [PR469](https://github.com/GTX537/CP6/pull/469) source `778338a1048ca9bc41752ac691a27c68b6604013`进入远端main `3b3855ebd2b8125a90e7e1674ada216c8ae95a73`，29任务路径逐blob核对；37.NET/9Vue及类型检查通过，无跳过。[单份交付](../development/evidence/W83-01/DELIVERY.md)。Handoff [PR59](https://github.com/GTX537/CP6.AI-Handoff/pull/59)采用、准确分支删除、固定树干净detached、finish释放。Main同任务最后状态PR/finish及Issue468关闭待完成，未提前声明释放。5个PG停止保留；当前约16.56min，原估60–90min＋独立前置2min，最终按finish计。正式procurement/Finance、125目标与247验收不提升，七天目标ACTIVE。
 
 ## 2026-10-23：W82告知摘要夹具修订已采用
 
