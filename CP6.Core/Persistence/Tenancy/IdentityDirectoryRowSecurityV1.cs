@@ -84,10 +84,48 @@ internal static class IdentityDirectoryRowSecurityV1
                     pg_catalog.to_regprocedure('cp6_authentication_v1.admission_revision_writer()'),
                     pg_catalog.to_regprocedure('cp6_authentication_v1.organization_revision_writer()'),
                     pg_catalog.to_regprocedure('cp6_authentication_v1.permission_catalog_writer()'),
+                    pg_catalog.to_regprocedure('cp6_order_owner_v1.mapping_validate()'),
+                    pg_catalog.to_regprocedure('cp6_order_owner_v1.mapping_revision()'),
+                    pg_catalog.to_regprocedure('cp6_operations_owner_v1.mapping_validate()'),
+                    pg_catalog.to_regprocedure('cp6_operations_owner_v1.mapping_revision()'),
+                    pg_catalog.to_regprocedure('cp6_main_owner_v1.immutable()'),
+                    pg_catalog.to_regprocedure('cp6_oee_legacy_v1.validate()'),
+                    pg_catalog.to_regprocedure('cp6_oee_legacy_v1.immutable()'),
+                    pg_catalog.to_regprocedure('cp6_stock_outbox_v1.cp6_outbox_v2_guard()'),
+                    pg_catalog.to_regprocedure('cp6_stock_outbox_v1.cp6_outbox_v2_immutable()'),
+                    pg_catalog.to_regprocedure('cp6_stock_outbox_v1.source_proof()'),
+                    pg_catalog.to_regprocedure('cp6_stock_outbox_v1.envelope_immutable()'),
+                    pg_catalog.to_regprocedure('cp6_stock_outbox_v1.binding_identity_immutable()'),
+                    pg_catalog.to_regprocedure('cp6_stock_outbox_v1.authority_identity_immutable()'),
+                    pg_catalog.to_regprocedure('cp6_stock_outbox_v1.run_guard()'),
                     pg_catalog.to_regprocedure('cp6_storage_identity.set_rowversion_v1()')]) known(oid) WHERE known.oid=p.oid)
                   OR EXISTS(SELECT FROM pg_catalog.aclexplode(coalesce(p.proacl,pg_catalog.acldefault('f',p.proowner))) a
-                    WHERE a.grantee<>p.proowner AND NOT(n.nspname NOT IN ('cp6_authentication_v1','cp6_platform_admin_guard_v1')
+                    WHERE a.grantee<>p.proowner AND NOT(n.nspname NOT IN ('cp6_authentication_v1','cp6_platform_admin_guard_v1','cp6_order_owner_v1','cp6_operations_owner_v1','cp6_oee_legacy_v1','cp6_main_owner_v1','cp6_stock_outbox_v1')
                       AND a.grantee=0 AND a.privilege_type='EXECUTE' AND NOT a.is_grantable))))
+              -- Exact bodies from the frozen order/standalone/Machine/OEE/original-operation/Outbox migrations.
+              -- Normalize line endings only; names alone cannot admit a modified function.
+              AND NOT EXISTS(SELECT FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid=p.pronamespace
+                WHERE n.nspname IN ('cp6_order_owner_v1','cp6_operations_owner_v1','cp6_oee_legacy_v1','cp6_main_owner_v1','cp6_stock_outbox_v1') AND (
+                  p.prokind<>'f' OR p.prorettype<>'pg_catalog.trigger'::regtype
+                  OR p.prolang<>(SELECT oid FROM pg_catalog.pg_language WHERE lanname='plpgsql')
+                  OR p.proconfig IS DISTINCT FROM ARRAY['search_path=pg_catalog']::text[]
+                  OR NOT EXISTS(SELECT FROM (VALUES
+                    ('cp6_order_owner_v1.mapping_validate()','ada038b2302f27f04dc5dee3eb85e789168507e44764417fbd5419098ca2226c'),
+                    ('cp6_order_owner_v1.mapping_revision()','c5c89bd436c2274f8273fa79f108b8924a00e24b52878ea12a28502f3ed57ddf'),
+                    ('cp6_operations_owner_v1.mapping_validate()','13023cd79517db0282f75a2de4ab95685fb70753c9cf0583e64ff4ede5e32a65'),
+                    ('cp6_operations_owner_v1.mapping_revision()','69ceefaa980ec8291a7a88710964052ede18ab78c185ca736df460deac1757dd'),
+                    ('cp6_main_owner_v1.immutable()','8cebf6e39cd698ea785b4205cf167597da7156404fac050fb48ea8cb5388d026'),
+                    ('cp6_oee_legacy_v1.validate()','7753e263d9fae459905aefc5cdb294a1e0f0150f349896f977efe887fc4c281e'),
+                    ('cp6_oee_legacy_v1.immutable()','9c7273dd191374a454bf1bb8f614f946ac0e43e7318cd89a3a96cd5dec622105'),
+                    ('cp6_stock_outbox_v1.cp6_outbox_v2_guard()','4e2458c394e2996b4333203da9e9f604dac81d7fba80cd1b291414cd6aacc194'),
+                    ('cp6_stock_outbox_v1.cp6_outbox_v2_immutable()','5ea4f613f2e980bbd5d629ec1dc213e07fd2109cb11c639204a4d2df996bdf01'),
+                    ('cp6_stock_outbox_v1.source_proof()','3a3b06e915fdbdcbfc7675e3fac42e0692d5a1081c74358e9dd08324a9d60ba7'),
+                    ('cp6_stock_outbox_v1.envelope_immutable()','9a746686675b7df60111cd9982294d24a0095d2d20dadacf89d920915164c8dc'),
+                    ('cp6_stock_outbox_v1.binding_identity_immutable()','22fa68f1b7791bb0acb38e590e3de61fdca613e7987af18ce741649600b4b62e'),
+                    ('cp6_stock_outbox_v1.authority_identity_immutable()','0a86616c48e6fc6fec1562047daa677114bc77cc47336a47f102969673385498'),
+                    ('cp6_stock_outbox_v1.run_guard()','82d75b7d83b3e58545b61ccd860975b92710e54df4555a2560b946cb2d3fead6')
+                  ) expected(signature,sha256) WHERE p.oid=pg_catalog.to_regprocedure(expected.signature)
+                    AND encode(sha256(convert_to(replace(p.prosrc,chr(13)||chr(10),chr(10)),'UTF8')),'hex')=expected.sha256)))
               AND pg_catalog.to_regprocedure('public.cp6_cp936_length_v1(text)') IS NOT NULL
               AND pg_catalog.to_regprocedure('public.cp6_text_range_v1(text,text)') IS NOT NULL
             """);
