@@ -448,3 +448,19 @@ CRM [PR110](https://github.com/GTX537/CP6.CRM/pull/110)已采用，source `ab4a4
 结果不授权、不激活、不发attempt，不写Bundle/版本/稳定槽/PreviewProof，不接Program/HTTP。完整Save/Preview/Activate的真实Owner最终门与持久化仍待完成。24/375整卡、125目标0交付、247运行NOT_RUN不提升，七天目标ACTIVE。W51指定停止data删除自动审批拒绝原因为blocked by policy，保留不重试。
 
 Handoff [PR43](https://github.com/GTX537/CP6.AI-Handoff/pull/43)已采用 `7675390afb5752e1b15942629aff628f11991afa`，准确分支删除、固定树干净detached、finish释放。Main仅剩协调PR/finish，不提前声明释放。登记开工至此约14.71min，原预算40–60min，最终以finish为准、子任务不重复累计；前置只读核对约4min。
+
+## 2026-10-23：W67全部收尾 / W68配置保存稳定槽
+
+W67 Main442/CRM110/Handoff43全部采用，20项相关本地用例通过；实际18.51min，前置约4min。三条准确分支清理、固定树干净detached、全部席位释放。[W68](../dispatch/20261023-wave68/README.md)补PostgreSQL配置保存稳定请求槽和原结果，预计75–110min；完整Owner/Bundle写入与披露授权仍待采用。CRM Issue109保持开放，七天目标ACTIVE。
+
+## W68实际交付
+
+CRM [PR111](https://github.com/GTX537/CP6.CRM/pull/111)已采用，source `645da4a73a0cfde56f330d41291250c14b9f18da`，远端main `10985b5ca7f1f127f32768dec3983ee2e2d29571`，10条任务路径exact blob核对通过。[单份产品报告](https://github.com/GTX537/CP6.CRM/blob/10985b5ca7f1f127f32768dec3983ee2e2d29571/docs/development/evidence/W68-01/DELIVERY.md)。22项有效本地PG用例通过、无跳过（21项成功复用加1项定向补验），相关API与必要依赖构建成功；真实Owner业务验收NOT_RUN，无Actions。
+
+新增原生PostgreSQL configuration.save稳定请求槽与不可变原结果。租户/操作者/HMAC请求键为唯一身份，ResourceId和payload不进入槽；同键同指纹/版本恢复原201、资源、保护体、ETag与保留截止，异内容拒绝。先取事务锁查槽，再执行同连接/事务保存体；组件不commit。业务异常、原生SQL错误、取消或过期结果撤销本窗写入并保留外层已有工作；Serializable旧快照竞争交由Owner重建事务，无隐藏重试。NUL/Unicode字节、100ns截止与Owner版本表示保持。
+
+只在新自有库显式安装独立v1 schema，runtime最小USAGE/SELECT/INSERT，ALWAYS不可变guard与实际列/唯一槽/trigger/函数体漂移检查；已有环境不修补。22项实际PG行为通过，未实现红灯保留，一次作者集中SPEC/QUALITY通过。测试库正常停止、无postmaster.pid，数据与日志保留。CRM准确任务分支已删除，固定树干净detached，finish释放。无Actions、新增包、既有迁移或部署。
+
+测试保存体仅fixture.save_effects，尚未接真实Owner当前身份/对象/字段授权、完整Bundle/audit/outbox写集、重放当前资源/PII核验、隐私保留worker、提交未知协议或Program/HTTP。到期拒绝读取不等于隐私删除完成，密文与可信密钥由Owner提供。CRM Issue109原fixture矛盾保持OPEN。完整24/375整卡、125目标0交付、247运行NOT_RUN不提升，七天目标ACTIVE。W51指定停止data删除自动审批拒绝原因为blocked by policy，保留不重试。
+
+Handoff [PR44](https://github.com/GTX537/CP6.AI-Handoff/pull/44)已采用 `e25fb253fa991417d55ff2b404dd9c9fa3a73683`，准确分支删除、固定树干净detached、finish释放。Main仅剩协调PR/finish，不提前声明释放。登记开工至此约42.52min，原预算75–110min，最终以finish为准、子任务不重复累计；前置只读核对约8min。
