@@ -226,3 +226,21 @@ CRM [PR99](https://github.com/GTX537/CP6.CRM/pull/99)已采用，source `9ad4d54
 正式CRM原始事件来源、全路径PreCheckpoint/历史冲突/AuthoritySelection、持久Published/当前授权、真实Owner共同事务和Program采用继续后继。锁协议不提供认证/授权，不形成Ready/Allow或Main新鲜度。无Actions、生产部署或既有库迁移，不提升24/375整卡、125目标0交付或247运行NOT_RUN。七天目标ACTIVE，继续D5。
 
 Handoff [PR30](https://github.com/GTX537/CP6.AI-Handoff/pull/30)已采用 `51eb830369d0580d16feab2c6999a21187e5e569`，准确本地/远端分支删除、工作区干净detached、finish释放。Main仅剩当前协调分支正常PR及finish，不提前声明释放。登记开工至此约29.07min，原预算60–100min，实际最终时长以finish为准，不重复累计子任务；此前只读核对约3min。
+
+## 2026-10-23：W54全部收尾 / W55原始身份来源与内容门
+
+W54 CRM99/Handoff30/Main423已采用，101项相关验证通过，实际32.09min、前置约3min；准确分支删除、固定树干净detached、全部席位释放。[W55](../dispatch/20261023-wave55/README.md)单人继续新版原始来源/当前引用与正式全路径PreCheckpoint，预计90–150min。完整Published/最终Owner门继续后继，事实接收不形成Allow，七天目标ACTIVE。
+
+## W55实际交付
+
+CRM [PR100](https://github.com/GTX537/CP6.CRM/pull/100)已采用，source `6c8759caf2102849e0fc575c2f1b7ad41a5bd3f9`，远端main `8d8dd082232c6f74204c3e30be71c9922b8725ee`，21任务路径exact blob核对通过。[单份产品报告](https://github.com/GTX537/CP6.CRM/blob/8d8dd082232c6f74204c3e30be71c9922b8725ee/docs/development/evidence/W55-01/DELIVERY.md)。102个不同相关本地用例通过：原始内容/安装、正式Inbox与原生事务竞争、既有PG身份回归及Platform消费；API/Worker编译，真实C01/Owner验收NOT_RUN，无Actions。
+
+显式PG v2统一实际EVENT原envelope/data和完整SOURCE_SNAPSHOT原引用，保留独立摘要域与来源/注册向量；Current只引用同tenant/aggregate精确原来源。正式0.10.3 PreCheckpoint所有成功/冲突路径共同校验历史和注册，原操作journal及Inbox字节副本、Current、冲突/Drift/调度、精确token撤权和tenant/user/epoch会话限制同调用方Serializable事务。原transport决定冲突目标，外tenant碰撞无Owner写入；同内容不同transport复用原结果，旧版本不回退，观察不代替当前anchor。
+
+新版完整基线导入保留租约/Revision CAS、共同七锁和40001整事务边界；新来源使旧ticket失效，基线/消息不能清除Drift。丢失receipt可查原Owner key/digest，历史结果不ACK当前投递；最终Inbox故障后即使caller捕获并commit也无部分Owner/会话残留。真实runtime backend已证实等待identity原生锁，停用提交后不允许旧会话恢复，回滚则可继续。认证和读取策略仍是明确fixture，实际宿主接入未验收。
+
+仅新隔离库显式安装；有旧V1当前状态则拒绝切换，成功后旧V1当前入口原生与应用层关闭。四份冻结SQL不改写。一次作者SPEC/QUALITY通过；SQL修正后全新owned库重装验证，真实失败日志保留。两个owned PG已核身份和零外部会话后停止，数据/证据保留。CRM准确本地/远端分支已删除，固定工作区干净detached，manage finish释放后DEV-2复用Handoff。
+
+AuthoritySelection恢复、完整图/Published/当前授权、真实业务Owner共同最终门与sidecar/OIDC/broker宿主采用继续D5。Program/旧消费者未切换，CanAuthorize=false；Main–CRM分库不冒充共同门。无Actions、既有库迁移或部署，24/375整卡、125目标0交付和247运行NOT_RUN不提升。七天目标ACTIVE。W51准确data删除曾被自动审批拒绝，原因仅“blocked by policy”；继续停止保留，无重试绕过。
+
+Handoff [PR31](https://github.com/GTX537/CP6.AI-Handoff/pull/31)已采用 `57b2d7c4288bcf1e36074679025b73ec0c206400`，准确本地/远端分支删除、工作区干净detached、finish释放。Main仅剩当前协调分支正常PR及finish，不提前声明释放。登记开工至此约45.27min，原预算90–150min，实际最终时长以finish为准，不重复累计子任务；此前只读核对约3min。
