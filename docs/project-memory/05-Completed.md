@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-23：W56可信完整基线恢复与真实来源依赖图已采用
+
+CRM PR101/source `b220c9298e3ec2f1ad477619c0ae001289a6cd64`已采用远端main `6bd4dc30c962c86fe6ba3661fc52e8bbbfc4b8b0`；64项相关本地验证通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/6bd4dc30c962c86fe6ba3661fc52e8bbbfc4b8b0/docs/development/evidence/W56-01/DELIVERY.md)。可信完整基线AuthoritySelection/resolvedRefs、原生完整恢复约束和真实来源依赖图已采用；Published/真实Owner最终门继续D5，CanAuthorize=false。CRM/Handoff准确分支删除、固定树干净detached、finish释放，Main当前协调分支待最终PR/finish。整卡/完整目标/真实验收不提升，七天目标ACTIVE。
+
 ## 2026-10-23：W55原始身份来源与正式内容门已采用
 
 CRM PR100/source `6c8759caf2102849e0fc575c2f1b7ad41a5bd3f9`已采用远端main `8d8dd082232c6f74204c3e30be71c9922b8725ee`；102项相关本地验证通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/8d8dd082232c6f74204c3e30be71c9922b8725ee/docs/development/evidence/W55-01/DELIVERY.md)。显式PG v2来源/Current、正式内容PreCheckpoint/原journal、历史冲突与撤权/会话限制同事务；AuthoritySelection/Published/真实Owner最终门继续D5，CanAuthorize=false。CRM/Handoff准确分支删除、固定树干净detached、finish释放，Main当前协调分支待最终PR/finish。整卡/完整目标/真实验收不提升，七天目标ACTIVE。

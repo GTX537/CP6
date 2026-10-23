@@ -159582,6 +159582,16 @@
       "date": "2026-10-23",
       "change": "W55 CRM PR100 adopted explicit PG original identity sources/current, formal content PreCheckpoint and immutable original journal/Inbox with native session restrictions; 102 relevant local cases passed. Handoff finished; AuthoritySelection/Published/real Owner remains pending; continuous goal active.",
       "evidence": "https://github.com/GTX537/CP6.CRM/blob/8d8dd082232c6f74204c3e30be71c9922b8725ee/docs/development/evidence/W55-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "W55 fully finished; W56 trusted complete-baseline AuthoritySelection and original-provenance dependency graph admitted; seven-day ACTIVE.",
+      "evidence": "docs/development/dispatch/20261023-wave56/README.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "W56 CRM PR101 adopted trusted full-baseline authority recovery, immutable resolved refs, native CAS/complete-frame constraints and actual-source dependency graph; 64 related local cases passed. Published/real Owner remains pending; continuous goal active.",
+      "evidence": "https://github.com/GTX537/CP6.CRM/blob/6bd4dc30c962c86fe6ba3661fc52e8bbbfc4b8b0/docs/development/evidence/W56-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -167329,34 +167339,34 @@
       "card_anchor": "wp02-06",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W55-01",
+        "chat_label": "COORD / W56-01",
         "repository": "CRM",
         "owning_task_repository": "CRM",
-        "branch": "codex/w55-01",
+        "branch": "codex/w56-01",
         "worktree": "D:\\CP6-worktrees\\dev-2",
-        "claimed_at": "2026-10-23T03:41:58.519943+00:00",
-        "baseline_sha": "46dfd16e0052eab44c1020970767f4f47fc5cf0d",
-        "entry_evidence": "docs/development/dispatch/20261023-wave55/README.md",
+        "claimed_at": "2026-10-23T04:32:10.398085+00:00",
+        "baseline_sha": "8d8dd082232c6f74204c3e30be71c9922b8725ee",
+        "entry_evidence": "docs/development/dispatch/20261023-wave56/README.md",
         "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
-        "dispatch_scope": "W55_01",
+        "dispatch_scope": "W56_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
         "actual_start_ref": {
-          "commit": "b31f73826ae9b2e7b2feb7b07c89af5c0d4fab38",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-06/messages/20261023T034158Z-wave55-start/MESSAGE.md",
-          "at": "2026-10-23T03:41:58.519943+00:00"
+          "commit": "d52047df982cbff7f514db40e8e0f946e88a2d63",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-06/messages/20261023T043210Z-wave56-start/MESSAGE.md",
+          "at": "2026-10-23T04:32:10.398085+00:00"
         },
         "reserved_write_resources": [
           "CRM:identity-consumer",
           "CRM:PG-identity-schema",
-          "CRM:ef-model",
-          "CRM:package-references"
+          "CRM:identity-dependency-graph",
+          "CRM:auth-readiness"
         ],
         "reserved_postgresql_ports": [
           55437
         ],
-        "handoff_branch": "codex/w55-handoff",
+        "handoff_branch": "codex/w56-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
@@ -167365,16 +167375,16 @@
         "candidate_integrated": true,
         "resources_released": true,
         "full_task_completed": false,
-        "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/8d8dd082232c6f74204c3e30be71c9922b8725ee/docs/development/evidence/W55-01/DELIVERY.md",
-        "source_candidate_sha": "6c8759caf2102849e0fc575c2f1b7ad41a5bd3f9",
-        "remote_main_sha": "8d8dd082232c6f74204c3e30be71c9922b8725ee",
-        "pull_request": "https://github.com/GTX537/CP6.CRM/pull/100",
+        "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/6bd4dc30c962c86fe6ba3661fc52e8bbbfc4b8b0/docs/development/evidence/W56-01/DELIVERY.md",
+        "source_candidate_sha": "b220c9298e3ec2f1ad477619c0ae001289a6cd64",
+        "remote_main_sha": "6bd4dc30c962c86fe6ba3661fc52e8bbbfc4b8b0",
+        "pull_request": "https://github.com/GTX537/CP6.CRM/pull/101",
         "handoff_delivery_ref": {
-          "commit": "5cd35d8d32288105cfa54703c0eae97bfac28be9",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-06/messages/20261023T042051Z-wave55-delivery/MESSAGE.md",
-          "at": "2026-10-23T04:20:51.546145+00:00",
+          "commit": "a09c127e8d0877feae536d1adef2245cb23f24d4",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-06/messages/20261023T054032Z-wave56-delivery/MESSAGE.md",
+          "at": "2026-10-23T01:40:32.659076-04:00",
           "base": "codex/t02c-entry-handoff-20260921",
-          "branch": "codex/w55-handoff"
+          "branch": "codex/w56-handoff"
         }
       },
       "blockers": [],
@@ -167519,16 +167529,43 @@
         "source_candidate_sha": "6c8759caf2102849e0fc575c2f1b7ad41a5bd3f9",
         "remote_main_sha": "8d8dd082232c6f74204c3e30be71c9922b8725ee",
         "pull_request": "https://github.com/GTX537/CP6.CRM/pull/100",
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "lifecycle_snapshot": {
           "crm_branch_deleted": true,
           "crm_seat_released": true,
           "handoff_branch_deleted": true,
           "handoff_seat_released": true,
           "main_task": "CP6:W55-COORD",
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave55-final-verification.json"
+        },
+        "test_data_disposition": "Two owned PostgreSQL instances stopped; logs/data retained; W51 rejected deletion not retried",
+        "actual_agent_minutes": 47.64,
+        "final_main_sha": "6cf666b86655b46f1a761260466f79aa7c98c809",
+        "branches_deleted": true,
+        "seats_released": true
+      },
+      "wave56_delivery": {
+        "status": "MERGED",
+        "report": "https://github.com/GTX537/CP6.CRM/blob/6bd4dc30c962c86fe6ba3661fc52e8bbbfc4b8b0/docs/development/evidence/W56-01/DELIVERY.md",
+        "validation": "64项不同相关本地用例最终通过；新恢复/原生CAS/完整提交/跨租户/来源依赖图及旧接收/会话/基线/认证回归；API/Worker编译；真实Owner与宿主验收NOT_RUN，无Actions",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "adopted_scope": "Trusted full-baseline AuthoritySelection and immutable resolved refs, native recovery CAS/atomic completion, selected-content history gate and actual-source dependency graph; no Published allow or real Owner final gate",
+        "source_candidate_sha": "b220c9298e3ec2f1ad477619c0ae001289a6cd64",
+        "remote_main_sha": "6bd4dc30c962c86fe6ba3661fc52e8bbbfc4b8b0",
+        "pull_request": "https://github.com/GTX537/CP6.CRM/pull/101",
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "crm_branch_deleted": true,
+          "crm_seat_released": true,
+          "handoff_branch_deleted": true,
+          "handoff_seat_released": true,
+          "main_task": "CP6:W56-COORD",
           "main_finish_required": true,
           "main_seat_released": false,
-          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave55-final-verification.json"
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave56-final-verification.json"
         },
         "test_data_disposition": "Two owned PostgreSQL instances stopped; logs/data retained; W51 rejected deletion not retried"
       }
@@ -185406,10 +185443,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261023-wave55",
-      "path": "docs/development/dispatch/20261023-wave55/README.md",
-      "baseline_sha": "aaddacdf44b9107a9915fa7465edec0b25996da0",
-      "registered_at": "2026-10-23T03:41:58.519943+00:00",
+      "id": "20261023-wave56",
+      "path": "docs/development/dispatch/20261023-wave56/README.md",
+      "baseline_sha": "6cf666b86655b46f1a761260466f79aa7c98c809",
+      "registered_at": "2026-10-23T04:32:10.398085+00:00",
       "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -185426,90 +185463,92 @@
       "product_integrated": true,
       "windows": [
         {
-          "id": "W55-01",
+          "id": "W56-01",
           "task_id": "WP02-06",
-          "title": "CRM original identity provenance, unified current references and formal content PreCheckpoint",
+          "title": "Trusted complete-baseline AuthoritySelection, immutable conflict resolution and actual provenance graph",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "b31f73826ae9b2e7b2feb7b07c89af5c0d4fab38",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-06/messages/20261023T034158Z-wave55-start/MESSAGE.md",
-            "at": "2026-10-23T03:41:58.519943+00:00"
+            "commit": "d52047df982cbff7f514db40e8e0f946e88a2d63",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-06/messages/20261023T043210Z-wave56-start/MESSAGE.md",
+            "at": "2026-10-23T04:32:10.398085+00:00"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\dev-2",
-          "branch": "codex/w55-01",
-          "planned_scope_ref": "docs/development/dispatch/20261023-wave55/README.md",
+          "branch": "codex/w56-01",
+          "planned_scope_ref": "docs/development/dispatch/20261023-wave56/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/8d8dd082232c6f74204c3e30be71c9922b8725ee/docs/development/evidence/W55-01/DELIVERY.md",
-          "validation": "102个不同相关本地用例通过：原始内容/安装、正式Inbox与原生事务竞争、既有PG身份回归及Platform消费；API/Worker编译，真实C01/Owner验收NOT_RUN，无Actions",
+          "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/6bd4dc30c962c86fe6ba3661fc52e8bbbfc4b8b0/docs/development/evidence/W56-01/DELIVERY.md",
+          "validation": "64项不同相关本地用例最终通过；新恢复/原生CAS/完整提交/跨租户/来源依赖图及旧接收/会话/基线/认证回归；API/Worker编译；真实Owner与宿主验收NOT_RUN，无Actions",
           "candidate_integrated": true,
           "integration": {
             "result": "PASS",
             "repository": "GTX537/CP6.CRM",
-            "source": "6c8759caf2102849e0fc575c2f1b7ad41a5bd3f9",
-            "main": "8d8dd082232c6f74204c3e30be71c9922b8725ee",
+            "source": "b220c9298e3ec2f1ad477619c0ae001289a6cd64",
+            "main": "6bd4dc30c962c86fe6ba3661fc52e8bbbfc4b8b0",
             "target": "main",
-            "pr": "https://github.com/GTX537/CP6.CRM/pull/100",
+            "pr": "https://github.com/GTX537/CP6.CRM/pull/101",
             "paths": [
               "CHANGELOG-AI.md",
-              "docs/development/evidence/W55-01/DELIVERY.md",
+              "docs/development/evidence/W56-01/DELIVERY.md",
               "docs/project-memory/05-Completed.md",
               "docs/project-memory/06-Todo.md",
               "docs/project-memory/PROJECT_STATE.md",
-              "src/CP6.CRM.Api/Authentication/PostgreSqlCrmAuthStore.cs",
               "src/CP6.CRM.Infrastructure/CP6.CRM.Infrastructure.csproj",
-              "src/CP6.CRM.Infrastructure/Identity/PostgreSql/IdentityIngressContentV2.cs",
-              "src/CP6.CRM.Infrastructure/Identity/PostgreSql/IdentityIngressDbV2.cs",
-              "src/CP6.CRM.Infrastructure/Identity/PostgreSql/IdentityIngressGuardsV2.sql",
+              "src/CP6.CRM.Infrastructure/Identity/PostgreSql/IdentityAuthorityContentV1.cs",
+              "src/CP6.CRM.Infrastructure/Identity/PostgreSql/IdentityAuthoritySchemaV1.sql",
+              "src/CP6.CRM.Infrastructure/Identity/PostgreSql/IdentityDependencyCompiler.cs",
               "src/CP6.CRM.Infrastructure/Identity/PostgreSql/IdentityIngressInboxV2.cs",
-              "src/CP6.CRM.Infrastructure/Identity/PostgreSql/IdentityIngressSchemaV2.sql",
+              "src/CP6.CRM.Infrastructure/Identity/PostgreSql/IdentityIngressRecoveryV1.cs",
               "src/CP6.CRM.Infrastructure/Identity/PostgreSql/IdentityIngressStorageV2.cs",
+              "src/CP6.CRM.Infrastructure/Identity/PostgreSql/IdentityProjectionGraphV1.cs",
+              "src/CP6.CRM.Infrastructure/Identity/PostgreSql/IdentityProjectionGraphV2.cs",
+              "src/CP6.CRM.Infrastructure/Identity/PostgreSql/PostgreSqlIdentityAuthorityV1.cs",
               "src/CP6.CRM.Infrastructure/Identity/PostgreSql/PostgreSqlIdentityIngressV2.cs",
-              "src/CP6.CRM.Infrastructure/Identity/PostgreSql/PostgreSqlIdentityProjectionV1.cs",
-              "src/CP6.CRM.Infrastructure/Identity/PostgreSql/PostgreSqlIdentitySessionsV1.cs",
-              "tests/CP6.CRM.IdentityPostgreSqlTests/IdentityIngressBoundaryTests.cs",
-              "tests/CP6.CRM.IdentityPostgreSqlTests/IdentityIngressContentTests.cs",
+              "tests/CP6.CRM.IdentityPostgreSqlTests/IdentityAuthorityBehaviorTests.cs",
+              "tests/CP6.CRM.IdentityPostgreSqlTests/IdentityAuthorityFrameTests.cs",
+              "tests/CP6.CRM.IdentityPostgreSqlTests/IdentityAuthorityGraphTests.cs",
+              "tests/CP6.CRM.IdentityPostgreSqlTests/IdentityAuthorityNativeTests.cs",
+              "tests/CP6.CRM.IdentityPostgreSqlTests/IdentityAuthorityRecoveryTests.cs",
               "tests/CP6.CRM.IdentityPostgreSqlTests/IdentityIngressNativeTests.cs",
-              "tests/CP6.CRM.IdentityPostgreSqlTests/IdentityIngressTransactionTests.cs",
               "tests/CP6.CRM.IdentityPostgreSqlTests/SessionStoreTests.cs"
             ],
-            "observed_at": "2026-10-23T04:18:34.833178+00:00"
+            "observed_at": "2026-10-23T05:35:10.363304+00:00"
           },
           "runtime_resources_released": true,
           "resources_released": true,
           "handoff_delivery_ref": {
-            "commit": "5cd35d8d32288105cfa54703c0eae97bfac28be9",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-06/messages/20261023T042051Z-wave55-delivery/MESSAGE.md",
-            "at": "2026-10-23T04:20:51.546145+00:00",
+            "commit": "a09c127e8d0877feae536d1adef2245cb23f24d4",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-06/messages/20261023T054032Z-wave56-delivery/MESSAGE.md",
+            "at": "2026-10-23T01:40:32.659076-04:00",
             "base": "codex/t02c-entry-handoff-20260921",
-            "branch": "codex/w55-handoff"
+            "branch": "codex/w56-handoff"
           },
           "lifecycle_snapshot": {
             "crm_branch_deleted": true,
             "crm_seat_released": true,
             "handoff_branch_deleted": true,
             "handoff_seat_released": true,
-            "main_task": "CP6:W55-COORD",
+            "main_task": "CP6:W56-COORD",
             "main_finish_required": true,
             "main_seat_released": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave55-final-verification.json"
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave56-final-verification.json"
           }
         }
       ],
       "horizon": {
-        "started_at": "2026-10-23T03:41:58.519943+00:00",
+        "started_at": "2026-10-23T04:32:10.398085+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          90,
-          150
+          105,
+          170
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -185517,29 +185556,29 @@
         "reuse_worktree": "D:\\CP6-worktrees\\dev-2",
         "new_worktrees": 0
       },
-      "next_action": "Finish Main coordination PR/lifecycle, then continue trusted complete-baseline AuthoritySelection and published identity/Owner foundation",
-      "validation": "102个不同相关本地用例通过：原始内容/安装、正式Inbox与原生事务竞争、既有PG身份回归及Platform消费；API/Worker编译，真实C01/Owner验收NOT_RUN，无Actions",
+      "next_action": "Finish Main coordination PR/lifecycle, then continue Published/current authorization and real Owner foundation",
+      "validation": "64项不同相关本地用例最终通过；新恢复/原生CAS/完整提交/跨租户/来源依赖图及旧接收/会话/基线/认证回归；API/Worker编译；真实Owner与宿主验收NOT_RUN，无Actions",
       "lifecycle_complete": false,
       "handoff_delivery_ref": {
-        "commit": "5cd35d8d32288105cfa54703c0eae97bfac28be9",
-        "path": "handoffs/CP6-DEV-20261012/tasks/WP02-06/messages/20261023T042051Z-wave55-delivery/MESSAGE.md",
-        "at": "2026-10-23T04:20:51.546145+00:00",
+        "commit": "a09c127e8d0877feae536d1adef2245cb23f24d4",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP02-06/messages/20261023T054032Z-wave56-delivery/MESSAGE.md",
+        "at": "2026-10-23T01:40:32.659076-04:00",
         "base": "codex/t02c-entry-handoff-20260921",
-        "branch": "codex/w55-handoff"
+        "branch": "codex/w56-handoff"
       },
       "handoff_integration": {
         "result": "PASS",
         "repository": "GTX537/CP6.AI-Handoff",
-        "source": "5cd35d8d32288105cfa54703c0eae97bfac28be9",
-        "main": "57b2d7c4288bcf1e36074679025b73ec0c206400",
+        "source": "a09c127e8d0877feae536d1adef2245cb23f24d4",
+        "main": "87399631c8f9b25a8779047f90e729f0b5440454",
         "target": "codex/t02c-entry-handoff-20260921",
-        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/31",
+        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/32",
         "paths": [
-          "handoffs/CP6-DEV-20261012/tasks/WP02-06/messages/20261023T034158Z-wave55-start/MESSAGE.md",
-          "handoffs/CP6-DEV-20261012/tasks/WP02-06/messages/20261023T042051Z-wave55-delivery/MESSAGE.md",
-          "handoffs/CP6-DEV-20261012/waves/20261023-wave55.md"
+          "handoffs/CP6-DEV-20261012/tasks/WP02-06/messages/20261023T043210Z-wave56-start/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/tasks/WP02-06/messages/20261023T054032Z-wave56-delivery/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/waves/20261023-wave56.md"
         ],
-        "observed_at": "2026-10-23T04:21:56.902446+00:00"
+        "observed_at": "2026-10-23T05:42:43.798171+00:00"
       }
     },
     "wave_history": [
@@ -194362,6 +194401,149 @@
         "seats_released": true,
         "final_main_sha": "aaddacdf44b9107a9915fa7465edec0b25996da0",
         "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave54-final-verification.json"
+      },
+      {
+        "id": "20261023-wave55",
+        "path": "docs/development/dispatch/20261023-wave55/README.md",
+        "baseline_sha": "aaddacdf44b9107a9915fa7465edec0b25996da0",
+        "registered_at": "2026-10-23T03:41:58.519943+00:00",
+        "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W55-01",
+            "task_id": "WP02-06",
+            "title": "CRM original identity provenance, unified current references and formal content PreCheckpoint",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "b31f73826ae9b2e7b2feb7b07c89af5c0d4fab38",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-06/messages/20261023T034158Z-wave55-start/MESSAGE.md",
+              "at": "2026-10-23T03:41:58.519943+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\dev-2",
+            "branch": "codex/w55-01",
+            "planned_scope_ref": "docs/development/dispatch/20261023-wave55/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/8d8dd082232c6f74204c3e30be71c9922b8725ee/docs/development/evidence/W55-01/DELIVERY.md",
+            "validation": "102个不同相关本地用例通过：原始内容/安装、正式Inbox与原生事务竞争、既有PG身份回归及Platform消费；API/Worker编译，真实C01/Owner验收NOT_RUN，无Actions",
+            "candidate_integrated": true,
+            "integration": {
+              "result": "PASS",
+              "repository": "GTX537/CP6.CRM",
+              "source": "6c8759caf2102849e0fc575c2f1b7ad41a5bd3f9",
+              "main": "8d8dd082232c6f74204c3e30be71c9922b8725ee",
+              "target": "main",
+              "pr": "https://github.com/GTX537/CP6.CRM/pull/100",
+              "paths": [
+                "CHANGELOG-AI.md",
+                "docs/development/evidence/W55-01/DELIVERY.md",
+                "docs/project-memory/05-Completed.md",
+                "docs/project-memory/06-Todo.md",
+                "docs/project-memory/PROJECT_STATE.md",
+                "src/CP6.CRM.Api/Authentication/PostgreSqlCrmAuthStore.cs",
+                "src/CP6.CRM.Infrastructure/CP6.CRM.Infrastructure.csproj",
+                "src/CP6.CRM.Infrastructure/Identity/PostgreSql/IdentityIngressContentV2.cs",
+                "src/CP6.CRM.Infrastructure/Identity/PostgreSql/IdentityIngressDbV2.cs",
+                "src/CP6.CRM.Infrastructure/Identity/PostgreSql/IdentityIngressGuardsV2.sql",
+                "src/CP6.CRM.Infrastructure/Identity/PostgreSql/IdentityIngressInboxV2.cs",
+                "src/CP6.CRM.Infrastructure/Identity/PostgreSql/IdentityIngressSchemaV2.sql",
+                "src/CP6.CRM.Infrastructure/Identity/PostgreSql/IdentityIngressStorageV2.cs",
+                "src/CP6.CRM.Infrastructure/Identity/PostgreSql/PostgreSqlIdentityIngressV2.cs",
+                "src/CP6.CRM.Infrastructure/Identity/PostgreSql/PostgreSqlIdentityProjectionV1.cs",
+                "src/CP6.CRM.Infrastructure/Identity/PostgreSql/PostgreSqlIdentitySessionsV1.cs",
+                "tests/CP6.CRM.IdentityPostgreSqlTests/IdentityIngressBoundaryTests.cs",
+                "tests/CP6.CRM.IdentityPostgreSqlTests/IdentityIngressContentTests.cs",
+                "tests/CP6.CRM.IdentityPostgreSqlTests/IdentityIngressNativeTests.cs",
+                "tests/CP6.CRM.IdentityPostgreSqlTests/IdentityIngressTransactionTests.cs",
+                "tests/CP6.CRM.IdentityPostgreSqlTests/SessionStoreTests.cs"
+              ],
+              "observed_at": "2026-10-23T04:18:34.833178+00:00"
+            },
+            "runtime_resources_released": true,
+            "resources_released": true,
+            "handoff_delivery_ref": {
+              "commit": "5cd35d8d32288105cfa54703c0eae97bfac28be9",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-06/messages/20261023T042051Z-wave55-delivery/MESSAGE.md",
+              "at": "2026-10-23T04:20:51.546145+00:00",
+              "base": "codex/t02c-entry-handoff-20260921",
+              "branch": "codex/w55-handoff"
+            },
+            "lifecycle_snapshot": {
+              "crm_branch_deleted": true,
+              "crm_seat_released": true,
+              "handoff_branch_deleted": true,
+              "handoff_seat_released": true,
+              "main_task": "CP6:W55-COORD",
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave55-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-23T03:41:58.519943+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            90,
+            150
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\dev-2",
+          "new_worktrees": 0
+        },
+        "next_action": "Finish Main coordination PR/lifecycle, then continue trusted complete-baseline AuthoritySelection and published identity/Owner foundation",
+        "validation": "102个不同相关本地用例通过：原始内容/安装、正式Inbox与原生事务竞争、既有PG身份回归及Platform消费；API/Worker编译，真实C01/Owner验收NOT_RUN，无Actions",
+        "lifecycle_complete": true,
+        "handoff_delivery_ref": {
+          "commit": "5cd35d8d32288105cfa54703c0eae97bfac28be9",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-06/messages/20261023T042051Z-wave55-delivery/MESSAGE.md",
+          "at": "2026-10-23T04:20:51.546145+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w55-handoff"
+        },
+        "handoff_integration": {
+          "result": "PASS",
+          "repository": "GTX537/CP6.AI-Handoff",
+          "source": "5cd35d8d32288105cfa54703c0eae97bfac28be9",
+          "main": "57b2d7c4288bcf1e36074679025b73ec0c206400",
+          "target": "codex/t02c-entry-handoff-20260921",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/31",
+          "paths": [
+            "handoffs/CP6-DEV-20261012/tasks/WP02-06/messages/20261023T034158Z-wave55-start/MESSAGE.md",
+            "handoffs/CP6-DEV-20261012/tasks/WP02-06/messages/20261023T042051Z-wave55-delivery/MESSAGE.md",
+            "handoffs/CP6-DEV-20261012/waves/20261023-wave55.md"
+          ],
+          "observed_at": "2026-10-23T04:21:56.902446+00:00"
+        },
+        "actual_agent_minutes": 47.64,
+        "preflight_estimate_minutes": 3,
+        "branches_deleted": true,
+        "seats_released": true,
+        "final_main_sha": "6cf666b86655b46f1a761260466f79aa7c98c809",
+        "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave55-final-verification.json"
       }
     ],
     "development_priority": {
@@ -194488,9 +194670,9 @@
           "id": "D5",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W55-01",
+          "current_window": "W56-01",
           "prerequisite_adjustment": "CRM remains SQL Server; implement native PostgreSQL session/revocation foundation before complete identity/Inbox/Owner adoption.",
-          "next_action": "Trusted complete-baseline AuthoritySelection recovery, full graph/Published current authorization, then actual Owner common final transaction and real host adoption"
+          "next_action": "Published current authorization, then actual Owner common final transaction and real host adoption"
         },
         {
           "id": "D6",
