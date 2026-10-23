@@ -829,6 +829,21 @@ builder.Services.AddScoped<CP6.Core.Services.Integration.ISpaceDeadLetterNotifie
 // 4.15.5 Retry Worker — 60s ごとに Failed + NextRetryAt 到期 のイベントをリトライ
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.IntegrationEventRetryWorker>();
 
+// New keyed stock originals only. Registration is deployment-owned and must be explicit.
+var stockOutboxHost = builder.Configuration.GetSection("StockOutboxHost")
+    .Get<CP6.Core.Services.Integration.StockOutbox.StockOutboxHostOptionsV1>() ?? new();
+builder.Services.AddSingleton(stockOutboxHost);
+if (stockOutboxHost.Enabled)
+{
+    stockOutboxHost.Validate();
+    if (database.Provider != DatabaseProvider.PostgreSql)
+        throw new InvalidOperationException("STOCK_OUTBOX_POSTGRESQL_REQUIRED");
+    builder.Services.AddScoped<CP6.WebApi.Services.StockOutboxSignalRPublisherV1>();
+    builder.Services.AddScoped(sp => new CP6.Core.Services.Integration.StockOutbox.StockOutboxWorkerV1(
+        sp.GetRequiredService<CP6Context>(), stockOutboxHost, sp.GetRequiredService<CP6.WebApi.Services.StockOutboxSignalRPublisherV1>()));
+    builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.StockOutboxDispatchWorkerV1>();
+}
+
 // 财务每日对账 worker（章10 §5）：每日跑 AP/AR 子账↔GL + 试算平衡勾稽，不一致告警
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.FinReconciliationWorker>();
 // Space 库位对账 worker（波5）：每日扫已发布库位(Status=1)↔WMS bin 停用漂移，只读告警不自愈

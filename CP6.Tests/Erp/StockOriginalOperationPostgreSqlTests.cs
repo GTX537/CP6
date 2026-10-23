@@ -55,6 +55,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await using var h=await Seed();var owner=await GrantStocktakeDashboard(h);await SeedInventory(h);
         var mover=InventoryMover(h,owner);var command=StockMove();var result=await mover.MoveCommandAsync(command);
         Assert.Equal(result,await mover.MoveCommandAsync(command));Assert.NotEqual(result.OutTxnNo,result.InTxnNo);
+        Assert.Equal(1,await StockNotifications(h));
         Assert.Equal(2,await h.Db.StockTransactions.CountAsync());Assert.Equal(10m,await h.Db.Stocks.Where(s=>s.LocationCd=="L1").Select(s=>s.PhysicalQty).SingleAsync());
         Assert.Equal(.12345678m,await h.Db.Stocks.Where(s=>s.LocationCd=="L3").Select(s=>s.PhysicalQty).SingleAsync());
         Assert.Equal("ORIGINAL_OPERATION_INPUT_CONFLICT",(await Assert.ThrowsAsync<OrderPriceCorrectionException>(()=>mover.ApplyCommandAsync(StockApply(command.OperationId)))).Message);
@@ -70,6 +71,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var failure=new FailSecondAdjustment{Enabled=true};await using var h=await Seed(failure);
         var owner=await GrantStocktakeDashboard(h);await SeedInventory(h);var mover=InventoryMover(h,owner);var command=StockMove();
         await Assert.ThrowsAnyAsync<Exception>(()=>mover.MoveCommandAsync(command));Assert.False(failure.Enabled);
+        Assert.Equal(0,await StockNotifications(h));
         Assert.Equal(0,await Operations(h));Assert.Equal(0,await h.Db.StockTransactions.CountAsync());Assert.Equal(0,await h.Db.WmsSequences.CountAsync());
         Assert.Equal(2,await h.Db.Stocks.CountAsync());Assert.Equal(10.12345678m,await h.Db.Stocks.Where(s=>s.ProductCd=="P1").Select(s=>s.PhysicalQty).SingleAsync());
         Assert.Equal("UNKNOWN",(await mover.ReadOperationAsync(command.OperationId)).State);
@@ -95,6 +97,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var hook=new CommandHook();await using var h=await Seed(hook);var owner=await GrantStocktakeDashboard(h);await SeedInventory(h);
         var reads=0;hook.Before=c=>{if(c.CommandText.Contains("WITH field_subject") && ++reads==2)throw new IOException("stock final authorization fault");return Task.CompletedTask;};
         await Assert.ThrowsAnyAsync<Exception>(()=>InventoryMover(h,owner).ApplyCommandAsync(StockApply()));hook.Before=null;
+        Assert.Equal(0,await StockNotifications(h));
         Assert.Equal(2,reads);Assert.Equal(0,await Operations(h));Assert.Equal(0,await h.Db.StockTransactions.CountAsync());Assert.Equal(0,await h.Db.WmsSequences.CountAsync());
         Assert.Equal(10.12345678m,await h.Db.Stocks.Where(s=>s.ProductCd=="P1").Select(s=>s.PhysicalQty).SingleAsync());
     }
