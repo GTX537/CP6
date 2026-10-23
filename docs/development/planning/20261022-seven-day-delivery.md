@@ -370,3 +370,21 @@ CRM [PR107](https://github.com/GTX537/CP6.CRM/pull/107)已采用，source `54a78
 CRM准确本地/远端分支删除、固定树干净detached、finish释放。七天目标ACTIVE，继续实际Owner前置与D6可独立公共支撑。无Actions、既有库迁移或部署。W51准确data删除此前自动审批拒绝，原因仅“blocked by policy”；停止保留，无重试绕过。
 
 Handoff [PR38](https://github.com/GTX537/CP6.AI-Handoff/pull/38)已采用 `99db307c36bd5d5e9394e68bb1e84849a42566db`，准确分支删除、固定树干净detached、finish释放。Main仅剩协调PR/finish，不提前声明释放。登记开工至此约27.87min，原预算45–75min，最终以finish为准、子任务不重复累计；前置只读核对约6min。
+
+## 2026-10-23：W62全部收尾 / W63配置内容规范化
+
+W62 CRM107/Handoff38/Main431全部采用，真实跨仓场景通过，无跳过；实际36.05min，准确分支删除、固定树干净detached、全部席位释放。[W63](../dispatch/20261023-wave63/README.md)补原配置内容规范化与摘要，预计35–55min；保留原输入，完整Owner/Bundle保存/激活未完成。七天目标ACTIVE。
+
+## W63实际交付
+
+CRM [PR108](https://github.com/GTX537/CP6.CRM/pull/108)已采用，source `6c3feacec7a69243a25f6f5a78039922157990ad`，远端main `c7662eb196e72ddc8cab6d6c05490b6a310ca172`，7任务路径exact blob核对通过。[单份产品报告](https://github.com/GTX537/CP6.CRM/blob/c7662eb196e72ddc8cab6d6c05490b6a310ca172/docs/development/evidence/W63-01/DELIVERY.md)。12项相关本地用例通过、无跳过，API/Worker及必要依赖构建成功；原内容hash复现，完整Owner/表单验收NOT_RUN，无Actions。
+
+新增原ConfigurationDraft专用规范化内容视图及ContentHash，版本crm-inquiry-configuration-content-v1。NFC/UTF8、固定ASCII键顺序、紧凑JSON和原有界整数的精确归约，复现冻结原UI样例摘要；长小数/指数/负零不经浮点舍入，完整policy和数组顺序进入摘要。
+
+保留原SourceJson/SourceSha256、原业务值与noticeHash；NFC视图不回写业务值、不重算引用摘要，也不替代原草稿。时间字符串保留year0/全部小数精度。组件不是通用JSON或原权限投影签名codec，原生成合同/验签/日历/依赖/SQL均不变。结果不授权、不激活，不写Bundle/命令槽，不发preview/attempt。
+
+一次作者完整SPEC/QUALITY通过；12项新相关用例当前成功，初始桩红灯保留。W61/W59未变证据按真实来源引用，不重复运行；本轮没有数据库或监听进程、Actions、迁移、发包或部署。CRM准确分支删除、固定树干净detached、finish释放。
+
+完整24/375整卡、125目标0交付、247运行NOT_RUN不提升。七天目标ACTIVE，继续真实Owner前置和D6完整保存/公开表单必要基础。W51准确data删除此前自动审批拒绝，原因仅“blocked by policy”；停止保留，无重试绕过。
+
+Handoff [PR39](https://github.com/GTX537/CP6.AI-Handoff/pull/39)已采用 `57384c98558196d1ffab1c21829bb5e1fe75a847`，准确分支删除、固定树干净detached、finish释放。Main仅剩协调PR/finish，不提前声明释放。登记开工至此约17.81min，原预算35–55min，最终以finish为准、子任务不重复累计；前置只读核对约4min。
