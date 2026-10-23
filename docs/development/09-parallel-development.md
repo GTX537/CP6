@@ -310,3 +310,5 @@ Main、CRM和Platform任务分开提交/PR。生产者先交付准确Schema/包/
 W81 Main465/Handoff57已采用，Handoff准确分支与席位已收尾；Main同任务最后状态与finish后继续。W37–W80不重复。
 
 W83 Main469/Handoff59已采用，Handoff准确分支与席位已收尾；Main同任务最后状态与finish后继续。W37–W82不重复。
+
+W84 Main472/Handoff60已采用，Handoff准确分支与席位已收尾；Main同任务最后状态与finish后继续。W37–W83不重复。

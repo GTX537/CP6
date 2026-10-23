@@ -1,8 +1,8 @@
 # 当前待办与优先级
 
-## 2026-10-23：W84批次追溯与召回标记Owner候选通过
+## 2026-10-23：W84批次追溯与召回标记Owner已采用
 
-Issue471真实缺陷红灯转绿；23独立.NET用例（17原生PG、5既有非PG行为、1两租户启动种子）及12Vue用例通过，无跳过；相关构建和vue-tsc通过。[单份交付](../development/evidence/W84-01/DELIVERY.md)。整批当前授权与原生版本写、来源字段受控、合法空批次、数量不变，实际后续分配拒绝/解除恢复已验证；正式召回执行未验收。4个PG停止保留，待Main/Handoff采用和分支/席位收尾。完整目标/验收不提升，七天ACTIVE。
+Main [PR472](https://github.com/GTX537/CP6/pull/472) source `9607b710b6b926dbeb7735482f474cd2083b127f`进入远端main `4cbf720a21c783cd16fc0d8ca84857494463c2a1`，26任务路径逐blob核对；23.NET/12Vue及类型检查通过，无跳过。[单份交付](../development/evidence/W84-01/DELIVERY.md)。Handoff [PR60](https://github.com/GTX537/CP6.AI-Handoff/pull/60)采用、准确分支删除、固定树干净detached、finish释放。Main同任务最后状态PR/finish及Issue471关闭待完成，未提前声明释放。4个PG停止保留；当前约17.80min，原估35–55min＋独立前置2min，最终按finish计。正式召回执行/Finance、125目标与247验收不提升，七天目标ACTIVE。
 
 ## 2026-10-23：W83物料缺料跟进Owner已采用
 
