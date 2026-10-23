@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-23：W82告知摘要夹具修订已采用
+
+CRM PR121/source `350d4d4261144607985cfb33770f630d09859b0f`已采用远端main `3e69fa188a43d261660fe871103bc2b7b400a674`；21项相关本地用例通过，无跳过，原S01/父/新revision只读校验通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/3e69fa188a43d261660fe871103bc2b7b400a674/docs/development/evidence/W82-01/DELIVERY.md)。告知/内容/展示及状态摘要一致修订，原件/父赢家事件/负例/重放及NOT_RUN保持，Issue109关闭。无PG启动/Actions/部署；真实Owner与公开受理继续待接。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main协调收尾后继续七天目标。
+
 ## 2026-10-23：W81库龄与效期读取Owner已采用
 
 Main [PR465](https://github.com/GTX537/CP6/pull/465) source `4f73c3787ba74f9499b503c342d5fae8d8932966`进入远端main `0252d9e85450f6f2f46d0bc6639fff2cbdde10cc`，38任务路径逐blob核对；23.NET/27Vue及类型检查通过，无跳过。[单份交付](../development/evidence/W81-01/DELIVERY.md)。Handoff [PR57](https://github.com/GTX537/CP6.AI-Handoff/pull/57)采用、准确分支删除、固定树干净detached、finish释放。Main同任务最后状态PR/finish及Issue464关闭待完成，未提前声明释放。4个PG停止保留；当前约17.48min，原估60–90min＋独立前置3min，最终按finish计。正式DISP/Finance、125目标与247验收不提升，七天目标ACTIVE。
