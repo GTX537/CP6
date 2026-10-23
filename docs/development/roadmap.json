@@ -159782,6 +159782,16 @@
       "date": "2026-10-23",
       "change": "W72 Main452 exact adoption and Handoff48 verified;50.NET/23UI/typecheck passed. Handoff branch deleted/seat released; Main final finish pending. Full acceptances unchanged.",
       "evidence": "https://github.com/GTX537/CP6/blob/41cef2ffc77464745c18576e0f60108d59a8ec37/docs/development/evidence/W72-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "W72 lifecycle complete28.17min and Issue451 closed; W73 native Site/Form/prepared Intake relations admitted. Full Owner/Bundle versions remain pending; seven-day ACTIVE.",
+      "evidence": "docs/development/dispatch/20261023-wave73/README.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "W73 CRM PR113 adopted immutable native inquiry object bindings; 27 unique native PG cases passed without skip. Original Owner and Bundle/public form gaps remain; continuous goal ACTIVE.",
+      "evidence": "https://github.com/GTX537/CP6.CRM/blob/dc8784583860b78635a89924ad2576ba24a21e78/docs/development/evidence/W73-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -162361,7 +162371,7 @@
         "claimed_at": "2026-10-23T17:40:11.035533+00:00",
         "baseline_sha": "3c9b56ceaf66073d780c1dcb82f8bbba87bf0098",
         "entry_evidence": "docs/development/dispatch/20261023-wave72/README.md",
-        "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
+        "phase": "CLOSED",
         "dispatch_scope": "W72_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -162407,7 +162417,7 @@
         "worker_delivery_received": true,
         "candidate_review_completed": true,
         "candidate_integrated": true,
-        "resources_released": false,
+        "resources_released": true,
         "full_task_completed": false,
         "issue": "https://github.com/GTX537/CP6/issues/451",
         "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/41cef2ffc77464745c18576e0f60108d59a8ec37/docs/development/evidence/W72-01/DELIVERY.md",
@@ -166779,7 +166789,7 @@
         "business_acceptance": "NOT_RUN",
         "adopted_scope": "Current legacy/V1/V2 Mobile Owner with two-sided scope, native department mapping and safe historical reads; unadopted effects/source query/scan-profile refused; full S1 remains absent",
         "issue": "https://github.com/GTX537/CP6/issues/451",
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "source_candidate_sha": "b3b38164e1d3732053f8241b86580a5d0f184f13",
         "remote_main_sha": "41cef2ffc77464745c18576e0f60108d59a8ec37",
         "pull_request": "https://github.com/GTX537/CP6/pull/452",
@@ -166794,11 +166804,16 @@
           "handoff_branch_deleted": true,
           "handoff_seat_released": true,
           "main_task": "CP6:BUG-451-MOBILE-OWNER",
-          "main_finish_required": true,
-          "main_seat_released": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave72-final-verification.json"
         },
-        "test_data_disposition": "Three owned PostgreSQL clusters stopped; data and logs retained"
+        "test_data_disposition": "Three owned PostgreSQL clusters stopped; data and logs retained",
+        "actual_agent_minutes": 28.17,
+        "final_main_sha": "fd54b9ef9c8cc8fe01cef3a87c9572405d8eef9d",
+        "branches_deleted": true,
+        "seats_released": true,
+        "issue_state": "CLOSED"
       }
     },
     {
@@ -170600,31 +170615,31 @@
       "card_anchor": "wp03-01",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W69-01",
+        "chat_label": "COORD / W73-01",
         "repository": "CRM",
         "owning_task_repository": "CRM",
-        "branch": "codex/w69-01",
+        "branch": "codex/w73-01",
         "worktree": "D:\\CP6-worktrees\\dev-2",
-        "claimed_at": "2026-10-23T15:14:06.848863+00:00",
-        "baseline_sha": "10985b5ca7f1f127f32768dec3983ee2e2d29571",
-        "entry_evidence": "docs/development/dispatch/20261023-wave69/README.md",
+        "claimed_at": "2026-10-23T18:13:54.629124+00:00",
+        "baseline_sha": "6c049934bad09ba230cb47cf8e6606db19331f18",
+        "entry_evidence": "docs/development/dispatch/20261023-wave73/README.md",
         "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
-        "dispatch_scope": "W69_01",
+        "dispatch_scope": "W73_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
         "actual_start_ref": {
-          "commit": "9f2502d6b46dfd09a8ccd9ae9b116a35a9a7007d",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T151406Z-wave69-start/MESSAGE.md",
-          "at": "2026-10-23T15:14:06.848863+00:00"
+          "commit": "734add8b9f1301e9f43f19d450d1f61dc8ea24de",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T181354Z-wave73-start/MESSAGE.md",
+          "at": "2026-10-23T18:13:54.629124+00:00"
         },
         "reserved_write_resources": [
-          "CRM:inquiry-prepared-drafts"
+          "CRM:inquiry-object-bindings"
         ],
         "reserved_postgresql_ports": [
-          55437
+          55441
         ],
-        "handoff_branch": "codex/w69-handoff",
+        "handoff_branch": "codex/w73-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
@@ -170633,18 +170648,17 @@
         "candidate_integrated": true,
         "resources_released": true,
         "full_task_completed": false,
-        "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/6c049934bad09ba230cb47cf8e6606db19331f18/docs/development/evidence/W69-01/DELIVERY.md",
-        "source_candidate_sha": "4477a42e3bc271461570cad4733f4c368be1a95c",
-        "remote_main_sha": "6c049934bad09ba230cb47cf8e6606db19331f18",
-        "pull_request": "https://github.com/GTX537/CP6.CRM/pull/112",
+        "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/dc8784583860b78635a89924ad2576ba24a21e78/docs/development/evidence/W73-01/DELIVERY.md",
+        "source_candidate_sha": "7da2543b996806c53f5fa68831b2b61923e2b965",
+        "remote_main_sha": "dc8784583860b78635a89924ad2576ba24a21e78",
+        "pull_request": "https://github.com/GTX537/CP6.CRM/pull/113",
         "handoff_delivery_ref": {
-          "commit": "b960aec441c1ea48a5bc5bbaa987c75510c24e8e",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T154648Z-wave69-delivery/MESSAGE.md",
-          "at": "2026-10-23T15:46:48.746068+00:00",
+          "commit": "efb9687fcbd915ae16f58bc153ea043cc2a5f168",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T182751Z-wave73-delivery/MESSAGE.md",
+          "at": "2026-10-23T18:27:51.755422+00:00",
           "base": "codex/t02c-entry-handoff-20260921",
-          "branch": "codex/w69-handoff"
-        },
-        "lifecycle_complete": true
+          "branch": "codex/w73-handoff"
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -170815,6 +170829,29 @@
         "final_main_sha": "56ccc3c7e3e7087ed921426d656108ce1fbf5b24",
         "branches_deleted": true,
         "seats_released": true
+      },
+      "wave73_delivery": {
+        "status": "MERGED",
+        "report": "https://github.com/GTX537/CP6.CRM/blob/dc8784583860b78635a89924ad2576ba24a21e78/docs/development/evidence/W73-01/DELIVERY.md",
+        "validation": "27项独立相关本地PG用例通过（24新增+3既有），无跳过，相关API及必要依赖构建成功；真实Owner业务验收NOT_RUN，无Actions",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "adopted_scope": "Native immutable Site/Form/PreparedIntake graph, tenant-qualified FKs, semantic content binding and original-result transaction composition; no formal versions or Owner adoption",
+        "source_candidate_sha": "7da2543b996806c53f5fa68831b2b61923e2b965",
+        "remote_main_sha": "dc8784583860b78635a89924ad2576ba24a21e78",
+        "pull_request": "https://github.com/GTX537/CP6.CRM/pull/113",
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "crm_branch_deleted": true,
+          "crm_seat_released": true,
+          "handoff_branch_deleted": true,
+          "handoff_seat_released": true,
+          "main_task": "CP6:W73-COORD",
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave73-final-verification.json"
+        },
+        "test_data_disposition": "Owned PostgreSQL stopped; data/logs retained; no existing environment migrated"
       }
     },
     {
@@ -186618,10 +186655,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261023-wave72",
-      "path": "docs/development/dispatch/20261023-wave72/README.md",
-      "baseline_sha": "3c9b56ceaf66073d780c1dcb82f8bbba87bf0098",
-      "registered_at": "2026-10-23T17:42:46.499324+00:00",
+      "id": "20261023-wave73",
+      "path": "docs/development/dispatch/20261023-wave73/README.md",
+      "baseline_sha": "fd54b9ef9c8cc8fe01cef3a87c9572405d8eef9d",
+      "registered_at": "2026-10-23T18:13:54.629124+00:00",
       "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -186638,135 +186675,110 @@
       "product_integrated": true,
       "windows": [
         {
-          "id": "W72-01",
-          "task_id": "WP02-03",
-          "title": "移动任务三组独立入口当前Owner",
-          "lifecycle_task": "BUG-451-MOBILE-OWNER",
+          "id": "W73-01",
+          "task_id": "WP03-01",
+          "title": "Native inquiry object bindings",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "phase": "CLOSED",
           "gate": "CONFIRMED",
-          "worker_start_received": true,
           "actual_start_ref": {
-            "commit": "a62a3b701f8d202c616e287e9f599d449620a52b",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T174246Z-wave72-start/MESSAGE.md",
-            "at": "2026-10-23T17:42:46.499324+00:00"
+            "commit": "734add8b9f1301e9f43f19d450d1f61dc8ea24de",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T181354Z-wave73-start/MESSAGE.md",
+            "at": "2026-10-23T18:13:54.629124+00:00"
           },
+          "worker_start_received": true,
           "worker_delivery_received": true,
-          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/bug-451-mobile-owner",
-          "planned_scope_ref": "docs/development/dispatch/20261023-wave72/README.md",
+          "worktree": "D:\\CP6-worktrees\\dev-2",
+          "branch": "codex/w73-01",
+          "planned_scope_ref": "docs/development/dispatch/20261023-wave73/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/41cef2ffc77464745c18576e0f60108d59a8ec37/docs/development/evidence/W72-01/DELIVERY.md",
-          "validation": "50项独立.NET（21真实PG、29既有InMemory）及23项Vue通过，无跳过；Vue类型检查和相关构建通过",
-          "runtime_resources_released": true,
+          "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/dc8784583860b78635a89924ad2576ba24a21e78/docs/development/evidence/W73-01/DELIVERY.md",
+          "validation": "27项独立相关本地PG用例通过（24新增+3既有），无跳过，相关API及必要依赖构建成功；真实Owner业务验收NOT_RUN，无Actions",
           "candidate_integrated": true,
           "integration": {
             "result": "PASS",
-            "repository": "GTX537/CP6",
-            "source": "b3b38164e1d3732053f8241b86580a5d0f184f13",
-            "main": "41cef2ffc77464745c18576e0f60108d59a8ec37",
+            "repository": "GTX537/CP6.CRM",
+            "source": "7da2543b996806c53f5fa68831b2b61923e2b965",
+            "main": "dc8784583860b78635a89924ad2576ba24a21e78",
             "target": "main",
-            "pr": "https://github.com/GTX537/CP6/pull/452",
+            "pr": "https://github.com/GTX537/CP6.CRM/pull/113",
             "paths": [
-              "CP6.Core/Services/Integration/OperationsAccessV1.Mobile.cs",
-              "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
-              "CP6.Core/Services/Sys/IamStandaloneDepartmentMappingV1.cs",
-              "CP6.Core/Services/Wms/IMobileTaskV2Service.cs",
-              "CP6.Core/Services/Wms/MobileService.Owner.cs",
-              "CP6.Core/Services/Wms/MobileService.cs",
-              "CP6.Core/Services/Wms/MobileTaskV1Service.Owner.cs",
-              "CP6.Core/Services/Wms/MobileTaskV1Service.cs",
-              "CP6.Core/Services/Wms/MobileTaskV2Contracts.cs",
-              "CP6.Core/Services/Wms/MobileTaskV2Service.Owner.cs",
-              "CP6.Core/Services/Wms/MobileTaskV2Service.cs",
-              "CP6.Persistence.PostgreSql/Migrations/Core/20261023175000_MobileDepartmentOwnerV1.cs",
-              "CP6.Tests/Erp/MobileOwnerPostgreSqlTests.cs",
-              "CP6.WebApi/Controllers/Wms/MobileController.cs",
-              "CP6.WebApi/Controllers/Wms/MobileTasksV1Controller.cs",
-              "CP6.WebApi/Controllers/Wms/MobileTasksV2Controller.cs",
-              "CP6.WebApi/Controllers/Wms/TaskAnalyticsController.cs",
-              "CP6.WebApi/Program.cs",
-              "cp6.web/src/api/sys/iam.ts",
-              "cp6.web/src/api/wms/mobile.ts",
-              "cp6.web/src/api/wms/production.ts",
-              "cp6.web/src/views/pms/StandaloneDepartmentMappings.vue",
-              "cp6.web/src/views/wms/MobileTaskView.vue",
-              "cp6.web/src/views/wms/WmsProductionConsole.vue",
-              "cp6.web/src/views/wms/__tests__/MobileAnalyticsOwner.spec.ts",
-              "cp6.web/src/views/wms/__tests__/MobileOwner.spec.ts",
-              "docs/development/07-detailed-tasks.md",
-              "docs/development/09-parallel-development.md",
-              "docs/development/dispatch/20261023-wave72/README.md",
-              "docs/development/evidence/W72-01/DELIVERY.md",
-              "docs/development/planning/20261022-seven-day-delivery.md",
-              "docs/development/roadmap.json",
+              "CHANGELOG-AI.md",
+              "docs/development/evidence/W73-01/DELIVERY.md",
               "docs/project-memory/05-Completed.md",
               "docs/project-memory/06-Todo.md",
-              "docs/project-memory/CHANGELOG-AI.md",
-              "docs/project-memory/PROJECT_STATE.md"
+              "docs/project-memory/PROJECT_STATE.md",
+              "src/CP6.CRM.Infrastructure/CP6.CRM.Infrastructure.csproj",
+              "src/CP6.CRM.Infrastructure/Persistence/PostgreSql/InquiryBindingSchemaV1.sql",
+              "src/CP6.CRM.Infrastructure/Persistence/PostgreSql/PostgreSqlInquiryBindingsV1.Readiness.cs",
+              "src/CP6.CRM.Infrastructure/Persistence/PostgreSql/PostgreSqlInquiryBindingsV1.cs",
+              "tests/CP6.CRM.IdentityPostgreSqlTests/InquiryBindingTests.cs"
             ],
-            "observed_at": "2026-10-23T18:03:33.859533+00:00"
+            "observed_at": "2026-10-23T18:25:48.618495+00:00"
           },
+          "runtime_resources_released": true,
+          "resources_released": true,
           "handoff_delivery_ref": {
-            "commit": "b04442ebc60ba01ec373b41c9aa132872f34da09",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T180353Z-wave72-delivery/MESSAGE.md",
-            "at": "2026-10-23T18:03:53.365972+00:00",
+            "commit": "efb9687fcbd915ae16f58bc153ea043cc2a5f168",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T182751Z-wave73-delivery/MESSAGE.md",
+            "at": "2026-10-23T18:27:51.755422+00:00",
             "base": "codex/t02c-entry-handoff-20260921",
-            "branch": "codex/w72-handoff"
+            "branch": "codex/w73-handoff"
           },
-          "resources_released": false,
           "lifecycle_snapshot": {
+            "crm_branch_deleted": true,
+            "crm_seat_released": true,
             "handoff_branch_deleted": true,
             "handoff_seat_released": true,
-            "main_task": "CP6:BUG-451-MOBILE-OWNER",
+            "main_task": "CP6:W73-COORD",
             "main_finish_required": true,
             "main_seat_released": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave72-final-verification.json"
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave73-final-verification.json"
           }
         }
       ],
       "horizon": {
-        "started_at": "2026-10-23T17:40:11.035533+00:00",
+        "started_at": "2026-10-23T18:12:22.128032Z",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          120,
-          180
+          80,
+          120
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
       "storage": {
-        "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+        "reuse_worktree": "D:\\CP6-worktrees\\dev-2",
         "new_worktrees": 0
       },
-      "next_action": "Finish same-branch Main ledger PR and lifecycle; close Issue451 after verification; continue D5/D6 real CRM Owner and public form prerequisites",
-      "validation": "50项独立.NET（21真实PG、29既有InMemory）及23项Vue通过，无跳过；Vue类型检查和相关构建通过",
+      "next_action": "Finish coordination lifecycle; continue actual Owner prerequisites and independent D6 foundations",
+      "validation": "27项独立相关本地PG用例通过（24新增+3既有），无跳过，相关API及必要依赖构建成功；真实Owner业务验收NOT_RUN，无Actions",
+      "lifecycle_complete": false,
       "handoff_delivery_ref": {
-        "commit": "b04442ebc60ba01ec373b41c9aa132872f34da09",
-        "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T180353Z-wave72-delivery/MESSAGE.md",
-        "at": "2026-10-23T18:03:53.365972+00:00",
+        "commit": "efb9687fcbd915ae16f58bc153ea043cc2a5f168",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T182751Z-wave73-delivery/MESSAGE.md",
+        "at": "2026-10-23T18:27:51.755422+00:00",
         "base": "codex/t02c-entry-handoff-20260921",
-        "branch": "codex/w72-handoff"
+        "branch": "codex/w73-handoff"
       },
       "handoff_integration": {
         "result": "PASS",
         "repository": "GTX537/CP6.AI-Handoff",
-        "source": "b04442ebc60ba01ec373b41c9aa132872f34da09",
-        "main": "f833756a86252cd8fefa9d8f9af90c906904ab6e",
+        "source": "efb9687fcbd915ae16f58bc153ea043cc2a5f168",
+        "main": "88566612aac8f2493a1456e8bfcd351b5c6ab257",
         "target": "codex/t02c-entry-handoff-20260921",
-        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/48",
+        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/49",
         "paths": [
-          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T174246Z-wave72-start/MESSAGE.md",
-          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T180353Z-wave72-delivery/MESSAGE.md",
-          "handoffs/CP6-DEV-20261012/waves/20261023-wave72.md"
+          "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T181354Z-wave73-start/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/tasks/WP03-01/messages/20261023T182751Z-wave73-delivery/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/waves/20261023-wave73.md"
         ],
-        "observed_at": "2026-10-23T18:05:01.616655+00:00"
-      },
-      "lifecycle_complete": false
+        "observed_at": "2026-10-23T18:28:39.140609+00:00"
+      }
     },
     "wave_history": [
       {
@@ -197916,6 +197928,163 @@
         "seats_released": true,
         "final_main_sha": "3c9b56ceaf66073d780c1dcb82f8bbba87bf0098",
         "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave71-final-verification.json"
+      },
+      {
+        "id": "20261023-wave72",
+        "path": "docs/development/dispatch/20261023-wave72/README.md",
+        "baseline_sha": "3c9b56ceaf66073d780c1dcb82f8bbba87bf0098",
+        "registered_at": "2026-10-23T17:42:46.499324+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W72-01",
+            "task_id": "WP02-03",
+            "title": "移动任务三组独立入口当前Owner",
+            "lifecycle_task": "BUG-451-MOBILE-OWNER",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "actual_start_ref": {
+              "commit": "a62a3b701f8d202c616e287e9f599d449620a52b",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T174246Z-wave72-start/MESSAGE.md",
+              "at": "2026-10-23T17:42:46.499324+00:00"
+            },
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/bug-451-mobile-owner",
+            "planned_scope_ref": "docs/development/dispatch/20261023-wave72/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/41cef2ffc77464745c18576e0f60108d59a8ec37/docs/development/evidence/W72-01/DELIVERY.md",
+            "validation": "50项独立.NET（21真实PG、29既有InMemory）及23项Vue通过，无跳过；Vue类型检查和相关构建通过",
+            "runtime_resources_released": true,
+            "candidate_integrated": true,
+            "integration": {
+              "result": "PASS",
+              "repository": "GTX537/CP6",
+              "source": "b3b38164e1d3732053f8241b86580a5d0f184f13",
+              "main": "41cef2ffc77464745c18576e0f60108d59a8ec37",
+              "target": "main",
+              "pr": "https://github.com/GTX537/CP6/pull/452",
+              "paths": [
+                "CP6.Core/Services/Integration/OperationsAccessV1.Mobile.cs",
+                "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
+                "CP6.Core/Services/Sys/IamStandaloneDepartmentMappingV1.cs",
+                "CP6.Core/Services/Wms/IMobileTaskV2Service.cs",
+                "CP6.Core/Services/Wms/MobileService.Owner.cs",
+                "CP6.Core/Services/Wms/MobileService.cs",
+                "CP6.Core/Services/Wms/MobileTaskV1Service.Owner.cs",
+                "CP6.Core/Services/Wms/MobileTaskV1Service.cs",
+                "CP6.Core/Services/Wms/MobileTaskV2Contracts.cs",
+                "CP6.Core/Services/Wms/MobileTaskV2Service.Owner.cs",
+                "CP6.Core/Services/Wms/MobileTaskV2Service.cs",
+                "CP6.Persistence.PostgreSql/Migrations/Core/20261023175000_MobileDepartmentOwnerV1.cs",
+                "CP6.Tests/Erp/MobileOwnerPostgreSqlTests.cs",
+                "CP6.WebApi/Controllers/Wms/MobileController.cs",
+                "CP6.WebApi/Controllers/Wms/MobileTasksV1Controller.cs",
+                "CP6.WebApi/Controllers/Wms/MobileTasksV2Controller.cs",
+                "CP6.WebApi/Controllers/Wms/TaskAnalyticsController.cs",
+                "CP6.WebApi/Program.cs",
+                "cp6.web/src/api/sys/iam.ts",
+                "cp6.web/src/api/wms/mobile.ts",
+                "cp6.web/src/api/wms/production.ts",
+                "cp6.web/src/views/pms/StandaloneDepartmentMappings.vue",
+                "cp6.web/src/views/wms/MobileTaskView.vue",
+                "cp6.web/src/views/wms/WmsProductionConsole.vue",
+                "cp6.web/src/views/wms/__tests__/MobileAnalyticsOwner.spec.ts",
+                "cp6.web/src/views/wms/__tests__/MobileOwner.spec.ts",
+                "docs/development/07-detailed-tasks.md",
+                "docs/development/09-parallel-development.md",
+                "docs/development/dispatch/20261023-wave72/README.md",
+                "docs/development/evidence/W72-01/DELIVERY.md",
+                "docs/development/planning/20261022-seven-day-delivery.md",
+                "docs/development/roadmap.json",
+                "docs/project-memory/05-Completed.md",
+                "docs/project-memory/06-Todo.md",
+                "docs/project-memory/CHANGELOG-AI.md",
+                "docs/project-memory/PROJECT_STATE.md"
+              ],
+              "observed_at": "2026-10-23T18:03:33.859533+00:00"
+            },
+            "handoff_delivery_ref": {
+              "commit": "b04442ebc60ba01ec373b41c9aa132872f34da09",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T180353Z-wave72-delivery/MESSAGE.md",
+              "at": "2026-10-23T18:03:53.365972+00:00",
+              "base": "codex/t02c-entry-handoff-20260921",
+              "branch": "codex/w72-handoff"
+            },
+            "resources_released": true,
+            "lifecycle_snapshot": {
+              "handoff_branch_deleted": true,
+              "handoff_seat_released": true,
+              "main_task": "CP6:BUG-451-MOBILE-OWNER",
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave72-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-23T17:40:11.035533+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            120,
+            180
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W73 native inquiry object binding foundation",
+        "validation": "50项独立.NET（21真实PG、29既有InMemory）及23项Vue通过，无跳过；Vue类型检查和相关构建通过",
+        "handoff_delivery_ref": {
+          "commit": "b04442ebc60ba01ec373b41c9aa132872f34da09",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T180353Z-wave72-delivery/MESSAGE.md",
+          "at": "2026-10-23T18:03:53.365972+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w72-handoff"
+        },
+        "handoff_integration": {
+          "result": "PASS",
+          "repository": "GTX537/CP6.AI-Handoff",
+          "source": "b04442ebc60ba01ec373b41c9aa132872f34da09",
+          "main": "f833756a86252cd8fefa9d8f9af90c906904ab6e",
+          "target": "codex/t02c-entry-handoff-20260921",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/48",
+          "paths": [
+            "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T174246Z-wave72-start/MESSAGE.md",
+            "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T180353Z-wave72-delivery/MESSAGE.md",
+            "handoffs/CP6-DEV-20261012/waves/20261023-wave72.md"
+          ],
+          "observed_at": "2026-10-23T18:05:01.616655+00:00"
+        },
+        "lifecycle_complete": true,
+        "actual_agent_minutes": 28.17,
+        "preflight_estimate_minutes": 3,
+        "branches_deleted": true,
+        "seats_released": true,
+        "final_main_sha": "fd54b9ef9c8cc8fe01cef3a87c9572405d8eef9d",
+        "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave72-final-verification.json"
       }
     ],
     "development_priority": {
@@ -197974,7 +198143,7 @@
         35,
         55
       ],
-      "current_stage": "D2",
+      "current_stage": "D6",
       "stages": [
         {
           "id": "D1",
@@ -198051,9 +198220,9 @@
           "id": "D6",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W69-01",
-          "next_action": "Prepared content persisted; complete real Owner gate and Site/Form/Bundle/audit/outbox prerequisites",
-          "prerequisite_adjustment": "W69 immutable prepared content persisted with tenant/calendar FK and W68 original-result transaction composition; complete real Owner final authorization, Site/Form/Intake/Bundle graph, audit/outbox and privacy lifecycle remain required. CRM Issue109 remains open."
+          "current_window": "W73-01",
+          "next_action": "Prepared object graph persisted; complete formal versioned Bundle and real Owner/audit/outbox prerequisites",
+          "prerequisite_adjustment": "W73 native prepared Site/Form/Intake graph adopted with immutable FKs and same-transaction original results. Formal versions, real Owner final authorization, audit/outbox and privacy lifecycle remain required; Issue109 open."
         },
         {
           "id": "D7",
