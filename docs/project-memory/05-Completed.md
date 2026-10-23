@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-23：W54正式Platform与PG共同锁已采用
+
+CRM PR99/source `9ad4d54a9b18c87c105c887355074cfb02c741e1`已采用远端main `46dfd16e0052eab44c1020970767f4f47fc5cf0d`；101项相关本地验证通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/46dfd16e0052eab44c1020970767f4f47fc5cf0d/docs/development/evidence/W54-01/DELIVERY.md)。当前Platform0.10.3引用、显式PG七锁profile及正式Inbox与实际写者锁互通已落实；完整内容PreCheckpoint/Published/最终Owner门继续D5，不形成Allow。CRM/Handoff准确分支删除、固定树干净detached、finish释放，Main当前协调分支待最终PR/finish。整卡/完整目标/真实验收不提升，七天目标ACTIVE。
+
 ## 2026-10-23：W53当前身份投影已采用
 
 CRM PR98/source `796ef79442eb718ad311256b8f0e2598f2c3e104`已采用远端main `7c74f9c9471415df4f4f6429671b8665fafbb4cb`；22项相关本地验证通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/7c74f9c9471415df4f4f6429671b8665fafbb4cb/docs/development/evidence/W53-01/DELIVERY.md)。PG当前引用防回退、冲突关闭、原生租约/CAS和只读依赖图已落实；PendingInspection不形成Allow。CRM/Handoff准确分支删除、固定树干净detached、finish释放，Main当前协调分支待最终PR/finish。正式PreCheckpoint/完整Published/所有writer最终门及Owner共同事务继续D5，整卡/完整目标/真实验收不提升；七天目标ACTIVE。
