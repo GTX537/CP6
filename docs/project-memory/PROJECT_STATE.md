@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-23：W57本次采集凭据与可失效发布读模型已采用
+
+CRM PR102/source `b7e55240f583d9db287f7371a387485ed81b8aee`已采用远端main `6ff205740ac5290154588acd7840ad9f70cb7c96`；77项相关本地验证通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/6ff205740ac5290154588acd7840ad9f70cb7c96/docs/development/evidence/W57-01/DELIVERY.md)。本次完整采集凭据、原生完整发布/CAS及自动失效已采用；当前身份/字段授权与真实Owner最终门继续D5，CanAuthorize=false。CRM/Handoff准确分支删除、固定树干净detached、finish释放，Main当前协调分支待最终PR/finish。整卡/完整目标/真实验收不提升，七天目标ACTIVE。
+
 ## 2026-10-23：W56可信完整基线恢复与真实来源依赖图已采用
 
 CRM PR101/source `b220c9298e3ec2f1ad477619c0ae001289a6cd64`已采用远端main `6bd4dc30c962c86fe6ba3661fc52e8bbbfc4b8b0`；64项相关本地验证通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/6bd4dc30c962c86fe6ba3661fc52e8bbbfc4b8b0/docs/development/evidence/W56-01/DELIVERY.md)。可信完整基线AuthoritySelection/resolvedRefs、原生完整恢复约束和真实来源依赖图已采用；Published/真实Owner最终门继续D5，CanAuthorize=false。CRM/Handoff准确分支删除、固定树干净detached、finish释放，Main当前协调分支待最终PR/finish。整卡/完整目标/真实验收不提升，七天目标ACTIVE。
