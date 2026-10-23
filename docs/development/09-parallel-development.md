@@ -1,5 +1,9 @@
 # 多对话任务分配与交付
 
+> 当前：[W78配置事件原子入队](dispatch/20261023-wave78/README.md)，本聊天单人；CRM PR119/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W77不重复。
+
+> 当前：[W78配置事件入队](dispatch/20261023-wave78/README.md)，本聊天单人；W37–W77已finish，不重复。
+
 > 当前：[W77配置保存审计](dispatch/20261023-wave77/README.md)，本聊天单人；CRM PR117/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W76不重复。
 
 > 当前：[W77配置保存审计](dispatch/20261023-wave77/README.md)，本聊天单人；W37–W76已finish，不重复。
