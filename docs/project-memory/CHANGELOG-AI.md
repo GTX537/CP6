@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-23：W69配置草稿持久化已采用
+
+CRM PR112/source `4477a42e3bc271461570cad4733f4c368be1a95c`已采用远端main `6c049934bad09ba230cb47cf8e6606db19331f18`；21项最终本地PG用例通过，无跳过；相关API/必要依赖构建通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/6c049934bad09ba230cb47cf8e6606db19331f18/docs/development/evidence/W69-01/DELIVERY.md)。不可变原文与实际租户日历绑定已持久化，和W68原结果共同事务已实测；FK执行状态缺口已修正，CRM Issue109保持开放；完整Owner/Bundle/audit/outbox与公开受理待接。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main协调PR/finish待收尾。七天目标ACTIVE，完整业务验收不提升。
+
 ## 2026-10-23：W68配置保存原结果已采用
 
 CRM PR111/source `645da4a73a0cfde56f330d41291250c14b9f18da`已采用远端main `10985b5ca7f1f127f32768dec3983ee2e2d29571`；22项有效本地PG用例通过，无跳过；相关API/必要依赖构建通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/10985b5ca7f1f127f32768dec3983ee2e2d29571/docs/development/evidence/W68-01/DELIVERY.md)。原生稳定槽与原结果参与调用方事务，失败恢复及并发已验证；CRM Issue109保持开放；真实Owner最终授权、Bundle/audit/outbox和隐私保留待采用。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main协调PR/finish待收尾。七天目标ACTIVE，完整业务验收不提升。

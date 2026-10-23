@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W69配置草稿持久化](dispatch/20261023-wave69/README.md)，本聊天单人；CRM PR112/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W68不重复。
+
 > 当前：[W68配置保存原结果](dispatch/20261023-wave68/README.md)，本聊天单人；CRM PR111/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W67不重复。
 
 > 当前：[W67冻结表单内容](dispatch/20261023-wave67/README.md)，本聊天单人；CRM PR110/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W66不重复。
