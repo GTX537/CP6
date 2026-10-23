@@ -30,3 +30,9 @@ COORD本聊天单人，2026-10-23T11:37:31.163542+00:00。基线Main `b23e5e111d
 这只关闭Issue433原文旁路并交付首个非PII安全历史映射。其他实体详情需明确Owner/字段/PII/删除历史政策才能开放；列表完整资源/PII策略、强制原子写入覆盖、导出、hold、引用图、保留清理仍待对应窗口。完整WP02-13、24/375整卡、125目标0交付、247 NOT_RUN不提升；七天目标ACTIVE继续。
 
 原预算60–90min，实际最终按同任务start到finish计算，子任务不重复累计。候选审查通过，待正常PR采用及Handoff/台账最后收尾；不提前声称分支删除或席位释放。W51准确data删除曾被自动审批拒绝，原因仅blocked by policy；停止保留，无重试绕过。
+
+## 实际采用与最后收尾
+
+Main [PR434](https://github.com/GTX537/CP6/pull/434) source `183750bc45f39ce81499a11411914d3cf46de3aa`采用远端main `a8a31bccdb57fb3a9a87da5aadb99be7b1673653`，全部22路径exact核对通过。Handoff [PR40](https://github.com/GTX537/CP6.AI-Handoff/pull/40)采用 `1e877baa5c3ff0523db882c50b89fbd87528e1d7`，准确任务分支删除、固定树干净detached、finish释放。产品12路径与已测试提交逐blob相同，未重复运行成功测试；最后文档diff单独检查，台账生成核对。
+
+Main沿同一任务分支最后状态PR及finish待收尾；Issue433在远端和生命周期最终核对后关闭。当前登记实际约27.46min，预算60–90min，最终以finish为准；前置只读核对约6min，子任务不重复累计。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave64-final-verification.json`。无Actions、迁移或部署。七天持续目标ACTIVE，继续真实Owner前置和D6公共支撑。
