@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W67冻结表单内容](dispatch/20261023-wave67/README.md)，本聊天单人；CRM PR110/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W66不重复。
+
 > 当前：[W66附件引用与内容保留](dispatch/20261023-wave66/README.md)，本聊天单人，Main440/Handoff42已采用；同任务最后状态与finish后继续。W37–W65不重复。
 
 > 当前：[W65采番串行推进](dispatch/20261023-wave65/README.md)，本聊天单人，Main437/Handoff41已采用；同任务最后状态与finish后继续。W37–W64不重复。

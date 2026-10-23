@@ -64,7 +64,7 @@
 
 | 任务 | 仓库 | 状态 | 直接前置 | 类型/规模 | 对话 |
 |---|---|---|---|---|---|
-| [WP03-01 公开表单Bundle与配置生效](../../docs/development/task-plans/WP03.md#wp03-01) | CRM | 待安排 | S01-08, S02-00, WP02-09 | CODE / M | COORD / W63-01 |
+| [WP03-01 公开表单Bundle与配置生效](../../docs/development/task-plans/WP03.md#wp03-01) | CRM | 待安排 | S01-08, S02-00, WP02-09 | CODE / M | COORD / W67-01 |
 | [WP03-02 浏览器绑定公开提交与H01自动受理](../../docs/development/task-plans/WP03.md#wp03-02) | CRM | 待安排 | WP02-09, WP02-16, WP03-01 | CODE / L | 未领取 |
 | [WP03-03 询盘审核队列、放行拒绝与到期](../../docs/development/task-plans/WP03.md#wp03-03) | CRM | 待安排 | WP02-09, WP03-02 | CODE / M | 未领取 |
 | [WP03-04 询盘同意、保留匿名化与隐私导出](../../docs/development/task-plans/WP03.md#wp03-04) | CRM | 待安排 | WP02-09, WP02-14, WP02-15, WP03-03 | CODE / M | 未领取 |
