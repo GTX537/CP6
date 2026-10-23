@@ -39,3 +39,9 @@ schema probe的ReadOnlyMemory.AsSpan编译错误、dotnet run artifacts启动路
 ## 剩余与生命周期
 
 正常产品PR、Handoff采用和原分支最终状态PR后，核对远端、准确删除分支并manage finish；当前DEV-1/2待收尾，集成席空闲，根用户未跟踪资产保留。完整WP02-10、PLT-DEL业务验收、金融投递/消费者、正式SCHED/RES/PERF及CRM身份/共同事务继续按原任务推进；24/375整卡、125目标0交付、247运行NOT_RUN不提升。真实企业issuer/角色、迁移/切换、跨宿主拓扑、保留/归档/hold未验收。七天目标保持ACTIVE。
+
+## 远端采用与原任务收尾
+
+产品[PR](https://github.com/GTX537/CP6/pull/416)及[Handoff](https://github.com/GTX537/CP6.AI-Handoff/pull/26)采用，source`68a0ecaad7c900ddb1beea591738b6a14457c9be`、远端main`e084e873c7a80dd9023d2f3bce137ecd2554b799`，24任务文件blob一致；Handoff source`bab3da6d4cb12b1f717781ea6200301058f7640e`、目标`9a1c8a0d9a101db87baece381e25e5ef996acb93`，准确分支删除/DEV-2释放。
+
+22项去重相关.NET/真实PostgreSQL通过，含实际Program/登录/HTTP/WebSocket、共同事务与原编号恢复；无前端改动，未重复前端或全仓验证；产品输入相同复用，最后仅文档diff/链接/台账。DEV-1最后状态PR后finish，不提前宣称释放。准确分支处置、工作区状态、席位及排除中断的估算执行时间见最终PR、实时登记与`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave50-final-verification.json`。七天目标ACTIVE，继续CRM实际前置。
