@@ -1,8 +1,8 @@
 # AI 可读变更日志
 
-## 2026-10-23：W86库位优化历史观察Owner候选通过
+## 2026-10-23：W86库位优化历史观察Owner已采用
 
-Issue477真实红灯转绿；19独立.NET用例（15原生PG、3既有非PG库位优化行为、1两租户启动种子）及22Vue用例通过，无跳过；相关构建和vue-tsc通过。[单份交付](../development/evidence/W86-01/DELIVERY.md)。完整来源披露门、真实UUID部门与精确原文保留；旧写零效果，历史状态不冒充物理完成。3个PG停止保留，套接字失败原证据及单项补验均保留；待Main/Handoff采用及分支/席位收尾。完整WP10-28/29与验收不提升，七天ACTIVE。
+Main [PR478](https://github.com/GTX537/CP6/pull/478) source `593b54bdf494d7de949475804677dc694dee15e1`进入远端main `4246689a04513633ee4bd0cb5e29623bbbfb9722`，30任务路径逐blob核对；19.NET/22Vue及类型检查通过，无跳过。[单份交付](../development/evidence/W86-01/DELIVERY.md)。Handoff [PR62](https://github.com/GTX537/CP6.AI-Handoff/pull/62)采用、准确分支删除、固定树干净detached、finish释放。Main同任务最后状态PR/finish及Issue477关闭待完成，未提前声明释放。3个PG停止保留；当前约11.09min，原估35–55min＋独立前置2min，最终按finish计。正式WP10-28/29库位优化执行/Finance、125目标与247验收不提升，七天目标ACTIVE。
 
 ## 2026-10-23：W85越库历史观察Owner已采用
 
