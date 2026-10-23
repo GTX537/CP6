@@ -159947,6 +159947,11 @@
       "date": "2026-10-23",
       "change": "W86 Issue477 candidate verified:19.NET/22Vue and typecheck; exact opaque history current Owner only, full fixed-cut/Proposal/Transfer remains UNPROVEN.",
       "evidence": "docs/development/evidence/W86-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "W86 Main478 exact adoption and Handoff62 verified;19.NET/22UI/typecheck passed. Handoff branch deleted/seat released; Main final finish pending. Full acceptances unchanged.",
+      "evidence": "https://github.com/GTX537/CP6/blob/4246689a04513633ee4bd0cb5e29623bbbfb9722/docs/development/evidence/W86-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -162526,7 +162531,7 @@
         "claimed_at": "2026-10-23T23:14:47.717649+00:00",
         "baseline_sha": "a32182de95bf392d3c9e4705b84720cc39f62909",
         "entry_evidence": "docs/development/dispatch/20261023-wave86/README.md",
-        "phase": "CANDIDATE_VERIFIED",
+        "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
         "dispatch_scope": "W86_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -162570,11 +162575,21 @@
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": false,
+        "candidate_integrated": true,
         "resources_released": false,
         "full_task_completed": false,
         "issue": "https://github.com/GTX537/CP6/issues/477",
-        "worker_delivery_ref": "docs/development/evidence/W86-01/DELIVERY.md"
+        "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/4246689a04513633ee4bd0cb5e29623bbbfb9722/docs/development/evidence/W86-01/DELIVERY.md",
+        "source_candidate_sha": "593b54bdf494d7de949475804677dc694dee15e1",
+        "remote_main_sha": "4246689a04513633ee4bd0cb5e29623bbbfb9722",
+        "pull_request": "https://github.com/GTX537/CP6/pull/478",
+        "handoff_delivery_ref": {
+          "commit": "1c99e008097732744d03a19bda93e607f763cddd",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T232406Z-wave86-delivery/MESSAGE.md",
+          "at": "2026-10-23T23:24:06.474776+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w86-handoff"
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -167556,14 +167571,33 @@
         "closed_issue": "GTX537/CP6#474"
       },
       "wave86_delivery": {
-        "status": "CANDIDATE_VERIFIED",
-        "report": "docs/development/evidence/W86-01/DELIVERY.md",
+        "status": "MERGED",
+        "report": "https://github.com/GTX537/CP6/blob/4246689a04513633ee4bd0cb5e29623bbbfb9722/docs/development/evidence/W86-01/DELIVERY.md",
         "validation": "19独立.NET用例（15原生PG、3既有非PG库位优化行为、1两租户启动种子）及22Vue用例通过，无跳过；相关构建和vue-tsc通过",
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "adopted_scope": "Slotting current historical Owner, opaque legacy source disclosure, exact original JSON, UUID department mapping, pagination and early legacy effect fence; full WP10-28/29 not admitted",
         "issue": "https://github.com/GTX537/CP6/issues/477",
-        "lifecycle_complete": false
+        "lifecycle_complete": false,
+        "source_candidate_sha": "593b54bdf494d7de949475804677dc694dee15e1",
+        "remote_main_sha": "4246689a04513633ee4bd0cb5e29623bbbfb9722",
+        "pull_request": "https://github.com/GTX537/CP6/pull/478",
+        "handoff_delivery_ref": {
+          "commit": "1c99e008097732744d03a19bda93e607f763cddd",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T232406Z-wave86-delivery/MESSAGE.md",
+          "at": "2026-10-23T23:24:06.474776+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w86-handoff"
+        },
+        "lifecycle_snapshot": {
+          "handoff_branch_deleted": true,
+          "handoff_seat_released": true,
+          "main_task": "CP6:BUG-477-SLOTTING-OWNER",
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave86-final-verification.json"
+        },
+        "test_data_disposition": "Three owned PostgreSQL clusters stopped; data and logs retained"
       }
     },
     {
@@ -187603,7 +187637,7 @@
       "path": "docs/development/dispatch/20261023-wave86/README.md",
       "baseline_sha": "a32182de95bf392d3c9e4705b84720cc39f62909",
       "registered_at": "2026-10-23T23:15:44.299896+00:00",
-      "phase": "CANDIDATE_VERIFIED",
+      "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -187615,8 +187649,8 @@
       ],
       "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": false,
-      "product_integrated": false,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W86-01",
@@ -187625,7 +187659,7 @@
           "lifecycle_task": "BUG-477-SLOTTING-OWNER",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "CANDIDATE_VERIFIED",
+          "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "actual_start_ref": {
@@ -187642,9 +187676,67 @@
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "worker_delivery_ref": "docs/development/evidence/W86-01/DELIVERY.md",
+          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/4246689a04513633ee4bd0cb5e29623bbbfb9722/docs/development/evidence/W86-01/DELIVERY.md",
           "validation": "19独立.NET用例（15原生PG、3既有非PG库位优化行为、1两租户启动种子）及22Vue用例通过，无跳过；相关构建和vue-tsc通过",
-          "runtime_resources_released": true
+          "runtime_resources_released": true,
+          "candidate_integrated": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "593b54bdf494d7de949475804677dc694dee15e1",
+            "main": "4246689a04513633ee4bd0cb5e29623bbbfb9722",
+            "target": "main",
+            "pr": "https://github.com/GTX537/CP6/pull/478",
+            "paths": [
+              "CP6.Core/Services/Integration/OperationsAccessV1.Slotting.cs",
+              "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
+              "CP6.Core/Services/Sys/IamStandaloneDepartmentMappingV1.cs",
+              "CP6.Core/Services/Wms/ISlottingService.cs",
+              "CP6.Core/Services/Wms/SlottingService.Owner.cs",
+              "CP6.Core/Services/Wms/SlottingService.cs",
+              "CP6.Entity/DTOs/Wms/SlottingOwnerV1.cs",
+              "CP6.Persistence.PostgreSql/Migrations/Core/20261023232000_SlottingDepartmentOwnerV1.cs",
+              "CP6.Tests/Erp/SlottingOwnerPostgreSqlTests.cs",
+              "CP6.Tests/MesPermissionSeedTests.cs",
+              "CP6.WebApi/Controllers/Wms/SlottingController.cs",
+              "CP6.WebApi/Program.cs",
+              "CP6.WebApi/Seed/WmsPermissionSeed.cs",
+              "cp6.web/src/api/sys/iam.ts",
+              "cp6.web/src/api/wms/logistics.ts",
+              "cp6.web/src/types/wms/slottingOwner.ts",
+              "cp6.web/src/views/pms/StandaloneDepartmentMappings.spec.ts",
+              "cp6.web/src/views/pms/StandaloneDepartmentMappings.vue",
+              "cp6.web/src/views/wms/SlottingOwner.spec.ts",
+              "cp6.web/src/views/wms/SlottingView.vue",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/09-parallel-development.md",
+              "docs/development/dispatch/20261023-wave86/README.md",
+              "docs/development/evidence/W86-01/DELIVERY.md",
+              "docs/development/planning/20261022-seven-day-delivery.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-23T23:24:05.878150+00:00"
+          },
+          "handoff_delivery_ref": {
+            "commit": "1c99e008097732744d03a19bda93e607f763cddd",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T232406Z-wave86-delivery/MESSAGE.md",
+            "at": "2026-10-23T23:24:06.474776+00:00",
+            "base": "codex/t02c-entry-handoff-20260921",
+            "branch": "codex/w86-handoff"
+          },
+          "resources_released": false,
+          "lifecycle_snapshot": {
+            "handoff_branch_deleted": true,
+            "handoff_seat_released": true,
+            "main_task": "CP6:BUG-477-SLOTTING-OWNER",
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave86-final-verification.json"
+          }
         }
       ],
       "horizon": {
@@ -187660,8 +187752,30 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Main product adoption, Handoff delivery, same-task lifecycle close and continue seven-day goal",
-      "validation": "19独立.NET用例（15原生PG、3既有非PG库位优化行为、1两租户启动种子）及22Vue用例通过，无跳过；相关构建和vue-tsc通过"
+      "next_action": "Finish same-branch Main ledger PR/lifecycle, close Issue477 on proof; continue seven-day remaining direct prerequisites",
+      "validation": "19独立.NET用例（15原生PG、3既有非PG库位优化行为、1两租户启动种子）及22Vue用例通过，无跳过；相关构建和vue-tsc通过",
+      "handoff_delivery_ref": {
+        "commit": "1c99e008097732744d03a19bda93e607f763cddd",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T232406Z-wave86-delivery/MESSAGE.md",
+        "at": "2026-10-23T23:24:06.474776+00:00",
+        "base": "codex/t02c-entry-handoff-20260921",
+        "branch": "codex/w86-handoff"
+      },
+      "handoff_integration": {
+        "result": "PASS",
+        "repository": "GTX537/CP6.AI-Handoff",
+        "source": "1c99e008097732744d03a19bda93e607f763cddd",
+        "main": "b20c534cad638b669272fd78fb804a86818dfb23",
+        "target": "codex/t02c-entry-handoff-20260921",
+        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/62",
+        "paths": [
+          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T231544Z-wave86-start/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T232406Z-wave86-delivery/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/waves/20261023-wave86.md"
+        ],
+        "observed_at": "2026-10-23T23:25:12.027509+00:00"
+      },
+      "lifecycle_complete": false
     },
     "wave_history": [
       {
@@ -200890,7 +201004,7 @@
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "库位优化历史观察独立Owner与旧写入口围栏"
+          "next_action": "Slotting historical current Owner adopted; full fixed-cut/Proposal/Transfer adoption remains unproven. Continue remaining independent Owners and D5/D6 real prerequisites."
         },
         {
           "id": "D3",
