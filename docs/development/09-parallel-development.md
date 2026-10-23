@@ -1,6 +1,6 @@
 # 多对话任务分配与交付
 
-> 当前：[W71补充指示当前Owner](dispatch/20261023-wave71/README.md)，本聊天单人，Issue448；W37–W70已finish，不重复。
+> 当前：[W71补充指示当前Owner](dispatch/20261023-wave71/README.md)，本聊天单人，Main449/Handoff47已采用；同任务最后状态与finish后继续。W37–W70不重复。
 
 > 当前：[W70退货独立Owner](dispatch/20261023-wave70/README.md)，本聊天单人，Main446/Handoff46已采用；同任务最后状态与finish后继续。W37–W69不重复。
 

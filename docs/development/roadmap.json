@@ -159762,6 +159762,11 @@
       "date": "2026-10-23",
       "change": "W71 Issue448 replenishment current Owner, two-sided location scope and native department binding verified:25.NET/16UI; full REP and runtime acceptance unchanged.",
       "evidence": "docs/development/evidence/W71-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "W71 Main449 exact adoption and Handoff47 verified;25.NET/16UI/typecheck passed. Handoff branch deleted/seat released; Main final finish pending. Full acceptances unchanged.",
+      "evidence": "https://github.com/GTX537/CP6/blob/f35ad97a42fdc4686b143a54c0c3b0f6c3ae106c/docs/development/evidence/W71-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -162341,7 +162346,7 @@
         "claimed_at": "2026-10-23T17:07:06.021972+00:00",
         "baseline_sha": "736d902d86440ee178334c80210abc4ed58dcb1f",
         "entry_evidence": "docs/development/dispatch/20261023-wave71/README.md",
-        "phase": "CANDIDATE_VERIFIED",
+        "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
         "dispatch_scope": "W71_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -162385,11 +162390,21 @@
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": false,
+        "candidate_integrated": true,
         "resources_released": false,
         "full_task_completed": false,
         "issue": "https://github.com/GTX537/CP6/issues/448",
-        "worker_delivery_ref": "docs/development/evidence/W71-01/DELIVERY.md"
+        "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/f35ad97a42fdc4686b143a54c0c3b0f6c3ae106c/docs/development/evidence/W71-01/DELIVERY.md",
+        "source_candidate_sha": "338c61c084e4e1a73c2e91c12807c307272c580f",
+        "remote_main_sha": "f35ad97a42fdc4686b143a54c0c3b0f6c3ae106c",
+        "pull_request": "https://github.com/GTX537/CP6/pull/449",
+        "handoff_delivery_ref": {
+          "commit": "2a1be35124a6ff20526dd1521c2dd9dd4fe49350",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T173133Z-wave71-delivery/MESSAGE.md",
+          "at": "2026-10-23T17:31:33.709009+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w71-handoff"
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -166637,14 +166652,33 @@
         "issue_state": "CLOSED"
       },
       "wave71_delivery": {
-        "status": "CANDIDATE_VERIFIED",
-        "report": "docs/development/evidence/W71-01/DELIVERY.md",
+        "status": "MERGED",
+        "report": "https://github.com/GTX537/CP6/blob/f35ad97a42fdc4686b143a54c0c3b0f6c3ae106c/docs/development/evidence/W71-01/DELIVERY.md",
         "validation": "25项独立.NET（18真实PG、7既有InMemory）及16项Vue（6补货、10现有绑定页）通过，无跳过；Vue类型检查和相关构建通过",
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "adopted_scope": "PG current Replenish read Owner with actual two-sided warehouse scope and explicit department binding; five unadopted commands denied before effects; independent MobileTask/complete REP remain absent",
         "issue": "https://github.com/GTX537/CP6/issues/448",
-        "lifecycle_complete": false
+        "lifecycle_complete": false,
+        "source_candidate_sha": "338c61c084e4e1a73c2e91c12807c307272c580f",
+        "remote_main_sha": "f35ad97a42fdc4686b143a54c0c3b0f6c3ae106c",
+        "pull_request": "https://github.com/GTX537/CP6/pull/449",
+        "handoff_delivery_ref": {
+          "commit": "2a1be35124a6ff20526dd1521c2dd9dd4fe49350",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T173133Z-wave71-delivery/MESSAGE.md",
+          "at": "2026-10-23T17:31:33.709009+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w71-handoff"
+        },
+        "lifecycle_snapshot": {
+          "handoff_branch_deleted": true,
+          "handoff_seat_released": true,
+          "main_task": "CP6:BUG-448-REPLENISH-OWNER",
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave71-final-verification.json"
+        },
+        "test_data_disposition": "Three owned PostgreSQL clusters stopped; data and logs retained"
       }
     },
     {
@@ -186468,7 +186502,7 @@
       "path": "docs/development/dispatch/20261023-wave71/README.md",
       "baseline_sha": "736d902d86440ee178334c80210abc4ed58dcb1f",
       "registered_at": "2026-10-23T17:09:25.776980+00:00",
-      "phase": "CANDIDATE_VERIFIED",
+      "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -186480,8 +186514,8 @@
       ],
       "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": false,
-      "product_integrated": false,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W71-01",
@@ -186490,7 +186524,7 @@
           "lifecycle_task": "BUG-448-REPLENISH-OWNER",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "CANDIDATE_VERIFIED",
+          "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "actual_start_ref": {
@@ -186507,9 +186541,64 @@
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "worker_delivery_ref": "docs/development/evidence/W71-01/DELIVERY.md",
+          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/f35ad97a42fdc4686b143a54c0c3b0f6c3ae106c/docs/development/evidence/W71-01/DELIVERY.md",
           "validation": "25项独立.NET（18真实PG、7既有InMemory）及16项Vue（6补货、10现有绑定页）通过，无跳过；Vue类型检查和相关构建通过",
-          "runtime_resources_released": true
+          "runtime_resources_released": true,
+          "candidate_integrated": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "338c61c084e4e1a73c2e91c12807c307272c580f",
+            "main": "f35ad97a42fdc4686b143a54c0c3b0f6c3ae106c",
+            "target": "main",
+            "pr": "https://github.com/GTX537/CP6/pull/449",
+            "paths": [
+              "CP6.Core/Services/Integration/OperationsAccessV1.Replenish.cs",
+              "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
+              "CP6.Core/Services/Sys/IamStandaloneDepartmentMappingV1.cs",
+              "CP6.Core/Services/Wms/IReplenishService.cs",
+              "CP6.Core/Services/Wms/ReplenishService.Owner.cs",
+              "CP6.Core/Services/Wms/ReplenishService.cs",
+              "CP6.Persistence.PostgreSql/Migrations/Core/20261023171500_ReplenishDepartmentOwnerV1.cs",
+              "CP6.Tests/Erp/ReplenishOwnerPostgreSqlTests.cs",
+              "CP6.WebApi/Controllers/Wms/ReplenishController.cs",
+              "CP6.WebApi/Program.cs",
+              "CP6.WebApi/Seed/I18nCnScreenSeed.cs",
+              "CP6.WebApi/Seed/WmsPermissionSeed.cs",
+              "cp6.web/src/api/sys/iam.ts",
+              "cp6.web/src/api/wms/logistics.ts",
+              "cp6.web/src/views/pms/StandaloneDepartmentMappings.vue",
+              "cp6.web/src/views/wms/ReplenishView.vue",
+              "cp6.web/src/views/wms/__tests__/ReplenishOwner.spec.ts",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/09-parallel-development.md",
+              "docs/development/dispatch/20261023-wave71/README.md",
+              "docs/development/evidence/W71-01/DELIVERY.md",
+              "docs/development/planning/20261022-seven-day-delivery.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-23T17:30:57.070549+00:00"
+          },
+          "handoff_delivery_ref": {
+            "commit": "2a1be35124a6ff20526dd1521c2dd9dd4fe49350",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T173133Z-wave71-delivery/MESSAGE.md",
+            "at": "2026-10-23T17:31:33.709009+00:00",
+            "base": "codex/t02c-entry-handoff-20260921",
+            "branch": "codex/w71-handoff"
+          },
+          "resources_released": false,
+          "lifecycle_snapshot": {
+            "handoff_branch_deleted": true,
+            "handoff_seat_released": true,
+            "main_task": "CP6:BUG-448-REPLENISH-OWNER",
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave71-final-verification.json"
+          }
         }
       ],
       "horizon": {
@@ -186525,8 +186614,30 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Main product adoption, Handoff delivery and same-task lifecycle closure",
-      "validation": "25项独立.NET（18真实PG、7既有InMemory）及16项Vue（6补货、10现有绑定页）通过，无跳过；Vue类型检查和相关构建通过"
+      "next_action": "Finish same-branch Main ledger PR and lifecycle; close Issue448 after verification; inspect independent Mobile Owner prerequisites",
+      "validation": "25项独立.NET（18真实PG、7既有InMemory）及16项Vue（6补货、10现有绑定页）通过，无跳过；Vue类型检查和相关构建通过",
+      "handoff_delivery_ref": {
+        "commit": "2a1be35124a6ff20526dd1521c2dd9dd4fe49350",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T173133Z-wave71-delivery/MESSAGE.md",
+        "at": "2026-10-23T17:31:33.709009+00:00",
+        "base": "codex/t02c-entry-handoff-20260921",
+        "branch": "codex/w71-handoff"
+      },
+      "handoff_integration": {
+        "result": "PASS",
+        "repository": "GTX537/CP6.AI-Handoff",
+        "source": "2a1be35124a6ff20526dd1521c2dd9dd4fe49350",
+        "main": "3eedbd17b1910905b133cabb1a10ee4250b01b43",
+        "target": "codex/t02c-entry-handoff-20260921",
+        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/47",
+        "paths": [
+          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T170925Z-wave71-start/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T173133Z-wave71-delivery/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/waves/20261023-wave71.md"
+        ],
+        "observed_at": "2026-10-23T17:32:47.030097+00:00"
+      },
+      "lifecycle_complete": false
     },
     "wave_history": [
       {
@@ -197614,7 +197725,7 @@
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "补充指示独立Owner、双端范围及可信部门绑定"
+          "next_action": "RMA and Replenish current read Owners adopted; complete facts/adapters remain absent. Inspect independent Mobile legacy/V1/V2 Owner against accepted MOBILE contract; continue D5/D6 foundations."
         },
         {
           "id": "D3",

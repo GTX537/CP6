@@ -32,3 +32,9 @@ IAM现有standalone mapping增加replenish-order，复用当前Owner、原操作
 ## 收尾
 
 原估90–130min＋独立前置4min，最终以Main start/finish计时，Handoff不重复累计。候选通过后正常两仓PR采用、准确分支清理与finish释放，未提前声称席位释放。七天目标ACTIVE继续。W51指定停止data删除曾被自动审批拒绝，原因blocked by policy；原目录保留，不重试或绕过。
+
+## 实际采用与最后收尾
+
+Main [PR449](https://github.com/GTX537/CP6/pull/449) source `338c61c084e4e1a73c2e91c12807c307272c580f`采用远端main `f35ad97a42fdc4686b143a54c0c3b0f6c3ae106c`，27任务路径核对。Handoff [PR47](https://github.com/GTX537/CP6.AI-Handoff/pull/47)采用 `3eedbd17b1910905b133cabb1a10ee4250b01b43`，准确任务分支删除、固定树干净detached、finish释放。17个产品路径与已测提交逐blob相同，复用有效成功结果；最后文档diff和台账生成单独检查。
+
+Main同一任务分支最后状态PR及finish待完成；Issue448在最终远端和生命周期核对后关闭。当前约27.09min，原估90–130min，最终以finish为准，独立前置约4min，子任务不重复累计。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave71-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续独立Mobile入口前置及D5/D6公共基础，完整REP保持未采用。
