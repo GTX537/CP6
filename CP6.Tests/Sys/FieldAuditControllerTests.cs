@@ -11,7 +11,7 @@ namespace CP6.Tests.Sys;
 /// <summary>
 /// 字段审计查询（#4 字段审计 T5）。直接 new FieldAuditController(db) 调方法（[RequirePermission]
 /// 授权过滤器在 MVC 管线才运行，单测直调不触发——移交 T8 gstack）；返回为匿名对象，用反射读出断言。
-/// 列表端点返 changeCount 摘要不返完整 changes（防大负载）；record 端点按 ChangedAt 正序返完整 changes。
+/// 列表摘要保留；record 没有实际 Owner 时必须关闭，实际授权时间线另由 PostgreSQL/HTTP 覆盖。
 /// </summary>
 public class FieldAuditControllerTests
 {
@@ -176,7 +176,7 @@ public class FieldAuditControllerTests
     }
 
     [Fact]
-    public async Task Record_returns_changes_ascending_by_changedAt_with_full_payload()
+    public async Task Record_without_actual_owner_never_returns_original_changes()
     {
         using var db = TestHelper.CreateInMemoryContext();
         var oneChange = "[{\"field\":\"Name\",\"old\":\"a\",\"new\":\"b\"}]";
@@ -187,20 +187,9 @@ public class FieldAuditControllerTests
         Seed(db, "Sys_User", "other", 2, TwoChanges, at: new DateTime(2026, 6, 5, 10, 0, 0)); // 不同 key，不命中
         db.SaveChanges();
 
-        var rows = UnwrapRows(await new FieldAuditController(db)
-            .GetRecord(entityName: "Sys_User", entityKey: "u1"));
-
-        Assert.Equal(3, rows.Count);
-
-        // 正序：6/1 → 6/2 → 6/3
-        var times = rows.Select(r => Prop<DateTime>(r, "ChangedAt")).ToList();
-        Assert.Equal(new DateTime(2026, 6, 1, 10, 0, 0), times[0]);
-        Assert.Equal(new DateTime(2026, 6, 2, 10, 0, 0), times[1]);
-        Assert.Equal(new DateTime(2026, 6, 3, 10, 0, 0), times[2]);
-
-        // record 端点返完整 changes 原 JSON 串
-        Assert.Equal(oneChange, Prop<string>(rows[0], "Changes"));
-        Assert.Equal(oneChange, Prop<string>(rows[1], "Changes"));
-        Assert.Equal(TwoChanges, Prop<string>(rows[2], "Changes"));
+        var error = await Assert.ThrowsAsync<CP6.Core.Services.Erp.OrderPriceCorrectionException>(
+            () => new FieldAuditController(db).GetRecord(entityName: "Sys_User", entityKey: "u1"));
+        Assert.Equal("DETAIL_UNAVAILABLE", error.Message); Assert.Equal(503, error.Status);
+        Assert.Equal(4, db.Sys_FieldAuditLogs.Count());
     }
 }

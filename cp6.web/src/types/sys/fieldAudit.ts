@@ -13,19 +13,19 @@ export interface FieldAuditListItem {
   entityName: string
   entityKey: string
   operation: Operation
-  changeCount: number
+  changeCount: number | null
+  evidenceStatus: 'READABLE' | 'UNREADABLE'
   userId: string
   userName: string
   changedAt: string
 }
 
-/** 时间线行（GET /api/sys/field-audit/record 返回 rows 元素，含完整 changes 原始 JSON 串）*/
+/** 服务端当前 Owner 生成的安全投影；不包含原 Changes JSON 或操作者 PII。 */
 export interface FieldAuditTimelineItem {
   id: string
   operation: Operation
-  changes: string // JSON 串 [{Field,Old,New}]（后端 System.Text.Json PascalCase），客户端 JSON.parse 后解析
-  userId: string
-  userName: string
+  changes: FieldChange[]
+  evidenceStatus: 'READABLE' | 'RESTRICTED' | 'UNREADABLE'
   changedAt: string
 }
 
@@ -36,9 +36,8 @@ export interface FieldChange {
   new: string | null
 }
 
-/** 后端 changes JSON 串解析出的原始形状（PascalCase keys）*/
-export interface RawFieldChange {
-  Field: string
-  Old: string | null
-  New: string | null
+export interface FieldAuditTimelinePage {
+  rows: FieldAuditTimelineItem[]
+  nextCursor: string | null
+  projectionVersion: string
 }

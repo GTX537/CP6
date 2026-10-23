@@ -600,6 +600,7 @@ builder.Services.AddScoped(sp => new CP6.Core.Services.Integration.OperationsOwn
     sp.GetRequiredService<IHttpContextAccessor>(), ct => CP6.WebApi.Services.OrderPriceCorrectionAuthenticationV1
         .CurrentActor(sp.GetRequiredService<IHttpContextAccessor>().HttpContext, ct)));
 builder.Services.AddScoped<IUnshippedOrderService, UnshippedOrderService>();
+builder.Services.AddScoped<CP6.Core.Services.Sys.FieldAuditReadOwnerV1>();
 builder.Services.AddScoped<ICreditNoteService, CreditNoteService>();
 builder.Services.AddScoped<IBridgeHealthService, BridgeHealthService>();
 builder.Services.AddScoped<IOrderTraceService, OrderTraceService>();

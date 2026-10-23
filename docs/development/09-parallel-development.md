@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W64字段审计Owner](dispatch/20261023-wave64/README.md)，本聊天单人，Issue433；W37–W63已finish，不重复。
+
 > 当前：[W63配置内容规范化](dispatch/20261023-wave63/README.md)，本聊天单人；CRM PR108/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W62不重复。
 
 > 当前：[W62实际来源跨仓发布集成](dispatch/20261023-wave62/README.md)，本聊天单人；CRM PR107/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W61不重复。
