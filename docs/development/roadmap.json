@@ -159877,6 +159877,11 @@
       "date": "2026-10-23",
       "change": "W81 Issue464 read Owners verified:23 unique.NET/27UI and typecheck. Direct existing Dashboard consumer included; formal DISP/Finance and business acceptance unchanged.",
       "evidence": "docs/development/evidence/W81-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "W81 Main465 exact adoption and Handoff57 verified;23.NET/27UI/typecheck passed. Handoff branch deleted/seat released; Main final finish pending. Full acceptances unchanged.",
+      "evidence": "https://github.com/GTX537/CP6/blob/0252d9e85450f6f2f46d0bc6639fff2cbdde10cc/docs/development/evidence/W81-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -162456,7 +162461,7 @@
         "claimed_at": "2026-10-23T21:33:46.385120+00:00",
         "baseline_sha": "c6de50305c82fb4e03664f92c4e5ab432cc60af0",
         "entry_evidence": "docs/development/dispatch/20261023-wave81/README.md",
-        "phase": "CANDIDATE_VERIFIED",
+        "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
         "dispatch_scope": "W81_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -162506,12 +162511,22 @@
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": false,
+        "candidate_integrated": true,
         "resources_released": false,
         "full_task_completed": false,
         "issue": "https://github.com/GTX537/CP6/issues/464",
-        "worker_delivery_ref": "docs/development/evidence/W81-01/DELIVERY.md",
-        "direct_consumer_scope_note": "Existing home stock-dwell widget shares the changed API/type; type-check found numeric consumer. COORD same-task serial update includes exact strings, named parser and current identity epoch; no other dashboard behavior added."
+        "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/0252d9e85450f6f2f46d0bc6639fff2cbdde10cc/docs/development/evidence/W81-01/DELIVERY.md",
+        "direct_consumer_scope_note": "Existing home stock-dwell widget shares the changed API/type; type-check found numeric consumer. COORD same-task serial update includes exact strings, named parser and current identity epoch; no other dashboard behavior added.",
+        "source_candidate_sha": "4f73c3787ba74f9499b503c342d5fae8d8932966",
+        "remote_main_sha": "0252d9e85450f6f2f46d0bc6639fff2cbdde10cc",
+        "pull_request": "https://github.com/GTX537/CP6/pull/465",
+        "handoff_delivery_ref": {
+          "commit": "4b333b7b2c58ff2f9a208384fff7becb2d9b974d",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T214927Z-wave81-delivery/MESSAGE.md",
+          "at": "2026-10-23T21:49:27.205824+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w81-handoff"
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -167076,14 +167091,33 @@
         "seats_released": true
       },
       "wave81_delivery": {
-        "status": "CANDIDATE_VERIFIED",
-        "report": "docs/development/evidence/W81-01/DELIVERY.md",
+        "status": "MERGED",
+        "report": "https://github.com/GTX537/CP6/blob/0252d9e85450f6f2f46d0bc6639fff2cbdde10cc/docs/development/evidence/W81-01/DELIVERY.md",
         "validation": "23独立.NET用例（17原生PostgreSQL＋6既有InMemory）及27Vue用例通过，无跳过；相关构建与最终vue-tsc类型检查通过",
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "adopted_scope": "Current stock dwell/expiry read Owners, exact observation v1, source stock scope and fields, safe unavailable legacy disposition; direct home widget adoption",
         "issue": "https://github.com/GTX537/CP6/issues/464",
-        "lifecycle_complete": false
+        "lifecycle_complete": false,
+        "source_candidate_sha": "4f73c3787ba74f9499b503c342d5fae8d8932966",
+        "remote_main_sha": "0252d9e85450f6f2f46d0bc6639fff2cbdde10cc",
+        "pull_request": "https://github.com/GTX537/CP6/pull/465",
+        "handoff_delivery_ref": {
+          "commit": "4b333b7b2c58ff2f9a208384fff7becb2d9b974d",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T214927Z-wave81-delivery/MESSAGE.md",
+          "at": "2026-10-23T21:49:27.205824+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w81-handoff"
+        },
+        "lifecycle_snapshot": {
+          "handoff_branch_deleted": true,
+          "handoff_seat_released": true,
+          "main_task": "CP6:BUG-464-INVENTORY-REPORT-OWNER",
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave81-final-verification.json"
+        },
+        "test_data_disposition": "Four owned PostgreSQL clusters stopped; data and logs retained"
       }
     },
     {
@@ -187095,7 +187129,7 @@
       "path": "docs/development/dispatch/20261023-wave81/README.md",
       "baseline_sha": "c6de50305c82fb4e03664f92c4e5ab432cc60af0",
       "registered_at": "2026-10-23T21:35:23.844245+00:00",
-      "phase": "CANDIDATE_VERIFIED",
+      "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -187107,8 +187141,8 @@
       ],
       "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": false,
-      "product_integrated": false,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W81-01",
@@ -187117,7 +187151,7 @@
           "lifecycle_task": "BUG-464-INVENTORY-REPORT-OWNER",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "CANDIDATE_VERIFIED",
+          "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "actual_start_ref": {
@@ -187134,9 +187168,75 @@
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "worker_delivery_ref": "docs/development/evidence/W81-01/DELIVERY.md",
+          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/0252d9e85450f6f2f46d0bc6639fff2cbdde10cc/docs/development/evidence/W81-01/DELIVERY.md",
           "validation": "23独立.NET用例（17原生PostgreSQL＋6既有InMemory）及27Vue用例通过，无跳过；相关构建与最终vue-tsc类型检查通过",
-          "runtime_resources_released": true
+          "runtime_resources_released": true,
+          "candidate_integrated": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "4f73c3787ba74f9499b503c342d5fae8d8932966",
+            "main": "0252d9e85450f6f2f46d0bc6639fff2cbdde10cc",
+            "target": "main",
+            "pr": "https://github.com/GTX537/CP6/pull/465",
+            "paths": [
+              "CP6.Core/Services/Integration/OperationsAccessV1.Inventory.cs",
+              "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
+              "CP6.Core/Services/Wms/ExpiryService.Owner.cs",
+              "CP6.Core/Services/Wms/ExpiryService.cs",
+              "CP6.Core/Services/Wms/IExpiryService.cs",
+              "CP6.Core/Services/Wms/IStockDwellService.cs",
+              "CP6.Core/Services/Wms/InventoryReportValuesV1.cs",
+              "CP6.Core/Services/Wms/StockDwellService.Owner.cs",
+              "CP6.Core/Services/Wms/StockDwellService.cs",
+              "CP6.Entity/DTOs/Wms/InventoryObservationV1.cs",
+              "CP6.Persistence.PostgreSql/Migrations/Core/20261023214000_InventoryObservationOwnerV1.cs",
+              "CP6.Tests/Erp/InventoryReportOwnerPostgreSqlTests.cs",
+              "CP6.WebApi/Controllers/Wms/ExpiryController.cs",
+              "CP6.WebApi/Controllers/Wms/StockDwellController.cs",
+              "CP6.WebApi/Program.cs",
+              "CP6.WebApi/Seed/WmsPermissionSeed.cs",
+              "cp6.web/src/api/wms/expiry.ts",
+              "cp6.web/src/api/wms/stockDwell.ts",
+              "cp6.web/src/types/wms/inventoryObservation.ts",
+              "cp6.web/src/types/wms/stockDwell.ts",
+              "cp6.web/src/utils/inventoryObservation.ts",
+              "cp6.web/src/views/dashboard/DashboardView.spec.ts",
+              "cp6.web/src/views/dashboard/DashboardView.vue",
+              "cp6.web/src/views/dashboard/dashboardLoadState.spec.ts",
+              "cp6.web/src/views/dashboard/dashboardLoadState.ts",
+              "cp6.web/src/views/wms/ExpiryView.vue",
+              "cp6.web/src/views/wms/InventoryReportOwner.spec.ts",
+              "cp6.web/src/views/wms/StockDwellView.vue",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/09-parallel-development.md",
+              "docs/development/dispatch/20261023-wave81/README.md",
+              "docs/development/evidence/W81-01/DELIVERY.md",
+              "docs/development/planning/20261022-seven-day-delivery.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-23T21:49:08.287008+00:00"
+          },
+          "handoff_delivery_ref": {
+            "commit": "4b333b7b2c58ff2f9a208384fff7becb2d9b974d",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T214927Z-wave81-delivery/MESSAGE.md",
+            "at": "2026-10-23T21:49:27.205824+00:00",
+            "base": "codex/t02c-entry-handoff-20260921",
+            "branch": "codex/w81-handoff"
+          },
+          "resources_released": false,
+          "lifecycle_snapshot": {
+            "handoff_branch_deleted": true,
+            "handoff_seat_released": true,
+            "main_task": "CP6:BUG-464-INVENTORY-REPORT-OWNER",
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave81-final-verification.json"
+          }
         }
       ],
       "horizon": {
@@ -187152,8 +187252,30 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Main product adoption, Handoff delivery, same-task lifecycle close and continue seven-day goal",
-      "validation": "23独立.NET用例（17原生PostgreSQL＋6既有InMemory）及27Vue用例通过，无跳过；相关构建与最终vue-tsc类型检查通过"
+      "next_action": "Finish same-branch Main ledger PR/lifecycle, close Issue464 on proof; continue seven-day remaining direct prerequisites",
+      "validation": "23独立.NET用例（17原生PostgreSQL＋6既有InMemory）及27Vue用例通过，无跳过；相关构建与最终vue-tsc类型检查通过",
+      "handoff_delivery_ref": {
+        "commit": "4b333b7b2c58ff2f9a208384fff7becb2d9b974d",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T214927Z-wave81-delivery/MESSAGE.md",
+        "at": "2026-10-23T21:49:27.205824+00:00",
+        "base": "codex/t02c-entry-handoff-20260921",
+        "branch": "codex/w81-handoff"
+      },
+      "handoff_integration": {
+        "result": "PASS",
+        "repository": "GTX537/CP6.AI-Handoff",
+        "source": "4b333b7b2c58ff2f9a208384fff7becb2d9b974d",
+        "main": "40b5e546769138e7ede83b7777fa6430065c886c",
+        "target": "codex/t02c-entry-handoff-20260921",
+        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/57",
+        "paths": [
+          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T213503Z-wave81-start/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T214927Z-wave81-delivery/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/waves/20261023-wave81.md"
+        ],
+        "observed_at": "2026-10-23T21:50:32.531272+00:00"
+      },
+      "lifecycle_complete": false
     },
     "wave_history": [
       {
@@ -199637,7 +199759,7 @@
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "库龄与效期独立读取Owner及旧处置入口隔离"
+          "next_action": "Stock dwell and expiry current read Owners adopted; full approved DISP/Finance remains separate. Continue remaining independent Owners and D5/D6 real prerequisites."
         },
         {
           "id": "D3",

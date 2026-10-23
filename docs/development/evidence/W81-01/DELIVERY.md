@@ -34,3 +34,9 @@ PG旧Dispose在任何SQL/序号/审计/库存调用前503 DISPOSITION_OWNER_REQU
 候选进入Main产品PR后交换Handoff交付，核对远端采用，再同任务Main状态PR和finish；在完成之前不提前宣称分支删除或席位释放。原估60–90min＋独立前置约3min，实际以Main start/finish，不重复累计Handoff。
 
 本窗是D2/WP02-03部分采用。24/375整卡、125目标0完整交付、247正式运行NOT_RUN不提升，七天目标ACTIVE。完整DISP/Finance、CRM实际Site/Form最终Owner/投递和公开受理继续待接。开工核对并据真实W79最终证据校正旧assignment未释放标志，未重复W79工作。W51指定停止data删除曾被自动审批以blocked by policy拒绝，仍保留不重试。
+
+## 实际采用与最后收尾
+
+Main [PR465](https://github.com/GTX537/CP6/pull/465) source `4f73c3787ba74f9499b503c342d5fae8d8932966`采用远端main `0252d9e85450f6f2f46d0bc6639fff2cbdde10cc`，38任务路径逐blob核对；Handoff [PR57](https://github.com/GTX537/CP6.AI-Handoff/pull/57)采用`40b5e546769138e7ede83b7777fa6430065c886c`，准确分支删除、固定树干净detached、finish释放。28个产品路径与已测提交逐blob一致，复用有效结果，最后文档diff/台账生成单独检查。
+
+Main同任务最终状态PR/finish及Issue464最后关闭待完成；当前约17.48min，原估60–90min＋独立前置3min，实际按finish不重复计Handoff。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave81-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续剩余独立Owner及D5/D6真实前置，正式DISP/Finance仍未采用。

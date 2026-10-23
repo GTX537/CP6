@@ -664,3 +664,9 @@ W80 Main463/CRM120/Handoff56全部采用，Issue118关闭，14项相关用例通
 ## W81验证完成
 
 23独立.NET用例（17原生PostgreSQL＋6既有InMemory）及27Vue用例通过，无跳过；相关构建与最终vue-tsc类型检查通过。既有Dashboard库龄小组件直接消费改后的API/type，类型检查发现旧number处理；COORD同窗口扩展至该组件/解析器及两份相关测试，精确文本与epoch失效已验证，其余看板域不动。新版days0–365与旧有负天数/午夜过滤分别保真实合同，不把参考算术冒Finance估值。4个自有PG停止保留，进入两仓采用与同任务最终收尾，七天目标ACTIVE。
+
+## 实际采用与最后收尾
+
+Main [PR465](https://github.com/GTX537/CP6/pull/465) source `4f73c3787ba74f9499b503c342d5fae8d8932966`采用远端main `0252d9e85450f6f2f46d0bc6639fff2cbdde10cc`，38任务路径逐blob核对；Handoff [PR57](https://github.com/GTX537/CP6.AI-Handoff/pull/57)采用`40b5e546769138e7ede83b7777fa6430065c886c`，准确分支删除、固定树干净detached、finish释放。28个产品路径与已测提交逐blob一致，复用有效结果，最后文档diff/台账生成单独检查。
+
+Main同任务最终状态PR/finish及Issue464最后关闭待完成；当前约17.48min，原估60–90min＋独立前置3min，实际按finish不重复计Handoff。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave81-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续剩余独立Owner及D5/D6真实前置，正式DISP/Finance仍未采用。
