@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W59询盘投影真实验签](dispatch/20261023-wave59/README.md)，本聊天单人；CRM PR104/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W58不重复。
+
 > 当前：[W58真实在线身份与PG当前事实核查](dispatch/20261023-wave58/README.md)，本聊天单人；CRM PR103/Handoff已采用，协调分支收尾后继续D5。W37–W57不重复。
 
 > 当前：[W57本次采集凭据与可失效发布读模型](dispatch/20261023-wave57/README.md)，本聊天单人；CRM PR102/Handoff已采用，协调分支收尾后继续D5。W37–W56不重复。

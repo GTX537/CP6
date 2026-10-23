@@ -38,7 +38,7 @@
 | [WP02-06 CRM身份投影、撤权fence与会话恢复](../../docs/development/task-plans/WP02.md#wp02-06) | CRM | 待安排 | WP02-05, WP02-07 | CODE / M | COORD / W58-01 |
 | [WP02-07 Platform调用方同事务Inbox与原结果槽](../../docs/development/task-plans/WP02.md#wp02-07) | Platform | 已交付 | S01-09, WP02-01 | CODE / M | C / WP02-07（沿用原WP02-01对话） |
 | [WP02-08 Platform Outbox领取、发送与Unknown恢复](../../docs/development/task-plans/WP02.md#wp02-08) | Platform | 已交付 | WP02-07 | CODE / M | C / WP02-08（沿用原WP02-07对话） |
-| [WP02-09 CRM首个Owner真实共同事务与授权门](../../docs/development/task-plans/WP02.md#wp02-09) | CRM | 待安排 | S01-08, WP02-06, WP02-07 | CODE / M | 未领取 |
+| [WP02-09 CRM首个Owner真实共同事务与授权门](../../docs/development/task-plans/WP02.md#wp02-09) | CRM | 待安排 | S01-08, WP02-06, WP02-07 | CODE / M | COORD / W59-01 |
 | [WP02-10 Main Owner共同事务、原结果与授权参与](../../docs/development/task-plans/WP02.md#wp02-10) | Main | 待安排 | WP02-02, WP02-03, WP02-07 | CODE / M | COORD / W50-01 |
 | [WP02-11 Platform HTTP错误、安全重试和截止时间](../../docs/development/task-plans/WP02.md#wp02-11) | Platform | 已交付 | WP02-01 | CODE / M | D / WP02-11（沿用原S01-07对话） |
 | [WP02-12 消息producer资格、Kafka/Dapr传输与死信原体](../../docs/development/task-plans/WP02.md#wp02-12) | Platform | 已交付 | S01-09, WP02-01, WP02-08 | CODE / M | C / WP02-12 |

@@ -298,3 +298,21 @@ CRM [PR103](https://github.com/GTX537/CP6.CRM/pull/103)已采用，source `80af9
 后继继续Main在线字段政策/CRM字段映射、真实业务Owner共同最终门与宿主采用；旧业务工厂仍为历史SQL Server，Program/consumer未切换。无Actions、既有库迁移或部署；24/375整卡、125目标0完整交付、247 NOT_RUN不提升，七天目标ACTIVE。W51准确data删除曾被自动审批拒绝，原因仅“blocked by policy”；停止保留，无重试或绕过。
 
 Handoff [PR34](https://github.com/GTX537/CP6.AI-Handoff/pull/34)已采用 `3aa2fac8dd49aca5bb0e2a08cd0b7034a864fcea`，准确本地/远端分支删除、工作区干净detached、finish释放。Main仅剩当前协调分支正常PR及finish，不提前声明释放。登记开工至此约59.82min，原预算100–160min，实际最终时长以finish为准，不重复累计子任务；此前只读核对约3min。
+
+## 2026-10-23：W58全部收尾 / W59询盘投影真实验签
+
+W58 CRM103/Handoff34/Main427全部采用，130项相关本地验证通过；实际63.09min，准确分支删除、固定树干净detached、全部席位释放。[W59](../dispatch/20261023-wave59/README.md)继续可信密钥目录、实际Ed25519验签及撤销/轮换核查，预计90–140min。完整字段映射与真实Owner最终门仍待采用；七天目标ACTIVE。
+
+## W59实际交付
+
+CRM [PR104](https://github.com/GTX537/CP6.CRM/pull/104)已采用，source `73163779f0a5d4d213cd500023f6629baa849c63`，远端main `611e95cfc83928c192070c5b101f2c6b9f202183`，10任务路径exact blob核对通过。[单份产品报告](https://github.com/GTX537/CP6.CRM/blob/611e95cfc83928c192070c5b101f2c6b9f202183/docs/development/evidence/W59-01/DELIVERY.md)。204项相关本地用例通过（18项签名/信任、186项既有询盘合同/终态）；API/Worker相关构建；真实Owner/宿主验收NOT_RUN，无Actions。
+
+采用原PermissionProjection严格合同/规范化字节，补真实Pure Ed25519与可信密钥目录；精确issuer/key/catalog、tenant/subject/purpose、有效期和撤销检查。原子CAS更新目录使旧结果失效，防进程内密钥ID换材料/撤销回滚；轮换保留原签发时间语义。结果集合逐层只读，CanAuthorize=false，不能充当当前身份、Owner字段映射或共同事务最终门。
+
+NSec25.4.0/libsodium1.0.20.1精确固定，nuget.org实际恢复并在Windows x64运行；原冻结S01/生成器/生成合同、八份PG SQL与Program不变。生产可信目录及跨进程/重启恢复仍需实际宿主采用；Main全字段映射未签认，真实业务验收不提升。本窗没有启动PG、迁库、Actions或部署。
+
+一次作者完整SPEC/QUALITY通过；204项最终结果和初始RFC红灯/CS8604失败记录保留，不重复累计18项前次成功。未变W58当前身份/PG和W57发布证据仅复用。CRM准确本地/远端分支删除、固定树干净detached、finish释放。
+
+七天目标ACTIVE。继续真实Owner必要前置与D6可独立公共支撑；24/375整卡、125目标0完整交付、247 NOT_RUN不提升。W51准确data删除此前被自动审批拒绝，原因仅“blocked by policy”；停止保留，无重试绕过。
+
+Handoff [PR35](https://github.com/GTX537/CP6.AI-Handoff/pull/35)已采用 `4e6cb8a25ae06931ec590df95384c3abbbfa1f57`，准确本地/远端分支删除、固定树干净detached、finish释放。Main仅剩协调PR/finish，不提前声明释放。登记开工至此约23.17min，原预算90–140min，最终实际以finish为准，不重复累计子任务；此前只读前置约4min。
