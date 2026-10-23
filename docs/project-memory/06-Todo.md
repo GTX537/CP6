@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-23：W68配置保存原结果已采用
+
+CRM PR111/source `645da4a73a0cfde56f330d41291250c14b9f18da`已采用远端main `10985b5ca7f1f127f32768dec3983ee2e2d29571`；22项有效本地PG用例通过，无跳过；相关API/必要依赖构建通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/10985b5ca7f1f127f32768dec3983ee2e2d29571/docs/development/evidence/W68-01/DELIVERY.md)。原生稳定槽与原结果参与调用方事务，失败恢复及并发已验证；CRM Issue109保持开放；真实Owner最终授权、Bundle/audit/outbox和隐私保留待采用。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main协调PR/finish待收尾。七天目标ACTIVE，完整业务验收不提升。
+
 ## 2026-10-23：W67冻结表单内容已采用
 
 CRM PR110/source `ab4a41c828d614058a04dc185299a284be542a56`已采用远端main `969bcc0660d96b41dcad102e1ef555b1c3bc6103`；20项本地相关用例通过，无跳过；相关API/Worker构建通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/969bcc0660d96b41dcad102e1ef555b1c3bc6103/docs/development/evidence/W67-01/DELIVERY.md)。完整表单内容与摘要、原告知及hash分别保留；CRM Issue109原fixture矛盾保持开放；结果不授权/不激活，真实Owner与Bundle保存/公开表单待采用。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main协调PR/finish待收尾。七天目标ACTIVE，完整业务验收不提升。
