@@ -1,4 +1,5 @@
 using CP6.Entity.DomainModels.Wms;
+using CP6.Entity.DTOs.Wms;
 
 namespace CP6.Core.Services.Wms;
 
@@ -17,6 +18,8 @@ namespace CP6.Core.Services.Wms;
 /// </remarks>
 public interface ISlottingService
 {
+    Task<SlottingPageV1> SearchOwnerAsync(SlottingQueryV1 query);
+    Task<SlottingObservationV1?> GetOwnerAsync(string planNo);
     Task<List<SlottingPlan>> SearchAsync(string? warehouseCd, int? status);
     Task<SlottingPlanResult?> GetAsync(string planNo);
     Task<string> AnalyzeAsync(string warehouseCd, int analysisDays, string? userName);

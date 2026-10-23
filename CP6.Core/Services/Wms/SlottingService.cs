@@ -1,4 +1,5 @@
 using System.Text.Json;
+using CP6.Core.Services.Integration;
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
@@ -6,27 +7,29 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Core.Services.Wms;
 
-public class SlottingService : ISlottingService
+public partial class SlottingService : ISlottingService
 {
     private readonly CP6Context _db;
     private readonly IWmsSequenceService _seq;
     private readonly IMobileTaskV2Service _tasks;
     private readonly IWmsAccessScopeProvider _accessScopes;
+    private readonly OperationsOwnerV1? _owner;
     private const string Prefix = "SLP";
 
     public SlottingService(
         CP6Context db,
         IWmsSequenceService seq,
         IMobileTaskV2Service tasks,
-        IWmsAccessScopeProvider accessScopes)
+        IWmsAccessScopeProvider accessScopes, OperationsOwnerV1? owner = null)
     {
         _db = db;
         _seq = seq;
         _tasks = tasks;
         _accessScopes = accessScopes;
+        _owner = owner;
     }
 
-    public async Task<List<SlottingPlan>> SearchAsync(string? warehouseCd, int? status)
+    private async Task<List<SlottingPlan>> SearchCoreAsync(string? warehouseCd, int? status)
     {
         var query = (await _accessScopes.GetCurrentAsync())
             .Apply(_db.SlottingPlans.AsNoTracking())
@@ -36,7 +39,7 @@ public class SlottingService : ISlottingService
         return await query.OrderByDescending(x => x.AnalyzedAt).Take(200).ToListAsync();
     }
 
-    public async Task<SlottingPlanResult?> GetAsync(string planNo)
+    private async Task<SlottingPlanResult?> GetCoreAsync(string planNo)
     {
         var p = await (await _accessScopes.GetCurrentAsync())
             .Apply(_db.SlottingPlans.AsNoTracking())
@@ -49,7 +52,7 @@ public class SlottingService : ISlottingService
         return new SlottingPlanResult { Plan = p, Recommendations = recs };
     }
 
-    public async Task<string> AnalyzeAsync(string warehouseCd, int analysisDays, string? userName)
+    private async Task<string> AnalyzeCoreAsync(string warehouseCd, int analysisDays, string? userName)
     {
         if (string.IsNullOrWhiteSpace(warehouseCd))
             throw new InvalidOperationException("warehouseCd required");
@@ -136,7 +139,7 @@ public class SlottingService : ISlottingService
         return no;
     }
 
-    public async Task<int> ApproveAsync(string planNo, string? userName)
+    private async Task<int> ApproveCoreAsync(string planNo, string? userName)
     {
         await using var tx = await BeginTransactionAsync();
         try
@@ -273,7 +276,7 @@ public class SlottingService : ISlottingService
         }
     }
 
-    public async Task CancelAsync(string planNo, string? userName)
+    private async Task CancelCoreAsync(string planNo, string? userName)
     {
         await using var tx = await BeginTransactionAsync();
         try

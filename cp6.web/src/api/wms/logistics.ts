@@ -1,3 +1,4 @@
+import type { SlottingPage, SlottingQuery, SlottingObservation } from '@/types/wms/slottingOwner'
 import type { CrossDockPage, CrossDockObservation, CrossDockQuery } from '@/types/wms/crossDockOwner'
 import http from '../http'
 import type {
@@ -58,6 +59,12 @@ export const replenishApi = {
 }
 
 export const slottingApi = {
+  searchOwner(q: SlottingQuery) {
+    return http.get<any, WmsApi<SlottingPage>>('/wms/slotting/owner-v1', { params: q })
+  },
+  getOwner(no: string) {
+    return http.get<any, WmsApi<SlottingObservation>>(`/wms/slotting/owner-v1/${encodeURIComponent(no)}`)
+  },
   search(warehouseCd?: string, status?: number) {
     return http.get<any, WmsApi<SlottingPlan[]>>('/wms/slotting', { params: { warehouseCd, status } })
   },

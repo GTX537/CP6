@@ -728,3 +728,11 @@ W84 Main359/470与Handoff60全部采用，Issue471关闭，35相关用例及类�
 Main [PR475](https://github.com/GTX537/CP6/pull/475) source `a8e2e8a098c3a8ad9e713cd5f8f8c789270631cc`采用远端main `bbf9ae10322d880f68380bdaddc8435280ff7895`，30任务路径逐blob核对；Handoff [PR61](https://github.com/GTX537/CP6.AI-Handoff/pull/61)采用`7fdc5d18e71fc49a0c11b7406f1044727f721abf`，准确分支删除、固定树干净detached、finish释放。20个产品路径与已测提交逐blob一致，复用有效结果，最后文档diff/台账生成单独检查。
 
 Main同任务最终状态PR/finish及Issue474最后关闭待完成；当前约14.70min，原估35–55min＋独立前置2min，实际按finish不重复计Handoff。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave85-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续剩余独立Owner及D5/D6真实前置，正式WP10-32越库执行/Finance仍未采用。
+
+## 2026-10-23：W85全部收尾 / W86库位优化历史观察Owner
+
+W85 Main399/470与Handoff61全部采用，Issue474关闭，39相关用例及类型检查通过，实际16.82min＋前置2min；两准确分支删除、固定树干净detached、全部席位释放。[W86](../dispatch/20261023-wave86/README.md)修Issue477，预计35–55min，独立前置约2min；库位优化当前历史Owner、完整源披露门、精确原文及旧写零效果；固定cut/Proposal/Transfer仍未采用。七天目标ACTIVE。
+
+## W86验证完成
+
+19独立.NET用例（15原生PG、3既有非PG库位优化行为、1两租户启动种子）及22Vue用例通过，无跳过；相关构建和vue-tsc通过。一次集中审查闭合，原文/来源门/旧写零效果、原生并发、真实HTTP及203条分页通过；3个实际PG停止保留，套接字环境失败单项补验通过、原失败保留。正常采用与同任务收尾后继续，七天ACTIVE。
