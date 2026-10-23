@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-23：W65采番串行推进候选通过
+
+Issue436原生PG红灯转绿；8项原生PostgreSQL用例通过，4项未受改动的原Seq用例复用先前通过结果；12项独立用例无跳过，相关Main构建通过。[单份交付](../development/evidence/W65-01/DELIVERY.md)。保留原租户唯一域、周期和调用方事务；原命令receipt/完整Owner仍待实施。三个隔离PG已停止保留；待两仓采用及准确分支/席位收尾，七天目标ACTIVE。
+
 ## 2026-10-23：W64字段审计Owner已采用
 
 Main [PR434](https://github.com/GTX537/CP6/pull/434) / source `183750bc45f39ce81499a11411914d3cf46de3aa`已进入远端main `a8a31bccdb57fb3a9a87da5aadb99be7b1673653`，22任务路径exact核对通过；27.NET/6UI通过、无跳过。[单份交付](../development/evidence/W64-01/DELIVERY.md)。Handoff [PR40](https://github.com/GTX537/CP6.AI-Handoff/pull/40)已采用，准确分支删除、固定树干净detached、finish释放。Main同任务最后状态PR/finish及Issue433最终关闭待完成，未提前宣布席位释放。两个PG已停止保留；当前约27.46min，原预算60–90min，实际以finish为准。完整WP02-13/业务验收不提升，七天目标ACTIVE继续。
