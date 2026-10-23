@@ -608,3 +608,21 @@ CRM [PR117](https://github.com/GTX537/CP6.CRM/pull/117)已采用，source `6ac69
 这仅是局部保存审计与实际事务组合；当前Site/Form权限不能由DeptIds替代。真实Owner最终门/创建与保留批准来源、Outbox原子入队/投递、Preview/Activate/真实批准、公开Attempt/受理和Program/HTTP仍待接。原事件时间比配置时间范围窄，后继不能截断时间冒充兼容；Platform0.10.3已有OutboxV2供复用。合成ProtectedResult测试不表示生产加密采用。Issue109保持OPEN，24/375整卡、125目标0交付、247运行NOT_RUN不提升，七天目标ACTIVE。无新包、Actions、既有环境迁移或部署。W51指定停止data删除被自动审批以blocked by policy拒绝，保留不重试。
 
 Handoff [PR53](https://github.com/GTX537/CP6.AI-Handoff/pull/53)已采用 `4dcb673b7c2722ba831e319af579e52b248307c4`，准确分支删除、固定树干净detached、finish释放。Main仅剩协调PR/finish，不提前声明释放。登记开工至此约16.09min，原预算30–50min，最终以finish为准、子任务不重复累计；前置只读核对约3min。
+
+## 2026-10-23：W77全部收尾 / W78配置事件入队
+
+W77 CRM117/Main458/Handoff53全部采用，31独立PG通过，实际18.13min＋前置3min，三分支删除、固定树干净detached、全部席位释放。[W78](../dispatch/20261023-wave78/README.md)采用Platform原生Outbox，将实际保存审计与事件入队放入W68回调同事务，预计50–80min，独立前置约3min；当前Owner及真实投递、激活和公开受理仍待接，七天目标ACTIVE。Issue118记录冻结FX26错误causation，原件保持。
+
+## W78实际交付
+
+CRM [PR119](https://github.com/GTX537/CP6.CRM/pull/119)已采用，source `fcef696c1e955770255efac07d789e6437f338e4`，远端main `5297a8e641f21b089858078cabe4c11779984aad`，12条任务路径exact blob核对通过。[单份产品报告](https://github.com/GTX537/CP6.CRM/blob/5297a8e641f21b089858078cabe4c11779984aad/docs/development/evidence/W78-01/DELIVERY.md)。37项独立本轮PG用例通过，无跳过，相关API/必要依赖构建通过；真实Owner与投递验收NOT_RUN，无Actions。
+
+实际保存Audit派生严格TargetLocalInquiryEvent，因果为赢家Audit而非事件自身；无界Bundle版本与首个事件流序号1分离。技术MessageId编码完整tenant/event，跨租户同wire ID不冲突。原始时间不截断；合法年0000/七位小数和实际PG时钟通过，原事件无法表达的历史时间明确拒绝且原Bundle/Audit保持。
+
+复用Platform0.10.3原生模型/消息/Binding/guards。实际Audit FK与延迟complete-binding约束保证原生队列commit前已有正确来源、绑定、载荷字节/摘要及Blocked路由，不允许伪已发布/领取。W68回调内Bundle/Audit/Outbox与原结果共同提交/回滚；重放零再次分配，实际Gate竞争和Serializable40001、取消、元数据冲突、九类漂移、原生直接写入拒绝和损坏读回通过。遗留ClaimBatch实测排除V2记录。
+
+37个独立PG行为全部通过，一次作者SPEC/QUALITY无剩余阻断。初始NotImplemented红灯保留；同自有PG55446的独立测试库承接原生版本演进，旧库均保留，未修改业务环境。自有实例已停止，数据/日志/TRX保留。CRM准确任务分支删除、固定树干净detached、finish释放。
+
+这仅是原子入队基础；真实当前身份/动作/Site/Form最终门、真实创建与保留批准、Owner宿主/发布权限、投递重试/隔离/状态映射、Preview/Activate、公开Attempt/受理仍待接。没有新包、Actions、生产部署或既有环境迁移。Issue109/118冻结fixture问题保持OPEN，24/375整卡、125目标0完整交付、247运行NOT_RUN不提升，七天目标ACTIVE。W51指定停止data删除曾被自动审批以blocked by policy拒绝，保留不重试。
+
+Handoff [PR54](https://github.com/GTX537/CP6.AI-Handoff/pull/54)已采用 `995822bcff997ff6d7d5e8a2fbf347b0b1ba7609`，准确分支删除、固定树干净detached、finish释放。Main仅剩协调PR/finish，不提前声明释放。登记开工至此约24.61min，原预算50–80min，最终以finish为准、子任务不重复累计；前置只读核对约3min。
