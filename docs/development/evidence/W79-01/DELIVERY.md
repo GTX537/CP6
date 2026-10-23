@@ -39,3 +39,9 @@ CostCollect旧流程没有Finance Owner且有缺费率自动估算路径；PG Co
 完整工艺/成本/Finance Owner、生产业务验收、CRM Site/Form最终权限/配置保存真实Owner/投递和公开生命周期仍待落实。24/375整卡、125目标0完整交付、247运行NOT_RUN保持，D3仍部分采用，七天目标ACTIVE。原估120–180分钟＋独立前置6分钟，实际以Main start/finish计，Handoff不重复累计。
 
 候选通过后依次Main产品采用、Handoff交付与finish、同任务Main最终状态/PR/finish，远端核对后准确删除两任务分支并释放固定席位；现在尚不提前声明已释放。W51指定停止data删除曾被自动审批以blocked by policy拒绝，保留不重试或绕过。
+
+## 实际采用与最后收尾
+
+Main [PR461](https://github.com/GTX537/CP6/pull/461) source `119e3659d5f773595693a776c7322954b704c92d`采用远端main `c7964dd87ce374aaf4f74b9ea29b50380aab2744`，36任务路径逐blob核对；Handoff [PR55](https://github.com/GTX537/CP6.AI-Handoff/pull/55)采用`7c3fecd3152044582b9adbaac840ba524aa19f59`，准确任务分支删除、固定树干净detached、finish释放。26个产品路径与已测提交逐blob相同，复用有效结果；最后文档diff/台账生成单独检查。
+
+Main同任务分支最终状态PR及finish待完成；Issue460最后远端及生命周期核对后关闭。当前约46.18min，原估120–180min＋独立前置6min，最终按finish，子任务不重复累计。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave79-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，随后继续D5/D6剩余直接前置，完整工艺/成本/Finance仍未采用。

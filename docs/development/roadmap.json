@@ -159852,6 +159852,11 @@
       "date": "2026-10-23",
       "change": "W79 Issue460 current work center/rate Owner verified:37 unique.NET/25UI; full process/Finance and runtime acceptance unchanged.",
       "evidence": "docs/development/evidence/W79-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "W79 Main461 exact adoption and Handoff55 verified;37.NET/25UI/typecheck passed. Handoff branch deleted/seat released; Main final finish pending. Full acceptances unchanged.",
+      "evidence": "https://github.com/GTX537/CP6/blob/c7964dd87ce374aaf4f74b9ea29b50380aab2744/docs/development/evidence/W79-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -162431,7 +162436,7 @@
         "claimed_at": "2026-10-23T20:22:59.694495+00:00",
         "baseline_sha": "3ab6662229c1ccb70cb2b377cb96fea686d7b3ec",
         "entry_evidence": "docs/development/dispatch/20261023-wave79/README.md",
-        "phase": "CANDIDATE_VERIFIED",
+        "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
         "dispatch_scope": "W79_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -162480,11 +162485,21 @@
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": false,
+        "candidate_integrated": true,
         "resources_released": false,
         "full_task_completed": false,
         "issue": "https://github.com/GTX537/CP6/issues/460",
-        "worker_delivery_ref": "docs/development/evidence/W79-01/DELIVERY.md"
+        "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/c7964dd87ce374aaf4f74b9ea29b50380aab2744/docs/development/evidence/W79-01/DELIVERY.md",
+        "source_candidate_sha": "119e3659d5f773595693a776c7322954b704c92d",
+        "remote_main_sha": "c7964dd87ce374aaf4f74b9ea29b50380aab2744",
+        "pull_request": "https://github.com/GTX537/CP6/pull/461",
+        "handoff_delivery_ref": {
+          "commit": "9cd4cf39ee8336f8046e2b3c1e8c7e425e6b39dd",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T210647Z-wave79-delivery/MESSAGE.md",
+          "at": "2026-10-23T21:06:47.566337+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w79-handoff"
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -166940,14 +166955,33 @@
         "issue_state": "CLOSED"
       },
       "wave79_delivery": {
-        "status": "CANDIDATE_VERIFIED",
-        "report": "docs/development/evidence/W79-01/DELIVERY.md",
+        "status": "MERGED",
+        "report": "https://github.com/GTX537/CP6/blob/c7964dd87ce374aaf4f74b9ea29b50380aab2744/docs/development/evidence/W79-01/DELIVERY.md",
         "validation": "37独立.NET（25真实PG、12既有InMemory）＋25Vue通过，无跳过；相关构建及最终Vue类型检查通过",
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "adopted_scope": "WorkCenter and ProcessCostRate independent current Owner with real department UUID, field MIN, native CAS and exact decimal wire v1; Finance Collect safely refuses until actual Finance Owner",
         "issue": "https://github.com/GTX537/CP6/issues/460",
-        "lifecycle_complete": false
+        "lifecycle_complete": false,
+        "source_candidate_sha": "119e3659d5f773595693a776c7322954b704c92d",
+        "remote_main_sha": "c7964dd87ce374aaf4f74b9ea29b50380aab2744",
+        "pull_request": "https://github.com/GTX537/CP6/pull/461",
+        "handoff_delivery_ref": {
+          "commit": "9cd4cf39ee8336f8046e2b3c1e8c7e425e6b39dd",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T210647Z-wave79-delivery/MESSAGE.md",
+          "at": "2026-10-23T21:06:47.566337+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w79-handoff"
+        },
+        "lifecycle_snapshot": {
+          "handoff_branch_deleted": true,
+          "handoff_seat_released": true,
+          "main_task": "CP6:BUG-460-WORKCENTER-OWNER",
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave79-final-verification.json"
+        },
+        "test_data_disposition": "Six owned PostgreSQL clusters stopped; data and logs retained"
       }
     },
     {
@@ -186933,7 +186967,7 @@
       "path": "docs/development/dispatch/20261023-wave79/README.md",
       "baseline_sha": "3ab6662229c1ccb70cb2b377cb96fea686d7b3ec",
       "registered_at": "2026-10-23T20:24:43.868237+00:00",
-      "phase": "CANDIDATE_VERIFIED",
+      "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -186945,8 +186979,8 @@
       ],
       "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": false,
-      "product_integrated": false,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W79-01",
@@ -186955,7 +186989,7 @@
           "lifecycle_task": "BUG-460-WORKCENTER-OWNER",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "CANDIDATE_VERIFIED",
+          "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "actual_start_ref": {
@@ -186972,9 +187006,73 @@
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "worker_delivery_ref": "docs/development/evidence/W79-01/DELIVERY.md",
+          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/c7964dd87ce374aaf4f74b9ea29b50380aab2744/docs/development/evidence/W79-01/DELIVERY.md",
           "validation": "37独立.NET（25真实PG、12既有InMemory）＋25Vue通过，无跳过；相关构建及最终Vue类型检查通过",
-          "runtime_resources_released": true
+          "runtime_resources_released": true,
+          "candidate_integrated": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "119e3659d5f773595693a776c7322954b704c92d",
+            "main": "c7964dd87ce374aaf4f74b9ea29b50380aab2744",
+            "target": "main",
+            "pr": "https://github.com/GTX537/CP6/pull/461",
+            "paths": [
+              "CP6.Core/Services/Fin/CostCollectService.cs",
+              "CP6.Core/Services/Integration/OperationsAccessV1.ProcessCost.cs",
+              "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
+              "CP6.Core/Services/Mes/IProcessCostRateService.cs",
+              "CP6.Core/Services/Mes/IWorkCenterService.cs",
+              "CP6.Core/Services/Mes/ProcessCostOwnerValuesV1.cs",
+              "CP6.Core/Services/Mes/ProcessCostRateService.Owner.cs",
+              "CP6.Core/Services/Mes/ProcessCostRateService.cs",
+              "CP6.Core/Services/Mes/WorkCenterService.Owner.cs",
+              "CP6.Core/Services/Mes/WorkCenterService.cs",
+              "CP6.Core/Services/Sys/IamStandaloneDepartmentMappingV1.cs",
+              "CP6.Entity/DTOs/Mes/ProcessCostOwnerV1.cs",
+              "CP6.Persistence.PostgreSql/Migrations/Core/20261023203000_WorkCenterDepartmentOwnerV1.cs",
+              "CP6.Tests/Erp/WorkCenterOwnerPostgreSqlTests.cs",
+              "CP6.WebApi/Controllers/Fin/CostController.cs",
+              "CP6.WebApi/Controllers/Mes/ProcessCostRateController.cs",
+              "CP6.WebApi/Controllers/Mes/WorkCenterController.cs",
+              "CP6.WebApi/Program.cs",
+              "CP6.WebApi/Seed/MesPermissionSeed.cs",
+              "cp6.web/src/api/mes/processCost.ts",
+              "cp6.web/src/api/sys/iam.ts",
+              "cp6.web/src/types/mes/processCost.ts",
+              "cp6.web/src/views/mes/ProcessCostOwner.spec.ts",
+              "cp6.web/src/views/mes/ProcessCostRateView.vue",
+              "cp6.web/src/views/mes/WorkCenterView.vue",
+              "cp6.web/src/views/pms/StandaloneDepartmentMappings.vue",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/09-parallel-development.md",
+              "docs/development/dispatch/20261023-wave79/README.md",
+              "docs/development/evidence/W79-01/DELIVERY.md",
+              "docs/development/planning/20261022-seven-day-delivery.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-23T21:06:38.627065+00:00"
+          },
+          "handoff_delivery_ref": {
+            "commit": "9cd4cf39ee8336f8046e2b3c1e8c7e425e6b39dd",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T210647Z-wave79-delivery/MESSAGE.md",
+            "at": "2026-10-23T21:06:47.566337+00:00",
+            "base": "codex/t02c-entry-handoff-20260921",
+            "branch": "codex/w79-handoff"
+          },
+          "resources_released": false,
+          "lifecycle_snapshot": {
+            "handoff_branch_deleted": true,
+            "handoff_seat_released": true,
+            "main_task": "CP6:BUG-460-WORKCENTER-OWNER",
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave79-final-verification.json"
+          }
         }
       ],
       "horizon": {
@@ -186990,8 +187088,30 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Main product adoption, Handoff delivery and same-task lifecycle closure",
-      "validation": "37独立.NET（25真实PG、12既有InMemory）＋25Vue通过，无跳过；相关构建及最终Vue类型检查通过"
+      "next_action": "Finish same-branch Main ledger PR and lifecycle; close Issue460 after verification; continue remaining D5/D6 prerequisites",
+      "validation": "37独立.NET（25真实PG、12既有InMemory）＋25Vue通过，无跳过；相关构建及最终Vue类型检查通过",
+      "handoff_delivery_ref": {
+        "commit": "9cd4cf39ee8336f8046e2b3c1e8c7e425e6b39dd",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T210647Z-wave79-delivery/MESSAGE.md",
+        "at": "2026-10-23T21:06:47.566337+00:00",
+        "base": "codex/t02c-entry-handoff-20260921",
+        "branch": "codex/w79-handoff"
+      },
+      "handoff_integration": {
+        "result": "PASS",
+        "repository": "GTX537/CP6.AI-Handoff",
+        "source": "9cd4cf39ee8336f8046e2b3c1e8c7e425e6b39dd",
+        "main": "7c3fecd3152044582b9adbaac840ba524aa19f59",
+        "target": "codex/t02c-entry-handoff-20260921",
+        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/55",
+        "paths": [
+          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T202443Z-wave79-start/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T210647Z-wave79-delivery/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/waves/20261023-wave79.md"
+        ],
+        "observed_at": "2026-10-23T21:07:46.413575+00:00"
+      },
+      "lifecycle_complete": false
     },
     "wave_history": [
       {
@@ -199197,7 +199317,7 @@
           "last_window_actual_agent_minutes": 56.28,
           "last_branches_deleted": true,
           "last_seats_released": true,
-          "next_action": "工作中心与工序费率独立入口当前Owner"
+          "next_action": "WorkCenter and ProcessCostRate independent Owners adopted; complete process/cost/Finance Owner remains separate. Continue D5/D6 direct prerequisites without inventing Site/Form scope."
         },
         {
           "id": "D4",

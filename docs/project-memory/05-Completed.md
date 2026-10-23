@@ -1,8 +1,8 @@
 # 已完成能力与近期里程碑
 
-## 2026-10-23：W79工作中心与工序费率当前Owner候选通过
+## 2026-10-23：W79工作中心与工序费率当前Owner已采用
 
-Issue460真实PG红灯转绿；37独立.NET（25真实PG、12既有InMemory）＋25Vue通过，无跳过；相关构建及最终Vue类型检查通过。[单份交付](../development/evidence/W79-01/DELIVERY.md)。原生部门绑定、实际ID/版本、费用MIN、八位小数精确页面；PG旧Finance归集503待真正Owner。完整任务/验收不提升，六个自有PG停止保留，待两仓采用与准确分支/席位收尾，七天目标ACTIVE。
+Main [PR461](https://github.com/GTX537/CP6/pull/461) source `119e3659d5f773595693a776c7322954b704c92d`进入远端main `c7964dd87ce374aaf4f74b9ea29b50380aab2744`，36任务路径逐blob核对通过；37.NET/25Vue及类型检查通过，无跳过。[单份交付](../development/evidence/W79-01/DELIVERY.md)。Handoff [PR55](https://github.com/GTX537/CP6.AI-Handoff/pull/55)采用、准确分支删除、固定树干净detached、finish释放。Main同任务最后状态PR/finish及Issue460关闭待完成，未提前声明席位释放。六个PG停止保留；当前约46.18min，原估120–180min＋独立前置6min，最终按finish计。完整工艺/成本/Finance、125目标和247验收不提升；七天目标ACTIVE。
 
 ## 2026-10-23：W78配置事件原子入队已采用
 
