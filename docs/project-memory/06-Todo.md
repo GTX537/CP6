@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-23：W77配置保存审计已采用
+
+CRM PR117/source `6ac69e5e33c2ab078ecaef03e256a557728efe65`已采用远端main `49d06e17bc1d4547ef0d6dd9a934cd1a735ddb3e`；31项独立本地PG用例通过，无跳过；相关API/必要依赖构建通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/49d06e17bc1d4547ef0d6dd9a934cd1a735ddb3e/docs/development/evidence/W77-01/DELIVERY.md)。实际Bundle派生的保存审计及延迟原槽/Resource/ETag提交约束已采用，共同回滚/重放、原生竞争、精确时间和原始失败记录均核对，CRM Issue109保持开放；真实Owner/Outbox、激活生命周期与公开受理待接。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main协调PR/finish待收尾。七天目标ACTIVE，完整业务验收不提升。
+
 ## 2026-10-23：W76不可变Draft Bundle已采用
 
 CRM PR116/source `631734a0ac4c620226c989b71a4ce1b710db55f3`已采用远端main `5deac62fc4d00a731b5d2dea79877572dc39a49b`；25项独立本地PG用例通过，无跳过；相关API/必要依赖构建通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/5deac62fc4d00a731b5d2dea79877572dc39a49b/docs/development/evidence/W76-01/DELIVERY.md)。不可变Draft Bundle和完整身份/视图/规范内容已持久化，混合隔离原生Gate及稳定槽回滚/原结果重放零再分配已实测；继任历史和告知原文边界通过，CRM Issue109保持开放；真实Owner/audit/outbox、激活生命周期与公开受理待接。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main协调PR/finish待收尾。七天目标ACTIVE，完整业务验收不提升。
