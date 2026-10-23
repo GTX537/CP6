@@ -156,3 +156,19 @@ W49实际39.38分钟，PR414/415/Handoff25采用、Issue413关闭、准确分支
 产品[PR](https://github.com/GTX537/CP6/pull/416)及[Handoff](https://github.com/GTX537/CP6.AI-Handoff/pull/26)采用，source`68a0ecaad7c900ddb1beea591738b6a14457c9be`、远端main`e084e873c7a80dd9023d2f3bce137ecd2554b799`，24任务文件blob一致；Handoff source`bab3da6d4cb12b1f717781ea6200301058f7640e`、目标`9a1c8a0d9a101db87baece381e25e5ef996acb93`，准确分支删除/DEV-2释放。
 
 22项去重相关.NET/真实PostgreSQL通过，含实际Program/登录/HTTP/WebSocket、共同事务与原编号恢复；无前端改动，未重复前端或全仓验证；原请求UNKNOWN保留，Finance/其余路由/正式DEL未验收。最后状态PR后finish，七天目标ACTIVE，继续CRM身份/共同事务。
+
+## 2026-10-23：W50实际收尾 / W51 CRM PG基础
+
+W50 PR416/417、Handoff26已采用，22项相关验证通过，实际约50.27min（排除中断的分段估算）；准确分支删除，固定树干净detached，席位释放。[W51](../dispatch/20261023-wave51/README.md)本聊天继续CRM PostgreSQL会话和同事务撤权基础，预计90–150min；完整投影/授权/业务采用仍待后续，七天目标ACTIVE。
+
+## CRM产品采用 / 当前收尾
+
+CRM [PR96](https://github.com/GTX537/CP6.CRM/pull/96)已正常合并，source `83017508cb2c4a702ab8f5fb3bb62d73d12c96af`，远端main `48be253dfe3c4b451a9be7eaf9b7ef5f1199086a`，13个任务文件精确blob采用核对通过。14个不同相关PG/.NET用例通过；实际共同事务、独立并发连接、原生约束、CAS、只读启动及现有AuthService兼容；上游明确使用test double，不冒充Main/OIDC或Owner最终门。唯一[产品报告](https://github.com/GTX537/CP6.CRM/blob/48be253dfe3c4b451a9be7eaf9b7ef5f1199086a/docs/development/evidence/W51-01/DELIVERY.md)。初始编译/analyzer和观察器缓存导致的测试失败保留；一次完整作者审查及相关修正复查完成。
+
+新PG存储保存完整UTC ticks，28字节版本化CAS含实例/递增版本；global issuer+jti身份绑定与原生撤权删除同事务，旧Serializable快照40001。现有Program不选择新存储，完整source/Projection/Published/Inbox/final authorization和全部writer仍待后续。不运行旧SQL双库/前端/全仓，不触发Actions/部署。
+
+自有PG已确认停止，76,150,437字节可重建data因自动审批拒绝删除而保留（仅返回blocked by policy，无更具体原因，无替代删除）；证据、TRX、日志和构建缓存保留。CRM finish后复用DEV-2回Handoff原分支，Main总控分支最后合并收尾；最终真实席位/准确分支状态见本轮PR和本机wave51-final-verification.json。整卡24/375、125目标0交付、247运行NOT_RUN不变。
+
+## 资料采用与实际生命周期
+
+Handoff [PR27](https://github.com/GTX537/CP6.AI-Handoff/pull/27)已采用`db5a5c486e46aaf9944df812d036c33ddb086ef8`，准确任务分支已删除、固定树干净detached、finish释放；CRM PR96同样完成准确分支删除及finish，DEV-2串行bind/resume全过程未超额。Main仅剩本协调分支正常PR和finish；当前记录不预先声明Main已释放。最终proof为`C:/Users/tt/CP6-planning-reports/20261017-foundation/wave51-final-verification.json`。本轮登记开工至此约23.17分钟，前置只读核对另约8分钟；最终实际耗时随finish核定。下一轮继续CRM真实PG基线/投影/前置检查，七天目标ACTIVE。
