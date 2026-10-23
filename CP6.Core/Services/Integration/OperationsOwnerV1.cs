@@ -16,7 +16,7 @@ public sealed partial class OperationsOwnerV1
     internal const string Mes = "mes-work-order", Outbound = "wms-outbound-order",
         Production = "mes-production-result", Inbound = "wms-inbound-order", Receipt = "wms-inbound-receipt",
         Stock = "wms-stock", StockTake = "wms-stocktake", WmsDashboard = "wms-dashboard", MesDashboard = "mes-dashboard", Defect = "mes-defect",
-        StockQc = "wms-stock-qc", InboundQc = "wms-qc-inspection", Quality = "mes-quality-inspection", Machine = "mes-machine", Oee = "mes-oee", Planning = "mes-planning-board", Achievement = "mes-plan-achievement";
+        StockQc = "wms-stock-qc", InboundQc = "wms-qc-inspection", Quality = "mes-quality-inspection", Machine = "mes-machine", Oee = "mes-oee", Planning = "mes-planning-board", Achievement = "mes-plan-achievement", Rma = "wms-rma";
     internal const string Mapping = "Main.Operations.Owner.v1";
     private readonly CP6Context db;
     private readonly IHttpContextAccessor http;
@@ -39,7 +39,7 @@ public sealed partial class OperationsOwnerV1
         var source=await new CurrentFieldPermissionSourceReaderV1(db,http,()=>definition).ReadAsync(resource,ct);
         var expected=resource is Outbound or Inbound or Receipt or Stock?new[]{"UnitPrice"}:
             resource is Mes or Production or MesDashboard or Defect or StockQc or InboundQc or Quality or Machine or Oee or Planning or Achievement?Array.Empty<string>():
-            resource==WmsDashboard?new[]{"Amount"}:new[]{"Amount","UnitPrice"};
+            resource==WmsDashboard?new[]{"Amount"}:resource==Rma?new[]{"CustomerName","OperatorCd","Remarks","ReturnReason"}:new[]{"Amount","UnitPrice"};
         if(!source.Fields.Order(StringComparer.Ordinal).SequenceEqual(expected))throw new CurrentPermissionUnavailableException();
         if(source.SubjectId!=subject)throw new OrderPriceCorrectionException("REAUTH_REQUIRED",401);
         var actor=await PostgreSqlPermissionReader.ReadAsync(db,subject,ct);
@@ -68,7 +68,7 @@ public sealed partial class OperationsOwnerV1
         Func<CancellationToken,Task<string>>? actionAtFence=null,bool readOnlyAuthorityFence=false)
     {
         using var linked=CancellationTokenSource.CreateLinkedTokenSource(ct,http.HttpContext?.RequestAborted??CancellationToken.None);ct=linked.Token;
-        if(resource is not (Mes or Outbound or Production or Inbound or Receipt or Stock or StockTake or WmsDashboard or MesDashboard or Defect or StockQc or InboundQc or Quality or Machine or Oee or Planning or Achievement) || !db.Database.IsNpgsql() || db.Database.CurrentTransaction!=null
+        if(resource is not (Mes or Outbound or Production or Inbound or Receipt or Stock or StockTake or WmsDashboard or MesDashboard or Defect or StockQc or InboundQc or Quality or Machine or Oee or Planning or Achievement or Rma) || !db.Database.IsNpgsql() || db.Database.CurrentTransaction!=null
             || System.Transactions.Transaction.Current!=null || db.ChangeTracker.HasChanges()
             || readOnlyAuthorityFence && (write || delegation!=null || actionAtFence!=null)
             || db.ChangeTracker.Entries().Any(e=>IsBusiness(e.Entity.GetType().Name)))
@@ -86,7 +86,7 @@ public sealed partial class OperationsOwnerV1
                     """).SingleAsync(ct))throw new CurrentPermissionUnavailableException();
             }
             else await AuthenticationCompletionGateV1.AcquireAsync(db,ct);
-            await LockGraph(write,ct);
+            await LockGraph(write,ct,resource==Rma);
             if(delegation!=null && (!write || !ReferenceEquals(delegation.Context,db)
                 || delegation.Tenant!=db.CurrentTenantId || !AllowsDelegation(resource,action,delegation)))
                 throw new OrderPriceCorrectionException("DELEGATION_FORBIDDEN",403);
@@ -141,8 +141,8 @@ public sealed partial class OperationsOwnerV1
             || ticket.Resource==Mes && ticket.Action=="issue" && resource==Outbound)
         || ticket.Resource==Production && ticket.Action=="complete" && ticket.CompletionResultId!=null
             && (resource==Receipt && action=="post" || resource==Production && action=="backflush");
-    private static bool IsBusiness(string name)=>BusinessTables.Contains(name);
-    private async Task LockGraph(bool write,CancellationToken ct)
+    private static bool IsBusiness(string name)=>BusinessTables.Contains(name) || name is "RmaHeader" or "RmaDetail";
+    private async Task LockGraph(bool write,CancellationToken ct,bool includeRma=false)
     {
         // Legacy soft references and stock writers do not yet share one row-lock protocol.
         // Bounded table fences include raw SQL writers; never perform external I/O inside this transaction.
@@ -152,7 +152,8 @@ public sealed partial class OperationsOwnerV1
             var entity=db.Model.GetEntityTypes().Single(e=>e.ClrType.Name==name);
             return db.GetService<ISqlGenerationHelper>().DelimitIdentifier(entity.GetTableName()!,entity.GetSchema()??"public");
         }
-        await db.Database.ExecuteSqlRawAsync("LOCK TABLE "+string.Join(",",BusinessTables.Select(Name).Distinct().Order(StringComparer.Ordinal))
+        var tables=includeRma?BusinessTables.Concat(new[]{"RmaHeader","RmaDetail"}):BusinessTables;
+        await db.Database.ExecuteSqlRawAsync("LOCK TABLE "+string.Join(",",tables.Select(Name).Distinct().Order(StringComparer.Ordinal))
             +(write?" IN SHARE ROW EXCLUSIVE MODE":" IN SHARE MODE"),ct);
         await db.Database.ExecuteSqlRawAsync("LOCK TABLE "+string.Join(",",new[]{"WmsRoleScope","Location","Warehouse","OutboundRoutingRule","ProductProcess","ProductMaterial","ProductMaster","MasterGenericCode","DefectCategory","InspectionTemplate"}
             .Select(Name).Distinct().Order(StringComparer.Ordinal))+" IN SHARE MODE",ct);

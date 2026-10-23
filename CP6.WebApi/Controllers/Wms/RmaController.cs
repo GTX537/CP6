@@ -1,5 +1,7 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
+using CP6.Core.Services.Erp;
+using CP6.WebApi.Controllers.Erp;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +11,7 @@ namespace CP6.WebApi.Controllers.Wms;
 [ApiController]
 [Route("api/wms/rma")]
 [Authorize]
+[OrderOwnerResult]
 public class RmaController : ControllerBase
 {
     private readonly IRmaService _svc;
@@ -17,6 +20,7 @@ public class RmaController : ControllerBase
     private string? CurrentUser => User?.Identity?.Name;
 
     [HttpGet]
+    [RequirePermission("wms-rma", "query")]
     public async Task<IActionResult> Search([FromQuery] RmaSearchQuery q)
     {
         var list = await _svc.SearchAsync(q);
@@ -24,6 +28,7 @@ public class RmaController : ControllerBase
     }
 
     [HttpGet("{no}")]
+    [RequirePermission("wms-rma", "query")]
     public async Task<IActionResult> Get(string no)
     {
         var dto = await _svc.GetAsync(no);
@@ -40,7 +45,7 @@ public class RmaController : ControllerBase
             var no = await _svc.CreateAsync(dto, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071", data = new { rmaNo = no } });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/receive")]
@@ -52,7 +57,7 @@ public class RmaController : ControllerBase
             await _svc.ReceiveAsync(no, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071" });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/start-inspection")]
@@ -64,7 +69,7 @@ public class RmaController : ControllerBase
             await _svc.StartInspectionAsync(no, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071" });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/judge")]
@@ -77,7 +82,7 @@ public class RmaController : ControllerBase
             return Ok(new { code = 0, message = "WM-MSG-071" });
         }
         catch (InsufficientStockException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/close")]
@@ -89,7 +94,7 @@ public class RmaController : ControllerBase
             await _svc.CloseAsync(no, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071" });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/cancel")]
@@ -101,6 +106,11 @@ public class RmaController : ControllerBase
             await _svc.CancelAsync(no, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071" });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
+
+    [HttpGet("capabilities")]
+    [RequirePermission("wms-rma", "query")]
+    public async Task<IActionResult> Capabilities() =>
+        Ok(new { code = 0, message = "OK", data = await _svc.GetCapabilitiesAsync() });
 }

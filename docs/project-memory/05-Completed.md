@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-23：W70退货当前Owner候选通过
+
+Issue445真实PG红灯转绿；20项独立.NET用例通过（19项最终组合运行成功复用、1项异常包装断言修正后复验），7项页面用例、Vue类型检查及相关Main构建通过；无跳过。[单份交付](../development/evidence/W70-01/DELIVERY.md)。RMA按当前对象/仓库/字段受保护查询，未采用命令在库存/审计/ERP前拒绝；完整RMA仍未交付。四个PG停止保留，待Main/Handoff采用与准确分支/席位收尾；七天目标ACTIVE。
+
 ## 2026-10-23：W69配置草稿持久化已采用
 
 CRM PR112/source `4477a42e3bc271461570cad4733f4c368be1a95c`已采用远端main `6c049934bad09ba230cb47cf8e6606db19331f18`；21项最终本地PG用例通过，无跳过；相关API/必要依赖构建通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/6c049934bad09ba230cb47cf8e6606db19331f18/docs/development/evidence/W69-01/DELIVERY.md)。不可变原文与实际租户日历绑定已持久化，和W68原结果共同事务已实测；FK执行状态缺口已修正，CRM Issue109保持开放；完整Owner/Bundle/audit/outbox与公开受理待接。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main协调PR/finish待收尾。七天目标ACTIVE，完整业务验收不提升。

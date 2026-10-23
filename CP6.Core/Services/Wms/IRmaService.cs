@@ -8,9 +8,12 @@ namespace CP6.Core.Services.Wms;
 /// <remarks>
 /// 仕様書 §25。
 /// ライフサイクル：0=申請 → 1=RMA発行 → 2=返品入庫 → 3=検査中 → 4=判定済 → 5=後処理完了 → 9=取消
+/// 上記は既存モデルの説明。PostgreSQLでは現在Owner付き照会のみを採用し、
+/// 正式RMAアダプター未採用の全コマンドは RMA_OWNER_ADOPTION_UNPROVEN で拒否する。
 /// </remarks>
 public interface IRmaService
 {
+    Task<RmaCapabilitiesV1> GetCapabilitiesAsync();
     Task<List<RmaHeader>> SearchAsync(RmaSearchQuery q);
     Task<RmaDto?> GetAsync(string rmaNo);
 
@@ -32,6 +35,8 @@ public interface IRmaService
     /// <summary>取消（status<5 のみ）</summary>
     Task CancelAsync(string rmaNo, string? userName);
 }
+
+public sealed record RmaCapabilitiesV1(bool WritesAvailable, string Status);
 
 public class RmaSearchQuery
 {

@@ -554,6 +554,9 @@ foreach(var resource in new[]{"wms-stock","wms-stocktake","wms-dashboard","mes-d
     CP6.Core.Services.Sys.FieldRegistry.Register(resource,fields.Select(f=>new CP6.Core.Services.Sys.FieldRegistry.Field(f,f)).ToArray());
 }
 
+CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-rma", "返品管理", new[] { 1, 2, 3, 4, 5 }, 1);
+CP6.Core.Services.Sys.FieldRegistry.Register("wms-rma", new[] { "CustomerName", "OperatorCd", "Remarks", "ReturnReason" }
+    .Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
 CP6.Core.Services.Sys.AuthorizationCatalogV1.Seal();
 
 // 共享用量内核（見積与 MRP 共消费，spec §4）
