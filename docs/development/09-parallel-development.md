@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W54正式Platform与CRM PG共同锁](dispatch/20261023-wave54/README.md)，本聊天单人；CRM PR99/Handoff已采用，协调分支收尾后继续D5。W37–W53不重复。
+
 > 当前：[W53 CRM PG当前投影与依赖图](dispatch/20261023-wave53/README.md)，本聊天单人；CRM PR98/Handoff PR29已采用，当前协调分支收尾后继续D5。W37–W52不重复。
 
 > 当前：[W52 CRM真实Main基线与PG原证据](dispatch/20261023-wave52/README.md)，本聊天单人；CRM PR97与Main前置修复PR420已采用，Issue419已关闭。W37–W51不重复。
