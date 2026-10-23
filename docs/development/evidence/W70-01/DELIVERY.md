@@ -33,3 +33,9 @@ PostgreSQL全部公共入口现在要求同一DbContext的当前原会话Operati
 这是旧入口受保护查询与安全拒绝的采用，不是完整RMA业务交付。WP02-03整卡状态、24/375整卡、125目标0交付、247运行NOT_RUN均不提升。D2正式RMA与REP前置、D5真实CRM Owner共同门及D6完整SiteFormIntakeBundle等仍保留；CRM Issue109未改。
 
 预计90–140min＋前置约6min，最终以Main start/finish记实际，Handoff不重复累计。候选通过后执行两仓正常PR采用、准确分支清理和finish释放；未提前声称席位释放。七天目标保持ACTIVE并继续。W51指定停止data删除曾被自动审批拒绝，原因blocked by policy；原目录保留，不重试或绕过。
+
+## 实际采用与最后收尾
+
+Main [PR446](https://github.com/GTX537/CP6/pull/446) source `748477dfa7a67d8b5cb8f4b6ba688b07585b2d8e`采用远端main `8080bd7dda999bc2f8593866458a534f469b9631`，24任务路径核对通过。Handoff [PR46](https://github.com/GTX537/CP6.AI-Handoff/pull/46)采用 `8a83015c13b7abc3305928f9ed3200ddc17551a1`，准确任务分支删除、固定树干净detached、finish释放。十四个产品路径与已测提交逐blob相同，复用有效成功结果；最后文档diff和台账生成单独检查。
+
+Main同一任务分支最后状态PR及finish待完成；Issue445在最终远端和生命周期核对后关闭。当前约58.00min，原估90–140min，最终以finish为准，前置只读约6min、子任务不重复累计。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave70-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续REP独立Owner与正式Transfer等前置；D5/D6其余范围保留。

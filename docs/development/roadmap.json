@@ -159747,6 +159747,11 @@
       "date": "2026-10-23",
       "change": "W70 Issue445 current RMA read Owner and unadopted command denial verified:20.NET/7UI; full RMA and runtime acceptance unchanged.",
       "evidence": "docs/development/evidence/W70-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "W70 Main446 exact adoption and Handoff46 verified;20.NET/7UI/typecheck passed with exact reuse. Handoff branch deleted/seat released; Main final finish pending. Full acceptances unchanged.",
+      "evidence": "https://github.com/GTX537/CP6/blob/8080bd7dda999bc2f8593866458a534f469b9631/docs/development/evidence/W70-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -162326,7 +162331,7 @@
         "claimed_at": "2026-10-23T16:01:09.069548+00:00",
         "baseline_sha": "56ccc3c7e3e7087ed921426d656108ce1fbf5b24",
         "entry_evidence": "docs/development/dispatch/20261023-wave70/README.md",
-        "phase": "CANDIDATE_VERIFIED",
+        "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
         "dispatch_scope": "W70_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -162366,11 +162371,21 @@
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": false,
+        "candidate_integrated": true,
         "resources_released": false,
         "full_task_completed": false,
         "issue": "https://github.com/GTX537/CP6/issues/445",
-        "worker_delivery_ref": "docs/development/evidence/W70-01/DELIVERY.md"
+        "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/8080bd7dda999bc2f8593866458a534f469b9631/docs/development/evidence/W70-01/DELIVERY.md",
+        "source_candidate_sha": "748477dfa7a67d8b5cb8f4b6ba688b07585b2d8e",
+        "remote_main_sha": "8080bd7dda999bc2f8593866458a534f469b9631",
+        "pull_request": "https://github.com/GTX537/CP6/pull/446",
+        "handoff_delivery_ref": {
+          "commit": "dfb22339dfeb6fae0f200f1efcb7d45910ba6cbd",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T165633Z-wave70-delivery/MESSAGE.md",
+          "at": "2026-10-23T16:56:33.943314+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w70-handoff"
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -166518,14 +166533,33 @@
         "issue_closed": true
       },
       "wave70_delivery": {
-        "status": "CANDIDATE_VERIFIED",
-        "report": "docs/development/evidence/W70-01/DELIVERY.md",
+        "status": "MERGED",
+        "report": "https://github.com/GTX537/CP6/blob/8080bd7dda999bc2f8593866458a534f469b9631/docs/development/evidence/W70-01/DELIVERY.md",
         "validation": "20项独立.NET用例通过（19项最终组合运行成功复用、1项异常包装断言修正后复验），7项页面用例、Vue类型检查及相关Main构建通过；无跳过",
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "adopted_scope": "PG current RMA read Owner; all unadopted legacy commands denied before effects; complete RMA facts/adapters remain absent",
         "issue": "https://github.com/GTX537/CP6/issues/445",
-        "lifecycle_complete": false
+        "lifecycle_complete": false,
+        "source_candidate_sha": "748477dfa7a67d8b5cb8f4b6ba688b07585b2d8e",
+        "remote_main_sha": "8080bd7dda999bc2f8593866458a534f469b9631",
+        "pull_request": "https://github.com/GTX537/CP6/pull/446",
+        "handoff_delivery_ref": {
+          "commit": "dfb22339dfeb6fae0f200f1efcb7d45910ba6cbd",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T165633Z-wave70-delivery/MESSAGE.md",
+          "at": "2026-10-23T16:56:33.943314+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w70-handoff"
+        },
+        "lifecycle_snapshot": {
+          "handoff_branch_deleted": true,
+          "handoff_seat_released": true,
+          "main_task": "CP6:BUG-445-RMA-OWNER",
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave70-final-verification.json"
+        },
+        "test_data_disposition": "Four owned PostgreSQL clusters stopped; data and logs retained"
       }
     },
     {
@@ -186349,7 +186383,7 @@
       "path": "docs/development/dispatch/20261023-wave70/README.md",
       "baseline_sha": "56ccc3c7e3e7087ed921426d656108ce1fbf5b24",
       "registered_at": "2026-10-23T16:09:20.859008+00:00",
-      "phase": "CANDIDATE_VERIFIED",
+      "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -186361,8 +186395,8 @@
       ],
       "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": false,
-      "product_integrated": false,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W70-01",
@@ -186371,7 +186405,7 @@
           "lifecycle_task": "BUG-445-RMA-OWNER",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "CANDIDATE_VERIFIED",
+          "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "actual_start_ref": {
@@ -186388,9 +186422,61 @@
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "worker_delivery_ref": "docs/development/evidence/W70-01/DELIVERY.md",
+          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/8080bd7dda999bc2f8593866458a534f469b9631/docs/development/evidence/W70-01/DELIVERY.md",
           "validation": "20项独立.NET用例通过（19项最终组合运行成功复用、1项异常包装断言修正后复验），7项页面用例、Vue类型检查及相关Main构建通过；无跳过",
-          "runtime_resources_released": true
+          "runtime_resources_released": true,
+          "candidate_integrated": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "748477dfa7a67d8b5cb8f4b6ba688b07585b2d8e",
+            "main": "8080bd7dda999bc2f8593866458a534f469b9631",
+            "target": "main",
+            "pr": "https://github.com/GTX537/CP6/pull/446",
+            "paths": [
+              "CP6.Core/Services/Integration/OperationsAccessV1.Rma.cs",
+              "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
+              "CP6.Core/Services/Wms/IRmaService.cs",
+              "CP6.Core/Services/Wms/RmaService.Owner.cs",
+              "CP6.Core/Services/Wms/RmaService.cs",
+              "CP6.Persistence.PostgreSql/Migrations/Core/20261023160000_RmaOwnerCatalogV1.cs",
+              "CP6.Tests/Erp/RmaOwnerPostgreSqlTests.cs",
+              "CP6.WebApi/Controllers/Wms/RmaController.cs",
+              "CP6.WebApi/Program.cs",
+              "CP6.WebApi/Seed/I18nCnScreenSeed.cs",
+              "CP6.WebApi/Seed/WmsPermissionSeed.cs",
+              "cp6.web/src/api/wms/rma.ts",
+              "cp6.web/src/views/wms/RmaView.vue",
+              "cp6.web/src/views/wms/__tests__/RmaOwner.spec.ts",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/09-parallel-development.md",
+              "docs/development/dispatch/20261023-wave70/README.md",
+              "docs/development/evidence/W70-01/DELIVERY.md",
+              "docs/development/planning/20261022-seven-day-delivery.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-23T16:55:53.806457+00:00"
+          },
+          "handoff_delivery_ref": {
+            "commit": "dfb22339dfeb6fae0f200f1efcb7d45910ba6cbd",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T165633Z-wave70-delivery/MESSAGE.md",
+            "at": "2026-10-23T16:56:33.943314+00:00",
+            "base": "codex/t02c-entry-handoff-20260921",
+            "branch": "codex/w70-handoff"
+          },
+          "resources_released": false,
+          "lifecycle_snapshot": {
+            "handoff_branch_deleted": true,
+            "handoff_seat_released": true,
+            "main_task": "CP6:BUG-445-RMA-OWNER",
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave70-final-verification.json"
+          }
         }
       ],
       "horizon": {
@@ -186406,8 +186492,30 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Main product adoption, Handoff delivery and same-task lifecycle closure",
-      "validation": "20项独立.NET用例通过（19项最终组合运行成功复用、1项异常包装断言修正后复验），7项页面用例、Vue类型检查及相关Main构建通过；无跳过"
+      "next_action": "Finish same-branch Main ledger PR and lifecycle; close Issue445 after verification; continue REP Owner prerequisites",
+      "validation": "20项独立.NET用例通过（19项最终组合运行成功复用、1项异常包装断言修正后复验），7项页面用例、Vue类型检查及相关Main构建通过；无跳过",
+      "handoff_delivery_ref": {
+        "commit": "dfb22339dfeb6fae0f200f1efcb7d45910ba6cbd",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T165633Z-wave70-delivery/MESSAGE.md",
+        "at": "2026-10-23T16:56:33.943314+00:00",
+        "base": "codex/t02c-entry-handoff-20260921",
+        "branch": "codex/w70-handoff"
+      },
+      "handoff_integration": {
+        "result": "PASS",
+        "repository": "GTX537/CP6.AI-Handoff",
+        "source": "dfb22339dfeb6fae0f200f1efcb7d45910ba6cbd",
+        "main": "8a83015c13b7abc3305928f9ed3200ddc17551a1",
+        "target": "codex/t02c-entry-handoff-20260921",
+        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/46",
+        "paths": [
+          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T160920Z-wave70-start/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T165633Z-wave70-delivery/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/waves/20261023-wave70.md"
+        ],
+        "observed_at": "2026-10-23T16:57:54.424737+00:00"
+      },
+      "lifecycle_complete": false
     },
     "wave_history": [
       {
@@ -197350,7 +197458,7 @@
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "RMA独立查询Owner与未采用命令阻断"
+          "next_action": "RMA current read Owner adopted; complete facts/adapters remain absent. Inspect REP independent current Owner and accepted Transfer prerequisites."
         },
         {
           "id": "D3",

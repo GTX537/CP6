@@ -1,8 +1,8 @@
 # 已完成能力与近期里程碑
 
-## 2026-10-23：W70退货当前Owner候选通过
+## 2026-10-23：W70退货当前Owner已采用
 
-Issue445真实PG红灯转绿；20项独立.NET用例通过（19项最终组合运行成功复用、1项异常包装断言修正后复验），7项页面用例、Vue类型检查及相关Main构建通过；无跳过。[单份交付](../development/evidence/W70-01/DELIVERY.md)。RMA按当前对象/仓库/字段受保护查询，未采用命令在库存/审计/ERP前拒绝；完整RMA仍未交付。四个PG停止保留，待Main/Handoff采用与准确分支/席位收尾；七天目标ACTIVE。
+Main [PR446](https://github.com/GTX537/CP6/pull/446) source `748477dfa7a67d8b5cb8f4b6ba688b07585b2d8e`已进入远端main `8080bd7dda999bc2f8593866458a534f469b9631`，24任务路径逐blob核对通过；20.NET/7UI及类型检查通过（19.NET成功复用、1项异常包装断言修正复验），无跳过。[单份交付](../development/evidence/W70-01/DELIVERY.md)。Handoff [PR46](https://github.com/GTX537/CP6.AI-Handoff/pull/46)已采用、准确分支删除、固定树干净detached、finish释放。Main同任务最后状态PR/finish及Issue445关闭待完成，未提前声明席位释放。四个PG停止保留；当前约58.00min，原估90–140min，最终按finish计。完整RMA、125目标和247验收不提升，七天目标ACTIVE继续。
 
 ## 2026-10-23：W69配置草稿持久化已采用
 
