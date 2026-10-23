@@ -35,7 +35,7 @@
 | [WP02-03 Main当前授权与撤权最终门](../../docs/development/task-plans/WP02.md#wp02-03) | Main | 待安排 | WP02-02 | CODE / M | COORD / W49-01 |
 | [WP02-04 租户创建、暂停恢复与管理审计](../../docs/development/task-plans/WP02.md#wp02-04) | Main | 待安排 | WP02-03 | CODE / M | COORD / W25-01 租户管理当前平台actor共同事务 |
 | [WP02-05 Main身份权威快照及完整目录发布](../../docs/development/task-plans/WP02.md#wp02-05) | Main | 待安排 | S01-09, WP02-03, WP02-04 | CODE / M | COORD / W22-01 Main身份写者覆盖 |
-| [WP02-06 CRM身份投影、撤权fence与会话恢复](../../docs/development/task-plans/WP02.md#wp02-06) | CRM | 待安排 | WP02-05, WP02-07 | CODE / M | COORD / W55-01 |
+| [WP02-06 CRM身份投影、撤权fence与会话恢复](../../docs/development/task-plans/WP02.md#wp02-06) | CRM | 待安排 | WP02-05, WP02-07 | CODE / M | COORD / W56-01 |
 | [WP02-07 Platform调用方同事务Inbox与原结果槽](../../docs/development/task-plans/WP02.md#wp02-07) | Platform | 已交付 | S01-09, WP02-01 | CODE / M | C / WP02-07（沿用原WP02-01对话） |
 | [WP02-08 Platform Outbox领取、发送与Unknown恢复](../../docs/development/task-plans/WP02.md#wp02-08) | Platform | 已交付 | WP02-07 | CODE / M | C / WP02-08（沿用原WP02-07对话） |
 | [WP02-09 CRM首个Owner真实共同事务与授权门](../../docs/development/task-plans/WP02.md#wp02-09) | CRM | 待安排 | S01-08, WP02-06, WP02-07 | CODE / M | 未领取 |
