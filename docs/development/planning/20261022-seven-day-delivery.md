@@ -280,3 +280,21 @@ CRM [PR102](https://github.com/GTX537/CP6.CRM/pull/102)已采用，source `b7e55
 后继继续当前身份/字段授权、真实业务Owner共同最终门和实际宿主采用；旧业务工厂仍走历史SQL Server路径，Program/consumer未切换，PG读模型不冒充共同事务。无Actions、既有库迁移或部署；24/375整卡、125目标0交付、247 NOT_RUN不提升，七天目标ACTIVE。W51准确data删除曾被自动审批拒绝，原因仅“blocked by policy”；停止保留，无重试绕过。
 
 Handoff [PR33](https://github.com/GTX537/CP6.AI-Handoff/pull/33)已采用 `caccd556bcc3f7346990156f803355476f3319af`，准确本地/远端分支删除、工作区干净detached、finish释放。Main仅剩当前协调分支正常PR及finish，不提前声明释放。登记开工至此约75.07min，原预算110–170min，实际最终时长以finish为准，不重复累计子任务；此前只读核对约8min。
+
+## 2026-10-23：W57全部收尾 / W58当前身份核查
+
+W57 CRM102/Handoff33/Main426全部采用，77项本地验证通过，登记实际78.17min；准确分支删除、固定树干净detached、全部席位释放。[W58](../dispatch/20261023-wave58/README.md)单人继续真实在线身份和PG当前发布事实核查、原字段来源消费，预计100–160min。字段映射/在线字段政策与真实Owner最终门不足保持关闭，七天目标ACTIVE。
+
+## W58实际交付
+
+CRM [PR103](https://github.com/GTX537/CP6.CRM/pull/103)已采用，source `80af97ec22060c1dd32586db4ebb045e71762611`，远端main `aaed1098b35cf74fd286099f2bc31b1b9b071f80`，13任务路径exact blob核对通过。[单份产品报告](https://github.com/GTX537/CP6.CRM/blob/aaed1098b35cf74fd286099f2bc31b1b9b071f80/docs/development/evidence/W58-01/DELIVERY.md)。130项相关本地用例通过（17项本次PG/HTTPS、1项PG认证、112项旧身份/OIDC回归）；API/Worker相关构建；真实Owner/宿主验收NOT_RUN，无Actions。
+
+具体OIDC客户端每次执行签名/token/在线context校验，新分支要求原URI、JSON与no-store；随后创建PG Serializable READ ONLY事务，核当前注册/完整发布、原来源、用户限制、token撤销与原epoch。原身份/范围计算通过内部事实接口共用，旧路径验证未放宽，不制造SQL Server投影行或rowversion。
+
+原字段逐grant保留role/source/version、action/scope/DeptIds及显式Fields；不同grant不合成新许可、缺字段不推默认。结果为本次核查快照，CanAuthorize=false，字段政策和业务门明确不可用；不实现旧授权Reader、不注册新业务路由、不新建/续期session。真实HTTPS/签名JWT串联与只读角色拒绝写入已实际验证，夹具不冒充真实Main或IdP。
+
+八份原SQL不变、无迁移，专用读取角色验证不改变原writer能力。一次作者完整SPEC/QUALITY通过；当前130项结果和失败记录留证，未改W57发布/90秒采集及W54/55正式包证据仅复用。owned PG停止保留，CRM准确本地/远端分支已删除、固定树干净detached且finish释放。
+
+后继继续Main在线字段政策/CRM字段映射、真实业务Owner共同最终门与宿主采用；旧业务工厂仍为历史SQL Server，Program/consumer未切换。无Actions、既有库迁移或部署；24/375整卡、125目标0完整交付、247 NOT_RUN不提升，七天目标ACTIVE。W51准确data删除曾被自动审批拒绝，原因仅“blocked by policy”；停止保留，无重试或绕过。
+
+Handoff [PR34](https://github.com/GTX537/CP6.AI-Handoff/pull/34)已采用 `3aa2fac8dd49aca5bb0e2a08cd0b7034a864fcea`，准确本地/远端分支删除、工作区干净detached、finish释放。Main仅剩当前协调分支正常PR及finish，不提前声明释放。登记开工至此约59.82min，原预算100–160min，实际最终时长以finish为准，不重复累计子任务；此前只读核对约3min。
