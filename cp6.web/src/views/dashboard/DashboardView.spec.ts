@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia } from 'pinia'
 import { nextTick, ref } from 'vue'
+import { AUTH_EPOCH, AUTH_EVENT } from '@/auth/identity'
 import DashboardView from './DashboardView.vue'
 import { usePlatformStore } from '@/stores/platform'
 import { usePermissionStore } from '@/stores/permission'
@@ -28,7 +29,8 @@ function summary(todayOrders = 0) {
     pendingOutbound: 0, stockWarnings: 0, pendingApprovals: 0, totalProducts: 0 }, recentOrders: [], workOrderStatus: [] }
 }
 const dwell = () => ({ code: 0, data: { asOfDate: '2026-10-16', groupBy: 'product',
-  totalQty: 0, totalValue: 0, over90Qty: 0, over90Value: 0, rows: [] } })
+  totalQty: '0', referenceValue: null, over90Qty: '0', over90ReferenceValue: null,
+  version: 'INVENTORY-OBSERVATION-OWNER/1', referenceReadable: false, customerNameReadable: false, missingPriceCount: null, valuationStatus: 'UNKNOWN', currency: null, rows: [] } })
 let wrapper: ReturnType<typeof mount> | undefined
 function render() {
   const pinia = createPinia()
@@ -61,6 +63,21 @@ beforeEach(() => {
 afterEach(() => { wrapper?.unmount(); wrapper = undefined })
 
 describe('Dashboard visible states and lifecycle', () => {
+  it('shows exact Owner stock dwell quantities and clears them on a same-user identity epoch change', async () => {
+    const value = dwell()
+    const precise = '9999999999999.99999999'
+    api.dwell.mockResolvedValue({ code: 0, data: { ...value.data, totalQty: precise, over90Qty: precise, rows: [
+      { groupKey: 'P', groupLabel: 'Private stock', totalQty: precise, referenceValue: null, bucket0To30Qty: '0',
+        bucket31To60Qty: '0', bucket61To90Qty: '0', bucketOver90Qty: precise, oldestAgeDays: 100, oldestReceiveDate: '2026-01-01' },
+    ] } })
+    const { view } = render(); await flushPromises()
+    expect(view.find('.stock-dwell-widget').text()).toContain('9,999,999,999,999.99999999')
+    const old = deferred(); api.dwell.mockReturnValueOnce(old.promise)
+    await view.findAll('button[aria-label="刷新"]')[2]!.trigger('click')
+    localStorage.setItem(AUTH_EPOCH, crypto.randomUUID()); window.dispatchEvent(new Event(AUTH_EVENT))
+    old.resolve(value); await flushPromises(); expect(view.find('.stock-dwell-widget').exists()).toBe(false)
+  })
+
   it('shows pending placeholders, then true zero and empty results only after success', async () => {
     const pending = deferred()
     api.summary.mockReturnValue(pending.promise)

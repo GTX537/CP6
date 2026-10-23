@@ -30,7 +30,7 @@
           />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :icon="Search" :loading="loading" @click="load">
+          <el-button type="primary" :icon="Search" :loading="loading" :disabled="!permitted()" @click="load">
             {{ t('wms.stockDwell.btn.search') }}
           </el-button>
           <el-button :icon="Refresh" @click="resetQuery">
@@ -40,6 +40,8 @@
       </el-form>
     </el-card>
 
+    <p>仅观察有收货日期的可见库存。单价参考算术未核币种，不代表财务估值；隐藏或缺价显示“—”。</p>
+    <p v-if="readError" role="alert">{{ readError }}</p>
     <el-row :gutter="12" class="kpi-row">
       <el-col :xs="12" :sm="6" :md="6">
         <el-card shadow="never" class="kpi-card">
@@ -61,8 +63,8 @@
       </el-col>
       <el-col :xs="12" :sm="6" :md="6">
         <el-card shadow="never" class="kpi-card value">
-          <div class="kpi-label">{{ t('wms.stockDwell.kpi.totalValue') }}</div>
-          <div class="kpi-value">{{ formatAmount(summary?.totalValue) }}</div>
+          <div class="kpi-label">单价参考算术（未核币种）</div>
+          <div class="kpi-value">{{ formatAmount(summary?.referenceValue) }}</div>
         </el-card>
       </el-col>
     </el-row>
@@ -83,22 +85,22 @@
           </div>
           <div class="bucket-bar" :aria-label="row.groupLabel">
             <span
-              v-if="row.bucket0To30Qty > 0"
+              v-if="row.bucket0To30Qty !== '0'"
               class="bucket-segment b0"
               :style="segmentStyle(row.bucket0To30Qty, row.totalQty)"
             />
             <span
-              v-if="row.bucket31To60Qty > 0"
+              v-if="row.bucket31To60Qty !== '0'"
               class="bucket-segment b1"
               :style="segmentStyle(row.bucket31To60Qty, row.totalQty)"
             />
             <span
-              v-if="row.bucket61To90Qty > 0"
+              v-if="row.bucket61To90Qty !== '0'"
               class="bucket-segment b2"
               :style="segmentStyle(row.bucket61To90Qty, row.totalQty)"
             />
             <span
-              v-if="row.bucketOver90Qty > 0"
+              v-if="row.bucketOver90Qty !== '0'"
               class="bucket-segment b3"
               :style="segmentStyle(row.bucketOver90Qty, row.totalQty)"
             />
@@ -126,8 +128,8 @@
         <el-table-column :label="t('wms.stockDwell.col.totalQty')" width="120" align="right">
           <template #default="{ row }">{{ formatQty(row.totalQty) }}</template>
         </el-table-column>
-        <el-table-column :label="t('wms.stockDwell.col.totalValue')" width="130" align="right">
-          <template #default="{ row }">{{ formatAmount(row.totalValue) }}</template>
+        <el-table-column label="单价参考算术" width="130" align="right">
+          <template #default="{ row }">{{ formatAmount(row.referenceValue) }}</template>
         </el-table-column>
         <el-table-column :label="t('wms.stockDwell.bucket.b0')" width="105" align="right">
           <template #default="{ row }">{{ formatQty(row.bucket0To30Qty) }}</template>
@@ -173,7 +175,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Refresh, Search } from '@element-plus/icons-vue'
 import CpTag from '@/components/base/CpTag.vue'
@@ -181,7 +183,9 @@ import CpEmpty from '@/components/base/CpEmpty.vue'
 import { stockDwellApi } from '@/api/wms/stockDwell'
 import { useBreakpoint } from '@/composables/useBreakpoint'
 import type { StockDwellQuery, StockDwellRow, StockDwellSummary } from '@/types/wms/stockDwell'
-import { formatQty as fmtQty } from '@/utils/format'
+import { observationText, observationPercent, inventoryObservationVersion } from '@/utils/inventoryObservation'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
+import { usePermissionStore } from '@/stores/permission'
 
 const { t } = useI18n()
 const { isMobile } = useBreakpoint()
@@ -191,14 +195,17 @@ const query = reactive<StockDwellQuery>({
   asOfDate: todayString(),
 })
 const summary = ref<StockDwellSummary | null>(null)
-const loading = ref(false)
+const loading = ref(false), readError = ref('')
+const permission = usePermissionStore()
+let sequence = 0
+function clearProtected() { sequence++; summary.value = null; loading.value = false }
+const intent = useOperationsIntent(() => { clearProtected(); readError.value = '身份已变化，请重新查询。' })
+const permitted = () => permission.loaded && permission.has('wms-stock-dwell:view') && permission.has('wms-stock:query')
+watch(permitted, allowed => { if (!allowed) clearProtected() })
 
 const rows = computed<StockDwellRow[]>(() => summary.value?.rows ?? [])
 const barRows = computed(() => rows.value.slice(0, 8))
-const over90Rate = computed(() => {
-  const total = Number(summary.value?.totalQty ?? 0)
-  return total > 0 ? Number(summary.value?.over90Qty ?? 0) / total : 0
-})
+const over90Rate = computed(() => observationPercent(summary.value?.over90Qty, summary.value?.totalQty))
 
 function todayString(): string {
   const d = new Date()
@@ -219,18 +226,23 @@ function payload(): StockDwellQuery {
     warehouseCd: clean(query.warehouseCd),
     productCd: clean(query.productCd),
     ownerCd: clean(query.ownerCd),
-    asOfDate: query.asOfDate || todayString(),
+    asOfDate: query.asOfDate,
   }
 }
 
 async function load() {
-  loading.value = true
+  const token = intent.capture(), read = ++sequence
+  const current = () => intent.current(token) && read === sequence
+  summary.value = null; loading.value = true; readError.value = ''
   try {
+    if (!permitted() || !query.asOfDate) throw new Error('Current view and explicit observation date required')
     const res = await stockDwellApi.summary(payload())
+    if (!current()) return
+    if (!permitted() || res?.code !== 0 || res.data?.version !== inventoryObservationVersion) throw new Error('Current observation unavailable')
     summary.value = res.data
-  } finally {
-    loading.value = false
-  }
+  } catch {
+    if (current()) { summary.value = null; readError.value = '读取失败，请重新查询当前权限范围。' }
+  } finally { if (current()) loading.value = false }
 }
 
 function resetQuery() {
@@ -242,24 +254,11 @@ function resetQuery() {
   load()
 }
 
-function segmentStyle(qty: number, total: number) {
-  const pct = total > 0 ? (qty / total) * 100 : 0
-  return { flexBasis: `${pct}%` }
+function segmentStyle(qty: string, total: string) {
+  return { flexBasis: `${observationPercent(qty, total) ?? 0}%` }
 }
-
-function formatQty(n: number | null | undefined): string {
-  if (n == null) return '-'
-  return fmtQty(n, 4)
-}
-
-function formatAmount(n: number | null | undefined): string {
-  if (n == null) return '-'
-  return fmtQty(n, 0)
-}
-
-function formatPercent(n: number): string {
-  return `${(n * 100).toFixed(1)}%`
-}
+const formatQty = observationText, formatAmount = observationText
+function formatPercent(n: number | null): string { return n == null ? '—' : `≈${n.toFixed(1)}%` }
 
 function formatDate(value?: string | null): string {
   return value ? value.slice(0, 10) : '-'

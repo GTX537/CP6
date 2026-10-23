@@ -17,6 +17,7 @@ internal sealed partial class OperationsAccessV1
         var source=await owner.AuthorityAsync(resource,action,ct);Authorities.Add(source);
         return sources[key]=new(db,owner,source,Authorities);
     }
+    internal bool CustomerNameReadable=>authority.Fields.Fields.TryGetValue("CustomerName",out var field) && field.CanRead;
     internal bool AmountReadable=>authority.Fields.Fields.TryGetValue("Amount",out var field) && field.CanRead;
     internal void RequireAmountRead()
     {if(!AmountReadable)throw new OrderPriceCorrectionException("FIELD_READ_FORBIDDEN",403);}

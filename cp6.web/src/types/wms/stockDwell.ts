@@ -11,22 +11,28 @@ export interface StockDwellQuery {
 export interface StockDwellRow {
   groupKey: string
   groupLabel: string
-  totalQty: number
-  totalValue: number
-  bucket0To30Qty: number
-  bucket31To60Qty: number
-  bucket61To90Qty: number
-  bucketOver90Qty: number
+  totalQty: string
+  referenceValue: string | null
+  bucket0To30Qty: string
+  bucket31To60Qty: string
+  bucket61To90Qty: string
+  bucketOver90Qty: string
   oldestReceiveDate?: string
   oldestAgeDays: number
 }
 
 export interface StockDwellSummary {
+  version: 'INVENTORY-OBSERVATION-OWNER/1'
+  referenceReadable: boolean
+  customerNameReadable: boolean
+  missingPriceCount: number | null
+  valuationStatus: 'UNKNOWN'
+  currency: null
   asOfDate: string
   groupBy: StockDwellGroupBy
-  totalQty: number
-  totalValue: number
-  over90Qty: number
-  over90Value: number
+  totalQty: string
+  referenceValue: string | null
+  over90Qty: string
+  over90ReferenceValue: string | null
   rows: StockDwellRow[]
 }

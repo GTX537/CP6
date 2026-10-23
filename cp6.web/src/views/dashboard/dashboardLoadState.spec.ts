@@ -13,8 +13,9 @@ const summary = {
 }
 const zeroDashboard = () => ({ summary: { ...summary }, recentOrders: [], workOrderStatus: [] })
 const emptyDwell = () => ({ code: 0, data: {
-  asOfDate: '2026-10-16', groupBy: 'product', totalQty: 0, totalValue: 0,
-  over90Qty: 0, over90Value: 0, rows: [],
+  asOfDate: '2026-10-16', groupBy: 'product', totalQty: '0', referenceValue: null,
+  over90Qty: '0', over90ReferenceValue: null,
+  version: 'INVENTORY-OBSERVATION-OWNER/1', referenceReadable: false, customerNameReadable: false, missingPriceCount: null, valuationStatus: 'UNKNOWN', currency: null, rows: [],
 } })
 
 describe('dashboard group state', () => {
@@ -110,7 +111,7 @@ describe('existing dashboard response contracts', () => {
       [parseUnshipped, { code: 403, data: { items: [], total: 0 } }],
       [parseUnshipped, { code: 0, data: { items: [{ webOrderNo: 'A' }], total: 1 } }],
       [parseStockDwell, { code: 0, data: { ...emptyDwell().data, rows: undefined } }],
-      [parseStockDwell, { code: 0, data: { ...emptyDwell().data, over90Qty: '0' } }],
+      [parseStockDwell, { code: 0, data: { ...emptyDwell().data, over90Qty: 0 } }],
       [parseStockDwell, { code: 1, data: emptyDwell().data }],
     ]
     for (const [parse, response] of cases) {

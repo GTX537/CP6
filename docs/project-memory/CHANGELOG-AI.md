@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-23：W81库龄与效期读取Owner候选通过
+
+Issue464真实PG红灯转绿；23独立.NET用例（17原生PostgreSQL＋6既有InMemory）及27Vue用例通过，无跳过；相关构建与最终vue-tsc类型检查通过。[单份交付](../development/evidence/W81-01/DELIVERY.md)。精确参考观察与真实分页、当前源库存权限交集，旧处置早期503；直接首页库龄消费已同步。正式DISP/Finance及完整验收不提升，4个自有PG停止保留；待两仓采用及分支/席位收尾，七天目标ACTIVE。
+
 ## 2026-10-23：W80 FX26夹具因果链修订已采用
 
 CRM PR120/source `2241b288c8a43a2f0293b0384e8e58d5ed8e224c`已采用远端main `82d726fbc4ae3d90a0b9cfcbf24b78516829fa17`；14项相关本地用例通过，无跳过，原S01及显式revision只读校验通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/82d726fbc4ae3d90a0b9cfcbf24b78516829fa17/docs/development/evidence/W80-01/DELIVERY.md)。六条事件及携带副本按实际赢家审计修订，原件/负例/重放及NOT_RUN保持，Issue118关闭、109开放。无PG启动/Actions/部署；真实Owner与公开受理继续待接。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main协调收尾后继续七天目标。
