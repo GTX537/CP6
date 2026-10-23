@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-23：W58真实在线身份与PG当前事实核查已采用
+
+CRM PR103/source `80af97ec22060c1dd32586db4ebb045e71762611`已采用远端main `aaed1098b35cf74fd286099f2bc31b1b9b071f80`；130项相关本地验证通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/aaed1098b35cf74fd286099f2bc31b1b9b071f80/docs/development/evidence/W58-01/DELIVERY.md)。具体OIDC与PG只读当前身份核查、原字段来源已采用；完整字段政策/映射与真实Owner最终门继续D5，CanAuthorize=false。CRM/Handoff准确分支删除、固定树干净detached、finish释放，Main当前协调分支待最终PR/finish。整卡/完整目标/真实验收不提升，七天目标ACTIVE。
+
 ## 2026-10-23：W57本次采集凭据与可失效发布读模型已采用
 
 CRM PR102/source `b7e55240f583d9db287f7371a387485ed81b8aee`已采用远端main `6ff205740ac5290154588acd7840ad9f70cb7c96`；77项相关本地验证通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/6ff205740ac5290154588acd7840ad9f70cb7c96/docs/development/evidence/W57-01/DELIVERY.md)。本次完整采集凭据、原生完整发布/CAS及自动失效已采用；当前身份/字段授权与真实Owner最终门继续D5，CanAuthorize=false。CRM/Handoff准确分支删除、固定树干净detached、finish释放，Main当前协调分支待最终PR/finish。整卡/完整目标/真实验收不提升，七天目标ACTIVE。
