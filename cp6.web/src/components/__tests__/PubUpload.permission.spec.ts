@@ -1,9 +1,9 @@
 // @vitest-environment jsdom
 import { nextTick } from 'vue'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
-import ElementPlus from 'element-plus'
+import ElementPlus, { ElMessage, ElMessageBox } from 'element-plus'
 import { createPinia, setActivePinia } from 'pinia'
 import PubUpload from '../PubUpload.vue'
 import { permission } from '@/directives/permission'
@@ -59,6 +59,7 @@ describe('PubUpload host permission UX', () => {
     vi.clearAllMocks()
     vi.mocked(attachmentApi.list).mockResolvedValue([fileRow])
   })
+  afterEach(() => vi.restoreAllMocks())
 
   it('keeps read actions but hides upload and delete without the host write action', async () => {
     const { wrapper } = mountUpload([])
@@ -88,5 +89,37 @@ describe('PubUpload host permission UX', () => {
 
     expect(wrapper.find('.attachment-write').exists()).toBe(false)
     expect(wrapper.find('.attachment-delete').exists()).toBe(false)
+  })
+
+  it('confirms reference removal and only reports success after the explicit unlink acknowledgement', async () => {
+    const confirm = vi.spyOn(ElMessageBox, 'confirm').mockResolvedValue('confirm')
+    const success = vi.spyOn(ElMessage, 'success').mockImplementation(() => ({ close: vi.fn() }))
+    vi.mocked(attachmentApi.remove).mockResolvedValue({ code: 0, data: { state: 'UNLINKED', physicalDeletion: 'NOT_REQUESTED' } } as any)
+    vi.mocked(attachmentApi.list).mockResolvedValueOnce([fileRow]).mockResolvedValueOnce([])
+    const { wrapper } = mountUpload(['erp-order:add'])
+    await flushPromises()
+    await wrapper.find('.attachment-delete').trigger('click')
+    await flushPromises()
+    expect(confirm).toHaveBeenCalledWith('确定移除该附件引用？文件内容不会被永久删除。', '提示', { type: 'warning' })
+    expect(attachmentApi.remove).toHaveBeenCalledWith(fileRow.id)
+    expect(success).toHaveBeenCalledWith('已移除附件引用')
+    expect(wrapper.find('.attachment-delete').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('keeps the visible reference and avoids success when an old server omits the unlink acknowledgement', async () => {
+    vi.spyOn(ElMessageBox, 'confirm').mockResolvedValue('confirm')
+    const success = vi.spyOn(ElMessage, 'success').mockImplementation(() => ({ close: vi.fn() }))
+    const error = vi.spyOn(ElMessage, 'error').mockImplementation(() => ({ close: vi.fn() }))
+    vi.mocked(attachmentApi.remove).mockResolvedValue({ code: 0 } as any)
+    const { wrapper } = mountUpload(['erp-order:add'])
+    await flushPromises()
+    await wrapper.find('.attachment-delete').trigger('click')
+    await flushPromises()
+    expect(success).not.toHaveBeenCalled()
+    expect(error).toHaveBeenCalledWith('附件移除结果未确认，请刷新核对')
+    expect(wrapper.find('.attachment-delete').exists()).toBe(true)
+    expect(attachmentApi.list).toHaveBeenCalledTimes(1)
+    wrapper.unmount()
   })
 })

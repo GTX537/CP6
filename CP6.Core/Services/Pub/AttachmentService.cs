@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Pub;
 
-/// <summary>统一附件服务实现 —— PUB 章06。MD5 秒传 + StorePath 引用计数删除。</summary>
+/// <summary>统一附件服务实现。保留旧MD5共享路径；普通删除仅移除附件引用，不处置共享内容。</summary>
 public class AttachmentService : IAttachmentService
 {
     private readonly CP6Context _db;
@@ -93,15 +93,49 @@ public class AttachmentService : IAttachmentService
 
     public async Task DeleteAsync(Guid id)
     {
+        if (_db.Database.IsNpgsql())
+        {
+            await UnlinkPostgreSqlAsync(id);
+            return;
+        }
         var att = await _db.Pub_Attachments.FindAsync(id);
         if (att == null) return;
-        var storePath = att.StorePath;
         _db.Pub_Attachments.Remove(att);
         await _db.SaveChangesAsync();
 
-        // 引用计数：还有其他记录指向同 StorePath 则保留物理文件
-        var stillReferenced = await _db.Pub_Attachments.AnyAsync(a => a.StorePath == storePath);
-        if (!stillReferenced) await _store.DeleteAsync(storePath);
+        // A tenant-local reference count cannot authorize global physical disposal. The
+        // separate store Owner must establish the complete reference/retention/hold gate.
+    }
+
+    private async Task UnlinkPostgreSqlAsync(Guid id)
+    {
+        var tenant = _db.CurrentTenantId;
+        var transaction = _db.Database.CurrentTransaction;
+        var savepoint = transaction is null ? null : "attachment_unlink_" + Guid.NewGuid().ToString("N");
+        if (transaction is not null) await transaction.CreateSavepointAsync(savepoint!);
+        int count;
+        try
+        {
+            // One native statement: autocommit or the caller's transaction. Do not flush
+            // other tracked business, and do not trust Find's potentially foreign local row.
+            count = await _db.Pub_Attachments.Where(a => a.TenantId == tenant && a.Id == id).ExecuteDeleteAsync();
+            if (transaction is not null) await transaction.ReleaseSavepointAsync(savepoint!);
+        }
+        catch
+        {
+            if (transaction is not null)
+            {
+                await transaction.RollbackToSavepointAsync(savepoint!);
+                await transaction.ReleaseSavepointAsync(savepoint!);
+            }
+            throw;
+        }
+        if (count != 0)
+            foreach (var entry in _db.ChangeTracker.Entries<Pub_Attachment>()
+                         .Where(e => e.Entity.TenantId == tenant && e.Entity.Id == id).ToArray())
+                entry.State = EntityState.Detached;
+        // Deliberately no physical deletion, including when the last visible row is gone.
+        // A later caller rollback can therefore restore the original readable reference.
     }
 
     public async Task RebindAsync(string draftToken, string bizId)

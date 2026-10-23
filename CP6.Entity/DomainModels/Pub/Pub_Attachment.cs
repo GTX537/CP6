@@ -5,7 +5,7 @@ namespace CP6.Entity.DomainModels.Pub;
 
 /// <summary>
 /// 统一附件 —— PUB 章06。挂在任意业务单据上（BizType + BizId）。
-/// MD5 秒传：相同内容多条记录共享同一 StorePath；删除按 StorePath 引用计数决定是否物理删。
+/// 旧MD5去重让多条记录共享 StorePath；普通删除仅移除引用，物理处置需独立的完整存储Owner门。
 /// 草稿期 BizId 未定时用 DraftToken 暂存，单据保存后 RebindAsync 回填 BizId。
 /// </summary>
 [Table("Pub_Attachment")]

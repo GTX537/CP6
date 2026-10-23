@@ -416,3 +416,11 @@ W64 Main434/435、Handoff40全部采用，Issue433关闭，实际34.35min、前�
 Main [PR437](https://github.com/GTX537/CP6/pull/437) source `d721ee65118084b798d66184c3e2ae00e209fdaf`采用远端main `9d40f65cfc332e1543b4c0d762dcf7807042c99b`，全部13路径exact核对通过。Handoff [PR41](https://github.com/GTX537/CP6.AI-Handoff/pull/41)采用 `8e4e41a9b84701059644463e0ec6fe28a6c8d743`，准确任务分支删除、固定树干净detached、finish释放。三个产品路径与已测提交逐blob相同，未重复成功验证；最后文档diff和台账生成单独检查。
 
 Main同一任务分支最后状态PR及finish待完成；Issue436在最终远端和生命周期核对后关闭。当前约35.39min，原估50–80min，最终以finish为准；前置只读核对约4min，子任务不重复累计。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave65-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续真实Owner前置和D6公共支撑。
+
+## 2026-10-23：W65已收尾 / W66附件引用与内容保留
+
+W65 Main437/438、Handoff41全部采用，Issue436关闭，实际52.58min、前置约4min；准确分支删除、固定树干净detached、全部席位释放。[W66](../dispatch/20261023-wave66/README.md)修Issue439共享文件误删与PG解绑事务边界，预计60–90min；完整文件Owner及引用/保留门仍待实施。七天目标ACTIVE。
+
+## W66验证完成
+
+19项.NET独立用例通过（18项首轮成功复用、1项仅夹具修正后复验），5项页面行为通过，无跳过；相关Main构建通过。三个PG停止保留；原跨tenant文件丢失红灯与夹具42P16失败保留。进入两仓采用及同任务最后收尾；完整文件Owner不提升，七天目标ACTIVE。

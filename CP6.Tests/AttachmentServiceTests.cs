@@ -55,7 +55,7 @@ public class AttachmentServiceTests
     }
 
     [Fact]
-    public async Task Delete_KeepsPhysical_UntilLastRefRemoved()
+    public async Task Delete_OnlyUnlinks_AndRetainsPhysicalEvenAfterLastVisibleReference()
     {
         using var db = Db();
         var store = new FakeStore();
@@ -68,8 +68,9 @@ public class AttachmentServiceTests
         Assert.True(store.Exists(a1.StorePath));
 
         await svc.DeleteAsync(a2.Id);
-        Assert.Equal(1, store.DeleteCalls);          // 最后一条 → 物理删
-        Assert.False(store.Exists(a1.StorePath));
+        Assert.Equal(0, store.DeleteCalls);          // 局部引用为0不授权全域物理处置
+        Assert.True(store.Exists(a1.StorePath));
+        Assert.Empty(await db.Pub_Attachments.ToListAsync());
     }
 
     [Fact]

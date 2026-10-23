@@ -97,6 +97,18 @@ public sealed class AttachmentControllerPermissionTests
     }
 
     [Fact]
+    public async Task Delete_AcknowledgesOnlyUnlinkWithoutClaimingPhysicalDeletion()
+    {
+        var service = new RecordingAttachmentService { FindResult = Attachment("erp-order", "alice") };
+        var controller = CreateController(service, new RecordingPermissionService("erp-order"));
+        var result = Assert.IsType<OkObjectResult>(await controller.Delete(service.FindResult.Id));
+        var body = System.Text.Json.JsonSerializer.SerializeToElement(result.Value);
+        Assert.Equal("UNLINKED", body.GetProperty("data").GetProperty("state").GetString());
+        Assert.Equal("NOT_REQUESTED", body.GetProperty("data").GetProperty("physicalDeletion").GetString());
+        Assert.Equal(1, service.DeleteCalls);
+    }
+
+    [Fact]
     public async Task Rebind_DeniesDraftOwnedByAnotherUser()
     {
         var service = new RecordingAttachmentService

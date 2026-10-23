@@ -26,7 +26,7 @@
         <template #default="{ row }">
           <el-button class="attachment-download" link type="primary" @click="download(row)">{{ t('下载') }}</el-button>
           <el-button class="attachment-preview" link type="primary" @click="preview(row)">{{ t('预览') }}</el-button>
-          <el-button v-permission="writePermission" class="attachment-delete" link type="danger" @click="remove(row)">{{ t('删除') }}</el-button>
+          <el-button v-permission="writePermission" class="attachment-delete" link type="danger" @click="remove(row)">{{ t('移除附件引用') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -101,9 +101,13 @@ async function preview(row: any) {
 }
 
 async function remove(row: any) {
-  await ElMessageBox.confirm(t('确定删除该附件？'), t('提示'), { type: 'warning' })
-  await attachmentApi.remove(row.id)
-  ElMessage.success(t('已删除'))
+  await ElMessageBox.confirm(t('确定移除该附件引用？文件内容不会被永久删除。'), t('提示'), { type: 'warning' })
+  const result: any = await attachmentApi.remove(row.id)
+  if (result?.data?.state !== 'UNLINKED' || result?.data?.physicalDeletion !== 'NOT_REQUESTED') {
+    ElMessage.error(t('附件移除结果未确认，请刷新核对'))
+    return
+  }
+  ElMessage.success(t('已移除附件引用'))
   if (props.bizId) await reload()
   else fileList.value = fileList.value.filter(f => f.id !== row.id)
 }
