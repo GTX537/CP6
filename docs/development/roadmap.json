@@ -159692,6 +159692,16 @@
       "date": "2026-10-23",
       "change": "W65 Main437 exact adoption and Handoff delivery verified;8PG pass/4legacy reuse. Handoff branch deleted/seat released; Main final finish pending. Full acceptances unchanged.",
       "evidence": "https://github.com/GTX537/CP6/blob/9d40f65cfc332e1543b4c0d762dcf7807042c99b/docs/development/evidence/W65-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "W65 lifecycle complete52.58min; W66 Issue439 attachment physical retention and scoped unlink admitted; seven-day ACTIVE.",
+      "evidence": "docs/development/dispatch/20261023-wave66/README.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "W66 Issue439 scoped attachment unlink/physical retention verified:19.NET/5UI success with exact reuse; full file Owner and runtime acceptance unchanged.",
+      "evidence": "docs/development/evidence/W66-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -168765,14 +168775,72 @@
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-14",
       "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "assignment": {
+        "chat_label": "COORD / W66-01",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/bug-439-attachment-retain",
+        "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+        "claimed_at": "2026-10-23T12:55:21.264813+00:00",
+        "baseline_sha": "b6afa549972de3ab10b8cb20d93aba27842e40d1",
+        "entry_evidence": "docs/development/dispatch/20261023-wave66/README.md",
+        "phase": "CANDIDATE_VERIFIED",
+        "dispatch_scope": "W66_01",
+        "bounded_window_gate": "CONFIRMED",
+        "full_task_gate_unchanged": true,
+        "worker_start_received": true,
+        "actual_start_ref": {
+          "commit": "29af3ef7d49b200ff63c6b3e45d53b932ee62269",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-14/messages/20261023T131314Z-wave66-start/MESSAGE.md",
+          "at": "2026-10-23T13:13:14.090956+00:00"
+        },
+        "allowed_write_paths": [
+          "CP6.Core/Services/Pub/AttachmentService.cs",
+          "CP6.Core/Services/Pub/IAttachmentService.cs",
+          "CP6.Entity/DomainModels/Pub/Pub_Attachment.cs",
+          "CP6.WebApi/Controllers/Pub/AttachmentController.cs",
+          "CP6.WebApi/Seed/I18nCnScreenSeed.cs",
+          "CP6.Tests/Attachment*",
+          "cp6.web/src/components/PubUpload.vue",
+          "cp6.web/src/components/__tests__/PubUpload.permission.spec.ts",
+          "docs/development/",
+          "docs/project-memory/"
+        ],
+        "reserved_write_resources": [
+          "Main:attachment-owner"
+        ],
+        "reserved_postgresql_ports": [
+          55435
+        ],
+        "handoff_branch": "codex/w66-handoff",
+        "actions_authorized": false,
+        "deployment_authorized": false,
+        "existing_database_migration_authorized": false,
+        "worker_delivery_received": true,
+        "candidate_review_completed": true,
+        "candidate_integrated": false,
+        "resources_released": false,
+        "full_task_completed": false,
+        "issue": "https://github.com/GTX537/CP6/issues/439",
+        "worker_delivery_ref": "docs/development/evidence/W66-01/DELIVERY.md"
+      },
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "wave66_delivery": {
+        "status": "CANDIDATE_VERIFIED",
+        "report": "docs/development/evidence/W66-01/DELIVERY.md",
+        "validation": "19项.NET独立用例通过（18项首轮成功复用、1项仅夹具修正后复验），5项页面行为通过，无跳过；相关Main构建通过",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "adopted_scope": "Legacy unlink does not dispose shared content; PG tenant-targeted DML and caller transaction preservation; full file Owner/retention gate absent",
+        "issue": "https://github.com/GTX537/CP6/issues/439",
+        "lifecycle_complete": false
+      }
     },
     {
       "id": "WP02-15",
@@ -168869,7 +168937,7 @@
         "worker_delivery_received": true,
         "candidate_review_completed": true,
         "candidate_integrated": true,
-        "resources_released": false,
+        "resources_released": true,
         "full_task_completed": false,
         "issue": "https://github.com/GTX537/CP6/issues/436",
         "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/9d40f65cfc332e1543b4c0d762dcf7807042c99b/docs/development/evidence/W65-01/DELIVERY.md",
@@ -168882,7 +168950,8 @@
           "at": "2026-10-23T12:25:25.443984+00:00",
           "base": "codex/t02c-entry-handoff-20260921",
           "branch": "codex/w65-handoff"
-        }
+        },
+        "lifecycle_complete": true
       },
       "blockers": [],
       "validation_evidence": [],
@@ -168965,7 +169034,7 @@
         "business_acceptance": "NOT_RUN",
         "adopted_scope": "Native PostgreSQL Pub sequence current-rule serialization; legacy operation receipt and full Owner remain absent",
         "issue": "https://github.com/GTX537/CP6/issues/436",
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "source_candidate_sha": "d721ee65118084b798d66184c3e2ae00e209fdaf",
         "remote_main_sha": "9d40f65cfc332e1543b4c0d762dcf7807042c99b",
         "pull_request": "https://github.com/GTX537/CP6/pull/437",
@@ -168980,11 +169049,15 @@
           "handoff_branch_deleted": true,
           "handoff_seat_released": true,
           "main_task": "CP6:BUG-436-PUB-SEQ-ATOMIC",
-          "main_finish_required": true,
-          "main_seat_released": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave65-final-verification.json"
         },
-        "test_data_disposition": "Three owned PostgreSQL clusters stopped; data and logs retained"
+        "test_data_disposition": "Three owned PostgreSQL clusters stopped; data and logs retained",
+        "actual_agent_minutes": 52.58,
+        "final_main_sha": "b6afa549972de3ab10b8cb20d93aba27842e40d1",
+        "branches_deleted": true,
+        "seats_released": true
       }
     },
     {
@@ -186045,11 +186118,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261023-wave65",
-      "path": "docs/development/dispatch/20261023-wave65/README.md",
-      "baseline_sha": "4b129632448409a6bcd713b295cf87b7a5b972e3",
-      "registered_at": "2026-10-23T12:01:01.627430+00:00",
-      "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
+      "id": "20261023-wave66",
+      "path": "docs/development/dispatch/20261023-wave66/README.md",
+      "baseline_sha": "b6afa549972de3ab10b8cb20d93aba27842e40d1",
+      "registered_at": "2026-10-23T13:13:14.090956+00:00",
+      "phase": "CANDIDATE_VERIFIED",
       "assigned_chats": [
         "COORD"
       ],
@@ -186061,85 +186134,44 @@
       ],
       "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": true,
-      "product_integrated": true,
+      "windows_closed": false,
+      "product_integrated": false,
       "windows": [
         {
-          "id": "W65-01",
-          "task_id": "WP02-16",
-          "title": "PostgreSQL Pub采番当前规则串行推进修复",
-          "lifecycle_task": "BUG-436-PUB-SEQ-ATOMIC",
+          "id": "W66-01",
+          "task_id": "WP02-14",
+          "title": "附件解绑与物理处置分离及PostgreSQL租户事务保护",
+          "lifecycle_task": "BUG-439-ATTACHMENT-RETAIN",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "CLOSED",
+          "phase": "CANDIDATE_VERIFIED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "actual_start_ref": {
-            "commit": "82fe76dbf96787eefbe40f0b6c117f882400a1a1",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-16/messages/20261023T120101Z-wave65-start/MESSAGE.md",
-            "at": "2026-10-23T12:01:01.627430+00:00"
+            "commit": "29af3ef7d49b200ff63c6b3e45d53b932ee62269",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-14/messages/20261023T131314Z-wave66-start/MESSAGE.md",
+            "at": "2026-10-23T13:13:14.090956+00:00"
           },
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/bug-436-pub-seq-atomic",
-          "planned_scope_ref": "docs/development/dispatch/20261023-wave65/README.md",
+          "branch": "codex/bug-439-attachment-retain",
+          "planned_scope_ref": "docs/development/dispatch/20261023-wave66/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/9d40f65cfc332e1543b4c0d762dcf7807042c99b/docs/development/evidence/W65-01/DELIVERY.md",
-          "validation": "8项原生PostgreSQL用例通过，4项未受改动的原Seq用例复用先前通过结果；12项独立用例无跳过，相关Main构建通过",
-          "runtime_resources_released": true,
-          "candidate_integrated": true,
-          "integration": {
-            "result": "PASS",
-            "repository": "GTX537/CP6",
-            "source": "d721ee65118084b798d66184c3e2ae00e209fdaf",
-            "main": "9d40f65cfc332e1543b4c0d762dcf7807042c99b",
-            "target": "main",
-            "pr": "https://github.com/GTX537/CP6/pull/437",
-            "paths": [
-              "CP6.Core/Services/Pub/ISeqService.cs",
-              "CP6.Core/Services/Pub/SeqService.cs",
-              "CP6.Tests/SeqServicePostgreSqlTests.cs",
-              "docs/development/07-detailed-tasks.md",
-              "docs/development/09-parallel-development.md",
-              "docs/development/dispatch/20261023-wave65/README.md",
-              "docs/development/evidence/W65-01/DELIVERY.md",
-              "docs/development/planning/20261022-seven-day-delivery.md",
-              "docs/development/roadmap.json",
-              "docs/project-memory/05-Completed.md",
-              "docs/project-memory/06-Todo.md",
-              "docs/project-memory/CHANGELOG-AI.md",
-              "docs/project-memory/PROJECT_STATE.md"
-            ],
-            "observed_at": "2026-10-23T12:24:53.512758+00:00"
-          },
-          "handoff_delivery_ref": {
-            "commit": "dec90b9694c207637612692161b26d37622f9623",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-16/messages/20261023T122525Z-wave65-delivery/MESSAGE.md",
-            "at": "2026-10-23T12:25:25.443984+00:00",
-            "base": "codex/t02c-entry-handoff-20260921",
-            "branch": "codex/w65-handoff"
-          },
-          "resources_released": false,
-          "lifecycle_snapshot": {
-            "handoff_branch_deleted": true,
-            "handoff_seat_released": true,
-            "main_task": "CP6:BUG-436-PUB-SEQ-ATOMIC",
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave65-final-verification.json"
-          }
+          "worker_delivery_ref": "docs/development/evidence/W66-01/DELIVERY.md",
+          "validation": "19项.NET独立用例通过（18项首轮成功复用、1项仅夹具修正后复验），5项页面行为通过，无跳过；相关Main构建通过",
+          "runtime_resources_released": true
         }
       ],
       "horizon": {
-        "started_at": "2026-10-23T11:58:26.172254+00:00",
+        "started_at": "2026-10-23T12:55:21.264813+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          50,
-          80
+          60,
+          90
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -186147,31 +186179,8 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Finish same-branch Main ledger PR and lifecycle; close Issue436 after verification; continue seven-day goal",
-      "validation": "8项原生PostgreSQL用例通过，4项未受改动的原Seq用例复用先前通过结果；12项独立用例无跳过，相关Main构建通过",
-      "handoff_delivery_ref": {
-        "commit": "dec90b9694c207637612692161b26d37622f9623",
-        "path": "handoffs/CP6-DEV-20261012/tasks/WP02-16/messages/20261023T122525Z-wave65-delivery/MESSAGE.md",
-        "at": "2026-10-23T12:25:25.443984+00:00",
-        "base": "codex/t02c-entry-handoff-20260921",
-        "branch": "codex/w65-handoff"
-      },
-      "handoff_integration": {
-        "result": "PASS",
-        "repository": "GTX537/CP6.AI-Handoff",
-        "source": "dec90b9694c207637612692161b26d37622f9623",
-        "main": "8e4e41a9b84701059644463e0ec6fe28a6c8d743",
-        "target": "codex/t02c-entry-handoff-20260921",
-        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/41",
-        "paths": [
-          "handoffs/CP6-DEV-20261012/tasks/WP02-16/messages/20261023T120101Z-wave65-start/MESSAGE.md",
-          "handoffs/CP6-DEV-20261012/tasks/WP02-16/messages/20261023T122525Z-wave65-delivery/MESSAGE.md",
-          "handoffs/CP6-DEV-20261012/waves/20261023-wave65.md"
-        ],
-        "observed_at": "2026-10-23T12:31:30.559777+00:00",
-        "method": "REST PR/ref plus exact Git blobs after transient GraphQL TLS timeout"
-      },
-      "lifecycle_complete": false
+      "next_action": "Main product adoption, Handoff delivery and same task final lifecycle",
+      "validation": "19项.NET独立用例通过（18项首轮成功复用、1项仅夹具修正后复验），5项页面行为通过，无跳过；相关Main构建通过"
     },
     "wave_history": [
       {
@@ -196350,6 +196359,141 @@
         "seats_released": true,
         "final_main_sha": "4b129632448409a6bcd713b295cf87b7a5b972e3",
         "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave64-final-verification.json"
+      },
+      {
+        "id": "20261023-wave65",
+        "path": "docs/development/dispatch/20261023-wave65/README.md",
+        "baseline_sha": "4b129632448409a6bcd713b295cf87b7a5b972e3",
+        "registered_at": "2026-10-23T12:01:01.627430+00:00",
+        "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W65-01",
+            "task_id": "WP02-16",
+            "title": "PostgreSQL Pub采番当前规则串行推进修复",
+            "lifecycle_task": "BUG-436-PUB-SEQ-ATOMIC",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "actual_start_ref": {
+              "commit": "82fe76dbf96787eefbe40f0b6c117f882400a1a1",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-16/messages/20261023T120101Z-wave65-start/MESSAGE.md",
+              "at": "2026-10-23T12:01:01.627430+00:00"
+            },
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/bug-436-pub-seq-atomic",
+            "planned_scope_ref": "docs/development/dispatch/20261023-wave65/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/9d40f65cfc332e1543b4c0d762dcf7807042c99b/docs/development/evidence/W65-01/DELIVERY.md",
+            "validation": "8项原生PostgreSQL用例通过，4项未受改动的原Seq用例复用先前通过结果；12项独立用例无跳过，相关Main构建通过",
+            "runtime_resources_released": true,
+            "candidate_integrated": true,
+            "integration": {
+              "result": "PASS",
+              "repository": "GTX537/CP6",
+              "source": "d721ee65118084b798d66184c3e2ae00e209fdaf",
+              "main": "9d40f65cfc332e1543b4c0d762dcf7807042c99b",
+              "target": "main",
+              "pr": "https://github.com/GTX537/CP6/pull/437",
+              "paths": [
+                "CP6.Core/Services/Pub/ISeqService.cs",
+                "CP6.Core/Services/Pub/SeqService.cs",
+                "CP6.Tests/SeqServicePostgreSqlTests.cs",
+                "docs/development/07-detailed-tasks.md",
+                "docs/development/09-parallel-development.md",
+                "docs/development/dispatch/20261023-wave65/README.md",
+                "docs/development/evidence/W65-01/DELIVERY.md",
+                "docs/development/planning/20261022-seven-day-delivery.md",
+                "docs/development/roadmap.json",
+                "docs/project-memory/05-Completed.md",
+                "docs/project-memory/06-Todo.md",
+                "docs/project-memory/CHANGELOG-AI.md",
+                "docs/project-memory/PROJECT_STATE.md"
+              ],
+              "observed_at": "2026-10-23T12:24:53.512758+00:00"
+            },
+            "handoff_delivery_ref": {
+              "commit": "dec90b9694c207637612692161b26d37622f9623",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-16/messages/20261023T122525Z-wave65-delivery/MESSAGE.md",
+              "at": "2026-10-23T12:25:25.443984+00:00",
+              "base": "codex/t02c-entry-handoff-20260921",
+              "branch": "codex/w65-handoff"
+            },
+            "resources_released": false,
+            "lifecycle_snapshot": {
+              "handoff_branch_deleted": true,
+              "handoff_seat_released": true,
+              "main_task": "CP6:BUG-436-PUB-SEQ-ATOMIC",
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave65-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-23T11:58:26.172254+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            50,
+            80
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "附件解绑与物理处置分离及PostgreSQL租户事务保护",
+        "validation": "8项原生PostgreSQL用例通过，4项未受改动的原Seq用例复用先前通过结果；12项独立用例无跳过，相关Main构建通过",
+        "handoff_delivery_ref": {
+          "commit": "dec90b9694c207637612692161b26d37622f9623",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-16/messages/20261023T122525Z-wave65-delivery/MESSAGE.md",
+          "at": "2026-10-23T12:25:25.443984+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w65-handoff"
+        },
+        "handoff_integration": {
+          "result": "PASS",
+          "repository": "GTX537/CP6.AI-Handoff",
+          "source": "dec90b9694c207637612692161b26d37622f9623",
+          "main": "8e4e41a9b84701059644463e0ec6fe28a6c8d743",
+          "target": "codex/t02c-entry-handoff-20260921",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/41",
+          "paths": [
+            "handoffs/CP6-DEV-20261012/tasks/WP02-16/messages/20261023T120101Z-wave65-start/MESSAGE.md",
+            "handoffs/CP6-DEV-20261012/tasks/WP02-16/messages/20261023T122525Z-wave65-delivery/MESSAGE.md",
+            "handoffs/CP6-DEV-20261012/waves/20261023-wave65.md"
+          ],
+          "observed_at": "2026-10-23T12:31:30.559777+00:00",
+          "method": "REST PR/ref plus exact Git blobs after transient GraphQL TLS timeout"
+        },
+        "lifecycle_complete": true,
+        "actual_agent_minutes": 52.58,
+        "preflight_estimate_minutes": 4,
+        "branches_deleted": true,
+        "seats_released": true,
+        "final_main_sha": "b6afa549972de3ab10b8cb20d93aba27842e40d1",
+        "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave65-final-verification.json"
       }
     ],
     "development_priority": {
@@ -196484,9 +196628,9 @@
           "id": "D6",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W65-01",
-          "next_action": "Pub stale allocation repaired; continue real Owner prerequisites and D6 file/public foundations",
-          "prerequisite_adjustment": "Repair actual PostgreSQL Pub duplicate allocation; preserve original scopes/transaction ownership. No operation receipts or full Owner adoption claimed."
+          "current_window": "W66-01",
+          "next_action": "附件解绑与物理处置分离及PostgreSQL租户事务保护",
+          "prerequisite_adjustment": "Stop unsafe physical attachment deletion; preserve local metadata transaction and tenant boundaries. Full file Owner/retention/receipt remain pending."
         },
         {
           "id": "D7",

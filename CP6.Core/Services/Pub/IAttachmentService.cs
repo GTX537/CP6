@@ -2,7 +2,7 @@ using CP6.Entity.DomainModels.Pub;
 
 namespace CP6.Core.Services.Pub;
 
-/// <summary>统一附件服务 —— PUB 章06 §4/§9。上传秒传 + 删除引用计数 + 草稿转正。</summary>
+/// <summary>统一附件服务。上传旧去重、移除附件引用和草稿转正；不授权共享内容的物理处置。</summary>
 public interface IAttachmentService
 {
     /// <summary>上传：校验大小(E-061)/类型(E-062)→MD5 秒传复用→建记录。</summary>
@@ -21,7 +21,7 @@ public interface IAttachmentService
     /// <summary>下载：返回元数据 + 读取流（控制器鉴权后流式输出）。</summary>
     Task<(Pub_Attachment att, Stream stream)> DownloadAsync(Guid id);
 
-    /// <summary>删除记录；仅当无其他记录引用同 StorePath 才物理删。</summary>
+    /// <summary>仅移除附件记录，不请求物理删除。PostgreSQL已有调用方事务时，由调用方最终提交。</summary>
     Task DeleteAsync(Guid id);
 
     /// <summary>草稿转正：把 draftToken 的附件回填 BizId。</summary>

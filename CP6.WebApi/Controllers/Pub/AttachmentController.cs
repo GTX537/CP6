@@ -82,7 +82,7 @@ public class AttachmentController : LocalizedControllerBase
             : File(stream, contentType);                      // inline 预览
     }
 
-    /// <summary>删除（引用计数后物理删由 service 决定）</summary>
+    /// <summary>移除附件引用；此入口不请求共享内容的物理删除。</summary>
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
@@ -91,7 +91,7 @@ public class AttachmentController : LocalizedControllerBase
         if (!await CanAccessBizAsync(att.BizType)) return BizPermissionDenied();
 
         await _svc.DeleteAsync(id);
-        return Ok(new { code = 0, message = "OK" });
+        return Ok(new { code = 0, message = "OK", data = new { state = "UNLINKED", physicalDeletion = "NOT_REQUESTED" } });
     }
 
     /// <summary>草稿转正：把 draftToken 的附件回填 BizId（业务单据保存后调）</summary>

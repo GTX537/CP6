@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W66附件引用与内容保留](dispatch/20261023-wave66/README.md)，本聊天单人，Issue439；W37–W65已finish，不重复。
+
 > 当前：[W65采番串行推进](dispatch/20261023-wave65/README.md)，本聊天单人，Main437/Handoff41已采用；同任务最后状态与finish后继续。W37–W64不重复。
 
 > 当前：[W64字段审计Owner](dispatch/20261023-wave64/README.md)，本聊天单人，Main434/Handoff已采用；同任务最后状态与finish后继续。W37–W63不重复。

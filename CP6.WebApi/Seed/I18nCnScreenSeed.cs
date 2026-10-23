@@ -9,6 +9,10 @@ public static class I18nCnScreenSeed
 {
     public static readonly Sys_Lang[] Items = new[]
     {
+        new Sys_Lang { LangKey = "移除附件引用", ZhCN = "移除附件引用", ZhTW = "移除附件參照", En = "Remove attachment reference", Ja = "添付ファイルの参照を削除", Ko = "첨부 파일 참조 제거" },
+        new Sys_Lang { LangKey = "确定移除该附件引用？文件内容不会被永久删除。", ZhCN = "确定移除该附件引用？文件内容不会被永久删除。", ZhTW = "確定移除此附件參照？檔案內容不會被永久刪除。", En = "Remove this attachment reference? This does not permanently delete the file contents.", Ja = "添付ファイルの参照を削除しますか？ファイルの内容は完全には削除されません。", Ko = "이 첨부 파일 참조를 제거할까요? 파일 내용은 영구 삭제되지 않습니다." },
+        new Sys_Lang { LangKey = "已移除附件引用", ZhCN = "已移除附件引用", ZhTW = "已移除附件參照", En = "Attachment reference removed", Ja = "添付ファイルの参照を削除しました", Ko = "첨부 파일 참조가 제거되었습니다" },
+        new Sys_Lang { LangKey = "附件移除结果未确认，请刷新核对", ZhCN = "附件移除结果未确认，请刷新核对", ZhTW = "附件移除結果未確認，請重新整理核對", En = "Attachment removal is unconfirmed. Refresh to check its status.", Ja = "添付ファイルの削除結果を確認できません。再読み込みして確認してください。", Ko = "첨부 파일 제거 결과를 확인하지 못했습니다. 새로 고침하여 확인하세요." },
         new Sys_Lang { LangKey = "DEMO（可空）", ZhCN = "DEMO（可空）", ZhTW = "DEMO（可空）", En = "DEMO (Nullable)", Ja = "DEMO（空可）", Ko = "DEMO (비워둘 수 있음)" },
         new Sys_Lang { LangKey = "DemoNo（可空）", ZhCN = "DemoNo（可空）", ZhTW = "DemoNo（可空）", En = "DemoNo (Nullable)", Ja = "DemoNo（空可）", Ko = "DemoNo (비워둘 수 있음)" },
         new Sys_Lang { LangKey = "{label}必填", ZhCN = "{label}必填", ZhTW = "{label}必填", En = "{label} is required", Ja = "{label}は必須です", Ko = "{label}은(는) 필수입니다" },
