@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-23：W79工作中心与工序费率当前Owner候选通过
+
+Issue460真实PG红灯转绿；37独立.NET（25真实PG、12既有InMemory）＋25Vue通过，无跳过；相关构建及最终Vue类型检查通过。[单份交付](../development/evidence/W79-01/DELIVERY.md)。原生部门绑定、实际ID/版本、费用MIN、八位小数精确页面；PG旧Finance归集503待真正Owner。完整任务/验收不提升，六个自有PG停止保留，待两仓采用与准确分支/席位收尾，七天目标ACTIVE。
+
 ## 2026-10-23：W78配置事件原子入队已采用
 
 CRM PR119/source `fcef696c1e955770255efac07d789e6437f338e4`已采用远端main `5297a8e641f21b089858078cabe4c11779984aad`；37项独立本地PG用例通过，无跳过；相关API/必要依赖构建通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/5297a8e641f21b089858078cabe4c11779984aad/docs/development/evidence/W78-01/DELIVERY.md)。实际审计到Platform原生Outbox的共同事务已采用，完整tenant事件身份、原生提交绑定/规范字节和Blocked路由通过；CRM Issue109/118开放，真实Owner/投递、激活与公开受理待接。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main协调PR/finish待收尾。七天目标ACTIVE，完整业务验收不提升。

@@ -4,12 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Mes;
 
-public class WorkCenterService : IWorkCenterService
+public partial class WorkCenterService : IWorkCenterService
 {
     private readonly CP6Context _db;
-    public WorkCenterService(CP6Context db) => _db = db;
+    private readonly CP6.Core.Services.Integration.OperationsOwnerV1? _owner;
+    public WorkCenterService(CP6Context db, CP6.Core.Services.Integration.OperationsOwnerV1? owner = null) { _db = db; _owner = owner; }
 
-    public async Task<List<WorkCenter>> ListAsync(string? keyword)
+    private async Task<List<WorkCenter>> ListCoreAsync(string? keyword)
     {
         var q = _db.WorkCenters.AsNoTracking().Where(x => !x.IsDeleted);
         if (!string.IsNullOrWhiteSpace(keyword))
@@ -17,10 +18,10 @@ public class WorkCenterService : IWorkCenterService
         return await q.OrderBy(x => x.WgCd).ToListAsync();
     }
 
-    public Task<WorkCenter?> GetAsync(string wgCd)
+    private Task<WorkCenter?> GetCoreAsync(string wgCd)
         => _db.WorkCenters.AsNoTracking().FirstOrDefaultAsync(x => x.WgCd == wgCd && !x.IsDeleted);
 
-    public async Task UpsertAsync(WorkCenter dto, string? user)
+    private async Task UpsertCoreAsync(WorkCenter dto, string? user)
     {
         if (string.IsNullOrWhiteSpace(dto.WgCd))
             throw new InvalidOperationException("E-A2-WC-001: 工作中心CD必填");
@@ -43,7 +44,7 @@ public class WorkCenterService : IWorkCenterService
         await _db.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(string wgCd, string? user)
+    private async Task DeleteCoreAsync(string wgCd, string? user)
     {
         var row = await _db.WorkCenters.FirstOrDefaultAsync(x => x.WgCd == wgCd && !x.IsDeleted)
             ?? throw new InvalidOperationException("E-A2-WC-001: 工作中心不存在");

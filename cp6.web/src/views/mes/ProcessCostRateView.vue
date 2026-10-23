@@ -5,18 +5,24 @@
       <span class="subtitle">{{ t('人工费率') }} / {{ t('制造费率') }} / {{ t('生效日') }}</span>
     </div>
 
+    <el-alert v-if="readError" :title="readError" type="error" :closable="false" />
+    <el-alert v-if="intent.error.value" :title="intent.error.value" type="warning" :closable="false" />
     <el-card shadow="never">
       <div class="table-toolbar">
         <el-input v-model="filterWgCd" size="small" style="width: 220px" :placeholder="t('工作中心')" clearable @keyup.enter="reload" />
         <el-button type="primary" size="small" @click="reload">{{ t('查询') }}</el-button>
-        <el-button v-permission="'mes-process-cost-rate:edit'" size="small" @click="openCreate">{{ t('新增') }}</el-button>
+        <el-button v-permission="'mes-process-cost-rate:edit'" size="small" @click="openCreate" :disabled="!canWrite('edit')">{{ t('新增') }}</el-button>
         <el-tag size="small" type="info">{{ t('共 {n} 条', { n: rows.length }) }}</el-tag>
       </div>
 
       <el-table :data="rows" border stripe size="small" max-height="600" v-loading="loading">
         <el-table-column prop="wgCd" :label="t('工作中心')" width="150" show-overflow-tooltip />
-        <el-table-column prop="laborRate" :label="t('人工费率')" width="130" align="right" />
-        <el-table-column prop="overheadRate" :label="t('制造费率')" width="130" align="right" />
+        <el-table-column :label="t('人工费率')" width="180" align="right">
+          <template #default="{ row }">{{ row.laborRate ?? '—' }}</template>
+        </el-table-column>
+        <el-table-column :label="t('制造费率')" width="180" align="right">
+          <template #default="{ row }">{{ row.overheadRate ?? '—' }}</template>
+        </el-table-column>
         <el-table-column :label="t('生效日')" width="140">
           <template #default="{ row }">{{ fmtDate(row.validFrom) }}</template>
         </el-table-column>
@@ -25,8 +31,8 @@
         </el-table-column>
         <el-table-column :label="t('操作')" width="140" fixed="right">
           <template #default="{ row }">
-            <el-button v-permission="'mes-process-cost-rate:edit'" link type="primary" size="small" @click="openEdit(row)">{{ t('编辑') }}</el-button>
-            <el-button v-permission="'mes-process-cost-rate:del'" link type="danger" size="small" @click="doDelete(row)">{{ t('删除') }}</el-button>
+            <el-button v-permission="'mes-process-cost-rate:edit'" link type="primary" size="small" @click="openEdit(row)" :disabled="!canWrite('edit')">{{ t('编辑') }}</el-button>
+            <el-button v-permission="'mes-process-cost-rate:del'" link type="danger" size="small" @click="doDelete(row)" :disabled="!canWrite('del')">{{ t('删除') }}</el-button>
           </template>
         </el-table-column>
         <template #empty><span>{{ t('暂无数据') }}</span></template>
@@ -39,8 +45,8 @@
           <el-input v-model="form.wgCd" maxlength="10" :disabled="editing" />
         </el-form-item>
         <el-row :gutter="12">
-          <el-col :span="12"><el-form-item :label="t('人工费率')"><el-input-number v-model="form.laborRate" :min="0" :precision="2" controls-position="right" style="width:100%" /></el-form-item></el-col>
-          <el-col :span="12"><el-form-item :label="t('制造费率')"><el-input-number v-model="form.overheadRate" :min="0" :precision="2" controls-position="right" style="width:100%" /></el-form-item></el-col>
+          <el-col :span="12"><el-form-item :label="t('人工费率')"><el-input v-model="form.laborRate" inputmode="decimal" :disabled="editing && !form.laborRateWritable" :placeholder="form.laborRate == null ? '—' : ''" /></el-form-item></el-col>
+          <el-col :span="12"><el-form-item :label="t('制造费率')"><el-input v-model="form.overheadRate" inputmode="decimal" :disabled="editing && !form.overheadRateWritable" :placeholder="form.overheadRate == null ? '—' : ''" /></el-form-item></el-col>
         </el-row>
         <el-row :gutter="12">
           <el-col :span="12"><el-form-item :label="t('生效日')" required><el-date-picker v-model="form.validFrom" type="date" value-format="YYYY-MM-DD" style="width:100%" /></el-form-item></el-col>
@@ -49,81 +55,94 @@
       </el-form>
       <template #footer>
         <el-button @click="dialogVisible = false" :disabled="saving">{{ t('取消') }}</el-button>
-        <el-button type="primary" :loading="saving" @click="submit">{{ t('确定') }}</el-button>
+        <el-button type="primary" :loading="saving" :disabled="!canWrite('edit')" @click="submit">{{ t('确定') }}</el-button>
       </template>
     </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { processCostRateApi } from '@/api/mes/processCost'
 import type { ProcessCostRate } from '@/types/mes/processCost'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
+import { usePermissionStore } from '@/stores/permission'
 
-const { t } = useI18n()
-const rows = ref<ProcessCostRate[]>([])
-const loading = ref(false)
-const saving = ref(false)
-const filterWgCd = ref('')
-const dialogVisible = ref(false)
-const editing = ref(false)
-
-function emptyForm(): ProcessCostRate {
-  return { wgCd: '', laborRate: 0, overheadRate: 0, validFrom: '', validTo: null }
-}
+const { t } = useI18n(), permission = usePermissionStore()
+const rows = ref<ProcessCostRate[]>([]), loading = ref(false), readError = ref('')
+const filterWgCd = ref(''), dialogVisible = ref(false), editing = ref(false)
+const emptyForm = (): ProcessCostRate => ({ id: undefined, rowVersion: undefined, wgCd: '', laborRate: '', overheadRate: '', laborRateWritable: true, overheadRateWritable: true, validFrom: '', validTo: null })
 const form = reactive<ProcessCostRate>(emptyForm())
-
+let readSequence = 0
+function clearProtected() {
+  readSequence++; rows.value = []; loading.value = false; dialogVisible.value = false
+  Object.assign(form, emptyForm()); editing.value = false
+}
+const intent = useOperationsIntent(() => { clearProtected(); filterWgCd.value = ''; readError.value = '身份已变化，请重新查询。' })
+const saving = intent.busy
+const permitted = (action: string) => permission.loaded && permission.has(`mes-process-cost-rate:${action}`)
+const canWrite = (action: string) => permitted(action) && !saving.value && !intent.uncertain.value
+watch(() => permitted('query'), allowed => { if (!allowed) clearProtected() })
 async function reload() {
-  loading.value = true
+  const token = intent.capture(), sequence = ++readSequence
+  const current = () => intent.current(token) && sequence === readSequence
+  rows.value = []; loading.value = true; readError.value = ''
   try {
-    const res = await processCostRateApi.list(filterWgCd.value.trim() || undefined)
-    rows.value = res?.data || []
-  } finally {
-    loading.value = false
-  }
+    if (!permitted('query')) throw new Error('Current query action required')
+    const result = await processCostRateApi.list(filterWgCd.value || undefined)
+    if (!current()) return
+    if (!permitted('query') || result?.code !== 0 || !Array.isArray(result.data)) throw new Error('Current data unavailable')
+    rows.value = result.data
+  } catch {
+    if (current()) { clearProtected(); readError.value = '读取失败，请重新查询当前权限范围。' }
+  } finally { if (current()) loading.value = false }
 }
-
 function openCreate() {
-  Object.assign(form, emptyForm())
-  if (filterWgCd.value.trim()) form.wgCd = filterWgCd.value.trim()
-  editing.value = false
-  dialogVisible.value = true
+  if (!canWrite('edit')) return
+  Object.assign(form, emptyForm()); editing.value = false; dialogVisible.value = true
 }
-
 function openEdit(row: ProcessCostRate) {
-  Object.assign(form, { ...row })
-  editing.value = true
-  dialogVisible.value = true
+  if (!canWrite('edit') || !row.id || !row.rowVersion) return
+  Object.assign(form, emptyForm(), row); editing.value = true; dialogVisible.value = true
 }
-
 async function submit() {
-  if (!form.wgCd?.trim()) { ElMessage.warning(t('工作中心')); return }
-  if (!form.validFrom) { ElMessage.warning(t('生效日')); return }
-  saving.value = true
+  if (!canWrite('edit') || !form.wgCd?.trim()) return
+  if (!form.validFrom) return
+  const token = intent.begin(); if (!token) return
+  // Explicit payload excludes response metadata and caller identity; strings never pass through Number.
+  const input: ProcessCostRate = { id: form.id, rowVersion: form.rowVersion, wgCd: form.wgCd,
+    laborRate: !editing.value || form.laborRateWritable ? form.laborRate : undefined,
+    overheadRate: !editing.value || form.overheadRateWritable ? form.overheadRate : undefined,
+    validFrom: form.validFrom, validTo: form.validTo || null }
   try {
-    await processCostRateApi.save({ ...form, wgCd: form.wgCd.trim(), validTo: form.validTo || null })
-    ElMessage.success(t('已保存'))
-    dialogVisible.value = false
-    await reload()
-  } finally {
-    saving.value = false
-  }
+    const result = await processCostRateApi.save(input)
+    if (!intent.current(token)) return
+    if (result?.code !== 0) throw new Error('Unconfirmed write result')
+    ElMessage.success(t('已保存')); dialogVisible.value = false; Object.assign(form, emptyForm()); await reload()
+  } catch (error) {
+    if (intent.current(token)) { clearProtected(); intent.failed(token, error) }
+  } finally { intent.finish(token) }
 }
-
-// 生效/失效日为日期字段（后端返 ISO datetime），仅展示日期部分
-function fmtDate(v?: string | null): string { return v ? String(v).slice(0, 10) : '' }
-
 async function doDelete(row: ProcessCostRate) {
-  if (!row.id) { ElMessage.warning(t('确认删除')); return }
-  await ElMessageBox.confirm(t('确认删除'), t('提示'), { type: 'warning' })
-  await processCostRateApi.remove(row.id)
-  ElMessage.success(t('已删除'))
-  await reload()
+  if (!canWrite('del') || !row.id || !row.rowVersion) return
+  const token = intent.begin(); if (!token) return
+  const id = row.id, version = row.rowVersion
+  try {
+    await ElMessageBox.confirm(t('确认删除'), t('提示'), { type: 'warning' })
+    if (!intent.current(token) || !permitted('del')) return
+    const result = await processCostRateApi.remove(id, version)
+    if (!intent.current(token)) return
+    if (result?.code !== 0) throw new Error('Unconfirmed delete result')
+    ElMessage.success(t('已删除')); dialogVisible.value = false; Object.assign(form, emptyForm()); await reload()
+  } catch (error) {
+    if (error !== 'cancel' && error !== 'close' && intent.current(token)) { clearProtected(); intent.failed(token, error) }
+  } finally { intent.finish(token) }
 }
-
-reload()
+// Formatting for display never replaces the original precision-bearing timestamp in the edit payload.
+function fmtDate(value?: string | null) { return value ? value.slice(0, 10) : '' }
+void reload()
 </script>
 
 <style scoped>

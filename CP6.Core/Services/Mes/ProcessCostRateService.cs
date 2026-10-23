@@ -4,19 +4,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Mes;
 
-public class ProcessCostRateService : IProcessCostRateService
+public partial class ProcessCostRateService : IProcessCostRateService
 {
     private readonly CP6Context _db;
-    public ProcessCostRateService(CP6Context db) => _db = db;
+    private readonly CP6.Core.Services.Integration.OperationsOwnerV1? _owner;
+    public ProcessCostRateService(CP6Context db, CP6.Core.Services.Integration.OperationsOwnerV1? owner = null) { _db = db; _owner = owner; }
 
-    public async Task<List<ProcessCostRate>> ListAsync(string? wgCd)
+    private async Task<List<ProcessCostRate>> ListCoreAsync(string? wgCd)
     {
         var q = _db.ProcessCostRates.AsNoTracking().Where(x => !x.IsDeleted);
         if (!string.IsNullOrWhiteSpace(wgCd)) q = q.Where(x => x.WgCd == wgCd);
         return await q.OrderBy(x => x.WgCd).ThenByDescending(x => x.ValidFrom).ToListAsync();
     }
 
-    public Task<ProcessCostRate?> ResolveAsync(string wgCd, DateTime onDate)
+    private Task<ProcessCostRate?> ResolveCoreAsync(string wgCd, DateTime onDate)
         => _db.ProcessCostRates.AsNoTracking()
             .Where(x => !x.IsDeleted && x.WgCd == wgCd
                         && x.ValidFrom <= onDate
@@ -24,7 +25,7 @@ public class ProcessCostRateService : IProcessCostRateService
             .OrderByDescending(x => x.ValidFrom)
             .FirstOrDefaultAsync();
 
-    public async Task UpsertAsync(ProcessCostRate dto, string? user)
+    private async Task UpsertCoreAsync(ProcessCostRate dto, string? user)
     {
         if (dto.LaborRate < 0m || dto.OverheadRate < 0m)
             throw new InvalidOperationException("E-A2-RATE-003: 费率不可为负");
@@ -61,7 +62,7 @@ public class ProcessCostRateService : IProcessCostRateService
         await _db.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(Guid id, string? user)
+    private async Task DeleteCoreAsync(Guid id, string? user)
     {
         var row = await _db.ProcessCostRates.FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted)
             ?? throw new InvalidOperationException("E-A2-RATE-001: 费率不存在");
