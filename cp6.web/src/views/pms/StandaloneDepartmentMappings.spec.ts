@@ -28,6 +28,15 @@ describe('explicit standalone department binding', () => {
     api.saveStandaloneMapping.mockImplementation(async (_input, operationId) => ({ operationId, kind: 'dept-standalone-mapping', state: 'COMMITTED', entityId: id }))
     await vm.save(); expect(api.saveStandaloneMapping.mock.calls[0]![0]).toMatchObject({ objectKind: 'cross-dock', objectId: 'cross-dock-uuid', departmentId: dept })
   })
+  it('selects a real slotting-plan identity and submits its explicit department binding', async () => {
+    const vm = await render(); await vm.open()
+    await view!.get('[aria-label="对象类型"]').setValue('slotting-plan')
+    api.standaloneObjects.mockResolvedValue([{ id: 'slotting-plan-uuid', name: 'SLP-EXISTING' }])
+    vm.search = 'SLP'; await vm.findObjects(); expect(api.standaloneObjects).toHaveBeenCalledWith('slotting-plan', 'SLP')
+    vm.draft.objectId = 'slotting-plan-uuid'; vm.draft.departmentId = dept; vm.draft.reason = 'Verified existing record owner'
+    api.saveStandaloneMapping.mockImplementation(async (_input, operationId) => ({ operationId, kind: 'dept-standalone-mapping', state: 'COMMITTED', entityId: id }))
+    await vm.save(); expect(api.saveStandaloneMapping.mock.calls[0]![0]).toMatchObject({ objectKind: 'slotting-plan', objectId: 'slotting-plan-uuid', departmentId: dept })
+  })
   it('selects a real machine identity and submits its explicit department binding', async () => {
     const vm = await render(); await vm.open()
     await view!.get('[aria-label="对象类型"]').setValue('machine')

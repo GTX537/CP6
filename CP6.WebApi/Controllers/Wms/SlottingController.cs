@@ -1,4 +1,6 @@
 using CP6.Core.Auth;
+using CP6.Core.Services.Erp;
+using CP6.Entity.DTOs.Wms;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +11,8 @@ namespace CP6.WebApi.Controllers.Wms;
 [ApiController]
 [Route("api/wms/slotting")]
 [Authorize]
+[CP6.WebApi.Controllers.Erp.OrderOwnerResult]
+[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class SlottingController : ControllerBase
 {
     private readonly ISlottingService _svc;
@@ -16,15 +20,29 @@ public class SlottingController : ControllerBase
     private string? CurrentUser => User?.Identity?.Name;
 
     [HttpGet]
+    [RequirePermission("wms-slotting", "query")]
     public async Task<IActionResult> Search([FromQuery] string? warehouseCd, [FromQuery] int? status)
         => Ok(new { code = 0, message = "OK", data = await _svc.SearchAsync(warehouseCd, status) });
 
     [HttpGet("{no}")]
+    [RequirePermission("wms-slotting", "query")]
     public async Task<IActionResult> Get(string no)
     {
         var r = await _svc.GetAsync(no);
         if (r == null) return NotFound(new { code = 404, message = "WM-MSG-070" });
         return Ok(new { code = 0, message = "OK", data = r });
+    }
+
+    [HttpGet("owner-v1")]
+    [RequirePermission("wms-slotting", "query")]
+    public async Task<IActionResult> SearchOwner([FromQuery] SlottingQueryV1 query)
+        => Ok(new { code = 0, data = await _svc.SearchOwnerAsync(query) });
+    [HttpGet("owner-v1/{no}")]
+    [RequirePermission("wms-slotting", "query")]
+    public async Task<IActionResult> GetOwner(string no)
+    {
+        var result = await _svc.GetOwnerAsync(no);
+        return result == null ? NotFound(new { code = "OBJECT_NOT_FOUND" }) : Ok(new { code = 0, data = result });
     }
 
     /// <summary>分析実行 → SlottingPlan 生成</summary>
@@ -42,7 +60,7 @@ public class SlottingController : ControllerBase
             return StatusCode(StatusCodes.Status403Forbidden,
                 new { code = ex.Message, message = ex.Message });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/approve")]
@@ -68,7 +86,7 @@ public class SlottingController : ControllerBase
         {
             return Conflict(new { code = ex.Code, message = ex.Code });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/cancel")]
@@ -85,7 +103,7 @@ public class SlottingController : ControllerBase
         {
             return Conflict(new { code = ex.Code, message = ex.Code });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     public class AnalyzeRequest

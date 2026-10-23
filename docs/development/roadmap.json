@@ -159937,6 +159937,16 @@
       "date": "2026-10-23",
       "change": "W85 Main475 exact adoption and Handoff61 verified;18.NET/21UI/typecheck passed. Handoff branch deleted/seat released; Main final finish pending. Full acceptances unchanged.",
       "evidence": "https://github.com/GTX537/CP6/blob/bbf9ae10322d880f68380bdaddc8435280ff7895/docs/development/evidence/W85-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "W85 lifecycle complete16.82min and Issue474 closed; W86 Issue477 slotting history Owner and zero-effect legacy write fence admitted; seven-day ACTIVE.",
+      "evidence": "docs/development/dispatch/20261023-wave86/README.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "W86 Issue477 candidate verified:19.NET/22Vue and typecheck; exact opaque history current Owner only, full fixed-cut/Proposal/Transfer remains UNPROVEN.",
+      "evidence": "docs/development/evidence/W86-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -162508,45 +162518,45 @@
       "card_anchor": "wp02-03",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W85-01",
+        "chat_label": "COORD / W86-01",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/bug-474-crossdock-owner",
+        "branch": "codex/bug-477-slotting-owner",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-23T22:56:48.790339+00:00",
-        "baseline_sha": "25d00d7773d60e448ab8d4c37450ad6f81a3cb31",
-        "entry_evidence": "docs/development/dispatch/20261023-wave85/README.md",
-        "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
-        "dispatch_scope": "W85_01",
+        "claimed_at": "2026-10-23T23:14:47.717649+00:00",
+        "baseline_sha": "a32182de95bf392d3c9e4705b84720cc39f62909",
+        "entry_evidence": "docs/development/dispatch/20261023-wave86/README.md",
+        "phase": "CANDIDATE_VERIFIED",
+        "dispatch_scope": "W86_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
         "actual_start_ref": {
-          "commit": "559e17c2e8bdd1818454c5aa267602795f4e4ff0",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T225827Z-wave85-start/MESSAGE.md",
-          "at": "2026-10-23T22:58:27.550875+00:00"
+          "commit": "9f2bc51aa3d0e8b09915a5c39ba5bb4967db5f1a",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T231544Z-wave86-start/MESSAGE.md",
+          "at": "2026-10-23T23:15:44.299896+00:00"
         },
         "allowed_write_paths": [
-          "CP6.Core/Services/Wms/*CrossDock*",
+          "CP6.Core/Services/Wms/*Slotting*",
           "CP6.Core/Services/Integration/Operations*",
-          "CP6.Entity/DTOs/Wms/CrossDock*",
-          "CP6.WebApi/Controllers/Wms/CrossDock*",
+          "CP6.Entity/DTOs/Wms/Slotting*",
+          "CP6.WebApi/Controllers/Wms/Slotting*",
           "CP6.WebApi/Program.cs",
           "CP6.WebApi/Seed/WmsPermissionSeed.cs",
           "CP6.Persistence.PostgreSql/Migrations/Core/",
           "CP6.Tests/",
           "CP6.Core/Services/Sys/IamStandaloneDepartmentMappingV1.cs",
+          "cp6.web/src/api/sys/iam.ts",
           "cp6.web/src/views/pms/StandaloneDepartmentMappings.vue",
-          "cp6.web/src/views/wms/CrossDock*",
+          "cp6.web/src/views/pms/StandaloneDepartmentMappings.spec.ts",
+          "cp6.web/src/views/wms/Slotting*",
           "cp6.web/src/api/wms/logistics.ts",
           "cp6.web/src/types/wms/",
           "docs/development/",
-          "docs/project-memory/",
-          "cp6.web/src/api/sys/iam.ts",
-          "cp6.web/src/views/pms/StandaloneDepartmentMappings.spec.ts"
+          "docs/project-memory/"
         ],
         "reserved_write_resources": [
-          "Main:CrossDock-Owner",
+          "Main:Slotting-Owner",
           "Main:OperationsOwner",
           "Main:authorization-catalog",
           "Main:PG-migration"
@@ -162554,28 +162564,17 @@
         "reserved_postgresql_ports": [
           55435
         ],
-        "handoff_branch": "codex/w85-handoff",
+        "handoff_branch": "codex/w86-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": true,
+        "candidate_integrated": false,
         "resources_released": false,
         "full_task_completed": false,
-        "issue": "https://github.com/GTX537/CP6/issues/474",
-        "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/bbf9ae10322d880f68380bdaddc8435280ff7895/docs/development/evidence/W85-01/DELIVERY.md",
-        "direct_consumer_note": "Cross-dock department kind requires matching typed IAM API union; actual existing mapping component selection/save regression included in same serial task.",
-        "source_candidate_sha": "a8e2e8a098c3a8ad9e713cd5f8f8c789270631cc",
-        "remote_main_sha": "bbf9ae10322d880f68380bdaddc8435280ff7895",
-        "pull_request": "https://github.com/GTX537/CP6/pull/475",
-        "handoff_delivery_ref": {
-          "commit": "b861a9a3137f3f9c9d1c7a7ff860119a5739a146",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T230956Z-wave85-delivery/MESSAGE.md",
-          "at": "2026-10-23T23:09:56.396800+00:00",
-          "base": "codex/t02c-entry-handoff-20260921",
-          "branch": "codex/w85-handoff"
-        }
+        "issue": "https://github.com/GTX537/CP6/issues/477",
+        "worker_delivery_ref": "docs/development/evidence/W86-01/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -166809,6 +166808,77 @@
             "branch": "codex/w84-handoff"
           },
           "lifecycle_complete": true
+        },
+        {
+          "chat_label": "COORD / W85-01",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/bug-474-crossdock-owner",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-10-23T22:56:48.790339+00:00",
+          "baseline_sha": "25d00d7773d60e448ab8d4c37450ad6f81a3cb31",
+          "entry_evidence": "docs/development/dispatch/20261023-wave85/README.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "W85_01",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "actual_start_ref": {
+            "commit": "559e17c2e8bdd1818454c5aa267602795f4e4ff0",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T225827Z-wave85-start/MESSAGE.md",
+            "at": "2026-10-23T22:58:27.550875+00:00"
+          },
+          "allowed_write_paths": [
+            "CP6.Core/Services/Wms/*CrossDock*",
+            "CP6.Core/Services/Integration/Operations*",
+            "CP6.Entity/DTOs/Wms/CrossDock*",
+            "CP6.WebApi/Controllers/Wms/CrossDock*",
+            "CP6.WebApi/Program.cs",
+            "CP6.WebApi/Seed/WmsPermissionSeed.cs",
+            "CP6.Persistence.PostgreSql/Migrations/Core/",
+            "CP6.Tests/",
+            "CP6.Core/Services/Sys/IamStandaloneDepartmentMappingV1.cs",
+            "cp6.web/src/views/pms/StandaloneDepartmentMappings.vue",
+            "cp6.web/src/views/wms/CrossDock*",
+            "cp6.web/src/api/wms/logistics.ts",
+            "cp6.web/src/types/wms/",
+            "docs/development/",
+            "docs/project-memory/",
+            "cp6.web/src/api/sys/iam.ts",
+            "cp6.web/src/views/pms/StandaloneDepartmentMappings.spec.ts"
+          ],
+          "reserved_write_resources": [
+            "Main:CrossDock-Owner",
+            "Main:OperationsOwner",
+            "Main:authorization-catalog",
+            "Main:PG-migration"
+          ],
+          "reserved_postgresql_ports": [
+            55435
+          ],
+          "handoff_branch": "codex/w85-handoff",
+          "actions_authorized": false,
+          "deployment_authorized": false,
+          "existing_database_migration_authorized": false,
+          "worker_delivery_received": true,
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "resources_released": true,
+          "full_task_completed": false,
+          "issue": "https://github.com/GTX537/CP6/issues/474",
+          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/bbf9ae10322d880f68380bdaddc8435280ff7895/docs/development/evidence/W85-01/DELIVERY.md",
+          "direct_consumer_note": "Cross-dock department kind requires matching typed IAM API union; actual existing mapping component selection/save regression included in same serial task.",
+          "source_candidate_sha": "a8e2e8a098c3a8ad9e713cd5f8f8c789270631cc",
+          "remote_main_sha": "bbf9ae10322d880f68380bdaddc8435280ff7895",
+          "pull_request": "https://github.com/GTX537/CP6/pull/475",
+          "handoff_delivery_ref": {
+            "commit": "b861a9a3137f3f9c9d1c7a7ff860119a5739a146",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T230956Z-wave85-delivery/MESSAGE.md",
+            "at": "2026-10-23T23:09:56.396800+00:00",
+            "base": "codex/t02c-entry-handoff-20260921",
+            "branch": "codex/w85-handoff"
+          },
+          "lifecycle_complete": true
         }
       ],
       "wave13_delivery": {
@@ -167459,7 +167529,7 @@
         "business_acceptance": "NOT_RUN",
         "adopted_scope": "Cross-dock current historical read Owner, exact server paging, explicit UUID department mapping, source/field intersections and early legacy effect fence; full WP10-32 not admitted",
         "issue": "https://github.com/GTX537/CP6/issues/474",
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "source_candidate_sha": "a8e2e8a098c3a8ad9e713cd5f8f8c789270631cc",
         "remote_main_sha": "bbf9ae10322d880f68380bdaddc8435280ff7895",
         "pull_request": "https://github.com/GTX537/CP6/pull/475",
@@ -167474,11 +167544,26 @@
           "handoff_branch_deleted": true,
           "handoff_seat_released": true,
           "main_task": "CP6:BUG-474-CROSSDOCK-OWNER",
-          "main_finish_required": true,
-          "main_seat_released": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave85-final-verification.json"
         },
-        "test_data_disposition": "Two owned PostgreSQL clusters stopped; data and logs retained"
+        "test_data_disposition": "Two owned PostgreSQL clusters stopped; data and logs retained",
+        "actual_agent_minutes": 16.82,
+        "final_main_sha": "a32182de95bf392d3c9e4705b84720cc39f62909",
+        "branches_deleted": true,
+        "seats_released": true,
+        "closed_issue": "GTX537/CP6#474"
+      },
+      "wave86_delivery": {
+        "status": "CANDIDATE_VERIFIED",
+        "report": "docs/development/evidence/W86-01/DELIVERY.md",
+        "validation": "19独立.NET用例（15原生PG、3既有非PG库位优化行为、1两租户启动种子）及22Vue用例通过，无跳过；相关构建和vue-tsc通过",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "adopted_scope": "Slotting current historical Owner, opaque legacy source disclosure, exact original JSON, UUID department mapping, pagination and early legacy effect fence; full WP10-28/29 not admitted",
+        "issue": "https://github.com/GTX537/CP6/issues/477",
+        "lifecycle_complete": false
       }
     },
     {
@@ -187514,11 +187599,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261023-wave85",
-      "path": "docs/development/dispatch/20261023-wave85/README.md",
-      "baseline_sha": "25d00d7773d60e448ab8d4c37450ad6f81a3cb31",
-      "registered_at": "2026-10-23T22:58:27.550875+00:00",
-      "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
+      "id": "20261023-wave86",
+      "path": "docs/development/dispatch/20261023-wave86/README.md",
+      "baseline_sha": "a32182de95bf392d3c9e4705b84720cc39f62909",
+      "registered_at": "2026-10-23T23:15:44.299896+00:00",
+      "phase": "CANDIDATE_VERIFIED",
       "assigned_chats": [
         "COORD"
       ],
@@ -187530,98 +187615,40 @@
       ],
       "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": true,
-      "product_integrated": true,
+      "windows_closed": false,
+      "product_integrated": false,
       "windows": [
         {
-          "id": "W85-01",
+          "id": "W86-01",
           "task_id": "WP02-03",
-          "title": "越库历史观察独立Owner与旧写入口围栏",
-          "lifecycle_task": "BUG-474-CROSSDOCK-OWNER",
+          "title": "库位优化历史观察独立Owner与旧写入口围栏",
+          "lifecycle_task": "BUG-477-SLOTTING-OWNER",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "CLOSED",
+          "phase": "CANDIDATE_VERIFIED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "actual_start_ref": {
-            "commit": "559e17c2e8bdd1818454c5aa267602795f4e4ff0",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T225827Z-wave85-start/MESSAGE.md",
-            "at": "2026-10-23T22:58:27.550875+00:00"
+            "commit": "9f2bc51aa3d0e8b09915a5c39ba5bb4967db5f1a",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T231544Z-wave86-start/MESSAGE.md",
+            "at": "2026-10-23T23:15:44.299896+00:00"
           },
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/bug-474-crossdock-owner",
-          "planned_scope_ref": "docs/development/dispatch/20261023-wave85/README.md",
+          "branch": "codex/bug-477-slotting-owner",
+          "planned_scope_ref": "docs/development/dispatch/20261023-wave86/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/bbf9ae10322d880f68380bdaddc8435280ff7895/docs/development/evidence/W85-01/DELIVERY.md",
-          "validation": "18独立.NET用例（15原生PG、2既有非PG越库行为、1两租户启动种子）及21Vue用例通过，无跳过；相关构建和vue-tsc通过",
-          "runtime_resources_released": true,
-          "candidate_integrated": true,
-          "integration": {
-            "result": "PASS",
-            "repository": "GTX537/CP6",
-            "source": "a8e2e8a098c3a8ad9e713cd5f8f8c789270631cc",
-            "main": "bbf9ae10322d880f68380bdaddc8435280ff7895",
-            "target": "main",
-            "pr": "https://github.com/GTX537/CP6/pull/475",
-            "paths": [
-              "CP6.Core/Services/Integration/OperationsAccessV1.CrossDock.cs",
-              "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
-              "CP6.Core/Services/Sys/IamStandaloneDepartmentMappingV1.cs",
-              "CP6.Core/Services/Wms/CrossDockService.Owner.cs",
-              "CP6.Core/Services/Wms/CrossDockService.cs",
-              "CP6.Core/Services/Wms/ICrossDockService.cs",
-              "CP6.Entity/DTOs/Wms/CrossDockOwnerV1.cs",
-              "CP6.Persistence.PostgreSql/Migrations/Core/20261023230000_CrossDockDepartmentOwnerV1.cs",
-              "CP6.Tests/Erp/CrossDockOwnerPostgreSqlTests.cs",
-              "CP6.Tests/MesPermissionSeedTests.cs",
-              "CP6.WebApi/Controllers/Wms/CrossDockController.cs",
-              "CP6.WebApi/Program.cs",
-              "CP6.WebApi/Seed/WmsPermissionSeed.cs",
-              "cp6.web/src/api/sys/iam.ts",
-              "cp6.web/src/api/wms/logistics.ts",
-              "cp6.web/src/types/wms/crossDockOwner.ts",
-              "cp6.web/src/views/pms/StandaloneDepartmentMappings.spec.ts",
-              "cp6.web/src/views/pms/StandaloneDepartmentMappings.vue",
-              "cp6.web/src/views/wms/CrossDockOwner.spec.ts",
-              "cp6.web/src/views/wms/CrossDockView.vue",
-              "docs/development/07-detailed-tasks.md",
-              "docs/development/09-parallel-development.md",
-              "docs/development/dispatch/20261023-wave85/README.md",
-              "docs/development/evidence/W85-01/DELIVERY.md",
-              "docs/development/planning/20261022-seven-day-delivery.md",
-              "docs/development/roadmap.json",
-              "docs/project-memory/05-Completed.md",
-              "docs/project-memory/06-Todo.md",
-              "docs/project-memory/CHANGELOG-AI.md",
-              "docs/project-memory/PROJECT_STATE.md"
-            ],
-            "observed_at": "2026-10-23T23:09:39.563966+00:00"
-          },
-          "handoff_delivery_ref": {
-            "commit": "b861a9a3137f3f9c9d1c7a7ff860119a5739a146",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T230956Z-wave85-delivery/MESSAGE.md",
-            "at": "2026-10-23T23:09:56.396800+00:00",
-            "base": "codex/t02c-entry-handoff-20260921",
-            "branch": "codex/w85-handoff"
-          },
-          "resources_released": false,
-          "lifecycle_snapshot": {
-            "handoff_branch_deleted": true,
-            "handoff_seat_released": true,
-            "main_task": "CP6:BUG-474-CROSSDOCK-OWNER",
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave85-final-verification.json"
-          }
+          "worker_delivery_ref": "docs/development/evidence/W86-01/DELIVERY.md",
+          "validation": "19独立.NET用例（15原生PG、3既有非PG库位优化行为、1两租户启动种子）及22Vue用例通过，无跳过；相关构建和vue-tsc通过",
+          "runtime_resources_released": true
         }
       ],
       "horizon": {
-        "started_at": "2026-10-23T22:56:48.790339+00:00",
+        "started_at": "2026-10-23T23:14:47.717649+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
           35,
@@ -187633,30 +187660,8 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Finish same-branch Main ledger PR/lifecycle, close Issue474 on proof; continue seven-day remaining direct prerequisites",
-      "validation": "18独立.NET用例（15原生PG、2既有非PG越库行为、1两租户启动种子）及21Vue用例通过，无跳过；相关构建和vue-tsc通过",
-      "handoff_delivery_ref": {
-        "commit": "b861a9a3137f3f9c9d1c7a7ff860119a5739a146",
-        "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T230956Z-wave85-delivery/MESSAGE.md",
-        "at": "2026-10-23T23:09:56.396800+00:00",
-        "base": "codex/t02c-entry-handoff-20260921",
-        "branch": "codex/w85-handoff"
-      },
-      "handoff_integration": {
-        "result": "PASS",
-        "repository": "GTX537/CP6.AI-Handoff",
-        "source": "b861a9a3137f3f9c9d1c7a7ff860119a5739a146",
-        "main": "7fdc5d18e71fc49a0c11b7406f1044727f721abf",
-        "target": "codex/t02c-entry-handoff-20260921",
-        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/61",
-        "paths": [
-          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T225827Z-wave85-start/MESSAGE.md",
-          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T230956Z-wave85-delivery/MESSAGE.md",
-          "handoffs/CP6-DEV-20261012/waves/20261023-wave85.md"
-        ],
-        "observed_at": "2026-10-23T23:10:47.429768+00:00"
-      },
-      "lifecycle_complete": false
+      "next_action": "Main product adoption, Handoff delivery, same-task lifecycle close and continue seven-day goal",
+      "validation": "19独立.NET用例（15原生PG、3既有非PG库位优化行为、1两租户启动种子）及22Vue用例通过，无跳过；相关构建和vue-tsc通过"
     },
     "wave_history": [
       {
@@ -200647,6 +200652,158 @@
         "final_main_sha": "25d00d7773d60e448ab8d4c37450ad6f81a3cb31",
         "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave84-final-verification.json",
         "closed_issue": "GTX537/CP6#471"
+      },
+      {
+        "id": "20261023-wave85",
+        "path": "docs/development/dispatch/20261023-wave85/README.md",
+        "baseline_sha": "25d00d7773d60e448ab8d4c37450ad6f81a3cb31",
+        "registered_at": "2026-10-23T22:58:27.550875+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W85-01",
+            "task_id": "WP02-03",
+            "title": "越库历史观察独立Owner与旧写入口围栏",
+            "lifecycle_task": "BUG-474-CROSSDOCK-OWNER",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "actual_start_ref": {
+              "commit": "559e17c2e8bdd1818454c5aa267602795f4e4ff0",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T225827Z-wave85-start/MESSAGE.md",
+              "at": "2026-10-23T22:58:27.550875+00:00"
+            },
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/bug-474-crossdock-owner",
+            "planned_scope_ref": "docs/development/dispatch/20261023-wave85/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/bbf9ae10322d880f68380bdaddc8435280ff7895/docs/development/evidence/W85-01/DELIVERY.md",
+            "validation": "18独立.NET用例（15原生PG、2既有非PG越库行为、1两租户启动种子）及21Vue用例通过，无跳过；相关构建和vue-tsc通过",
+            "runtime_resources_released": true,
+            "candidate_integrated": true,
+            "integration": {
+              "result": "PASS",
+              "repository": "GTX537/CP6",
+              "source": "a8e2e8a098c3a8ad9e713cd5f8f8c789270631cc",
+              "main": "bbf9ae10322d880f68380bdaddc8435280ff7895",
+              "target": "main",
+              "pr": "https://github.com/GTX537/CP6/pull/475",
+              "paths": [
+                "CP6.Core/Services/Integration/OperationsAccessV1.CrossDock.cs",
+                "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
+                "CP6.Core/Services/Sys/IamStandaloneDepartmentMappingV1.cs",
+                "CP6.Core/Services/Wms/CrossDockService.Owner.cs",
+                "CP6.Core/Services/Wms/CrossDockService.cs",
+                "CP6.Core/Services/Wms/ICrossDockService.cs",
+                "CP6.Entity/DTOs/Wms/CrossDockOwnerV1.cs",
+                "CP6.Persistence.PostgreSql/Migrations/Core/20261023230000_CrossDockDepartmentOwnerV1.cs",
+                "CP6.Tests/Erp/CrossDockOwnerPostgreSqlTests.cs",
+                "CP6.Tests/MesPermissionSeedTests.cs",
+                "CP6.WebApi/Controllers/Wms/CrossDockController.cs",
+                "CP6.WebApi/Program.cs",
+                "CP6.WebApi/Seed/WmsPermissionSeed.cs",
+                "cp6.web/src/api/sys/iam.ts",
+                "cp6.web/src/api/wms/logistics.ts",
+                "cp6.web/src/types/wms/crossDockOwner.ts",
+                "cp6.web/src/views/pms/StandaloneDepartmentMappings.spec.ts",
+                "cp6.web/src/views/pms/StandaloneDepartmentMappings.vue",
+                "cp6.web/src/views/wms/CrossDockOwner.spec.ts",
+                "cp6.web/src/views/wms/CrossDockView.vue",
+                "docs/development/07-detailed-tasks.md",
+                "docs/development/09-parallel-development.md",
+                "docs/development/dispatch/20261023-wave85/README.md",
+                "docs/development/evidence/W85-01/DELIVERY.md",
+                "docs/development/planning/20261022-seven-day-delivery.md",
+                "docs/development/roadmap.json",
+                "docs/project-memory/05-Completed.md",
+                "docs/project-memory/06-Todo.md",
+                "docs/project-memory/CHANGELOG-AI.md",
+                "docs/project-memory/PROJECT_STATE.md"
+              ],
+              "observed_at": "2026-10-23T23:09:39.563966+00:00"
+            },
+            "handoff_delivery_ref": {
+              "commit": "b861a9a3137f3f9c9d1c7a7ff860119a5739a146",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T230956Z-wave85-delivery/MESSAGE.md",
+              "at": "2026-10-23T23:09:56.396800+00:00",
+              "base": "codex/t02c-entry-handoff-20260921",
+              "branch": "codex/w85-handoff"
+            },
+            "resources_released": true,
+            "lifecycle_snapshot": {
+              "handoff_branch_deleted": true,
+              "handoff_seat_released": true,
+              "main_task": "CP6:BUG-474-CROSSDOCK-OWNER",
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave85-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-23T22:56:48.790339+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            35,
+            55
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "库位优化历史观察独立Owner与旧写入口围栏",
+        "validation": "18独立.NET用例（15原生PG、2既有非PG越库行为、1两租户启动种子）及21Vue用例通过，无跳过；相关构建和vue-tsc通过",
+        "handoff_delivery_ref": {
+          "commit": "b861a9a3137f3f9c9d1c7a7ff860119a5739a146",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T230956Z-wave85-delivery/MESSAGE.md",
+          "at": "2026-10-23T23:09:56.396800+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w85-handoff"
+        },
+        "handoff_integration": {
+          "result": "PASS",
+          "repository": "GTX537/CP6.AI-Handoff",
+          "source": "b861a9a3137f3f9c9d1c7a7ff860119a5739a146",
+          "main": "7fdc5d18e71fc49a0c11b7406f1044727f721abf",
+          "target": "codex/t02c-entry-handoff-20260921",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/61",
+          "paths": [
+            "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T225827Z-wave85-start/MESSAGE.md",
+            "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T230956Z-wave85-delivery/MESSAGE.md",
+            "handoffs/CP6-DEV-20261012/waves/20261023-wave85.md"
+          ],
+          "observed_at": "2026-10-23T23:10:47.429768+00:00"
+        },
+        "lifecycle_complete": true,
+        "actual_agent_minutes": 16.82,
+        "preflight_estimate_minutes": 2,
+        "branches_deleted": true,
+        "seats_released": true,
+        "final_main_sha": "a32182de95bf392d3c9e4705b84720cc39f62909",
+        "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave85-final-verification.json",
+        "closed_issue": "GTX537/CP6#474"
       }
     ],
     "development_priority": {
@@ -200723,8 +200880,8 @@
           "id": "D2",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W85-01",
-          "prerequisite_adjustment": "Issue474 bounded historical cross-dock observation/current authority; full staged source orchestration remains WP10-32 UNPROVEN.",
+          "current_window": "W86-01",
+          "prerequisite_adjustment": "Issue477 bounded slotting history current Owner and opaque source disclosure; full WP10-28/29 remains UNPROVEN.",
           "adopted_window": "W42-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/395",
           "report": "docs/development/evidence/WP02-03/standalone-department/DELIVERY.md",
@@ -200733,7 +200890,7 @@
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "Cross-dock historical observation current Owner adopted; full R2 IN/OUT source adoption and acceptance remain unproven. Continue remaining independent Owners and D5/D6 real prerequisites."
+          "next_action": "库位优化历史观察独立Owner与旧写入口围栏"
         },
         {
           "id": "D3",

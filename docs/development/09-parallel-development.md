@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W86库位优化历史观察Owner](dispatch/20261023-wave86/README.md)，本聊天单人，Issue477；W37–W85已finish，不重复。
+
 > 当前：[W85越库历史观察Owner](dispatch/20261023-wave85/README.md)，本聊天单人，Issue474；W37–W84已finish，不重复。
 
 > 当前：[W84批次追溯与召回标记Owner](dispatch/20261023-wave84/README.md)，本聊天单人，Issue471；W37–W83已finish，不重复。
