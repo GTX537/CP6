@@ -29,3 +29,9 @@ COORD本聊天单人；2026-10-22T11:02:33.333510+00:00；Main基线`3f75fcff219
 库存原操作同事务Outbox、私有受信后台及原编号恢复已验证；22项去重相关.NET/真实PostgreSQL通过，含实际Program/登录/HTTP/WebSocket、共同事务与原编号恢复；无前端改动，未重复前端或全仓验证。真实UNKNOWN保留，SignalR确认不等于客户端ACK/Finance。产品PR/Handoff及准确分支/席位finish待执行。
 
 [DELIVERY](../../evidence/WP02-10/stock-outbox/DELIVERY.md)。
+
+## close
+
+产品[PR](https://github.com/GTX537/CP6/pull/416)及[Handoff](https://github.com/GTX537/CP6.AI-Handoff/pull/26)采用，source`68a0ecaad7c900ddb1beea591738b6a14457c9be`、远端main`e084e873c7a80dd9023d2f3bce137ecd2554b799`，24任务文件blob一致；Handoff source`bab3da6d4cb12b1f717781ea6200301058f7640e`、目标`9a1c8a0d9a101db87baece381e25e5ef996acb93`，准确分支删除/DEV-2释放。
+
+[DELIVERY](../../evidence/WP02-10/stock-outbox/DELIVERY.md)。
