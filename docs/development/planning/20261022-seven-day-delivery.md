@@ -572,3 +572,21 @@ CRM [PR115](https://github.com/GTX537/CP6.CRM/pull/115)已采用，source `01c40
 此为准备版本父图；完整BundleIdentity/ConfigurationView、真实Owner当前身份/字段/对象最终共同门、audit/outbox、Preview/Activate/publicAttempt、隐私保留及Program/HTTP仍待接，CanAuthorize/CanActivate仍false。Issue109保持OPEN。无新包、既有环境迁移、Actions或部署；24/375整卡、125目标0交付、247运行NOT_RUN保持，七天目标ACTIVE。W51指定停止data删除被自动审批拒绝原因为blocked by policy，保留不重试。
 
 Handoff [PR51](https://github.com/GTX537/CP6.AI-Handoff/pull/51)已采用 `752b6a1365dc1dc93917ce16737941b3b708e4e4`，准确分支删除、固定树干净detached、finish释放。Main仅剩协调PR/finish，不提前声明释放。登记开工至此约16.44min，原预算35–55min，最终以finish为准、子任务不重复累计；前置只读核对约2min。
+
+## 2026-10-23：W75全部收尾 / W76不可变Draft Bundle
+
+W75 CRM115/Main456/Handoff51全部采用，33独立PG通过，实际18.14min＋前置2min，三分支删除、固定树干净detached、全部席位释放。[W76](../dispatch/20261023-wave76/README.md)保存实际父图派生的Draft Bundle身份、内容及完整ConfigurationView，预计40–65min，独立前置约2min；真实Owner/audit/outbox、激活及公开受理仍待接，七天目标ACTIVE。
+
+## W76实际交付
+
+CRM [PR116](https://github.com/GTX537/CP6.CRM/pull/116)已采用，source `631734a0ac4c620226c989b71a4ce1b710db55f3`，远端main `5deac62fc4d00a731b5d2dea79877572dc39a49b`，11条任务路径exact blob核对通过。[单份产品报告](https://github.com/GTX537/CP6.CRM/blob/5deac62fc4d00a731b5d2dea79877572dc39a49b/docs/development/evidence/W76-01/DELIVERY.md)。25项独立本轮PG用例通过，无跳过，相关API/必要依赖构建通过；真实Owner业务验收NOT_RUN，无Actions。
+
+新增实际三版本父图派生的不可变Draft Bundle、完整BundleIdentity/ConfigurationView及规范内容持久化，五个tenant-qualified FK与原生父图guard共同核查。版本保原token/完整规范键，每Form真实行Gate唯一；保年0000/闰秒/任意小数精度、合法ETag原文及原告知文本/UTF8摘要，NFC视图不替代操作原文。
+
+读取重建核对27列、实际父关系与所有内容摘要；DTO返回副本。新内容用继任Bundle保旧历史；混合隔离、同ID并发/取消、原生多行重复原子拒绝通过。W68稳定槽先取得后回调分配UUID/保存，回滚及后续SQL错误共同撤销，重放原视图/ETag且不再次分配。合成原结果字节测试不宣称生产加密采用。
+
+最终24+1=25独立PG通过，初始三项未实现红灯保留，产品代码未变时复用先前24项结果；一次作者SPEC/QUALITY无剩余阻断。自有PG55444正常停止，数据/日志/TRX保留。CRM准确任务分支删除、固定树干净detached、finish释放。
+
+这仅是Draft Bundle持久化；真实configuration.save/read Owner的身份/对象/字段最终共同门、创建事实来源、audit/outbox、Preview/Activate状态机和批准、公开Attempt/受理、隐私保留及Program/HTTP仍待接。CanAuthorize/CanActivate/CanIssueAttempt仍false，Issue109保持OPEN。无新包、既有环境迁移、Actions或部署；24/375整卡、125目标0交付、247运行NOT_RUN保持，七天目标ACTIVE。W51指定停止data删除被自动审批以blocked by policy拒绝，保留不重试。
+
+Handoff [PR52](https://github.com/GTX537/CP6.AI-Handoff/pull/52)已采用 `77878b85bdc71d93d93ff8975951879668b4e8ee`，准确分支删除、固定树干净detached、finish释放。Main仅剩协调PR/finish，不提前声明释放。登记开工至此约13.32min，原预算40–65min，最终以finish为准、子任务不重复累计；前置只读核对约2min。

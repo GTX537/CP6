@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-23：W76不可变Draft Bundle已采用
+
+CRM PR116/source `631734a0ac4c620226c989b71a4ce1b710db55f3`已采用远端main `5deac62fc4d00a731b5d2dea79877572dc39a49b`；25项独立本地PG用例通过，无跳过；相关API/必要依赖构建通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/5deac62fc4d00a731b5d2dea79877572dc39a49b/docs/development/evidence/W76-01/DELIVERY.md)。不可变Draft Bundle和完整身份/视图/规范内容已持久化，混合隔离原生Gate及稳定槽回滚/原结果重放零再分配已实测；继任历史和告知原文边界通过，CRM Issue109保持开放；真实Owner/audit/outbox、激活生命周期与公开受理待接。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main协调PR/finish待收尾。七天目标ACTIVE，完整业务验收不提升。
+
 ## 2026-10-23：W75精确来源版本联结已采用
 
 CRM PR115/source `01c40f6d2e0d47ff80fa88af2ac39c99e1e3137f`已采用远端main `318661183a8c9e72c4a5b1f2bfa1e5512d4495cf`；33项独立本地PG用例通过，无跳过；相关API/必要依赖构建通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/318661183a8c9e72c4a5b1f2bfa1e5512d4495cf/docs/development/evidence/W75-01/DELIVERY.md)。显式精确Intake/Calendar来源版本及实际三版本父图已采用，混合隔离原生Gate和三版本/W68原结果共同事务已实测；就绪自调用失败已修复并保留记录，CRM Issue109保持开放；完整Owner/Bundle/audit/outbox与公开受理待接。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main协调PR/finish待收尾。七天目标ACTIVE，完整业务验收不提升。
