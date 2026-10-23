@@ -192,3 +192,19 @@ Handoff [PR28](https://github.com/GTX537/CP6.AI-Handoff/pull/28)已采用 `791c5
 Main驱动集中审查后补充：本次独立结果目录必须含唯一指定测试且Passed，不能以子进程exit0或旧TRX冒充执行；finally恢复共享夹具原始值。只复测受影响真实跨仓驱动，`D:\CP6-local-test\wave52\foundation\baseline-driver-review-regression-20261023T021904Z.log`及子进程`D:\CP6-local-test\wave52\foundation\cross-results\b94359c995f34685930eeb6b4bab1929\actual-main-crm.trx`均通过；CRM已采用产品代码/依赖未改，其其余成功结果直接复用。新增隔离PG也在收尾前停止。
 
 登记开工至此约43.05min，包含同一实际期间内的Issue419修复及串行席位切换，不重复累计子任务时长；此前只读前置核对另约6min。预计90–150min只是开工预算，最终actual以finish记录核定。下一轮继续D5 PG Published/投影与PreCheckpoint必要前置，七天目标ACTIVE。
+
+## 2026-10-23：W52全部收尾 / W53当前身份投影
+
+W52 CRM97/Handoff28/Main421及BUG419 PR420采用；12个CRM用例/一个Main驱动（与子用例同场景）通过，另复用6项Main验证。登记48.35min、前置约6min；准确分支删除、固定树干净detached、席位释放。[W53](../dispatch/20261023-wave53/README.md)本聊天继续PG当前投影、租约/CAS和依赖图，预计80–130min。缺PreCheckpoint仍不产生Allow，七天目标ACTIVE。
+
+## W53实际交付
+
+CRM [PR98](https://github.com/GTX537/CP6.CRM/pull/98)已采用，source `796ef79442eb718ad311256b8f0e2598f2c3e104`，远端main `7c74f9c9471415df4f4f6429671b8665fafbb4cb`，13任务路径exact blob核对通过。[单份产品报告](https://github.com/GTX537/CP6.CRM/blob/7c74f9c9471415df4f4f6429671b8665fafbb4cb/docs/development/evidence/W53-01/DELIVERY.md)。22个不同相关本地用例通过：7个原生PG投影/事务、4个依赖图、9个W52基线、2个会话回归；W52未变Main协议证据复用；无Actions、非完整Owner验收。
+
+PG当前引用指向W52不可变原始Items，防降版/同版覆盖；冲突同事务记录并关闭图读取，缺目录项为Unavailable。调用方Serializable事务内保存原始证据/已支持token撤权/引用/状态，savepoint错误撤回半套效果；2分钟原生租约及attempt/revision CAS阻止迟到完成。原生引用写入也使旧ticket失效。独立typed依赖图不伪造SQL RowVersion，保留完整合法角色/字段/时刻精度；图只供PendingInspection，CanAuthorize=false。
+
+一次作者SPEC/QUALITY审查通过，最后补充实际中途数据库异常且上层catch后commit的回滚用例；所有失败日志保留。自有PG已核身份和零外部会话后停止，数据/证据保留，不重试W51被自动审批拒绝的准确删除。CRM准确本地/远端分支删除，固定工作区干净detached，manage finish释放后DEV-2复用Handoff。
+
+正式Platform0.10.3 Inbox/PreCheckpoint全早退、历史一致性与AuthoritySelection、完整持久Published/当前授权、所有writer最终门、真实Owner共同事务和Program采用仍待后续。W51行fence不冒充七阶段锁协议；ObservedAtUtc只是本地应用时间。无现有环境切换/生产部署，不提升24/375整卡、125目标0交付或247运行NOT_RUN。七天目标ACTIVE，继续D5。
+
+Handoff [PR29](https://github.com/GTX537/CP6.AI-Handoff/pull/29)已采用 `80737129714840a079cde5ea7a015ff2b4f4a016`，准确本地/远端分支删除、工作区干净detached、finish释放。Main仅剩当前协调分支正常PR及finish，不提前声明释放。登记开工至此约25.90min，原预算80–130min，实际最终时长以finish为准，不重复累计子任务。此前只读核对约2min。

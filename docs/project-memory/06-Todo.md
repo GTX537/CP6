@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-23：W53当前身份投影已采用
+
+CRM PR98/source `796ef79442eb718ad311256b8f0e2598f2c3e104`已采用远端main `7c74f9c9471415df4f4f6429671b8665fafbb4cb`；22项相关本地验证通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/7c74f9c9471415df4f4f6429671b8665fafbb4cb/docs/development/evidence/W53-01/DELIVERY.md)。PG当前引用防回退、冲突关闭、原生租约/CAS和只读依赖图已落实；PendingInspection不形成Allow。CRM/Handoff准确分支删除、固定树干净detached、finish释放，Main当前协调分支待最终PR/finish。正式PreCheckpoint/完整Published/所有writer最终门及Owner共同事务继续D5，整卡/完整目标/真实验收不提升；七天目标ACTIVE。
+
 ## 2026-10-23：BUG419身份目录当前迁移兼容
 
 [Issue419](https://github.com/GTX537/CP6/issues/419)修复已完成6项相关本地PG验证与集中作者审查。身份目录精确准入现行迁移14个业务函数，保留原ACL/拒绝未知与危险定义；[交付报告](../development/evidence/BUG-419/DELIVERY.md)。PR420已核对远端采用，BUG分支删除/DEV-1释放并resume原W52分支；Issue已在实际跨仓联通复测后关闭。继续W52 CRM完整原始基线。七天目标ACTIVE，不提升完整125目标/247运行验收。
