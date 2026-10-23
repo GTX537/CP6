@@ -172,3 +172,7 @@ CRM [PR96](https://github.com/GTX537/CP6.CRM/pull/96)已正常合并，source `8
 ## 资料采用与实际生命周期
 
 Handoff [PR27](https://github.com/GTX537/CP6.AI-Handoff/pull/27)已采用`db5a5c486e46aaf9944df812d036c33ddb086ef8`，准确任务分支已删除、固定树干净detached、finish释放；CRM PR96同样完成准确分支删除及finish，DEV-2串行bind/resume全过程未超额。Main仅剩本协调分支正常PR和finish；当前记录不预先声明Main已释放。最终proof为`C:/Users/tt/CP6-planning-reports/20261017-foundation/wave51-final-verification.json`。本轮登记开工至此约23.17分钟，前置只读核对另约8分钟；最终实际耗时随finish核定。下一轮继续CRM真实PG基线/投影/前置检查，七天目标ACTIVE。
+
+## 2026-10-23：W51全部收尾 / W52真实身份基线
+
+W51 CRM96/Handoff27/Main418已采用；14项相关PG/.NET通过，登记25.51min、前置约8.36min；准确分支删除、固定树干净detached、席位释放。[W52](../dispatch/20261023-wave52/README.md)本聊天继续CRM原始完整基线与PG证据，预计90–150min。完整Published/PreCheckpoint/Owner授权仍待后续，七天目标ACTIVE。

@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-23：W51全部收尾 / W52真实身份基线
+
+W51 CRM96/Handoff27/Main418已采用；14项相关PG/.NET通过，登记25.51min、前置约8.36min；准确分支删除、固定树干净detached、席位释放。[W52](../development/dispatch/20261023-wave52/README.md)本聊天继续CRM原始完整基线与PG证据，预计90–150min。完整Published/PreCheckpoint/Owner授权仍待后续，七天目标ACTIVE。
+
 ## 2026-10-23：W51 CRM PostgreSQL会话基础已合并
 
 CRM PR96/source `83017508cb2c4a702ab8f5fb3bb62d73d12c96af`已采用远端main `48be253dfe3c4b451a9be7eaf9b7ef5f1199086a`；14项相关PG/.NET通过，一次作者审查完成。[单份交付](https://github.com/GTX537/CP6.CRM/blob/48be253dfe3c4b451a9be7eaf9b7ef5f1199086a/docs/development/evidence/W51-01/DELIVERY.md)详列原生CAS/撤权共同事务和剩余身份门。现有Program尚未切PG；完整卡/125目标/247运行不提升。自有PG已停止，测试data 76,150,437字节因自动审批拒绝准确删除而保留，无绕过。CRM PR96与Handoff PR27均已完成准确分支删除、工作区干净detached和finish释放；Main本协调分支最后合并/finish后继续D5，七天目标ACTIVE。
