@@ -45,7 +45,7 @@
 | [WP02-13 审计写入、授权查询和保留清理](../../docs/development/task-plans/WP02.md#wp02-13) | Main | 待安排 | WP02-10 | CODE / M | COORD / W64-01 |
 | [WP02-14 文件不可变版本、扫描和Owner授权绑定](../../docs/development/task-plans/WP02.md#wp02-14) | Main | 待安排 | WP02-10 | CODE / M | 未领取 |
 | [WP02-15 隐私subject目录、导出与擦除编排](../../docs/development/task-plans/WP02.md#wp02-15) | Main | 待安排 | WP02-04, WP02-13, WP02-14 | CODE / M | 未领取 |
-| [WP02-16 编号原命令分配和生成器安全预览](../../docs/development/task-plans/WP02.md#wp02-16) | Main | 待安排 | WP02-10 | CODE / M | D / WP02-16 第九轮 代码生成器安全即时预览 |
+| [WP02-16 编号原命令分配和生成器安全预览](../../docs/development/task-plans/WP02.md#wp02-16) | Main | 待安排 | WP02-10 | CODE / M | COORD / W65-01 |
 | [WP02-17 多语言维护、发布CAS与客户端精确缓存](../../docs/development/task-plans/WP02.md#wp02-17) | Main | 待安排 | WP02-10, WP02-14 | CODE / M | 未领取 |
 | [WP02-18 工作台菜单CAS与授权KPI查询](../../docs/development/task-plans/WP02.md#wp02-18) | Main | 待安排 | WP02-03 | CODE / M | D / WP02-18 第十三轮 菜单保存后的列表与当前浏览器导航刷新恢复 |
 | [WP02-19 客户端激活、nonce与身份完成门](../../docs/development/task-plans/WP02.md#wp02-19) | Main | 待安排 | WP02-03, WP02-04 | CODE / M | 未领取 |

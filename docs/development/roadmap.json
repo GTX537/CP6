@@ -159677,6 +159677,16 @@
       "date": "2026-10-23",
       "change": "W64 Main434 exact adoption and Handoff delivery verified; 27.NET/6UI passed. Handoff branch deleted and seat released; same Main task final finish pending. Full acceptances unchanged.",
       "evidence": "https://github.com/GTX537/CP6/blob/a8a31bccdb57fb3a9a87da5aadb99be7b1673653/docs/development/evidence/W64-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "W64 lifecycle complete34.35min; W65 Issue436 PostgreSQL Pub sequence serialization admitted; seven-day ACTIVE.",
+      "evidence": "docs/development/dispatch/20261023-wave65/README.md"
+    },
+    {
+      "date": "2026-10-23",
+      "change": "W65 Issue436 native Pub sequence verified:8PG passed plus4unchanged legacy cases reused. Full Owner and acceptance unchanged; adoption and finish pending.",
+      "evidence": "docs/development/evidence/W65-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -168671,7 +168681,7 @@
         "worker_delivery_received": true,
         "candidate_review_completed": true,
         "candidate_integrated": true,
-        "resources_released": false,
+        "resources_released": true,
         "full_task_completed": false,
         "issue": "https://github.com/GTX537/CP6/issues/433",
         "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/a8a31bccdb57fb3a9a87da5aadb99be7b1673653/docs/development/evidence/W64-01/DELIVERY.md",
@@ -168684,7 +168694,8 @@
           "at": "2026-10-23T11:43:02.185390+00:00",
           "base": "codex/t02c-entry-handoff-20260921",
           "branch": "codex/w64-handoff"
-        }
+        },
+        "lifecycle_complete": true
       },
       "blockers": [],
       "validation_evidence": [],
@@ -168701,7 +168712,7 @@
         "business_acceptance": "NOT_RUN",
         "adopted_scope": "Current Owner field history projection; first Machine Status/ActiveFlg only; all raw fallback closed",
         "issue": "https://github.com/GTX537/CP6/issues/433",
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "source_candidate_sha": "183750bc45f39ce81499a11411914d3cf46de3aa",
         "remote_main_sha": "a8a31bccdb57fb3a9a87da5aadb99be7b1673653",
         "pull_request": "https://github.com/GTX537/CP6/pull/434",
@@ -168716,11 +168727,15 @@
           "handoff_branch_deleted": true,
           "handoff_seat_released": true,
           "main_task": "CP6:BUG-433-FIELD-AUDIT-OWNER",
-          "main_finish_required": true,
-          "main_seat_released": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave64-final-verification.json"
         },
-        "test_data_disposition": "Two owned PostgreSQL clusters stopped; data and logs retained"
+        "test_data_disposition": "Two owned PostgreSQL clusters stopped; data and logs retained",
+        "actual_agent_minutes": 34.35,
+        "final_main_sha": "4b129632448409a6bcd713b295cf87b7a5b972e3",
+        "branches_deleted": true,
+        "seats_released": true
       }
     },
     {
@@ -168811,49 +168826,48 @@
       "card_anchor": "wp02-16",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "D / WP02-16 第九轮 代码生成器安全即时预览",
+        "chat_label": "COORD / W65-01",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/wp02-16-codegen-preview-20261015",
-        "worktree": "D:/CP6-worktrees/wp02-16-codegen-preview-20261015",
-        "claimed_at": "2026-10-15T15:10:23.577941+00:00",
-        "baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
-        "coordination_baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
-        "entry_evidence": "docs/development/dispatch/20261015-wave9/WP02-16.md",
-        "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
-        "dispatch_scope": "PURE_CODEGEN_PREVIEW_ONLY",
-        "bounded_window_gate": "CLOSED",
+        "branch": "codex/bug-436-pub-seq-atomic",
+        "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+        "claimed_at": "2026-10-23T11:58:26.172254+00:00",
+        "baseline_sha": "4b129632448409a6bcd713b295cf87b7a5b972e3",
+        "entry_evidence": "docs/development/dispatch/20261023-wave65/README.md",
+        "phase": "CANDIDATE_VERIFIED",
+        "dispatch_scope": "W65_01",
+        "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
+        "actual_start_ref": {
+          "commit": "82fe76dbf96787eefbe40f0b6c117f882400a1a1",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-16/messages/20261023T120101Z-wave65-start/MESSAGE.md",
+          "at": "2026-10-23T12:01:01.627430+00:00"
+        },
         "allowed_write_paths": [
-          "CP6.Core/Services/Pub/CodeGenService.cs",
-          "CP6.Core/Services/Pub/CodeGenPreview*.cs",
-          "CP6.WebApi/Controllers/Pub/CodeGenController.cs",
-          "CP6.Web/src/api/pub/codegen.ts",
-          "CP6.Web/src/views/pms/CodeGenView.vue",
-          "CP6.Tests/CodeGenServiceTests.cs",
-          "CP6.Tests/CodeGenPreview*.cs",
-          "docs/development/evidence/WP02-16/codegen-preview/"
+          "CP6.Core/Services/Pub/SeqService.cs",
+          "CP6.Core/Services/Pub/ISeqService.cs",
+          "CP6.Tests/Seq*",
+          "docs/development/",
+          "docs/project-memory/"
         ],
         "reserved_write_resources": [
-          "Main:codegen-preview"
+          "Main:numbering"
         ],
-        "reserved_postgresql_ports": [],
-        "handoff_branch": "codex/dev-handoff-wp02-16",
+        "reserved_postgresql_ports": [
+          55435
+        ],
+        "handoff_branch": "codex/w65-handoff",
         "actions_authorized": false,
-        "formal_publication_authorized": false,
-        "delivery_report": "docs/development/evidence/WP02-16/codegen-preview/DELIVERY.md",
-        "worker_start_ref": {
-          "commit": "c3da88a0cf1d273e29c0137e6528673294ed753b",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-16/messages/20261015T155054Z-start/MESSAGE.md"
-        },
-        "coordinator_received_at": "2026-10-16T12:19:07.591973+00:00",
-        "execution_baseline_sha": "37d84b4b6eaeefe7e8b35c21df26a8b1f8c119d5",
-        "handoff_delivery": {
-          "commit": "ed160beda640640a7fda6f6f7a8e18285d909c83",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-16/messages/20261016T115200Z-delivery/MESSAGE.md"
-        },
-        "window_closed_at": "2026-10-16T12:20:03.123557+00:00"
+        "deployment_authorized": false,
+        "existing_database_migration_authorized": false,
+        "worker_delivery_received": true,
+        "candidate_review_completed": true,
+        "candidate_integrated": false,
+        "resources_released": false,
+        "full_task_completed": false,
+        "issue": "https://github.com/GTX537/CP6/issues/436",
+        "worker_delivery_ref": "docs/development/evidence/W65-01/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -168880,6 +168894,63 @@
         "remote_main_sha": "28839d413c02fafcfa98ca9b26eb342aa7a61776",
         "integrated_source_sha": "3b44bf09f18faa1db280a6ad5279a2a3171a66d3",
         "remote_verified_at": "2026-10-16T12:20:03.123557+00:00"
+      },
+      "assignment_history": [
+        {
+          "chat_label": "D / WP02-16 第九轮 代码生成器安全即时预览",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/wp02-16-codegen-preview-20261015",
+          "worktree": "D:/CP6-worktrees/wp02-16-codegen-preview-20261015",
+          "claimed_at": "2026-10-15T15:10:23.577941+00:00",
+          "baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
+          "coordination_baseline_sha": "3a975dd39611f2911f02f2413fbb21419261af23",
+          "entry_evidence": "docs/development/dispatch/20261015-wave9/WP02-16.md",
+          "phase": "BOUNDED_IMPLEMENTATION_INTEGRATED",
+          "dispatch_scope": "PURE_CODEGEN_PREVIEW_ONLY",
+          "bounded_window_gate": "CLOSED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "allowed_write_paths": [
+            "CP6.Core/Services/Pub/CodeGenService.cs",
+            "CP6.Core/Services/Pub/CodeGenPreview*.cs",
+            "CP6.WebApi/Controllers/Pub/CodeGenController.cs",
+            "CP6.Web/src/api/pub/codegen.ts",
+            "CP6.Web/src/views/pms/CodeGenView.vue",
+            "CP6.Tests/CodeGenServiceTests.cs",
+            "CP6.Tests/CodeGenPreview*.cs",
+            "docs/development/evidence/WP02-16/codegen-preview/"
+          ],
+          "reserved_write_resources": [
+            "Main:codegen-preview"
+          ],
+          "reserved_postgresql_ports": [],
+          "handoff_branch": "codex/dev-handoff-wp02-16",
+          "actions_authorized": false,
+          "formal_publication_authorized": false,
+          "delivery_report": "docs/development/evidence/WP02-16/codegen-preview/DELIVERY.md",
+          "worker_start_ref": {
+            "commit": "c3da88a0cf1d273e29c0137e6528673294ed753b",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-16/messages/20261015T155054Z-start/MESSAGE.md"
+          },
+          "coordinator_received_at": "2026-10-16T12:19:07.591973+00:00",
+          "execution_baseline_sha": "37d84b4b6eaeefe7e8b35c21df26a8b1f8c119d5",
+          "handoff_delivery": {
+            "commit": "ed160beda640640a7fda6f6f7a8e18285d909c83",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-16/messages/20261016T115200Z-delivery/MESSAGE.md"
+          },
+          "window_closed_at": "2026-10-16T12:20:03.123557+00:00"
+        }
+      ],
+      "wave65_delivery": {
+        "status": "CANDIDATE_VERIFIED",
+        "report": "docs/development/evidence/W65-01/DELIVERY.md",
+        "validation": "8项原生PostgreSQL用例通过，4项未受改动的原Seq用例复用先前通过结果；12项独立用例无跳过，相关Main构建通过",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "adopted_scope": "Native PostgreSQL Pub sequence current-rule serialization; legacy operation receipt and full Owner remain absent",
+        "issue": "https://github.com/GTX537/CP6/issues/436",
+        "lifecycle_complete": false
       }
     },
     {
@@ -185940,11 +186011,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261023-wave64",
-      "path": "docs/development/dispatch/20261023-wave64/README.md",
-      "baseline_sha": "b23e5e111d1f1f77936a76a74ff6acfb707bd067",
-      "registered_at": "2026-10-23T11:27:59.800088+00:00",
-      "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
+      "id": "20261023-wave65",
+      "path": "docs/development/dispatch/20261023-wave65/README.md",
+      "baseline_sha": "4b129632448409a6bcd713b295cf87b7a5b972e3",
+      "registered_at": "2026-10-23T12:01:01.627430+00:00",
+      "phase": "CANDIDATE_VERIFIED",
       "assigned_chats": [
         "COORD"
       ],
@@ -185956,94 +186027,44 @@
       ],
       "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": true,
-      "product_integrated": true,
+      "windows_closed": false,
+      "product_integrated": false,
       "windows": [
         {
-          "id": "W64-01",
-          "task_id": "WP02-13",
-          "title": "字段审计详情当前Owner门及首个设备安全历史映射",
-          "lifecycle_task": "BUG-433-FIELD-AUDIT-OWNER",
+          "id": "W65-01",
+          "task_id": "WP02-16",
+          "title": "PostgreSQL Pub采番当前规则串行推进修复",
+          "lifecycle_task": "BUG-436-PUB-SEQ-ATOMIC",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "CLOSED",
+          "phase": "CANDIDATE_VERIFIED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "actual_start_ref": {
-            "commit": "6c315bc1fc6be6a3b7fc5942897e9174a096e42d",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-13/messages/20261023T112759Z-wave64-start/MESSAGE.md",
-            "at": "2026-10-23T11:27:59.800088+00:00"
+            "commit": "82fe76dbf96787eefbe40f0b6c117f882400a1a1",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-16/messages/20261023T120101Z-wave65-start/MESSAGE.md",
+            "at": "2026-10-23T12:01:01.627430+00:00"
           },
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/bug-433-field-audit-owner",
-          "planned_scope_ref": "docs/development/dispatch/20261023-wave64/README.md",
+          "branch": "codex/bug-436-pub-seq-atomic",
+          "planned_scope_ref": "docs/development/dispatch/20261023-wave65/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/a8a31bccdb57fb3a9a87da5aadb99be7b1673653/docs/development/evidence/W64-01/DELIVERY.md",
-          "validation": "27项.NET相关用例与6项前端行为用例通过，无跳过；实际PostgreSQL/HTTP红灯已转绿，相关Main构建通过",
-          "runtime_resources_released": true,
-          "candidate_integrated": true,
-          "integration": {
-            "result": "PASS",
-            "repository": "GTX537/CP6",
-            "source": "183750bc45f39ce81499a11411914d3cf46de3aa",
-            "main": "a8a31bccdb57fb3a9a87da5aadb99be7b1673653",
-            "target": "main",
-            "pr": "https://github.com/GTX537/CP6/pull/434",
-            "paths": [
-              "CP6.Core/Services/Sys/FieldAuditChangesV1.cs",
-              "CP6.Core/Services/Sys/FieldAuditReadOwnerV1.cs",
-              "CP6.Tests/Erp/FieldAuditOwnerPostgreSqlTests.cs",
-              "CP6.Tests/Sys/FieldAuditChangesTests.cs",
-              "CP6.Tests/Sys/FieldAuditControllerTests.cs",
-              "CP6.WebApi/Controllers/Sys/FieldAuditController.cs",
-              "CP6.WebApi/Program.cs",
-              "CP6.WebApi/Seed/I18nSecAuditScreenSeed.cs",
-              "cp6.web/src/api/sys/fieldAudit.ts",
-              "cp6.web/src/types/sys/fieldAudit.ts",
-              "cp6.web/src/views/pms/FieldAuditOwner.spec.ts",
-              "cp6.web/src/views/pms/FieldAuditView.vue",
-              "docs/development/07-detailed-tasks.md",
-              "docs/development/09-parallel-development.md",
-              "docs/development/dispatch/20261023-wave64/README.md",
-              "docs/development/evidence/W64-01/DELIVERY.md",
-              "docs/development/planning/20261022-seven-day-delivery.md",
-              "docs/development/roadmap.json",
-              "docs/project-memory/05-Completed.md",
-              "docs/project-memory/06-Todo.md",
-              "docs/project-memory/CHANGELOG-AI.md",
-              "docs/project-memory/PROJECT_STATE.md"
-            ],
-            "observed_at": "2026-10-23T11:41:32.443550+00:00"
-          },
-          "handoff_delivery_ref": {
-            "commit": "217106e4e6cad6a23847a6b12c22e76ed6ad7e9c",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-13/messages/20261023T114302Z-wave64-delivery/MESSAGE.md",
-            "at": "2026-10-23T11:43:02.185390+00:00",
-            "base": "codex/t02c-entry-handoff-20260921",
-            "branch": "codex/w64-handoff"
-          },
-          "resources_released": false,
-          "lifecycle_snapshot": {
-            "handoff_branch_deleted": true,
-            "handoff_seat_released": true,
-            "main_task": "CP6:BUG-433-FIELD-AUDIT-OWNER",
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave64-final-verification.json"
-          }
+          "worker_delivery_ref": "docs/development/evidence/W65-01/DELIVERY.md",
+          "validation": "8项原生PostgreSQL用例通过，4项未受改动的原Seq用例复用先前通过结果；12项独立用例无跳过，相关Main构建通过",
+          "runtime_resources_released": true
         }
       ],
       "horizon": {
-        "started_at": "2026-10-23T11:20:34.497204+00:00",
+        "started_at": "2026-10-23T11:58:26.172254+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          60,
-          90
+          50,
+          80
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -186051,31 +186072,8 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Finish same-branch Main ledger PR and lifecycle; close Issue433 after verification; continue seven-day goal",
-      "validation": "27项.NET相关用例与6项前端行为用例通过，无跳过；实际PostgreSQL/HTTP红灯已转绿，相关Main构建通过",
-      "handoff_delivery_ref": {
-        "commit": "217106e4e6cad6a23847a6b12c22e76ed6ad7e9c",
-        "path": "handoffs/CP6-DEV-20261012/tasks/WP02-13/messages/20261023T114302Z-wave64-delivery/MESSAGE.md",
-        "at": "2026-10-23T11:43:02.185390+00:00",
-        "base": "codex/t02c-entry-handoff-20260921",
-        "branch": "codex/w64-handoff"
-      },
-      "handoff_integration": {
-        "result": "PASS",
-        "repository": "GTX537/CP6.AI-Handoff",
-        "source": "217106e4e6cad6a23847a6b12c22e76ed6ad7e9c",
-        "main": "1e877baa5c3ff0523db882c50b89fbd87528e1d7",
-        "target": "codex/t02c-entry-handoff-20260921",
-        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/40",
-        "paths": [
-          "handoffs/CP6-DEV-20261012/tasks/WP02-13/messages/20261023T112759Z-wave64-start/MESSAGE.md",
-          "handoffs/CP6-DEV-20261012/tasks/WP02-13/messages/20261023T114302Z-wave64-delivery/MESSAGE.md",
-          "handoffs/CP6-DEV-20261012/waves/20261023-wave64.md"
-        ],
-        "observed_at": "2026-10-23T11:47:53.403651+00:00",
-        "method": "REST PR/ref plus exact Git blobs after transient GraphQL TLS timeout"
-      },
-      "lifecycle_complete": false
+      "next_action": "Main product adoption, Handoff delivery and same task final lifecycle",
+      "validation": "8项原生PostgreSQL用例通过，4项未受改动的原Seq用例复用先前通过结果；12项独立用例无跳过，相关Main构建通过"
     },
     "wave_history": [
       {
@@ -196110,6 +196108,150 @@
         "seats_released": true,
         "final_main_sha": "b23e5e111d1f1f77936a76a74ff6acfb707bd067",
         "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave63-final-verification.json"
+      },
+      {
+        "id": "20261023-wave64",
+        "path": "docs/development/dispatch/20261023-wave64/README.md",
+        "baseline_sha": "b23e5e111d1f1f77936a76a74ff6acfb707bd067",
+        "registered_at": "2026-10-23T11:27:59.800088+00:00",
+        "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W64-01",
+            "task_id": "WP02-13",
+            "title": "字段审计详情当前Owner门及首个设备安全历史映射",
+            "lifecycle_task": "BUG-433-FIELD-AUDIT-OWNER",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "actual_start_ref": {
+              "commit": "6c315bc1fc6be6a3b7fc5942897e9174a096e42d",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-13/messages/20261023T112759Z-wave64-start/MESSAGE.md",
+              "at": "2026-10-23T11:27:59.800088+00:00"
+            },
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/bug-433-field-audit-owner",
+            "planned_scope_ref": "docs/development/dispatch/20261023-wave64/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/a8a31bccdb57fb3a9a87da5aadb99be7b1673653/docs/development/evidence/W64-01/DELIVERY.md",
+            "validation": "27项.NET相关用例与6项前端行为用例通过，无跳过；实际PostgreSQL/HTTP红灯已转绿，相关Main构建通过",
+            "runtime_resources_released": true,
+            "candidate_integrated": true,
+            "integration": {
+              "result": "PASS",
+              "repository": "GTX537/CP6",
+              "source": "183750bc45f39ce81499a11411914d3cf46de3aa",
+              "main": "a8a31bccdb57fb3a9a87da5aadb99be7b1673653",
+              "target": "main",
+              "pr": "https://github.com/GTX537/CP6/pull/434",
+              "paths": [
+                "CP6.Core/Services/Sys/FieldAuditChangesV1.cs",
+                "CP6.Core/Services/Sys/FieldAuditReadOwnerV1.cs",
+                "CP6.Tests/Erp/FieldAuditOwnerPostgreSqlTests.cs",
+                "CP6.Tests/Sys/FieldAuditChangesTests.cs",
+                "CP6.Tests/Sys/FieldAuditControllerTests.cs",
+                "CP6.WebApi/Controllers/Sys/FieldAuditController.cs",
+                "CP6.WebApi/Program.cs",
+                "CP6.WebApi/Seed/I18nSecAuditScreenSeed.cs",
+                "cp6.web/src/api/sys/fieldAudit.ts",
+                "cp6.web/src/types/sys/fieldAudit.ts",
+                "cp6.web/src/views/pms/FieldAuditOwner.spec.ts",
+                "cp6.web/src/views/pms/FieldAuditView.vue",
+                "docs/development/07-detailed-tasks.md",
+                "docs/development/09-parallel-development.md",
+                "docs/development/dispatch/20261023-wave64/README.md",
+                "docs/development/evidence/W64-01/DELIVERY.md",
+                "docs/development/planning/20261022-seven-day-delivery.md",
+                "docs/development/roadmap.json",
+                "docs/project-memory/05-Completed.md",
+                "docs/project-memory/06-Todo.md",
+                "docs/project-memory/CHANGELOG-AI.md",
+                "docs/project-memory/PROJECT_STATE.md"
+              ],
+              "observed_at": "2026-10-23T11:41:32.443550+00:00"
+            },
+            "handoff_delivery_ref": {
+              "commit": "217106e4e6cad6a23847a6b12c22e76ed6ad7e9c",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-13/messages/20261023T114302Z-wave64-delivery/MESSAGE.md",
+              "at": "2026-10-23T11:43:02.185390+00:00",
+              "base": "codex/t02c-entry-handoff-20260921",
+              "branch": "codex/w64-handoff"
+            },
+            "resources_released": false,
+            "lifecycle_snapshot": {
+              "handoff_branch_deleted": true,
+              "handoff_seat_released": true,
+              "main_task": "CP6:BUG-433-FIELD-AUDIT-OWNER",
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave64-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-23T11:20:34.497204+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            60,
+            90
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "PostgreSQL Pub采番当前规则串行推进修复",
+        "validation": "27项.NET相关用例与6项前端行为用例通过，无跳过；实际PostgreSQL/HTTP红灯已转绿，相关Main构建通过",
+        "handoff_delivery_ref": {
+          "commit": "217106e4e6cad6a23847a6b12c22e76ed6ad7e9c",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-13/messages/20261023T114302Z-wave64-delivery/MESSAGE.md",
+          "at": "2026-10-23T11:43:02.185390+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w64-handoff"
+        },
+        "handoff_integration": {
+          "result": "PASS",
+          "repository": "GTX537/CP6.AI-Handoff",
+          "source": "217106e4e6cad6a23847a6b12c22e76ed6ad7e9c",
+          "main": "1e877baa5c3ff0523db882c50b89fbd87528e1d7",
+          "target": "codex/t02c-entry-handoff-20260921",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/40",
+          "paths": [
+            "handoffs/CP6-DEV-20261012/tasks/WP02-13/messages/20261023T112759Z-wave64-start/MESSAGE.md",
+            "handoffs/CP6-DEV-20261012/tasks/WP02-13/messages/20261023T114302Z-wave64-delivery/MESSAGE.md",
+            "handoffs/CP6-DEV-20261012/waves/20261023-wave64.md"
+          ],
+          "observed_at": "2026-10-23T11:47:53.403651+00:00",
+          "method": "REST PR/ref plus exact Git blobs after transient GraphQL TLS timeout"
+        },
+        "lifecycle_complete": true,
+        "actual_agent_minutes": 34.35,
+        "preflight_estimate_minutes": 6,
+        "branches_deleted": true,
+        "seats_released": true,
+        "final_main_sha": "4b129632448409a6bcd713b295cf87b7a5b972e3",
+        "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave64-final-verification.json"
       }
     ],
     "development_priority": {
@@ -196244,9 +196386,9 @@
           "id": "D6",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W64-01",
-          "next_action": "Audit raw-content bypass fixed; continue real Owner prerequisites and independent D6 public foundations",
-          "prerequisite_adjustment": "P0 existing audit raw-content bypass first; reuse Machine current Owner for bounded non-PII history. Full WP02-13 and inquiry gates remain unchanged."
+          "current_window": "W65-01",
+          "next_action": "PostgreSQL Pub采番当前规则串行推进修复",
+          "prerequisite_adjustment": "Repair actual PostgreSQL Pub duplicate allocation; preserve original scopes/transaction ownership. No operation receipts or full Owner adoption claimed."
         },
         {
           "id": "D7",

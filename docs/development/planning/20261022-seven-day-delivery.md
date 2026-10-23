@@ -402,3 +402,11 @@ W63 Main432/CRM108/Handoff39全部采用，实际20.18min、前置约4min；准�
 Main [PR434](https://github.com/GTX537/CP6/pull/434) source `183750bc45f39ce81499a11411914d3cf46de3aa`采用远端main `a8a31bccdb57fb3a9a87da5aadb99be7b1673653`，全部22路径exact核对通过。Handoff [PR40](https://github.com/GTX537/CP6.AI-Handoff/pull/40)采用 `1e877baa5c3ff0523db882c50b89fbd87528e1d7`，准确任务分支删除、固定树干净detached、finish释放。产品12路径与已测试提交逐blob相同，未重复运行成功测试；最后文档diff单独检查，台账生成核对。
 
 Main沿同一任务分支最后状态PR及finish待收尾；Issue433在远端和生命周期最终核对后关闭。当前登记实际约27.46min，预算60–90min，最终以finish为准；前置只读核对约6min，子任务不重复累计。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave64-final-verification.json`。无Actions、迁移或部署。七天持续目标ACTIVE，继续真实Owner前置和D6公共支撑。
+
+## 2026-10-23：W64已收尾 / W65采番串行推进
+
+W64 Main434/435、Handoff40全部采用，Issue433关闭，实际34.35min、前置约6min；准确分支删除、固定树干净detached、全部席位释放。[W65](../dispatch/20261023-wave65/README.md)修Issue436 PostgreSQL Pub重复采番，预计50–80min；原命令回执及完整WP02-16前置仍未完成。七天目标ACTIVE。
+
+## W65验证完成
+
+8项原生PostgreSQL用例通过，4项未受改动的原Seq用例复用先前通过结果；12项独立用例无跳过，相关Main构建通过。三个隔离PG停止保留；真实重复号红灯与首次跟踪状态失败保留。进入两仓采用及同任务最后收尾；完整Owner门不提升，七天目标ACTIVE。
