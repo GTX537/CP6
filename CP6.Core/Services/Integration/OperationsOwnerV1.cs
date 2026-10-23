@@ -15,7 +15,7 @@ public sealed partial class OperationsOwnerV1
 {
     internal const string Mes = "mes-work-order", Outbound = "wms-outbound-order",
         Production = "mes-production-result", Inbound = "wms-inbound-order", Receipt = "wms-inbound-receipt",
-        Stock = "wms-stock", StockTake = "wms-stocktake", WmsDashboard = "wms-dashboard", MesDashboard = "mes-dashboard", Defect = "mes-defect", MaterialShortage = "wms-material-shortage", LotTrace = "wms-lot-trace",
+        Stock = "wms-stock", StockTake = "wms-stocktake", WmsDashboard = "wms-dashboard", MesDashboard = "mes-dashboard", Defect = "mes-defect", MaterialShortage = "wms-material-shortage", LotTrace = "wms-lot-trace", CrossDock = "wms-cross-dock",
         StockQc = "wms-stock-qc", InboundQc = "wms-qc-inspection", Quality = "mes-quality-inspection", Machine = "mes-machine", Oee = "mes-oee", Planning = "mes-planning-board", Achievement = "mes-plan-achievement", Rma = "wms-rma", Replenish = "wms-replenish", Mobile = "wms-mobile", WorkCenter = "mes-work-center", ProcessCostRate = "mes-process-cost-rate", StockDwell = "wms-stock-dwell", Expiry = "wms-expiry";
     internal const string Mapping = "Main.Operations.Owner.v1";
     private readonly CP6Context db;
@@ -37,7 +37,7 @@ public sealed partial class OperationsOwnerV1
         var subject=await currentActor(ct);var definition=catalog();
         if(!definition.IsSealed || !definition.Scopes.TryGetValue(resource,out var scope))throw new CurrentPermissionUnavailableException();
         var source=await new CurrentFieldPermissionSourceReaderV1(db,http,()=>definition).ReadAsync(resource,ct);
-        var expected=resource==LotTrace?new[]{"CustomerName","OperatorCd","Remark","SupplierName"}:resource==MaterialShortage?new[]{"Remark"}:resource is Outbound or Inbound or Receipt or Stock?new[]{"UnitPrice"}:
+        var expected=resource==CrossDock?new[]{"CustomerCd","OperatorCd","Remarks","SupplierCd"}:resource==LotTrace?new[]{"CustomerName","OperatorCd","Remark","SupplierName"}:resource==MaterialShortage?new[]{"Remark"}:resource is Outbound or Inbound or Receipt or Stock?new[]{"UnitPrice"}:
             resource is Mes or Production or MesDashboard or Defect or StockQc or InboundQc or Quality or Machine or Oee or Planning or Achievement or WorkCenter?Array.Empty<string>():
             resource==StockDwell?new[]{"Amount","CustomerName"}:resource==ProcessCostRate?new[]{"LaborRate","OverheadRate"}:resource==WmsDashboard?new[]{"Amount"}:resource==Rma?new[]{"CustomerName","OperatorCd","Remarks","ReturnReason"}:
             resource==Replenish?new[]{"OperatorCd","Remarks"}:resource==Mobile?new[]{"AssignedTo","ExceptionDescription","Instruction","Remarks"}:new[]{"Amount","UnitPrice"};
@@ -69,7 +69,7 @@ public sealed partial class OperationsOwnerV1
         Func<CancellationToken,Task<string>>? actionAtFence=null,bool readOnlyAuthorityFence=false)
     {
         using var linked=CancellationTokenSource.CreateLinkedTokenSource(ct,http.HttpContext?.RequestAborted??CancellationToken.None);ct=linked.Token;
-        if(resource is not (Mes or Outbound or Production or Inbound or Receipt or Stock or StockTake or WmsDashboard or MesDashboard or Defect or StockQc or InboundQc or Quality or Machine or Oee or Planning or Achievement or Rma or Replenish or Mobile or WorkCenter or ProcessCostRate or StockDwell or Expiry or MaterialShortage or LotTrace) || !db.Database.IsNpgsql() || db.Database.CurrentTransaction!=null
+        if(resource is not (Mes or Outbound or Production or Inbound or Receipt or Stock or StockTake or WmsDashboard or MesDashboard or Defect or StockQc or InboundQc or Quality or Machine or Oee or Planning or Achievement or Rma or Replenish or Mobile or WorkCenter or ProcessCostRate or StockDwell or Expiry or MaterialShortage or LotTrace or CrossDock) || !db.Database.IsNpgsql() || db.Database.CurrentTransaction!=null
             || System.Transactions.Transaction.Current!=null || db.ChangeTracker.HasChanges()
             || readOnlyAuthorityFence && (write || delegation!=null || actionAtFence!=null)
             || db.ChangeTracker.Entries().Any(e=>IsBusiness(e.Entity.GetType().Name)))
@@ -142,7 +142,7 @@ public sealed partial class OperationsOwnerV1
             || ticket.Resource==Mes && ticket.Action=="issue" && resource==Outbound)
         || ticket.Resource==Production && ticket.Action=="complete" && ticket.CompletionResultId!=null
             && (resource==Receipt && action=="post" || resource==Production && action=="backflush");
-    private static bool IsBusiness(string name)=>BusinessTables.Contains(name) || name is "RmaHeader" or "RmaDetail" or "ReplenishOrder" or "MobileTask" or "MobileTaskEvent" or "MobileTaskScanLog" or "TaskCommandReceipt" or "WorkCenter" or "ProcessCostRate";
+    private static bool IsBusiness(string name)=>BusinessTables.Contains(name) || name is "RmaHeader" or "RmaDetail" or "ReplenishOrder" or "MobileTask" or "MobileTaskEvent" or "MobileTaskScanLog" or "TaskCommandReceipt" or "WorkCenter" or "ProcessCostRate" or "CrossDockOrder";
     private async Task LockGraph(bool write,CancellationToken ct,string? resource=null)
     {
         // Legacy soft references and stock writers do not yet share one row-lock protocol.
@@ -153,7 +153,7 @@ public sealed partial class OperationsOwnerV1
             var entity=db.Model.GetEntityTypes().Single(e=>e.ClrType.Name==name);
             return db.GetService<ISqlGenerationHelper>().DelimitIdentifier(entity.GetTableName()!,entity.GetSchema()??"public");
         }
-        string[] additional=resource switch { StockDwell=>["BusinessPartner"],WorkCenter or ProcessCostRate=>["WorkCenter","ProcessCostRate"],Rma=>["RmaHeader","RmaDetail"],Replenish=>["ReplenishOrder"],Mobile=>["MobileTask","MobileTaskEvent","MobileTaskScanLog","TaskCommandReceipt"],_=>[] };
+        string[] additional=resource switch { CrossDock=>["CrossDockOrder"],StockDwell=>["BusinessPartner"],WorkCenter or ProcessCostRate=>["WorkCenter","ProcessCostRate"],Rma=>["RmaHeader","RmaDetail"],Replenish=>["ReplenishOrder"],Mobile=>["MobileTask","MobileTaskEvent","MobileTaskScanLog","TaskCommandReceipt"],_=>[] };
         var tables=BusinessTables.Concat(additional);
         await db.Database.ExecuteSqlRawAsync("LOCK TABLE "+string.Join(",",tables.Select(Name).Distinct().Order(StringComparer.Ordinal))
             +(write?" IN SHARE ROW EXCLUSIVE MODE":" IN SHARE MODE"),ct);

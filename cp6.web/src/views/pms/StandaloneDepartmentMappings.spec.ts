@@ -19,6 +19,15 @@ beforeEach(() => {
 })
 afterEach(() => { view?.unmount(); view = undefined })
 describe('explicit standalone department binding', () => {
+  it('selects a real cross-dock identity and submits its explicit department binding', async () => {
+    const vm = await render(); await vm.open()
+    await view!.get('[aria-label="对象类型"]').setValue('cross-dock')
+    api.standaloneObjects.mockResolvedValue([{ id: 'cross-dock-uuid', name: 'XD-EXISTING' }])
+    vm.search = 'XD'; await vm.findObjects(); expect(api.standaloneObjects).toHaveBeenCalledWith('cross-dock', 'XD')
+    vm.draft.objectId = 'cross-dock-uuid'; vm.draft.departmentId = dept; vm.draft.reason = 'Verified existing record owner'
+    api.saveStandaloneMapping.mockImplementation(async (_input, operationId) => ({ operationId, kind: 'dept-standalone-mapping', state: 'COMMITTED', entityId: id }))
+    await vm.save(); expect(api.saveStandaloneMapping.mock.calls[0]![0]).toMatchObject({ objectKind: 'cross-dock', objectId: 'cross-dock-uuid', departmentId: dept })
+  })
   it('selects a real machine identity and submits its explicit department binding', async () => {
     const vm = await render(); await vm.open()
     await view!.get('[aria-label="对象类型"]').setValue('machine')

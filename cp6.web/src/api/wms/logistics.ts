@@ -1,3 +1,4 @@
+import type { CrossDockPage, CrossDockObservation, CrossDockQuery } from '@/types/wms/crossDockOwner'
 import http from '../http'
 import type {
   CrossDockOrder, CrossDockSearchQuery,
@@ -6,6 +7,12 @@ import type {
 } from '@/types/wms/wms'
 
 export const crossDockApi = {
+  searchOwner(q: CrossDockQuery) {
+    return http.get<any, WmsApi<CrossDockPage>>('/wms/cross-dock/owner-v1', { params: q })
+  },
+  getOwner(no: string) {
+    return http.get<any, WmsApi<CrossDockObservation>>(`/wms/cross-dock/owner-v1/${encodeURIComponent(no)}`)
+  },
   search(q: CrossDockSearchQuery = {}) {
     return http.get<any, WmsApi<CrossDockOrder[]>>('/wms/cross-dock', { params: q })
   },

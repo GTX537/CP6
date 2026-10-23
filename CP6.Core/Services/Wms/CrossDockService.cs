@@ -4,19 +4,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Wms;
 
-public class CrossDockService : ICrossDockService
+public partial class CrossDockService : ICrossDockService
 {
     private readonly CP6Context _db;
     private readonly IWmsSequenceService _seq;
     private readonly IStockMovementService _stock;
     private const string Prefix = "XD";
 
-    public CrossDockService(CP6Context db, IWmsSequenceService seq, IStockMovementService stock)
+    private readonly CP6.Core.Services.Integration.OperationsOwnerV1? _owner;
+    public CrossDockService(CP6Context db, IWmsSequenceService seq, IStockMovementService stock, CP6.Core.Services.Integration.OperationsOwnerV1? owner = null)
     {
-        _db = db; _seq = seq; _stock = stock;
+        _db = db; _seq = seq; _stock = stock; _owner = owner;
     }
 
-    public async Task<List<CrossDockOrder>> SearchAsync(CrossDockSearchQuery q)
+    private async Task<List<CrossDockOrder>> SearchCoreAsync(CrossDockSearchQuery q)
     {
         var query = _db.CrossDockOrders.AsNoTracking().Where(x => !x.IsDeleted);
         if (!string.IsNullOrWhiteSpace(q.XDockNo)) query = query.Where(x => x.XDockNo.Contains(q.XDockNo));
@@ -30,10 +31,10 @@ public class CrossDockService : ICrossDockService
             .Skip((q.Page - 1) * q.PageSize).Take(q.PageSize).ToListAsync();
     }
 
-    public async Task<CrossDockOrder?> GetAsync(string xdockNo)
+    private async Task<CrossDockOrder?> GetCoreAsync(string xdockNo)
         => await _db.CrossDockOrders.AsNoTracking().FirstOrDefaultAsync(x => x.XDockNo == xdockNo && !x.IsDeleted);
 
-    public async Task<string> CreateAsync(CrossDockOrderDto dto, string? userName)
+    private async Task<string> CreateCoreAsync(CrossDockOrderDto dto, string? userName)
     {
         if (string.IsNullOrWhiteSpace(dto.ProductCd)) throw new InvalidOperationException("ProductCd required");
         if (string.IsNullOrWhiteSpace(dto.WarehouseCd)) throw new InvalidOperationException("WarehouseCd required");
@@ -57,7 +58,7 @@ public class CrossDockService : ICrossDockService
         return no;
     }
 
-    public async Task ExecuteAsync(string xdockNo, string? userName)
+    private async Task ExecuteCoreAsync(string xdockNo, string? userName)
     {
         var order = await _db.CrossDockOrders.FirstOrDefaultAsync(x => x.XDockNo == xdockNo && !x.IsDeleted)
             ?? throw new InvalidOperationException("WM-MSG-070");
@@ -101,7 +102,7 @@ public class CrossDockService : ICrossDockService
         await _db.SaveChangesAsync();
     }
 
-    public async Task CancelAsync(string xdockNo, string? userName)
+    private async Task CancelCoreAsync(string xdockNo, string? userName)
     {
         var order = await _db.CrossDockOrders.FirstOrDefaultAsync(x => x.XDockNo == xdockNo && !x.IsDeleted)
             ?? throw new InvalidOperationException("WM-MSG-070");
