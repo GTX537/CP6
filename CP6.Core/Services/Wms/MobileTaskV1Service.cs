@@ -1,3 +1,4 @@
+using CP6.Core.Services.Integration;
 using System.Security.Cryptography;
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Wms;
@@ -6,9 +7,10 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.Core.Services.Wms;
 
-public sealed class MobileTaskV1Service : IMobileTaskV1Service
+public sealed partial class MobileTaskV1Service : IMobileTaskV1Service
 {
     private const string Prefix = "MTK";
+    private readonly OperationsOwnerV1? _owner;
     private readonly CP6Context _db;
     private readonly IWmsSequenceService _sequence;
     private readonly IStockMovementService _stock;
@@ -22,8 +24,9 @@ public sealed class MobileTaskV1Service : IMobileTaskV1Service
         IStockMovementService stock,
         IMobileService legacyMobile,
         IMobileTaskNotifier? taskNotifier = null,
-        IWmsNotifier? stockNotifier = null)
+        IWmsNotifier? stockNotifier = null, OperationsOwnerV1? owner = null)
     {
+        _owner = owner;
         _db = db;
         _sequence = sequence;
         _stock = stock;
@@ -32,14 +35,14 @@ public sealed class MobileTaskV1Service : IMobileTaskV1Service
         _stockNotifier = stockNotifier ?? new NoOpWmsNotifier();
     }
 
-    public async Task<PagedResult<MobileTaskV1Dto>> GetTasksAsync(
+    private async Task<PagedResult<MobileTaskV1Dto>> GetTasksCoreAsync(
         MobileTaskV1Query query,
-        CancellationToken ct = default)
+        CancellationToken ct = default, IQueryable<MobileTask>? allowed = null, Action<MobileTask>? project = null)
     {
         query.Page = Math.Max(1, query.Page);
         query.PageSize = Math.Clamp(query.PageSize, 1, 200);
 
-        var tasks = _db.MobileTasks.AsNoTracking()
+        var tasks = (allowed ?? _db.MobileTasks.AsNoTracking())
             .Where(x => !x.IsDeleted && x.TaskType == MobileTaskType.Move);
 
         if (!string.IsNullOrWhiteSpace(query.AssignedTo))
@@ -60,10 +63,12 @@ public sealed class MobileTaskV1Service : IMobileTaskV1Service
             .OrderBy(x => x.Status)
             .ThenBy(x => x.Priority)
             .ThenByDescending(x => x.CreateDate)
+            .ThenBy(x => x.Id)
             .Skip((query.Page - 1) * query.PageSize)
             .Take(query.PageSize)
             .ToListAsync(ct);
 
+        if (project != null) foreach (var row in items) project(row);
         return new PagedResult<MobileTaskV1Dto>
         {
             Items = items.Select(Map).ToList(),
@@ -73,14 +78,14 @@ public sealed class MobileTaskV1Service : IMobileTaskV1Service
         };
     }
 
-    public async Task<MobileTaskV1Dto?> GetAsync(string taskNo, CancellationToken ct = default)
+    private async Task<MobileTaskV1Dto?> GetCoreAsync(string taskNo, CancellationToken ct = default)
     {
         var task = await _db.MobileTasks.AsNoTracking()
             .FirstOrDefaultAsync(x => x.MobileTaskNo == taskNo && !x.IsDeleted && x.TaskType == MobileTaskType.Move, ct);
         return task == null ? null : Map(task);
     }
 
-    public async Task<MobileTaskV1Dto> CreateAsync(
+    private async Task<MobileTaskV1Dto> CreateCoreAsync(
         CreateMoveTaskRequest request,
         string? userName,
         CancellationToken ct = default)
@@ -111,7 +116,7 @@ public sealed class MobileTaskV1Service : IMobileTaskV1Service
         return Map(task);
     }
 
-    public async Task<MobileTaskV1Dto> AssignAsync(
+    private async Task<MobileTaskV1Dto> AssignCoreAsync(
         string taskNo,
         AssignTaskRequest request,
         string? userName,
@@ -130,7 +135,7 @@ public sealed class MobileTaskV1Service : IMobileTaskV1Service
         return Map(task);
     }
 
-    public async Task<MobileTaskV1Dto> ClaimAsync(
+    private async Task<MobileTaskV1Dto> ClaimCoreAsync(
         string taskNo,
         ClaimTaskRequest request,
         string? userName,
@@ -153,7 +158,7 @@ public sealed class MobileTaskV1Service : IMobileTaskV1Service
         return Map(task);
     }
 
-    public async Task<MobileTaskV1Dto> StartAsync(
+    private async Task<MobileTaskV1Dto> StartCoreAsync(
         string taskNo,
         StartTaskRequest request,
         string? userName,
@@ -173,7 +178,7 @@ public sealed class MobileTaskV1Service : IMobileTaskV1Service
         return Map(task);
     }
 
-    public async Task<MobileScanResult> ScanAsync(
+    private async Task<MobileScanResult> ScanCoreAsync(
         string taskNo,
         MobileScanRequest request,
         CancellationToken ct = default)
@@ -187,7 +192,7 @@ public sealed class MobileTaskV1Service : IMobileTaskV1Service
         return await _legacyMobile.ScanAsync(request);
     }
 
-    public async Task<MobileTaskV1Dto> CompleteAsync(
+    private async Task<MobileTaskV1Dto> CompleteCoreAsync(
         string taskNo,
         CompleteMoveRequest request,
         string? userName,
@@ -288,7 +293,7 @@ public sealed class MobileTaskV1Service : IMobileTaskV1Service
         return Map(task);
     }
 
-    public async Task<MobileTaskV1Dto> CancelAsync(
+    private async Task<MobileTaskV1Dto> CancelCoreAsync(
         string taskNo,
         CancelTaskRequest request,
         string? userName,

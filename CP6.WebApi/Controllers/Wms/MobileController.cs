@@ -1,3 +1,5 @@
+using CP6.Core.Services.Erp;
+using CP6.WebApi.Controllers.Erp;
 using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
@@ -7,6 +9,7 @@ namespace CP6.WebApi.Controllers.Wms;
 
 /// <summary>MSBBWM300 — モバイル作業指示（RFハンディ）Web API</summary>
 [ApiController]
+[OrderOwnerResult]
 [Route("api/wms/mobile")]
 [Authorize]
 public class MobileController : ControllerBase
@@ -17,6 +20,7 @@ public class MobileController : ControllerBase
 
     /// <summary>当該作業者の指示一覧。assignedTo 未指定時はログインユーザを既定にする。</summary>
     [HttpGet("task")]
+    [RequirePermission("wms-mobile", "view")]
     public async Task<IActionResult> GetTasks([FromQuery] MobileTaskQuery q)
     {
         if (string.IsNullOrWhiteSpace(q.AssignedTo)) q.AssignedTo = CurrentUser;
@@ -24,6 +28,7 @@ public class MobileController : ControllerBase
     }
 
     [HttpGet("task/{no}")]
+    [RequirePermission("wms-mobile", "view")]
     public async Task<IActionResult> Get(string no)
     {
         var t = await _svc.GetAsync(no);
@@ -40,7 +45,7 @@ public class MobileController : ControllerBase
             var no = await _svc.CreateAsync(dto, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071", data = new { mobileTaskNo = no } });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("task/{no}/start")]
@@ -48,7 +53,7 @@ public class MobileController : ControllerBase
     public async Task<IActionResult> Start(string no)
     {
         try { await _svc.StartAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     /// <summary>バーコード 1 件を解決（ロケーション/製品/不明）。</summary>
@@ -68,7 +73,7 @@ public class MobileController : ControllerBase
             return Ok(new { code = 0, message = "WM-MSG-071" });
         }
         catch (InsufficientStockException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("task/{no}/cancel")]
@@ -76,6 +81,6 @@ public class MobileController : ControllerBase
     public async Task<IActionResult> Cancel(string no)
     {
         try { await _svc.CancelAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 }

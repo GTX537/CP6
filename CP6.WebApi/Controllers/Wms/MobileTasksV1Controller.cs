@@ -1,3 +1,5 @@
+using CP6.Core.Services.Erp;
+using CP6.WebApi.Controllers.Erp;
 using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CP6.WebApi.Controllers.Wms;
 
 [ApiController]
+[OrderOwnerResult]
 [Route("api/v1/wms/mobile/tasks")]
 [Authorize]
 public sealed class MobileTasksV1Controller : ControllerBase
@@ -117,7 +120,7 @@ public sealed class MobileTasksV1Controller : ControllerBase
             });
         }
         catch (ArgumentException ex) { return Validation(ex.Message); }
-        catch (InvalidOperationException ex) { return Validation(ex.Message); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return Validation(ex.Message); }
     }
 
     private ActionResult Validation(string message)

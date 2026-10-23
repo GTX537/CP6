@@ -1,3 +1,5 @@
+using CP6.Core.Services.Erp;
+using CP6.WebApi.Controllers.Erp;
 using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CP6.WebApi.Controllers.Wms;
 
 [ApiController]
+[OrderOwnerResult]
 [Route("api/v2/wms/tasks")]
 [Authorize]
 public sealed class MobileTasksV2Controller : ControllerBase
@@ -15,6 +18,10 @@ public sealed class MobileTasksV2Controller : ControllerBase
     public MobileTasksV2Controller(IMobileTaskV2Service service) => _service = service;
 
     private string? CurrentUser => User.Identity?.Name;
+
+    [HttpGet("capabilities")]
+    [RequirePermission("wms-mobile", "view")]
+    public Task<MobileTaskCapabilitiesV1> Capabilities(CancellationToken ct) => _service.GetCapabilitiesAsync(ct);
 
     [HttpGet]
     [RequirePermission("wms-mobile", "view")]
@@ -186,12 +193,12 @@ public sealed class MobileTasksV2Controller : ControllerBase
     }
 
     private static bool IsHandled(Exception ex)
-        => ex is MobileTaskNotFoundException
+        => ex is not OrderPriceCorrectionException && (ex is MobileTaskNotFoundException
             or MobileTaskConflictException
             or InsufficientStockException
             or WmsAccessDeniedException
             or ArgumentException
-            or InvalidOperationException;
+            or InvalidOperationException);
 
     private static object Error(string code) => new { code, message = code };
 }

@@ -2,6 +2,10 @@ import http from '../http'
 import type { PagedResult } from '@/types/wms/wms'
 
 export interface TaskAnalytics {
+  timeBasis?: string
+  durationBasis?: string
+  physicalResultsVerified?: boolean
+  durationSampleCount?: number
   created: number
   completed: number
   partiallyCompleted: number

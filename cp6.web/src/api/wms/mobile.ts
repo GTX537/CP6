@@ -8,6 +8,7 @@ import type {
 // ───────── モバイル作業指示（WM300） ─────────
 
 export const mobileApi = {
+  capabilities() { return http.get<any, { writesAvailable: boolean; status: string; readContract: string; historicalResultsVerified: boolean }>('/v2/wms/tasks/capabilities') },
   tasks(q: MobileTaskQuery = {}) {
     return http.get<any, PagedResult<MobileTask>>('/v2/wms/tasks', { params: q })
   },

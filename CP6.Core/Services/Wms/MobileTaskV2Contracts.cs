@@ -248,6 +248,10 @@ public sealed class TaskAnalyticsQuery
 
 public sealed class TaskAnalyticsDto
 {
+    public string TimeBasis => "LEGACY_CREATED_AT";
+    public string DurationBasis => "LEGACY_ELAPSED";
+    public bool PhysicalResultsVerified => false;
+    public int DurationSampleCount { get; init; }
     public int Created { get; init; }
     public int Completed { get; init; }
     public int PartiallyCompleted { get; init; }
