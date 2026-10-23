@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W71补充指示当前Owner](dispatch/20261023-wave71/README.md)，本聊天单人，Issue448；W37–W70已finish，不重复。
+
 > 当前：[W70退货独立Owner](dispatch/20261023-wave70/README.md)，本聊天单人，Main446/Handoff46已采用；同任务最后状态与finish后继续。W37–W69不重复。
 
 > 当前：[W69配置草稿持久化](dispatch/20261023-wave69/README.md)，本聊天单人；CRM PR112/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W68不重复。

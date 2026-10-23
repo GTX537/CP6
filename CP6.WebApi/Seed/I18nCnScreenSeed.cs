@@ -9,6 +9,11 @@ public static class I18nCnScreenSeed
 {
     public static readonly Sys_Lang[] Items = new[]
     {
+        new Sys_Lang { LangKey = "补充指示暂只支持查询，生成和派发功能尚未开通。", ZhCN = "补充指示暂只支持查询，生成和派发功能尚未开通。", ZhTW = "補充指示暫只支援查詢，產生和派發功能尚未開通。", En = "Replenishment is currently read-only. Generation and dispatch are not yet available.", Ja = "補充指示は現在照会のみです。生成・タスク発行はまだ利用できません。", Ko = "보충 지시는 현재 조회만 가능합니다. 생성 및 작업 발행 기능은 아직 사용할 수 없습니다." },
+        new Sys_Lang { LangKey = "补充指示未能读取，请刷新重试。", ZhCN = "补充指示未能读取，请刷新重试。", ZhTW = "補充指示未能讀取，請重新整理後再試。", En = "Replenishment data could not be loaded. Refresh to try again.", Ja = "補充指示を読み込めませんでした。再読み込みしてください。", Ko = "보충 지시를 불러오지 못했습니다. 새로 고침하여 다시 시도하세요." },
+        new Sys_Lang { LangKey = "最多显示500条，更多记录请缩小查询范围。", ZhCN = "最多显示500条，更多记录请缩小查询范围。", ZhTW = "最多顯示500筆，更多記錄請縮小查詢範圍。", En = "Up to 500 records are shown. Narrow the search to find more records.", Ja = "最大500件を表示します。他の記録を探すには検索条件を絞ってください。", Ko = "최대 500개 기록이 표시됩니다. 다른 기록을 찾으려면 검색 범위를 좁히세요." },
+        new Sys_Lang { LangKey = "已派发任务", ZhCN = "已派发任务", ZhTW = "已派發任務", En = "Task issued", Ja = "タスク発行済", Ko = "작업 발행됨" },
+        new Sys_Lang { LangKey = "旧记录报告完成", ZhCN = "旧记录报告完成", ZhTW = "舊記錄報告完成", En = "Legacy record reports completion", Ja = "旧記録上の完了", Ko = "기존 기록상 완료" },
         new Sys_Lang { LangKey = "退货暂只支持查询，授权、收货和处置功能尚未开通。", ZhCN = "退货暂只支持查询，授权、收货和处置功能尚未开通。", ZhTW = "退貨暫只支援查詢，授權、收貨和處置功能尚未開通。", En = "Returns are currently read-only. Authorization, receipt and disposition are not yet available.", Ja = "返品は現在照会のみです。承認・入庫・処分はまだ利用できません。", Ko = "반품은 현재 조회만 가능합니다. 승인, 입고 및 처분 기능은 아직 사용할 수 없습니다." },
         new Sys_Lang { LangKey = "退货数据未能读取，请刷新重试。", ZhCN = "退货数据未能读取，请刷新重试。", ZhTW = "退貨資料未能讀取，請重新整理後再試。", En = "Return data could not be loaded. Refresh to try again.", Ja = "返品データを読み込めませんでした。再読み込みしてください。", Ko = "반품 데이터를 불러오지 못했습니다. 새로 고침하여 다시 시도하세요." },
         new Sys_Lang { LangKey = "移除附件引用", ZhCN = "移除附件引用", ZhTW = "移除附件參照", En = "Remove attachment reference", Ja = "添付ファイルの参照を削除", Ko = "첨부 파일 참조 제거" },

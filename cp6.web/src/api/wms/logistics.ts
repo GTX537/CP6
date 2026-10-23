@@ -24,6 +24,9 @@ export const crossDockApi = {
 }
 
 export const replenishApi = {
+  capabilities() {
+    return http.get<any, WmsApi<{ writesAvailable: boolean; status: string }>>('/wms/replenish/capabilities')
+  },
   search(q: ReplenishSearchQuery = {}) {
     return http.get<any, WmsApi<ReplenishOrder[]>>('/wms/replenish', { params: q })
   },

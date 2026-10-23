@@ -7,6 +7,7 @@ namespace CP6.Core.Services.Wms;
 /// </summary>
 /// <remarks>
 /// 仕様書 §22。
+/// 以下は旧モデル。PostgreSQLは現在Owner付き照会のみを採用し、正式REP/Transfer未採用の命令は拒否する。
 /// GenerateAsync：指定倉庫の "ピッキング棚（接頭辞 PIK-）" 在庫を一覧取得、
 /// MinQty を割っているものに対して "保管棚（接頭辞 RES-）" から補充する指示を一括生成。
 /// 第一版は接頭辞ベースの簡易実装（後で T_Location に LocationKind 列を追加して厳密化可）。
@@ -15,6 +16,7 @@ namespace CP6.Core.Services.Wms;
 /// </remarks>
 public interface IReplenishService
 {
+    Task<ReplenishCapabilitiesV1> GetCapabilitiesAsync();
     Task<List<ReplenishOrder>> SearchAsync(ReplenishSearchQuery q);
     Task<ReplenishOrder?> GetAsync(string replenishNo);
     Task<string> CreateAsync(ReplenishOrderDto dto, string? userName);
@@ -30,6 +32,8 @@ public interface IReplenishService
     Task<string> ExecuteAsync(string replenishNo, string? userName);
     Task CancelAsync(string replenishNo, string? userName);
 }
+
+public sealed record ReplenishCapabilitiesV1(bool WritesAvailable, string Status);
 
 public class ReplenishSearchQuery
 {

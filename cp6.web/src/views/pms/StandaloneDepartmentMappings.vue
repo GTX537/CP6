@@ -1,7 +1,7 @@
 <template>
   <section aria-label="独立对象部门绑定" v-loading="busy">
     <h3>独立对象部门绑定</h3>
-    <p>明确指定库存、库存流水、盘点单或无订单生产指示所属的组织部门。请先核实实际归属；不会根据当前操作人自动填入。</p>
+    <p>明确指定库存、库存流水、盘点单、无订单生产指示、设备或补充指示所属的组织部门。请先核实实际归属；不会根据当前操作人自动填入。</p>
     <p>停用绑定或其组织部门后，对应部门范围将不可用。全租户及本人范围仍按各自授权判断。</p>
     <el-button v-permission="'pub-dept:edit'" :disabled="busy || !!pending" @click="open()">新增绑定</el-button>
     <el-button :disabled="busy || editing" @click="load">刷新绑定</el-button>
@@ -61,7 +61,7 @@ const empty = (): IamStandaloneMappingInput => ({ objectKind: 'stock', objectId:
 const draft = reactive(empty())
 const kinds: { value: StandaloneKind; label: string }[] = [
   { value: 'stock', label: '库存' }, { value: 'stock-transaction', label: '库存流水' },
-  { value: 'stocktake', label: '盘点单' }, { value: 'work-order', label: '无订单生产指示' }, { value: 'machine', label: '设备' }
+  { value: 'stocktake', label: '盘点单' }, { value: 'work-order', label: '无订单生产指示' }, { value: 'machine', label: '设备' }, { value: 'replenish-order', label: '补充指示' }
 ]
 const search = ref(''), objects = ref<StandaloneObjectChoice[]>([])
 function kindName(kind: StandaloneKind) { return kinds.find(row => row.value === kind)?.label || kind }
