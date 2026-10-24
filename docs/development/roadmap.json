@@ -159997,6 +159997,11 @@
       "date": "2026-10-24",
       "change": "W90 Issue485 candidate verified:24 unique NET/25Vue and typecheck; current independent Kitting Owner and old write gate; full formal Composition and W89 workspace approval remain pending.",
       "evidence": "docs/development/evidence/W90-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-24",
+      "change": "W90 Main486 exact adoption and Handoff65 verified;24.NET/25UI/typecheck passed. Handoff branch deleted/seat released; Main final finish pending. Full acceptances unchanged.",
+      "evidence": "https://github.com/GTX537/CP6/blob/6f19fde5e3d9ea4483c8c04c9713c6743f835007/docs/development/evidence/W90-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -162576,7 +162581,7 @@
         "claimed_at": "2026-10-24T00:44:59.470277+00:00",
         "baseline_sha": "d65abaf82b6b0ac339d0fc3b6ce945dfc82ddf4f",
         "entry_evidence": "docs/development/dispatch/20261024-wave90/README.md",
-        "phase": "CANDIDATE_VERIFIED",
+        "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
         "dispatch_scope": "W90_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -162600,11 +162605,21 @@
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": false,
+        "candidate_integrated": true,
         "resources_released": false,
         "full_task_completed": false,
         "issue": "https://github.com/GTX537/CP6/issues/485",
-        "worker_delivery_ref": "docs/development/evidence/W90-01/DELIVERY.md"
+        "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/6f19fde5e3d9ea4483c8c04c9713c6743f835007/docs/development/evidence/W90-01/DELIVERY.md",
+        "source_candidate_sha": "5f3f648854a8d201d934d0a6e19bbdbf39094167",
+        "remote_main_sha": "6f19fde5e3d9ea4483c8c04c9713c6743f835007",
+        "pull_request": "https://github.com/GTX537/CP6/pull/486",
+        "handoff_delivery_ref": {
+          "commit": "d8aac6ab14918a33a945dbf43d518fadb182a99e",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T005945Z-wave90-delivery/MESSAGE.md",
+          "at": "2026-10-24T00:59:45.496108+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w90-handoff"
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -167770,14 +167785,33 @@
         "seats_released": true
       },
       "wave90_delivery": {
-        "status": "CANDIDATE_VERIFIED",
-        "report": "docs/development/evidence/W90-01/DELIVERY.md",
+        "status": "MERGED",
+        "report": "https://github.com/GTX537/CP6/blob/6f19fde5e3d9ea4483c8c04c9713c6743f835007/docs/development/evidence/W90-01/DELIVERY.md",
         "validation": "24独立.NET用例（16原生PG、7既有非PG套件行为、1两租户种子）及25Vue用例通过，无跳过；相关构建和vue-tsc通过，定向补验与原组去重合计49项",
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "adopted_scope": "Kitting current legacy recipe and historical order independent Owner, actual Stock transaction disclosure, exact strings and independent UUID mapping; old PG writes fail before effects; full Composition not adopted",
         "issue": "https://github.com/GTX537/CP6/issues/485",
-        "lifecycle_complete": false
+        "lifecycle_complete": false,
+        "source_candidate_sha": "5f3f648854a8d201d934d0a6e19bbdbf39094167",
+        "remote_main_sha": "6f19fde5e3d9ea4483c8c04c9713c6743f835007",
+        "pull_request": "https://github.com/GTX537/CP6/pull/486",
+        "handoff_delivery_ref": {
+          "commit": "d8aac6ab14918a33a945dbf43d518fadb182a99e",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T005945Z-wave90-delivery/MESSAGE.md",
+          "at": "2026-10-24T00:59:45.496108+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w90-handoff"
+        },
+        "lifecycle_snapshot": {
+          "handoff_branch_deleted": true,
+          "handoff_seat_released": true,
+          "main_task": "CP6:BUG-485-KITTING-OWNER",
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave90-final-verification.json"
+        },
+        "test_data_disposition": "Three owned PostgreSQL clusters stopped; data and logs retained"
       }
     },
     {
@@ -187942,7 +187976,7 @@
       "path": "docs/development/dispatch/20261024-wave90/README.md",
       "baseline_sha": "d65abaf82b6b0ac339d0fc3b6ce945dfc82ddf4f",
       "registered_at": "2026-10-24T00:44:59.470277+00:00",
-      "phase": "CANDIDATE_VERIFIED",
+      "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -187954,8 +187988,8 @@
       ],
       "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": false,
-      "product_integrated": false,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W90-01",
@@ -187964,7 +187998,7 @@
           "lifecycle_task": "BUG-485-KITTING-OWNER",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "CANDIDATE_VERIFIED",
+          "phase": "CLOSED",
           "gate": "CONFIRMED",
           "actual_start_ref": {
             "commit": "c01f98f54b264636db7c15329ed59df06ecb6c64",
@@ -187981,9 +188015,67 @@
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "worker_delivery_ref": "docs/development/evidence/W90-01/DELIVERY.md",
+          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/6f19fde5e3d9ea4483c8c04c9713c6743f835007/docs/development/evidence/W90-01/DELIVERY.md",
           "validation": "24独立.NET用例（16原生PG、7既有非PG套件行为、1两租户种子）及25Vue用例通过，无跳过；相关构建和vue-tsc通过，定向补验与原组去重合计49项",
-          "runtime_resources_released": true
+          "runtime_resources_released": true,
+          "candidate_integrated": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "5f3f648854a8d201d934d0a6e19bbdbf39094167",
+            "main": "6f19fde5e3d9ea4483c8c04c9713c6743f835007",
+            "target": "main",
+            "pr": "https://github.com/GTX537/CP6/pull/486",
+            "paths": [
+              "CP6.Core/Services/Integration/OperationsAccessV1.Kitting.cs",
+              "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
+              "CP6.Core/Services/Sys/IamStandaloneDepartmentMappingV1.cs",
+              "CP6.Core/Services/Wms/IKittingService.cs",
+              "CP6.Core/Services/Wms/KittingService.Owner.cs",
+              "CP6.Core/Services/Wms/KittingService.cs",
+              "CP6.Entity/DTOs/Wms/KittingOwnerV1.cs",
+              "CP6.Persistence.PostgreSql/Migrations/Core/20261024005000_KittingDepartmentOwnerV1.cs",
+              "CP6.Tests/Erp/KittingOwnerPostgreSqlTests.cs",
+              "CP6.Tests/MesPermissionSeedTests.cs",
+              "CP6.WebApi/Controllers/Wms/KittingController.cs",
+              "CP6.WebApi/Program.cs",
+              "CP6.WebApi/Seed/WmsPermissionSeed.cs",
+              "cp6.web/src/api/sys/iam.ts",
+              "cp6.web/src/api/wms/kitting.ts",
+              "cp6.web/src/types/wms/kittingOwner.ts",
+              "cp6.web/src/views/pms/StandaloneDepartmentMappings.spec.ts",
+              "cp6.web/src/views/pms/StandaloneDepartmentMappings.vue",
+              "cp6.web/src/views/wms/KitOwner.spec.ts",
+              "cp6.web/src/views/wms/KitView.vue",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/09-parallel-development.md",
+              "docs/development/dispatch/20261024-wave90/README.md",
+              "docs/development/evidence/W90-01/DELIVERY.md",
+              "docs/development/planning/20261022-seven-day-delivery.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md"
+            ],
+            "observed_at": "2026-10-24T00:59:28.862788+00:00"
+          },
+          "handoff_delivery_ref": {
+            "commit": "d8aac6ab14918a33a945dbf43d518fadb182a99e",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T005945Z-wave90-delivery/MESSAGE.md",
+            "at": "2026-10-24T00:59:45.496108+00:00",
+            "base": "codex/t02c-entry-handoff-20260921",
+            "branch": "codex/w90-handoff"
+          },
+          "resources_released": false,
+          "lifecycle_snapshot": {
+            "handoff_branch_deleted": true,
+            "handoff_seat_released": true,
+            "main_task": "CP6:BUG-485-KITTING-OWNER",
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave90-final-verification.json"
+          }
         }
       ],
       "horizon": {
@@ -187999,8 +188091,30 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Main adoption, Handoff delivery, same-task lifecycle finish; W89 workspace confirmation pending",
-      "validation": "24独立.NET用例（16原生PG、7既有非PG套件行为、1两租户种子）及25Vue用例通过，无跳过；相关构建和vue-tsc通过，定向补验与原组去重合计49项"
+      "next_action": "Finish same-branch Main ledger PR/lifecycle, close Issue485 on proof; continue seven-day remaining direct prerequisites",
+      "validation": "24独立.NET用例（16原生PG、7既有非PG套件行为、1两租户种子）及25Vue用例通过，无跳过；相关构建和vue-tsc通过，定向补验与原组去重合计49项",
+      "handoff_delivery_ref": {
+        "commit": "d8aac6ab14918a33a945dbf43d518fadb182a99e",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T005945Z-wave90-delivery/MESSAGE.md",
+        "at": "2026-10-24T00:59:45.496108+00:00",
+        "base": "codex/t02c-entry-handoff-20260921",
+        "branch": "codex/w90-handoff"
+      },
+      "handoff_integration": {
+        "result": "PASS",
+        "repository": "GTX537/CP6.AI-Handoff",
+        "source": "d8aac6ab14918a33a945dbf43d518fadb182a99e",
+        "main": "194b2cdecad3322d7f5a87b1d5caf747913c7cc8",
+        "target": "codex/t02c-entry-handoff-20260921",
+        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/65",
+        "paths": [
+          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T004459Z-wave90-start/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T005945Z-wave90-delivery/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/waves/20261024-wave90.md"
+        ],
+        "observed_at": "2026-10-24T01:00:39.614072+00:00"
+      },
+      "lifecycle_complete": false
     },
     "wave_history": [
       {
@@ -201763,7 +201877,7 @@
         },
         {
           "id": "D2",
-          "phase": "IMPLEMENTING",
+          "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
           "current_window": "W90-01",
           "prerequisite_adjustment": "Issue477 bounded slotting history current Owner and opaque source disclosure; full WP10-28/29 remains UNPROVEN.",
@@ -201775,7 +201889,7 @@
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "Kitting standalone current Owner and legacy write gate; full Composition adoption remains separate"
+          "next_action": "Kitting legacy recipe and historical order current Owners adopted; full approved KIT Composition remains separate. Continue remaining independent Owners and D5/D6 real prerequisites."
         },
         {
           "id": "D3",

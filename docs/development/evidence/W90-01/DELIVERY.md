@@ -33,3 +33,9 @@ Owner复用原生身份围栏、固定排序业务表读锁与最终当前权限
 24/375整卡、125目标0完整交付、247正式运行NOT_RUN保持。完整WP10-26/27、KIT的K-G01–K-G06、15AC、准确工程Ref/冻结版本/UOM转换/Root/Claim/SourceBudget/共同QuantityUoW/真实物理闭合和恢复继续UNPROVEN/NOT_RUN。七天目标ACTIVE。
 
 W89跨仓切换组合被自动审批以`blocked by policy`拒绝，CRM未开工；Main484仅准备文档采用，W89 Main/Handoff原分支可靠保存并已deferred释放，明确确认待答复。本任务只复用原仓席位，不重试或绕过bind。历史W51指定停止data删除也保留原拒绝边界，不重试。
+
+## 实际采用与最后收尾
+
+Main [PR486](https://github.com/GTX537/CP6/pull/486) source `5f3f648854a8d201d934d0a6e19bbdbf39094167`采用远端main `6f19fde5e3d9ea4483c8c04c9713c6743f835007`，30任务路径逐blob核对；Handoff [PR65](https://github.com/GTX537/CP6.AI-Handoff/pull/65)采用`194b2cdecad3322d7f5a87b1d5caf747913c7cc8`，准确分支删除、固定树干净detached、finish释放。20个产品路径与已测提交逐blob一致，复用有效结果，最后文档diff/台账生成单独检查。
+
+Main同任务最终状态PR/finish及Issue485最后关闭待完成；当前约17.92min，原估45–65min＋独立前置4min，实际按finish不重复计Handoff。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave90-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续剩余独立Owner及D5/D6真实前置，正式KIT Composition仍未采用。
