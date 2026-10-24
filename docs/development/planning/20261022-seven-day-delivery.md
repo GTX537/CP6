@@ -1042,3 +1042,13 @@ W107 Main519/CRM134/Handoff83已全部合并finish，准确分支删除、席位
 19项最终适用的唯一相关本地检查通过、0跳过：13项真实PostgreSQL行为、6项原模型元数据回归；受影响编译通过。 [实际交付](../dispatch/20261024-wave108/README.md)。
 Handoff [PR84](https://github.com/GTX537/CP6.AI-Handoff/pull/84) 已采用 `e10cab1497d1341d53a8538a5ab26eb93734a353`，原准确分支删除、固定DEV-2 finish释放。 CRM分支删除/席位释放已核对；Main本次正常PR及finish继续，当前START后墙钟24.52min（原估90–150），最终按Main finish计，不叠加各仓。
 接续原签发与新bundle身份桥接、消费/H01/编号与提交回执；七天ACTIVE，正式整卡/验收不提升。
+
+## 2026-10-24：W108完整收尾 / W109人工受理权限源
+
+W108 Main520/CRM135/Handoff84全部finish，准确分支删除、席位释放，实际29.33min/19项检查。[W109](../dispatch/20261024-wave109/README.md)补实际Main人工受理权限生产者与CRM互通，预计50–80min；完整H01、服务身份、无损版本桥和公开提交仍待，七天ACTIVE。
+
+## W109人工受理权限源候选及CRM互通
+
+49项最终适用的唯一相关本地检查通过、0跳过：Main47项实际权限源/PG/HTTP与局部回归，CRM2项实际签名互通；受影响项目编译通过。 [实际交付](../dispatch/20261024-wave109/README.md)。
+Handoff [PR85](https://github.com/GTX537/CP6.AI-Handoff/pull/85)已采用 `6f21e118e8b6e0c54b3d637aec430ba34168fdb9`，准确分支删除、固定DEV-2 finish释放。 CRM分支删除/释放已核对；Main实际产品PR/finish继续，当前START后墙钟13.44min（原估50–80），最终按Main finish计，不叠加各仓。
+后继服务身份、最终业务fence、原身份无损桥接/消费/H01/公开提交回执。七天ACTIVE。

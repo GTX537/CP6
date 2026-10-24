@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-24：W109人工受理权限源与实际CRM互通
+
+Main实际OIDC签发新增四人工intake用途，当前主管/健康部门/精确SiteForm和crm-intake完整字段源；缺失/撤销/不可表达范围拒绝，签名不是最终业务授权。CRM [PR136](https://github.com/GTX537/CP6.CRM/pull/136)已采用 `c5657a3918d589475a25e5dd4d932af9f11e7c97`。49项最终适用的唯一相关本地检查通过、0跳过：Main47项实际权限源/PG/HTTP与局部回归，CRM2项实际签名互通；受影响项目编译通过。 [单份交付](../development/dispatch/20261024-wave109/README.md)。CRM准确分支删除、DEV-2释放；Handoff [PR85](https://github.com/GTX537/CP6.AI-Handoff/pull/85)已采用 `6f21e118e8b6e0c54b3d637aec430ba34168fdb9`，准确分支删除、固定DEV-2 finish释放。 Main产品PR/finish继续，当前墙钟13.44min（原估50–80）。自有PG停止/缓存保留，无Actions/部署；服务身份/H01/无损版本桥/消费/公开提交及正式验收待后继。24/375、0/125、247NOT_RUN不变，七天ACTIVE。
+
 ## 2026-10-24：W108原完整CRM图PostgreSQL存储采用
 
 CRM [PR135](https://github.com/GTX537/CP6.CRM/pull/135)已采用 `dfeba8e44d58a668b8f721b605a425f1bc5279b7`，原32组织表/codec/GraphStore使用明确PG profile，精度、租户复合FK、主行版本锁及全事务回滚验证。19项最终适用的唯一相关本地检查通过、0跳过：13项真实PostgreSQL行为、6项原模型元数据回归；受影响编译通过。 [单份交付](../development/dispatch/20261024-wave108/README.md)。CRM准确分支删除、DEV-2释放；Handoff [PR84](https://github.com/GTX537/CP6.AI-Handoff/pull/84) 已采用 `e10cab1497d1341d53a8538a5ab26eb93734a353`，原准确分支删除、固定DEV-2 finish释放。 Main最终合并/finish继续，当前墙钟24.52min（原估90–150）。仅显式新库/ReadCommitted，自有PG停止、缓存保留，无Actions或部署。原签发/新bundle身份桥接、消费/H01/编号/公开提交回执及正式验收待后继；24/375、0/125、247NOT_RUN不变，七天ACTIVE。
