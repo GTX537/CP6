@@ -126,6 +126,9 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     public async Task Inquiry_producer_actual_HTTP_login_OIDC_signing_rejects_spoofing_and_current_revocation()
     {
         await using var h = await Seed(); var pair = (await GrantInquiry(h))[0]; var options = InquiryPermissionSigningTests.Options();
+        var bridgeDirectory = Environment.GetEnvironmentVariable("CP6_INQUIRY_CONFIGURATION_BRIDGE");
+        if (bridgeDirectory is not null)
+            await h.Db.Sys_Users.Where(x => x.Id == h.ActorId).ExecuteUpdateAsync(x => x.SetProperty(u => u.DeptId, h.Parent));
         var environment = IdentityEnvironment(h.Tenant); const string clientSecret = "owned-local-client-secret";
         const string redirect = "https://crm.cp6.test/callback";
         environment["CrmOidc__Issuer"] = options.Issuer;
@@ -170,9 +173,39 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         if (Environment.GetEnvironmentVariable("CP6_INQUIRY_PROJECTION_OUTPUT") is { Length: > 0 } path)
             await File.WriteAllTextAsync(path, JsonSerializer.Serialize(new { projection = document.RootElement,
                 publicKeyBase64 = options.PublicKeyBase64, activeFromUtc = options.ActiveFromUtc, producer = "actual Main login/OIDC/HTTP endpoint; local isolated PostgreSQL" }));
+        // Optional two-process integration. The isolated-run directory is supplied by the local
+        // harness, never by a request. Only its private session file contains the short-lived token.
+        if (bridgeDirectory is not null)
+        {
+            var root = Path.GetFullPath(Environment.GetEnvironmentVariable("CP6_PERMISSION_PG_ROOT")!);
+            bridgeDirectory = Path.GetFullPath(bridgeDirectory);
+            Assert.StartsWith(root + Path.DirectorySeparatorChar, bridgeDirectory, StringComparison.OrdinalIgnoreCase);
+            Directory.CreateDirectory(bridgeDirectory);
+            await File.WriteAllTextAsync(Path.Combine(bridgeDirectory, "session.json"), JsonSerializer.Serialize(new
+            {
+                marker = "CP6-owned-inquiry-configuration-interop-v1", issuer = options.Issuer, origin = host.Origin.ToString(),
+                accessToken = token, idToken = tokenBody.RootElement.GetProperty("id_token").GetString(),
+                tenantId = h.Tenant, subjectId = h.ActorId, departmentId = h.Parent, siteId = pair.SiteId, formId = pair.FormId,
+                keyId = options.KeyId, publicKeyBase64 = options.PublicKeyBase64, activeFromUtc = options.ActiveFromUtc
+            }));
+            await WaitConfigurationBridge(bridgeDirectory, "saved");
+        }
         await h.Db.Sys_RoleActions.Where(x => x.RoleId == 71 && x.ActionCode == "configure").ExecuteDeleteAsync();
         using (var revoked = await host.Send(Projection(command, token))) Assert.Equal(HttpStatusCode.Forbidden, revoked.StatusCode);
+        if (bridgeDirectory is not null)
+        {
+            await File.WriteAllTextAsync(Path.Combine(bridgeDirectory, "revoked"), "actual Main configure action revoked");
+            await WaitConfigurationBridge(bridgeDirectory, "done");
+            File.Delete(Path.Combine(bridgeDirectory, "session.json"));
+        }
         await h.Db.Database.ExecuteSqlInterpolatedAsync($"UPDATE public.\"CrmOidcGrant\" SET \"Revoked\"=true WHERE \"SubjectId\"={h.ActorId}");
         using var revokedSession = await host.Send(Projection(command with { Purpose = "configuration:read" }, token)); Assert.Equal(HttpStatusCode.Unauthorized, revokedSession.StatusCode);
+    }
+
+    private static async Task WaitConfigurationBridge(string directory, string stage)
+    {
+        using var timeout = new CancellationTokenSource(TimeSpan.FromMinutes(3));
+        while (!File.Exists(Path.Combine(directory, stage))) await Task.Delay(100, timeout.Token);
+        Assert.Equal("PASS", await File.ReadAllTextAsync(Path.Combine(directory, stage), timeout.Token));
     }
 }

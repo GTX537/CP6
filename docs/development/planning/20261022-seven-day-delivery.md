@@ -982,3 +982,13 @@ W101 Main513/CRM128/Handoff77已采用，152项相关验证通过，24.18min加�
 ## W102实际配置Owner已采用
 
 347项唯一相关本地检查通过：30项配置Owner/真实HTTP与PG，166项既有PG身份/原结果/日历/绑定，151项相关单元；0跳过，失败日志保留。 CRM129与Handoff已合并finish；[交付](../dispatch/20261024-wave102/README.md)。Main本次最后合并/finish继续，当前63.70min；接续可信Web BFF v2、预览/激活与公开受理，正式目标/验收不提升。七天ACTIVE。
+
+## 2026-10-24：W102完整收尾 / W103真实权限与BFF链路
+
+W102 Main514/CRM129/Handoff78已完整合并finish，347项相关本地检查通过，实际68.89min，准确分支删除、三个席位释放。[W103](../dispatch/20261024-wave103/README.md)接原保护会话到Main签名和配置Owner的服务端链路、显式Web BFF转发，预计90–150min；浏览器自报身份不可信，旧UI不同合同留后继。七天ACTIVE，正式目标/验收不提升。
+
+## W103真实权限与Web BFF已采用
+
+181项最终适用的唯一相关本地检查通过：27项新增BFF/原生PG HTTP、51项既有Owner/会话、86项OIDC/传输、15项Node BFF、2项实际Main与CRM互通；0跳过。 [实际交付](../dispatch/20261024-wave103/README.md)。
+Handoff [PR79](https://github.com/GTX537/CP6.AI-Handoff/pull/79) 已采用 `c1978b0a92fd81164751c6c5791e20a4c946ca06`，准确分支删除、固定席位finish释放。目录连接清理曾被自动审批拒绝；用户本机仅移除连接后，已核对目标缓存完整，官方bind/resume成功。 Main本次正常PR/finish继续；当前Main START后墙钟62.05min，原估90–150min；包含审批等待，最终单列，不叠加CRM/Handoff。
+接续冻结配置UI、预览/激活及公开受理；正式目标/验收不提升，七天ACTIVE。
