@@ -1072,3 +1072,13 @@ W110三仓完整finish，准确分支删除、席位释放，实际20.78min/75�
 154项唯一相关本地检查通过、0跳过：23项真实PostgreSQL（10项本轮采用/边界、13项原v1图回归），131项旧Intake/Calendar/模型回归；生成器检查和受影响项目构建通过。 [实际交付](../dispatch/20261024-wave111/README.md)。
 Handoff [PR87](https://github.com/GTX537/CP6.AI-Handoff/pull/87)已采用 `a3b252cb3d307767bce3ef8349b991a9f8c7a36f`，准确分支删除、固定DEV-2 finish释放。 CRM分支删除/释放已核对；Main文档PR/finish继续，当前START后墙钟19.61min（原估40–70），最终按Main finish计，不叠加各仓。
 后继真实宿主/隔离衔接、消费/回执、服务身份/H01最终权限及完整公开提交。七天ACTIVE。
+
+## 2026-10-24：W111完整收尾 / W112原同意与回执图
+
+W111 Main523/CRM138/Handoff87全部finish，准确分支删除、席位释放，实际23.18min/154项检查。[W112](../dispatch/20261024-wave112/README.md)补原完整CRM图的ConsentFact/ReceiptProof与绑定完整性，预计60–100min；完整H01、服务身份、消费重放和公开提交仍待，七天ACTIVE。
+
+## W112原同意与回执图
+
+82项唯一相关本地检查通过、0跳过：32项真实PostgreSQL（19项本轮事实/边界、13项原v1图回归），50项旧模型/回执codec回归。一次集中审查发现回执输出合同风险，修复后定向复验5项；其他有效结果复用，失败记录保留。 [实际交付](../dispatch/20261024-wave112/README.md)。
+Handoff [PR88](https://github.com/GTX537/CP6.AI-Handoff/pull/88)已采用 `bceba80f0bcc2c5370c50b6069a981426dcfb27d`，准确分支删除、固定DEV-2 finish释放。 CRM分支删除/释放已核对；Main文档PR/finish继续，当前START后墙钟25.94min（原估60–100），最终按Main finish计，不叠加各仓。
+后继实际消费/重放、service/H01最终权限、宿主隔离及完整公开提交，七天ACTIVE。

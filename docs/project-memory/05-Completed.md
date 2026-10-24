@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-24：W112原同意与回执图
+
+CRM [PR139](https://github.com/GTX537/CP6.CRM/pull/139)已采用 `3f12f94215c1b7beec182312959ee4e39c77bd4f`；新库PGv4原图同意/回执绑定、延迟完整性、验证读取和不可逆隐私/撤销，原父行串行化两种竞争顺序。82项唯一相关本地检查通过、0跳过：32项真实PostgreSQL（19项本轮事实/边界、13项原v1图回归），50项旧模型/回执codec回归。一次集中审查发现回执输出合同风险，修复后定向复验5项；其他有效结果复用，失败记录保留。 [单份交付](../development/dispatch/20261024-wave112/README.md)。CRM准确分支删除、DEV-2释放；Handoff [PR88](https://github.com/GTX537/CP6.AI-Handoff/pull/88)已采用 `bceba80f0bcc2c5370c50b6069a981426dcfb27d`，准确分支删除、固定DEV-2 finish释放。 Main文档PR/finish继续，墙钟25.94min（原估60–100）。自有PG停止/缓存保留，无Actions/迁移/部署。消费重放、service/H01最终权限、宿主隔离、完整公开提交待后继；24/375、0/125、247NOT_RUN不变，七天ACTIVE。
+
 ## 2026-10-24：W111原日历与Intake图无损采用
 
 CRM [PR138](https://github.com/GTX537/CP6.CRM/pull/138)已采用 `0323e3760c6638b48e5b0990968a574ceeb948aa`；显式新库PGv3保留原日历发布事实、原Intake全图和精确生效时间/假期，验证源内容、回滚和父子行并发，不构造业务成功。154项唯一相关本地检查通过、0跳过：23项真实PostgreSQL（10项本轮采用/边界、13项原v1图回归），131项旧Intake/Calendar/模型回归；生成器检查和受影响项目构建通过。 [单份交付](../development/dispatch/20261024-wave111/README.md)。CRM准确分支删除、DEV-2释放；Handoff [PR87](https://github.com/GTX537/CP6.AI-Handoff/pull/87)已采用 `a3b252cb3d307767bce3ef8349b991a9f8c7a36f`，准确分支删除、固定DEV-2 finish释放。 Main文档PR/finish继续，当前墙钟19.61min（原估40–70）。自有PG停止/缓存保留，无Actions/部署；真实宿主/隔离衔接、消费/回执、service/H01最终权限及完整公开提交待后继。24/375、0/125、247NOT_RUN不变，七天ACTIVE。
