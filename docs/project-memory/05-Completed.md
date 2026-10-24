@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-24：W123原生保留维护权限
+
+29项唯一相关本地成功检查：Main13、CRM16；真实Main TLS控制器/服务认证/PG来源经实际CRM捕获、持久信任和当前事务，原H01提交回归、完整角色/当前动作、用途/租户/nonce/epoch/期限、撤权锁/恢复互斥和跨事务误用通过，必需0跳过。 [交付](../development/dispatch/20261024-wave123/README.md)。CRM已合并finish，原生维护用途和当前服务证明已采用。
+Handoff [PR99](https://github.com/GTX537/CP6.AI-Handoff/pull/99)采用 `566e6e56acc5814b7252e1dcd1f1829befbb253f`，准确分支已删除、DEV-2已finish释放。 Main最终PR/finish尚待；START后墙钟27.14分钟，原估110–160分钟，最终按Main finish计，不叠加各仓；不含先前只读调查。
+隐私/保留及实际发布仍待，24/375、0/125、247NOT_RUN保持，七天ACTIVE。
+
 ## 2026-10-24：W122原生询盘页面与动作
 
 101项唯一相关本地成功检查：Main28、CRM26（PostgreSQL/HTTP/9种实际浏览器场景）、Web47；实际Main读取用途HTTP原字节通过CRM持久PG信任，当前权限/CSRF、原命令恢复、412、访问失效、截止时钟、并发/CAS和原读取回归通过，必需0跳过。 [交付](../development/dispatch/20261024-wave122/README.md)。CRM已合并finish，原生队列/详情、当前动作及稳定重试已采用；Handoff [PR98](https://github.com/GTX537/CP6.AI-Handoff/pull/98)采用 `fa331f5750c6155d2d5a74908a8b3c9708aa562f`，准确分支已删除、DEV-2已finish释放。
