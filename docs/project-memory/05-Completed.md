@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-24：W114实际配置Owner与原图共同事务
+
+CRM [PR141](https://github.com/GTX537/CP6.CRM/pull/141)已采用 `d69bf0ec98613b0d00b7f546eaa241fc0c631235`；受控Serializable原图事务及实际配置Owner同事务采用、源Head行锁保留身份七锁协议。83项唯一相关本地PG/HTTP检查通过、0跳过：7项受控事务成功复用、39项实际配置Owner、10项隔离v3、9项隔离v2、18项v1/v4原图与回执；锁协议冲突和测试版本混用均已定位修正，失败日志保留。 [单份交付](../development/dispatch/20261024-wave114/README.md)。CRM准确分支删除、DEV-2释放；Handoff [PR90](https://github.com/GTX537/CP6.AI-Handoff/pull/90)已采用 `cb37e979bda63af27c3ad43d94d93cc82acfb8c7`，准确分支删除、固定DEV-2 finish释放。 Main文档PR/finish继续，墙钟31.86min（原估65–100）。自有PG停止/缓存保留，无Actions/迁移/部署。消费重放、service/H01最终权限、完整提交与页面继续；24/375、0/125、247NOT_RUN不变，七天ACTIVE。
+
 ## 2026-10-24：W113公开回执独立Owner
 
 CRM [PR140](https://github.com/GTX537/CP6.CRM/pull/140)已采用 `f5afba3e9bfb91119ca1d62bc5ff7bec3d121a51`；独立公开回执HTTP Owner与受保护Cookie、原PGv4读取事务及实际BFF接入。92项唯一相关本地检查通过、0跳过：62项PG/HTTP、30项Web与相关类型检查；真实Node BFF→API→PG回执和原表单，以及原配置写入/重放通过。首次缺失Node产物及新增Web夹具合同错误已修复并定向重验，其他有效成功复用，失败记录保留。 [单份交付](../development/dispatch/20261024-wave113/README.md)。CRM准确分支删除、DEV-2释放；Handoff [PR89](https://github.com/GTX537/CP6.AI-Handoff/pull/89)已采用 `5aac8893ba0917e623459b8f97fb17ea597b030e`，准确分支删除、固定DEV-2 finish释放。 Main文档PR/finish继续，墙钟26.13min（原估50–80）。自有PG停止/缓存保留，无Actions/迁移/部署。消费重放、service/H01最终权限、完整提交事务接入、完整公开提交待后继；24/375、0/125、247NOT_RUN不变，七天ACTIVE。
