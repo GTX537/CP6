@@ -908,3 +908,9 @@ W89 Main506、CRM124/125、Handoff72与Issue123已闭环，实际44.03min（排�
 ## W97候选验证
 
 70项去重相关本地验证通过（44项原生PG、26项既有逻辑回归），无跳过；修复前2项CUSTOMER→SELF失败保留。同事务MOVE属性保全／目标兼容有界修复，既有v1输入和原键恢复不变。PG停止，正常Main/Handoff采用、Issue503关闭和finish待完成；新MOVE页面后续采用。详见[单份交付](../evidence/BUG-503/DELIVERY.md)。
+
+## 实际采用与最后收尾
+
+Main [产品PR](https://github.com/GTX537/CP6/pull/507) source `d05bce95ec9591a532d009847f6b5a38db216562`采用远端main `906bcaef5974c0bc3305c89387044e5b396496d6`，14任务路径一致；Handoff [PR](https://github.com/GTX537/CP6.AI-Handoff/pull/73)采用`bd49fe3aef1826037ef68c0efd17cee5ac3d9dda`，准确分支删除、固定树干净detached、finish释放。3产品路径与已测提交逐blob一致，复用70项原成功证据，最后文档diff和台账生成独立检查。Issue503已关闭。
+
+Main同任务最终状态PR/finish待完成，当前约12.71min，原估25–40min＋前置约5min，最终以`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave97-final-verification.json`为准，不重复Handoff。3个自有PG停止、所有数据及失败证据保留；无Actions／迁移／部署。实际MOVE页面和正式业务验收仍未完成，七天ACTIVE。

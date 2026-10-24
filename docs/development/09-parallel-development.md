@@ -364,3 +364,5 @@ W94 Main498/Handoff69已采用，Handoff准确分支与席位已收尾；Main同
 W95 Main501/Handoff70已采用，Handoff准确分支与席位已收尾；Main同任务最后状态与finish后继续。W37–W88、W90–W94已完成，W89保存待确认不重复。
 
 W96 Main504/Handoff71已采用，Handoff准确分支与席位已收尾；Main同任务最后状态与finish后优先官方重绑并恢复用户已明确授权的W89。Issue503及新增MOVE提交保持未完成。
+
+W97产品/Handoff已采用，Issue503已关闭，Handoff准确分支与席位已收尾；Main同任务最后状态与finish后继续实际MOVE页面及Site/Form Owner前置。

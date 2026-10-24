@@ -1,8 +1,8 @@
 # 当前待办与优先级
 
-## 2026-10-24：W97 MOVE保管属性候选通过
+## 2026-10-24：W97 MOVE保管属性修复已采用
 
-70项去重相关本地验证通过（44项原生PG、26项既有逻辑回归），无跳过；修复前2项CUSTOMER→SELF失败保留。[单份交付](../development/evidence/BUG-503/DELIVERY.md)。同事务保留来源属性，异属性目标安全409，原v1/负库存政策保留；PG停止，待正常Main/Handoff采用、Issue503关闭与准确分支/席位收尾。新增MOVE页面后续采用，七天ACTIVE，全局验收计数不变。
+Main [产品PR](https://github.com/GTX537/CP6/pull/507) source `d05bce95ec9591a532d009847f6b5a38db216562`进入远端main `906bcaef5974c0bc3305c89387044e5b396496d6`，14路径一致；44原生PG＋26逻辑回归去重70项通过，[单份交付](../development/evidence/BUG-503/DELIVERY.md)。Issue503已关闭，Handoff [PR](https://github.com/GTX537/CP6.AI-Handoff/pull/73)已采用并删除准确分支、finish释放席位；Main同任务最后状态PR/finish待完成。3个PG停止保留，无Actions／既有库迁移／部署。当前12.71min，原估25–40min＋独立前置约5min，最终据finish计。新MOVE页面后续采用，七天ACTIVE，全局计数不变。
 
 ## 2026-10-24：W89身份会话围栏与BUG-123已采用
 

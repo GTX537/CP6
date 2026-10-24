@@ -32,3 +32,9 @@ COORD本聊天单人，Issue [503](https://github.com/GTX537/CP6/issues/503)，M
 本地自有PG全部停止、无postmaster PID，测试数据／日志留存。普通Actions未触发，不改工作流、分支保护或生产门禁，无全仓回归、SQL Server验收、既有环境迁移或生产部署。正式Stock QuantityKernel/Root/Claim/容量、全库数据修复、Finance业务接收、真实业务验收及新增MOVE页面未在本修复内交付。
 
 Issue503在相关测试、一次审查、原步骤复测和远端main采用核对完成后才关闭；此候选记录不提前声称关闭或席位已释放。Main/Handoff正常PR合并、准确任务分支定向删除与官方finish待完成，最终记录 `C:\Users\tt\CP6-planning-reports\20261017-foundation\wave97-final-verification.json`。24/375整卡、125总目标0完整、247正式运行NOT_RUN保持不变，七天ACTIVE。
+
+## 实际采用与最后收尾
+
+Main [产品PR](https://github.com/GTX537/CP6/pull/507) source `d05bce95ec9591a532d009847f6b5a38db216562`采用远端main `906bcaef5974c0bc3305c89387044e5b396496d6`，14任务路径一致；Handoff [PR](https://github.com/GTX537/CP6.AI-Handoff/pull/73)采用`bd49fe3aef1826037ef68c0efd17cee5ac3d9dda`，准确分支删除、固定树干净detached、finish释放。3产品路径与已测提交逐blob一致，复用70项原成功证据，最后文档diff和台账生成独立检查。Issue503已关闭。
+
+Main同任务最终状态PR/finish待完成，当前约12.71min，原估25–40min＋前置约5min，最终以`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave97-final-verification.json`为准，不重复Handoff。3个自有PG停止、所有数据及失败证据保留；无Actions／迁移／部署。实际MOVE页面和正式业务验收仍未完成，七天ACTIVE。
