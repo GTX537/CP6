@@ -762,3 +762,11 @@ CRM [PR122](https://github.com/GTX537/CP6.CRM/pull/122)已采用，source `f87d5
 Handoff [PR63](https://github.com/GTX537/CP6.AI-Handoff/pull/63)已采用 `49895cb45ffd949d2f6447365f9b0ec66ebb9ece`，准确分支删除、固定树干净detached、finish释放。Main仅剩协调PR/finish，不提前声明释放。登记开工至此约15.99min，原预算50–80min，最终以finish为准、子任务不重复累计；独立前置约3min。
 
 W87协调核对纠正上述W84/W85两处历史摘要PR编号；依据wave84/85-product-delivery及close-delivery已保存远端证明，仅修正引用，不改变历史完成/验证范围。
+
+## 2026-10-23：W87全部收尾 / W88 VMI独立Owner
+
+W87 Main480/CRM122/Handoff63全部采用，33独立相关用例通过，实际18.06min＋前置3min，三准确分支删除和席位释放已核对。[W88](../dispatch/20261023-wave88/README.md)修Issue481，补VMI当前Owner/源行交集、精确观察和历史估算读，预计50–75min＋独立前置约3min；按日正式计费/Finance及CRM Site/Form最终门仍待接。七天目标ACTIVE。
+
+## W88验证完成
+
+18独立.NET用例（15原生PG、2既有非PG VMI行为、1两租户启动种子）及22Vue用例通过，无跳过；相关构建和vue-tsc通过，最终权限故障定向补验1项并入原15项、不重复计数。一次集中审查完成，5个实际PG停止保留；40去重项不代表完整业务验收。正常采用与同任务收尾后继续，七天ACTIVE。

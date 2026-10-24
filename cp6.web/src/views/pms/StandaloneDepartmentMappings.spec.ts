@@ -19,6 +19,15 @@ beforeEach(() => {
 })
 afterEach(() => { view?.unmount(); view = undefined })
 describe('explicit standalone department binding', () => {
+  it('binds a searched historical VMI billing UUID independently from current stock', async () => {
+    const vm = await render(); await vm.open()
+    await view!.get('[aria-label="对象类型"]').setValue('vmi-billing')
+    api.standaloneObjects.mockResolvedValue([{ id: 'vmi-billing-uuid', name: 'VMI-EXISTING' }])
+    vm.search = 'VMI'; await vm.findObjects(); expect(api.standaloneObjects).toHaveBeenCalledWith('vmi-billing', 'VMI')
+    vm.draft.objectId = 'vmi-billing-uuid'; vm.draft.departmentId = dept; vm.draft.reason = 'Verified historical billing owner'
+    api.saveStandaloneMapping.mockImplementation(async (_input, operationId) => ({ operationId, kind: 'dept-standalone-mapping', state: 'COMMITTED', entityId: id }))
+    await vm.save(); expect(api.saveStandaloneMapping.mock.calls[0]![0]).toMatchObject({ objectKind: 'vmi-billing', objectId: 'vmi-billing-uuid', departmentId: dept })
+  })
   it('selects a real cross-dock identity and submits its explicit department binding', async () => {
     const vm = await render(); await vm.open()
     await view!.get('[aria-label="对象类型"]').setValue('cross-dock')

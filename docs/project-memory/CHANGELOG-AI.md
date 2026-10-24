@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-24：W88 VMI独立Owner候选通过
+
+Issue481原生红灯转绿；18独立.NET用例（15原生PG、2既有非PG VMI行为、1两租户启动种子）及22Vue用例通过，无跳过；相关构建和vue-tsc通过，最终权限故障定向补验1项并入原15项、不重复计数。[单份交付](../development/evidence/W88-01/DELIVERY.md)。当前库存源交集、混单位精确分组、历史估算语义、敏感字段与账单UUID权限已补；旧写零效果。5个PG停止保留，测试夹具唯一约束失败原证据保留；待Main/Handoff采用及准确分支/席位收尾。完整WP10-39/40及验收不提升，七天ACTIVE。
+
 ## 2026-10-23：W87持久签名信任已采用
 
 CRM PR122/source `f87d5dab2049bed802f77d1ee4e29e1a1122cd81`已采用远端main `1a7f0838c3db87d0b736fbe1c88d4ba9a0b1841f`；33独立相关用例通过（16PG＋17已有签名），实际数据库重启恢复与两个方向锁争用通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/1a7f0838c3db87d0b736fbe1c88d4ba9a0b1841f/docs/development/evidence/W87-01/DELIVERY.md)。持久材料/撤销、原操作重放和同事务当前验签已采用，实际权限生产者/Site/Form Owner及业务最终门待接。CRM/Handoff准确分支删除、固定树干净detached、finish释放；Main协调PR/finish待收尾。七天目标ACTIVE，完整业务验收不提升。

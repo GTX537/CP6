@@ -558,6 +558,8 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-rma", "返品管理", new[
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-rma", new[] { "CustomerName", "OperatorCd", "Remarks", "ReturnReason" }
     .Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
 CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-replenish", "補充指示", new[] { 1, 2, 3, 4, 5 }, 1);
+CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-vmi", "VMI当前观察与历史估算", new[] { 1, 2, 3, 4, 5 }, 1);
+CP6.Core.Services.Sys.FieldRegistry.Register("wms-vmi", new[] { "BillingAmount", "CustomerName", "DailyStorageRate", "Remarks" }.Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
 CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-slotting", "库位优化历史观察", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-slotting", new[] { "ApproverCd", "RecommendationsJson", "Remarks" }.Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
 CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-cross-dock", "越库历史观察", new[] { 1, 2, 3, 4, 5 }, 1);

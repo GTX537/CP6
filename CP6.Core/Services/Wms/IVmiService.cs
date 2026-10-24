@@ -1,4 +1,5 @@
 using CP6.Entity.DomainModels.Wms;
+using CP6.Entity.DTOs.Wms;
 
 namespace CP6.Core.Services.Wms;
 
@@ -11,9 +12,14 @@ namespace CP6.Core.Services.Wms;
 /// 本サービスは：
 ///   1. 客先別 VMI 在庫サマリ
 ///   2. 月次保管料 計算（バッチ）
+/// PostgreSQL uses the versioned Owner observations below. Legacy reads require that version;
+/// legacy calculate/confirm are fenced until formal billing and Finance adoption are proven.
 /// </remarks>
 public interface IVmiService
 {
+    Task<VmiPageV1<VmiCustomerObservationV1>> SearchCustomersOwnerAsync(VmiQueryV1 query);
+    Task<VmiPageV1<VmiStockObservationV1>> SearchStockOwnerAsync(string customerCd, VmiQueryV1 query);
+    Task<VmiPageV1<VmiBillingObservationV1>> SearchBillingsOwnerAsync(VmiQueryV1 query);
     /// <summary>客先別 VMI 在庫サマリ</summary>
     Task<List<VmiCustomerSummary>> SearchByCustomerAsync(string? customerCd);
 
