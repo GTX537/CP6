@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-24：W107原Attempt与三维原子限流前置采用
+
+CRM [PR134](https://github.com/GTX537/CP6.CRM/pull/134)已采用 `a69098129ef64d1bd6ae0a96df8831890220ffce`，原IssuedAttempt/browser/CSRF/origin/ETag/DB时限、原政策与精确指纹、调用方同事务PG三桶计数采用。24项最终适用的唯一相关本地检查通过、0跳过：21项原Attempt/内容/PG三维限流，3项既有公开GET回归；受影响编译通过。 [单份交付](../development/dispatch/20261024-wave107/README.md)。CRM准确分支删除、DEV-2释放；Handoff [PR83](https://github.com/GTX537/CP6.AI-Handoff/pull/83) 已采用 `88364f6475e7ab58cf09eac933922b264f2bf8a8`，原准确分支删除、固定DEV-2 finish释放。 Main最终合并/finish继续，当前墙钟15.13min（原估45–75）。自有PG/HTTP停止、缓存保留，无Actions或部署。HTTP提交未开放，消费/原图/H01/编号/回执及正式验收待后继；24/375、0/125、247NOT_RUN不变，七天ACTIVE。
+
 ## 2026-10-24：W106公开表单与持久浏览器绑定Attempt采用
 
 CRM [PR133](https://github.com/GTX537/CP6.CRM/pull/133)已采用 `c3e94a89e0c542ba3c5a8872ecb7bea55087cb89`，实际已激活配置公开GET、不可变PG IssuedAttempt、浏览器/CSRF摘要绑定及严格Node BFF接通。82项唯一相关本地检查通过、0跳过：26公开Owner/PG/HTTP/cookie/配置绑定（含实际Node BFF互通）、28相关配置/BFF回归、28Node，另含受影响编译与类型验证。 [单份交付](../development/dispatch/20261024-wave106/README.md)。CRM准确分支删除、DEV-2释放；Handoff [PR82](https://github.com/GTX537/CP6.AI-Handoff/pull/82) 已采用 `08789af72ad034874782164f1c314aa38a6665af`，原准确分支删除、固定DEV-2 finish释放。 Main最终合并/finish继续，当前墙钟26.93min（原估75–120）。自有PG/HTTP/Node停止，缓存保留，无Actions或部署。提交/回执/H01/公开页面、企业发布、正式发送和即时跨仓撤权待后继；24/375、0/125、247NOT_RUN不变，七天ACTIVE。
