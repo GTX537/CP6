@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## 2026-10-24：W120原生询盘读取Owner
+
+64项唯一相关本地成功检查：22项游标/PostgreSQL/HTTP、42项Web；实际公开提交完整图→独立读取Owner→Node BFF，权限/租户/字段/期限/行锁变化及传输拒绝覆盖，必需范围0跳过。 [交付](../development/dispatch/20261024-wave120/README.md)。CRM PR146已合并finish，原生列表/详情读取Owner和BFF已采用。
+Handoff [PR96](https://github.com/GTX537/CP6.AI-Handoff/pull/96)采用 `b28ac649bad6a0a6e1bab9bcd4301cd851519448`，准确分支已删除、DEV-2已finish释放。 Main最终PR/finish尚待；START后墙钟45.45分钟，原估110–170分钟，最终按Main finish计，不叠加各仓；不含先前只读调查。
+人工放行/拒绝、页面和后继隐私/发布仍待，24/375、0/125、247NOT_RUN保持，七天ACTIVE。
+
 ## 2026-10-24：W119人员询盘来源绑定
 
 54项唯一相关本地成功检查：Main12、CRM42，实际Main login/OIDC/HTTP原签名→CRM PostgreSQL持久信任互通；身份/完整角色源/epoch/nonce/用途/期限/撤权/会话CAS及传输拒绝覆盖，必需范围0跳过。 [交付](../development/dispatch/20261024-wave119/README.md)。CRM PR145已合并finish，Main实际Bearer来源签发与原冻结投影绑定。
