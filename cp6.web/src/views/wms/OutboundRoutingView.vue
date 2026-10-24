@@ -92,9 +92,12 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="t('wms.outboundRouting.col.target')" required>
-          <el-select v-model="form.targetWarehouseCd" filterable allow-create style="width: 100%">
-            <el-option v-for="w in warehouses" :key="w.warehouseCd" :label="`${w.warehouseCd} ${w.warehouseName}`" :value="w.warehouseCd" />
+          <el-select v-model="form.targetWarehouseCd" filterable remote allow-create :remote-method="loadWarehouses" :loading="warehouseLoading" style="width: 100%">
+            <el-option v-for="w in warehouses" :key="w.id" :label="`${w.warehouseCd} ${w.nameReadable ? w.warehouseName || '—' : '名称参照不可'}`" :value="w.warehouseCd" />
           </el-select>
+          <span class="hint">候補は現在参照できる倉庫です。コードで検索できます。</span>
+          <span v-if="warehouseTotal > warehouses.length" class="hint">先頭200件を表示中です。コードを絞って検索してください。</span>
+          <span v-if="warehouseFailed" class="hint">倉庫候補を取得できません。</span>
         </el-form-item>
         <el-form-item :label="t('wms.outboundRouting.col.enabled')">
           <el-switch v-model="form.enabled" />
@@ -119,14 +122,13 @@ import CpPageShell from '@/components/templates/CpPageShell.vue'
 import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import CpTag from '@/components/base/CpTag.vue'
 import { outboundRoutingApi } from '@/api/wms/outboundRouting'
-import { warehouseApi } from '@/api/wms/warehouse'
+import { useWarehouseOwnerChoices } from '@/composables/useWarehouseOwnerChoices'
 import type { OutboundRoutingRule } from '@/types/wms/outboundRouting'
 
 const { t } = useI18n()
 
 const total = ref<number>()
 const listRef = ref<ListPageExpose>()
-const warehouses = ref<{ warehouseCd: string; warehouseName: string }[]>([])
 const saving = ref(false)
 
 const dialogVisible = ref(false)
@@ -172,19 +174,11 @@ function emptyForm(): OutboundRoutingRule {
   }
 }
 const form = reactive<OutboundRoutingRule>(emptyForm())
+const { warehouses, total: warehouseTotal, loading: warehouseLoading, failed: warehouseFailed, loadWarehouses } = useWarehouseOwnerChoices(() => { form.targetWarehouseCd = '' })
 
 const preview = reactive({ productCd: '', customerCd: '', outboundType: 2, fallbackWarehouseCd: '' })
 const previewResult = ref<string[]>([])
 const previewLoading = ref(false)
-
-async function loadWarehouses() {
-  try {
-    const res = await warehouseApi.search({})
-    warehouses.value = (res?.data || []) as any
-  } catch {
-    warehouses.value = []
-  }
-}
 
 function openCreate() {
   editingId.value = null
@@ -257,7 +251,7 @@ async function runPreview() {
   }
 }
 
-onMounted(loadWarehouses)
+onMounted(() => loadWarehouses())
 </script>
 
 <style scoped>

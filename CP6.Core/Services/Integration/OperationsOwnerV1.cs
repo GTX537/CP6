@@ -15,7 +15,7 @@ public sealed partial class OperationsOwnerV1
 {
     internal const string Mes = "mes-work-order", Outbound = "wms-outbound-order",
         Production = "mes-production-result", Inbound = "wms-inbound-order", Receipt = "wms-inbound-receipt",
-        Stock = "wms-stock", StockTake = "wms-stocktake", WmsDashboard = "wms-dashboard", MesDashboard = "mes-dashboard", Defect = "mes-defect", MaterialShortage = "wms-material-shortage", LotTrace = "wms-lot-trace", CrossDock = "wms-cross-dock", Slotting = "wms-slotting", Vmi = "wms-vmi", Kitting = "wms-kitting", ReportCenter = "wms-report-center",
+        Stock = "wms-stock", StockTake = "wms-stocktake", WmsDashboard = "wms-dashboard", MesDashboard = "mes-dashboard", Defect = "mes-defect", MaterialShortage = "wms-material-shortage", LotTrace = "wms-lot-trace", CrossDock = "wms-cross-dock", Slotting = "wms-slotting", Vmi = "wms-vmi", Kitting = "wms-kitting", ReportCenter = "wms-report-center", Warehouse = "wms-warehouse", Location = "wms-location",
         StockQc = "wms-stock-qc", InboundQc = "wms-qc-inspection", Quality = "mes-quality-inspection", Machine = "mes-machine", Oee = "mes-oee", Planning = "mes-planning-board", Achievement = "mes-plan-achievement", Rma = "wms-rma", Replenish = "wms-replenish", Mobile = "wms-mobile", WorkCenter = "mes-work-center", ProcessCostRate = "mes-process-cost-rate", StockDwell = "wms-stock-dwell", Expiry = "wms-expiry";
     internal const string Mapping = "Main.Operations.Owner.v1";
     private readonly CP6Context db;
@@ -37,7 +37,7 @@ public sealed partial class OperationsOwnerV1
         var subject=await currentActor(ct);var definition=catalog();
         if(!definition.IsSealed || !definition.Scopes.TryGetValue(resource,out var scope))throw new CurrentPermissionUnavailableException();
         var source=await new CurrentFieldPermissionSourceReaderV1(db,http,()=>definition).ReadAsync(resource,ct);
-        var expected=resource==ReportCenter?new[]{"OperatorCd","OwnerCd","Remark"}:resource==Kitting?new[]{"ComponentName","ExecutedTxnNos","KitName","OperatorCd","Remarks"}:resource==Vmi?new[]{"BillingAmount","CustomerName","DailyStorageRate","Remarks"}:resource==Slotting?new[]{"ApproverCd","RecommendationsJson","Remarks"}:resource==CrossDock?new[]{"CustomerCd","OperatorCd","Remarks","SupplierCd"}:resource==LotTrace?new[]{"CustomerName","OperatorCd","Remark","SupplierName"}:resource==MaterialShortage?new[]{"Remark"}:resource is Outbound or Inbound or Receipt or Stock?new[]{"UnitPrice"}:
+        var expected=resource==Warehouse?new[]{"AddressText","ManagerCd","Remarks","WarehouseName"}:resource==Location?new[]{"Barcode","LocationName"}:resource==ReportCenter?new[]{"OperatorCd","OwnerCd","Remark"}:resource==Kitting?new[]{"ComponentName","ExecutedTxnNos","KitName","OperatorCd","Remarks"}:resource==Vmi?new[]{"BillingAmount","CustomerName","DailyStorageRate","Remarks"}:resource==Slotting?new[]{"ApproverCd","RecommendationsJson","Remarks"}:resource==CrossDock?new[]{"CustomerCd","OperatorCd","Remarks","SupplierCd"}:resource==LotTrace?new[]{"CustomerName","OperatorCd","Remark","SupplierName"}:resource==MaterialShortage?new[]{"Remark"}:resource is Outbound or Inbound or Receipt or Stock?new[]{"UnitPrice"}:
             resource is Mes or Production or MesDashboard or Defect or StockQc or InboundQc or Quality or Machine or Oee or Planning or Achievement or WorkCenter?Array.Empty<string>():
             resource==StockDwell?new[]{"Amount","CustomerName"}:resource==ProcessCostRate?new[]{"LaborRate","OverheadRate"}:resource==WmsDashboard?new[]{"Amount"}:resource==Rma?new[]{"CustomerName","OperatorCd","Remarks","ReturnReason"}:
             resource==Replenish?new[]{"OperatorCd","Remarks"}:resource==Mobile?new[]{"AssignedTo","ExceptionDescription","Instruction","Remarks"}:new[]{"Amount","UnitPrice"};
@@ -69,10 +69,11 @@ public sealed partial class OperationsOwnerV1
         Func<CancellationToken,Task<string>>? actionAtFence=null,bool readOnlyAuthorityFence=false)
     {
         using var linked=CancellationTokenSource.CreateLinkedTokenSource(ct,http.HttpContext?.RequestAborted??CancellationToken.None);ct=linked.Token;
-        if(resource is not (Mes or Outbound or Production or Inbound or Receipt or Stock or StockTake or WmsDashboard or MesDashboard or Defect or StockQc or InboundQc or Quality or Machine or Oee or Planning or Achievement or Rma or Replenish or Mobile or WorkCenter or ProcessCostRate or StockDwell or Expiry or MaterialShortage or LotTrace or CrossDock or Slotting or Vmi or Kitting or ReportCenter) || !db.Database.IsNpgsql() || db.Database.CurrentTransaction!=null
+        if(resource is not (Mes or Outbound or Production or Inbound or Receipt or Stock or StockTake or WmsDashboard or MesDashboard or Defect or StockQc or InboundQc or Quality or Machine or Oee or Planning or Achievement or Rma or Replenish or Mobile or WorkCenter or ProcessCostRate or StockDwell or Expiry or MaterialShortage or LotTrace or CrossDock or Slotting or Vmi or Kitting or ReportCenter or Warehouse or Location) || !db.Database.IsNpgsql() || db.Database.CurrentTransaction!=null
             || System.Transactions.Transaction.Current!=null || db.ChangeTracker.HasChanges()
             || readOnlyAuthorityFence && (write || delegation!=null || actionAtFence!=null)
-            || db.ChangeTracker.Entries().Any(e=>IsBusiness(e.Entity.GetType().Name)))
+            || db.ChangeTracker.Entries().Any(e=>IsBusiness(e.Entity.GetType().Name))
+            || resource is Warehouse or Location && db.ChangeTracker.Entries().Any(e=>e.Entity is CP6.Entity.DomainModels.Wms.Warehouse or CP6.Entity.DomainModels.Wms.Location))
             throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
         var original=db.ChangeTracker.Entries().Select(e=>e.Entity).ToHashSet(ReferenceEqualityComparer.Instance);
         IDbContextTransaction? tx=null;var committing=false;
@@ -158,6 +159,6 @@ public sealed partial class OperationsOwnerV1
         await db.Database.ExecuteSqlRawAsync("LOCK TABLE "+string.Join(",",tables.Select(Name).Distinct().Order(StringComparer.Ordinal))
             +(write?" IN SHARE ROW EXCLUSIVE MODE":" IN SHARE MODE"),ct);
         await db.Database.ExecuteSqlRawAsync("LOCK TABLE "+string.Join(",",new[]{"WmsRoleScope","Location","Warehouse","OutboundRoutingRule","ProductProcess","ProductMaterial","ProductMaster","MasterGenericCode","DefectCategory","InspectionTemplate"}
-            .Select(Name).Distinct().Order(StringComparer.Ordinal))+" IN SHARE MODE",ct);
+            .Select(Name).Distinct().Order(StringComparer.Ordinal))+(write && resource is Warehouse or Location?" IN SHARE ROW EXCLUSIVE MODE":" IN SHARE MODE"),ct);
     }
 }

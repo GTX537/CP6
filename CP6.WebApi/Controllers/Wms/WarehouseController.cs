@@ -1,4 +1,7 @@
 using CP6.Core.Auth;
+using CP6.Core.Services.Wms;
+using CP6.Core.Services.Erp;
+using CP6.WebApi.Controllers.Erp;
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.AspNetCore.Authorization;
@@ -11,12 +14,15 @@ namespace CP6.WebApi.Controllers.Wms;
 /// MSBBWM010 — 倉庫・ロケーション マスタ Web API
 /// </summary>
 [ApiController]
+[OrderOwnerResult]
 [Route("api/wms/warehouse")]
 [Authorize]
-public class WarehouseController : ControllerBase
+public partial class WarehouseController : ControllerBase
 {
     private readonly CP6Context _db;
-    public WarehouseController(CP6Context db) => _db = db;
+    private readonly WarehouseOwnerServiceV1? _owner;
+    public WarehouseController(CP6Context db,WarehouseOwnerServiceV1? owner=null) { _db=db;_owner=owner; }
+    private WarehouseOwnerServiceV1 Owner=>_owner??throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
 
     private string? CurrentUser => User?.Identity?.Name;
 
@@ -25,6 +31,7 @@ public class WarehouseController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Search([FromQuery] string? warehouseCd, [FromQuery] int? warehouseType, [FromQuery] string? baseCd)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("warehouses","query");
         var q = _db.Warehouses.AsNoTracking().Where(x => !x.IsDeleted);
         if (!string.IsNullOrWhiteSpace(warehouseCd)) q = q.Where(x => x.WarehouseCd.Contains(warehouseCd));
         if (warehouseType.HasValue) q = q.Where(x => x.WarehouseType == warehouseType.Value);
@@ -36,6 +43,7 @@ public class WarehouseController : ControllerBase
     [HttpGet("{cd}")]
     public async Task<IActionResult> Get(string cd)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("warehouses","query",cd);
         var w = await _db.Warehouses.AsNoTracking()
             .FirstOrDefaultAsync(x => x.WarehouseCd == cd && !x.IsDeleted);
         if (w == null) return NotFound(new { code = 404, message = "WM-MSG-070" });
@@ -46,6 +54,7 @@ public class WarehouseController : ControllerBase
     [RequirePermission("wms-warehouse", "add")]
     public async Task<IActionResult> Create([FromBody] Warehouse dto)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("warehouses","add");
         if (string.IsNullOrWhiteSpace(dto.WarehouseCd))
             return BadRequest(new { code = 400, message = "WarehouseCd is required" });
 
@@ -65,6 +74,7 @@ public class WarehouseController : ControllerBase
     [RequirePermission("wms-warehouse", "edit")]
     public async Task<IActionResult> Update(string cd, [FromBody] Warehouse dto)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("warehouses","edit",cd);
         var w = await _db.Warehouses.FirstOrDefaultAsync(x => x.WarehouseCd == cd && !x.IsDeleted);
         if (w == null) return NotFound(new { code = 404, message = "WM-MSG-070" });
 
@@ -92,6 +102,7 @@ public class WarehouseController : ControllerBase
     [RequirePermission("wms-warehouse", "del")]
     public async Task<IActionResult> Delete(string cd)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("warehouses","del",cd);
         var w = await _db.Warehouses.FirstOrDefaultAsync(x => x.WarehouseCd == cd && !x.IsDeleted);
         if (w == null) return NotFound(new { code = 404, message = "WM-MSG-070" });
 
@@ -111,6 +122,7 @@ public class WarehouseController : ControllerBase
     [HttpGet("{cd}/tree")]
     public async Task<IActionResult> GetTree(string cd)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("locations","query",cd,true);
         var list = await _db.Locations.AsNoTracking()
             .Where(x => x.WarehouseCd == cd && !x.IsDeleted)
             .OrderBy(x => x.LocationLevel).ThenBy(x => x.LocationCd)
@@ -122,6 +134,7 @@ public class WarehouseController : ControllerBase
     [RequirePermission("wms-location", "add")]
     public async Task<IActionResult> CreateLocation([FromBody] Location dto)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("locations","add",dto.WarehouseCd,true);
         if (string.IsNullOrWhiteSpace(dto.LocationCd) || string.IsNullOrWhiteSpace(dto.WarehouseCd))
             return BadRequest(new { code = 400, message = "LocationCd / WarehouseCd is required" });
         if (await _db.Locations.AnyAsync(x => x.LocationCd == dto.LocationCd && !x.IsDeleted))
@@ -148,6 +161,7 @@ public class WarehouseController : ControllerBase
     [RequirePermission("wms-location", "edit")]
     public async Task<IActionResult> UpdateLocation(string cd, [FromBody] Location dto)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("locations","edit",cd);
         var l = await _db.Locations.FirstOrDefaultAsync(x => x.LocationCd == cd && !x.IsDeleted);
         if (l == null) return NotFound(new { code = 404, message = "WM-MSG-070" });
 
@@ -178,6 +192,7 @@ public class WarehouseController : ControllerBase
     [RequirePermission("wms-location", "del")]
     public async Task<IActionResult> DeleteLocation(string cd)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("locations","del",cd);
         var l = await _db.Locations.FirstOrDefaultAsync(x => x.LocationCd == cd && !x.IsDeleted);
         if (l == null) return NotFound(new { code = 404, message = "WM-MSG-070" });
 
