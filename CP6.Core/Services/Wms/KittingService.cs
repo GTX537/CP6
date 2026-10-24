@@ -5,23 +5,25 @@ using Microsoft.EntityFrameworkCore;
 namespace CP6.Core.Services.Wms;
 
 /// <summary>キット組立・バラシ サービス実装</summary>
-public class KittingService : IKittingService
+public partial class KittingService : IKittingService
 {
     private readonly CP6Context _db;
     private readonly IWmsSequenceService _seq;
     private readonly IStockMovementService _stock;
+    private readonly CP6.Core.Services.Integration.OperationsOwnerV1? _owner;
     private const string OrderPrefix = "KIT";
 
-    public KittingService(CP6Context db, IWmsSequenceService seq, IStockMovementService stock)
+    public KittingService(CP6Context db, IWmsSequenceService seq, IStockMovementService stock, CP6.Core.Services.Integration.OperationsOwnerV1? owner = null)
     {
         _db = db;
         _seq = seq;
         _stock = stock;
+        _owner = owner;
     }
 
     // ─── マスタ ───
 
-    public async Task<List<KitMaster>> SearchMastersAsync(string? keyword)
+    private async Task<List<KitMaster>> SearchMastersCoreAsync(string? keyword)
     {
         var query = _db.KitMasters.AsNoTracking().Where(x => !x.IsDeleted);
         if (!string.IsNullOrWhiteSpace(keyword))
@@ -29,7 +31,7 @@ public class KittingService : IKittingService
         return await query.OrderBy(x => x.KitSku).ToListAsync();
     }
 
-    public async Task<KitMasterDto?> GetMasterAsync(string kitSku)
+    private async Task<KitMasterDto?> GetMasterCoreAsync(string kitSku)
     {
         var m = await _db.KitMasters.AsNoTracking().FirstOrDefaultAsync(x => x.KitSku == kitSku && !x.IsDeleted);
         if (m == null) return null;
@@ -49,7 +51,7 @@ public class KittingService : IKittingService
         };
     }
 
-    public async Task CreateMasterAsync(KitMasterDto dto, string? userName)
+    private async Task CreateMasterCoreAsync(KitMasterDto dto, string? userName)
     {
         if (string.IsNullOrWhiteSpace(dto.KitSku) || string.IsNullOrWhiteSpace(dto.KitName))
             throw new InvalidOperationException("KitSku and KitName are required");
@@ -80,7 +82,7 @@ public class KittingService : IKittingService
         await _db.SaveChangesAsync();
     }
 
-    public async Task UpdateMasterAsync(string kitSku, KitMasterDto dto, string? userName)
+    private async Task UpdateMasterCoreAsync(string kitSku, KitMasterDto dto, string? userName)
     {
         var m = await _db.KitMasters.FirstOrDefaultAsync(x => x.KitSku == kitSku && !x.IsDeleted)
             ?? throw new InvalidOperationException("WM-MSG-070");
@@ -109,7 +111,7 @@ public class KittingService : IKittingService
         await _db.SaveChangesAsync();
     }
 
-    public async Task DeleteMasterAsync(string kitSku, string? userName)
+    private async Task DeleteMasterCoreAsync(string kitSku, string? userName)
     {
         var m = await _db.KitMasters.FirstOrDefaultAsync(x => x.KitSku == kitSku && !x.IsDeleted)
             ?? throw new InvalidOperationException("WM-MSG-070");
@@ -123,7 +125,7 @@ public class KittingService : IKittingService
 
     // ─── 指示 ───
 
-    public async Task<List<KitOrder>> SearchOrdersAsync(KitOrderSearchQuery q)
+    private async Task<List<KitOrder>> SearchOrdersCoreAsync(KitOrderSearchQuery q)
     {
         var query = _db.KitOrders.AsNoTracking().Where(x => !x.IsDeleted);
         if (!string.IsNullOrWhiteSpace(q.KitOrderNo)) query = query.Where(x => x.KitOrderNo.Contains(q.KitOrderNo));
@@ -136,10 +138,10 @@ public class KittingService : IKittingService
             .Skip((q.Page - 1) * q.PageSize).Take(q.PageSize).ToListAsync();
     }
 
-    public async Task<KitOrder?> GetOrderAsync(string kitOrderNo)
+    private async Task<KitOrder?> GetOrderCoreAsync(string kitOrderNo)
         => await _db.KitOrders.AsNoTracking().FirstOrDefaultAsync(x => x.KitOrderNo == kitOrderNo && !x.IsDeleted);
 
-    public async Task<string> CreateOrderAsync(KitOrderDto dto, string? userName)
+    private async Task<string> CreateOrderCoreAsync(KitOrderDto dto, string? userName)
     {
         if (dto.Qty <= 0) throw new InvalidOperationException("WM-MSG-021: Qty must be > 0");
         if (string.IsNullOrWhiteSpace(dto.WarehouseCd) || string.IsNullOrWhiteSpace(dto.KitLocationCd))
@@ -166,7 +168,7 @@ public class KittingService : IKittingService
         return no;
     }
 
-    public async Task ExecuteAsync(string kitOrderNo, string? userName)
+    private async Task ExecuteCoreAsync(string kitOrderNo, string? userName)
     {
         var order = await _db.KitOrders.FirstOrDefaultAsync(x => x.KitOrderNo == kitOrderNo && !x.IsDeleted)
             ?? throw new InvalidOperationException("WM-MSG-070");
@@ -287,7 +289,7 @@ public class KittingService : IKittingService
         await _db.SaveChangesAsync();
     }
 
-    public async Task CancelAsync(string kitOrderNo, string? userName)
+    private async Task CancelCoreAsync(string kitOrderNo, string? userName)
     {
         var order = await _db.KitOrders.FirstOrDefaultAsync(x => x.KitOrderNo == kitOrderNo && !x.IsDeleted)
             ?? throw new InvalidOperationException("WM-MSG-070");

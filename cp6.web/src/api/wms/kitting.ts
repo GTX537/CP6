@@ -1,7 +1,12 @@
 import http from '../http'
 import type { KitMaster, KitOrder, KitOrderSearchQuery, WmsApi } from '@/types/wms/wms'
+import type { KitQuery, KitMasterRow, KitMasterDetail, KitOrderRow, KitPage } from '@/types/wms/kittingOwner'
 
 export const kittingApi = {
+  searchMastersOwner(query: KitQuery) { return http.get<any, WmsApi<KitPage<KitMasterRow>>>('/wms/kit/owner-v1/masters', { params: query }) },
+  getMasterOwner(sku: string) { return http.get<any, WmsApi<KitMasterDetail>>(`/wms/kit/owner-v1/masters/${encodeURIComponent(sku)}`) },
+  searchOrdersOwner(query: KitQuery) { return http.get<any, WmsApi<KitPage<KitOrderRow>>>('/wms/kit/owner-v1/orders', { params: query }) },
+  getOrderOwner(no: string) { return http.get<any, WmsApi<KitOrderRow>>(`/wms/kit/owner-v1/orders/${encodeURIComponent(no)}`) },
   searchMasters(keyword?: string) {
     return http.get<any, WmsApi<KitMaster[]>>('/wms/kit/masters', { params: { keyword } })
   },

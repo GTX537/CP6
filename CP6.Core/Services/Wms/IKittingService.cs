@@ -1,3 +1,4 @@
+using CP6.Entity.DTOs.Wms;
 using CP6.Entity.DomainModels.Wms;
 
 namespace CP6.Core.Services.Wms;
@@ -10,10 +11,14 @@ namespace CP6.Core.Services.Wms;
 /// マスタ：KitSku + 構成部品 BOM。
 /// 指示：ASSEMBLE（部品 OUT × N + キット品 IN × 1）
 ///       DISASSEMBLE（キット品 OUT × 1 + 部品 IN × N）
-/// 1 指示の実行は全ステップ成功 or 全失敗（StockMovementService の例外で巻き戻し）。
+/// PostgreSQL 的旧逐腿执行不证明全组原子；正式 Composition Owner 采用前拒绝旧写入。
 /// </remarks>
 public interface IKittingService
 {
+    Task<KitPageV1<KitMasterObservationV1>> SearchMastersOwnerAsync(KitQueryV1 query);
+    Task<KitMasterDetailV1?> GetMasterOwnerAsync(string sku);
+    Task<KitPageV1<KitOrderObservationV1>> SearchOrdersOwnerAsync(KitQueryV1 query);
+    Task<KitOrderObservationV1?> GetOrderOwnerAsync(string no);
     // ─── マスタ ───
     Task<List<KitMaster>> SearchMastersAsync(string? keyword);
     Task<KitMasterDto?> GetMasterAsync(string kitSku);
