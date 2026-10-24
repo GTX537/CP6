@@ -34,3 +34,11 @@ UNKNOWN 仅表示当前查询未见终态，不能证明先前请求未提交，
 - 保留旧数字/存储合同的真实范围；本轮未完成整个正式 Stock Root/Slice、金额/数量总和规范、生产角色/日志保留政策、全库 schema 租户迁移或真实环境验收。
 
 验证与生命周期见 [交付报告](../../development/evidence/WP02-10/stock-original-operation/DELIVERY.md)。
+
+## W97 / Issue503 MOVE 属性修复边界
+
+首次 MOVE 在既有 PostgreSQL Owner 权限根、库存表锁与原事务内读取来源库存。新目标继承原存储的 OwnerType/OwnerCd、UnitCd、UnitPrice、ReceiveDate/ExpiryDate、PaperRollNo、QcStatus、RecallFlag；两条移动流水保留其中已有流水列（货主、单位、单价、卷号）。创建者／操作者仍取当前可信 actor。源／目标数量、原键日志及 Outbox 一起提交，失败整体回滚。
+
+已有目标只有上述属性逐值相等才可累加，保留其对象身份、原创建者与预留量。当前库存键没有货主／属性维度，不能在一行表示不同货主、单位、质量／召回、日期、卷号或单价；冲突返回安全的 `409 STOCK_MOVE_METADATA_CONFLICT`，不披露属性值，不覆盖零余额行，不做隐式单位换算或加权计价。数量精度与仓库允许负库存政策不变：来源不存在时仍沿用旧默认 SELF/null/PENDING/非召回属性，负腿是否允许继续由原仓库规则决定；这是保留的兼容行为，不证明正式来源身份或 QuantityKernel 已采用。
+
+元数据取自服务端，不增加外部 DTO 字段，不改变 `Main.Wms.StockOperation.v1` 冻结输入、摘要或原记录。MOVE 不额外要求单价读写权限；公开原结果及冲突不含价格。已提交原键继续按当前 query 和全部准确对象 ID 披露，不重新检查现在的属性兼容、不重做移动，也不修写历史错误流水。旧数据修复、正式 Root/Claim/容量、Finance 业务接收和新增 MOVE 页面分别留待对应任务。验证和生命周期见 [W97单份交付](../../development/evidence/BUG-503/DELIVERY.md)。
