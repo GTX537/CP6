@@ -1110,3 +1110,13 @@ W114三仓finish、准确分支删除和席位释放，实际35.14min/83项检�
 ## W115实际服务权限生产
 
 [实际交付](../evidence/W115-01/DELIVERY.md)：Main显式服务登记与实际IAM生产冻结intake:release投影，84项本地相关验证通过。Handoff [PR91](https://github.com/GTX537/CP6.AI-Handoff/pull/91)已采用740e7700c22c563a8b43858cb98bbe58de190e47，准确分支删除、DEV-2 finish释放；Main功能PR/finish继续。当前START后墙钟18.64min（原估75–115），最终按Main finish计一次。 CRM服务当前身份/撤权与业务持锁门禁、H01完整提交与页面仍待；七天ACTIVE。
+
+## 2026-10-24：W115完整收尾 / W116服务主体来源与当前检查
+
+W115 Main527/Handoff91已合并finish，准确分支删除、席位释放，实际23.4min/84项检查。[W116](../dispatch/20261024-wave116/README.md)由本聊天单人推进真实服务C02来源及CRM当前持锁检查，预计110–170min。完整公开提交/H01业务采用继续，七天ACTIVE。
+
+## W116实际服务来源与当前检查
+
+231项唯一相关本地成功检查：Main118、CRM持锁39/来源基线发布26/兼容单元48；原始Main PostgreSQL服务快照实际跨仓接收、发布与持锁。必需范围无跳过；另1项历史整数角色导出检查未执行且不计通过；误选整类探索批次中止，不宣称全量通过。 [交付](../dispatch/20261024-wave116/README.md)。
+Handoff [PR92](https://github.com/GTX537/CP6.AI-Handoff/pull/92)已采用 `d43a26d8f43a463bad58d60d72dc4bb92a59fcf7`，准确分支删除、DEV-2 finish释放。 Main最终合并/finish尚待；当前START后墙钟46.40分钟，原估110–170分钟，最终按Main finish计，不叠加各仓。前期只读调查不包含在此登记计时内。
+完整H01/公开提交继续，七天ACTIVE。

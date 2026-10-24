@@ -1,5 +1,11 @@
 # AI 可读变更日志
 
+## 2026-10-24：W116真实服务来源与当前持锁检查
+
+231项唯一相关本地成功检查：Main118、CRM持锁39/来源基线发布26/兼容单元48；原始Main PostgreSQL服务快照实际跨仓接收、发布与持锁。必需范围无跳过；另1项历史整数角色导出检查未执行且不计通过；误选整类探索批次中止，不宣称全量通过。 [交付](../development/dispatch/20261024-wave116/README.md)。CRM PR142已合并finish，独立服务源/原生当前检查无用户会话伪装；Handoff [PR92](https://github.com/GTX537/CP6.AI-Handoff/pull/92)已采用 `d43a26d8f43a463bad58d60d72dc4bb92a59fcf7`，准确分支删除、DEV-2 finish释放。
+Handoff [PR92](https://github.com/GTX537/CP6.AI-Handoff/pull/92)已采用 `d43a26d8f43a463bad58d60d72dc4bb92a59fcf7`，准确分支删除、DEV-2 finish释放。 Main最终合并/finish尚待；当前START后墙钟46.40分钟，原估110–170分钟，最终按Main finish计，不叠加各仓。前期只读调查不包含在此登记计时内。
+Main正常PR/finish继续；H01完整授权与公开提交仍待，24/375、0/125、247NOT_RUN保持，七天ACTIVE。
+
 ## 2026-10-24：W115实际H01服务权限生产
 
 Main显式服务UUID/角色登记与实际IAM冻结intake:release签名生产入口，本地84项唯一相关PG/HTTP检查通过、0跳过。[单份交付](../development/evidence/W115-01/DELIVERY.md)。Handoff [PR91](https://github.com/GTX537/CP6.AI-Handoff/pull/91)已采用740e7700c22c563a8b43858cb98bbe58de190e47，准确分支删除、DEV-2 finish释放；Main功能PR/finish继续。当前START后墙钟18.64min（原估75–115），最终按Main finish计一次。 PostgreSQL隔离实例停止、缓存保留，无Actions/既有迁移/部署。CRM服务当前身份/撤权及最终事务门禁、完整H01与公开提交继续；24/375、0/125、247NOT_RUN不变，七天ACTIVE。

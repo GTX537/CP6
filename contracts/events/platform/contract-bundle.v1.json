@@ -1,5 +1,5 @@
 {
-  "bundleVersion": "1.2.0",
+  "bundleVersion": "1.3.0",
   "cloudEventsSpecVersion": "1.0",
   "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
   "entries": [
@@ -351,6 +351,45 @@
           "path": "permission-changed/v3/examples/pii-negative.json",
           "valid": false,
           "sha256": "f22fdce43b95741b04bc4d31e9b624fa846e233ec2521b4ba1cd0e2f74f63a36"
+        }
+      ]
+    },
+    {
+      "eventType": "com.gtx537.platform.service-principal.changed.v1",
+      "schemaVersion": "1.0.0",
+      "schemaId": "https://contracts.cp6.uk/events/platform/service-principal-changed/v1/schema.json",
+      "schemaPath": "service-principal-changed/v1/schema.json",
+      "schemaSha256": "7c1418514ba590e32cbb754bde19060c953991a33be66d0665567d72442fff24",
+      "examples": [
+        {
+          "name": "valid",
+          "path": "service-principal-changed/v1/examples/valid.json",
+          "valid": true,
+          "sha256": "17abb7a5c81c209e38fdc0f321af8541b7fa8e115107e6da9efd85ff5388f92e"
+        },
+        {
+          "name": "missing-required",
+          "path": "service-principal-changed/v1/examples/missing-required.json",
+          "valid": false,
+          "sha256": "ad018ed6c683a216bbecd48f5a75d101420e34f3404b9a31bef48a534eecab65"
+        },
+        {
+          "name": "unknown-optional",
+          "path": "service-principal-changed/v1/examples/unknown-optional.json",
+          "valid": true,
+          "sha256": "919780ca8811162bb5c028ff1171f8b8827eb490fef3ed4a2e77f1537e177b77"
+        },
+        {
+          "name": "wrong-type",
+          "path": "service-principal-changed/v1/examples/wrong-type.json",
+          "valid": false,
+          "sha256": "e365d1d8aeddd56dcbd945c6ff0c72b687a2a80f3ab955f6683dcb8df0be70ac"
+        },
+        {
+          "name": "pii-negative",
+          "path": "service-principal-changed/v1/examples/pii-negative.json",
+          "valid": false,
+          "sha256": "8676d21e8fb01f777193bee174eb06d88cfade8467952a69cdc11974af20bdcf"
         }
       ]
     }

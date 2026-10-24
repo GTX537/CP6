@@ -94,6 +94,14 @@ var inquiryServices = builder.Configuration.GetSection("InquiryServicePrincipals
     ?? new CP6.WebApi.Services.InquiryServicePrincipalOptionsV1();
 builder.Services.AddSingleton(new CP6.WebApi.Services.InquiryServicePrincipalRegistryV1(inquiryServices, crmOidc));
 builder.Services.AddScoped<CP6.WebApi.Services.InquiryServicePermissionIssuerV1>();
+if (inquiryServices.IdentityPublicationEnabled)
+{
+    if (!CP6.WebApi.Configuration.CrmIdentityConfiguration.BindOptions(builder.Configuration).Enabled
+        || database.Provider != CP6.Core.Persistence.DatabaseProvider.PostgreSql)
+        throw new InvalidOperationException("C02_SERVICE_SOURCE_REQUIRES_POSTGRESQL_IDENTITY");
+    builder.Services.AddScoped<CP6.WebApi.Services.InquiryServiceIdentityPublisherV1>();
+    builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.InquiryServiceIdentityWorkerV1>();
+}
 builder.Services.AddScoped<CP6.WebApi.Services.CrmOidcDirectory>();
 builder.Services.AddScoped<CP6.WebApi.Services.ICrmOidcServiceDirectory>(services =>
     services.GetRequiredService<CP6.WebApi.Services.CrmOidcDirectory>());

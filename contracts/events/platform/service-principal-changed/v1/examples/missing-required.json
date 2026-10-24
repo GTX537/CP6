@@ -1,0 +1,33 @@
+{
+  "specversion": "1.0",
+  "id": "event-service-principal",
+  "source": "urn:cp6:platform",
+  "type": "com.gtx537.platform.service-principal.changed.v1",
+  "subject": "tenants/11111111-1111-4111-8111-111111111111/service-principal:33333333-3333-4333-8333-333333333333",
+  "time": "2026-09-10T12:00:00Z",
+  "datacontenttype": "application/json",
+  "dataschema": "https://contracts.cp6.uk/events/platform/service-principal-changed/v1/schema.json",
+  "tenantid": "11111111-1111-4111-8111-111111111111",
+  "correlationid": "correlation-1",
+  "causationid": "command-1",
+  "aggregateid": "service-principal:33333333-3333-4333-8333-333333333333",
+  "aggregateversion": 1,
+  "schemaversion": "1.0.0",
+  "region": "us",
+  "data": {
+    "tenantId": "11111111-1111-4111-8111-111111111111",
+    "principalId": "33333333-3333-4333-8333-333333333333",
+    "clientId": "inquiry-h01",
+    "departmentId": "44444444-4444-4444-8444-444444444444",
+    "enabled": true,
+    "version": 1,
+    "roles": [
+      "role:-2147483648",
+      "role:0",
+      "role:2147483647"
+    ],
+    "registrationVersion": "registration-v1",
+    "sourceProfile": "cp6-inquiry-service-v1",
+    "registrationRevision": 1
+  }
+}
