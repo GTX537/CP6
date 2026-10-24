@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NSec.Cryptography" Version="[25.4.0]" />
+    <PackageReference Include="libsodium" Version="[1.0.20.1]" />
     <PackageReference Include="CP6.Platform.AspNetCore" Version="[0.10.3]" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.30" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />

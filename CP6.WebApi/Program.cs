@@ -86,6 +86,10 @@ builder.Services.AddSingleton(crmOidc);
 CP6.WebApi.Configuration.CrmIdentityConfiguration.AddCrmIdentityEvents(builder.Services, builder.Configuration, crmOidc, database);
 CP6.WebApi.Configuration.ErpIntegrationConfiguration.AddErpIntegration(builder.Services, builder.Configuration, crmOidc, database);
 builder.Services.AddSingleton<CP6.WebApi.Services.CrmOidcCrypto>();
+var inquirySigning = builder.Configuration.GetSection("InquiryPermissionSigning").Get<CP6.WebApi.Services.InquiryPermissionSigningOptionsV1>()
+    ?? new CP6.WebApi.Services.InquiryPermissionSigningOptionsV1();
+builder.Services.AddSingleton(new CP6.WebApi.Services.InquiryPermissionSigningKeyV1(inquirySigning, crmOidc));
+builder.Services.AddScoped<CP6.WebApi.Services.InquiryPermissionIssuerV1>();
 builder.Services.AddScoped<CP6.WebApi.Services.CrmOidcDirectory>();
 builder.Services.AddScoped<CP6.WebApi.Services.ICrmOidcServiceDirectory>(services =>
     services.GetRequiredService<CP6.WebApi.Services.CrmOidcDirectory>());

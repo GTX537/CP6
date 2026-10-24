@@ -9,6 +9,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Tokens;
+using CP6.Core.EFDbContext;
+using Dapper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CP6.WebApi.Controllers.Sys;
 
@@ -16,10 +20,10 @@ namespace CP6.WebApi.Controllers.Sys;
 [ApiController]
 [AllowAnonymous]
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-public sealed class CrmOidcController(CrmOidcOptions options, CrmOidcCrypto crypto,
+public sealed partial class CrmOidcController(CrmOidcOptions options, CrmOidcCrypto crypto,
     ICrmOidcGrantStore grants, CrmOidcDirectory directory, IConfiguration configuration,
     ITokenBlacklistService blacklist, IAuthCookieWriter cookies,
-    CrmOidcServiceTokens? serviceTokens = null) : ControllerBase
+    CrmOidcServiceTokens? serviceTokens = null, InquiryPermissionIssuerV1? inquiryPermissions = null) : ControllerBase
 {
     [HttpGet("/.well-known/openid-configuration")]
     public IActionResult Discovery() => !options.Enabled ? NotFound() : Ok(new
@@ -340,7 +344,7 @@ public sealed class CrmOidcController(CrmOidcOptions options, CrmOidcCrypto cryp
         return (user, principal);
     }
 
-    private async Task<(Sys_User User, CrmOidcGrant Grant)?> ReadBearerAsync()
+    private async Task<(Sys_User User, CrmOidcGrant Grant, DateTimeOffset ExpiresAtUtc)?> ReadBearerAsync(CP6Context? lockedContext = null)
     {
         var header = Request.Headers.Authorization.ToString();
         if (!header.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)) return null;
@@ -348,12 +352,31 @@ public sealed class CrmOidcController(CrmOidcOptions options, CrmOidcCrypto cryp
         try { principal = crypto.Validate(header[7..], "CP6.Web", "at+jwt"); }
         catch (Exception ex) when (ex is SecurityTokenException or ArgumentException) { return null; }
         if (!Guid.TryParse(principal.FindFirst("jti")?.Value, out var id) || principal.FindFirst("sid")?.Value != id.ToString()) return null;
-        var grant = await grants.FindSessionAsync(id);
+        // New signed projections use the actual caller transaction, not a separate store
+        // connection. Ordinary OIDC context reads retain their existing behavior.
+        CrmOidcGrant? grant;
+        if (lockedContext is null) grant = await grants.FindSessionAsync(id);
+        else
+        {
+            if (!lockedContext.Database.IsNpgsql() || lockedContext.Database.CurrentTransaction is null)
+                throw new InquiryPermissionExceptionV1(503, "inquiry_authority_unavailable");
+            grant = await lockedContext.Database.GetDbConnection().QuerySingleOrDefaultAsync<CrmOidcGrant>(new CommandDefinition("""
+                SELECT * FROM public."CrmOidcGrant" WHERE "Id"=@id AND "Consumed" AND NOT "Revoked"
+                  AND "AccessExpiresAtUtc">clock_timestamp() AND "SourceExpiresAtUtc">clock_timestamp() FOR SHARE
+                """, new { id }, lockedContext.Database.CurrentTransaction.GetDbTransaction(), cancellationToken: HttpContext.RequestAborted));
+        }
         if (grant == null || grant.ClientId != "CP6.Web" || principal.FindFirst("sub")?.Value != grant.SubjectId.ToString()
             || principal.FindFirst("tenant_id")?.Value != grant.OrganizationId.ToString()
             || await blacklist.IsBlacklistedAsync(id.ToString())) return null;
         var user = await directory.FindActiveAsync(grant.SubjectId, grant.OrganizationId, grant.SourceJti, grant.SecurityStamp);
-        return user == null || !await directory.RefreshFamilyMatchesAsync(grant) ? null : (user, grant);
+        if (user == null || !await directory.RefreshFamilyMatchesAsync(grant)
+            || !long.TryParse(principal.FindFirst("exp")?.Value, System.Globalization.NumberStyles.None,
+                System.Globalization.CultureInfo.InvariantCulture, out var expirySeconds)
+            || expirySeconds is < -62135596800L or > 253402300799L) return null;
+        var expires = new[] { DateTimeOffset.FromUnixTimeSeconds(expirySeconds),
+            new DateTimeOffset(DateTime.SpecifyKind(grant.AccessExpiresAtUtc, DateTimeKind.Utc)),
+            new DateTimeOffset(DateTime.SpecifyKind(grant.SourceExpiresAtUtc, DateTimeKind.Utc)) }.Min();
+        return (user, grant, expires);
     }
 
     private ObjectResult OAuthError(string error, int status = 400)

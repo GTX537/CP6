@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-24：W101真实Main配置权限签发交付
+
+Main实际CP6.Web会话/当前PG动作/精确pair签发、纯Ed25519和默认关闭配置完成验证；CRM [PR128](https://github.com/GTX537/CP6.CRM/pull/128)已采用 `dc09f558d6070a807c59316adce50b35641d8ba6`。152项相关本地检查通过、0跳过，[单份交付](../development/dispatch/20261024-wave101/README.md)。CRM/Handoff分支删除、固定席位finish释放；Main本次最后合并/finish。配置Owner/跨仓当前授权和真实业务验收仍待继续，CanAuthorize=false；24/375、0/125、247NOT_RUN不变，七天ACTIVE。自有PG/HTTP已停止，无Actions或部署；当前22.45min，最终按Main finish计。
+
 ## 2026-10-24：W100精确Site/Form来源交付
 
 Main实际IAM范围管理、原操作/审计/原C2 v3事件同事务完成相关验证，准备本次Main合并。CRM [PR127](https://github.com/GTX537/CP6.CRM/pull/127)已采用 `cab16a031c93d52da674f20984a2d503d35fc2a8`；173项唯一相关本地检查通过、0跳过，[本轮交付](../development/dispatch/20261024-wave100/README.md)。CRM/Handoff准确分支删除、固定席位finish释放；Main本次最后收尾。旧合同/注册兼容，CanAuthorize=false，真实签名生产者和配置Owner、明确环境Source升级仍待继续。24/375整卡、0/125目标、247正式NOT_RUN不变；七天ACTIVE。自有PG已停止保留，无Actions、既有库迁移或部署；当前约24.21min，最终按Main finish计。

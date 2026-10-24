@@ -248,7 +248,7 @@ internal sealed class AuthenticationApiProcess(Process process, HttpClient clien
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         return client.SendAsync(request);
     }
-    internal static async Task<AuthenticationApiProcess> Start(string connection, IReadOnlyDictionary<string,string>? environment = null)
+    internal static async Task<AuthenticationApiProcess> Start(string connection, IReadOnlyDictionary<string,string>? environment = null, bool allowAutoRedirect = true)
     {
         var directory = Path.Combine(Environment.GetEnvironmentVariable("CP6_PERMISSION_PG_ROOT")!, "actual-api", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(directory);
@@ -285,7 +285,7 @@ internal sealed class AuthenticationApiProcess(Process process, HttpClient clien
             if (!child.Start()) throw new InvalidOperationException("Owned API failed to start.");
             child.BeginOutputReadLine(); child.BeginErrorReadLine();
             var url = await ready.Task.WaitAsync(TimeSpan.FromSeconds(40));
-            return new AuthenticationApiProcess(child, new HttpClient(new HttpClientHandler { UseCookies = false })
+            return new AuthenticationApiProcess(child, new HttpClient(new HttpClientHandler { UseCookies = false, AllowAutoRedirect = allowAutoRedirect })
                 { BaseAddress = new Uri(url), Timeout = TimeSpan.FromSeconds(15) }, secret,
                 () => { lock(log) File.WriteAllText(Path.Combine(directory, "runtime.log"), log.ToString()); });
         }
