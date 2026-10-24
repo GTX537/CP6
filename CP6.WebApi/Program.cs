@@ -558,6 +558,11 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-rma", "返品管理", new[
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-rma", new[] { "CustomerName", "OperatorCd", "Remarks", "ReturnReason" }
     .Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
 CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-replenish", "補充指示", new[] { 1, 2, 3, 4, 5 }, 1);
+CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-warehouse", "仓库原对象", new[] { 1, 2, 3, 4, 5 }, 1);
+CP6.Core.Services.Sys.FieldRegistry.Register("wms-warehouse", new[] { "AddressText", "ManagerCd", "Remarks", "WarehouseName" }.Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
+CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-location", "库位原对象", new[] { 1, 2, 3, 4, 5 }, 1);
+CP6.Core.Services.Sys.FieldRegistry.Register("wms-location", new[] { "Barcode", "LocationName" }.Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
+builder.Services.AddScoped<CP6.Core.Services.Wms.WarehouseOwnerServiceV1>();
 CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-report-center", "当前库存及原流水观察", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-report-center", new[] { "OperatorCd", "OwnerCd", "Remark" }.Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
 CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-kitting", "套件主数据及历史订单", new[] { 1, 2, 3, 4, 5 }, 1);
