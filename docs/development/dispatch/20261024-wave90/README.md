@@ -24,3 +24,9 @@ Main产品PR采用→Handoff交付合并/准确分支删除/finish→同Main任�
 ## W90验证完成
 
 24独立.NET用例（16原生PG、7既有非PG套件行为、1两租户种子）及25Vue用例通过，无跳过；相关构建和vue-tsc通过，定向补验与原组去重合计49项。一次集中审查及有据定向补验完成，3个实际PG停止保留；49去重项不代表完整业务验收。正常采用与同任务收尾后继续，W89确认仍待答复，七天ACTIVE。
+
+## 实际采用与最后收尾
+
+Main [PR486](https://github.com/GTX537/CP6/pull/486) source `5f3f648854a8d201d934d0a6e19bbdbf39094167`采用远端main `6f19fde5e3d9ea4483c8c04c9713c6743f835007`，30任务路径逐blob核对；Handoff [PR65](https://github.com/GTX537/CP6.AI-Handoff/pull/65)采用`194b2cdecad3322d7f5a87b1d5caf747913c7cc8`，准确分支删除、固定树干净detached、finish释放。20个产品路径与已测提交逐blob一致，复用有效结果，最后文档diff/台账生成单独检查。
+
+Main同任务最终状态PR/finish及Issue485最后关闭待完成；当前约17.92min，原估45–65min＋独立前置4min，实际按finish不重复计Handoff。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave90-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续剩余独立Owner及D5/D6真实前置，正式KIT Composition仍未采用。
