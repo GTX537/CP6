@@ -61,12 +61,13 @@ public sealed class InquiryPermissionSigningKeyV1 : IDisposable
         issuer = options.Issuer; keyId = options.KeyId; from = options.ActiveFromUtc; until = options.ActiveToUtc; revoked = options.Revoked;
     }
 
-    internal string Sign(InquiryPermissionSubjectV1 subject, InquiryPermissionRequestV1 request, string[] permissions,
+    internal string Sign(InquiryPermissionSubjectV1 subject, InquiryPermissionRequestV1 request, InquiryPermissionFactsV1 facts,
         DateTimeOffset now, DateTimeOffset expires)
     {
         if (!Enabled || key is null || revoked || now < from || until is { } end && now >= end)
             throw new InquiryPermissionExceptionV1(503, "inquiry_signer_unavailable");
-        if (!WireId(subject.TenantId) || !WireId(subject.SubjectId) || !WireId(request.SiteId) || !WireId(request.FormId))
+        if (!WireId(subject.TenantId) || !WireId(subject.SubjectId) || !WireId(request.SiteId) || !WireId(request.FormId)
+            || facts.Departments.Any(x => !WireId(x)))
             throw new InquiryPermissionExceptionV1(422, "inquiry_projection_identity_not_representable");
         if (expires <= now || expires - now > TimeSpan.FromMinutes(5))
             throw new InquiryPermissionExceptionV1(401, "invalid_token");
@@ -76,10 +77,11 @@ public sealed class InquiryPermissionSigningKeyV1 : IDisposable
             ["algorithm"] = "Ed25519", ["catalogVersion"] = CatalogVersion, ["decision"] = "Allow",
             ["organizationId"] = subject.TenantId.ToString("D"), ["subjectId"] = subject.SubjectId.ToString("D"),
             ["purpose"] = request.Purpose, ["issuedAtUtc"] = Wire(now), ["expiresAtUtc"] = Wire(expires),
-            ["permissions"] = new JsonArray(permissions.Select(x => (JsonNode?)JsonValue.Create(x)).ToArray()),
-            ["fieldPermissions"] = new JsonArray(), ["managedDepartmentIds"] = new JsonArray(),
+            ["permissions"] = new JsonArray(facts.Permissions.Select(x => (JsonNode?)JsonValue.Create(x)).ToArray()),
+            ["fieldPermissions"] = new JsonArray(facts.Fields.Select(x => (JsonNode?)JsonValue.Create(x)).ToArray()),
+            ["managedDepartmentIds"] = new JsonArray(facts.Departments.Select(x => (JsonNode?)JsonValue.Create(x.ToString("D"))).ToArray()),
             ["scopes"] = new JsonObject { ["siteIds"] = new JsonArray(request.SiteId.ToString("D")), ["formIds"] = new JsonArray(request.FormId.ToString("D")) },
-            ["isSupervisor"] = false
+            ["isSupervisor"] = facts.Supervisor
         };
         // Exact frozen v1 canonicalization: ordinal object keys, unchanged array order and
         // Utf8JsonWriter's standard string escaping. Signature is omitted while signing.

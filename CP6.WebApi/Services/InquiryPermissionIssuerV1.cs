@@ -12,10 +12,11 @@ public sealed record InquiryPermissionSubjectV1(Guid TenantId, Guid SubjectId, G
 public sealed class InquiryPermissionExceptionV1(int status, string code) : InvalidOperationException(code)
 { public int Status { get; } = status; }
 
-/// <summary>Actual Main producer for configuration purposes. The callback is the server's
+/// <summary>Actual Main producer for configuration and human intake purposes. The callback is the server's
 /// existing authenticated CRM Bearer reader, rerun inside the Main authentication root.
 /// A signed point-in-time projection is not a cross-database business commit fence.</summary>
-public sealed class InquiryPermissionIssuerV1(CP6Context db, InquiryPermissionSigningKeyV1 signing)
+public sealed class InquiryPermissionIssuerV1(CP6Context db, InquiryPermissionSigningKeyV1 signing,
+    Func<AuthorizationCatalogSnapshotV1>? captureCatalog = null)
 {
     public bool Enabled => signing.Enabled;
     public async Task<string> IssueAsync(InquiryPermissionRequestV1 request,
@@ -27,6 +28,9 @@ public sealed class InquiryPermissionIssuerV1(CP6Context db, InquiryPermissionSi
         {
             "configuration:read" => ["crm-site:query"],
             "configuration:write" or "configuration:preview" or "configuration:activate" => ["crm-site:query", "crm-site:configure"],
+            "intake:list" or "intake:detail" => ["crm-lead:query"],
+            "intake:release" => ["crm-lead:query", "crm-lead:view-pii", "crm-lead:add"],
+            "intake:reject" => ["crm-lead:query", "crm-lead:view-pii", "crm-lead:edit"],
             _ => throw new InquiryPermissionExceptionV1(400, "unsupported_projection_purpose")
         };
         if (!Enabled || !db.Database.IsNpgsql() || db.Database.CurrentTransaction is not null
@@ -47,12 +51,17 @@ public sealed class InquiryPermissionIssuerV1(CP6Context db, InquiryPermissionSi
             if (pairs.Any(x => x.SiteId == request.SiteId && x.FormId == request.FormId)) { permitted = true; break; }
         }
         if (!permitted) throw new InquiryPermissionExceptionV1(403, "insufficient_scope");
+        var facts = request.Purpose.StartsWith("intake:", StringComparison.Ordinal)
+            ? await InquiryIntakePermissionSourceV1.ReadAsync(db, subject.SubjectId, request.Purpose, required, permissions,
+                captureCatalog ?? AuthorizationCatalogV1.Capture, ct)
+            : new InquiryPermissionFactsV1(required, [], [], false);
         var final = await currentBearer(db, ct);
-        if (final is null || final.TenantId != subject.TenantId || final.SubjectId != subject.SubjectId || final.SessionId != subject.SessionId)
+        if (final is null || final.TenantId != subject.TenantId || final.SubjectId != subject.SubjectId || final.SessionId != subject.SessionId
+            || db.CurrentTenantId != subject.TenantId)
             throw new InquiryPermissionExceptionV1(401, "invalid_token");
         var now = await db.Database.SqlQueryRaw<DateTimeOffset>("SELECT clock_timestamp() AS \"Value\"").SingleAsync(ct);
         var expires = new[] { now.AddMinutes(5), subject.ExpiresAtUtc, final.ExpiresAtUtc }.Min();
-        var result = signing.Sign(subject, request, required, now, expires);
+        var result = signing.Sign(subject, request, facts, now, expires);
         ct.ThrowIfCancellationRequested(); await tx.CommitAsync(ct);
         return result;
     }

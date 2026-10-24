@@ -18,14 +18,27 @@ internal sealed class CurrentFieldPermissionSourceReaderV1(
     /// changing isolation, retrying or committing it. Repeatable-read remains the caller's old
     /// snapshot; a later effect still needs the Owner's current authorization/fence.
     /// </summary>
-    public async Task<FieldPermissionSourceV1> ReadAsync(string resource, CancellationToken ct = default)
+    public Task<FieldPermissionSourceV1> ReadAsync(string resource, CancellationToken ct = default)
+        => ReadCoreAsync(resource, null, ct);
+
+    // Internal source-only entry for the Main OIDC producer after its actual current Bearer
+    // callback and authentication root. No fabricated HttpContext/claims or public actor input.
+    // The returned facts still confer no business authorization or commit fence.
+    internal Task<FieldPermissionSourceV1> ReadTrustedSubjectAsync(string resource, Guid subject, CancellationToken ct)
+    {
+        if (subject == Guid.Empty || db.Database.CurrentTransaction is null)
+            throw new CurrentPermissionUnavailableException();
+        return ReadCoreAsync(resource, subject, ct);
+    }
+
+    private async Task<FieldPermissionSourceV1> ReadCoreAsync(string resource, Guid? trustedSubject, CancellationToken ct)
     {
         using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(ct,
             http.HttpContext?.RequestAborted ?? CancellationToken.None);
         try
         {
             cancellation.Token.ThrowIfCancellationRequested();
-            var subject = CurrentPermissionContext.RequireCurrentUser(db, http);
+            var subject = trustedSubject ?? CurrentPermissionContext.RequireCurrentUser(db, http);
             if (!db.Database.IsNpgsql() || string.IsNullOrWhiteSpace(resource))
                 throw new CurrentPermissionUnavailableException();
             var catalog = (captureCatalog ?? AuthorizationCatalogV1.Capture)();

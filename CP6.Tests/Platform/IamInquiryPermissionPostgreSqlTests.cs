@@ -124,9 +124,18 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
 
     [CurrentPermissionPostgresFact]
     public async Task Inquiry_producer_actual_HTTP_login_OIDC_signing_rejects_spoofing_and_current_revocation()
+        => await InquiryProducerHttp("configuration:write");
+
+    [CurrentPermissionPostgresFact]
+    public async Task Inquiry_intake_actual_HTTP_login_OIDC_signing_rejects_spoofing_and_current_revocation()
+        => await InquiryProducerHttp("intake:release");
+
+    private async Task InquiryProducerHttp(string purpose)
     {
-        await using var h = await Seed(); var pair = (await GrantInquiry(h))[0]; var options = InquiryPermissionSigningTests.Options();
+        await using var h = await Seed(); var intake = purpose.StartsWith("intake:", StringComparison.Ordinal);
+        var pair = intake ? await GrantIntake(h) : (await GrantInquiry(h))[0]; var options = InquiryPermissionSigningTests.Options();
         var bridgeDirectory = Environment.GetEnvironmentVariable("CP6_INQUIRY_CONFIGURATION_BRIDGE");
+        if (intake) bridgeDirectory = null;
         if (bridgeDirectory is not null)
             await h.Db.Sys_Users.Where(x => x.Id == h.ActorId).ExecuteUpdateAsync(x => x.SetProperty(u => u.DeptId, h.Parent));
         var environment = IdentityEnvironment(h.Tenant); const string clientSecret = "owned-local-client-secret";
@@ -156,7 +165,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         tokenRequest.Headers.Authorization = new("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes("CP6.Web:" + clientSecret)));
         using var tokenResponse = await host.Send(tokenRequest); Assert.True(tokenResponse.StatusCode == HttpStatusCode.OK, await tokenResponse.Content.ReadAsStringAsync());
         using var tokenBody = JsonDocument.Parse(await tokenResponse.Content.ReadAsStringAsync()); var token = tokenBody.RootElement.GetProperty("access_token").GetString()!;
-        var command = new InquiryPermissionRequestV1("configuration:write", pair.SiteId, pair.FormId);
+        var command = new InquiryPermissionRequestV1(purpose, pair.SiteId, pair.FormId);
         HttpRequestMessage Projection(object body, string? bearer, bool secure = true)
         { var r = new HttpRequestMessage(HttpMethod.Post, "connect/inquiry-permission") { Content = JsonContent.Create(body) };
             if (bearer is not null) r.Headers.Authorization = new AuthenticationHeaderValue("Bearer", bearer);
@@ -170,7 +179,13 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         using var signed = await host.Send(Projection(command, token)); var json = await signed.Content.ReadAsStringAsync();
         Assert.True(signed.StatusCode == HttpStatusCode.OK, json); Assert.True(signed.Headers.CacheControl?.NoStore);
         using var document = JsonDocument.Parse(json); Assert.Equal(h.ActorId, document.RootElement.GetProperty("subjectId").GetGuid());
-        if (Environment.GetEnvironmentVariable("CP6_INQUIRY_PROJECTION_OUTPUT") is { Length: > 0 } path)
+        if (intake)
+        {
+            Assert.True(document.RootElement.GetProperty("isSupervisor").GetBoolean());
+            Assert.Equal(6, document.RootElement.GetProperty("fieldPermissions").GetArrayLength());
+            Assert.Equal(2, document.RootElement.GetProperty("managedDepartmentIds").GetArrayLength());
+        }
+        if (Environment.GetEnvironmentVariable(intake ? "CP6_INQUIRY_INTAKE_PROJECTION_OUTPUT" : "CP6_INQUIRY_PROJECTION_OUTPUT") is { Length: > 0 } path)
             await File.WriteAllTextAsync(path, JsonSerializer.Serialize(new { projection = document.RootElement,
                 publicKeyBase64 = options.PublicKeyBase64, activeFromUtc = options.ActiveFromUtc, producer = "actual Main login/OIDC/HTTP endpoint; local isolated PostgreSQL" }));
         // Optional two-process integration. The isolated-run directory is supplied by the local
@@ -190,7 +205,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             }));
             await WaitConfigurationBridge(bridgeDirectory, "saved");
         }
-        await h.Db.Sys_RoleActions.Where(x => x.RoleId == 71 && x.ActionCode == "configure").ExecuteDeleteAsync();
+        var revokeAction = intake ? "add" : "configure";
+        await h.Db.Sys_RoleActions.Where(x => x.RoleId == 71 && x.ActionCode == revokeAction).ExecuteDeleteAsync();
         using (var revoked = await host.Send(Projection(command, token))) Assert.Equal(HttpStatusCode.Forbidden, revoked.StatusCode);
         if (bridgeDirectory is not null)
         {
