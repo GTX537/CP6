@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-24：W103真实权限与Web BFF配置采用
+
+CRM [PR130](https://github.com/GTX537/CP6.CRM/pull/130)采用 `0045bff214909b5282c975b583f79e8247beee2d`：原保护会话向实际Main签发请求权限，显式Node BFF到PG配置Owner，最终授权及原结果/业务/正式outbox共同事务保持；181项唯一相关本地检查通过、0跳过，包含实际Main与CRM两进程互通。[单份交付](../development/dispatch/20261024-wave103/README.md)。CRM分支删除、DEV-2已finish释放；Handoff [PR79](https://github.com/GTX537/CP6.AI-Handoff/pull/79) 已采用 `c1978b0a92fd81164751c6c5791e20a4c946ca06`，准确分支删除、固定席位finish释放。目录连接清理曾被自动审批拒绝；用户本机仅移除连接后，已核对目标缓存完整，官方bind/resume成功。 Main最后合并/finish继续，当前墙钟62.05min（原估90–150min，含审批等待）。冻结UI、预览/激活/公开受理及即时跨仓撤权待后继；24/375、0/125、247NOT_RUN不变，七天ACTIVE。自有PG/HTTP/Node停止，无Actions或部署。
+
 ## 2026-10-24：W102实际配置Owner与PG宿主交付
 
 配置GET/保存真实Owner、当前精确授权、原结果/日历/内容/Bundle/审计/正式outbox同事务，默认关闭的PG API宿主已由CRM [PR129](https://github.com/GTX537/CP6.CRM/pull/129)采用 `d3615db81675ca6cdad2d9c777505d451a552931`。347项唯一相关本地检查通过、0跳过，[单份交付](../development/dispatch/20261024-wave102/README.md)。CRM/Handoff分支删除、固定席位finish释放；Main本次最后合并/finish，当前63.70min（原估120–180min）。Web BFF v2、预览/激活/公开受理与即时跨仓撤权仍待后继；24/375、0/125、247NOT_RUN不变，七天ACTIVE。自有PG/HTTP停止，无Actions或部署。

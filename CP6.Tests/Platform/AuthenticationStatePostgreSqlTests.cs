@@ -231,6 +231,7 @@ public sealed partial class AuthenticationStatePostgreSqlTests(TenantManagementP
 // No existing appsettings/DEV process or port is used. The child process is always stopped on disposal.
 internal sealed class AuthenticationApiProcess(Process process, HttpClient client, string secret, Action saveLog) : IAsyncDisposable
 {
+    internal Uri Origin => client.BaseAddress!;
     internal Task<HttpResponseMessage> Send(HttpRequestMessage request) => client.SendAsync(request);
     internal string Token(Sys_User user, string? version = null) => JwtHelper.GenerateToken(user.Id.ToString(), user.UserName,
         secret, "auth-state-component", "auth-state-component", 5, user.TenantId,
