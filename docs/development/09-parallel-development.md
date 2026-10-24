@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W89同事务当前身份](dispatch/20261024-wave89/README.md)，本聊天单人；W37–W88已finish，不重复。 CRM尚未开工；固定目录重绑确认待答复，Main协调继续。
+
 > 当前：[W88 VMI独立Owner](dispatch/20261023-wave88/README.md)，本聊天单人；W37–W87已finish，不重复。
 
 > 当前：[W87持久签名信任](dispatch/20261023-wave87/README.md)，本聊天单人；CRM PR122/Handoff已采用，协调收尾后继续实际Owner前置。W37–W86不重复。

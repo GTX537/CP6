@@ -776,3 +776,9 @@ W87 Main480/CRM122/Handoff63全部采用，33独立相关用例通过，实际18
 Main [PR482](https://github.com/GTX537/CP6/pull/482) source `e23c73c0c3eb941a258fb59c2a7cd50dc6a9634c`采用远端main `73395fa783435c2b2bf6f09b218e135bf51177fe`，30任务路径逐blob核对；Handoff [PR64](https://github.com/GTX537/CP6.AI-Handoff/pull/64)采用`d386156a175ccc0cdb70c5132a365cfc7a9d8343`，准确分支删除、固定树干净detached、finish释放。20个产品路径与已测提交逐blob一致，复用有效结果，最后文档diff/台账生成单独检查。
 
 Main同任务最终状态PR/finish及Issue481最后关闭待完成；当前约24.48min，原估50–75min＋独立前置3min，实际按finish不重复计Handoff。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave88-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续剩余独立Owner及D5/D6真实前置，正式WP10-39/40正式计费/Finance仍未采用。
+
+## 2026-10-24：W88全部收尾 / W89同事务当前身份
+
+W88 Main482/483、Handoff64已采用，Issue481关闭，40独立相关用例通过，实际26.33min＋前置3min，准确分支删除和席位释放已核对。[W89](../dispatch/20261024-wave89/README.md)补CRM当前身份/会话在调用方业务事务内的原生持锁检查与最终重核，预计40–60min＋独立前置约4min；实际Site/Form权限生产者与业务Owner仍待接。七天目标ACTIVE。
+
+W89状态补记：CRM实现尚未开工。跨仓切换组合命令被自动审批以 `blocked by policy` 拒绝；已改为成功执行不删除目录/分支的Handoff保存释放，原分支远端保留，DEV-2仍为Handoff干净detached。固定目录重绑确认待答复，Main协调/只读设计继续，七天目标ACTIVE。
