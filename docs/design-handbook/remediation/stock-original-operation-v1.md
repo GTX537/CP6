@@ -14,7 +14,7 @@ W44-01 / WP02-10 限定采用；数据库 PostgreSQL。使用 [Main journal v1](
 |GET `/api/wms/stock/operations/v1/{operation}`|query；COMMITTED + 原流水号 / CLOSED / UNKNOWN|
 |POST `/api/wms/stock/operations/v1/{operation}/close`|query + 当前会话/CSRF；未提交原键封闭，已提交只能返回当前授权的原结果|
 
-全入口要求实际登录、当前原会话权限和 no-store；POST 受现有全局 CSRF 约束。兼容 `/apply`、`/move` 与既有父 Owner 内部库存原语不升级为可恢复合同。新客户端 `stockApi.apply/move` 必须传入原键并调用新版本；客户端 API 不生成键、不重发、不把 UNKNOWN 转成失败证明。W44时页面尚未采用；W96实际库存页采用ADJ与公共原键持久恢复，MOVE新增提交因Issue503保管属性缺陷尚未开放，不能声称移动页面采用。见[W96交付](../../development/evidence/W96-01/DELIVERY.md)。
+全入口要求实际登录、当前原会话权限和 no-store；POST 受现有全局 CSRF 约束。兼容 `/apply`、`/move` 与既有父 Owner 内部库存原语不升级为可恢复合同。新客户端 `stockApi.apply/move` 必须传入原键并调用新版本；客户端 API 不生成键、不重发、不把 UNKNOWN 转成失败证明。W44时页面尚未采用；W96采用ADJ与公共原键持久恢复，当时MOVE因Issue503暂缓。W97修复属性保全后，W98在实际库存行补齐MOVE表单、正数精确文本数量、独立move动作及双腿原结果恢复。见[W96交付](../../development/evidence/W96-01/DELIVERY.md)和[W98交付](../../development/evidence/W98-01/DELIVERY.md)。
 
 ## 原子性与恢复
 
@@ -41,4 +41,4 @@ UNKNOWN 仅表示当前查询未见终态，不能证明先前请求未提交，
 
 已有目标只有上述属性逐值相等才可累加，保留其对象身份、原创建者与预留量。当前库存键没有货主／属性维度，不能在一行表示不同货主、单位、质量／召回、日期、卷号或单价；冲突返回安全的 `409 STOCK_MOVE_METADATA_CONFLICT`，不披露属性值，不覆盖零余额行，不做隐式单位换算或加权计价。数量精度与仓库允许负库存政策不变：来源不存在时仍沿用旧默认 SELF/null/PENDING/非召回属性，负腿是否允许继续由原仓库规则决定；这是保留的兼容行为，不证明正式来源身份或 QuantityKernel 已采用。
 
-元数据取自服务端，不增加外部 DTO 字段，不改变 `Main.Wms.StockOperation.v1` 冻结输入、摘要或原记录。MOVE 不额外要求单价读写权限；公开原结果及冲突不含价格。已提交原键继续按当前 query 和全部准确对象 ID 披露，不重新检查现在的属性兼容、不重做移动，也不修写历史错误流水。旧数据修复、正式 Root/Claim/容量、Finance 业务接收和新增 MOVE 页面分别留待对应任务。验证和生命周期见 [W97单份交付](../../development/evidence/BUG-503/DELIVERY.md)。
+元数据取自服务端，不增加外部 DTO 字段，不改变 `Main.Wms.StockOperation.v1` 冻结输入、摘要或原记录。MOVE 不额外要求单价读写权限；公开原结果及冲突不含价格。已提交原键继续按当前 query 和全部准确对象 ID 披露，不重新检查现在的属性兼容、不重做移动，也不修写历史错误流水。旧数据修复、正式 Root/Claim/容量、Finance 业务接收分别留待对应任务；新增 MOVE 页面由 W98 采用，其成功不替代正式业务验收。验证和生命周期见 [W97单份交付](../../development/evidence/BUG-503/DELIVERY.md)。

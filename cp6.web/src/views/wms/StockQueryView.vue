@@ -42,6 +42,7 @@
       <template #col-_action="{ row }">
         <el-button link type="primary" size="small" @click="openHistory(row)">{{ t('wms.common.history') }}</el-button>
         <el-button v-permission="'wms-stock:adjust'" link type="primary" size="small" @click="commands?.open(row)">{{ t('在庫調整') }}</el-button>
+        <el-button v-permission="'wms-stock:move'" link type="primary" size="small" @click="commands?.open(row, 'MOVE')">{{ t('棚移動') }}</el-button>
         <el-button v-permission="'wms-stock-qc:set'" link type="warning" size="small" @click="openQcDialog(row)">{{ t('wms.stock.qc.btn') }}</el-button>
       </template>
     </CpListPage>

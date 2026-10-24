@@ -914,3 +914,11 @@ W89 Main506、CRM124/125、Handoff72与Issue123已闭环，实际44.03min（排�
 Main [产品PR](https://github.com/GTX537/CP6/pull/507) source `d05bce95ec9591a532d009847f6b5a38db216562`采用远端main `906bcaef5974c0bc3305c89387044e5b396496d6`，14任务路径一致；Handoff [PR](https://github.com/GTX537/CP6.AI-Handoff/pull/73)采用`bd49fe3aef1826037ef68c0efd17cee5ac3d9dda`，准确分支删除、固定树干净detached、finish释放。3产品路径与已测提交逐blob一致，复用70项原成功证据，最后文档diff和台账生成独立检查。Issue503已关闭。
 
 Main同任务最终状态PR/finish待完成，当前约12.71min，原估25–40min＋前置约5min，最终以`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave97-final-verification.json`为准，不重复Handoff。3个自有PG停止、所有数据及失败证据保留；无Actions／迁移／部署。实际MOVE页面和正式业务验收仍未完成，七天ACTIVE。
+
+## 2026-10-24：W97完整收尾 / W98实际MOVE页面
+
+W97 Main507/508、Handoff73、Issue503已闭环，14.62min＋前置约5min，准确分支删除、席位释放。[W98](../dispatch/20261024-wave98/README.md)继续实际库存MOVE入口及原键恢复，预计25–35min＋前置约2min；复用W96浏览器恢复与W97后端，七天ACTIVE，全局验收计数不变。
+
+## W98候选验证
+
+1项原生PostgreSQL实际HTTP＋29项Vue/client定向检查通过，vue-tsc通过，无最终跳过；1项修复前MOVE入口红灯保留。实际MOVE页面及原键恢复候选完成，后端合同和W97属性修复未改；PG停止，正常Main/Handoff采用及finish待完成，七天ACTIVE。详见[单份交付](../evidence/W98-01/DELIVERY.md)。

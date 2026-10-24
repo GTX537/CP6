@@ -8,6 +8,31 @@ namespace CP6.Tests.Erp;
 public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
     [CurrentPermissionPostgresFact]
+    public async Task Stock_move_ui_actual_http_exact_text_preserves_custody_and_original_without_adjust_or_price_grant()
+    {
+        await using var h=await Seed();await GrantStocktakeDashboard(h);await SeedMoveCustody(h);
+        await h.Db.Stocks.Where(s=>s.ProductCd=="P1").ExecuteUpdateAsync(s=>s
+            .SetProperty(x=>x.PhysicalQty,9007199254741.12345678m).SetProperty(x=>x.AvailableQty,9007199254741.12345678m));
+        await h.Db.Sys_RoleActions.Where(a=>a.MenuId==403 && a.ActionCode=="adjust").ExecuteDeleteAsync();
+        h.Db.Sys_RoleFieldPerms.Add(new(){RoleId=72,ResourceKey="wms-stock",FieldName="UnitPrice",Access=3});
+        await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();
+        await using var host=await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!);var cookies=await Login(host,h);
+        const string root="api/wms/stock/";var operationId=Guid.NewGuid();
+        var command=new {operationId,warehouseCd="W01",fromLocationCd="L1",toLocationCd="L3",productCd="P1",lotNo="LOT",qty="9007199254740.12345678",remark="exact text move"};
+        using(var response=await host.Send(OperationsRequest(cookies,HttpMethod.Post,root+"commands/v1/move",command)))
+        {Assert.Equal(HttpStatusCode.OK,response.StatusCode);var text=await response.Content.ReadAsStringAsync();Assert.DoesNotContain("123.4567",text);
+            using var json=JsonDocument.Parse(text);var data=json.RootElement.GetProperty("data");Assert.Equal(operationId,data.GetProperty("operationId").GetGuid());
+            Assert.Equal("MOVE",data.GetProperty("kind").GetString());Assert.NotEqual(data.GetProperty("outTxnNo").GetString(),data.GetProperty("inTxnNo").GetString());}
+        var source=await h.Db.Stocks.AsNoTracking().SingleAsync(s=>s.ProductCd=="P1" && s.LocationCd=="L1");
+        var target=await h.Db.Stocks.AsNoTracking().SingleAsync(s=>s.LocationCd=="L3");
+        Assert.Equal(1m,source.PhysicalQty);Assert.Equal(9007199254740.12345678m,target.PhysicalQty);AssertMoveCustody(source);AssertMoveCustody(target);
+        await h.Db.Sys_RoleActions.Where(a=>a.MenuId==403 && a.ActionCode=="move").ExecuteDeleteAsync();
+        using(var replay=await host.Send(OperationsRequest(cookies,HttpMethod.Post,root+"commands/v1/move",command)))Assert.Equal(HttpStatusCode.OK,replay.StatusCode);
+        using(var recovery=await host.Send(OperationsRequest(cookies,HttpMethod.Get,root+$"operations/v1/{operationId}")))
+        {Assert.Equal(HttpStatusCode.OK,recovery.StatusCode);Assert.Contains("COMMITTED",await recovery.Content.ReadAsStringAsync());}
+        Assert.Equal(2,await h.Db.StockTransactions.CountAsync());Assert.Equal(1,await Operations(h));Assert.Equal(1,await StockNotifications(h));
+    }
+    [CurrentPermissionPostgresFact]
     public async Task Stock_ui_actual_http_decimal_strings_original_recovery_and_atomic_outbox()
     {
         await using var h = await Seed(); await GrantStocktakeDashboard(h); await SeedInventory(h);
