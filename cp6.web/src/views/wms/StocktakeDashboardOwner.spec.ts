@@ -18,6 +18,7 @@ vi.mock('vue-router', () => ({ useRoute: () => route, useRouter: () => ({ push: 
 import Take from './StockTakeView.vue'
 import TakeList from './StockTakeListView.vue'
 import Stock from './StockQueryView.vue'
+vi.mock('@/stores/permission', () => ({ usePermissionStore: () => ({ loaded: true, actionKeys: new Set(), has: () => false }) }))
 import Wms from './WmsDashboardView.vue'
 import Mes from '../mes/MesDashboardView.vue'
 import { AUTH_EPOCH, AUTH_EVENT } from '@/auth/identity'

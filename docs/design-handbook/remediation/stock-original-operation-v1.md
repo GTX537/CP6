@@ -14,7 +14,7 @@ W44-01 / WP02-10 限定采用；数据库 PostgreSQL。使用 [Main journal v1](
 |GET `/api/wms/stock/operations/v1/{operation}`|query；COMMITTED + 原流水号 / CLOSED / UNKNOWN|
 |POST `/api/wms/stock/operations/v1/{operation}/close`|query + 当前会话/CSRF；未提交原键封闭，已提交只能返回当前授权的原结果|
 
-全入口要求实际登录、当前原会话权限和 no-store；POST 受现有全局 CSRF 约束。兼容 `/apply`、`/move` 与既有父 Owner 内部库存原语不升级为可恢复合同。新客户端 `stockApi.apply/move` 必须传入原键并调用新版本；客户端 API 不生成键、不重发、不把 UNKNOWN 转成失败证明。当前页面没有调整/移动调用，尚无该能力的浏览器持久化流程，不能宣称页面采用。
+全入口要求实际登录、当前原会话权限和 no-store；POST 受现有全局 CSRF 约束。兼容 `/apply`、`/move` 与既有父 Owner 内部库存原语不升级为可恢复合同。新客户端 `stockApi.apply/move` 必须传入原键并调用新版本；客户端 API 不生成键、不重发、不把 UNKNOWN 转成失败证明。W44时页面尚未采用；W96实际库存页采用ADJ与公共原键持久恢复，MOVE新增提交因Issue503保管属性缺陷尚未开放，不能声称移动页面采用。见[W96交付](../../development/evidence/W96-01/DELIVERY.md)。
 
 ## 原子性与恢复
 
@@ -29,7 +29,7 @@ UNKNOWN 仅表示当前查询未见终态，不能证明先前请求未提交，
 ## 准确限制
 
 - 此处为既有库存 Owner 的兼容业务采用，不是 WMS-TRANSFER-01 的 RootSpan/Claim/Stage/SourceDemand/capacity/物理执行合同，不完成 REP/RMA。
-- 现有 Finance bridge/SignalR 在首次已知提交后 best-effort 调用。COMMIT 确认丢失可能导致它们尚未发送，原结果恢复不会替代发送、重发或证明外部完成；可靠 outbox/消费者采用仍待实现。
+- 现有 Finance bridge/SignalR 在首次已知提交后 best-effort 调用。COMMIT 确认丢失可能导致它们尚未发送，原结果恢复不会替代发送、重发或证明外部完成；W50已采用同事务库存Outbox与可信空失效提示路由，见[W50交付](../../development/evidence/WP02-10/stock-outbox/DELIVERY.md)；Finance可靠消费和下游业务ACK仍未证明。
 - 部门映射仍为 W42 精确对象 ID，未给新流水自动继承部门；若原结果披露所需对象缺当前映射则拒绝，需有权限的维护入口按真实归属显式建立。不得从原请求人、字符串或相同库存键猜测。
 - 保留旧数字/存储合同的真实范围；本轮未完成整个正式 Stock Root/Slice、金额/数量总和规范、生产角色/日志保留政策、全库 schema 租户迁移或真实环境验收。
 

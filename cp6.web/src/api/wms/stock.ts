@@ -27,12 +27,12 @@ export const stockApi = {
   },
 
   /** 在庫変動 1 件適用 */
-  apply(req: StockMovementRequest & { operationId: string }) {
+  apply(req: Omit<StockMovementRequest, 'qty' | 'unitPrice'> & { operationId: string; qty: number | string; unitPrice?: number | string }) {
     return http.post<any, WmsApi<StockOperationResult>>('/wms/stock/commands/v1/apply', req)
   },
 
   /** 棚移動 */
-  move(req: StockMoveRequest & { operationId: string }) {
+  move(req: Omit<StockMoveRequest, 'qty'> & { operationId: string; qty: number | string }) {
     return http.post<any, WmsApi<StockOperationResult>>('/wms/stock/commands/v1/move', req)
   },
 
