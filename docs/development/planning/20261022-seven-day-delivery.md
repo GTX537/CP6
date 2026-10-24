@@ -1012,3 +1012,13 @@ W104 Main516/CRM131/Handoff80已完整合并finish，三分支删除、席位释
 85项唯一相关本地检查通过、0跳过：20生命周期PG/HTTP、11真实浏览器、28相关会话/Owner、24Node、2实际Main/CRM互通。 [实际交付](../dispatch/20261024-wave105/README.md)。
 Handoff [PR81](https://github.com/GTX537/CP6.AI-Handoff/pull/81) 已采用 `53cddda6f0bbc6dd0db3d5481613b9f937772f41`，原准确分支删除、固定DEV-2 finish释放。 CRM分支删除/席位释放已核对；Main本次正常PR及finish继续，当前START后墙钟39.64min（原估180–270），最终按Main finish计，不叠加各仓。
 接续公开表单、Attempt和提交受理；七天ACTIVE，正式整卡/验收不提升。
+
+## 2026-10-24：W105完整收尾 / W106公开表单与Attempt
+
+W105 Main517/CRM132/Handoff81全部合并finish，准确分支删除、席位释放；实际43.07min、85项相关本地检查。[W106](../dispatch/20261024-wave106/README.md)接可信公开GET与持久浏览器绑定Attempt，预计75–120min；七天ACTIVE，正式目标/验收不提升。
+
+## W106公开表单与持久Attempt已采用
+
+82项唯一相关本地检查通过、0跳过：26公开Owner/PG/HTTP/cookie/配置绑定（含实际Node BFF互通）、28相关配置/BFF回归、28Node，另含受影响编译与类型验证。 [实际交付](../dispatch/20261024-wave106/README.md)。
+Handoff [PR82](https://github.com/GTX537/CP6.AI-Handoff/pull/82) 已采用 `08789af72ad034874782164f1c314aa38a6665af`，原准确分支删除、固定DEV-2 finish释放。 CRM分支删除/席位释放已核对；Main本次正常PR及finish继续，当前START后墙钟26.93min（原估75–120），最终按Main finish计，不叠加各仓。
+接续submit/receipt/H01与公开页面；七天ACTIVE，正式整卡/验收不提升。
