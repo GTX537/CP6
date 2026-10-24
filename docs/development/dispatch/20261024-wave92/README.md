@@ -24,3 +24,9 @@ COORD本聊天单人，沿用writing-plans/executing-plans及精简验证。Main
 ## 验证完成
 
 19独立.NET（18原生PG、1两租户目录种子）与31Vue通过，无跳过；相关构建及vue-tsc通过，定向补验去重合计50项。一次集中审查及原生竞争/HTTP补验完成；PG停止，待正常采用/收尾。
+
+## 实际采用与最后收尾
+
+Main [PR492](https://github.com/GTX537/CP6/pull/492) source `78213f208946fefa7f24e88c51fb9055d888bf2e`采用远端main `41cbbe6cdbd564557ead95aca7fab2d96bf99a42`，33任务路径逐blob核对；Handoff [PR67](https://github.com/GTX537/CP6.AI-Handoff/pull/67)采用`6a74a70759f9d5e1fc18a5ce662e72a15b692b20`，准确分支删除、固定树干净detached、finish释放。23个产品路径与已测提交逐blob一致，复用有效结果，最后文档diff/台账生成单独检查。
+
+Main同任务最终状态PR/finish及Issue491最后关闭待完成；当前约23.48min，原估60–90min＋独立前置4min，实际按finish不重复计Handoff。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave92-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续剩余独立Owner及D5/D6真实前置，正式MASTER WP10-01仍未采用。
