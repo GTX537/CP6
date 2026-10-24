@@ -39,6 +39,44 @@ beforeEach(() => {
 })
 afterEach(() => { view?.unmount(); view = undefined; vi.restoreAllMocks() })
 describe('actual stock command screen', () => {
+  it('freezes MOVE destination and positive exact quantity without browser custody or price fields', async () => {
+    const vm = await render(), wait = deferred(); api.operationScope.mockReturnValueOnce(wait.promise)
+    vm.open(row, 'MOVE'); vm.destination = 'L3 '; vm.quantity = '9007199254740.12345678'; vm.remark = 'move once'
+    const saving = vm.submit(); vm.destination = 'L4'; vm.quantity = '2'; await vm.submit()
+    wait.resolve(wrap(scope)); await saving
+    expect(api.move).toHaveBeenCalledTimes(1); expect(api.apply).not.toHaveBeenCalled()
+    expect(api.move.mock.lastCall?.[0]).toEqual({ operationId: expect.any(String), warehouseCd: 'W01', fromLocationCd: 'L1',
+      toLocationCd: 'L3 ', productCd: 'P1 ', lotNo: 'LOT ', qty: '9007199254740.12345678', remark: 'move once' })
+    expect(pendingStockOperation(scope)).toBeNull(); expect(view!.text()).toContain('TXO / TXI'); expect(view!.emitted('committed')).toHaveLength(1)
+  })
+  it('validates MOVE destination and positive quantity before saving an original key', async () => {
+    const vm = await render(); vm.open(row, 'MOVE'); vm.quantity = '1'
+    for (const location of ['', ' ', 'L1', 'X'.repeat(31)]) { vm.destination = location; await vm.submit(); expect(api.move).not.toHaveBeenCalled() }
+    vm.destination = 'L3'
+    for (const qty of ['0', '-0.1', '1e3', '10000000000000', '0.000000001']) { vm.quantity = qty; await vm.submit(); expect(api.move).not.toHaveBeenCalled() }
+    expect(pendingStockOperation(scope)).toBeNull(); vm.quantity = '.00000001'; await vm.submit()
+    expect(api.move.mock.lastCall?.[0]).toMatchObject({ qty: '0.00000001', toLocationCd: 'L3' })
+  })
+  it('uses move permission independently of adjust and cancels a pending send on move revocation', async () => {
+    const vm = await render(); shared.permission.actionKeys = new Set(['wms-stock:query', 'wms-stock:move']); await flushPromises()
+    vm.open(row, 'APPLY'); expect(vm.visible).toBe(false); vm.open(row, 'MOVE'); expect(vm.visible).toBe(true)
+    vm.quantity = '1'; vm.destination = 'L3'; const wait = deferred(); api.operationScope.mockReturnValueOnce(wait.promise)
+    const saving = vm.submit(); await flushPromises(); shared.permission.actionKeys.delete('wms-stock:move')
+    wait.resolve(wrap(scope)); await saving; expect(api.move).not.toHaveBeenCalled(); expect(api.apply).not.toHaveBeenCalled()
+    expect(pendingStockOperation(scope)).toBeNull()
+  })
+  it('recovers a timed-out MOVE after remount and rejects a mismatched pair of original legs', async () => {
+    let vm = await render(); api.move.mockRejectedValueOnce(new Error('timeout'))
+    vm.open(row, 'MOVE'); vm.destination = 'L3'; vm.quantity = '1'; await vm.submit()
+    const original = pendingStockOperation(scope)!; expect(original.kind).toBe('MOVE')
+    expect(Object.keys(original).sort()).toEqual(['kind', 'operationId'])
+    view!.unmount(); view = undefined; shared.permission.actionKeys = new Set(['wms-stock:query']); vm = await render()
+    api.readOperation.mockResolvedValue(wrap({ operationId: original.operationId, state: 'COMMITTED', result: { ...original, outTxnNo: 'SAME', inTxnNo: 'SAME' } }))
+    await vm.resolve(false); expect(vm.pending).toEqual(original); expect(view!.emitted('committed')).toBeUndefined()
+    api.readOperation.mockResolvedValue(wrap({ operationId: original.operationId, state: 'COMMITTED', result: { ...original, outTxnNo: 'OUT-ORIGINAL', inTxnNo: 'IN-ORIGINAL' } }))
+    await vm.resolve(false); expect(vm.pending).toBeNull(); expect(view!.text()).toContain('OUT-ORIGINAL / IN-ORIGINAL')
+    expect(api.move).toHaveBeenCalledTimes(1); expect(api.apply).not.toHaveBeenCalled()
+  })
   it('freezes the displayed business keys and exact decimal text, and blocks duplicate clicks', async () => {
     const vm = await render(), wait = deferred(); api.operationScope.mockReturnValueOnce(wait.promise)
     vm.open(row, 'APPLY'); vm.quantity = '9007199254740.12345678'; vm.remark = 'first'
@@ -49,7 +87,7 @@ describe('actual stock command screen', () => {
     expect(api.apply.mock.lastCall?.[0]).not.toHaveProperty('unitPrice'); expect(api.apply.mock.lastCall?.[0]).not.toHaveProperty('operatorCd')
     expect(pendingStockOperation(scope)).toBeNull(); expect(view!.emitted('committed')).toHaveLength(1); expect(view!.text()).toContain('TX1')
   })
-  it('rejects overflow and rounding before adjustment and does not offer a new MOVE write', async () => {
+  it('rejects overflow and rounding before adjustment and preserves negative adjustment', async () => {
     const vm = await render(); vm.open(row)
     for (const value of ['10000000000000', '0.000000001']) { vm.quantity = value; await vm.submit(); expect(api.apply).not.toHaveBeenCalled() }
     vm.quantity = '-0.00000001'; await vm.submit(); expect(api.apply.mock.lastCall?.[0]).toMatchObject({ qty: '-0.00000001', locationCd: 'L1' })
@@ -104,5 +142,8 @@ describe('actual stock command screen', () => {
     await view.findAll('button').find(button => button.text() === '在庫調整')!.trigger('click')
     expect(view.text()).toContain('調整差分'); expect(view.text()).toContain('P1')
     const commands: any = view.findComponent(Commands).vm; commands.quantity = '1'; await commands.submit(); expect(api.apply).toHaveBeenCalledTimes(1)
+    await view.findAll('button').find(button => button.text() === '棚移動')!.trigger('click')
+    expect(view.text()).toContain('移動先ロケーション'); commands.destination = 'L3'; commands.quantity = '1'; await commands.submit()
+    expect(api.move).toHaveBeenCalledTimes(1)
   })
 })

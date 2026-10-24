@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-24：W98实际MOVE页面候选通过
+
+1项原生PostgreSQL实际HTTP＋29项Vue/client定向检查通过，vue-tsc通过，无最终跳过；1项修复前MOVE入口红灯保留。[单份交付](../development/evidence/W98-01/DELIVERY.md)。实际库存行MOVE、精确文本数量、当前动作／原键恢复已实现，复用W96恢复与W97服务端；PG停止，待正常Main/Handoff采用及分支/席位finish。正式业务验收不提升，七天ACTIVE。
+
 ## 2026-10-24：W97 MOVE保管属性修复已采用
 
 Main [产品PR](https://github.com/GTX537/CP6/pull/507) source `d05bce95ec9591a532d009847f6b5a38db216562`进入远端main `906bcaef5974c0bc3305c89387044e5b396496d6`，14路径一致；44原生PG＋26逻辑回归去重70项通过，[单份交付](../development/evidence/BUG-503/DELIVERY.md)。Issue503已关闭，Handoff [PR](https://github.com/GTX537/CP6.AI-Handoff/pull/73)已采用并删除准确分支、finish释放席位；Main同任务最后状态PR/finish待完成。3个PG停止保留，无Actions／既有库迁移／部署。当前12.71min，原估25–40min＋独立前置约5min，最终据finish计。新MOVE页面后续采用，七天ACTIVE，全局计数不变。

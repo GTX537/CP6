@@ -160117,6 +160117,16 @@
       "date": "2026-10-24",
       "change": "W97 Main product and Handoff exact adoption verified; Issue503 closed after native regression/original reproduction and remote adoption,70 related checks pass. Handoff branch deleted/seat released; Main final close/finish pending. Full counts unchanged.",
       "evidence": "https://github.com/GTX537/CP6/blob/906bcaef5974c0bc3305c89387044e5b396496d6/docs/development/evidence/BUG-503/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-24",
+      "change": "W97 full close verified14.62min plus preflight~5min; exact branches deleted and seats released, Issue503 closed. W98 actual stock MOVE page/recovery admitted25–35min; seven-day ACTIVE, full counts unchanged.",
+      "evidence": "docs/development/dispatch/20261024-wave98/README.md"
+    },
+    {
+      "date": "2026-10-24",
+      "change": "W98 actual stock MOVE page/original recovery locally verified1 nativeHTTP+29Vue/client and types; W97 backend evidence reused, awaiting normal adoption/finish. Full counts unchanged.",
+      "evidence": "docs/development/evidence/W98-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -170268,51 +170278,41 @@
       "card_anchor": "wp02-10",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W97 BUG-503",
+        "chat_label": "COORD / W98-01",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/bug-503",
+        "branch": "codex/w98-01",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-24T04:00:22.607920+00:00",
-        "baseline_sha": "800691f802a87dbafc3aa9b504df1267e12e8b42",
-        "entry_evidence": "docs/development/dispatch/20261024-wave97/README.md",
-        "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
-        "dispatch_scope": "W97_BUG_503",
+        "claimed_at": "2026-10-24T04:17:25.688628+00:00",
+        "baseline_sha": "c7324fab629a4d66057d4b370ba522e891f3b680",
+        "entry_evidence": "docs/development/dispatch/20261024-wave98/README.md",
+        "phase": "CANDIDATE_VERIFIED",
+        "dispatch_scope": "W98_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
         "actual_start_ref": {
-          "commit": "30405270fd91110e9f0ff77dc7a290973964773c",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261024T040022Z-wave97-start/MESSAGE.md",
-          "at": "2026-10-24T04:00:22.607920+00:00"
+          "commit": "f2fd4cf57af408466892a139e385a589829c903b",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261024T041725Z-wave98-start/MESSAGE.md",
+          "at": "2026-10-24T04:17:25.688628+00:00"
         },
         "reserved_write_resources": [
-          "Main:StockMovementService",
-          "Main:stock-native-tests"
+          "Main:stock-MOVE-UI",
+          "Main:stock-HTTP-tests"
         ],
         "reserved_postgresql_ports": [
           55435
         ],
-        "handoff_branch": "codex/w97-handoff",
+        "handoff_branch": "codex/w98-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": true,
+        "candidate_integrated": false,
         "resources_released": false,
         "full_task_completed": false,
-        "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/906bcaef5974c0bc3305c89387044e5b396496d6/docs/development/evidence/BUG-503/DELIVERY.md",
-        "source_candidate_sha": "d05bce95ec9591a532d009847f6b5a38db216562",
-        "remote_main_sha": "906bcaef5974c0bc3305c89387044e5b396496d6",
-        "pull_request": "https://github.com/GTX537/CP6/pull/507",
-        "handoff_delivery_ref": {
-          "commit": "d0560b499011adf87c6004522e14f5c85cc5e83e",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261024T041029Z-wave97-delivery/MESSAGE.md",
-          "at": "2026-10-24T04:10:29.340114+00:00",
-          "base": "codex/t02c-entry-handoff-20260921",
-          "branch": "codex/w97-handoff"
-        }
+        "worker_delivery_ref": "docs/development/evidence/W98-01/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -170690,6 +170690,54 @@
             "branch": "codex/w96-handoff"
           },
           "lifecycle_complete": true
+        },
+        {
+          "chat_label": "COORD / W97 BUG-503",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/bug-503",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-10-24T04:00:22.607920+00:00",
+          "baseline_sha": "800691f802a87dbafc3aa9b504df1267e12e8b42",
+          "entry_evidence": "docs/development/dispatch/20261024-wave97/README.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "W97_BUG_503",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "actual_start_ref": {
+            "commit": "30405270fd91110e9f0ff77dc7a290973964773c",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261024T040022Z-wave97-start/MESSAGE.md",
+            "at": "2026-10-24T04:00:22.607920+00:00"
+          },
+          "reserved_write_resources": [
+            "Main:StockMovementService",
+            "Main:stock-native-tests"
+          ],
+          "reserved_postgresql_ports": [
+            55435
+          ],
+          "handoff_branch": "codex/w97-handoff",
+          "actions_authorized": false,
+          "deployment_authorized": false,
+          "existing_database_migration_authorized": false,
+          "worker_delivery_received": true,
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "resources_released": true,
+          "full_task_completed": false,
+          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/906bcaef5974c0bc3305c89387044e5b396496d6/docs/development/evidence/BUG-503/DELIVERY.md",
+          "source_candidate_sha": "d05bce95ec9591a532d009847f6b5a38db216562",
+          "remote_main_sha": "906bcaef5974c0bc3305c89387044e5b396496d6",
+          "pull_request": "https://github.com/GTX537/CP6/pull/507",
+          "handoff_delivery_ref": {
+            "commit": "d0560b499011adf87c6004522e14f5c85cc5e83e",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261024T041029Z-wave97-delivery/MESSAGE.md",
+            "at": "2026-10-24T04:10:29.340114+00:00",
+            "base": "codex/t02c-entry-handoff-20260921",
+            "branch": "codex/w97-handoff"
+          },
+          "lifecycle_complete": true
         }
       ],
       "wave44_delivery": {
@@ -170782,7 +170830,7 @@
         "business_acceptance": "NOT_RUN",
         "adopted_scope": "Bounded legacy MOVE source custody preservation and exact target compatibility, v1 replay unchanged",
         "issue": "https://github.com/GTX537/CP6/issues/503",
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "source_candidate_sha": "d05bce95ec9591a532d009847f6b5a38db216562",
         "remote_main_sha": "906bcaef5974c0bc3305c89387044e5b396496d6",
         "pull_request": "https://github.com/GTX537/CP6/pull/507",
@@ -170797,12 +170845,30 @@
           "handoff_branch_deleted": true,
           "handoff_seat_released": true,
           "main_task": "CP6:BUG-503",
-          "main_finish_required": true,
-          "main_seat_released": false,
-          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave97-final-verification.json"
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave97-final-verification.json",
+          "main_branch_deleted": true,
+          "observed_at": "2026-10-24T04:14:25.348134+00:00",
+          "close_pr": "https://github.com/GTX537/CP6/pull/508"
         },
         "issue_state": "CLOSED",
-        "test_data_disposition": "Three owned PostgreSQL clusters stopped; all successful and failed evidence retained"
+        "test_data_disposition": "Three owned PostgreSQL clusters stopped; all successful and failed evidence retained",
+        "branches_deleted": true,
+        "seats_released": true,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave97-final-verification.json",
+        "final_main": "c7324fab629a4d66057d4b370ba522e891f3b680",
+        "close_pr": "https://github.com/GTX537/CP6/pull/508",
+        "actual_agent_minutes": 14.62
+      },
+      "wave98_delivery": {
+        "status": "CANDIDATE_VERIFIED",
+        "report": "docs/development/evidence/W98-01/DELIVERY.md",
+        "validation": "1项原生PostgreSQL实际HTTP＋29项Vue/client定向检查通过，vue-tsc通过，无最终跳过；1项修复前MOVE入口红灯保留",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "adopted_scope": "Actual same-warehouse MOVE page and durable original-key recovery using unchanged v1/Owner",
+        "lifecycle_complete": false
       }
     },
     {
@@ -188810,11 +188876,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261024-wave97",
-      "path": "docs/development/dispatch/20261024-wave97/README.md",
-      "baseline_sha": "800691f802a87dbafc3aa9b504df1267e12e8b42",
-      "registered_at": "2026-10-24T04:00:22.607920+00:00",
-      "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
+      "id": "20261024-wave98",
+      "path": "docs/development/dispatch/20261024-wave98/README.md",
+      "baseline_sha": "c7324fab629a4d66057d4b370ba522e891f3b680",
+      "registered_at": "2026-10-24T04:17:25.688628+00:00",
+      "phase": "CANDIDATE_VERIFIED",
       "assigned_chats": [
         "COORD"
       ],
@@ -188826,86 +188892,44 @@
       ],
       "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": true,
-      "product_integrated": true,
+      "windows_closed": false,
+      "product_integrated": false,
       "windows": [
         {
-          "id": "BUG-503",
+          "id": "W98-01",
           "task_id": "WP02-10",
-          "title": "W97 MOVE保管属性有界修复",
-          "lifecycle_task": "BUG-503",
+          "title": "实际库存MOVE页面和原键恢复",
+          "lifecycle_task": "W98-01",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "CLOSED",
+          "phase": "CANDIDATE_VERIFIED",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "30405270fd91110e9f0ff77dc7a290973964773c",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261024T040022Z-wave97-start/MESSAGE.md",
-            "at": "2026-10-24T04:00:22.607920+00:00"
+            "commit": "f2fd4cf57af408466892a139e385a589829c903b",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261024T041725Z-wave98-start/MESSAGE.md",
+            "at": "2026-10-24T04:17:25.688628+00:00"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/bug-503",
-          "planned_scope_ref": "docs/development/dispatch/20261024-wave97/README.md",
+          "branch": "codex/w98-01",
+          "planned_scope_ref": "docs/development/dispatch/20261024-wave98/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/906bcaef5974c0bc3305c89387044e5b396496d6/docs/development/evidence/BUG-503/DELIVERY.md",
-          "validation": "70项去重相关本地验证通过（44项原生PG、26项既有逻辑回归），无跳过；修复前2项CUSTOMER→SELF失败保留",
-          "runtime_resources_released": true,
-          "candidate_integrated": true,
-          "integration": {
-            "result": "PASS",
-            "repository": "GTX537/CP6",
-            "source": "d05bce95ec9591a532d009847f6b5a38db216562",
-            "main": "906bcaef5974c0bc3305c89387044e5b396496d6",
-            "target": "main",
-            "pr": "https://github.com/GTX537/CP6/pull/507",
-            "paths": [
-              "CP6.Core/Services/Wms/StockMovementService.MoveMetadata.cs",
-              "CP6.Core/Services/Wms/StockMovementService.cs",
-              "CP6.Tests/Erp/StockMoveMetadataPostgreSqlTests.cs",
-              "docs/design-handbook/remediation/stock-original-operation-v1.md",
-              "docs/development/07-detailed-tasks.md",
-              "docs/development/09-parallel-development.md",
-              "docs/development/dispatch/20261024-wave97/README.md",
-              "docs/development/evidence/BUG-503/DELIVERY.md",
-              "docs/development/planning/20261022-seven-day-delivery.md",
-              "docs/development/roadmap.json",
-              "docs/project-memory/05-Completed.md",
-              "docs/project-memory/06-Todo.md",
-              "docs/project-memory/CHANGELOG-AI.md",
-              "docs/project-memory/PROJECT_STATE.md"
-            ],
-            "observed_at": "2026-10-24T04:10:06.542411+00:00"
-          },
-          "handoff_delivery_ref": {
-            "commit": "d0560b499011adf87c6004522e14f5c85cc5e83e",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261024T041029Z-wave97-delivery/MESSAGE.md",
-            "at": "2026-10-24T04:10:29.340114+00:00",
-            "base": "codex/t02c-entry-handoff-20260921",
-            "branch": "codex/w97-handoff"
-          },
-          "resources_released": false,
-          "lifecycle_snapshot": {
-            "handoff_branch_deleted": true,
-            "handoff_seat_released": true,
-            "main_task": "CP6:BUG-503",
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave97-final-verification.json"
-          }
+          "worker_delivery_ref": "docs/development/evidence/W98-01/DELIVERY.md",
+          "validation": "1项原生PostgreSQL实际HTTP＋29项Vue/client定向检查通过，vue-tsc通过，无最终跳过；1项修复前MOVE入口红灯保留",
+          "runtime_resources_released": true
         }
       ],
       "horizon": {
-        "started_at": "2026-10-24T03:59:18.158173+00:00",
+        "started_at": "2026-10-24T04:16:19.155726+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
           25,
-          40
+          35
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -188913,30 +188937,8 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Finish same-branch Main ledger PR/lifecycle then actual MOVE UI and Site/Form Owner prerequisites",
-      "validation": "70项去重相关本地验证通过（44项原生PG、26项既有逻辑回归），无跳过；修复前2项CUSTOMER→SELF失败保留",
-      "handoff_delivery_ref": {
-        "commit": "d0560b499011adf87c6004522e14f5c85cc5e83e",
-        "path": "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261024T041029Z-wave97-delivery/MESSAGE.md",
-        "at": "2026-10-24T04:10:29.340114+00:00",
-        "base": "codex/t02c-entry-handoff-20260921",
-        "branch": "codex/w97-handoff"
-      },
-      "handoff_integration": {
-        "result": "PASS",
-        "repository": "GTX537/CP6.AI-Handoff",
-        "source": "d0560b499011adf87c6004522e14f5c85cc5e83e",
-        "main": "bd49fe3aef1826037ef68c0efd17cee5ac3d9dda",
-        "target": "codex/t02c-entry-handoff-20260921",
-        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/73",
-        "paths": [
-          "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261024T040022Z-wave97-start/MESSAGE.md",
-          "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261024T041029Z-wave97-delivery/MESSAGE.md",
-          "handoffs/CP6-DEV-20261012/waves/20261024-wave97.md"
-        ],
-        "observed_at": "2026-10-24T04:11:14.092095+00:00"
-      },
-      "lifecycle_complete": false
+      "next_action": "Normal Main/Handoff adoption and finish; then actual Site/Form Owner prerequisites",
+      "validation": "1项原生PostgreSQL实际HTTP＋29项Vue/client定向检查通过，vue-tsc通过，无最终跳过；1项修复前MOVE入口红灯保留"
     },
     "wave_history": [
       {
@@ -203860,6 +203862,143 @@
         "branches_deleted": true,
         "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave89-final-verification.json",
         "actual_agent_minutes": 44.03
+      },
+      {
+        "id": "20261024-wave97",
+        "path": "docs/development/dispatch/20261024-wave97/README.md",
+        "baseline_sha": "800691f802a87dbafc3aa9b504df1267e12e8b42",
+        "registered_at": "2026-10-24T04:00:22.607920+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "BUG-503",
+            "task_id": "WP02-10",
+            "title": "W97 MOVE保管属性有界修复",
+            "lifecycle_task": "BUG-503",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "30405270fd91110e9f0ff77dc7a290973964773c",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261024T040022Z-wave97-start/MESSAGE.md",
+              "at": "2026-10-24T04:00:22.607920+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/bug-503",
+            "planned_scope_ref": "docs/development/dispatch/20261024-wave97/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/906bcaef5974c0bc3305c89387044e5b396496d6/docs/development/evidence/BUG-503/DELIVERY.md",
+            "validation": "70项去重相关本地验证通过（44项原生PG、26项既有逻辑回归），无跳过；修复前2项CUSTOMER→SELF失败保留",
+            "runtime_resources_released": true,
+            "candidate_integrated": true,
+            "integration": {
+              "result": "PASS",
+              "repository": "GTX537/CP6",
+              "source": "d05bce95ec9591a532d009847f6b5a38db216562",
+              "main": "906bcaef5974c0bc3305c89387044e5b396496d6",
+              "target": "main",
+              "pr": "https://github.com/GTX537/CP6/pull/507",
+              "paths": [
+                "CP6.Core/Services/Wms/StockMovementService.MoveMetadata.cs",
+                "CP6.Core/Services/Wms/StockMovementService.cs",
+                "CP6.Tests/Erp/StockMoveMetadataPostgreSqlTests.cs",
+                "docs/design-handbook/remediation/stock-original-operation-v1.md",
+                "docs/development/07-detailed-tasks.md",
+                "docs/development/09-parallel-development.md",
+                "docs/development/dispatch/20261024-wave97/README.md",
+                "docs/development/evidence/BUG-503/DELIVERY.md",
+                "docs/development/planning/20261022-seven-day-delivery.md",
+                "docs/development/roadmap.json",
+                "docs/project-memory/05-Completed.md",
+                "docs/project-memory/06-Todo.md",
+                "docs/project-memory/CHANGELOG-AI.md",
+                "docs/project-memory/PROJECT_STATE.md"
+              ],
+              "observed_at": "2026-10-24T04:10:06.542411+00:00"
+            },
+            "handoff_delivery_ref": {
+              "commit": "d0560b499011adf87c6004522e14f5c85cc5e83e",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261024T041029Z-wave97-delivery/MESSAGE.md",
+              "at": "2026-10-24T04:10:29.340114+00:00",
+              "base": "codex/t02c-entry-handoff-20260921",
+              "branch": "codex/w97-handoff"
+            },
+            "resources_released": true,
+            "lifecycle_snapshot": {
+              "handoff_branch_deleted": true,
+              "handoff_seat_released": true,
+              "main_task": "CP6:BUG-503",
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave97-final-verification.json",
+              "main_branch_deleted": true,
+              "observed_at": "2026-10-24T04:14:25.348134+00:00",
+              "close_pr": "https://github.com/GTX537/CP6/pull/508"
+            },
+            "lifecycle_complete": true
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-24T03:59:18.158173+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            25,
+            40
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W98 actual MOVE page and original recovery",
+        "validation": "70项去重相关本地验证通过（44项原生PG、26项既有逻辑回归），无跳过；修复前2项CUSTOMER→SELF失败保留",
+        "handoff_delivery_ref": {
+          "commit": "d0560b499011adf87c6004522e14f5c85cc5e83e",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261024T041029Z-wave97-delivery/MESSAGE.md",
+          "at": "2026-10-24T04:10:29.340114+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w97-handoff"
+        },
+        "handoff_integration": {
+          "result": "PASS",
+          "repository": "GTX537/CP6.AI-Handoff",
+          "source": "d0560b499011adf87c6004522e14f5c85cc5e83e",
+          "main": "bd49fe3aef1826037ef68c0efd17cee5ac3d9dda",
+          "target": "codex/t02c-entry-handoff-20260921",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/73",
+          "paths": [
+            "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261024T040022Z-wave97-start/MESSAGE.md",
+            "handoffs/CP6-DEV-20261012/tasks/WP02-10/messages/20261024T041029Z-wave97-delivery/MESSAGE.md",
+            "handoffs/CP6-DEV-20261012/waves/20261024-wave97.md"
+          ],
+          "observed_at": "2026-10-24T04:11:14.092095+00:00"
+        },
+        "lifecycle_complete": true,
+        "resources_released": true,
+        "branches_deleted": true,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave97-final-verification.json",
+        "actual_agent_minutes": 14.62
       }
     ],
     "development_priority": {
@@ -203965,9 +204104,9 @@
         },
         {
           "id": "D4",
-          "phase": "PARTIALLY_ADOPTED",
+          "phase": "IMPLEMENTING",
           "full_business_acceptance": false,
-          "current_window": "W97 / BUG-503",
+          "current_window": "W98-01",
           "prerequisite_adjustment": "Main stock original operations have actual journal; adopt independent new native OutboxV2 with proven shared connection/transaction and trusted empty invalidation route; no reinterpretation of legacy queue tokens or finance effect.",
           "adopted_window": "W50-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/399",
@@ -203983,7 +204122,7 @@
           "last_window_actual_agent_minutes": 20.83,
           "last_branches_deleted": true,
           "last_seats_released": true,
-          "next_action": "Issue503 MOVE custody repair adopted; actual MOVE page and durable original recovery next, formal Stock/TRANSFER acceptance remains"
+          "next_action": "Actual MOVE page and durable original recovery after Issue503 repair; full D4 remains"
         },
         {
           "id": "D5",

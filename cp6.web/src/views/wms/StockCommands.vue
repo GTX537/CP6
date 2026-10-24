@@ -16,13 +16,17 @@
       {{ result.state === 'COMMITTED' ? t('在庫操作は確定済みです。') : result.state === 'CLOSED' ? t('元操作は封閉済みです。在庫変更は実行されません。') : t('結果は未確定です。元の操作番号を保持しています。') }}
       <span v-if="result.result">{{ result.result.txnNo || `${result.result.outTxnNo} / ${result.result.inTxnNo}` }}</span>
     </p>
-    <el-dialog v-model="visible" :title="t('在庫調整')" width="560" :close-on-click-modal="false">
+    <el-dialog v-model="visible" :title="kind === 'MOVE' ? t('棚移動') : t('在庫調整')" width="560" :close-on-click-modal="false">
       <template v-if="target">
         <p>{{ t('倉庫／ロケーション') }}: {{ target.warehouseCd }} / {{ target.locationCd }}</p>
         <p>{{ t('製品／ロット') }}: {{ target.productCd }} / {{ target.lotNo || '—' }}</p>
         <p>{{ t('この倉庫・ロケーション・製品・ロットの在庫を変更します。確定時の権限と在庫制約が適用されます。') }}</p>
         <el-form label-position="top" @submit.prevent="submit">
-          <el-form-item :label="t('調整差分（増加は正、減少は負）')" required>
+          <el-form-item v-if="kind === 'MOVE'" :label="t('移動先ロケーション（同じ倉庫内）')" required>
+            <el-input v-model="destination" :disabled="busy" :placeholder="t('移動元と異なるロケーション')" />
+          </el-form-item>
+          <p v-if="kind === 'MOVE'">{{ t('所有者・単位・品質などの在庫属性は維持されます。移動先に異なる属性の在庫がある場合は移動できません。') }}</p>
+          <el-form-item :label="kind === 'MOVE' ? t('移動数量（正数）') : t('調整差分（増加は正、減少は負）')" required>
             <el-input v-model="quantity" :disabled="busy" inputmode="decimal" :placeholder="t('整数13桁・小数8桁まで')" />
           </el-form-item>
           <el-form-item :label="t('備考')"><el-input v-model="remark" :disabled="busy" type="textarea" maxlength="500" /></el-form-item>
@@ -49,13 +53,14 @@ import type { Stock, StockOperation, StockOperationScope } from '@/types/wms/wms
 const { t } = useI18n(), permissions = usePermissionStore(), emit = defineEmits<{ committed: [] }>()
 const scope = ref<StockOperationScope | null>(null), pending = ref<PendingStockOperation | null>(null), result = ref<StockOperation | null>(null)
 const target = ref<Stock | null>(null), visible = ref(false)
+const kind = ref<PendingStockOperation['kind']>('APPLY'), destination = ref('')
 const quantity = ref(''), remark = ref(''), error = ref(''), busy = ref(false)
 const canQuery = computed(() => permissions.loaded && permissions.has('wms-stock:query'))
-const canWrite = () => canQuery.value && permissions.has('wms-stock:adjust')
+const canWrite = (operation: PendingStockOperation['kind']) => canQuery.value && permissions.has(operation === 'MOVE' ? 'wms-stock:move' : 'wms-stock:adjust')
 let reads = 0
 function clear() {
   reads++; scope.value = null; pending.value = null; result.value = null; target.value = null
-  visible.value = false; quantity.value = ''; remark.value = ''; error.value = ''; busy.value = false
+  visible.value = false; kind.value = 'APPLY'; destination.value = ''; quantity.value = ''; remark.value = ''; error.value = ''; busy.value = false
 }
 const intent = useOperationsIntent(clear)
 function syncPending() { if (scope.value) pending.value = pendingStockOperation(scope.value) }
@@ -70,26 +75,32 @@ async function loadScope() {
     const saved = pendingStockOperation(value); scope.value = value; pending.value = saved
   } catch { if (intent.current(token) && read === reads) error.value = '操作状態を読み込めません。権限と保存された元の操作記録を確認してください。' }
 }
-function open(row: Stock) {
-  if (!scope.value || busy.value || !canWrite()) return
+function open(row: Stock, operation: PendingStockOperation['kind'] = 'APPLY') {
+  if (!scope.value || busy.value || !canWrite(operation)) return
   try { syncPending(); if (pending.value) return } catch { error.value = '保存された元の操作記録を確認してください。'; return }
-  target.value = { ...row }; quantity.value = ''; remark.value = ''; error.value = ''; result.value = null; visible.value = true
+  target.value = { ...row }; kind.value = operation; destination.value = ''; quantity.value = ''; remark.value = ''; error.value = ''; result.value = null; visible.value = true
 }
 async function submit() {
-  if (busy.value || !visible.value || !target.value || !scope.value || !canWrite()) return
+  if (busy.value || !visible.value || !target.value || !scope.value || !canWrite(kind.value)) return
   const token = intent.capture(), bound = { ...scope.value }, row = { ...target.value }
+  const operation = kind.value, toLocationCd = destination.value
   let qty: string
   try {
-    qty = stockQuantity(quantity.value, false)
+    qty = stockQuantity(quantity.value, operation === 'MOVE')
+    if (operation === 'MOVE' && (!toLocationCd.trim() || [...toLocationCd].length > 30)) throw new Error('移動先ロケーションを30文字以内で入力してください。')
+    // Preserve the key bytes; the Owner applies the database's location identity/equality rules.
+    if (operation === 'MOVE' && toLocationCd === row.locationCd) throw new Error('移動先は移動元と異なるロケーションを指定してください。')
     if (remark.value.length > 500) throw new Error('備考は500文字以内で入力してください。')
   } catch (failure: any) { error.value = failure.message; return }
   const common = { warehouseCd: row.warehouseCd, productCd: row.productCd, lotNo: row.lotNo, qty, remark: remark.value || undefined }
-  const command = { ...common, txnType: 'ADJ' as const, locationCd: row.locationCd,
+  const adjustment = { ...common, txnType: 'ADJ' as const, locationCd: row.locationCd,
     unitCd: row.unitCd, ownerType: row.ownerType, ownerCd: row.ownerCd, paperRollNo: row.paperRollNo }
+  const move = { ...common, fromLocationCd: row.locationCd, toLocationCd }
   busy.value = true; error.value = ''; result.value = null
-  const guard = () => { if (!intent.current(token) || !canWrite()) throw new Error('操作画面が変わりました。') }
+  const guard = () => { if (!intent.current(token) || !canWrite(operation)) throw new Error('操作画面が変わりました。') }
   try {
-    const value = await saveStockOperation(bound, 'APPLY', guard, id => stockApi.apply({ ...command, operationId: id }))
+    const value = await saveStockOperation(bound, operation, guard, id => operation === 'MOVE'
+      ? stockApi.move({ ...move, operationId: id }) : stockApi.apply({ ...adjustment, operationId: id }))
     if (!intent.current(token)) return
     result.value = value; visible.value = false; target.value = null; emit('committed')
   } catch { if (intent.current(token)) { visible.value = false; target.value = null; error.value = '結果を確認できません。操作状態を更新し、元の番号で確認してください。'; } }
