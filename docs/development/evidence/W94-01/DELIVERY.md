@@ -31,3 +31,9 @@ CarrierCd/TrackingNo/Remarks按当前字段MIN投影；隐藏Carrier/Tracking即
 24/375整卡、125目标0完整、247正式运行NOT_RUN不变。完整WP10-19/20、正式PackageVersion/PackCoverage/Seal/Manifest、真实Source/RSV/Stock/OUT同UoW和原请求持久恢复、DEL承运/交付仍UNPROVEN/NOT_RUN；当前历史读取和UI保护不替代已接受合同。七天目标ACTIVE，D2–D7继续，D5/D6实际前置仍待推进。
 
 W89官方跨仓bind自动审批返回`blocked by policy`，CRM未修改；两个原分支可靠保存、deferred席位已释放，确认仍待答复，不重试或绕过。历史W51指定停止data删除拒绝边界保留。
+
+## 实际采用与最后收尾
+
+Main [PR498](https://github.com/GTX537/CP6/pull/498) source `5612c1d99298f485e5c691970f2a8d16bb8b8227`采用远端main `88bea56ed8d52304d0117c97b0310e4e66cdba03`，26任务路径逐blob核对；Handoff [PR69](https://github.com/GTX537/CP6.AI-Handoff/pull/69)采用`9579a98b3bade479e0f1ab8a5d75c51ec40afbc4`，准确分支删除、固定树干净detached、finish释放。14个产品路径与已测提交逐blob一致，复用成功结果；最后文档diff和台账生成独立检查。
+
+Main同任务最终状态PR/finish及Issue497最后关闭待完成；当前约14.52min，原估40–65min＋独立前置4min，最终按finish计，不重复Handoff。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave94-final-verification.json`。无Actions、既有环境迁移或部署。七天ACTIVE；完整OUT/WP10-19/20和D5/D6真实前置继续，未以本窗口缩小目标。

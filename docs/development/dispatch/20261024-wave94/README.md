@@ -21,3 +21,9 @@ COORD本聊天单人，Main `74edef400c18e88ceba133600368637df09ffef5`，Handoff
 ## 验证完成
 
 29独立.NET（15原生PG、13既有InMemory出库回归、1两租户权限种子）及15Vue通过，无跳过；相关构建和vue-tsc通过，去重44项。当前业务文本PAD SPACE语义不变，原值保真；一次集中审查通过，PG停止，待正常采用/收尾。
+
+## 实际采用与最后收尾
+
+Main [PR498](https://github.com/GTX537/CP6/pull/498) source `5612c1d99298f485e5c691970f2a8d16bb8b8227`采用远端main `88bea56ed8d52304d0117c97b0310e4e66cdba03`，26任务路径逐blob核对；Handoff [PR69](https://github.com/GTX537/CP6.AI-Handoff/pull/69)采用`9579a98b3bade479e0f1ab8a5d75c51ec40afbc4`，准确分支删除、固定树干净detached、finish释放。14个产品路径与已测提交逐blob一致，复用成功结果；最后文档diff和台账生成独立检查。
+
+Main同任务最终状态PR/finish及Issue497最后关闭待完成；当前约14.52min，原估40–65min＋独立前置4min，最终按finish计，不重复Handoff。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave94-final-verification.json`。无Actions、既有环境迁移或部署。七天ACTIVE；完整OUT/WP10-19/20和D5/D6真实前置继续，未以本窗口缩小目标。
