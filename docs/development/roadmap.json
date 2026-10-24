@@ -160072,6 +160072,11 @@
       "date": "2026-10-24",
       "change": "W95 Issue500 sample current Owner verified:17.NET/10Vue/typecheck; legacy mutation fences. Reconciled stale D2 remaining text with W71 adopted current Owner; formal contracts and W89 authorization unchanged.",
       "evidence": "docs/development/evidence/W95-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-24",
+      "change": "W95 Main501 exact adoption and Handoff70 verified;17.NET/10Vue/typecheck passed. Handoff branch deleted/seat released; Main final finish pending. Full acceptances unchanged.",
+      "evidence": "https://github.com/GTX537/CP6/blob/603b9d51c6853315bd33aa4e7561368cdd20a934/docs/development/evidence/W95-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -162651,7 +162656,7 @@
         "claimed_at": "2026-10-24T02:51:10.748935+00:00",
         "baseline_sha": "a64261e5eab9bdcb9e6a1c9c45149100faa1cc6b",
         "entry_evidence": "docs/development/dispatch/20261024-wave95/README.md",
-        "phase": "CANDIDATE_VERIFIED",
+        "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
         "dispatch_scope": "W95_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -162676,11 +162681,21 @@
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": false,
+        "candidate_integrated": true,
         "resources_released": false,
         "full_task_completed": false,
         "issue": "https://github.com/GTX537/CP6/issues/500",
-        "worker_delivery_ref": "docs/development/evidence/W95-01/DELIVERY.md"
+        "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/603b9d51c6853315bd33aa4e7561368cdd20a934/docs/development/evidence/W95-01/DELIVERY.md",
+        "source_candidate_sha": "44f937ff8438912fb920d6771e639d51ead5333c",
+        "remote_main_sha": "603b9d51c6853315bd33aa4e7561368cdd20a934",
+        "pull_request": "https://github.com/GTX537/CP6/pull/501",
+        "handoff_delivery_ref": {
+          "commit": "b7db47d1aa13eef62f05038f02231a2f904c080f",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T030444Z-wave95-delivery/MESSAGE.md",
+          "at": "2026-10-24T03:04:44.928676+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w95-handoff"
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -168296,14 +168311,33 @@
         "actual_agent_minutes": 19.45
       },
       "wave95_delivery": {
-        "status": "CANDIDATE_VERIFIED",
-        "report": "docs/development/evidence/W95-01/DELIVERY.md",
+        "status": "MERGED",
+        "report": "https://github.com/GTX537/CP6/blob/603b9d51c6853315bd33aa4e7561368cdd20a934/docs/development/evidence/W95-01/DELIVERY.md",
         "validation": "17独立.NET（14原生PG、2既有InMemory样品回归、1两租户权限种子）及10Vue通过，无跳过；相关构建和vue-tsc通过，去重27项",
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "adopted_scope": "Current legacy sample observation Owner and compatibility writer fences; formal Sample/Stock adoption unproven",
         "issue": "https://github.com/GTX537/CP6/issues/500",
-        "lifecycle_complete": false
+        "lifecycle_complete": false,
+        "source_candidate_sha": "44f937ff8438912fb920d6771e639d51ead5333c",
+        "remote_main_sha": "603b9d51c6853315bd33aa4e7561368cdd20a934",
+        "pull_request": "https://github.com/GTX537/CP6/pull/501",
+        "handoff_delivery_ref": {
+          "commit": "b7db47d1aa13eef62f05038f02231a2f904c080f",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T030444Z-wave95-delivery/MESSAGE.md",
+          "at": "2026-10-24T03:04:44.928676+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w95-handoff"
+        },
+        "lifecycle_snapshot": {
+          "handoff_branch_deleted": true,
+          "handoff_seat_released": true,
+          "main_task": "CP6:BUG-500-SAMPLE-OWNER",
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave95-final-verification.json"
+        },
+        "test_data_disposition": "Two owned PostgreSQL clusters stopped; data and logs retained"
       }
     },
     {
@@ -188468,7 +188502,7 @@
       "path": "docs/development/dispatch/20261024-wave95/README.md",
       "baseline_sha": "a64261e5eab9bdcb9e6a1c9c45149100faa1cc6b",
       "registered_at": "2026-10-24T02:51:10.748935+00:00",
-      "phase": "CANDIDATE_VERIFIED",
+      "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -188480,8 +188514,8 @@
       ],
       "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": false,
-      "product_integrated": false,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W95-01",
@@ -188490,7 +188524,7 @@
           "lifecycle_task": "BUG-500-SAMPLE-OWNER",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "CANDIDATE_VERIFIED",
+          "phase": "CLOSED",
           "gate": "CONFIRMED",
           "actual_start_ref": {
             "commit": "a162410ab6fc5d3ff05ac9351661eb9ffd805282",
@@ -188507,9 +188541,66 @@
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "worker_delivery_ref": "docs/development/evidence/W95-01/DELIVERY.md",
+          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/603b9d51c6853315bd33aa4e7561368cdd20a934/docs/development/evidence/W95-01/DELIVERY.md",
           "validation": "17独立.NET（14原生PG、2既有InMemory样品回归、1两租户权限种子）及10Vue通过，无跳过；相关构建和vue-tsc通过，去重27项",
-          "runtime_resources_released": true
+          "runtime_resources_released": true,
+          "candidate_integrated": true,
+          "integration": {
+            "result": "PASS",
+            "repository": "GTX537/CP6",
+            "source": "44f937ff8438912fb920d6771e639d51ead5333c",
+            "main": "603b9d51c6853315bd33aa4e7561368cdd20a934",
+            "target": "main",
+            "pr": "https://github.com/GTX537/CP6/pull/501",
+            "paths": [
+              "CP6.Core/Services/Integration/OperationsAccessV1.Sample.cs",
+              "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
+              "CP6.Core/Services/Sys/IamStandaloneDepartmentMappingV1.cs",
+              "CP6.Core/Services/Wms/SampleOwnerV1.cs",
+              "CP6.Core/Services/Wms/SampleStockService.cs",
+              "CP6.Entity/DTOs/Wms/SampleOwnerV1.cs",
+              "CP6.Persistence.PostgreSql/Migrations/Core/20261024025500_SampleDepartmentOwnerV1.cs",
+              "CP6.Tests/Erp/SampleOwnerPostgreSqlTests.cs",
+              "CP6.Tests/MesPermissionSeedTests.cs",
+              "CP6.WebApi/Controllers/Wms/SampleStockController.cs",
+              "CP6.WebApi/Program.cs",
+              "CP6.WebApi/Seed/WmsPermissionSeed.cs",
+              "cp6.web/src/api/sys/iam.ts",
+              "cp6.web/src/api/wms/sampleOwner.ts",
+              "cp6.web/src/types/wms/sampleOwner.ts",
+              "cp6.web/src/views/pms/StandaloneDepartmentMappings.vue",
+              "cp6.web/src/views/wms/SampleOwner.spec.ts",
+              "cp6.web/src/views/wms/SampleStockView.vue",
+              "docs/development/07-detailed-tasks.md",
+              "docs/development/09-parallel-development.md",
+              "docs/development/dispatch/20261024-wave95/README.md",
+              "docs/development/evidence/W95-01/DELIVERY.md",
+              "docs/development/planning/20261022-seven-day-delivery.md",
+              "docs/development/roadmap.json",
+              "docs/project-memory/05-Completed.md",
+              "docs/project-memory/06-Todo.md",
+              "docs/project-memory/CHANGELOG-AI.md",
+              "docs/project-memory/PROJECT_STATE.md",
+              "docs/seeds/wms-permission-keys.md"
+            ],
+            "observed_at": "2026-10-24T03:04:24.368592+00:00"
+          },
+          "handoff_delivery_ref": {
+            "commit": "b7db47d1aa13eef62f05038f02231a2f904c080f",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T030444Z-wave95-delivery/MESSAGE.md",
+            "at": "2026-10-24T03:04:44.928676+00:00",
+            "base": "codex/t02c-entry-handoff-20260921",
+            "branch": "codex/w95-handoff"
+          },
+          "resources_released": false,
+          "lifecycle_snapshot": {
+            "handoff_branch_deleted": true,
+            "handoff_seat_released": true,
+            "main_task": "CP6:BUG-500-SAMPLE-OWNER",
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave95-final-verification.json"
+          }
         }
       ],
       "horizon": {
@@ -188525,8 +188616,30 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Main adoption, Handoff delivery, same-task finish; full goal continues; W89 confirmation pending",
-      "validation": "17独立.NET（14原生PG、2既有InMemory样品回归、1两租户权限种子）及10Vue通过，无跳过；相关构建和vue-tsc通过，去重27项"
+      "next_action": "Finish same-branch Main ledger PR/lifecycle, close Issue500 on proof; continue seven-day remaining real prerequisites",
+      "validation": "17独立.NET（14原生PG、2既有InMemory样品回归、1两租户权限种子）及10Vue通过，无跳过；相关构建和vue-tsc通过，去重27项",
+      "handoff_delivery_ref": {
+        "commit": "b7db47d1aa13eef62f05038f02231a2f904c080f",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T030444Z-wave95-delivery/MESSAGE.md",
+        "at": "2026-10-24T03:04:44.928676+00:00",
+        "base": "codex/t02c-entry-handoff-20260921",
+        "branch": "codex/w95-handoff"
+      },
+      "handoff_integration": {
+        "result": "PASS",
+        "repository": "GTX537/CP6.AI-Handoff",
+        "source": "b7db47d1aa13eef62f05038f02231a2f904c080f",
+        "main": "c7ca6825c3bd65bb45d25b84b5143a69515a599f",
+        "target": "codex/t02c-entry-handoff-20260921",
+        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/70",
+        "paths": [
+          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T025110Z-wave95-start/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T030444Z-wave95-delivery/MESSAGE.md",
+          "handoffs/CP6-DEV-20261012/waves/20261024-wave95.md"
+        ],
+        "observed_at": "2026-10-24T03:05:33.897681+00:00"
+      },
+      "lifecycle_complete": false
     },
     "wave_history": [
       {
@@ -203053,7 +203166,7 @@
         },
         {
           "id": "D2",
-          "phase": "IMPLEMENTING",
+          "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
           "current_window": "W95-01",
           "prerequisite_adjustment": "Sample legacy observation Owner; formal Loan/Stock/Site policy adoption separate",
@@ -203065,7 +203178,7 @@
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "Complete current sample history read and UI then continue full goal prerequisites"
+          "next_action": "Current sample Owner and actual UI adopted; full Sample/Stock WP10-41 remains separate. Continue remaining original Owners and D5/D6 real prerequisites."
         },
         {
           "id": "D3",
