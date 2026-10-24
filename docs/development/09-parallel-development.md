@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W105配置预览/激活交付](dispatch/20261024-wave105/README.md)：CRM与Handoff已合并finish，实际PG/浏览器及Main互通通过；Main最终收尾，后继公开表单/Attempt/提交。单人、PostgreSQL、七天ACTIVE。
+
 > 当前：[W104冻结配置页面交付](dispatch/20261024-wave104/README.md)：CRM131与Handoff已合并finish，63项本地检查通过；Main最终收尾，后继预览/激活和公开受理。单人、PostgreSQL、七天ACTIVE。
 
 > 当前：[W101实际签发交付](dispatch/20261024-wave101/README.md)：CRM128与Handoff已采用并finish，Main本次最后收尾；接续配置Owner/当前授权边界。单人、PostgreSQL、七天ACTIVE。

@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-24：W105配置预览、激活与数据库时间生效采用
+
+CRM [PR132](https://github.com/GTX537/CP6.CRM/pull/132)已采用 `14ca04883e5aae7b856b13674d00b6777d1567d5`，实际当前权限、actor绑定短时proof、原结果/审批引用/审计/outbox共同事务、精确DB时间区间与页面接通。85项唯一相关本地检查通过、0跳过：20生命周期PG/HTTP、11真实浏览器、28相关会话/Owner、24Node、2实际Main/CRM互通。 [单份交付](../development/dispatch/20261024-wave105/README.md)。CRM准确分支删除、DEV-2释放；Handoff [PR81](https://github.com/GTX537/CP6.AI-Handoff/pull/81) 已采用 `53cddda6f0bbc6dd0db3d5481613b9f937772f41`，原准确分支删除、固定DEV-2 finish释放。 Main最终合并/finish继续，当前墙钟39.64min（原估180–270）。自有PG/HTTP/浏览器停止，缓存保留，无Actions或部署。公开表单/Attempt/提交、正式发送和即时跨仓撤权待后继；24/375、0/125、247NOT_RUN不变，七天ACTIVE。
+
 ## 2026-10-24：W104冻结配置页面与可信上下文采用
 
 CRM [PR131](https://github.com/GTX537/CP6.CRM/pull/131)已采用 `77dd02db308c5a746fe0ae672e0a8fc13e108185`，原会话/当前授权上下文、冻结配置页面、显式政策、原键恢复/撤权清空及原生登录落点已接通。63项最终适用的唯一相关本地检查通过、0跳过：9上下文PG/HTTP、26原会话/Owner回归、22Node、6真实React浏览器到Node BFF及原生HTTP/PG Owner。 [单份交付](../development/dispatch/20261024-wave104/README.md)。CRM准确分支删除、DEV-2释放；Handoff [PR80](https://github.com/GTX537/CP6.AI-Handoff/pull/80) 已采用 `6cbbde316a20d7b5eb85f6180d59b9743e420ecc`，原准确分支删除、固定DEV-2 finish释放。 Main最终合并/finish继续，当前墙钟60.84min（原估120–180）。PG/HTTP/浏览器停止，缓存保留且未建junction；无Actions或部署。预览/激活、公开受理和即时跨仓撤权待后继；24/375、0/125、247NOT_RUN不变，七天ACTIVE。
