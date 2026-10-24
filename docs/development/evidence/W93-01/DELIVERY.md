@@ -30,3 +30,9 @@ ROUTING-OWNER/1新增分页原记录与单条观察。当前原会话/租户、�
 24/375整卡、125目标0完整交付、247正式运行NOT_RUN不变。完整RT01–07、WMS-RSV-01/WP10-07/08、真实Domain/Source/Approval/Selector/Stock事务采用及正式O-RSV仍UNPROVEN/NOT_RUN，不能以当前观察与入口拒绝缩小接受合同。七天目标ACTIVE，D2–D7继续，D5/D6真实前置仍需推进。
 
 W89官方跨仓bind自动审批返回`blocked by policy`，CRM未修改；两个原分支可靠保存、deferred席位已释放，明确确认仍待答复，不重试或绕过。历史W51指定停止data删除拒绝边界保留。
+
+## 实际采用与最后收尾
+
+Main [PR495](https://github.com/GTX537/CP6/pull/495) source `b4dd45c3c2823767b3bcdc5cd1b919c501aed642`采用远端main `384305513c9d1c8afbf22e84c044d742a8c62efd`，33任务路径逐blob核对；Handoff [PR68](https://github.com/GTX537/CP6.AI-Handoff/pull/68)采用`fd2548aba6d1c8b29279cd7fb5917eb4104b68ac`，准确分支删除、固定树干净detached、finish释放。23个产品路径与已测提交逐blob一致，复用成功结果；最后文档diff和台账生成独立检查。
+
+Main同任务最终状态PR/finish及Issue494最后关闭待完成；当前约17.56min，原估45–70min＋独立前置4min，最终按finish计，不重复Handoff。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave93-final-verification.json`。无Actions、既有环境迁移或部署。七天ACTIVE；完整RT/RSV/WP10-07/08和D5/D6真实前置继续，未以本窗口缩小目标。
