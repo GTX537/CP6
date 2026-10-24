@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-24：W100精确Site/Form来源交付
+
+Main实际IAM范围管理、原操作/审计/原C2 v3事件同事务完成相关验证，准备本次Main合并。CRM [PR127](https://github.com/GTX537/CP6.CRM/pull/127)已采用 `cab16a031c93d52da674f20984a2d503d35fc2a8`；173项唯一相关本地检查通过、0跳过，[本轮交付](../development/dispatch/20261024-wave100/README.md)。CRM/Handoff准确分支删除、固定席位finish释放；Main本次最后收尾。旧合同/注册兼容，CanAuthorize=false，真实签名生产者和配置Owner、明确环境Source升级仍待继续。24/375整卡、0/125目标、247正式NOT_RUN不变；七天ACTIVE。自有PG已停止保留，无Actions、既有库迁移或部署；当前约24.21min，最终按Main finish计。
+
 ## 2026-10-24：W99受保护命令会话宿主已采用
 
 CRM [PR126](https://github.com/GTX537/CP6.CRM/pull/126)已采用main `e86ca195470f8e4fad29aab474cfbef696dde132`；54项相关本地检查通过，API/必要依赖编译通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/e86ca195470f8e4fad29aab474cfbef696dde132/docs/development/evidence/W99-01/DELIVERY.md)。CRM/Handoff准确分支删除、固定席位finish释放；Main协调PR/finish本次收尾。原会话固定、不续期、单次捕获、锁内重核已接线；CanAuthorize=false，真实Site/Form范围与业务Owner仍待接。整卡24/375、目标0/125、247正式运行NOT_RUN不变；七天ACTIVE。自有PG已停止保留，无Actions、迁移或部署。当前约12.77min，最终按finish计，不重复CRM/Handoff。

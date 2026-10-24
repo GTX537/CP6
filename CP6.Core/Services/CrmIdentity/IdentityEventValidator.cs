@@ -69,7 +69,7 @@ public sealed class IdentityEventValidator : ICp6OutboxEnvelopeValidator, ICp6In
                 IdentityEventContracts.TenantChanged => "tenant:" + tenant,
                 IdentityEventContracts.UserChanged or IdentityEventContracts.UserChangedV2 => "user:" + data.GetProperty("userId").GetString(),
                 IdentityEventContracts.DepartmentChanged => "department:" + data.GetProperty("deptId").GetString(),
-                IdentityEventContracts.PermissionChanged or IdentityEventContracts.PermissionChangedV2 => "permission:" + data.GetProperty("subjectId").GetString(),
+                IdentityEventContracts.PermissionChanged or IdentityEventContracts.PermissionChangedV2 or IdentityEventContracts.PermissionChangedV3 => "permission:" + data.GetProperty("subjectId").GetString(),
                 IdentityEventContracts.TokenRevoked or IdentityEventContracts.TokenRevokedV2 when data.GetProperty("issuer").GetString() == issuer
                     => IdentityEventContracts.TokenAggregate(issuer, data.GetProperty("jti").GetString()!),
                 _ => null

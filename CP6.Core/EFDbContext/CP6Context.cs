@@ -34,6 +34,13 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
     private readonly ICurrentUserAccessor? _user;
     private readonly CrmIdentityRuntime? _identity;
 
+    // Explicit native IAM writers use this context's exact capture configuration and transaction.
+    internal Task CaptureIdentitySourceAsync(Guid tenantId, string aggregate, CancellationToken ct)
+    {
+        RequireIdentityCapture(tenantId);
+        return new IdentitySnapshotWriter(this, _identity!).WriteCurrentAsync(tenantId, aggregate, ct);
+    }
+
     /// <summary>New federation writes require this exact context's atomic identity/outbox adoption.</summary>
     public void RequireIdentityCapture(Guid tenantId)
     {

@@ -74,9 +74,21 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
         }
         else if (aggregate.StartsWith("permission:", StringComparison.Ordinal) && IdentityEventContracts.TryRoleSubject(aggregate[11..], out var roleId))
         {
-            data = await IdentityPermissionSnapshot.ReadAsync(db, tenant, roleId, cancellationToken).ConfigureAwait(false);
+            if (previous?.EventType == IdentityEventContracts.PermissionChangedV3)
+                await CP6.Core.Services.Sys.IamInquiryScopeAdministrationV1.CheckReadyAsync(db, cancellationToken).ConfigureAwait(false);
+            var permission = await IdentityPermissionSnapshot.ReadAsync(db, tenant, roleId, cancellationToken).ConfigureAwait(false);
+            var scopes = db.Database.IsNpgsql()
+                ? await CP6.Core.Services.Sys.IamInquiryScopeAdministrationV1.ReadSourceAsync(db, tenant, roleId, cancellationToken).ConfigureAwait(false)
+                : [];
+            data = permission;
             type = roleId <= 0 || previous?.EventType == IdentityEventContracts.PermissionChangedV2
                 ? IdentityEventContracts.PermissionChangedV2 : IdentityEventContracts.PermissionChanged;
+            if (scopes.Length > 0 || previous?.EventType == IdentityEventContracts.PermissionChangedV3)
+            {
+                type = IdentityEventContracts.PermissionChangedV3;
+                data = new PermissionIdentityDataV3(tenant, permission.SubjectId, permission.Enabled, 0,
+                    permission.Grants, permission.Enabled ? scopes : []);
+            }
             deleted = !await db.Sys_Roles.IgnoreQueryFilters().AnyAsync(x => x.TenantId == tenant && x.RoleId == roleId, cancellationToken).ConfigureAwait(false);
         }
         else throw new InvalidOperationException("C02_UNKNOWN_IDENTITY_AGGREGATE");
