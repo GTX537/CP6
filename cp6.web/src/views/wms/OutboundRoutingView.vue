@@ -1,283 +1,100 @@
-<!--
-  出庫ルーティング設定 —— 查询列表页。CpPageShell(:count) + CpListPage(paginated=false、码值列 map)。
-  候補倉庫プレビュー(設定検証ツール)と 作成/編集ダイアログ は複合フォームのため el-dialog/el-form 保持（token 化のみ）。
-  変更後 listRef.reload()（:key 再マウント不使用）。
--->
 <template>
-  <CpPageShell :title="t('wms.outboundRouting.title')" :count="total">
-    <template #actions>
-      <el-button type="primary" @click="openCreate">{{ t('wms.outboundRouting.btn.create') }}</el-button>
-      <el-button @click="listRef?.reload()">{{ t('wms.outboundRouting.btn.refresh') }}</el-button>
+  <CpPageShell title="出庫ルーティング原記録" :count="result?.total || 0">
+    <template #actions><el-button :disabled="!canRead" :loading="loading" @click="refresh">再取得</el-button></template>
+    <el-alert type="info" :closable="false" title="現在参照できる既存のルールを表示します。正式なルート方針の承認・有効化・候補プレビューは、連携の準備が整うまで利用できません。" />
+    <p v-if="!canRead" role="status">ルーティングと倉庫の参照権限が必要です。</p>
+    <div class="filters">
+      <label>引当先倉庫
+        <el-select v-model="warehouseId" clearable filterable remote :remote-method="loadWarehouses" :loading="warehouseLoading" :disabled="!canRead" aria-label="引当先倉庫">
+          <el-option v-for="w in warehouses" :key="w.id" :value="w.id" :label="`${w.warehouseCd} ${w.nameReadable ? w.warehouseName || '' : '名称参照不可'}`" />
+        </el-select>
+      </label>
+      <label>旧ルール状態 <select v-model="enabled" :disabled="!canRead" aria-label="旧ルール状態"><option value="all">すべて</option><option value="true">有効</option><option value="false">無効</option></select></label>
+      <el-button :disabled="!canRead" @click="load(1)">検索</el-button>
+    </div>
+    <p v-if="warehouseTotal > warehouses.length">倉庫候補は先頭200件です。コードを絞って検索してください。</p>
+    <p v-if="warehouseFailed">倉庫候補を取得できません。</p>
+    <p v-if="error" role="alert">{{ error }}</p>
+    <template v-if="result">
+      <p>現在の権限・条件で {{ result.total }} 件。全社共通の一覧や固定時点のスナップショットではありません。</p>
+      <p>既存の多倉庫解決機能：{{ result.legacyResolverEnabled ? '有効' : '無効（単一倉庫の従来動作）' }}。下記の有効フラグは正式な方針の承認・稼働状態を示しません。</p>
+      <el-table :data="result.items" row-key="id" @row-click="openDetail">
+        <el-table-column label="ルール名"><template #default="{ row }">{{ row.nameReadable ? row.ruleName || '—' : '参照不可' }}</template></el-table-column>
+        <el-table-column prop="sortOrder" label="旧並び順" />
+        <el-table-column prop="targetWarehouseCd" label="引当先倉庫" />
+        <el-table-column label="旧有効フラグ"><template #default="{ row }">{{ row.legacyEnabled ? '有効' : '無効' }}</template></el-table-column>
+        <el-table-column label="確認"><template #default="{ row }"><el-button link @click.stop="openDetail(row)">原記録</el-button></template></el-table-column>
+      </el-table>
+      <el-pagination :current-page="page" :page-size="50" :total="result.total" layout="prev, pager, next, total" @current-change="load" />
     </template>
-
-    <p class="subtitle">{{ t('wms.outboundRouting.subtitle') }}</p>
-
-    <CpListPage
-      ref="listRef"
-      :columns="columns"
-      :fetch="fetchList"
-      :paginated="false"
-      @total-change="total = $event"
-    >
-      <template #col-_action="{ row }">
-        <el-button link type="primary" size="small" @click="openEdit(row)">
-          {{ t('wms.outboundRouting.btn.edit') }}
-        </el-button>
-        <el-button v-permission="'wms-outbound-routing:del'" link type="danger" size="small" @click="remove(row)">
-          {{ t('wms.outboundRouting.btn.delete') }}
-        </el-button>
-      </template>
-    </CpListPage>
-
-    <!-- 候補倉庫プレビュー（設定検証ツール） -->
-    <el-card shadow="never" class="preview-card">
-      <template #header>{{ t('wms.outboundRouting.preview.title') }}</template>
-      <el-form :model="preview" inline size="small">
-        <el-form-item :label="t('wms.outboundRouting.preview.productCd')">
-          <el-input v-model="preview.productCd" style="width: 140px" />
-        </el-form-item>
-        <el-form-item :label="t('wms.outboundRouting.preview.customerCd')">
-          <el-input v-model="preview.customerCd" clearable style="width: 130px" />
-        </el-form-item>
-        <el-form-item :label="t('wms.outboundRouting.preview.outboundType')">
-          <el-select v-model="preview.outboundType" style="width: 130px">
-            <el-option :label="t('wms.outboundRouting.type.1')" :value="1" />
-            <el-option :label="t('wms.outboundRouting.type.2')" :value="2" />
-            <el-option :label="t('wms.outboundRouting.type.3')" :value="3" />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="t('wms.outboundRouting.preview.fallback')">
-          <el-input v-model="preview.fallbackWarehouseCd" clearable style="width: 120px" />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" :loading="previewLoading" @click="runPreview">
-            {{ t('wms.outboundRouting.preview.btn') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-      <div v-if="previewResult.length" class="preview-result">
-        <span class="preview-label">{{ t('wms.outboundRouting.preview.order') }}:</span>
-        <CpTag
-          v-for="(wh, idx) in previewResult"
-          :key="wh + idx"
-          :tone="idx === 0 ? 'ok' : 'info'"
-          class="preview-tag"
-        >
-          {{ idx + 1 }}. {{ wh }}
-        </CpTag>
-      </div>
-    </el-card>
-
-    <!-- 作成／編集ダイアログ -->
-    <el-dialog v-model="dialogVisible" :title="dialogTitle" width="560">
-      <el-form :model="form" label-width="120px">
-        <el-form-item :label="t('wms.outboundRouting.col.ruleName')" required>
-          <el-input v-model="form.ruleName" maxlength="100" />
-        </el-form-item>
-        <el-form-item :label="t('wms.outboundRouting.col.sortOrder')">
-          <el-input-number v-model="form.sortOrder" :min="0" :max="9999" />
-          <span class="hint">{{ t('wms.outboundRouting.hint.sortOrder') }}</span>
-        </el-form-item>
-        <el-form-item :label="t('wms.outboundRouting.col.customerCd')">
-          <el-input v-model="form.customerCd" clearable :placeholder="t('wms.outboundRouting.any')" maxlength="20" />
-        </el-form-item>
-        <el-form-item :label="t('wms.outboundRouting.col.productPrefix')">
-          <el-input v-model="form.productCdPrefix" clearable :placeholder="t('wms.outboundRouting.any')" maxlength="20" />
-        </el-form-item>
-        <el-form-item :label="t('wms.outboundRouting.col.outboundType')">
-          <el-select v-model="form.outboundType" clearable :placeholder="t('wms.outboundRouting.any')" style="width: 100%">
-            <el-option :label="t('wms.outboundRouting.type.1')" :value="1" />
-            <el-option :label="t('wms.outboundRouting.type.2')" :value="2" />
-            <el-option :label="t('wms.outboundRouting.type.3')" :value="3" />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="t('wms.outboundRouting.col.target')" required>
-          <el-select v-model="form.targetWarehouseCd" filterable remote allow-create :remote-method="loadWarehouses" :loading="warehouseLoading" style="width: 100%">
-            <el-option v-for="w in warehouses" :key="w.id" :label="`${w.warehouseCd} ${w.nameReadable ? w.warehouseName || '—' : '名称参照不可'}`" :value="w.warehouseCd" />
-          </el-select>
-          <span class="hint">候補は現在参照できる倉庫です。コードで検索できます。</span>
-          <span v-if="warehouseTotal > warehouses.length" class="hint">先頭200件を表示中です。コードを絞って検索してください。</span>
-          <span v-if="warehouseFailed" class="hint">倉庫候補を取得できません。</span>
-        </el-form-item>
-        <el-form-item :label="t('wms.outboundRouting.col.enabled')">
-          <el-switch v-model="form.enabled" />
-        </el-form-item>
-        <el-form-item :label="t('wms.outboundRouting.col.remarks')">
-          <el-input v-model="form.remarks" type="textarea" :rows="2" maxlength="500" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="dialogVisible = false" :disabled="saving">{{ t('wms.outboundRouting.btn.cancel') }}</el-button>
-        <el-button type="primary" :loading="saving" @click="submit">{{ t('wms.outboundRouting.btn.confirm') }}</el-button>
-      </template>
-    </el-dialog>
+    <p v-if="detailLoading">原記録を確認しています。</p>
+    <section v-if="detail" aria-label="路由原記録">
+      <h3>{{ detail.nameReadable ? detail.ruleName || '名称なし' : '名称参照不可' }}</h3>
+      <p>得意先条件：{{ condition(detail.customerCondition, detail.customerCd) }}</p>
+      <p>製品条件：{{ condition(detail.productCondition, detail.productCdPrefix) }}</p>
+      <p>旧出庫区分：{{ detail.outboundType === null ? '旧条件指定なし' : detail.outboundType }} ／ 引当先倉庫：{{ detail.targetWarehouseCd }}</p>
+      <p>備考：{{ detail.remarksReadable ? detail.remarks || '—' : '参照不可' }}</p>
+      <p>適用ドメインは記録されていません。正式な方針バージョンと稼働先の選択は未確認です。</p>
+    </section>
   </CpPageShell>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { computed, onMounted, ref, watch } from 'vue'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
-import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
-import CpTag from '@/components/base/CpTag.vue'
-import { outboundRoutingApi } from '@/api/wms/outboundRouting'
+import { usePermissionStore } from '@/stores/permission'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
 import { useWarehouseOwnerChoices } from '@/composables/useWarehouseOwnerChoices'
-import type { OutboundRoutingRule } from '@/types/wms/outboundRouting'
+import { routingOwnerApi as api } from '@/api/wms/routingOwner'
+import { checkRoutingPage, checkRoutingRow } from '@/types/wms/routingOwner'
+import type { RoutingObservation, RoutingPage, RoutingQuery } from '@/types/wms/routingOwner'
 
-const { t } = useI18n()
-
-const total = ref<number>()
-const listRef = ref<ListPageExpose>()
-const saving = ref(false)
-
-const dialogVisible = ref(false)
-const editingId = ref<string | null>(null)
-const dialogTitle = computed(() =>
-  editingId.value ? t('wms.outboundRouting.dlg.editTitle') : t('wms.outboundRouting.dlg.createTitle'),
-)
-
-// —— 列定义（customerCd/productCdPrefix/outboundType は any フォールバックを map で文案置換；enabled は kind:'tag'+map） ——
-const columns = computed<ListColumn<OutboundRoutingRule>[]>(() => [
-  { prop: 'sortOrder', label: t('wms.outboundRouting.col.sortOrder'), width: 90, kind: 'num' },
-  { prop: 'ruleName', label: t('wms.outboundRouting.col.ruleName'), minWidth: 180, overflowTooltip: true },
-  { prop: 'customerCd', label: t('wms.outboundRouting.col.customerCd'), width: 120,
-    map: (v) => ({ label: v ? String(v) : t('wms.outboundRouting.any') }) },
-  { prop: 'productCdPrefix', label: t('wms.outboundRouting.col.productPrefix'), width: 130,
-    map: (v) => ({ label: v ? String(v) : t('wms.outboundRouting.any') }) },
-  { prop: 'outboundType', label: t('wms.outboundRouting.col.outboundType'), width: 120,
-    map: (v) => ({ label: v == null ? t('wms.outboundRouting.any') : t(`wms.outboundRouting.type.${v}`) }) },
-  { prop: 'targetWarehouseCd', label: t('wms.outboundRouting.col.target'), width: 130, overflowTooltip: true },
-  { prop: 'enabled', label: t('wms.outboundRouting.col.enabled'), width: 100, kind: 'tag',
-    map: (v) => ({ label: v ? t('wms.outboundRouting.on') : t('wms.outboundRouting.off'), tone: v ? 'ok' : 'muted' }) },
-  { prop: 'remarks', label: t('wms.outboundRouting.col.remarks'), minWidth: 160, overflowTooltip: true },
-  { prop: '_action', label: t('wms.outboundRouting.col.action'), width: 150, fixed: 'right' },
-])
-
-// —— 取数：outboundRoutingApi.list(true) 扁平数组、无分页 → paginated=false 一次取全 ——
-const fetchList: ListFetch<OutboundRoutingRule> = async () => {
-  const res = await outboundRoutingApi.list(true)
-  const all = (res?.data || []) as OutboundRoutingRule[]
-  return { rows: all, total: all.length }
-}
-
-function emptyForm(): OutboundRoutingRule {
-  return {
-    ruleName: '',
-    sortOrder: 100,
-    customerCd: null,
-    productCdPrefix: null,
-    outboundType: null,
-    targetWarehouseCd: '',
-    enabled: true,
-    remarks: null,
-  }
-}
-const form = reactive<OutboundRoutingRule>(emptyForm())
-const { warehouses, total: warehouseTotal, loading: warehouseLoading, failed: warehouseFailed, loadWarehouses } = useWarehouseOwnerChoices(() => { form.targetWarehouseCd = '' })
-
-const preview = reactive({ productCd: '', customerCd: '', outboundType: 2, fallbackWarehouseCd: '' })
-const previewResult = ref<string[]>([])
-const previewLoading = ref(false)
-
-function openCreate() {
-  editingId.value = null
-  Object.assign(form, emptyForm())
-  dialogVisible.value = true
-}
-
-function openEdit(row: OutboundRoutingRule) {
-  editingId.value = row.id || null
-  Object.assign(form, { ...emptyForm(), ...row })
-  dialogVisible.value = true
-}
-
-async function submit() {
-  if (!form.ruleName?.trim() || !form.targetWarehouseCd?.trim()) {
-    ElMessage.warning(t('wms.outboundRouting.msg.required'))
-    return
-  }
-  saving.value = true
+const permission = usePermissionStore()
+const canRead = computed(() => permission.loaded && permission.has('wms-outbound-routing:query') && permission.has('wms-warehouse:query'))
+const warehouseId = ref(''), enabled = ref('all'), page = ref(1), result = ref<RoutingPage | null>(null), detail = ref<RoutingObservation | null>(null)
+const loading = ref(false), detailLoading = ref(false), error = ref('')
+let reads = 0, details = 0
+function clearRead() { reads++; details++; result.value = null; detail.value = null; loading.value = false; detailLoading.value = false; error.value = '' }
+function clearAll() { clearRead(); warehouseId.value = ''; enabled.value = 'all'; page.value = 1 }
+const intent = useOperationsIntent(clearAll)
+const { warehouses, total: warehouseTotal, loading: warehouseLoading, failed: warehouseFailed, loadWarehouses } = useWarehouseOwnerChoices(() => { warehouseId.value = ''; clearRead() })
+watch([warehouseId, enabled], () => { clearRead(); page.value = 1 }, { flush: 'sync' })
+watch(canRead, () => { intent.invalidate(); clearAll() }, { flush: 'sync' })
+watch(() => permission.actionKeys, () => { intent.invalidate(); clearRead() }, { deep: true, flush: 'sync' })
+async function load(next = 1) {
+  clearRead(); page.value = next
+  if (!canRead.value || !Number.isSafeInteger(next) || next < 1) return
+  const n = reads, token = intent.capture(), q: RoutingQuery = { page: next, pageSize: 50, targetWarehouseId: warehouseId.value || undefined, enabled: enabled.value === 'all' ? undefined : enabled.value === 'true' }
+  loading.value = true
   try {
-    const payload: OutboundRoutingRule = {
-      ...form,
-      customerCd: form.customerCd || null,
-      productCdPrefix: form.productCdPrefix || null,
-      outboundType: form.outboundType ?? null,
-      remarks: form.remarks || null,
-    }
-    if (editingId.value) {
-      await outboundRoutingApi.update(editingId.value, payload)
-      ElMessage.success(t('wms.outboundRouting.msg.updated'))
-    } else {
-      await outboundRoutingApi.create(payload)
-      ElMessage.success(t('wms.outboundRouting.msg.created'))
-    }
-    dialogVisible.value = false
-    listRef.value?.reload()
-  } finally {
-    saving.value = false
-  }
+    const response = await api.search(q)
+    if (!intent.current(token) || n !== reads || !canRead.value) return
+    if (response.code !== 0) throw new Error('READ_FAILED')
+    result.value = checkRoutingPage(response.data, q)
+  } catch { if (intent.current(token) && n === reads) error.value = '一覧を取得できません。現在の権限と条件を確認して再取得してください。' }
+  finally { if (intent.current(token) && n === reads) loading.value = false }
 }
-
-async function remove(row: OutboundRoutingRule) {
-  await ElMessageBox.confirm(
-    t('wms.outboundRouting.msg.deleteConfirm', { name: row.ruleName }),
-    t('wms.outboundRouting.btn.delete'),
-    { type: 'warning' },
-  )
-  if (!row.id) return
-  await outboundRoutingApi.remove(row.id)
-  ElMessage.success(t('wms.outboundRouting.msg.deleted'))
-  listRef.value?.reload()
-}
-
-async function runPreview() {
-  if (!preview.productCd?.trim()) {
-    ElMessage.warning(t('wms.outboundRouting.preview.needProduct'))
-    return
-  }
-  previewLoading.value = true
+async function openDetail(row: RoutingObservation) {
+  const n = ++details, token = intent.capture(); detail.value = null; detailLoading.value = false; error.value = ''
+  if (!canRead.value || !result.value?.items.some(x => x.id === row.id)) return
+  detailLoading.value = true
   try {
-    const res = await outboundRoutingApi.preview({
-      productCd: preview.productCd,
-      customerCd: preview.customerCd || undefined,
-      outboundType: preview.outboundType,
-      fallbackWarehouseCd: preview.fallbackWarehouseCd || undefined,
-    })
-    previewResult.value = (res?.data || []) as string[]
-  } finally {
-    previewLoading.value = false
-  }
+    const response = await api.get(row.id)
+    if (!intent.current(token) || n !== details || !canRead.value) return
+    if (response.code !== 0) throw new Error('READ_FAILED')
+    detail.value = checkRoutingRow(response.data, row.id)
+  } catch { if (intent.current(token) && n === details) error.value = '原記録を取得できません。現在の権限と対象を確認してください。' }
+  finally { if (intent.current(token) && n === details) detailLoading.value = false }
 }
-
-onMounted(() => loadWarehouses())
+function condition(kind: string, value: string | null) {
+  return kind === 'HIDDEN' ? '参照不可' : kind === 'LEGACY_ANY' ? '旧条件指定なし（正式ドメインの ANY を示しません）'
+    : kind === 'LEGACY_PREFIX' ? `旧接頭辞：${value}` : `旧完全一致：${value === '' ? '空文字' : value}`
+}
+async function refresh() { await load(page.value); if (canRead.value) await loadWarehouses() }
+onMounted(refresh)
 </script>
 
 <style scoped>
-.subtitle {
-  color: var(--cp-muted);
-  font-size: var(--cp-fs-xs);
-  margin: -8px 0 0;
-}
-.preview-card {
-  margin-top: 4px;
-}
-.preview-result {
-  margin-top: 8px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
-}
-.preview-label {
-  color: var(--cp-muted);
-  font-size: var(--cp-fs-sm);
-  margin-right: 2px;
-}
-.hint {
-  color: var(--cp-muted);
-  font-size: var(--cp-fs-xs);
-  margin-left: 8px;
-}
+.filters { display: flex; align-items: center; flex-wrap: wrap; gap: var(--cp-space-4, 16px); margin-block: var(--cp-space-4, 16px); }
+section { margin-top: var(--cp-space-4, 16px); }
 </style>

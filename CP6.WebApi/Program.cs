@@ -563,6 +563,9 @@ CP6.Core.Services.Sys.FieldRegistry.Register("wms-warehouse", new[] { "AddressTe
 CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-location", "库位原对象", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-location", new[] { "Barcode", "LocationName" }.Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
 builder.Services.AddScoped<CP6.Core.Services.Wms.WarehouseOwnerServiceV1>();
+CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-outbound-routing", "出库路由原记录", new[] { 1, 2, 3, 4, 5 }, 1);
+CP6.Core.Services.Sys.FieldRegistry.Register("wms-outbound-routing", new[] { "CustomerCd", "ProductCdPrefix", "Remarks", "RuleName" }.Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
+builder.Services.AddScoped(sp => new CP6.Core.Services.Wms.OutboundRoutingOwnerV1(sp.GetRequiredService<CP6.Core.EFDbContext.CP6Context>(), sp.GetRequiredService<CP6.Core.Services.Integration.OperationsOwnerV1>(), builder.Configuration.GetValue<bool>("OutboundRouting:Enabled")));
 CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-report-center", "当前库存及原流水观察", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-report-center", new[] { "OperatorCd", "OwnerCd", "Remark" }.Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
 CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-kitting", "套件主数据及历史订单", new[] { 1, 2, 3, 4, 5 }, 1);

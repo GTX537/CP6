@@ -1,4 +1,7 @@
 using CP6.Core.Auth;
+using CP6.Core.Services.Erp;
+using CP6.Entity.DTOs.Wms;
+using CP6.WebApi.Controllers.Erp;
 using CP6.Core.Services.Wms;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.AspNetCore.Authorization;
@@ -10,13 +13,22 @@ namespace CP6.WebApi.Controllers.Wms;
 /// 出庫ルーティングルール管理（多倉庫引当 Gap 4.2 / T14）。
 /// </summary>
 [ApiController]
+[OrderOwnerResult]
 [Route("api/wms/outbound-routing")]
 [Authorize]
 public class OutboundRoutingController : ControllerBase
 {
     private readonly IOutboundRoutingService _svc;
 
-    public OutboundRoutingController(IOutboundRoutingService svc) => _svc = svc;
+    private readonly OutboundRoutingOwnerV1? _owner;
+    public OutboundRoutingController(IOutboundRoutingService svc,OutboundRoutingOwnerV1? owner=null) { _svc=svc;_owner=owner; }
+    private OutboundRoutingOwnerV1 Owner=>_owner??throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
+    [HttpGet("owner/v1/rules")]
+    public async Task<IActionResult> SearchCurrent([FromQuery] RoutingQueryV1 query,CancellationToken ct)
+        =>Ok(new {code=0,data=await Owner.SearchAsync(query,ct)});
+    [HttpGet("owner/v1/rules/{id:guid}")]
+    public async Task<IActionResult> GetCurrent(Guid id,CancellationToken ct)
+        =>Ok(new {code=0,data=await Owner.GetAsync(id,ct)});
 
     private string? CurrentUser => User?.Identity?.Name;
 
@@ -49,7 +61,7 @@ public class OutboundRoutingController : ControllerBase
             var data = await _svc.CreateRuleAsync(rule, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-072", data });
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when(ex is not OrderPriceCorrectionException)
         {
             return BadRequest(new { code = 400, message = ex.Message });
         }
@@ -65,7 +77,7 @@ public class OutboundRoutingController : ControllerBase
             await _svc.UpdateRuleAsync(id, rule, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-073" });
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when(ex is not OrderPriceCorrectionException)
         {
             return BadRequest(new { code = 400, message = ex.Message });
         }
@@ -81,7 +93,7 @@ public class OutboundRoutingController : ControllerBase
             await _svc.DeleteRuleAsync(id, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-074" });
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when(ex is not OrderPriceCorrectionException)
         {
             return BadRequest(new { code = 400, message = ex.Message });
         }
