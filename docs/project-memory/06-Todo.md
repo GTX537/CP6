@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-24：W110原图无损版本与实际Bundle绑定
+
+CRM [PR137](https://github.com/GTX537/CP6.CRM/pull/137)已采用 `6c181d249745a9fb1b77aaef3d19da931ab7f4ab`；显式PGv2原完整图保存任意精度FormVersion，真实Bundle与既有Site/Form同事务绑定及原生并发保护，不构造业务成功。75项唯一相关本地检查通过、0跳过：25项真实PostgreSQL原图/绑定与50项旧模型和attempt codec回归；生成器检查及受影响测试项目构建通过。 [单份交付](../development/dispatch/20261024-wave110/README.md)。CRM准确分支删除、DEV-2释放；Handoff [PR86](https://github.com/GTX537/CP6.AI-Handoff/pull/86)已采用 `c0af8315db75e64024919b15b43ba56f9b43154e`，准确分支删除、固定DEV-2 finish释放。 Main文档PR/finish继续，当前墙钟18.58min（原估70–110）。自有PG停止/缓存保留，无Actions/部署；原日历/Intake、消费/回执、service/H01最终权限及完整公开提交待后继。24/375、0/125、247NOT_RUN不变，七天ACTIVE。
+
 ## 2026-10-24：W109人工受理权限源与实际CRM互通
 
 Main实际OIDC签发新增四人工intake用途，当前主管/健康部门/精确SiteForm和crm-intake完整字段源；缺失/撤销/不可表达范围拒绝，签名不是最终业务授权。CRM [PR136](https://github.com/GTX537/CP6.CRM/pull/136)已采用 `c5657a3918d589475a25e5dd4d932af9f11e7c97`。49项最终适用的唯一相关本地检查通过、0跳过：Main47项实际权限源/PG/HTTP与局部回归，CRM2项实际签名互通；受影响项目编译通过。 [单份交付](../development/dispatch/20261024-wave109/README.md)。CRM准确分支删除、DEV-2释放；Handoff [PR85](https://github.com/GTX537/CP6.AI-Handoff/pull/85)已采用 `6f21e118e8b6e0c54b3d637aec430ba34168fdb9`，准确分支删除、固定DEV-2 finish释放。 Main产品PR/finish继续，当前墙钟13.44min（原估50–80）。自有PG停止/缓存保留，无Actions/部署；服务身份/H01/无损版本桥/消费/公开提交及正式验收待后继。24/375、0/125、247NOT_RUN不变，七天ACTIVE。
