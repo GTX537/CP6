@@ -23,3 +23,9 @@ MOVE与ADJ分别校验各自当前动作，query提供原键恢复。发送前�
 ## 交付边界
 
 实际同仓MOVE页面与原键恢复，不等于正式Stock/TRANSFER Root/Claim/Stage/SourceDemand/capacity或现场业务验收；旧错误数据、Finance业务接收和外部ACK仍另行实施。当前候选待Main/Handoff正常PR采用与准确分支/席位finish；最终证明 `C:\Users\tt\CP6-planning-reports\20261017-foundation\wave98-final-verification.json`。24/375整卡、125总目标0完整、247正式运行NOT_RUN不变，七天持续目标ACTIVE；后续继续Site/Form Owner直接前置。
+
+## 实际采用与最后收尾
+
+Main [产品PR](https://github.com/GTX537/CP6/pull/509) source `98a4d468c264bcc050e2272ec798c6b3b6ab4072`采用远端main `0b8a3ee014e7bcfb1fe58adf5b2792f4e61a7992`，15任务路径一致；Handoff [PR](https://github.com/GTX537/CP6.AI-Handoff/pull/74)采用`84897920632c79f32c2ad95695c30c1b7b45b049`，准确分支删除、固定树干净detached、finish释放。4产品路径与已测提交逐blob一致，复用1原生HTTP＋29Vue/client和类型检查；最后文档diff和台账生成独立检查。
+
+Main同任务最终状态PR/finish待完成，当前约11.47min，原估25–35min＋前置约2min，最终以`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave98-final-verification.json`为准，不重复Handoff。自有PG停止、所有证据/数据保留，无Actions／迁移／部署。实际MOVE与原键恢复采用，正式业务验收仍独立，七天ACTIVE。
