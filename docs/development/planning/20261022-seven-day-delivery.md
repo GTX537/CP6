@@ -880,3 +880,23 @@ W95 Main501/502、Handoff70已采用，Issue500关闭，27项相关验证与类�
 Main [PR504](https://github.com/GTX537/CP6/pull/504) source `c1d05fe9140afc240e1a1289a09c963083fe6433`采用远端main `87c491b36cf2694f017764a0f6ebe1c43c635f04`，19任务路径一致；Handoff [PR71](https://github.com/GTX537/CP6.AI-Handoff/pull/71)采用`262dd3e197db4a68a9a7714f536c2daaa2366805`，准确分支删除、固定树干净detached、finish释放。8个产品路径与已测提交逐blob一致，复用原成功证据；最后文档diff和台账生成独立检查。
 
 Main同任务最终状态PR/finish待完成，当前约13.05min，原估60–90min＋前置6min，最终以`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave96-final-verification.json`为准，不重复Handoff。Issue503保持Open，新增MOVE页面未采用；用户已授权官方重绑CRM并继续W89，W96全收尾后优先恢复。无Actions、既有库迁移或部署，七天全目标ACTIVE。
+
+## 2026-10-24：W89明确授权后恢复
+
+用户已明确回复“授权重绑并继续 W89”。官方DEV-2 Handoff→CRM bind成功，固定路径不变，无新增树；Main原`codex/w89-coord`resume后快进到`b5d339628ba14d4f850004c002ae8ba937185e75`，CRM新`codex/w89-01`从已确认`1a7f0838c3db87d0b736fbe1c88d4ba9a0b1841f`于2026-10-24T03:31:51.844982+00:00真实start。原Handoff START与保存分支继续使用，不重复派工/ACK。
+
+W96 Main504/505、Handoff71已全部采用，实际14.82min＋独立前置6min，准确分支删除、三个固定席位释放，29相关本地检查及类型通过。Issue503移动所有者失败和新MOVE提交保持未完成。W89原窗口剩余预计40–60min，暂缓等待区间不计实现时间；继续原同事务身份/会话接缝，CanAuthorize=false，真实Site/Form动作与业务Owner仍待采用。七天ACTIVE。
+
+## W89实际交付与独立修复
+
+用户已明确授权“授权重绑并继续 W89”，官方 bind 成功，沿用原 START `e389658b10116fc1aab6f34a63b083f7d5dfe90b` 和原协调/Handoff 分支，不重复 W37–W88、W90–W96。
+
+CRM [PR124](https://github.com/GTX537/CP6.CRM/pull/124)：source `41ded0b42bebcd0b4a27b966bfbc6ea294664e1a`→main `5c0cbcd28e90671c87a9eed473611c5910dbf154`，13任务路径 exact blob 核对；随后独立 [PR125](https://github.com/GTX537/CP6.CRM/pull/125)：source `79dcb76bef6c31877976405015d74bafe7a3b35f`→最新main `59845f28539d89582884db442e25e95cd29ce328`，8路径 exact blob 核对。CRM Issue #123 已在原复现回归及远端采用后关闭。[W89单份产品报告](https://github.com/GTX537/CP6.CRM/blob/59845f28539d89582884db442e25e95cd29ce328/docs/development/evidence/W89-01/DELIVERY.md)；[BUG-123单份报告](https://github.com/GTX537/CP6.CRM/blob/59845f28539d89582884db442e25e95cd29ce328/docs/development/evidence/BUG-123/DELIVERY.md)。
+
+当前身份/原会话检查绑定调用方 Serializable 事务，七键→身份fence→Ingress State→当前Publication→实际session行；等待后的旧MVCC快照报40001，不自动重试。输入冻结、session hash/incarnation/revision与token/epoch匹配，当前原始身份与撤销、数据库新时钟、同事务变化、丢锁及结束后复用拒绝。受限函数不授予运行角色任意UPDATE，显式安装/漂移拒绝，无既有库迁移。
+
+实测发现Npgsql会复用事务对象，W89身份回执和独立BUG-123签名回执均已绑定PostgreSQL实际事务ID；重新取得锁也不能复活原事务回执。W87活跃事务验签与W89组合通过。W89 42项相关本地通过；BUG-123 18项相关PG通过，复用W89未变41项后去重59项；两次真实失败均保留，正式业务NOT_RUN，无Actions。API及必要依赖编译通过；各任务一次集中SPEC/QUALITY。两个自有PG55446已smart stop，数据/日志/TRX保留。
+
+CRM两个准确任务分支均已删除，工作区干净detached、官方finish释放后再由官方bind回Handoff；没有新增物理树/代理/聊天。CanAuthorize=false，FIELD_POLICY与BUSINESS门保持关闭，真实crm-site/Site/Form/字段权限生产者、实际业务Owner与宿主接线仍需后继。24/375整卡、125目标0完整、247正式运行NOT_RUN不提升；七天目标ACTIVE。下一独立优先Main库存MOVE所有者属性Issue503，再推进实际Owner采用。没有Actions、生产部署或历史W51被拒数据删除。
+
+Handoff [PR72](https://github.com/GTX537/CP6.AI-Handoff/pull/72)采用 `99389e2adbba3a7cd31d8d0d92405e1711655bdf`，准确分支删除、固定树干净detached、finish释放。Main仍需本次协调PR/finish，不提前声明席位释放。原准备21.33min＋恢复执行至此20.36min；暂缓等待与W90–W96排除，子任务不叠加；原剩余估计40–60min＋BUG-123预计5–10min，最终按finish记录。
