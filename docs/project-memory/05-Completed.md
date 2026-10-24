@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-24：W121原生询盘决策Owner
+
+68项唯一相关本地成功检查：24项PostgreSQL/HTTP、44项Web；实际H01/拒绝图、幂等/CAS/并发、真实HTTP响应丢失、晚期回滚/期限/撤回、实际Node BFF、公开原操作重试与存储保护覆盖，必需0跳过。 [交付](../development/dispatch/20261024-wave121/README.md)。CRM已合并finish，原生人工放行/拒绝Owner和BFF已采用；Handoff [PR97](https://github.com/GTX537/CP6.AI-Handoff/pull/97)采用 `e30af151185e316255233a275ff5d12bf49a857a`，准确分支已删除、DEV-2已finish释放。 Main最终PR/finish尚待；START后墙钟42.12分钟，原估80–130分钟，最终按Main finish计，不叠加各仓；不含先前只读调查。
+页面/动作展示和后继隐私/发布仍待，24/375、0/125、247NOT_RUN保持，七天ACTIVE。
+
 ## 2026-10-24：W120原生询盘读取Owner
 
 64项唯一相关本地成功检查：22项游标/PostgreSQL/HTTP、42项Web；实际公开提交完整图→独立读取Owner→Node BFF，权限/租户/字段/期限/行锁变化及传输拒绝覆盖，必需范围0跳过。 [交付](../development/dispatch/20261024-wave120/README.md)。CRM PR146已合并finish，原生列表/详情读取Owner和BFF已采用。

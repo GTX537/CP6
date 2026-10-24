@@ -1160,3 +1160,13 @@ Handoff [PR95](https://github.com/GTX537/CP6.AI-Handoff/pull/95)采用 `13bfc6a6
 64项唯一相关本地成功检查：22项游标/PostgreSQL/HTTP、42项Web；实际公开提交完整图→独立读取Owner→Node BFF，权限/租户/字段/期限/行锁变化及传输拒绝覆盖，必需范围0跳过。 [交付](../dispatch/20261024-wave120/README.md)。
 Handoff [PR96](https://github.com/GTX537/CP6.AI-Handoff/pull/96)采用 `b28ac649bad6a0a6e1bab9bcd4301cd851519448`，准确分支已删除、DEV-2已finish释放。 Main最终PR/finish尚待；START后墙钟45.45分钟，原估110–170分钟，最终按Main finish计，不叠加各仓；不含先前只读调查。
 后续W121人工放行/拒绝Owner及页面/隐私/发布继续，七天ACTIVE。
+
+## W121人工放行/拒绝窗口
+
+决策原结果/效果账25–40分钟，人工Owner/H01事务25–40分钟，HTTP/BFF/定向验证20–35分钟，审查及三仓收尾10–15分钟；合计80–130。[范围](../dispatch/20261024-wave121/README.md)。W120已闭环，七天ACTIVE。
+
+## W121原生决策Owner实际交付
+
+68项唯一相关本地成功检查：24项PostgreSQL/HTTP、44项Web；实际H01/拒绝图、幂等/CAS/并发、真实HTTP响应丢失、晚期回滚/期限/撤回、实际Node BFF、公开原操作重试与存储保护覆盖，必需0跳过。 [交付](../dispatch/20261024-wave121/README.md)。
+Handoff [PR97](https://github.com/GTX537/CP6.AI-Handoff/pull/97)采用 `e30af151185e316255233a275ff5d12bf49a857a`，准确分支已删除、DEV-2已finish释放。 Main最终PR/finish尚待；START后墙钟42.12分钟，原估80–130分钟，最终按Main finish计，不叠加各仓；不含先前只读调查。
+后续W122页面/动作展示及隐私/发布继续，七天ACTIVE。
