@@ -1,5 +1,5 @@
 {
-  "bundleVersion": "1.1.0",
+  "bundleVersion": "1.2.0",
   "cloudEventsSpecVersion": "1.0",
   "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
   "entries": [
@@ -312,6 +312,45 @@
           "path": "token-revoked/v2/examples/pii-negative.json",
           "valid": false,
           "sha256": "6d5734b62c2d613ac36aed6ae56b97d84ea3f709917712d496435e28f6527bab"
+        }
+      ]
+    },
+    {
+      "eventType": "com.gtx537.platform.permission.changed.v3",
+      "schemaVersion": "3.0.0",
+      "schemaId": "https://contracts.cp6.uk/events/platform/permission-changed/v3/schema.json",
+      "schemaPath": "permission-changed/v3/schema.json",
+      "schemaSha256": "d4a4f024429c0c56859337de13d9cd30fb821509752271440450d8c96cadc9fa",
+      "examples": [
+        {
+          "name": "valid",
+          "path": "permission-changed/v3/examples/valid.json",
+          "valid": true,
+          "sha256": "d089af22be45b61608981b73f5c4c90d117c21988c4a3c5f3cb169b0e103c9ab"
+        },
+        {
+          "name": "missing-required",
+          "path": "permission-changed/v3/examples/missing-required.json",
+          "valid": false,
+          "sha256": "167788ca197cefa1cdfac683c52d4e7835ede462e1a6e77f92e190ca1690457f"
+        },
+        {
+          "name": "unknown-optional",
+          "path": "permission-changed/v3/examples/unknown-optional.json",
+          "valid": true,
+          "sha256": "87afedb9862818b1b4a815d974a8c1effebcc3f8d52ae32b6c210d808c6224a4"
+        },
+        {
+          "name": "wrong-type",
+          "path": "permission-changed/v3/examples/wrong-type.json",
+          "valid": false,
+          "sha256": "4fe892c4bd55d5c1334ada7d9b474333554394d39ecf1392130af9166ae8d425"
+        },
+        {
+          "name": "pii-negative",
+          "path": "permission-changed/v3/examples/pii-negative.json",
+          "valid": false,
+          "sha256": "f22fdce43b95741b04bc4d31e9b624fa846e233ec2521b4ba1cd0e2f74f63a36"
         }
       ]
     }

@@ -944,3 +944,25 @@ CRM [PR126](https://github.com/GTX537/CP6.CRM/pull/126) source `c5ddbe13accfdfd5
 CRM准确任务分支已删除、固定席位finish后官方bind回Handoff。CanAuthorize=false；真实Site/Form当前范围、Main签名权限生产者、实际配置Owner/Program路由和保存/Audit/Outbox采用仍需后继，配置矩阵fields=[]，不能用线索部门或PII替代。24/375整卡、125目标0完整、247正式运行NOT_RUN不变，七天ACTIVE。没有Actions、既有环境迁移或生产部署。
 
 Handoff [PR](https://github.com/GTX537/CP6.AI-Handoff/pull/75)已采用 `ed4e49d9f68fd599d2c9dc29f0c5e77a6b538fd6`，准确分支删除、固定树干净detached、finish释放。Main本次协调PR/finish仍待完成；当前约12.77min，原估35–50min＋独立前置约5min，最终以wave99-final-verification.json实际finish为准，不叠加CRM/Handoff。
+
+## 2026-10-24：W99完整收尾 / W100精确Site/Form权限来源
+
+W99 Main511、CRM126、Handoff75已全部采用，54项相关检查通过，15.85min＋前置约5min，准确分支删除／固定树干净／三席位释放。[W100](../dispatch/20261024-wave100/README.md)继续Main精确范围管理与v3事件、CRM当前消费，预计90–150min＋独立前置约10min；真实签名生产者与配置Owner继续后继，七天全目标ACTIVE。
+
+## W100实际交付与最后收尾
+
+Main W100-01 本次提供实际 `api/iam/inquiry-scopes/{roleId}` GET/PUT及operations原键查询/close。现有 `pub-data-scope:query/edit` 当前权限、真实登录/CSRF、tenant及完整int RoleId边界保留；命令携带原operationId、角色version、referencesVersion和精确SiteForms。服务在原IAM同事务身份根内核对当前主体，冻结/排序精确配对，校验角色、CAS/ABA；原键与route RoleId绑定，返回原COMMITTED结果，关闭键禁止执行。原生参数化scope替换、原permission snapshot/outbox、审计和原操作结果在同一外层事务，结果写入失败全部回滚，提交ACK丢失从原键恢复。没有默认对象或自动授权。
+
+PostgreSQL migration `20261024050000_InquiryRoleScopesV1` 新增tenant+role+site+form复合主键与tenant+role外键，沿用实际authentication写者门；禁止UPDATE/TRUNCATE，按原事务/角色合并一次延迟检查，scope变化必须与最终v3 snapshot精确匹配，否则整笔回滚。迁移只在自有本地测试库运行，未触及既有环境。DB owner/迁移管理员仍是可信边界；schema不替代tenant或权限。原EF模型和SQL Server实现不改。
+
+Main-owned C2新增permission.changed.v3与bundle1.2.0。新集合要求非零UUID精确配对，旧动作/部门/字段和完整角色域不变；升到v3后角色聚合不降级，清空/禁用/删除明确撤权，未使用新范围的历史角色仍保持原版本。旧v1/v2 schema/examples字节不变，旧index保留，Main/CRM新资产逐字节一致。新index SHA256 `ff976a7acead6b563fa224af808cfa3900403194d81c103245dfa147cdf785da`，旧 `d06c2918d3aeee236a9ecb6b254911ad3a337f249fbac26c5237399644783e6a`。
+
+CRM [PR127](https://github.com/GTX537/CP6.CRM/pull/127) source `43083d0e38970ae1172eb2e76cdd8947a4031c7f`已采用远端main `cab16a031c93d52da674f20984a2d503d35fc2a8`，24任务路径逐blob一致。[CRM单份交付](https://github.com/GTX537/CP6.CRM/blob/cab16a031c93d52da674f20984a2d503d35fc2a8/docs/development/evidence/W100-02/DELIVERY.md)。真实native ingress/原始基线/current publication精确保留配对、来源、版本与角色状态，原身份持锁期间实际撤销写者阻塞，外层结束后撤销生效并要求新发布。旧native注册保持原摘要并拒绝v3；旧合法未知扩展按原任意JSON形状忽略，原授权/发布不受误解析影响。没有静默升级持久Source，实际环境profile/基线版本切换须单独实施；更新Main合同包不代表旧CRM注册已迁移。
+
+173项唯一相关本地检查通过：Main94（复用84项未变有效结果＋10项新行为），CRM79（41项native PG＋38项合同/发布/原权限）；0跳过。同一Main事件额外重放通过，不重复计数。 证据目录 `D:/CP6-local-test/wave100/foundation/`，最终索引 `final-validation.json`。Main相关输入未变，复用 `main-behavior-20261024T050634Z` 的84项成功结果；新增9项修正后 `main-reviewed-20261024T050824Z` 通过，加跨租户 `main-tenant-20261024T051243Z` 1项。CRM最终 `crm-stable-fixtures-20261024T051802Z` 41项、`crm-unit-20261024T051720Z` 38项、`crm-replay-20261024T051843Z` 重放1项通过。必要项目/依赖随测试编译，未跑全仓。
+
+真实Main IAM/PG产生的原Outbox字节直接交给CRM native ProcessAsync和HTTP基线采集；同一实际事件可重复接收。配套目录、transport认证、在线身份为明确本地夹具，不是生产Main/OIDC/正式业务验收。一次COORD完整SPEC/QUALITY核对源码、合同、迁移/租户、事务/撤权、原键、输入与兼容，审查发现旧未知扩展误解析已修正并定向回归。初次编译泛型推断失败、Main测试漏tenant过滤、CRM夹具version不符及重复固定tenant时随机目录被原完整性守卫拒绝，全部原日志保留；修正均不放宽保护。两套CRM自有PG55446均实例校验后smart stop并保留数据，Main各测试实例也已退出，HTTP宿主释放。
+
+完成的是明确Site/Form授权来源与当前消费；`CanAuthorize=false`，实际签名权限生产者、跨仓撤权最终门和配置Owner共同事务/真实业务采用仍须继续。不能把部门、supervisor或scope5转换成站点权限；配置矩阵fields=[]，不得引入线索PII；Owner必须核对实际tenant/Site/Form存在及父子绑定。无Actions、既有环境迁移、生产部署。整卡24/375、125目标0完整、247正式运行NOT_RUN保持；七天持续目标ACTIVE。
+
+Handoff [PR](https://github.com/GTX537/CP6.AI-Handoff/pull/76)已采用 `7ec07d382c98942481cea90f4a80aa6f4222d558`，准确分支删除、固定目录干净detached、官方finish释放。Main本次PR/finish尚待完成；当前实际24.21min，原估90–150min＋独立前置约10min；最终以wave100-final-verification.json的Main START到finish计，不叠加CRM/Handoff。

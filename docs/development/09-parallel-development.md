@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W100实际交付](dispatch/20261024-wave100/README.md)：CRM127及Handoff已采用，Main本次最终合并与finish；接续真实签名权限生产者及配置Owner。本聊天单人、PostgreSQL、七天目标ACTIVE。
+
 > 当前：[W99交付](dispatch/20261024-wave99/README.md)，CRM126及Handoff已采用；Main协调收尾后继续真实Site/Form范围、签名权限生产者与业务Owner。单人、PostgreSQL、七天目标ACTIVE。
 
 > 当前：[W99受保护会话宿主](dispatch/20261024-wave99/README.md)，本聊天单人；W37–W98已finish，不重复。
