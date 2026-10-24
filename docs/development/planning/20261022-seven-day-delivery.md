@@ -1062,3 +1062,13 @@ W109 Main521/CRM136/Handoff85全部finish，准确分支删除、席位释放，
 75项唯一相关本地检查通过、0跳过：25项真实PostgreSQL原图/绑定与50项旧模型和attempt codec回归；生成器检查及受影响测试项目构建通过。 [实际交付](../dispatch/20261024-wave110/README.md)。
 Handoff [PR86](https://github.com/GTX537/CP6.AI-Handoff/pull/86)已采用 `c0af8315db75e64024919b15b43ba56f9b43154e`，准确分支删除、固定DEV-2 finish释放。 CRM分支删除/释放已核对；Main文档PR/finish继续，当前START后墙钟18.58min（原估70–110），最终按Main finish计，不叠加各仓。
 后继原日历/Intake桥、消费/回执、服务身份/H01最终权限及完整公开提交。七天ACTIVE。
+
+## 2026-10-24：W110完整收尾 / W111原日历与Intake采用
+
+W110三仓完整finish，准确分支删除、席位释放，实际20.78min/75项检查。[W111](../dispatch/20261024-wave111/README.md)补真实原日历/Intake完整图和精确时间/假期，预计40–70min。完整消费/回执、服务身份/H01最终权限和公开提交仍待，七天ACTIVE。
+
+## W111原日历与Intake图无损采用
+
+154项唯一相关本地检查通过、0跳过：23项真实PostgreSQL（10项本轮采用/边界、13项原v1图回归），131项旧Intake/Calendar/模型回归；生成器检查和受影响项目构建通过。 [实际交付](../dispatch/20261024-wave111/README.md)。
+Handoff [PR87](https://github.com/GTX537/CP6.AI-Handoff/pull/87)已采用 `a3b252cb3d307767bce3ef8349b991a9f8c7a36f`，准确分支删除、固定DEV-2 finish释放。 CRM分支删除/释放已核对；Main文档PR/finish继续，当前START后墙钟19.61min（原估40–70），最终按Main finish计，不叠加各仓。
+后继真实宿主/隔离衔接、消费/回执、服务身份/H01最终权限及完整公开提交。七天ACTIVE。
