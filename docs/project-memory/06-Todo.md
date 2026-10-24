@@ -1,8 +1,8 @@
 # 当前待办与优先级
 
-## 2026-10-24：W88 VMI独立Owner候选通过
+## 2026-10-24：W88 VMI独立Owner已采用
 
-Issue481原生红灯转绿；18独立.NET用例（15原生PG、2既有非PG VMI行为、1两租户启动种子）及22Vue用例通过，无跳过；相关构建和vue-tsc通过，最终权限故障定向补验1项并入原15项、不重复计数。[单份交付](../development/evidence/W88-01/DELIVERY.md)。当前库存源交集、混单位精确分组、历史估算语义、敏感字段与账单UUID权限已补；旧写零效果。5个PG停止保留，测试夹具唯一约束失败原证据保留；待Main/Handoff采用及准确分支/席位收尾。完整WP10-39/40及验收不提升，七天ACTIVE。
+Main [PR482](https://github.com/GTX537/CP6/pull/482) source `e23c73c0c3eb941a258fb59c2a7cd50dc6a9634c`进入远端main `73395fa783435c2b2bf6f09b218e135bf51177fe`，30任务路径逐blob核对；18.NET/22Vue及类型检查通过，无跳过。[单份交付](../development/evidence/W88-01/DELIVERY.md)。Handoff [PR64](https://github.com/GTX537/CP6.AI-Handoff/pull/64)采用、准确分支删除、固定树干净detached、finish释放。Main同任务最后状态PR/finish及Issue481关闭待完成，未提前声明释放。5个PG停止保留；当前约24.48min，原估50–75min＋独立前置3min，最终按finish计。正式WP10-39/40正式计费/Finance、125目标与247验收不提升，七天目标ACTIVE。
 
 ## 2026-10-23：W87持久签名信任已采用
 
