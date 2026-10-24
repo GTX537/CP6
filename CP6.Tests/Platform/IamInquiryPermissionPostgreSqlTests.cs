@@ -130,10 +130,15 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     public async Task Inquiry_intake_actual_HTTP_login_OIDC_signing_rejects_spoofing_and_current_revocation()
         => await InquiryProducerHttp("intake:release");
 
-    private async Task InquiryProducerHttp(string purpose)
+    private async Task InquiryProducerHttp(string purpose, bool humanContext=false)
     {
         await using var h = await Seed(); var intake = purpose.StartsWith("intake:", StringComparison.Ordinal);
         var pair = intake ? await GrantIntake(h) : (await GrantInquiry(h))[0]; var options = InquiryPermissionSigningTests.Options();
+        if(humanContext)
+        {
+            (await h.Db.Sys_Users.SingleAsync(x=>x.Id==h.ActorId)).AuthenticationEpoch=Guid.NewGuid();await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();
+            await new IdentityBootstrapService(h.Db,ContextRuntime(h.Tenant,options.Issuer)).InitializeAsync(h.Tenant);h.Db.ChangeTracker.Clear();
+        }
         var bridgeDirectory = Environment.GetEnvironmentVariable("CP6_INQUIRY_CONFIGURATION_BRIDGE");
         if (intake) bridgeDirectory = null;
         if (bridgeDirectory is not null)
@@ -166,19 +171,26 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         using var tokenResponse = await host.Send(tokenRequest); Assert.True(tokenResponse.StatusCode == HttpStatusCode.OK, await tokenResponse.Content.ReadAsStringAsync());
         using var tokenBody = JsonDocument.Parse(await tokenResponse.Content.ReadAsStringAsync()); var token = tokenBody.RootElement.GetProperty("access_token").GetString()!;
         var command = new InquiryPermissionRequestV1(purpose, pair.SiteId, pair.FormId);
+        var nonce=ServiceNonce(); var endpoint=humanContext?"connect/inquiry-human-context":"connect/inquiry-permission";
         HttpRequestMessage Projection(object body, string? bearer, bool secure = true)
-        { var r = new HttpRequestMessage(HttpMethod.Post, "connect/inquiry-permission") { Content = JsonContent.Create(body) };
+        { if(humanContext && body is InquiryPermissionRequestV1 b) body=new InquiryHumanContextRequestV1(b.Purpose,b.SiteId,b.FormId,nonce);
+          var r = new HttpRequestMessage(HttpMethod.Post, endpoint) { Content = JsonContent.Create(body) };
             if (bearer is not null) r.Headers.Authorization = new AuthenticationHeaderValue("Bearer", bearer);
             if (secure) r.Headers.Add("X-Forwarded-Proto", "https"); return r; }
         // Unsafe cookie/no-auth requests remain subject to the existing CSRF middleware.
         using (var noToken = await host.Send(Projection(command, null))) Assert.Equal(HttpStatusCode.Forbidden, noToken.StatusCode);
         using (var invalidToken = await host.Send(Projection(command, "invalid"))) Assert.Equal(HttpStatusCode.Unauthorized, invalidToken.StatusCode);
-        using (var cookieOnly = await host.Send(Request(HttpMethod.Post, "connect/inquiry-permission", cookies, command))) Assert.NotEqual(HttpStatusCode.OK, cookieOnly.StatusCode);
+        using (var cookieOnly = await host.Send(Request(HttpMethod.Post, endpoint, cookies, command))) Assert.NotEqual(HttpStatusCode.OK, cookieOnly.StatusCode);
         using (var insecure = await host.Send(Projection(command, token, false))) Assert.Equal(HttpStatusCode.BadRequest, insecure.StatusCode);
         using (var forged = await host.Send(Projection(new { command.Purpose, command.SiteId, command.FormId, SubjectId = Guid.NewGuid() }, token))) Assert.Equal(HttpStatusCode.BadRequest, forged.StatusCode);
         using var signed = await host.Send(Projection(command, token)); var json = await signed.Content.ReadAsStringAsync();
         Assert.True(signed.StatusCode == HttpStatusCode.OK, json); Assert.True(signed.Headers.CacheControl?.NoStore);
-        using var document = JsonDocument.Parse(json); Assert.Equal(h.ActorId, document.RootElement.GetProperty("subjectId").GetGuid());
+        using var outer=JsonDocument.Parse(json);
+        if(humanContext && Environment.GetEnvironmentVariable("CP6_HUMAN_CONTEXT_OUTPUT") is {Length:>0} humanOutput)
+            await File.WriteAllTextAsync(humanOutput,JsonSerializer.Serialize(new{contextJson=json,publicKeyBase64=options.PublicKeyBase64,activeFromUtc=options.ActiveFromUtc,
+                producer="actual Main login/OIDC/HTTP; unchanged signed bytes; isolated PostgreSQL"}));
+        if(humanContext){Assert.Equal(nonce,outer.RootElement.GetProperty("requestNonce").GetString());Assert.True(ContextSignature(System.Text.Json.Nodes.JsonNode.Parse(json)!.AsObject(),options.PublicKeyBase64,InquiryPermissionSigningKeyV1.HumanContextVersion));}
+        using var document = JsonDocument.Parse(humanContext?outer.RootElement.GetProperty("permissionJson").GetString()!:json); Assert.Equal(h.ActorId, document.RootElement.GetProperty("subjectId").GetGuid());
         if (intake)
         {
             Assert.True(document.RootElement.GetProperty("isSupervisor").GetBoolean());
@@ -215,7 +227,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             File.Delete(Path.Combine(bridgeDirectory, "session.json"));
         }
         await h.Db.Database.ExecuteSqlInterpolatedAsync($"UPDATE public.\"CrmOidcGrant\" SET \"Revoked\"=true WHERE \"SubjectId\"={h.ActorId}");
-        using var revokedSession = await host.Send(Projection(command with { Purpose = "configuration:read" }, token)); Assert.Equal(HttpStatusCode.Unauthorized, revokedSession.StatusCode);
+        using var revokedSession = await host.Send(Projection(command with { Purpose = humanContext ? "intake:list" : "configuration:read" }, token)); Assert.Equal(HttpStatusCode.Unauthorized, revokedSession.StatusCode);
     }
 
     private static async Task WaitConfigurationBridge(string directory, string stage)

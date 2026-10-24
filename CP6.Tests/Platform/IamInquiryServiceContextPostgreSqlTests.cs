@@ -22,7 +22,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         var options=new CrmIdentityOptions { Enabled=true,Issuer=issuer,ProjectionReaderClientIds=["fixture-reader"] };
         options.Tenants.Add(tenant,"us");return new(options,new IdentityEventValidator(Cp6ContractBundle.Load(Path.Combine(AppContext.BaseDirectory,"contracts/events/platform")),issuer));
     }
-    private static bool ContextSignature(JsonObject body, string publicKey)
+    private static bool ContextSignature(JsonObject body, string publicKey, string domain="cp6-inquiry-service-context-v1")
     {
         var signature=body["signature"]!.GetValue<string>();
         static JsonNode? Sort(JsonNode? value)=>value switch
@@ -31,7 +31,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             JsonArray a=>new JsonArray(a.Select(Sort).ToArray()),_=>value?.DeepClone()
         };
         var unsigned=body.DeepClone().AsObject();unsigned.Remove("signature");var ordered=Sort(unsigned)!;
-        var bytes=Encoding.UTF8.GetBytes("cp6-inquiry-service-context-v1\n"+ordered.ToJsonString());
+        var bytes=Encoding.UTF8.GetBytes(domain+"\n"+ordered.ToJsonString());
         return SignatureAlgorithm.Ed25519.Verify(PublicKey.Import(SignatureAlgorithm.Ed25519,Convert.FromBase64String(publicKey),KeyBlobFormat.RawPublicKey),bytes,
             Convert.FromBase64String(signature.Replace('-','+').Replace('_','/')+"=="));
     }

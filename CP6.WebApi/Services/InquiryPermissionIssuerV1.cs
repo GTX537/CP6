@@ -2,6 +2,7 @@ using System.Data;
 using System.Text.Json.Serialization;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Sys;
+using CP6.Core.Services.CrmIdentity;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.WebApi.Services;
@@ -15,12 +16,16 @@ public sealed class InquiryPermissionExceptionV1(int status, string code) : Inva
 /// <summary>Actual Main producer for configuration and human intake purposes. The callback is the server's
 /// existing authenticated CRM Bearer reader, rerun inside the Main authentication root.
 /// A signed point-in-time projection is not a cross-database business commit fence.</summary>
-public sealed class InquiryPermissionIssuerV1(CP6Context db, InquiryPermissionSigningKeyV1 signing,
-    Func<AuthorizationCatalogSnapshotV1>? captureCatalog = null)
+public sealed partial class InquiryPermissionIssuerV1(CP6Context db, InquiryPermissionSigningKeyV1 signing,
+    Func<AuthorizationCatalogSnapshotV1>? captureCatalog = null, CrmIdentityRuntime? identityRuntime = null)
 {
     public bool Enabled => signing.Enabled;
-    public async Task<string> IssueAsync(InquiryPermissionRequestV1 request,
+    public Task<string> IssueAsync(InquiryPermissionRequestV1 request,
         Func<CP6Context, CancellationToken, Task<InquiryPermissionSubjectV1?>> currentBearer, CancellationToken ct)
+        => IssueCoreAsync(request, currentBearer, null, ct);
+
+    private async Task<string> IssueCoreAsync(InquiryPermissionRequestV1 request,
+        Func<CP6Context, CancellationToken, Task<InquiryPermissionSubjectV1?>> currentBearer, string? nonce, CancellationToken ct)
     {
         if (request is null || request.SiteId == Guid.Empty || request.FormId == Guid.Empty)
             throw new InquiryPermissionExceptionV1(400, "invalid_request");
@@ -59,9 +64,11 @@ public sealed class InquiryPermissionIssuerV1(CP6Context db, InquiryPermissionSi
         if (final is null || final.TenantId != subject.TenantId || final.SubjectId != subject.SubjectId || final.SessionId != subject.SessionId
             || db.CurrentTenantId != subject.TenantId)
             throw new InquiryPermissionExceptionV1(401, "invalid_token");
+        var source = nonce is null ? null : await ReadHumanSource(subject, ct);
         var now = await db.Database.SqlQueryRaw<DateTimeOffset>("SELECT clock_timestamp() AS \"Value\"").SingleAsync(ct);
         var expires = new[] { now.AddMinutes(5), subject.ExpiresAtUtc, final.ExpiresAtUtc }.Min();
         var result = signing.Sign(subject, request, facts, now, expires);
+        if (source is not null) result = signing.SignHumanContext(result, nonce!, source, identityRuntime!.ContractBundleSha256, request, now, expires);
         ct.ThrowIfCancellationRequested(); await tx.CommitAsync(ct);
         return result;
     }

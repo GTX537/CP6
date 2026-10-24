@@ -1,5 +1,11 @@
 # AI 可读变更日志
 
+## 2026-10-24：W119人员询盘来源绑定
+
+54项唯一相关本地成功检查：Main12、CRM42，实际Main login/OIDC/HTTP原签名→CRM PostgreSQL持久信任互通；身份/完整角色源/epoch/nonce/用途/期限/撤权/会话CAS及传输拒绝覆盖，必需范围0跳过。 [交付](../development/dispatch/20261024-wave119/README.md)。CRM PR145已合并finish，Main实际Bearer来源签发与原冻结投影绑定。
+Handoff [PR95](https://github.com/GTX537/CP6.AI-Handoff/pull/95)采用 `13bfc6a61e3da7a6cf6c5d4b632a4e12cde3b609`，准确分支已删除、DEV-2已finish释放。 Main最终PR/finish尚待；START后墙钟27.31分钟，原估70–110分钟，最终按Main finish计，不叠加各仓；不含先前只读调查。
+队列/详情业务Owner和后继管理/隐私/发布仍待，24/375、0/125、247NOT_RUN保持，七天ACTIVE。
+
 ## 2026-10-24：W118公开提交BFF与原生页面
 
 48项唯一相关本地成功检查：38 Web、10真实浏览器/原生HTTP与PG场景；最大Unicode/精确版本、原请求重放/坏响应、限流、迟到清理、回执及显式恢复覆盖，无必需跳过。UI过期/更新/拒绝注入范围明确，不冒充数据库过期验收。 [交付](../development/dispatch/20261024-wave118/README.md)。CRM PR144已合并finish，真实浏览器公开提交/回执及稳定原请求重试；Handoff [PR94](https://github.com/GTX537/CP6.AI-Handoff/pull/94)已采用 `c7fc5bdfb99bf8b13f7d8b89dd40861a784fde3a`，准确分支删除、DEV-2 finish释放。
