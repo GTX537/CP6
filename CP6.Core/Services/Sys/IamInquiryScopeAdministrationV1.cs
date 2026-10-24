@@ -66,7 +66,9 @@ public sealed class IamInquiryScopeAdministrationV1(CP6Context db, IamAdministra
         }, ct);
     }
 
-    internal static async Task<InquirySiteFormScopeV1[]> ReadSourceAsync(CP6Context db, Guid tenant, int role, CancellationToken ct)
+    // Trusted in-process source read. Callers must establish current identity/roles and hold
+    // their authority transaction; this method does not authorize a subject or an action.
+    public static async Task<InquirySiteFormScopeV1[]> ReadSourceAsync(CP6Context db, Guid tenant, int role, CancellationToken ct)
     {
         // Old migrations/legacy PostgreSQL fixtures have no resource authority. No absence can grant.
         if (!await db.Database.SqlQueryRaw<bool>("SELECT to_regclass('cp6_inquiry_scope_v1.role_scopes') IS NOT NULL AS \"Value\"").SingleAsync(ct)) return [];

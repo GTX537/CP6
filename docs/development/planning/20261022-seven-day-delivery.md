@@ -966,3 +966,11 @@ CRM [PR127](https://github.com/GTX537/CP6.CRM/pull/127) source `43083d0e38970ae1
 完成的是明确Site/Form授权来源与当前消费；`CanAuthorize=false`，实际签名权限生产者、跨仓撤权最终门和配置Owner共同事务/真实业务采用仍须继续。不能把部门、supervisor或scope5转换成站点权限；配置矩阵fields=[]，不得引入线索PII；Owner必须核对实际tenant/Site/Form存在及父子绑定。无Actions、既有环境迁移、生产部署。整卡24/375、125目标0完整、247正式运行NOT_RUN保持；七天持续目标ACTIVE。
 
 Handoff [PR](https://github.com/GTX537/CP6.AI-Handoff/pull/76)已采用 `7ec07d382c98942481cea90f4a80aa6f4222d558`，准确分支删除、固定目录干净detached、官方finish释放。Main本次PR/finish尚待完成；当前实际24.21min，原估90–150min＋独立前置约10min；最终以wave100-final-verification.json的Main START到finish计，不叠加CRM/Handoff。
+
+## 2026-10-24：W100完整收尾 / W101真实Main配置权限签发
+
+W100 Main512/CRM127/Handoff76已全部采用，173项相关检查通过，25.96min＋前置约10min，准确分支删除、三席位释放。[W101](../dispatch/20261024-wave101/README.md)推进实际Main签名生产者和CRM消费验证，预计65–100min＋前置约5min。真实配置Owner/当前最终授权和正式验收继续后继；七天目标ACTIVE。
+
+## W101实际签发生产者已验证
+
+152项唯一相关本地检查通过：Main134（23项新签发/当前PG/HTTP行为＋111项既有OIDC相关回归），CRM18（17项持久信任＋1项实际Main原HTTP输出）；0跳过。 CRM128与Handoff已合并finish；[交付](../dispatch/20261024-wave101/README.md)。Main本次最后合并/finish继续；当前22.45min，正式目标/验收不提升，后继为配置Owner与最终授权门。七天ACTIVE。

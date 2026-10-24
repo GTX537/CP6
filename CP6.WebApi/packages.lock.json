@@ -18,6 +18,12 @@
           "Yarp.ReverseProxy": "2.3.0"
         }
       },
+      "libsodium": {
+        "type": "Direct",
+        "requested": "[1.0.20.1, 1.0.20.1]",
+        "resolved": "1.0.20.1",
+        "contentHash": "pkiceEqJDQFHjbga3k/oPfTVX9g+GKJZ1VrkuiLhaymt9YNw1Dr7cX9hNuZuNaWcr9WD0moW55k4pMwzQ7JaZQ=="
+      },
       "MessagePack": {
         "type": "Direct",
         "requested": "[2.5.302, )",
@@ -69,6 +75,15 @@
           "Microsoft.EntityFrameworkCore.Relational": "8.0.30",
           "Microsoft.Extensions.DependencyModel": "8.0.2",
           "Mono.TextTemplating": "2.2.1"
+        }
+      },
+      "NSec.Cryptography": {
+        "type": "Direct",
+        "requested": "[25.4.0, 25.4.0]",
+        "resolved": "25.4.0",
+        "contentHash": "Z3wPpG0xefMLmhn9T+Ka/EzAmMQPT0THL/5E4lf9cXI/N9rbGH0G23ZFpRcPnD0ast2k7ieG6QSVNIjmfPCXBQ==",
+        "dependencies": {
+          "libsodium": "[1.0.20.1, 1.0.21)"
         }
       },
       "prometheus-net.AspNetCore": {
