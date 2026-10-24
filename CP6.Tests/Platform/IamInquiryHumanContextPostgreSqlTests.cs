@@ -71,4 +71,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     }
     [CurrentPermissionPostgresFact]
     public Task Inquiry_human_context_actual_HTTP_login_OIDC_signing_and_current_revocation()=>InquiryProducerHttp("intake:release",humanContext:true);
+    [CurrentPermissionPostgresFact]
+    public Task Inquiry_intake_read_context_actual_HTTP_signs_optional_current_decision_facts()=>InquiryProducerHttp("intake:detail",humanContext:true);
+
 }

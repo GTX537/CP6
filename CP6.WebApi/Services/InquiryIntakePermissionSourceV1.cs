@@ -62,6 +62,11 @@ internal static class InquiryIntakePermissionSourceV1
             throw new InquiryPermissionExceptionV1(403, "insufficient_field_scope");
         var actions = required.ToList();
         if (pii && !actions.Contains("crm-lead:view-pii")) actions.Add("crm-lead:view-pii");
+        // Optional UI capabilities remain read-purpose facts. CRM intersects each action's
+        // current resource scope; a write still obtains its own fresh purpose-bound proof.
+        if (purpose is "intake:list" or "intake:detail" && readable.Length == Fields.Count)
+            foreach (var action in new[] { "crm-lead:add", "crm-lead:edit" })
+                if (permissions.ActionKeys.Contains(action)) actions.Add(action);
         return new(actions.ToArray(), readable, departments, true);
     }
 }

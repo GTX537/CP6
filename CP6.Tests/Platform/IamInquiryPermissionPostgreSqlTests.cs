@@ -196,6 +196,11 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             Assert.True(document.RootElement.GetProperty("isSupervisor").GetBoolean());
             Assert.Equal(6, document.RootElement.GetProperty("fieldPermissions").GetArrayLength());
             Assert.Equal(2, document.RootElement.GetProperty("managedDepartmentIds").GetArrayLength());
+            if(purpose is "intake:list" or "intake:detail")
+            {
+                var actions=document.RootElement.GetProperty("permissions").EnumerateArray().Select(x=>x.GetString());
+                Assert.Contains("crm-lead:add",actions);Assert.Contains("crm-lead:edit",actions);
+            }
         }
         if (Environment.GetEnvironmentVariable(intake ? "CP6_INQUIRY_INTAKE_PROJECTION_OUTPUT" : "CP6_INQUIRY_PROJECTION_OUTPUT") is { Length: > 0 } path)
             await File.WriteAllTextAsync(path, JsonSerializer.Serialize(new { projection = document.RootElement,
@@ -217,7 +222,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             }));
             await WaitConfigurationBridge(bridgeDirectory, "saved");
         }
-        var revokeAction = intake ? "add" : "configure";
+        var revokeAction = intake ? purpose is "intake:list" or "intake:detail" ? "query" : "add" : "configure";
         await h.Db.Sys_RoleActions.Where(x => x.RoleId == 71 && x.ActionCode == revokeAction).ExecuteDeleteAsync();
         using (var revoked = await host.Send(Projection(command, token))) Assert.Equal(HttpStatusCode.Forbidden, revoked.StatusCode);
         if (bridgeDirectory is not null)
