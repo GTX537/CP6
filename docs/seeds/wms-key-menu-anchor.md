@@ -1,5 +1,9 @@
 # WMS 权限键 → 锚定 MenuId 映射（M-WMS Task 2 产出）
 
+## 2026-10-24 W94 包装查询Owner
+
+现有菜单413 `/wms/packaging`显式锚定`wms-packaging`，新增`query`定义而不授角色。版化历史包读取还独立要求`wms-outbound-order:query`及完整原父单范围；CarrierCd/TrackingNo/Remarks当前字段MIN，隐藏字段不允许搜索。新读入口`/api/wms/shipping/owner/v1/packages`和`/{no}`；旧两个读入口经Owner后拒绝无版本读取。原Outbound ship动作/Owner及库存写不变。详见[W94交付](../development/evidence/W94-01/DELIVERY.md)。下文历史SQL/统计不作为本增量自动授权依据。
+
 ## 2026-10-21 W39 当前Owner增量
 
 菜单416显式wms-dashboard、309显式mes-dashboard。新增query目录：403库存、415盘点、416 WMS看板、309 MES看板、308不良来源；幂等登记且不自动赋予角色。下文原轮次表格/SQL留作历史范围，本增量以当前MenuSeed/PermissionSeed为准。[Owner v1](../design-handbook/remediation/main-stocktake-dashboard-owner-v1.md)。

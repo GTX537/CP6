@@ -51,7 +51,7 @@ public static class WmsMenuSeed
         (410, "出荷指示 一覧",        "/wms/shipping-order-list",  "Files",          400, 410, null),
         (411, "出荷指示 登録",        "/wms/shipping-order",       "Promotion",      400, 411, null),
         (412, "ピッキング作業",       "/wms/picking",              "Pointer",        400, 412, null),
-        (413, "梱包・出荷確定",       "/wms/packaging",            "Suitcase",       400, 413, null),
+        (413, "梱包・出荷確定",       "/wms/packaging",            "Suitcase",       400, 413, "wms-packaging"),
         (414, "棚卸 一覧",            "/wms/stock-take-list",      "Coordinate",     400, 414, null),
         (415, "棚卸 作業",            "/wms/stock-take",           "Operation",      400, 415, "wms-stocktake"),
         (416, "WMSダッシュボード",    "/wms/dashboard",            "DataAnalysis",   400, 416, "wms-dashboard"),

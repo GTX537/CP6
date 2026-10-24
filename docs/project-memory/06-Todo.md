@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-24：W94出货包装独立Owner候选通过
+
+Issue497两个真实HTTP红灯转绿；29独立.NET（15原生PG、13既有InMemory出库回归、1两租户权限种子）及15Vue通过，无跳过；相关构建和vue-tsc通过，去重44项。[单份交付](../development/evidence/W94-01/DELIVERY.md)。包装当前观察、原出库单范围及实际页面时序完成，3个PG已停止保留，待正常Main/Handoff采用和分支/席位收尾。完整OUT不提升；W89确认待答复，七天ACTIVE。
+
 ## 2026-10-24：W93出库路由独立Owner已采用
 
 Main [PR495](https://github.com/GTX537/CP6/pull/495) source `b4dd45c3c2823767b3bcdc5cd1b919c501aed642`进入远端main `384305513c9d1c8afbf22e84c044d742a8c62efd`，33任务路径逐blob核对；25.NET/42Vue及类型检查通过，无跳过。[单份交付](../development/evidence/W93-01/DELIVERY.md)。Handoff [PR68](https://github.com/GTX537/CP6.AI-Handoff/pull/68)采用、准确分支删除、固定树干净detached、finish释放。Main原任务最后状态PR/finish及Issue494关闭待完成，未提前声明释放。3个PG停止保留；当前约17.56min，原估45–70min＋独立前置4min，最终按finish计。完整RT/RSV、125目标与247验收不提升，七天ACTIVE。W89跨仓重绑确认仍待答复，两原分支保存不清理、不绕过绑定限制。

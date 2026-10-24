@@ -1,5 +1,9 @@
 <template>
   <div class="wms-pack">
+    <el-alert type="info" :closable="false" title="既存の出庫単位で出荷を確定する画面です。履歴の梱包記録は、正式な封箱・承運受付・配達完了の証明ではありません。" />
+    <p v-if="!canQueue" role="status">出庫単の参照権限が必要です。</p>
+    <p v-if="queueError" role="alert">{{ queueError }}</p>
+    <p v-if="intent.error.value" role="alert">{{ intent.error.value }}</p>
     <el-row :gutter="12">
       <!-- 左：梱包待ち（status=3 Picking）一覧 -->
       <el-col :xs="24" :md="9">
@@ -8,7 +12,7 @@
             <div class="card-hd">
               <el-icon><Box /></el-icon>
               <span>{{ t('wms.pack.title.queue') }}</span>
-              <el-button text :icon="Refresh" @click="reloadQueue" size="small" style="margin-left: auto" />
+              <el-button text :icon="Refresh" :disabled="!canQueue || saving" @click="reloadQueue" size="small" style="margin-left: auto" />
             </div>
           </template>
           <el-empty v-if="queue.length === 0" :description="t('wms.pack.msg.noPackages')" :image-size="80" />
@@ -73,7 +77,7 @@
                 <span>{{ t('wms.pack.btn.confirmShip') }}</span>
               </div>
             </template>
-            <el-form :model="shipForm" label-width="140px" size="default">
+            <el-form :model="shipForm" :disabled="!canShip || saving || intent.uncertain.value" label-width="140px" size="default">
               <el-row :gutter="12">
                 <el-col :span="8"><el-form-item :label="t('wms.pack.fld.packageNo') + t('(自動)')">
                   <el-input v-model="autoPkgNo" disabled :placeholder="t('wms.common.optional')" />
@@ -93,11 +97,7 @@
                   </el-select>
                 </el-form-item></el-col>
                 <el-col :span="8"><el-form-item :label="t('wms.pack.fld.trackingNo')">
-                  <el-input v-model="shipForm.trackingNo" maxlength="50">
-                    <template #append>
-                      <el-button @click="genTracking">{{ t('wms.pack.btn.assignTracking') }}</el-button>
-                    </template>
-                  </el-input>
+                  <el-input v-model="shipForm.trackingNo" maxlength="50" placeholder="実際の送り状番号" />
                 </el-form-item></el-col>
                 <el-col :span="24"><el-form-item :label="t('wms.common.remarks')">
                   <el-input v-model="shipForm.remarks" type="textarea" :rows="2" />
@@ -105,7 +105,7 @@
               </el-row>
               <div style="margin-top: 8px">
                 <el-button v-permission="'wms-outbound-order:ship'" type="success" size="large" style="width: 100%; font-size: 18px; height: 56px"
-                  @click="onShip" :loading="saving" :icon="Check">
+                  @click="onShip" :disabled="!canShip || saving || intent.uncertain.value" :loading="saving" :icon="Check">
                   {{ t('wms.pack.btn.confirmShip') }}
                 </el-button>
               </div>
@@ -121,127 +121,137 @@
         <div class="card-hd">
           <el-icon><List /></el-icon>
           <span>{{ t('wms.common.history') }}</span>
-          <el-button text :icon="Refresh" @click="reloadHistory" size="small" style="margin-left: auto" />
+          <el-button text :icon="Refresh" :disabled="!canHistory" @click="reloadHistory(historyPage)" size="small" style="margin-left: auto" />
         </div>
       </template>
-      <el-table :data="history" border stripe size="small" max-height="350">
+      <p v-if="!canHistory" role="status">梱包と原出庫単の参照権限が必要です。</p>
+      <p v-if="historyError" role="alert">{{ historyError }}</p>
+      <label>梱包番号 <input v-model="packageFilter" :disabled="!canHistory" aria-label="梱包番号" /></label>
+      <el-button :disabled="!canHistory" @click="reloadHistory(1)">検索</el-button>
+      <p v-if="historyResult">現在参照可能な記録 {{ historyResult.total }} 件。日時は保存当時の値で、タイムゾーンは記録されていません。</p>
+      <el-table :data="historyResult?.items || []" border stripe size="small" max-height="350" @row-click="loadPackage">
         <el-table-column prop="packageNo" :label="t('wms.pack.fld.packageNo')" width="180" />
         <el-table-column prop="outboundNo" :label="t('wms.pick.fld.outboundNo')" width="180" />
         <el-table-column prop="caseQty" label="Cases" width="80" align="right" />
         <el-table-column prop="totalWeightKg" :label="t('wms.pack.fld.weightKg')" width="100" align="right">
-          <template #default="{ row }">{{ formatQty(row.totalWeightKg) }}</template>
+          <template #default="{ row }">{{ row.totalWeightKg ?? '—' }}</template>
         </el-table-column>
         <el-table-column :label="t('wms.pack.fld.carrier')" width="120">
-          <template #default="{ row }">{{ carrierMap[row.carrierCd] || row.carrierCd || '—' }}</template>
+          <template #default="{ row }">{{ row.carrierReadable ? carrierMap[row.carrierCd] || row.carrierCd || '—' : '参照不可' }}</template>
         </el-table-column>
-        <el-table-column prop="trackingNo" :label="t('wms.pack.fld.trackingNo')" width="180" />
-        <el-table-column prop="departureTime" label="Departure" width="180" :formatter="formatDateTimeCell" />
+        <el-table-column :label="t('wms.pack.fld.trackingNo')" width="180"><template #default="{ row }">{{ row.trackingReadable ? row.trackingNo ?? '—' : '参照不可' }}</template></el-table-column>
+        <el-table-column prop="departureTime" label="Departure (保存値)" width="180" />
       </el-table>
+      <el-pagination v-if="historyResult" :current-page="historyPage" :page-size="30" :total="historyResult.total" layout="prev, pager, next, total" @current-change="reloadHistory" />
+      <section v-if="packageDetail" aria-label="梱包原記録">
+        <h3>{{ packageDetail.packageNo }}</h3><p>原出庫単：{{ packageDetail.outboundNo }}</p>
+        <p>重量(kg)：{{ packageDetail.totalWeightKg ?? '未記録' }} ／ 容積(m³)：{{ packageDetail.totalVolumeM3 ?? '未記録' }}</p>
+        <p>備考：{{ packageDetail.remarksReadable ? packageDetail.remarks ?? '—' : '参照不可' }}</p>
+      </section>
     </el-card>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Box, Van, Check, List, Refresh } from '@element-plus/icons-vue'
 import { useI18n } from 'vue-i18n'
-import http from '@/api/http'
 import { outboundOrderApi } from '@/api/wms/outboundOrder'
-import type { OutboundOrder, ShipRequest, WmsApi } from '@/types/wms/wms'
-import { formatQty as fmtQty, formatDateTimeCell } from '@/utils/format'
+import { packagingOwnerApi } from '@/api/wms/packagingOwner'
+import { checkPackagingPage, checkPackagingRecord } from '@/types/wms/packagingOwner'
+import type { PackagingPage, PackagingRecord, PackagingQuery } from '@/types/wms/packagingOwner'
+import type { OutboundOrder, ShipRequest } from '@/types/wms/wms'
+import { formatQty as fmtQty } from '@/utils/format'
+import { usePermissionStore } from '@/stores/permission'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
+import { identityStamp } from '@/auth/identity'
 
-const { t } = useI18n()
-const saving = ref(false)
-
-const queue = ref<OutboundOrder[]>([])
-const current = ref<OutboundOrder | null>(null)
-
-const autoPkgNo = ref('—')
-
-const shipForm = reactive<ShipRequest>({
-  caseQty: 1,
-  totalWeightKg: undefined,
-  totalVolumeM3: undefined,
-  carrierCd: 'YAMATO',
-  trackingNo: '',
-  remarks: '',
-})
-
-const history = ref<any[]>([])
-
+const { t } = useI18n(), permission = usePermissionStore()
+const canQueue = computed(() => permission.loaded && permission.has('wms-outbound-order:query'))
+const canHistory = computed(() => canQueue.value && permission.has('wms-packaging:query'))
+const canShip = computed(() => canQueue.value && permission.has('wms-outbound-order:ship'))
+const queue = ref<OutboundOrder[]>([]), current = ref<OutboundOrder | null>(null), autoPkgNo = ref('—')
+const defaults = (): ShipRequest => ({ caseQty: 1, totalWeightKg: undefined, totalVolumeM3: undefined, carrierCd: '', trackingNo: '', remarks: '' })
+const shipForm = reactive<ShipRequest>(defaults())
+const historyResult = ref<PackagingPage | null>(null), historyPage = ref(1), packageFilter = ref(''), packageDetail = ref<PackagingRecord | null>(null)
+const queueError = ref(''), historyError = ref('')
+let queues = 0, orders = 0, histories = 0, packages = 0
+let sentIdentity: string | null = null
+function clearOrder() { orders++; current.value = null; autoPkgNo.value = '—'; Object.assign(shipForm, defaults()) }
+function clearHistory() { histories++; packages++; historyResult.value = null; packageDetail.value = null; historyError.value = '' }
+function clearAll() { queues++; queue.value = []; queueError.value = ''; clearOrder(); clearHistory(); packageFilter.value = ''; historyPage.value = 1 }
+const intent = useOperationsIntent(clearAll), saving = intent.busy
 const statusName = t('wms.pick.status.picking')
-
-const carrierMap: Record<string, string> = {
-  YAMATO: t('wms.pack.carrier.yamato'),
-  SAGAWA: t('wms.pack.carrier.sagawa'),
-  JP:     t('wms.pack.carrier.jp'),
-  SELF:   t('wms.pack.carrier.self'),
-  OTHER:  t('wms.pack.carrier.other'),
-}
-
-function formatQty(n: number | undefined | null) {
-  if (n == null) return ''
-  return fmtQty(n, 4)
-}
-
+const carrierMap: Record<string, string> = { YAMATO: t('wms.pack.carrier.yamato'), SAGAWA: t('wms.pack.carrier.sagawa'), JP: t('wms.pack.carrier.jp'), SELF: t('wms.pack.carrier.self'), OTHER: t('wms.pack.carrier.other') }
+function formatQty(n: number | undefined | null) { return n == null ? '' : fmtQty(n, 4) }
+watch(() => [permission.loaded, permission.actionKeys], () => {
+  const unresolved = sentIdentity === identityStamp(), notice = intent.error.value
+  intent.invalidate(); clearAll()
+  if (unresolved) { intent.uncertain.value = true; intent.error.value = notice || '出荷の結果が未確認です。再送せず、原出庫単と梱包履歴を確認してください。' }
+}, { deep: true, flush: 'sync' })
+watch(packageFilter, () => { clearHistory(); historyPage.value = 1 }, { flush: 'sync' })
 async function reloadQueue() {
+  if (saving.value) return
+  const n = ++queues, token = intent.capture(); queue.value = []; queueError.value = ''; clearOrder()
+  if (!canQueue.value) return
   try {
     const r = await outboundOrderApi.search({ status: 3, outboundType: 2, pageSize: 50 })
-    queue.value = r.data || []
-  } catch { /* */ }
+    if (!intent.current(token) || n !== queues || !canQueue.value) return
+    if (r.code !== 0 || !Array.isArray(r.data) || r.data.some(x => !x.outboundNo || x.status !== 3 || x.outboundType !== 2)) throw new Error('QUEUE_INVALID')
+    queue.value = r.data
+  } catch { if (intent.current(token) && n === queues) queueError.value = '現在の出庫一覧を取得できません。' }
 }
-
 async function loadOrder(o: OutboundOrder) {
+  if (saving.value || intent.uncertain.value || !canQueue.value || !queue.value.some(x => x.outboundNo === o.outboundNo)) return
+  clearOrder(); const n = orders, token = intent.capture(), number = o.outboundNo!
   try {
-    const r = await outboundOrderApi.get(o.outboundNo!)
-    current.value = r.data
-    autoPkgNo.value = '—'
-    shipForm.carrierCd = current.value.carrierCd || 'YAMATO'
-    shipForm.trackingNo = ''
-    shipForm.caseQty = (current.value.details?.length || 1)
-    shipForm.totalWeightKg = undefined
-    shipForm.totalVolumeM3 = undefined
-    shipForm.remarks = ''
-  } catch { /* */ }
+    const r = await outboundOrderApi.get(number)
+    if (!intent.current(token) || n !== orders || !canQueue.value) return
+    if (r.code !== 0 || !r.data || r.data.outboundNo !== number || r.data.status !== 3 || r.data.outboundType !== 2) throw new Error('ORDER_CHANGED')
+    current.value = r.data; shipForm.carrierCd = r.data.carrierCd || ''; shipForm.caseQty = r.data.details?.length || 1
+  } catch { if (intent.current(token) && n === orders) queueError.value = '原出庫単の最新状態を確認できません。' }
 }
-
-function genTracking() {
-  const d = new Date()
-  const ymd = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`
-  const rnd = Math.floor(Math.random() * 900000) + 100000
-  shipForm.trackingNo = `${shipForm.carrierCd}-${ymd}-${rnd}`
-}
-
 async function onShip() {
-  if (!current.value) return
+  if (!canShip.value || !current.value) return
+  const token = intent.begin(); if (!token) return
+  const number = current.value.outboundNo!, selected = orders, body = { ...shipForm }
   try {
     await ElMessageBox.confirm(t('wms.pack.msg.confirmShipAsk'), t('wms.common.confirm'), { type: 'success' })
-    saving.value = true
-    const res = await outboundOrderApi.ship(current.value.outboundNo!, shipForm)
-    if (res.data?.packageNo) {
-      autoPkgNo.value = res.data.packageNo
-      ElMessage.success(`${t('wms.common.success')}: ${res.data.packageNo}`)
-    } else {
-      ElMessage.success(t('wms.common.success'))
-    }
-    // 一覧から外す + 履歴更新
-    current.value = null
-    await reloadQueue()
-    await reloadHistory()
-  } catch (e: any) {
-    if (e?.response) ElMessage.error(e.response?.data?.message || 'Error')
-    // ElMessageBox cancel → 静默
-  } finally { saving.value = false }
+    if (!intent.current(token) || !canShip.value || orders !== selected || current.value?.outboundNo !== number) return
+    sentIdentity = token.identity
+    const r = await outboundOrderApi.ship(number, body)
+    if (!intent.current(token)) return
+    if (r.code !== 0 || !r.data || typeof r.data.packageNo !== 'string' || !r.data.packageNo) throw new Error('SHIP_OUTCOME_UNKNOWN')
+    sentIdentity = null
+    ElMessage.success(`${t('wms.common.success')}: ${r.data.packageNo}`); clearOrder()
+    intent.finish(token); await reloadQueue(); await reloadHistory(historyPage.value)
+  } catch (e) { intent.failed(token, e); if (intent.current(token) && !intent.uncertain.value) sentIdentity = null }
+  finally { intent.finish(token) }
 }
-
-async function reloadHistory() {
+async function reloadHistory(next = 1) {
+  clearHistory(); historyPage.value = next
+  if (!canHistory.value || !Number.isSafeInteger(next) || next < 1) return
+  const n = histories, token = intent.capture(), q: PackagingQuery = { page: next, pageSize: 30, packageNo: packageFilter.value || undefined }
   try {
-    const r: any = await http.get<any, WmsApi<any>>('/wms/shipping/packages', { params: { page: 1, pageSize: 30 } })
-    history.value = r?.data?.items || []
-  } catch { /* */ }
+    const r = await packagingOwnerApi.search(q)
+    if (!intent.current(token) || n !== histories || !canHistory.value) return
+    if (r.code !== 0) throw new Error('READ_FAILED')
+    historyResult.value = checkPackagingPage(r.data, q)
+  } catch { if (intent.current(token) && n === histories) historyError.value = '現在の梱包記録を取得できません。権限と検索条件を確認してください。' }
 }
-
+async function loadPackage(row: PackagingRecord) {
+  const n = ++packages, token = intent.capture(); packageDetail.value = null
+  if (!canHistory.value || !historyResult.value?.items.some(x => x.id === row.id)) return
+  try {
+    const r = await packagingOwnerApi.get(row.packageNo)
+    if (!intent.current(token) || n !== packages || !canHistory.value) return
+    if (r.code !== 0) throw new Error('READ_FAILED')
+    const record = checkPackagingRecord(r.data, row.packageNo)
+    if (record.id !== row.id || record.outboundId !== row.outboundId) throw new Error('IDENTITY_CHANGED')
+    packageDetail.value = record
+  } catch { if (intent.current(token) && n === packages) historyError.value = '原梱包記録を取得できません。' }
+}
 onMounted(() => { reloadQueue(); reloadHistory() })
 </script>
 
