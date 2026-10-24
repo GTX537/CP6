@@ -7,6 +7,7 @@
 -->
 <template>
   <CpPageShell :title="t('wms.stock.title')" :count="total">
+    <StockCommands ref="commands" @committed="reloadList" />
     <CpListPage :key="intent.epoch.value" clear-on-load
       ref="listRef"
       :columns="columns"
@@ -40,6 +41,7 @@
 
       <template #col-_action="{ row }">
         <el-button link type="primary" size="small" @click="openHistory(row)">{{ t('wms.common.history') }}</el-button>
+        <el-button v-permission="'wms-stock:adjust'" link type="primary" size="small" @click="commands?.open(row)">{{ t('在庫調整') }}</el-button>
         <el-button v-permission="'wms-stock-qc:set'" link type="warning" size="small" @click="openQcDialog(row)">{{ t('wms.stock.qc.btn') }}</el-button>
       </template>
     </CpListPage>
@@ -121,8 +123,10 @@ import { type FilterField } from '@/components/templates/CpFilterBar.vue'
 import { stockApi } from '@/api/wms/stock'
 import type { Stock, StockTransaction } from '@/types/wms/wms'
 import { formatQty as fmtQty } from '@/utils/format'
+import StockCommands from './StockCommands.vue'
 
 const { t } = useI18n()
+const commands = ref<InstanceType<typeof StockCommands> | null>(null)
 
 const total = ref<number>()
 const intent = useOperationsIntent(() => { reads++; historyReads++; total.value = 0; historyVisible.value = false; historyStock.value = null; historyTxns.value = []; qcDialogVisible.value = false; qcTarget.value = null; qcSaving.value = false })
@@ -166,7 +170,7 @@ const columns = computed<ListColumn<Stock>[]>(() => [
   { prop: 'owner', label: t('wms.stock.col.owner'), width: 100 },
   { prop: 'flag', label: t('wms.stock.col.flag'), width: 100 },
   { prop: 'qc', label: t('wms.stock.col.qc'), width: 100 },
-  { prop: '_action', label: t('wms.common.action'), width: 180, fixed: 'right' },
+  { prop: '_action', label: t('wms.common.action'), width: 240, fixed: 'right' },
 ])
 
 const filterLabels = computed(() => ({
