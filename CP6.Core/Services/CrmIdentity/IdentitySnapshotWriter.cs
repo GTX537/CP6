@@ -19,7 +19,7 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
     {
         RequireTransaction();
         foreach (var (tenant, aggregate) in capture.Targets.OrderBy(x => x.Tenant).ThenBy(x => x.Aggregate, StringComparer.Ordinal))
-            await WriteCurrentAsync(tenant, aggregate, cancellationToken).ConfigureAwait(false);
+            await WriteCurrentCoreAsync(tenant, aggregate, capture.FieldPolicyRevisions.Contains((tenant, aggregate)), cancellationToken).ConfigureAwait(false);
         foreach (var tenant in capture.DisabledTenants.Order())
             await RevokeTenantTokensAsync(tenant, cancellationToken).ConfigureAwait(false);
         foreach (var (tenant, user) in capture.InvalidatedUsers.OrderBy(x => x.Tenant).ThenBy(x => x.User))
@@ -30,7 +30,10 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
                 await RevokeBrowserGrantsAsync(tenant, user, family, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task WriteCurrentAsync(Guid tenant, string aggregate, CancellationToken cancellationToken = default)
+    public Task WriteCurrentAsync(Guid tenant, string aggregate, CancellationToken cancellationToken = default)
+        => WriteCurrentCoreAsync(tenant, aggregate, false, cancellationToken);
+
+    private async Task WriteCurrentCoreAsync(Guid tenant, string aggregate, bool forceRevision, CancellationToken cancellationToken)
     {
         RequireTransaction();
         if (!runtime.Options.Tenants.ContainsKey(tenant)) return;
@@ -92,7 +95,7 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
             deleted = !await db.Sys_Roles.IgnoreQueryFilters().AnyAsync(x => x.TenantId == tenant && x.RoleId == roleId, cancellationToken).ConfigureAwait(false);
         }
         else throw new InvalidOperationException("C02_UNKNOWN_IDENTITY_AGGREGATE");
-        await WriteDataAsync(tenant, aggregate, type, data, deleted, previous, cancellationToken).ConfigureAwait(false);
+        await WriteDataAsync(tenant, aggregate, type, data, deleted, previous, cancellationToken, forceRevision).ConfigureAwait(false);
     }
 
     internal async Task WriteServicePrincipalAsync(ServicePrincipalIdentityData data, bool deleted, CancellationToken ct)
@@ -155,13 +158,13 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
     }
 
     private async Task WriteDataAsync(Guid tenant, string aggregate, string type, object value, bool deleted,
-        CrmIdentitySnapshot? previous, CancellationToken cancellationToken)
+        CrmIdentitySnapshot? previous, CancellationToken cancellationToken, bool forceRevision = false)
     {
         var data = JsonSerializer.SerializeToNode(value, value.GetType(), IdentityEventContracts.Json)!.AsObject();
         data["deleted"] = deleted;
         data["version"] = previous?.Version ?? 0;
         var comparable = data.ToJsonString(IdentityEventContracts.Json);
-        if (previous is not null && previous.IsDeleted == deleted && previous.EventType == type &&
+        if (!forceRevision && previous is not null && previous.IsDeleted == deleted && previous.EventType == type &&
             previous.PayloadSha256 == IdentityEventContracts.Hash(Encoding.UTF8.GetBytes(comparable))) return;
         var version = checked((previous?.Version ?? 0) + 1);
         data["version"] = version;

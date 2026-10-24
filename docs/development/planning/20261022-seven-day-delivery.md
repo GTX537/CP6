@@ -1120,3 +1120,13 @@ W115 Main527/Handoff91已合并finish，准确分支删除、席位释放，实�
 231项唯一相关本地成功检查：Main118、CRM持锁39/来源基线发布26/兼容单元48；原始Main PostgreSQL服务快照实际跨仓接收、发布与持锁。必需范围无跳过；另1项历史整数角色导出检查未执行且不计通过；误选整类探索批次中止，不宣称全量通过。 [交付](../dispatch/20261024-wave116/README.md)。
 Handoff [PR92](https://github.com/GTX537/CP6.AI-Handoff/pull/92)已采用 `d43a26d8f43a463bad58d60d72dc4bb92a59fcf7`，准确分支删除、DEV-2 finish释放。 Main最终合并/finish尚待；当前START后墙钟46.40分钟，原估110–170分钟，最终按Main finish计，不叠加各仓。前期只读调查不包含在此登记计时内。
 完整H01/公开提交继续，七天ACTIVE。
+
+## W117完整公开提交/H01执行窗口
+
+W116收尾证据已核对。真实服务签名上下文40–65分钟，CRM完整提交事务与HTTP120–190分钟，验证/集中审查/三仓收尾45–70分钟；合计205–325分钟。[范围](../dispatch/20261024-wave117/README.md)。目标ACTIVE，局部窗口不代替正式验收。
+
+## W117实际公开提交/H01事务
+
+122项唯一相关本地成功检查：Main4、CRM118。真实Main PostgreSQL/TLS控制器到独立CRM完整提交；正常/待审/最大Unicode与精确版本、稳定重放/竞争/响应丢失/限额、权限来源、到期/取消/晚期失败回滚均验证。相关读取和Node BFF回归通过；无必需跳过。 [交付](../dispatch/20261024-wave117/README.md)。
+Handoff [PR93](https://github.com/GTX537/CP6.AI-Handoff/pull/93)已采用 `eb641466f17e818b009f37e1fbd18b0ab83d9fb1`，准确分支删除、DEV-2 finish释放。 Main最终合并/finish尚待；当前START后墙钟97.50分钟，原估205–325分钟，最终按Main finish计，不叠加各仓。前期只读调查不包含在此登记计时内。
+公开POST BFF/页面继续，七天ACTIVE。
