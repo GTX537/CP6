@@ -1,8 +1,8 @@
 # AI 可读变更日志
 
-## 2026-10-24：W98实际MOVE页面候选通过
+## 2026-10-24：W98实际MOVE页面已采用
 
-1项原生PostgreSQL实际HTTP＋29项Vue/client定向检查通过，vue-tsc通过，无最终跳过；1项修复前MOVE入口红灯保留。[单份交付](../development/evidence/W98-01/DELIVERY.md)。实际库存行MOVE、精确文本数量、当前动作／原键恢复已实现，复用W96恢复与W97服务端；PG停止，待正常Main/Handoff采用及分支/席位finish。正式业务验收不提升，七天ACTIVE。
+Main [产品PR](https://github.com/GTX537/CP6/pull/509) source `98a4d468c264bcc050e2272ec798c6b3b6ab4072`进入远端main `0b8a3ee014e7bcfb1fe58adf5b2792f4e61a7992`，15路径一致；1原生PG/HTTP＋29Vue/client和类型检查通过，[单份交付](../development/evidence/W98-01/DELIVERY.md)。Handoff [PR](https://github.com/GTX537/CP6.AI-Handoff/pull/74)已采用并删除准确分支、finish释放席位；Main同任务最后状态PR/finish待完成。1个PG停止保留，无Actions／既有库迁移／部署。当前11.47min，原估25–35min＋前置约2min，最终据finish计。实际ADJ/MOVE均已采用，正式Stock/TRANSFER验收保持未完成；七天ACTIVE，继续Site/Form Owner直接前置。
 
 ## 2026-10-24：W97 MOVE保管属性修复已采用
 
