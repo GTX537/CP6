@@ -160047,6 +160047,16 @@
       "date": "2026-10-24",
       "change": "W93 Main495 exact adoption and Handoff68 verified;25.NET/42Vue/typecheck passed. Handoff branch deleted/seat released; Main final finish pending. Full acceptances unchanged.",
       "evidence": "https://github.com/GTX537/CP6/blob/384305513c9d1c8afbf22e84c044d742a8c62efd/docs/development/evidence/W93-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-24",
+      "change": "W93 Main495/496 Handoff68 Issue494 fully closed19.73min; branches deleted seats released. W94 Issue497 packaging current Owner and actual page admitted. Formal OUT and W89 authorization remain pending.",
+      "evidence": "docs/development/dispatch/20261024-wave94/README.md"
+    },
+    {
+      "date": "2026-10-24",
+      "change": "W94 Issue497 candidate verified:29 unique .NET/15Vue/typecheck; packaging current Owner and actual UI. Formal OUT and W89 authorization pending.",
+      "evidence": "docs/development/evidence/W94-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -162618,55 +162628,44 @@
       "card_anchor": "wp02-03",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W93-01",
+        "chat_label": "COORD / W94-01",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/bug-494-routing-owner",
+        "branch": "codex/bug-497-packaging-owner",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-24T01:58:35.304572+00:00",
-        "baseline_sha": "5f983ff53a542f9bc67521fdc048a44cf56cb214",
-        "entry_evidence": "docs/development/dispatch/20261024-wave93/README.md",
-        "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
-        "dispatch_scope": "W93_01",
+        "claimed_at": "2026-10-24T02:24:35.898548+00:00",
+        "baseline_sha": "74edef400c18e88ceba133600368637df09ffef5",
+        "entry_evidence": "docs/development/dispatch/20261024-wave94/README.md",
+        "phase": "CANDIDATE_VERIFIED",
+        "dispatch_scope": "W94_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
         "actual_start_ref": {
-          "commit": "b3b2c7860cc0f38116229c900f8a054cc28389d8",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T015835Z-wave93-start/MESSAGE.md",
-          "at": "2026-10-24T01:58:35.304572+00:00"
+          "commit": "cd193d709c6a1c55f505245788fc77418275985f",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T022435Z-wave94-start/MESSAGE.md",
+          "at": "2026-10-24T02:24:35.898548+00:00"
         },
         "reserved_write_resources": [
-          "Main:WMS-RSV-01",
-          "Main:routing-owner",
-          "Main:outbound-resolver",
+          "Main:WMS-OUT-01",
+          "Main:packaging-owner",
           "Main:independent-owner",
           "Main:IAM-catalog"
         ],
         "reserved_postgresql_ports": [
           55435
         ],
-        "handoff_branch": "codex/w93-handoff",
+        "handoff_branch": "codex/w94-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": true,
+        "candidate_integrated": false,
         "resources_released": false,
         "full_task_completed": false,
-        "issue": "https://github.com/GTX537/CP6/issues/494",
-        "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/384305513c9d1c8afbf22e84c044d742a8c62efd/docs/development/evidence/W93-01/DELIVERY.md",
-        "source_candidate_sha": "b4dd45c3c2823767b3bcdc5cd1b919c501aed642",
-        "remote_main_sha": "384305513c9d1c8afbf22e84c044d742a8c62efd",
-        "pull_request": "https://github.com/GTX537/CP6/pull/495",
-        "handoff_delivery_ref": {
-          "commit": "6427f8a9b375d59016dd9a185ac5e19189982497",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T021301Z-wave93-delivery/MESSAGE.md",
-          "at": "2026-10-24T02:13:01.470420+00:00",
-          "base": "codex/t02c-entry-handoff-20260921",
-          "branch": "codex/w93-handoff"
-        }
+        "issue": "https://github.com/GTX537/CP6/issues/497",
+        "worker_delivery_ref": "docs/development/evidence/W94-01/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -167241,6 +167240,58 @@
             "branch": "codex/w92-handoff"
           },
           "lifecycle_complete": true
+        },
+        {
+          "chat_label": "COORD / W93-01",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/bug-494-routing-owner",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-10-24T01:58:35.304572+00:00",
+          "baseline_sha": "5f983ff53a542f9bc67521fdc048a44cf56cb214",
+          "entry_evidence": "docs/development/dispatch/20261024-wave93/README.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "W93_01",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "actual_start_ref": {
+            "commit": "b3b2c7860cc0f38116229c900f8a054cc28389d8",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T015835Z-wave93-start/MESSAGE.md",
+            "at": "2026-10-24T01:58:35.304572+00:00"
+          },
+          "reserved_write_resources": [
+            "Main:WMS-RSV-01",
+            "Main:routing-owner",
+            "Main:outbound-resolver",
+            "Main:independent-owner",
+            "Main:IAM-catalog"
+          ],
+          "reserved_postgresql_ports": [
+            55435
+          ],
+          "handoff_branch": "codex/w93-handoff",
+          "actions_authorized": false,
+          "deployment_authorized": false,
+          "existing_database_migration_authorized": false,
+          "worker_delivery_received": true,
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "resources_released": true,
+          "full_task_completed": false,
+          "issue": "https://github.com/GTX537/CP6/issues/494",
+          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/384305513c9d1c8afbf22e84c044d742a8c62efd/docs/development/evidence/W93-01/DELIVERY.md",
+          "source_candidate_sha": "b4dd45c3c2823767b3bcdc5cd1b919c501aed642",
+          "remote_main_sha": "384305513c9d1c8afbf22e84c044d742a8c62efd",
+          "pull_request": "https://github.com/GTX537/CP6/pull/495",
+          "handoff_delivery_ref": {
+            "commit": "6427f8a9b375d59016dd9a185ac5e19189982497",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T021301Z-wave93-delivery/MESSAGE.md",
+            "at": "2026-10-24T02:13:01.470420+00:00",
+            "base": "codex/t02c-entry-handoff-20260921",
+            "branch": "codex/w93-handoff"
+          },
+          "lifecycle_complete": true
         }
       ],
       "wave13_delivery": {
@@ -168108,7 +168159,7 @@
         "business_acceptance": "NOT_RUN",
         "adopted_scope": "Current routing original records, actual UUID department scopes and original Outbound transaction participant; formal RT/RSV policy adoption unproven",
         "issue": "https://github.com/GTX537/CP6/issues/494",
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "source_candidate_sha": "b4dd45c3c2823767b3bcdc5cd1b919c501aed642",
         "remote_main_sha": "384305513c9d1c8afbf22e84c044d742a8c62efd",
         "pull_request": "https://github.com/GTX537/CP6/pull/495",
@@ -168123,11 +168174,31 @@
           "handoff_branch_deleted": true,
           "handoff_seat_released": true,
           "main_task": "CP6:BUG-494-ROUTING-OWNER",
-          "main_finish_required": true,
-          "main_seat_released": false,
-          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave93-final-verification.json"
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave93-final-verification.json",
+          "main_branch_deleted": true,
+          "observed_at": "2026-10-24T02:17:20.312281+00:00",
+          "close_pr": "https://github.com/GTX537/CP6/pull/496"
         },
-        "test_data_disposition": "Three owned PostgreSQL clusters stopped; data and logs retained"
+        "test_data_disposition": "Three owned PostgreSQL clusters stopped; data and logs retained",
+        "branches_deleted": true,
+        "seats_released": true,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave93-final-verification.json",
+        "final_main": "74edef400c18e88ceba133600368637df09ffef5",
+        "close_pr": "https://github.com/GTX537/CP6/pull/496",
+        "issue_state": "CLOSED",
+        "actual_agent_minutes": 19.73
+      },
+      "wave94_delivery": {
+        "status": "CANDIDATE_VERIFIED",
+        "report": "docs/development/evidence/W94-01/DELIVERY.md",
+        "validation": "29独立.NET（15原生PG、13既有InMemory出库回归、1两租户权限种子）及15Vue通过，无跳过；相关构建和vue-tsc通过，去重44项",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "adopted_scope": "Current package original records and original Outbound range; actual UI intent protection; formal OUT adoption unproven",
+        "issue": "https://github.com/GTX537/CP6/issues/497",
+        "lifecycle_complete": false
       }
     },
     {
@@ -188288,11 +188359,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261024-wave93",
-      "path": "docs/development/dispatch/20261024-wave93/README.md",
-      "baseline_sha": "5f983ff53a542f9bc67521fdc048a44cf56cb214",
-      "registered_at": "2026-10-24T01:58:35.304572+00:00",
-      "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
+      "id": "20261024-wave94",
+      "path": "docs/development/dispatch/20261024-wave94/README.md",
+      "baseline_sha": "74edef400c18e88ceba133600368637df09ffef5",
+      "registered_at": "2026-10-24T02:24:35.898548+00:00",
+      "phase": "CANDIDATE_VERIFIED",
       "assigned_chats": [
         "COORD"
       ],
@@ -188304,105 +188375,44 @@
       ],
       "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": true,
-      "product_integrated": true,
+      "windows_closed": false,
+      "product_integrated": false,
       "windows": [
         {
-          "id": "W93-01",
+          "id": "W94-01",
           "task_id": "WP02-03",
-          "title": "出库路由管理独立Owner与内部参与门",
-          "lifecycle_task": "BUG-494-ROUTING-OWNER",
+          "title": "出货包装独立查询Owner和实际页面",
+          "lifecycle_task": "BUG-497-PACKAGING-OWNER",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "CLOSED",
+          "phase": "CANDIDATE_VERIFIED",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "b3b2c7860cc0f38116229c900f8a054cc28389d8",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T015835Z-wave93-start/MESSAGE.md",
-            "at": "2026-10-24T01:58:35.304572+00:00"
+            "commit": "cd193d709c6a1c55f505245788fc77418275985f",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T022435Z-wave94-start/MESSAGE.md",
+            "at": "2026-10-24T02:24:35.898548+00:00"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/bug-494-routing-owner",
-          "planned_scope_ref": "docs/development/dispatch/20261024-wave93/README.md",
+          "branch": "codex/bug-497-packaging-owner",
+          "planned_scope_ref": "docs/development/dispatch/20261024-wave94/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/384305513c9d1c8afbf22e84c044d742a8c62efd/docs/development/evidence/W93-01/DELIVERY.md",
-          "validation": "25独立.NET（19原生PG、5既有InMemory路由/分配回归、1两租户权限种子）及42Vue通过，无跳过；相关构建和vue-tsc通过，实际去重67项",
-          "runtime_resources_released": true,
-          "candidate_integrated": true,
-          "integration": {
-            "result": "PASS",
-            "repository": "GTX537/CP6",
-            "source": "b4dd45c3c2823767b3bcdc5cd1b919c501aed642",
-            "main": "384305513c9d1c8afbf22e84c044d742a8c62efd",
-            "target": "main",
-            "pr": "https://github.com/GTX537/CP6/pull/495",
-            "paths": [
-              "CP6.Core/Services/Integration/OperationsAccessV1.Routing.cs",
-              "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
-              "CP6.Core/Services/Sys/IamStandaloneDepartmentMappingV1.cs",
-              "CP6.Core/Services/Wms/IOutboundRoutingService.cs",
-              "CP6.Core/Services/Wms/OutboundRoutingOwnerV1.cs",
-              "CP6.Core/Services/Wms/OutboundRoutingService.cs",
-              "CP6.Core/Services/Wms/OutboundService.Owner.cs",
-              "CP6.Core/Services/Wms/OutboundService.cs",
-              "CP6.Entity/DTOs/Wms/OutboundRoutingOwnerV1.cs",
-              "CP6.Persistence.PostgreSql/Migrations/Core/20261024021500_RoutingDepartmentOwnerV1.cs",
-              "CP6.Tests/Erp/OutboundRoutingOwnerPostgreSqlTests.cs",
-              "CP6.Tests/MesPermissionSeedTests.cs",
-              "CP6.WebApi/Controllers/Wms/OutboundRoutingController.cs",
-              "CP6.WebApi/Program.cs",
-              "CP6.WebApi/Seed/WmsPermissionSeed.cs",
-              "cp6.web/src/api/sys/iam.ts",
-              "cp6.web/src/api/wms/routingOwner.ts",
-              "cp6.web/src/composables/useWarehouseOwnerChoices.ts",
-              "cp6.web/src/types/wms/routingOwner.ts",
-              "cp6.web/src/views/pms/StandaloneDepartmentMappings.spec.ts",
-              "cp6.web/src/views/pms/StandaloneDepartmentMappings.vue",
-              "cp6.web/src/views/wms/OutboundRoutingOwner.spec.ts",
-              "cp6.web/src/views/wms/OutboundRoutingView.vue",
-              "docs/development/07-detailed-tasks.md",
-              "docs/development/09-parallel-development.md",
-              "docs/development/dispatch/20261024-wave93/README.md",
-              "docs/development/evidence/W93-01/DELIVERY.md",
-              "docs/development/planning/20261022-seven-day-delivery.md",
-              "docs/development/roadmap.json",
-              "docs/project-memory/05-Completed.md",
-              "docs/project-memory/06-Todo.md",
-              "docs/project-memory/CHANGELOG-AI.md",
-              "docs/project-memory/PROJECT_STATE.md"
-            ],
-            "observed_at": "2026-10-24T02:12:43.538264+00:00"
-          },
-          "handoff_delivery_ref": {
-            "commit": "6427f8a9b375d59016dd9a185ac5e19189982497",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T021301Z-wave93-delivery/MESSAGE.md",
-            "at": "2026-10-24T02:13:01.470420+00:00",
-            "base": "codex/t02c-entry-handoff-20260921",
-            "branch": "codex/w93-handoff"
-          },
-          "resources_released": false,
-          "lifecycle_snapshot": {
-            "handoff_branch_deleted": true,
-            "handoff_seat_released": true,
-            "main_task": "CP6:BUG-494-ROUTING-OWNER",
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave93-final-verification.json"
-          }
+          "worker_delivery_ref": "docs/development/evidence/W94-01/DELIVERY.md",
+          "validation": "29独立.NET（15原生PG、13既有InMemory出库回归、1两租户权限种子）及15Vue通过，无跳过；相关构建和vue-tsc通过，去重44项",
+          "runtime_resources_released": true
         }
       ],
       "horizon": {
-        "started_at": "2026-10-24T01:56:50.559476+00:00",
+        "started_at": "2026-10-24T02:23:41.135489+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          45,
-          70
+          40,
+          65
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -188410,30 +188420,8 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Finish same-branch Main ledger PR/lifecycle, close Issue494 on proof; continue seven-day remaining real prerequisites",
-      "validation": "25独立.NET（19原生PG、5既有InMemory路由/分配回归、1两租户权限种子）及42Vue通过，无跳过；相关构建和vue-tsc通过，实际去重67项",
-      "handoff_delivery_ref": {
-        "commit": "6427f8a9b375d59016dd9a185ac5e19189982497",
-        "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T021301Z-wave93-delivery/MESSAGE.md",
-        "at": "2026-10-24T02:13:01.470420+00:00",
-        "base": "codex/t02c-entry-handoff-20260921",
-        "branch": "codex/w93-handoff"
-      },
-      "handoff_integration": {
-        "result": "PASS",
-        "repository": "GTX537/CP6.AI-Handoff",
-        "source": "6427f8a9b375d59016dd9a185ac5e19189982497",
-        "main": "fd2548aba6d1c8b29279cd7fb5917eb4104b68ac",
-        "target": "codex/t02c-entry-handoff-20260921",
-        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/68",
-        "paths": [
-          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T015835Z-wave93-start/MESSAGE.md",
-          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T021301Z-wave93-delivery/MESSAGE.md",
-          "handoffs/CP6-DEV-20261012/waves/20261024-wave93.md"
-        ],
-        "observed_at": "2026-10-24T02:13:45.805704+00:00"
-      },
-      "lifecycle_complete": false
+      "next_action": "Main adoption, Handoff delivery, same-task finish; full goal continues; W89 confirmation pending",
+      "validation": "29独立.NET（15原生PG、13既有InMemory出库回归、1两租户权限种子）及15Vue通过，无跳过；相关构建和vue-tsc通过，去重44项"
     },
     "wave_history": [
       {
@@ -202581,6 +202569,162 @@
         "branches_deleted": true,
         "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave92-final-verification.json",
         "actual_agent_minutes": 25.62
+      },
+      {
+        "id": "20261024-wave93",
+        "path": "docs/development/dispatch/20261024-wave93/README.md",
+        "baseline_sha": "5f983ff53a542f9bc67521fdc048a44cf56cb214",
+        "registered_at": "2026-10-24T01:58:35.304572+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W93-01",
+            "task_id": "WP02-03",
+            "title": "出库路由管理独立Owner与内部参与门",
+            "lifecycle_task": "BUG-494-ROUTING-OWNER",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "b3b2c7860cc0f38116229c900f8a054cc28389d8",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T015835Z-wave93-start/MESSAGE.md",
+              "at": "2026-10-24T01:58:35.304572+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/bug-494-routing-owner",
+            "planned_scope_ref": "docs/development/dispatch/20261024-wave93/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/384305513c9d1c8afbf22e84c044d742a8c62efd/docs/development/evidence/W93-01/DELIVERY.md",
+            "validation": "25独立.NET（19原生PG、5既有InMemory路由/分配回归、1两租户权限种子）及42Vue通过，无跳过；相关构建和vue-tsc通过，实际去重67项",
+            "runtime_resources_released": true,
+            "candidate_integrated": true,
+            "integration": {
+              "result": "PASS",
+              "repository": "GTX537/CP6",
+              "source": "b4dd45c3c2823767b3bcdc5cd1b919c501aed642",
+              "main": "384305513c9d1c8afbf22e84c044d742a8c62efd",
+              "target": "main",
+              "pr": "https://github.com/GTX537/CP6/pull/495",
+              "paths": [
+                "CP6.Core/Services/Integration/OperationsAccessV1.Routing.cs",
+                "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
+                "CP6.Core/Services/Sys/IamStandaloneDepartmentMappingV1.cs",
+                "CP6.Core/Services/Wms/IOutboundRoutingService.cs",
+                "CP6.Core/Services/Wms/OutboundRoutingOwnerV1.cs",
+                "CP6.Core/Services/Wms/OutboundRoutingService.cs",
+                "CP6.Core/Services/Wms/OutboundService.Owner.cs",
+                "CP6.Core/Services/Wms/OutboundService.cs",
+                "CP6.Entity/DTOs/Wms/OutboundRoutingOwnerV1.cs",
+                "CP6.Persistence.PostgreSql/Migrations/Core/20261024021500_RoutingDepartmentOwnerV1.cs",
+                "CP6.Tests/Erp/OutboundRoutingOwnerPostgreSqlTests.cs",
+                "CP6.Tests/MesPermissionSeedTests.cs",
+                "CP6.WebApi/Controllers/Wms/OutboundRoutingController.cs",
+                "CP6.WebApi/Program.cs",
+                "CP6.WebApi/Seed/WmsPermissionSeed.cs",
+                "cp6.web/src/api/sys/iam.ts",
+                "cp6.web/src/api/wms/routingOwner.ts",
+                "cp6.web/src/composables/useWarehouseOwnerChoices.ts",
+                "cp6.web/src/types/wms/routingOwner.ts",
+                "cp6.web/src/views/pms/StandaloneDepartmentMappings.spec.ts",
+                "cp6.web/src/views/pms/StandaloneDepartmentMappings.vue",
+                "cp6.web/src/views/wms/OutboundRoutingOwner.spec.ts",
+                "cp6.web/src/views/wms/OutboundRoutingView.vue",
+                "docs/development/07-detailed-tasks.md",
+                "docs/development/09-parallel-development.md",
+                "docs/development/dispatch/20261024-wave93/README.md",
+                "docs/development/evidence/W93-01/DELIVERY.md",
+                "docs/development/planning/20261022-seven-day-delivery.md",
+                "docs/development/roadmap.json",
+                "docs/project-memory/05-Completed.md",
+                "docs/project-memory/06-Todo.md",
+                "docs/project-memory/CHANGELOG-AI.md",
+                "docs/project-memory/PROJECT_STATE.md"
+              ],
+              "observed_at": "2026-10-24T02:12:43.538264+00:00"
+            },
+            "handoff_delivery_ref": {
+              "commit": "6427f8a9b375d59016dd9a185ac5e19189982497",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T021301Z-wave93-delivery/MESSAGE.md",
+              "at": "2026-10-24T02:13:01.470420+00:00",
+              "base": "codex/t02c-entry-handoff-20260921",
+              "branch": "codex/w93-handoff"
+            },
+            "resources_released": true,
+            "lifecycle_snapshot": {
+              "handoff_branch_deleted": true,
+              "handoff_seat_released": true,
+              "main_task": "CP6:BUG-494-ROUTING-OWNER",
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave93-final-verification.json",
+              "main_branch_deleted": true,
+              "observed_at": "2026-10-24T02:17:20.312281+00:00",
+              "close_pr": "https://github.com/GTX537/CP6/pull/496"
+            },
+            "lifecycle_complete": true
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-24T01:56:50.559476+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            45,
+            70
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W94 packaging current Owner and UI; W89 confirmation pending",
+        "validation": "25独立.NET（19原生PG、5既有InMemory路由/分配回归、1两租户权限种子）及42Vue通过，无跳过；相关构建和vue-tsc通过，实际去重67项",
+        "handoff_delivery_ref": {
+          "commit": "6427f8a9b375d59016dd9a185ac5e19189982497",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T021301Z-wave93-delivery/MESSAGE.md",
+          "at": "2026-10-24T02:13:01.470420+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w93-handoff"
+        },
+        "handoff_integration": {
+          "result": "PASS",
+          "repository": "GTX537/CP6.AI-Handoff",
+          "source": "6427f8a9b375d59016dd9a185ac5e19189982497",
+          "main": "fd2548aba6d1c8b29279cd7fb5917eb4104b68ac",
+          "target": "codex/t02c-entry-handoff-20260921",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/68",
+          "paths": [
+            "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T015835Z-wave93-start/MESSAGE.md",
+            "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T021301Z-wave93-delivery/MESSAGE.md",
+            "handoffs/CP6-DEV-20261012/waves/20261024-wave93.md"
+          ],
+          "observed_at": "2026-10-24T02:13:45.805704+00:00"
+        },
+        "lifecycle_complete": true,
+        "resources_released": true,
+        "branches_deleted": true,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave93-final-verification.json",
+        "actual_agent_minutes": 19.73
       }
     ],
     "development_priority": {
@@ -202655,10 +202799,10 @@
         },
         {
           "id": "D2",
-          "phase": "PARTIALLY_ADOPTED",
+          "phase": "IMPLEMENTING",
           "full_business_acceptance": false,
-          "current_window": "W93-01",
-          "prerequisite_adjustment": "Routing management current Owner and internal Outbound participation; formal policy/Source/Selector adoption separate",
+          "current_window": "W94-01",
+          "prerequisite_adjustment": "Current package Owner and original Outbound range, formal Source/Stock/Package adoption separate",
           "adopted_window": "W42-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/395",
           "report": "docs/development/evidence/WP02-03/standalone-department/DELIVERY.md",
@@ -202667,7 +202811,7 @@
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "Current routing Owner and original Outbound transaction participation adopted; full RT/RSV WP10-07/08 remains separate. Continue remaining original Owners and D5/D6 real prerequisites."
+          "next_action": "Complete current packaging read and UI then continue full goal prerequisites"
         },
         {
           "id": "D3",
