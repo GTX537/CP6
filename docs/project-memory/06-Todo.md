@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-24：W113公开回执独立Owner
+
+CRM [PR140](https://github.com/GTX537/CP6.CRM/pull/140)已采用 `f5afba3e9bfb91119ca1d62bc5ff7bec3d121a51`；独立公开回执HTTP Owner与受保护Cookie、原PGv4读取事务及实际BFF接入。92项唯一相关本地检查通过、0跳过：62项PG/HTTP、30项Web与相关类型检查；真实Node BFF→API→PG回执和原表单，以及原配置写入/重放通过。首次缺失Node产物及新增Web夹具合同错误已修复并定向重验，其他有效成功复用，失败记录保留。 [单份交付](../development/dispatch/20261024-wave113/README.md)。CRM准确分支删除、DEV-2释放；Handoff [PR89](https://github.com/GTX537/CP6.AI-Handoff/pull/89)已采用 `5aac8893ba0917e623459b8f97fb17ea597b030e`，准确分支删除、固定DEV-2 finish释放。 Main文档PR/finish继续，墙钟26.13min（原估50–80）。自有PG停止/缓存保留，无Actions/迁移/部署。消费重放、service/H01最终权限、完整提交事务接入、完整公开提交待后继；24/375、0/125、247NOT_RUN不变，七天ACTIVE。
+
 ## 2026-10-24：W112原同意与回执图
 
 CRM [PR139](https://github.com/GTX537/CP6.CRM/pull/139)已采用 `3f12f94215c1b7beec182312959ee4e39c77bd4f`；新库PGv4原图同意/回执绑定、延迟完整性、验证读取和不可逆隐私/撤销，原父行串行化两种竞争顺序。82项唯一相关本地检查通过、0跳过：32项真实PostgreSQL（19项本轮事实/边界、13项原v1图回归），50项旧模型/回执codec回归。一次集中审查发现回执输出合同风险，修复后定向复验5项；其他有效结果复用，失败记录保留。 [单份交付](../development/dispatch/20261024-wave112/README.md)。CRM准确分支删除、DEV-2释放；Handoff [PR88](https://github.com/GTX537/CP6.AI-Handoff/pull/88)已采用 `bceba80f0bcc2c5370c50b6069a981426dcfb27d`，准确分支删除、固定DEV-2 finish释放。 Main文档PR/finish继续，墙钟25.94min（原估60–100）。自有PG停止/缓存保留，无Actions/迁移/部署。消费重放、service/H01最终权限、宿主隔离、完整公开提交待后继；24/375、0/125、247NOT_RUN不变，七天ACTIVE。
