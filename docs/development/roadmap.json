@@ -159987,6 +159987,16 @@
       "date": "2026-10-24",
       "change": "W89 CRM implementation not started: automatic approval rejected combined workspace handoff before execution. Save-only Handoff deferred finish succeeded, branch/workspace retained and DEV-2 released. Main coordination and read-only design continue; full acceptance counts unchanged.",
       "evidence": "docs/development/dispatch/20261024-wave89/README.md"
+    },
+    {
+      "date": "2026-10-24",
+      "change": "W89 CRM held inspection pending explicit workspace confirmation; original branches retained and seats released, Main484 docs adopted. W90 Issue485 Kitting Owner admitted in unchanged Main/Handoff seats, no bind bypass.",
+      "evidence": "docs/development/dispatch/20261024-wave90/README.md"
+    },
+    {
+      "date": "2026-10-24",
+      "change": "W90 Issue485 candidate verified:24 unique NET/25Vue and typecheck; current independent Kitting Owner and old write gate; full formal Composition and W89 workspace approval remain pending.",
+      "evidence": "docs/development/evidence/W90-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -162558,53 +162568,43 @@
       "card_anchor": "wp02-03",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W88-01",
+        "chat_label": "COORD / W90-01",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/bug-481-vmi-owner",
+        "branch": "codex/bug-485-kitting-owner",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-23T23:49:55.475022+00:00",
-        "baseline_sha": "760fdd91e22d6a81fe66429f3d040f651bd7e71a",
-        "entry_evidence": "docs/development/dispatch/20261023-wave88/README.md",
-        "phase": "CLOSED",
-        "dispatch_scope": "W88_01",
+        "claimed_at": "2026-10-24T00:44:59.470277+00:00",
+        "baseline_sha": "d65abaf82b6b0ac339d0fc3b6ce945dfc82ddf4f",
+        "entry_evidence": "docs/development/dispatch/20261024-wave90/README.md",
+        "phase": "CANDIDATE_VERIFIED",
+        "dispatch_scope": "W90_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
         "actual_start_ref": {
-          "commit": "b7164edf23f2b0b2cbe9faf98d62a88fbe0585bd",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T234955Z-wave88-start/MESSAGE.md",
-          "at": "2026-10-23T23:49:55.475022+00:00"
+          "commit": "c01f98f54b264636db7c15329ed59df06ecb6c64",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T004459Z-wave90-start/MESSAGE.md",
+          "at": "2026-10-24T00:44:59.470277+00:00"
         },
         "reserved_write_resources": [
-          "Main:VMI-Owner",
-          "Main:operations-current-authority",
-          "Main:standalone-department-mapping"
+          "Main:WMS-KIT-01",
+          "Main:independent-owner",
+          "Main:IAM-standalone-catalog"
         ],
         "reserved_postgresql_ports": [
           55435
         ],
-        "handoff_branch": "codex/w88-handoff",
+        "handoff_branch": "codex/w90-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": true,
-        "resources_released": true,
+        "candidate_integrated": false,
+        "resources_released": false,
         "full_task_completed": false,
-        "issue": "https://github.com/GTX537/CP6/issues/481",
-        "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/73395fa783435c2b2bf6f09b218e135bf51177fe/docs/development/evidence/W88-01/DELIVERY.md",
-        "source_candidate_sha": "e23c73c0c3eb941a258fb59c2a7cd50dc6a9634c",
-        "remote_main_sha": "73395fa783435c2b2bf6f09b218e135bf51177fe",
-        "pull_request": "https://github.com/GTX537/CP6/pull/482",
-        "handoff_delivery_ref": {
-          "commit": "833bb087a229f4b6710e0d0db877f49747fc3c56",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T001042Z-wave88-delivery/MESSAGE.md",
-          "at": "2026-10-24T00:10:42.241378+00:00",
-          "base": "codex/t02c-entry-handoff-20260921",
-          "branch": "codex/w88-handoff"
-        }
+        "issue": "https://github.com/GTX537/CP6/issues/485",
+        "worker_delivery_ref": "docs/development/evidence/W90-01/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -166978,6 +166978,55 @@
             "base": "codex/t02c-entry-handoff-20260921",
             "branch": "codex/w86-handoff"
           }
+        },
+        {
+          "chat_label": "COORD / W88-01",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/bug-481-vmi-owner",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-10-23T23:49:55.475022+00:00",
+          "baseline_sha": "760fdd91e22d6a81fe66429f3d040f651bd7e71a",
+          "entry_evidence": "docs/development/dispatch/20261023-wave88/README.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "W88_01",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "actual_start_ref": {
+            "commit": "b7164edf23f2b0b2cbe9faf98d62a88fbe0585bd",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261023T234955Z-wave88-start/MESSAGE.md",
+            "at": "2026-10-23T23:49:55.475022+00:00"
+          },
+          "reserved_write_resources": [
+            "Main:VMI-Owner",
+            "Main:operations-current-authority",
+            "Main:standalone-department-mapping"
+          ],
+          "reserved_postgresql_ports": [
+            55435
+          ],
+          "handoff_branch": "codex/w88-handoff",
+          "actions_authorized": false,
+          "deployment_authorized": false,
+          "existing_database_migration_authorized": false,
+          "worker_delivery_received": true,
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "resources_released": true,
+          "full_task_completed": false,
+          "issue": "https://github.com/GTX537/CP6/issues/481",
+          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/73395fa783435c2b2bf6f09b218e135bf51177fe/docs/development/evidence/W88-01/DELIVERY.md",
+          "source_candidate_sha": "e23c73c0c3eb941a258fb59c2a7cd50dc6a9634c",
+          "remote_main_sha": "73395fa783435c2b2bf6f09b218e135bf51177fe",
+          "pull_request": "https://github.com/GTX537/CP6/pull/482",
+          "handoff_delivery_ref": {
+            "commit": "833bb087a229f4b6710e0d0db877f49747fc3c56",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T001042Z-wave88-delivery/MESSAGE.md",
+            "at": "2026-10-24T00:10:42.241378+00:00",
+            "base": "codex/t02c-entry-handoff-20260921",
+            "branch": "codex/w88-handoff"
+          }
         }
       ],
       "wave13_delivery": {
@@ -167719,6 +167768,16 @@
         "final_main_sha": "e86d5d3f34080c5f3694ed8f74e013cf8258210e",
         "branches_deleted": true,
         "seats_released": true
+      },
+      "wave90_delivery": {
+        "status": "CANDIDATE_VERIFIED",
+        "report": "docs/development/evidence/W90-01/DELIVERY.md",
+        "validation": "24独立.NET用例（16原生PG、7既有非PG套件行为、1两租户种子）及25Vue用例通过，无跳过；相关构建和vue-tsc通过，定向补验与原组去重合计49项",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "adopted_scope": "Kitting current legacy recipe and historical order independent Owner, actual Stock transaction disclosure, exact strings and independent UUID mapping; old PG writes fail before effects; full Composition not adopted",
+        "issue": "https://github.com/GTX537/CP6/issues/485",
+        "lifecycle_complete": false
       }
     },
     {
@@ -187879,11 +187938,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261024-wave89",
-      "path": "docs/development/dispatch/20261024-wave89/README.md",
-      "baseline_sha": "e86d5d3f34080c5f3694ed8f74e013cf8258210e",
-      "registered_at": "2026-10-24T00:21:10.533343+00:00",
-      "phase": "AWAITING_WORKSPACE_AUTHORIZATION",
+      "id": "20261024-wave90",
+      "path": "docs/development/dispatch/20261024-wave90/README.md",
+      "baseline_sha": "d65abaf82b6b0ac339d0fc3b6ce945dfc82ddf4f",
+      "registered_at": "2026-10-24T00:44:59.470277+00:00",
+      "phase": "CANDIDATE_VERIFIED",
       "assigned_chats": [
         "COORD"
       ],
@@ -187894,77 +187953,54 @@
         "COORD"
       ],
       "active_implementation_chats": [],
-      "workers_started": false,
+      "workers_started": true,
       "windows_closed": false,
       "product_integrated": false,
       "windows": [
         {
-          "id": "W89-01",
-          "task_id": "WP02-09",
-          "title": "Held PostgreSQL current identity/session inspection",
+          "id": "W90-01",
+          "task_id": "WP02-03",
+          "title": "套件主数据及历史订单独立Owner",
+          "lifecycle_task": "BUG-485-KITTING-OWNER",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "AWAITING_WORKSPACE_AUTHORIZATION",
+          "phase": "CANDIDATE_VERIFIED",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "e389658b10116fc1aab6f34a63b083f7d5dfe90b",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-09/messages/20261024T002110Z-wave89-start/MESSAGE.md",
-            "at": "2026-10-24T00:21:10.533343+00:00"
+            "commit": "c01f98f54b264636db7c15329ed59df06ecb6c64",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T004459Z-wave90-start/MESSAGE.md",
+            "at": "2026-10-24T00:44:59.470277+00:00"
           },
-          "worker_start_received": false,
-          "worker_delivery_received": false,
-          "worktree": "D:\\CP6-worktrees\\dev-2",
-          "branch": "codex/w89-01",
-          "planned_scope_ref": "docs/development/dispatch/20261024-wave89/README.md",
+          "worker_start_received": true,
+          "worker_delivery_received": true,
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "branch": "codex/bug-485-kitting-owner",
+          "planned_scope_ref": "docs/development/dispatch/20261024-wave90/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
           "deployment_authorized": false,
-          "coordination_start_received": true,
-          "actual_crm_start_received": false,
-          "resources_released": true,
-          "workspace_admission": {
-            "action": "Handoff deferred finish + DEV-2 cross-repository bind + CRM start",
-            "outcome": "Automatic approval rejection before execution",
-            "reason": "blocked by policy",
-            "crm_started": false,
-            "product_changes": false,
-            "safer_disposition": "Handoff save-only finish deferred succeeded; physical workspace and branch retained",
-            "handoff_source": "e389658b10116fc1aab6f34a63b083f7d5dfe90b",
-            "handoff_seat_released": true,
-            "confirmation_requested": true,
-            "evidence": "docs/development/dispatch/20261024-wave89/README.md",
-            "observed_at": "2026-10-24T00:30:06.851698+00:00"
-          }
+          "candidate_review_completed": true,
+          "worker_delivery_ref": "docs/development/evidence/W90-01/DELIVERY.md",
+          "validation": "24独立.NET用例（16原生PG、7既有非PG套件行为、1两租户种子）及25Vue用例通过，无跳过；相关构建和vue-tsc通过，定向补验与原组去重合计49项",
+          "runtime_resources_released": true
         }
       ],
       "horizon": {
-        "started_at": "2026-10-24T00:18:59.541973+00:00",
+        "started_at": "2026-10-24T00:43:24.568770+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          40,
-          60
+          45,
+          65
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
       "storage": {
-        "reuse_worktree": "D:\\CP6-worktrees\\dev-2",
+        "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Await explicit workspace replacement confirmation; continue independent Main coordination/read-only design",
-      "workspace_admission": {
-        "action": "Handoff deferred finish + DEV-2 cross-repository bind + CRM start",
-        "outcome": "Automatic approval rejection before execution",
-        "reason": "blocked by policy",
-        "crm_started": false,
-        "product_changes": false,
-        "safer_disposition": "Handoff save-only finish deferred succeeded; physical workspace and branch retained",
-        "handoff_source": "e389658b10116fc1aab6f34a63b083f7d5dfe90b",
-        "handoff_seat_released": true,
-        "confirmation_requested": true,
-        "evidence": "docs/development/dispatch/20261024-wave89/README.md",
-        "observed_at": "2026-10-24T00:30:06.851698+00:00"
-      }
+      "next_action": "Main adoption, Handoff delivery, same-task lifecycle finish; W89 workspace confirmation pending",
+      "validation": "24独立.NET用例（16原生PG、7既有非PG套件行为、1两租户种子）及25Vue用例通过，无跳过；相关构建和vue-tsc通过，定向补验与原组去重合计49项"
     },
     "wave_history": [
       {
@@ -201540,6 +201576,119 @@
         "seats_released": true,
         "final_main_sha": "e86d5d3f34080c5f3694ed8f74e013cf8258210e",
         "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave88-final-verification.json"
+      },
+      {
+        "id": "20261024-wave89",
+        "path": "docs/development/dispatch/20261024-wave89/README.md",
+        "baseline_sha": "e86d5d3f34080c5f3694ed8f74e013cf8258210e",
+        "registered_at": "2026-10-24T00:21:10.533343+00:00",
+        "phase": "AWAITING_WORKSPACE_AUTHORIZATION",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": false,
+        "windows_closed": false,
+        "product_integrated": false,
+        "windows": [
+          {
+            "id": "W89-01",
+            "task_id": "WP02-09",
+            "title": "Held PostgreSQL current identity/session inspection",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "AWAITING_WORKSPACE_AUTHORIZATION",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "e389658b10116fc1aab6f34a63b083f7d5dfe90b",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-09/messages/20261024T002110Z-wave89-start/MESSAGE.md",
+              "at": "2026-10-24T00:21:10.533343+00:00"
+            },
+            "worker_start_received": false,
+            "worker_delivery_received": false,
+            "worktree": "D:\\CP6-worktrees\\dev-2",
+            "branch": "codex/w89-01",
+            "planned_scope_ref": "docs/development/dispatch/20261024-wave89/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "coordination_start_received": true,
+            "actual_crm_start_received": false,
+            "resources_released": true,
+            "workspace_admission": {
+              "action": "Handoff deferred finish + DEV-2 cross-repository bind + CRM start",
+              "outcome": "Automatic approval rejection before execution",
+              "reason": "blocked by policy",
+              "crm_started": false,
+              "product_changes": false,
+              "safer_disposition": "Handoff save-only finish deferred succeeded; physical workspace and branch retained",
+              "handoff_source": "e389658b10116fc1aab6f34a63b083f7d5dfe90b",
+              "handoff_seat_released": true,
+              "confirmation_requested": true,
+              "evidence": "docs/development/dispatch/20261024-wave89/README.md",
+              "observed_at": "2026-10-24T00:30:06.851698+00:00"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-24T00:18:59.541973+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            40,
+            60
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\dev-2",
+          "new_worktrees": 0
+        },
+        "next_action": "Await explicit CRM workspace replacement confirmation; original W89-COORD/HANDOFF retained for resume",
+        "workspace_admission": {
+          "action": "Handoff deferred finish + DEV-2 cross-repository bind + CRM start",
+          "outcome": "Automatic approval rejection before execution",
+          "reason": "blocked by policy",
+          "crm_started": false,
+          "product_changes": false,
+          "safer_disposition": "Handoff save-only finish deferred succeeded; physical workspace and branch retained",
+          "handoff_source": "e389658b10116fc1aab6f34a63b083f7d5dfe90b",
+          "handoff_seat_released": true,
+          "confirmation_requested": true,
+          "evidence": "docs/development/dispatch/20261024-wave89/README.md",
+          "observed_at": "2026-10-24T00:30:06.851698+00:00"
+        },
+        "resources_released": true,
+        "branches_retained": true,
+        "coordination_pr": "https://github.com/GTX537/CP6/pull/484",
+        "coordination_main": "d65abaf82b6b0ac339d0fc3b6ce945dfc82ddf4f",
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "CP6:W89-COORD": {
+            "status": "deferred",
+            "branch": "codex/w89-coord",
+            "finished_head": "b07d3b5c294d7a79fa0c658aec45305cb80bc736",
+            "branch_disposition": "retained-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true,
+            "updated_at": "2026-10-24T00:40:19.625194+00:00"
+          },
+          "CP6.AI-Handoff:W89-HANDOFF": {
+            "status": "deferred",
+            "branch": "codex/w89-handoff",
+            "finished_head": "e389658b10116fc1aab6f34a63b083f7d5dfe90b",
+            "branch_disposition": "retained-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true,
+            "updated_at": "2026-10-24T00:29:05.759962+00:00"
+          }
+        }
       }
     ],
     "development_priority": {
@@ -201598,7 +201747,7 @@
         35,
         55
       ],
-      "current_stage": "D5",
+      "current_stage": "D2",
       "stages": [
         {
           "id": "D1",
@@ -201614,9 +201763,9 @@
         },
         {
           "id": "D2",
-          "phase": "PARTIALLY_ADOPTED",
+          "phase": "IMPLEMENTING",
           "full_business_acceptance": false,
-          "current_window": "W88-01",
+          "current_window": "W90-01",
           "prerequisite_adjustment": "Issue477 bounded slotting history current Owner and opaque source disclosure; full WP10-28/29 remains UNPROVEN.",
           "adopted_window": "W42-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/395",
@@ -201626,7 +201775,7 @@
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "VMI current observations and historical estimate Owner adopted; full formal daily billing/Finance remains unproven. Continue remaining independent Owners and D5/D6 real prerequisites."
+          "next_action": "Kitting standalone current Owner and legacy write gate; full Composition adoption remains separate"
         },
         {
           "id": "D3",
