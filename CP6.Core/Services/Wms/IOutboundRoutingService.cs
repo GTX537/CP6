@@ -6,6 +6,9 @@ namespace CP6.Core.Services.Wms;
 /// 出庫の多倉庫ルーティング（Gap 4.2 / T14）。
 /// </summary>
 /// <remarks>
+/// 以下は既存の引当動作であり、正式な RoutePolicy/Selector の契約ではない。
+/// PostgreSQL では元の出庫 Owner 内に束縛した内部入口だけがこの解決を実行する。
+/// 公開管理一覧は OutboundRoutingOwnerV1 の版付き観察を使用し、旧公開 API は現在権限を検証して拒否する。
 /// 引当時、1 明細につき「どの倉庫から順に在庫を探すか」を決定する。
 /// 候補順：① マッチした <see cref="OutboundRoutingRule"/>（SortOrder 昇順）の優先倉庫
 ///         → ② 残り倉庫を <c>Warehouse.OutboundPriority</c> 昇順

@@ -1,4 +1,6 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Erp;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,9 +11,13 @@ public class OutboundRoutingService : IOutboundRoutingService
 {
     private readonly CP6Context _db;
 
-    public OutboundRoutingService(CP6Context db)
+    private readonly OutboundRoutingOwnerV1? _owner;
+    public OutboundRoutingService(CP6Context db,OutboundRoutingOwnerV1? owner=null) { _db=db;_owner=owner; }
+    private OutboundRoutingOwnerV1 Owner=>_owner!=null&&_owner.Owns(_db)?_owner:throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
+    internal async Task<List<string>> ResolveWithinOwnerAsync(OperationsAccessV1 access,Guid outboundId,Guid detailId,CancellationToken ct=default)
     {
-        _db = db;
+        var input=await access.RequireRoutingParent(_db,outboundId,detailId,ct);
+        return await ResolveLegacyCoreAsync(input.CustomerCd,input.ProductCd,input.OutboundType,input.WarehouseCd,ct);
     }
 
     internal bool Owns(CP6Context context) => ReferenceEquals(_db, context);
@@ -23,6 +29,11 @@ public class OutboundRoutingService : IOutboundRoutingService
         int outboundType,
         string fallbackWarehouseCd,
         CancellationToken ct = default)
+    {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("preview",ct:ct);
+        return await ResolveLegacyCoreAsync(customerCd,productCd,outboundType,fallbackWarehouseCd,ct);
+    }
+    private async Task<List<string>> ResolveLegacyCoreAsync(string? customerCd,string productCd,int outboundType,string fallbackWarehouseCd,CancellationToken ct)
     {
         var ordered = new List<string>();
         var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -74,6 +85,7 @@ public class OutboundRoutingService : IOutboundRoutingService
 
     public async Task<List<OutboundRoutingRule>> ListRulesAsync(bool includeDisabled = true, CancellationToken ct = default)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("query",ct:ct);
         var q = _db.OutboundRoutingRules.AsNoTracking().Where(r => !r.IsDeleted);
         if (!includeDisabled) q = q.Where(r => r.Enabled);
         return await q
@@ -84,6 +96,7 @@ public class OutboundRoutingService : IOutboundRoutingService
 
     public async Task<OutboundRoutingRule> CreateRuleAsync(OutboundRoutingRule rule, string? userName, CancellationToken ct = default)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("add",ct:ct);
         Validate(rule);
         rule.Id = rule.Id == Guid.Empty ? Guid.NewGuid() : rule.Id;
         rule.Creator = userName;
@@ -96,6 +109,7 @@ public class OutboundRoutingService : IOutboundRoutingService
 
     public async Task UpdateRuleAsync(Guid id, OutboundRoutingRule rule, string? userName, CancellationToken ct = default)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("edit",id,ct);
         Validate(rule);
         var existing = await _db.OutboundRoutingRules
             .FirstOrDefaultAsync(r => r.Id == id && !r.IsDeleted, ct)
@@ -116,6 +130,7 @@ public class OutboundRoutingService : IOutboundRoutingService
 
     public async Task DeleteRuleAsync(Guid id, string? userName, CancellationToken ct = default)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("del",id,ct);
         var existing = await _db.OutboundRoutingRules
             .FirstOrDefaultAsync(r => r.Id == id && !r.IsDeleted, ct)
             ?? throw new InvalidOperationException("WM-MSG-070: ルーティングルールが見つかりません");
@@ -136,25 +151,38 @@ public class OutboundRoutingService : IOutboundRoutingService
 
 /// <summary>
 /// ルーティング無効時（OutboundRouting:Enabled=false）の no-op 実装。
-/// 常にフォールバック倉庫のみを返し、従来の単一倉庫引当を維持する。
+/// 元の出庫 Owner 内では実伝票の倉庫を使い、従来の単一倉庫引当を維持する。
+/// 公開の PostgreSQL 管理・プレビュー入口には独立 Owner が必要。
 /// </summary>
-public class NoOpOutboundRoutingService : IOutboundRoutingService
+public sealed class NoOpOutboundRoutingService(CP6Context db,OutboundRoutingOwnerV1? owner=null) : IOutboundRoutingService
 {
-    public Task<List<string>> ResolveCandidateWarehousesAsync(
-        string? customerCd, string productCd, int outboundType, string fallbackWarehouseCd, CancellationToken ct = default)
-        => Task.FromResult(string.IsNullOrWhiteSpace(fallbackWarehouseCd)
-            ? new List<string>()
-            : new List<string> { fallbackWarehouseCd });
-
-    public Task<List<OutboundRoutingRule>> ListRulesAsync(bool includeDisabled = true, CancellationToken ct = default)
-        => Task.FromResult(new List<OutboundRoutingRule>());
-
-    public Task<OutboundRoutingRule> CreateRuleAsync(OutboundRoutingRule rule, string? userName, CancellationToken ct = default)
-        => throw new InvalidOperationException("多倉庫ルーティングは無効です（OutboundRouting:Enabled=false）");
-
-    public Task UpdateRuleAsync(Guid id, OutboundRoutingRule rule, string? userName, CancellationToken ct = default)
-        => throw new InvalidOperationException("多倉庫ルーティングは無効です（OutboundRouting:Enabled=false）");
-
-    public Task DeleteRuleAsync(Guid id, string? userName, CancellationToken ct = default)
-        => throw new InvalidOperationException("多倉庫ルーティングは無効です（OutboundRouting:Enabled=false）");
+    private OutboundRoutingOwnerV1 Owner=>owner!=null&&owner.Owns(db)?owner:throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
+    internal bool Owns(CP6Context context)=>ReferenceEquals(db,context);
+    internal async Task<List<string>> ResolveWithinOwnerAsync(OperationsAccessV1 access,Guid outboundId,Guid detailId,CancellationToken ct=default)
+    {
+        var input=await access.RequireRoutingParent(db,outboundId,detailId,ct);return Fallback(input.WarehouseCd);
+    }
+    private static List<string> Fallback(string code)=>string.IsNullOrWhiteSpace(code)?[]:[code];
+    public async Task<List<string>> ResolveCandidateWarehousesAsync(string? customerCd,string productCd,int outboundType,string fallbackWarehouseCd,CancellationToken ct=default)
+    {
+        if(db.Database.IsNpgsql())await Owner.RejectLegacyAsync("preview",ct:ct);
+        return Fallback(fallbackWarehouseCd);
+    }
+    public async Task<List<OutboundRoutingRule>> ListRulesAsync(bool includeDisabled=true,CancellationToken ct=default)
+    {
+        if(db.Database.IsNpgsql())await Owner.RejectLegacyAsync("query",ct:ct);return [];
+    }
+    public async Task<OutboundRoutingRule> CreateRuleAsync(OutboundRoutingRule rule,string? userName,CancellationToken ct=default)
+    {
+        if(db.Database.IsNpgsql())await Owner.RejectLegacyAsync("add",ct:ct);throw Disabled();
+    }
+    public async Task UpdateRuleAsync(Guid id,OutboundRoutingRule rule,string? userName,CancellationToken ct=default)
+    {
+        if(db.Database.IsNpgsql())await Owner.RejectLegacyAsync("edit",id,ct);throw Disabled();
+    }
+    public async Task DeleteRuleAsync(Guid id,string? userName,CancellationToken ct=default)
+    {
+        if(db.Database.IsNpgsql())await Owner.RejectLegacyAsync("del",id,ct);throw Disabled();
+    }
+    private static InvalidOperationException Disabled()=>new("多倉庫ルーティングは無効です（OutboundRouting:Enabled=false）");
 }

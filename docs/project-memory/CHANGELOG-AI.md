@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-24：W93出库路由独立Owner候选通过
+
+Issue494三个真实红灯转绿；25独立.NET（19原生PG、5既有InMemory路由/分配回归、1两租户权限种子）及42Vue通过，无跳过；相关构建和vue-tsc通过，实际去重67项。[单份交付](../development/evidence/W93-01/DELIVERY.md)。独立当前观察、原UUID部门绑定和原出库事务内参与完成，3个PG停止保留，待正常Main/Handoff采用及分支/席位收尾。完整RT/RSV不提升；W89确认待答复，七天ACTIVE。
+
 ## 2026-10-24：W92仓库库位独立Owner已采用
 
 Main [PR492](https://github.com/GTX537/CP6/pull/492) source `78213f208946fefa7f24e88c51fb9055d888bf2e`进入远端main `41cbbe6cdbd564557ead95aca7fab2d96bf99a42`，33任务路径逐blob核对；19.NET/31Vue及类型检查通过，无跳过。[单份交付](../development/evidence/W92-01/DELIVERY.md)。Handoff [PR67](https://github.com/GTX537/CP6.AI-Handoff/pull/67)采用、准确分支删除、固定树干净detached、finish释放。Main同任务最后状态PR/finish及Issue491关闭待完成，未提前声明释放。3个PG停止保留；当前约23.48min，原估60–90min＋独立前置4min，最终按finish计。正式MASTER WP10-01、125目标与247验收不提升，七天目标ACTIVE。W89跨仓重绑确认仍待答复，两原分支保存不清理、不绕过绑定限制。

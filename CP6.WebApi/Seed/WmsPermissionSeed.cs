@@ -124,7 +124,7 @@ public static class WmsPermissionSeed
     /// 须在 <see cref="WmsMenuSeed.EnsureSeeded"/> 之后调用（锚定菜单行须先在）。
     /// </summary>
     // W37–W39 Owner catalog additions never grant roles automatically.
-    private static readonly (int MenuId,string Code,string Name)[] OwnerActions=[(401,"query","读取仓库原记录"),(401,"abandon","封闭未提交仓库名称操作"),(402,"query","读取库位原记录"),(402,"abandon","封闭未提交库位名称操作"),(481,"query","读取当前库存及原流水观察"),(481,"export","导出仓储报告"),(425,"query","读取套件主数据及历史订单"),(403,"query","读取库存"),(415,"query","读取盘点"),(416,"query","读取WMS看板"),(408,"query","读取出库单"),(405,"query","读取入库计划"),(406,"query","读取收货"),(426,"query","读取退货"),(423,"query","读取补充指示"),(428,"view","读取效期观察"),(417,"query","读取材料缺料跟进"),(427,"query","读取批次追溯"),(424,"query","读取越库记录"),(422,"query","读取库位优化记录"),(446,"query","读取VMI观察"),(446,"amount-read","读取VMI历史金额"),(446,"rate-read","读取VMI历史费率")];
+    private static readonly (int MenuId,string Code,string Name)[] OwnerActions=[(419,"query","读取出库路由原记录"),(419,"preview","预览出库路由策略"),(401,"query","读取仓库原记录"),(401,"abandon","封闭未提交仓库名称操作"),(402,"query","读取库位原记录"),(402,"abandon","封闭未提交库位名称操作"),(481,"query","读取当前库存及原流水观察"),(481,"export","导出仓储报告"),(425,"query","读取套件主数据及历史订单"),(403,"query","读取库存"),(415,"query","读取盘点"),(416,"query","读取WMS看板"),(408,"query","读取出库单"),(405,"query","读取入库计划"),(406,"query","读取收货"),(426,"query","读取退货"),(423,"query","读取补充指示"),(428,"view","读取效期观察"),(417,"query","读取材料缺料跟进"),(427,"query","读取批次追溯"),(424,"query","读取越库记录"),(422,"query","读取库位优化记录"),(446,"query","读取VMI观察"),(446,"amount-read","读取VMI历史金额"),(446,"rate-read","读取VMI历史费率")];
     public static void EnsureSeeded(CP6Context db)
     {
         // Sys_Tenant 为共享表（BaseEntity，非行级过滤）：Id 即 TenantId。

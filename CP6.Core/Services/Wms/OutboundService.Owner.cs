@@ -88,8 +88,8 @@ public partial class OutboundService
             await a.RequireOutbound(number,false,ct);a.RequirePriceWrite();RequireStockContext();await RequireNoAllocation(number,ct);
             var row=await _db.OutboundOrders.AsNoTracking().SingleAsync(o=>o.OutboundNo==number,ct);
             await a.RequireActiveAssociations(row.WebOrderNo,row.WorkOrderNo,ct);
-            if(_routing!=null && _routing.GetType()!=typeof(NoOpOutboundRoutingService)
-                && (_routing is not OutboundRoutingService routing || !routing.Owns(_db)))
+            if(_routing!=null && !(_routing is OutboundRoutingService routing && routing.Owns(_db))
+                && !(_routing is NoOpOutboundRoutingService disabled && disabled.Owns(_db)))
                 throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
             if(_shortage!=null && (_shortage is not MaterialShortageService real || !real.Owns(_db)))
                 throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);

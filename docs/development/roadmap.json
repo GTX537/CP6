@@ -160032,6 +160032,16 @@
       "date": "2026-10-24",
       "change": "W92 Main492 exact adoption and Handoff67 verified;19.NET/31UI/typecheck passed. Handoff branch deleted/seat released; Main final finish pending. Full acceptances unchanged.",
       "evidence": "https://github.com/GTX537/CP6/blob/41cbbe6cdbd564557ead95aca7fab2d96bf99a42/docs/development/evidence/W92-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-24",
+      "change": "W92 complete Main492/493 Handoff67 Issue491 closed25.62min; branches deleted and seats released. W93 Issue494 current routing Owner and internal participant admitted; formal RSV and W89 confirmation remain pending.",
+      "evidence": "docs/development/dispatch/20261024-wave93/README.md"
+    },
+    {
+      "date": "2026-10-24",
+      "change": "W93 Issue494 candidate verified:25 unique .NET/42Vue/typecheck; routing current Owner and bound internal resolver. Formal RT/RSV and W89 authorization remain pending.",
+      "evidence": "docs/development/evidence/W93-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -162603,55 +162613,45 @@
       "card_anchor": "wp02-03",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W92-01",
+        "chat_label": "COORD / W93-01",
         "repository": "Main",
         "owning_task_repository": "Main",
-        "branch": "codex/bug-491-warehouse-owner",
+        "branch": "codex/bug-494-routing-owner",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-24T01:27:52.090544+00:00",
-        "baseline_sha": "890cb6427fec6c40cbfd296e9e13bebf0f916c25",
-        "entry_evidence": "docs/development/dispatch/20261024-wave92/README.md",
-        "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
-        "dispatch_scope": "W92_01",
+        "claimed_at": "2026-10-24T01:58:35.304572+00:00",
+        "baseline_sha": "5f983ff53a542f9bc67521fdc048a44cf56cb214",
+        "entry_evidence": "docs/development/dispatch/20261024-wave93/README.md",
+        "phase": "CANDIDATE_VERIFIED",
+        "dispatch_scope": "W93_01",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
         "actual_start_ref": {
-          "commit": "4940bff3d9699d05b4beb3e8f78085c539fca9c8",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T012752Z-wave92-start/MESSAGE.md",
-          "at": "2026-10-24T01:27:52.090544+00:00"
+          "commit": "b3b2c7860cc0f38116229c900f8a054cc28389d8",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T015835Z-wave93-start/MESSAGE.md",
+          "at": "2026-10-24T01:58:35.304572+00:00"
         },
         "reserved_write_resources": [
-          "Main:WMS-MASTER-01",
-          "Main:warehouse-master",
+          "Main:WMS-RSV-01",
+          "Main:routing-owner",
+          "Main:outbound-resolver",
           "Main:independent-owner",
-          "Main:IAM-catalog",
-          "Main:original-operation-journal"
+          "Main:IAM-catalog"
         ],
         "reserved_postgresql_ports": [
           55435
         ],
-        "handoff_branch": "codex/w92-handoff",
+        "handoff_branch": "codex/w93-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": true,
+        "candidate_integrated": false,
         "resources_released": false,
         "full_task_completed": false,
-        "issue": "https://github.com/GTX537/CP6/issues/491",
-        "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/41cbbe6cdbd564557ead95aca7fab2d96bf99a42/docs/development/evidence/W92-01/DELIVERY.md",
-        "source_candidate_sha": "78213f208946fefa7f24e88c51fb9055d888bf2e",
-        "remote_main_sha": "41cbbe6cdbd564557ead95aca7fab2d96bf99a42",
-        "pull_request": "https://github.com/GTX537/CP6/pull/492",
-        "handoff_delivery_ref": {
-          "commit": "7428615e3987b374e1a76342365d2e2c46e230bf",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T014844Z-wave92-delivery/MESSAGE.md",
-          "at": "2026-10-24T01:48:44.306519+00:00",
-          "base": "codex/t02c-entry-handoff-20260921",
-          "branch": "codex/w92-handoff"
-        }
+        "issue": "https://github.com/GTX537/CP6/issues/494",
+        "worker_delivery_ref": "docs/development/evidence/W93-01/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -167174,6 +167174,58 @@
             "branch": "codex/w91-handoff"
           },
           "lifecycle_complete": true
+        },
+        {
+          "chat_label": "COORD / W92-01",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/bug-491-warehouse-owner",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-10-24T01:27:52.090544+00:00",
+          "baseline_sha": "890cb6427fec6c40cbfd296e9e13bebf0f916c25",
+          "entry_evidence": "docs/development/dispatch/20261024-wave92/README.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "W92_01",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "actual_start_ref": {
+            "commit": "4940bff3d9699d05b4beb3e8f78085c539fca9c8",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T012752Z-wave92-start/MESSAGE.md",
+            "at": "2026-10-24T01:27:52.090544+00:00"
+          },
+          "reserved_write_resources": [
+            "Main:WMS-MASTER-01",
+            "Main:warehouse-master",
+            "Main:independent-owner",
+            "Main:IAM-catalog",
+            "Main:original-operation-journal"
+          ],
+          "reserved_postgresql_ports": [
+            55435
+          ],
+          "handoff_branch": "codex/w92-handoff",
+          "actions_authorized": false,
+          "deployment_authorized": false,
+          "existing_database_migration_authorized": false,
+          "worker_delivery_received": true,
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "resources_released": true,
+          "full_task_completed": false,
+          "issue": "https://github.com/GTX537/CP6/issues/491",
+          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/41cbbe6cdbd564557ead95aca7fab2d96bf99a42/docs/development/evidence/W92-01/DELIVERY.md",
+          "source_candidate_sha": "78213f208946fefa7f24e88c51fb9055d888bf2e",
+          "remote_main_sha": "41cbbe6cdbd564557ead95aca7fab2d96bf99a42",
+          "pull_request": "https://github.com/GTX537/CP6/pull/492",
+          "handoff_delivery_ref": {
+            "commit": "7428615e3987b374e1a76342365d2e2c46e230bf",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T014844Z-wave92-delivery/MESSAGE.md",
+            "at": "2026-10-24T01:48:44.306519+00:00",
+            "base": "codex/t02c-entry-handoff-20260921",
+            "branch": "codex/w92-handoff"
+          },
+          "lifecycle_complete": true
         }
       ],
       "wave13_delivery": {
@@ -168002,7 +168054,7 @@
         "business_acceptance": "NOT_RUN",
         "adopted_scope": "Warehouse/location current observations, explicit original UUID department scope, independent name command and original operation recovery; full MASTER not adopted",
         "issue": "https://github.com/GTX537/CP6/issues/491",
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "source_candidate_sha": "78213f208946fefa7f24e88c51fb9055d888bf2e",
         "remote_main_sha": "41cbbe6cdbd564557ead95aca7fab2d96bf99a42",
         "pull_request": "https://github.com/GTX537/CP6/pull/492",
@@ -168017,11 +168069,31 @@
           "handoff_branch_deleted": true,
           "handoff_seat_released": true,
           "main_task": "CP6:BUG-491-WAREHOUSE-OWNER",
-          "main_finish_required": true,
-          "main_seat_released": false,
-          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave92-final-verification.json"
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave92-final-verification.json",
+          "main_branch_deleted": true,
+          "observed_at": "2026-10-24T01:53:02.075163+00:00",
+          "close_pr": "https://github.com/GTX537/CP6/pull/493"
         },
-        "test_data_disposition": "Three owned PostgreSQL clusters stopped; data and logs retained"
+        "test_data_disposition": "Three owned PostgreSQL clusters stopped; data and logs retained",
+        "branches_deleted": true,
+        "seats_released": true,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave92-final-verification.json",
+        "final_main": "5f983ff53a542f9bc67521fdc048a44cf56cb214",
+        "close_pr": "https://github.com/GTX537/CP6/pull/493",
+        "issue_state": "CLOSED",
+        "actual_agent_minutes": 25.62
+      },
+      "wave93_delivery": {
+        "status": "CANDIDATE_VERIFIED",
+        "report": "docs/development/evidence/W93-01/DELIVERY.md",
+        "validation": "25独立.NET（19原生PG、5既有InMemory路由/分配回归、1两租户权限种子）及42Vue通过，无跳过；相关构建和vue-tsc通过，实际去重67项",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "adopted_scope": "Current routing original records, actual UUID department scopes and original Outbound transaction participant; formal RT/RSV policy adoption unproven",
+        "issue": "https://github.com/GTX537/CP6/issues/494",
+        "lifecycle_complete": false
       }
     },
     {
@@ -188182,11 +188254,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261024-wave92",
-      "path": "docs/development/dispatch/20261024-wave92/README.md",
-      "baseline_sha": "890cb6427fec6c40cbfd296e9e13bebf0f916c25",
-      "registered_at": "2026-10-24T01:27:52.090544+00:00",
-      "phase": "DELIVERY_INTEGRATED_CLOSEOUT",
+      "id": "20261024-wave93",
+      "path": "docs/development/dispatch/20261024-wave93/README.md",
+      "baseline_sha": "5f983ff53a542f9bc67521fdc048a44cf56cb214",
+      "registered_at": "2026-10-24T01:58:35.304572+00:00",
+      "phase": "CANDIDATE_VERIFIED",
       "assigned_chats": [
         "COORD"
       ],
@@ -188198,105 +188270,44 @@
       ],
       "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": true,
-      "product_integrated": true,
+      "windows_closed": false,
+      "product_integrated": false,
       "windows": [
         {
-          "id": "W92-01",
+          "id": "W93-01",
           "task_id": "WP02-03",
-          "title": "仓库库位独立Owner与原结果名称维护",
-          "lifecycle_task": "BUG-491-WAREHOUSE-OWNER",
+          "title": "出库路由管理独立Owner与内部参与门",
+          "lifecycle_task": "BUG-494-ROUTING-OWNER",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
-          "phase": "CLOSED",
+          "phase": "CANDIDATE_VERIFIED",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "4940bff3d9699d05b4beb3e8f78085c539fca9c8",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T012752Z-wave92-start/MESSAGE.md",
-            "at": "2026-10-24T01:27:52.090544+00:00"
+            "commit": "b3b2c7860cc0f38116229c900f8a054cc28389d8",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T015835Z-wave93-start/MESSAGE.md",
+            "at": "2026-10-24T01:58:35.304572+00:00"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/bug-491-warehouse-owner",
-          "planned_scope_ref": "docs/development/dispatch/20261024-wave92/README.md",
+          "branch": "codex/bug-494-routing-owner",
+          "planned_scope_ref": "docs/development/dispatch/20261024-wave93/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/41cbbe6cdbd564557ead95aca7fab2d96bf99a42/docs/development/evidence/W92-01/DELIVERY.md",
-          "validation": "19独立.NET（18原生PG、1两租户目录种子）与31Vue通过，无跳过；相关构建及vue-tsc通过，定向补验去重合计50项",
-          "runtime_resources_released": true,
-          "candidate_integrated": true,
-          "integration": {
-            "result": "PASS",
-            "repository": "GTX537/CP6",
-            "source": "78213f208946fefa7f24e88c51fb9055d888bf2e",
-            "main": "41cbbe6cdbd564557ead95aca7fab2d96bf99a42",
-            "target": "main",
-            "pr": "https://github.com/GTX537/CP6/pull/492",
-            "paths": [
-              "CP6.Core/Services/Integration/OperationsAccessV1.Warehouse.cs",
-              "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
-              "CP6.Core/Services/Sys/IamStandaloneDepartmentMappingV1.cs",
-              "CP6.Core/Services/Wms/WarehouseOwnerServiceV1.cs",
-              "CP6.Entity/DTOs/Wms/WarehouseOwnerV1.cs",
-              "CP6.Persistence.PostgreSql/Migrations/Core/20261024013500_WarehouseDepartmentOwnerV1.cs",
-              "CP6.Tests/Erp/WarehouseOwnerPostgreSqlTests.cs",
-              "CP6.Tests/MesPermissionSeedTests.cs",
-              "CP6.WebApi/Controllers/Wms/WarehouseController.Owner.cs",
-              "CP6.WebApi/Controllers/Wms/WarehouseController.cs",
-              "CP6.WebApi/Program.cs",
-              "CP6.WebApi/Seed/WmsPermissionSeed.cs",
-              "cp6.web/src/api/sys/iam.ts",
-              "cp6.web/src/api/wms/warehouseOwner.ts",
-              "cp6.web/src/composables/useWarehouseOwnerChoices.ts",
-              "cp6.web/src/types/wms/warehouseOwner.ts",
-              "cp6.web/src/views/pms/StandaloneDepartmentMappings.spec.ts",
-              "cp6.web/src/views/pms/StandaloneDepartmentMappings.vue",
-              "cp6.web/src/views/wms/LocationListView.vue",
-              "cp6.web/src/views/wms/OutboundRoutingView.vue",
-              "cp6.web/src/views/wms/WarehouseListView.vue",
-              "cp6.web/src/views/wms/WarehouseMasterOwner.spec.ts",
-              "cp6.web/src/views/wms/WarehouseMasterOwnerView.vue",
-              "docs/development/07-detailed-tasks.md",
-              "docs/development/09-parallel-development.md",
-              "docs/development/dispatch/20261024-wave92/README.md",
-              "docs/development/evidence/W92-01/DELIVERY.md",
-              "docs/development/planning/20261022-seven-day-delivery.md",
-              "docs/development/roadmap.json",
-              "docs/project-memory/05-Completed.md",
-              "docs/project-memory/06-Todo.md",
-              "docs/project-memory/CHANGELOG-AI.md",
-              "docs/project-memory/PROJECT_STATE.md"
-            ],
-            "observed_at": "2026-10-24T01:48:37.121777+00:00"
-          },
-          "handoff_delivery_ref": {
-            "commit": "7428615e3987b374e1a76342365d2e2c46e230bf",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T014844Z-wave92-delivery/MESSAGE.md",
-            "at": "2026-10-24T01:48:44.306519+00:00",
-            "base": "codex/t02c-entry-handoff-20260921",
-            "branch": "codex/w92-handoff"
-          },
-          "resources_released": false,
-          "lifecycle_snapshot": {
-            "handoff_branch_deleted": true,
-            "handoff_seat_released": true,
-            "main_task": "CP6:BUG-491-WAREHOUSE-OWNER",
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave92-final-verification.json"
-          }
+          "worker_delivery_ref": "docs/development/evidence/W93-01/DELIVERY.md",
+          "validation": "25独立.NET（19原生PG、5既有InMemory路由/分配回归、1两租户权限种子）及42Vue通过，无跳过；相关构建和vue-tsc通过，实际去重67项",
+          "runtime_resources_released": true
         }
       ],
       "horizon": {
-        "started_at": "2026-10-24T01:26:50.033830+00:00",
+        "started_at": "2026-10-24T01:56:50.559476+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          60,
-          90
+          45,
+          70
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -188304,30 +188315,8 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Finish same-branch Main ledger PR/lifecycle, close Issue491 on proof; continue seven-day remaining direct prerequisites",
-      "validation": "19独立.NET（18原生PG、1两租户目录种子）与31Vue通过，无跳过；相关构建及vue-tsc通过，定向补验去重合计50项",
-      "handoff_delivery_ref": {
-        "commit": "7428615e3987b374e1a76342365d2e2c46e230bf",
-        "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T014844Z-wave92-delivery/MESSAGE.md",
-        "at": "2026-10-24T01:48:44.306519+00:00",
-        "base": "codex/t02c-entry-handoff-20260921",
-        "branch": "codex/w92-handoff"
-      },
-      "handoff_integration": {
-        "result": "PASS",
-        "repository": "GTX537/CP6.AI-Handoff",
-        "source": "7428615e3987b374e1a76342365d2e2c46e230bf",
-        "main": "6a74a70759f9d5e1fc18a5ce662e72a15b692b20",
-        "target": "codex/t02c-entry-handoff-20260921",
-        "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/67",
-        "paths": [
-          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T012752Z-wave92-start/MESSAGE.md",
-          "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T014844Z-wave92-delivery/MESSAGE.md",
-          "handoffs/CP6-DEV-20261012/waves/20261024-wave92.md"
-        ],
-        "observed_at": "2026-10-24T01:49:32.954817+00:00"
-      },
-      "lifecycle_complete": false
+      "next_action": "Main adoption, Handoff delivery, same-task lifecycle finish; W89 confirmation pending",
+      "validation": "25独立.NET（19原生PG、5既有InMemory路由/分配回归、1两租户权限种子）及42Vue通过，无跳过；相关构建和vue-tsc通过，实际去重67项"
     },
     "wave_history": [
       {
@@ -202319,6 +202308,162 @@
         "branches_deleted": true,
         "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave91-final-verification.json",
         "actual_agent_minutes": 15.39
+      },
+      {
+        "id": "20261024-wave92",
+        "path": "docs/development/dispatch/20261024-wave92/README.md",
+        "baseline_sha": "890cb6427fec6c40cbfd296e9e13bebf0f916c25",
+        "registered_at": "2026-10-24T01:27:52.090544+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W92-01",
+            "task_id": "WP02-03",
+            "title": "仓库库位独立Owner与原结果名称维护",
+            "lifecycle_task": "BUG-491-WAREHOUSE-OWNER",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "4940bff3d9699d05b4beb3e8f78085c539fca9c8",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T012752Z-wave92-start/MESSAGE.md",
+              "at": "2026-10-24T01:27:52.090544+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/bug-491-warehouse-owner",
+            "planned_scope_ref": "docs/development/dispatch/20261024-wave92/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "worker_delivery_ref": "https://github.com/GTX537/CP6/blob/41cbbe6cdbd564557ead95aca7fab2d96bf99a42/docs/development/evidence/W92-01/DELIVERY.md",
+            "validation": "19独立.NET（18原生PG、1两租户目录种子）与31Vue通过，无跳过；相关构建及vue-tsc通过，定向补验去重合计50项",
+            "runtime_resources_released": true,
+            "candidate_integrated": true,
+            "integration": {
+              "result": "PASS",
+              "repository": "GTX537/CP6",
+              "source": "78213f208946fefa7f24e88c51fb9055d888bf2e",
+              "main": "41cbbe6cdbd564557ead95aca7fab2d96bf99a42",
+              "target": "main",
+              "pr": "https://github.com/GTX537/CP6/pull/492",
+              "paths": [
+                "CP6.Core/Services/Integration/OperationsAccessV1.Warehouse.cs",
+                "CP6.Core/Services/Integration/OperationsOwnerV1.cs",
+                "CP6.Core/Services/Sys/IamStandaloneDepartmentMappingV1.cs",
+                "CP6.Core/Services/Wms/WarehouseOwnerServiceV1.cs",
+                "CP6.Entity/DTOs/Wms/WarehouseOwnerV1.cs",
+                "CP6.Persistence.PostgreSql/Migrations/Core/20261024013500_WarehouseDepartmentOwnerV1.cs",
+                "CP6.Tests/Erp/WarehouseOwnerPostgreSqlTests.cs",
+                "CP6.Tests/MesPermissionSeedTests.cs",
+                "CP6.WebApi/Controllers/Wms/WarehouseController.Owner.cs",
+                "CP6.WebApi/Controllers/Wms/WarehouseController.cs",
+                "CP6.WebApi/Program.cs",
+                "CP6.WebApi/Seed/WmsPermissionSeed.cs",
+                "cp6.web/src/api/sys/iam.ts",
+                "cp6.web/src/api/wms/warehouseOwner.ts",
+                "cp6.web/src/composables/useWarehouseOwnerChoices.ts",
+                "cp6.web/src/types/wms/warehouseOwner.ts",
+                "cp6.web/src/views/pms/StandaloneDepartmentMappings.spec.ts",
+                "cp6.web/src/views/pms/StandaloneDepartmentMappings.vue",
+                "cp6.web/src/views/wms/LocationListView.vue",
+                "cp6.web/src/views/wms/OutboundRoutingView.vue",
+                "cp6.web/src/views/wms/WarehouseListView.vue",
+                "cp6.web/src/views/wms/WarehouseMasterOwner.spec.ts",
+                "cp6.web/src/views/wms/WarehouseMasterOwnerView.vue",
+                "docs/development/07-detailed-tasks.md",
+                "docs/development/09-parallel-development.md",
+                "docs/development/dispatch/20261024-wave92/README.md",
+                "docs/development/evidence/W92-01/DELIVERY.md",
+                "docs/development/planning/20261022-seven-day-delivery.md",
+                "docs/development/roadmap.json",
+                "docs/project-memory/05-Completed.md",
+                "docs/project-memory/06-Todo.md",
+                "docs/project-memory/CHANGELOG-AI.md",
+                "docs/project-memory/PROJECT_STATE.md"
+              ],
+              "observed_at": "2026-10-24T01:48:37.121777+00:00"
+            },
+            "handoff_delivery_ref": {
+              "commit": "7428615e3987b374e1a76342365d2e2c46e230bf",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T014844Z-wave92-delivery/MESSAGE.md",
+              "at": "2026-10-24T01:48:44.306519+00:00",
+              "base": "codex/t02c-entry-handoff-20260921",
+              "branch": "codex/w92-handoff"
+            },
+            "resources_released": true,
+            "lifecycle_snapshot": {
+              "handoff_branch_deleted": true,
+              "handoff_seat_released": true,
+              "main_task": "CP6:BUG-491-WAREHOUSE-OWNER",
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave92-final-verification.json",
+              "main_branch_deleted": true,
+              "observed_at": "2026-10-24T01:53:02.075163+00:00",
+              "close_pr": "https://github.com/GTX537/CP6/pull/493"
+            },
+            "lifecycle_complete": true
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-24T01:26:50.033830+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            60,
+            90
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W93 routing current Owner and internal participant; W89 confirmation pending",
+        "validation": "19独立.NET（18原生PG、1两租户目录种子）与31Vue通过，无跳过；相关构建及vue-tsc通过，定向补验去重合计50项",
+        "handoff_delivery_ref": {
+          "commit": "7428615e3987b374e1a76342365d2e2c46e230bf",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T014844Z-wave92-delivery/MESSAGE.md",
+          "at": "2026-10-24T01:48:44.306519+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w92-handoff"
+        },
+        "handoff_integration": {
+          "result": "PASS",
+          "repository": "GTX537/CP6.AI-Handoff",
+          "source": "7428615e3987b374e1a76342365d2e2c46e230bf",
+          "main": "6a74a70759f9d5e1fc18a5ce662e72a15b692b20",
+          "target": "codex/t02c-entry-handoff-20260921",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/67",
+          "paths": [
+            "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T012752Z-wave92-start/MESSAGE.md",
+            "handoffs/CP6-DEV-20261012/tasks/WP02-03/messages/20261024T014844Z-wave92-delivery/MESSAGE.md",
+            "handoffs/CP6-DEV-20261012/waves/20261024-wave92.md"
+          ],
+          "observed_at": "2026-10-24T01:49:32.954817+00:00"
+        },
+        "lifecycle_complete": true,
+        "resources_released": true,
+        "branches_deleted": true,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave92-final-verification.json",
+        "actual_agent_minutes": 25.62
       }
     ],
     "development_priority": {
@@ -202393,10 +202538,10 @@
         },
         {
           "id": "D2",
-          "phase": "PARTIALLY_ADOPTED",
+          "phase": "IMPLEMENTING",
           "full_business_acceptance": false,
-          "current_window": "W92-01",
-          "prerequisite_adjustment": "Warehouse/location current authority and independent name maintenance; formal typed master gates remain action-specific",
+          "current_window": "W93-01",
+          "prerequisite_adjustment": "Routing management current Owner and internal Outbound participation; formal policy/Source/Selector adoption separate",
           "adopted_window": "W42-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/395",
           "report": "docs/development/evidence/WP02-03/standalone-department/DELIVERY.md",
@@ -202405,7 +202550,7 @@
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "Warehouse/location current Owners and original name commands adopted; full approved MASTER WP10-01 remains separate. Continue remaining independent Owners and D5/D6 real prerequisites."
+          "next_action": "Current routing Owner, source scopes and internal participant; formal RSV policy adoption separate"
         },
         {
           "id": "D3",

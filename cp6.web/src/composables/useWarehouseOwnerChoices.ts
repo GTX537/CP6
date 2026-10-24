@@ -14,6 +14,7 @@ export function useWarehouseOwnerChoices(clearSelection: () => void) {
   function clear() { sequence++; warehouses.value = []; total.value = 0; loading.value = false; failed.value = false; clearSelection() }
   const intent = useOperationsIntent(clear)
   watch(allowed, () => { intent.invalidate(); clear() }, { flush: 'sync' })
+  watch(() => permissions.actionKeys, () => { intent.invalidate(); clear() }, { deep: true, flush: 'sync' })
   async function loadWarehouses(code = '') {
     const n = ++sequence, token = intent.capture(); warehouses.value = []; total.value = 0; failed.value = false
     if (!allowed.value || code.length > 10) return

@@ -403,7 +403,13 @@ public partial class OutboundService : IOutboundService
 
             // 多倉庫ルーティング（Gap 4.2 / T14）：候補倉庫を優先順に解決し、
             // 各倉庫内で FEFO（期限→受入日→ロット）で単一 Stock 行を探す。最初に賄える倉庫を採用。
-            var candidateWarehouses = _routing != null
+            var candidateWarehouses = access!=null ? _routing switch
+            {
+                OutboundRoutingService routing => await routing.ResolveWithinOwnerAsync(access,header.Id,d.Id),
+                NoOpOutboundRoutingService disabled => await disabled.ResolveWithinOwnerAsync(access,header.Id,d.Id),
+                null => new List<string>{header.WarehouseCd},
+                _ => throw new CP6.Core.Services.Erp.OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503)
+            } : _routing != null
                 ? await _routing.ResolveCandidateWarehousesAsync(
                     header.CustomerCd, d.ProductCd, header.OutboundType, header.WarehouseCd)
                 : new List<string> { header.WarehouseCd };

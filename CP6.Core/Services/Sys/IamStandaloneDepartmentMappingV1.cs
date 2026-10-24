@@ -99,7 +99,7 @@ public sealed class IamStandaloneDepartmentMappingV1(CP6Context db, IamAdministr
         }, ct);
     }
 
-    private static readonly string[] Kinds = ["stock", "stock-transaction", "stocktake", "work-order", "machine", "replenish-order", "mobile-task", "work-center", "cross-dock", "slotting-plan", "vmi-billing", "kit-master", "kit-order", "warehouse", "location"];
+    private static readonly string[] Kinds = ["stock", "stock-transaction", "stocktake", "work-order", "machine", "replenish-order", "mobile-task", "work-center", "cross-dock", "slotting-plan", "vmi-billing", "kit-master", "kit-order", "warehouse", "location", "routing-rule"];
     public sealed record ObjectChoice { public Guid Id { get; init; } public string Name { get; init; } = ""; }
     public Task<ObjectChoice[]> FindObjectsAsync(string kind, string search,
         Func<CancellationToken, Task<Guid>> actor, CancellationToken ct)
@@ -122,6 +122,7 @@ public sealed class IamStandaloneDepartmentMappingV1(CP6Context db, IamAdministr
         "stocktake" => db.StockTakes.AsNoTracking().Where(x => !x.IsDeleted).Select(x => new ObjectChoice { Id=x.Id,Name=x.StockTakeNo }),
         "work-order" => db.WorkOrders.AsNoTracking().Where(x => !x.IsDeleted && (x.WebOrderNo == null || x.WebOrderNo == ""))
             .Select(x => new ObjectChoice { Id=x.Id,Name=x.WorkOrderNo }),
+        "routing-rule" => db.OutboundRoutingRules.AsNoTracking().Where(x=>!x.IsDeleted && db.Warehouses.Any(w=>!w.IsDeleted && w.WarehouseCd==x.TargetWarehouseCd)).Select(x=>new ObjectChoice {Id=x.Id,Name=x.RuleName}),
         "warehouse" => db.Warehouses.AsNoTracking().Where(x=>!x.IsDeleted).Select(x=>new ObjectChoice {Id=x.Id,Name=x.WarehouseCd}),
         "location" => db.Locations.AsNoTracking().Where(x=>!x.IsDeleted && db.Warehouses.Any(w=>!w.IsDeleted && w.WarehouseCd==x.WarehouseCd)).Select(x=>new ObjectChoice {Id=x.Id,Name=x.WarehouseCd+" / "+x.LocationCd}),
         "kit-master" => db.KitMasters.AsNoTracking().Where(x => !x.IsDeleted).Select(x => new ObjectChoice { Id = x.Id, Name = x.KitSku }),
