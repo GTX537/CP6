@@ -78,6 +78,8 @@ public class CsrfMiddleware
            // Service revocation requires explicit confidential-client authentication;
            // its controller does not use ambient browser cookies for authorization.
            || path.Equals("/connect/service-revocations", StringComparison.OrdinalIgnoreCase)
+           // This exact service endpoint uses explicit Basic credentials, never ambient cookies.
+           || path.Equals("/connect/inquiry-service-permission", StringComparison.OrdinalIgnoreCase)
            // Dapr deliveries require the explicit sidecar token and never authenticate with cookies.
            || path.Equals("/internal/erp/v1/events", StringComparison.OrdinalIgnoreCase)
            || IsNativeAnonymousAuthPath(path)

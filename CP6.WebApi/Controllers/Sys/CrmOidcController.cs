@@ -23,7 +23,8 @@ namespace CP6.WebApi.Controllers.Sys;
 public sealed partial class CrmOidcController(CrmOidcOptions options, CrmOidcCrypto crypto,
     ICrmOidcGrantStore grants, CrmOidcDirectory directory, IConfiguration configuration,
     ITokenBlacklistService blacklist, IAuthCookieWriter cookies,
-    CrmOidcServiceTokens? serviceTokens = null, InquiryPermissionIssuerV1? inquiryPermissions = null) : ControllerBase
+    CrmOidcServiceTokens? serviceTokens = null, InquiryPermissionIssuerV1? inquiryPermissions = null,
+    InquiryServicePermissionIssuerV1? inquiryServicePermissions = null) : ControllerBase
 {
     [HttpGet("/.well-known/openid-configuration")]
     public IActionResult Discovery() => !options.Enabled ? NotFound() : Ok(new
