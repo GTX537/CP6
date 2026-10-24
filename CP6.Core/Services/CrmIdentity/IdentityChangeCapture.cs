@@ -10,6 +10,9 @@ namespace CP6.Core.Services.CrmIdentity;
 public sealed class IdentityChangeCapture
 {
     internal readonly HashSet<(Guid Tenant, string Aggregate)> Targets = [];
+    // A field policy can change outside the role's action resource (e.g. crm-intake).
+    // Preserve that actual policy mutation as a source revision even when grants are identical.
+    internal readonly HashSet<(Guid Tenant, string Aggregate)> FieldPolicyRevisions = [];
     internal readonly HashSet<(Guid Tenant, Guid User)> InvalidatedUsers = [];
     internal readonly HashSet<Guid> DisabledTenants = [];
     internal readonly HashSet<(Guid Tenant, Guid User, Guid Family)> RevokedFamilies = [];
@@ -70,8 +73,12 @@ public sealed class IdentityChangeCapture
                     break;
                 case Sys_RoleFieldPerm field when options.Tenants.ContainsKey(field.TenantId):
                     capture.Targets.Add((field.TenantId, "permission:" + IdentityEventContracts.RoleSubject(field.RoleId)));
+                    capture.FieldPolicyRevisions.Add((field.TenantId, "permission:" + IdentityEventContracts.RoleSubject(field.RoleId)));
                     if (entry.State == EntityState.Modified)
-                        capture.Targets.Add((field.TenantId, "permission:" + IdentityEventContracts.RoleSubject(entry.OriginalValues.GetValue<int>(nameof(field.RoleId)))));
+                    {
+                        var original = (field.TenantId, "permission:" + IdentityEventContracts.RoleSubject(entry.OriginalValues.GetValue<int>(nameof(field.RoleId))));
+                        capture.Targets.Add(original); capture.FieldPolicyRevisions.Add(original);
+                    }
                     break;
                 case Sys_RoleMenu roleMenu when options.Tenants.ContainsKey(roleMenu.TenantId):
                     capture.Targets.Add((roleMenu.TenantId, "permission:" + IdentityEventContracts.RoleSubject(roleMenu.RoleId)));

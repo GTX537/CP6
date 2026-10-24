@@ -21,7 +21,7 @@ public sealed class InquiryPermissionSigningOptionsV1
     public bool Revoked { get; set; }
 }
 
-public sealed class InquiryPermissionSigningKeyV1 : IDisposable
+public sealed partial class InquiryPermissionSigningKeyV1 : IDisposable
 {
     public const string CatalogVersion = "crm-permission-catalog-1";
     private readonly Key? key;
