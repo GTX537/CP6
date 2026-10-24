@@ -1,6 +1,7 @@
 using System.Data;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Common;
+using CP6.Core.Services.CrmIdentity;
 using CP6.Core.Services.Sys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
@@ -26,6 +27,8 @@ public sealed class InquiryServicePermissionIssuerV1(CP6Context db, ITenantConte
             throw new InquiryPermissionExceptionV1(503, "inquiry_authority_unavailable");
         var registration = registry.Authenticate(new StringValues(authorization.ToArray()))
             ?? throw new InquiryPermissionExceptionV1(401, "invalid_client");
+        if (!registry.IsPublished(registration.Tenant))
+            throw new InquiryPermissionExceptionV1(503, "inquiry_service_identity_not_published");
         var previousTenant = tenant.CurrentTenantId;
         try
         {
@@ -44,6 +47,18 @@ public sealed class InquiryServicePermissionIssuerV1(CP6Context db, ITenantConte
                 return now;
             }
             await RequireCurrentTenant();
+            if (registry.IdentityPublicationEnabled)
+            {
+                var aggregate = "service-principal:" + registration.Subject.ToString("D");
+                var row = await db.CrmIdentitySnapshots.AsNoTracking().SingleOrDefaultAsync(x => x.TenantId == registration.Tenant && x.AggregateId == aggregate, ct);
+                var source = row is null ? null : System.Text.Json.JsonSerializer.Deserialize<ServicePrincipalIdentityData>(row.PayloadJson, IdentityEventContracts.Json);
+                if (row is null || row.IsDeleted || row.EventType != IdentityEventContracts.ServicePrincipalChanged || source is null
+                    || source.TenantId != registration.Tenant || source.PrincipalId != registration.Subject || source.ClientId != registration.Client
+                    || source.DepartmentId != registration.Department || !source.Enabled || source.AuthenticationEpoch != registration.AuthenticationEpoch
+                    || source.RegistrationVersion != registration.Version || source.RegistrationRevision != registration.Revision
+                    || source.SourceProfile != "cp6-inquiry-service-v1" || !source.Roles.SequenceEqual(registration.Roles.Select(IdentityEventContracts.RoleSubject)))
+                    throw new InquiryPermissionExceptionV1(503, "inquiry_service_identity_not_current");
+            }
             // Do not alias even a disabled human identity in the same organization.
             if (await db.Sys_Users.AsNoTracking().AnyAsync(x => x.Id == registration.Subject, ct))
                 throw new InquiryPermissionExceptionV1(503, "inquiry_service_identity_collision");

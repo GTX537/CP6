@@ -138,6 +138,15 @@ public class CrmIdentityContractTests
         Assert.False(validator.IsValid(Encoding.UTF8.GetBytes(user.ToJsonString())));
     }
 
+    [Fact]
+    public void Service_membership_preserves_all_integer_roles_within_original_transport_limit()
+    {
+        var tenant=Guid.NewGuid();var principal=Guid.NewGuid();var data=new ServicePrincipalIdentityData(tenant,principal,"inquiry-h01",Guid.NewGuid(),true,1,
+            Enumerable.Range(-512,1024).Select(IdentityEventContracts.RoleSubject).ToArray(),Guid.NewGuid(),"v1",1);
+        var envelope=IdentityEventContracts.Create(tenant,"service-principal:"+principal.ToString("D"),1,IdentityEventContracts.ServicePrincipalChanged,data,"us","c","c");
+        Assert.True(validator.Validate(envelope).IsValid);
+    }
+
     private static JsonObject Example(string name, int major = 1) => JsonNode.Parse(File.ReadAllBytes(Bundle.GetAssetPath(
         Bundle.Entries.Single(x => x.EventType == "com.gtx537.platform." + name + ".v" + major)
             .Examples.Single(x => x.Name == "valid").Path)))!.AsObject();

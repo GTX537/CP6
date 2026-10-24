@@ -95,6 +95,29 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
         await WriteDataAsync(tenant, aggregate, type, data, deleted, previous, cancellationToken).ConfigureAwait(false);
     }
 
+    internal async Task WriteServicePrincipalAsync(ServicePrincipalIdentityData data, bool deleted, CancellationToken ct)
+    {
+        RequireTransaction();
+        if (!db.Database.IsNpgsql() || !runtime.Options.Tenants.ContainsKey(data.TenantId))
+            throw new InvalidOperationException("C02_SERVICE_SOURCE_UNAVAILABLE");
+        var aggregate = "service-principal:" + data.PrincipalId.ToString("D");
+        var previous = await LoadLockedAsync(data.TenantId, aggregate, ct);
+        if (previous is not null)
+        {
+            var old = JsonSerializer.Deserialize<ServicePrincipalIdentityData>(previous.PayloadJson, IdentityEventContracts.Json)!;
+            if (previous.EventType != IdentityEventContracts.ServicePrincipalChanged || old.SourceProfile != data.SourceProfile)
+                throw new InvalidOperationException("C02_SERVICE_SOURCE_COLLISION");
+            // Compare JSON for arrays; a changed registration requires an explicit new persisted epoch/version.
+            var changed = JsonSerializer.Serialize(old with { Version = 0 }, IdentityEventContracts.Json)
+                != JsonSerializer.Serialize(data with { Version = 0 }, IdentityEventContracts.Json) || previous.IsDeleted != deleted;
+            if (changed && data.RegistrationRevision <= old.RegistrationRevision)
+                throw new InvalidOperationException("C02_SERVICE_REGISTRATION_REVISION_STALE");
+            if (changed && !deleted && (old.RegistrationVersion == data.RegistrationVersion || old.AuthenticationEpoch == data.AuthenticationEpoch))
+                throw new InvalidOperationException("C02_SERVICE_REGISTRATION_REQUIRES_NEW_EPOCH_AND_VERSION");
+        }
+        await WriteDataAsync(data.TenantId, aggregate, IdentityEventContracts.ServicePrincipalChanged, data, deleted, previous, ct);
+    }
+
     public async Task RevokeTokenAsync(Guid tenant, string jti, string subject, DateTimeOffset expiry,
         CancellationToken cancellationToken = default)
     {

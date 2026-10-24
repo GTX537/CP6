@@ -20,13 +20,14 @@ public static class IdentityEventContracts
     public const string PermissionChangedV2 = "com.gtx537.platform.permission.changed.v2";
     public const string PermissionChangedV3 = "com.gtx537.platform.permission.changed.v3";
     public const string TokenRevokedV2 = "com.gtx537.platform.token.revoked.v2";
+    public const string ServicePrincipalChanged = "com.gtx537.platform.service-principal.changed.v1";
     public static readonly JsonSerializerOptions Json = CreateJsonOptions();
 
     public static bool IsUserChanged(string? type) => type is UserChanged or UserChangedV2;
     public static bool IsPermissionChanged(string? type) => type is PermissionChanged or PermissionChangedV2 or PermissionChangedV3;
     public static bool IsTokenRevoked(string? type) => type is TokenRevoked or TokenRevokedV2;
-    public static bool IsFullIntegerRoleVersion(string? type) => type is UserChangedV2 or PermissionChangedV2 or PermissionChangedV3 or TokenRevokedV2;
-    public static bool IsSupported(string? type) => type is TenantChanged or DepartmentChanged
+    public static bool IsFullIntegerRoleVersion(string? type) => type is ServicePrincipalChanged or UserChangedV2 or PermissionChangedV2 or PermissionChangedV3 or TokenRevokedV2;
+    public static bool IsSupported(string? type) => type is TenantChanged or DepartmentChanged or ServicePrincipalChanged
         || IsUserChanged(type) || IsPermissionChanged(type) || IsTokenRevoked(type);
     public static string RoleSubject(int roleId) => "role:" + roleId.ToString(CultureInfo.InvariantCulture);
     public static bool TryRoleSubject(string subject, out int roleId)
@@ -83,3 +84,7 @@ public sealed record PermissionIdentityDataV3(Guid TenantId, string SubjectId, b
     IdentityGrant[] Grants, InquirySiteFormScopeV1[] SiteFormScopes);
 public sealed record TokenRevokedIdentityData(Guid TenantId, string Issuer, string Jti, string SubjectId,
     DateTimeOffset ExpiresAtUtc, int Version);
+
+public sealed record ServicePrincipalIdentityData(Guid TenantId, Guid PrincipalId, string ClientId, Guid DepartmentId,
+    bool Enabled, int Version, string[] Roles, Guid AuthenticationEpoch, string RegistrationVersion, long RegistrationRevision,
+    string SourceProfile = "cp6-inquiry-service-v1");

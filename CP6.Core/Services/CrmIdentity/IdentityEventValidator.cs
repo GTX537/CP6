@@ -67,6 +67,7 @@ public sealed class IdentityEventValidator : ICp6OutboxEnvelopeValidator, ICp6In
             var expected = root.GetProperty("type").GetString() switch
             {
                 IdentityEventContracts.TenantChanged => "tenant:" + tenant,
+                IdentityEventContracts.ServicePrincipalChanged => "service-principal:" + data.GetProperty("principalId").GetString(),
                 IdentityEventContracts.UserChanged or IdentityEventContracts.UserChangedV2 => "user:" + data.GetProperty("userId").GetString(),
                 IdentityEventContracts.DepartmentChanged => "department:" + data.GetProperty("deptId").GetString(),
                 IdentityEventContracts.PermissionChanged or IdentityEventContracts.PermissionChangedV2 or IdentityEventContracts.PermissionChangedV3 => "permission:" + data.GetProperty("subjectId").GetString(),
@@ -75,6 +76,13 @@ public sealed class IdentityEventValidator : ICp6OutboxEnvelopeValidator, ICp6In
                 _ => null
             };
             if (expected is null || aggregate != expected) return false;
+            if (root.GetProperty("type").GetString() == IdentityEventContracts.ServicePrincipalChanged)
+            {
+                var serviceRoles = data.GetProperty("roles").EnumerateArray().Select(x => x.GetString()).ToArray();
+                if (serviceRoles.Distinct(StringComparer.Ordinal).Count() != serviceRoles.Length
+                    || (!data.GetProperty("enabled").GetBoolean() && serviceRoles.Length != 0)
+                    || (data.GetProperty("enabled").GetBoolean() && serviceRoles.Length == 0)) return false;
+            }
             if (data.TryGetProperty("deleted", out var tombstone) && tombstone.GetBoolean() &&
                 (!data.TryGetProperty("enabled", out var enabled) || enabled.GetBoolean())) return false;
             var fullIntegerRole = IdentityEventContracts.IsFullIntegerRoleVersion(root.GetProperty("type").GetString());

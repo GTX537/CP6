@@ -1,6 +1,6 @@
 # 多对话任务分配与交付
 
-> 当前：[W115实际H01服务权限生产](dispatch/20261024-wave115/README.md)：84项相关检查通过、Handoff91合并finish；Main功能PR最终收尾。CRM服务门禁和完整公开提交继续。单人、PostgreSQL、七天ACTIVE。
+> 当前：[W116服务来源与持锁检查](dispatch/20261024-wave116/README.md)：CRM/Handoff已合并finish，231项唯一相关成功检查；Main产品正常PR与最终收尾。H01完整业务授权/公开提交继续。单人、PostgreSQL、七天ACTIVE。
 
 > 当前：[W105配置预览/激活交付](dispatch/20261024-wave105/README.md)：CRM与Handoff已合并finish，实际PG/浏览器及Main互通通过；Main最终收尾，后继公开表单/Attempt/提交。单人、PostgreSQL、七天ACTIVE。
 
