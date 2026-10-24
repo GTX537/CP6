@@ -160262,6 +160262,16 @@
       "date": "2026-10-24",
       "change": "W111 native v3 original calendar and Intake adopted with exact temporal facts;154 applicable local checks;CRM and Handoff merged/released, Main documentation closeout. Actual host/isolation, consumption, service H01, public submit and formal acceptance remain; seven-day ACTIVE.",
       "evidence": "docs/development/dispatch/20261024-wave111/README.md"
+    },
+    {
+      "date": "2026-10-24",
+      "change": "W111 CLOSED23.18min/154checks/all three-repository finish. W112 original consent and receipt graph facts admitted60–100min; service H01, version bridge, consumption and full business acceptance remain. Seven-day ACTIVE.",
+      "evidence": "docs/development/dispatch/20261024-wave112/README.md"
+    },
+    {
+      "date": "2026-10-24",
+      "change": "W112 native v4 original consent/receipt graph delivered;82 related local checks;CRM/Handoff merged/released, Main documentation closeout. Actual consumption/replay, service H01, host/isolation and full public submit remain;seven-day ACTIVE.",
+      "evidence": "docs/development/dispatch/20261024-wave112/README.md"
     }
   ],
   "implementation_assessment": {
@@ -173945,36 +173955,36 @@
       "card_anchor": "wp03-02",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W111-01/02",
+        "chat_label": "COORD / W112-01/02",
         "repository": "Main/CRM",
         "owning_task_repository": "CRM",
-        "branch": "codex/w111-01",
-        "crm_branch": "codex/w111-02",
+        "branch": "codex/w112-01",
+        "crm_branch": "codex/w112-02",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-24T12:52:27.549275+00:00",
-        "baseline_sha": "01b18a9b18a4660dee3c866183b8be677af37d98",
-        "crm_baseline_sha": "6c181d249745a9fb1b77aaef3d19da931ab7f4ab",
-        "entry_evidence": "docs/development/dispatch/20261024-wave111/README.md",
+        "claimed_at": "2026-10-24T13:19:44.636337+00:00",
+        "baseline_sha": "39c6015c844518184d735e9c352eaf8f4ad87e48",
+        "crm_baseline_sha": "0323e3760c6638b48e5b0990968a574ceeb948aa",
+        "entry_evidence": "docs/development/dispatch/20261024-wave112/README.md",
         "phase": "DELIVERY_MAIN_CLOSEOUT",
-        "dispatch_scope": "W111",
+        "dispatch_scope": "W112",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
         "actual_start_ref": {
-          "commit": "0c6d7c9c6788d443925f1057ddd47d3973cb1cfc",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-02/messages/20261024T125227Z-wave111-start/MESSAGE.md",
-          "at": "2026-10-24T12:52:27.549275+00:00"
+          "commit": "05b7cbdc04ec45bf8f432720cb1e98cc55b7ada0",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-02/messages/20261024T131944Z-wave112-start/MESSAGE.md",
+          "at": "2026-10-24T13:19:44.636337+00:00"
         },
         "reserved_write_resources": [
-          "CRM:runtime-model-and-generator",
+          "CRM:runtime-model",
           "CRM:runtime-postgresql-profile",
-          "CRM:original-calendar-intake-adoption",
+          "CRM:original-consent-receipt-bindings",
           "Main:coordination-ledger"
         ],
         "reserved_postgresql_ports": [
           55446
         ],
-        "handoff_branch": "codex/w111-handoff",
+        "handoff_branch": "codex/w112-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
@@ -173984,16 +173994,16 @@
         "resources_released": false,
         "full_task_completed": false,
         "crm_candidate_integrated": true,
-        "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/0323e3760c6638b48e5b0990968a574ceeb948aa/docs/development/evidence/W111-02/DELIVERY.md",
-        "crm_source_sha": "8e5157562203c2c9986786b148a12854a3b1587d",
-        "crm_remote_main_sha": "0323e3760c6638b48e5b0990968a574ceeb948aa",
-        "crm_pull_request": "https://github.com/GTX537/CP6.CRM/pull/138",
+        "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/3f12f94215c1b7beec182312959ee4e39c77bd4f/docs/development/evidence/W112-02/DELIVERY.md",
+        "crm_source_sha": "6e361a8a8e12e41227548fdc6cc5a6562be6640c",
+        "crm_remote_main_sha": "3f12f94215c1b7beec182312959ee4e39c77bd4f",
+        "crm_pull_request": "https://github.com/GTX537/CP6.CRM/pull/139",
         "handoff_delivery_ref": {
-          "commit": "8c0754c309a0c9bea4e1ca4bfbb22fc733747763",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-02/messages/20261024T130719Z-wave111-delivery/MESSAGE.md",
-          "at": "2026-10-24T13:07:19.824845+00:00",
+          "commit": "040e98729234b727ac1b6b59214be3f0194afda2",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-02/messages/20261024T134112Z-wave112-delivery/MESSAGE.md",
+          "at": "2026-10-24T13:41:12.134235+00:00",
           "base": "codex/t02c-entry-handoff-20260921",
-          "branch": "codex/w111-handoff"
+          "branch": "codex/w112-handoff"
         },
         "actual_used_postgresql_ports": [
           55446
@@ -174127,7 +174137,7 @@
         "seats_released": true
       },
       "wave111_delivery": {
-        "status": "CRM_PRODUCT_MERGED_MAIN_DOCUMENTATION_READY",
+        "status": "MERGED",
         "report": "https://github.com/GTX537/CP6.CRM/blob/0323e3760c6638b48e5b0990968a574ceeb948aa/docs/development/evidence/W111-02/DELIVERY.md",
         "validation": "154项唯一相关本地检查通过、0跳过：23项真实PostgreSQL（10项本轮采用/边界、13项原v1图回归），131项旧Intake/Calendar/模型回归；生成器检查和受影响项目构建通过。",
         "full_task_complete": false,
@@ -174136,7 +174146,7 @@
         "crm_source_sha": "8e5157562203c2c9986786b148a12854a3b1587d",
         "crm_remote_main_sha": "0323e3760c6638b48e5b0990968a574ceeb948aa",
         "crm_pull_request": "https://github.com/GTX537/CP6.CRM/pull/138",
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "lifecycle_snapshot": {
           "crm_branch_deleted": true,
           "crm_seat_released": true,
@@ -174144,9 +174154,38 @@
           "handoff_seat_released": true,
           "handoff_delivery_complete": true,
           "main_task": "CP6:W111-01",
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave111-final-verification.json",
+          "main_branch_deleted": true,
+          "final_main_sha": "39c6015c844518184d735e9c352eaf8f4ad87e48"
+        },
+        "actual_agent_minutes": 23.18,
+        "final_main_sha": "39c6015c844518184d735e9c352eaf8f4ad87e48",
+        "branches_deleted": true,
+        "seats_released": true
+      },
+      "wave112_delivery": {
+        "status": "CRM_PRODUCT_MERGED_MAIN_DOCUMENTATION_READY",
+        "report": "https://github.com/GTX537/CP6.CRM/blob/3f12f94215c1b7beec182312959ee4e39c77bd4f/docs/development/evidence/W112-02/DELIVERY.md",
+        "validation": "82项唯一相关本地检查通过、0跳过：32项真实PostgreSQL（19项本轮事实/边界、13项原v1图回归），50项旧模型/回执codec回归。一次集中审查发现回执输出合同风险，修复后定向复验5项；其他有效结果复用，失败记录保留。",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "adopted_scope": "Explicit native v4 original consent/receipt graph facts, deferred completeness, verified readers, native irreversible privacy/receipt and parent row concurrency; actual business consumption/H01 remains",
+        "crm_source_sha": "6e361a8a8e12e41227548fdc6cc5a6562be6640c",
+        "crm_remote_main_sha": "3f12f94215c1b7beec182312959ee4e39c77bd4f",
+        "crm_pull_request": "https://github.com/GTX537/CP6.CRM/pull/139",
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "crm_branch_deleted": true,
+          "crm_seat_released": true,
+          "handoff_branch_deleted": true,
+          "handoff_seat_released": true,
+          "handoff_delivery_complete": true,
+          "main_task": "CP6:W112-01",
           "main_finish_required": true,
           "main_seat_released": false,
-          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave111-final-verification.json"
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave112-final-verification.json"
         }
       }
     },
@@ -189913,10 +189952,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261024-wave111",
-      "path": "docs/development/dispatch/20261024-wave111/README.md",
-      "baseline_sha": "01b18a9b18a4660dee3c866183b8be677af37d98",
-      "registered_at": "2026-10-24T12:52:27.549275+00:00",
+      "id": "20261024-wave112",
+      "path": "docs/development/dispatch/20261024-wave112/README.md",
+      "baseline_sha": "39c6015c844518184d735e9c352eaf8f4ad87e48",
+      "registered_at": "2026-10-24T13:19:44.636337+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -189933,23 +189972,23 @@
       "product_integrated": true,
       "windows": [
         {
-          "id": "W111-01/02",
+          "id": "W112-01/02",
           "task_id": "WP03-02",
-          "title": "Original calendar and intake graph adoption with exact temporal facts",
+          "title": "Original consent and receipt graph facts and binding integrity",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "0c6d7c9c6788d443925f1057ddd47d3973cb1cfc",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP03-02/messages/20261024T125227Z-wave111-start/MESSAGE.md",
-            "at": "2026-10-24T12:52:27.549275+00:00"
+            "commit": "05b7cbdc04ec45bf8f432720cb1e98cc55b7ada0",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP03-02/messages/20261024T131944Z-wave112-start/MESSAGE.md",
+            "at": "2026-10-24T13:19:44.636337+00:00"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w111-01",
-          "planned_scope_ref": "docs/development/dispatch/20261024-wave111/README.md",
+          "branch": "codex/w112-01",
+          "planned_scope_ref": "docs/development/dispatch/20261024-wave112/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -189958,30 +189997,30 @@
           "candidate_integrated": true,
           "crm_candidate_integrated": true,
           "resources_released": false,
-          "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/0323e3760c6638b48e5b0990968a574ceeb948aa/docs/development/evidence/W111-02/DELIVERY.md",
-          "crm_source_sha": "8e5157562203c2c9986786b148a12854a3b1587d",
-          "crm_remote_main_sha": "0323e3760c6638b48e5b0990968a574ceeb948aa",
-          "crm_pull_request": "https://github.com/GTX537/CP6.CRM/pull/138",
-          "validation": "154项唯一相关本地检查通过、0跳过：23项真实PostgreSQL（10项本轮采用/边界、13项原v1图回归），131项旧Intake/Calendar/模型回归；生成器检查和受影响项目构建通过。",
+          "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/3f12f94215c1b7beec182312959ee4e39c77bd4f/docs/development/evidence/W112-02/DELIVERY.md",
+          "crm_source_sha": "6e361a8a8e12e41227548fdc6cc5a6562be6640c",
+          "crm_remote_main_sha": "3f12f94215c1b7beec182312959ee4e39c77bd4f",
+          "crm_pull_request": "https://github.com/GTX537/CP6.CRM/pull/139",
+          "validation": "82项唯一相关本地检查通过、0跳过：32项真实PostgreSQL（19项本轮事实/边界、13项原v1图回归），50项旧模型/回执codec回归。一次集中审查发现回执输出合同风险，修复后定向复验5项；其他有效结果复用，失败记录保留。",
           "lifecycle_snapshot": {
             "crm_branch_deleted": true,
             "crm_seat_released": true,
             "handoff_branch_deleted": true,
             "handoff_seat_released": true,
             "handoff_delivery_complete": true,
-            "main_task": "CP6:W111-01",
+            "main_task": "CP6:W112-01",
             "main_finish_required": true,
             "main_seat_released": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave111-final-verification.json"
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave112-final-verification.json"
           }
         }
       ],
       "horizon": {
-        "started_at": "2026-10-24T12:49:55.151581+00:00",
+        "started_at": "2026-10-24T13:17:02.682349+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          40,
-          70
+          60,
+          100
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -189989,26 +190028,26 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Original calendar and Intake source graph adopted; next actual host/isolation compatibility, ConsentFact/ReceiptProof/GraphBindingStatus, source consumption/replay, service identity/H01 final authority, numbering and public submit/receipt/page.",
-      "validation": "154项唯一相关本地检查通过、0跳过：23项真实PostgreSQL（10项本轮采用/边界、13项原v1图回归），131项旧Intake/Calendar/模型回归；生成器检查和受影响项目构建通过。",
+      "next_action": "Original consent/receipt graph facts delivered; next actual IssuedAttempt consumption/replay, service identity/H01 current business authority and numbering/outbox, explicit host/isolation integration and public submit/receipt/page.",
+      "validation": "82项唯一相关本地检查通过、0跳过：32项真实PostgreSQL（19项本轮事实/边界、13项原v1图回归），50项旧模型/回执codec回归。一次集中审查发现回执输出合同风险，修复后定向复验5项；其他有效结果复用，失败记录保留。",
       "lifecycle_snapshot": {
         "crm_branch_deleted": true,
         "crm_seat_released": true,
         "handoff_branch_deleted": true,
         "handoff_seat_released": true,
         "handoff_delivery_complete": true,
-        "main_task": "CP6:W111-01",
+        "main_task": "CP6:W112-01",
         "main_finish_required": true,
         "main_seat_released": false,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave111-final-verification.json"
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave112-final-verification.json"
       },
-      "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/0323e3760c6638b48e5b0990968a574ceeb948aa/docs/development/evidence/W111-02/DELIVERY.md",
+      "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/3f12f94215c1b7beec182312959ee4e39c77bd4f/docs/development/evidence/W112-02/DELIVERY.md",
       "handoff_delivery_ref": {
-        "commit": "8c0754c309a0c9bea4e1ca4bfbb22fc733747763",
-        "path": "handoffs/CP6-DEV-20261012/tasks/WP03-02/messages/20261024T130719Z-wave111-delivery/MESSAGE.md",
-        "at": "2026-10-24T13:07:19.824845+00:00",
+        "commit": "040e98729234b727ac1b6b59214be3f0194afda2",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP03-02/messages/20261024T134112Z-wave112-delivery/MESSAGE.md",
+        "at": "2026-10-24T13:41:12.134235+00:00",
         "base": "codex/t02c-entry-handoff-20260921",
-        "branch": "codex/w111-handoff"
+        "branch": "codex/w112-handoff"
       }
     },
     "wave_history": [
@@ -206518,6 +206557,117 @@
         "seats_released": true,
         "final_main_sha": "01b18a9b18a4660dee3c866183b8be677af37d98",
         "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave110-final-verification.json"
+      },
+      {
+        "id": "20261024-wave111",
+        "path": "docs/development/dispatch/20261024-wave111/README.md",
+        "baseline_sha": "01b18a9b18a4660dee3c866183b8be677af37d98",
+        "registered_at": "2026-10-24T12:52:27.549275+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W111-01/02",
+            "task_id": "WP03-02",
+            "title": "Original calendar and intake graph adoption with exact temporal facts",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "0c6d7c9c6788d443925f1057ddd47d3973cb1cfc",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP03-02/messages/20261024T125227Z-wave111-start/MESSAGE.md",
+              "at": "2026-10-24T12:52:27.549275+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w111-01",
+            "planned_scope_ref": "docs/development/dispatch/20261024-wave111/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "crm_candidate_integrated": true,
+            "resources_released": true,
+            "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/0323e3760c6638b48e5b0990968a574ceeb948aa/docs/development/evidence/W111-02/DELIVERY.md",
+            "crm_source_sha": "8e5157562203c2c9986786b148a12854a3b1587d",
+            "crm_remote_main_sha": "0323e3760c6638b48e5b0990968a574ceeb948aa",
+            "crm_pull_request": "https://github.com/GTX537/CP6.CRM/pull/138",
+            "validation": "154项唯一相关本地检查通过、0跳过：23项真实PostgreSQL（10项本轮采用/边界、13项原v1图回归），131项旧Intake/Calendar/模型回归；生成器检查和受影响项目构建通过。",
+            "lifecycle_snapshot": {
+              "crm_branch_deleted": true,
+              "crm_seat_released": true,
+              "handoff_branch_deleted": true,
+              "handoff_seat_released": true,
+              "handoff_delivery_complete": true,
+              "main_task": "CP6:W111-01",
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave111-final-verification.json",
+              "main_branch_deleted": true,
+              "final_main_sha": "39c6015c844518184d735e9c352eaf8f4ad87e48"
+            },
+            "main_remote_sha": "39c6015c844518184d735e9c352eaf8f4ad87e48",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/523"
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-24T12:49:55.151581+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            40,
+            70
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W111 fully closed; W112 original consent and receipt graph facts",
+        "validation": "154项唯一相关本地检查通过、0跳过：23项真实PostgreSQL（10项本轮采用/边界、13项原v1图回归），131项旧Intake/Calendar/模型回归；生成器检查和受影响项目构建通过。",
+        "lifecycle_snapshot": {
+          "crm_branch_deleted": true,
+          "crm_seat_released": true,
+          "handoff_branch_deleted": true,
+          "handoff_seat_released": true,
+          "handoff_delivery_complete": true,
+          "main_task": "CP6:W111-01",
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave111-final-verification.json",
+          "main_branch_deleted": true,
+          "final_main_sha": "39c6015c844518184d735e9c352eaf8f4ad87e48"
+        },
+        "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/0323e3760c6638b48e5b0990968a574ceeb948aa/docs/development/evidence/W111-02/DELIVERY.md",
+        "handoff_delivery_ref": {
+          "commit": "8c0754c309a0c9bea4e1ca4bfbb22fc733747763",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-02/messages/20261024T130719Z-wave111-delivery/MESSAGE.md",
+          "at": "2026-10-24T13:07:19.824845+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w111-handoff"
+        },
+        "lifecycle_complete": true,
+        "actual_agent_minutes": 23.18,
+        "branches_deleted": true,
+        "seats_released": true,
+        "final_main_sha": "39c6015c844518184d735e9c352eaf8f4ad87e48",
+        "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave111-final-verification.json"
       }
     ],
     "development_priority": {
@@ -206655,9 +206805,9 @@
           "id": "D6",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W111-01/02",
-          "next_action": "Original calendar and Intake source graph adopted; next actual host/isolation compatibility, ConsentFact/ReceiptProof/GraphBindingStatus, source consumption/replay, service identity/H01 final authority, numbering and public submit/receipt/page.",
-          "prerequisite_adjustment": "Original calendar and Intake graph adopted losslessly; actual host/isolation, consent/receipt facts, service authority/final business fence and public submit remain."
+          "current_window": "W112-01/02",
+          "next_action": "Original consent/receipt graph facts delivered; next actual IssuedAttempt consumption/replay, service identity/H01 current business authority and numbering/outbox, explicit host/isolation integration and public submit/receipt/page.",
+          "prerequisite_adjustment": "Original consent/receipt graph facts delivered; actual consumption/replay, service authority/current H01 business fence, host/isolation and public submit remain."
         },
         {
           "id": "D7",
