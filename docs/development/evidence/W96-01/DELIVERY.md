@@ -25,3 +25,9 @@ StockQueryView真实库存行接入ADJ调整对话框；读取当前服务端ten
 待正常Main产品PR采用、Handoff交付/finish、同Main任务分支最终状态PR/finish，核对远端后定向删除本轮准确分支、释放席位。24/375整卡、125目标0完整、247正式运行NOT_RUN不变；正式Stock Root/Claim/TRANSFER、REP/RMA、Finance和下游业务ACK未提升。
 
 用户在本轮明确回复“授权重绑并继续 W89”。原自动审批拒绝保留历史，但不再作为当前待确认阻塞。W96收尾释放后优先官方bind固定DEV-2 Handoff→CRM，resume原W89任务和保存分支，落实真实业务Owner事务；Issue503移动属性修复及新页面继续保留为随后任务。七天全目标ACTIVE。
+
+## 实际采用与最后收尾
+
+Main [PR504](https://github.com/GTX537/CP6/pull/504) source `c1d05fe9140afc240e1a1289a09c963083fe6433`采用远端main `87c491b36cf2694f017764a0f6ebe1c43c635f04`，19任务路径一致；Handoff [PR71](https://github.com/GTX537/CP6.AI-Handoff/pull/71)采用`262dd3e197db4a68a9a7714f536c2daaa2366805`，准确分支删除、固定树干净detached、finish释放。8个产品路径与已测提交逐blob一致，复用原成功证据；最后文档diff和台账生成独立检查。
+
+Main同任务最终状态PR/finish待完成，当前约13.05min，原估60–90min＋前置6min，最终以`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave96-final-verification.json`为准，不重复Handoff。Issue503保持Open，新增MOVE页面未采用；用户已授权官方重绑CRM并继续W89，W96全收尾后优先恢复。无Actions、既有库迁移或部署，七天全目标ACTIVE。
