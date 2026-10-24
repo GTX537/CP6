@@ -1,8 +1,8 @@
 # 项目当前状态
 
-## 2026-10-24：W96库存调整与恢复候选通过
+## 2026-10-24：W96库存调整与恢复已采用
 
-1项原生PostgreSQL实际HTTP端到端＋28项去重Vue/client检查通过，vue-tsc通过；另1项MOVE属性诊断红灯留为Issue503，未计通过。[单份交付](../development/evidence/W96-01/DELIVERY.md)。新增MOVE提交因保管属性缺陷暂不采用，Issue503保持Open，实际ADJ与原键恢复交付。2个PG停止保留，待正常Main/Handoff采用与分支/席位收尾。用户已明确授权重绑并继续W89，当前收尾后优先resume；七天ACTIVE。
+Main [PR504](https://github.com/GTX537/CP6/pull/504) source `c1d05fe9140afc240e1a1289a09c963083fe6433`进入远端main `87c491b36cf2694f017764a0f6ebe1c43c635f04`，19路径逐blob一致；1原生HTTP＋28Vue/client及类型检查通过。[单份交付](../development/evidence/W96-01/DELIVERY.md)。Handoff [PR71](https://github.com/GTX537/CP6.AI-Handoff/pull/71)已采用、准确分支删除、固定树干净detached、finish释放；Main同任务最后状态PR/finish待完成。新增MOVE未采用，已证保管属性失败留Issue503 Open。2个PG停止保留；当前约13.05min，原估60–90min＋独立前置6min，最终按finish计。用户明确授权W89重绑并继续，当前收尾后优先恢复；七天ACTIVE，整体目标与验收不提升。
 
 ## 2026-10-24：W95样品历史独立Owner已采用
 

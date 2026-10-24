@@ -874,3 +874,9 @@ W95 Main501/502、Handoff70已采用，Issue500关闭，27项相关验证与类�
 ## W96验证与W89恢复授权
 
 1项原生PostgreSQL实际HTTP端到端＋28项去重Vue/client检查通过，vue-tsc通过；另1项MOVE属性诊断红灯留为Issue503，未计通过。D4采用实际ADJ和持久原键恢复；新MOVE写入口待Issue503修复。用户明确授权官方DEV-2重绑CRM并继续W89，W96收尾后优先恢复D5。七天全目标继续，不以局部窗口替代完整出口。
+
+## 实际采用与最后收尾
+
+Main [PR504](https://github.com/GTX537/CP6/pull/504) source `c1d05fe9140afc240e1a1289a09c963083fe6433`采用远端main `87c491b36cf2694f017764a0f6ebe1c43c635f04`，19任务路径一致；Handoff [PR71](https://github.com/GTX537/CP6.AI-Handoff/pull/71)采用`262dd3e197db4a68a9a7714f536c2daaa2366805`，准确分支删除、固定树干净detached、finish释放。8个产品路径与已测提交逐blob一致，复用原成功证据；最后文档diff和台账生成独立检查。
+
+Main同任务最终状态PR/finish待完成，当前约13.05min，原估60–90min＋前置6min，最终以`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave96-final-verification.json`为准，不重复Handoff。Issue503保持Open，新增MOVE页面未采用；用户已授权官方重绑CRM并继续W89，W96全收尾后优先恢复。无Actions、既有库迁移或部署，七天全目标ACTIVE。

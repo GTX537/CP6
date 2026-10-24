@@ -18,3 +18,9 @@ COORD本聊天单人，Main `cf6fbd214c638d917f4cf617ee3a6d876ee77ea5`，Handoff
 ## 实施后前置调整与验证
 
 1项原生PostgreSQL实际HTTP端到端＋28项去重Vue/client检查通过，vue-tsc通过；另1项MOVE属性诊断红灯留为Issue503，未计通过。实际只采用ADJ页面及原键恢复；新增MOVE写入口因确认CUSTOMER→SELF缺陷撤回，保留Issue503待独立修复后继续。原计划MOVE项不勾完成。其余本轮适用验证及一次集中审查通过，PG停止。用户已明确授权官方重绑并继续W89；本轮收尾后优先恢复，不再等待确认。
+
+## 实际采用与最后收尾
+
+Main [PR504](https://github.com/GTX537/CP6/pull/504) source `c1d05fe9140afc240e1a1289a09c963083fe6433`采用远端main `87c491b36cf2694f017764a0f6ebe1c43c635f04`，19任务路径一致；Handoff [PR71](https://github.com/GTX537/CP6.AI-Handoff/pull/71)采用`262dd3e197db4a68a9a7714f536c2daaa2366805`，准确分支删除、固定树干净detached、finish释放。8个产品路径与已测提交逐blob一致，复用原成功证据；最后文档diff和台账生成独立检查。
+
+Main同任务最终状态PR/finish待完成，当前约13.05min，原估60–90min＋前置6min，最终以`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave96-final-verification.json`为准，不重复Handoff。Issue503保持Open，新增MOVE页面未采用；用户已授权官方重绑CRM并继续W89，W96全收尾后优先恢复。无Actions、既有库迁移或部署，七天全目标ACTIVE。
