@@ -770,3 +770,9 @@ W87 Main480/CRM122/Handoff63全部采用，33独立相关用例通过，实际18
 ## W88验证完成
 
 18独立.NET用例（15原生PG、2既有非PG VMI行为、1两租户启动种子）及22Vue用例通过，无跳过；相关构建和vue-tsc通过，最终权限故障定向补验1项并入原15项、不重复计数。一次集中审查完成，5个实际PG停止保留；40去重项不代表完整业务验收。正常采用与同任务收尾后继续，七天ACTIVE。
+
+## 实际采用与最后收尾
+
+Main [PR482](https://github.com/GTX537/CP6/pull/482) source `e23c73c0c3eb941a258fb59c2a7cd50dc6a9634c`采用远端main `73395fa783435c2b2bf6f09b218e135bf51177fe`，30任务路径逐blob核对；Handoff [PR64](https://github.com/GTX537/CP6.AI-Handoff/pull/64)采用`d386156a175ccc0cdb70c5132a365cfc7a9d8343`，准确分支删除、固定树干净detached、finish释放。20个产品路径与已测提交逐blob一致，复用有效结果，最后文档diff/台账生成单独检查。
+
+Main同任务最终状态PR/finish及Issue481最后关闭待完成；当前约24.48min，原估50–75min＋独立前置3min，实际按finish不重复计Handoff。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave88-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续剩余独立Owner及D5/D6真实前置，正式WP10-39/40正式计费/Finance仍未采用。

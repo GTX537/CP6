@@ -33,3 +33,9 @@ PostgreSQL旧读取409 OWNER_READ_VERSION_REQUIRED。旧calculate/confirm在当�
 正常Main产品PR→远端精确采用→Handoff DELIVERY/合并/finish→同任务Main最后状态PR/finish。最后证明前不提前声明分支删除或席位释放；实际计时以生命周期为准。
 
 24/375整卡、125目标0完整交付、247正式运行NOT_RUN保持。完整WP10-39/40、16AC、G1–G4按日历史切点/Root/Slice/合同/换算/币种舍入/OA/Finance仍UNPROVEN；CRM真实Site/Form Owner/公开受理等继续对应窗口。七天目标ACTIVE。W51指定停止data删除被自动审批以blocked by policy拒绝，原地保留不重试。
+
+## 实际采用与最后收尾
+
+Main [PR482](https://github.com/GTX537/CP6/pull/482) source `e23c73c0c3eb941a258fb59c2a7cd50dc6a9634c`采用远端main `73395fa783435c2b2bf6f09b218e135bf51177fe`，30任务路径逐blob核对；Handoff [PR64](https://github.com/GTX537/CP6.AI-Handoff/pull/64)采用`d386156a175ccc0cdb70c5132a365cfc7a9d8343`，准确分支删除、固定树干净detached、finish释放。20个产品路径与已测提交逐blob一致，复用有效结果，最后文档diff/台账生成单独检查。
+
+Main同任务最终状态PR/finish及Issue481最后关闭待完成；当前约24.48min，原估50–75min＋独立前置3min，实际按finish不重复计Handoff。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave88-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续剩余独立Owner及D5/D6真实前置，正式WP10-39/40正式计费/Finance仍未采用。
