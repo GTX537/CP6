@@ -31,6 +31,30 @@ public sealed partial class CrmOidcController
         catch (DbException) { return OAuthError("inquiry_authority_unavailable", 503); }
     }
 
+    [HttpPost("/connect/inquiry-human-context")]
+    [Consumes("application/json")]
+    [RequestSizeLimit(4096)]
+    public async Task<IActionResult> InquiryHumanContext(InquiryHumanContextRequestV1 request)
+    {
+        PreventCaching();
+        if (!options.Enabled || inquiryPermissions?.HumanContextEnabled != true) return NotFound();
+        if (!IsServiceTransportAllowed()) return OAuthError("invalid_request");
+        try
+        {
+            var result = await inquiryPermissions.IssueHumanContextAsync(request, async (db, _) =>
+            {
+                var session = await ReadBearerAsync(db);
+                return session is null ? null : new InquiryPermissionSubjectV1(session.Value.User.TenantId,
+                    session.Value.User.Id, session.Value.Grant.Id, session.Value.ExpiresAtUtc);
+            }, HttpContext.RequestAborted);
+            return Content(result, "application/json");
+        }
+        catch (InquiryPermissionExceptionV1 error) { return OAuthError(error.Message, error.Status); }
+        catch (IamAdministrationExceptionV1) { return OAuthError("inquiry_authority_unavailable", 503); }
+        catch (CurrentPermissionUnavailableException) { return OAuthError("inquiry_authority_unavailable", 503); }
+        catch (DbException) { return OAuthError("inquiry_authority_unavailable", 503); }
+    }
+
     [HttpPost("/connect/inquiry-service-permission")]
     [Consumes("application/json")]
     [RequestSizeLimit(4096)]

@@ -1140,3 +1140,13 @@ W117收尾证据已核对。BFF35–50分钟，公开页面65–100分钟，定�
 48项唯一相关本地成功检查：38 Web、10真实浏览器/原生HTTP与PG场景；最大Unicode/精确版本、原请求重放/坏响应、限流、迟到清理、回执及显式恢复覆盖，无必需跳过。UI过期/更新/拒绝注入范围明确，不冒充数据库过期验收。 [交付](../dispatch/20261024-wave118/README.md)。
 Handoff [PR94](https://github.com/GTX537/CP6.AI-Handoff/pull/94)已采用 `c7fc5bdfb99bf8b13f7d8b89dd40861a784fde3a`，准确分支删除、DEV-2 finish释放。 Main最终合并/finish尚待；当前START后墙钟24.63分钟，原估145–220分钟，最终按Main finish计，不叠加各仓。前期只读调查不包含在此登记计时内。
 后续原生管理/隐私/投递继续，七天ACTIVE。
+
+## W119人工审核权限前置
+
+Main25–40分钟，CRM25–40分钟，定向验证/审查/三仓收尾20–30分钟，合计70–110分钟。[范围](../dispatch/20261024-wave119/README.md)。先绑定人工字段权限源版本，队列/详情W120；七天ACTIVE。
+
+## W119人员上下文实际交付
+
+54项唯一相关本地成功检查：Main12、CRM42，实际Main login/OIDC/HTTP原签名→CRM PostgreSQL持久信任互通；身份/完整角色源/epoch/nonce/用途/期限/撤权/会话CAS及传输拒绝覆盖，必需范围0跳过。 [交付](../dispatch/20261024-wave119/README.md)。
+Handoff [PR95](https://github.com/GTX537/CP6.AI-Handoff/pull/95)采用 `13bfc6a61e3da7a6cf6c5d4b632a4e12cde3b609`，准确分支已删除、DEV-2已finish释放。 Main最终PR/finish尚待；START后墙钟27.31分钟，原估70–110分钟，最终按Main finish计，不叠加各仓；不含先前只读调查。
+后续W120原生队列/详情Owner及管理/隐私/发布继续，七天ACTIVE。

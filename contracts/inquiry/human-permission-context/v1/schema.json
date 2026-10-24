@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:cp6:inquiry:human-context:v1",
+  "title": "Human intake permission bound to current C02 sources",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "issuer",
+    "keyId",
+    "algorithm",
+    "catalogVersion",
+    "requestNonce",
+    "organizationId",
+    "subjectId",
+    "authenticationEpoch",
+    "purpose",
+    "siteId",
+    "formId",
+    "issuedAtUtc",
+    "expiresAtUtc",
+    "contractBundleSha256",
+    "permissionJson",
+    "userSource",
+    "roleSources",
+    "signature"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "cp6-inquiry-human-context-v1"
+    },
+    "issuer": {
+      "type": "string",
+      "pattern": "^https://iam\\.[a-z0-9.-]+$"
+    },
+    "keyId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]{8,80}$"
+    },
+    "algorithm": {
+      "const": "Ed25519"
+    },
+    "catalogVersion": {
+      "const": "crm-permission-catalog-1"
+    },
+    "requestNonce": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{43}$"
+    },
+    "organizationId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "subjectId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "authenticationEpoch": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "not": {
+        "const": "00000000-0000-0000-0000-000000000000"
+      }
+    },
+    "purpose": {
+      "enum": [
+        "intake:list",
+        "intake:detail",
+        "intake:release",
+        "intake:reject"
+      ]
+    },
+    "siteId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "formId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "issuedAtUtc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expiresAtUtc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "contractBundleSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "permissionJson": {
+      "type": "string"
+    },
+    "userSource": {
+      "$ref": "#/$defs/source"
+    },
+    "roleSources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/source"
+      }
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{86}$"
+    }
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "aggregateId",
+        "eventType",
+        "version",
+        "payloadSha256",
+        "isDeleted"
+      ],
+      "properties": {
+        "aggregateId": {
+          "type": "string"
+        },
+        "eventType": {
+          "type": "string"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "payloadSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "isDeleted": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "x-semantic": [
+    "Strict duplicate-member rejection before decode; maximum UTF-8 body32MiB. Canonical unpadded base64url nonce32bytes and signature64bytes.",
+    "Sign ordinal-key canonical JSON excluding root signature; domain cp6-inquiry-human-context-v1 plus LF. Nested permissionJson stays original unchanged frozen R3V15 bytes.",
+    "User source exact user:subjectId, user.changed.v1/v2 and not deleted. All assigned role sources including disabled/zero-grant, unique canonical permission:role:int32 and permission.changed.v1/v2/v3.",
+    "Timestamps exactly seven fractional digits UTC; issued <= databaseNow < expiry; lifetime at most5minutes. Inner issuer/key/catalog/identity/purpose/site/form/time match outer.",
+    "Compare nonce/issuer/bundle/tenant/subject/epoch/site/form/purpose from trusted original online capture; compare exact user and all role references under current identity locks and durable trust. Never business authorization by itself."
+  ]
+}
