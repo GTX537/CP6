@@ -1,245 +1,109 @@
-<!--
-  VMI 在庫（預り在庫）—— el-tabs 三视图，每个 tab 一张查询列表 → 各 tab 内嵌 CpListPage 迁移（WMS 批次5）。
-  el-tabs 是页面外壳（模板无对应契约，保留）；数量/金额列用 map；期限 col slot 保逾期红字；操作/確定/確定フラグ 走 col slot。
-  客户汇总无查询无分页(paginated=false)；明细无搜索栏，刷新+客户标签放 toolbar slot，fetch 闭包依 selectedCustomer 守卫。
-  跨 tab 联动：openDetails 切 tab + detailsRef.reload()；計算/確定 后 billingsRef.reload()。
--->
 <template>
-  <div class="wms-vmi">
-    <el-tabs v-model="activeTab" type="card">
-      <!-- ───── 客户汇总 ───── -->
-      <el-tab-pane :label="t('wms.vmi.tab.customers')" name="customers">
-        <CpListPage
-          ref="customersRef"
-          :columns="customerColumns"
-          :fetch="fetchCustomers"
-          :search-fields="customerSearchFields"
-          :filter-labels="filterLabels"
-          :paginated="false"
-        >
-          <template #col-_action="{ row }">
-            <el-button link type="primary" size="small" @click="openDetails(row.customerCd)">{{ t('wms.vmi.btn.viewDetail') }}</el-button>
-          </template>
-        </CpListPage>
-      </el-tab-pane>
-
-      <!-- ───── 明细 ───── -->
-      <el-tab-pane :label="t('wms.vmi.tab.details') + (selectedCustomer ? ` (${selectedCustomer})` : '')" name="details" :disabled="!selectedCustomer">
-        <CpListPage
-          ref="detailsRef"
-          :columns="detailColumns"
-          :fetch="fetchDetails"
-          :paginated="false"
-        >
-          <template #toolbar>
-            <el-tag>{{ selectedCustomer }}</el-tag>
-            <el-button @click="reloadDetails">{{ t('wms.common.refresh') }}</el-button>
-          </template>
-          <template #col-expiryDate="{ row }">
-            <span :class="expiryClass(row.expiryDate)">{{ row.expiryDate || '-' }}</span>
-          </template>
-        </CpListPage>
-      </el-tab-pane>
-
-      <!-- ───── 保管料 ───── -->
-      <el-tab-pane :label="t('wms.vmi.tab.billings')" name="billings">
-        <CpListPage
-          ref="billingsRef"
-          :columns="billingColumns"
-          :fetch="fetchBillings"
-          :search-fields="billingSearchFields"
-          :filter-labels="filterLabels"
-          :paginated="false"
-        >
-          <template #toolbar>
-            <el-button v-permission="'wms-vmi:calculate'" type="warning" @click="openCalc">{{ t('wms.vmi.btn.calculate') }}</el-button>
-          </template>
-          <template #col-billingAmount="{ row }">
-            <b>{{ formatMoney(row.billingAmount) }}</b>
-          </template>
-          <template #col-confirmed="{ row }">
-            <el-tag v-if="row.confirmed" type="success" size="small">{{ t('wms.common.confirm') }}</el-tag>
-            <el-tag v-else type="info" size="small">-</el-tag>
-          </template>
-          <template #col-_action="{ row }">
-            <el-button v-if="!row.confirmed" v-permission="'wms-vmi:confirm'" link type="primary" size="small" @click="onConfirm(row)">{{ t('wms.vmi.btn.confirm') }}</el-button>
-          </template>
-        </CpListPage>
-      </el-tab-pane>
-    </el-tabs>
-
-    <!-- 计算保管料 Dialog -->
-    <CpFormDialog
-      v-model="calcDialog"
-      :title="t('wms.vmi.dlg.calculate')"
-      width="480"
-      :form="calcForm"
-      :rules="calcRules"
-      :submit="onCalc"
-      :labels="{ cancel: t('wms.common.cancel'), confirm: t('wms.vmi.btn.calculate') }"
-    >
-      <el-alert :title="t('wms.vmi.msg.calcHint')" type="info" :closable="false" show-icon style="margin-bottom: 12px" />
-      <el-form-item :label="t('wms.vmi.fld.yearMonth')" prop="yearMonth">
-        <el-input v-model="calcForm.yearMonth" placeholder="2026-05" maxlength="7" />
-      </el-form-item>
-      <el-form-item :label="t('wms.vmi.fld.dailyRate')" prop="dailyStorageRate">
-        <el-input-number v-model="calcForm.dailyStorageRate" :min="0" :precision="4" controls-position="right" style="width: 100%" />
-      </el-form-item>
-    </CpFormDialog>
-  </div>
+  <CpPageShell title="VMI 库存与历史估算" :count="result?.total">
+    <p>库存按客户、单位分别显示当前可见数量。可用于指定作业的数量和库存估值尚未评估。历史账单是时点估算，旧确认标记不代表已送付或财务入账。新计费和确认暂不可用。</p>
+    <el-form inline @submit.prevent="search">
+      <el-form-item label="查看"><el-select v-model="mode"><el-option label="客户库存" value="customers" /><el-option label="库存明细" value="stock" /><el-option label="历史账单" value="billings" /></el-select></el-form-item>
+      <el-form-item label="客户代码"><el-input v-model="query.customerCd" clearable /></el-form-item>
+      <template v-if="mode === 'billings'">
+        <el-form-item label="账单年月"><el-input v-model="query.yearMonth" placeholder="202610" clearable /></el-form-item>
+        <el-form-item label="旧确认标记"><el-select v-model="confirmed" clearable><el-option label="已标记" value="true" /><el-option label="未标记" value="false" /></el-select></el-form-item>
+      </template>
+      <el-button type="primary" :disabled="!permitted()" :loading="loading" @click="search">查询</el-button>
+    </el-form>
+    <p v-if="error" role="alert">{{ error }}</p>
+    <template v-if="result">
+      <el-table v-if="mode === 'customers'" :data="result.items" border>
+        <el-table-column prop="customerCd" label="客户" />
+        <el-table-column label="单位"><template #default="{ row }">{{ row.unitCd || '未知' }}</template></el-table-column>
+        <el-table-column prop="skuCount" label="SKU 数" />
+        <el-table-column label="实物数量"><template #default="{ row }">{{ row.physicalQty ?? '单位未知，不合计' }}</template></el-table-column>
+        <el-table-column prop="legacyAllocatedQty" label="旧分配数量" />
+        <el-table-column prop="legacyAvailableQty" label="旧可用余额（未评估用途）" />
+        <el-table-column label="明细"><template #default="{ row }"><el-button link @click="openCustomer(row.customerCd)">查看库存</el-button></template></el-table-column>
+      </el-table>
+      <el-table v-else-if="mode === 'stock'" :data="result.items" row-key="id" border>
+        <el-table-column prop="customerCd" label="客户" /><el-table-column prop="productCd" label="产品" /><el-table-column prop="lotNo" label="批号" />
+        <el-table-column prop="warehouseCd" label="仓库" /><el-table-column prop="locationCd" label="库位" />
+        <el-table-column label="单位"><template #default="{ row }">{{ row.unitCd || '未知' }}</template></el-table-column>
+        <el-table-column prop="physicalQty" label="实物数量" /><el-table-column prop="legacyAllocatedQty" label="旧分配数量" /><el-table-column prop="legacyAvailableQty" label="旧可用余额（未评估用途）" />
+        <el-table-column prop="receiveDate" label="接收日期" /><el-table-column prop="expiryDate" label="到期日期" />
+      </el-table>
+      <el-table v-else :data="result.items" row-key="id" border>
+        <el-table-column prop="billingNo" label="历史账单号" /><el-table-column prop="customerCd" label="客户" />
+        <el-table-column label="客户名称"><template #default="{ row }">{{ row.customerNameReadable ? (row.customerName ?? '未记录') : '当前不可披露' }}</template></el-table-column>
+        <el-table-column prop="yearMonth" label="年月" /><el-table-column prop="beginQty" label="旧期初估算" /><el-table-column prop="endQty" label="旧期末估算" /><el-table-column prop="avgQty" label="旧平均估算" />
+        <el-table-column label="历史费率"><template #default="{ row }">{{ row.rateReadable ? row.dailyStorageRate : '当前不可披露' }}</template></el-table-column>
+        <el-table-column label="历史金额（币种未知）"><template #default="{ row }">{{ row.amountReadable ? row.billingAmount : '当前不可披露' }}</template></el-table-column>
+        <el-table-column label="旧确认标记"><template #default="{ row }">{{ row.legacyConfirmedFlag ? '已标记，财务结果未知' : '未标记' }}</template></el-table-column>
+        <el-table-column label="备注"><template #default="{ row }">{{ row.remarksReadable ? (row.remarks ?? '未记录') : '当前不可披露' }}</template></el-table-column>
+      </el-table>
+      <p>当前可见 {{ result.total }} 条，第 {{ result.page }} 页。分页反映当前观察结果。</p>
+      <el-button :disabled="result.page <= 1" @click="goPage(result.page - 1)">上一页</el-button>
+      <el-button :disabled="result.page * result.pageSize >= result.total" @click="goPage(result.page + 1)">下一页</el-button>
+    </template>
+  </CpPageShell>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
-import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
-import { useI18n } from 'vue-i18n'
-import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
-import { type FilterField } from '@/components/templates/CpFilterBar.vue'
-import CpFormDialog from '@/components/templates/CpFormDialog.vue'
+import { onMounted, reactive, ref, watch } from 'vue'
+import CpPageShell from '@/components/templates/CpPageShell.vue'
 import { vmiApi } from '@/api/wms/paperIndustry'
-import type { VmiBilling, VmiCustomerSummary, VmiStockDetail } from '@/types/wms/wms'
-import { formatQty as fmtQty, formatCurrency } from '@/utils/format'
+import { vmiVersion, type VmiQuery, type VmiPage, type VmiCustomerObservation, type VmiStockObservation, type VmiBillingObservation } from '@/types/wms/vmiOwner'
+import { usePermissionStore } from '@/stores/permission'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
 
-const { t } = useI18n()
-const activeTab = ref<'customers' | 'details' | 'billings'>('customers')
-
-const customersRef = ref<ListPageExpose | null>(null)
-const detailsRef = ref<ListPageExpose | null>(null)
-const billingsRef = ref<ListPageExpose | null>(null)
-
-const selectedCustomer = ref('')
-
-function formatQty(n: number | undefined | null) {
-  if (n == null) return '0'
-  return fmtQty(n, 2)
+type Mode = 'customers' | 'stock' | 'billings'
+type Row = VmiCustomerObservation | VmiStockObservation | VmiBillingObservation
+const permission = usePermissionStore(), mode = ref<Mode>('customers'), confirmed = ref('')
+const query = reactive<VmiQuery>({ customerCd: '', yearMonth: '', page: 1, pageSize: 50 })
+const result = ref<VmiPage<Row> | null>(null), loading = ref(false), error = ref('')
+let sequence = 0
+function clear() { sequence++; result.value = null; loading.value = false }
+const intent = useOperationsIntent(() => { clear(); error.value = '身份已变化，请重新查询。' })
+const permitted = () => permission.loaded && permission.has('wms-vmi:query') && (mode.value === 'billings' || permission.has('wms-stock:query'))
+watch(() => [permission.loaded, ...['wms-vmi:query', 'wms-stock:query', 'wms-vmi:amount-read', 'wms-vmi:rate-read'].map(x => permission.has(x))], clear, { flush: 'sync' })
+watch(() => [mode.value, confirmed.value, query.customerCd, query.yearMonth, query.page, query.pageSize], clear, { flush: 'sync' })
+const exact = (x: unknown) => typeof x === 'string' && /^-?\d+(?:\.\d+)?$/.test(x)
+function validRow(row: Row, kind: Mode): boolean {
+  if (!row || typeof row.customerCd !== 'string') return false
+  if (kind === 'billings') {
+    const r = row as VmiBillingObservation
+    return r.legacySemantics === 'POINT_IN_TIME_ESTIMATE' && r.financeOutcome === 'UNKNOWN' && r.unitKnowledge === 'UNKNOWN' && r.currencyKnowledge === 'UNKNOWN' &&
+      [r.beginQty, r.endQty, r.avgQty].every(exact) && typeof r.legacyConfirmedFlag === 'boolean' &&
+      (r.amountReadable === true ? permission.has('wms-vmi:amount-read') && exact(r.billingAmount) : r.amountReadable === false && r.billingAmount === null) &&
+      (r.rateReadable === true ? permission.has('wms-vmi:rate-read') && exact(r.dailyStorageRate) : r.rateReadable === false && r.dailyStorageRate === null) &&
+      (r.customerNameReadable === true ? r.customerName === null || typeof r.customerName === 'string' : r.customerNameReadable === false && r.customerName === null) &&
+      (r.remarksReadable === true ? r.remarks === null || typeof r.remarks === 'string' : r.remarksReadable === false && r.remarks === null)
+  }
+  const r = row as VmiCustomerObservation | VmiStockObservation
+  if (r.availabilityKnowledge !== 'NOT_EVALUATED' || r.free !== null) return false
+  const quantities = [r.physicalQty, r.legacyAllocatedQty, r.legacyAvailableQty]
+  if (kind === 'stock') return quantities.every(exact)
+  const customer = r as VmiCustomerObservation
+  return customer.valuationKnowledge === 'UNKNOWN' && customer.estimatedValue === null &&
+    (typeof customer.unitCd === 'string' && customer.unitCd.trim() !== '' ? customer.unitKnowledge === 'RECORDED' && quantities.every(exact) : customer.unitKnowledge === 'UNKNOWN' && quantities.every(x => x === null))
 }
-function formatMoney(n: number | undefined | null) {
-  if (n == null) return ''
-  return formatCurrency(n)
-}
-function expiryClass(d: string | undefined) {
-  if (!d) return ''
-  const days = Math.floor((new Date(d).getTime() - Date.now()) / 86400000)
-  if (days < 0) return 'expiry-expired'
-  if (days < 30) return 'expiry-soon'
-  return ''
-}
-
-const filterLabels = computed(() => ({
-  search: t('wms.common.search'),
-  reset: t('wms.common.clear'),
-}))
-
-// ───── 客户汇总 ─────
-const customerColumns = computed<ListColumn<VmiCustomerSummary>[]>(() => [
-  { prop: 'customerCd', label: t('wms.vmi.fld.customerCd'), width: 140 },
-  { prop: 'customerName', label: t('wms.vmi.fld.customerName'), minWidth: 180 },
-  { prop: 'skuCount', label: t('wms.vmi.fld.skuCount'), width: 100, kind: 'num' },
-  { prop: 'totalPhysicalQty', label: t('wms.vmi.fld.physical'), width: 120, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
-  { prop: 'totalAllocatedQty', label: t('wms.vmi.fld.allocated'), width: 120, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
-  { prop: 'totalAvailableQty', label: t('wms.vmi.fld.available'), width: 120, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
-  { prop: 'estimatedValue', label: t('wms.vmi.fld.estValue'), width: 140, align: 'right', map: (v) => ({ label: formatMoney(v as number) }) },
-  { prop: '_action', label: t('wms.common.action'), width: 140, fixed: 'right' },
-])
-const customerSearchFields = computed<FilterField[]>(() => [
-  { key: 'customerCd', label: t('wms.vmi.fld.customerCd'), type: 'text' },
-])
-const fetchCustomers: ListFetch<VmiCustomerSummary> = async ({ filters }) => {
-  const cd = filters.customerCd ? String(filters.customerCd) : undefined
-  const all = (await vmiApi.customers(cd)).data || []
-  return { rows: all, total: all.length }
-}
-
-async function openDetails(cd: string) {
-  selectedCustomer.value = cd
-  activeTab.value = 'details'
-  detailsRef.value?.reload()
-}
-
-// ───── 明细 ─────
-const detailColumns = computed<ListColumn<VmiStockDetail>[]>(() => [
-  { prop: 'productCd', label: t('wms.common.product'), width: 140 },
-  { prop: 'lotNo', label: t('wms.common.lot'), width: 140 },
-  { prop: 'warehouseCd', label: t('wms.common.warehouse'), width: 100 },
-  { prop: 'locationCd', label: t('wms.common.location'), width: 140 },
-  { prop: 'physicalQty', label: t('wms.vmi.fld.physical'), width: 110, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
-  { prop: 'availableQty', label: t('wms.vmi.fld.available'), width: 110, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
-  { prop: 'receiveDate', label: t('wms.vmi.fld.receiveDate'), width: 120 },
-  { prop: 'expiryDate', label: t('wms.common.expiryDate'), width: 120 },
-])
-const fetchDetails: ListFetch<VmiStockDetail> = async () => {
-  if (!selectedCustomer.value) return { rows: [], total: 0 }
-  const all = (await vmiApi.details(selectedCustomer.value)).data || []
-  return { rows: all, total: all.length }
-}
-function reloadDetails() { detailsRef.value?.reload() }
-
-// ───── 保管料 ─────
-const billingColumns = computed<ListColumn<VmiBilling>[]>(() => [
-  { prop: 'billingNo', label: t('wms.vmi.fld.billingNo'), width: 200 },
-  { prop: 'customerCd', label: t('wms.vmi.fld.customerCd'), width: 120 },
-  { prop: 'customerName', label: t('wms.vmi.fld.customerName'), minWidth: 160, overflowTooltip: true },
-  { prop: 'yearMonth', label: t('wms.vmi.fld.yearMonth'), width: 100 },
-  { prop: 'skuCount', label: t('wms.vmi.fld.skuCount'), width: 90, kind: 'num' },
-  { prop: 'beginQty', label: t('wms.vmi.fld.beginQty'), width: 110, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
-  { prop: 'endQty', label: t('wms.vmi.fld.endQty'), width: 110, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
-  { prop: 'avgQty', label: t('wms.vmi.fld.avgQty'), width: 110, align: 'right', map: (v) => ({ label: formatQty(v as number) }) },
-  { prop: 'dailyStorageRate', label: t('wms.vmi.fld.dailyRate'), width: 110, align: 'right', map: (v) => ({ label: formatMoney(v as number) }) },
-  { prop: 'billingAmount', label: t('wms.vmi.fld.billingAmt'), width: 140, align: 'right' },
-  { prop: 'calculatedAt', label: t('wms.vmi.fld.calculatedAt'), kind: 'datetime', width: 180 },
-  { prop: 'confirmed', label: t('wms.vmi.fld.confirmed'), width: 100, align: 'center' },
-  { prop: '_action', label: t('wms.common.action'), width: 120, fixed: 'right' },
-])
-const billingSearchFields = computed<FilterField[]>(() => [
-  { key: 'customerCd', label: t('wms.vmi.fld.customerCd'), type: 'text' },
-  { key: 'yearMonth', label: t('wms.vmi.fld.yearMonth'), type: 'text', placeholder: '2026-05' },
-  {
-    key: 'confirmed', label: t('wms.vmi.fld.confirmed'), type: 'select',
-    options: [
-      { label: t('wms.common.confirm'), value: true },
-      { label: '—', value: false },
-    ],
-  },
-])
-const fetchBillings: ListFetch<VmiBilling> = async ({ filters }) => {
-  const cd = filters.customerCd ? String(filters.customerCd) : undefined
-  const ym = filters.yearMonth ? String(filters.yearMonth) : undefined
-  const confirmed = filters.confirmed === undefined || filters.confirmed === '' ? undefined : Boolean(filters.confirmed)
-  const all = (await vmiApi.billings(cd, ym, confirmed)).data || []
-  return { rows: all, total: all.length }
-}
-
-// —— 计算保管料 ——
-const calcDialog = ref(false)
-const calcForm = reactive({ yearMonth: '', dailyStorageRate: 1.0 })
-const calcRules = computed<FormRules>(() => ({
-  yearMonth: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
-  dailyStorageRate: [{ required: true, trigger: 'change', validator: (_r, v, cb) => (typeof v === 'number' && v > 0 ? cb() : cb(new Error(t('wms.common.required')))) }],
-}))
-function openCalc() {
-  const now = new Date()
-  calcForm.yearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
-  calcForm.dailyStorageRate = 1.0
-  calcDialog.value = true
-}
-async function onCalc() {
-  const res = await vmiApi.calculate(calcForm.yearMonth, calcForm.dailyStorageRate)
-  ElMessage.success(t('wms.vmi.msg.upserted', { n: res.data.upserted }))
-  billingsRef.value?.reload()
-}
-
-async function onConfirm(row: VmiBilling) {
+async function load(input: VmiQuery) {
+  const kind = mode.value, q = { ...input }, token = intent.capture(); clear(); const read = sequence
+  if (kind !== 'billings') { delete q.yearMonth; delete q.confirmed } else { q.yearMonth ||= undefined }
+  if (!q.customerCd) q.customerCd = undefined
+  const current = () => intent.current(token) && read === sequence
+  loading.value = true; error.value = ''
   try {
-    await ElMessageBox.confirm(`${t('wms.vmi.btn.confirm')}: ${row.billingNo}`, t('wms.common.confirm'), { type: 'warning' })
-    await vmiApi.confirm(row.billingNo)
-    ElMessage.success(t('wms.common.success'))
-    billingsRef.value?.reload()
-  } catch { /* */ }
+    if (!permitted() || kind === 'stock' && !q.customerCd) throw new Error('Read unavailable')
+    const response = kind === 'customers' ? await vmiApi.customersOwner(q) : kind === 'stock' ? await vmiApi.stockOwner(q.customerCd!, q) : await vmiApi.billingsOwner(q)
+    if (!current()) return
+    const value = response.data, source = kind === 'billings' ? 'HISTORICAL_BILLING_ESTIMATE' : 'CURRENT_STOCK_OBSERVATION'
+    if (!permitted() || response.code !== 0 || value?.version !== vmiVersion || value.coverage !== 'AUTHORIZED_LEGACY_OBSERVATION' || value.source !== source ||
+      value.writesAvailable !== false || value.writeBlocker !== 'VMI_OWNER_ADOPTION_UNPROVEN' || value.page !== q.page || value.pageSize !== q.pageSize ||
+      !Number.isSafeInteger(value.total) || value.total < 0 || !Array.isArray(value.items) || value.items.length > q.pageSize ||
+      !value.items.every(row => validRow(row, kind) && (!q.customerCd || row.customerCd === q.customerCd))) throw new Error('Observation unavailable')
+    result.value = value
+  } catch { if (current()) { clear(); error.value = '无法读取当前权限内的 VMI 记录，请核对客户和查询条件后重试。' } }
+  finally { if (current()) loading.value = false }
 }
+function search() { query.page = 1; void load({ ...query, confirmed: confirmed.value === 'true' ? true : confirmed.value === 'false' ? false : undefined }) }
+function goPage(page: number) { query.page = page; void load({ ...query, confirmed: confirmed.value === 'true' ? true : confirmed.value === 'false' ? false : undefined }) }
+function openCustomer(customerCd: string) { if (!result.value?.items.some(x => x.customerCd === customerCd)) return; mode.value = 'stock'; query.customerCd = customerCd; search() }
+onMounted(search)
 </script>
-
-<style scoped>
-.wms-vmi { padding: 16px; }
-.expiry-expired { color: var(--cp-danger); font-weight: bold; }
-.expiry-soon { color: var(--cp-warn); font-weight: bold; }
-</style>

@@ -1,4 +1,6 @@
 using CP6.Core.Auth;
+using CP6.Core.Services.Erp;
+using CP6.Entity.DTOs.Wms;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,21 +11,39 @@ namespace CP6.WebApi.Controllers.Wms;
 [ApiController]
 [Route("api/wms/vmi")]
 [Authorize]
+[CP6.WebApi.Controllers.Erp.OrderOwnerResult]
+[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class VmiController : ControllerBase
 {
     private readonly IVmiService _svc;
     public VmiController(IVmiService svc) => _svc = svc;
     private string? CurrentUser => User?.Identity?.Name;
 
+    [HttpGet("owner-v1/customers")]
+    [RequirePermission("wms-vmi", "query")]
+    public async Task<IActionResult> OwnerCustomers([FromQuery] VmiQueryV1 query)
+        => Ok(new { code = 0, message = "OK", data = await _svc.SearchCustomersOwnerAsync(query) });
+    [HttpGet("owner-v1/customers/{customerCd}/details")]
+    [RequirePermission("wms-vmi", "query")]
+    public async Task<IActionResult> OwnerDetails(string customerCd, [FromQuery] VmiQueryV1 query)
+        => Ok(new { code = 0, message = "OK", data = await _svc.SearchStockOwnerAsync(customerCd, query) });
+    [HttpGet("owner-v1/billings")]
+    [RequirePermission("wms-vmi", "query")]
+    public async Task<IActionResult> OwnerBillings([FromQuery] VmiQueryV1 query)
+        => Ok(new { code = 0, message = "OK", data = await _svc.SearchBillingsOwnerAsync(query) });
+
     [HttpGet("customers")]
+    [RequirePermission("wms-vmi", "query")]
     public async Task<IActionResult> Customers([FromQuery] string? customerCd)
         => Ok(new { code = 0, message = "OK", data = await _svc.SearchByCustomerAsync(customerCd) });
 
     [HttpGet("customers/{customerCd}/details")]
+    [RequirePermission("wms-vmi", "query")]
     public async Task<IActionResult> Details(string customerCd)
         => Ok(new { code = 0, message = "OK", data = await _svc.GetDetailsAsync(customerCd) });
 
     [HttpGet("billings")]
+    [RequirePermission("wms-vmi", "query")]
     public async Task<IActionResult> Billings([FromQuery] string? customerCd, [FromQuery] string? yearMonth, [FromQuery] bool? confirmed)
         => Ok(new { code = 0, message = "OK", data = await _svc.SearchBillingsAsync(customerCd, yearMonth, confirmed) });
 
@@ -36,7 +56,7 @@ public class VmiController : ControllerBase
             var n = await _svc.CalculateMonthlyBillingAsync(req.YearMonth, req.DailyStorageRate, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071", data = new { upserted = n } });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("billings/{no}/confirm")]
@@ -44,7 +64,7 @@ public class VmiController : ControllerBase
     public async Task<IActionResult> Confirm(string no)
     {
         try { await _svc.ConfirmBillingAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     public class CalculateRequest

@@ -1,21 +1,23 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Wms;
 
-public class VmiService : IVmiService
+public partial class VmiService : IVmiService
 {
     private readonly CP6Context _db;
     private readonly IWmsSequenceService _seq;
+    private readonly OperationsOwnerV1? _owner;
     private const string BillingPrefix = "VMI";
 
-    public VmiService(CP6Context db, IWmsSequenceService seq)
+    public VmiService(CP6Context db, IWmsSequenceService seq, OperationsOwnerV1? owner = null)
     {
-        _db = db; _seq = seq;
+        _db = db; _seq = seq; _owner = owner;
     }
 
-    public async Task<List<VmiCustomerSummary>> SearchByCustomerAsync(string? customerCd)
+    private async Task<List<VmiCustomerSummary>> SearchByCustomerCoreAsync(string? customerCd)
     {
         var query = _db.Stocks.AsNoTracking()
             .Where(s => s.OwnerType == StockOwnerType.Customer && !s.IsDeleted);
@@ -37,7 +39,7 @@ public class VmiService : IVmiService
         return grouped;
     }
 
-    public async Task<List<VmiStockDetail>> GetDetailsAsync(string customerCd)
+    private async Task<List<VmiStockDetail>> GetDetailsCoreAsync(string customerCd)
     {
         if (string.IsNullOrWhiteSpace(customerCd)) return new();
         return await _db.Stocks.AsNoTracking()
@@ -53,7 +55,7 @@ public class VmiService : IVmiService
             .ToListAsync();
     }
 
-    public async Task<List<VmiBilling>> SearchBillingsAsync(string? customerCd, string? yearMonth, bool? confirmed)
+    private async Task<List<VmiBilling>> SearchBillingsCoreAsync(string? customerCd, string? yearMonth, bool? confirmed)
     {
         var query = _db.VmiBillings.AsNoTracking().Where(x => !x.IsDeleted);
         if (!string.IsNullOrWhiteSpace(customerCd)) query = query.Where(x => x.CustomerCd == customerCd);
@@ -62,7 +64,7 @@ public class VmiService : IVmiService
         return await query.OrderByDescending(x => x.YearMonth).ThenBy(x => x.CustomerCd).ToListAsync();
     }
 
-    public async Task<int> CalculateMonthlyBillingAsync(string yearMonth, decimal dailyStorageRate, string? userName)
+    private async Task<int> CalculateMonthlyBillingCoreAsync(string yearMonth, decimal dailyStorageRate, string? userName)
     {
         if (string.IsNullOrWhiteSpace(yearMonth) || yearMonth.Length != 6)
             throw new InvalidOperationException("yearMonth must be YYYYMM (6 chars)");
@@ -117,7 +119,7 @@ public class VmiService : IVmiService
         return upserted;
     }
 
-    public async Task ConfirmBillingAsync(string billingNo, string? userName)
+    private async Task ConfirmBillingCoreAsync(string billingNo, string? userName)
     {
         var b = await _db.VmiBillings.FirstOrDefaultAsync(x => x.BillingNo == billingNo && !x.IsDeleted)
             ?? throw new InvalidOperationException("WM-MSG-070");

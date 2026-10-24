@@ -1,4 +1,5 @@
 import http from '../http'
+import type { VmiQuery, VmiPage, VmiCustomerObservation, VmiStockObservation, VmiBillingObservation } from '@/types/wms/vmiOwner'
 import type {
   PaperRoll, PaperRollSearchQuery, SlitRequest,
   InkLot, InkLotSearchQuery, InkColorMatchHistory, MixInkRequest,
@@ -83,6 +84,15 @@ export const palletApi = {
 }
 
 export const vmiApi = {
+  customersOwner(q: VmiQuery) {
+    return http.get<any, WmsApi<VmiPage<VmiCustomerObservation>>>('/wms/vmi/owner-v1/customers', { params: q })
+  },
+  stockOwner(customerCd: string, q: VmiQuery) {
+    return http.get<any, WmsApi<VmiPage<VmiStockObservation>>>(`/wms/vmi/owner-v1/customers/${encodeURIComponent(customerCd)}/details`, { params: q })
+  },
+  billingsOwner(q: VmiQuery) {
+    return http.get<any, WmsApi<VmiPage<VmiBillingObservation>>>('/wms/vmi/owner-v1/billings', { params: q })
+  },
   customers(customerCd?: string) {
     return http.get<any, WmsApi<VmiCustomerSummary[]>>('/wms/vmi/customers', { params: { customerCd } })
   },
