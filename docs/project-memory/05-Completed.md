@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-24：W108原完整CRM图PostgreSQL存储采用
+
+CRM [PR135](https://github.com/GTX537/CP6.CRM/pull/135)已采用 `dfeba8e44d58a668b8f721b605a425f1bc5279b7`，原32组织表/codec/GraphStore使用明确PG profile，精度、租户复合FK、主行版本锁及全事务回滚验证。19项最终适用的唯一相关本地检查通过、0跳过：13项真实PostgreSQL行为、6项原模型元数据回归；受影响编译通过。 [单份交付](../development/dispatch/20261024-wave108/README.md)。CRM准确分支删除、DEV-2释放；Handoff [PR84](https://github.com/GTX537/CP6.AI-Handoff/pull/84) 已采用 `e10cab1497d1341d53a8538a5ab26eb93734a353`，原准确分支删除、固定DEV-2 finish释放。 Main最终合并/finish继续，当前墙钟24.52min（原估90–150）。仅显式新库/ReadCommitted，自有PG停止、缓存保留，无Actions或部署。原签发/新bundle身份桥接、消费/H01/编号/公开提交回执及正式验收待后继；24/375、0/125、247NOT_RUN不变，七天ACTIVE。
+
 ## 2026-10-24：W107原Attempt与三维原子限流前置采用
 
 CRM [PR134](https://github.com/GTX537/CP6.CRM/pull/134)已采用 `a69098129ef64d1bd6ae0a96df8831890220ffce`，原IssuedAttempt/browser/CSRF/origin/ETag/DB时限、原政策与精确指纹、调用方同事务PG三桶计数采用。24项最终适用的唯一相关本地检查通过、0跳过：21项原Attempt/内容/PG三维限流，3项既有公开GET回归；受影响编译通过。 [单份交付](../development/dispatch/20261024-wave107/README.md)。CRM准确分支删除、DEV-2释放；Handoff [PR83](https://github.com/GTX537/CP6.AI-Handoff/pull/83) 已采用 `88364f6475e7ab58cf09eac933922b264f2bf8a8`，原准确分支删除、固定DEV-2 finish释放。 Main最终合并/finish继续，当前墙钟15.13min（原估45–75）。自有PG/HTTP停止、缓存保留，无Actions或部署。HTTP提交未开放，消费/原图/H01/编号/回执及正式验收待后继；24/375、0/125、247NOT_RUN不变，七天ACTIVE。
