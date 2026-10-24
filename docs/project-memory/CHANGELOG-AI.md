@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-24：W102实际配置Owner与PG宿主交付
+
+配置GET/保存真实Owner、当前精确授权、原结果/日历/内容/Bundle/审计/正式outbox同事务，默认关闭的PG API宿主已由CRM [PR129](https://github.com/GTX537/CP6.CRM/pull/129)采用 `d3615db81675ca6cdad2d9c777505d451a552931`。347项唯一相关本地检查通过、0跳过，[单份交付](../development/dispatch/20261024-wave102/README.md)。CRM/Handoff分支删除、固定席位finish释放；Main本次最后合并/finish，当前63.70min（原估120–180min）。Web BFF v2、预览/激活/公开受理与即时跨仓撤权仍待后继；24/375、0/125、247NOT_RUN不变，七天ACTIVE。自有PG/HTTP停止，无Actions或部署。
+
 ## 2026-10-24：W101真实Main配置权限签发交付
 
 Main实际CP6.Web会话/当前PG动作/精确pair签发、纯Ed25519和默认关闭配置完成验证；CRM [PR128](https://github.com/GTX537/CP6.CRM/pull/128)已采用 `dc09f558d6070a807c59316adce50b35641d8ba6`。152项相关本地检查通过、0跳过，[单份交付](../development/dispatch/20261024-wave101/README.md)。CRM/Handoff分支删除、固定席位finish释放；Main本次最后合并/finish。配置Owner/跨仓当前授权和真实业务验收仍待继续，CanAuthorize=false；24/375、0/125、247NOT_RUN不变，七天ACTIVE。自有PG/HTTP已停止，无Actions或部署；当前22.45min，最终按Main finish计。
