@@ -1,252 +1,75 @@
 <template>
-  <div class="wms-report">
-    <el-card shadow="never" class="search-card">
-      <el-form inline size="small">
-        <el-form-item :label="t('wms.report.fld.type')">
-          <el-select v-model="reportType" style="width: 180px" @change="onTypeChange">
-            <el-option v-for="(l, v) in typeMap" :key="v" :label="l" :value="v" />
-          </el-select>
-        </el-form-item>
-
-        <!-- 月次 -->
-        <el-form-item v-if="reportType === 'monthly'" :label="t('wms.report.fld.yearMonth')">
-          <el-input v-model="form.yearMonth" placeholder="2026-05" style="width: 130px" />
-        </el-form-item>
-
-        <!-- ABC -->
-        <el-form-item v-if="reportType === 'abc'" :label="t('wms.report.fld.analysisDays')">
-          <el-input-number v-model="form.analysisDays" :min="1" :max="3650" style="width: 130px" controls-position="right" />
-        </el-form-item>
-
-        <!-- 滞留 -->
-        <el-form-item v-if="reportType === 'dead'" :label="t('wms.report.fld.idleDays')">
-          <el-input-number v-model="form.idleDays" :min="1" :max="3650" style="width: 130px" controls-position="right" />
-        </el-form-item>
-
-        <!-- 入出庫 -->
-        <template v-if="reportType === 'inbound' || reportType === 'outbound'">
-          <el-form-item :label="t('wms.report.fld.fromDate')">
-            <el-date-picker v-model="form.fromDate" type="date" value-format="YYYY-MM-DD" style="width: 150px" />
-          </el-form-item>
-          <el-form-item :label="t('wms.report.fld.toDate')">
-            <el-date-picker v-model="form.toDate" type="date" value-format="YYYY-MM-DD" style="width: 150px" />
-          </el-form-item>
-          <el-form-item :label="t('wms.report.fld.product')">
-            <el-input v-model="form.productCd" clearable style="width: 140px" />
-          </el-form-item>
+  <CpPageShell title="库存与流水记录" :count="result?.total">
+    <p>这里显示当前有权查阅的原记录。正式月报、ABC、呆滞判断和固定快照导出尚未接通，不能用这些记录直接推算。金额未知，可用量未按用途评估。</p>
+    <el-form inline @submit.prevent="search">
+      <el-form-item label="记录类型"><el-select v-model="mode"><el-option label="当前库存" value="stocks" /><el-option label="原库存流水" value="transactions" /></el-select></el-form-item>
+      <el-form-item label="仓库"><el-input v-model="query.warehouseCd" clearable /></el-form-item>
+      <el-form-item label="产品"><el-input v-model="query.productCd" clearable /></el-form-item>
+      <el-form-item label="批次"><el-input v-model="query.lotNo" clearable /></el-form-item>
+      <template v-if="mode === 'transactions'">
+        <el-form-item label="原流水类型"><el-input v-model="query.txnType" clearable /></el-form-item>
+        <el-form-item label="记录起日"><el-date-picker v-model="query.fromDate" type="date" value-format="YYYY-MM-DD" clearable /></el-form-item>
+        <el-form-item label="记录止日"><el-date-picker v-model="query.toDate" type="date" value-format="YYYY-MM-DD" clearable /></el-form-item>
+      </template>
+      <el-button type="primary" :disabled="!permitted()" :loading="loading" @click="search">查询</el-button>
+    </el-form>
+    <p v-if="error" role="alert">{{ error }}</p>
+    <template v-if="result">
+      <p v-if="mode === 'transactions'">按原记录日期筛选，未换算仓库当地时区；一条流水不等于一次真实出库发生。原数量符号保持，不合计不同单位；相关业务来源暂不可披露。</p>
+      <p v-else>“原分配量”和“原可用标记量”是旧记录值，不能据此认定某项用途可使用。缺失单位或未知货主保持原状态。</p>
+      <el-table :data="result.items" row-key="id" border>
+        <template v-if="mode === 'transactions'"><el-table-column prop="txnNo" label="原流水号" /><el-table-column prop="txnType" label="原类型" /><el-table-column prop="txnDateTime" label="原记录时间" /><el-table-column prop="qty" label="原数量" /></template>
+        <el-table-column prop="warehouseCd" label="仓库" /><el-table-column prop="locationCd" label="库位" /><el-table-column prop="productCd" label="产品" /><el-table-column prop="lotNo" label="批次" />
+        <template v-if="mode === 'stocks'"><el-table-column prop="physicalQty" label="原物理量" /><el-table-column prop="legacyAllocatedQty" label="原分配量" /><el-table-column prop="legacyAvailableQty" label="原可用标记量" /></template>
+        <el-table-column label="原单位"><template #default="{ row }">{{ row.unitState === 'RECORDED' ? row.unitCd : '未记录' }}</template></el-table-column>
+        <el-table-column label="原货主类型"><template #default="{ row }">{{ row.ownerType || '未记录' }}{{ row.ownerState === 'UNKNOWN' ? '（未知）' : '' }}</template></el-table-column>
+        <el-table-column label="原货主编码"><template #default="{ row }">{{ row.ownerCdReadable ? row.ownerCd ?? '未记录' : '当前不可披露' }}</template></el-table-column>
+        <template v-if="mode === 'transactions'">
+          <el-table-column label="记录操作人"><template #default="{ row }">{{ row.operatorCdReadable ? row.operatorCd ?? '未记录' : '当前不可披露' }}</template></el-table-column>
+          <el-table-column label="原备注"><template #default="{ row }">{{ row.remarkReadable ? row.remark ?? '未记录' : '当前不可披露' }}</template></el-table-column>
         </template>
-
-        <el-form-item :label="t('wms.report.fld.warehouse')">
-          <el-input v-model="form.warehouseCd" clearable style="width: 120px" />
-        </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" @click="run" :loading="loading">{{ t('wms.report.btn.run') }}</el-button>
-          <el-button :disabled="rows.length === 0" @click="downloadCsv">{{ t('wms.report.btn.csv') }}</el-button>
-        </el-form-item>
-        <el-form-item>
-          <CpTag tone="info">{{ t('wms.report.fld.rows') }}: {{ rows.length }}</CpTag>
-        </el-form-item>
-      </el-form>
-    </el-card>
-
-    <el-card shadow="never">
-      <CpEmpty v-if="rows.length === 0" :text="t('wms.report.msg.noData')" />
-
-      <!-- Monthly -->
-      <el-table v-if="reportType === 'monthly' && rows.length > 0" :data="rows" border stripe size="small" max-height="650">
-        <el-table-column prop="yearMonth" :label="t('wms.report.fld.yearMonth')" width="100" />
-        <el-table-column prop="warehouseCd" :label="t('wms.report.fld.warehouse')" width="100" />
-        <el-table-column prop="productCd" :label="t('wms.report.fld.product')" width="160" />
-        <el-table-column prop="physicalQty" :label="t('wms.report.monthly.physical')" width="120" align="right">
-          <template #default="{ row }">{{ fmtQty(row.physicalQty) }}</template>
-        </el-table-column>
-        <el-table-column prop="allocatedQty" :label="t('wms.report.monthly.allocated')" width="120" align="right">
-          <template #default="{ row }">{{ fmtQty(row.allocatedQty) }}</template>
-        </el-table-column>
-        <el-table-column prop="availableQty" :label="t('wms.report.monthly.available')" width="120" align="right">
-          <template #default="{ row }">{{ fmtQty(row.availableQty) }}</template>
-        </el-table-column>
-        <el-table-column prop="lotCount" :label="t('wms.report.monthly.lotCount')" width="90" align="right" />
-        <el-table-column prop="estimatedValue" :label="t('wms.report.monthly.value')" width="160" align="right">
-          <template #default="{ row }">{{ fmtMoney(row.estimatedValue) }}</template>
-        </el-table-column>
       </el-table>
-
-      <!-- ABC -->
-      <el-table v-if="reportType === 'abc' && rows.length > 0" :data="rows" border stripe size="small" max-height="650">
-        <el-table-column prop="productCd" :label="t('wms.report.fld.product')" width="200" />
-        <el-table-column prop="outCount" :label="t('wms.report.abc.outCount')" width="140" align="right" />
-        <el-table-column prop="outQty" :label="t('wms.report.abc.outQty')" width="160" align="right">
-          <template #default="{ row }">{{ fmtQty(row.outQty) }}</template>
-        </el-table-column>
-        <el-table-column prop="cumulativeRatio" :label="t('wms.report.abc.cumRatio')" width="140" align="right">
-          <template #default="{ row }">{{ row.cumulativeRatio }}%</template>
-        </el-table-column>
-        <el-table-column :label="t('wms.report.abc.rank')" width="100" align="center">
-          <template #default="{ row }">
-            <CpTag :tone="row.abcRank === 'A' ? 'danger' : row.abcRank === 'B' ? 'warn' : 'info'">{{ row.abcRank }}</CpTag>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <!-- DeadStock -->
-      <el-table v-if="reportType === 'dead' && rows.length > 0" :data="rows" border stripe size="small" max-height="650">
-        <el-table-column prop="warehouseCd" :label="t('wms.report.fld.warehouse')" width="100" />
-        <el-table-column prop="locationCd" :label="t('wms.common.location')" width="140" />
-        <el-table-column prop="productCd" :label="t('wms.report.fld.product')" width="140" />
-        <el-table-column prop="lotNo" :label="t('wms.common.lot')" width="140" />
-        <el-table-column prop="physicalQty" :label="t('wms.report.monthly.physical')" width="120" align="right">
-          <template #default="{ row }">{{ fmtQty(row.physicalQty) }}</template>
-        </el-table-column>
-        <el-table-column prop="lastMovedAt" :label="t('wms.report.dead.lastMoved')" width="180" :formatter="formatDateTimeCell" />
-        <el-table-column prop="idleDays" :label="t('wms.report.dead.idleDays')" width="120" align="right">
-          <template #default="{ row }">
-            <CpTag :tone="row.idleDays > 180 ? 'danger' : row.idleDays > 90 ? 'warn' : 'info'">{{ row.idleDays }}</CpTag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="estimatedValue" :label="t('wms.report.monthly.value')" width="140" align="right">
-          <template #default="{ row }">{{ fmtMoney(row.estimatedValue) }}</template>
-        </el-table-column>
-      </el-table>
-
-      <!-- InboundHistory / OutboundHistory -->
-      <el-table v-if="(reportType === 'inbound' || reportType === 'outbound') && rows.length > 0" :data="rows" border stripe size="small" max-height="650">
-        <el-table-column prop="txnNo" :label="t('wms.report.hist.txnNo')" width="200" />
-        <el-table-column prop="txnDateTime" :label="t('wms.report.hist.dateTime')" width="180" :formatter="formatDateTimeCell" />
-        <el-table-column prop="warehouseCd" :label="t('wms.report.fld.warehouse')" width="90" />
-        <el-table-column prop="locationCd" :label="t('wms.common.location')" width="130" />
-        <el-table-column prop="productCd" :label="t('wms.report.fld.product')" width="130" />
-        <el-table-column prop="lotNo" :label="t('wms.common.lot')" width="130" />
-        <el-table-column prop="qty" :label="t('wms.common.qty')" width="120" align="right">
-          <template #default="{ row }">{{ fmtQty(row.qty) }}</template>
-        </el-table-column>
-        <el-table-column prop="relatedNo" :label="t('wms.report.hist.relatedNo')" width="170" />
-        <el-table-column prop="relatedType" :label="t('wms.report.hist.relatedType')" width="120" />
-        <el-table-column prop="operatorCd" :label="t('wms.report.hist.operator')" width="100" />
-      </el-table>
-
-      <el-alert v-if="rows.length >= 5000" :title="t('wms.report.msg.maxLimit')" type="warning" :closable="false" show-icon style="margin-top: 12px" />
-    </el-card>
-  </div>
+      <p>当前可见 {{ result.total }} 条，第 {{ result.page }} 页。翻页会重新核对当前数据和权限，本结果不是冻结快照。</p>
+      <el-button :disabled="result.page <= 1" @click="goPage(result.page - 1)">上一页</el-button>
+      <el-button :disabled="result.page * result.pageSize >= result.total" @click="goPage(result.page + 1)">下一页</el-button>
+    </template>
+  </CpPageShell>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
-import { ElMessage } from 'element-plus'
-import { useI18n } from 'vue-i18n'
-import CpTag from '@/components/base/CpTag.vue'
-import CpEmpty from '@/components/base/CpEmpty.vue'
+import { onMounted, reactive, ref, watch } from 'vue'
+import CpPageShell from '@/components/templates/CpPageShell.vue'
 import { reportApi } from '@/api/wms/reportCenter'
-import { formatQty, formatCurrency, formatDateTimeCell } from '@/utils/format'
+import { validReportPage, type ReportMode, type ReportQuery, type ReportPage } from '@/types/wms/reportCenterOwner'
+import { usePermissionStore } from '@/stores/permission'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
 
-const { t } = useI18n()
-
-type ReportType = 'monthly' | 'abc' | 'dead' | 'inbound' | 'outbound'
-const reportType = ref<ReportType>('monthly')
-const rows = ref<any[]>([])
-const loading = ref(false)
-
-const today = new Date()
-const ym = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`
-const firstOfMonth = `${ym}-01`
-const todayStr = today.toISOString().slice(0, 10)
-
-const form = reactive({
-  yearMonth: ym,
-  analysisDays: 90,
-  idleDays: 90,
-  fromDate: firstOfMonth,
-  toDate: todayStr,
-  warehouseCd: '',
-  productCd: '',
-})
-
-const typeMap = computed<Record<ReportType, string>>(() => ({
-  monthly: t('wms.report.type.monthly'),
-  abc: t('wms.report.type.abc'),
-  dead: t('wms.report.type.dead'),
-  inbound: t('wms.report.type.inbound'),
-  outbound: t('wms.report.type.outbound'),
-}))
-
-function fmtQty(n: number | undefined | null) {
-  if (n == null) return ''
-  return formatQty(n, 4)
-}
-function fmtMoney(n: number | undefined | null) {
-  if (n == null) return ''
-  return formatCurrency(n)
-}
-
-function onTypeChange() { rows.value = [] }
-
-async function run() {
-  loading.value = true
-  rows.value = []
+const permission = usePermissionStore(), mode = ref<ReportMode>('stocks')
+const query = reactive<ReportQuery>({ warehouseCd: '', productCd: '', lotNo: '', page: 1, pageSize: 50 })
+const result = ref<ReportPage | null>(null), loading = ref(false), error = ref('')
+let sequence = 0
+function clear() { sequence++; result.value = null; loading.value = false }
+const intent = useOperationsIntent(() => { clear(); error.value = '身份已变化，请重新查询。' })
+const permitted = () => permission.loaded && permission.has('wms-report-center:query') && permission.has('wms-stock:query')
+watch(() => [permission.loaded, permission.has('wms-report-center:query'), permission.has('wms-stock:query')], clear, { flush: 'sync' })
+watch(() => [query.warehouseCd, query.productCd, query.lotNo, query.txnType, query.fromDate, query.toDate, query.page, query.pageSize], clear, { flush: 'sync' })
+watch(mode, () => { clear(); query.txnType = undefined; query.fromDate = undefined; query.toDate = undefined; search() }, { flush: 'sync' })
+async function load(input: ReportQuery) {
+  const kind = mode.value, q = { ...input }, token = intent.capture(); clear(); const read = sequence
+  for (const key of ['warehouseCd', 'productCd', 'lotNo', 'txnType', 'fromDate', 'toDate'] as const) if (!q[key]) delete q[key]
+  if (kind === 'stocks') { delete q.txnType; delete q.fromDate; delete q.toDate }
+  const current = () => intent.current(token) && read === sequence && kind === mode.value
+  loading.value = true; error.value = ''
   try {
-    let res: any
-    const wh = form.warehouseCd || undefined
-    switch (reportType.value) {
-      case 'monthly':
-        res = await reportApi.monthlyStock(form.yearMonth, wh); break
-      case 'abc':
-        res = await reportApi.abcAnalysis(form.analysisDays, wh); break
-      case 'dead':
-        res = await reportApi.deadStock(form.idleDays, wh); break
-      case 'inbound':
-        res = await reportApi.inboundHistory(form.fromDate, form.toDate, wh, form.productCd || undefined); break
-      case 'outbound':
-        res = await reportApi.outboundHistory(form.fromDate, form.toDate, wh, form.productCd || undefined); break
-    }
-    rows.value = res?.data || []
-  } catch (e: any) {
-    ElMessage.error(e?.response?.data?.message || e?.message || 'Error')
-  } finally { loading.value = false }
+    if (!permitted()) throw new Error('Read unavailable')
+    const response = kind === 'stocks' ? await reportApi.stockOwner(q) : await reportApi.transactionsOwner(q)
+    if (!current()) return
+    if (!permitted() || response.code !== 0 || !validReportPage(response.data, q, kind)) throw new Error('Observation unavailable')
+    result.value = response.data
+  } catch { if (current()) { clear(); error.value = '无法读取当前权限内的库存或流水记录，请核对条件后重新查询。' } }
+  finally { if (current()) loading.value = false }
 }
-
-async function downloadCsv() {
-  const wh = form.warehouseCd || undefined
-  const params: any = { warehouseCd: wh }
-  let url = ''
-  let filename = ''
-  switch (reportType.value) {
-    case 'monthly':
-      url = '/wms/report-center/monthly-stock/csv'
-      params.yearMonth = form.yearMonth
-      filename = `monthly-stock-${form.yearMonth}.csv`
-      break
-    case 'abc':
-      url = '/wms/report-center/abc-analysis/csv'
-      params.analysisDays = form.analysisDays
-      filename = `abc-analysis-${form.analysisDays}d.csv`
-      break
-    case 'dead':
-      url = '/wms/report-center/dead-stock/csv'
-      params.idleDays = form.idleDays
-      filename = `dead-stock-${form.idleDays}d.csv`
-      break
-    case 'inbound':
-      url = '/wms/report-center/inbound-history/csv'
-      params.fromDate = form.fromDate
-      params.toDate = form.toDate
-      params.productCd = form.productCd || undefined
-      filename = `inbound-${form.fromDate}-${form.toDate}.csv`
-      break
-    case 'outbound':
-      url = '/wms/report-center/outbound-history/csv'
-      params.fromDate = form.fromDate
-      params.toDate = form.toDate
-      params.productCd = form.productCd || undefined
-      filename = `outbound-${form.fromDate}-${form.toDate}.csv`
-      break
-  }
-  try { await reportApi.downloadCsv(url, params, filename) }
-  catch (e: any) { ElMessage.error(e?.message || 'Download failed') }
-}
+function search() { query.page = 1; void load({ ...query }) }
+function goPage(page: number) { query.page = page; void load({ ...query }) }
+onMounted(search)
 </script>
-
-<style scoped>
-.wms-report { padding: 16px; }
-.search-card { margin-bottom: 12px; }
-</style>

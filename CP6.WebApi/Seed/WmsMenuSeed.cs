@@ -11,13 +11,14 @@ namespace CP6.WebApi.Seed;
 /// 本种子把 400 段 WMS 菜单接入 Program.cs 启动链，逐行 <c>if (!Any(MenuId==X))</c> 幂等，
 /// 并给 30 个权限资源键各指定**一个锚定菜单行**显式设 <see cref="Sys_Menu.MenuKey"/>
 /// （对齐 <c>docs/seeds/wms-permission-keys.md</c> 的 30 个连字符键；供 T3 种 Sys_RoleAction）。
+/// 后续报表Owner另将481的既有派生键显式锚定；query/export只登记目录，不自动授予角色。
 ///
 /// MenuKey 策略（关键）：
 ///  - **锚定行**显式设 MenuKey = T1 权限键。**绝不能靠 Program.cs 的 RoutePath 自动回填**
 ///    （<c>RoutePath.Replace('/','-')</c>）——它会把 8 个键拆碎（如 /wms/stock-take→wms-stock-take
 ///    ≠ 键 wms-stocktake；/wms/inspection→wms-inspection ≠ wms-qc-inspection；kit/plate-mold-stock/
 ///    ink-lot/mobile-task/iot-monitor 同理）。故锚定行一律显式。
-///  - **非锚定内容页**（一覧/列表页、product-inbound/shipping/picking/packaging/dashboard/report-center
+///  - **非锚定内容页**（一覧/列表页、product-inbound/shipping/picking/packaging/dashboard
 ///    /bridge-health）MenuKey 留 null：本方法在 Program.cs 的 RoutePath 自动回填块**之前**调用，
 ///    同一次启动内这些 null 行会被自动回填出各自 RoutePath 派生键（如 wms-inbound-order-list），
 ///    它们不承载权限（无 Sys_RoleAction 引用），与锚定键无冲突。
@@ -92,7 +93,7 @@ public static class WmsMenuSeed
 
         // ── 帳票分析 (WM-14)  480(parent) 481~483 ──────────────
         (480, "帳票分析",             null,                        "PieChart",       400, 480, null),
-        (481, "帳票センター",         "/wms/report-center",        "Printer",        480, 481, null),
+        (481, "帳票センター",         "/wms/report-center",        "Printer",        480, 481, "wms-report-center"),
         (482, "連携ヘルス監視",       "/wms/bridge-health",        "Monitor",        480, 482, null),
         (483, "在庫滞留レポート",     "/wms/stock-dwell",          "TrendCharts",    480, 483, "wms-stock-dwell"),
     };
@@ -136,7 +137,7 @@ public static class WmsMenuSeed
 
         // 锚定键防御：若既有库中锚定行的 MenuKey 因历史 RoutePath 自动回填被写成派生键（如 wms-stock-take、
         // wms-inspection、wms-kit、wms-ink-lot、wms-mobile-task、wms-iot-monitor、wms-plate-mold-stock），
-        // 就地矫正为 T1 权威键。仅矫正 30 个锚定行，非锚定行不动。幂等（已正确即跳过）。
+        // 就地矫正为下表显式指定的权威键；非锚定行不动。幂等（已正确即跳过）。
         var fixedAny = false;
         foreach (var r in Rows)
         {

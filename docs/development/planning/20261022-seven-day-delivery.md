@@ -796,3 +796,11 @@ W89准备文档Main484已采用；CRM未开工，跨仓重绑仍待自动审批�
 Main [PR486](https://github.com/GTX537/CP6/pull/486) source `5f3f648854a8d201d934d0a6e19bbdbf39094167`采用远端main `6f19fde5e3d9ea4483c8c04c9713c6743f835007`，30任务路径逐blob核对；Handoff [PR65](https://github.com/GTX537/CP6.AI-Handoff/pull/65)采用`194b2cdecad3322d7f5a87b1d5caf747913c7cc8`，准确分支删除、固定树干净detached、finish释放。20个产品路径与已测提交逐blob一致，复用有效结果，最后文档diff/台账生成单独检查。
 
 Main同任务最终状态PR/finish及Issue485最后关闭待完成；当前约17.92min，原估45–65min＋独立前置4min，实际按finish不重复计Handoff。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave90-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续剩余独立Owner及D5/D6真实前置，正式KIT Composition仍未采用。
+
+## 2026-10-24：W90全部收尾 / W91报表中心独立Owner
+
+W90 Main486/487与Handoff65已采用，Issue485关闭，49项相关验证/类型检查通过；19.77min＋前置约4min，准确分支删除、固定树干净/席位释放。[W91](../dispatch/20261024-wave91/README.md)继续Issue488当前报表Owner和来源权限、旧报告/CSV门，预计45–70min＋独立前置4min。完整Analytics验收不提升，W89重绑确认仍待答复。七天ACTIVE。
+
+## W91验证完成
+
+24独立.NET（16原生PG、7既有非PG报告行为、1两租户目录种子）与9Vue通过，无跳过；相关构建及vue-tsc通过，定向补验去重合计33项。当前原记录Owner与旧导出门通过，完整Analytics不提升；正常收尾后继续，七天ACTIVE。
