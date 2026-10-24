@@ -1,3 +1,5 @@
+using CP6.Entity.DTOs.Wms;
+
 namespace CP6.Core.Services.Wms;
 
 /// <summary>
@@ -7,9 +9,14 @@ namespace CP6.Core.Services.Wms;
 /// 仕様書 §50。集計レポート用の共通サービス。
 /// データ源：T_Stock / T_StockTransaction を唯一の真実源とする。
 /// CSV エクスポートは UTF-8 BOM 付（Excel で文字化け回避）。
+/// 上記は既存非PG経路の履歴仕様。PostgreSQLはOwner版の原記録照会のみ利用可能で、
+/// 旧報告はバージョン移行要求、凍結スナップショット未採用のCSVは現在権限確認後に拒否する。
 /// </remarks>
 public interface IReportCenterService
 {
+    Task<ReportPageV1<ReportStockRowV1>> SearchStockOwnerAsync(ReportQueryV1 query);
+    Task<ReportPageV1<ReportTransactionRowV1>> SearchTransactionsOwnerAsync(ReportQueryV1 query);
+    Task RequireExportOwnerAsync();
     /// <summary>在庫月報：年月末時点の在庫スナップショット（製品CD × 倉庫CD ごと）</summary>
     Task<List<MonthlyStockReportRow>> MonthlyStockReportAsync(string yearMonth, string? warehouseCd = null);
 

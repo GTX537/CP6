@@ -1,4 +1,5 @@
 import http from '../http'
+import type { ReportPage, ReportQuery } from '@/types/wms/reportCenterOwner'
 import type {
   MonthlyStockReportRow, AbcAnalysisRow, DeadStockRow,
   InboundHistoryRow, OutboundHistoryRow,
@@ -6,6 +7,8 @@ import type {
 } from '@/types/wms/wms'
 
 export const reportApi = {
+  stockOwner(params: ReportQuery) { return http.get<any, WmsApi<ReportPage>>('/wms/report-center/owner-v1/stocks', { params }) },
+  transactionsOwner(params: ReportQuery) { return http.get<any, WmsApi<ReportPage>>('/wms/report-center/owner-v1/transactions', { params }) },
   monthlyStock(yearMonth: string, warehouseCd?: string) {
     return http.get<any, WmsApi<MonthlyStockReportRow[]>>('/wms/report-center/monthly-stock', { params: { yearMonth, warehouseCd } })
   },

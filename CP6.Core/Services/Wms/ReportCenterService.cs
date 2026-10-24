@@ -7,14 +7,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Wms;
 
-public class ReportCenterService : IReportCenterService
+public partial class ReportCenterService : IReportCenterService
 {
     private readonly CP6Context _db;
-    public ReportCenterService(CP6Context db) => _db = db;
+    private readonly CP6.Core.Services.Integration.OperationsOwnerV1? _owner;
+    public ReportCenterService(CP6Context db, CP6.Core.Services.Integration.OperationsOwnerV1? owner=null) { _db=db; _owner=owner; }
 
     // ═════════ 在庫月報 ═════════
 
-    public async Task<List<MonthlyStockReportRow>> MonthlyStockReportAsync(string yearMonth, string? warehouseCd = null)
+    private async Task<List<MonthlyStockReportRow>> MonthlyStockReportCoreAsync(string yearMonth, string? warehouseCd = null)
     {
         if (!TryParseYearMonth(yearMonth, out var monthEnd))
             throw new InvalidOperationException("yearMonth format must be 'YYYY-MM' or 'YYYYMM'");
@@ -75,7 +76,7 @@ public class ReportCenterService : IReportCenterService
 
     // ═════════ ABC 分析 ═════════
 
-    public async Task<List<AbcAnalysisRow>> AbcAnalysisAsync(int analysisDays = 90, string? warehouseCd = null)
+    private async Task<List<AbcAnalysisRow>> AbcAnalysisCoreAsync(int analysisDays = 90, string? warehouseCd = null)
     {
         if (analysisDays <= 0) analysisDays = 90;
         var from = DateTime.Today.AddDays(-analysisDays);
@@ -106,7 +107,7 @@ public class ReportCenterService : IReportCenterService
 
     // ═════════ 滞留品 ═════════
 
-    public async Task<List<DeadStockRow>> DeadStockAsync(int idleDays = 90, string? warehouseCd = null)
+    private async Task<List<DeadStockRow>> DeadStockCoreAsync(int idleDays = 90, string? warehouseCd = null)
     {
         if (idleDays <= 0) idleDays = 90;
         var threshold = DateTime.Today.AddDays(-idleDays);
@@ -158,7 +159,7 @@ public class ReportCenterService : IReportCenterService
 
     // ═════════ 入庫・出庫実績 ═════════
 
-    public async Task<List<InboundHistoryRow>> InboundHistoryAsync(DateTime fromDate, DateTime toDate, string? warehouseCd = null, string? productCd = null)
+    private async Task<List<InboundHistoryRow>> InboundHistoryCoreAsync(DateTime fromDate, DateTime toDate, string? warehouseCd = null, string? productCd = null)
     {
         var to = toDate.Date.AddDays(1); // 終日まで含む
         var q = _db.StockTransactions.AsNoTracking()
@@ -180,7 +181,7 @@ public class ReportCenterService : IReportCenterService
             .Take(5000).ToListAsync();
     }
 
-    public async Task<List<OutboundHistoryRow>> OutboundHistoryAsync(DateTime fromDate, DateTime toDate, string? warehouseCd = null, string? productCd = null)
+    private async Task<List<OutboundHistoryRow>> OutboundHistoryCoreAsync(DateTime fromDate, DateTime toDate, string? warehouseCd = null, string? productCd = null)
     {
         var to = toDate.Date.AddDays(1);
         var q = _db.StockTransactions.AsNoTracking()
@@ -204,7 +205,7 @@ public class ReportCenterService : IReportCenterService
 
     // ═════════ CSV エクスポート ═════════
 
-    public byte[] ExportCsv<T>(IEnumerable<T> rows)
+    private byte[] ExportCsvCore<T>(IEnumerable<T> rows)
     {
         var props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
         var sb = new StringBuilder();
