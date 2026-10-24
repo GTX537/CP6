@@ -1,8 +1,8 @@
 # AI 可读变更日志
 
-## 2026-10-24：W91报表中心独立Owner候选通过
+## 2026-10-24：W91报表中心独立Owner已采用
 
-Issue488三原生红灯转绿；24独立.NET（16原生PG、7既有非PG报告行为、1两租户目录种子）与9Vue通过，无跳过；相关构建及vue-tsc通过，定向补验去重合计33项。[单份交付](../development/evidence/W91-01/DELIVERY.md)。双Owner源范围、精确原记录及旧报告/CSV门已补；3个PG停止保留，待Main/Handoff采用与准确分支/席位收尾。完整Analytics不提升，W89确认待答复，七天ACTIVE。
+Main [PR489](https://github.com/GTX537/CP6/pull/489) source `121dc62f27288eca82ad1ca455560e280eaa3d5a`进入远端main `5dfa31efd70989d645162964e70ee5d3f208a1aa`，27任务路径逐blob核对；24.NET/9Vue及类型检查通过，无跳过。[单份交付](../development/evidence/W91-01/DELIVERY.md)。Handoff [PR66](https://github.com/GTX537/CP6.AI-Handoff/pull/66)采用、准确分支删除、固定树干净detached、finish释放。Main同任务最后状态PR/finish及Issue488关闭待完成，未提前声明释放。3个PG停止保留；当前约13.41min，原估45–70min＋独立前置4min，最终按finish计。正式Analytics WP10-44/45、125目标与247验收不提升，七天目标ACTIVE。W89跨仓重绑确认仍待答复，已保存两原分支不清理、不绕过绑定限制。
 
 ## 2026-10-24：W90套件独立Owner已采用
 
