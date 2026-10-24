@@ -160282,6 +160282,16 @@
       "date": "2026-10-24",
       "change": "W113 public receipt HTTP Owner/BFF delivered;92 related local checks;CRM/Handoff merged/released, Main documentation closeout. Actual consumption/replay, service H01 and complete public-submit transaction remain;seven-day ACTIVE.",
       "evidence": "docs/development/dispatch/20261024-wave113/README.md"
+    },
+    {
+      "date": "2026-10-24",
+      "change": "W113 CLOSED29.0min/92checks/all three-repository finish. W114 original graph held Owner transaction admitted65–100min; service H01, actual submission consumption and full business acceptance remain. Seven-day ACTIVE.",
+      "evidence": "docs/development/dispatch/20261024-wave114/README.md"
+    },
+    {
+      "date": "2026-10-24",
+      "change": "W114 actual authenticated configuration Owner and managed Serializable original graph delivered;83 related checks;CRM/Handoff merged/released,Main documentation closeout;full submit/serviceH01 remain;seven-day ACTIVE.",
+      "evidence": "docs/development/dispatch/20261024-wave114/README.md"
     }
   ],
   "implementation_assessment": {
@@ -173965,37 +173975,36 @@
       "card_anchor": "wp03-02",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W113-01/02",
+        "chat_label": "COORD / W114-01/02",
         "repository": "Main/CRM",
         "owning_task_repository": "CRM",
-        "branch": "codex/w113-01",
-        "crm_branch": "codex/w113-02",
+        "branch": "codex/w114-01",
+        "crm_branch": "codex/w114-02",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-24T13:55:34.198819+00:00",
-        "baseline_sha": "2fecb766c5a9fde350fa98716b5faa1de1b5b6d9",
-        "crm_baseline_sha": "3f12f94215c1b7beec182312959ee4e39c77bd4f",
-        "entry_evidence": "docs/development/dispatch/20261024-wave113/README.md",
+        "claimed_at": "2026-10-24T14:30:56.861298+00:00",
+        "baseline_sha": "6edd07112c6dd67cefda5554c0d9fb1449eb561c",
+        "crm_baseline_sha": "f5afba3e9bfb91119ca1d62bc5ff7bec3d121a51",
+        "entry_evidence": "docs/development/dispatch/20261024-wave114/README.md",
         "phase": "DELIVERY_MAIN_CLOSEOUT",
-        "dispatch_scope": "W113",
+        "dispatch_scope": "W114",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
         "actual_start_ref": {
-          "commit": "3cd0bb22e016186bf64edce94bc1503b168f8da7",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-02/messages/20261024T135534Z-wave113-start/MESSAGE.md",
-          "at": "2026-10-24T13:55:34.198819+00:00"
+          "commit": "3657a483e9b64dca7b918073f21724419085ebfa",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-02/messages/20261024T143056Z-wave114-start/MESSAGE.md",
+          "at": "2026-10-24T14:30:56.861298+00:00"
         },
         "reserved_write_resources": [
-          "CRM:public-receipt-owner",
+          "CRM:runtime-postgresql-transaction",
           "CRM:inquiry-native-host",
-          "CRM:public-browser-receipt",
-          "CRM:public-bff",
+          "CRM:configuration-owner-original-graph",
           "Main:coordination-ledger"
         ],
         "reserved_postgresql_ports": [
           55446
         ],
-        "handoff_branch": "codex/w113-handoff",
+        "handoff_branch": "codex/w114-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
@@ -174005,16 +174014,16 @@
         "resources_released": false,
         "full_task_completed": false,
         "crm_candidate_integrated": true,
-        "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/f5afba3e9bfb91119ca1d62bc5ff7bec3d121a51/docs/development/evidence/W113-02/DELIVERY.md",
-        "crm_source_sha": "f8ce8b982e7da7f6328d7cef5b9f5bf1675920dd",
-        "crm_remote_main_sha": "f5afba3e9bfb91119ca1d62bc5ff7bec3d121a51",
-        "crm_pull_request": "https://github.com/GTX537/CP6.CRM/pull/140",
+        "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/d69bf0ec98613b0d00b7f546eaa241fc0c631235/docs/development/evidence/W114-02/DELIVERY.md",
+        "crm_source_sha": "f1281a18ad90790d2481593f319d50176d702f02",
+        "crm_remote_main_sha": "d69bf0ec98613b0d00b7f546eaa241fc0c631235",
+        "crm_pull_request": "https://github.com/GTX537/CP6.CRM/pull/141",
         "handoff_delivery_ref": {
-          "commit": "9a7a7e668ecaf2d80c85ae8341c31c1ab1538598",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-02/messages/20261024T141739Z-wave113-delivery/MESSAGE.md",
-          "at": "2026-10-24T14:17:39.983950+00:00",
+          "commit": "7c578cf3f024f405865114a170ccb402bd407e73",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-02/messages/20261024T145748Z-wave114-delivery/MESSAGE.md",
+          "at": "2026-10-24T14:57:48.328956+00:00",
           "base": "codex/t02c-entry-handoff-20260921",
-          "branch": "codex/w113-handoff"
+          "branch": "codex/w114-handoff"
         },
         "actual_used_postgresql_ports": [
           55446
@@ -174206,7 +174215,7 @@
         "seats_released": true
       },
       "wave113_delivery": {
-        "status": "CRM_PRODUCT_MERGED_MAIN_DOCUMENTATION_READY",
+        "status": "MERGED",
         "report": "https://github.com/GTX537/CP6.CRM/blob/f5afba3e9bfb91119ca1d62bc5ff7bec3d121a51/docs/development/evidence/W113-02/DELIVERY.md",
         "validation": "92项唯一相关本地检查通过、0跳过：62项PG/HTTP、30项Web与相关类型检查；真实Node BFF→API→PG回执和原表单，以及原配置写入/重放通过。首次缺失Node产物及新增Web夹具合同错误已修复并定向重验，其他有效成功复用，失败记录保留。",
         "full_task_complete": false,
@@ -174215,7 +174224,7 @@
         "crm_source_sha": "f8ce8b982e7da7f6328d7cef5b9f5bf1675920dd",
         "crm_remote_main_sha": "f5afba3e9bfb91119ca1d62bc5ff7bec3d121a51",
         "crm_pull_request": "https://github.com/GTX537/CP6.CRM/pull/140",
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "lifecycle_snapshot": {
           "crm_branch_deleted": true,
           "crm_seat_released": true,
@@ -174223,9 +174232,38 @@
           "handoff_seat_released": true,
           "handoff_delivery_complete": true,
           "main_task": "CP6:W113-01",
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave113-final-verification.json",
+          "main_branch_deleted": true,
+          "final_main_sha": "6edd07112c6dd67cefda5554c0d9fb1449eb561c"
+        },
+        "actual_agent_minutes": 29.0,
+        "final_main_sha": "6edd07112c6dd67cefda5554c0d9fb1449eb561c",
+        "branches_deleted": true,
+        "seats_released": true
+      },
+      "wave114_delivery": {
+        "status": "CRM_PRODUCT_MERGED_MAIN_DOCUMENTATION_READY",
+        "report": "https://github.com/GTX537/CP6.CRM/blob/d69bf0ec98613b0d00b7f546eaa241fc0c631235/docs/development/evidence/W114-02/DELIVERY.md",
+        "validation": "83项唯一相关本地PG/HTTP检查通过、0跳过：7项受控事务成功复用、39项实际配置Owner、10项隔离v3、9项隔离v2、18项v1/v4原图与回执；锁协议冲突和测试版本混用均已定位修正，失败日志保留。",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "adopted_scope": "Managed v4 Serializable original graph and actual authenticated configuration Owner same-transaction adoption; source Head locking preserves exact identity inventory; full submit/H01 remains",
+        "crm_source_sha": "f1281a18ad90790d2481593f319d50176d702f02",
+        "crm_remote_main_sha": "d69bf0ec98613b0d00b7f546eaa241fc0c631235",
+        "crm_pull_request": "https://github.com/GTX537/CP6.CRM/pull/141",
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "crm_branch_deleted": true,
+          "crm_seat_released": true,
+          "handoff_branch_deleted": true,
+          "handoff_seat_released": true,
+          "handoff_delivery_complete": true,
+          "main_task": "CP6:W114-01",
           "main_finish_required": true,
           "main_seat_released": false,
-          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave113-final-verification.json"
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave114-final-verification.json"
         }
       }
     },
@@ -189992,10 +190030,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261024-wave113",
-      "path": "docs/development/dispatch/20261024-wave113/README.md",
-      "baseline_sha": "2fecb766c5a9fde350fa98716b5faa1de1b5b6d9",
-      "registered_at": "2026-10-24T13:55:34.198819+00:00",
+      "id": "20261024-wave114",
+      "path": "docs/development/dispatch/20261024-wave114/README.md",
+      "baseline_sha": "6edd07112c6dd67cefda5554c0d9fb1449eb561c",
+      "registered_at": "2026-10-24T14:30:56.861298+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -190012,23 +190050,23 @@
       "product_integrated": true,
       "windows": [
         {
-          "id": "W113-01/02",
+          "id": "W114-01/02",
           "task_id": "WP03-02",
-          "title": "Public receipt HTTP Owner and protected browser credential",
+          "title": "Original graph and actual held identity Owner shared Serializable transaction",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "3cd0bb22e016186bf64edce94bc1503b168f8da7",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP03-02/messages/20261024T135534Z-wave113-start/MESSAGE.md",
-            "at": "2026-10-24T13:55:34.198819+00:00"
+            "commit": "3657a483e9b64dca7b918073f21724419085ebfa",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP03-02/messages/20261024T143056Z-wave114-start/MESSAGE.md",
+            "at": "2026-10-24T14:30:56.861298+00:00"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w113-01",
-          "planned_scope_ref": "docs/development/dispatch/20261024-wave113/README.md",
+          "branch": "codex/w114-01",
+          "planned_scope_ref": "docs/development/dispatch/20261024-wave114/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -190037,30 +190075,30 @@
           "candidate_integrated": true,
           "crm_candidate_integrated": true,
           "resources_released": false,
-          "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/f5afba3e9bfb91119ca1d62bc5ff7bec3d121a51/docs/development/evidence/W113-02/DELIVERY.md",
-          "crm_source_sha": "f8ce8b982e7da7f6328d7cef5b9f5bf1675920dd",
-          "crm_remote_main_sha": "f5afba3e9bfb91119ca1d62bc5ff7bec3d121a51",
-          "crm_pull_request": "https://github.com/GTX537/CP6.CRM/pull/140",
-          "validation": "92项唯一相关本地检查通过、0跳过：62项PG/HTTP、30项Web与相关类型检查；真实Node BFF→API→PG回执和原表单，以及原配置写入/重放通过。首次缺失Node产物及新增Web夹具合同错误已修复并定向重验，其他有效成功复用，失败记录保留。",
+          "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/d69bf0ec98613b0d00b7f546eaa241fc0c631235/docs/development/evidence/W114-02/DELIVERY.md",
+          "crm_source_sha": "f1281a18ad90790d2481593f319d50176d702f02",
+          "crm_remote_main_sha": "d69bf0ec98613b0d00b7f546eaa241fc0c631235",
+          "crm_pull_request": "https://github.com/GTX537/CP6.CRM/pull/141",
+          "validation": "83项唯一相关本地PG/HTTP检查通过、0跳过：7项受控事务成功复用、39项实际配置Owner、10项隔离v3、9项隔离v2、18项v1/v4原图与回执；锁协议冲突和测试版本混用均已定位修正，失败日志保留。",
           "lifecycle_snapshot": {
             "crm_branch_deleted": true,
             "crm_seat_released": true,
             "handoff_branch_deleted": true,
             "handoff_seat_released": true,
             "handoff_delivery_complete": true,
-            "main_task": "CP6:W113-01",
+            "main_task": "CP6:W114-01",
             "main_finish_required": true,
             "main_seat_released": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave113-final-verification.json"
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave114-final-verification.json"
           }
         }
       ],
       "horizon": {
-        "started_at": "2026-10-24T13:53:32.080557+00:00",
+        "started_at": "2026-10-24T14:29:24.960165+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          50,
-          80
+          65,
+          100
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -190068,26 +190106,26 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Public receipt HTTP Owner and actual BFF adopted; next actual IssuedAttempt consumption/replay, service identity/H01 current business authority and numbering/CommandReplay/AuditFact/OutboxFact transaction, public submit and pages.",
-      "validation": "92项唯一相关本地检查通过、0跳过：62项PG/HTTP、30项Web与相关类型检查；真实Node BFF→API→PG回执和原表单，以及原配置写入/重放通过。首次缺失Node产物及新增Web夹具合同错误已修复并定向重验，其他有效成功复用，失败记录保留。",
+      "next_action": "Managed v4 Serializable and actual authenticated configuration Owner atomic original graph adoption delivered; next actual IssuedAttempt consumption/replay, service identity/H01 current authority and numbering/CommandReplay/AuditFact/OutboxFact transaction, full public submit and pages.",
+      "validation": "83项唯一相关本地PG/HTTP检查通过、0跳过：7项受控事务成功复用、39项实际配置Owner、10项隔离v3、9项隔离v2、18项v1/v4原图与回执；锁协议冲突和测试版本混用均已定位修正，失败日志保留。",
       "lifecycle_snapshot": {
         "crm_branch_deleted": true,
         "crm_seat_released": true,
         "handoff_branch_deleted": true,
         "handoff_seat_released": true,
         "handoff_delivery_complete": true,
-        "main_task": "CP6:W113-01",
+        "main_task": "CP6:W114-01",
         "main_finish_required": true,
         "main_seat_released": false,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave113-final-verification.json"
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave114-final-verification.json"
       },
-      "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/f5afba3e9bfb91119ca1d62bc5ff7bec3d121a51/docs/development/evidence/W113-02/DELIVERY.md",
+      "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/d69bf0ec98613b0d00b7f546eaa241fc0c631235/docs/development/evidence/W114-02/DELIVERY.md",
       "handoff_delivery_ref": {
-        "commit": "9a7a7e668ecaf2d80c85ae8341c31c1ab1538598",
-        "path": "handoffs/CP6-DEV-20261012/tasks/WP03-02/messages/20261024T141739Z-wave113-delivery/MESSAGE.md",
-        "at": "2026-10-24T14:17:39.983950+00:00",
+        "commit": "7c578cf3f024f405865114a170ccb402bd407e73",
+        "path": "handoffs/CP6-DEV-20261012/tasks/WP03-02/messages/20261024T145748Z-wave114-delivery/MESSAGE.md",
+        "at": "2026-10-24T14:57:48.328956+00:00",
         "base": "codex/t02c-entry-handoff-20260921",
-        "branch": "codex/w113-handoff"
+        "branch": "codex/w114-handoff"
       }
     },
     "wave_history": [
@@ -206819,6 +206857,117 @@
         "seats_released": true,
         "final_main_sha": "2fecb766c5a9fde350fa98716b5faa1de1b5b6d9",
         "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave112-final-verification.json"
+      },
+      {
+        "id": "20261024-wave113",
+        "path": "docs/development/dispatch/20261024-wave113/README.md",
+        "baseline_sha": "2fecb766c5a9fde350fa98716b5faa1de1b5b6d9",
+        "registered_at": "2026-10-24T13:55:34.198819+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W113-01/02",
+            "task_id": "WP03-02",
+            "title": "Public receipt HTTP Owner and protected browser credential",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "3cd0bb22e016186bf64edce94bc1503b168f8da7",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP03-02/messages/20261024T135534Z-wave113-start/MESSAGE.md",
+              "at": "2026-10-24T13:55:34.198819+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w113-01",
+            "planned_scope_ref": "docs/development/dispatch/20261024-wave113/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "crm_candidate_integrated": true,
+            "resources_released": true,
+            "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/f5afba3e9bfb91119ca1d62bc5ff7bec3d121a51/docs/development/evidence/W113-02/DELIVERY.md",
+            "crm_source_sha": "f8ce8b982e7da7f6328d7cef5b9f5bf1675920dd",
+            "crm_remote_main_sha": "f5afba3e9bfb91119ca1d62bc5ff7bec3d121a51",
+            "crm_pull_request": "https://github.com/GTX537/CP6.CRM/pull/140",
+            "validation": "92项唯一相关本地检查通过、0跳过：62项PG/HTTP、30项Web与相关类型检查；真实Node BFF→API→PG回执和原表单，以及原配置写入/重放通过。首次缺失Node产物及新增Web夹具合同错误已修复并定向重验，其他有效成功复用，失败记录保留。",
+            "lifecycle_snapshot": {
+              "crm_branch_deleted": true,
+              "crm_seat_released": true,
+              "handoff_branch_deleted": true,
+              "handoff_seat_released": true,
+              "handoff_delivery_complete": true,
+              "main_task": "CP6:W113-01",
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave113-final-verification.json",
+              "main_branch_deleted": true,
+              "final_main_sha": "6edd07112c6dd67cefda5554c0d9fb1449eb561c"
+            },
+            "main_remote_sha": "6edd07112c6dd67cefda5554c0d9fb1449eb561c",
+            "main_pull_request": "https://github.com/GTX537/CP6/pull/525"
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-24T13:53:32.080557+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            50,
+            80
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W113 fully closed; W114 original graph held Owner transaction",
+        "validation": "92项唯一相关本地检查通过、0跳过：62项PG/HTTP、30项Web与相关类型检查；真实Node BFF→API→PG回执和原表单，以及原配置写入/重放通过。首次缺失Node产物及新增Web夹具合同错误已修复并定向重验，其他有效成功复用，失败记录保留。",
+        "lifecycle_snapshot": {
+          "crm_branch_deleted": true,
+          "crm_seat_released": true,
+          "handoff_branch_deleted": true,
+          "handoff_seat_released": true,
+          "handoff_delivery_complete": true,
+          "main_task": "CP6:W113-01",
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave113-final-verification.json",
+          "main_branch_deleted": true,
+          "final_main_sha": "6edd07112c6dd67cefda5554c0d9fb1449eb561c"
+        },
+        "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/f5afba3e9bfb91119ca1d62bc5ff7bec3d121a51/docs/development/evidence/W113-02/DELIVERY.md",
+        "handoff_delivery_ref": {
+          "commit": "9a7a7e668ecaf2d80c85ae8341c31c1ab1538598",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-02/messages/20261024T141739Z-wave113-delivery/MESSAGE.md",
+          "at": "2026-10-24T14:17:39.983950+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w113-handoff"
+        },
+        "lifecycle_complete": true,
+        "actual_agent_minutes": 29.0,
+        "branches_deleted": true,
+        "seats_released": true,
+        "final_main_sha": "6edd07112c6dd67cefda5554c0d9fb1449eb561c",
+        "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave113-final-verification.json"
       }
     ],
     "development_priority": {
@@ -206956,9 +207105,9 @@
           "id": "D6",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W113-01/02",
-          "next_action": "Public receipt HTTP Owner and actual BFF adopted; next actual IssuedAttempt consumption/replay, service identity/H01 current business authority and numbering/CommandReplay/AuditFact/OutboxFact transaction, public submit and pages.",
-          "prerequisite_adjustment": "Public receipt Owner/BFF delivered; actual consumption/replay, service authority/current H01 business fence and public submit remain."
+          "current_window": "W114-01/02",
+          "next_action": "Managed v4 Serializable and actual authenticated configuration Owner atomic original graph adoption delivered; next actual IssuedAttempt consumption/replay, service identity/H01 current authority and numbering/CommandReplay/AuditFact/OutboxFact transaction, full public submit and pages.",
+          "prerequisite_adjustment": "Actual configuration Owner now adopts original graph under its existing held identity Serializable transaction; service identity/H01 and full public submission transaction remain."
         },
         {
           "id": "D7",

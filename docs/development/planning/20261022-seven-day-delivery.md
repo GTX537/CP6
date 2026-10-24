@@ -1092,3 +1092,13 @@ W112 Main524/CRM139/Handoff88全部finish，准确分支删除、席位释放，
 92项唯一相关本地检查通过、0跳过：62项PG/HTTP、30项Web与相关类型检查；真实Node BFF→API→PG回执和原表单，以及原配置写入/重放通过。首次缺失Node产物及新增Web夹具合同错误已修复并定向重验，其他有效成功复用，失败记录保留。 [实际交付](../dispatch/20261024-wave113/README.md)。
 Handoff [PR89](https://github.com/GTX537/CP6.AI-Handoff/pull/89)已采用 `5aac8893ba0917e623459b8f97fb17ea597b030e`，准确分支删除、固定DEV-2 finish释放。 CRM分支删除/释放已核对；Main文档PR/finish继续，当前START后墙钟26.13min（原估50–80），最终按Main finish计，不叠加各仓。
 后继实际消费/重放、service/H01最终权限、完整提交事务接入及完整公开提交，七天ACTIVE。
+
+## 2026-10-24：W113完整收尾 / W114原图与持锁Owner共同事务
+
+W113 Main525/CRM140/Handoff89全部finish，准确分支删除、席位释放，实际29.0min/92项检查。[W114](../dispatch/20261024-wave114/README.md)接入原图受控Serializable事务并由实际配置Owner原子采用，预计65–100min；完整H01、服务身份、消费重放和公开提交仍待，七天ACTIVE。
+
+## W114实际配置Owner与原图共同事务
+
+83项唯一相关本地PG/HTTP检查通过、0跳过：7项受控事务成功复用、39项实际配置Owner、10项隔离v3、9项隔离v2、18项v1/v4原图与回执；锁协议冲突和测试版本混用均已定位修正，失败日志保留。 [实际交付](../dispatch/20261024-wave114/README.md)。
+Handoff [PR90](https://github.com/GTX537/CP6.AI-Handoff/pull/90)已采用 `cb37e979bda63af27c3ad43d94d93cc82acfb8c7`，准确分支删除、固定DEV-2 finish释放。 CRM分支删除/释放已核对；Main文档PR/finish继续，当前START后墙钟31.86min（原估65–100），最终按Main finish计，不叠加各仓。
+后继实际消费/重放、service/H01最终权限、完整提交事务及公开页面，七天ACTIVE。
