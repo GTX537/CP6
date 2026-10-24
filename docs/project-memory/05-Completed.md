@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-24：W118公开提交BFF与原生页面
+
+48项唯一相关本地成功检查：38 Web、10真实浏览器/原生HTTP与PG场景；最大Unicode/精确版本、原请求重放/坏响应、限流、迟到清理、回执及显式恢复覆盖，无必需跳过。UI过期/更新/拒绝注入范围明确，不冒充数据库过期验收。 [交付](../development/dispatch/20261024-wave118/README.md)。CRM PR144已合并finish，真实浏览器公开提交/回执及稳定原请求重试；Handoff [PR94](https://github.com/GTX537/CP6.AI-Handoff/pull/94)已采用 `c7fc5bdfb99bf8b13f7d8b89dd40861a784fde3a`，准确分支删除、DEV-2 finish释放。
+Handoff [PR94](https://github.com/GTX537/CP6.AI-Handoff/pull/94)已采用 `c7fc5bdfb99bf8b13f7d8b89dd40861a784fde3a`，准确分支删除、DEV-2 finish释放。 Main最终合并/finish尚待；当前START后墙钟24.63分钟，原估145–220分钟，最终按Main finish计，不叠加各仓。前期只读调查不包含在此登记计时内。
+Main正常PR/finish继续；后续管理/隐私/投递Owner仍待，24/375、0/125、247NOT_RUN保持，七天ACTIVE。
+
 ## 2026-10-24：W117公开提交/H01真实Owner
 
 122项唯一相关本地成功检查：Main4、CRM118。真实Main PostgreSQL/TLS控制器到独立CRM完整提交；正常/待审/最大Unicode与精确版本、稳定重放/竞争/响应丢失/限额、权限来源、到期/取消/晚期失败回滚均验证。相关读取和Node BFF回归通过；无必需跳过。 [交付](../development/dispatch/20261024-wave117/README.md)。CRM PR143已合并finish，完整提交/H01事务及稳定重放，无用户会话伪装；Handoff [PR93](https://github.com/GTX537/CP6.AI-Handoff/pull/93)已采用 `eb641466f17e818b009f37e1fbd18b0ab83d9fb1`，准确分支删除、DEV-2 finish释放。
