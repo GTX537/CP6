@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-24：W89身份会话围栏与BUG-123已采用
+
+CRM PR124/125均已采用，最新main `59845f28539d89582884db442e25e95cd29ce328`；Issue123已关闭，59个去重相关本地用例通过（W89 42，BUG-123本次18，交集1；未变输入按真实来源复用）。[身份围栏](https://github.com/GTX537/CP6.CRM/blob/59845f28539d89582884db442e25e95cd29ce328/docs/development/evidence/W89-01/DELIVERY.md)；[签名回执修复](https://github.com/GTX537/CP6.CRM/blob/59845f28539d89582884db442e25e95cd29ce328/docs/development/evidence/BUG-123/DELIVERY.md)。两个CRM任务及Handoff分支准确删除、固定树干净detached、finish释放；Main协调PR/finish待本次收尾。两个PG已停止保留，无Actions/既有库迁移/生产部署。CanAuthorize=false，真实Site/Form Owner仍待接，整卡24/375、目标0/125、247运行NOT_RUN不变。七天ACTIVE；下一独立优先Main Issue503。原准备21.33min＋恢复执行至此20.36min，等待和W90–W96不计，最终见wave89-final-verification.json。
+
 ## 2026-10-24：W96库存调整与恢复已采用
 
 Main [PR504](https://github.com/GTX537/CP6/pull/504) source `c1d05fe9140afc240e1a1289a09c963083fe6433`进入远端main `87c491b36cf2694f017764a0f6ebe1c43c635f04`，19路径逐blob一致；1原生HTTP＋28Vue/client及类型检查通过。[单份交付](../development/evidence/W96-01/DELIVERY.md)。Handoff [PR71](https://github.com/GTX537/CP6.AI-Handoff/pull/71)已采用、准确分支删除、固定树干净detached、finish释放；Main同任务最后状态PR/finish待完成。新增MOVE未采用，已证保管属性失败留Issue503 Open。2个PG停止保留；当前约13.05min，原估60–90min＋独立前置6min，最终按finish计。用户明确授权W89重绑并继续，当前收尾后优先恢复；七天ACTIVE，整体目标与验收不提升。
