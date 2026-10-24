@@ -928,3 +928,19 @@ W97 Main507/508、Handoff73、Issue503已闭环，14.62min＋前置约5min，准
 Main [产品PR](https://github.com/GTX537/CP6/pull/509) source `98a4d468c264bcc050e2272ec798c6b3b6ab4072`采用远端main `0b8a3ee014e7bcfb1fe58adf5b2792f4e61a7992`，15任务路径一致；Handoff [PR](https://github.com/GTX537/CP6.AI-Handoff/pull/74)采用`84897920632c79f32c2ad95695c30c1b7b45b049`，准确分支删除、固定树干净detached、finish释放。4产品路径与已测提交逐blob一致，复用1原生HTTP＋29Vue/client和类型检查；最后文档diff和台账生成独立检查。
 
 Main同任务最终状态PR/finish待完成，当前约11.47min，原估25–35min＋前置约2min，最终以`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave98-final-verification.json`为准，不重复Handoff。自有PG停止、所有证据/数据保留，无Actions／迁移／部署。实际MOVE与原键恢复采用，正式业务验收仍独立，七天ACTIVE。
+
+## 2026-10-24：W98全部收尾 / W99受保护会话宿主
+
+W98 Main509/510、Handoff74已采用，30项相关检查与类型通过，实际13.99min＋独立前置约2min，准确分支删除／席位释放。[W99](../dispatch/20261024-wave99/README.md)接通受保护PG会话、真实在线身份和同事务身份围栏，预计35–50min＋前置约5min；实际Site/Form范围与业务Owner仍需采用，七天ACTIVE。
+
+## W99实际采用与最后收尾
+
+CRM [PR126](https://github.com/GTX537/CP6.CRM/pull/126) source `c5ddbe13accfdfd5e3b3a7ced52088e8c1edcbbf`已采用远端main `e86ca195470f8e4fad29aab474cfbef696dde132`，7任务路径逐blob一致。[单份交付](https://github.com/GTX537/CP6.CRM/blob/e86ca195470f8e4fad29aab474cfbef696dde132/docs/development/evidence/W99-01/DELIVERY.md)。
+
+实际CrmAuthenticationService新增明确PostgreSQL/具体在线客户端命令准备入口：只用浏览器opaque cookie/CSRF，从受保护原会话读取固定身份、epoch、版本和有效期，每次执行真实在线JWT与no-store context验证。无需浏览器提供Actor/Token/版本；不Touch/续期/改变会话，不公开token/cookie/密文/hash。有效期取原会话、原行和实际JWT的最小值，并在await后重查。一次性捕获直接进入W89同事务原身份/会话持锁，失败后不得重用，提交前原事务最终重核；锁内不联网，无隐式重试。
+
+54项相关本地检查通过：21项真实受保护会话/TLS/JWT/PG宿主行为＋33项相关身份与认证回归，0跳过；原失败保留，无Actions，正式业务NOT_RUN。API与必要依赖同次编译通过；一次集中SPEC/QUALITY。首轮18通过/3失败为不合法存储准备和错误异常类型预期，现有守卫没有放宽；改为真实epoch变化并校正断言，原日志/TRX保留。自有PG55446已smart stop并保留数据，测试HTTP宿主正常释放；无schema/依赖变更。
+
+CRM准确任务分支已删除、固定席位finish后官方bind回Handoff。CanAuthorize=false；真实Site/Form当前范围、Main签名权限生产者、实际配置Owner/Program路由和保存/Audit/Outbox采用仍需后继，配置矩阵fields=[]，不能用线索部门或PII替代。24/375整卡、125目标0完整、247正式运行NOT_RUN不变，七天ACTIVE。没有Actions、既有环境迁移或生产部署。
+
+Handoff [PR](https://github.com/GTX537/CP6.AI-Handoff/pull/75)已采用 `ed4e49d9f68fd599d2c9dc29f0c5e77a6b538fd6`，准确分支删除、固定树干净detached、finish释放。Main本次协调PR/finish仍待完成；当前约12.77min，原估35–50min＋独立前置约5min，最终以wave99-final-verification.json实际finish为准，不叠加CRM/Handoff。

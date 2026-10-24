@@ -1,5 +1,9 @@
 # 多对话任务分配与交付
 
+> 当前：[W99交付](dispatch/20261024-wave99/README.md)，CRM126及Handoff已采用；Main协调收尾后继续真实Site/Form范围、签名权限生产者与业务Owner。单人、PostgreSQL、七天目标ACTIVE。
+
+> 当前：[W99受保护会话宿主](dispatch/20261024-wave99/README.md)，本聊天单人；W37–W98已finish，不重复。
+
 > 当前：[W98实际MOVE页面](dispatch/20261024-wave98/README.md)，本聊天单人，固定席位复用；W97/Issue503已完整收尾。
 
 > 当前：[W97 MOVE保管属性修复](dispatch/20261024-wave97/README.md)，本聊天单人，固定席位原仓复用；W89已收尾。

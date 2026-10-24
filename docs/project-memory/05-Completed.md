@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-24：W99受保护命令会话宿主已采用
+
+CRM [PR126](https://github.com/GTX537/CP6.CRM/pull/126)已采用main `e86ca195470f8e4fad29aab474cfbef696dde132`；54项相关本地检查通过，API/必要依赖编译通过。[单份交付](https://github.com/GTX537/CP6.CRM/blob/e86ca195470f8e4fad29aab474cfbef696dde132/docs/development/evidence/W99-01/DELIVERY.md)。CRM/Handoff准确分支删除、固定席位finish释放；Main协调PR/finish本次收尾。原会话固定、不续期、单次捕获、锁内重核已接线；CanAuthorize=false，真实Site/Form范围与业务Owner仍待接。整卡24/375、目标0/125、247正式运行NOT_RUN不变；七天ACTIVE。自有PG已停止保留，无Actions、迁移或部署。当前约12.77min，最终按finish计，不重复CRM/Handoff。
+
 ## 2026-10-24：W98实际MOVE页面已采用
 
 Main [产品PR](https://github.com/GTX537/CP6/pull/509) source `98a4d468c264bcc050e2272ec798c6b3b6ab4072`进入远端main `0b8a3ee014e7bcfb1fe58adf5b2792f4e61a7992`，15路径一致；1原生PG/HTTP＋29Vue/client和类型检查通过，[单份交付](../development/evidence/W98-01/DELIVERY.md)。Handoff [PR](https://github.com/GTX537/CP6.AI-Handoff/pull/74)已采用并删除准确分支、finish释放席位；Main同任务最后状态PR/finish待完成。1个PG停止保留，无Actions／既有库迁移／部署。当前11.47min，原估25–35min＋前置约2min，最终据finish计。实际ADJ/MOVE均已采用，正式Stock/TRANSFER验收保持未完成；七天ACTIVE，继续Site/Form Owner直接前置。
