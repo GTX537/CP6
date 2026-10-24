@@ -66,7 +66,7 @@
 |---|---|---|---|---|---|
 | [WP03-01 公开表单Bundle与配置生效](../../docs/development/task-plans/WP03.md#wp03-01) | CRM | 待安排 | S01-08, S02-00, WP02-09 | CODE / M | COORD / W106-01/02 |
 | [WP03-02 浏览器绑定公开提交与H01自动受理](../../docs/development/task-plans/WP03.md#wp03-02) | CRM | 待安排 | WP02-09, WP02-16, WP03-01 | CODE / L | COORD / W118-01/02 |
-| [WP03-03 询盘审核队列、放行拒绝与到期](../../docs/development/task-plans/WP03.md#wp03-03) | CRM | 待安排 | WP02-09, WP03-02 | CODE / M | COORD / W122-01/02 |
+| [WP03-03 询盘审核队列、放行拒绝与到期](../../docs/development/task-plans/WP03.md#wp03-03) | CRM | 待安排 | WP02-09, WP03-02 | CODE / M | COORD / W123-01/02 |
 | [WP03-04 询盘同意、保留匿名化与隐私导出](../../docs/development/task-plans/WP03.md#wp03-04) | CRM | 待安排 | WP02-09, WP02-14, WP02-15, WP03-03 | CODE / M | 未领取 |
 | [WP03-05 账户创建、维护和独立生命周期](../../docs/development/task-plans/WP03.md#wp03-05) | CRM | 待安排 | S01-08, S02-00, WP02-09 | CODE / M | 未领取 |
 | [WP03-06 账户来源证明和旧C03结果历史](../../docs/development/task-plans/WP03.md#wp03-06) | CRM | 待安排 | WP02-09, WP02-23, WP03-05, WP04-03 | CODE / M | 未领取 |

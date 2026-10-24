@@ -32,7 +32,7 @@ public sealed class InquiryServicePermissionIssuerV1(CP6Context db, ITenantConte
     {
         if (request is null || request.SiteId == Guid.Empty || request.FormId == Guid.Empty)
             throw new InquiryPermissionExceptionV1(400, "invalid_request");
-        if (request.Purpose != "intake:release" && !(nonce is not null && request.Purpose == "public:receive"))
+        if (request.Purpose != "intake:release" && !(nonce is not null && request.Purpose is ("public:receive" or InquiryRetentionPermissionSourceV1.Purpose)))
             throw new InquiryPermissionExceptionV1(400, "unsupported_projection_purpose");
         if (!Enabled || !db.Database.IsNpgsql() || db.Database.CurrentTransaction is not null
             || System.Transactions.Transaction.Current is not null || db.ChangeTracker.Entries().Any())
@@ -82,7 +82,9 @@ public sealed class InquiryServicePermissionIssuerV1(CP6Context db, ITenantConte
             // Do not alias even a disabled human identity in the same organization.
             if (await db.Sys_Users.AsNoTracking().AnyAsync(x => x.Id == registration.Subject, ct))
                 throw new InquiryPermissionExceptionV1(503, "inquiry_service_identity_collision");
-            var facts = request.Purpose == "public:receive" ? null : await InquiryServicePermissionSourceV1.ReadAsync(db, registration, request,
+            var facts = request.Purpose == "public:receive" ? null
+                : request.Purpose == InquiryRetentionPermissionSourceV1.Purpose ? await InquiryRetentionPermissionSourceV1.ReadAsync(db,registration,ct)
+                : await InquiryServicePermissionSourceV1.ReadAsync(db, registration, request,
                 (captureCatalog ?? AuthorizationCatalogV1.Capture)(), ct);
             var issued = await RequireCurrentTenant();
             var expiry = issued.AddMinutes(5);

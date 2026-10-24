@@ -28,11 +28,14 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     private sealed class ServiceContextControllers:IApplicationFeatureProvider<ControllerFeature>
     {public void PopulateFeature(IEnumerable<ApplicationPart> parts,ControllerFeature feature){feature.Controllers.Clear();feature.Controllers.Add(typeof(CrmOidcController).GetTypeInfo());}}
     [CurrentPermissionPostgresFact]
-    public async Task Inquiry_service_context_actual_TLS_controller_to_separate_CRM_submit_transaction()
+    public Task Inquiry_service_context_actual_TLS_controller_to_separate_CRM_submit_transaction()=>ServiceContextHttp(false);
+    [CurrentPermissionPostgresFact]
+    public Task Inquiry_retention_actual_TLS_controller_to_CRM_current_service_transaction()=>ServiceContextHttp(true);
+    private async Task ServiceContextHttp(bool retention)
     {
         var project=Environment.GetEnvironmentVariable("CP6_CRM_CROSS_PROJECT")??throw new InvalidOperationException("Owned CRM project required; no skip");
         var output=Environment.GetEnvironmentVariable("CP6_SERVICE_CONTEXT_OUTPUT")!;var folder=Path.GetDirectoryName(output)!;
-        await using var h=await Seed();var pair=await GrantIntake(h,5);var options=InquiryPermissionSigningTests.Options();
+        await using var h=await Seed();var pair=retention?await GrantRetention(h):await GrantIntake(h,5);var options=InquiryPermissionSigningTests.Options();
         using var key=InquiryPermissionSigningTests.Signer(options);var runtime=ContextRuntime(h.Tenant,options.Issuer);
         await new IdentityBootstrapService(h.Db,runtime).InitializeAsync(h.Tenant);h.Db.ChangeTracker.Clear();
         var config=ServiceRegistration(h,Guid.NewGuid());config.Oidc.Issuer=options.Issuer;
@@ -62,12 +65,12 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
                 ServerCertificateCustomValidationCallback=(_,cert,_,_)=>cert?.Thumbprint==certificate.Thumbprint}){BaseAddress=new(origin)};
             async Task<HttpResponseMessage> Send(object body,string? basic)
             {using var request=new HttpRequestMessage(HttpMethod.Post,"/connect/inquiry-service-context"){Content=JsonContent.Create(body)};if(basic is not null)request.Headers.Add("Authorization",basic);return await http.SendAsync(request);}
-            var command=new InquiryServiceContextRequestV1("intake:release",pair.SiteId,pair.FormId,ServiceNonce());
+            var command=new InquiryServiceContextRequestV1(retention?"privacy:retention-worker":"intake:release",pair.SiteId,pair.FormId,ServiceNonce());
             using(var wrong=await Send(command,ServiceBasic("wrong").ToString()))Assert.Equal(HttpStatusCode.Unauthorized,wrong.StatusCode);
             using(var forged=await Send(new{command.Purpose,command.SiteId,command.FormId,command.RequestNonce,SubjectId=h.ActorId},ServiceBasic().ToString()))Assert.Equal(HttpStatusCode.BadRequest,forged.StatusCode);
             using(var good=await Send(command,ServiceBasic().ToString())){Assert.Equal(HttpStatusCode.OK,good.StatusCode);Assert.Contains("no-store",good.Headers.CacheControl!.ToString());}
             var rows=await h.Db.CrmIdentitySnapshots.AsNoTracking().Where(x=>x.TenantId==h.Tenant).OrderBy(x=>x.AggregateId).ToArrayAsync();
-            var run="actual-main-submit-"+DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffffffZ");
+            var run=(retention?"actual-main-retention-":"actual-main-submit-")+DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffffffZ");
             var bridge=Path.Combine(folder,run+"-bridge.json");
             await File.WriteAllTextAsync(bridge,JsonSerializer.Serialize(new{issuer=options.Issuer,origin,thumbprint=certificate.Thumbprint,
                 tenantId=h.Tenant,departmentId=h.Parent,subjectId=config.Source.Registrations[0].SubjectId,epoch=config.Source.Registrations[0].AuthenticationEpoch,
@@ -76,7 +79,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             var start=new ProcessStartInfo(Environment.GetEnvironmentVariable("DOTNET_HOST_PATH")??"C:/Users/tt/.dotnet/dotnet.exe")
                 {WorkingDirectory=Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(project)))!,UseShellExecute=false,CreateNoWindow=true,RedirectStandardOutput=true,RedirectStandardError=true};
             foreach(var arg in new[]{"test",project,"--no-restore","--artifacts-path",Environment.GetEnvironmentVariable("CP6_CRM_CROSS_ARTIFACTS")!,"--filter",
-                "FullyQualifiedName~Public_submit_actual_Main_TLS_controller_PG_identity_and_CRM_complete_graph_commit","--logger","trx;LogFileName="+run+".trx","--results-directory",folder,"-v:q"})start.ArgumentList.Add(arg);
+                retention?"FullyQualifiedName~Retention_actual_Main_TLS_current_authority_and_CRM_transaction":"FullyQualifiedName~Public_submit_actual_Main_TLS_controller_PG_identity_and_CRM_complete_graph_commit","--logger","trx;LogFileName="+run+".trx","--results-directory",folder,"-v:q"})start.ArgumentList.Add(arg);
             start.Environment["CP6_MAIN_SERVICE_BRIDGE"]=bridge;
             using var child=Process.Start(start)!;var stdout=child.StandardOutput.ReadToEndAsync();var stderr=child.StandardError.ReadToEndAsync();
             using var timeout=new CancellationTokenSource(TimeSpan.FromMinutes(4));
