@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W97 MOVE保管属性修复](dispatch/20261024-wave97/README.md)，本聊天单人，固定席位原仓复用；W89已收尾。
+
 > 当前：[W89交付](dispatch/20261024-wave89/README.md)，CRM PR124/125及Handoff已采用，Issue123关闭；Main协调收尾后继续独立Main Issue503。用户授权已执行，旧待确认/暂缓文字为历史节点，当前状态以此入口和roadmap为准。
 
 > 当前恢复W89：用户已明确授权，官方DEV-2重绑CRM成功；原Main协调分支resume，CRM实际开工。W96完整收尾，不重复。

@@ -51,7 +51,7 @@ public partial class StockMovementService : IStockMovementService
     private async Task<string> ApplyInternalAsync(
         StockMovementRequest req,
         bool publishWhenCommitted,
-        CancellationToken ct, bool stockTakeApproval = false)
+        CancellationToken ct, bool stockTakeApproval = false, MoveStockMetadata? moveMetadata = null)
     {
         Validate(req);
 
@@ -110,6 +110,8 @@ public partial class StockMovementService : IStockMovementService
                     OwnerType = req.OwnerType,
                     OwnerCd = req.OwnerCd,
                     PaperRollNo = req.PaperRollNo,
+                    QcStatus = moveMetadata?.QcStatus ?? StockQcStatus.Pending,
+                    RecallFlag = moveMetadata?.RecallFlag ?? false,
                     Creator = req.OperatorCd,
                 };
                 _db.Stocks.Add(stock);
@@ -246,9 +248,15 @@ public partial class StockMovementService : IStockMovementService
 
         try
         {
-            var outNo = await ApplyInternalAsync(outRequest, publishWhenCommitted: false, ct);
+            // PostgreSQL public entry points hold the Owner's stock table fence for this entire transaction.
+            // MOVE changes location, never custody, valuation, units or quality. Keep these server-derived
+            // fields out of the public request so existing v1 canonical input/replay bytes stay unchanged.
+            var metadata = await ReadMoveMetadataAsync(req, ct);
+            metadata.CopyTo(outRequest);
+            metadata.CopyTo(inRequest);
+            var outNo = await ApplyInternalAsync(outRequest, publishWhenCommitted: false, ct, moveMetadata: metadata);
             inRequest.RelatedNo = outNo;
-            var inNo = await ApplyInternalAsync(inRequest, publishWhenCommitted: false, ct);
+            var inNo = await ApplyInternalAsync(inRequest, publishWhenCommitted: false, ct, moveMetadata: metadata);
             if (tx != null) await tx.CommitAsync(ct);
 
             // When this method owns the transaction boundary, publish only after

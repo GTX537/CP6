@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-24：W97 MOVE保管属性候选通过
+
+70项去重相关本地验证通过（44项原生PG、26项既有逻辑回归），无跳过；修复前2项CUSTOMER→SELF失败保留。[单份交付](../development/evidence/BUG-503/DELIVERY.md)。同事务保留来源属性，异属性目标安全409，原v1/负库存政策保留；PG停止，待正常Main/Handoff采用、Issue503关闭与准确分支/席位收尾。新增MOVE页面后续采用，七天ACTIVE，全局验收计数不变。
+
 ## 2026-10-24：W89身份会话围栏与BUG-123已采用
 
 CRM PR124/125均已采用，最新main `59845f28539d89582884db442e25e95cd29ce328`；Issue123已关闭，59个去重相关本地用例通过（W89 42，BUG-123本次18，交集1；未变输入按真实来源复用）。[身份围栏](https://github.com/GTX537/CP6.CRM/blob/59845f28539d89582884db442e25e95cd29ce328/docs/development/evidence/W89-01/DELIVERY.md)；[签名回执修复](https://github.com/GTX537/CP6.CRM/blob/59845f28539d89582884db442e25e95cd29ce328/docs/development/evidence/BUG-123/DELIVERY.md)。两个CRM任务及Handoff分支准确删除、固定树干净detached、finish释放；Main协调PR/finish待本次收尾。两个PG已停止保留，无Actions/既有库迁移/生产部署。CanAuthorize=false，真实Site/Form Owner仍待接，整卡24/375、目标0/125、247运行NOT_RUN不变。七天ACTIVE；下一独立优先Main Issue503。原准备21.33min＋恢复执行至此20.36min，等待和W90–W96不计，最终见wave89-final-verification.json。

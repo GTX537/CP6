@@ -900,3 +900,11 @@ CRM [PR124](https://github.com/GTX537/CP6.CRM/pull/124)：source `41ded0b42bebcd
 CRM两个准确任务分支均已删除，工作区干净detached、官方finish释放后再由官方bind回Handoff；没有新增物理树/代理/聊天。CanAuthorize=false，FIELD_POLICY与BUSINESS门保持关闭，真实crm-site/Site/Form/字段权限生产者、实际业务Owner与宿主接线仍需后继。24/375整卡、125目标0完整、247正式运行NOT_RUN不提升；七天目标ACTIVE。下一独立优先Main库存MOVE所有者属性Issue503，再推进实际Owner采用。没有Actions、生产部署或历史W51被拒数据删除。
 
 Handoff [PR72](https://github.com/GTX537/CP6.AI-Handoff/pull/72)采用 `99389e2adbba3a7cd31d8d0d92405e1711655bdf`，准确分支删除、固定树干净detached、finish释放。Main仍需本次协调PR/finish，不提前声明席位释放。原准备21.33min＋恢复执行至此20.36min；暂缓等待与W90–W96排除，子任务不叠加；原剩余估计40–60min＋BUG-123预计5–10min，最终按finish记录。
+
+## 2026-10-24：W89全部收尾 / W97库存MOVE保管属性修复
+
+W89 Main506、CRM124/125、Handoff72与Issue123已闭环，实际44.03min（排除等待），准确分支清理／席位释放。[W97](../dispatch/20261024-wave97/README.md)继续Issue503真实Owner事务内属性保全，预计25–40min＋独立前置约5min。新MOVE页面后续采用，七天ACTIVE，总体完整验收计数不变。
+
+## W97候选验证
+
+70项去重相关本地验证通过（44项原生PG、26项既有逻辑回归），无跳过；修复前2项CUSTOMER→SELF失败保留。同事务MOVE属性保全／目标兼容有界修复，既有v1输入和原键恢复不变。PG停止，正常Main/Handoff采用、Issue503关闭和finish待完成；新MOVE页面后续采用。详见[单份交付](../evidence/BUG-503/DELIVERY.md)。
