@@ -1,5 +1,9 @@
 # WMS 写端点 × 权限键清单（M-WMS Task 1 真相源）
 
+## 2026-10-24 W95 样品历史Owner
+
+菜单447 `wms-sample-stock`仅新增query定义，不自动授角色；新入口`/api/wms/sample-stock/owner/v1/records`及`/{id}`。样品独立范围支持本人/明确部门绑定/全部，另取当前仓区范围；六敏感字段当前MIN。原add/edit/lend/return/expire/del仍需本动作与对象范围，通过后因正式Sample/Stock前置未采用而拒绝写入。旧query经Owner后要求新版本。不能用查询或历史记录宣称正式借还已获准。[W95交付](../development/evidence/W95-01/DELIVERY.md)。
+
 ## 2026-10-24 W94 包装查询Owner
 
 现有菜单413 `/wms/packaging`显式锚定`wms-packaging`，新增`query`定义而不授角色。版化历史包读取还独立要求`wms-outbound-order:query`及完整原父单范围；CarrierCd/TrackingNo/Remarks当前字段MIN，隐藏字段不允许搜索。新读入口`/api/wms/shipping/owner/v1/packages`和`/{no}`；旧两个读入口经Owner后拒绝无版本读取。原Outbound ship动作/Owner及库存写不变。详见[W94交付](../development/evidence/W94-01/DELIVERY.md)。下文历史SQL/统计不作为本增量自动授权依据。

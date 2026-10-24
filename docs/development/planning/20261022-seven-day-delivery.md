@@ -852,3 +852,11 @@ W93 Main495/496与Handoff68已采用，Issue494关闭，67项相关验证/类型
 Main [PR498](https://github.com/GTX537/CP6/pull/498) source `5612c1d99298f485e5c691970f2a8d16bb8b8227`采用远端main `88bea56ed8d52304d0117c97b0310e4e66cdba03`，26任务路径逐blob核对；Handoff [PR69](https://github.com/GTX537/CP6.AI-Handoff/pull/69)采用`9579a98b3bade479e0f1ab8a5d75c51ec40afbc4`，准确分支删除、固定树干净detached、finish释放。14个产品路径与已测提交逐blob一致，复用成功结果；最后文档diff和台账生成独立检查。
 
 Main同任务最终状态PR/finish及Issue497最后关闭待完成；当前约14.52min，原估40–65min＋独立前置4min，最终按finish计，不重复Handoff。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave94-final-verification.json`。无Actions、既有环境迁移或部署。七天ACTIVE；完整OUT/WP10-19/20和D5/D6真实前置继续，未以本窗口缩小目标。
+
+## 2026-10-24：W94全部收尾 / W95样品历史独立Owner
+
+W94 Main498/499与Handoff69已采用，Issue497关闭，44项相关验证/类型检查通过；19.45min＋前置约4min，准确分支删除、固定树干净/席位释放。[W95](../dispatch/20261024-wave95/README.md)继续Issue500样品当前Owner、历史证据与页面时序，预计40–65min＋独立前置约5min。正式样品借还不提升，W89重绑确认仍待答复。七天ACTIVE。
+
+## W95验证完成
+
+17独立.NET（14原生PG、2既有InMemory样品回归、1两租户权限种子）及10Vue通过，无跳过；相关构建和vue-tsc通过，去重27项。样品历史Owner与旧写隔离完成；完整Sample/Stock未提升。D2过期剩余描述已核对W71更正，七天全目标继续。
