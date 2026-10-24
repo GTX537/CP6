@@ -1,8 +1,8 @@
 # 项目当前状态
 
-## 2026-10-24：W92仓库库位独立Owner候选通过
+## 2026-10-24：W92仓库库位独立Owner已采用
 
-Issue491三个原生红灯转绿；19独立.NET（18原生PG、1两租户目录种子）与31Vue通过，无跳过；相关构建及vue-tsc通过，定向补验去重合计50项。[单份交付](../development/evidence/W92-01/DELIVERY.md)。当前Owner/原UUID绑定/独立名称维护及原键恢复完成；3个PG停止保留，待Main/Handoff采用与准确分支/席位收尾。完整MASTER不提升，W89确认待答复，七天ACTIVE。
+Main [PR492](https://github.com/GTX537/CP6/pull/492) source `78213f208946fefa7f24e88c51fb9055d888bf2e`进入远端main `41cbbe6cdbd564557ead95aca7fab2d96bf99a42`，33任务路径逐blob核对；19.NET/31Vue及类型检查通过，无跳过。[单份交付](../development/evidence/W92-01/DELIVERY.md)。Handoff [PR67](https://github.com/GTX537/CP6.AI-Handoff/pull/67)采用、准确分支删除、固定树干净detached、finish释放。Main同任务最后状态PR/finish及Issue491关闭待完成，未提前声明释放。3个PG停止保留；当前约23.48min，原估60–90min＋独立前置4min，最终按finish计。正式MASTER WP10-01、125目标与247验收不提升，七天目标ACTIVE。W89跨仓重绑确认仍待答复，两原分支保存不清理、不绕过绑定限制。
 
 ## 2026-10-24：W91报表中心独立Owner已采用
 
