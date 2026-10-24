@@ -53,8 +53,8 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             p.GetProperty("fieldPermissions").EnumerateArray().Select(x => x.GetString()).Order(StringComparer.Ordinal));
         var actions = p.GetProperty("permissions").EnumerateArray().Select(x => x.GetString()).ToArray();
         Assert.Contains("crm-lead:query", actions); Assert.Contains("crm-lead:view-pii", actions);
-        if (purpose == "intake:release") Assert.Contains("crm-lead:add", actions);
-        if (purpose == "intake:reject") Assert.Contains("crm-lead:edit", actions);
+        if (purpose is "intake:release" or "intake:list" or "intake:detail") Assert.Contains("crm-lead:add", actions);
+        if (purpose is "intake:reject" or "intake:list" or "intake:detail") Assert.Contains("crm-lead:edit", actions);
         Assert.DoesNotContain("crm-lead:assign", actions); // Supervisor fact, not an unsupported wire action.
     }
 
@@ -85,7 +85,11 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear();
         using var key = InquiryPermissionSigningTests.Signer(InquiryPermissionSigningTests.Options()); var service = IntakeIssuer(h, key);
         using (var hidden = JsonDocument.Parse(await Issue(service, InquirySubject(h), pair, "intake:detail")))
+        {
             Assert.DoesNotContain("email", hidden.RootElement.GetProperty("fieldPermissions").EnumerateArray().Select(x => x.GetString()));
+            Assert.DoesNotContain("crm-lead:add", hidden.RootElement.GetProperty("permissions").EnumerateArray().Select(x => x.GetString()));
+            Assert.DoesNotContain("crm-lead:edit", hidden.RootElement.GetProperty("permissions").EnumerateArray().Select(x => x.GetString()));
+        }
         Assert.Equal("insufficient_field_scope", (await Assert.ThrowsAsync<InquiryPermissionExceptionV1>(() => Issue(service, InquirySubject(h), pair, "intake:release"))).Message);
         h.Db.Sys_RoleFieldPerms.Add(new() { RoleId = 72, ResourceKey = "crm-intake", FieldName = "email", Access = 2 });
         await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear();
@@ -103,6 +107,14 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         var menu = await h.Db.Sys_Menus.Where(x => x.MenuKey == "crm-lead").Select(x => x.MenuId).SingleAsync();
         await h.Db.Sys_RoleActions.Where(x => x.RoleId == 71 && x.MenuId == menu && x.ActionCode == action).ExecuteDeleteAsync();
         using var key = InquiryPermissionSigningTests.Signer(InquiryPermissionSigningTests.Options()); var service = IntakeIssuer(h, key);
+        if (action is "view-pii" or "add" or "edit")
+        {
+            using var read = JsonDocument.Parse(await Issue(service, InquirySubject(h), pair, "intake:detail"));
+            var advertised = read.RootElement.GetProperty("permissions").EnumerateArray().Select(x => x.GetString()).ToArray();
+            Assert.DoesNotContain("crm-lead:" + action, advertised);
+            if (action == "view-pii") { Assert.DoesNotContain("crm-lead:add", advertised); Assert.DoesNotContain("crm-lead:edit", advertised); }
+            else Assert.Contains(action == "add" ? "crm-lead:edit" : "crm-lead:add", advertised);
+        }
         if (action == "view-pii")
         {
             using var list = JsonDocument.Parse(await Issue(service, InquirySubject(h), pair, "intake:list"));

@@ -1,5 +1,11 @@
 # AI 可读变更日志
 
+## 2026-10-24：W122原生询盘页面与动作
+
+101项唯一相关本地成功检查：Main28、CRM26（PostgreSQL/HTTP/9种实际浏览器场景）、Web47；实际Main读取用途HTTP原字节通过CRM持久PG信任，当前权限/CSRF、原命令恢复、412、访问失效、截止时钟、并发/CAS和原读取回归通过，必需0跳过。 [交付](../development/dispatch/20261024-wave122/README.md)。CRM已合并finish，原生队列/详情、当前动作及稳定重试已采用；Handoff [PR98](https://github.com/GTX537/CP6.AI-Handoff/pull/98)采用 `fa331f5750c6155d2d5a74908a8b3c9708aa562f`，准确分支已删除、DEV-2已finish释放。
+Handoff [PR98](https://github.com/GTX537/CP6.AI-Handoff/pull/98)采用 `fa331f5750c6155d2d5a74908a8b3c9708aa562f`，准确分支已删除、DEV-2已finish释放。 Main最终PR/finish尚待；START后墙钟24.05分钟，原估100–150分钟，最终按Main finish计，不叠加各仓；不含先前只读调查。
+隐私/保留及实际发布仍待，24/375、0/125、247NOT_RUN保持，七天ACTIVE。
+
 ## 2026-10-24：W121原生询盘决策Owner
 
 68项唯一相关本地成功检查：24项PostgreSQL/HTTP、44项Web；实际H01/拒绝图、幂等/CAS/并发、真实HTTP响应丢失、晚期回滚/期限/撤回、实际Node BFF、公开原操作重试与存储保护覆盖，必需0跳过。 [交付](../development/dispatch/20261024-wave121/README.md)。CRM已合并finish，原生人工放行/拒绝Owner和BFF已采用；Handoff [PR97](https://github.com/GTX537/CP6.AI-Handoff/pull/97)采用 `e30af151185e316255233a275ff5d12bf49a857a`，准确分支已删除、DEV-2已finish释放。 Main最终PR/finish尚待；START后墙钟42.12分钟，原估80–130分钟，最终按Main finish计，不叠加各仓；不含先前只读调查。
