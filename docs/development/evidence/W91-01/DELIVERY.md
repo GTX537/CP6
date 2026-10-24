@@ -33,3 +33,9 @@ Issue[488](https://github.com/GTX537/CP6/issues/488)，COORD本聊天单人。Ma
 24/375整卡、125目标0完整交付、247正式运行NOT_RUN保持。完整WP10-44/45、N-G1–5、18AC以及固定原生cuts/双时间/正式算法/冻结发布与导出保持UNPROVEN/NOT_RUN；本窗不代替完整已接受Analytics。七天目标ACTIVE，继续D2–D7必要工作。
 
 W89组合跨仓切换自动审批返回`blocked by policy`，CRM未开工。Main484仅准备文档采用，两个原W89分支保存并deferred释放，明确确认仍待答复；本窗不重试或绕过bind。历史W51指定停止data删除同样保留不重试。
+
+## 实际采用与最后收尾
+
+Main [PR489](https://github.com/GTX537/CP6/pull/489) source `121dc62f27288eca82ad1ca455560e280eaa3d5a`采用远端main `5dfa31efd70989d645162964e70ee5d3f208a1aa`，27任务路径逐blob核对；Handoff [PR66](https://github.com/GTX537/CP6.AI-Handoff/pull/66)采用`567f465bac4180d7d3ebf3bad54627343f80f9e0`，准确分支删除、固定树干净detached、finish释放。17个产品路径与已测提交逐blob一致，复用有效结果，最后文档diff/台账生成单独检查。
+
+Main同任务最终状态PR/finish及Issue488最后关闭待完成；当前约13.41min，原估45–70min＋独立前置4min，实际按finish不重复计Handoff。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave91-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续剩余独立Owner及D5/D6真实前置，正式Analytics WP10-44/45仍未采用。

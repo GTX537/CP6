@@ -11,7 +11,7 @@ AGENTS/POLICY哈希不变，官方status固定两树干净无进程，原仓star
 ## 实施与验证顺序
 
 - [x] 在`CP6.Tests/Erp/ReportCenterOwnerPostgreSqlTests.cs`写真实缺Owner三红灯：旧报告即使空也拒绝、原流水不泄露、通用CSV不在PG直接导出。命令`run_wave91.py owner-red Report_center_owner_missing --pg`，预期先3失败，保存原日志。
-- [x] 新增`CP6.Entity/DTOs/Wms/ReportCenterOwnerV1.cs`、`CP6.Core/Services/Wms/ReportCenterService.Owner.cs`、`CP6.Core/Services/Integration/OperationsAccessV1.Reports.cs`。默认50/最大200，过滤与稳定排序后分页/真实总量；库存和流水分模式，不跨单位汇总。日期只过滤原TxnDateTime轴（date-only闭开日界），不宣称Site时区或knowledgeCut。OperatorCd/OwnerCd/Remark当前字段MIN；跨业务RelatedNo等缺来源证据不披露，原值保留。
+- [x] 新增`CP6.Entity/DTOs/Wms/ReportCenterOwnerV1.cs`、`CP6.Core/Services/Wms/ReportCenterService.Owner.cs`、`CP6.Core/Services/Integration/OperationsAccessV1.Reports.cs`。默认50/最大200，过滤与稳定排序后分页/真实总量；库存和流水分模式，不跨单位汇总。日期只过滤原TxnDateTime轴（date-only含末日并保留末日亚秒），不宣称Site时区或knowledgeCut。OperatorCd/OwnerCd/Remark当前字段MIN；跨业务RelatedNo等缺来源证据不披露，原值保留。
 - [x] 修改`ReportCenterService.cs`/接口/Controller/Program、WmsMenuSeed/WmsPermissionSeed及单一PG目录迁移：481锚定wms-report-center，新增query/export定义不授角色。五旧PG报告Owner后409；旧HTTP CSV先独立export门再503，通用同步CSV入口PG直接拒绝以免逃逸验证。新只读GET no-store，不将Owner错误转400。非PG旧实现语义保留。
 - [x] 修改`cp6.web/src/api/wms/reportCenter.ts`、新增`types/wms/reportCenterOwner.ts`并采用于`views/wms/ReportCenterView.vue`：当前库存/原流水两模式，精确原值与未知语义，身份/权限/筛选/模式/分页变化立即清空，迟返/失败/卸载不回填；正式报告/CSV未满足采用门不提供成功入口。新增真实页面行为测试`ReportCenterOwner.spec.ts`。
 - [x] 原生PG覆盖源Owner交集、租户/部门/仓区/软删除、字段/无权来源、精度/未知、跨5000分页、亚秒/日界、参数冻结与最终权限故障、实际HTTP/CSV、原生SQL写锁；复用既有同对象IAM目录证明，仅按受影响范围新增行为覆盖。相关旧非PG报告和两租户种子、Vue与类型检查。一次作者完整SPEC/QUALITY集中审查，有明确风险才补局部验证。
@@ -24,3 +24,9 @@ AGENTS/POLICY哈希不变，官方status固定两树干净无进程，原仓star
 ## 验证完成
 
 24独立.NET（16原生PG、7既有非PG报告行为、1两租户目录种子）与9Vue通过，无跳过；相关构建及vue-tsc通过，定向补验去重合计33项。一次集中审查和最终源权限故障补验完成；PG均停止，待正常采用/收尾。
+
+## 实际采用与最后收尾
+
+Main [PR489](https://github.com/GTX537/CP6/pull/489) source `121dc62f27288eca82ad1ca455560e280eaa3d5a`采用远端main `5dfa31efd70989d645162964e70ee5d3f208a1aa`，27任务路径逐blob核对；Handoff [PR66](https://github.com/GTX537/CP6.AI-Handoff/pull/66)采用`567f465bac4180d7d3ebf3bad54627343f80f9e0`，准确分支删除、固定树干净detached、finish释放。17个产品路径与已测提交逐blob一致，复用有效结果，最后文档diff/台账生成单独检查。
+
+Main同任务最终状态PR/finish及Issue488最后关闭待完成；当前约13.41min，原估45–70min＋独立前置4min，实际按finish不重复计Handoff。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave91-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续剩余独立Owner及D5/D6真实前置，正式Analytics WP10-44/45仍未采用。

@@ -804,3 +804,9 @@ W90 Main486/487与Handoff65已采用，Issue485关闭，49项相关验证/类型
 ## W91验证完成
 
 24独立.NET（16原生PG、7既有非PG报告行为、1两租户目录种子）与9Vue通过，无跳过；相关构建及vue-tsc通过，定向补验去重合计33项。当前原记录Owner与旧导出门通过，完整Analytics不提升；正常收尾后继续，七天ACTIVE。
+
+## 实际采用与最后收尾
+
+Main [PR489](https://github.com/GTX537/CP6/pull/489) source `121dc62f27288eca82ad1ca455560e280eaa3d5a`采用远端main `5dfa31efd70989d645162964e70ee5d3f208a1aa`，27任务路径逐blob核对；Handoff [PR66](https://github.com/GTX537/CP6.AI-Handoff/pull/66)采用`567f465bac4180d7d3ebf3bad54627343f80f9e0`，准确分支删除、固定树干净detached、finish释放。17个产品路径与已测提交逐blob一致，复用有效结果，最后文档diff/台账生成单独检查。
+
+Main同任务最终状态PR/finish及Issue488最后关闭待完成；当前约13.41min，原估45–70min＋独立前置4min，实际按finish不重复计Handoff。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave91-final-verification.json`。无Actions、既有库迁移或部署。七天目标ACTIVE，继续剩余独立Owner及D5/D6真实前置，正式Analytics WP10-44/45仍未采用。
