@@ -33,3 +33,9 @@ Issue [500](https://github.com/GTX537/CP6/issues/500)，COORD本聊天单人。[
 24/375整卡、125目标0完整、247正式运行NOT_RUN不变。完整WP10-41的Stock Root/range保管移动、SampleSourceBinding、不可变Loan/Return/OccurrenceUse、真实借用者/用途政策、Site期限/延期/退役与失效义务、持久观察与未知恢复仍UNPROVEN/NOT_RUN。七天全目标ACTIVE；D1限定完成，D2–D7部分采用/未完成，本窗口不替代D4/D5/D6真实公共前置。
 
 W89官方跨仓bind自动审批返回`blocked by policy`，CRM未修改；原Main/Handoff分支可靠保存、deferred席位已释放，确认仍待答复，不重试或绕过。历史W51指定已停data删除拒绝边界保留。
+
+## 实际采用与最后收尾
+
+Main [PR501](https://github.com/GTX537/CP6/pull/501) source `44f937ff8438912fb920d6771e639d51ead5333c`采用远端main `603b9d51c6853315bd33aa4e7561368cdd20a934`，29任务路径逐blob核对；Handoff [PR70](https://github.com/GTX537/CP6.AI-Handoff/pull/70)采用`c7ca6825c3bd65bb45d25b84b5143a69515a599f`，准确分支删除、固定树干净detached、finish释放。18个产品路径与已测提交逐blob一致，复用成功结果；最后文档diff和台账生成独立检查。
+
+Main同任务最终状态PR/finish及Issue500最后关闭待完成；当前约16.98min，原估40–65min＋独立前置5min，最终按finish计，不重复Handoff。最终证明`C:\Users\tt\CP6-planning-reports\20261017-foundation\wave95-final-verification.json`。无Actions、既有环境迁移或部署。七天ACTIVE；完整Sample/Stock/WP10-41和D5/D6真实前置继续，未以本窗口缩小目标。
