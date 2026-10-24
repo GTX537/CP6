@@ -1,6 +1,6 @@
 # 多对话任务分配与交付
 
-> 当前：[W114实际配置Owner与原图共同事务](dispatch/20261024-wave114/README.md)：CRM/Handoff已合并finish，83项相关检查通过；Main文档PR最终收尾。消费重放、service/H01和完整公开提交继续。单人、PostgreSQL、七天ACTIVE。
+> 当前：[W115实际H01服务权限生产](dispatch/20261024-wave115/README.md)：84项相关检查通过、Handoff91合并finish；Main功能PR最终收尾。CRM服务门禁和完整公开提交继续。单人、PostgreSQL、七天ACTIVE。
 
 > 当前：[W105配置预览/激活交付](dispatch/20261024-wave105/README.md)：CRM与Handoff已合并finish，实际PG/浏览器及Main互通通过；Main最终收尾，后继公开表单/Attempt/提交。单人、PostgreSQL、七天ACTIVE。
 

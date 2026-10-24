@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-24：W115实际H01服务权限生产
+
+Main显式服务UUID/角色登记与实际IAM冻结intake:release签名生产入口，本地84项唯一相关PG/HTTP检查通过、0跳过。[单份交付](../development/evidence/W115-01/DELIVERY.md)。Handoff [PR91](https://github.com/GTX537/CP6.AI-Handoff/pull/91)已采用740e7700c22c563a8b43858cb98bbe58de190e47，准确分支删除、DEV-2 finish释放；Main功能PR/finish继续。当前START后墙钟18.64min（原估75–115），最终按Main finish计一次。 PostgreSQL隔离实例停止、缓存保留，无Actions/既有迁移/部署。CRM服务当前身份/撤权及最终事务门禁、完整H01与公开提交继续；24/375、0/125、247NOT_RUN不变，七天ACTIVE。
+
 ## 2026-10-24：W114实际配置Owner与原图共同事务
 
 CRM [PR141](https://github.com/GTX537/CP6.CRM/pull/141)已采用 `d69bf0ec98613b0d00b7f546eaa241fc0c631235`；受控Serializable原图事务及实际配置Owner同事务采用、源Head行锁保留身份七锁协议。83项唯一相关本地PG/HTTP检查通过、0跳过：7项受控事务成功复用、39项实际配置Owner、10项隔离v3、9项隔离v2、18项v1/v4原图与回执；锁协议冲突和测试版本混用均已定位修正，失败日志保留。 [单份交付](../development/dispatch/20261024-wave114/README.md)。CRM准确分支删除、DEV-2释放；Handoff [PR90](https://github.com/GTX537/CP6.AI-Handoff/pull/90)已采用 `cb37e979bda63af27c3ad43d94d93cc82acfb8c7`，准确分支删除、固定DEV-2 finish释放。 Main文档PR/finish继续，墙钟31.86min（原估65–100）。自有PG停止/缓存保留，无Actions/迁移/部署。消费重放、service/H01最终权限、完整提交与页面继续；24/375、0/125、247NOT_RUN不变，七天ACTIVE。

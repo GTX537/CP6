@@ -1102,3 +1102,11 @@ W113 Main525/CRM140/Handoff89全部finish，准确分支删除、席位释放，
 83项唯一相关本地PG/HTTP检查通过、0跳过：7项受控事务成功复用、39项实际配置Owner、10项隔离v3、9项隔离v2、18项v1/v4原图与回执；锁协议冲突和测试版本混用均已定位修正，失败日志保留。 [实际交付](../dispatch/20261024-wave114/README.md)。
 Handoff [PR90](https://github.com/GTX537/CP6.AI-Handoff/pull/90)已采用 `cb37e979bda63af27c3ad43d94d93cc82acfb8c7`，准确分支删除、固定DEV-2 finish释放。 CRM分支删除/释放已核对；Main文档PR/finish继续，当前START后墙钟31.86min（原估65–100），最终按Main finish计，不叠加各仓。
 后继实际消费/重放、service/H01最终权限、完整提交事务及公开页面，七天ACTIVE。
+
+## 2026-10-24：W114完整收尾 / W115实际H01服务权限生产
+
+W114三仓finish、准确分支删除和席位释放，实际35.14min/83项检查。[W115](../dispatch/20261024-wave115/README.md)登记真实服务主体并从实际IAM生产冻结intake:release投影，预计75–115min；CRM服务当前授权门禁和完整公开提交继续后继，七天ACTIVE。
+
+## W115实际服务权限生产
+
+[实际交付](../evidence/W115-01/DELIVERY.md)：Main显式服务登记与实际IAM生产冻结intake:release投影，84项本地相关验证通过。Handoff [PR91](https://github.com/GTX537/CP6.AI-Handoff/pull/91)已采用740e7700c22c563a8b43858cb98bbe58de190e47，准确分支删除、DEV-2 finish释放；Main功能PR/finish继续。当前START后墙钟18.64min（原估75–115），最终按Main finish计一次。 CRM服务当前身份/撤权与业务持锁门禁、H01完整提交与页面仍待；七天ACTIVE。

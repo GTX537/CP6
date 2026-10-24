@@ -90,6 +90,10 @@ var inquirySigning = builder.Configuration.GetSection("InquiryPermissionSigning"
     ?? new CP6.WebApi.Services.InquiryPermissionSigningOptionsV1();
 builder.Services.AddSingleton(new CP6.WebApi.Services.InquiryPermissionSigningKeyV1(inquirySigning, crmOidc));
 builder.Services.AddScoped<CP6.WebApi.Services.InquiryPermissionIssuerV1>();
+var inquiryServices = builder.Configuration.GetSection("InquiryServicePrincipals").Get<CP6.WebApi.Services.InquiryServicePrincipalOptionsV1>()
+    ?? new CP6.WebApi.Services.InquiryServicePrincipalOptionsV1();
+builder.Services.AddSingleton(new CP6.WebApi.Services.InquiryServicePrincipalRegistryV1(inquiryServices, crmOidc));
+builder.Services.AddScoped<CP6.WebApi.Services.InquiryServicePermissionIssuerV1>();
 builder.Services.AddScoped<CP6.WebApi.Services.CrmOidcDirectory>();
 builder.Services.AddScoped<CP6.WebApi.Services.ICrmOidcServiceDirectory>(services =>
     services.GetRequiredService<CP6.WebApi.Services.CrmOidcDirectory>());
