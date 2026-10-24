@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> 当前：[W102配置Owner实际交付](dispatch/20261024-wave102/README.md)：CRM129与Handoff已采用并finish，Main最后收尾；接续可信Web BFF、预览/激活及公开受理。单人、PostgreSQL、七天ACTIVE。
+
 > 当前：[W101实际签发交付](dispatch/20261024-wave101/README.md)：CRM128与Handoff已采用并finish，Main本次最后收尾；接续配置Owner/当前授权边界。单人、PostgreSQL、七天ACTIVE。
 
 > 当前：[W100实际交付](dispatch/20261024-wave100/README.md)：CRM127及Handoff已采用，Main本次最终合并与finish；接续真实签名权限生产者及配置Owner。本聊天单人、PostgreSQL、七天目标ACTIVE。
