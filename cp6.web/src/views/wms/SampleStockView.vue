@@ -1,250 +1,96 @@
-<!--
-  サンプル在庫 —— CpPageShell + CpListPage + 2×CpFormDialog 迁移（WMS 批次3）。
-  状態列 kind:'tag'+map；種別/数量列 map（数量拼 unitCd，无 tag）；expectedReturnDate 走 col slot 保留逾期红字；操作走 col slot。
-  overdueOnly 复选（CpFilterBar 无 boolean 字段类型，缺口 #15）→ 放 CpListPage toolbar slot，fetch 闭包读取 + 切换后 reload()。
-  新建/借出用 CpFormDialog（default slot 保留 input-number/select/date-picker）；必填(種別/数量、貸出先)改 el-form rules。
-  in-place 变更(新建/借出/返却/廃棄)后 listRef.reload() 保留当前筛选/页码。
--->
 <template>
-  <CpPageShell :title="t('wms.sample.title')" :count="total">
-    <template #actions>
-      <el-button @click="openCreate">{{ t('wms.common.create') }}</el-button>
+  <CpPageShell title="サンプル原記録" :count="result?.total || 0">
+    <template #actions><el-button :disabled="!canRead" :loading="loading" @click="load(page)">再取得</el-button></template>
+    <el-alert type="info" :closable="false" title="既存の登録・借出・返却情報を確認できます。数量と保管場所は旧記録の申告値です。正式な在庫との照合が済むまで、新規登録や借出・返却・失効の変更は利用できません。" />
+    <p v-if="!canRead" role="status">サンプルの参照権限が必要です。</p>
+    <div class="filters">
+      <label>番号 <input v-model="sampleNo" :disabled="!canRead" aria-label="番号" /></label>
+      <label>旧状態 <select v-model="status" :disabled="!canRead" aria-label="旧状態"><option value="all">すべて</option><option value="0">保管中</option><option value="1">貸出中</option><option value="2">返却済</option><option value="3">失効</option></select></label>
+      <label><input v-model="awaiting" type="checkbox" :disabled="!canRead" />返却記録の確認が必要なもの（失効を含む）</label>
+      <el-button :disabled="!canRead" @click="load(1)">検索</el-button>
+    </div>
+    <p v-if="error" role="alert">{{ error }}</p>
+    <template v-if="result">
+      <p>現在の権限・条件で {{ result.total }} 件。過去の全借用履歴や在庫残高を示す一覧ではありません。</p>
+      <el-table :data="result.items" row-key="id" @row-click="openDetail">
+        <el-table-column prop="sampleNo" label="番号" />
+        <el-table-column prop="sampleType" label="旧種別" />
+        <el-table-column label="旧申告数量"><template #default="{ row }">{{ row.declaredQuantity }} {{ row.unitCd }}</template></el-table-column>
+        <el-table-column label="旧状態"><template #default="{ row }">{{ statusLabel(row.legacyStatus) }}</template></el-table-column>
+        <el-table-column label="返却確認"><template #default="{ row }">{{ evidenceLabel(row.returnEvidenceState) }}</template></el-table-column>
+        <el-table-column label="確認"><template #default="{ row }"><el-button link @click.stop="openDetail(row)">原記録</el-button></template></el-table-column>
+      </el-table>
+      <el-pagination :current-page="page" :page-size="50" :total="result.total" layout="prev, pager, next, total" @current-change="load" />
     </template>
-
-    <CpListPage
-      ref="listRef"
-      :columns="columns"
-      :fetch="fetchList"
-      :search-fields="searchFields"
-      :filter-labels="filterLabels"
-      @total-change="total = $event"
-    >
-      <template #toolbar>
-        <el-checkbox v-model="overdueOnly" @change="reloadList">{{ t('wms.sample.btn.overdue') }}</el-checkbox>
-      </template>
-
-      <template #col-expectedReturnDate="{ row }">
-        <span :class="overdueClass(row)">{{ row.expectedReturnDate || '—' }}</span>
-      </template>
-
-      <template #col-_action="{ row }">
-        <el-button v-if="row.status === 0 || row.status === 2" v-permission="'wms-sample-stock:lend'" link type="primary" size="small" @click="openLend(row)">{{ t('wms.sample.btn.lend') }}</el-button>
-        <el-button v-if="row.status === 1" v-permission="'wms-sample-stock:return'" link type="success" size="small" @click="onReturn(row)">{{ t('wms.sample.btn.return') }}</el-button>
-        <el-button v-if="row.status !== 3" v-permission="'wms-sample-stock:expire'" link type="danger" size="small" @click="onExpire(row)">{{ t('wms.sample.btn.expire') }}</el-button>
-      </template>
-    </CpListPage>
-
-    <!-- 新建 -->
-    <CpFormDialog
-      v-model="createDialog"
-      :title="t('wms.sample.dlg.create')"
-      width="600"
-      :form="createForm"
-      :rules="createRules"
-      :submit="onCreate"
-      :labels="{ cancel: t('wms.common.cancel'), confirm: t('wms.common.save') }"
-      @saved="reloadList"
-    >
-      <el-row :gutter="12">
-        <el-col :span="12"><el-form-item :label="t('wms.sample.fld.type')" prop="sampleType">
-          <el-select v-model="createForm.sampleType" style="width: 100%">
-            <el-option v-for="(l, v) in typeMap" :key="v" :label="l" :value="v" />
-          </el-select>
-        </el-form-item></el-col>
-        <el-col :span="12"><el-form-item :label="t('wms.sample.fld.qty')" prop="quantity"><el-input-number v-model="createForm.quantity" :min="0" :precision="4" controls-position="right" style="width: 100%" /></el-form-item></el-col>
-        <el-col :span="12"><el-form-item :label="t('wms.sample.fld.customer')"><el-input v-model="createForm.customerCd" maxlength="20" /></el-form-item></el-col>
-        <el-col :span="12"><el-form-item :label="t('wms.vmi.fld.customerName')"><el-input v-model="createForm.customerName" maxlength="100" /></el-form-item></el-col>
-        <el-col :span="12"><el-form-item :label="t('wms.sample.fld.product')"><el-input v-model="createForm.productCd" maxlength="20" /></el-form-item></el-col>
-        <el-col :span="12"><el-form-item :label="t('wms.common.productName')"><el-input v-model="createForm.productName" maxlength="100" /></el-form-item></el-col>
-        <el-col :span="12"><el-form-item label="Unit"><el-input v-model="createForm.unitCd" maxlength="10" /></el-form-item></el-col>
-        <el-col :span="12"><el-form-item :label="t('wms.common.warehouse')"><el-input v-model="createForm.warehouseCd" maxlength="10" /></el-form-item></el-col>
-        <el-col :span="24"><el-form-item :label="t('wms.common.location')"><el-input v-model="createForm.locationCd" maxlength="30" /></el-form-item></el-col>
-        <el-col :span="24"><el-form-item :label="t('wms.common.remarks')"><el-input v-model="createForm.remarks" type="textarea" :rows="2" /></el-form-item></el-col>
-      </el-row>
-    </CpFormDialog>
-
-    <!-- 借出 -->
-    <CpFormDialog
-      v-model="lendDialog"
-      :title="t('wms.sample.dlg.lend') + ' — ' + (lendTarget?.sampleNo ?? '')"
-      width="460"
-      :form="lendForm"
-      :rules="lendRules"
-      :submit="onLend"
-      :labels="{ cancel: t('wms.common.cancel'), confirm: t('wms.sample.btn.lend') }"
-      @saved="reloadList"
-    >
-      <el-form-item :label="t('wms.sample.fld.lentTo')" prop="lentTo">
-        <el-input v-model="lendForm.lentTo" maxlength="60" />
-      </el-form-item>
-      <el-form-item :label="t('wms.sample.fld.expReturn')">
-        <el-date-picker v-model="lendForm.expectedReturnDate" type="date" value-format="YYYY-MM-DD" style="width: 100%" />
-      </el-form-item>
-    </CpFormDialog>
+    <p v-if="detailLoading">原記録を確認しています。</p>
+    <section v-if="detail" aria-label="サンプル原記録">
+      <h3>{{ detail.sampleNo }}</h3>
+      <p>旧申告数量：{{ detail.declaredQuantity }} {{ detail.unitCd }} ／ 旧状態：{{ statusLabel(detail.legacyStatus) }}</p>
+      <p>返却確認：{{ evidenceLabel(detail.returnEvidenceState) }}。未返却数量は未確定です。</p>
+      <p>得意先：{{ visible(detail.customerCdReadable, detail.customerCd) }} ／ {{ visible(detail.customerNameReadable, detail.customerName) }}</p>
+      <p>製品：{{ visible(detail.productCdReadable, detail.productCd) }} ／ {{ visible(detail.productNameReadable, detail.productName) }}</p>
+      <p>旧倉庫・場所：{{ detail.warehouseCd ?? '記録なし' }} ／ {{ detail.locationCd ?? '記録なし' }}（正式な在庫所在は未確認）</p>
+      <p>最終借用者の旧記録：{{ visible(detail.borrowerReadable, detail.lentTo) }}（本人・連絡先との照合は未確認）</p>
+      <p>旧借出時刻：{{ detail.lentAt ?? '記録なし' }} ／ 旧返却予定：{{ detail.expectedReturnDate ?? '記録なし' }} ／ 旧返却時刻：{{ detail.returnedAt ?? '記録なし' }}</p>
+      <p>登録時刻：{{ detail.registeredAt }} ／ 備考：{{ visible(detail.remarksReadable, detail.remarks) }}</p>
+      <p>過去の借用履歴は不完全です。旧返却時刻だけでは正式な入庫・義務の解消を証明できません。拠点の日付基準が未確認のため、正式な期限・逾期判定は表示しません。</p>
+    </section>
   </CpPageShell>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
-import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
-import { useI18n } from 'vue-i18n'
+import { computed, onMounted, ref, watch } from 'vue'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
-import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
-import { type FilterField } from '@/components/templates/CpFilterBar.vue'
-import CpFormDialog from '@/components/templates/CpFormDialog.vue'
-import { type Tone } from '@/components/base/CpTag.vue'
-import { sampleApi } from '@/api/wms/paperIndustry2'
-import type { SampleStock, SampleSearchQuery } from '@/types/wms/wms'
-import { formatQty as fmtQty } from '@/utils/format'
+import { usePermissionStore } from '@/stores/permission'
+import { useOperationsIntent } from '@/composables/useOperationsIntent'
+import { sampleOwnerApi as api } from '@/api/wms/sampleOwner'
+import { checkSamplePage, checkSampleRow } from '@/types/wms/sampleOwner'
+import type { SampleObservation, SamplePage, SampleQuery } from '@/types/wms/sampleOwner'
 
-const { t } = useI18n()
-
-const total = ref<number>()
-const listRef = ref<ListPageExpose | null>(null)
-function reloadList() { listRef.value?.reload() }
-
-// overdueOnly：CpFilterBar 无 boolean 字段类型（缺口 #15）→ toolbar slot 复选，fetch 闭包读取
-const overdueOnly = ref(false)
-
-const typeMap = computed<Record<string, string>>(() => ({
-  PROTO: t('wms.sample.type.proto'),
-  COLOR: t('wms.sample.type.color'),
-  DUMMY: t('wms.sample.type.dummy'),
-  OTHER: t('wms.sample.type.other'),
-}))
-const statusMap = computed<Record<number, string>>(() => ({
-  0: t('wms.sample.status.inStock'),
-  1: t('wms.sample.status.lentOut'),
-  2: t('wms.sample.status.returned'),
-  3: t('wms.sample.status.expired'),
-}))
-// 原 statusTagOf(success/warning/primary/info) → 设计系统 Tone（保色）
-function statusTone(s: number): Tone {
-  return ({ 0: 'ok', 1: 'warn', 2: 'info', 3: 'muted' } as const)[s as 0] || 'muted'
-}
-function codeLabel(m: Record<number, string>, v: unknown): string {
-  return m[v as number] || (v == null ? '' : String(v))
-}
-function formatQty(n: number | undefined | null) {
-  if (n == null) return '0'
-  return fmtQty(n, 4)
-}
-function overdueClass(row: SampleStock): string {
-  if (row.status !== 1 || !row.expectedReturnDate) return ''
-  return new Date(row.expectedReturnDate) < new Date() ? 'sample-overdue' : ''
-}
-
-const columns = computed<ListColumn<SampleStock>[]>(() => [
-  { prop: 'sampleNo', label: t('wms.sample.fld.no'), kind: 'mono', width: 180 },
-  { prop: 'status', label: t('wms.common.status'), width: 100, kind: 'tag',
-    map: (v) => ({ label: codeLabel(statusMap.value, v), tone: statusTone(v as number) }) },
-  { prop: 'sampleType', label: t('wms.sample.fld.type'), width: 100,
-    map: (v) => ({ label: typeMap.value[v as string] || (v == null ? '' : String(v)) }) },
-  { prop: 'customerCd', label: t('wms.sample.fld.customer'), width: 120 },
-  { prop: 'customerName', label: t('wms.vmi.fld.customerName'), minWidth: 140, overflowTooltip: true },
-  { prop: 'productCd', label: t('wms.sample.fld.product'), width: 120 },
-  { prop: 'productName', label: t('wms.common.productName'), minWidth: 140, overflowTooltip: true },
-  { prop: 'quantity', label: t('wms.sample.fld.qty'), width: 100, align: 'right',
-    map: (v, row) => ({ label: `${formatQty(v as number)} ${(row as SampleStock).unitCd ?? ''}` }) },
-  { prop: 'locationCd', label: t('wms.common.location'), width: 140 },
-  { prop: 'lentTo', label: t('wms.sample.fld.lentTo'), width: 140 },
-  { prop: 'lentAt', label: t('wms.sample.fld.lentAt'), kind: 'datetime', width: 180 },
-  { prop: 'expectedReturnDate', label: t('wms.sample.fld.expReturn'), width: 130 },
-  { prop: 'returnedAt', label: t('wms.sample.fld.returnedAt'), kind: 'datetime', width: 180 },
-  { prop: '_action', label: t('wms.common.action'), width: 240, fixed: 'right' },
-])
-
-const filterLabels = computed(() => ({
-  search: t('wms.common.search'),
-  reset: t('wms.common.clear'),
-}))
-
-const searchFields = computed<FilterField[]>(() => [
-  { key: 'sampleNo', label: t('wms.sample.fld.no'), type: 'text' },
-  {
-    key: 'sampleType', label: t('wms.sample.fld.type'), type: 'select',
-    options: Object.entries(typeMap.value).map(([v, l]) => ({ label: l, value: v })),
-  },
-  { key: 'customerCd', label: t('wms.sample.fld.customer'), type: 'text' },
-  { key: 'productCd', label: t('wms.sample.fld.product'), type: 'text' },
-  {
-    key: 'status', label: t('wms.common.status'), type: 'select',
-    options: Object.entries(statusMap.value).map(([v, l]) => ({ label: l, value: Number(v) })),
-  },
-])
-
-const PAGE_CAP = 500
-const fetchList: ListFetch<SampleStock> = async ({ page, size, filters }) => {
-  const f = filters as Record<string, unknown>
-  const q: SampleSearchQuery = { pageSize: PAGE_CAP, overdueOnly: overdueOnly.value }
-  if (f.sampleNo) q.sampleNo = String(f.sampleNo)
-  if (f.sampleType) q.sampleType = String(f.sampleType)
-  if (f.customerCd) q.customerCd = String(f.customerCd)
-  if (f.productCd) q.productCd = String(f.productCd)
-  if (f.status !== undefined && f.status !== '' && f.status !== null) q.status = Number(f.status)
-  const res = await sampleApi.search(q)
-  const all = res.data || []
-  const start = (page - 1) * size
-  return { rows: all.slice(start, start + size), total: all.length }
-}
-
-// —— 新建 ——
-const createDialog = ref(false)
-const createForm = reactive<Record<string, unknown>>({
-  sampleType: 'PROTO', customerCd: '', customerName: '', productCd: '', productName: '',
-  quantity: 1, unitCd: 'PCS', warehouseCd: '', locationCd: '', remarks: '',
-})
-const createRules = computed<FormRules>(() => ({
-  sampleType: [{ required: true, message: t('wms.common.required'), trigger: 'change' }],
-  quantity: [{ required: true, message: t('wms.common.required'), trigger: 'change' }],
-}))
-function openCreate() {
-  Object.assign(createForm, {
-    sampleType: 'PROTO', customerCd: '', customerName: '', productCd: '', productName: '',
-    quantity: 1, unitCd: 'PCS', warehouseCd: '', locationCd: '', remarks: '',
-  })
-  createDialog.value = true
-}
-async function onCreate() {
-  const res = await sampleApi.create({ ...createForm } as unknown as SampleStock)
-  ElMessage.success(`${t('wms.common.success')}: ${res.data.sampleNo}`)
-}
-
-// —— 借出 ——
-const lendDialog = ref(false)
-const lendTarget = ref<SampleStock | null>(null)
-const lendForm = reactive<Record<string, unknown>>({ lentTo: '', expectedReturnDate: undefined })
-const lendRules = computed<FormRules>(() => ({
-  lentTo: [{ required: true, message: t('wms.common.required'), trigger: 'blur' }],
-}))
-function openLend(row: SampleStock) {
-  lendTarget.value = row
-  Object.assign(lendForm, { lentTo: '', expectedReturnDate: undefined })
-  lendDialog.value = true
-}
-async function onLend() {
-  await sampleApi.lend(lendTarget.value!.sampleNo, lendForm.lentTo as string, lendForm.expectedReturnDate as string | undefined)
-  ElMessage.success(t('wms.common.success'))
-}
-
-async function onReturn(row: SampleStock) {
+const permission = usePermissionStore()
+const canRead = computed(() => permission.loaded && permission.has('wms-sample-stock:query'))
+const sampleNo = ref(''), status = ref('all'), awaiting = ref(false), page = ref(1)
+const result = ref<SamplePage | null>(null), detail = ref<SampleObservation | null>(null)
+const loading = ref(false), detailLoading = ref(false), error = ref('')
+let reads = 0, details = 0
+function clearRead() { reads++; details++; result.value = null; detail.value = null; loading.value = false; detailLoading.value = false; error.value = '' }
+function clearAll() { clearRead(); sampleNo.value = ''; status.value = 'all'; awaiting.value = false; page.value = 1 }
+const intent = useOperationsIntent(clearAll)
+watch([sampleNo, status, awaiting], () => { clearRead(); page.value = 1 }, { flush: 'sync' })
+watch(canRead, () => { intent.invalidate(); clearAll() }, { flush: 'sync' })
+watch(() => permission.actionKeys, () => { intent.invalidate(); clearRead() }, { deep: true, flush: 'sync' })
+async function load(next = 1) {
+  clearRead(); page.value = next
+  if (!canRead.value || !Number.isSafeInteger(next) || next < 1) return
+  const n = reads, token = intent.capture(), q: SampleQuery = { page: next, pageSize: 50, sampleNo: sampleNo.value || undefined, legacyStatus: status.value === 'all' ? undefined : Number(status.value), awaitingReturnEvidence: awaiting.value || undefined }
+  loading.value = true
   try {
-    await ElMessageBox.confirm(`${t('wms.sample.btn.return')}: ${row.sampleNo}`, t('wms.common.confirm'), { type: 'warning' })
-    await sampleApi.return(row.sampleNo)
-    ElMessage.success(t('wms.common.success'))
-    reloadList()
-  } catch { /* */ }
+    const response = await api.search(q)
+    if (!intent.current(token) || n !== reads || !canRead.value) return
+    if (response.code !== 0) throw new Error('READ_FAILED')
+    result.value = checkSamplePage(response.data, q)
+  } catch { if (intent.current(token) && n === reads) error.value = '一覧を取得できません。現在の権限と条件を確認して再取得してください。' }
+  finally { if (intent.current(token) && n === reads) loading.value = false }
 }
-async function onExpire(row: SampleStock) {
+async function openDetail(row: SampleObservation) {
+  const n = ++details, token = intent.capture(); detail.value = null; detailLoading.value = false; error.value = ''
+  if (!canRead.value || !result.value?.items.some(x => x.id === row.id)) return
+  detailLoading.value = true
   try {
-    await ElMessageBox.confirm(`${t('wms.sample.btn.expire')}: ${row.sampleNo}`, t('wms.common.confirm'), { type: 'warning' })
-    await sampleApi.expire(row.sampleNo)
-    ElMessage.success(t('wms.common.success'))
-    reloadList()
-  } catch { /* */ }
+    const response = await api.get(row.id)
+    if (!intent.current(token) || n !== details || !canRead.value) return
+    if (response.code !== 0) throw new Error('READ_FAILED')
+    detail.value = checkSampleRow(response.data, row.id)
+  } catch { if (intent.current(token) && n === details) error.value = '原記録を取得できません。現在の権限と対象を確認してください。' }
+  finally { if (intent.current(token) && n === details) detailLoading.value = false }
 }
+function visible(read: boolean, value: string | null) { return read ? value ?? '記録なし' : '参照不可' }
+function statusLabel(value: number) { return ({ 0: '保管中', 1: '貸出中', 2: '返却済', 3: '失効' } as Record<number, string>)[value] ?? `旧状態 ${value}` }
+function evidenceLabel(value: string) { return value === 'OUTSTANDING_UNKNOWN' ? '返却記録の確認が必要' : value === 'RETURN_RECORDED_UNVERIFIED' ? '返却時刻あり・実在庫未照合' : '借出記録なし・履歴未照合' }
+onMounted(() => load())
 </script>
 
 <style scoped>
-.sample-overdue { color: var(--cp-danger); font-weight: bold; }
+.filters { display: flex; align-items: center; flex-wrap: wrap; gap: var(--cp-space-4, 16px); margin-block: var(--cp-space-4, 16px); }
+section { margin-top: var(--cp-space-4, 16px); }
 </style>

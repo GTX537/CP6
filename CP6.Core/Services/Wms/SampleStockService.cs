@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Erp;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,13 +11,17 @@ public class SampleStockService : ISampleStockService
     private readonly IWmsSequenceService _seq;
     private const string Prefix = "SMP";
 
-    public SampleStockService(CP6Context db, IWmsSequenceService seq)
+    private readonly SampleOwnerV1? _owner;
+    private SampleOwnerV1 Owner=>_owner!=null&&_owner.Owns(_db)?_owner:throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
+
+    public SampleStockService(CP6Context db, IWmsSequenceService seq, SampleOwnerV1? owner=null)
     {
-        _db = db; _seq = seq;
+        _db = db; _seq = seq; _owner = owner;
     }
 
     public async Task<List<SampleStock>> SearchAsync(SampleSearchQuery q)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("query");
         var query = _db.SampleStocks.AsNoTracking().Where(x => !x.IsDeleted);
         if (!string.IsNullOrWhiteSpace(q.SampleNo)) query = query.Where(x => x.SampleNo.Contains(q.SampleNo));
         if (!string.IsNullOrWhiteSpace(q.SampleType)) query = query.Where(x => x.SampleType == q.SampleType);
@@ -35,10 +40,14 @@ public class SampleStockService : ISampleStockService
     }
 
     public async Task<SampleStock?> GetAsync(string sampleNo)
-        => await _db.SampleStocks.AsNoTracking().FirstOrDefaultAsync(x => x.SampleNo == sampleNo && !x.IsDeleted);
+    {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("query",sampleNo);
+        return await _db.SampleStocks.AsNoTracking().FirstOrDefaultAsync(x => x.SampleNo == sampleNo && !x.IsDeleted);
+    }
 
     public async Task<string> CreateAsync(SampleDto dto, string? userName)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("add");
         if (string.IsNullOrWhiteSpace(dto.SampleType))
             throw new InvalidOperationException("SampleType required");
         if (dto.Quantity <= 0) throw new InvalidOperationException("Quantity > 0");
@@ -62,6 +71,7 @@ public class SampleStockService : ISampleStockService
 
     public async Task UpdateAsync(string sampleNo, SampleDto dto, string? userName)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("edit",sampleNo);
         var s = await GetTracked(sampleNo);
         if (s.Status == SampleStatus.Expired)
             throw new InvalidOperationException("WM-MSG-043: 失効品は訂正不可");
@@ -78,6 +88,7 @@ public class SampleStockService : ISampleStockService
 
     public async Task LendAsync(string sampleNo, string lentTo, DateTime? expectedReturnDate, string? userName)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("lend",sampleNo);
         if (string.IsNullOrWhiteSpace(lentTo))
             throw new InvalidOperationException("lentTo required");
         var s = await GetTracked(sampleNo);
@@ -94,6 +105,7 @@ public class SampleStockService : ISampleStockService
 
     public async Task ReturnAsync(string sampleNo, string? userName)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("return",sampleNo);
         var s = await GetTracked(sampleNo);
         if (s.Status != SampleStatus.LentOut)
             throw new InvalidOperationException("WM-MSG-043: 貸出中のみ返却可");
@@ -105,6 +117,7 @@ public class SampleStockService : ISampleStockService
 
     public async Task ExpireAsync(string sampleNo, string? userName)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("expire",sampleNo);
         var s = await GetTracked(sampleNo);
         if (s.Status == SampleStatus.Expired)
             throw new InvalidOperationException("WM-MSG-043: 既に失効");
@@ -115,6 +128,7 @@ public class SampleStockService : ISampleStockService
 
     public async Task<List<SampleStock>> OverdueAsync()
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("query");
         var today = DateTime.Today;
         return await _db.SampleStocks.AsNoTracking()
             .Where(x => !x.IsDeleted && x.Status == SampleStatus.LentOut
@@ -125,6 +139,7 @@ public class SampleStockService : ISampleStockService
 
     public async Task DeleteAsync(string sampleNo, string? userName)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("del",sampleNo);
         var s = await GetTracked(sampleNo);
         if (s.Status == SampleStatus.LentOut)
             throw new InvalidOperationException("WM-MSG-043: 貸出中は削除不可（先に返却）");
