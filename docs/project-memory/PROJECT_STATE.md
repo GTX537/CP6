@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-25：W130原生身份基线宿主待Main收尾
+
+34项唯一相关本地检查通过：CRM29、Main5；必需0跳过，原失败及针对性复测保留，未变化成功证据按原适用范围复用。 CRM154/Handoff交付已正常合并、准确分支删除和finish；Main前置BUG543已修复关闭，Main正常收尾继续。[交付](../development/evidence/W130-01/DELIVERY.md)。D5可信delta入口、提交后ACK、及时跨仓撤权和原生API可观测性仍待；基线轮询不等于即时撤权。完整D5及正式目标/验收不提升；D2、D3、D6、D7继续原计划必要出口。
+
 ## 2026-10-25：BUG543身份目录当前迁移兼容
 
 [Issue543](https://github.com/GTX537/CP6/issues/543)精确补齐新版独立对象映射和询盘范围函数准入，保留旧digest和安全拒绝。Main四项及CRM原始基线子进程一项相关本地验证通过。[报告](../development/evidence/BUG-543/DELIVERY.md)。正常PR后恢复W130原生后台联通；Issue待该原步骤通过后关闭，七天ACTIVE。
