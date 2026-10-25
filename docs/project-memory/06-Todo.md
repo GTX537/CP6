@@ -2256,3 +2256,8 @@ T1–T7 已完成，不要重复铺设。T7 细节见 `.superpowers/sdd/gr-vp-t7
 
 - 每完成一项任务，更新 `PROJECT_STATE.md`、`05-Completed.md`、`06-Todo.md` 和 `CHANGELOG-AI.md`。
 - README/CODEMAP 的规模数字已经过时，未来可单独刷新，但不要在权限任务中夹带修改。
+
+
+## 2026-10-25：README 通用制造定位与入口同步（README-20261025）
+
+README 已同步当前产品方向；后续继续按既有台账推进真实业务采用和验收。本次没有新增业务任务、变更其他任务优先级，或把设计范围视为全部实现。 [本任务报告](../development/evidence/README-20261025.md)。

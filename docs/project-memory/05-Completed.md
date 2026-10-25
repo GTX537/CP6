@@ -3163,3 +3163,8 @@ C01 的实际密码/PKCE、服务令牌、固定 Platform/CRM 消费者、严格
 - `.bak` 已通过 Git LFS 上传至私有 GitHub 仓库。
 - 所有本地分支、历史 marker 和迁移标签已推送。
 - 恢复标签：`migration-2026-07-18-ready`。
+
+
+## 2026-10-25：README 通用制造定位与入口同步（README-20261025）
+
+完成根 README 的通用制造定位、近期已合入能力、四仓分工、PostgreSQL 本地开发和文档导航更新；已有纸品等能力按明确行业适用范围描述。文档交付不增加业务目标或验收通过数。 [本任务报告](../development/evidence/README-20261025.md)。

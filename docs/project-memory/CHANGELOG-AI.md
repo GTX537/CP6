@@ -3158,3 +3158,8 @@ C01 的实际密码/PKCE、服务令牌、固定 Platform/CRM 消费者、严格
 ## 维护规则
 
 每完成一个可交付任务，追加日期、提交、业务影响、验证结果和遗留票。不要复制整个 commit 列表；细节用 `git log --all --decorate --oneline` 查询。
+
+
+## 2026-10-25：README 通用制造定位与入口同步（README-20261025）
+
+更新根 README：移除 Crown Package / mcframe7 作为当前产品定位的表述，补齐通用制造全业务链、ENG/PLM/QA、PostgreSQL 与多仓边界，并修正本地启动和文档入口。仅文档，无产品代码或运行配置变更。 [本任务报告](../development/evidence/README-20261025.md)。
