@@ -1190,3 +1190,13 @@ Main40–60分钟，CRM35–50分钟，定向验证/集中审查/三仓收尾35�
 29项唯一相关本地成功检查：Main13、CRM16；真实Main TLS控制器/服务认证/PG来源经实际CRM捕获、持久信任和当前事务，原H01提交回归、完整角色/当前动作、用途/租户/nonce/epoch/期限、撤权锁/恢复互斥和跨事务误用通过，必需0跳过。 [交付](../dispatch/20261024-wave123/README.md)。
 Handoff [PR99](https://github.com/GTX537/CP6.AI-Handoff/pull/99)采用 `566e6e56acc5814b7252e1dcd1f1829befbb253f`，准确分支已删除、DEV-2已finish释放。 Main最终PR/finish尚待；START后墙钟27.14分钟，原估110–160分钟，最终按Main finish计，不叠加各仓；不含先前只读调查。
 后续W124原生保留行事务及隐私/发布继续，七天ACTIVE。
+
+## W124原生保留行事务窗口
+
+保留控制30–45分钟，完整行Owner及Worker45–65分钟，验证审查30–45分钟，三仓收尾15–25分钟；合计120–180。[范围](../dispatch/20261024-wave124/README.md)。W123已闭环，七天ACTIVE。
+
+## W124原生询盘保留Owner实际交付
+
+92项唯一相关本地成功检查：44项PG/HTTP/实际浏览器及Worker、48项Web；必需0跳过。真实60分钟到期验证原子匿名化、hold阻断、原记录独立期限、正式outbox失败回滚和单次事件；长测在当前编译版本完成，显示期限、Lead投影及负例分别引用定向证据，不称全套重跑。 [交付](../dispatch/20261024-wave124/README.md)。
+Handoff [PR100](https://github.com/GTX537/CP6.AI-Handoff/pull/100)采用 `684da578537f6d91035562070ef2b05173b012cb`，准确分支已删除、DEV-2已finish释放。 Main最终PR/finish尚待；START后墙钟174.07分钟，原估120–180分钟，最终按Main finish计，不叠加各仓；不含先前只读调查。
+后续人类隐私/导出及实际发布继续，七天ACTIVE。原35–55小时为初估；官方COORD登记至W123的全部已合并窗口（含BUG任务）去除跨仓重叠后为59.75小时，包含等待/暂缓，未包含准备、最终核对和本轮W124；不能当纯编码时长或完成率。本轮实际耗时仍以最终Main finish为准。
