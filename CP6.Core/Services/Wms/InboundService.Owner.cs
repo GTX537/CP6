@@ -85,6 +85,7 @@ public partial class InboundService
             _=StockOwner;a.RequirePriceWrite();frozen.OperatorCd=a.Actor;
             foreach(var line in frozen.Details)await a.RequireLocation(frozen.WarehouseCd,line.LocationCd,ct);
             await RequireReceiptSources(frozen,a,ct);
+            using var inheritance=StockOwner.InheritTransactions(a);
             var number=await ConfirmReceiptCoreAsync(frozen,a.Actor,true);CaptureStock(effects);
             a.AtCommit(t=>a.RequireReceipt(number,t));return number;
         });
@@ -102,6 +103,7 @@ public partial class InboundService
             if(ticket==null){a.RequirePriceWrite();await a.RequireSourceWorkOrder(workOrder,ct);await a.RequireLocation(FinishedGoodsWarehouse,FinishedGoodsLocation,ct);}
             if(quantity<=0 || !await _db.WorkOrders.AnyAsync(w=>w.WorkOrderNo==workOrder && !w.IsDeleted && w.Status==WorkOrderStatus.Completed && w.CompletedQty==quantity,ct))
                 throw new OrderPriceCorrectionException("PRODUCTION_RECEIPT_INVALID",409);
+            using var inheritance=StockOwner.InheritTransactions(a);
             var number=await CreateFinishedGoodsFromWorkOrderCoreAsync(workOrder,quantity,a.Actor,true);CaptureStock(effects);
             if(ticket==null)a.AtCommit(t=>a.RequireReceipt(number,t));
             else a.AtCommit(async t=>
@@ -132,6 +134,7 @@ public partial class InboundService
         var access=await parent.ActionAsync(OperationsOwnerV1.Receipt,"post",ct);access.RequirePriceWrite();dto.OperatorCd=access.Actor;
         foreach(var line in dto.Details)await access.RequireLocation(dto.WarehouseCd,line.LocationCd,ct);
         await RequireReceiptSources(dto,access,ct);
+        using var inheritance=StockOwner.InheritTransactions(parent);
         var number=await ConfirmReceiptCoreAsync(dto,access.Actor,true);CaptureStock(effects);
         parent.AtCommit(async t=>
         {

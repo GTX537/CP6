@@ -18,7 +18,7 @@ public partial class OrderCancelBridgeHook
 {
     // Bounded delegation from an already authorized Order.cancel inside the same Owner transaction.
     // It does not grant general warehouse/manufacturing actions or accept arbitrary child keys.
-    internal async Task<OwnedCascade> PrepareOwnedAsync(CP6Context db,string number,string actor)
+    internal async Task<OwnedCascade> PrepareOwnedAsync(CP6Context db,string number,string actor,StockTransactionInheritanceV1 inheritance)
     {
         if(!ReferenceEquals(_db,db) || !db.Database.IsNpgsql() || db.Database.CurrentTransaction==null
             || _outboundService is not OutboundService outbound || !outbound.OwnsCancellation(db)
@@ -43,7 +43,8 @@ public partial class OrderCancelBridgeHook
                          join w in db.WorkOrders.AsNoTracking() on o.WorkOrderNo equals w.WorkOrderNo
                          where ids.Contains(o.Id) && !w.IsDeleted && w.WebOrderNo==number
                          select new {Outbound=o.Id,WorkOrder=w.Id}).ToArrayAsync();
-        return new(this,orders,outbounds,edges.Select(e=>(e.Outbound,e.WorkOrder)).ToArray(),actor);
+        inheritance.RequireStockInheritanceContext(db);
+        return new(this,orders,outbounds,edges.Select(e=>(e.Outbound,e.WorkOrder)).ToArray(),actor,inheritance);
     }
     private static string Table<T>(CP6Context db) where T:class
     {
@@ -57,10 +58,11 @@ public partial class OrderCancelBridgeHook
         private readonly List<OutboundOrder> outbounds;
         private readonly (Guid Outbound,Guid WorkOrder)[] edges;
         private readonly string actor;
+        private readonly StockTransactionInheritanceV1 inheritance;
         private readonly List<(string Number,bool Shipping,List<StockTransaction> Transactions)> notifications=[];
         internal OwnedCascade(OrderCancelBridgeHook owner,List<WorkOrder> workOrders,List<OutboundOrder> outbounds,
-            (Guid Outbound,Guid WorkOrder)[] edges,string actor)
-        {this.owner=owner;this.workOrders=workOrders;this.outbounds=outbounds;this.edges=edges;this.actor=actor;}
+            (Guid Outbound,Guid WorkOrder)[] edges,string actor,StockTransactionInheritanceV1 inheritance)
+        {this.owner=owner;this.workOrders=workOrders;this.outbounds=outbounds;this.edges=edges;this.actor=actor;this.inheritance=inheritance;}
         internal async Task<OrderCancelHookResult> RunAsync(bool execute,Guid correlationId)
         {
             var db=owner._db;
@@ -95,7 +97,7 @@ public partial class OrderCancelBridgeHook
                             new NpgsqlParameter("tenant",db.CurrentTenantId),new NpgsqlParameter("id",release.Key)).AsNoTracking().SingleAsync();
                         if(locked.AllocatedQty<release.Value)throw new InvalidOperationException("CANCEL_ALLOCATION_INVALID");
                     }
-                    await ((OutboundService)owner._outboundService).CancelFromOrderAsync(row.OutboundNo,actor);
+                    await ((OutboundService)owner._outboundService).CancelFromOrderAsync(row.OutboundNo,actor,inheritance);
                 });
                 probe.Cancelled=succeeded;probe.Message=succeeded?"Cancelled":"CANCEL_CHILD_FAILED";
                 if(succeeded)notifications.Add((row.OutboundNo,row.OutboundType==OutboundType.Shipping,
@@ -123,11 +125,13 @@ public partial class OrderCancelBridgeHook
             var db=owner._db;var tx=db.Database.CurrentTransaction!;
             db.ChangeTracker.DetectChanges();
             var snapshot=db.ChangeTracker.Entries().Select(e=>new {e.Entity,e.State,Current=e.CurrentValues.Clone(),Original=e.OriginalValues.Clone()}).ToArray();
+            var ownership=inheritance.Checkpoint();
             await tx.CreateSavepointAsync("order_cancel_child");
             try {await action();await tx.ReleaseSavepointAsync("order_cancel_child");return true;}
             catch(Exception error) when(!Fatal(error))
             {
                 await tx.RollbackToSavepointAsync("order_cancel_child");
+                inheritance.RestoreAfterSavepointRollback(ownership);
                 var existing=snapshot.Select(e=>e.Entity).ToHashSet(ReferenceEqualityComparer.Instance);
                 foreach(var entry in db.ChangeTracker.Entries().ToArray())if(!existing.Contains(entry.Entity))entry.State=EntityState.Detached;
                 foreach(var saved in snapshot)

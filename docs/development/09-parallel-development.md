@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W136新设备可信创建](dispatch/20261025-wave136/README.md)：显式部门/同事务映射与原操作恢复已验证，Handoff已finish，Main收尾；后继D2其他对象/新流水实际继承。单人、PostgreSQL、七天ACTIVE。
+> 当前：[W137库存流水可信继承](dispatch/20261025-wave137/README.md)：精确Stock来源、当前恢复及各父事务/保存点已验证，Handoff已finish，Main收尾；后继D2其余可信创建/REP/RMA。单人、PostgreSQL、七天ACTIVE。
+
+> 历史快照：[W136新设备可信创建](dispatch/20261025-wave136/README.md)：显式部门/同事务映射与原操作恢复已验证，Handoff已finish，Main收尾；后继D2其他对象/新流水实际继承。单人、PostgreSQL、七天ACTIVE。
 
 > 历史快照：[W135 D6准确适用与来源核定](dispatch/20261025-wave135/README.md)：现有发布/权限及冻结调用边界已核清，真实外部输入仍未证；Handoff已finish，Main收尾，后继D2新对象可信归属。单人、PostgreSQL、七天ACTIVE。
 

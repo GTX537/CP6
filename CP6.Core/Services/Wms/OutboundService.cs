@@ -262,11 +262,12 @@ public partial class OutboundService : IOutboundService
 
     internal bool OwnsCancellation(CP6Context db) => ReferenceEquals(_db,db)
         && _stock is StockMovementService stock && stock.Owns(db);
-    internal Task CancelFromOrderAsync(string outboundNo,string userName)
+    internal async Task CancelFromOrderAsync(string outboundNo,string userName,StockTransactionInheritanceV1 inheritance)
     {
         if(!_db.Database.IsNpgsql() || _db.Database.CurrentTransaction==null)
             throw new CP6.Core.Services.Erp.OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
-        return CancelCoreAsync(outboundNo,userName,true);
+        using var scope=((StockMovementService)_stock).InheritTransactions(inheritance);
+        await CancelCoreAsync(outboundNo,userName,true);
     }
     internal async Task PublishOrderCancellationAsync(string outboundNo,bool shipping,string actor,IReadOnlyList<StockTransaction> transactions)
     {

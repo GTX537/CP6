@@ -43,6 +43,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await StandaloneScope(h,admin,type);var read=new StockOperationsService(h.Db,owner);
         Assert.Empty((await read.SearchAsync(new())).Items); // No inference from creator or current department.
         var stock=await h.Db.Stocks.SingleAsync(s=>s.ProductCd=="P1");h.Db.ChangeTracker.Clear();
+        var historical=new StockTransaction{TxnNo="HISTORICAL",TxnType=WmsTxnType.ADJ,WarehouseCd="W01",LocationCd="L1",ProductCd="P1",LotNo="LOT",Creator="price-owner"};
+        h.Db.StockTransactions.Add(historical);await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();
         await BindStandalone(h,admin,"stock",stock.Id);
         var page=await read.SearchAsync(new(){PageSize=1});Assert.Equal(1,page.Total);Assert.Equal(stock.Id,Assert.Single(page.Items).Id);
         Assert.Equal(30.37037034m,(await new WmsDashboardService(h.Db,owner).GetKpiAsync()).TotalStockValue);
@@ -50,10 +52,11 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(11.24691356m,await h.Db.Stocks.Where(s=>s.Id==stock.Id).Select(s=>s.PhysicalQty).SingleAsync());
         var other=InventoryAdjustment();other.ProductCd="P2";other.LocationCd="L2";
         await Assert.ThrowsAsync<OrderPriceCorrectionException>(()=>InventoryMover(h,owner).ApplyAsync(other));
-        Assert.Equal(1,await h.Db.StockTransactions.CountAsync());
-        Assert.Empty((await read.TransactionsAsync(new())).Items); // A matching stock key is not historical transaction ownership.
-        var txn=await h.Db.StockTransactions.Select(x=>x.Id).SingleAsync();await BindStandalone(h,admin,"stock-transaction",txn);
+        Assert.Equal(2,await h.Db.StockTransactions.CountAsync());
+        Assert.NotEqual(historical.Id,Assert.Single((await read.TransactionsAsync(new())).Items).Id);
         Assert.Single((await read.HistoryAsync(stock.Id)).Transactions);
+        await BindStandalone(h,admin,"stock-transaction",historical.Id); // A matching stock key still cannot establish historical ownership.
+        Assert.Equal(2,(await read.HistoryAsync(stock.Id)).Transactions.Count);
         await h.Db.Sys_Depts.Where(d=>d.Id==admin.Root).ExecuteUpdateAsync(s=>s.SetProperty(d=>d.Enable,false));
         if(type==4) { Assert.Equal(0,(await read.SearchAsync(new())).Total);Assert.Equal(0,(await read.TransactionsAsync(new())).Total); }
         else { await Assert.ThrowsAsync<OrderPriceCorrectionException>(()=>read.SearchAsync(new()));

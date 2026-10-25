@@ -117,6 +117,8 @@ public partial class StockMovementService : IStockMovementService
                 _db.Stocks.Add(stock);
             }
 
+            var binding=_db.Database.IsNpgsql()?await InheritanceAccess.BeginStockTransaction(stock,ct):null;
+
             // 在庫数の更新（種別毎にロジック分岐）
             ApplyDelta(stock, req);
 
@@ -141,6 +143,7 @@ public partial class StockMovementService : IStockMovementService
             var txnNo = await _seq.NextAsync(TxnPrefix, DateTime.Today);
             var txn = new StockTransaction
             {
+                Id = binding?.TransactionId ?? Guid.NewGuid(),
                 TxnNo = txnNo,
                 TxnType = req.TxnType,
                 TxnDateTime = DateTime.Now,
@@ -163,6 +166,7 @@ public partial class StockMovementService : IStockMovementService
             _db.StockTransactions.Add(txn);
 
             await _db.SaveChangesAsync(ct);
+            if(binding!=null)await InheritanceAccess.CompleteStockTransaction(binding,ct);
             if (tx != null) await tx.CommitAsync(ct);
             var canPublishNow = publishWhenCommitted && (tx != null || isInMemory);
 

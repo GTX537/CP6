@@ -33,13 +33,16 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var wms=new OutboundService(h.Db,seq,new StockMovementService(h.Db,seq),shortage:new MaterialShortageService(h.Db),owner:owner);
         h.Db.Stocks.Add(new(){WarehouseCd="W01",LocationCd="L",ProductCd="P",LotNo="",PhysicalQty=10m,AvailableQty=10m});
         await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();
-        var draft=NewOutbound();draft.Details.Add(new(){ProductCd="MISSING",RequiredQty=3m});
+        var admin=await MappingAdmin(h);await BindStandalone(h,admin,"stock",await h.Db.Stocks.Select(s=>s.Id).SingleAsync());
+        // The accepted shortage Owner requires an actual material work-order source.
+        var draft=NewOutbound();draft.WorkOrderNo=await SeedProduction(h);draft.Details.Add(new(){ProductCd="MISSING",RequiredQty=3m});
         var no=await wms.CreateOrderAsync(draft,null);await wms.ConfirmOrderAsync(no,null);await wms.AllocateAsync(no,null);
         Assert.Equal(OutboundOrderStatus.PartialAllocated,await h.Db.OutboundOrders.Select(o=>o.Status).SingleAsync());
         Assert.Equal(1,await h.Db.MaterialShortages.CountAsync());
         await wms.CancelOrderAsync(no,null);await wms.CancelOrderAsync(no,null);
         Assert.Equal(2,await h.Db.StockTransactions.CountAsync());Assert.Equal(0m,await h.Db.Stocks.Select(s=>s.AllocatedQty).SingleAsync());
         Assert.Equal(10m,await h.Db.Stocks.Select(s=>s.PhysicalQty).SingleAsync());
+        Assert.Equal(2,await InheritedMappings(h));
     }
 
     private sealed class OperationsNotification(Func<Task> notify):IWmsNotifier
