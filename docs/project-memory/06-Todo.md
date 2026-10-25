@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 2026-10-24：W124原生询盘保留Owner
+
+92项唯一相关本地成功检查：44项PG/HTTP/实际浏览器及Worker、48项Web；必需0跳过。真实60分钟到期验证原子匿名化、hold阻断、原记录独立期限、正式outbox失败回滚和单次事件；长测在当前编译版本完成，显示期限、Lead投影及负例分别引用定向证据，不称全套重跑。 [交付](../development/dispatch/20261024-wave124/README.md)。CRM已合并finish，原生保留Owner/独立hold/lease/Worker与显示期限已采用。
+Handoff [PR100](https://github.com/GTX537/CP6.AI-Handoff/pull/100)采用 `684da578537f6d91035562070ef2b05173b012cb`，准确分支已删除、DEV-2已finish释放。 Main最终PR/finish尚待；START后墙钟174.07分钟，原估120–180分钟，最终按Main finish计，不叠加各仓；不含先前只读调查。
+人类隐私/导出及实际发布仍待，24/375、0/125、247NOT_RUN保持，七天ACTIVE。
+
 ## 2026-10-24：W123原生保留维护权限
 
 29项唯一相关本地成功检查：Main13、CRM16；真实Main TLS控制器/服务认证/PG来源经实际CRM捕获、持久信任和当前事务，原H01提交回归、完整角色/当前动作、用途/租户/nonce/epoch/期限、撤权锁/恢复互斥和跨事务误用通过，必需0跳过。 [交付](../development/dispatch/20261024-wave123/README.md)。CRM已合并finish，原生维护用途和当前服务证明已采用。
