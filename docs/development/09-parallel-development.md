@@ -1,204 +1,206 @@
 # 多对话任务分配与交付
 
-> 当前：[W128导出下载当前来源](dispatch/20261025-wave128/README.md)：72项定向检查通过，CRM153/Handoff104已采用并finish，Main产品与台账收尾；下一窗口逐项审计原七天出口。单人、PostgreSQL、七天ACTIVE。
+> 当前：[W129原七天出口审计](dispatch/20261025-wave129/README.md)：原D1/D4关闭，D2/D3/D5/D6/D7剩余明确；Handoff105已finish，Main正常收尾。下一D5原生PG身份宿主。单人、七天ACTIVE；以下旧轮次均为历史快照，不表示当前待授权或占用。
 
-> 当前：[W105配置预览/激活交付](dispatch/20261024-wave105/README.md)：CRM与Handoff已合并finish，实际PG/浏览器及Main互通通过；Main最终收尾，后继公开表单/Attempt/提交。单人、PostgreSQL、七天ACTIVE。
+> 历史快照：[W128导出下载当前来源](dispatch/20261025-wave128/README.md)：72项定向检查通过，CRM153/Handoff104已采用并finish，Main产品与台账收尾；下一窗口逐项审计原七天出口。单人、PostgreSQL、七天ACTIVE。
 
-> 当前：[W104冻结配置页面交付](dispatch/20261024-wave104/README.md)：CRM131与Handoff已合并finish，63项本地检查通过；Main最终收尾，后继预览/激活和公开受理。单人、PostgreSQL、七天ACTIVE。
+> 历史快照：[W105配置预览/激活交付](dispatch/20261024-wave105/README.md)：CRM与Handoff已合并finish，实际PG/浏览器及Main互通通过；Main最终收尾，后继公开表单/Attempt/提交。单人、PostgreSQL、七天ACTIVE。
 
-> 当前：[W101实际签发交付](dispatch/20261024-wave101/README.md)：CRM128与Handoff已采用并finish，Main本次最后收尾；接续配置Owner/当前授权边界。单人、PostgreSQL、七天ACTIVE。
+> 历史快照：[W104冻结配置页面交付](dispatch/20261024-wave104/README.md)：CRM131与Handoff已合并finish，63项本地检查通过；Main最终收尾，后继预览/激活和公开受理。单人、PostgreSQL、七天ACTIVE。
 
-> 当前：[W100实际交付](dispatch/20261024-wave100/README.md)：CRM127及Handoff已采用，Main本次最终合并与finish；接续真实签名权限生产者及配置Owner。本聊天单人、PostgreSQL、七天目标ACTIVE。
+> 历史快照：[W101实际签发交付](dispatch/20261024-wave101/README.md)：CRM128与Handoff已采用并finish，Main本次最后收尾；接续配置Owner/当前授权边界。单人、PostgreSQL、七天ACTIVE。
 
-> 当前：[W99交付](dispatch/20261024-wave99/README.md)，CRM126及Handoff已采用；Main协调收尾后继续真实Site/Form范围、签名权限生产者与业务Owner。单人、PostgreSQL、七天目标ACTIVE。
+> 历史快照：[W100实际交付](dispatch/20261024-wave100/README.md)：CRM127及Handoff已采用，Main本次最终合并与finish；接续真实签名权限生产者及配置Owner。本聊天单人、PostgreSQL、七天目标ACTIVE。
 
-> 当前：[W99受保护会话宿主](dispatch/20261024-wave99/README.md)，本聊天单人；W37–W98已finish，不重复。
+> 历史快照：[W99交付](dispatch/20261024-wave99/README.md)，CRM126及Handoff已采用；Main协调收尾后继续真实Site/Form范围、签名权限生产者与业务Owner。单人、PostgreSQL、七天目标ACTIVE。
 
-> 当前：[W98实际MOVE页面](dispatch/20261024-wave98/README.md)，本聊天单人，固定席位复用；W97/Issue503已完整收尾。
+> 历史快照：[W99受保护会话宿主](dispatch/20261024-wave99/README.md)，本聊天单人；W37–W98已finish，不重复。
 
-> 当前：[W97 MOVE保管属性修复](dispatch/20261024-wave97/README.md)，本聊天单人，固定席位原仓复用；W89已收尾。
+> 历史快照：[W98实际MOVE页面](dispatch/20261024-wave98/README.md)，本聊天单人，固定席位复用；W97/Issue503已完整收尾。
 
-> 当前：[W89交付](dispatch/20261024-wave89/README.md)，CRM PR124/125及Handoff已采用，Issue123关闭；Main协调收尾后继续独立Main Issue503。用户授权已执行，旧待确认/暂缓文字为历史节点，当前状态以此入口和roadmap为准。
+> 历史快照：[W97 MOVE保管属性修复](dispatch/20261024-wave97/README.md)，本聊天单人，固定席位原仓复用；W89已收尾。
 
-> 当前恢复W89：用户已明确授权，官方DEV-2重绑CRM成功；原Main协调分支resume，CRM实际开工。W96完整收尾，不重复。
+> 历史快照：[W89交付](dispatch/20261024-wave89/README.md)，CRM PR124/125及Handoff已采用，Issue123关闭；Main协调收尾后继续独立Main Issue503。用户授权已执行，旧待确认/暂缓文字为历史节点，当前状态以此入口和roadmap为准。
 
-> 当前：[W96库存原操作页面](dispatch/20261024-wave96/README.md)，本聊天单人，固定席位原仓复用；W95已收尾，W89保存待确认。
+> 历史恢复W89：用户已明确授权，官方DEV-2重绑CRM成功；原Main协调分支resume，CRM实际开工。W96完整收尾，不重复。
 
-> 当前：[W95样品历史独立Owner](dispatch/20261024-wave95/README.md)，本聊天单人，固定席位原仓复用；W94已收尾，W89保存待确认。
+> 历史快照：[W96库存原操作页面](dispatch/20261024-wave96/README.md)，本聊天单人，固定席位原仓复用；W95已收尾，W89保存待确认。
 
-> 当前：[W94包装独立查询Owner](dispatch/20261024-wave94/README.md)，本聊天单人，固定席位原仓复用；W93已收尾，W89保存待确认。
+> 历史快照：[W95样品历史独立Owner](dispatch/20261024-wave95/README.md)，本聊天单人，固定席位原仓复用；W94已收尾，W89保存待确认。
 
-> 当前：[W93出库路由独立Owner](dispatch/20261024-wave93/README.md)，本聊天单人，固定席位原仓复用；W92已收尾，W89保存待确认。
+> 历史快照：[W94包装独立查询Owner](dispatch/20261024-wave94/README.md)，本聊天单人，固定席位原仓复用；W93已收尾，W89保存待确认。
 
-> 当前：[W92仓库库位独立Owner](dispatch/20261024-wave92/README.md)，本聊天单人，固定席位原仓复用；W91已收尾，W89保存待确认。
+> 历史快照：[W93出库路由独立Owner](dispatch/20261024-wave93/README.md)，本聊天单人，固定席位原仓复用；W92已收尾，W89保存待确认。
 
-> 当前：[W91报表中心独立Owner](dispatch/20261024-wave91/README.md)，本聊天单人，原仓固定席位；W90已收尾，W89保存待确认。
+> 历史快照：[W92仓库库位独立Owner](dispatch/20261024-wave92/README.md)，本聊天单人，固定席位原仓复用；W91已收尾，W89保存待确认。
 
-> 当前：[W90套件独立Owner](dispatch/20261024-wave90/README.md)，本聊天单人；W89重绑确认待答复，保留原分支，W37–W88不重复。
+> 历史快照：[W91报表中心独立Owner](dispatch/20261024-wave91/README.md)，本聊天单人，原仓固定席位；W90已收尾，W89保存待确认。
 
-> 当前：[W89同事务当前身份](dispatch/20261024-wave89/README.md)，本聊天单人；W37–W88已finish，不重复。 CRM尚未开工；固定目录重绑确认待答复，Main协调继续。
+> 历史快照：[W90套件独立Owner](dispatch/20261024-wave90/README.md)，本聊天单人；W89重绑确认待答复，保留原分支，W37–W88不重复。
 
-> 当前：[W88 VMI独立Owner](dispatch/20261023-wave88/README.md)，本聊天单人；W37–W87已finish，不重复。
+> 历史快照：[W89同事务当前身份](dispatch/20261024-wave89/README.md)，本聊天单人；W37–W88已finish，不重复。 CRM尚未开工；固定目录重绑确认待答复，Main协调继续。
 
-> 当前：[W87持久签名信任](dispatch/20261023-wave87/README.md)，本聊天单人；CRM PR122/Handoff已采用，协调收尾后继续实际Owner前置。W37–W86不重复。
+> 历史快照：[W88 VMI独立Owner](dispatch/20261023-wave88/README.md)，本聊天单人；W37–W87已finish，不重复。
 
-> 当前：[W87持久签名信任](dispatch/20261023-wave87/README.md)，本聊天单人；W37–W86已finish，不重复。
+> 历史快照：[W87持久签名信任](dispatch/20261023-wave87/README.md)，本聊天单人；CRM PR122/Handoff已采用，协调收尾后继续实际Owner前置。W37–W86不重复。
 
-> 当前：[W86库位优化历史观察Owner](dispatch/20261023-wave86/README.md)，本聊天单人，Issue477；W37–W85已finish，不重复。
+> 历史快照：[W87持久签名信任](dispatch/20261023-wave87/README.md)，本聊天单人；W37–W86已finish，不重复。
 
-> 当前：[W85越库历史观察Owner](dispatch/20261023-wave85/README.md)，本聊天单人，Issue474；W37–W84已finish，不重复。
+> 历史快照：[W86库位优化历史观察Owner](dispatch/20261023-wave86/README.md)，本聊天单人，Issue477；W37–W85已finish，不重复。
 
-> 当前：[W84批次追溯与召回标记Owner](dispatch/20261023-wave84/README.md)，本聊天单人，Issue471；W37–W83已finish，不重复。
+> 历史快照：[W85越库历史观察Owner](dispatch/20261023-wave85/README.md)，本聊天单人，Issue474；W37–W84已finish，不重复。
 
-> 当前：[W83材料缺料Owner](dispatch/20261023-wave83/README.md)，本聊天单人，Issue468；W37–W82已finish，不重复。
+> 历史快照：[W84批次追溯与召回标记Owner](dispatch/20261023-wave84/README.md)，本聊天单人，Issue471；W37–W83已finish，不重复。
 
-> 当前：[W82告知摘要夹具修订](dispatch/20261023-wave82/README.md)，本聊天单人；CRM PR121/Handoff已采用，协调收尾后继续WMS/MES独立Owner与CRM公共基础。W37–W81不重复。
+> 历史快照：[W83材料缺料Owner](dispatch/20261023-wave83/README.md)，本聊天单人，Issue468；W37–W82已finish，不重复。
 
-> 当前：[W82告知摘要夹具修订](dispatch/20261023-wave82/README.md)，本聊天单人；W37–W81已finish，不重复。
+> 历史快照：[W82告知摘要夹具修订](dispatch/20261023-wave82/README.md)，本聊天单人；CRM PR121/Handoff已采用，协调收尾后继续WMS/MES独立Owner与CRM公共基础。W37–W81不重复。
 
-> 当前：[W81库龄/效期Owner](dispatch/20261023-wave81/README.md)，本聊天单人，Issue464；W37–W80已finish，不重复。
+> 历史快照：[W82告知摘要夹具修订](dispatch/20261023-wave82/README.md)，本聊天单人；W37–W81已finish，不重复。
 
-> 当前：[W80夹具因果链修订](dispatch/20261023-wave80/README.md)，本聊天单人；CRM PR120/Handoff已采用，协调收尾后继续WMS独立Owner与CRM公共基础。W37–W79不重复。
+> 历史快照：[W81库龄/效期Owner](dispatch/20261023-wave81/README.md)，本聊天单人，Issue464；W37–W80已finish，不重复。
 
-> 当前：[W80夹具因果链修订](dispatch/20261023-wave80/README.md)，本聊天单人；W37–W79已finish，不重复。
+> 历史快照：[W80夹具因果链修订](dispatch/20261023-wave80/README.md)，本聊天单人；CRM PR120/Handoff已采用，协调收尾后继续WMS独立Owner与CRM公共基础。W37–W79不重复。
 
-> 当前：[W79工作中心/费率Owner](dispatch/20261023-wave79/README.md)，本聊天单人，Main461/Handoff55已采用；同任务最后状态与finish后继续。W37–W78不重复。
+> 历史快照：[W80夹具因果链修订](dispatch/20261023-wave80/README.md)，本聊天单人；W37–W79已finish，不重复。
 
-> 当前：[W78配置事件原子入队](dispatch/20261023-wave78/README.md)，本聊天单人；CRM PR119/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W77不重复。
+> 历史快照：[W79工作中心/费率Owner](dispatch/20261023-wave79/README.md)，本聊天单人，Main461/Handoff55已采用；同任务最后状态与finish后继续。W37–W78不重复。
 
-> 当前：[W78配置事件入队](dispatch/20261023-wave78/README.md)，本聊天单人；W37–W77已finish，不重复。
+> 历史快照：[W78配置事件原子入队](dispatch/20261023-wave78/README.md)，本聊天单人；CRM PR119/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W77不重复。
 
-> 当前：[W77配置保存审计](dispatch/20261023-wave77/README.md)，本聊天单人；CRM PR117/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W76不重复。
+> 历史快照：[W78配置事件入队](dispatch/20261023-wave78/README.md)，本聊天单人；W37–W77已finish，不重复。
 
-> 当前：[W77配置保存审计](dispatch/20261023-wave77/README.md)，本聊天单人；W37–W76已finish，不重复。
+> 历史快照：[W77配置保存审计](dispatch/20261023-wave77/README.md)，本聊天单人；CRM PR117/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W76不重复。
 
-> 当前：[W76不可变Draft Bundle](dispatch/20261023-wave76/README.md)，本聊天单人；CRM PR116/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W75不重复。
+> 历史快照：[W77配置保存审计](dispatch/20261023-wave77/README.md)，本聊天单人；W37–W76已finish，不重复。
 
-> 当前：[W76不可变Draft Bundle](dispatch/20261023-wave76/README.md)，本聊天单人；W37–W75已finish，不重复。
+> 历史快照：[W76不可变Draft Bundle](dispatch/20261023-wave76/README.md)，本聊天单人；CRM PR116/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W75不重复。
 
-> 当前：[W75精确来源版本联结](dispatch/20261023-wave75/README.md)，本聊天单人；CRM PR115/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W74不重复。
+> 历史快照：[W76不可变Draft Bundle](dispatch/20261023-wave76/README.md)，本聊天单人；W37–W75已finish，不重复。
 
-> 当前：[W75精确来源版本联结](dispatch/20261023-wave75/README.md)，本聊天单人；W37–W74已finish，不重复。
+> 历史快照：[W75精确来源版本联结](dispatch/20261023-wave75/README.md)，本聊天单人；CRM PR115/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W74不重复。
 
-> 当前：[W74精确表单版本身份](dispatch/20261023-wave74/README.md)，本聊天单人；CRM PR114/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W73不重复。
+> 历史快照：[W75精确来源版本联结](dispatch/20261023-wave75/README.md)，本聊天单人；W37–W74已finish，不重复。
 
-> 当前：[W74精确表单版本身份](dispatch/20261023-wave74/README.md)，本聊天单人；W37–W73已finish，不重复。
+> 历史快照：[W74精确表单版本身份](dispatch/20261023-wave74/README.md)，本聊天单人；CRM PR114/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W73不重复。
 
-> 当前：[W73原生配置对象绑定](dispatch/20261023-wave73/README.md)，本聊天单人；CRM PR113/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W72不重复。
+> 历史快照：[W74精确表单版本身份](dispatch/20261023-wave74/README.md)，本聊天单人；W37–W73已finish，不重复。
 
-> 当前：[W73原生配置对象绑定](dispatch/20261023-wave73/README.md)，本聊天单人；W37–W72已finish，不重复。
+> 历史快照：[W73原生配置对象绑定](dispatch/20261023-wave73/README.md)，本聊天单人；CRM PR113/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W72不重复。
 
-> 当前：[W72独立移动Owner](dispatch/20261023-wave72/README.md)，本聊天单人，Main452/Handoff48已采用；同任务最后状态与finish后继续。W37–W71不重复。
+> 历史快照：[W73原生配置对象绑定](dispatch/20261023-wave73/README.md)，本聊天单人；W37–W72已finish，不重复。
 
-> 当前：[W71补充指示当前Owner](dispatch/20261023-wave71/README.md)，本聊天单人，Main449/Handoff47已采用；同任务最后状态与finish后继续。W37–W70不重复。
+> 历史快照：[W72独立移动Owner](dispatch/20261023-wave72/README.md)，本聊天单人，Main452/Handoff48已采用；同任务最后状态与finish后继续。W37–W71不重复。
 
-> 当前：[W70退货独立Owner](dispatch/20261023-wave70/README.md)，本聊天单人，Main446/Handoff46已采用；同任务最后状态与finish后继续。W37–W69不重复。
+> 历史快照：[W71补充指示当前Owner](dispatch/20261023-wave71/README.md)，本聊天单人，Main449/Handoff47已采用；同任务最后状态与finish后继续。W37–W70不重复。
 
-> 当前：[W69配置草稿持久化](dispatch/20261023-wave69/README.md)，本聊天单人；CRM PR112/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W68不重复。
+> 历史快照：[W70退货独立Owner](dispatch/20261023-wave70/README.md)，本聊天单人，Main446/Handoff46已采用；同任务最后状态与finish后继续。W37–W69不重复。
 
-> 当前：[W68配置保存原结果](dispatch/20261023-wave68/README.md)，本聊天单人；CRM PR111/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W67不重复。
+> 历史快照：[W69配置草稿持久化](dispatch/20261023-wave69/README.md)，本聊天单人；CRM PR112/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W68不重复。
 
-> 当前：[W67冻结表单内容](dispatch/20261023-wave67/README.md)，本聊天单人；CRM PR110/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W66不重复。
+> 历史快照：[W68配置保存原结果](dispatch/20261023-wave68/README.md)，本聊天单人；CRM PR111/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W67不重复。
 
-> 当前：[W66附件引用与内容保留](dispatch/20261023-wave66/README.md)，本聊天单人，Main440/Handoff42已采用；同任务最后状态与finish后继续。W37–W65不重复。
+> 历史快照：[W67冻结表单内容](dispatch/20261023-wave67/README.md)，本聊天单人；CRM PR110/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W66不重复。
 
-> 当前：[W65采番串行推进](dispatch/20261023-wave65/README.md)，本聊天单人，Main437/Handoff41已采用；同任务最后状态与finish后继续。W37–W64不重复。
+> 历史快照：[W66附件引用与内容保留](dispatch/20261023-wave66/README.md)，本聊天单人，Main440/Handoff42已采用；同任务最后状态与finish后继续。W37–W65不重复。
 
-> 当前：[W64字段审计Owner](dispatch/20261023-wave64/README.md)，本聊天单人，Main434/Handoff已采用；同任务最后状态与finish后继续。W37–W63不重复。
+> 历史快照：[W65采番串行推进](dispatch/20261023-wave65/README.md)，本聊天单人，Main437/Handoff41已采用；同任务最后状态与finish后继续。W37–W64不重复。
 
-> 当前：[W63配置内容规范化](dispatch/20261023-wave63/README.md)，本聊天单人；CRM PR108/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W62不重复。
+> 历史快照：[W64字段审计Owner](dispatch/20261023-wave64/README.md)，本聊天单人，Main434/Handoff已采用；同任务最后状态与finish后继续。W37–W63不重复。
 
-> 当前：[W62实际来源跨仓发布集成](dispatch/20261023-wave62/README.md)，本聊天单人；CRM PR107/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W61不重复。
+> 历史快照：[W63配置内容规范化](dispatch/20261023-wave63/README.md)，本聊天单人；CRM PR108/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W62不重复。
 
-> 当前：[W61配置草稿与PG日历绑定](dispatch/20261023-wave61/README.md)，本聊天单人；CRM PR106/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W60不重复。
+> 历史快照：[W62实际来源跨仓发布集成](dispatch/20261023-wave62/README.md)，本聊天单人；CRM PR107/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W61不重复。
 
-> 当前：[W60不可变日历PG快照](dispatch/20261023-wave60/README.md)，本聊天单人；CRM PR105/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W59不重复。
+> 历史快照：[W61配置草稿与PG日历绑定](dispatch/20261023-wave61/README.md)，本聊天单人；CRM PR106/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W60不重复。
 
-> 当前：[W59询盘投影真实验签](dispatch/20261023-wave59/README.md)，本聊天单人；CRM PR104/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W58不重复。
+> 历史快照：[W60不可变日历PG快照](dispatch/20261023-wave60/README.md)，本聊天单人；CRM PR105/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W59不重复。
 
-> 当前：[W58真实在线身份与PG当前事实核查](dispatch/20261023-wave58/README.md)，本聊天单人；CRM PR103/Handoff已采用，协调分支收尾后继续D5。W37–W57不重复。
+> 历史快照：[W59询盘投影真实验签](dispatch/20261023-wave59/README.md)，本聊天单人；CRM PR104/Handoff已采用，协调收尾后继续Owner前置与D6公共支撑。W37–W58不重复。
 
-> 当前：[W57本次采集凭据与可失效发布读模型](dispatch/20261023-wave57/README.md)，本聊天单人；CRM PR102/Handoff已采用，协调分支收尾后继续D5。W37–W56不重复。
+> 历史快照：[W58真实在线身份与PG当前事实核查](dispatch/20261023-wave58/README.md)，本聊天单人；CRM PR103/Handoff已采用，协调分支收尾后继续D5。W37–W57不重复。
 
-> 当前：[W56可信完整基线恢复与真实来源依赖图](dispatch/20261023-wave56/README.md)，本聊天单人；CRM PR101/Handoff已采用，协调分支收尾后继续D5。W37–W55不重复。
+> 历史快照：[W57本次采集凭据与可失效发布读模型](dispatch/20261023-wave57/README.md)，本聊天单人；CRM PR102/Handoff已采用，协调分支收尾后继续D5。W37–W56不重复。
 
-> 当前：[W55原始身份来源与正式内容门](dispatch/20261023-wave55/README.md)，本聊天单人；CRM PR100/Handoff已采用，协调分支收尾后继续D5。W37–W54不重复。
+> 历史快照：[W56可信完整基线恢复与真实来源依赖图](dispatch/20261023-wave56/README.md)，本聊天单人；CRM PR101/Handoff已采用，协调分支收尾后继续D5。W37–W55不重复。
 
-> 当前：[W54正式Platform与CRM PG共同锁](dispatch/20261023-wave54/README.md)，本聊天单人；CRM PR99/Handoff已采用，协调分支收尾后继续D5。W37–W53不重复。
+> 历史快照：[W55原始身份来源与正式内容门](dispatch/20261023-wave55/README.md)，本聊天单人；CRM PR100/Handoff已采用，协调分支收尾后继续D5。W37–W54不重复。
 
-> 当前：[W53 CRM PG当前投影与依赖图](dispatch/20261023-wave53/README.md)，本聊天单人；CRM PR98/Handoff PR29已采用，当前协调分支收尾后继续D5。W37–W52不重复。
+> 历史快照：[W54正式Platform与CRM PG共同锁](dispatch/20261023-wave54/README.md)，本聊天单人；CRM PR99/Handoff已采用，协调分支收尾后继续D5。W37–W53不重复。
 
-> 当前：[W52 CRM真实Main基线与PG原证据](dispatch/20261023-wave52/README.md)，本聊天单人；CRM PR97与Main前置修复PR420已采用，Issue419已关闭。W37–W51不重复。
+> 历史快照：[W53 CRM PG当前投影与依赖图](dispatch/20261023-wave53/README.md)，本聊天单人；CRM PR98/Handoff PR29已采用，当前协调分支收尾后继续D5。W37–W52不重复。
 
-> 当前：[W51 CRM PG会话/撤权基础](dispatch/20261023-wave51/README.md)，本聊天单人，CRM PR96已合并；W37–W50已收尾，不重复。
+> 历史快照：[W52 CRM真实Main基线与PG原证据](dispatch/20261023-wave52/README.md)，本聊天单人；CRM PR97与Main前置修复PR420已采用，Issue419已关闭。W37–W51不重复。
 
-> 当前：[W50库存原操作Outbox](dispatch/20261022-wave50/README.md)，本聊天单人；W37–W49已实际finish，不重复。
+> 历史快照：[W51 CRM PG会话/撤权基础](dispatch/20261023-wave51/README.md)，本聊天单人，CRM PR96已合并；W37–W50已收尾，不重复。
 
-> 当前：[W49计划/达成率Owner](dispatch/20261022-wave49/README.md)，本聊天单人；W37–W48已实际finish，不重复。
+> 历史快照：[W50库存原操作Outbox](dispatch/20261022-wave50/README.md)，本聊天单人；W37–W49已实际finish，不重复。
 
-> 当前：[W48 OEE独立Owner](dispatch/20261022-wave48/README.md)，本聊天单人；W37–W47已实际finish，不重复。
+> 历史快照：[W49计划/达成率Owner](dispatch/20261022-wave49/README.md)，本聊天单人；W37–W48已实际finish，不重复。
 
-> 当前：[W47设备/停机Owner](dispatch/20261022-wave47/README.md)，本聊天单人；W37–W46已实际finish，不重复。
+> 历史快照：[W48 OEE独立Owner](dispatch/20261022-wave48/README.md)，本聊天单人；W37–W47已实际finish，不重复。
 
-> 当前：[W46 / P1 #404](dispatch/20261022-wave46/README.md)，产品PR405/Handoff22已采用，原任务最后文档后finish/Issue404关闭；本聊天继续D3；W37–W45已实际finish。
+> 历史快照：[W47设备/停机Owner](dispatch/20261022-wave47/README.md)，本聊天单人；W37–W46已实际finish，不重复。
 
-> 当前：七天D3前置 [W45 / P0 #401](dispatch/20261022-wave45/README.md)，产品PR402/Handoff21已采用，原分支最后文档后finish/关闭Issue401；COORD本聊天单人继续D3。W37–W44已实际finish，不重复。
+> 历史快照：[W46 / P1 #404](dispatch/20261022-wave46/README.md)，产品PR405/Handoff22已采用，原任务最后文档后finish/Issue404关闭；本聊天继续D3；W37–W45已实际finish。
 
-> 当前：七天目标D4 [W44库存原操作恢复](dispatch/20261022-wave44/README.md)已采用，原分支最后文档后finish；本聊天单人。W37–W43均已实际finish；正式Transfer/REP/RMA/SCHED与可靠外部投递前置保留。
+> 历史快照：七天D3前置 [W45 / P0 #401](dispatch/20261022-wave45/README.md)，产品PR402/Handoff21已采用，原分支最后文档后finish/关闭Issue401；COORD本聊天单人继续D3。W37–W44已实际finish，不重复。
 
-> 当前：七天目标D4首批 [W43 Main原命令恢复](dispatch/20261022-wave43/README.md)已采用，原分支最后文档后finish；本聊天单人。W37–W42均已实际finish；D2/D3完整前置保留。
+> 历史快照：七天目标D4 [W44库存原操作恢复](dispatch/20261022-wave44/README.md)已采用，原分支最后文档后finish；本聊天单人。W37–W43均已实际finish；正式Transfer/REP/RMA/SCHED与可靠外部投递前置保留。
 
-> 当前：七天目标D2首批 [W42可信部门绑定](dispatch/20261022-wave42/README.md)已采用，原分支最后文档后finish；单人；W37–W41均已实际finish。RMA按正式适配/Owner前置后续采用。
+> 历史快照：七天目标D4首批 [W43 Main原命令恢复](dispatch/20261022-wave43/README.md)已采用，原分支最后文档后finish；本聊天单人。W37–W42均已实际finish；D2/D3完整前置保留。
 
-> 当前：[七天一期持续目标](planning/20261022-seven-day-delivery.md)，COORD单人；[D1/W41质量Owner](dispatch/20261022-wave41/README.md)已采用，DEV-2释放；原W41-01最后文档/finish后直接D2，W37–W40已实际finish。
+> 历史快照：七天目标D2首批 [W42可信部门绑定](dispatch/20261022-wave42/README.md)已采用，原分支最后文档后finish；单人；W37–W41均已实际finish。RMA按正式适配/Owner前置后续采用。
 
-> 当前：[W40收尾](dispatch/20261022-wave40/README.md)，不良记录Owner已集成、#389关闭；DEV-2释放，原W40-01最后文档PR后finish。真实收尾以管理登记/最终PR说明为准，W39不重复。
+> 历史快照：[七天一期持续目标](planning/20261022-seven-day-delivery.md)，COORD单人；[D1/W41质量Owner](dispatch/20261022-wave41/README.md)已采用，DEV-2释放；原W41-01最后文档/finish后直接D2，W37–W40已实际finish。
 
-> 当前：[W39收尾](dispatch/20261021-wave39/README.md)，盘点/库存/看板Owner已集成，#386关闭；DEV-2释放，原W39-01最后文档PR后finish。真实收尾以管理登记/最终PR说明为准；W38不重复。
+> 历史快照：[W40收尾](dispatch/20261022-wave40/README.md)，不良记录Owner已集成、#389关闭；DEV-2释放，原W40-01最后文档PR后finish。真实收尾以管理登记/最终PR说明为准，W39不重复。
 
-> 当前：[W38收尾](dispatch/20261021-wave38/README.md)，报工/入库Owner已集成，#383关闭；DEV-2释放，原W38-01最后文档PR后finish。实际收尾以管理登记/最终PR说明为准；旧轮次为历史快照，W37不重复。
+> 历史快照：[W39收尾](dispatch/20261021-wave39/README.md)，盘点/库存/看板Owner已集成，#386关闭；DEV-2释放，原W39-01最后文档PR后finish。真实收尾以管理登记/最终PR说明为准；W38不重复。
 
-> 当前：[W37收尾](dispatch/20261021-wave37/README.md)，独立制造/出库主服务Owner已集成，#380关闭；Handoff席位释放，原W37-01最后文档PR后finish。无新派工/工作树；旧“当前”段落为历史快照。
+> 历史快照：[W38收尾](dispatch/20261021-wave38/README.md)，报工/入库Owner已集成，#383关闭；DEV-2释放，原W38-01最后文档PR后finish。实际收尾以管理登记/最终PR说明为准；旧轮次为历史快照，W37不重复。
 
-> 当前：[W36收尾](dispatch/20261021-wave36/README.md)，订单取消库存/制造级联Owner已集成，#377关闭；Handoff席位释放，原W36-01最后文档PR后finish。无新派工/工作树；旧“当前”段落为历史快照。
+> 历史快照：[W37收尾](dispatch/20261021-wave37/README.md)，独立制造/出库主服务Owner已集成，#380关闭；Handoff席位释放，原W37-01最后文档PR后finish。无新派工/工作树；旧“当前”段落为历史快照。
 
-> 当前：[W35收尾](dispatch/20261021-wave35/README.md)，普通订单创建/修改/删除Owner已集成，#374关闭；Handoff席位释放，原W35-01最后文档PR后finish。无新派工/工作树；旧“当前”段落为历史快照。
+> 历史快照：[W36收尾](dispatch/20261021-wave36/README.md)，订单取消库存/制造级联Owner已集成，#377关闭；Handoff席位释放，原W36-01最后文档PR后finish。无新派工/工作树；旧“当前”段落为历史快照。
 
-> 当前：[W34收尾](dispatch/20261021-wave34/README.md)，普通订单读取/导出/下载Owner已集成，#371关闭；Handoff席位释放，原W34-01最后文档PR后finish。无新派工/工作树；旧“当前”段落为历史快照。
+> 历史快照：[W35收尾](dispatch/20261021-wave35/README.md)，普通订单创建/修改/删除Owner已集成，#374关闭；Handoff席位释放，原W35-01最后文档PR后finish。无新派工/工作树；旧“当前”段落为历史快照。
 
-> 当前：[W33收尾](dispatch/20261020-wave33/README.md)，部门可信映射及PA090 Owner读写已集成，#368关闭；Handoff席位释放，原W33-01最后文档PR后finish。无新派工/工作树；旧“当前”段落为历史快照。
+> 历史快照：[W34收尾](dispatch/20261021-wave34/README.md)，普通订单读取/导出/下载Owner已集成，#371关闭；Handoff席位释放，原W34-01最后文档PR后finish。无新派工/工作树；旧“当前”段落为历史快照。
 
-> 当前：[W32收尾](dispatch/20261020-wave32/README.md)，Owner单价订正与最终撤权门产品/Handoff已集成，#365关闭；Handoff席位已释放，原W32-01分支完成本提交正常PR后finish。无新派工/分支/树；后续按真实剩余合同及实时席位登记开工。
+> 历史快照：[W33收尾](dispatch/20261020-wave33/README.md)，部门可信映射及PA090 Owner读写已集成，#368关闭；Handoff席位释放，原W33-01最后文档PR后finish。无新派工/工作树；旧“当前”段落为历史快照。
 
-> 当前：[W31收尾](dispatch/20261020-wave31/README.md)，字段可信来源产品/Handoff已集成、分支清理和固定席位释放；最后协调W31-CLOSE待自身正常PR/finish。下项依真实剩余合同，不重复W27–31；四仓合计2+1。
+> 历史快照：[W32收尾](dispatch/20261020-wave32/README.md)，Owner单价订正与最终撤权门产品/Handoff已集成，#365关闭；Handoff席位已释放，原W32-01分支完成本提交正常PR后finish。无新派工/分支/树；后续按真实剩余合同及实时席位登记开工。
 
-> 当前：[W30收尾](dispatch/20261020-wave30/README.md)，产品PR361/Handoff PR6已集成，#360 Closed，任务分支清理/固定席位释放；仅最后协调W30-CLOSE待自身正常PR/finish。下项按真实剩余合同领取，不重复W27–W30，四仓合计2+1。
+> 历史快照：[W31收尾](dispatch/20261020-wave31/README.md)，字段可信来源产品/Handoff已集成、分支清理和固定席位释放；最后协调W31-CLOSE待自身正常PR/finish。下项依真实剩余合同，不重复W27–31；四仓合计2+1。
 
-> 当前：[W29最终处置](dispatch/20261020-wave29/README.md)。角色/授权及#353已通过Main PR354/356/358、CRM PR95和Handoff PR4/5集成，任务分支清理/固定席位释放；最后协调文档W29-353-CLOSE正常PR/finish后关闭本目标。下项从真实剩余范围重新经start领取，不重复W27/W28/W29；四仓合计2+1。
+> 历史快照：[W30收尾](dispatch/20261020-wave30/README.md)，产品PR361/Handoff PR6已集成，#360 Closed，任务分支清理/固定席位释放；仅最后协调W30-CLOSE待自身正常PR/finish。下项按真实剩余合同领取，不重复W27–W30，四仓合计2+1。
+
+> 历史快照：[W29最终处置](dispatch/20261020-wave29/README.md)。角色/授权及#353已通过Main PR354/356/358、CRM PR95和Handoff PR4/5集成，任务分支清理/固定席位释放；最后协调文档W29-353-CLOSE正常PR/finish后关闭本目标。下项从真实剩余范围重新经start领取，不重复W27/W28/W29；四仓合计2+1。
 
 > 当前执行入口：[分支与工作区统一政策](worktrees/POLICY.md) / [命令及固定席位](worktrees/REGISTRY.md)。四仓合计2开发+1集成；所有写入任务必须start领取、finish释放，旧轮次目录仅为历史。
 
 > 最新：[第二十七轮收尾](dispatch/20261019-wave27/README.md)，三个窗口已集成，#335/#337/#339关闭；无活动实施对话/保留资源。剩余IAM引用CAS、CRM/Owner及真实业务待后续窗口。下方进展为历史记录。
 
-> 当前：[第二十七轮](dispatch/20261019-wave27/README.md)，COORD本聊天独立执行前端跨Tab恢复、SSO准入批准及初绑/JIT三个连续窗口；先W27-01，原目录复用。
+> 历史快照：[第二十七轮](dispatch/20261019-wave27/README.md)，COORD本聊天独立执行前端跨Tab恢复、SSO准入批准及初绑/JIT三个连续窗口；先W27-01，原目录复用。
 
 > 最新：[第二十六轮收尾](dispatch/20261019-wave26/README.md)，三个窗口已集成，#327/#329/#331关闭；无活动实施对话/保留资源。完整公共基础与真实业务仍未完成。下方轮次进展为历史记录。
 
-> 当前：[第二十六轮](dispatch/20261019-wave26/README.md)，单总控三个连续认证公共基础窗口，先W26-01；复用原目录，无新代理/Actions。
+> 历史快照：[第二十六轮](dispatch/20261019-wave26/README.md)，单总控三个连续认证公共基础窗口，先W26-01；复用原目录，无新代理/Actions。
 
 > [第二十五轮](dispatch/20261019-wave25/README.md)三个窗口已集成，#319/#321/#323关闭；单总控窗口CLOSED，无活动资源或其他对话派工。完整公共基础仍未完成。
 
-> 当前：[第二十五轮长任务](dispatch/20261019-wave25/README.md)，单总控三个顺序窗口，先W25-01；不新增对话/代理/目录。
+> 历史快照：[第二十五轮长任务](dispatch/20261019-wave25/README.md)，单总控三个顺序窗口，先W25-01；不新增对话/代理/目录。
 
 > [第二十四轮](dispatch/20261019-wave24/README.md)已集成并关闭#315；当前窗口CLOSED，无活动资源或其他对话派工。完整公共基础未完成。
 
-> 当前：[第二十四轮](dispatch/20261019-wave24/README.md)平台授撤当前调用人最终权限门；单总控、原目录复用。
+> 历史快照：[第二十四轮](dispatch/20261019-wave24/README.md)平台授撤当前调用人最终权限门；单总控、原目录复用。
 
 > [第二十三轮](dispatch/20261019-wave23/README.md)两窗已关闭，#308/#311已集成；无活动实施/占用资源，无其他对话派工。完整IAM/业务未完成。
 
 > W23-01已集成；[W23-02创建白名单](dispatch/20261019-wave23/README.md)接续同一单总控目标，未派其他对话。
 
-> 当前：[第二十三轮平台管理员共同事务](dispatch/20261019-wave23/README.md)，当前COORD独占串行；无其他对话派工。
+> 历史快照：[第二十三轮平台管理员共同事务](dispatch/20261019-wave23/README.md)，当前COORD独占串行；无其他对话派工。
 
 > 最新：[第二十二轮](dispatch/20261019-wave22/README.md)已收尾：Main实际写者矩阵、P0 #304修正及21项原生证据已合入。无活动窗口/资源占用；当前单总控，无新派工。
 
