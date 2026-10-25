@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W129原七天出口审计](dispatch/20261025-wave129/README.md)：原D1/D4关闭，D2/D3/D5/D6/D7剩余明确；Handoff105已finish，Main正常收尾。下一D5原生PG身份宿主。单人、七天ACTIVE；以下旧轮次均为历史快照，不表示当前待授权或占用。
+> 当前：[W130原生身份基线宿主](dispatch/20261025-wave130/README.md)，W129已完整收尾。单人、PostgreSQL、固定席位、七天ACTIVE。
+
+> 历史快照：[W129原七天出口审计](dispatch/20261025-wave129/README.md)：原D1/D4关闭，D2/D3/D5/D6/D7剩余明确；Handoff105已finish，Main正常收尾。下一D5原生PG身份宿主。单人、七天ACTIVE；以下旧轮次均为历史快照，不表示当前待授权或占用。
 
 > 历史快照：[W128导出下载当前来源](dispatch/20261025-wave128/README.md)：72项定向检查通过，CRM153/Handoff104已采用并finish，Main产品与台账收尾；下一窗口逐项审计原七天出口。单人、PostgreSQL、七天ACTIVE。
 

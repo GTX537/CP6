@@ -9,6 +9,7 @@ using CP6.Core.Services.CrmIdentity;
 using CP6.Core.Services.Sys;
 using CP6.WebApi.Configuration;
 using CP6.WebApi.Controllers.Internal;
+using CP6.WebApi.Controllers.Sys;
 using CP6.WebApi.Services;
 using CP6.WebApi.Services.IdentityDirectoryTenancy;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,6 +18,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
@@ -44,6 +46,7 @@ internal sealed class IdentityDirectoryConfiguredHttpHost : IAsyncDisposable
     internal CrmOidcOptions Options { get; }
     internal CrmIdentityRuntime Runtime { get; }
     internal IdentityDirectoryTenantHost Host { get; }
+    internal IReadOnlyDictionary<string, string> BaselineSecrets { get; private set; } = new Dictionary<string, string>();
     internal int OwnerQueries => _owner.Calls;
     internal string RequestDiagnostics => $"received={_requests.Received}; aborted={_requests.Aborted}; completed={_requests.Completed}";
     private IdentityDirectoryConfiguredHttpHost(WebApplication app, HttpClient client, IdentityDirectoryConfiguredPostgresFixture postgres,
@@ -51,7 +54,7 @@ internal sealed class IdentityDirectoryConfiguredHttpHost : IAsyncDisposable
     { _app = app; Client = client; _postgres = postgres; Options = options; Runtime = runtime; Host = host; _owner = owner; _requests = requests; _signer = new(options); }
 
     internal static async Task<IdentityDirectoryConfiguredHttpHost> Start(IdentityDirectoryConfiguredPostgresFixture postgres,
-        IReadOnlyDictionary<string, string?>? overrides = null, TimeProvider? clock = null)
+        IReadOnlyDictionary<string, string?>? overrides = null, TimeProvider? clock = null, bool baselineTokens = false)
     {
         var runtime = IdentityDirectoryPostgresFixture.Runtime(); using var rsa = RSA.Create(2048);
         var key = new RsaSecurityKey(rsa.ExportParameters(false)) { KeyId = "configured-directory-fixture" };
@@ -106,10 +109,40 @@ internal sealed class IdentityDirectoryConfiguredHttpHost : IAsyncDisposable
             var signing = new OpenIdConnectConfiguration { Issuer = options.Issuer }; signing.SigningKeys.Add(key);
             bearer.ConfigurationManager = new StaticConfigurationManager<OpenIdConnectConfiguration>(signing); bearer.MapInboundClaims = false;
         });
-        builder.Services.AddControllers().AddApplicationPart(typeof(CrmIdentityController).Assembly);
+        var controllers = builder.Services.AddControllers().AddApplicationPart(typeof(CrmIdentityController).Assembly);
+        Dictionary<string, string> secrets = [];
+        if (baselineTokens)
+        {
+            // The local two-process test uses the actual C2 controller, tenant directory and token
+            // record writer. Browser-only dependencies are unused strict fixtures.
+            foreach (var client in options.ServiceClients)
+            { var secret = CrmOidcCrypto.RandomToken(); secrets.Add(client.ClientId, secret); client.SecretSha256 = CrmOidcCrypto.Hash(secret); }
+            controllers.AddControllersAsServices(); builder.Services.AddHttpContextAccessor();
+            builder.Services.AddSingleton<CrmOidcCrypto>();
+            builder.Services.AddScoped(sp =>
+            {
+                CrmOidcServiceTokens.TryDecodeBasic(sp.GetRequiredService<IHttpContextAccessor>().HttpContext!.Request.Headers.Authorization, out var clientId, out _);
+                var tenant = options.ServiceClients.SingleOrDefault(c => c.ClientId == clientId)?.TenantId ?? TenantStorageContext.A;
+                return new TokenEndpointDatabase(postgres.OwnerContext(tenant));
+            });
+            builder.Services.AddScoped(sp =>
+            {
+                var db = sp.GetRequiredService<TokenEndpointDatabase>().Database;
+                var crypto = sp.GetRequiredService<CrmOidcCrypto>();
+                var directory = new CrmOidcDirectory(db, new TenantContext(), Mock.Of<ITokenBlacklistService>(MockBehavior.Strict),
+                    Mock.Of<IPasswordPolicyService>(MockBehavior.Strict), options);
+                var tokenRuntime = sp.GetRequiredService<CrmIdentityRuntime>();
+                return new CrmOidcController(options, crypto, Mock.Of<ICrmOidcGrantStore>(MockBehavior.Strict), directory,
+                    builder.Configuration, Mock.Of<ITokenBlacklistService>(MockBehavior.Strict), Mock.Of<IAuthCookieWriter>(MockBehavior.Strict),
+                    new CrmOidcServiceTokens(options, crypto, directory, records: new CrmServiceTokenRecordStore(db, tokenRuntime)));
+            });
+        }
         var app = builder.Build(); var requests = new RequestCounters();
         app.Use(async (context, next) =>
         {
+            // Explicit local TLS-termination fixture only. This does not verify TLS/deployment;
+            // production CRM has no HTTP option and never sends a forwarded-proto assertion.
+            if (baselineTokens && context.Request.Path == "/connect/token") context.Request.Scheme = "https";
             Interlocked.Increment(ref requests.Received);
             using var aborted = context.RequestAborted.Register(() => Interlocked.Increment(ref requests.Aborted));
             try { await next(context); } finally { Interlocked.Increment(ref requests.Completed); }
@@ -120,7 +153,8 @@ internal sealed class IdentityDirectoryConfiguredHttpHost : IAsyncDisposable
             await app.StartAsync();
             var address = app.Services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>()!.Addresses.Single();
             return new(app, new HttpClient { BaseAddress = new(address), Timeout = TimeSpan.FromSeconds(20) }, postgres, options,
-                app.Services.GetRequiredService<CrmIdentityRuntime>(), app.Services.GetRequiredService<IdentityDirectoryTenantHost>(), owner, requests);
+                app.Services.GetRequiredService<CrmIdentityRuntime>(), app.Services.GetRequiredService<IdentityDirectoryTenantHost>(), owner, requests)
+                { BaselineSecrets = secrets };
         }
         catch { await app.DisposeAsync(); throw; }
     }
@@ -149,6 +183,8 @@ internal sealed class IdentityDirectoryConfiguredHttpHost : IAsyncDisposable
     public async ValueTask DisposeAsync()
     { Client.Dispose(); await _app.StopAsync(); await _app.DisposeAsync(); _signer.Dispose(); }
     private sealed class SigningClock(DateTimeOffset now) : TimeProvider { public override DateTimeOffset GetUtcNow() => now; }
+    private sealed class TokenEndpointDatabase(CP6.Core.EFDbContext.CP6Context database) : IDisposable
+    { internal CP6.Core.EFDbContext.CP6Context Database => database; public void Dispose() => database.Dispose(); }
     private sealed class RequestCounters { internal int Received, Aborted, Completed; }
     private sealed class OwnerQueryGuard : DbCommandInterceptor
     {
