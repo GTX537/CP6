@@ -1200,3 +1200,11 @@ Handoff [PR99](https://github.com/GTX537/CP6.AI-Handoff/pull/99)采用 `566e6e56
 92项唯一相关本地成功检查：44项PG/HTTP/实际浏览器及Worker、48项Web；必需0跳过。真实60分钟到期验证原子匿名化、hold阻断、原记录独立期限、正式outbox失败回滚和单次事件；长测在当前编译版本完成，显示期限、Lead投影及负例分别引用定向证据，不称全套重跑。 [交付](../dispatch/20261024-wave124/README.md)。
 Handoff [PR100](https://github.com/GTX537/CP6.AI-Handoff/pull/100)采用 `684da578537f6d91035562070ef2b05173b012cb`，准确分支已删除、DEV-2已finish释放。 Main最终PR/finish尚待；START后墙钟174.07分钟，原估120–180分钟，最终按Main finish计，不叠加各仓；不含先前只读调查。
 后续人类隐私/导出及实际发布继续，七天ACTIVE。原35–55小时为初估；官方COORD登记至W123的全部已合并窗口（含BUG任务）去除跨仓重叠后为59.75小时，包含等待/暂缓，未包含准备、最终核对和本轮W124；不能当纯编码时长或完成率。本轮实际耗时仍以最终Main finish为准。
+
+## W125主体导出归属修复窗口
+
+复现15–25、修复20–35、验证审查15–25、两仓收尾10–15分钟，合计60–100。[范围](../dispatch/20261025-wave125/README.md)。W124已完整闭环180.32分钟，累计登记去重62.76小时（含等待，非纯编码）。七天ACTIVE。
+
+## W125实际交付准备
+
+23项唯一相关本地检查通过：1项真实PostgreSQL主体归属回归、2项原主体导出检查、20项现有平台权限过滤检查，必需0跳过。Vue SFC/TypeScript编译与五语SSR通过（UI壳组件替身，不称浏览器或HTTP验证）。 原估60–100分钟，截至准备11.37分钟；最终以两仓finish区间去重计。完整SYS-PRIV Owner目录/审批/共同权限门、嵌套字段分类、FILE operation/当前下载、人类撤回、CRM导出及原生outbox发布仍待实际采用。 [报告](../evidence/W125-01/DELIVERY.md)。七天ACTIVE。

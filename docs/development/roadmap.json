@@ -160392,6 +160392,16 @@
       "date": "2026-10-24",
       "change": "W124 native retention Owner/storage/hold/lease/worker and display expiry adopted;92 unique local checks;CRM/Handoff merged/released;Main coordination normal PR/finish pending;seven-day ACTIVE.",
       "evidence": "docs/development/dispatch/20261024-wave124/README.md"
+    },
+    {
+      "date": "2026-10-25",
+      "change": "W124 lifecycle reconciled; admit W125 Issue537 subject-export stable ownership fix,60–100min single chat; seven-day ACTIVE.",
+      "evidence": "docs/development/dispatch/20261025-wave125/README.md"
+    },
+    {
+      "date": "2026-10-25",
+      "change": "W125 Issue537 scoped subject export fix ready;23 unique local checks plus five-language SSR;existing i18n baseline gaps retained;normal Main/Handoff closeout pending;seven-day ACTIVE.",
+      "evidence": "docs/development/dispatch/20261025-wave125/README.md"
     }
   ],
   "implementation_assessment": {
@@ -172030,14 +172040,69 @@
       "plan_path": "docs/development/task-plans/WP02.md",
       "card_anchor": "wp02-15",
       "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "assignment": {
+        "chat_label": "COORD / W125-BUG-537",
+        "repository": "Main",
+        "owning_task_repository": "Main",
+        "branch": "codex/bug-537",
+        "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+        "claimed_at": "2026-10-25T02:02:39.114673+00:00",
+        "baseline_sha": "0723de10a3aa99a89325436560b50c72a88270ca",
+        "entry_evidence": "docs/development/dispatch/20261025-wave125/README.md",
+        "phase": "DELIVERY_MAIN_CLOSEOUT",
+        "dispatch_scope": "W125",
+        "bounded_window_gate": "CONFIRMED",
+        "full_task_gate_unchanged": true,
+        "worker_start_received": true,
+        "actual_start_ref": {
+          "commit": "de4f7dd91bad618e57854968bb1a4540b5b7dc62",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-15/messages/20261025T020239Z-wave125-start/MESSAGE.md",
+          "at": "2026-10-25T02:02:39.114673+00:00"
+        },
+        "reserved_write_resources": [
+          "Main:privacy-orchestration",
+          "Main:subject-export-ui",
+          "Main:coordination-ledger"
+        ],
+        "reserved_postgresql_ports": [
+          55451
+        ],
+        "handoff_branch": "codex/w125-handoff",
+        "actions_authorized": false,
+        "deployment_authorized": false,
+        "existing_database_migration_authorized": false,
+        "worker_delivery_received": true,
+        "candidate_review_completed": true,
+        "candidate_integrated": false,
+        "resources_released": false,
+        "full_task_completed": false,
+        "worker_delivery_ref": "docs/development/evidence/W125-01/DELIVERY.md"
+      },
       "blockers": [],
       "validation_evidence": [],
       "delivery_evidence": null,
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "wave125_delivery": {
+        "status": "MAIN_CANDIDATE_READY",
+        "report": "docs/development/evidence/W125-01/DELIVERY.md",
+        "issue": "https://github.com/GTX537/CP6/issues/537",
+        "validation": "23项唯一相关本地检查通过：1项真实PostgreSQL主体归属回归、2项原主体导出检查、20项现有平台权限过滤检查，必需0跳过。Vue SFC/TypeScript编译与五语SSR通过（UI壳组件替身，不称浏览器或HTTP验证）。",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "adopted_scope": "Candidate bounded existing subject-export ownership fix; full privacy orchestration remains",
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "main_task": "CP6:BUG-537",
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "handoff_delivery_complete": false,
+          "handoff_seat_released": false,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave125-final-verification.json"
+        }
+      }
     },
     {
       "id": "WP02-16",
@@ -175209,7 +175274,7 @@
         "baseline_sha": "87e51aee6029077258f4707d662f928027a045fc",
         "crm_baseline_sha": "9bc151f3f8f9962d7842e5566e6b61872b74908d",
         "entry_evidence": "docs/development/dispatch/20261024-wave124/README.md",
-        "phase": "DELIVERY_MAIN_CLOSEOUT",
+        "phase": "CLOSED",
         "dispatch_scope": "W124",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -175236,8 +175301,8 @@
         "existing_database_migration_authorized": false,
         "worker_delivery_received": true,
         "candidate_review_completed": true,
-        "candidate_integrated": false,
-        "resources_released": false,
+        "candidate_integrated": true,
+        "resources_released": true,
         "full_task_completed": false,
         "crm_candidate_integrated": true,
         "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/429560455682a8ef9b4bab2e22173ff3eec2fec1/docs/development/evidence/W124-02/DELIVERY.md",
@@ -175254,7 +175319,18 @@
         "actual_used_postgresql_ports": [
           55449,
           55450
-        ]
+        ],
+        "lifecycle_snapshot": {
+          "main_task": "CP6:W124-01",
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "crm_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "crm_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave124-final-verification.json"
+        }
       },
       "blockers": [],
       "validation_evidence": [],
@@ -175266,7 +175342,7 @@
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "wave124_delivery": {
-        "status": "CRM_MERGED_MAIN_CLOSEOUT_READY",
+        "status": "CLOSED",
         "report": "https://github.com/GTX537/CP6.CRM/blob/429560455682a8ef9b4bab2e22173ff3eec2fec1/docs/development/evidence/W124-02/DELIVERY.md",
         "validation": "92项唯一相关本地成功检查：44项PG/HTTP/实际浏览器及Worker、48项Web；必需0跳过。真实60分钟到期验证原子匿名化、hold阻断、原记录独立期限、正式outbox失败回滚和单次事件；长测在当前编译版本完成，显示期限、Lead投影及负例分别引用定向证据，不称全套重跑。",
         "full_task_complete": false,
@@ -175275,16 +175351,16 @@
         "crm_source_sha": "abdb3ce1684d079c0e42fc660e272992556ffe78",
         "crm_remote_main_sha": "429560455682a8ef9b4bab2e22173ff3eec2fec1",
         "crm_pull_request": "https://github.com/GTX537/CP6.CRM/pull/150",
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "lifecycle_snapshot": {
-          "crm_branch_deleted": true,
-          "crm_seat_released": true,
-          "handoff_branch_deleted": true,
-          "handoff_seat_released": true,
-          "handoff_delivery_complete": true,
           "main_task": "CP6:W124-01",
-          "main_finish_required": true,
-          "main_seat_released": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "crm_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "crm_branch_deleted": true,
+          "handoff_branch_deleted": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave124-final-verification.json"
         }
       }
@@ -190979,10 +191055,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261024-wave124",
-      "path": "docs/development/dispatch/20261024-wave124/README.md",
-      "baseline_sha": "87e51aee6029077258f4707d662f928027a045fc",
-      "registered_at": "2026-10-24T23:01:06.270313+00:00",
+      "id": "20261025-wave125",
+      "path": "docs/development/dispatch/20261025-wave125/README.md",
+      "baseline_sha": "0723de10a3aa99a89325436560b50c72a88270ca",
+      "registered_at": "2026-10-25T02:02:39.114673+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -190999,23 +191075,23 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W124-01/02",
-          "task_id": "WP03-04",
-          "title": "Native inquiry retention row Owner and controlled worker",
+          "id": "W125-BUG-537",
+          "task_id": "WP02-15",
+          "title": "Subject export tenant and stable identity defect",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "28cfb456f50c622e9c20341c4c531b6d49b41257",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP03-04/messages/20261024T230106Z-wave124-start/MESSAGE.md",
-            "at": "2026-10-24T23:01:06.270313+00:00"
+            "commit": "de4f7dd91bad618e57854968bb1a4540b5b7dc62",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-15/messages/20261025T020239Z-wave125-start/MESSAGE.md",
+            "at": "2026-10-25T02:02:39.114673+00:00"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w124-01",
-          "planned_scope_ref": "docs/development/dispatch/20261024-wave124/README.md",
+          "branch": "codex/bug-537",
+          "planned_scope_ref": "docs/development/dispatch/20261025-wave125/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -191023,31 +191099,25 @@
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
-          "crm_candidate_integrated": true,
-          "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/429560455682a8ef9b4bab2e22173ff3eec2fec1/docs/development/evidence/W124-02/DELIVERY.md",
-          "crm_source_sha": "abdb3ce1684d079c0e42fc660e272992556ffe78",
-          "crm_remote_main_sha": "429560455682a8ef9b4bab2e22173ff3eec2fec1",
-          "crm_pull_request": "https://github.com/GTX537/CP6.CRM/pull/150",
-          "validation": "92项唯一相关本地成功检查：44项PG/HTTP/实际浏览器及Worker、48项Web；必需0跳过。真实60分钟到期验证原子匿名化、hold阻断、原记录独立期限、正式outbox失败回滚和单次事件；长测在当前编译版本完成，显示期限、Lead投影及负例分别引用定向证据，不称全套重跑。",
+          "issue": "https://github.com/GTX537/CP6/issues/537",
+          "validation": "23项唯一相关本地检查通过：1项真实PostgreSQL主体归属回归、2项原主体导出检查、20项现有平台权限过滤检查，必需0跳过。Vue SFC/TypeScript编译与五语SSR通过（UI壳组件替身，不称浏览器或HTTP验证）。",
+          "worker_delivery_ref": "docs/development/evidence/W125-01/DELIVERY.md",
           "lifecycle_snapshot": {
-            "crm_branch_deleted": true,
-            "crm_seat_released": true,
-            "handoff_branch_deleted": true,
-            "handoff_seat_released": true,
-            "handoff_delivery_complete": true,
-            "main_task": "CP6:W124-01",
+            "main_task": "CP6:BUG-537",
             "main_finish_required": true,
             "main_seat_released": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave124-final-verification.json"
+            "handoff_delivery_complete": false,
+            "handoff_seat_released": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave125-final-verification.json"
           }
         }
       ],
       "horizon": {
-        "started_at": "2026-10-24T22:58:43.768398+00:00",
+        "started_at": "2026-10-25T02:00:49.979952+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          120,
-          180
+          60,
+          100
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -191055,26 +191125,15 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "First reproduce and fix current Main subject-export tenant/stable-subject scope as a WP02-15 prerequisite; then current human privacy authority and withdrawal. Native export/download requires actual SYS-PRIV/SYS-FILE adoption; native outbox publisher and full business acceptance remain.",
-      "validation": "92项唯一相关本地成功检查：44项PG/HTTP/实际浏览器及Worker、48项Web；必需0跳过。真实60分钟到期验证原子匿名化、hold阻断、原记录独立期限、正式outbox失败回滚和单次事件；长测在当前编译版本完成，显示期限、Lead投影及负例分别引用定向证据，不称全套重跑。",
+      "next_action": "Verify current human privacy authority and native consent-withdrawal prerequisites next; complete SYS-PRIV/SYS-FILE export/download, nested classification and native publisher remain separate.",
+      "validation": "23项唯一相关本地检查通过：1项真实PostgreSQL主体归属回归、2项原主体导出检查、20项现有平台权限过滤检查，必需0跳过。Vue SFC/TypeScript编译与五语SSR通过（UI壳组件替身，不称浏览器或HTTP验证）。",
       "lifecycle_snapshot": {
-        "crm_branch_deleted": true,
-        "crm_seat_released": true,
-        "handoff_branch_deleted": true,
-        "handoff_seat_released": true,
-        "handoff_delivery_complete": true,
-        "main_task": "CP6:W124-01",
+        "main_task": "CP6:BUG-537",
         "main_finish_required": true,
         "main_seat_released": false,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave124-final-verification.json"
-      },
-      "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/429560455682a8ef9b4bab2e22173ff3eec2fec1/docs/development/evidence/W124-02/DELIVERY.md",
-      "handoff_delivery_ref": {
-        "commit": "41c723312cd9e8ba4b306bf9fccebff500cb1860",
-        "path": "handoffs/CP6-DEV-20261012/tasks/WP03-04/messages/20261025T015013Z-wave124-delivery/MESSAGE.md",
-        "at": "2026-10-25T01:50:13.626088+00:00",
-        "base": "codex/t02c-entry-handoff-20260921",
-        "branch": "codex/w124-handoff"
+        "handoff_delivery_complete": false,
+        "handoff_seat_released": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave125-final-verification.json"
       }
     },
     "wave_history": [
@@ -208936,6 +208995,106 @@
           "branch": "codex/w123-handoff"
         },
         "actual_registered_wave_minutes": 30.34
+      },
+      {
+        "id": "20261024-wave124",
+        "path": "docs/development/dispatch/20261024-wave124/README.md",
+        "baseline_sha": "87e51aee6029077258f4707d662f928027a045fc",
+        "registered_at": "2026-10-24T23:01:06.270313+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W124-01/02",
+            "task_id": "WP03-04",
+            "title": "Native inquiry retention row Owner and controlled worker",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "28cfb456f50c622e9c20341c4c531b6d49b41257",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP03-04/messages/20261024T230106Z-wave124-start/MESSAGE.md",
+              "at": "2026-10-24T23:01:06.270313+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w124-01",
+            "planned_scope_ref": "docs/development/dispatch/20261024-wave124/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "crm_candidate_integrated": true,
+            "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/429560455682a8ef9b4bab2e22173ff3eec2fec1/docs/development/evidence/W124-02/DELIVERY.md",
+            "crm_source_sha": "abdb3ce1684d079c0e42fc660e272992556ffe78",
+            "crm_remote_main_sha": "429560455682a8ef9b4bab2e22173ff3eec2fec1",
+            "crm_pull_request": "https://github.com/GTX537/CP6.CRM/pull/150",
+            "validation": "92项唯一相关本地成功检查：44项PG/HTTP/实际浏览器及Worker、48项Web；必需0跳过。真实60分钟到期验证原子匿名化、hold阻断、原记录独立期限、正式outbox失败回滚和单次事件；长测在当前编译版本完成，显示期限、Lead投影及负例分别引用定向证据，不称全套重跑。",
+            "lifecycle_snapshot": {
+              "main_task": "CP6:W124-01",
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "crm_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "crm_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave124-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-24T22:58:43.768398+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            120,
+            180
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "First reproduce and fix current Main subject-export tenant/stable-subject scope as a WP02-15 prerequisite; then current human privacy authority and withdrawal. Native export/download requires actual SYS-PRIV/SYS-FILE adoption; native outbox publisher and full business acceptance remain.",
+        "validation": "92项唯一相关本地成功检查：44项PG/HTTP/实际浏览器及Worker、48项Web；必需0跳过。真实60分钟到期验证原子匿名化、hold阻断、原记录独立期限、正式outbox失败回滚和单次事件；长测在当前编译版本完成，显示期限、Lead投影及负例分别引用定向证据，不称全套重跑。",
+        "lifecycle_snapshot": {
+          "main_task": "CP6:W124-01",
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "crm_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "crm_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave124-final-verification.json"
+        },
+        "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/429560455682a8ef9b4bab2e22173ff3eec2fec1/docs/development/evidence/W124-02/DELIVERY.md",
+        "handoff_delivery_ref": {
+          "commit": "41c723312cd9e8ba4b306bf9fccebff500cb1860",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-04/messages/20261025T015013Z-wave124-delivery/MESSAGE.md",
+          "at": "2026-10-25T01:50:13.626088+00:00",
+          "base": "codex/t02c-entry-handoff-20260921",
+          "branch": "codex/w124-handoff"
+        },
+        "actual_registered_wave_minutes": 180.32
       }
     ],
     "development_priority": {
@@ -209073,9 +209232,9 @@
           "id": "D6",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W124-01/02",
-          "next_action": "First reproduce and fix current Main subject-export tenant/stable-subject scope as a WP02-15 prerequisite; then current human privacy authority and withdrawal. Native export/download requires actual SYS-PRIV/SYS-FILE adoption; native outbox publisher and full business acceptance remain.",
-          "prerequisite_adjustment": "Native retention Owner adopted under independent hold coverage and current maintenance authority; human privacy/export needs actual SYS-PRIV/SYS-FILE prerequisites."
+          "current_window": "W125-BUG-537",
+          "next_action": "Verify current human privacy authority and native consent-withdrawal prerequisites next; complete SYS-PRIV/SYS-FILE export/download, nested classification and native publisher remain separate.",
+          "prerequisite_adjustment": "Bounded existing Main subject-export ownership defect is independently actionable before full privacy/export adoption."
         },
         {
           "id": "D7",

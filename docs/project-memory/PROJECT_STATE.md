@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-25：W125主体导出归属修复待合并
+
+23项唯一相关本地检查通过：1项真实PostgreSQL主体归属回归、2项原主体导出检查、20项现有平台权限过滤检查，必需0跳过。Vue SFC/TypeScript编译与五语SSR通过（UI壳组件替身，不称浏览器或HTTP验证）。 [交付](../development/evidence/W125-01/DELIVERY.md)。Issue537基线失败已复现并修复；语言全仓1054既存缺项保留，扫描输入未变。自有PG停止，Main/Handoff最终合并及finish待，正式总数不变，七天ACTIVE。
+
 ## 2026-10-24：W124原生询盘保留Owner
 
 92项唯一相关本地成功检查：44项PG/HTTP/实际浏览器及Worker、48项Web；必需0跳过。真实60分钟到期验证原子匿名化、hold阻断、原记录独立期限、正式outbox失败回滚和单次事件；长测在当前编译版本完成，显示期限、Lead投影及负例分别引用定向证据，不称全套重跑。 [交付](../development/dispatch/20261024-wave124/README.md)。CRM已合并finish，原生保留Owner/独立hold/lease/Worker与显示期限已采用。

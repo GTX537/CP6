@@ -10,7 +10,8 @@ public interface IGdprService
     /// <summary>导出整租户数据包（Sys_Tenant 行 + 所有 owner 表行，逐行剔密钥）。租户不存在 → E-SEC-032。</summary>
     Task<Stream> ExportTenantAsync(Guid tenantId);
 
-    /// <summary>导出单数据主体（Sys_User + 其安全日志/操作日志，剔密钥）。用户不存在 → E-SEC-032。</summary>
+    /// <summary>有限主体导出：Sys_User 与其目标租户/稳定UserId匹配的安全日志，沿用标量密钥过滤。
+    /// 缺少稳定主体键的旧操作日志不按用户名归属；版本化scope明确UNKNOWN_SCOPE及独立读取时间，非全Owner导出。用户不存在 → E-SEC-032。</summary>
     Task<Stream> ExportSubjectAsync(Guid userId);
 
     /// <summary>擦除单数据主体（匿名化 + 重置密码哈希 + 停用 + 吊销 refresh 令牌族，保留行 + Id）。</summary>

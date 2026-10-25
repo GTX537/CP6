@@ -1,6 +1,6 @@
 # 多对话任务分配与交付
 
-> 当前：[W124原生询盘保留Owner](dispatch/20261024-wave124/README.md)：CRM/Handoff已合并finish，92项相关检查通过；Main台账正常PR及最终收尾。人类隐私/导出及实际发布后继。单人、PostgreSQL、七天ACTIVE。
+> 当前：[W125主体导出归属修复](dispatch/20261025-wave125/README.md)：Issue537基线失败已复现，23项相关检查和五语SSR通过；Main/Handoff正常合并和finish待。单人、PostgreSQL、七天ACTIVE。
 
 > 当前：[W105配置预览/激活交付](dispatch/20261024-wave105/README.md)：CRM与Handoff已合并finish，实际PG/浏览器及Main互通通过；Main最终收尾，后继公开表单/Attempt/提交。单人、PostgreSQL、七天ACTIVE。
 

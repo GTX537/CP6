@@ -93,22 +93,38 @@ public class GdprService : IGdprService
 
     public async Task<Stream> ExportSubjectAsync(Guid userId)
     {
-        var user = await _db.Sys_Users.IgnoreQueryFilters().FirstOrDefaultAsync(u => u.Id == userId)
+        var readStartedAtUtc = DateTime.UtcNow;
+        var user = await _db.Sys_Users.IgnoreQueryFilters().AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId)
             ?? throw new InvalidOperationException("E-SEC-032");
 
-        var securityLogs = await _db.Sys_SecurityLogs.IgnoreQueryFilters()
-            .Where(l => l.UserId == userId).ToListAsync();
-        var operLogs = await _db.Sys_OperLogs.IgnoreQueryFilters()
-            .Where(l => l.UserName == user.UserName).ToListAsync();
+        // The selected subject determines scope; the platform operator may belong to another tenant.
+        var securityLogs = await _db.Sys_SecurityLogs.IgnoreQueryFilters().AsNoTracking()
+            .Where(l => l.TenantId == user.TenantId && l.UserId == user.Id).ToListAsync();
 
-        // 注：Creator/Modifier == user.UserName 的全表反扫为可选 best-effort，本期从简不做
-        //（数据量与遍历成本高，主体导出聚焦用户身份 + 其登录/操作留痕，足覆盖 GDPR 访问权核心）。
+        // Sys_OperLog has no stable subject key. Neither a reusable name nor ImpersonatorId proves ownership.
+        // Keep the existing array shape, but do not interpret omitted rows as absence of subject data.
+        var readCompletedAtUtc = DateTime.UtcNow;
         var package = new
         {
             user = StripSensitive(user),
             securityLogs = securityLogs.Select(StripSensitive).ToList(),
-            operLogs = operLogs.Select(StripSensitive).ToList(),
-            exportedAt = DateTime.UtcNow
+            operLogs = Array.Empty<Dictionary<string, object?>>(),
+            exportedAt = readCompletedAtUtc,
+            scope = new
+            {
+                version = "cp6.subject-export-scope.v1",
+                tenantId = user.TenantId,
+                subjectId = user.Id,
+                complete = false,
+                consistency = "SEPARATE_READS",
+                readStartedAtUtc,
+                readCompletedAtUtc,
+                user = new { status = "INCLUDED", selector = "STABLE_USER_ID" },
+                securityLogs = new { status = "INCLUDED", selector = "TARGET_TENANT_AND_STABLE_USER_ID" },
+                operLogs = new { status = "UNKNOWN_SCOPE", reason = "STABLE_SUBJECT_ID_UNAVAILABLE" },
+                otherOwners = new { status = "UNKNOWN_SCOPE", reason = "SUBJECT_OWNER_DIRECTORY_NOT_ADOPTED" },
+                fieldFiltering = "ROOT_SCALAR_SENSITIVE_FIELD_POLICY; NESTED_CONTENT_NOT_CLASSIFIED"
+            }
         };
 
         var stream = Serialize(package);
