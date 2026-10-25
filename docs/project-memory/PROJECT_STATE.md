@@ -3438,3 +3438,8 @@ C01 的实际密码/PKCE、服务令牌、固定 Platform/CRM 消费者、严格
 ## 下一动作
 
 `main` 同步和 P2.5 受控整合已经完成，不再重复处理候选分支。下一张不依赖外部输入的 Space 卡优先实现无人工锁时的确定性父关系推导：只有唯一、可证明的几何包含关系才能生成 Zone/Aisle/Rack 父关系，无匹配或多候选继续 Blocking。不同 SourceHash 的几何建议继承与人工确认另开产品卡。GR-VP T1–T7 已完成，不要重做；其 PMS/Sys 权限 UX、角色显示名和 insert-only 基线语义仍按 `06-Todo.md` 的 P1 独立处理。正式 CAD/黄金集、外部 Provider、S14～S15/S18～S19、E12-S06、生产迁移与 WMS 发布/恢复演练继续作为独立失败关闭门禁；禁止把候选检查点 `0d25da4d` 整包合入。
+
+
+## 2026-10-25：README 通用制造定位与入口同步（README-20261025）
+
+根 README 已同步为面向通用制造业的企业管理平台，补齐工程/PLM、质量与端到端业务链，区分产品目标、已有实现和实际验收；采用 PostgreSQL 后续开发基线。当前业务任务状态仍由 roadmap.json 管理。 [本任务报告](../development/evidence/README-20261025.md)。
