@@ -67,3 +67,14 @@ W42、W136以上限制保留其历史范围。W137仅解除本次实际库存写
 - 页面只在身份隔离的浏览器互斥锁内创建或恢复；localStorage仅存原操作UUID，不存盘点内容或部门草稿。未知结果不重发/换键；重载后查询或显式关闭。旧身份迟到响应不能跳转或删除引用。已确认创建后页面导航失败保留已提交回执，不能误称提交未知。
 
 [W138实际交付报告](../../development/evidence/W138-01/DELIVERY.md)。本增量不完成Stock/无订单工单创建、REP/RMA或其余七天出口，不回填历史，不新增数据库迁移/角色授予，不提升生产或正式验收。
+
+## W139 增量：无订单工单创建合同 v1（2026-10-25）
+
+- `GET /api/mes/work-orders/creation-context` 使用当前原会话 `mes-work-order:add` 返回健康同租户部门及权限版本。无订单创建时scope2/3/4必须明确选择，scope1/5允许合法无绑定；scope1不获任意指派。不得用当前人部门或OrderNo1/2/3等显示引用推断归属。
+- `POST /api/mes/work-orders/operations` 接受原操作UUID、ExpectedAuthorityVersion、DepartmentId和原WorkOrderDto。WebOrderNo非空时禁止独立部门赋值，保持现有原订单范围与有效关联检查；无订单新单才可写本次独立映射。旧CreateAsync和从订单展开的合法路径保留；本合同不将历史对象绑定维护权交给创建人。
+- 实际Owner新分配工单UUID，忽略输入的header/子表身份，创建原语保存header、process/material和原编号。一次性绑定能力限定同DbContext/原事务/租户/真人和新UUID，核真实新单及原关联后只为其插入映射；当前权限/组织版本及映射revision最终门保留。单条参数化映射插入前后只接受自身版本变化，不吞掉额外映射变更或撤权。
+- `Main.Mes.WorkOrderCreation.v1` 将业务全图、序号、映射、必要审计和不可变原结果共同提交。相同原键/输入仅返回原结果；不同输入409。同一身份与业务锁串行首次创建/原键重放/close，完整保留数量精度和现有全局编号语义。关联订单在最终提交前再次检查有效性。
+- `GET operations/scope`、`GET operations/{operation}` 与 `POST operations/{operation}/close` 要求当前query。恢复还要求原真人、原合同和确切工单UUID当前可见；同业务号替代对象不能披露旧收据。首次创建不要求query，撤销add后仍可在query允许时恢复。UNKNOWN不证明未执行；close未提交时保存CLOSED墓碑阻断迟到创建，已提交则返回原结果。
+- 实际工单三步录入页采用明确部门/原操作路径；浏览器互斥、当前身份校验和按租户/真人保存的原UUID共同阻止未知重发。页面不持久化工单草稿或部门。重载可查询或关闭；身份改变清敏感显示但保留原引用。恢复到已创建单号后，若明细读取失败保留收据并禁用编辑/发行，成功读取当前明细后才恢复；正常编辑/发行路径保留。
+
+实际验证见[W139交付报告](../../development/evidence/W139-01/DELIVERY.md)。Stock可信新建、正式REP/RMA/IN及原D3/D5/D6/D7剩余出口保留；不提升正式业务验收、不迁移既有环境。

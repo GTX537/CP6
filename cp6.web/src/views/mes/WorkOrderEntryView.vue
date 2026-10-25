@@ -1,6 +1,29 @@
 <template>
   <div class="work-order-entry">
     <el-alert v-if="intent.error.value" :title="intent.error.value" type="warning" :closable="false" />
+    <el-alert v-if="creationError" :title="creationError" type="warning" :closable="false" />
+    <el-card v-if="!isEdit || creationPending || creationResult" shadow="never" style="margin-bottom: 16px">
+      <div v-if="!isEdit">
+        <template v-if="form.webOrderNo">{{ t('関連受注の現在の権限範囲を使用します。') }}</template>
+        <template v-else>
+          <span>{{ t('担当部門') }}</span>
+          <el-select v-model="creationDepartment" clearable :disabled="saving || !!creationPending" :placeholder="t('担当部門を選択してください')">
+            <el-option v-for="department in creationContext?.departments ?? []" :key="department.id" :value="department.id" :label="department.code + ' ' + department.name" />
+          </el-select>
+          <span v-if="creationContext?.allowsUnbound">{{ t('現在の権限では部門未指定でも作成できます。') }}</span>
+        </template>
+        <el-button v-if="permissions.has('mes-work-order:add')" :disabled="saving" @click="loadCreationContext">{{ t('作成条件を更新') }}</el-button>
+      </div>
+      <p v-if="creationPending">{{ t('前回の作成結果を確認してください。確認が終わるまで新規作成はできません。') }}</p>
+      <p v-if="creationResult?.status === 'COMMITTED'">{{ t('作成済み') }}: {{ creationResult.result?.workOrderNo }}</p>
+      <p v-if="creationResult?.status === 'CLOSED'">{{ t('未完了の操作を閉じました。内容を確認して新規作成できます。') }}</p>
+      <el-button v-if="permissions.has('mes-work-order:query')" :disabled="saving" @click="loadCreationScope">{{ t('操作状態を更新') }}</el-button>
+      <template v-if="creationPending && permissions.has('mes-work-order:query')">
+        <el-button :disabled="saving" @click="resolveCreation(false)">{{ t('前回の結果を確認') }}</el-button>
+        <el-button :disabled="saving" @click="resolveCreation(true)">{{ t('未完了の操作を閉じる') }}</el-button>
+      </template>
+      <el-button v-if="recoveredOnly && permissions.has('mes-work-order:query')" :disabled="saving" @click="loadByNo(form.workOrderNo)">{{ t('作成済み指図を読み込む') }}</el-button>
+    </el-card>
     <el-card shadow="never">
       <template #header>
         <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -64,6 +87,9 @@
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 import { ref, reactive, computed, watch } from 'vue'
+import { usePermissionStore } from '@/stores/permission'
+import { pendingWorkOrderCreation, saveWorkOrderCreation, resolveWorkOrderCreation, workOrderResponse } from '@/auth/workOrderCreationRecovery'
+import type { WorkOrderCreationContext, WorkOrderCreationScope, WorkOrderCreationOperation } from '@/types/mes/workOrderCreation'
 import { useOperationsIntent } from '@/composables/useOperationsIntent'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -73,6 +99,15 @@ import WoStep1BasicInfo from './work-order/steps/WoStep1BasicInfo.vue'
 import WoStep2ProcessPlan from './work-order/steps/WoStep2ProcessPlan.vue'
 import WoStep3MaterialConfirm from './work-order/steps/WoStep3MaterialConfirm.vue'
 
+const permissions = usePermissionStore()
+const creationContext = ref<WorkOrderCreationContext | null>(null), creationScope = ref<WorkOrderCreationScope | null>(null)
+const creationDepartment = ref<string | null>(null), creationPending = ref<string | null>(null), creationError = ref('')
+const creationResult = ref<WorkOrderCreationOperation | null>(null), recoveredOnly = ref(false)
+let creationReads = 0
+function clearCreation() {
+  creationReads++; creationContext.value = null; creationScope.value = null; creationDepartment.value = null
+  creationPending.value = null; creationError.value = ''; creationResult.value = null; recoveredOnly.value = false
+}
 const route = useRoute()
 const router = useRouter()
 const step = ref(0)
@@ -109,11 +144,11 @@ const emptyForm = (): WorkOrderDto => ({
 const form = reactive<WorkOrderDto>(emptyForm())
 let reads = 0, revision = 0
 watch(form, () => { revision++ }, { deep: true, flush: 'sync' })
-const intent = useOperationsIntent(() => { reads++; Object.assign(form, emptyForm()); step.value = 0 })
+const intent = useOperationsIntent(() => { reads++; clearCreation(); Object.assign(form, emptyForm()); step.value = 0 })
 const saving = intent.busy
 
 const isEdit = computed(() => !!form.workOrderNo)
-const canIssue = computed(() => isEdit.value && (form.status === 0 || form.status === 1))
+const canIssue = computed(() => !recoveredOnly.value && isEdit.value && (form.status === 0 || form.status === 1))
 
 function getStatusLabel(v: number) {
   return t(WORK_ORDER_STATUS_OPTIONS.find(s => s.value === v)?.label ?? `${v}`)
@@ -127,13 +162,14 @@ async function loadByNo(no: string) {
   try {
     const res = await workOrderApi.get(no)
     if (!intent.current(token) || id !== reads || edit !== revision) return
-    if (res.code === 0 && res.data) Object.assign(form, emptyForm(), res.data)
+    if (res.code === 0 && res.data) { Object.assign(form, emptyForm(), res.data); recoveredOnly.value = false }
   } catch {
     if (intent.current(token) && id === reads) ElMessage.warning(t('読込できませんでした。保存結果は一覧で確認してください。'))
   }
 }
 
 async function onExpandFromOrder(webOrderNo: string) {
+  if (creationPending.value) { creationError.value = t('先に前回の作成結果を確認してください。'); return }
   const token = intent.begin(); if (!token) return
   try {
     await ElMessageBox.confirm(t('受注 {webOrderNo} から製造指図を自動展開します。よろしいですか？', { webOrderNo }), t('確認'), { type: 'info' })
@@ -192,26 +228,85 @@ function next() {
   step.value += 1
 }
 
+watch(() => form.webOrderNo, () => { creationDepartment.value = null }, { flush: 'sync' })
+function creationGuard(token: ReturnType<typeof intent.capture>) {
+  if (!intent.current(token)) throw new Error('現在のユーザーまたは画面が変わりました。')
+}
+async function loadCreationContext() {
+  const token = intent.capture(), id = ++creationReads
+  try {
+    const context = workOrderResponse(await workOrderApi.creationContext())
+    if (!intent.current(token) || id !== creationReads) return
+    creationContext.value = context; creationScope.value = context; creationDepartment.value = null
+    creationPending.value = pendingWorkOrderCreation(context); creationError.value = ''
+  } catch (e) { if (intent.current(token) && id === creationReads) creationFailure(token, e) }
+}
+async function loadCreationScope() {
+  const token = intent.capture(), id = ++creationReads
+  try {
+    const scope = workOrderResponse(await workOrderApi.creationScope())
+    if (!intent.current(token) || id !== creationReads) return
+    creationScope.value = scope; creationPending.value = pendingWorkOrderCreation(scope); creationError.value = ''
+  } catch (e) { if (intent.current(token) && id === creationReads) creationFailure(token, e) }
+}
+function creationFailure(token: ReturnType<typeof intent.capture>, failure: any) {
+  if (!intent.current(token)) return
+  const status = failure?.response?.status
+  if (status === 401 || status === 403) {
+    intent.invalidate(); clearCreation(); reads++; Object.assign(form, emptyForm()); step.value = 0
+  }
+  creationError.value = t('作成結果を確認できません。再送せず、現在の権限で前回の操作結果を確認してください。')
+}
+async function resolveCreation(close: boolean) {
+  const scope = creationScope.value; if (!scope) return
+  const token = intent.begin(); if (!token) return
+  try {
+    const result = await resolveWorkOrderCreation(scope, close, () => creationGuard(token))
+    if (!intent.current(token)) return
+    creationResult.value = result; creationPending.value = pendingWorkOrderCreation(scope); creationError.value = ''
+    if (result.status === 'COMMITTED' && result.result) {
+      Object.assign(form, emptyForm(), { workOrderNo: result.result.workOrderNo }); recoveredOnly.value = true; step.value = 0
+      await loadByNo(result.result.workOrderNo)
+    }
+  } catch (e) { creationFailure(token, e) } finally { intent.finish(token) }
+}
 async function onSave() {
+  if (recoveredOnly.value) { creationError.value = t('作成済み指図を読み込んでから操作してください。'); return }
   if (!validateStep1()) { step.value = 0; return }
   if (!validateStep2()) { step.value = 1; return }
-  const token = intent.begin(); if (!token) return
+  const draftIdentity = intent.capture()
   const draft = JSON.parse(JSON.stringify(form)) as WorkOrderDto, edit = revision
+  const context = creationContext.value, department = draft.webOrderNo ? null : creationDepartment.value
+  if (!draft.workOrderNo && (!context || creationPending.value || (!draft.webOrderNo && !context.allowsUnbound && !department))) {
+    creationError.value = t('作成条件と担当部門、前回の操作状態を確認してください。'); return
+  }
+  const token = intent.begin(); if (!token) return
+  // begin can discover an identity change before its browser event and clear this draft.
+  if (!intent.current(draftIdentity)) { intent.finish(token); return }
   try {
     if (draft.workOrderNo) await workOrderApi.update(draft.workOrderNo, draft)
     else {
-      const res = await workOrderApi.create(draft)
+      const result = await saveWorkOrderCreation(context!, () => creationGuard(token), operationId => workOrderApi.createOperation({
+        operationId, expectedAuthorityVersion: context!.authorityVersion, departmentId: department, workOrder: draft,
+      }))
       if (!intent.current(token)) return
-      // Preserve the committed identity even when a separate query permission/readback fails.
-      if (res.data?.workOrderNo) form.workOrderNo = res.data.workOrderNo
+      creationResult.value = result; creationPending.value = pendingWorkOrderCreation(context!); creationError.value = ''
+      if (result.result) form.workOrderNo = result.result.workOrderNo
     }
     if (!intent.current(token)) return
     ElMessage.success(t('ME-MSG-041: 保存が完了しました'))
     if (draft.workOrderNo && revision === edit) await loadByNo(draft.workOrderNo)
-  } catch (e) { intent.failed(token, e) } finally { intent.finish(token) }
+  } catch (e) {
+    if (draft.workOrderNo) intent.failed(token, e)
+    else {
+      if (intent.current(token) && context) creationPending.value = pendingWorkOrderCreation(context)
+      creationFailure(token, e)
+    }
+  } finally { intent.finish(token) }
 }
 
 async function onIssue() {
+  if (recoveredOnly.value) return
   const token = intent.begin(); if (!token) return
   const no = form.workOrderNo
   try {
@@ -224,8 +319,10 @@ async function onIssue() {
 }
 
 watch(() => route.query.no, async (no) => {
-  intent.invalidate(); reads++; Object.assign(form, emptyForm())
+  intent.invalidate(); reads++; clearCreation(); Object.assign(form, emptyForm())
   if (typeof no === 'string' && no) await loadByNo(no)
+  else if (permissions.has('mes-work-order:add')) await loadCreationContext()
+  else if (permissions.has('mes-work-order:query')) await loadCreationScope()
 }, { immediate: true })
 </script>
 

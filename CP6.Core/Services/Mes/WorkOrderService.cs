@@ -152,7 +152,7 @@ public partial class WorkOrderService : IWorkOrderService
     //  Create / Update / Delete
     // ═══════════════════════════════════════════════════════════
 
-    private async Task<string> CreateCoreAsync(WorkOrderDto dto, string? userName, bool owned = false)
+    private async Task<string> CreateCoreAsync(WorkOrderDto dto, string? userName, bool owned = false, Guid? creationId = null)
     {
         await using var tx = owned ? null : await _db.Database.BeginTransactionAsync();
 
@@ -161,6 +161,7 @@ public partial class WorkOrderService : IWorkOrderService
 
         var wo = new WorkOrder
         {
+            Id = creationId ?? Guid.NewGuid(),
             WorkOrderNo = no,
             Status = dto.Status >= 0 ? dto.Status : 0,
             OrderNo1 = dto.OrderNo1,
