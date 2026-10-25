@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W134审计来源修复](dispatch/20261025-wave134/README.md)：CRM/Handoff已采用并finish，Issue157关闭，Main收尾；后继原D6准确适用与真实来源，其他原出口保留。单人、PostgreSQL、七天ACTIVE。
+> 当前：[W135 D6准确适用与来源核定](dispatch/20261025-wave135/README.md)：现有发布/权限及冻结调用边界已核清，真实外部输入仍未证；Handoff已finish，Main收尾，后继D2新对象可信归属。单人、PostgreSQL、七天ACTIVE。
+
+> 历史快照：[W134审计来源修复](dispatch/20261025-wave134/README.md)：CRM/Handoff已采用并finish，Issue157关闭，Main收尾；后继原D6准确适用与真实来源，其他原出口保留。单人、PostgreSQL、七天ACTIVE。
 
 > 历史快照：[W133原生事件发布恢复](dispatch/20261025-wave133/README.md)：CRM/Handoff已采用并finish，Main收尾；真实broker与宿主独立资格仍未证。后继原D6公共能力准确适用，其他原出口保留。单人、PostgreSQL、七天ACTIVE。
 

@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-25：W135 D6核定待Main收尾
+
+按原INQ允许LeadNo为空与当前R1闭合schema核定公开/H01没有NUM/FILE调用，不冒充完整共同服务采用；原生日历发布、配置批准和Main→CRM当前隐私来源已经存在。企业政策/专业日历、真实身份/路由/密钥、normalizer与目标宿主资格、真实broker/消费者/SLO未证，D6保持PARTIALLY_ADOPTED。 当前精确源/原文/四个schema根与引用、有效schema hash、既有发布/权限调用已核对；九轮所引CRM成果为当前主线祖先，历史验证只按原范围引用。文档差异/链接与台账一致性，无产品测试或运行配置变化。 Handoff已清理分支并释放；Main收尾继续。[单份报告](../development/evidence/W135-01/DELIVERY.md)。下一窗口D2新对象可信归属实现，七天ACTIVE。
+
 ## 2026-10-25：W134审计来源修复待Main收尾
 
 [CRM #157](https://github.com/GTX537/CP6.CRM/issues/157)已完成修复、真实复验、远端采用及finish后关闭。原实现两个自动受理场景均Expected10/Actual20；修复后相同3项真实HTTP/PG检查通过，必需0跳过，含宽合法输入、待审核无Lead、原请求重放的原回执/审计/事件/数量和异体冲突。 CRM/Handoff已清理分支并释放；Main收尾继续。[交付](../development/evidence/W134-01/DELIVERY.md)。继续原D6 NUM/FILE/PRIV在冻结公开提交/H01路径的准确适用与版本边界、真实政策/日历来源核定；D2新对象可信归属及REP/RMA共同门、D3计划写协议、D5实际宿主/企业运输和D7最终集成保留。已有日历原生发布与显式Owner批准入口须按实际源码复用，不重复构造；企业资料与真实运输不由夹具代替。
