@@ -1,10 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, shallowMount } from '@vue/test-utils'
 import { reactive } from 'vue'
-const mes = vi.hoisted(() => ({get:vi.fn(),search:vi.fn(),create:vi.fn(),update:vi.fn(),delete:vi.fn(),issue:vi.fn(),expandFromOrder:vi.fn()}))
+const mes = vi.hoisted(() => ({get:vi.fn(),search:vi.fn(),create:vi.fn(),update:vi.fn(),delete:vi.fn(),issue:vi.fn(),expandFromOrder:vi.fn(),creationContext:vi.fn(),creationScope:vi.fn(),createOperation:vi.fn(),readCreation:vi.fn(),closeCreation:vi.fn()}))
 const wms = vi.hoisted(() => ({get:vi.fn(),search:vi.fn(),create:vi.fn(),update:vi.fn(),delete:vi.fn(),confirm:vi.fn(),allocate:vi.fn(),ship:vi.fn(),cancel:vi.fn(),fromOrder:vi.fn(),fromWorkOrder:vi.fn()}))
 const messages = vi.hoisted(() => ({success:vi.fn(),warning:vi.fn(),error:vi.fn(),confirm:vi.fn()}))
 vi.mock('@/api/mes/mes',()=>({workOrderApi:mes}))
+vi.mock('@/stores/permission',()=>({usePermissionStore:()=>({loaded:true,has:()=>true})}))
 vi.mock('@/api/wms/outboundOrder',()=>({outboundOrderApi:wms}))
 vi.mock('element-plus',()=>({ElMessage:messages,ElMessageBox:{confirm:messages.confirm}}))
 vi.mock('vue-i18n',async original=>({...await original<typeof import('vue-i18n')>(),useI18n:()=>({t:(key:string)=>key})}))
@@ -29,6 +30,10 @@ const outbound={outboundNo:'OUT1',status:0,warehouseCd:'W01',details:[{productCd
 beforeEach(()=>{
  localStorage.clear();route.query={};vi.clearAllMocks()
  Object.values(mes).forEach(m=>m.mockReset());Object.values(wms).forEach(m=>m.mockReset())
+ const scope={tenantId:'10000000-0000-0000-0000-000000000001',actorId:'20000000-0000-0000-0000-000000000002'}
+ mes.creationContext.mockResolvedValue({code:0,data:{...scope,authorityVersion:'current',allowsUnbound:true,departments:[]}})
+ mes.creationScope.mockResolvedValue({code:0,data:scope})
+ Object.defineProperty(navigator,'locks',{configurable:true,value:{request:async (_key:string,_options:any,run:(x:any)=>any)=>run({})}})
  messages.confirm.mockReset().mockResolvedValue('confirm');mes.search.mockResolvedValue({data:{items:[],total:0}})
 })
 afterEach(()=>{view?.unmount();view=undefined})
@@ -43,12 +48,12 @@ describe('independent manufacturing and outbound intent',()=>{
  })
  it.each([0,2])('locks a write before awaiting, freezes the draft and keeps committed identity if read is denied (%s)',async index=>{
   const vm=render(index),api=index===0?mes:wms,doc=index===0?manufacturing:outbound
-  Object.assign(vm.form,doc);if(index===0)vm.form.workOrderNo='';else delete vm.form.outboundNo
-  let done!:(x:unknown)=>void;api.create.mockImplementationOnce(()=>new Promise(r=>{done=r}))
-  const first=vm.onSave();await vm.onSave();expect(api.create).toHaveBeenCalledTimes(1)
-  vm.form.remarks='new draft';expect(api.create.mock.calls[0]![0].remarks).not.toBe('new draft')
+  await flushPromises();Object.assign(vm.form,doc);if(index===0)vm.form.workOrderNo='';else delete vm.form.outboundNo
+  let done!:(x:unknown)=>void;const write=index===0?mes.createOperation:api.create;write.mockImplementationOnce(()=>new Promise(r=>{done=r}))
+  const first=vm.onSave();await flushPromises();await vm.onSave();expect(write).toHaveBeenCalledTimes(1)
+  vm.form.remarks='new draft';expect((index===0?write.mock.calls[0]![0].workOrder:write.mock.calls[0]![0]).remarks).not.toBe('new draft')
   api.get.mockRejectedValue({response:{status:403}})
-  done({code:0,data:{workOrderNo:'NEW',outboundNo:'NEW'}});await first
+  done({code:0,data:index===0?{operationId:write.mock.calls[0]![0].operationId,workOrderId:'40000000-0000-0000-0000-000000000004',workOrderNo:'NEW',departmentId:null}:{outboundNo:'NEW'}});await first
   expect(index===0?vm.form.workOrderNo:vm.form.outboundNo).toBe('NEW')
   expect(vm.form.remarks).toBe('new draft');expect(messages.success).toHaveBeenCalledTimes(1)
  })

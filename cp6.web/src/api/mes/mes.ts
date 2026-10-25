@@ -1,3 +1,4 @@
+import type { WorkOrderCreationScope, WorkOrderCreationContext, WorkOrderCreationCommand, WorkOrderCreationResult, WorkOrderCreationOperation } from '@/types/mes/workOrderCreation'
 import http from '../http'
 import type { MachineCreationScope, MachineCreationContext, MachineCreationCommand, MachineCreationResult, MachineCreationOperation } from '@/types/mes/machineCreation'
 import type {
@@ -44,6 +45,11 @@ type Api<T> = { code: number; message: string; data: T }
 // MSBBME020 / 030 — 製造指図
 // ─────────────────────────────────────────────────────────────
 export const workOrderApi = {
+  creationContext: () => http.get<any, Api<WorkOrderCreationContext>>('/mes/work-orders/creation-context'),
+  creationScope: () => http.get<any, Api<WorkOrderCreationScope>>('/mes/work-orders/operations/scope'),
+  createOperation: (command: WorkOrderCreationCommand) => http.post<any, Api<WorkOrderCreationResult>>('/mes/work-orders/operations', command),
+  readCreation: (operation: string) => http.get<any, Api<WorkOrderCreationOperation>>('/mes/work-orders/operations/' + encodeURIComponent(operation)),
+  closeCreation: (operation: string) => http.post<any, Api<WorkOrderCreationOperation>>('/mes/work-orders/operations/' + encodeURIComponent(operation) + '/close'),
   /** 採番取得 */
   getNextSequence() {
     return http.post<any, Api<{ sequence: string }>>('/mes/work-orders/next-seq')
