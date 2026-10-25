@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-25：BUG543身份目录当前迁移兼容
+
+[Issue543](https://github.com/GTX537/CP6/issues/543)精确补齐新版独立对象映射和询盘范围函数准入，保留旧digest和安全拒绝。Main四项及CRM原始基线子进程一项相关本地验证通过。[报告](../development/evidence/BUG-543/DELIVERY.md)。正常PR后恢复W130原生后台联通；Issue待该原步骤通过后关闭，七天ACTIVE。
+
 ## 2026-10-25：W129原七天出口审计
 
 D1保持DONE，D4按原首个Owner/可靠投递出口核对W43/44/50/96/98后关闭；2/7=28.6%仅为阶段关闭率。D2/D3实际写协议、D5原生PG身份宿主与观测、D6必要消息/共同服务/真实来源及D7最终集成仍未完。剩余42–70h为低置信净执行估算，外部等待另列，替代30–50h粗估。[单份报告](../development/evidence/W129-01/DELIVERY.md)。正式24/375、0/125和247NOT_RUN保持；七天ACTIVE，先推进D5基线/发布宿主。W128三仓已完整清理释放，W129文档审查通过，Handoff105已采用并准确清理/释放；Main正常PR/finish继续，最终以wave129-final-verification.json核销。
