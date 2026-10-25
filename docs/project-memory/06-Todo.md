@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-25：W134审计来源修复待Main收尾
+
+[CRM #157](https://github.com/GTX537/CP6.CRM/issues/157)已完成修复、真实复验、远端采用及finish后关闭。原实现两个自动受理场景均Expected10/Actual20；修复后相同3项真实HTTP/PG检查通过，必需0跳过，含宽合法输入、待审核无Lead、原请求重放的原回执/审计/事件/数量和异体冲突。 CRM/Handoff已清理分支并释放；Main收尾继续。[交付](../development/evidence/W134-01/DELIVERY.md)。继续原D6 NUM/FILE/PRIV在冻结公开提交/H01路径的准确适用与版本边界、真实政策/日历来源核定；D2新对象可信归属及REP/RMA共同门、D3计划写协议、D5实际宿主/企业运输和D7最终集成保留。已有日历原生发布与显式Owner批准入口须按实际源码复用，不重复构造；企业资料与真实运输不由夹具代替。
+
 ## 2026-10-25：W133原生事件发布恢复待Main收尾
 
 20项唯一相关CRM本地检查通过、必需0跳过：真实原生Owner/HTTP/PG、五类原事件、原run/提交收据恢复、并发/当前权限及角色隔离、取消停止、保护漂移，含真实60分钟匿名化及最终代码原文复核。 CRM/Handoff已正常合并、准确分支删除及finish；Main正常收尾继续。[交付](../development/evidence/W133-01/DELIVERY.md)。下一独立任务先处理[CRM #157](https://github.com/GTX537/CP6.CRM/issues/157)，再核D6 NUM/FILE/PRIV在冻结公开提交/H01路径的准确适用、版本接口和真实政策/日历来源继续核对；当前真实Dapr/Kafka/企业TLS/ACL/凭据/登记/消费者/SLO仍未证。D2新对象归属及REP/RMA写Owner共同门、D3计划写入口、D5实际宿主独立资格和D7最终集成保留，不扩展全部隐私导出或125目标。
