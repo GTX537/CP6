@@ -160447,6 +160447,11 @@
       "date": "2026-10-25",
       "change": "W129 exact lifecycle reconciled; W130 native PostgreSQL identity baseline host admitted,90–150min,sole COORD. No full task/target/runtime acceptance promotion.",
       "evidence": "docs/development/dispatch/20261025-wave130/README.md"
+    },
+    {
+      "date": "2026-10-25",
+      "change": "BUG543 exact current mapping/inquiry migration functions admitted; four Main plus one CRM actual-source checks passed. Resume W130 after normal remote adoption; original seven-day exits unchanged.",
+      "evidence": "docs/development/evidence/BUG-543/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -169724,6 +169729,16 @@
         "seat_released": true,
         "issue_closed": true,
         "actual_crm_cross_repository_passed": true
+      },
+      "wave130_prerequisite_fix": {
+        "issue": "https://github.com/GTX537/CP6/issues/543",
+        "report": "docs/development/evidence/BUG-543/DELIVERY.md",
+        "status": "VALIDATED_AWAITING_REMOTE_ADOPTION",
+        "branch": "codex/bug-543-directory-current",
+        "chat": "COORD",
+        "related_main_tests_passed": 4,
+        "related_crm_child_tests_passed": 1,
+        "full_task_completed": false
       }
     },
     {
@@ -191492,8 +191507,10 @@
       "next_action": "Native baseline host, then trusted delta ingress/revocation and native API observability; preserve all original remaining exits.",
       "prerequisite_bug": {
         "issue": 543,
-        "phase": "REPRODUCED",
-        "next_action": "Save W130 branch, officially release DEV-1, fix BUG-543 on latest main, then resume this same W130 branch."
+        "phase": "ADOPTED_WAITING_NATIVE_RETEST",
+        "next_action": "Continue W130 native host source retest, then close Issue543 with evidence.",
+        "pr": 544,
+        "remote_main": "2e287861179be170cf6013e311eb608378871597"
       }
     },
     "wave_history": [
