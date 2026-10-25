@@ -160412,6 +160412,16 @@
       "date": "2026-10-25",
       "change": "W126 human consent current authority verified48 scoped checks;CRM151/Handoff102 adopted and released;Main source/coordination ready for normal merge;full native withdrawal follows;seven-day ACTIVE.",
       "evidence": "docs/development/dispatch/20261025-wave126/README.md"
+    },
+    {
+      "date": "2026-10-25",
+      "change": "W126 lifecycle reconciled; admit W127 native consent withdrawal Owner/UI,90–150min single-chat estimate;seven-day ACTIVE.",
+      "evidence": "docs/development/dispatch/20261025-wave127/README.md"
+    },
+    {
+      "date": "2026-10-25",
+      "change": "W127 native human consent withdrawal Owner/UI verified79 scoped local checks including real60-minute original deadline;CRM/Handoff adopted and released;Main ready for normal closeout;full export/download and publisher remain;seven-day ACTIVE.",
+      "evidence": "docs/development/dispatch/20261025-wave127/README.md"
     }
   ],
   "implementation_assessment": {
@@ -175284,36 +175294,37 @@
       "card_anchor": "wp03-04",
       "entry_gate": "NOT_CHECKED",
       "assignment": {
-        "chat_label": "COORD / W126-01/02",
+        "chat_label": "COORD / W127-01/02",
         "repository": "Main/CRM",
         "owning_task_repository": "CRM",
-        "branch": "codex/w126-01",
-        "crm_branch": "codex/w126-02",
+        "branch": "codex/w127-01",
+        "crm_branch": "codex/w127-02",
         "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-25T02:44:49.306462+00:00",
-        "baseline_sha": "80af679096c7a594230b8508d653d1b397f63b40",
-        "crm_baseline_sha": "429560455682a8ef9b4bab2e22173ff3eec2fec1",
-        "entry_evidence": "docs/development/dispatch/20261025-wave126/README.md",
+        "claimed_at": "2026-10-25T03:19:44.199276+00:00",
+        "baseline_sha": "ef8ee5d489a4c7b299af4925e62f240cfa4bcfb8",
+        "crm_baseline_sha": "9181897d533c3cc6309c264d84aaf1aaf59babfb",
+        "entry_evidence": "docs/development/dispatch/20261025-wave127/README.md",
         "phase": "DELIVERY_MAIN_CLOSEOUT",
-        "dispatch_scope": "W126",
+        "dispatch_scope": "W127",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "worker_start_received": true,
         "actual_start_ref": {
-          "commit": "4399f77763ba2ff64eca9a1b685bea077452de4e",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-04/messages/20261025T024449Z-wave126-start/MESSAGE.md",
-          "at": "2026-10-25T02:44:49.306462+00:00"
+          "commit": "757e71b0ae7d71402cfc915a2849426022f4896d",
+          "path": "handoffs/CP6-DEV-20261012/tasks/WP03-04/messages/20261025T031944Z-wave127-start/MESSAGE.md",
+          "at": "2026-10-25T03:19:44.199276+00:00"
         },
         "reserved_write_resources": [
-          "Main:human-permission-issuer",
-          "Main:consent-field-catalog",
-          "CRM:human-context-capture-and-verifier",
+          "CRM:native-consent-owner-ledger-effects",
+          "CRM:native-runtime-graph-and-host",
+          "CRM:inquiry-web-ui",
           "Main:coordination-ledger"
         ],
         "reserved_postgresql_ports": [
-          55452
+          55453,
+          55454
         ],
-        "handoff_branch": "codex/w126-handoff",
+        "handoff_branch": "codex/w127-handoff",
         "actions_authorized": false,
         "deployment_authorized": false,
         "existing_database_migration_authorized": false,
@@ -175322,9 +175333,20 @@
         "candidate_integrated": false,
         "resources_released": false,
         "full_task_completed": false,
-        "worker_delivery_ref": "docs/development/evidence/W126-01/DELIVERY.md",
+        "implementation_progress": {
+          "at": "2026-10-25T04:53:44.174382+00:00",
+          "crm_saved_source": "105df93427bf0504ce077dee2c85092e433c7340",
+          "validation": "79项唯一相关本地检查通过：27项PostgreSQL/HTTP/实际浏览器、52项Web及相关页面类型/浏览器包构建；必需0跳过。包括真实原60分钟保留期，不改业务期限或时钟。",
+          "required_pending": [],
+          "review": "PASS",
+          "crm_pr": "https://github.com/GTX537/CP6.CRM/pull/152",
+          "crm_seat_released": true,
+          "main_seat_released": false,
+          "evidence": "D:\\CP6-local-test\\wave127\\foundation\\final-validation.json"
+        },
+        "worker_delivery_ref": "docs/development/evidence/W127-01/DELIVERY.md",
         "lifecycle_snapshot": {
-          "main_task": "CP6:W126-01",
+          "main_task": "CP6:W127-01",
           "main_finish_required": true,
           "main_seat_released": false,
           "crm_seat_released": true,
@@ -175332,7 +175354,7 @@
           "handoff_delivery_complete": true,
           "handoff_seat_released": true,
           "handoff_branch_deleted": true,
-          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave126-final-verification.json"
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave127-final-verification.json"
         }
       },
       "blockers": [],
@@ -175436,10 +175458,62 @@
             "handoff_branch_deleted": true,
             "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave124-final-verification.json"
           }
+        },
+        {
+          "chat_label": "COORD / W126-01/02",
+          "repository": "Main/CRM",
+          "owning_task_repository": "CRM",
+          "branch": "codex/w126-01",
+          "crm_branch": "codex/w126-02",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-10-25T02:44:49.306462+00:00",
+          "baseline_sha": "80af679096c7a594230b8508d653d1b397f63b40",
+          "crm_baseline_sha": "429560455682a8ef9b4bab2e22173ff3eec2fec1",
+          "entry_evidence": "docs/development/dispatch/20261025-wave126/README.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "W126",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "actual_start_ref": {
+            "commit": "4399f77763ba2ff64eca9a1b685bea077452de4e",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP03-04/messages/20261025T024449Z-wave126-start/MESSAGE.md",
+            "at": "2026-10-25T02:44:49.306462+00:00"
+          },
+          "reserved_write_resources": [
+            "Main:human-permission-issuer",
+            "Main:consent-field-catalog",
+            "CRM:human-context-capture-and-verifier",
+            "Main:coordination-ledger"
+          ],
+          "reserved_postgresql_ports": [
+            55452
+          ],
+          "handoff_branch": "codex/w126-handoff",
+          "actions_authorized": false,
+          "deployment_authorized": false,
+          "existing_database_migration_authorized": false,
+          "worker_delivery_received": true,
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "resources_released": true,
+          "full_task_completed": false,
+          "worker_delivery_ref": "docs/development/evidence/W126-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_task": "CP6:W126-01",
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "crm_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "crm_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave126-final-verification.json"
+          }
         }
       ],
       "wave126_delivery": {
-        "status": "CRM_AND_HANDOFF_ADOPTED_MAIN_READY",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W126-01/DELIVERY.md",
         "validation": "48项唯一相关本地检查通过：Main17项PostgreSQL/真实登录OIDC/HTTP，CRM29项具体保护会话/HTTP/当前来源，跨仓实际签名/原始快照到CRM PostgreSQL2项；必需0跳过。",
         "crm_delivery": {
@@ -175461,9 +175535,45 @@
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "adopted_scope": "Current human consent authority; native withdrawal Owner follows",
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "lifecycle_snapshot": {
           "main_task": "CP6:W126-01",
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "crm_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "crm_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave126-final-verification.json"
+        }
+      },
+      "wave127_delivery": {
+        "status": "CRM_AND_HANDOFF_ADOPTED_MAIN_READY",
+        "report": "docs/development/evidence/W127-01/DELIVERY.md",
+        "validation": "79项唯一相关本地检查通过：27项PostgreSQL/HTTP/实际浏览器、52项Web及相关页面类型/浏览器包构建；必需0跳过。包括真实原60分钟保留期，不改业务期限或时钟。",
+        "crm_delivery": {
+          "result": "PASS",
+          "source": "105df93427bf0504ce077dee2c85092e433c7340",
+          "main": "bb5edc19798eb7d03b02d4e528b099b5ce594213",
+          "pr": "https://github.com/GTX537/CP6.CRM/pull/152",
+          "exact_tree_adoption": true,
+          "at": "2026-10-25T04:36:42.131322+00:00"
+        },
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "c8168a77ca35aa4ad195332024a299b185679568",
+          "main": "a953c39a8bfcfd4ab33cc6547906298588053325",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/103",
+          "exact_tree_adoption": true,
+          "at": "2026-10-25T04:52:49.760138+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "adopted_scope": "Native consent withdrawal Owner/UI and actual original-deadline compatibility; export/download and publisher follow",
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "main_task": "CP6:W127-01",
           "main_finish_required": true,
           "main_seat_released": false,
           "crm_seat_released": true,
@@ -175471,7 +175581,7 @@
           "handoff_delivery_complete": true,
           "handoff_seat_released": true,
           "handoff_branch_deleted": true,
-          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave126-final-verification.json"
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave127-final-verification.json"
         }
       }
     },
@@ -191165,10 +191275,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261025-wave126",
-      "path": "docs/development/dispatch/20261025-wave126/README.md",
-      "baseline_sha": "80af679096c7a594230b8508d653d1b397f63b40",
-      "registered_at": "2026-10-25T02:44:49.306462+00:00",
+      "id": "20261025-wave127",
+      "path": "docs/development/dispatch/20261025-wave127/README.md",
+      "baseline_sha": "ef8ee5d489a4c7b299af4925e62f240cfa4bcfb8",
+      "registered_at": "2026-10-25T03:19:44.199276+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -191185,23 +191295,23 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W126-01/02",
+          "id": "W127-01/02",
           "task_id": "WP03-04",
-          "title": "Human consent withdrawal current authority",
+          "title": "Native human consent withdrawal Owner and UI",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "4399f77763ba2ff64eca9a1b685bea077452de4e",
-            "path": "handoffs/CP6-DEV-20261012/tasks/WP03-04/messages/20261025T024449Z-wave126-start/MESSAGE.md",
-            "at": "2026-10-25T02:44:49.306462+00:00"
+            "commit": "757e71b0ae7d71402cfc915a2849426022f4896d",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP03-04/messages/20261025T031944Z-wave127-start/MESSAGE.md",
+            "at": "2026-10-25T03:19:44.199276+00:00"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w126-01",
-          "planned_scope_ref": "docs/development/dispatch/20261025-wave126/README.md",
+          "branch": "codex/w127-01",
+          "planned_scope_ref": "docs/development/dispatch/20261025-wave127/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -191209,10 +191319,10 @@
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
-          "validation": "48项唯一相关本地检查通过：Main17项PostgreSQL/真实登录OIDC/HTTP，CRM29项具体保护会话/HTTP/当前来源，跨仓实际签名/原始快照到CRM PostgreSQL2项；必需0跳过。",
-          "worker_delivery_ref": "docs/development/evidence/W126-01/DELIVERY.md",
+          "validation": "79项唯一相关本地检查通过：27项PostgreSQL/HTTP/实际浏览器、52项Web及相关页面类型/浏览器包构建；必需0跳过。包括真实原60分钟保留期，不改业务期限或时钟。",
+          "worker_delivery_ref": "docs/development/evidence/W127-01/DELIVERY.md",
           "lifecycle_snapshot": {
-            "main_task": "CP6:W126-01",
+            "main_task": "CP6:W127-01",
             "main_finish_required": true,
             "main_seat_released": false,
             "crm_seat_released": true,
@@ -191220,16 +191330,16 @@
             "handoff_delivery_complete": true,
             "handoff_seat_released": true,
             "handoff_branch_deleted": true,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave126-final-verification.json"
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave127-final-verification.json"
           }
         }
       ],
       "horizon": {
-        "started_at": "2026-10-25T02:41:59.224652+00:00",
+        "started_at": "2026-10-25T03:14:43.202765+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          55,
-          90
+          90,
+          150
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -191237,10 +191347,21 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W127 native human consent withdrawal Owner/ETag/idempotency/atomic consent facts and target-local events/UI; reuse current human authority. Full privacy export and native publisher remain.",
-      "validation": "48项唯一相关本地检查通过：Main17项PostgreSQL/真实登录OIDC/HTTP，CRM29项具体保护会话/HTTP/当前来源，跨仓实际签名/原始快照到CRM PostgreSQL2项；必需0跳过。",
+      "next_action": "W128 explicit current human privacy export/download source and owner-approved per-use fields; then native encrypted export job and one-use current download. Native publisher remains.",
+      "implementation_progress": {
+        "at": "2026-10-25T04:53:44.174382+00:00",
+        "crm_saved_source": "105df93427bf0504ce077dee2c85092e433c7340",
+        "validation": "79项唯一相关本地检查通过：27项PostgreSQL/HTTP/实际浏览器、52项Web及相关页面类型/浏览器包构建；必需0跳过。包括真实原60分钟保留期，不改业务期限或时钟。",
+        "required_pending": [],
+        "review": "PASS",
+        "crm_pr": "https://github.com/GTX537/CP6.CRM/pull/152",
+        "crm_seat_released": true,
+        "main_seat_released": false,
+        "evidence": "D:\\CP6-local-test\\wave127\\foundation\\final-validation.json"
+      },
+      "validation": "79项唯一相关本地检查通过：27项PostgreSQL/HTTP/实际浏览器、52项Web及相关页面类型/浏览器包构建；必需0跳过。包括真实原60分钟保留期，不改业务期限或时钟。",
       "lifecycle_snapshot": {
-        "main_task": "CP6:W126-01",
+        "main_task": "CP6:W127-01",
         "main_finish_required": true,
         "main_seat_released": false,
         "crm_seat_released": true,
@@ -191248,7 +191369,7 @@
         "handoff_delivery_complete": true,
         "handoff_seat_released": true,
         "handoff_branch_deleted": true,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave126-final-verification.json"
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave127-final-verification.json"
       }
     },
     "wave_history": [
@@ -209295,6 +209416,94 @@
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave125-final-verification.json"
         },
         "actual_registered_wave_minutes": 31.22
+      },
+      {
+        "id": "20261025-wave126",
+        "path": "docs/development/dispatch/20261025-wave126/README.md",
+        "baseline_sha": "80af679096c7a594230b8508d653d1b397f63b40",
+        "registered_at": "2026-10-25T02:44:49.306462+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W126-01/02",
+            "task_id": "WP03-04",
+            "title": "Human consent withdrawal current authority",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "4399f77763ba2ff64eca9a1b685bea077452de4e",
+              "path": "handoffs/CP6-DEV-20261012/tasks/WP03-04/messages/20261025T024449Z-wave126-start/MESSAGE.md",
+              "at": "2026-10-25T02:44:49.306462+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w126-01",
+            "planned_scope_ref": "docs/development/dispatch/20261025-wave126/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "validation": "48项唯一相关本地检查通过：Main17项PostgreSQL/真实登录OIDC/HTTP，CRM29项具体保护会话/HTTP/当前来源，跨仓实际签名/原始快照到CRM PostgreSQL2项；必需0跳过。",
+            "worker_delivery_ref": "docs/development/evidence/W126-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_task": "CP6:W126-01",
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "crm_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "crm_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave126-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-25T02:41:59.224652+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            55,
+            90
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W127 native human consent withdrawal Owner/ETag/idempotency/atomic consent facts and target-local events/UI; reuse current human authority. Full privacy export and native publisher remain.",
+        "validation": "48项唯一相关本地检查通过：Main17项PostgreSQL/真实登录OIDC/HTTP，CRM29项具体保护会话/HTTP/当前来源，跨仓实际签名/原始快照到CRM PostgreSQL2项；必需0跳过。",
+        "lifecycle_snapshot": {
+          "main_task": "CP6:W126-01",
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "crm_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "crm_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave126-final-verification.json"
+        },
+        "actual_registered_wave_minutes": 29.11
       }
     ],
     "development_priority": {
@@ -209432,9 +209641,9 @@
           "id": "D6",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W126-01/02",
-          "next_action": "W127 native human consent withdrawal Owner/ETag/idempotency/atomic consent facts and target-local events/UI; reuse current human authority. Full privacy export and native publisher remain.",
-          "prerequisite_adjustment": "Frozen consent-withdraw requires its own actual human source; native withdrawal Owner follows. W125 export fix and W124 retention are closed."
+          "current_window": "W127-01/02",
+          "next_action": "W128 explicit current human privacy export/download source and owner-approved per-use fields; then native encrypted export job and one-use current download. Native publisher remains.",
+          "prerequisite_adjustment": "W126 actual current human consent authority is adopted; W127 implements native Owner and UI. Full task gates remain unchanged."
         },
         {
           "id": "D7",

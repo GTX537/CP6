@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-25：W127原生人工撤回同意待Main收尾
+
+79项唯一相关本地检查通过：27项PostgreSQL/HTTP/实际浏览器、52项Web及相关页面类型/浏览器包构建；必需0跳过。包括真实原60分钟保留期，不改业务期限或时钟。 CRM/Handoff已合并、准确分支删除与finish；Main待正常合并。两个PG停止，正式总数不变、七天ACTIVE。[交付](../development/evidence/W127-01/DELIVERY.md)。下一窗口落实privacy:export/download的独立当前真人来源与明确字段用途映射，再实施原生导出任务/加密制品/单次下载及页面。原生Outbox发布、真实授权配置/既有环境迁移/Lead月跨度到期和正式业务验收仍未完成。
+
 ## 2026-10-25：W126人工撤回同意权限来源待Main收尾
 
 48项唯一相关本地检查通过：Main17项PostgreSQL/真实登录OIDC/HTTP，CRM29项具体保护会话/HTTP/当前来源，跨仓实际签名/原始快照到CRM PostgreSQL2项；必需0跳过。 CRM151/Handoff102已合并、准确分支删除与finish；Main候选待正常合并。PG停止，正式总数不变、七天ACTIVE。[交付](../development/evidence/W126-01/DELIVERY.md)。原生撤回Owner、精确Submission/Consent资源、ETag/幂等槽、原事务即时事实和目标本地版本事件、页面入口紧随后继；撤回不改已有保留deadline。隐私导出/FILE当前下载/嵌套分类与原生Outbox发布仍另行采用。

@@ -1216,3 +1216,11 @@ Main20–30分钟，CRM15–25分钟，验证审查10–20分钟，收尾10–15
 ## W126实际交付准备
 
 48项唯一相关本地检查通过：Main17项PostgreSQL/真实登录OIDC/HTTP，CRM29项具体保护会话/HTTP/当前来源，跨仓实际签名/原始快照到CRM PostgreSQL2项；必需0跳过。 原估55–90分钟，截至准备26.25分钟，最终以三仓finish计一次。CRM/Handoff已闭环，Main待收尾；[报告](../evidence/W126-01/DELIVERY.md)。原生撤回Owner、精确Submission/Consent资源、ETag/幂等槽、原事务即时事实和目标本地版本事件、页面入口紧随后继；撤回不改已有保留deadline。隐私导出/FILE当前下载/嵌套分类与原生Outbox发布仍另行采用。 七天ACTIVE。
+
+## W127原生人工撤回Owner窗口
+
+Owner35–55分钟，宿主页面20–35分钟，验证审查25–40分钟，收尾10–20分钟；合计90–150。[范围](../dispatch/20261025-wave127/README.md)。W126已闭环，七天ACTIVE。
+
+## W127实际交付准备
+
+79项唯一相关本地检查通过：27项PostgreSQL/HTTP/实际浏览器、52项Web及相关页面类型/浏览器包构建；必需0跳过。包括真实原60分钟保留期，不改业务期限或时钟。 原估90–150分钟，截至准备99.02分钟，最终按三仓finish计一次，包含自然期限等待。CRM/Handoff闭环、Main待收尾；[报告](../evidence/W127-01/DELIVERY.md)。下一窗口落实privacy:export/download的独立当前真人来源与明确字段用途映射，再实施原生导出任务/加密制品/单次下载及页面。原生Outbox发布、真实授权配置/既有环境迁移/Lead月跨度到期和正式业务验收仍未完成。 七天ACTIVE。
