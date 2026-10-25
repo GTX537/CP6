@@ -160457,6 +160457,16 @@
       "date": "2026-10-25",
       "change": "W130 native C2/baseline PG host:34 scoped local checks;CRM154/Handoff adopted and released;BUG543 fixed/closed;Main exact closeout pending. Full D5 and all formal target/acceptance states unchanged;seven-day ACTIVE.",
       "evidence": "docs/development/dispatch/20261025-wave130/README.md"
+    },
+    {
+      "date": "2026-10-25",
+      "change": "W130 exact lifecycle reconciled; W131 trusted native identity delta/ACK/revocation host admitted,115–190min,sole COORD. No full task/target/runtime acceptance promotion.",
+      "evidence": "docs/development/dispatch/20261025-wave131/README.md"
+    },
+    {
+      "date": "2026-10-25",
+      "change": "W131 native identity delta/post-commit ACK/revocation:12 unique scoped checks;CRM155/Handoff107 adopted and released;Main closeout pending. Current Dapr/Kafka NOT_RUN;full D5 and all formal task/target/acceptance states unchanged;seven-day ACTIVE.",
+      "evidence": "docs/development/dispatch/20261025-wave131/README.md"
     }
   ],
   "implementation_assessment": {
@@ -170153,7 +170163,7 @@
         "seats_released": true
       },
       "wave130_delivery": {
-        "status": "CRM_AND_HANDOFF_ADOPTED_MAIN_READY",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W130-01/DELIVERY.md",
         "validation": "34项唯一相关本地检查通过：CRM29、Main5；必需0跳过，原失败及针对性复测保留，未变化成功证据按原适用范围复用。",
         "crm_delivery": {
@@ -170175,9 +170185,54 @@
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "adopted_scope": "Native complete baseline C2/collection/recovery/publication background host; delta/ACK/revocation and native observability remain",
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "crm_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "crm_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave130-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W130-01",
+          "remote_target": "e11613a324cdddbfa88f93210df4f8b15b5c593d",
+          "source": "10da4994fd58dfc6f1ee2d07b1555da88706516f",
+          "branch": "codex/w130-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/545"
+        }
+      },
+      "wave131_delivery": {
+        "status": "CRM_AND_HANDOFF_ADOPTED_MAIN_READY",
+        "report": "docs/development/evidence/W131-01/DELIVERY.md",
+        "validation": "12项唯一相关本地检查通过：CRM11、Main1；必需0跳过。实际原生HTTP、普通PostgreSQL写入、提交后确认、最终持锁门撤权及实际Main原文跨进程采用均通过；未变成功来源复用，原失败保留。",
+        "crm_delivery": {
+          "result": "PASS",
+          "source": "58c4ac76f5517c8d432290fde081d21f9ca2bacb",
+          "main": "8513d075518227bde3e79787559e5977e38d4095",
+          "pr": "https://github.com/GTX537/CP6.CRM/pull/155",
+          "exact_tree_adoption": true,
+          "at": "2026-10-25T07:49:22.013307+00:00"
+        },
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "041afd052a83b873de856eddf01027e4645a6786",
+          "main": "de6e896e9dcca302802d315bc2fc45ca9fa718c3",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/107",
+          "exact_tree_adoption": true,
+          "at": "2026-10-25T07:52:07.030281+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "adopted_scope": "Default-off trusted native identity delta HTTP, PostgreSQL caller transaction, persisted post-commit ACK and session revocation; current broker/enterprise transport and native API observability remain",
         "lifecycle_complete": false,
         "lifecycle_snapshot": {
-          "main_task": "CP6:W130-01",
+          "main_task": "CP6:W131-01",
           "main_finish_required": true,
           "main_seat_released": false,
           "crm_seat_released": true,
@@ -170185,7 +170240,7 @@
           "handoff_delivery_complete": true,
           "handoff_seat_released": true,
           "handoff_branch_deleted": true,
-          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave130-final-verification.json"
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave131-final-verification.json"
         }
       }
     },
@@ -171042,7 +171097,7 @@
         "seats_released": true
       },
       "wave130_delivery": {
-        "status": "CRM_AND_HANDOFF_ADOPTED_MAIN_READY",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W130-01/DELIVERY.md",
         "validation": "34项唯一相关本地检查通过：CRM29、Main5；必需0跳过，原失败及针对性复测保留，未变化成功证据按原适用范围复用。",
         "crm_delivery": {
@@ -171064,9 +171119,54 @@
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "adopted_scope": "Native complete baseline C2/collection/recovery/publication background host; delta/ACK/revocation and native observability remain",
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "crm_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "crm_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave130-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W130-01",
+          "remote_target": "e11613a324cdddbfa88f93210df4f8b15b5c593d",
+          "source": "10da4994fd58dfc6f1ee2d07b1555da88706516f",
+          "branch": "codex/w130-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/545"
+        }
+      },
+      "wave131_delivery": {
+        "status": "CRM_AND_HANDOFF_ADOPTED_MAIN_READY",
+        "report": "docs/development/evidence/W131-01/DELIVERY.md",
+        "validation": "12项唯一相关本地检查通过：CRM11、Main1；必需0跳过。实际原生HTTP、普通PostgreSQL写入、提交后确认、最终持锁门撤权及实际Main原文跨进程采用均通过；未变成功来源复用，原失败保留。",
+        "crm_delivery": {
+          "result": "PASS",
+          "source": "58c4ac76f5517c8d432290fde081d21f9ca2bacb",
+          "main": "8513d075518227bde3e79787559e5977e38d4095",
+          "pr": "https://github.com/GTX537/CP6.CRM/pull/155",
+          "exact_tree_adoption": true,
+          "at": "2026-10-25T07:49:22.013307+00:00"
+        },
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "041afd052a83b873de856eddf01027e4645a6786",
+          "main": "de6e896e9dcca302802d315bc2fc45ca9fa718c3",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/107",
+          "exact_tree_adoption": true,
+          "at": "2026-10-25T07:52:07.030281+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "adopted_scope": "Default-off trusted native identity delta HTTP, PostgreSQL caller transaction, persisted post-commit ACK and session revocation; current broker/enterprise transport and native API observability remain",
         "lifecycle_complete": false,
         "lifecycle_snapshot": {
-          "main_task": "CP6:W130-01",
+          "main_task": "CP6:W131-01",
           "main_finish_required": true,
           "main_seat_released": false,
           "crm_seat_released": true,
@@ -171074,7 +171174,7 @@
           "handoff_delivery_complete": true,
           "handoff_seat_released": true,
           "handoff_branch_deleted": true,
-          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave130-final-verification.json"
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave131-final-verification.json"
         }
       }
     },
@@ -173542,7 +173642,7 @@
         "seats_released": true
       },
       "wave130_delivery": {
-        "status": "CRM_AND_HANDOFF_ADOPTED_MAIN_READY",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W130-01/DELIVERY.md",
         "validation": "34项唯一相关本地检查通过：CRM29、Main5；必需0跳过，原失败及针对性复测保留，未变化成功证据按原适用范围复用。",
         "crm_delivery": {
@@ -173564,9 +173664,54 @@
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "adopted_scope": "Native complete baseline C2/collection/recovery/publication background host; delta/ACK/revocation and native observability remain",
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "crm_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "crm_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave130-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W130-01",
+          "remote_target": "e11613a324cdddbfa88f93210df4f8b15b5c593d",
+          "source": "10da4994fd58dfc6f1ee2d07b1555da88706516f",
+          "branch": "codex/w130-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/545"
+        }
+      },
+      "wave131_delivery": {
+        "status": "CRM_AND_HANDOFF_ADOPTED_MAIN_READY",
+        "report": "docs/development/evidence/W131-01/DELIVERY.md",
+        "validation": "12项唯一相关本地检查通过：CRM11、Main1；必需0跳过。实际原生HTTP、普通PostgreSQL写入、提交后确认、最终持锁门撤权及实际Main原文跨进程采用均通过；未变成功来源复用，原失败保留。",
+        "crm_delivery": {
+          "result": "PASS",
+          "source": "58c4ac76f5517c8d432290fde081d21f9ca2bacb",
+          "main": "8513d075518227bde3e79787559e5977e38d4095",
+          "pr": "https://github.com/GTX537/CP6.CRM/pull/155",
+          "exact_tree_adoption": true,
+          "at": "2026-10-25T07:49:22.013307+00:00"
+        },
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "041afd052a83b873de856eddf01027e4645a6786",
+          "main": "de6e896e9dcca302802d315bc2fc45ca9fa718c3",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/107",
+          "exact_tree_adoption": true,
+          "at": "2026-10-25T07:52:07.030281+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "adopted_scope": "Default-off trusted native identity delta HTTP, PostgreSQL caller transaction, persisted post-commit ACK and session revocation; current broker/enterprise transport and native API observability remain",
         "lifecycle_complete": false,
         "lifecycle_snapshot": {
-          "main_task": "CP6:W130-01",
+          "main_task": "CP6:W131-01",
           "main_finish_required": true,
           "main_seat_released": false,
           "crm_seat_released": true,
@@ -173574,7 +173719,7 @@
           "handoff_delivery_complete": true,
           "handoff_seat_released": true,
           "handoff_branch_deleted": true,
-          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave130-final-verification.json"
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave131-final-verification.json"
         }
       }
     },
@@ -191559,10 +191704,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261025-wave130",
-      "path": "docs/development/dispatch/20261025-wave130/README.md",
-      "baseline_sha": "9297eb12cc997f25c5c10271f5abf3f19b1846c5",
-      "registered_at": "2026-10-25T06:26:40.113563+00:00",
+      "id": "20261025-wave131",
+      "path": "docs/development/dispatch/20261025-wave131/README.md",
+      "baseline_sha": "e11613a324cdddbfa88f93210df4f8b15b5c593d",
+      "registered_at": "2026-10-25T07:22:10.667535+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -191579,32 +191724,32 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W130-01",
-          "implementation_task": "W130-02",
+          "id": "W131-01",
+          "implementation_task": "W131-02",
           "related_tasks": [
             "WP02-06",
             "WP02-09",
             "WP02-29"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Actual native PostgreSQL identity baseline collection/publication host",
+          "title": "Trusted native identity delta ingress, post-commit ACK and revocation propagation",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "24c785a0578b7b383c682b6bed37988fff80e13a",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261025T062640Z-wave130-start/MESSAGE.md",
-            "at": "2026-10-25T06:26:40.113563+00:00",
-            "branch": "codex/w130-handoff"
+            "commit": "efc064121b8576b6f88a6a6fd5984cd3d0b72e8e",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261025T072210Z-wave131-start/MESSAGE.md",
+            "at": "2026-10-25T07:22:10.667535+00:00",
+            "branch": "codex/w131-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w130-01",
+          "branch": "codex/w131-01",
           "crm_worktree": "D:\\CP6-worktrees\\dev-2",
-          "crm_branch": "codex/w130-02",
-          "planned_scope_ref": "docs/development/dispatch/20261025-wave130/README.md",
+          "crm_branch": "codex/w131-02",
+          "planned_scope_ref": "docs/development/dispatch/20261025-wave131/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -191612,10 +191757,10 @@
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
-          "validation": "34项唯一相关本地检查通过：CRM29、Main5；必需0跳过，原失败及针对性复测保留，未变化成功证据按原适用范围复用。",
-          "worker_delivery_ref": "docs/development/evidence/W130-01/DELIVERY.md",
+          "validation": "12项唯一相关本地检查通过：CRM11、Main1；必需0跳过。实际原生HTTP、普通PostgreSQL写入、提交后确认、最终持锁门撤权及实际Main原文跨进程采用均通过；未变成功来源复用，原失败保留。",
+          "worker_delivery_ref": "docs/development/evidence/W131-01/DELIVERY.md",
           "lifecycle_snapshot": {
-            "main_task": "CP6:W130-01",
+            "main_task": "CP6:W131-01",
             "main_finish_required": true,
             "main_seat_released": false,
             "crm_seat_released": true,
@@ -191623,16 +191768,16 @@
             "handoff_delivery_complete": true,
             "handoff_seat_released": true,
             "handoff_branch_deleted": true,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave130-final-verification.json"
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave131-final-verification.json"
           }
         }
       ],
       "horizon": {
-        "started_at": "2026-10-25T06:25:23.245775+00:00",
+        "started_at": "2026-10-25T07:21:01.855956+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          90,
-          150
+          115,
+          190
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -191640,20 +191785,10 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Implement trusted native delta ingress with post-commit ACK and current revocation fence, then native API observability; retain original D2/D3/D6/D7 necessary exits.",
-      "prerequisite_bug": {
-        "issue": 543,
-        "phase": "CLOSED",
-        "next_action": "Original native C2-directory-PG reproduction passed; issue closed; fix branch and slot already disposed.",
-        "pr": 544,
-        "remote_main": "2e287861179be170cf6013e311eb608378871597",
-        "issue_closed": true,
-        "branch_deleted": true,
-        "seat_released": true
-      },
-      "validation": "34项唯一相关本地检查通过：CRM29、Main5；必需0跳过，原失败及针对性复测保留，未变化成功证据按原适用范围复用。",
+      "next_action": "Implement native API observability, retain current broker/enterprise transport prerequisites, then complete original D2/D3/D6/D7 necessary exits.",
+      "validation": "12项唯一相关本地检查通过：CRM11、Main1；必需0跳过。实际原生HTTP、普通PostgreSQL写入、提交后确认、最终持锁门撤权及实际Main原文跨进程采用均通过；未变成功来源复用，原失败保留。",
       "lifecycle_snapshot": {
-        "main_task": "CP6:W130-01",
+        "main_task": "CP6:W131-01",
         "main_finish_required": true,
         "main_seat_released": false,
         "crm_seat_released": true,
@@ -191661,7 +191796,7 @@
         "handoff_delivery_complete": true,
         "handoff_seat_released": true,
         "handoff_branch_deleted": true,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave130-final-verification.json"
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave131-final-verification.json"
       }
     },
     "wave_history": [
@@ -210127,6 +210262,153 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/105"
           }
         ]
+      },
+      {
+        "id": "20261025-wave130",
+        "path": "docs/development/dispatch/20261025-wave130/README.md",
+        "baseline_sha": "9297eb12cc997f25c5c10271f5abf3f19b1846c5",
+        "registered_at": "2026-10-25T06:26:40.113563+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W130-01",
+            "implementation_task": "W130-02",
+            "related_tasks": [
+              "WP02-06",
+              "WP02-09",
+              "WP02-29"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Actual native PostgreSQL identity baseline collection/publication host",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "24c785a0578b7b383c682b6bed37988fff80e13a",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261025T062640Z-wave130-start/MESSAGE.md",
+              "at": "2026-10-25T06:26:40.113563+00:00",
+              "branch": "codex/w130-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w130-01",
+            "crm_worktree": "D:\\CP6-worktrees\\dev-2",
+            "crm_branch": "codex/w130-02",
+            "planned_scope_ref": "docs/development/dispatch/20261025-wave130/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "validation": "34项唯一相关本地检查通过：CRM29、Main5；必需0跳过，原失败及针对性复测保留，未变化成功证据按原适用范围复用。",
+            "worker_delivery_ref": "docs/development/evidence/W130-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "crm_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "crm_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave130-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-25T06:25:23.245775+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            90,
+            150
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Implement trusted native delta ingress with post-commit ACK and current revocation fence, then native API observability; retain original D2/D3/D6/D7 necessary exits.",
+        "prerequisite_bug": {
+          "issue": 543,
+          "phase": "CLOSED",
+          "next_action": "Original native C2-directory-PG reproduction passed; issue closed; fix branch and slot already disposed.",
+          "pr": 544,
+          "remote_main": "2e287861179be170cf6013e311eb608378871597",
+          "issue_closed": true,
+          "branch_deleted": true,
+          "seat_released": true
+        },
+        "validation": "34项唯一相关本地检查通过：CRM29、Main5；必需0跳过，原失败及针对性复测保留，未变化成功证据按原适用范围复用。",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "crm_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "crm_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave130-final-verification.json"
+        },
+        "actual_registered_wave_minutes": 51.35,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W130-01",
+            "remote_target": "e11613a324cdddbfa88f93210df4f8b15b5c593d",
+            "source": "10da4994fd58dfc6f1ee2d07b1555da88706516f",
+            "branch": "codex/w130-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/545"
+          },
+          {
+            "repository": "CP6.CRM",
+            "task": "W130-02",
+            "remote_target": "04bf47e1078c8f741ba79eee94f3e94b44fa84f3",
+            "source": "1c08f74f089d07c70a226360a32a7f548904a876",
+            "branch": "codex/w130-02",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.CRM/pull/154"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W130-HANDOFF",
+            "remote_target": "82fef5963d59ed9e3994be46bf948e76c61eeca5",
+            "source": "600b3e42ab2e4b9035bde6bf72d0d55da42fafc0",
+            "branch": "codex/w130-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/106"
+          },
+          {
+            "repository": "CP6",
+            "task": "BUG-543-DIRECTORY-CURRENT",
+            "remote_target": "e11613a324cdddbfa88f93210df4f8b15b5c593d",
+            "source": "9bf59336dd3e908d54ab204fad09199631da56c9",
+            "branch": "codex/bug-543-directory-current",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/544"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -210267,11 +210549,11 @@
           "id": "D5",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W130-01",
-          "prerequisite_adjustment": "Native baseline host adopted; no legacy EF fallback. Trusted delta propagation/post-commit ACK and native API observability remain.",
-          "next_action": "Implement trusted native delta ingress with post-commit ACK and current revocation fence, then native API observability; retain original D2/D3/D6/D7 necessary exits.",
+          "current_window": "W131-01",
+          "prerequisite_adjustment": "Native baseline and delta/committed ACK/revocation hosts adopted locally; no legacy EF fallback. Native API observability and actual broker/enterprise transport prerequisites remain.",
+          "next_action": "Implement native API observability, retain current broker/enterprise transport prerequisites, then complete original D2/D3/D6/D7 necessary exits.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
-          "remaining": "D5可信delta入口、提交后ACK、及时跨仓撤权和原生API可观测性仍待；基线轮询不等于即时撤权。完整D5及正式目标/验收不提升；D2、D3、D6、D7继续原计划必要出口。",
+          "remaining": "D5原生API可观测性仍待；本轮实际Dapr/Kafka链路NOT_RUN，真实企业传输ACL/凭据/登记、协调撤销和生产传播SLO未证明。D2、D3、D6、D7继续原计划必要出口，完整D5与正式验收不提升。",
           "adopted_baseline_host": {
             "result": "PASS",
             "source": "1c08f74f089d07c70a226360a32a7f548904a876",
@@ -210280,7 +210562,15 @@
             "exact_tree_adoption": true,
             "at": "2026-10-25T07:10:14.495010+00:00"
           },
-          "report": "docs/development/evidence/W130-01/DELIVERY.md"
+          "report": "docs/development/evidence/W131-01/DELIVERY.md",
+          "adopted_delta_host": {
+            "result": "PASS",
+            "source": "58c4ac76f5517c8d432290fde081d21f9ca2bacb",
+            "main": "8513d075518227bde3e79787559e5977e38d4095",
+            "pr": "https://github.com/GTX537/CP6.CRM/pull/155",
+            "exact_tree_adoption": true,
+            "at": "2026-10-25T07:49:22.013307+00:00"
+          }
         },
         {
           "id": "D6",
