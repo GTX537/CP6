@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-25：W132原生操作面与观测待Main收尾
+
+17项唯一相关CRM本地检查通过，必需0跳过：真实原生HTTP/PG、操作权限隔离、有界探针及取消、多宿主传播、Owner重放、未知COMMIT消息恢复、后台采集和最终持锁撤权。 CRM156/Handoff108已正常合并、准确分支删除及finish；Main正常收尾继续。[交付](../development/evidence/W132-01/DELIVERY.md)。D5实际宿主镜像/加载来源的适用验证器及独立资格仍待；当前Dapr/Kafka、企业TLS/ACL/凭据/登记和生产SLO未证。D2/D3写入口前置、D6原生Outbox发布/恢复及必要公共支撑、D7最终集成继续原出口，完整阶段/正式验收不提升。
+
 ## 2026-10-25：W131原生身份增量宿主待Main收尾
 
 12项唯一相关本地检查通过：CRM11、Main1；必需0跳过。实际原生HTTP、普通PostgreSQL写入、提交后确认、最终持锁门撤权及实际Main原文跨进程采用均通过；未变成功来源复用，原失败保留。 CRM155/Handoff107已正常合并、准确分支删除和finish；Main正常收尾继续。[交付](../development/evidence/W131-01/DELIVERY.md)。D5原生API可观测性仍待；本轮实际Dapr/Kafka链路NOT_RUN，真实企业传输ACL/凭据/登记、协调撤销和生产传播SLO未证明。D2、D3、D6、D7继续原计划必要出口，完整D5与正式验收不提升。
