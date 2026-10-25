@@ -84,6 +84,8 @@ internal static class IdentityDirectoryRowSecurityV1
                     pg_catalog.to_regprocedure('cp6_authentication_v1.admission_revision_writer()'),
                     pg_catalog.to_regprocedure('cp6_authentication_v1.organization_revision_writer()'),
                     pg_catalog.to_regprocedure('cp6_authentication_v1.permission_catalog_writer()'),
+                    pg_catalog.to_regprocedure('cp6_inquiry_scope_v1.changed()'),
+                    pg_catalog.to_regprocedure('cp6_inquiry_scope_v1.require_snapshot()'),
                     pg_catalog.to_regprocedure('cp6_order_owner_v1.mapping_validate()'),
                     pg_catalog.to_regprocedure('cp6_order_owner_v1.mapping_revision()'),
                     pg_catalog.to_regprocedure('cp6_operations_owner_v1.mapping_validate()'),
@@ -100,12 +102,13 @@ internal static class IdentityDirectoryRowSecurityV1
                     pg_catalog.to_regprocedure('cp6_stock_outbox_v1.run_guard()'),
                     pg_catalog.to_regprocedure('cp6_storage_identity.set_rowversion_v1()')]) known(oid) WHERE known.oid=p.oid)
                   OR EXISTS(SELECT FROM pg_catalog.aclexplode(coalesce(p.proacl,pg_catalog.acldefault('f',p.proowner))) a
-                    WHERE a.grantee<>p.proowner AND NOT(n.nspname NOT IN ('cp6_authentication_v1','cp6_platform_admin_guard_v1','cp6_order_owner_v1','cp6_operations_owner_v1','cp6_oee_legacy_v1','cp6_main_owner_v1','cp6_stock_outbox_v1')
+                    WHERE a.grantee<>p.proowner AND NOT(n.nspname NOT IN ('cp6_authentication_v1','cp6_platform_admin_guard_v1','cp6_order_owner_v1','cp6_operations_owner_v1','cp6_oee_legacy_v1','cp6_main_owner_v1','cp6_stock_outbox_v1','cp6_inquiry_scope_v1')
                       AND a.grantee=0 AND a.privilege_type='EXECUTE' AND NOT a.is_grantable))))
-              -- Exact bodies from the frozen order/standalone/Machine/OEE/original-operation/Outbox migrations.
+              -- Exact bodies from the frozen business migrations, including Sample mapping and InquiryRoleScopes.
+              -- Preserve the previously accepted Machine mapping body alongside the current Sample mapping.
               -- Normalize line endings only; names alone cannot admit a modified function.
               AND NOT EXISTS(SELECT FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid=p.pronamespace
-                WHERE n.nspname IN ('cp6_order_owner_v1','cp6_operations_owner_v1','cp6_oee_legacy_v1','cp6_main_owner_v1','cp6_stock_outbox_v1') AND (
+                WHERE n.nspname IN ('cp6_order_owner_v1','cp6_operations_owner_v1','cp6_oee_legacy_v1','cp6_main_owner_v1','cp6_stock_outbox_v1','cp6_inquiry_scope_v1') AND (
                   p.prokind<>'f' OR p.prorettype<>'pg_catalog.trigger'::regtype
                   OR p.prolang<>(SELECT oid FROM pg_catalog.pg_language WHERE lanname='plpgsql')
                   OR p.proconfig IS DISTINCT FROM ARRAY['search_path=pg_catalog']::text[]
@@ -113,6 +116,9 @@ internal static class IdentityDirectoryRowSecurityV1
                     ('cp6_order_owner_v1.mapping_validate()','ada038b2302f27f04dc5dee3eb85e789168507e44764417fbd5419098ca2226c'),
                     ('cp6_order_owner_v1.mapping_revision()','c5c89bd436c2274f8273fa79f108b8924a00e24b52878ea12a28502f3ed57ddf'),
                     ('cp6_operations_owner_v1.mapping_validate()','13023cd79517db0282f75a2de4ab95685fb70753c9cf0583e64ff4ede5e32a65'),
+                    ('cp6_operations_owner_v1.mapping_validate()','c1eeb7d5b8d8f45845eb92d9080028cb063272ded410c0061c91144a9f3ff652'),
+                    ('cp6_inquiry_scope_v1.changed()','9fbba38e14f8bb80ce47c0eec9cef29aa4c04e1b98a54e99b068abcc5b3799a9'),
+                    ('cp6_inquiry_scope_v1.require_snapshot()','a80bf1e0875c51639a4f7a9d753900d725fafec24e31fbeab2be4b19410867a4'),
                     ('cp6_operations_owner_v1.mapping_revision()','69ceefaa980ec8291a7a88710964052ede18ab78c185ca736df460deac1757dd'),
                     ('cp6_main_owner_v1.immutable()','8cebf6e39cd698ea785b4205cf167597da7156404fac050fb48ea8cb5388d026'),
                     ('cp6_oee_legacy_v1.validate()','7753e263d9fae459905aefc5cdb294a1e0f0150f349896f977efe887fc4c281e'),

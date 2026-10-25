@@ -160442,6 +160442,11 @@
       "date": "2026-10-25",
       "change": "W129 original exit audit: D4 first actual Owner/outbox exit closed from adopted W43/44/50/96/98;D1+D4=2/7 stages,not effort percentage;D2/D3/D5/D6/D7 remain;42–70h low-confidence execution estimate excludes external waits;formal task/target/runtime states unchanged.",
       "evidence": "docs/development/evidence/W129-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-25",
+      "change": "BUG543 exact current mapping/inquiry migration functions admitted; four Main plus one CRM actual-source checks passed. Resume W130 after normal remote adoption; original seven-day exits unchanged.",
+      "evidence": "docs/development/evidence/BUG-543/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -169719,6 +169724,16 @@
         "seat_released": true,
         "issue_closed": true,
         "actual_crm_cross_repository_passed": true
+      },
+      "wave130_prerequisite_fix": {
+        "issue": "https://github.com/GTX537/CP6/issues/543",
+        "report": "docs/development/evidence/BUG-543/DELIVERY.md",
+        "status": "VALIDATED_AWAITING_REMOTE_ADOPTION",
+        "branch": "codex/bug-543-directory-current",
+        "chat": "COORD",
+        "related_main_tests_passed": 4,
+        "related_crm_child_tests_passed": 1,
+        "full_task_completed": false
       }
     },
     {
