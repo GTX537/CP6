@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-25：W133原生事件发布恢复待Main收尾
+
+20项唯一相关CRM本地检查通过、必需0跳过：真实原生Owner/HTTP/PG、五类原事件、原run/提交收据恢复、并发/当前权限及角色隔离、取消停止、保护漂移，含真实60分钟匿名化及最终代码原文复核。 CRM/Handoff已正常合并、准确分支删除及finish；Main正常收尾继续。[交付](../development/evidence/W133-01/DELIVERY.md)。下一独立任务先处理[CRM #157](https://github.com/GTX537/CP6.CRM/issues/157)，再核D6 NUM/FILE/PRIV在冻结公开提交/H01路径的准确适用、版本接口和真实政策/日历来源继续核对；当前真实Dapr/Kafka/企业TLS/ACL/凭据/登记/消费者/SLO仍未证。D2新对象归属及REP/RMA写Owner共同门、D3计划写入口、D5实际宿主独立资格和D7最终集成保留，不扩展全部隐私导出或125目标。
+
 ## 2026-10-25：W132原生操作面与观测待Main收尾
 
 17项唯一相关CRM本地检查通过，必需0跳过：真实原生HTTP/PG、操作权限隔离、有界探针及取消、多宿主传播、Owner重放、未知COMMIT消息恢复、后台采集和最终持锁撤权。 CRM156/Handoff108已正常合并、准确分支删除及finish；Main正常收尾继续。[交付](../development/evidence/W132-01/DELIVERY.md)。D5实际宿主镜像/加载来源的适用验证器及独立资格仍待；当前Dapr/Kafka、企业TLS/ACL/凭据/登记和生产SLO未证。D2/D3写入口前置、D6原生Outbox发布/恢复及必要公共支撑、D7最终集成继续原出口，完整阶段/正式验收不提升。
