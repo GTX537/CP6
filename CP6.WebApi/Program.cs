@@ -553,8 +553,8 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("crm-opportunity", "CRM 商机"
 // Inquiry source fields have their own explicit wire mapping; registration alone grants no action or resource scope.
 CP6.Core.Services.Sys.FieldRegistry.Register(CP6.WebApi.Services.InquiryIntakePermissionSourceV1.Resource,
     CP6.WebApi.Services.InquiryIntakePermissionSourceV1.Fields.Select(x => new CP6.Core.Services.Sys.FieldRegistry.Field(x, x)).ToArray());
-CP6.Core.Services.Sys.FieldRegistry.Register(CP6.WebApi.Services.InquiryConsentPermissionSourceV1.Resource,
-    CP6.WebApi.Services.InquiryConsentPermissionSourceV1.Fields.Select(x => new CP6.Core.Services.Sys.FieldRegistry.Field(x, x)).ToArray());
+CP6.Core.Services.Sys.FieldRegistry.Register(CP6.WebApi.Services.InquiryPrivacyFieldCatalogV1.Resource,
+    CP6.WebApi.Services.InquiryPrivacyFieldCatalogV1.Fields.Select(x => new CP6.Core.Services.Sys.FieldRegistry.Field(x, x)).ToArray());
 CP6.Core.Services.Sys.FieldRegistry.Register("order",
     new CP6.Core.Services.Sys.FieldRegistry.Field("UnitPrice", "単価"),
     new CP6.Core.Services.Sys.FieldRegistry.Field("Amount", "金額"));
