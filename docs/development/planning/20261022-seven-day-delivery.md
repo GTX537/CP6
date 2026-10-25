@@ -1208,3 +1208,11 @@ Handoff [PR100](https://github.com/GTX537/CP6.AI-Handoff/pull/100)采用 `684da5
 ## W125实际交付准备
 
 23项唯一相关本地检查通过：1项真实PostgreSQL主体归属回归、2项原主体导出检查、20项现有平台权限过滤检查，必需0跳过。Vue SFC/TypeScript编译与五语SSR通过（UI壳组件替身，不称浏览器或HTTP验证）。 原估60–100分钟，截至准备11.37分钟；最终以两仓finish区间去重计。完整SYS-PRIV Owner目录/审批/共同权限门、嵌套字段分类、FILE operation/当前下载、人类撤回、CRM导出及原生outbox发布仍待实际采用。 [报告](../evidence/W125-01/DELIVERY.md)。七天ACTIVE。
+
+## W126人工撤回同意权限来源窗口
+
+Main20–30分钟，CRM15–25分钟，验证审查10–20分钟，收尾10–15分钟；合计55–90。[范围](../dispatch/20261025-wave126/README.md)。W125已闭环，七天ACTIVE。
+
+## W126实际交付准备
+
+48项唯一相关本地检查通过：Main17项PostgreSQL/真实登录OIDC/HTTP，CRM29项具体保护会话/HTTP/当前来源，跨仓实际签名/原始快照到CRM PostgreSQL2项；必需0跳过。 原估55–90分钟，截至准备26.25分钟，最终以三仓finish计一次。CRM/Handoff已闭环，Main待收尾；[报告](../evidence/W126-01/DELIVERY.md)。原生撤回Owner、精确Submission/Consent资源、ETag/幂等槽、原事务即时事实和目标本地版本事件、页面入口紧随后继；撤回不改已有保留deadline。隐私导出/FILE当前下载/嵌套分类与原生Outbox发布仍另行采用。 七天ACTIVE。

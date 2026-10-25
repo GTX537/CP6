@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-25：W126人工撤回同意权限来源待Main收尾
+
+48项唯一相关本地检查通过：Main17项PostgreSQL/真实登录OIDC/HTTP，CRM29项具体保护会话/HTTP/当前来源，跨仓实际签名/原始快照到CRM PostgreSQL2项；必需0跳过。 CRM151/Handoff102已合并、准确分支删除与finish；Main候选待正常合并。PG停止，正式总数不变、七天ACTIVE。[交付](../development/evidence/W126-01/DELIVERY.md)。原生撤回Owner、精确Submission/Consent资源、ETag/幂等槽、原事务即时事实和目标本地版本事件、页面入口紧随后继；撤回不改已有保留deadline。隐私导出/FILE当前下载/嵌套分类与原生Outbox发布仍另行采用。
+
 ## 2026-10-25：W125主体导出归属修复待合并
 
 23项唯一相关本地检查通过：1项真实PostgreSQL主体归属回归、2项原主体导出检查、20项现有平台权限过滤检查，必需0跳过。Vue SFC/TypeScript编译与五语SSR通过（UI壳组件替身，不称浏览器或HTTP验证）。 [交付](../development/evidence/W125-01/DELIVERY.md)。Issue537基线失败已复现并修复；语言全仓1054既存缺项保留，扫描输入未变。自有PG停止，Main/Handoff最终合并及finish待，正式总数不变，七天ACTIVE。

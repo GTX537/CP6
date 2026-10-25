@@ -133,14 +133,15 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     private async Task InquiryProducerHttp(string purpose, bool humanContext=false)
     {
         await using var h = await Seed(); var intake = purpose.StartsWith("intake:", StringComparison.Ordinal);
-        var pair = intake ? await GrantIntake(h) : (await GrantInquiry(h))[0]; var options = InquiryPermissionSigningTests.Options();
+        var consent = purpose == "privacy:consent-withdraw";
+        var pair = consent ? await GrantConsent(h) : intake ? await GrantIntake(h) : (await GrantInquiry(h))[0]; var options = InquiryPermissionSigningTests.Options();
         if(humanContext)
         {
             (await h.Db.Sys_Users.SingleAsync(x=>x.Id==h.ActorId)).AuthenticationEpoch=Guid.NewGuid();await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();
             await new IdentityBootstrapService(h.Db,ContextRuntime(h.Tenant,options.Issuer)).InitializeAsync(h.Tenant);h.Db.ChangeTracker.Clear();
         }
         var bridgeDirectory = Environment.GetEnvironmentVariable("CP6_INQUIRY_CONFIGURATION_BRIDGE");
-        if (intake) bridgeDirectory = null;
+        if (intake || consent) bridgeDirectory = null;
         if (bridgeDirectory is not null)
             await h.Db.Sys_Users.Where(x => x.Id == h.ActorId).ExecuteUpdateAsync(x => x.SetProperty(u => u.DeptId, h.Parent));
         var environment = IdentityEnvironment(h.Tenant); const string clientSecret = "owned-local-client-secret";
@@ -187,8 +188,12 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
         Assert.True(signed.StatusCode == HttpStatusCode.OK, json); Assert.True(signed.Headers.CacheControl?.NoStore);
         using var outer=JsonDocument.Parse(json);
         if(humanContext && Environment.GetEnvironmentVariable("CP6_HUMAN_CONTEXT_OUTPUT") is {Length:>0} humanOutput)
+        {
+            var sources=await h.Db.CrmIdentitySnapshots.AsNoTracking().Where(x=>x.TenantId==h.Tenant).OrderBy(x=>x.AggregateId).ToArrayAsync();
             await File.WriteAllTextAsync(humanOutput,JsonSerializer.Serialize(new{contextJson=json,publicKeyBase64=options.PublicKeyBase64,activeFromUtc=options.ActiveFromUtc,
-                producer="actual Main login/OIDC/HTTP; unchanged signed bytes; isolated PostgreSQL"}));
+                departmentId=h.Parent,rows=sources.Select(x=>new{x.AggregateId,x.EventType,x.Version,x.PayloadSha256,x.IsDeleted,payloadJson=x.PayloadJson}),
+                producer="actual Main login/OIDC/HTTP; unchanged signed bytes and persisted source payloads; isolated PostgreSQL"},IdentityEventContracts.Json));
+        }
         if(humanContext){Assert.Equal(nonce,outer.RootElement.GetProperty("requestNonce").GetString());Assert.True(ContextSignature(System.Text.Json.Nodes.JsonNode.Parse(json)!.AsObject(),options.PublicKeyBase64,InquiryPermissionSigningKeyV1.HumanContextVersion));}
         using var document = JsonDocument.Parse(humanContext?outer.RootElement.GetProperty("permissionJson").GetString()!:json); Assert.Equal(h.ActorId, document.RootElement.GetProperty("subjectId").GetGuid());
         if (intake)
@@ -222,7 +227,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             }));
             await WaitConfigurationBridge(bridgeDirectory, "saved");
         }
-        var revokeAction = intake ? purpose is "intake:list" or "intake:detail" ? "query" : "add" : "configure";
+        var revokeAction = consent ? "consent-withdraw" : intake ? purpose is "intake:list" or "intake:detail" ? "query" : "add" : "configure";
         await h.Db.Sys_RoleActions.Where(x => x.RoleId == 71 && x.ActionCode == revokeAction).ExecuteDeleteAsync();
         using (var revoked = await host.Send(Projection(command, token))) Assert.Equal(HttpStatusCode.Forbidden, revoked.StatusCode);
         if (bridgeDirectory is not null)
