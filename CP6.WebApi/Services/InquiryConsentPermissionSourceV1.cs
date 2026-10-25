@@ -16,7 +16,7 @@ internal static class InquiryConsentPermissionSourceV1
     {
         var catalog = capture();
         if (!catalog.IsSealed || !catalog.Fields.TryGetValue(Resource, out var definitions)
-            || !definitions.Select(x => x.Name).SequenceEqual(Fields))
+            || !InquiryPrivacyFieldCatalogV1.Matches(definitions.Select(x => x.Name), allowLegacyConsent: true))
             throw new CurrentPermissionUnavailableException();
         var managed = await InquiryIntakePermissionSourceV1.ManagedDepartmentsAsync(db, permissions, "crm-lead", ct);
         var privacy = await InquiryIntakePermissionSourceV1.ManagedDepartmentsAsync(db, permissions, Resource, ct);

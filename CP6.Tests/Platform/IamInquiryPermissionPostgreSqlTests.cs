@@ -134,14 +134,15 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
     {
         await using var h = await Seed(); var intake = purpose.StartsWith("intake:", StringComparison.Ordinal);
         var consent = purpose == "privacy:consent-withdraw";
-        var pair = consent ? await GrantConsent(h) : intake ? await GrantIntake(h) : (await GrantInquiry(h))[0]; var options = InquiryPermissionSigningTests.Options();
+        var privacy = purpose is "privacy:export" or "privacy:download";
+        var pair = privacy ? await GrantPrivacy(h) : consent ? await GrantConsent(h) : intake ? await GrantIntake(h) : (await GrantInquiry(h))[0]; var options = InquiryPermissionSigningTests.Options();
         if(humanContext)
         {
             (await h.Db.Sys_Users.SingleAsync(x=>x.Id==h.ActorId)).AuthenticationEpoch=Guid.NewGuid();await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();
             await new IdentityBootstrapService(h.Db,ContextRuntime(h.Tenant,options.Issuer)).InitializeAsync(h.Tenant);h.Db.ChangeTracker.Clear();
         }
         var bridgeDirectory = Environment.GetEnvironmentVariable("CP6_INQUIRY_CONFIGURATION_BRIDGE");
-        if (intake || consent) bridgeDirectory = null;
+        if (intake || consent || privacy) bridgeDirectory = null;
         if (bridgeDirectory is not null)
             await h.Db.Sys_Users.Where(x => x.Id == h.ActorId).ExecuteUpdateAsync(x => x.SetProperty(u => u.DeptId, h.Parent));
         var environment = IdentityEnvironment(h.Tenant); const string clientSecret = "owned-local-client-secret";
@@ -227,7 +228,7 @@ public sealed partial class IamUserAssignmentsPostgreSqlTests
             }));
             await WaitConfigurationBridge(bridgeDirectory, "saved");
         }
-        var revokeAction = consent ? "consent-withdraw" : intake ? purpose is "intake:list" or "intake:detail" ? "query" : "add" : "configure";
+        var revokeAction = privacy ? "export" : consent ? "consent-withdraw" : intake ? purpose is "intake:list" or "intake:detail" ? "query" : "add" : "configure";
         await h.Db.Sys_RoleActions.Where(x => x.RoleId == 71 && x.ActionCode == revokeAction).ExecuteDeleteAsync();
         using (var revoked = await host.Send(Projection(command, token))) Assert.Equal(HttpStatusCode.Forbidden, revoked.StatusCode);
         if (bridgeDirectory is not null)
