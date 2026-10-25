@@ -1,4 +1,5 @@
 import http from '../http'
+import type { MachineCreationScope, MachineCreationContext, MachineCreationCommand, MachineCreationResult, MachineCreationOperation } from '@/types/mes/machineCreation'
 import type {
   WorkOrderDto,
   WorkOrderSearchQuery,
@@ -262,6 +263,21 @@ export const mesDashboardApi = {
 // MES Phase 4 — 設備管理
 // ─────────────────────────────────────────────────────────────
 export const machineApi = {
+  creationContext() {
+    return http.get<any, Api<MachineCreationContext>>('/mes/machines/creation-context')
+  },
+  creationScope() {
+    return http.get<any, Api<MachineCreationScope>>('/mes/machines/operations/scope')
+  },
+  createOperation(command: MachineCreationCommand) {
+    return http.post<any, Api<MachineCreationResult>>('/mes/machines/operations', command)
+  },
+  readCreation(operationId: string) {
+    return http.get<any, Api<MachineCreationOperation>>(`/mes/machines/operations/${encodeURIComponent(operationId)}`)
+  },
+  closeCreation(operationId: string) {
+    return http.post<any, Api<MachineCreationOperation>>(`/mes/machines/operations/${encodeURIComponent(operationId)}/close`)
+  },
   search(query: MachineSearchQuery) {
     return http.get<any, Api<MachineDto[]>>('/mes/machines', {
       params: query,

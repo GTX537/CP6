@@ -1,6 +1,16 @@
 <template>
   <div class="machine-list">
     <el-alert v-if="intent.error.value" :title="intent.error.value" type="warning" :closable="false" show-icon />
+    <el-alert v-if="creationError" :title="creationError" type="warning" :closable="false" show-icon />
+    <div v-if="allowed('query')" class="creation-recovery">
+      <el-button :disabled="saving" @click="loadCreationScope">{{ t('登録操作の状態を更新') }}</el-button>
+      <template v-if="creationPending">
+        <span>{{ t('確認が必要な登録操作') }}: {{ creationPending }}</span>
+        <el-button :disabled="saving" @click="resolveCreation(false)">{{ t('元の結果を確認') }}</el-button>
+        <el-button :disabled="saving" @click="resolveCreation(true)">{{ t('未実行なら登録を取り消す') }}</el-button>
+      </template>
+      <span v-if="creationResult">{{ creationResult.status === 'COMMITTED' ? t('登録済み') : creationResult.status === 'CLOSED' ? t('未実行の登録を取り消しました') : t('結果は未確認です。再送せず、確認または取消を行ってください。') }} {{ creationResult.result?.machineCd }}</span>
+    </div>
     <el-card shadow="never" class="search-card">
       <el-form :model="query" inline size="small">
         <el-form-item :label="t('設備CD')">
@@ -89,6 +99,12 @@
     <!-- 設備編集 ダイアログ -->
     <el-dialog v-model="dialogVisible" :title="form.machineCd && isEdit ? t('設備編集') : t('設備新規')" width="700px" @closed="resetForm">
       <el-form :model="form" label-width="120px" size="small">
+        <el-form-item v-if="!isEdit && creationContext" :label="t('所属部門')" :required="!creationContext.allowsUnbound">
+          <el-select v-model="creationDepartment" clearable :disabled="saving" :placeholder="t('部門を選択してください')" @clear="creationDepartment = null">
+            <el-option v-for="department in creationContext.departments" :key="department.id" :value="department.id" :label="`${department.code} — ${department.name}`" />
+          </el-select>
+          <span v-if="creationContext.allowsUnbound">{{ t('部門を指定しない登録も可能です') }}</span>
+        </el-form-item>
         <el-row :gutter="12">
           <el-col :span="12">
             <el-form-item :label="t('設備CD')" required>
@@ -224,12 +240,14 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
 import { useOperationsIntent } from '@/composables/useOperationsIntent'
 import { usePermissionStore } from '@/stores/permission'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Check } from '@element-plus/icons-vue'
 import { machineApi } from '@/api/mes/mes'
+import { machineResponse, pendingMachineCreation, saveMachineCreation, resolveMachineCreation } from '@/auth/machineCreationRecovery'
+import type { MachineCreationScope, MachineCreationContext, MachineCreationOperation } from '@/types/mes/machineCreation'
 import {
   MACHINE_STATUS_OPTIONS,
   DOWNTIME_TYPE_OPTIONS,
@@ -257,6 +275,11 @@ const emptyForm = (): MachineDto => ({
   manufacturer: '', model: '', remarks: '', activeFlg: true,
 })
 const form = reactive<MachineDto>(emptyForm())
+const creationContext = ref<MachineCreationContext | null>(null), creationDepartment = ref<string | null>(null)
+const creationScope = ref<MachineCreationScope | null>(null), creationPending = ref<string | null>(null)
+const creationError = ref(''), creationResult = ref<MachineCreationOperation | null>(null)
+let creationReads = 0
+let creationWriting = false
 
 // ─── downtime dialog ───
 const dtDialogVisible = ref(false)
@@ -278,13 +301,16 @@ const saving = intent.busy
 let listSequence = 0, detailSequence = 0
 function clearProtected() {
   listSequence++; detailSequence++; rows.value = []; loading.value = false
+  creationReads++; creationContext.value = null; creationDepartment.value = null; creationScope.value = null
+  creationWriting = false
+  creationPending.value = null; creationError.value = ''; creationResult.value = null
   dialogVisible.value = false; dtDialogVisible.value = false
   Object.assign(form, emptyForm()); Object.assign(dtForm, emptyDt())
 }
 function allowed(action: string) { return permissions.loaded && permissions.has(`mes-machine:${action}`) }
 function forbidden(error: any, writeSettled = false) {
   if ([401, 403].includes(error?.response?.status)) {
-    const unresolved = intent.uncertain.value || (!writeSettled && intent.busy.value)
+    const unresolved = intent.uncertain.value || (!writeSettled && intent.busy.value && !creationWriting)
     intent.invalidate(); clearProtected()
     if (unresolved) {
       intent.uncertain.value = true
@@ -307,9 +333,20 @@ async function search() {
   } finally { if (intent.current(token) && request === listSequence) loading.value = false }
 }
 function reset() { Object.assign(query, defaultQuery()); void search() }
-function openCreate() {
+async function openCreate() {
   if (!allowed('add') || intent.busy.value || intent.uncertain.value) return
-  detailSequence++; Object.assign(form, emptyForm()); isEdit.value = false; dialogVisible.value = true
+  const token = intent.capture(), request = ++detailSequence
+  Object.assign(form, emptyForm()); isEdit.value = false; dialogVisible.value = false
+  creationContext.value = null; creationDepartment.value = null; creationError.value = ''; creationResult.value = null
+  try {
+    const context = machineResponse(await machineApi.creationContext())
+    if (!intent.current(token) || request !== detailSequence || !allowed('add')) return
+    creationReads++; creationScope.value = { tenantId: context.tenantId, actorId: context.actorId }; syncCreationPending()
+    if (creationPending.value) { creationError.value = '先に前回の登録結果を確認してください。'; return }
+    creationContext.value = context; dialogVisible.value = true
+  } catch (error) {
+    if (intent.current(token) && request === detailSequence && !forbidden(error)) creationError.value = '登録できる部門を確認できません。権限と最新状態を確認してください。'
+  }
 }
 async function openEdit(row: MachineDto) {
   if (!allowed('edit') || intent.busy.value || intent.uncertain.value) return
@@ -321,21 +358,85 @@ async function openEdit(row: MachineDto) {
     Object.assign(form, emptyForm(), result.data); isEdit.value = true; dialogVisible.value = true
   } catch (error) { if (intent.current(token) && request === detailSequence) forbidden(error) }
 }
-function resetForm() { detailSequence++; Object.assign(form, emptyForm()) }
+function resetForm() { detailSequence++; Object.assign(form, emptyForm()); creationContext.value = null; creationDepartment.value = null }
 async function onSave() {
   const edit = isEdit.value
   if (!allowed(edit ? 'edit' : 'add')) return
   if (!form.machineCd || !form.machineName) { ElMessage.error(t('設備CDと設備名は必須です')); return }
+  if (!edit) { await saveCreation(); return }
   const token = intent.begin(); if (!token) return
   const input = { ...form }
   try {
-    if (edit) await machineApi.update(input.machineCd, input)
-    else await machineApi.create(input)
+    await machineApi.update(input.machineCd, input)
     if (!intent.current(token)) return
     ElMessage.success(t(edit ? 'ME-MSG-041: 更新しました' : 'ME-MSG-041: 登録しました')); dialogVisible.value = false; void search()
   } catch (error) {
     if (intent.current(token) && !forbidden(error, true)) intent.failed(token, error)
   } finally { intent.finish(token) }
+}
+function syncCreationPending() {
+  if (creationScope.value) creationPending.value = pendingMachineCreation(creationScope.value)
+}
+async function loadCreationScope() {
+  if (saving.value || !allowed('query')) return
+  const token = intent.capture(), read = ++creationReads
+  creationScope.value = null; creationPending.value = null; creationError.value = ''; creationResult.value = null
+  try {
+    const scope = machineResponse(await machineApi.creationScope())
+    if (!intent.current(token) || read !== creationReads || !allowed('query')) return
+    const pending = pendingMachineCreation(scope); creationScope.value = scope; creationPending.value = pending
+  } catch (error) {
+    if (intent.current(token) && read === creationReads && !forbidden(error)) creationError.value = '登録操作の状態を確認できません。権限と保存された操作番号を確認してください。'
+  }
+}
+async function saveCreation() {
+  const context = creationContext.value, department = creationDepartment.value || null
+  if (!dialogVisible.value || !context || !allowed('add')) return
+  if (department === null ? !context.allowsUnbound : !context.departments.some(d => d.id === department)) {
+    creationError.value = '登録する設備の所属部門を選択してください。'; return
+  }
+  const token = intent.begin(); if (!token) return
+  creationWriting = true
+  const input = { ...form }; creationError.value = ''; creationResult.value = null
+  const guard = () => { if (!intent.current(token) || !allowed('add')) throw new Error('操作画面が変わりました。') }
+  try {
+    const result = await saveMachineCreation(context, guard, operationId => machineApi.createOperation({
+      operationId, expectedAuthorityVersion: context.authorityVersion, departmentId: department, machine: input,
+    }))
+    if (!intent.current(token)) return
+    creationResult.value = result; ElMessage.success(t('登録しました')); dialogVisible.value = false; void search()
+  } catch (error) {
+    if (intent.current(token)) {
+      dialogVisible.value = false; Object.assign(form, emptyForm()); creationContext.value = null; creationDepartment.value = null
+      if (!forbidden(error, true)) creationError.value = '結果を確認できません。元の登録操作を確認してください。再送は行いません。'
+    }
+  } finally {
+    if (intent.current(token)) { creationWriting = false; try { syncCreationPending() } catch { creationScope.value = null; creationError.value = '保存された操作番号を確認してください。' } }
+    intent.finish(token)
+  }
+}
+async function resolveCreation(close: boolean) {
+  if (saving.value || !creationScope.value || !allowed('query')) return
+  // Query/close only this original creation; a different legacy write's uncertainty stays intact.
+  const token = intent.capture(); intent.busy.value = true
+  const scope = { ...creationScope.value }; creationError.value = ''; creationResult.value = null
+  const guard = () => { if (!intent.current(token) || !allowed('query')) throw new Error('操作画面が変わりました。') }
+  try {
+    const result = await resolveMachineCreation(scope, close, guard)
+    if (!intent.current(token)) return
+    creationResult.value = result; if (result.status === 'COMMITTED') void search()
+  } catch (error) {
+    if (intent.current(token) && !forbidden(error, true)) creationError.value = '元の結果を確認できません。権限を確認してください。操作番号は保持されます。'
+  } finally {
+    if (intent.current(token)) { try { syncCreationPending() } catch { creationScope.value = null; creationError.value = '保存された操作番号を確認してください。' } }
+    intent.finish(token)
+  }
+}
+function creationStorageChanged(event: StorageEvent) {
+  if (event.key !== null && !event.key.startsWith('cp6_machine_creation_v1:') || saving.value || !creationScope.value) return
+  creationResult.value = null
+  if (!isEdit.value) { dialogVisible.value = false; resetForm() }
+  try { syncCreationPending() } catch { creationScope.value = null; creationError.value = '保存された操作番号を確認してください。' }
 }
 async function onDelete(row: MachineDto) {
   if (!allowed('del')) return
@@ -369,11 +470,13 @@ async function onRegisterDowntime() {
   } finally { intent.finish(token) }
 }
 
-onMounted(() => { search() })
+onMounted(() => { void search(); void loadCreationScope(); window.addEventListener('storage', creationStorageChanged) })
+onBeforeUnmount(() => { window.removeEventListener('storage', creationStorageChanged) })
 </script>
 
 <style scoped>
 .machine-list { padding: 16px; }
+.creation-recovery { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-block: 12px; }
 .search-card { margin-bottom: 12px; }
 .grid-card { margin-bottom: 12px; }
 
