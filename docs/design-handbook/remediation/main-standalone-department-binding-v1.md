@@ -54,3 +54,16 @@ W42、W136以上限制保留其历史范围。W137仅解除本次实际库存写
 - 原库存操作输入与 `Main.Wms.StockOperation.v1` 合同不变。恢复仍要求原真人、当前 query、确切原 Stock 和流水 UUID 的当前可见性及仓区范围；映射继承使合法部门用户可查看刚提交的流水，不把历史部门当作永久授权。提交确认丢失仍按原操作查询；查询或原键重放不会重复库存效果。
 
 实现及本地验证见 [W137交付报告](../../development/evidence/W137-01/DELIVERY.md)。不新增迁移、接口请求字段、角色授权或SQL Server实现，不改变真实运行验收与七天其余出口。
+
+## W138 增量：盘点创建合同 v1（2026-10-25）
+
+原W42对无绑定盘点创建的拒绝是历史基线；本增量只开放真实StockTake创建Owner的新协议，不将Machine或流水继承能力视为通用既有对象重绑。
+
+- GET /api/wms/stock-take/creation-context 在当前wms-stocktake:add、盘点UnitPrice/Amount写及wms-stock:query/UnitPrice读下返回同租户健康部门和AuthorityVersion。范围2/3/4必须明确选择本部门/健康子树/自定义集合中的部门；1不获得任意指派，1/5可保留无绑定创建。版本变化要求重新获取上下文，不自动猜测部门。
+- POST /api/wms/stock-take/operations 接受OperationId、ExpectedAuthorityVersion、DepartmentId及原StockTakePlanDto。Owner分配新UUID，一次性绑定能力限定原DbContext/事务/租户/真人/该新单。旧plan入口仍保持合法本人/全租户行为，部门范围旧入口没有明确归属仍拒绝。
+- 选定的部门只决定新盘点标题归属，不扩张库存权限。全部目标库存必须同时满足盘点与库存查询的当前部门、本人及仓区范围；不可把不可见项静默裁掉。一次捕获完整真实Stock UUID/业务键/数量/单价快照传给实际创建原语，提交前批量复核精确来源与数量/单价。历史库存归属不按业务键推断。
+- 新标题、明细、序号、映射及不可变Main.Wms.StockTakeCreation.v1原结果/审计同事务保存。参数化映射插入前核所有参与者组织版本，之后仅接受自身映射版本变化并核其他组织版本不变；最终仍核当前真人、权限源/注册表/范围/字段/仓区、精确新单UUID与映射revision。前后额外映射变化、源身份替换、源/目标撤权、快照变化均回滚。
+- 同操作同输入只恢复原结果；异输入409；恢复仅原真人、当前query和原新单UUID当前可见性，不允许同业务单号的新对象替代。POST由实际Owner在原事务锁内选择首次add或原结果query，恢复不要求已被撤回的add。GET /operations/{id} 未见结果为UNKNOWN，POST /operations/{id}/close 与创建同锁，未提交写CLOSED墓碑并阻断迟到命令；已提交返回仍有权披露的原结果。
+- 页面只在身份隔离的浏览器互斥锁内创建或恢复；localStorage仅存原操作UUID，不存盘点内容或部门草稿。未知结果不重发/换键；重载后查询或显式关闭。旧身份迟到响应不能跳转或删除引用。已确认创建后页面导航失败保留已提交回执，不能误称提交未知。
+
+[W138实际交付报告](../../development/evidence/W138-01/DELIVERY.md)。本增量不完成Stock/无订单工单创建、REP/RMA或其余七天出口，不回填历史，不新增数据库迁移/角色授予，不提升生产或正式验收。

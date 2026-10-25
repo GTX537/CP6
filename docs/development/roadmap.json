@@ -160527,6 +160527,16 @@
       "date": "2026-10-25",
       "change": "W137 actual stock transaction exact-source inheritance and current original recovery verified across all existing stock primitive parents, including order-cancel savepoints. Handoff adopted/released; Main closeout pending. Full states unchanged.",
       "evidence": "docs/development/evidence/W137-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-25",
+      "change": "W137 closed once from final proof. W138 trusted stocktake creation and original recovery admitted,120–180min,sole COORD. Full states unchanged.",
+      "evidence": "docs/development/dispatch/20261025-wave138/README.md"
+    },
+    {
+      "date": "2026-10-25",
+      "change": "W138 trusted stocktake creation, whole source snapshot and original recovery verified in actual Owner and page. Handoff adopted/released; Main closeout pending. Full states unchanged.",
+      "evidence": "docs/development/evidence/W138-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -168836,7 +168846,7 @@
         }
       },
       "wave137_inheritance": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W137-01/DELIVERY.md",
         "scope": "Actual new StockTransaction inheritance from exact current Stock UUID across existing audited stock writers and Order cancellation; other trusted object creation and formal REP/RMA unchanged.",
         "handoff_delivery": {
@@ -168846,6 +168856,41 @@
           "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/113",
           "exact_tree_adoption": true,
           "at": "2026-10-25T13:08:42.372099+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave137-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W137-01",
+          "remote_target": "c953b514de34efa2a3dae566d601c99a01d91370",
+          "source": "fa1b533ca05116d635158fbace97d4c110b8055a",
+          "branch": "codex/w137-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/552"
+        }
+      },
+      "wave138_creation": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "report": "docs/development/evidence/W138-01/DELIVERY.md",
+        "scope": "Trusted new Stocktake ownership, whole current stock snapshot, original operation recovery and actual page adoption; Stock/WorkOrder and formal REP/RMA remain.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "8be2ad8b5f3d023429252d8c15067258d22c0764",
+          "main": "95f529262714b3ffbaf597ffda3a89ac998f09ac",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/114",
+          "exact_tree_adoption": true,
+          "at": "2026-10-25T14:08:02.170033+00:00"
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
@@ -172005,7 +172050,7 @@
         }
       },
       "wave137_inheritance": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W137-01/DELIVERY.md",
         "scope": "Actual new StockTransaction inheritance from exact current Stock UUID across existing audited stock writers and Order cancellation; other trusted object creation and formal REP/RMA unchanged.",
         "handoff_delivery": {
@@ -172015,6 +172060,41 @@
           "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/113",
           "exact_tree_adoption": true,
           "at": "2026-10-25T13:08:42.372099+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave137-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W137-01",
+          "remote_target": "c953b514de34efa2a3dae566d601c99a01d91370",
+          "source": "fa1b533ca05116d635158fbace97d4c110b8055a",
+          "branch": "codex/w137-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/552"
+        }
+      },
+      "wave138_creation": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "report": "docs/development/evidence/W138-01/DELIVERY.md",
+        "scope": "Trusted new Stocktake ownership, whole current stock snapshot, original operation recovery and actual page adoption; Stock/WorkOrder and formal REP/RMA remain.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "8be2ad8b5f3d023429252d8c15067258d22c0764",
+          "main": "95f529262714b3ffbaf597ffda3a89ac998f09ac",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/114",
+          "exact_tree_adoption": true,
+          "at": "2026-10-25T14:08:02.170033+00:00"
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
@@ -192444,10 +192524,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261025-wave137",
-      "path": "docs/development/dispatch/20261025-wave137/README.md",
-      "baseline_sha": "151705492faa33ed6d79837a20a71912a4feb6d7",
-      "registered_at": "2026-10-25T12:39:14.903262+00:00",
+      "id": "20261025-wave138",
+      "path": "docs/development/dispatch/20261025-wave138/README.md",
+      "baseline_sha": "c953b514de34efa2a3dae566d601c99a01d91370",
+      "registered_at": "2026-10-25T13:34:54.956016+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -192466,28 +192546,28 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W137-01",
+          "id": "W138-01",
           "related_tasks": [
             "WP02-03",
             "WP02-10"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "D2 exact stock transaction ownership inheritance",
+          "title": "D2 trusted stocktake creation and original recovery",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "7328d3b4b3d8be0f1908eb71083c590d3be62b70",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261025T123914Z-wave137-start/MESSAGE.md",
-            "at": "2026-10-25T12:39:14.903262+00:00",
-            "branch": "codex/w137-handoff"
+            "commit": "eb8d4c75ddbff85b96bee860615d01eecbb95239",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261025T133454Z-wave138-start/MESSAGE.md",
+            "at": "2026-10-25T13:34:54.956016+00:00",
+            "branch": "codex/w138-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w137-01",
-          "planned_scope_ref": "docs/development/dispatch/20261025-wave137/README.md",
+          "branch": "codex/w138-01",
+          "planned_scope_ref": "docs/development/dispatch/20261025-wave138/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -192495,8 +192575,8 @@
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
-          "validation": "Actual isolated PostgreSQL/HTTP required checks 171 passed; source provenance, current original disclosure, actual parents and order-cancel savepoint compatibility; failures retained with precise scope, no Actions/production.",
-          "worker_delivery_ref": "docs/development/evidence/W137-01/DELIVERY.md",
+          "validation": "95 actual PostgreSQL/HTTP related results (74 unchanged reuse + final21 focused retest), final19 page/recovery, vue-tsc clean; original failures retained, no Actions/production.",
+          "worker_delivery_ref": "docs/development/evidence/W138-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -192507,7 +192587,7 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-25T12:31:11.867053+00:00",
+        "started_at": "2026-10-25T13:32:48.580777+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
           120,
@@ -192519,7 +192599,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Continue original D2 trusted Stock/Stocktake/no-order WorkOrder creation and actual REP/RMA Owner seams; retain D3 planning, D5 actual host/enterprise transport, D6 real external inputs and D7 final integration.",
+      "next_action": "Continue original D2 trusted Stock and no-order WorkOrder creation, actual REP/RMA Owner seams; retain D3 planning, D5 actual host/enterprise transport, D6 real external inputs and D7 final integration.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -192527,7 +192607,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 39.53
+      "elapsed_registered_wave_minutes": 41.66
     },
     "wave_history": [
       {
@@ -211885,6 +211965,115 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/112"
           }
         ]
+      },
+      {
+        "id": "20261025-wave137",
+        "path": "docs/development/dispatch/20261025-wave137/README.md",
+        "baseline_sha": "151705492faa33ed6d79837a20a71912a4feb6d7",
+        "registered_at": "2026-10-25T12:39:14.903262+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W137-01",
+            "related_tasks": [
+              "WP02-03",
+              "WP02-10"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "D2 exact stock transaction ownership inheritance",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "7328d3b4b3d8be0f1908eb71083c590d3be62b70",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261025T123914Z-wave137-start/MESSAGE.md",
+              "at": "2026-10-25T12:39:14.903262+00:00",
+              "branch": "codex/w137-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w137-01",
+            "planned_scope_ref": "docs/development/dispatch/20261025-wave137/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "validation": "Actual isolated PostgreSQL/HTTP required checks 171 passed; source provenance, current original disclosure, actual parents and order-cancel savepoint compatibility; failures retained with precise scope, no Actions/production.",
+            "worker_delivery_ref": "docs/development/evidence/W137-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave137-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-25T12:31:11.867053+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            120,
+            180
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Continue original D2 trusted Stock/Stocktake/no-order WorkOrder creation and actual REP/RMA Owner seams; retain D3 planning, D5 actual host/enterprise transport, D6 real external inputs and D7 final integration.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave137-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 39.53,
+        "actual_registered_wave_minutes": 56.92,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W137-01",
+            "remote_target": "c953b514de34efa2a3dae566d601c99a01d91370",
+            "source": "fa1b533ca05116d635158fbace97d4c110b8055a",
+            "branch": "codex/w137-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/552"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W137-HANDOFF",
+            "remote_target": "45143d21eee67aceda07b02c97184b3a41f834ee",
+            "source": "22a4c19ce9cad7b8b814f925af20155e8be59753",
+            "branch": "codex/w137-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/113"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -211962,19 +212151,19 @@
           "id": "D2",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W137-01",
+          "current_window": "W138-01",
           "prerequisite_adjustment": "Sample legacy observation Owner; formal Loan/Stock/Site policy adoption separate",
           "adopted_window": "W42-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/395",
           "report": "docs/development/evidence/WP02-03/standalone-department/DELIVERY.md",
-          "remaining": "Machine explicit department creation W136 and exact current-transaction StockTransaction inheritance W137 verified in actual Owners. Stock/Stocktake/no-order WorkOrder trusted creation and formal REP/RMA/IN/Sample policy/source Owner contracts remain unproven.",
+          "remaining": "Machine creation W136 and StockTransaction inheritance W137 adopted remotely; Stocktake creation/recovery W138 validated in actual Owner and page, Main closeout pending. Stock/no-order WorkOrder creation and formal REP/RMA/IN/Sample policy/source contracts remain.",
           "actual_agent_minutes": 39.91,
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "Continue original D2 trusted Stock/Stocktake/no-order WorkOrder creation and actual REP/RMA Owner seams; retain D3 planning, D5 actual host/enterprise transport, D6 real external inputs and D7 final integration.",
+          "next_action": "Continue original D2 trusted Stock and no-order WorkOrder creation, actual REP/RMA Owner seams; retain D3 planning, D5 actual host/enterprise transport, D6 real external inputs and D7 final integration.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
-          "last_creation_report": "docs/development/evidence/W136-01/DELIVERY.md",
+          "last_creation_report": "docs/development/evidence/W138-01/DELIVERY.md",
           "last_inheritance_report": "docs/development/evidence/W137-01/DELIVERY.md"
         },
         {
@@ -211990,7 +212179,7 @@
           "last_window_actual_agent_minutes": 56.28,
           "last_branches_deleted": true,
           "last_seats_released": true,
-          "next_action": "Continue original D2 exact current-transaction StockTransaction ownership inheritance and trusted Stock/Stocktake/no-order WorkOrder creation, each actual Owner and same-UoW; retain formal REP/RMA and original D3/D5/D6/D7 exits.",
+          "next_action": "Complete original D3 planning write adoption with exact Snapshot/Occurrence/Root identity and WorkOrder same-UoW. Current independent serial priority remains D2 Stock/no-order WorkOrder creation.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W136-01/DELIVERY.md"
         },
@@ -212064,7 +212253,7 @@
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
           "current_window": "W135-01",
-          "next_action": "Implement original D2 trusted new-object department ownership and current-transaction inheritance with explicit authoritative department, controlled mapping version transition, current authority fences and original-result recovery; retain REP/RMA, D3 planning, D5 host/enterprise transport and D7 final integration.",
+          "next_action": "Complete original D6 proven enterprise policy/calendar, registration/keys/runtime/broker prerequisites and related actual submission/acceptance integration; no fabricated defaults. Current independent serial priority remains D2 Stock/no-order WorkOrder creation.",
           "prerequisite_adjustment": "W135 exact original-contract applicability/source determination complete; W128 export/download authority sources already adopted, full export remains outside automatic D6 expansion. Full task dependencies remain unchanged.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "remaining": "真实企业政策/专业日历及批准依据、Site/Form/IAM/服务/密钥登记、目标宿主normalizer/时区与运行身份资格、真实broker/消费者/SLO和D7最终相关集成未证。冻结公开/H01 NUM/FILE边界已核定；既有原生发布/激活及当前PRIV来源复用，不重复构造或扩展全隐私导出。",

@@ -41,14 +41,36 @@ public partial class StockTakeService
         var frozen=OperationsOwnerV1.Freeze(dto);
         return Owner.ExecuteAsync(OperationsOwnerV1.StockTake,"add",true,async(a,ct)=>
         {
-            a.RequirePriceWrite();a.RequireAmountWrite();var source=await a.SourceAsync(OperationsOwnerV1.Stock,ct);source.RequirePriceRead();
-            var snapshot=_db.Stocks.AsNoTracking().Where(s=>!s.IsDeleted && s.WarehouseCd==frozen.TargetWarehouseCd);
-            if(!string.IsNullOrWhiteSpace(frozen.TargetLocationPrefix))snapshot=snapshot.Where(s=>s.LocationCd.StartsWith(frozen.TargetLocationPrefix));
-            if(!string.IsNullOrWhiteSpace(frozen.TargetProductCd))snapshot=snapshot.Where(s=>s.ProductCd==frozen.TargetProductCd);
-            var allowed=source.InventoryStocks(a.InventoryStocks()).Select(s=>s.Id);
-            if(await snapshot.AnyAsync(s=>!allowed.Contains(s.Id),ct))throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN",403);
-            var no=await CreatePlanCoreAsync(frozen,a.Actor);a.AtCommit(t=>a.RequireStockTake(no,t));return no;
+            var no=await CreatePlanOwnedAsync(frozen,a,null,ct);a.AtCommit(t=>a.RequireStockTake(no,t));return no;
         });
+    }
+    private async Task<string> CreatePlanOwnedAsync(StockTakePlanDto plan,OperationsAccessV1 access,Guid? id,CancellationToken ct)
+    {
+        access.RequirePriceWrite();access.RequireAmountWrite();
+        var source=await access.SourceAsync(OperationsOwnerV1.Stock,ct);source.RequirePriceRead();
+        var rows=_db.Stocks.AsNoTracking().Where(s=>!s.IsDeleted && s.WarehouseCd==plan.TargetWarehouseCd);
+        if(!string.IsNullOrWhiteSpace(plan.TargetLocationPrefix))rows=rows.Where(s=>s.LocationCd.StartsWith(plan.TargetLocationPrefix));
+        if(!string.IsNullOrWhiteSpace(plan.TargetProductCd))rows=rows.Where(s=>s.ProductCd==plan.TargetProductCd);
+        var snapshot=await rows.OrderBy(s=>s.LocationCd).ThenBy(s=>s.ProductCd).ThenBy(s=>s.LotNo).ToListAsync(ct);
+        var allowed=source.InventoryStocks(access.InventoryStocks());
+        var ids=snapshot.Select(s=>s.Id).ToArray();
+        if(await allowed.CountAsync(s=>ids.Contains(s.Id),ct)!=ids.Length)
+            throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN",403);
+        var number=await CreatePlanCoreAsync(plan,access.Actor,id,snapshot);
+        if(id!=null)access.AtCommit(async t=>
+        {
+            // The new header never grants its creator a different stock or a partial snapshot.
+            var current=await allowed.Where(s=>ids.Contains(s.Id)).ToDictionaryAsync(s=>s.Id,t);
+            foreach(var stock in snapshot)
+            {
+                if(!current.TryGetValue(stock.Id,out var row) || row.WarehouseCd!=stock.WarehouseCd
+                    || row.LocationCd!=stock.LocationCd || row.ProductCd!=stock.ProductCd || row.LotNo!=stock.LotNo)
+                    throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN",403);
+                if(row.PhysicalQty!=stock.PhysicalQty || row.UnitPrice!=stock.UnitPrice)
+                    throw new OrderPriceCorrectionException("STOCKTAKE_SNAPSHOT_CHANGED",409);
+            }
+        });
+        return number;
     }
     public Task StartCountAsync(string no,string? userName)=>!_db.Database.IsNpgsql()?StartCountCoreAsync(no,userName):
         Owner.ExecuteAsync(OperationsOwnerV1.StockTake,"count",true,async(a,ct)=>
