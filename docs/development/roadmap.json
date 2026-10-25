@@ -160467,6 +160467,16 @@
       "date": "2026-10-25",
       "change": "W131 native identity delta/post-commit ACK/revocation:12 unique scoped checks;CRM155/Handoff107 adopted and released;Main closeout pending. Current Dapr/Kafka NOT_RUN;full D5 and all formal task/target/acceptance states unchanged;seven-day ACTIVE.",
       "evidence": "docs/development/dispatch/20261025-wave131/README.md"
+    },
+    {
+      "date": "2026-10-25",
+      "change": "W131 lifecycle reconciled exactly;W132 native API observability/runtime identity/operational adoption admitted,70–110min,sole COORD. Formal full task/target/acceptance states unchanged.",
+      "evidence": "docs/development/dispatch/20261025-wave132/README.md"
+    },
+    {
+      "date": "2026-10-25",
+      "change": "W132 formal bounded native observation/protected operations:17 scoped local checks;CRM156/Handoff108 adopted and released;Main closeout pending. Runtime remains Unproven;host qualification/current broker not accepted. Next original D6 native Outbox prerequisite;all formal task/target/acceptance states unchanged,seven-day ACTIVE.",
+      "evidence": "docs/development/dispatch/20261025-wave132/README.md"
     }
   ],
   "implementation_assessment": {
@@ -170208,7 +170218,7 @@
         }
       },
       "wave131_delivery": {
-        "status": "CRM_AND_HANDOFF_ADOPTED_MAIN_READY",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W131-01/DELIVERY.md",
         "validation": "12项唯一相关本地检查通过：CRM11、Main1；必需0跳过。实际原生HTTP、普通PostgreSQL写入、提交后确认、最终持锁门撤权及实际Main原文跨进程采用均通过；未变成功来源复用，原失败保留。",
         "crm_delivery": {
@@ -170230,17 +170240,26 @@
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "adopted_scope": "Default-off trusted native identity delta HTTP, PostgreSQL caller transaction, persisted post-commit ACK and session revocation; current broker/enterprise transport and native API observability remain",
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "lifecycle_snapshot": {
-          "main_task": "CP6:W131-01",
-          "main_finish_required": true,
-          "main_seat_released": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
           "crm_seat_released": true,
-          "crm_branch_deleted": true,
-          "handoff_delivery_complete": true,
           "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "crm_branch_deleted": true,
           "handoff_branch_deleted": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave131-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W131-01",
+          "remote_target": "d939c4d8303373b40ba943ce6996e5cd98219da0",
+          "source": "4b7f8c40628adcecdb453c6787ffd45a94c5b4e6",
+          "branch": "codex/w131-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/546"
         }
       }
     },
@@ -171142,7 +171161,7 @@
         }
       },
       "wave131_delivery": {
-        "status": "CRM_AND_HANDOFF_ADOPTED_MAIN_READY",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W131-01/DELIVERY.md",
         "validation": "12项唯一相关本地检查通过：CRM11、Main1；必需0跳过。实际原生HTTP、普通PostgreSQL写入、提交后确认、最终持锁门撤权及实际Main原文跨进程采用均通过；未变成功来源复用，原失败保留。",
         "crm_delivery": {
@@ -171164,17 +171183,26 @@
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "adopted_scope": "Default-off trusted native identity delta HTTP, PostgreSQL caller transaction, persisted post-commit ACK and session revocation; current broker/enterprise transport and native API observability remain",
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "lifecycle_snapshot": {
-          "main_task": "CP6:W131-01",
-          "main_finish_required": true,
-          "main_seat_released": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
           "crm_seat_released": true,
-          "crm_branch_deleted": true,
-          "handoff_delivery_complete": true,
           "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "crm_branch_deleted": true,
           "handoff_branch_deleted": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave131-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W131-01",
+          "remote_target": "d939c4d8303373b40ba943ce6996e5cd98219da0",
+          "source": "4b7f8c40628adcecdb453c6787ffd45a94c5b4e6",
+          "branch": "codex/w131-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/546"
         }
       }
     },
@@ -173687,7 +173715,7 @@
         }
       },
       "wave131_delivery": {
-        "status": "CRM_AND_HANDOFF_ADOPTED_MAIN_READY",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W131-01/DELIVERY.md",
         "validation": "12项唯一相关本地检查通过：CRM11、Main1；必需0跳过。实际原生HTTP、普通PostgreSQL写入、提交后确认、最终持锁门撤权及实际Main原文跨进程采用均通过；未变成功来源复用，原失败保留。",
         "crm_delivery": {
@@ -173709,9 +173737,54 @@
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "adopted_scope": "Default-off trusted native identity delta HTTP, PostgreSQL caller transaction, persisted post-commit ACK and session revocation; current broker/enterprise transport and native API observability remain",
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "crm_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "crm_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave131-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W131-01",
+          "remote_target": "d939c4d8303373b40ba943ce6996e5cd98219da0",
+          "source": "4b7f8c40628adcecdb453c6787ffd45a94c5b4e6",
+          "branch": "codex/w131-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/546"
+        }
+      },
+      "wave132_delivery": {
+        "status": "CRM_AND_HANDOFF_ADOPTED_MAIN_READY",
+        "report": "docs/development/evidence/W132-01/DELIVERY.md",
+        "validation": "17项唯一相关CRM本地检查通过，必需0跳过：真实原生HTTP/PG、操作权限隔离、有界探针及取消、多宿主传播、Owner重放、未知COMMIT消息恢复、后台采集和最终持锁撤权。",
+        "crm_delivery": {
+          "result": "PASS",
+          "source": "634d127181bfe1d11f51b58df0a03d2c6d144ef3",
+          "main": "de00251a50e50e9a4750c34efb526d172569a9ab",
+          "pr": "https://github.com/GTX537/CP6.CRM/pull/156",
+          "exact_tree_adoption": true,
+          "at": "2026-10-25T08:22:29.115235+00:00"
+        },
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "4117345f8f349236843c438c4973997edb88b265",
+          "main": "f39750c25ba2b7d2ca7c6b769b334d72f190309f",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/108",
+          "exact_tree_adoption": true,
+          "at": "2026-10-25T08:24:56.864266+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "adopted_scope": "Formal local bounded native-host observation and protected operational health; runtime identity remains Unproven, applicable host qualification and actual broker/enterprise transport still outstanding",
         "lifecycle_complete": false,
         "lifecycle_snapshot": {
-          "main_task": "CP6:W131-01",
+          "main_task": "CP6:W132-01",
           "main_finish_required": true,
           "main_seat_released": false,
           "crm_seat_released": true,
@@ -173719,7 +173792,7 @@
           "handoff_delivery_complete": true,
           "handoff_seat_released": true,
           "handoff_branch_deleted": true,
-          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave131-final-verification.json"
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave132-final-verification.json"
         }
       }
     },
@@ -191704,10 +191777,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261025-wave131",
-      "path": "docs/development/dispatch/20261025-wave131/README.md",
-      "baseline_sha": "e11613a324cdddbfa88f93210df4f8b15b5c593d",
-      "registered_at": "2026-10-25T07:22:10.667535+00:00",
+      "id": "20261025-wave132",
+      "path": "docs/development/dispatch/20261025-wave132/README.md",
+      "baseline_sha": "d939c4d8303373b40ba943ce6996e5cd98219da0",
+      "registered_at": "2026-10-25T08:03:31.754639+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -191724,32 +191797,30 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W131-01",
-          "implementation_task": "W131-02",
+          "id": "W132-01",
+          "implementation_task": "W132-02",
           "related_tasks": [
-            "WP02-06",
-            "WP02-09",
             "WP02-29"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Trusted native identity delta ingress, post-commit ACK and revocation propagation",
+          "title": "Native API observability, runtime identity and operational endpoints",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "efc064121b8576b6f88a6a6fd5984cd3d0b72e8e",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261025T072210Z-wave131-start/MESSAGE.md",
-            "at": "2026-10-25T07:22:10.667535+00:00",
-            "branch": "codex/w131-handoff"
+            "commit": "f242118894f0f387260b636fd35b8b35ce76791e",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261025T080331Z-wave132-start/MESSAGE.md",
+            "at": "2026-10-25T08:03:31.754639+00:00",
+            "branch": "codex/w132-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w131-01",
+          "branch": "codex/w132-01",
           "crm_worktree": "D:\\CP6-worktrees\\dev-2",
-          "crm_branch": "codex/w131-02",
-          "planned_scope_ref": "docs/development/dispatch/20261025-wave131/README.md",
+          "crm_branch": "codex/w132-02",
+          "planned_scope_ref": "docs/development/dispatch/20261025-wave132/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -191757,10 +191828,10 @@
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
-          "validation": "12项唯一相关本地检查通过：CRM11、Main1；必需0跳过。实际原生HTTP、普通PostgreSQL写入、提交后确认、最终持锁门撤权及实际Main原文跨进程采用均通过；未变成功来源复用，原失败保留。",
-          "worker_delivery_ref": "docs/development/evidence/W131-01/DELIVERY.md",
+          "validation": "17项唯一相关CRM本地检查通过，必需0跳过：真实原生HTTP/PG、操作权限隔离、有界探针及取消、多宿主传播、Owner重放、未知COMMIT消息恢复、后台采集和最终持锁撤权。",
+          "worker_delivery_ref": "docs/development/evidence/W132-01/DELIVERY.md",
           "lifecycle_snapshot": {
-            "main_task": "CP6:W131-01",
+            "main_task": "CP6:W132-01",
             "main_finish_required": true,
             "main_seat_released": false,
             "crm_seat_released": true,
@@ -191768,16 +191839,16 @@
             "handoff_delivery_complete": true,
             "handoff_seat_released": true,
             "handoff_branch_deleted": true,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave131-final-verification.json"
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave132-final-verification.json"
           }
         }
       ],
       "horizon": {
-        "started_at": "2026-10-25T07:21:01.855956+00:00",
+        "started_at": "2026-10-25T08:00:52.703108+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          115,
-          190
+          70,
+          110
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -191785,10 +191856,10 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Implement native API observability, retain current broker/enterprise transport prerequisites, then complete original D2/D3/D6/D7 necessary exits.",
-      "validation": "12项唯一相关本地检查通过：CRM11、Main1；必需0跳过。实际原生HTTP、普通PostgreSQL写入、提交后确认、最终持锁门撤权及实际Main原文跨进程采用均通过；未变成功来源复用，原失败保留。",
+      "next_action": "Verify and implement the original D6 native inquiry Outbox publication/recovery prerequisite; retain D2/D3 write-owner prerequisites and D5 host qualification/enterprise transport gaps, then perform D7 final changed-input integration.",
+      "validation": "17项唯一相关CRM本地检查通过，必需0跳过：真实原生HTTP/PG、操作权限隔离、有界探针及取消、多宿主传播、Owner重放、未知COMMIT消息恢复、后台采集和最终持锁撤权。",
       "lifecycle_snapshot": {
-        "main_task": "CP6:W131-01",
+        "main_task": "CP6:W132-01",
         "main_finish_required": true,
         "main_seat_released": false,
         "crm_seat_released": true,
@@ -191796,7 +191867,7 @@
         "handoff_delivery_complete": true,
         "handoff_seat_released": true,
         "handoff_branch_deleted": true,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave131-final-verification.json"
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave132-final-verification.json"
       }
     },
     "wave_history": [
@@ -210409,6 +210480,133 @@
             "pr": "https://github.com/GTX537/CP6/pull/544"
           }
         ]
+      },
+      {
+        "id": "20261025-wave131",
+        "path": "docs/development/dispatch/20261025-wave131/README.md",
+        "baseline_sha": "e11613a324cdddbfa88f93210df4f8b15b5c593d",
+        "registered_at": "2026-10-25T07:22:10.667535+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W131-01",
+            "implementation_task": "W131-02",
+            "related_tasks": [
+              "WP02-06",
+              "WP02-09",
+              "WP02-29"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Trusted native identity delta ingress, post-commit ACK and revocation propagation",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "efc064121b8576b6f88a6a6fd5984cd3d0b72e8e",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261025T072210Z-wave131-start/MESSAGE.md",
+              "at": "2026-10-25T07:22:10.667535+00:00",
+              "branch": "codex/w131-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w131-01",
+            "crm_worktree": "D:\\CP6-worktrees\\dev-2",
+            "crm_branch": "codex/w131-02",
+            "planned_scope_ref": "docs/development/dispatch/20261025-wave131/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "validation": "12项唯一相关本地检查通过：CRM11、Main1；必需0跳过。实际原生HTTP、普通PostgreSQL写入、提交后确认、最终持锁门撤权及实际Main原文跨进程采用均通过；未变成功来源复用，原失败保留。",
+            "worker_delivery_ref": "docs/development/evidence/W131-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "crm_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "crm_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave131-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-25T07:21:01.855956+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            115,
+            190
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Implement native API observability, retain current broker/enterprise transport prerequisites, then complete original D2/D3/D6/D7 necessary exits.",
+        "validation": "12项唯一相关本地检查通过：CRM11、Main1；必需0跳过。实际原生HTTP、普通PostgreSQL写入、提交后确认、最终持锁门撤权及实际Main原文跨进程采用均通过；未变成功来源复用，原失败保留。",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "crm_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "crm_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave131-final-verification.json"
+        },
+        "actual_registered_wave_minutes": 36.35,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W131-01",
+            "remote_target": "d939c4d8303373b40ba943ce6996e5cd98219da0",
+            "source": "4b7f8c40628adcecdb453c6787ffd45a94c5b4e6",
+            "branch": "codex/w131-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/546"
+          },
+          {
+            "repository": "CP6.CRM",
+            "task": "W131-02",
+            "remote_target": "8513d075518227bde3e79787559e5977e38d4095",
+            "source": "58c4ac76f5517c8d432290fde081d21f9ca2bacb",
+            "branch": "codex/w131-02",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.CRM/pull/155"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W131-HANDOFF",
+            "remote_target": "de6e896e9dcca302802d315bc2fc45ca9fa718c3",
+            "source": "041afd052a83b873de856eddf01027e4645a6786",
+            "branch": "codex/w131-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/107"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -210549,11 +210747,11 @@
           "id": "D5",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W131-01",
-          "prerequisite_adjustment": "Native baseline and delta/committed ACK/revocation hosts adopted locally; no legacy EF fallback. Native API observability and actual broker/enterprise transport prerequisites remain.",
-          "next_action": "Implement native API observability, retain current broker/enterprise transport prerequisites, then complete original D2/D3/D6/D7 necessary exits.",
+          "current_window": "W132-01",
+          "prerequisite_adjustment": "Native baseline, delta/committed ACK/revocation and bounded API observability adopted locally; no legacy EF fallback. Applicable actual host identity verification, independent qualification and actual broker/enterprise transport prerequisites remain.",
+          "next_action": "Complete applicable actual runtime host/image verification and independently qualified release; validate actual broker and enterprise transport/credential/registration/SLO prerequisites.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
-          "remaining": "D5原生API可观测性仍待；本轮实际Dapr/Kafka链路NOT_RUN，真实企业传输ACL/凭据/登记、协调撤销和生产传播SLO未证明。D2、D3、D6、D7继续原计划必要出口，完整D5与正式验收不提升。",
+          "remaining": "原生基线/delta/提交后确认/撤权及有界观测已本地采用；实际宿主镜像/加载来源验证器和独立资格未证，实际broker/企业TLS/ACL/凭据/登记/生产SLO仍待。",
           "adopted_baseline_host": {
             "result": "PASS",
             "source": "1c08f74f089d07c70a226360a32a7f548904a876",
@@ -210562,7 +210760,7 @@
             "exact_tree_adoption": true,
             "at": "2026-10-25T07:10:14.495010+00:00"
           },
-          "report": "docs/development/evidence/W131-01/DELIVERY.md",
+          "report": "docs/development/evidence/W132-01/DELIVERY.md",
           "adopted_delta_host": {
             "result": "PASS",
             "source": "58c4ac76f5517c8d432290fde081d21f9ca2bacb",
@@ -210570,6 +210768,14 @@
             "pr": "https://github.com/GTX537/CP6.CRM/pull/155",
             "exact_tree_adoption": true,
             "at": "2026-10-25T07:49:22.013307+00:00"
+          },
+          "adopted_observability_host": {
+            "result": "PASS",
+            "source": "634d127181bfe1d11f51b58df0a03d2c6d144ef3",
+            "main": "de00251a50e50e9a4750c34efb526d172569a9ab",
+            "pr": "https://github.com/GTX537/CP6.CRM/pull/156",
+            "exact_tree_adoption": true,
+            "at": "2026-10-25T08:22:29.115235+00:00"
           }
         },
         {
@@ -210593,7 +210799,7 @@
       ],
       "scope": "Quality + bounded WMS/MES Owners; Main durable operation; CRM identity/first Owner; inquiry prerequisites/form/submit; related integration. Exact prerequisite gates retained.",
       "no_agents": true,
-      "next_stage": "D5",
+      "next_stage": "D6",
       "exit_audit": {
         "window": "W129-01",
         "report": "docs/development/evidence/W129-01/DELIVERY.md",

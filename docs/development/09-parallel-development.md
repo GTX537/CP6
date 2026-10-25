@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W131原生身份增量宿主](dispatch/20261025-wave131/README.md)：本地PG/HTTP/实际Main原文采用通过，CRM155/Handoff107已采用并finish，Main收尾；后继原生可观测性及原计划必要出口，实际broker仍NOT_RUN。单人、PostgreSQL、七天ACTIVE。
+> 当前：[W132原生操作面与观测](dispatch/20261025-wave132/README.md)：CRM156/Handoff108已采用并finish，Main收尾；运行身份Unproven，真实broker仍NOT_RUN。后继原D6原生Outbox发布/恢复，其他原出口保留。单人、PostgreSQL、七天ACTIVE。
+
+> 历史快照：[W131原生身份增量宿主](dispatch/20261025-wave131/README.md)：本地PG/HTTP/实际Main原文采用通过，CRM155/Handoff107已采用并finish，Main收尾；后继原生可观测性及原计划必要出口，实际broker仍NOT_RUN。单人、PostgreSQL、七天ACTIVE。
 
 > 历史快照：[W130原生身份基线宿主](dispatch/20261025-wave130/README.md)：34项定向检查通过，CRM154/Handoff已采用并finish，BUG543正常修复且关闭，Main收尾；后继可信delta/ACK、撤权与原生可观测性。单人、PostgreSQL、七天ACTIVE。
 
