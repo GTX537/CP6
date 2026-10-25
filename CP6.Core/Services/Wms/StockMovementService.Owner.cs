@@ -20,6 +20,7 @@ public partial class StockMovementService
                 throw new OrderPriceCorrectionException("INTERNAL_STOCK_CAPABILITY_REQUIRED",403);
             a.RequirePriceWrite();frozen.OperatorCd=a.Actor;
             await a.RequireStockKey(frozen.WarehouseCd,frozen.LocationCd,frozen.ProductCd,frozen.LotNo,true,t);
+            using var inheritance=InheritTransactions(a);
             var no=await ApplyWithinOwnerAsync(frozen,t);
             effects.AddRange(_db.ChangeTracker.Entries<StockTransaction>().Select(e=>e.Entity));
             a.AtCommit(c=>a.RequireStockKey(frozen.WarehouseCd,frozen.LocationCd,frozen.ProductCd,frozen.LotNo,false,c));return no;
@@ -38,6 +39,7 @@ public partial class StockMovementService
             if(await _db.Stocks.AnyAsync(s=>s.WarehouseCd==frozen.WarehouseCd && s.ProductCd==frozen.ProductCd && s.LotNo==frozen.LotNo
                 && s.LocationCd==frozen.FromLocationCd && s.LocationCd==frozen.ToLocationCd,t))
                 throw new ArgumentException("WM-MSG-010: 移動先は移動元と異なるロケーションを指定してください。");
+            using var inheritance=InheritTransactions(a);
             var pair=await MoveCoreAsync(frozen,t);
             effects.AddRange(_db.ChangeTracker.Entries<StockTransaction>().Select(e=>e.Entity));
             a.AtCommit(async c=>

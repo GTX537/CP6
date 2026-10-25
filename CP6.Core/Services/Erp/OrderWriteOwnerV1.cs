@@ -73,8 +73,13 @@ public sealed class OrderWriteOwnerV1
 
     private static bool Business(object entity) => entity is Order or OrderDetail or OrderProcess or OrderProcessNote or OrderMaterial;
     private static bool CancellationBusiness(object entity) => entity is WorkOrder or OutboundOrder or OutboundOrderDetail or Stock or StockTransaction or WmsSequence;
-    internal async Task<Result> ExecuteAsync(string action, string? number, OrderDto? request,
+    internal Task<Result> ExecuteAsync(string action, string? number, OrderDto? request,
         Func<OrderDto?, string, Task<string>> body, CancellationToken ct = default)
+        =>ExecuteCoreAsync(action,number,request,(dto,actor,_)=>body(dto,actor),ct);
+    internal Task<Result> ExecuteCancellationAsync(string number,Func<string,StockTransactionInheritanceV1,Task<string>> body,
+        CancellationToken ct=default)=>ExecuteCoreAsync("cancel",number,null,(_,actor,inheritance)=>body(actor,inheritance!),ct);
+    private async Task<Result> ExecuteCoreAsync(string action,string? number,OrderDto? request,
+        Func<OrderDto?,string,StockTransactionInheritanceV1?,Task<string>> body,CancellationToken ct)
     {
         using var linked = CancellationTokenSource.CreateLinkedTokenSource(ct, http.HttpContext?.RequestAborted ?? CancellationToken.None);
         ct=linked.Token; ct.ThrowIfCancellationRequested();
@@ -105,7 +110,10 @@ public sealed class OrderWriteOwnerV1
                 await LockGraph(number,ct);
                 await RequireObject(authority,number,false,ct);
             }
-            var saved=await body(frozen,authority.Actor.UserName);
+            var inheritance=action=="cancel"?new StockTransactionInheritanceV1(db,authority.Source.SubjectId,
+                authority.Actor.UserName,"order","cancel",await StandaloneDepartmentScopeV1.Version(db,ct)):null;
+            var saved=await body(frozen,authority.Actor.UserName,inheritance);
+            if(inheritance!=null)await inheritance.ValidateFinalAsync(ct);
             var final=await AuthorityAsync(action,ct);
             if (final.Source.SourcePermissionVersion!=authority.Source.SourcePermissionVersion
                 || final.Source.RegistryVersion!=authority.Source.RegistryVersion

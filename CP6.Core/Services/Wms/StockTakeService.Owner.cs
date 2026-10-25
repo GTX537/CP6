@@ -99,6 +99,7 @@ public partial class StockTakeService
                 if(!await _db.Stocks.AnyAsync(s=>s.Id==line.StockId && s.PhysicalQty==line.BookQty,ct))
                     throw new OrderPriceCorrectionException("STOCKTAKE_SNAPSHOT_CHANGED",409);
             }
+            using var inheritance=stock.InheritTransactions(a);
             await ApproveAndApplyCoreAsync(no,a.Actor,r=>stock.ApplyStockTakeWithinOwnerAsync(r,no,ct));
             effects.AddRange(_db.ChangeTracker.Entries<StockTransaction>().Select(e=>e.Entity));
             a.AtCommit(t=>a.RequireStockTake(no,t));return true;

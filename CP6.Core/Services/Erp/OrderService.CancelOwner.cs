@@ -13,10 +13,10 @@ public partial class OrderService
         // Strings/bool are immutable request snapshots. Never accept the caller's userName as authority.
         OrderCancelResult? result=null;
         OrderCancelBridgeHook.OwnedCascade? cascade=null;
-        await WriteOwner.ExecuteAsync("cancel",number,null,async (_,actor)=>
+        await WriteOwner.ExecuteCancellationAsync(number,async (actor,inheritance)=>
         {
             if(_cancelBridge is OrderCancelBridgeHook bridge)
-                cascade=await bridge.PrepareOwnedAsync(_db,number,actor);
+                cascade=await bridge.PrepareOwnedAsync(_db,number,actor,inheritance);
             else if(_cancelBridge is not NoOpOrderCancelBridgeHook)
                 throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
             result=await CancelCoreAsync(number,reason,force,actor,cascade==null?null:cascade.RunAsync);

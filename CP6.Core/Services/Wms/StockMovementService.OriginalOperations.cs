@@ -23,6 +23,7 @@ public partial class StockMovementService : IStockOriginalOperationsV1
             a.RequirePriceWrite();frozen.OperatorCd=a.Actor;
             await a.RequireStockKey(frozen.WarehouseCd,frozen.LocationCd,frozen.ProductCd,frozen.LotNo,true,t);
             var before=await Snapshot(frozen.WarehouseCd,[frozen.LocationCd],frozen.ProductCd,frozen.LotNo,t);
+            using var inheritance=InheritTransactions(a);
             var no=await ApplyWithinOwnerAsync(frozen,t);
             a.AtCommit(c=>a.RequireStockKey(frozen.WarehouseCd,frozen.LocationCd,frozen.ProductCd,frozen.LotNo,false,c));
             return (new StockOperationResultV1(frozen.OperationId,"APPLY",TxnNo:no),before);
@@ -42,6 +43,7 @@ public partial class StockMovementService : IStockOriginalOperationsV1
                 && s.LocationCd==frozen.FromLocationCd && s.LocationCd==frozen.ToLocationCd,t))
                 throw new ArgumentException("WM-MSG-010: 移動先は移動元と異なるロケーションを指定してください。");
             var before=await Snapshot(frozen.WarehouseCd,[frozen.FromLocationCd,frozen.ToLocationCd],frozen.ProductCd,frozen.LotNo,t);
+            using var inheritance=InheritTransactions(a);
             var pair=await MoveCoreAsync(frozen,t);
             a.AtCommit(async c=>
             {

@@ -49,6 +49,7 @@ public partial class BackflushService
                             yieldByFlute[spec.SheetFlute]=yield??1m;
                         }
                     }
+                    using var inheritance=((StockMovementService)_stock).InheritTransactions(a);
                     foreach(var row in bom)
                     {
                         var qty=BomUsageResolver.ComputeUsage(_usage,wo.ProductCd,row,wo.CompletedQty,specByCd,yieldByFlute);if(qty<=0)continue;

@@ -65,6 +65,7 @@ public partial class OutboundService
             await a.RequireOutbound(number,false,ct);RequireStockContext();
             var row=await _db.OutboundOrders.AsNoTracking().SingleAsync(o=>o.OutboundNo==number,ct);
             if(row.Status==OutboundOrderStatus.Cancelled)return (Changed:false,Shipping:false,Actor:a.Actor);
+            using var inheritance=((StockMovementService)_stock).InheritTransactions(a);
             await RequireStoredReservation(row,false,ct);await CancelCoreAsync(number,a.Actor,true);
             transactions.AddRange(_db.ChangeTracker.Entries<StockTransaction>().Select(e=>e.Entity));
             a.AtCommit(t=>a.RequireOutbound(number,false,t));return (Changed:true,Shipping:row.OutboundType==OutboundType.Shipping,Actor:a.Actor);
@@ -93,6 +94,7 @@ public partial class OutboundService
                 throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
             if(_shortage!=null && (_shortage is not MaterialShortageService real || !real.Owns(_db)))
                 throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
+            using var inheritance=((StockMovementService)_stock).InheritTransactions(a);
             await AllocateCoreAsync(number,a.Actor,a,effects);QueueStockEffects(effects);
             a.AtCommit(t=>a.RequireOutbound(number,false,t));return true;
         });
@@ -109,6 +111,7 @@ public partial class OutboundService
             await a.RequireActiveAssociations(row.WebOrderNo,row.WorkOrderNo,ct);
             if(row.OutboundType==OutboundType.Shipping && !string.IsNullOrWhiteSpace(row.WebOrderNo))await a.RequireSourceOrder(row.WebOrderNo,true,ct);
             await RequireStoredReservation(row,true,ct);
+            using var inheritance=((StockMovementService)_stock).InheritTransactions(a);
             var package=await ShipCoreAsync(number,frozen,a.Actor,effects);QueueStockEffects(effects);
             a.AtCommit(t=>a.RequireOutbound(number,false,t));return package;
         });
