@@ -545,6 +545,7 @@ builder.Services.AddScoped<CP6.Core.Services.Sys.IFieldPermService, CP6.Core.Ser
 CP6.Core.Services.Sys.DataScopeRegistry.Register("order", "受注", new[] { 1, 2, 3, 4, 5 }, 2);
 CP6.Core.Services.Sys.DataScopeRegistry.Register("product", "製品", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.DataScopeRegistry.Register("pur-pr", "采购申请", new[] { 1, 2, 3, 4, 5 }, 1);
+CP6.Core.Services.Sys.DataScopeRegistry.Register("crm-privacy", "CRM 隐私", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.DataScopeRegistry.Register("crm-lead", "CRM 线索", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.DataScopeRegistry.Register("crm-account", "CRM 企业与联系人", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.DataScopeRegistry.Register("crm-opportunity", "CRM 商机", new[] { 1, 2, 3, 4, 5 }, 1);
@@ -552,6 +553,8 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("crm-opportunity", "CRM 商机"
 // Inquiry source fields have their own explicit wire mapping; registration alone grants no action or resource scope.
 CP6.Core.Services.Sys.FieldRegistry.Register(CP6.WebApi.Services.InquiryIntakePermissionSourceV1.Resource,
     CP6.WebApi.Services.InquiryIntakePermissionSourceV1.Fields.Select(x => new CP6.Core.Services.Sys.FieldRegistry.Field(x, x)).ToArray());
+CP6.Core.Services.Sys.FieldRegistry.Register(CP6.WebApi.Services.InquiryConsentPermissionSourceV1.Resource,
+    CP6.WebApi.Services.InquiryConsentPermissionSourceV1.Fields.Select(x => new CP6.Core.Services.Sys.FieldRegistry.Field(x, x)).ToArray());
 CP6.Core.Services.Sys.FieldRegistry.Register("order",
     new CP6.Core.Services.Sys.FieldRegistry.Field("UnitPrice", "単価"),
     new CP6.Core.Services.Sys.FieldRegistry.Field("Amount", "金額"));

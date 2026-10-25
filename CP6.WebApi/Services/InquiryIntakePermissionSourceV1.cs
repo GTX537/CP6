@@ -28,19 +28,7 @@ internal static class InquiryIntakePermissionSourceV1
 
         // Same current human supervisor semantics as Main CrmOidcDirectory, with a complete
         // healthy department tree. No user/collaborator shortcut and no all-tenant UUID grant.
-        var scope = permissions.DataScopes.GetValueOrDefault("crm-lead", 1);
-        if (scope is < 1 or > 5) throw new CurrentPermissionUnavailableException();
-        var organization = await db.Sys_Depts.AsNoTracking().ToDictionaryAsync(x => x.Id, ct);
-        var healthy = organization.Values.Where(x => IamUserAdministrationV1.DepartmentAvailable(x.Id, organization)).ToArray();
-        var own = healthy.SingleOrDefault(x => x.Id == permissions.DeptId);
-        var departments = healthy.Where(x => scope switch
-        {
-            2 => own is not null && x.Id == own.Id,
-            3 => own is not null && x.Path.StartsWith(own.Path, StringComparison.Ordinal),
-            4 => permissions.CustomDeptIds.GetValueOrDefault("crm-lead", []).Contains(x.Id),
-            5 => true,
-            _ => false
-        }).Select(x => x.Id).Order().ToArray();
+        var departments = await ManagedDepartmentsAsync(db, permissions, "crm-lead", ct);
         if (!permissions.ActionKeys.Contains("crm-lead:assign") || departments.Length == 0)
             throw new InquiryPermissionExceptionV1(403, "insufficient_scope");
         // Frozen wire limits do not authorize truncating/remapping the real department set.
@@ -69,4 +57,23 @@ internal static class InquiryIntakePermissionSourceV1
                 if (permissions.ActionKeys.Contains(action)) actions.Add(action);
         return new(actions.ToArray(), readable, departments, true);
     }
+    // Current enabled roles, healthy tenant department tree, explicit resource scope.
+    internal static async Task<Guid[]> ManagedDepartmentsAsync(CP6Context db, UserPermissionContext permissions,
+        string resource, CancellationToken ct)
+    {
+        var scope = permissions.DataScopes.GetValueOrDefault(resource, 1);
+        if (scope is < 1 or > 5) throw new CurrentPermissionUnavailableException();
+        var organization = await db.Sys_Depts.AsNoTracking().ToDictionaryAsync(x => x.Id, ct);
+        var healthy = organization.Values.Where(x => IamUserAdministrationV1.DepartmentAvailable(x.Id, organization)).ToArray();
+        var own = healthy.SingleOrDefault(x => x.Id == permissions.DeptId);
+        return healthy.Where(x => scope switch
+        {
+            2 => own is not null && x.Id == own.Id,
+            3 => own is not null && x.Path.StartsWith(own.Path, StringComparison.Ordinal),
+            4 => permissions.CustomDeptIds.GetValueOrDefault(resource, []).Contains(x.Id),
+            5 => true,
+            _ => false
+        }).Select(x => x.Id).Order().ToArray();
+    }
+
 }

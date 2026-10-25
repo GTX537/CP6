@@ -22,7 +22,7 @@ public sealed partial class InquiryPermissionIssuerV1
     {
         if (request is null || !InquiryPermissionSigningKeyV1.ValidServiceNonce(request.RequestNonce))
             throw new InquiryPermissionExceptionV1(400, "invalid_request");
-        if (request.Purpose is not ("intake:list" or "intake:detail" or "intake:release" or "intake:reject"))
+        if (request.Purpose is not ("intake:list" or "intake:detail" or "intake:release" or "intake:reject" or "privacy:consent-withdraw"))
             throw new InquiryPermissionExceptionV1(400, "unsupported_projection_purpose");
         if (!HumanContextEnabled) throw new InquiryPermissionExceptionV1(503, "inquiry_human_context_unavailable");
         return IssueCoreAsync(new(request.Purpose, request.SiteId, request.FormId), currentBearer, request.RequestNonce, ct);

@@ -13,7 +13,7 @@ public sealed record InquiryPermissionSubjectV1(Guid TenantId, Guid SubjectId, G
 public sealed class InquiryPermissionExceptionV1(int status, string code) : InvalidOperationException(code)
 { public int Status { get; } = status; }
 
-/// <summary>Actual Main producer for configuration and human intake purposes. The callback is the server's
+/// <summary>Actual Main producer for configuration, human intake and consent withdrawal purposes. The callback is the server's
 /// existing authenticated CRM Bearer reader, rerun inside the Main authentication root.
 /// A signed point-in-time projection is not a cross-database business commit fence.</summary>
 public sealed partial class InquiryPermissionIssuerV1(CP6Context db, InquiryPermissionSigningKeyV1 signing,
@@ -36,6 +36,7 @@ public sealed partial class InquiryPermissionIssuerV1(CP6Context db, InquiryPerm
             "intake:list" or "intake:detail" => ["crm-lead:query"],
             "intake:release" => ["crm-lead:query", "crm-lead:view-pii", "crm-lead:add"],
             "intake:reject" => ["crm-lead:query", "crm-lead:view-pii", "crm-lead:edit"],
+            "privacy:consent-withdraw" => ["crm-lead:query", "crm-privacy:consent-withdraw"],
             _ => throw new InquiryPermissionExceptionV1(400, "unsupported_projection_purpose")
         };
         if (!Enabled || !db.Database.IsNpgsql() || db.Database.CurrentTransaction is not null
@@ -59,7 +60,10 @@ public sealed partial class InquiryPermissionIssuerV1(CP6Context db, InquiryPerm
         var facts = request.Purpose.StartsWith("intake:", StringComparison.Ordinal)
             ? await InquiryIntakePermissionSourceV1.ReadAsync(db, subject.SubjectId, request.Purpose, required, permissions,
                 captureCatalog ?? AuthorizationCatalogV1.Capture, ct)
-            : new InquiryPermissionFactsV1(required, [], [], false);
+            : request.Purpose == "privacy:consent-withdraw"
+                ? await InquiryConsentPermissionSourceV1.ReadAsync(db, subject.SubjectId, required, permissions,
+                    captureCatalog ?? AuthorizationCatalogV1.Capture, ct)
+                : new InquiryPermissionFactsV1(required, [], [], false);
         var final = await currentBearer(db, ct);
         if (final is null || final.TenantId != subject.TenantId || final.SubjectId != subject.SubjectId || final.SessionId != subject.SessionId
             || db.CurrentTenantId != subject.TenantId)
