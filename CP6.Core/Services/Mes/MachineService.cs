@@ -80,7 +80,7 @@ public partial class MachineService : IMachineService
         return m == null ? null : ToDto(m);
     }
 
-    private async Task<string> CreateCoreAsync(MachineDto dto, string? userName)
+    private async Task<string> CreateCoreAsync(MachineDto dto, string? userName, Guid? allocatedId = null)
     {
         if (string.IsNullOrWhiteSpace(dto.MachineCd)) throw new InvalidOperationException("ME-MSG-001");
         if (string.IsNullOrWhiteSpace(dto.MachineName)) throw new InvalidOperationException("ME-MSG-031");
@@ -91,6 +91,7 @@ public partial class MachineService : IMachineService
         var now = DateTime.Now;
         _db.Machines.Add(new Machine
         {
+            Id = allocatedId ?? Guid.NewGuid(),
             MachineCd = dto.MachineCd,
             MachineName = dto.MachineName,
             MachineType = dto.MachineType,

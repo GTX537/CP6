@@ -19,6 +19,38 @@ public class MachineController : ControllerBase
 
     private string? CurrentUser => User?.Identity?.Name;
 
+    private IMachineCreationOperationsV1 Creations => _service as IMachineCreationOperationsV1
+        ?? throw new CP6.Core.Services.Erp.OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
+
+    [HttpGet("creation-context")]
+    [RequirePermission("mes-machine","add")]
+    public async Task<IActionResult> CreationContext(CancellationToken ct)
+        =>Ok(new{code=0,message="OK",data=await Creations.CreationContextAsync(ct)});
+
+    [HttpGet("operations/scope")]
+    [RequirePermission("mes-machine","query")]
+    public async Task<IActionResult> CreationScope(CancellationToken ct)
+        =>Ok(new{code=0,message="OK",data=await Creations.CreationScopeAsync(ct)});
+
+    // The actual Owner chooses add for a new command, query for an immutable original.
+    [HttpPost("operations")]
+    public async Task<IActionResult> CreateOperation(MachineCreationCommandV1 request,CancellationToken ct)
+    {
+        try {return Ok(new{code=0,message="OK",data=await Creations.CreateCommandAsync(request,ct)});}
+        catch(InvalidOperationException ex) when(ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException)
+        {return BadRequest(new{code=400,message=ex.Message});}
+    }
+
+    [HttpGet("operations/{operation:guid}")]
+    [RequirePermission("mes-machine","query")]
+    public async Task<IActionResult> ReadCreation(Guid operation,CancellationToken ct)
+        =>Ok(new{code=0,message="OK",data=await Creations.ReadCreationAsync(operation,ct)});
+
+    [HttpPost("operations/{operation:guid}/close")]
+    [RequirePermission("mes-machine","query")]
+    public async Task<IActionResult> CloseCreation(Guid operation,CancellationToken ct)
+        =>Ok(new{code=0,message="OK",data=await Creations.CloseCreationAsync(operation,ct)});
+
     [HttpGet]
     [RequirePermission("mes-machine", "query")]
     public async Task<IActionResult> Search([FromQuery] MachineSearchQuery query)
