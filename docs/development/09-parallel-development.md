@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W132原生操作面与观测](dispatch/20261025-wave132/README.md)：CRM156/Handoff108已采用并finish，Main收尾；运行身份Unproven，真实broker仍NOT_RUN。后继原D6原生Outbox发布/恢复，其他原出口保留。单人、PostgreSQL、七天ACTIVE。
+> 当前：[W133原生事件发布恢复](dispatch/20261025-wave133/README.md)：CRM/Handoff已采用并finish，Main收尾；真实broker与宿主独立资格仍未证。后继原D6公共能力准确适用，其他原出口保留。单人、PostgreSQL、七天ACTIVE。
+
+> 历史快照：[W132原生操作面与观测](dispatch/20261025-wave132/README.md)：CRM156/Handoff108已采用并finish，Main收尾；运行身份Unproven，真实broker仍NOT_RUN。后继原D6原生Outbox发布/恢复，其他原出口保留。单人、PostgreSQL、七天ACTIVE。
 
 > 历史快照：[W131原生身份增量宿主](dispatch/20261025-wave131/README.md)：本地PG/HTTP/实际Main原文采用通过，CRM155/Handoff107已采用并finish，Main收尾；后继原生可观测性及原计划必要出口，实际broker仍NOT_RUN。单人、PostgreSQL、七天ACTIVE。
 
