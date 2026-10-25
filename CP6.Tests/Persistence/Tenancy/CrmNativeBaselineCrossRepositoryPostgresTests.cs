@@ -33,7 +33,7 @@ public sealed class CrmNativeBaselineCrossRepositoryPostgresTests(IdentityDirect
         var start = new ProcessStartInfo(Path.Combine(Environment.GetEnvironmentVariable("DOTNET_ROOT")!, "dotnet.exe"))
         { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true, WorkingDirectory = Path.GetDirectoryName(project)! };
         foreach (var argument in new[] { "test", project, "--no-build", "--no-restore", "--artifacts-path", artifacts,
-            "--filter", "FullyQualifiedName~NativeMainBaselineCompatibilityTests", "--logger", "trx;LogFileName=native-main-crm.trx", "--results-directory", results, "-v:q" })
+            "--filter", "FullyQualifiedName~NativeBaselineMainHostTests", "--logger", "trx;LogFileName=native-main-crm.trx", "--results-directory", results, "-v:q" })
             start.ArgumentList.Add(argument);
         // Ephemeral credentials stay in the child environment, never a file/command-line diagnostic.
         start.Environment["CP6_CRM_ACTUAL_MAIN"] = JsonSerializer.Serialize(new { Origin = host.Client.BaseAddress!.AbsoluteUri, Tenants = expected });

@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
@@ -117,7 +119,9 @@ internal sealed class IdentityDirectoryConfiguredHttpHost : IAsyncDisposable
             // record writer. Browser-only dependencies are unused strict fixtures.
             foreach (var client in options.ServiceClients)
             { var secret = CrmOidcCrypto.RandomToken(); secrets.Add(client.ClientId, secret); client.SecretSha256 = CrmOidcCrypto.Hash(secret); }
+            controllers.ConfigureApplicationPartManager(manager => manager.FeatureProviders.Add(new BaselineControllersOnly()));
             controllers.AddControllersAsServices(); builder.Services.AddHttpContextAccessor();
+            builder.Services.RemoveAll<CrmOidcController>();
             builder.Services.AddSingleton<CrmOidcCrypto>();
             builder.Services.AddScoped(sp =>
             {
@@ -183,6 +187,15 @@ internal sealed class IdentityDirectoryConfiguredHttpHost : IAsyncDisposable
     public async ValueTask DisposeAsync()
     { Client.Dispose(); await _app.StopAsync(); await _app.DisposeAsync(); _signer.Dispose(); }
     private sealed class SigningClock(DateTimeOffset now) : TimeProvider { public override DateTimeOffset GetUtcNow() => now; }
+    private sealed class BaselineControllersOnly : IApplicationFeatureProvider<ControllerFeature>
+    {
+        public void PopulateFeature(IEnumerable<ApplicationPart> parts, ControllerFeature feature)
+        {
+            foreach (var controller in feature.Controllers.ToArray())
+                if (controller.AsType() != typeof(CrmIdentityController) && controller.AsType() != typeof(CrmOidcController))
+                    feature.Controllers.Remove(controller);
+        }
+    }
     private sealed class TokenEndpointDatabase(CP6.Core.EFDbContext.CP6Context database) : IDisposable
     { internal CP6.Core.EFDbContext.CP6Context Database => database; public void Dispose() => database.Dispose(); }
     private sealed class RequestCounters { internal int Received, Aborted, Completed; }
