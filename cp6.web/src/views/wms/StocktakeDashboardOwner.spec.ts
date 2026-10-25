@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { shallowMount, flushPromises } from '@vue/test-utils'
 import { reactive } from 'vue'
-const take = vi.hoisted(() => ({ search: vi.fn(), get: vi.fn(), createPlan: vi.fn(), startCount: vi.fn(), updateCounts: vi.fn(), submit: vi.fn(), approve: vi.fn(), cancel: vi.fn() }))
+const take = vi.hoisted(() => ({ search: vi.fn(), get: vi.fn(), createPlan: vi.fn(), creationContext: vi.fn(), creationScope: vi.fn(), createOperation: vi.fn(), readCreation: vi.fn(), closeCreation: vi.fn(), startCount: vi.fn(), updateCounts: vi.fn(), submit: vi.fn(), approve: vi.fn(), cancel: vi.fn() }))
 const stock = vi.hoisted(() => ({ search: vi.fn(), history: vi.fn(), transactions: vi.fn(), setQcStatus: vi.fn() }))
 const wms = vi.hoisted(() => ({ kpi: vi.fn(), trend: vi.fn(), warehouseValue: vi.fn(), alerts: vi.fn() }))
 const mes = vi.hoisted(() => ({ summary: vi.fn(), processProgress: vi.fn(), delayAlerts: vi.fn(), defectTop5: vi.fn(), recentCompleted: vi.fn(), machineHeatmap: vi.fn(), dailyTrend: vi.fn() }))
@@ -18,7 +18,7 @@ vi.mock('vue-router', () => ({ useRoute: () => route, useRouter: () => ({ push: 
 import Take from './StockTakeView.vue'
 import TakeList from './StockTakeListView.vue'
 import Stock from './StockQueryView.vue'
-vi.mock('@/stores/permission', () => ({ usePermissionStore: () => ({ loaded: true, actionKeys: new Set(), has: () => false }) }))
+vi.mock('@/stores/permission', () => ({ usePermissionStore: () => ({ loaded: true, actionKeys: new Set(), has: (key: string) => key.startsWith('wms-stocktake:') }) }))
 import Wms from './WmsDashboardView.vue'
 import Mes from '../mes/MesDashboardView.vue'
 import { AUTH_EPOCH, AUTH_EVENT } from '@/auth/identity'
@@ -31,10 +31,16 @@ function render(component: any): any {
   } } }); return view.vm
 }
 function identity() { localStorage.setItem(AUTH_EPOCH, crypto.randomUUID()); window.dispatchEvent(new Event(AUTH_EVENT)) }
+const scope = { tenantId: '10000000-0000-0000-0000-000000000001', actorId: '20000000-0000-0000-0000-000000000002' }
+const stockTakeId = '40000000-0000-0000-0000-000000000004'
+const receipt = (operationId: string, stockTakeNo: string) => ({ code: 0, data: { operationId, stockTakeId, stockTakeNo, departmentId: null } })
 const document = { stockTakeNo: 'ST1', stockTakeType: 1, plannedDate: '2026-10-21', status: 1, targetWarehouseCd: 'W1', details: [{ lineNo: 1, productCd: 'P', lotNo: '', locationCd: 'L', bookQty: 2, countedQty: 1 }] }
 beforeEach(() => {
   localStorage.clear(); route.query = {}; vi.clearAllMocks(); vi.useFakeTimers()
   for (const api of [take, stock, wms, mes]) Object.values(api).forEach(fn => fn.mockReset().mockResolvedValue({ data: [] }))
+  take.creationScope.mockResolvedValue({ code: 0, data: scope })
+  take.creationContext.mockResolvedValue({ code: 0, data: { ...scope, authorityVersion: 'current', allowsUnbound: true, departments: [] } })
+  Object.defineProperty(navigator, 'locks', { configurable: true, value: { request: async (_key: string, _options: any, run: (lock: any) => Promise<any>) => run({}) } })
   messages.confirm.mockReset().mockResolvedValue('confirm'); messages.push.mockReset().mockResolvedValue(undefined)
   wms.kpi.mockResolvedValue({ data: { totalStockValue: 5 } }); wms.alerts.mockResolvedValue({ data: { expiryAlerts: [], delayedInbounds: [] } })
   stock.transactions.mockResolvedValue({ data: { items: [] } }); mes.summary.mockResolvedValue({ data: { totalGoodQty: 5 } })
@@ -63,19 +69,22 @@ describe('stocktake, inventory and dashboards Owner UI', () => {
     const read = vm.load('OLD'); identity(); done({ data: document }); await read; expect(vm.form.details).toEqual([])
   })
   it('freezes plan creation, retains its committed number and never navigates after identity change', async () => {
-    const vm = render(TakeList); vm.planForm.targetWarehouseCd = 'W1'; let done!: (x: unknown) => void
-    take.createPlan.mockImplementationOnce(() => new Promise(r => { done = r })); const save = vm.onCreatePlan()
-    await expect(vm.onCreatePlan()).rejects.toThrow(); expect(take.createPlan).toHaveBeenCalledTimes(1)
-    vm.planForm.targetWarehouseCd = 'W2'; expect(take.createPlan.mock.calls[0]![0].targetWarehouseCd).toBe('W1')
-    done({ data: { stockTakeNo: 'NEW' } }); await save; expect(vm.lastSavedNo).toBe('NEW')
-    take.createPlan.mockImplementationOnce(() => new Promise(r => { done = r })); const stale = vm.onCreatePlan(); identity(); done({ data: { stockTakeNo: 'OLD' } })
+    const vm = render(TakeList); await flushPromises(); await vm.openPlan(); vm.planForm.targetWarehouseCd = 'W1'; let done!: (x: unknown) => void
+    take.createOperation.mockImplementationOnce(() => new Promise(r => { done = r })); const save = vm.onCreatePlan(); await flushPromises()
+    await expect(vm.onCreatePlan()).rejects.toThrow(); expect(take.createOperation).toHaveBeenCalledTimes(1)
+    vm.planForm.targetWarehouseCd = 'W2'; expect(take.createOperation.mock.calls[0]![0].plan.targetWarehouseCd).toBe('W1')
+    done(receipt(take.createOperation.mock.calls[0]![0].operationId, 'NEW')); await save; expect(vm.lastSavedNo).toBe('NEW')
+    await vm.openPlan(); take.createOperation.mockImplementationOnce(() => new Promise(r => { done = r }))
+    const stale = vm.onCreatePlan(); await flushPromises(); const operation = take.createOperation.mock.calls[1]![0].operationId
+    identity(); done(receipt(operation, 'OLD'))
     await expect(stale).rejects.toThrow(); expect(messages.push).toHaveBeenCalledTimes(1)
   })
-  it('keeps unknown plan submissions open and rejects another attempt', async () => {
-    const vm = render(TakeList); take.createPlan.mockResolvedValueOnce({ data: { stockTakeNo: 'CONFIRMED' } }); await vm.onCreatePlan()
-    take.createPlan.mockRejectedValue({ response: { status: 503 } })
-    await expect(vm.onCreatePlan()).rejects.toBeDefined(); await expect(vm.onCreatePlan()).rejects.toThrow(); expect(take.createPlan).toHaveBeenCalledTimes(2)
-    expect(vm.lastSavedNo).toBe('CONFIRMED')
+  it('retains unknown plan references and rejects another submission', async () => {
+    const vm = render(TakeList); await flushPromises(); await vm.openPlan()
+    take.createOperation.mockImplementationOnce(async c => receipt(c.operationId, 'CONFIRMED')); await vm.onCreatePlan()
+    await vm.openPlan(); take.createOperation.mockRejectedValue({ response: { status: 503 } })
+    await expect(vm.onCreatePlan()).rejects.toBeDefined(); await expect(vm.onCreatePlan()).rejects.toThrow(); expect(take.createOperation).toHaveBeenCalledTimes(2)
+    expect(vm.lastSavedNo).toBe('CONFIRMED'); expect(vm.creationPending).not.toBeNull()
   })
   it('retains confirmed approval state when follow-up reading is forbidden', async () => {
     const vm = render(Take); Object.assign(vm.form, structuredClone(document)); vm.form.status = 3

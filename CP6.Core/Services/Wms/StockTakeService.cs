@@ -104,7 +104,7 @@ public partial class StockTakeService : IStockTakeService
 
     // ───────── 計画 ─────────
 
-    private async Task<string> CreatePlanCoreAsync(StockTakePlanDto dto, string? userName)
+    private async Task<string> CreatePlanCoreAsync(StockTakePlanDto dto, string? userName, Guid? newId=null, List<Stock>? ownedSnapshot=null)
     {
         if (string.IsNullOrWhiteSpace(dto.TargetWarehouseCd))
             throw new InvalidOperationException("対象倉庫CDは必須です");
@@ -118,7 +118,7 @@ public partial class StockTakeService : IStockTakeService
         if (!string.IsNullOrWhiteSpace(dto.TargetProductCd))
             snapshotQuery = snapshotQuery.Where(s => s.ProductCd == dto.TargetProductCd);
 
-        var snapshot = await snapshotQuery
+        var snapshot = ownedSnapshot ?? await snapshotQuery
             .OrderBy(s => s.LocationCd).ThenBy(s => s.ProductCd).ThenBy(s => s.LotNo)
             .ToListAsync();
 
@@ -129,6 +129,7 @@ public partial class StockTakeService : IStockTakeService
 
         _db.StockTakes.Add(new StockTake
         {
+            Id = newId ?? Guid.NewGuid(),
             StockTakeNo = no,
             StockTakeType = dto.StockTakeType == 0 ? 1 : dto.StockTakeType,
             PlannedDate = dto.PlannedDate == default ? DateTime.Today : dto.PlannedDate,

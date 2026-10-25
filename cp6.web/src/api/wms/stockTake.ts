@@ -1,9 +1,15 @@
+import type { StocktakeCreationContext, StocktakeCreationScope, StocktakeCreationCommand, StocktakeCreationResult, StocktakeCreationOperation } from '@/types/wms/stocktakeCreation'
 import http from '../http'
 import type {
   StockTake, StockTakePlanRequest, StockTakeCountInput, StockTakeSearchQuery, WmsApi,
 } from '@/types/wms/wms'
 
 export const stockTakeApi = {
+  creationContext() { return http.get<any, WmsApi<StocktakeCreationContext>>('/wms/stock-take/creation-context') },
+  creationScope() { return http.get<any, WmsApi<StocktakeCreationScope>>('/wms/stock-take/operations/scope') },
+  createOperation(request: StocktakeCreationCommand) { return http.post<any, WmsApi<StocktakeCreationResult>>('/wms/stock-take/operations', request) },
+  readCreation(id: string) { return http.get<any, WmsApi<StocktakeCreationOperation>>('/wms/stock-take/operations/' + encodeURIComponent(id)) },
+  closeCreation(id: string) { return http.post<any, WmsApi<StocktakeCreationOperation>>('/wms/stock-take/operations/' + encodeURIComponent(id) + '/close') },
   search(q: StockTakeSearchQuery = {}) {
     return http.get<any, WmsApi<StockTake[]>>('/wms/stock-take', { params: q })
   },
