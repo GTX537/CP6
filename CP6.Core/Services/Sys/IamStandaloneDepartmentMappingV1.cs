@@ -99,7 +99,7 @@ public sealed class IamStandaloneDepartmentMappingV1(CP6Context db, IamAdministr
         }, ct);
     }
 
-    private static readonly string[] Kinds = ["stock", "stock-transaction", "stocktake", "work-order", "machine", "replenish-order", "mobile-task", "work-center", "cross-dock", "slotting-plan", "vmi-billing", "kit-master", "kit-order", "warehouse", "location", "routing-rule", "sample-stock", "product-master", "uom-profile"];
+    private static readonly string[] Kinds = ["stock", "stock-transaction", "stocktake", "work-order", "machine", "replenish-order", "mobile-task", "work-center", "cross-dock", "slotting-plan", "vmi-billing", "kit-master", "kit-order", "warehouse", "location", "routing-rule", "sample-stock", "product-master", "uom-profile", "currency-policy"];
     public sealed record ObjectChoice { public Guid Id { get; init; } public string Name { get; init; } = ""; }
     public Task<ObjectChoice[]> FindObjectsAsync(string kind, string search,
         Func<CancellationToken, Task<Guid>> actor, CancellationToken ct)
@@ -116,6 +116,9 @@ public sealed class IamStandaloneDepartmentMappingV1(CP6Context db, IamAdministr
     // The IAM directory grants identity metadata only; it does not disclose quantities, prices or business details.
     private IQueryable<ObjectChoice> Objects(string kind) => kind switch
     {
+        "currency-policy" => db.Database.SqlQuery<ObjectChoice>($"""
+            SELECT policy_id AS "Id",code AS "Name" FROM cp6_currency_policy_v1.heads WHERE tenant_id={db.CurrentTenantId}
+            """),
         "uom-profile" => db.Database.SqlQuery<ObjectChoice>($"""
             SELECT profile_id AS "Id",code AS "Name" FROM cp6_uom_profile_v1.heads WHERE tenant_id={db.CurrentTenantId}
             """),

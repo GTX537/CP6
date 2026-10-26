@@ -19,7 +19,7 @@ beforeEach(() => {
 })
 afterEach(() => { view?.unmount(); view = undefined })
 describe('explicit standalone department binding', () => {
-  it.each(['kit-master', 'kit-order', 'warehouse', 'location', 'routing-rule', 'product-master', 'uom-profile'])('binds the searched %s UUID without inferring the other object identity', async kind => {
+  it.each(['kit-master', 'kit-order', 'warehouse', 'location', 'routing-rule', 'product-master', 'uom-profile', 'currency-policy'])('binds the searched %s UUID without inferring the other object identity', async kind => {
     const vm = await render(); await vm.open(); await view!.get('[aria-label="对象类型"]').setValue(kind)
     api.standaloneObjects.mockResolvedValue([{ id: kind + '-uuid', name: 'KIT-EXISTING' }]); vm.search = 'KIT'; await vm.findObjects()
     expect(api.standaloneObjects).toHaveBeenCalledWith(kind, 'KIT'); vm.draft.objectId = kind + '-uuid'; vm.draft.departmentId = dept; vm.draft.reason = 'Verified existing kit identity'
