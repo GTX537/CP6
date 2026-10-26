@@ -21,3 +21,5 @@ Core 内部 TransferDemandBudgetV1 与 PostgreSQL 前向迁移：WMS_TRANSFER �
 W141 final proof 已核销一次并关闭其分页窗口。W142 Handoff 运输和 Main 产品采用分别核对；本报告提交时正常 PR/官方 finish 仍在进行，准确 source/merge SHA、分支处置、固定席位和进程结果以规划目录 wave142-main/handoff-delivery.json、wave142-final-verification.json 与官方 state.json 为准。固定目录保留复用，用户文件与依赖缓存保留。
 
 原七天目标仍 ACTIVE，D1/D4 已关闭，其余阶段不提升。正式375卡、125完整目标及247运行验收不因本内部组件计为完成。下一步接入正式 Transfer context/主数据/当前权限与 Request/Draft 原操作生命周期，再推进 REP SourceDemand/目标预算/Transfer→Stock、RMA IN、D3/D5/D6/D7剩余出口。
+
+任务归属已在同一PR收尾校正为 [WP10-10](../../task-plans/WP10.md#wp10-10) 的内部持久化前置（WP02-03为后续权限依赖）。完整卡的 WP02-10/13、Stock/Claim WP10-03/08/09 当前真实Owner/库存采用条件继续保留；本组件没有启动这些生产路径，不把参数结构验证当提供者采用。正式 entry_gate/state 不变，Core和新增迁移串行窗口由本聊天独占。
