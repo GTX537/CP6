@@ -59,7 +59,6 @@ public sealed class ConfigurationRuleOwnerV1(CP6Context db, OperationsOwnerV1 ow
         ConfigurationRuleValuesV1.Ref(reference); var access = await root.SourceAsync(OperationsOwnerV1.ConfigurationRule, ct);
         access.RequireConfigurationRuleSourceAccess(db); await access.RequireConfigurationRule(reference.Id, ct);
         root.AtCommit(token => access.RequireConfigurationRule(reference.Id, token));
-        root.AtCommit(access.ValidateFinalAsync);
         var store = new ConfigurationRuleStoreV1(db); await store.Fence(false, ct);
         var value = await Observe(access, await store.Read(reference.Id, Revision(reference.Version), ct), ct);
         if (value.Reference != reference) throw Error("CONFIGURATION_RULE_REFERENCE_CHANGED", 412);

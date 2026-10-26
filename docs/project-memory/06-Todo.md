@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-26：W153来源复核待Main收尾
+
+BUG572嵌套来源最终复核修复通过65个不同PG/HTTP用例，原4个失败已复测；UI未改未重跑。[单份报告](../development/evidence/W153-01/DELIVERY.md)。登记12.62分钟，原估35–55；Handoff已释放，Main待正常PR/finish和Issue核销。七天原出口及所有正式状态保持。
+
 ## 2026-10-26：W152 CFG选项规则待Main收尾
 
 CFG工程选项规则、批准替换/撤回、ENG准确规则同事务采用及独立页面通过PG/HTTP26、UI50不同用例、type/Vite。[单份报告](../development/evidence/W152-01/DELIVERY.md)。登记28.02分钟，原估75–120；Handoff已释放，Main待正常PR/finish。仅ENGINEERING_OPTIONS_ONLY，完整适用/替代/来源/rebase/评审冻结与原七天全部出口保持未完成。

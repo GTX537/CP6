@@ -15,7 +15,11 @@ internal sealed partial class OperationsAccessV1
         var key=resource+":"+action;
         if(sources.TryGetValue(key,out var found))return found;
         var source=await owner.AuthorityAsync(resource,action,ct);Authorities.Add(source);
-        return sources[key]=new(db,owner,source,Authorities);
+        var access=new OperationsAccessV1(db,owner,source,Authorities);
+        // Final object checks belong to the root transaction too. Register once per
+        // cached source; its checks (and deeper sources) are populated by the caller.
+        AtCommit(access.ValidateFinalAsync);
+        return sources[key]=access;
     }
     internal bool CustomerNameReadable=>authority.Fields.Fields.TryGetValue("CustomerName",out var field) && field.CanRead;
     internal bool AmountReadable=>authority.Fields.Fields.TryGetValue("Amount",out var field) && field.CanRead;
