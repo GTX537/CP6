@@ -160577,6 +160577,16 @@
       "date": "2026-10-26",
       "change": "W142 internal Transfer local demand and exact range budget verified on actual Main PostgreSQL transaction. Handoff adopted/released; Main closeout pending. Full states unchanged.",
       "evidence": "docs/development/evidence/W142-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-26",
+      "change": "W142 closed once from final proof. W143 actual loaded CRM managed payload and startup guard admitted,100–150min,sole COORD. Full states unchanged.",
+      "evidence": "docs/development/dispatch/20261026-wave143/README.md"
+    },
+    {
+      "date": "2026-10-26",
+      "change": "W142 archived once from final proof. W143 CRM managed payload startup gate adopted PR160,26 scoped checks; full D5 qualification and all original remaining exits retained. CRM/Handoff released, Main closeout pending.",
+      "evidence": "docs/development/evidence/W143-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -174436,6 +174446,40 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/547"
         }
+      },
+      "wave143_managed_payload": {
+        "status": "ADOPTED_MAIN_CLOSEOUT_PENDING",
+        "report": "docs/development/evidence/W143-01/DELIVERY.md",
+        "crm_delivery": {
+          "result": "PASS",
+          "source": "fb224f2b71a9d0148b2b87a257a5607768e7fec2",
+          "main": "2e159bda59d7464a6f3fcdbb1c227cd30a17e7b2",
+          "pr": "https://github.com/GTX537/CP6.CRM/pull/160",
+          "exact_tree_adoption": true,
+          "at": "2026-10-26T12:25:33.019243+00:00"
+        },
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "253be0cfc4927a05066a17c5ddca944d5ab855f0",
+          "main": "232b4a3d9b23e250bacea8d2e904da9ba0681ad9",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/119",
+          "exact_tree_adoption": true,
+          "at": "2026-10-26T12:29:47.224016+00:00"
+        },
+        "scope": "Configured actual native host static CP6 managed payload startup guard only; no complete release/runtime qualification.",
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "crm_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": false,
+          "crm_branch_deleted": true,
+          "handoff_branch_deleted": true
+        }
       }
     },
     {
@@ -184152,7 +184196,7 @@
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "wave142_demand_budget": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W142-01/DELIVERY.md",
         "scope": "Internal local Transfer SourceDemand and exact demand-range PostgreSQL persistence only; formal T04 authority/catalog and REP/RMA writes remain unadopted.",
         "handoff_delivery": {
@@ -184166,16 +184210,27 @@
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "original_dependencies_unchanged": true,
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "lifecycle_snapshot": {
-          "main_finish_required": true,
-          "main_seat_released": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
           "handoff_seat_released": true,
-          "main_branch_deleted": false,
-          "handoff_branch_deleted": true
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave142-final-verification.json"
         },
         "formal_entry_gate_advanced": false,
-        "prerequisite_scope": "WP10-10 internal persistence prerequisite only. Full task requires WP02-10/13 trusted current-authority/original command and WP10-03/08/09 Stock/Claim execution adoption; not used or claimed by this isolated native component. Sole COORD owns shared Core/new PG migration window; no other implementation writer."
+        "prerequisite_scope": "WP10-10 internal persistence prerequisite only. Full task requires WP02-10/13 trusted current-authority/original command and WP10-03/08/09 Stock/Claim execution adoption; not used or claimed by this isolated native component. Sole COORD owns shared Core/new PG migration window; no other implementation writer.",
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W142-01",
+          "remote_target": "ae0c5a5fcb3e30d3bb2463a9d1fccf999258007d",
+          "source": "375ff51226f84d5ff8191441ad8372671dd0aad6",
+          "branch": "codex/w142-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/559"
+        }
       }
     },
     {
@@ -192787,10 +192842,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261026-wave142",
-      "path": "docs/development/dispatch/20261026-wave142/README.md",
-      "baseline_sha": "befe791d7600f39d15007f8058ee29562b321e04",
-      "registered_at": "2026-10-26T11:37:44.880082+00:00",
+      "id": "20261026-wave143",
+      "path": "docs/development/dispatch/20261026-wave143/README.md",
+      "baseline_sha": "ae0c5a5fcb3e30d3bb2463a9d1fccf999258007d",
+      "registered_at": "2026-10-26T12:13:32.523165+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -192806,55 +192861,73 @@
       ],
       "workers_started": true,
       "windows_closed": false,
-      "product_integrated": false,
+      "product_integrated": true,
       "windows": [
         {
-          "id": "W142-01",
+          "id": "W143-01",
+          "implementation_task": "W143-02",
           "related_tasks": [
-            "WP10-10",
-            "WP02-03"
+            "WP02-29"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "D2 local Transfer demand and budget persistence",
+          "title": "D5 actual loaded managed payload and startup guard",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "a9fc1fed880c7926df466d8f08f76c6db7daab45",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261026T113744Z-wave142-start/MESSAGE.md",
-            "at": "2026-10-26T11:37:44.880082+00:00",
-            "branch": "codex/w142-handoff"
+            "commit": "5304e1313aa4667a73d5afe7cd0f9cc22f4fccf8",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261026T121332Z-wave143-start/MESSAGE.md",
+            "at": "2026-10-26T12:13:32.523165+00:00",
+            "branch": "codex/w143-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w142-01",
-          "planned_scope_ref": "docs/development/dispatch/20261026-wave142/README.md",
+          "branch": "codex/w143-01",
+          "planned_scope_ref": "docs/development/dispatch/20261026-wave143/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "candidate_integrated": false,
+          "candidate_integrated": true,
           "resources_released": false,
-          "validation": "11 actual PostgreSQL native component results passed with fresh isolated migration. Full source/master/current-authority HTTP adoption NOT_RUN; no Actions/production/existing-environment migration.",
-          "worker_delivery_ref": "docs/development/evidence/W142-01/DELIVERY.md",
+          "validation": "26 scoped local actual native host/PG/loaded payload checks passed,0 skipped. Full native host image/source/qualification and enterprise transport NOT_RUN.",
+          "worker_delivery_ref": "https://github.com/GTX537/CP6.CRM/blob/fb224f2b71a9d0148b2b87a257a5607768e7fec2/docs/development/evidence/W143-02/DELIVERY.md",
+          "crm_delivery": {
+            "result": "PASS",
+            "source": "fb224f2b71a9d0148b2b87a257a5607768e7fec2",
+            "main": "2e159bda59d7464a6f3fcdbb1c227cd30a17e7b2",
+            "pr": "https://github.com/GTX537/CP6.CRM/pull/160",
+            "exact_tree_adoption": true,
+            "at": "2026-10-26T12:25:33.019243+00:00"
+          },
+          "handoff_delivery": {
+            "result": "PASS",
+            "source": "253be0cfc4927a05066a17c5ddca944d5ab855f0",
+            "main": "232b4a3d9b23e250bacea8d2e904da9ba0681ad9",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/119",
+            "exact_tree_adoption": true,
+            "at": "2026-10-26T12:29:47.224016+00:00"
+          },
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
+            "crm_seat_released": true,
             "handoff_seat_released": true,
             "main_branch_deleted": false,
+            "crm_branch_deleted": true,
             "handoff_branch_deleted": true
           }
         }
       ],
       "horizon": {
-        "started_at": "2026-10-26T11:36:24.477615+00:00",
+        "started_at": "2026-10-26T12:12:21.512494+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          70,
-          100
+          100,
+          150
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -192862,16 +192935,17 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Continue D2 formal Transfer trusted context/catalog/current authority and Request/Draft original command lifecycle using native local demand budget, then REP and RMA IN/Stock seams; preserve D3/D5/D6/D7 exits.",
+      "next_action": "Continue original D3 MES planning Snapshot/Occurrence/Root WorkOrder common-transaction prerequisites; retain D2 formal trusted Product/UOM/technical Owner and Transfer/REP/RMA, D5 full host/source/release/enterprise transport, D6 real policy/calendar/registration/keys and D7 integration.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
+        "crm_seat_released": true,
         "handoff_seat_released": true,
         "main_branch_deleted": false,
+        "crm_branch_deleted": true,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 17.73,
-      "scope_task_mapping": "Primary WP10-10 source budget prerequisite; WP02-03 remains the upcoming current-authorization dependency, no full admission/state advancement."
+      "elapsed_registered_wave_minutes": 18.2
     },
     "wave_history": [
       {
@@ -212773,6 +212847,116 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/117"
           }
         ]
+      },
+      {
+        "id": "20261026-wave142",
+        "path": "docs/development/dispatch/20261026-wave142/README.md",
+        "baseline_sha": "befe791d7600f39d15007f8058ee29562b321e04",
+        "registered_at": "2026-10-26T11:37:44.880082+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W142-01",
+            "related_tasks": [
+              "WP10-10",
+              "WP02-03"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "D2 local Transfer demand and budget persistence",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "a9fc1fed880c7926df466d8f08f76c6db7daab45",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261026T113744Z-wave142-start/MESSAGE.md",
+              "at": "2026-10-26T11:37:44.880082+00:00",
+              "branch": "codex/w142-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w142-01",
+            "planned_scope_ref": "docs/development/dispatch/20261026-wave142/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "validation": "11 actual PostgreSQL native component results passed with fresh isolated migration. Full source/master/current-authority HTTP adoption NOT_RUN; no Actions/production/existing-environment migration.",
+            "worker_delivery_ref": "docs/development/evidence/W142-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave142-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-26T11:36:24.477615+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            70,
+            100
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Continue D2 formal Transfer trusted context/catalog/current authority and Request/Draft original command lifecycle using native local demand budget, then REP and RMA IN/Stock seams; preserve D3/D5/D6/D7 exits.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave142-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 17.73,
+        "scope_task_mapping": "Primary WP10-10 source budget prerequisite; WP02-03 remains the upcoming current-authorization dependency, no full admission/state advancement.",
+        "actual_registered_wave_minutes": 22.71,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W142-01",
+            "remote_target": "ae0c5a5fcb3e30d3bb2463a9d1fccf999258007d",
+            "source": "375ff51226f84d5ff8191441ad8372671dd0aad6",
+            "branch": "codex/w142-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/559"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W142-HANDOFF",
+            "remote_target": "859a15d5538212643f89ae6a5b8feb1067e06f52",
+            "source": "89650112e186203321ebfc357423f23185136d0e",
+            "branch": "codex/w142-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/118"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -212831,7 +213015,7 @@
         35,
         55
       ],
-      "current_stage": "D2",
+      "current_stage": "D5",
       "stages": [
         {
           "id": "D1",
@@ -212865,7 +213049,8 @@
           "last_creation_report": "docs/development/evidence/W140-01/DELIVERY.md",
           "last_inheritance_report": "docs/development/evidence/W137-01/DELIVERY.md",
           "last_paging_report": "docs/development/evidence/W141-01/DELIVERY.md",
-          "last_demand_budget_report": "docs/development/evidence/W142-01/DELIVERY.md"
+          "last_demand_budget_report": "docs/development/evidence/W142-01/DELIVERY.md",
+          "formal_master_gap": "W143 source audit: legacy ProductCd/QtyUnit lacks versioned formal UOM and trusted TechnicalIdentity original. Do not synthesize KNOWN or NOT_APPLICABLE; formal T04/catalog/current authority/Request and Transfer/REP/RMA remain."
         },
         {
           "id": "D3",
@@ -212918,11 +213103,11 @@
           "id": "D5",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W132-01",
+          "current_window": "W143-01",
           "prerequisite_adjustment": "Native baseline, delta/committed ACK/revocation and bounded API observability adopted locally; no legacy EF fallback. Applicable actual host identity verification, independent qualification and actual broker/enterprise transport prerequisites remain.",
-          "next_action": "Complete applicable actual runtime host/image verification and independently qualified release; validate actual broker and enterprise transport/credential/registration/SLO prerequisites.",
+          "next_action": "Continue original D3 MES planning Snapshot/Occurrence/Root WorkOrder common-transaction prerequisites; retain D2 formal trusted Product/UOM/technical Owner and Transfer/REP/RMA, D5 full host/source/release/enterprise transport, D6 real policy/calendar/registration/keys and D7 integration.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
-          "remaining": "原生基线/delta/提交后确认/撤权及有界观测已本地采用；实际宿主镜像/加载来源验证器和独立资格未证，实际broker/企业TLS/ACL/凭据/登记/生产SLO仍待。",
+          "remaining": "Native local identity/Owner common transaction and bounded operations adopted; W143 actual CLR managed startup payload pin guard adopted. Full process/container/native/JIT image, source/deployment trust, independent release qualification, enterprise broker registration/TLS/ACL/credentials and SLO remain.",
           "adopted_baseline_host": {
             "result": "PASS",
             "source": "1c08f74f089d07c70a226360a32a7f548904a876",
@@ -212947,6 +213132,15 @@
             "pr": "https://github.com/GTX537/CP6.CRM/pull/156",
             "exact_tree_adoption": true,
             "at": "2026-10-25T08:22:29.115235+00:00"
+          },
+          "last_managed_payload_report": "docs/development/evidence/W143-01/DELIVERY.md",
+          "managed_payload_delivery": {
+            "result": "PASS",
+            "source": "fb224f2b71a9d0148b2b87a257a5607768e7fec2",
+            "main": "2e159bda59d7464a6f3fcdbb1c227cd30a17e7b2",
+            "pr": "https://github.com/GTX537/CP6.CRM/pull/160",
+            "exact_tree_adoption": true,
+            "at": "2026-10-26T12:25:33.019243+00:00"
           }
         },
         {
@@ -212988,7 +213182,7 @@
       ],
       "scope": "Quality + bounded WMS/MES Owners; Main durable operation; CRM identity/first Owner; inquiry prerequisites/form/submit; related integration. Exact prerequisite gates retained.",
       "no_agents": true,
-      "next_stage": "D2",
+      "next_stage": "D3",
       "exit_audit": {
         "window": "W129-01",
         "report": "docs/development/evidence/W129-01/DELIVERY.md",
