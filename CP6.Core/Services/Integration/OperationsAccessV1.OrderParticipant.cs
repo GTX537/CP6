@@ -12,7 +12,7 @@ internal sealed partial class OperationsAccessV1
         if (!ReferenceEquals(db, context) || !db.Database.IsNpgsql() || db.Database.CurrentTransaction == null
             || authority.Source.TenantId != db.CurrentTenantId || authority.Source.SubjectId != ActorId)
             throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503);
-        if (authority.Resource != OperationsOwnerV1.PlateMold || (write ? authority.Action != "edit" : authority.Action is not ("query" or "edit")))
+        if (authority.Resource != OperationsOwnerV1.PlateMold || (write ? authority.Action is not ("add" or "edit" or "del") : authority.Action is not ("query" or "add" or "edit" or "del")))
             throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
         return db.Database.CurrentTransaction;
     }

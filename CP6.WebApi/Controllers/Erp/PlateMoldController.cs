@@ -13,6 +13,8 @@ namespace CP6.WebApi.Controllers.Erp;
 [ApiController]
 [Authorize]
 [Route("api/plate-molds")]
+[OrderOwnerResult]
+[ResponseCache(NoStore=true,Location=ResponseCacheLocation.None)]
 public class PlateMoldController : LocalizedControllerBase
 {
     private readonly IPlateMoldService _service;
@@ -71,7 +73,7 @@ public class PlateMoldController : LocalizedControllerBase
                 data = new { wdPtnNo = no, wdRev = rev, orderLink = link, peApi = pe }
             });
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException)
         {
             return BadRequest(new { code = 400, message = ex.Message });
         }
@@ -90,7 +92,7 @@ public class PlateMoldController : LocalizedControllerBase
                 data = new { wdPtnNo, wdRev = rev, orderLink = link, peApi = pe }
             });
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException)
         {
             return BadRequest(new { code = 400, message = ex.Message });
         }
@@ -106,7 +108,7 @@ public class PlateMoldController : LocalizedControllerBase
             await _service.UpdateAsync(wdPtnNo, wdRev, dto, userName);
             return Ok(new { code = 0, message = "OK" });
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException)
         {
             return BadRequest(new { code = 400, message = ex.Message });
         }
@@ -118,11 +120,11 @@ public class PlateMoldController : LocalizedControllerBase
 
     [HttpDelete("{wdPtnNo}/{wdRev:int}")]
     [RequirePermission("erp-plate-mold", "del")]
-    public async Task<IActionResult> Delete(string wdPtnNo, int wdRev, [FromQuery] string? rowVersion = null)
+    public async Task<IActionResult> Delete(string wdPtnNo, int wdRev, [FromBody] PlateMoldDto? dto)
     {
         var userName = User?.Identity?.Name;
-        var rv = !string.IsNullOrEmpty(rowVersion) ? Convert.FromBase64String(rowVersion) : null;
-        await _service.DeleteAsync(wdPtnNo, wdRev, rv, userName);
+        if(dto==null)throw new CP6.Core.Services.Erp.OrderPriceCorrectionException("VERSION_REQUIRED",400);
+        await _service.DeleteVersionedAsync(wdPtnNo, wdRev, dto, userName);
         return Ok(new { code = 0, message = "OK" });
     }
 

@@ -33,6 +33,7 @@ public interface IPlateMoldService
 
     /// <summary>削除（管理者のみ；論理削除）</summary>
     Task DeleteAsync(string wdPtnNo, int wdRev, byte[]? rowVersion, string? userName);
+    Task DeleteVersionedAsync(string wdPtnNo,int wdRev,PlateMoldDto dto,string? userName);
 
     /// <summary>採番</summary>
     Task<string> NextSequenceAsync();

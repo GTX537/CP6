@@ -18,6 +18,12 @@ public enum PlateMoldOperationType
 /// <summary>PA140 版型・木型 1 件 DTO</summary>
 public class PlateMoldDto
 {
+    public Guid? OperationId { get; set; }
+    public string? OperationReason { get; set; }
+    public string? ExpectedNativeRowVersion { get; set; }
+    public PlateMoldTechnicalControlV1? ExpectedTechnicalControl { get; set; }
+    public PlateMoldOrderPreconditionV1? ExpectedOrder { get; set; }
+    public string? OrderDepartment { get; set; }
     public string? WdPtnNo { get; set; }
     public int WdRev { get; set; } = 1;
 
@@ -128,6 +134,11 @@ public class PlateMoldDto
 
     public byte[]? RowVersion { get; set; }
 }
+
+/// <summary>Explicit unknown technical-control knowledge plus the exact observed native source.
+/// This is not a SUP approval/freeze token. Legacy transfer status never supplies this value.</summary>
+public sealed record PlateMoldTechnicalControlV1(string Knowledge, string Owner, Guid Id, string Version, string Digest);
+public sealed record PlateMoldOrderPreconditionV1(Guid OrderId, Guid LineId, string OrderRowVersion, string LineRowVersion);
 
 public class PlateMoldHistoryItemDto
 {

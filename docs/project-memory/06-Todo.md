@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-26：W158旧写者与原订单请求待Main收尾
+
+全部旧PostgreSQL版型写者版本/同事务、原Order变更取消耐久请求和旧页面恢复通过PG13/原关联回归15/UI47/type/Vite。[单份报告](../development/evidence/W158-01/DELIVERY.md)。登记35.43分钟，预计90–150；Handoff已释放，Main待正常PR/finish。专业控制未证实、请求未应用、PE未执行；原七天全部剩余出口保留。
+
 ## 2026-10-26：W157原订单关联待Main收尾
 
 原订单Owner共同事务CREATE_OR_LINK、准确原关联/原键恢复和来源页采用通过PG15、旧Owner兼容2、UI/router/auth37及type/Vite。[单份报告](../development/evidence/W157-01/DELIVERY.md)。登记26.16分钟，预计70–120；Handoff已释放、Main待正常PR/finish。PE未执行；旧写者完整收敛、正式Sales来源和原七天剩余出口未完成。

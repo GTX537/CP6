@@ -1352,3 +1352,7 @@ BUG572修复与65个不同PG/HTTP用例通过，UI未改复用。[单份报告](
 ## 2026-10-26 W157原订单关联共同事务
 
 真实CREATE_OR_LINK及原结果恢复/页面交付，PG15/旧Owner兼容2/UI37/type/Vite通过。[单份报告](../evidence/W157-01/DELIVERY.md)。登记26.16分钟，预计70–120。旧writer完整收敛/正式Sales源、ROU/BOM/WO/SCHED与全部原目标出口保持；Handoff已释放、Main待收尾。
+
+## 2026-10-26 W158旧写者版本与原订单请求
+
+旧create/revise/update/delete和页面采用、耐久CHANGE/CANCEL请求通过PG13/原关联15/UI47/type/Vite。[单份报告](../evidence/W158-01/DELIVERY.md)。登记35.43分钟，预计90–150。专业控制、订单请求应用、正式Sales与原目标出口未完成；Handoff已释放，Main待收尾。

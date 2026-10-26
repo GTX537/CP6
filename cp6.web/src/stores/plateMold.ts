@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { usePermissionStore } from '@/stores/permission'
 import { PlateMoldOperationType } from '@/types/erp/plateMold'
 import type { PlateMoldDto, PlateMoldHistoryItemDto } from '@/types/erp/plateMold'
 
@@ -36,7 +37,8 @@ export const usePlateMoldStore = defineStore('plateMold', () => {
   const dto = ref<PlateMoldDto>(emptyDto())
   const history = ref<PlateMoldHistoryItemDto[]>([])
   const isDirty = ref(false)
-  const isAdmin = ref(true) // 簡略：admin role 持ちと仮定。本来は user state より参照
+  const permissions = usePermissionStore()
+  const canDelete = computed(() => permissions.has('erp-plate-mold:del'))
 
   const isRegister = computed(() => operationType.value === PlateMoldOperationType.Register)
   const isRevise   = computed(() => operationType.value === PlateMoldOperationType.Revise)
@@ -68,7 +70,7 @@ export const usePlateMoldStore = defineStore('plateMold', () => {
 
   return {
     // state
-    operationType, dto, history, isDirty, isAdmin,
+    operationType, dto, history, isDirty, canDelete,
     // computed
     isRegister, isRevise, isEdit, isDelete, isView,
     isPageReadOnly, canEdit, canEditVrsnName,

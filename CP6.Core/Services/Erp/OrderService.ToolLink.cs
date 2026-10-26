@@ -4,6 +4,9 @@ namespace CP6.Core.Services.Erp;
 
 public partial class OrderService
 {
+    internal Task<ToolOrderIntentReceiptV1> RequestToolOrderAsync(OperationsAccessV1 root, Guid operation, string kind,
+        PlateMoldSourceRefV1 tool,ToolNativeOrderRefV1 expected,PlateMoldDto proposal,CancellationToken ct)
+        =>WriteOwner.EnlistToolIntent(root,operation,kind,tool,expected,proposal,ct);
     internal Task<string> CreateToolLinkedAsync(OperationsAccessV1 root, OrderDto draft, CancellationToken ct)
         => WriteOwner.EnlistToolCreate(root, draft, async (frozen, actor) =>
         {

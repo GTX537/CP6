@@ -51,10 +51,10 @@ export const plateMoldApi = {
       `/plate-molds/${encodeURIComponent(wdPtnNo)}/${wdRev}`, dto
     )
   },
-  remove(wdPtnNo: string, wdRev: number, rowVersion?: string) {
+  remove(wdPtnNo: string, wdRev: number, dto: PlateMoldDto) {
     return http.delete<any, ApiResult<null>>(
       `/plate-molds/${encodeURIComponent(wdPtnNo)}/${wdRev}`,
-      { params: { rowVersion } }
+      { data: dto }
     )
   },
 

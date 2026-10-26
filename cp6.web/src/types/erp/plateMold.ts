@@ -12,6 +12,12 @@ export enum PlateMoldOperationType {
 }
 
 export interface PlateMoldDto {
+  operationId?: string
+  operationReason?: string
+  expectedNativeRowVersion?: string
+  expectedTechnicalControl?: { knowledge: string; owner: string; id: string; version: string; digest: string }
+  expectedOrder?: { orderId: string; lineId: string; orderRowVersion: string; lineRowVersion: string }
+  orderDepartment?: string
   wdPtnNo?: string
   wdRev: number
 
