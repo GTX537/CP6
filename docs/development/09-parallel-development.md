@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W141补货／退货服务器分页](dispatch/20261026-wave141/README.md)：真实Owner及页面已验证，Handoff已finish，Main收尾；后继D2正式REP/RMA/IN。单人、PostgreSQL、七天ACTIVE。
+> 当前：[W142调拨本地需求预算前置](dispatch/20261026-wave142/README.md)：内部PG组件已验证，正式T04接线待，Handoff已finish，Main收尾；后继D2正式REP/RMA/IN。单人、PostgreSQL、七天ACTIVE。
+
+> 历史快照：[W141补货／退货服务器分页](dispatch/20261026-wave141/README.md)：真实Owner及页面已验证，Handoff已finish，Main收尾；后继D2正式REP/RMA/IN。单人、PostgreSQL、七天ACTIVE。
 
 > 历史快照：[W140库存可信创建与v2采用](dispatch/20261025-wave140/README.md)：真实Owner及页面已验证，Handoff已finish，Main收尾；后继D2正式REP/RMA/IN。单人、PostgreSQL、七天ACTIVE。
 
