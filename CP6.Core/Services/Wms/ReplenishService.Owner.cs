@@ -15,6 +15,21 @@ public partial class ReplenishService
         : Owner.ExecuteAsync(OperationsOwnerV1.Replenish, "query", false, (_, _) =>
             Task.FromResult(new ReplenishCapabilitiesV1(false, "REPLENISH_OWNER_ADOPTION_UNPROVEN")));
 
+    public Task<PagedResult<ReplenishOrder>> SearchPageAsync(ReplenishSearchQuery query)
+    {
+        var frozen = OperationsOwnerV1.Freeze(query);
+        frozen.PageSize = Math.Clamp(frozen.PageSize, 1, 500);
+        frozen.Page = Math.Clamp(frozen.Page, 1, int.MaxValue / frozen.PageSize);
+        return Owner.ExecuteAsync(OperationsOwnerV1.Replenish, "query", false, async (access, ct) =>
+        {
+            var rows = FilterPageRows(access.Replenishments(), frozen);
+            var result = await OwnerPageV1.ReadAsync(rows, OrderPageRows(rows), frozen.Page, frozen.PageSize, ct,
+                joined => joined.OrderBy(r => r.Item!.Priority).ThenByDescending(r => r.Item!.CreateDate).ThenBy(r => r.Item!.Id));
+            foreach (var row in result.Items) access.ProjectReplenishment(row, list: true);
+            return result;
+        });
+    }
+
     public Task<List<ReplenishOrder>> SearchAsync(ReplenishSearchQuery query)
     {
         if (!_db.Database.IsNpgsql()) return SearchCoreAsync(query);

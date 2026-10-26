@@ -15,6 +15,7 @@ public interface IRmaService
 {
     Task<RmaCapabilitiesV1> GetCapabilitiesAsync();
     Task<List<RmaHeader>> SearchAsync(RmaSearchQuery q);
+    Task<PagedResult<RmaHeader>> SearchPageAsync(RmaSearchQuery query);
     Task<RmaDto?> GetAsync(string rmaNo);
 
     /// <summary>RMA 申請受付（status=0→1 同時に番号発行）</summary>

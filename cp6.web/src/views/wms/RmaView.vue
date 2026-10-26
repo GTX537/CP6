@@ -1,6 +1,6 @@
 <!--
   返品 (RMA) —— list+detail 単一ファイル（mode トグル）。
-  list モード → CpPageShell（:count←total）+ CpListPage（単表スクロール paginated=false）。
+  list モード → CpPageShell（:count←total）+ CpListPage（現在Ownerのサーバーページング）。
     状態=kind:'tag'+map（共有 Tone）；申請日=kind:'date'；create は CpPageShell #actions。
   detail モード（特殊エディタ領域：新規/閲覧兼用フォーム + 明細編集テーブル）→ ヘッダ状態を CpTag 化、action-bar を token 化。
     back で mode=list → CpListPage が再マウントし自動 reload。
@@ -25,7 +25,6 @@
         :fetch="fetchList"
         :search-fields="searchFields"
         :filter-labels="filterLabels"
-        :paginated="false"
         @total-change="total = $event"
       >
         <template #col-_action="{ row }">
@@ -140,6 +139,7 @@
 import { ref, reactive, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import { readWmsPage } from '@/api/wms/readWmsPage'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
 import CpListPage, { type ListColumn, type ListFetch } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
@@ -154,7 +154,6 @@ const { t } = useI18n()
 
 const mode = ref<'list' | 'detail'>('list')
 const total = ref<number>()
-const query = reactive<RmaSearchQuery>({ pageSize: 500 })
 
 const current = ref<RmaHeader | null>(null)
 const writesAvailable = ref(false), readError = ref(''), listEpoch = ref(0), reloadRequired = ref(false)
@@ -227,11 +226,11 @@ const searchFields = computed<FilterField[]>(() => [
   },
 ])
 
-const fetchList: ListFetch<RmaHeader> = async ({ filters }) => {
+const fetchList: ListFetch<RmaHeader> = async ({ page, size, filters }) => {
   const token = intent.capture(), sequence = ++readSequence
   current.value = null; writesAvailable.value = false; total.value = undefined; readError.value = ''
   const f = filters as Record<string, unknown>
-  const q: RmaSearchQuery = { ...query }
+  const q: RmaSearchQuery = { page, pageSize: size }
   q.rmaNo = f.rmaNo ? String(f.rmaNo) : undefined
   q.customerCd = f.customerCd ? String(f.customerCd) : undefined
   q.originalShippingNo = f.originalShippingNo ? String(f.originalShippingNo) : undefined
@@ -239,11 +238,11 @@ const fetchList: ListFetch<RmaHeader> = async ({ filters }) => {
   try {
     const available = await readCapabilities()
     if (!intent.current(token) || sequence !== readSequence) throw new Error('Stale read')
-    const result = await rmaApi.search(q)
+    const result = await rmaApi.page(q)
     if (!intent.current(token) || sequence !== readSequence || !allowed('query')) throw new Error('Stale read')
-    if (result.code !== 0 || !Array.isArray(result.data)) throw new Error('Unavailable list')
+    const resultPage = readWmsPage(result, page, size)
     writesAvailable.value = available
-    return { rows: result.data, total: result.data.length }
+    return resultPage
   } catch {
     if (intent.current(token) && sequence === readSequence) clearFailedRead()
     throw new Error(t('退货数据未能读取，请刷新重试。'))

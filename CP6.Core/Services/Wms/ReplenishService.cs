@@ -36,14 +36,22 @@ public partial class ReplenishService : IReplenishService
         q.Page = Math.Max(1, q.Page);
         q.PageSize = Math.Clamp(q.PageSize, 1, 500);
         var query = allowed ?? await ScopedOrdersAsync(tracking: false);
+        return await OrderPageRows(FilterPageRows(query, q))
+            .Skip((q.Page - 1) * q.PageSize).Take(q.PageSize).ToListAsync(ct);
+    }
+
+    private static IQueryable<ReplenishOrder> FilterPageRows(IQueryable<ReplenishOrder> query, ReplenishSearchQuery q)
+    {
         if (!string.IsNullOrWhiteSpace(q.ReplenishNo)) query = query.Where(x => x.ReplenishNo.Contains(q.ReplenishNo));
         if (!string.IsNullOrWhiteSpace(q.ProductCd)) query = query.Where(x => x.ProductCd == q.ProductCd);
         if (!string.IsNullOrWhiteSpace(q.WarehouseCd)) query = query.Where(x => x.WarehouseCd == q.WarehouseCd);
         if (q.Status.HasValue) query = query.Where(x => x.Status == q.Status.Value);
         if (q.Priority.HasValue) query = query.Where(x => x.Priority == q.Priority.Value);
-        return await query.OrderBy(x => x.Priority).ThenByDescending(x => x.CreateDate).ThenBy(x => x.Id)
-            .Skip((q.Page - 1) * q.PageSize).Take(q.PageSize).ToListAsync(ct);
+        return query;
     }
+
+    private static IOrderedQueryable<ReplenishOrder> OrderPageRows(IQueryable<ReplenishOrder> query)
+        => query.OrderBy(x => x.Priority).ThenByDescending(x => x.CreateDate).ThenBy(x => x.Id);
 
     private async Task<ReplenishOrder?> GetCoreAsync(string replenishNo, IQueryable<ReplenishOrder>? allowed = null, CancellationToken ct = default)
         => await (allowed ?? await ScopedOrdersAsync(tracking: false))

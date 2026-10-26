@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { shallowMount, flushPromises } from '@vue/test-utils'
-const api = vi.hoisted(() => ({ search: vi.fn(), get: vi.fn(), capabilities: vi.fn(), create: vi.fn(), update: vi.fn(), generateBatch: vi.fn(), execute: vi.fn(), cancel: vi.fn() }))
+const api = vi.hoisted(() => ({ page: vi.fn(), search: vi.fn(), get: vi.fn(), capabilities: vi.fn(), create: vi.fn(), update: vi.fn(), generateBatch: vi.fn(), execute: vi.fn(), cancel: vi.fn() }))
 const ui = vi.hoisted(() => ({ success: vi.fn(), error: vi.fn(), warning: vi.fn(), confirm: vi.fn() }))
 const permission = vi.hoisted(() => ({ loaded: true, has: vi.fn(() => true) }))
 vi.mock('@/api/wms/logistics', () => ({ replenishApi: api }))
@@ -19,7 +19,7 @@ beforeEach(() => {
   localStorage.clear(); vi.clearAllMocks(); permission.loaded = true; permission.has.mockReturnValue(true)
   for (const mock of Object.values(api)) mock.mockReset()
   api.capabilities.mockResolvedValue({ code: 0, data: { writesAvailable: false, status: 'REPLENISH_OWNER_ADOPTION_UNPROVEN' } })
-  api.search.mockResolvedValue({ code: 0, data: [structuredClone(row)] }); api.get.mockResolvedValue({ code: 0, data: structuredClone(row) })
+  api.page.mockResolvedValue({ code: 0, data: { items: [structuredClone(row)], total: 1, page: 1, pageSize: 50 } }); api.get.mockResolvedValue({ code: 0, data: structuredClone(row) })
   ui.confirm.mockResolvedValue(undefined)
 })
 afterEach(() => { wrapper?.unmount(); wrapper = undefined })
@@ -33,15 +33,15 @@ describe('Replenishment current Owner page', () => {
     expect(ui.success).not.toHaveBeenCalled()
   })
   it('preserves status zero and fails unavailable or missing list data without false empty success', async () => {
-    const vm = render(); await vm.fetchList(query); expect(api.search.mock.calls[0]![0].status).toBe(0)
+    const vm = render(); await vm.fetchList(query); expect(api.page.mock.calls[0]![0].status).toBe(0)
     api.capabilities.mockRejectedValueOnce({ response: { status: 503 } }); await expect(vm.fetchList(query)).rejects.toThrow()
-    api.search.mockResolvedValueOnce({ code: 0, data: null }); await expect(vm.fetchList(query)).rejects.toThrow()
+    api.page.mockResolvedValueOnce({ code: 0, data: null }); await expect(vm.fetchList(query)).rejects.toThrow()
     expect(vm.readError).not.toBe(''); expect(vm.writesAvailable).toBe(false)
   })
   it('clears protected forms on identity change and rejects an already pending old search', async () => {
-    const vm = render(); const response = pending(); api.search.mockReturnValueOnce(response.promise)
+    const vm = render(); const response = pending(); api.page.mockReturnValueOnce(response.promise)
     const old = vm.fetchList(query); const observed = expect(old).rejects.toThrow(); await flushPromises()
-    expect(api.search).toHaveBeenCalledTimes(1); vm.dialogVisible = true; vm.createForm.productCd = 'private'
+    expect(api.page).toHaveBeenCalledTimes(1); vm.dialogVisible = true; vm.createForm.productCd = 'private'
     identity(); response.resolve({ code: 0, data: [row] }); await observed
     expect(vm.dialogVisible).toBe(false); expect(vm.createForm.productCd).toBe(''); expect(vm.writesAvailable).toBe(false)
   })
@@ -53,7 +53,7 @@ describe('Replenishment current Owner page', () => {
     expect(vm.writesAvailable).toBe(false)
   })
   it('rejects missing UI action and confirmation from an old identity', async () => {
-    const vm = render(); permission.has.mockReturnValue(false); await expect(vm.fetchList(query)).rejects.toThrow(); expect(api.search).not.toHaveBeenCalled()
+    const vm = render(); permission.has.mockReturnValue(false); await expect(vm.fetchList(query)).rejects.toThrow(); expect(api.page).not.toHaveBeenCalled()
     permission.has.mockReturnValue(true); api.capabilities.mockResolvedValue({ code: 0, data: { writesAvailable: true, status: 'LEGACY' } })
     await vm.fetchList(query); const answer = pending(); ui.confirm.mockReturnValueOnce(answer.promise)
     const sending = vm.onExecute(row); identity(); answer.resolve(undefined); await sending; expect(api.execute).not.toHaveBeenCalled()
@@ -68,4 +68,39 @@ describe('Replenishment current Owner page', () => {
     await expect(vm.submitCreate()).rejects.toThrow(); await vm.fetchList(query); await expect(vm.submitCreate()).rejects.toThrow()
     expect(api.create).toHaveBeenCalledTimes(2); expect(vm.intent.uncertain.value).toBe(true)
   })
+  it('loads a server page beyond 500 with the authorized total and status zero', async () => {
+    const vm = render()
+    api.page.mockResolvedValue({ code: 0, data: { items: [row], total: 501, page: 11, pageSize: 50 } })
+    const result = await vm.fetchList({ page: 11, size: 50, filters: { status: 0 } })
+    expect(api.page).toHaveBeenCalledWith(expect.objectContaining({ page: 11, pageSize: 50, status: 0 }))
+    expect(result).toEqual({ rows: [row], total: 501 })
+    expect(api.search).not.toHaveBeenCalled()
+  })
+  it('rejects a malformed server page total instead of reporting a false empty result', async () => {
+    const vm = render()
+    api.page.mockResolvedValue({ code: 0, data: { items: [], page: 1, pageSize: 50 } })
+    await expect(vm.fetchList(query)).rejects.toThrow()
+    expect(vm.writesAvailable).toBe(false)
+  })
+
+  it('rejects an older page after a newer page is accepted', async () => {
+    const vm = render(), response = pending()
+    api.page.mockReturnValueOnce(response.promise)
+    const old = vm.fetchList(query), observed = expect(old).rejects.toThrow()
+    await flushPromises()
+    api.page.mockResolvedValueOnce({ code: 0, data: { items: [row], total: 51, page: 2, pageSize: 50 } })
+    expect(await vm.fetchList({ ...query, page: 2 })).toEqual({ rows: [row], total: 51 })
+    response.resolve({ code: 0, data: { items: [row], total: 1, page: 1, pageSize: 50 } })
+    await observed
+    expect(vm.readError).toBe('')
+  })
+  it('does not disclose a pending page after the current query grant is removed', async () => {
+    const vm = render(), response = pending()
+    api.page.mockReturnValueOnce(response.promise)
+    const old = vm.fetchList(query), observed = expect(old).rejects.toThrow()
+    await flushPromises(); permission.has.mockReturnValue(false)
+    response.resolve({ code: 0, data: { items: [row], total: 1, page: 1, pageSize: 50 } })
+    await observed; expect(vm.writesAvailable).toBe(false); expect(vm.total).toBeUndefined()
+  })
+
 })
