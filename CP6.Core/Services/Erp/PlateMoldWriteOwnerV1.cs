@@ -1,4 +1,5 @@
 using System.Text.Json;
+using CP6.Core.Services.Plm;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Integration;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,7 @@ public sealed record PlateMoldWriteResultV1(Guid OperationId,string Kind,Guid To
     string PeState="NOT_EXECUTED",string OrderSourceKind="NATIVE_ORDER_LINK_ONLY");
 public sealed record PlateMoldWriteOperationV1(Guid OperationId,string State,PlateMoldWriteResultV1? Result=null);
 
-/// <summary>Legacy native maintenance and explicit unknown technical-control knowledge.
+/// <summary>Legacy native maintenance with actual professional draft control when available.
 /// Exact observed bytes are immutable; this Owner does not approve/freeze a professional tool specification.</summary>
 public sealed class PlateMoldWriteOwnerV1(CP6Context db,OperationsOwnerV1 owner,IOrderService orders,
     OrderReadOwnerV1 reader,ToolOrderLinkOwnerV1 links)
@@ -21,7 +22,6 @@ public sealed class PlateMoldWriteOwnerV1(CP6Context db,OperationsOwnerV1 owner,
     internal bool Owns(CP6Context context)=>ReferenceEquals(db,context);
     private OperationsOwnerV1 Authority=>owner.Owns(db) && reader.Owns(db)?owner:throw Error("AUTHORITY_FENCE_UNAVAILABLE",503);
     private static PlateMoldTechnicalControlV1 NewControl=>new("NEW_UNCONTROLLED_DRAFT",PlateMoldSourceStoreV1.Owner,Guid.Empty,"absent","");
-    private static PlateMoldTechnicalControlV1 Observed(PlateMoldSourceRefV1 source)=>new("TECHNICAL_CONTROL_UNPROVEN",source.Owner,source.Id,source.Version,source.Digest);
     public Task<PlateMoldWriterScopeV1> ScopeAsync(CancellationToken ct=default)=>Authority.ExecuteAsync(
         OperationsOwnerV1.PlateMold,"query",false,(a,_)=>Task.FromResult(new PlateMoldWriterScopeV1(db.CurrentTenantId,a.ActorId,NewControl)),ct,readOnlyAuthorityFence:true);
     internal Task<T> ReadNative<T>(Func<IQueryable<PlateMold>,CancellationToken,Task<T>> read,string action="query",CancellationToken ct=default)
@@ -42,7 +42,7 @@ public sealed class PlateMoldWriteOwnerV1(CP6Context db,OperationsOwnerV1 owner,
             rows=revision==null?rows.Where(p=>!p.IsDeleted):rows.Where(p=>p.WdRev==revision.Value);
             var native=await rows.OrderByDescending(p=>p.WdRev).FirstOrDefaultAsync(token);if(native==null)return null;
             var(query,store)=await Source(a,token);var source=await store.Read(query,native.Id,null,token);
-            var dto=PlateMoldService.NativeDto(native);dto.ExpectedNativeRowVersion=source.CurrentNativeRowVersion;dto.ExpectedTechnicalControl=Observed(source.Reference);
+            var dto=PlateMoldService.NativeDto(native);dto.ExpectedNativeRowVersion=source.CurrentNativeRowVersion;dto.ExpectedTechnicalControl=await ToolSpecificationStoreV1.LegacyControl(db,source.Reference,token);
             if(!string.IsNullOrWhiteSpace(native.ArrangeNo))
             {var original=await OriginalOrder(a,native,token);dto.ExpectedOrder=new(original.OrderId,original.LineId,original.OrderRowVersion,original.LineRowVersion);}
             return dto;
@@ -77,7 +77,7 @@ public sealed class PlateMoldWriteOwnerV1(CP6Context db,OperationsOwnerV1 owner,
                 if(string.IsNullOrWhiteSpace(number) || revision<1)throw Error("TOOL_IDENTITY_REQUIRED",400);
                 native=await a.PlateMolds().SingleOrDefaultAsync(p=>p.WdPtnNo==number && p.WdRev==revision,token)??throw Error("OBJECT_FORBIDDEN",403);
                 var current=await store.Read(query,native.Id,null,token);
-                if(frozen.ExpectedTechnicalControl!=Observed(current.Reference))throw Error("TECHNICAL_CONTROL_CHANGED",412);
+                if(frozen.ExpectedTechnicalControl!=await ToolSpecificationStoreV1.LegacyControl(db,current.Reference,token))throw Error("TECHNICAL_CONTROL_CHANGED",412);
                 if(current.CurrentNativeRowVersion!=frozen.ExpectedNativeRowVersion
                     || frozen.RowVersion is {Length:>0} && Convert.ToBase64String(frozen.RowVersion)!=frozen.ExpectedNativeRowVersion)
                     throw Error("TOOL_NATIVE_VERSION_CHANGED",412);
@@ -118,7 +118,7 @@ public sealed class PlateMoldWriteOwnerV1(CP6Context db,OperationsOwnerV1 owner,
                 order=expectedOrder!;state=intent.State;
             }
             var saved=await store.Read(query,id,null,token);
-            var result=new PlateMoldWriteResultV1(operation,kind,id,native.WdPtnNo,native.WdRev,saved.Reference,saved.CurrentNativeRowVersion,Observed(saved.Reference),order,state,intent);
+            var result=new PlateMoldWriteResultV1(operation,kind,id,native.WdPtnNo,native.WdRev,saved.Reference,saved.CurrentNativeRowVersion,await ToolSpecificationStoreV1.LegacyControl(db,saved.Reference,token),order,state,intent);
             await journal.Store(Writer,Contract,operation,a.ActorId,bytes,result,[id],new{action="legacy-tool-command",actor=a.ActorId,result},token);
             return result;
         },ct,actionAtFence:async token=>{original=await journal.Read(Writer,operation,token);return original==null?action:"query";});

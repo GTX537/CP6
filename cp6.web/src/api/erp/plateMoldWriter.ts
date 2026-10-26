@@ -3,6 +3,7 @@ import type { PlateMoldDto } from '@/types/erp/plateMold'
 import type { ToolNativeOrder, ToolLinkEnvelope } from './toolOrderLinks'
 import type { PlateSourceVersion } from './plateMoldSources'
 export type ToolWriteKind = 'CREATE' | 'REVISE' | 'UPDATE' | 'DELETE'
+export type TechnicalControl = NonNullable<PlateMoldDto['expectedTechnicalControl']>
 export interface ToolWriterScope { tenantId: string; actorId: string; newTechnicalControl: NonNullable<PlateMoldDto['expectedTechnicalControl']> }
 export interface ToolWriteReceipt { operationId: string; kind: ToolWriteKind; toolId: string; number: string; revision: number;
   source: PlateSourceVersion['reference']; nativeRowVersion: string; technicalControl: NonNullable<PlateMoldDto['expectedTechnicalControl']>;

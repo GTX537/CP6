@@ -67,6 +67,15 @@ it('preserves input and original key on 412 and never fills a newer version or r
   api.operation.mockResolvedValue(ok({ operationId: original.operationId, state: 'CLOSED' })); await click('结束未提交操作')
   expect(pendingToolWrite(scope)).toBeNull(); expect(api.create).toHaveBeenCalledTimes(1); expect(api.getByNo).not.toHaveBeenCalled(); expect(store.dto.vrsnName).toBe('Private-input')
 })
+it('uses the professional draft control independently from native observation and accepts its original result', async () => {
+  const professional = { knowledge: 'TECHNICAL_SPECIFICATION_DRAFT', owner: 'Main.Plm.ToolSpecification.v1', id, version: '2', digest: 'c'.repeat(64) }
+  api.getByNo.mockResolvedValue(ok({ ...current(), expectedTechnicalControl: professional }))
+  route.query = { wdPtnNo: 'FULL-ORIGINAL-TOOL', rev: '7' }; await render(); store.setOperationType(PlateMoldOperationType.Edit)
+  api.operation.mockImplementation(async (operationId: string) => ok({ operationId, state: 'COMMITTED', result: { ...receipt(operationId, 'UPDATE'), technicalControl: professional } }))
+  await flushPromises(); await click('sales.btn.register')
+  expect(api.update.mock.calls[0]![2].expectedTechnicalControl).toEqual(professional)
+  expect(view!.text()).toContain('专业规格草稿，尚未批准或冻结'); expect(pendingToolWrite(scope)).toBeNull()
+})
 it('recovers a lost create response after reload without retaining form contents or resending', async () => {
   api.create.mockRejectedValue(new Error('lost')); await render(); draft(); await click('sales.btn.register'); const original = pendingToolWrite(scope)!
   view!.unmount(); view = undefined; await render(); expect(store.dto.vrsnName).toBe(''); await click('查询原操作')

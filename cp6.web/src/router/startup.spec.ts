@@ -31,6 +31,7 @@ vi.mock('@/views/pms/ChangePasswordView.vue', () => ({ default: { template: '<se
 vi.mock('@/views/pms/TwoFactorChallengeView.vue', () => ({ default: { template: '<section data-testid="factor">Second factor</section>' } }))
 vi.mock('@/views/pms/TwoFactorEnrollView.vue', () => ({ default: { template: '<section data-testid="factor">Enroll second factor</section>' } }))
 vi.mock('@/views/erp/PlateMoldSourcesView.vue', () => ({ default: { template: '<section data-testid="plate-sources">Tool sources</section>' } }))
+vi.mock('@/views/plm/ToolSpecificationsView.vue', () => ({ default: { template: '<section data-testid="tool-specifications">Tool specification drafts</section>' } }))
 vi.mock('@/views/erp/ProductMasterView.vue', () => ({ default: { template: '<section data-testid="product-window">Product window</section>' } }))
 
 let router: Router | undefined
@@ -233,5 +234,13 @@ describe('plate source independent entry', () => {
     const active = await boot('/erp/plate-mold-sources')
     expect(document.querySelector('[data-testid="plate-sources"]') !== null).toBe(allowed)
     expect(active.currentRoute.value.path === '/erp/plate-mold-sources').toBe(allowed)
+  })
+})
+describe('technical tool specification independent entry', () => {
+  it.each([false, true])('requires the professional query grant instead of legacy edit: %s', async allowed => {
+    signedIn(); authFixture.actions.mockResolvedValue(allowed ? ['plm-tool-specification:query'] : ['erp-plate-mold:query', 'erp-plate-mold:edit'])
+    const active = await boot('/plm/tool-specifications')
+    expect(document.querySelector('[data-testid="tool-specifications"]') !== null).toBe(allowed)
+    expect(active.currentRoute.value.path === '/plm/tool-specifications').toBe(allowed)
   })
 })
