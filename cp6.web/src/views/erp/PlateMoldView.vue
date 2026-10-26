@@ -11,11 +11,11 @@
           <CpTag v-if="store.dto.status === 9" tone="ok">{{ t('sales.status.transferred') }}</CpTag>
         </div>
         <div class="header-right">
-          <el-radio-group v-model="opModel" size="small">
+          <el-radio-group v-model="opModel" size="small" :disabled="saving || loading || !!pending">
             <el-radio-button :value="PlateMoldOperationType.Register">{{ t('sales.op.register') }}</el-radio-button>
             <el-radio-button :value="PlateMoldOperationType.Revise">{{ t('sales.op.revise') }}</el-radio-button>
             <el-radio-button :value="PlateMoldOperationType.Edit">{{ t('sales.op.edit') }}</el-radio-button>
-            <el-radio-button :value="PlateMoldOperationType.Delete" :disabled="!store.isAdmin">{{ t('sales.op.delete') }}</el-radio-button>
+            <el-radio-button :value="PlateMoldOperationType.Delete" :disabled="!store.canDelete">{{ t('sales.op.delete') }}</el-radio-button>
             <el-radio-button :value="PlateMoldOperationType.View">{{ t('sales.op.view') }}</el-radio-button>
           </el-radio-group>
         </div>
@@ -89,23 +89,23 @@
             </el-form-item>
             <el-form-item :label="t('抜方向')"><el-input v-model="store.dto.extractionDirect" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
             <el-form-item :label="t('複版')"><el-checkbox v-model="store.dto.duplicatePlateFlg" :disabled="!store.canEdit">{{ t('複版あり') }}</el-checkbox></el-form-item>
-            <el-form-item :label="t('シート寸法 巾')"><el-input-number v-model="store.dto.sheetWidth" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
-            <el-form-item :label="t('シート寸法 流れ')"><el-input-number v-model="store.dto.sheetFlow" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
-            <el-form-item :label="t('刃渡り 巾')"><el-input-number v-model="store.dto.bladeWidth" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
-            <el-form-item :label="t('刃渡り 流れ')"><el-input-number v-model="store.dto.bladeFlow" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('シート寸法 巾')"><el-input-number v-model="store.dto.sheetWidth" :disabled="!store.canEdit" :precision="4" :controls="false" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('シート寸法 流れ')"><el-input-number v-model="store.dto.sheetFlow" :disabled="!store.canEdit" :precision="4" :controls="false" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('刃渡り 巾')"><el-input-number v-model="store.dto.bladeWidth" :disabled="!store.canEdit" :precision="4" :controls="false" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('刃渡り 流れ')"><el-input-number v-model="store.dto.bladeFlow" :disabled="!store.canEdit" :precision="4" :controls="false" style="width: 130px" /></el-form-item>
             <el-form-item :label="t('付数')"><el-input-number v-model="store.dto.compositionQty" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
             <el-form-item :label="t('個数')"><el-input-number v-model="store.dto.mfgQty" :disabled="!store.canEdit" :precision="0" :controls="false" :min="1" style="width: 110px" /></el-form-item>
             <el-form-item :label="t('色数')"><el-input-number v-model="store.dto.colorQty" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
             <el-form-item :label="t('本数')"><el-input-number v-model="store.dto.bookQty" :disabled="!store.canEdit" :precision="0" :controls="false" :min="0" style="width: 110px" /></el-form-item>
-            <el-form-item :label="t('フレキソ版厚')"><el-input-number v-model="store.dto.flexoThick" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
-            <el-form-item :label="t('シリンダーサイズ')"><el-input-number v-model="store.dto.cylinderSize" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('フレキソ版厚')"><el-input-number v-model="store.dto.flexoThick" :disabled="!store.canEdit" :precision="4" :controls="false" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('シリンダーサイズ')"><el-input-number v-model="store.dto.cylinderSize" :disabled="!store.canEdit" :precision="4" :controls="false" style="width: 130px" /></el-form-item>
             <el-form-item :label="t('sales.term.supplier')" required><el-input v-model="store.dto.supplierCd" :disabled="!store.canEdit" style="width: 160px" /></el-form-item>
             <el-form-item :label="t('加工予定先')"><el-input v-model="store.dto.processDestination" :disabled="!store.canEdit" style="width: 160px" /></el-form-item>
             <el-form-item :label="t('納期')"><el-date-picker v-model="store.dto.deliveryDate" type="date" value-format="YYYY-MM-DD" :disabled="!store.canEdit" style="width: 150px" /></el-form-item>
             <el-form-item :label="t('入荷実績日')"><el-date-picker v-model="store.dto.arrivalActualDate" type="date" value-format="YYYY-MM-DD" :disabled="!store.canEdit" style="width: 150px" /></el-form-item>
-            <el-form-item :label="t('見積価格')"><el-input-number v-model="store.dto.estimateAmount" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
-            <el-form-item :label="t('売上決定価格')"><el-input-number v-model="store.dto.decisionAmount" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
-            <el-form-item :label="t('仕入予定金額')"><el-input-number v-model="store.dto.purchaseAmount" :disabled="!store.canEdit" :precision="2" :controls="false" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('見積価格')"><el-input-number v-model="store.dto.estimateAmount" :disabled="!store.canEdit" :precision="4" :controls="false" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('売上決定価格')"><el-input-number v-model="store.dto.decisionAmount" :disabled="!store.canEdit" :precision="4" :controls="false" style="width: 130px" /></el-form-item>
+            <el-form-item :label="t('仕入予定金額')"><el-input-number v-model="store.dto.purchaseAmount" :disabled="!store.canEdit" :precision="4" :controls="false" style="width: 130px" /></el-form-item>
             <el-form-item :label="t('売上日')"><el-date-picker v-model="store.dto.salesDate" type="date" value-format="YYYY-MM-DD" :disabled="!store.canEdit" style="width: 150px" /></el-form-item>
             <el-form-item :label="t('落丁型')"><el-input v-model="store.dto.strippingCd" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
             <el-form-item :label="t('置き版')"><el-input v-model="store.dto.standingCd" :disabled="!store.canEdit" style="width: 130px" /></el-form-item>
@@ -171,41 +171,89 @@
     </el-card>
 
     <el-card shadow="never" class="footer-card">
+      <p>原记录 Rev 与传输状态独立保留；技术批准未证实，实物资格未知，PE 未执行。</p>
+      <p v-if="store.dto.expectedNativeRowVersion">当前原记录版本：{{ store.dto.expectedNativeRowVersion }}；技术原观察版本：{{ store.dto.expectedTechnicalControl?.version }}</p>
+      <p v-if="error" role="alert">{{ error }}</p><p v-if="notice" role="status">{{ notice }}</p>
+      <el-button v-if="completed" :disabled="saving || loading" @click="onLoadByNo">重新载入已确认原记录</el-button>
+      <div v-if="pending"><p>存在待确认操作，请先查询原结果。</p>
+        <el-button :disabled="saving || loading" @click="recover(false)">查询原操作</el-button>
+        <el-button :disabled="saving || loading" @click="recover(true)">结束未提交操作</el-button></div>
+      <label v-if="!store.isView">操作理由 <el-input v-model="store.dto.operationReason" aria-label="操作理由" maxlength="500" /></label>
+      <label v-if="store.isRegister || store.isRevise">新建原订单部门编码 <el-input v-model="store.dto.orderDepartment" aria-label="原订单部门编码" maxlength="10" /></label>
+      <p v-if="store.isEdit || store.isDelete">商业变更／取消只提交原订单请求，受理后仍需原订单处理。</p>
       <div class="btn-row">
         <el-button v-if="store.isView" :icon="Document" @click="onIssueLabel">{{ t('sales.btn.label') }}</el-button>
         <el-button v-if="store.isView" :icon="Document" @click="onPurchaseOrder">{{ t('sales.btn.purchaseOrder') }}</el-button>
-        <el-button v-if="store.isDelete" v-permission="'erp-plate-mold:del'" type="danger" :loading="saving" @click="onSave">{{ t('sales.btn.delete') }}</el-button>
-        <el-button v-else-if="store.canEdit" v-permission="'erp-plate-mold:add'" type="success" :loading="saving" @click="onSave">{{ t('sales.btn.register') }}</el-button>
-        <el-button @click="onClear">{{ t('sales.btn.clear') }}</el-button>
+        <el-button v-if="store.isDelete" v-permission="'erp-plate-mold:del'" type="danger" :loading="saving" :disabled="!canSave" @click="onSave">{{ t('sales.btn.delete') }}</el-button>
+        <el-button v-else-if="store.canEdit" v-permission="savePermission" type="success" :loading="saving" :disabled="!canSave" @click="onSave">{{ t('sales.btn.register') }}</el-button>
+        <el-button :disabled="saving || loading || !!pending" @click="onClear">{{ t('sales.btn.clear') }}</el-button>
       </div>
     </el-card>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { Document } from '@element-plus/icons-vue'
 import { usePlateMoldStore } from '@/stores/plateMold'
 import { PlateMoldOperationType } from '@/types/erp/plateMold'
 import { plateMoldApi } from '@/api/erp/plateMold'
 import CpTag from '@/components/base/CpTag.vue'
+import { usePermissionStore } from '@/stores/permission'
+import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
+import { plateMoldWriterApi, type ToolWriterScope, type ToolWriteOperation, type ToolWriteKind } from '@/api/erp/plateMoldWriter'
+import { pendingToolWrite, saveToolWrite, resolveToolWrite, writerResponse, type PendingToolWrite } from '@/auth/plateMoldWriteRecovery'
 
 const { t } = useI18n()
-const store = usePlateMoldStore()
+const store = usePlateMoldStore(), route = useRoute(), permissions = usePermissionStore()
 const tab = ref('basic')
 const searchNo = ref('')
 const searchRev = ref<number | undefined>()
 const searchEstimate = ref('')
 const loading = ref(false)
-const saving = ref(false)
+const saving = ref(false), error = ref(''), notice = ref(''), completed = ref(false)
+const scope = ref<ToolWriterScope | null>(null), pending = ref<PendingToolWrite | null>(null)
+const savePermission = computed(() => `erp-plate-mold:${store.isRegister ? 'add' : store.isDelete ? 'del' : 'edit'}`)
+const canSave = computed(() => !!scope.value && !pending.value && !completed.value && !loading.value && !saving.value && !store.isView && permissions.has(savePermission.value))
+let live = true, generation = 0
+function guard(stamp: string, current: number) { requireIdentity(stamp); if (!live || current !== generation) throw new Error('页面已变化。') }
+function clearPrivate() { store.reset(); scope.value = null; pending.value = null; notice.value = ''; completed.value = false; searchNo.value = ''; searchRev.value = undefined; searchEstimate.value = '' }
+async function run(write: boolean, action: (check: () => void) => Promise<void>) {
+  if (loading.value || saving.value) return
+  const stamp = identityStamp(), current = generation, check = () => guard(stamp, current)
+  if (write) saving.value = true; else loading.value = true
+  error.value = ''
+  try { await action(check); check() }
+  catch (failure: any) { try { check()
+    if ([401, 403].includes(failure?.response?.status)) { generation++; clearPrivate(); error.value = '当前权限无法确认，请重新载入。' }
+    else error.value = failure?.response?.status === 412 ? '版本已变化，输入和原版本已保留；请查询或结束原操作，再明确重新载入。'
+      : failure?.response?.status === 409 ? '原关联或操作冲突，请查询原操作；不会自动重建订单。' : failure?.message || '结果暂未确认，请查询原操作。'
+  } catch { /* Ignore responses from a previous identity or route. */ } }
+  finally { try { check(); if (scope.value) pending.value = pendingToolWrite(scope.value) } catch { /* Keep durable recovery IDs. */ }
+    if (current === generation || !scope.value) { saving.value = false; loading.value = false } }
+}
+async function currentScope(check: () => void) { const value = writerResponse(await plateMoldWriterApi.scope()); check(); scope.value = value; pending.value = pendingToolWrite(value); return value }
+function newDraft() { if (scope.value && store.isRegister) { store.dto.expectedNativeRowVersion = 'absent'; store.dto.expectedTechnicalControl = { ...scope.value.newTechnicalControl }; store.dto.expectedOrder = undefined; store.dto.rowVersion = undefined } }
+function showOperation(value: ToolWriteOperation) {
+  if (value.state === 'COMMITTED' && value.result) {
+    completed.value = true; const r = value.result
+    searchNo.value = r.number; searchRev.value = r.revision
+    notice.value = `原操作已提交：${r.number} / Rev ${r.revision}。${r.commercialState === 'REQUESTED' ? '原订单请求已受理，尚未应用。' : '原订单已创建。'} PE 未执行。请明确重新载入后继续。`
+  } else notice.value = value.state === 'CLOSED' ? '未提交操作已结束，输入和原版本保留。' : '结果仍未知，请继续查询或结束未提交操作。'
+}
+async function recover(close: boolean) { const current = scope.value; if (!current) return
+  await run(true, async check => { const value = await resolveToolWrite(current, close, check); check(); showOperation(value) })
+}
 
 const opModel = computed({
   get: () => store.operationType,
   set: v => {
+    if (pending.value || loading.value || saving.value) return
     store.setOperationType(v)
-    if (v === PlateMoldOperationType.Register) store.reset()
+    if (v === PlateMoldOperationType.Register) { store.reset(); completed.value = false; newDraft() }
   },
 })
 const opLabel = computed(() => ({
@@ -227,82 +275,64 @@ const opTagType = computed<'primary' | 'warning' | 'danger' | 'info' | 'success'
 })
 
 async function onLoadByEstimate() {
-  if (!searchEstimate.value) { ElMessage.warning(t('sales.err.E10022')); return }
-  loading.value = true
-  try {
-    const r = await plateMoldApi.getByEstimateCalc(searchEstimate.value)
-    if (r.code === 0 && r.data) {
-      store.loadFromDto(r.data)
-      ElMessage.success(t('sales.msg.loadSuccess'))
-    } else {
-      ElMessage.info(t('sales.err.E10008'))
-    }
-  } finally { loading.value = false }
+  if (!searchEstimate.value || pending.value || !store.isRegister) return
+  const estimate = searchEstimate.value
+  await run(false, async check => { await currentScope(check); if (pending.value) return
+    const response = await plateMoldApi.getByEstimateCalc(estimate); check()
+    if (response.code === 0 && response.data) { store.loadFromDto(response.data); completed.value = false; newDraft() }
+    else error.value = t('sales.err.E10008')
+  })
 }
-
+async function readExact(number: string, revision: number | undefined, check: () => void) {
+  const r = await plateMoldApi.getByNo(number, revision); check()
+  if (r.code !== 0 || !r.data) { error.value = t('sales.err.E10008'); return }
+  if (r.data.wdPtnNo !== number || revision !== undefined && r.data.wdRev !== revision || !r.data.expectedNativeRowVersion || !r.data.expectedTechnicalControl) throw new Error('无法核对原记录版本。')
+  store.loadFromDto(r.data); completed.value = false; store.history = []
+  if (store.isRegister) store.setOperationType(PlateMoldOperationType.View)
+  const h = await plateMoldApi.history(number); check(); if (h.code === 0) store.history = h.data || []
+}
 async function onLoadByNo() {
-  if (!searchNo.value) { ElMessage.warning(t('sales.err.E10022')); return }
-  loading.value = true
-  try {
-    const r = await plateMoldApi.getByNo(searchNo.value, searchRev.value)
-    if (r.code === 0 && r.data) {
-      store.loadFromDto(r.data)
-      const h = await plateMoldApi.history(searchNo.value)
-      if (h.code === 0 && h.data) store.history = h.data
-      ElMessage.success(t('sales.msg.loadSuccess'))
-    } else {
-      ElMessage.info(t('sales.err.E10008'))
-    }
-  } finally { loading.value = false }
+  if (!searchNo.value || pending.value) return
+  const number = searchNo.value, revision = searchRev.value
+  await run(false, async check => { await currentScope(check); if (!pending.value) await readExact(number, revision, check) })
 }
-
 async function onSave() {
-  if (store.isDelete) {
-    try {
-      await ElMessageBox.confirm(
-        `${t('sales.msg.deleteConfirm')} (${store.dto.wdPtnNo} ${t('sales.term.rev')} ${store.dto.wdRev})`,
-        t('sales.msg.confirmTitle'), { type: 'warning' }
-      )
-    } catch { return }
-    saving.value = true
-    try {
-      const r = await plateMoldApi.remove(store.dto.wdPtnNo!, store.dto.wdRev, store.dto.rowVersion)
-      if (r.code === 0) { ElMessage.success(t('sales.msg.deleteSuccess')); store.reset() }
-    } finally { saving.value = false }
-    return
+  if (!canSave.value || !scope.value) return
+  const current = scope.value, kind: ToolWriteKind = store.isRegister ? 'CREATE' : store.isRevise ? 'REVISE' : store.isDelete ? 'DELETE' : 'UPDATE'
+  const dto = JSON.parse(JSON.stringify(store.dto)) as typeof store.dto
+  if (!dto.operationReason?.trim() || !dto.expectedNativeRowVersion || !dto.expectedTechnicalControl || kind !== 'CREATE' && !dto.wdPtnNo) {
+    error.value = '请填写操作理由，并明确载入当前原记录版本。'; return
   }
-  saving.value = true
-  try {
-    if (store.isRegister) {
-      const r = await plateMoldApi.create(store.dto)
-      if (r.code === 0 && r.data) {
-        ElMessage.success(`${t('sales.msg.saveSuccess')}: ${r.data.wdPtnNo} / ${t('sales.term.rev')} ${r.data.wdRev}`)
-        // 結果を反映して訂正モードへ
-        store.dto.wdPtnNo = r.data.wdPtnNo
-        store.dto.wdRev = r.data.wdRev
-        store.dto.arrangeNo = r.data.orderLink.arrangeNo
-        store.setOperationType(PlateMoldOperationType.Edit)
-      }
-    } else if (store.isRevise) {
-      const r = await plateMoldApi.revise(store.dto.wdPtnNo!, store.dto)
-      if (r.code === 0 && r.data) {
-        ElMessage.success(`${t('sales.op.revise')}: ${t('sales.term.rev')} ${r.data.wdRev}`)
-        store.dto.wdRev = r.data.wdRev
-        store.setOperationType(PlateMoldOperationType.Edit)
-      }
-    } else if (store.isEdit) {
-      const r = await plateMoldApi.update(store.dto.wdPtnNo!, store.dto.wdRev, store.dto)
-      if (r.code === 0) ElMessage.success(t('sales.msg.saveSuccess'))
-    }
-  } finally { saving.value = false }
+  await run(true, async check => {
+    const value = await saveToolWrite(current, kind, check, id => {
+      check(); if (!permissions.has(savePermission.value)) throw new Error('当前没有此操作权限。')
+      dto.operationId = id
+      return kind === 'CREATE' ? plateMoldApi.create(dto) : kind === 'REVISE' ? plateMoldApi.revise(dto.wdPtnNo!, dto)
+        : kind === 'UPDATE' ? plateMoldApi.update(dto.wdPtnNo!, dto.wdRev, dto) : plateMoldApi.remove(dto.wdPtnNo!, dto.wdRev, dto)
+    }); check(); showOperation(value)
+  })
 }
-
-function onClear() { store.reset(); searchNo.value = ''; searchRev.value = undefined; searchEstimate.value = '' }
+function onClear() { if (pending.value || loading.value || saving.value) return; store.reset(); newDraft(); completed.value = false; notice.value = ''; searchNo.value = ''; searchRev.value = undefined; searchEstimate.value = '' }
+async function initialize() { await run(false, async check => {
+  await currentScope(check)
+  const number = typeof route.query.wdPtnNo === 'string' ? route.query.wdPtnNo : ''
+  const rev = Number(route.query.rev)
+  if (number && Number.isSafeInteger(rev) && rev > 0) {
+    searchNo.value = number; searchRev.value = rev; store.setOperationType(PlateMoldOperationType.View)
+    await readExact(number, rev, check)
+  } else { store.reset(); newDraft() }
+}) }
+function identityChanged() { generation++; clearPrivate(); error.value = ''; loading.value = false; saving.value = false }
+watch(() => [route.query.wdPtnNo, route.query.rev], () => { identityChanged(); void initialize() })
+onMounted(() => { store.reset(); window.addEventListener(AUTH_EVENT, identityChanged); window.addEventListener('storage', identityChanged); void initialize() })
+onBeforeUnmount(() => { live = false; generation++; clearPrivate(); window.removeEventListener(AUTH_EVENT, identityChanged); window.removeEventListener('storage', identityChanged) })
 
 async function onIssueLabel() {
   if (!store.dto.wdPtnNo) return
+  const stamp = identityStamp(), current = generation
   try {
     const blob = await plateMoldApi.issueLabel([{ wdPtnNo: store.dto.wdPtnNo, wdRev: store.dto.wdRev }]) as unknown as Blob
+    guard(stamp, current)
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a'); a.href = url
     a.download = `plate-mold-label_${store.dto.wdPtnNo}_${store.dto.wdRev}.csv`; a.click()

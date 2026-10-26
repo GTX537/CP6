@@ -66,8 +66,24 @@ public sealed class ToolOrderLinkOwnerV1(CP6Context db, OperationsOwnerV1 owner,
             throw Error("TOOL_ORDER_COMMAND_INVALID",400);
         var frozen=OperationsOwnerV1.Freeze(input);var bytes=MainOwnerOperationJournalV1.Encode(frozen);
         var journal=new MainOwnerOperationJournalV1(db); MainOwnerOperationJournalV1.Original? previous=null;
-        return Authority.ExecuteAsync(OperationsOwnerV1.PlateMold,"edit",true,async(a,token)=>
-        {
+        return Authority.ExecuteAsync(OperationsOwnerV1.PlateMold,"edit",true,
+            (a,token)=>ApplyLink(a,frozen,bytes,journal,previous,token),ct,
+            actionAtFence:async token=>{previous=await journal.Read(LinkOwner,frozen.OperationId,token);return previous==null?"edit":"query";});
+    }
+    internal async Task<ToolOrderLinkReceiptV1> EnlistLegacyCreate(OperationsAccessV1 root,Guid operation,Guid newlyCreatedId,string? department,CancellationToken ct)
+    {
+        root.RequireToolOrderTransaction(db,true);
+        // The caller has just created this original row in the same transaction. This does not fill a missing edit precondition.
+        if(!db.ChangeTracker.Entries<PlateMold>().Any(e=>e.Entity.Id==newlyCreatedId && e.Entity.Creator==root.Actor && e.Entity.ArrangeNo==null))
+            throw Error("NEW_TOOL_TRANSACTION_REQUIRED",503);
+        var(query,store)=await Source(root,ct);var source=await store.Read(query,newlyCreatedId,null,ct);
+        var command=new ToolOrderLinkCommandV1(operation,source.Reference,source.CurrentNativeRowVersion,department);
+        var journal=new MainOwnerOperationJournalV1(db);
+        return await ApplyLink(root,command,MainOwnerOperationJournalV1.Encode(command),journal,null,ct);
+    }
+    private async Task<ToolOrderLinkReceiptV1> ApplyLink(OperationsAccessV1 a,ToolOrderLinkCommandV1 frozen,byte[] bytes,
+        MainOwnerOperationJournalV1 journal,MainOwnerOperationJournalV1.Original? previous,CancellationToken token)
+    {
             var (query,store)=await Source(a,token);
             if(previous!=null)return await Disclose(a,query,store,frozen.OperationId,previous,bytes,token);
             if(!await a.PlateMolds().AnyAsync(p=>p.Id==frozen.Tool.Id,token))throw Error("OBJECT_FORBIDDEN",403);
@@ -124,8 +140,8 @@ public sealed class ToolOrderLinkOwnerV1(CP6Context db, OperationsOwnerV1 owner,
             await journal.Store(LinkOwner,Contract,frozen.OperationId,a.ActorId,bytes,result,[native.Id],
                 new { action="create-or-link-original-order",actor=a.ActorId,result },token);
             return result;
-        },ct,actionAtFence:async token=>{previous=await journal.Read(LinkOwner,frozen.OperationId,token);return previous==null?"edit":"query";});
     }
+
     private static OrderDto Draft(PlateMold p,string? department)
     {
         var code=p.WdPtnNo.Length>15?p.WdPtnNo[..15]:p.WdPtnNo;

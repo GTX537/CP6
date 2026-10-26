@@ -12,16 +12,17 @@ namespace CP6.Core.Services.Erp;
 /// <remarks>
 /// 5 操作モード（登録/改定/訂正/削除/参照）+ Rev 管理 + 版型受注連携 + PE API 連携。
 /// </remarks>
-public class PlateMoldService : IPlateMoldService
+public partial class PlateMoldService : IPlateMoldService
 {
     private readonly CP6Context _db;
     private readonly IPlateMoldPeApiService _peApi;
     private const string WdPtnPrefix = "PM"; // 版型 NO 採番プレフィックス
 
-    public PlateMoldService(CP6Context db, IPlateMoldPeApiService peApi)
+    public PlateMoldService(CP6Context db, IPlateMoldPeApiService peApi, PlateMoldWriteOwnerV1? writeOwner = null)
     {
         _db = db;
         _peApi = peApi;
+        _writeOwner = writeOwner;
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -30,6 +31,7 @@ public class PlateMoldService : IPlateMoldService
 
     public async Task<PlateMoldDto?> GetByNoAsync(string wdPtnNo, int? rev = null)
     {
+        if (_db.Database.IsNpgsql()) return await WriteOwner.EditorAsync(wdPtnNo, rev);
         var q = _db.PlateMolds.AsNoTracking().Where(x => x.WdPtnNo == wdPtnNo && !x.IsDeleted);
         if (rev.HasValue) q = q.Where(x => x.WdRev == rev.Value);
         var ent = await q.OrderByDescending(x => x.WdRev).FirstOrDefaultAsync();
@@ -83,9 +85,12 @@ public class PlateMoldService : IPlateMoldService
         dto.PaperCdB = p.PaperCdB; dto.PrintCdB = p.PrintCdB; dto.EmbossCdB = p.EmbossCdB; dto.MakerCdB = p.MakerCdB;
     }
 
-    public async Task<List<PlateMoldHistoryItemDto>> GetHistoryAsync(string wdPtnNo)
+    public Task<List<PlateMoldHistoryItemDto>> GetHistoryAsync(string wdPtnNo)
+        => _db.Database.IsNpgsql() ? WriteOwner.ReadNative((rows,ct)=>HistoryCoreAsync(wdPtnNo,rows)) : HistoryCoreAsync(wdPtnNo,_db.PlateMolds.AsNoTracking());
+
+    private async Task<List<PlateMoldHistoryItemDto>> HistoryCoreAsync(string wdPtnNo,IQueryable<PlateMold> scoped)
     {
-        var rows = await _db.PlateMolds.AsNoTracking()
+        var rows = await scoped
             .Where(x => x.WdPtnNo == wdPtnNo && !x.IsDeleted)
             .OrderBy(x => x.WdRev)
             .ToListAsync();
@@ -114,6 +119,7 @@ public class PlateMoldService : IPlateMoldService
     public async Task<(string, int, PlateMoldOrderLinkResultDto, PlateMoldPeApiResultDto)>
         CreateAsync(PlateMoldDto dto, string? userName)
     {
+        if (_db.Database.IsNpgsql()) return await CreateNativeOwned(dto);
         ValidateBeforeSave(dto);
         var wdPtnNo = await NextSequenceAsync();
         var now = DateTime.Now;
@@ -149,6 +155,7 @@ public class PlateMoldService : IPlateMoldService
     public async Task<(int, PlateMoldOrderLinkResultDto, PlateMoldPeApiResultDto)>
         ReviseAsync(string wdPtnNo, PlateMoldDto dto, string? userName)
     {
+        if (_db.Database.IsNpgsql()) return await ReviseNativeOwned(wdPtnNo,dto);
         ValidateBeforeSave(dto);
 
         // 最大 Rev を取得
@@ -201,6 +208,7 @@ public class PlateMoldService : IPlateMoldService
 
     public async Task UpdateAsync(string wdPtnNo, int wdRev, PlateMoldDto dto, string? userName)
     {
+        if (_db.Database.IsNpgsql()) { await WriteOwner.ExecuteAsync("UPDATE",wdPtnNo,wdRev,dto); return; }
         var ent = await _db.PlateMolds.FirstOrDefaultAsync(x =>
             x.WdPtnNo == wdPtnNo && x.WdRev == wdRev && !x.IsDeleted)
             ?? throw new KeyNotFoundException($"E10008: 版型 '{wdPtnNo}' Rev {wdRev} が見つかりません");
@@ -228,6 +236,7 @@ public class PlateMoldService : IPlateMoldService
 
     public async Task DeleteAsync(string wdPtnNo, int wdRev, byte[]? rowVersion, string? userName)
     {
+        if (_db.Database.IsNpgsql()) throw new OrderPriceCorrectionException("VERSION_REQUIRED",400);
         var ent = await _db.PlateMolds.FirstOrDefaultAsync(x =>
             x.WdPtnNo == wdPtnNo && x.WdRev == wdRev && !x.IsDeleted)
             ?? throw new KeyNotFoundException($"E10008: 版型 '{wdPtnNo}' Rev {wdRev} が見つかりません");
@@ -360,9 +369,12 @@ public class PlateMoldService : IPlateMoldService
             ["processCd"] = "ProcessCd",
         };
 
-    public async Task<(List<PlateMoldListItemDto>, int)> SearchAsync(PlateMoldQueryDto query)
+    public Task<(List<PlateMoldListItemDto>, int)> SearchAsync(PlateMoldQueryDto query)
+        => _db.Database.IsNpgsql() ? WriteOwner.ReadNative((scoped,ct)=>SearchCoreAsync(query,scoped)) : SearchCoreAsync(query,_db.PlateMolds.AsNoTracking());
+
+    private async Task<(List<PlateMoldListItemDto>, int)> SearchCoreAsync(PlateMoldQueryDto query,IQueryable<PlateMold> scoped)
     {
-        var q = BuildSearchQuery(query);
+        var q = BuildSearchQuery(query).Where(p=>scoped.Select(x=>x.Id).Contains(p.Id));
 
         List<PlateMold> rows;
         int total;

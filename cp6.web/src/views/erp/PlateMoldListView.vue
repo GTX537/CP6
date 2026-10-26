@@ -137,7 +137,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
+import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
@@ -162,6 +163,12 @@ const exporting = ref(false)
 const issuing = ref(false)
 const selectedRow = ref<PlateMoldListItemDto | null>(null)
 
+let live = true, generation = 0, searchGeneration = 0
+function clearPrivate() { generation++; searchGeneration++; rows.value = []; total.value = 0; selectedRow.value = null; resetQuery(); loading.value = false; exporting.value = false; issuing.value = false }
+function check(stamp: string, current: number) { requireIdentity(stamp); if (!live || current !== generation) throw new Error('页面已变化。') }
+function deny(error: any) { if ([401, 403].includes(error?.response?.status)) clearPrivate() }
+onMounted(() => { window.addEventListener(AUTH_EVENT, clearPrivate); window.addEventListener('storage', clearPrivate) })
+onBeforeUnmount(() => { live = false; clearPrivate(); window.removeEventListener(AUTH_EVENT, clearPrivate); window.removeEventListener('storage', clearPrivate) })
 const isPickerMode = computed(() => route.query.picker === '1')
 const checkedCount = computed(() => rows.value.filter(r => r.issue).length)
 
@@ -187,18 +194,20 @@ async function search() {
       ElMessage.warning(`${t('sales.err.E10036')} (${label})`); return
     }
   }
-  loading.value = true
+  const stamp = identityStamp(), current = generation, request = ++searchGeneration
+  rows.value = []; selectedRow.value = null; total.value = 0; loading.value = true
   try {
-    const r = await plateMoldApi.search(query)
+    const r = await plateMoldApi.search({ ...query }); check(stamp, current); if (request !== searchGeneration) return
     if (r.code === 0 && r.data) {
       rows.value = r.data.rows
       total.value = r.data.total
       if (rows.value.length === 0) ElMessage.info(t('sales.err.E10008'))
     }
-  } finally { loading.value = false }
+  } catch (error) { if (current === generation && request === searchGeneration) deny(error) } finally { if (current === generation && request === searchGeneration) loading.value = false }
 }
 
 function resetQuery() {
+  searchGeneration++; selectedRow.value = null
   Object.keys(query).forEach(k => {
     if (k === 'page' || k === 'pageSize' || k === 'onlyLatestRev') return
     ;(query as any)[k] = undefined
@@ -209,24 +218,28 @@ function resetQuery() {
 }
 
 async function exportCsv() {
+  const stamp = identityStamp(), current = generation
   exporting.value = true
   try {
     const blob = await plateMoldApi.exportCsv(query) as unknown as Blob
+    check(stamp, current)
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
     a.download = `plate-molds_${new Date().toISOString().slice(0, 10)}.csv`
     a.click()
     URL.revokeObjectURL(url)
-  } finally { exporting.value = false }
+  } catch (error) { if (current === generation) deny(error) } finally { if (current === generation) exporting.value = false }
 }
 
 async function onIssueLabel() {
   const targets = rows.value.filter(r => r.issue).map(r => ({ wdPtnNo: r.wdPtnNo, wdRev: r.wdRev }))
   if (targets.length === 0) { ElMessage.warning(t('sales.err.E10010')); return }
+  const stamp = identityStamp(), current = generation
   issuing.value = true
   try {
     const blob = await plateMoldApi.issueLabel(targets) as unknown as Blob
+    check(stamp, current)
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
@@ -234,7 +247,7 @@ async function onIssueLabel() {
     a.click()
     URL.revokeObjectURL(url)
     rows.value.forEach(r => r.issue = false)
-  } finally { issuing.value = false }
+  } catch (error) { if (current === generation) deny(error) } finally { if (current === generation) issuing.value = false }
 }
 
 function onPick() {
