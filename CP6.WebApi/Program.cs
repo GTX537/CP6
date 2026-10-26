@@ -656,6 +656,7 @@ builder.Services.AddScoped<CP6.Core.Services.ErpIntegration.ErpCommerceAuthority
 // 4.3 MSBBPA050/060 Web 製品マスタ 相关服务
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<CommercialProductIdentityReader>();
+builder.Services.AddScoped<CP6.Core.Services.Mes.ResourceSourceOwnerV1>();
 builder.Services.AddScoped<UomProfileOwnerV1>();
 builder.Services.AddScoped<CurrencyPolicyOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringProductOwnerV1>();

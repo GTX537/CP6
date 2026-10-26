@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-26：W154实际资源来源待Main收尾
+
+实际资源来源目录/普通资料原操作通过PG/HTTP46、UI/IAM29及type/Vite。[单份报告](../development/evidence/W154-01/DELIVERY.md)。登记25.73分钟，原估60–90；Handoff已释放，Main待正常PR/finish。完整资源资格/计划写入及原七天剩余出口未完成，正式状态不变。
+
 ## 2026-10-26：W153来源复核待Main收尾
 
 BUG572嵌套来源最终复核修复通过65个不同PG/HTTP用例，原4个失败已复测；UI未改未重跑。[单份报告](../development/evidence/W153-01/DELIVERY.md)。登记12.62分钟，原估35–55；Handoff已释放，Main待正常PR/finish和Issue核销。七天原出口及所有正式状态保持。
