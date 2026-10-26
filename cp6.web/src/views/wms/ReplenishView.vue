@@ -3,7 +3,7 @@
   结构：CpPageShell（标题 + 计数 pill）→ CpListPage（列/搜索/取数包装/行操作 col slot）＋ 两个 CpFormDialog（新規作成 / バッチ生成）。
   码值列（状態/優先度/トリガ）走 ListColumn map + kind:'tag'（label 走 t() computed，tone 用共享 Tone）；
   数量列用 map(formatQty)+kind:'num'；実行日時用 map 自定义 datetime 格式；操作列走 col-_action 具名插槽。
-  数据源 replenishApi.search 返回扁平数组无 total → fetch 包装内客户端分页；页内変更后用 listRef.reload() 就地刷新。
+  数据源为当前Owner服务器分页；页内変更后用 listRef.reload() 就地刷新。
 -->
 <template>
   <CpPageShell :title="t('wms.replenish.title')" :count="total">
@@ -15,7 +15,6 @@
 
     <el-alert v-if="!writesAvailable" :title="t('补充指示暂只支持查询，生成和派发功能尚未开通。')" type="info" :closable="false" show-icon />
     <el-alert v-if="readError || intent.error.value" :title="readError || intent.error.value" type="warning" :closable="false" show-icon />
-    <p>{{ t('最多显示500条，更多记录请缩小查询范围。') }}</p>
     <CpListPage
       :key="listEpoch"
       :lazy="reloadRequired"
@@ -101,6 +100,7 @@
 import { ref, reactive, computed } from 'vue'
 import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import { readWmsPage } from '@/api/wms/readWmsPage'
 import CpPageShell from '@/components/templates/CpPageShell.vue'
 import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import { type FilterField } from '@/components/templates/CpFilterBar.vue'
@@ -187,13 +187,12 @@ const searchFields = computed<FilterField[]>(() => [
   },
 ])
 
-// —— 取数：包装 replenishApi.search；扁平数组无 total → 客户端分页 ——
-const PAGE_CAP = 500
+// 当前Owner返回本页与有权总数。
 const fetchList: ListFetch<ReplenishOrder> = async ({ page, size, filters }) => {
   const token = intent.capture(), sequence = ++readSequence
   clearForms(); writesAvailable.value = false; total.value = undefined; readError.value = ''
   const f = filters as Record<string, unknown>
-  const q: ReplenishSearchQuery = { pageSize: PAGE_CAP }
+  const q: ReplenishSearchQuery = { page, pageSize: size }
   if (f.replenishNo) q.replenishNo = String(f.replenishNo)
   if (f.productCd) q.productCd = String(f.productCd)
   if (f.warehouseCd) q.warehouseCd = String(f.warehouseCd)
@@ -203,12 +202,11 @@ const fetchList: ListFetch<ReplenishOrder> = async ({ page, size, filters }) => 
     const capabilities = await replenishApi.capabilities()
     if (!intent.current(token) || sequence !== readSequence) throw new Error('Stale read')
     if (capabilities.code !== 0 || typeof capabilities.data?.writesAvailable !== 'boolean') throw new Error('Unavailable capabilities')
-    const res = await replenishApi.search(q)
+    const res = await replenishApi.page(q)
     if (!intent.current(token) || sequence !== readSequence || !allowed('query')) throw new Error('Stale read')
-    if (res.code !== 0 || !Array.isArray(res.data)) throw new Error('Unavailable list')
+    const result = readWmsPage(res, page, size)
     writesAvailable.value = capabilities.data.writesAvailable && capabilities.data.status === 'LEGACY'
-    const start = (page - 1) * size
-    return { rows: res.data.slice(start, start + size), total: res.data.length }
+    return result
   } catch {
     if (intent.current(token) && sequence === readSequence) {
       clearForms(); writesAvailable.value = false; total.value = undefined

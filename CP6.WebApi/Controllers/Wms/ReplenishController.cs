@@ -23,6 +23,11 @@ public class ReplenishController : ControllerBase
     public async Task<IActionResult> Search([FromQuery] ReplenishSearchQuery q)
         => Ok(new { code = 0, message = "OK", data = await _svc.SearchAsync(q) });
 
+    [HttpGet("pages/v1")]
+    [RequirePermission("wms-replenish", "query")]
+    public async Task<IActionResult> Page([FromQuery] ReplenishSearchQuery query)
+        => Ok(new { code = 0, message = "OK", data = await _svc.SearchPageAsync(query) });
+
     [HttpGet("{no}")]
     [RequirePermission("wms-replenish", "query")]
     public async Task<IActionResult> Get(string no)

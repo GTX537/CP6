@@ -27,6 +27,11 @@ public class RmaController : ControllerBase
         return Ok(new { code = 0, message = "OK", data = list });
     }
 
+    [HttpGet("pages/v1")]
+    [RequirePermission("wms-rma", "query")]
+    public async Task<IActionResult> Page([FromQuery] RmaSearchQuery query)
+        => Ok(new { code = 0, message = "OK", data = await _svc.SearchPageAsync(query) });
+
     [HttpGet("{no}")]
     [RequirePermission("wms-rma", "query")]
     public async Task<IActionResult> Get(string no)

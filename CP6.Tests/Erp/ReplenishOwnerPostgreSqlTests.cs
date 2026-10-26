@@ -77,14 +77,14 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await using var h = await Seed(); await SeedReplenish(h); var service = Replenishments(h, await GrantReplenish(h));
         await h.Db.WmsRoleScopes.ExecuteDeleteAsync(); h.Db.WmsRoleScopes.Add(new() { RoleId = 72, WarehouseCd = "W1", AreaCd = "TARGET" });
         await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear();
-        Assert.Empty(await service.SearchAsync(new())); Assert.Null(await service.GetAsync("RPL-OWNER"));
+        Assert.Empty(await service.SearchAsync(new())); Assert.Equal(0, (await service.SearchPageAsync(new())).Total); Assert.Null(await service.GetAsync("RPL-OWNER"));
         Assert.Equal(403, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => service.ExecuteAsync("RPL-OWNER", "forged"))).Status);
         h.Db.WmsRoleScopes.Add(new() { RoleId = 72, WarehouseCd = "W1", AreaCd = "SOURCE" });
         await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear();
         await h.Db.ReplenishOrders.ExecuteUpdateAsync(s => s.SetProperty(r => r.FromLocationCd, "from ").SetProperty(r => r.ToLocationCd, "to "));
         Assert.Equal(12.12345678m, Assert.Single(await service.SearchAsync(new() { Status = 0 })).Qty);
         await h.Db.Locations.Where(l => l.LocationCd == "FROM").ExecuteUpdateAsync(s => s.SetProperty(l => l.IsDeleted, true));
-        Assert.Empty(await service.SearchAsync(new()));
+        Assert.Empty(await service.SearchAsync(new())); Assert.Equal(0, (await service.SearchPageAsync(new())).Total);
     }
 
     [CurrentPermissionPostgresFact]
@@ -107,15 +107,22 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     {
         await using var h = await Seed(); await SeedReplenish(h); var service = Replenishments(h, await GrantReplenish(h));
         var admin = await MappingAdmin(h); await StandaloneScope(h, admin, scope);
-        Assert.Empty(await service.SearchAsync(new()));
+        Assert.Empty(await service.SearchAsync(new())); Assert.Equal(0, (await service.SearchPageAsync(new())).Total);
         var id = await h.Db.ReplenishOrders.Select(r => r.Id).SingleAsync(); await BindStandalone(h, admin, "replenish-order", id);
-        Assert.Single(await service.SearchAsync(new()));
+        Assert.Single(await service.SearchAsync(new())); Assert.Equal(1, (await service.SearchPageAsync(new())).Total);
         await h.Db.Database.ExecuteSqlInterpolatedAsync($"UPDATE cp6_operations_owner_v1.department_mappings SET enabled=false WHERE object_id={id}");
-        Assert.Empty(await service.SearchAsync(new()));
+        Assert.Empty(await service.SearchAsync(new())); Assert.Equal(0, (await service.SearchPageAsync(new())).Total);
         await h.Db.Database.ExecuteSqlInterpolatedAsync($"UPDATE cp6_operations_owner_v1.department_mappings SET enabled=true WHERE object_id={id}");
         await h.Db.Sys_Depts.Where(d => d.Id == admin.Root).ExecuteUpdateAsync(s => s.SetProperty(d => d.Enable, false));
-        if (scope == 4) Assert.Empty(await service.SearchAsync(new()));
-        else await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => service.SearchAsync(new()));
+        if (scope == 4)
+        {
+            Assert.Empty(await service.SearchAsync(new())); Assert.Equal(0, (await service.SearchPageAsync(new())).Total);
+        }
+        else
+        {
+            await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => service.SearchAsync(new()));
+            await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => service.SearchPageAsync(new()));
+        }
     }
 
     [CurrentPermissionPostgresFact]
@@ -187,7 +194,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var hook = new CommandHook(); await using var h = await Seed(hook); await SeedReplenish(h);
         var service = Replenishments(h, await GrantReplenish(h)); var reads = 0;
         hook.Before = c => { if (c.CommandText.Contains("WITH field_subject") && ++reads == 2) throw new IOException("final source unavailable"); return Task.CompletedTask; };
-        Assert.Equal(503, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => service.SearchAsync(new()))).Status); hook.Before = null;
+        Assert.Equal(503, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => service.SearchAsync(new()))).Status); reads = 0; Assert.Equal(503, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => service.SearchPageAsync(new()))).Status); hook.Before = null;
         await h.Db.Sys_RoleActions.Where(a => a.MenuId == 423 && a.ActionCode == "query").ExecuteDeleteAsync();
         Assert.Equal(403, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => service.GetCapabilitiesAsync())).Status);
         Assert.Equal(403, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => service.GetAsync("RPL-OWNER"))).Status);

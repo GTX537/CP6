@@ -111,18 +111,18 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     {
         await using var h = await Seed(); await SeedRma(h); var service = Rmas(h, await GrantRma(h));
         var admin = await MappingAdmin(h); await StandaloneScope(h, admin, scope);
-        Assert.Empty(await service.SearchAsync(new())); // No inference from the actor or warehouse.
+        Assert.Empty(await service.SearchAsync(new())); Assert.Equal(0, (await service.SearchPageAsync(new())).Total); // No inference from the actor or warehouse.
         await SaveMapping(h, admin, await MappingCommand(h, admin));
         await h.Db.Orders.ExecuteUpdateAsync(s => s.SetProperty(o => o.OrderDepartment, "sales "));
         h.Db.OutboundOrders.Add(new() { OutboundNo = "SHIP-1", WarehouseCd = "W1", OutboundType = OutboundType.Shipping,
             CustomerCd = "CUSTOMER-1", WebOrderNo = h.Number, Creator = "origin" });
         await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear();
         await h.Db.RmaHeaders.ExecuteUpdateAsync(s => s.SetProperty(r => r.OriginalShippingNo, "ship-1 "));
-        Assert.Single(await service.SearchAsync(new()));
+        Assert.Single(await service.SearchAsync(new())); Assert.Equal(1, (await service.SearchPageAsync(new())).Total);
         await h.Db.OutboundOrders.ExecuteUpdateAsync(s => s.SetProperty(o => o.CustomerCd, "OTHER"));
-        Assert.Empty(await service.SearchAsync(new()));
+        Assert.Empty(await service.SearchAsync(new())); Assert.Equal(0, (await service.SearchPageAsync(new())).Total);
         await h.Db.OutboundOrders.ExecuteUpdateAsync(s => s.SetProperty(o => o.CustomerCd, "CUSTOMER-1").SetProperty(o => o.IsDeleted, true));
-        Assert.Empty(await service.SearchAsync(new()));
+        Assert.Empty(await service.SearchAsync(new())); Assert.Equal(0, (await service.SearchPageAsync(new())).Total);
     }
 
     [CurrentPermissionPostgresFact]
@@ -136,11 +136,11 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             new Location { WarehouseCd = "W1", LocationCd = "L2", AreaCd = "B" });
         h.Db.RmaDetails.Add(new() { RmaNo = "RMA-OWNER", LineNo = 2, ProductCd = "P2", Qty = 1, DestLocationCd = "L2", Creator = "price-owner" });
         await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear();
-        Assert.Empty(await service.SearchAsync(new()));
+        Assert.Empty(await service.SearchAsync(new())); Assert.Equal(0, (await service.SearchPageAsync(new())).Total);
         await h.Db.RmaDetails.Where(d => d.LineNo == 1).ExecuteUpdateAsync(s => s.SetProperty(d => d.DestLocationCd, "l1 "));
-        Assert.Single(await service.SearchAsync(new()));
+        Assert.Single(await service.SearchAsync(new())); Assert.Equal(1, (await service.SearchPageAsync(new())).Total);
         await h.Db.Locations.Where(l => l.LocationCd == "L2").ExecuteUpdateAsync(s => s.SetProperty(l => l.IsDeleted, true));
-        Assert.Empty(await service.SearchAsync(new()));
+        Assert.Empty(await service.SearchAsync(new())); Assert.Equal(0, (await service.SearchPageAsync(new())).Total);
     }
 
     [CurrentPermissionPostgresFact]

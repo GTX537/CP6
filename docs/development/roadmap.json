@@ -160557,6 +160557,16 @@
       "date": "2026-10-26",
       "change": "W140 trusted Stock creation, explicit v2 commands, same-transaction inheritance and native source proof verified in actual Owner and page. Handoff adopted/released; Main closeout pending. Full states unchanged.",
       "evidence": "docs/development/evidence/W140-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-26",
+      "change": "W140 closed once from final proof. W141 authorized replenishment/return paging admitted,45–70min,sole COORD. Full states unchanged.",
+      "evidence": "docs/development/dispatch/20261026-wave141/README.md"
+    },
+    {
+      "date": "2026-10-26",
+      "change": "W141 authorized Replenish/RMA pagination and totals verified in actual Owner and pages. Handoff adopted/released; Main closeout pending. Full states unchanged.",
+      "evidence": "docs/development/evidence/W141-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -168971,7 +168981,7 @@
         }
       },
       "wave140_creation": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W140-01/DELIVERY.md",
         "scope": "Trusted v2 Stock creation and transaction inheritance with actual page, original recovery, native outbox and forward source proof; formal REP/RMA remain.",
         "handoff_delivery": {
@@ -168981,6 +168991,41 @@
           "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/116",
           "exact_tree_adoption": true,
           "at": "2026-10-26T10:31:44.405184+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave140-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W140-01",
+          "remote_target": "4fe957192e7fba9e8f91c88f9f507da271d9734e",
+          "source": "d5349e34d65933b795fcd1df5f08375aa125a94f",
+          "branch": "codex/w140-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/557"
+        }
+      },
+      "wave141_paging": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "report": "docs/development/evidence/W141-01/DELIVERY.md",
+        "scope": "Authorized Replenish/RMA server paging and totals, actual pages and compatibility; formal REP/RMA writes remain unadopted.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "7be64274dbfd88e8e2e39184c30b3673923f6ae4",
+          "main": "c8b8f4e6f5381e0e8aa163d123e85f09488cf69a",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/117",
+          "exact_tree_adoption": true,
+          "at": "2026-10-26T10:59:23.737915+00:00"
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
@@ -172245,7 +172290,7 @@
         }
       },
       "wave140_creation": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W140-01/DELIVERY.md",
         "scope": "Trusted v2 Stock creation and transaction inheritance with actual page, original recovery, native outbox and forward source proof; formal REP/RMA remain.",
         "handoff_delivery": {
@@ -172259,13 +172304,24 @@
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "original_dependencies_unchanged": true,
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "lifecycle_snapshot": {
-          "main_finish_required": true,
-          "main_seat_released": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
           "handoff_seat_released": true,
-          "main_branch_deleted": false,
-          "handoff_branch_deleted": true
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave140-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W140-01",
+          "remote_target": "4fe957192e7fba9e8f91c88f9f507da271d9734e",
+          "source": "d5349e34d65933b795fcd1df5f08375aa125a94f",
+          "branch": "codex/w140-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/557"
         }
       }
     },
@@ -192684,10 +192740,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261025-wave140",
-      "path": "docs/development/dispatch/20261025-wave140/README.md",
-      "baseline_sha": "ffdb5ac833841287bdb668c7d9a13f3a5b818f6b",
-      "registered_at": "2026-10-25T15:37:36.416544+00:00",
+      "id": "20261026-wave141",
+      "path": "docs/development/dispatch/20261026-wave141/README.md",
+      "baseline_sha": "4fe957192e7fba9e8f91c88f9f507da271d9734e",
+      "registered_at": "2026-10-26T10:46:02.063773+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -192706,28 +192762,27 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W140-01",
+          "id": "W141-01",
           "related_tasks": [
-            "WP02-03",
-            "WP02-10"
+            "WP02-03"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "D2 trusted stock creation for adjustment and move",
+          "title": "D2 authorized replenishment and return pagination",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "5d63d9ee5cd4476de949b19f6bacc57b1290e5e7",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261025T153736Z-wave140-start/MESSAGE.md",
-            "at": "2026-10-25T15:37:36.416544+00:00",
-            "branch": "codex/w140-handoff"
+            "commit": "402e645dba023cdb6a0cb6626f59f6a46e29314d",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261026T104602Z-wave141-start/MESSAGE.md",
+            "at": "2026-10-26T10:46:02.063773+00:00",
+            "branch": "codex/w141-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w140-01",
-          "planned_scope_ref": "docs/development/dispatch/20261025-wave140/README.md",
+          "branch": "codex/w141-01",
+          "planned_scope_ref": "docs/development/dispatch/20261026-wave141/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -192735,8 +192790,8 @@
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
-          "validation": "89 unique related PostgreSQL/HTTP/native source qualification results;28 page/recovery and vue-tsc passed. Precise unchanged successes reused, original failures retained; isolated forward migration only, no Actions/production.",
-          "worker_delivery_ref": "docs/development/evidence/W140-01/DELIVERY.md",
+          "validation": "31 unique related PostgreSQL/HTTP/Owner results;21 page and vue-tsc passed. Precise unchanged successes reused, original failures retained; no migrations or dependency changes, no Actions/production.",
+          "worker_delivery_ref": "docs/development/evidence/W141-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -192747,11 +192802,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-25T15:36:06.970170+00:00",
+        "started_at": "2026-10-26T10:44:36.026089+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          120,
-          180
+          45,
+          70
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -192767,7 +192822,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 1136.48
+      "elapsed_registered_wave_minutes": 15.52
     },
     "wave_history": [
       {
@@ -212452,6 +212507,115 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/115"
           }
         ]
+      },
+      {
+        "id": "20261025-wave140",
+        "path": "docs/development/dispatch/20261025-wave140/README.md",
+        "baseline_sha": "ffdb5ac833841287bdb668c7d9a13f3a5b818f6b",
+        "registered_at": "2026-10-25T15:37:36.416544+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W140-01",
+            "related_tasks": [
+              "WP02-03",
+              "WP02-10"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "D2 trusted stock creation for adjustment and move",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "5d63d9ee5cd4476de949b19f6bacc57b1290e5e7",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261025T153736Z-wave140-start/MESSAGE.md",
+              "at": "2026-10-25T15:37:36.416544+00:00",
+              "branch": "codex/w140-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w140-01",
+            "planned_scope_ref": "docs/development/dispatch/20261025-wave140/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "validation": "89 unique related PostgreSQL/HTTP/native source qualification results;28 page/recovery and vue-tsc passed. Precise unchanged successes reused, original failures retained; isolated forward migration only, no Actions/production.",
+            "worker_delivery_ref": "docs/development/evidence/W140-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave140-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-25T15:36:06.970170+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            120,
+            180
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Continue original D2 formal REP/RMA/IN SourceDemand/Transfer and prepare/commit/query/seal Owner seams; retain D3 planning, D5 actual host/enterprise transport, D6 real external inputs and D7 final integration.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave140-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 1136.48,
+        "actual_registered_wave_minutes": 1139.81,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W140-01",
+            "remote_target": "4fe957192e7fba9e8f91c88f9f507da271d9734e",
+            "source": "d5349e34d65933b795fcd1df5f08375aa125a94f",
+            "branch": "codex/w140-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/557"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W140-HANDOFF",
+            "remote_target": "decfd7d094ca70341de8a31236bba21946ae8f72",
+            "source": "19347ad3ec137b11f5952112c267f780fd0bde2c",
+            "branch": "codex/w140-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/116"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -212529,12 +212693,12 @@
           "id": "D2",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W140-01",
-          "prerequisite_adjustment": "Sample legacy observation Owner; formal Loan/Stock/Site policy adoption separate",
+          "current_window": "W141-01",
+          "prerequisite_adjustment": "Formal SourceDemand/Transfer providers and RMA IN/terminal Owner contracts remain prerequisites; current read Owners and trusted creation/inheritance are adopted within their precise scope.",
           "adopted_window": "W42-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/395",
           "report": "docs/development/evidence/WP02-03/standalone-department/DELIVERY.md",
-          "remaining": "Machine creation W136, StockTransaction inheritance W137, Stocktake creation W138 and WorkOrder creation W139 remotely adopted. W140 Stock creation/adjustment/move/native v2 source proof locally validated, Main closeout pending. Formal REP/RMA/IN source contracts remain.",
+          "remaining": "Machine/Stocktake/WorkOrder/Stock creation and StockTransaction inheritance W136–W140 remotely adopted. W141 authorized REP/RMA server paging validated, Main closeout pending. Formal SourceDemand/Transfer and RMA IN/terminal contracts remain.",
           "actual_agent_minutes": 39.91,
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
@@ -212542,7 +212706,8 @@
           "next_action": "Continue original D2 formal REP/RMA/IN SourceDemand/Transfer and prepare/commit/query/seal Owner seams; retain D3 planning, D5 actual host/enterprise transport, D6 real external inputs and D7 final integration.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W140-01/DELIVERY.md",
-          "last_inheritance_report": "docs/development/evidence/W137-01/DELIVERY.md"
+          "last_inheritance_report": "docs/development/evidence/W137-01/DELIVERY.md",
+          "last_paging_report": "docs/development/evidence/W141-01/DELIVERY.md"
         },
         {
           "id": "D3",
@@ -212557,7 +212722,7 @@
           "last_window_actual_agent_minutes": 56.28,
           "last_branches_deleted": true,
           "last_seats_released": true,
-          "next_action": "Complete original D3 planning write adoption with exact Snapshot/Occurrence/Root identity and WorkOrder same-UoW. Current independent serial priority remains D2 Stock/no-order WorkOrder creation.",
+          "next_action": "Complete original D3 planning write adoption with exact Snapshot/Occurrence/Root identity and WorkOrder same-UoW.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W136-01/DELIVERY.md"
         },
@@ -212631,7 +212796,7 @@
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
           "current_window": "W135-01",
-          "next_action": "Complete original D6 proven enterprise policy/calendar, registration/keys/runtime/broker prerequisites and related actual submission/acceptance integration; no fabricated defaults. Current independent serial priority remains D2 Stock/no-order WorkOrder creation.",
+          "next_action": "Complete original D6 proven enterprise policy/calendar, registration/keys/runtime/broker prerequisites and related actual submission/acceptance integration; no fabricated defaults.",
           "prerequisite_adjustment": "W135 exact original-contract applicability/source determination complete; W128 export/download authority sources already adopted, full export remains outside automatic D6 expansion. Full task dependencies remain unchanged.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "remaining": "真实企业政策/专业日历及批准依据、Site/Form/IAM/服务/密钥登记、目标宿主normalizer/时区与运行身份资格、真实broker/消费者/SLO和D7最终相关集成未证。冻结公开/H01 NUM/FILE边界已核定；既有原生发布/激活及当前PRIV来源复用，不重复构造或扩展全隐私导出。",

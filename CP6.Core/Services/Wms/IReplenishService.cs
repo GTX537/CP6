@@ -18,6 +18,7 @@ public interface IReplenishService
 {
     Task<ReplenishCapabilitiesV1> GetCapabilitiesAsync();
     Task<List<ReplenishOrder>> SearchAsync(ReplenishSearchQuery q);
+    Task<PagedResult<ReplenishOrder>> SearchPageAsync(ReplenishSearchQuery query);
     Task<ReplenishOrder?> GetAsync(string replenishNo);
     Task<string> CreateAsync(ReplenishOrderDto dto, string? userName);
     Task UpdateAsync(string replenishNo, ReplenishOrderDto dto, string? userName);

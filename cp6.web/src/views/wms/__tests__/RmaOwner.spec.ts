@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { shallowMount, flushPromises } from '@vue/test-utils'
-const api = vi.hoisted(() => ({ search: vi.fn(), get: vi.fn(), capabilities: vi.fn(), create: vi.fn(), receive: vi.fn(), startInspection: vi.fn(), judge: vi.fn(), close: vi.fn(), cancel: vi.fn() }))
+const api = vi.hoisted(() => ({ page: vi.fn(), search: vi.fn(), get: vi.fn(), capabilities: vi.fn(), create: vi.fn(), receive: vi.fn(), startInspection: vi.fn(), judge: vi.fn(), close: vi.fn(), cancel: vi.fn() }))
 const ui = vi.hoisted(() => ({ success: vi.fn(), error: vi.fn(), warning: vi.fn(), confirm: vi.fn() }))
 const permission = vi.hoisted(() => ({ loaded: true, has: vi.fn(() => true) }))
 vi.mock('@/api/wms/rma', () => ({ rmaApi: api }))
@@ -19,7 +19,7 @@ beforeEach(() => {
   localStorage.clear(); vi.clearAllMocks(); permission.loaded = true; permission.has.mockReturnValue(true)
   for (const mock of Object.values(api)) mock.mockReset()
   api.capabilities.mockResolvedValue({ code: 0, data: { writesAvailable: false, status: 'RMA_OWNER_ADOPTION_UNPROVEN' } })
-  api.search.mockResolvedValue({ code: 0, data: [structuredClone(row)] }); api.get.mockResolvedValue({ code: 0, data: structuredClone(row) })
+  api.page.mockResolvedValue({ code: 0, data: { items: [structuredClone(row)], total: 1, page: 1, pageSize: 50 } }); api.get.mockResolvedValue({ code: 0, data: structuredClone(row) })
   ui.confirm.mockResolvedValue(undefined)
 })
 afterEach(() => { wrapper?.unmount(); wrapper = undefined })
@@ -35,7 +35,7 @@ describe('RMA current Owner page', () => {
     const vm = render(); await vm.fetchList(query); await vm.openDetail('RMA-1')
     api.capabilities.mockRejectedValueOnce({ response: { status: 503 } })
     await expect(vm.fetchList(query)).rejects.toThrow(); expect(vm.current).toBeNull(); expect(vm.readError).not.toBe('')
-    api.search.mockRejectedValueOnce({ response: { status: 403 } })
+    api.page.mockRejectedValueOnce({ response: { status: 403 } })
     await expect(vm.fetchList(query)).rejects.toThrow(); expect(vm.writesAvailable).toBe(false)
   })
   it('clears identity data and ignores an old delayed detail response', async () => {
@@ -52,12 +52,12 @@ describe('RMA current Owner page', () => {
     expect(vm.writesAvailable).toBe(false); expect(vm.current).toBeNull()
   })
   it('does not treat a successful HTTP envelope with missing data as an empty authorized list', async () => {
-    const vm = render(); api.search.mockResolvedValueOnce({ code: 0, data: null })
+    const vm = render(); api.page.mockResolvedValueOnce({ code: 0, data: null })
     await expect(vm.fetchList(query)).rejects.toThrow(); expect(vm.readError).not.toBe('')
   })
   it('honors missing query action and rechecks identity after legacy confirmation', async () => {
     const vm = render(); permission.has.mockReturnValue(false); await expect(vm.fetchList(query)).rejects.toThrow()
-    expect(api.search).not.toHaveBeenCalled(); permission.has.mockReturnValue(true)
+    expect(api.page).not.toHaveBeenCalled(); permission.has.mockReturnValue(true)
     api.capabilities.mockResolvedValue({ code: 0, data: { writesAvailable: true, status: 'LEGACY' } })
     await vm.fetchList(query); await vm.openDetail('RMA-1'); const answer = pending(); ui.confirm.mockReturnValueOnce(answer.promise)
     const sending = vm.onReceive(); identity(); answer.resolve(undefined); await sending; expect(api.receive).not.toHaveBeenCalled()
@@ -71,4 +71,39 @@ describe('RMA current Owner page', () => {
     await vm.onReceive(); await vm.fetchList(query); await vm.openDetail('RMA-1'); await vm.onReceive()
     expect(api.receive).toHaveBeenCalledTimes(2); expect(vm.intent.uncertain.value).toBe(true)
   })
+  it('loads a server page beyond 500 with the authorized total and status zero', async () => {
+    const vm = render()
+    api.page.mockResolvedValue({ code: 0, data: { items: [row], total: 501, page: 11, pageSize: 50 } })
+    const result = await vm.fetchList({ page: 11, size: 50, filters: { status: 0 } })
+    expect(api.page).toHaveBeenCalledWith(expect.objectContaining({ page: 11, pageSize: 50, status: 0 }))
+    expect(result).toEqual({ rows: [row], total: 501 })
+    expect(api.search).not.toHaveBeenCalled()
+  })
+  it('rejects a malformed server page total instead of reporting a false empty result', async () => {
+    const vm = render()
+    api.page.mockResolvedValue({ code: 0, data: { items: [], page: 1, pageSize: 50 } })
+    await expect(vm.fetchList(query)).rejects.toThrow()
+    expect(vm.writesAvailable).toBe(false)
+  })
+
+  it('rejects an older page after a newer page is accepted', async () => {
+    const vm = render(), response = pending()
+    api.page.mockReturnValueOnce(response.promise)
+    const old = vm.fetchList(query), observed = expect(old).rejects.toThrow()
+    await flushPromises()
+    api.page.mockResolvedValueOnce({ code: 0, data: { items: [row], total: 51, page: 2, pageSize: 50 } })
+    expect(await vm.fetchList({ ...query, page: 2 })).toEqual({ rows: [row], total: 51 })
+    response.resolve({ code: 0, data: { items: [row], total: 1, page: 1, pageSize: 50 } })
+    await observed
+    expect(vm.readError).toBe('')
+  })
+  it('does not disclose a pending page after the current query grant is removed', async () => {
+    const vm = render(), response = pending()
+    api.page.mockReturnValueOnce(response.promise)
+    const old = vm.fetchList(query), observed = expect(old).rejects.toThrow()
+    await flushPromises(); permission.has.mockReturnValue(false)
+    response.resolve({ code: 0, data: { items: [row], total: 1, page: 1, pageSize: 50 } })
+    await observed; expect(vm.writesAvailable).toBe(false); expect(vm.total).toBeUndefined()
+  })
+
 })

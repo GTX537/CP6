@@ -1,7 +1,10 @@
 import http from '../http'
-import type { RmaHeader, RmaSearchQuery, RmaDispositionInput, WmsApi } from '@/types/wms/wms'
+import type { RmaHeader, RmaSearchQuery, RmaDispositionInput, WmsApi, WmsPaged } from '@/types/wms/wms'
 
 export const rmaApi = {
+  page(q: RmaSearchQuery = {}) {
+    return http.get<any, WmsApi<WmsPaged<RmaHeader>>>('/wms/rma/pages/v1', { params: q })
+  },
   capabilities() {
     return http.get<any, WmsApi<{ writesAvailable: boolean; status: string }>>('/wms/rma/capabilities')
   },

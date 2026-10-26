@@ -15,6 +15,21 @@ public partial class RmaService
         : Owner.ExecuteAsync(OperationsOwnerV1.Rma, "query", false, (_, _) =>
             Task.FromResult(new RmaCapabilitiesV1(false, "RMA_OWNER_ADOPTION_UNPROVEN")));
 
+    public Task<PagedResult<RmaHeader>> SearchPageAsync(RmaSearchQuery query)
+    {
+        var frozen = OperationsOwnerV1.Freeze(query);
+        frozen.PageSize = Math.Clamp(frozen.PageSize, 1, 500);
+        frozen.Page = Math.Clamp(frozen.Page, 1, int.MaxValue / frozen.PageSize);
+        return Owner.ExecuteAsync(OperationsOwnerV1.Rma, "query", false, async (access, ct) =>
+        {
+            var rows = FilterPageRows(access.Rmas(), frozen);
+            var result = await OwnerPageV1.ReadAsync(rows, OrderPageRows(rows), frozen.Page, frozen.PageSize, ct,
+                joined => joined.OrderByDescending(r => r.Item!.AppliedDate).ThenBy(r => r.Item!.Id));
+            foreach (var row in result.Items) ProjectListRow(row);
+            return result;
+        });
+    }
+
     public Task<List<RmaHeader>> SearchAsync(RmaSearchQuery query)
     {
         if (!_db.Database.IsNpgsql()) return SearchCoreAsync(query);
@@ -25,13 +40,15 @@ public partial class RmaService
         {
             var rows = await SearchCoreAsync(frozen, access.Rmas(), ct);
             // The ordinary list needs customer reference only. Do not disclose free text or actor names.
-            foreach (var row in rows)
-            {
-                row.CustomerName = null; row.OperatorCd = null; row.ReturnReason = null; row.Remarks = null;
-                row.Creator = null; row.Modifier = null;
-            }
+            foreach (var row in rows) ProjectListRow(row);
             return rows;
         });
+    }
+
+    private static void ProjectListRow(RmaHeader row)
+    {
+        row.CustomerName = null; row.OperatorCd = null; row.ReturnReason = null; row.Remarks = null;
+        row.Creator = null; row.Modifier = null;
     }
 
     public Task<RmaDto?> GetAsync(string number) => !_db.Database.IsNpgsql() ? GetCoreAsync(number)

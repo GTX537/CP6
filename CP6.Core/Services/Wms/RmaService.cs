@@ -42,15 +42,23 @@ public partial class RmaService : IRmaService
     private async Task<List<RmaHeader>> SearchCoreAsync(RmaSearchQuery q, IQueryable<RmaHeader>? allowed = null, CancellationToken ct = default)
     {
         var query = allowed ?? _db.RmaHeaders.AsNoTracking().Where(x => !x.IsDeleted);
+        return await OrderPageRows(FilterPageRows(query, q))
+            .Skip((q.Page - 1) * q.PageSize).Take(q.PageSize).ToListAsync(ct);
+    }
+
+    private static IQueryable<RmaHeader> FilterPageRows(IQueryable<RmaHeader> query, RmaSearchQuery q)
+    {
         if (!string.IsNullOrWhiteSpace(q.RmaNo)) query = query.Where(x => x.RmaNo.Contains(q.RmaNo));
         if (!string.IsNullOrWhiteSpace(q.CustomerCd)) query = query.Where(x => x.CustomerCd == q.CustomerCd);
         if (!string.IsNullOrWhiteSpace(q.OriginalShippingNo)) query = query.Where(x => x.OriginalShippingNo == q.OriginalShippingNo);
         if (q.Status.HasValue) query = query.Where(x => x.Status == q.Status.Value);
         if (q.AppliedFrom.HasValue) query = query.Where(x => x.AppliedDate >= q.AppliedFrom.Value);
         if (q.AppliedTo.HasValue) query = query.Where(x => x.AppliedDate <= q.AppliedTo.Value);
-        return await query.OrderByDescending(x => x.AppliedDate).ThenBy(x => x.Id)
-            .Skip((q.Page - 1) * q.PageSize).Take(q.PageSize).ToListAsync(ct);
+        return query;
     }
+
+    private static IOrderedQueryable<RmaHeader> OrderPageRows(IQueryable<RmaHeader> query)
+        => query.OrderByDescending(x => x.AppliedDate).ThenBy(x => x.Id);
 
     private async Task<RmaDto?> GetCoreAsync(string rmaNo, IQueryable<RmaHeader>? allowed = null, CancellationToken ct = default)
     {

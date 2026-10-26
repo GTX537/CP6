@@ -4,7 +4,7 @@ import http from '../http'
 import type {
   CrossDockOrder, CrossDockSearchQuery,
   ReplenishOrder, ReplenishSearchQuery,
-  SlottingPlan, SlottingPlanResult, WmsApi,
+  SlottingPlan, SlottingPlanResult, WmsApi, WmsPaged,
 } from '@/types/wms/wms'
 
 export const crossDockApi = {
@@ -32,6 +32,9 @@ export const crossDockApi = {
 }
 
 export const replenishApi = {
+  page(q: ReplenishSearchQuery = {}) {
+    return http.get<any, WmsApi<WmsPaged<ReplenishOrder>>>('/wms/replenish/pages/v1', { params: q })
+  },
   capabilities() {
     return http.get<any, WmsApi<{ writesAvailable: boolean; status: string }>>('/wms/replenish/capabilities')
   },
