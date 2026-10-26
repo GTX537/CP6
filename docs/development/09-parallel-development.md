@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W152 CFG选项规则及采用](dispatch/20261026-wave152/README.md)：相关验证通过、Handoff已finish，Main待正常采用/finish；完整配置与原七天全部出口保留。
+> 当前：[W153嵌套来源复核](dispatch/20261026-wave153/README.md)：定向验证完成、Handoff已finish，Main待正常PR/finish；原七天全部出口保持。
+
+> 历史快照：[W152 CFG选项规则及采用](dispatch/20261026-wave152/README.md)：相关验证通过、Handoff已finish，Main待正常采用/finish；完整配置与原七天全部出口保留。
 
 > 历史快照：[W151工程修订与工作草稿](dispatch/20261026-wave151/README.md)：相关验证通过、Handoff已finish，Main待正常采用/finish；仅DRAFT，原七天全部出口保留。
 

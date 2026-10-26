@@ -1332,3 +1332,7 @@ P1 Issue565限定修复，最终60项、类型/构建及真实demo API浏览器�
 ## 2026-10-26 W152 CFG选项规则及实际采用
 
 独立CFG选项规则、受控批准/撤回与ENG准确规则采用通过PG/HTTP26、UI50不同用例和type/Vite。[单份报告](../evidence/W152-01/DELIVERY.md)。登记28.02分钟，原估75–120；Handoff释放，Main待正常PR/finish。只证明ENGINEERING_OPTIONS_ONLY，完整配置/来源/评审冻结及原七天全部出口保留，整阶段仍D1/D4。
+
+## 2026-10-26 W153来源最终复核
+
+BUG572修复与65个不同PG/HTTP用例通过，UI未改复用。[单份报告](../evidence/W153-01/DELIVERY.md)。登记12.62分钟，原估35–55；Handoff释放、Main待收尾。D7局部缺陷修复不关闭最终集成阶段，D1/D4以外仍未完成。
