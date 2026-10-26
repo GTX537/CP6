@@ -10,7 +10,7 @@ describe('stock original operation client', () => {
     http.post.mockRejectedValueOnce(new Error('unknown commit'))
     await expect(stockApi.apply(command)).rejects.toThrow('unknown commit')
     expect(http.post).toHaveBeenCalledOnce()
-    expect(http.post).toHaveBeenCalledWith('/wms/stock/commands/v1/apply', command)
+    expect(http.post).toHaveBeenCalledWith('/wms/stock/commands/v2/apply', command)
     expect(command.qty).toBe(1.12345678)
   })
   it('keeps MOVE separate and queries the original without submitting a new move', async () => {
@@ -20,7 +20,7 @@ describe('stock original operation client', () => {
     http.get.mockResolvedValue({ data: { operationId: command.operationId, state: 'UNKNOWN' } })
     expect((await stockApi.readOperation(command.operationId)).data.state).toBe('UNKNOWN')
     expect(http.post).toHaveBeenCalledOnce()
-    expect(http.post).toHaveBeenCalledWith('/wms/stock/commands/v1/move', command)
+    expect(http.post).toHaveBeenCalledWith('/wms/stock/commands/v2/move', command)
     expect(http.get).toHaveBeenCalledWith(`/wms/stock/operations/v1/${command.operationId}`)
   })
   it('requires explicit close and obtains the current server scope', async () => {

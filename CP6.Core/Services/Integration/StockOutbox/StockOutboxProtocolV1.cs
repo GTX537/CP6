@@ -9,6 +9,7 @@ namespace CP6.Core.Services.Integration.StockOutbox;
 internal static class StockOutboxProtocolV1
 {
     internal const string SourceOwner = "Main.Wms.StockMovement", SourceContract = "Main.Wms.StockOperation.v1";
+    internal const string CreationSourceContract = "Main.Wms.StockOperation.v2";
     internal const string Owner = "Main.Wms.InventoryNotification", Domain = "Main.Stock.Notification.v1", Route = "InventoryInvalidatedV1";
     internal const string Publisher = "Main.SignalR.InventoryInvalidated.v1", PolicyVersion = "Main.StockOutbox.Technical.v1";
     internal const string Profile = "Main.StockOutbox.Background.v1", Purpose = "inventory-invalidation-delivery";

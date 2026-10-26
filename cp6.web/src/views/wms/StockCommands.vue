@@ -2,6 +2,7 @@
   <section v-if="canQuery" class="stock-commands" aria-label="在庫操作">
     <div class="command-heading">
       <strong>{{ t('在庫操作') }}</strong>
+      <el-button v-if="canWrite('APPLY')" :disabled="busy || !!pending || !scope" @click="openNew">{{ t('新しい在庫の調整') }}</el-button>
       <el-button :disabled="busy" @click="loadScope">{{ t('操作状態を更新') }}</el-button>
     </div>
     <p v-if="error" role="alert">{{ t(error) }}</p>
@@ -18,14 +19,33 @@
     </p>
     <el-dialog v-model="visible" :title="kind === 'MOVE' ? t('棚移動') : t('在庫調整')" width="560" :close-on-click-modal="false">
       <template v-if="target">
-        <p>{{ t('倉庫／ロケーション') }}: {{ target.warehouseCd }} / {{ target.locationCd }}</p>
-        <p>{{ t('製品／ロット') }}: {{ target.productCd }} / {{ target.lotNo || '—' }}</p>
+        <template v-if="!newEntry">
+          <p>{{ t('倉庫／ロケーション') }}: {{ target.warehouseCd }} / {{ target.locationCd }}</p>
+          <p>{{ t('製品／ロット') }}: {{ target.productCd }} / {{ target.lotNo || '—' }}</p>
+        </template>
         <p>{{ t('この倉庫・ロケーション・製品・ロットの在庫を変更します。確定時の権限と在庫制約が適用されます。') }}</p>
         <el-form label-position="top" @submit.prevent="submit">
+          <template v-if="newEntry">
+            <el-form-item :label="t('倉庫コード')" required><el-input v-model="target.warehouseCd" :disabled="busy" /></el-form-item>
+            <el-form-item :label="t('ロケーションコード')" required><el-input v-model="target.locationCd" :disabled="busy" /></el-form-item>
+            <el-form-item :label="t('製品コード')" required><el-input v-model="target.productCd" :disabled="busy" /></el-form-item>
+            <el-form-item :label="t('ロット番号')"><el-input v-model="target.lotNo" :disabled="busy" /></el-form-item>
+            <el-form-item :label="t('単位')"><el-input v-model="target.unitCd" :disabled="busy" /></el-form-item>
+          </template>
           <el-form-item v-if="kind === 'MOVE'" :label="t('移動先ロケーション（同じ倉庫内）')" required>
             <el-input v-model="destination" :disabled="busy" :placeholder="t('移動元と異なるロケーション')" />
           </el-form-item>
           <p v-if="kind === 'MOVE'">{{ t('所有者・単位・品質などの在庫属性は維持されます。移動先に異なる属性の在庫がある場合は移動できません。') }}</p>
+          <el-button :disabled="busy" @click="loadCreationContext">{{ t('在庫・所属を確認') }}</el-button>
+          <template v-if="creation?.requiresCreation">
+            <p>{{ t('この場所に新しい在庫を作成します。所属部門を選択してください。') }}</p>
+            <el-form-item :label="t('所属部門')" :required="!creation.allowsUnbound">
+              <el-select v-model="department" :disabled="busy" :clearable="creation.allowsUnbound" :placeholder="t('所属部門を選択')">
+                <el-option v-if="creation.allowsUnbound" :label="t('部門を指定しない')" value="" />
+                <el-option v-for="item in creation.departments" :key="item.id" :label="`${item.code} ${item.name}`" :value="item.id" />
+              </el-select>
+            </el-form-item>
+          </template>
           <el-form-item :label="kind === 'MOVE' ? t('移動数量（正数）') : t('調整差分（増加は正、減少は負）')" required>
             <el-input v-model="quantity" :disabled="busy" inputmode="decimal" :placeholder="t('整数13桁・小数8桁まで')" />
           </el-form-item>
@@ -48,11 +68,13 @@ import { usePermissionStore } from '@/stores/permission'
 import { useOperationsIntent } from '@/composables/useOperationsIntent'
 import { stockApi } from '@/api/wms/stock'
 import { pendingStockOperation, resolveStockOperation, saveStockOperation, stockQuantity, stockResponse, type PendingStockOperation } from '@/auth/stockOperationRecovery'
-import type { Stock, StockOperation, StockOperationScope } from '@/types/wms/wms'
+import type { Stock, StockOperation, StockOperationScope, StockCreationContext, StockCreationKey, StockCreationIntent } from '@/types/wms/wms'
 
 const { t } = useI18n(), permissions = usePermissionStore(), emit = defineEmits<{ committed: [] }>()
 const scope = ref<StockOperationScope | null>(null), pending = ref<PendingStockOperation | null>(null), result = ref<StockOperation | null>(null)
 const target = ref<Stock | null>(null), visible = ref(false)
+const newEntry = ref(false), creation = ref<StockCreationContext | null>(null), department = ref('')
+let creationSignature = '', dialogIdentity: ReturnType<typeof intent.capture> | null = null
 const kind = ref<PendingStockOperation['kind']>('APPLY'), destination = ref('')
 const quantity = ref(''), remark = ref(''), error = ref(''), busy = ref(false)
 const canQuery = computed(() => permissions.loaded && permissions.has('wms-stock:query'))
@@ -60,6 +82,7 @@ const canWrite = (operation: PendingStockOperation['kind']) => canQuery.value &&
 let reads = 0
 function clear() {
   reads++; scope.value = null; pending.value = null; result.value = null; target.value = null
+  creation.value = null; creationSignature = ''; department.value = ''; newEntry.value = false; dialogIdentity = null
   visible.value = false; kind.value = 'APPLY'; destination.value = ''; quantity.value = ''; remark.value = ''; error.value = ''; busy.value = false
 }
 const intent = useOperationsIntent(clear)
@@ -79,13 +102,51 @@ function open(row: Stock, operation: PendingStockOperation['kind'] = 'APPLY') {
   if (!scope.value || busy.value || !canWrite(operation)) return
   try { syncPending(); if (pending.value) return } catch { error.value = '保存された元の操作記録を確認してください。'; return }
   target.value = { ...row }; kind.value = operation; destination.value = ''; quantity.value = ''; remark.value = ''; error.value = ''; result.value = null; visible.value = true
+  newEntry.value = false; creation.value = null; creationSignature = ''; department.value = ''; dialogIdentity = intent.capture()
+}
+function openNew() {
+  open({ id: '', warehouseCd: '', locationCd: '', productCd: '', lotNo: '', unitCd: '',
+    physicalQty: 0, allocatedQty: 0, availableQty: 0, ownerType: 'SELF', recallFlag: false })
+  if (visible.value && target.value?.id === '') newEntry.value = true
+}
+function targetKey(): StockCreationKey | null {
+  const row = target.value
+  return row ? { warehouseCd: row.warehouseCd, locationCd: kind.value === 'MOVE' ? destination.value : row.locationCd,
+    productCd: row.productCd, lotNo: row.lotNo } : null
+}
+function signature(key: StockCreationKey | null, operation = kind.value) { return JSON.stringify([operation, key]) }
+watch(() => signature(targetKey()), () => { creation.value = null; creationSignature = ''; department.value = '' }, { flush: 'sync' })
+function checkKey(key: StockCreationKey) {
+  if (!key.warehouseCd.trim() || !key.locationCd.trim() || !key.productCd.trim()) throw new Error('倉庫・ロケーション・製品を入力してください。')
+}
+async function readCreation(key: StockCreationKey, operation: PendingStockOperation['kind'], bound: StockOperationScope,
+  token: ReturnType<typeof intent.capture>) {
+  const sign = signature(key, operation)
+  const value = creation.value && creationSignature === sign ? creation.value
+    : stockResponse(await stockApi.creationContext(operation === 'MOVE' ? 'move' : 'adjust', key))
+  if (!intent.current(token) || !canWrite(operation) || value.tenantId !== bound.tenantId || value.actorId !== bound.actorId)
+    throw new Error('操作画面が変わりました。')
+  if (signature(targetKey()) === sign) { creation.value = value; creationSignature = sign }
+  return value
+}
+async function loadCreationContext() {
+  if (busy.value || !scope.value || !target.value || !canWrite(kind.value)) return
+  if (!dialogIdentity || !intent.current(dialogIdentity)) { clear(); return }
+  const token = dialogIdentity, key = targetKey()!, operation = kind.value, bound = { ...scope.value }
+  busy.value = true; error.value = ''; creation.value = null; department.value = ''
+  try { checkKey(key); await readCreation(key, operation, bound, token) }
+  catch { if (intent.current(token)) error.value = '在庫・所属を確認できません。入力と現在の権限を確認してください。' }
+  finally { if (intent.current(token)) busy.value = false }
 }
 async function submit() {
   if (busy.value || !visible.value || !target.value || !scope.value || !canWrite(kind.value)) return
-  const token = intent.capture(), bound = { ...scope.value }, row = { ...target.value }
+  if (!dialogIdentity || !intent.current(dialogIdentity)) { clear(); return }
+  const token = dialogIdentity, bound = { ...scope.value }, row = { ...target.value }, key = targetKey()!
   const operation = kind.value, toLocationCd = destination.value
+  const selectedDepartment = department.value, creating = newEntry.value
   let qty: string
   try {
+    checkKey(key)
     qty = stockQuantity(quantity.value, operation === 'MOVE')
     if (operation === 'MOVE' && (!toLocationCd.trim() || [...toLocationCd].length > 30)) throw new Error('移動先ロケーションを30文字以内で入力してください。')
     // Preserve the key bytes; the Owner applies the database's location identity/equality rules.
@@ -98,12 +159,26 @@ async function submit() {
   const move = { ...common, fromLocationCd: row.locationCd, toLocationCd }
   busy.value = true; error.value = ''; result.value = null
   const guard = () => { if (!intent.current(token) || !canWrite(operation)) throw new Error('操作画面が変わりました。') }
+  let submitted = false
   try {
+    const context = await readCreation(key, operation, bound, token); guard()
+    if (creating && !context.requiresCreation) { error.value = 'この在庫は既に存在します。一覧から対象の在庫を選択してください。'; return }
+    let newStock: StockCreationIntent | undefined
+    if (context.requiresCreation) {
+      if (!selectedDepartment && !context.allowsUnbound) { error.value = '所属部門を選択してください。'; return }
+      if (selectedDepartment && !context.departments.some(d => d.id === selectedDepartment)) { error.value = '所属部門を確認し直してください。'; return }
+      newStock = { expectedAuthorityVersion: context.authorityVersion, departmentId: selectedDepartment || null }
+    }
+    const creationInput = newStock ? { newStock } : {}
+    submitted = true
     const value = await saveStockOperation(bound, operation, guard, id => operation === 'MOVE'
-      ? stockApi.move({ ...move, operationId: id }) : stockApi.apply({ ...adjustment, operationId: id }))
+      ? stockApi.move({ ...move, ...creationInput, operationId: id }) : stockApi.apply({ ...adjustment, ...creationInput, operationId: id }))
     if (!intent.current(token)) return
     result.value = value; visible.value = false; target.value = null; emit('committed')
-  } catch { if (intent.current(token)) { visible.value = false; target.value = null; error.value = '結果を確認できません。操作状態を更新し、元の番号で確認してください。'; } }
+  } catch { if (intent.current(token)) {
+    if (submitted) { visible.value = false; target.value = null; error.value = '結果を確認できません。操作状態を更新し、元の番号で確認してください。' }
+    else error.value = '在庫・所属を確認できません。入力と現在の権限を確認してください。'
+  } }
   finally { if (intent.current(token)) { busy.value = false; try { syncPending() } catch { scope.value = null; error.value = '保存された元の操作記録を確認してください。' } } }
 }
 async function resolve(close: boolean) {

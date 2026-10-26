@@ -182,6 +182,14 @@ export interface StockOperation {
   result?: StockOperationResult | null
 }
 export interface StockOperationScope { tenantId: string; actorId: string }
+export interface StockCreationIntent { expectedAuthorityVersion: string; departmentId: string | null }
+export interface StockCreationContext extends StockOperationScope {
+  authorityVersion: string
+  requiresCreation: boolean
+  allowsUnbound: boolean
+  departments: { id: string; code: string; name: string }[]
+}
+export interface StockCreationKey { warehouseCd: string; locationCd: string; productCd: string; lotNo: string }
 
 // ───────── 入庫予定（WM030） ─────────
 

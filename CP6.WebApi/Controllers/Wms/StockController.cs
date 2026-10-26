@@ -34,6 +34,27 @@ public class StockController : ControllerBase
     private IStockOriginalOperationsV1 Original=>_mover as IStockOriginalOperationsV1
         ??throw new CP6.Core.Services.Erp.OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
 
+    private IStockCreationOperationsV2 Creation=>_mover as IStockCreationOperationsV2
+        ??throw new CP6.Core.Services.Erp.OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
+    [HttpGet("creation-context/{operation}")]
+    public async Task<IActionResult> CreationContext(string operation,[FromQuery] string warehouseCd,[FromQuery] string locationCd,
+        [FromQuery] string productCd,[FromQuery] string lotNo="",CancellationToken ct=default)
+        =>Ok(new{code=0,message="OK",data=await Creation.CreationContextAsync(operation,new(warehouseCd,locationCd,productCd,lotNo),ct)});
+    [HttpPost("commands/v2/apply")]
+    public async Task<IActionResult> ApplyCreationCommand([FromBody] StockApplyCommandV2 request,CancellationToken ct)
+    {
+        try{return Ok(new{code=0,message="OK",data=await Creation.ApplyCommandAsync(request,ct)});}
+        catch(InsufficientStockException ex){return BadRequest(new{code=400,message=ex.Message});}
+        catch(ArgumentException ex){return BadRequest(new{code=400,message=ex.Message});}
+    }
+    [HttpPost("commands/v2/move")]
+    public async Task<IActionResult> MoveCreationCommand([FromBody] StockMoveCommandV2 request,CancellationToken ct)
+    {
+        try{return Ok(new{code=0,message="OK",data=await Creation.MoveCommandAsync(request,ct)});}
+        catch(InsufficientStockException ex){return BadRequest(new{code=400,message=ex.Message});}
+        catch(ArgumentException ex){return BadRequest(new{code=400,message=ex.Message});}
+    }
+
     // The Owner chooses current query for an original and adjust/move only for a new command.
     [HttpPost("commands/v1/apply")]
     public async Task<IActionResult> ApplyCommand([FromBody] StockApplyCommandV1 request,CancellationToken ct)

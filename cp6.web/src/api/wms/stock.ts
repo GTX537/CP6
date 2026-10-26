@@ -8,6 +8,9 @@ import type {
   StockOperationResult,
   StockOperation,
   StockOperationScope,
+  StockCreationIntent,
+  StockCreationContext,
+  StockCreationKey,
   WmsApi,
   WmsPaged,
 } from '@/types/wms/wms'
@@ -27,13 +30,16 @@ export const stockApi = {
   },
 
   /** 在庫変動 1 件適用 */
-  apply(req: Omit<StockMovementRequest, 'qty' | 'unitPrice'> & { operationId: string; qty: number | string; unitPrice?: number | string }) {
-    return http.post<any, WmsApi<StockOperationResult>>('/wms/stock/commands/v1/apply', req)
+  apply(req: Omit<StockMovementRequest, 'qty' | 'unitPrice'> & { operationId: string; qty: number | string; unitPrice?: number | string; newStock?: StockCreationIntent }) {
+    return http.post<any, WmsApi<StockOperationResult>>('/wms/stock/commands/v2/apply', req)
   },
 
   /** 棚移動 */
-  move(req: Omit<StockMoveRequest, 'qty'> & { operationId: string; qty: number | string }) {
-    return http.post<any, WmsApi<StockOperationResult>>('/wms/stock/commands/v1/move', req)
+  move(req: Omit<StockMoveRequest, 'qty'> & { operationId: string; qty: number | string; newStock?: StockCreationIntent }) {
+    return http.post<any, WmsApi<StockOperationResult>>('/wms/stock/commands/v2/move', req)
+  },
+  creationContext(action: 'adjust' | 'move', key: StockCreationKey) {
+    return http.get<any, WmsApi<StockCreationContext>>(`/wms/stock/creation-context/${action}`, { params: key })
   },
 
   operationScope() {
