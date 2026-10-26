@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W142调拨本地需求预算前置](dispatch/20261026-wave142/README.md)：内部PG组件已验证，正式T04接线待，Handoff已finish，Main收尾；后继D2正式REP/RMA/IN。单人、PostgreSQL、七天ACTIVE。
+> 当前：[W143 CRM托管载荷启动门禁](dispatch/20261026-wave143/README.md)：产品及Handoff已采用并finish，Main收尾。原七天ACTIVE，后继D3实际计划写事务前置；D2可信主数据与正式写入、D5完整资格及D6/D7仍保留。
+
+> 历史快照：[W142调拨本地需求预算前置](dispatch/20261026-wave142/README.md)：内部PG组件已验证，正式T04接线待，Handoff已finish，Main收尾；后继D2正式REP/RMA/IN。单人、PostgreSQL、七天ACTIVE。
 
 > 历史快照：[W141补货／退货服务器分页](dispatch/20261026-wave141/README.md)：真实Owner及页面已验证，Handoff已finish，Main收尾；后继D2正式REP/RMA/IN。单人、PostgreSQL、七天ACTIVE。
 
