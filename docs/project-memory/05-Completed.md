@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-26：W156版型来源待Main收尾
+
+版型工具完整原身份/观察历史与当前Owner读取通过PG/HTTP17、目录5、UI/IAM/router52及type/Vite。[单份报告](../development/evidence/W156-01/DELIVERY.md)。登记22.01分钟，预计60–100；Handoff已释放、Main待正常PR/finish。旧writer/订单共同事务、正式技术与实物资格及原七天剩余出口未完成。
+
 ## 2026-10-26：W155实际时间单位待Main收尾
 
 原Owner时间单位定义与资源工时读取通过PG/HTTP40、UI/IAM43及type/Vite。[单份报告](../development/evidence/W155-01/DELIVERY.md)。登记23.08分钟，预计45–70；Handoff已释放，Main待正常PR/finish。完整资源资格/计划写入和原七天剩余出口未完成，正式状态不变。

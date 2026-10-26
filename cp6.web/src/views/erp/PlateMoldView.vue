@@ -1,5 +1,6 @@
 <template>
   <div class="plate-mold">
+    <router-link v-permission="'erp-plate-mold:query'" to="/erp/plate-mold-sources">版型工具原来源与观察历史</router-link>
     <!-- ヘッダー：操作種別 + 検索 -->
     <el-card shadow="never" class="header-card">
       <div class="header-row">

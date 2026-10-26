@@ -10,6 +10,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/mes/machine-sources': () => import('@/views/mes/ResourceSourcesView.vue'),
   '/mes/work-center-sources': () => import('@/views/mes/ResourceSourcesView.vue'),
   '/erp/uom-profiles': () => import('@/views/erp/UomProfilesView.vue'),
+  '/erp/plate-mold-sources': () => import('@/views/erp/PlateMoldSourcesView.vue'),
   '/erp/time-unit-bases': () => import('@/views/erp/UomTimeBasesView.vue'),
   '/erp/currency-policies': () => import('@/views/erp/CurrencyPoliciesView.vue'),
   '/plm/configuration-rules': () => import('@/views/plm/ConfigurationRulesView.vue'),
@@ -448,6 +449,7 @@ export function addDynamicRoutes(menus: any[]) {
       ...platformChildren(),
       // Internal child pages stay mounted even though they are absent from Sys_Menu.
       ...internalSubChildren(),
+      { path: 'erp/plate-mold-sources', name: 'erp/plate-mold-sources', component: viewModules['/erp/plate-mold-sources']!, meta: { permission: 'erp-plate-mold:query' } },
       { path: 'erp/time-unit-bases', name: 'erp/time-unit-bases', component: viewModules['/erp/time-unit-bases']!, meta: { permission: 'erp-uom-profile:query' } },
       ...(['MACHINE', 'WORK_CENTER'] as const).map(kind => {
         const path = kind === 'MACHINE' ? 'mes/machine-sources' : 'mes/work-center-sources'
