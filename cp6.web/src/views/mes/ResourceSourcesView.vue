@@ -20,6 +20,14 @@
       <h3>原能力描述</h3><dl><template v-for="(value, key) in selected.source.capability" :key="key"><dt>{{ labels[key] || key }}</dt><dd>{{ value ?? '未填写' }}</dd></template></dl>
       <h3>原归属代码</h3><dl><template v-for="(value, key) in selected.source.assignment" :key="key"><dt>{{ labels[key] || key }}</dt><dd>{{ value ?? '未填写' }}</dd></template></dl>
       <p>以上数值与旧归属来自原资料。能力资格、正式站点归属和生产准入尚需分别确认。</p>
+      <section v-if="permissions.has('erp-uom-profile:query')" aria-label="资源工时换算">
+        <h3>工时单位换算</h3><p>读取本资源的原数值，按已登记的单位时间含义精确换算。</p>
+        <form @submit.prevent="findTimeUnits"><label>目标单位搜索 <input v-model="unitSearch" aria-label="工时单位搜索" maxlength="100" /></label><button :disabled="busy">查询工时单位</button></form>
+        <form @submit.prevent="convertTime"><label>原工时字段 <select v-model="timeField" aria-label="原工时字段" :disabled="busy" @change="timeResult = null"><option value="">请选择</option><template v-if="kind === 'MACHINE'"><option value="standardCycleSeconds">原标准周期秒</option><option value="plannedRunMinutesPerDay">原计划运行分钟 / 日</option></template><option v-else value="dailyCapacityHours">原每日产能小时</option></select></label>
+          <label>目标单位 <select v-model="targetUnit" aria-label="工时目标单位" :disabled="busy" @change="timeResult = null"><option value="">请选择查询结果</option><option v-for="unit in timeUnits" :key="unit.reference.id" :value="unit.reference.id">{{ unit.profile.code }} / {{ unit.profile.name }} · 版本 {{ unit.reference.version }}</option></select></label><button :disabled="busy || !timeField || !targetUnit">换算原工时</button></form>
+        <article v-if="timeResult" aria-label="工时换算结果"><p>原值：{{ timeResult.nativeQuantity ?? '未填写' }} {{ timeLabels[timeResult.nativeBasis] }}；{{ timeResult.state === 'KNOWN' ? '换算值：' + timeResult.convertedQuantity : '暂不可换算：' + timeResult.reasons.map(r => timeReasons[r] || r).join('、') }}。</p>
+          <p>资源版本 {{ timeResult.sourceRef.version }}；目标单位版本 {{ timeResult.targetRef.version }}；时间含义版本 {{ timeResult.timeBasisRef?.version ?? '未采用' }}。</p><p>结果仅反映本次查询，资源产能资格仍需另行确认。</p></article>
+      </section>
       <form @submit.prevent="loadHistory"><label>历史版本 <input v-model="historyVersion" aria-label="资源历史版本" pattern="[1-9][0-9]*" required /></label><button :disabled="busy">读取历史</button></form>
       <article v-if="history"><h3>历史版本 {{ history.reference.version }}</h3><p>{{ history.source.master.name ?? '未填写名称' }} · {{ history.isCurrent ? '当前版本' : '历史记录' }}</p><pre>{{ history.originalJson }}</pre></article>
       <details><summary>当前来源原件</summary><p class="identity">摘要：{{ selected.reference.digest }}</p><pre>{{ selected.originalJson }}</pre></details>
@@ -33,19 +41,26 @@ import { pendingResourceOperation, resolveResourceOperation, saveResourceOperati
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
 import { usePermissionStore } from '@/stores/permission'
+import { uomApi, type UomVersion } from '@/api/erp/uomProfiles'
+import { timeApi, type ResourceTimeResult } from '@/api/erp/uomTimeBases'
 const props = withDefaults(defineProps<{ kind?: ResourceKind }>(), { kind: 'MACHINE' })
 const kind = computed(() => props.kind), permissions = usePermissionStore()
 const canEdit = computed(() => permissions.has((kind.value === 'MACHINE' ? 'mes-machine' : 'mes-work-center') + ':edit'))
 const busy = ref(false), error = ref(''), notice = ref(''), scope = ref<ResourceScope | null>(null), pending = ref<PendingResourceOperation | null>(null)
 const search = ref(''), page = ref(1), rows = ref<ResourceVersion[]>([]), selected = ref<ResourceVersion | null>(null), history = ref<ResourceVersion | null>(null), historyVersion = ref('1')
 const draft = ref<Record<string, string>>({}), cleared = ref<Record<string, boolean>>({})
+const unitSearch = ref(''), targetUnit = ref(''), timeField = ref(''), timeUnits = ref<UomVersion[]>([]), timeResult = ref<ResourceTimeResult | null>(null)
+const timeLabels = { SECOND: '秒', MINUTE: '分钟', HOUR: '小时' }
+const timeReasons: Record<string, string> = { TIME_BASIS_REQUIRED: '尚未登记时间含义', TIME_BASIS_SOURCE_CHANGED: '单位版本已变化，需重新登记时间含义', TIME_BASIS_DISABLED: '时间含义已停用', RESOURCE_SOURCE_DISABLED: '原资源已停用或删除', RESOURCE_TIME_VALUE_MISSING: '原工时未填写' }
+function clearTime() { unitSearch.value = ''; targetUnit.value = ''; timeField.value = ''; timeUnits.value = []; timeResult.value = null }
 const fields = computed(() => [{ key: 'name', label: '资源名称', max: 100, date: false }, ...(kind.value === 'MACHINE' ? [
   { key: 'manufacturer', label: '制造商', max: 50, date: false }, { key: 'model', label: '型号', max: 50, date: false },
   { key: 'installDate', label: '安装日期', max: 10, date: true }, { key: 'lastMaintenanceDate', label: '上次维护日期', max: 10, date: true },
   { key: 'nextMaintenanceDate', label: '下次维护日期', max: 10, date: true }, { key: 'remarks', label: '备注', max: 500, date: false }] : [])])
 const labels: Record<string, string> = { machineType: '设备类型', processCode: '原工程代码', plannedRunMinutesPerDay: '原计划运行分钟 / 日', standardCycleSeconds: '原标准周期秒', capacityPerHour: '原每小时产能', dailyCapacityHours: '原每日产能小时', legacyWorkCenterCode: '旧工作中心代码', legacyBaseCode: '旧基地代码' }
 let live = true, generation = 0
-function clearPrivate() { rows.value = []; selected.value = null; history.value = null; draft.value = {}; cleared.value = {}; scope.value = null; pending.value = null }
+function clearPrivate() { clearTime(); search.value = ''; rows.value = []; selected.value = null; history.value = null; draft.value = {}; cleared.value = {}; scope.value = null; pending.value = null }
+watch(selected, clearTime)
 function guard() { const stamp = identityStamp(), current = generation; return () => { requireIdentity(stamp); if (!live || current !== generation) throw new Error('当前页面已变化。') } }
 async function run(action: (check: () => void) => Promise<void>) {
   if (busy.value) return
@@ -85,6 +100,12 @@ async function save() {
 async function loadHistory() { const current = selected.value; if (!current) return; await run(async check => {
   history.value = null; const result = resourceResponse(await resourceApi(kind.value).read(current.reference.id, historyVersion.value)); check(); history.value = result
 }) }
+async function findTimeUnits() { await run(async check => { timeUnits.value = []; targetUnit.value = ''; timeResult.value = null; const units = resourceResponse(await uomApi.list(unitSearch.value)); check(); timeUnits.value = units.filter(u => u.profile.enabled) }) }
+async function convertTime() {
+  const current = selected.value, unit = timeUnits.value.find(u => u.reference.id === targetUnit.value), field = timeField.value
+  if (!current || !unit || !field) return
+  await run(async check => { timeResult.value = null; const result = resourceResponse(await timeApi.resource(current.reference, field, unit.reference)); check(); timeResult.value = result })
+}
 async function recover(close: boolean) { const current = scope.value; if (!current) return; await run(async check => {
   const result = await resolveResourceOperation(current, kind.value, close, check); check()
   if (result.state === 'COMMITTED') { selected.value = null; history.value = null; rows.value = [] }
@@ -96,5 +117,5 @@ onMounted(() => { window.addEventListener(AUTH_EVENT, identityChanged); window.a
 onBeforeUnmount(() => { live = false; generation++; window.removeEventListener(AUTH_EVENT, identityChanged); window.removeEventListener('storage', identityChanged); clearPrivate() })
 </script>
 <style scoped>
-.resource-page{max-width:1200px;margin:auto;padding:24px;color:var(--text,#18343d)}header,nav,form{display:flex;gap:14px;align-items:center;flex-wrap:wrap}header{justify-content:space-between}h1{margin-bottom:8px}.panel{background:var(--surface,#fff);border:1px solid #d7e3e7;border-radius:12px;padding:22px;margin-top:20px}button,input{font:inherit;padding:8px 12px;border:1px solid #bdcdd3;border-radius:6px;color:inherit;background:#fff}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}button:focus-visible,input:focus{outline:2px solid #14969e;outline-offset:2px}.table-scroll{overflow:auto}table{width:100%;min-width:580px;border-collapse:collapse}th,td{text-align:left;padding:14px;border-bottom:1px solid #dce5e9}nav{margin-top:16px}fieldset{border:0;padding:0;width:100%;min-width:0}.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:20px}.fields label{display:grid;gap:6px}.clear{font-size:13px;display:flex;align-items:center;gap:6px}dl{display:grid;grid-template-columns:minmax(140px,1fr) 2fr;gap:10px}dd{margin:0;overflow-wrap:anywhere}.identity,pre{overflow-wrap:anywhere;white-space:pre-wrap}pre{background:#f3f6f7;padding:14px;max-height:360px;overflow:auto}[role=alert]{color:#a02828}@media(max-width:600px){.resource-page{padding:10px}.panel{padding:14px}}
+.resource-page{max-width:1200px;margin:auto;padding:24px;color:var(--text,#18343d)}header,nav,form{display:flex;gap:14px;align-items:center;flex-wrap:wrap}header{justify-content:space-between}h1{margin-bottom:8px}.panel{background:var(--surface,#fff);border:1px solid #d7e3e7;border-radius:12px;padding:22px;margin-top:20px}button,input,select{font:inherit;padding:8px 12px;border:1px solid #bdcdd3;border-radius:6px;color:inherit;background:#fff}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}button:focus-visible,input:focus,select:focus{outline:2px solid #14969e;outline-offset:2px}.table-scroll{overflow:auto}table{width:100%;min-width:580px;border-collapse:collapse}th,td{text-align:left;padding:14px;border-bottom:1px solid #dce5e9}nav{margin-top:16px}fieldset{border:0;padding:0;width:100%;min-width:0}.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:20px}.fields label{display:grid;gap:6px}.clear{font-size:13px;display:flex;align-items:center;gap:6px}dl{display:grid;grid-template-columns:minmax(140px,1fr) 2fr;gap:10px}dd{margin:0;overflow-wrap:anywhere}.identity,pre{overflow-wrap:anywhere;white-space:pre-wrap}pre{background:#f3f6f7;padding:14px;max-height:360px;overflow:auto}[role=alert]{color:#a02828}@media(max-width:600px){.resource-page{padding:10px}.panel{padding:14px}}
 </style>

@@ -2,6 +2,9 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { mount, flushPromises, type VueWrapper } from '@vue/test-utils'
 import type { ResourceCommand, ResourceVersion } from '@/api/mes/resourceSources'
 const api = vi.hoisted(() => ({ scope: vi.fn(), list: vi.fn(), read: vi.fn(), save: vi.fn(), operation: vi.fn(), authenticated: true, canEdit: true }))
+const time = vi.hoisted(() => ({ resource: vi.fn(), list: vi.fn() }))
+vi.mock('@/api/erp/uomTimeBases', () => ({ timeApi: time }))
+vi.mock('@/api/erp/uomProfiles', () => ({ uomApi: time }))
 vi.mock('@/api/mes/resourceSources', () => ({ resourceApi: () => api }))
 vi.mock('@/stores/permission', () => ({ usePermissionStore: () => ({ loaded: true, has: (key: string) => !key.endsWith(':edit') || api.canEdit, loadMyActions: vi.fn() }) }))
 vi.mock('@/auth/browserAuthentication', () => ({ authenticationCanRead: () => api.authenticated }))
@@ -80,4 +83,21 @@ it('provides the work-center editor with nullable name and no machine-only field
   expect(view!.text()).toContain('1234567890123.12345678'); expect(view!.find('[aria-label="制造商"]').exists()).toBe(false)
   await field('清空资源名称').setValue(true); await submit('资源名称')
   expect(api.save.mock.calls[0]![0]).toMatchObject({ expected: center.reference, patches: [{ field: 'name', value: null }] })
+})
+it('converts the original resource field with exact source and unit references, without a client quantity', async () => {
+  const target = { owner: 'Main.Erp.UomProfile.v1', id, version: '4', digest: 'c'.repeat(64) }
+  time.list.mockResolvedValue(ok([{ reference: target, profile: { code: 'H', name: 'Hour', enabled: true } }]))
+  time.resource.mockResolvedValue(ok({ sourceRef: row.reference, targetRef: target, field: 'plannedRunMinutesPerDay', nativeBasis: 'MINUTE', nativeQuantity: '480', state: 'KNOWN', convertedQuantity: '8.00000000', timeBasisRef: { version: '1' }, reasons: [], observation: 'CURRENT_TRANSACTION_ONLY', qualification: 'NOT_ATTESTED' }))
+  await render(); await submit('工时单位搜索'); await field('原工时字段').setValue('plannedRunMinutesPerDay'); await field('工时目标单位').setValue(id); await submit('原工时字段')
+  expect(time.resource).toHaveBeenCalledWith(row.reference, 'plannedRunMinutesPerDay', target); expect(view!.text()).toContain('8.00000000'); expect(view!.text()).toContain('资源产能资格仍需另行确认')
+  await field('原工时字段').setValue('standardCycleSeconds'); expect(view!.find('[aria-label="工时换算结果"]').exists()).toBe(false)
+})
+it('shows missing time meaning as unknown and removes unit and resource data on denial', async () => {
+  const target = { owner: 'Main.Erp.UomProfile.v1', id, version: '4', digest: 'c'.repeat(64) }
+  time.list.mockResolvedValue(ok([{ reference: target, profile: { code: 'H', name: 'Hour', enabled: true } }]))
+  time.resource.mockResolvedValue(ok({ sourceRef: row.reference, targetRef: target, field: 'standardCycleSeconds', nativeBasis: 'SECOND', nativeQuantity: null, state: 'UNKNOWN', convertedQuantity: null, timeBasisRef: null, reasons: ['TIME_BASIS_REQUIRED'] }))
+  await render(); await submit('工时单位搜索'); await field('原工时字段').setValue('standardCycleSeconds'); await field('工时目标单位').setValue(id); await submit('原工时字段')
+  expect(view!.text()).toContain('尚未登记时间含义'); expect(view!.text()).not.toContain('换算值：')
+  time.resource.mockRejectedValueOnce({ response: { status: 403 } }); await submit('原工时字段')
+  expect(view!.text()).not.toContain('Original machine'); expect(view!.find('[aria-label="工时换算结果"]').exists()).toBe(false)
 })
