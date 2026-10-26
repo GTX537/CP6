@@ -662,6 +662,7 @@ builder.Services.AddScoped<CP6.Core.Services.Mes.ResourceSourceOwnerV1>();
 builder.Services.AddScoped<UomProfileOwnerV1>();
 builder.Services.AddScoped<UomTimeBasisOwnerV1>();
 builder.Services.AddScoped<PlateMoldSourceOwnerV1>();
+builder.Services.AddScoped<ToolOrderLinkOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.ResourceTimeOwnerV1>();
 builder.Services.AddScoped<CurrencyPolicyOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringProductOwnerV1>();
