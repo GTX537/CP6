@@ -18,6 +18,7 @@ public sealed partial class OperationsOwnerV1
         Stock = "wms-stock", StockTake = "wms-stocktake", WmsDashboard = "wms-dashboard", MesDashboard = "mes-dashboard", Defect = "mes-defect", MaterialShortage = "wms-material-shortage", LotTrace = "wms-lot-trace", CrossDock = "wms-cross-dock", Slotting = "wms-slotting", Vmi = "wms-vmi", Kitting = "wms-kitting", ReportCenter = "wms-report-center", Warehouse = "wms-warehouse", Location = "wms-location", Routing = "wms-outbound-routing",
         StockQc = "wms-stock-qc", InboundQc = "wms-qc-inspection", Quality = "mes-quality-inspection", Machine = "mes-machine", Oee = "mes-oee", Planning = "mes-planning-board", Achievement = "mes-plan-achievement", Rma = "wms-rma", Replenish = "wms-replenish", Mobile = "wms-mobile", WorkCenter = "mes-work-center", ProcessCostRate = "mes-process-cost-rate", StockDwell = "wms-stock-dwell", Expiry = "wms-expiry";
     internal const string Product = "product";
+    internal const string UomProfile = "uom-profile";
     internal const string Packaging = "wms-packaging", Sample = "wms-sample-stock";
     internal const string Mapping = "Main.Operations.Owner.v1";
     private readonly CP6Context db;
@@ -40,7 +41,7 @@ public sealed partial class OperationsOwnerV1
         if(!definition.IsSealed || !definition.Scopes.TryGetValue(resource,out var scope))throw new CurrentPermissionUnavailableException();
         var source=await new CurrentFieldPermissionSourceReaderV1(db,http,()=>definition).ReadAsync(resource,ct);
         var expected=resource==Sample?new[]{"CustomerCd","CustomerName","LentTo","ProductCd","ProductName","Remarks"}:resource==Packaging?new[]{"CarrierCd","Remarks","TrackingNo"}:resource==Routing?new[]{"CustomerCd","ProductCdPrefix","Remarks","RuleName"}:resource==Warehouse?new[]{"AddressText","ManagerCd","Remarks","WarehouseName"}:resource==Location?new[]{"Barcode","LocationName"}:resource==ReportCenter?new[]{"OperatorCd","OwnerCd","Remark"}:resource==Kitting?new[]{"ComponentName","ExecutedTxnNos","KitName","OperatorCd","Remarks"}:resource==Vmi?new[]{"BillingAmount","CustomerName","DailyStorageRate","Remarks"}:resource==Slotting?new[]{"ApproverCd","RecommendationsJson","Remarks"}:resource==CrossDock?new[]{"CustomerCd","OperatorCd","Remarks","SupplierCd"}:resource==LotTrace?new[]{"CustomerName","OperatorCd","Remark","SupplierName"}:resource==MaterialShortage?new[]{"Remark"}:resource is Outbound or Inbound or Receipt or Stock?new[]{"UnitPrice"}:
-            resource is Product or Mes or Production or MesDashboard or Defect or StockQc or InboundQc or Quality or Machine or Oee or Planning or Achievement or WorkCenter?Array.Empty<string>():
+            resource is UomProfile or Product or Mes or Production or MesDashboard or Defect or StockQc or InboundQc or Quality or Machine or Oee or Planning or Achievement or WorkCenter?Array.Empty<string>():
             resource==StockDwell?new[]{"Amount","CustomerName"}:resource==ProcessCostRate?new[]{"LaborRate","OverheadRate"}:resource==WmsDashboard?new[]{"Amount"}:resource==Rma?new[]{"CustomerName","OperatorCd","Remarks","ReturnReason"}:
             resource==Replenish?new[]{"OperatorCd","Remarks"}:resource==Mobile?new[]{"AssignedTo","ExceptionDescription","Instruction","Remarks"}:new[]{"Amount","UnitPrice"};
         if(!source.Fields.Order(StringComparer.Ordinal).SequenceEqual(expected))throw new CurrentPermissionUnavailableException();
@@ -48,7 +49,7 @@ public sealed partial class OperationsOwnerV1
         var actor=await PostgreSqlPermissionReader.ReadAsync(db,subject,ct);
         if(string.IsNullOrWhiteSpace(actor.UserName) || !actor.RoleIds.Order().SequenceEqual(source.Roles.Select(r=>r.RoleId).Order()))
             throw new CurrentPermissionUnavailableException();
-        var menu=resource=="order"?"erp-order":resource==Product?"erp-product":resource;
+        var menu=resource=="order"?"erp-order":resource==Product?"erp-product":resource==UomProfile?"erp-uom-profile":resource;
         var actions=await (from a in db.Sys_MenuActions.AsNoTracking() join m in db.Sys_Menus.AsNoTracking() on a.MenuId equals m.MenuId
             where m.Enable && m.MenuKey==menu select a.ActionCode).ToArrayAsync(ct);
         if(!actor.ActionKeys.Contains(menu+":"+action) || !actions.Contains(action,StringComparer.Ordinal))
@@ -71,7 +72,7 @@ public sealed partial class OperationsOwnerV1
         Func<CancellationToken,Task<string>>? actionAtFence=null,bool readOnlyAuthorityFence=false)
     {
         using var linked=CancellationTokenSource.CreateLinkedTokenSource(ct,http.HttpContext?.RequestAborted??CancellationToken.None);ct=linked.Token;
-        if(resource is not (Product or Mes or Outbound or Production or Inbound or Receipt or Stock or StockTake or WmsDashboard or MesDashboard or Defect or StockQc or InboundQc or Quality or Machine or Oee or Planning or Achievement or Rma or Replenish or Mobile or WorkCenter or ProcessCostRate or StockDwell or Expiry or MaterialShortage or LotTrace or CrossDock or Slotting or Vmi or Kitting or ReportCenter or Warehouse or Location or Routing or Packaging or Sample) || !db.Database.IsNpgsql() || db.Database.CurrentTransaction!=null
+        if(resource is not (UomProfile or Product or Mes or Outbound or Production or Inbound or Receipt or Stock or StockTake or WmsDashboard or MesDashboard or Defect or StockQc or InboundQc or Quality or Machine or Oee or Planning or Achievement or Rma or Replenish or Mobile or WorkCenter or ProcessCostRate or StockDwell or Expiry or MaterialShortage or LotTrace or CrossDock or Slotting or Vmi or Kitting or ReportCenter or Warehouse or Location or Routing or Packaging or Sample) || !db.Database.IsNpgsql() || db.Database.CurrentTransaction!=null
             || System.Transactions.Transaction.Current!=null || db.ChangeTracker.HasChanges()
             || readOnlyAuthorityFence && (write || delegation!=null || actionAtFence!=null)
             || db.ChangeTracker.Entries().Any(e=>IsBusiness(e.Entity.GetType().Name))

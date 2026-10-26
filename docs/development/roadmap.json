@@ -160622,6 +160622,16 @@
       "date": "2026-10-26",
       "change": "W146 Issue556 initial route/mount race fixed with red/green and real demo browser evidence; unique50 relevant regressions, type/Vite build0. Limited WP02-18 traceability corrected; full states unchanged. Handoff released, Main closeout pending.",
       "evidence": "docs/development/evidence/W146-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-26",
+      "change": "W146 closed once from final proof, Issue556 closed. W147 actual native UOM configuration Owner and explicit Product unit binding admitted,180–240min,sole COORD; formal states unchanged.",
+      "evidence": "docs/development/dispatch/20261026-wave147/README.md"
+    },
+    {
+      "date": "2026-10-26",
+      "change": "W147 native immutable UOM Owner and explicit original Product unit binding locally validated: PG/Kestrel43 plus forward-migration1, UI32, type/Vite build0. No legacy code inference, automatic role grants, formal currency/engineering/manufacturing/Transfer/SCHED qualification or full task closure. Handoff released, Main closeout pending.",
+      "evidence": "docs/development/evidence/W147-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -173514,7 +173524,7 @@
         }
       ],
       "wave146_route_startup": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "issue": "https://github.com/GTX537/CP6/issues/556",
         "report": "docs/development/evidence/W146-01/DELIVERY.md",
         "scope": "Initial dynamic-route application startup only; no audit-policy or full workspace menu completion",
@@ -173529,13 +173539,24 @@
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "original_dependencies_unchanged": true,
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "lifecycle_snapshot": {
-          "main_finish_required": true,
-          "main_seat_released": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
           "handoff_seat_released": true,
-          "main_branch_deleted": false,
-          "handoff_branch_deleted": true
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave146-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W146-01",
+          "remote_target": "cbb2b17197349a3a8c202b137d3ffe8bbfba0dc6",
+          "source": "d6a9c93bd5d933b36f7f9f9ef25ee7c9b8705396",
+          "branch": "codex/w146-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/564"
         }
       }
     },
@@ -179380,6 +179401,30 @@
           "branch_absent": true,
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/563"
+        }
+      },
+      "wave147_uom_owner": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "report": "docs/development/evidence/W147-01/DELIVERY.md",
+        "scope": "Native versioned UOM profile Owner and explicit original Product unit binding only; currency/dual-Owner engineering/full product subgraph and final HoldExact remain.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "94d2406cd0754fd557b4388dbbf0819568701ddc",
+          "main": "1a939148968245096e833d4140cee80577975885",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/123",
+          "exact_tree_adoption": true,
+          "at": "2026-10-26T16:02:53.216089+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "handoff_seat_released": true,
+          "main_branch_deleted": false,
+          "handoff_branch_deleted": true
         }
       }
     },
@@ -192984,10 +193029,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261026-wave146",
-      "path": "docs/development/dispatch/20261026-wave146/README.md",
-      "baseline_sha": "2522a2c9145cff05dec1811e2c6ff7609f5a23f5",
-      "registered_at": "2026-10-26T14:04:39.901358+00:00",
+      "id": "20261026-wave147",
+      "path": "docs/development/dispatch/20261026-wave147/README.md",
+      "baseline_sha": "cbb2b17197349a3a8c202b137d3ffe8bbfba0dc6",
+      "registered_at": "2026-10-26T14:55:26.642783+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -193006,28 +193051,27 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W146-01",
+          "id": "W147-01",
           "related_tasks": [
-            "WP02-18"
+            "WP04-33"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "P1 issue556 authenticated dynamic-route startup",
-          "issue": "https://github.com/GTX537/CP6/issues/556",
+          "title": "Native versioned UOM profile Owner and original Product unit adoption",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "5d4b7ba1bf9c972c546b743df1673443debea71e",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261026T140439Z-wave146-start/MESSAGE.md",
-            "at": "2026-10-26T14:04:39.901358+00:00",
-            "branch": "codex/w146-handoff"
+            "commit": "6614cbad4dbe194e4f9c80cd7cd9dfdc5461431b",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261026T145526Z-wave147-start/MESSAGE.md",
+            "at": "2026-10-26T14:55:26.642783+00:00",
+            "branch": "codex/w147-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w146-01",
-          "planned_scope_ref": "docs/development/dispatch/20261026-wave146/README.md",
+          "branch": "codex/w147-01",
+          "planned_scope_ref": "docs/development/dispatch/20261026-wave147/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -193035,9 +193079,8 @@
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
-          "traceability_correction": "W146 startup concerns workspace menu/dynamic-route adoption (WP02-18), not audit-policy implementation (WP02-13). Scope and all full task states unchanged.",
-          "validation": "10 actual startup +40 existing relevant authentication regressions passed; type/Vite build0; real demo browser refresh/deep-link/menu/profile passed. No new backend/PG run.",
-          "worker_delivery_ref": "docs/development/evidence/W146-01/DELIVERY.md",
+          "validation": "Actual PG/Kestrel43 plus directed forward-migration1 passed (44 disjoint); UI/recovery/IAM32 passed; vue-tsc/Vite exit0. No formal business acceptance.",
+          "worker_delivery_ref": "docs/development/evidence/W147-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -193048,11 +193091,15 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-26T14:00:11.609436+00:00",
+        "started_at": "2026-10-26T14:51:20.221033+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          80,
-          120
+          180,
+          240
+        ],
+        "original_unit_only_estimate_minutes": [
+          120,
+          180
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -193060,7 +193107,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Resume WP04-33 versioned unit profile and dual-Owner engineering mapping, then the retained original D3 Root/Snapshot/Occurrence and SCHED same-UoW. Preserve all D2/D5/D6/D7 exits.",
+      "next_action": "Continue native currency identity and dual-Owner engineering mapping required by WP04-33; then engineering freeze, WP08-17 intent, formal WO Root/Snapshot/Occurrence and SCHED same-UoW/UI. Preserve the original D2/D5/D6/D7 exits.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -193068,7 +193115,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 32.46
+      "elapsed_registered_wave_minutes": 72.28
     },
     "wave_history": [
       {
@@ -213455,6 +213502,116 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/121"
           }
         ]
+      },
+      {
+        "id": "20261026-wave146",
+        "path": "docs/development/dispatch/20261026-wave146/README.md",
+        "baseline_sha": "2522a2c9145cff05dec1811e2c6ff7609f5a23f5",
+        "registered_at": "2026-10-26T14:04:39.901358+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W146-01",
+            "related_tasks": [
+              "WP02-18"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "P1 issue556 authenticated dynamic-route startup",
+            "issue": "https://github.com/GTX537/CP6/issues/556",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "5d4b7ba1bf9c972c546b743df1673443debea71e",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261026T140439Z-wave146-start/MESSAGE.md",
+              "at": "2026-10-26T14:04:39.901358+00:00",
+              "branch": "codex/w146-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w146-01",
+            "planned_scope_ref": "docs/development/dispatch/20261026-wave146/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "traceability_correction": "W146 startup concerns workspace menu/dynamic-route adoption (WP02-18), not audit-policy implementation (WP02-13). Scope and all full task states unchanged.",
+            "validation": "10 actual startup +40 existing relevant authentication regressions passed; type/Vite build0; real demo browser refresh/deep-link/menu/profile passed. No new backend/PG run.",
+            "worker_delivery_ref": "docs/development/evidence/W146-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave146-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-26T14:00:11.609436+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            80,
+            120
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Resume WP04-33 versioned unit profile and dual-Owner engineering mapping, then the retained original D3 Root/Snapshot/Occurrence and SCHED same-UoW. Preserve all D2/D5/D6/D7 exits.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave146-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 32.46,
+        "actual_registered_wave_minutes": 36.73,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W146-01",
+            "remote_target": "cbb2b17197349a3a8c202b137d3ffe8bbfba0dc6",
+            "source": "d6a9c93bd5d933b36f7f9f9ef25ee7c9b8705396",
+            "branch": "codex/w146-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/564"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W146-HANDOFF",
+            "remote_target": "229645ace197e60ca980357ca30e2566b3bec331",
+            "source": "fcc5a216661bda27e9ab048fe66dd6f90c569278",
+            "branch": "codex/w146-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/122"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -213554,7 +213711,7 @@
           "id": "D3",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W146-01",
+          "current_window": "W147-01",
           "prerequisite_adjustment": "Issue460 WorkCenter and ProcessCostRate actual current Owner; full process/cost/Finance adoption remains separate.",
           "adopted_window": "W49-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/402",
@@ -213563,12 +213720,13 @@
           "last_window_actual_agent_minutes": 56.28,
           "last_branches_deleted": true,
           "last_seats_released": true,
-          "next_action": "Resume WP04-33 versioned unit profile and dual-Owner engineering mapping, then the retained original D3 Root/Snapshot/Occurrence and SCHED same-UoW. Preserve all D2/D5/D6/D7 exits.",
+          "next_action": "Continue native currency identity and dual-Owner engineering mapping required by WP04-33; then engineering freeze, WP08-17 intent, formal WO Root/Snapshot/Occurrence and SCHED same-UoW/UI. Preserve the original D2/D5/D6/D7 exits.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W136-01/DELIVERY.md",
           "last_product_source_report": "docs/development/evidence/W144-01/DELIVERY.md",
           "last_type_fix_report": "docs/development/evidence/W145-01/DELIVERY.md",
-          "last_route_startup_report": "docs/development/evidence/W146-01/DELIVERY.md"
+          "last_route_startup_report": "docs/development/evidence/W146-01/DELIVERY.md",
+          "last_uom_owner_report": "docs/development/evidence/W147-01/DELIVERY.md"
         },
         {
           "id": "D4",

@@ -5,6 +5,7 @@ import { usePermissionStore } from '@/stores/permission'
 
 // 路由路径 → 组件的映射表（所有可能的页面）
 const viewModules: Record<string, () => Promise<any>> = {
+  '/erp/uom-profiles': () => import('@/views/erp/UomProfilesView.vue'),
   '/dashboard': () => import('@/views/dashboard/DashboardView.vue'),
   // ───── PMS システム管理 (100~199) ─────
   '/role': () => import('@/views/pms/RoleView.vue'),

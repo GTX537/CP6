@@ -24,8 +24,16 @@ public sealed class CommercialProductIdentityReader(CP6Context db, OperationsOwn
             || parsed < 1 || parsed.ToString(CultureInfo.InvariantCulture) != version))
             throw new OrderPriceCorrectionException("PRODUCT_IDENTITY_INPUT_INVALID", 400);
         if (version != null) exact = long.Parse(version, CultureInfo.InvariantCulture);
-        return owner.ExecuteAsync(OperationsOwnerV1.Product, "query", false, async (a, token) =>
-        {
+        return owner.ExecuteAsync(OperationsOwnerV1.Product, "query", false,
+            (access, token) => ReadOwnedAsync(db, access, productId, exact, token), ct);
+    }
+
+    // The original reader is shared with the actual product-unit writer, on its exact Main transaction.
+    // The caller supplies the real current Product Owner access; no nested transaction or fabricated permit.
+    internal static async Task<CommercialProductIdentityV1> ReadOwnedAsync(CP6Context db, OperationsAccessV1 a,
+        Guid productId, long? exact, CancellationToken token)
+    {
+            a.RequireProductSourceAccess(db);
             // Current object authority is required even for an old version. A hard-deleted object is not disclosed.
             if (!await a.Products(includeDeleted: true).AnyAsync(p => p.Id == productId, token))
                 throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN", 403);
@@ -54,7 +62,6 @@ public sealed class CommercialProductIdentityReader(CP6Context db, OperationsOwn
             return new CommercialProductIdentityV1(db.CurrentTenantId, productId, selected.Revision.ToString(CultureInfo.InvariantCulture), selected.Digest,
                 selected.Revision == current.Revision, selected.Present, doc.RootElement.Clone(), selected.Json,
                 Missing: ["VERSIONED_UOM_PROFILE", "CURRENCY_IDENTITY", "DUAL_OWNER_ENGINEERING_MAPPING"]);
-        }, ct);
     }
 
     private sealed class SourceRow

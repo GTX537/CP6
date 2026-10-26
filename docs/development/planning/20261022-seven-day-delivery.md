@@ -1308,3 +1308,7 @@ Issue562原类型构建红灯后最小补全product-master，原命令及19项UI
 ## W146 产品刷新与深链前置修复
 
 [Issue556](https://github.com/GTX537/CP6/issues/556)根因为首次挂载与动态路由安装竞态，main等初始导航后再挂载。50项去重相关行为、类型/Vite构建和真实demo浏览器验证通过，[单份报告](../evidence/W146-01/DELIVERY.md)。预计80–120分钟，当前登记32.46分钟，最终finish核对；只占有限WP02-18记录，不完成正式任务。原单位/工程D3及D2/D5/D6/D7范围不变，Handoff已释放，Main收尾。
+
+## 2026-10-26 W147 原生单位与原产品采用
+
+原生版本化单位Owner、实际产品源版本与准确单位显式绑定、独立权限及原操作恢复完成本地定向验证；PG/Kestrel43加最后迁移1，共44去重，页面/恢复/IAM32、类型及Vite通过。[单份报告](../evidence/W147-01/DELIVERY.md)。Main START至登记72.28分钟，原估180–240；Handoff已释放，Main待正常采用/finish。只关闭限定窗口，不完成WP04-33；原币种、双Owner工程、冻结与正式WO/SCHED及D2/D5/D6/D7继续，七天ACTIVE。
