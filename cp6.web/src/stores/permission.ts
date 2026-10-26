@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { rolePermApi } from '@/api/sys/rolePerm'
+import { identityStamp, requireIdentity } from '@/auth/identity'
 
 /**
  * PUB 章02/04 前端权限 store。
@@ -11,17 +12,25 @@ export const usePermissionStore = defineStore('permission', () => {
   const actionKeys = ref<Set<string>>(new Set())
   const loaded = ref(false)
   let generation = 0
+  let inFlight: Promise<void> | undefined
 
-  async function loadMyActions() {
-    const expected = generation
-    try {
-      const keys = await rolePermApi.myActions()
-      if (expected !== generation) return
-      actionKeys.value = new Set(keys)
-      loaded.value = true
-    } catch {
-      // 未登录/失败：保持空集，不阻塞页面
-    }
+  function loadMyActions(): Promise<void> {
+    if (inFlight) return inFlight
+    const expected = generation, stamp = identityStamp()
+    const request = (async () => {
+      try {
+        const keys = await rolePermApi.myActions()
+        if (expected !== generation) return
+        requireIdentity(stamp)
+        actionKeys.value = new Set(keys)
+        loaded.value = true
+      } catch {
+        // A failed initial read stays unconfirmed. A later navigation can retry.
+      }
+    })()
+    inFlight = request
+    void request.finally(() => { if (inFlight === request) inFlight = undefined })
+    return request
   }
 
   function has(key: string): boolean {
@@ -30,6 +39,7 @@ export const usePermissionStore = defineStore('permission', () => {
 
   function reset() {
     generation++
+    inFlight = undefined
     actionKeys.value = new Set()
     loaded.value = false
   }

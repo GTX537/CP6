@@ -1312,3 +1312,7 @@ Issue562原类型构建红灯后最小补全product-master，原命令及19项UI
 ## 2026-10-26 W147 原生单位与原产品采用
 
 原生版本化单位Owner、实际产品源版本与准确单位显式绑定、独立权限及原操作恢复完成本地定向验证；PG/Kestrel43加最后迁移1，共44去重，页面/恢复/IAM32、类型及Vite通过。[单份报告](../evidence/W147-01/DELIVERY.md)。Main START至登记72.28分钟，原估180–240；Handoff已释放，Main待正常采用/finish。只关闭限定窗口，不完成WP04-33；原币种、双Owner工程、冻结与正式WO/SCHED及D2/D5/D6/D7继续，七天ACTIVE。
+
+## 2026-10-26 W148 冷登录当前权限初始化
+
+P1 Issue565限定修复，最终60项、类型/构建及真实demo API浏览器冷登录直接仓库/设备/工单、深链/刷新/退出重登/匿名拒绝通过。[单份报告](../evidence/W148-01/DELIVERY.md)。Main START至登记36.5分钟，预计80–120；Handoff已释放，Main待正常采用/Issue关闭/finish。原七天ACTIVE、完整任务状态和所有原出口不变。

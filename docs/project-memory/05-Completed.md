@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-26：W148登录权限修复待Main收尾
+
+P1 Issue565冷登录普通页面权限初始化已验证：最终60项、类型/Vite与真实API浏览器回归通过。[单份报告](../development/evidence/W148-01/DELIVERY.md)。Main START至登记36.5分钟，原估80–120；Handoff已释放，Main待正常PR/Issue关闭/finish。仅WP02-03有限修复，原七天ACTIVE及币种/工程/正式D3与D2/D5/D6/D7出口不变。
+
 ## 2026-10-26：W147单位Owner及原产品绑定待Main收尾
 
 原生单位配置/版本/独立权限/精确换算和原产品显式单位绑定已完成本地定向验证：实际PG/Kestrel43与最后迁移1（44去重），页面/恢复/IAM32及类型/Vite通过。[单份报告](../development/evidence/W147-01/DELIVERY.md)。Main START至登记72.28分钟，预计180–240分钟；Handoff已释放，Main待正常PR采用和finish。仅WP04-33有限记录，币种/双Owner工程/冻结/正式WO与SCHED及D2/D5/D6/D7仍保留，原七天ACTIVE。

@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W147单位Owner与产品单位绑定](dispatch/20261026-wave147/README.md)：定向PG/HTTP、页面/恢复、类型及构建已过，Handoff已finish，Main待正常采用/finish。原七天及币种/工程/正式D3等出口保持。
+> 当前：[W148冷登录权限修复](dispatch/20261026-wave148/README.md)：相关自动化/真实浏览器回归通过，Handoff已finish，Main待正常采用、Issue关闭和finish；原七天出口保持。
+
+> 历史快照：[W147单位Owner与产品单位绑定](dispatch/20261026-wave147/README.md)：定向PG/HTTP、页面/恢复、类型及构建已过，Handoff已finish，Main待正常采用/finish。原七天及币种/工程/正式D3等出口保持。
 
 > 历史快照：[W146产品刷新/深链修复](dispatch/20261026-wave146/README.md)：相关行为/构建/真实浏览器已过，Handoff已finish，Main待正常合并/Issue关闭。原单位/工程D3及完整七天ACTIVE。
 

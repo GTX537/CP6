@@ -16,7 +16,6 @@ import App from './App.vue'
 import router from './router'
 import i18n, { initI18n } from './i18n'
 import { permission } from './directives/permission'
-import { usePermissionStore } from './stores/permission'
 
 async function bootstrap() {
   // 后台初始化/增量同步语言包（已由 hydrateCachedLanguagePacks 同步载入本地缓存，此处不阻塞首屏挂载）
@@ -52,11 +51,6 @@ async function bootstrap() {
   await router.isReady()
   app.mount('#app')
 
-  // The marker can outlive cookies after CRM-wide logout. Login must not preload
-  // protected workspace permissions; its passive profile probe owns SSO detection.
-  if (window.location.pathname !== '/login' && localStorage.getItem('cp6_authed') === '1') {
-    usePermissionStore().loadMyActions()
-  }
 }
 
 bootstrap()
