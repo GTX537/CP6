@@ -35,8 +35,11 @@ function accept(scope: ToolWriterScope, original: PendingToolWrite, value: ToolW
     || (value.state === 'COMMITTED' ? !r || r.operationId !== original.operationId || r.kind !== original.kind || !uuid.test(r.toolId)
       || !r.number || !Number.isSafeInteger(r.revision) || r.revision < 1 || !r.nativeRowVersion
       || r.source?.id !== r.toolId || r.source.owner !== 'Main.Erp.PlateMoldSource.v1' || !digest.test(r.source.digest) || !/^[1-9][0-9]*$/.test(r.source.version)
-      || r.technicalControl?.knowledge !== 'TECHNICAL_CONTROL_UNPROVEN' || r.technicalControl.id !== r.source.id
-      || r.technicalControl.version !== r.source.version || r.technicalControl.digest !== r.source.digest || r.technicalControl.owner !== r.source.owner
+      || r.technicalControl?.id !== r.source.id
+      || (r.technicalControl.knowledge === 'TECHNICAL_CONTROL_UNPROVEN'
+        ? r.technicalControl.version !== r.source.version || r.technicalControl.digest !== r.source.digest || r.technicalControl.owner !== r.source.owner
+        : r.technicalControl.knowledge !== 'TECHNICAL_SPECIFICATION_DRAFT' || r.technicalControl.owner !== 'Main.Plm.ToolSpecification.v1'
+          || !/^[1-9][0-9]*$/.test(r.technicalControl.version) || !digest.test(r.technicalControl.digest))
       || !uuid.test(r.order?.orderId) || !uuid.test(r.order.lineId) || !r.order.number || !r.order.arrangeNumber || !Number.isSafeInteger(r.order.lineNumber) || r.order.lineNumber < 1 || !r.order.orderRowVersion || !r.order.lineRowVersion
       || r.peState !== 'NOT_EXECUTED' || r.orderSourceKind !== 'NATIVE_ORDER_LINK_ONLY'
       || (change ? r.commercialState !== 'REQUESTED' || r.intent?.operationId !== original.operationId || r.intent.toolId !== r.toolId || r.intent.state !== 'REQUESTED'

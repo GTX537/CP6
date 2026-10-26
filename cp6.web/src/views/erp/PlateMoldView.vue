@@ -172,7 +172,7 @@
 
     <el-card shadow="never" class="footer-card">
       <p>原记录 Rev 与传输状态独立保留；技术批准未证实，实物资格未知，PE 未执行。</p>
-      <p v-if="store.dto.expectedNativeRowVersion">当前原记录版本：{{ store.dto.expectedNativeRowVersion }}；技术原观察版本：{{ store.dto.expectedTechnicalControl?.version }}</p>
+      <p v-if="store.dto.expectedNativeRowVersion">当前原记录版本：{{ store.dto.expectedNativeRowVersion }}；技术控制版本：{{ store.dto.expectedTechnicalControl?.version }}（{{ store.dto.expectedTechnicalControl?.knowledge === 'TECHNICAL_SPECIFICATION_DRAFT' ? '专业规格草稿，尚未批准或冻结' : '原观察，专业技术控制未证明' }}）</p>
       <p v-if="error" role="alert">{{ error }}</p><p v-if="notice" role="status">{{ notice }}</p>
       <el-button v-if="completed" :disabled="saving || loading" @click="onLoadByNo">重新载入已确认原记录</el-button>
       <div v-if="pending"><p>存在待确认操作，请先查询原结果。</p>

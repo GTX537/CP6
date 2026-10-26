@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W158旧写者共同事务与原订单请求](dispatch/20261026-wave158/README.md)：定向验证完成、Handoff已finish，Main待正常PR/finish；原七天全部出口保持。
+> 当前：[W159工具技术规格草稿](dispatch/20261026-wave159/README.md)：定向验证完成、Handoff已finish，Main待正常PR/finish；原七天全部出口保持。
+
+> 历史快照：[W158旧写者共同事务与原订单请求](dispatch/20261026-wave158/README.md)：定向验证完成、Handoff已finish，Main待正常PR/finish；原七天全部出口保持。
 
 > 历史快照：[W157版型原订单共同事务](dispatch/20261026-wave157/README.md)：定向验证完成、Handoff已finish，Main待正常PR/finish；原七天全部出口保持。
 

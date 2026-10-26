@@ -556,6 +556,8 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-configuration-rule", "工�
 CP6.Core.Services.Sys.FieldRegistry.Register("plm-configuration-rule");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-engineering-revision", "工程修订工作稿", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("plm-engineering-revision");
+CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-tool-specification", "工具技术规格草稿", new[] { 1, 2, 3, 4, 5 }, 5);
+CP6.Core.Services.Sys.FieldRegistry.Register("plm-tool-specification");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-engineering-product", "工程产品身份", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("plm-engineering-product");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("space-site", "物理站点准确来源", new[] { 5 }, 5);
@@ -668,6 +670,7 @@ builder.Services.AddScoped<CP6.Core.Services.Mes.ResourceTimeOwnerV1>();
 builder.Services.AddScoped<CurrencyPolicyOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringProductOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringRevisionOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Plm.ToolSpecificationOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.ConfigurationRuleOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringProductMappingService>();
 builder.Services.AddScoped<CommercialProductUnitOwnerV1>();
