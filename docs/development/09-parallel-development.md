@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W154实际资源来源目录](dispatch/20261026-wave154/README.md)：定向验证完成、Handoff已finish，Main待正常PR/finish；原七天全部出口保持。
+> 当前：[W155时间单位与原工时读取](dispatch/20261026-wave155/README.md)：定向验证完成、Handoff已finish，Main待正常PR/finish；原七天全部出口保持。
+
+> 历史快照：[W154实际资源来源目录](dispatch/20261026-wave154/README.md)：定向验证完成、Handoff已finish，Main待正常PR/finish；原七天全部出口保持。
 
 > 历史快照：[W153嵌套来源复核](dispatch/20261026-wave153/README.md)：定向验证完成、Handoff已finish，Main待正常PR/finish；原七天全部出口保持。
 

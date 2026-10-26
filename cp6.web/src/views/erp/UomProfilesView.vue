@@ -2,6 +2,7 @@
   <div class="uom-page" :aria-busy="busy">
     <header><div><h1>单位配置</h1><p>维护单位版本、精度与换算规则，并确认产品使用的单位版本。</p></div>
       <button type="button" :disabled="busy" @click="reload">刷新</button></header>
+    <RouterLink v-if="permissions.has('erp-uom-profile:query')" to="/erp/time-unit-bases">登记单位时间含义</RouterLink>
     <p v-if="error" role="alert">{{ error }}</p>
     <p v-if="notice" role="status">{{ notice }}</p>
     <section v-for="kind in channels" v-show="pending[kind]" :key="kind" class="recovery" aria-label="原操作恢复">
