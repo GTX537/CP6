@@ -9,6 +9,7 @@ import { requireReadableAuthentication } from '@/auth/browserAuthentication'
 const viewModules: Record<string, () => Promise<any>> = {
   '/erp/uom-profiles': () => import('@/views/erp/UomProfilesView.vue'),
   '/erp/currency-policies': () => import('@/views/erp/CurrencyPoliciesView.vue'),
+  '/plm/engineering-revisions': () => import('@/views/plm/EngineeringRevisionsView.vue'),
   '/plm/engineering-products': () => import('@/views/plm/EngineeringProductMappingView.vue'),
   '/dashboard': () => import('@/views/dashboard/DashboardView.vue'),
   // ───── PMS システム管理 (100~199) ─────

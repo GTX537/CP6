@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-26：W151工程修订待Main收尾
+
+工程修订/编号共同事务、工作快照/配置组成和独立页面通过PG/HTTP19去重项、UI35与type/Vite。[单份报告](../development/evidence/W151-01/DELIVERY.md)。登记35.85分钟，原估90–150；Handoff已释放，Main待正常PR/finish。仅WP05-03限定DRAFT工作面，真实父基线/变更/legacy、完整来源/规则、rebase/评审冻结与制造采用未完成；原七天ACTIVE，其余出口保留。
+
 ## 2026-10-26：W150工程映射待Main收尾
 
 工程身份Owner/原ERP及实际Site双Owner映射/独立页面通过PG/HTTP16、UI33和类型/Vite验证。[单份报告](../development/evidence/W150-01/DELIVERY.md)。Main START至登记36.99分钟，原估90–150；Handoff已释放，Main待正常PR/finish。仅WP04-33/WP05-02有限前置；确认范围IDENTITY_SITE_ONLY，法人/技术Revision/Configuration/制造采用继续保留。原七天ACTIVE，正式D3及D2/D5/D6/D7全部出口不缩减。

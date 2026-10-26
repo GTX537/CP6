@@ -550,6 +550,8 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("uom-profile", "单位配置", 
 CP6.Core.Services.Sys.FieldRegistry.Register("uom-profile");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("currency-policy", "币种政策", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("currency-policy");
+CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-engineering-revision", "工程修订工作稿", new[] { 1, 2, 3, 4, 5 }, 5);
+CP6.Core.Services.Sys.FieldRegistry.Register("plm-engineering-revision");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-engineering-product", "工程产品身份", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("plm-engineering-product");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("space-site", "物理站点准确来源", new[] { 5 }, 5);
@@ -655,6 +657,7 @@ builder.Services.AddScoped<CommercialProductIdentityReader>();
 builder.Services.AddScoped<UomProfileOwnerV1>();
 builder.Services.AddScoped<CurrencyPolicyOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringProductOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringRevisionOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringProductMappingService>();
 builder.Services.AddScoped<CommercialProductUnitOwnerV1>();
 // 仕掛チェック：mcframe7 連携無し時は NoOp 実装（Phase 3 で実装差替え）
