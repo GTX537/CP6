@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-26：W146产品刷新/深链修复待Main收尾
+
+[Issue556](https://github.com/GTX537/CP6/issues/556)首次路由挂载竞态最小修复；50项去重相关行为、类型/Vite构建及真实demo浏览器刷新/深链验证通过。Handoff已finish，Main仍待采用/Issue关闭。[单份报告](../development/evidence/W146-01/DELIVERY.md)。原计划80–120分钟，原七天ACTIVE与单位/工程范围不变。
+
 ## 2026-10-26：W145 P0产品绑定类型修复待Main收尾
 
 [Issue562](https://github.com/GTX537/CP6/issues/562)最小类型修复：原vue-tsc构建和19项当前UI回归通过。单位Owner功能保留后继，原七天ACTIVE。Handoff已释放，Main继续。[单份交付](../development/evidence/W145-01/DELIVERY.md)。

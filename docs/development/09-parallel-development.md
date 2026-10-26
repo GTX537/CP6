@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W145 P0产品绑定类型修复](dispatch/20261026-wave145/README.md)：原类型构建及19项UI已过，Handoff已finish，Main收尾。单位Owner原范围仍待，后继先核活动P1Issue556，原七天ACTIVE。
+> 当前：[W146产品刷新/深链修复](dispatch/20261026-wave146/README.md)：相关行为/构建/真实浏览器已过，Handoff已finish，Main待正常合并/Issue关闭。原单位/工程D3及完整七天ACTIVE。
+
+> 历史快照：[W145 P0产品绑定类型修复](dispatch/20261026-wave145/README.md)：原类型构建及19项UI已过，Handoff已finish，Main收尾。单位Owner原范围仍待，后继先核活动P1Issue556，原七天ACTIVE。
 
 > 历史快照：[W144原产品身份与持久源版本](dispatch/20261026-wave144/README.md)：本地验证完成，Handoff已finish，Main收尾。原D3需要继续正式UOM/工程/冻结来源及真实工单共同事务；七天ACTIVE。
 

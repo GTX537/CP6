@@ -47,6 +47,9 @@ async function bootstrap() {
   // PUB 章02：注册 v-permission 指令
   app.directive('permission', permission)
 
+  // Finish the initial guard/rematch before AuthenticationBoundary can install routes
+  // or redirect using the router's placeholder location during a deep-link reload.
+  await router.isReady()
   app.mount('#app')
 
   // The marker can outlive cookies after CRM-wide logout. Login must not preload
