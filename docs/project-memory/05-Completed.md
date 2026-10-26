@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-26：W145 P0产品绑定类型修复待Main收尾
+
+[Issue562](https://github.com/GTX537/CP6/issues/562)最小类型修复：原vue-tsc构建和19项当前UI回归通过。单位Owner功能保留后继，原七天ACTIVE。Handoff已释放，Main继续。[单份交付](../development/evidence/W145-01/DELIVERY.md)。
+
 ## 2026-10-26：W144原产品身份与源版本提供者待Main收尾
 
 原ProductMaster头身份来源已具有原生持久版本、不可变历史、当前授权读取及显式部门绑定；正式UOM/币种/双Owner工程映射和最终业务准入仍未证。 31项PG/HTTP及19项UI通过；Handoff已释放，Main正常收尾继续。[单份交付](../development/evidence/W144-01/DELIVERY.md)。完整七天仍ACTIVE。

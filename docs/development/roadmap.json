@@ -160597,6 +160597,21 @@
       "date": "2026-10-26",
       "change": "W143 archived once with sole WP02-29 managed payload record closed. W144 native ProductMaster identity/frontier/history and current read verified;31 PG/HTTP plus scoped UI. Handoff adopted/released, Main closeout pending. Original goal states retained.",
       "evidence": "docs/development/evidence/W144-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-26",
+      "change": "W144 closed once from final proof. W145 explicit native unit profile Owner and source adoption admitted,120–180min,sole COORD. Full states unchanged.",
+      "evidence": "docs/development/dispatch/20261026-wave145/README.md"
+    },
+    {
+      "date": "2026-10-26",
+      "change": "Verified P0 issue562 TS2322 blocks frontend type build; repository BUG-MANAGEMENT requires fixing P0 before ordinary feature work. W145 now contains one bug only; original unit feature remains scheduled.",
+      "evidence": "docs/development/dispatch/20261026-wave145/README.md"
+    },
+    {
+      "date": "2026-10-26",
+      "change": "W145 P0 issue562 exact type union fix verified with original type build and19 current UI cases; no unit feature claimed. Handoff released, Main closeout pending.",
+      "evidence": "docs/development/evidence/W145-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -179262,7 +179277,7 @@
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "wave144_product_identity": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W144-01/DELIVERY.md",
         "scope": "Native product-head source identity/frontier/history and current authorized read only. Complete UOM/currency/engineering mapping and final consumer admission remain.",
         "handoff_delivery": {
@@ -179272,6 +179287,42 @@
           "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/120",
           "exact_tree_adoption": true,
           "at": "2026-10-26T13:16:55.887145+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave144-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W144-01",
+          "remote_target": "721671e41dbd40f70d908e79e16f778be566c226",
+          "source": "004a8cc9d6d01de9f73dbccff093d65a2d2d336e",
+          "branch": "codex/w144-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/561"
+        }
+      },
+      "wave145_type_fix": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "issue": "https://github.com/GTX537/CP6/issues/562",
+        "report": "docs/development/evidence/W145-01/DELIVERY.md",
+        "scope": "P0 issue562 missing product-master exact type member only; unit Owner feature not implemented.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "32be90abc829adfa3bc26ed4741c08481f3f9c6b",
+          "main": "aeac440b4b08c431675c72bd1274ff914bdeb500",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/121",
+          "exact_tree_adoption": true,
+          "at": "2026-10-26T13:45:49.229998+00:00"
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
@@ -192887,10 +192938,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261026-wave144",
-      "path": "docs/development/dispatch/20261026-wave144/README.md",
-      "baseline_sha": "e2e7dc7a49d1c921064d4d21ed8b05c029507386",
-      "registered_at": "2026-10-26T12:54:15.773748+00:00",
+      "id": "20261026-wave145",
+      "path": "docs/development/dispatch/20261026-wave145/README.md",
+      "baseline_sha": "721671e41dbd40f70d908e79e16f778be566c226",
+      "registered_at": "2026-10-26T13:37:24.468107+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -192909,27 +192960,27 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W144-01",
+          "id": "W145-01",
           "related_tasks": [
             "WP04-33"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "D3 prerequisite native commercial product identity and frontier",
+          "title": "P0 issue562 product source frontend type build",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "9280e46692d35f04a3b2e79ebe22e67119dd5767",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261026T125415Z-wave144-start/MESSAGE.md",
-            "at": "2026-10-26T12:54:15.773748+00:00",
-            "branch": "codex/w144-handoff"
+            "commit": "b49633108860ac6ad772df7f7d0acc9d31b7e173",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261026T133724Z-wave145-start/MESSAGE.md",
+            "at": "2026-10-26T13:37:24.468107+00:00",
+            "branch": "codex/w145-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w144-01",
-          "planned_scope_ref": "docs/development/dispatch/20261026-wave144/README.md",
+          "branch": "codex/w145-01",
+          "planned_scope_ref": "docs/development/dispatch/20261026-wave145/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -192937,8 +192988,10 @@
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
-          "validation": "31 local PG/actual HTTP checks and 19 UI cases passed; formal identity/UOM/final-admission still unproven.",
-          "worker_delivery_ref": "docs/development/evidence/W144-01/DELIVERY.md",
+          "issue": "https://github.com/GTX537/CP6/issues/562",
+          "scope_change_reason": "Verified P0 issue562 TS2322 blocks frontend type build; repository BUG-MANAGEMENT requires fixing P0 before ordinary feature work. W145 now contains one bug only; original unit feature remains scheduled.",
+          "validation": "Actual vue-tsc build passed after recorded TS2322 red;19 current UI regressions passed. No backend/DB change or new PG run.",
+          "worker_delivery_ref": "docs/development/evidence/W145-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -192949,19 +193002,37 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-26T12:52:25.144172+00:00",
+        "started_at": "2026-10-26T13:35:00.351837+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          100,
-          150
+          15,
+          25
         ],
-        "parent_continuous_goal": "CP6-7D-20261022"
+        "parent_continuous_goal": "CP6-7D-20261022",
+        "initial_unit_estimate_minutes": [
+          120,
+          180
+        ]
       },
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Continue WP04-33 actual versioned UOM/profile and dual-Owner engineering identity providers, then WP05 engineering source/frozen baseline and original D3 Snapshot/Occurrence/Root same-UoW planning adoption; retain D2 formal Transfer/REP/RMA, D5 qualification/enterprise transport, D6 real policies/registration and D7 integration.",
+      "next_action": "Audit and fix active P1 product-list refresh/deep-link issue556 in a separate task, then continue the retained WP04-33 actual versioned unit profile/engineering identity and original D3 planning same-UoW; preserve full D1-D7 scope.",
+      "scope_change": {
+        "reason": "Verified P0 issue562 TS2322 blocks frontend type build; repository BUG-MANAGEMENT requires fixing P0 before ordinary feature work. W145 now contains one bug only; original unit feature remains scheduled.",
+        "issue": "https://github.com/GTX537/CP6/issues/562",
+        "previous_scope": "Explicit unit profile Owner/current product-unit source",
+        "retained_unit_estimate_minutes": [
+          120,
+          180
+        ],
+        "current_scope": "P0 issue562 type fix only",
+        "current_estimate_minutes": [
+          15,
+          25
+        ]
+      },
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -192969,7 +193040,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 25.39
+      "elapsed_registered_wave_minutes": 11.66
     },
     "wave_history": [
       {
@@ -213120,6 +213191,114 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/119"
           }
         ]
+      },
+      {
+        "id": "20261026-wave144",
+        "path": "docs/development/dispatch/20261026-wave144/README.md",
+        "baseline_sha": "e2e7dc7a49d1c921064d4d21ed8b05c029507386",
+        "registered_at": "2026-10-26T12:54:15.773748+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W144-01",
+            "related_tasks": [
+              "WP04-33"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "D3 prerequisite native commercial product identity and frontier",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "9280e46692d35f04a3b2e79ebe22e67119dd5767",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261026T125415Z-wave144-start/MESSAGE.md",
+              "at": "2026-10-26T12:54:15.773748+00:00",
+              "branch": "codex/w144-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w144-01",
+            "planned_scope_ref": "docs/development/dispatch/20261026-wave144/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "validation": "31 local PG/actual HTTP checks and 19 UI cases passed; formal identity/UOM/final-admission still unproven.",
+            "worker_delivery_ref": "docs/development/evidence/W144-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave144-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-26T12:52:25.144172+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            100,
+            150
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Continue WP04-33 actual versioned UOM/profile and dual-Owner engineering identity providers, then WP05 engineering source/frozen baseline and original D3 Snapshot/Occurrence/Root same-UoW planning adoption; retain D2 formal Transfer/REP/RMA, D5 qualification/enterprise transport, D6 real policies/registration and D7 integration.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave144-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 25.39,
+        "actual_registered_wave_minutes": 32.74,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W144-01",
+            "remote_target": "721671e41dbd40f70d908e79e16f778be566c226",
+            "source": "004a8cc9d6d01de9f73dbccff093d65a2d2d336e",
+            "branch": "codex/w144-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/561"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W144-HANDOFF",
+            "remote_target": "c12609094bb6205c62cdce58a1c3134cf93a2360",
+            "source": "2e30a647af513347a2f0ce0c0aadd7af8341957c",
+            "branch": "codex/w144-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/120"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -213219,7 +213398,7 @@
           "id": "D3",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W144-01",
+          "current_window": "W145-01",
           "prerequisite_adjustment": "Issue460 WorkCenter and ProcessCostRate actual current Owner; full process/cost/Finance adoption remains separate.",
           "adopted_window": "W49-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/402",
@@ -213228,10 +213407,11 @@
           "last_window_actual_agent_minutes": 56.28,
           "last_branches_deleted": true,
           "last_seats_released": true,
-          "next_action": "Continue WP04-33 actual versioned UOM/profile and dual-Owner engineering identity providers, then WP05 engineering source/frozen baseline and original D3 Snapshot/Occurrence/Root same-UoW planning adoption; retain D2 formal Transfer/REP/RMA, D5 qualification/enterprise transport, D6 real policies/registration and D7 integration.",
+          "next_action": "Audit and fix active P1 product-list refresh/deep-link issue556 in a separate task, then continue the retained WP04-33 actual versioned unit profile/engineering identity and original D3 planning same-UoW; preserve full D1-D7 scope.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W136-01/DELIVERY.md",
-          "last_product_source_report": "docs/development/evidence/W144-01/DELIVERY.md"
+          "last_product_source_report": "docs/development/evidence/W144-01/DELIVERY.md",
+          "last_type_fix_report": "docs/development/evidence/W145-01/DELIVERY.md"
         },
         {
           "id": "D4",
