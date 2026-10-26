@@ -160692,6 +160692,16 @@
       "date": "2026-10-26",
       "change": "W153 BUG572 nested source final checks validated with65 distinct PG/HTTP cases. Root/source authority retained; original goal and all formal states unchanged,Handoff released,Main closeout pending.",
       "evidence": "docs/development/evidence/W153-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-26",
+      "change": "W153 closed once and its WP02-13 source-fence record closed. W154 actual resource source catalogue admitted60–90min,sole COORD; original scope/formal states preserved.",
+      "evidence": "docs/development/dispatch/20261026-wave154/README.md"
+    },
+    {
+      "date": "2026-10-26",
+      "change": "W154 real resource source catalogue/ordinary metadata commands validated PG46/UI29/type/Vite; formal resource/production adoption not claimed. Original formal states unchanged,Handoff released,Main closeout pending.",
+      "evidence": "docs/development/evidence/W154-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -172840,7 +172850,7 @@
         }
       },
       "wave153_nested_source_fence": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W153-01/DELIVERY.md",
         "issue": "https://github.com/GTX537/CP6/issues/572",
         "scope": "BUG572 actual root transaction includes nested source final object checks",
@@ -172856,13 +172866,24 @@
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "original_dependencies_unchanged": true,
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "lifecycle_snapshot": {
-          "main_finish_required": true,
-          "main_seat_released": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
           "handoff_seat_released": true,
-          "main_branch_deleted": false,
-          "handoff_branch_deleted": true
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave153-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W153-01",
+          "source": "432497d432eced5ba0b5db5a363594f080b0e614",
+          "remote_target": "5ab8b45be51aca261a0012c1b640f3f3bc15a904",
+          "branch": "codex/w153-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/573"
         }
       }
     },
@@ -183674,7 +183695,32 @@
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02-10公共Main原生PostgreSQL事务/最终授权fence由根统一加入；精确值/身份保原Owner协议。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "wave154_resource_sources": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "report": "docs/development/evidence/W154-01/DELIVERY.md",
+        "scope": "Actual Machine/WorkCenter original source catalogue and ordinary metadata commands; controlled capability/assignment qualification remains separate",
+        "remaining": "Isolated local PostgreSQL18/actual HTTP/component/type/Vite evidence only. No Actions/deployment/existing-environment migration. No approved capability/UOM, formal Site/assignment timelines, eligibility/Claim/RES-WRITE-1 adoption, routing/BOM/WO/SCHED business acceptance. Full WP08-16 and seven-day remaining exits are incomplete.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "e3bd1f17be66b8946bdec4476c7144789307a2dd",
+          "main": "53091ddccd5abd2d3a5792044491694dc16d4f96",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/130",
+          "exact_tree_adoption": true,
+          "at": "2026-10-26T20:46:42.433752+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "handoff_seat_released": true,
+          "main_branch_deleted": false,
+          "handoff_branch_deleted": true
+        }
+      }
     },
     {
       "id": "WP08-17",
@@ -193373,10 +193419,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261026-wave153",
-      "path": "docs/development/dispatch/20261026-wave153/README.md",
-      "baseline_sha": "42b7582507e1b6daa1f65b3b817b9f701f97cb79",
-      "registered_at": "2026-10-26T20:00:55.035051+00:00",
+      "id": "20261026-wave154",
+      "path": "docs/development/dispatch/20261026-wave154/README.md",
+      "baseline_sha": "5ab8b45be51aca261a0012c1b640f3f3bc15a904",
+      "registered_at": "2026-10-26T20:27:36.329646+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -193395,28 +193441,27 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W153-01",
+          "id": "W154-01",
           "related_tasks": [
-            "WP02-13"
+            "WP08-16"
           ],
-          "issue": "https://github.com/GTX537/CP6/issues/572",
           "goal_id": "CP6-7D-20261022",
-          "title": "Nested source final object checks in the actual root transaction",
+          "title": "Actual resource original source versions and ordinary master commands",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "084ca557a768da99a9e476297f9ef990c3d3888f",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261026T200055Z-wave153-start/MESSAGE.md",
-            "at": "2026-10-26T20:00:55.035051+00:00",
-            "branch": "codex/w153-handoff"
+            "commit": "5c2b4446c7bbc04acf8ee39fb35777bf7625a8f2",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261026T202736Z-wave154-start/MESSAGE.md",
+            "at": "2026-10-26T20:27:36.329646+00:00",
+            "branch": "codex/w154-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w153-01",
-          "planned_scope_ref": "docs/development/dispatch/20261026-wave153/README.md",
+          "branch": "codex/w154-01",
+          "planned_scope_ref": "docs/development/dispatch/20261026-wave154/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -193424,8 +193469,8 @@
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
-          "validation": "Actual local PG/HTTP 65 distinct; no skipped; UI unchanged and not rerun.",
-          "worker_delivery_ref": "docs/development/evidence/W153-01/DELIVERY.md",
+          "validation": "Local PG/HTTP46,UI/IAM29,type/Vite; no skipped.",
+          "worker_delivery_ref": "docs/development/evidence/W154-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -193436,11 +193481,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-26T19:59:18.457088+00:00",
+        "started_at": "2026-10-26T20:22:02.213435+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          35,
-          55
+          60,
+          90
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -193448,7 +193493,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Resume actual resource/material source prerequisites before engineering routing/BOM and original formal WO/SCHED writes; preserve all original D2/D5/D6/D7 exits and real external prerequisites.",
+      "next_action": "Continue real capability/UOM/assignment controls and original resource/material/tool prerequisites for routing/BOM and original WO/SCHED; preserve every original D2/D5/D6/D7 exit and real external prerequisites.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -193456,7 +193501,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 12.62
+      "elapsed_registered_wave_minutes": 25.73
     },
     "wave_history": [
       {
@@ -214608,6 +214653,115 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/128"
           }
         ]
+      },
+      {
+        "id": "20261026-wave153",
+        "path": "docs/development/dispatch/20261026-wave153/README.md",
+        "baseline_sha": "42b7582507e1b6daa1f65b3b817b9f701f97cb79",
+        "registered_at": "2026-10-26T20:00:55.035051+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W153-01",
+            "related_tasks": [
+              "WP02-13"
+            ],
+            "issue": "https://github.com/GTX537/CP6/issues/572",
+            "goal_id": "CP6-7D-20261022",
+            "title": "Nested source final object checks in the actual root transaction",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "084ca557a768da99a9e476297f9ef990c3d3888f",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261026T200055Z-wave153-start/MESSAGE.md",
+              "at": "2026-10-26T20:00:55.035051+00:00",
+              "branch": "codex/w153-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w153-01",
+            "planned_scope_ref": "docs/development/dispatch/20261026-wave153/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "validation": "Actual local PG/HTTP 65 distinct; no skipped; UI unchanged and not rerun.",
+            "worker_delivery_ref": "docs/development/evidence/W153-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave153-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-26T19:59:18.457088+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            35,
+            55
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Resume actual resource/material source prerequisites before engineering routing/BOM and original formal WO/SCHED writes; preserve all original D2/D5/D6/D7 exits and real external prerequisites.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave153-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 12.62,
+        "actual_registered_wave_minutes": 15.31,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W153-01",
+            "source": "432497d432eced5ba0b5db5a363594f080b0e614",
+            "remote_target": "5ab8b45be51aca261a0012c1b640f3f3bc15a904",
+            "branch": "codex/w153-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/573"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W153-HANDOFF",
+            "source": "3c4efb859e92fa774cd30b03c2b12be7c097f8a9",
+            "remote_target": "86b61a7d75463cfb594bc2ec2423742146241fc7",
+            "branch": "codex/w153-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/129"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -214666,7 +214820,7 @@
         35,
         55
       ],
-      "current_stage": "D7",
+      "current_stage": "D3",
       "stages": [
         {
           "id": "D1",
@@ -214707,7 +214861,7 @@
           "id": "D3",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W152-01",
+          "current_window": "W154-01",
           "prerequisite_adjustment": "Issue460 WorkCenter and ProcessCostRate actual current Owner; full process/cost/Finance adoption remains separate.",
           "adopted_window": "W49-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/402",
@@ -214716,7 +214870,7 @@
           "last_window_actual_agent_minutes": 56.28,
           "last_branches_deleted": true,
           "last_seats_released": true,
-          "next_action": "Continue actual engineering BOM/routing/document/quality sources and complete configuration applicability, parent baseline/change/legacy/rebase/review/freeze for original D3 formal WO and SCHED; retain all original D2/D5/D6/D7 exits.",
+          "next_action": "Continue real capability/UOM/assignment controls and original resource/material/tool prerequisites for routing/BOM and original WO/SCHED; preserve every original D2/D5/D6/D7 exit and real external prerequisites.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W136-01/DELIVERY.md",
           "last_product_source_report": "docs/development/evidence/W144-01/DELIVERY.md",
@@ -214727,7 +214881,8 @@
           "last_currency_policy_report": "docs/development/evidence/W149-01/DELIVERY.md",
           "last_engineering_mapping_report": "docs/development/evidence/W150-01/DELIVERY.md",
           "last_revision_draft_report": "docs/development/evidence/W151-01/DELIVERY.md",
-          "last_configuration_rule_report": "docs/development/evidence/W152-01/DELIVERY.md"
+          "last_configuration_rule_report": "docs/development/evidence/W152-01/DELIVERY.md",
+          "last_resource_source_report": "docs/development/evidence/W154-01/DELIVERY.md"
         },
         {
           "id": "D4",

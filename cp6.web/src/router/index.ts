@@ -7,6 +7,8 @@ import { requireReadableAuthentication } from '@/auth/browserAuthentication'
 
 // 路由路径 → 组件的映射表（所有可能的页面）
 const viewModules: Record<string, () => Promise<any>> = {
+  '/mes/machine-sources': () => import('@/views/mes/ResourceSourcesView.vue'),
+  '/mes/work-center-sources': () => import('@/views/mes/ResourceSourcesView.vue'),
   '/erp/uom-profiles': () => import('@/views/erp/UomProfilesView.vue'),
   '/erp/currency-policies': () => import('@/views/erp/CurrencyPoliciesView.vue'),
   '/plm/configuration-rules': () => import('@/views/plm/ConfigurationRulesView.vue'),
@@ -444,7 +446,12 @@ export function addDynamicRoutes(menus: any[]) {
       // S类 #5 带外平台区：始终挂载（菜单不含，靠守卫 + 后端把关）
       ...platformChildren(),
       // Internal child pages stay mounted even though they are absent from Sys_Menu.
-      ...internalSubChildren()
+      ...internalSubChildren(),
+      ...(['MACHINE', 'WORK_CENTER'] as const).map(kind => {
+        const path = kind === 'MACHINE' ? 'mes/machine-sources' : 'mes/work-center-sources'
+        return { path, name: path, component: viewModules['/' + path]!, props: { kind },
+          meta: { permission: (kind === 'MACHINE' ? 'mes-machine' : 'mes-work-center') + ':query' } }
+      })
     ]
   })
 
