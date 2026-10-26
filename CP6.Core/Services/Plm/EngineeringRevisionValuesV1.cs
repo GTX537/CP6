@@ -36,7 +36,7 @@ internal static class EngineeringRevisionValuesV1
     {
         if (input.Options == null || input.Options.Length > 256) throw Error("ENGINEERING_CONFIGURATION_INVALID", 400);
         Applicability(input.Applicability, input.Reason);
-        if (input.RuleRef != null) throw Error("ENGINEERING_CONFIGURATION_RULE_OWNER_REQUIRED", 503);
+        if (input.RuleRef != null) ConfigurationRuleValuesV1.Ref(input.RuleRef);
         var names = new HashSet<string>(StringComparer.Ordinal);
         foreach (var option in input.Options)
         {

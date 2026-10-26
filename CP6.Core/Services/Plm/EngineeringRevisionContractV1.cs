@@ -12,7 +12,7 @@ public sealed record EngineeringOptionV1(string Name, string Type, string? Text 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record EngineeringConfigurationInputV1(EngineeringOptionV1[] Options, string Applicability, string Reason,
     EngineeringSourceRefV1? RuleRef = null);
-public sealed record EngineeringConfigurationDraftV1(EngineeringRevisionRefV1 Reference, EngineeringConfigurationInputV1 Input);
+public sealed record EngineeringConfigurationDraftV1(EngineeringRevisionRefV1 Reference, EngineeringConfigurationInputV1 Input, [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] ConfigurationOptionCheckV1? OptionCheck = null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record EngineeringComponentDraftV1(Guid OccurrenceId, string Kind, string Path, int SemanticOrder,
     string Applicability, string Reason, string Note, EngineeringSourceRefV1? SourceRef = null);

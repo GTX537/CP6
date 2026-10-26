@@ -27,7 +27,12 @@
       <div class="inline"><label>本修订的工程产品<select v-model="rootProduct" aria-label="本修订的工程产品" :disabled="locked"><option value="">请选择准确来源；新草稿也可暂不选择</option><option v-for="row in products.filter(p => !current?.draft.productRef || p.reference.id === current.draft.productRef.id)" :key="refKey(row.reference)" :value="refKey(row.reference)">{{ row.product.code }} / {{ row.product.name }} · {{ row.reference.id }} · v{{ row.reference.version }}</option></select></label>
         <button v-if="current && canEdit" :disabled="locked || !rootProduct" @click="bindProduct">保存产品引用</button></div>
     </section>
-    <section v-if="current"><h2>配置草稿</h2><p>选项值保持原样；小数按文本保存。当前尚无适用规则核准。</p>
+    <section v-if="current"><h2>配置草稿</h2><p>选项值保持原样；小数按文本保存。可明确选择当前获准的选项规则，完整适用范围仍需核准。</p>
+      <p v-if="current.draft.configuration?.optionCheck" role="status">选项检查：{{ optionStatus(current.draft.configuration.optionCheck.status) }}；规则版本 {{ current.draft.configuration.optionCheck.ruleRef.version }}。仅覆盖选项约束。</p>
+      <ul v-if="current.draft.configuration?.optionCheck?.findings.length"><li v-for="(f, i) in current.draft.configuration.optionCheck.findings" :key="i">{{ findingText(f.code) }}：{{ f.name }}</li></ul>
+      <button :disabled="busy || !current.draft.productRef || !permissions.has('plm-configuration-rule:query')" @click="findRules">查找获准选项规则</button>
+      <label>获准选项规则<select v-model="ruleSelection" aria-label="获准选项规则" :disabled="locked"><option value="">{{ configuration.ruleRef ? `保留规则版本 ${configuration.ruleRef.version}` : '暂不选择规则' }}</option><option v-for="r in rules" :key="refKey(r.reference)" :value="refKey(r.reference)">{{ r.body.name }} · v{{ r.reference.version }} · {{ r.reference.id }}</option></select></label>
+      <button :disabled="locked || !canEdit" @click="configuration.ruleRef = null; ruleSelection = ''">清除所选规则</button>
       <form @submit.prevent="saveConfiguration"><fieldset :disabled="locked || !canEdit"><div class="grid">
         <label>配置适用性<select v-model="configuration.applicability" aria-label="配置适用性"><option value="UNKNOWN">待确定</option><option value="APPLIES">拟适用</option><option value="NOT_APPLICABLE">拟不适用</option></select></label>
         <label>配置说明<textarea v-model="configuration.reason" aria-label="配置说明" :required="configuration.applicability === 'NOT_APPLICABLE'" /></label>
@@ -36,7 +41,7 @@
         <label>类型<select :value="option.type" :aria-label="`选项类型 ${index + 1}`" @change="optionType(index, ($event.target as HTMLSelectElement).value)"><option value="STRING">文本</option><option value="DECIMAL">小数</option><option value="BOOLEAN">是 / 否</option></select></label>
         <label v-if="option.type === 'STRING'">值<input v-model="option.text" :aria-label="`选项值 ${index + 1}`" /></label>
         <label v-else-if="option.type === 'DECIMAL'">精确小数<input v-model="option.decimal" :aria-label="`选项值 ${index + 1}`" inputmode="decimal" required /></label>
-        <label v-else>值<select v-model="option.boolean" :aria-label="`选项值 ${index + 1}`"><option :value="true">是</option><option :value="false">否</option></select></label>
+        <label v-else>值<select :value="option.boolean == null ? '' : String(option.boolean)" :aria-label="`选项值 ${index + 1}`" required @change="option.boolean = ($event.target as HTMLSelectElement).value === '' ? null : ($event.target as HTMLSelectElement).value === 'true'"><option value="">请选择</option><option value="true">是</option><option value="false">否</option></select></label>
         <button type="button" @click="configuration.options.splice(index, 1)">移除选项</button>
       </div><button type="button" @click="configuration.options.push({ name: '', type: 'STRING', text: '' })">添加选项</button><button>保存配置草稿</button><button type="button" @click="clearConfiguration">清除配置草稿</button></fieldset></form>
     </section>
@@ -60,6 +65,7 @@
 </template>
 
 <script setup lang="ts">
+import { configurationApi, type ConfigurationSnapshot } from '@/api/plm/configurationRules'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { revisionApi, type RevisionCommand, type RevisionComponent, type RevisionConfiguration, type RevisionCreation, type RevisionDiff, type RevisionPatch, type RevisionScope, type RevisionSnapshot } from '@/api/plm/engineeringRevisions'
 import { engineeringApi, type EngineeringReference, type EngineeringVersion } from '@/api/plm/engineeringProducts'
@@ -71,6 +77,7 @@ const permissions = usePermissionStore(), canRead = computed(() => permissions.l
 const busy = ref(false), error = ref(''), notice = ref(''), scope = ref<RevisionScope | null>(null), pending = ref<PendingRevisionOperation | null>(null), locked = computed(() => busy.value || !!pending.value)
 const rows = ref<RevisionSnapshot[]>([]), search = ref(''), page = ref(1), current = ref<RevisionSnapshot | null>(null), creating = ref(false), creation = ref<RevisionCreation | null>(null), draftId = ref('')
 const goal = ref(''), reason = ref(''), noParentReason = ref(''), department = ref(''), productSearch = ref(''), products = ref<EngineeringVersion[]>([]), rootProduct = ref('')
+const rules = ref<ConfigurationSnapshot[]>([]), ruleSelection = ref('')
 const emptyConfiguration = (): RevisionConfiguration => ({ options: [], applicability: 'UNKNOWN', reason: '' })
 const configuration = ref<RevisionConfiguration>(emptyConfiguration()), component = ref<RevisionComponent | null>(null), componentSource = ref('')
 const historyVersion = ref('1'), beforeVersion = ref('1'), afterVersion = ref('1'), history = ref<RevisionSnapshot | null>(null), diff = ref<RevisionDiff | null>(null)
@@ -79,7 +86,7 @@ let generation = 0, live = true
 const copy = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T
 const refKey = (value: EngineeringReference) => `${value.owner}:${value.id}:${value.version}:${value.digest}`
 function missingText(value: string) {
-  const text: Record<string, string> = { PRODUCT_UNRESOLVED: '工程产品待解析', PRODUCT_SOURCE_CHANGED: '工程产品来源已变化，需重新核对', CONFIGURATION_MISSING: '配置草稿待补齐', CONFIGURATION_RULE_OWNER_REQUIRED: '配置规则待接入并核准', COMPOSITION_MISSING: '组成内容待补齐' }
+  const text: Record<string, string> = { PRODUCT_UNRESOLVED: '工程产品待解析', PRODUCT_SOURCE_CHANGED: '工程产品来源已变化，需重新核对', CONFIGURATION_MISSING: '配置草稿待补齐', CONFIGURATION_RULE_CHANGED: '选项规则已撤回、替换或来源已变化，需重新核对', CONFIGURATION_OPTIONS_UNRESOLVED: '选项仍有缺项或冲突', CONFIGURATION_APPLICABILITY_REQUIRED: '完整配置适用范围仍待核准', CONFIGURATION_RULE_OWNER_REQUIRED: '配置规则待接入并核准', COMPOSITION_MISSING: '组成内容待补齐' }
   return text[value] || (value.startsWith('SOURCE_CHANGED:') ? '组成来源已变化：' : value.startsWith('SOURCE_REQUIRED:') ? '组成来源待补齐：' : '组成适用性待核准：') + value.split(':').slice(1).join(':')
 }
 function message(failure: any) {
@@ -97,7 +104,7 @@ async function run(action: (check: () => void) => Promise<void>) {
   catch (failure: any) { try { check(); if (failure?.response?.status === 403) clearPrivate(); error.value = message(failure) } catch { /* Ignore obsolete responses. */ } }
   finally { try { check(); syncPending(); busy.value = false } catch { if (live && epoch === generation) busy.value = false } }
 }
-function clearEditor() { current.value = null; creating.value = false; creation.value = null; draftId.value = ''; goal.value = ''; reason.value = ''; noParentReason.value = ''; department.value = ''; rootProduct.value = ''; products.value = []; productSearch.value = ''; component.value = null; componentSource.value = ''; configuration.value = emptyConfiguration(); history.value = null; diff.value = null; historyVersion.value = '1'; beforeVersion.value = '1'; afterVersion.value = '1' }
+function clearEditor() { rules.value = []; ruleSelection.value = '';  current.value = null; creating.value = false; creation.value = null; draftId.value = ''; goal.value = ''; reason.value = ''; noParentReason.value = ''; department.value = ''; rootProduct.value = ''; products.value = []; productSearch.value = ''; component.value = null; componentSource.value = ''; configuration.value = emptyConfiguration(); history.value = null; diff.value = null; historyVersion.value = '1'; beforeVersion.value = '1'; afterVersion.value = '1' }
 function setCurrent(value: RevisionSnapshot) { clearEditor(); current.value = value; draftId.value = value.reference.id; goal.value = value.draft.goal; configuration.value = copy(value.draft.configuration?.input ?? emptyConfiguration()); afterVersion.value = value.reference.version }
 async function reload() { await run(async check => { rows.value = []; clearEditor(); scope.value = null; if (!permissions.loaded) await permissions.loadMyActions(); check(); if (!canRead.value) throw new Error('当前没有读取工程修订的权限。'); const s = revisionResponse(await revisionApi.scope()); check(); scope.value = s; const list = revisionResponse(await revisionApi.list(search.value, page.value)); check(); rows.value = list }) }
 async function loadList(target: number) { await run(async check => { rows.value = []; const list = revisionResponse(await revisionApi.list(search.value, target)); check(); rows.value = list; page.value = target }) }
@@ -120,8 +127,11 @@ async function saveGoal() {
   try { await write({ revisionId: draftId.value, action: 'CREATE', expectedAuthorityVersion: creation.value?.authorityVersion, departmentId: department.value || null, origin: { type: 'NEW_PRODUCT', noParentReason: noParentReason.value }, goal: goal.value, reason: reason.value, productRef: rootProduct.value ? selectedProduct(rootProduct.value) : null }) } catch (failure) { error.value = message(failure) }
 }
 async function bindProduct() { try { await patch([{ op: 'SET_PRODUCT', productRef: selectedProduct(rootProduct.value) }]) } catch (failure) { error.value = message(failure) } }
-function optionType(index: number, type: string) { const original = configuration.value.options[index]; if (!original) return; configuration.value.options[index] = type === 'DECIMAL' ? { name: original.name, type, decimal: '' } : type === 'BOOLEAN' ? { name: original.name, type, boolean: false } : { name: original.name, type: 'STRING', text: '' } }
-async function saveConfiguration() { await patch([{ op: 'SET_CONFIGURATION', configuration: copy(configuration.value) }]) }
+function optionType(index: number, type: string) { const original = configuration.value.options[index]; if (!original) return; configuration.value.options[index] = type === 'DECIMAL' ? { name: original.name, type, decimal: '' } : type === 'BOOLEAN' ? { name: original.name, type, boolean: null } : { name: original.name, type: 'STRING', text: '' } }
+const optionStatus = (s: string) => ({ OPTIONS_VALIDATED: '选项约束已通过', UNKNOWN: '缺少必要输入', CONFLICT: '存在约束冲突', NO_MATCH: '选项值不满足规则' }[s] || s)
+const findingText = (s: string) => ({ REQUIRED_OPTION_MISSING: '必选项待补齐', DEPENDENCY_OPTION_MISSING: '依赖选项待补齐', OPTION_CONSTRAINT_CONFLICT: '选项约束冲突', OPTION_VALUE_NOT_ALLOWED: '选项值不在允许范围' }[s] || s)
+async function findRules() { const product = current.value?.draft.productRef; if (!product) return; await run(async check => { rules.value = []; ruleSelection.value = ''; const list = revisionResponse(await configurationApi.list(product.id)); check(); for (const row of list) { if (!row.activeRef) continue; const approved = revisionResponse(await configurationApi.read(row.activeRef.id, row.activeRef.version)); check(); if (approved.isActive && !approved.missing.length && refKey(approved.body.productRef) === refKey(product)) rules.value.push(approved) } }) }
+async function saveConfiguration() { const input = copy(configuration.value); if (ruleSelection.value) { const rule = rules.value.find(r => refKey(r.reference) === ruleSelection.value); if (!rule) { error.value = '请重新查找获准规则。'; return } input.ruleRef = copy(rule.reference) } await patch([{ op: 'SET_CONFIGURATION', configuration: input }]) }
 async function clearConfiguration() { await patch([{ op: 'CLEAR_CONFIGURATION' }]) }
 function newComponent() { componentSource.value = ''; component.value = { occurrenceId: crypto.randomUUID(), kind: 'PRODUCT', path: '', semanticOrder: 0, applicability: 'UNKNOWN', reason: '', note: '', sourceRef: null } }
 function editComponent(value: RevisionComponent) { componentSource.value = ''; component.value = copy(value) }
