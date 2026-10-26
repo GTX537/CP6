@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-26：W157原订单关联待Main收尾
+
+原订单Owner共同事务CREATE_OR_LINK、准确原关联/原键恢复和来源页采用通过PG15、旧Owner兼容2、UI/router/auth37及type/Vite。[单份报告](../development/evidence/W157-01/DELIVERY.md)。登记26.16分钟，预计70–120；Handoff已释放、Main待正常PR/finish。PE未执行；旧写者完整收敛、正式Sales来源和原七天剩余出口未完成。
+
 ## 2026-10-26：W156版型来源待Main收尾
 
 版型工具完整原身份/观察历史与当前Owner读取通过PG/HTTP17、目录5、UI/IAM/router52及type/Vite。[单份报告](../development/evidence/W156-01/DELIVERY.md)。登记22.01分钟，预计60–100；Handoff已释放、Main待正常PR/finish。旧writer/订单共同事务、正式技术与实物资格及原七天剩余出口未完成。

@@ -13,6 +13,8 @@
       <h2>{{ selected.source.identity.name }}</h2><p class="identity">{{ selected.source.identity.baseCode }} / {{ selected.source.identity.number }} / 业务修订 {{ selected.source.identity.businessRevision }}</p>
       <p>当前观察版本 {{ selected.reference.version }}；记录时间 {{ selected.observedAt }}。</p>
       <p>技术批准：未知；实物资格：未知。旧传输状态与附件勾选不能作为批准或文件证明。</p>
+      <button :disabled="busy" @click="showOrderLink = true">原订单关联</button>
+      <ToolOrderLinkPanel v-if="showOrderLink" :key="selected.reference.id + selected.currentNativeRowVersion" :source="selected" @denied="orderDenied" />
       <p>原适用期：{{ selected.source.validity.startDate }} 至 {{ selected.source.validity.endDate }}；{{ selected.source.control.isDeleted ? '原记录已删除' : '原记录存在' }}。</p>
       <p>旧传输状态：{{ selected.source.control.legacyTransferStatus }}；旧 mc 转送标志：{{ selected.source.control.legacyMcTransferred ? '是' : '否' }}。</p>
       <h3>原技术资料</h3><dl><template v-for="(value, key) in selected.source.technical" :key="key"><dt>{{ labels[key] || key }}</dt><dd>{{ display(value) }}</dd></template></dl>
@@ -30,6 +32,9 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { plateSourceApi, type PlateSourceEnvelope, type PlateSourceVersion } from '@/api/erp/plateMoldSources'
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
+import ToolOrderLinkPanel from './ToolOrderLinkPanel.vue'
+const showOrderLink = ref(false)
+function orderDenied() { clearPrivate(); error.value = '当前无权读取原关联，请核对权限。' }
 const busy = ref(false), error = ref(''), search = ref(''), page = ref(1), historyVersion = ref('1')
 const rows = ref<PlateSourceVersion[]>([]), selected = ref<PlateSourceVersion | null>(null), history = ref<PlateSourceVersion | null>(null)
 let generation = 0, live = true
@@ -46,7 +51,7 @@ const labels: Record<string, string> = {
 }
 function display(value: string | number | boolean | null) { return value == null ? '未填写' : typeof value === 'boolean' ? value ? '是' : '否' : value }
 function response<T>(value: PlateSourceEnvelope<T>): T { if (value.code !== 0) throw new Error('来源读取未成功。'); return value.data }
-function clearPrivate() { rows.value = []; selected.value = null; history.value = null; search.value = ''; page.value = 1; historyVersion.value = '1' }
+function clearPrivate() { showOrderLink.value = false; rows.value = []; selected.value = null; history.value = null; search.value = ''; page.value = 1; historyVersion.value = '1' }
 async function run(action: (check: () => void) => Promise<void>) {
   if (busy.value) return
   const stamp = identityStamp(), current = generation

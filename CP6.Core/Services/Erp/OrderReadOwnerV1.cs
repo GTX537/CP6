@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace CP6.Core.Services.Erp;
 
 /// <summary>Repository-owned ordinary Order read/export/download mapping; never a write grant.</summary>
-public sealed class OrderReadOwnerV1
+public sealed partial class OrderReadOwnerV1
 {
     internal const string MappingVersion = "Main.Order.Read.Owner.v1";
     private readonly CP6Context db;

@@ -16,7 +16,7 @@ using Npgsql;
 namespace CP6.Core.Services.Erp;
 
 /// <summary>Ordinary Order create/edit/delete authority, independent of read and trusted C03 integration.</summary>
-public sealed class OrderWriteOwnerV1
+public sealed partial class OrderWriteOwnerV1
 {
     internal const string MappingVersion = "Main.Order.Write.Owner.v1";
     private readonly CP6Context db;
