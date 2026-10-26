@@ -99,7 +99,7 @@ public sealed class IamStandaloneDepartmentMappingV1(CP6Context db, IamAdministr
         }, ct);
     }
 
-    private static readonly string[] Kinds = ["stock", "stock-transaction", "stocktake", "work-order", "machine", "replenish-order", "mobile-task", "work-center", "cross-dock", "slotting-plan", "vmi-billing", "kit-master", "kit-order", "warehouse", "location", "routing-rule", "sample-stock", "product-master", "uom-profile", "currency-policy", "plm-engineering-product", "plm-engineering-revision"];
+    private static readonly string[] Kinds = ["stock", "stock-transaction", "stocktake", "work-order", "machine", "replenish-order", "mobile-task", "work-center", "cross-dock", "slotting-plan", "vmi-billing", "kit-master", "kit-order", "warehouse", "location", "routing-rule", "sample-stock", "product-master", "uom-profile", "currency-policy", "plm-engineering-product", "plm-engineering-revision", "plm-configuration-rule"];
     public sealed record ObjectChoice { public Guid Id { get; init; } public string Name { get; init; } = ""; }
     public Task<ObjectChoice[]> FindObjectsAsync(string kind, string search,
         Func<CancellationToken, Task<Guid>> actor, CancellationToken ct)
@@ -116,6 +116,9 @@ public sealed class IamStandaloneDepartmentMappingV1(CP6Context db, IamAdministr
     // The IAM directory grants identity metadata only; it does not disclose quantities, prices or business details.
     private IQueryable<ObjectChoice> Objects(string kind) => kind switch
     {
+        "plm-configuration-rule" => db.Database.SqlQuery<ObjectChoice>($"""
+            SELECT rule_id AS "Id",rule_id::text AS "Name" FROM cp6_configuration_rule_v1.heads WHERE tenant_id={db.CurrentTenantId}
+            """),
         "plm-engineering-revision" => db.Database.SqlQuery<ObjectChoice>($"""
             SELECT revision_id AS "Id",code AS "Name" FROM cp6_engineering_revision_v1.heads WHERE tenant_id={db.CurrentTenantId}
             """),

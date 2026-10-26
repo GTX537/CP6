@@ -34,7 +34,14 @@ public sealed class EngineeringRevisionOwnerV1(CP6Context db, OperationsOwnerV1 
         if (value.Draft.ProductRef is { } product)
         { var actual = await Product(access, product, false, ct); if (!actual.IsCurrent || actual.Product.Enabled != true) missing.Add("PRODUCT_SOURCE_CHANGED"); }
         else missing.Add("PRODUCT_UNRESOLVED");
-        missing.Add(value.Draft.Configuration == null ? "CONFIGURATION_MISSING" : "CONFIGURATION_RULE_OWNER_REQUIRED");
+        if (value.Draft.Configuration?.Input.RuleRef is { } ruleRef)
+        {
+            var rule = await new ConfigurationRuleOwnerV1(db, owner).Source(access, ruleRef, value.Draft.ProductRef, false, ct);
+            if (!rule.IsActive || rule.State != "APPROVED" || rule.Missing!.Length != 0 || rule.Body.ProductRef != value.Draft.ProductRef) missing.Add("CONFIGURATION_RULE_CHANGED");
+            if (value.Draft.Configuration.OptionCheck?.Status != "OPTIONS_VALIDATED") missing.Add("CONFIGURATION_OPTIONS_UNRESOLVED");
+            missing.Add("CONFIGURATION_APPLICABILITY_REQUIRED");
+        }
+        else missing.Add(value.Draft.Configuration == null ? "CONFIGURATION_MISSING" : "CONFIGURATION_RULE_OWNER_REQUIRED");
         if (value.Draft.Components.Length == 0) missing.Add("COMPOSITION_MISSING");
         foreach (var component in value.Draft.Components)
         {
@@ -136,6 +143,11 @@ public sealed class EngineeringRevisionOwnerV1(CP6Context db, OperationsOwnerV1 
                     if (patch.Op == "UPSERT_COMPONENT" && patch.Component!.SourceRef is { } source)
                         await Product(access, new(source.Owner, source.Id, source.Version, source.Digest), true, token);
                 }
+            }
+            if (frozen.Patches?.Any(patch => patch.Op == "SET_CONFIGURATION") == true && draft.Configuration?.Input.RuleRef is { } reference)
+            {
+                var rule = await new ConfigurationRuleOwnerV1(db, owner).Source(access, reference, draft.ProductRef, true, token);
+                draft = draft with { Configuration = draft.Configuration with { OptionCheck = ConfigurationRuleValuesV1.Evaluate(rule, draft.Configuration.Input.Options) } };
             }
             var saved = await store.Append(frozen.RevisionId, access.ActorId, draft, frozen.Reason, expected, frozen.ExpectedEtag, code, frozen.Origin, numbering, token);
             if (creation != null) await access.CompleteEngineeringRevisionCreation(creation, token);

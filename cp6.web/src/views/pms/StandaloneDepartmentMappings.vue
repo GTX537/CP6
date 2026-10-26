@@ -62,6 +62,7 @@ const draft = reactive(empty())
 const kinds: { value: StandaloneKind; label: string }[] = [
   { value: 'uom-profile', label: '单位配置原对象' },
   { value: 'currency-policy', label: '币种政策原对象' },
+  { value: 'plm-configuration-rule', label: '工程选项规则原对象' },
   { value: 'plm-engineering-revision', label: '工程修订原对象' },
   { value: 'plm-engineering-product', label: '工程产品原对象' },
   { value: 'stock', label: '库存' }, { value: 'stock-transaction', label: '库存流水' },

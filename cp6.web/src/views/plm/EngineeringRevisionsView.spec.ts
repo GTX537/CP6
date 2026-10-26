@@ -2,8 +2,9 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { mount, flushPromises, type VueWrapper } from '@vue/test-utils'
 import type { RevisionCommand, RevisionSnapshot } from '@/api/plm/engineeringRevisions'
 import type { EngineeringVersion } from '@/api/plm/engineeringProducts'
-const api = vi.hoisted(() => ({ scope: vi.fn(), creationContext: vi.fn(), list: vi.fn(), read: vi.fn(), diff: vi.fn(), save: vi.fn(), operation: vi.fn(), products: vi.fn(), authenticated: true, allowed: true }))
+const api = vi.hoisted(() => ({ scope: vi.fn(), creationContext: vi.fn(), list: vi.fn(), read: vi.fn(), diff: vi.fn(), save: vi.fn(), operation: vi.fn(), products: vi.fn(), rules: vi.fn(), rule: vi.fn(), authenticated: true, allowed: true }))
 vi.mock('@/api/plm/engineeringRevisions', () => ({ revisionApi: api }))
+vi.mock('@/api/plm/configurationRules', () => ({ configurationApi: { list: api.rules, read: api.rule } }))
 vi.mock('@/api/plm/engineeringProducts', () => ({ engineeringApi: { list: api.products } }))
 vi.mock('@/stores/permission', () => ({ usePermissionStore: () => ({ loaded: true, has: () => api.allowed, loadMyActions: vi.fn() }) }))
 vi.mock('@/auth/browserAuthentication', () => ({ authenticationCanRead: () => api.authenticated }))
@@ -61,7 +62,7 @@ it('requires an explicit source selection and retains exact native reference for
 it('keeps configuration decimals as exact strings and does not infer rule approval', async () => {
   await opened(); await click('添加选项'); await field('选项名 1').setValue('Length'); await field('选项类型 1').setValue('DECIMAL')
   const exact = '100000000000000000000000000000.000000000000000000012300'; await field('选项值 1').setValue(exact); await submit('配置适用性')
-  expect(api.save.mock.calls[0]![0].patches).toEqual([{ op: 'SET_CONFIGURATION', configuration: { options: [{ name: 'Length', type: 'DECIMAL', decimal: exact }], applicability: 'UNKNOWN', reason: '' } }]); expect(view!.text()).toContain('当前尚无适用规则核准')
+  expect(api.save.mock.calls[0]![0].patches).toEqual([{ op: 'SET_CONFIGURATION', configuration: { options: [{ name: 'Length', type: 'DECIMAL', decimal: exact }], applicability: 'UNKNOWN', reason: '' } }]); expect(view!.text()).toContain('完整适用范围仍需核准')
 })
 it('keeps two occurrences of one product separate and removes only the selected occurrence', async () => {
   await opened()
@@ -93,4 +94,29 @@ it('does not read without query rights and erases previously loaded private cont
   api.allowed = false; await render(); expect(api.scope).not.toHaveBeenCalled(); expect(api.list).not.toHaveBeenCalled(); view!.unmount(); view = undefined
   api.allowed = true; await render(); await click('打开'); api.read.mockRejectedValueOnce({ response: { status: 403, data: { message: 'OBJECT_FORBIDDEN' } } }); await submit('历史工作版本')
   expect(view!.find('[aria-label="设计目标"]').exists()).toBe(false); expect(view!.text()).not.toContain('Original design'); expect(view!.text()).toContain('当前权限无法访问')
+})
+
+it('explicitly selects the active approved version even when the rule head is a newer draft', async () => {
+  persisted.draft.productRef = product.reference
+  const ruleRef = { owner: 'Main.Plm.ConfigurationRule.v1', id: '90000000-0000-4000-8000-000000000009', version: '3', digest: 'f'.repeat(64) }
+  api.rules.mockResolvedValue(ok([{ reference: { ...ruleRef, version: '4' }, activeRef: ruleRef }]))
+  api.rule.mockResolvedValue(ok({ reference: ruleRef, isActive: true, body: { name: 'Current approved options', productRef: product.reference }, missing: [] }))
+  await opened(); await click('查找获准选项规则'); expect(api.rule).toHaveBeenCalledWith(ruleRef.id, '3')
+  expect((field('获准选项规则').element as HTMLSelectElement).value).toBe(''); expect(api.save).not.toHaveBeenCalled()
+  await field('获准选项规则').setValue(`${ruleRef.owner}:${ruleRef.id}:${ruleRef.version}:${ruleRef.digest}`); await submit('配置适用性')
+  expect(api.save.mock.calls[0]![0].patches[0].configuration.ruleRef).toEqual(ruleRef)
+})
+it('excludes withdrawn or source-mismatched rule choices and clears private configuration on source denial', async () => {
+  persisted.draft.productRef = product.reference
+  const reference = { owner: 'Main.Plm.ConfigurationRule.v1', id: '90000000-0000-4000-8000-000000000009', version: '3', digest: 'f'.repeat(64) }
+  api.rules.mockResolvedValue(ok([{ activeRef: reference }])); api.rule.mockResolvedValue(ok({ reference, isActive: false, body: { name: 'Withdrawn rule', productRef: product.reference }, missing: [] }))
+  await opened(); await click('查找获准选项规则'); expect(view!.text()).not.toContain('Withdrawn rule')
+  api.rule.mockRejectedValue({ response: { status: 403, data: { message: 'OBJECT_FORBIDDEN' } } }); await click('查找获准选项规则'); expect(view!.find('[aria-label="配置适用性"]').exists()).toBe(false)
+})
+
+it('requires an explicit boolean choice before applying an approved option rule', async () => {
+  await opened(); await click('添加选项'); await field('选项名 1').setValue('Guard'); await field('选项类型 1').setValue('BOOLEAN')
+  expect((field('选项值 1').element as HTMLSelectElement).value).toBe(''); expect(field('选项值 1').attributes('required')).toBeDefined()
+  await field('选项值 1').setValue('false'); await submit('配置适用性')
+  expect(api.save.mock.calls[0]![0].patches[0].configuration.options).toEqual([{ name: 'Guard', type: 'BOOLEAN', boolean: false }])
 })

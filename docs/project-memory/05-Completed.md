@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-26：W152 CFG选项规则待Main收尾
+
+CFG工程选项规则、批准替换/撤回、ENG准确规则同事务采用及独立页面通过PG/HTTP26、UI50不同用例、type/Vite。[单份报告](../development/evidence/W152-01/DELIVERY.md)。登记28.02分钟，原估75–120；Handoff已释放，Main待正常PR/finish。仅ENGINEERING_OPTIONS_ONLY，完整适用/替代/来源/rebase/评审冻结与原七天全部出口保持未完成。
+
 ## 2026-10-26：W151工程修订待Main收尾
 
 工程修订/编号共同事务、工作快照/配置组成和独立页面通过PG/HTTP19去重项、UI35与type/Vite。[单份报告](../development/evidence/W151-01/DELIVERY.md)。登记35.85分钟，原估90–150；Handoff已释放，Main待正常PR/finish。仅WP05-03限定DRAFT工作面，真实父基线/变更/legacy、完整来源/规则、rebase/评审冻结与制造采用未完成；原七天ACTIVE，其余出口保留。
