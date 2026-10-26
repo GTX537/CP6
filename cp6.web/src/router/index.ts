@@ -2,6 +2,8 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { prefetchNamespacesForPath } from '@/i18n'
 import { usePlatformStore } from '@/stores/platform'
 import { usePermissionStore } from '@/stores/permission'
+import { identityStamp, requireIdentity } from '@/auth/identity'
+import { requireReadableAuthentication } from '@/auth/browserAuthentication'
 
 // 路由路径 → 组件的映射表（所有可能的页面）
 const viewModules: Record<string, () => Promise<any>> = {
@@ -461,7 +463,9 @@ export function resetRoutes() {
 }
 
 // 路由守卫
+let navigationGeneration = 0
 router.beforeEach(async (to) => {
+  const navigation = ++navigationGeneration
   // T9：登录态信号由 httpOnly token 改为非敏感标志 cp6_authed（JS 读不到 httpOnly token）
   const authed = localStorage.getItem('cp6_authed')
 
@@ -502,11 +506,22 @@ router.beforeEach(async (to) => {
   }
 
   const requiredPermission = to.meta?.permission as string | undefined
-  if (requiredPermission) {
-    const permissions = usePermissionStore()
-    if (!permissions.loaded) await permissions.loadMyActions()
-    if (!permissions.has(requiredPermission)) return '/'
+  const permissions = usePermissionStore()
+  // Ordinary Owner pages also need their current actions before setup/onMounted.
+  // The password-change screen is usable with its restricted session alone.
+  if (to.path !== '/sys/change-password') {
+    const stamp = identityStamp()
+    try {
+      await requireReadableAuthentication()
+      requireIdentity(stamp)
+      if (!permissions.loaded) await permissions.loadMyActions()
+      requireIdentity(stamp)
+    }
+    // An obsolete guard must not redirect over a newer identity's navigation.
+    // A still-current initial navigation resolves to login so bootstrap can mount.
+    catch { return navigation === navigationGeneration ? '/login' : false }
   }
+  if (requiredPermission && !permissions.has(requiredPermission)) return '/'
 
   // 4. 独立窗口（popup）/ 改密页（standalone）：有登录态即可，不依赖动态菜单
   if (to.meta?.standalone) {
