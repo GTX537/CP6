@@ -1316,3 +1316,7 @@ Issue562原类型构建红灯后最小补全product-master，原命令及19项UI
 ## 2026-10-26 W148 冷登录当前权限初始化
 
 P1 Issue565限定修复，最终60项、类型/构建及真实demo API浏览器冷登录直接仓库/设备/工单、深链/刷新/退出重登/匿名拒绝通过。[单份报告](../evidence/W148-01/DELIVERY.md)。Main START至登记36.5分钟，预计80–120；Handoff已释放，Main待正常采用/Issue关闭/finish。原七天ACTIVE、完整任务状态和所有原出口不变。
+
+## 2026-10-26 W149 原生币种政策
+
+准确政策Owner/权限/原结果/独立页面已验证，PG/HTTP29、UI30、类型/构建通过。[单份报告](../evidence/W149-01/DELIVERY.md)。Main START至登记26.08分钟，原估120–180；Handoff已释放，Main待正常采用/finish。原七天ACTIVE，仅D1/D4整阶段闭合；正式状态与全部剩余出口保持。

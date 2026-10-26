@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-26：W149币种政策待Main收尾
+
+原生币种政策Owner/准确来源/独立页面已通过相关PG/HTTP29、UI30及类型/Vite验证。[单份报告](../development/evidence/W149-01/DELIVERY.md)。Main START至登记26.08分钟，原估120–180；Handoff已释放，Main待正常PR/finish。仅WP04-33有限前置，原七天ACTIVE，工程/正式D3及D2/D5/D6/D7全部出口保留。
+
 ## 2026-10-26：W148登录权限修复待Main收尾
 
 P1 Issue565冷登录普通页面权限初始化已验证：最终60项、类型/Vite与真实API浏览器回归通过。[单份报告](../development/evidence/W148-01/DELIVERY.md)。Main START至登记36.5分钟，原估80–120；Handoff已释放，Main待正常PR/Issue关闭/finish。仅WP02-03有限修复，原七天ACTIVE及币种/工程/正式D3与D2/D5/D6/D7出口不变。

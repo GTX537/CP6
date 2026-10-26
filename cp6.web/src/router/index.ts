@@ -8,6 +8,7 @@ import { requireReadableAuthentication } from '@/auth/browserAuthentication'
 // 路由路径 → 组件的映射表（所有可能的页面）
 const viewModules: Record<string, () => Promise<any>> = {
   '/erp/uom-profiles': () => import('@/views/erp/UomProfilesView.vue'),
+  '/erp/currency-policies': () => import('@/views/erp/CurrencyPoliciesView.vue'),
   '/dashboard': () => import('@/views/dashboard/DashboardView.vue'),
   // ───── PMS システム管理 (100~199) ─────
   '/role': () => import('@/views/pms/RoleView.vue'),
