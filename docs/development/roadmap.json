@@ -160652,6 +160652,16 @@
       "date": "2026-10-26",
       "change": "W149 native currency policy Owner/source/entry validated:PG/HTTP29,UI30,type/build0. Limited WP04-33 only; formal states unchanged,Handoff released,Main closeout pending.",
       "evidence": "docs/development/evidence/W149-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-26",
+      "change": "W149 closed once from final proof. W150 engineering identity/actual Site source/dual-Owner mapping admitted,90–150min,sole COORD; limited WP04-33/WP05-02,formal states unchanged.",
+      "evidence": "docs/development/dispatch/20261026-wave150/README.md"
+    },
+    {
+      "date": "2026-10-26",
+      "change": "W150 native engineering identity/dual-Owner ERP/physical Site mapping validated:PG/HTTP16,UI33,type/build0. Limited WP04-33/WP05-02 only; formal states unchanged,Handoff released,Main closeout pending.",
+      "evidence": "docs/development/evidence/W150-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -179494,7 +179504,7 @@
         }
       },
       "wave149_currency_policy": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W149-01/DELIVERY.md",
         "scope": "Native currency policy Owner, current authorized exact source, independent page and explicit IAM mapping only; no inferred original product currency binding or downstream adoption.",
         "handoff_delivery": {
@@ -179504,6 +179514,41 @@
           "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/125",
           "exact_tree_adoption": true,
           "at": "2026-10-26T17:30:21.304730+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave149-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W149-01",
+          "source": "5ee82703ec05d429a7e6c6f020d6680338f5eff8",
+          "remote_target": "47e375e6899a580c7ac49d58aa4d25b2e4cc4607",
+          "branch": "codex/w149-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/568"
+        }
+      },
+      "wave150_engineering_mapping": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "report": "docs/development/evidence/W150-01/DELIVERY.md",
+        "scope": "Native engineering identity and dual-Owner original ERP mapping at exact actual Site; IDENTITY_SITE_ONLY. Legal entity, technical Revision/Configuration and manufacturing applicability remain fenced.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "9963b58921a3158525a8e181d77cd08cc88168e0",
+          "main": "d2c1c8798a3ca85cb9345de6f56bb4f2811391cf",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/126",
+          "exact_tree_adoption": true,
+          "at": "2026-10-26T18:18:35.303896+00:00"
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
@@ -179766,7 +179811,31 @@
         "WP02：按S02-00采用的PostgreSQL租户存储/迁移与可信上下文；当前动作/读取授权和共同最终授权fence；Main Owner事务、原键结果及审计能力。",
         "WP04：ERP经营产品/物料当前身份与业务Owner确认接口；不依赖报价订单整包。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "wave150_engineering_mapping": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "report": "docs/development/evidence/W150-01/DELIVERY.md",
+        "scope": "Native engineering identity and dual-Owner original ERP mapping at exact actual Site; IDENTITY_SITE_ONLY. Legal entity, technical Revision/Configuration and manufacturing applicability remain fenced.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "9963b58921a3158525a8e181d77cd08cc88168e0",
+          "main": "d2c1c8798a3ca85cb9345de6f56bb4f2811391cf",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/126",
+          "exact_tree_adoption": true,
+          "at": "2026-10-26T18:18:35.303896+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "handoff_seat_released": true,
+          "main_branch_deleted": false,
+          "handoff_branch_deleted": true
+        }
+      }
     },
     {
       "id": "WP05-03",
@@ -193119,10 +193188,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261026-wave149",
-      "path": "docs/development/dispatch/20261026-wave149/README.md",
-      "baseline_sha": "8e5eb3bc29f5ce19fc2c13ac83b17350a8ee081a",
-      "registered_at": "2026-10-26T17:08:05.518079+00:00",
+      "id": "20261026-wave150",
+      "path": "docs/development/dispatch/20261026-wave150/README.md",
+      "baseline_sha": "47e375e6899a580c7ac49d58aa4d25b2e4cc4607",
+      "registered_at": "2026-10-26T17:46:53.169159+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -193141,27 +193210,28 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W149-01",
+          "id": "W150-01",
           "related_tasks": [
-            "WP04-33"
+            "WP04-33",
+            "WP05-02"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Native currency policy Owner and exact source reads",
+          "title": "Engineering identity and dual-Owner original ERP mapping",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "1e6a6cd443f44bdbb696e6d308fe12f024d614ae",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261026T170805Z-wave149-start/MESSAGE.md",
-            "at": "2026-10-26T17:08:05.518079+00:00",
-            "branch": "codex/w149-handoff"
+            "commit": "d3fef0f1604836678909e051bb14c14af95e9d68",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261026T174653Z-wave150-start/MESSAGE.md",
+            "at": "2026-10-26T17:46:53.169159+00:00",
+            "branch": "codex/w150-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w149-01",
-          "planned_scope_ref": "docs/development/dispatch/20261026-wave149/README.md",
+          "branch": "codex/w150-01",
+          "planned_scope_ref": "docs/development/dispatch/20261026-wave150/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -193169,8 +193239,8 @@
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
-          "validation": "PostgreSQL/actual HTTP29 applicable cases; final exact-source1 replacement, UI30 disjoint cases; type/Vite0. Local only, no formal business acceptance.",
-          "worker_delivery_ref": "docs/development/evidence/W149-01/DELIVERY.md",
+          "validation": "PostgreSQL/actual HTTP16, UI33 disjoint; type/Vite0. Local only, no formal business acceptance.",
+          "worker_delivery_ref": "docs/development/evidence/W150-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -193181,11 +193251,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-26T17:05:41.520684+00:00",
+        "started_at": "2026-10-26T17:42:55.256785+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          120,
-          180
+          90,
+          150
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -193193,7 +193263,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Continue retained dual-Owner engineering mapping, engineering freeze, formal WO Root/Snapshot/Occurrence and SCHED same-UoW/UI; preserve all original D2/D5/D6/D7 exits.",
+      "next_action": "Continue engineering revision/configuration/freeze and retained full mapping applicability, original formal WO Root/Snapshot/Occurrence and SCHED same-UoW/UI; preserve all original D2/D5/D6/D7 exits.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -193201,7 +193271,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 26.08
+      "elapsed_registered_wave_minutes": 36.99
     },
     "wave_history": [
       {
@@ -213919,6 +213989,114 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/124"
           }
         ]
+      },
+      {
+        "id": "20261026-wave149",
+        "path": "docs/development/dispatch/20261026-wave149/README.md",
+        "baseline_sha": "8e5eb3bc29f5ce19fc2c13ac83b17350a8ee081a",
+        "registered_at": "2026-10-26T17:08:05.518079+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W149-01",
+            "related_tasks": [
+              "WP04-33"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Native currency policy Owner and exact source reads",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "1e6a6cd443f44bdbb696e6d308fe12f024d614ae",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261026T170805Z-wave149-start/MESSAGE.md",
+              "at": "2026-10-26T17:08:05.518079+00:00",
+              "branch": "codex/w149-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w149-01",
+            "planned_scope_ref": "docs/development/dispatch/20261026-wave149/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "validation": "PostgreSQL/actual HTTP29 applicable cases; final exact-source1 replacement, UI30 disjoint cases; type/Vite0. Local only, no formal business acceptance.",
+            "worker_delivery_ref": "docs/development/evidence/W149-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave149-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-26T17:05:41.520684+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            120,
+            180
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Continue retained dual-Owner engineering mapping, engineering freeze, formal WO Root/Snapshot/Occurrence and SCHED same-UoW/UI; preserve all original D2/D5/D6/D7 exits.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave149-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 26.08,
+        "actual_registered_wave_minutes": 30.16,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W149-01",
+            "source": "5ee82703ec05d429a7e6c6f020d6680338f5eff8",
+            "remote_target": "47e375e6899a580c7ac49d58aa4d25b2e4cc4607",
+            "branch": "codex/w149-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/568"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W149-HANDOFF",
+            "source": "c449b4a52a1494431033124aac0c89af3e572049",
+            "remote_target": "f448f7bab034058ee48a13543ca8c8bd491e00b3",
+            "branch": "codex/w149-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/125"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -214018,7 +214196,7 @@
           "id": "D3",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W149-01",
+          "current_window": "W150-01",
           "prerequisite_adjustment": "Issue460 WorkCenter and ProcessCostRate actual current Owner; full process/cost/Finance adoption remains separate.",
           "adopted_window": "W49-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/402",
@@ -214027,7 +214205,7 @@
           "last_window_actual_agent_minutes": 56.28,
           "last_branches_deleted": true,
           "last_seats_released": true,
-          "next_action": "Continue retained dual-Owner engineering mapping, engineering freeze, formal WO Root/Snapshot/Occurrence and SCHED same-UoW/UI; preserve all original D2/D5/D6/D7 exits.",
+          "next_action": "Continue engineering revision/configuration/freeze and retained full mapping applicability, original formal WO Root/Snapshot/Occurrence and SCHED same-UoW/UI; preserve all original D2/D5/D6/D7 exits.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W136-01/DELIVERY.md",
           "last_product_source_report": "docs/development/evidence/W144-01/DELIVERY.md",
@@ -214035,7 +214213,8 @@
           "last_route_startup_report": "docs/development/evidence/W146-01/DELIVERY.md",
           "last_uom_owner_report": "docs/development/evidence/W147-01/DELIVERY.md",
           "last_permission_bootstrap_report": "docs/development/evidence/W148-01/DELIVERY.md",
-          "last_currency_policy_report": "docs/development/evidence/W149-01/DELIVERY.md"
+          "last_currency_policy_report": "docs/development/evidence/W149-01/DELIVERY.md",
+          "last_engineering_mapping_report": "docs/development/evidence/W150-01/DELIVERY.md"
         },
         {
           "id": "D4",

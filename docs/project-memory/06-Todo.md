@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-26：W150工程映射待Main收尾
+
+工程身份Owner/原ERP及实际Site双Owner映射/独立页面通过PG/HTTP16、UI33和类型/Vite验证。[单份报告](../development/evidence/W150-01/DELIVERY.md)。Main START至登记36.99分钟，原估90–150；Handoff已释放，Main待正常PR/finish。仅WP04-33/WP05-02有限前置；确认范围IDENTITY_SITE_ONLY，法人/技术Revision/Configuration/制造采用继续保留。原七天ACTIVE，正式D3及D2/D5/D6/D7全部出口不缩减。
+
 ## 2026-10-26：W149币种政策待Main收尾
 
 原生币种政策Owner/准确来源/独立页面已通过相关PG/HTTP29、UI30及类型/Vite验证。[单份报告](../development/evidence/W149-01/DELIVERY.md)。Main START至登记26.08分钟，原估120–180；Handoff已释放，Main待正常PR/finish。仅WP04-33有限前置，原七天ACTIVE，工程/正式D3及D2/D5/D6/D7全部出口保留。
