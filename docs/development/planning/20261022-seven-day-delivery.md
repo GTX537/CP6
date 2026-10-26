@@ -1324,3 +1324,7 @@ P1 Issue565限定修复，最终60项、类型/构建及真实demo API浏览器�
 ## 2026-10-26 W150 工程身份及双Owner Site映射
 
 原生工程Owner、原ERP/物理Site准确映射和独立入口通过PG/HTTP16、UI33及类型/构建。[单份报告](../evidence/W150-01/DELIVERY.md)。Main START至登记36.99分钟，原估90–150；Handoff已释放，Main待正常采用/finish。确认只覆盖Site身份关系，法人/技术Revision/Configuration/制造采用仍保留。原七天ACTIVE，仅D1/D4整阶段闭合，正式卡/目标/运行验收状态不提升。
+
+## 2026-10-26 W151 工程修订与工作草稿
+
+原生修订/编号同事务、工作快照/配置组成和独立入口通过PG/HTTP19项去重验证、UI35、type/Vite。[单份报告](../evidence/W151-01/DELIVERY.md)。登记35.85分钟，原估90–150；Handoff已释放，Main待正常PR/finish。仅DRAFT，原父基线/规则/完整来源/rebase/评审冻结及七天全部出口保留，整阶段仍D1/D4。

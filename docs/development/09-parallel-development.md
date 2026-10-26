@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W150工程身份与双Owner映射](dispatch/20261026-wave150/README.md)：相关验证通过，Handoff已finish，Main待正常采用/finish；仅Site身份关系，原七天全部出口保留。
+> 当前：[W151工程修订与工作草稿](dispatch/20261026-wave151/README.md)：相关验证通过、Handoff已finish，Main待正常采用/finish；仅DRAFT，原七天全部出口保留。
+
+> 历史快照：[W150工程身份与双Owner映射](dispatch/20261026-wave150/README.md)：相关验证通过，Handoff已finish，Main待正常采用/finish；仅Site身份关系，原七天全部出口保留。
 
 > 历史快照：[W149币种政策Owner](dispatch/20261026-wave149/README.md)：相关验证通过，Handoff已finish，Main待正常采用和finish；原七天出口保持。
 
