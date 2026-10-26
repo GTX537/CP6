@@ -548,6 +548,8 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("product", "製品", new[] { 1,
 CP6.Core.Services.Sys.FieldRegistry.Register("product");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("uom-profile", "单位配置", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("uom-profile");
+CP6.Core.Services.Sys.DataScopeRegistry.Register("erp-plate-mold", "版型工具原来源", new[] { 1, 2, 3, 4, 5 }, 5);
+CP6.Core.Services.Sys.FieldRegistry.Register("erp-plate-mold");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("currency-policy", "币种政策", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("currency-policy");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-configuration-rule", "工程选项规则", new[] { 1, 2, 3, 4, 5 }, 5);
@@ -659,6 +661,7 @@ builder.Services.AddScoped<CommercialProductIdentityReader>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.ResourceSourceOwnerV1>();
 builder.Services.AddScoped<UomProfileOwnerV1>();
 builder.Services.AddScoped<UomTimeBasisOwnerV1>();
+builder.Services.AddScoped<PlateMoldSourceOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.ResourceTimeOwnerV1>();
 builder.Services.AddScoped<CurrencyPolicyOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringProductOwnerV1>();

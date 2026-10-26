@@ -69,16 +69,16 @@ public class ErpPermissionSeedTests
             var roleActions = db.Sys_RoleActions.IgnoreQueryFilters()
                 .Where(x => x.TenantId == tid && x.RoleId == 1).ToList();
 
-            // W34 adds four catalog definitions only; existing thirty write grants remain.
-            Assert.Equal(34, menuActions.Count);
+            // W34/W156 add five catalog definitions only; existing thirty write grants remain.
+            Assert.Equal(35, menuActions.Count);
             Assert.Equal(30, roleActions.Count);
 
             // 逐元组精确匹配（漏种 0 / 多种 0）。
             var maSet = menuActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
             var raSet = roleActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
             var expected = ExpectedTuples.ToHashSet();
-            Assert.Equal(expected.Concat(new[] { (207, "query"), (207, "export"), (207, "download"), (208, "query") }).ToHashSet(), maSet);
-            Assert.DoesNotContain(roleActions, a => a.MenuId == 207 || (a.MenuId == 208 && a.ActionCode == "query"));
+            Assert.Equal(expected.Concat(new[] { (207, "query"), (207, "export"), (207, "download"), (208, "query"), (215, "query") }).ToHashSet(), maSet);
+            Assert.DoesNotContain(roleActions, a => a.MenuId == 207 || ((a.MenuId == 208 || a.MenuId == 215) && a.ActionCode == "query"));
             Assert.Equal(expected, raSet);
         }
     }
@@ -97,8 +97,8 @@ public class ErpPermissionSeedTests
         Assert.Equal(ma1, db.Sys_MenuActions.IgnoreQueryFilters().Count());
         Assert.Equal(ra1, db.Sys_RoleActions.IgnoreQueryFilters().Count());
 
-        // Two tenants: 34 catalog definitions and 30 historical write grants each.
-        Assert.Equal(68, ma1);
+        // Two tenants: 35 catalog definitions and 30 historical write grants each.
+        Assert.Equal(70, ma1);
         Assert.Equal(60, ra1);
     }
 

@@ -1,5 +1,6 @@
 <template>
   <div class="plate-mold-list">
+    <router-link v-permission="'erp-plate-mold:query'" to="/erp/plate-mold-sources">版型工具原来源与观察历史</router-link>
     <el-card shadow="never" class="search-card">
       <el-form :model="query" label-width="120px" size="small" inline>
         <el-form-item :label="t('sales.term.base')">

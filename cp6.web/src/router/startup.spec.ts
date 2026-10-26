@@ -30,6 +30,7 @@ vi.mock('@/views/pms/SsoLandingView.vue', () => ({ default: { template: '<sectio
 vi.mock('@/views/pms/ChangePasswordView.vue', () => ({ default: { template: '<section data-testid="password">Change password</section>' } }))
 vi.mock('@/views/pms/TwoFactorChallengeView.vue', () => ({ default: { template: '<section data-testid="factor">Second factor</section>' } }))
 vi.mock('@/views/pms/TwoFactorEnrollView.vue', () => ({ default: { template: '<section data-testid="factor">Enroll second factor</section>' } }))
+vi.mock('@/views/erp/PlateMoldSourcesView.vue', () => ({ default: { template: '<section data-testid="plate-sources">Tool sources</section>' } }))
 vi.mock('@/views/erp/ProductMasterView.vue', () => ({ default: { template: '<section data-testid="product-window">Product window</section>' } }))
 
 let router: Router | undefined
@@ -222,5 +223,15 @@ describe('current permissions after real authentication publication', () => {
     await active.push('/product-list'); await flushPromises()
     expect(permission.has('erp-product:query')).toBe(true)
     expect(document.querySelector('[data-testid="products"]')?.getAttribute('data-permissions-ready')).toBe('true')
+  })
+})
+
+
+describe('plate source independent entry', () => {
+  it.each([false, true])('requires the current original query grant on a direct link: %s', async allowed => {
+    signedIn(); authFixture.actions.mockResolvedValue(allowed ? ['erp-plate-mold:query'] : ['erp-plate-mold:edit'])
+    const active = await boot('/erp/plate-mold-sources')
+    expect(document.querySelector('[data-testid="plate-sources"]') !== null).toBe(allowed)
+    expect(active.currentRoute.value.path === '/erp/plate-mold-sources').toBe(allowed)
   })
 })
