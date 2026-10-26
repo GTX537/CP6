@@ -58,18 +58,25 @@ public partial class StockMovementService : IStockOriginalOperationsV1
             && s.ProductCd==product && s.LotNo==lot).OrderBy(s=>s.Id).ToArrayAsync(ct);
 
     private async Task<StockOperationResultV1> ExecuteOriginal(Guid operation,string action,byte[] input,
-        Func<OperationsAccessV1,CancellationToken,Task<(StockOperationResultV1 result,Stock[] before)>> apply,CancellationToken ct)
+        Func<OperationsAccessV1,CancellationToken,Task<(StockOperationResultV1 result,Stock[] before)>> apply,CancellationToken ct,
+        string contract=OperationContract)
     {
         var journal=new MainOwnerOperationJournalV1(_db);MainOwnerOperationJournalV1.Original? original=null;
         var effects=new List<StockTransaction>();
         var result=await Owner.ExecuteAsync(OperationsOwnerV1.Stock,action,true,async(a,t)=>
         {
-            if(original!=null)return await DiscloseStockOriginal(a,original,operation,input,t);
+            if(original!=null)
+            {
+                RequireOriginalActor(a,original);
+                if(original.State!="CLOSED" && original.Contract!=contract)
+                    throw new OrderPriceCorrectionException("ORIGINAL_OPERATION_INPUT_CONFLICT",409);
+                return await DiscloseStockOriginal(a,original,operation,input,t);
+            }
             var changed=await apply(a,t);
             effects.AddRange(_db.ChangeTracker.Entries<StockTransaction>().Select(e=>e.Entity));
             var stocks=_db.ChangeTracker.Entries<Stock>().Select(e=>e.Entity).OrderBy(s=>s.Id).ToArray();
             var saved=new StoredStockResult(changed.result,stocks.Select(s=>s.Id).ToArray(),effects.Select(s=>s.Id).ToArray());
-            await journal.Store(OperationOwner,OperationContract,operation,a.ActorId,input,saved,saved.StockIds,
+            await journal.Store(OperationOwner,contract,operation,a.ActorId,input,saved,saved.StockIds,
                 new {actor=a.ActorId,action,before=changed.before,after=stocks,transactions=effects},t);
             await Integration.StockOutbox.StockOutboxEnqueueV1.Enqueue(_db,operation,t);
             return changed.result;
@@ -104,7 +111,7 @@ public partial class StockMovementService : IStockOriginalOperationsV1
     }
     private static void RequireOriginalActor(OperationsAccessV1 a,MainOwnerOperationJournalV1.Original original)
     {
-        if(original.Actor!=a.ActorId || original.Contract!=OperationContract)
+        if(original.Actor!=a.ActorId || original.Contract is not (OperationContract or CreationOperationContract))
             throw new OrderPriceCorrectionException("ORIGINAL_OPERATION_FORBIDDEN",403);
     }
     public Task<StockOperationScopeV1> OperationScopeAsync(CancellationToken ct=default)

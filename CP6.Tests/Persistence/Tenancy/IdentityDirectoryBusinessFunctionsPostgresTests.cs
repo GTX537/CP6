@@ -31,6 +31,7 @@ public sealed class IdentityDirectoryBusinessFunctionsPostgresTests(IdentityDire
             "CREATE FUNCTION cp6_main_owner_v1.unknown() RETURNS int LANGUAGE sql AS 'SELECT 1'",
             "CREATE OR REPLACE FUNCTION cp6_main_owner_v1.immutable() RETURNS trigger LANGUAGE plpgsql SET search_path=pg_catalog AS 'BEGIN RETURN NULL; END'",
             "ALTER FUNCTION cp6_stock_outbox_v1.source_proof() SECURITY DEFINER",
+            "CREATE OR REPLACE FUNCTION cp6_stock_outbox_v1.source_proof() RETURNS trigger LANGUAGE plpgsql SET search_path=pg_catalog AS 'BEGIN RETURN NEW; END'",
             "ALTER FUNCTION cp6_stock_outbox_v1.run_guard() SET search_path=public,pg_catalog",
             "CREATE OR REPLACE FUNCTION cp6_operations_owner_v1.mapping_validate() RETURNS trigger LANGUAGE plpgsql SET search_path=pg_catalog AS 'BEGIN RETURN NEW; END'",
             "GRANT EXECUTE ON FUNCTION cp6_oee_legacy_v1.validate() TO PUBLIC",

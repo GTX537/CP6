@@ -19,7 +19,8 @@ internal static class StockOutboxEnqueueV1
             || native.IsolationLevel is not (IsolationLevel.ReadCommitted or IsolationLevel.Serializable))
             throw new InvalidOperationException("STOCK_OUTBOX_SOURCE_TRANSACTION_REQUIRED");
         var original = await new MainOwnerOperationJournalV1(source).Read(StockOutboxProtocolV1.SourceOwner, operation, ct);
-        if(original is not { State: "COMMITTED", Contract: StockOutboxProtocolV1.SourceContract })
+        if(original is not { State: "COMMITTED" }
+            || original.Contract is not (StockOutboxProtocolV1.SourceContract or StockOutboxProtocolV1.CreationSourceContract))
             throw new InvalidOperationException("STOCK_OUTBOX_COMMITTED_SOURCE_REQUIRED");
         var tenant = source.CurrentTenantId;
         var root = StockOutboxProtocolV1.Root(tenant);

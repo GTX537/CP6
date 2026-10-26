@@ -105,7 +105,7 @@ internal static class IdentityDirectoryRowSecurityV1
                     WHERE a.grantee<>p.proowner AND NOT(n.nspname NOT IN ('cp6_authentication_v1','cp6_platform_admin_guard_v1','cp6_order_owner_v1','cp6_operations_owner_v1','cp6_oee_legacy_v1','cp6_main_owner_v1','cp6_stock_outbox_v1','cp6_inquiry_scope_v1')
                       AND a.grantee=0 AND a.privilege_type='EXECUTE' AND NOT a.is_grantable))))
               -- Exact bodies from the frozen business migrations, including Sample mapping and InquiryRoleScopes.
-              -- Preserve the previously accepted Machine mapping body alongside the current Sample mapping.
+              -- Preserve the previously accepted Machine mapping and v1 Stock source bodies alongside their explicit successors.
               -- Normalize line endings only; names alone cannot admit a modified function.
               AND NOT EXISTS(SELECT FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid=p.pronamespace
                 WHERE n.nspname IN ('cp6_order_owner_v1','cp6_operations_owner_v1','cp6_oee_legacy_v1','cp6_main_owner_v1','cp6_stock_outbox_v1','cp6_inquiry_scope_v1') AND (
@@ -126,6 +126,7 @@ internal static class IdentityDirectoryRowSecurityV1
                     ('cp6_stock_outbox_v1.cp6_outbox_v2_guard()','4e2458c394e2996b4333203da9e9f604dac81d7fba80cd1b291414cd6aacc194'),
                     ('cp6_stock_outbox_v1.cp6_outbox_v2_immutable()','5ea4f613f2e980bbd5d629ec1dc213e07fd2109cb11c639204a4d2df996bdf01'),
                     ('cp6_stock_outbox_v1.source_proof()','3a3b06e915fdbdcbfc7675e3fac42e0692d5a1081c74358e9dd08324a9d60ba7'),
+                    ('cp6_stock_outbox_v1.source_proof()','d95eb95f9c30cab04091e585a046882bae80255b73ca2a142f4dd8116ddf3f14'),
                     ('cp6_stock_outbox_v1.envelope_immutable()','9a746686675b7df60111cd9982294d24a0095d2d20dadacf89d920915164c8dc'),
                     ('cp6_stock_outbox_v1.binding_identity_immutable()','22fa68f1b7791bb0acb38e590e3de61fdca613e7987af18ce741649600b4b62e'),
                     ('cp6_stock_outbox_v1.authority_identity_immutable()','0a86616c48e6fc6fec1562047daa677114bc77cc47336a47f102969673385498'),

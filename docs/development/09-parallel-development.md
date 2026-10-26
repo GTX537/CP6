@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W139工单可信创建与恢复](dispatch/20261025-wave139/README.md)：真实Owner及页面已验证，Handoff已finish，Main收尾；后继D2其他可信创建/REP/RMA。单人、PostgreSQL、七天ACTIVE。
+> 当前：[W140库存可信创建与v2采用](dispatch/20261025-wave140/README.md)：真实Owner及页面已验证，Handoff已finish，Main收尾；后继D2正式REP/RMA/IN。单人、PostgreSQL、七天ACTIVE。
+
+> 历史快照：[W139工单可信创建与恢复](dispatch/20261025-wave139/README.md)：真实Owner及页面已验证，Handoff已finish，Main收尾；后继D2其他可信创建/REP/RMA。单人、PostgreSQL、七天ACTIVE。
 
 > 历史快照：[W138盘点可信创建与恢复](dispatch/20261025-wave138/README.md)：真实Owner及页面已验证，Handoff已finish，Main收尾；后继D2其他可信创建/REP/RMA。单人、PostgreSQL、七天ACTIVE。
 

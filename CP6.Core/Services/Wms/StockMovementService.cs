@@ -94,26 +94,7 @@ public partial class StockMovementService : IStockMovementService
 
             if (stock == null)
             {
-                stock = new Stock
-                {
-                    WarehouseCd = req.WarehouseCd,
-                    LocationCd = req.LocationCd,
-                    ProductCd = req.ProductCd,
-                    LotNo = req.LotNo,
-                    PhysicalQty = 0m,
-                    AllocatedQty = 0m,
-                    AvailableQty = 0m,
-                    UnitCd = req.UnitCd,
-                    ReceiveDate = req.ReceiveDate,
-                    ExpiryDate = req.ExpiryDate,
-                    UnitPrice = req.UnitPrice,
-                    OwnerType = req.OwnerType,
-                    OwnerCd = req.OwnerCd,
-                    PaperRollNo = req.PaperRollNo,
-                    QcStatus = moveMetadata?.QcStatus ?? StockQcStatus.Pending,
-                    RecallFlag = moveMetadata?.RecallFlag ?? false,
-                    Creator = req.OperatorCd,
-                };
+                stock = NewStock(req,moveMetadata);
                 _db.Stocks.Add(stock);
             }
 

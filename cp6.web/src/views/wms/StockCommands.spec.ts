@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, shallowMount } from '@vue/test-utils'
-const api = vi.hoisted(() => ({ operationScope: vi.fn(), apply: vi.fn(), move: vi.fn(), readOperation: vi.fn(), closeOperation: vi.fn(), search: vi.fn(), history: vi.fn() }))
+const api = vi.hoisted(() => ({ operationScope: vi.fn(), creationContext: vi.fn(), apply: vi.fn(), move: vi.fn(), readOperation: vi.fn(), closeOperation: vi.fn(), search: vi.fn(), history: vi.fn() }))
 const shared = vi.hoisted(() => ({ permission: undefined as any }))
 vi.mock('@/api/wms/stock', () => ({ stockApi: api }))
 vi.mock('vue-i18n', async original => ({ ...await original<typeof import('vue-i18n')>(), useI18n: () => ({ t: (key: string) => key }) }))
@@ -30,6 +30,7 @@ async function render(): Promise<any> {
 function identity() { localStorage.setItem(AUTH_EPOCH, crypto.randomUUID()); window.dispatchEvent(new Event(AUTH_EVENT)) }
 beforeEach(() => {
   localStorage.clear(); vi.resetAllMocks(); shared.permission.loaded = true; shared.permission.actionKeys = new Set(['wms-stock:query', 'wms-stock:adjust', 'wms-stock:move'])
+  api.creationContext.mockResolvedValue(wrap({ ...scope, authorityVersion: "v1", requiresCreation: false, allowsUnbound: false, departments: [] }));
   api.operationScope.mockResolvedValue(wrap(scope)); api.apply.mockImplementation(async command => wrap({ operationId: command.operationId, kind: 'APPLY', txnNo: 'TX1' }))
   api.move.mockImplementation(async command => wrap({ operationId: command.operationId, kind: 'MOVE', outTxnNo: 'TXO', inTxnNo: 'TXI' }))
   const held = new Set<string>()
@@ -146,4 +147,50 @@ describe('actual stock command screen', () => {
     expect(view.text()).toContain('移動先ロケーション'); commands.destination = 'L3'; commands.quantity = '1'; await commands.submit()
     expect(api.move).toHaveBeenCalledTimes(1)
   })
+  it('requires explicit department for a new adjustment and retains only the original reference on timeout', async () => {
+    api.creationContext.mockResolvedValue(wrap({ ...scope, authorityVersion: 'CURRENT', requiresCreation: true,
+      allowsUnbound: false, departments: [{ id: 'dept-1', code: 'D1', name: 'Department One' }] }))
+    const vm = await render(); vm.openNew(); Object.assign(vm.target, { warehouseCd: 'W01', locationCd: 'L3', productCd: 'NEW', lotNo: 'LOT', unitCd: 'EA' })
+    vm.quantity = '1.12345678'; await vm.submit()
+    expect(api.apply).not.toHaveBeenCalled(); expect(pendingStockOperation(scope)).toBeNull()
+    expect(view!.text()).toContain('所属部門'); vm.department = 'dept-1'; api.apply.mockRejectedValueOnce(new Error('lost'))
+    await vm.submit(); expect(api.apply.mock.lastCall?.[0]).toMatchObject({ productCd: 'NEW', qty: '1.12345678',
+      newStock: { departmentId: 'dept-1', expectedAuthorityVersion: 'CURRENT' } })
+    expect(Object.keys(pendingStockOperation(scope)!).sort()).toEqual(['kind', 'operationId'])
+    expect([...Array(localStorage.length)].map((_, i) => localStorage.getItem(localStorage.key(i)!)).join()).not.toContain('dept-1')
+  })
+  it('invalidates a chosen department when the move destination changes and never silently rebinds existing stock', async () => {
+    api.creationContext.mockResolvedValueOnce(wrap({ ...scope, authorityVersion: 'NEW', requiresCreation: true,
+      allowsUnbound: false, departments: [{ id: 'dept-1', code: 'D1', name: 'Department One' }] }))
+    const vm = await render(); vm.open(row, 'MOVE'); vm.destination = 'L3'; vm.quantity = '1'; await vm.submit()
+    expect(api.move).not.toHaveBeenCalled(); vm.department = 'dept-1'; vm.destination = 'L4'; await flushPromises()
+    await vm.submit(); expect(api.move.mock.lastCall?.[0]).toMatchObject({ toLocationCd: 'L4' })
+    expect(api.move.mock.lastCall?.[0]).not.toHaveProperty('newStock')
+  })
+  it('rejects an old account draft even when the login marker changes before its browser event', async () => {
+    const vm = await render(); vm.open(row, 'APPLY'); vm.quantity = '1'
+    localStorage.setItem(AUTH_EPOCH, crypto.randomUUID()); await vm.submit()
+    expect(api.apply).not.toHaveBeenCalled(); expect(pendingStockOperation(scope)).toBeNull(); expect(vm.target).toBeNull()
+  })
+
+  it('opens the new-stock entry from its real button and rejects a key which already exists', async () => {
+    const vm = await render()
+    await view!.findAll('button').find(button => button.text() === '新しい在庫の調整')!.trigger('click')
+    Object.assign(vm.target, { warehouseCd: 'W01', locationCd: 'L1', productCd: 'P1', lotNo: 'LOT' }); vm.quantity = '1'
+    await vm.submit(); expect(api.apply).not.toHaveBeenCalled(); expect(view!.text()).toContain('既に存在します')
+    expect(pendingStockOperation(scope)).toBeNull()
+  })
+  it('permits an explicitly unbound new stock only when the current context allows it', async () => {
+    api.creationContext.mockResolvedValue(wrap({ ...scope, authorityVersion: 'SELF-CURRENT', requiresCreation: true, allowsUnbound: true, departments: [] }))
+    const vm = await render(); vm.openNew(); Object.assign(vm.target, { warehouseCd: 'W01', locationCd: 'L3', productCd: 'NEW', lotNo: '' }); vm.quantity = '2'
+    await vm.submit(); expect(api.apply.mock.lastCall?.[0]).toMatchObject({ qty: '2', newStock: { departmentId: null, expectedAuthorityVersion: 'SELF-CURRENT' } })
+    expect(pendingStockOperation(scope)).toBeNull()
+  })
+  it('discards a pending creation context on identity change without saving or sending an operation', async () => {
+    const vm = await render(), wait = deferred(); api.creationContext.mockReturnValueOnce(wait.promise)
+    vm.open(row, 'MOVE'); vm.destination = 'L3'; vm.quantity = '1'; const saving = vm.submit(); await flushPromises()
+    identity(); wait.resolve(wrap({ ...scope, authorityVersion: 'OLD', requiresCreation: true, allowsUnbound: true, departments: [] })); await saving
+    expect(api.move).not.toHaveBeenCalled(); expect(vm.creation).toBeNull(); expect(vm.target).toBeNull(); expect(pendingStockOperation(scope)).toBeNull()
+  })
+
 })
