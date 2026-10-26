@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-26：W147单位Owner及原产品绑定待Main收尾
+
+原生单位配置/版本/独立权限/精确换算和原产品显式单位绑定已完成本地定向验证：实际PG/Kestrel43与最后迁移1（44去重），页面/恢复/IAM32及类型/Vite通过。[单份报告](../development/evidence/W147-01/DELIVERY.md)。Main START至登记72.28分钟，预计180–240分钟；Handoff已释放，Main待正常PR采用和finish。仅WP04-33有限记录，币种/双Owner工程/冻结/正式WO与SCHED及D2/D5/D6/D7仍保留，原七天ACTIVE。
+
 ## 2026-10-26：W146产品刷新/深链修复待Main收尾
 
 [Issue556](https://github.com/GTX537/CP6/issues/556)首次路由挂载竞态最小修复；50项去重相关行为、类型/Vite构建及真实demo浏览器刷新/深链验证通过。Handoff已finish，Main仍待采用/Issue关闭。[单份报告](../development/evidence/W146-01/DELIVERY.md)。原计划80–120分钟，原七天ACTIVE与单位/工程范围不变。

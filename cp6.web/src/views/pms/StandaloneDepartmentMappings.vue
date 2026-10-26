@@ -60,6 +60,7 @@ const pending = ref<PendingIamOperation | null>(null)
 const empty = (): IamStandaloneMappingInput => ({ objectKind: 'stock', objectId: '', departmentId: '', enabled: true, expectedVersion: 'absent', expectedReferencesVersion: '', reason: '' })
 const draft = reactive(empty())
 const kinds: { value: StandaloneKind; label: string }[] = [
+  { value: 'uom-profile', label: '单位配置原对象' },
   { value: 'stock', label: '库存' }, { value: 'stock-transaction', label: '库存流水' },
   { value: 'stocktake', label: '盘点单' }, { value: 'work-order', label: '无订单生产指示' }, { value: 'machine', label: '设备' }, { value: 'replenish-order', label: '补充指示' }, { value: 'mobile-task', label: '移动任务' }, { value: 'work-center', label: '工作中心' }, { value: 'cross-dock', label: '越库记录' }, { value: 'slotting-plan', label: '库位优化方案' }, { value: 'vmi-billing', label: 'VMI历史账单' }, { value: 'kit-master', label: '套件主数据' }, { value: 'kit-order', label: '套件历史订单' }, { value: 'warehouse', label: '仓库原对象' }, { value: 'location', label: '库位原对象' }, { value: 'routing-rule', label: '出库路由原记录' }, { value: 'sample-stock', label: '样品原记录' }, { value: 'product-master', label: '产品原主账' }
 ]

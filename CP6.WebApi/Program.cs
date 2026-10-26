@@ -546,6 +546,8 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("order", "受注", new[] { 1, 2
 CP6.Core.Services.Sys.DataScopeRegistry.Register("product", "製品", new[] { 1, 2, 3, 4, 5 }, 5);
 // Native identity source exposes no price or customer fields. Existing scope semantics are retained.
 CP6.Core.Services.Sys.FieldRegistry.Register("product");
+CP6.Core.Services.Sys.DataScopeRegistry.Register("uom-profile", "单位配置", new[] { 1, 2, 3, 4, 5 }, 5);
+CP6.Core.Services.Sys.FieldRegistry.Register("uom-profile");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("pur-pr", "采购申请", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.DataScopeRegistry.Register("crm-privacy", "CRM 隐私", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.DataScopeRegistry.Register("crm-lead", "CRM 线索", new[] { 1, 2, 3, 4, 5 }, 1);
@@ -644,6 +646,8 @@ builder.Services.AddScoped<CP6.Core.Services.ErpIntegration.ErpCommerceAuthority
 // 4.3 MSBBPA050/060 Web 製品マスタ 相关服务
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<CommercialProductIdentityReader>();
+builder.Services.AddScoped<UomProfileOwnerV1>();
+builder.Services.AddScoped<CommercialProductUnitOwnerV1>();
 // 仕掛チェック：mcframe7 連携無し時は NoOp 実装（Phase 3 で実装差替え）
 builder.Services.AddScoped<IWipCheckService, NoOpWipCheckService>();
 
