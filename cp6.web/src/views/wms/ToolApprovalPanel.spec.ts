@@ -40,3 +40,11 @@ it('clears revoked data and ignores late results from an earlier identity', asyn
   await open(); api.context.mockRejectedValue({ response: { status: 403 } }); await click('读取审批条件'); expect(view!.text()).not.toContain('Private policy'); expect(view!.emitted('authority-denied')).toHaveLength(1)
   let finish!: (value: unknown) => void; api.context.mockReturnValue(new Promise(r => { finish = r })); await click('读取审批条件'); localStorage.setItem(AUTH_EPOCH, 'two'); window.dispatchEvent(new Event(AUTH_EVENT)); finish(ok(context())); await flushPromises(); expect(view!.find('article').exists()).toBe(false)
 })
+it('shows current transport receipt separately from the immutable original and rejects mismatched receipts', async () => {
+  const submission = receipt('SUBMIT', {}).submission
+  const delivery = { submissionId: fid, outboxId: id, state: 'RECEIVED', attempts: 2, errorCode: null, receipt: { submissionId: fid, instanceId: null, state: 'DISPATCH_PENDING', alias: null } }
+  api.context.mockResolvedValue(ok({ ...context(), submission, delivery })); await open()
+  expect(view!.text()).toContain('审批端已受理，尚待启动'); expect(view!.text()).toContain('尚未批准或报废'); expect(api.write).not.toHaveBeenCalled()
+  api.context.mockResolvedValue(ok({ ...context(), submission, delivery: { ...delivery, state: 'OUTCOME_UNKNOWN', receipt: null } })); await click('读取审批条件'); expect(view!.text()).toContain('系统将查询原提交')
+  api.context.mockResolvedValue(ok({ ...context(), submission, delivery: { ...delivery, receipt: { ...delivery.receipt, submissionId: id } } })); await click('读取审批条件'); expect(view!.text()).toContain('审批来源与当前对象不一致'); expect(view!.text()).not.toContain('审批端已受理')
+})

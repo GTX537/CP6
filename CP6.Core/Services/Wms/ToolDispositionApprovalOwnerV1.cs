@@ -78,7 +78,8 @@ public sealed partial class ToolDispositionApprovalOwnerV1(CP6Context db, Operat
                 catch(OrderPriceCorrectionException e)when(e.Status is 403 or 404 or 412 or 422){knowledge="UNAVAILABLE";}
                 catch(CurrentPermissionUnavailableException){knowledge="UNAVAILABLE";}
             return new ToolDispositionApprovalContextV1(db.CurrentTenantId,id,c.Etag,c.Disposition,policy,knowledge,
-                c.Submissions.SingleOrDefault() is {} s?c.Store.View(s):null);
+                c.Submissions.SingleOrDefault() is {} s?c.Store.View(s):null,
+                c.Submissions.SingleOrDefault() is {} delivered?await ToolApprovalDeliveryV1.ReadAsync(db,Environment,delivered.Id,t):null);
         },ct);
     private Task<ToolDispositionApprovalResultV1> Write<T>(Guid id,string? etag,Guid operation,string action,T command,
         Func<Context,CancellationToken,Task<ToolDispositionApprovalResultV1>> change,CancellationToken ct)

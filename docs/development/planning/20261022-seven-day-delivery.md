@@ -1432,3 +1432,7 @@ FLOW独立启停、准确版本校验、历史、原命令恢复和管理入口�
 ## 2026-10-27 W177 受信审批接收与准确版本固定
 
 受信服务/原Owner证据、三层比较/别名、准确版本与同事务启动意图已验证；19本地检查（18PG/HTTP、1unit）通过，0skip。[报告](../evidence/W177-01/DELIVERY.md)。登记46.4分钟，预计120–210；Handoff已释放，Main待正常PR/finish。实际投递/TxE/TxD/业务回执及七天全部出口保留。 Continue real Owner service delivery, atomic TxE start, TxD decisions and Owner application receipt; retain original ROU/BOM/WO/SCHED and D2/D5/D6/D7 exits.
+
+## 2026-10-27 W178 Owner 审批可靠投递与原结果恢复
+
+Owner原包可靠服务投递、持久租约/回执与原命令恢复已验证；28项后端（27PG/HTTP、1unit，其中19项明确复用）、6Vue及类型检查/构建通过。[报告](../evidence/W178-01/DELIVERY.md)。登记32.6分钟，预计120–210；Handoff已释放，Main待正常PR/finish。TxE/TxD/业务回执及七天全部出口保留。 Continue atomic TxE instance/tasks/token/history start, TxD decisions and Owner application receipt; retain original ROU/BOM/WO/SCHED and D2/D5/D6/D7 exits.

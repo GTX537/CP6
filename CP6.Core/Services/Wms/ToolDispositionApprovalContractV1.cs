@@ -19,7 +19,7 @@ public sealed record ToolDispositionApprovalViewV1(Guid SubmissionId, Guid ToolI
     string TransportState = "PENDING", bool IsApproved = false, bool IsDiscarded = false);
 public sealed record ToolDispositionApprovalContextV1(Guid TenantId, Guid ToolId, string Etag,
     ToolDispositionContextV1 Disposition, ToolDispositionPolicyViewV1? Policy, string PolicyKnowledge,
-    ToolDispositionApprovalViewV1? Submission);
+    ToolDispositionApprovalViewV1? Submission, ToolApprovalDeliveryViewV1? Delivery = null);
 public sealed record ToolDispositionApprovalResultV1(Guid OperationId, Guid ObjectId, string Kind,
     ToolDispositionRefV1 Fact, ToolDispositionApprovalViewV1? Submission = null, bool IsDiscarded = false, bool IsUsePermit = false);
 public sealed record ToolDispositionApprovalOperationV1(Guid OperationId, string State, ToolDispositionApprovalResultV1? Result = null);
