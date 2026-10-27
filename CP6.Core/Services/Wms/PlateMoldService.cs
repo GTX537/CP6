@@ -8,15 +8,18 @@ public class PlateMoldService : IPlateMoldService
 {
     private readonly CP6Context _db;
     private readonly IWmsSequenceService _seq;
+    private readonly ToolInstanceOwnerV1? _owner;
+    private ToolInstanceOwnerV1 Owner=>_owner!=null&&_owner.Owns(_db)?_owner:throw new CP6.Core.Services.Erp.OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
     private const string Prefix = "PLT2"; // PLT は Pallet で利用済の為 PLT2
 
-    public PlateMoldService(CP6Context db, IWmsSequenceService seq)
+    public PlateMoldService(CP6Context db, IWmsSequenceService seq, ToolInstanceOwnerV1? owner=null)
     {
-        _db = db; _seq = seq;
+        _db = db; _seq = seq; _owner=owner;
     }
 
     public async Task<List<PlateMoldStock>> SearchAsync(PlateMoldSearchQuery q)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("query");
         var query = _db.PlateMoldStocks.AsNoTracking().Where(x => !x.IsDeleted);
         if (!string.IsNullOrWhiteSpace(q.PlateNo)) query = query.Where(x => x.PlateNo.Contains(q.PlateNo));
         if (!string.IsNullOrWhiteSpace(q.PlateType)) query = query.Where(x => x.PlateType == q.PlateType);
@@ -28,10 +31,14 @@ public class PlateMoldService : IPlateMoldService
     }
 
     public async Task<PlateMoldStock?> GetAsync(string plateNo)
-        => await _db.PlateMoldStocks.AsNoTracking().FirstOrDefaultAsync(x => x.PlateNo == plateNo && !x.IsDeleted);
+    {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("query",plateNo);
+        return await _db.PlateMoldStocks.AsNoTracking().FirstOrDefaultAsync(x => x.PlateNo == plateNo && !x.IsDeleted);
+    }
 
     public async Task<string> CreateAsync(PlateMoldDto dto, string? userName)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("add");
         if (string.IsNullOrWhiteSpace(dto.PlateType))
             throw new InvalidOperationException("PlateType required");
         if (dto.MaxShots.HasValue && dto.MaxShots.Value <= 0)
@@ -58,6 +65,7 @@ public class PlateMoldService : IPlateMoldService
 
     public async Task UpdateAsync(string plateNo, PlateMoldDto dto, string? userName)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("edit",plateNo);
         var p = await GetTracked(plateNo);
         if (p.Status == PlateMoldStatus.Discarded)
             throw new InvalidOperationException("WM-MSG-043: 廃版は訂正不可");
@@ -77,6 +85,7 @@ public class PlateMoldService : IPlateMoldService
 
     public async Task RecordUsageAsync(string plateNo, int shots, string? userName)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("use",plateNo);
         if (shots <= 0) throw new InvalidOperationException("shots > 0");
         var p = await GetTracked(plateNo);
         if (p.Status != PlateMoldStatus.Usable)
@@ -92,6 +101,7 @@ public class PlateMoldService : IPlateMoldService
 
     public async Task StartMaintenanceAsync(string plateNo, DateTime? nextMaintDate, string? userName)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("maintenance",plateNo);
         var p = await GetTracked(plateNo);
         if (p.Status != PlateMoldStatus.Usable && p.Status != PlateMoldStatus.LifeReached)
             throw new InvalidOperationException("WM-MSG-043: 使用可/寿命到達のみメンテ可");
@@ -103,6 +113,7 @@ public class PlateMoldService : IPlateMoldService
 
     public async Task CompleteMaintenanceAsync(string plateNo, string? userName)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("maintenance",plateNo);
         var p = await GetTracked(plateNo);
         if (p.Status != PlateMoldStatus.Maintenance)
             throw new InvalidOperationException("WM-MSG-043: メンテ中のみ完了可");
@@ -115,6 +126,7 @@ public class PlateMoldService : IPlateMoldService
 
     public async Task DiscardAsync(string plateNo, string? userName)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("dispose",plateNo);
         var p = await GetTracked(plateNo);
         if (p.Status == PlateMoldStatus.Discarded)
             throw new InvalidOperationException("WM-MSG-043: 既に廃版");
@@ -125,6 +137,7 @@ public class PlateMoldService : IPlateMoldService
 
     public async Task<List<PlateMoldStock>> WarningListAsync(decimal threshold = 0.9m)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("query");
         var list = await _db.PlateMoldStocks.AsNoTracking()
             .Where(x => !x.IsDeleted
                 && (x.Status == PlateMoldStatus.LifeReached
@@ -138,6 +151,7 @@ public class PlateMoldService : IPlateMoldService
 
     public async Task DeleteAsync(string plateNo, string? userName)
     {
+        if(_db.Database.IsNpgsql())await Owner.RejectLegacyAsync("del",plateNo);
         var p = await GetTracked(plateNo);
         p.IsDeleted = true;
         p.Modifier = userName; p.ModifyDate = DateTime.Now;

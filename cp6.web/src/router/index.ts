@@ -174,6 +174,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   // ───── Phase WM-6 業界特化（占位） ─────
   '/wms/paper-roll':           () => import('@/views/wms/PaperRollView.vue'),
   '/wms/remnant':              () => import('@/views/wms/RemnantView.vue'),
+  '/wms/plate-mold': () => import('@/views/wms/PlateMoldView.vue'),
   '/wms/plate-mold-stock':     () => import('@/views/wms/PlateMoldView.vue'),
   '/wms/ink-lot':              () => import('@/views/wms/InkLotView.vue'),
   '/wms/pallet':               () => import('@/views/wms/PalletView.vue'),
@@ -450,6 +451,7 @@ export function addDynamicRoutes(menus: any[]) {
       ...platformChildren(),
       // Internal child pages stay mounted even though they are absent from Sys_Menu.
       ...internalSubChildren(),
+      { path: 'wms/plate-mold', name: 'wms/plate-mold', component: viewModules['/wms/plate-mold']!, meta: { permission: 'wms-plate-mold:query' } },
       { path: 'plm/tool-specifications', name: 'plm/tool-specifications', component: viewModules['/plm/tool-specifications']!, meta: { permission: 'plm-tool-specification:query' } },
       { path: 'erp/plate-mold-sources', name: 'erp/plate-mold-sources', component: viewModules['/erp/plate-mold-sources']!, meta: { permission: 'erp-plate-mold:query' } },
       { path: 'erp/time-unit-bases', name: 'erp/time-unit-bases', component: viewModules['/erp/time-unit-bases']!, meta: { permission: 'erp-uom-profile:query' } },
