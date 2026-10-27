@@ -34,6 +34,7 @@ public class TaskCenterService : ITaskCenterService
         var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == instanceId)
                    ?? throw new InvalidOperationException("流程实例不存在");
         if (inst.StarterId != userId) throw new InvalidOperationException("仅发起人可撤回");
+        FlowEngine.RequireLegacyRuntime(inst);
         if (inst.Status != FlowInstanceStatus.Running) throw new InvalidOperationException("仅进行中的流程可撤回");
 
         inst.Status = FlowInstanceStatus.Withdrawn;

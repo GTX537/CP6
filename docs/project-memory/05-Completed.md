@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-27：W179 审批实例原子启动待 Main 收尾
+
+原固定发布版本的实际实例/任务/token/history/读模型及启动完成回执同事务；原提交查询与原command回执分离。109 local checks: 22 PG18/HTTP and 87 affected kernel/unit;0skip;no UI change。[报告](../development/evidence/W179-01/DELIVERY.md)。登记34.94分钟，预计120–210；Handoff已释放，Main待正常PR/finish。TxD/业务回执和七天全部出口保留。
+
 ## 2026-10-27：W178 审批可靠投递待 Main 收尾
 
 Owner原包可靠服务投递、持久租约/回执与原命令恢复已验证；28项后端（27PG/HTTP、1unit，其中19项明确复用）、6Vue及类型检查/构建通过。[报告](../development/evidence/W178-01/DELIVERY.md)。登记32.6分钟，预计120–210；Handoff已释放，Main待正常PR/finish。TxE/TxD/业务回执及七天全部出口保留。

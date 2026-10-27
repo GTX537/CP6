@@ -20,7 +20,7 @@ internal sealed class InclusiveSplitNodeHandler : INodeHandler
         var defaults  = outs.Where(e =>  string.IsNullOrWhiteSpace(e.Condition)).ToList();
 
         // 注意不能对全边直接调 Evaluate：空表达式在 ExpressionEvaluator 里恒真，必须先分组
-        var truthy = condEdges.Where(e => ExpressionEvaluator.Evaluate(e.Condition, inst.VarsJson)).ToList();
+        var truthy = condEdges.Where(e => eng.EvaluateCondition(e.Condition, inst.VarsJson)).ToList();
         var active = truthy.Count > 0 ? truthy : defaults.Take(1).ToList();
 
         var forkId = Guid.NewGuid();

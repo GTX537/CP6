@@ -44,6 +44,7 @@ public class WfTimeoutService : IWfTimeoutService
     {
         var due = await _db.Wf_FlowTasks
             .Where(t => t.Status == FlowTaskStatus.Pending && t.DueAt != null && t.DueAt <= now && !t.TimeoutHandled)
+            .Where(t => !_db.Wf_FlowInstances.Any(i => i.Id == t.InstanceId && i.Creator == FlowEngine.ApprovalRuntimeV2))
             .OrderBy(t => t.DueAt)
             .Take(100)
             .ToListAsync(ct);

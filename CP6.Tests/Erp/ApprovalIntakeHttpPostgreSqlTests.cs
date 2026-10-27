@@ -89,8 +89,19 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         using(var accepted=await Send(valid.Token))
         {Assert.True(accepted.StatusCode==HttpStatusCode.Created,await accepted.Content.ReadAsStringAsync());Assert.True(accepted.Headers.CacheControl!.NoStore);}
         using(var original=await Send(valid.Token,original:"commands/"+e.CommandId))Assert.Equal(HttpStatusCode.OK,original.StatusCode);
+        // Current execution has a separate authenticated route; immutable command ACK is unchanged.
+        var started=await Starter(h).RunAsync(h.Tenant); // This fixture is start -> end: suspended, never implicitly approved.
+        using(var current=await Send(valid.Token,original:"submissions/"+e.SubmissionId))
+        {
+            Assert.Equal(HttpStatusCode.OK,current.StatusCode);Assert.True(current.Headers.CacheControl!.NoStore);
+            var value=JsonSerializer.Deserialize<ApprovalSubmissionAckV2>(await current.Content.ReadAsStringAsync(),ApprovalBindingOwnerV2.Json)!;
+            Assert.Equal("SUSPENDED",value.State);Assert.Equal(started.InstanceId,value.InstanceId);
+        }
+        using(var original=await Send(valid.Token,original:"commands/"+e.CommandId))
+            Assert.Equal("DISPATCH_PENDING",JsonDocument.Parse(await original.Content.ReadAsStringAsync()).RootElement.GetProperty("state").GetString());
         await h.Db.CrmServiceTokenRecords.Where(x=>x.Issuer==oidc.Issuer&&x.Jti==valid.Id).ExecuteUpdateAsync(s=>s.SetProperty(x=>x.RevokedAtUtc,DateTimeOffset.UtcNow));
         using(var revoked=await Send(valid.Token,original:"commands/"+e.CommandId))Assert.Equal(HttpStatusCode.Forbidden,revoked.StatusCode);
+        using(var revoked=await Send(valid.Token,original:"submissions/"+e.SubmissionId))Assert.Equal(HttpStatusCode.Forbidden,revoked.StatusCode);
         using(var fresh=await Send((await Token()).Token,original:"commands/"+e.CommandId))Assert.Equal(HttpStatusCode.OK,fresh.StatusCode);
         await app.StopAsync();
     }

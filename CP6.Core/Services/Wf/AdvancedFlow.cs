@@ -24,6 +24,7 @@ public partial class FlowEngine
 
         var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == task.InstanceId);
         if (inst is null || inst.Status != FlowInstanceStatus.Running) throw new InvalidOperationException("流程已结束，不能加签");
+        RequireLegacyRuntime(inst);
 
         await AssertActorMayHandleAsync(task, actorId);   // ★ 归属闸（P0 票#1）：只有本任务处理人可发起加签
 
@@ -86,6 +87,7 @@ public partial class FlowEngine
 
         var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == task.InstanceId);
         if (inst is null || inst.Status != FlowInstanceStatus.Running) throw new InvalidOperationException("E-WF-002");
+        RequireLegacyRuntime(inst);
 
         // ★ 归属闸（P0 票#1）。bypassOwnership 唯一可信调用方=InboxService.BatchTransferAsync
         //（admin 批量转单：控制器 oa-inbox:batch-transfer 闸 + AssigneeId==from 预筛已把关）。
