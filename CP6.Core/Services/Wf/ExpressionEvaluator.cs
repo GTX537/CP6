@@ -16,6 +16,19 @@ namespace CP6.Core.Services.Wf;
 /// </summary>
 public static class ExpressionEvaluator
 {
+    /// <summary>Compile-only validation for a registered immutable snapshot schema; never substitutes sample values.</summary>
+    internal static bool ValidateSchemaExpression(string expression, IEnumerable<string> fields)
+    {
+        if (string.IsNullOrWhiteSpace(expression) || expression.Length > 4000) return false;
+        try
+        {
+            var tokens = Tokenize(expression);
+            if (tokens.Count > 512) return false;
+            var parser = new Parser(tokens, fields.ToDictionary(x => x, _ => (object?)1d, StringComparer.Ordinal), true);
+            parser.ParseExpr(); parser.ExpectEnd(); return true;
+        }
+        catch (Exception e) when (e is FormatException or KeyNotFoundException or ArgumentException) { return false; }
+    }
     /// <summary>布尔求值（流程条件边/表单 require 复核）。空表达式=true；任何错误→false。</summary>
     public static bool Evaluate(string? expression, string? varsJson)
         => Evaluate(expression, ParseVars(varsJson));
@@ -183,8 +196,9 @@ public static class ExpressionEvaluator
         private readonly List<Token> _t;
         private readonly IReadOnlyDictionary<string, object?> _vars;
         private int _pos;
+        private readonly bool _validateOnly;
 
-        public Parser(List<Token> t, IReadOnlyDictionary<string, object?> vars) { _t = t; _vars = vars; }
+        public Parser(List<Token> t, IReadOnlyDictionary<string, object?> vars, bool validateOnly = false) { _t = t; _vars = vars; _validateOnly = validateOnly; }
 
         private Token? Peek => _pos < _t.Count ? _t[_pos] : null;
         public void ExpectEnd() { if (_pos != _t.Count) throw new FormatException(); }
@@ -212,7 +226,7 @@ public static class ExpressionEvaluator
             {
                 _pos++;
                 var right = ParseAdd();
-                return Compare(op.Type, left, right);
+                return _validateOnly ? true : Compare(op.Type, left, right);
             }
             return left;
         }
@@ -224,7 +238,7 @@ public static class ExpressionEvaluator
             {
                 _pos++;
                 var right = ParseMul();
-                left = Arith(op.Type, left, right);
+                left = _validateOnly ? 1d : Arith(op.Type, left, right);
             }
             return left;
         }
@@ -236,7 +250,7 @@ public static class ExpressionEvaluator
             {
                 _pos++;
                 var right = ParseUnary();
-                left = Arith(op.Type, left, right);
+                left = _validateOnly ? 1d : Arith(op.Type, left, right);
             }
             return left;
         }
@@ -261,7 +275,13 @@ public static class ExpressionEvaluator
                     _pos++;
                     var name = (string)tok.Value!;
                     if (Peek is { Type: TokType.LParen })   // 函数调用
-                        return CallFunc(name, ParseArgs());
+                    {
+                        var args = ParseArgs();
+                        if (!_validateOnly) return CallFunc(name, args);
+                        var valid = name switch { "dateDiff" => args.Count == 2, "sum" or "min" or "max" => args.Count >= 1,
+                            "abs" or "len" => args.Count == 1, "round" => args.Count is 1 or 2, "if" => args.Count == 3, _ => false };
+                        if (!valid) throw new FormatException(); return 1d;
+                    }
                     if (!_vars.TryGetValue(name, out var v)) throw new KeyNotFoundException(name);   // 未知字段 → 安全失败
                     return v;
                 case TokType.LParen:

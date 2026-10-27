@@ -310,6 +310,14 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler>(sp => new CP6.Core
     sp.GetRequiredService<IConfiguration>().GetValue<int?>("Wfs:SubFlowMaxInstances")));   // 子流程 B-T1 节点处理器（N 上限可配，缺省 100）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowDefService, CP6.Core.Services.Wf.FlowDefService>();     // 章03/04 流程定义 + 实例详情查询
 builder.Services.AddScoped<CP6.Core.Services.Wf.FlowDraftOwnerV1>();
+builder.Services.AddScoped(sp => new CP6.Core.Services.Oa.ApprovalBindingOwnerV2(
+    sp.GetRequiredService<CP6Context>(), sp.GetRequiredService<IHttpContextAccessor>(),
+    sp.GetRequiredService<CP6.Core.Services.Sys.ScopeAuthorizationFenceV1>(), async ct =>
+    {
+        try { return await CP6.WebApi.Services.IamAdministrationHttpV1.CurrentActor(sp.GetRequiredService<IHttpContextAccessor>().HttpContext!, ct); }
+        catch (CP6.Core.Services.Sys.IamAdministrationExceptionV1 e)
+        { throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1(e.Message, e.Status, e); }
+    }, sp.GetRequiredService<CP6.Core.Services.Wf.FlowAuthoringOwnerV2>()));
 builder.Services.AddScoped(sp => new CP6.Core.Services.Wf.FlowAuthoringOwnerV2(
     sp.GetRequiredService<CP6Context>(), sp.GetRequiredService<IHttpContextAccessor>(),
     sp.GetRequiredService<CP6.Core.Services.Sys.ScopeAuthorizationFenceV1>(), async ct =>
@@ -552,6 +560,9 @@ builder.Services.AddScoped<CP6.Core.Services.Sys.IDataScopeFilter, CP6.Core.Serv
 builder.Services.AddScoped<CP6.Core.Services.Sys.IFieldPermService, CP6.Core.Services.Sys.FieldPermService>();
 // 章03 数据权限资源注册（业务实体接 IDataScoped 后即生效；范围 1本人/2本部门/3及下级/4自定义/5全部）
 CP6.Core.Services.Sys.DataScopeRegistry.Register("order", "受注", new[] { 1, 2, 3, 4, 5 }, 2);
+CP6.Core.Services.Sys.DataScopeRegistry.Register(CP6.Core.Services.Oa.ApprovalBindingOwnerV2.Resource, "审批业务绑定", new[] { 1, 2, 3, 4, 5 }, 1);
+CP6.Core.Services.Sys.FieldRegistry.Register(CP6.Core.Services.Oa.ApprovalBindingOwnerV2.Resource,
+    CP6.Core.Services.Oa.ApprovalBindingOwnerV2.Fields.Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
 CP6.Core.Services.Sys.DataScopeRegistry.Register(CP6.Core.Services.Wf.FlowAuthoringOwnerV2.Resource, "流程定义草稿", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.FieldRegistry.Register(CP6.Core.Services.Wf.FlowAuthoringOwnerV2.Resource,
     CP6.Core.Services.Wf.FlowAuthoringOwnerV2.Fields.Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
@@ -1461,6 +1472,7 @@ using (var scope = app.Services.CreateScope())
     // 逐租户显式 TenantId + IgnoreQueryFilters 幂等。20 去重元组（31 写端点去重）覆盖 6 有写端点 menu-key
     // （oa-form-search(736) 仅 Query search 只读豁免→view，不种）。
     CP6.WebApi.Seed.OawfPermissionSeed.EnsureSeeded(db);
+    CP6.WebApi.Seed.ApprovalBindingPermissionSeed.EnsureSeeded(db);
 
     // WFS 波③ 事件触发 F-T2：流程触发器权限点 FlowTrigger.View/Edit（菜单 734 oa-flow-admin）逐租户幂等种子。
     // 须置于 OawfPermissionSeed（及 OawfMenuSeed 的 734 MenuKey 回填）之后。「贴点⊆种子」互锁。
