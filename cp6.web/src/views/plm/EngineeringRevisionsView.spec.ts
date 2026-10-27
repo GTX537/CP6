@@ -2,9 +2,10 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { mount, flushPromises, type VueWrapper } from '@vue/test-utils'
 import type { RevisionCommand, RevisionSnapshot } from '@/api/plm/engineeringRevisions'
 import type { EngineeringVersion } from '@/api/plm/engineeringProducts'
-const api = vi.hoisted(() => ({ scope: vi.fn(), creationContext: vi.fn(), list: vi.fn(), read: vi.fn(), diff: vi.fn(), save: vi.fn(), operation: vi.fn(), products: vi.fn(), rules: vi.fn(), rule: vi.fn(), routings: vi.fn(), boms: vi.fn(), authenticated: true, allowed: true }))
+const api = vi.hoisted(() => ({ scope: vi.fn(), creationContext: vi.fn(), list: vi.fn(), read: vi.fn(), diff: vi.fn(), save: vi.fn(), operation: vi.fn(), products: vi.fn(), rules: vi.fn(), rule: vi.fn(), routings: vi.fn(), documents: vi.fn(), boms: vi.fn(), authenticated: true, allowed: true }))
 vi.mock('@/api/plm/engineeringRevisions', () => ({ revisionApi: api }))
 vi.mock('@/api/plm/configurationRules', () => ({ configurationApi: { list: api.rules, read: api.rule } }))
+vi.mock('@/api/plm/controlledDocument', () => ({ documentApi: { list: api.documents } }))
 vi.mock('@/api/plm/engineeringBom', () => ({ bomApi: { list: api.boms } }))
 vi.mock('@/api/plm/engineeringRouting', () => ({ routingApi: { list: api.routings } }))
 vi.mock('@/api/plm/engineeringProducts', () => ({ engineeringApi: { list: api.products } }))
@@ -139,4 +140,15 @@ it('requires an explicit boolean choice before applying an approved option rule'
   expect((field('选项值 1').element as HTMLSelectElement).value).toBe(''); expect(field('选项值 1').attributes('required')).toBeDefined()
   await field('选项值 1').setValue('false'); await submit('配置适用性')
   expect(api.save.mock.calls[0]![0].patches[0].configuration.options).toEqual([{ name: 'Guard', type: 'BOOLEAN', boolean: false }])
+})
+
+it('adopts the explicitly selected document version without asserting professional approval', async () => {
+  persisted.draft.productRef = product.reference
+  const reference = { owner: 'Main.Plm.ControlledDocument.v1', id: '90000000-0000-4000-8000-000000000009', version: '3', digest: 'f'.repeat(64) }
+  api.documents.mockResolvedValue(ok([{ reference, isCurrent: true, body: { name: 'Exact drawing', revisionLabel: 'B', productRef: product.reference } }]))
+  await opened(); await click('添加组成位置'); await field('位置路径').setValue('drawing'); await field('组成类型').setValue('DOCUMENT'); await click('查找本修订文档')
+  expect(api.documents).toHaveBeenCalledWith(id); expect(api.save).not.toHaveBeenCalled()
+  await field('组成文档来源').setValue(`${reference.owner}:${reference.id}:${reference.version}:${reference.digest}`); await submit('位置路径')
+  expect(api.save.mock.calls[0]![0].patches[0].component).toMatchObject({ kind: 'DOCUMENT', sourceRef: reference })
+  expect(view!.text()).not.toContain('文档已批准')
 })
