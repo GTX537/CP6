@@ -58,6 +58,16 @@ public sealed class ToolSpecificationOwnerV1(CP6Context db, OperationsOwnerV1 ow
             return result.ToArray();
         }, ct);
     }
+    internal async Task<ToolSpecificationViewV1> Source(OperationsAccessV1 root, EngineeringSourceRefV1 reference, CancellationToken ct)
+    {
+        if (reference.Owner != ToolSpecificationStoreV1.Owner || reference.Id == Guid.Empty || !ValidDigest(reference.Digest)) throw Error("TOOL_SPECIFICATION_REFERENCE_INVALID", 400);
+        var a = await root.SourceAsync(OperationsOwnerV1.ToolSpecification, ct);
+        var (native, source, store) = await Stores(a, false, ct);
+        var value = await Observe(a, native, source, store, reference.Id, Revision(reference.Version), ct);
+        if (value.Specification?.Reference != reference) throw Error("TOOL_SPECIFICATION_REFERENCE_CHANGED", 412);
+        // Observe's RequireSpecificationTool already registers the final object check.
+        return value;
+    }
     public Task<ToolSpecificationViewV1> ReadAsync(Guid id, string? version = null, CancellationToken ct = default)
     {
         if (id == Guid.Empty) throw Error("TOOL_IDENTITY_REQUIRED", 400);

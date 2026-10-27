@@ -48,8 +48,18 @@ public sealed class EngineeringRevisionOwnerV1(CP6Context db, OperationsOwnerV1 
             Component(component);
             if (component.SourceRef is { } source)
             {
-                var actual = await Product(access, new(source.Owner, source.Id, source.Version, source.Digest), false, ct);
-                if (!actual.IsCurrent || actual.Product.Enabled != true) missing.Add("SOURCE_CHANGED:" + component.OccurrenceId);
+                if (component.Kind == "ROUTING")
+                {
+                    var route = await new EngineeringRoutingOwnerV1(db, owner).Source(access, source, value.Reference.Id, value.Draft.ProductRef, false, ct);
+                    if (!route.IsCurrent) missing.Add("SOURCE_CHANGED:" + component.OccurrenceId);
+                    missing.AddRange(route.Missing!.Select(x => "ROUTING:" + component.OccurrenceId + ":" + x));
+                    missing.Add("ROUTING_REVIEW_AND_FREEZE_REQUIRED:" + component.OccurrenceId);
+                }
+                else
+                {
+                    var actual = await Product(access, new(source.Owner, source.Id, source.Version, source.Digest), false, ct);
+                    if (!actual.IsCurrent || actual.Product.Enabled != true) missing.Add("SOURCE_CHANGED:" + component.OccurrenceId);
+                }
             }
             else missing.Add("SOURCE_REQUIRED:" + component.OccurrenceId);
             if (component.Applicability != "APPLIES") missing.Add("APPLICABILITY_POLICY_REQUIRED:" + component.OccurrenceId);
@@ -141,7 +151,11 @@ public sealed class EngineeringRevisionOwnerV1(CP6Context db, OperationsOwnerV1 
                 {
                     if (patch.Op == "SET_PRODUCT") await Product(access, patch.ProductRef!, true, token);
                     if (patch.Op == "UPSERT_COMPONENT" && patch.Component!.SourceRef is { } source)
-                        await Product(access, new(source.Owner, source.Id, source.Version, source.Digest), true, token);
+                    {
+                        if (patch.Component.Kind == "ROUTING")
+                            await new EngineeringRoutingOwnerV1(db, owner).Source(access, source, frozen.RevisionId, draft.ProductRef, true, token);
+                        else await Product(access, new(source.Owner, source.Id, source.Version, source.Digest), true, token);
+                    }
                 }
             }
             if (frozen.Patches?.Any(patch => patch.Op == "SET_CONFIGURATION") == true && draft.Configuration?.Input.RuleRef is { } reference)

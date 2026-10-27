@@ -16,6 +16,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/plm/configuration-rules': () => import('@/views/plm/ConfigurationRulesView.vue'),
   '/plm/tool-specifications': () => import('@/views/plm/ToolSpecificationsView.vue'),
   '/plm/engineering-revisions': () => import('@/views/plm/EngineeringRevisionsView.vue'),
+  '/plm/engineering-routing': () => import('@/views/plm/EngineeringRoutingView.vue'),
   '/plm/engineering-products': () => import('@/views/plm/EngineeringProductMappingView.vue'),
   '/dashboard': () => import('@/views/dashboard/DashboardView.vue'),
   // ───── PMS システム管理 (100~199) ─────
