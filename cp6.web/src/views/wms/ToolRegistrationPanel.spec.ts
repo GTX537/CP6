@@ -32,6 +32,15 @@ it('creates with exact actual site and authority, decimal text and no invented i
   const body = api.create.mock.calls[0]![0]; expect(body).toMatchObject({ kind: 'CREATE', site: site.reference, creationAuthorityVersion: 'current-authority', departmentId: null, profile: { madeCost: '9999999999999999.99', maxShots: null } }); expect(body).not.toHaveProperty('lifetimeShots'); expect(body).not.toHaveProperty('customerCd')
   expect(pendingToolRegistration(scope)).toBeNull(); await submit(); expect(api.create).toHaveBeenCalledTimes(1)
 })
+it('submits original Unicode sequences and distinguishes old text provenance when reading', async () => {
+  const raw = '  e\u0301 🛠  '
+  await open(); await view!.get('textarea').setValue(raw)
+  for (const label of ['尺寸说明', '备注']) { await view!.get(`input[aria-label="不登记${label}"]`).setValue(false); await view!.get(`input[aria-label="新建${label}"]`).setValue(raw) }
+  await submit(); expect(api.create.mock.calls[0]![0]).toMatchObject({ evidence: raw, profile: { sizeNote: raw, remarks: raw } })
+  const value = { tenantId: scope.tenantId, reference: { owner: 'Main.Wms.ToolRegistration.v1', id }, currentNative: reference, currentSite: site, inputContract: 'tool.registration.v1' }
+  api.read.mockResolvedValue(ok(value)); await click('查看站点与计数来源'); expect(view!.text()).toContain('无法还原输入时的原始字符序列')
+  api.read.mockResolvedValue(ok({ ...value, inputContract: 'tool.registration.v2' })); await click('查看站点与计数来源'); expect(view!.text()).not.toContain('无法还原输入时的原始字符序列')
+})
 it('binds legacy with unchanged native ETag and reference without supplying resets', async () => {
   await open('登记旧实物站点'); await submit(); expect(api.bind.mock.calls[0]!.slice(0, 2)).toEqual([id, selected.etag]); expect(api.bind.mock.calls[0]![2]).toMatchObject({ kind: 'BIND_LEGACY', expected: reference, site: site.reference }); expect(api.bind.mock.calls[0]![2]).not.toHaveProperty('profile'); expect(api.create).not.toHaveBeenCalled()
 })

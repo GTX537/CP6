@@ -13,11 +13,11 @@ public sealed record ToolRegistrationRefV1(string Owner,Guid Id,string Version,s
 public sealed record ToolRegistrationViewV1(Guid TenantId,ToolRegistrationRefV1 Reference,ToolInstanceRefV1 CurrentNative,
     EngineeringSourceRefV1 SiteAtRegistration,EngineeringSiteChoiceV1 CurrentSite,Guid CycleAnchorId,string Origin,
     string InitialCycleShots,string? CycleNo,string CycleKnowledge,string? CurrentCycleShots,string LifetimeKnowledge,string? LifetimeShots,
-    string OriginalJson,string CurrentEligibility="UNKNOWN");
-public sealed record ToolRegistrationResultV1(Guid OperationId,string Kind,Guid ObjectId,string Version,string Digest);
+    string OriginalJson,string CurrentEligibility="UNKNOWN",string InputContract="tool.registration.v1");
+public sealed record ToolRegistrationResultV1(Guid OperationId,string Kind,Guid ObjectId,string Version,string Digest,string InputContract="tool.registration.v1");
 public sealed record ToolRegistrationOperationV1(Guid OperationId,string State,ToolRegistrationResultV1? Result=null);
 internal sealed record ToolRegistrationOriginalV1(Guid TenantId,Guid ObjectId,Guid ActorId,string Origin,Guid CycleAnchorId,
     string? CycleNo,string InitialCycleShots,string LifetimeKnowledge,string? LifetimeShots,ToolInstanceRefV1 NativeAtRegistration,
-    EngineeringSourceRefV1 Site,string Evidence);
+    EngineeringSourceRefV1 Site,string Evidence,string InputContract="tool.registration.v1");
 
 public sealed record ToolRegistrationCreationContextV1(Guid TenantId,Guid ActorId,string AuthorityVersion,bool AllowsUnbound,EngineeringProductDepartmentV1[] Departments,string[] WritableFields);

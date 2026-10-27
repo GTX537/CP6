@@ -11,6 +11,7 @@
       <p>周期起点：{{ registration.initialCycleShots }}；当前计数：{{ registration.currentCycleShots ?? '待核对' }}；终身次数：{{ registration.lifetimeShots ?? '未知' }}。</p>
       <p>周期编号：{{ registration.cycleNo ?? '历史缺证或待核对' }}；登记起点身份：{{ registration.cycleAnchorId }}。当前使用资格：未知。</p>
       <p v-if="registration.cycleKnowledge === 'RECONCILIATION_REQUIRED'">登记后检测到未核实的次数或维护变化，需核对实际记录。</p>
+      <p v-if="!registration.inputContract || registration.inputContract === 'tool.registration.v1'">该登记保存的是旧版规范化文本，无法还原输入时的原始字符序列。</p>
     </article>
     <form v-if="mode" aria-label="实物登记" @submit.prevent="save"><fieldset :disabled="busy || !!pending || completed">
       <h3>{{ mode === 'CREATE' ? '新建未关联实物' : '确认旧实物的站点和观察起点' }}</h3>
