@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-27：W163 客户原身份来源待 Main 收尾
+
+客户原身份来源、当前权限/不可变版本/同事务精确采用能力已验证：17PG/HTTP、5种子单元、26UI及type/Vite通过。[报告](../development/evidence/W163-01/DELIVERY.md)。登记17.4分钟，预计60–90；Handoff已释放，Main待收尾。WMS真实关联采用及原七天完整出口保留。
+
 ## 2026-10-27：W162 登记原码点修复待 Main 收尾
 
 BUG582已验证：新登记保留原码点，历史v1保持原字节/恢复语义并明确来源；37PG/HTTP、9UI、type/Vite通过。[报告](../development/evidence/W162-01/DELIVERY.md)。登记26.02分钟，预计25–45；Handoff已释放，Main待收尾。原七天及完整WP10-48范围保留。

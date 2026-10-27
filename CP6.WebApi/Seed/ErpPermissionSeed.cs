@@ -72,7 +72,7 @@ public static class ErpPermissionSeed
     // Catalog only; unlike the historical write Actions, these confer no automatic role grant.
     private static readonly (int MenuId, string Code, string Name)[] ReadActions = [
         (207, "query", "查询订单列表"), (207, "export", "导出订单列表"),
-        (207, "download", "下载订单报表"), (208, "query", "读取完整订单"), (215, "query", "读取版型工具原来源") ];
+        (207, "download", "下载订单报表"), (208, "query", "读取完整订单"), (215, "query", "读取版型工具原来源"), (212, "query", "读取客户原身份来源") ];
 
     /// <summary>
     /// 逐租户登记 ERP 权限点；仅历史写Actions授管理员（RoleId=1），ReadActions只登记目录。

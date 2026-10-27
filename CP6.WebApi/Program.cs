@@ -546,6 +546,8 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("order", "受注", new[] { 1, 2
 CP6.Core.Services.Sys.DataScopeRegistry.Register("product", "製品", new[] { 1, 2, 3, 4, 5 }, 5);
 // Native identity source exposes no price or customer fields. Existing scope semantics are retained.
 CP6.Core.Services.Sys.FieldRegistry.Register("product");
+CP6.Core.Services.Sys.DataScopeRegistry.Register("erp-business-partner", "客户原身份来源", new[] { 1, 2, 3, 4, 5 }, 1);
+CP6.Core.Services.Sys.FieldRegistry.Register("erp-business-partner", new CP6.Core.Services.Sys.FieldRegistry.Field("BpName", "客户名称"));
 CP6.Core.Services.Sys.DataScopeRegistry.Register("uom-profile", "单位配置", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("uom-profile");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("erp-plate-mold", "版型工具原来源", new[] { 1, 2, 3, 4, 5 }, 5);
@@ -709,6 +711,7 @@ builder.Services.AddScoped<IPowerEggWorkflowService, NoOpPowerEggWorkflowService
 
 // 4.5 MSBBPA100/110/120 FSC・取引先マスタ
 builder.Services.AddScoped<IBusinessPartnerService, BusinessPartnerService>();
+builder.Services.AddScoped<CP6.Core.Services.Erp.BusinessPartnerIdentityOwnerV1>();
 builder.Services.AddScoped<IFscChecklistService, FscChecklistService>();
 
 // 4.6 MSBBPA130/140/150 シート単価・版型/木型マスタ

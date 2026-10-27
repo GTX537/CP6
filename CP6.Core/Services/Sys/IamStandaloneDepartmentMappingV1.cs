@@ -99,7 +99,7 @@ public sealed class IamStandaloneDepartmentMappingV1(CP6Context db, IamAdministr
         }, ct);
     }
 
-    private static readonly string[] Kinds = ["stock", "stock-transaction", "stocktake", "work-order", "machine", "replenish-order", "mobile-task", "work-center", "cross-dock", "slotting-plan", "vmi-billing", "kit-master", "kit-order", "warehouse", "location", "routing-rule", "sample-stock", "product-master", "uom-profile", "currency-policy", "plm-engineering-product", "plm-engineering-revision", "plm-configuration-rule", "plate-mold", "tool-instance"];
+    private static readonly string[] Kinds = ["stock", "stock-transaction", "stocktake", "work-order", "machine", "replenish-order", "mobile-task", "work-center", "cross-dock", "slotting-plan", "vmi-billing", "kit-master", "kit-order", "warehouse", "location", "routing-rule", "sample-stock", "product-master", "uom-profile", "currency-policy", "plm-engineering-product", "plm-engineering-revision", "plm-configuration-rule", "plate-mold", "tool-instance", "business-partner"];
     public sealed record ObjectChoice { public Guid Id { get; init; } public string Name { get; init; } = ""; }
     public Task<ObjectChoice[]> FindObjectsAsync(string kind, string search,
         Func<CancellationToken, Task<Guid>> actor, CancellationToken ct)
@@ -116,6 +116,7 @@ public sealed class IamStandaloneDepartmentMappingV1(CP6Context db, IamAdministr
     // The IAM directory grants identity metadata only; it does not disclose quantities, prices or business details.
     private IQueryable<ObjectChoice> Objects(string kind) => kind switch
     {
+        "business-partner" => db.BusinessPartners.AsNoTracking().Where(x => !x.IsDeleted).Select(x => new ObjectChoice { Id=x.Id,Name=x.BpCd }),
         "tool-instance" => db.PlateMoldStocks.AsNoTracking().Where(x => !x.IsDeleted).Select(x => new ObjectChoice { Id=x.Id,Name=x.PlateNo }),
         "plate-mold" => db.PlateMolds.AsNoTracking().Where(x => !x.IsDeleted).Select(x => new ObjectChoice { Id=x.Id,Name=x.BaseCd+" / "+x.WdPtnNo+" / "+x.WdRev }),
         "plm-configuration-rule" => db.Database.SqlQuery<ObjectChoice>($"""

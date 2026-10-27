@@ -160782,6 +160782,16 @@
       "date": "2026-10-27",
       "change": "W162 BUG582 versioned original Unicode registration validated37PG/HTTP,9UI,type/Vite; historical v1 bytes/replay preserved with explicit provenance. Handoff released, Main closeout pending; full states unchanged.",
       "evidence": "docs/development/evidence/W162-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-27",
+      "change": "W162 archived once; only WP10-48.wave162_unicode lifecycle closed. W163 native business partner identity source admitted60–90min as actual prerequisite to trusted source adoption. Full original scope retained.",
+      "evidence": "docs/development/dispatch/20261027-wave163/README.md"
+    },
+    {
+      "date": "2026-10-27",
+      "change": "W163 native business partner source/authority/history/exact fence actual HTTP validated17PG/HTTP,5seed-unit,26UI,type/Vite. Source capability only; actual WMS adoption next. Handoff released, Main closeout pending; full states unchanged.",
+      "evidence": "docs/development/evidence/W163-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -186902,7 +186912,7 @@
         }
       },
       "wave162_unicode": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "issue": "https://github.com/GTX537/CP6/issues/582",
         "workspace_task": "BUG-582-TOOL-REGISTRATION-UNICODE",
         "report": "docs/development/evidence/W162-01/DELIVERY.md",
@@ -186915,6 +186925,43 @@
           "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/138",
           "exact_tree_adoption": true,
           "at": "2026-10-27T01:35:01.471842+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave162-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "BUG-582-TOOL-REGISTRATION-UNICODE",
+          "source": "084456fc792f680dda692c986837024a48977177",
+          "remote_target": "e07d4c733243956d3fa6afa2596a413bce92fa59",
+          "branch": "codex/bug-582-tool-registration-unicode",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/583"
+        }
+      },
+      "wave163_customer_source": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "workspace_task": "W163-01",
+        "report": "docs/development/evidence/W163-01/DELIVERY.md",
+        "scope": "Native business partner identity source Owner: current original-session query/field/department authority, immutable native observations, actual HTTP and precise same-Main-transaction source hold.",
+        "remaining": "Local isolated PostgreSQL18/actual HTTP and component UI only; no browser E2E, enterprise acceptance, Actions, existing environment migration or deployment. Source records minimum original customer identity/status/role/frozen facts and NOT_ATTESTED trading eligibility, not170-field customer CRUD, credit approval or CRM equivalence. Legacy customer CRUD not replaced. Internal HoldExact is tested infrastructure, actual WMS/ENG adoption still pending. Trusted non-null customer/product/location registration, technical candidates, physical lifecycle and full WP10-48/all seven-day exits remain incomplete.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "54536865241dfe9aa9330a5e1df8d8c272784d80",
+          "main": "6e9fcda411a246714948e9fbf47b75529d0fc554",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/139",
+          "exact_tree_adoption": true,
+          "at": "2026-10-27T02:12:08.231777+00:00"
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
@@ -193897,10 +193944,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261027-wave162",
-      "path": "docs/development/dispatch/20261027-wave162/README.md",
-      "baseline_sha": "6a9554571c510aadfb541fedc85719c5617daec5",
-      "registered_at": "2026-10-27T01:11:23.346258+00:00",
+      "id": "20261027-wave163",
+      "path": "docs/development/dispatch/20261027-wave163/README.md",
+      "baseline_sha": "e07d4c733243956d3fa6afa2596a413bce92fa59",
+      "registered_at": "2026-10-27T01:58:46.647366+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -193919,29 +193966,28 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W162-01",
-          "workspace_task": "BUG-582-TOOL-REGISTRATION-UNICODE",
-          "issue": "https://github.com/GTX537/CP6/issues/582",
+          "id": "W163-01",
+          "workspace_task": "W163-01",
           "related_tasks": [
             "WP10-48"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Tool registration Unicode input integrity correction",
+          "title": "Native business partner identity source Owner",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "b98d14571d5c5ffbc17c82fda582f890958f5991",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T011123Z-wave162-start/MESSAGE.md",
-            "at": "2026-10-27T01:11:23.346258+00:00",
-            "branch": "codex/w162-handoff"
+            "commit": "7dd817d2bd68b842159ba579b5128a3e7f561229",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T015846Z-wave163-start/MESSAGE.md",
+            "at": "2026-10-27T01:58:46.647366+00:00",
+            "branch": "codex/w163-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/bug-582-tool-registration-unicode",
-          "planned_scope_ref": "docs/development/dispatch/20261027-wave162/README.md",
+          "branch": "codex/w163-01",
+          "planned_scope_ref": "docs/development/dispatch/20261027-wave163/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -193949,8 +193995,8 @@
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
-          "validation": "37PG/HTTP,9UI,type/Vite;no skips",
-          "worker_delivery_ref": "docs/development/evidence/W162-01/DELIVERY.md",
+          "validation": "17PG/HTTP,5seed-unit,26UI,type/Vite;no skips",
+          "worker_delivery_ref": "docs/development/evidence/W163-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -193961,11 +194007,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-27T01:09:59.208839+00:00",
+        "started_at": "2026-10-27T01:56:24.086822+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          25,
-          45
+          60,
+          90
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -193973,7 +194019,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Continue trusted optional customer/product/location sources and technical candidates, actual engineering dual Role and physical lifecycle; all original D2/D3/D5/D6/D7 exits remain.",
+      "next_action": "Continue trusted optional customer/product/location sources in actual registration, technical candidates, physical lifecycle and actual engineering dual Role; all original D2/D3/D5/D6/D7 exits remain.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -193981,7 +194027,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 26.02
+      "elapsed_registered_wave_minutes": 17.4
     },
     "wave_history": [
       {
@@ -216109,6 +216155,116 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/137"
           }
         ]
+      },
+      {
+        "id": "20261027-wave162",
+        "path": "docs/development/dispatch/20261027-wave162/README.md",
+        "baseline_sha": "6a9554571c510aadfb541fedc85719c5617daec5",
+        "registered_at": "2026-10-27T01:11:23.346258+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W162-01",
+            "workspace_task": "BUG-582-TOOL-REGISTRATION-UNICODE",
+            "issue": "https://github.com/GTX537/CP6/issues/582",
+            "related_tasks": [
+              "WP10-48"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Tool registration Unicode input integrity correction",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "b98d14571d5c5ffbc17c82fda582f890958f5991",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T011123Z-wave162-start/MESSAGE.md",
+              "at": "2026-10-27T01:11:23.346258+00:00",
+              "branch": "codex/w162-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/bug-582-tool-registration-unicode",
+            "planned_scope_ref": "docs/development/dispatch/20261027-wave162/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "validation": "37PG/HTTP,9UI,type/Vite;no skips",
+            "worker_delivery_ref": "docs/development/evidence/W162-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave162-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-27T01:09:59.208839+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            25,
+            45
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Continue trusted optional customer/product/location sources and technical candidates, actual engineering dual Role and physical lifecycle; all original D2/D3/D5/D6/D7 exits remain.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave162-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 26.02,
+        "actual_registered_wave_minutes": 29.31,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "BUG-582-TOOL-REGISTRATION-UNICODE",
+            "source": "084456fc792f680dda692c986837024a48977177",
+            "remote_target": "e07d4c733243956d3fa6afa2596a413bce92fa59",
+            "branch": "codex/bug-582-tool-registration-unicode",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/583"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W162-HANDOFF",
+            "source": "bf64335d2bb5c35a26e4cffc6885fb81287b2358",
+            "remote_target": "fdc0758b4da6424a59a1f0879239d98fa74e6b71",
+            "branch": "codex/w162-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/138"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -216208,7 +216364,7 @@
           "id": "D3",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W162-01",
+          "current_window": "W163-01",
           "prerequisite_adjustment": "Issue460 WorkCenter and ProcessCostRate actual current Owner; full process/cost/Finance adoption remains separate.",
           "adopted_window": "W49-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/402",
@@ -216217,7 +216373,7 @@
           "last_window_actual_agent_minutes": 56.28,
           "last_branches_deleted": true,
           "last_seats_released": true,
-          "next_action": "Continue trusted optional customer/product/location sources and technical candidates, actual engineering dual Role and physical lifecycle; all original D2/D3/D5/D6/D7 exits remain.",
+          "next_action": "Continue trusted optional customer/product/location sources in actual registration, technical candidates, physical lifecycle and actual engineering dual Role; all original D2/D3/D5/D6/D7 exits remain.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W136-01/DELIVERY.md",
           "last_product_source_report": "docs/development/evidence/W144-01/DELIVERY.md",
@@ -216237,7 +216393,8 @@
           "last_tool_technical_draft_report": "docs/development/evidence/W159-01/DELIVERY.md",
           "last_physical_tool_provider_report": "docs/development/evidence/W160-01/DELIVERY.md",
           "last_physical_tool_registration_report": "docs/development/evidence/W161-01/DELIVERY.md",
-          "last_physical_tool_unicode_report": "docs/development/evidence/W162-01/DELIVERY.md"
+          "last_physical_tool_unicode_report": "docs/development/evidence/W162-01/DELIVERY.md",
+          "last_customer_source_report": "docs/development/evidence/W163-01/DELIVERY.md"
         },
         {
           "id": "D4",
