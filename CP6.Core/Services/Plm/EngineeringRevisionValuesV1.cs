@@ -56,8 +56,10 @@ internal static class EngineeringRevisionValuesV1
         Text(value.Path, 2048); Text(value.Note, empty: true); Applicability(value.Applicability, value.Reason);
         if (value.SourceRef is { } source)
         {
-            if (value.Kind != "PRODUCT" || source.Owner != EngineeringProductValuesV1.Owner) throw Error("ENGINEERING_COMPONENT_SOURCE_OWNER_REQUIRED", 503);
-            Reference(new(source.Owner, source.Id, source.Version, source.Digest));
+            if (value.Kind == "PRODUCT" && source.Owner == EngineeringProductValuesV1.Owner)
+                Reference(new(source.Owner, source.Id, source.Version, source.Digest));
+            else if (value.Kind == "ROUTING" && source.Owner == EngineeringRoutingValuesV1.Owner) EngineeringRoutingValuesV1.Ref(source);
+            else throw Error("ENGINEERING_COMPONENT_SOURCE_OWNER_REQUIRED", 503);
         }
     }
     internal static EngineeringWorkingDraftV1 Patch(EngineeringWorkingDraftV1 original, EngineeringDraftPatchV1[]? patches)

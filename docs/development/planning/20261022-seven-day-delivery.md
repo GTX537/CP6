@@ -1464,3 +1464,7 @@ Owner原包可靠服务投递、持久租约/回执与原命令恢复已验证�
 ## 2026-10-27 W185 业务回执可靠返回与缺链恢复
 
 业务回执可靠返回、原事件查询、连续投影和固定快照缺链恢复已验证；不重复执行业务，缺失义务保持BLOCKED。26 local checks: 26 PG18/HTTP and 0 affected kernel/unit;0skip;no frontend changes。[报告](../evidence/W185-01/DELIVERY.md)。登记55.45分钟，预计120–210；Handoff已释放，Main待正常PR/finish。实际业务效果及七天全部出口保留。 Recheck exact original D3 planning/WO and trusted engineering prerequisites, choose the next necessary Owner adoption, and retain D2/D5/D6/D7 plus all real external inputs. Do not automatically expand this receipt prerequisite into full workflow or physical-discard delivery.
+
+## 2026-10-27 W186 版本化工艺与准确来源
+
+工艺独立Owner、稳定步骤与依赖、准确资源/工具/单位、实际ProductProcess原件、工程组成采用与原结果恢复已验证；草稿不冒充冻结或生产资格。42 local checks: 42 PG18/HTTP and 0 affected kernel/unit;45 Vue;types/build PASS;0skip。[报告](../evidence/W186-01/DELIVERY.md)。登记35.7分钟，预计120–210；Handoff已释放，Main待正常PR/finish。实际业务效果及七天全部出口保留。 Recheck the remaining actual manufacturing-view/BOM and controlled quality/document sources needed for engineering review/freeze and formal WO/SCHED; preserve original D2/D5/D6/D7 exits and avoid unrelated expansion.
