@@ -1468,3 +1468,7 @@ Owner原包可靠服务投递、持久租约/回执与原命令恢复已验证�
 ## 2026-10-27 W186 版本化工艺与准确来源
 
 工艺独立Owner、稳定步骤与依赖、准确资源/工具/单位、实际ProductProcess原件、工程组成采用与原结果恢复已验证；草稿不冒充冻结或生产资格。42 local checks: 42 PG18/HTTP and 0 affected kernel/unit;45 Vue;types/build PASS;0skip。[报告](../evidence/W186-01/DELIVERY.md)。登记35.7分钟，预计120–210；Handoff已释放，Main待正常PR/finish。实际业务效果及七天全部出口保留。 Recheck the remaining actual manufacturing-view/BOM and controlled quality/document sources needed for engineering review/freeze and formal WO/SCHED; preserve original D2/D5/D6/D7 exits and avoid unrelated expansion.
+
+## 2026-10-27 W187 版本化BOM与准确材料来源
+
+BOM独立Owner、多层稳定位置、准确材料/单位、实际ProductMaterial原件、历史/使用位置、工程组成与原结果恢复已验证；草稿不冒充冻结或生产资格。43 local checks: 43 PG18/HTTP and 0 affected kernel/unit;44 Vue;types/build PASS;0skip。[报告](../evidence/W187-01/DELIVERY.md)。登记19.62分钟，预计120–210；Handoff已释放，Main待正常PR/finish。实际业务效果及七天全部出口保留。 Continue the direct manufacturing mapping/output relationships and controlled sources needed for engineering review/freeze and original WO/SCHED writes; preserve D2/D5/D6/D7 and do not expand unrelated domains.
