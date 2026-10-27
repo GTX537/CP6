@@ -2,9 +2,10 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { mount, flushPromises, type VueWrapper } from '@vue/test-utils'
 import type { RevisionCommand, RevisionSnapshot } from '@/api/plm/engineeringRevisions'
 import type { EngineeringVersion } from '@/api/plm/engineeringProducts'
-const api = vi.hoisted(() => ({ scope: vi.fn(), creationContext: vi.fn(), list: vi.fn(), read: vi.fn(), diff: vi.fn(), save: vi.fn(), operation: vi.fn(), products: vi.fn(), rules: vi.fn(), rule: vi.fn(), routings: vi.fn(), authenticated: true, allowed: true }))
+const api = vi.hoisted(() => ({ scope: vi.fn(), creationContext: vi.fn(), list: vi.fn(), read: vi.fn(), diff: vi.fn(), save: vi.fn(), operation: vi.fn(), products: vi.fn(), rules: vi.fn(), rule: vi.fn(), routings: vi.fn(), boms: vi.fn(), authenticated: true, allowed: true }))
 vi.mock('@/api/plm/engineeringRevisions', () => ({ revisionApi: api }))
 vi.mock('@/api/plm/configurationRules', () => ({ configurationApi: { list: api.rules, read: api.rule } }))
+vi.mock('@/api/plm/engineeringBom', () => ({ bomApi: { list: api.boms } }))
 vi.mock('@/api/plm/engineeringRouting', () => ({ routingApi: { list: api.routings } }))
 vi.mock('@/api/plm/engineeringProducts', () => ({ engineeringApi: { list: api.products } }))
 vi.mock('@/stores/permission', () => ({ usePermissionStore: () => ({ loaded: true, has: () => api.allowed, loadMyActions: vi.fn() }) }))
@@ -55,6 +56,15 @@ it('binds the explicit exact current routing from this revision without inventin
   await click('查找本修订工艺'); expect(api.routings).toHaveBeenCalledWith(id); expect((field('组成工艺来源').element as HTMLSelectElement).value).toBe('')
   await field('组成工艺来源').setValue(`${reference.owner}:${reference.id}:${reference.version}:${reference.digest}`); await submit('位置路径')
   expect(api.save.mock.calls[0]![0].patches[0].component).toMatchObject({ kind: 'ROUTING', sourceRef: reference }); expect(view!.text()).toContain('尚未评审或冻结')
+})
+it('binds the explicit exact current BOM from this revision without inventing approval', async () => {
+  persisted.draft.productRef = product.reference
+  const reference = { owner: 'Main.Plm.EngineeringBom.v1', id: '80000000-0000-4000-8000-000000000008', version: '3', digest: 'e'.repeat(64) }
+  api.boms.mockResolvedValue(ok([{ reference, isCurrent: true, body: { kind: 'MBOM', name: 'Exact manufacturing BOM', productRef: product.reference } }]))
+  await opened(); await click('添加组成位置'); await field('组成类型').setValue('MBOM'); await field('位置路径').setValue('manufacture/route')
+  await click('查找本修订 BOM'); expect(api.boms).toHaveBeenCalledWith(id); expect((field('组成BOM来源').element as HTMLSelectElement).value).toBe('')
+  await field('组成BOM来源').setValue(`${reference.owner}:${reference.id}:${reference.version}:${reference.digest}`); await submit('位置路径')
+  expect(api.save.mock.calls[0]![0].patches[0].component).toMatchObject({ kind: 'MBOM', sourceRef: reference }); expect(view!.text()).toContain('尚未评审或冻结')
 })
 it('creates an unresolved new-product draft with explicit reason and department; goal patch preserves omitted fields', async () => {
   await render(); await form(); expect((field('本修订的工程产品').element as HTMLSelectElement).value).toBe('')

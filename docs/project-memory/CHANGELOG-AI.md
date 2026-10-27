@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-27：W187 版本化BOM与准确材料来源待 Main 收尾
+
+BOM独立Owner、多层稳定位置、准确材料/单位、实际ProductMaterial原件、历史/使用位置、工程组成与原结果恢复已验证；草稿不冒充冻结或生产资格。43 local checks: 43 PG18/HTTP and 0 affected kernel/unit;44 Vue;types/build PASS;0skip。[报告](../development/evidence/W187-01/DELIVERY.md)。登记19.62分钟，预计120–210；Handoff已释放，Main待正常PR/finish。实际业务效果及七天全部出口保留。
+
 ## 2026-10-27：W186 版本化工艺与准确来源待 Main 收尾
 
 工艺独立Owner、稳定步骤与依赖、准确资源/工具/单位、实际ProductProcess原件、工程组成采用与原结果恢复已验证；草稿不冒充冻结或生产资格。42 local checks: 42 PG18/HTTP and 0 affected kernel/unit;45 Vue;types/build PASS;0skip。[报告](../development/evidence/W186-01/DELIVERY.md)。登记35.7分钟，预计120–210；Handoff已释放，Main待正常PR/finish。实际业务效果及七天全部出口保留。
