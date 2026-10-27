@@ -26,6 +26,7 @@ public sealed class ApprovalStartOwnerV2(CP6Context db, ScopeAuthorizationFenceV
     {
         if (!await db.Database.SqlQueryRaw<bool>("SELECT cp6_approval_start_v2.ready() AS \"Value\"").SingleAsync(ct))
             throw Error("APP_START_STORE_UNAVAILABLE", 503);
+        await ApprovalTaskAssignmentsV2.Ready(db, ct);
     }
     internal static Task<string?> Current(CP6Context db, Guid environment, string owner, Guid submission, CancellationToken ct)
         => db.Database.SqlQuery<string>($"""
@@ -84,6 +85,7 @@ public sealed class ApprovalStartOwnerV2(CP6Context db, ScopeAuthorizationFenceV
             var instance = await engine.StageApprovalStartV2(publication, e,
                 Encoding.UTF8.GetString(Convert.FromBase64String(e.Snapshot.CanonicalBytesBase64)), ct);
             await db.SaveChangesAsync(ct); // Participates in this outer native transaction; never a separate commit.
+            await engine.SaveApprovalAssignments(ct);
             var original = JsonSerializer.Deserialize<ApprovalSubmissionAckV2>(pending.Ack, ApprovalBindingOwnerV2.Json)!;
             var state = instance.Status == FlowInstanceStatus.Suspended ? "SUSPENDED" : "RUNNING";
             var result = original with { InstanceId = instance.Id, State = state, RowVersion = ApprovalBindingTimelineBuilderV2.Version(2) };

@@ -48,6 +48,7 @@ internal sealed class ApprovalNodeHandler : INodeHandler
                     TokenId = ctx.Token.Id,   // ★ 唯一增量：会签计票按 token 隔离
                 };
                 eng.Db.Wf_FlowTasks.Add(task);
+                eng.RecordApprovalAssignment(inst, task, rule, res.ApproverIds);
                 eng.WriteFormToOnSend(inst, node, ctx.Token,   // ★ T9：送签建传签履历行
                     expectedHandler: assignee, onBehalfOf: delegatedFrom, stepSeq: step);
                 if (delegatedFrom is Guid g)

@@ -26,6 +26,7 @@ public partial class FlowEngine
                 TokenId = token.Id, StageIndex = k, StageRound = round,
             };
             _db.Wf_FlowTasks.Add(task);
+            RecordApprovalAssignment(inst, task, stage.Rule, res.ApproverIds, stage.StageCode);
             WriteFormToOnSend(inst, node, token, assignee, delegatedFrom, step, stageIndex: k, stageRound: round);
             if (delegatedFrom is Guid g) AddHistory(inst.Id, node.Id, assignee, "delegate", $"代 {g} 审批");
             await _notifier.TodoCreatedAsync(assignee, inst.Id, task.Id, inst.FlowKey);

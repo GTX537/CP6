@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-27：W180 任务原职责与当前委派授权待 Main 收尾
+
+真实任务原Principal/规则/候选与原启动同事务；委派不覆盖原职责，当前权限/委派范围/SOD提供同事务参与检查。33 local checks: 17 PG18 and 16 affected kernel/unit;0skip;no UI change。[报告](../development/evidence/W180-01/DELIVERY.md)。登记26.36分钟，预计90–150；Handoff已释放，Main待正常PR/finish。TxD/业务回执和七天全部出口保留。
+
 ## 2026-10-27：W179 审批实例原子启动待 Main 收尾
 
 原固定发布版本的实际实例/任务/token/history/读模型及启动完成回执同事务；原提交查询与原command回执分离。109 local checks: 22 PG18/HTTP and 87 affected kernel/unit;0skip;no UI change。[报告](../development/evidence/W179-01/DELIVERY.md)。登记34.94分钟，预计120–210；Handoff已释放，Main待正常PR/finish。TxD/业务回执和七天全部出口保留。
