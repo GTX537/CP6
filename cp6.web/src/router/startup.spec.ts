@@ -244,3 +244,13 @@ describe('technical tool specification independent entry', () => {
     expect(active.currentRoute.value.path === '/plm/tool-specifications').toBe(allowed)
   })
 })
+
+vi.mock('@/views/wms/PlateMoldView.vue', () => ({ default: { template: '<div data-testid="physical-tools" />' } }))
+describe('physical tool independent entry', () => {
+  it.each([false, true])('requires current WMS query and does not borrow engineering permission: %s', async allowed => {
+    signedIn(); authFixture.actions.mockResolvedValue(allowed ? ['wms-plate-mold:query'] : ['erp-plate-mold:query', 'wms-plate-mold:edit'])
+    const active = await boot('/wms/plate-mold')
+    expect(document.querySelector('[data-testid="physical-tools"]') !== null).toBe(allowed)
+    expect(active.currentRoute.value.path === '/wms/plate-mold').toBe(allowed)
+  })
+})

@@ -11,7 +11,8 @@ namespace CP6.WebApi.Controllers.Wms;
 /// <summary>MSBBWM220 — 印版・木型 Web API</summary>
 [ApiController]
 [Route("api/wms/plate-mold")]
-[Authorize]
+[Authorize, CP6.WebApi.Controllers.Erp.OrderOwnerResult]
+[ResponseCache(NoStore=true,Location=ResponseCacheLocation.None)]
 public class PlateMoldController : ControllerBase
 {
     private readonly IPlateMoldService _svc;
@@ -39,7 +40,7 @@ public class PlateMoldController : ControllerBase
             var no = await _svc.CreateAsync(dto, CurrentUser);
             return Ok(new { code = 0, message = "WM-MSG-071", data = new { plateNo = no } });
         }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPut("{no}")]
@@ -47,7 +48,7 @@ public class PlateMoldController : ControllerBase
     public async Task<IActionResult> Update(string no, [FromBody] PlateMoldDto dto)
     {
         try { await _svc.UpdateAsync(no, dto, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/use")]
@@ -55,7 +56,7 @@ public class PlateMoldController : ControllerBase
     public async Task<IActionResult> RecordUsage(string no, [FromBody] UsageRequest req)
     {
         try { await _svc.RecordUsageAsync(no, req.Shots, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/maintenance/start")]
@@ -63,7 +64,7 @@ public class PlateMoldController : ControllerBase
     public async Task<IActionResult> StartMaintenance(string no, [FromBody] MaintRequest req)
     {
         try { await _svc.StartMaintenanceAsync(no, req?.NextMaintenanceDate, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/maintenance/complete")]
@@ -71,7 +72,7 @@ public class PlateMoldController : ControllerBase
     public async Task<IActionResult> CompleteMaintenance(string no)
     {
         try { await _svc.CompleteMaintenanceAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpPost("{no}/discard")]
@@ -79,7 +80,7 @@ public class PlateMoldController : ControllerBase
     public async Task<IActionResult> Discard(string no)
     {
         try { await _svc.DiscardAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     [HttpGet("warnings")]
@@ -91,7 +92,7 @@ public class PlateMoldController : ControllerBase
     public async Task<IActionResult> Delete(string no)
     {
         try { await _svc.DeleteAsync(no, CurrentUser); return Ok(new { code = 0, message = "WM-MSG-071" }); }
-        catch (InvalidOperationException ex) { return BadRequest(new { code = 400, message = ex.Message }); }
+        catch (InvalidOperationException ex) when (ex is not CP6.Core.Services.Erp.OrderPriceCorrectionException) { return BadRequest(new { code = 400, message = ex.Message }); }
     }
 
     public class UsageRequest { public int Shots { get; set; } }
