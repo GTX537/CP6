@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-27：W162 登记原码点修复待 Main 收尾
+
+BUG582已验证：新登记保留原码点，历史v1保持原字节/恢复语义并明确来源；37PG/HTTP、9UI、type/Vite通过。[报告](../development/evidence/W162-01/DELIVERY.md)。登记26.02分钟，预计25–45；Handoff已释放，Main待收尾。原七天及完整WP10-48范围保留。
+
 ## 2026-10-27：W161 实物登记待 Main 收尾
 
 真实实物新建、旧记录准确 Site/周期观察起点、未知寿命及原操作恢复通过28PG/HTTP、45UI、type/Vite。[单份报告](../development/evidence/W161-01/DELIVERY.md)。登记21.11分钟，预计50–80；Handoff已释放，Main待收尾。非空可信关联、实际生命周期/工程双Role和完整原目标仍未完成。

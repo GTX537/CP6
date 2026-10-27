@@ -16,7 +16,8 @@ namespace CP6.Core.Services.Wms;
 public sealed class ToolRegistrationOwnerV1(CP6Context db,OperationsOwnerV1 owner)
 {
     internal const string RegistrationOwner="Main.Wms.ToolRegistration.v1";
-    private const string Contract="tool.registration.v1";
+    private const string Contract="tool.registration.v2",LegacyContract="tool.registration.v1";
+    private static bool KnownContract(string value)=>value is Contract or LegacyContract;
     private OperationsOwnerV1 Authority=>owner.Owns(db)?owner:throw Error("AUTHORITY_FENCE_UNAVAILABLE",503);
     public Task<ToolRegistrationCreationContextV1> CreationContextAsync(CancellationToken ct=default)
         =>Authority.ExecuteAsync(OperationsOwnerV1.ToolInstance,"add",false,(a,t)=>a.ToolCreationContext(t),ct);
@@ -51,7 +52,7 @@ public sealed class ToolRegistrationOwnerV1(CP6Context db,OperationsOwnerV1 owne
             """).SingleOrDefaultAsync(ct);
         if(row==null)return null;
         var value=JsonSerializer.Deserialize<ToolRegistrationOriginalV1>(row.Json);
-        if(value==null||value.TenantId!=db.CurrentTenantId||value.ObjectId!=id||Hash(row.Json)!=row.Digest)
+        if(value==null||value.TenantId!=db.CurrentTenantId||value.ObjectId!=id||Hash(row.Json)!=row.Digest||!KnownContract(value.InputContract))
             throw Error("TOOL_REGISTRATION_UNAVAILABLE",503);
         return (row,value);
     }
@@ -79,7 +80,7 @@ public sealed class ToolRegistrationOwnerV1(CP6Context db,OperationsOwnerV1 owne
                 """).SingleAsync(t);
             return new ToolRegistrationViewV1(db.CurrentTenantId,new(RegistrationOwner,id,"1",row.Digest),native.Reference,value.Site,currentSite,value.CycleAnchorId,
                 value.Origin,value.InitialCycleShots,coherent?value.CycleNo:null,coherent?value.Origin:"RECONCILIATION_REQUIRED",coherent?value.InitialCycleShots:null,
-                coherent?value.LifetimeKnowledge:"UNKNOWN",coherent?value.LifetimeShots:null,row.Json);
+                coherent?value.LifetimeKnowledge:"UNKNOWN",coherent?value.LifetimeShots:null,row.Json,InputContract:value.InputContract);
         },ct);
     }
     private async Task<EngineeringSiteChoiceV1> ExactSite(OperationsAccessV1 site,EngineeringSourceRefV1 expected,CancellationToken ct)
@@ -101,7 +102,21 @@ public sealed class ToolRegistrationOwnerV1(CP6Context db,OperationsOwnerV1 owne
             if(final==null||final.Value.Row.Digest!=expected.Digest)throw Error("TOOL_REGISTRATION_CHANGED",412);});
     }
     private static string Hash(string value)=>Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value))).ToLowerInvariant();
-    private static string? Normal(string? value)=>value?.Normalize(NormalizationForm.FormC);
+    private static readonly UTF8Encoding StrictUtf8=new(false,true);
+    private static string? OriginalText(string? value)
+    {
+        // A malformed UTF-16 sequence cannot be preserved as Unicode; never replace it silently.
+        try { if(value!=null)StrictUtf8.GetByteCount(value);return value; }
+        catch(EncoderFallbackException) { throw Error("TOOL_REGISTRATION_INVALID",400); }
+    }
+    private static byte[] EncodeCommand(ToolRegistrationCommandV1 command,string? etag,string contract)
+    {
+        // Only an already-stored v1 operation may use its historical, lossy codec.
+        // New operations always use v2; do not rewrite old input/result/original bytes.
+        if(contract==LegacyContract)command=command with{Evidence=command.Evidence.Normalize(NormalizationForm.FormC),
+            Profile=command.Profile is {} p?p with{SizeNote=p.SizeNote?.Normalize(NormalizationForm.FormC),Remarks=p.Remarks?.Normalize(NormalizationForm.FormC)}:null};
+        return MainOwnerOperationJournalV1.Encode(new{contract,etag,command});
+    }
     private static decimal? Cost(string? value)=>value==null?null:Regex.IsMatch(value,"\\A(?:0|[1-9][0-9]{0,15})(?:\\.[0-9]{1,2})?\\z")
         &&decimal.TryParse(value,NumberStyles.AllowDecimalPoint,CultureInfo.InvariantCulture,out var n)?n:throw Error("TOOL_PROFILE_COST_INVALID",400);
     private static DateTime? Date(string? value)=>value==null?null:DateTime.TryParseExact(value,"yyyy-MM-dd",CultureInfo.InvariantCulture,DateTimeStyles.None,out var d)
@@ -112,7 +127,7 @@ public sealed class ToolRegistrationOwnerV1(CP6Context db,OperationsOwnerV1 owne
             ||input.Site==null||input.Site.Owner!=EngineeringProductValuesV1.SiteOwner||input.Site.Id==Guid.Empty
             ||input.Site.Digest==null||!Regex.IsMatch(input.Site.Digest,"\\A[0-9a-f]{64}\\z")||string.IsNullOrWhiteSpace(input.Evidence)||input.Evidence.Length>1000)
             throw Error("TOOL_REGISTRATION_INVALID",400);
-        Revision(input.Site.Version);input=input with{Evidence=Normal(input.Evidence)!};
+        Revision(input.Site.Version);OriginalText(input.Evidence);
         if(input.Kind=="BIND_LEGACY")
         {
             if(input.Expected==null||input.Expected.Owner!=Owner||input.Expected.Id!=input.ObjectId||input.Profile!=null
@@ -124,18 +139,18 @@ public sealed class ToolRegistrationOwnerV1(CP6Context db,OperationsOwnerV1 owne
             ||p.ColorCount is <1 or >12||p.MaxShots is <1||p.SizeNote?.Length>40||p.Remarks?.Length>500)
             throw Error("TOOL_REGISTRATION_INVALID",400);
         Date(p.MadeDate);
-        return input with{Profile=p with{MadeCost=Cost(p.MadeCost)?.ToString("0.00",CultureInfo.InvariantCulture),SizeNote=Normal(p.SizeNote),Remarks=Normal(p.Remarks)}};
+        return input with{Profile=p with{MadeCost=Cost(p.MadeCost)?.ToString("0.00",CultureInfo.InvariantCulture),SizeNote=OriginalText(p.SizeNote),Remarks=OriginalText(p.Remarks)}};
     }
     public Task<ToolRegistrationResultV1> CommandAsync(ToolRegistrationCommandV1 input,string? etag,CancellationToken ct=default)
     {
-        var command=Validate(OperationsOwnerV1.Freeze(input),etag);var action=command.Kind=="CREATE"?"add":"initialize";
-        var bytes=MainOwnerOperationJournalV1.Encode(new{contract=Contract,etag,command});var journal=new MainOwnerOperationJournalV1(db);
+        var command=OperationsOwnerV1.Freeze(Validate(input,etag));var action=command.Kind=="CREATE"?"add":"initialize";
+        var bytes=EncodeCommand(command,etag,Contract);var journal=new MainOwnerOperationJournalV1(db);
         MainOwnerOperationJournalV1.Original? original=null;
         return Authority.ExecuteAsync(OperationsOwnerV1.ToolInstance,action,true,async(a,t)=>
         {
             var store=new ToolInstanceStoreV1(db);await store.Fence(t,true);await Fence(t,true);
             var query=await a.SourceAsync(OperationsOwnerV1.ToolInstance,t);
-            if(original!=null)return await Disclose(query,store,command.OperationId,original,bytes,t);
+            if(original!=null)return await Disclose(query,store,command.OperationId,original,EncodeCommand(command,etag,original.Contract),t);
             var site=await a.SourceAsync(OperationsOwnerV1.PhysicalSite,t);await ExactSite(site,command.Site,t);
             a.AtCommit(async token=>{await ExactSite(site,command.Site,token);});
             ToolInstanceViewV1 native;
@@ -165,13 +180,13 @@ public sealed class ToolRegistrationOwnerV1(CP6Context db,OperationsOwnerV1 owne
             var fresh=command.Kind=="CREATE";
             var value=new ToolRegistrationOriginalV1(db.CurrentTenantId,command.ObjectId,a.ActorId,fresh?"NEW_REGISTERED":"LEGACY_OBSERVED",
                 Guid.NewGuid(),fresh?"1":null,shots.ToString(CultureInfo.InvariantCulture),fresh?"KNOWN_FROM_REGISTRATION":"UNKNOWN",fresh?"0":null,
-                native.Reference,command.Site,command.Evidence);
+                native.Reference,command.Site,command.Evidence,Contract);
             var json=JsonSerializer.Serialize(value);var digest=Hash(json);var rev=Revision(native.Reference.Version);
             await db.Database.ExecuteSqlInterpolatedAsync($"""
                 INSERT INTO cp6_tool_instance_v1.registrations(tenant_id,object_id,native_revision,original_json,original_digest)
                 VALUES({db.CurrentTenantId},{command.ObjectId},{rev},{json},{digest})
                 """,t);
-            var result=new ToolRegistrationResultV1(command.OperationId,fresh?"TOOL_CREATE":"TOOL_INITIALIZE",command.ObjectId,"1",digest);
+            var result=new ToolRegistrationResultV1(command.OperationId,fresh?"TOOL_CREATE":"TOOL_INITIALIZE",command.ObjectId,"1",digest,Contract);
             await journal.Store(RegistrationOwner,Contract,command.OperationId,a.ActorId,bytes,result,[command.ObjectId],
                 new{action=command.Kind,actor=a.ActorId,native=native.Reference,site=command.Site,value.CycleAnchorId,value.Origin},t);
             // New registration does not upgrade query or warehouse scope; every participant is checked again.
@@ -181,12 +196,12 @@ public sealed class ToolRegistrationOwnerV1(CP6Context db,OperationsOwnerV1 owne
     }
     private async Task<ToolRegistrationResultV1> Disclose(OperationsAccessV1 query,ToolInstanceStoreV1 store,Guid operation,MainOwnerOperationJournalV1.Original original,byte[]? input,CancellationToken ct)
     {
-        if(original.Actor!=query.ActorId||original.Contract!=Contract)throw Error("ORIGINAL_OPERATION_FORBIDDEN",403);
+        if(original.Actor!=query.ActorId||!KnownContract(original.Contract))throw Error("ORIGINAL_OPERATION_FORBIDDEN",403);
         if(original.State=="CLOSED")throw Error("ORIGINAL_OPERATION_CLOSED",409);
         if(input!=null&&!MainOwnerOperationJournalV1.Matches(original,input))throw Error("ORIGINAL_OPERATION_INPUT_CONFLICT",409);
         var result=JsonSerializer.Deserialize<ToolRegistrationResultV1>(original.Result);
         if(original.State!="COMMITTED"||result==null||result.OperationId!=operation||result.Kind is not("TOOL_CREATE" or "TOOL_INITIALIZE")
-            ||result.Version!="1"||original.Objects.Length!=1||original.Objects[0]!=result.ObjectId)throw Error("ORIGINAL_OPERATION_UNAVAILABLE",503);
+            ||result.Version!="1"||result.InputContract!=original.Contract||original.Objects.Length!=1||original.Objects[0]!=result.ObjectId)throw Error("ORIGINAL_OPERATION_UNAVAILABLE",503);
         var saved=await StoredAsync(result.ObjectId,ct)??throw Error("ORIGINAL_OPERATION_UNAVAILABLE",503);
         await store.Read(query,result.ObjectId,Revision(saved.Value.NativeAtRegistration.Version),ct);
         if(saved.Row.Digest!=result.Digest)throw Error("ORIGINAL_OPERATION_UNAVAILABLE",503);
@@ -201,7 +216,7 @@ public sealed class ToolRegistrationOwnerV1(CP6Context db,OperationsOwnerV1 owne
             var original=await journal.Read(RegistrationOwner,id,t);
             if(original!=null)
             {
-                if(original.Actor!=a.ActorId||original.Contract!=Contract)throw Error("ORIGINAL_OPERATION_FORBIDDEN",403);
+                if(original.Actor!=a.ActorId||!KnownContract(original.Contract))throw Error("ORIGINAL_OPERATION_FORBIDDEN",403);
                 return original.State=="CLOSED"?new ToolRegistrationOperationV1(id,"CLOSED"):new(id,"COMMITTED",await Disclose(a,store,id,original,null,t));
             }
             if(!close)return new ToolRegistrationOperationV1(id,"UNKNOWN");

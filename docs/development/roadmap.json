@@ -160772,6 +160772,16 @@
       "date": "2026-10-27",
       "change": "W161 actual new physical registration and explicit legacy Site/cycle anchor validated28PG/HTTP,45UI,type/Vite; truthful lifetime knowledge/no execution permit. Handoff released, Main closeout pending. Full original states unchanged.",
       "evidence": "docs/development/evidence/W161-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-27",
+      "change": "W161 archived once; WP10-48.wave161_registration lifecycle closed. W162 BUG582 original-codepoint integrity fix admitted25–45min before next trusted source adoption. Full original scope retained.",
+      "evidence": "docs/development/dispatch/20261027-wave162/README.md"
+    },
+    {
+      "date": "2026-10-27",
+      "change": "W162 BUG582 versioned original Unicode registration validated37PG/HTTP,9UI,type/Vite; historical v1 bytes/replay preserved with explicit provenance. Handoff released, Main closeout pending; full states unchanged.",
+      "evidence": "docs/development/evidence/W162-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -186856,7 +186866,7 @@
         }
       },
       "wave161_registration": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W161-01/DELIVERY.md",
         "scope": "Actual native physical tool registration with exact trusted Site, new zero cycle/lifetime provenance, explicit old observation with unknown lifetime, immutable cycle anchor, combined internal HoldExact and original operation/API/page adoption.",
         "remaining": "Local isolated PG18 and actual local HTTP/UI only; no browser E2E or real enterprise acceptance. Existing env migration/Actions/deployment not executed. New registration specifically unlinked customer/product/location; nonempty trusted links remain original work. Legacy cycle ordinal and lifetime unknown, anchor is an observed starting point not invented historical maintenance. Native lifecycle drift invalidates current cycle/lifetime knowledge even if value restored. No actual use/maintenance/retirement, corrective Site rebind, technical candidate adoption, positive ENG dualRole or execution permit delivered. Full WP10-48 and all seven-day exits unchanged.",
@@ -186867,6 +186877,44 @@
           "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/137",
           "exact_tree_adoption": true,
           "at": "2026-10-27T00:52:58.160920+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave161-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W161-01",
+          "source": "36cdfea93f8d986e77121c30b1cb02624867de93",
+          "remote_target": "6a9554571c510aadfb541fedc85719c5617daec5",
+          "branch": "codex/w161-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/581"
+        }
+      },
+      "wave162_unicode": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "issue": "https://github.com/GTX537/CP6/issues/582",
+        "workspace_task": "BUG-582-TOOL-REGISTRATION-UNICODE",
+        "report": "docs/development/evidence/W162-01/DELIVERY.md",
+        "scope": "BUG582 new registration input codec preserves original Unicode codepoints; persisted v1 input/result/provenance remains unchanged and explicitly versioned.",
+        "remaining": "Local isolated PostgreSQL18/actual HTTP and component UI only; no browser E2E, enterprise acceptance, Actions, existing environment migration or deployment. Historical v1 inputs were already NFC-normalized; original codepoints cannot be reconstructed, legacy replay retains the original v1 semantics and is visibly labeled. No historical bytes rewritten. Trusted non-null customer/product/location references, technical candidates, lifecycle and actual engineering adoption remain incomplete; full WP10-48 and all seven-day exits unchanged.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "bf64335d2bb5c35a26e4cffc6885fb81287b2358",
+          "main": "fdc0758b4da6424a59a1f0879239d98fa74e6b71",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/138",
+          "exact_tree_adoption": true,
+          "at": "2026-10-27T01:35:01.471842+00:00"
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
@@ -193849,10 +193897,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261027-wave161",
-      "path": "docs/development/dispatch/20261027-wave161/README.md",
-      "baseline_sha": "54be36cf2e05027eb2574106aa98b160cabe81e8",
-      "registered_at": "2026-10-27T00:34:14.521000+00:00",
+      "id": "20261027-wave162",
+      "path": "docs/development/dispatch/20261027-wave162/README.md",
+      "baseline_sha": "6a9554571c510aadfb541fedc85719c5617daec5",
+      "registered_at": "2026-10-27T01:11:23.346258+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -193871,27 +193919,29 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W161-01",
+          "id": "W162-01",
+          "workspace_task": "BUG-582-TOOL-REGISTRATION-UNICODE",
+          "issue": "https://github.com/GTX537/CP6/issues/582",
           "related_tasks": [
             "WP10-48"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Physical tool registration and cycle provenance",
+          "title": "Tool registration Unicode input integrity correction",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "bc8df1c692649c3269227afac470e77f8324d6c6",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T003414Z-wave161-start/MESSAGE.md",
-            "at": "2026-10-27T00:34:14.521000+00:00",
-            "branch": "codex/w161-handoff"
+            "commit": "b98d14571d5c5ffbc17c82fda582f890958f5991",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T011123Z-wave162-start/MESSAGE.md",
+            "at": "2026-10-27T01:11:23.346258+00:00",
+            "branch": "codex/w162-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w161-01",
-          "planned_scope_ref": "docs/development/dispatch/20261027-wave161/README.md",
+          "branch": "codex/bug-582-tool-registration-unicode",
+          "planned_scope_ref": "docs/development/dispatch/20261027-wave162/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -193899,8 +193949,8 @@
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
-          "validation": "28 PG18/HTTP;45 UI/router/auth;type/Vite pass;no skips.",
-          "worker_delivery_ref": "docs/development/evidence/W161-01/DELIVERY.md",
+          "validation": "37PG/HTTP,9UI,type/Vite;no skips",
+          "worker_delivery_ref": "docs/development/evidence/W162-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -193911,11 +193961,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-27T00:32:56.927545+00:00",
+        "started_at": "2026-10-27T01:09:59.208839+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          50,
-          80
+          25,
+          45
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -193923,7 +193973,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Continue WP10-48 actual trusted optional customer/product/location links and technical candidates, then real WP05-06 dual-Role adoption; formal lifecycle/use/maintenance/retirement, approval/freeze/DOC and all original D2/D3/D5/D6/D7 exits remain.",
+      "next_action": "Continue trusted optional customer/product/location sources and technical candidates, actual engineering dual Role and physical lifecycle; all original D2/D3/D5/D6/D7 exits remain.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -193931,7 +193981,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 21.11
+      "elapsed_registered_wave_minutes": 26.02
     },
     "wave_history": [
       {
@@ -215951,6 +216001,114 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/136"
           }
         ]
+      },
+      {
+        "id": "20261027-wave161",
+        "path": "docs/development/dispatch/20261027-wave161/README.md",
+        "baseline_sha": "54be36cf2e05027eb2574106aa98b160cabe81e8",
+        "registered_at": "2026-10-27T00:34:14.521000+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W161-01",
+            "related_tasks": [
+              "WP10-48"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Physical tool registration and cycle provenance",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "bc8df1c692649c3269227afac470e77f8324d6c6",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T003414Z-wave161-start/MESSAGE.md",
+              "at": "2026-10-27T00:34:14.521000+00:00",
+              "branch": "codex/w161-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w161-01",
+            "planned_scope_ref": "docs/development/dispatch/20261027-wave161/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "validation": "28 PG18/HTTP;45 UI/router/auth;type/Vite pass;no skips.",
+            "worker_delivery_ref": "docs/development/evidence/W161-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave161-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-27T00:32:56.927545+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            50,
+            80
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Continue WP10-48 actual trusted optional customer/product/location links and technical candidates, then real WP05-06 dual-Role adoption; formal lifecycle/use/maintenance/retirement, approval/freeze/DOC and all original D2/D3/D5/D6/D7 exits remain.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave161-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 21.11,
+        "actual_registered_wave_minutes": 24.86,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W161-01",
+            "source": "36cdfea93f8d986e77121c30b1cb02624867de93",
+            "remote_target": "6a9554571c510aadfb541fedc85719c5617daec5",
+            "branch": "codex/w161-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/581"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W161-HANDOFF",
+            "source": "9019c444ec7ee270a4190cb1187bfe04e071d248",
+            "remote_target": "fb443d80a111982c403d4432bce1a56f7d4fc5c6",
+            "branch": "codex/w161-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/137"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -216050,7 +216208,7 @@
           "id": "D3",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W161-01",
+          "current_window": "W162-01",
           "prerequisite_adjustment": "Issue460 WorkCenter and ProcessCostRate actual current Owner; full process/cost/Finance adoption remains separate.",
           "adopted_window": "W49-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/402",
@@ -216059,7 +216217,7 @@
           "last_window_actual_agent_minutes": 56.28,
           "last_branches_deleted": true,
           "last_seats_released": true,
-          "next_action": "Continue WP10-48 actual trusted optional customer/product/location links and technical candidates, then real WP05-06 dual-Role adoption; formal lifecycle/use/maintenance/retirement, approval/freeze/DOC and all original D2/D3/D5/D6/D7 exits remain.",
+          "next_action": "Continue trusted optional customer/product/location sources and technical candidates, actual engineering dual Role and physical lifecycle; all original D2/D3/D5/D6/D7 exits remain.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W136-01/DELIVERY.md",
           "last_product_source_report": "docs/development/evidence/W144-01/DELIVERY.md",
@@ -216078,7 +216236,8 @@
           "last_legacy_tool_writer_report": "docs/development/evidence/W158-01/DELIVERY.md",
           "last_tool_technical_draft_report": "docs/development/evidence/W159-01/DELIVERY.md",
           "last_physical_tool_provider_report": "docs/development/evidence/W160-01/DELIVERY.md",
-          "last_physical_tool_registration_report": "docs/development/evidence/W161-01/DELIVERY.md"
+          "last_physical_tool_registration_report": "docs/development/evidence/W161-01/DELIVERY.md",
+          "last_physical_tool_unicode_report": "docs/development/evidence/W162-01/DELIVERY.md"
         },
         {
           "id": "D4",

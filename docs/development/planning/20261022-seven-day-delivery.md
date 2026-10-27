@@ -1368,3 +1368,7 @@ BUG572修复与65个不同PG/HTTP用例通过，UI未改复用。[单份报告](
 ## 2026-10-27 W161 实物登记
 
 限定实际新建/旧站点与周期起点、恢复及页面采用，通过28PG/HTTP、45UI、type/Vite。[报告](../evidence/W161-01/DELIVERY.md)。登记21.11分钟，预计50–80；Handoff已释放，Main待finish。可信非空关联、生命周期、工程双Role及完整七天未完成。
+
+## 2026-10-27 W162 登记原码点修复
+
+BUG582版本化输入修复，历史原件及恢复保持；37PG/HTTP、9UI、type/Vite通过。[报告](../evidence/W162-01/DELIVERY.md)。登记26.02分钟，预计25–45；Handoff已释放，Main待finish。原七天全部未完成出口保留。
