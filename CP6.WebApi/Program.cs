@@ -310,6 +310,14 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.INodeHandler>(sp => new CP6.Core
     sp.GetRequiredService<IConfiguration>().GetValue<int?>("Wfs:SubFlowMaxInstances")));   // 子流程 B-T1 节点处理器（N 上限可配，缺省 100）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowDefService, CP6.Core.Services.Wf.FlowDefService>();     // 章03/04 流程定义 + 实例详情查询
 builder.Services.AddScoped<CP6.Core.Services.Wf.FlowDraftOwnerV1>();
+builder.Services.AddScoped(sp => new CP6.Core.Services.Wf.FlowAuthoringOwnerV2(
+    sp.GetRequiredService<CP6Context>(), sp.GetRequiredService<IHttpContextAccessor>(),
+    sp.GetRequiredService<CP6.Core.Services.Sys.ScopeAuthorizationFenceV1>(), async ct =>
+    {
+        try { return await CP6.WebApi.Services.IamAdministrationHttpV1.CurrentActor(sp.GetRequiredService<IHttpContextAccessor>().HttpContext!, ct); }
+        catch (CP6.Core.Services.Sys.IamAdministrationExceptionV1 e)
+        { throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1(e.Message, e.Status, e); }
+    }, sp.GetServices<CP6.Core.Services.Wf.IServiceTaskExecutor>(), sp.GetServices<CP6.Core.Services.Wf.IWfConnector>()));
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfNotifier, CP6.WebApi.Services.PersistentWfNotifier>();     // 事务内仅写通知 outbox；提交后由 worker 定向推送/发邮件
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfNotificationDispatchWorker>();
 builder.Services.AddScoped<CP6.Core.Services.Wf.ITaskCenterService, CP6.Core.Services.Wf.TaskCenterService>(); // 章04 待办中心（待办/我的申请/撤回）
@@ -544,6 +552,9 @@ builder.Services.AddScoped<CP6.Core.Services.Sys.IDataScopeFilter, CP6.Core.Serv
 builder.Services.AddScoped<CP6.Core.Services.Sys.IFieldPermService, CP6.Core.Services.Sys.FieldPermService>();
 // 章03 数据权限资源注册（业务实体接 IDataScoped 后即生效；范围 1本人/2本部门/3及下级/4自定义/5全部）
 CP6.Core.Services.Sys.DataScopeRegistry.Register("order", "受注", new[] { 1, 2, 3, 4, 5 }, 2);
+CP6.Core.Services.Sys.DataScopeRegistry.Register(CP6.Core.Services.Wf.FlowAuthoringOwnerV2.Resource, "流程定义草稿", new[] { 1, 2, 3, 4, 5 }, 1);
+CP6.Core.Services.Sys.FieldRegistry.Register(CP6.Core.Services.Wf.FlowAuthoringOwnerV2.Resource,
+    CP6.Core.Services.Wf.FlowAuthoringOwnerV2.Fields.Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
 CP6.Core.Services.Sys.DataScopeRegistry.Register("product", "製品", new[] { 1, 2, 3, 4, 5 }, 5);
 // Native identity source exposes no price or customer fields. Existing scope semantics are retained.
 CP6.Core.Services.Sys.FieldRegistry.Register("product");

@@ -1408,3 +1408,7 @@ BUG582版本化输入修复，历史原件及恢复保持；37PG/HTTP、9UI、ty
 ## 2026-10-27 W171 Scope授权门公共前置
 
 Scope环境/租户/权限域登记、真实epoch/事务锁、14张当前权限源表writer参与、原操作恢复已验证；31本地检查（28PG18/HTTP、3unit），0skip。[报告](../evidence/W171-01/DELIVERY.md)。登记33.93分钟，预计90–150；Handoff已释放、Main待收尾。正式Workflow消费者/审批与七天全部出口仍开放。 Continue actual Workflow authorization/consumer/publication prerequisites using the same registered fence, preserve full D2/D3/D5/D6/D7 and all original seven-day exits; do not close formal business cards for this foundation.
+
+## 2026-10-27 W172 流程草稿实际采用
+
+FLOW草稿Owner新建/读取/保存、当前Scope/资源/字段/设计期策略、原命令与审计同事务、旧入口身份隔离及设计器已验证；42后端、14UI、类型检查和构建通过，0skip。[报告](../evidence/W172-01/DELIVERY.md)。登记64.09分钟，预计150–240；Handoff已释放，Main待正常PR/finish。发布/启用/审批和七天全部出口保留。 Continue exact Workflow publication/activation and approved consumer prerequisites, preserving every original D2/D3/D5/D6/D7 exit; no full card or real acceptance closure from this authoring slice.
