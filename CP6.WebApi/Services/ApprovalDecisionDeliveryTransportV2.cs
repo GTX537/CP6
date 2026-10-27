@@ -74,7 +74,18 @@ public sealed class ApprovalDecisionDeliveryTransportV2 : IApprovalDecisionTrans
         {if(result.Length+n>1048576)throw new HttpRequestException("DELIVERY_RESPONSE_TOO_LARGE");await result.WriteAsync(buffer.AsMemory(0,n),ct);}
         return result.ToArray();
     }
-    public async Task<ApprovalDecisionTransportResponseV2> SendAsync(ApprovalDecisionDeliveryRouteV2 route,Guid eventId,byte[] original,bool query,CancellationToken ct)
+    public Task<ApprovalDecisionTransportResponseV2> SendAsync(ApprovalDecisionDeliveryRouteV2 route,Guid eventId,byte[] original,bool query,CancellationToken ct)
+        => Exchange(route,ToolApprovalFactReceiverV2.Route+(query?"/"+eventId.ToString("D"):""),original,query,ct);
+    internal Task<ApprovalDecisionTransportResponseV2> ReadChainAsync(ApprovalDecisionDeliveryRouteV2 route,Guid stream,string after,int limit,string? cursor,CancellationToken ct)
+    {
+        if(!long.TryParse(after,System.Globalization.NumberStyles.None,System.Globalization.CultureInfo.InvariantCulture,out var revision)
+            || revision<0 || after!=revision.ToString(System.Globalization.CultureInfo.InvariantCulture) || limit is <1 or >100 || cursor is {Length:0 or >8192})
+            throw new ArgumentException("Invalid receipt chain query.");
+        var path=ToolApprovalFactReceiverV2.ApplicationRoute+stream.ToString("D")+"/receipts?afterRevision="+after+"&limit="+limit.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        if(cursor!=null)path+="&cursor="+Uri.EscapeDataString(cursor);
+        return Exchange(route,path,[],true,ct);
+    }
+    private async Task<ApprovalDecisionTransportResponseV2> Exchange(ApprovalDecisionDeliveryRouteV2 route,string fixedPath,byte[] original,bool query,CancellationToken ct)
     {
         // Both fixed origins are deployment registrations. A response body/queryRef can never redirect credentials.
         if(Route(route.Tenant)!=route)return new(403,[]);
@@ -96,7 +107,7 @@ public sealed class ApprovalDecisionDeliveryTransportV2 : IApprovalDecisionTrans
         }
         catch(Exception e)when(e is JsonException or KeyNotFoundException or InvalidOperationException or FormatException){return new(403,[]);}
         if(Route(route.Tenant)!=route)return new(403,[]);
-        using var request=new HttpRequestMessage(query?HttpMethod.Get:HttpMethod.Post,route.Destination+ToolApprovalFactReceiverV2.Route+(query?"/"+eventId.ToString("D"):""));
+        using var request=new HttpRequestMessage(query?HttpMethod.Get:HttpMethod.Post,route.Destination+fixedPath);
         request.Headers.Authorization=new AuthenticationHeaderValue("Bearer",token);
         if(!query){request.Content=new ByteArrayContent(original);request.Content.Headers.ContentType=new("application/json");}
         using var response=await _client.SendAsync(request,HttpCompletionOption.ResponseHeadersRead,ct);

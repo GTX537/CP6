@@ -73,7 +73,11 @@ public sealed class ToolApprovalDeliveryTransportV1 : IToolApprovalDeliveryTrans
         {if(result.Length+n>1048576)throw new HttpRequestException("DELIVERY_RESPONSE_TOO_LARGE");await result.WriteAsync(buffer.AsMemory(0,n),ct);}
         return result.ToArray();
     }
-    public async Task<ToolApprovalDeliveryResponseV1> SendAsync(ToolApprovalDeliveryRouteV1 route,Guid command,byte[] original,bool query,CancellationToken ct)
+    public Task<ToolApprovalDeliveryResponseV1> SendAsync(ToolApprovalDeliveryRouteV1 route,Guid command,byte[] original,bool query,CancellationToken ct)
+        => Exchange(route,"/internal/oa/app/v2/"+(query?"commands/"+command.ToString("D"):"submissions"),original,query,ct);
+    internal Task<ToolApprovalDeliveryResponseV1> SendReceiptAsync(ToolApprovalDeliveryRouteV1 route,Guid receiptEvent,byte[] original,bool query,CancellationToken ct)
+        => Exchange(route,query?CP6.Core.Services.Oa.ApprovalReceiptIngestionV2.QueryRoute+receiptEvent.ToString("D"):CP6.Core.Services.Oa.ApprovalReceiptIngestionV2.Route,original,query,ct);
+    private async Task<ToolApprovalDeliveryResponseV1> Exchange(ToolApprovalDeliveryRouteV1 route,string fixedPath,byte[] original,bool query,CancellationToken ct)
     {
         // Both fixed origins are deployment registrations. A response body/queryRef can never redirect credentials.
         if(Route(route.Tenant)!=route)return new(403,[]);
@@ -95,7 +99,7 @@ public sealed class ToolApprovalDeliveryTransportV1 : IToolApprovalDeliveryTrans
         }
         catch(Exception e)when(e is JsonException or KeyNotFoundException or InvalidOperationException or FormatException){return new(403,[]);}
         if(Route(route.Tenant)!=route)return new(403,[]);
-        using var request=new HttpRequestMessage(query?HttpMethod.Get:HttpMethod.Post,route.Destination+"/internal/oa/app/v2/"+(query?"commands/"+command.ToString("D"):"submissions"));
+        using var request=new HttpRequestMessage(query?HttpMethod.Get:HttpMethod.Post,route.Destination+fixedPath);
         request.Headers.Authorization=new AuthenticationHeaderValue("Bearer",token);
         if(!query){request.Content=new ByteArrayContent(original);request.Content.Headers.ContentType=new("application/json");}
         using var response=await _client.SendAsync(request,HttpCompletionOption.ResponseHeadersRead,ct);
