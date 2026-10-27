@@ -3,7 +3,7 @@ import http from '../http'
 // OA 流程 API（/api/wf）。http 拦截器已返 body：{ code, message, data }，调用方取 res.data。
 export const flowApi = {
   // 流程定义
-  saveDef(data: { flowKey: string; flowName: string; formKey: string; schemaJson: string }) {
+  saveDef(data: { flowKey: string; flowName: string; formKey: string; schemaJson: string; rowVersion?: string }) {
     return http.post('/wf/flow/def', data)
   },
   getDef(flowKey: string) {

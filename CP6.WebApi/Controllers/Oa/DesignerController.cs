@@ -44,7 +44,8 @@ public class DesignerController : LocalizedControllerBase
         var summary = await _designer.LoadAsync(flowKey);
         if (summary is null) return NotFound(new { code = 404, message = "E-WF-006" });
         var draft = await _flowDef.GetDraftAsync(flowKey);
-        return Ok2(new { summary, schemaJson = draft?.SchemaJson ?? "{}", draft });
+        var published = draft == null ? await _flowDef.GetDefAsync(flowKey) : null;
+        return Ok2(new { summary, schemaJson = draft?.SchemaJson ?? published?.SchemaJson ?? "{}", draft });
     }
 
     public record SaveReq(string FlowKey, string FlowName, string FormKey, string? FunctionId,
@@ -63,7 +64,7 @@ public class DesignerController : LocalizedControllerBase
         }
         catch (InvalidOperationException e)
         {
-            return e.Message == "E-WF-045"
+            return e.Message is "E-WF-045" or "DRAFT_REQUIRED"
                 ? Conflict(new { code = e.Message, message = e.Message })
                 : Err(e);
         }

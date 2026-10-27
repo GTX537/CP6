@@ -21,5 +21,5 @@ export interface SaveFlowBody {
 export interface LoadFlowResult {
   summary: FlowDefSummary
   schemaJson: string
-  draft?: { rowVersion?: string; version: number }
+  draft?: { rowVersion?: string; version: number; name: string }
 }

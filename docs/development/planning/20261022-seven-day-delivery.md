@@ -1400,3 +1400,7 @@ BUG582版本化输入修复，历史原件及恢复保持；37PG/HTTP、9UI、ty
 ## 2026-10-27 W169 报废申请与停新使用
 
 24本地检查（24PG18/HTTP）、22组件及type/Vite通过。[报告](../evidence/W169-01/DELIVERY.md)。登记21.14分钟，预计60–90；Handoff已释放、Main待finish。Continue genuine OA approval and cross-Owner closure prerequisites or ENG/DOC purpose qualification, preserving original D2/D3/D5/D6/D7 exits and WP05-05/WP04-32 scope.
+
+## 2026-10-27 W170 流程只读与显式草稿
+
+流程读取无副作用、显式准确来源草稿/原操作恢复及两个设计器已验证；27本地检查（12PG18/HTTP、15复用）、12组件及type/Vite通过。[报告](../evidence/W170-01/DELIVERY.md)。登记30.33分钟，预计45–75；Handoff已释放、Main待收尾。完整Workflow授权/发布/审批与七天全部出口仍开放。 Continue registered Workflow authorization/publication prerequisites for actual approval, preserving D2/D3/D5/D6/D7 and all original exits; do not equate native draft completion with full OA-DEF/APP.
