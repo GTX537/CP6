@@ -645,6 +645,15 @@ builder.Services.AddSingleton(new CP6.WebApi.Services.ApprovalIntakeRegistryV2(
 builder.Services.AddScoped<CP6.Core.Services.Oa.IApprovalServiceAuthorityV2,CP6.WebApi.Services.ApprovalIntakeServiceAuthorityV2>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.ApprovalIntakeOwnerV2>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.ApprovalStartOwnerV2>();
+builder.Services.AddScoped(sp => new CP6.Core.Services.Oa.ApprovalTaskAuthorityV2(
+    sp.GetRequiredService<CP6Context>(), sp.GetRequiredService<IHttpContextAccessor>(),
+    sp.GetRequiredService<CP6.Core.Services.Sys.ScopeAuthorizationFenceV1>(), async ct =>
+    {
+        try { return await CP6.WebApi.Services.IamAdministrationHttpV1.CurrentActor(sp.GetRequiredService<IHttpContextAccessor>().HttpContext!, ct); }
+        catch (CP6.Core.Services.Sys.IamAdministrationExceptionV1 e)
+        { throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1(e.Message, e.Status, e); }
+    }));
+builder.Services.AddScoped<CP6.Core.Services.Oa.ApprovalTaskDecisionOwnerV2>();
 builder.Services.AddSingleton(builder.Configuration.GetSection("ApprovalStart").Get<CP6.WebApi.BackgroundServices.ApprovalStartOptionsV2>()??new());
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.ApprovalStartWorkerV2>();
 builder.Services.AddSingleton(sp=>new CP6.WebApi.Services.ToolApprovalDeliveryRegistryV1(

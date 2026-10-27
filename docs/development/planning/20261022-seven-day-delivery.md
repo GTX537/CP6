@@ -1444,3 +1444,7 @@ Owner原包可靠服务投递、持久租约/回执与原命令恢复已验证�
 ## 2026-10-27 W180 任务原职责与当前委派授权
 
 真实任务原Principal/规则/候选与原启动同事务；委派不覆盖原职责，当前权限/委派范围/SOD提供同事务参与检查。33 local checks: 17 PG18 and 16 affected kernel/unit;0skip;no UI change。[报告](../evidence/W180-01/DELIVERY.md)。登记26.36分钟，预计90–150；Handoff已释放，Main待正常PR/finish。TxD/业务回执和七天全部出口保留。 Continue actual TxD decision evidence/atomic outbox and Owner original application receipts; complete necessary service/subflow adapters and retain original ROU/BOM/WO/SCHED and D2/D5/D6/D7 exits.
+
+## 2026-10-27 W181 实际审批决定共同事务
+
+实际原生票决、双版本、原命令与终态证据/Outbox共同事务已接入既有HTTP；冻结政策和当前权限保留。40 local checks: 24 PG18/HTTP and 16 affected kernel/unit;0skip;no UI change。[报告](../evidence/W181-01/DELIVERY.md)。登记42.81分钟，预计120–210；Handoff已释放，Main待正常PR/finish。业务应用/页面及七天全部出口保留。 Continue actual Owner decision Inbox/application receipt and business effects in one Owner transaction, plus current projection and native task UI. Preserve original ROU/BOM/WO/SCHED and D2/D5/D6/D7 exits.

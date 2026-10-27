@@ -18,20 +18,19 @@ public sealed class ApprovalTaskAuthorityV2(CP6Context db, IHttpContextAccessor 
     ScopeAuthorizationFenceV1 fence, Func<CancellationToken, Task<Guid>> currentActor)
 {
     private static ScopeAuthorizationExceptionV1 Error(string code, int status = 403) => new(code, status);
-    private async Task<UserPermissionContext> User(Guid id, CancellationToken ct)
+    private async Task<UserPermissionContext> User(Guid id, CancellationToken ct, bool write = true)
     {
         if (id == Guid.Empty || !await db.Sys_Users.AsNoTracking().AnyAsync(u => u.Id == id && u.Enable
             && (u.LockedUntil == null || u.LockedUntil <= DateTime.Now), ct)) throw Error("COMMAND_FORBIDDEN");
         var permission = await PostgreSqlPermissionReader.ReadAsync(db, id, ct);
-        if (!permission.MenuKeys.Contains("oa-inbox") || !permission.ActionKeys.Contains("oa-inbox:approve")
+        var action = write ? "approve" : "query";
+        if (!permission.MenuKeys.Contains("oa-inbox") || !permission.ActionKeys.Contains("oa-inbox:" + action)
             || !await (from a in db.Sys_MenuActions join m in db.Sys_Menus on a.MenuId equals m.MenuId
-                       where m.Enable && m.MenuKey == "oa-inbox" && a.ActionCode == "approve" select a).AnyAsync(ct))
+                       where m.Enable && m.MenuKey == "oa-inbox" && a.ActionCode == action select a).AnyAsync(ct))
             throw Error("COMMAND_FORBIDDEN");
         return permission;
     }
-    private sealed record Original(byte[] Payload);
-    private async Task<ApprovalTaskAuthorityEvidenceV2> Check(Guid taskId, Guid? onBehalfOf,
-        ScopeAuthorizationLeaseV1 lease, CancellationToken ct)
+    internal async Task<Guid> CurrentActor(bool write, CancellationToken ct)
     {
         var actual = await currentActor(ct);
         if (actual != CurrentPermissionContext.RequireCurrentUser(db, http)
@@ -41,6 +40,14 @@ public sealed class ApprovalTaskAuthorityV2(CP6Context db, IHttpContextAccessor 
             throw Error("AUTHENTICATION_REQUIRED", 401);
         if (!await db.Sys_Tenants.AsNoTracking().AnyAsync(t => t.Id == db.CurrentTenantId && t.Enable
             && (t.ExpireDate == null || t.ExpireDate > DateTime.Now), ct)) throw Error("AUTHENTICATION_REQUIRED", 401);
+        await User(actual, ct, write);
+        return actual;
+    }
+    private sealed record Original(byte[] Payload);
+    private async Task<ApprovalTaskAuthorityEvidenceV2> Check(Guid taskId, Guid? onBehalfOf,
+        ScopeAuthorizationLeaseV1 lease, CancellationToken ct, bool requirePending = true)
+    {
+        var actual = await CurrentActor(true, ct);
         var actualPermission = await User(actual, ct);
         var principal = onBehalfOf ?? actual;
         var principalPermission = principal == actual ? actualPermission : await User(principal, ct);
@@ -49,7 +56,7 @@ public sealed class ApprovalTaskAuthorityV2(CP6Context db, IHttpContextAccessor 
         var instance = await db.Wf_FlowInstances.AsNoTracking().SingleOrDefaultAsync(i => i.Id == task.InstanceId, ct);
         if (instance == null || instance.Creator != FlowEngine.ApprovalRuntimeV2 || task.AssigneeId != principal)
             throw Error("RESOURCE_NOT_FOUND", 404);
-        if (instance.Status != 0 || task.Status != 0) throw Error("TASK_NOT_PENDING", 409);
+        if (requirePending && (instance.Status != 0 || task.Status != 0)) throw Error("TASK_NOT_PENDING", 409);
         var assignment = await ApprovalTaskAssignmentsV2.Read(db, fence.EnvironmentId, taskId, ct);
         if (assignment.InstanceId != instance.Id || assignment.PrincipalId != principal || assignment.TokenId != task.TokenId
             || assignment.FlowVersionId != instance.FlowDefVersionId || assignment.NodeId != task.NodeId
@@ -96,10 +103,10 @@ public sealed class ApprovalTaskAuthorityV2(CP6Context db, IHttpContextAccessor 
         await fence.ValidateAsync(scope, ct);
         return new(scope, evidence);
     }
-    internal async Task ValidateAsync(ApprovalTaskAuthorityLeaseV2 lease, CancellationToken ct = default)
+    internal async Task ValidateAsync(ApprovalTaskAuthorityLeaseV2 lease, CancellationToken ct = default, bool afterVote = false)
     {
         await fence.ValidateAsync(lease.Scope, ct);
-        var current = await Check(lease.Evidence.Assignment.TaskId, lease.Evidence.OnBehalfOfId, lease.Scope, ct);
+        var current = await Check(lease.Evidence.Assignment.TaskId, lease.Evidence.OnBehalfOfId, lease.Scope, ct, !afterVote);
         if (!ApprovalCanonicalV2.Bytes(current).SequenceEqual(ApprovalCanonicalV2.Bytes(lease.Evidence)))
             throw Error("TASK_AUTHORITY_CHANGED", 409);
         await fence.ValidateAsync(lease.Scope, ct);

@@ -140,7 +140,7 @@ public partial class FlowEngine
     {
         if (HasActiveToken(inst.Id)) return;
         if (inst.Status != FlowInstanceStatus.Running) return;   // 已驳回/撤回，不覆盖
-        if (_approvalStartV2)
+        if (_approvalStartV2 && !_approvalDecisionV2)
         {
             inst.Status = FlowInstanceStatus.Suspended;
             AddHistory(inst.Id, inst.CurrentNode, Guid.Empty, "suspend", "APP_EXPLICIT_DECISION_REQUIRED");
