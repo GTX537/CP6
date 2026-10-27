@@ -24,6 +24,11 @@ internal sealed class ToolInstanceStoreV1(CP6Context db)
             throw Error("AUTHORITY_FENCE_UNAVAILABLE", 503);
         await db.Database.ExecuteSqlRawAsync("LOCK TABLE public.\"T_PlateMoldStock\" " + (write ? "IN SHARE ROW EXCLUSIVE MODE" : "IN SHARE MODE"), ct);
         await db.Database.ExecuteSqlRawAsync("LOCK TABLE cp6_tool_instance_v1.heads,cp6_tool_instance_v1.versions " + (write ? "IN SHARE ROW EXCLUSIVE MODE" : "IN SHARE MODE"), ct);
+        await db.Database.ExecuteSqlRawAsync("LOCK TABLE cp6_tool_instance_v1.registration_links " + (write ? "IN SHARE ROW EXCLUSIVE MODE" : "IN SHARE MODE"),ct);
+        if(!await db.Database.SqlQueryRaw<bool>("""
+            SELECT count(*)=2 AS "Value" FROM pg_catalog.pg_trigger WHERE tgrelid='cp6_tool_instance_v1.registration_links'::regclass
+              AND tgname IN ('tool_registration_links_immutable','tool_registration_links_no_truncate') AND tgenabled IN ('O','A') AND NOT tgisinternal
+            """).SingleAsync(ct))throw Error("TOOL_REGISTRATION_UNAVAILABLE",503);
         fencedTransaction = db.Database.CurrentTransaction;
     }
     private sealed class SourceRow
@@ -65,7 +70,7 @@ internal sealed class ToolInstanceStoreV1(CP6Context db)
         using var doc = JsonDocument.Parse(selected.Json);
         access.AtCommit(last => access.RequireToolInstance(db, id, last));
         return new(db.CurrentTenantId,new(Owner,id,Text(selected.Revision),selected.Digest),selected.Revision==current.Revision,
-            "\""+token+"\"",selected.NativeToken,selected.ObservedAt,await access.MaskToolSource(doc.RootElement,ct),access.ToolReadableFields,access.ToolWritableFields);
+            "\""+token+"\"",selected.NativeToken,selected.ObservedAt,await access.MaskToolSource(doc.RootElement,ct),(await access.LinkedCustomerNameReadable(id,ct)?access.ToolReadableFields:access.ToolReadableFields.Where(x=>x!="CustomerName").ToArray()),access.ToolWritableFields);
     }
     internal async Task<ToolInstanceViewV1> HoldExactAsync(OperationsAccessV1 access,ToolInstanceRefV1 expected,CancellationToken ct)
     {

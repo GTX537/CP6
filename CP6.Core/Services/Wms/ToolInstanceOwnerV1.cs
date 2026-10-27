@@ -25,7 +25,7 @@ public sealed class ToolInstanceOwnerV1(CP6Context db,OperationsOwnerV1 owner)
             ||q.PlateType?.Length>10||q.CustomerCd?.Length>20||q.ProductCd?.Length>20)throw Error("TOOL_INSTANCE_QUERY_INVALID",400);
         return Authority.ExecuteAsync(OperationsOwnerV1.ToolInstance,"query",false,async(a,t)=>
         {
-            var store=new ToolInstanceStoreV1(db);await store.Fence(t);var rows=a.ToolInstances();
+            var store=new ToolInstanceStoreV1(db);await store.Fence(t);var rows=await a.ScopedToolInstances(t);
             if(q.PlateNo!=null)rows=rows.Where(x=>x.PlateNo.Contains(q.PlateNo));
             if(q.PlateType!=null)rows=rows.Where(x=>x.PlateType==q.PlateType);
             if(q.CustomerCd!=null){a.RequireToolFieldRead("CustomerCd");rows=rows.Where(x=>x.CustomerCd==q.CustomerCd);}
@@ -46,7 +46,7 @@ public sealed class ToolInstanceOwnerV1(CP6Context db,OperationsOwnerV1 owner)
     internal Task RejectLegacyAsync(string action,string? number=null,CancellationToken ct=default)
         =>Authority.ExecuteAsync<object>(OperationsOwnerV1.ToolInstance,action,false,async(a,t)=>
         {
-            if(number!=null&&!await a.ToolInstances().AnyAsync(x=>x.PlateNo==number,t))throw Error("TOOL_INSTANCE_NOT_FOUND",404);
+            if(number!=null&&!await (await a.ScopedToolInstances(t)).AnyAsync(x=>x.PlateNo==number,t))throw Error("TOOL_INSTANCE_NOT_FOUND",404);
             throw Error(action=="query"?"OWNER_READ_VERSION_REQUIRED":action=="edit"?"TOOL_PROFILE_VERSION_REQUIRED":"TOOL_LIFECYCLE_ADOPTION_UNPROVEN",action is "query" or "edit"?409:503);
         },ct);
     private static ToolInstanceCommandV1 Validate(ToolInstanceCommandV1 input)

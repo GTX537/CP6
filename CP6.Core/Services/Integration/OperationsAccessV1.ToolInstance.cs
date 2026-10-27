@@ -37,7 +37,7 @@ internal sealed partial class OperationsAccessV1
     internal void RequireToolFieldRead(string field)
     {if(!authority.Fields.Fields[field].CanRead)throw new OrderPriceCorrectionException("FIELD_READ_FORBIDDEN",403);}
     internal async Task<PlateMoldStock> RequireTool(Guid id,CancellationToken ct)
-        =>await ToolInstances().SingleOrDefaultAsync(x=>x.Id==id,ct)??throw new OrderPriceCorrectionException("TOOL_INSTANCE_NOT_FOUND",404);
+        =>await (await ScopedToolInstances(ct)).SingleOrDefaultAsync(x=>x.Id==id,ct)??throw new OrderPriceCorrectionException("TOOL_INSTANCE_NOT_FOUND",404);
     internal void RequireToolFieldWrite(string field)
     {if(!authority.Fields.Fields[field].CanWrite)throw new OrderPriceCorrectionException("FIELD_WRITE_FORBIDDEN",403);}
     internal async Task RequireToolInstance(CP6Context context,Guid id,CancellationToken ct)
@@ -60,6 +60,7 @@ internal sealed partial class OperationsAccessV1
         }
         var copy=System.Text.Json.Nodes.JsonNode.Parse(source.GetRawText())!.AsObject();
         foreach(var field in authority.Fields.Fields)if(!field.Value.CanRead)copy[char.ToLowerInvariant(field.Key[0])+field.Key[1..]]=null;
+        if(!await LinkedCustomerNameReadable(source.GetProperty("id").GetGuid(),ct))copy["customerName"]=null;
         return System.Text.Json.JsonSerializer.SerializeToElement(copy);
     }
     internal string[] ToolReadableFields=>authority.Fields.Fields.Where(x=>x.Value.CanRead).Select(x=>x.Key).ToArray();
