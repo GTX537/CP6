@@ -8,7 +8,7 @@
     <template v-if="context">
       <article v-if="context.policy"><h4>当前政策记录</h4><p>{{ context.policyKnowledge === 'CURRENT' ? '当前可用' : '当前不可用' }} · {{ context.policy.fact.body.requiredHumanApprovals }} 人批准</p><p>{{ context.policy.fact.body.reason }}</p><p>{{ context.policy.fact.body.effectiveFrom }} 至 {{ context.policy.fact.body.effectiveTo }}</p><p>{{ context.policy.fact.body.separateRequesterAndHandler ? '申请人与办理人须分离' : '按此政策核对办理人资格' }}</p></article>
       <p v-else>尚未登记适用政策，不能送审。</p>
-      <article v-if="context.submission"><h4>原审批提交</h4><p>已保存，待投递；审批尚未启动。</p><p>{{ context.submission.submissionId }} · {{ context.submission.frozenAt }}</p></article>
+      <article v-if="context.submission"><h4>原审批提交</h4><p>{{ deliveryText }}</p><p>{{ context.submission.submissionId }} · {{ context.submission.frozenAt }}</p><p v-if="context.delivery?.errorCode">投递状态码：{{ context.delivery.errorCode }}</p><p v-if="context.delivery?.state === 'DUPLICATE_OF'">对应原提交：{{ context.delivery.receipt?.submissionId }}</p></article>
       <p v-if="!context.disposition.request">请先保存报废申请，再读取审批条件。</p>
       <form v-if="canPolicy && !context.disposition.isDiscarded" aria-label="报废审批政策" @submit.prevent="policy('ENABLED')"><fieldset :disabled="locked">
         <label>适用原因 <select v-model="reasonCode" aria-label="审批政策原因"><option value="DAMAGE">损坏</option><option value="WEAR">磨损</option><option value="OBSOLETE">淘汰</option><option value="ALL">全部三种原因</option></select></label>
@@ -38,6 +38,23 @@ const permission = usePermissionStore(), canPolicy = computed(() => permission.h
 const context = ref<ToolApprovalContext | null>(null), busy = ref(false), completed = ref(false), pending = ref<PendingToolApproval | null>(null), error = ref(''), notice = ref('')
 const reason = ref(''), policyReason = ref(''), reasonCode = ref('DAMAGE'), approvals = ref(1), separate = ref(true), from = ref(''), until = ref('')
 const locked = computed(() => busy.value || !!pending.value || completed.value)
+const deliveryText = computed(() => {
+  switch (context.value?.delivery?.state) {
+    case 'RECEIVED': return '审批端已受理，尚待启动；尚未批准或报废。'
+    case 'DUPLICATE_OF': return '已关联原审批提交；尚未批准或报废。'
+    case 'OUTCOME_UNKNOWN': return '投递结果待确认，系统将查询原提交；请勿重复送审。'
+    case 'BLOCKED': return '投递已暂停，需恢复服务或当前提交资格；原申请保留。'
+    case 'CONFLICT': return '投递回执存在冲突，需核对原记录；原申请保留。'
+    default: return '已保存，待投递；审批尚未启动。'
+  }
+})
+function deliveryValid(c: ToolApprovalContext) {
+  const d = c.delivery; if (!d) return true
+  if (!c.submission || d.submissionId !== c.submission.submissionId || !['PENDING', 'OUTCOME_UNKNOWN', 'BLOCKED', 'CONFLICT', 'RECEIVED', 'DUPLICATE_OF'].includes(d.state)) return false
+  if (!['RECEIVED', 'DUPLICATE_OF'].includes(d.state)) return !d.receipt
+  const r = d.receipt
+  return !!r && r.state === 'DISPATCH_PENDING' && r.instanceId === null && (d.state === 'RECEIVED' ? r.submissionId === d.submissionId && r.alias === null : r.alias?.requestedSubmissionId === d.submissionId && r.alias.canonicalSubmissionId === r.submissionId && r.submissionId !== d.submissionId)
+}
 let live = true, generation = 0
 function clear() { context.value = null; pending.value = null; completed.value = false; reason.value = ''; policyReason.value = ''; from.value = ''; until.value = ''; notice.value = '' }
 async function run(action: (check: () => void) => Promise<void>) {
@@ -49,7 +66,7 @@ async function run(action: (check: () => void) => Promise<void>) {
 }
 async function load() {
   if (pending.value || !props.selected) return; const id = props.selected.reference.id
-  await run(async check => { const c = result(await api.context(id)); check(); if (c.toolId !== id || c.tenantId !== props.scope?.tenantId || c.disposition?.toolId !== id || c.disposition.isUsePermit !== false || c.disposition.obligations.canFinalize !== false || c.submission && (c.submission.toolId !== id || c.submission.state !== 'DISPATCH_PENDING' || c.submission.isApproved !== false || c.submission.isDiscarded !== false)) throw new Error('审批来源与当前对象不一致。'); context.value = c; completed.value = false; notice.value = '' })
+  await run(async check => { const c = result(await api.context(id)); check(); if (c.toolId !== id || c.tenantId !== props.scope?.tenantId || c.disposition?.toolId !== id || c.disposition.isUsePermit !== false || c.disposition.obligations.canFinalize !== false || !deliveryValid(c) || c.submission && (c.submission.toolId !== id || c.submission.state !== 'DISPATCH_PENDING' || c.submission.isApproved !== false || c.submission.isDiscarded !== false)) throw new Error('审批来源与当前对象不一致。'); context.value = c; completed.value = false; notice.value = '' })
 }
 async function write(kind: ToolApprovalKind, body: Record<string, unknown>) {
   const c = context.value, scope = props.scope; if (!c || !scope || locked.value || (kind === 'POLICY' ? !canPolicy.value : !canSubmit.value)) return

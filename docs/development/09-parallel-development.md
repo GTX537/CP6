@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W177 审批接收](dispatch/20261027-wave177/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
+> 当前：[W178 审批可靠投递](dispatch/20261027-wave178/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
+
+> 历史快照：[W177 审批接收](dispatch/20261027-wave177/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
 
 > 历史快照：[W176 处置审批冻结](dispatch/20261027-wave176/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
 

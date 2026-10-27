@@ -160932,6 +160932,16 @@
       "date": "2026-10-27",
       "change": "W177 trusted TxS intake, exact pin and immutable start intent:19 local checks,0skip; Handoff released, Main closeout pending. Actual transport/TxE/TxD/receipts and original goal remain.",
       "evidence": "docs/development/evidence/W177-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-27",
+      "change": "W177 archived once; only WP12-06.wave177_approval_intake lifecycle closed. W178 actual Owner service delivery admitted120–210min; engine and application remain pending.",
+      "evidence": "docs/development/dispatch/20261027-wave178/README.md"
+    },
+    {
+      "date": "2026-10-27",
+      "change": "W178 actual Owner service delivery and durable recovery:28 backend and6Vue,typecheck/build,0skip; Handoff released, Main closeout pending. Actual TxE/TxD/receipts and original goal remain.",
+      "evidence": "docs/development/evidence/W178-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -190597,7 +190607,7 @@
         }
       },
       "wave177_approval_intake": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "workspace_task": "W177-01",
         "report": "docs/development/evidence/W177-01/DELIVERY.md",
         "scope": "Actual WMS frozen-envelope TxS intake with registered C02 service authority, precise Owner evidence, three-level deduplication/direct aliases, receive-time binding and Published pin, atomic command/submission/start-outbox/audit and original recovery.",
@@ -190609,6 +190619,43 @@
           "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/153",
           "exact_tree_adoption": true,
           "at": "2026-10-27T13:32:58.704568+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave177-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W177-01",
+          "source": "0db99a523bbce74e9bc37816a1be1204eda950c6",
+          "remote_target": "bcfb6504aeb41dde5f0d563d392679e79353f4c6",
+          "branch": "codex/w177-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/599"
+        }
+      },
+      "wave178_approval_delivery": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "workspace_task": "W178-01",
+        "report": "docs/development/evidence/W178-01/DELIVERY.md",
+        "scope": "Actual frozen Owner outbox delivery through registered C02 service HTTP, durable lease/attempt/result, fixed original route/identity, original-command recovery, current authority and strict receipts; independent current transport UI.",
+        "remaining": "Transport acceptance only. Atomic TxE instance/tasks/history, TxD decisions/outbox and Owner Inbox/application receipt remain. C02 RSA keys, registration, policy and receive clock are explicit isolated test fixtures; full enterprise host qualification not claimed. No Actions, existing-environment migration or deployment. Original D2/D3/D5/D6/D7 exits remain.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "a1d95685e70855c96fe0c6f68187a46bc9832e7e",
+          "main": "eb3dc58e521442c4f77f83ed89a1bf2f7b5191cf",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/154",
+          "exact_tree_adoption": true,
+          "at": "2026-10-27T14:20:54.147135+00:00"
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
@@ -194608,10 +194655,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261027-wave177",
-      "path": "docs/development/dispatch/20261027-wave177/README.md",
-      "baseline_sha": "32037b9cb577e927e209c41bcfc615a20dd7f308",
-      "registered_at": "2026-10-27T12:50:18.184590+00:00",
+      "id": "20261027-wave178",
+      "path": "docs/development/dispatch/20261027-wave178/README.md",
+      "baseline_sha": "bcfb6504aeb41dde5f0d563d392679e79353f4c6",
+      "registered_at": "2026-10-27T13:51:05.346740+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -194630,31 +194677,31 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W177-01",
-          "workspace_task": "W177-01",
+          "id": "W178-01",
+          "workspace_task": "W178-01",
           "related_tasks": [
+            "WP10-48",
             "WP12-06",
             "WP12-07",
-            "WP10-48",
             "WP02-10"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Trusted approval intake and exact pinned binding transaction",
+          "title": "Owner actual approval delivery and durable original recovery",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "97592d4b4f3ff1a19765cbe0a2a172df794a6d33",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T125018Z-wave177-start/MESSAGE.md",
-            "at": "2026-10-27T12:50:18.184590+00:00",
-            "branch": "codex/w177-handoff"
+            "commit": "f096c803e3c1ae9f69ea00150bf9c157d7d99f87",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T135105Z-wave178-start/MESSAGE.md",
+            "at": "2026-10-27T13:51:05.346740+00:00",
+            "branch": "codex/w178-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w177-01",
-          "planned_scope_ref": "docs/development/dispatch/20261027-wave177/README.md",
+          "branch": "codex/w178-01",
+          "planned_scope_ref": "docs/development/dispatch/20261027-wave178/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -194662,8 +194709,8 @@
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
-          "validation": "19 local checks:18 PG18/HTTP and1 exact numeric rule,0skip; actual backend compile; no UI changes",
-          "worker_delivery_ref": "docs/development/evidence/W177-01/DELIVERY.md",
+          "validation": "28 backend checks:27 PG18/HTTP and1unit (19 explicit reuse),6Vue,typecheck/build,0skip",
+          "worker_delivery_ref": "docs/development/evidence/W178-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -194674,7 +194721,7 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-27T12:48:07.443071+00:00",
+        "started_at": "2026-10-27T13:50:05.690635+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
           120,
@@ -194686,7 +194733,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Continue real Owner service delivery, atomic TxE start, TxD decisions and Owner application receipt; retain original ROU/BOM/WO/SCHED and D2/D5/D6/D7 exits.",
+      "next_action": "Continue atomic TxE instance/tasks/token/history start, TxD decisions and Owner application receipt; retain original ROU/BOM/WO/SCHED and D2/D5/D6/D7 exits.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -194694,7 +194741,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 46.4
+      "elapsed_registered_wave_minutes": 32.6
     },
     "wave_history": [
       {
@@ -218476,6 +218523,118 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/152"
           }
         ]
+      },
+      {
+        "id": "20261027-wave177",
+        "path": "docs/development/dispatch/20261027-wave177/README.md",
+        "baseline_sha": "32037b9cb577e927e209c41bcfc615a20dd7f308",
+        "registered_at": "2026-10-27T12:50:18.184590+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W177-01",
+            "workspace_task": "W177-01",
+            "related_tasks": [
+              "WP12-06",
+              "WP12-07",
+              "WP10-48",
+              "WP02-10"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Trusted approval intake and exact pinned binding transaction",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "97592d4b4f3ff1a19765cbe0a2a172df794a6d33",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T125018Z-wave177-start/MESSAGE.md",
+              "at": "2026-10-27T12:50:18.184590+00:00",
+              "branch": "codex/w177-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w177-01",
+            "planned_scope_ref": "docs/development/dispatch/20261027-wave177/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "validation": "19 local checks:18 PG18/HTTP and1 exact numeric rule,0skip; actual backend compile; no UI changes",
+            "worker_delivery_ref": "docs/development/evidence/W177-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave177-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-27T12:48:07.443071+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            120,
+            210
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Continue real Owner service delivery, atomic TxE start, TxD decisions and Owner application receipt; retain original ROU/BOM/WO/SCHED and D2/D5/D6/D7 exits.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave177-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 46.4,
+        "actual_registered_wave_minutes": 50.11,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W177-01",
+            "source": "0db99a523bbce74e9bc37816a1be1204eda950c6",
+            "remote_target": "bcfb6504aeb41dde5f0d563d392679e79353f4c6",
+            "branch": "codex/w177-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/599"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W177-HANDOFF",
+            "source": "3195cb686c844f553bd07de84e13eaf1c896604f",
+            "remote_target": "227123e1f3ee300bf473bea611d5c1406b7f2e35",
+            "branch": "codex/w177-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/153"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -218575,7 +218734,7 @@
           "id": "D3",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W177-01",
+          "current_window": "W178-01",
           "prerequisite_adjustment": "Issue460 WorkCenter and ProcessCostRate actual current Owner; full process/cost/Finance adoption remains separate.",
           "adopted_window": "W49-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/402",
@@ -218584,7 +218743,7 @@
           "last_window_actual_agent_minutes": 56.28,
           "last_branches_deleted": true,
           "last_seats_released": true,
-          "next_action": "Continue real Owner service delivery, atomic TxE start, TxD decisions and Owner application receipt; retain original ROU/BOM/WO/SCHED and D2/D5/D6/D7 exits.",
+          "next_action": "Continue atomic TxE instance/tasks/token/history start, TxD decisions and Owner application receipt; retain original ROU/BOM/WO/SCHED and D2/D5/D6/D7 exits.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W136-01/DELIVERY.md",
           "last_product_source_report": "docs/development/evidence/W144-01/DELIVERY.md",
@@ -218619,7 +218778,8 @@
           "last_flow_activation_report": "docs/development/evidence/W174-01/DELIVERY.md",
           "last_approval_binding_report": "docs/development/evidence/W175-01/DELIVERY.md",
           "last_approval_intent_report": "docs/development/evidence/W176-01/DELIVERY.md",
-          "last_approval_intake_report": "docs/development/evidence/W177-01/DELIVERY.md"
+          "last_approval_intake_report": "docs/development/evidence/W177-01/DELIVERY.md",
+          "last_approval_delivery_report": "docs/development/evidence/W178-01/DELIVERY.md"
         },
         {
           "id": "D4",
