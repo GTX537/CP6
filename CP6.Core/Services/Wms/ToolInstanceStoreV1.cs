@@ -69,6 +69,7 @@ internal sealed class ToolInstanceStoreV1(CP6Context db)
     }
     internal async Task<ToolInstanceViewV1> HoldExactAsync(OperationsAccessV1 access,ToolInstanceRefV1 expected,CancellationToken ct)
     {
+        access.RequireToolSourceAccess(db);
         if(expected==null||expected.Owner!=Owner||expected.Id==Guid.Empty)throw Error("TOOL_INSTANCE_REF_INVALID",400);
         Revision(expected.Version);await Fence(ct);
         var current=await Read(access,expected.Id,null,ct);
