@@ -18,12 +18,14 @@ import { designerApi } from '@/api/oa/designer'
 import type { FlowDefSummary, LoadFlowResult } from '@/types/oa/designer'
 import DesignerCanvas from './DesignerCanvas.vue'
 import FlowDraftCreationPanel from './FlowDraftCreationPanel.vue'
+import FlowAuthoringDesignerV2 from './FlowAuthoringDesignerV2.vue'
 import { identityStamp, requireIdentity } from '@/auth/identity'
 import EdgePropertyPanel from './EdgePropertyPanel.vue'
 import NodePropertyPanel from './NodePropertyPanel.vue'
 import { isFallbackEdge, validateClient, type FlowSchemaDto, type SchemaEdge, type SchemaNode } from './designerModel'
 
 const { t } = useI18n()
+const authoringVisible = ref(false)
 
 const INITIAL_SCHEMA: FlowSchemaDto = {
   start: 'start1',
@@ -331,7 +333,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="designer-view">
+  <FlowAuthoringDesignerV2 v-if="authoringVisible" @close="authoringVisible = false" />
+  <div v-else class="designer-view">
     <header class="designer-header">
       <div class="header-identity">
         <span class="header-icon"><el-icon><Connection /></el-icon></span>
@@ -345,6 +348,7 @@ onMounted(async () => {
         </div>
       </div>
       <div class="header-actions">
+        <el-button @click="authoringVisible = true">新草稿工作区</el-button>
         <el-button :icon="Check" @click="doValidate">校验</el-button>
         <el-button v-permission="'oa-designer:add'" :icon="CopyDocument" @click="openCloneDialog">另存副本</el-button>
         <el-button v-permission="'oa-designer:edit'" :disabled="!!selectedKey && !draftRowVersion" :loading="saving" @click="doSave">保存草稿</el-button>

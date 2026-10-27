@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-27：W172 流程草稿采用待 Main 收尾
+
+FLOW草稿Owner新建/读取/保存、当前Scope/资源/字段/设计期策略、原命令与审计同事务、旧入口身份隔离及设计器已验证；42后端、14UI、类型检查和构建通过，0skip。[报告](../development/evidence/W172-01/DELIVERY.md)。登记64.09分钟，预计150–240；Handoff已释放，Main待正常PR/finish。发布/启用/审批和七天全部出口保留。
+
 ## 2026-10-27：W171 Scope授权门待 Main 收尾
 
 Scope环境/租户/权限域登记、真实epoch/事务锁、14张当前权限源表writer参与、原操作恢复已验证；31本地检查（28PG18/HTTP、3unit），0skip。[报告](../development/evidence/W171-01/DELIVERY.md)。登记33.93分钟，预计90–150；Handoff已释放、Main待收尾。正式Workflow消费者/审批与七天全部出口仍开放。

@@ -30,7 +30,14 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     private static async Task EngineeringAction(Harness h, string menuKey, string action)
     {
         var menu = await h.Db.Sys_Menus.SingleOrDefaultAsync(row => row.MenuKey == menuKey);
-        if (menu == null) { menu = new() { MenuId = menuKey == "space-site" ? 9151 : 9144, MenuKey = menuKey, MenuName = menuKey }; h.Db.Sys_Menus.Add(menu); }
+        if (menu == null)
+        {
+            var id = menuKey == "space-site" ? 9151 : 9144;
+            // Related Owner suites share the fixture database. A different menu already using
+            // the preferred fixture id must not prevent genuine cross-feature verification.
+            if (await h.Db.Sys_Menus.AnyAsync(m => m.MenuId == id)) id = checked(await h.Db.Sys_Menus.MaxAsync(m => m.MenuId) + 1);
+            menu = new() { MenuId = id, MenuKey = menuKey, MenuName = menuKey }; h.Db.Sys_Menus.Add(menu);
+        }
         if (!await h.Db.Sys_MenuActions.AnyAsync(row => row.MenuId == menu.MenuId && row.ActionCode == action)) h.Db.Sys_MenuActions.Add(new() { MenuId = menu.MenuId, ActionCode = action, ActionName = action });
         if (!await h.Db.Sys_RoleActions.AnyAsync(row => row.MenuId == menu.MenuId && row.RoleId == 72 && row.ActionCode == action)) h.Db.Sys_RoleActions.Add(new() { RoleId = 72, MenuId = menu.MenuId, ActionCode = action });
         await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear();

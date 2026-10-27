@@ -36,5 +36,13 @@ public class BizExceptionMiddleware
             });
             await context.Response.WriteAsync(payload);
         }
+        catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (
+            ex.InnerException is Npgsql.PostgresException { SqlState: "23514", MessageText: "AUTHORITY_FENCE_UNAVAILABLE" })
+        {
+            // A legacy EF entry attempted to write an identity owned by controlled FLOW authoring.
+            // Keep its existing envelope, with a precise unavailable result instead of a server error.
+            context.Response.StatusCode = 503;
+            await context.Response.WriteAsJsonAsync(new { code = "AUTHORITY_FENCE_UNAVAILABLE", message = "AUTHORITY_FENCE_UNAVAILABLE" });
+        }
     }
 }

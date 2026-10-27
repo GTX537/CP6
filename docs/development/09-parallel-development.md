@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W171 Scope授权门](dispatch/20261027-wave171/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
+> 当前：[W172 流程草稿Owner](dispatch/20261027-wave172/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
+
+> 历史快照：[W171 Scope授权门](dispatch/20261027-wave171/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
 
 > 历史快照：[W170 流程定义只读与显式版本草稿](dispatch/20261027-wave170/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
 
