@@ -14,6 +14,8 @@ internal sealed class ToolActualUsageStoreV1(CP6Context db)
     internal static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
     internal static string Hash(string text) => ToolMaintenanceStoreV1.Hash(text);
     internal static string OwnerOf(string kind) => kind switch { "EVIDENCE" => EvidenceOwner, "OCCURRENCE" => OccurrenceOwner,
+        "M_OCCURRENCE" => "Main.Wms.ToolMaintenanceOccurrence.v1", "M_OBSERVATION" => ObservationOwner,
+        "M_POLICY" => "Main.Wms.ToolMaintenanceRecognitionPolicy.v1", "M_RECOGNITION" => DecisionOwner, "M_APPLICATION" => ApplicationOwner,
         "OBSERVATION" => ObservationOwner, "POLICY" => PolicyOwner, "RECOGNITION" => DecisionOwner, "USE" => UseOwner, "APPLICATION" => ApplicationOwner, _ => throw Error("TOOL_ACTUAL_UNAVAILABLE",503) };
     internal static ToolActualRefV1 Ref(ToolActualFactV1 fact) => new(OwnerOf(fact.Kind), fact.RecordId, fact.Revision, Hash(JsonSerializer.Serialize(fact, Json)));
     internal static T Body<T>(ToolActualFactViewV1 fact) => fact.Fact.Body.Deserialize<T>(Json) ?? throw Error("TOOL_ACTUAL_UNAVAILABLE",503);
@@ -24,7 +26,7 @@ internal sealed class ToolActualUsageStoreV1(CP6Context db)
         if (!db.Database.IsNpgsql() || db.Database.CurrentTransaction == null) throw Error("AUTHORITY_FENCE_UNAVAILABLE",503);
         await db.Database.ExecuteSqlRawAsync("LOCK TABLE cp6_tool_actual_v1.environment,cp6_tool_actual_v1.documents,cp6_tool_actual_v1.facts " + (write ? "IN SHARE ROW EXCLUSIVE MODE" : "IN SHARE MODE"),ct);
         if (!await db.Database.SqlQueryRaw<bool>("""
-            SELECT count(*)=7 AS "Value" FROM pg_catalog.pg_trigger WHERE tgrelid IN ('cp6_tool_actual_v1.environment'::regclass,
+            SELECT count(*)=8 AS "Value" FROM pg_catalog.pg_trigger WHERE tgrelid IN ('cp6_tool_actual_v1.environment'::regclass,
               'cp6_tool_actual_v1.documents'::regclass,'cp6_tool_actual_v1.facts'::regclass) AND tgname LIKE 'tool_actual_%'
               AND tgenabled IN ('O','A') AND NOT tgisinternal
             """).SingleAsync(ct)) throw Error("TOOL_ACTUAL_UNAVAILABLE",503);
@@ -61,7 +63,7 @@ internal sealed class ToolActualUsageStoreV1(CP6Context db)
     }
     internal async Task<bool> ForeignIdentity(string key,Guid tool,CancellationToken ct)
         => await db.Database.SqlQuery<bool>($"SELECT EXISTS(SELECT FROM cp6_tool_actual_v1.facts WHERE tenant_id={db.CurrentTenantId} AND identity_key={key} AND tool_id<>{tool}) AS \"Value\"").SingleAsync(ct);
-    internal static bool Unreconciled(ToolActualFactViewV1[] facts) => facts.Any(f=>f.Fact.Kind=="OBSERVATION");
+    internal static bool Unreconciled(ToolActualFactViewV1[] facts) => facts.Any(f=>f.Fact.Kind is "OBSERVATION" or "M_OBSERVATION");
     internal static ToolActualObservationViewV1 Observation(ToolActualFactViewV1 original,ToolActualFactViewV1[] facts)
     {
         var decisions=facts.Where(f=>f.Fact.Kind=="RECOGNITION"&&f.Fact.SubjectId==original.Reference.Id).ToArray();

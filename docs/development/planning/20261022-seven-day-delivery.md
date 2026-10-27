@@ -1392,3 +1392,7 @@ BUG582版本化输入修复，历史原件及恢复保持；37PG/HTTP、9UI、ty
 ## 2026-10-27 W167 实际使用认定与计数应用
 
 95本地检查（88PG18/HTTP）、22组件及type/Vite通过。[报告](../evidence/W167-01/DELIVERY.md)。登记44.61分钟，预计90–150；Handoff已释放、Main待finish。Continue current ENG purpose/technical qualification and normal-use admission or discard approval/obligation closure after checking actual dependencies. Preserve original D2/D3/D5/D6/D7, Order request application, formal Sales and all seven-day exits.
+
+## 2026-10-27 W168 维护实际结果认定与正式完成
+
+75本地检查（75PG18/HTTP）、29组件及type/Vite通过。[报告](../evidence/W168-01/DELIVERY.md)。登记28.53分钟，预计70–110；Handoff已释放、Main待finish。Continue normal-use ENG technical approval/purpose qualification or discard approval/obligation closure after latest dependencies; preserve original D2/D3/D5/D6/D7, WP05-05 request application and WP04-32 formal Sales.
