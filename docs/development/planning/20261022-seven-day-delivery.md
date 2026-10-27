@@ -1472,3 +1472,7 @@ Owner原包可靠服务投递、持久租约/回执与原命令恢复已验证�
 ## 2026-10-27 W187 版本化BOM与准确材料来源
 
 BOM独立Owner、多层稳定位置、准确材料/单位、实际ProductMaterial原件、历史/使用位置、工程组成与原结果恢复已验证；草稿不冒充冻结或生产资格。43 local checks: 43 PG18/HTTP and 0 affected kernel/unit;44 Vue;types/build PASS;0skip。[报告](../evidence/W187-01/DELIVERY.md)。登记19.62分钟，预计120–210；Handoff已释放，Main待正常PR/finish。实际业务效果及七天全部出口保留。 Continue the direct manufacturing mapping/output relationships and controlled sources needed for engineering review/freeze and original WO/SCHED writes; preserve D2/D5/D6/D7 and do not expand unrelated domains.
+
+## 2026-10-27 W188 制造映射与逐产出关系
+
+制造关系独立Owner、多对多位置映射、逐产出生成/投入/中间流、准确产品/单位/配置、历史差异与原结果恢复已验证；专业原证、正式关系集及冻结仍待。53 local checks: 53 PG18/HTTP and 0 affected kernel/unit;38 Vue;types/build PASS;0skip。[报告](../evidence/W188-01/DELIVERY.md)。登记23.85分钟，预计70–115；Handoff已释放，Main待正常PR/finish。实际业务效果及七天全部出口保留。 Continue the actual controlled specification/document and professional evidence sources needed to assemble formal output relations and engineering review/freeze, then original WO/SCHED writes; retain D2/D5/D6/D7 and avoid unrelated expansion.
