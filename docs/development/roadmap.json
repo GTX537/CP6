@@ -160962,6 +160962,16 @@
       "date": "2026-10-27",
       "change": "W180 native task assignment/current authority: 33 local checks: 17 PG18 and 16 affected kernel/unit;0skip;no UI change; Handoff released, Main closeout pending. TxD/application and original goal remain.",
       "evidence": "docs/development/evidence/W180-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-27",
+      "change": "W180 archived once; only WP12-06.wave180_task_assignment lifecycle closed. W181 actual native TxD and original decision command admitted120–210min; business application and original goal exits remain pending.",
+      "evidence": "docs/development/dispatch/20261027-wave181/README.md"
+    },
+    {
+      "date": "2026-10-27",
+      "change": "W181 native approval decision transaction: 40 local checks: 24 PG18/HTTP and 16 affected kernel/unit;0skip;no UI change; Handoff released, Main closeout pending. Owner application and original goal remain.",
+      "evidence": "docs/development/evidence/W181-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -190738,7 +190748,7 @@
         }
       },
       "wave180_task_assignment": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "workspace_task": "W180-01",
         "report": "docs/development/evidence/W180-01/DELIVERY.md",
         "scope": "Actual native task assignment facts persist with the original TxE engine graph: exact original Principal, resolver rule/candidates, pinned version and node/stage/round. Native delegation no longer replaces original duty. Transaction participant checks current actual/principal command authority, exact active grant and both SOD identities.",
@@ -190750,6 +190760,43 @@
           "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/156",
           "exact_tree_adoption": true,
           "at": "2026-10-27T15:53:11.595844+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave180-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W180-01",
+          "source": "510e915e34f5b68cde65316f4715571a137cf4d3",
+          "remote_target": "b6fe6fc2c202eac0da3217730f235226ab54214c",
+          "branch": "codex/w180-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/602"
+        }
+      },
+      "wave181_approval_decision": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "workspace_task": "W181-01",
+        "report": "docs/development/evidence/W181-01/DELIVERY.md",
+        "scope": "Actual native TxD uses the existing all/any/veto/serial/parallel kernel, exact pinned task duty and current principal/actual/delegation/SOD authority; task and instance versions, original command recovery, immutable votes, complete terminal evidence, original decision bytes, outbox and audit commit in one PostgreSQL transaction. Existing HTTP decision entry adopts this writer.",
+        "remaining": "Isolated PostgreSQL18 and actual local login/CSRF/HTTP validation only; no new UI or enterprise acceptance. Decision persistence is not business application. Current business projection, native task page, decision/evidence query, actual reliable delivery and Owner application receipt remain, along with service/subflow and all original D2/D3/D5/D6/D7 exits. No Actions, existing-environment migration or deployment.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "5f1674748fa11aefabb1782d1485c0d2d999917e",
+          "main": "55126cdcc3af83e456f4e0e3d79dd6be1ee3de97",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/157",
+          "exact_tree_adoption": true,
+          "at": "2026-10-27T16:55:31.540179+00:00"
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
@@ -194749,10 +194796,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261027-wave180",
-      "path": "docs/development/dispatch/20261027-wave180/README.md",
-      "baseline_sha": "63321d8f92067659d813eda5c61c5531c07ccc69",
-      "registered_at": "2026-10-27T15:34:48.126454+00:00",
+      "id": "20261027-wave181",
+      "path": "docs/development/dispatch/20261027-wave181/README.md",
+      "baseline_sha": "b6fe6fc2c202eac0da3217730f235226ab54214c",
+      "registered_at": "2026-10-27T16:15:43.013631+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -194771,8 +194818,8 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W180-01",
-          "workspace_task": "W180-01",
+          "id": "W181-01",
+          "workspace_task": "W181-01",
           "related_tasks": [
             "WP10-48",
             "WP12-06",
@@ -194780,22 +194827,22 @@
             "WP02-10"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Native task assignment and current delegated authority evidence",
+          "title": "Native approval vote and decision transaction",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "ff53c1fb426c6cdbc0aea98413abd779b6204944",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T153448Z-wave180-start/MESSAGE.md",
-            "at": "2026-10-27T15:34:48.126454+00:00",
-            "branch": "codex/w180-handoff"
+            "commit": "cda75e3f4e56f1bf0b45fbede5665bea53d55bbb",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T161543Z-wave181-start/MESSAGE.md",
+            "at": "2026-10-27T16:15:43.013631+00:00",
+            "branch": "codex/w181-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w180-01",
-          "planned_scope_ref": "docs/development/dispatch/20261027-wave180/README.md",
+          "branch": "codex/w181-01",
+          "planned_scope_ref": "docs/development/dispatch/20261027-wave181/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -194803,8 +194850,8 @@
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
-          "validation": "33 local checks: 17 PG18 and 16 affected kernel/unit;0skip;no UI change",
-          "worker_delivery_ref": "docs/development/evidence/W180-01/DELIVERY.md",
+          "validation": "40 local checks: 24 PG18/HTTP and 16 affected kernel/unit;0skip;no UI change",
+          "worker_delivery_ref": "docs/development/evidence/W181-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -194815,11 +194862,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-27T15:32:25.359424+00:00",
+        "started_at": "2026-10-27T16:13:26.939498+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          90,
-          150
+          120,
+          210
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -194827,7 +194874,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Continue actual TxD decision evidence/atomic outbox and Owner original application receipts; complete necessary service/subflow adapters and retain original ROU/BOM/WO/SCHED and D2/D5/D6/D7 exits.",
+      "next_action": "Continue actual Owner decision Inbox/application receipt and business effects in one Owner transaction, plus current projection and native task UI. Preserve original ROU/BOM/WO/SCHED and D2/D5/D6/D7 exits.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -194835,7 +194882,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 26.36
+      "elapsed_registered_wave_minutes": 42.81
     },
     "wave_history": [
       {
@@ -218953,6 +219000,118 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/155"
           }
         ]
+      },
+      {
+        "id": "20261027-wave180",
+        "path": "docs/development/dispatch/20261027-wave180/README.md",
+        "baseline_sha": "63321d8f92067659d813eda5c61c5531c07ccc69",
+        "registered_at": "2026-10-27T15:34:48.126454+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W180-01",
+            "workspace_task": "W180-01",
+            "related_tasks": [
+              "WP10-48",
+              "WP12-06",
+              "WP12-07",
+              "WP02-10"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Native task assignment and current delegated authority evidence",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "ff53c1fb426c6cdbc0aea98413abd779b6204944",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T153448Z-wave180-start/MESSAGE.md",
+              "at": "2026-10-27T15:34:48.126454+00:00",
+              "branch": "codex/w180-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w180-01",
+            "planned_scope_ref": "docs/development/dispatch/20261027-wave180/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "validation": "33 local checks: 17 PG18 and 16 affected kernel/unit;0skip;no UI change",
+            "worker_delivery_ref": "docs/development/evidence/W180-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave180-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-27T15:32:25.359424+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            90,
+            150
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Continue actual TxD decision evidence/atomic outbox and Owner original application receipts; complete necessary service/subflow adapters and retain original ROU/BOM/WO/SCHED and D2/D5/D6/D7 exits.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave180-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 26.36,
+        "actual_registered_wave_minutes": 35.82,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W180-01",
+            "source": "510e915e34f5b68cde65316f4715571a137cf4d3",
+            "remote_target": "b6fe6fc2c202eac0da3217730f235226ab54214c",
+            "branch": "codex/w180-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/602"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W180-HANDOFF",
+            "source": "589088f7ef9fa50fe2cdf4016dab47fe4044207c",
+            "remote_target": "6a4bd2140f2b1488cbbcd6e041ef63485861eb28",
+            "branch": "codex/w180-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/156"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -219052,7 +219211,7 @@
           "id": "D3",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W180-01",
+          "current_window": "W181-01",
           "prerequisite_adjustment": "Issue460 WorkCenter and ProcessCostRate actual current Owner; full process/cost/Finance adoption remains separate.",
           "adopted_window": "W49-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/402",
@@ -219061,7 +219220,7 @@
           "last_window_actual_agent_minutes": 56.28,
           "last_branches_deleted": true,
           "last_seats_released": true,
-          "next_action": "Continue actual TxD decision evidence/atomic outbox and Owner original application receipts; complete necessary service/subflow adapters and retain original ROU/BOM/WO/SCHED and D2/D5/D6/D7 exits.",
+          "next_action": "Continue actual Owner decision Inbox/application receipt and business effects in one Owner transaction, plus current projection and native task UI. Preserve original ROU/BOM/WO/SCHED and D2/D5/D6/D7 exits.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W136-01/DELIVERY.md",
           "last_product_source_report": "docs/development/evidence/W144-01/DELIVERY.md",
@@ -219099,7 +219258,8 @@
           "last_approval_intake_report": "docs/development/evidence/W177-01/DELIVERY.md",
           "last_approval_delivery_report": "docs/development/evidence/W178-01/DELIVERY.md",
           "last_approval_start_report": "docs/development/evidence/W179-01/DELIVERY.md",
-          "last_task_assignment_report": "docs/development/evidence/W180-01/DELIVERY.md"
+          "last_task_assignment_report": "docs/development/evidence/W180-01/DELIVERY.md",
+          "last_approval_decision_report": "docs/development/evidence/W181-01/DELIVERY.md"
         },
         {
           "id": "D4",

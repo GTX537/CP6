@@ -167,7 +167,7 @@ public partial class FlowEngine : IFlowEngine
         var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == task.InstanceId);
         if (inst is null || inst.Status != FlowInstanceStatus.Running) return;   // 实例已结束/挂起
 
-        RequireLegacyRuntime(inst); // oa.app/2.0 decisions must use its TxD Owner, never legacy callbacks.
+        if (!_approvalDecisionV2) RequireLegacyRuntime(inst);
 
         await AssertActorMayHandleAsync(task, actorId, onBehalfOf);   // ★ 归属闸（P0 票#1）：非本人/非委派/非系统 → E-WF-029
 
@@ -212,7 +212,7 @@ public partial class FlowEngine : IFlowEngine
 
         if (!decided)
         {
-            await _db.SaveChangesAsync();   // 等其他会签人
+            if (!_approvalDecisionV2) await _db.SaveChangesAsync();   // Native TxD saves the whole operation.
             return;
         }
 
@@ -264,8 +264,11 @@ public partial class FlowEngine : IFlowEngine
                 VoidPendingFormTos(inst.Id);      // ★ T9：驳回连坐，全 Pending 传签履历行 → 作废
             }
         }
-        await DispatchIfFinishedAsync(inst, actorId, comment);   // 终态 → 反向回调业务（原子：在最终 SaveChanges 前）
-        await _db.SaveChangesAsync();
+        if (!_approvalDecisionV2)
+        {
+            await DispatchIfFinishedAsync(inst, actorId, comment);
+            await _db.SaveChangesAsync();
+        }
     }
 
     /// <summary>
@@ -326,7 +329,8 @@ public partial class FlowEngine : IFlowEngine
             if (type == "end")
             {
                 ConsumeToken(token);
-                AddHistory(inst.Id, node.Id, Guid.Empty, "end", "Reached end without an approval decision");
+                AddHistory(inst.Id, node.Id, Guid.Empty, "end", _approvalDecisionV2
+                    ? "Reached end during recorded human decision" : "Reached end without an approval decision");
                 FinishIfDrained(inst); return;
             }
         }
@@ -498,6 +502,9 @@ public partial class FlowEngine : IFlowEngine
 
     internal async Task<FlowSchema> LoadSchemaAsync(Wf_FlowInstance instance, CancellationToken ct = default)
     {
+        if (_approvalDecisionV2 && instance.Creator == ApprovalRuntimeV2
+            && instance.Id == ApprovalInstanceId(_approvalOriginal!))
+            return _approvalDecisionSchema!;
         RequireLegacyRuntime(instance);
         if (instance.FlowDefVersionId is not Guid versionId)
         {

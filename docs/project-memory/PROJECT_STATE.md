@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-27：W181 实际审批决定共同事务待 Main 收尾
+
+实际原生票决、双版本、原命令与终态证据/Outbox共同事务已接入既有HTTP；冻结政策和当前权限保留。40 local checks: 24 PG18/HTTP and 16 affected kernel/unit;0skip;no UI change。[报告](../development/evidence/W181-01/DELIVERY.md)。登记42.81分钟，预计120–210；Handoff已释放，Main待正常PR/finish。业务应用/页面及七天全部出口保留。
+
 ## 2026-10-27：W180 任务原职责与当前委派授权待 Main 收尾
 
 真实任务原Principal/规则/候选与原启动同事务；委派不覆盖原职责，当前权限/委派范围/SOD提供同事务参与检查。33 local checks: 17 PG18 and 16 affected kernel/unit;0skip;no UI change。[报告](../development/evidence/W180-01/DELIVERY.md)。登记26.36分钟，预计90–150；Handoff已释放，Main待正常PR/finish。TxD/业务回执和七天全部出口保留。

@@ -11,7 +11,7 @@ namespace CP6.Tests.Erp;
 public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
     private static ApprovalTaskAuthorityV2 TaskAuthority(Harness h) => new(h.Db,
-        new HttpContextAccessor { HttpContext = h.Http }, ScopeFence(h), _ => Task.FromResult(
+        new OperationsHttp { HttpContext = h.Http }, ScopeFence(h), _ => Task.FromResult(
             Guid.Parse(h.Http.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value)));
     private static async Task TaskPermission(Harness h, Guid reviewer)
     {
