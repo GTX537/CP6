@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W175 审批绑定与版本](dispatch/20261027-wave175/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
+> 当前：[W176 处置审批冻结](dispatch/20261027-wave176/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
+
+> 历史快照：[W175 审批绑定与版本](dispatch/20261027-wave175/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
 
 > 历史快照：[W174 独立启停与版本](dispatch/20261027-wave174/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
 

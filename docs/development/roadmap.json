@@ -160912,6 +160912,16 @@
       "date": "2026-10-27",
       "change": "W175 approval binding:23backend+15UI,typecheck/build,0skip; Handoff released, Main closeout pending. Exact runtime/dependency consumers/full workflow and original goal states unchanged.",
       "evidence": "docs/development/evidence/W175-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-27",
+      "change": "W175 archived once; only WP12-06.wave175_approval_binding lifecycle closed. W176 actual Owner frozen approval intent admitted90–150min; engine and application remain pending.",
+      "evidence": "docs/development/dispatch/20261027-wave176/README.md"
+    },
+    {
+      "date": "2026-10-27",
+      "change": "W176 actual Owner frozen approval:18backend+15UI,typecheck/build,0skip; Handoff released, Main closeout pending. Workflow transport/engine/decision consumers and original goal states unchanged.",
+      "evidence": "docs/development/evidence/W176-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -187364,6 +187374,32 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/590"
         }
+      },
+      "wave176_approval_intent": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "workspace_task": "W176-01",
+        "report": "docs/development/evidence/W176-01/DELIVERY.md",
+        "scope": "Actual WMS disposition approval policy and frozen Owner submission: exact Subject/Policy/native/obligation evidence, durable original envelope/outbox/command/audit, permanent intent deduplication, current authority, API and page recovery.",
+        "remaining": "Owner local freeze only; no actual transport registration, delivery worker, Workflow TxS/TxE/TxD, instance, decision, Owner Inbox/application receipt or final discard. Cross-Owner obligations remain UNKNOWN. No browser-to-PG E2E,247 real acceptance,Actions,existing-environment migration or deployment. Original D2/D3/D5/D6/D7 exits remain.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "ad859bc56b40ddeb5d5c75f2bb395ac5531f13e0",
+          "main": "6e283a0f052f8b5555d6d82f5cad24b1c9b29888",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/152",
+          "exact_tree_adoption": true,
+          "at": "2026-10-27T12:29:52.741811+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "handoff_seat_released": true,
+          "main_branch_deleted": false,
+          "handoff_branch_deleted": true
+        }
       }
     },
     {
@@ -190503,7 +190539,7 @@
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "wave175_approval_binding": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "workspace_task": "W175-01",
         "report": "docs/development/evidence/W175-01/DELIVERY.md",
         "scope": "OA-APP binding Owner: trusted configuration registry, immutable revisions and timelines, exact publication validation, native current permissions/Scope, atomic original command and audit, actual management UI.",
@@ -190519,13 +190555,24 @@
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "original_dependencies_unchanged": true,
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "lifecycle_snapshot": {
-          "main_finish_required": true,
-          "main_seat_released": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
           "handoff_seat_released": true,
-          "main_branch_deleted": false,
-          "handoff_branch_deleted": true
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave175-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W175-01",
+          "source": "5ffee88cfa3929c9bec0c2d9943e2602ebe3b68f",
+          "remote_target": "00b45abb5987d235c6c9cb85819373a8926746ff",
+          "branch": "codex/w175-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/597"
         }
       }
     },
@@ -194514,10 +194561,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261027-wave175",
-      "path": "docs/development/dispatch/20261027-wave175/README.md",
-      "baseline_sha": "13a007fc1b81abb1332b2537c2fb7233dc8babf2",
-      "registered_at": "2026-10-27T11:22:43.763859+00:00",
+      "id": "20261027-wave176",
+      "path": "docs/development/dispatch/20261027-wave176/README.md",
+      "baseline_sha": "00b45abb5987d235c6c9cb85819373a8926746ff",
+      "registered_at": "2026-10-27T12:06:20.189154+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -194536,31 +194583,32 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W175-01",
-          "workspace_task": "W175-01",
+          "id": "W176-01",
+          "workspace_task": "W176-01",
           "related_tasks": [
+            "WP10-48",
+            "WP10-36",
             "WP12-06",
-            "WP12-02",
-            "WP02-10",
-            "WP02-13"
+            "WP12-07",
+            "WP02-10"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "OA-APP trusted binding and immutable activation timeline",
+          "title": "WMS actual disposition approval policy and frozen original submission",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "5966b8647a681792f96181f164745b4064e3d429",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T112243Z-wave175-start/MESSAGE.md",
-            "at": "2026-10-27T11:22:43.763859+00:00",
-            "branch": "codex/w175-handoff"
+            "commit": "502af5fcfd14645b8a23dd8505b129b904dbf8c6",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T120620Z-wave176-start/MESSAGE.md",
+            "at": "2026-10-27T12:06:20.189154+00:00",
+            "branch": "codex/w176-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w175-01",
-          "planned_scope_ref": "docs/development/dispatch/20261027-wave175/README.md",
+          "branch": "codex/w176-01",
+          "planned_scope_ref": "docs/development/dispatch/20261027-wave176/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -194568,8 +194616,8 @@
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
-          "validation": "23backend (8 PG18/HTTP+15unit with explicit reuse),15UI,typecheck/build;0skip",
-          "worker_delivery_ref": "docs/development/evidence/W175-01/DELIVERY.md",
+          "validation": "18backend PG18/HTTP with10 unchanged disposition regressions reused,15UI,typecheck/build;0skip",
+          "worker_delivery_ref": "docs/development/evidence/W176-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -194580,7 +194628,7 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-27T11:21:39.375700+00:00",
+        "started_at": "2026-10-27T12:05:13.279587+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
           90,
@@ -194592,7 +194640,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Connect actual seven-day Owner frozen Subject/Policy and durable submission to original-key engine startup with the accepted OA-APP transaction/evidence requirements; do not count configuration as business approval.",
+      "next_action": "Adopt the actual frozen WMS Owner envelope through trusted registered service transport and OA-APP TxS selection/pinning, then atomic engine start/real decisions and two-sided durable receipts; retain engineering/WO/SCHED and all original goal exits.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -194600,7 +194648,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 26.26
+      "elapsed_registered_wave_minutes": 25.68
     },
     "wave_history": [
       {
@@ -218157,6 +218205,118 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/150"
           }
         ]
+      },
+      {
+        "id": "20261027-wave175",
+        "path": "docs/development/dispatch/20261027-wave175/README.md",
+        "baseline_sha": "13a007fc1b81abb1332b2537c2fb7233dc8babf2",
+        "registered_at": "2026-10-27T11:22:43.763859+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W175-01",
+            "workspace_task": "W175-01",
+            "related_tasks": [
+              "WP12-06",
+              "WP12-02",
+              "WP02-10",
+              "WP02-13"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "OA-APP trusted binding and immutable activation timeline",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "5966b8647a681792f96181f164745b4064e3d429",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T112243Z-wave175-start/MESSAGE.md",
+              "at": "2026-10-27T11:22:43.763859+00:00",
+              "branch": "codex/w175-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w175-01",
+            "planned_scope_ref": "docs/development/dispatch/20261027-wave175/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "validation": "23backend (8 PG18/HTTP+15unit with explicit reuse),15UI,typecheck/build;0skip",
+            "worker_delivery_ref": "docs/development/evidence/W175-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave175-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-27T11:21:39.375700+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            90,
+            150
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Connect actual seven-day Owner frozen Subject/Policy and durable submission to original-key engine startup with the accepted OA-APP transaction/evidence requirements; do not count configuration as business approval.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave175-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 26.26,
+        "actual_registered_wave_minutes": 30.34,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W175-01",
+            "source": "5ffee88cfa3929c9bec0c2d9943e2602ebe3b68f",
+            "remote_target": "00b45abb5987d235c6c9cb85819373a8926746ff",
+            "branch": "codex/w175-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/597"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W175-HANDOFF",
+            "source": "7e36893c89b99e0d4f65e1828215e9a769f4998c",
+            "remote_target": "f485dedb409d5223130dfe67a05b28de7fa4bc75",
+            "branch": "codex/w175-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/151"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -218256,7 +218416,7 @@
           "id": "D3",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W175-01",
+          "current_window": "W176-01",
           "prerequisite_adjustment": "Issue460 WorkCenter and ProcessCostRate actual current Owner; full process/cost/Finance adoption remains separate.",
           "adopted_window": "W49-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/402",
@@ -218265,7 +218425,7 @@
           "last_window_actual_agent_minutes": 56.28,
           "last_branches_deleted": true,
           "last_seats_released": true,
-          "next_action": "Connect actual seven-day Owner frozen Subject/Policy and durable submission to original-key engine startup with the accepted OA-APP transaction/evidence requirements; do not count configuration as business approval.",
+          "next_action": "Adopt the actual frozen WMS Owner envelope through trusted registered service transport and OA-APP TxS selection/pinning, then atomic engine start/real decisions and two-sided durable receipts; retain engineering/WO/SCHED and all original goal exits.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W136-01/DELIVERY.md",
           "last_product_source_report": "docs/development/evidence/W144-01/DELIVERY.md",
@@ -218298,7 +218458,8 @@
           "last_flow_authoring_report": "docs/development/evidence/W172-01/DELIVERY.md",
           "last_flow_publication_report": "docs/development/evidence/W173-01/DELIVERY.md",
           "last_flow_activation_report": "docs/development/evidence/W174-01/DELIVERY.md",
-          "last_approval_binding_report": "docs/development/evidence/W175-01/DELIVERY.md"
+          "last_approval_binding_report": "docs/development/evidence/W175-01/DELIVERY.md",
+          "last_approval_intent_report": "docs/development/evidence/W176-01/DELIVERY.md"
         },
         {
           "id": "D4",

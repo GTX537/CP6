@@ -52,13 +52,14 @@ public sealed class ToolDispositionOwnerV1(CP6Context db, OperationsOwnerV1 owne
         return new(a, query, tools, store, native, registration, await store.Facts(id, ct), await Obligations(id, ct));
     }
     public Task<ToolDispositionContextV1> ContextAsync(Guid id, CancellationToken ct = default)
-        => Authority.ExecuteAsync(OperationsOwnerV1.ToolInstance, "query", false, async (a, t) =>
+        => Authority.ExecuteAsync(OperationsOwnerV1.ToolInstance, "query", false, (a, t) => ReadOwnedAsync(a, id, false, t), ct);
+    internal async Task<ToolDispositionContextV1> ReadOwnedAsync(OperationsAccessV1 a, Guid id, bool write, CancellationToken t)
         {
-            var c = await Prepare(a, id, false, t); var request = c.Facts.SingleOrDefault(x => x.Fact.Kind == "REQUEST"); var block = c.Facts.SingleOrDefault(x => x.Fact.Kind == "BLOCK");
+            var c = await Prepare(a, id, write, t); var request = c.Facts.SingleOrDefault(x => x.Fact.Kind == "REQUEST"); var block = c.Facts.SingleOrDefault(x => x.Fact.Kind == "BLOCK");
             return new ToolDispositionContextV1(db.CurrentTenantId, id, c.Etag, c.Native.Reference, c.Registration.CurrentSite.Reference,
                 block != null ? "BLOCKED_PENDING_DISPOSITION" : request != null ? "REQUESTED" : "NOT_REQUESTED", block != null, request, block, c.Obligations,
                 IsDiscarded: c.Native.Source.GetProperty("status").GetInt32() == 3);
-        }, ct);
+        }
     private static void Text(string? value, int max)
     {
         if (string.IsNullOrWhiteSpace(value) || value.Length > max) throw Error("TOOL_DISPOSITION_INPUT_INVALID", 400);

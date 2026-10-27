@@ -23,10 +23,12 @@
         <label>停用说明 <textarea v-model="blockReason" aria-label="停用说明" maxlength="500" required /></label><button :disabled="!blockReason.trim()">明确阻止新使用</button>
       </fieldset></form>
     </template>
+    <ToolApprovalPanel :scope="scope" :selected="selected" @authority-denied="emit('authority-denied')" />
   </section>
 </template>
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import ToolApprovalPanel from './ToolApprovalPanel.vue'
 import type { EngineeringScope } from '@/api/plm/engineeringProducts'
 import type { ToolInstanceView } from '@/api/wms/toolInstances'
 import { toolDispositionApi as api, type DispositionContext, type DispositionKind } from '@/api/wms/toolDisposition'

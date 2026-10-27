@@ -639,6 +639,7 @@ CP6.Core.Services.Sys.FieldRegistry.Register("wms-plate-mold", new[] { "Customer
 builder.Services.AddScoped<CP6.Core.Services.Wms.ToolInstanceOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.ToolMaintenanceOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.ToolDispositionOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.ToolDispositionApprovalOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.ToolMaintenanceMasterOwnerV1>();
 builder.Services.AddSingleton(_ => new CP6.Core.Services.Wms.ToolActualRuntimeV1(
     Guid.TryParse(builder.Configuration["Wms:ToolActual:EnvironmentId"], out var toolActualEnvironment) ? toolActualEnvironment : Guid.Empty,
