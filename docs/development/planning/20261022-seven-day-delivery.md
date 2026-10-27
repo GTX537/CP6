@@ -1452,3 +1452,7 @@ Owner原包可靠服务投递、持久租约/回执与原命令恢复已验证�
 ## 2026-10-27 W182 业务审批事实接收
 
 实际服务与准确Subject当前授权、原决定/证据和Inbox/应用流共同提交已接入实际HTTP；确认丢失可原键恢复，不执行业务报废。17 local checks: 17 PG18/HTTP and 0 affected kernel/unit;0skip;no UI change。[报告](../evidence/W182-01/DELIVERY.md)。登记29.83分钟，预计120–210；Handoff已释放，Main待正常PR/finish。业务应用/页面及七天全部出口保留。 Continue reliable delivery of the exact persisted Workflow decision to the actual Owner, then actual Owner eligibility and business/application receipt transaction when its real obligations are satisfied. Preserve original ROU/BOM/WO/SCHED and D2/D5/D6/D7 exits.
+
+## 2026-10-27 W183 实际审批决定可靠投递
+
+原决定可靠投递、先查原事件、持久租约/epoch与当前服务授权、原确认恢复已接入实际TLS/C02/HTTP；运输接收不提升业务应用。19 local checks: 19 PG18/HTTP and 0 affected kernel/unit;0skip;no UI change。[报告](../evidence/W183-01/DELIVERY.md)。登记18.65分钟，预计60–100；Handoff已释放，Main待正常PR/finish。业务应用/页面及七天全部出口保留。 Continue actual Owner business applicability and original ApplicationReceipt/closure sources, then original engineering WO/SCHED and WMS writes. Preserve all original D2/D3/D5/D6/D7 exits and real external prerequisites.
