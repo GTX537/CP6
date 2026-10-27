@@ -640,6 +640,10 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.ToolInstanceOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.ToolMaintenanceOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.ToolDispositionOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.ToolDispositionApprovalOwnerV1>();
+builder.Services.AddSingleton(new CP6.WebApi.Services.ApprovalIntakeRegistryV2(
+    builder.Configuration.GetSection("ApprovalIntake").Get<CP6.WebApi.Services.ApprovalIntakeOptionsV2>()??new(),crmOidc,builder.Environment.IsDevelopment()));
+builder.Services.AddScoped<CP6.Core.Services.Oa.IApprovalServiceAuthorityV2,CP6.WebApi.Services.ApprovalIntakeServiceAuthorityV2>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.ApprovalIntakeOwnerV2>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.ToolMaintenanceMasterOwnerV1>();
 builder.Services.AddSingleton(_ => new CP6.Core.Services.Wms.ToolActualRuntimeV1(
     Guid.TryParse(builder.Configuration["Wms:ToolActual:EnvironmentId"], out var toolActualEnvironment) ? toolActualEnvironment : Guid.Empty,

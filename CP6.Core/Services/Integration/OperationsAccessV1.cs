@@ -8,7 +8,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Integration;
 
-internal sealed partial class OperationsAccessV1(CP6Context db,OperationsOwnerV1 owner,OperationsOwnerV1.Authority authority,List<OperationsOwnerV1.Authority>? participants=null)
+internal sealed partial class OperationsAccessV1(CP6Context db,OperationsOwnerV1 owner,OperationsOwnerV1.Authority authority,List<OperationsOwnerV1.Authority>? participants=null,
+    Func<string,string,CancellationToken,Task<OperationsOwnerV1.Authority>>? storedSubjectSource=null)
 {
     internal List<OperationsOwnerV1.Authority> Authorities {get;}=participants??[authority];
     private readonly List<Func<CancellationToken,Task>> finals=[];

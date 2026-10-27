@@ -14,8 +14,8 @@ internal sealed partial class OperationsAccessV1
     {
         var key=resource+":"+action;
         if(sources.TryGetValue(key,out var found))return found;
-        var source=await owner.AuthorityAsync(resource,action,ct);Authorities.Add(source);
-        var access=new OperationsAccessV1(db,owner,source,Authorities);
+        var source=await (storedSubjectSource==null?owner.AuthorityAsync(resource,action,ct):storedSubjectSource(resource,action,ct));Authorities.Add(source);
+        var access=new OperationsAccessV1(db,owner,source,Authorities,storedSubjectSource);
         // Final object checks belong to the root transaction too. Register once per
         // cached source; its checks (and deeper sources) are populated by the caller.
         AtCommit(access.ValidateFinalAsync);
