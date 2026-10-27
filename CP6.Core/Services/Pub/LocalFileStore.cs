@@ -35,4 +35,12 @@ public class LocalFileStore : IFileStore
     }
 
     public bool Exists(string storePath) => File.Exists(Path.Combine(_root, storePath));
+
+    public async Task<Stream> OpenReadBoundedAsync(string storePath, long expectedLength, CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+        var stream = await OpenReadAsync(storePath);
+        if (stream.Length != expectedLength) { await stream.DisposeAsync(); throw new IOException("File length differs from the original content reference."); }
+        return stream;
+    }
 }

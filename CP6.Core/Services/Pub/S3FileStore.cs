@@ -68,6 +68,19 @@ public sealed class S3FileStore : IFileStore, IDisposable
     public async Task DeleteAsync(string storePath)
         => await _client.DeleteObjectAsync(_bucket, Key(storePath));
 
+    public async Task<Stream> OpenReadBoundedAsync(string storePath, long expectedLength, CancellationToken ct)
+    {
+        try
+        {
+            using var response = await _client.GetObjectAsync(_bucket, Key(storePath), ct);
+            if (response.ContentLength != expectedLength) throw new IOException("Object length differs from the original content reference.");
+            var bytes = await FileContentBytesV1.Read(response.ResponseStream, expectedLength, ct);
+            return new MemoryStream(bytes, false);
+        }
+        catch (AmazonS3Exception ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        { throw new FileNotFoundException("Object does not exist", storePath, ex); }
+    }
+
     public bool Exists(string storePath)
     {
         try

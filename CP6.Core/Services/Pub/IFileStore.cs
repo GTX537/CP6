@@ -12,6 +12,10 @@ public interface IFileStore
     /// <summary>打开读取流（不存在抛 FileNotFoundException）。</summary>
     Task<Stream> OpenReadAsync(string storePath);
 
+    /// <summary>Native exact-content reads must enforce the bound before buffering provider data.</summary>
+    Task<Stream> OpenReadBoundedAsync(string storePath, long expectedLength, CancellationToken ct)
+        => throw new NotSupportedException("Bounded native content reads are not supported by this provider.");
+
     /// <summary>物理删除（不存在则忽略）。</summary>
     Task DeleteAsync(string storePath);
 
