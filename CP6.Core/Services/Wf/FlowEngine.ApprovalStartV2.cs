@@ -31,6 +31,7 @@ public partial class FlowEngine
         if (!_db.Database.IsNpgsql() || _db.Database.CurrentTransaction == null || _db.ChangeTracker.HasChanges())
             throw new ScopeAuthorizationExceptionV1("APP_START_TRANSACTION_REQUIRED");
         _approvalStartV2 = true;
+        _approvalOriginal = command;
         var schema = Deserialize(publication.Fields["SchemaJson"]!);
         var first = FirstNode(schema) ?? throw new ScopeAuthorizationExceptionV1("FLOW_VERSION_UNAVAILABLE", 422);
         var instance = new Wf_FlowInstance

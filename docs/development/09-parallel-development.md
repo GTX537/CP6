@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W179 审批实例原子启动](dispatch/20261027-wave179/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
+> 当前：[W180 任务原职责与当前委派授权](dispatch/20261027-wave180/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
+
+> 历史快照：[W179 审批实例原子启动](dispatch/20261027-wave179/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
 
 > 历史快照：[W178 审批可靠投递](dispatch/20261027-wave178/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
 

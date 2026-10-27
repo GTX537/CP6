@@ -344,13 +344,14 @@ public partial class FlowEngine : IFlowEngine
     /// <summary>委派替换（章07 §5）：原审批人处有效委派期 → 返回 (代理人, 被代理人)；否则 (原人, null)。</summary>
     internal async Task<(Guid assignee, Guid? delegatedFrom)> ResolveActualAssigneeAsync(Guid approverId)
     {
+        // Native approval preserves the person entrusted with the duty. A current act-as grant
+        // authorizes a later human action; it never replaces the original task principal.
+        if (_approvalStartV2) return (approverId, null);
         var now = DateTime.Now;
         var d = await _db.Wf_FlowDelegates
             .Where(x => x.GrantorId == approverId && x.Enable && x.ValidFrom <= now && x.ValidTo >= now)
             .OrderByDescending(x => x.CreateDate)
             .FirstOrDefaultAsync();
-        if (_approvalStartV2 && d != null && !await _db.Sys_Users.AsNoTracking().AnyAsync(x => x.Id == d.DelegateId && x.Enable))
-            throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1("APP_DELEGATE_UNAVAILABLE", 422);
         return d is null ? (approverId, null) : (d.DelegateId, approverId);
     }
 
