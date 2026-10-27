@@ -10,11 +10,12 @@
       </tbody></table></div><p v-if="!rows.length">当前权限范围内没有记录。</p>
       <nav aria-label="实物分页"><button :disabled="busy || page === 1" @click="loadPage(page - 1)">上一页</button><span>第 {{ page }} 页 · 共 {{ total }} 条</span><button :disabled="busy || page * 50 >= total" @click="loadPage(page + 1)">下一页</button></nav>
     </section>
+    <ToolAssociationPanel :scope="scope" :selected="selected" @authority-denied="registrationDenied" />
     <ToolRegistrationPanel :scope="scope" :selected="selected" @authority-denied="registrationDenied" />
     <section v-if="selected" class="panel">
       <h2>{{ selected.source.plateNo }} · 资料</h2><p>来源版本 {{ selected.reference.version }} · 实物 ID：{{ selected.reference.id }}</p>
       <p>原记录本周期已用 {{ selected.source.usedShots }} 次；正式周期编号、终身次数和站点尚未核实的记录，可在“站点与计数来源”中核对。当前使用资格：未知。</p>
-      <p>工程关联尚未核实。使用、维护与报废入口需待对应业务规则和来源接通。</p>
+      <p>工程关联请在上方按准确技术版本核对。使用、维护与报废入口仍待对应业务规则和来源接通。</p>
       <dl><dt>客户</dt><dd>{{ visible('CustomerCd', selected.source.customerCd) }} / {{ visible('CustomerName', selected.source.customerName) }}</dd><dt>产品</dt><dd>{{ visible('ProductCd', selected.source.productCd) }} / {{ visible('ProductName', selected.source.productName) }}</dd><dt>登记成本</dt><dd>{{ visible('MadeCost', selected.source.madeCost) }}</dd></dl>
       <form aria-label="保存实物资料" @submit.prevent="save"><fieldset :disabled="busy || !!pending || completed || !canWrite">
         <div class="fields"><label v-for="field in fields" :key="field.key">{{ field.label }}
@@ -30,6 +31,7 @@
 </template>
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import ToolAssociationPanel from './ToolAssociationPanel.vue'
 import ToolRegistrationPanel from './ToolRegistrationPanel.vue'
 import type { EngineeringScope } from '@/api/plm/engineeringProducts'
 import { toolInstanceApi as api, type ToolInstanceView } from '@/api/wms/toolInstances'

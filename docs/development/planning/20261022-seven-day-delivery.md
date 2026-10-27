@@ -1380,3 +1380,7 @@ BUG582版本化输入修复，历史原件及恢复保持；37PG/HTTP、9UI、ty
 ## 2026-10-27 W164 实物登记采用可信来源
 
 客户/产品/库位实际UUID/版本采用，当前来源权限、同事务及旧v1/v2兼容；48PG/HTTP、12组件及type/Vite通过。[报告](../evidence/W164-01/DELIVERY.md)。登记25.46分钟，预计90–150；Handoff已释放、Main待finish。Continue technical-tool candidates, physical lifecycle and actual engineering dual Role; preserve all original D2/D3/D5/D6/D7 exits, Order request processing and formal Sales.
+
+## 2026-10-27 W165 工程与实物双Owner关系采用
+
+准确技术版本/实物提案及双方原Owner同轮当前采用；51PG/HTTP、16组件及type/Vite通过。[报告](../evidence/W165-01/DELIVERY.md)。登记34.62分钟，预计150–240；Handoff已释放、Main待finish。Continue actual physical use/maintenance/discard and professional technical approval/qualification adoption, preserving all original D2/D3/D5/D6/D7 exits, Order request processing and formal Sales.

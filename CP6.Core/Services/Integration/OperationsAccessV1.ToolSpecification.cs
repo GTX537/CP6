@@ -7,7 +7,7 @@ internal sealed partial class OperationsAccessV1
 {
     internal IQueryable<PlateMold> SpecificationTools(bool includeDeleted = false)
     {
-        if (authority.Resource != OperationsOwnerV1.ToolSpecification || authority.Action is not ("query" or "add" or "edit"))
+        if (authority.Resource != OperationsOwnerV1.ToolSpecification || authority.Action is not ("query" or "add" or "edit" or "instance-associate"))
             throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
         // Same native object identity/mapping; professional action and custom scope are independent.
         return PlateMolds(includeDeleted);

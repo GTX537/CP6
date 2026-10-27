@@ -43,9 +43,18 @@ public sealed partial class OperationsOwnerV1
 
     internal async Task<Authority> AuthorityAsync(string resource,string action,CancellationToken ct)
     {
-        var subject=await currentActor(ct);var definition=catalog();
+        var subject=await currentActor(ct);return await AuthorityCoreAsync(resource,action,subject,false,ct);
+    }
+    // Stored Owner decisions supply the subject; this path cannot execute a user command.
+    internal Task<Authority> AssociationReceiptAuthorityAsync(string resource,string action,Guid actor,CancellationToken ct)
+        => action=="query" || resource==ToolInstance && action=="engineering-link" || resource==ToolSpecification && action=="instance-associate"
+            ? AuthorityCoreAsync(resource,action,actor,true,ct) : throw new OrderPriceCorrectionException("ACTION_FORBIDDEN",403);
+    private async Task<Authority> AuthorityCoreAsync(string resource,string action,Guid subject,bool storedDecision,CancellationToken ct)
+    {
+        var definition=catalog();
         if(!definition.IsSealed || !definition.Scopes.TryGetValue(resource,out var scope))throw new CurrentPermissionUnavailableException();
-        var source=await new CurrentFieldPermissionSourceReaderV1(db,http,()=>definition).ReadAsync(resource,ct);
+        var reader=new CurrentFieldPermissionSourceReaderV1(db,http,()=>definition);
+        var source=storedDecision?await reader.ReadTrustedSubjectAsync(resource,subject,ct):await reader.ReadAsync(resource,ct);
         var expected=resource==BusinessPartner?new[]{"BpName"}:resource==ToolInstance?new[]{"CustomerCd","CustomerName","MadeCost","ProductCd","ProductName","Remarks"}:resource==Sample?new[]{"CustomerCd","CustomerName","LentTo","ProductCd","ProductName","Remarks"}:resource==Packaging?new[]{"CarrierCd","Remarks","TrackingNo"}:resource==Routing?new[]{"CustomerCd","ProductCdPrefix","Remarks","RuleName"}:resource==Warehouse?new[]{"AddressText","ManagerCd","Remarks","WarehouseName"}:resource==Location?new[]{"Barcode","LocationName"}:resource==ReportCenter?new[]{"OperatorCd","OwnerCd","Remark"}:resource==Kitting?new[]{"ComponentName","ExecutedTxnNos","KitName","OperatorCd","Remarks"}:resource==Vmi?new[]{"BillingAmount","CustomerName","DailyStorageRate","Remarks"}:resource==Slotting?new[]{"ApproverCd","RecommendationsJson","Remarks"}:resource==CrossDock?new[]{"CustomerCd","OperatorCd","Remarks","SupplierCd"}:resource==LotTrace?new[]{"CustomerName","OperatorCd","Remark","SupplierName"}:resource==MaterialShortage?new[]{"Remark"}:resource is Outbound or Inbound or Receipt or Stock?new[]{"UnitPrice"}:
             resource is ToolSpecification or PlateMold or ConfigurationRule or EngineeringRevision or EngineeringProduct or PhysicalSite or CurrencyPolicy or UomProfile or Product or Mes or Production or MesDashboard or Defect or StockQc or InboundQc or Quality or Machine or Oee or Planning or Achievement or WorkCenter?Array.Empty<string>():
             resource==StockDwell?new[]{"Amount","CustomerName"}:resource==ProcessCostRate?new[]{"LaborRate","OverheadRate"}:resource==WmsDashboard?new[]{"Amount"}:resource==Rma?new[]{"CustomerName","OperatorCd","Remarks","ReturnReason"}:
@@ -167,7 +176,7 @@ public sealed partial class OperationsOwnerV1
             var entity=db.Model.GetEntityTypes().Single(e=>e.ClrType.Name==name);
             return db.GetService<ISqlGenerationHelper>().DelimitIdentifier(entity.GetTableName()!,entity.GetSchema()??"public");
         }
-        string[] additional=resource switch { ToolInstance=>["PlateMoldStock","BusinessPartner"],PlateMold or ToolSpecification=>["PlateMold"],Sample=>["SampleStock"],Kitting=>["KitMaster","KitMasterComponent","KitOrder"],Vmi=>["VmiBilling"],Slotting=>["SlottingPlan"],CrossDock=>["CrossDockOrder"],StockDwell or BusinessPartner=>["BusinessPartner"],WorkCenter or ProcessCostRate=>["WorkCenter","ProcessCostRate"],Rma=>["RmaHeader","RmaDetail"],Replenish=>["ReplenishOrder"],Mobile=>["MobileTask","MobileTaskEvent","MobileTaskScanLog","TaskCommandReceipt"],_=>[] };
+        string[] additional=resource switch { ToolInstance=>["PlateMoldStock","BusinessPartner","PlateMold"],ToolSpecification=>["PlateMold","PlateMoldStock","BusinessPartner"],PlateMold=>["PlateMold"],Sample=>["SampleStock"],Kitting=>["KitMaster","KitMasterComponent","KitOrder"],Vmi=>["VmiBilling"],Slotting=>["SlottingPlan"],CrossDock=>["CrossDockOrder"],StockDwell or BusinessPartner=>["BusinessPartner"],WorkCenter or ProcessCostRate=>["WorkCenter","ProcessCostRate"],Rma=>["RmaHeader","RmaDetail"],Replenish=>["ReplenishOrder"],Mobile=>["MobileTask","MobileTaskEvent","MobileTaskScanLog","TaskCommandReceipt"],_=>[] };
         var tables=BusinessTables.Concat(additional);
         await db.Database.ExecuteSqlRawAsync("LOCK TABLE "+string.Join(",",tables.Select(Name).Distinct().Order(StringComparer.Ordinal))
             +(write?" IN SHARE ROW EXCLUSIVE MODE":" IN SHARE MODE"),ct);
