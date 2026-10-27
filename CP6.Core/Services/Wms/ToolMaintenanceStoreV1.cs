@@ -15,7 +15,7 @@ internal sealed class ToolMaintenanceStoreV1(CP6Context db)
     internal static string Hash(string value) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value))).ToLowerInvariant();
     internal static string OwnerOf(string kind) => kind switch { "POLICY" => PolicyOwner, "REPORT" => ReportOwner, "ASSESSMENT" => QualificationOwner, _ => Owner };
     internal static ToolMaintenanceRefV1 Ref(ToolMaintenanceFactV1 fact) => new(OwnerOf(fact.Kind), fact.RecordId, "1", Hash(JsonSerializer.Serialize(fact, Json)));
-    internal static ToolMaintenanceRefV1 CycleRef(ToolMaintenanceCycleV1 cycle) => new(CycleOwner, cycle.Id, "1", Hash(JsonSerializer.Serialize(cycle, Json)));
+    internal static ToolMaintenanceRefV1 CycleRef(ToolMaintenanceCycleV1 cycle) => new(CycleOwner, cycle.Id, cycle.ProjectionRevision ?? "1", Hash(JsonSerializer.Serialize(cycle, Json)));
     internal async Task Fence(bool write, CancellationToken ct)
     {
         if (!db.Database.IsNpgsql() || db.Database.CurrentTransaction == null) throw Error("AUTHORITY_FENCE_UNAVAILABLE", 503);
@@ -67,6 +67,7 @@ internal sealed class ToolMaintenanceStoreV1(CP6Context db)
     internal static async Task<(bool Coherent, ToolMaintenanceCycleV1 Cycle)> Project(CP6Context db, ToolRegistrationOriginalV1 registration, CancellationToken ct)
     {
         var store = new ToolMaintenanceStoreV1(db); await store.Fence(false, ct);
+        var actual = new ToolActualUsageStoreV1(db); await actual.Fence(false, ct);
         var initial = Revision(registration.NativeAtRegistration.Version);
         var coherent = await db.Database.SqlQuery<bool>($"""
             WITH observations AS (
@@ -78,11 +79,15 @@ internal sealed class ToolMaintenanceStoreV1(CP6Context db)
               (body->'usedShots',body->'lastUsedAt',body->'nextMaintenanceDate',body->'status') IS DISTINCT FROM
               (previous->'usedShots',previous->'lastUsedAt',previous->'nextMaintenanceDate',previous->'status') AND NOT EXISTS(
                 SELECT FROM cp6_tool_maintenance_v1.facts f WHERE f.tenant_id={db.CurrentTenantId} AND f.tool_id={registration.ObjectId}
-                AND f.kind IN ('START','RESET') AND f.body_json::jsonb->'nativeBefore'->>'version'=previous_revision::text
-                AND f.body_json::jsonb->'nativeAfter'->>'version'=revision::text)) AS "Value"
+                AND f.kind IN ('START','RESET') AND f.body_json::jsonb->'nativeBefore'->>'version'=v.previous_revision::text
+                AND f.body_json::jsonb->'nativeAfter'->>'version'=v.revision::text) AND NOT EXISTS(
+                SELECT FROM cp6_tool_actual_v1.facts f WHERE f.tenant_id={db.CurrentTenantId} AND f.tool_id={registration.ObjectId}
+                AND f.kind='USE' AND f.body_json::jsonb->'nativeBefore'->>'version'=v.previous_revision::text
+                AND f.body_json::jsonb->'nativeAfter'->>'version'=v.revision::text)) AS "Value"
             """).SingleAsync(ct);
         var lastReset = (await store.Facts(registration.ObjectId, ct)).LastOrDefault(x => x.Fact.Kind == "RESET");
-        return (coherent, lastReset?.Fact.CycleAfter ?? new(registration.CycleAnchorId, registration.CycleNo,
-            int.Parse(registration.InitialCycleShots, CultureInfo.InvariantCulture), registration.LifetimeKnowledge, registration.LifetimeShots));
+        var cycle = lastReset?.Fact.CycleAfter ?? new(registration.CycleAnchorId, registration.CycleNo,
+            int.Parse(registration.InitialCycleShots, CultureInfo.InvariantCulture), registration.LifetimeKnowledge, registration.LifetimeShots);
+        return (coherent, ToolActualUsageStoreV1.ProjectCycle(registration, cycle, await actual.Facts(registration.ObjectId, ct)));
     }
 }
