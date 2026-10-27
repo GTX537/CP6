@@ -89,6 +89,24 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         using (var original = await Send(valid.Token, originalPath)) Assert.Equal(HttpStatusCode.OK, original.StatusCode);
         using (var application = await Send(valid.Token, ack.ReceiptQueryRef))
         { Assert.Equal(HttpStatusCode.OK, application.StatusCode); Assert.Equal("NOT_APPLIED", JsonDocument.Parse(await application.Content.ReadAsStringAsync()).RootElement.GetProperty("kind").GetString()); }
+        var applicationResult = await ApplicationAttempt(h, await ApplicationTool(h));
+        using (var application = await Send(valid.Token, ack.ReceiptQueryRef))
+        {
+            Assert.Equal(HttpStatusCode.OK, application.StatusCode);
+            var body = JsonDocument.Parse(await application.Content.ReadAsStringAsync()).RootElement;
+            Assert.Equal("FOUND", body.GetProperty("kind").GetString()); Assert.Equal(applicationResult.Receipt.ReceiptId, body.GetProperty("receipt").GetProperty("receiptId").GetGuid());
+            Assert.False(body.TryGetProperty("receiptStreamId", out _));
+            Assert.Equal(applicationResult.Receipt, ApprovalApplicationReceiptWireV2.Parse(System.Text.Encoding.UTF8.GetBytes(body.GetProperty("receipt").GetRawText())));
+        }
+        var chainPath = ToolApprovalFactReceiverV2.ApplicationRoute + ack.ReceiptStreamId + "/receipts?afterRevision=0&limit=1";
+        using (var chain = await Send(valid.Token, chainPath))
+        {
+            Assert.Equal(HttpStatusCode.OK, chain.StatusCode);
+            var body = JsonDocument.Parse(await chain.Content.ReadAsStringAsync()).RootElement;
+            Assert.Equal("1", body.GetProperty("highestRevisionAtSnapshot").GetString());
+            Assert.Equal(applicationResult.Receipt, ApprovalApplicationReceiptWireV2.Parse(System.Text.Encoding.UTF8.GetBytes(body.GetProperty("items")[0].GetRawText())));
+        }
+        using (var extra = await Send(valid.Token, chainPath + "&actorId=forged")) Assert.Equal(HttpStatusCode.UnprocessableEntity, extra.StatusCode);
         await h.Db.CrmServiceTokenRecords.Where(x => x.Issuer == oidc.Issuer && x.Jti == valid.Id).ExecuteUpdateAsync(s => s.SetProperty(x => x.RevokedAtUtc, DateTimeOffset.UtcNow));
         using (var revoked = await Send(valid.Token, originalPath)) Assert.Equal(HttpStatusCode.Forbidden, revoked.StatusCode);
         using (var fresh = await Send((await Token()).Token, originalPath)) Assert.Equal(HttpStatusCode.OK, fresh.StatusCode);

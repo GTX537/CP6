@@ -8,6 +8,15 @@ namespace CP6.Core.Services.Wms;
 
 public sealed partial class ToolDispositionApprovalOwnerV1
 {
+    internal async Task<ToolDispositionPolicyCommandV1> ApplicationPolicy(OperationsAccessV1 access, Guid tool,
+        ApprovalSubmitCommandV2 original, CancellationToken ct)
+    {
+        var c = await Prepare(access, tool, false, ct);
+        var frozen = c.Policies.SingleOrDefault(x => x.Reference.Id.ToString() == original.Policy.Ref.Id
+            && x.Reference.Owner == original.Policy.Ref.Owner && x.Reference.Version == original.Policy.Ref.Version
+            && x.Reference.Digest == original.Policy.Digest.Value) ?? throw Error("POLICY_UNRESOLVED", 422);
+        return await RequirePolicy(c, frozen.Reference, ct);
+    }
     internal sealed record DecisionPolicyProof(ToolDispositionPolicyV1 FrozenPolicy, string ReadAuthority);
     private sealed record DecisionSource(Guid Tool, Guid Policy, byte[] Payload);
 
