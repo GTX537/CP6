@@ -26,6 +26,7 @@ public class FlowDefinitionPinTests
         var engine = new FlowEngine(db, new ApproverResolver(db));
         var oldId = await engine.SubmitAsync("leave", Guid.NewGuid(), "{}");
 
+        await DefinitionDraftFixture.FromPublished(db, v1.VersionId);
         var v2Draft = await definitions.SaveDraftAsync("leave", "Leave v2", null, Schema(a2), null);
         var v2 = await definitions.PublishAsync("leave", v2Draft.RowVersion, Guid.NewGuid());
         var newId = await engine.SubmitAsync("leave", Guid.NewGuid(), "{}");

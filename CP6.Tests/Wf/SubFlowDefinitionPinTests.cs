@@ -30,6 +30,7 @@ public sealed class SubFlowDefinitionPinTests
             "parent", "Parent", null, JsonSerializer.Serialize(ParentSchema(parentApprover, "child")), null);
         var parentV1 = await definitions.PublishAsync("parent", parentDraft1.RowVersion, Guid.NewGuid());
 
+        await DefinitionDraftFixture.FromPublished(db, childV1.VersionId);
         var childDraft2 = await definitions.SaveDraftAsync(
             "child", "Child v2", null, JsonSerializer.Serialize(ChildSchema(childV2Approver)), null);
         var childV2 = await definitions.PublishAsync("child", childDraft2.RowVersion, Guid.NewGuid());
@@ -43,6 +44,7 @@ public sealed class SubFlowDefinitionPinTests
         Assert.Equal(childV1Approver,
             (await db.Wf_FlowTasks.SingleAsync(x => x.InstanceId == oldChild.Id)).AssigneeId);
 
+        await DefinitionDraftFixture.FromPublished(db, parentV1.VersionId);
         var parentDraft2 = await definitions.SaveDraftAsync(
             "parent", "Parent v2", null, JsonSerializer.Serialize(ParentSchema(parentApprover, "child")), null);
         await definitions.PublishAsync("parent", parentDraft2.RowVersion, Guid.NewGuid());

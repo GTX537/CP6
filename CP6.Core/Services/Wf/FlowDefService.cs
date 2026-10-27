@@ -14,7 +14,8 @@ public class FlowDefService : IFlowDefService
     /// <summary>Legacy internal helper retained for existing service callers. Browser endpoints use SaveDraftAsync.</summary>
     public async Task<Guid> SaveDefAsync(string flowKey, string flowName, string? formKey, string schemaJson, string? user = null)
     {
-        var draft = await SaveDraftAsync(flowKey, flowName, formKey, schemaJson, null, user);
+        // Compatibility helper is not the browser draft lifecycle or WFC-1 publication Owner.
+        var draft = await SaveDraftCoreAsync(flowKey, flowName, formKey, schemaJson, null, user, true);
         var row = await _db.Wf_FlowDefVersions.SingleAsync(x => x.Id == draft.VersionId);
         row.Status = WfDefinitionVersionStatus.Published;
         row.PublishedAtUtc = DateTime.UtcNow;
@@ -42,37 +43,34 @@ public class FlowDefService : IFlowDefService
         return head;
     }
 
-    public async Task<DefinitionDraftDto?> GetDraftAsync(string flowKey, bool createIfMissing = true, string? user = null)
+    public async Task<DefinitionDraftDto?> GetDraftAsync(string flowKey, bool createIfMissing = false, string? user = null)
     {
-        var head = await _db.Wf_FlowDefs.FirstOrDefaultAsync(x => x.FlowKey == flowKey);
+        // Retain the legacy argument for source compatibility, but a read never creates a version.
+        var head = await _db.Wf_FlowDefs.AsNoTracking().FirstOrDefaultAsync(x => x.FlowKey == flowKey);
         if (head == null) return null;
-        var draft = await _db.Wf_FlowDefVersions
+        var draft = await _db.Wf_FlowDefVersions.AsNoTracking()
             .SingleOrDefaultAsync(x => x.FlowDefId == head.Id && x.Status == WfDefinitionVersionStatus.Draft);
-        if (draft == null && createIfMissing)
-        {
-            var latest = await _db.Wf_FlowDefVersions.AsNoTracking()
-                .Where(x => x.FlowDefId == head.Id && x.Status == WfDefinitionVersionStatus.Published)
-                .OrderByDescending(x => x.Version).FirstOrDefaultAsync();
-            draft = new Wf_FlowDefVersion
-            {
-                Id = Guid.NewGuid(), FlowDefId = head.Id,
-                Version = (latest?.Version ?? 0) + 1,
-                Status = WfDefinitionVersionStatus.Draft,
-                FlowNameSnapshot = latest?.FlowNameSnapshot ?? head.FlowName,
-                SchemaJson = latest?.SchemaJson ?? head.SchemaJson,
-                Creator = user
-            };
-            _db.Wf_FlowDefVersions.Add(draft);
-            await _db.SaveChangesAsync();
-        }
         return draft == null ? null : ToDraft(head.Id, draft);
     }
 
-    public async Task<DefinitionDraftDto> SaveDraftAsync(
+    public Task<DefinitionDraftDto> SaveDraftAsync(
         string flowKey, string flowName, string? formKey, string schemaJson, byte[]? rowVersion, string? user = null)
+        => SaveDraftCoreAsync(flowKey, flowName, formKey, schemaJson, rowVersion, user, false);
+
+    private async Task<DefinitionDraftDto> SaveDraftCoreAsync(
+        string flowKey, string flowName, string? formKey, string schemaJson, byte[]? rowVersion, string? user, bool legacy)
     {
         if (string.IsNullOrWhiteSpace(flowKey)) throw new InvalidOperationException("FlowKey 不能为空");
         var head = await _db.Wf_FlowDefs.FirstOrDefaultAsync(x => x.FlowKey == flowKey);
+        var draft = head == null ? null : await _db.Wf_FlowDefVersions
+            .SingleOrDefaultAsync(x => x.FlowDefId == head.Id && x.Status == WfDefinitionVersionStatus.Draft);
+        // Check before mutating the tracked head: a failed edit must not leave pending head changes.
+        if (!legacy)
+        {
+            if (head != null && draft == null) throw new InvalidOperationException("DRAFT_REQUIRED");
+            if (head == null && rowVersion != null) throw new InvalidOperationException("E-WF-045");
+            if (draft != null) EnsureRowVersion(draft.RowVersion, rowVersion);
+        }
         if (head == null)
         {
             head = new Wf_FlowDef
@@ -91,8 +89,6 @@ public class FlowDefService : IFlowDefService
             head.ModifyDate = DateTime.UtcNow;
         }
 
-        var draft = await _db.Wf_FlowDefVersions
-            .SingleOrDefaultAsync(x => x.FlowDefId == head.Id && x.Status == WfDefinitionVersionStatus.Draft);
         if (draft == null)
         {
             var maxVersion = await _db.Wf_FlowDefVersions
@@ -107,7 +103,7 @@ public class FlowDefService : IFlowDefService
         }
         else
         {
-            EnsureRowVersion(draft.RowVersion, rowVersion);
+            if (!legacy) EnsureRowVersion(draft.RowVersion, rowVersion);
             if (rowVersion != null)
                 _db.Entry(draft).Property(x => x.RowVersion).OriginalValue = rowVersion;
             draft.FlowNameSnapshot = flowName;
@@ -217,7 +213,7 @@ public class FlowDefService : IFlowDefService
 
     private static void EnsureRowVersion(byte[]? current, byte[]? expected)
     {
-        if (expected != null && current != null && !current.SequenceEqual(expected))
+        if (current is { Length: > 0 } && (expected == null || !current.SequenceEqual(expected)))
             throw new InvalidOperationException("E-WF-045");
     }
 }

@@ -25,6 +25,7 @@ public class DefinitionVersionServiceTests
         var firstDraft = await service.SaveDraftAsync("leave", "Leave v1", null, FlowV1, null);
         var first = await service.PublishAsync("leave", firstDraft.RowVersion, Guid.NewGuid());
 
+        await DefinitionDraftFixture.FromPublished(db, first.VersionId);
         var secondDraft = await service.SaveDraftAsync("leave", "Leave v2", null, FlowV2, null);
         var resolver = new DefinitionVersionResolver(db);
         var beforePublish = await resolver.ResolveLatestFlowAsync("leave");

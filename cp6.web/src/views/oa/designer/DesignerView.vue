@@ -17,6 +17,8 @@ import {
 import { designerApi } from '@/api/oa/designer'
 import type { FlowDefSummary, LoadFlowResult } from '@/types/oa/designer'
 import DesignerCanvas from './DesignerCanvas.vue'
+import FlowDraftCreationPanel from './FlowDraftCreationPanel.vue'
+import { identityStamp, requireIdentity } from '@/auth/identity'
 import EdgePropertyPanel from './EdgePropertyPanel.vue'
 import NodePropertyPanel from './NodePropertyPanel.vue'
 import { isFallbackEdge, validateClient, type FlowSchemaDto, type SchemaEdge, type SchemaNode } from './designerModel'
@@ -101,13 +103,16 @@ async function loadList() {
 
 async function onSelectFlow(key: string | null) {
   if (!key) return
+  const stamp = identityStamp()
   selectedKey.value = key
   try {
     const response = await designerApi.load(key) as any
     const result: LoadFlowResult = response.data ?? response
+    requireIdentity(stamp)
+    if (selectedKey.value !== key) return
     const summary = result.summary
     flowKey.value = summary.flowKey
-    flowName.value = summary.flowName
+    flowName.value = result.draft?.name ?? summary.flowName
     formKey.value = summary.formKey ?? ''
     functionId.value = summary.functionId ?? ''
     flowCode.value = summary.flowCode ?? ''
@@ -232,6 +237,7 @@ function doValidate() {
 }
 
 async function doSave(): Promise<boolean> {
+  if (selectedKey.value && !draftRowVersion.value) return false
   if (!doValidateOnly()) return false
   if (!flowKey.value.trim()) {
     ElMessage.warning(t('oa.designer.flowKeyRequired'))
@@ -341,13 +347,14 @@ onMounted(async () => {
       <div class="header-actions">
         <el-button :icon="Check" @click="doValidate">校验</el-button>
         <el-button v-permission="'oa-designer:add'" :icon="CopyDocument" @click="openCloneDialog">另存副本</el-button>
-        <el-button v-permission="'oa-designer:edit'" :loading="saving" @click="doSave">保存草稿</el-button>
+        <el-button v-permission="'oa-designer:edit'" :disabled="!!selectedKey && !draftRowVersion" :loading="saving" @click="doSave">保存草稿</el-button>
         <el-button v-permission="'oa-designer:publish'" type="primary" :loading="publishing" @click="doPublish">发布</el-button>
       </div>
     </header>
 
-    <section class="identity-strip" aria-label="流程基础信息">
-      <label><span>流程标识 *</span><el-input v-model="flowKey" clearable placeholder="例如 leave_request" /></label>
+    <FlowDraftCreationPanel v-if="selectedKey && !draftRowVersion" :key="selectedKey" :flow-key="selectedKey" @created="onSelectFlow(selectedKey)" @denied="newFlow" />
+    <section class="identity-strip" aria-label="流程基础信息" :inert="!!selectedKey && !draftRowVersion">
+      <label><span>流程标识 *</span><el-input v-model="flowKey" :disabled="!!selectedKey" clearable placeholder="例如 leave_request" /></label>
       <label><span>流程名称 *</span><el-input v-model="flowName" clearable placeholder="请输入流程名称" /></label>
       <label><span>表单标识</span><el-input v-model="formKey" clearable placeholder="关联业务表单" /></label>
       <label><span>功能 ID</span><el-input v-model="functionId" clearable placeholder="可选" /></label>
@@ -380,11 +387,11 @@ onMounted(async () => {
         <footer><span>{{ flowList.length }} 个流程</span><b><i />已启用</b></footer>
       </aside>
 
-      <section class="designer-canvas-wrap">
+      <section class="designer-canvas-wrap" :inert="!!selectedKey && !draftRowVersion">
         <DesignerCanvas v-model="schema" @select="onSelect" />
       </section>
 
-      <aside class="designer-right-panel" :class="{ active: selState.kind }">
+      <aside class="designer-right-panel" :class="{ active: selState.kind }" :inert="!!selectedKey && !draftRowVersion">
         <div class="inspector-heading">
           <span><el-icon><component :is="selState.kind === 'edge' ? Connection : (selState.kind === 'node' ? EditPen : Setting)" /></el-icon></span>
           <div>

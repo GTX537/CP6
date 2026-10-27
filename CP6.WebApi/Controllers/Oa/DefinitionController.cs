@@ -109,7 +109,7 @@ public sealed class DefinitionController : ControllerBase
     private IActionResult OkEnvelope(object value) => Ok(new { code = 0, message = "OK", data = value });
 
     private IActionResult Error(InvalidOperationException ex) =>
-        ex.Message == "E-WF-045"
+        ex.Message is "E-WF-045" or "DRAFT_REQUIRED"
             ? Conflict(new { code = ex.Message, message = ex.Message })
             : BadRequest(new { code = ex.Message, message = ex.Message });
 

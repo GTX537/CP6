@@ -8,7 +8,8 @@ public interface IFlowDefService
     /// <summary>建/改流程定义（按 FlowKey upsert，schema 变更自增 Version）。返回 FlowDef.Id。</summary>
     Task<Guid> SaveDefAsync(string flowKey, string flowName, string? formKey, string schemaJson, string? user = null);
 
-    Task<DefinitionDraftDto?> GetDraftAsync(string flowKey, bool createIfMissing = true, string? user = null);
+    /// <summary>Read only. The retained createIfMissing argument never causes a write.</summary>
+    Task<DefinitionDraftDto?> GetDraftAsync(string flowKey, bool createIfMissing = false, string? user = null);
     Task<DefinitionDraftDto> SaveDraftAsync(string flowKey, string flowName, string? formKey, string schemaJson, byte[]? rowVersion, string? user = null);
     Task<DefinitionPublishResult> PublishAsync(string flowKey, byte[]? rowVersion, Guid publishedBy, CancellationToken ct = default);
     Task<IReadOnlyList<DefinitionVersionItem>> ListVersionsAsync(string flowKey, CancellationToken ct = default);

@@ -45,10 +45,10 @@ public class FlowController : LocalizedControllerBase
     {
         try
         {
-            var draft = await _defSvc.SaveDraftAsync(r.FlowKey, r.FlowName, r.FormKey, r.SchemaJson, null, CurrentUser);
-            return Ok2(new { id = draft.DefinitionId, versionId = draft.VersionId, status = "draft" });
+            var draft = await _defSvc.SaveDraftAsync(r.FlowKey, r.FlowName, r.FormKey, r.SchemaJson, r.RowVersion, CurrentUser);
+            return Ok2(new { id = draft.DefinitionId, versionId = draft.VersionId, status = "draft", draft.RowVersion });
         }
-        catch (InvalidOperationException e) { return Err(e); }
+        catch (InvalidOperationException e) { return e.Message is "DRAFT_REQUIRED" or "E-WF-045" ? Conflict(new { code = e.Message, message = e.Message }) : Err(e); }
     }
 
     [HttpGet("flow/def/{flowKey}")]
@@ -102,7 +102,7 @@ public class FlowController : LocalizedControllerBase
         }
     }
 
-    public record FlowDefReq(string FlowKey, string FlowName, string? FormKey, string SchemaJson);
+    public record FlowDefReq(string FlowKey, string FlowName, string? FormKey, string SchemaJson, byte[]? RowVersion = null);
     public record SubmitReq(string FlowKey, string? VarsJson, string? BizType, string? BizId);
     public record ActReq(bool Approve, string? Comment);
 }
