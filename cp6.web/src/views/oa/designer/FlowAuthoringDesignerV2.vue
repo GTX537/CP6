@@ -3,6 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { flowAuthoringApi as api, type AuthoringCommand, type AuthoringEntry, type AuthoringField, type AuthoringResult, type AuthoringView } from '@/api/oa/flowAuthoring'
 import DesignerCanvas from './DesignerCanvas.vue'
+import FlowPublicationPanelV2 from './FlowPublicationPanelV2.vue'
 import NodePropertyPanel from './NodePropertyPanel.vue'
 import EdgePropertyPanel from './EdgePropertyPanel.vue'
 import { type FlowSchemaDto, type SchemaNode, type SchemaEdge } from './designerModel'
@@ -15,6 +16,8 @@ const allFields: AuthoringField[] = ['Name', 'SchemaJson', 'FormKey', 'FunctionI
 const labels: Record<AuthoringField, string> = { Name: '流程名称', SchemaJson: '流程结构', FormKey: '表单标识', FunctionId: '功能 ID', FlowCode: '流程编号' }
 const entry = ref<AuthoringEntry>(), items = ref<AuthoringView[]>([]), current = ref<AuthoringView>()
 const key = ref(''), fields = ref<Partial<Record<AuthoringField, string | null>>>({}), schema = ref<FlowSchemaDto>(JSON.parse(initial)), originalSchema = ref(initial)
+const publicationLocked = ref(false)
+const dirty = computed(() => !!current.value && (allFields.some(f => f !== 'SchemaJson' && fields.value[f] !== current.value?.fields[f]) || Object.hasOwn(fields.value, 'SchemaJson') && preserveSchema(originalSchema.value, schema.value) !== originalSchema.value))
 const busy = ref(false), error = ref(''), message = ref(''), stale = ref(false), page = ref(1)
 const pending = ref<{ key: string; command: AuthoringCommand }>()
 const selected = ref<{ kind: 'node' | 'edge' | null; id: string | null }>({ kind: null, id: null })
@@ -22,7 +25,7 @@ const selectedNode = computed(() => selected.value.kind === 'node' ? schema.valu
 const edgeIndex = computed(() => selected.value.kind === 'edge' ? schema.value.edges.findIndex((e, i) => (e.id || `${e.from}__${e.to}__${i}`) === selected.value.id) : -1)
 const writable = computed(() => current.value?.writableFields ?? entry.value?.writableFields ?? [])
 const readable = computed(() => allFields.every(f => Object.hasOwn(fields.value, f)))
-const canSave = computed(() => !stale.value && readable.value && writable.value.length > 0 && (current.value != null || entry.value?.canCreate))
+const canSave = computed(() => !publicationLocked.value && !current.value?.published && !stale.value && readable.value && writable.value.length > 0 && (current.value != null || entry.value?.canCreate))
 let generation = 0, live = true, controller: AbortController | undefined
 function remember() {
   if (pending.value) sessionStorage.setItem(cache, JSON.stringify({ identity: identityStamp(), pending: pending.value }))
@@ -55,7 +58,7 @@ function apply(view: AuthoringView) {
   selected.value = { kind: null, id: null }
 }
 async function reload() {
-  if (pending.value) return
+  if (pending.value || publicationLocked.value) return
   return run(async (check, signal) => {
     const list = await api.list(page.value, signal); check(); items.value = list
     // Existing readable drafts remain accessible when creation permission or Scope registration is unavailable.
@@ -65,11 +68,11 @@ async function reload() {
   })
 }
 function load(value: string) {
-  if (pending.value) return
+  if (pending.value || publicationLocked.value) return
   return run(async (check, signal) => { const loaded = await api.read(value, signal); check(); apply(loaded); message.value = '' })
 }
 function create() {
-  if (busy.value || pending.value || !entry.value?.canCreate) return
+  if (busy.value || pending.value || publicationLocked.value || !entry.value?.canCreate) return
   current.value = undefined; key.value = ''; fields.value = { Name: '', SchemaJson: initial, FormKey: null, FunctionId: null, FlowCode: null }
   originalSchema.value = initial; schema.value = JSON.parse(initial); selected.value = { kind: null, id: null }; stale.value = false; message.value = ''; error.value = ''
 }
@@ -111,7 +114,7 @@ function patchEdge(patch: Partial<SchemaEdge>) {
   schema.value = { ...schema.value, edges: schema.value.edges.map((e, i) => i === edgeIndex.value ? { ...e, ...patch, id: e.id, from: e.from, to: e.to } : e) }
 }
 function identityChanged() { clearPrivate(); error.value = '登录身份已变化，请重新读取。' }
-function leave() { if (!pending.value && !busy.value) emit('close') }
+function leave() { if (!pending.value && !busy.value && !publicationLocked.value) emit('close') }
 onMounted(() => {
   try {
     const saved = JSON.parse(sessionStorage.getItem(cache) ?? 'null')
@@ -128,26 +131,27 @@ onBeforeUnmount(() => { live = false; generation++; controller?.abort(); window.
 
 <template>
   <section class="authoring" aria-label="流程草稿工作区">
-    <header><div><h2>流程草稿</h2><p>在这里编写并保存新流程。草稿保持停用，发布入口尚未开放。</p></div>
-      <div class="actions"><button :disabled="busy || !!pending" @click="leave">返回流程库</button><button :disabled="busy || !!pending" @click="reload">重新读取</button>
-        <button :disabled="busy || !!pending || !entry?.canCreate" @click="create">新建草稿</button>
+    <header><div><h2>流程草稿</h2><p>在这里编写并保存新流程。发布前请先保存并预览。发布成功后流程仍保持停用。</p></div>
+      <div class="actions"><button :disabled="busy || publicationLocked || !!pending" @click="leave">返回流程库</button><button :disabled="busy || publicationLocked || !!pending" @click="reload">重新读取</button>
+        <button :disabled="busy || publicationLocked || !!pending || !entry?.canCreate" @click="create">新建草稿</button>
         <button :disabled="busy || (!pending && !canSave)" @click="save">{{ pending ? '以原意图重试' : '保存草稿' }}</button>
         <button v-if="pending" :disabled="busy" @click="recover">查询原保存结果</button></div></header>
     <p v-if="error" role="alert">{{ error }}</p><p v-if="message" role="status">{{ message }}</p>
     <p v-if="!entry?.canCreate && !pending">当前不能新建草稿。请确认流程设计权限及本租户的草稿登记策略。</p>
+    <FlowPublicationPanelV2 :current="current" :dirty="dirty" :disabled="busy || !!pending" @locked="publicationLocked = $event" @reload="load" @private-clear="clearPrivate" />
     <div class="workbench">
-      <aside><h3>已保存草稿</h3><button v-for="item in items" :key="item.definitionId" :disabled="busy || !!pending" @click="load(item.key)">{{ item.fields.Name ?? item.key }}</button>
-        <p v-if="!items.length">暂无可读取的草稿</p><div class="pages"><button :disabled="busy || !!pending || page === 1" @click="page--; reload()">上一页</button><span>{{ page }}</span><button :disabled="busy || !!pending || items.length < 100" @click="page++; reload()">下一页</button></div></aside>
+      <aside><h3>流程定义</h3><button v-for="item in items" :key="item.definitionId" :disabled="busy || publicationLocked || !!pending" @click="load(item.key)">{{ item.fields.Name ?? item.key }}{{ item.published ? '（已发布）' : '' }}</button>
+        <p v-if="!items.length">暂无可读取的草稿</p><div class="pages"><button :disabled="busy || publicationLocked || !!pending || page === 1" @click="page--; reload()">上一页</button><span>{{ page }}</span><button :disabled="busy || publicationLocked || !!pending || items.length < 100" @click="page++; reload()">下一页</button></div></aside>
       <main>
-        <div class="identity" :inert="busy || !!pending || stale">
+        <div class="identity" :inert="busy || publicationLocked || !!pending || stale">
           <label>流程标识<input v-model="key" :disabled="!!current" maxlength="100" /></label>
           <label v-for="field in allFields.filter(f => f !== 'SchemaJson')" :key="field" v-show="Object.hasOwn(fields, field)">{{ labels[field] }}<input v-model="fields[field]" :disabled="!writable.includes(field)" :maxlength="field === 'Name' ? 200 : field === 'FormKey' ? 100 : 50" /></label>
         </div>
         <p v-if="!Object.hasOwn(fields, 'SchemaJson')">当前无权读取流程结构。</p>
-        <div v-else class="canvas" :inert="busy || !!pending || stale || !writable.includes('SchemaJson')"><DesignerCanvas v-model="schema" @select="selected = $event" /></div>
+        <div v-else class="canvas" :inert="busy || publicationLocked || !!pending || stale || !writable.includes('SchemaJson')"><DesignerCanvas v-model="schema" @select="selected = $event" /></div>
         <p v-if="current?.diagnostics.length">草稿仍有待完善项目：{{ current.diagnostics.join('、') }}。保存不代表可发布。</p>
       </main>
-      <aside :inert="busy || !!pending || stale || !writable.includes('SchemaJson')">
+      <aside :inert="busy || publicationLocked || !!pending || stale || !writable.includes('SchemaJson')">
         <NodePropertyPanel v-if="selectedNode" :node="selectedNode" :current-flow-key="key" @update="patchNode" />
         <EdgePropertyPanel v-else-if="edgeIndex >= 0 && schema.edges[edgeIndex]" :edge="schema.edges[edgeIndex]!" @update="patchEdge" />
         <p v-else>选择节点或路径以编辑属性。</p>

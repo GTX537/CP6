@@ -14,11 +14,11 @@ namespace CP6.Core.Services.Wf;
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record FlowAuthoringBodyV2(string Name, string SchemaJson, string? FormKey, string? FunctionId, string? FlowCode);
 public sealed record FlowAuthoringViewV2(Guid DefinitionId, Guid DraftId, string Key, string Version,
-    Dictionary<string, string?> Fields, string[] WritableFields, string[] Diagnostics, bool Enabled = false);
+    Dictionary<string, string?> Fields, string[] WritableFields, string[] Diagnostics, bool Enabled = false, bool Published = false, int VersionNumber = 1);
 public sealed record WorkflowCommandResultV1(string CommandId, string Outcome, Guid? ResourceId, string? ResourceVersion,
     FlowAuthoringViewV2? Result, DateTimeOffset? RecordedAtUtc, string? CorrelationId);
 
-/// <summary>The first FLOW authoring consumer. No executable projection or publication is produced here.</summary>
+/// <summary>FLOW definition Owner. Publication remains separate from activation and executable runtime projection.</summary>
 public sealed partial class FlowAuthoringOwnerV2
 {
     public const string Resource = "workflow-definition", Operation = "FLOW_SAVE_DRAFT";
@@ -78,11 +78,11 @@ public sealed partial class FlowAuthoringOwnerV2
              where m.Enable && m.MenuKey == menu && a.ActionCode == action select a).AnyAsync(ct)) throw Error("ACTION_FORBIDDEN", 403);
     }
     private sealed record Head(Guid Id, Guid DraftId, string Key, Guid OwnerId, Guid? DeptId, Guid Version,
-        string Name, string SchemaJson, string? FormKey, string? FunctionId, string? FlowCode);
+        string Name, string SchemaJson, string? FormKey, string? FunctionId, string? FlowCode, int Status = 0, int Number = 1, Guid? SavedBy = null);
     private IQueryable<Head> Heads() => db.Database.SqlQuery<Head>($"""
         SELECT h.id AS "Id",h.draft_id AS "DraftId",h.flow_key AS "Key",h.owner_id AS "OwnerId",h.owner_dept_id AS "DeptId",
           d.row_version AS "Version",d.name AS "Name",d.schema_json AS "SchemaJson",d.form_key AS "FormKey",
-          h.function_id AS "FunctionId",h.flow_code AS "FlowCode" FROM cp6_workflow_authoring_v2.heads h
+          h.function_id AS "FunctionId",h.flow_code AS "FlowCode",d.status AS "Status",d.version_number AS "Number",d.saved_by AS "SavedBy" FROM cp6_workflow_authoring_v2.heads h
           JOIN cp6_workflow_authoring_v2.drafts d ON d.tenant_id=h.tenant_id AND d.environment_id=h.environment_id AND d.head_id=h.id AND d.id=h.draft_id
           WHERE h.tenant_id={db.CurrentTenantId} AND h.environment_id={fence.EnvironmentId}
         """);
@@ -145,7 +145,7 @@ public sealed partial class FlowAuthoringOwnerV2
     { ["Name"] = head.Name, ["SchemaJson"] = head.SchemaJson, ["FormKey"] = head.FormKey, ["FunctionId"] = head.FunctionId, ["FlowCode"] = head.FlowCode };
     private static FlowAuthoringViewV2 View(Head head, FieldPermissionDecisionV1 permission, string[] diagnostics) => new(
         head.Id, head.DraftId, head.Key, head.Version.ToString("D"), Values(head).Where(x => permission.Fields[x.Key].CanRead).ToDictionary(),
-        Fields.Where(x => permission.Fields[x].CanWrite).ToArray(), permission.Fields["SchemaJson"].CanRead ? diagnostics : []);
+        head.Status == 0 ? Fields.Where(x => permission.Fields[x].CanWrite).ToArray() : [], permission.Fields["SchemaJson"].CanRead ? diagnostics : [], false, head.Status == 1, head.Number);
     private async Task<bool> CanEdit(UserPermissionContext actor, CancellationToken ct)
     {
         var policy = await ReadPolicy(ct);
@@ -158,6 +158,7 @@ public sealed partial class FlowAuthoringOwnerV2
         Entry(); await using var tx = await db.Database.BeginTransactionAsync(ct); await Root(ct);
         var actor = await Actor(ct); var head = await Heads().SingleOrDefaultAsync(x => x.Key == key, ct) ?? throw Error("DEFINITION_NOT_FOUND", 404);
         var permission = await Permission(actor, head, await CanEdit(actor, ct), false, ct);
+        if (head.Status != 0) throw Error("DRAFT_REQUIRED", 404);
         if ((await Actor(ct)).UserId != actor.UserId) throw Error("REAUTH_REQUIRED", 401);
         return View(head, permission, []);
     }
@@ -178,7 +179,7 @@ public sealed partial class FlowAuthoringOwnerV2
         }
         var result = new List<FlowAuthoringViewV2>();
         var pageRows = await query.OrderBy(h => h.Key).Skip((page - 1) * 100).Take(100)
-            .Select(h => new Head(h.Id, h.DraftId, h.Key, h.OwnerId, h.DeptId, h.Version, h.Name, "", h.FormKey, h.FunctionId, h.FlowCode)).ToListAsync(ct);
+            .Select(h => new Head(h.Id, h.DraftId, h.Key, h.OwnerId, h.DeptId, h.Version, h.Name, "", h.FormKey, h.FunctionId, h.FlowCode, h.Status, h.Number, h.SavedBy)).ToListAsync(ct);
         foreach (var head in pageRows)
         {
             var permission = await Permission(actor, head, false, false, ct);
@@ -294,11 +295,12 @@ public sealed partial class FlowAuthoringOwnerV2
             var old = await Heads().SingleOrDefaultAsync(x => x.Key == key, ct);
             var head = old ?? new Head(Guid.NewGuid(), Guid.NewGuid(), key, actor.UserId, actor.DeptId, Guid.NewGuid(), "", "", null, null, null);
             var permission = await Permission(actor, head, true, old == null, ct);
+            if (old?.Status == 1) throw Error("DRAFT_REQUIRED", 409);
             if (old != null && command.ExpectedVersion == null) throw Error("DEFINITION_EXISTS", 409);
             if (old == null && command.ExpectedVersion != null || old != null && command.ExpectedVersion != old.Version.ToString("D")) throw Error("DEFINITION_CHANGED", 409);
             var body = command.Body with { FunctionId = string.IsNullOrWhiteSpace(command.Body.FunctionId) ? null : command.Body.FunctionId,
                 FlowCode = string.IsNullOrWhiteSpace(command.Body.FlowCode) ? null : command.Body.FlowCode };
-            var next = head with { Version = Guid.NewGuid(), Name = body.Name, SchemaJson = body.SchemaJson, FormKey = body.FormKey, FunctionId = body.FunctionId, FlowCode = body.FlowCode };
+            var next = head with { Version = Guid.NewGuid(), SavedBy = actor.UserId, Name = body.Name, SchemaJson = body.SchemaJson, FormKey = body.FormKey, FunctionId = body.FunctionId, FlowCode = body.FlowCode };
             CheckWrites(old, next, permission);
             var diagnostics = ValidateSchema(key, body.SchemaJson, ct);
             if (old == null)
@@ -308,8 +310,8 @@ public sealed partial class FlowAuthoringOwnerV2
                     VALUES({db.CurrentTenantId},{fence.EnvironmentId},{next.Id},{key},{actor.UserId},{actor.DeptId},{body.FunctionId},{body.FlowCode},{next.DraftId},{next.Version})
                     """, ct);
                 await db.Database.ExecuteSqlInterpolatedAsync($"""
-                    INSERT INTO cp6_workflow_authoring_v2.drafts(tenant_id,environment_id,head_id,id,name,form_key,schema_json,row_version)
-                    VALUES({db.CurrentTenantId},{fence.EnvironmentId},{next.Id},{next.DraftId},{body.Name},{body.FormKey},{body.SchemaJson},{next.Version})
+                    INSERT INTO cp6_workflow_authoring_v2.drafts(tenant_id,environment_id,head_id,id,name,form_key,schema_json,row_version,saved_by)
+                    VALUES({db.CurrentTenantId},{fence.EnvironmentId},{next.Id},{next.DraftId},{body.Name},{body.FormKey},{body.SchemaJson},{next.Version},{actor.UserId})
                     """, ct);
             }
             else
@@ -319,7 +321,7 @@ public sealed partial class FlowAuthoringOwnerV2
                     WHERE tenant_id={db.CurrentTenantId} AND environment_id={fence.EnvironmentId} AND id={next.Id}
                     """, ct);
                 var changed = await db.Database.ExecuteSqlInterpolatedAsync($"""
-                    UPDATE cp6_workflow_authoring_v2.drafts SET name={body.Name},form_key={body.FormKey},schema_json={body.SchemaJson},row_version={next.Version}
+                    UPDATE cp6_workflow_authoring_v2.drafts SET name={body.Name},form_key={body.FormKey},schema_json={body.SchemaJson},row_version={next.Version},saved_by={actor.UserId}
                     WHERE tenant_id={db.CurrentTenantId} AND environment_id={fence.EnvironmentId} AND head_id={next.Id} AND row_version={old.Version}
                     """, ct);
                 if (changed != 1) throw Error("DEFINITION_CHANGED", 409);

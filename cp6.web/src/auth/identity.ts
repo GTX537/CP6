@@ -14,6 +14,7 @@ export function identityStamp(): string {
 
 export function clearTabIdentity(): void {
   sessionStorage.removeItem('cp6-workflow-authoring-pending')
+  sessionStorage.removeItem('cp6-workflow-publication-pending')
   for (const key of ['cp6_impersonating', 'cp6_oa_acting_as', 'cp6-login-transition']) sessionStorage.removeItem(key)
 }
 
