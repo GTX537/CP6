@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-27：W183 实际审批决定可靠投递待 Main 收尾
+
+原决定可靠投递、先查原事件、持久租约/epoch与当前服务授权、原确认恢复已接入实际TLS/C02/HTTP；运输接收不提升业务应用。19 local checks: 19 PG18/HTTP and 0 affected kernel/unit;0skip;no UI change。[报告](../development/evidence/W183-01/DELIVERY.md)。登记18.65分钟，预计60–100；Handoff已释放，Main待正常PR/finish。业务应用/页面及七天全部出口保留。
+
 ## 2026-10-27：W182 业务审批事实接收待 Main 收尾
 
 实际服务与准确Subject当前授权、原决定/证据和Inbox/应用流共同提交已接入实际HTTP；确认丢失可原键恢复，不执行业务报废。17 local checks: 17 PG18/HTTP and 0 affected kernel/unit;0skip;no UI change。[报告](../development/evidence/W182-01/DELIVERY.md)。登记29.83分钟，预计120–210；Handoff已释放，Main待正常PR/finish。业务应用/页面及七天全部出口保留。

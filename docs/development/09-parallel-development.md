@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W182 业务审批事实接收](dispatch/20261027-wave182/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
+> 当前：[W183 实际审批决定可靠投递](dispatch/20261027-wave183/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
+
+> 历史快照：[W182 业务审批事实接收](dispatch/20261027-wave182/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
 
 > 历史快照：[W181 实际审批决定共同事务](dispatch/20261027-wave181/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
 
