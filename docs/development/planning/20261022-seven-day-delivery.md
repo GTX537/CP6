@@ -1364,3 +1364,7 @@ BUG572修复与65个不同PG/HTTP用例通过，UI未改复用。[单份报告](
 ## 2026-10-27 W160实物实例来源
 
 限定实际来源/资料/HoldExact采用通过PG14、InMemory7、UI62、type/Vite。[单份报告](../evidence/W160-01/DELIVERY.md)。登记20.43分钟，预计80–130；Handoff已释放，Main待finish。正式Site/cycle/lifetime、新建与使用维护报废、实际双Role及完整目标未完成。
+
+## 2026-10-27 W161 实物登记
+
+限定实际新建/旧站点与周期起点、恢复及页面采用，通过28PG/HTTP、45UI、type/Vite。[报告](../evidence/W161-01/DELIVERY.md)。登记21.11分钟，预计50–80；Handoff已释放，Main待finish。可信非空关联、生命周期、工程双Role及完整七天未完成。

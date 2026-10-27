@@ -160762,6 +160762,16 @@
       "date": "2026-10-27",
       "change": "W160 actual physical tool current original provider/profile/HoldExact validated PG14/InMemory7/UI62/type/Vite. No Site/cycle/lifetime/qualification invention; Handoff released, Main closeout pending; full formal states unchanged.",
       "evidence": "docs/development/evidence/W160-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-27",
+      "change": "W160 closed once including WP10-48 limited provider lifecycle. W161 actual new registration and legacy Site/cycle anchor admitted50–80min; original full scope retained.",
+      "evidence": "docs/development/dispatch/20261027-wave161/README.md"
+    },
+    {
+      "date": "2026-10-27",
+      "change": "W161 actual new physical registration and explicit legacy Site/cycle anchor validated28PG/HTTP,45UI,type/Vite; truthful lifetime knowledge/no execution permit. Handoff released, Main closeout pending. Full original states unchanged.",
+      "evidence": "docs/development/evidence/W161-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -186810,7 +186820,7 @@
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "wave160_physical_provider": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W160-01/DELIVERY.md",
         "scope": "Actual WMS tool instance native identity/current original provider, current authorization/masking, bounded profile original operation and internal same-UoW HoldExact; actual API and page. Formal Site/cycle/qualification remain unproven.",
         "remaining": "Only isolated local PG18 migration/actual HTTP,7 existing InMemory legacy regressions,62 UI/router/auth/IAM and type/Vite. No browser E2E, enterprise acceptance or existing environment migration. Source versions are real observation versions, not approved business cycles or lifecycle decisions. Lifetime/CycleNo/Site unknown; new registration/legacy mapping/use/maintenance/discard and actual ENG association consumer not delivered. HoldExact internal provider tested with real UoW/concurrent connections, not an HTTP permit/TTL or positive dual-Role decision. Full WP10-48/WP05-06 and original seven-day scope remain. No Actions/deployment.",
@@ -186821,6 +186831,42 @@
           "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/136",
           "exact_tree_adoption": true,
           "at": "2026-10-27T00:16:52.603755+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave160-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W160-01",
+          "source": "5788dbd9768a16d57d62df684155e1b152b3fffc",
+          "remote_target": "54be36cf2e05027eb2574106aa98b160cabe81e8",
+          "branch": "codex/w160-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/580"
+        }
+      },
+      "wave161_registration": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "report": "docs/development/evidence/W161-01/DELIVERY.md",
+        "scope": "Actual native physical tool registration with exact trusted Site, new zero cycle/lifetime provenance, explicit old observation with unknown lifetime, immutable cycle anchor, combined internal HoldExact and original operation/API/page adoption.",
+        "remaining": "Local isolated PG18 and actual local HTTP/UI only; no browser E2E or real enterprise acceptance. Existing env migration/Actions/deployment not executed. New registration specifically unlinked customer/product/location; nonempty trusted links remain original work. Legacy cycle ordinal and lifetime unknown, anchor is an observed starting point not invented historical maintenance. Native lifecycle drift invalidates current cycle/lifetime knowledge even if value restored. No actual use/maintenance/retirement, corrective Site rebind, technical candidate adoption, positive ENG dualRole or execution permit delivered. Full WP10-48 and all seven-day exits unchanged.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "9019c444ec7ee270a4190cb1187bfe04e071d248",
+          "main": "fb443d80a111982c403d4432bce1a56f7d4fc5c6",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/137",
+          "exact_tree_adoption": true,
+          "at": "2026-10-27T00:52:58.160920+00:00"
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
@@ -193803,10 +193849,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261026-wave160",
-      "path": "docs/development/dispatch/20261026-wave160/README.md",
-      "baseline_sha": "f4677c825c5b34644aa277645ebc39bd514a02f5",
-      "registered_at": "2026-10-26T23:58:24.505158+00:00",
+      "id": "20261027-wave161",
+      "path": "docs/development/dispatch/20261027-wave161/README.md",
+      "baseline_sha": "54be36cf2e05027eb2574106aa98b160cabe81e8",
+      "registered_at": "2026-10-27T00:34:14.521000+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -193825,27 +193871,27 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W160-01",
+          "id": "W161-01",
           "related_tasks": [
             "WP10-48"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Physical tool instance source authority and bounded profile adoption",
+          "title": "Physical tool registration and cycle provenance",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "9025be1ff2c7e6869b4f9cf2f466fc6dbbeb9ff7",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261026T235824Z-wave160-start/MESSAGE.md",
-            "at": "2026-10-26T23:58:24.505158+00:00",
-            "branch": "codex/w160-handoff"
+            "commit": "bc8df1c692649c3269227afac470e77f8324d6c6",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T003414Z-wave161-start/MESSAGE.md",
+            "at": "2026-10-27T00:34:14.521000+00:00",
+            "branch": "codex/w161-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w160-01",
-          "planned_scope_ref": "docs/development/dispatch/20261026-wave160/README.md",
+          "branch": "codex/w161-01",
+          "planned_scope_ref": "docs/development/dispatch/20261027-wave161/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -193853,8 +193899,8 @@
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
-          "validation": "14 PG18/HTTP;7 legacy InMemory;62 UI/router/auth/IAM;type/Vite pass;no skips.",
-          "worker_delivery_ref": "docs/development/evidence/W160-01/DELIVERY.md",
+          "validation": "28 PG18/HTTP;45 UI/router/auth;type/Vite pass;no skips.",
+          "worker_delivery_ref": "docs/development/evidence/W161-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -193865,11 +193911,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-26T23:57:18.755939+00:00",
+        "started_at": "2026-10-27T00:32:56.927545+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          80,
-          130
+          50,
+          80
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -193877,7 +193923,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Continue WP10-48 actual Site/legacy binding and independent maintenance cycle/lifetime knowledge, then new registration and formal physical/technical dual-Role adoption. Professional approval/freeze, DOC, Order request application and all original D2/D3/D5/D6/D7 exits remain.",
+      "next_action": "Continue WP10-48 actual trusted optional customer/product/location links and technical candidates, then real WP05-06 dual-Role adoption; formal lifecycle/use/maintenance/retirement, approval/freeze/DOC and all original D2/D3/D5/D6/D7 exits remain.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -193885,7 +193931,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 20.43
+      "elapsed_registered_wave_minutes": 21.11
     },
     "wave_history": [
       {
@@ -215797,6 +215843,114 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/135"
           }
         ]
+      },
+      {
+        "id": "20261026-wave160",
+        "path": "docs/development/dispatch/20261026-wave160/README.md",
+        "baseline_sha": "f4677c825c5b34644aa277645ebc39bd514a02f5",
+        "registered_at": "2026-10-26T23:58:24.505158+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W160-01",
+            "related_tasks": [
+              "WP10-48"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Physical tool instance source authority and bounded profile adoption",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "9025be1ff2c7e6869b4f9cf2f466fc6dbbeb9ff7",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261026T235824Z-wave160-start/MESSAGE.md",
+              "at": "2026-10-26T23:58:24.505158+00:00",
+              "branch": "codex/w160-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w160-01",
+            "planned_scope_ref": "docs/development/dispatch/20261026-wave160/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "validation": "14 PG18/HTTP;7 legacy InMemory;62 UI/router/auth/IAM;type/Vite pass;no skips.",
+            "worker_delivery_ref": "docs/development/evidence/W160-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave160-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-26T23:57:18.755939+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            80,
+            130
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Continue WP10-48 actual Site/legacy binding and independent maintenance cycle/lifetime knowledge, then new registration and formal physical/technical dual-Role adoption. Professional approval/freeze, DOC, Order request application and all original D2/D3/D5/D6/D7 exits remain.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave160-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 20.43,
+        "actual_registered_wave_minutes": 23.07,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W160-01",
+            "source": "5788dbd9768a16d57d62df684155e1b152b3fffc",
+            "remote_target": "54be36cf2e05027eb2574106aa98b160cabe81e8",
+            "branch": "codex/w160-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/580"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W160-HANDOFF",
+            "source": "df05def4865addfe61a70620caf23e2c0e586a4b",
+            "remote_target": "d61d506efcdbedde347da3bf6409585e007f44f2",
+            "branch": "codex/w160-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/136"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -215896,7 +216050,7 @@
           "id": "D3",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W160-01",
+          "current_window": "W161-01",
           "prerequisite_adjustment": "Issue460 WorkCenter and ProcessCostRate actual current Owner; full process/cost/Finance adoption remains separate.",
           "adopted_window": "W49-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/402",
@@ -215905,7 +216059,7 @@
           "last_window_actual_agent_minutes": 56.28,
           "last_branches_deleted": true,
           "last_seats_released": true,
-          "next_action": "Continue WP10-48 actual Site/legacy binding and independent maintenance cycle/lifetime knowledge, then new registration and formal physical/technical dual-Role adoption. Professional approval/freeze, DOC, Order request application and all original D2/D3/D5/D6/D7 exits remain.",
+          "next_action": "Continue WP10-48 actual trusted optional customer/product/location links and technical candidates, then real WP05-06 dual-Role adoption; formal lifecycle/use/maintenance/retirement, approval/freeze/DOC and all original D2/D3/D5/D6/D7 exits remain.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W136-01/DELIVERY.md",
           "last_product_source_report": "docs/development/evidence/W144-01/DELIVERY.md",
@@ -215923,7 +216077,8 @@
           "last_tool_order_link_report": "docs/development/evidence/W157-01/DELIVERY.md",
           "last_legacy_tool_writer_report": "docs/development/evidence/W158-01/DELIVERY.md",
           "last_tool_technical_draft_report": "docs/development/evidence/W159-01/DELIVERY.md",
-          "last_physical_tool_provider_report": "docs/development/evidence/W160-01/DELIVERY.md"
+          "last_physical_tool_provider_report": "docs/development/evidence/W160-01/DELIVERY.md",
+          "last_physical_tool_registration_report": "docs/development/evidence/W161-01/DELIVERY.md"
         },
         {
           "id": "D4",

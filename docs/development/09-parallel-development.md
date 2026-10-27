@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W160实物实例来源](dispatch/20261026-wave160/README.md)：验证完成、Handoff已finish，Main待正常PR/finish；原七天全部出口保持。
+> 当前：[W161 实物登记](dispatch/20261027-wave161/README.md)：验证完成、Handoff已finish，Main待正常PR/finish；七天全部出口保留。
+
+> 历史快照：[W160实物实例来源](dispatch/20261026-wave160/README.md)：验证完成、Handoff已finish，Main待正常PR/finish；原七天全部出口保持。
 
 > 历史快照：[W159工具技术规格草稿](dispatch/20261026-wave159/README.md)：定向验证完成、Handoff已finish，Main待正常PR/finish；原七天全部出口保持。
 

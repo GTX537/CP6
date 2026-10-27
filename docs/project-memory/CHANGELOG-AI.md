@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-27：W161 实物登记待 Main 收尾
+
+真实实物新建、旧记录准确 Site/周期观察起点、未知寿命及原操作恢复通过28PG/HTTP、45UI、type/Vite。[单份报告](../development/evidence/W161-01/DELIVERY.md)。登记21.11分钟，预计50–80；Handoff已释放，Main待收尾。非空可信关联、实际生命周期/工程双Role和完整原目标仍未完成。
+
 ## 2026-10-27：W160实物实例来源待Main收尾
 
 实物实例准确来源/不可变历史、有限资料编辑、同事务HoldExact及实际页面通过PG14、InMemory7、UI62、type/Vite。[单份报告](../development/evidence/W160-01/DELIVERY.md)。登记20.43分钟，预计80–130；Handoff已释放，Main待收尾。Site/周期/终身/资格及完整原任务保持未完成。

@@ -9,6 +9,13 @@ namespace CP6.Core.Services.Integration;
 
 internal sealed partial class OperationsAccessV1
 {
+    internal void RequireToolSourceAccess(CP6Context context)
+    {
+        if(!ReferenceEquals(db,context)||db.Database.CurrentTransaction==null||authority.Source.TenantId!=db.CurrentTenantId)
+            throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
+        if(authority.Resource!=OperationsOwnerV1.ToolInstance||authority.Action!="query")
+            throw new OrderPriceCorrectionException("ACTION_FORBIDDEN",403);
+    }
     internal IQueryable<PlateMoldStock> ToolInstances()
     {
         var rows=db.PlateMoldStocks.AsNoTracking().Where(x=>!x.IsDeleted);
