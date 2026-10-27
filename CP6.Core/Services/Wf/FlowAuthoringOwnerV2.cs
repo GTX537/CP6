@@ -14,7 +14,7 @@ namespace CP6.Core.Services.Wf;
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record FlowAuthoringBodyV2(string Name, string SchemaJson, string? FormKey, string? FunctionId, string? FlowCode);
 public sealed record FlowAuthoringViewV2(Guid DefinitionId, Guid DraftId, string Key, string Version,
-    Dictionary<string, string?> Fields, string[] WritableFields, string[] Diagnostics, bool Enabled = false, bool Published = false, int VersionNumber = 1);
+    Dictionary<string, string?> Fields, string[] WritableFields, string[] Diagnostics, bool Enabled = false, bool Published = false, int VersionNumber = 1, string? ActivationRevision = null);
 public sealed record WorkflowCommandResultV1(string CommandId, string Outcome, Guid? ResourceId, string? ResourceVersion,
     FlowAuthoringViewV2? Result, DateTimeOffset? RecordedAtUtc, string? CorrelationId);
 
@@ -78,12 +78,13 @@ public sealed partial class FlowAuthoringOwnerV2
              where m.Enable && m.MenuKey == menu && a.ActionCode == action select a).AnyAsync(ct)) throw Error("ACTION_FORBIDDEN", 403);
     }
     private sealed record Head(Guid Id, Guid DraftId, string Key, Guid OwnerId, Guid? DeptId, Guid Version,
-        string Name, string SchemaJson, string? FormKey, string? FunctionId, string? FlowCode, int Status = 0, int Number = 1, Guid? SavedBy = null);
+        string Name, string SchemaJson, string? FormKey, string? FunctionId, string? FlowCode, int Status = 0, int Number = 1, Guid? SavedBy = null, bool Enabled = false, Guid ActivationVersion = default);
     private IQueryable<Head> Heads() => db.Database.SqlQuery<Head>($"""
         SELECT h.id AS "Id",h.draft_id AS "DraftId",h.flow_key AS "Key",h.owner_id AS "OwnerId",h.owner_dept_id AS "DeptId",
           d.row_version AS "Version",d.name AS "Name",d.schema_json AS "SchemaJson",d.form_key AS "FormKey",
-          h.function_id AS "FunctionId",h.flow_code AS "FlowCode",d.status AS "Status",d.version_number AS "Number",d.saved_by AS "SavedBy" FROM cp6_workflow_authoring_v2.heads h
+          h.function_id AS "FunctionId",h.flow_code AS "FlowCode",d.status AS "Status",d.version_number AS "Number",d.saved_by AS "SavedBy",a.enabled AS "Enabled",a.revision AS "ActivationVersion" FROM cp6_workflow_authoring_v2.heads h
           JOIN cp6_workflow_authoring_v2.drafts d ON d.tenant_id=h.tenant_id AND d.environment_id=h.environment_id AND d.head_id=h.id AND d.id=h.draft_id
+          JOIN cp6_workflow_authoring_v2.activation_current a ON a.tenant_id=h.tenant_id AND a.environment_id=h.environment_id AND a.head_id=h.id
           WHERE h.tenant_id={db.CurrentTenantId} AND h.environment_id={fence.EnvironmentId}
         """);
     private int ResourceScope(UserPermissionContext actor)
@@ -111,15 +112,15 @@ public sealed partial class FlowAuthoringOwnerV2
             _ => false
         };
     }
-    private async Task ReadCapability(UserPermissionContext actor, CancellationToken ct)
+    private async Task ReadCapability(UserPermissionContext actor, CancellationToken ct, string menu = "oa-designer")
     {
-        // The actual enabled designer menu is this resource's read capability. Removing edit alone does not revoke read.
-        if (!actor.MenuKeys.Contains("oa-designer") || !await db.Sys_Menus.AnyAsync(m => m.Enable && m.MenuKey == "oa-designer", ct))
+        // Each controlled entry requires its actual enabled menu. Removing a write action alone does not revoke read.
+        if (!actor.MenuKeys.Contains(menu) || !await db.Sys_Menus.AnyAsync(m => m.Enable && m.MenuKey == menu, ct))
             throw Error("OBJECT_FORBIDDEN", 403);
     }
-    private async Task<FieldPermissionDecisionV1> Permission(UserPermissionContext actor, Head head, bool write, bool creating, CancellationToken ct)
+    private async Task<FieldPermissionDecisionV1> Permission(UserPermissionContext actor, Head head, bool write, bool creating, CancellationToken ct, string readMenu = "oa-designer")
     {
-        await ReadCapability(actor, ct);
+        await ReadCapability(actor, ct, readMenu);
         if (!await Visible(actor, head, ct)) throw Error("DEFINITION_NOT_FOUND", 404);
         if (write)
         {
@@ -145,7 +146,7 @@ public sealed partial class FlowAuthoringOwnerV2
     { ["Name"] = head.Name, ["SchemaJson"] = head.SchemaJson, ["FormKey"] = head.FormKey, ["FunctionId"] = head.FunctionId, ["FlowCode"] = head.FlowCode };
     private static FlowAuthoringViewV2 View(Head head, FieldPermissionDecisionV1 permission, string[] diagnostics) => new(
         head.Id, head.DraftId, head.Key, head.Version.ToString("D"), Values(head).Where(x => permission.Fields[x.Key].CanRead).ToDictionary(),
-        head.Status == 0 ? Fields.Where(x => permission.Fields[x].CanWrite).ToArray() : [], permission.Fields["SchemaJson"].CanRead ? diagnostics : [], false, head.Status == 1, head.Number);
+        head.Status == 0 ? Fields.Where(x => permission.Fields[x].CanWrite).ToArray() : [], permission.Fields["SchemaJson"].CanRead ? diagnostics : [], head.Enabled, head.Status == 1, head.Number, head.ActivationVersion.ToString("D"));
     private async Task<bool> CanEdit(UserPermissionContext actor, CancellationToken ct)
     {
         var policy = await ReadPolicy(ct);
@@ -162,12 +163,12 @@ public sealed partial class FlowAuthoringOwnerV2
         if ((await Actor(ct)).UserId != actor.UserId) throw Error("REAUTH_REQUIRED", 401);
         return View(head, permission, []);
     }
-    public async Task<FlowAuthoringViewV2[]> ListAsync(int page = 1, CancellationToken ct = default)
+    public async Task<FlowAuthoringViewV2[]> ListAsync(int page = 1, CancellationToken ct = default, string readMenu = "oa-designer")
     {
         if (page < 1 || page > 100000) throw Error("PAGE_INVALID", 400);
         Entry(); await using var tx = await db.Database.BeginTransactionAsync(ct); await Root(ct); var actor = await Actor(ct);
         // Verify catalog/read admission even for an empty page. Scope filtering precedes pagination.
-        await ReadCapability(actor, ct);
+        await ReadCapability(actor, ct, readMenu);
         var query = Heads(); var scope = ResourceScope(actor);
         if (scope == 1) query = query.Where(h => h.OwnerId == actor.UserId);
         else if (scope is 2 or 3 or 4)
@@ -179,10 +180,10 @@ public sealed partial class FlowAuthoringOwnerV2
         }
         var result = new List<FlowAuthoringViewV2>();
         var pageRows = await query.OrderBy(h => h.Key).Skip((page - 1) * 100).Take(100)
-            .Select(h => new Head(h.Id, h.DraftId, h.Key, h.OwnerId, h.DeptId, h.Version, h.Name, "", h.FormKey, h.FunctionId, h.FlowCode, h.Status, h.Number, h.SavedBy)).ToListAsync(ct);
+            .Select(h => new Head(h.Id, h.DraftId, h.Key, h.OwnerId, h.DeptId, h.Version, h.Name, "", h.FormKey, h.FunctionId, h.FlowCode, h.Status, h.Number, h.SavedBy, h.Enabled, h.ActivationVersion)).ToListAsync(ct);
         foreach (var head in pageRows)
         {
-            var permission = await Permission(actor, head, false, false, ct);
+            var permission = await Permission(actor, head, false, false, ct, readMenu);
             var view = View(head, permission, []); view.Fields.Remove("SchemaJson"); result.Add(view);
         }
         if ((await Actor(ct)).UserId != actor.UserId) throw Error("REAUTH_REQUIRED", 401);
@@ -292,6 +293,7 @@ public sealed partial class FlowAuthoringOwnerV2
             }
             var lease = await fence.AcquireAsync(ct);
             if (!await db.Database.SqlQueryRaw<bool>("SELECT cp6_workflow_authoring_v2.ready() AS \"Value\"").SingleAsync(ct)) throw Error("AUTHORING_WRITER_COVERAGE_UNAVAILABLE");
+            await ActivationReady(ct);
             var old = await Heads().SingleOrDefaultAsync(x => x.Key == key, ct);
             var head = old ?? new Head(Guid.NewGuid(), Guid.NewGuid(), key, actor.UserId, actor.DeptId, Guid.NewGuid(), "", "", null, null, null);
             var permission = await Permission(actor, head, true, old == null, ct);
@@ -328,7 +330,8 @@ public sealed partial class FlowAuthoringOwnerV2
             }
             var at = DateTimeOffset.UtcNow;
             // Store the complete original snapshot. Each response (including replay) applies current field projection.
-            var snapshot = new FlowAuthoringViewV2(next.Id, next.DraftId, key, next.Version.ToString("D"), Values(next), [], diagnostics);
+            next = next with { ActivationVersion = (await Activation(next.Id, ct)).Revision };
+            var snapshot = new FlowAuthoringViewV2(next.Id, next.DraftId, key, next.Version.ToString("D"), Values(next), [], diagnostics, next.Enabled, false, next.Number, next.ActivationVersion.ToString("D"));
             var saved = new WorkflowCommandResultV1(command.CommandId, "SUCCEEDED", next.Id, snapshot.Version, snapshot, at, command.Correlation);
             var text = JsonSerializer.Serialize(saved, Json);
             await db.Database.ExecuteSqlInterpolatedAsync($"""

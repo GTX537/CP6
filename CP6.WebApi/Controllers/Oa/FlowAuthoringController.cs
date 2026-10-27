@@ -25,6 +25,14 @@ public sealed class FlowAuthoringController(FlowAuthoringOwnerV2 owner) : Contro
     public Task<IActionResult> Publish(string key, CancellationToken ct) => Run(async () => await owner.PublishAsync(key, await Raw(ct), ct));
     [HttpPost("definitions/FLOW/{key}/drafts"), RequestSizeLimit(1024 * 1024)]
     public Task<IActionResult> Next(string key, CancellationToken ct) => Run(async () => await owner.CreateNextDraftAsync(key, await Raw(ct), ct));
+    [HttpGet("activations/FLOW")]
+    public Task<IActionResult> ActivationList([FromQuery] int page = 1, CancellationToken ct = default) => Run(async () => await owner.ActivationListAsync(page, ct));
+    [HttpGet("definitions/FLOW/{key}/activation")]
+    public Task<IActionResult> Activation(string key, [FromQuery] int page = 1, CancellationToken ct = default) => Run(async () => await owner.ActivationPreviewAsync(key, page, ct));
+    [HttpGet("definitions/FLOW/{key}/activation-history")]
+    public Task<IActionResult> ActivationHistory(string key, [FromQuery] int page = 1, CancellationToken ct = default) => Run(async () => await owner.ActivationHistoryAsync(key, page, ct));
+    [HttpPost("definitions/FLOW/{key}/activation"), RequestSizeLimit(1024 * 1024)]
+    public Task<IActionResult> Activate(string key, CancellationToken ct) => Run(async () => await owner.SetActivationAsync(key, await Raw(ct), ct));
     [HttpGet("definitions/FLOW/{key}/draft")]
     public Task<IActionResult> Read(string key, CancellationToken ct) => Run(async () => await owner.ReadAsync(key, ct));
     [HttpPut("definitions/FLOW/{key}/draft"), RequestSizeLimit(1024 * 1024)]
@@ -42,8 +50,9 @@ public sealed class FlowAuthoringController(FlowAuthoringOwnerV2 owner) : Contro
     [HttpGet("commands/{commandId}")]
     public Task<IActionResult> Original(string commandId, [FromQuery] string operation, [FromQuery] string resource, CancellationToken ct) => Run(async () =>
     {
-        if (operation is not (FlowAuthoringOwnerV2.Operation or FlowAuthoringOwnerV2.PublishOperation or FlowAuthoringOwnerV2.NextDraftOperation) || string.IsNullOrWhiteSpace(resource) || resource.Length > 100)
+        if (operation is not (FlowAuthoringOwnerV2.Operation or FlowAuthoringOwnerV2.PublishOperation or FlowAuthoringOwnerV2.NextDraftOperation or FlowAuthoringOwnerV2.ActivationOperation) || string.IsNullOrWhiteSpace(resource) || resource.Length > 100)
             throw new ScopeAuthorizationExceptionV1("COMMAND_SCOPE_INVALID", 400);
+        if (operation == FlowAuthoringOwnerV2.ActivationOperation) return (object)await owner.ActivationOriginalAsync(resource, commandId, ct);
         return operation == FlowAuthoringOwnerV2.Operation ? (object)await owner.OriginalAsync(resource, commandId, ct) : await owner.LifecycleOriginalAsync(resource, operation, commandId, ct);
     });
     private async Task<IActionResult> Run(Func<Task<object>> action)

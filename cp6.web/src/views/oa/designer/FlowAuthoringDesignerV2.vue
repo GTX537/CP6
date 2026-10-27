@@ -81,7 +81,7 @@ async function accept(result: AuthoringResult, check: () => void, signal: AbortS
   if (!intent || result.commandId !== intent.command.commandId || result.outcome !== 'SUCCEEDED' || !result.result
     || result.result.key !== intent.key || result.resourceId !== result.result.definitionId || result.resourceVersion !== result.result.version
     || current.value && current.value.definitionId !== result.resourceId) throw new Error('原结果不匹配')
-  apply(result.result); pending.value = undefined; remember(); message.value = '原保存已确认。草稿尚未发布或启用。'
+  apply(result.result); pending.value = undefined; remember(); message.value = '原保存已确认。草稿尚未发布，现有启停配置保持不变。'
   const latest = await api.read(intent.key, signal); check(); apply(latest)
   const list = await api.list(page.value, signal); check(); items.value = list
 }
@@ -131,7 +131,7 @@ onBeforeUnmount(() => { live = false; generation++; controller?.abort(); window.
 
 <template>
   <section class="authoring" aria-label="流程草稿工作区">
-    <header><div><h2>流程草稿</h2><p>在这里编写并保存新流程。发布前请先保存并预览。发布成功后流程仍保持停用。</p></div>
+    <header><div><h2>流程草稿</h2><p>在这里编写并保存新流程。发布前请先保存并预览。发布不会改变当前启停配置。</p></div>
       <div class="actions"><button :disabled="busy || publicationLocked || !!pending" @click="leave">返回流程库</button><button :disabled="busy || publicationLocked || !!pending" @click="reload">重新读取</button>
         <button :disabled="busy || publicationLocked || !!pending || !entry?.canCreate" @click="create">新建草稿</button>
         <button :disabled="busy || (!pending && !canSave)" @click="save">{{ pending ? '以原意图重试' : '保存草稿' }}</button>

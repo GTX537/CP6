@@ -1416,3 +1416,7 @@ FLOW草稿Owner新建/读取/保存、当前Scope/资源/字段/设计期策略�
 ## 2026-10-27 W173 流程发布与不可变版本
 
 FLOW准确发布预览、不可变版本、原命令恢复、指定版本下一草稿和设计器已验证；26后端、20UI、类型检查和构建通过，0skip。[报告](../evidence/W173-01/DELIVERY.md)。登记25.1分钟，预计90–150；Handoff已释放，Main待正常PR/finish。依赖来源/启用/审批和七天全部出口保留。 Continue actual FORM/dependency qualification, exact activation/runtime consumer adoption and original D2/D3/D5/D6/D7 exits; do not close full targets from this publication slice.
+
+## 2026-10-27 W174 准确版本独立启停
+
+FLOW独立启停、准确版本校验、历史、原命令恢复和管理入口已验证；35后端、22UI、类型检查和构建通过，0skip。[报告](../evidence/W174-01/DELIVERY.md)。登记19.0分钟，预计60–100；Handoff已释放，Main待正常PR/finish。依赖来源/运行消费者/审批和七天全部出口保留。 Connect the actual seven-day approval consumer to the exact publication and activation source, preserving accepted APP binding/Owner transaction requirements; do not expand into unnecessary full form/clone tooling.

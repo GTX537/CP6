@@ -55,7 +55,7 @@ async function accept(result: LifecycleResult, check: () => void) {
   if (intent.operation === 'FLOW_PUBLISH' && (!publication || publication.key !== intent.key || publication.definitionId !== intent.definitionId || publication.versionId !== intent.command.body.draftVersionId || publication.activationChanged !== false)) throw new Error('发布结果不匹配')
   if (intent.operation === 'FLOW_CREATE_DRAFT' && (!draft || draft.key !== intent.key || draft.definitionId !== intent.definitionId || draft.version !== result.resourceVersion)) throw new Error('草稿结果不匹配')
   check(); pending.value = undefined; remember(); preview.value = undefined
-  message.value = publication ? '发布已确认。流程尚未启用。' : '下一草稿已创建，原发布版本保持不变。'
+  message.value = publication ? '发布已确认。当前启停配置保持不变。' : '下一草稿已创建，原发布版本保持不变。'
   emit('locked', false); emit('reload', intent.key)
 }
 function retry() {
@@ -107,7 +107,7 @@ onBeforeUnmount(() => { live = false; generation++; controller?.abort(); window.
       <template v-if="pending"><button :disabled="busy" @click="recover">查询原发布或草稿结果</button><button :disabled="busy" @click="retry">以原意图重试</button></template>
     </div>
     <div v-if="preview && matchingPreview">
-      <p>预览有效至 {{ new Date(preview.expiresAtUtc).toLocaleString() }}。确认发布将冻结当前已保存版本，流程保持停用。</p>
+      <p>预览有效至 {{ new Date(preview.expiresAtUtc).toLocaleString() }}。确认发布将冻结当前已保存版本，当前启停配置保持不变。</p>
       <p v-if="!preview.canPublish">当前草稿或依赖尚不满足发布条件：{{ preview.diagnostics.join('、') }}</p>
       <ul v-if="preview.dependencies.length"><li v-for="d in preview.dependencies" :key="d.location + d.kind">{{ d.kind }} · {{ d.reference }} · {{ d.evidenceState === 'UNPROVEN' ? '来源待核定' : '已登记引用' }}</li></ul>
       <label>发布说明<textarea v-model="comment" maxlength="1000" :disabled="busy || !!pending" /></label>

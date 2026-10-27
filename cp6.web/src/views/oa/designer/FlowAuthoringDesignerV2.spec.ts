@@ -40,7 +40,7 @@ it('only accepts the matching original result then reads the current draft', asy
   const w = setup(); await flushPromises(); state(w).create(); state(w).key = 'leave'; state(w).fields.Name = 'leave'
   vi.mocked(api.save).mockImplementation(async (_key, command) => ({ commandId: command.commandId, outcome: 'SUCCEEDED', resourceId: 'head', resourceVersion: 'version', result: draft(), recordedAtUtc: '2026-10-27T00:00:00Z', correlationId: null }))
   await state(w).save(); expect(state(w).pending).toBeUndefined(); expect(state(w).current.version).toBe('version'); expect(api.read).toHaveBeenCalledWith('leave', expect.any(AbortSignal))
-  expect(w.text()).toContain('草稿尚未发布或启用')
+  expect(w.text()).toContain('草稿尚未发布，现有启停配置保持不变')
 })
 it('uses the returned CAS token and preserves original schema on a metadata-only save', async () => {
   const w = setup(); await flushPromises(); await state(w).load('leave'); state(w).fields.Name = 'updated'
