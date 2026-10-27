@@ -1,7 +1,7 @@
 import http from '../http'
 export type AuthoringField = 'Name' | 'SchemaJson' | 'FormKey' | 'FunctionId' | 'FlowCode'
 export interface AuthoringView {
-  definitionId: string; draftId: string; key: string; version: string; enabled: false; published?: boolean; versionNumber?: number
+  definitionId: string; draftId: string; key: string; version: string; enabled: boolean; activationRevision?: string; published?: boolean; versionNumber?: number
   fields: Partial<Record<AuthoringField, string | null>>; writableFields: AuthoringField[]; diagnostics: string[]
 }
 export interface AuthoringCommand {

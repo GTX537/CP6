@@ -32,7 +32,7 @@ it('retains exact publication intent through unknown outcomes and reloads only a
   vi.mocked(api.original).mockResolvedValue({ commandId: intent.command.commandId, outcome: 'SUCCEEDED', resourceId: 'head', resourceVersion: 'new-token',
     result: { publication: { ...version, versionId: 'draft' }, draft: null } })
   await state(w).recover(); expect(state(w).pending).toBeUndefined(); expect(w.emitted('reload')?.[0]).toEqual(['leave'])
-  expect(w.text()).toContain('流程尚未启用'); expect(sessionStorage.getItem('cp6-workflow-publication-pending')).toBeNull()
+  expect(w.text()).toContain('启停配置保持不变'); expect(sessionStorage.getItem('cp6-workflow-publication-pending')).toBeNull()
 })
 it('restores unresolved original intent after remount and rejects mismatched results', async () => {
   vi.mocked(api.execute).mockRejectedValue({ response: { status: 503 } })

@@ -160892,6 +160892,16 @@
       "date": "2026-10-27",
       "change": "W173 FLOW exact publication:26backend+20UI,typecheck/build,0skip; Handoff released, Main closeout pending. Activation/dependency consumers/full workflow and original goal states unchanged.",
       "evidence": "docs/development/evidence/W173-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-27",
+      "change": "W173 archived once; only WP12-01.wave173_flow_publication lifecycle closed. W174 independent exact-version activation admitted60–100min; no formal Workflow adoption claim.",
+      "evidence": "docs/development/dispatch/20261027-wave174/README.md"
+    },
+    {
+      "date": "2026-10-27",
+      "change": "W174 FLOW independent activation:35backend+22UI,typecheck/build,0skip; Handoff released, Main closeout pending. Exact runtime/dependency consumers/full workflow and original goal states unchanged.",
+      "evidence": "docs/development/evidence/W174-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -190207,7 +190217,7 @@
         }
       },
       "wave173_flow_publication": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "workspace_task": "W173-01",
         "report": "docs/development/evidence/W173-01/DELIVERY.md",
         "scope": "Exact FLOW publication preview and immutable publication receipt, current publish policy/capability with same Scope, original commands, explicit source next draft, current historical disclosure and actual designer adoption.",
@@ -190223,13 +190233,24 @@
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "original_dependencies_unchanged": true,
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "lifecycle_snapshot": {
-          "main_finish_required": true,
-          "main_seat_released": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
           "handoff_seat_released": true,
-          "main_branch_deleted": false,
-          "handoff_branch_deleted": true
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave173-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W173-01",
+          "source": "bdb962af74fe5c567fbebfe8a4f7a68f77a1a2dd",
+          "remote_target": "e488c98cf4230e76f7231b4e57b45d78537df394",
+          "branch": "codex/w173-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/595"
         }
       }
     },
@@ -190267,7 +190288,38 @@
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：按S02-00采用的PostgreSQL布局、可信上下文/当前授权和全部写者共同最终fence、Main Owner事务及原键结果/审计。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "wave173_publication_evidence_reuse": {
+        "evidence": "docs/development/evidence/W173-01/DELIVERY.md",
+        "main_pr": 595,
+        "scope": "Exact FLOW publication preview and immutable versions; historical WP12-01 limited field preserved; not full WP12-02 delivery"
+      },
+      "wave174_flow_activation": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "workspace_task": "W174-01",
+        "report": "docs/development/evidence/W174-01/DELIVERY.md",
+        "scope": "Independent FLOW activation revision, exact immutable published source checks, current native admin permission with shared Scope, immutable activation history, WFC original recovery and actual flow-admin entry.",
+        "remaining": "Activation configuration is persisted; runtime consumers remain NOT_ADOPTED. No native projection, new root admission, inflight mutation or business approval completion. FORM/subflow source and unique form binding remain pending; service registration evidence is not complete external execution qualification. Full WP12-02/APP and original D2/D3/D5/D6/D7 exits remain; no browser-to-PG E2E, enterprise acceptance, Actions, existing-environment migration or deployment.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "f8b5d795df76e717fb847506a7f529ff5b12163a",
+          "main": "db08425694da1dfdb35789d2fb570819cdde86b4",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/150",
+          "exact_tree_adoption": true,
+          "at": "2026-10-27T11:07:58.322493+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "handoff_seat_released": true,
+          "main_branch_deleted": false,
+          "handoff_branch_deleted": true
+        }
+      }
     },
     {
       "id": "WP12-03",
@@ -194415,10 +194467,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261027-wave173",
-      "path": "docs/development/dispatch/20261027-wave173/README.md",
-      "baseline_sha": "137e8e7c711627603d728e26ef1a74c2cfedba77",
-      "registered_at": "2026-10-27T10:14:48.983483+00:00",
+      "id": "20261027-wave174",
+      "path": "docs/development/dispatch/20261027-wave174/README.md",
+      "baseline_sha": "e488c98cf4230e76f7231b4e57b45d78537df394",
+      "registered_at": "2026-10-27T10:52:05.957170+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -194437,30 +194489,31 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W173-01",
-          "workspace_task": "W173-01",
+          "id": "W174-01",
+          "workspace_task": "W174-01",
           "related_tasks": [
+            "WP12-02",
             "WP12-01",
             "WP02-10",
             "WP02-13"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "FLOW exact publication and immutable versions",
+          "title": "FLOW independent exact-version activation",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "31380429e81b1a8bd14bf02fc38139bb22acea56",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T101448Z-wave173-start/MESSAGE.md",
-            "at": "2026-10-27T10:14:48.983483+00:00",
-            "branch": "codex/w173-handoff"
+            "commit": "f651066158f576b64e109440d14312f9ab4f0b8a",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T105205Z-wave174-start/MESSAGE.md",
+            "at": "2026-10-27T10:52:05.957170+00:00",
+            "branch": "codex/w174-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w173-01",
-          "planned_scope_ref": "docs/development/dispatch/20261027-wave173/README.md",
+          "branch": "codex/w174-01",
+          "planned_scope_ref": "docs/development/dispatch/20261027-wave174/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -194468,8 +194521,8 @@
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
-          "validation": "26backend (25 PG18/HTTP+1unit),20UI,typecheck/build;0skip",
-          "worker_delivery_ref": "docs/development/evidence/W173-01/DELIVERY.md",
+          "validation": "35backend (34 PG18/HTTP+1unit),22UI,typecheck/build;0skip",
+          "worker_delivery_ref": "docs/development/evidence/W174-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -194480,11 +194533,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-27T10:12:27.771366+00:00",
+        "started_at": "2026-10-27T10:50:05.075496+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          90,
-          150
+          60,
+          100
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -194492,7 +194545,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Continue actual FORM/dependency qualification, exact activation/runtime consumer adoption and original D2/D3/D5/D6/D7 exits; do not close full targets from this publication slice.",
+      "next_action": "Connect the actual seven-day approval consumer to the exact publication and activation source, preserving accepted APP binding/Owner transaction requirements; do not expand into unnecessary full form/clone tooling.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -194500,7 +194553,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 25.1
+      "elapsed_registered_wave_minutes": 19.0
     },
     "wave_history": [
       {
@@ -217834,6 +217887,117 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/148"
           }
         ]
+      },
+      {
+        "id": "20261027-wave173",
+        "path": "docs/development/dispatch/20261027-wave173/README.md",
+        "baseline_sha": "137e8e7c711627603d728e26ef1a74c2cfedba77",
+        "registered_at": "2026-10-27T10:14:48.983483+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W173-01",
+            "workspace_task": "W173-01",
+            "related_tasks": [
+              "WP12-01",
+              "WP02-10",
+              "WP02-13"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "FLOW exact publication and immutable versions",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "31380429e81b1a8bd14bf02fc38139bb22acea56",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T101448Z-wave173-start/MESSAGE.md",
+              "at": "2026-10-27T10:14:48.983483+00:00",
+              "branch": "codex/w173-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w173-01",
+            "planned_scope_ref": "docs/development/dispatch/20261027-wave173/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "validation": "26backend (25 PG18/HTTP+1unit),20UI,typecheck/build;0skip",
+            "worker_delivery_ref": "docs/development/evidence/W173-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave173-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-27T10:12:27.771366+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            90,
+            150
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Continue actual FORM/dependency qualification, exact activation/runtime consumer adoption and original D2/D3/D5/D6/D7 exits; do not close full targets from this publication slice.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave173-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 25.1,
+        "actual_registered_wave_minutes": 27.98,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W173-01",
+            "source": "bdb962af74fe5c567fbebfe8a4f7a68f77a1a2dd",
+            "remote_target": "e488c98cf4230e76f7231b4e57b45d78537df394",
+            "branch": "codex/w173-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/595"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W173-HANDOFF",
+            "source": "aeeb27b04c0e0b03831f6698a322d7a121930d8d",
+            "remote_target": "11ea3bb7234a0f69bab2bb03652a58f9d494aa23",
+            "branch": "codex/w173-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/149"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -217933,7 +218097,7 @@
           "id": "D3",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W173-01",
+          "current_window": "W174-01",
           "prerequisite_adjustment": "Issue460 WorkCenter and ProcessCostRate actual current Owner; full process/cost/Finance adoption remains separate.",
           "adopted_window": "W49-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/402",
@@ -217942,7 +218106,7 @@
           "last_window_actual_agent_minutes": 56.28,
           "last_branches_deleted": true,
           "last_seats_released": true,
-          "next_action": "Continue actual FORM/dependency qualification, exact activation/runtime consumer adoption and original D2/D3/D5/D6/D7 exits; do not close full targets from this publication slice.",
+          "next_action": "Connect the actual seven-day approval consumer to the exact publication and activation source, preserving accepted APP binding/Owner transaction requirements; do not expand into unnecessary full form/clone tooling.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W136-01/DELIVERY.md",
           "last_product_source_report": "docs/development/evidence/W144-01/DELIVERY.md",
@@ -217973,7 +218137,8 @@
           "last_workflow_draft_report": "docs/development/evidence/W170-01/DELIVERY.md",
           "last_scope_authorization_report": "docs/development/evidence/W171-01/DELIVERY.md",
           "last_flow_authoring_report": "docs/development/evidence/W172-01/DELIVERY.md",
-          "last_flow_publication_report": "docs/development/evidence/W173-01/DELIVERY.md"
+          "last_flow_publication_report": "docs/development/evidence/W173-01/DELIVERY.md",
+          "last_flow_activation_report": "docs/development/evidence/W174-01/DELIVERY.md"
         },
         {
           "id": "D4",
