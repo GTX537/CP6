@@ -33,6 +33,7 @@ public sealed class ToolMaintenanceOwnerV1(CP6Context db, OperationsOwnerV1 owne
         var original = JsonSerializer.Deserialize<ToolRegistrationOriginalV1>(registration.OriginalJson) ?? throw Error("TOOL_REGISTRATION_UNAVAILABLE", 503);
         var cycle = facts.LastOrDefault(x => x.Fact.Kind == "RESET")?.Fact.CycleAfter ?? new(original.CycleAnchorId, original.CycleNo,
             int.Parse(original.InitialCycleShots, CultureInfo.InvariantCulture), original.LifetimeKnowledge, original.LifetimeShots);
+        cycle = (await ToolMaintenanceStoreV1.Project(db, original, ct)).Cycle;
         return new(a, query, tools, store, native, registration, cycle, facts);
     }
     private static void Text(string? text, int max, bool optional = false)
@@ -98,7 +99,7 @@ public sealed class ToolMaintenanceOwnerV1(CP6Context db, OperationsOwnerV1 owne
                 new(CycleRef(c.Cycle), c.Coherent ? c.Cycle.Number : null, c.Coherent ? c.Cycle.Shots.ToString(CultureInfo.InvariantCulture) : null,
                     c.Coherent ? c.Registration.Origin : "RECONCILIATION_REQUIRED", c.Coherent ? c.Cycle.LifetimeKnowledge : "UNKNOWN", c.Coherent ? c.Cycle.LifetimeShots : null),
                 p, knowledge, entries, c.Facts.Where(x => x.Fact.Kind == "ASSESSMENT" && ids.Contains(x.Fact.MaintenanceId!.Value)).ToArray(),
-                c.Native.Source.GetProperty("status").GetInt32() == 1 || !c.Coherent ? "RESTRICTED" : "UNKNOWN", Page: page);
+                c.Native.Source.GetProperty("status").GetInt32() == 1 || !c.Coherent || c.Registration.CurrentEligibility == "RESTRICTED" ? "RESTRICTED" : "UNKNOWN", Page: page);
         }, ct);
     }
     private async Task<ToolMaintenanceFactViewV1> Save(Context c, string kind, Guid? maintenance, object body, CancellationToken ct,

@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W166 实物维护与周期恢复](dispatch/20261027-wave166/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天原出口保留。
+> 当前：[W167 实际使用认定与计数应用](dispatch/20261027-wave167/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
+
+> 历史快照：[W166 实物维护与周期恢复](dispatch/20261027-wave166/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天原出口保留。
 
 > 历史快照：[W165 工程实物关联](dispatch/20261027-wave165/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天原出口保留。
 

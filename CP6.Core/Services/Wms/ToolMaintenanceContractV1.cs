@@ -25,7 +25,8 @@ public sealed record ToolMaintenanceAssessmentCommandV1(Guid OperationId, ToolMa
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record ToolMaintenanceResetV1(Guid OperationId, ToolMaintenanceRefV1 CompletionRef, ToolMaintenanceRefV1 ResetPolicySelectionRef,
     ToolMaintenanceRefV1 QualificationRef, ToolMaintenanceRefV1 ExpectedCycleRef);
-public sealed record ToolMaintenanceCycleV1(Guid Id, string? Number, int Shots, string LifetimeKnowledge, string? LifetimeShots);
+public sealed record ToolMaintenanceCycleV1(Guid Id, string? Number, int Shots, string LifetimeKnowledge, string? LifetimeShots,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? ProjectionRevision = null);
 public sealed record ToolMaintenanceCycleViewV1(ToolMaintenanceRefV1 Reference, string? Number, string? Shots, string Knowledge,
     string LifetimeKnowledge, string? LifetimeShots);
 public sealed record ToolMaintenanceAuthorityV1(string Resource, string Action, string PermissionVersion, string OrganizationVersion);
