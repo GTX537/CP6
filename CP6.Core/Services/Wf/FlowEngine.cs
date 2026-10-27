@@ -167,6 +167,8 @@ public partial class FlowEngine : IFlowEngine
         var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == task.InstanceId);
         if (inst is null || inst.Status != FlowInstanceStatus.Running) return;   // 实例已结束/挂起
 
+        RequireLegacyRuntime(inst); // oa.app/2.0 decisions must use its TxD Owner, never legacy callbacks.
+
         await AssertActorMayHandleAsync(task, actorId, onBehalfOf);   // ★ 归属闸（P0 票#1）：非本人/非委派/非系统 → E-WF-029
 
         task.Status = approve ? FlowTaskStatus.Approved : FlowTaskStatus.Rejected;
@@ -272,6 +274,7 @@ public partial class FlowEngine : IFlowEngine
     /// </summary>
     private async Task DispatchIfFinishedAsync(Wf_FlowInstance inst, Guid decidedBy, string? reason)
     {
+        RequireLegacyRuntime(inst);
         // ★ 子流程第一段（spec D5）：子终态窗口内只原子入队唤醒凭据（Withdrawn 走 TaskCenterService.WithdrawAsync 的对称钩子）
         if (inst.Status is FlowInstanceStatus.Approved or FlowInstanceStatus.Rejected)
             SubFlowResume.EnqueueIfChild(_db, inst);
@@ -313,6 +316,20 @@ public partial class FlowEngine : IFlowEngine
     {
         inst.CurrentNode = node.Id;   // 兼容：保留代表节点
         var type = (node.Type ?? "approval").Trim().ToLowerInvariant();
+        if (_approvalStartV2)
+        {
+            if (++_approvalTransitions > 1000) throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1("APP_START_TRANSITION_LIMIT", 422);
+            // Automatic business/service effects need their own adopted Owner protocol. Preserve the
+            // actual token and reason; neither execute the legacy side effect nor manufacture approval.
+            if (type is "servicetask" or "subflow")
+            { Suspend(inst, node, "APP_NODE_OWNER_REQUIRED"); return; }
+            if (type == "end")
+            {
+                ConsumeToken(token);
+                AddHistory(inst.Id, node.Id, Guid.Empty, "end", "Reached end without an approval decision");
+                FinishIfDrained(inst); return;
+            }
+        }
         if (!_handlers.TryGetValue(type, out var handler))
             throw new InvalidOperationException($"未知节点类型：{node.Type}（节点 {node.Id}）");
         await handler.OnEnterAsync(new NodeContext { Inst = inst, Schema = schema, Node = node, Token = token, Engine = this });
@@ -332,6 +349,8 @@ public partial class FlowEngine : IFlowEngine
             .Where(x => x.GrantorId == approverId && x.Enable && x.ValidFrom <= now && x.ValidTo >= now)
             .OrderByDescending(x => x.CreateDate)
             .FirstOrDefaultAsync();
+        if (_approvalStartV2 && d != null && !await _db.Sys_Users.AsNoTracking().AnyAsync(x => x.Id == d.DelegateId && x.Enable))
+            throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1("APP_DELEGATE_UNAVAILABLE", 422);
         return d is null ? (approverId, null) : (d.DelegateId, approverId);
     }
 
@@ -340,7 +359,7 @@ public partial class FlowEngine : IFlowEngine
     internal void Suspend(Wf_FlowInstance inst, FlowNode node, string reason)
     {
         inst.Status = FlowInstanceStatus.Suspended;
-        AddHistory(inst.Id, node.Id, inst.StarterId, "suspend", reason);
+        AddHistory(inst.Id, node.Id, _approvalStartV2 ? Guid.Empty : inst.StarterId, "suspend", reason);
     }
 
     /// <summary>
@@ -478,6 +497,7 @@ public partial class FlowEngine : IFlowEngine
 
     internal async Task<FlowSchema> LoadSchemaAsync(Wf_FlowInstance instance, CancellationToken ct = default)
     {
+        RequireLegacyRuntime(instance);
         if (instance.FlowDefVersionId is not Guid versionId)
         {
             // Explicit compatibility path for pre-P0 rows. New starts always pin before insert.

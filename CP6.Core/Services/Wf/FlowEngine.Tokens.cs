@@ -140,6 +140,12 @@ public partial class FlowEngine
     {
         if (HasActiveToken(inst.Id)) return;
         if (inst.Status != FlowInstanceStatus.Running) return;   // 已驳回/撤回，不覆盖
+        if (_approvalStartV2)
+        {
+            inst.Status = FlowInstanceStatus.Suspended;
+            AddHistory(inst.Id, inst.CurrentNode, Guid.Empty, "suspend", "APP_EXPLICIT_DECISION_REQUIRED");
+            return;
+        }
         inst.Status = FlowInstanceStatus.Approved;
     }
 
@@ -170,7 +176,7 @@ public partial class FlowEngine
 
         foreach (var edge in outgoing)
         {
-            if (!ExpressionEvaluator.Evaluate(edge.Condition, inst.VarsJson)) continue;
+            if (!EvaluateCondition(edge.Condition, inst.VarsJson)) continue;
             var target = FindNode(schema, edge.To);
             if (target is not null)
             {

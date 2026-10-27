@@ -13,18 +13,28 @@ namespace CP6.Core.Services.Wf;
 public class ApproverResolver : IApproverResolver
 {
     private readonly CP6Context _db;
-    public ApproverResolver(CP6Context db) => _db = db;
+    private readonly bool _exactConditions;
+    public ApproverResolver(CP6Context db, bool exactConditions = false) { _db = db; _exactConditions = exactConditions; }
 
     public async Task<ApproverResolveResult> ResolveAsync(ApproverRule rule, ApproverResolveContext ctx)
     {
         // ②a 门控:When 对 表单 vars(+ starter.* 若引用)求值,假 → 本规则不产审批人(spec §4.6 命名空间)
         if (!string.IsNullOrWhiteSpace(rule.When))
         {
+            if (_exactConditions)
+            {
+                var starter = await _db.Sys_Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == ctx.StarterUserId);
+                if (!FlowEngine.ExactCondition(rule.When, ExactVars(ctx.VarsJson, starter, null)))
+                    return ApproverResolveResult.Unres("条件不满足(When)");
+            }
+            else
+            {
             var whenVars = ExpressionEvaluator.ParseVars(ctx.VarsJson);
             if (rule.When!.Contains("starter."))   // 仅在引用时载入发起人,保表单字段门控的常见路径零额外查询
                 AddUserNamespace(whenVars, "starter", await _db.Sys_Users.FirstOrDefaultAsync(u => u.Id == ctx.StarterUserId));
             if (!ExpressionEvaluator.Evaluate(rule.When, whenVars))
                 return ApproverResolveResult.Unres("条件不满足(When)");
+            }
         }
 
         var baseRes = rule.Strategy switch
@@ -41,6 +51,13 @@ public class ApproverResolver : IApproverResolver
             _ => ApproverResolveResult.Unres("未知审批人策略"),
         };
         if (!baseRes.Resolved) return baseRes;
+        if (_exactConditions)
+        {
+            var ids = baseRes.ApproverIds;
+            var valid = await _db.Sys_Users.AsNoTracking().Where(u => ids.Contains(u.Id) && u.Enable).Select(u => u.Id).ToArrayAsync();
+            // Preserve the resolver's complete membership: never silently shrink an all/veto electorate.
+            if (ids.Any(id => !valid.Contains(id))) return ApproverResolveResult.Unres("审批人不存在或已停用");
+        }
 
         // ②a 候选过滤:Filter 逐候选求值,留通过者
         if (!string.IsNullOrWhiteSpace(rule.Filter))
@@ -109,6 +126,8 @@ public class ApproverResolver : IApproverResolver
     private async Task<ApproverResolveResult> RoleAsync(ApproverRule rule)
     {
         if (rule.RoleId is not int rid) return ApproverResolveResult.Unres("未指定角色");
+        if (_exactConditions && !await _db.Sys_Roles.AsNoTracking().AnyAsync(r => r.RoleId == rid && r.Enable))
+            return ApproverResolveResult.Unres("角色不存在或已停用");
         var ids = await _db.Sys_Users.Where(u => u.RoleId == rid && u.Enable).Select(u => u.Id).ToListAsync();
         return ids.Count > 0
             ? ApproverResolveResult.Ok(ids.ToArray())
@@ -210,6 +229,11 @@ public class ApproverResolver : IApproverResolver
         var kept = new List<Guid>();
         foreach (var u in users)
         {
+            if (_exactConditions)
+            {
+                if (FlowEngine.ExactCondition(filter, ExactVars(ctx.VarsJson, starter, u))) kept.Add(u.Id);
+                continue;
+            }
             var vars = new Dictionary<string, object?>(formVars, StringComparer.Ordinal);
             AddUserNamespace(vars, "starter", starter);
             AddUserNamespace(vars, "user", u);
@@ -228,5 +252,15 @@ public class ApproverResolver : IApproverResolver
         vars[$"{ns}.roleId"]    = u.RoleId is int r ? (double)r : (object?)null;
         vars[$"{ns}.userName"]  = u.UserName;
         vars[$"{ns}.enable"]    = u.Enable;
+    }
+
+    private static string ExactVars(string? json, Sys_User? starter, Sys_User? user)
+    {
+        var root = System.Text.Json.Nodes.JsonNode.Parse(json ?? "{}")!.AsObject();
+        static System.Text.Json.Nodes.JsonNode Values(Sys_User u) => JsonSerializer.SerializeToNode(new
+        { id = u.Id.ToString(), deptId = u.DeptId?.ToString() ?? "", managerId = u.ManagerId?.ToString() ?? "", roleId = u.RoleId, userName = u.UserName, enable = u.Enable })!;
+        if (starter != null) root["starter"] = Values(starter);
+        if (user != null) root["user"] = Values(user);
+        return root.ToJsonString();
     }
 }

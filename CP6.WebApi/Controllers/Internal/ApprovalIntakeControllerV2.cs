@@ -19,6 +19,8 @@ public sealed class ApprovalIntakeControllerV2 : ControllerBase
     });
     [HttpGet("commands/{command:guid}")]
     public Task<IActionResult> Original(Guid command)=>Run(async(owner,ct)=>Ok(await owner.OriginalAsync(command,ct)));
+    [HttpGet("submissions/{submission:guid}")]
+    public Task<IActionResult> Current(Guid submission)=>Run(async(owner,ct)=>Ok(await owner.CurrentAsync(submission,ct)));
     private async Task<IActionResult> Run(Func<ApprovalIntakeOwnerV2,CancellationToken,Task<IActionResult>> action)
     {
         Response.Headers.CacheControl="no-store";

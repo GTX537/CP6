@@ -22,6 +22,7 @@ public class ApprovalDispatcher
     /// </summary>
     public async Task OnInstanceFinishedAsync(Wf_FlowInstance inst, bool approved, Guid? decidedBy, string? reason)
     {
+        FlowEngine.RequireLegacyRuntime(inst);
         if (string.IsNullOrEmpty(inst.BizType)) return;   // OA 原生表单，无业务回调
 
         var cb = _callbacks.FirstOrDefault(c => c.BizType == inst.BizType)

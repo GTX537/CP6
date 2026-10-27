@@ -644,6 +644,9 @@ builder.Services.AddSingleton(new CP6.WebApi.Services.ApprovalIntakeRegistryV2(
     builder.Configuration.GetSection("ApprovalIntake").Get<CP6.WebApi.Services.ApprovalIntakeOptionsV2>()??new(),crmOidc,builder.Environment.IsDevelopment()));
 builder.Services.AddScoped<CP6.Core.Services.Oa.IApprovalServiceAuthorityV2,CP6.WebApi.Services.ApprovalIntakeServiceAuthorityV2>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.ApprovalIntakeOwnerV2>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.ApprovalStartOwnerV2>();
+builder.Services.AddSingleton(builder.Configuration.GetSection("ApprovalStart").Get<CP6.WebApi.BackgroundServices.ApprovalStartOptionsV2>()??new());
+builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.ApprovalStartWorkerV2>();
 builder.Services.AddSingleton(sp=>new CP6.WebApi.Services.ToolApprovalDeliveryRegistryV1(
     builder.Configuration.GetSection("ToolApprovalDelivery").Get<CP6.WebApi.Services.ToolApprovalDeliveryOptionsV1>()??new(),crmOidc,
     sp.GetRequiredService<CP6.WebApi.Services.ApprovalIntakeRegistryV2>(),builder.Environment.IsDevelopment()));

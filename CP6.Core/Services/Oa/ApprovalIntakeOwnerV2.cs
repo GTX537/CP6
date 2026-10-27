@@ -191,4 +191,27 @@ public sealed class ApprovalIntakeOwnerV2(CP6Context db,ScopeAuthorizationFenceV
         var e=Parse(row.Payload).Value;Match(await Registered(e,ct),service,e,false);
         if(await Service(ct)!=service)throw Error("AUTHORITY_CHANGED",403);return ack;
     }
+
+    public async Task<ApprovalSubmissionAckV2> CurrentAsync(Guid submission,CancellationToken ct=default)
+    {
+        if(submission==Guid.Empty)throw Error("RESOURCE_NOT_FOUND",404);
+        if(db.Database.CurrentTransaction!=null||db.ChangeTracker.HasChanges())throw Error("AUTHORITY_UNAVAILABLE",503);
+        await using var tx=await db.Database.BeginTransactionAsync(ct);await fence.Root(ct);await Ready(ct);
+        await ApprovalStartOwnerV2.Ready(db,ct);var service=await Service(ct);
+        var rows=await db.Database.SqlQuery<Saved>($"""
+            SELECT s.id AS "Id",s.owner AS "Owner",s.core_hash AS "Core",s.intent_core_hash AS "IntentCore",s.intent_hash AS "Intent",s.payload AS "Payload",s.ack_json AS "Ack"
+            FROM cp6_approval_intake_v2.submissions s WHERE s.tenant_id={service.Tenant} AND s.environment_id={service.Environment}
+              AND s.principal={service.Principal} AND (s.id={submission} OR EXISTS(SELECT FROM cp6_approval_intake_v2.aliases a
+                WHERE a.tenant_id=s.tenant_id AND a.environment_id=s.environment_id AND a.owner=s.owner AND a.canonical_id=s.id AND a.requested_id={submission} AND a.principal={service.Principal}))
+            """).ToArrayAsync(ct);
+        if(rows.Length!=1)throw Error("RESOURCE_NOT_FOUND",404);
+        var row=rows[0];var e=Parse(row.Payload).Value;Match(await Registered(e,ct),service,e,false);
+        var current=Ack(await ApprovalStartOwnerV2.Current(db,service.Environment,row.Owner,row.Id,ct)??row.Ack);
+        if(row.Id!=submission)
+        {
+            var alias=await AliasFor(row.Owner,submission,ct)??throw Error("RESOURCE_NOT_FOUND",404);
+            current=current with{Alias=new(submission,row.Id,alias.Id)};
+        }
+        if(await Service(ct)!=service)throw Error("AUTHORITY_CHANGED",403);return current;
+    }
 }
