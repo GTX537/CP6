@@ -23,6 +23,7 @@ internal sealed class ToolInstanceStoreV1(CP6Context db)
         if (!db.Database.IsNpgsql() || db.Database.CurrentTransaction == null || db.CurrentTenantId == Guid.Empty)
             throw Error("AUTHORITY_FENCE_UNAVAILABLE", 503);
         await db.Database.ExecuteSqlRawAsync("LOCK TABLE public.\"T_PlateMoldStock\" " + (write ? "IN SHARE ROW EXCLUSIVE MODE" : "IN SHARE MODE"), ct);
+        await new ToolDispositionStoreV1(db).Fence(write, ct);
         await db.Database.ExecuteSqlRawAsync("LOCK TABLE cp6_tool_instance_v1.heads,cp6_tool_instance_v1.versions " + (write ? "IN SHARE ROW EXCLUSIVE MODE" : "IN SHARE MODE"), ct);
         await db.Database.ExecuteSqlRawAsync("LOCK TABLE cp6_tool_instance_v1.registration_links " + (write ? "IN SHARE ROW EXCLUSIVE MODE" : "IN SHARE MODE"),ct);
         if(!await db.Database.SqlQueryRaw<bool>("""

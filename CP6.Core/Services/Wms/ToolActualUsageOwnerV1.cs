@@ -87,7 +87,7 @@ public sealed partial class ToolActualUsageOwnerV1(CP6Context db, OperationsOwne
             ToolActualFactViewV1[] Items(string kind)=>c.Facts.Where(f=>f.Fact.Kind==kind).Reverse().Skip((page-1)*20).Take(20).ToArray();
             return new ToolActualContextV1(db.CurrentTenantId,id,c.Scope,c.Etag,c.Native.Reference,c.Registration.CurrentSite.Reference,
                 !c.Coherent?"RECONCILIATION_REQUIRED":Unreconciled(c.Facts)?"ACTUAL_RECONCILIATION_REQUIRED":"NO_RECORDED_ACTUAL_RESTRICTION",
-                Unreconciled(c.Facts)?"RESTRICTED":"UNKNOWN",c.Cycles,c.Coherent?c.Cycle.LifetimeKnowledge:"UNKNOWN",c.Coherent?c.Cycle.LifetimeShots:null,
+                Unreconciled(c.Facts)||c.Registration.NewUseBlocked?"RESTRICTED":"UNKNOWN",c.Cycles,c.Coherent?c.Cycle.LifetimeKnowledge:"UNKNOWN",c.Coherent?c.Cycle.LifetimeShots:null,
                 p,p==null?"MISSING":k,Items("EVIDENCE"),Items("OCCURRENCE"),Items("OBSERVATION").Select(f=>Observation(f,c.Facts)).ToArray(),Items("USE"),Page:page);
         },ct);
     }

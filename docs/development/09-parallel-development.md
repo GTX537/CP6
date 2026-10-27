@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W168 维护实际结果认定与正式完成](dispatch/20261027-wave168/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
+> 当前：[W169 报废申请与停新使用](dispatch/20261027-wave169/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
+
+> 历史快照：[W168 维护实际结果认定与正式完成](dispatch/20261027-wave168/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
 
 > 历史快照：[W167 实际使用认定与计数应用](dispatch/20261027-wave167/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
 

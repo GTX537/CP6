@@ -19,7 +19,7 @@ public sealed class ToolMaintenanceOwnerV1(CP6Context db, OperationsOwnerV1 owne
     private sealed record Context(OperationsAccessV1 Access, OperationsAccessV1 Query, ToolInstanceStoreV1 Tools, ToolMaintenanceStoreV1 Store,
         ToolInstanceViewV1 Native, ToolRegistrationViewV1 Registration, ToolMaintenanceCycleV1 Cycle, ToolMaintenanceFactViewV1[] Facts)
     {
-        internal string Etag => "\"tm1-" + Hash(JsonSerializer.Serialize(new { Native.Reference, Last = Facts.LastOrDefault()?.Reference }, ToolMaintenanceStoreV1.Json)) + "\"";
+        internal string Etag => "\"tm1-" + Hash(JsonSerializer.Serialize(new { Native.Reference, Last = Facts.LastOrDefault()?.Reference, Registration.NewUseBlocked }, ToolMaintenanceStoreV1.Json)) + "\"";
         internal bool Coherent => Registration.CycleKnowledge != "RECONCILIATION_REQUIRED";
     }
     private async Task<Context> Prepare(OperationsAccessV1 a, Guid id, bool write, CancellationToken ct)
@@ -237,6 +237,8 @@ public sealed class ToolMaintenanceOwnerV1(CP6Context db, OperationsOwnerV1 owne
         var cmd = OperationsOwnerV1.Freeze(input);
         return Write(id, etag, cmd.OperationId, "maintenance-restore", cmd, async (c, t) =>
         {
+            await new ToolDispositionStoreV1(db).RequireNewUseAllowed(id, t);
+            c.Access.AtCommit(token => new ToolDispositionStoreV1(db).RequireNewUseAllowed(id, token));
             Ready(c); var entry = Entry(c, maintenance);
             if (entry.Status != "COMPLETED_PASS_PENDING_RESET" || entry.Completion!.Reference != cmd.CompletionRef) throw Error("TOOL_MAINTENANCE_COMPLETION_CHANGED", 412);
             if (cmd.ExpectedCycleRef != CycleRef(c.Cycle) || c.Cycle.Number == null) throw Error("TOOL_MAINTENANCE_CYCLE_UNPROVEN", 422);

@@ -1396,3 +1396,7 @@ BUG582版本化输入修复，历史原件及恢复保持；37PG/HTTP、9UI、ty
 ## 2026-10-27 W168 维护实际结果认定与正式完成
 
 75本地检查（75PG18/HTTP）、29组件及type/Vite通过。[报告](../evidence/W168-01/DELIVERY.md)。登记28.53分钟，预计70–110；Handoff已释放、Main待finish。Continue normal-use ENG technical approval/purpose qualification or discard approval/obligation closure after latest dependencies; preserve original D2/D3/D5/D6/D7, WP05-05 request application and WP04-32 formal Sales.
+
+## 2026-10-27 W169 报废申请与停新使用
+
+24本地检查（24PG18/HTTP）、22组件及type/Vite通过。[报告](../evidence/W169-01/DELIVERY.md)。登记21.14分钟，预计60–90；Handoff已释放、Main待finish。Continue genuine OA approval and cross-Owner closure prerequisites or ENG/DOC purpose qualification, preserving original D2/D3/D5/D6/D7 exits and WP05-05/WP04-32 scope.

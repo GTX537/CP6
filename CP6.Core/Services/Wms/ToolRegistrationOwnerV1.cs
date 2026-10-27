@@ -76,9 +76,10 @@ public sealed partial class ToolRegistrationOwnerV1(CP6Context db,OperationsOwne
             var currentSite=await PhysicalSiteIdentityReaderV1.ReadOwnedAsync(db,site,value.Site.Id,t);
             var (coherent,cycle)=await ToolMaintenanceStoreV1.Project(db,value,t);
             var actualRestricted=ToolActualUsageStoreV1.Unreconciled(await new ToolActualUsageStoreV1(db).Facts(id,t));
+            var blocked=await new ToolDispositionStoreV1(db).Blocked(id,t);
             return new ToolRegistrationViewV1(db.CurrentTenantId,new(RegistrationOwner,id,"1",row.Digest),native.Reference,value.Site,currentSite,value.CycleAnchorId,
                 value.Origin,value.InitialCycleShots,coherent?cycle.Number:null,coherent?value.Origin:"RECONCILIATION_REQUIRED",coherent?cycle.Shots.ToString(CultureInfo.InvariantCulture):null,
-                coherent?cycle.LifetimeKnowledge:"UNKNOWN",coherent?cycle.LifetimeShots:null,row.Json,CurrentEligibility:actualRestricted?"RESTRICTED":"UNKNOWN",InputContract:value.InputContract,Links:await ProjectLinks(a,id,native.Source,t),ActualKnowledge:actualRestricted?"ACTUAL_RECONCILIATION_REQUIRED":"NO_RECORDED_ACTUAL_RESTRICTION");
+                coherent?cycle.LifetimeKnowledge:"UNKNOWN",coherent?cycle.LifetimeShots:null,row.Json,CurrentEligibility:actualRestricted||blocked?"RESTRICTED":"UNKNOWN",InputContract:value.InputContract,Links:await ProjectLinks(a,id,native.Source,t),ActualKnowledge:actualRestricted?"ACTUAL_RECONCILIATION_REQUIRED":"NO_RECORDED_ACTUAL_RESTRICTION",NewUseBlocked:blocked);
     }
     private async Task<EngineeringSiteChoiceV1> ExactSite(OperationsAccessV1 site,EngineeringSourceRefV1 expected,CancellationToken ct)
     {
