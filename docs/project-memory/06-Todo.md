@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-27：W182 业务审批事实接收待 Main 收尾
+
+实际服务与准确Subject当前授权、原决定/证据和Inbox/应用流共同提交已接入实际HTTP；确认丢失可原键恢复，不执行业务报废。17 local checks: 17 PG18/HTTP and 0 affected kernel/unit;0skip;no UI change。[报告](../development/evidence/W182-01/DELIVERY.md)。登记29.83分钟，预计120–210；Handoff已释放，Main待正常PR/finish。业务应用/页面及七天全部出口保留。
+
 ## 2026-10-27：W181 实际审批决定共同事务待 Main 收尾
 
 实际原生票决、双版本、原命令与终态证据/Outbox共同事务已接入既有HTTP；冻结政策和当前权限保留。40 local checks: 24 PG18/HTTP and 16 affected kernel/unit;0skip;no UI change。[报告](../development/evidence/W181-01/DELIVERY.md)。登记42.81分钟，预计120–210；Handoff已释放，Main待正常PR/finish。业务应用/页面及七天全部出口保留。

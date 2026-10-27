@@ -1448,3 +1448,7 @@ Owner原包可靠服务投递、持久租约/回执与原命令恢复已验证�
 ## 2026-10-27 W181 实际审批决定共同事务
 
 实际原生票决、双版本、原命令与终态证据/Outbox共同事务已接入既有HTTP；冻结政策和当前权限保留。40 local checks: 24 PG18/HTTP and 16 affected kernel/unit;0skip;no UI change。[报告](../evidence/W181-01/DELIVERY.md)。登记42.81分钟，预计120–210；Handoff已释放，Main待正常PR/finish。业务应用/页面及七天全部出口保留。 Continue actual Owner decision Inbox/application receipt and business effects in one Owner transaction, plus current projection and native task UI. Preserve original ROU/BOM/WO/SCHED and D2/D5/D6/D7 exits.
+
+## 2026-10-27 W182 业务审批事实接收
+
+实际服务与准确Subject当前授权、原决定/证据和Inbox/应用流共同提交已接入实际HTTP；确认丢失可原键恢复，不执行业务报废。17 local checks: 17 PG18/HTTP and 0 affected kernel/unit;0skip;no UI change。[报告](../evidence/W182-01/DELIVERY.md)。登记29.83分钟，预计120–210；Handoff已释放，Main待正常PR/finish。业务应用/页面及七天全部出口保留。 Continue reliable delivery of the exact persisted Workflow decision to the actual Owner, then actual Owner eligibility and business/application receipt transaction when its real obligations are satisfied. Preserve original ROU/BOM/WO/SCHED and D2/D5/D6/D7 exits.
