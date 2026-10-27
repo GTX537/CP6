@@ -66,29 +66,18 @@ public sealed partial class ToolRegistrationOwnerV1(CP6Context db,OperationsOwne
     public Task<ToolRegistrationViewV1?> ReadAsync(Guid id,CancellationToken ct=default)
     {
         if(id==Guid.Empty)throw Error("TOOL_INSTANCE_ID_INVALID",400);
-        return Authority.ExecuteAsync(OperationsOwnerV1.ToolInstance,"query",false,async(a,t)=>
-        {
+        return Authority.ExecuteAsync(OperationsOwnerV1.ToolInstance,"query",false,(a,t)=>ReadOwnedAsync(a,id,t),ct);
+    }
+    internal async Task<ToolRegistrationViewV1?> ReadOwnedAsync(OperationsAccessV1 a,Guid id,CancellationToken t)
+    {
             var store=new ToolInstanceStoreV1(db);await store.Fence(t);await Fence(t);
             var native=await store.Read(a,id,null,t);var saved=await StoredAsync(id,t);if(saved==null)return null;
             var (row,value)=saved.Value;var site=await a.SourceAsync(OperationsOwnerV1.PhysicalSite,t);
             var currentSite=await PhysicalSiteIdentityReaderV1.ReadOwnedAsync(db,site,value.Site.Id,t);
-            // Inspect the intervening immutable observations, not only today's equal-looking counter.
-            var revision=Revision(value.NativeAtRegistration.Version);
-            var coherent=await db.Database.SqlQuery<bool>($"""
-                SELECT NOT EXISTS(
-                  SELECT FROM cp6_tool_instance_v1.versions v
-                  JOIN cp6_tool_instance_v1.versions initial ON initial.tenant_id=v.tenant_id AND initial.object_id=v.object_id AND initial.revision={revision}
-                  WHERE v.tenant_id={db.CurrentTenantId} AND v.object_id={id} AND v.revision>={revision}
-                    AND (NOT v.source_present OR
-                      (v.source_json::jsonb->'usedShots',v.source_json::jsonb->'lastUsedAt',v.source_json::jsonb->'nextMaintenanceDate',v.source_json::jsonb->'status')
-                      IS DISTINCT FROM
-                      (initial.source_json::jsonb->'usedShots',initial.source_json::jsonb->'lastUsedAt',initial.source_json::jsonb->'nextMaintenanceDate',initial.source_json::jsonb->'status'))
-                ) AS "Value"
-                """).SingleAsync(t);
+            var (coherent,cycle)=await ToolMaintenanceStoreV1.Project(db,value,t);
             return new ToolRegistrationViewV1(db.CurrentTenantId,new(RegistrationOwner,id,"1",row.Digest),native.Reference,value.Site,currentSite,value.CycleAnchorId,
-                value.Origin,value.InitialCycleShots,coherent?value.CycleNo:null,coherent?value.Origin:"RECONCILIATION_REQUIRED",coherent?value.InitialCycleShots:null,
-                coherent?value.LifetimeKnowledge:"UNKNOWN",coherent?value.LifetimeShots:null,row.Json,InputContract:value.InputContract,Links:await ProjectLinks(a,id,native.Source,t));
-        },ct);
+                value.Origin,value.InitialCycleShots,coherent?cycle.Number:null,coherent?value.Origin:"RECONCILIATION_REQUIRED",coherent?cycle.Shots.ToString(CultureInfo.InvariantCulture):null,
+                coherent?cycle.LifetimeKnowledge:"UNKNOWN",coherent?cycle.LifetimeShots:null,row.Json,InputContract:value.InputContract,Links:await ProjectLinks(a,id,native.Source,t));
     }
     private async Task<EngineeringSiteChoiceV1> ExactSite(OperationsAccessV1 site,EngineeringSourceRefV1 expected,CancellationToken ct)
     {
