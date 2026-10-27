@@ -1372,3 +1372,7 @@ BUG572修复与65个不同PG/HTTP用例通过，UI未改复用。[单份报告](
 ## 2026-10-27 W162 登记原码点修复
 
 BUG582版本化输入修复，历史原件及恢复保持；37PG/HTTP、9UI、type/Vite通过。[报告](../evidence/W162-01/DELIVERY.md)。登记26.02分钟，预计25–45；Handoff已释放，Main待finish。原七天全部未完成出口保留。
+
+## 2026-10-27 W163 客户原身份来源
+
+真实原客户身份来源Owner、当前权限/不可变版本/同Main事务保护；17PG/HTTP、5种子单元、26UI及type/Vite通过。[报告](../evidence/W163-01/DELIVERY.md)。登记17.4分钟，预计60–90；Handoff已释放，Main待finish。真实登记关联采用及原七天全部未完成出口保留。

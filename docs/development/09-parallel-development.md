@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W162 原码点修复](dispatch/20261027-wave162/README.md)：验证完成、Handoff已finish，Main待正常PR/finish；七天全部出口保留。
+> 当前：[W163 客户原身份来源](dispatch/20261027-wave163/README.md)：验证完成、Handoff已finish，Main待正常PR/finish；七天全部出口保留。
+
+> 历史快照：[W162 原码点修复](dispatch/20261027-wave162/README.md)：验证完成、Handoff已finish，Main待正常PR/finish；七天全部出口保留。
 
 > 历史快照：[W161 实物登记](dispatch/20261027-wave161/README.md)：验证完成、Handoff已finish，Main待正常PR/finish；七天全部出口保留。
 

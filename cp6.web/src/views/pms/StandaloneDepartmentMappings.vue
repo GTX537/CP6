@@ -60,6 +60,7 @@ const pending = ref<PendingIamOperation | null>(null)
 const empty = (): IamStandaloneMappingInput => ({ objectKind: 'stock', objectId: '', departmentId: '', enabled: true, expectedVersion: 'absent', expectedReferencesVersion: '', reason: '' })
 const draft = reactive(empty())
 const kinds: { value: StandaloneKind; label: string }[] = [
+  { value: 'business-partner', label: '客户原主档' },
   { value: 'tool-instance', label: 'WMS实物版模' },
   { value: 'plate-mold', label: '版型工具原对象' },
   { value: 'uom-profile', label: '单位配置原对象' },
