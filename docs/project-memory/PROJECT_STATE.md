@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-27：W190 文档原件与准确内容绑定待 Main 收尾
+
+文档独立Owner、原件与派生关系、不可变工作版本、同事务文件绑定、当前权限下载、工程组成与原结果恢复已验证；专业批准、质量规范与正式冻结仍待。36 local checks: 36 PG18/HTTP and 0 affected kernel/unit;67 Vue;types/build PASS;0skip。[报告](../development/evidence/W190-01/DELIVERY.md)。登记20.3分钟，预计90–150；Handoff已释放，Main待正常PR/finish。实际业务效果及七天全部出口保留。
+
 ## 2026-10-27：W189 不可变文件内容与当前授权读取待 Main 收尾
 
 文件独立Owner、有界上传与原字节、真实Defender检查、当前父对象/字段权限、持久隔离、保留与历史恢复已验证；正式文档绑定、用途批准和处置图仍待。27 local checks: 12 PG18/HTTP and 15 affected kernel/unit;40 Vue;types/build PASS;0skip。[报告](../development/evidence/W189-01/DELIVERY.md)。登记25.23分钟，预计120–180；Handoff已释放，Main待正常PR/finish。实际业务效果及七天全部出口保留。

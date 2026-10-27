@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W189 不可变文件内容与当前授权读取](dispatch/20261027-wave189/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
+> 当前：[W190 文档原件与准确内容绑定](dispatch/20261027-wave190/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
+
+> 历史快照：[W189 不可变文件内容与当前授权读取](dispatch/20261027-wave189/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
 
 > 历史快照：[W188 制造映射与逐产出关系](dispatch/20261027-wave188/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
 

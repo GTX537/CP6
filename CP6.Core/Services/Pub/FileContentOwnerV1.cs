@@ -133,6 +133,29 @@ public sealed class FileContentOwnerV1(CP6Context db, OperationsOwnerV1 owner, I
         if (id == Guid.Empty || version != "1" || digest?.Length != 64) throw Error("FILE_REFERENCE_INVALID", 400);
         var outcome = await Authority.ExecuteAsync<FileContentDownloadV1?>(OperationsOwnerV1.FileContent, "query", true, async (a, token) =>
         {
+            return await DownloadWithin(a,id,digest,token);
+        }, ct);
+        return outcome ?? throw Error("FILE_CONTENT_INTEGRITY_UNAVAILABLE", 503);
+    }
+    internal async Task<FileContentSnapshotV1> BoundSource(OperationsAccessV1 root,FileContentRefV1 reference,Guid parent,bool requireAvailable,CancellationToken ct)
+    {
+        var a=await root.SourceAsync(OperationsOwnerV1.FileContent,ct);var store=new FileContentStoreV1(db);await store.Fence(false,ct);
+        var value=await Observe(a,await store.Read(reference.Id,null,ct),ct);
+        if(value.ContentRef!=reference || value.Parent.Id!=parent)throw Error("DOCUMENT_FILE_REFERENCE_CHANGED",412);
+        if(requireAvailable)
+        {
+            if(value.Availability!="AVAILABLE")throw Error("FILE_CONTENT_NOT_AVAILABLE",409);
+            var row=await store.Row(reference.Id,ct);await VerifyStored(row.StorePath,row.ByteLength,row.Digest,ct);
+        }
+        return value;
+    }
+    internal async Task<FileContentDownloadV1?> BoundDownload(OperationsAccessV1 root,FileContentRefV1 reference,Guid parent,CancellationToken ct)
+    {
+        await BoundSource(root,reference,parent,false,ct);
+        return await DownloadWithin(await root.SourceAsync(OperationsOwnerV1.FileContent,ct),reference.Id,reference.Digest,ct);
+    }
+    private async Task<FileContentDownloadV1?> DownloadWithin(OperationsAccessV1 a,Guid id,string digest,CancellationToken token)
+    {
             var store = new FileContentStoreV1(db); await store.Fence(true, token); await a.RequireFileContent(id, token);
             var current = await Observe(a, await store.Read(id, null, token), token);
             if (current.ContentRef.Digest != digest) throw Error("FILE_REFERENCE_CHANGED", 412);
@@ -149,8 +172,6 @@ public sealed class FileContentOwnerV1(CP6Context db, OperationsOwnerV1 owner, I
             }
             // Bytes are returned only after ExecuteAsync completes its final current authority fence.
             return new FileContentDownloadV1(bytes, current.ContentRef, current.FileName);
-        }, ct);
-        return outcome ?? throw Error("FILE_CONTENT_INTEGRITY_UNAVAILABLE", 503);
     }
     private async Task<byte[]> VerifyStored(string path, long size, string digest, CancellationToken ct)
     {

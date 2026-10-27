@@ -581,6 +581,8 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-configuration-rule", "工�
 CP6.Core.Services.Sys.FieldRegistry.Register("plm-configuration-rule");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-engineering-revision", "工程修订工作稿", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("plm-engineering-revision");
+CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-controlled-document", "受控技术文档", new[] { 1, 2, 3, 4, 5 }, 1);
+CP6.Core.Services.Sys.FieldRegistry.Register("plm-controlled-document", new CP6.Core.Services.Sys.FieldRegistry.Field("Content", "文档内容"), new CP6.Core.Services.Sys.FieldRegistry.Field("Metadata", "文档资料"));
 CP6.Core.Services.Sys.DataScopeRegistry.Register("file-content", "受控文件内容", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.FieldRegistry.Register("file-content", new CP6.Core.Services.Sys.FieldRegistry.Field("Content", "文件内容"), new CP6.Core.Services.Sys.FieldRegistry.Field("FileName", "文件名称"));
 CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-engineering-manufacturing", "制造映射与产出", new[] { 1, 2, 3, 4, 5 }, 5);
@@ -768,6 +770,7 @@ builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringBomOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringManufacturingOwnerV1>();
 builder.Services.AddSingleton<CP6.Core.Services.Pub.IFileContentInspectorV1, CP6.Core.Services.Pub.DefenderFileContentInspectorV1>();
 builder.Services.AddScoped<CP6.Core.Services.Pub.FileContentOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Plm.ControlledDocumentOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.ToolSpecificationOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.ToolAssociationOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.ToolAssociationEngineeringOwnerV1>();
