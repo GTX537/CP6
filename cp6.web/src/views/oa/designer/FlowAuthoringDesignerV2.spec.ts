@@ -11,7 +11,7 @@ const draft = (overrides: Partial<AuthoringView> = {}): AuthoringView => ({ defi
   fields: { Name: 'leave', SchemaJson: raw, FormKey: null, FunctionId: null, FlowCode: null }, writableFields: ['Name', 'SchemaJson', 'FormKey', 'FunctionId', 'FlowCode'], diagnostics: [], ...overrides })
 const mounted: ReturnType<typeof mount>[] = []
 function setup() {
-  const w = mount(Designer, { global: { stubs: { DesignerCanvas: true, NodePropertyPanel: true, EdgePropertyPanel: true } } }); mounted.push(w); return w
+  const w = mount(Designer, { global: { stubs: { FlowPublicationPanelV2: true, DesignerCanvas: true, NodePropertyPanel: true, EdgePropertyPanel: true } } }); mounted.push(w); return w
 }
 const state = (w: any): any => w.vm.$.setupState
 beforeEach(() => {

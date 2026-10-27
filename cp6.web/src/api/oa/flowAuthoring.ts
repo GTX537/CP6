@@ -1,7 +1,7 @@
 import http from '../http'
 export type AuthoringField = 'Name' | 'SchemaJson' | 'FormKey' | 'FunctionId' | 'FlowCode'
 export interface AuthoringView {
-  definitionId: string; draftId: string; key: string; version: string; enabled: false
+  definitionId: string; draftId: string; key: string; version: string; enabled: false; published?: boolean; versionNumber?: number
   fields: Partial<Record<AuthoringField, string | null>>; writableFields: AuthoringField[]; diagnostics: string[]
 }
 export interface AuthoringCommand {
@@ -17,7 +17,7 @@ const data = <T>(value: any): T => value?.data ?? value
 export const flowAuthoringApi = {
   entry: async (signal?: AbortSignal) => data<AuthoringEntry>(await http.get('/oa/v2/definitions/FLOW/entry', { signal })),
   list: async (page: number, signal?: AbortSignal) => data<AuthoringView[]>(await http.get('/oa/v2/definitions/FLOW', { params: { page }, signal })),
-  read: async (key: string, signal?: AbortSignal) => data<AuthoringView>(await http.get(`/oa/v2/definitions/FLOW/${encodeURIComponent(key)}/draft`, { signal })),
+  read: async (key: string, signal?: AbortSignal) => data<AuthoringView>(await http.get(`/oa/v2/definitions/FLOW/${encodeURIComponent(key)}`, { signal })),
   save: async (key: string, command: AuthoringCommand, signal?: AbortSignal) => data<AuthoringResult>(await http.put(`/oa/v2/definitions/FLOW/${encodeURIComponent(key)}/draft`, command, { signal })),
   original: async (key: string, command: string, signal?: AbortSignal) => data<AuthoringResult>(await http.get(`/oa/v2/commands/${encodeURIComponent(command)}`, { params: { operation: 'FLOW_SAVE_DRAFT', resource: key }, signal })),
 }
