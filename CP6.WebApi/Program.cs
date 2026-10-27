@@ -615,6 +615,7 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-plate-mold", "实物版模
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-plate-mold", new[] { "CustomerCd", "CustomerName", "MadeCost", "ProductCd", "ProductName", "Remarks" }.Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
 builder.Services.AddScoped<CP6.Core.Services.Wms.ToolInstanceOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.ToolMaintenanceOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.ToolDispositionOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.ToolMaintenanceMasterOwnerV1>();
 builder.Services.AddSingleton(_ => new CP6.Core.Services.Wms.ToolActualRuntimeV1(
     Guid.TryParse(builder.Configuration["Wms:ToolActual:EnvironmentId"], out var toolActualEnvironment) ? toolActualEnvironment : Guid.Empty,
