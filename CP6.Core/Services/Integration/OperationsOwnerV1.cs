@@ -49,6 +49,10 @@ public sealed partial class OperationsOwnerV1
     internal Task<Authority> AssociationReceiptAuthorityAsync(string resource,string action,Guid actor,CancellationToken ct)
         => action=="query" || resource==ToolInstance && action=="engineering-link" || resource==ToolSpecification && action=="instance-associate"
             ? AuthorityCoreAsync(resource,action,actor,true,ct) : throw new OrderPriceCorrectionException("ACTION_FORBIDDEN",403);
+    // Only immutable policy/qualification records supply this subject, never a command caller.
+    internal Task<Authority> ToolMaintenanceReceiptAuthorityAsync(string resource,string action,Guid actor,CancellationToken ct)
+        => action=="query" || resource==ToolInstance && action=="maintenance-policy" || resource==PhysicalSite && action=="tool-maintenance-assess"
+            ? AuthorityCoreAsync(resource,action,actor,true,ct) : throw new OrderPriceCorrectionException("ACTION_FORBIDDEN",403);
     private async Task<Authority> AuthorityCoreAsync(string resource,string action,Guid subject,bool storedDecision,CancellationToken ct)
     {
         var definition=catalog();
@@ -176,7 +180,7 @@ public sealed partial class OperationsOwnerV1
             var entity=db.Model.GetEntityTypes().Single(e=>e.ClrType.Name==name);
             return db.GetService<ISqlGenerationHelper>().DelimitIdentifier(entity.GetTableName()!,entity.GetSchema()??"public");
         }
-        string[] additional=resource switch { ToolInstance=>["PlateMoldStock","BusinessPartner","PlateMold"],ToolSpecification=>["PlateMold","PlateMoldStock","BusinessPartner"],PlateMold=>["PlateMold"],Sample=>["SampleStock"],Kitting=>["KitMaster","KitMasterComponent","KitOrder"],Vmi=>["VmiBilling"],Slotting=>["SlottingPlan"],CrossDock=>["CrossDockOrder"],StockDwell or BusinessPartner=>["BusinessPartner"],WorkCenter or ProcessCostRate=>["WorkCenter","ProcessCostRate"],Rma=>["RmaHeader","RmaDetail"],Replenish=>["ReplenishOrder"],Mobile=>["MobileTask","MobileTaskEvent","MobileTaskScanLog","TaskCommandReceipt"],_=>[] };
+        string[] additional=resource switch { ToolInstance or PhysicalSite=>["PlateMoldStock","BusinessPartner","PlateMold"],ToolSpecification=>["PlateMold","PlateMoldStock","BusinessPartner"],PlateMold=>["PlateMold"],Sample=>["SampleStock"],Kitting=>["KitMaster","KitMasterComponent","KitOrder"],Vmi=>["VmiBilling"],Slotting=>["SlottingPlan"],CrossDock=>["CrossDockOrder"],StockDwell or BusinessPartner=>["BusinessPartner"],WorkCenter or ProcessCostRate=>["WorkCenter","ProcessCostRate"],Rma=>["RmaHeader","RmaDetail"],Replenish=>["ReplenishOrder"],Mobile=>["MobileTask","MobileTaskEvent","MobileTaskScanLog","TaskCommandReceipt"],_=>[] };
         var tables=BusinessTables.Concat(additional);
         await db.Database.ExecuteSqlRawAsync("LOCK TABLE "+string.Join(",",tables.Select(Name).Distinct().Order(StringComparer.Ordinal))
             +(write?" IN SHARE ROW EXCLUSIVE MODE":" IN SHARE MODE"),ct);

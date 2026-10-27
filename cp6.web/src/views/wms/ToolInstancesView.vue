@@ -10,6 +10,7 @@
       </tbody></table></div><p v-if="!rows.length">当前权限范围内没有记录。</p>
       <nav aria-label="实物分页"><button :disabled="busy || page === 1" @click="loadPage(page - 1)">上一页</button><span>第 {{ page }} 页 · 共 {{ total }} 条</span><button :disabled="busy || page * 50 >= total" @click="loadPage(page + 1)">下一页</button></nav>
     </section>
+    <ToolMaintenancePanel :scope="scope" :selected="selected" @authority-denied="registrationDenied" />
     <ToolAssociationPanel :scope="scope" :selected="selected" @authority-denied="registrationDenied" />
     <ToolRegistrationPanel :scope="scope" :selected="selected" @authority-denied="registrationDenied" />
     <section v-if="selected" class="panel">
@@ -32,6 +33,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import ToolAssociationPanel from './ToolAssociationPanel.vue'
+import ToolMaintenancePanel from './ToolMaintenancePanel.vue'
 import ToolRegistrationPanel from './ToolRegistrationPanel.vue'
 import type { EngineeringScope } from '@/api/plm/engineeringProducts'
 import { toolInstanceApi as api, type ToolInstanceView } from '@/api/wms/toolInstances'

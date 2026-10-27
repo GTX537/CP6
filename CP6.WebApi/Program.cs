@@ -614,6 +614,8 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.SampleOwnerV1>();
 CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-plate-mold", "实物版模", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-plate-mold", new[] { "CustomerCd", "CustomerName", "MadeCost", "ProductCd", "ProductName", "Remarks" }.Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
 builder.Services.AddScoped<CP6.Core.Services.Wms.ToolInstanceOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.ToolMaintenanceOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.ToolMaintenanceMasterOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.ToolRegistrationOwnerV1>();
 CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-outbound-routing", "出库路由原记录", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-outbound-routing", new[] { "CustomerCd", "ProductCdPrefix", "Remarks", "RuleName" }.Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
