@@ -1005,6 +1005,17 @@ builder.Services.AddDataProtection()
 builder.Services.AddScoped<CP6.Core.Services.Sys.ITenantSsoConfigService, CP6.Core.Services.Sys.TenantSsoConfigService>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.SsoConfigurationAdminV1>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.IamAdministrationV1>();
+builder.Services.Configure<CP6.Core.Services.Sys.ScopeAuthorizationOptionsV1>(builder.Configuration.GetSection("ScopeAuthorization"));
+builder.Services.AddScoped<CP6.Core.Services.Sys.ScopeAuthorizationFenceV1>();
+builder.Services.AddScoped(sp => new CP6.Core.Services.Sys.ScopeAuthorizationAdministrationV1(
+    sp.GetRequiredService<CP6Context>(), sp.GetRequiredService<IHttpContextAccessor>(),
+    sp.GetRequiredService<CP6.Core.Services.Sys.ScopeAuthorizationFenceV1>(), async ct =>
+    {
+        try { return await CP6.WebApi.Services.IamAdministrationHttpV1.CurrentActor(
+            sp.GetRequiredService<IHttpContextAccessor>().HttpContext!, ct); }
+        catch (CP6.Core.Services.Sys.IamAdministrationExceptionV1 e)
+        { throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1(e.Message, e.Status, e); }
+    }));
 builder.Services.AddScoped<CP6.Core.Services.Sys.IamUserAdministrationV1>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.IamDepartmentAdministrationV1>();
 builder.Services.AddScoped<CP6.Core.Services.Sys.IamOrderDepartmentMappingV1>();
