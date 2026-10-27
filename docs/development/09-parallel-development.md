@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W187 版本化BOM与准确材料来源](dispatch/20261027-wave187/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
+> 当前：[W188 制造映射与逐产出关系](dispatch/20261027-wave188/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
+
+> 历史快照：[W187 版本化BOM与准确材料来源](dispatch/20261027-wave187/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
 
 > 历史快照：[W186 版本化工艺与准确来源](dispatch/20261027-wave186/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
 

@@ -161032,6 +161032,16 @@
       "date": "2026-10-27",
       "change": "W187 native versioned BOM and exact material sources: 43 local checks: 43 PG18/HTTP and 0 affected kernel/unit;44 Vue;types/build PASS;0skip; Handoff released, Main closeout pending. Owner application and original goal remain.",
       "evidence": "docs/development/evidence/W187-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-27",
+      "change": "W187 archived once; only WP05-09.wave187_bom lifecycle closed. W188 manufacturing mapping and output relation authoring admitted70–115min; original seven-day exits remain pending.",
+      "evidence": "docs/development/dispatch/20261027-wave188/README.md"
+    },
+    {
+      "date": "2026-10-27",
+      "change": "W188 native manufacturing mappings and per-output relationships: 53 local checks: 53 PG18/HTTP and 0 affected kernel/unit;38 Vue;types/build PASS;0skip; Handoff released, Main closeout pending. Owner application and original goal remain.",
+      "evidence": "docs/development/evidence/W188-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -180921,7 +180931,7 @@
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "wave187_bom": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "workspace_task": "W187-01",
         "report": "docs/development/evidence/W187-01/DELIVERY.md",
         "scope": "Native versioned EBOM/MBOM drafts with stable hierarchical occurrences, exact material and UOM sources, actual ProductMaterial originals, history/where-used and independent current authority. Engineering composition adopts exact kinds/versions; original-result recovery stays atomic.",
@@ -180937,13 +180947,24 @@
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "original_dependencies_unchanged": true,
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "lifecycle_snapshot": {
-          "main_finish_required": true,
-          "main_seat_released": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
           "handoff_seat_released": true,
-          "main_branch_deleted": false,
-          "handoff_branch_deleted": true
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave187-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W187-01",
+          "source": "f048f181a76958c6b799388a71466306d3a174bb",
+          "remote_target": "edff491c580ac82ea4849281a89f742b1cc46601",
+          "branch": "codex/w187-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/609"
         }
       }
     },
@@ -180989,7 +181010,33 @@
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：按S02-00采用的PostgreSQL租户存储/迁移与可信上下文；当前动作/读取授权和共同最终授权fence；Main Owner事务、原键结果及审计能力。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "wave188_manufacturing": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "workspace_task": "W188-01",
+        "report": "docs/development/evidence/W188-01/DELIVERY.md",
+        "scope": "Independent manufacturing draft Owner/API/UI with exact EBOM/MBOM/routing/configuration sources; stable many-to-many mappings, per-output product/operation/input/intermediate flow and exact quantity/denominator. Current nested authority, immutable history, CAS and original operation recovery.",
+        "remaining": "Isolated PostgreSQL18 and actual local Program HTTP, Vue behavior, typecheck and build only. This native draft is not ENG-OUTPUT-RELATIONS/1. Professional specification/evidence references, approved applicability/conversion/substitution, controlled documents, engineering review/freeze, formal WO/SCHED and original D2/D3/D5/D6/D7 exits remain. No Actions, existing-environment migration or deployment.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "2714f5a6b8a897f3706feff44aca9313d6decd88",
+          "main": "5dda1e8bd53b3b63854f710c96c37d5ecf434ec6",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/164",
+          "exact_tree_adoption": true,
+          "at": "2026-10-27T21:23:12.933534+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "handoff_seat_released": true,
+          "main_branch_deleted": false,
+          "handoff_branch_deleted": true
+        }
+      }
     },
     {
       "id": "WP05-11",
@@ -195078,10 +195125,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261027-wave187",
-      "path": "docs/development/dispatch/20261027-wave187/README.md",
-      "baseline_sha": "342e3e1bd69dd04910f9e53946f23bd4d9cfd9dd",
-      "registered_at": "2026-10-27T20:34:15.986580+00:00",
+      "id": "20261027-wave188",
+      "path": "docs/development/dispatch/20261027-wave188/README.md",
+      "baseline_sha": "edff491c580ac82ea4849281a89f742b1cc46601",
+      "registered_at": "2026-10-27T21:00:47.692179+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -195100,30 +195147,30 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W187-01",
-          "workspace_task": "W187-01",
+          "id": "W188-01",
+          "workspace_task": "W188-01",
           "related_tasks": [
+            "WP05-10",
             "WP05-09",
-            "WP05-03",
-            "WP10-47"
+            "WP05-08"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Versioned BOM occurrences and exact material sources",
+          "title": "Manufacturing mappings and per-output operation relationships",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "e487a246faae301aaeedc965598f6b1861eaae02",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T203415Z-wave187-start/MESSAGE.md",
-            "at": "2026-10-27T20:34:15.986580+00:00",
-            "branch": "codex/w187-handoff"
+            "commit": "84470655a86f9883c0c767457b85adbad4b37150",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T210047Z-wave188-start/MESSAGE.md",
+            "at": "2026-10-27T21:00:47.692179+00:00",
+            "branch": "codex/w188-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w187-01",
-          "planned_scope_ref": "docs/development/dispatch/20261027-wave187/README.md",
+          "branch": "codex/w188-01",
+          "planned_scope_ref": "docs/development/dispatch/20261027-wave188/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -195131,8 +195178,8 @@
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
-          "validation": "43 local checks: 43 PG18/HTTP and 0 affected kernel/unit;44 Vue;types/build PASS;0skip",
-          "worker_delivery_ref": "docs/development/evidence/W187-01/DELIVERY.md",
+          "validation": "53 local checks: 53 PG18/HTTP and 0 affected kernel/unit;38 Vue;types/build PASS;0skip",
+          "worker_delivery_ref": "docs/development/evidence/W188-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -195143,11 +195190,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-27T20:33:23.507332+00:00",
+        "started_at": "2026-10-27T21:00:05.576640+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          120,
-          210
+          70,
+          115
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -195155,7 +195202,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Continue the direct manufacturing mapping/output relationships and controlled sources needed for engineering review/freeze and original WO/SCHED writes; preserve D2/D5/D6/D7 and do not expand unrelated domains.",
+      "next_action": "Continue the actual controlled specification/document and professional evidence sources needed to assemble formal output relations and engineering review/freeze, then original WO/SCHED writes; retain D2/D5/D6/D7 and avoid unrelated expansion.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -195163,7 +195210,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 19.62
+      "elapsed_registered_wave_minutes": 23.85
     },
     "wave_history": [
       {
@@ -220063,6 +220110,117 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/162"
           }
         ]
+      },
+      {
+        "id": "20261027-wave187",
+        "path": "docs/development/dispatch/20261027-wave187/README.md",
+        "baseline_sha": "342e3e1bd69dd04910f9e53946f23bd4d9cfd9dd",
+        "registered_at": "2026-10-27T20:34:15.986580+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W187-01",
+            "workspace_task": "W187-01",
+            "related_tasks": [
+              "WP05-09",
+              "WP05-03",
+              "WP10-47"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Versioned BOM occurrences and exact material sources",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "e487a246faae301aaeedc965598f6b1861eaae02",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T203415Z-wave187-start/MESSAGE.md",
+              "at": "2026-10-27T20:34:15.986580+00:00",
+              "branch": "codex/w187-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w187-01",
+            "planned_scope_ref": "docs/development/dispatch/20261027-wave187/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "validation": "43 local checks: 43 PG18/HTTP and 0 affected kernel/unit;44 Vue;types/build PASS;0skip",
+            "worker_delivery_ref": "docs/development/evidence/W187-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave187-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-27T20:33:23.507332+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            120,
+            210
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Continue the direct manufacturing mapping/output relationships and controlled sources needed for engineering review/freeze and original WO/SCHED writes; preserve D2/D5/D6/D7 and do not expand unrelated domains.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave187-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 19.62,
+        "actual_registered_wave_minutes": 22.16,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W187-01",
+            "source": "f048f181a76958c6b799388a71466306d3a174bb",
+            "remote_target": "edff491c580ac82ea4849281a89f742b1cc46601",
+            "branch": "codex/w187-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/609"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W187-HANDOFF",
+            "source": "b1bab4bf70203d52e70b40f5443f27be04510166",
+            "remote_target": "28ff2e95aacfd53770fd86aa5e186cad82c25b6e",
+            "branch": "codex/w187-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/163"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -220162,7 +220320,7 @@
           "id": "D3",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W187-01",
+          "current_window": "W188-01",
           "prerequisite_adjustment": "Issue460 WorkCenter and ProcessCostRate actual current Owner; full process/cost/Finance adoption remains separate.",
           "adopted_window": "W49-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/402",
@@ -220171,7 +220329,7 @@
           "last_window_actual_agent_minutes": 56.28,
           "last_branches_deleted": true,
           "last_seats_released": true,
-          "next_action": "Continue the direct manufacturing mapping/output relationships and controlled sources needed for engineering review/freeze and original WO/SCHED writes; preserve D2/D5/D6/D7 and do not expand unrelated domains.",
+          "next_action": "Continue the actual controlled specification/document and professional evidence sources needed to assemble formal output relations and engineering review/freeze, then original WO/SCHED writes; retain D2/D5/D6/D7 and avoid unrelated expansion.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W136-01/DELIVERY.md",
           "last_product_source_report": "docs/development/evidence/W144-01/DELIVERY.md",
@@ -220216,7 +220374,8 @@
           "last_application_receipt_report": "docs/development/evidence/W184-01/DELIVERY.md",
           "last_receipt_return_report": "docs/development/evidence/W185-01/DELIVERY.md",
           "last_routing_report": "docs/development/evidence/W186-01/DELIVERY.md",
-          "last_bom_report": "docs/development/evidence/W187-01/DELIVERY.md"
+          "last_bom_report": "docs/development/evidence/W187-01/DELIVERY.md",
+          "last_manufacturing_report": "docs/development/evidence/W188-01/DELIVERY.md"
         },
         {
           "id": "D4",
