@@ -1,9 +1,9 @@
-import { toolActualUsageApi as api, type ActualCommandKind, type ActualOperation, type ActualResult } from '@/api/wms/toolActualUsage'
+import { toolActualUsageApi as api, type AnyActualCommandKind, type ActualOperation, type ActualResult } from '@/api/wms/toolActualUsage'
 import type { EngineeringEnvelope, EngineeringScope } from '@/api/plm/engineeringProducts'
 import { identityStamp, requireIdentity } from './identity'
-export interface PendingActualUsage { operationId: string; objectId: string; kind: ActualCommandKind }
+export interface PendingActualUsage { operationId: string; objectId: string; kind: AnyActualCommandKind }
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-const owners: Record<ActualCommandKind, string> = { EVIDENCE: 'Main.Wms.ManualToolUseEvidence.v1', OCCURRENCE: 'Main.Wms.ToolUseOccurrence.v1', OBSERVATION: 'Main.Wms.ToolActualObservation.v1', POLICY: 'Main.Wms.ToolActualRecognitionPolicy.v1', RECOGNITION: 'Main.Wms.ToolActualRecognition.v1', APPLICATION: 'Main.Wms.ToolObservationApplication.v1' }
+const owners: Record<AnyActualCommandKind, string> = { M_OCCURRENCE: 'Main.Wms.ToolMaintenanceOccurrence.v1', M_OBSERVATION: 'Main.Wms.ToolActualObservation.v1', M_POLICY: 'Main.Wms.ToolMaintenanceRecognitionPolicy.v1', M_RECOGNITION: 'Main.Wms.ToolActualRecognition.v1', M_APPLICATION: 'Main.Wms.ToolObservationApplication.v1', EVIDENCE: 'Main.Wms.ManualToolUseEvidence.v1', OCCURRENCE: 'Main.Wms.ToolUseOccurrence.v1', OBSERVATION: 'Main.Wms.ToolActualObservation.v1', POLICY: 'Main.Wms.ToolActualRecognitionPolicy.v1', RECOGNITION: 'Main.Wms.ToolActualRecognition.v1', APPLICATION: 'Main.Wms.ToolObservationApplication.v1' }
 function key(scope: EngineeringScope) { if (!uuid.test(scope.tenantId) || !uuid.test(scope.actorId)) throw new Error('无法确认当前身份。'); return `cp6_tool_actual_operation_v1:${scope.tenantId.toLowerCase()}:${scope.actorId.toLowerCase()}` }
 export function actualResponse<T>(value: EngineeringEnvelope<T>): T { if (value?.code !== 0 || value.data == null) throw new Error('无法确认实际使用原结果。'); return value.data }
 export function pendingActualUsage(scope: EngineeringScope): PendingActualUsage | null {
@@ -30,7 +30,7 @@ function accept(scope: EngineeringScope, original: PendingActualUsage, value: Ac
   if (JSON.stringify(pendingActualUsage(scope)) !== JSON.stringify(original)) throw new Error('原实际使用操作记录已变化。')
   if (value.state !== 'UNKNOWN') localStorage.removeItem(key(scope)); return value
 }
-export function saveActualUsage(scope: EngineeringScope, objectId: string, kind: ActualCommandKind, guard: () => void, write: (id: string) => Promise<EngineeringEnvelope<ActualResult>>) {
+export function saveActualUsage(scope: EngineeringScope, objectId: string, kind: AnyActualCommandKind, guard: () => void, write: (id: string) => Promise<EngineeringEnvelope<ActualResult>>) {
   return exclusive(scope, guard, async check => {
     if (!uuid.test(objectId) || !Object.hasOwn(owners, kind)) throw new Error('请先选择实际使用对象。')
     if (pendingActualUsage(scope)) throw new Error('请先查询或结束原实际使用操作。')

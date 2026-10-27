@@ -172,7 +172,10 @@ public sealed class ToolMaintenanceOwnerV1(CP6Context db, OperationsOwnerV1 owne
                 if (last.Status == "UNSERVICEABLE")
                 {
                     var policy = await RequirePolicy(c, cmd.RepairPolicy!, false, t);
-                    if (!policy.AllowUnserviceableRepair || cmd.RepairPolicy == last.Completion!.Fact.Body.GetProperty("policy").Deserialize<ToolMaintenanceRefV1>(ToolMaintenanceStoreV1.Json)) throw Error("TOOL_REPAIR_POLICY_REQUIRED", 409);
+                    var completionPolicy = last.Completion!.Fact.Body.GetProperty("policy").Deserialize<ToolMaintenanceRefV1>(ToolMaintenanceStoreV1.Json);
+                    if (!policy.AllowUnserviceableRepair || cmd.RepairPolicy == completionPolicy
+                        || completionPolicy == null && Exact(c.Facts, cmd.RepairPolicy!, "POLICY").Fact.RecordedAt <= last.Completion.Fact.RecordedAt)
+                        throw Error("TOOL_REPAIR_POLICY_REQUIRED", 409);
                     c.Access.AtCommit(async token => { await RequirePolicy(c, cmd.RepairPolicy!, true, token); });
                 }
                 else if (cmd.RepairPolicy != null) throw Error("TOOL_MAINTENANCE_INPUT_INVALID", 400);
@@ -259,6 +262,27 @@ public sealed class ToolMaintenanceOwnerV1(CP6Context db, OperationsOwnerV1 owne
             return await Save(c, "RESET", maintenance, new { completion = cmd.CompletionRef, policy = cmd.ResetPolicySelectionRef, qualification = cmd.QualificationRef,
                 previousCycle = c.Cycle, previousCycleRef = cmd.ExpectedCycleRef, qualificationAtEffect = "MAINTENANCE_RELEASE_ONLY" }, t, after, cycle);
         }, ct, target: maintenance);
+    }
+    // Called by the actual observation Owner inside the same authority fence and PostgreSQL transaction.
+    // This creates the original maintenance completion; recovery policy and MASTER qualification stay separate.
+    internal async Task<ToolMaintenanceFactViewV1> CompleteActualOwnedAsync(OperationsAccessV1 access,Guid id,
+        ToolMaintenanceObservedBodyV1 observed,ToolActualRefV1 observation,ToolActualRefV1 decision,ToolActualRefV1 recognitionPolicy,CancellationToken ct)
+    {
+        if(!owner.Owns(db)||db.Database.CurrentTransaction==null)throw Error("AUTHORITY_FENCE_UNAVAILABLE",503);
+        var c=await Prepare(access,id,true,ct);var maintenance=observed.Identity.SourceDocumentId;var entry=Entry(c,maintenance);
+        var report=Exact(c.Facts,observed.EvidenceRef,"REPORT",maintenance);var body=Body<ToolMaintenanceReportCommandV1>(report);
+        if(body.Outcome!=observed.Outcome||body.OccurredAt!=observed.OccurredAt)throw Error("OCCURRENCE_CONTENT_CONFLICT",409);
+        if(entry.Completion is { } existing)
+        {
+            var b=existing.Fact.Body;
+            if(b.GetProperty("report").Deserialize<ToolMaintenanceRefV1>(ToolMaintenanceStoreV1.Json)!=report.Reference
+                ||b.GetProperty("outcome").GetString()!=body.Outcome||b.GetProperty("occurredAt").GetDateTimeOffset()!=body.OccurredAt)
+                throw Error("TOOL_MAINTENANCE_COMPLETION_CONFLICT",409);
+            return existing;
+        }
+        if(entry.Status!="OPEN"||c.Native.Source.GetProperty("status").GetInt32()!=1)throw Error("TOOL_MAINTENANCE_STATE_INVALID",409);
+        return await Save(c,"COMPLETE",maintenance,new {body.Outcome,body.OccurredAt,report=report.Reference,policy=(ToolMaintenanceRefV1?)null,
+            cycle=entry.Start.Fact.Body.GetProperty("cycle"),observation,decision,recognitionPolicy,qualificationAtOccurrence="UNPROVEN"},ct);
     }
     private async Task<ToolMaintenanceResultV1> Disclose(Context c, Guid operation, MainOwnerOperationJournalV1.Original original, byte[]? bytes, CancellationToken ct)
     {

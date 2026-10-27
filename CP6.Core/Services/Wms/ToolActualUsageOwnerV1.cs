@@ -12,15 +12,15 @@ using static CP6.Core.Services.Wms.ToolActualUsageStoreV1;
 namespace CP6.Core.Services.Wms;
 
 /// <summary>Actual occurrence recognition never retroactively grants a production use permit.</summary>
-public sealed class ToolActualUsageOwnerV1(CP6Context db, OperationsOwnerV1 owner, ToolActualRuntimeV1 runtime)
+public sealed partial class ToolActualUsageOwnerV1(CP6Context db, OperationsOwnerV1 owner, ToolActualRuntimeV1 runtime)
 {
     private const string Contract="Main.Wms.ToolActualUsage.commands.v1",Journal="Main.Wms.ToolActualUsage.operations.v1";
     private OperationsOwnerV1 Authority=>owner.Owns(db)?owner:throw Error("AUTHORITY_FENCE_UNAVAILABLE",503);
     private sealed record Context(OperationsAccessV1 Access,OperationsAccessV1 Query,ToolInstanceStoreV1 Tools,ToolActualUsageStoreV1 Store,
         ToolInstanceViewV1 Native,ToolRegistrationViewV1 Registration,ToolRegistrationOriginalV1 Original,ToolMaintenanceCycleV1 Cycle,
-        ToolActualScopeV1 Scope,ToolActualFactViewV1[] Facts,ToolActualCycleV1[] Cycles)
+        ToolActualScopeV1 Scope,ToolActualFactViewV1[] Facts,ToolActualCycleV1[] Cycles,ToolMaintenanceFactViewV1[] Maintenance)
     {
-        internal string Etag=>"\"ta1-"+Hash(JsonSerializer.Serialize(new{Native.Reference,Last=Facts.LastOrDefault()?.Reference,Scope},ToolActualUsageStoreV1.Json))+"\"";
+        internal string Etag=>"\"ta1-"+Hash(JsonSerializer.Serialize(new{Native.Reference,Last=Facts.LastOrDefault()?.Reference,MaintenanceLast=Maintenance.LastOrDefault()?.Reference,Scope},ToolActualUsageStoreV1.Json))+"\"";
         internal bool Coherent=>Registration.CycleKnowledge!="RECONCILIATION_REQUIRED";
     }
     private async Task<Context> Prepare(OperationsAccessV1 a,Guid id,bool write,CancellationToken ct)
@@ -35,7 +35,7 @@ public sealed class ToolActualUsageOwnerV1(CP6Context db, OperationsOwnerV1 owne
         var scope=new ToolActualScopeV1(runtime.EnvironmentId,db.CurrentTenantId,registration.CurrentSite.Reference.Id,runtime.Mode);
         if(facts.Any(f=>f.Fact.Scope!=scope))throw Error("TOOL_ACTUAL_RUNTIME_MISMATCH",503);
         return new(a,query,tools,store,native,registration,original,cycle,scope,facts,
-            await ToolActualUsageStoreV1.Cycles(db,original,await maintenance.Facts(id,ct),facts,ct));
+            await ToolActualUsageStoreV1.Cycles(db,original,await maintenance.Facts(id,ct),facts,ct),await maintenance.Facts(id,ct));
     }
     private static void Text(string? text,int max)
     {
@@ -110,14 +110,19 @@ public sealed class ToolActualUsageOwnerV1(CP6Context db, OperationsOwnerV1 owne
             if(string.IsNullOrEmpty(etag))throw Error("IF_MATCH_REQUIRED",428);if(etag!=c.Etag)throw Error("TOOL_ACTUAL_CHANGED",412);
             await a.RequireToolInstance(db,id,t);var fact=await change(c,t);
             var outcome=fact.Fact.Kind switch{"OCCURRENCE"=>"REGISTERED_ACTUAL_OCCURRENCE","OBSERVATION"=>"RECORDED_OBSERVATION","APPLICATION"=>"APPLIED_ACTUAL_WITH_RESTRICTIONS",
+                "M_OCCURRENCE"=>"REGISTERED_ACTUAL_OCCURRENCE","M_OBSERVATION"=>"RECORDED_OBSERVATION",
+                "M_RECOGNITION"=>Body<ToolMaintenanceRecognizedBodyV1>(fact).Outcome,"M_POLICY"=>Body<ToolMaintenanceActualPolicyV1>(fact).State,
+                "M_APPLICATION"=>Body<ToolMaintenanceActualApplicationV1>(fact).MaintenanceOutcome=="PASS"?"COMPLETED_PASS_PENDING_RESET":Body<ToolMaintenanceActualApplicationV1>(fact).MaintenanceOutcome,
                 "RECOGNITION"=>Body<ToolActualRecognizedBodyV1>(fact).Outcome,"POLICY"=>Body<ToolActualPolicyCommandV1>(fact).State,_=>"RECORDED_LOCAL_ATTESTATION"};
             var result=new ToolActualResultV1(operation,id,fact.Fact.Kind,fact.Reference,outcome);
             await journal.Store(Journal,Contract,operation,a.ActorId,bytes,result,[id],new{action,a.ActorId,fact.Reference,fact.Fact.NativeBefore,fact.Fact.NativeAfter},t);
             var isNew=!c.Facts.Any(f=>f.Reference==fact.Reference);var expectedNative=isNew?fact.Fact.NativeAfter:c.Native.Reference;
             var expectedHead=isNew?fact.Reference:c.Facts.LastOrDefault()?.Reference;
+            var maintenanceHead=(await new ToolMaintenanceStoreV1(db).Facts(id,t)).LastOrDefault()?.Reference;
             await c.Tools.HoldExactAsync(c.Query,expectedNative,t);
             a.AtCommit(async token=>
             {
+                if((await new ToolMaintenanceStoreV1(db).Facts(id,token)).LastOrDefault()?.Reference!=maintenanceHead)throw Error("TOOL_MAINTENANCE_CHANGED",412);
                 if((await c.Store.Facts(id,token)).LastOrDefault()?.Reference!=expectedHead)throw Error("TOOL_ACTUAL_CHANGED",412);
                 var site=await c.Query.SourceAsync(OperationsOwnerV1.PhysicalSite,token);
                 if((await PhysicalSiteIdentityReaderV1.ReadOwnedAsync(db,site,c.Scope.SiteId,token)).Reference!=c.Registration.CurrentSite.Reference)throw Error("TOOL_SITE_CHANGED",412);
@@ -292,10 +297,11 @@ public sealed class ToolActualUsageOwnerV1(CP6Context db, OperationsOwnerV1 owne
     public Task<object> LookupAsync(Guid factId,string kind,string? version=null,CancellationToken ct=default)
         =>Authority.ExecuteAsync(OperationsOwnerV1.ToolInstance,"query",false,async(a,t)=>
         {
-            var tool=await db.Database.SqlQuery<Guid>($"SELECT tool_id AS \"Value\" FROM cp6_tool_actual_v1.facts WHERE tenant_id={db.CurrentTenantId} AND record_id={factId} AND kind={kind}").SingleOrDefaultAsync(t);
+            var maintenanceKind=kind switch {"OBSERVATION"=>"M_OBSERVATION","RECOGNITION"=>"M_RECOGNITION",_=>kind};
+            var tool=await db.Database.SqlQuery<Guid>($"SELECT tool_id AS \"Value\" FROM cp6_tool_actual_v1.facts WHERE tenant_id={db.CurrentTenantId} AND record_id={factId} AND kind IN ({kind},{maintenanceKind})").SingleOrDefaultAsync(t);
             if(tool==Guid.Empty)throw Error("TOOL_ACTUAL_FACT_NOT_FOUND",404);var c=await Prepare(a,tool,false,t);
             var f=c.Facts.Single(x=>x.Reference.Id==factId);if(version!=null&&version!=f.Reference.Version)throw Error("TOOL_ACTUAL_REFERENCE_CHANGED",412);
             await c.Tools.Read(c.Query,tool,Revision(f.Fact.NativeAfter.Version),t);
-            return kind=="OBSERVATION"?(object)Observation(f,c.Facts):f;
+            return f.Fact.Kind=="M_OBSERVATION"?(object)MaintenanceObservation(f,c.Facts):kind=="OBSERVATION"?(object)Observation(f,c.Facts):f;
         },ct);
 }
