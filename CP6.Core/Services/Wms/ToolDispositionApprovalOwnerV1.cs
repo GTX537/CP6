@@ -12,7 +12,7 @@ using static CP6.Core.Services.Wms.ToolInstanceStoreV1;
 namespace CP6.Core.Services.Wms;
 
 /// <summary>Business Owner local freeze transaction. Durable acceptance means DISPATCH_PENDING, never engine or business success.</summary>
-public sealed class ToolDispositionApprovalOwnerV1(CP6Context db, OperationsOwnerV1 owner, ScopeAuthorizationFenceV1 scope)
+public sealed partial class ToolDispositionApprovalOwnerV1(CP6Context db, OperationsOwnerV1 owner, ScopeAuthorizationFenceV1 scope)
 {
     private OperationsOwnerV1 Authority => owner.Owns(db) ? owner : throw Error("AUTHORITY_FENCE_UNAVAILABLE",503);
     private Guid Environment { get { try { return scope.EnvironmentId; } catch(ScopeAuthorizationExceptionV1 e) { throw Error(e.Message,e.Status); } } }
@@ -46,7 +46,7 @@ public sealed class ToolDispositionApprovalOwnerV1(CP6Context db, OperationsOwne
     private static ToolMaintenanceAuthorityV1[] Witnesses(OperationsAccessV1 a)=>a.Authorities.DistinctBy(x=>(x.Resource,x.Action))
         .OrderBy(x=>x.Resource,StringComparer.Ordinal).ThenBy(x=>x.Action,StringComparer.Ordinal)
         .Select(x=>new ToolMaintenanceAuthorityV1(x.Resource,x.Action,x.Source.SourcePermissionVersion,x.OrganizationVersion)).ToArray();
-    private async Task<ToolDispositionPolicyCommandV1> RequirePolicy(Context c,ToolDispositionRefV1 reference,CancellationToken ct)
+    private async Task<ToolDispositionPolicyCommandV1> RequirePolicy(Context c,ToolDispositionRefV1 reference,CancellationToken ct,bool storedSources=false)
     {
         var policy=(await c.Store.Policies(c.Disposition.ToolId,ct)).LastOrDefault();
         if(policy==null || policy.Reference!=reference)throw Error("TOOL_APPROVAL_POLICY_CHANGED",412);
@@ -59,7 +59,8 @@ public sealed class ToolDispositionApprovalOwnerV1(CP6Context db, OperationsOwne
         {
             var authority=await Authority.ToolDispositionPolicyAuthorityAsync(w.Resource,w.Action,policy.Fact.ActorId,ct);
             if(authority.Source.SourcePermissionVersion!=w.PermissionVersion || authority.OrganizationVersion!=w.OrganizationVersion)throw Error("TOOL_APPROVAL_POLICY_ISSUER_CHANGED",412);
-            var access=new OperationsAccessV1(db,owner,authority);
+            var access=new OperationsAccessV1(db,owner,authority,storedSubjectSource:storedSources
+                ? (resource,action,t)=>Authority.ToolDispositionPolicyAuthorityAsync(resource,action,policy.Fact.ActorId,t) : null);
             if(w.Resource==OperationsOwnerV1.ToolInstance)await access.RequireToolInstance(db,c.Disposition.ToolId,ct);
             if(w.Resource==OperationsOwnerV1.PhysicalSite)
             {

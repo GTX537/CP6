@@ -59,6 +59,10 @@ public sealed partial class OperationsOwnerV1
     internal Task<Authority> ToolDispositionPolicyAuthorityAsync(string resource,string action,Guid actor,CancellationToken ct)
         => action=="query" || resource==ToolInstance && action=="dispose-policy"
             ? AuthorityCoreAsync(resource,action,actor,true,ct) : throw new OrderPriceCorrectionException("ACTION_FORBIDDEN",403);
+    // Only the immutable actual Owner submission supplies actor; no public actor override.
+    internal Task<Authority> ToolApprovalIntakeAuthorityAsync(string resource,string action,Guid actor,CancellationToken ct)
+        => action=="query" || resource==ToolInstance && action=="dispose-submit"
+            ? AuthorityCoreAsync(resource,action,actor,true,ct) : throw new OrderPriceCorrectionException("ACTION_FORBIDDEN",403);
     private async Task<Authority> AuthorityCoreAsync(string resource,string action,Guid subject,bool storedDecision,CancellationToken ct)
     {
         var definition=catalog();
