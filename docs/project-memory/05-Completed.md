@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-27：W171 Scope授权门待 Main 收尾
+
+Scope环境/租户/权限域登记、真实epoch/事务锁、14张当前权限源表writer参与、原操作恢复已验证；31本地检查（28PG18/HTTP、3unit），0skip。[报告](../development/evidence/W171-01/DELIVERY.md)。登记33.93分钟，预计90–150；Handoff已释放、Main待收尾。正式Workflow消费者/审批与七天全部出口仍开放。
+
 ## 2026-10-27：W170 流程定义只读与显式草稿待 Main 收尾
 
 流程读取无副作用、显式准确来源草稿/原操作恢复及两个设计器已验证；27本地检查（12PG18/HTTP、15复用）、12组件及type/Vite通过。[报告](../development/evidence/W170-01/DELIVERY.md)。登记30.33分钟，预计45–75；Handoff已释放、Main待收尾。完整Workflow授权/发布/审批与七天全部出口仍开放。
