@@ -26,14 +26,20 @@ public sealed class ToolApprovalFactControllerV2 : ControllerBase
         var result = await receiver.ReceivedAsync(eventId, ct); return StatusCode(result.Status, result.Body);
     });
     [HttpGet(ToolApprovalFactReceiverV2.ApplicationRoute + "{streamId:guid}/result")]
-    public Task<IActionResult> Application(Guid streamId) => Run(async (receiver, ct) => Ok(await receiver.ApplicationAsync(streamId, ct)));
-    private async Task<IActionResult> Run(Func<ToolApprovalFactReceiverV2, CancellationToken, Task<IActionResult>> action)
+    public Task<IActionResult> Application(Guid streamId) => Run(async (receiver, ct)
+        => File(ToolApprovalFactReceiverV2.ApplicationResponseBytes(await receiver.ApplicationAsync(streamId, ct)), "application/json"));
+    [HttpGet(ToolApprovalFactReceiverV2.ApplicationRoute + "{streamId:guid}/receipts")]
+    public Task<IActionResult> Receipts(Guid streamId, [FromQuery] string afterRevision = "0", [FromQuery] int limit = 20, [FromQuery] string? cursor = null)
+        => Run(async (receiver, ct) => File(ToolApprovalFactReceiverV2.ApplicationResponseBytes(
+            await receiver.ReceiptChainAsync(streamId, afterRevision, limit, cursor, ct)), "application/json"), true);
+    private async Task<IActionResult> Run(Func<ToolApprovalFactReceiverV2, CancellationToken, Task<IActionResult>> action, bool chain = false)
     {
         Response.Headers.CacheControl = "no-store";
         try
         {
             await ApprovalFactReceiverServiceAuthorityV2.BindTenant(HttpContext, HttpContext.RequestAborted);
-            if (Request.Query.Count != 0) throw new ScopeAuthorizationExceptionV1("DECISION_SHAPE_INVALID", 422);
+            if (Request.Query.Any(x => !chain || x.Key is not ("afterRevision" or "limit" or "cursor") || x.Value.Count != 1))
+                throw new ScopeAuthorizationExceptionV1("DECISION_SHAPE_INVALID", 422);
             return await action(HttpContext.RequestServices.GetRequiredService<ToolApprovalFactReceiverV2>(), HttpContext.RequestAborted);
         }
         catch (ScopeAuthorizationExceptionV1 e) { return Failure(e.Status, e.Message); }

@@ -11,6 +11,7 @@
       <nav aria-label="实物分页"><button :disabled="busy || page === 1" @click="loadPage(page - 1)">上一页</button><span>第 {{ page }} 页 · 共 {{ total }} 条</span><button :disabled="busy || page * 50 >= total" @click="loadPage(page + 1)">下一页</button></nav>
     </section>
     <ToolDispositionPanel :scope="scope" :selected="selected" @authority-denied="registrationDenied" />
+    <ToolApplicationPanel :scope="scope" :selected="selected" @authority-denied="registrationDenied" />
     <ToolMaintenancePanel :scope="scope" :selected="selected" @authority-denied="registrationDenied" />
     <ToolActualMaintenancePanel :scope="scope" :selected="selected" @authority-denied="registrationDenied" />
     <ToolActualUsagePanel :scope="scope" :selected="selected" @authority-denied="registrationDenied" />
@@ -38,6 +39,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import ToolAssociationPanel from './ToolAssociationPanel.vue'
 import ToolMaintenancePanel from './ToolMaintenancePanel.vue'
 import ToolDispositionPanel from './ToolDispositionPanel.vue'
+import ToolApplicationPanel from './ToolApplicationPanel.vue'
 import ToolActualMaintenancePanel from './ToolActualMaintenancePanel.vue'
 import ToolActualUsagePanel from './ToolActualUsagePanel.vue'
 import ToolRegistrationPanel from './ToolRegistrationPanel.vue'

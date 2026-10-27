@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Oa;
 using CP6.Core.Services.Sys;
@@ -11,13 +12,17 @@ public sealed record ApprovalFactAckV2(string Kind, Guid EventId, Guid DecisionI
     ApprovalDigestV2 PayloadDigest, Guid InboxId, string ReceiveState, DateTimeOffset ReceivedAt, string Application,
     Guid? ApplicationReceiptId, Guid? ReceiptStreamId, string? ReceiptQueryRef, string? ErrorCode);
 public sealed record ApprovalFactNotObservedV2(string Kind, Guid EventId, DateTimeOffset ObservedAt, string QueryRef);
-public sealed record ApprovalApplicationNotAppliedV2(string Kind, Guid ReceiptStreamId, DateTimeOffset ObservedAt);
+[JsonDerivedType(typeof(ApprovalApplicationNotAppliedV2)), JsonDerivedType(typeof(ApprovalApplicationFoundV2))]
+public abstract record ApprovalApplicationResultV2(string Kind);
+public sealed record ApprovalApplicationNotAppliedV2(string Kind, Guid ReceiptStreamId, DateTimeOffset ObservedAt) : ApprovalApplicationResultV2(Kind);
+public sealed record ApprovalApplicationFoundV2(ApprovalApplicationReceiptV2 Receipt) : ApprovalApplicationResultV2("FOUND");
 public sealed record ApprovalFactReceiveResultV2(int Status, object Body);
 
 /// <summary>Actual Tool Owner fact reception. Receipt means an immutable approval fact
 /// was received, not that a physical tool was discarded. Application uses a separate Owner transaction.</summary>
-public sealed class ToolApprovalFactReceiverV2(CP6Context db, ScopeAuthorizationFenceV1 scope,
-    IApprovalServiceAuthorityV2 authority, ApprovalDecisionSourceV2 source)
+public sealed partial class ToolApprovalFactReceiverV2(CP6Context db, ScopeAuthorizationFenceV1 scope,
+    IApprovalServiceAuthorityV2 authority, ApprovalDecisionSourceV2 source,
+    Microsoft.AspNetCore.DataProtection.IDataProtectionProvider? protection = null)
 {
     public const string Route = "/internal/wms/approval-results/v2";
     public const string ApplicationRoute = "/internal/wms/approval-application-streams/";
@@ -215,7 +220,7 @@ public sealed class ToolApprovalFactReceiverV2(CP6Context db, ScopeAuthorization
         }
         await Final(lease, auth, row?.Submission, grant, false, ct); await tx.CommitAsync(ct); return result;
     }
-    public async Task<ApprovalApplicationNotAppliedV2> ApplicationAsync(Guid streamId, CancellationToken ct = default)
+    public async Task<ApprovalApplicationResultV2> ApplicationAsync(Guid streamId, CancellationToken ct = default)
     {
         Entry(); await using var tx = await db.Database.BeginTransactionAsync(ct);
         var lease = await scope.AcquireAsync(ct); await Ready(ct); var auth = await Service(ct);
@@ -225,9 +230,10 @@ public sealed class ToolApprovalFactReceiverV2(CP6Context db, ScopeAuthorization
             WHERE s.environment_id={scope.EnvironmentId} AND s.tenant_id={db.CurrentTenantId} AND s.id={streamId}
             """).SingleOrDefaultAsync(ct) ?? throw Error("RESOURCE_NOT_FOUND", 404);
         var grant = await Subject(auth.Service, stream.Submission, false, auth.Registration, ct);
-        // This Owner version has no application writer. Neither a transport ACK nor a
-        // legacy physical status is evidence of an application under this exact stream.
-        var result = new ApprovalApplicationNotAppliedV2("NOT_APPLIED", streamId, await Now(ct));
+        var store = new ToolApplicationReceiptStoreV2(db, scope); await store.Ready(ct);
+        var receipt = await store.Latest(streamId, ct);
+        ApprovalApplicationResultV2 result = receipt == null ? new ApprovalApplicationNotAppliedV2("NOT_APPLIED", streamId, await Now(ct))
+            : new ApprovalApplicationFoundV2(receipt);
         await Final(lease, auth, stream.Submission, grant, false, ct); await tx.CommitAsync(ct); return result;
     }
 }

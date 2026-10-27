@@ -12,10 +12,11 @@ namespace CP6.Tests.Erp;
 
 public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
+    private static readonly Microsoft.AspNetCore.DataProtection.IDataProtectionProvider FactCursorProtection = new Microsoft.AspNetCore.DataProtection.EphemeralDataProtectionProvider();
     private sealed record FactFixture(ToolApprovalFactReceiverV2 Owner, IntakeAuthority Authority,
         byte[] Payload, ApprovalDecisionEnvelopeV2 Decision);
     private static ToolApprovalFactReceiverV2 FactReceiver(Harness h, IApprovalServiceAuthorityV2 authority)
-        => new(h.Db, ScopeFence(h), authority, new(h.Db, ScopeFence(h)));
+        => new(h.Db, ScopeFence(h), authority, new(h.Db, ScopeFence(h)), FactCursorProtection);
     private async Task<FactFixture> FactSetup(Harness h, bool approve = true)
     {
         var (intake, first, second) = await DecisionSetup(h);
