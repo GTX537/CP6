@@ -49,9 +49,9 @@ public sealed class ApprovalIntakeRegistryV2
 public sealed class ApprovalIntakeServiceAuthorityV2(CP6Context db,IHttpContextAccessor http,ApprovalIntakeRegistryV2 registry,CrmOidcOptions oidc)
     : IApprovalServiceAuthorityV2
 {
-    private sealed record Facts(ApprovalIntakeRegistryV2.Client Client,Guid Jti,DateTimeOffset Expires);
+    internal sealed record Facts(ApprovalIntakeRegistryV2.Client Client,Guid Jti,DateTimeOffset Expires);
     private static string? Single(ClaimsPrincipal p,string type)=>p.FindAll(type).ToArray() is {Length:1} claims?claims[0].Value:null;
-    private static async Task<Facts> Authenticate(HttpContext http,ApprovalIntakeRegistryV2 registry,CrmOidcOptions oidc,CancellationToken ct)
+    internal static async Task<Facts> Authenticate(HttpContext http,ApprovalIntakeRegistryV2 registry,CrmOidcOptions oidc,CancellationToken ct)
     {
         if(!registry.Enabled||await http.RequestServices.GetRequiredService<IAuthenticationSchemeProvider>().GetSchemeAsync(CrmIdentityController.Scheme)==null)
             throw new ScopeAuthorizationExceptionV1("OWNER_UNAVAILABLE",503);

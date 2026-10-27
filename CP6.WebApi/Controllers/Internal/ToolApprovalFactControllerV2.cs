@@ -1,0 +1,48 @@
+using CP6.Core.Services.Oa;
+using CP6.Core.Services.Sys;
+using CP6.Core.Services.Wms;
+using CP6.WebApi.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace CP6.WebApi.Controllers.Internal;
+
+[ApiController, AllowAnonymous, ApiExplorerSettings(IgnoreApi = true)]
+[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+public sealed class ToolApprovalFactControllerV2 : ControllerBase
+{
+    [HttpPost(ToolApprovalFactReceiverV2.Route), RequestSizeLimit(1048576)]
+    public Task<IActionResult> Receive() => Run(async (receiver, ct) => {
+        using var bytes = new MemoryStream(); var buffer = new byte[8192]; int read;
+        while ((read = await Request.Body.ReadAsync(buffer, ct)) != 0)
+        {
+            if (bytes.Length + read > 1048576) throw new ScopeAuthorizationExceptionV1("DECISION_SHAPE_INVALID", 422);
+            await bytes.WriteAsync(buffer.AsMemory(0, read), ct);
+        }
+        var result = await receiver.ReceiveAsync(bytes.ToArray(), ct); return StatusCode(result.Status, result.Body);
+    });
+    [HttpGet(ToolApprovalFactReceiverV2.Route + "/{eventId:guid}")]
+    public Task<IActionResult> Received(Guid eventId) => Run(async (receiver, ct) => {
+        var result = await receiver.ReceivedAsync(eventId, ct); return StatusCode(result.Status, result.Body);
+    });
+    [HttpGet(ToolApprovalFactReceiverV2.ApplicationRoute + "{streamId:guid}/result")]
+    public Task<IActionResult> Application(Guid streamId) => Run(async (receiver, ct) => Ok(await receiver.ApplicationAsync(streamId, ct)));
+    private async Task<IActionResult> Run(Func<ToolApprovalFactReceiverV2, CancellationToken, Task<IActionResult>> action)
+    {
+        Response.Headers.CacheControl = "no-store";
+        try
+        {
+            await ApprovalFactReceiverServiceAuthorityV2.BindTenant(HttpContext, HttpContext.RequestAborted);
+            if (Request.Query.Count != 0) throw new ScopeAuthorizationExceptionV1("DECISION_SHAPE_INVALID", 422);
+            return await action(HttpContext.RequestServices.GetRequiredService<ToolApprovalFactReceiverV2>(), HttpContext.RequestAborted);
+        }
+        catch (ScopeAuthorizationExceptionV1 e) { return Failure(e.Status, e.Message); }
+        catch (CP6.Core.Services.Erp.OrderPriceCorrectionException e) { return Failure(e.Status, e.Message); }
+        catch (CurrentPermissionUnavailableException) { return Failure(503, "AUTHORITY_UNAVAILABLE"); }
+        catch (Exception e) when (e is System.Data.Common.DbException or Microsoft.EntityFrameworkCore.DbUpdateException or TimeoutException)
+        { return Failure(503, "AUTHORITY_UNAVAILABLE"); }
+    }
+    private ObjectResult Failure(int status, string code) => StatusCode(status, new { code, messageKey = code,
+        correlationId = Guid.NewGuid(), retryable = status is 429 or 503 or 504, fieldErrors = Array.Empty<object>(),
+        currentRowVersion = (string?)null, resultQueryRef = (string?)null });
+}

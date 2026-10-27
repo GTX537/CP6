@@ -654,6 +654,13 @@ builder.Services.AddScoped(sp => new CP6.Core.Services.Oa.ApprovalTaskAuthorityV
         { throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1(e.Message, e.Status, e); }
     }));
 builder.Services.AddScoped<CP6.Core.Services.Oa.ApprovalTaskDecisionOwnerV2>();
+builder.Services.AddSingleton(new CP6.WebApi.Services.ApprovalFactReceiverRegistryV2(
+    builder.Configuration.GetSection("ApprovalFactReceiver").Get<CP6.WebApi.Services.ApprovalFactReceiverOptionsV2>() ?? new(), crmOidc, builder.Environment.IsDevelopment()));
+builder.Services.AddScoped<CP6.WebApi.Services.ApprovalFactReceiverServiceAuthorityV2>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.ApprovalDecisionSourceV2>();
+builder.Services.AddScoped(sp => new CP6.Core.Services.Wms.ToolApprovalFactReceiverV2(sp.GetRequiredService<CP6Context>(),
+    sp.GetRequiredService<CP6.Core.Services.Sys.ScopeAuthorizationFenceV1>(),
+    sp.GetRequiredService<CP6.WebApi.Services.ApprovalFactReceiverServiceAuthorityV2>(), sp.GetRequiredService<CP6.Core.Services.Oa.ApprovalDecisionSourceV2>()));
 builder.Services.AddSingleton(builder.Configuration.GetSection("ApprovalStart").Get<CP6.WebApi.BackgroundServices.ApprovalStartOptionsV2>()??new());
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.ApprovalStartWorkerV2>();
 builder.Services.AddSingleton(sp=>new CP6.WebApi.Services.ToolApprovalDeliveryRegistryV1(

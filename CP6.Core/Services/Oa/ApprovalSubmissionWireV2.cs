@@ -24,19 +24,19 @@ internal static class ApprovalSubmissionWireV2
 {
     internal sealed record Parsed(ApprovalSubmitCommandV2 Value, byte[] Canonical, string Full, string Core, string IntentCore, string Intent);
     internal static ScopeAuthorizationExceptionV1 Error(string code, int status = 422) => new(code, status);
-    private static void Shape(JsonElement e, params string[] fields)
+    internal static void Shape(JsonElement e, params string[] fields)
     {
         if(e.ValueKind!=JsonValueKind.Object || !e.EnumerateObject().Select(p=>p.Name).Order(StringComparer.Ordinal).SequenceEqual(fields.Order(StringComparer.Ordinal))) throw new JsonException();
     }
-    private static void Key(JsonElement e, int max=100)
+    internal static void Key(JsonElement e, int max=100)
     {if(e.ValueKind!=JsonValueKind.String || string.IsNullOrWhiteSpace(e.GetString()) || e.GetString()!.EnumerateRunes().Count()>max)throw new JsonException();}
-    private static void Id(JsonElement e, bool nullable=false)
+    internal static void Id(JsonElement e, bool nullable=false)
     {if(nullable&&e.ValueKind==JsonValueKind.Null)return;var s=e.GetString();if(!Guid.TryParseExact(s,"D",out var id)||id==Guid.Empty||s!=id.ToString("D"))throw new JsonException();}
-    private static void Ref(JsonElement e)
+    internal static void Ref(JsonElement e)
     {Shape(e,"owner","id","version");foreach(var p in e.EnumerateObject())Key(p.Value);}
-    private static void Digest(JsonElement e)
+    internal static void Digest(JsonElement e)
     {Shape(e,"algorithm","canonicalizationVersion","value");Key(e.GetProperty("canonicalizationVersion"));if(e.GetProperty("algorithm").GetString()!="sha256"||!Regex.IsMatch(e.GetProperty("value").GetString()??"",@"\A[0-9a-f]{64}\z"))throw new JsonException();}
-    private static void Engineering(JsonElement e)
+    internal static void Engineering(JsonElement e)
     {
         if(e.ValueKind==JsonValueKind.Null)return;
         var kind=e.GetProperty("kind").GetString();
