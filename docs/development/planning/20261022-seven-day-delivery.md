@@ -1420,3 +1420,7 @@ FLOW准确发布预览、不可变版本、原命令恢复、指定版本下一�
 ## 2026-10-27 W174 准确版本独立启停
 
 FLOW独立启停、准确版本校验、历史、原命令恢复和管理入口已验证；35后端、22UI、类型检查和构建通过，0skip。[报告](../evidence/W174-01/DELIVERY.md)。登记19.0分钟，预计60–100；Handoff已释放，Main待正常PR/finish。依赖来源/运行消费者/审批和七天全部出口保留。 Connect the actual seven-day approval consumer to the exact publication and activation source, preserving accepted APP binding/Owner transaction requirements; do not expand into unnecessary full form/clone tooling.
+
+## 2026-10-27 W175 审批业务绑定与不可变时间线
+
+审批绑定、不可变时间线、准确版本校验、原命令恢复和管理入口已验证；23后端、15UI、类型检查和构建通过，0skip。[报告](../evidence/W175-01/DELIVERY.md)。登记26.26分钟，预计90–150；Handoff已释放，Main待正常PR/finish。依赖来源/运行消费者/审批和七天全部出口保留。 Connect actual seven-day Owner frozen Subject/Policy and durable submission to original-key engine startup with the accepted OA-APP transaction/evidence requirements; do not count configuration as business approval.
