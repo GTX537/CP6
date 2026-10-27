@@ -6,11 +6,22 @@ export interface ToolSite { reference: ToolSiteRef; code: string; name: string; 
 export interface ToolCreationContext extends EngineeringScope { authorityVersion: string; allowsUnbound: boolean; departments: { id: string; code: string; name: string }[]; writableFields: string[] }
 export interface ToolNewProfile { plateType: string; colorCount: number | null; sizeNote: string | null; madeDate: string | null; madeCost: string | null; maxShots: number | null; remarks: string | null }
 export interface ToolRegistrationCommand { operationId: string; objectId: string; kind: 'CREATE' | 'BIND_LEGACY'; site: ToolSiteRef; evidence: string; expected?: ToolInstanceReference | null; creationAuthorityVersion?: string | null; departmentId?: string | null; profile?: ToolNewProfile | null }
-export interface ToolRegistrationView { tenantId: string; reference: { owner: 'Main.Wms.ToolRegistration.v1'; id: string; version: string; digest: string }; currentNative: ToolInstanceReference; siteAtRegistration: ToolSiteRef; currentSite: ToolSite; cycleAnchorId: string; origin: 'NEW_REGISTERED' | 'LEGACY_OBSERVED'; initialCycleShots: string; cycleNo: string | null; cycleKnowledge: 'NEW_REGISTERED' | 'LEGACY_OBSERVED' | 'RECONCILIATION_REQUIRED'; currentCycleShots: string | null; lifetimeKnowledge: string; lifetimeShots: string | null; originalJson: string; currentEligibility: 'UNKNOWN'; inputContract?: 'tool.registration.v1' | 'tool.registration.v2' }
-export interface ToolRegistrationResult { operationId: string; kind: 'TOOL_CREATE' | 'TOOL_INITIALIZE'; objectId: string; version: string; digest: string; inputContract?: 'tool.registration.v1' | 'tool.registration.v2' }
+export interface ToolSourceRef { owner: string; id: string; version: string; digest: string }
+export interface ToolPartyChoice { reference: ToolSourceRef; code: string; name: string | null }
+export interface ToolLocationChoice { reference: ToolSourceRef; warehouse: ToolSourceRef; warehouseCd: string; locationCd: string; areaCd: string | null }
+export interface ToolRegistrationLinks { customer: ToolSourceRef | null; product: ToolSourceRef | null; location: { location: ToolSourceRef; warehouse: ToolSourceRef } | null }
+export interface ToolLinkedRegistrationCommand { registration: ToolRegistrationCommand; links: ToolRegistrationLinks }
+export interface ToolRegistrationLinkView extends ToolRegistrationLinks { customerState: string; productState: string; locationState: string }
+export interface ToolRegistrationView { links?: ToolRegistrationLinkView | null; tenantId: string; reference: { owner: 'Main.Wms.ToolRegistration.v1'; id: string; version: string; digest: string }; currentNative: ToolInstanceReference; siteAtRegistration: ToolSiteRef; currentSite: ToolSite; cycleAnchorId: string; origin: 'NEW_REGISTERED' | 'LEGACY_OBSERVED'; initialCycleShots: string; cycleNo: string | null; cycleKnowledge: 'NEW_REGISTERED' | 'LEGACY_OBSERVED' | 'RECONCILIATION_REQUIRED'; currentCycleShots: string | null; lifetimeKnowledge: string; lifetimeShots: string | null; originalJson: string; currentEligibility: 'UNKNOWN'; inputContract?: 'tool.registration.v1' | 'tool.registration.v2' | 'tool.registration.v3' }
+export interface ToolRegistrationResult { operationId: string; kind: 'TOOL_CREATE' | 'TOOL_INITIALIZE'; objectId: string; version: string; digest: string; inputContract?: 'tool.registration.v1' | 'tool.registration.v2' | 'tool.registration.v3' }
 export interface ToolRegistrationOperation { operationId: string; state: 'COMMITTED' | 'CLOSED' | 'UNKNOWN'; result?: ToolRegistrationResult | null }
 const root = '/wms/specials/v1/tools'
 export const toolRegistrationApi = {
+  customers: (search = '') => http.get<any, EngineeringEnvelope<ToolPartyChoice[]>>(`${root}/registration-customers`, { params: { search } }),
+  products: (search = '') => http.get<any, EngineeringEnvelope<ToolPartyChoice[]>>(`${root}/registration-products`, { params: { search } }),
+  locations: (siteId: string, search = '') => http.get<any, EngineeringEnvelope<ToolLocationChoice[]>>(`${root}/registration-locations`, { params: { siteId, search } }),
+  linkedCreate: (body: ToolLinkedRegistrationCommand) => http.post<any, EngineeringEnvelope<ToolRegistrationResult>>(`${root}/linked-registration`, body),
+  linkedBind: (id: string, etag: string, body: ToolLinkedRegistrationCommand) => http.put<any, EngineeringEnvelope<ToolRegistrationResult>>(`${root}/${encodeURIComponent(id)}/linked-registration`, body, { headers: { 'If-Match': etag } }),
   context: () => http.get<any, EngineeringEnvelope<ToolCreationContext>>(`${root}/creation-context`),
   sites: (search = '') => http.get<any, EngineeringEnvelope<ToolSite[]>>(`${root}/sites`, { params: { search } }),
   read: (id: string) => http.get<any, EngineeringEnvelope<ToolRegistrationView | null>>(`${root}/${encodeURIComponent(id)}/registration`),

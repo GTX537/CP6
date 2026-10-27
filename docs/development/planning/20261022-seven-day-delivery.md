@@ -1376,3 +1376,7 @@ BUG582版本化输入修复，历史原件及恢复保持；37PG/HTTP、9UI、ty
 ## 2026-10-27 W163 客户原身份来源
 
 真实原客户身份来源Owner、当前权限/不可变版本/同Main事务保护；17PG/HTTP、5种子单元、26UI及type/Vite通过。[报告](../evidence/W163-01/DELIVERY.md)。登记17.4分钟，预计60–90；Handoff已释放，Main待finish。真实登记关联采用及原七天全部未完成出口保留。
+
+## 2026-10-27 W164 实物登记采用可信来源
+
+客户/产品/库位实际UUID/版本采用，当前来源权限、同事务及旧v1/v2兼容；48PG/HTTP、12组件及type/Vite通过。[报告](../evidence/W164-01/DELIVERY.md)。登记25.46分钟，预计90–150；Handoff已释放、Main待finish。Continue technical-tool candidates, physical lifecycle and actual engineering dual Role; preserve all original D2/D3/D5/D6/D7 exits, Order request processing and formal Sales.

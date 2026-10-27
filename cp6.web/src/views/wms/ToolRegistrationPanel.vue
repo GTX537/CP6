@@ -10,15 +10,29 @@
       <p>站点：{{ registration.currentSite.code }} · {{ registration.currentSite.name }}{{ registration.currentSite.enabled ? '' : '（已停用）' }}</p>
       <p>周期起点：{{ registration.initialCycleShots }}；当前计数：{{ registration.currentCycleShots ?? '待核对' }}；终身次数：{{ registration.lifetimeShots ?? '未知' }}。</p>
       <p>周期编号：{{ registration.cycleNo ?? '历史缺证或待核对' }}；登记起点身份：{{ registration.cycleAnchorId }}。当前使用资格：未知。</p>
+      <p v-if="registration.links">客户：{{ linkState(registration.links.customerState) }}；产品：{{ linkState(registration.links.productState) }}；库位：{{ linkState(registration.links.locationState) }}。</p>
       <p v-if="registration.cycleKnowledge === 'RECONCILIATION_REQUIRED'">登记后检测到未核实的次数或维护变化，需核对实际记录。</p>
       <p v-if="!registration.inputContract || registration.inputContract === 'tool.registration.v1'">该登记保存的是旧版规范化文本，无法还原输入时的原始字符序列。</p>
     </article>
     <form v-if="mode" aria-label="实物登记" @submit.prevent="save"><fieldset :disabled="busy || !!pending || completed">
-      <h3>{{ mode === 'CREATE' ? '新建未关联实物' : '确认旧实物的站点和观察起点' }}</h3>
-      <p v-if="mode === 'CREATE'">仅用于经确认尚未使用的新实物。当前周期和终身次数从零开始；客户、产品、库位保持未关联。</p>
+      <h3>{{ mode === 'CREATE' ? '新建实物及可选关联' : '确认旧实物的站点和观察起点' }}</h3>
+      <p v-if="mode === 'CREATE'">仅用于经确认尚未使用的新实物。当前周期和终身次数从零开始；客户、产品、库位可从当前允许的真实来源中选择；留空表示不建立关联。</p>
       <p v-else>保留原记录的次数；不补造历史周期编号或终身次数，不改变旧仓库、库位和维护状态。</p>
       <label>搜索站点 <input v-model="search" aria-label="搜索站点" maxlength="100" /></label><button type="button" @click="searchSites">搜索站点</button>
       <label>真实站点 <select v-model="siteId" aria-label="真实站点" required><option value="">请选择</option><option v-for="site in sites" :key="site.reference.id" :value="site.reference.id">{{ site.code }} · {{ site.name }}</option></select></label>
+      <p>关联只保存本次核实的来源，不代表客户交易资格或产品工程放行。旧实物仅可显式对应现有码值，未对应的历史关系仍待核实。</p>
+      <div v-if="canLink('customer')">
+        <label>搜索客户 <input v-model="customerSearch" aria-label="搜索客户" maxlength="20" /></label><button type="button" @click="searchCustomers">查找客户</button>
+        <label>真实客户 <select v-model="customerId" aria-label="真实客户"><option value="">不建立客户关联</option><option v-for="x in customers" :key="x.reference.id" :value="x.reference.id">{{ x.code }}{{ x.name ? ' · ' + x.name : '' }}</option></select></label>
+      </div>
+      <div v-if="canLink('product')">
+        <label>搜索产品 <input v-model="productSearch" aria-label="搜索产品" maxlength="20" /></label><button type="button" @click="searchProducts">查找产品</button>
+        <label>真实产品 <select v-model="productId" aria-label="真实产品"><option value="">不建立产品关联</option><option v-for="x in products" :key="x.reference.id" :value="x.reference.id">{{ x.code }}{{ x.name ? ' · ' + x.name : '' }}</option></select></label>
+      </div>
+      <div v-if="permission.has('wms-location:query') && permission.has('wms-warehouse:query')">
+        <label>搜索库位 <input v-model="locationSearch" aria-label="搜索库位" maxlength="30" /></label><button type="button" :disabled="!siteId" @click="searchLocations">查找站点库位</button>
+        <label>真实库位 <select v-model="locationId" aria-label="真实库位"><option value="">不建立库位关联</option><option v-for="x in locations" :key="x.reference.id" :value="x.reference.id">{{ x.warehouseCd }} / {{ x.locationCd }}{{ x.areaCd ? ' · ' + x.areaCd : '' }}</option></select></label>
+      </div>
       <template v-if="mode === 'CREATE'">
         <label>所属部门 <select v-model="departmentId" aria-label="所属部门"><option v-if="context?.allowsUnbound" value="">不绑定部门</option><option v-for="d in context?.departments" :key="d.id" :value="d.id">{{ d.code }} · {{ d.name }}</option></select></label>
         <label>实物类型 <select v-model="plateType" aria-label="实物类型"><option v-for="kind in ['PLATE', 'MOLD', 'CYL', 'OTHER']" :key="kind">{{ kind }}</option></select></label>
@@ -37,7 +51,7 @@
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { EngineeringScope } from '@/api/plm/engineeringProducts'
 import type { ToolInstanceView } from '@/api/wms/toolInstances'
-import { toolRegistrationApi as api, type ToolCreationContext, type ToolRegistrationView, type ToolSite, type ToolRegistrationCommand } from '@/api/wms/toolRegistrations'
+import { toolRegistrationApi as api, type ToolCreationContext, type ToolRegistrationView, type ToolSite, type ToolRegistrationCommand, type ToolPartyChoice, type ToolLocationChoice, type ToolRegistrationLinks } from '@/api/wms/toolRegistrations'
 import { pendingToolRegistration, resolveToolRegistration, saveToolRegistration, type PendingToolRegistration } from '@/auth/toolRegistrationRecovery'
 import { instanceResponse as result } from '@/auth/toolInstanceRecovery'
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
@@ -47,10 +61,15 @@ const emit = defineEmits<{ 'authority-denied': [] }>(), permission = usePermissi
 const busy = ref(false), error = ref(''), notice = ref(''), completed = ref(false), pending = ref<PendingToolRegistration | null>(null)
 const registration = ref<ToolRegistrationView | null>(null), mode = ref<'CREATE' | 'BIND_LEGACY' | null>(null), context = ref<ToolCreationContext | null>(null)
 const sites = ref<ToolSite[]>([]), siteId = ref(''), search = ref(''), departmentId = ref(''), plateType = ref('PLATE'), evidence = ref(''), objectId = ref('')
+const customers = ref<ToolPartyChoice[]>([]), products = ref<ToolPartyChoice[]>([]), locations = ref<ToolLocationChoice[]>([])
+const customerId = ref(''), productId = ref(''), locationId = ref(''), customerSearch = ref(''), productSearch = ref(''), locationSearch = ref('')
+function clearLinks() { customers.value = []; products.value = []; locations.value = []; customerId.value = ''; productId.value = ''; locationId.value = ''; customerSearch.value = ''; productSearch.value = ''; locationSearch.value = '' }
+function canLink(kind: 'customer' | 'product') { const field = kind === 'customer' ? 'CustomerCd' : 'ProductCd'; return permission.has(kind === 'customer' ? 'erp-business-partner:query' : 'erp-product:query') && !!(mode.value === 'CREATE' ? context.value?.writableFields : baseline.value?.writableFields)?.includes(field) }
+function linkState(state: string) { return ({ LINKED: '已核实关联', LEGACY_UNMAPPED: '历史关系待核实', UNLINKED: '未关联', HIDDEN: '当前不可见' } as Record<string, string>)[state] || '待核实' }
 const baseline = ref<ToolInstanceView | null>(null), draft = ref<Record<string, string>>({}), omitted = ref<Record<string, boolean>>({})
 const fields = [{ key: 'colorCount', label: '色数', max: 2 }, { key: 'sizeNote', label: '尺寸说明', max: 40 }, { key: 'madeDate', label: '制造日期', max: 10, date: true }, { key: 'madeCost', label: '登记成本', max: 19 }, { key: 'maxShots', label: '最大次数', max: 10 }, { key: 'remarks', label: '备注', max: 500 }]
 let live = true, generation = 0
-function clear() { mode.value = null; context.value = null; registration.value = null; baseline.value = null; sites.value = []; siteId.value = ''; departmentId.value = ''; search.value = ''; plateType.value = 'PLATE'; evidence.value = ''; objectId.value = ''; draft.value = {}; omitted.value = {}; completed.value = false; pending.value = null; notice.value = '' }
+function clear() { clearLinks(); mode.value = null; context.value = null; registration.value = null; baseline.value = null; sites.value = []; siteId.value = ''; departmentId.value = ''; search.value = ''; plateType.value = 'PLATE'; evidence.value = ''; objectId.value = ''; draft.value = {}; omitted.value = {}; completed.value = false; pending.value = null; notice.value = '' }
 function writable(key: string) { const field = ({ madeCost: 'MadeCost', remarks: 'Remarks' } as Record<string, string>)[key]; return !field || !!context.value?.writableFields.includes(field) }
 function refreshPending() { pending.value = props.scope ? pendingToolRegistration(props.scope) : null }
 async function run(action: (check: () => void) => Promise<void>) {
@@ -60,12 +79,20 @@ async function run(action: (check: () => void) => Promise<void>) {
   busy.value = true; error.value = ''
   try { await action(check); check() }
   catch (failure: any) { try { check(); if ([401, 403].includes(failure?.response?.status)) { clear(); emit('authority-denied'); error.value = '当前权限已变化，请重新载入。' }
-    else error.value = failure?.response?.status === 412 ? '实物、站点或创建权限版本已变化。输入和原版本已保留，请先查询或结束原登记。' : failure?.message || '结果尚未确认，请查询原登记。'
+    else error.value = failure?.response?.status === 412 ? '实物、关联来源、站点或创建权限版本已变化。输入和原版本已保留，请先查询或结束原登记。' : failure?.message || '结果尚未确认，请查询原登记。'
   } catch { /* Discard late responses for an old identity. */ } }
   finally { try { check(); refreshPending(); busy.value = false } catch { if (live && generation === current) busy.value = false } }
 }
 function acceptSites(value: ToolSite[]) { if (!Array.isArray(value) || value.some(s => !s.enabled || s.reference.owner !== 'Main.Space.PhysicalSiteIdentity.v1' || !/^[1-9][0-9]*$/.test(s.reference.version) || !/^[0-9a-f]{64}$/.test(s.reference.digest))) throw new Error('站点来源无法确认。'); return value }
 async function searchSites() { await run(async check => { const value = result(await api.sites(search.value)); check(); sites.value = acceptSites(value); siteId.value = '' }) }
+function acceptParty(values: ToolPartyChoice[], owner: string) { if (!Array.isArray(values) || values.some(x => x.reference?.owner !== owner || !/^[1-9][0-9]*$/.test(x.reference.version) || !/^[0-9a-f]{64}$/.test(x.reference.digest))) throw new Error('关联来源无法确认。'); return values }
+async function searchCustomers() { await run(async check => { const values = result(await api.customers(customerSearch.value)); check(); customers.value = acceptParty(values, 'Main.Erp.BusinessPartnerIdentity.v1'); customerId.value = '' }) }
+async function searchProducts() { await run(async check => { const values = result(await api.products(productSearch.value)); check(); products.value = acceptParty(values, 'Main.Erp.ProductIdentity.v1'); productId.value = '' }) }
+async function searchLocations() { const site = siteId.value; if (!site) return; await run(async check => { const values = result(await api.locations(site, locationSearch.value)); check(); if (site !== siteId.value) return
+  if (!Array.isArray(values) || values.some(x => x.reference?.owner !== 'Main.Wms.LocationIdentity.v1' || x.warehouse?.owner !== 'Main.Wms.WarehouseIdentity.v1' || !/^[0-9a-f]{64}$/.test(x.reference.digest) || !/^[0-9a-f]{64}$/.test(x.warehouse.digest))) throw new Error('库位来源无法确认。')
+  locations.value = values; locationId.value = ''
+}) }
+watch(siteId, () => { locations.value = []; locationId.value = '' })
 async function beginCreate() {
   if (!permission.has('wms-plate-mold:add') || pending.value) return
   await run(async check => { const value = result(await api.context()); check(); if (value.tenantId !== props.scope?.tenantId || value.actorId !== props.scope.actorId) throw new Error('创建身份无法确认。')
@@ -93,8 +120,11 @@ async function save() {
     if (kind === 'CREATE') { if (!context.value || !context.value.allowsUnbound && !departmentId.value) throw new Error('请选择当前允许的所属部门。'); command.creationAuthorityVersion = context.value.authorityVersion; command.departmentId = departmentId.value || null
       command.profile = { plateType: plateType.value, colorCount: integer('colorCount'), maxShots: integer('maxShots'), sizeNote: text('sizeNote'), madeDate: text('madeDate'), madeCost: text('madeCost'), remarks: text('remarks') }
     } else { if (!baseline.value) return; command.expected = { ...baseline.value.reference } }
+    const customer = customers.value.find(x => x.reference.id === customerId.value), product = products.value.find(x => x.reference.id === productId.value), location = locations.value.find(x => x.reference.id === locationId.value)
+    if (customerId.value && !customer || productId.value && !product || locationId.value && !location) throw new Error('请重新核实所选来源。')
+    const links: ToolRegistrationLinks = { customer: customer ? { ...customer.reference } : null, product: product ? { ...product.reference } : null, location: location ? { location: { ...location.reference }, warehouse: { ...location.warehouse } } : null }
     const etag = baseline.value?.etag
-    await saveToolRegistration(identity, command.objectId, kind === 'CREATE' ? 'TOOL_CREATE' : 'TOOL_INITIALIZE', check, operationId => kind === 'CREATE' ? api.create({ ...command, operationId }) : api.bind(command.objectId, etag!, { ...command, operationId })); check(); completed.value = true; notice.value = '实物登记已提交，请明确重新载入当前资料。'
+    await saveToolRegistration(identity, command.objectId, kind === 'CREATE' ? 'TOOL_CREATE' : 'TOOL_INITIALIZE', check, operationId => kind === 'CREATE' ? api.linkedCreate({ registration: { ...command, operationId }, links }) : api.linkedBind(command.objectId, etag!, { registration: { ...command, operationId }, links })); check(); completed.value = true; notice.value = '实物登记已提交，请明确重新载入当前资料。'
   })
 }
 async function recover(close: boolean) { const identity = props.scope; if (!identity) return; await run(async check => { const value = await resolveToolRegistration(identity, close, check); check(); completed.value = value.state === 'COMMITTED'; notice.value = value.state === 'UNKNOWN' ? '登记结果仍未知。' : value.state === 'CLOSED' ? '未提交登记已结束，输入仍保留。' : '原登记已提交，请重新载入当前资料。' }) }

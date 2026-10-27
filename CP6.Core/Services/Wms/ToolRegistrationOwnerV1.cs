@@ -13,11 +13,11 @@ using static CP6.Core.Services.Wms.ToolInstanceStoreV1;
 namespace CP6.Core.Services.Wms;
 
 /// <summary>Real registration provenance. A cycle observation is never an execution permit.</summary>
-public sealed class ToolRegistrationOwnerV1(CP6Context db,OperationsOwnerV1 owner)
+public sealed partial class ToolRegistrationOwnerV1(CP6Context db,OperationsOwnerV1 owner)
 {
     internal const string RegistrationOwner="Main.Wms.ToolRegistration.v1";
     private const string Contract="tool.registration.v2",LegacyContract="tool.registration.v1";
-    private static bool KnownContract(string value)=>value is Contract or LegacyContract;
+    private static bool KnownContract(string value)=>value is Contract or LegacyContract or LinkedContract;
     private OperationsOwnerV1 Authority=>owner.Owns(db)?owner:throw Error("AUTHORITY_FENCE_UNAVAILABLE",503);
     public Task<ToolRegistrationCreationContextV1> CreationContextAsync(CancellationToken ct=default)
         =>Authority.ExecuteAsync(OperationsOwnerV1.ToolInstance,"add",false,(a,t)=>a.ToolCreationContext(t),ct);
@@ -54,6 +54,13 @@ public sealed class ToolRegistrationOwnerV1(CP6Context db,OperationsOwnerV1 owne
         var value=JsonSerializer.Deserialize<ToolRegistrationOriginalV1>(row.Json);
         if(value==null||value.TenantId!=db.CurrentTenantId||value.ObjectId!=id||Hash(row.Json)!=row.Digest||!KnownContract(value.InputContract))
             throw Error("TOOL_REGISTRATION_UNAVAILABLE",503);
+        if(value.InputContract==LinkedContract)
+        {
+            var linked=await ToolRegistrationLinkRowV1.Query(db).SingleOrDefaultAsync(x=>x.ObjectId==id,ct);
+            using var original=JsonDocument.Parse(row.Json);
+            if(linked==null||Hash(linked.Json)!=linked.Digest||!original.RootElement.TryGetProperty("LinksDigest",out var witness)||witness.GetString()!=linked.Digest)
+                throw Error("TOOL_REGISTRATION_UNAVAILABLE",503);
+        }
         return (row,value);
     }
     public Task<ToolRegistrationViewV1?> ReadAsync(Guid id,CancellationToken ct=default)
@@ -80,7 +87,7 @@ public sealed class ToolRegistrationOwnerV1(CP6Context db,OperationsOwnerV1 owne
                 """).SingleAsync(t);
             return new ToolRegistrationViewV1(db.CurrentTenantId,new(RegistrationOwner,id,"1",row.Digest),native.Reference,value.Site,currentSite,value.CycleAnchorId,
                 value.Origin,value.InitialCycleShots,coherent?value.CycleNo:null,coherent?value.Origin:"RECONCILIATION_REQUIRED",coherent?value.InitialCycleShots:null,
-                coherent?value.LifetimeKnowledge:"UNKNOWN",coherent?value.LifetimeShots:null,row.Json,InputContract:value.InputContract);
+                coherent?value.LifetimeKnowledge:"UNKNOWN",coherent?value.LifetimeShots:null,row.Json,InputContract:value.InputContract,Links:await ProjectLinks(a,id,native.Source,t));
         },ct);
     }
     private async Task<EngineeringSiteChoiceV1> ExactSite(OperationsAccessV1 site,EngineeringSourceRefV1 expected,CancellationToken ct)
@@ -142,17 +149,30 @@ public sealed class ToolRegistrationOwnerV1(CP6Context db,OperationsOwnerV1 owne
         return input with{Profile=p with{MadeCost=Cost(p.MadeCost)?.ToString("0.00",CultureInfo.InvariantCulture),SizeNote=OriginalText(p.SizeNote),Remarks=OriginalText(p.Remarks)}};
     }
     public Task<ToolRegistrationResultV1> CommandAsync(ToolRegistrationCommandV1 input,string? etag,CancellationToken ct=default)
+        =>ExecuteCommandAsync(input,etag,null,ct);
+    public Task<ToolRegistrationResultV1> LinkedCommandAsync(ToolLinkedRegistrationCommandV1 input,string? etag,CancellationToken ct=default)
     {
+        if(input==null||input.Registration==null||input.Links==null)throw Error("TOOL_REGISTRATION_INVALID",400);
+        return ExecuteCommandAsync(input.Registration,etag,OperationsOwnerV1.Freeze(input.Links),ct);
+    }
+    private Task<ToolRegistrationResultV1> ExecuteCommandAsync(ToolRegistrationCommandV1 input,string? etag,ToolRegistrationLinksV1? links,CancellationToken ct)
+    {
+        var contract=links==null?Contract:LinkedContract;
         var command=OperationsOwnerV1.Freeze(Validate(input,etag));var action=command.Kind=="CREATE"?"add":"initialize";
-        var bytes=EncodeCommand(command,etag,Contract);var journal=new MainOwnerOperationJournalV1(db);
+        var bytes=links==null?EncodeCommand(command,etag,contract):MainOwnerOperationJournalV1.Encode(new{contract,etag,command,links});var journal=new MainOwnerOperationJournalV1(db);
         MainOwnerOperationJournalV1.Original? original=null;
         return Authority.ExecuteAsync(OperationsOwnerV1.ToolInstance,action,true,async(a,t)=>
         {
             var store=new ToolInstanceStoreV1(db);await store.Fence(t,true);await Fence(t,true);
             var query=await a.SourceAsync(OperationsOwnerV1.ToolInstance,t);
-            if(original!=null)return await Disclose(query,store,command.OperationId,original,EncodeCommand(command,etag,original.Contract),t);
+            if(original!=null)
+            {
+                if(original.State!="CLOSED"&&(original.Contract==LinkedContract)!=(links!=null))throw Error("ORIGINAL_OPERATION_INPUT_CONFLICT",409);
+                return await Disclose(query,store,command.OperationId,original,links==null?EncodeCommand(command,etag,original.Contract):bytes,t);
+            }
             var site=await a.SourceAsync(OperationsOwnerV1.PhysicalSite,t);await ExactSite(site,command.Site,t);
             a.AtCommit(async token=>{await ExactSite(site,command.Site,token);});
+            var resolved=links==null?null:await ResolveLinks(a,command,links,t);
             ToolInstanceViewV1 native;
             if(command.Kind=="CREATE")
             {
@@ -163,9 +183,10 @@ public sealed class ToolRegistrationOwnerV1(CP6Context db,OperationsOwnerV1 owne
                 if(await db.WmsSequences.AnyAsync(x=>x.Prefix=="PLT2"&&x.DateKey=="*"&&(x.NextNo<0||x.NextNo==int.MaxValue),t))throw Error("TOOL_NUMBER_UNAVAILABLE",503);
                 var number=await new WmsSequenceService(db).NextAsync("PLT2");
                 if(await db.PlateMoldStocks.IgnoreQueryFilters().AnyAsync(x=>x.TenantId==db.CurrentTenantId&&x.PlateNo==number,t))throw Error("TOOL_NUMBER_CONFLICT",409);
-                db.PlateMoldStocks.Add(new PlateMoldStock{Id=command.ObjectId,PlateNo=number,PlateType=p.PlateType,ColorCount=p.ColorCount,
+                var newRow=new PlateMoldStock{Id=command.ObjectId,PlateNo=number,PlateType=p.PlateType,ColorCount=p.ColorCount,
                     SizeNote=p.SizeNote,MadeDate=Date(p.MadeDate),MadeCost=Cost(p.MadeCost),MaxShots=p.MaxShots,Remarks=p.Remarks,
-                    UsedShots=0,Status=0,Creator=a.Actor,CreateDate=DateTime.Now});
+                    UsedShots=0,Status=0,Creator=a.Actor,CreateDate=DateTime.Now};
+                if(resolved!=null)ApplyLinks(newRow,resolved);db.PlateMoldStocks.Add(newRow);
                 await db.SaveChangesAsync(t);await a.CompleteToolCreation(ticket,t);native=await store.Read(query,command.ObjectId,null,t);
             }
             else
@@ -175,19 +196,24 @@ public sealed class ToolRegistrationOwnerV1(CP6Context db,OperationsOwnerV1 owne
                 if(etag!=native.Etag||command.Expected!=native.Reference)throw Error("TOOL_INSTANCE_CHANGED",412);
                 if(native.Source.GetProperty("status").GetInt32()==3)throw Error("TOOL_INSTANCE_DISCARDED",409);
             }
+            if(resolved!=null&&command.Kind=="BIND_LEGACY")await MatchLegacyLinks(command.ObjectId,resolved,t);
             if(await StoredAsync(command.ObjectId,t)!=null)throw Error("TOOL_ALREADY_REGISTERED",409);
             var shots=native.Source.GetProperty("usedShots").GetInt32();if(shots<0)throw Error("TOOL_CYCLE_OBSERVATION_INVALID",409);
             var fresh=command.Kind=="CREATE";
             var value=new ToolRegistrationOriginalV1(db.CurrentTenantId,command.ObjectId,a.ActorId,fresh?"NEW_REGISTERED":"LEGACY_OBSERVED",
                 Guid.NewGuid(),fresh?"1":null,shots.ToString(CultureInfo.InvariantCulture),fresh?"KNOWN_FROM_REGISTRATION":"UNKNOWN",fresh?"0":null,
-                native.Reference,command.Site,command.Evidence,Contract);
-            var json=JsonSerializer.Serialize(value);var digest=Hash(json);var rev=Revision(native.Reference.Version);
+                native.Reference,command.Site,command.Evidence,contract);
+            var linksJson=resolved==null?null:JsonSerializer.Serialize(resolved);var linksDigest=linksJson==null?null:Hash(linksJson);
+            var json=JsonSerializer.Serialize(value);
+            if(linksDigest!=null){var node=System.Text.Json.Nodes.JsonNode.Parse(json)!.AsObject();node["LinksDigest"]=linksDigest;json=node.ToJsonString();}
+            var digest=Hash(json);var rev=Revision(native.Reference.Version);
             await db.Database.ExecuteSqlInterpolatedAsync($"""
                 INSERT INTO cp6_tool_instance_v1.registrations(tenant_id,object_id,native_revision,original_json,original_digest)
                 VALUES({db.CurrentTenantId},{command.ObjectId},{rev},{json},{digest})
                 """,t);
-            var result=new ToolRegistrationResultV1(command.OperationId,fresh?"TOOL_CREATE":"TOOL_INITIALIZE",command.ObjectId,"1",digest,Contract);
-            await journal.Store(RegistrationOwner,Contract,command.OperationId,a.ActorId,bytes,result,[command.ObjectId],
+            if(resolved!=null)await StoreLinks(resolved,linksJson!,linksDigest!,t);
+            var result=new ToolRegistrationResultV1(command.OperationId,fresh?"TOOL_CREATE":"TOOL_INITIALIZE",command.ObjectId,"1",digest,contract);
+            await journal.Store(RegistrationOwner,contract,command.OperationId,a.ActorId,bytes,result,[command.ObjectId],
                 new{action=command.Kind,actor=a.ActorId,native=native.Reference,site=command.Site,value.CycleAnchorId,value.Origin},t);
             // New registration does not upgrade query or warehouse scope; every participant is checked again.
             await HoldExactAsync(query,new(RegistrationOwner,command.ObjectId,"1",digest),native.Reference,command.Site,t);
