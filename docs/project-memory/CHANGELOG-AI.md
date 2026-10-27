@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-27：W185 业务回执可靠返回与缺链恢复待 Main 收尾
+
+业务回执可靠返回、原事件查询、连续投影和固定快照缺链恢复已验证；不重复执行业务，缺失义务保持BLOCKED。26 local checks: 26 PG18/HTTP and 0 affected kernel/unit;0skip;no frontend changes。[报告](../development/evidence/W185-01/DELIVERY.md)。登记55.45分钟，预计120–210；Handoff已释放，Main待正常PR/finish。实际业务效果及七天全部出口保留。
+
 ## 2026-10-27：W184 业务应用回执与原结果待 Main 收尾
 
 当前人类Owner应用资格、不可变回执/原命令/审计/待回报消息共同事务、固定快照查询与页面恢复已验证；缺失义务关闭来源保持BLOCKED。16 local checks: 16 PG18/HTTP and 0 affected kernel/unit;22 UI;0skip;typecheck/build passed。[报告](../development/evidence/W184-01/DELIVERY.md)。登记29.33分钟，预计90–150；Handoff已释放，Main待正常PR/finish。实际义务关闭/业务效果、回执投递摄取及七天全部出口保留。
