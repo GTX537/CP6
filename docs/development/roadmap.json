@@ -160802,6 +160802,16 @@
       "date": "2026-10-27",
       "change": "W164 actual trusted customer/product/location registration adoption, immutable links, current authority and old v1/v2 replay validated48PG/HTTP+12UI/type/Vite. Handoff released, Main closeout pending; original full task/target/acceptance states unchanged.",
       "evidence": "docs/development/evidence/W164-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-27",
+      "change": "W164 archived once; only WP10-48.wave164_registration_links lifecycle closed. W165 exact technical and physical tool association admitted150–240min. Full original scope retained.",
+      "evidence": "docs/development/dispatch/20261027-wave165/README.md"
+    },
+    {
+      "date": "2026-10-27",
+      "change": "W165 actual local engineering/physical pair relation and independent Owner decisions validated 51PG/HTTP+16UI/type/Vite; Handoff released, Main closeout pending. Full goal/task/target/acceptance states unchanged.",
+      "evidence": "docs/development/evidence/W165-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -186997,7 +187007,7 @@
         }
       },
       "wave164_registration_links": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "workspace_task": "W164-01",
         "report": "docs/development/evidence/W164-01/DELIVERY.md",
         "scope": "Actual physical tool registration consumes trusted customer/product/location UUID/version sources in its own transaction, with current linked-source authority on reads, history and original-result recovery.",
@@ -187009,6 +187019,43 @@
           "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/140",
           "exact_tree_adoption": true,
           "at": "2026-10-27T02:54:59.095920+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave164-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W164-01",
+          "source": "8187601ee1400f3c0ea00133cf1fdce908fc3264",
+          "remote_target": "8a86cabdb45f84376e42341e504012c74b7bba7c",
+          "branch": "codex/w164-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/585"
+        }
+      },
+      "wave165_instance_association": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "workspace_task": "W165-01",
+        "report": "docs/development/evidence/W165-01/DELIVERY.md",
+        "scope": "Exact engineering No/Rev and immutable technical/physical pair; actual distinct professional and WMS Owner decisions, same-round current policy/source protection, durable projection/recovery, native HTTP and UI.",
+        "remaining": "Relation to an exact DRAFT is not technical approval, maintenance qualification, execution permit, external Owner inbox adoption, enterprise acceptance or complete WP05-06/WP10-48. No ordinary Stock/StockTransaction effects, Actions, existing-environment migration or deployment.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "4a1952aa75b25ef90846fb74d533b198728f474c",
+          "main": "2878ad6702c1763504154786c1e8a3d014ceb1a9",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/141",
+          "exact_tree_adoption": true,
+          "at": "2026-10-27T03:43:57.724379+00:00"
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
@@ -193991,10 +194038,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261027-wave164",
-      "path": "docs/development/dispatch/20261027-wave164/README.md",
-      "baseline_sha": "25e5ca250f51ce40f042671cecfdae6b37cabd39",
-      "registered_at": "2026-10-27T02:32:32.035092+00:00",
+      "id": "20261027-wave165",
+      "path": "docs/development/dispatch/20261027-wave165/README.md",
+      "baseline_sha": "8a86cabdb45f84376e42341e504012c74b7bba7c",
+      "registered_at": "2026-10-27T03:12:18.986426+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -194013,28 +194060,29 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W164-01",
-          "workspace_task": "W164-01",
+          "id": "W165-01",
+          "workspace_task": "W165-01",
           "related_tasks": [
+            "WP05-06",
             "WP10-48"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Trusted source linked physical-tool registration",
+          "title": "Exact technical and physical tool association",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "382471045f35baa20018455df540e234f11a0d25",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T023232Z-wave164-start/MESSAGE.md",
-            "at": "2026-10-27T02:32:32.035092+00:00",
-            "branch": "codex/w164-handoff"
+            "commit": "731185895dfd685ff97863e0bbb1f0048ad32182",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T031218Z-wave165-start/MESSAGE.md",
+            "at": "2026-10-27T03:12:18.986426+00:00",
+            "branch": "codex/w165-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w164-01",
-          "planned_scope_ref": "docs/development/dispatch/20261027-wave164/README.md",
+          "branch": "codex/w165-01",
+          "planned_scope_ref": "docs/development/dispatch/20261027-wave165/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -194042,8 +194090,8 @@
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
-          "validation": "48PG/HTTP,12UI,type/Vite;no skips",
-          "worker_delivery_ref": "docs/development/evidence/W164-01/DELIVERY.md",
+          "validation": "51PG/HTTP,16UI,type/Vite;no skips",
+          "worker_delivery_ref": "docs/development/evidence/W165-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -194054,11 +194102,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-27T02:30:47.354162+00:00",
+        "started_at": "2026-10-27T03:10:34.284037+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          90,
-          150
+          150,
+          240
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -194066,7 +194114,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Continue technical-tool candidates, physical lifecycle and actual engineering dual Role; preserve all original D2/D3/D5/D6/D7 exits, Order request processing and formal Sales.",
+      "next_action": "Continue actual physical use/maintenance/discard and professional technical approval/qualification adoption, preserving all original D2/D3/D5/D6/D7 exits, Order request processing and formal Sales.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -194074,7 +194122,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 25.46
+      "elapsed_registered_wave_minutes": 34.62
     },
     "wave_history": [
       {
@@ -216421,6 +216469,115 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/139"
           }
         ]
+      },
+      {
+        "id": "20261027-wave164",
+        "path": "docs/development/dispatch/20261027-wave164/README.md",
+        "baseline_sha": "25e5ca250f51ce40f042671cecfdae6b37cabd39",
+        "registered_at": "2026-10-27T02:32:32.035092+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W164-01",
+            "workspace_task": "W164-01",
+            "related_tasks": [
+              "WP10-48"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Trusted source linked physical-tool registration",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "382471045f35baa20018455df540e234f11a0d25",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261027T023232Z-wave164-start/MESSAGE.md",
+              "at": "2026-10-27T02:32:32.035092+00:00",
+              "branch": "codex/w164-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w164-01",
+            "planned_scope_ref": "docs/development/dispatch/20261027-wave164/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "validation": "48PG/HTTP,12UI,type/Vite;no skips",
+            "worker_delivery_ref": "docs/development/evidence/W164-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave164-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-27T02:30:47.354162+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            90,
+            150
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Continue technical-tool candidates, physical lifecycle and actual engineering dual Role; preserve all original D2/D3/D5/D6/D7 exits, Order request processing and formal Sales.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave164-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 25.46,
+        "actual_registered_wave_minutes": 28.61,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W164-01",
+            "source": "8187601ee1400f3c0ea00133cf1fdce908fc3264",
+            "remote_target": "8a86cabdb45f84376e42341e504012c74b7bba7c",
+            "branch": "codex/w164-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/585"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W164-HANDOFF",
+            "source": "3b99dcb9ce298c351bb2a886e36c5623a3a894f6",
+            "remote_target": "b80f0efaf4a29aa6f69565ae83ef7eb1c36b59d2",
+            "branch": "codex/w164-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/140"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -216520,7 +216677,7 @@
           "id": "D3",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W164-01",
+          "current_window": "W165-01",
           "prerequisite_adjustment": "Issue460 WorkCenter and ProcessCostRate actual current Owner; full process/cost/Finance adoption remains separate.",
           "adopted_window": "W49-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/402",
@@ -216529,7 +216686,7 @@
           "last_window_actual_agent_minutes": 56.28,
           "last_branches_deleted": true,
           "last_seats_released": true,
-          "next_action": "Continue technical-tool candidates, physical lifecycle and actual engineering dual Role; preserve all original D2/D3/D5/D6/D7 exits, Order request processing and formal Sales.",
+          "next_action": "Continue actual physical use/maintenance/discard and professional technical approval/qualification adoption, preserving all original D2/D3/D5/D6/D7 exits, Order request processing and formal Sales.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W136-01/DELIVERY.md",
           "last_product_source_report": "docs/development/evidence/W144-01/DELIVERY.md",
@@ -216551,7 +216708,8 @@
           "last_physical_tool_registration_report": "docs/development/evidence/W161-01/DELIVERY.md",
           "last_physical_tool_unicode_report": "docs/development/evidence/W162-01/DELIVERY.md",
           "last_customer_source_report": "docs/development/evidence/W163-01/DELIVERY.md",
-          "last_registration_links_report": "docs/development/evidence/W164-01/DELIVERY.md"
+          "last_registration_links_report": "docs/development/evidence/W164-01/DELIVERY.md",
+          "last_instance_association_report": "docs/development/evidence/W165-01/DELIVERY.md"
         },
         {
           "id": "D4",

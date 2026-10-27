@@ -124,7 +124,7 @@ public static class WmsPermissionSeed
     /// 须在 <see cref="WmsMenuSeed.EnsureSeeded"/> 之后调用（锚定菜单行须先在）。
     /// </summary>
     // W37–W39 Owner catalog additions never grant roles automatically.
-    private static readonly (int MenuId,string Code,string Name)[] OwnerActions=[(443,"query","读取实物版模原来源"),(443,"initialize","确认旧实物站点及周期起点"),(447,"query","读取样品原记录"),(413,"query","读取原出货包装记录"),(419,"query","读取出库路由原记录"),(419,"preview","预览出库路由策略"),(401,"query","读取仓库原记录"),(401,"abandon","封闭未提交仓库名称操作"),(402,"query","读取库位原记录"),(402,"abandon","封闭未提交库位名称操作"),(481,"query","读取当前库存及原流水观察"),(481,"export","导出仓储报告"),(425,"query","读取套件主数据及历史订单"),(403,"query","读取库存"),(415,"query","读取盘点"),(416,"query","读取WMS看板"),(408,"query","读取出库单"),(405,"query","读取入库计划"),(406,"query","读取收货"),(426,"query","读取退货"),(423,"query","读取补充指示"),(428,"view","读取效期观察"),(417,"query","读取材料缺料跟进"),(427,"query","读取批次追溯"),(424,"query","读取越库记录"),(422,"query","读取库位优化记录"),(446,"query","读取VMI观察"),(446,"amount-read","读取VMI历史金额"),(446,"rate-read","读取VMI历史费率")];
+    private static readonly (int MenuId,string Code,string Name)[] OwnerActions=[(443,"engineering-link","确认实物工程关联"),(443,"query","读取实物版模原来源"),(443,"initialize","确认旧实物站点及周期起点"),(447,"query","读取样品原记录"),(413,"query","读取原出货包装记录"),(419,"query","读取出库路由原记录"),(419,"preview","预览出库路由策略"),(401,"query","读取仓库原记录"),(401,"abandon","封闭未提交仓库名称操作"),(402,"query","读取库位原记录"),(402,"abandon","封闭未提交库位名称操作"),(481,"query","读取当前库存及原流水观察"),(481,"export","导出仓储报告"),(425,"query","读取套件主数据及历史订单"),(403,"query","读取库存"),(415,"query","读取盘点"),(416,"query","读取WMS看板"),(408,"query","读取出库单"),(405,"query","读取入库计划"),(406,"query","读取收货"),(426,"query","读取退货"),(423,"query","读取补充指示"),(428,"view","读取效期观察"),(417,"query","读取材料缺料跟进"),(427,"query","读取批次追溯"),(424,"query","读取越库记录"),(422,"query","读取库位优化记录"),(446,"query","读取VMI观察"),(446,"amount-read","读取VMI历史金额"),(446,"rate-read","读取VMI历史费率")];
     public static void EnsureSeeded(CP6Context db)
     {
         // Sys_Tenant 为共享表（BaseEntity，非行级过滤）：Id 即 TenantId。
@@ -139,6 +139,12 @@ public static class WmsPermissionSeed
                 if(!db.Sys_MenuActions.IgnoreQueryFilters().Any(x=>x.TenantId==tid && x.MenuId==menuId && x.ActionCode==code))
                 {db.Sys_MenuActions.Add(new(){TenantId=tid,MenuId=menuId,ActionCode=code,ActionName=name});changed=true;}
             }
+            // Professional tool actions are defined for new tenants too, without role grants.
+            var technicalMenu = db.Sys_Menus.Where(m => m.MenuKey == "plm-tool-specification").Select(m => (int?)m.MenuId).SingleOrDefault();
+            if (technicalMenu.HasValue)
+                foreach (var code in new[] { "query", "add", "edit", "instance-associate" })
+                    if (!db.Sys_MenuActions.IgnoreQueryFilters().Any(x => x.TenantId == tid && x.MenuId == technicalMenu.Value && x.ActionCode == code))
+                    { db.Sys_MenuActions.Add(new() { TenantId = tid, MenuId = technicalMenu.Value, ActionCode = code, ActionName = code }); changed = true; }
             foreach (var (menuId, code, name) in Actions)
             {
                 // IgnoreQueryFilters：跨租户可见，避免默认租户作用域误判其他租户既存行缺失而重复插。
