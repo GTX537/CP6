@@ -99,7 +99,7 @@ public sealed class IamStandaloneDepartmentMappingV1(CP6Context db, IamAdministr
         }, ct);
     }
 
-    private static readonly string[] Kinds = ["stock", "stock-transaction", "stocktake", "work-order", "machine", "replenish-order", "mobile-task", "work-center", "cross-dock", "slotting-plan", "vmi-billing", "kit-master", "kit-order", "warehouse", "location", "routing-rule", "sample-stock", "product-master", "uom-profile", "currency-policy", "plm-engineering-product", "plm-engineering-revision", "plm-configuration-rule", "plate-mold", "tool-instance", "business-partner", "plm-engineering-requirement", "plm-requirement-set", "plm-engineering-iteration"];
+    private static readonly string[] Kinds = ["stock", "stock-transaction", "stocktake", "work-order", "machine", "replenish-order", "mobile-task", "work-center", "cross-dock", "slotting-plan", "vmi-billing", "kit-master", "kit-order", "warehouse", "location", "routing-rule", "sample-stock", "product-master", "uom-profile", "currency-policy", "plm-engineering-product", "plm-engineering-revision", "plm-configuration-rule", "plate-mold", "tool-instance", "business-partner", "plm-engineering-requirement", "plm-requirement-set", "plm-engineering-iteration", "inventory-identity"];
     public sealed record ObjectChoice { public Guid Id { get; init; } public string Name { get; init; } = ""; }
     public Task<ObjectChoice[]> FindObjectsAsync(string kind, string search,
         Func<CancellationToken, Task<Guid>> actor, CancellationToken ct)
@@ -139,6 +139,9 @@ public sealed class IamStandaloneDepartmentMappingV1(CP6Context db, IamAdministr
             """),
         "currency-policy" => db.Database.SqlQuery<ObjectChoice>($"""
             SELECT policy_id AS "Id",code AS "Name" FROM cp6_currency_policy_v1.heads WHERE tenant_id={db.CurrentTenantId}
+            """),
+        "inventory-identity" => db.Database.SqlQuery<ObjectChoice>($"""
+            SELECT object_id AS "Id",code AS "Name" FROM cp6_inventory_identity_v1.heads WHERE tenant_id={db.CurrentTenantId}
             """),
         "uom-profile" => db.Database.SqlQuery<ObjectChoice>($"""
             SELECT profile_id AS "Id",code AS "Name" FROM cp6_uom_profile_v1.heads WHERE tenant_id={db.CurrentTenantId}

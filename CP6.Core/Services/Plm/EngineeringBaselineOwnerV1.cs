@@ -13,6 +13,16 @@ namespace CP6.Core.Services.Plm;
 public sealed partial class EngineeringBaselineOwnerV1(CP6Context db,OperationsOwnerV1 owner,ScopeAuthorizationFenceV1 scope,
     QualitySpecificationRuntimeV1 runtime,EngineeringSourceCheckService checks,IterationReviewOwnerV1 reviews,EngineeringOutputRelationsOwnerV1 relations)
 {
+    internal bool Owns(CP6Context context)=>ReferenceEquals(db,context) && owner.Owns(db) && checks.Owns(db) && reviews.Owns(db) && relations.Owns(db);
+    internal async Task<EngineeringBaselineViewV1> Source(OperationsAccessV1 root, EngineeringSourceRefV1 reference, bool current, CancellationToken ct)
+    {
+        if (!Owns(db) || reference.Owner!="Main.Plm.EngineeringBaseline.v1") throw Error("AUTHORITY_FENCE_UNAVAILABLE",503);
+        var a=await root.SourceAsync(OperationsOwnerV1.EngineeringBaseline,ct);
+        var value=await View(a,await Store(a,false,ct),reference.Id,ct,current);
+        if(value.Reference!=reference)throw Error("ENGINEERING_BASELINE_REFERENCE_CHANGED",412);
+        if(current && value.SourceStatus!="CURRENT")throw Error("ENGINEERING_BASELINE_SOURCES_CHANGED",412);
+        return value;
+    }
     private OperationsOwnerV1 Authority=>owner.Owns(db) && checks.Owns(db) && reviews.Owns(db) && relations.Owns(db)?owner:throw Error("AUTHORITY_FENCE_UNAVAILABLE",503);
     private async Task<EngineeringBaselineStoreV1> Store(OperationsAccessV1 a,bool write,CancellationToken ct)
     {

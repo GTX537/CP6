@@ -573,6 +573,8 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("erp-business-partner", "客户
 CP6.Core.Services.Sys.FieldRegistry.Register("erp-business-partner", new CP6.Core.Services.Sys.FieldRegistry.Field("BpName", "客户名称"));
 CP6.Core.Services.Sys.DataScopeRegistry.Register("uom-profile", "单位配置", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("uom-profile");
+CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-inventory-identity", "库存身份", new[] { 1, 2, 3, 4, 5 }, 5);
+CP6.Core.Services.Sys.FieldRegistry.Register("wms-inventory-identity");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("erp-plate-mold", "版型工具原来源", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("erp-plate-mold");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("currency-policy", "币种政策", new[] { 1, 2, 3, 4, 5 }, 5);
@@ -837,6 +839,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<CommercialProductIdentityReader>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.ResourceSourceOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.ResourceCapabilityOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.InventoryIdentityOwnerV1>();
 builder.Services.AddScoped<UomProfileOwnerV1>();
 builder.Services.AddScoped<UomTimeBasisOwnerV1>();
 builder.Services.AddScoped<PlateMoldSourceOwnerV1>();
