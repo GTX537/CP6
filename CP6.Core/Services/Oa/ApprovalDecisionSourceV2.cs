@@ -27,8 +27,25 @@ public sealed class ApprovalDecisionSourceV2(CP6Context db, ScopeAuthorizationFe
             """).SingleOrDefaultAsync(ct) ?? throw new ScopeAuthorizationExceptionV1("DECISION_EVIDENCE_UNAVAILABLE");
         var original = ApprovalDecisionWireV2.Parse(row.Payload);
         if (original.Full != row.PayloadHash || ApprovalCanonicalV2.Hash(Encoding.UTF8.GetBytes(row.Evidence)) != row.EvidenceHash
-            || original.Value.DecisionEvidenceDigest?.Value != row.EvidenceHash)
+            || original.Value.Decision != "WITHDRAWN" && original.Value.DecisionEvidenceDigest?.Value != row.EvidenceHash)
             throw new ScopeAuthorizationExceptionV1("DECISION_EVIDENCE_UNAVAILABLE");
+        if(original.Value.Decision=="WITHDRAWN")
+        {
+            using var evidence=System.Text.Json.JsonDocument.Parse(row.Evidence);var value=evidence.RootElement;
+            if(!await db.Database.SqlQueryRaw<bool>("SELECT cp6_approval_withdraw_v2.ready() AS \"Value\"").SingleAsync(ct)
+                || value.GetProperty("profile").GetString()!="oa.app.withdrawal-evidence/2.0"
+                || value.GetProperty("decisionId").GetGuid()!=original.Value.DecisionId)
+                throw new ScopeAuthorizationExceptionV1("DECISION_EVIDENCE_UNAVAILABLE");
+            var command=ApprovalWithdrawalWireV2.Parse(Encoding.UTF8.GetBytes(value.GetProperty("command").GetRawText())).Value;
+            var stored=await db.Database.SqlQuery<byte[]>($"""
+                SELECT payload AS "Value" FROM cp6_approval_withdraw_v2.commands WHERE environment_id={scope.EnvironmentId} AND tenant_id={db.CurrentTenantId}
+                  AND owner={command.ProducerOwner} AND id={command.CommandId} AND state='WITHDRAWN' AND decision_id={e.DecisionId}
+                """).SingleOrDefaultAsync(ct);
+            if(stored==null || !ApprovalCanonicalV2.Bytes(command).AsSpan().SequenceEqual(stored)
+                || !ApprovalCanonicalV2.Bytes(command.Fact.Actor).AsSpan().SequenceEqual(ApprovalCanonicalV2.Bytes(original.Value.TerminalActor))
+                || command.Fact.Subject!=original.Value.Subject || command.Fact.PolicyRef!=original.Value.Policy.Ref || command.Fact.Reason!=original.Value.Reason)
+                throw new ScopeAuthorizationExceptionV1("DECISION_EVIDENCE_UNAVAILABLE");
+        }
         // A registered producer may retry a logical decision under another event id;
         // retain the exact native source event mapping, never replace the original.
         if (original.Core != incoming.Core) throw new ScopeAuthorizationExceptionV1("DECISION_PAYLOAD_CONFLICT", 409);

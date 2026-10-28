@@ -12,6 +12,10 @@ internal sealed record ApprovalBusinessDecisionProofV2(object FrozenPolicy,int R
 /// to another domain's policy and no caller-supplied evidence provider.</summary>
 public sealed class ApprovalBusinessEvidenceV2(ToolDispositionApprovalOwnerV1 tools,ControlledDocumentReviewOwnerV1? documents=null,RequirementSetReviewOwnerV1? sets=null,IterationReviewOwnerV1? iterations=null)
 {
+    internal Task<string> Withdrawal(ApprovalSubmitCommandV2 original,ApprovalWithdrawCommandV2 command,bool current,CancellationToken ct)
+        =>original.Subject.BusinessOwner==IterationReviewStoreV1.Owner && iterations!=null
+            ?iterations.WithdrawalEvidence(original,command,current,ct)
+            :throw new ScopeAuthorizationExceptionV1("WITHDRAW_OWNER_NOT_ADOPTED",422);
     internal async Task<ApprovalBusinessIntakeProofV2> Intake(ApprovalSubmissionWireV2.Parsed incoming,CancellationToken ct)
     {
         if(incoming.Value.Subject.BusinessOwner=="Main.Wms.ToolDisposition.v1")
@@ -33,6 +37,8 @@ public sealed class ApprovalBusinessEvidenceV2(ToolDispositionApprovalOwnerV1 to
             return await documents.ReadDecisionPolicy(original,principal,deciding,ct);
         if(original.Subject.BusinessOwner==RequirementSetReviewStoreV1.Owner && sets!=null)
             return await sets.ReadDecisionPolicy(original,principal,deciding,ct,approving);
+        if(original.Subject.BusinessOwner==IterationReviewStoreV1.Owner && iterations!=null)
+            return await iterations.ReadDecisionPolicy(original,principal,deciding,ct,approving);
         throw new ScopeAuthorizationExceptionV1("BUSINESS_EVIDENCE_OWNER_UNAVAILABLE",422);
     }
     internal Task<string[]> Requirements(ApprovalSubmitCommandV2 original,ApprovalBusinessDecisionProofV2 policy,
@@ -43,6 +49,8 @@ public sealed class ApprovalBusinessEvidenceV2(ToolDispositionApprovalOwnerV1 to
             return documents.ValidateDecisionRequirements(original,policy,votes,approved,ct);
         if(original.Subject.BusinessOwner==RequirementSetReviewStoreV1.Owner && sets!=null)
             return sets.ValidateDecisionRequirements(original,policy,votes,approved,ct);
+        if(original.Subject.BusinessOwner==IterationReviewStoreV1.Owner && iterations!=null)
+            return iterations.ValidateDecisionRequirements(original,policy,votes,approved,ct);
         throw new ScopeAuthorizationExceptionV1("BUSINESS_EVIDENCE_OWNER_UNAVAILABLE",422);
     }
 }

@@ -5,7 +5,7 @@ import type { CandidateSnapshot } from './iterationCandidate'
 export interface ReviewRequirement { code: string; description: string; roleId: number; minimumApprovals: number }
 export interface ReviewPolicyCommand { operationId: string; state: 'ENABLED' | 'REVOKED'; requirements: ReviewRequirement[]; rejectDisposition: 'RETURN' | 'REJECT'; separateAuthorAndReviewer: true; effectiveFrom: string; effectiveTo: string; reason: string }
 export interface ReviewPolicy { reference: EngineeringReference; fact: { recordedAt: string; body: ReviewPolicyCommand } }
-export interface ReviewSubmission { submissionId: string; roundId: string; iteration: EngineeringReference; package: EngineeringReference; policy: EngineeringReference; snapshotDigest: string; dispatchState: string; businessStage: 'IN_REVIEW'; applicationState: 'NOT_RECEIVED' }
+export interface ReviewSubmission { submissionId: string; roundId: string; iteration: EngineeringReference; package: EngineeringReference; policy: EngineeringReference; snapshotDigest: string; dispatchState: string; businessStage: string; applicationState: string }
 export interface ReviewContext { iterationId: string; etag: string; iteration: EngineeringIterationSnapshot; candidates: CandidateSnapshot[]; policies: ReviewPolicy[]; submissions: ReviewSubmission[] }
 export interface ReviewSubmitCommand { operationId: string; iteration: EngineeringReference; iterationEtag: string; inputVersion: string; candidates: EngineeringReference[]; policy: EngineeringReference; reviewers: string[]; reviewBasis: string; reason: string }
 export interface ReviewResult { operationId: string; iterationId: string; kind: 'POLICY' | 'SUBMIT'; reference: EngineeringReference; submission?: ReviewSubmission | null }

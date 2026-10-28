@@ -47,7 +47,7 @@ public sealed partial class IterationReviewOwnerV1(CP6Context db,OperationsOwner
     {if(string.IsNullOrEmpty(etag))throw Error("IF_MATCH_REQUIRED",428);if(etag!=c.Etag)throw Error("ITERATION_REVIEW_CONTEXT_CHANGED",412);}
     public Task<IterationReviewContextV1> ContextAsync(Guid id,CancellationToken ct=default)=>Authority.ExecuteAsync(OperationsOwnerV1.EngineeringIteration,"query",false,async(a,t)=>{
         var c=await Prepare(a,id,false,t);var submissions=new List<IterationReviewSubmissionV1>();
-        foreach(var row in c.Submissions){await DisclosePackage(a,row,false,t);submissions.Add(await View(c.Store,row,t));}
+        foreach(var row in c.Submissions){await DisclosePackage(a,row,false,t);submissions.Add(await View(c.Store,row,c.Iteration.Body.Iteration!.Stage,t));}
         return new IterationReviewContextV1(id,c.Etag,c.Iteration,c.Candidates,c.Policies,submissions.ToArray());
     },ct);
     public sealed record RoleChoice(int RoleId,string RoleName);
@@ -143,12 +143,12 @@ public sealed partial class IterationReviewOwnerV1(CP6Context db,OperationsOwner
         return Write(id,etag,command.OperationId,"review-submit",command,async(c,t)=>{
             Match(c,etag);
             if(c.Iteration.Reference!=command.Iteration || c.Iteration.Etag!=command.IterationEtag || c.Iteration.Body.Iteration!.InputVersion!=command.InputVersion)throw Error("ITERATION_VERSION_CHANGED",412);
-            if(c.Iteration.Body.Iteration!.Stage!="IN_DESIGN" || c.Iteration.Body.Iteration.CurrentReview!=null || c.Submissions.Length>0)throw Error("ITERATION_REVIEW_ALREADY_SUBMITTED",409);
+            if(c.Iteration.Body.Iteration!.Stage!="IN_DESIGN" || c.Iteration.Body.Iteration.CurrentReview!=null)throw Error("ITERATION_REVIEW_ALREADY_SUBMITTED",409);
             var exact=await candidates.ReviewCandidates(c.Access,id,command.Candidates,true,true,t);c=c with{Candidates=exact};
             var policy=await Policy(c,command.Policy,t);var registration=await Registration(t);await Reviewers(c,command.Reviewers,policy,t);
             var round=Guid.NewGuid();var submission=Guid.NewGuid();var aggregate=Guid.NewGuid();var binding=Guid.NewGuid();var outbox=Guid.NewGuid();
             var package=new IterationReviewPackageV1(IterationReviewCanonicalV1.PackageSchema,new(Environment.ToString(),db.CurrentTenantId),round,
-                c.Iteration.Reference,c.Iteration.OriginalJson,policy.Reference,command.Reviewers.Order().ToArray(),command.ReviewBasis,exact,[]);
+                c.Iteration.Reference,c.Iteration.OriginalJson,policy.Reference,command.Reviewers.Order().ToArray(),command.ReviewBasis,exact,(await ReadIssues(c,t)).Select(x=>JsonSerializer.SerializeToElement(x,ApprovalBindingOwnerV2.Json)).ToArray());
             var packageBytes=IterationReviewCanonicalV1.Bytes(package);if(packageBytes.Length>16777216)throw Error("ITERATION_REVIEW_PACKAGE_TOO_LARGE",422);
             var snapshot=IterationReviewMappingV1.Snapshot(package,packageBytes,policy,registration,aggregate,binding,submission);
             var snapshotBytes=IterationReviewCanonicalV1.Bytes(snapshot);if(snapshotBytes.Length>262144)throw Error("ITERATION_REVIEW_OA_SNAPSHOT_TOO_LARGE",422);
@@ -177,10 +177,13 @@ public sealed partial class IterationReviewOwnerV1(CP6Context db,OperationsOwner
             return new(command.OperationId,id,"SUBMIT",new(SubmissionOwner,submission,"1",row.Digest),await c.Store.View(row,t));
         },ct);
     }
-    private async Task<IterationReviewSubmissionV1> View(IterationReviewStoreV1 store,SubmissionRow row,CancellationToken ct)
+    private async Task<IterationReviewSubmissionV1> View(IterationReviewStoreV1 store,SubmissionRow row,string businessStage,CancellationToken ct)
     {
         var value=await store.View(row,ct);var delivery=await ToolApprovalDeliveryV1.ReadAsync(db,Environment,row.Id,ct,IterationReviewStoreV1.Owner);
-        return value with{DispatchState=delivery?.State??"PENDING"};
+        var applications=new IterationReviewApplicationStoreV1(db,scope);await applications.Ready(ct);
+        var source=await applications.ForSubmission(row.Id,ct);var receipt=source==null?null:await applications.Latest(source.Stream,ct);
+        return value with{DispatchState=delivery?.State??"PENDING",BusinessStage=businessStage,
+            ApplicationState=receipt?.Application??(source==null?"NOT_RECEIVED":"RECEIVED")};
     }
     private async Task DisclosePackage(OperationsAccessV1 a,SubmissionRow row,bool hold,CancellationToken ct)
     {
@@ -192,7 +195,7 @@ public sealed partial class IterationReviewOwnerV1(CP6Context db,OperationsOwner
         var c=await Prepare(a,id,false,t);var row=c.Submissions.SingleOrDefault(s=>s.Id==submission)??throw Error("OBJECT_FORBIDDEN",403);
         await DisclosePackage(a,row,false,t);var e=await c.Store.Envelope(row,t);var bytes=Convert.FromBase64String(e.Snapshot.CanonicalBytesBase64);
         var snapshot=JsonSerializer.Deserialize<IterationReviewSnapshotV1>(bytes,ApprovalBindingOwnerV2.Json)!;
-        return new IterationReviewDetailV1(await View(c.Store,row,t),ReadPackage(row),snapshot,Encoding.UTF8.GetString(bytes),Encoding.UTF8.GetString(row.Payload));
+        return new IterationReviewDetailV1(await View(c.Store,row,c.Iteration.Body.Iteration!.Stage,t),ReadPackage(row),snapshot,Encoding.UTF8.GetString(bytes),Encoding.UTF8.GetString(row.Payload));
     },ct);
     private async Task<IterationReviewResultV1> Disclose(Context c,Guid operation,MainOwnerOperationJournalV1.Original original,byte[]? input,CancellationToken ct)
     {

@@ -22,13 +22,14 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     }
     private sealed record IterationReviewFixture(ContentStore Files,IterationFixture Iteration,EngineeringCheckViewV1 Check,
         IterationCandidateService Candidates,IterationCandidateCommandV1 Candidate,IterationReviewContextV1 Context,Guid Principal);
-    private async Task<IterationReviewFixture> IterationReviewSetup(Harness h,int count=2)
+    private async Task<IterationReviewFixture> IterationReviewSetup(Harness h,int count=2,Func<IterationFixture,Task>? beforeCheck=null,string rejectDisposition="RETURN")
     {
         var f=await CheckSetup(h);var checkAuthority=CandidateAuthority(h);
         var checks=new EngineeringSourceCheckService(h.Db,checkAuthority,Documents(h,f.Files),Specifications(h,f.Files));
         var revision=await new EngineeringRevisionOwnerV1(h.Db,checkAuthority,Documents(h,f.Files),Specifications(h,f.Files)).ReadAsync(f.Command.Revision.Id,null);
         var iteration=await IterationSetup(h,f.Files,revision.Draft.ProductRef,reuseBinding:true);
         foreach(var action in new[]{"candidate-write","review-policy","review-submit","review-decide"})await EngineeringAction(h,"plm-engineering-iteration",action);
+        if(beforeCheck!=null)await beforeCheck(iteration);
         // Check only after all native inputs and permission registrations are established.
         var checkResult=await checks.CheckAsync(f.Command);var check=await checks.ReadAsync(checkResult.CheckRunId);Assert.Equal("PASS",check.Original.State);
         var iterations=Iterations(h,f.Files);var work=await IterationWrite(iterations,IterationChange(iteration.Iteration,"SAVE_TASK") with{Task=IterationTask(h,iteration.Reviewer)});
@@ -39,7 +40,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         for(var i=0;i<count;i++)await candidates.CommandAsync(c with{OperationId=Guid.NewGuid(),CandidateId=Guid.NewGuid(),Title="方案 "+i});
         var o=IterationReviews(h,f.Files);var context=await o.ContextAsync(work.Reference.Id);
         var at=DateTimeOffset.FromUnixTimeMilliseconds(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
-        await o.PolicyAsync(work.Reference.Id,context.Etag,new(Guid.NewGuid(),"ENABLED",[new("TECHNICAL","Review complete candidate set and accurate original inputs",72,1)],"RETURN",true,at.AddHours(-1),at.AddDays(1),"Assigned independent project reviewer"));
+        await o.PolicyAsync(work.Reference.Id,context.Etag,new(Guid.NewGuid(),"ENABLED",[new("TECHNICAL","Review complete candidate set and accurate original inputs",72,1)],rejectDisposition,true,at.AddHours(-1),at.AddDays(1),"Assigned independent project reviewer"));
         var principal=Guid.NewGuid();await h.Db.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO cp6_approval_binding_v2.registrations(tenant_id,environment_id,biz_type,subject_kind,owner,revision,snapshot_schema,snapshot_fields,enabled,service_principal,audience,fixed_route,evidence_mode)
             VALUES({h.Tenant},{ScopeEnvironment},'PLM_ITER_REVIEW','PLM_ITER_REVIEW','Main.Plm.EngineeringIteration.v1',{Guid.NewGuid()},

@@ -101,6 +101,7 @@ internal sealed class IterationReviewStoreV1(CP6Context db,Guid environment)
             INSERT INTO cp6_iteration_review_v1.outbox(environment_id,tenant_id,id,submission_id,payload,payload_digest)
             VALUES({environment},{db.CurrentTenantId},{e.OwnerOutboxId},{row.Id},{row.Payload},{row.Digest})
             """,ct)!=2)throw Error("ITERATION_REVIEW_WRITE_UNAVAILABLE",503);
+        await new IterationReviewControlStoreV1(db,environment).Begin(row,ct);
         var saved=await Submission(row.Id,ct);
         if(saved==null || Json(await Envelope(saved,ct))!=Json(e))throw Error("ITERATION_REVIEW_WRITE_UNAVAILABLE",503);
     }
