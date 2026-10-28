@@ -581,6 +581,8 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-configuration-rule", "工�
 CP6.Core.Services.Sys.FieldRegistry.Register("plm-configuration-rule");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-engineering-revision", "工程修订工作稿", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("plm-engineering-revision");
+CP6.Core.Services.Sys.DataScopeRegistry.Register("quality-specification", "独立质量规格", new[] { 1, 2, 3, 4, 5 }, 1);
+CP6.Core.Services.Sys.FieldRegistry.Register("quality-specification", new CP6.Core.Services.Sys.FieldRegistry.Field("Metadata", "规格资料"), new CP6.Core.Services.Sys.FieldRegistry.Field("Requirements", "完整质量要求"));
 CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-controlled-document", "受控技术文档", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.FieldRegistry.Register("plm-controlled-document", new CP6.Core.Services.Sys.FieldRegistry.Field("Content", "文档内容"), new CP6.Core.Services.Sys.FieldRegistry.Field("Metadata", "文档资料"));
 CP6.Core.Services.Sys.DataScopeRegistry.Register("file-content", "受控文件内容", new[] { 1, 2, 3, 4, 5 }, 1);
@@ -793,6 +795,8 @@ builder.Services.AddSingleton<CP6.Core.Services.Pub.IFileContentInspectorV1, CP6
 builder.Services.AddScoped<CP6.Core.Services.Pub.FileContentOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.ControlledDocumentOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.ControlledDocumentReviewOwnerV1>();
+builder.Services.AddSingleton(new CP6.Core.Services.Mes.QualitySpecificationRuntimeV1(builder.Configuration["QualitySpecification:EvidenceMode"] ?? ""));
+builder.Services.AddScoped<CP6.Core.Services.Mes.QualitySpecificationAuthorityService>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.ApprovalBusinessEvidenceV2>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.ToolSpecificationOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.ToolAssociationOwnerV1>();

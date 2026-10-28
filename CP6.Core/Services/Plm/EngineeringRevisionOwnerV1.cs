@@ -1,3 +1,4 @@
+using CP6.Core.Services.Mes;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Erp;
@@ -8,7 +9,7 @@ using static CP6.Core.Services.Plm.EngineeringProductValuesV1;
 using static CP6.Core.Services.Plm.EngineeringRevisionValuesV1;
 
 namespace CP6.Core.Services.Plm;
-public sealed class EngineeringRevisionOwnerV1(CP6Context db, OperationsOwnerV1 owner, ControlledDocumentOwnerV1? documents = null)
+public sealed class EngineeringRevisionOwnerV1(CP6Context db, OperationsOwnerV1 owner, ControlledDocumentOwnerV1? documents = null, QualitySpecificationAuthorityService? quality = null)
 {
     private const string Contract = "Main.Plm.EngineeringRevision.commands.v1";
     private OperationsOwnerV1 Authority => owner.Owns(db) ? owner : throw Error("AUTHORITY_FENCE_UNAVAILABLE", 503);
@@ -48,7 +49,12 @@ public sealed class EngineeringRevisionOwnerV1(CP6Context db, OperationsOwnerV1 
             Component(component);
             if (component.SourceRef is { } source)
             {
-                if (component.Kind == "DOCUMENT")
+                if (component.Kind == "QUALITY_SPEC")
+                {
+                    var proof = await (quality ?? throw Error("QUALITY_SPEC_OWNER_UNAVAILABLE",503)).Source(access,source,value.Draft.ProductRef,false,ct);
+                    missing.AddRange(proof.Missing.Select(x => "QUALITY_SPEC:" + component.OccurrenceId + ":" + x));
+                }
+                else if (component.Kind == "DOCUMENT")
                 {
                     var document = await (documents ?? throw Error("DOCUMENT_OWNER_UNAVAILABLE",503)).Source(access,source,value.Reference.Id,value.Draft.ProductRef,false,ct);
                     if (!document.IsCurrent) missing.Add("SOURCE_CHANGED:" + component.OccurrenceId);
@@ -166,7 +172,12 @@ public sealed class EngineeringRevisionOwnerV1(CP6Context db, OperationsOwnerV1 
                     if (patch.Op == "SET_PRODUCT") await Product(access, patch.ProductRef!, true, token);
                     if (patch.Op == "UPSERT_COMPONENT" && patch.Component!.SourceRef is { } source)
                     {
-                        if (patch.Component.Kind == "DOCUMENT")
+                        if (patch.Component.Kind == "QUALITY_SPEC")
+                        {
+                            if (draft.ProductRef == null) throw Error("ENGINEERING_PRODUCT_REQUIRED",422);
+                            await (quality ?? throw Error("QUALITY_SPEC_OWNER_UNAVAILABLE",503)).Source(access,source,draft.ProductRef,true,token);
+                        }
+                        else if (patch.Component.Kind == "DOCUMENT")
                             await (documents ?? throw Error("DOCUMENT_OWNER_UNAVAILABLE",503)).Source(access,source,frozen.RevisionId,draft.ProductRef,true,token);
                         else if (patch.Component.Kind == "ROUTING")
                             await new EngineeringRoutingOwnerV1(db, owner).Source(access, source, frozen.RevisionId, draft.ProductRef, true, token);

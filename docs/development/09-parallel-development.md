@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W191 文档准确送审与专业批准](dispatch/20261027-wave191/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
+> 当前：[W192 独立质量规格与工程准确采用](dispatch/20261027-wave192/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
+
+> 历史快照：[W191 文档准确送审与专业批准](dispatch/20261027-wave191/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
 
 > 历史快照：[W190 文档原件与准确内容绑定](dispatch/20261027-wave190/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
 
