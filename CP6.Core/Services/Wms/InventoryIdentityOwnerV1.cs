@@ -13,6 +13,7 @@ namespace CP6.Core.Services.Wms;
 public sealed partial class InventoryIdentityOwnerV1(CP6Context db, OperationsOwnerV1 owner, ScopeAuthorizationFenceV1 scope,
     QualitySpecificationRuntimeV1 runtime, EngineeringBaselineOwnerV1 baselines)
 {
+    internal bool Owns(CP6Context context) => ReferenceEquals(db, context) && owner.Owns(db) && baselines.Owns(db);
     private OperationsOwnerV1 Authority => owner.Owns(db) && baselines.Owns(db) ? owner : throw Error("AUTHORITY_FENCE_UNAVAILABLE", 503);
     private Guid Environment => scope.EnvironmentId;
     private async Task<InventoryIdentityStoreV1> Store(OperationsAccessV1 a, bool write, CancellationToken ct)
@@ -131,7 +132,11 @@ public sealed partial class InventoryIdentityOwnerV1(CP6Context db, OperationsOw
     {
         Reference(reference);
         return Authority.ExecuteAsync(OperationsOwnerV1.InventoryIdentity, "query", false, async (a, t) =>
-        {
+            await CatalogueSource(a, reference, t), ct);
+    }
+    internal async Task<InventoryProductCatalogueV1> CatalogueSource(OperationsAccessV1 root, InventoryIdentityRefV1 reference, CancellationToken t)
+    {
+            _ = Authority; Reference(reference); var a = await root.SourceAsync(OperationsOwnerV1.InventoryIdentity, t);
             var s = await Store(a, false, t); var v = await Exact(a, s, reference, "PRODUCT", true, t); var p = v.Original.Definition.Product!;
             var party = await Exact(a, s, p.Party, "PARTY", true, t);
             var baseRef = v.Original.Sources.Single(x => x.Path == "baseUom").Reference;
@@ -140,7 +145,6 @@ public sealed partial class InventoryIdentityOwnerV1(CP6Context db, OperationsOw
                 new(p.TechnicalKind, p.Baseline, p.TechnicalKind == "NOT_APPLICABLE" ? AsSource(v.Reference) : null),
                 new(p.Purpose.Id.ToString(), p.Purpose.Version), new(party.Original.Definition.Party!.Kind,
                     party.Original.Definition.Party.Customer is {} customer ? new(customer.Owner, customer.Id, customer.Version, customer.Digest) : AsSource(p.Party))), v.Original.Sources);
-        }, ct);
     }
     private static EngineeringSourceRefV1 AsSource(InventoryIdentityRefV1 r) => new(r.Owner, r.Id, r.Version, r.Digest);
 }

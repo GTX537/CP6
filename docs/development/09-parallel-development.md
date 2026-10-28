@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W204 库存身份](dispatch/20261028-wave204/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
+> 当前：[W205 受信调拨来源](dispatch/20261028-wave205/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
+
+> 历史快照：[W204 库存身份](dispatch/20261028-wave204/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
 
 > 历史快照：[W203 资源能力目录](dispatch/20261028-wave203/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
 

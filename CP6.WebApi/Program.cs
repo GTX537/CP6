@@ -575,6 +575,11 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("uom-profile", "单位配置", 
 CP6.Core.Services.Sys.FieldRegistry.Register("uom-profile");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-inventory-identity", "库存身份", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-inventory-identity");
+// Tenant-wide registration; product/object scopes remain enforced by the actual source Owners.
+CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-transfer-environment", "调拨来源环境", new[] { 5 }, 5);
+CP6.Core.Services.Sys.FieldRegistry.Register("wms-transfer-environment");
+CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-transfer-source", "调拨来源读取", new[] { 5 }, 5);
+CP6.Core.Services.Sys.FieldRegistry.Register("wms-transfer-source");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("erp-plate-mold", "版型工具原来源", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("erp-plate-mold");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("currency-policy", "币种政策", new[] { 1, 2, 3, 4, 5 }, 5);
@@ -840,6 +845,9 @@ builder.Services.AddScoped<CommercialProductIdentityReader>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.ResourceSourceOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.ResourceCapabilityOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.InventoryIdentityOwnerV1>();
+builder.Services.Configure<CP6.Core.Services.Wms.Transfer.TransferEnvironmentOptionsV1>(builder.Configuration.GetSection("TransferEnvironment"));
+builder.Services.AddScoped<CP6.Core.Services.Wms.Transfer.TransferEnvironmentOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.Transfer.TransferProductSourcesV1>();
 builder.Services.AddScoped<UomProfileOwnerV1>();
 builder.Services.AddScoped<UomTimeBasisOwnerV1>();
 builder.Services.AddScoped<PlateMoldSourceOwnerV1>();
