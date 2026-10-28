@@ -64,12 +64,17 @@ internal sealed class EngineeringRevisionStoreV1(CP6Context db)
     internal async Task<EngineeringRevisionSnapshotV1> Read(Guid id, long? version, CancellationToken ct)
     {
         var (head, raw, value) = await OriginalAt(id, version, ct);
+        var frozen = await Frozen(id, Revision(value.Version), ct);
         return new(db.CurrentTenantId, new(RevisionOwner, id, value.Version, raw.Digest), value.Code, value.Etag,
             new(CandidateOwner, value.CandidateId, value.Version, Digest(Encode(value.Draft))), value.Version == head.Revision.ToString(CultureInfo.InvariantCulture),
-            "DRAFT", value.Origin, value.Draft, value.Reason, value.ParentVersion, value.RecordedAt, Encoding.UTF8.GetString(raw.Body));
+            frozen ? "FROZEN" : "DRAFT", value.Origin, value.Draft, value.Reason, value.ParentVersion, value.RecordedAt, Encoding.UTF8.GetString(raw.Body),
+            Freeze: frozen ? "FROZEN" : "NOT_REQUESTED");
     }
+    private Task<bool> Frozen(Guid id,long version,CancellationToken ct)=>db.Database.SqlQuery<bool>($"""
+        SELECT EXISTS(SELECT FROM cp6_engineering_baseline_v1.baselines WHERE tenant_id={db.CurrentTenantId} AND revision_id={id} AND revision_version={version}) AS "Value"
+        """).SingleAsync(ct);
     internal async Task<EngineeringRevisionSnapshotV1> Append(Guid id, Guid actor, EngineeringWorkingDraftV1 draft, string reason,
-        long? expected, Guid? etag, string? code, EngineeringRevisionOriginV1? origin, EngineeringNumberAllocationV1? numbering, CancellationToken ct)
+        long? expected, Guid? etag, string? code, EngineeringRevisionOriginV1? origin, EngineeringNumberAllocationV1? numbering, CancellationToken ct, bool allowFrozenSuccessor = false)
     {
         Transaction(); var productId = draft.ProductRef?.Id; var head = await Heads(db).SingleOrDefaultAsync(row => row.Id == id, ct); long next;
         EngineeringRevisionStoredV1 value;
@@ -89,6 +94,7 @@ internal sealed class EngineeringRevisionStoreV1(CP6Context db)
         else
         {
             if (head == null || head.Revision != expected) throw Error("ENGINEERING_WORKING_VERSION_CHANGED", 412);
+            if (!allowFrozenSuccessor && await Frozen(id, head.Revision, ct)) throw Error("ENGINEERING_BASELINE_SUCCESSOR_REQUIRED", 409);
             var (_, _, before) = await OriginalAt(id, null, ct);
             if (before.Etag != etag) throw Error("ENGINEERING_WORKING_VERSION_CHANGED", 412);
             if (head.ProductId != null && head.ProductId != draft.ProductRef?.Id) throw Error("ENGINEERING_REVISION_PRODUCT_IMMUTABLE", 409);

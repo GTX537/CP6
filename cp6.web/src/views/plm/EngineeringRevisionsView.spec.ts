@@ -28,6 +28,10 @@ const field = (label: string) => view!.get(`[aria-label="${label}"]`)
 async function click(text: string) { await button(text).trigger('click'); await flushPromises() }
 async function submit(label: string) { field(label).element.closest('form')!.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })); await flushPromises() }
 async function opened() { await render(); await click('打开'); await field('修改原因').setValue('Reviewed draft edit') }
+it('preserves frozen originals and directs editing through an explicit baseline successor', async () => {
+  persisted.state = 'FROZEN'; await opened(); expect(view!.text()).toContain('已冻结，请在工程基线中开始后继设计')
+  expect(field('设计目标').element.closest('fieldset')!.disabled).toBe(true); await submit('设计目标'); expect(api.save).not.toHaveBeenCalled()
+})
 async function form() { await click('新建修订'); await field('设计目标').setValue('New design'); await field('无父基线原因').setValue('No previous baseline'); await field('修改原因').setValue('New product'); await field('修订所属部门').setValue(department) }
 beforeEach(() => {
   vi.resetAllMocks(); localStorage.clear(); localStorage.setItem(AUTH_EPOCH, 'first'); api.authenticated = true; api.allowed = true; persisted = structuredClone(row)
@@ -57,7 +61,7 @@ it('binds the explicit exact current routing from this revision without inventin
   await opened(); await click('添加组成位置'); await field('组成类型').setValue('ROUTING'); await field('位置路径').setValue('manufacture/route')
   await click('查找本修订工艺'); expect(api.routings).toHaveBeenCalledWith(id); expect((field('组成工艺来源').element as HTMLSelectElement).value).toBe('')
   await field('组成工艺来源').setValue(`${reference.owner}:${reference.id}:${reference.version}:${reference.digest}`); await submit('位置路径')
-  expect(api.save.mock.calls[0]![0].patches[0].component).toMatchObject({ kind: 'ROUTING', sourceRef: reference }); expect(view!.text()).toContain('尚未评审或冻结')
+  expect(api.save.mock.calls[0]![0].patches[0].component).toMatchObject({ kind: 'ROUTING', sourceRef: reference }); expect(view!.text()).toContain('尚未冻结')
 })
 it('binds the explicit exact current BOM from this revision without inventing approval', async () => {
   persisted.draft.productRef = product.reference
@@ -66,14 +70,14 @@ it('binds the explicit exact current BOM from this revision without inventing ap
   await opened(); await click('添加组成位置'); await field('组成类型').setValue('MBOM'); await field('位置路径').setValue('manufacture/route')
   await click('查找本修订 BOM'); expect(api.boms).toHaveBeenCalledWith(id); expect((field('组成BOM来源').element as HTMLSelectElement).value).toBe('')
   await field('组成BOM来源').setValue(`${reference.owner}:${reference.id}:${reference.version}:${reference.digest}`); await submit('位置路径')
-  expect(api.save.mock.calls[0]![0].patches[0].component).toMatchObject({ kind: 'MBOM', sourceRef: reference }); expect(view!.text()).toContain('尚未评审或冻结')
+  expect(api.save.mock.calls[0]![0].patches[0].component).toMatchObject({ kind: 'MBOM', sourceRef: reference }); expect(view!.text()).toContain('尚未冻结')
 })
 it('creates an unresolved new-product draft with explicit reason and department; goal patch preserves omitted fields', async () => {
   await render(); await form(); expect((field('本修订的工程产品').element as HTMLSelectElement).value).toBe('')
   await submit('设计目标'); expect(api.save.mock.calls[0]![0]).toMatchObject({ action: 'CREATE', expectedAuthorityVersion: 'current', departmentId: department, origin: { type: 'NEW_PRODUCT', noParentReason: 'No previous baseline' }, productRef: null, goal: 'New design', reason: 'New product' })
   await field('设计目标').setValue('Changed goal'); await field('修改原因').setValue('Goal only'); await submit('设计目标')
   expect(api.save.mock.calls[1]![0]).toMatchObject({ action: 'PATCH', expectedVersion: '1', expectedEtag: row.etag, patches: [{ op: 'SET_GOAL', goal: 'Changed goal' }] })
-  expect(api.save.mock.calls[1]![0]).not.toHaveProperty('productRef'); expect(view!.text()).toContain('尚未评审或冻结')
+  expect(api.save.mock.calls[1]![0]).not.toHaveProperty('productRef'); expect(view!.text()).toContain('尚未冻结')
 })
 it('requires an explicit source selection and retains exact native reference for binding', async () => {
   await opened(); await field('工程产品搜索').setValue('P'); await submit('工程产品搜索')

@@ -15,13 +15,15 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     private static OperationsOwnerV1 CandidateAuthority(Harness h,Func<CancellationToken,Task<Guid>>? actor=null)
     {
         var catalog=new AuthorizationCatalogStoreV1();
-        foreach(var key in new[]{"plm-engineering-iteration","plm-configuration-rule","quality-specification","plm-controlled-document","file-content","plm-engineering-revision","plm-engineering-product","space-site","uom-profile","plm-engineering-bom","plm-engineering-routing","plm-tool-specification","erp-plate-mold","mes-machine","mes-work-center","product","plm-requirement-set","plm-engineering-requirement"})
+        foreach(var key in new[]{"plm-engineering-baseline","plm-engineering-iteration","plm-configuration-rule","quality-specification","plm-controlled-document","file-content","plm-engineering-revision","plm-engineering-product","space-site","uom-profile","plm-engineering-bom","plm-engineering-routing","plm-tool-specification","erp-plate-mold","mes-machine","mes-work-center","product","plm-requirement-set","plm-engineering-requirement"})
         {
             catalog.RegisterScope(key,key,[1,2,3,4,5],5);catalog.RegisterFields(key,key switch{
-                "plm-engineering-iteration"=>[new("Metadata","Metadata"),new("Inputs","Inputs"),new("Tasks","Tasks")],
-                "plm-requirement-set"=>[new("Scope","Scope"),new("Members","Members")],"plm-engineering-requirement"=>[new("Definition","Definition"),new("Source","Source")],
-                "quality-specification"=>[new("Metadata","Metadata"),new("Requirements","Requirements")],
-                "plm-controlled-document"=>[new("Content","Content"),new("Metadata","Metadata")],"file-content"=>[new("Content","Content"),new("FileName","FileName")],_=>[]});
+                // RegistryVersion hashes the complete definitions, including labels. Keep the
+                // native setup consistent with Program when its original is consumed over HTTP.
+                "plm-engineering-iteration"=>[new("Metadata","项目计划"),new("Inputs","准确输入"),new("Tasks","任务交付")],
+                "plm-requirement-set"=>[new("Scope","适用范围"),new("Members","准确成员")],"plm-engineering-requirement"=>[new("Definition","需求定义"),new("Source","需求来源")],
+                "quality-specification"=>[new("Metadata","规格资料"),new("Requirements","完整质量要求")],
+                "plm-controlled-document"=>[new("Content","文档内容"),new("Metadata","文档资料")],"file-content"=>[new("Content","文件内容"),new("FileName","文件名称")],_=>[]});
         }
         catalog.Seal();return new(h.Db,new OperationsHttp{HttpContext=h.Http},actor??(_=>Task.FromResult(h.User)),catalog.Capture);
     }

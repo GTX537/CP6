@@ -13,7 +13,7 @@
     </section>
     <section v-if="creating || current">
       <h2>{{ creating ? '新产品修订草稿' : current?.revisionCode }}</h2>
-      <p v-if="current">工作版本 {{ current.reference.version }} · 草稿 · 尚未评审或冻结</p>
+      <p v-if="current">工作版本 {{ current.reference.version }} · {{ current.state === 'FROZEN' ? '已冻结，请在工程基线中开始后继设计' : '草稿 · 尚未冻结' }}</p>
       <p>此处保存工作草稿。配置规则、完整组成来源和适用性核准齐备后，才能进入后续评审。</p>
       <ul v-if="current?.missing.length" aria-label="草稿缺项"><li v-for="item in current.missing" :key="item">{{ missingText(item) }}</li></ul>
       <form @submit.prevent="saveGoal"><fieldset :disabled="locked || (!creating && !canEdit)"><div class="grid">
@@ -83,7 +83,7 @@ import { revisionResponse, pendingRevisionOperation, resolveRevisionOperation, s
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
 import { usePermissionStore } from '@/stores/permission'
-const permissions = usePermissionStore(), canRead = computed(() => permissions.loaded && permissions.has('plm-engineering-revision:query')), canEdit = computed(() => canRead.value && permissions.has('plm-engineering-revision:edit'))
+const permissions = usePermissionStore(), canRead = computed(() => permissions.loaded && permissions.has('plm-engineering-revision:query')), canEdit = computed(() => canRead.value && permissions.has('plm-engineering-revision:edit') && current.value?.state !== 'FROZEN')
 const checkPending = ref(false)
 const busy = ref(false), error = ref(''), notice = ref(''), scope = ref<RevisionScope | null>(null), pending = ref<PendingRevisionOperation | null>(null), locked = computed(() => busy.value || !!pending.value || checkPending.value)
 const rows = ref<RevisionSnapshot[]>([]), search = ref(''), page = ref(1), current = ref<RevisionSnapshot | null>(null), creating = ref(false), creation = ref<RevisionCreation | null>(null), draftId = ref('')
@@ -142,7 +142,7 @@ async function write(command: Omit<RevisionCommand, 'operationId'>) {
     const value = revisionResponse(await revisionApi.read(body.revisionId)); check(); setCurrent(value); const list = revisionResponse(await revisionApi.list(search.value, page.value)); check(); rows.value = list; notice.value = '工作快照已保存。'
   })
 }
-async function patch(patches: RevisionPatch[]) { const value = current.value; if (!value || !reason.value.trim()) { error.value = '请填写修改原因。'; return } await write({ revisionId: value.reference.id, action: 'PATCH', expectedVersion: value.reference.version, expectedEtag: value.etag, reason: reason.value, patches }) }
+async function patch(patches: RevisionPatch[]) { const value = current.value; if (!canEdit.value) return; if (!value || !reason.value.trim()) { error.value = '请填写修改原因。'; return } await write({ revisionId: value.reference.id, action: 'PATCH', expectedVersion: value.reference.version, expectedEtag: value.etag, reason: reason.value, patches }) }
 async function saveGoal() {
   if (!creating.value) { await patch([{ op: 'SET_GOAL', goal: goal.value }]); return }
   try { await write({ revisionId: draftId.value, action: 'CREATE', expectedAuthorityVersion: creation.value?.authorityVersion, departmentId: department.value || null, origin: { type: 'NEW_PRODUCT', noParentReason: noParentReason.value }, goal: goal.value, reason: reason.value, productRef: rootProduct.value ? selectedProduct(rootProduct.value) : null }) } catch (failure) { error.value = message(failure) }
