@@ -7,6 +7,8 @@ import { requireReadableAuthentication } from '@/auth/browserAuthentication'
 
 // 路由路径 → 组件的映射表（所有可能的页面）
 const viewModules: Record<string, () => Promise<any>> = {
+  '/mes/machine-capabilities': () => import('@/views/mes/ResourceCapabilitiesView.vue'),
+  '/mes/work-center-capabilities': () => import('@/views/mes/ResourceCapabilitiesView.vue'),
   '/mes/machine-sources': () => import('@/views/mes/ResourceSourcesView.vue'),
   '/mes/work-center-sources': () => import('@/views/mes/ResourceSourcesView.vue'),
   '/erp/uom-profiles': () => import('@/views/erp/UomProfilesView.vue'),
@@ -468,6 +470,11 @@ export function addDynamicRoutes(menus: any[]) {
       { path: 'plm/tool-specifications', name: 'plm/tool-specifications', component: viewModules['/plm/tool-specifications']!, meta: { permission: 'plm-tool-specification:query' } },
       { path: 'erp/plate-mold-sources', name: 'erp/plate-mold-sources', component: viewModules['/erp/plate-mold-sources']!, meta: { permission: 'erp-plate-mold:query' } },
       { path: 'erp/time-unit-bases', name: 'erp/time-unit-bases', component: viewModules['/erp/time-unit-bases']!, meta: { permission: 'erp-uom-profile:query' } },
+      ...(['MACHINE', 'WORK_CENTER'] as const).map(kind => {
+        const path = kind === 'MACHINE' ? 'mes/machine-capabilities' : 'mes/work-center-capabilities'
+        return { path, name: path, component: viewModules['/' + path]!, props: { kind },
+          meta: { permission: (kind === 'MACHINE' ? 'mes-machine' : 'mes-work-center') + ':query' } }
+      }),
       ...(['MACHINE', 'WORK_CENTER'] as const).map(kind => {
         const path = kind === 'MACHINE' ? 'mes/machine-sources' : 'mes/work-center-sources'
         return { path, name: path, component: viewModules['/' + path]!, props: { kind },

@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W202 原生工程基线](dispatch/20261028-wave202/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
+> 当前：[W203 资源能力目录](dispatch/20261028-wave203/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
+
+> 历史快照：[W202 原生工程基线](dispatch/20261028-wave202/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
 
 > 历史快照：[W201 原生完整输出关系](dispatch/20261028-wave201/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
 

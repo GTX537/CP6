@@ -1,6 +1,7 @@
 <template>
   <div class="machine-list">
     <router-link to="/mes/machine-sources">资源来源与资料版本</router-link>
+    <router-link to="/mes/machine-capabilities">资源能力目录</router-link>
     <el-alert v-if="intent.error.value" :title="intent.error.value" type="warning" :closable="false" show-icon />
     <el-alert v-if="creationError" :title="creationError" type="warning" :closable="false" show-icon />
     <div v-if="allowed('query')" class="creation-recovery">

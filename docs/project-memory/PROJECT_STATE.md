@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-28：W203 资源能力目录待Main收尾
+
+原生机器/工作中心能力目录、准确单位/工时与来源原件、独立不可变版本、当前授权/共同事务、原操作恢复及工艺准确引用已验证。31 PG18/Program HTTP; 41 Vue;types/build PASS;0skip。[报告](../development/evidence/W203-01/DELIVERY.md)。登记28.83分钟，预计160–230；Handoff已释放，Main待正常PR/finish。能力是有权人员声明，现场资格、RES变更预检/Claim及生产许可仍未完成，完整WP08-16/WP05-08与七天出口不关闭。
+
 ## 2026-10-28：W202 原生工程基线待Main收尾
 
 原生工程基线、当前来源与已应用专业评审共同事务、准确原件/成员/结果意图、取消竞争及后继工作版本已验证。21 PG18/Program HTTP; 25 Vue;types/build PASS;binding mapper/shared schema PASS;0skip。[报告](../development/evidence/W202-01/DELIVERY.md)。登记82.48分钟，预计180–300；Handoff已释放，Main待正常PR/finish。成功冻结范围为真实批准政策下的外购成品；INTERNAL资格和下游投递/REL/VER/WO/SCHED仍待，绑定证据限映射器。完整WP05-12与七天出口不关闭。

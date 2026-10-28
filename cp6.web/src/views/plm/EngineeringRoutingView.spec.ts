@@ -1,11 +1,12 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
 import type { RoutingCommand, RoutingSnapshot } from '@/api/plm/engineeringRouting'
-const api = vi.hoisted(() => ({ scope: vi.fn(), list: vi.fn(), read: vi.fn(), diff: vi.fn(), legacy: vi.fn(), save: vi.fn(), operation: vi.fn(), parents: vi.fn(), sites: vi.fn(), mappings: vi.fn(), resources: vi.fn(), tools: vi.fn(), units: vi.fn(), authenticated: true, denied: [] as string[] }))
+const api = vi.hoisted(() => ({ scope: vi.fn(), list: vi.fn(), read: vi.fn(), diff: vi.fn(), legacy: vi.fn(), save: vi.fn(), operation: vi.fn(), parents: vi.fn(), sites: vi.fn(), mappings: vi.fn(), resources: vi.fn(), capability: vi.fn(), tools: vi.fn(), units: vi.fn(), authenticated: true, denied: [] as string[] }))
 vi.mock('@/api/plm/engineeringRouting', () => ({ routingApi: api }))
 vi.mock('@/api/plm/engineeringRevisions', () => ({ revisionApi: { list: api.parents } }))
 vi.mock('@/api/plm/engineeringProducts', () => ({ engineeringApi: { siteChoices: api.sites, mappings: api.mappings } }))
 vi.mock('@/api/mes/resourceSources', () => ({ resourceApi: () => ({ list: api.resources }) }))
+vi.mock('@/api/mes/resourceCapabilities', () => ({ capabilityApi: () => ({ read: api.capability }) }))
 vi.mock('@/api/plm/toolSpecifications', () => ({ toolSpecificationApi: { list: api.tools } }))
 vi.mock('@/api/erp/uomProfiles', () => ({ uomApi: { list: api.units } }))
 vi.mock('@/stores/permission', () => ({ usePermissionStore: () => ({ loaded: true, has: (key: string) => !api.denied.includes(key), loadMyActions: vi.fn() }) }))
@@ -92,4 +93,17 @@ it('ignores late source responses after an identity change', async () => {
   field('资源搜索').element.closest('form')!.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })); await flushPromises()
   api.authenticated = false; localStorage.setItem(AUTH_EPOCH, 'other'); window.dispatchEvent(new Event(AUTH_EVENT)); resolve(ok([{ secret: 'private-resource' }])); await flushPromises()
   expect(view!.text()).not.toContain('Private cutting route'); expect(view!.text()).not.toContain('private-resource'); expect(view!.find('[aria-label="工艺名称"]').exists()).toBe(false)
+})
+
+it('explicitly adopts the exact resource capability version, rejects mismatched source, and removes both references together', async () => {
+  const source = { ...reference('Main.Mes.ResourceSource.v1', 20), owner: 'Main.Mes.ResourceSource.v1' as const, kind: 'MACHINE' as const }
+  persisted.body.operations[0]!.resources = [source]
+  api.capability.mockResolvedValue(ok({ isCurrent: true, body: { source }, reference: { ...source, owner: 'Main.Mes.ResourceCapability.v1', version: '3' } }))
+  await opened(); await click('引用当前能力目录'); await submit('工艺名称')
+  expect(api.capability).toHaveBeenCalledWith(source.id)
+  expect(api.save.mock.calls[0]![0].body.operations[0].resourceCapabilities).toEqual([{ ...source, owner: 'Main.Mes.ResourceCapability.v1', version: '3' }])
+  api.capability.mockResolvedValue(ok({ isCurrent: true, body: { source: { ...source, version: '99' } }, reference: { ...source, owner: 'Main.Mes.ResourceCapability.v1', version: '4' } }))
+  await click('引用当前能力目录'); expect(view!.text()).toContain('能力目录与所选资源版本不一致')
+  await click('移除资源'); await field('工艺修改原因').setValue('Explicit removal'); await submit('工艺名称')
+  expect(api.save.mock.calls.at(-1)![0].body.operations[0]).toMatchObject({ resources: [], resourceCapabilities: [] })
 })

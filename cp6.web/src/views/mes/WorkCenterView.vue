@@ -1,6 +1,7 @@
 <template>
   <div class="mes-work-center">
     <router-link to="/mes/work-center-sources">资源来源与资料版本</router-link>
+    <router-link to="/mes/work-center-capabilities">资源能力目录</router-link>
     <div class="page-header">
       <h2>{{ t('工作中心') }}</h2>
       <span class="subtitle">{{ t('日可用产能') }} / {{ t('工序费率') }} / {{ t('产能') }}</span>

@@ -161182,6 +161182,16 @@
       "date": "2026-10-28",
       "change": "W202 native engineering baseline freeze and durable recovery: 21 PG18/Program HTTP; 25 Vue;types/build PASS;binding mapper/shared schema PASS;0skip; Handoff released, Main closeout pending. Full WP05-12, INTERNAL/downstream qualification and original seven-day exits remain.",
       "evidence": "docs/development/evidence/W202-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-28",
+      "change": "W202 archived once; only WP05-12 limited baseline lifecycle closed. W203 resource capability catalogue and exact routing source adoption admitted 160–230min. D2 current audit still lacks original ProductOption technical/ownership/purpose and Stock adoption; original exits preserved.",
+      "evidence": "docs/development/dispatch/20261028-wave203/README.md"
+    },
+    {
+      "date": "2026-10-28",
+      "change": "W203 native resource capability declarations and exact routing sources: 31 PG18/Program HTTP; 41 Vue;types/build PASS;0skip; Handoff released, Main closeout pending. Full WP08-16/WP05-08, physical resource/INTERNAL/downstream qualification and original seven-day exits remain.",
+      "evidence": "docs/development/evidence/W203-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -181065,6 +181075,32 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/608"
         }
+      },
+      "wave203_routing_capability": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "workspace_task": "W203-01",
+        "report": "docs/development/evidence/W203-01/DELIVERY.md",
+        "scope": "Native resource capability declaration catalogue for actual Machine/WorkCenter identities; exact resource/UOM/time-basis originals, separate immutable revisions, dedicated capability-edit authorization and final common-transaction fences, durable original recovery and cancellation, independent pages and explicit exact engineering routing/source-check adoption.",
+        "remaining": "Local isolated PostgreSQL18 and actual Program HTTP plus Vue/types/build. Capability basis text is an operator declaration, not verified physical measurements or external evidence. DECLARED_NOT_QUALIFIED and RESOURCE_QUALIFICATION_REQUIRED remain; no RES-WRITE-1 capability change preflight, assignment/effect plan, resource admission Claim, route-specific physical qualification or WO Start permission. Time-unit selection does not reinterpret or convert legacy minute/second/hour values. Internal manufacturing freeze, actual tool qualification and REL/VER/WO/SCHED remain incomplete. D2 versioned UOM and baseline now exist, but full ProductOption technical/ownership/purpose source and Stock/Transfer adoption remain. Original D2/D3/D5/D6/D7, full WP08-16/WP05-08,125 targets and247 formal acceptances are not closed. No Actions, existing-environment migration or production deployment.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "d88be09892fdff38053e84813e7bc9464c21a25e",
+          "main": "943132f6e9db774dbfc1097b22757c297c9b624c",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/179",
+          "exact_tree_adoption": true,
+          "at": "2026-10-28T18:19:26.505774+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "handoff_seat_released": true,
+          "main_branch_deleted": false,
+          "handoff_branch_deleted": true
+        }
       }
     },
     {
@@ -181413,7 +181449,7 @@
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "wave202_native_engineering_baseline": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "workspace_task": "W202-01",
         "report": "docs/development/evidence/W202-01/DELIVERY.md",
         "scope": "Independent native engineering baseline freeze Owner/API/UI using actual current source checks and applied professional review; exact source/engineering candidates and separate technical/review digests; immutable originals/members/manifest, optional output binding, durable result intent and original operation, cancellation concurrency and explicit linked successor working version.",
@@ -181429,13 +181465,24 @@
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "original_dependencies_unchanged": true,
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "lifecycle_snapshot": {
-          "main_finish_required": true,
-          "main_seat_released": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
           "handoff_seat_released": true,
-          "main_branch_deleted": false,
-          "handoff_branch_deleted": true
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave202-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W202-01",
+          "source": "eece6f1e2627953ebfe5b22b95ca910ffc8d105d",
+          "remote_target": "e8483126fde37b7420cc80bf9f491e4056b315ed",
+          "branch": "codex/w202-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/625"
         }
       }
     },
@@ -185117,6 +185164,32 @@
           "branch_absent": true,
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/575"
+        }
+      },
+      "wave203_resource_capability": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "workspace_task": "W203-01",
+        "report": "docs/development/evidence/W203-01/DELIVERY.md",
+        "scope": "Native resource capability declaration catalogue for actual Machine/WorkCenter identities; exact resource/UOM/time-basis originals, separate immutable revisions, dedicated capability-edit authorization and final common-transaction fences, durable original recovery and cancellation, independent pages and explicit exact engineering routing/source-check adoption.",
+        "remaining": "Local isolated PostgreSQL18 and actual Program HTTP plus Vue/types/build. Capability basis text is an operator declaration, not verified physical measurements or external evidence. DECLARED_NOT_QUALIFIED and RESOURCE_QUALIFICATION_REQUIRED remain; no RES-WRITE-1 capability change preflight, assignment/effect plan, resource admission Claim, route-specific physical qualification or WO Start permission. Time-unit selection does not reinterpret or convert legacy minute/second/hour values. Internal manufacturing freeze, actual tool qualification and REL/VER/WO/SCHED remain incomplete. D2 versioned UOM and baseline now exist, but full ProductOption technical/ownership/purpose source and Stock/Transfer adoption remain. Original D2/D3/D5/D6/D7, full WP08-16/WP05-08,125 targets and247 formal acceptances are not closed. No Actions, existing-environment migration or production deployment.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "d88be09892fdff38053e84813e7bc9464c21a25e",
+          "main": "943132f6e9db774dbfc1097b22757c297c9b624c",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/179",
+          "exact_tree_adoption": true,
+          "at": "2026-10-28T18:19:26.505774+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "handoff_seat_released": true,
+          "main_branch_deleted": false,
+          "handoff_branch_deleted": true
         }
       }
     },
@@ -195857,10 +195930,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261028-wave202",
-      "path": "docs/development/dispatch/20261028-wave202/README.md",
-      "baseline_sha": "32c8a3555fa0466205ff8055abe5b380bc9d174e",
-      "registered_at": "2026-10-28T16:19:11.637568+00:00",
+      "id": "20261028-wave203",
+      "path": "docs/development/dispatch/20261028-wave203/README.md",
+      "baseline_sha": "e8483126fde37b7420cc80bf9f491e4056b315ed",
+      "registered_at": "2026-10-28T17:52:44.791781+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -195879,28 +195952,29 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W202-01",
-          "workspace_task": "W202-01",
+          "id": "W203-01",
+          "workspace_task": "W203-01",
           "related_tasks": [
-            "WP05-12"
+            "WP08-16",
+            "WP05-08"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Native engineering baseline freeze and durable original recovery",
+          "title": "Native resource capability catalogue and exact routing references",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "d14a2282a3417b0ed28ec4e3d8d444c44c150fe4",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261028T161911Z-wave202-start/MESSAGE.md",
-            "at": "2026-10-28T16:19:11.637568+00:00",
-            "branch": "codex/w202-handoff"
+            "commit": "b249f1a216795ab7ac3d95295d6224ffb170fc11",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261028T175244Z-wave203-start/MESSAGE.md",
+            "at": "2026-10-28T17:52:44.791781+00:00",
+            "branch": "codex/w203-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w202-01",
-          "planned_scope_ref": "docs/development/dispatch/20261028-wave202/README.md",
+          "branch": "codex/w203-01",
+          "planned_scope_ref": "docs/development/dispatch/20261028-wave203/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -195909,13 +195983,12 @@
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
-            "Main:engineering-baseline",
-            "Main:engineering-revision",
-            "Main:engineering-iteration",
+            "Main:resource-capability",
+            "Main:engineering-routing",
             "Main:engineering-source-check"
           ],
-          "validation": "21 PG18/Program HTTP; 25 Vue;types/build PASS;binding mapper/shared schema PASS;0skip",
-          "worker_delivery_ref": "docs/development/evidence/W202-01/DELIVERY.md",
+          "validation": "31 PG18/Program HTTP; 41 Vue;types/build PASS;0skip",
+          "worker_delivery_ref": "docs/development/evidence/W203-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -195926,11 +195999,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-28T16:16:48.730117+00:00",
+        "started_at": "2026-10-28T17:51:39.958020+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          180,
-          300
+          160,
+          230
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -195938,7 +196011,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Continue concrete native physical resource/tool/routing qualification and actual downstream receipt/REL/VER prerequisites toward WO/SCHED; retain original D2/D5/D6/D7 exits and remaining full WP05/12 scope. No invented approval/provider or production acceptance.",
+      "next_action": "Continue real independent resource qualification/evidence and controlled applicability/assignment prerequisites, actual tool qualification and REL/VER toward WO/SCHED. Revisit D2 native ProductOption/technical identity/ownership/purpose and Stock adoption using the now available UOM/baseline providers. Preserve every original seven-day exit; never convert declared capability into physical or production approval.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -195946,7 +196019,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 82.48
+      "elapsed_registered_wave_minutes": 28.83
     },
     "wave_history": [
       {
@@ -222516,6 +222589,121 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/177"
           }
         ]
+      },
+      {
+        "id": "20261028-wave202",
+        "path": "docs/development/dispatch/20261028-wave202/README.md",
+        "baseline_sha": "32c8a3555fa0466205ff8055abe5b380bc9d174e",
+        "registered_at": "2026-10-28T16:19:11.637568+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W202-01",
+            "workspace_task": "W202-01",
+            "related_tasks": [
+              "WP05-12"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Native engineering baseline freeze and durable original recovery",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "d14a2282a3417b0ed28ec4e3d8d444c44c150fe4",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261028T161911Z-wave202-start/MESSAGE.md",
+              "at": "2026-10-28T16:19:11.637568+00:00",
+              "branch": "codex/w202-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w202-01",
+            "planned_scope_ref": "docs/development/dispatch/20261028-wave202/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:engineering-baseline",
+              "Main:engineering-revision",
+              "Main:engineering-iteration",
+              "Main:engineering-source-check"
+            ],
+            "validation": "21 PG18/Program HTTP; 25 Vue;types/build PASS;binding mapper/shared schema PASS;0skip",
+            "worker_delivery_ref": "docs/development/evidence/W202-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave202-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-28T16:16:48.730117+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            180,
+            300
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Continue concrete native physical resource/tool/routing qualification and actual downstream receipt/REL/VER prerequisites toward WO/SCHED; retain original D2/D5/D6/D7 exits and remaining full WP05/12 scope. No invented approval/provider or production acceptance.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave202-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 82.48,
+        "actual_registered_wave_minutes": 85.49,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W202-01",
+            "source": "eece6f1e2627953ebfe5b22b95ca910ffc8d105d",
+            "remote_target": "e8483126fde37b7420cc80bf9f491e4056b315ed",
+            "branch": "codex/w202-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/625"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W202-HANDOFF",
+            "source": "97963d6df0665edc84df15414fd22ff68256ee37",
+            "remote_target": "2cb928002f28b10f20a0325cc21663a0e3f337e8",
+            "branch": "codex/w202-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/178"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -222615,7 +222803,7 @@
           "id": "D3",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W202-01",
+          "current_window": "W203-01",
           "prerequisite_adjustment": "Issue460 WorkCenter and ProcessCostRate actual current Owner; full process/cost/Finance adoption remains separate.",
           "adopted_window": "W49-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/402",
@@ -222624,7 +222812,7 @@
           "last_window_actual_agent_minutes": 56.28,
           "last_branches_deleted": true,
           "last_seats_released": true,
-          "next_action": "Continue concrete native physical resource/tool/routing qualification and actual downstream receipt/REL/VER prerequisites toward WO/SCHED; retain original D2/D5/D6/D7 exits and remaining full WP05/12 scope. No invented approval/provider or production acceptance.",
+          "next_action": "Continue real independent resource qualification/evidence and controlled applicability/assignment prerequisites, actual tool qualification and REL/VER toward WO/SCHED. Revisit D2 native ProductOption/technical identity/ownership/purpose and Stock adoption using the now available UOM/baseline providers. Preserve every original seven-day exit; never convert declared capability into physical or production approval.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W136-01/DELIVERY.md",
           "last_product_source_report": "docs/development/evidence/W144-01/DELIVERY.md",
@@ -222684,7 +222872,8 @@
           "last_iteration_review_submission_report": "docs/development/evidence/W199-01/DELIVERY.md",
           "last_iteration_review_application_report": "docs/development/evidence/W200-01/DELIVERY.md",
           "last_output_relations_report": "docs/development/evidence/W201-01/DELIVERY.md",
-          "last_engineering_baseline_report": "docs/development/evidence/W202-01/DELIVERY.md"
+          "last_engineering_baseline_report": "docs/development/evidence/W202-01/DELIVERY.md",
+          "last_resource_capability_report": "docs/development/evidence/W203-01/DELIVERY.md"
         },
         {
           "id": "D4",
