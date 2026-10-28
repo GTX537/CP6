@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-28：W208 库位隔离草稿待Main收尾
+
+原生库位隔离草稿、实际旧读取/写入屏障、当前父身份/层级/权限、原键恢复与独立页面已验证。61 distinct PG18/Program HTTP; 36 distinct Vue;types/build PASS;0skip。[报告](../development/evidence/W208-01/DELIVERY.md)。登记20.73分钟，预计60–100；Handoff已释放，Main待正常PR/finish。旧仓库Site/条码来源、typed规则/激活、完整MASTER/Transfer/Stock及七天出口保留。
+
 ## 2026-10-28：W207 库位层级策略待Main收尾
 
 显式库位层级策略、实际原生树兼容/结构版本、稳定父ID预检、当前权限与原键恢复及独立页面已验证。45 distinct PG18/Program HTTP; 58 distinct Vue;types/build PASS;0skip。[报告](../development/evidence/W207-01/DELIVERY.md)。登记15.75分钟，预计90–150；Handoff已释放，Main待正常PR/finish。正式Location初始化隔离/创建与完整MASTER/Transfer/Stock及七天出口保留。

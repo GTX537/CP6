@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W207 库位层级策略](dispatch/20261028-wave207/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
+> 当前：[W208 库位隔离草稿](dispatch/20261028-wave208/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
+
+> 历史快照：[W207 库位层级策略](dispatch/20261028-wave207/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
 
 > 历史快照：[W206 仓库草稿](dispatch/20261028-wave206/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
 

@@ -62,6 +62,9 @@ public class Location : BaseBizEntity, IAuditable
     /// <summary>凍結中（入出庫禁止）</summary>
     public bool IsBlocked { get; set; } = false;
 
+    /// <summary>PostgreSQL initialization quarantine. Never grants operational eligibility.</summary>
+    public bool IsInitializationQuarantined { get; set; }
+
     /// <summary>バーコード（CODE128/QR）</summary>
     [MaxLength(50)] public string? Barcode { get; set; }
 }

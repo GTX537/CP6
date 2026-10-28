@@ -56,7 +56,7 @@ internal sealed class LocationHierarchyStoreV1(CP6Context db)
     {
         // Resolve all native parent codes using the real PostgreSQL comparison in one query.
         // Full graph compatibility discloses no hidden node identities or counts.
-        var locations=db.Locations.AsNoTracking().Where(x=>!x.IsDeleted&&x.WarehouseCd==warehouse.WarehouseCd);
+        var locations=db.Locations.IgnoreQueryFilters().AsNoTracking().Where(x=>x.TenantId==db.CurrentTenantId&&!x.IsDeleted&&x.WarehouseCd==warehouse.WarehouseCd);
         var rows=await (from l in locations join parent in locations on l.ParentLocationCd equals parent.LocationCd into parents
             from p in parents.DefaultIfEmpty()
             select new{l.Id,l.LocationLevel,HasParent=l.ParentLocationCd!=null,ParentId=(Guid?)p.Id,ParentLevel=(int?)p.LocationLevel}).ToArrayAsync(ct);

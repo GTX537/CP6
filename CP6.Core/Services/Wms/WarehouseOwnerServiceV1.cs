@@ -124,7 +124,7 @@ public sealed class WarehouseOwnerServiceV1(CP6Context db,OperationsOwnerV1 owne
                 if(!MainOwnerOperationJournalV1.Matches(original,input))throw Error("ORIGINAL_OPERATION_INPUT_CONFLICT",409);
                 return disclosed.Result!;
             }
-            var row=await a.RequireMaster(kind,id,t);a.RequireMasterNameWrite(kind);CheckEtag(expected,row);
+            var row=await a.RequireMasterNameTarget(kind,id,t);a.RequireMasterNameWrite(kind);CheckEtag(expected,row);
             var before=row is Warehouse w?w.WarehouseName:((Location)row).LocationName;
             var after=change.Op=="KEEP"?before:change.Value;
             var changed=!string.Equals(before,after,StringComparison.Ordinal);
@@ -138,14 +138,14 @@ public sealed class WarehouseOwnerServiceV1(CP6Context db,OperationsOwnerV1 owne
             var result=new MasterNameResultV1(operation,kind,id,changed?"CHANGED":"NO_CHANGE",OperationsAccessV1.MasterEtag(row));
             await journal.Store(JournalOwner(kind),Contract,operation,a.ActorId,input,result,[id],
                 new {action="name",kind,id,actor=a.ActorId,before,after,effect=result.Effect},t);
-            a.AtCommit(async token=>{await a.RequireMaster(kind,id,token);});return result;
+            a.AtCommit(async token=>{await a.RequireMasterNameTarget(kind,id,token);});return result;
         },ct,actionAtFence:async t=>{original=await journal.Read(JournalOwner(kind),operation,t);return original==null?"edit":"query";});
     }
     private async Task<MasterOperationV1> Disclose(OperationsAccessV1 a,MainOwnerOperationJournalV1.Original original,string kind,Guid id,Guid operation,CancellationToken ct)
     {
         if(original.Actor!=a.ActorId||original.Contract!=Contract)throw Error("ORIGINAL_OPERATION_FORBIDDEN",403);
         if(!original.Objects.SequenceEqual(new[]{id}))throw Error("ORIGINAL_OPERATION_INPUT_CONFLICT",409);
-        await a.RequireMaster(kind,id,ct);a.AtCommit(async t=>{await a.RequireMaster(kind,id,t);});
+        await a.RequireMasterNameTarget(kind,id,ct);a.AtCommit(async t=>{await a.RequireMasterNameTarget(kind,id,t);});
         if(original.State=="CLOSED")return new(operation,kind,id,"CLOSED");
         var result=JsonSerializer.Deserialize<MasterNameResultV1>(original.Result);
         if(original.State!="COMMITTED"||result==null||result.OperationId!=operation||result.ObjectId!=id||result.Kind!=kind
@@ -162,7 +162,7 @@ public sealed class WarehouseOwnerServiceV1(CP6Context db,OperationsOwnerV1 owne
         return Owner.ExecuteAsync(resource,close?"abandon":"query",close,async(a,t)=>
         {
             if(original!=null)return await Disclose(a,original,kind,id,operation,t);
-            await a.RequireMaster(kind,id,t);a.AtCommit(async token=>{await a.RequireMaster(kind,id,token);});
+            await a.RequireMasterNameTarget(kind,id,t);a.AtCommit(async token=>{await a.RequireMasterNameTarget(kind,id,token);});
             if(!close)return new MasterOperationV1(operation,kind,id,"UNKNOWN");
             var result=new MasterOperationV1(operation,kind,id,"CLOSED");
             await journal.Store(JournalOwner(kind),Contract,operation,a.ActorId,null,result,[id],new {action="abandon-uncommitted-name",kind,id,actor=a.ActorId},t);

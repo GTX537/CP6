@@ -11,7 +11,7 @@ internal sealed partial class OperationsAccessV1
 {
     internal IQueryable<Warehouse> MasterWarehouses()
     {
-        var rows=db.Warehouses.AsNoTracking().Where(x=>!x.IsDeleted);
+        var rows=db.Warehouses.AsNoTracking().Where(x=>x.TenantId==db.CurrentTenantId && !x.IsDeleted);
         if(authority.Scope==1)rows=rows.Where(x=>x.Creator==Actor);
         else if(authority.Scope!=5)
         {
@@ -19,17 +19,20 @@ internal sealed partial class OperationsAccessV1
         }
         if(!authority.Actor.RoleIds.Contains(1))
         {
-            var grants=db.WmsRoleScopes.Where(g=>authority.Actor.RoleIds.Contains(g.RoleId));
+            var grants=db.WmsRoleScopes.Where(g=>g.TenantId==db.CurrentTenantId && authority.Actor.RoleIds.Contains(g.RoleId));
             // Warehouse identity metadata does not assert visibility of every child area or stock.
             rows=rows.Where(x=>grants.Any(g=>g.WarehouseCd=="*"||g.WarehouseCd==x.WarehouseCd));
         }
         return rows;
     }
-    internal async Task<IQueryable<Location>> MasterLocations(CancellationToken ct)
+    internal async Task<IQueryable<Location>> MasterLocations(CancellationToken ct,bool includeInitialization=false)
     {
         var source=await SourceAsync(OperationsOwnerV1.Warehouse,ct);
         var warehouses=source.MasterWarehouses();
-        var rows=db.Locations.AsNoTracking().Where(x=>!x.IsDeleted && warehouses.Any(w=>w.WarehouseCd==x.WarehouseCd));
+        // IgnoreQueryFilters propagates into subqueries: tenant predicates on warehouses,
+        // WMS grants and department mappings are deliberately explicit as well.
+        var native=includeInitialization?db.Locations.IgnoreQueryFilters():db.Locations;
+        var rows=native.AsNoTracking().Where(x=>x.TenantId==db.CurrentTenantId && !x.IsDeleted && warehouses.Any(w=>w.WarehouseCd==x.WarehouseCd));
         if(authority.Scope==1)rows=rows.Where(x=>x.Creator==Actor);
         else if(authority.Scope!=5)
         {
@@ -37,7 +40,7 @@ internal sealed partial class OperationsAccessV1
         }
         if(!authority.Actor.RoleIds.Contains(1))
         {
-            var grants=db.WmsRoleScopes.Where(g=>authority.Actor.RoleIds.Contains(g.RoleId));
+            var grants=db.WmsRoleScopes.Where(g=>g.TenantId==db.CurrentTenantId && authority.Actor.RoleIds.Contains(g.RoleId));
             rows=rows.Where(x=>grants.Any(g=>(g.WarehouseCd=="*"||g.WarehouseCd==x.WarehouseCd)
                 &&(g.AreaCd==null||g.AreaCd==""||g.AreaCd=="*"||g.AreaCd==x.AreaCd)));
         }
@@ -48,6 +51,21 @@ internal sealed partial class OperationsAccessV1
             ??throw new OrderPriceCorrectionException("MASTER_NOT_FOUND",404)
             :await (await MasterLocations(ct)).SingleOrDefaultAsync(x=>x.Id==id,ct)
                 ??throw new OrderPriceCorrectionException("MASTER_NOT_FOUND",404);
+    internal async Task<Location> RequireLocationDraft(Guid id,CancellationToken ct)
+        =>await (await MasterLocations(ct,true)).SingleOrDefaultAsync(x=>x.Id==id&&x.IsInitializationQuarantined,ct)
+            ??throw new OrderPriceCorrectionException("LOCATION_DRAFT_NOT_FOUND",404);
+    internal async Task<BaseBizEntity> RequireMasterNameTarget(string kind,Guid id,CancellationToken ct)
+        =>kind=="warehouses"?await RequireMaster(kind,id,ct)
+            :await (await MasterLocations(ct,true)).SingleOrDefaultAsync(x=>x.Id==id,ct)
+                ??throw new OrderPriceCorrectionException("MASTER_NOT_FOUND",404);
+    internal void RequireLocationDraftFields(LocationDraftCommandV1 c,Warehouse warehouse)
+    {
+        RequireWarehouseHierarchyControl(warehouse);
+        foreach(var field in new[]{c.LocationName!=null?"LocationName":null,c.Barcode!=null?"Barcode":null}.OfType<string>())
+            if(!authority.Fields.Fields[field].CanWrite)throw new OrderPriceCorrectionException("FIELD_WRITE_FORBIDDEN",403);
+    }
+    internal bool LocationNameReadable=>MasterRead("LocationName");
+    internal bool LocationNameWritable=>authority.Fields.Fields["LocationName"].CanWrite;
     internal void RequireWarehouseCreateFields(WarehouseDraftCommandV1 c)
     {
         foreach (var field in new[] { "WarehouseName", c.Address != null ? "AddressText" : null,
