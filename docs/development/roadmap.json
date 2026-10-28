@@ -161122,6 +161122,16 @@
       "date": "2026-10-28",
       "change": "W196 exact requirement-set native FLOW and Owner approval: 36 distinct PG18/actual Program HTTP/C02/TLS;70 Vue;types/build PASS;0skip; Handoff released, Main closeout pending. Remaining full WP05-14 and original goal exits remain.",
       "evidence": "docs/development/evidence/W196-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-28",
+      "change": "W196 archived once; only WP05-14.wave196_requirement_set_approval lifecycle closed. W197 engineering project, exact iteration inputs and task confirmation admitted120–210min; original seven-day exits remain pending.",
+      "evidence": "docs/development/dispatch/20261028-wave197/README.md"
+    },
+    {
+      "date": "2026-10-28",
+      "change": "W197 native project/iteration/task foundation: 15 distinct PG18/actual Program HTTP;44 Vue;types/build PASS;0skip; Handoff released, Main closeout pending. Full WP05-18 and original goal exits remain.",
+      "evidence": "docs/development/evidence/W197-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -181434,7 +181444,7 @@
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "wave196_requirement_set_approval": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "workspace_task": "W196-01",
         "report": "docs/development/evidence/W196-01/DELIVERY.md",
         "scope": "Exact requirement-set versions and original necessity/criteria; qualified member approval references; independent professional native FLOW review, explicit Owner application and immutable receipts; original recovery, independent API/UI/department binding.",
@@ -181450,13 +181460,24 @@
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "original_dependencies_unchanged": true,
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "lifecycle_snapshot": {
-          "main_finish_required": true,
-          "main_seat_released": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
           "handoff_seat_released": true,
-          "main_branch_deleted": false,
-          "handoff_branch_deleted": true
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave196-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W196-01",
+          "source": "604e0a1145e2b598179536d3417b54887cc10841",
+          "remote_target": "b5dae7f543f0bc73b8ceed0a47e48aa55180731a",
+          "branch": "codex/w196-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/619"
         }
       }
     },
@@ -181694,7 +181715,33 @@
         "WP02：按S02-00采用的PostgreSQL租户存储/迁移与可信上下文；当前动作/读取授权和共同最终授权fence；Main Owner事务、原键结果及审计能力。",
         "WP02：可信编号/角色/代理及审计；改型路径需WP05-26的真实批准ECO，非改型路径不等待。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "wave197_iteration_foundation": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "workspace_task": "W197-01",
+        "report": "docs/development/evidence/W197-01/DELIVERY.md",
+        "scope": "Native project membership/site/milestones/numbering, immutable engineering iteration and exact approved requirement-set adoption, separate input/plan versions, hold/resume, precise weighted tasks and independent deliverable confirmation/return, current permissions and original recovery, independent API/UI and IAM binding.",
+        "remaining": "Local isolated PG18 and actual Program HTTP, native file Owner with controlled test file store, Vue/types/build only. Full WP05-18 external ECO/parent/legacy/admission adapters and approved exemptions remain unavailable; WP05-19/20/21 candidate/OA/receipt/closure, ENG freeze/REL and real WO/SCHED remain. Full requirement-set withdrawal/impact propagation and original D2/D3/D5/D6/D7 exits remain. No enterprise acceptance, Actions, existing-environment migration or deployment.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "92a518c5bc2186968ec2c90a26ca593679f826fa",
+          "main": "c9dc97c8ac27ccaf14355546fc1c97255fd7f181",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/173",
+          "exact_tree_adoption": true,
+          "at": "2026-10-28T10:32:51.564605+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "handoff_seat_released": true,
+          "main_branch_deleted": false,
+          "handoff_branch_deleted": true
+        }
+      }
     },
     {
       "id": "WP05-19",
@@ -195501,10 +195548,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261028-wave196",
-      "path": "docs/development/dispatch/20261028-wave196/README.md",
-      "baseline_sha": "63d60c0a4d30f31cc9a25f17890db51e802ea548",
-      "registered_at": "2026-10-28T08:36:49.160213+00:00",
+      "id": "20261028-wave197",
+      "path": "docs/development/dispatch/20261028-wave197/README.md",
+      "baseline_sha": "b5dae7f543f0bc73b8ceed0a47e48aa55180731a",
+      "registered_at": "2026-10-28T09:45:47.216938+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -195523,29 +195570,28 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W196-01",
-          "workspace_task": "W196-01",
+          "id": "W197-01",
+          "workspace_task": "W197-01",
           "related_tasks": [
-            "WP05-14",
             "WP05-18"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Exact requirement-set native FLOW review and Owner application",
+          "title": "Engineering project, exact iteration inputs and task confirmation",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "799b4536a7b0289d2e87f614eba8938c1e31196b",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261028T083649Z-wave196-start/MESSAGE.md",
-            "at": "2026-10-28T08:36:49.160213+00:00",
-            "branch": "codex/w196-handoff"
+            "commit": "0112b3a153fd7fc915480409e764bd652d286048",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261028T094547Z-wave197-start/MESSAGE.md",
+            "at": "2026-10-28T09:45:47.216938+00:00",
+            "branch": "codex/w197-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w196-01",
-          "planned_scope_ref": "docs/development/dispatch/20261028-wave196/README.md",
+          "branch": "codex/w197-01",
+          "planned_scope_ref": "docs/development/dispatch/20261028-wave197/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -195553,8 +195599,8 @@
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
-          "validation": "36 distinct PG18/actual Program HTTP/C02/TLS;70 Vue;types/build PASS;0skip",
-          "worker_delivery_ref": "docs/development/evidence/W196-01/DELIVERY.md",
+          "validation": "15 distinct PG18/actual Program HTTP;44 Vue;types/build PASS;0skip",
+          "worker_delivery_ref": "docs/development/evidence/W197-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -195565,11 +195611,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-28T08:35:16.829410+00:00",
+        "started_at": "2026-10-28T09:39:16.343124+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          240,
-          360
+          120,
+          210
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -195577,7 +195623,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Continue ITER/OA then engineering freeze and actual WO/SCHED with exact approved-set source; retain remaining authoritative WP05-14 decisions/adoption/impact, D2 Transfer/REP/RMA, D5 real host/transport, D6 policy/calendar/registration and D7 exits.",
+      "next_action": "Continue exact candidate baseline and native OA review/Owner receipt adoption (WP05-19/20), then engineering freeze and actual WO/SCHED; preserve remaining full WP05-18/14 external authority gaps, D2 Transfer/REP/RMA, D5 real host/transport, D6 policy/calendar/registration and D7 exits.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -195585,7 +195631,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 56.1
+      "elapsed_registered_wave_minutes": 55.25
     },
     "wave_history": [
       {
@@ -221485,6 +221531,116 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/171"
           }
         ]
+      },
+      {
+        "id": "20261028-wave196",
+        "path": "docs/development/dispatch/20261028-wave196/README.md",
+        "baseline_sha": "63d60c0a4d30f31cc9a25f17890db51e802ea548",
+        "registered_at": "2026-10-28T08:36:49.160213+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W196-01",
+            "workspace_task": "W196-01",
+            "related_tasks": [
+              "WP05-14",
+              "WP05-18"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Exact requirement-set native FLOW review and Owner application",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "799b4536a7b0289d2e87f614eba8938c1e31196b",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261028T083649Z-wave196-start/MESSAGE.md",
+              "at": "2026-10-28T08:36:49.160213+00:00",
+              "branch": "codex/w196-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w196-01",
+            "planned_scope_ref": "docs/development/dispatch/20261028-wave196/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "validation": "36 distinct PG18/actual Program HTTP/C02/TLS;70 Vue;types/build PASS;0skip",
+            "worker_delivery_ref": "docs/development/evidence/W196-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave196-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-28T08:35:16.829410+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            240,
+            360
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Continue ITER/OA then engineering freeze and actual WO/SCHED with exact approved-set source; retain remaining authoritative WP05-14 decisions/adoption/impact, D2 Transfer/REP/RMA, D5 real host/transport, D6 policy/calendar/registration and D7 exits.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave196-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 56.1,
+        "actual_registered_wave_minutes": 59.86,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W196-01",
+            "source": "604e0a1145e2b598179536d3417b54887cc10841",
+            "remote_target": "b5dae7f543f0bc73b8ceed0a47e48aa55180731a",
+            "branch": "codex/w196-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/619"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W196-HANDOFF",
+            "source": "0b1c86a4b2af1330134662d2ff331434062d9915",
+            "remote_target": "3ca67c8a4ccd18548e6ff02e66f507200e2d96bf",
+            "branch": "codex/w196-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/172"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -221584,7 +221740,7 @@
           "id": "D3",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W196-01",
+          "current_window": "W197-01",
           "prerequisite_adjustment": "Issue460 WorkCenter and ProcessCostRate actual current Owner; full process/cost/Finance adoption remains separate.",
           "adopted_window": "W49-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/402",
@@ -221593,7 +221749,7 @@
           "last_window_actual_agent_minutes": 56.28,
           "last_branches_deleted": true,
           "last_seats_released": true,
-          "next_action": "Continue ITER/OA then engineering freeze and actual WO/SCHED with exact approved-set source; retain remaining authoritative WP05-14 decisions/adoption/impact, D2 Transfer/REP/RMA, D5 real host/transport, D6 policy/calendar/registration and D7 exits.",
+          "next_action": "Continue exact candidate baseline and native OA review/Owner receipt adoption (WP05-19/20), then engineering freeze and actual WO/SCHED; preserve remaining full WP05-18/14 external authority gaps, D2 Transfer/REP/RMA, D5 real host/transport, D6 policy/calendar/registration and D7 exits.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W136-01/DELIVERY.md",
           "last_product_source_report": "docs/development/evidence/W144-01/DELIVERY.md",
@@ -221647,7 +221803,8 @@
           "last_source_check_report": "docs/development/evidence/W193-01/DELIVERY.md",
           "last_requirement_definition_report": "docs/development/evidence/W194-01/DELIVERY.md",
           "last_requirement_evaluation_report": "docs/development/evidence/W195-01/DELIVERY.md",
-          "last_requirement_set_approval_report": "docs/development/evidence/W196-01/DELIVERY.md"
+          "last_requirement_set_approval_report": "docs/development/evidence/W196-01/DELIVERY.md",
+          "last_iteration_foundation_report": "docs/development/evidence/W197-01/DELIVERY.md"
         },
         {
           "id": "D4",

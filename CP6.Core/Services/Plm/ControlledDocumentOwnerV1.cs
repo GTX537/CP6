@@ -10,6 +10,7 @@ public sealed partial class ControlledDocumentOwnerV1(CP6Context db, OperationsO
     CP6.Core.Services.Sys.ScopeAuthorizationFenceV1 reviewScope)
 {
     private const string Contract = "Main.Plm.ControlledDocument.commands.v1";
+    internal bool Owns(CP6Context context)=>ReferenceEquals(db,context);
     private OperationsOwnerV1 Authority => owner.Owns(db) ? owner : throw Error("AUTHORITY_FENCE_UNAVAILABLE", 503);
     public Task<EngineeringProductScopeV1> ScopeAsync(CancellationToken ct = default) => Authority.ExecuteAsync(
         OperationsOwnerV1.ControlledDocument, "query", false,

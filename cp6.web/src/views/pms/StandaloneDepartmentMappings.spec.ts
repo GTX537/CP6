@@ -19,7 +19,7 @@ beforeEach(() => {
 })
 afterEach(() => { view?.unmount(); view = undefined })
 describe('explicit standalone department binding', () => {
-  it.each(['business-partner', 'tool-instance', 'kit-master', 'kit-order', 'warehouse', 'location', 'routing-rule', 'product-master', 'uom-profile', 'currency-policy', 'plm-engineering-product', 'plm-engineering-requirement', 'plm-engineering-revision', 'plm-configuration-rule', 'plm-requirement-set'])('binds the searched %s UUID without inferring the other object identity', async kind => {
+  it.each(['business-partner', 'tool-instance', 'kit-master', 'kit-order', 'warehouse', 'location', 'routing-rule', 'product-master', 'uom-profile', 'currency-policy', 'plm-engineering-product', 'plm-engineering-requirement', 'plm-engineering-revision', 'plm-configuration-rule', 'plm-requirement-set', 'plm-engineering-iteration'])('binds the searched %s UUID without inferring the other object identity', async kind => {
     const vm = await render(); await vm.open(); await view!.get('[aria-label="对象类型"]').setValue(kind)
     api.standaloneObjects.mockResolvedValue([{ id: kind + '-uuid', name: 'KIT-EXISTING' }]); vm.search = 'KIT'; await vm.findObjects()
     expect(api.standaloneObjects).toHaveBeenCalledWith(kind, 'KIT'); vm.draft.objectId = kind + '-uuid'; vm.draft.departmentId = dept; vm.draft.reason = 'Verified existing kit identity'

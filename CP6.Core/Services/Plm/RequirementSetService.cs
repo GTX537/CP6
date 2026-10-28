@@ -9,6 +9,7 @@ namespace CP6.Core.Services.Plm;
 public sealed partial class RequirementSetService(CP6Context db,OperationsOwnerV1 owner,RequirementEvaluationService evaluations,CP6.Core.Services.Sys.ScopeAuthorizationFenceV1 scope)
 {
     internal string EvidenceMode=>evaluations.EvidenceMode;
+    internal bool Owns(CP6Context context)=>ReferenceEquals(db,context);
     private OperationsOwnerV1 Authority=>owner.Owns(db)?owner:throw Error("AUTHORITY_FENCE_UNAVAILABLE",503);
     public Task<RequirementSetScopeV1> ScopeAsync(CancellationToken ct=default)=>Authority.ExecuteAsync(OperationsOwnerV1.RequirementSet,"query",false,
         async(a,t)=>{await scope.Root(t);if(evaluations.EvidenceMode is not("REAL" or "DEMO"))throw Error("REQUIREMENT_SET_ENVIRONMENT_UNAVAILABLE",503);return new RequirementSetScopeV1(scope.EnvironmentId,db.CurrentTenantId,a.ActorId,evaluations.EvidenceMode);},ct,readOnlyAuthorityFence:true);
