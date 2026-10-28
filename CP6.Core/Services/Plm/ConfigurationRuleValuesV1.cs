@@ -19,9 +19,12 @@ internal static class ConfigurationRuleValuesV1
     internal static void Options(EngineeringOptionV1[] values) => Configuration(new(values, "UNKNOWN", ""));
     internal static void Validate(ConfigurationRuleBodyV1? body)
     {
-        if (body == null || body.Scope != Scope || body.Definitions == null || body.Constraints == null
-            || body.Definitions.Length is < 1 or > 256 || body.Constraints.Length > 512) throw Error("CONFIGURATION_RULE_INVALID", 400);
+        if (body == null || body.Scope is not (Scope or EngineeringSourceCheckValuesV1.PolicyScope) || body.Definitions == null || body.Constraints == null
+            || (body.Definitions.Length > 256 || body.Definitions.Length == 0 && body.Scope == Scope) || body.Constraints.Length > 512) throw Error("CONFIGURATION_RULE_INVALID", 400);
         Text(body.Name, 256); Reference(body.ProductRef);
+        if (body.Scope == Scope && body.EngineeringChecks != null || body.Scope == EngineeringSourceCheckValuesV1.PolicyScope && body.EngineeringChecks == null)
+            throw Error("ENGINEERING_CHECK_POLICY_SCOPE_INVALID", 400);
+        if (body.EngineeringChecks != null) EngineeringSourceCheckValuesV1.Policy(body.EngineeringChecks);
         var definitions = new Dictionary<string, ConfigurationOptionDefinitionV1>(StringComparer.Ordinal);
         foreach (var d in body.Definitions)
         {
@@ -67,7 +70,7 @@ internal static class ConfigurationRuleValuesV1
             else if (c.Kind == "REQUIRES" && !Same(consequence!, c.Then) || c.Kind == "MUTEX" && exists && Same(consequence!, c.Then))
             { conflict = true; findings.Add(new("OPTION_CONSTRAINT_CONFLICT", c.Then.Name, c.Id)); }
         }
-        return new(Scope, rule.Reference, EngineeringProductStoreV1.Digest(EngineeringProductStoreV1.Encode(options)),
+        return new(rule.Body.Scope, rule.Reference, EngineeringProductStoreV1.Digest(EngineeringProductStoreV1.Encode(options)),
             conflict ? "CONFLICT" : unknown ? "UNKNOWN" : invalid ? "NO_MATCH" : "OPTIONS_VALIDATED", findings.ToArray(), DateTimeOffset.UtcNow);
     }
 }

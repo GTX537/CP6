@@ -6,7 +6,8 @@ public sealed record ConfigurationOptionDefinitionV1(string Name, string Type, b
 public sealed record ConfigurationConstraintV1(string Id, string Kind, EngineeringOptionV1 When, EngineeringOptionV1 Then, string Reason);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record ConfigurationRuleBodyV1(string Scope, string Name, EngineeringProductRefV1 ProductRef,
-    ConfigurationOptionDefinitionV1[] Definitions, ConfigurationConstraintV1[] Constraints);
+    ConfigurationOptionDefinitionV1[] Definitions, ConfigurationConstraintV1[] Constraints,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] EngineeringCheckPolicyV1? EngineeringChecks = null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record ConfigurationRuleCommandV1
 {

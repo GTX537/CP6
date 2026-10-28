@@ -22,7 +22,7 @@ const product: EngineeringVersion = { tenantId: scope.tenantId, reference: { own
 const productKey = `${product.reference.owner}:${product.reference.id}:${product.reference.version}:${product.reference.digest}`
 const ok = <T>(data: T) => ({ code: 0, data })
 let view: VueWrapper | undefined, persisted: RevisionSnapshot
-async function render() { view = mount(View); await flushPromises() }
+async function render() { view = mount(View, { global: { stubs: { EngineeringSourceCheckView: true } } }); await flushPromises() }
 const button = (text: string) => view!.findAll('button').find(value => value.text() === text)!
 const field = (label: string) => view!.get(`[aria-label="${label}"]`)
 async function click(text: string) { await button(text).trigger('click'); await flushPromises() }

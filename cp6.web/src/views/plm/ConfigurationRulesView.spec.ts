@@ -34,6 +34,22 @@ beforeEach(() => {
   Object.defineProperty(navigator, 'locks', { configurable: true, value: { request: (_key: string, _options: unknown, action: (lock: object) => unknown) => action({}) } })
 })
 afterEach(() => { view?.unmount(); view = undefined })
+it('requires explicit applicability policy input and saves it as a new approval scope without upgrading old rules', async () => {
+  await opened(); expect((field('包含工程完整性政策').element as HTMLInputElement).checked).toBe(false)
+  await field('包含工程完整性政策').setValue(true)
+  expect((field('政策制造方式').element as HTMLSelectElement).value).toBe('')
+  expect((field('EBOM 政策适用性').element as HTMLSelectElement).value).toBe('')
+  await field('政策产品类别').setValue('PART'); await field('政策制造方式').setValue('PURCHASED_FINISHED'); await field('政策配置适用性').setValue('APPLIES')
+  await field('工程政策依据').setValue('Explicit purchased finished product policy')
+  for (const kind of ['EBOM', 'MBOM', 'ROUTING', 'DOCUMENT', 'QUALITY_SPEC']) {
+    const required = ['DOCUMENT', 'QUALITY_SPEC'].includes(kind)
+    await field(`${kind} 政策适用性`).setValue(required ? 'APPLIES' : 'NOT_APPLICABLE')
+    await field(`${kind} 最少位置数`).setValue(required ? '1' : '0'); await field(`${kind} 政策依据`).setValue('Exact category basis')
+  }
+  await click('提交审核'); expect(api.save).not.toHaveBeenCalled(); expect(view!.text()).toContain('请先保存草稿')
+  await submit('规则名称'); expect(api.save.mock.calls[0]![0].body).toMatchObject({ scope: 'ENGINEERING_OPTIONS_AND_CHECKS_V1', engineeringChecks: { productCategory: 'PART', manufacturing: 'PURCHASED_FINISHED' } })
+  expect(api.save.mock.calls[0]![0].body.engineeringChecks.composition).toHaveLength(5)
+})
 it('creates a rule with explicit source, department and exact allowed decimal values', async () => {
   await render(); await click('新建规则'); await field('规则名称').setValue('New options'); await field('操作原因').setValue('New rule'); await field('规则所属部门').setValue(department)
   await submit('工程产品搜索'); expect((field('规则工程来源').element as HTMLSelectElement).value).toBe('')
