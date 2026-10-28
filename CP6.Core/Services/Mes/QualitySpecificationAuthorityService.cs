@@ -17,6 +17,7 @@ namespace CP6.Core.Services.Mes;
 public sealed partial class QualitySpecificationAuthorityService(CP6Context db, OperationsOwnerV1 owner,
     ScopeAuthorizationFenceV1 scope, QualitySpecificationRuntimeV1 runtime, ControlledDocumentOwnerV1 documents)
 {
+    internal bool Owns(CP6Context context)=>ReferenceEquals(db,context) && owner.Owns(db) && documents.Owns(db);
     private OperationsOwnerV1 Authority => owner.Owns(db) ? owner : throw Error("AUTHORITY_FENCE_UNAVAILABLE",503);
     private Guid Environment => scope.EnvironmentId;
     private async Task<QualitySpecificationStoreV1> Store(OperationsAccessV1 access, bool write, CancellationToken ct)

@@ -47,6 +47,7 @@
         <details v-if="work"><summary>查看已采用的原始需求集</summary><pre>{{ work.input.requirementSetOriginal }}</pre></details>
       </section>
       <section v-if="work"><h3>迭代执行</h3><p>{{ label(work.stage) }} · {{ label(work.holdState) }} · 工作进度 {{ current?.progress?.percent === null ? '暂无计划任务' : `${current?.progress?.percent}%` }}</p>
+        <a :href="`/plm/engineering-iteration/${encodeURIComponent(current!.reference.id)}/candidates`">查看候选方案</a>
         <button v-if="can('start') && work.stage === 'PLANNED'" :disabled="locked || work.holdState === 'HELD'" @click="command('START')">启动迭代</button><button v-if="can('hold') && work.holdState === 'NORMAL'" :disabled="locked" @click="command('HOLD')">暂停迭代</button><button v-if="can('resume') && work.holdState === 'HELD'" :disabled="locked" @click="command('RESUME')">核对来源并恢复</button>
         <h3>计划任务</h3><button v-if="can('edit')" :disabled="locked || work.holdState === 'HELD'" @click="newTask">添加计划任务</button>
         <article v-for="task in work.tasks" :key="task.plan.id"><h4>{{ task.plan.title }}</h4><p>{{ label(task.state) }} · 权重 {{ task.plan.weight }} · 负责人 {{ memberName(task.plan.ownerId) }} · 确认者 {{ memberName(task.plan.confirmerId) }}</p><p>判据：{{ task.plan.acceptance }}</p><p v-if="task.confirmedAt">已由 {{ memberName(task.confirmedBy || '') }} 于 {{ task.confirmedAt }} 确认。</p>
