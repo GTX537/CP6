@@ -67,10 +67,14 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     [CurrentPermissionPostgresFact]
     public async Task InventoryIdentity_known_technical_uses_real_frozen_native_baseline_and_exact_original()
     {
+        // Bind the database through a real tenant registration before any source original exists.
+        // This tenant does not grant the consuming tenant any source or registration authority.
+        await using var bootstrap = await Seed(); await GrantTransfer(bootstrap); await TransferEnvironment(bootstrap).SaveAsync(RegisterTransfer());
         await using var h = await Seed(); await EnsureInventoryProductMenu(h); Harness? reviewer = null; InventoryProductV1? product = null;
         var f = await BaselineSetup(h, beforeCheck: async () =>
         {
             reviewer = await GrantInventoryIdentity(h, false);
+            await GrantTransfer(h, false); await TransferEnvironment(h).SaveAsync(RegisterTransfer());
             // The baseline includes a protected iteration review. Its independent identity approver must
             // be admitted by the real project Owner before the review freezes, not by bypassing that reader.
             var projects = Iterations(h); var project = Assert.Single(await projects.ListAsync("PROJECT"));
@@ -94,9 +98,12 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await o.CommandAsync(c); await InventoryIdentity(reviewer!, f.Review.Source.Files).CommandAsync(IdentityAction(await o.ReadAsync(c.Id), "APPROVE")); var v = await o.ReadAsync(c.Id);
         Assert.True(v.CanSelect); Assert.Equal(baseline.OriginalJson, Assert.Single(v.Original.Sources, x => x.Path == "technicalBaseline").OriginalJson);
         var option = (await o.CatalogueAsync(v.Reference)).Option; Assert.Equal(baseline.Reference, option.TechnicalIdentity.RevisionRef); Assert.Null(option.TechnicalIdentity.ApplicabilityRef);
+        var consumed = await TransferSources(h, f.Review.Source.Files).ReadAsync(v.Reference);
+        Assert.Equal(baseline.Reference, consumed.Product.TechnicalIdentity.RevisionRef); Assert.Equal(ScopeEnvironment, consumed.Environment.EnvironmentId);
         var projects = Iterations(h); var project = Assert.Single(await projects.ListAsync("PROJECT"));
         await projects.CommandAsync(IterationChange(project, "EDIT_PROJECT") with
         { Project = project.Body.Project!.Definition with { Members = project.Body.Project.Definition.Members.Where(x => x != reviewer!.User).ToArray() } });
         Assert.Equal(403, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => InventoryIdentity(reviewer!, f.Review.Source.Files).ReadAsync(c.Id))).Status);
+        Assert.Equal(403, (await Assert.ThrowsAsync<OrderPriceCorrectionException>(() => TransferSources(reviewer!, f.Review.Source.Files).ReadAsync(v.Reference))).Status);
     }
 }

@@ -8,6 +8,7 @@ import { requireReadableAuthentication } from '@/auth/browserAuthentication'
 // 路由路径 → 组件的映射表（所有可能的页面）
 const viewModules: Record<string, () => Promise<any>> = {
   '/wms/inventory-identity': () => import('@/views/wms/InventoryIdentitiesView.vue'),
+  '/wms/transfer-environment': () => import('@/views/wms/TransferEnvironmentView.vue'),
   '/mes/machine-capabilities': () => import('@/views/mes/ResourceCapabilitiesView.vue'),
   '/mes/work-center-capabilities': () => import('@/views/mes/ResourceCapabilitiesView.vue'),
   '/mes/machine-sources': () => import('@/views/mes/ResourceSourcesView.vue'),

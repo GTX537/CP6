@@ -28,6 +28,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
                 "erp-business-partner"=>[new("BpName","Name")],"quality-specification"=>[new("Metadata","规格资料"),new("Requirements","完整质量要求")],
                 "plm-controlled-document"=>[new("Content","文档内容"),new("Metadata","文档资料")],"file-content"=>[new("Content","文件内容"),new("FileName","文件名称")],_=>[]});
         }
+        foreach (var key in new[] { "wms-transfer-environment", "wms-transfer-source" }) { catalog.RegisterScope(key, key, [5], 5); catalog.RegisterFields(key, []); }
         catalog.Seal();return new(h.Db,new OperationsHttp{HttpContext=h.Http},actor??(_=>Task.FromResult(h.User)),catalog.Capture);
     }
     private static InventoryIdentityOwnerV1 InventoryIdentity(Harness h, ContentStore? files = null)
@@ -60,9 +61,9 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var owner = InventoryIdentity(maker); var c = await IdentityCreate(owner, d); await owner.CommandAsync(c);
         await InventoryIdentity(approver).CommandAsync(IdentityAction(await owner.ReadAsync(c.Id), "APPROVE")); return await owner.ReadAsync(c.Id);
     }
-    private async Task<(Harness Reviewer, InventoryIdentityDefinitionV1 Definition, UomProfileVersionV1 Unit)> InventoryProductSetup(Harness h, bool ratio = false)
+    private async Task<(Harness Reviewer, InventoryIdentityDefinitionV1 Definition, UomProfileVersionV1 Unit)> InventoryProductSetup(Harness h, bool ratio = false, bool registerScope = true)
     {
-        var reviewer = await GrantInventoryIdentity(h); await GrantMappingRead(h); await GrantUomProfile(h);
+        var reviewer = await GrantInventoryIdentity(h, registerScope); await GrantMappingRead(h); await GrantUomProfile(h);
         foreach (var (menu, action) in new[] { ("erp-product", "edit"), ("erp-product", "confirm-engineering"), ("plm-engineering-product", "confirm"),
             ("erp-product", "confirm-inventory"), ("plm-engineering-product", "confirm-inventory") }) await EngineeringAction(h, menu, action);
         var unit = await MakeUnit(Units(h));
