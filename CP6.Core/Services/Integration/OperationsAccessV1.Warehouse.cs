@@ -48,6 +48,15 @@ internal sealed partial class OperationsAccessV1
             ??throw new OrderPriceCorrectionException("MASTER_NOT_FOUND",404)
             :await (await MasterLocations(ct)).SingleOrDefaultAsync(x=>x.Id==id,ct)
                 ??throw new OrderPriceCorrectionException("MASTER_NOT_FOUND",404);
+    internal void RequireWarehouseCreateFields(WarehouseDraftCommandV1 c)
+    {
+        foreach (var field in new[] { "WarehouseName", c.Address != null ? "AddressText" : null,
+            c.ManagerCode != null ? "ManagerCd" : null, c.Remarks != null ? "Remarks" : null }.OfType<string>())
+            if (!authority.Fields.Fields[field].CanWrite) throw new OrderPriceCorrectionException("FIELD_WRITE_FORBIDDEN", 403);
+        if (!authority.Actor.RoleIds.Contains(1) && !db.WmsRoleScopes.Any(g => authority.Actor.RoleIds.Contains(g.RoleId)
+            && (g.WarehouseCd == "*" || g.WarehouseCd == c.WarehouseCode)))
+            throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN", 403);
+    }
     internal void RequireMasterNameWrite(string kind)
     {
         if(!authority.Fields.Fields[kind=="warehouses"?"WarehouseName":"LocationName"].CanWrite)

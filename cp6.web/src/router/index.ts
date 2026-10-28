@@ -7,6 +7,7 @@ import { requireReadableAuthentication } from '@/auth/browserAuthentication'
 
 // 路由路径 → 组件的映射表（所有可能的页面）
 const viewModules: Record<string, () => Promise<any>> = {
+  '/wms/warehouse-drafts': () => import('@/views/wms/WarehouseDraftView.vue'),
   '/wms/inventory-identity': () => import('@/views/wms/InventoryIdentitiesView.vue'),
   '/wms/transfer-environment': () => import('@/views/wms/TransferEnvironmentView.vue'),
   '/mes/machine-capabilities': () => import('@/views/mes/ResourceCapabilitiesView.vue'),
@@ -468,6 +469,7 @@ export function addDynamicRoutes(menus: any[]) {
       ...internalSubChildren(),
       { path: 'plm/engineering-iteration/:iterationId/candidates', name: 'plm/iteration-candidates', component: () => import('@/views/plm/IterationCandidatesView.vue'), props: true, meta: { permission: 'plm-engineering-iteration:query' } },
       { path: 'plm/controlled-document/:documentId', name: 'plm/document-review-detail', component: viewModules['/plm/controlled-document']!, props: route => ({ documentId: route.params.documentId, reviewSubmission: typeof route.query.submission === 'string' ? route.query.submission : undefined }), meta: { permission: 'plm-controlled-document:query' } },
+      { path: 'wms/warehouse-drafts', name: 'wms/warehouse-drafts', component: viewModules['/wms/warehouse-drafts']!, meta: { permission: 'wms-warehouse:query' } },
       { path: 'wms/plate-mold', name: 'wms/plate-mold', component: viewModules['/wms/plate-mold']!, meta: { permission: 'wms-plate-mold:query' } },
       { path: 'plm/tool-specifications', name: 'plm/tool-specifications', component: viewModules['/plm/tool-specifications']!, meta: { permission: 'plm-tool-specification:query' } },
       { path: 'erp/plate-mold-sources', name: 'erp/plate-mold-sources', component: viewModules['/erp/plate-mold-sources']!, meta: { permission: 'erp-plate-mold:query' } },

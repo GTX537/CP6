@@ -1544,3 +1544,7 @@ BOM独立Owner、多层稳定位置、准确材料/单位、实际ProductMateria
 ## 2026-10-28 W205 受信调拨环境与原生来源
 
 受信环境/模式/沙箱、数据库不可变归属、租户原生Owner注册和来源命名空间、同事务准确产品消费及独立管理页面已验证。14 PG18/Program HTTP; 43 Vue;types/build PASS;0skip。[报告](../evidence/W205-01/DELIVERY.md)。登记26.56分钟，预计100–170；Handoff已释放，Main待正常PR/finish。原件不回填，旧未知环境不能冒充生产；正式MASTER/T01/T02/T04/Stock及完整WP10-03/WP10-10与七天出口不关闭。 Continue D2 formal MASTER location/lifecycle and the remaining real Transfer context providers, then T04 Request/Draft budget and Stock/RSV common-transaction adoption. Reuse proven native product/environment sources; do not equate registration with field qualification or synthesize empty provider lists. Preserve D3/D5/D6/D7 original exits.
+
+## 2026-10-28 W206 仓库草稿与旧入口隔离
+
+仓库DRAFT创建、真实Site/类型、当前权限/部门绑定、原键恢复、代码锚与旧业务使用隔离及独立页面已验证。33 PG18/Program HTTP; 45 Vue;types/build PASS;0skip。[报告](../evidence/W206-01/DELIVERY.md)。登记21.64分钟，预计120–200；Handoff已释放，Main待正常PR/finish。据点/负责人关系、Location和生命周期与完整Transfer/Stock及七天出口继续保留。 Continue formal MASTER location initialization and trusted lifecycle/rule/Owner protections, plus genuine optional warehouse relationship providers; then complete Transfer context/T04 Request/Draft and Stock/RSV adoption. Preserve other original seven-day exits.
