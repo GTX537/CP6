@@ -2,7 +2,8 @@ import { beforeEach, afterEach, expect, it, vi } from 'vitest'
 import { mount, flushPromises, type VueWrapper } from '@vue/test-utils'
 import type { RevisionSnapshot } from '@/api/plm/engineeringRevisions'
 import type { CheckCommand, CheckView } from '@/api/plm/engineeringSourceCheck'
-const api = vi.hoisted(() => ({ scope: vi.fn(), save: vi.fn(), read: vi.fn(), history: vi.fn(), operation: vi.fn(), allowed: true, authenticated: true }))
+const api = vi.hoisted(() => ({ scope: vi.fn(), save: vi.fn(), read: vi.fn(), history: vi.fn(), operation: vi.fn(), relations: vi.fn(), allowed: true, authenticated: true }))
+vi.mock('@/api/plm/engineeringOutputRelations', () => ({ outputRelationsApi: { list: api.relations } }))
 vi.mock('@/api/plm/engineeringSourceCheck', () => ({ sourceCheckApi: api }))
 vi.mock('@/stores/permission', () => ({ usePermissionStore: () => ({ loaded: true, has: () => api.allowed }) }))
 vi.mock('@/auth/browserAuthentication', () => ({ authenticationCanRead: () => api.authenticated }))
@@ -38,6 +39,14 @@ it('checks the saved exact candidate and policy and preserves UNKNOWN without cl
   expect(api.save).toHaveBeenCalledOnce(); expect(api.save.mock.calls[0]![0]).toMatchObject({ revision: reference, candidate, policy, expectedEtag: revision.etag })
   expect(wrapper!.text()).toContain('原检查：未知'); expect(wrapper!.text()).toContain('尚未冻结，未取得用途许可')
   expect(pendingSourceCheck(scope)).toBeNull()
+})
+it('selects the exact independently qualified relation for this revision and passes its full reference', async () => {
+  const relation = { owner: 'Main.Plm.EngineeringOutputRelations.v1', id: crypto.randomUUID(), version: '9', digest: '8'.repeat(64) }
+  api.relations.mockResolvedValue(ok([{ version: { reference: relation, original: { revisionOrigin: reference, body: { name: 'Qualified complete outputs' } } }, control: { state: 'QUALIFIED' }, missing: [] }]))
+  await render(); await click('查找准确输出关系'); await wrapper!.get('[aria-label="准确输出关系"]').setValue('0'); await start()
+  expect(api.save.mock.calls[0]![0].outputRelations).toEqual(relation)
+  await wrapper!.setProps({ revision: { ...structuredClone(revision), reference: { ...reference, digest: '9'.repeat(64) } } }); await flushPromises(); await start()
+  expect(api.save.mock.calls[1]![0].outputRelations).toBeUndefined()
 })
 it('recovers the original key after a lost response without automatic resend or persisting private inputs', async () => {
   api.save.mockRejectedValue(new Error('network interrupted')); await render(); await start()

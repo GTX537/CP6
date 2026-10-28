@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W200 迭代评审处理与可信撤回](dispatch/20261028-wave200/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
+> 当前：[W201 原生完整输出关系](dispatch/20261028-wave201/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
+
+> 历史快照：[W200 迭代评审处理与可信撤回](dispatch/20261028-wave200/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
 
 > 历史快照：[W199 完整候选评审包与持久OA送审](dispatch/20261028-wave199/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
 

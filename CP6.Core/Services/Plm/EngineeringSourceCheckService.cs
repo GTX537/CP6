@@ -9,9 +9,10 @@ using static CP6.Core.Services.Plm.EngineeringSourceCheckValuesV1;
 namespace CP6.Core.Services.Plm;
 
 public sealed partial class EngineeringSourceCheckService(CP6Context db, OperationsOwnerV1 owner,
-    ControlledDocumentOwnerV1 documents, QualitySpecificationAuthorityService quality)
+    ControlledDocumentOwnerV1 documents, QualitySpecificationAuthorityService quality, EngineeringOutputRelationsOwnerV1? outputRelations = null)
 {
-    internal bool Owns(CP6Context context)=>ReferenceEquals(db,context) && owner.Owns(db) && documents.Owns(db) && quality.Owns(db);
+    internal bool Owns(CP6Context context)=>ReferenceEquals(db,context) && owner.Owns(db) && documents.Owns(db) && quality.Owns(db)
+        && (outputRelations == null || outputRelations.Owns(db));
     internal async Task<EngineeringCheckViewV1> CandidateSource(OperationsAccessV1 root,EngineeringSourceRefV1 reference,CancellationToken ct)
     {
         IterationCandidateValuesV1.Reference(reference,EngineeringSourceCheckValuesV1.Owner);
@@ -87,6 +88,9 @@ public sealed partial class EngineeringSourceCheckService(CP6Context db, Operati
             }
             await Attempt(root, o, path, (a, t) => Component(a, o, path, component, revision, t), ct);
         }
+        if (command.OutputRelations != null)
+            await Attempt(root, o, "outputRelations", (a, t) => OutputRelations(a, o, command.OutputRelations, revision, t), ct);
+        else if (rules.Manufacturing == "INTERNAL") o.Item("outputRelations", "UNKNOWN", "OUTPUT_RELATIONS_REQUIRED");
         return new(revision, policy, o, root.EngineeringAuthorityWatermark());
     }
     private static string Fingerprint(Evaluation value) => Digest(new
@@ -145,6 +149,7 @@ public sealed partial class EngineeringSourceCheckService(CP6Context db, Operati
         if (!current.Revision.IsCurrent) changes.Add("CANDIDATE_CHANGED");
         if (current.Policy.ActiveRef != saved.Command.Policy) changes.Add("CHECK_POLICY_CHANGED");
         if (Digest(current.Observed.Sources) != Digest(saved.Sources)) changes.Add("SOURCE_WATERMARK_CHANGED");
+        if (Digest(current.Observed.Items.Where(x => x.Path != "manifest")) != Digest(saved.Items.Where(x => x.Path != "manifest"))) changes.Add("CHECK_FINDINGS_CHANGED");
         if (saved.ActorId == a.ActorId && current.Authority != saved.AuthorityWatermark) changes.Add("AUTHORITY_CHANGED");
         Final(a, saved.Command, current);
         return new(reference, saved, json, changes.Count == 0 ? "CURRENT" : "STALE", changes.ToArray());

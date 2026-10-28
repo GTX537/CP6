@@ -23,6 +23,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/plm/controlled-document': () => import('@/views/plm/ControlledDocumentView.vue'),
   '/pub/file-content': () => import('@/views/pub/FileContentView.vue'),
   '/plm/engineering-manufacturing': () => import('@/views/plm/EngineeringManufacturingView.vue'),
+  '/plm/engineering-output-relations': () => import('@/views/plm/EngineeringOutputRelationsView.vue'),
   '/plm/engineering-bom': () => import('@/views/plm/EngineeringBomView.vue'),
   '/plm/engineering-routing': () => import('@/views/plm/EngineeringRoutingView.vue'),
   '/plm/engineering-products': () => import('@/views/plm/EngineeringProductMappingView.vue'),

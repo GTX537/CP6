@@ -595,6 +595,8 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("file-content", "受控文件�
 CP6.Core.Services.Sys.FieldRegistry.Register("file-content", new CP6.Core.Services.Sys.FieldRegistry.Field("Content", "文件内容"), new CP6.Core.Services.Sys.FieldRegistry.Field("FileName", "文件名称"));
 CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-engineering-manufacturing", "制造映射与产出", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("plm-engineering-manufacturing");
+CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-engineering-output-relations", "工程输出关系", new[] { 1, 2, 3, 4, 5 }, 5);
+CP6.Core.Services.Sys.FieldRegistry.Register("plm-engineering-output-relations");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-engineering-bom", "版本化BOM", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("plm-engineering-bom");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-engineering-routing", "版本化工艺", new[] { 1, 2, 3, 4, 5 }, 5);
@@ -853,6 +855,7 @@ builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringSourceCheckService>(
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringRoutingOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringBomOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringManufacturingOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringOutputRelationsOwnerV1>();
 builder.Services.AddSingleton<CP6.Core.Services.Pub.IFileContentInspectorV1, CP6.Core.Services.Pub.DefenderFileContentInspectorV1>();
 builder.Services.AddScoped<CP6.Core.Services.Pub.FileContentOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.ControlledDocumentOwnerV1>();
