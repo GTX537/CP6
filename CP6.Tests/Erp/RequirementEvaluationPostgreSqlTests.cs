@@ -21,9 +21,9 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     private static RequirementEvaluationService Evaluations(Harness h,string mode="DEMO",Guid? environment=null)
         =>new(h.Db,EvaluationAuthority(h),ScopeFence(h,environment),new(mode),EvaluationDrafts(h));
     private sealed record EvaluationFixture(Guid First,Guid Second,EngineeringRequirementSnapshotV1 Source,EngineeringRequirementSnapshotV1 Definition);
-    private async Task<EvaluationFixture> EvaluationSetup(Harness h)
+    private async Task<EvaluationFixture> EvaluationSetup(Harness h,bool registerScope=true)
     {
-        await GrantRequirement(h);await GrantUomProfile(h);await RegisterScope(h);
+        await GrantRequirement(h);await GrantUomProfile(h);if(registerScope)await RegisterScope(h);
         foreach(var action in new[]{"review-policy","review-submit","review-decide","withdraw"})await EngineeringAction(h,"plm-engineering-requirement",action);
         var first=Guid.NewGuid();var second=Guid.NewGuid();h.Db.Sys_Roles.Add(new(){RoleId=74,RoleName="Requirement professional"});
         h.Db.Sys_Users.AddRange(new(){Id=first,UserName="requirement-reviewer-one",Password="fixture",RoleId=72},new(){Id=second,UserName="requirement-reviewer-two",Password="fixture",RoleId=72});

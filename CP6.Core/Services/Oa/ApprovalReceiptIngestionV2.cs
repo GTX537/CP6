@@ -53,9 +53,12 @@ public sealed class ApprovalReceiptIngestionV2(CP6Context db, ScopeAuthorization
             SELECT owner AS "Owner",revision AS "Revision",enabled AS "Enabled",can_receive AS "Receive",can_query AS "Query",evidence_mode AS "Mode"
             FROM cp6_approval_receipt_v2.registrations WHERE environment_id={s.Environment} AND tenant_id={s.Tenant} AND principal_id={s.Principal}
             """).SingleOrDefaultAsync(ct);
-        if (r == null || !r.Enabled || !r.Query || r.Owner is not (ApprovalBusinessProfileV2.ToolOwner or ApprovalBusinessProfileV2.DocumentOwner) || r.Mode != s.EvidenceMode) throw Error("PRODUCER_NOT_ALLOWED", 403);
+        if (r == null || !r.Enabled || !r.Query || r.Owner is not (ApprovalBusinessProfileV2.ToolOwner or ApprovalBusinessProfileV2.DocumentOwner or ApprovalBusinessProfileV2.RequirementSetOwner) || r.Mode != s.EvidenceMode) throw Error("PRODUCER_NOT_ALLOWED", 403);
         if(r.Owner==ApprovalBusinessProfileV2.DocumentOwner
             && !await db.Database.SqlQueryRaw<bool>("SELECT cp6_document_review_application_v1.ready() AS \"Value\"").SingleAsync(ct))
+            throw Error("RECEIPT_SOURCE_UNAVAILABLE");
+        if(r.Owner==ApprovalBusinessProfileV2.RequirementSetOwner
+            && !await db.Database.SqlQueryRaw<bool>("SELECT cp6_requirement_set_review_application_v1.ready() AS \"Value\"").SingleAsync(ct))
             throw Error("RECEIPT_SOURCE_UNAVAILABLE");
         return (s, r);
     }

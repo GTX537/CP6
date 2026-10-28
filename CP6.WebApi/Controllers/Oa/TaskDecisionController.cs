@@ -121,6 +121,13 @@ public sealed class TaskDecisionController : ControllerBase
         catch(ScopeAuthorizationExceptionV1 ex){return NativeError(ex);}
         catch(CP6.Core.Services.Erp.OrderPriceCorrectionException ex){return NativeError(new(ex.Message,ex.Status));}
     }
+    [HttpGet("requirement-set-review/{requirementSet:guid}")]
+    public async Task<IActionResult> RequirementSetTasks(Guid requirementSet,CancellationToken ct)
+    {
+        try {Response.Headers.CacheControl="no-store";return Ok(await _native.RequirementSetTasksAsync(requirementSet,ActingAs(),ct));}
+        catch(ScopeAuthorizationExceptionV1 ex){return NativeError(ex);}
+        catch(CP6.Core.Services.Erp.OrderPriceCorrectionException ex){return NativeError(new(ex.Message,ex.Status));}
+    }
     [HttpPost("{taskId:guid}/decision-commands/{commandId:guid}/close")]
     public async Task<IActionResult> CloseCommand(Guid taskId,Guid commandId,CancellationToken ct)
     {

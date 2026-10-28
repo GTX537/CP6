@@ -581,6 +581,8 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-configuration-rule", "工�
 CP6.Core.Services.Sys.FieldRegistry.Register("plm-configuration-rule");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-engineering-requirement", "工程需求与来源", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("plm-engineering-requirement", new CP6.Core.Services.Sys.FieldRegistry.Field("Definition", "需求定义"), new CP6.Core.Services.Sys.FieldRegistry.Field("Source", "需求来源"));
+CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-requirement-set", "需求集评审与批准", new[] { 1, 2, 3, 4, 5 }, 5);
+CP6.Core.Services.Sys.FieldRegistry.Register("plm-requirement-set", new CP6.Core.Services.Sys.FieldRegistry.Field("Scope", "适用范围"), new CP6.Core.Services.Sys.FieldRegistry.Field("Members", "准确成员"));
 CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-engineering-revision", "工程修订工作稿", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("plm-engineering-revision");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("quality-specification", "独立质量规格", new[] { 1, 2, 3, 4, 5 }, 1);
@@ -723,6 +725,27 @@ builder.Services.AddScoped<CP6.Core.Services.Plm.DocumentDecisionDeliveryV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.DocumentApplicationDeliveryV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.DocumentReceiptRecoveryV1>();
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.DocumentReviewPipelineWorkerV1>();
+builder.Services.AddSingleton<CP6.Core.Services.Plm.IRequirementSetReviewSubmissionTransportV1>(sp=>new CP6.WebApi.Services.RequirementSetReviewSubmissionTransportV1(
+    builder.Configuration.GetSection("RequirementSetReviewSubmissionDelivery").Get<CP6.WebApi.Services.ToolApprovalDeliveryOptionsV1>()??new(),crmOidc,
+    sp.GetRequiredService<CP6.WebApi.Services.ApprovalIntakeRegistryV2>(),builder.Environment.IsDevelopment()));
+builder.Services.AddScoped<CP6.Core.Services.Plm.RequirementSetReviewDeliveryV1>();
+builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.RequirementSetReviewSubmissionWorkerV1>();
+builder.Services.AddScoped(sp=>new CP6.Core.Services.Plm.RequirementSetReviewFactReceiverV1(sp.GetRequiredService<CP6Context>(),
+    sp.GetRequiredService<CP6.Core.Services.Sys.ScopeAuthorizationFenceV1>(),sp.GetRequiredService<CP6.WebApi.Services.ApprovalFactReceiverServiceAuthorityV2>(),
+    sp.GetRequiredService<CP6.Core.Services.Oa.ApprovalDecisionSourceV2>(),sp.GetRequiredService<Microsoft.AspNetCore.DataProtection.IDataProtectionProvider>()));
+builder.Services.AddSingleton<CP6.Core.Services.Plm.IRequirementSetDecisionTransportV1>(sp=>new CP6.WebApi.Services.RequirementSetDecisionTransportV1(
+    builder.Configuration.GetSection("RequirementSetReviewDecisionDelivery").Get<CP6.WebApi.Services.ApprovalDecisionDeliveryOptionsV2>()??new(),crmOidc,
+    sp.GetRequiredService<CP6.WebApi.Services.ApprovalFactReceiverRegistryV2>(),builder.Environment.IsDevelopment()));
+builder.Services.AddSingleton<CP6.Core.Services.Plm.IRequirementSetApplicationTransportV1>(sp=>new CP6.WebApi.Services.RequirementSetApplicationTransportV1(
+    builder.Configuration.GetSection("RequirementSetReviewReceiptDelivery").Get<CP6.WebApi.Services.ToolApprovalDeliveryOptionsV1>()??new(),crmOidc,
+    sp.GetRequiredService<CP6.WebApi.Services.ApprovalIntakeRegistryV2>(),builder.Environment.IsDevelopment()));
+builder.Services.AddSingleton<CP6.Core.Services.Plm.IRequirementSetReceiptChainTransportV1>(sp=>new CP6.WebApi.Services.RequirementSetReceiptChainTransportV1(
+    builder.Configuration.GetSection("RequirementSetReviewReceiptRecovery").Get<CP6.WebApi.Services.ApprovalDecisionDeliveryOptionsV2>()??new(),crmOidc,
+    sp.GetRequiredService<CP6.WebApi.Services.ApprovalFactReceiverRegistryV2>(),builder.Environment.IsDevelopment()));
+builder.Services.AddScoped<CP6.Core.Services.Plm.RequirementSetDecisionDeliveryV1>();
+builder.Services.AddScoped<CP6.Core.Services.Plm.RequirementSetApplicationDeliveryV1>();
+builder.Services.AddScoped<CP6.Core.Services.Plm.RequirementSetReceiptRecoveryV1>();
+builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.RequirementSetReviewPipelineWorkerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.ToolMaintenanceMasterOwnerV1>();
 builder.Services.AddSingleton(_ => new CP6.Core.Services.Wms.ToolActualRuntimeV1(
     Guid.TryParse(builder.Configuration["Wms:ToolActual:EnvironmentId"], out var toolActualEnvironment) ? toolActualEnvironment : Guid.Empty,
@@ -791,6 +814,8 @@ builder.Services.AddScoped<CurrencyPolicyOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringProductOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringRevisionOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringRequirementService>();
+builder.Services.AddScoped<CP6.Core.Services.Plm.RequirementSetService>();
+builder.Services.AddScoped<CP6.Core.Services.Plm.RequirementSetReviewOwnerV1>();
 builder.Services.AddSingleton(new CP6.Core.Services.Plm.RequirementEvaluationRuntimeV1(builder.Configuration["RequirementEvaluation:EvidenceMode"] ?? ""));
 builder.Services.AddScoped<CP6.Core.Services.Plm.RequirementEvaluationService>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringSourceCheckService>();

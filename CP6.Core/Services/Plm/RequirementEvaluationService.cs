@@ -13,6 +13,7 @@ public sealed class RequirementEvaluationService(CP6Context db,OperationsOwnerV1
     RequirementEvaluationRuntimeV1 runtime,EngineeringRequirementService requirements)
 {
     private OperationsOwnerV1 Authority=>owner.Owns(db)?owner:throw Error("AUTHORITY_FENCE_UNAVAILABLE",503);
+    internal string EvidenceMode=>runtime.EvidenceMode;
     private Guid Environment=>scope.EnvironmentId;
     private async Task<RequirementEvaluationStoreV1> Store(OperationsAccessV1 a,bool write,CancellationToken ct)
     {
@@ -180,7 +181,7 @@ public sealed class RequirementEvaluationService(CP6Context db,OperationsOwnerV1
             return result;
         },ct);
     }
-    internal async Task<RequirementEvaluationSourceProofV1> Source(OperationsAccessV1 root,EngineeringSourceRefV1 reference,bool hold,CancellationToken ct)
+    internal async Task<RequirementEvaluationSourceProofV1> Source(OperationsAccessV1 root,EngineeringSourceRefV1 reference,bool hold,CancellationToken ct,bool tolerateInputChange=false)
     {
         EngineeringRequirementValuesV1.Ref(reference);var a=await root.SourceAsync(OperationsOwnerV1.EngineeringRequirement,ct);
         var s=await Store(a,false,ct);var v=await View(a,s,reference.Id,Revision(reference.Version),ct);
@@ -188,7 +189,8 @@ public sealed class RequirementEvaluationService(CP6Context db,OperationsOwnerV1
         var inputs=await Inputs(a,reference,hold,ct);var digest=InputDigest(inputs);var missing=inputs.Missing.ToList();
         var approval=v.CurrentApproval?.Body.Requirement==reference?v.CurrentApproval:null;
         if(approval==null)missing.Add(v.Control?.State=="WITHDRAWN"?"REQUIREMENT_APPROVAL_WITHDRAWN":"REQUIREMENT_APPROVAL_REQUIRED");
-        else if(approval.Body.InputDigest!=digest)throw Error("REQUIREMENT_APPROVAL_INPUT_CHANGED",412);
+        else if(approval.Body.InputDigest!=digest)
+        {if(!tolerateInputChange || hold)throw Error("REQUIREMENT_APPROVAL_INPUT_CHANGED",412);missing.Add("REQUIREMENT_APPROVAL_INPUT_CHANGED");}
         if(hold)
         {
             if(missing.Count>0)throw Error("REQUIREMENT_APPROVAL_SOURCE_UNAVAILABLE",422);
