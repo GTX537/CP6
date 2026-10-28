@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-28：W194 独立工程需求草稿待Main收尾
+
+独立工程需求来源包、准确版本/原文、关系防自证循环、精确判据与未定项、当前权限及原键恢复/API/页面已验证；正式关系/判据评审、批准需求集、ITER/冻结/WO/SCHED仍待。15 PG18/actual Program HTTP (12 requirement,3 department regression);39 Vue;types/build PASS;0skip。[报告](../development/evidence/W194-01/DELIVERY.md)。登记53.77分钟，预计100–160；Handoff已释放，Main待正常PR/finish。原七天全部出口保留。
+
 ## 2026-10-27：W193 工程准确来源与完整性检查待 Main 收尾
 
 工程准确候选/政策、完整来源原文/水位、持久四态检查、同事务最终核对、原键恢复及API/页面已验证；正式评审/冻结与WO/SCHED仍待。39 local checks: 37 PG18/HTTP and 2 affected kernel/unit;30 Vue;types/build PASS;0skip。[报告](../development/evidence/W193-01/DELIVERY.md)。登记49.4分钟，预计240–420；Handoff已释放，Main待正常PR/finish。实际业务效果及七天全部出口保留。

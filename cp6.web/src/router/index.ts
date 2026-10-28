@@ -15,6 +15,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/erp/currency-policies': () => import('@/views/erp/CurrencyPoliciesView.vue'),
   '/plm/configuration-rules': () => import('@/views/plm/ConfigurationRulesView.vue'),
   '/plm/tool-specifications': () => import('@/views/plm/ToolSpecificationsView.vue'),
+  '/plm/engineering-requirement': () => import('@/views/plm/EngineeringRequirementsView.vue'),
   '/plm/engineering-revisions': () => import('@/views/plm/EngineeringRevisionsView.vue'),
   '/mes/quality-specifications': () => import('@/views/mes/QualitySpecificationsView.vue'),
   '/plm/controlled-document': () => import('@/views/plm/ControlledDocumentView.vue'),
