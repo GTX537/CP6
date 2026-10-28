@@ -788,6 +788,7 @@ builder.Services.AddScoped<CP6.Core.Services.Mes.ResourceTimeOwnerV1>();
 builder.Services.AddScoped<CurrencyPolicyOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringProductOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringRevisionOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringSourceCheckService>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringRoutingOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringBomOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringManufacturingOwnerV1>();

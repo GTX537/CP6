@@ -60,6 +60,7 @@
       </div><p v-if="component.kind === 'ROUTING'">工艺草稿的准确版本可加入组成；工艺缺项、评审与冻结仍需完成。</p><p v-else-if="!['PRODUCT', 'EBOM', 'MBOM', 'DOCUMENT'].includes(component.kind)">该内容的正式来源入口尚未接入。可记录缺项说明，后续补齐准确来源。</p>
       <button type="button" @click="component.sourceRef = null; componentSource = ''">清除来源引用</button><button>保存组成位置</button><button type="button" @click="component = null">取消编辑位置</button></fieldset></form>
     </section>
+    <EngineeringSourceCheckView v-if="current" :revision="current" :blocked="busy || !!pending" @pending="checkPending = $event" />
     <section v-if="current"><h2>工作历史与差异</h2><form class="inline" @submit.prevent="loadHistory"><label>工作版本<input v-model="historyVersion" aria-label="历史工作版本" pattern="[1-9][0-9]*" :disabled="busy" required /></label><button :disabled="busy">读取历史</button></form>
       <div v-if="history"><p>版本 {{ history.reference.version }}：{{ history.draft.goal }}。原因：{{ history.reason }}</p><p>记录了 {{ history.draft.components.length }} 个组成位置。{{ history.isCurrent ? '当前工作快照。' : '历史工作快照，不覆盖当前草稿。' }}</p><details><summary>历史配置与组成</summary><pre>{{ JSON.stringify(history.draft, null, 2) }}</pre></details></div>
       <form class="inline" @submit.prevent="loadDiff"><label>起始工作版本<input v-model="beforeVersion" aria-label="差异起始版本" pattern="[1-9][0-9]*" :disabled="busy" required /></label><label>结束工作版本<input v-model="afterVersion" aria-label="差异结束版本" pattern="[1-9][0-9]*" :disabled="busy" required /></label><button :disabled="busy">比较工作版本</button></form>
@@ -69,6 +70,7 @@
 </template>
 
 <script setup lang="ts">
+import EngineeringSourceCheckView from './EngineeringSourceCheckView.vue'
 import { configurationApi, type ConfigurationSnapshot } from '@/api/plm/configurationRules'
 import { qualityApi, type QualityView } from '@/api/mes/qualitySpecification'
 import { documentApi, type DocumentSnapshot } from '@/api/plm/controlledDocument'
@@ -82,7 +84,8 @@ import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
 import { usePermissionStore } from '@/stores/permission'
 const permissions = usePermissionStore(), canRead = computed(() => permissions.loaded && permissions.has('plm-engineering-revision:query')), canEdit = computed(() => canRead.value && permissions.has('plm-engineering-revision:edit'))
-const busy = ref(false), error = ref(''), notice = ref(''), scope = ref<RevisionScope | null>(null), pending = ref<PendingRevisionOperation | null>(null), locked = computed(() => busy.value || !!pending.value)
+const checkPending = ref(false)
+const busy = ref(false), error = ref(''), notice = ref(''), scope = ref<RevisionScope | null>(null), pending = ref<PendingRevisionOperation | null>(null), locked = computed(() => busy.value || !!pending.value || checkPending.value)
 const rows = ref<RevisionSnapshot[]>([]), search = ref(''), page = ref(1), current = ref<RevisionSnapshot | null>(null), creating = ref(false), creation = ref<RevisionCreation | null>(null), draftId = ref('')
 const goal = ref(''), reason = ref(''), noParentReason = ref(''), department = ref(''), productSearch = ref(''), products = ref<EngineeringVersion[]>([]), rootProduct = ref('')
 const rules = ref<ConfigurationSnapshot[]>([]), ruleSelection = ref('')

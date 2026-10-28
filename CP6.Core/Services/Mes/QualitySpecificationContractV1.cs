@@ -50,4 +50,4 @@ public sealed record QualitySpecificationOperationV1(Guid OperationId, string St
 public sealed record QualitySpecificationSourceProofV1(EngineeringSourceRefV1 Specification,
     EngineeringSourceRefV1 Control, EngineeringSourceRefV1? Approval, string RequirementsDigest,
     string Availability, string[] Missing, QualityRequirementV1[] Requirements,
-    string Observation = "READ_ONLY_OBSERVATION");
+    string Observation = "READ_ONLY_OBSERVATION", string? OriginalSourceJson = null);

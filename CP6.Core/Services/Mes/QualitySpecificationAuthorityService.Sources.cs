@@ -79,7 +79,7 @@ public sealed partial class QualitySpecificationAuthorityService
         }
         return new(reference,v.ControlReference,v.CurrentApproval?.Body.Specification==reference?v.CurrentApproval.Reference:null,digest,
             missing.Count==0?"AVAILABLE":"UNAVAILABLE",missing.Distinct(StringComparer.Ordinal).ToArray(),v.Version.Body.Requirements,
-            hold?"HELD_IN_CURRENT_UOW":"READ_ONLY_OBSERVATION");
+            hold?"HELD_IN_CURRENT_UOW":"READ_ONLY_OBSERVATION",v.Version.OriginalJson);
     }
     internal Task<QualitySpecificationSourceProofV1> HoldExact(OperationsAccessV1 root,EngineeringSourceRefV1 reference,
         EngineeringSourceRefV1 expectedControl,EngineeringProductRefV1 product,CancellationToken ct)
