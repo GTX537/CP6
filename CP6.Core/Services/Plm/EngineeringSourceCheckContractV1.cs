@@ -9,7 +9,8 @@ public sealed record EngineeringCheckPolicyV1(string Schema, string ProductCateg
     string ConfigurationApplicability, string Reason, EngineeringCompositionPolicyV1[] Composition);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record EngineeringSourceCheckCommandV1(Guid OperationId, EngineeringRevisionRefV1 Revision,
-    EngineeringRevisionRefV1 Candidate, Guid ExpectedEtag, EngineeringSourceRefV1 Policy, string Reason);
+    EngineeringRevisionRefV1 Candidate, Guid ExpectedEtag, EngineeringSourceRefV1 Policy, string Reason,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] EngineeringSourceRefV1? OutputRelations = null);
 public sealed record EngineeringCheckItemV1(string Path, string State, string Code, string Reason,
     EngineeringSourceRefV1? Source = null);
 public sealed record EngineeringSourcePinV1(string Path, EngineeringSourceRefV1 Reference, string Provider,

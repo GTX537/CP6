@@ -80,7 +80,14 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             new Sys_Dept { Id = child, DeptCode = "NOT-SALES", DeptName = "Child", ParentId = root, Path = $"/{root}/{child}/" },
             new Sys_Dept { Id = other, DeptCode = "Other", DeptName = "Other", Path = $"/{other}/" });
         var menu = await h.Db.Sys_Menus.SingleOrDefaultAsync(m => m.MenuKey == "pub-dept");
-        if (menu == null) { menu = new() { MenuId = 32721, MenuKey = "pub-dept", MenuName = "Departments" }; h.Db.Sys_Menus.Add(menu); }
+        if (menu == null)
+        {
+            // Native Owner migrations can legitimately occupy a former fixture-only id.
+            // Do not collide with an actual menu or replace its existing action bindings.
+            var used = (await h.Db.Sys_Menus.Select(x => x.MenuId).ToArrayAsync()).ToHashSet();
+            var id = used.Contains(32721) ? Enumerable.Range(1, int.MaxValue).First(x => !used.Contains(x)) : 32721;
+            menu = new() { MenuId = id, MenuKey = "pub-dept", MenuName = "Departments" }; h.Db.Sys_Menus.Add(menu);
+        }
         foreach (var action in new[] { "query", "edit" })
         {
             h.Db.Sys_RoleActions.Add(new() { RoleId = 72, MenuId = menu.MenuId, ActionCode = action });

@@ -4,7 +4,7 @@ import type { RevisionDraft } from './engineeringRevisions'
 import type { ConfigurationBody } from './configurationRules'
 export interface CompositionPolicy { kind: string; applicability: string; minimumOccurrences: number; reason: string }
 export interface EngineeringCheckPolicy { schema: 'engineering-check-policy/1'; productCategory: string; manufacturing: string; configurationApplicability: string; reason: string; composition: CompositionPolicy[] }
-export interface CheckCommand { operationId: string; revision: EngineeringReference; candidate: EngineeringReference; expectedEtag: string; policy: EngineeringReference; reason: string }
+export interface CheckCommand { operationId: string; revision: EngineeringReference; candidate: EngineeringReference; expectedEtag: string; policy: EngineeringReference; reason: string; outputRelations?: EngineeringReference }
 export interface CheckItem { path: string; state: 'PASS' | 'BLOCK' | 'UNKNOWN' | 'NOT_APPLICABLE'; code: string; reason: string; source: EngineeringReference | null }
 export interface SourcePin { path: string; reference: EngineeringReference; provider: string; nativeSchema: string; capability: string; watermark: string; originalJson: string; findings: string[] }
 export interface CheckRun { tenantId: string; id: string; actorId: string; checkedAt: string; command: CheckCommand; input: RevisionDraft; policyBody: ConfigurationBody; inputDigest: string; manifest: { schema: string; canonicalization: string; algorithm: string; originalJson: string; digest: string } | null; items: CheckItem[]; sources: SourcePin[]; state: string; authorityWatermark: string; purpose: string }

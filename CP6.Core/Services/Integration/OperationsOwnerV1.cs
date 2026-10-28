@@ -29,7 +29,7 @@ public sealed partial class OperationsOwnerV1
     internal const string EngineeringRevision = "plm-engineering-revision";
     internal const string ControlledDocument = "plm-controlled-document", QualitySpecification = "quality-specification";
     internal const string FileContent = "file-content";
-    internal const string EngineeringManufacturing = "plm-engineering-manufacturing";
+    internal const string EngineeringManufacturing = "plm-engineering-manufacturing", EngineeringOutputRelations = "plm-engineering-output-relations";
     internal const string EngineeringBom = "plm-engineering-bom";
     internal const string EngineeringRouting = "plm-engineering-routing";
     internal const string EngineeringProduct = "plm-engineering-product", PhysicalSite = "space-site";
@@ -75,6 +75,10 @@ public sealed partial class OperationsOwnerV1
     internal Task<Authority> DocumentReviewAuthorityAsync(string resource,string action,Guid actor,CancellationToken ct)
         => action=="query" || resource==ControlledDocument && action is "review-policy" or "review-submit" or "review-decide"
             ? AuthorityCoreAsync(resource,action,actor,true,ct) : throw new OrderPriceCorrectionException("ACTION_FORBIDDEN",403);
+    // Actor comes only from this Owner's immutable policy or qualification record.
+    internal Task<Authority> OutputRelationsAuthorityAsync(string action,Guid actor,CancellationToken ct)
+        => action is "review-policy" or "qualify" ? AuthorityCoreAsync(EngineeringOutputRelations,action,actor,true,ct)
+            : throw new OrderPriceCorrectionException("ACTION_FORBIDDEN",403);
     internal Task<Authority> QualityPolicyAuthorityAsync(Guid actor,CancellationToken ct)
         =>AuthorityCoreAsync(QualitySpecification,"review-policy",actor,true,ct);
     internal Task<Authority> RequirementSetReviewAuthorityAsync(string resource,string action,Guid actor,CancellationToken ct)
@@ -92,7 +96,7 @@ public sealed partial class OperationsOwnerV1
         var reader=new CurrentFieldPermissionSourceReaderV1(db,http,()=>definition);
         var source=storedDecision?await reader.ReadTrustedSubjectAsync(resource,subject,ct):await reader.ReadAsync(resource,ct);
         var expected=resource==EngineeringIteration?new[]{"Inputs","Metadata","Tasks"}:resource==RequirementSet?new[]{"Members","Scope"}:resource==EngineeringRequirement?new[]{"Definition","Source"}:resource==QualitySpecification?new[]{"Metadata","Requirements"}:resource==ControlledDocument?new[]{"Content","Metadata"}:resource==FileContent?new[]{"Content","FileName"}:resource==BusinessPartner?new[]{"BpName"}:resource==ToolInstance?new[]{"CustomerCd","CustomerName","MadeCost","ProductCd","ProductName","Remarks"}:resource==Sample?new[]{"CustomerCd","CustomerName","LentTo","ProductCd","ProductName","Remarks"}:resource==Packaging?new[]{"CarrierCd","Remarks","TrackingNo"}:resource==Routing?new[]{"CustomerCd","ProductCdPrefix","Remarks","RuleName"}:resource==Warehouse?new[]{"AddressText","ManagerCd","Remarks","WarehouseName"}:resource==Location?new[]{"Barcode","LocationName"}:resource==ReportCenter?new[]{"OperatorCd","OwnerCd","Remark"}:resource==Kitting?new[]{"ComponentName","ExecutedTxnNos","KitName","OperatorCd","Remarks"}:resource==Vmi?new[]{"BillingAmount","CustomerName","DailyStorageRate","Remarks"}:resource==Slotting?new[]{"ApproverCd","RecommendationsJson","Remarks"}:resource==CrossDock?new[]{"CustomerCd","OperatorCd","Remarks","SupplierCd"}:resource==LotTrace?new[]{"CustomerName","OperatorCd","Remark","SupplierName"}:resource==MaterialShortage?new[]{"Remark"}:resource is Outbound or Inbound or Receipt or Stock?new[]{"UnitPrice"}:
-            resource is EngineeringManufacturing or EngineeringBom or EngineeringRouting or ToolSpecification or PlateMold or ConfigurationRule or EngineeringRevision or EngineeringProduct or PhysicalSite or CurrencyPolicy or UomProfile or Product or Mes or Production or MesDashboard or Defect or StockQc or InboundQc or Quality or Machine or Oee or Planning or Achievement or WorkCenter?Array.Empty<string>():
+            resource is EngineeringOutputRelations or EngineeringManufacturing or EngineeringBom or EngineeringRouting or ToolSpecification or PlateMold or ConfigurationRule or EngineeringRevision or EngineeringProduct or PhysicalSite or CurrencyPolicy or UomProfile or Product or Mes or Production or MesDashboard or Defect or StockQc or InboundQc or Quality or Machine or Oee or Planning or Achievement or WorkCenter?Array.Empty<string>():
             resource==StockDwell?new[]{"Amount","CustomerName"}:resource==ProcessCostRate?new[]{"LaborRate","OverheadRate"}:resource==WmsDashboard?new[]{"Amount"}:resource==Rma?new[]{"CustomerName","OperatorCd","Remarks","ReturnReason"}:
             resource==Replenish?new[]{"OperatorCd","Remarks"}:resource==Mobile?new[]{"AssignedTo","ExceptionDescription","Instruction","Remarks"}:new[]{"Amount","UnitPrice"};
         if(!source.Fields.Order(StringComparer.Ordinal).SequenceEqual(expected))throw new CurrentPermissionUnavailableException();
@@ -123,7 +127,7 @@ public sealed partial class OperationsOwnerV1
         Func<CancellationToken,Task<string>>? actionAtFence=null,bool readOnlyAuthorityFence=false)
     {
         using var linked=CancellationTokenSource.CreateLinkedTokenSource(ct,http.HttpContext?.RequestAborted??CancellationToken.None);ct=linked.Token;
-        if(resource is not (EngineeringIteration or RequirementSet or EngineeringRequirement or QualitySpecification or ControlledDocument or FileContent or EngineeringManufacturing or EngineeringBom or EngineeringRouting or BusinessPartner or ToolInstance or ToolSpecification or PlateMold or ConfigurationRule or EngineeringRevision or EngineeringProduct or PhysicalSite or CurrencyPolicy or UomProfile or Product or Mes or Outbound or Production or Inbound or Receipt or Stock or StockTake or WmsDashboard or MesDashboard or Defect or StockQc or InboundQc or Quality or Machine or Oee or Planning or Achievement or Rma or Replenish or Mobile or WorkCenter or ProcessCostRate or StockDwell or Expiry or MaterialShortage or LotTrace or CrossDock or Slotting or Vmi or Kitting or ReportCenter or Warehouse or Location or Routing or Packaging or Sample) || !db.Database.IsNpgsql() || db.Database.CurrentTransaction!=null
+        if(resource is not (EngineeringIteration or RequirementSet or EngineeringRequirement or QualitySpecification or ControlledDocument or FileContent or EngineeringOutputRelations or EngineeringManufacturing or EngineeringBom or EngineeringRouting or BusinessPartner or ToolInstance or ToolSpecification or PlateMold or ConfigurationRule or EngineeringRevision or EngineeringProduct or PhysicalSite or CurrencyPolicy or UomProfile or Product or Mes or Outbound or Production or Inbound or Receipt or Stock or StockTake or WmsDashboard or MesDashboard or Defect or StockQc or InboundQc or Quality or Machine or Oee or Planning or Achievement or Rma or Replenish or Mobile or WorkCenter or ProcessCostRate or StockDwell or Expiry or MaterialShortage or LotTrace or CrossDock or Slotting or Vmi or Kitting or ReportCenter or Warehouse or Location or Routing or Packaging or Sample) || !db.Database.IsNpgsql() || db.Database.CurrentTransaction!=null
             || System.Transactions.Transaction.Current!=null || db.ChangeTracker.HasChanges()
             || readOnlyAuthorityFence && (write || delegation!=null || actionAtFence!=null)
             || db.ChangeTracker.Entries().Any(e=>IsBusiness(e.Entity.GetType().Name))

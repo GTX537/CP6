@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-28：W201 原生输出关系待Main收尾
+
+原生完整输入/工序/输出关系、准确规格和受控证据、独立专业确认/撤回、当前与最终共同事务来源门、来源检查及独立入口已验证。19 PG18/Program HTTP; 14 Vue;types/build PASS;actual wire/shared schema PASS;0skip。[报告](../development/evidence/W201-01/DELIVERY.md)。登记73.09分钟，预计150–240；Handoff已释放，Main待正常PR/finish。完整WP05-10/WP05-11及七天出口保留，设备/工装实际资格、外部提供者和正式验收、Baseline/OutputBinding/REL/VER仍待。
+
 ## 2026-10-28：W200 迭代评审处理与可信撤回待Main收尾
 
 原生专业决定、独立问题答复/验收、同事务应用回执与撤回竞争、真实原人Workflow撤回、后继轮次和HTTPS原结果恢复已验证。12 PG18/Program HTTP/C02 TLS;1 Int64 boundary unit;34 Vue;types/build PASS;0skip。[报告](../development/evidence/W200-01/DELIVERY.md)。登记105.01分钟，预计180–300；Handoff已释放，Main待正常PR/finish。完整WP05-20/WP12-19及七天出口保留，委托撤回/换人重新授权和其他Owner采用仍待。

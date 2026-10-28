@@ -7,6 +7,15 @@ namespace CP6.Core.Services.Plm;
 
 public sealed partial class EngineeringManufacturingOwnerV1
 {
+    internal async Task<EngineeringManufacturingSnapshotV1> Source(OperationsAccessV1 root, EngineeringSourceRefV1 reference, CancellationToken ct)
+    {
+        IterationCandidateValuesV1.Reference(reference, EngineeringManufacturingValuesV1.Owner);
+        var a = await root.SourceAsync(OperationsOwnerV1.EngineeringManufacturing, ct);
+        var store = new EngineeringManufacturingStoreV1(db); await store.Fence(false, ct);
+        var value = await Observe(a, await store.Read(reference.Id, Revision(reference.Version), ct), ct);
+        if (value.Reference != reference) throw Error("MANUFACTURING_REFERENCE_CHANGED", 412);
+        return value;
+    }
     private async Task<EngineeringManufacturingSnapshotV1> Observe(OperationsAccessV1 root, EngineeringManufacturingSnapshotV1 value, CancellationToken ct)
     {
         await root.RequireEngineeringManufacturing(value.Reference.Id, ct);
