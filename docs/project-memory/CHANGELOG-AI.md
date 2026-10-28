@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-28：W212 时钟政策与时间评估待Main收尾
+
+原生时钟政策、实际数据库观察、来源/当前权限、有效期边界、回拨/超时拒绝和原键恢复已验证。9 distinct PG18/Program HTTP; 0 ancillary checks; 30 distinct Vue;types/build PASS;0skip。[报告](../development/evidence/W212-01/DELIVERY.md)。登记13.58分钟，预计75–110；Handoff已释放，Main待正常PR/finish。实际规则生效、占用保护与激活、完整MASTER/Transfer/Stock及七天出口保留。
+
 ## 2026-10-28：W211 库位规则送审与真实审批绑定待Main收尾
 
 准确候选送审、真实OA人类任务/决定、当前政策/角色/来源、退回重审/撤回迟到决定和原键恢复已验证。30 distinct PG18/Program HTTP; 0 ancillary checks; 40 distinct Vue;types/build PASS;0skip。[报告](../development/evidence/W211-01/DELIVERY.md)。登记27.96分钟，预计100–150；Handoff已释放，Main待正常PR/finish。实际规则生效、时钟占用与激活、完整MASTER/Transfer/Stock及七天出口保留。

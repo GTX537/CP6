@@ -161272,6 +161272,16 @@
       "date": "2026-10-28",
       "change": "W211 exact candidate submission/native OA decisions/08Q binding/current permissions/source checks/withdrawal and original recovery: 30 distinct PG18/Program HTTP; 0 ancillary checks; 40 distinct Vue;types/build PASS;0skip; Handoff released, Main closeout pending. No actual rule activation/lifecycle/full MASTER qualification; original goal unchanged.",
       "evidence": "docs/development/evidence/W211-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-28",
+      "change": "W211 archived once; only its limited rule-review lifecycles closed. W212 native clock policy and rule temporal evaluation admitted75–110min; actual rule application and original seven-day exits remain.",
+      "evidence": "docs/development/dispatch/20261028-wave212/README.md"
+    },
+    {
+      "date": "2026-10-28",
+      "change": "W212 native clock policy/actual advancing PG observation/current source and permission/temporal prediction/original recovery: 9 distinct PG18/Program HTTP; 0 ancillary checks; 30 distinct Vue;types/build PASS;0skip; Handoff released, Main closeout pending. No actual rule activation/lifecycle/full MASTER qualification; original goal unchanged.",
+      "evidence": "docs/development/evidence/W212-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -186215,7 +186225,7 @@
         }
       },
       "wave211_rule_review": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "workspace_task": "W211-01",
         "report": "docs/development/evidence/W211-01/DELIVERY.md",
         "scope": "Exact location rule proposal submission, immutable explicit review policies, actual native OA assigned human decisions, trusted 08Q approval binding, returned/rejected/withdrawn state and original-operation recovery; no 08E activation.",
@@ -186227,6 +186237,43 @@
           "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/187",
           "exact_tree_adoption": true,
           "at": "2026-10-28T23:12:54.498895+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave211-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W211-01",
+          "source": "2df88b32d73a729a916c7273fab140030b2285f1",
+          "remote_target": "aa488fbd2b1f8cfaf681b53efc9f96fd06718748",
+          "branch": "codex/w211-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/634"
+        }
+      },
+      "wave212_clock_policy": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "workspace_task": "W212-01",
+        "report": "docs/development/evidence/W212-01/DELIVERY.md",
+        "scope": "Versioned native warehouse clock policies bound to explicit deployment-approved PostgreSQL source and environment; durable actual observations, rollback/latency/uncertainty guards, exact candidate CURRENT/PLANNED validity assessment and original-operation recovery UI.",
+        "remaining": "Local isolated PostgreSQL18/actual Program HTTP and related Vue/types/build only. Operator-configured source attestation is a trust input, not automatic NTP/UTC synchronization proof; default unavailable. Temporal assessment is TIME_ONLY, never rule activation or admission. Occupancy/effect-Owner protection, 08E selector/application transaction, lifecycle and formal Transfer/Stock plus all original seven-day exits remain. No Actions, existing-environment migration or deployment.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "2eb0d356fe4880b190c552f0c62ac1e2af9a5d99",
+          "main": "53df72d49bdc117a3430b073949e3a2506893ee5",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/188",
+          "exact_tree_adoption": true,
+          "at": "2026-10-28T23:33:34.849983+00:00"
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
@@ -187001,7 +187048,7 @@
         }
       },
       "wave211_rule_review": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "workspace_task": "W211-01",
         "report": "docs/development/evidence/W211-01/DELIVERY.md",
         "scope": "Exact location rule proposal submission, immutable explicit review policies, actual native OA assigned human decisions, trusted 08Q approval binding, returned/rejected/withdrawn state and original-operation recovery; no 08E activation.",
@@ -187013,6 +187060,43 @@
           "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/187",
           "exact_tree_adoption": true,
           "at": "2026-10-28T23:12:54.498895+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave211-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W211-01",
+          "source": "2df88b32d73a729a916c7273fab140030b2285f1",
+          "remote_target": "aa488fbd2b1f8cfaf681b53efc9f96fd06718748",
+          "branch": "codex/w211-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/634"
+        }
+      },
+      "wave212_clock_policy": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "workspace_task": "W212-01",
+        "report": "docs/development/evidence/W212-01/DELIVERY.md",
+        "scope": "Versioned native warehouse clock policies bound to explicit deployment-approved PostgreSQL source and environment; durable actual observations, rollback/latency/uncertainty guards, exact candidate CURRENT/PLANNED validity assessment and original-operation recovery UI.",
+        "remaining": "Local isolated PostgreSQL18/actual Program HTTP and related Vue/types/build only. Operator-configured source attestation is a trust input, not automatic NTP/UTC synchronization proof; default unavailable. Temporal assessment is TIME_ONLY, never rule activation or admission. Occupancy/effect-Owner protection, 08E selector/application transaction, lifecycle and formal Transfer/Stock plus all original seven-day exits remain. No Actions, existing-environment migration or deployment.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "2eb0d356fe4880b190c552f0c62ac1e2af9a5d99",
+          "main": "53df72d49bdc117a3430b073949e3a2506893ee5",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/188",
+          "exact_tree_adoption": true,
+          "at": "2026-10-28T23:33:34.849983+00:00"
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
@@ -196639,10 +196723,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261028-wave211",
-      "path": "docs/development/dispatch/20261028-wave211/README.md",
-      "baseline_sha": "f09396935e83ef1f5cdeb066f368710c7f2d654b",
-      "registered_at": "2026-10-28T22:46:12.252101+00:00",
+      "id": "20261028-wave212",
+      "path": "docs/development/dispatch/20261028-wave212/README.md",
+      "baseline_sha": "aa488fbd2b1f8cfaf681b53efc9f96fd06718748",
+      "registered_at": "2026-10-28T23:21:43.870407+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -196661,29 +196745,29 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W211-01",
-          "workspace_task": "W211-01",
+          "id": "W212-01",
+          "workspace_task": "W212-01",
           "related_tasks": [
             "WP10-01",
             "WP10-10"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Native location rule submission and OA decision binding",
+          "title": "Native warehouse clock policy and rule temporal assessment",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "fd349143e8791aea9b5e9f8f9a8f24c181c7f066",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261028T224612Z-wave211-start/MESSAGE.md",
-            "at": "2026-10-28T22:46:12.252101+00:00",
-            "branch": "codex/w211-handoff"
+            "commit": "b06c6462667516f438f466ba52bb829690d5ed74",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261028T232143Z-wave212-start/MESSAGE.md",
+            "at": "2026-10-28T23:21:43.870407+00:00",
+            "branch": "codex/w212-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w211-01",
-          "planned_scope_ref": "docs/development/dispatch/20261028-wave211/README.md",
+          "branch": "codex/w212-01",
+          "planned_scope_ref": "docs/development/dispatch/20261028-wave212/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -196692,12 +196776,12 @@
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
-            "Main:location-rule-review",
-            "Main:OA-business-adapter",
+            "Main:warehouse-clock-policy",
+            "Main:location-rule-temporal-evaluation",
             "Main:current-authorization"
           ],
-          "validation": "30 distinct PG18/Program HTTP; 0 ancillary checks; 40 distinct Vue;types/build PASS;0skip",
-          "worker_delivery_ref": "docs/development/evidence/W211-01/DELIVERY.md",
+          "validation": "9 distinct PG18/Program HTTP; 0 ancillary checks; 30 distinct Vue;types/build PASS;0skip",
+          "worker_delivery_ref": "docs/development/evidence/W212-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -196708,11 +196792,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-28T22:45:33.266865+00:00",
+        "started_at": "2026-10-28T23:20:56.097181+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          100,
-          150
+          75,
+          110
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -196720,7 +196804,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Continue 08E exact rule activation with real clock policy, occupancy and effect Owner protections, then warehouse/location lifecycle and formal Transfer Request/Draft/Stock adoption. Preserve all original D2/D3/D5/D6/D7 exits.",
+      "next_action": "Implement real non-overlapping occupancy and effect-Owner protections, then 08E rule activation, warehouse/location lifecycle and formal Transfer Request/Draft/Stock. Preserve original D2/D3/D5/D6/D7 and125targets/247formalacceptances/full task states.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -196728,7 +196812,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 27.96
+      "elapsed_registered_wave_minutes": 13.58
     },
     "wave_history": [
       {
@@ -224339,6 +224423,121 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/186"
           }
         ]
+      },
+      {
+        "id": "20261028-wave211",
+        "path": "docs/development/dispatch/20261028-wave211/README.md",
+        "baseline_sha": "f09396935e83ef1f5cdeb066f368710c7f2d654b",
+        "registered_at": "2026-10-28T22:46:12.252101+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W211-01",
+            "workspace_task": "W211-01",
+            "related_tasks": [
+              "WP10-01",
+              "WP10-10"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Native location rule submission and OA decision binding",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "fd349143e8791aea9b5e9f8f9a8f24c181c7f066",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261028T224612Z-wave211-start/MESSAGE.md",
+              "at": "2026-10-28T22:46:12.252101+00:00",
+              "branch": "codex/w211-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w211-01",
+            "planned_scope_ref": "docs/development/dispatch/20261028-wave211/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:location-rule-review",
+              "Main:OA-business-adapter",
+              "Main:current-authorization"
+            ],
+            "validation": "30 distinct PG18/Program HTTP; 0 ancillary checks; 40 distinct Vue;types/build PASS;0skip",
+            "worker_delivery_ref": "docs/development/evidence/W211-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave211-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-28T22:45:33.266865+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            100,
+            150
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Continue 08E exact rule activation with real clock policy, occupancy and effect Owner protections, then warehouse/location lifecycle and formal Transfer Request/Draft/Stock adoption. Preserve all original D2/D3/D5/D6/D7 exits.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave211-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 27.96,
+        "actual_registered_wave_minutes": 30.87,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W211-01",
+            "source": "2df88b32d73a729a916c7273fab140030b2285f1",
+            "remote_target": "aa488fbd2b1f8cfaf681b53efc9f96fd06718748",
+            "branch": "codex/w211-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/634"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W211-HANDOFF",
+            "source": "51bf3282a242027d17618dd0636e49bb7f136e76",
+            "remote_target": "544cf89ff9e8d878bcb74b76edee16a8c306047d",
+            "branch": "codex/w211-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/187"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -224416,7 +224615,7 @@
           "id": "D2",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W211-01",
+          "current_window": "W212-01",
           "prerequisite_adjustment": "Formal SourceDemand/Transfer providers and RMA IN/terminal Owner contracts remain prerequisites; current read Owners and trusted creation/inheritance are adopted within their precise scope.",
           "adopted_window": "W42-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/395",
@@ -224426,13 +224625,13 @@
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "Continue 08E exact rule activation with real clock policy, occupancy and effect Owner protections, then warehouse/location lifecycle and formal Transfer Request/Draft/Stock adoption. Preserve all original D2/D3/D5/D6/D7 exits.",
+          "next_action": "Implement real non-overlapping occupancy and effect-Owner protections, then 08E rule activation, warehouse/location lifecycle and formal Transfer Request/Draft/Stock. Preserve original D2/D3/D5/D6/D7 and125targets/247formalacceptances/full task states.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W140-01/DELIVERY.md",
           "last_inheritance_report": "docs/development/evidence/W137-01/DELIVERY.md",
           "last_paging_report": "docs/development/evidence/W141-01/DELIVERY.md",
           "last_demand_budget_report": "docs/development/evidence/W142-01/DELIVERY.md",
-          "formal_master_gap": "W206-210 warehouse/location/candidate/reference limited foundations and W211 exact submission/native OA approval binding delivered. Actual 08E rule activation, clock/occupancy and effect Owner protection, lifecycle and formal Transfer/Stock effects remain.",
+          "formal_master_gap": "W206-211 native warehouse/location/candidate/source/review foundations and W212 clock policy/temporal assessment delivered. Actual08E, occupancy/effect Owner protection, lifecycle and formal Transfer/Stock remain.",
           "last_inventory_identity_report": "docs/development/evidence/W204-01/DELIVERY.md",
           "last_transfer_environment_report": "docs/development/evidence/W205-01/DELIVERY.md",
           "last_warehouse_draft_report": "docs/development/evidence/W206-01/DELIVERY.md",
@@ -224440,7 +224639,8 @@
           "last_location_draft_report": "docs/development/evidence/W208-01/DELIVERY.md",
           "last_location_rule_report": "docs/development/evidence/W209-01/DELIVERY.md",
           "last_rule_references_report": "docs/development/evidence/W210-01/DELIVERY.md",
-          "last_rule_review_report": "docs/development/evidence/W211-01/DELIVERY.md"
+          "last_rule_review_report": "docs/development/evidence/W211-01/DELIVERY.md",
+          "last_clock_policy_report": "docs/development/evidence/W212-01/DELIVERY.md"
         },
         {
           "id": "D3",

@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W211 规则送审与审批绑定](dispatch/20261028-wave211/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
+> 当前：[W212 时钟政策与时间评估](dispatch/20261028-wave212/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
+
+> 历史快照：[W211 规则送审与审批绑定](dispatch/20261028-wave211/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
 
 > 历史快照：[W210 规则字典与来源绑定](dispatch/20261028-wave210/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
 

@@ -39,3 +39,7 @@ POST `/api/location-rule/owner-v1/{id}/review-policies` 保存不可变新政策
 PostgreSQL 前向迁移新增政策/送审/outbox、投递、可信事实、批准绑定/回执链、状态及明确投递 Owner；原件不可变、外键、当前事务 journal/事实来源与启用触发器共同约束。只在隔离本地数据库验证；不执行既有环境迁移。
 
 [本轮交付](evidence/W211-01/DELIVERY.md)记录实际验证、修复、复用来源及收尾。08E 所需当前时钟政策/占用和效果 Owner、Selector 生效前驱、仓库/库位激活、正式 Transfer/Stock 及七天完整出口均保留。没有 Actions、生产候选、真实企业验收或部署结论。
+
+## W212 时间前置
+
+规则审批页可对准确候选进行[原生时钟政策与时间评估](warehouse-clock-policy-v1.md)。CURRENT取真实认可来源观察，PLANNED保留带偏移指定时刻且只预测；未知来源不放行。时间满足仍不构成08E应用或作业准入，原审批与Selector语义保持。

@@ -5,6 +5,7 @@
     <template v-if="source && scope">
       <RouterLink :to="`/wms/location/${source.body.locationId}/rules`">返回库位规则候选</RouterLink>
       <LocationRuleReviewPanel :location-rule="source" :scope="scope" :disabled="busy" :initial-submission="submission" />
+      <LocationRuleTimePanel :source="source" :scope="scope" :disabled="busy" />
     </template>
   </main>
 </template>
@@ -17,6 +18,7 @@ import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
 import { usePermissionStore } from '@/stores/permission'
 import LocationRuleReviewPanel from './LocationRuleReviewPanel.vue'
+import LocationRuleTimePanel from './LocationRuleTimePanel.vue'
 const route=useRoute(), permissions=usePermissionStore(), source=ref<LocationRuleReviewSource|null>(null), scope=ref<LocationRuleReviewScope|null>(null)
 const busy=ref(false), error=ref(''), id=computed(()=>String(route.params.id??'')), submission=computed(()=>typeof route.query.submission==='string'?route.query.submission:undefined)
 const canRead=computed(()=>permissions.loaded&&permissions.has('wms-location-rule:query'))
