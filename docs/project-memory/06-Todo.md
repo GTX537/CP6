@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-28：W213 容量份额底座待Main收尾
+
+内部容量域/准确份额/别名去重、同事务部分实现、原结果恢复和精确数量验证已完成。12 actual isolated PostgreSQL capacity behavior/migration tests PASS;0skip;no UI change。[报告](../development/evidence/W213-01/DELIVERY.md)。登记11.37分钟，预计50–75；Handoff已释放，Main待正常PR/finish。真实Owner覆盖/源映射/库存采用、保护与08E、完整MASTER/Transfer/Stock及七天出口保留。
+
 ## 2026-10-28：W212 时钟政策与时间评估待Main收尾
 
 原生时钟政策、实际数据库观察、来源/当前权限、有效期边界、回拨/超时拒绝和原键恢复已验证。9 distinct PG18/Program HTTP; 0 ancillary checks; 30 distinct Vue;types/build PASS;0skip。[报告](../development/evidence/W212-01/DELIVERY.md)。登记13.58分钟，预计75–110；Handoff已释放，Main待正常PR/finish。实际规则生效、占用保护与激活、完整MASTER/Transfer/Stock及七天出口保留。
