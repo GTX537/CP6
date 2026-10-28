@@ -659,6 +659,7 @@ CP6.Core.Services.Sys.FieldRegistry.Register("wms-location", new[] { "Barcode", 
 builder.Services.AddScoped<CP6.Core.Services.Wms.WarehouseOwnerServiceV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.WarehouseDraftOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.LocationHierarchyOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.LocationDraftOwnerV1>();
 CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-packaging", "出货包装原记录", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-packaging", new[] { "CarrierCd", "Remarks", "TrackingNo" }.Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
 builder.Services.AddScoped<CP6.Core.Services.Wms.PackagingOwnerV1>();

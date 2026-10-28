@@ -100,9 +100,9 @@ public sealed class LocationHierarchyOwnerV1(CP6Context db,OperationsOwnerV1 own
             if(!await s.Compatible(w,p.Original.RootLevels,p.Original.Edges,t))throw Error("HIERARCHY_CURRENT_TREE_INCOMPATIBLE",409);
             if(c.ParentLocationId is Guid id)
             {
-                var location=await a.SourceAsync(OperationsOwnerV1.Location,t);var parent=(Location)await location.RequireMaster("locations",id,t);
-                if(!await db.Locations.AsNoTracking().AnyAsync(x=>x.Id==parent.Id&&x.WarehouseCd==w.WarehouseCd,t)||!p.Original.Edges.Contains(new(parent.LocationLevel,c.LocationLevel)))throw Error("HIERARCHY_EDGE_FORBIDDEN");
-                a.AtCommit(async token=>{await location.RequireMaster("locations",id,token);});
+                var location=await a.SourceAsync(OperationsOwnerV1.Location,t);var parent=(Location)await location.RequireMasterNameTarget("locations",id,t);
+                if(!await db.Locations.IgnoreQueryFilters().AsNoTracking().AnyAsync(x=>x.TenantId==db.CurrentTenantId&&x.Id==parent.Id&&x.WarehouseCd==w.WarehouseCd,t)||!p.Original.Edges.Contains(new(parent.LocationLevel,c.LocationLevel)))throw Error("HIERARCHY_EDGE_FORBIDDEN");
+                a.AtCommit(async token=>{await location.RequireMasterNameTarget("locations",id,token);});
             }
             else if(!p.Original.RootLevels.Contains(c.LocationLevel))throw Error("HIERARCHY_ROOT_FORBIDDEN");
             a.AtCommit(async token=>{await s.Fence(false,token);if((await s.HeadFor(warehouse,token))?.Hierarchy!=h.Hierarchy

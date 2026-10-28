@@ -1849,7 +1849,14 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         // ロケーション：LocationCd 唯一；倉庫+親ツリー；製品検索
         modelBuilder.Entity<Location>(e =>
         {
-            e.HasIndex(x => x.LocationCd).IsUnique();
+            var legacyCode = e.HasIndex(x => x.LocationCd).IsUnique();
+            if (Database.IsNpgsql())
+            {
+                e.Property(x => x.IsInitializationQuarantined).HasDefaultValue(false);
+                legacyCode.HasFilter("NOT \"IsInitializationQuarantined\"");
+                e.HasIndex(x => new { x.TenantId, x.WarehouseCd, x.LocationCd }).IsUnique();
+            }
+            else e.Ignore(x => x.IsInitializationQuarantined);
             e.HasIndex(x => new { x.WarehouseCd, x.ParentLocationCd });
             e.HasIndex(x => new { x.WarehouseCd, x.IsBlocked, x.IsPickable });
             e.HasIndex(x => x.Barcode);
@@ -2605,6 +2612,8 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
             var body = Expression.Equal(
                 Expression.Property(p, nameof(BaseTenantEntity.TenantId)),
                 Expression.Property(Expression.Constant(this), nameof(CurrentTenantId)));
+            if (Database.IsNpgsql() && et.ClrType == typeof(Location))
+                body = Expression.AndAlso(body, Expression.Not(Expression.Property(p, nameof(Location.IsInitializationQuarantined))));
             modelBuilder.Entity(et.ClrType).HasQueryFilter(Expression.Lambda(body, p));
         }
 

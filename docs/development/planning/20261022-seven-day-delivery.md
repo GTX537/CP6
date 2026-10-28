@@ -1552,3 +1552,7 @@ BOM独立Owner、多层稳定位置、准确材料/单位、实际ProductMateria
 ## 2026-10-28 W207 库位层级策略与结构预检
 
 显式库位层级策略、实际原生树兼容/结构版本、稳定父ID预检、当前权限与原键恢复及独立页面已验证。45 distinct PG18/Program HTTP; 58 distinct Vue;types/build PASS;0skip。[报告](../evidence/W207-01/DELIVERY.md)。登记15.75分钟，预计90–150；Handoff已释放，Main待正常PR/finish。正式Location初始化隔离/创建与完整MASTER/Transfer/Stock及七天出口保留。 Implement actual Location InitializationFence coverage for legacy reads/writes/allocation, then native DRAFT+QUARANTINED creation using current hierarchy policy/revision and real parent identity. Continue full lifecycle/rule/Owner protections, optional warehouse relation providers and formal Transfer/Stock adoption; preserve remaining original seven-day exits.
+
+## 2026-10-28 W208 库位隔离草稿与实际初始化屏障
+
+原生库位隔离草稿、实际旧读取/写入屏障、当前父身份/层级/权限、原键恢复与独立页面已验证。61 distinct PG18/Program HTTP; 36 distinct Vue;types/build PASS;0skip。[报告](../evidence/W208-01/DELIVERY.md)。登记20.73分钟，预计60–100；Handoff已释放，Main待正常PR/finish。旧仓库Site/条码来源、typed规则/激活、完整MASTER/Transfer/Stock及七天出口保留。 Continue actual typed-rule and lifecycle prerequisites and formal Transfer Request/Draft/Stock Owner adoption; qualify legacy warehouse Site and barcode sources separately. Do not activate quarantine without complete current Owner/consumer proof; preserve all original seven-day exits.
