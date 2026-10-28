@@ -664,6 +664,10 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.LocationHierarchyOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.LocationDraftOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.LocationRuleOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.LocationRuleReferencesOwnerV1>();
+builder.Services.Configure<CP6.Core.Services.Wms.WarehouseClockOptionsV1>(builder.Configuration.GetSection("WarehouseClock"));
+builder.Services.AddScoped(sp=>new CP6.Core.Services.Wms.WarehouseClockRuntimeV1(sp.GetRequiredService<CP6Context>(),
+    sp.GetRequiredService<CP6.Core.Services.Sys.ScopeAuthorizationFenceV1>(),sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<CP6.Core.Services.Wms.WarehouseClockOptionsV1>>(),builder.Environment.IsDevelopment()));
+builder.Services.AddScoped<CP6.Core.Services.Wms.WarehouseClockOwnerV1>();
 CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-packaging", "出货包装原记录", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-packaging", new[] { "CarrierCd", "Remarks", "TrackingNo" }.Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
 builder.Services.AddScoped<CP6.Core.Services.Wms.PackagingOwnerV1>();
