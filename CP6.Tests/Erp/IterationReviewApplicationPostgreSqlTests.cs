@@ -10,13 +10,14 @@ namespace CP6.Tests.Erp;
 public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
     private sealed record IterationDecisionFixture(IterationReviewFixture Source,Guid Submission,IntakeAuthority Service);
-    private async Task<IterationDecisionFixture> IterationDecisionSetup(Harness h,string rejectDisposition="RETURN")
+    private async Task<IterationDecisionFixture> IterationDecisionSetup(Harness h,string rejectDisposition="RETURN",Func<Task>? beforeCheck=null)
     {
         var f=await IterationReviewSetup(h,1,async iteration=>{
             foreach(var action in new[]{"review-apply","review-withdraw","review-issue","review-issue-verify","review-issue-degrade"})await EngineeringAction(h,"plm-engineering-iteration",action);
             h.Db.Sys_Roles.Add(new(){RoleId=76,RoleName="Iteration FLOW reviewer"});await h.Db.SaveChangesAsync();
             await h.Db.Sys_Users.Where(x=>x.Id==iteration.Reviewer).ExecuteUpdateAsync(s=>s.SetProperty(x=>x.RoleId,76));
             await TaskPermission(h,iteration.Reviewer);await EngineeringAction(h,"oa-inbox","query");
+            if(beforeCheck!=null)await beforeCheck();
         },rejectDisposition);
         var(binding,flows,initial)=await ExistingReviewBinding(h);var head=await flows.ReadHeadAsync("binding-flow");
         var draft=await flows.CreateNextDraftAsync("binding-flow",NextDraftCommand(head.Version,initial,"iteration-decision-next"));
