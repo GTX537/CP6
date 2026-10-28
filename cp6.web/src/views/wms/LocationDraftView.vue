@@ -17,7 +17,7 @@
       </fieldset>
     </form>
     <h2>已保存草稿</h2><p v-if="!rows.length">当前页没有可读取的库位草稿。</p>
-    <table v-else><thead><tr><th>编码</th><th>名称</th><th>层级</th><th>状态</th><th>业务版本</th></tr></thead><tbody><tr v-for="r in rows" :key="r.id"><td>{{ r.code }}</td><td>{{ r.canReadName ? r.name ?? '未设置' : '无读取权限' }}</td><td>{{ r.level }}</td><td>草稿 · 未启用</td><td>{{ r.businessRevision }}</td></tr></tbody></table>
+    <table v-else><thead><tr><th>编码</th><th>名称</th><th>层级</th><th>状态</th><th>业务版本</th></tr></thead><tbody><tr v-for="r in rows" :key="r.id"><td>{{ r.code }} · <RouterLink v-if="permissions.has('wms-location-rule:query')" :to="`/wms/location/${r.id}/rules`">规则候选</RouterLink></td><td>{{ r.canReadName ? r.name ?? '未设置' : '无读取权限' }}</td><td>{{ r.level }}</td><td>草稿 · 未启用</td><td>{{ r.businessRevision }}</td></tr></tbody></table>
     <button :disabled="busy || page === 1" @click="move(-1)">上一页</button><span>第 {{ page }} 页</span><button :disabled="busy || rows.length < 50" @click="move(1)">下一页</button>
     <p><RouterLink :to="`/wms/warehouse/${warehouse}/hierarchy`">库位层级策略</RouterLink> · <RouterLink to="/wms/warehouse-drafts">仓库草稿</RouterLink></p>
   </main>

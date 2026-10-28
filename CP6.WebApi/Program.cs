@@ -573,6 +573,8 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("erp-business-partner", "客户
 CP6.Core.Services.Sys.FieldRegistry.Register("erp-business-partner", new CP6.Core.Services.Sys.FieldRegistry.Field("BpName", "客户名称"));
 CP6.Core.Services.Sys.DataScopeRegistry.Register("uom-profile", "单位配置", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("uom-profile");
+CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-location-rule", "库位规则候选", new[] { 1, 2, 3, 4, 5 }, 1);
+CP6.Core.Services.Sys.FieldRegistry.Register("wms-location-rule", new[] { "AllowedOperations", "AllowedProductTypes", "Capacity", "IsPickable", "Selector", "Validity" }.Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
 CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-inventory-identity", "库存身份", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-inventory-identity");
 // Tenant-wide registration; product/object scopes remain enforced by the actual source Owners.
@@ -660,6 +662,7 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.WarehouseOwnerServiceV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.WarehouseDraftOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.LocationHierarchyOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.LocationDraftOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.LocationRuleOwnerV1>();
 CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-packaging", "出货包装原记录", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-packaging", new[] { "CarrierCd", "Remarks", "TrackingNo" }.Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
 builder.Services.AddScoped<CP6.Core.Services.Wms.PackagingOwnerV1>();
