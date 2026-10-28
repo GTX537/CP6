@@ -85,6 +85,9 @@ public sealed partial class OperationsOwnerV1
             : throw new OrderPriceCorrectionException("ACTION_FORBIDDEN",403);
     internal Task<Authority> QualityPolicyAuthorityAsync(Guid actor,CancellationToken ct)
         =>AuthorityCoreAsync(QualitySpecification,"review-policy",actor,true,ct);
+    internal Task<Authority> LocationRuleReviewAuthorityAsync(string resource,string action,Guid actor,CancellationToken ct)
+        => action=="query" || resource==LocationRule && action is "review-policy" or "review-submit" or "review-decide"
+            ? AuthorityCoreAsync(resource,action,actor,true,ct) : throw new OrderPriceCorrectionException("ACTION_FORBIDDEN",403);
     internal Task<Authority> RequirementSetReviewAuthorityAsync(string resource,string action,Guid actor,CancellationToken ct)
         => action=="query" || resource==RequirementSet && action is "review-policy" or "review-submit" or "review-decide"
             ? AuthorityCoreAsync(resource,action,actor,true,ct) : throw new OrderPriceCorrectionException("ACTION_FORBIDDEN",403);

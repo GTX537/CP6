@@ -1564,3 +1564,7 @@ BOM独立Owner、多层稳定位置、准确材料/单位、实际ProductMateria
 ## 2026-10-28 W210 库位规则字典与准确来源绑定
 
 原生仓库规则字典、真实UOM/BASE来源、候选不可变绑定、当前独立权限、原键恢复及独立页面已验证。46 distinct PG18/Program HTTP; 0 ancillary checks; 44 distinct Vue;types/build PASS;0skip。[报告](../evidence/W210-01/DELIVERY.md)。登记26.69分钟，预计75–120；Handoff已释放，Main待正常PR/finish。真实批准/应用、时钟占用与激活、完整MASTER/Transfer/Stock及七天出口保留。 Continue exact rule submission/approval and application with actual clock/occupancy/Owner protections, then lifecycle and formal Transfer Request/Draft/Stock adoption. Retain all original D2/D3/D5/D6/D7 exits.
+
+## 2026-10-28 W211 库位规则送审与真实 OA 决定绑定
+
+准确候选送审、真实OA人类任务/决定、当前政策/角色/来源、退回重审/撤回迟到决定和原键恢复已验证。30 distinct PG18/Program HTTP; 0 ancillary checks; 40 distinct Vue;types/build PASS;0skip。[报告](../evidence/W211-01/DELIVERY.md)。登记27.96分钟，预计100–150；Handoff已释放，Main待正常PR/finish。实际规则生效、时钟占用与激活、完整MASTER/Transfer/Stock及七天出口保留。 Continue 08E exact rule activation with real clock policy, occupancy and effect Owner protections, then warehouse/location lifecycle and formal Transfer Request/Draft/Stock adoption. Preserve all original D2/D3/D5/D6/D7 exits.

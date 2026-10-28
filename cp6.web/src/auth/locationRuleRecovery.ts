@@ -25,7 +25,7 @@ function accept(s: RuleScope, id: string, v: RuleOperation, check: () => void) {
     || (v.state === 'COMMITTED' ? !r || r.operationId !== id || r.locationId !== s.locationId || !uuid.test(r.selectorId)
       || r.reference?.owner !== 'Main.Wms.LocationRuleProposal.v1' || !uuid.test(r.reference.id) || !/^[1-9][0-9]*$/.test(r.reference.version)
       || !/^[a-f0-9]{64}$/.test(r.reference.digest) || !/^"[a-f0-9]{32}"$/.test(r.etag)
-      || !['CREATED', 'UPDATED', 'NO_CHANGE', 'WITHDRAWN', 'RESOLVED'].includes(r.effect) || r.state !== (r.effect === 'WITHDRAWN' ? 'WITHDRAWN' : 'DRAFT') : r != null)
+      || !['CREATED', 'UPDATED', 'NO_CHANGE', 'WITHDRAWN', 'RESOLVED'].includes(r.effect) || (r.effect === 'WITHDRAWN' ? r.state !== 'WITHDRAWN' : r.effect === 'NO_CHANGE' ? !['DRAFT', 'RETURNED'].includes(r.state) : r.state !== 'DRAFT') : r != null)
     || pendingLocationRule(s) !== id) throw new Error('原操作结果不一致，请保留记录。')
   if (v.state !== 'UNKNOWN') localStorage.removeItem(locationRuleKey(s)); return v
 }

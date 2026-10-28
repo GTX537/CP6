@@ -33,7 +33,7 @@ public sealed record LocationRuleViewV1(EngineeringSourceRefV1 Reference,Guid Lo
 {
     public string ReferenceResolution{get;init;}="UNRESOLVED";
     public RuleReferenceBindingV1? ReferenceBinding{get;init;}
-    public string Approval=>"NOT_SUBMITTED";
+    public string Approval=>State is "DRAFT"?"NOT_SUBMITTED":State;
     public bool AdmissionGrant=>false;
 }
 public sealed record LocationRuleContextV1(LocationRuleScopeV1 Scope,string LocationCode,string InitializationState,

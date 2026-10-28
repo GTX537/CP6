@@ -10,7 +10,7 @@ internal sealed record ApprovalBusinessDecisionProofV2(object FrozenPolicy,int R
 
 /// <summary>Explicit local participants selected by the frozen business Owner. No fallback
 /// to another domain's policy and no caller-supplied evidence provider.</summary>
-public sealed class ApprovalBusinessEvidenceV2(ToolDispositionApprovalOwnerV1 tools,ControlledDocumentReviewOwnerV1? documents=null,RequirementSetReviewOwnerV1? sets=null,IterationReviewOwnerV1? iterations=null)
+public sealed class ApprovalBusinessEvidenceV2(ToolDispositionApprovalOwnerV1 tools,ControlledDocumentReviewOwnerV1? documents=null,RequirementSetReviewOwnerV1? sets=null,IterationReviewOwnerV1? iterations=null,LocationRuleReviewOwnerV1? rules=null)
 {
     internal Task<string> Withdrawal(ApprovalSubmitCommandV2 original,ApprovalWithdrawCommandV2 command,bool current,CancellationToken ct)
         =>original.Subject.BusinessOwner==IterationReviewStoreV1.Owner && iterations!=null
@@ -22,6 +22,8 @@ public sealed class ApprovalBusinessEvidenceV2(ToolDispositionApprovalOwnerV1 to
         {var p=await tools.VerifyIntakeEvidence(incoming,ct);return new(p.FrozenSubmissionId,p.Evidence);}
         if(incoming.Value.Subject.BusinessOwner==ControlledDocumentReviewStoreV1.Owner && documents!=null)
             return await documents.VerifyIntakeEvidence(incoming,ct);
+        if(incoming.Value.Subject.BusinessOwner==LocationRuleReviewStoreV1.Owner && rules!=null)
+            return await rules.VerifyIntakeEvidence(incoming,ct);
         if(incoming.Value.Subject.BusinessOwner==RequirementSetReviewStoreV1.Owner && sets!=null)
             return await sets.VerifyIntakeEvidence(incoming,ct);
         if(incoming.Value.Subject.BusinessOwner==IterationReviewStoreV1.Owner && iterations!=null)
@@ -35,6 +37,8 @@ public sealed class ApprovalBusinessEvidenceV2(ToolDispositionApprovalOwnerV1 to
         {var p=await tools.ReadDecisionPolicy(original,ct);return new(p.FrozenPolicy,p.FrozenPolicy.Body.RequiredHumanApprovals,"tool",p.ReadAuthority);}
         if(original.Subject.BusinessOwner==ControlledDocumentReviewStoreV1.Owner && documents!=null)
             return await documents.ReadDecisionPolicy(original,principal,deciding,ct);
+        if(original.Subject.BusinessOwner==LocationRuleReviewStoreV1.Owner && rules!=null)
+            return await rules.ReadDecisionPolicy(original,principal,deciding,ct,approving);
         if(original.Subject.BusinessOwner==RequirementSetReviewStoreV1.Owner && sets!=null)
             return await sets.ReadDecisionPolicy(original,principal,deciding,ct,approving);
         if(original.Subject.BusinessOwner==IterationReviewStoreV1.Owner && iterations!=null)
@@ -47,6 +51,8 @@ public sealed class ApprovalBusinessEvidenceV2(ToolDispositionApprovalOwnerV1 to
         if(original.Subject.BusinessOwner=="Main.Wms.ToolDisposition.v1")return Task.FromResult(Array.Empty<string>());
         if(original.Subject.BusinessOwner==ControlledDocumentReviewStoreV1.Owner && documents!=null)
             return documents.ValidateDecisionRequirements(original,policy,votes,approved,ct);
+        if(original.Subject.BusinessOwner==LocationRuleReviewStoreV1.Owner && rules!=null)
+            return rules.ValidateDecisionRequirements(original,policy,votes,approved,ct);
         if(original.Subject.BusinessOwner==RequirementSetReviewStoreV1.Owner && sets!=null)
             return sets.ValidateDecisionRequirements(original,policy,votes,approved,ct);
         if(original.Subject.BusinessOwner==IterationReviewStoreV1.Owner && iterations!=null)

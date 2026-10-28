@@ -75,7 +75,7 @@ public sealed class LocationRuleOwnerV1(CP6Context db,OperationsOwnerV1 owner)
     {
         if(input==null||!Text(input.Reason,1000))throw Error("RULE_WITHDRAW_REASON_REQUIRED");var c=OperationsOwnerV1.Freeze(input);
         return Command(location,id,c.OperationId,"withdraw",new{location,id,etag,kind="WITHDRAW",command=c},async(a,s,t)=>
-        {var h=await Editable(s,location,id,etag,t);return(await s.Change(h,c.OperationId,a.ActorId,null,t),"WITHDRAWN");},ct);
+        {var h=await Editable(s,location,id,etag,t,true);return(await s.Change(h,c.OperationId,a.ActorId,null,t),"WITHDRAWN");},ct);
     }
     public Task<LocationRuleResultV1> ResolveAsync(Guid location,Guid id,string? etag,LocationRuleResolveV1 input,CancellationToken ct=default)
     {
@@ -90,10 +90,10 @@ public sealed class LocationRuleOwnerV1(CP6Context db,OperationsOwnerV1 owner)
             return(await s.Change(h,c.OperationId,a.ActorId,old.Draft,t,binding),"RESOLVED");
         },ct);
     }
-    private static async Task<LocationRuleStoreV1.Head> Editable(LocationRuleStoreV1 s,Guid location,Guid id,string? etag,CancellationToken ct)
+    private static async Task<LocationRuleStoreV1.Head> Editable(LocationRuleStoreV1 s,Guid location,Guid id,string? etag,CancellationToken ct,bool withdraw=false)
     {
         if(string.IsNullOrEmpty(etag))throw Error("RULE_ETAG_REQUIRED",428);var h=await s.HeadFor(location,id,ct);
-        if(h.Etag!=etag)throw Error("RULE_PREDECESSOR_CHANGED",412);if(h.State!="DRAFT")throw Error("RULE_PROPOSAL_NOT_EDITABLE",409);return h;
+        if(h.Etag!=etag)throw Error("RULE_PREDECESSOR_CHANGED",412);if(withdraw?h.State is "WITHDRAWN" or "EFFECTIVE":h.State is not("DRAFT" or "RETURNED"))throw Error("RULE_PROPOSAL_NOT_EDITABLE",409);return h;
     }
     private Task<LocationRuleResultV1> Command(Guid location,Guid id,Guid operation,string action,object command,
         Func<OperationsAccessV1,LocationRuleStoreV1,CancellationToken,Task<(LocationRuleStoreV1.Head Head,string Effect)>> body,CancellationToken ct)
