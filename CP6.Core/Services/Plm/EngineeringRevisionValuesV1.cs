@@ -1,3 +1,4 @@
+using CP6.Core.Services.Mes;
 using System.Text.RegularExpressions;
 using static CP6.Core.Services.Plm.EngineeringProductValuesV1;
 
@@ -58,6 +59,7 @@ internal static class EngineeringRevisionValuesV1
         {
             if (value.Kind == "PRODUCT" && source.Owner == EngineeringProductValuesV1.Owner)
                 Reference(new(source.Owner, source.Id, source.Version, source.Digest));
+            else if (value.Kind == "QUALITY_SPEC" && source.Owner == QualitySpecificationValuesV1.Owner) QualitySpecificationValuesV1.Ref(source);
             else if (value.Kind == "DOCUMENT" && source.Owner == ControlledDocumentValuesV1.Owner) ControlledDocumentValuesV1.Ref(source);
             else if (value.Kind == "ROUTING" && source.Owner == EngineeringRoutingValuesV1.Owner) EngineeringRoutingValuesV1.Ref(source);
             else if (value.Kind is "EBOM" or "MBOM" && source.Owner == EngineeringBomValuesV1.Owner) EngineeringBomValuesV1.Ref(source);

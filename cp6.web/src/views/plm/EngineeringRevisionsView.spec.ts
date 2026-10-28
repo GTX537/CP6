@@ -2,9 +2,10 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { mount, flushPromises, type VueWrapper } from '@vue/test-utils'
 import type { RevisionCommand, RevisionSnapshot } from '@/api/plm/engineeringRevisions'
 import type { EngineeringVersion } from '@/api/plm/engineeringProducts'
-const api = vi.hoisted(() => ({ scope: vi.fn(), creationContext: vi.fn(), list: vi.fn(), read: vi.fn(), diff: vi.fn(), save: vi.fn(), operation: vi.fn(), products: vi.fn(), rules: vi.fn(), rule: vi.fn(), routings: vi.fn(), documents: vi.fn(), boms: vi.fn(), authenticated: true, allowed: true }))
+const api = vi.hoisted(() => ({ scope: vi.fn(), creationContext: vi.fn(), list: vi.fn(), read: vi.fn(), diff: vi.fn(), save: vi.fn(), operation: vi.fn(), products: vi.fn(), rules: vi.fn(), rule: vi.fn(), routings: vi.fn(), documents: vi.fn(), boms: vi.fn(), qualities: vi.fn(), qualityRead: vi.fn(), qualitySource: vi.fn(), authenticated: true, allowed: true }))
 vi.mock('@/api/plm/engineeringRevisions', () => ({ revisionApi: api }))
 vi.mock('@/api/plm/configurationRules', () => ({ configurationApi: { list: api.rules, read: api.rule } }))
+vi.mock('@/api/mes/qualitySpecification', () => ({ qualityApi: { list: api.qualities, read: api.qualityRead, source: api.qualitySource } }))
 vi.mock('@/api/plm/controlledDocument', () => ({ documentApi: { list: api.documents } }))
 vi.mock('@/api/plm/engineeringBom', () => ({ bomApi: { list: api.boms } }))
 vi.mock('@/api/plm/engineeringRouting', () => ({ routingApi: { list: api.routings } }))
@@ -151,4 +152,24 @@ it('adopts the explicitly selected document version without asserting profession
   await field('组成文档来源').setValue(`${reference.owner}:${reference.id}:${reference.version}:${reference.digest}`); await submit('位置路径')
   expect(api.save.mock.calls[0]![0].patches[0].component).toMatchObject({ kind: 'DOCUMENT', sourceRef: reference })
   expect(view!.text()).not.toContain('文档已批准')
+})
+
+it('selects the still approved exact quality revision while a later draft exists', async () => {
+  persisted.draft.productRef = product.reference
+  const reference = { owner: 'Main.Quality.Specification.v1', id: department, version: '1', digest: 'd'.repeat(64) }
+  const exact = { version: { reference, body: { name: 'Approved quality source', product: product.reference } } }
+  api.qualities.mockResolvedValue(ok([{ version: { ...exact.version, reference: { ...reference, version: '2' } }, currentApproval: { body: { specification: reference } } }]))
+  api.qualityRead.mockResolvedValue(ok(exact)); api.qualitySource.mockResolvedValue(ok({ availability: 'AVAILABLE', specification: reference, observation: 'READ_ONLY_OBSERVATION' }))
+  await opened(); await click('添加组成位置'); await field('组成类型').setValue('QUALITY_SPEC'); await field('位置路径').setValue('inspection/incoming')
+  await click('查找已批准质量规格'); expect(api.qualityRead).toHaveBeenCalledWith(reference.id, '1')
+  await field('组成质量规格来源').setValue(`${reference.owner}:${reference.id}:${reference.version}:${reference.digest}`); await submit('位置路径')
+  expect(api.save.mock.calls[0]![0].patches[0].component.sourceRef).toEqual(reference)
+})
+it('excludes withdrawn quality sources from engineering choices', async () => {
+  persisted.draft.productRef = product.reference
+  const reference = { owner: 'Main.Quality.Specification.v1', id: department, version: '1', digest: 'd'.repeat(64) }
+  api.qualities.mockResolvedValue(ok([{ version: { reference, body: { name: 'Withdrawn source', product: product.reference } }, currentApproval: { body: { specification: reference } } }]))
+  api.qualitySource.mockResolvedValue(ok({ availability: 'UNAVAILABLE', specification: reference, observation: 'READ_ONLY_OBSERVATION' }))
+  await opened(); await click('添加组成位置'); await field('组成类型').setValue('QUALITY_SPEC'); await click('查找已批准质量规格')
+  expect(field('组成质量规格来源').findAll('option')).toHaveLength(1); expect(api.save).not.toHaveBeenCalled()
 })

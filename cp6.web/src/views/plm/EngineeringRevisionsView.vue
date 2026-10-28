@@ -53,6 +53,7 @@
         <label>适用性<select v-model="component.applicability" aria-label="组成适用性"><option value="UNKNOWN">待确定</option><option value="APPLIES">拟适用</option><option value="NOT_APPLICABLE">拟不适用</option></select></label>
         <label>适用性说明<textarea v-model="component.reason" aria-label="组成适用性说明" :required="component.applicability === 'NOT_APPLICABLE'" /></label><label>说明<textarea v-model="component.note" aria-label="组成说明" /></label>
         <label v-if="component.kind === 'PRODUCT'">工程产品来源<select v-model="componentSource" aria-label="组成来源"><option value="">{{ component.sourceRef ? '保留已记录来源' : '来源待补齐' }}</option><option v-for="row in products" :key="refKey(row.reference)" :value="refKey(row.reference)">{{ row.product.code }} / {{ row.product.name }} · {{ row.reference.id }} · v{{ row.reference.version }}</option></select></label>
+        <div v-if="component.kind === 'QUALITY_SPEC'"><label>质量规格搜索<input v-model="qualitySearch" aria-label="质量规格搜索" /></label><button type="button" :disabled="!permissions.has('quality-specification:query')" @click="findQuality(1)">查找已批准质量规格</button><button v-if="qualityMore" type="button" @click="findQuality(qualityPage + 1)">更多质量规格</button><label>质量规格来源<select v-model="componentSource" aria-label="组成质量规格来源"><option value="">{{ component.sourceRef ? '保留已记录规格版本' : '请选择已批准的准确版本' }}</option><option v-for="q in qualitySources" :key="refKey(q.version.reference)" :value="refKey(q.version.reference)">{{ q.version.body.name }} · v{{ q.version.reference.version }}</option></select></label><p>保存时会核对规格当前批准与完整来源，工程草稿无需预先冻结。</p></div>
         <div v-if="component.kind === 'DOCUMENT'"><button type="button" :disabled="!permissions.has('plm-controlled-document:query')" @click="findDocuments">查找本修订文档</button><label>文档来源<select v-model="componentSource" aria-label="组成文档来源"><option value="">{{ component.sourceRef ? '保留已记录文档版本' : '请选择准确文档版本' }}</option><option v-for="d in documents" :key="refKey(d.reference)" :value="refKey(d.reference)">{{ d.body.name }} · {{ d.body.revisionLabel }} · v{{ d.reference.version }}</option></select></label><p>文档工作版本可加入组成；专业批准与用途许可仍需完成。</p></div>
         <div v-if="component.kind === 'ROUTING'"><button type="button" :disabled="!permissions.has('plm-engineering-routing:query')" @click="findRoutings">查找本修订工艺</button><label>工艺来源<select v-model="componentSource" aria-label="组成工艺来源"><option value="">{{ component.sourceRef ? '保留已记录工艺版本' : '请选择准确工艺版本' }}</option><option v-for="r in routings" :key="refKey(r.reference)" :value="refKey(r.reference)">{{ r.body.name }} · v{{ r.reference.version }} · {{ r.reference.id }}</option></select></label></div>
         <div v-if="component.kind === 'EBOM' || component.kind === 'MBOM'"><button type="button" :disabled="!permissions.has('plm-engineering-bom:query')" @click="findBoms">查找本修订 BOM</button><label>结构来源<select v-model="componentSource" aria-label="组成BOM来源"><option value="">{{ component.sourceRef ? '保留已记录结构版本' : '请选择准确结构版本' }}</option><option v-for="b in boms" :key="refKey(b.reference)" :value="refKey(b.reference)">{{ b.body.kind }} / {{ b.body.name }} · v{{ b.reference.version }}</option></select></label><p>准确结构版本可以加入组成；结构评审、制造映射和冻结仍需完成。</p></div>
@@ -69,6 +70,7 @@
 
 <script setup lang="ts">
 import { configurationApi, type ConfigurationSnapshot } from '@/api/plm/configurationRules'
+import { qualityApi, type QualityView } from '@/api/mes/qualitySpecification'
 import { documentApi, type DocumentSnapshot } from '@/api/plm/controlledDocument'
 import { bomApi, type BomSnapshot } from '@/api/plm/engineeringBom'
 import { routingApi, type RoutingSnapshot } from '@/api/plm/engineeringRouting'
@@ -84,6 +86,7 @@ const busy = ref(false), error = ref(''), notice = ref(''), scope = ref<Revision
 const rows = ref<RevisionSnapshot[]>([]), search = ref(''), page = ref(1), current = ref<RevisionSnapshot | null>(null), creating = ref(false), creation = ref<RevisionCreation | null>(null), draftId = ref('')
 const goal = ref(''), reason = ref(''), noParentReason = ref(''), department = ref(''), productSearch = ref(''), products = ref<EngineeringVersion[]>([]), rootProduct = ref('')
 const rules = ref<ConfigurationSnapshot[]>([]), ruleSelection = ref('')
+const qualitySources = ref<QualityView[]>([]), qualitySearch = ref(''), qualityPage = ref(1), qualityMore = ref(false)
 const documents = ref<DocumentSnapshot[]>([])
 const routings = ref<RoutingSnapshot[]>([]), boms = ref<BomSnapshot[]>([])
 const emptyConfiguration = (): RevisionConfiguration => ({ options: [], applicability: 'UNKNOWN', reason: '' })
@@ -94,6 +97,7 @@ let generation = 0, live = true
 const copy = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T
 const refKey = (value: EngineeringReference) => `${value.owner}:${value.id}:${value.version}:${value.digest}`
 function missingText(value: string) {
+  if (value.startsWith('QUALITY_SPEC:')) return '质量规格的批准、完整要求或当前来源不可用，请重新核对。'
   if (value.startsWith('DOCUMENT_APPROVAL_REQUIRED:')) return '所引用文档仍待专业评审与批准'
   if (value.startsWith('DOCUMENT:')) return '文档来源或内容仍有待确认事项'
   if (value.startsWith('BOM_REVIEW_AND_FREEZE_REQUIRED:')) return '所引用结构仍待评审与冻结'
@@ -118,7 +122,7 @@ async function run(action: (check: () => void) => Promise<void>) {
   catch (failure: any) { try { check(); if (failure?.response?.status === 403) clearPrivate(); error.value = message(failure) } catch { /* Ignore obsolete responses. */ } }
   finally { try { check(); syncPending(); busy.value = false } catch { if (live && epoch === generation) busy.value = false } }
 }
-function clearEditor() { documents.value = []; boms.value = []; routings.value = []; rules.value = []; ruleSelection.value = '';  current.value = null; creating.value = false; creation.value = null; draftId.value = ''; goal.value = ''; reason.value = ''; noParentReason.value = ''; department.value = ''; rootProduct.value = ''; products.value = []; productSearch.value = ''; component.value = null; componentSource.value = ''; configuration.value = emptyConfiguration(); history.value = null; diff.value = null; historyVersion.value = '1'; beforeVersion.value = '1'; afterVersion.value = '1' }
+function clearEditor() { qualitySources.value = []; qualitySearch.value = ''; qualityPage.value = 1; qualityMore.value = false; documents.value = []; boms.value = []; routings.value = []; rules.value = []; ruleSelection.value = '';  current.value = null; creating.value = false; creation.value = null; draftId.value = ''; goal.value = ''; reason.value = ''; noParentReason.value = ''; department.value = ''; rootProduct.value = ''; products.value = []; productSearch.value = ''; component.value = null; componentSource.value = ''; configuration.value = emptyConfiguration(); history.value = null; diff.value = null; historyVersion.value = '1'; beforeVersion.value = '1'; afterVersion.value = '1' }
 function setCurrent(value: RevisionSnapshot) { clearEditor(); current.value = value; draftId.value = value.reference.id; goal.value = value.draft.goal; configuration.value = copy(value.draft.configuration?.input ?? emptyConfiguration()); afterVersion.value = value.reference.version }
 async function reload() { await run(async check => { rows.value = []; clearEditor(); scope.value = null; if (!permissions.loaded) await permissions.loadMyActions(); check(); if (!canRead.value) throw new Error('当前没有读取工程修订的权限。'); const s = revisionResponse(await revisionApi.scope()); check(); scope.value = s; const list = revisionResponse(await revisionApi.list(search.value, page.value)); check(); rows.value = list }) }
 async function loadList(target: number) { await run(async check => { rows.value = []; const list = revisionResponse(await revisionApi.list(search.value, target)); check(); rows.value = list; page.value = target }) }
@@ -149,10 +153,26 @@ async function saveConfiguration() { const input = copy(configuration.value); if
 async function clearConfiguration() { await patch([{ op: 'CLEAR_CONFIGURATION' }]) }
 function newComponent() { componentSource.value = ''; component.value = { occurrenceId: crypto.randomUUID(), kind: 'PRODUCT', path: '', semanticOrder: 0, applicability: 'UNKNOWN', reason: '', note: '', sourceRef: null } }
 function editComponent(value: RevisionComponent) { componentSource.value = ''; component.value = copy(value) }
+async function findQuality(target: number) {
+  const parent = current.value; if (!parent?.draft.productRef) return
+  await run(async check => {
+    if (target === 1) { qualitySources.value = []; componentSource.value = '' }
+    const values = revisionResponse(await qualityApi.list(qualitySearch.value, target)); check()
+    for (const item of values) {
+      const reference = item.currentApproval?.body.specification
+      if (!reference || item.version.body.product.id !== parent.draft.productRef!.id) continue
+      const exact = reference.version === item.version.reference.version ? item : revisionResponse(await qualityApi.read(reference.id, reference.version)); check()
+      const proof = revisionResponse(await qualityApi.source(reference)); check()
+      if (refKey(exact.version.reference) !== refKey(reference) || refKey(proof.specification) !== refKey(reference) || proof.observation !== 'READ_ONLY_OBSERVATION') throw new Error('质量规格来源与所选准确版本不一致。')
+      if (proof.availability === 'AVAILABLE' && refKey(exact.version.body.product) === refKey(parent.draft.productRef!)) qualitySources.value.push(exact)
+    }
+    qualityPage.value = target; qualityMore.value = values.length === 20
+  })
+}
 async function findDocuments() { const parent = current.value; if (!parent) return; await run(async check => { documents.value = []; componentSource.value = ''; const values = revisionResponse(await documentApi.list(parent.reference.id)); check(); documents.value = values.filter(d => d.isCurrent && parent.draft.productRef && refKey(d.body.productRef) === refKey(parent.draft.productRef)) }) }
 async function findRoutings() { const parent = current.value; if (!parent) return; await run(async check => { routings.value = []; componentSource.value = ''; const values = revisionResponse(await routingApi.list(parent.reference.id)); check(); routings.value = values.filter(r => r.isCurrent && parent.draft.productRef && refKey(r.body.productRef) === refKey(parent.draft.productRef)) }) }
 async function findBoms() { const parent = current.value, kind = component.value?.kind; if (!parent) return; await run(async check => { boms.value = []; componentSource.value = ''; const values = revisionResponse(await bomApi.list(parent.reference.id)); check(); boms.value = values.filter(b => b.isCurrent && b.body.kind === kind && parent.draft.productRef && refKey(b.body.productRef) === refKey(parent.draft.productRef)) }) }
-async function saveComponent() { if (!component.value) return; try { const value = copy(component.value); if (componentSource.value) { if (value.kind === 'DOCUMENT') { const d = documents.value.find(d => refKey(d.reference) === componentSource.value); if (!d) throw new Error('请重新查找本修订文档。'); value.sourceRef = copy(d.reference) } else if (value.kind === 'ROUTING') { const r = routings.value.find(r => refKey(r.reference) === componentSource.value); if (!r) throw new Error('请重新查找本修订工艺。'); value.sourceRef = copy(r.reference) } else if (value.kind === 'EBOM' || value.kind === 'MBOM') { const b = boms.value.find(b => b.body.kind === value.kind && refKey(b.reference) === componentSource.value); if (!b) throw new Error('请重新查找本修订BOM。'); value.sourceRef = copy(b.reference) } else value.sourceRef = selectedProduct(componentSource.value) } await patch([{ op: 'UPSERT_COMPONENT', component: value }]) } catch (failure) { error.value = message(failure) } }
+async function saveComponent() { if (!component.value) return; try { const value = copy(component.value); if (componentSource.value) { if (value.kind === 'QUALITY_SPEC') { const q = qualitySources.value.find(q => refKey(q.version.reference) === componentSource.value); if (!q) throw new Error('请重新查找已批准质量规格。'); value.sourceRef = copy(q.version.reference) } else if (value.kind === 'DOCUMENT') { const d = documents.value.find(d => refKey(d.reference) === componentSource.value); if (!d) throw new Error('请重新查找本修订文档。'); value.sourceRef = copy(d.reference) } else if (value.kind === 'ROUTING') { const r = routings.value.find(r => refKey(r.reference) === componentSource.value); if (!r) throw new Error('请重新查找本修订工艺。'); value.sourceRef = copy(r.reference) } else if (value.kind === 'EBOM' || value.kind === 'MBOM') { const b = boms.value.find(b => b.body.kind === value.kind && refKey(b.reference) === componentSource.value); if (!b) throw new Error('请重新查找本修订BOM。'); value.sourceRef = copy(b.reference) } else value.sourceRef = selectedProduct(componentSource.value) } await patch([{ op: 'UPSERT_COMPONENT', component: value }]) } catch (failure) { error.value = message(failure) } }
 async function removeComponent(value: RevisionComponent) { await patch([{ op: 'REMOVE_COMPONENT', occurrenceId: value.occurrenceId }]) }
 async function loadHistory() { const id = current.value?.reference.id, version = historyVersion.value; if (!id) return; await run(async check => { history.value = null; const value = revisionResponse(await revisionApi.read(id, version)); check(); history.value = value }) }
 async function loadDiff() { const id = current.value?.reference.id, before = beforeVersion.value, after = afterVersion.value; if (!id) return; await run(async check => { diff.value = null; const value = revisionResponse(await revisionApi.diff(id, before, after)); check(); diff.value = value }) }
