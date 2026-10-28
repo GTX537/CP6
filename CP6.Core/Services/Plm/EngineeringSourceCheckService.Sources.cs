@@ -144,6 +144,13 @@ public sealed partial class EngineeringSourceCheckService
                             vtool.IsCurrent && vtool.SourceMatches && vtool.ProductMatches
                                 ? ["TOOL_APPROVAL_AND_PHYSICAL_QUALIFICATION_REQUIRED"] : ["TOOL_SOURCE_CHANGED"]);
                     }
+                    foreach (var capability in step.ResourceCapabilities ?? [])
+                    {
+                        var declared = await new ResourceCapabilityOwnerV1(db, owner).Source(root, capability, false, ct);
+                        o.Pin(stepPath + "/capabilities/" + capability.Kind + "/" + capability.Id,
+                            new(capability.Owner, capability.Id, capability.Version, capability.Digest), "cp6_resource_capability_v1", declared.OriginalJson,
+                            new { declared.IsCurrent, declared.Qualification }, declared.Missing);
+                    }
                     foreach (var unit in step.Parameters.Select(x => x.UnitRef).OfType<UomProfileRefV1>().Distinct())
                         await Unit(root, o, stepPath + "/units/" + unit.Id, unit, ct);
                 }

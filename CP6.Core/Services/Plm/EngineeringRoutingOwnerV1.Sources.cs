@@ -44,6 +44,7 @@ public sealed partial class EngineeringRoutingOwnerV1
         var resourceCache = new Dictionary<CP6.Core.Services.Mes.ResourceSourceRefV1, ResourceSourceVersionV1>();
         var unitCache = new Dictionary<UomProfileRefV1, UomProfileVersionV1>();
         var toolCache = new Dictionary<EngineeringSourceRefV1, ToolSpecificationViewV1>();
+        var capabilityCache = new Dictionary<ResourceCapabilityRefV1, ResourceCapabilitySnapshotV1>();
         foreach (var step in body.Operations)
         {
             foreach (var source in step.Resources)
@@ -60,6 +61,16 @@ public sealed partial class EngineeringRoutingOwnerV1
                 if (!value.IsCurrent || !value.SourcePresent || !value.SourceEnabled)
                 { if (current) throw Error("ROUTING_RESOURCE_SOURCE_CHANGED", 412); findings.Add("RESOURCE_SOURCE_CHANGED:" + step.OccurrenceId); }
                 findings.Add("RESOURCE_QUALIFICATION_REQUIRED:" + step.OccurrenceId);
+            }
+            foreach (var reference in step.ResourceCapabilities ?? [])
+            {
+                if (!capabilityCache.TryGetValue(reference, out var capability))
+                {
+                    capability = await new ResourceCapabilityOwnerV1(db, owner).Source(root, reference, current, ct);
+                    capabilityCache.Add(reference, capability);
+                }
+                if (!step.Resources.Contains(capability.Body.Source)) throw Error("ROUTING_RESOURCE_CAPABILITY_SOURCE_MISMATCH", 412);
+                foreach (var missing in capability.Missing) findings.Add(missing + ":" + step.OccurrenceId);
             }
             foreach (var source in step.Tools)
             {

@@ -12,7 +12,8 @@ public sealed record RoutingParameterV1(string Name, string? Value, string? Mini
 public sealed record RoutingOperationV1(Guid OccurrenceId, string ProcessCode, string Name, int SemanticOrder,
     Guid[] DependsOn, string? AlternativeGroup, string Applicability, string Reason, string Instructions,
     ResourceSourceRefV1[] Resources, EngineeringSourceRefV1[] Tools, RoutingParameterV1[] Parameters,
-    string DocumentRequirement, Guid? LegacyRowId = null);
+    string DocumentRequirement, Guid? LegacyRowId = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] ResourceCapabilityRefV1[]? ResourceCapabilities = null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record EngineeringRoutingBodyV1(string Name, EngineeringRevisionRefV1 RevisionOrigin,
     EngineeringProductRefV1 ProductRef, EngineeringSourceRefV1? SiteRef, string ManufacturingViewRequirement,

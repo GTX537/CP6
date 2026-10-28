@@ -69,6 +69,17 @@ internal static class EngineeringRoutingValuesV1
                     || !sources.Add((tool.Owner, tool.Id))) throw Error("ROUTING_TOOL_REFERENCE_INVALID", 400);
                 Revision(tool.Version);
             }
+            if (op.ResourceCapabilities is { } capabilities)
+            {
+                if (capabilities.Length > 100) throw Error("ROUTING_RESOURCE_CAPABILITY_INVALID", 400);
+                var selected = new HashSet<(string, Guid)>();
+                foreach (var capability in capabilities)
+                {
+                    CP6.Core.Services.Mes.ResourceCapabilityValuesV1.Reference(capability);
+                    if (!selected.Add((capability.Kind, capability.Id)) || !op.Resources.Any(r => r.Kind == capability.Kind && r.Id == capability.Id))
+                        throw Error("ROUTING_RESOURCE_CAPABILITY_INVALID", 400);
+                }
+            }
             var names = new HashSet<string>(StringComparer.Ordinal);
             foreach (var parameter in op.Parameters)
             {

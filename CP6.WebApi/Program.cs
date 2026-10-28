@@ -836,6 +836,7 @@ builder.Services.AddScoped<CP6.Core.Services.ErpIntegration.ErpCommerceAuthority
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<CommercialProductIdentityReader>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.ResourceSourceOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Mes.ResourceCapabilityOwnerV1>();
 builder.Services.AddScoped<UomProfileOwnerV1>();
 builder.Services.AddScoped<UomTimeBasisOwnerV1>();
 builder.Services.AddScoped<PlateMoldSourceOwnerV1>();
