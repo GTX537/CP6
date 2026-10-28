@@ -9,7 +9,7 @@ internal static class LocationRuleValuesV1
     internal const string Owner="Main.Wms.LocationRuleProposal.v1",Contract="LOCATION-RULE-PROPOSAL/1";
     internal static readonly string[] Fields=["AllowedOperations","AllowedProductTypes","Capacity","IsPickable","Selector","Validity"];
     internal static OrderPriceCorrectionException Error(string code,int status=400)=>new(code,status);
-    internal static bool Text(string? v,int max)=>!string.IsNullOrWhiteSpace(v)&&v.Length<=max&&v==v.Trim()&&!v.Any(char.IsControl)&&ValidUnicode(v);
+    internal static bool Text(string? v,int max)=>!string.IsNullOrWhiteSpace(v)&&v.Length<=max&&!v.Any(char.IsControl)&&ValidUnicode(v);
     private static bool ValidUnicode(string v)
     {for(var i=0;i<v.Length;i++)if(char.IsSurrogate(v[i])&&(!char.IsHighSurrogate(v[i])||++i>=v.Length||!char.IsLowSurrogate(v[i])))return false;return true;}
     internal static void Reference(LocationRuleCodeRefV1? r)

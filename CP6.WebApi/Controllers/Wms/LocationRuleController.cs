@@ -20,5 +20,7 @@ public sealed class LocationRuleController(LocationRuleOwnerV1 owner):Controller
     [HttpPost("{id:guid}/withdraw"),RequestSizeLimit(8192)]public async Task<IActionResult> Withdraw(Guid location,Guid id,LocationRuleWithdrawV1 command,CancellationToken ct)
     {var r=await owner.WithdrawAsync(location,id,Request.Headers.IfMatch.ToString(),command,ct);Response.Headers.ETag=r.Etag;return Result(r);}
     [HttpGet("operations/{id:guid}")]public async Task<IActionResult> Operation(Guid location,Guid id,CancellationToken ct)=>Result(await owner.OperationAsync(location,id,false,ct));
+    [HttpPost("{id:guid}/resolve"),RequestSizeLimit(8192)]public async Task<IActionResult> Resolve(Guid location,Guid id,LocationRuleResolveV1 command,CancellationToken ct)
+    {var r=await owner.ResolveAsync(location,id,Request.Headers.IfMatch.ToString(),command,ct);Response.Headers.ETag=r.Etag;return Result(r);}
     [HttpPost("operations/{id:guid}/close")]public async Task<IActionResult> Close(Guid location,Guid id,CancellationToken ct)=>Result(await owner.OperationAsync(location,id,true,ct));
 }

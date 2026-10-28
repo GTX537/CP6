@@ -16,8 +16,12 @@ public sealed class LocationRuleOwnerV1(CP6Context db,OperationsOwnerV1 owner)
         =>Authority.ExecuteAsync(OperationsOwnerV1.LocationRule,"query",false,async(a,t)=>
         {
             await Target(a,location,t);var native=await a.RequireLocationRuleTarget(location,t);var s=new LocationRuleStoreV1(db);await s.Fence(false,t);
-            var fields=a.LocationRuleFields();return new LocationRuleContextV1(new(db.CurrentTenantId,a.ActorId,location),native.LocationCd,
-                native.IsInitializationQuarantined?"QUARANTINED":"LEGACY_UNVERIFIED",fields,fields.Single(x=>x.Field=="Selector").CanRead?await s.Selectors(location,t):[]);
+            var fields=a.LocationRuleFields();var (warehouse,policy)=await LocationRuleReferenceResolverV1.Policy(db,a,location,t);
+            return new LocationRuleContextV1(new(db.CurrentTenantId,a.ActorId,location),native.LocationCd,
+                native.IsInitializationQuarantined?"QUARANTINED":"LEGACY_UNVERIFIED",fields,fields.Single(x=>x.Field=="Selector").CanRead?await s.Selectors(location,t):[])
+            {WarehouseId=warehouse,ReferencePolicy=policy?.Reference,ReferenceCatalog=policy,
+                ReferenceAuthorities=policy==null?"UNAVAILABLE":policy.Original.Definition.Enabled?"CONFIGURED":"DISABLED",
+                ReferenceAuthorityBindings=LocationRuleReferenceResolverV1.Authorities(policy)};
         },ct);
     private static async Task<LocationRuleViewV1> View(OperationsAccessV1 a,LocationRuleStoreV1 s,LocationRuleStoreV1.Head h,long? version,CancellationToken ct)
     {
@@ -32,7 +36,8 @@ public sealed class LocationRuleOwnerV1(CP6Context db,OperationsOwnerV1 owner)
             case "IsPickable":candidate["isPickable"]=d.IsPickable;break;
             case "Validity":candidate["validFrom"]=d.ValidFrom;candidate["validTo"]=d.ValidTo;break;
         }
-        return new(r.Reference,h.Location,h.Selector,h.State,h.Etag,candidate,fields.Where(x=>!x.CanRead).Select(x=>x.Field).ToArray(),fields.All(x=>x.CanRead)?r.Json:null);
+        return new(r.Reference,h.Location,h.Selector,h.State,h.Etag,candidate,fields.Where(x=>!x.CanRead).Select(x=>x.Field).ToArray(),fields.All(x=>x.CanRead)?r.Json:null)
+            {ReferenceResolution=r.Original.ReferenceResolution,ReferenceBinding=fields.All(x=>x.CanRead)?r.Original.ReferenceBinding:null};
     }
     public Task<LocationRuleViewV1> ReadAsync(Guid location,Guid id,string? version=null,CancellationToken ct=default)
     {
@@ -71,6 +76,19 @@ public sealed class LocationRuleOwnerV1(CP6Context db,OperationsOwnerV1 owner)
         if(input==null||!Text(input.Reason,1000))throw Error("RULE_WITHDRAW_REASON_REQUIRED");var c=OperationsOwnerV1.Freeze(input);
         return Command(location,id,c.OperationId,"withdraw",new{location,id,etag,kind="WITHDRAW",command=c},async(a,s,t)=>
         {var h=await Editable(s,location,id,etag,t);return(await s.Change(h,c.OperationId,a.ActorId,null,t),"WITHDRAWN");},ct);
+    }
+    public Task<LocationRuleResultV1> ResolveAsync(Guid location,Guid id,string? etag,LocationRuleResolveV1 input,CancellationToken ct=default)
+    {
+        if(input==null||input.ExpectedPolicy==null)throw Error("RULE_REFERENCE_POLICY_REQUIRED");var c=OperationsOwnerV1.Freeze(input);
+        return Command(location,id,c.OperationId,"resolve",new{location,id,etag,kind="RESOLVE",command=c},async(a,s,t)=>
+        {
+            var h=await Editable(s,location,id,etag,t);a.RequireLocationRuleWrite(Fields);
+            if(a.LocationRuleFields().Any(f=>!f.CanRead))throw Error("FIELD_READ_FORBIDDEN",403);
+            var old=(await s.Read(h,null,t)).Original;
+            var binding=await LocationRuleReferenceResolverV1.Resolve(db,a,location,old.Draft,c.ExpectedPolicy,t);
+            if(old.ReferenceBinding!=null&&EngineeringProductStoreV1.Encode(old.ReferenceBinding).AsSpan().SequenceEqual(EngineeringProductStoreV1.Encode(binding)))return(h,"NO_CHANGE");
+            return(await s.Change(h,c.OperationId,a.ActorId,old.Draft,t,binding),"RESOLVED");
+        },ct);
     }
     private static async Task<LocationRuleStoreV1.Head> Editable(LocationRuleStoreV1 s,Guid location,Guid id,string? etag,CancellationToken ct)
     {

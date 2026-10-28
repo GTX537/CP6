@@ -5,7 +5,7 @@ import LocationRuleView from './LocationRuleView.vue'
 import { locationRuleKey, pendingLocationRule } from '@/auth/locationRuleRecovery'
 import { AUTH_EPOCH, AUTH_EVENT } from '@/auth/identity'
 import type { RuleContext, RuleDraft, RuleView } from '@/api/wms/locationRule'
-const mock = vi.hoisted(() => ({ scope: vi.fn(), context: vi.fn(), list: vi.fn(), read: vi.fn(), create: vi.fn(), patch: vi.fn(), withdraw: vi.fn(), operation: vi.fn(), authenticated: true, permissions: null as any, route: null as any }))
+const mock = vi.hoisted(() => ({ scope: vi.fn(), context: vi.fn(), list: vi.fn(), read: vi.fn(), create: vi.fn(), patch: vi.fn(), withdraw: vi.fn(), resolve: vi.fn(), operation: vi.fn(), authenticated: true, permissions: null as any, route: null as any }))
 vi.mock('@/api/wms/locationRule', () => ({ locationRuleApi: mock }))
 vi.mock('@/api/wms/transferEnvironment', () => ({ transferEnvironmentApi: {} }))
 vi.mock('vue-router', () => ({ useRoute: () => mock.route }))
@@ -36,10 +36,29 @@ beforeEach(() => {
   mock.create.mockImplementation((_l: string, operation: string) => Promise.resolve(ok(result(operation))))
   mock.patch.mockImplementation((_l: string, _p: string, _e: string, operation: string) => Promise.resolve(ok(result(operation, 'UPDATED'))))
   mock.withdraw.mockImplementation((_l: string, _p: string, _e: string, operation: string) => Promise.resolve(ok(result(operation, 'WITHDRAWN'))))
+  mock.resolve.mockImplementation((_l: string, _p: string, _e: string, operation: string) => Promise.resolve(ok(result(operation, 'RESOLVED'))))
   Object.defineProperty(navigator, 'locks', { configurable: true, value: { request: (_k: string, _o: unknown, action: (lock: object) => unknown) => action({}) } })
 })
 afterEach(() => { view?.unmount(); view = undefined })
 describe('typed location rule proposals', () => {
+  const policy = { owner: 'Main.Wms.LocationRuleReferences.v1', id: id(90), version: '9007199254740993', digest: 'b'.repeat(64) }
+  async function prepared() { mock.context.mockResolvedValue(ok({ ...structuredClone(context), referenceAuthorities: 'CONFIGURED', referencePolicy: policy })); mock.list.mockResolvedValue(ok([structuredClone(row)])); await render(); await click('查看候选') }
+  it('binds the saved candidate and exact current policy without submitting unsaved edits or claiming approval', async () => {
+    await prepared(); await set('容量值', '1'); await click('绑定已保存候选来源')
+    expect(mock.resolve).toHaveBeenCalledWith(scope.locationId, row.reference.id, row.etag, expect.any(String), policy); expect(mock.patch).not.toHaveBeenCalled(); expect(view!.text()).toContain('尚未批准或生效'); expect(pendingLocationRule(scope)).toBeNull()
+  })
+  it('refuses a changed dictionary before allocating a binding operation', async () => {
+    await prepared(); mock.context.mockResolvedValue(ok({ ...structuredClone(context), referenceAuthorities: 'CONFIGURED', referencePolicy: { ...policy, digest: 'c'.repeat(64) } })); await click('绑定已保存候选来源'); expect(mock.resolve).not.toHaveBeenCalled(); expect(pendingLocationRule(scope)).toBeNull()
+  })
+  it('never binds hidden fields and does not treat a saved binding as current approval', async () => {
+    mock.context.mockResolvedValue(ok({ ...structuredClone(context), referenceAuthorities: 'CONFIGURED', referencePolicy: policy, fields: context.fields.map(f => ({ ...f, canRead: f.field !== 'Capacity' })) })); const hidden = { ...structuredClone(row), referenceResolution: 'RESOLVED', referenceBinding: null, redactedFields: ['Capacity'], originalJson: null }; delete hidden.candidate.capacity
+    mock.list.mockResolvedValue(ok([hidden])); mock.read.mockResolvedValue(ok(hidden)); await render(); await click('查看候选'); await click('绑定已保存候选来源'); expect(mock.resolve).not.toHaveBeenCalled(); expect(view!.text()).toContain('后续采用前仍须重核当前来源')
+  })
+  it('recovers a lost source-binding receipt using the original UUID without sending a second resolve', async () => {
+    mock.resolve.mockRejectedValue(new Error('lost')); await prepared(); await click('绑定已保存候选来源'); const operation = pendingLocationRule(scope)!
+    mock.operation.mockResolvedValue(ok({ operationId: operation, locationId: scope.locationId, state: 'UNKNOWN' })); await click('查询原操作'); expect(pendingLocationRule(scope)).toBe(operation)
+    mock.operation.mockResolvedValue(ok({ operationId: operation, locationId: scope.locationId, state: 'COMMITTED', result: result(operation, 'RESOLVED') })); await click('查询原操作'); expect(pendingLocationRule(scope)).toBeNull(); expect(mock.resolve).toHaveBeenCalledTimes(1)
+  })
   it('keeps maximum decimal input exact and empty declarations distinct without applying rules', async () => {
     await render(); await fill(); await submit(); const sent = mock.create.mock.calls[0]![2]
     expect(sent.capacity.value).toBe('9999999999999.99999999'); expect(sent.allowedOperations).toEqual([]); expect(sent.allowedProductTypes).toEqual([]); expect(sent.isPickable).toBe(false); expect(sent.validFrom).toBeNull()

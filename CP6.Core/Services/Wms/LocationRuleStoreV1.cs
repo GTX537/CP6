@@ -33,7 +33,8 @@ internal sealed class LocationRuleStoreV1(CP6Context db)
             """).SingleOrDefaultAsync(ct)??throw Error("RULE_VERSION_NOT_FOUND",404);
         var o=JsonSerializer.Deserialize<LocationRuleOriginalV1>(row.Body,EngineeringProductStoreV1.Json);
         if(o==null||o.TenantId!=db.CurrentTenantId||o.Id!=h.Id||o.LocationId!=h.Location||o.SelectorId!=h.Selector||o.Version!=n.ToString(CultureInfo.InvariantCulture)
-            ||o.ReferenceResolution!="UNRESOLVED"||EngineeringProductStoreV1.Digest(row.Body)!=row.Digest)throw Error("RULE_ORIGINAL_UNAVAILABLE",503);
+            ||o.ReferenceResolution is not ("UNRESOLVED" or "RESOLVED")||o.ReferenceResolution=="RESOLVED"!=(o.ReferenceBinding!=null)
+            ||EngineeringProductStoreV1.Digest(row.Body)!=row.Digest)throw Error("RULE_ORIGINAL_UNAVAILABLE",503);
         Draft(o.Draft);return(o,new(Owner,h.Id,o.Version,row.Digest),Encoding.UTF8.GetString(row.Body));
     }
     internal async Task<LocationRuleSelectorV1[]> Selectors(Guid location,CancellationToken ct)
@@ -56,7 +57,7 @@ internal sealed class LocationRuleStoreV1(CP6Context db)
             """,ct);
         var h=await HeadFor(location,id,ct);await Append(h,operation,actor,draft,ct);return h;
     }
-    internal async Task<Head> Change(Head before,Guid operation,Guid actor,LocationRuleDraftV1? draft,CancellationToken ct)
+    internal async Task<Head> Change(Head before,Guid operation,Guid actor,LocationRuleDraftV1? draft,CancellationToken ct,RuleReferenceBindingV1? binding=null)
     {
         if(before.Revision==long.MaxValue||draft!=null&&before.Version==long.MaxValue)throw Error("RULE_VERSION_EXHAUSTED",503);
         var version=before.Version+(draft==null?0:1);var state=draft==null?"WITHDRAWN":"DRAFT";var token=Guid.NewGuid();
@@ -64,11 +65,11 @@ internal sealed class LocationRuleStoreV1(CP6Context db)
             UPDATE cp6_location_rule_v1.proposals SET version={version},revision=revision+1,token={token},state={state},operation_id={operation},actor_id={actor}
             WHERE tenant_id={db.CurrentTenantId} AND id={before.Id} AND revision={before.Revision} AND token={before.Token} AND state='DRAFT'
             """,ct)!=1)throw Error("RULE_PREDECESSOR_CHANGED",412);
-        var h=await HeadFor(before.Location,before.Id,ct);if(draft!=null)await Append(h,operation,actor,draft,ct);return h;
+        var h=await HeadFor(before.Location,before.Id,ct);if(draft!=null)await Append(h,operation,actor,draft,ct,binding);return h;
     }
-    private async Task Append(Head h,Guid operation,Guid actor,LocationRuleDraftV1 draft,CancellationToken ct)
+    private async Task Append(Head h,Guid operation,Guid actor,LocationRuleDraftV1 draft,CancellationToken ct,RuleReferenceBindingV1? binding=null)
     {
-        var o=new LocationRuleOriginalV1(db.CurrentTenantId,h.Id,h.Location,h.Selector,h.Version.ToString(CultureInfo.InvariantCulture),operation,actor,DateTimeOffset.UtcNow,draft,"UNRESOLVED");
+        var o=new LocationRuleOriginalV1(db.CurrentTenantId,h.Id,h.Location,h.Selector,h.Version.ToString(CultureInfo.InvariantCulture),operation,actor,DateTimeOffset.UtcNow,draft,binding==null?"UNRESOLVED":"RESOLVED",binding);
         var body=EngineeringProductStoreV1.Encode(o);var digest=EngineeringProductStoreV1.Digest(body);
         await db.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO cp6_location_rule_v1.versions(tenant_id,id,version,operation_id,actor_id,body,digest)
