@@ -63,6 +63,7 @@ const kinds: { value: StandaloneKind; label: string }[] = [
   { value: 'business-partner', label: '客户原主档' },
   { value: 'tool-instance', label: 'WMS实物版模' },
   { value: 'plate-mold', label: '版型工具原对象' },
+  { value: 'inventory-identity', label: '库存身份原对象' },
   { value: 'uom-profile', label: '单位配置原对象' },
   { value: 'currency-policy', label: '币种政策原对象' },
   { value: 'plm-configuration-rule', label: '工程选项规则原对象' },
