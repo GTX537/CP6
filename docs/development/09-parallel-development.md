@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W194 独立工程需求草稿](dispatch/20261028-wave194/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
+> 当前：[W195 准确需求专业评价与批准来源](dispatch/20261028-wave195/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
+
+> 历史快照：[W194 独立工程需求草稿](dispatch/20261028-wave194/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
 
 > 历史快照：[W193 工程准确来源与完整性检查](dispatch/20261027-wave193/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；原七天全部出口保留。
 

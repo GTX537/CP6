@@ -791,6 +791,8 @@ builder.Services.AddScoped<CurrencyPolicyOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringProductOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringRevisionOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringRequirementService>();
+builder.Services.AddSingleton(new CP6.Core.Services.Plm.RequirementEvaluationRuntimeV1(builder.Configuration["RequirementEvaluation:EvidenceMode"] ?? ""));
+builder.Services.AddScoped<CP6.Core.Services.Plm.RequirementEvaluationService>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringSourceCheckService>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringRoutingOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringBomOwnerV1>();
