@@ -12,7 +12,7 @@ using Npgsql;
 namespace CP6.Tests.Erp;
 public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
-    private static OperationsOwnerV1 CandidateAuthority(Harness h)
+    private static OperationsOwnerV1 CandidateAuthority(Harness h,Func<CancellationToken,Task<Guid>>? actor=null)
     {
         var catalog=new AuthorizationCatalogStoreV1();
         foreach(var key in new[]{"plm-engineering-iteration","plm-configuration-rule","quality-specification","plm-controlled-document","file-content","plm-engineering-revision","plm-engineering-product","space-site","uom-profile","plm-engineering-bom","plm-engineering-routing","plm-tool-specification","erp-plate-mold","mes-machine","mes-work-center","product","plm-requirement-set","plm-engineering-requirement"})
@@ -23,7 +23,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
                 "quality-specification"=>[new("Metadata","Metadata"),new("Requirements","Requirements")],
                 "plm-controlled-document"=>[new("Content","Content"),new("Metadata","Metadata")],"file-content"=>[new("Content","Content"),new("FileName","FileName")],_=>[]});
         }
-        catalog.Seal();return new(h.Db,new OperationsHttp{HttpContext=h.Http},_=>Task.FromResult(h.User),catalog.Capture);
+        catalog.Seal();return new(h.Db,new OperationsHttp{HttpContext=h.Http},actor??(_=>Task.FromResult(h.User)),catalog.Capture);
     }
     private static EngineeringSourceCheckService CandidateChecks(Harness h)=>new(h.Db,CandidateAuthority(h),Documents(h,new ContentStore()),Specifications(h,new ContentStore()));
     private static IterationCandidateService Candidates(Harness h)=>new(h.Db,CandidateAuthority(h),Iterations(h),CandidateChecks(h),ScopeFence(h));

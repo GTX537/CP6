@@ -75,15 +75,17 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Empty((await reviews.ContextAsync(value.Reference.Id)).Submissions);
     }
     private sealed record SetDecisionFixture(SetFixture Source,Guid Submission);
-    private async Task<SetDecisionFixture> SetDecisionSetup(Harness h,bool receive=true)
+    private async Task<SetDecisionFixture> SetDecisionSetup(Harness h,bool receive=true,bool reuseBinding=false)
     {
-        var(binding,flows,initial)=await PrepareBinding(h);var f=await SetSetup(h,false);
-        h.Db.Sys_Roles.Add(new(){RoleId=73,RoleName="Set FLOW assignment"});await h.Db.SaveChangesAsync();
+        var prepared=reuseBinding?await ExistingReviewBinding(h):await PrepareBinding(h);
+        var(binding,flows,initial)=prepared;var f=await SetSetup(h,false);
+        var assignmentRole=reuseBinding?75:73;
+        if(!await h.Db.Sys_Roles.AnyAsync(x=>x.RoleId==assignmentRole))h.Db.Sys_Roles.Add(new(){RoleId=assignmentRole,RoleName="Set FLOW assignment"});await h.Db.SaveChangesAsync();
         foreach(var id in new[]{f.Member.First,f.Member.Second})
-        {await h.Db.Sys_Users.Where(x=>x.Id==id).ExecuteUpdateAsync(s=>s.SetProperty(x=>x.RoleId,73));await TaskPermission(h,id);}
+        {await h.Db.Sys_Users.Where(x=>x.Id==id).ExecuteUpdateAsync(s=>s.SetProperty(x=>x.RoleId,assignmentRole));await TaskPermission(h,id);}
         await EngineeringAction(h,"oa-inbox","query");h.Db.ChangeTracker.Clear();
-        var head=await flows.ReadHeadAsync("binding-flow");var draft=await flows.CreateNextDraftAsync("binding-flow",NextDraftCommand(head.Version,initial));
-        var edit=await flows.SaveAsync("binding-flow",AuthoringCommand("set-flow",draft.ResourceVersion,"requirement set",StartSchema));
+        var head=await flows.ReadHeadAsync("binding-flow");var draft=await flows.CreateNextDraftAsync("binding-flow",NextDraftCommand(head.Version,initial,"set-next"));
+        var edit=await flows.SaveAsync("binding-flow",AuthoringCommand("set-flow",draft.ResourceVersion,"requirement set",StartSchema.Replace("\"approverRoleId\":73","\"approverRoleId\":"+assignmentRole)));
         var publication=await flows.PublishAsync("binding-flow",PublicationCommand(await Preview(flows,"binding-flow",edit),"set-publish"));var version=publication.Result!.Publication!.VersionId;var principal=Guid.NewGuid();
         await h.Db.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO cp6_approval_binding_v2.registrations(tenant_id,environment_id,biz_type,subject_kind,owner,revision,snapshot_schema,snapshot_fields,enabled,service_principal,audience,fixed_route,evidence_mode)
@@ -105,7 +107,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     }
     private async Task<(RequirementSetReviewFactReceiverV1 Receiver,byte[] Payload,IntakeAuthority Authority)> SetReceiver(Harness h,SetDecisionFixture f)
     {
-        var bytes=await h.Db.Database.SqlQuery<byte[]>($"SELECT payload AS \"Value\" FROM cp6_approval_decision_v2.outbox WHERE tenant_id={h.Tenant}").SingleAsync();
+        var bytes=await h.Db.Database.SqlQuery<byte[]>($"SELECT payload AS \"Value\" FROM cp6_approval_decision_v2.outbox WHERE tenant_id={h.Tenant} AND convert_from(payload,'UTF8')::jsonb->>'consumerOwner'='Main.Plm.RequirementSet.v1'").SingleAsync();
         var service=new IntakeAuthority(new(ScopeEnvironment,h.Tenant,Guid.NewGuid(),"set-workflow-producer","CP6.Services","test-registration",true,"DEMO"));
         await h.Db.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO cp6_requirement_set_review_fact_v1.registrations(environment_id,tenant_id,principal_id,revision,enabled,can_receive,can_query,evidence_mode)

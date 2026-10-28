@@ -10,7 +10,7 @@ internal sealed record ApprovalBusinessDecisionProofV2(object FrozenPolicy,int R
 
 /// <summary>Explicit local participants selected by the frozen business Owner. No fallback
 /// to another domain's policy and no caller-supplied evidence provider.</summary>
-public sealed class ApprovalBusinessEvidenceV2(ToolDispositionApprovalOwnerV1 tools,ControlledDocumentReviewOwnerV1? documents=null,RequirementSetReviewOwnerV1? sets=null)
+public sealed class ApprovalBusinessEvidenceV2(ToolDispositionApprovalOwnerV1 tools,ControlledDocumentReviewOwnerV1? documents=null,RequirementSetReviewOwnerV1? sets=null,IterationReviewOwnerV1? iterations=null)
 {
     internal async Task<ApprovalBusinessIntakeProofV2> Intake(ApprovalSubmissionWireV2.Parsed incoming,CancellationToken ct)
     {
@@ -20,6 +20,8 @@ public sealed class ApprovalBusinessEvidenceV2(ToolDispositionApprovalOwnerV1 to
             return await documents.VerifyIntakeEvidence(incoming,ct);
         if(incoming.Value.Subject.BusinessOwner==RequirementSetReviewStoreV1.Owner && sets!=null)
             return await sets.VerifyIntakeEvidence(incoming,ct);
+        if(incoming.Value.Subject.BusinessOwner==IterationReviewStoreV1.Owner && iterations!=null)
+            return await iterations.VerifyIntakeEvidence(incoming,ct);
         throw new ScopeAuthorizationExceptionV1("BUSINESS_EVIDENCE_OWNER_UNAVAILABLE",422);
     }
     internal async Task<ApprovalBusinessDecisionProofV2> Decision(ApprovalSubmitCommandV2 original,

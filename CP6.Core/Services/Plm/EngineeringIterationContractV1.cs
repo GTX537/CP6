@@ -35,7 +35,10 @@ public sealed record IterationTaskV1(IterationTaskPlanV1 Plan,string State,Engin
 public sealed record IterationInputCaptureV1(RequirementSetSourceProofV1 Proof,string RequirementSetOriginal,DateTimeOffset AdoptedAt,Guid AdoptedBy);
 public sealed record IterationProjectV1(IterationProjectInputV1 Definition,string State);
 public sealed record IterationWorkV1(Guid ProjectId,EngineeringSourceRefV1 ProjectReference,IterationPlanV1 Plan,EngineeringRevisionOriginV1 Origin,
-    string Stage,string HoldState,string PlanVersion,string InputVersion,IterationInputCaptureV1 Input,IterationTaskV1[] Tasks);
+    string Stage,string HoldState,string PlanVersion,string InputVersion,IterationInputCaptureV1 Input,IterationTaskV1[] Tasks)
+{
+    public IterationReviewRoundLinkV1? CurrentReview {get;init;}
+}
 public sealed record EngineeringIterationBodyV1(string Kind,string Name,string Number,IterationProjectV1? Project,IterationWorkV1? Iteration);
 public sealed record IterationProgressV1(string ConfirmedWeight,string PlannedWeight,string? Percent);
 public sealed record EngineeringIterationSnapshotV1(Guid TenantId,EngineeringSourceRefV1 Reference,Guid Etag,bool IsCurrent,

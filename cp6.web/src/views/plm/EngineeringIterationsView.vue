@@ -48,6 +48,8 @@
       </section>
       <section v-if="work"><h3>迭代执行</h3><p>{{ label(work.stage) }} · {{ label(work.holdState) }} · 工作进度 {{ current?.progress?.percent === null ? '暂无计划任务' : `${current?.progress?.percent}%` }}</p>
         <a :href="`/plm/engineering-iteration/${encodeURIComponent(current!.reference.id)}/candidates`">查看候选方案</a>
+        <button :disabled="busy" @click="reviewOpen = !reviewOpen">{{ reviewOpen ? '收起迭代送审' : '查看迭代送审' }}</button>
+        <IterationReviewPanel v-if="reviewOpen && current && scope" :iteration="current" :scope="scope" :disabled="busy || !!pending" @changed="refreshReviewIteration" />
         <button v-if="can('start') && work.stage === 'PLANNED'" :disabled="locked || work.holdState === 'HELD'" @click="command('START')">启动迭代</button><button v-if="can('hold') && work.holdState === 'NORMAL'" :disabled="locked" @click="command('HOLD')">暂停迭代</button><button v-if="can('resume') && work.holdState === 'HELD'" :disabled="locked" @click="command('RESUME')">核对来源并恢复</button>
         <h3>计划任务</h3><button v-if="can('edit')" :disabled="locked || work.holdState === 'HELD'" @click="newTask">添加计划任务</button>
         <article v-for="task in work.tasks" :key="task.plan.id"><h4>{{ task.plan.title }}</h4><p>{{ label(task.state) }} · 权重 {{ task.plan.weight }} · 负责人 {{ memberName(task.plan.ownerId) }} · 确认者 {{ memberName(task.plan.confirmerId) }}</p><p>判据：{{ task.plan.acceptance }}</p><p v-if="task.confirmedAt">已由 {{ memberName(task.confirmedBy || '') }} 于 {{ task.confirmedAt }} 确认。</p>
@@ -71,6 +73,7 @@
 </template>
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import IterationReviewPanel from './IterationReviewPanel.vue'
 import { usePermissionStore } from '@/stores/permission'
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
@@ -80,7 +83,7 @@ import { documentApi, type DocumentSnapshot } from '@/api/plm/controlledDocument
 import { engineeringIterationApi as api, iterationLabel as label, type EngineeringIterationScope, type EngineeringIterationSnapshot, type EngineeringIterationCommand, type IterationProjectInput, type IterationPlan, type IterationTaskPlan } from '@/api/plm/engineeringIteration'
 import { engineeringIterationResponse as response, pendingEngineeringIteration, saveEngineeringIteration, resolveEngineeringIteration, type PendingEngineeringIteration } from '@/auth/engineeringIterationRecovery'
 const permission = usePermissionStore(), can = (action: string) => permission.loaded && permission.has(`plm-engineering-iteration:${action}`)
-const busy = ref(false), error = ref(''), notice = ref(''), scope = ref<EngineeringIterationScope | null>(null), pending = ref<PendingEngineeringIteration | null>(null), locked = computed(() => busy.value || !!pending.value)
+const busy = ref(false), error = ref(''), notice = ref(''), scope = ref<EngineeringIterationScope | null>(null), pending = ref<PendingEngineeringIteration | null>(null), locked = computed(() => busy.value || !!pending.value || current.value?.body.iteration?.stage === 'IN_REVIEW')
 const rows = ref<EngineeringIterationSnapshot[]>([]), page = ref(1), search = ref(''), project = ref<EngineeringIterationSnapshot | null>(null), iterations = ref<EngineeringIterationSnapshot[]>([]), childPage = ref(1), current = ref<EngineeringIterationSnapshot | null>(null)
 const creation = ref<EngineeringCreation | null>(null), department = ref(''), objectId = ref(''), reason = ref(''), projectDraft = ref<IterationProjectInput | null>(null), plan = ref<IterationPlan | null>(null), taskDraft = ref<IterationTaskPlan | null>(null)
 const origin = ref<'NEW_PRODUCT' | 'CHANGE' | 'LEGACY_REVIEW'>('NEW_PRODUCT'), noParentReason = ref(''), work = computed(() => current.value?.body.iteration || null), projectMembers = computed(() => project.value?.body.project?.definition.members || [])
@@ -91,7 +94,9 @@ const reviewDocuments = ref<DocumentSnapshot[]>([])
 const copy = <T,>(v: T): T => JSON.parse(JSON.stringify(v)) as T, cryptoId = () => crypto.randomUUID()
 let generation = 0, live = true
 function memberName(id: string) { return members.value.find(m => m.id === id)?.name || (id === scope.value?.actorId ? '当前用户' : id) }
-function resetEditor() { current.value = null; creation.value = null; projectDraft.value = null; plan.value = null; taskDraft.value = null; objectId.value = ''; reason.value = department.value = ''; selectedSet.value = null; setChoices.value = []; setId.value = setVersion.value = ''; submitTaskId.value = ''; deliverables.value = []; documentChoices.value = []; reviewDocuments.value = []; documentId.value = ''; history.value = null; siteOptions.value = []; productOptions.value = [] }
+const reviewOpen = ref(false)
+async function refreshReviewIteration() { await run(async check => { const id = current.value?.reference.id; if (!id) return; const value = response(await api.read(id)); check(); current.value = value; plan.value = value.body.iteration ? copy(value.body.iteration.plan) : null }) }
+function resetEditor() { reviewOpen.value = false; current.value = null; creation.value = null; projectDraft.value = null; plan.value = null; taskDraft.value = null; objectId.value = ''; reason.value = department.value = ''; selectedSet.value = null; setChoices.value = []; setId.value = setVersion.value = ''; submitTaskId.value = ''; deliverables.value = []; documentChoices.value = []; reviewDocuments.value = []; documentId.value = ''; history.value = null; siteOptions.value = []; productOptions.value = [] }
 function clearPrivate() { resetEditor(); project.value = null; iterations.value = []; rows.value = []; members.value = []; scope.value = null; pending.value = null; notice.value = '' }
 async function run(action: (check: () => void) => Promise<void>) {
   if (busy.value) return
