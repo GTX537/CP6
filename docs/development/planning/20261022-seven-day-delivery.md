@@ -1548,3 +1548,7 @@ BOM独立Owner、多层稳定位置、准确材料/单位、实际ProductMateria
 ## 2026-10-28 W206 仓库草稿与旧入口隔离
 
 仓库DRAFT创建、真实Site/类型、当前权限/部门绑定、原键恢复、代码锚与旧业务使用隔离及独立页面已验证。33 PG18/Program HTTP; 45 Vue;types/build PASS;0skip。[报告](../evidence/W206-01/DELIVERY.md)。登记21.64分钟，预计120–200；Handoff已释放，Main待正常PR/finish。据点/负责人关系、Location和生命周期与完整Transfer/Stock及七天出口继续保留。 Continue formal MASTER location initialization and trusted lifecycle/rule/Owner protections, plus genuine optional warehouse relationship providers; then complete Transfer context/T04 Request/Draft and Stock/RSV adoption. Preserve other original seven-day exits.
+
+## 2026-10-28 W207 库位层级策略与结构预检
+
+显式库位层级策略、实际原生树兼容/结构版本、稳定父ID预检、当前权限与原键恢复及独立页面已验证。45 distinct PG18/Program HTTP; 58 distinct Vue;types/build PASS;0skip。[报告](../evidence/W207-01/DELIVERY.md)。登记15.75分钟，预计90–150；Handoff已释放，Main待正常PR/finish。正式Location初始化隔离/创建与完整MASTER/Transfer/Stock及七天出口保留。 Implement actual Location InitializationFence coverage for legacy reads/writes/allocation, then native DRAFT+QUARANTINED creation using current hierarchy policy/revision and real parent identity. Continue full lifecycle/rule/Owner protections, optional warehouse relation providers and formal Transfer/Stock adoption; preserve remaining original seven-day exits.
