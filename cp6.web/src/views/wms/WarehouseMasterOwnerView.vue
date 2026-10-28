@@ -34,7 +34,7 @@
         <el-table-column label="元の親参照"><template #default="{ row }">{{ row.parentState === 'AUTHORIZED_ORIGINAL_REFERENCE' ? row.parentLocationCd : row.parentState === 'ROOT_RECORD' ? '親の記録なし' : '参照不可・未確認' }}</template></el-table-column>
       </template>
       <el-table-column v-else prop="baseCd" label="保存拠点コード" />
-      <el-table-column label="操作"><template #default="{ row }"><el-button link :disabled="!canEdit || !row.nameWritable || !!pending || busy || storageBlocked" @click="openName(row)">名称変更</el-button><RouterLink v-if="isLocation && permission.has('wms-location-rule:query')" :to="`/wms/location/${row.id}/rules`">规则候选</RouterLink><RouterLink v-if="!isLocation" :to="`/wms/warehouse/${row.id}/hierarchy`">库位层级策略</RouterLink></template></el-table-column>
+      <el-table-column label="操作"><template #default="{ row }"><el-button link :disabled="!canEdit || !row.nameWritable || !!pending || busy || storageBlocked" @click="openName(row)">名称変更</el-button><RouterLink v-if="isLocation && permission.has('wms-location-rule:query')" :to="`/wms/location/${row.id}/rules`">规则候选</RouterLink><RouterLink v-if="!isLocation" :to="`/wms/warehouse/${row.id}/hierarchy`">库位层级策略</RouterLink><RouterLink v-if="!isLocation" :to="`/wms/warehouse/${row.id}/rule-references`">库位规则字典</RouterLink></template></el-table-column>
     </el-table>
     <el-pagination v-if="result" layout="total, prev, pager, next" :total="result.total" :page-size="result.pageSize" :current-page="result.page" @current-change="goPage" />
     <el-dialog :model-value="!!editing" title="名称変更" :before-close="closeEditor" :close-on-click-modal="false">

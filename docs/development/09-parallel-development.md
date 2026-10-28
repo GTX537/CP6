@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W209 库位规则候选](dispatch/20261028-wave209/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
+> 当前：[W210 规则字典与来源绑定](dispatch/20261028-wave210/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
+
+> 历史快照：[W209 库位规则候选](dispatch/20261028-wave209/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
 
 > 历史快照：[W208 库位隔离草稿](dispatch/20261028-wave208/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
 

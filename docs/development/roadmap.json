@@ -161252,6 +161252,16 @@
       "date": "2026-10-28",
       "change": "W209 typed rule proposals/immutable history/current permission/CAS/withdrawal/original recovery: 74 distinct PG18/Program HTTP; 5 ancillary checks; 44 distinct Vue;types/build PASS;0skip; Handoff released, Main closeout pending. No actual rule application/lifecycle/full MASTER qualification; original goal unchanged.",
       "evidence": "docs/development/evidence/W209-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-28",
+      "change": "W209 archived once; only its limited location-rule lifecycles closed. W210 native rule reference owner admitted75–120min; actual approval/application and original seven-day exits remain.",
+      "evidence": "docs/development/dispatch/20261028-wave210/README.md"
+    },
+    {
+      "date": "2026-10-28",
+      "change": "W210 native rule dictionary/real UOM and BASE/exact immutable proposal binding/current permission/original recovery: 46 distinct PG18/Program HTTP; 0 ancillary checks; 44 distinct Vue;types/build PASS;0skip; Handoff released, Main closeout pending. No actual rule approval/application/lifecycle/full MASTER qualification; original goal unchanged.",
+      "evidence": "docs/development/evidence/W210-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -186121,7 +186131,7 @@
         }
       },
       "wave209_location_rule": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "workspace_task": "W209-01",
         "report": "docs/development/evidence/W209-01/DELIVERY.md",
         "scope": "Typed native Location rule proposal Owner: exact LIMITED/UNLIMITED/UNKNOWN capacity, immutable candidate versions, stable empty selector identity, strict presence patches/CAS/NO_CHANGE, withdrawal, current action/field/tenant/department/warehouse scope, atomic journal/recovery and independent UI/history.",
@@ -186133,6 +186143,43 @@
           "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/185",
           "exact_tree_adoption": true,
           "at": "2026-10-28T22:00:09.034923+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave209-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W209-01",
+          "source": "9030146690d9c2859a1dddebd942a879ed9cd093",
+          "remote_target": "7afc4e1f5dd06847b82a53d65763bf57f3d4c64b",
+          "branch": "codex/w209-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/632"
+        }
+      },
+      "wave210_rule_references": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "workspace_task": "W210-01",
+        "report": "docs/development/evidence/W210-01/DELIVERY.md",
+        "scope": "Native versioned warehouse rule reference policy, real UOM and base originals, exact immutable candidate reference binding, current permissions and source checks, independent UI and original-operation recovery.",
+        "remaining": "Local PostgreSQL18/Program HTTP and related Vue/types/build only. Dictionary configuration and RESOLVED references do not grant approval, rule application, occupancy/clock qualification, READY_TYPED or warehouse/location activation. Original seven-day exits/full tasks/125 targets/247 formal acceptances remain; no Actions, existing-environment migration or deployment.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "a1e5c9f64cc096068cd03196bfa03994dabb32a2",
+          "main": "334e0254b4277b0014616db8b9be3a1a0ce354b0",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/186",
+          "exact_tree_adoption": true,
+          "at": "2026-10-28T22:35:58.450132+00:00"
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
@@ -186833,7 +186880,7 @@
         }
       },
       "wave209_location_rule": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "workspace_task": "W209-01",
         "report": "docs/development/evidence/W209-01/DELIVERY.md",
         "scope": "Typed native Location rule proposal Owner: exact LIMITED/UNLIMITED/UNKNOWN capacity, immutable candidate versions, stable empty selector identity, strict presence patches/CAS/NO_CHANGE, withdrawal, current action/field/tenant/department/warehouse scope, atomic journal/recovery and independent UI/history.",
@@ -186845,6 +186892,43 @@
           "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/185",
           "exact_tree_adoption": true,
           "at": "2026-10-28T22:00:09.034923+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave209-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W209-01",
+          "source": "9030146690d9c2859a1dddebd942a879ed9cd093",
+          "remote_target": "7afc4e1f5dd06847b82a53d65763bf57f3d4c64b",
+          "branch": "codex/w209-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/632"
+        }
+      },
+      "wave210_rule_references": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "workspace_task": "W210-01",
+        "report": "docs/development/evidence/W210-01/DELIVERY.md",
+        "scope": "Native versioned warehouse rule reference policy, real UOM and base originals, exact immutable candidate reference binding, current permissions and source checks, independent UI and original-operation recovery.",
+        "remaining": "Local PostgreSQL18/Program HTTP and related Vue/types/build only. Dictionary configuration and RESOLVED references do not grant approval, rule application, occupancy/clock qualification, READY_TYPED or warehouse/location activation. Original seven-day exits/full tasks/125 targets/247 formal acceptances remain; no Actions, existing-environment migration or deployment.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "a1e5c9f64cc096068cd03196bfa03994dabb32a2",
+          "main": "334e0254b4277b0014616db8b9be3a1a0ce354b0",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/186",
+          "exact_tree_adoption": true,
+          "at": "2026-10-28T22:35:58.450132+00:00"
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
@@ -196471,10 +196555,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261028-wave209",
-      "path": "docs/development/dispatch/20261028-wave209/README.md",
-      "baseline_sha": "7da31562e21be39691d208fe0f880aac7cf700c6",
-      "registered_at": "2026-10-28T21:44:27.367641+00:00",
+      "id": "20261028-wave210",
+      "path": "docs/development/dispatch/20261028-wave210/README.md",
+      "baseline_sha": "7afc4e1f5dd06847b82a53d65763bf57f3d4c64b",
+      "registered_at": "2026-10-28T22:10:50.867164+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -196493,29 +196577,29 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W209-01",
-          "workspace_task": "W209-01",
+          "id": "W210-01",
+          "workspace_task": "W210-01",
           "related_tasks": [
             "WP10-01",
             "WP10-10"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Typed location rule proposal owner",
+          "title": "Native location rule references and exact candidate resolution",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "21b3172b5d24c19420af2816f6abb7e0375c1caa",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261028T214427Z-wave209-start/MESSAGE.md",
-            "at": "2026-10-28T21:44:27.367641+00:00",
-            "branch": "codex/w209-handoff"
+            "commit": "ce3e9b26ab26cd2e10fc44dfd27fd3ef8a231c00",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261028T221050Z-wave210-start/MESSAGE.md",
+            "at": "2026-10-28T22:10:50.867164+00:00",
+            "branch": "codex/w210-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w209-01",
-          "planned_scope_ref": "docs/development/dispatch/20261028-wave209/README.md",
+          "branch": "codex/w210-01",
+          "planned_scope_ref": "docs/development/dispatch/20261028-wave210/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -196524,12 +196608,12 @@
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
-            "Main:location-rule-proposal",
-            "Main:rule-selector",
+            "Main:location-rule-references",
+            "Main:rule-resolution",
             "Main:current-authorization"
           ],
-          "validation": "74 distinct PG18/Program HTTP; 5 ancillary checks; 44 distinct Vue;types/build PASS;0skip",
-          "worker_delivery_ref": "docs/development/evidence/W209-01/DELIVERY.md",
+          "validation": "46 distinct PG18/Program HTTP; 0 ancillary checks; 44 distinct Vue;types/build PASS;0skip",
+          "worker_delivery_ref": "docs/development/evidence/W210-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -196540,11 +196624,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-28T21:43:21.844374+00:00",
+        "started_at": "2026-10-28T22:09:55.173290+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          50,
-          85
+          75,
+          120
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -196552,7 +196636,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Continue real rule reference authority bindings, approval/application and lifecycle protections, then formal Transfer Request/Draft/Stock adoption. Preserve original D2/D3/D5/D6/D7 exits; no unproven activation.",
+      "next_action": "Continue exact rule submission/approval and application with actual clock/occupancy/Owner protections, then lifecycle and formal Transfer Request/Draft/Stock adoption. Retain all original D2/D3/D5/D6/D7 exits.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -196560,7 +196644,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 17.52
+      "elapsed_registered_wave_minutes": 26.69
     },
     "wave_history": [
       {
@@ -223941,6 +224025,121 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/184"
           }
         ]
+      },
+      {
+        "id": "20261028-wave209",
+        "path": "docs/development/dispatch/20261028-wave209/README.md",
+        "baseline_sha": "7da31562e21be39691d208fe0f880aac7cf700c6",
+        "registered_at": "2026-10-28T21:44:27.367641+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W209-01",
+            "workspace_task": "W209-01",
+            "related_tasks": [
+              "WP10-01",
+              "WP10-10"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Typed location rule proposal owner",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "21b3172b5d24c19420af2816f6abb7e0375c1caa",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261028T214427Z-wave209-start/MESSAGE.md",
+              "at": "2026-10-28T21:44:27.367641+00:00",
+              "branch": "codex/w209-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w209-01",
+            "planned_scope_ref": "docs/development/dispatch/20261028-wave209/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:location-rule-proposal",
+              "Main:rule-selector",
+              "Main:current-authorization"
+            ],
+            "validation": "74 distinct PG18/Program HTTP; 5 ancillary checks; 44 distinct Vue;types/build PASS;0skip",
+            "worker_delivery_ref": "docs/development/evidence/W209-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave209-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-28T21:43:21.844374+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            50,
+            85
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Continue real rule reference authority bindings, approval/application and lifecycle protections, then formal Transfer Request/Draft/Stock adoption. Preserve original D2/D3/D5/D6/D7 exits; no unproven activation.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave209-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 17.52,
+        "actual_registered_wave_minutes": 22.13,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W209-01",
+            "source": "9030146690d9c2859a1dddebd942a879ed9cd093",
+            "remote_target": "7afc4e1f5dd06847b82a53d65763bf57f3d4c64b",
+            "branch": "codex/w209-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/632"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W209-HANDOFF",
+            "source": "f97f5fa7c26983f43d237d958e1fa8970c169c76",
+            "remote_target": "4488c8de2097482ee7bfa970dc9b258abd16633e",
+            "branch": "codex/w209-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/185"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -224018,7 +224217,7 @@
           "id": "D2",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W209-01",
+          "current_window": "W210-01",
           "prerequisite_adjustment": "Formal SourceDemand/Transfer providers and RMA IN/terminal Owner contracts remain prerequisites; current read Owners and trusted creation/inheritance are adopted within their precise scope.",
           "adopted_window": "W42-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/395",
@@ -224028,19 +224227,20 @@
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "Continue real rule reference authority bindings, approval/application and lifecycle protections, then formal Transfer Request/Draft/Stock adoption. Preserve original D2/D3/D5/D6/D7 exits; no unproven activation.",
+          "next_action": "Continue exact rule submission/approval and application with actual clock/occupancy/Owner protections, then lifecycle and formal Transfer Request/Draft/Stock adoption. Retain all original D2/D3/D5/D6/D7 exits.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W140-01/DELIVERY.md",
           "last_inheritance_report": "docs/development/evidence/W137-01/DELIVERY.md",
           "last_paging_report": "docs/development/evidence/W141-01/DELIVERY.md",
           "last_demand_budget_report": "docs/development/evidence/W142-01/DELIVERY.md",
-          "formal_master_gap": "W206 warehouse drafts, W207 hierarchy, W208 quarantined location creation and W209 typed rule candidates delivered within exact scopes. Real rule reference authorities/approval/application/lifecycle/Owner protections and formal Transfer/Stock effects remain.",
+          "formal_master_gap": "W206 warehouse drafts, W207 hierarchy, W208 quarantined location creation, W209 typed rule proposals and W210 native rule reference configuration/binding delivered within exact scopes. Rule approval/application, clock/occupancy and lifecycle/Owner protections and formal Transfer/Stock effects remain.",
           "last_inventory_identity_report": "docs/development/evidence/W204-01/DELIVERY.md",
           "last_transfer_environment_report": "docs/development/evidence/W205-01/DELIVERY.md",
           "last_warehouse_draft_report": "docs/development/evidence/W206-01/DELIVERY.md",
           "last_location_hierarchy_report": "docs/development/evidence/W207-01/DELIVERY.md",
           "last_location_draft_report": "docs/development/evidence/W208-01/DELIVERY.md",
-          "last_location_rule_report": "docs/development/evidence/W209-01/DELIVERY.md"
+          "last_location_rule_report": "docs/development/evidence/W209-01/DELIVERY.md",
+          "last_rule_references_report": "docs/development/evidence/W210-01/DELIVERY.md"
         },
         {
           "id": "D3",

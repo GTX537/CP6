@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-28：W210 库位规则字典与来源绑定待Main收尾
+
+原生仓库规则字典、真实UOM/BASE来源、候选不可变绑定、当前独立权限、原键恢复及独立页面已验证。46 distinct PG18/Program HTTP; 0 ancillary checks; 44 distinct Vue;types/build PASS;0skip。[报告](../development/evidence/W210-01/DELIVERY.md)。登记26.69分钟，预计75–120；Handoff已释放，Main待正常PR/finish。真实批准/应用、时钟占用与激活、完整MASTER/Transfer/Stock及七天出口保留。
+
 ## 2026-10-28：W209 库位规则候选待Main收尾
 
 库位类型化规则候选、不可变历史、独立字段/范围权限、差分更新及撤回、原键恢复与独立页面已验证。74 distinct PG18/Program HTTP; 5 ancillary checks; 44 distinct Vue;types/build PASS;0skip。[报告](../development/evidence/W209-01/DELIVERY.md)。登记17.52分钟，预计50–85；Handoff已释放，Main待正常PR/finish。真实规则字典来源/批准/应用及激活、完整MASTER/Transfer/Stock及七天出口保留。

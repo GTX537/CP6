@@ -6,7 +6,11 @@
     <section v-if="pending"><p>有一笔结果待确认，请先查询原操作。</p><button :disabled="busy" @click="recover(false)">查询原操作</button><button :disabled="busy || !permissions.has('wms-location-rule:abandon')" @click="recover(true)">关闭未提交原操作</button></section>
     <section v-if="context">
       <h2>当前来源与规则</h2><p>库位 {{ context.locationCode }} · {{ context.initializationState === 'QUARANTINED' ? '隔离草稿，尚未启用' : '旧记录，初始化来源未核定' }}</p>
-      <p>指标、单位、精度及适用域引用尚待权威来源核定；允许动作和品类也是候选声明。当前不能送审或应用规则。</p>
+      <p>{{ context.referenceAuthorities === 'CONFIGURED' ? '已配置规则字典；候选须单独绑定当前准确来源。' : context.referenceAuthorities === 'DISABLED' ? '规则字典已停用，不能建立新绑定。' : '规则字典尚未配置，候选引用待核定。' }} 当前不能送审或应用规则。</p>
+      <RouterLink v-if="context.warehouseId" :to="`/wms/warehouse/${context.warehouseId}/rule-references`">查看仓库规则字典</RouterLink>
+      <details v-if="context.referenceCatalog"><summary>查看当前字典的准确代码与版本</summary><p>指标、适用域及精度引用版本：{{ context.referencePolicy?.version }}。单位使用各自原生版本。</p>
+        <ul><li v-for="m in context.referenceCatalog.original.definition.metrics" :key="m.id">指标 {{ m.id }} · 量纲 {{ m.dimensionKey }}</li><li v-for="u in context.referenceCatalog.original.units" :key="u.reference.id">单位 {{ u.code }} · 版本 {{ u.reference.version }} · {{ u.reference.owner }}</li><li v-for="p in context.referenceCatalog.original.definition.precisions" :key="p.id">精度 {{ p.id }} · {{ p.scale }} 位小数，超出拒绝</li><li v-for="d in context.referenceCatalog.original.definition.domains" :key="d.id">适用域 {{ d.id }} · 规则族 {{ d.ruleFamilies.join('、') }} · 品类 {{ d.productTypes.join('、') }} · 动作 {{ d.operations.join('、') }}</li></ul>
+      </details>
       <p v-if="!context.selectors.length">当前可见范围没有已登记的规则选择器。</p>
       <ul><li v-for="s in context.selectors" :key="s.id">{{ s.ruleFamily }} · {{ s.metricId }} · {{ s.applicabilityDomainId }}：选择器版本 {{ s.revision }}，{{ s.currentRuleVersionId ? '已有规则引用' : '尚无生效规则' }}</li></ul>
     </section>
@@ -14,6 +18,9 @@
     <table v-if="rows.length"><thead><tr><th>候选 ID</th><th>版本</th><th>状态</th><th>操作</th></tr></thead><tbody><tr v-for="r in rows" :key="r.reference.id"><td>{{ r.reference.id }}</td><td>{{ r.reference.version }}</td><td>{{ r.state === 'WITHDRAWN' ? '已撤回' : '草稿' }}</td><td><button :disabled="busy || !!pending" @click="select(r)">查看候选</button></td></tr></tbody></table>
     <p v-else>当前页没有可读取的候选。</p><button :disabled="busy || page === 1" @click="move(-1)">上一页</button><span>第 {{ page }} 页</span><button :disabled="busy || rows.length < 50" @click="move(1)">下一页</button>
     <section v-if="selected"><p>当前候选版本 {{ selected.reference.version }}；{{ selected.state === 'DRAFT' ? '草稿' : '已撤回' }}。</p>
+      <p>{{ selected.referenceResolution === 'RESOLVED' ? '本版本已保存准确来源绑定；后续采用前仍须重核当前来源，尚未批准或生效。' : '本版本来源尚未绑定。' }}</p>
+      <p v-if="selected.referenceBinding">绑定字典版本 {{ selected.referenceBinding.policy.version }}，来源登记 {{ selected.referenceBinding.registryVersion }}。</p>
+      <button :disabled="busy || !!pending || !canResolve" @click="resolve">绑定已保存候选来源</button><p>绑定针对上方已保存版本；下方尚未保存的修改不会一并提交。</p>
       <p v-if="selected.redactedFields.length">部分字段无读取权限，相关原文已隐藏。</p>
       <label>历史版本<input v-model="historyVersion" aria-label="历史版本" inputmode="numeric" /></label><button :disabled="busy" @click="readHistory">读取历史</button>
       <pre v-if="history">{{ JSON.stringify(history.candidate, null, 2) }}</pre><p v-if="history">上方为版本 {{ history.reference.version }} 的原候选，只供读取。</p>
@@ -57,6 +64,7 @@ const family = ref(''), metric = ref(''), domain = ref(''), domainVersion = ref(
 let live = true, generation = 0
 const writable = (field: string) => !!context.value?.fields.some(f => f.field === field && f.canWrite && (!selected.value || f.canRead))
 const canSave = computed(() => selected.value ? selected.value.state === 'DRAFT' && permissions.has('wms-location-rule:edit') : permissions.has('wms-location-rule:draft') && !!context.value?.fields.every(f => f.canWrite))
+const canResolve = computed(() => selected.value?.state === 'DRAFT' && permissions.has('wms-location-rule:resolve') && context.value?.referenceAuthorities === 'CONFIGURED' && !!context.value.referencePolicy && context.value.fields.every(f => f.canRead && f.canWrite) && selected.value.redactedFields.length === 0)
 function form(d?: Partial<RuleDraft>) {
   family.value = d?.selectorKey?.ruleFamily || ''; metric.value = d?.selectorKey?.metricId || (d?.capacity?.mode === 'LIMITED' ? d.capacity.metricRef.id : ''); domain.value = d?.selectorKey?.applicabilityDomainRef.id || ''; domainVersion.value = d?.selectorKey?.applicabilityDomainRef.version || ''
   const c = d?.capacity; mode.value = c?.mode || ''; quantity.value = c?.mode === 'LIMITED' ? c.value : ''; metricVersion.value = c?.mode === 'LIMITED' ? c.metricRef.version : ''; uom.value = c?.mode === 'LIMITED' ? c.uomRef.id : ''; uomVersion.value = c?.mode === 'LIMITED' ? c.uomRef.version : ''; precision.value = c?.mode === 'LIMITED' ? c.precisionPolicyRef.id : ''; precisionVersion.value = c?.mode === 'LIMITED' ? c.precisionPolicyRef.version : ''; unknownReason.value = c?.mode === 'UNKNOWN' ? c.reason : ''
@@ -99,6 +107,13 @@ async function save() { await run(async check => {
   check(); selected.value = null; history.value = null; editing.value = false; form(); await load(check); notice.value = '候选已保存，尚未批准或生效。'
 }) }
 async function withdraw() { await run(async check => { const target = selected.value, s = context.value?.scope; if (!target || !s || !permissions.has('wms-location-rule:withdraw') || !reason.value.trim()) throw new Error('请核对权限并填写撤回原因。'); await submitLocationRule(s, target.reference.id, operation => api.withdraw(s.locationId, target.reference.id, target.etag, operation, reason.value), check); check(); selected.value = null; history.value = null; editing.value = false; form(); await load(check); notice.value = '候选已撤回，历史版本保留。' }) }
+async function resolve() { await run(async check => {
+  const target = selected.value, c = context.value; if (!target || !c || !canResolve.value || !c.referencePolicy) throw new Error('需要当前字典、完整字段权限和来源绑定权限。')
+  const fresh = value(await api.context(location.value)); check()
+  if (locationRuleKey(fresh.scope) !== locationRuleKey(c.scope) || fresh.referenceAuthorities !== 'CONFIGURED' || JSON.stringify(fresh.referencePolicy) !== JSON.stringify(c.referencePolicy)) throw new Error('规则字典或当前身份已变化，请重新载入。')
+  await submitLocationRule(c.scope, target.reference.id, operation => api.resolve(c.scope.locationId, target.reference.id, target.etag, operation, c.referencePolicy!), check)
+  check(); selected.value = null; history.value = null; editing.value = false; form(); await load(check); notice.value = '准确来源已绑定到候选版本，尚未批准或生效。'
+}) }
 async function recover(close: boolean) { await run(async check => { const s = context.value?.scope; if (!s || close && !permissions.has('wms-location-rule:abandon')) throw new Error('当前权限不足。'); const r = await recoverLocationRule(s, close, check); check(); if (r.state !== 'UNKNOWN') { selected.value = null; history.value = null; editing.value = false; form(); await load(check) } notice.value = r.state === 'COMMITTED' ? '已找回原操作；当前候选已重新载入。' : r.state === 'CLOSED' ? '未提交原操作已关闭。' : '结果仍未知，请继续查询。' }) }
 async function readHistory() { await run(async check => { if (!selected.value || !/^[1-9][0-9]*$/.test(historyVersion.value)) throw new Error('请输入准确历史版本。'); const id = selected.value.reference.id, version = historyVersion.value; const v = value(await api.read(location.value, id, version)); check(); if (v.locationId !== location.value || v.reference.id !== id || v.reference.version !== version) throw new Error('历史引用不一致。'); history.value = v }) }
 async function move(delta: number) { await run(async check => { page.value += delta; selected.value = null; history.value = null; editing.value = false; form(); await load(check) }) }

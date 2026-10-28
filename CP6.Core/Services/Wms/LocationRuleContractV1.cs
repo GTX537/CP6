@@ -27,18 +27,23 @@ public sealed record LocationRuleScopeV1(Guid TenantId,Guid ActorId,Guid Locatio
 public sealed record LocationRuleFieldV1(string Field,bool CanRead,bool CanWrite);
 public sealed record LocationRuleSelectorV1(Guid Id,string RuleFamily,string MetricId,string ApplicabilityDomainId,string Revision,Guid? CurrentRuleVersionId);
 public sealed record LocationRuleOriginalV1(Guid TenantId,Guid Id,Guid LocationId,Guid SelectorId,string Version,
-    Guid OperationId,Guid ActorId,DateTimeOffset RecordedAt,LocationRuleDraftV1 Draft,string ReferenceResolution);
+    Guid OperationId,Guid ActorId,DateTimeOffset RecordedAt,LocationRuleDraftV1 Draft,string ReferenceResolution,RuleReferenceBindingV1? ReferenceBinding=null);
 public sealed record LocationRuleViewV1(EngineeringSourceRefV1 Reference,Guid LocationId,Guid SelectorId,string State,
     string Etag,Dictionary<string,object?> Candidate,string[] RedactedFields,string? OriginalJson)
 {
-    public string ReferenceResolution=>"UNRESOLVED";
+    public string ReferenceResolution{get;init;}="UNRESOLVED";
+    public RuleReferenceBindingV1? ReferenceBinding{get;init;}
     public string Approval=>"NOT_SUBMITTED";
     public bool AdmissionGrant=>false;
 }
 public sealed record LocationRuleContextV1(LocationRuleScopeV1 Scope,string LocationCode,string InitializationState,
     LocationRuleFieldV1[] Fields,LocationRuleSelectorV1[] Selectors)
 {
-    public string ReferenceAuthorities=>"UNAVAILABLE";
+    public string ReferenceAuthorities{get;init;}="UNAVAILABLE";
+    public Guid? WarehouseId{get;init;}
+    public EngineeringSourceRefV1? ReferencePolicy{get;init;}
+    public RuleReferenceAuthorityV1[] ReferenceAuthorityBindings{get;init;}=[];
+    public RuleReferencePolicyV1? ReferenceCatalog{get;init;}
     public string ApplicationCapability=>"UNAVAILABLE";
     public bool AdmissionGrant=>false;
 }
