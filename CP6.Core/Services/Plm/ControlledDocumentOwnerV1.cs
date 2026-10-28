@@ -6,7 +6,8 @@ using static CP6.Core.Services.Plm.EngineeringProductValuesV1;
 
 namespace CP6.Core.Services.Plm;
 
-public sealed partial class ControlledDocumentOwnerV1(CP6Context db, OperationsOwnerV1 owner, CP6.Core.Services.Pub.FileContentOwnerV1 files)
+public sealed partial class ControlledDocumentOwnerV1(CP6Context db, OperationsOwnerV1 owner, CP6.Core.Services.Pub.FileContentOwnerV1 files,
+    CP6.Core.Services.Sys.ScopeAuthorizationFenceV1 reviewScope)
 {
     private const string Contract = "Main.Plm.ControlledDocument.commands.v1";
     private OperationsOwnerV1 Authority => owner.Owns(db) ? owner : throw Error("AUTHORITY_FENCE_UNAVAILABLE", 503);

@@ -24,9 +24,10 @@ internal sealed record ApprovalVoteV2(Guid Id, Guid CommandId, Guid TaskId, Guid
 
 /// <summary>TxD: actual kernel vote, original command, immutable evidence and terminal outbox
 /// share one PostgreSQL transaction. No business callback or transport runs before commit.</summary>
-public sealed class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuthorizationFenceV1 scope,
-    ApprovalTaskAuthorityV2 authority, ToolDispositionApprovalOwnerV1 tool)
+public sealed partial class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuthorizationFenceV1 scope,
+    ApprovalTaskAuthorityV2 authority, ToolDispositionApprovalOwnerV1 tool,ApprovalBusinessEvidenceV2? businesses=null)
 {
+    private ApprovalBusinessEvidenceV2 Business=>businesses??new(tool);
     private static ScopeAuthorizationExceptionV1 Error(string code, int status = 503) => new(code, status);
     private sealed record Source(byte[] Payload, string Ack, string Publication);
     private sealed record Command(Guid Actor, Guid Task, string Digest, string Result);
@@ -73,13 +74,14 @@ public sealed class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuthorizatio
     {
         if (command.Actor != actor) throw Error("RESOURCE_NOT_FOUND", 404);
         var original = ApprovalSubmissionWireV2.Parse((await ReadSource(command.Task, ct)).Payload).Value;
-        await tool.ReadDecisionPolicy(original, ct); // Current business/field read, not old approve/grant authority.
+        await Business.Decision(original,null,false,ct); // Current business/field read, not old approve/grant authority.
         return Parse<ApprovalTaskDecisionResultV2>(command.Result);
     }
     public async Task<ApprovalTaskDecisionResultV2?> OriginalAsync(Guid id, CancellationToken ct = default)
     {
         Entry(); await using var tx = await db.Database.BeginTransactionAsync(ct);
         var lease = await scope.AcquireAsync(ct); await Ready(ct); var actor = await authority.CurrentActor(false, ct);
+        await RequireNotClosed(id,actor,ct);
         var command = await Original(id, ct); var result = command == null ? null : await Disclose(command, actor, ct);
         await scope.ValidateAsync(lease, ct); await tx.CommitAsync(ct); return result;
     }
@@ -87,7 +89,7 @@ public sealed class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuthorizatio
     {
         Entry(); await using var tx = await db.Database.BeginTransactionAsync(ct);
         var lease = await authority.AcquireAsync(task, behalf, ct); await Ready(ct);
-        await tool.ReadDecisionPolicy(ApprovalSubmissionWireV2.Parse((await ReadSource(task, ct)).Payload).Value, ct);
+        await Business.Decision(ApprovalSubmissionWireV2.Parse((await ReadSource(task, ct)).Payload).Value,lease.Evidence.PrincipalId,false,ct);
         var result = await View(task, ct); await authority.ValidateAsync(lease, ct); await tx.CommitAsync(ct); return result;
     }
     private static void Input(ApprovalTaskDecisionInputV2 input)
@@ -115,7 +117,8 @@ public sealed class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuthorizatio
         try
         {
             var fence = await scope.AcquireAsync(ct); await Ready(ct);
-            var actor = await authority.CurrentActor(false, ct); var originalCommand = await Original(input.CommandId, ct);
+            var actor = await authority.CurrentActor(false, ct); await RequireNotClosed(input.CommandId,actor,ct);
+            var originalCommand = await Original(input.CommandId, ct);
             if (originalCommand != null)
             {
                 var originalResult = await Disclose(originalCommand, actor, ct);
@@ -125,6 +128,8 @@ public sealed class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuthorizatio
             if (string.IsNullOrEmpty(ifMatch)) throw Error("PRECONDITION_REQUIRED", 428);
             if (ifMatch != "\"" + input.TaskRowVersion + "\"") throw Error("PRECONDITION_FAILED", 412);
             var source = await ReadSource(task, ct); var original = ApprovalSubmissionWireV2.Parse(source.Payload).Value;
+            if(original.Subject.BusinessOwner=="Main.Plm.ControlledDocument.v1" && string.IsNullOrWhiteSpace(input.Comment))
+                throw Error("DOCUMENT_REVIEW_COMMENT_REQUIRED",422);
             var publication = Parse<FlowPublicationV2>(source.Publication); var ack = Parse<ApprovalSubmissionAckV2>(source.Ack);
             var lease = await authority.AcquireAsync(task, behalf, ct);
             var view = await View(task, ct);
@@ -141,7 +146,7 @@ public sealed class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuthorizatio
                 SELECT 1 FROM public."Wf_FlowInstance" WHERE "Id"={view.InstanceId} AND "TenantId"={db.CurrentTenantId} FOR UPDATE;
                 SELECT 1 FROM public."Wf_FlowTask" WHERE "InstanceId"={view.InstanceId} AND "TenantId"={db.CurrentTenantId} ORDER BY "Id" FOR UPDATE;
                 """, ct);
-            var policy = await tool.ReadDecisionPolicy(original, ct);
+            var policy = await Business.Decision(original,lease.Evidence.PrincipalId,true,ct);
             var occurred = await db.Database.SqlQueryRaw<DateTimeOffset>("SELECT date_trunc('milliseconds',clock_timestamp()) AS \"Value\"").SingleAsync(ct);
             var last = await db.Database.SqlQuery<DateTimeOffset?>($"""
                 SELECT max(occurred_at) AS "Value" FROM cp6_approval_decision_v2.votes WHERE tenant_id={db.CurrentTenantId} AND environment_id={scope.EnvironmentId} AND instance_id={view.InstanceId}
@@ -175,7 +180,7 @@ public sealed class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuthorizatio
             var audit = Json(new { profile = "oa.app.txd/2.0", input.CommandId, vote.Id, decision, before = view, after = result.Result.Task,
                 authority = lease.Evidence, policy = original.Policy, businessRead = policy.ReadAuthority });
             await authority.ValidateAsync(lease, ct, afterVote: true);
-            var finalPolicy = await tool.ReadDecisionPolicy(original, ct);
+            var finalPolicy = await Business.Decision(original,lease.Evidence.PrincipalId,true,ct);
             if (Json(finalPolicy) != Json(policy)) throw Error("AUTHORITY_CHANGED", 409);
             await db.Database.ExecuteSqlInterpolatedAsync($"""
                 UPDATE cp6_approval_decision_v2.commands SET completed=true,result_json={Json(result)},audit_json={audit}
@@ -194,7 +199,7 @@ public sealed class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuthorizatio
     }
 
     private async Task<Guid> Terminal(ApprovalSubmitCommandV2 original, ApprovalSubmissionAckV2 ack,
-        Wf_FlowInstance instance, ApprovalVoteV2 terminal, ToolDispositionApprovalOwnerV1.DecisionPolicyProof policy, CancellationToken ct)
+        Wf_FlowInstance instance, ApprovalVoteV2 terminal, ApprovalBusinessDecisionProofV2 policy, CancellationToken ct)
     {
         var stored = await db.Database.SqlQuery<StoredVote>($"""
             SELECT body AS "Body",digest AS "Digest" FROM cp6_approval_decision_v2.votes
@@ -213,11 +218,12 @@ public sealed class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuthorizatio
         if (votes.Length == 0 || tasks.Any(t => t.Status is FlowTaskStatus.Pending or FlowTaskStatus.Suspended))
             throw Error("DECISION_EVIDENCE_INCOMPLETE", 422);
         var approved = instance.Status == FlowInstanceStatus.Approved;
-        if (approved && votes.Where(v => v.Approved).Select(v => v.Authority.PrincipalId).Distinct().Count() < policy.FrozenPolicy.Body.RequiredHumanApprovals)
+        if (approved && votes.Where(v => v.Approved).Select(v => v.Authority.PrincipalId).Distinct().Count() < policy.RequiredHumanApprovals)
             throw Error("DECISION_EVIDENCE_INCOMPLETE", 422);
         if (!approved && !votes.Any(v => !v.Approved)) throw Error("DECISION_EVIDENCE_INCOMPLETE", 422);
         var requirements = votes.Select(v => v.RequirementId).Distinct().Order(StringComparer.Ordinal).ToList();
-        requirements.Add(approved ? "tool.human-approvals/" + policy.FrozenPolicy.Body.RequiredHumanApprovals : "tool.explicit-rejection/1");
+        requirements.Add(approved ? policy.RequirementPrefix+".human-approvals/"+policy.RequiredHumanApprovals : policy.RequirementPrefix+".explicit-rejection/1");
+        requirements.AddRange(await Business.Requirements(original,policy,votes,approved,ct));
         var decision = Guid.NewGuid(); var eventId = Guid.NewGuid();
         var decided = await db.Database.SqlQueryRaw<DateTimeOffset>("SELECT date_trunc('milliseconds',clock_timestamp()) AS \"Value\"").SingleAsync(ct);
         if (decided < terminal.OccurredAt) throw Error("APP_CLOCK_REGRESSION", 409);

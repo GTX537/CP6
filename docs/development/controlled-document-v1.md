@@ -1,6 +1,6 @@
 # 受控技术文档原件与工作修订 v1
 
-独立 Owner `Main.Plm.ControlledDocument.v1`，菜单 `plm-controlled-document`，页面 `/plm/controlled-document`，API `/api/controlled-document/owner-v1`。新增存储只支持 PostgreSQL。依据 WP05-16、SUP-REQ-002/003、AC-SUP-003/004 和 PG04-A177–182，实现准确来源登记和不可变工作内容；实际专业审批、REL 用途许可、正式工程冻结、分发/现场应用仍为后续输出。
+独立 Owner `Main.Plm.ControlledDocument.v1`，菜单 `plm-controlled-document`，页面 `/plm/controlled-document`，API `/api/controlled-document/owner-v1`。新增存储只支持 PostgreSQL。依据 WP05-16、SUP-REQ-002/003、AC-SUP-003/004 和 PG04-A177–182，实现准确来源登记和不可变工作内容。专业送审、原生 FLOW 签署与文档 Owner 应用见[文档专业评审 v1](document-review-v1.md)；REL 用途许可、正式工程冻结、分发/现场应用仍为后续输出。
 
 ## 内容与版本
 
@@ -17,6 +17,8 @@
 `GET /{id}/content/{occurrence}?version=...` 在一个 Owner 事务内重新检查文档与文件当前权限、检查/保留状态和实际字节。返回 attachment、octet-stream、no-store、nosniff；文件完整性失败沿用 W189 持久隔离，随后恢复字节也不能跳过重新检查。历史状态不授予当前下载权。存储可达性最终以实际读取为准，目录中的安全状态不保证后续磁盘/网络持续可用。
 
 工程 DOCUMENT 组成只能引用准确原生文档版本。原工程快照不因文档新版而移动；缺项和待审批状态继续显式返回。可加入工作组成不等于已获专业批准或允许制造。
+
+查询的 `state`/`readiness` 是当前观察：只有对应准确版本的真实应用结果可以返回 APPROVED；后续工作修订仍为 DRAFT。未配置可信审批环境标识时，现有文档读取、修订和下载保留原权限要求，状态返回 UNKNOWN / REVIEW_STATUS_UNAVAILABLE，不读取其他环境的批准记录，不声称已批准或确定未批准。已配置环境的来源或数据库保护失效仍拒绝披露批准结论。
 
 ## 恢复与调用
 

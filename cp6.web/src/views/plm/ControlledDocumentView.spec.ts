@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
 import type { DocumentCommand, DocumentSnapshot } from '@/api/plm/controlledDocument'
-const api = vi.hoisted(() => ({ scope: vi.fn(), list: vi.fn(), read: vi.fn(), diff: vi.fn(), save: vi.fn(), download: vi.fn(), operation: vi.fn(), parents: vi.fn(), files: vi.fn(), denied: [] as string[], authenticated: true }))
+const api = vi.hoisted(() => ({ scope: vi.fn(), list: vi.fn(), read: vi.fn(), diff: vi.fn(), save: vi.fn(), download: vi.fn(), operation: vi.fn(), parents: vi.fn(), parentRead: vi.fn(), files: vi.fn(), denied: [] as string[], authenticated: true }))
 vi.mock('@/api/plm/controlledDocument', () => ({ documentApi: api }))
 vi.mock('@/api/pub/fileContent', () => ({ fileContentApi: { list: api.files } }))
-vi.mock('@/api/plm/engineeringRevisions', () => ({ revisionApi: { list: api.parents } }))
+vi.mock('@/api/plm/engineeringRevisions', () => ({ revisionApi: { list: api.parents, read: api.parentRead } }))
 vi.mock('@/stores/permission', () => ({ usePermissionStore: () => ({ loaded: true, has: (key: string) => !api.denied.includes(key), loadMyActions: vi.fn() }) }))
 vi.mock('@/auth/browserAuthentication', () => ({ authenticationCanRead: () => api.authenticated }))
 import View from './ControlledDocumentView.vue'
@@ -21,16 +21,29 @@ const button = (text: string) => view!.findAll('button').find(x => x.text() === 
 const field = (name: string) => view!.get(`[aria-label="${name}"]`)
 async function click(text: string) { await button(text).trigger('click'); await flushPromises() }
 async function submit(label: string) { field(label).element.closest('form')!.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })); await flushPromises() }
-async function choose() { view = mount(View); await flushPromises(); await field('工程修订搜索').setValue('ENG'); await submit('工程修订搜索'); await field('工程修订选择').setValue(`${parent.reference.owner}:${parent.reference.id}:${parent.reference.version}:${parent.reference.digest}`); await click('读取文档') }
+async function choose() { view = mount(View, { global: { stubs: { ControlledDocumentReviewPanel: true } } }); await flushPromises(); await field('工程修订搜索').setValue('ENG'); await submit('工程修订搜索'); await field('工程修订选择').setValue(`${parent.reference.owner}:${parent.reference.id}:${parent.reference.version}:${parent.reference.digest}`); await click('读取文档') }
 async function opened() { await choose(); await click('查看文档'); await field('修订原因').setValue('Explicit revision reason') }
 beforeEach(() => {
   vi.resetAllMocks(); localStorage.clear(); localStorage.setItem(AUTH_EPOCH, 'first'); api.authenticated = true; api.denied = []; persisted = structuredClone(row)
-  api.scope.mockResolvedValue(ok(scope)); api.parents.mockResolvedValue(ok([parent])); api.files.mockResolvedValue(ok([file])); api.list.mockImplementation(async () => ok([structuredClone(persisted)])); api.read.mockImplementation(async () => ok(structuredClone(persisted)))
+  api.scope.mockResolvedValue(ok(scope)); api.parents.mockResolvedValue(ok([parent])); api.parentRead.mockResolvedValue(ok(parent)); api.files.mockResolvedValue(ok([file])); api.list.mockImplementation(async () => ok([structuredClone(persisted)])); api.read.mockImplementation(async () => ok(structuredClone(persisted)))
   api.save.mockImplementation(async (input: DocumentCommand) => ok({ operationId: input.operationId, kind: 'CONTROLLED_DOCUMENT', objectId: input.documentId, version: '3', digest: 'c'.repeat(64) }))
   Object.defineProperty(navigator, 'locks', { configurable: true, value: { request: (_key: string, _options: unknown, action: (lock: object) => unknown) => action({}) } })
   Object.defineProperty(crypto, 'subtle', { configurable: true, value: { digest: vi.fn(async () => new Uint8Array(32).fill(170).buffer) } })
 })
 afterEach(() => { view?.unmount(); view = undefined })
+it('opens the workflow document link with its exact parent version and review panel', async () => {
+  view = mount(View, { props: { documentId: row.reference.id, reviewSubmission: guid(44) }, global: { stubs: { ControlledDocumentReviewPanel: true } } }); await flushPromises()
+  expect(api.read).toHaveBeenCalledWith(row.reference.id); expect(api.parentRead).toHaveBeenCalledWith(parent.reference.id, parent.reference.version)
+  expect(view.text()).toContain(row.body.name); expect(view.findComponent({ name: 'ControlledDocumentReviewPanel' }).props('document').reference).toEqual(row.reference)
+  expect(view.findComponent({ name: 'ControlledDocumentReviewPanel' }).props('initialSubmission')).toBe(guid(44))
+})
+it.each(['APPROVED', 'UNKNOWN'] as const)('shows the observed %s state without inventing a pending review', async state => {
+  persisted.state = state
+  persisted.readiness = state === 'APPROVED' ? 'CONTROLLED' : 'REVIEW_STATUS_UNAVAILABLE'
+  await choose()
+  expect(view!.get('article').text()).toContain(state === 'APPROVED' ? '已专业批准' : '审批状态未确认')
+  expect(view!.get('article').text()).not.toContain('待专业评审')
+})
 it('preserves search and loads only the chosen exact engineering context', async () => { await choose(); expect(api.parents).toHaveBeenCalledWith('ENG', 1); expect(api.list).toHaveBeenCalledWith(parent.reference.id, '', 1); await field('工程修订选择').setValue(''); expect(view!.text()).not.toContain(row.body.name) })
 it('keeps the same source search when loading later engineering pages', async () => { api.parents.mockResolvedValue(ok(Array.from({ length: 20 }, (_, i) => ({ ...parent, reference: { ...parent.reference, id: i === 0 ? parent.reference.id : guid(100 + i) } })))); await choose(); expect((field('工程修订搜索').element as HTMLInputElement).value).toBe('ENG'); await click('更多工程修订'); expect(api.parents).toHaveBeenLastCalledWith('ENG', 2) })
 it('creates a document from an actual file choice without fabricating source facts', async () => {

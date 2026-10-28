@@ -9,8 +9,9 @@ namespace CP6.Core.Services.Oa;
 
 /// <summary>TxS only: durable original submission, exact binding/pin and start intent. Never calls the legacy engine.</summary>
 public sealed class ApprovalIntakeOwnerV2(CP6Context db,ScopeAuthorizationFenceV1 fence,IApprovalServiceAuthorityV2 authority,
-    ToolDispositionApprovalOwnerV1 evidence,FlowAuthoringOwnerV2 flows)
+    ToolDispositionApprovalOwnerV1 evidence,FlowAuthoringOwnerV2 flows,ApprovalBusinessEvidenceV2? businesses=null)
 {
+    private ApprovalBusinessEvidenceV2 Business=>businesses??new(evidence);
     internal Func<DateTimeOffset> ReceiveClock { get; set; }=()=>DateTimeOffset.UtcNow;
     private sealed record Registration(string Owner,Guid Revision,string SnapshotSchema,string SnapshotFields,bool Enabled,Guid Principal,string Audience,string EvidenceMode);
     private sealed record Saved(Guid Id,string Owner,string Core,string IntentCore,string Intent,byte[] Payload,string Ack);
@@ -127,7 +128,7 @@ public sealed class ApprovalIntakeOwnerV2(CP6Context db,ScopeAuthorizationFenceV
                 return new(200,Ack(original.Ack));
             }
             Match(registration,service,e,true);var lease=await fence.AcquireAsync(ct);
-            var ownerProof=await evidence.VerifyIntakeEvidence(p,ct);
+            var ownerProof=await Business.Intake(p,ct);
             // All new commands follow BindingHead -> Intent -> Submission/alias, including
             // aliases and original-submission retries. Only genuinely new submissions select a timeline.
             var bindingId=await LockSubmission(p,ct);
@@ -169,7 +170,7 @@ public sealed class ApprovalIntakeOwnerV2(CP6Context db,ScopeAuthorizationFenceV
                 VALUES({service.Tenant},{service.Environment},{service.Principal},{e.CommandId},{owner},{result.SubmissionId},{p.Full},{raw},{ApprovalBindingOwnerV2.Serialize(result)},{audit},{at})
                 """,ct);
             if(await Service(ct)!=service||await Registered(e,ct)!=registration)throw Error("AUTHORITY_CHANGED",403);
-            if(await evidence.VerifyIntakeEvidence(p,ct)!=ownerProof)throw Error("AUTHORITY_CHANGED",403);
+            if(await Business.Intake(p,ct)!=ownerProof)throw Error("AUTHORITY_CHANGED",403);
             if(selected!=null)await flows.SubmissionSource(selected.FlowKey,selected.FlowVersion,ct);
             await Ready(ct);await fence.ValidateAsync(lease,ct);ct.ThrowIfCancellationRequested();committing=true;await tx.CommitAsync(ct);
             return new(status,result);

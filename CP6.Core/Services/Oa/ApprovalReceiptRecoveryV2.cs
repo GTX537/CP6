@@ -20,8 +20,9 @@ public sealed record ApprovalReceiptRecoveryRunV2(string State, Guid? ReceiptStr
 
 /// <summary>Recover Owner receipts, never Owner effects. Every source HTTP request is outside TxR;
 /// each verified prefix survives later network failure, expiration, revocation or lease takeover.</summary>
-public sealed class ApprovalReceiptRecoveryV2(CP6Context db, ScopeAuthorizationFenceV1 scope, IApprovalReceiptChainTransportV2 transport)
+public sealed class ApprovalReceiptRecoveryV2(CP6Context db, ScopeAuthorizationFenceV1 scope, IApprovalReceiptChainTransportV2 transport,string businessOwner=ApprovalBusinessProfileV2.ToolOwner)
 {
+    private readonly ApprovalBusinessProfileV2 profile=ApprovalBusinessProfileV2.For(businessOwner);
     internal int PageLimit { get; init; } = 20;
     internal sealed record Work(Guid Id, Guid Submission, Guid Instance, Guid Decision, string SubjectRevision, string Unit,
         long Highest, Guid? Latest, long Target, long Epoch, string? Route);
@@ -43,26 +44,26 @@ public sealed class ApprovalReceiptRecoveryV2(CP6Context db, ScopeAuthorizationF
     }
     private async Task<Proof> Authority(ApprovalDecisionDeliveryRouteV2 r, Guid submission, CancellationToken ct)
     {
-        if (r.Environment != scope.EnvironmentId || r.Tenant != db.CurrentTenantId || r.ConsumerOwner != ApprovalReceiptIngestionV2.Owner
+        if (r.Environment != scope.EnvironmentId || r.Tenant != db.CurrentTenantId || r.ConsumerOwner != profile.Owner
             || transport.Route(r.Tenant) != r || !await db.Sys_Tenants.AsNoTracking().AnyAsync(t => t.Id == r.Tenant && t.Enable && (t.ExpireDate == null || t.ExpireDate > DateTime.Now), ct))
             throw Error("RECEIPT_RECOVERY_AUTHORITY_UNAVAILABLE", 403);
-        return await db.Database.SqlQuery<Proof>($"""
+        return await db.Database.SqlQuery<Proof>(profile.FactSql($"""
             SELECT r.revision AS "Registration",g.revision AS "Grant",sr.revision AS "SourceRegistration",sg.revision AS "SourceGrant"
             FROM cp6_approval_receipt_v2.registrations r
             JOIN cp6_approval_receipt_v2.subject_grants g ON g.environment_id=r.environment_id AND g.tenant_id=r.tenant_id AND g.principal_id=r.principal_id
             JOIN cp6_tool_approval_fact_v2.registrations sr ON sr.environment_id=r.environment_id AND sr.tenant_id=r.tenant_id AND sr.principal_id=r.principal_id
             JOIN cp6_tool_approval_fact_v2.subject_grants sg ON sg.environment_id=sr.environment_id AND sg.tenant_id=sr.tenant_id AND sg.principal_id=sr.principal_id AND sg.submission_id=g.submission_id
             WHERE r.environment_id={r.Environment} AND r.tenant_id={r.Tenant} AND r.principal_id={r.Principal} AND g.submission_id={submission}
-              AND r.owner={ApprovalReceiptIngestionV2.Owner} AND g.owner=r.owner AND r.enabled AND r.can_query AND r.can_receive AND r.can_recover
+              AND r.owner={profile.Owner} AND g.owner=r.owner AND r.enabled AND r.can_query AND r.can_receive AND r.can_recover
               AND g.enabled AND g.can_query AND g.can_receive AND g.can_recover AND r.evidence_mode={r.EvidenceMode}
               AND sr.enabled AND sr.can_query AND sr.evidence_mode=r.evidence_mode AND sg.enabled AND sg.can_query
-            """).SingleOrDefaultAsync(ct) ?? throw Error("RECEIPT_RECOVERY_AUTHORITY_UNAVAILABLE", 403);
+            """)).SingleOrDefaultAsync(ct) ?? throw Error("RECEIPT_RECOVERY_AUTHORITY_UNAVAILABLE", 403);
     }
     private async Task LockRows(Work w, CancellationToken ct)
     {
         _ = await db.Database.SqlQuery<Guid>($"""
             SELECT id AS "Value" FROM cp6_approval_intake_v2.submissions WHERE tenant_id={db.CurrentTenantId}
-              AND environment_id={scope.EnvironmentId} AND owner={ApprovalReceiptIngestionV2.Owner} AND id={w.Submission} FOR UPDATE
+              AND environment_id={scope.EnvironmentId} AND owner={profile.Owner} AND id={w.Submission} FOR UPDATE
             """).ToArrayAsync(ct);
         _ = await db.Database.SqlQuery<Guid>($"""
             SELECT id AS "Value" FROM cp6_approval_receipt_v2.streams WHERE environment_id={scope.EnvironmentId} AND tenant_id={db.CurrentTenantId} AND id={w.Id} FOR UPDATE
@@ -79,7 +80,7 @@ public sealed class ApprovalReceiptRecoveryV2(CP6Context db, ScopeAuthorizationF
             FROM cp6_approval_receipt_v2.gaps g JOIN cp6_approval_receipt_v2.streams s ON s.environment_id=g.environment_id AND s.tenant_id=g.tenant_id AND s.id=g.stream_id
             JOIN cp6_approval_receipt_v2.subject_grants a ON a.environment_id=s.environment_id AND a.tenant_id=s.tenant_id AND a.submission_id=s.submission_id
               AND a.principal_id={route.Principal} AND a.enabled AND a.can_query AND a.can_receive AND a.can_recover
-            WHERE g.environment_id={scope.EnvironmentId} AND g.tenant_id={tenant} AND NOT g.completed
+            WHERE g.environment_id={scope.EnvironmentId} AND g.tenant_id={tenant} AND NOT g.completed AND s.owner={profile.Owner}
               AND (g.lease_until IS NULL OR g.lease_until<=clock_timestamp()) AND g.next_attempt<=clock_timestamp()
               AND (g.error_code IS DISTINCT FROM 'RECEIPT_CHAIN_CONFLICT' OR g.route_json::jsonb->>'version'<>{route.Version})
             ORDER BY g.next_attempt,g.stream_id LIMIT 1

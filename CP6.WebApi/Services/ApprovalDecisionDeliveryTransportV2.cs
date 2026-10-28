@@ -25,9 +25,9 @@ public sealed class ApprovalDecisionDeliveryRegistryV2
     private readonly Dictionary<Guid,(ApprovalDecisionDeliveryRouteV2 Route,string Secret)> _routes=[];
     private readonly CrmOidcOptions _oidc;
     private readonly ApprovalIntakeRegistryV2 _identity;
-    public ApprovalDecisionDeliveryRegistryV2(ApprovalDecisionDeliveryOptionsV2 options,CrmOidcOptions oidc,ApprovalFactReceiverRegistryV2 receiver,bool development=false)
+    public ApprovalDecisionDeliveryRegistryV2(ApprovalDecisionDeliveryOptionsV2 options,CrmOidcOptions oidc,ApprovalFactReceiverRegistryV2 receiver,bool development=false,string businessOwner=ApprovalBusinessProfileV2.ToolOwner)
     {
-        var intake=receiver.Transport;_oidc=oidc;_identity=intake;if(!options.Enabled)return;
+        var profile=ApprovalBusinessProfileV2.For(businessOwner);var intake=receiver.Transport;_oidc=oidc;_identity=intake;if(!options.Enabled)return;
         bool Origin(string value)=>Uri.TryCreate(value,UriKind.Absolute,out var u) && u.AbsolutePath=="/" && u.Query=="" && u.Fragment=="" && u.UserInfo==""
             && !value.EndsWith('/') && (u.Scheme=="https" || development && oidc.AllowInsecureLoopback && u.Scheme=="http"
                 && IPAddress.TryParse(u.Host,out var ip) && IPAddress.IsLoopback(ip));
@@ -40,7 +40,7 @@ public sealed class ApprovalDecisionDeliveryRegistryV2
                 || registered==null || !registered.Enabled || registered.TenantId!=client.TenantId || !registered.AllowedScopes.SequenceEqual(["cp6.services"])
                 || string.IsNullOrEmpty(client.ClientSecret) || client.ClientSecret.Length>1024 || !CrmOidcCrypto.EqualsSecret(client.ClientSecret,registered.SecretSha256)
                 || _routes.ContainsKey(client.TenantId))throw new InvalidOperationException("DELIVERY_REGISTRATION_INVALID");
-            _routes.Add(client.TenantId,(new(intake.Environment,client.TenantId,mapping.Principal,client.ClientId,oidc.Issuer,options.DestinationOrigin,options.Version,intake.EvidenceMode,ApprovalDecisionDeliveryV2.Consumer),client.ClientSecret));
+            _routes.Add(client.TenantId,(new(intake.Environment,client.TenantId,mapping.Principal,client.ClientId,oidc.Issuer,options.DestinationOrigin,options.Version,intake.EvidenceMode,profile.Owner),client.ClientSecret));
         }
     }
     public ApprovalDecisionDeliveryRouteV2? Route(Guid tenant)
@@ -75,13 +75,13 @@ public sealed class ApprovalDecisionDeliveryTransportV2 : IApprovalDecisionTrans
         return result.ToArray();
     }
     public Task<ApprovalDecisionTransportResponseV2> SendAsync(ApprovalDecisionDeliveryRouteV2 route,Guid eventId,byte[] original,bool query,CancellationToken ct)
-        => Exchange(route,ToolApprovalFactReceiverV2.Route+(query?"/"+eventId.ToString("D"):""),original,query,ct);
+        => Exchange(route,ApprovalBusinessProfileV2.For(route.ConsumerOwner).DecisionRoute+(query?"/"+eventId.ToString("D"):""),original,query,ct);
     internal Task<ApprovalDecisionTransportResponseV2> ReadChainAsync(ApprovalDecisionDeliveryRouteV2 route,Guid stream,string after,int limit,string? cursor,CancellationToken ct)
     {
         if(!long.TryParse(after,System.Globalization.NumberStyles.None,System.Globalization.CultureInfo.InvariantCulture,out var revision)
             || revision<0 || after!=revision.ToString(System.Globalization.CultureInfo.InvariantCulture) || limit is <1 or >100 || cursor is {Length:0 or >8192})
             throw new ArgumentException("Invalid receipt chain query.");
-        var path=ToolApprovalFactReceiverV2.ApplicationRoute+stream.ToString("D")+"/receipts?afterRevision="+after+"&limit="+limit.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        var path=ApprovalBusinessProfileV2.For(route.ConsumerOwner).ApplicationRoute+stream.ToString("D")+"/receipts?afterRevision="+after+"&limit="+limit.ToString(System.Globalization.CultureInfo.InvariantCulture);
         if(cursor!=null)path+="&cursor="+Uri.EscapeDataString(cursor);
         return Exchange(route,path,[],true,ct);
     }

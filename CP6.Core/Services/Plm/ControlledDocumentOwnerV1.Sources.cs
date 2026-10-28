@@ -5,6 +5,18 @@ using static CP6.Core.Services.Plm.EngineeringProductValuesV1;
 namespace CP6.Core.Services.Plm;
 public sealed partial class ControlledDocumentOwnerV1
 {
+    internal async Task<ControlledDocumentSnapshotV1> ReviewSource(OperationsAccessV1 access, EngineeringSourceRefV1 reference,
+        bool requireAvailable, CancellationToken ct)
+    {
+        ControlledDocumentValuesV1.Ref(reference);
+        var store=new ControlledDocumentStoreV1(db);await store.Fence(false,ct);
+        var value=await Observe(access,await store.Read(reference.Id,Revision(reference.Version),ct),ct);
+        if(value.Reference!=reference)throw Error("DOCUMENT_REFERENCE_CHANGED",412);
+        if(requireAvailable)
+            foreach(var content in value.Body.Contents)
+                await files.BoundSource(access,content.File,value.Body.RevisionOrigin.Id,true,ct);
+        return value;
+    }
     private async Task<ControlledDocumentSnapshotV1> Observe(OperationsAccessV1 a,ControlledDocumentSnapshotV1 value,CancellationToken ct)
     {
         await a.RequireControlledDocument(value.Reference.Id,ct); a.AtCommit(t => a.RequireControlledDocument(value.Reference.Id,t));
@@ -14,7 +26,20 @@ public sealed partial class ControlledDocumentOwnerV1
             var file = await files.BoundSource(a,content.File,value.Body.RevisionOrigin.Id,false,ct);
             observations.Add(new(content.OccurrenceId,file.Availability,file.FileName,file.StateVersion));
         }
-        return value with { Missing=findings.Distinct().ToArray(),ContentStatus=observations.ToArray() };
+        // Reading existing content does not require activating Workflow. Without an explicit
+        // deployment identity its approval state is unknown, never inferred from another environment.
+        if(!reviewScope.HasDeploymentEnvironment)
+        {
+            findings.Add("DOCUMENT_REVIEW_STATUS_UNAVAILABLE");
+            return value with { Missing=findings.Distinct().ToArray(),ContentStatus=observations.ToArray(),
+                State="UNKNOWN",Readiness="REVIEW_STATUS_UNAVAILABLE" };
+        }
+        var applications=new DocumentReviewApplicationStoreV1(db,reviewScope);await applications.Ready(ct);
+        var approved=await applications.Approved(value.Reference,ct);
+        a.AtCommit(t=>applications.Ready(t));
+        if(approved!=null)findings.RemoveAll(x=>x is "DOCUMENT_PROFESSIONAL_REVIEW_REQUIRED" or "LANGUAGE_AUTHORITY_REVIEW_REQUIRED");
+        return value with { Missing=findings.Distinct().ToArray(),ContentStatus=observations.ToArray(),
+            State=approved==null?"DRAFT":"APPROVED",Readiness=approved==null?"REVIEW_REQUIRED":findings.Count==0?"CONTROLLED":"SOURCE_UNAVAILABLE" };
     }
     private async Task<string[]> Sources(OperationsAccessV1 root,ControlledDocumentBodyV1 body,bool current,CancellationToken ct,bool requireCurrentParent=true)
     {

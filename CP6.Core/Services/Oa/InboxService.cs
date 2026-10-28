@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Oa;
 
-public class InboxService : IInboxService
+public partial class InboxService : IInboxService
 {
     private readonly CP6Context _db;
     private readonly IFlowEngine _engine;       // T7 批量办理
@@ -69,6 +69,9 @@ public class InboxService : IInboxService
                     .Select(b => b.DetailRoute).FirstOrDefault()
             }).ToDictionaryAsync(x => x.BizType, x => x.Route);
 
+        var nativeDocumentRoutes=await NativeDocumentRoutes(rows.Where(x=>x.i.Creator==FlowEngine.ApprovalRuntimeV2)
+            .Select(x=>x.i.Id).Distinct().ToArray());
+
         // Batch-load frozen stage plans for tokens that carry multi-stage plans
         var tokenIds = rows.Where(x => x.t.TokenId.HasValue).Select(x => x.t.TokenId!.Value).Distinct().ToList();
         var tokenPlans = new Dictionary<(Guid tokenId, int stageIndex), (string? name, string? code)>();
@@ -101,7 +104,7 @@ public class InboxService : IInboxService
                 StageIndex: x.t.StageIndex, StageRound: x.t.StageRound,
                 StageName: stageName, StageCode: stageCode,
                 CanSendBackPrevStage: x.t.StageIndex > 0,
-                DetailRoute: x.i.BizType != null && x.i.BizId != null &&
+                DetailRoute: nativeDocumentRoutes.TryGetValue(x.i.Id,out var nativeRoute) ? nativeRoute : x.i.BizType != null && x.i.BizId != null &&
                     detailRoutes.TryGetValue(x.i.BizType, out var template)
                         ? ApprovalPanelService.RenderDetailRoute(template, x.i.BizId)
                         : null);
