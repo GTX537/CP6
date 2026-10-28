@@ -57,6 +57,13 @@ internal sealed partial class OperationsAccessV1
             && (g.WarehouseCd == "*" || g.WarehouseCd == c.WarehouseCode)))
             throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN", 403);
     }
+    internal void RequireWarehouseHierarchyControl(Warehouse warehouse)
+    {
+        if(!authority.Actor.RoleIds.Contains(1) && !db.WmsRoleScopes.Any(g=>authority.Actor.RoleIds.Contains(g.RoleId)
+            && (g.WarehouseCd=="*"||g.WarehouseCd==warehouse.WarehouseCd)
+            && (g.AreaCd==null||g.AreaCd==""||g.AreaCd=="*")))
+            throw new OrderPriceCorrectionException("HIERARCHY_WAREHOUSE_SCOPE_REQUIRED",403);
+    }
     internal void RequireMasterNameWrite(string kind)
     {
         if(!authority.Fields.Fields[kind=="warehouses"?"WarehouseName":"LocationName"].CanWrite)

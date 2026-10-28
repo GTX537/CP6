@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-28：W207 库位层级策略待Main收尾
+
+显式库位层级策略、实际原生树兼容/结构版本、稳定父ID预检、当前权限与原键恢复及独立页面已验证。45 distinct PG18/Program HTTP; 58 distinct Vue;types/build PASS;0skip。[报告](../development/evidence/W207-01/DELIVERY.md)。登记15.75分钟，预计90–150；Handoff已释放，Main待正常PR/finish。正式Location初始化隔离/创建与完整MASTER/Transfer/Stock及七天出口保留。
+
 ## 2026-10-28：W206 仓库草稿待Main收尾
 
 仓库DRAFT创建、真实Site/类型、当前权限/部门绑定、原键恢复、代码锚与旧业务使用隔离及独立页面已验证。33 PG18/Program HTTP; 45 Vue;types/build PASS;0skip。[报告](../development/evidence/W206-01/DELIVERY.md)。登记21.64分钟，预计120–200；Handoff已释放，Main待正常PR/finish。据点/负责人关系、Location和生命周期与完整Transfer/Stock及七天出口继续保留。
