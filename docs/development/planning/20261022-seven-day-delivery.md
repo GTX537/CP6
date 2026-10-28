@@ -1496,3 +1496,7 @@ BOM独立Owner、多层稳定位置、准确材料/单位、实际ProductMateria
 ## 2026-10-27 W193 工程准确来源与完整性检查
 
 工程准确候选/政策、完整来源原文/水位、持久四态检查、同事务最终核对、原键恢复及API/页面已验证；正式评审/冻结与WO/SCHED仍待。39 local checks: 37 PG18/HTTP and 2 affected kernel/unit;30 Vue;types/build PASS;0skip。[报告](../evidence/W193-01/DELIVERY.md)。登记49.4分钟，预计240–420；Handoff已释放，Main待正常PR/finish。实际业务效果及七天全部出口保留。 Continue the exact engineering review/ITER application and freeze prerequisites for actual WO/SCHED; retain original D2 Transfer/REP/RMA, D5 actual host/transport, D6 policy/calendar/registration and D7 integration exits. Do not expand unrelated engineering scope.
+
+## 2026-10-28 W194 独立工程需求草稿
+
+独立工程需求来源包、准确版本/原文、关系防自证循环、精确判据与未定项、当前权限及原键恢复/API/页面已验证；正式关系/判据评审、批准需求集、ITER/冻结/WO/SCHED仍待。15 PG18/actual Program HTTP (12 requirement,3 department regression);39 Vue;types/build PASS;0skip。[报告](../evidence/W194-01/DELIVERY.md)。登记53.77分钟，预计100–160；Handoff已释放，Main待正常PR/finish。原七天全部出口保留。 Continue exact requirement/criterion review and approved requirement-set prerequisites for ITER application, engineering freeze and actual WO/SCHED. Preserve original D2 Transfer/REP/RMA, D5 real host/transport, D6 policy/calendar/registration and D7 integration exits.

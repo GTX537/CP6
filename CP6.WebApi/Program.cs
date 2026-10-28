@@ -579,6 +579,8 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("currency-policy", "币种政�
 CP6.Core.Services.Sys.FieldRegistry.Register("currency-policy");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-configuration-rule", "工程选项规则", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("plm-configuration-rule");
+CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-engineering-requirement", "工程需求与来源", new[] { 1, 2, 3, 4, 5 }, 5);
+CP6.Core.Services.Sys.FieldRegistry.Register("plm-engineering-requirement", new CP6.Core.Services.Sys.FieldRegistry.Field("Definition", "需求定义"), new CP6.Core.Services.Sys.FieldRegistry.Field("Source", "需求来源"));
 CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-engineering-revision", "工程修订工作稿", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("plm-engineering-revision");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("quality-specification", "独立质量规格", new[] { 1, 2, 3, 4, 5 }, 1);
@@ -788,6 +790,7 @@ builder.Services.AddScoped<CP6.Core.Services.Mes.ResourceTimeOwnerV1>();
 builder.Services.AddScoped<CurrencyPolicyOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringProductOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringRevisionOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringRequirementService>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringSourceCheckService>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringRoutingOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringBomOwnerV1>();
