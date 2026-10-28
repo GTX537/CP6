@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-10-28：W209 库位规则候选待Main收尾
+
+库位类型化规则候选、不可变历史、独立字段/范围权限、差分更新及撤回、原键恢复与独立页面已验证。74 distinct PG18/Program HTTP; 5 ancillary checks; 44 distinct Vue;types/build PASS;0skip。[报告](../development/evidence/W209-01/DELIVERY.md)。登记17.52分钟，预计50–85；Handoff已释放，Main待正常PR/finish。真实规则字典来源/批准/应用及激活、完整MASTER/Transfer/Stock及七天出口保留。
+
 ## 2026-10-28：W208 库位隔离草稿待Main收尾
 
 原生库位隔离草稿、实际旧读取/写入屏障、当前父身份/层级/权限、原键恢复与独立页面已验证。61 distinct PG18/Program HTTP; 36 distinct Vue;types/build PASS;0skip。[报告](../development/evidence/W208-01/DELIVERY.md)。登记20.73分钟，预计60–100；Handoff已释放，Main待正常PR/finish。旧仓库Site/条码来源、typed规则/激活、完整MASTER/Transfer/Stock及七天出口保留。
