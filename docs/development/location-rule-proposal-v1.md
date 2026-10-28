@@ -1,6 +1,6 @@
 # 库位规则候选 v1
 
-Owner `Main.Wms.LocationRuleProposal.v1`，原操作合同 `LOCATION-RULE-PROPOSAL/1`。落实 WMS-MASTER-01 v1.1.1 §4.1.2、4.3、7.1 与 08D/08W 的候选维护。W210 增加[原生字典与准确来源绑定](location-rule-references-v1.md)；送审、批准绑定、应用与生命周期仍须独立采用。本合同不提供生产使用许可。
+Owner `Main.Wms.LocationRuleProposal.v1`，原操作合同 `LOCATION-RULE-PROPOSAL/1`。落实 WMS-MASTER-01 v1.1.1 §4.1.2、4.3、7.1 与 08D/08W 的候选维护。W210 增加[原生字典与准确来源绑定](location-rule-references-v1.md)；W211 增加[送审与真实 OA 批准绑定](location-rule-review-v1.md)，实际规则生效与生命周期仍须独立采用。本合同不提供生产使用许可。
 
 ## 独立入口和当前权限
 
@@ -23,7 +23,7 @@ API `/api/wms/locations/{locationId}/rules-v1`：GET scope/context/分页列表�
 
 容量采用独立有标签原件存储，不回写旧 CapacityQty。允许集合空数组明确保留；代码按 ordinal 排序做同值比较，禁止重复/未知结构。时刻必须显式时区、最多7位小数，保存原偏移，区间比较按 UTC 且 From<To；null 表示候选待补，不表示已允许无限期。
 
-普通草稿仍以准确原字符串和版本保存，ReferenceResolution=UNRESOLVED。W210 新增 POST `/{proposalId}/resolve`，以独立 resolve 动作、当前 If-Match 和准确 expectedPolicy 绑定真实字典与原生 UOM；成功产生 RESOLVED 新版本，固定真实 Owner/id/version/Registry 与原件引用，不回填旧版本。普通内容修改重回 UNRESOLVED。context 的 ReferenceAuthorities 状态和新 referenceAuthorityBindings 区分未配置、已配置与停用；已配置或历史 RESOLVED 均不能代替下一次采用的当前来源重核。没有送审或应用端点，也没有批准人/ClockPolicy/库存占用的替代证据。
+普通草稿仍以准确原字符串和版本保存，ReferenceResolution=UNRESOLVED。W210 新增 POST `/{proposalId}/resolve`，以独立 resolve 动作、当前 If-Match 和准确 expectedPolicy 绑定真实字典与原生 UOM；成功产生 RESOLVED 新版本，固定真实 Owner/id/version/Registry 与原件引用，不回填旧版本。普通内容修改重回 UNRESOLVED。context 的 ReferenceAuthorities 状态和新 referenceAuthorityBindings 区分未配置、已配置与停用；已配置或历史 RESOLVED 均不能代替下一次采用的当前来源重核。W211 送审与批准绑定使用独立审批入口；当前合同仍不替代 ClockPolicy/库存占用或规则生效证据。
 
 ## 原件、前驱和撤回
 
@@ -31,7 +31,7 @@ API `/api/wms/locations/{locationId}/rules-v1`：GET scope/context/分页列表�
 
 proposals 分开维护候选 version 与对象 revision/token；versions 保存不可变准确候选和摘要。修改必须持当前强 ETag；typed patch 的遗漏是 KEEP，SET(null)、顶层null、非法CLEAR、未知字段均拒绝。容量 SET 替换整个有类型对象；两个集合、布尔仅SET，时间可CLEAR回待补。selectorKey 不可 PATCH。整体规范同值返回 NO_CHANGE，候选版/ETag/选择器都不变化。
 
-实质修改新增候选原件，版本+1、对象 revision/token 更新；撤回仅 DRAFT→WITHDRAWN，保留原候选版本及原件，单独推进对象前驱。修改与撤回争同一前驱，落败者返回412；WITHDRAWN 不得编辑或重开。未来送审/批准/应用状态须由后续正式合同扩展，不能靠本端点伪造。
+实质修改新增候选原件，版本+1、对象 revision/token 更新；W211 扩展后的撤回允许任一非 WITHDRAWN/EFFECTIVE 状态→WITHDRAWN，保留原候选版本及原件，单独推进对象前驱。修改与撤回争同一前驱，落败者返回412；WITHDRAWN 不得编辑或重开。DRAFT/RETURNED 可编辑；送审和批准绑定状态由 W211 正式审批合同推进，不能靠本候选端点伪造。
 
 选择器/候选原件/对象前驱/Journal及审计同 PostgreSQL 事务。外键、真实原生租户身份校验、不可变触发器、连续版本与延迟原操作证明约束一起保全；运行时核查实际启用触发器。Raw SQL 不能把草稿选择器改成已应用，也不能删除原件。没有创建 Stock、释放预占、解除仓库或库位隔离、改变旧名称/数量/层级。
 
@@ -43,4 +43,4 @@ proposals 分开维护候选 version 与对象 revision/token；versions 保存�
 
 浏览器仅按 origin+tenant+actor+location 保存 UUID，使用 Web Locks 互斥并重核当前身份；未知提交只查询原键。身份/路由变化及401/403/404清理私有显示，拒绝晚响应和错误身份回执。无应用按钮或虚构默认字典。
 
-验证为隔离 PostgreSQL18、实际 Program HTTP 和相关 Vue/类型/构建。没有执行既有环境迁移、Actions 或生产部署。正式 MASTER 全流程、规则审批/应用与来源在效果点的重新核验、READY_TYPED/激活、Stock/RSV/Transfer 效果及原七天完整出口保留。
+验证为隔离 PostgreSQL18、实际 Program HTTP 和相关 Vue/类型/构建。没有执行既有环境迁移、Actions 或生产部署。正式 MASTER 全流程、规则实际生效与来源在效果点的重新核验、READY_TYPED/激活、Stock/RSV/Transfer 效果及原七天完整出口保留。

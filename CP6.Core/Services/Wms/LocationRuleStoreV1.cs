@@ -11,12 +11,12 @@ internal sealed class LocationRuleStoreV1(CP6Context db)
     internal sealed class Head
     {
         public Guid Id{get;init;}public Guid Location{get;init;}public Guid Selector{get;init;}
-        public long Version{get;init;}public long Revision{get;init;}public Guid Token{get;init;}public string State{get;init;}="";
+        public long Version{get;init;}public long Revision{get;init;}public Guid Token{get;init;}public Guid? ActiveSubmissionId{get;init;}public string State{get;init;}="";
         public string Etag=>"\""+Token.ToString("N")+"\"";
     }
     private sealed class VersionRow{public byte[] Body{get;init;}=[];public string Digest{get;init;}="";}
     internal IQueryable<Head> Heads()=>db.Database.SqlQuery<Head>($"""
-        SELECT id AS "Id",location_id AS "Location",selector_id AS "Selector",version AS "Version",revision AS "Revision",token AS "Token",state AS "State"
+        SELECT id AS "Id",location_id AS "Location",selector_id AS "Selector",version AS "Version",revision AS "Revision",token AS "Token",state AS "State",active_submission_id AS "ActiveSubmissionId"
         FROM cp6_location_rule_v1.proposals WHERE tenant_id={db.CurrentTenantId}
         """);
     internal async Task Fence(bool write,CancellationToken ct)
@@ -59,11 +59,12 @@ internal sealed class LocationRuleStoreV1(CP6Context db)
     }
     internal async Task<Head> Change(Head before,Guid operation,Guid actor,LocationRuleDraftV1? draft,CancellationToken ct,RuleReferenceBindingV1? binding=null)
     {
+        if(draft!=null && before.State is not("DRAFT" or "RETURNED") || draft==null && before.State is "WITHDRAWN" or "EFFECTIVE")throw Error("RULE_PROPOSAL_NOT_EDITABLE",409);
         if(before.Revision==long.MaxValue||draft!=null&&before.Version==long.MaxValue)throw Error("RULE_VERSION_EXHAUSTED",503);
         var version=before.Version+(draft==null?0:1);var state=draft==null?"WITHDRAWN":"DRAFT";var token=Guid.NewGuid();
         if(await db.Database.ExecuteSqlInterpolatedAsync($"""
-            UPDATE cp6_location_rule_v1.proposals SET version={version},revision=revision+1,token={token},state={state},operation_id={operation},actor_id={actor}
-            WHERE tenant_id={db.CurrentTenantId} AND id={before.Id} AND revision={before.Revision} AND token={before.Token} AND state='DRAFT'
+            UPDATE cp6_location_rule_v1.proposals SET version={version},revision=revision+1,token={token},state={state},operation_id={operation},actor_id={actor},active_submission_id={(draft==null?before.ActiveSubmissionId:null)}
+            WHERE tenant_id={db.CurrentTenantId} AND id={before.Id} AND revision={before.Revision} AND token={before.Token} AND state={before.State}
             """,ct)!=1)throw Error("RULE_PREDECESSOR_CHANGED",412);
         var h=await HeadFor(before.Location,before.Id,ct);if(draft!=null)await Append(h,operation,actor,draft,ct,binding);return h;
     }

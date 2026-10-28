@@ -137,7 +137,7 @@ public static class WmsPermissionSeed
             // Catalog only: independent rule actions never grant any role.
             var ruleMenu = db.Sys_Menus.Where(m => m.MenuKey == "wms-location-rule").Select(m => (int?)m.MenuId).SingleOrDefault();
             if (ruleMenu.HasValue)
-                foreach (var code in new[] { "query", "draft", "edit", "withdraw", "abandon", "resolve" })
+                foreach (var code in new[] { "query", "draft", "edit", "withdraw", "abandon", "resolve", "review-policy", "review-submit", "review-decide", "review-bind" })
                     if (!db.Sys_MenuActions.IgnoreQueryFilters().Any(x => x.TenantId == tid && x.MenuId == ruleMenu.Value && x.ActionCode == code))
                     { db.Sys_MenuActions.Add(new() { TenantId = tid, MenuId = ruleMenu.Value, ActionCode = code, ActionName = code }); changed = true; }
             foreach(var (menuId,code,name) in OwnerActions)

@@ -6,7 +6,7 @@
     <section v-if="pending"><p>有一笔结果待确认，请先查询原操作。</p><button :disabled="busy" @click="recover(false)">查询原操作</button><button :disabled="busy || !permissions.has('wms-location-rule:abandon')" @click="recover(true)">关闭未提交原操作</button></section>
     <section v-if="context">
       <h2>当前来源与规则</h2><p>库位 {{ context.locationCode }} · {{ context.initializationState === 'QUARANTINED' ? '隔离草稿，尚未启用' : '旧记录，初始化来源未核定' }}</p>
-      <p>{{ context.referenceAuthorities === 'CONFIGURED' ? '已配置规则字典；候选须单独绑定当前准确来源。' : context.referenceAuthorities === 'DISABLED' ? '规则字典已停用，不能建立新绑定。' : '规则字典尚未配置，候选引用待核定。' }} 当前不能送审或应用规则。</p>
+      <p>{{ context.referenceAuthorities === 'CONFIGURED' ? '已配置规则字典；候选须单独绑定当前准确来源。' : context.referenceAuthorities === 'DISABLED' ? '规则字典已停用，不能建立新绑定。' : '规则字典尚未配置，候选引用待核定。' }} 来源完整后可进入规则审批，最终生效须另外核定。</p>
       <RouterLink v-if="context.warehouseId" :to="`/wms/warehouse/${context.warehouseId}/rule-references`">查看仓库规则字典</RouterLink>
       <details v-if="context.referenceCatalog"><summary>查看当前字典的准确代码与版本</summary><p>指标、适用域及精度引用版本：{{ context.referencePolicy?.version }}。单位使用各自原生版本。</p>
         <ul><li v-for="m in context.referenceCatalog.original.definition.metrics" :key="m.id">指标 {{ m.id }} · 量纲 {{ m.dimensionKey }}</li><li v-for="u in context.referenceCatalog.original.units" :key="u.reference.id">单位 {{ u.code }} · 版本 {{ u.reference.version }} · {{ u.reference.owner }}</li><li v-for="p in context.referenceCatalog.original.definition.precisions" :key="p.id">精度 {{ p.id }} · {{ p.scale }} 位小数，超出拒绝</li><li v-for="d in context.referenceCatalog.original.definition.domains" :key="d.id">适用域 {{ d.id }} · 规则族 {{ d.ruleFamilies.join('、') }} · 品类 {{ d.productTypes.join('、') }} · 动作 {{ d.operations.join('、') }}</li></ul>
@@ -15,16 +15,17 @@
       <ul><li v-for="s in context.selectors" :key="s.id">{{ s.ruleFamily }} · {{ s.metricId }} · {{ s.applicabilityDomainId }}：选择器版本 {{ s.revision }}，{{ s.currentRuleVersionId ? '已有规则引用' : '尚无生效规则' }}</li></ul>
     </section>
     <h2>候选与历史</h2>
-    <table v-if="rows.length"><thead><tr><th>候选 ID</th><th>版本</th><th>状态</th><th>操作</th></tr></thead><tbody><tr v-for="r in rows" :key="r.reference.id"><td>{{ r.reference.id }}</td><td>{{ r.reference.version }}</td><td>{{ r.state === 'WITHDRAWN' ? '已撤回' : '草稿' }}</td><td><button :disabled="busy || !!pending" @click="select(r)">查看候选</button></td></tr></tbody></table>
+    <table v-if="rows.length"><thead><tr><th>候选 ID</th><th>版本</th><th>状态</th><th>操作</th></tr></thead><tbody><tr v-for="r in rows" :key="r.reference.id"><td>{{ r.reference.id }}</td><td>{{ r.reference.version }}</td><td>{{ stateText(r.state) }}</td><td><button :disabled="busy || !!pending" @click="select(r)">查看候选</button></td></tr></tbody></table>
     <p v-else>当前页没有可读取的候选。</p><button :disabled="busy || page === 1" @click="move(-1)">上一页</button><span>第 {{ page }} 页</span><button :disabled="busy || rows.length < 50" @click="move(1)">下一页</button>
-    <section v-if="selected"><p>当前候选版本 {{ selected.reference.version }}；{{ selected.state === 'DRAFT' ? '草稿' : '已撤回' }}。</p>
-      <p>{{ selected.referenceResolution === 'RESOLVED' ? '本版本已保存准确来源绑定；后续采用前仍须重核当前来源，尚未批准或生效。' : '本版本来源尚未绑定。' }}</p>
+    <section v-if="selected"><p>当前候选版本 {{ selected.reference.version }}；{{ stateText(selected.state) }}。</p>
+      <p>{{ selected.referenceResolution === 'RESOLVED' ? '本版本已保存准确来源绑定；后续采用前仍须重核当前来源。审批状态见上方，规则生效须另外核定。' : '本版本来源尚未绑定。' }}</p>
       <p v-if="selected.referenceBinding">绑定字典版本 {{ selected.referenceBinding.policy.version }}，来源登记 {{ selected.referenceBinding.registryVersion }}。</p>
       <button :disabled="busy || !!pending || !canResolve" @click="resolve">绑定已保存候选来源</button><p>绑定针对上方已保存版本；下方尚未保存的修改不会一并提交。</p>
+      <RouterLink :to="`/wms/location-rule/${selected.reference.id}/review`">进入此候选的规则审批</RouterLink>
       <p v-if="selected.redactedFields.length">部分字段无读取权限，相关原文已隐藏。</p>
       <label>历史版本<input v-model="historyVersion" aria-label="历史版本" inputmode="numeric" /></label><button :disabled="busy" @click="readHistory">读取历史</button>
       <pre v-if="history">{{ JSON.stringify(history.candidate, null, 2) }}</pre><p v-if="history">上方为版本 {{ history.reference.version }} 的原候选，只供读取。</p>
-      <label>撤回原因<input v-model="reason" aria-label="撤回原因" maxlength="1000" /></label><button :disabled="busy || !!pending || selected.state !== 'DRAFT' || !permissions.has('wms-location-rule:withdraw') || !reason.trim()" @click="withdraw">撤回候选</button>
+      <label>撤回原因<input v-model="reason" aria-label="撤回原因" maxlength="1000" /></label><button :disabled="busy || !!pending || ['WITHDRAWN', 'EFFECTIVE'].includes(selected.state) || !permissions.has('wms-location-rule:withdraw') || !reason.trim()" @click="withdraw">撤回候选</button>
     </section>
     <button :disabled="busy || !!pending || !permissions.has('wms-location-rule:draft')" @click="newDraft">填写新候选</button>
     <form v-if="context && editing" @submit.prevent="save"><fieldset :disabled="busy || !!pending"><legend>{{ selected ? '修改候选' : '新建候选' }}</legend>
@@ -63,8 +64,9 @@ const historyVersion = ref(''), reason = ref(''), busy = ref(false), pending = r
 const family = ref(''), metric = ref(''), domain = ref(''), domainVersion = ref(''), mode = ref(''), quantity = ref(''), metricVersion = ref(''), uom = ref(''), uomVersion = ref(''), precision = ref(''), precisionVersion = ref(''), unknownReason = ref(''), products = ref(''), operations = ref(''), pickable = ref(false), from = ref(''), to = ref('')
 let live = true, generation = 0
 const writable = (field: string) => !!context.value?.fields.some(f => f.field === field && f.canWrite && (!selected.value || f.canRead))
-const canSave = computed(() => selected.value ? selected.value.state === 'DRAFT' && permissions.has('wms-location-rule:edit') : permissions.has('wms-location-rule:draft') && !!context.value?.fields.every(f => f.canWrite))
-const canResolve = computed(() => selected.value?.state === 'DRAFT' && permissions.has('wms-location-rule:resolve') && context.value?.referenceAuthorities === 'CONFIGURED' && !!context.value.referencePolicy && context.value.fields.every(f => f.canRead && f.canWrite) && selected.value.redactedFields.length === 0)
+function stateText(s: string) { return ({ DRAFT: '草稿', SUBMITTED: '送审中', RETURNED: '已退回修改', REJECTED: '已拒绝', APPROVED_PENDING: '审批通过，待生效', WITHDRAWN: '已撤回' } as Record<string,string>)[s] ?? s }
+const canSave = computed(() => selected.value ? ['DRAFT', 'RETURNED'].includes(selected.value.state) && permissions.has('wms-location-rule:edit') : permissions.has('wms-location-rule:draft') && !!context.value?.fields.every(f => f.canWrite))
+const canResolve = computed(() => !!selected.value && ['DRAFT', 'RETURNED'].includes(selected.value.state) && permissions.has('wms-location-rule:resolve') && context.value?.referenceAuthorities === 'CONFIGURED' && !!context.value.referencePolicy && context.value.fields.every(f => f.canRead && f.canWrite) && selected.value.redactedFields.length === 0)
 function form(d?: Partial<RuleDraft>) {
   family.value = d?.selectorKey?.ruleFamily || ''; metric.value = d?.selectorKey?.metricId || (d?.capacity?.mode === 'LIMITED' ? d.capacity.metricRef.id : ''); domain.value = d?.selectorKey?.applicabilityDomainRef.id || ''; domainVersion.value = d?.selectorKey?.applicabilityDomainRef.version || ''
   const c = d?.capacity; mode.value = c?.mode || ''; quantity.value = c?.mode === 'LIMITED' ? c.value : ''; metricVersion.value = c?.mode === 'LIMITED' ? c.metricRef.version : ''; uom.value = c?.mode === 'LIMITED' ? c.uomRef.id : ''; uomVersion.value = c?.mode === 'LIMITED' ? c.uomRef.version : ''; precision.value = c?.mode === 'LIMITED' ? c.precisionPolicyRef.id : ''; precisionVersion.value = c?.mode === 'LIMITED' ? c.precisionPolicyRef.version : ''; unknownReason.value = c?.mode === 'UNKNOWN' ? c.reason : ''
@@ -83,7 +85,7 @@ async function load(check: () => void) {
 }
 async function reload() { await run(async check => { clear(); if (!permissions.loaded) await permissions.loadMyActions(); check(); await load(check) }) }
 function newDraft() { selected.value = null; history.value = null; reason.value = ''; form(); editing.value = true }
-async function select(row: RuleView) { await run(async check => { const v = value(await api.read(location.value, row.reference.id)); check(); if (v.locationId !== location.value || v.reference.id !== row.reference.id) throw new Error('返回候选身份不一致。'); selected.value = v; history.value = null; reason.value = ''; form(v.candidate); editing.value = v.state === 'DRAFT' }) }
+async function select(row: RuleView) { await run(async check => { const v = value(await api.read(location.value, row.reference.id)); check(); if (v.locationId !== location.value || v.reference.id !== row.reference.id) throw new Error('返回候选身份不一致。'); selected.value = v; history.value = null; reason.value = ''; form(v.candidate); editing.value = ['DRAFT', 'RETURNED'].includes(v.state) }) }
 function capacity(): RuleCapacity {
   if (mode.value === 'UNLIMITED') return { mode: 'UNLIMITED' }
   if (mode.value === 'UNKNOWN' && unknownReason.value.trim()) return { mode: 'UNKNOWN', reason: unknownReason.value }
