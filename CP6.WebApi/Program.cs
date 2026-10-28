@@ -581,6 +581,8 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-configuration-rule", "工�
 CP6.Core.Services.Sys.FieldRegistry.Register("plm-configuration-rule");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-engineering-requirement", "工程需求与来源", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("plm-engineering-requirement", new CP6.Core.Services.Sys.FieldRegistry.Field("Definition", "需求定义"), new CP6.Core.Services.Sys.FieldRegistry.Field("Source", "需求来源"));
+CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-engineering-iteration", "工程项目与迭代", new[] {1,2,3,4,5},5);
+CP6.Core.Services.Sys.FieldRegistry.Register("plm-engineering-iteration",new CP6.Core.Services.Sys.FieldRegistry.Field("Metadata","项目计划"),new CP6.Core.Services.Sys.FieldRegistry.Field("Inputs","准确输入"),new CP6.Core.Services.Sys.FieldRegistry.Field("Tasks","任务交付"));
 CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-requirement-set", "需求集评审与批准", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("plm-requirement-set", new CP6.Core.Services.Sys.FieldRegistry.Field("Scope", "适用范围"), new CP6.Core.Services.Sys.FieldRegistry.Field("Members", "准确成员"));
 CP6.Core.Services.Sys.DataScopeRegistry.Register("plm-engineering-revision", "工程修订工作稿", new[] { 1, 2, 3, 4, 5 }, 5);
@@ -815,6 +817,7 @@ builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringProductOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringRevisionOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringRequirementService>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.RequirementSetService>();
+builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringIterationService>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.RequirementSetReviewOwnerV1>();
 builder.Services.AddSingleton(new CP6.Core.Services.Plm.RequirementEvaluationRuntimeV1(builder.Configuration["RequirementEvaluation:EvidenceMode"] ?? ""));
 builder.Services.AddScoped<CP6.Core.Services.Plm.RequirementEvaluationService>();

@@ -66,6 +66,7 @@ const kinds: { value: StandaloneKind; label: string }[] = [
   { value: 'uom-profile', label: '单位配置原对象' },
   { value: 'currency-policy', label: '币种政策原对象' },
   { value: 'plm-configuration-rule', label: '工程选项规则原对象' },
+  { value: 'plm-engineering-iteration', label: '工程项目原对象' },
   { value: 'plm-requirement-set', label: '工程需求集原对象' },
   { value: 'plm-engineering-requirement', label: '工程需求或来源包原对象' },
   { value: 'plm-engineering-revision', label: '工程修订原对象' },

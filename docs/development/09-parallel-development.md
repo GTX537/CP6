@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W196 准确需求集FLOW评审与Owner批准](dispatch/20261028-wave196/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
+> 当前：[W197 工程项目与迭代任务](dispatch/20261028-wave197/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
+
+> 历史快照：[W196 准确需求集FLOW评审与Owner批准](dispatch/20261028-wave196/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
 
 > 历史快照：[W195 准确需求专业评价与批准来源](dispatch/20261028-wave195/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
 

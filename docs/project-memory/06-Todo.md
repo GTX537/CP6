@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-28：W197 工程项目与迭代任务待Main收尾
+
+原生项目/成员/场地/编号、准确已批准迭代输入、计划/输入独立版本、暂停恢复、精确加权任务/实际交付物与独立确认退回、当前权限及原操作恢复已验证。完整WP05-18外部来源与豁免、候选/OA/关闭、冻结/WO/SCHED仍待。15 distinct PG18/actual Program HTTP;44 Vue;types/build PASS;0skip。[报告](../development/evidence/W197-01/DELIVERY.md)。登记55.25分钟，预计120–210；Handoff已释放，Main待正常PR/finish。原七天全部出口保留。
+
 ## 2026-10-28：W196 准确需求集FLOW评审与Owner批准待Main收尾
 
 准确需求集/原文成员、实际专业FLOW签署、独立Owner采用与原生回执、C02/TLS丢失响应恢复、当前字段/对象/部门及页面已验证；WP05-14排除/冲突权威裁决、撤回/实际采用影响链和ITER/冻结/WO/SCHED仍待。36 distinct PG18/actual Program HTTP/C02/TLS;70 Vue;types/build PASS;0skip。[报告](../development/evidence/W196-01/DELIVERY.md)。登记56.1分钟，预计240–360；Handoff已释放，Main待正常PR/finish。原七天全部出口保留。
