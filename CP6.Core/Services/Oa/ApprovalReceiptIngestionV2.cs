@@ -53,7 +53,10 @@ public sealed class ApprovalReceiptIngestionV2(CP6Context db, ScopeAuthorization
             SELECT owner AS "Owner",revision AS "Revision",enabled AS "Enabled",can_receive AS "Receive",can_query AS "Query",evidence_mode AS "Mode"
             FROM cp6_approval_receipt_v2.registrations WHERE environment_id={s.Environment} AND tenant_id={s.Tenant} AND principal_id={s.Principal}
             """).SingleOrDefaultAsync(ct);
-        if (r == null || !r.Enabled || !r.Query || r.Owner != Owner || r.Mode != s.EvidenceMode) throw Error("PRODUCER_NOT_ALLOWED", 403);
+        if (r == null || !r.Enabled || !r.Query || r.Owner is not (ApprovalBusinessProfileV2.ToolOwner or ApprovalBusinessProfileV2.DocumentOwner) || r.Mode != s.EvidenceMode) throw Error("PRODUCER_NOT_ALLOWED", 403);
+        if(r.Owner==ApprovalBusinessProfileV2.DocumentOwner
+            && !await db.Database.SqlQueryRaw<bool>("SELECT cp6_document_review_application_v1.ready() AS \"Value\"").SingleAsync(ct))
+            throw Error("RECEIPT_SOURCE_UNAVAILABLE");
         return (s, r);
     }
     private async Task<Grant> Subject(ApprovalServiceIdentityV2 s, Guid submission, Registration registration, bool write, CancellationToken ct)
@@ -67,11 +70,11 @@ public sealed class ApprovalReceiptIngestionV2(CP6Context db, ScopeAuthorization
         if (write && (!s.CanSubmit || !registration.Receive || !g.Receive)) throw Error("COMMAND_FORBIDDEN", 403);
         return g;
     }
-    private async Task LockSubmission(Guid submission, CancellationToken ct)
+    private async Task LockSubmission(Guid submission,string businessOwner,CancellationToken ct)
     {
         var rows = await db.Database.SqlQuery<Guid>($"""
             SELECT id AS "Value" FROM cp6_approval_intake_v2.submissions WHERE tenant_id={db.CurrentTenantId}
-              AND environment_id={scope.EnvironmentId} AND owner={Owner} AND id={submission} FOR UPDATE
+              AND environment_id={scope.EnvironmentId} AND owner={businessOwner} AND id={submission} FOR UPDATE
             """).ToArrayAsync(ct);
         if (rows.Length != 1) throw Error("RESOURCE_NOT_FOUND", 404);
     }
@@ -130,7 +133,7 @@ public sealed class ApprovalReceiptIngestionV2(CP6Context db, ScopeAuthorization
         var source = await db.Database.SqlQuery<Source>($"""
             SELECT d.payload AS "Payload",d.payload_digest AS "Hash",s.selection_json::jsonb->'registration'->>'evidenceMode' AS "Mode"
             FROM cp6_approval_decision_v2.decisions d JOIN cp6_approval_intake_v2.submissions s
-              ON s.environment_id=d.environment_id AND s.tenant_id=d.tenant_id AND s.id=d.submission_id AND s.owner={Owner}
+              ON s.environment_id=d.environment_id AND s.tenant_id=d.tenant_id AND s.id=d.submission_id AND s.owner={e.ProducerOwner}
             WHERE d.environment_id={scope.EnvironmentId} AND d.tenant_id={db.CurrentTenantId} AND d.id={e.DecisionId}
               AND d.submission_id={e.SubmissionId} AND d.instance_id={e.InstanceId}
             """).SingleOrDefaultAsync(ct);
@@ -140,12 +143,12 @@ public sealed class ApprovalReceiptIngestionV2(CP6Context db, ScopeAuthorization
         if (source.Mode != mode) throw Error("PRODUCER_NOT_ALLOWED", 403);
         if (decision.Value.Subject != e.Subject || decision.Value.PayloadDigest != e.DecisionPayloadDigest || decision.Value.ConsumerOwner != e.ProducerOwner)
             return "RECEIPT_DECISION_CONFLICT";
-        // Registered native Tool provider: original bytes prove provenance without entering or locking the Owner transaction.
-        var original = await db.Database.SqlQuery<byte[]>($"""
+        // Closed registered native business provider: original bytes prove provenance without entering or locking the Owner transaction.
+        var original = await db.Database.SqlQuery<byte[]>(ApprovalBusinessProfileV2.For(e.ProducerOwner).FactSql($"""
             SELECT payload AS "Value" FROM cp6_tool_application_v2.receipts
             WHERE environment_id={scope.EnvironmentId} AND tenant_id={db.CurrentTenantId} AND id={e.ReceiptId} AND event_id={e.ReceiptEventId}
               AND payload_hash={hash}
-            """).SingleOrDefaultAsync(ct);
+            """)).SingleOrDefaultAsync(ct);
         return original == null || !original.AsSpan().SequenceEqual(canonical) ? "RECEIPT_SOURCE_CONFLICT" : null;
     }
     public async Task<ApprovalReceiptIngestResultV2> ReceiveAsync(byte[] raw, CancellationToken ct = default)
@@ -157,9 +160,9 @@ public sealed class ApprovalReceiptIngestionV2(CP6Context db, ScopeAuthorization
         {
             var lease = await scope.AcquireAsync(ct); await Ready(ct); var auth = await Service(ct); var s = auth.Service;
             if (e.Scope != new ApprovalScopeV2(s.Environment.ToString(), s.Tenant) || e.ProducerOwner != auth.Registration.Owner
-                || e.Subject.BizType != "WMS_TOOL_DISCARD" || e.Subject.SubjectKind != "TOOL_DISPOSITION_REQUEST" || e.Action != "WMS_TOOL_DISCARD")
+                || e.Subject.BizType != ApprovalBusinessProfileV2.For(auth.Registration.Owner).BizType || e.Subject.SubjectKind != ApprovalBusinessProfileV2.For(auth.Registration.Owner).SubjectKind || e.Action != ApprovalBusinessProfileV2.For(auth.Registration.Owner).BizType)
                 throw Error("PRODUCER_NOT_ALLOWED", 403);
-            var grant = await Subject(s, e.SubmissionId, auth.Registration, false, ct); await LockSubmission(e.SubmissionId, ct);
+            var grant = await Subject(s, e.SubmissionId, auth.Registration, false, ct); await LockSubmission(e.SubmissionId,auth.Registration.Owner,ct);
             var projection = await Stream(e.ReceiptStreamId, ct);
             _ = await db.Database.SqlQuery<Guid>($"""
                 SELECT event_id AS "Value" FROM cp6_approval_receipt_v2.inbox WHERE environment_id={s.Environment}
@@ -265,7 +268,7 @@ public sealed class ApprovalReceiptIngestionV2(CP6Context db, ScopeAuthorization
         if (row == null) result = new(200, new ApprovalReceiptNotObservedV2("NOT_OBSERVED", eventId, await Now(ct), QueryRoute + eventId));
         else
         {
-            grant = await Subject(auth.Service, row.Submission, auth.Registration, false, ct); await LockSubmission(row.Submission, ct);
+            grant = await Subject(auth.Service, row.Submission, auth.Registration, false, ct); await LockSubmission(row.Submission,auth.Registration.Owner,ct);
             result = Result(row, await Stream(row.Stream, ct) ?? throw Error("RECEIPT_EVIDENCE_UNAVAILABLE"));
         }
         await Final(lease, auth, row?.Submission, grant, false, ct); await tx.CommitAsync(ct); return result;
@@ -279,7 +282,7 @@ public sealed class ApprovalReceiptIngestionV2(CP6Context db, ScopeAuthorization
             SELECT submission_id AS "Value" FROM cp6_approval_receipt_v2.streams WHERE environment_id={scope.EnvironmentId} AND tenant_id={db.CurrentTenantId} AND id={streamId}
             """).SingleOrDefaultAsync(ct);
         if (submission == Guid.Empty) throw Error("RESOURCE_NOT_FOUND", 404);
-        var grant = await Subject(auth.Service, submission, auth.Registration, false, ct); await LockSubmission(submission, ct);
+        var grant = await Subject(auth.Service, submission, auth.Registration, false, ct); await LockSubmission(submission,auth.Registration.Owner,ct);
         var p = await Stream(streamId, ct) ?? throw Error("RECEIPT_EVIDENCE_UNAVAILABLE");
         var gap = await db.Database.SqlQuery<bool>($"""
             SELECT EXISTS(SELECT FROM cp6_approval_receipt_v2.gaps WHERE environment_id={scope.EnvironmentId} AND tenant_id={db.CurrentTenantId} AND stream_id={streamId} AND NOT completed) AS "Value"

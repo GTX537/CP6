@@ -35,6 +35,7 @@ public sealed class ScopeAuthorizationLeaseV1
 public sealed class ScopeAuthorizationFenceV1(CP6Context db, IOptions<ScopeAuthorizationOptionsV1> options)
 {
     public const string WorkflowDomain = "WF_AUTH", NativeWriterProfile = "MAIN_NATIVE_IAM_WF_V1";
+    internal bool HasDeploymentEnvironment => options.Value.EnvironmentId != Guid.Empty;
     internal Guid EnvironmentId => options.Value.EnvironmentId is var id && id != Guid.Empty
         ? id : throw new ScopeAuthorizationExceptionV1("SCOPE_ENVIRONMENT_UNAVAILABLE");
     internal void RequireTransaction()

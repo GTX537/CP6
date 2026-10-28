@@ -27,7 +27,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         c.Seal();return new(db??h.Db,new OperationsHttp{HttpContext=h.Http},_=>Task.FromResult(h.User),c.Capture);
     }
     private static ControlledDocumentOwnerV1 Documents(Harness h,IFileStore store,CP6Context? db=null)
-        =>new(db??h.Db,DocumentAuthority(h,db),new(db??h.Db,DocumentAuthority(h,db),store,new ContentInspector()));
+        =>new(db??h.Db,DocumentAuthority(h,db),new(db??h.Db,DocumentAuthority(h,db),store,new ContentInspector()),ScopeFence(db==null?h:h with{Db=db}));
     private static async Task<ControlledDocumentCommandV1> DocumentInput(Harness h,IFileStore store)
     {
         byte[] bytes=[1,2,3];var upload=await ContentInput(h,bytes);
@@ -167,6 +167,15 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await using var host=await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!,new Dictionary<string,string>(){["Storage__Provider"]="Local",["Storage__LocalRoot"]=root});var cookies=await Login(host,h);
         using var command=await host.Send(OperationsRequest(cookies,HttpMethod.Post,"/api/controlled-document/owner-v1/commands",input));Assert.Equal(HttpStatusCode.OK,command.StatusCode);
         using var read=await host.Send(OperationsRequest(cookies,HttpMethod.Get,"/api/controlled-document/owner-v1/"+input.DocumentId));Assert.Equal(HttpStatusCode.OK,read.StatusCode);Assert.True(read.Headers.CacheControl?.NoStore);
+        using var response=JsonDocument.Parse(await read.Content.ReadAsStringAsync());
+        var observation=response.RootElement.GetProperty("data").Deserialize<ControlledDocumentSnapshotV1>(new JsonSerializerOptions(JsonSerializerDefaults.Web));
+        Assert.Equal("UNKNOWN",observation!.State);Assert.Equal("REVIEW_STATUS_UNAVAILABLE",observation.Readiness);
+        using(var unavailable=await host.Send(OperationsRequest(cookies,HttpMethod.Get,"/api/controlled-document/owner-v1/"+input.DocumentId+"/review-context")))
+        {
+            Assert.Equal(HttpStatusCode.ServiceUnavailable,unavailable.StatusCode);
+            using var failure=JsonDocument.Parse(await unavailable.Content.ReadAsStringAsync());
+            Assert.Equal("SCOPE_ENVIRONMENT_UNAVAILABLE",failure.RootElement.GetProperty("message").GetString());
+        }
         var url=$"/api/controlled-document/owner-v1/{input.DocumentId}/content/{input.Body.Contents[0].OccurrenceId}?version=1";
         using var download=await host.Send(OperationsRequest(cookies,HttpMethod.Get,url));Assert.Equal(HttpStatusCode.OK,download.StatusCode);Assert.Equal(new byte[]{1,2,3},await download.Content.ReadAsByteArrayAsync());Assert.Equal("attachment",download.Content.Headers.ContentDisposition?.DispositionType);
         var menu=await h.Db.Sys_Menus.Where(x=>x.MenuKey=="plm-controlled-document").Select(x=>x.MenuId).SingleAsync();await h.Db.Sys_RoleActions.Where(x=>x.MenuId==menu&&x.ActionCode=="query").ExecuteDeleteAsync();

@@ -114,6 +114,20 @@ public sealed class TaskDecisionController : ControllerBase
             throw new ScopeAuthorizationExceptionV1("ACT_AS_INVALID", 422);
         return id;
     }
+    [HttpGet("document-review/{document:guid}")]
+    public async Task<IActionResult> DocumentTasks(Guid document,CancellationToken ct)
+    {
+        try {Response.Headers.CacheControl="no-store";return Ok(await _native.DocumentTasksAsync(document,ActingAs(),ct));}
+        catch(ScopeAuthorizationExceptionV1 ex){return NativeError(ex);}
+        catch(CP6.Core.Services.Erp.OrderPriceCorrectionException ex){return NativeError(new(ex.Message,ex.Status));}
+    }
+    [HttpPost("{taskId:guid}/decision-commands/{commandId:guid}/close")]
+    public async Task<IActionResult> CloseCommand(Guid taskId,Guid commandId,CancellationToken ct)
+    {
+        try {Response.Headers.CacheControl="no-store";return Ok(await _native.CloseAsync(taskId,commandId,ct));}
+        catch(ScopeAuthorizationExceptionV1 ex){return NativeError(ex,commandId);}
+        catch(CP6.Core.Services.Erp.OrderPriceCorrectionException ex){return NativeError(new(ex.Message,ex.Status),commandId);}
+    }
     private IActionResult NativeError(ScopeAuthorizationExceptionV1 error, Guid? commandId = null)
         => StatusCode(error.Status, new { code = error.Message, messageKey = error.Message, correlationId = Guid.NewGuid(),
             retryable = error.Status is 503 or 504, fieldErrors = Array.Empty<object>(), currentRowVersion = (string?)null,

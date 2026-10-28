@@ -91,10 +91,20 @@ public sealed class ApprovalTaskAuthorityV2(CP6Context db, IHttpContextAccessor 
             grantRevision = lease.Snapshot.Epoch.ToString(System.Globalization.CultureInfo.InvariantCulture)
                 + ":" + ApprovalCanonicalV2.Hash(ApprovalCanonicalV2.Bytes(grant));
         }
-        var permission = ApprovalBindingOwnerV2.Serialize(new { profile = "oa.app.current-task-authority/2.0",
-            actual = actualPermission, principal = principalPermission, action = "oa-inbox:approve" });
+        var permission = PermissionEvidence(actualPermission,principalPermission);
         return new(assignment, principal, actual, principal == actual ? null : principal, grantId, grantRevision,
             grantBody, original.SeparationSubjectIds, lease.Snapshot, permission);
+    }
+    internal static string PermissionEvidence(UserPermissionContext actual,UserPermissionContext principal)
+    {
+        // SQL row order is not an authority change. Keep every permission fact, ordering only
+        // set-valued collections; actual membership, scope and field changes still differ.
+        static object Facts(UserPermissionContext p)=>new {p.UserId,p.UserName,p.DeptId,p.DeptPath,
+            RoleIds=p.RoleIds.Order().ToArray(),MenuKeys=p.MenuKeys.Order(StringComparer.Ordinal).ToArray(),
+            ActionKeys=p.ActionKeys.Order(StringComparer.Ordinal).ToArray(),p.DataScopes,p.FieldPerms,
+            CustomDeptIds=p.CustomDeptIds.ToDictionary(x=>x.Key,x=>x.Value.Order().ToArray())};
+        return System.Text.Encoding.UTF8.GetString(ApprovalCanonicalV2.Bytes(new {
+            profile="oa.app.current-task-authority/2.0",actual=Facts(actual),principal=Facts(principal),action="oa-inbox:approve" }));
     }
     internal async Task<ApprovalTaskAuthorityLeaseV2> AcquireAsync(Guid taskId, Guid? onBehalfOf = null, CancellationToken ct = default)
     {

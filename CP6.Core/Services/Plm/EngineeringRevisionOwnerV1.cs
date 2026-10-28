@@ -53,7 +53,7 @@ public sealed class EngineeringRevisionOwnerV1(CP6Context db, OperationsOwnerV1 
                     var document = await (documents ?? throw Error("DOCUMENT_OWNER_UNAVAILABLE",503)).Source(access,source,value.Reference.Id,value.Draft.ProductRef,false,ct);
                     if (!document.IsCurrent) missing.Add("SOURCE_CHANGED:" + component.OccurrenceId);
                     missing.AddRange(document.Missing!.Select(x => "DOCUMENT:" + component.OccurrenceId + ":" + x));
-                    missing.Add("DOCUMENT_APPROVAL_REQUIRED:" + component.OccurrenceId);
+                    if(document.State!="APPROVED")missing.Add("DOCUMENT_APPROVAL_REQUIRED:" + component.OccurrenceId);
                 }
                 else if (component.Kind == "ROUTING")
                 {

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CP6.WebApi.Controllers.Plm;
-[ApiController, Authorize, Route("api/controlled-document/owner-v1"), OrderOwnerResult]
+[ApiController, Authorize, Route("api/controlled-document/owner-v1"), OrderOwnerResult, DocumentReviewAvailability]
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public sealed class ControlledDocumentController(ControlledDocumentOwnerV1 owner) : ControllerBase
 {

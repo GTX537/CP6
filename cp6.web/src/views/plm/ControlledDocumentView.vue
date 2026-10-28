@@ -6,7 +6,7 @@
     <section v-if="canRead"><h2>工程来源</h2><form @submit.prevent="findParents(1)"><label>工程修订搜索<input v-model="search" aria-label="工程修订搜索" :disabled="busy" /></label><button :disabled="busy">查找工程修订</button></form><button v-if="moreParents" :disabled="busy" @click="findParents(parentPage + 1)">更多工程修订</button>
       <label>工程修订<select v-model="choice" aria-label="工程修订选择" :disabled="locked"><option value="">请选择</option><option v-for="p in parents" :key="key(p.reference)" :value="key(p.reference)">{{ p.revisionCode }} · v{{ p.reference.version }} · {{ p.draft.goal }}</option></select></label><button :disabled="locked || !parent" @click="loadPage(1)">读取文档</button>
     </section>
-    <section v-if="parent"><h2>文档目录</h2><button v-if="permissions.has('plm-controlled-document:add')" :disabled="locked || !parent.draft.productRef" @click="create">登记文档</button><p v-if="!rows.length">当前范围内没有文档。</p><article v-for="row in rows" :key="row.reference.id"><h3>{{ row.body.name }}</h3><p>修订 {{ row.body.revisionLabel }} · 工作版本 {{ row.reference.version }} · 待专业评审</p><button :disabled="busy" @click="open(row.reference.id)">查看文档</button></article><nav><button :disabled="busy || page === 1" @click="loadPage(page - 1)">上一页</button><span>第 {{ page }} 页</span><button :disabled="busy || rows.length < 20" @click="loadPage(page + 1)">下一页</button></nav></section>
+    <section v-if="parent"><h2>文档目录</h2><button v-if="permissions.has('plm-controlled-document:add')" :disabled="locked || !parent.draft.productRef" @click="create">登记文档</button><p v-if="!rows.length">当前范围内没有文档。</p><article v-for="row in rows" :key="row.reference.id"><h3>{{ row.body.name }}</h3><p>修订 {{ row.body.revisionLabel }} · 工作版本 {{ row.reference.version }} · {{ row.state === 'APPROVED' ? '已专业批准' : row.state === 'UNKNOWN' ? '审批状态未确认' : '待专业评审' }}</p><button :disabled="busy" @click="open(row.reference.id)">查看文档</button></article><nav><button :disabled="busy || page === 1" @click="loadPage(page - 1)">上一页</button><span>第 {{ page }} 页</span><button :disabled="busy || rows.length < 20" @click="loadPage(page + 1)">下一页</button></nav></section>
     <section v-if="body"><h2>{{ current ? '修订文档资料' : '登记原始资料' }}</h2><p>保存的是待评审修订。来源、语言权威和派生依据按实际资料填写；未知项可留空，批准与用途许可另行确认。</p>
       <form @submit.prevent="save"><fieldset :disabled="locked || !canWrite"><div class="grid"><label>文档名称<input v-model="body.name" aria-label="文档名称" maxlength="4000" required /></label><label>修订标记<input v-model="body.revisionLabel" aria-label="修订标记" maxlength="4000" required /></label>
         <label>来源类别<select v-model="body.source.kind" aria-label="来源类别"><option value="INTERNAL">内部编制</option><option value="EXTERNAL">外来文档</option></select></label><label>原始 Owner<input v-model="body.source.ownerName" aria-label="原始 Owner" /></label><label>来源单位<input v-model="body.source.organization" aria-label="来源单位" /></label><label>来源版本<input v-model="body.source.sourceVersion" aria-label="来源版本" /></label><label>来源日期<input v-model="body.source.sourceDate" aria-label="来源日期" type="date" /></label><label>取得依据<textarea v-model="body.source.acquisitionBasis" aria-label="取得依据" /></label><label>权威语言<input v-model="body.source.authorityLanguage" aria-label="权威语言" /></label><label>语言权威依据<textarea v-model="body.source.authorityBasis" aria-label="语言权威依据" /></label></div>
@@ -21,10 +21,12 @@
       <article v-if="history"><h3>历史 v{{ history.reference.version }} · {{ history.body.name }}</h3><p>历史引用保持原版本。下载仍核对当前权限与安全状态。</p><ul><li v-for="item in history.contentStatus" :key="item.occurrenceId">{{ item.fileName }}：{{ availability(item.availability) }} <button :disabled="busy || item.availability !== 'AVAILABLE'" @click="download(history, item.occurrenceId)">下载历史内容</button></li></ul></article>
       <form @submit.prevent="readDiff"><label>比较起始版本<input v-model="before" aria-label="比较起始版本" pattern="[1-9][0-9]*" /></label><label>比较结束版本<input v-model="after" aria-label="比较结束版本" pattern="[1-9][0-9]*" /></label><button :disabled="busy">比较版本</button></form><ul v-if="diff"><li v-for="change in diff.changes" :key="change.path">{{ change.path.startsWith('contents/') ? '内容或派生关系' : ({ name: '名称', source: '来源资料', revisionLabel: '修订标记', revisionOrigin: '工程来源', productRef: '产品来源' }[change.path] ?? '文档资料') }}：{{ display(change.before) }} → {{ display(change.after) }}</li></ul>
     </section>
+    <ControlledDocumentReviewPanel v-if="current && scope" :document="current" :scope="scope" :disabled="busy || !!pending" :initial-submission="reviewSubmission" />
   </main>
 </template>
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import ControlledDocumentReviewPanel from './ControlledDocumentReviewPanel.vue'
 import { documentApi, type DocumentBody, type DocumentContent, type DocumentSnapshot } from '@/api/plm/controlledDocument'
 import { revisionApi, type RevisionDiff, type RevisionSnapshot } from '@/api/plm/engineeringRevisions'
 import { fileContentApi, type FileSnapshot } from '@/api/pub/fileContent'
@@ -33,6 +35,7 @@ import { pendingDocument, documentResponse as result, saveDocument, resolveDocum
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
 import { usePermissionStore } from '@/stores/permission'
+const props = defineProps<{ documentId?: string; reviewSubmission?: string }>()
 const permissions = usePermissionStore(), canRead = computed(() => permissions.loaded && permissions.has('plm-controlled-document:query'))
 const busy = ref(false), error = ref(''), notice = ref(''), scope = ref<EngineeringScope | null>(null), pending = ref<PendingDocument | null>(null), locked = computed(() => busy.value || !!pending.value)
 const parents = ref<RevisionSnapshot[]>([]), choice = ref(''), search = ref(''), parentPage = ref(1), moreParents = ref(false), parent = computed(() => parents.value.find(p => key(p.reference) === choice.value))
@@ -56,7 +59,20 @@ async function run(action: (check: () => void) => Promise<void>) {
   catch (e: any) { try { check(); const status = e?.response?.status; if ([401, 403].includes(status)) clearPrivate(); error.value = [401, 403].includes(status) ? '当前无权读取文档或其原始内容。' : status === 412 ? '来源或文档版本已变化，请查询原操作并刷新。' : [409, 503].includes(status) ? '内容状态或派生依据不满足本次操作，请核对准确原件。' : e?.message || '操作结果尚未确认。' } catch { /* No stale identity disclosure. */ } }
   finally { try { check(); syncPending(); busy.value = false } catch { if (live && epoch === generation) busy.value = false } }
 }
-async function reload() { if (!permissions.loaded) await permissions.loadMyActions(); await run(async check => { clearPrivate(); scope.value = null; const s = result(await documentApi.scope()); check(); scope.value = s }) }
+async function reload() {
+  if (!permissions.loaded) await permissions.loadMyActions()
+  await run(async check => {
+    clearPrivate(); scope.value = null; const s = result(await documentApi.scope()); check(); scope.value = s
+    if (props.documentId) {
+      const v = result(await documentApi.read(props.documentId)); check()
+      if (v.reference.id !== props.documentId || v.tenantId !== s.tenantId) throw new Error('文档上下文已变化。')
+      const p = result(await revisionApi.read(v.body.revisionOrigin.id, v.body.revisionOrigin.version)); check()
+      if (key(p.reference) !== key(v.body.revisionOrigin)) throw new Error('工程来源版本不一致。')
+      parents.value = [p]; choice.value = key(p.reference); await nextTick(); check()
+      rows.value = [v]; current.value = v; body.value = copy(v.body); draftId.value = v.reference.id
+    }
+  })
+}
 async function findParents(target: number) { const text = search.value; await run(async check => { if (target === 1) { clearEditor(); rows.value = []; parents.value = []; choice.value = '' } const values = result(await revisionApi.list(text, target)); check(); parents.value.push(...values.filter(v => v.isCurrent)); parentPage.value = target; moreParents.value = values.length === 20 }) }
 async function loadRows(target: number, check: () => void) { const p = parent.value; if (!p) return; rows.value = []; const values = result(await documentApi.list(p.reference.id, '', target)); check(); if (values.some(v => v.tenantId !== scope.value?.tenantId || v.body.revisionOrigin.id !== p.reference.id)) throw new Error('文档上下文不一致。'); rows.value = values; page.value = target }
 async function loadPage(target: number) { await run(check => loadRows(target, check)) }
@@ -79,6 +95,7 @@ function clear() { generation++; busy.value = false; clearPrivate(); scope.value
 function changed() { clear(); if (authenticationCanRead()) void reload() }
 function storage(e: StorageEvent) { if (e.key?.startsWith('cp6_document_operation_v1:')) { try { syncPending() } catch { error.value = '原操作记录异常，请保留记录。' } } }
 watch(choice, () => { clearEditor(); rows.value = [] }); watch(canRead, allowed => { if (!allowed) clear() })
+watch(() => props.documentId, changed)
 onMounted(() => { window.addEventListener(AUTH_EVENT, changed); window.addEventListener('storage', storage); void reload() })
 onBeforeUnmount(() => { live = false; generation++; clearPrivate(); window.removeEventListener(AUTH_EVENT, changed); window.removeEventListener('storage', storage) })
 </script>

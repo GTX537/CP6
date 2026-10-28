@@ -16,7 +16,7 @@ internal sealed partial class OperationsAccessV1
     internal IQueryable<ControlledDocumentHeadV1> ControlledDocuments()
     {
         if (authority.Source.TenantId != db.CurrentTenantId || authority.Resource != OperationsOwnerV1.ControlledDocument
-            || authority.Action is not ("query" or "add" or "edit")) throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
+            || authority.Action is not ("query" or "add" or "edit" or "review-policy" or "review-submit" or "review-decide" or "review-apply")) throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
         RequireDocumentFields(false); var rows = ControlledDocumentStoreV1.Heads(db);
         if (authority.Scope == 1) return rows.Where(x => x.CreatorId == ActorId);
         if (authority.Scope == 5) return rows;

@@ -698,6 +698,27 @@ builder.Services.AddSingleton(sp=>new CP6.WebApi.Services.ToolApprovalDeliveryRe
 builder.Services.AddSingleton<CP6.Core.Services.Wms.IToolApprovalDeliveryTransportV1,CP6.WebApi.Services.ToolApprovalDeliveryTransportV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.ToolApprovalDeliveryV1>();
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.ToolApprovalDeliveryWorkerV1>();
+builder.Services.AddSingleton<CP6.Core.Services.Plm.IDocumentReviewSubmissionTransportV1>(sp=>new CP6.WebApi.Services.DocumentReviewSubmissionTransportV1(
+    builder.Configuration.GetSection("DocumentReviewSubmissionDelivery").Get<CP6.WebApi.Services.ToolApprovalDeliveryOptionsV1>()??new(),crmOidc,
+    sp.GetRequiredService<CP6.WebApi.Services.ApprovalIntakeRegistryV2>(),builder.Environment.IsDevelopment()));
+builder.Services.AddScoped<CP6.Core.Services.Plm.DocumentReviewDeliveryV1>();
+builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.DocumentReviewSubmissionWorkerV1>();
+builder.Services.AddScoped(sp=>new CP6.Core.Services.Plm.DocumentReviewFactReceiverV1(sp.GetRequiredService<CP6Context>(),
+    sp.GetRequiredService<CP6.Core.Services.Sys.ScopeAuthorizationFenceV1>(),sp.GetRequiredService<CP6.WebApi.Services.ApprovalFactReceiverServiceAuthorityV2>(),
+    sp.GetRequiredService<CP6.Core.Services.Oa.ApprovalDecisionSourceV2>(),sp.GetRequiredService<Microsoft.AspNetCore.DataProtection.IDataProtectionProvider>()));
+builder.Services.AddSingleton<CP6.Core.Services.Plm.IDocumentDecisionTransportV1>(sp=>new CP6.WebApi.Services.DocumentDecisionTransportV1(
+    builder.Configuration.GetSection("DocumentReviewDecisionDelivery").Get<CP6.WebApi.Services.ApprovalDecisionDeliveryOptionsV2>()??new(),crmOidc,
+    sp.GetRequiredService<CP6.WebApi.Services.ApprovalFactReceiverRegistryV2>(),builder.Environment.IsDevelopment()));
+builder.Services.AddSingleton<CP6.Core.Services.Plm.IDocumentApplicationTransportV1>(sp=>new CP6.WebApi.Services.DocumentApplicationTransportV1(
+    builder.Configuration.GetSection("DocumentReviewReceiptDelivery").Get<CP6.WebApi.Services.ToolApprovalDeliveryOptionsV1>()??new(),crmOidc,
+    sp.GetRequiredService<CP6.WebApi.Services.ApprovalIntakeRegistryV2>(),builder.Environment.IsDevelopment()));
+builder.Services.AddSingleton<CP6.Core.Services.Plm.IDocumentReceiptChainTransportV1>(sp=>new CP6.WebApi.Services.DocumentReceiptChainTransportV1(
+    builder.Configuration.GetSection("DocumentReviewReceiptRecovery").Get<CP6.WebApi.Services.ApprovalDecisionDeliveryOptionsV2>()??new(),crmOidc,
+    sp.GetRequiredService<CP6.WebApi.Services.ApprovalFactReceiverRegistryV2>(),builder.Environment.IsDevelopment()));
+builder.Services.AddScoped<CP6.Core.Services.Plm.DocumentDecisionDeliveryV1>();
+builder.Services.AddScoped<CP6.Core.Services.Plm.DocumentApplicationDeliveryV1>();
+builder.Services.AddScoped<CP6.Core.Services.Plm.DocumentReceiptRecoveryV1>();
+builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.DocumentReviewPipelineWorkerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.ToolMaintenanceMasterOwnerV1>();
 builder.Services.AddSingleton(_ => new CP6.Core.Services.Wms.ToolActualRuntimeV1(
     Guid.TryParse(builder.Configuration["Wms:ToolActual:EnvironmentId"], out var toolActualEnvironment) ? toolActualEnvironment : Guid.Empty,
@@ -771,6 +792,8 @@ builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringManufacturingOwnerV1
 builder.Services.AddSingleton<CP6.Core.Services.Pub.IFileContentInspectorV1, CP6.Core.Services.Pub.DefenderFileContentInspectorV1>();
 builder.Services.AddScoped<CP6.Core.Services.Pub.FileContentOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.ControlledDocumentOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Plm.ControlledDocumentReviewOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.ApprovalBusinessEvidenceV2>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.ToolSpecificationOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.ToolAssociationOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.ToolAssociationEngineeringOwnerV1>();

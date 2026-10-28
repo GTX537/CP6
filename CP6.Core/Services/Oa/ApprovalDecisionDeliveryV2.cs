@@ -23,8 +23,10 @@ public sealed record ApprovalDecisionDeliveryViewV2(Guid EventId, string State, 
 
 /// <summary>Delivers native immutable decision bytes. Each network exchange runs outside
 /// database transactions. A transport receipt is never a business application result.</summary>
-public sealed class ApprovalDecisionDeliveryV2(CP6Context db, ScopeAuthorizationFenceV1 scope, IApprovalDecisionTransportV2 transport)
+public sealed class ApprovalDecisionDeliveryV2(CP6Context db, ScopeAuthorizationFenceV1 scope, IApprovalDecisionTransportV2 transport,string businessOwner=ApprovalBusinessProfileV2.ToolOwner)
 {
+    private readonly ApprovalBusinessProfileV2 profile=ApprovalBusinessProfileV2.For(businessOwner);
+    private IQueryable<T> SourceQuery<T>(FormattableString sql)=>db.Database.SqlQuery<T>(profile.FactSql(sql));
     public const string Consumer = "Main.Wms.ToolDisposition.v1";
     internal sealed record Original(Guid Id, Guid Submission, byte[] Payload, string Digest);
     internal sealed record Registration(Guid Revision, bool Enabled, bool Query, bool Receive, string Mode);
@@ -45,12 +47,15 @@ public sealed class ApprovalDecisionDeliveryV2(CP6Context db, ScopeAuthorization
         await scope.Root(ct);
         if (!await db.Database.SqlQueryRaw<bool>("SELECT cp6_approval_delivery_v2.ready() AS \"Value\"").SingleAsync(ct))
             throw Error("DELIVERY_STORE_UNAVAILABLE", 503);
+        if(profile.Owner==ApprovalBusinessProfileV2.DocumentOwner
+            && !await db.Database.SqlQueryRaw<bool>("SELECT cp6_document_review_fact_v1.ready() AS \"Value\"").SingleAsync(ct))
+            throw Error("DELIVERY_STORE_UNAVAILABLE",503);
     }
     private async Task<Registration> Registered(ApprovalDecisionDeliveryRouteV2 r, CancellationToken ct)
     {
-        if (r.Environment != scope.EnvironmentId || r.Tenant != db.CurrentTenantId || r.ConsumerOwner != Consumer || transport.Route(r.Tenant) != r)
+        if (r.Environment != scope.EnvironmentId || r.Tenant != db.CurrentTenantId || r.ConsumerOwner != profile.Owner || transport.Route(r.Tenant) != r)
             throw Error("DELIVERY_ROUTE_CHANGED", 403);
-        var registration = await db.Database.SqlQuery<Registration>($"""
+        var registration = await SourceQuery<Registration>($"""
             SELECT revision AS "Revision",enabled AS "Enabled",can_query AS "Query",can_receive AS "Receive",evidence_mode AS "Mode"
             FROM cp6_tool_approval_fact_v2.registrations WHERE environment_id={r.Environment} AND tenant_id={r.Tenant} AND principal_id={r.Principal}
             """).SingleOrDefaultAsync(ct);
@@ -62,7 +67,7 @@ public sealed class ApprovalDecisionDeliveryV2(CP6Context db, ScopeAuthorization
     private async Task<AuthorityProof> Authority(ApprovalDecisionDeliveryRouteV2 r, Guid submission, CancellationToken ct)
     {
         var registration = await Registered(r, ct);
-        var grant = await db.Database.SqlQuery<Grant>($"""
+        var grant = await SourceQuery<Grant>($"""
             SELECT revision AS "Revision",enabled AS "Enabled",can_query AS "Query",can_receive AS "Receive"
             FROM cp6_tool_approval_fact_v2.subject_grants WHERE environment_id={r.Environment} AND tenant_id={r.Tenant}
               AND principal_id={r.Principal} AND submission_id={submission}
@@ -78,13 +83,13 @@ public sealed class ApprovalDecisionDeliveryV2(CP6Context db, ScopeAuthorization
         var fence = await scope.AcquireAsync(ct); await Ready(ct); var registered = await Registered(route, ct);
         var routeHash = Fingerprint(route);
         // The native authorization root and Scope lock serialize claims, including a first absent delivery row.
-        var original = await db.Database.SqlQuery<Original>($"""
+        var original = await SourceQuery<Original>($"""
             SELECT o.id AS "Id",o.submission_id AS "Submission",o.payload AS "Payload",o.payload_digest AS "Digest"
             FROM cp6_approval_decision_v2.outbox o
             JOIN cp6_tool_approval_fact_v2.subject_grants g ON g.environment_id=o.environment_id AND g.tenant_id=o.tenant_id
               AND g.submission_id=o.submission_id AND g.principal_id={route.Principal} AND g.enabled AND g.can_query
             LEFT JOIN cp6_approval_delivery_v2.delivery d ON d.environment_id=o.environment_id AND d.tenant_id=o.tenant_id AND d.outbox_id=o.id
-            WHERE o.environment_id={route.Environment} AND o.tenant_id={tenant} AND o.consumer_owner={Consumer}
+            WHERE o.environment_id={route.Environment} AND o.tenant_id={tenant} AND o.consumer_owner={profile.Owner}
               AND (d.outbox_id IS NULL OR (d.lease_until<=clock_timestamp() AND
                 ((d.state IN('OUTCOME_UNKNOWN','PENDING_VALIDATION') AND d.next_attempt<=clock_timestamp()) OR
                  (d.state='BLOCKED' AND (d.route_hash<>{routeHash} OR d.registration_revision<>{registered.Revision} OR d.subject_revision<>g.revision)))))
@@ -103,7 +108,7 @@ public sealed class ApprovalDecisionDeliveryV2(CP6Context db, ScopeAuthorization
         }
         var parsed = ApprovalDecisionWireV2.Parse(original.Payload); var e = parsed.Value;
         if (parsed.Full != original.Digest || !parsed.Canonical.AsSpan().SequenceEqual(original.Payload) || e.EventId != original.Id
-            || e.SubmissionId != original.Submission || e.Scope != new ApprovalScopeV2(route.Environment.ToString(), tenant) || e.ConsumerOwner != Consumer)
+            || e.SubmissionId != original.Submission || e.Scope != new ApprovalScopeV2(route.Environment.ToString(), tenant) || e.ConsumerOwner != profile.Owner)
             throw Error("DELIVERY_ORIGINAL_INVALID", 503);
         var source = await new ApprovalDecisionSourceV2(db, scope).Read(parsed, ct);
         if (source.Mode != route.EvidenceMode) throw Error("DELIVERY_SOURCE_MODE_MISMATCH", 403);
@@ -138,7 +143,7 @@ public sealed class ApprovalDecisionDeliveryV2(CP6Context db, ScopeAuthorization
             if (kind == "NOT_OBSERVED")
             {
                 Shape(root, "kind", "eventId", "observedAt", "queryRef"); Id(root.GetProperty("eventId"));
-                if (root.GetProperty("eventId").GetGuid() != e.EventId || root.GetProperty("queryRef").GetString() != ToolApprovalFactReceiverV2.Route + "/" + e.EventId) throw new JsonException();
+                if (root.GetProperty("eventId").GetGuid() != e.EventId || root.GetProperty("queryRef").GetString() != ApprovalBusinessProfileV2.For(e.ConsumerOwner).DecisionRoute + "/" + e.EventId) throw new JsonException();
                 _ = root.GetProperty("observedAt").GetDateTimeOffset();
                 return new(kind, "NOT_OBSERVED", Json(root));
             }
@@ -157,14 +162,14 @@ public sealed class ApprovalDecisionDeliveryV2(CP6Context db, ScopeAuthorization
                 throw new JsonException();
             if (pending)
             {
-                if (root.GetProperty("queryRef").GetString() != ToolApprovalFactReceiverV2.Route + "/" + e.EventId) throw new JsonException();
+                if (root.GetProperty("queryRef").GetString() != ApprovalBusinessProfileV2.For(e.ConsumerOwner).DecisionRoute + "/" + e.EventId) throw new JsonException();
                 return new(kind!, "PENDING_VALIDATION", Json(root));
             }
             var ack = root.Deserialize<ApprovalFactAckV2>(ApprovalBindingOwnerV2.Json)!;
             if (ack.ReceiveState is not ("RECORDED" or "DUPLICATE" or "STALE_RECEIPT" or "GAP" or "CONFLICT")
                 || ack.Application is not ("NOT_APPLIED" or "PENDING" or "APPLIED" or "STALE" or "CONFLICT" or "BLOCKED" or "UNKNOWN")) throw new JsonException();
             Id(root.GetProperty("applicationReceiptId"), true); Id(root.GetProperty("receiptStreamId"), true);
-            if (ack.ReceiptStreamId == null ? ack.ReceiptQueryRef != null : ack.ReceiptQueryRef != ToolApprovalFactReceiverV2.ApplicationRoute + ack.ReceiptStreamId + "/result") throw new JsonException();
+            if (ack.ReceiptStreamId == null ? ack.ReceiptQueryRef != null : ack.ReceiptQueryRef != ApprovalBusinessProfileV2.For(e.ConsumerOwner).ApplicationRoute + ack.ReceiptStreamId + "/result") throw new JsonException();
             if (ack.Application == "NOT_APPLIED" && ack.ApplicationReceiptId != null || ack.ApplicationReceiptId != null && ack.ReceiptStreamId == null) throw new JsonException();
             if (ack.ReceiveState is "RECORDED" or "DUPLICATE" or "STALE_RECEIPT" && (ack.ReceiptStreamId == null || ack.ErrorCode != null)) throw new JsonException();
             if (ack.ReceiveState == "GAP" && (e.Sequence == "1" || ack.Application != "NOT_APPLIED" || ack.ReceiptStreamId != null)) throw new JsonException();
