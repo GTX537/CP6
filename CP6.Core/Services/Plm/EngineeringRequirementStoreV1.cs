@@ -17,6 +17,7 @@ internal sealed class EngineeringRequirementHeadV1
 }
 internal sealed class EngineeringRequirementStoreV1(CP6Context db)
 {
+    internal CP6Context Context=>db;
     private IDbContextTransaction? fenced;
     private void Transaction(bool check = true)
     {

@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using CP6.Core.Services.Erp;
 
 namespace CP6.Core.Services.Plm;
 
@@ -11,7 +12,11 @@ public sealed record RequirementSourceV1(string Kind, string OriginDescription, 
 public sealed record RequirementCriterionV1(string Id, string Kind, string Object, string Conditions,
     string MethodRequirement, string? Lower = null, bool? LowerInclusive = null,
     string? Upper = null, bool? UpperInclusive = null, string? ProposedUnit = null,
-    string? UnitBasis = null, string? Precision = null, string? QualitativeBasis = null);
+    string? UnitBasis = null, string? Precision = null, string? QualitativeBasis = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] RequirementEvaluationBasisV1? Evaluation = null);
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+public sealed record RequirementEvaluationBasisV1(string Schema, UomProfileRefV1 Unit,
+    [property: JsonRequired] bool LowerUnbounded, [property: JsonRequired] bool UpperUnbounded);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record RequirementRelationV1(string Id, string Kind, EngineeringSourceRefV1 Target,
     string CoverageReason, string Uncovered, string Necessity);

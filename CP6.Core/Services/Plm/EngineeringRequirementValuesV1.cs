@@ -55,6 +55,13 @@ internal static class EngineeringRequirementValuesV1
                     || c.Kind=="QUANTITATIVE" && c.QualitativeBasis!=null)throw Error("REQUIREMENT_CRITERION_INVALID",400);
                 if(c.Lower!=null && c.Upper!=null && (Compare(c.Lower,c.Upper)>0 || Compare(c.Lower,c.Upper)==0 && (c.LowerInclusive==false || c.UpperInclusive==false)))
                     throw Error("REQUIREMENT_INTERVAL_EMPTY",400);
+                if(c.Evaluation is {} e)
+                {
+                    if(c.Kind!="QUANTITATIVE" || e.Schema!="requirement-evaluation/1"
+                        || e.LowerUnbounded && (c.Lower!=null || c.LowerInclusive!=null)
+                        || e.UpperUnbounded && (c.Upper!=null || c.UpperInclusive!=null))throw Error("REQUIREMENT_EVALUATION_BASIS_INVALID",400);
+                    CP6.Core.Services.Erp.UomProfileValuesV1.Reference(e.Unit);
+                }
             }
             ids.Clear();
             foreach(var link in r.Relations)

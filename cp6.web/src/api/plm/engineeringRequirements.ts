@@ -1,11 +1,12 @@
 import http from '../http'
+import type { UomReference } from '../erp/uomProfiles'
 import type { EngineeringCreation, EngineeringEnvelope, EngineeringReference, EngineeringScope } from './engineeringProducts'
 export type RequirementEnvelope<T> = EngineeringEnvelope<T>
 export type RequirementScope = EngineeringScope
 export type RequirementCreation = EngineeringCreation
 export type RequirementOperationKind = 'SOURCE' | 'REQUIREMENT'
 export interface RequirementSource { kind: 'INTERNAL_PROPOSAL' | 'UNRESOLVED'; originDescription: string; sourceLabel: string; acquisitionBasis: string; clauses: { id: string; originalText: string; locator: string }[] }
-export interface RequirementCriterion { id: string; kind: 'QUANTITATIVE' | 'QUALITATIVE'; object: string; conditions: string; methodRequirement: string; lower: string | null; lowerInclusive: boolean | null; upper: string | null; upperInclusive: boolean | null; proposedUnit: string | null; unitBasis: string | null; precision: string | null; qualitativeBasis: string | null }
+export interface RequirementCriterion { id: string; kind: 'QUANTITATIVE' | 'QUALITATIVE'; object: string; conditions: string; methodRequirement: string; lower: string | null; lowerInclusive: boolean | null; upper: string | null; upperInclusive: boolean | null; proposedUnit: string | null; unitBasis: string | null; precision: string | null; qualitativeBasis: string | null; evaluation?: { schema: 'requirement-evaluation/1'; unit: UomReference; lowerUnbounded: boolean; upperUnbounded: boolean } | null }
 export interface RequirementRelation { id: string; kind: 'PARENT' | 'DERIVED' | 'CONSTRAINT' | 'CONFLICT' | 'DEPENDENCY'; target: EngineeringReference; coverageReason: string; uncovered: string; necessity: string }
 export interface RequirementDefinition { source: EngineeringReference; clauseIds: string[]; interpretation: string; applicableObject: string; necessity: string; clarificationQuestions: string[]; criteria: RequirementCriterion[]; relations: RequirementRelation[] }
 export interface RequirementBody { kind: RequirementOperationKind; name: string; source: RequirementSource | null; requirement: RequirementDefinition | null }

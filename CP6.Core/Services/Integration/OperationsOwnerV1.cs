@@ -75,6 +75,8 @@ public sealed partial class OperationsOwnerV1
             ? AuthorityCoreAsync(resource,action,actor,true,ct) : throw new OrderPriceCorrectionException("ACTION_FORBIDDEN",403);
     internal Task<Authority> QualityPolicyAuthorityAsync(Guid actor,CancellationToken ct)
         =>AuthorityCoreAsync(QualitySpecification,"review-policy",actor,true,ct);
+    internal Task<Authority> RequirementPolicyAuthorityAsync(Guid actor,CancellationToken ct)
+        =>AuthorityCoreAsync(EngineeringRequirement,"review-policy",actor,true,ct);
     private async Task<Authority> AuthorityCoreAsync(string resource,string action,Guid subject,bool storedDecision,CancellationToken ct)
     {
         var definition=catalog();

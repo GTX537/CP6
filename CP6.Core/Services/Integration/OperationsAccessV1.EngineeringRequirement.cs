@@ -30,7 +30,7 @@ internal sealed partial class OperationsAccessV1
     internal IQueryable<EngineeringRequirementHeadV1> EngineeringRequirements()
     {
         if (authority.Source.TenantId != db.CurrentTenantId) throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503);
-        if (authority.Resource != OperationsOwnerV1.EngineeringRequirement || authority.Action is not ("query" or "add" or "edit"))
+        if (authority.Resource != OperationsOwnerV1.EngineeringRequirement || authority.Action is not ("query" or "add" or "edit" or "review-policy" or "review-submit" or "review-decide" or "withdraw"))
             throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
         RequireRequirementFields(false); var rows = EngineeringRequirementStoreV1.Heads(db);
         if (authority.Scope == 1) return rows.Where(row => row.CreatorId == ActorId);

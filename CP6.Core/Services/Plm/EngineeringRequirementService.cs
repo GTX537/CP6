@@ -1,11 +1,12 @@
 using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Integration;
+using CP6.Core.Services.Erp;
 using Microsoft.EntityFrameworkCore;
 using static CP6.Core.Services.Plm.EngineeringProductValuesV1;
 
 namespace CP6.Core.Services.Plm;
-public sealed class EngineeringRequirementService(CP6Context db,OperationsOwnerV1 owner)
+public sealed partial class EngineeringRequirementService(CP6Context db,OperationsOwnerV1 owner)
 {
     private OperationsOwnerV1 Authority=>owner.Owns(db)?owner:throw Error("AUTHORITY_FENCE_UNAVAILABLE",503);
     public Task<EngineeringProductScopeV1> ScopeAsync(CancellationToken ct=default)=>Authority.ExecuteAsync(OperationsOwnerV1.EngineeringRequirement,"query",false,
@@ -39,6 +40,13 @@ public sealed class EngineeringRequirementService(CP6Context db,OperationsOwnerV
             if(!seen.Add(v.Reference))return;if(depth>128 || seen.Count>4096)throw Error("REQUIREMENT_GRAPH_LIMIT",422);
             await a.RequireEngineeringRequirement(v.Reference.Id,ct);a.AtCommit(t=>a.RequireEngineeringRequirement(v.Reference.Id,t));
             if(v.Body.Requirement is not {} r)return;
+            foreach(var unit in r.Criteria.Select(x=>x.Evaluation?.Unit).OfType<UomProfileRefV1>().Distinct())
+            {
+                var ua=await a.SourceAsync(OperationsOwnerV1.UomProfile,ct);await ua.RequireUomProfile(unit.Id,ct);ua.AtCommit(t=>ua.RequireUomProfile(unit.Id,t));
+                var us=new UomProfileStoreV1(s.Context);await us.Fence(false,ct);var uv=await us.Read(unit.Id,Revision(unit.Version),ct);
+                if(uv.Reference!=unit)throw Error("REQUIREMENT_UNIT_REFERENCE_CHANGED",412);
+                if(!uv.IsCurrent || uv.Profile.Enabled!=true)missing.Add("UNIT_SOURCE_CHANGED:"+unit.Id);
+            }
             var source=await Exact(a,s,r.Source,"SOURCE",ct);
             if(!source.IsCurrent)missing.Add("SOURCE_VERSION_CHANGED:"+v.Reference.Id);
             if(source.Body.Source!.Kind=="UNRESOLVED")missing.Add("SOURCE_UNRESOLVED:"+v.Reference.Id);
@@ -96,6 +104,7 @@ public sealed class EngineeringRequirementService(CP6Context db,OperationsOwnerV
             {
                 await a.RequireEngineeringRequirement(c.ObjectId,t);var old=await s.Read(c.ObjectId,null,t);
                 if(old.Reference.Version!=c.ExpectedVersion || old.Etag!=c.ExpectedEtag)throw Error("REQUIREMENT_VERSION_CHANGED",412);
+                await RequirementEvaluationStoreV1.GuardRevision(db,c.ObjectId,t);
                 // Editing cannot remove a revoked dependency to disclose or launder its former original.
                 await Observe(a,s,old,t);
             }
