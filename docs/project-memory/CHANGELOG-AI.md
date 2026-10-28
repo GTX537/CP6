@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-28：W196 准确需求集FLOW评审与Owner批准待Main收尾
+
+准确需求集/原文成员、实际专业FLOW签署、独立Owner采用与原生回执、C02/TLS丢失响应恢复、当前字段/对象/部门及页面已验证；WP05-14排除/冲突权威裁决、撤回/实际采用影响链和ITER/冻结/WO/SCHED仍待。36 distinct PG18/actual Program HTTP/C02/TLS;70 Vue;types/build PASS;0skip。[报告](../development/evidence/W196-01/DELIVERY.md)。登记56.1分钟，预计240–360；Handoff已释放，Main待正常PR/finish。原七天全部出口保留。
+
 ## 2026-10-28：W195 准确需求专业评价与批准来源待Main收尾
 
 准确需求评价输入/native单位与无界、真实专业政策/固定包/独立签署/批准撤回、历史控制和同UoW来源、原键恢复/API/页面已验证；完整需求集FLOW、ITER/冻结/WO/SCHED及商业原Owner接线仍待。24 PG18/actual Program HTTP (12 professional evaluation,12 draft regression);25 Vue;types/build PASS;0skip。[报告](../development/evidence/W195-01/DELIVERY.md)。登记47.53分钟，预计180–300；Handoff已释放，Main待正常PR/finish。原七天全部出口保留。

@@ -99,7 +99,7 @@ public sealed class IamStandaloneDepartmentMappingV1(CP6Context db, IamAdministr
         }, ct);
     }
 
-    private static readonly string[] Kinds = ["stock", "stock-transaction", "stocktake", "work-order", "machine", "replenish-order", "mobile-task", "work-center", "cross-dock", "slotting-plan", "vmi-billing", "kit-master", "kit-order", "warehouse", "location", "routing-rule", "sample-stock", "product-master", "uom-profile", "currency-policy", "plm-engineering-product", "plm-engineering-revision", "plm-configuration-rule", "plate-mold", "tool-instance", "business-partner", "plm-engineering-requirement"];
+    private static readonly string[] Kinds = ["stock", "stock-transaction", "stocktake", "work-order", "machine", "replenish-order", "mobile-task", "work-center", "cross-dock", "slotting-plan", "vmi-billing", "kit-master", "kit-order", "warehouse", "location", "routing-rule", "sample-stock", "product-master", "uom-profile", "currency-policy", "plm-engineering-product", "plm-engineering-revision", "plm-configuration-rule", "plate-mold", "tool-instance", "business-partner", "plm-engineering-requirement", "plm-requirement-set"];
     public sealed record ObjectChoice { public Guid Id { get; init; } public string Name { get; init; } = ""; }
     public Task<ObjectChoice[]> FindObjectsAsync(string kind, string search,
         Func<CancellationToken, Task<Guid>> actor, CancellationToken ct)
@@ -121,6 +121,9 @@ public sealed class IamStandaloneDepartmentMappingV1(CP6Context db, IamAdministr
         "plate-mold" => db.PlateMolds.AsNoTracking().Where(x => !x.IsDeleted).Select(x => new ObjectChoice { Id=x.Id,Name=x.BaseCd+" / "+x.WdPtnNo+" / "+x.WdRev }),
         "plm-configuration-rule" => db.Database.SqlQuery<ObjectChoice>($"""
             SELECT rule_id AS "Id",rule_id::text AS "Name" FROM cp6_configuration_rule_v1.heads WHERE tenant_id={db.CurrentTenantId}
+            """),
+        "plm-requirement-set" => db.Database.SqlQuery<ObjectChoice>($"""
+            SELECT object_id AS "Id",object_id::text AS "Name" FROM cp6_requirement_set_v1.heads WHERE tenant_id={db.CurrentTenantId}
             """),
         "plm-engineering-requirement" => db.Database.SqlQuery<ObjectChoice>($"""
             SELECT object_id AS "Id",object_id::text AS "Name" FROM cp6_engineering_requirement_v1.heads WHERE tenant_id={db.CurrentTenantId}

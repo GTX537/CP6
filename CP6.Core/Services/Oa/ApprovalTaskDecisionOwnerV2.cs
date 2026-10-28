@@ -128,7 +128,7 @@ public sealed partial class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuth
             if (string.IsNullOrEmpty(ifMatch)) throw Error("PRECONDITION_REQUIRED", 428);
             if (ifMatch != "\"" + input.TaskRowVersion + "\"") throw Error("PRECONDITION_FAILED", 412);
             var source = await ReadSource(task, ct); var original = ApprovalSubmissionWireV2.Parse(source.Payload).Value;
-            if(original.Subject.BusinessOwner=="Main.Plm.ControlledDocument.v1" && string.IsNullOrWhiteSpace(input.Comment))
+            if(original.Subject.BusinessOwner is "Main.Plm.ControlledDocument.v1" or "Main.Plm.RequirementSet.v1" && string.IsNullOrWhiteSpace(input.Comment))
                 throw Error("DOCUMENT_REVIEW_COMMENT_REQUIRED",422);
             var publication = Parse<FlowPublicationV2>(source.Publication); var ack = Parse<ApprovalSubmissionAckV2>(source.Ack);
             var lease = await authority.AcquireAsync(task, behalf, ct);
@@ -146,7 +146,7 @@ public sealed partial class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuth
                 SELECT 1 FROM public."Wf_FlowInstance" WHERE "Id"={view.InstanceId} AND "TenantId"={db.CurrentTenantId} FOR UPDATE;
                 SELECT 1 FROM public."Wf_FlowTask" WHERE "InstanceId"={view.InstanceId} AND "TenantId"={db.CurrentTenantId} ORDER BY "Id" FOR UPDATE;
                 """, ct);
-            var policy = await Business.Decision(original,lease.Evidence.PrincipalId,true,ct);
+            var policy = await Business.Decision(original,lease.Evidence.PrincipalId,true,ct,input.Decision=="approve");
             var occurred = await db.Database.SqlQueryRaw<DateTimeOffset>("SELECT date_trunc('milliseconds',clock_timestamp()) AS \"Value\"").SingleAsync(ct);
             var last = await db.Database.SqlQuery<DateTimeOffset?>($"""
                 SELECT max(occurred_at) AS "Value" FROM cp6_approval_decision_v2.votes WHERE tenant_id={db.CurrentTenantId} AND environment_id={scope.EnvironmentId} AND instance_id={view.InstanceId}
@@ -180,7 +180,7 @@ public sealed partial class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuth
             var audit = Json(new { profile = "oa.app.txd/2.0", input.CommandId, vote.Id, decision, before = view, after = result.Result.Task,
                 authority = lease.Evidence, policy = original.Policy, businessRead = policy.ReadAuthority });
             await authority.ValidateAsync(lease, ct, afterVote: true);
-            var finalPolicy = await Business.Decision(original,lease.Evidence.PrincipalId,true,ct);
+            var finalPolicy = await Business.Decision(original,lease.Evidence.PrincipalId,true,ct,input.Decision=="approve");
             if (Json(finalPolicy) != Json(policy)) throw Error("AUTHORITY_CHANGED", 409);
             await db.Database.ExecuteSqlInterpolatedAsync($"""
                 UPDATE cp6_approval_decision_v2.commands SET completed=true,result_json={Json(result)},audit_json={audit}
