@@ -460,6 +460,7 @@ export function addDynamicRoutes(menus: any[]) {
       ...platformChildren(),
       // Internal child pages stay mounted even though they are absent from Sys_Menu.
       ...internalSubChildren(),
+      { path: 'plm/engineering-iteration/:iterationId/candidates', name: 'plm/iteration-candidates', component: () => import('@/views/plm/IterationCandidatesView.vue'), props: true, meta: { permission: 'plm-engineering-iteration:query' } },
       { path: 'plm/controlled-document/:documentId', name: 'plm/document-review-detail', component: viewModules['/plm/controlled-document']!, props: route => ({ documentId: route.params.documentId, reviewSubmission: typeof route.query.submission === 'string' ? route.query.submission : undefined }), meta: { permission: 'plm-controlled-document:query' } },
       { path: 'wms/plate-mold', name: 'wms/plate-mold', component: viewModules['/wms/plate-mold']!, meta: { permission: 'wms-plate-mold:query' } },
       { path: 'plm/tool-specifications', name: 'plm/tool-specifications', component: viewModules['/plm/tool-specifications']!, meta: { permission: 'plm-tool-specification:query' } },

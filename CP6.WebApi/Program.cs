@@ -818,6 +818,7 @@ builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringRevisionOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringRequirementService>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.RequirementSetService>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringIterationService>();
+builder.Services.AddScoped<CP6.Core.Services.Plm.IterationCandidateService>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.RequirementSetReviewOwnerV1>();
 builder.Services.AddSingleton(new CP6.Core.Services.Plm.RequirementEvaluationRuntimeV1(builder.Configuration["RequirementEvaluation:EvidenceMode"] ?? ""));
 builder.Services.AddScoped<CP6.Core.Services.Plm.RequirementEvaluationService>();

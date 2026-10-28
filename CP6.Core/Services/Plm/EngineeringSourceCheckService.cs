@@ -11,6 +11,19 @@ namespace CP6.Core.Services.Plm;
 public sealed partial class EngineeringSourceCheckService(CP6Context db, OperationsOwnerV1 owner,
     ControlledDocumentOwnerV1 documents, QualitySpecificationAuthorityService quality)
 {
+    internal bool Owns(CP6Context context)=>ReferenceEquals(db,context) && owner.Owns(db) && documents.Owns(db) && quality.Owns(db);
+    internal async Task<EngineeringCheckViewV1> CandidateSource(OperationsAccessV1 root,EngineeringSourceRefV1 reference,CancellationToken ct)
+    {
+        IterationCandidateValuesV1.Reference(reference,EngineeringSourceCheckValuesV1.Owner);
+        if(reference.Version!="1")throw Error("ENGINEERING_CHECK_REFERENCE_INVALID",400);
+        var access=await root.SourceAsync(OperationsOwnerV1.EngineeringRevision,ct);
+        var store=new EngineeringSourceCheckStoreV1(db);await store.Fence(ct);
+        // Compare this provider's authority observation, not the consuming Owner's additional
+        // participants. Successful callbacks still join the root's final same-UoW fence.
+        var value=await access.EngineeringObservation((observation,t)=>View(observation,store,reference.Id,t),ct);
+        if(value.Reference!=reference)throw Error("ENGINEERING_CHECK_REFERENCE_CHANGED",412);
+        return value;
+    }
     private OperationsOwnerV1 Authority => owner.Owns(db) ? owner : throw Error("AUTHORITY_FENCE_UNAVAILABLE", 503);
     private sealed record Evaluation(EngineeringRevisionSnapshotV1 Revision, ConfigurationRuleSnapshotV1 Policy, Observation Observed, string Authority);
     private async Task<Evaluation> Evaluate(OperationsAccessV1 root, EngineeringSourceCheckCommandV1 command, CancellationToken ct)
