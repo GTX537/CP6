@@ -662,6 +662,7 @@ builder.Services.AddSingleton(new CP6.WebApi.Services.ApprovalIntakeRegistryV2(
     builder.Configuration.GetSection("ApprovalIntake").Get<CP6.WebApi.Services.ApprovalIntakeOptionsV2>()??new(),crmOidc,builder.Environment.IsDevelopment()));
 builder.Services.AddScoped<CP6.Core.Services.Oa.IApprovalServiceAuthorityV2,CP6.WebApi.Services.ApprovalIntakeServiceAuthorityV2>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.ApprovalIntakeOwnerV2>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.ApprovalWithdrawalOwnerV2>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.ApprovalReceiptIngestionV2>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.ApprovalStartOwnerV2>();
 builder.Services.AddScoped(sp => new CP6.Core.Services.Oa.ApprovalTaskAuthorityV2(
@@ -753,6 +754,26 @@ builder.Services.AddScoped<CP6.Core.Services.Plm.RequirementSetDecisionDeliveryV
 builder.Services.AddScoped<CP6.Core.Services.Plm.RequirementSetApplicationDeliveryV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.RequirementSetReceiptRecoveryV1>();
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.RequirementSetReviewPipelineWorkerV1>();
+builder.Services.AddScoped(sp=>new CP6.Core.Services.Plm.IterationReviewFactReceiverV1(sp.GetRequiredService<CP6Context>(),
+    sp.GetRequiredService<CP6.Core.Services.Sys.ScopeAuthorizationFenceV1>(),sp.GetRequiredService<CP6.WebApi.Services.ApprovalFactReceiverServiceAuthorityV2>(),
+    sp.GetRequiredService<CP6.Core.Services.Oa.ApprovalDecisionSourceV2>(),sp.GetRequiredService<Microsoft.AspNetCore.DataProtection.IDataProtectionProvider>()));
+builder.Services.AddSingleton<CP6.Core.Services.Plm.IIterationDecisionTransportV1>(sp=>new CP6.WebApi.Services.IterationDecisionTransportV1(
+    builder.Configuration.GetSection("IterationReviewDecisionDelivery").Get<CP6.WebApi.Services.ApprovalDecisionDeliveryOptionsV2>()??new(),crmOidc,
+    sp.GetRequiredService<CP6.WebApi.Services.ApprovalFactReceiverRegistryV2>(),builder.Environment.IsDevelopment()));
+builder.Services.AddSingleton<CP6.Core.Services.Plm.IIterationApplicationTransportV1>(sp=>new CP6.WebApi.Services.IterationApplicationTransportV1(
+    builder.Configuration.GetSection("IterationReviewReceiptDelivery").Get<CP6.WebApi.Services.ToolApprovalDeliveryOptionsV1>()??new(),crmOidc,
+    sp.GetRequiredService<CP6.WebApi.Services.ApprovalIntakeRegistryV2>(),builder.Environment.IsDevelopment()));
+builder.Services.AddSingleton<CP6.Core.Services.Plm.IIterationReceiptChainTransportV1>(sp=>new CP6.WebApi.Services.IterationReceiptChainTransportV1(
+    builder.Configuration.GetSection("IterationReviewReceiptRecovery").Get<CP6.WebApi.Services.ApprovalDecisionDeliveryOptionsV2>()??new(),crmOidc,
+    sp.GetRequiredService<CP6.WebApi.Services.ApprovalFactReceiverRegistryV2>(),builder.Environment.IsDevelopment()));
+builder.Services.AddScoped<CP6.Core.Services.Plm.IterationDecisionDeliveryV1>();
+builder.Services.AddSingleton<CP6.Core.Services.Plm.IIterationWithdrawalTransportV1>(sp=>new CP6.WebApi.Services.IterationWithdrawalTransportV1(
+    builder.Configuration.GetSection("IterationReviewWithdrawalDelivery").Get<CP6.WebApi.Services.ToolApprovalDeliveryOptionsV1>()??new(),crmOidc,
+    sp.GetRequiredService<CP6.WebApi.Services.ApprovalIntakeRegistryV2>(),builder.Environment.IsDevelopment()));
+builder.Services.AddScoped<CP6.Core.Services.Plm.IterationWithdrawalDeliveryV1>();
+builder.Services.AddScoped<CP6.Core.Services.Plm.IterationApplicationDeliveryV1>();
+builder.Services.AddScoped<CP6.Core.Services.Plm.IterationReceiptRecoveryV1>();
+builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.IterationReviewPipelineWorkerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.ToolMaintenanceMasterOwnerV1>();
 builder.Services.AddSingleton(_ => new CP6.Core.Services.Wms.ToolActualRuntimeV1(
     Guid.TryParse(builder.Configuration["Wms:ToolActual:EnvironmentId"], out var toolActualEnvironment) ? toolActualEnvironment : Guid.Empty,

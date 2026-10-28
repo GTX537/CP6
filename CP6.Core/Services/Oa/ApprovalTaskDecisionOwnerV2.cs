@@ -128,7 +128,7 @@ public sealed partial class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuth
             if (string.IsNullOrEmpty(ifMatch)) throw Error("PRECONDITION_REQUIRED", 428);
             if (ifMatch != "\"" + input.TaskRowVersion + "\"") throw Error("PRECONDITION_FAILED", 412);
             var source = await ReadSource(task, ct); var original = ApprovalSubmissionWireV2.Parse(source.Payload).Value;
-            if(original.Subject.BusinessOwner is "Main.Plm.ControlledDocument.v1" or "Main.Plm.RequirementSet.v1" && string.IsNullOrWhiteSpace(input.Comment))
+            if(original.Subject.BusinessOwner is "Main.Plm.ControlledDocument.v1" or "Main.Plm.RequirementSet.v1" or "Main.Plm.EngineeringIteration.v1" && string.IsNullOrWhiteSpace(input.Comment))
                 throw Error("DOCUMENT_REVIEW_COMMENT_REQUIRED",422);
             var publication = Parse<FlowPublicationV2>(source.Publication); var ack = Parse<ApprovalSubmissionAckV2>(source.Ack);
             var lease = await authority.AcquireAsync(task, behalf, ct);

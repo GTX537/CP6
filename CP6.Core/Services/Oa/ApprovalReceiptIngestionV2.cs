@@ -53,12 +53,15 @@ public sealed class ApprovalReceiptIngestionV2(CP6Context db, ScopeAuthorization
             SELECT owner AS "Owner",revision AS "Revision",enabled AS "Enabled",can_receive AS "Receive",can_query AS "Query",evidence_mode AS "Mode"
             FROM cp6_approval_receipt_v2.registrations WHERE environment_id={s.Environment} AND tenant_id={s.Tenant} AND principal_id={s.Principal}
             """).SingleOrDefaultAsync(ct);
-        if (r == null || !r.Enabled || !r.Query || r.Owner is not (ApprovalBusinessProfileV2.ToolOwner or ApprovalBusinessProfileV2.DocumentOwner or ApprovalBusinessProfileV2.RequirementSetOwner) || r.Mode != s.EvidenceMode) throw Error("PRODUCER_NOT_ALLOWED", 403);
+        if (r == null || !r.Enabled || !r.Query || r.Owner is not (ApprovalBusinessProfileV2.ToolOwner or ApprovalBusinessProfileV2.DocumentOwner or ApprovalBusinessProfileV2.RequirementSetOwner or ApprovalBusinessProfileV2.IterationOwner) || r.Mode != s.EvidenceMode) throw Error("PRODUCER_NOT_ALLOWED", 403);
         if(r.Owner==ApprovalBusinessProfileV2.DocumentOwner
             && !await db.Database.SqlQueryRaw<bool>("SELECT cp6_document_review_application_v1.ready() AS \"Value\"").SingleAsync(ct))
             throw Error("RECEIPT_SOURCE_UNAVAILABLE");
         if(r.Owner==ApprovalBusinessProfileV2.RequirementSetOwner
             && !await db.Database.SqlQueryRaw<bool>("SELECT cp6_requirement_set_review_application_v1.ready() AS \"Value\"").SingleAsync(ct))
+            throw Error("RECEIPT_SOURCE_UNAVAILABLE");
+        if(r.Owner==ApprovalBusinessProfileV2.IterationOwner
+            && !await db.Database.SqlQueryRaw<bool>("SELECT cp6_iteration_review_application_v1.ready() AS \"Value\"").SingleAsync(ct))
             throw Error("RECEIPT_SOURCE_UNAVAILABLE");
         return (s, r);
     }
@@ -163,7 +166,7 @@ public sealed class ApprovalReceiptIngestionV2(CP6Context db, ScopeAuthorization
         {
             var lease = await scope.AcquireAsync(ct); await Ready(ct); var auth = await Service(ct); var s = auth.Service;
             if (e.Scope != new ApprovalScopeV2(s.Environment.ToString(), s.Tenant) || e.ProducerOwner != auth.Registration.Owner
-                || e.Subject.BizType != ApprovalBusinessProfileV2.For(auth.Registration.Owner).BizType || e.Subject.SubjectKind != ApprovalBusinessProfileV2.For(auth.Registration.Owner).SubjectKind || e.Action != ApprovalBusinessProfileV2.For(auth.Registration.Owner).BizType)
+                || e.Subject.BizType != ApprovalBusinessProfileV2.For(auth.Registration.Owner).BizType || e.Subject.SubjectKind != ApprovalBusinessProfileV2.For(auth.Registration.Owner).SubjectKind || e.Action != ApprovalBusinessProfileV2.For(auth.Registration.Owner).ApplicationAction)
                 throw Error("PRODUCER_NOT_ALLOWED", 403);
             var grant = await Subject(s, e.SubmissionId, auth.Registration, false, ct); await LockSubmission(e.SubmissionId,auth.Registration.Owner,ct);
             var projection = await Stream(e.ReceiptStreamId, ct);
@@ -183,12 +186,12 @@ public sealed class ApprovalReceiptIngestionV2(CP6Context db, ScopeAuthorization
             string? originalHash = old?.Hash;
             if (code == null && projection != null && (projection.Submission != e.SubmissionId || projection.Instance != e.InstanceId
                 || projection.Decision != e.DecisionId || projection.Owner != e.ProducerOwner || projection.SubjectRevision != e.Subject.BusinessRevision
-                || projection.Unit != e.Subject.SubjectId)) code = "RECEIPT_STREAM_IDENTITY_CONFLICT";
+                || projection.Unit != ApprovalBusinessProfileV2.For(e.ProducerOwner).ApplicationUnit(e.Subject))) code = "RECEIPT_STREAM_IDENTITY_CONFLICT";
             if (code == null)
             {
                 var otherStream = await db.Database.SqlQuery<Guid>($"""
                     SELECT id AS "Value" FROM cp6_approval_receipt_v2.streams WHERE environment_id={s.Environment} AND tenant_id={s.Tenant}
-                      AND instance_id={e.InstanceId} AND subject_revision={e.Subject.BusinessRevision} AND application_unit_id={e.Subject.SubjectId} AND id<>{e.ReceiptStreamId}
+                      AND instance_id={e.InstanceId} AND subject_revision={e.Subject.BusinessRevision} AND application_unit_id={ApprovalBusinessProfileV2.For(e.ProducerOwner).ApplicationUnit(e.Subject)} AND id<>{e.ReceiptStreamId}
                     """).ToArrayAsync(ct);
                 if (otherStream.Length != 0) code = "RECEIPT_STREAM_IDENTITY_CONFLICT";
             }
@@ -209,7 +212,7 @@ public sealed class ApprovalReceiptIngestionV2(CP6Context db, ScopeAuthorization
                 {
                     await db.Database.ExecuteSqlInterpolatedAsync($"""
                         INSERT INTO cp6_approval_receipt_v2.streams(environment_id,tenant_id,id,owner,submission_id,instance_id,decision_id,subject_revision,application_unit_id,row_version)
-                        VALUES({s.Environment},{s.Tenant},{e.ReceiptStreamId},{e.ProducerOwner},{e.SubmissionId},{e.InstanceId},{e.DecisionId},{e.Subject.BusinessRevision},{e.Subject.SubjectId},{Guid.NewGuid()})
+                        VALUES({s.Environment},{s.Tenant},{e.ReceiptStreamId},{e.ProducerOwner},{e.SubmissionId},{e.InstanceId},{e.DecisionId},{e.Subject.BusinessRevision},{ApprovalBusinessProfileV2.For(e.ProducerOwner).ApplicationUnit(e.Subject)},{Guid.NewGuid()})
                         """, ct);
                     projection = await Stream(e.ReceiptStreamId, ct) ?? throw Error("RECEIPT_EVIDENCE_UNAVAILABLE");
                 }

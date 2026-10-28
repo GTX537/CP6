@@ -30,7 +30,7 @@ internal sealed partial class OperationsAccessV1
     internal IQueryable<EngineeringIterationHeadV1> EngineeringIterations()
     {
         if (authority.Source.TenantId != db.CurrentTenantId) throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503);
-        if (authority.Resource != OperationsOwnerV1.EngineeringIteration || authority.Action is not ("query" or "add" or "edit" or "start" or "hold" or "resume" or "task-submit" or "task-confirm" or "candidate-write" or "review-policy" or "review-submit" or "review-decide"))
+        if (authority.Resource != OperationsOwnerV1.EngineeringIteration || authority.Action is not ("query" or "add" or "edit" or "start" or "hold" or "resume" or "task-submit" or "task-confirm" or "candidate-write" or "review-policy" or "review-submit" or "review-decide" or "review-apply" or "review-withdraw" or "review-issue" or "review-issue-verify" or "review-issue-degrade"))
             throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
         RequireEngineeringIterationFields(false); var all = EngineeringIterationStoreV1.Heads(db);
         var projects=all.Where(p=>p.Kind=="PROJECT" && p.MemberIds.Contains(ActorId));

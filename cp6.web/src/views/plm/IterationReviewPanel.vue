@@ -36,14 +36,15 @@
         <label>规则状态<select v-model="state" aria-label="评审规则状态"><option value="ENABLED">启用</option><option value="REVOKED">撤销</option></select></label>
         <label>登记原因<textarea v-model="policyReason" aria-label="评审规则登记原因" required maxlength="8000" /></label><button>保存评审规则</button>
       </fieldset></form></details>
-      <form v-if="can('review-submit') && !context.submissions.length" @submit.prevent="submit"><fieldset :disabled="locked || !sameVersion || !ready || !policy">
+      <form v-if="can('review-submit') && (!context.submissions.length || context.iteration.body.iteration?.stage === 'IN_DESIGN')" @submit.prevent="submit"><fieldset :disabled="locked || !sameVersion || !ready || !policy">
         <h3>送审完整候选集</h3><button type="button" @click="loadReviewers">读取项目评审成员</button>
         <label>独立评审人（可多选）<select v-model="selectedReviewers" multiple aria-label="独立评审人" required><option v-for="person in reviewers" :key="person.id" :value="person.id">{{ person.name }}</option></select></label>
         <label>评审依据<textarea v-model="basis" aria-label="迭代评审依据" required maxlength="8000" /></label><label>送审原因<textarea v-model="reason" aria-label="迭代送审原因" required /></label><button>提交迭代评审</button>
       </fieldset></form>
       <h3>送审记录</h3><p v-if="!context.submissions.length">尚未送审。</p>
-      <article v-for="s in context.submissions" :key="s.submissionId"><p>已进入评审 · 投递：{{ delivery(s.dispatchState) }}</p><p>业务批准尚未应用。</p><button :disabled="locked" @click="inspect(s.submissionId)">查看冻结评审包</button></article>
+      <article v-for="s in context.submissions" :key="s.submissionId"><p>已进入评审 · 投递：{{ delivery(s.dispatchState) }}</p><p>{{ applicationStatus(s.applicationState) }}</p><button :disabled="locked" @click="inspect(s.submissionId)">查看冻结评审包</button></article>
       <article v-if="detail"><h3>冻结评审包</h3><p>{{ detail.package.reviewBasis }}</p><p>完整候选：{{ detail.package.candidates.length }} 项</p><details><summary>查看送审原件</summary><pre>{{ detail.originalSnapshot }}</pre><pre>{{ detail.originalSubmission }}</pre></details></article>
+      <IterationReviewActionsPanel v-if="detail" :iteration-id="context.iterationId" :detail="detail" :submissions="context.submissions" :current-submission="context.iteration.body.iteration?.currentReview?.submissionId ?? null" :scope="scope" :disabled="locked" @changed="emit('changed')" />
     </template>
   </section>
 </template>
@@ -56,6 +57,7 @@ import { pendingIterationReview, writeIterationReview, resolveIterationReview, t
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
 import { usePermissionStore } from '@/stores/permission'
+import IterationReviewActionsPanel from './IterationReviewActionsPanel.vue'
 const props = defineProps<{ iteration: EngineeringIterationSnapshot; scope: EngineeringIterationScope; disabled?: boolean }>()
 const emit = defineEmits<{ changed: [] }>(), permission = usePermissionStore()
 const can = (action: string) => permission.loaded && permission.has('plm-engineering-iteration:query') && permission.has(`plm-engineering-iteration:${action}`)
@@ -71,6 +73,7 @@ let generation = 0, live = true
 const copy = <T,>(v: T): T => JSON.parse(JSON.stringify(v))
 function roleName(id: number) { return roles.value.find(r => r.roleId === id)?.roleName ?? String(id) }
 function delivery(code: string) { return ({ PENDING: '待投递', RECEIVED: '已接收', DUPLICATE_OF: '已确认原受理', OUTCOME_UNKNOWN: '结果待确认', BLOCKED: '待处理', CONFLICT: '原件冲突' } as Record<string, string>)[code] ?? code }
+function applicationStatus(code: string) { return ({ APPLIED: '本轮审批决定已应用。', BLOCKED: '业务应用仍有阻塞。', STALE: '原轮次已失效，保留其处理结果。', CONFLICT: '业务应用存在冲突。' } as Record<string, string>)[code] ?? '业务批准尚未应用。' }
 function addRequirement() { requirements.value.push({ code: '', description: '', roleId: null, minimumApprovals: 1 }) }
 function syncPending() { pending.value = pendingIterationReview(props.scope) }
 function reset() { generation++; busy.value = false; context.value = detail.value = null; roles.value = []; reviewers.value = []; selectedReviewers.value = []; pending.value = null; requirements.value = []; addRequirement(); error.value = notice.value = from.value = to.value = policyReason.value = basis.value = reason.value = ''; state.value = 'ENABLED'; rejectDisposition.value = 'RETURN' }

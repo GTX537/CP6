@@ -1,4 +1,5 @@
 using CP6.Core.Services.Plm;
+using CP6.Core.Services.Oa;
 using CP6.WebApi.Controllers.Erp;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +30,33 @@ public sealed class IterationReviewController(IterationReviewOwnerV1 owner):Cont
     public async Task<IActionResult> Close(Guid id,CancellationToken ct)=>Result(await owner.OperationAsync(id,true,ct));
     [HttpGet("{id:guid}/review-submissions/{submission:guid}")]
     public async Task<IActionResult> Submission(Guid id,Guid submission,CancellationToken ct)=>Result(await owner.SubmissionAsync(id,submission,ct));
+
+    [HttpGet("{id:guid}/review-submissions/{submission:guid}/application")]
+    public async Task<IActionResult> Application(Guid id,Guid submission,CancellationToken ct)=>Result(await owner.ApplicationAsync(id,submission,ct));
+    [HttpPost("{id:guid}/review-application")]
+    public async Task<IActionResult> Apply(Guid id,[FromBody]IterationApplicationCommandV1 input,CancellationToken ct)=>Result(await owner.ApplyAsync(id,Request.Headers.IfMatch.ToString(),input,ct));
+    [HttpGet("review-application-operations/{id:guid}")]
+    public async Task<IActionResult> ApplicationOperation(Guid id,CancellationToken ct)=>Result(await owner.ApplicationOperationAsync(id,false,ct));
+    [HttpPost("review-application-operations/{id:guid}/close")]
+    public async Task<IActionResult> CloseApplication(Guid id,CancellationToken ct)=>Result(await owner.ApplicationOperationAsync(id,true,ct));
+    [HttpGet("{id:guid}/review-issues")]
+    public async Task<IActionResult> Issues(Guid id,CancellationToken ct)=>Result(await owner.IssuesAsync(id,ct));
+    [HttpPost("{id:guid}/review-issues"),RequestSizeLimit(1048576)]
+    public async Task<IActionResult> Issue(Guid id,[FromBody]IterationReviewIssueCommandV1 input,CancellationToken ct)=>Result(await owner.IssueAsync(id,Request.Headers.IfMatch.ToString(),input,ct));
+    [HttpGet("review-issue-operations/{id:guid}")]
+    public async Task<IActionResult> IssueOperation(Guid id,CancellationToken ct)=>Result(await owner.IssueOperationAsync(id,false,ct));
+    [HttpPost("review-issue-operations/{id:guid}/close")]
+    public async Task<IActionResult> CloseIssue(Guid id,CancellationToken ct)=>Result(await owner.IssueOperationAsync(id,true,ct));
+    [HttpPost("{id:guid}/review-submissions/{submission:guid}/withdraw")]
+    public async Task<IActionResult> Withdraw(Guid id,Guid submission,[FromBody]ApprovalUserWithdrawV2 input,CancellationToken ct)
+    {
+        var value=await owner.WithdrawAsync(id,submission,Request.Headers.IfMatch.ToString(),input,ct);
+        return value.State=="CONFLICT"?StatusCode(409,new{code=0,data=value}):Result(value);
+    }
+    [HttpGet("review-withdrawal-operations/{id:guid}")]
+    public async Task<IActionResult> WithdrawalOperation(Guid id,CancellationToken ct)=>Result(await owner.WithdrawalOperationAsync(id,false,ct));
+    [HttpPost("review-withdrawal-operations/{id:guid}/close")]
+    public async Task<IActionResult> CloseWithdrawal(Guid id,CancellationToken ct)=>Result(await owner.WithdrawalOperationAsync(id,true,ct));
 
 }
 

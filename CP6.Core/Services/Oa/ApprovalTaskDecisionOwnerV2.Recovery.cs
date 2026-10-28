@@ -4,6 +4,7 @@ namespace CP6.Core.Services.Oa;
 public sealed record ApprovalTaskCommandResolutionV2(Guid CommandId,string State,ApprovalTaskDecisionResultV2? Result=null);
 public sealed record DocumentReviewTaskV1(Guid SubmissionId,Guid DocumentId,string DocumentVersion,ApprovalTaskDecisionViewV2 Task);
 public sealed record RequirementSetReviewTaskV1(Guid SubmissionId,Guid RequirementSetId,string RequirementSetVersion,ApprovalTaskDecisionViewV2 Task);
+public sealed record IterationReviewTaskV1(Guid SubmissionId,Guid IterationId,ApprovalTaskDecisionViewV2 Task);
 public sealed partial class ApprovalTaskDecisionOwnerV2
 {
     private sealed record ClosedCommand(Guid Actor,Guid Task);
@@ -83,6 +84,32 @@ public sealed partial class ApprovalTaskDecisionOwnerV2
             var original=ApprovalSubmissionWireV2.Parse((await ReadSource(id,ct)).Payload).Value;
             await Business.Decision(original,lease.Evidence.PrincipalId,false,ct);
             result.Add(new(original.SubmissionId,requirementSet,original.Subject.BusinessRevision,await View(id,ct)));
+            await authority.ValidateAsync(lease,ct);
+        }
+        await scope.ValidateAsync(fence,ct);await tx.CommitAsync(ct);return result.ToArray();
+    }
+    public async Task<IterationReviewTaskV1[]> IterationTasksAsync(Guid submission,Guid? behalf=null,CancellationToken ct=default)
+    {
+        if(submission==Guid.Empty)throw Error("DECISION_INPUT_INVALID",422);
+        Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);
+        var fence=await scope.AcquireAsync(ct);await Ready(ct);var actor=await authority.CurrentActor(false,ct);var principal=behalf??actor;
+        var ids=await db.Database.SqlQuery<Guid>($"""
+            SELECT t."Id" AS "Value" FROM public."Wf_FlowTask" t
+            JOIN cp6_approval_start_v2.starts s ON s.tenant_id=t."TenantId" AND s.instance_id=t."InstanceId"
+            JOIN cp6_iteration_review_v1.submissions d ON d.tenant_id=s.tenant_id AND d.environment_id=s.environment_id AND d.id=s.submission_id
+            WHERE s.tenant_id={db.CurrentTenantId} AND s.environment_id={scope.EnvironmentId} AND s.owner={ApprovalBusinessProfileV2.IterationOwner}
+              AND d.id={submission} AND t."Status"=0 AND t."AssigneeId"={principal} ORDER BY t."Id"
+            """).ToArrayAsync(ct);
+        var result=new List<IterationReviewTaskV1>();
+        foreach(var id in ids)
+        {
+            var lease=await authority.AcquireAsync(id,behalf,ct);
+            var original=ApprovalSubmissionWireV2.Parse((await ReadSource(id,ct)).Payload).Value;
+            await Business.Decision(original,lease.Evidence.PrincipalId,false,ct);
+            var iteration=await db.Database.SqlQuery<Guid>($"""
+                SELECT iteration_id AS "Value" FROM cp6_iteration_review_v1.submissions WHERE environment_id={scope.EnvironmentId} AND tenant_id={db.CurrentTenantId} AND id={submission}
+                """).SingleAsync(ct);
+            result.Add(new(original.SubmissionId,iteration,await View(id,ct)));
             await authority.ValidateAsync(lease,ct);
         }
         await scope.ValidateAsync(fence,ct);await tx.CommitAsync(ct);return result.ToArray();

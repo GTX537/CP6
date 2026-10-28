@@ -161152,6 +161152,16 @@
       "date": "2026-10-28",
       "change": "W199 native complete review package and durable OA submission: 9 distinct PG18/actual HTTP/TLS;1 canonical unit;20 Vue;types/build PASS;0skip; Handoff released, Main closeout pending. Full WP05-19 and original goal exits remain.",
       "evidence": "docs/development/evidence/W199-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-28",
+      "change": "W199 archived once; only WP05-19.wave199_iteration_review_submission lifecycle closed. W200 native iteration decision application admitted180–300min; original seven-day exits remain pending.",
+      "evidence": "docs/development/dispatch/20261028-wave200/README.md"
+    },
+    {
+      "date": "2026-10-28",
+      "change": "W200 native iteration decision/issue/application and original-person OA withdrawal: 12 PG18/Program HTTP/C02 TLS;1 Int64 boundary unit;34 Vue;types/build PASS;0skip; Handoff released, Main closeout pending. Full WP05-20/WP12-19 and original goal exits remain.",
+      "evidence": "docs/development/evidence/W200-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -181851,7 +181861,7 @@
         }
       },
       "wave199_iteration_review_submission": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "workspace_task": "W199-01",
         "report": "docs/development/evidence/W199-01/DELIVERY.md",
         "scope": "Native first-round complete iteration candidate aggregate, immutable ReviewPackage/RoundBinding and exact canonical bytes; current policy/independent reviewers/source authorization; atomic IN_REVIEW, dual journals and outbox; native OA intake/FLOW start, durable original TLS delivery and recovery; independent API/UI.",
@@ -181867,13 +181877,24 @@
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "original_dependencies_unchanged": true,
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "lifecycle_snapshot": {
-          "main_finish_required": true,
-          "main_seat_released": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
           "handoff_seat_released": true,
-          "main_branch_deleted": false,
-          "handoff_branch_deleted": true
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave199-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W199-01",
+          "source": "577239654b565cede69e122e341a958436e85753",
+          "remote_target": "df309fb2bc9a91bba907057f93034c95e4e1eee8",
+          "branch": "codex/w199-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/622"
         }
       }
     },
@@ -181915,7 +181936,33 @@
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：按S02-00采用的PostgreSQL租户存储/迁移与可信上下文；当前动作/读取授权和共同最终授权fence；Main Owner事务、原键结果及审计能力。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "wave200_iteration_review_application": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "workspace_task": "W200-01",
+        "report": "docs/development/evidence/W200-01/DELIVERY.md",
+        "scope": "Native iteration professional decisions, immutable issues and independent verification, exact decision inbox, atomic application/receipt/outbox, shared application-withdrawal control, native OA Tx W with original human and actual row versions, durable C02/TLS query recovery, successor rounds and independent API/UI.",
+        "remaining": "Local isolated PG18, Program HTTP, isolated C02/TLS, Vue/types/build only; test file/scanner services are not enterprise production acceptance. Native non-delegated withdrawal only; delegated withdrawal, explicit replacement authorization after BLOCKED and other business Owner adoption remain WP12-19. Full WP05-20 external identities/formal acceptance, WP05-19 external aliases, WP05-18 external adapters/exemptions, requirement-set withdrawal/impact and original D2/D3/D5/D6/D7 exits remain. No Actions, existing-environment migration or deployment.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "35fb36dc81c41c789729b2df05b07a25ec0dc681",
+          "main": "d3df4598033a84d386d748334b3d745cf7472279",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/176",
+          "exact_tree_adoption": true,
+          "at": "2026-10-28T14:40:11.294038+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "handoff_seat_released": true,
+          "main_branch_deleted": false,
+          "handoff_branch_deleted": true
+        }
+      }
     },
     {
       "id": "WP05-21",
@@ -192177,7 +192224,33 @@
         "WP02：按S02-00采用的PostgreSQL布局、可信上下文/当前授权和全部写者共同最终fence、Main Owner事务及原键结果/审计。",
         "各实际Owner：同control CAS与当前actor/业务授权参加；WP05-20为首个应用消费者，不是本通用协议底座前置。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "wave200_native_iteration_withdrawal": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "workspace_task": "W200-01",
+        "report": "docs/development/evidence/W200-01/DELIVERY.md",
+        "scope": "Native iteration professional decisions, immutable issues and independent verification, exact decision inbox, atomic application/receipt/outbox, shared application-withdrawal control, native OA Tx W with original human and actual row versions, durable C02/TLS query recovery, successor rounds and independent API/UI.",
+        "remaining": "Local isolated PG18, Program HTTP, isolated C02/TLS, Vue/types/build only; test file/scanner services are not enterprise production acceptance. Native non-delegated withdrawal only; delegated withdrawal, explicit replacement authorization after BLOCKED and other business Owner adoption remain WP12-19. Full WP05-20 external identities/formal acceptance, WP05-19 external aliases, WP05-18 external adapters/exemptions, requirement-set withdrawal/impact and original D2/D3/D5/D6/D7 exits remain. No Actions, existing-environment migration or deployment.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "35fb36dc81c41c789729b2df05b07a25ec0dc681",
+          "main": "d3df4598033a84d386d748334b3d745cf7472279",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/176",
+          "exact_tree_adoption": true,
+          "at": "2026-10-28T14:40:11.294038+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "handoff_seat_released": true,
+          "main_branch_deleted": false,
+          "handoff_branch_deleted": true
+        }
+      }
     },
     {
       "id": "WP12-20",
@@ -195642,10 +195715,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261028-wave199",
-      "path": "docs/development/dispatch/20261028-wave199/README.md",
-      "baseline_sha": "adc0dfde7e0080c0111650fb67a6f1e826d6050c",
-      "registered_at": "2026-10-28T11:36:29.808841+00:00",
+      "id": "20261028-wave200",
+      "path": "docs/development/dispatch/20261028-wave200/README.md",
+      "baseline_sha": "df309fb2bc9a91bba907057f93034c95e4e1eee8",
+      "registered_at": "2026-10-28T12:57:36.480658+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -195664,28 +195737,29 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W199-01",
-          "workspace_task": "W199-01",
+          "id": "W200-01",
+          "workspace_task": "W200-01",
           "related_tasks": [
-            "WP05-19"
+            "WP12-19",
+            "WP05-20"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Complete iteration review package and persistent OA submission",
+          "title": "Native iteration decision application, independent issues and withdrawal competition",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "c1f4f22792e4565e7b69606b0b66da3a7c6151b2",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261028T113629Z-wave199-start/MESSAGE.md",
-            "at": "2026-10-28T11:36:29.808841+00:00",
-            "branch": "codex/w199-handoff"
+            "commit": "ceb20f82925605e5a83fd467d1e049e22e7b762f",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261028T125736Z-wave200-start/MESSAGE.md",
+            "at": "2026-10-28T12:57:36.480658+00:00",
+            "branch": "codex/w200-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w199-01",
-          "planned_scope_ref": "docs/development/dispatch/20261028-wave199/README.md",
+          "branch": "codex/w200-01",
+          "planned_scope_ref": "docs/development/dispatch/20261028-wave200/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -195693,8 +195767,15 @@
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
-          "validation": "9 distinct PG18/actual HTTP/TLS;1 canonical unit;20 Vue;types/build PASS;0skip",
-          "worker_delivery_ref": "docs/development/evidence/W199-01/DELIVERY.md",
+          "scope_clarification": "WP12-19 native OA trusted withdrawal protocol is absent; implement the direct prerequisite in the same serial W200 window before ITER withdrawal adoption.",
+          "exclusive_resources": [
+            "Main:oa-application",
+            "Main:engineering-iteration",
+            "Main:oa-owner-route-plm-iter",
+            "file:Main:CP6.Core/Services/Wf/ApprovalDispatcher.cs"
+          ],
+          "validation": "12 PG18/Program HTTP/C02 TLS;1 Int64 boundary unit;34 Vue;types/build PASS;0skip",
+          "worker_delivery_ref": "docs/development/evidence/W200-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -195705,11 +195786,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-28T11:34:38.117391+00:00",
+        "started_at": "2026-10-28T12:56:01.252510+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          150,
-          240
+          180,
+          300
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -195717,7 +195798,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Continue WP05-20 native iteration decisions, independent issue closure, Owner application/receipt and withdrawal competition, then engineering freeze and actual WO/SCHED. Preserve full WP05-19/18/14 external authority gaps and original D2/D3/D5/D6/D7 exits.",
+      "next_action": "Continue native engineering freeze/REL/VER and actual WO/SCHED according to original prerequisites; retain WP12-19 delegated/replacement authorization and full cross-Owner adoption, full WP05-20/19/18/14 external authority and formal acceptance gaps, and all original seven-day exits.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -195725,7 +195806,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 72.6
+      "elapsed_registered_wave_minutes": 105.01
     },
     "wave_history": [
       {
@@ -221953,6 +222034,115 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/174"
           }
         ]
+      },
+      {
+        "id": "20261028-wave199",
+        "path": "docs/development/dispatch/20261028-wave199/README.md",
+        "baseline_sha": "adc0dfde7e0080c0111650fb67a6f1e826d6050c",
+        "registered_at": "2026-10-28T11:36:29.808841+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W199-01",
+            "workspace_task": "W199-01",
+            "related_tasks": [
+              "WP05-19"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Complete iteration review package and persistent OA submission",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "c1f4f22792e4565e7b69606b0b66da3a7c6151b2",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261028T113629Z-wave199-start/MESSAGE.md",
+              "at": "2026-10-28T11:36:29.808841+00:00",
+              "branch": "codex/w199-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w199-01",
+            "planned_scope_ref": "docs/development/dispatch/20261028-wave199/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "validation": "9 distinct PG18/actual HTTP/TLS;1 canonical unit;20 Vue;types/build PASS;0skip",
+            "worker_delivery_ref": "docs/development/evidence/W199-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave199-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-28T11:34:38.117391+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            150,
+            240
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Continue WP05-20 native iteration decisions, independent issue closure, Owner application/receipt and withdrawal competition, then engineering freeze and actual WO/SCHED. Preserve full WP05-19/18/14 external authority gaps and original D2/D3/D5/D6/D7 exits.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave199-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 72.6,
+        "actual_registered_wave_minutes": 76.12,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W199-01",
+            "source": "577239654b565cede69e122e341a958436e85753",
+            "remote_target": "df309fb2bc9a91bba907057f93034c95e4e1eee8",
+            "branch": "codex/w199-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/622"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W199-HANDOFF",
+            "source": "ba2f99336954f8791ce3f39534826e113e783cdb",
+            "remote_target": "58231fe221a951aed35a9260870d9e24d720c903",
+            "branch": "codex/w199-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/175"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -222052,7 +222242,7 @@
           "id": "D3",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W199-01",
+          "current_window": "W200-01",
           "prerequisite_adjustment": "Issue460 WorkCenter and ProcessCostRate actual current Owner; full process/cost/Finance adoption remains separate.",
           "adopted_window": "W49-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/402",
@@ -222061,7 +222251,7 @@
           "last_window_actual_agent_minutes": 56.28,
           "last_branches_deleted": true,
           "last_seats_released": true,
-          "next_action": "Continue WP05-20 native iteration decisions, independent issue closure, Owner application/receipt and withdrawal competition, then engineering freeze and actual WO/SCHED. Preserve full WP05-19/18/14 external authority gaps and original D2/D3/D5/D6/D7 exits.",
+          "next_action": "Continue native engineering freeze/REL/VER and actual WO/SCHED according to original prerequisites; retain WP12-19 delegated/replacement authorization and full cross-Owner adoption, full WP05-20/19/18/14 external authority and formal acceptance gaps, and all original seven-day exits.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W136-01/DELIVERY.md",
           "last_product_source_report": "docs/development/evidence/W144-01/DELIVERY.md",
@@ -222118,7 +222308,8 @@
           "last_requirement_set_approval_report": "docs/development/evidence/W196-01/DELIVERY.md",
           "last_iteration_foundation_report": "docs/development/evidence/W197-01/DELIVERY.md",
           "last_iteration_candidate_report": "docs/development/evidence/W198-01/DELIVERY.md",
-          "last_iteration_review_submission_report": "docs/development/evidence/W199-01/DELIVERY.md"
+          "last_iteration_review_submission_report": "docs/development/evidence/W199-01/DELIVERY.md",
+          "last_iteration_review_application_report": "docs/development/evidence/W200-01/DELIVERY.md"
         },
         {
           "id": "D4",
