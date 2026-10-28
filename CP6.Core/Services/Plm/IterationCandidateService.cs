@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using static CP6.Core.Services.Plm.EngineeringProductValuesV1;
 using static CP6.Core.Services.Plm.IterationCandidateValuesV1;
 namespace CP6.Core.Services.Plm;
-public sealed class IterationCandidateService(CP6Context db,OperationsOwnerV1 owner,EngineeringIterationService iterations,
+public sealed partial class IterationCandidateService(CP6Context db,OperationsOwnerV1 owner,EngineeringIterationService iterations,
     EngineeringSourceCheckService checks,ScopeAuthorizationFenceV1 scope)
 {
     private OperationsOwnerV1 Authority=>owner.Owns(db) && iterations.Owns(db) && checks.Owns(db)?owner:throw Error("AUTHORITY_FENCE_UNAVAILABLE",503);

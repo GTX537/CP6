@@ -25,7 +25,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     {
         await GrantRequirement(h);await GrantUomProfile(h);if(registerScope)await RegisterScope(h);
         foreach(var action in new[]{"review-policy","review-submit","review-decide","withdraw"})await EngineeringAction(h,"plm-engineering-requirement",action);
-        var first=Guid.NewGuid();var second=Guid.NewGuid();h.Db.Sys_Roles.Add(new(){RoleId=74,RoleName="Requirement professional"});
+        var first=Guid.NewGuid();var second=Guid.NewGuid();if(!await h.Db.Sys_Roles.AnyAsync(x=>x.RoleId==74))h.Db.Sys_Roles.Add(new(){RoleId=74,RoleName="Requirement professional"});
         h.Db.Sys_Users.AddRange(new(){Id=first,UserName="requirement-reviewer-one",Password="fixture",RoleId=72},new(){Id=second,UserName="requirement-reviewer-two",Password="fixture",RoleId=72});
         h.Db.Sys_UserRoles.AddRange(new(){UserId=first,RoleId=74},new(){UserId=second,RoleId=74});await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();
         var o=EvaluationDrafts(h);var source=await CreateRequirement(o,SourceBody());var b=DefinitionBody(source.Reference);

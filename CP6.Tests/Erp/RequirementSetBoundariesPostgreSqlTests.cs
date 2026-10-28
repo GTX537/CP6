@@ -12,9 +12,9 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
 
     private sealed record SetApplicationFixture(SetDecisionFixture Set,RequirementSetReviewFactReceiverV1 Receiver,
         IntakeAuthority Authority,byte[] Payload,ApprovalDecisionEnvelopeV2 Decision);
-    private async Task<SetApplicationFixture> SetApplicationSetup(Harness h,bool approve=true)
+    private async Task<SetApplicationFixture> SetApplicationSetup(Harness h,bool approve=true,bool reuseBinding=false)
     {
-        var f=await SetDecisionSetup(h);await SetVote(DecisionActor(h,f.Source.Member.First),approve?"approve":"reject");
+        var f=await SetDecisionSetup(h,reuseBinding:reuseBinding);await SetVote(DecisionActor(h,f.Source.Member.First),approve?"approve":"reject");
         if(approve)await SetVote(DecisionActor(h,f.Source.Member.Second));
         var receiver=await SetReceiver(h,f);return new(f,receiver.Receiver,receiver.Authority,receiver.Payload,ApprovalDecisionWireV2.Parse(receiver.Payload).Value);
     }

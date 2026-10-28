@@ -37,9 +37,9 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     private static EngineeringIterationCommandV1 IterationChange(EngineeringIterationSnapshotV1 v,string action)=>new(){OperationId=Guid.NewGuid(),ObjectId=v.Reference.Id,Action=action,ExpectedVersion=v.Reference.Version,ExpectedEtag=v.Etag,Reason="Explicit iteration change"};
     private static async Task<EngineeringIterationSnapshotV1> IterationWrite(EngineeringIterationService o,EngineeringIterationCommandV1 c){await o.CommandAsync(c);return await o.ReadAsync(c.ObjectId);}
     private sealed record IterationFixture(EngineeringIterationSnapshotV1 Project,EngineeringIterationSnapshotV1 Iteration,SetApplicationFixture Set,Guid Reviewer);
-    private async Task<IterationFixture> IterationSetup(Harness h,ContentStore? files=null,EngineeringProductRefV1? product=null)
+    private async Task<IterationFixture> IterationSetup(Harness h,ContentStore? files=null,EngineeringProductRefV1? product=null,bool reuseBinding=false)
     {
-        var f=await SetApplicationSetup(h);FactAck(await f.Receiver.ReceiveAsync(f.Payload));var reviews=SetReviews(h);var ready=await reviews.SubmissionAsync(f.Set.Source.Set.Reference.Id,f.Set.Submission);
+        var f=await SetApplicationSetup(h,reuseBinding:reuseBinding);FactAck(await f.Receiver.ReceiveAsync(f.Payload));var reviews=SetReviews(h);var ready=await reviews.SubmissionAsync(f.Set.Source.Set.Reference.Id,f.Set.Submission);
         await reviews.ApplyAsync(f.Set.Source.Set.Reference.Id,ready.Application.Etag,new(Guid.NewGuid(),f.Set.Submission,null,"Approve accurate iteration input"));
         await GrantIteration(h);var reviewer=Guid.NewGuid();h.Db.Sys_Users.Add(new(){Id=reviewer,UserName="iteration-confirmer",Password="fixture",RoleId=72});await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();
         var o=Iterations(h,files);var siteId=await PhysicalSite(h,"ITER-SITE");var site=(await o.SitesAsync()).Single(x=>x.Reference.Id==siteId).Reference;
