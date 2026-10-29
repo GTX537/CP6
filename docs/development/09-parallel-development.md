@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W219 精简门禁规则](dispatch/20261029-wave219/README.md)，文档检查完成；Handoff已释放，Main待正常PR/finish。后续信任内部契约、快速失败。
+> 当前：[W220 原生退货申请](dispatch/20261029-wave220/README.md)，16项定向验证通过；Handoff已释放，Main待正常PR/finish。
+
+> 历史快照：[W219 精简门禁规则](dispatch/20261029-wave219/README.md)，文档检查完成；Handoff已释放，Main待正常PR/finish。后续信任内部契约、快速失败。
 
 > 历史快照：[W218 出库分配库位控制](dispatch/20261029-wave218/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
 

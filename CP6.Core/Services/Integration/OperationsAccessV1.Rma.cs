@@ -7,6 +7,24 @@ namespace CP6.Core.Services.Integration;
 
 internal sealed partial class OperationsAccessV1
 {
+    internal bool RmaApplicationSelfOnly => authority.Scope == 1;
+    internal async Task RequireRmaApplicationSource(Guid outboundId, Guid applicant, CancellationToken ct)
+    {
+        if (RmaApplicationSelfOnly && applicant != ActorId || !await Outbounds().AnyAsync(x => x.Id == outboundId, ct))
+            throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN", 403);
+    }
+    internal void RequireRmaApplicationFields(bool remarks)
+    {
+        if (!authority.Fields.Fields["ReturnReason"].CanWrite || remarks && !authority.Fields.Fields["Remarks"].CanWrite)
+            throw new OrderPriceCorrectionException("FIELD_WRITE_FORBIDDEN", 403);
+    }
+    internal RmaApplicationViewV1 ProjectRmaApplication(RmaApplicationViewV1 value) => value with
+    {
+        RequestedBy = authority.Fields.Fields["OperatorCd"].CanRead ? value.RequestedBy : null,
+        Reason = authority.Fields.Fields["ReturnReason"].CanRead ? value.Reason : null,
+        Remarks = authority.Fields.Fields["Remarks"].CanRead ? value.Remarks : null
+    };
+
     internal IQueryable<RmaHeader> Rmas()
     {
         var rows = db.RmaHeaders.AsNoTracking().Where(r => !r.IsDeleted);

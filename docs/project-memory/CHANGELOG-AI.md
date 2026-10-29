@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-10-29：W220 原生退货申请与授权分离
+
+原生退货申请API独立保存DRAFT/SUBMITTED不可变版本，不再将申请视为授权；实际出库来源、完整21,8数量、当前权限、同事务原操作与审计已落地。16项相关PostgreSQL/HTTP验证通过，0跳过。 [交付报告](../development/evidence/W220-01/DELIVERY.md)。API限定交付；前端、正式履约/权益和授权审批未完成。七天目标继续，Handoff已释放、Main待正常PR/finish。
+
 ## 2026-10-29：W219 内部契约与快速失败规则
 
 按用户最新指示，将Trust Internal Contracts、Fail-Fast和精简门禁写入AGENTS：内部契约直接采用，边界负责必要校验，缺前置立即明确失败；减少重复证明、兜底与重跑。仅文档差异/引用及台账结构检查，产品测试0次。 [报告](../development/evidence/W219-01/DELIVERY.md)。W218已完整收尾；本轮Handoff已释放，Main待正常PR/finish，七天原目标继续。

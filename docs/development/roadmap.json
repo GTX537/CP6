@@ -161352,6 +161352,16 @@
       "date": "2026-10-29",
       "change": "W219 user execution principles applied in Main AGENTS and Handoff. Documentation only, no product tests or business completion credit; Main lifecycle closeout pending.",
       "evidence": "docs/development/evidence/W219-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W219 lifecycle closed once. W220 implements native return application intent, separately from authorization. No formal completion promotion.",
+      "evidence": "docs/development/dispatch/20261029-wave220/README.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W220 native return application Owner delivered locally; formal source/entitlement/authorization and D2 exit remain incomplete. Handoff released; Main normal closeout pending.",
+      "evidence": "docs/development/evidence/W220-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -188171,7 +188181,23 @@
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "wave220_native_application": {
+        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "scope": "Native outbound-backed return applications: immutable draft/submitted versions, current RMA authority, exact quantity, atomic original-operation recovery; no authorization or stock/finance effects.",
+        "limitations": "Versioned native application contract, not formal RMA-C01 or full OriginalFulfilment/entitlement adoption. Existing RMA effect commands remain fenced.",
+        "report": "docs/development/evidence/W220-01/DELIVERY.md",
+        "validation": "16 local tests passed",
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "handoff_seat_released": true,
+          "main_branch_deleted": false,
+          "handoff_branch_deleted": true
+        },
+        "full_task_completed": false
+      }
     },
     {
       "id": "WP10-23",
@@ -197259,10 +197285,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261029-wave219",
-      "path": "docs/development/dispatch/20261029-wave219/README.md",
-      "baseline_sha": "93cae2d30bfa607fc33e0adef4b7473981b01beb",
-      "registered_at": "2026-10-29T03:09:53.083836+00:00",
+      "id": "20261029-wave220",
+      "path": "docs/development/dispatch/20261029-wave220/README.md",
+      "baseline_sha": "8ccce9d1a11b36f89dd7af5ee176e2a9d4030555",
+      "registered_at": "2026-10-29T03:28:34.770389+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -197281,34 +197307,29 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W219-01",
-          "workspace_task": "W219-01",
+          "id": "W220-01",
+          "workspace_task": "W220-01",
           "related_tasks": [
-            "WP02-03",
-            "WP02-06",
-            "WP02-09",
-            "WP02-29",
-            "WP03-01",
-            "WP03-02",
-            "WP14-10"
+            "WP10-22",
+            "WP10-19"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "User policy: trust internal contracts, fail fast, reduce unnecessary gates",
+          "title": "Native return application Owner separated from authorization",
           "chat": "COORD",
-          "mode": "SINGLE_CHAT_COORDINATION_POLICY",
+          "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "8d68c8c2948c4a2664a4af3a905b16bd27975ee6",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T030953Z-wave219-start/MESSAGE.md",
-            "at": "2026-10-29T03:09:53.083836+00:00",
-            "branch": "codex/w219-handoff"
+            "commit": "391ce00842093e09e410a744569dba61699bab92",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T032834Z-wave220-start/MESSAGE.md",
+            "at": "2026-10-29T03:28:34.770389+00:00",
+            "branch": "codex/w220-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w219-01",
-          "planned_scope_ref": "docs/development/dispatch/20261029-wave219/README.md",
+          "branch": "codex/w220-01",
+          "planned_scope_ref": "docs/development/dispatch/20261029-wave220/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -197317,11 +197338,12 @@
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
-            "Main:development-policy",
+            "Main:RMA-native-application",
+            "Main:PostgreSQL-migration",
             "Main:coordination-ledger"
           ],
-          "worker_delivery_ref": "docs/development/evidence/W219-01/DELIVERY.md",
-          "validation": "Document diff/references and ledger structure only; no product tests",
+          "worker_delivery_ref": "docs/development/evidence/W220-01/DELIVERY.md",
+          "validation": "16 local PostgreSQL/HTTP tests passed, zero skipped; one compile-only helper-name failure retained",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -197332,11 +197354,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-29T03:05:12.726860+00:00",
+        "started_at": "2026-10-29T03:26:15.016707+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          10,
-          20
+          45,
+          75
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -197344,7 +197366,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Continue the next original D2/D3 missing business write, using established internal contracts directly and fail-fast at the responsible boundary. Check only actual direct prerequisites; no new full audit or unrelated prerequisite expansion. D5/D6 external inputs and D7 final integration remain explicit.",
+      "next_action": "Continue actual D2 return authorization/fulfilment adoption and other original seven-day exits. Do not reopen completed waves or add qualification wrappers.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -197352,7 +197374,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 8.03
+      "elapsed_registered_wave_minutes": 16.9
     },
     "wave_history": [
       {
@@ -225879,6 +225901,125 @@
             "branch_absent": true,
             "seat_released": true,
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/194"
+          }
+        ]
+      },
+      {
+        "id": "20261029-wave219",
+        "path": "docs/development/dispatch/20261029-wave219/README.md",
+        "baseline_sha": "93cae2d30bfa607fc33e0adef4b7473981b01beb",
+        "registered_at": "2026-10-29T03:09:53.083836+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W219-01",
+            "workspace_task": "W219-01",
+            "related_tasks": [
+              "WP02-03",
+              "WP02-06",
+              "WP02-09",
+              "WP02-29",
+              "WP03-01",
+              "WP03-02",
+              "WP14-10"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "User policy: trust internal contracts, fail fast, reduce unnecessary gates",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_COORDINATION_POLICY",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "8d68c8c2948c4a2664a4af3a905b16bd27975ee6",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T030953Z-wave219-start/MESSAGE.md",
+              "at": "2026-10-29T03:09:53.083836+00:00",
+              "branch": "codex/w219-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w219-01",
+            "planned_scope_ref": "docs/development/dispatch/20261029-wave219/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:development-policy",
+              "Main:coordination-ledger"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W219-01/DELIVERY.md",
+            "validation": "Document diff/references and ledger structure only; no product tests",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave219-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-29T03:05:12.726860+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            10,
+            20
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Continue the next original D2/D3 missing business write, using established internal contracts directly and fail-fast at the responsible boundary. Check only actual direct prerequisites; no new full audit or unrelated prerequisite expansion. D5/D6 external inputs and D7 final integration remain explicit.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave219-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 8.03,
+        "actual_registered_wave_minutes": 10.78,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W219-01",
+            "source": "fced39173db53797951a0269fc8697ae696c66b7",
+            "remote_target": "8ccce9d1a11b36f89dd7af5ee176e2a9d4030555",
+            "branch": "codex/w219-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/642"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W219-HANDOFF",
+            "source": "d283e3df1720ae45db227eeb84f7164bd55e714b",
+            "remote_target": "99712c158e06e7dc955a0702dbe20285fe5fdb67",
+            "branch": "codex/w219-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/195"
           }
         ]
       }
