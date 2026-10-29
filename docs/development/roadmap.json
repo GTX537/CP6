@@ -161402,6 +161402,16 @@
       "date": "2026-10-29",
       "change": "W224 formal application intent lifecycle validated on actual shipments, trusted host coordinates and existing owner contracts. No entitlement/approval or full D2 acceptance claimed.",
       "evidence": "docs/development/evidence/W224-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W224 closed once; W225 admits actual formal application UI and direct list/editor support. Original goal scope and incomplete entitlement/approval remain unchanged.",
+      "evidence": "docs/development/dispatch/20261029-wave225/README.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W225 formal application page and direct list/editor support validated. Original-command recovery retains exact request; read-only remarks correction tracked in issue 649. No entitlement/approval/full D2 acceptance claimed.",
+      "evidence": "docs/development/evidence/W225-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -188328,10 +188338,36 @@
         }
       },
       "wave224_formal_application": {
-        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "status": "CLOSED",
         "scope": "Implement formal RMA application intent lifecycle using trusted scope and signed immutable source selections, actual fulfilment snapshots, exact request ranges, current authority and original-operation recovery.",
         "limitations": "Application creation/submission grants no authorization, stock or financial effect. Source coverage and entitlement remain explicitly PARTIAL/UNKNOWN; no fabricated policy, zero quantities or independent approvals. UI adoption and full authorization/receipt remain subsequent direct work.",
         "report": "docs/development/evidence/W224-01/DELIVERY.md",
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave224-final-verification.json"
+        },
+        "full_task_completed": false,
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W224-01",
+          "source": "e24836d946727ffd6d10f0d69d14b92a42a6126a",
+          "remote_target": "43b1ab4feb99084b43c4bdc5be99ea89678d828f",
+          "branch": "codex/w224-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/648"
+        }
+      },
+      "wave225_formal_application_page": {
+        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "scope": "Adopt formal RMA application contracts in the actual return page with stable authorized listing, lossless draft editing, submission/withdrawal and original-command recovery; expose explicit formal-source capture on the outbound page.",
+        "limitations": "Preserve existing native application access. Application intent grants no return authorization, stock or finance effect. Source/entitlement gaps remain PARTIAL/UNKNOWN; full return workbench and independent approval/inbound are not completed by UI adoption.",
+        "report": "docs/development/evidence/W225-01/DELIVERY.md",
         "lifecycle_complete": false,
         "lifecycle_snapshot": {
           "main_finish_required": true,
@@ -197429,10 +197465,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261029-wave224",
-      "path": "docs/development/dispatch/20261029-wave224/README.md",
-      "baseline_sha": "c1ce8741dc87fb271dfab70a47b40d480448291c",
-      "registered_at": "2026-10-29T05:30:50.278598+00:00",
+      "id": "20261029-wave225",
+      "path": "docs/development/dispatch/20261029-wave225/README.md",
+      "baseline_sha": "43b1ab4feb99084b43c4bdc5be99ea89678d828f",
+      "registered_at": "2026-10-29T06:27:40.334608+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -197451,28 +197487,28 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W224-01",
-          "workspace_task": "W224-01",
+          "id": "W225-01",
+          "workspace_task": "W225-01",
           "related_tasks": [
             "WP10-22"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Formal return application intent lifecycle",
+          "title": "Formal return application page adoption",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "9864cbf0324fa12b76e270a148ed3b3e3a8bdab7",
-            "branch": "codex/w224-handoff",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T053050Z-wave224-start/MESSAGE.md",
-            "at": "2026-10-29T05:30:50.278598+00:00"
+            "commit": "7c4e0652ecb3fdc08179c6ac07eb0578c8d30bbc",
+            "branch": "codex/w225-handoff",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T062740Z-wave225-start/MESSAGE.md",
+            "at": "2026-10-29T06:27:40.334608+00:00"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w224-01",
-          "planned_scope_ref": "docs/development/dispatch/20261029-wave224/README.md",
+          "branch": "codex/w225-01",
+          "planned_scope_ref": "docs/development/dispatch/20261029-wave225/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -197483,13 +197519,12 @@
           "exclusive_resources": [
             "Main:WMS-RMA-01",
             "Main:rma-owner",
-            "Main:outbound-fulfilment",
-            "Main:rma-runtime-registration",
-            "Main:coordination-ledger",
-            "Main:file-content-owned-read"
+            "Main:rma-ui-recovery",
+            "Main:outbound-ui",
+            "Main:coordination-ledger"
           ],
-          "worker_delivery_ref": "docs/development/evidence/W224-01/DELIVERY.md",
-          "validation": "13 affected shipment cases passed in the initial mixed run (6 new fixture failures retained); corrected formal application suite passed 6 cases; focused review scenarios passed 5 cases with zero skipped. Actual HTTP response samples validate against the accepted 195-definition RMA schema. Unchanged successful evidence reused; no frontend change, Actions, production or existing-environment migration.",
+          "worker_delivery_ref": "docs/development/evidence/W225-01/DELIVERY.md",
+          "validation": "Vue related suite 26 PASS; focused formal page suite 10 PASS after review fixes; final vue-tsc PASS. PostgreSQL entry/actual HTTP 3 PASS; focused remarks/lifecycle 3 PASS. Original remarks check reproduced one expected failure before the fix; original-condition failure retained. Actual HTTP ApplicationPage and RmaApplication pass accepted canonical schema. Unchanged W224 shipment/transaction evidence reused; no Actions, production or existing-environment migration.",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -197500,7 +197535,7 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-29T05:27:31.104020+00:00",
+        "started_at": "2026-10-29T06:25:50.968099+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
           90,
@@ -197512,8 +197547,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Adopt the formal application endpoints in the actual return page, then continue actual entitlement/independent authorization and formal inbound consumption; preserve all original goal exits.",
-      "scope_refinement": "Actual shipment captures customer identity explicitly. Existing operational warehouses use trusted server tenant/warehouse/site coordinates; draft physical-use guard is unchanged. No guessed historical customer or site mapping.",
+      "next_action": "Continue actual entitlement and independent authorization, then formal inbound consumption, preserving every original seven-day exit.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -197521,7 +197555,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 46.76
+      "elapsed_registered_wave_minutes": 37.81
     },
     "wave_history": [
       {
@@ -226627,6 +226661,124 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/199"
           }
         ]
+      },
+      {
+        "id": "20261029-wave224",
+        "path": "docs/development/dispatch/20261029-wave224/README.md",
+        "baseline_sha": "c1ce8741dc87fb271dfab70a47b40d480448291c",
+        "registered_at": "2026-10-29T05:30:50.278598+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W224-01",
+            "workspace_task": "W224-01",
+            "related_tasks": [
+              "WP10-22"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Formal return application intent lifecycle",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "9864cbf0324fa12b76e270a148ed3b3e3a8bdab7",
+              "branch": "codex/w224-handoff",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T053050Z-wave224-start/MESSAGE.md",
+              "at": "2026-10-29T05:30:50.278598+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w224-01",
+            "planned_scope_ref": "docs/development/dispatch/20261029-wave224/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:WMS-RMA-01",
+              "Main:rma-owner",
+              "Main:outbound-fulfilment",
+              "Main:rma-runtime-registration",
+              "Main:coordination-ledger",
+              "Main:file-content-owned-read"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W224-01/DELIVERY.md",
+            "validation": "13 affected shipment cases passed in the initial mixed run (6 new fixture failures retained); corrected formal application suite passed 6 cases; focused review scenarios passed 5 cases with zero skipped. Actual HTTP response samples validate against the accepted 195-definition RMA schema. Unchanged successful evidence reused; no frontend change, Actions, production or existing-environment migration.",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave224-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-29T05:27:31.104020+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            90,
+            150
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Adopt the formal application endpoints in the actual return page, then continue actual entitlement/independent authorization and formal inbound consumption; preserve all original goal exits.",
+        "scope_refinement": "Actual shipment captures customer identity explicitly. Existing operational warehouses use trusted server tenant/warehouse/site coordinates; draft physical-use guard is unchanged. No guessed historical customer or site mapping.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave224-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 46.76,
+        "actual_registered_wave_minutes": 50.56,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W224-01",
+            "source": "e24836d946727ffd6d10f0d69d14b92a42a6126a",
+            "remote_target": "43b1ab4feb99084b43c4bdc5be99ea89678d828f",
+            "branch": "codex/w224-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/648"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W224-HANDOFF",
+            "source": "5950073b8c3207bb935cb408eb21c4fc087b2aaa",
+            "remote_target": "10a96dbd81d08a108d0856452993d1f84f9ac825",
+            "branch": "codex/w224-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/200"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -226704,7 +226856,7 @@
           "id": "D2",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W224-01",
+          "current_window": "W225-01",
           "prerequisite_adjustment": "Formal SourceDemand/Transfer providers and RMA IN/terminal Owner contracts remain prerequisites; current read Owners and trusted creation/inheritance are adopted within their precise scope.",
           "adopted_window": "W42-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/395",
@@ -226714,7 +226866,7 @@
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "Adopt the formal application endpoints in the actual return page, then continue actual entitlement/independent authorization and formal inbound consumption; preserve all original goal exits.",
+          "next_action": "Continue actual entitlement and independent authorization, then formal inbound consumption, preserving every original seven-day exit.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W140-01/DELIVERY.md",
           "last_inheritance_report": "docs/development/evidence/W137-01/DELIVERY.md",
@@ -226737,7 +226889,8 @@
           "last_stock_control_report": "docs/development/evidence/W217-01/DELIVERY.md",
           "last_allocation_control_report": "docs/development/evidence/W218-01/DELIVERY.md",
           "last_fulfilment_source_report": "docs/development/evidence/W223-01/DELIVERY.md",
-          "last_formal_application_report": "docs/development/evidence/W224-01/DELIVERY.md"
+          "last_formal_application_report": "docs/development/evidence/W224-01/DELIVERY.md",
+          "last_formal_application_page_report": "docs/development/evidence/W225-01/DELIVERY.md"
         },
         {
           "id": "D3",

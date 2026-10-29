@@ -41,11 +41,14 @@ describe('independent manufacturing and outbound intent',()=>{
  it('sends the explicit return-source choice with shipment and resets it for the next dialog',async()=>{
   const vm=render(2);Object.assign(vm.form,{...outbound,outboundType:2,webOrderNo:'ORDER'})
   vm.onShipClick();expect(vm.shipReq.captureReturnSource).toBe(false)
+  expect(vm.shipReq.captureReturnApplicationSource).toBe(false)
   vm.shipReq.captureReturnSource=true
+  vm.shipReq.captureReturnApplicationSource=true
   wms.ship.mockResolvedValueOnce({data:{packageNo:'PKG'}});wms.get.mockResolvedValueOnce({data:{...outbound,status:4}})
   await vm.onConfirmShip()
-  expect(wms.ship).toHaveBeenCalledWith('OUT1',expect.objectContaining({captureReturnSource:true}))
+  expect(wms.ship).toHaveBeenCalledWith('OUT1',expect.objectContaining({captureReturnSource:true,captureReturnApplicationSource:true}))
   vm.onShipClick();expect(vm.shipReq.captureReturnSource).toBe(false)
+  expect(vm.shipReq.captureReturnApplicationSource).toBe(false)
  })
  it('keeps the original outbound line identity in the save request after deleting another line',async()=>{
   const vm=render(2)

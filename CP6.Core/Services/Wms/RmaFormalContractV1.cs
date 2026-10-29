@@ -52,3 +52,15 @@ public sealed record RmaApplicationWorkV1(Guid WorkId, Guid RmaId, string Operat
     string State, FulfilmentRefV1 BindingRef, object[] Checkpoints, string[] NextActions, DateTimeOffset CreatedAt, DateTimeOffset UpdatedAt);
 public sealed record RmaApplicationReceiptV1(Guid ReceiptId, FulfilmentRefV1 CommandBindingRef, string Status,
     FulfilmentRefV1[] ResultRefs, string[] EffectKeys, FulfilmentRefV1? NoAdditionalEffectProofRef, DateTimeOffset RecordedAt, bool Replayed);
+
+public sealed record RmaApplicationQueryV1(FulfilmentRefV1 ScopeOptionRef, FulfilmentRefV1? CustomerRef,
+    FulfilmentRefV1? ShipmentLineRef, FulfilmentRefV1? InvoiceLineRef, string[] States,
+    DateTimeOffset? RecordedFrom, DateTimeOffset? RecordedTo, string? Cursor, int PageSize = 50);
+public sealed record RmaSummaryV1(Guid RmaId, string DisplayNo, FulfilmentRefV1 CustomerRef, string ApplicationState,
+    string AuthorizationState, string PhysicalState, string QualityState, string QualityIntegrationReadiness,
+    string DispositionState, string CommercialState, string FinancialState, string EngineeringFeedbackState,
+    DateTimeOffset RecordedAt, FulfilmentRefV1 HeadRef);
+public sealed record RmaApplicationPageV1(RmaSummaryV1[] Items, string? NextCursor, FulfilmentRefV1 SnapshotRef,
+    DateTimeOffset CapturedAt, string Coverage);
+// Owner-specific edit context preserves remarks, which the canonical application projection does not expose.
+public sealed record RmaApplicationEditContextV1(RmaFormalApplicationV1 Application, string? Remarks);

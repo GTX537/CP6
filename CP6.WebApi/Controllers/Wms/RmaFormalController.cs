@@ -49,6 +49,10 @@ public sealed class RmaFormalController(RmaFormalOwnerV1 owner) : ControllerBase
     public async Task<IActionResult> Sources(RmaFulfilmentQueryV1 query, CancellationToken ct) => Ok(await owner.SourcesAsync(query, ct));
     [HttpPost("applications"), RequestSizeLimit(1048576)]
     public async Task<IActionResult> Create(RmaFormalCreateV1 command, CancellationToken ct) => Application(await owner.CreateAsync(Command(), command, ct), 201);
+    [HttpGet("applications")]
+    public async Task<IActionResult> List([FromQuery] RmaApplicationQueryV1 query, CancellationToken ct) => Ok(await owner.ListAsync(query, ct));
+    [HttpGet("applications/{applicationId:guid}/edit-context")]
+    public async Task<IActionResult> EditContext(Guid applicationId, CancellationToken ct) => Ok(await owner.EditContextAsync(applicationId, ct));
     [HttpPut("applications/{applicationId:guid}"), RequestSizeLimit(1048576)]
     public async Task<IActionResult> Edit(Guid applicationId, RmaFormalEditV1 command, CancellationToken ct) =>
         Application(await owner.EditAsync(applicationId, Command(), command, Request.Headers.IfMatch, ct));

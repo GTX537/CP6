@@ -29,11 +29,15 @@ public sealed partial class RmaFormalOwnerV1(CP6Context db, OperationsOwnerV1 ow
             var store = new RmaFormalStoreV1(db, protector); await store.Fence(environment.EnvironmentId, runtime.EvidenceMode, write, t);
             return await body(store, a, t);
         }, ct, actionAtFence: actionAtFence);
-    private static void Fields(OperationsAccessV1 a, bool write, bool remarks = false)
+    private static void ReadFields(OperationsAccessV1 a)
     {
         var fields = a.Authorities[0].Fields.Fields;
         if (!fields["OperatorCd"].CanRead || !fields["ReturnReason"].CanRead) throw Error("FIELD_READ_FORBIDDEN", 403);
-        if (write && (!fields["ReturnReason"].CanWrite || remarks && !fields["Remarks"].CanWrite)) throw Error("FIELD_WRITE_FORBIDDEN", 403);
+    }
+    private static void WriteFields(OperationsAccessV1 a, bool remarks)
+    {
+        var fields = a.Authorities[0].Fields.Fields;
+        if (!fields["ReturnReason"].CanWrite || remarks && !fields["Remarks"].CanWrite) throw Error("FIELD_WRITE_FORBIDDEN", 403);
     }
     private static decimal Quantity(FulfilmentQtyV1 quantity)
     {
@@ -76,7 +80,7 @@ public sealed partial class RmaFormalOwnerV1(CP6Context db, OperationsOwnerV1 ow
     }
     private async Task Access(OperationsAccessV1 a, RmaFormalOriginalV1 o, CancellationToken ct)
     {
-        Fields(a, false); await RequireScope(a, o.Scope, ct);
+        ReadFields(a); await RequireScope(a, o.Scope, ct);
         foreach (var id in o.Lines.Select(x => x.OutboundId).Distinct()) await RequireOutbound(a, id, ct);
     }
     private async Task<RmaFormalLineOriginalV1[]> Lines(RmaFormalStoreV1 store, OperationsAccessV1 a, RmaTrustedScopeV1 scope,
@@ -119,7 +123,7 @@ public sealed partial class RmaFormalOwnerV1(CP6Context db, OperationsOwnerV1 ow
         return Command(command, "APP_CREATE", "application-write", "POST", CreateRoute, c.ClientApplicationId, c, null,
             async (store, a, t) =>
             {
-                Fields(a, true, c.Remarks != null); var selected = await ResolveScope(store, a, c.ScopeOptionRef, t);
+                ReadFields(a); WriteFields(a, c.Remarks != null); var selected = await ResolveScope(store, a, c.ScopeOptionRef, t);
                 if (await store.Heads().AnyAsync(x => x.Id == c.ClientApplicationId, t)) throw Error("RMA_APPLICATION_EXISTS", 409);
                 var lines = await Lines(store, a, selected.Scope, c.CustomerRef, c.Lines, 1, t);
                 return new(c.ClientApplicationId, 1, a.ActorId, selected.Scope, c.CustomerRef, c.ReasonCode, c.RequestedOutcome,
@@ -131,7 +135,8 @@ public sealed partial class RmaFormalOwnerV1(CP6Context db, OperationsOwnerV1 ow
         Intent(c.CustomerRef, c.ReasonCode, c.RequestedOutcome, c.Lines, c.Remarks); Transition(c.ExpectedApplicationVersion, c.ExpectedApplicationHeadRef, c.Reason);
         return Command(command, "APP_EDIT", "application-write", "PUT", EditRoute, id, c, etag, async (store, a, t) =>
         {
-            Fields(a, true, c.Remarks != null); var before = await Current(store, a, id, t); Expected(before, c.ExpectedApplicationVersion, c.ExpectedApplicationHeadRef, etag);
+            var before = await Current(store, a, id, t); WriteFields(a, c.Remarks != before.Remarks);
+            Expected(before, c.ExpectedApplicationVersion, c.ExpectedApplicationHeadRef, etag);
             if (before.State != "DRAFT") throw Error("RMA_APPLICATION_NOT_DRAFT", 409);
             var next = checked(before.Version + 1); var lines = await Lines(store, a, before.Scope, c.CustomerRef, c.Lines, next, t);
             return before with { Version = next, Customer = c.CustomerRef, ReasonCode = c.ReasonCode, Outcome = c.RequestedOutcome,
