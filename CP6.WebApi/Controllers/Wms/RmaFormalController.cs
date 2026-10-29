@@ -15,22 +15,24 @@ public sealed class RmaFormalResultAttribute : ActionFilterAttribute
     {
         var http = context.HttpContext; http.Response.Headers.CacheControl = "no-store";
         var correlation = http.Request.Headers["X-Correlation-Id"].ToString();
+        var queryPath = http.Request.Path.StartsWithSegments("/api/wms/rma/v1/policies")
+            ? "/api/wms/rma/v1/policies/commands/query" : "/api/wms/rma/v1/commands/query";
         if (!context.ModelState.IsValid || string.IsNullOrWhiteSpace(correlation) || correlation.Length > 200
             || !http.Request.Headers.CacheControl.ToString().Split(',').Any(x => x.Trim().Equals("no-store", StringComparison.OrdinalIgnoreCase)))
-        { context.Result = Problem(400, "VALIDATION_FAILED", correlation, http.TraceIdentifier); return; }
+        { context.Result = Problem(400, "VALIDATION_FAILED", correlation, http.TraceIdentifier, queryPath); return; }
         var result = await next();
         if (result.Exception is OrderPriceCorrectionException error)
-        { result.Result = Problem(error.Status, error.Message, correlation, http.TraceIdentifier); result.ExceptionHandled = true; }
+        { result.Result = Problem(error.Status, error.Message, correlation, http.TraceIdentifier, queryPath); result.ExceptionHandled = true; }
         else if (result.Exception is ScopeAuthorizationExceptionV1 scope)
-        { result.Result = Problem(scope.Status, scope.Message, correlation, http.TraceIdentifier); result.ExceptionHandled = true; }
+        { result.Result = Problem(scope.Status, scope.Message, correlation, http.TraceIdentifier, queryPath); result.ExceptionHandled = true; }
     }
-    private static ObjectResult Problem(int status, string code, string correlation, string trace)
+    private static ObjectResult Problem(int status, string code, string correlation, string trace, string queryPath)
     {
         var unknown = code == "OPERATIONS_OUTCOME_UNKNOWN";
         return new(new { status, code, title = code, detail = code, correlationId = string.IsNullOrWhiteSpace(correlation) || correlation.Length > 200 ? trace : correlation,
             retryable = false, commitKnowledge = unknown ? "UNKNOWN" : "NOT_ACCEPTED", bindingCreated = false, workCreated = false,
             terminalReceiptCreated = false, recovery = new { action = unknown ? "QUERY_ORIGINAL" : status == 412 ? "REFRESH_HEAD" : "NONE",
-                queryPath = unknown ? "/api/wms/rma/v1/commands/query" : null, originalCommandRef = (object?)null,
+                queryPath = unknown ? queryPath : null, originalCommandRef = (object?)null,
                 originalEffectKey = (string?)null, ownerQueryIdentity = (object?)null }, fieldErrors = Array.Empty<object>() }) { StatusCode = status };
     }
 }
@@ -39,6 +41,12 @@ public sealed class RmaFormalResultAttribute : ActionFilterAttribute
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public sealed class RmaFormalController(RmaFormalOwnerV1 owner) : ControllerBase
 {
+    [HttpPost("policies/read"), RequestSizeLimit(65536)]
+    public async Task<IActionResult> Policy(RmaPolicyReadV1 query, CancellationToken ct) => Ok(await owner.ReadPolicyAsync(query, ct));
+    [HttpPost("policies/publish"), RequestSizeLimit(65536)]
+    public async Task<IActionResult> PublishPolicy(RmaPolicyPublishV1 input, CancellationToken ct) => Ok(await owner.PublishPolicyAsync(Command(), input, ct));
+    [HttpPost("policies/commands/query"), RequestSizeLimit(65536)]
+    public async Task<IActionResult> PolicyCommand(RmaPolicyCommandQueryV1 query, CancellationToken ct) => Ok(await owner.QueryPolicyCommandAsync(query, ct));
     private Guid Command() => Guid.TryParse(Request.Headers["Idempotency-Key"], out var id) && id != Guid.Empty
         ? id : throw new OrderPriceCorrectionException("VALIDATION_FAILED", 400);
     private IActionResult Application(RmaFormalApplicationV1 value, int status = 200)
