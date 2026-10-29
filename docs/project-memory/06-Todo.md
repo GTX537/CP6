@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-29：W218 出库分配库位控制待Main收尾
+
+出库分配采用当前库位控制：选择合法替代，拒绝封锁/未知候选，提交前复核；整单失败回滚，已存预留可取消释放。25 distinct actual PostgreSQL/Program HTTP PASS;0skip;frontend unchanged。[报告](../development/evidence/W218-01/DELIVERY.md)。登记24.8分钟，预计45–70；Handoff已释放，Main待正常PR/finish。原七天出口不变；此前65–70%无加权依据，不作为实际完成率。
+
 ## 2026-10-29：W217 独立库存库位控制待Main收尾
 
 独立库存普通新使用采用当前库位封锁，两端和提交前复核；保留原结果恢复、纯预留释放和内部盘点事实路径。69 distinct actual PostgreSQL/Program HTTP PASS;0skip;frontend unchanged。[报告](../development/evidence/W217-01/DELIVERY.md)。登记18.8分钟，预计45–70；Handoff已释放，Main待正常PR/finish。正式MASTER/Transfer/Stock及原七天出口不变。

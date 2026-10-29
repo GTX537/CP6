@@ -193,6 +193,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     public async Task Stock_inheritance_outbound_reservation_ship_and_cancel_keep_same_stock_provenance(bool cancel)
     {
         await using var h=await Seed();var owner=await GrantOperations(h);var wms=OperationsWms(h,owner);
+        h.Db.Locations.Add(new(){WarehouseCd="W01",LocationCd="L"});
         h.Db.Stocks.Add(new(){WarehouseCd="W01",LocationCd="L",ProductCd="P",LotNo="",PhysicalQty=10m,AvailableQty=10m,UnitPrice=2m});
         await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();var admin=await MappingAdmin(h);
         await BindStandalone(h,admin,"stock",await h.Db.Stocks.Select(s=>s.Id).SingleAsync());

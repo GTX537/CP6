@@ -207,8 +207,9 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         IOutboundRoutingService routing=disabled?new NoOpOutboundRoutingService(h.Db):new OutboundRoutingService(h.Db);
         var wms=new OutboundService(h.Db,new WmsSequenceService(h.Db),new StockMovementService(h.Db,new WmsSequenceService(h.Db)),routing:routing,owner:owner);
         h.Db.Warehouses.Add(new(){WarehouseCd="W02",WarehouseName="Legacy target"});
+        h.Db.Locations.AddRange(new(){WarehouseCd="W01",LocationCd="L"},new(){WarehouseCd="W02",LocationCd="L2"});
         h.Db.OutboundRoutingRules.Add(new(){RuleName="Existing",TargetWarehouseCd="W02",Enabled=true});
-        h.Db.Stocks.AddRange(new(){WarehouseCd="W01",LocationCd="L",ProductCd="P",PhysicalQty=10m,AvailableQty=10m},new(){WarehouseCd="W02",LocationCd="L",ProductCd="P",PhysicalQty=10m,AvailableQty=10m});
+        h.Db.Stocks.AddRange(new(){WarehouseCd="W01",LocationCd="L",ProductCd="P",PhysicalQty=10m,AvailableQty=10m},new(){WarehouseCd="W02",LocationCd="L2",ProductCd="P",PhysicalQty=10m,AvailableQty=10m});
         await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();var no=await wms.CreateOrderAsync(NewOutbound(),null);await wms.ConfirmOrderAsync(no,null);var reads=0;
         hook.Before=c=>{if(c.CommandText.Contains("WITH field_subject")&&++reads==2)throw new IOException("final source fault");return Task.CompletedTask;};
         Assert.Equal(503,(await Assert.ThrowsAsync<OrderPriceCorrectionException>(()=>wms.AllocateAsync(no,"forged"))).Status);hook.Before=null;

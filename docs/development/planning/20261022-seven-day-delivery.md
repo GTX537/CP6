@@ -1592,3 +1592,7 @@ BOM独立Owner、多层稳定位置、准确材料/单位、实际ProductMateria
 ## 2026-10-29 W217 独立库存库位控制
 
 独立库存普通新使用采用当前库位封锁，两端和提交前复核；保留原结果恢复、纯预留释放和内部盘点事实路径。69 distinct actual PostgreSQL/Program HTTP PASS;0skip;frontend unchanged。[报告](../evidence/W217-01/DELIVERY.md)。登记18.8分钟，预计45–70；Handoff已释放，Main待正常PR/finish。正式MASTER/Transfer/Stock及原七天出口不变。 Continue actual formal MASTER/location qualification and effect Owner adoption toward Transfer/Stock/REP/RMA; preserve D3/D5/D6/D7 and all original seven-day exits.
+
+## 2026-10-29 W218 出库分配库位控制与进度口径纠正
+
+出库分配采用当前库位控制：选择合法替代，拒绝封锁/未知候选，提交前复核；整单失败回滚，已存预留可取消释放。25 distinct actual PostgreSQL/Program HTTP PASS;0skip;frontend unchanged。[报告](../evidence/W218-01/DELIVERY.md)。登记24.8分钟，预计45–70；Handoff已释放，Main待正常PR/finish。原七天出口不变；此前65–70%无加权依据，不作为实际完成率。 Audit each original D2/D3/D5/D6/D7 exit against adopted source and actual evidence, separating the seven-day deliverables from full formal product acceptance. Execute the next direct missing output; preserve all original exits and do not expand or shrink the goal. 2/7仅是完整阶段闭环率，不等于实际总工作量完成率。
