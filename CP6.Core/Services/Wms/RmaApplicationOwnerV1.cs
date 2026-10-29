@@ -64,8 +64,10 @@ public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner
         if (rows.Length == 0 || rows.Any(x => x.ShippedQty <= 0 || string.IsNullOrWhiteSpace(x.UnitCd) || string.IsNullOrWhiteSpace(x.ShipTxnNo)))
             throw Error("RMA_SOURCE_LINE_UNAVAILABLE", 503);
         // Native outbound owns these facts; do not revalidate its stock journal or manufacture formal range/UOM references.
+        var lineage = await OutboundOrderLineageV1.Read(db, header.OutboundNo, ct);
         var lines = rows.Select(x => new RmaApplicationSourceLineV1(x.Id, x.LineNo, x.ProductCd, Quantity(x.ShippedQty),
-            x.UnitCd!, x.WarehouseCd ?? header.WarehouseCd, x.LocationCd, x.LotNo, x.ShipTxnNo!)).ToArray();
+            x.UnitCd!, x.WarehouseCd ?? header.WarehouseCd, x.LocationCd, x.LotNo, x.ShipTxnNo!)
+            { OrderLine = lineage.GetValueOrDefault(x.Id) }).ToArray();
         var version = MainOwnerOperationJournalV1.Digest(MainOwnerOperationJournalV1.Encode(new { header.Id, header.OutboundNo, header.CustomerCd, header.WebOrderNo, Lines = lines }));
         return new(header.Id, header.OutboundNo, header.CustomerCd, header.WebOrderNo, version, lines);
     }

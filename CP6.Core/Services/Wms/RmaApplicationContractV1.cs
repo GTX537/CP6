@@ -11,7 +11,11 @@ public sealed record RmaApplicationCreateV1(Guid OperationId, Guid ApplicationId
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record RmaApplicationSubmitV1(Guid OperationId, int ExpectedVersion);
 public sealed record RmaApplicationSourceLineV1(Guid Id, int LineNumber, string ProductCode,
-    string ShippedQuantity, string UnitCode, string WarehouseCode, string? LocationCode, string? LotNumber, string ShipmentTransaction);
+    string ShippedQuantity, string UnitCode, string WarehouseCode, string? LocationCode, string? LotNumber, string ShipmentTransaction)
+{
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public OutboundOrderLineSnapshotV1? OrderLine { get; init; }
+}
 public sealed record RmaApplicationSourceV1(Guid Id, string Number, string CustomerCode, string? OrderNumber,
     string Version, IReadOnlyList<RmaApplicationSourceLineV1> Lines);
 public sealed record RmaApplicationSourceChoiceV1(Guid Id, string Number, string? CustomerCode);

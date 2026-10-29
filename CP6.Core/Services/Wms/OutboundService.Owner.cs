@@ -181,17 +181,36 @@ public partial class OutboundService
         var h=await _db.OutboundOrders.SingleAsync(o=>o.OutboundNo==number && !o.IsDeleted,ct);
         if(h.Status is not (OutboundOrderStatus.Draft or OutboundOrderStatus.Confirmed))throw new InvalidOperationException("WM-MSG-043");
         await RequireNoAllocation(number,ct);
+        var old=await _db.OutboundOrderDetails.Where(d=>d.OutboundNo==number).ToArrayAsync(ct);
+        var lineage=await OutboundOrderLineageV1.Read(_db,number,ct);
+        var linked=old.Any(d=>lineage.ContainsKey(d.Id));
+        if(linked)
+        {
+            if(dto.OutboundType!=h.OutboundType || dto.WebOrderNo!=h.WebOrderNo || dto.CustomerCd!=h.CustomerCd)
+                throw new OrderPriceCorrectionException("OUTBOUND_ORDER_SOURCE_IMMUTABLE",409);
+            if(dto.Details.Select(d=>d.LineNo).Distinct().Count()!=dto.Details.Count)
+                throw new OrderPriceCorrectionException("OUTBOUND_LINE_ID_INVALID",400);
+            foreach(var d in dto.Details)
+            {
+                var row=old.SingleOrDefault(x=>x.LineNo==d.LineNo);
+                if(row==null || !lineage.TryGetValue(row.Id,out var source))
+                    throw new OrderPriceCorrectionException("OUTBOUND_SOURCE_LINE_REQUIRED",409);
+                if(d.ProductCd!=source.ProductCode || d.UnitCd!=source.QuantityUnit)
+                    throw new OrderPriceCorrectionException("OUTBOUND_ORDER_SOURCE_IMMUTABLE",409);
+            }
+        }
         h.OutboundType=dto.OutboundType;h.WorkOrderNo=dto.WorkOrderNo;h.WebOrderNo=dto.WebOrderNo;h.CustomerCd=dto.CustomerCd;
         h.CustomerName=dto.CustomerName;h.WarehouseCd=dto.WarehouseCd;h.PlannedDate=dto.PlannedDate;h.Priority=dto.Priority;
         h.ShipToAddress=dto.ShipToAddress;h.CarrierCd=dto.CarrierCd;h.Remarks=dto.Remarks;h.Modifier=actor;h.ModifyDate=DateTime.Now;
-        var old=await _db.OutboundOrderDetails.Where(d=>d.OutboundNo==number).ToArrayAsync(ct);
+        var retained=new HashSet<OutboundOrderDetail>();
         for(var i=0;i<dto.Details.Count;i++)
         {
-            var d=dto.Details[i];var row=old.SingleOrDefault(x=>x.LineNo==i+1);
+            var d=dto.Details[i];var row=old.SingleOrDefault(x=>x.LineNo==(linked?d.LineNo:i+1));
             if(row==null){row=new(){OutboundNo=h.OutboundNo,LineNo=i+1,Creator=actor};_db.OutboundOrderDetails.Add(row);}
+            retained.Add(row);
             row.ProductCd=d.ProductCd;row.ProductName=d.ProductName;row.RequiredQty=d.RequiredQty;
             row.UnitCd=d.UnitCd;row.UnitPrice=d.UnitPrice;row.Remarks=d.Remarks;row.Modifier=actor;row.ModifyDate=DateTime.Now;
         }
-        _db.OutboundOrderDetails.RemoveRange(old.Where(d=>d.LineNo>dto.Details.Count));await _db.SaveChangesAsync(ct);
+        _db.OutboundOrderDetails.RemoveRange(old.Where(d=>!retained.Contains(d)));await _db.SaveChangesAsync(ct);
     }
 }
