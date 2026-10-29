@@ -23,6 +23,7 @@ public partial class StockMovementService : IStockCreationOperationsV2
             Validate(frozen);a.RequirePriceWrite();frozen.OperatorCd=a.Actor;
             var before=await Snapshot(frozen.WarehouseCd,[frozen.LocationCd],frozen.ProductCd,frozen.LotNo,t);
             await PrepareStockCreation(a,frozen,frozen.NewStock,null,t);
+            await GuardIndependentLocationUse(a,frozen.WarehouseCd,frozen.LocationCd,frozen.TxnType,t);
             using var inheritance=InheritTransactions(a);
             var no=await ApplyWithinOwnerAsync(frozen,t);
             a.AtCommit(c=>a.RequireStockKey(frozen.WarehouseCd,frozen.LocationCd,frozen.ProductCd,frozen.LotNo,false,c));
@@ -44,6 +45,8 @@ public partial class StockMovementService : IStockCreationOperationsV2
                 LocationCd=frozen.ToLocationCd,ProductCd=frozen.ProductCd,LotNo=frozen.LotNo,Qty=frozen.Qty,OperatorCd=a.Actor};
             metadata.CopyTo(target);
             await PrepareStockCreation(a,target,frozen.NewStock,metadata,t);
+            await GuardIndependentLocationUse(a,frozen.WarehouseCd,frozen.FromLocationCd,WmsTxnType.MOVE,t);
+            await GuardIndependentLocationUse(a,frozen.WarehouseCd,frozen.ToLocationCd,WmsTxnType.MOVE,t);
             using var inheritance=InheritTransactions(a);
             var pair=await MoveCoreAsync(frozen,t);
             a.AtCommit(async c=>

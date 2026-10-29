@@ -137,7 +137,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         }
         await h.Db.Sys_RoleDataScopes.Where(x => x.ResourceKey != "order").ExecuteUpdateAsync(s => s.SetProperty(x => x.ScopeType, 5));
         await h.Db.WmsRoleScopes.ExecuteDeleteAsync(); h.Db.WmsRoleScopes.Add(new() { RoleId = 72, WarehouseCd = "W01", AreaCd = "A" });
-        h.Db.Locations.AddRange(new() { WarehouseCd = "W01", LocationCd = "L1", AreaCd = "A" }, new() { WarehouseCd = "W01", LocationCd = "L2", AreaCd = "B" });
+        await h.Db.Locations.Where(l=>l.WarehouseCd=="W01" && l.LocationCd=="L2").ExecuteUpdateAsync(s=>s.SetProperty(l=>l.AreaCd,"B"));
         await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear();
         Assert.Equal("10.12345678", (await dwell.GetObservationAsync(DwellQuery())).TotalQty); Assert.Equal(1, (await expiry.GetObservationAsync(ExpiryQuery())).Total);
     }

@@ -129,7 +129,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     public async Task Stock_move_custody_preserves_allow_negative_policy_with_and_without_existing_source(bool missingSource,bool allowNegative)
     {
         await using var h=await Seed();var owner=await GrantStocktakeDashboard(h);await SeedMoveCustody(h);
-        h.Db.Warehouses.Add(new(){WarehouseCd="W01",WarehouseName="Policy warehouse",AllowNegative=allowNegative});
+        await h.Db.Warehouses.Where(w=>w.WarehouseCd=="W01").ExecuteUpdateAsync(s=>s.SetProperty(w=>w.AllowNegative,allowNegative));
         await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();
         if(missingSource)await h.Db.Stocks.Where(s=>s.ProductCd=="P1").ExecuteDeleteAsync();
         var command=StockMove();command.Qty=11.12345678m;
