@@ -17,7 +17,8 @@ internal static class OutboundFulfilmentV1
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
     internal sealed record PreparedLine(Guid Id, Guid OrderLineId, string ProductCode, string UnitCode, string Quantity,
         FulfilmentRefV1 Product, UomProfileRefV1 UnitProfile, UomProfileRefV1 BaseProfile, FulfilmentQtyV1 BaseQty);
-    internal sealed record Prepared(DateTimeOffset At, OrderFulfilmentSourceV1 Order, IReadOnlyList<PreparedLine> Lines, FulfilmentRefV1? Customer);
+    internal sealed record Prepared(DateTimeOffset At, OrderFulfilmentSourceV1 Order, IReadOnlyList<PreparedLine> Lines,
+        FulfilmentRefV1? Customer, IReadOnlyDictionary<Guid, SalesReturnSourceReaderV1.Prepared>? Commercial);
     private static OrderPriceCorrectionException Error(string code, int status = 422) => new(code, status);
 
     // Only the shipping decision validates mutable source conditions. Readers trust this stored contract.
@@ -76,7 +77,8 @@ internal static class OutboundFulfilmentV1
                 profile.Reference, baseline.Reference, new(value, new(baseline.Profile.Code, baseline.Reference.Version))));
         }
         var sourceLines = result.Select(x => x.OrderLineId).ToHashSet();
-        return new(at, order with { Lines = order.Lines.Where(x => sourceLines.Contains(x.Id)).ToArray() }, result, customer);
+        var commercial = formalApplication ? await SalesReturnSourceReaderV1.Prepare(db, order.Id, sourceLines, ct) : null;
+        return new(at, order with { Lines = order.Lines.Where(x => sourceLines.Contains(x.Id)).ToArray() }, result, customer, commercial);
     }
 
     private static FulfilmentFactV1 Fact<T>(string owner, string id, string version, T value)
@@ -109,11 +111,21 @@ internal static class OutboundFulfilmentV1
                     ShipmentLineId = row.Id, line.Product, row.LotNo, row.ShipTxnNo });
                 facts.Add(lot); lots.Add(lot.Reference);
             }
+            FulfilmentRefV1? commercial = null;
+            if (prepared.Commercial != null)
+            {
+                var source = prepared.Commercial[line.OrderLineId];
+                commercial = await SalesReturnSourceReaderV1.Capture(db, outbound.Id, line.Id, version,
+                    new(shipment.Reference, line.Id.ToString(), order.Reference, line.OrderLineId.ToString(),
+                        prepared.Order.Number, source.Number, line.ProductCode, prepared.Customer!, prepared.At, source.Terms), ct);
+            }
             lines.Add(new(shipment.Reference, line.Id.ToString(), version, order.Reference, line.OrderLineId.ToString(),
-                null, null, null, null, line.Product, [new("0", line.BaseQty.Value)], line.BaseQty, lots, [], []));
+                null, null, null, commercial, line.Product, [new("0", line.BaseQty.Value)], line.BaseQty, lots, [], []));
         }
         var snapshot = new OutboundFulfilmentSnapshotV1(outbound.Id, outbound.OutboundNo, outbound.CustomerCd!, prepared.At,
-            lines, facts, "PARTIAL", ["SCHEDULE", "DELIVERY_PROOF", "INVOICE_LINE", "COMMERCIAL_SNAPSHOT", "SERIAL", "LPN"])
+            lines, facts, "PARTIAL", prepared.Commercial == null
+                ? ["SCHEDULE", "DELIVERY_PROOF", "INVOICE_LINE", "COMMERCIAL_SNAPSHOT", "SERIAL", "LPN"]
+                : ["SCHEDULE", "DELIVERY_PROOF", "INVOICE_LINE", "SERIAL", "LPN"])
             { CustomerRef = prepared.Customer };
         await db.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO cp6_outbound_fulfilment_v1.snapshots(tenant_id,outbound_id,payload)

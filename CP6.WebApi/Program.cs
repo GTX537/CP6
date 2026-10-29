@@ -662,6 +662,7 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.WarehouseOwnerServiceV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.WarehouseDraftOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.RmaApplicationOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.RmaFormalOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Erp.SalesReturnSourceReaderV1>();
 builder.Services.AddOptions<CP6.Core.Services.Wms.RmaApplicationOptionsV1>().Bind(builder.Configuration.GetSection("RmaApplication"))
     .Validate(x => x.IsValid(), "RmaApplication warehouse/site coordinates must be unique and nonempty.").ValidateOnStart();
 builder.Services.AddScoped<CP6.Core.Services.Wms.LocationHierarchyOwnerV1>();

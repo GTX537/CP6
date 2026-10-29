@@ -2,7 +2,14 @@ import http from '../http'
 import type { EngineeringEnvelope } from '../plm/engineeringProducts'
 export interface RmaRef { owner: string; id: string; version: string; digest: string }
 export interface RmaQty { value: string; uom: { code: string; version: string } }
-export interface RmaOriginal { shipmentRef: RmaRef; shipmentLineId: string; shipmentLineVersion: string; orderRef: RmaRef; orderLineId: string; productRef: RmaRef; baseQty: RmaQty }
+export interface RmaOriginal { shipmentRef: RmaRef; shipmentLineId: string; shipmentLineVersion: string; orderRef: RmaRef; orderLineId: string; productRef: RmaRef; baseQty: RmaQty; commercialSnapshotRef: RmaRef | null }
+export interface SalesReturnTerms { currencyCode: string; fxRate: string; headerSalesPriceDivision: string | null; quantity: string | null; quantityUnit: string | null; priceUnit: string | null; setUnitPrice: string | null; individualUnitPrice: string | null; amount: string | null; specialPriceFlag: string | null; provisionalPrice: boolean; lineSalesPriceDivision: string | null }
+export interface SalesReturnSource {
+  reference: RmaRef
+  original: { shipmentRef: RmaRef; shipmentLineId: string; orderRef: RmaRef; orderLineId: string; orderNumber: string; orderLineNumber: number; productCode: string; customerRef: RmaRef; capturedAt: string; terms: SalesReturnTerms }
+  current: { customerCode: string; productCode: string; orderDeleted: boolean; lineDeleted: boolean; cancelledAt: string | null; terms: SalesReturnTerms } | null
+  currentState: 'LINE_MISSING' | 'TERMS_UNCHANGED' | 'TERMS_CHANGED'
+}
 export interface RmaOption { optionRef: RmaRef; original: RmaOriginal; remainingAuthorizableQuantity: RmaQty | null; coverage: string; gates: string[] }
 export interface RmaPage<T> { items: T[]; nextCursor: string | null; snapshotRef: RmaRef; capturedAt: string; coverage: string }
 export interface RmaContext { scopeOptions: { optionRef: RmaRef; warehouseId: string; siteId: string; label: string; capabilities: string[] }[]; capabilities: string[] }
@@ -26,6 +33,7 @@ export interface RmaPending { version: 1; commandId: string; applicationId: stri
 export const rmaRoute = (kind: RmaCommandKind) => '/api/wms/rma/v1/applications' + (kind === 'CREATE' ? '' : '/{applicationId}' + (kind === 'SUBMIT' ? '/submit' : kind === 'WITHDRAW' ? '/withdrawals' : ''))
 const root = '/wms/rma/v1', headers = () => ({ 'X-Correlation-Id': crypto.randomUUID(), 'Cache-Control': 'no-store' })
 export const rmaFormalApi = {
+  commercial: (outboundId: string, lineId: string) => http.get<any, EngineeringEnvelope<SalesReturnSource>>(`/erp/sales-return-sources/v1/${encodeURIComponent(outboundId)}/${encodeURIComponent(lineId)}`, { headers: headers() }).then(x => x.data),
   context: () => http.get<any, RmaContext>(`${root}/context`, { headers: headers() }),
   sources: (q: RmaSearch) => http.post<any, RmaPage<RmaOption>>(`${root}/original-fulfilment-options/search`, q, { headers: headers() }),
   labels: (outboundId: string) => http.get<any, EngineeringEnvelope<RmaSourceLabels>>(`/wms/rma/native-applications-v1/sources/${encodeURIComponent(outboundId)}/fulfilment`).then(x => x.data),

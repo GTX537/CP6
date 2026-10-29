@@ -37,7 +37,13 @@
       </fieldset></form>
     </section>
     <section v-if="detail"><h2>申请详情</h2><p>{{ states[detail.state] }} · 版本 {{ detail.applicationVersion }} / {{ headVersion }}</p><p>原因：{{ detail.reasonCode }}</p><p>期望处理：{{ outcomes.find(x => x[0] === detail!.requestedOutcome)?.[1] }}</p>
-      <div class="scroll"><table><thead><tr><th>明细</th><th>申请数量</th><th>原因</th></tr></thead><tbody><tr v-for="(line, index) in detail.requestedLines" :key="line.lineId"><td>{{ index + 1 }}</td><td>{{ line.requestedQuantity.value }} {{ line.requestedQuantity.uom.code }}</td><td>{{ line.reasonDetail }}</td></tr></tbody></table></div>
+      <div class="scroll"><table><thead><tr><th>明细</th><th>申请数量</th><th>原因</th><th>原订单商业记录</th></tr></thead><tbody><tr v-for="(line, index) in detail.requestedLines" :key="line.lineId"><td>{{ index + 1 }}</td><td>{{ line.requestedQuantity.value }} {{ line.requestedQuantity.uom.code }}</td><td>{{ line.reasonDetail }}</td><td><button v-if="line.originalSnapshot.commercialSnapshotRef" :disabled="busy" @click="readCommercial(line.originalSnapshot)">查看原商业记录</button><span v-else>发运时未保存</span></td></tr></tbody></table></div>
+      <section v-if="commercial" aria-label="原订单商业记录"><h3>{{ commercial.original.orderNumber }} · 原订单行 {{ commercial.original.orderLineNumber }} · {{ commercial.original.productCode }}</h3>
+        <p>发运时保存于 {{ commercial.original.capturedAt }}。此记录用于追溯，不代表可退额度、贷项或退款批准。</p>
+        <p>{{ commercialStates[commercial.currentState] }}</p>
+        <p v-if="commercial.current">当前物料：{{ commercial.current.productCode }}；客户：{{ commercial.current.customerCode }}<span v-if="commercial.current.cancelledAt">；订单已取消</span><span v-if="commercial.current.orderDeleted || commercial.current.lineDeleted">；原记录已删除</span></p>
+        <div class="scroll"><table><thead><tr><th>字段</th><th>发运时原值</th><th>当前值</th></tr></thead><tbody><tr v-for="field in commercialFields" :key="field.key"><td>{{ field.label }}</td><td>{{ commercialValue(commercial.original.terms[field.key]) }}</td><td>{{ commercial.current ? commercialValue(commercial.current.terms[field.key]) : '原明细已不存在' }}</td></tr></tbody></table></div>
+      </section>
       <button :disabled="busy || detail.applicationVersion === 1" @click="history(detail.applicationVersion - 1)">上一版本</button><button :disabled="busy || detail.applicationVersion === headVersion" @click="history(detail.applicationVersion + 1)">下一版本</button>
       <div v-if="isHead && selectedScope && !editing">
         <button v-if="canWrite && detail.state === 'DRAFT'" :disabled="busy || blocked" @click="edit">编辑草稿</button>
@@ -51,7 +57,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, shallowRef, toRaw } from 'vue'
-import { rmaFormalApi as api, type FormalApplication, type RmaContext, type RmaOption, type RmaOrderFact, type RmaPage, type RmaPending, type RmaRef, type RmaRequestedLine, type RmaSummary } from '@/api/wms/rmaFormalApplications'
+import { rmaFormalApi as api, type FormalApplication, type RmaContext, type RmaOption, type RmaOrderFact, type RmaOriginal, type RmaPage, type RmaPending, type RmaRef, type RmaRequestedLine, type RmaSummary, type SalesReturnSource, type SalesReturnTerms } from '@/api/wms/rmaFormalApplications'
 import { rmaApplicationsApi, type RmaScope } from '@/api/wms/rmaApplications'
 import { pendingFormal, recoverFormal, writeFormal } from '@/auth/rmaFormalRecovery'
 import { AUTH_EVENT } from '@/auth/identity'
@@ -70,10 +76,19 @@ const sources = shallowRef<Choice[]>([]), sourceCursors = ref<(string | null)[]>
 const lines = ref<DraftLine[]>([]), customer = shallowRef<RmaRef | null>(null), reasonCode = ref(''), outcome = ref('TO_BE_DECIDED'), remarks = ref(''), changeReason = ref('')
 const editing = shallowRef<FormalApplication | null>(null), detail = shallowRef<FormalApplication | null>(null), headVersion = ref(1), transitionReason = ref('')
 const isHead = computed(() => detail.value?.applicationVersion === headVersion.value)
+const commercial = shallowRef<SalesReturnSource | null>(null)
+const commercialStates = { LINE_MISSING: '当前原明细已不存在；原商业记录仍保留。', TERMS_UNCHANGED: '当前商业字段与发运时一致。', TERMS_CHANGED: '当前商业字段已变化，原值保持不变。' }
+const commercialFields: { key: keyof SalesReturnTerms; label: string }[] = [
+  { key: 'currencyCode', label: '币种' }, { key: 'fxRate', label: '汇率' }, { key: 'quantity', label: '原订单数量' }, { key: 'quantityUnit', label: '数量单位' },
+  { key: 'priceUnit', label: '计价单位' }, { key: 'setUnitPrice', label: '设定单价' }, { key: 'individualUnitPrice', label: '个别单价' }, { key: 'amount', label: '原订单行金额' },
+  { key: 'headerSalesPriceDivision', label: '订单计价区分' }, { key: 'lineSalesPriceDivision', label: '明细计价区分' }, { key: 'specialPriceFlag', label: '特殊价格标记' }, { key: 'provisionalPrice', label: '暂定价格' },
+]
+const commercialValue = (value: string | boolean | null) => value === null ? '未记录' : typeof value === 'boolean' ? value ? '是' : '否' : value
+async function readCommercial(original: RmaOriginal) { await run(async check => { commercial.value = null; const value = await api.commercial(original.shipmentRef.id, original.shipmentLineId); check(); commercial.value = value }) }
 const states = { DRAFT: '草稿', SUBMITTED: '已提交 · 待授权', WITHDRAWN: '已撤回', SUPERSEDED: '已替代' }
 const outcomes = [['TO_BE_DECIDED', '待协商'], ['RETURN_ONLY', '仅退回实物'], ['CREDIT', '贷项'], ['REFUND', '退款'], ['REPLACEMENT', '换货'], ['SUPPLEMENTARY_SHIPMENT', '补发']] as const
 let live = true, generation = 0
-function clearDraft() { lines.value = []; customer.value = null; editing.value = null; reasonCode.value = ''; outcome.value = 'TO_BE_DECIDED'; remarks.value = ''; changeReason.value = '' }
+function clearDraft() { commercial.value = null; lines.value = []; customer.value = null; editing.value = null; reasonCode.value = ''; outcome.value = 'TO_BE_DECIDED'; remarks.value = ''; changeReason.value = '' }
 function clear() { context.value = null; identity.value = null; pending.value = null; storageError.value = false; applications.value = null; sources.value = []; detail.value = null; clearDraft(); transitionReason.value = '' }
 async function refreshPending(check: () => void) {
   if (!identity.value) return
