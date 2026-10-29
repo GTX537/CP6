@@ -161302,6 +161302,16 @@
       "date": "2026-10-29",
       "change": "W214 internal execution intent/prepare keys/action recovery/apply-seal decision: 13 actual isolated PostgreSQL execution intent behavior/migration tests PASS;0skip;no UI change; Handoff released, Main closeout pending. No real Owner/Stock/08E adoption or formal acceptance; original goal unchanged.",
       "evidence": "docs/development/evidence/W214-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W214 archived once; only its limited execution-intent lifecycles closed. W215 native stock evidence and coverage assessment admitted60–100min; actual rule application and original seven-day exits remain.",
+      "evidence": "docs/development/dispatch/20261029-wave215/README.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W215 exact native stock facts/current permissions/coverage assessment: 7 actual PostgreSQL/Program HTTP;29Vue/type/build PASS;0skip; Handoff released, Main closeout pending. No complete occupancy/08E/formal Stock write adoption or enterprise acceptance; original goal unchanged.",
+      "evidence": "docs/development/evidence/W215-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -186356,7 +186366,7 @@
         }
       },
       "wave214_execution_intent": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "workspace_task": "W214-01",
         "report": "docs/development/evidence/W214-01/DELIVERY.md",
         "scope": "Internal PostgreSQL execution intents, immutable prepare keys and action payloads, business/action fences, apply-versus-seal decision, original recovery and atomic terminal action persistence.",
@@ -186368,6 +186378,43 @@
           "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/190",
           "exact_tree_adoption": true,
           "at": "2026-10-29T00:16:31.900995+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave214-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W214-01",
+          "source": "0ca2ae01c8315e45a5db55d643a5fc19685e535a",
+          "remote_target": "96027c56280f7207ca23aae2ed71941fd44dd9ea",
+          "branch": "codex/w214-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/637"
+        }
+      },
+      "wave215_stock_assessment": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "workspace_task": "W215-01",
+        "report": "docs/development/evidence/W215-01/DELIVERY.md",
+        "scope": "Exact current candidate-bound native Stock observation through independent current Stock/Location/Warehouse/rule authority, precise per-row quantities, bounded current-row coverage and explicit unresolved capacity obligations, with actual API and UI adoption.",
+        "remaining": "Read-only point-in-time observation: COMPLETE_CURRENT_ROWS is only native active Stock rows, never complete physical/capacity/obligation coverage. No aggregation of mixed units or Physical+Allocated, no invented zero for unknown, no formal Root/Claim/conversion/delegation proof, no prepare protection or08E impact/application receipt. Actual source/obligation mapping, effect Owner protection, rule application and formal Transfer/Stock/REP/RMA remain. Isolated local PostgreSQL/Program HTTP and UI only, no enterprise acceptance, Actions or deployment. Original seven-day exits unchanged.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "aa9db9978eb42578d98538938b068b4f3b8df74c",
+          "main": "b842475c6a389b0a5cdb83d555c791374f95e0b8",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/191",
+          "exact_tree_adoption": true,
+          "at": "2026-10-29T00:48:42.144168+00:00"
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
@@ -187253,7 +187300,7 @@
         }
       },
       "wave214_execution_intent": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "workspace_task": "W214-01",
         "report": "docs/development/evidence/W214-01/DELIVERY.md",
         "scope": "Internal PostgreSQL execution intents, immutable prepare keys and action payloads, business/action fences, apply-versus-seal decision, original recovery and atomic terminal action persistence.",
@@ -187265,6 +187312,43 @@
           "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/190",
           "exact_tree_adoption": true,
           "at": "2026-10-29T00:16:31.900995+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave214-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W214-01",
+          "source": "0ca2ae01c8315e45a5db55d643a5fc19685e535a",
+          "remote_target": "96027c56280f7207ca23aae2ed71941fd44dd9ea",
+          "branch": "codex/w214-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/637"
+        }
+      },
+      "wave215_stock_assessment": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "workspace_task": "W215-01",
+        "report": "docs/development/evidence/W215-01/DELIVERY.md",
+        "scope": "Exact current candidate-bound native Stock observation through independent current Stock/Location/Warehouse/rule authority, precise per-row quantities, bounded current-row coverage and explicit unresolved capacity obligations, with actual API and UI adoption.",
+        "remaining": "Read-only point-in-time observation: COMPLETE_CURRENT_ROWS is only native active Stock rows, never complete physical/capacity/obligation coverage. No aggregation of mixed units or Physical+Allocated, no invented zero for unknown, no formal Root/Claim/conversion/delegation proof, no prepare protection or08E impact/application receipt. Actual source/obligation mapping, effect Owner protection, rule application and formal Transfer/Stock/REP/RMA remain. Isolated local PostgreSQL/Program HTTP and UI only, no enterprise acceptance, Actions or deployment. Original seven-day exits unchanged.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "aa9db9978eb42578d98538938b068b4f3b8df74c",
+          "main": "b842475c6a389b0a5cdb83d555c791374f95e0b8",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/191",
+          "exact_tree_adoption": true,
+          "at": "2026-10-29T00:48:42.144168+00:00"
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
@@ -196891,10 +196975,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261029-wave214",
-      "path": "docs/development/dispatch/20261029-wave214/README.md",
-      "baseline_sha": "ab31a0e8a7c5941b1714fc04b7e4dedb1c6890b7",
-      "registered_at": "2026-10-29T00:06:36.463395+00:00",
+      "id": "20261029-wave215",
+      "path": "docs/development/dispatch/20261029-wave215/README.md",
+      "baseline_sha": "96027c56280f7207ca23aae2ed71941fd44dd9ea",
+      "registered_at": "2026-10-29T00:36:48.404547+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -196913,29 +196997,29 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W214-01",
-          "workspace_task": "W214-01",
+          "id": "W215-01",
+          "workspace_task": "W215-01",
           "related_tasks": [
             "WP10-01",
             "WP10-10"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Execution intent and protection action persistence foundation",
+          "title": "Native location stock evidence and occupancy coverage assessment",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "a115195c5f1416583eb1119791b575059330ed57",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T000636Z-wave214-start/MESSAGE.md",
-            "at": "2026-10-29T00:06:36.463395+00:00",
-            "branch": "codex/w214-handoff"
+            "commit": "3c8566388d44bd0c0575a5a20b5bcd5af38ae503",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T003648Z-wave215-start/MESSAGE.md",
+            "at": "2026-10-29T00:36:48.404547+00:00",
+            "branch": "codex/w215-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w214-01",
-          "planned_scope_ref": "docs/development/dispatch/20261029-wave214/README.md",
+          "branch": "codex/w215-01",
+          "planned_scope_ref": "docs/development/dispatch/20261029-wave215/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -196944,12 +197028,12 @@
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
-            "Main:execution-intent-store",
-            "Main:PostgreSQL-execution-intent-migration",
-            "Main:protection-action-persistence"
+            "Main:native-location-stock-source",
+            "Main:location-rule-stock-assessment",
+            "Main:location-rule-stock-ui"
           ],
-          "validation": "13 actual isolated PostgreSQL execution intent behavior/migration tests PASS;0skip;no UI change",
-          "worker_delivery_ref": "docs/development/evidence/W214-01/DELIVERY.md",
+          "validation": "7 actual PostgreSQL/Program HTTP;29Vue/type/build PASS;0skip",
+          "worker_delivery_ref": "docs/development/evidence/W215-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -196960,11 +197044,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-29T00:05:28.110206+00:00",
+        "started_at": "2026-10-29T00:35:40.637030+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          50,
-          80
+          60,
+          100
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -196972,7 +197056,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Adopt real effect-Owner protection including all native final write gates, old obligation continuation and prepare-key tombstones; resolve actual source/coverage/exclusive delegation, then08E and formal Transfer/Stock. Preserve D2/D3/D5/D6/D7 exits,125targets/247formalacceptances/full task states.",
+      "next_action": "Implement actual source/obligation ownership and exact capacity assignment/delegation, adopt all affected write guards and prepare-key tombstones, then native08E/Transfer/Stock/REP/RMA. Preserve D3/D5/D6/D7 and all original seven-day exits; existing read-only native stock evidence cannot authorize writes.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -196980,7 +197064,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 11.75
+      "elapsed_registered_wave_minutes": 14.15
     },
     "wave_history": [
       {
@@ -224936,6 +225020,121 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/189"
           }
         ]
+      },
+      {
+        "id": "20261029-wave214",
+        "path": "docs/development/dispatch/20261029-wave214/README.md",
+        "baseline_sha": "ab31a0e8a7c5941b1714fc04b7e4dedb1c6890b7",
+        "registered_at": "2026-10-29T00:06:36.463395+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W214-01",
+            "workspace_task": "W214-01",
+            "related_tasks": [
+              "WP10-01",
+              "WP10-10"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Execution intent and protection action persistence foundation",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "a115195c5f1416583eb1119791b575059330ed57",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T000636Z-wave214-start/MESSAGE.md",
+              "at": "2026-10-29T00:06:36.463395+00:00",
+              "branch": "codex/w214-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w214-01",
+            "planned_scope_ref": "docs/development/dispatch/20261029-wave214/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:execution-intent-store",
+              "Main:PostgreSQL-execution-intent-migration",
+              "Main:protection-action-persistence"
+            ],
+            "validation": "13 actual isolated PostgreSQL execution intent behavior/migration tests PASS;0skip;no UI change",
+            "worker_delivery_ref": "docs/development/evidence/W214-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave214-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-29T00:05:28.110206+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            50,
+            80
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Adopt real effect-Owner protection including all native final write gates, old obligation continuation and prepare-key tombstones; resolve actual source/coverage/exclusive delegation, then08E and formal Transfer/Stock. Preserve D2/D3/D5/D6/D7 exits,125targets/247formalacceptances/full task states.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave214-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 11.75,
+        "actual_registered_wave_minutes": 14.48,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W214-01",
+            "source": "0ca2ae01c8315e45a5db55d643a5fc19685e535a",
+            "remote_target": "96027c56280f7207ca23aae2ed71941fd44dd9ea",
+            "branch": "codex/w214-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/637"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W214-HANDOFF",
+            "source": "61476b717638cb91293e26a21110d7d7d5f9f4ec",
+            "remote_target": "273e80586435cabfc6654b663295afc9a260a5d8",
+            "branch": "codex/w214-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/190"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -225013,7 +225212,7 @@
           "id": "D2",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W214-01",
+          "current_window": "W215-01",
           "prerequisite_adjustment": "Formal SourceDemand/Transfer providers and RMA IN/terminal Owner contracts remain prerequisites; current read Owners and trusted creation/inheritance are adopted within their precise scope.",
           "adopted_window": "W42-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/395",
@@ -225023,13 +225222,13 @@
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "Adopt real effect-Owner protection including all native final write gates, old obligation continuation and prepare-key tombstones; resolve actual source/coverage/exclusive delegation, then08E and formal Transfer/Stock. Preserve D2/D3/D5/D6/D7 exits,125targets/247formalacceptances/full task states.",
+          "next_action": "Implement actual source/obligation ownership and exact capacity assignment/delegation, adopt all affected write guards and prepare-key tombstones, then native08E/Transfer/Stock/REP/RMA. Preserve D3/D5/D6/D7 and all original seven-day exits; existing read-only native stock evidence cannot authorize writes.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W140-01/DELIVERY.md",
           "last_inheritance_report": "docs/development/evidence/W137-01/DELIVERY.md",
           "last_paging_report": "docs/development/evidence/W141-01/DELIVERY.md",
           "last_demand_budget_report": "docs/development/evidence/W142-01/DELIVERY.md",
-          "formal_master_gap": "W206-213 native warehouse/location/candidate/source/review/clock and internal capacity foundations delivered. W214 execution intent/actions cover only participating writers, no external closure authority. Actual effect gates, Owner tombstones/coverage/delegation, source/root adoption and08E remain.",
+          "formal_master_gap": "W206-214 prerequisites and W215 native stock read evidence adopted. Full source/obligation/measurement/delegation and effect guards,08E and formal Transfer/Stock remain; current-stock completeness is not complete occupancy.",
           "last_inventory_identity_report": "docs/development/evidence/W204-01/DELIVERY.md",
           "last_transfer_environment_report": "docs/development/evidence/W205-01/DELIVERY.md",
           "last_warehouse_draft_report": "docs/development/evidence/W206-01/DELIVERY.md",
@@ -225040,7 +225239,8 @@
           "last_rule_review_report": "docs/development/evidence/W211-01/DELIVERY.md",
           "last_clock_policy_report": "docs/development/evidence/W212-01/DELIVERY.md",
           "last_capacity_store_report": "docs/development/evidence/W213-01/DELIVERY.md",
-          "last_execution_intent_report": "docs/development/evidence/W214-01/DELIVERY.md"
+          "last_execution_intent_report": "docs/development/evidence/W214-01/DELIVERY.md",
+          "last_stock_assessment_report": "docs/development/evidence/W215-01/DELIVERY.md"
         },
         {
           "id": "D3",

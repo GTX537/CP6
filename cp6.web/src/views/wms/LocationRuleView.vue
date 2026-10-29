@@ -22,6 +22,7 @@
       <p v-if="selected.referenceBinding">绑定字典版本 {{ selected.referenceBinding.policy.version }}，来源登记 {{ selected.referenceBinding.registryVersion }}。</p>
       <button :disabled="busy || !!pending || !canResolve" @click="resolve">绑定已保存候选来源</button><p>绑定针对上方已保存版本；下方尚未保存的修改不会一并提交。</p>
       <RouterLink :to="`/wms/location-rule/${selected.reference.id}/review`">进入此候选的规则审批</RouterLink>
+      <LocationStockPanel v-if="context" :source="selected" :scope="context.scope" :disabled="busy || !!pending" />
       <p v-if="selected.redactedFields.length">部分字段无读取权限，相关原文已隐藏。</p>
       <label>历史版本<input v-model="historyVersion" aria-label="历史版本" inputmode="numeric" /></label><button :disabled="busy" @click="readHistory">读取历史</button>
       <pre v-if="history">{{ JSON.stringify(history.candidate, null, 2) }}</pre><p v-if="history">上方为版本 {{ history.reference.version }} 的原候选，只供读取。</p>
@@ -58,6 +59,7 @@ import { transferResponse as value } from '@/auth/transferEnvironmentRecovery'
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
 import { usePermissionStore } from '@/stores/permission'
+import LocationStockPanel from './LocationStockPanel.vue'
 const route = useRoute(), location = computed(() => String(route.params.id || '')), permissions = usePermissionStore()
 const context = ref<RuleContext | null>(null), rows = ref<RuleView[]>([]), selected = ref<RuleView | null>(null), history = ref<RuleView | null>(null)
 const historyVersion = ref(''), reason = ref(''), busy = ref(false), pending = ref<string | null>(null), page = ref(1), editing = ref(false), error = ref(''), notice = ref('')
