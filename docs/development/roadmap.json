@@ -161292,6 +161292,16 @@
       "date": "2026-10-28",
       "change": "W213 internal capacity domain locks/exact shares/aliases/atomic realization/recovery: 12 actual isolated PostgreSQL capacity behavior/migration tests PASS;0skip;no UI change; Handoff released, Main closeout pending. No real Owner/Stock/08E adoption or formal acceptance; original goal unchanged.",
       "evidence": "docs/development/evidence/W213-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W213 archived once; only its limited capacity-store lifecycles closed. W214 execution intent and protection actions foundation admitted50–80min; actual rule application and original seven-day exits remain.",
+      "evidence": "docs/development/dispatch/20261029-wave214/README.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W214 internal execution intent/prepare keys/action recovery/apply-seal decision: 13 actual isolated PostgreSQL execution intent behavior/migration tests PASS;0skip;no UI change; Handoff released, Main closeout pending. No real Owner/Stock/08E adoption or formal acceptance; original goal unchanged.",
+      "evidence": "docs/development/evidence/W214-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -186309,7 +186319,7 @@
         }
       },
       "wave213_capacity_store": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "workspace_task": "W213-01",
         "report": "docs/development/evidence/W213-01/DELIVERY.md",
         "scope": "Internal PostgreSQL capacity-domain locks, immutable exact obligation/physical shares, aliases, atomic partial realization/release, precise conversion and original-result recovery within the actual caller transaction.",
@@ -186321,6 +186331,43 @@
           "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/189",
           "exact_tree_adoption": true,
           "at": "2026-10-28T23:53:45.867016+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave213-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W213-01",
+          "source": "f23324023e51744f0a161713bc0e24c295bc365d",
+          "remote_target": "ab31a0e8a7c5941b1714fc04b7e4dedb1c6890b7",
+          "branch": "codex/w213-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/636"
+        }
+      },
+      "wave214_execution_intent": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "workspace_task": "W214-01",
+        "report": "docs/development/evidence/W214-01/DELIVERY.md",
+        "scope": "Internal PostgreSQL execution intents, immutable prepare keys and action payloads, business/action fences, apply-versus-seal decision, original recovery and atomic terminal action persistence.",
+        "remaining": "Internal persistence prerequisite only: PARTICIPATING_WRITERS_ONLY/externalClosureAuthority=false, no HTTP/DI/native Stock/Selector adoption. Future Owner must validate authoritative originals, current permission/control, complete dependency coverage and every effect writer. Remote prepare tombstones, source/Root/delegation adoption and restoration successor CAS remain. Isolated local PostgreSQL only; no enterprise acceptance, existing-environment migration, Actions or deployment. Original seven-day exits remain.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "61476b717638cb91293e26a21110d7d7d5f9f4ec",
+          "main": "273e80586435cabfc6654b663295afc9a260a5d8",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/190",
+          "exact_tree_adoption": true,
+          "at": "2026-10-29T00:16:31.900995+00:00"
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
@@ -187169,7 +187216,7 @@
         }
       },
       "wave213_capacity_store": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "workspace_task": "W213-01",
         "report": "docs/development/evidence/W213-01/DELIVERY.md",
         "scope": "Internal PostgreSQL capacity-domain locks, immutable exact obligation/physical shares, aliases, atomic partial realization/release, precise conversion and original-result recovery within the actual caller transaction.",
@@ -187181,6 +187228,43 @@
           "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/189",
           "exact_tree_adoption": true,
           "at": "2026-10-28T23:53:45.867016+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave213-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W213-01",
+          "source": "f23324023e51744f0a161713bc0e24c295bc365d",
+          "remote_target": "ab31a0e8a7c5941b1714fc04b7e4dedb1c6890b7",
+          "branch": "codex/w213-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/636"
+        }
+      },
+      "wave214_execution_intent": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "workspace_task": "W214-01",
+        "report": "docs/development/evidence/W214-01/DELIVERY.md",
+        "scope": "Internal PostgreSQL execution intents, immutable prepare keys and action payloads, business/action fences, apply-versus-seal decision, original recovery and atomic terminal action persistence.",
+        "remaining": "Internal persistence prerequisite only: PARTICIPATING_WRITERS_ONLY/externalClosureAuthority=false, no HTTP/DI/native Stock/Selector adoption. Future Owner must validate authoritative originals, current permission/control, complete dependency coverage and every effect writer. Remote prepare tombstones, source/Root/delegation adoption and restoration successor CAS remain. Isolated local PostgreSQL only; no enterprise acceptance, existing-environment migration, Actions or deployment. Original seven-day exits remain.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "61476b717638cb91293e26a21110d7d7d5f9f4ec",
+          "main": "273e80586435cabfc6654b663295afc9a260a5d8",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/190",
+          "exact_tree_adoption": true,
+          "at": "2026-10-29T00:16:31.900995+00:00"
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
@@ -196807,10 +196891,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261028-wave213",
-      "path": "docs/development/dispatch/20261028-wave213/README.md",
-      "baseline_sha": "7e287d305807225d12f6c44a44b1dd0ec5831769",
-      "registered_at": "2026-10-28T23:44:27.968639+00:00",
+      "id": "20261029-wave214",
+      "path": "docs/development/dispatch/20261029-wave214/README.md",
+      "baseline_sha": "ab31a0e8a7c5941b1714fc04b7e4dedb1c6890b7",
+      "registered_at": "2026-10-29T00:06:36.463395+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -196829,29 +196913,29 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W213-01",
-          "workspace_task": "W213-01",
+          "id": "W214-01",
+          "workspace_task": "W214-01",
           "related_tasks": [
             "WP10-01",
             "WP10-10"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Capacity shares and atomic realization foundation",
+          "title": "Execution intent and protection action persistence foundation",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "7bd22e42ad14d1b021018e81dd3779ac87c72d6c",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261028T234427Z-wave213-start/MESSAGE.md",
-            "at": "2026-10-28T23:44:27.968639+00:00",
-            "branch": "codex/w213-handoff"
+            "commit": "a115195c5f1416583eb1119791b575059330ed57",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T000636Z-wave214-start/MESSAGE.md",
+            "at": "2026-10-29T00:06:36.463395+00:00",
+            "branch": "codex/w214-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w213-01",
-          "planned_scope_ref": "docs/development/dispatch/20261028-wave213/README.md",
+          "branch": "codex/w214-01",
+          "planned_scope_ref": "docs/development/dispatch/20261029-wave214/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -196860,12 +196944,12 @@
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
-            "Main:capacity-occupancy-store",
-            "Main:PostgreSQL-capacity-migration",
-            "Main:capacity-domain-locks"
+            "Main:execution-intent-store",
+            "Main:PostgreSQL-execution-intent-migration",
+            "Main:protection-action-persistence"
           ],
-          "validation": "12 actual isolated PostgreSQL capacity behavior/migration tests PASS;0skip;no UI change",
-          "worker_delivery_ref": "docs/development/evidence/W213-01/DELIVERY.md",
+          "validation": "13 actual isolated PostgreSQL execution intent behavior/migration tests PASS;0skip;no UI change",
+          "worker_delivery_ref": "docs/development/evidence/W214-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -196876,11 +196960,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-28T23:43:05.754042+00:00",
+        "started_at": "2026-10-29T00:05:28.110206+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
           50,
-          75
+          80
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -196888,7 +196972,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Implement real source/coverage and exclusive delegation adoption plus effect-Owner protection, then08E rule application and formal Transfer/Stock. Preserve all original D2/D3/D5/D6/D7 exits,125targets/247formalacceptances/full task states.",
+      "next_action": "Adopt real effect-Owner protection including all native final write gates, old obligation continuation and prepare-key tombstones; resolve actual source/coverage/exclusive delegation, then08E and formal Transfer/Stock. Preserve D2/D3/D5/D6/D7 exits,125targets/247formalacceptances/full task states.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -196896,7 +196980,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 11.37
+      "elapsed_registered_wave_minutes": 11.75
     },
     "wave_history": [
       {
@@ -224737,6 +224821,121 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/188"
           }
         ]
+      },
+      {
+        "id": "20261028-wave213",
+        "path": "docs/development/dispatch/20261028-wave213/README.md",
+        "baseline_sha": "7e287d305807225d12f6c44a44b1dd0ec5831769",
+        "registered_at": "2026-10-28T23:44:27.968639+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W213-01",
+            "workspace_task": "W213-01",
+            "related_tasks": [
+              "WP10-01",
+              "WP10-10"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Capacity shares and atomic realization foundation",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "7bd22e42ad14d1b021018e81dd3779ac87c72d6c",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261028T234427Z-wave213-start/MESSAGE.md",
+              "at": "2026-10-28T23:44:27.968639+00:00",
+              "branch": "codex/w213-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w213-01",
+            "planned_scope_ref": "docs/development/dispatch/20261028-wave213/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:capacity-occupancy-store",
+              "Main:PostgreSQL-capacity-migration",
+              "Main:capacity-domain-locks"
+            ],
+            "validation": "12 actual isolated PostgreSQL capacity behavior/migration tests PASS;0skip;no UI change",
+            "worker_delivery_ref": "docs/development/evidence/W213-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave213-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-28T23:43:05.754042+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            50,
+            75
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Implement real source/coverage and exclusive delegation adoption plus effect-Owner protection, then08E rule application and formal Transfer/Stock. Preserve all original D2/D3/D5/D6/D7 exits,125targets/247formalacceptances/full task states.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave213-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 11.37,
+        "actual_registered_wave_minutes": 14.35,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W213-01",
+            "source": "f23324023e51744f0a161713bc0e24c295bc365d",
+            "remote_target": "ab31a0e8a7c5941b1714fc04b7e4dedb1c6890b7",
+            "branch": "codex/w213-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/636"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W213-HANDOFF",
+            "source": "4dda4884760c2c1581f5f97e8841723a5a28ec67",
+            "remote_target": "8cc0f942ddd5fa7740c58af8bd83b3db024b834c",
+            "branch": "codex/w213-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/189"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -224814,7 +225013,7 @@
           "id": "D2",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W213-01",
+          "current_window": "W214-01",
           "prerequisite_adjustment": "Formal SourceDemand/Transfer providers and RMA IN/terminal Owner contracts remain prerequisites; current read Owners and trusted creation/inheritance are adopted within their precise scope.",
           "adopted_window": "W42-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/395",
@@ -224824,13 +225023,13 @@
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "Implement real source/coverage and exclusive delegation adoption plus effect-Owner protection, then08E rule application and formal Transfer/Stock. Preserve all original D2/D3/D5/D6/D7 exits,125targets/247formalacceptances/full task states.",
+          "next_action": "Adopt real effect-Owner protection including all native final write gates, old obligation continuation and prepare-key tombstones; resolve actual source/coverage/exclusive delegation, then08E and formal Transfer/Stock. Preserve D2/D3/D5/D6/D7 exits,125targets/247formalacceptances/full task states.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W140-01/DELIVERY.md",
           "last_inheritance_report": "docs/development/evidence/W137-01/DELIVERY.md",
           "last_paging_report": "docs/development/evidence/W141-01/DELIVERY.md",
           "last_demand_budget_report": "docs/development/evidence/W142-01/DELIVERY.md",
-          "formal_master_gap": "W206-212 native warehouse/location/candidate/source/review/clock foundations delivered. W213 capacity persistence is internal recorded facts only. Real coverage/exclusive delegation, source/root adoption, effect protection and08E remain.",
+          "formal_master_gap": "W206-213 native warehouse/location/candidate/source/review/clock and internal capacity foundations delivered. W214 execution intent/actions cover only participating writers, no external closure authority. Actual effect gates, Owner tombstones/coverage/delegation, source/root adoption and08E remain.",
           "last_inventory_identity_report": "docs/development/evidence/W204-01/DELIVERY.md",
           "last_transfer_environment_report": "docs/development/evidence/W205-01/DELIVERY.md",
           "last_warehouse_draft_report": "docs/development/evidence/W206-01/DELIVERY.md",
@@ -224840,7 +225039,8 @@
           "last_rule_references_report": "docs/development/evidence/W210-01/DELIVERY.md",
           "last_rule_review_report": "docs/development/evidence/W211-01/DELIVERY.md",
           "last_clock_policy_report": "docs/development/evidence/W212-01/DELIVERY.md",
-          "last_capacity_store_report": "docs/development/evidence/W213-01/DELIVERY.md"
+          "last_capacity_store_report": "docs/development/evidence/W213-01/DELIVERY.md",
+          "last_execution_intent_report": "docs/development/evidence/W214-01/DELIVERY.md"
         },
         {
           "id": "D3",

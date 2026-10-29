@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W213 容量份额底座](dispatch/20261028-wave213/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
+> 当前：[W214 执行意图底座](dispatch/20261029-wave214/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
+
+> 历史快照：[W213 容量份额底座](dispatch/20261028-wave213/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
 
 > 历史快照：[W212 时钟政策与时间评估](dispatch/20261028-wave212/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
 
