@@ -147,6 +147,7 @@ public partial class StockMovementService : IStockMovementService
             _db.StockTransactions.Add(txn);
 
             await _db.SaveChangesAsync(ct);
+            if (_db.Database.IsNpgsql()) await StockMovementSequenceV1.Record(_db,stock.Id,txn.Id,ct);
             if(binding!=null)await InheritanceAccess.CompleteStockTransaction(binding,ct);
             if (tx != null) await tx.CommitAsync(ct);
             var canPublishNow = publishWhenCommitted && (tx != null || isInMemory);

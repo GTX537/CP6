@@ -15,7 +15,8 @@ public sealed class RmaFormalResultAttribute : ActionFilterAttribute
     {
         var http = context.HttpContext; http.Response.Headers.CacheControl = "no-store";
         var correlation = http.Request.Headers["X-Correlation-Id"].ToString();
-        var queryPath = http.Request.Path.Value?.Contains("/authorization",StringComparison.Ordinal) == true
+        var queryPath = http.Request.Path.Value?.Contains("/physical",StringComparison.Ordinal) == true
+            ? "/api/wms/rma/v1/physical/commands/query" : http.Request.Path.Value?.Contains("/authorization",StringComparison.Ordinal) == true
             ? "/api/wms/rma/v1/authorization/commands/query" : http.Request.Path.StartsWithSegments("/api/wms/rma/v1/delivery-evidence")
             ? "/api/wms/rma/v1/delivery-evidence/commands/query" : http.Request.Path.StartsWithSegments("/api/wms/rma/v1/policies")
             ? "/api/wms/rma/v1/policies/commands/query" : "/api/wms/rma/v1/commands/query";
@@ -43,6 +44,22 @@ public sealed class RmaFormalResultAttribute : ActionFilterAttribute
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public sealed class RmaFormalController(RmaFormalOwnerV1 owner) : ControllerBase
 {
+    [HttpGet("applications/{applicationId:guid}/physical/context")]
+    public async Task<IActionResult> PhysicalContext(Guid applicationId, CancellationToken ct) => Ok(await owner.PhysicalReturnContextAsync(applicationId,ct));
+    [HttpGet("applications/{applicationId:guid}/physical/works/{workId:guid}")]
+    public async Task<IActionResult> PhysicalWork(Guid applicationId, Guid workId, int? revision, CancellationToken ct) => Ok(await owner.ReadPhysicalWorkAsync(applicationId,workId,revision,ct));
+    [HttpGet("applications/{applicationId:guid}/physical/works/{workId:guid}/inbound")]
+    public async Task<IActionResult> PhysicalInbound(Guid applicationId, Guid workId, CancellationToken ct) => Ok(await owner.QueryPhysicalInboundAsync(applicationId,workId,ct));
+    [HttpPost("applications/{applicationId:guid}/physical/registrations"),RequestSizeLimit(1048576)]
+    public async Task<IActionResult> PhysicalRegister(Guid applicationId, RmaRegisterPhysicalReturnV1 input, CancellationToken ct) => Ok(await owner.RegisterPhysicalReturnAsync(applicationId,Command(),input,ct));
+    [HttpPost("applications/{applicationId:guid}/physical/works/{workId:guid}/prepare"),RequestSizeLimit(65536)]
+    public async Task<IActionResult> PhysicalPrepare(Guid applicationId, Guid workId, RmaPhysicalWorkCommandV1 input, CancellationToken ct) => Ok(await owner.PreparePhysicalReturnAsync(applicationId,workId,Command(),input,ct));
+    [HttpPost("applications/{applicationId:guid}/physical/works/{workId:guid}/commit"),RequestSizeLimit(65536)]
+    public async Task<IActionResult> PhysicalCommit(Guid applicationId, Guid workId, RmaPhysicalWorkCommandV1 input, CancellationToken ct) => Ok(await owner.CommitPhysicalReturnAsync(applicationId,workId,Command(),input,ct));
+    [HttpPost("applications/{applicationId:guid}/physical/works/{workId:guid}/seal"),RequestSizeLimit(65536)]
+    public async Task<IActionResult> PhysicalSeal(Guid applicationId, Guid workId, RmaPhysicalWorkCommandV1 input, CancellationToken ct) => Ok(await owner.SealPhysicalReturnAsync(applicationId,workId,Command(),input,ct));
+    [HttpPost("physical/commands/query"),RequestSizeLimit(65536)]
+    public async Task<IActionResult> PhysicalQuery(RmaPhysicalCommandQueryV1 input, CancellationToken ct) => Ok(await owner.QueryPhysicalCommandAsync(input,ct));
     [HttpGet("applications/{applicationId:guid}/authorization/context")]
     public async Task<IActionResult> AuthorizationContext(Guid applicationId, bool includeEntitlements, CancellationToken ct) => Ok(await owner.AuthorizationContextAsync(applicationId,ct,includeEntitlements));
     [HttpGet("applications/{applicationId:guid}/authorization")]

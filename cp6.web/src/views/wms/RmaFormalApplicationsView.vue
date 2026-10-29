@@ -54,6 +54,7 @@
         <button v-if="canWithdraw && authorization?.outcome !== 'APPROVED' && ['DRAFT', 'SUBMITTED'].includes(detail.state)" :disabled="busy || blocked || !transitionReason.trim()" @click="transition('WITHDRAW')">撤回申请</button>
       </div>
       <RmaAuthorizationPanel v-if="identity && isHead && !editing" :scope="identity" :application-id="detail.applicationId" :submitted="detail.state === 'SUBMITTED'" :can-decide="context!.capabilities.includes('wms.rma.authorization.decide')" :can-revoke="context!.capabilities.includes('wms.rma.authorization.revoke')" @current="authorization = $event" />
+      <RmaPhysicalReturnPanel v-if="identity && isHead && !editing" :scope="identity" :application-id="detail.applicationId" :capabilities="context!.capabilities" />
     </section>
   </main>
 </template>
@@ -68,6 +69,7 @@ import { authenticationCanRead } from '@/auth/browserAuthentication'
 import RmaPolicyPanel from './RmaPolicyPanel.vue'
 import RmaDeliveryEvidencePanel from './RmaDeliveryEvidencePanel.vue'
 import RmaAuthorizationPanel from './RmaAuthorizationPanel.vue'
+import RmaPhysicalReturnPanel from './RmaPhysicalReturnPanel.vue'
 import type { AuthorizationDecision } from '@/api/wms/rmaAuthorizations'
 
 type Choice = RmaOption & { shipment: string; customer: string; product: string; customerRef: RmaRef }

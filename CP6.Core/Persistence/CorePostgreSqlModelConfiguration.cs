@@ -64,5 +64,11 @@ internal static class CorePostgreSqlModelConfiguration
             (typeof(WmsFeatureFlagChange), nameof(WmsFeatureFlagChange.AppliedAtUtc)),
         };
 
-    public static void Apply(ModelBuilder modelBuilder) => PostgreSqlModelConfiguration.Apply(modelBuilder, UtcDateTimes, PostgreSqlFixedTextDomainsV1.Core);
+    public static void Apply(ModelBuilder modelBuilder)
+    {
+        // The authenticated account name is preserved verbatim by the native return receipt writer.
+        modelBuilder.Entity<InboundReceipt>().Property(x => x.OperatorCd).HasMaxLength(100);
+        modelBuilder.Entity<StockTransaction>().Property(x => x.OperatorCd).HasMaxLength(100);
+        PostgreSqlModelConfiguration.Apply(modelBuilder, UtcDateTimes, PostgreSqlFixedTextDomainsV1.Core);
+    }
 }

@@ -13,10 +13,10 @@ using static CP6.Core.Services.Wms.RmaFormalStoreV1;
 
 namespace CP6.Core.Services.Wms;
 
-/// <summary>Formal return applications and independent authorization/claims. No stock or financial effect.</summary>
+/// <summary>Formal return applications, independent authorization and physical receipt through WMS-IN.</summary>
 public sealed partial class RmaFormalOwnerV1(CP6Context db, OperationsOwnerV1 owner, ScopeAuthorizationFenceV1 environment,
     QualitySpecificationRuntimeV1 runtime, IDataProtectionProvider protection, FileContentOwnerV1 files, IOptions<RmaApplicationOptionsV1> options,
-    IRmaReturnSourcesV1? returnSources = null)
+    IRmaReturnSourcesV1? returnSources = null, RmaInboundAdapterV1? inbound = null)
 {
     private const string JournalOwner = "Main.Wms.RmaFormalCommand.v1", Contract = "WMS-RMA-01.APPLICATION/1";
     public const string CreateRoute = "/api/wms/rma/v1/applications", EditRoute = CreateRoute + "/{applicationId}",

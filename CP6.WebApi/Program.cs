@@ -664,6 +664,9 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.RmaApplicationOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.RmaFormalOwnerV1>();
 builder.Services.Configure<CP6.Core.Services.Wms.RmaReturnSimulationOptionsV1>(builder.Configuration.GetSection("RmaReturnSimulation"));
 builder.Services.AddSingleton<CP6.Core.Services.Wms.IRmaReturnSourcesV1, CP6.Core.Services.Wms.RmaSimulatedReturnSourcesV1>();
+builder.Services.Configure<CP6.Core.Services.Wms.RmaInboundSimulationOptionsV1>(builder.Configuration.GetSection("RmaInboundSimulation"));
+builder.Services.AddScoped<CP6.Core.Services.Wms.IRmaInboundSourcesV1, CP6.Core.Services.Wms.RmaSimulatedInboundSourcesV1>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.RmaInboundAdapterV1>();
 builder.Services.AddScoped<CP6.Core.Services.Erp.SalesReturnSourceReaderV1>();
 builder.Services.AddOptions<CP6.Core.Services.Wms.RmaApplicationOptionsV1>().Bind(builder.Configuration.GetSection("RmaApplication"))
     .Validate(x => x.IsValid(), "RmaApplication warehouse/site coordinates must be unique and nonempty.").ValidateOnStart();
