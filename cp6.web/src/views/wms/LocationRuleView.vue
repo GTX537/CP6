@@ -1,6 +1,7 @@
 <template>
   <main class="location-rules">
     <h1>库位规则候选</h1><p>保存候选后尚未批准或生效。候选容量不会改变库存、预占数量或库位封锁。</p>
+    <RouterLink v-if="permissions.has('wms-location:query')" :to="`/wms/location/${String(route.params.id)}/controls`">查看本域封锁</RouterLink>
     <p v-if="error" role="alert">{{ error }}</p><p v-if="notice" role="status">{{ notice }}</p>
     <button :disabled="busy" @click="reload">重新载入</button>
     <section v-if="pending"><p>有一笔结果待确认，请先查询原操作。</p><button :disabled="busy" @click="recover(false)">查询原操作</button><button :disabled="busy || !permissions.has('wms-location-rule:abandon')" @click="recover(true)">关闭未提交原操作</button></section>

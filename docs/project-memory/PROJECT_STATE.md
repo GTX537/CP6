@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-10-29：W216 库位本域控制待Main收尾
+
+库位本域封锁、准确解除决定、原结果恢复及真实API/页面完成。10 actual PostgreSQL/Program HTTP (8local-control +2initialization);28Vue/type/build PASS;0skip。[报告](../development/evidence/W216-01/DELIVERY.md)。登记25.55分钟，预计60–100；Handoff已释放，Main待正常PR/finish。初始化与其他来源限制保留；正式MASTER/Transfer/Stock及原七天出口不变。
+
 ## 2026-10-29：W215 库存事实评估待Main收尾
 
 准确候选绑定的真实库存事实、独立当前权限、精确数量、覆盖边界及API/页面已完成。7 actual PostgreSQL/Program HTTP;29Vue/type/build PASS;0skip。[报告](../development/evidence/W215-01/DELIVERY.md)。登记14.15分钟，预计60–100；Handoff已释放，Main待正常PR/finish。真实Owner覆盖/源映射/库存采用、保护与08E、完整MASTER/Transfer/Stock及七天出口保留。

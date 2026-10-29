@@ -22,9 +22,10 @@ public sealed class LocationDraftOwnerV1(CP6Context db,OperationsOwnerV1 owner)
     private sealed class Data
     {
         public Guid Id {get;init;}public Guid Warehouse {get;init;}public Guid? Parent {get;init;}public long Revision {get;init;}
+        public long ControlRevision {get;init;}
     }
     private IQueryable<Data> Rows()=>db.Database.SqlQuery<Data>($"""
-        SELECT id AS "Id",warehouse_id AS "Warehouse",parent_id AS "Parent",business_revision AS "Revision"
+        SELECT id AS "Id",warehouse_id AS "Warehouse",parent_id AS "Parent",business_revision AS "Revision",control_revision AS "ControlRevision"
         FROM cp6_location_draft_v1.locations WHERE tenant_id={db.CurrentTenantId}
         """);
     private async Task<(Warehouse Native,EngineeringSourceRefV1 Site)> Warehouse(OperationsAccessV1 a,Guid id,CancellationToken ct)
@@ -74,7 +75,7 @@ public sealed class LocationDraftOwnerV1(CP6Context db,OperationsOwnerV1 owner)
         if(m.Parent is Guid p && await (await a.MasterLocations(ct,true)).AnyAsync(x=>x.Id==p,ct))parent=p;
         a.AtCommit(async t=>{await a.RequireLocationDraft(id,t);});
         return new(id,warehouse,w.Native.WarehouseCd,x.LocationCd,a.LocationNameReadable?x.LocationName:null,x.LocationLevel,
-            parent,m.Parent==null?"ROOT_RECORD":parent!=null?"AUTHORIZED_ORIGINAL_REFERENCE":"SOURCE_DISCLOSURE_UNAVAILABLE",OperationsAccessV1.MasterEtag(x),Rev(m.Revision),w.Site,a.LocationNameReadable,a.LocationNameWritable);
+            parent,m.Parent==null?"ROOT_RECORD":parent!=null?"AUTHORIZED_ORIGINAL_REFERENCE":"SOURCE_DISCLOSURE_UNAVAILABLE",OperationsAccessV1.MasterEtag(x),Rev(m.Revision),w.Site,a.LocationNameReadable,a.LocationNameWritable){ControlRevision=Rev(m.ControlRevision)};
     }
     public Task<LocationDraftViewV1> ReadAsync(Guid warehouse,Guid id,CancellationToken ct=default)
         =>Authority.ExecuteAsync(OperationsOwnerV1.Location,"query",false,(a,t)=>Read(a,warehouse,id,t),ct);

@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W215 库存事实评估](dispatch/20261029-wave215/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
+> 当前：[W216 库位本域控制](dispatch/20261029-wave216/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
+
+> 历史快照：[W215 库存事实评估](dispatch/20261029-wave215/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
 
 > 历史快照：[W214 执行意图底座](dispatch/20261029-wave214/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
 

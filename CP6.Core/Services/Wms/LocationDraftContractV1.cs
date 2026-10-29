@@ -16,7 +16,7 @@ public sealed record LocationDraftViewV1(Guid Id,Guid WarehouseId,string Warehou
 {
     public string Lifecycle=>"DRAFT";
     public string SourceKind=>"MANUAL";
-    public string ControlRevision=>"1";
+    public string ControlRevision{get;init;}="1";
     public string InitializationState=>"QUARANTINED";
     public string InitializationProvenance=>"MANUAL_CREATE";
     public string LegacyCapacityKind=>"TECHNICAL_PLACEHOLDER";
