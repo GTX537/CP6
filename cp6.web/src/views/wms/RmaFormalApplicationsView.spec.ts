@@ -16,7 +16,7 @@ const option = { optionRef: reference(8), original: source, remainingAuthorizabl
 let context: RmaContext, app: FormalApplication, stored: Map<string, unknown>, view: VueWrapper | undefined
 const page = (items: unknown[], nextCursor: string | null = null) => ({ items, nextCursor, snapshotRef: reference(19), capturedAt: '2026-10-29T00:00:00Z', coverage: 'PARTIAL' })
 const click = async (label: string) => { const button = view!.findAll('button').find(x => x.text() === label)!; await button.trigger('click'); await flushPromises() }
-async function render() { view = mount(View, { global: { stubs: { RmaPolicyPanel: true, RmaDeliveryEvidencePanel: true, RouterLink: { template: '<a><slot /></a>' } } } }); await flushPromises() }
+async function render() { view = mount(View, { global: { stubs: { RmaAuthorizationPanel: true, RmaPolicyPanel: true, RmaDeliveryEvidencePanel: true, RouterLink: { template: '<a><slot /></a>' } } } }); await flushPromises() }
 async function fill() { await click('添加 PRODUCT'); await view!.get('[aria-label="申请原因代码"]').setValue('DAMAGED'); await view!.get('[aria-label="备注"]').setValue('Private note'); await view!.get('[aria-label="第1行申请数量"]').setValue(amount) }
 async function save(label = '保存草稿') { await view!.findAll('form').find(x => x.text().includes(label))!.trigger('submit'); await flushPromises() }
 beforeEach(() => {
@@ -38,6 +38,13 @@ beforeEach(() => {
 })
 afterEach(() => { view?.unmount(); view = undefined; vi.restoreAllMocks() })
 describe('formal return entry', () => {
+  it('opens authorization for the current application and removes withdrawal while approval is active', async () => {
+    app.state = 'SUBMITTED'; context.capabilities.push('wms.rma.authorization.decide', 'wms.rma.authorization.revoke')
+    await render(); await click('查看申请')
+    const panel = view!.findComponent({ name: 'RmaAuthorizationPanel' }); expect(panel.props()).toMatchObject({ applicationId: app.applicationId, submitted: true, canDecide: true, canRevoke: true, scope: who })
+    panel.vm.$emit('current', { outcome: 'APPROVED' }); await flushPromises(); expect(view!.findAll('button').some(x => x.text() === '撤回申请')).toBe(false)
+    panel.vm.$emit('current', { outcome: 'REVOKED' }); await flushPromises(); expect(view!.findAll('button').some(x => x.text() === '撤回申请')).toBe(true)
+  })
   it('opens receipt evidence for the selected immutable shipment line and clears it with the draft', async () => {
     await render(); await click('签收证据 PRODUCT')
     const panel = view!.findComponent({ name: 'RmaDeliveryEvidencePanel' }); expect(panel.exists()).toBe(true); expect(panel.props('original')).toEqual(source); expect(panel.props('scope')).toEqual(who)

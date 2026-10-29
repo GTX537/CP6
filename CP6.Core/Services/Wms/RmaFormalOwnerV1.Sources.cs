@@ -59,7 +59,8 @@ public sealed partial class RmaFormalOwnerV1
     private static string[] Capabilities(OperationsAccessV1 a) => new[] { ("query", "wms.rma.read"),
         ("application-write", "wms.rma.application.write"), ("application-submit", "wms.rma.application.submit"),
         ("application-withdraw", "wms.rma.application.withdraw"), ("policy-publish", "wms.rma.policy.publish"),
-        ("evidence-record", "wms.rma.evidence.record"), ("evidence-withdraw", "wms.rma.evidence.withdraw") }.Where(x => a.Authorities[0].Actor.ActionKeys.Contains("wms-rma:" + x.Item1)).Select(x => x.Item2).ToArray();
+        ("evidence-record", "wms.rma.evidence.record"), ("evidence-withdraw", "wms.rma.evidence.withdraw"),
+        ("authorization-decide", "wms.rma.authorization.decide"), ("authorization-revoke", "wms.rma.authorization.revoke") }.Where(x => a.Authorities[0].Actor.ActionKeys.Contains("wms-rma:" + x.Item1)).Select(x => x.Item2).ToArray();
     public Task<RmaFormalContextV1> ContextAsync(CancellationToken ct = default) => Run<RmaFormalContextV1>("query", true, async (store, a, t) =>
     {
         var sites = await WarehouseSites(t); var codes = VisibleWarehouseCodes(a); var warehouseIds = sites.Keys.ToArray();
