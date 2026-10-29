@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-29：W219 内部契约与快速失败规则
+
+按用户最新指示，将Trust Internal Contracts、Fail-Fast和精简门禁写入AGENTS：内部契约直接采用，边界负责必要校验，缺前置立即明确失败；减少重复证明、兜底与重跑。仅文档差异/引用及台账结构检查，产品测试0次。 [报告](../development/evidence/W219-01/DELIVERY.md)。W218已完整收尾；本轮Handoff已释放，Main待正常PR/finish，七天原目标继续。
+
 ## 2026-10-29：W218 出库分配库位控制待Main收尾
 
 出库分配采用当前库位控制：选择合法替代，拒绝封锁/未知候选，提交前复核；整单失败回滚，已存预留可取消释放。25 distinct actual PostgreSQL/Program HTTP PASS;0skip;frontend unchanged。[报告](../development/evidence/W218-01/DELIVERY.md)。登记24.8分钟，预计45–70；Handoff已释放，Main待正常PR/finish。原七天出口不变；此前65–70%无加权依据，不作为实际完成率。
