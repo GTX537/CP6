@@ -667,6 +667,20 @@ CP6.Core.Services.Sys.FieldRegistry.Register("quality-return-inspection", Array.
 builder.Services.Configure<CP6.Core.Services.Mes.ReturnQualitySimulationOptionsV1>(builder.Configuration.GetSection("ReturnQualitySimulation"));
 builder.Services.AddScoped<CP6.Core.Services.Mes.ReturnQualityPolicySourceV1>();
 builder.Services.AddScoped<CP6.Core.Services.Mes.ReturnQualityOwnerV1>();
+foreach (var definition in CP6.Core.Services.Wms.ReturnDispositionOwnersV2.All)
+{
+    CP6.Core.Services.Sys.DataScopeRegistry.Register(definition.Resource,definition.Kind,new[] { 1,2,3,4,5 },1);
+    CP6.Core.Services.Sys.FieldRegistry.Register(definition.Resource,Array.Empty<CP6.Core.Services.Sys.FieldRegistry.Field>());
+}
+builder.Services.Configure<CP6.Core.Services.Wms.ReturnDispositionSimulationOptionsV2>(builder.Configuration.GetSection("ReturnDispositionSimulation"));
+builder.Services.AddScoped<CP6.Core.Services.Wms.ReturnDispositionPolicyV2>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.StockMovementService>(sp => (CP6.Core.Services.Wms.StockMovementService)sp.GetRequiredService<CP6.Core.Services.Wms.IStockMovementService>());
+builder.Services.AddScoped<CP6.Core.Services.Wms.StockQcService>(sp => (CP6.Core.Services.Wms.StockQcService)sp.GetRequiredService<CP6.Core.Services.Wms.IStockQcService>());
+builder.Services.AddScoped<CP6.Core.Services.Wms.ReturnResaleOwnerV2>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.ReturnRepairTransferOwnerV2>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.ReturnScrapOwnerV2>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.SupplierReturnShipmentOwnerV2>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.CustomerReturnShipmentOwnerV2>();
 builder.Services.Configure<CP6.Core.Services.Wms.RmaReturnSimulationOptionsV1>(builder.Configuration.GetSection("RmaReturnSimulation"));
 builder.Services.AddSingleton<CP6.Core.Services.Wms.IRmaReturnSourcesV1, CP6.Core.Services.Wms.RmaSimulatedReturnSourcesV1>();
 builder.Services.Configure<CP6.Core.Services.Wms.RmaInboundSimulationOptionsV1>(builder.Configuration.GetSection("RmaInboundSimulation"));

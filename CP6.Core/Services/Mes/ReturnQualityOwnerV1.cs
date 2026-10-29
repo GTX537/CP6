@@ -17,6 +17,19 @@ public sealed partial class ReturnQualityOwnerV1(CP6Context db, OperationsOwnerV
     internal static readonly string[] States = ["ACCEPTED","REJECTED","HOLD","PENDING"];
     private static readonly FulfilmentRefV1 Contract = RmaInboundAdapterV1.Ref("QA-NCR-01.ReturnAdapter","RMA-QUALITY-1",new { Version = 1,Owner = "QA-NCR-01" });
     private readonly ReturnQualityStoreV1 store = new(db);
+    internal async Task<ReturnQualityChoiceV1[]> DispositionSources(OperationsAccessV1 parent,Guid app,bool write,CancellationToken ct)
+    {
+        await rma.QualityFence(write,ct);
+        var ra =await parent.SourceAsync(OperationsOwnerV1.Rma,ct); var qa =await parent.SourceAsync(OperationsOwnerV1.ReturnQuality,ct);
+        var sources =await rma.QualitySources(ra,app,ct); var rows =await store.Heads().Where(x => x.Application ==app).ToArrayAsync(ct);
+        var result =new List<ReturnQualityChoiceV1>();
+        foreach (var source in sources)
+        {
+            var row =rows.SingleOrDefault(x => x.Line ==source.LineId); var view =row ==null ? null : await View(qa,sources,row.Id,ct);
+            await Scope(qa,source,view?.Inspection.CreatorId ?? source.RegistrarId,ct); result.Add(new(source,view,null));
+        }
+        return result.ToArray();
+    }
     private Task<T> Run<T>(Guid app, string resource, string action, bool write,
         Func<OperationsAccessV1,OperationsAccessV1,RmaQualitySourceV1[],CancellationToken,Task<T>> body,
         CancellationToken ct, Func<CancellationToken,Task<string>>? choose = null)

@@ -18,9 +18,9 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         ReturnQualityOwnerV1 Reviewer,ReturnQualitySimulationOptionsV1 Simulation,ReturnQualityViewV1 Inspection);
     private static ReturnQualityOwnerV1 QualityReturn(Harness h,PhysicalReturnFixture f,ReturnQualitySimulationOptionsV1 options)
         => new(h.Db,FormalRmaAuthority(h),PhysicalReturnOwner(h,f.Approval,f.Case),new(Options.Create(options)));
-    private async Task<ReturnQualityFixture> QualityReturnSetup(Harness h)
+    private async Task<ReturnQualityFixture> QualityReturnSetup(Harness h,bool originalRoot =true)
     {
-        var f = await PhysicalReturnSetup(h); var app = f.Approval.Application.ApplicationId;
+        var f = await PhysicalReturnSetup(h,originalRoot); var app = f.Approval.Application.ApplicationId;
         foreach (var action in new[] { "query","start","decide","withdraw" }) await EngineeringAction(h,"quality-return-inspection",action);
         foreach (var action in new[] { "inspection-start","quality-observe" }) await EngineeringAction(h,"wms-rma",action);
         h.Db.Sys_RoleDataScopes.Add(new() { RoleId =72,ResourceKey ="quality-return-inspection",ScopeType =5 });
