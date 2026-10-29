@@ -1596,3 +1596,7 @@ BOM独立Owner、多层稳定位置、准确材料/单位、实际ProductMateria
 ## 2026-10-29 W218 出库分配库位控制与进度口径纠正
 
 出库分配采用当前库位控制：选择合法替代，拒绝封锁/未知候选，提交前复核；整单失败回滚，已存预留可取消释放。25 distinct actual PostgreSQL/Program HTTP PASS;0skip;frontend unchanged。[报告](../evidence/W218-01/DELIVERY.md)。登记24.8分钟，预计45–70；Handoff已释放，Main待正常PR/finish。原七天出口不变；此前65–70%无加权依据，不作为实际完成率。 Audit each original D2/D3/D5/D6/D7 exit against adopted source and actual evidence, separating the seven-day deliverables from full formal product acceptance. Execute the next direct missing output; preserve all original exits and do not expand or shrink the goal. 2/7仅是完整阶段闭环率，不等于实际总工作量完成率。
+
+## 2026-10-29 W219 用户执行原则
+
+按用户最新指示，将Trust Internal Contracts、Fail-Fast和精简门禁写入AGENTS：内部契约直接采用，边界负责必要校验，缺前置立即明确失败；减少重复证明、兜底与重跑。仅文档差异/引用及台账结构检查，产品测试0次。 [规则交付](../evidence/W219-01/DELIVERY.md)。不做新的大范围审计或按文档轮次增加完成率，按原目标实际缺口继续。Continue the next original D2/D3 missing business write, using established internal contracts directly and fail-fast at the responsible boundary. Check only actual direct prerequisites; no new full audit or unrelated prerequisite expansion. D5/D6 external inputs and D7 final integration remain explicit.

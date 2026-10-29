@@ -161342,6 +161342,16 @@
       "date": "2026-10-29",
       "change": "W218 outbound allocation current location controls: 25 distinct actual PostgreSQL/Program HTTP PASS;0skip;frontend unchanged; Handoff released, Main closeout pending. Candidate alternatives, whole-intent rollback and cancellation preserved. Unsupported65–70% completion estimate withdrawn; original seven-day scope remains.",
       "evidence": "docs/development/evidence/W218-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W218 closed once. W219 applies latest user Trust Internal Contracts and Fail-Fast instruction; no full audit or product test for documentation; original seven-day scope unchanged.",
+      "evidence": "docs/development/dispatch/20261029-wave219/README.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W219 user execution principles applied in Main AGENTS and Handoff. Documentation only, no product tests or business completion credit; Main lifecycle closeout pending.",
+      "evidence": "docs/development/evidence/W219-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -186544,7 +186554,7 @@
         }
       },
       "wave218_allocation_control": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "workspace_task": "W218-01",
         "report": "docs/development/evidence/W218-01/DELIVERY.md",
         "scope": "Actual native outbound allocation selects only locations with current unblocked controls, tries permitted alternatives, rejects control failures without inventing shortage, and rechecks before commit. Whole-intent rollback and cancellation release are preserved.",
@@ -186560,13 +186570,24 @@
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "original_dependencies_unchanged": true,
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "lifecycle_snapshot": {
-          "main_finish_required": true,
-          "main_seat_released": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
           "handoff_seat_released": true,
-          "main_branch_deleted": false,
-          "handoff_branch_deleted": true
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave218-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W218-01",
+          "source": "f8f9243c1eda07003272add39491c14eeea1d77d",
+          "remote_target": "93cae2d30bfa607fc33e0adef4b7473981b01beb",
+          "branch": "codex/w218-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/641"
         }
       }
     },
@@ -187985,7 +188006,7 @@
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "wave218_allocation_control": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "workspace_task": "W218-01",
         "report": "docs/development/evidence/W218-01/DELIVERY.md",
         "scope": "Actual native outbound allocation selects only locations with current unblocked controls, tries permitted alternatives, rejects control failures without inventing shortage, and rechecks before commit. Whole-intent rollback and cancellation release are preserved.",
@@ -188001,13 +188022,24 @@
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
         "original_dependencies_unchanged": true,
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "lifecycle_snapshot": {
-          "main_finish_required": true,
-          "main_seat_released": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
           "handoff_seat_released": true,
-          "main_branch_deleted": false,
-          "handoff_branch_deleted": true
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave218-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W218-01",
+          "source": "f8f9243c1eda07003272add39491c14eeea1d77d",
+          "remote_target": "93cae2d30bfa607fc33e0adef4b7473981b01beb",
+          "branch": "codex/w218-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/641"
         }
       }
     },
@@ -197227,10 +197259,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261029-wave218",
-      "path": "docs/development/dispatch/20261029-wave218/README.md",
-      "baseline_sha": "a8c44554307f5d3fe173c765a17ab9eab7cadd63",
-      "registered_at": "2026-10-29T02:29:25.749882+00:00",
+      "id": "20261029-wave219",
+      "path": "docs/development/dispatch/20261029-wave219/README.md",
+      "baseline_sha": "93cae2d30bfa607fc33e0adef4b7473981b01beb",
+      "registered_at": "2026-10-29T03:09:53.083836+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -197249,29 +197281,34 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W218-01",
-          "workspace_task": "W218-01",
+          "id": "W219-01",
+          "workspace_task": "W219-01",
           "related_tasks": [
-            "WP10-01",
-            "WP10-19"
+            "WP02-03",
+            "WP02-06",
+            "WP02-09",
+            "WP02-29",
+            "WP03-01",
+            "WP03-02",
+            "WP14-10"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Outbound reservation adopts current location controls",
+          "title": "User policy: trust internal contracts, fail fast, reduce unnecessary gates",
           "chat": "COORD",
-          "mode": "SINGLE_CHAT_IMPLEMENTATION",
+          "mode": "SINGLE_CHAT_COORDINATION_POLICY",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "afed63953f445c667b566786e736b92b5c5da9da",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T022925Z-wave218-start/MESSAGE.md",
-            "at": "2026-10-29T02:29:25.749882+00:00",
-            "branch": "codex/w218-handoff"
+            "commit": "8d68c8c2948c4a2664a4af3a905b16bd27975ee6",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T030953Z-wave219-start/MESSAGE.md",
+            "at": "2026-10-29T03:09:53.083836+00:00",
+            "branch": "codex/w219-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w218-01",
-          "planned_scope_ref": "docs/development/dispatch/20261029-wave218/README.md",
+          "branch": "codex/w219-01",
+          "planned_scope_ref": "docs/development/dispatch/20261029-wave219/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -197280,11 +197317,11 @@
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
-            "Main:outbound-allocation",
-            "Main:stock-location-guard"
+            "Main:development-policy",
+            "Main:coordination-ledger"
           ],
-          "validation": "25 distinct actual PostgreSQL/Program HTTP PASS;0skip;frontend unchanged",
-          "worker_delivery_ref": "docs/development/evidence/W218-01/DELIVERY.md",
+          "worker_delivery_ref": "docs/development/evidence/W219-01/DELIVERY.md",
+          "validation": "Document diff/references and ledger structure only; no product tests",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -197295,11 +197332,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-29T02:27:11.600507+00:00",
+        "started_at": "2026-10-29T03:05:12.726860+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          45,
-          70
+          10,
+          20
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -197307,7 +197344,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Audit each original D2/D3/D5/D6/D7 exit against adopted source and actual evidence, separating the seven-day deliverables from full formal product acceptance. Execute the next direct missing output; preserve all original exits and do not expand or shrink the goal.",
+      "next_action": "Continue the next original D2/D3 missing business write, using established internal contracts directly and fail-fast at the responsible boundary. Check only actual direct prerequisites; no new full audit or unrelated prerequisite expansion. D5/D6 external inputs and D7 final integration remain explicit.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -197315,7 +197352,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 24.8
+      "elapsed_registered_wave_minutes": 8.03
     },
     "wave_history": [
       {
@@ -225730,6 +225767,120 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/193"
           }
         ]
+      },
+      {
+        "id": "20261029-wave218",
+        "path": "docs/development/dispatch/20261029-wave218/README.md",
+        "baseline_sha": "a8c44554307f5d3fe173c765a17ab9eab7cadd63",
+        "registered_at": "2026-10-29T02:29:25.749882+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W218-01",
+            "workspace_task": "W218-01",
+            "related_tasks": [
+              "WP10-01",
+              "WP10-19"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Outbound reservation adopts current location controls",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "afed63953f445c667b566786e736b92b5c5da9da",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T022925Z-wave218-start/MESSAGE.md",
+              "at": "2026-10-29T02:29:25.749882+00:00",
+              "branch": "codex/w218-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w218-01",
+            "planned_scope_ref": "docs/development/dispatch/20261029-wave218/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:outbound-allocation",
+              "Main:stock-location-guard"
+            ],
+            "validation": "25 distinct actual PostgreSQL/Program HTTP PASS;0skip;frontend unchanged",
+            "worker_delivery_ref": "docs/development/evidence/W218-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave218-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-29T02:27:11.600507+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            45,
+            70
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Audit each original D2/D3/D5/D6/D7 exit against adopted source and actual evidence, separating the seven-day deliverables from full formal product acceptance. Execute the next direct missing output; preserve all original exits and do not expand or shrink the goal.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave218-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 24.8,
+        "actual_registered_wave_minutes": 28.3,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W218-01",
+            "source": "f8f9243c1eda07003272add39491c14eeea1d77d",
+            "remote_target": "93cae2d30bfa607fc33e0adef4b7473981b01beb",
+            "branch": "codex/w218-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/641"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W218-HANDOFF",
+            "source": "252d5292f4a47f5ade54eddc2374ee5ffe39b91a",
+            "remote_target": "2724f6c96e474b05532c6b9a3d3b2e1e6e74eab9",
+            "branch": "codex/w218-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/194"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -226143,7 +226294,16 @@
         "confidence": "LOW",
         "external_wait_excluded": true,
         "basis": "Previous65–70% engineering estimate withdrawn as an actual completion measure: no item weights or auditable denominator. D1/D4 closed; D2/D3/D5/D6 partial and D7 final integration open. 28.6% is stage closure only, not total delivered work. Audit original exits before quantifying partial work; no mechanical wave increment."
-      }
+      },
+      "execution_principles_ref": "AGENTS.md"
+    },
+    "execution_principles": {
+      "source": "User instruction 2026-10-28: Trust Internal Contracts and Fail-Fast; reduce unnecessary gates",
+      "rules": "AGENTS.md",
+      "effective": "From the next task, including W219",
+      "internal_contracts": "Trust validated internal contracts without per-layer duplicate validation or qualification",
+      "failure": "Fail fast at the responsible boundary; no silent fallback or success-shaped defaults",
+      "validation": "Affected behavior only; one task review; reuse valid evidence; documents do not run product tests"
     }
   },
   "acceptance_basis": {
