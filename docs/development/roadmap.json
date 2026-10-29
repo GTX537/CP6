@@ -161442,6 +161442,16 @@
       "date": "2026-10-29",
       "change": "W228 receipt evidence collection/withdrawal/recovery and page adopted; user permits simulated data for development AND production acceptance, superseding real-data waits.",
       "evidence": "docs/development/evidence/W228-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W228 closed once. W229 implements entitlement and independent authorization, exact source-coordinate claims and UI recovery with user-authorized simulated acceptance inputs.",
+      "evidence": "docs/development/dispatch/20261029-wave229/README.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W229 exact source-coordinate entitlement, independent decisions, immutable shares, atomic claims/original recovery and actual page accepted with explicit simulated business sources. Formal inbound remains next.",
+      "evidence": "docs/development/evidence/W229-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -188498,10 +188508,36 @@
         }
       },
       "wave228_delivery_evidence": {
-        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "status": "CLOSED",
         "scope": "Record actual customer receipt evidence against exact immutable native shipment lines, preserve original commands and immutable records, and consume the evidence in the actual return application page.",
         "limitations": "Recorded evidence is not a formal DEL cumulative Proof or a return authorization. Do not infer delivered quantity from carrier text, default prior claims/credits to zero, or alter original shipment/stock/financial quantities. Full source-cut entitlement, independent approval and formal IN remain open.",
         "report": "docs/development/evidence/W228-01/DELIVERY.md",
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave228-final-verification.json"
+        },
+        "full_task_completed": false,
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W228-01",
+          "source": "0ddccbb7a687d836c2754be6f7573b39d9503238",
+          "remote_target": "43a39e2cfceaa962627eb001e825a2ec66f53372",
+          "branch": "codex/w228-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/653"
+        }
+      },
+      "wave229_authorization": {
+        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "scope": "Implement return entitlement snapshots, independent approve/reject/revoke decisions, exact source-coordinate claims, immutable shares and actual RMA page recovery. Use explicit simulated source cuts for missing delivery/invoice/historical business data.",
+        "limitations": "Formal physical inbound and downstream disposition/commercial/financial effects remain separate. Simulation is authorized for production acceptance; no real-data wait. Source simulation is explicit and never a substitute for executing authorization/claim logic.",
+        "report": "docs/development/evidence/W229-01/DELIVERY.md",
         "lifecycle_complete": false,
         "lifecycle_snapshot": {
           "main_finish_required": true,
@@ -197599,10 +197635,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261029-wave228",
-      "path": "docs/development/dispatch/20261029-wave228/README.md",
-      "baseline_sha": "ffee9bc63e43ccc714a4e09ab787f69fa2cbab3e",
-      "registered_at": "2026-10-29T08:51:26.519979+00:00",
+      "id": "20261029-wave229",
+      "path": "docs/development/dispatch/20261029-wave229/README.md",
+      "baseline_sha": "43a39e2cfceaa962627eb001e825a2ec66f53372",
+      "registered_at": "2026-10-29T09:38:57.098816+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -197621,30 +197657,30 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W228-01",
-          "workspace_task": "W228-01",
+          "id": "W229-01",
+          "workspace_task": "W229-01",
           "related_tasks": [
             "WP10-22"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Customer receipt evidence collection and original recovery",
+          "title": "Return entitlement and independent authorization with simulated source cuts",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "ecf73c7986704995dc4c25d108614260a62d3d58",
-            "branch": "codex/w228-handoff",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T085126Z-wave228-start/MESSAGE.md",
-            "at": "2026-10-29T08:51:26.519979+00:00"
+            "commit": "8ae984a53c57443b9ec9d165393c2ebd5f9705cc",
+            "branch": "codex/w229-handoff",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T093857Z-wave229-start/MESSAGE.md",
+            "at": "2026-10-29T09:38:57.098816+00:00"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w228-01",
-          "planned_scope_ref": "docs/development/dispatch/20261029-wave228/README.md",
+          "branch": "codex/w229-01",
+          "planned_scope_ref": "docs/development/dispatch/20261029-wave229/README.md",
           "full_task_completed": false,
-          "business_acceptance": "NOT_RUN",
+          "business_acceptance": "PASS_SIMULATED_AUTHORIZATION_SCOPE",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
@@ -197652,12 +197688,12 @@
           "resources_released": false,
           "exclusive_resources": [
             "Main:rma-owner",
-            "Main:rma-delivery-evidence",
+            "Main:rma-entitlement-claims",
             "Main:rma-ui-recovery",
             "Main:coordination-ledger"
           ],
-          "worker_delivery_ref": "docs/development/evidence/W228-01/DELIVERY.md",
-          "validation": "Actual isolated PostgreSQL/API9 PASS (8 initial related plus1 targeted held-attachment case), Vue21 PASS (7 evidence +14 parent application), vue-tsc PASS. Initial Vue18/19 retained: an overbroad localStorage-empty assertion counted the existing identity marker; corrected to test private business-data exclusion and reran only the affected component. Tests use explicit simulated business data and file storage/inspection. Unchanged related results reused; no Actions, production deployment or existing-environment migration.",
+          "worker_delivery_ref": "docs/development/evidence/W229-01/DELIVERY.md",
+          "validation": "10 distinct PostgreSQL/API scenarios PASS (9 authorization plus existing formal application HTTP), Vue22 PASS (7 authorization plus15 parent), vue-tsc PASS. Initial authorization final8/9 retained: expiry fixture incorrectly equated source-wide remaining1.62345678 with this application available0.62345678; corrected both assertions. Task review changed absent-decision HTTP from implicit204 to explicit200/null, then only expiry and actualHTTP reran2/2. Final provenance UI7 and typecheck passed; unchanged successful tests reused. Complete simulated source cuts, simulated actors/policy and explicit downstream receipt/unknown states used; actual Owner/API/UI executed. No Actions/deployment/existing-environment migration.",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -197668,11 +197704,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-29T08:48:11.033639+00:00",
-        "checkpoint_at": "2026-10-29T09:25:10.417902+00:00",
+        "started_at": "2026-10-29T09:36:45.480819+00:00",
+        "checkpoint_at": "2026-10-29T10:20:22.026124+00:00",
         "estimated_agent_wall_time_minutes": [
-          90,
-          150
+          150,
+          240
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -197680,7 +197716,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Use complete explicitly simulated shipment/delivery/invoice/credit/claim/policy scenarios to implement and accept return entitlement, independent authorization and formal inbound. User allows simulated business data for production acceptance; do not wait for real enterprise data. Preserve the original seven-stage feature scope and record actual runtime/deployment separately.",
+      "next_action": "Adopt approved return shares into formal inbound in the same PostgreSQL transaction using complete simulated receipt/source/stock scenarios, then close remaining original D2/D3/D5/D6 exits and D7 integration.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -197688,7 +197724,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 36.99
+      "elapsed_registered_wave_minutes": 43.61
     },
     "wave_history": [
       {
@@ -227260,6 +227296,121 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/203"
           }
         ]
+      },
+      {
+        "id": "20261029-wave228",
+        "path": "docs/development/dispatch/20261029-wave228/README.md",
+        "baseline_sha": "ffee9bc63e43ccc714a4e09ab787f69fa2cbab3e",
+        "registered_at": "2026-10-29T08:51:26.519979+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W228-01",
+            "workspace_task": "W228-01",
+            "related_tasks": [
+              "WP10-22"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Customer receipt evidence collection and original recovery",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "ecf73c7986704995dc4c25d108614260a62d3d58",
+              "branch": "codex/w228-handoff",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T085126Z-wave228-start/MESSAGE.md",
+              "at": "2026-10-29T08:51:26.519979+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w228-01",
+            "planned_scope_ref": "docs/development/dispatch/20261029-wave228/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:rma-owner",
+              "Main:rma-delivery-evidence",
+              "Main:rma-ui-recovery",
+              "Main:coordination-ledger"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W228-01/DELIVERY.md",
+            "validation": "Actual isolated PostgreSQL/API9 PASS (8 initial related plus1 targeted held-attachment case), Vue21 PASS (7 evidence +14 parent application), vue-tsc PASS. Initial Vue18/19 retained: an overbroad localStorage-empty assertion counted the existing identity marker; corrected to test private business-data exclusion and reran only the affected component. Tests use explicit simulated business data and file storage/inspection. Unchanged related results reused; no Actions, production deployment or existing-environment migration.",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave228-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-29T08:48:11.033639+00:00",
+          "checkpoint_at": "2026-10-29T09:25:10.417902+00:00",
+          "estimated_agent_wall_time_minutes": [
+            90,
+            150
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Use complete explicitly simulated shipment/delivery/invoice/credit/claim/policy scenarios to implement and accept return entitlement, independent authorization and formal inbound. User allows simulated business data for production acceptance; do not wait for real enterprise data. Preserve the original seven-stage feature scope and record actual runtime/deployment separately.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave228-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 36.99,
+        "actual_registered_wave_minutes": 40.99,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W228-01",
+            "source": "0ddccbb7a687d836c2754be6f7573b39d9503238",
+            "remote_target": "43a39e2cfceaa962627eb001e825a2ec66f53372",
+            "branch": "codex/w228-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/653"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W228-HANDOFF",
+            "source": "4b219703ad06aece1f50ca2f225471a29625386e",
+            "remote_target": "8efa117fb853af89f53a11a38cc1880166c2c8d0",
+            "branch": "codex/w228-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/204"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -227337,7 +227488,7 @@
           "id": "D2",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W228-01",
+          "current_window": "W229-01",
           "prerequisite_adjustment": "Formal SourceDemand/Transfer providers and RMA IN/terminal Owner contracts remain prerequisites; current read Owners and trusted creation/inheritance are adopted within their precise scope.",
           "adopted_window": "W42-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/395",
@@ -227347,7 +227498,7 @@
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "Use complete explicitly simulated shipment/delivery/invoice/credit/claim/policy scenarios to implement and accept return entitlement, independent authorization and formal inbound. User allows simulated business data for production acceptance; do not wait for real enterprise data. Preserve the original seven-stage feature scope and record actual runtime/deployment separately.",
+          "next_action": "Adopt approved return shares into formal inbound in the same PostgreSQL transaction using complete simulated receipt/source/stock scenarios, then close remaining original D2/D3/D5/D6 exits and D7 integration.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W140-01/DELIVERY.md",
           "last_inheritance_report": "docs/development/evidence/W137-01/DELIVERY.md",
@@ -227374,7 +227525,8 @@
           "last_formal_application_page_report": "docs/development/evidence/W225-01/DELIVERY.md",
           "last_original_commercial_source_report": "docs/development/evidence/W226-01/DELIVERY.md",
           "last_policy_publication_report": "docs/development/evidence/W227-01/DELIVERY.md",
-          "last_delivery_evidence_report": "docs/development/evidence/W228-01/DELIVERY.md"
+          "last_delivery_evidence_report": "docs/development/evidence/W228-01/DELIVERY.md",
+          "last_authorization_report": "docs/development/evidence/W229-01/DELIVERY.md"
         },
         {
           "id": "D3",
@@ -227672,8 +227824,8 @@
         ]
       },
       "latest_progress_assessment": {
-        "as_of": "2026-10-29T09:25:10.417902+00:00",
-        "adopted_through": "W227; W228 validation complete, remote adoption pending",
+        "as_of": "2026-10-29T10:20:22.026124+00:00",
+        "adopted_through": "W228; W229 validation complete, remote adoption pending",
         "engineering_range_percent": null,
         "formal_stage_closure": "2/7",
         "remaining_execution_hours": null,

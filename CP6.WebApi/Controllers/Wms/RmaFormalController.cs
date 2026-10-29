@@ -15,7 +15,8 @@ public sealed class RmaFormalResultAttribute : ActionFilterAttribute
     {
         var http = context.HttpContext; http.Response.Headers.CacheControl = "no-store";
         var correlation = http.Request.Headers["X-Correlation-Id"].ToString();
-        var queryPath = http.Request.Path.StartsWithSegments("/api/wms/rma/v1/delivery-evidence")
+        var queryPath = http.Request.Path.Value?.Contains("/authorization",StringComparison.Ordinal) == true
+            ? "/api/wms/rma/v1/authorization/commands/query" : http.Request.Path.StartsWithSegments("/api/wms/rma/v1/delivery-evidence")
             ? "/api/wms/rma/v1/delivery-evidence/commands/query" : http.Request.Path.StartsWithSegments("/api/wms/rma/v1/policies")
             ? "/api/wms/rma/v1/policies/commands/query" : "/api/wms/rma/v1/commands/query";
         if (!context.ModelState.IsValid || string.IsNullOrWhiteSpace(correlation) || correlation.Length > 200
@@ -42,6 +43,16 @@ public sealed class RmaFormalResultAttribute : ActionFilterAttribute
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public sealed class RmaFormalController(RmaFormalOwnerV1 owner) : ControllerBase
 {
+    [HttpGet("applications/{applicationId:guid}/authorization/context")]
+    public async Task<IActionResult> AuthorizationContext(Guid applicationId, bool includeEntitlements, CancellationToken ct) => Ok(await owner.AuthorizationContextAsync(applicationId,ct,includeEntitlements));
+    [HttpGet("applications/{applicationId:guid}/authorization")]
+    public async Task<IActionResult> Authorization(Guid applicationId, int? version, CancellationToken ct) => new JsonResult(await owner.ReadAuthorizationAsync(applicationId,version,ct));
+    [HttpPost("applications/{applicationId:guid}/authorization/decide"),RequestSizeLimit(524288)]
+    public async Task<IActionResult> Decide(Guid applicationId, RmaAuthorizationDecideV1 input, CancellationToken ct) => Ok(await owner.DecideAuthorizationAsync(applicationId,Command(),input,ct));
+    [HttpPost("applications/{applicationId:guid}/authorization/revoke"),RequestSizeLimit(65536)]
+    public async Task<IActionResult> Revoke(Guid applicationId, RmaAuthorizationRevokeV1 input, CancellationToken ct) => Ok(await owner.RevokeAuthorizationAsync(applicationId,Command(),input,ct));
+    [HttpPost("authorization/commands/query"),RequestSizeLimit(65536)]
+    public async Task<IActionResult> AuthorizationCommand(RmaAuthorizationQueryV1 input, CancellationToken ct) => Ok(await owner.QueryAuthorizationCommandAsync(input,ct));
     [HttpPost("delivery-evidence/record"), RequestSizeLimit(131072)]
     public async Task<IActionResult> RecordEvidence(RmaDeliveryEvidenceRecordV1 input, CancellationToken ct) => Ok(await owner.RecordDeliveryEvidenceAsync(Command(), input, ct));
     [HttpPost("delivery-evidence/withdrawals"), RequestSizeLimit(65536)]

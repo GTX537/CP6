@@ -13,9 +13,10 @@ using static CP6.Core.Services.Wms.RmaFormalStoreV1;
 
 namespace CP6.Core.Services.Wms;
 
-/// <summary>Formal application intent only. No authorization, entitlement claim, stock or financial write.</summary>
+/// <summary>Formal return applications and independent authorization/claims. No stock or financial effect.</summary>
 public sealed partial class RmaFormalOwnerV1(CP6Context db, OperationsOwnerV1 owner, ScopeAuthorizationFenceV1 environment,
-    QualitySpecificationRuntimeV1 runtime, IDataProtectionProvider protection, FileContentOwnerV1 files, IOptions<RmaApplicationOptionsV1> options)
+    QualitySpecificationRuntimeV1 runtime, IDataProtectionProvider protection, FileContentOwnerV1 files, IOptions<RmaApplicationOptionsV1> options,
+    IRmaReturnSourcesV1? returnSources = null)
 {
     private const string JournalOwner = "Main.Wms.RmaFormalCommand.v1", Contract = "WMS-RMA-01.APPLICATION/1";
     public const string CreateRoute = "/api/wms/rma/v1/applications", EditRoute = CreateRoute + "/{applicationId}",
@@ -155,6 +156,7 @@ public sealed partial class RmaFormalOwnerV1(CP6Context db, OperationsOwnerV1 ow
             {
                 var before = await Current(store, a, id, t); Expected(before, c.ExpectedApplicationVersion, c.ExpectedApplicationHeadRef, etag);
                 if (withdraw ? before.State is not ("DRAFT" or "SUBMITTED") : before.State != "DRAFT") throw Error("RMA_APPLICATION_STATE_CONFLICT", 409);
+                if (withdraw && (await AuthorizationCurrent(id,t))?.Outcome == "APPROVED") throw Error("AUTHORIZATION_ACTIVE",409);
                 if (!withdraw)
                 {
                     await Customer(a, before.Customer, t);

@@ -21,7 +21,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     private static readonly JsonSerializerOptions RmaJson = new(JsonSerializerDefaults.Web);
     private static RmaApplicationOptionsV1 FormalCoordinates(Harness h) => new() { WarehouseSites = h.Db.Warehouses.AsNoTracking()
         .Select(x => new RmaWarehouseSiteV1 { TenantId = h.Tenant, WarehouseId = x.Id, SiteId = h.Db.Space_Sites.Where(s => s.SiteCode == "SITE").Select(s => s.Id).Single() }).ToArray() };
-    private static RmaFormalOwnerV1 FormalRma(Harness h, IDataProtectionProvider? keys = null, RmaApplicationOptionsV1? coordinates = null)
+    private static RmaFormalOwnerV1 FormalRma(Harness h, IDataProtectionProvider? keys = null, RmaApplicationOptionsV1? coordinates = null, IRmaReturnSourcesV1? sources = null)
     {
         var catalog = new AuthorizationCatalogStoreV1();
         catalog.RegisterScope("wms-rma", "RMA", [1,2,3,4,5], 1);
@@ -33,7 +33,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         catalog.Seal();
         var authority = new OperationsOwnerV1(h.Db, new OperationsHttp { HttpContext = h.Http }, _ => Task.FromResult(h.User), catalog.Capture);
         return new(h.Db, authority, ScopeFence(h), new QualitySpecificationRuntimeV1("DEMO"),
-            keys ?? new EphemeralDataProtectionProvider(), ContentOwner(h, new ContentStore(), new ContentInspector()), Options.Create(coordinates ?? FormalCoordinates(h)));
+            keys ?? new EphemeralDataProtectionProvider(), ContentOwner(h, new ContentStore(), new ContentInspector()), Options.Create(coordinates ?? FormalCoordinates(h)),sources);
     }
     private async Task<FulfilmentFixture> FormalShipment(Harness h, bool customer = true, bool ship = true)
     {

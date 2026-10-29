@@ -51,8 +51,9 @@
         <button v-if="canWrite && detail.state === 'DRAFT'" :disabled="busy || blocked" @click="edit">编辑草稿</button>
         <label v-if="canSubmit && detail.state === 'DRAFT' || canWithdraw && ['DRAFT', 'SUBMITTED'].includes(detail.state)">操作原因<input v-model="transitionReason" aria-label="操作原因" maxlength="500" :disabled="busy || blocked" /></label>
         <button v-if="canSubmit && detail.state === 'DRAFT'" :disabled="busy || blocked || !transitionReason.trim()" @click="transition('SUBMIT')">提交申请</button>
-        <button v-if="canWithdraw && ['DRAFT', 'SUBMITTED'].includes(detail.state)" :disabled="busy || blocked || !transitionReason.trim()" @click="transition('WITHDRAW')">撤回申请</button>
+        <button v-if="canWithdraw && authorization?.outcome !== 'APPROVED' && ['DRAFT', 'SUBMITTED'].includes(detail.state)" :disabled="busy || blocked || !transitionReason.trim()" @click="transition('WITHDRAW')">撤回申请</button>
       </div>
+      <RmaAuthorizationPanel v-if="identity && isHead && !editing" :scope="identity" :application-id="detail.applicationId" :submitted="detail.state === 'SUBMITTED'" :can-decide="context!.capabilities.includes('wms.rma.authorization.decide')" :can-revoke="context!.capabilities.includes('wms.rma.authorization.revoke')" @current="authorization = $event" />
     </section>
   </main>
 </template>
@@ -66,6 +67,8 @@ import { AUTH_EVENT } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
 import RmaPolicyPanel from './RmaPolicyPanel.vue'
 import RmaDeliveryEvidencePanel from './RmaDeliveryEvidencePanel.vue'
+import RmaAuthorizationPanel from './RmaAuthorizationPanel.vue'
+import type { AuthorizationDecision } from '@/api/wms/rmaAuthorizations'
 
 type Choice = RmaOption & { shipment: string; customer: string; product: string; customerRef: RmaRef }
 type DraftLine = RmaRequestedLine & { label: string }
@@ -81,6 +84,7 @@ const lines = ref<DraftLine[]>([]), customer = shallowRef<RmaRef | null>(null), 
 const editing = shallowRef<FormalApplication | null>(null), detail = shallowRef<FormalApplication | null>(null), headVersion = ref(1), transitionReason = ref('')
 const isHead = computed(() => detail.value?.applicationVersion === headVersion.value)
 const selectedDelivery = shallowRef<RmaOriginal | null>(null)
+const authorization = shallowRef<AuthorizationDecision | null>(null)
 const commercial = shallowRef<SalesReturnSource | null>(null)
 const commercialStates = { LINE_MISSING: '当前原明细已不存在；原商业记录仍保留。', TERMS_UNCHANGED: '当前商业字段与发运时一致。', TERMS_CHANGED: '当前商业字段已变化，原值保持不变。' }
 const commercialFields: { key: keyof SalesReturnTerms; label: string }[] = [
@@ -90,10 +94,10 @@ const commercialFields: { key: keyof SalesReturnTerms; label: string }[] = [
 ]
 const commercialValue = (value: string | boolean | null) => value === null ? '未记录' : typeof value === 'boolean' ? value ? '是' : '否' : value
 async function readCommercial(original: RmaOriginal) { await run(async check => { commercial.value = null; const value = await api.commercial(original.shipmentRef.id, original.shipmentLineId); check(); commercial.value = value }) }
-const states = { DRAFT: '草稿', SUBMITTED: '已提交 · 待授权', WITHDRAWN: '已撤回', SUPERSEDED: '已替代' }
+const states = { DRAFT: '草稿', SUBMITTED: '已提交', WITHDRAWN: '已撤回', SUPERSEDED: '已替代' }
 const outcomes = [['TO_BE_DECIDED', '待协商'], ['RETURN_ONLY', '仅退回实物'], ['CREDIT', '贷项'], ['REFUND', '退款'], ['REPLACEMENT', '换货'], ['SUPPLEMENTARY_SHIPMENT', '补发']] as const
 let live = true, generation = 0
-function clearDraft() { selectedDelivery.value = null; commercial.value = null; lines.value = []; customer.value = null; editing.value = null; reasonCode.value = ''; outcome.value = 'TO_BE_DECIDED'; remarks.value = ''; changeReason.value = '' }
+function clearDraft() { authorization.value = null; selectedDelivery.value = null; commercial.value = null; lines.value = []; customer.value = null; editing.value = null; reasonCode.value = ''; outcome.value = 'TO_BE_DECIDED'; remarks.value = ''; changeReason.value = '' }
 function clear() { context.value = null; identity.value = null; pending.value = null; storageError.value = false; applications.value = null; sources.value = []; detail.value = null; clearDraft(); transitionReason.value = '' }
 async function refreshPending(check: () => void) {
   if (!identity.value) return

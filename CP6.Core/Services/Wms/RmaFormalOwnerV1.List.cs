@@ -50,9 +50,10 @@ public sealed partial class RmaFormalOwnerV1
                         || q.States.Length > 0 && !q.States.Contains(original.State)
                         || original.RequestedAt < q.RecordedFrom || original.RequestedAt > q.RecordedTo) continue;
                     var view = View(original);
+                    var authorization = await AuthorizationCurrent(original.Id,t);
                     items.Add(new(original.ActorId, original.Lines.Select(x => x.OutboundId).Distinct().ToArray(),
                         new(original.Id, "RA-" + original.Id.ToString("N"), original.Customer, original.State,
-                            "PENDING", "UNKNOWN", "PENDING", "ADOPTION_UNPROVEN", "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
+                            authorization?.Outcome ?? "PENDING", "UNKNOWN", "PENDING", "ADOPTION_UNPROVEN", "UNKNOWN", "UNKNOWN", "UNKNOWN", "UNKNOWN",
                             original.RequestedAt, view.ApplicationRef)));
                 }
                 page = new(filter, DateTimeOffset.UtcNow, items.OrderByDescending(x => x.Summary.RecordedAt).ThenBy(x => x.Summary.RmaId).ToArray());
