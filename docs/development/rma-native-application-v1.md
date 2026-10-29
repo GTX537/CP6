@@ -37,3 +37,11 @@ Head、不可变申请版本、原操作结果及审计在同一 PostgreSQL 事�
 ## W222 订单行来源
 
 新生成的订单出库行带可选`OrderLine`快照，含真实订单/明细ID、原业务行号、商品、原数量/数量单位和捕获时间，不含价格。生成与快照同一Owner事务；读取直接信任该不可变事实。后续订单修改不重写原快照。有来源的出库编辑按原行号保留身份，来源订单/客户/商品/单位不可改；删除未处理行仍保留来源历史。历史未关联行不猜测回填，可选字段缺省时原来源版本摘要保持兼容。该事实仍不是正式ShipmentLine/InvoiceLine/Schedule/UOM/range合同，也不授予退货权益。
+
+## W223 实际履约来源
+
+发货请求可显式提交`captureReturnSource: true`，与真实出库、包装、流水共同提交不可变来源；默认false保留既有发货行为。需要准确订单行关系、当前产品/单位绑定和无损数量换算，不能用订单号/SKU猜测替代。GET `sources/{id}/fulfilment`返回不可变事实和OriginalFulfilmentRef字段形状；未捕获404，始终要求当前RMA对象/仓库/租户权限。快照只含本次发货的订单行，不含价格。
+
+产品引用复用Main.Erp.ProductIdentity.v1；单位复用Main.Erp.UomProfile.v1。新Main.Erp.OrderFulfilment.v1/Main.Wms.ShipmentFulfilment.v1分别保存实际订单行截面/本次发货事实，新Main.Wms.ShipmentLot.v1保存本次实际发货批次出现，不代表全局批次主档。Facts.OriginalJson是其Reference摘要对应的准确原文。每行范围`[0, baseQty)`属于这次发货版本，baseQty是精确基准单位数量，不代表可退余额。
+
+Coverage固定PARTIAL，并列出未观察的Schedule、DeliveryProof、InvoiceLine、CommercialSnapshot、Serial、LPN。nullable字段及空列表不能解释为外部关联不存在；不能用该来源跳过正式选项、权益/授权或独立审批。本轮未交付完整RMA-Q01/C01/C02/C03验收。后续需直接采用这些事实并补上所需的真实来源/权益消费，不增加资格登记层。

@@ -16,6 +16,8 @@ public sealed class RmaApplicationController(RmaApplicationOwnerV1 owner) : Cont
         Ok(new { code = 0, data = await owner.SourcesAsync(keyword, page, ct) });
     [HttpGet("sources/{id:guid}")]
     public async Task<IActionResult> Source(Guid id, CancellationToken ct) => Ok(new { code = 0, data = await owner.SourceAsync(id, ct) });
+    [HttpGet("sources/{id:guid}/fulfilment")]
+    public async Task<IActionResult> Fulfilment(Guid id, CancellationToken ct) => Ok(new { code = 0, data = await owner.FulfilmentAsync(id, ct) });
     [HttpGet]
     public async Task<IActionResult> List([FromQuery] int page = 1, CancellationToken ct = default) =>
         Ok(new { code = 0, data = await owner.ListAsync(page, ct) });
