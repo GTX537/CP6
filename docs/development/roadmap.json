@@ -161312,6 +161312,16 @@
       "date": "2026-10-29",
       "change": "W215 exact native stock facts/current permissions/coverage assessment: 7 actual PostgreSQL/Program HTTP;29Vue/type/build PASS;0skip; Handoff released, Main closeout pending. No complete occupancy/08E/formal Stock write adoption or enterprise acceptance; original goal unchanged.",
       "evidence": "docs/development/evidence/W215-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W215 archived once; only its limited execution-intent lifecycles closed. W216 native stock evidence and coverage assessment admitted60–100min; actual rule application and original seven-day exits remain.",
+      "evidence": "docs/development/dispatch/20261029-wave216/README.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W216 native local blocks/exact release decisions: 10 actual PostgreSQL/Program HTTP (8local-control +2initialization);28Vue/type/build PASS;0skip; Handoff released, Main closeout pending. Preserves quarantine/other controls; not full Owner stop,08E or business acceptance.",
+      "evidence": "docs/development/evidence/W216-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -186403,7 +186413,7 @@
         }
       },
       "wave215_stock_assessment": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "workspace_task": "W215-01",
         "report": "docs/development/evidence/W215-01/DELIVERY.md",
         "scope": "Exact current candidate-bound native Stock observation through independent current Stock/Location/Warehouse/rule authority, precise per-row quantities, bounded current-row coverage and explicit unresolved capacity obligations, with actual API and UI adoption.",
@@ -186415,6 +186425,43 @@
           "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/191",
           "exact_tree_adoption": true,
           "at": "2026-10-29T00:48:42.144168+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave215-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W215-01",
+          "source": "cc1f787d385cd21aab570f2cff98b187ffeca620",
+          "remote_target": "e134f385f1dadfe31ee0e7ab26b40c6f566c8b11",
+          "branch": "codex/w215-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/638"
+        }
+      },
+      "wave216_local_control": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "workspace_task": "W216-01",
+        "report": "docs/development/evidence/W216-01/DELIVERY.md",
+        "scope": "Native local operational block and exact current authorized release decisions, persistent original-result recovery, same-transaction control revisions and native mirror, independent permissions and actual API/UI adoption.",
+        "remaining": "NATIVE_LOCAL_CONTROL_ONLY: the release basis is an authenticated current local operator decision, not OA approval, Quality release or proof that all effect Owners have stopped. Initialization quarantine and other restrictions remain. No activation,08E,formal Transfer/Stock/REP/RMA completion, real environment acceptance,Actions or deployment. Original seven-day exits unchanged.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "cef012718fb3ab0afe52db0056fd3534429ccc35",
+          "main": "dfc6402306d33819464bb2e2c3b260dcd13bc53a",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/192",
+          "exact_tree_adoption": true,
+          "at": "2026-10-29T01:43:03.610272+00:00"
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
@@ -187337,7 +187384,7 @@
         }
       },
       "wave215_stock_assessment": {
-        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "status": "CLOSED",
         "workspace_task": "W215-01",
         "report": "docs/development/evidence/W215-01/DELIVERY.md",
         "scope": "Exact current candidate-bound native Stock observation through independent current Stock/Location/Warehouse/rule authority, precise per-row quantities, bounded current-row coverage and explicit unresolved capacity obligations, with actual API and UI adoption.",
@@ -187349,6 +187396,43 @@
           "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/191",
           "exact_tree_adoption": true,
           "at": "2026-10-29T00:48:42.144168+00:00"
+        },
+        "full_task_complete": false,
+        "business_acceptance": "NOT_RUN",
+        "original_dependencies_unchanged": true,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave215-final-verification.json"
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W215-01",
+          "source": "cc1f787d385cd21aab570f2cff98b187ffeca620",
+          "remote_target": "e134f385f1dadfe31ee0e7ab26b40c6f566c8b11",
+          "branch": "codex/w215-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/638"
+        }
+      },
+      "wave216_local_control": {
+        "status": "VALIDATED_MAIN_CLOSEOUT_PENDING",
+        "workspace_task": "W216-01",
+        "report": "docs/development/evidence/W216-01/DELIVERY.md",
+        "scope": "Native local operational block and exact current authorized release decisions, persistent original-result recovery, same-transaction control revisions and native mirror, independent permissions and actual API/UI adoption.",
+        "remaining": "NATIVE_LOCAL_CONTROL_ONLY: the release basis is an authenticated current local operator decision, not OA approval, Quality release or proof that all effect Owners have stopped. Initialization quarantine and other restrictions remain. No activation,08E,formal Transfer/Stock/REP/RMA completion, real environment acceptance,Actions or deployment. Original seven-day exits unchanged.",
+        "handoff_delivery": {
+          "result": "PASS",
+          "source": "cef012718fb3ab0afe52db0056fd3534429ccc35",
+          "main": "dfc6402306d33819464bb2e2c3b260dcd13bc53a",
+          "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/192",
+          "exact_tree_adoption": true,
+          "at": "2026-10-29T01:43:03.610272+00:00"
         },
         "full_task_complete": false,
         "business_acceptance": "NOT_RUN",
@@ -196975,10 +197059,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261029-wave215",
-      "path": "docs/development/dispatch/20261029-wave215/README.md",
-      "baseline_sha": "96027c56280f7207ca23aae2ed71941fd44dd9ea",
-      "registered_at": "2026-10-29T00:36:48.404547+00:00",
+      "id": "20261029-wave216",
+      "path": "docs/development/dispatch/20261029-wave216/README.md",
+      "baseline_sha": "e134f385f1dadfe31ee0e7ab26b40c6f566c8b11",
+      "registered_at": "2026-10-29T01:20:58.434427+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -196997,29 +197081,29 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W215-01",
-          "workspace_task": "W215-01",
+          "id": "W216-01",
+          "workspace_task": "W216-01",
           "related_tasks": [
             "WP10-01",
             "WP10-10"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Native location stock evidence and occupancy coverage assessment",
+          "title": "Native location operational block and exact release decisions",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "3c8566388d44bd0c0575a5a20b5bcd5af38ae503",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T003648Z-wave215-start/MESSAGE.md",
-            "at": "2026-10-29T00:36:48.404547+00:00",
-            "branch": "codex/w215-handoff"
+            "commit": "1579fcf776bea7353dc8028692b00b7d32aa1b10",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T012058Z-wave216-start/MESSAGE.md",
+            "at": "2026-10-29T01:20:58.434427+00:00",
+            "branch": "codex/w216-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w215-01",
-          "planned_scope_ref": "docs/development/dispatch/20261029-wave215/README.md",
+          "branch": "codex/w216-01",
+          "planned_scope_ref": "docs/development/dispatch/20261029-wave216/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -197028,12 +197112,12 @@
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
-            "Main:native-location-stock-source",
-            "Main:location-rule-stock-assessment",
-            "Main:location-rule-stock-ui"
+            "Main:location-local-control",
+            "Main:native-location-control-mirror",
+            "Main:location-control-ui"
           ],
-          "validation": "7 actual PostgreSQL/Program HTTP;29Vue/type/build PASS;0skip",
-          "worker_delivery_ref": "docs/development/evidence/W215-01/DELIVERY.md",
+          "validation": "10 actual PostgreSQL/Program HTTP (8local-control +2initialization);28Vue/type/build PASS;0skip",
+          "worker_delivery_ref": "docs/development/evidence/W216-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -197044,7 +197128,7 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-29T00:35:40.637030+00:00",
+        "started_at": "2026-10-29T01:18:32.108499+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
           60,
@@ -197056,7 +197140,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Implement actual source/obligation ownership and exact capacity assignment/delegation, adopt all affected write guards and prepare-key tombstones, then native08E/Transfer/Stock/REP/RMA. Preserve D3/D5/D6/D7 and all original seven-day exits; existing read-only native stock evidence cannot authorize writes.",
+      "next_action": "Continue actual MASTER qualification, current location/source definitions and effect Owner guards toward Transfer/Stock/REP/RMA. Native local controls are now available but do not supply full occupancy or all-Owner protection. Preserve original D3/D5/D6/D7 and all seven-day exits.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -197064,7 +197148,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 14.15
+      "elapsed_registered_wave_minutes": 25.55
     },
     "wave_history": [
       {
@@ -225135,6 +225219,121 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/190"
           }
         ]
+      },
+      {
+        "id": "20261029-wave215",
+        "path": "docs/development/dispatch/20261029-wave215/README.md",
+        "baseline_sha": "96027c56280f7207ca23aae2ed71941fd44dd9ea",
+        "registered_at": "2026-10-29T00:36:48.404547+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W215-01",
+            "workspace_task": "W215-01",
+            "related_tasks": [
+              "WP10-01",
+              "WP10-10"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Native location stock evidence and occupancy coverage assessment",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "3c8566388d44bd0c0575a5a20b5bcd5af38ae503",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T003648Z-wave215-start/MESSAGE.md",
+              "at": "2026-10-29T00:36:48.404547+00:00",
+              "branch": "codex/w215-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w215-01",
+            "planned_scope_ref": "docs/development/dispatch/20261029-wave215/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:native-location-stock-source",
+              "Main:location-rule-stock-assessment",
+              "Main:location-rule-stock-ui"
+            ],
+            "validation": "7 actual PostgreSQL/Program HTTP;29Vue/type/build PASS;0skip",
+            "worker_delivery_ref": "docs/development/evidence/W215-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave215-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-29T00:35:40.637030+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            60,
+            100
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Implement actual source/obligation ownership and exact capacity assignment/delegation, adopt all affected write guards and prepare-key tombstones, then native08E/Transfer/Stock/REP/RMA. Preserve D3/D5/D6/D7 and all original seven-day exits; existing read-only native stock evidence cannot authorize writes.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave215-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 14.15,
+        "actual_registered_wave_minutes": 28.41,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W215-01",
+            "source": "cc1f787d385cd21aab570f2cff98b187ffeca620",
+            "remote_target": "e134f385f1dadfe31ee0e7ab26b40c6f566c8b11",
+            "branch": "codex/w215-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/638"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W215-HANDOFF",
+            "source": "aa9db9978eb42578d98538938b068b4f3b8df74c",
+            "remote_target": "b842475c6a389b0a5cdb83d555c791374f95e0b8",
+            "branch": "codex/w215-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/191"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -225212,23 +225411,23 @@
           "id": "D2",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W215-01",
+          "current_window": "W216-01",
           "prerequisite_adjustment": "Formal SourceDemand/Transfer providers and RMA IN/terminal Owner contracts remain prerequisites; current read Owners and trusted creation/inheritance are adopted within their precise scope.",
           "adopted_window": "W42-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/395",
           "report": "docs/development/evidence/WP02-03/standalone-department/DELIVERY.md",
-          "remaining": "Machine/Stocktake/WorkOrder/Stock creation and StockTransaction inheritance W136–W140 remotely adopted. W141 paging adopted. W142 internal Transfer local demand budget validated, Main closeout pending. Formal T04 context/master/permission/Request/Draft adoption and REP/RMA IN/terminal contracts remain.",
+          "remaining": "Native object creation/inheritance, local source budget and Product/technical/UOM/trusted environment sources delivered. Actual local controls validated W216. Formal MASTER current definitions/qualification, Transfer T01/T02/T04 Request adoption, complete effect Owner guards, Stock and REP/RMA remain.",
           "actual_agent_minutes": 39.91,
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "Implement actual source/obligation ownership and exact capacity assignment/delegation, adopt all affected write guards and prepare-key tombstones, then native08E/Transfer/Stock/REP/RMA. Preserve D3/D5/D6/D7 and all original seven-day exits; existing read-only native stock evidence cannot authorize writes.",
+          "next_action": "Continue actual MASTER qualification, current location/source definitions and effect Owner guards toward Transfer/Stock/REP/RMA. Native local controls are now available but do not supply full occupancy or all-Owner protection. Preserve original D3/D5/D6/D7 and all seven-day exits.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W140-01/DELIVERY.md",
           "last_inheritance_report": "docs/development/evidence/W137-01/DELIVERY.md",
           "last_paging_report": "docs/development/evidence/W141-01/DELIVERY.md",
           "last_demand_budget_report": "docs/development/evidence/W142-01/DELIVERY.md",
-          "formal_master_gap": "W206-214 prerequisites and W215 native stock read evidence adopted. Full source/obligation/measurement/delegation and effect guards,08E and formal Transfer/Stock remain; current-stock completeness is not complete occupancy.",
+          "formal_master_gap": "W206-W215 prerequisites adopted; W216 native local blocks and exact release decisions validated, Main closeout pending. Full source/obligation/measurement/delegation and all effect guards,08E and formal Transfer/Stock remain.",
           "last_inventory_identity_report": "docs/development/evidence/W204-01/DELIVERY.md",
           "last_transfer_environment_report": "docs/development/evidence/W205-01/DELIVERY.md",
           "last_warehouse_draft_report": "docs/development/evidence/W206-01/DELIVERY.md",
@@ -225240,7 +225439,8 @@
           "last_clock_policy_report": "docs/development/evidence/W212-01/DELIVERY.md",
           "last_capacity_store_report": "docs/development/evidence/W213-01/DELIVERY.md",
           "last_execution_intent_report": "docs/development/evidence/W214-01/DELIVERY.md",
-          "last_stock_assessment_report": "docs/development/evidence/W215-01/DELIVERY.md"
+          "last_stock_assessment_report": "docs/development/evidence/W215-01/DELIVERY.md",
+          "last_local_control_report": "docs/development/evidence/W216-01/DELIVERY.md"
         },
         {
           "id": "D3",
@@ -225534,8 +225734,8 @@
         ]
       },
       "latest_progress_assessment": {
-        "as_of": "2026-10-28T03:00:31.716839+00:00",
-        "adopted_through": "W192; W193 local validation pending remote adoption",
+        "as_of": "2026-10-29T01:44:05.353859+00:00",
+        "adopted_through": "W215; W216 local validation complete, remote Main adoption pending",
         "engineering_range_percent": [
           65,
           70
@@ -225547,7 +225747,7 @@
         ],
         "confidence": "LOW",
         "external_wait_excluded": true,
-        "basis": "Approximate original-scope functionality, not round/test counts; D1/D4 closed, D2/D3/D5/D6 partial and D7 final closure open. Prior total35-55h estimate invalid."
+        "basis": "Original functional scope estimate; no increase from local-control prerequisite alone. D1/D4 closed; D2/D3/D5/D6 partial, D7 final closure open. Prior35-55h total invalid; prior remaining-hours estimate low confidence, not newly timed."
       }
     }
   },

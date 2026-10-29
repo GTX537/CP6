@@ -662,6 +662,7 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.WarehouseOwnerServiceV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.WarehouseDraftOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.LocationHierarchyOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.LocationDraftOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.LocationControlOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.LocationRuleOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.LocationRuleReferencesOwnerV1>();
 builder.Services.Configure<CP6.Core.Services.Wms.WarehouseClockOptionsV1>(builder.Configuration.GetSection("WarehouseClock"));

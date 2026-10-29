@@ -1584,3 +1584,7 @@ BOM独立Owner、多层稳定位置、准确材料/单位、实际ProductMateria
 ## 2026-10-29 W215 库位库存事实与占用覆盖评估
 
 准确候选绑定的真实库存事实、独立当前权限、精确数量、覆盖边界及API/页面已完成。7 actual PostgreSQL/Program HTTP;29Vue/type/build PASS;0skip。[报告](../evidence/W215-01/DELIVERY.md)。登记14.15分钟，预计60–100；Handoff已释放，Main待正常PR/finish。真实Owner覆盖/源映射/库存采用、保护与08E、完整MASTER/Transfer/Stock及七天出口保留。 Implement actual source/obligation ownership and exact capacity assignment/delegation, adopt all affected write guards and prepare-key tombstones, then native08E/Transfer/Stock/REP/RMA. Preserve D3/D5/D6/D7 and all original seven-day exits; existing read-only native stock evidence cannot authorize writes.
+
+## 2026-10-29 W216 库位本域控制
+
+库位本域封锁、准确解除决定、原结果恢复及真实API/页面完成。10 actual PostgreSQL/Program HTTP (8local-control +2initialization);28Vue/type/build PASS;0skip。[报告](../evidence/W216-01/DELIVERY.md)。登记25.55分钟，预计60–100；Handoff已释放，Main待正常PR/finish。初始化与其他来源限制保留；正式MASTER/Transfer/Stock及原七天出口不变。 Continue actual MASTER qualification, current location/source definitions and effect Owner guards toward Transfer/Stock/REP/RMA. Native local controls are now available but do not supply full occupancy or all-Owner protection. Preserve original D3/D5/D6/D7 and all seven-day exits.

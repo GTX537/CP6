@@ -7,6 +7,7 @@ import { requireReadableAuthentication } from '@/auth/browserAuthentication'
 
 // 路由路径 → 组件的映射表（所有可能的页面）
 const viewModules: Record<string, () => Promise<any>> = {
+  '/wms/location-controls': () => import('@/views/wms/LocationControlView.vue'),
   '/wms/location-rule-review': () => import('@/views/wms/LocationRuleReviewView.vue'),
   '/wms/location-rules': () => import('@/views/wms/LocationRuleView.vue'),
   '/wms/location-rule-references': () => import('@/views/wms/LocationRuleReferencesView.vue'),
@@ -477,6 +478,7 @@ export function addDynamicRoutes(menus: any[]) {
       { path: 'plm/controlled-document/:documentId', name: 'plm/document-review-detail', component: viewModules['/plm/controlled-document']!, props: route => ({ documentId: route.params.documentId, reviewSubmission: typeof route.query.submission === 'string' ? route.query.submission : undefined }), meta: { permission: 'plm-controlled-document:query' } },
       { path: 'wms/location-rule/:id/review', name: 'wms/location-rule-review', component: viewModules['/wms/location-rule-review']!, meta: { permission: 'wms-location-rule:query' } },
       { path: 'wms/location/:id/rules', name: 'wms/location-rules', component: viewModules['/wms/location-rules']!, meta: { permission: 'wms-location-rule:query' } },
+      { path: 'wms/location/:id/controls', name: 'wms/location-controls', component: viewModules['/wms/location-controls']!, meta: { permission: 'wms-location:query' } },
       { path: 'wms/warehouse/:id/location-drafts', name: 'wms/location-drafts', component: viewModules['/wms/location-drafts']!, meta: { permission: 'wms-location:query' } },
       { path: 'wms/warehouse/:id/hierarchy', name: 'wms/location-hierarchy', component: viewModules['/wms/location-hierarchy']!, meta: { permission: 'wms-warehouse:query' } },
       { path: 'wms/warehouse/:id/rule-references', name: 'wms/location-rule-references', component: viewModules['/wms/location-rule-references']!, meta: { permission: 'wms-warehouse:query' } },
