@@ -1,8 +1,14 @@
+using System.Text.Json.Serialization;
+
 namespace CP6.Core.Services.Wms;
 
-public sealed record FulfilmentRefV1(string Owner, string Id, string Version, string Digest);
-public sealed record FulfilmentUomV1(string Code, string Version);
-public sealed record FulfilmentQtyV1(string Value, FulfilmentUomV1 Uom);
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+public sealed record FulfilmentRefV1([property: JsonRequired] string Owner, [property: JsonRequired] string Id,
+    [property: JsonRequired] string Version, [property: JsonRequired] string Digest);
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+public sealed record FulfilmentUomV1([property: JsonRequired] string Code, [property: JsonRequired] string Version);
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+public sealed record FulfilmentQtyV1([property: JsonRequired] string Value, [property: JsonRequired] FulfilmentUomV1 Uom);
 public sealed record FulfilmentRangeV1(string From, string To);
 
 // Field shape of WMS-RMA-01 OriginalFulfilmentRef. The enclosing source reports its actual coverage.
@@ -16,4 +22,8 @@ public sealed record OriginalFulfilmentV1(FulfilmentRefV1 ShipmentRef, string Sh
 public sealed record FulfilmentFactV1(FulfilmentRefV1 Reference, string OriginalJson);
 public sealed record OutboundFulfilmentSnapshotV1(Guid OutboundId, string OutboundNumber, string CustomerCode,
     DateTimeOffset CapturedAt, IReadOnlyList<OriginalFulfilmentV1> Lines, IReadOnlyList<FulfilmentFactV1> Facts,
-    string Coverage, IReadOnlyList<string> Unobserved);
+    string Coverage, IReadOnlyList<string> Unobserved)
+{
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public FulfilmentRefV1? CustomerRef { get; init; }
+}

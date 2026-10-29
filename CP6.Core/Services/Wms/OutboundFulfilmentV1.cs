@@ -17,11 +17,11 @@ internal static class OutboundFulfilmentV1
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
     internal sealed record PreparedLine(Guid Id, Guid OrderLineId, string ProductCode, string UnitCode, string Quantity,
         FulfilmentRefV1 Product, UomProfileRefV1 UnitProfile, UomProfileRefV1 BaseProfile, FulfilmentQtyV1 BaseQty);
-    internal sealed record Prepared(DateTimeOffset At, OrderFulfilmentSourceV1 Order, IReadOnlyList<PreparedLine> Lines);
+    internal sealed record Prepared(DateTimeOffset At, OrderFulfilmentSourceV1 Order, IReadOnlyList<PreparedLine> Lines, FulfilmentRefV1? Customer);
     private static OrderPriceCorrectionException Error(string code, int status = 422) => new(code, status);
 
     // Only the shipping decision validates mutable source conditions. Readers trust this stored contract.
-    internal static async Task<Prepared> Prepare(CP6Context db, OperationsAccessV1 access, OutboundOrder outbound, CancellationToken ct)
+    internal static async Task<Prepared> Prepare(CP6Context db, OperationsAccessV1 access, OutboundOrder outbound, bool formalApplication, CancellationToken ct)
     {
         if (outbound.OutboundType != OutboundType.Shipping || string.IsNullOrWhiteSpace(outbound.WebOrderNo))
             throw Error("FULFILMENT_ORDER_SOURCE_REQUIRED");
@@ -29,6 +29,15 @@ internal static class OutboundFulfilmentV1
         var order = await OrderFulfilmentSourceReaderV1.Read(db, outbound.WebOrderNo, at, ct);
         if (string.IsNullOrWhiteSpace(outbound.CustomerCd) || order.CustomerCode != outbound.CustomerCd)
             throw Error("FULFILMENT_CUSTOMER_CHANGED", 409);
+        FulfilmentRefV1? customer = null;
+        if (formalApplication)
+        {
+            var partners = await access.SourceAsync(OperationsOwnerV1.BusinessPartner, ct);
+            var id = await partners.BusinessPartners().Where(x => x.BpCd == outbound.CustomerCd && x.CustomerFlg)
+                .Select(x => (Guid?)x.Id).SingleOrDefaultAsync(ct) ?? throw Error("FULFILMENT_CUSTOMER_UNAVAILABLE", 403);
+            var actual = (await BusinessPartnerIdentityOwnerV1.ReadOwnedAsync(db, partners, id, null, ct)).Reference;
+            customer = new(actual.Owner, actual.Id.ToString(), actual.Version, actual.Digest);
+        }
         var lineage = await OutboundOrderLineageV1.Read(db, outbound.OutboundNo, ct);
         var rows = await db.OutboundOrderDetails.AsNoTracking().Where(x => x.OutboundNo == outbound.OutboundNo
             && !x.IsDeleted && x.ShippedQty < x.AllocatedQty).OrderBy(x => x.LineNo).ToArrayAsync(ct);
@@ -67,7 +76,7 @@ internal static class OutboundFulfilmentV1
                 profile.Reference, baseline.Reference, new(value, new(baseline.Profile.Code, baseline.Reference.Version))));
         }
         var sourceLines = result.Select(x => x.OrderLineId).ToHashSet();
-        return new(at, order with { Lines = order.Lines.Where(x => sourceLines.Contains(x.Id)).ToArray() }, result);
+        return new(at, order with { Lines = order.Lines.Where(x => sourceLines.Contains(x.Id)).ToArray() }, result, customer);
     }
 
     private static FulfilmentFactV1 Fact<T>(string owner, string id, string version, T value)
@@ -104,19 +113,22 @@ internal static class OutboundFulfilmentV1
                 null, null, null, null, line.Product, [new("0", line.BaseQty.Value)], line.BaseQty, lots, [], []));
         }
         var snapshot = new OutboundFulfilmentSnapshotV1(outbound.Id, outbound.OutboundNo, outbound.CustomerCd!, prepared.At,
-            lines, facts, "PARTIAL", ["SCHEDULE", "DELIVERY_PROOF", "INVOICE_LINE", "COMMERCIAL_SNAPSHOT", "SERIAL", "LPN"]);
+            lines, facts, "PARTIAL", ["SCHEDULE", "DELIVERY_PROOF", "INVOICE_LINE", "COMMERCIAL_SNAPSHOT", "SERIAL", "LPN"])
+            { CustomerRef = prepared.Customer };
         await db.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO cp6_outbound_fulfilment_v1.snapshots(tenant_id,outbound_id,payload)
             VALUES({db.CurrentTenantId},{outbound.Id},CAST({JsonSerializer.Serialize(snapshot)} AS jsonb))
             """, ct);
     }
 
-    internal static async Task<OutboundFulfilmentSnapshotV1> Read(CP6Context db, Guid outboundId, CancellationToken ct)
+    internal static async Task<OutboundFulfilmentSnapshotV1> Read(CP6Context db, Guid outboundId, CancellationToken ct) =>
+        await TryRead(db, outboundId, ct) ?? throw Error("FULFILMENT_NOT_CAPTURED", 404);
+    internal static async Task<OutboundFulfilmentSnapshotV1?> TryRead(CP6Context db, Guid outboundId, CancellationToken ct)
     {
         var payload = await db.Database.SqlQuery<string>($"""
             SELECT payload::text AS "Value" FROM cp6_outbound_fulfilment_v1.snapshots
             WHERE tenant_id={db.CurrentTenantId} AND outbound_id={outboundId}
-            """).SingleOrDefaultAsync(ct) ?? throw Error("FULFILMENT_NOT_CAPTURED", 404);
-        return JsonSerializer.Deserialize<OutboundFulfilmentSnapshotV1>(payload)!;
+            """).SingleOrDefaultAsync(ct);
+        return payload == null ? null : JsonSerializer.Deserialize<OutboundFulfilmentSnapshotV1>(payload)!;
     }
 }

@@ -104,7 +104,7 @@ public partial class OutboundService
     {
         if(!_db.Database.IsNpgsql())
         {
-            if(req.CaptureReturnSource)throw new OrderPriceCorrectionException("FULFILMENT_POSTGRESQL_REQUIRED",422);
+            if(req.CaptureReturnSource || req.CaptureReturnApplicationSource)throw new OrderPriceCorrectionException("FULFILMENT_POSTGRESQL_REQUIRED",422);
             return await ShipCoreAsync(number,req,userName);
         }
         var frozen=OperationsOwnerV1.Freeze(req);var effects=new List<Func<Task>>();
@@ -115,7 +115,8 @@ public partial class OutboundService
             await a.RequireActiveAssociations(row.WebOrderNo,row.WorkOrderNo,ct);
             if(row.OutboundType==OutboundType.Shipping && !string.IsNullOrWhiteSpace(row.WebOrderNo))await a.RequireSourceOrder(row.WebOrderNo,true,ct);
             await RequireStoredReservation(row,true,ct);
-            var fulfilment=frozen.CaptureReturnSource?await OutboundFulfilmentV1.Prepare(_db,a,row,ct):null;
+            var fulfilment=frozen.CaptureReturnSource || frozen.CaptureReturnApplicationSource
+                ?await OutboundFulfilmentV1.Prepare(_db,a,row,frozen.CaptureReturnApplicationSource,ct):null;
             using var inheritance=((StockMovementService)_stock).InheritTransactions(a);
             var package=await ShipCoreAsync(number,frozen,a.Actor,effects);QueueStockEffects(effects);
             if(fulfilment!=null)await OutboundFulfilmentV1.Capture(_db,row,fulfilment,package,ct);
