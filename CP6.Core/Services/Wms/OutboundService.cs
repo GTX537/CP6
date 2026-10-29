@@ -136,7 +136,7 @@ public partial class OutboundService : IOutboundService
         return no;
     }
 
-    private Task CreateOrderInternalAsync(string outboundNo, OutboundOrderDto dto, string? userName)
+    private Task<List<OutboundOrderDetail>> CreateOrderInternalAsync(string outboundNo, OutboundOrderDto dto, string? userName)
     {
         var header = new OutboundOrder
         {
@@ -157,10 +157,11 @@ public partial class OutboundService : IOutboundService
         };
         _db.OutboundOrders.Add(header);
 
+        var generated = new List<OutboundOrderDetail>();
         int line = 1;
         foreach (var d in dto.Details)
         {
-            _db.OutboundOrderDetails.Add(new OutboundOrderDetail
+            var detail = new OutboundOrderDetail
             {
                 OutboundNo = outboundNo,
                 LineNo = line++,
@@ -171,9 +172,11 @@ public partial class OutboundService : IOutboundService
                 UnitPrice = d.UnitPrice,
                 Remarks = d.Remarks,
                 Creator = userName,
-            });
+            };
+            _db.OutboundOrderDetails.Add(detail);
+            generated.Add(detail);
         }
-        return Task.CompletedTask;
+        return Task.FromResult(generated);
     }
 
     private async Task UpdateOrderCoreAsync(string outboundNo, OutboundOrderDto dto, string? userName)
@@ -748,12 +751,13 @@ public partial class OutboundService : IOutboundService
                 LineNo = i + 1,
                 ProductCd = d.ProductCd,
                 RequiredQty = d.Quantity ?? 0,
-                UnitCd = d.UnitPriceUnit,
+                UnitCd = owned ? d.QtyUnit : d.UnitPriceUnit,
                 UnitPrice = d.IndividualUnitPrice,
             }).ToList(),
         };
-        await CreateOrderInternalAsync(no, dto, userName);
+        var generated = await CreateOrderInternalAsync(no, dto, userName);
         await _db.SaveChangesAsync();
+        if (owned) await OutboundOrderLineageV1.Capture(_db, order, orderDetails, generated);
         return no;
     }
 

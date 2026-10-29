@@ -72,7 +72,7 @@
       </template>
 
       <el-table :data="form.details" border size="small" max-height="400">
-        <el-table-column type="index" :label="t('wms.common.line')" width="50" align="center" />
+        <el-table-column prop="lineNo" :label="t('wms.common.line')" width="50" align="center" />
         <el-table-column :label="t('wms.common.product')" min-width="140">
           <template #default="{ row }"><el-input v-model="row.productCd" :disabled="!editable" maxlength="20" /></template>
         </el-table-column>
@@ -213,11 +213,11 @@ function formatQty(n: number | null | undefined): string {
 }
 
 function addLine() {
-  form.details.push({ lineNo: form.details.length + 1, productCd: '', requiredQty: 0, allocatedQty: 0, shippedQty: 0 } as OutboundOrderDetail)
+  const lineNo = form.details.reduce((last, line) => Math.max(last, line.lineNo), 0) + 1
+  form.details.push({ lineNo, productCd: '', requiredQty: 0, allocatedQty: 0, shippedQty: 0 } as OutboundOrderDetail)
 }
 function removeLine(idx: number) {
   form.details.splice(idx, 1)
-  form.details.forEach((d, i) => (d.lineNo = i + 1))
 }
 
 async function loadByNo(no: string) {

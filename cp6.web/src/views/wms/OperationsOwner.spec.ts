@@ -38,6 +38,17 @@ beforeEach(()=>{
 })
 afterEach(()=>{view?.unmount();view=undefined})
 describe('independent manufacturing and outbound intent',()=>{
+ it('keeps the original outbound line identity in the save request after deleting another line',async()=>{
+  const vm=render(2)
+  const remaining={lineNo:2,productCd:'SAME',requiredQty:2,unitCd:'EA'}
+  wms.get.mockResolvedValueOnce({data:{...outbound,details:[{...remaining,lineNo:1},{...remaining}]}})
+  await vm.loadByNo('OUT1');vm.removeLine(0)
+  wms.update.mockResolvedValueOnce({code:0})
+  wms.get.mockResolvedValueOnce({data:{...outbound,details:[{...remaining}]}})
+  await vm.onSave()
+  expect(wms.update.mock.calls[0]![1].details).toEqual([remaining])
+  vm.addLine();expect(vm.form.details.map((x:any)=>x.lineNo)).toEqual([2,3])
+ })
  it.each([0,2])('discards prior-identity reads and preserves drafts edited while loading (%s)',async index=>{
   const vm=render(index),api=index===0?mes:wms,doc=index===0?manufacturing:outbound
   let done!:(x:unknown)=>void;api.get.mockImplementationOnce(()=>new Promise(r=>{done=r}))
