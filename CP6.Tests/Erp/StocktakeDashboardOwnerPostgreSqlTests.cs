@@ -45,6 +45,9 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         =>new(h.Db,new WmsSequenceService(h.Db),InventoryMover(h,owner),owner);
     private static async Task SeedInventory(Harness h)
     {
+        h.Db.Warehouses.Add(new(){WarehouseCd="W01",WarehouseName="Inventory",Creator="price-owner"});
+        foreach(var code in new[]{"L1","L2","L3"})
+            h.Db.Locations.Add(new(){WarehouseCd="W01",LocationCd=code,Creator="price-owner",AreaCd="A"});
         h.Db.Stocks.AddRange(new Stock{WarehouseCd="W01",LocationCd="L1",ProductCd="P1",LotNo="LOT",PhysicalQty=10.12345678m,AvailableQty=10.12345678m,UnitPrice=3m,Creator="price-owner"},
             new Stock{WarehouseCd="W01",LocationCd="L2",ProductCd="P2",LotNo="LOT",PhysicalQty=20m,AvailableQty=20m,UnitPrice=5m,Creator="price-owner"});
         await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();
@@ -142,7 +145,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     {
         await using var h=await Seed();var owner=await GrantStocktakeDashboard(h);await SeedInventory(h);
         await h.Db.WmsRoleScopes.ExecuteDeleteAsync();h.Db.WmsRoleScopes.Add(new(){RoleId=72,WarehouseCd="w01 ",AreaCd="a "});
-        h.Db.Locations.AddRange(new(){WarehouseCd="W01",LocationCd="L1",AreaCd="A"},new(){WarehouseCd="W01",LocationCd="L2",AreaCd="B"});
+        await h.Db.Locations.Where(l=>l.WarehouseCd=="W01" && l.LocationCd=="L2").ExecuteUpdateAsync(s=>s.SetProperty(l=>l.AreaCd,"B"));
         h.Db.Sys_RoleFieldPerms.Add(new(){RoleId=72,ResourceKey="wms-stock",FieldName="UnitPrice",Access=3});await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();
         var read=new StockOperationsService(h.Db,owner);var row=Assert.Single((await read.SearchAsync(new())).Items);Assert.Null(row.UnitPrice);
         await Assert.ThrowsAsync<OrderPriceCorrectionException>(()=>InventoryMover(h,owner).ApplyAsync(InventoryAdjustment()));

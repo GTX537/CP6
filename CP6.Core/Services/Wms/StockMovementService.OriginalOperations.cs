@@ -22,6 +22,7 @@ public partial class StockMovementService : IStockOriginalOperationsV1
                 throw new OrderPriceCorrectionException("INTERNAL_STOCK_CAPABILITY_REQUIRED",403);
             a.RequirePriceWrite();frozen.OperatorCd=a.Actor;
             await a.RequireStockKey(frozen.WarehouseCd,frozen.LocationCd,frozen.ProductCd,frozen.LotNo,true,t);
+            await GuardIndependentLocationUse(a,frozen.WarehouseCd,frozen.LocationCd,frozen.TxnType,t);
             var before=await Snapshot(frozen.WarehouseCd,[frozen.LocationCd],frozen.ProductCd,frozen.LotNo,t);
             using var inheritance=InheritTransactions(a);
             var no=await ApplyWithinOwnerAsync(frozen,t);
@@ -39,6 +40,8 @@ public partial class StockMovementService : IStockOriginalOperationsV1
             frozen.OperatorCd=a.Actor;
             await a.RequireStockKey(frozen.WarehouseCd,frozen.FromLocationCd,frozen.ProductCd,frozen.LotNo,true,t);
             await a.RequireStockKey(frozen.WarehouseCd,frozen.ToLocationCd,frozen.ProductCd,frozen.LotNo,true,t);
+            await GuardIndependentLocationUse(a,frozen.WarehouseCd,frozen.FromLocationCd,WmsTxnType.MOVE,t);
+            await GuardIndependentLocationUse(a,frozen.WarehouseCd,frozen.ToLocationCd,WmsTxnType.MOVE,t);
             if(await _db.Stocks.AnyAsync(s=>s.WarehouseCd==frozen.WarehouseCd && s.ProductCd==frozen.ProductCd && s.LotNo==frozen.LotNo
                 && s.LocationCd==frozen.FromLocationCd && s.LocationCd==frozen.ToLocationCd,t))
                 throw new ArgumentException("WM-MSG-010: 移動先は移動元と異なるロケーションを指定してください。");

@@ -1588,3 +1588,7 @@ BOM独立Owner、多层稳定位置、准确材料/单位、实际ProductMateria
 ## 2026-10-29 W216 库位本域控制
 
 库位本域封锁、准确解除决定、原结果恢复及真实API/页面完成。10 actual PostgreSQL/Program HTTP (8local-control +2initialization);28Vue/type/build PASS;0skip。[报告](../evidence/W216-01/DELIVERY.md)。登记25.55分钟，预计60–100；Handoff已释放，Main待正常PR/finish。初始化与其他来源限制保留；正式MASTER/Transfer/Stock及原七天出口不变。 Continue actual MASTER qualification, current location/source definitions and effect Owner guards toward Transfer/Stock/REP/RMA. Native local controls are now available but do not supply full occupancy or all-Owner protection. Preserve original D3/D5/D6/D7 and all seven-day exits.
+
+## 2026-10-29 W217 独立库存库位控制
+
+独立库存普通新使用采用当前库位封锁，两端和提交前复核；保留原结果恢复、纯预留释放和内部盘点事实路径。69 distinct actual PostgreSQL/Program HTTP PASS;0skip;frontend unchanged。[报告](../evidence/W217-01/DELIVERY.md)。登记18.8分钟，预计45–70；Handoff已释放，Main待正常PR/finish。正式MASTER/Transfer/Stock及原七天出口不变。 Continue actual formal MASTER/location qualification and effect Owner adoption toward Transfer/Stock/REP/RMA; preserve D3/D5/D6/D7 and all original seven-day exits.
