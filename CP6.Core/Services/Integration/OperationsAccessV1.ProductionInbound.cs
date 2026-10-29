@@ -50,7 +50,10 @@ internal sealed partial class OperationsAccessV1
         else if(authority.Scope!=5)
         {
             var orders=DepartmentOrders(authority).Select(o=>o.WebOrderNo);
-            rows=rows.Where(r=>db.WorkOrders.Any(w=>w.WorkOrderNo==r.WorkOrderNo && !w.IsDeleted && w.WebOrderNo!=null && orders.Contains(w.WebOrderNo)));
+            var returnSources=db.Database.SqlQuery<RmaReceiptSource>($"SELECT receipt_id AS \"Receipt\",outbound_id AS \"Outbound\" FROM cp6_rma_formal_v1.inbound_receipt_sources WHERE tenant_id={db.CurrentTenantId}");
+            var outbounds=Outbounds().Select(x=>x.Id);
+            rows=rows.Where(r=>db.WorkOrders.Any(w=>w.WorkOrderNo==r.WorkOrderNo && !w.IsDeleted && w.WebOrderNo!=null && orders.Contains(w.WebOrderNo))
+                || r.SourceType=="RMA" && returnSources.Any(x=>x.Receipt==r.Id) && !returnSources.Any(x=>x.Receipt==r.Id && !outbounds.Contains(x.Outbound)));
         }
         rows=rows.Where(r=>(r.InboundNo==null || r.InboundNo=="" || db.InboundOrders.Any(o=>o.InboundNo==r.InboundNo && !o.IsDeleted))
             && (r.WorkOrderNo==null || r.WorkOrderNo=="" || db.WorkOrders.Any(w=>w.WorkOrderNo==r.WorkOrderNo && !w.IsDeleted)));
@@ -67,6 +70,11 @@ internal sealed partial class OperationsAccessV1
     internal async Task RequireReceipt(string number,CancellationToken ct)
     {
         if(!await Receipts().AnyAsync(r=>r.ReceiptNo==number,ct))throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN",403);
+    }
+    private sealed class RmaReceiptSource
+    {
+        public Guid Receipt { get; init; }
+        public Guid Outbound { get; init; }
     }
     internal async Task RequireSourceInbound(string number,CancellationToken ct)
     {

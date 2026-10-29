@@ -26105,7 +26105,7 @@ namespace CP6.Persistence.PostgreSql.Migrations.Core
                         .HasAnnotation("CP6:TimeContract", "PreservedWallClock");
 
                     b.Property<string>("OperatorCd")
-                        .HasMaxLength(20)
+                        .HasMaxLength(100)
                         .HasColumnType("bpchar")
                         .UseCollation("cp6_ci_as_provider_v1");
 
@@ -26194,7 +26194,7 @@ namespace CP6.Persistence.PostgreSql.Migrations.Core
                                 .HasAnnotation("CP6:GeneratedCapacity", true)
                                 .HasAnnotation("CP6:OriginalName", "CK_T_InboundReceipt_Modifier_Utf16Capacity");
 
-                            t.HasCheckConstraint("CK_T_InboundReceipt_OperatorCd_Utf16Capacity", "char_length(regexp_replace((convert_from(pg_catalog.bpcharsend(\"OperatorCd\"), 'UTF8'))::text COLLATE \"C\", U&'[\\+010000-\\+10FFFF]', 'aa', 'g')) <= 20")
+                            t.HasCheckConstraint("CK_T_InboundReceipt_OperatorCd_Utf16Capacity", "char_length(regexp_replace((convert_from(pg_catalog.bpcharsend(\"OperatorCd\"), 'UTF8'))::text COLLATE \"C\", U&'[\\+010000-\\+10FFFF]', 'aa', 'g')) <= 100")
                                 .HasAnnotation("CP6:GeneratedCapacity", true)
                                 .HasAnnotation("CP6:OriginalName", "CK_T_InboundReceipt_OperatorCd_Utf16Capacity");
 
@@ -33326,7 +33326,7 @@ namespace CP6.Persistence.PostgreSql.Migrations.Core
                         .HasAnnotation("CP6:TimeContract", "PreservedWallClock");
 
                     b.Property<string>("OperatorCd")
-                        .HasMaxLength(20)
+                        .HasMaxLength(100)
                         .HasColumnType("bpchar")
                         .UseCollation("cp6_ci_as_provider_v1");
 
@@ -33475,7 +33475,7 @@ namespace CP6.Persistence.PostgreSql.Migrations.Core
                                 .HasAnnotation("CP6:GeneratedCapacity", true)
                                 .HasAnnotation("CP6:OriginalName", "CK_T_StockTransaction_Modifier_Utf16Capacity");
 
-                            t.HasCheckConstraint("CK_T_StockTransaction_OperatorCd_Utf16Capacity", "char_length(regexp_replace((convert_from(pg_catalog.bpcharsend(\"OperatorCd\"), 'UTF8'))::text COLLATE \"C\", U&'[\\+010000-\\+10FFFF]', 'aa', 'g')) <= 20")
+                            t.HasCheckConstraint("CK_T_StockTransaction_OperatorCd_Utf16Capacity", "char_length(regexp_replace((convert_from(pg_catalog.bpcharsend(\"OperatorCd\"), 'UTF8'))::text COLLATE \"C\", U&'[\\+010000-\\+10FFFF]', 'aa', 'g')) <= 100")
                                 .HasAnnotation("CP6:GeneratedCapacity", true)
                                 .HasAnnotation("CP6:OriginalName", "CK_T_StockTransaction_OperatorCd_Utf16Capacity");
 
