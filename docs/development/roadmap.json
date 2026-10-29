@@ -227948,7 +227948,7 @@
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
           "current_window": "W232-01",
-          "prerequisite_adjustment": "W230 actual native Stock/IN/RMA shared transaction and W231 independent return-quality adapter/observation are implemented and locally accepted using explicit simulated source facts. Remaining SourceDemand/Transfer adoption, RMA source correction, five disposition Owners and commercial exits require implementation/integration; missing enterprise data is supplied by simulation.",
+          "prerequisite_adjustment": "W230 actual Stock/IN/RMA transaction, W231 independent Quality decisions/observation, and W232 five independent terminal disposition Owners with actual MOVE/LOSS/SHIP and page recovery are implemented and locally accepted with explicit simulated business inputs. Remaining SourceDemand/Transfer adoption, source/disposition correction and RMA commercial/financial exits require implementation/integration; missing enterprise data is supplied by simulation.",
           "adopted_window": "W42-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/395",
           "report": "docs/development/evidence/WP02-03/standalone-department/DELIVERY.md",
