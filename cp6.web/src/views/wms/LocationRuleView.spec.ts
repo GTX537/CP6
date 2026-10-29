@@ -7,6 +7,7 @@ import { AUTH_EPOCH, AUTH_EVENT } from '@/auth/identity'
 import type { RuleContext, RuleDraft, RuleView } from '@/api/wms/locationRule'
 const mock = vi.hoisted(() => ({ scope: vi.fn(), context: vi.fn(), list: vi.fn(), read: vi.fn(), create: vi.fn(), patch: vi.fn(), withdraw: vi.fn(), resolve: vi.fn(), operation: vi.fn(), authenticated: true, permissions: null as any, route: null as any }))
 vi.mock('@/api/wms/locationRule', () => ({ locationRuleApi: mock }))
+vi.mock('@/api/wms/locationStockAssessment', () => ({ locationStockAssessmentApi: { assess: vi.fn() } }))
 vi.mock('@/api/wms/transferEnvironment', () => ({ transferEnvironmentApi: {} }))
 vi.mock('vue-router', () => ({ useRoute: () => mock.route }))
 vi.mock('@/stores/permission', () => ({ usePermissionStore: () => mock.permissions }))

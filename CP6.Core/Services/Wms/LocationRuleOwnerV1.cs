@@ -5,7 +5,7 @@ using CP6.Core.Services.Plm;
 using Microsoft.EntityFrameworkCore;
 using static CP6.Core.Services.Wms.LocationRuleValuesV1;
 namespace CP6.Core.Services.Wms;
-public sealed class LocationRuleOwnerV1(CP6Context db,OperationsOwnerV1 owner)
+public sealed partial class LocationRuleOwnerV1(CP6Context db,OperationsOwnerV1 owner)
 {
     private OperationsOwnerV1 Authority=>owner.Owns(db)?owner:throw Error("AUTHORITY_FENCE_UNAVAILABLE",503);
     private async Task Target(OperationsAccessV1 a,Guid location,CancellationToken ct)
