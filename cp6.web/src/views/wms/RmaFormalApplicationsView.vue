@@ -10,6 +10,7 @@
       <p v-if="!context.scopeOptions.length">当前没有可用的仓库范围，请联系管理员核对仓库与站点配置及访问权限。</p>
     </section>
     <RmaPolicyPanel v-if="selectedScope && identity" :key="selectedScope.optionRef.id" :scope="identity" :option="selectedScope.optionRef" :can-publish="context!.capabilities.includes('wms.rma.policy.publish')" />
+    <RmaDeliveryEvidencePanel v-if="selectedScope && identity && selectedDelivery" :scope="identity" :option="selectedScope.optionRef" :original="selectedDelivery" :can-record="context!.capabilities.includes('wms.rma.evidence.record')" :can-withdraw="context!.capabilities.includes('wms.rma.evidence.withdraw')" />
     <section v-if="selectedScope"><h2>已保存申请</h2>
       <label>状态<select v-model="stateFilter" aria-label="申请状态" :disabled="busy" @change="searchApplications"><option value="">全部</option><option v-for="(label, state) in states" :key="state" :value="state">{{ label }}</option></select></label>
       <div class="scroll"><table><thead><tr><th>申请编号</th><th>状态</th><th>申请时间</th><th>查看</th></tr></thead><tbody><tr v-for="row in applications?.items" :key="row.rmaId"><td>{{ row.displayNo }}</td><td>{{ states[row.applicationState] }}</td><td>{{ row.recordedAt }}</td><td><button :disabled="busy" @click="open(row.rmaId)">查看申请</button></td></tr></tbody></table></div>
@@ -19,7 +20,7 @@
     <section v-if="selectedScope && canWrite"><h2>添加退货来源</h2>
       <form class="search" @submit.prevent="searchSources"><label>发货单或客户编码<input v-model="keyword" aria-label="来源关键词" maxlength="200" :disabled="busy" /></label><button :disabled="busy || blocked || !!editing">查找来源</button></form>
       <p>显示已保存客户身份的发货来源。可退额度尚待授权核定，原发货数量不代表可批准额度。</p>
-      <div class="scroll"><table><thead><tr><th>发货单</th><th>客户</th><th>产品</th><th>原发货数量</th><th>选择</th></tr></thead><tbody><tr v-for="choice in sources" :key="choice.optionRef.id"><td>{{ choice.shipment }}</td><td>{{ choice.customer }}</td><td>{{ choice.product }}</td><td>{{ choice.original.baseQty.value }} {{ choice.original.baseQty.uom.code }}</td><td><button :disabled="busy || blocked || !!editing" @click="add(choice)">添加 {{ choice.product }}</button></td></tr></tbody></table></div>
+      <div class="scroll"><table><thead><tr><th>发货单</th><th>客户</th><th>产品</th><th>原发货数量</th><th>选择</th></tr></thead><tbody><tr v-for="choice in sources" :key="choice.optionRef.id"><td>{{ choice.shipment }}</td><td>{{ choice.customer }}</td><td>{{ choice.product }}</td><td>{{ choice.original.baseQty.value }} {{ choice.original.baseQty.uom.code }}</td><td><button :disabled="busy || blocked || !!editing" @click="add(choice)">添加 {{ choice.product }}</button><button :disabled="busy" @click="selectedDelivery = choice.original">签收证据 {{ choice.product }}</button></td></tr></tbody></table></div>
       <p v-if="!sources.length">当前页没有可选来源。</p>
       <nav aria-label="来源分页"><button :disabled="busy || blocked || sourceCursors.length === 1 || !!editing" @click="moveSources(false)">上一页来源</button><button :disabled="busy || blocked || !sourceNext || !!editing" @click="moveSources(true)">下一页来源</button></nav>
     </section>
@@ -38,7 +39,7 @@
       </fieldset></form>
     </section>
     <section v-if="detail"><h2>申请详情</h2><p>{{ states[detail.state] }} · 版本 {{ detail.applicationVersion }} / {{ headVersion }}</p><p>原因：{{ detail.reasonCode }}</p><p>期望处理：{{ outcomes.find(x => x[0] === detail!.requestedOutcome)?.[1] }}</p>
-      <div class="scroll"><table><thead><tr><th>明细</th><th>申请数量</th><th>原因</th><th>原订单商业记录</th></tr></thead><tbody><tr v-for="(line, index) in detail.requestedLines" :key="line.lineId"><td>{{ index + 1 }}</td><td>{{ line.requestedQuantity.value }} {{ line.requestedQuantity.uom.code }}</td><td>{{ line.reasonDetail }}</td><td><button v-if="line.originalSnapshot.commercialSnapshotRef" :disabled="busy" @click="readCommercial(line.originalSnapshot)">查看原商业记录</button><span v-else>发运时未保存</span></td></tr></tbody></table></div>
+      <div class="scroll"><table><thead><tr><th>明细</th><th>申请数量</th><th>原因</th><th>原订单商业记录</th></tr></thead><tbody><tr v-for="(line, index) in detail.requestedLines" :key="line.lineId"><td>{{ index + 1 }}</td><td>{{ line.requestedQuantity.value }} {{ line.requestedQuantity.uom.code }}</td><td>{{ line.reasonDetail }}</td><td><button v-if="line.originalSnapshot.commercialSnapshotRef" :disabled="busy" @click="readCommercial(line.originalSnapshot)">查看原商业记录</button><span v-else>发运时未保存</span><button :disabled="busy" @click="selectedDelivery = line.originalSnapshot">签收证据 {{ index + 1 }}</button></td></tr></tbody></table></div>
       <section v-if="commercial" aria-label="原订单商业记录"><h3>{{ commercial.original.orderNumber }} · 原订单行 {{ commercial.original.orderLineNumber }} · {{ commercial.original.productCode }}</h3>
         <p>发运时保存于 {{ commercial.original.capturedAt }}。此记录用于追溯，不代表可退额度、贷项或退款批准。</p>
         <p>{{ commercialStates[commercial.currentState] }}</p>
@@ -64,6 +65,7 @@ import { pendingFormal, recoverFormal, writeFormal } from '@/auth/rmaFormalRecov
 import { AUTH_EVENT } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
 import RmaPolicyPanel from './RmaPolicyPanel.vue'
+import RmaDeliveryEvidencePanel from './RmaDeliveryEvidencePanel.vue'
 
 type Choice = RmaOption & { shipment: string; customer: string; product: string; customerRef: RmaRef }
 type DraftLine = RmaRequestedLine & { label: string }
@@ -78,6 +80,7 @@ const sources = shallowRef<Choice[]>([]), sourceCursors = ref<(string | null)[]>
 const lines = ref<DraftLine[]>([]), customer = shallowRef<RmaRef | null>(null), reasonCode = ref(''), outcome = ref('TO_BE_DECIDED'), remarks = ref(''), changeReason = ref('')
 const editing = shallowRef<FormalApplication | null>(null), detail = shallowRef<FormalApplication | null>(null), headVersion = ref(1), transitionReason = ref('')
 const isHead = computed(() => detail.value?.applicationVersion === headVersion.value)
+const selectedDelivery = shallowRef<RmaOriginal | null>(null)
 const commercial = shallowRef<SalesReturnSource | null>(null)
 const commercialStates = { LINE_MISSING: '当前原明细已不存在；原商业记录仍保留。', TERMS_UNCHANGED: '当前商业字段与发运时一致。', TERMS_CHANGED: '当前商业字段已变化，原值保持不变。' }
 const commercialFields: { key: keyof SalesReturnTerms; label: string }[] = [
@@ -90,7 +93,7 @@ async function readCommercial(original: RmaOriginal) { await run(async check => 
 const states = { DRAFT: '草稿', SUBMITTED: '已提交 · 待授权', WITHDRAWN: '已撤回', SUPERSEDED: '已替代' }
 const outcomes = [['TO_BE_DECIDED', '待协商'], ['RETURN_ONLY', '仅退回实物'], ['CREDIT', '贷项'], ['REFUND', '退款'], ['REPLACEMENT', '换货'], ['SUPPLEMENTARY_SHIPMENT', '补发']] as const
 let live = true, generation = 0
-function clearDraft() { commercial.value = null; lines.value = []; customer.value = null; editing.value = null; reasonCode.value = ''; outcome.value = 'TO_BE_DECIDED'; remarks.value = ''; changeReason.value = '' }
+function clearDraft() { selectedDelivery.value = null; commercial.value = null; lines.value = []; customer.value = null; editing.value = null; reasonCode.value = ''; outcome.value = 'TO_BE_DECIDED'; remarks.value = ''; changeReason.value = '' }
 function clear() { context.value = null; identity.value = null; pending.value = null; storageError.value = false; applications.value = null; sources.value = []; detail.value = null; clearDraft(); transitionReason.value = '' }
 async function refreshPending(check: () => void) {
   if (!identity.value) return

@@ -161432,6 +161432,16 @@
       "date": "2026-10-29",
       "change": "W227 actual scoped RMA policy publication/history/recovery and application-page adoption validated; no automatic enterprise policy or role grants. Entitlement/approval/IN and original D2 exit remain open. Current progress assessment withdraws unsupported total ETA.",
       "evidence": "docs/development/evidence/W227-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W227 closed once. W228 collects actual receipt evidence linked to exact original shipment lines, with current authorization and original-command recovery; formal DEL proof and return authorization remain separate.",
+      "evidence": "docs/development/dispatch/20261029-wave228/README.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W228 receipt evidence collection/withdrawal/recovery and page adopted; user permits simulated data for development AND production acceptance, superseding real-data waits.",
+      "evidence": "docs/development/evidence/W228-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -188462,10 +188472,36 @@
         }
       },
       "wave227_policy_publication": {
-        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "status": "CLOSED",
         "scope": "Implement actual scoped RMA policy publication, immutable versions and current/original reads, original-command recovery and the actual policy/application page.",
         "limitations": "No default enterprise return policy is seeded. Policy publication does not approve a return, establish source completeness or release stock/financial effects. Actual entitlement, independent decision and formal inbound remain open.",
         "report": "docs/development/evidence/W227-01/DELIVERY.md",
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave227-final-verification.json"
+        },
+        "full_task_completed": false,
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W227-01",
+          "source": "b26f464335755fe5f46e2ed21d8390c5484a61ed",
+          "remote_target": "ffee9bc63e43ccc714a4e09ab787f69fa2cbab3e",
+          "branch": "codex/w227-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/652"
+        }
+      },
+      "wave228_delivery_evidence": {
+        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "scope": "Record actual customer receipt evidence against exact immutable native shipment lines, preserve original commands and immutable records, and consume the evidence in the actual return application page.",
+        "limitations": "Recorded evidence is not a formal DEL cumulative Proof or a return authorization. Do not infer delivered quantity from carrier text, default prior claims/credits to zero, or alter original shipment/stock/financial quantities. Full source-cut entitlement, independent approval and formal IN remain open.",
+        "report": "docs/development/evidence/W228-01/DELIVERY.md",
         "lifecycle_complete": false,
         "lifecycle_snapshot": {
           "main_finish_required": true,
@@ -197563,10 +197599,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261029-wave227",
-      "path": "docs/development/dispatch/20261029-wave227/README.md",
-      "baseline_sha": "984fd1e0f063dd2ac122dda151880d90a1e520cf",
-      "registered_at": "2026-10-29T08:03:22.909045+00:00",
+      "id": "20261029-wave228",
+      "path": "docs/development/dispatch/20261029-wave228/README.md",
+      "baseline_sha": "ffee9bc63e43ccc714a4e09ab787f69fa2cbab3e",
+      "registered_at": "2026-10-29T08:51:26.519979+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -197585,28 +197621,28 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W227-01",
-          "workspace_task": "W227-01",
+          "id": "W228-01",
+          "workspace_task": "W228-01",
           "related_tasks": [
             "WP10-22"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Scoped return policy publication and original recovery",
+          "title": "Customer receipt evidence collection and original recovery",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "5476e72aac271ba3ef28c909abeb25ba2f8e5159",
-            "branch": "codex/w227-handoff",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T080322Z-wave227-start/MESSAGE.md",
-            "at": "2026-10-29T08:03:22.909045+00:00"
+            "commit": "ecf73c7986704995dc4c25d108614260a62d3d58",
+            "branch": "codex/w228-handoff",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T085126Z-wave228-start/MESSAGE.md",
+            "at": "2026-10-29T08:51:26.519979+00:00"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w227-01",
-          "planned_scope_ref": "docs/development/dispatch/20261029-wave227/README.md",
+          "branch": "codex/w228-01",
+          "planned_scope_ref": "docs/development/dispatch/20261029-wave228/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -197616,12 +197652,12 @@
           "resources_released": false,
           "exclusive_resources": [
             "Main:rma-owner",
-            "Main:rma-policy",
+            "Main:rma-delivery-evidence",
             "Main:rma-ui-recovery",
             "Main:coordination-ledger"
           ],
-          "worker_delivery_ref": "docs/development/evidence/W227-01/DELIVERY.md",
-          "validation": "Initial related build failed with CS0118 at the new stored-policy deserializer; qualified the existing RmaFormalStoreV1.Json options. Corrected affected PostgreSQL/HTTP run:8 PASS,0 failures, including two real connections competing for one policy head, current rights/scope/tenant checks, immutable history, transaction rollback and lost-commit recovery. Vue policy/application tests19 PASS and vue-tsc PASS. Initial failure retained. Unchanged W224-W226 application/source evidence reused; no full-suite rerun, Actions, real-browser or target-environment acceptance.",
+          "worker_delivery_ref": "docs/development/evidence/W228-01/DELIVERY.md",
+          "validation": "Actual isolated PostgreSQL/API9 PASS (8 initial related plus1 targeted held-attachment case), Vue21 PASS (7 evidence +14 parent application), vue-tsc PASS. Initial Vue18/19 retained: an overbroad localStorage-empty assertion counted the existing identity marker; corrected to test private business-data exclusion and reran only the affected component. Tests use explicit simulated business data and file storage/inspection. Unchanged related results reused; no Actions, production deployment or existing-environment migration.",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -197632,11 +197668,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-29T08:00:29.992519+00:00",
-        "checkpoint_at": "2026-10-29T08:30:58.979034+00:00",
+        "started_at": "2026-10-29T08:48:11.033639+00:00",
+        "checkpoint_at": "2026-10-29T09:25:10.417902+00:00",
         "estimated_agent_wall_time_minutes": [
-          60,
-          100
+          90,
+          150
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -197644,7 +197680,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Adopt the real policy and proven current sources in independent return authorization, then formal inbound; preserve all original seven-day exits.",
+      "next_action": "Use complete explicitly simulated shipment/delivery/invoice/credit/claim/policy scenarios to implement and accept return entitlement, independent authorization and formal inbound. User allows simulated business data for production acceptance; do not wait for real enterprise data. Preserve the original seven-stage feature scope and record actual runtime/deployment separately.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -197652,7 +197688,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 30.48
+      "elapsed_registered_wave_minutes": 36.99
     },
     "wave_history": [
       {
@@ -227109,6 +227145,121 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/202"
           }
         ]
+      },
+      {
+        "id": "20261029-wave227",
+        "path": "docs/development/dispatch/20261029-wave227/README.md",
+        "baseline_sha": "984fd1e0f063dd2ac122dda151880d90a1e520cf",
+        "registered_at": "2026-10-29T08:03:22.909045+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W227-01",
+            "workspace_task": "W227-01",
+            "related_tasks": [
+              "WP10-22"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Scoped return policy publication and original recovery",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "5476e72aac271ba3ef28c909abeb25ba2f8e5159",
+              "branch": "codex/w227-handoff",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T080322Z-wave227-start/MESSAGE.md",
+              "at": "2026-10-29T08:03:22.909045+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w227-01",
+            "planned_scope_ref": "docs/development/dispatch/20261029-wave227/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:rma-owner",
+              "Main:rma-policy",
+              "Main:rma-ui-recovery",
+              "Main:coordination-ledger"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W227-01/DELIVERY.md",
+            "validation": "Initial related build failed with CS0118 at the new stored-policy deserializer; qualified the existing RmaFormalStoreV1.Json options. Corrected affected PostgreSQL/HTTP run:8 PASS,0 failures, including two real connections competing for one policy head, current rights/scope/tenant checks, immutable history, transaction rollback and lost-commit recovery. Vue policy/application tests19 PASS and vue-tsc PASS. Initial failure retained. Unchanged W224-W226 application/source evidence reused; no full-suite rerun, Actions, real-browser or target-environment acceptance.",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave227-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-29T08:00:29.992519+00:00",
+          "checkpoint_at": "2026-10-29T08:30:58.979034+00:00",
+          "estimated_agent_wall_time_minutes": [
+            60,
+            100
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Adopt the real policy and proven current sources in independent return authorization, then formal inbound; preserve all original seven-day exits.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave227-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 30.48,
+        "actual_registered_wave_minutes": 34.83,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W227-01",
+            "source": "b26f464335755fe5f46e2ed21d8390c5484a61ed",
+            "remote_target": "ffee9bc63e43ccc714a4e09ab787f69fa2cbab3e",
+            "branch": "codex/w227-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/652"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W227-HANDOFF",
+            "source": "e9e1dc7426cdbab6383ec561e42fb80be97db3cb",
+            "remote_target": "ed5ecbed839637c953d46877bb1cf5e3f3cb5033",
+            "branch": "codex/w227-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/203"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -227186,7 +227337,7 @@
           "id": "D2",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W227-01",
+          "current_window": "W228-01",
           "prerequisite_adjustment": "Formal SourceDemand/Transfer providers and RMA IN/terminal Owner contracts remain prerequisites; current read Owners and trusted creation/inheritance are adopted within their precise scope.",
           "adopted_window": "W42-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/395",
@@ -227196,7 +227347,7 @@
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "Adopt the real policy and proven current sources in independent return authorization, then formal inbound; preserve all original seven-day exits.",
+          "next_action": "Use complete explicitly simulated shipment/delivery/invoice/credit/claim/policy scenarios to implement and accept return entitlement, independent authorization and formal inbound. User allows simulated business data for production acceptance; do not wait for real enterprise data. Preserve the original seven-stage feature scope and record actual runtime/deployment separately.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W140-01/DELIVERY.md",
           "last_inheritance_report": "docs/development/evidence/W137-01/DELIVERY.md",
@@ -227222,7 +227373,8 @@
           "last_formal_application_report": "docs/development/evidence/W224-01/DELIVERY.md",
           "last_formal_application_page_report": "docs/development/evidence/W225-01/DELIVERY.md",
           "last_original_commercial_source_report": "docs/development/evidence/W226-01/DELIVERY.md",
-          "last_policy_publication_report": "docs/development/evidence/W227-01/DELIVERY.md"
+          "last_policy_publication_report": "docs/development/evidence/W227-01/DELIVERY.md",
+          "last_delivery_evidence_report": "docs/development/evidence/W228-01/DELIVERY.md"
         },
         {
           "id": "D3",
@@ -227298,7 +227450,8 @@
           "last_iteration_review_application_report": "docs/development/evidence/W200-01/DELIVERY.md",
           "last_output_relations_report": "docs/development/evidence/W201-01/DELIVERY.md",
           "last_engineering_baseline_report": "docs/development/evidence/W202-01/DELIVERY.md",
-          "last_resource_capability_report": "docs/development/evidence/W203-01/DELIVERY.md"
+          "last_resource_capability_report": "docs/development/evidence/W203-01/DELIVERY.md",
+          "acceptance_data_policy_ref": "dispatch_policy.continuous_goal.acceptance_data_policy"
         },
         {
           "id": "D4",
@@ -227372,7 +227525,8 @@
             "pr": "https://github.com/GTX537/CP6.CRM/pull/160",
             "exact_tree_adoption": true,
             "at": "2026-10-26T12:25:33.019243+00:00"
-          }
+          },
+          "acceptance_data_policy_ref": "dispatch_policy.continuous_goal.acceptance_data_policy"
         },
         {
           "id": "D6",
@@ -227400,7 +227554,8 @@
             "exact_tree_adoption": true,
             "at": "2026-10-25T10:34:44.236026+00:00"
           },
-          "applicability_audit_report": "docs/development/evidence/W135-01/DELIVERY.md"
+          "applicability_audit_report": "docs/development/evidence/W135-01/DELIVERY.md",
+          "acceptance_data_policy_ref": "dispatch_policy.continuous_goal.acceptance_data_policy"
         },
         {
           "id": "D7",
@@ -227409,7 +227564,8 @@
           "current_window": "W153-01",
           "next_action": "Resume actual resource/material source prerequisites before engineering routing/BOM and original formal WO/SCHED writes; preserve all original D2/D5/D6/D7 exits and real external prerequisites.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
-          "last_source_fence_report": "docs/development/evidence/W153-01/DELIVERY.md"
+          "last_source_fence_report": "docs/development/evidence/W153-01/DELIVERY.md",
+          "acceptance_data_policy_ref": "dispatch_policy.continuous_goal.acceptance_data_policy"
         }
       ],
       "scope": "Quality + bounded WMS/MES Owners; Main durable operation; CRM identity/first Owner; inquiry prerequisites/form/submit; related integration. Exact prerequisite gates retained.",
@@ -227516,20 +227672,23 @@
         ]
       },
       "latest_progress_assessment": {
-        "as_of": "2026-10-29T08:30:58.979034+00:00",
-        "adopted_through": "W226; W227 local validation complete, remote Main adoption pending",
+        "as_of": "2026-10-29T09:25:10.417902+00:00",
+        "adopted_through": "W227; W228 validation complete, remote adoption pending",
         "engineering_range_percent": null,
         "formal_stage_closure": "2/7",
         "remaining_execution_hours": null,
-        "confidence": "No reliable current total estimate",
-        "external_wait_excluded": false,
-        "superseded_remaining_execution_hours": [
-          40,
-          60
-        ],
-        "basis": "D1/D4 closed; D2/D3/D5/D6 partial, D7 final integration open. 28.6% is stage closure only. Previous65-70% lacks auditable weights; old35-55h total and rolling40-60h remaining are not current completion promises. Remaining implementation and real enterprise/host inputs prevent a dependable finish date; do not inflate progress by waves/tests."
+        "confidence": "Re-estimate remaining implementation under user-authorized simulated acceptance; no real-data wait",
+        "external_wait_excluded": true,
+        "basis": "D1/D4 closed; remaining original feature exits require implementation/integration. Simulated business data and service fixtures are now authorized for production acceptance; lack of real enterprise data is not a blocker. No unsupported engineering percentage or stale rolling ETA."
       },
-      "execution_principles_ref": "AGENTS.md"
+      "execution_principles_ref": "AGENTS.md",
+      "acceptance_data_policy": {
+        "as_of": "2026-10-29T09:12:10.171246+00:00",
+        "authority": "User explicitly permits simulated data for development AND production acceptance; no real business data is available.",
+        "data": "SIMULATED_ALLOWED_FOR_PRODUCTION_ACCEPTANCE",
+        "requirements": "Construct complete contract-conforming scenarios, including policy/calendar/identity/registration/external-service fixtures. Execute actual implementation and relevant integrations. Record simulation scope, runtime and actual results. Do not wait for real enterprise data; deployment state remains separate.",
+        "supersedes": "Earlier real-enterprise-data prerequisites as blockers for this goal acceptance. Actual missing implementation remains incomplete."
+      }
     },
     "execution_principles": {
       "source": "User instruction 2026-10-28: Trust Internal Contracts and Fail-Fast; reduce unnecessary gates",

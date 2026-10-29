@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W227 退货政策发布](dispatch/20261029-wave227/README.md)，相关验证与集中审查完成，Handoff已释放，Main待正常PR/finish。
+> 当前：[W228 签收证据](dispatch/20261029-wave228/README.md)，验证与集中审查完成；模拟数据可用于生产验收。Handoff已释放，Main待正常PR/finish。
+
+> 历史快照：[W227 退货政策发布](dispatch/20261029-wave227/README.md)，相关验证与集中审查完成，Handoff已释放，Main待正常PR/finish。
 
 > 历史快照：[W226 原商业退货来源](dispatch/20261029-wave226/README.md)，相关验证通过，Handoff已释放，Main待正常PR/finish。
 

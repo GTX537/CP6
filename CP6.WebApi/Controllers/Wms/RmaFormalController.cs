@@ -15,7 +15,8 @@ public sealed class RmaFormalResultAttribute : ActionFilterAttribute
     {
         var http = context.HttpContext; http.Response.Headers.CacheControl = "no-store";
         var correlation = http.Request.Headers["X-Correlation-Id"].ToString();
-        var queryPath = http.Request.Path.StartsWithSegments("/api/wms/rma/v1/policies")
+        var queryPath = http.Request.Path.StartsWithSegments("/api/wms/rma/v1/delivery-evidence")
+            ? "/api/wms/rma/v1/delivery-evidence/commands/query" : http.Request.Path.StartsWithSegments("/api/wms/rma/v1/policies")
             ? "/api/wms/rma/v1/policies/commands/query" : "/api/wms/rma/v1/commands/query";
         if (!context.ModelState.IsValid || string.IsNullOrWhiteSpace(correlation) || correlation.Length > 200
             || !http.Request.Headers.CacheControl.ToString().Split(',').Any(x => x.Trim().Equals("no-store", StringComparison.OrdinalIgnoreCase)))
@@ -41,6 +42,16 @@ public sealed class RmaFormalResultAttribute : ActionFilterAttribute
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public sealed class RmaFormalController(RmaFormalOwnerV1 owner) : ControllerBase
 {
+    [HttpPost("delivery-evidence/record"), RequestSizeLimit(131072)]
+    public async Task<IActionResult> RecordEvidence(RmaDeliveryEvidenceRecordV1 input, CancellationToken ct) => Ok(await owner.RecordDeliveryEvidenceAsync(Command(), input, ct));
+    [HttpPost("delivery-evidence/withdrawals"), RequestSizeLimit(65536)]
+    public async Task<IActionResult> WithdrawEvidence(RmaDeliveryEvidenceWithdrawV1 input, CancellationToken ct) => Ok(await owner.WithdrawDeliveryEvidenceAsync(Command(), input, ct));
+    [HttpPost("delivery-evidence/search"), RequestSizeLimit(65536)]
+    public async Task<IActionResult> Evidence(RmaDeliveryEvidenceQueryV1 query, CancellationToken ct) => Ok(await owner.DeliveryEvidenceAsync(query, ct));
+    [HttpPost("delivery-evidence/files/search"), RequestSizeLimit(65536)]
+    public async Task<IActionResult> EvidenceFiles(RmaEvidenceFileQueryV1 query, CancellationToken ct) => Ok(await owner.DeliveryEvidenceFilesAsync(query, ct));
+    [HttpPost("delivery-evidence/commands/query"), RequestSizeLimit(65536)]
+    public async Task<IActionResult> EvidenceCommand(RmaPolicyCommandQueryV1 query, CancellationToken ct) => Ok(await owner.QueryDeliveryEvidenceCommandAsync(query, ct));
     [HttpPost("policies/read"), RequestSizeLimit(65536)]
     public async Task<IActionResult> Policy(RmaPolicyReadV1 query, CancellationToken ct) => Ok(await owner.ReadPolicyAsync(query, ct));
     [HttpPost("policies/publish"), RequestSizeLimit(65536)]
