@@ -1,6 +1,7 @@
 <template>
   <main class="rma-applications">
     <header><div><h1>退货申请</h1><p>选择原发货明细，保存并提交申请。申请提交后仍须独立授权，尚不能收货或退款。</p></div><RouterLink to="/wms/rma">返回退货查询</RouterLink></header>
+    <RouterLink to="/wms/rma-applications">打开正式退货申请</RouterLink>
     <p v-if="error" role="alert">{{ error }}</p><p v-if="notice" role="status">{{ notice }}</p>
     <button :disabled="busy" @click="reload">重新载入</button>
     <section v-if="pending" class="recovery"><h2>确认上一笔操作</h2><p>上一笔操作的结果尚未确认，查询完成前不能再次提交。</p>

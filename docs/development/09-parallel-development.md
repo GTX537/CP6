@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W224 正式退货申请意图](dispatch/20261029-wave224/README.md)，相关验证通过，Handoff已释放，Main待正常PR/finish。
+> 当前：[W225 正式退货申请页面](dispatch/20261029-wave225/README.md)，相关验证通过，Handoff已释放，Main待正常PR/finish。
+
+> 历史快照：[W224 正式退货申请意图](dispatch/20261029-wave224/README.md)，相关验证通过，Handoff已释放，Main待正常PR/finish。
 
 > 历史快照：[W223 真实发货与履约来源](dispatch/20261029-wave223/README.md)，相关验证通过，Handoff已释放，Main待正常PR/finish。
 

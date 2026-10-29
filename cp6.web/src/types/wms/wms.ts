@@ -327,6 +327,7 @@ export interface OutboundOrderSearchQuery {
 
 export interface ShipRequest {
   captureReturnSource?: boolean
+  captureReturnApplicationSource?: boolean
   caseQty?: number
   totalWeightKg?: number
   totalVolumeM3?: number
