@@ -1600,3 +1600,7 @@ BOM独立Owner、多层稳定位置、准确材料/单位、实际ProductMateria
 ## 2026-10-29 W219 用户执行原则
 
 按用户最新指示，将Trust Internal Contracts、Fail-Fast和精简门禁写入AGENTS：内部契约直接采用，边界负责必要校验，缺前置立即明确失败；减少重复证明、兜底与重跑。仅文档差异/引用及台账结构检查，产品测试0次。 [规则交付](../evidence/W219-01/DELIVERY.md)。不做新的大范围审计或按文档轮次增加完成率，按原目标实际缺口继续。Continue the next original D2/D3 missing business write, using established internal contracts directly and fail-fast at the responsible boundary. Check only actual direct prerequisites; no new full audit or unrelated prerequisite expansion. D5/D6 external inputs and D7 final integration remain explicit.
+
+## 2026-10-29 W220 原生退货申请
+
+原生退货申请API独立保存DRAFT/SUBMITTED不可变版本，不再将申请视为授权；实际出库来源、完整21,8数量、当前权限、同事务原操作与审计已落地。16项相关PostgreSQL/HTTP验证通过，0跳过。 [报告](../evidence/W220-01/DELIVERY.md)。D2尚未完成；本轮无正式授权/权益或前端交付，不据此增加未经审计的完成率。
