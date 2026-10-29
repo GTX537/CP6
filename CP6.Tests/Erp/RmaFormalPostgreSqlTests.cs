@@ -23,7 +23,15 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         .Select(x => new RmaWarehouseSiteV1 { TenantId = h.Tenant, WarehouseId = x.Id, SiteId = h.Db.Space_Sites.Where(s => s.SiteCode == "SITE").Select(s => s.Id).Single() }).ToArray() };
     private static RmaFormalOwnerV1 FormalRma(Harness h, IDataProtectionProvider? keys = null, RmaApplicationOptionsV1? coordinates = null, IRmaReturnSourcesV1? sources = null, IRmaInboundSourcesV1? inboundSources = null)
     {
+        var authority = FormalRmaAuthority(h);
+        return new(h.Db, authority, ScopeFence(h), new QualitySpecificationRuntimeV1("DEMO"),
+            keys ?? new EphemeralDataProtectionProvider(), ContentOwner(h, new ContentStore(), new ContentInspector()), Options.Create(coordinates ?? FormalCoordinates(h)),sources,
+            inboundSources == null ? null : new RmaInboundAdapterV1(h.Db,new StockMovementService(h.Db,new WmsSequenceService(h.Db),owner:authority),new WmsSequenceService(h.Db),inboundSources));
+    }
+    private static OperationsOwnerV1 FormalRmaAuthority(Harness h)
+    {
         var catalog = new AuthorizationCatalogStoreV1();
+        catalog.RegisterScope("quality-return-inspection","Return Quality",[1,2,3,4,5],5); catalog.RegisterFields("quality-return-inspection",[]);
         catalog.RegisterScope("wms-rma", "RMA", [1,2,3,4,5], 1);
         catalog.RegisterFields("wms-rma", [new("CustomerName","CustomerName"),new("OperatorCd","OperatorCd"),new("Remarks","Remarks"),new("ReturnReason","ReturnReason")]);
         catalog.RegisterScope("erp-business-partner", "Partner", [1,2,3,4,5], 1);
@@ -33,10 +41,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         foreach (var key in new[] { "file-content", "plm-engineering-product", "plm-engineering-revision" })
         { catalog.RegisterScope(key, key, [1,2,3,4,5], 5); catalog.RegisterFields(key, key == "file-content" ? [new("Content","Content"),new("FileName","Name")] : []); }
         catalog.Seal();
-        var authority = new OperationsOwnerV1(h.Db, new OperationsHttp { HttpContext = h.Http }, _ => Task.FromResult(h.User), catalog.Capture);
-        return new(h.Db, authority, ScopeFence(h), new QualitySpecificationRuntimeV1("DEMO"),
-            keys ?? new EphemeralDataProtectionProvider(), ContentOwner(h, new ContentStore(), new ContentInspector()), Options.Create(coordinates ?? FormalCoordinates(h)),sources,
-            inboundSources == null ? null : new RmaInboundAdapterV1(h.Db,new StockMovementService(h.Db,new WmsSequenceService(h.Db),owner:authority),new WmsSequenceService(h.Db),inboundSources));
+        return new OperationsOwnerV1(h.Db, new OperationsHttp { HttpContext = h.Http }, _ => Task.FromResult(h.User), catalog.Capture);
     }
     private async Task<FulfilmentFixture> FormalShipment(Harness h, bool customer = true, bool ship = true)
     {

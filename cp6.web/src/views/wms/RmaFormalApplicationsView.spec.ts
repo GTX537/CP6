@@ -16,7 +16,7 @@ const option = { optionRef: reference(8), original: source, remainingAuthorizabl
 let context: RmaContext, app: FormalApplication, stored: Map<string, unknown>, view: VueWrapper | undefined
 const page = (items: unknown[], nextCursor: string | null = null) => ({ items, nextCursor, snapshotRef: reference(19), capturedAt: '2026-10-29T00:00:00Z', coverage: 'PARTIAL' })
 const click = async (label: string) => { const button = view!.findAll('button').find(x => x.text() === label)!; await button.trigger('click'); await flushPromises() }
-async function render() { view = mount(View, { global: { stubs: { RmaPhysicalReturnPanel: true, RmaAuthorizationPanel: true, RmaPolicyPanel: true, RmaDeliveryEvidencePanel: true, RouterLink: { template: '<a><slot /></a>' } } } }); await flushPromises() }
+async function render() { view = mount(View, { global: { stubs: { RmaPhysicalReturnPanel: true, RmaQualityPanel: true, RmaAuthorizationPanel: true, RmaPolicyPanel: true, RmaDeliveryEvidencePanel: true, RouterLink: { template: '<a><slot /></a>' } } } }); await flushPromises() }
 async function fill() { await click('添加 PRODUCT'); await view!.get('[aria-label="申请原因代码"]').setValue('DAMAGED'); await view!.get('[aria-label="备注"]').setValue('Private note'); await view!.get('[aria-label="第1行申请数量"]').setValue(amount) }
 async function save(label = '保存草稿') { await view!.findAll('form').find(x => x.text().includes(label))!.trigger('submit'); await flushPromises() }
 beforeEach(() => {

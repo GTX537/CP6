@@ -8,6 +8,11 @@ namespace CP6.Core.Services.Integration;
 internal sealed partial class OperationsAccessV1
 {
     internal bool RmaApplicationSelfOnly => authority.Scope == 1;
+    internal void RequireRmaApplicationReadFields()
+    {
+        if (!authority.Fields.Fields["OperatorCd"].CanRead || !authority.Fields.Fields["ReturnReason"].CanRead)
+            throw new OrderPriceCorrectionException("FIELD_READ_FORBIDDEN",403);
+    }
     internal async Task RequireRmaApplicationSource(Guid outboundId, Guid applicant, CancellationToken ct)
     {
         if (RmaApplicationSelfOnly && applicant != ActorId || !await Outbounds().AnyAsync(x => x.Id == outboundId, ct))

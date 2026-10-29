@@ -30,11 +30,7 @@ public sealed partial class RmaFormalOwnerV1(CP6Context db, OperationsOwnerV1 ow
             var store = new RmaFormalStoreV1(db, protector); await store.Fence(environment.EnvironmentId, runtime.EvidenceMode, write, t);
             return await body(store, a, t);
         }, ct, actionAtFence: actionAtFence);
-    private static void ReadFields(OperationsAccessV1 a)
-    {
-        var fields = a.Authorities[0].Fields.Fields;
-        if (!fields["OperatorCd"].CanRead || !fields["ReturnReason"].CanRead) throw Error("FIELD_READ_FORBIDDEN", 403);
-    }
+    private static void ReadFields(OperationsAccessV1 a) => a.RequireRmaApplicationReadFields();
     private static void WriteFields(OperationsAccessV1 a, bool remarks)
     {
         var fields = a.Authorities[0].Fields.Fields;
