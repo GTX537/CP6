@@ -4,6 +4,7 @@ using CP6.Core.EFDbContext;
 using CP6.Core.Services.Erp;
 using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Wms;
+using CP6.Entity.DTOs.Wms;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Wms;
@@ -70,6 +71,20 @@ public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner
     }
     public Task<RmaApplicationSourceV1> SourceAsync(Guid id, CancellationToken ct = default) =>
         owner.ExecuteAsync(OperationsOwnerV1.Rma, "query", false, (a, t) => Source(a, id, t), ct);
+    public Task<MasterOperationScopeV1> ScopeAsync(CancellationToken ct = default) =>
+        owner.ExecuteAsync(OperationsOwnerV1.Rma, "query", false,
+            (a, t) => Task.FromResult(new MasterOperationScopeV1(db.CurrentTenantId, a.ActorId)), ct);
+    public Task<RmaApplicationSourceChoiceV1[]> SourcesAsync(string? keyword, int page = 1, CancellationToken ct = default)
+    {
+        if (page < 1 || page > int.MaxValue / 50 || keyword?.Length > 100) throw Error("RMA_PAGE_INVALID", 400);
+        return owner.ExecuteAsync(OperationsOwnerV1.Rma, "query", false, (a, t) =>
+        {
+            var rows = a.Outbounds().Where(x => x.OutboundType == OutboundType.Shipping && x.Status == OutboundOrderStatus.Completed);
+            if (!string.IsNullOrWhiteSpace(keyword)) rows = rows.Where(x => x.OutboundNo.Contains(keyword) || x.CustomerCd != null && x.CustomerCd.Contains(keyword));
+            return rows.OrderBy(x => x.OutboundNo).ThenBy(x => x.Id).Skip((page - 1) * 50).Take(50)
+                .Select(x => new RmaApplicationSourceChoiceV1(x.Id, x.OutboundNo, x.CustomerCd)).ToArrayAsync(t);
+        }, ct);
+    }
     public Task<RmaApplicationViewV1> ReadAsync(Guid id, int? version = null, CancellationToken ct = default) =>
         owner.ExecuteAsync(OperationsOwnerV1.Rma, "query", false, async (a, t) =>
         {

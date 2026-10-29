@@ -9,6 +9,11 @@ namespace CP6.WebApi.Controllers.Wms;
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public sealed class RmaApplicationController(RmaApplicationOwnerV1 owner) : ControllerBase
 {
+    [HttpGet("scope")]
+    public async Task<IActionResult> Scope(CancellationToken ct) => Ok(new { code = 0, data = await owner.ScopeAsync(ct) });
+    [HttpGet("sources")]
+    public async Task<IActionResult> Sources([FromQuery] string? keyword, [FromQuery] int page = 1, CancellationToken ct = default) =>
+        Ok(new { code = 0, data = await owner.SourcesAsync(keyword, page, ct) });
     [HttpGet("sources/{id:guid}")]
     public async Task<IActionResult> Source(Guid id, CancellationToken ct) => Ok(new { code = 0, data = await owner.SourceAsync(id, ct) });
     [HttpGet]

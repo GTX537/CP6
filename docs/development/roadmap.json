@@ -161362,6 +161362,16 @@
       "date": "2026-10-29",
       "change": "W220 native return application Owner delivered locally; formal source/entitlement/authorization and D2 exit remain incomplete. Handoff released; Main normal closeout pending.",
       "evidence": "docs/development/evidence/W220-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W220 closed once; W221 integrates the actual return application page and source selection using established contracts. Original seven-day scope preserved.",
+      "evidence": "docs/development/dispatch/20261029-wave221/README.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W221 native return application page and current source picker validated; independent formal authorization/entitlement still incomplete. Handoff released, Main closeout pending.",
+      "evidence": "docs/development/evidence/W221-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -188183,11 +188193,37 @@
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "wave220_native_application": {
-        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "status": "CLOSED",
         "scope": "Native outbound-backed return applications: immutable draft/submitted versions, current RMA authority, exact quantity, atomic original-operation recovery; no authorization or stock/finance effects.",
         "limitations": "Versioned native application contract, not formal RMA-C01 or full OriginalFulfilment/entitlement adoption. Existing RMA effect commands remain fenced.",
         "report": "docs/development/evidence/W220-01/DELIVERY.md",
         "validation": "16 local tests passed",
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave220-final-verification.json"
+        },
+        "full_task_completed": false,
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W220-01",
+          "source": "f19bfba3c2f91095b31f06ce489c86b6b125abc3",
+          "remote_target": "9f8708ea075f2b23258a28a35088325ad45312a4",
+          "branch": "codex/w220-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/643"
+        }
+      },
+      "wave221_application_entry": {
+        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "scope": "Usable return application page: current authorized native shipment picker, exact quantity text entry, create/submit/read and durable original-operation recovery across reloads and identity changes.",
+        "limitations": "Native application intent only; formal OriginalFulfilment, entitlement and independent authorization remain incomplete. No stock or finance effects.",
+        "report": "docs/development/evidence/W221-01/DELIVERY.md",
         "lifecycle_complete": false,
         "lifecycle_snapshot": {
           "main_finish_required": true,
@@ -197285,10 +197321,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261029-wave220",
-      "path": "docs/development/dispatch/20261029-wave220/README.md",
-      "baseline_sha": "8ccce9d1a11b36f89dd7af5ee176e2a9d4030555",
-      "registered_at": "2026-10-29T03:28:34.770389+00:00",
+      "id": "20261029-wave221",
+      "path": "docs/development/dispatch/20261029-wave221/README.md",
+      "baseline_sha": "9f8708ea075f2b23258a28a35088325ad45312a4",
+      "registered_at": "2026-10-29T03:52:51.128418+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -197307,29 +197343,28 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W220-01",
-          "workspace_task": "W220-01",
+          "id": "W221-01",
+          "workspace_task": "W221-01",
           "related_tasks": [
-            "WP10-22",
-            "WP10-19"
+            "WP10-22"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Native return application Owner separated from authorization",
+          "title": "Return application page and native source selection",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "391ce00842093e09e410a744569dba61699bab92",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T032834Z-wave220-start/MESSAGE.md",
-            "at": "2026-10-29T03:28:34.770389+00:00",
-            "branch": "codex/w220-handoff"
+            "commit": "bdd537c06c1179ac7903bcb50bc6e5d9cf5bdd9f",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T035251Z-wave221-start/MESSAGE.md",
+            "at": "2026-10-29T03:52:51.128418+00:00",
+            "branch": "codex/w221-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w220-01",
-          "planned_scope_ref": "docs/development/dispatch/20261029-wave220/README.md",
+          "branch": "codex/w221-01",
+          "planned_scope_ref": "docs/development/dispatch/20261029-wave221/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -197339,11 +197374,11 @@
           "resources_released": false,
           "exclusive_resources": [
             "Main:RMA-native-application",
-            "Main:PostgreSQL-migration",
+            "Main:web-RMA",
             "Main:coordination-ledger"
           ],
-          "worker_delivery_ref": "docs/development/evidence/W220-01/DELIVERY.md",
-          "validation": "16 local PostgreSQL/HTTP tests passed, zero skipped; one compile-only helper-name failure retained",
+          "worker_delivery_ref": "docs/development/evidence/W221-01/DELIVERY.md",
+          "validation": "2 PostgreSQL/HTTP + 18 related Vue tests passed, zero skipped; typecheck and actual Chrome component/mock-API rendering passed; W220 write evidence reused",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -197354,11 +197389,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-29T03:26:15.016707+00:00",
+        "started_at": "2026-10-29T03:50:43.447846+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          45,
-          75
+          30,
+          45
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -197366,7 +197401,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Continue actual D2 return authorization/fulfilment adoption and other original seven-day exits. Do not reopen completed waves or add qualification wrappers.",
+      "next_action": "Continue direct D2 return authorization/fulfilment adoption and other original seven-day exits; no new qualification wrapper or audit-only wave.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -197374,7 +197409,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 16.9
+      "elapsed_registered_wave_minutes": 26.02
     },
     "wave_history": [
       {
@@ -226020,6 +226055,121 @@
             "branch_absent": true,
             "seat_released": true,
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/195"
+          }
+        ]
+      },
+      {
+        "id": "20261029-wave220",
+        "path": "docs/development/dispatch/20261029-wave220/README.md",
+        "baseline_sha": "8ccce9d1a11b36f89dd7af5ee176e2a9d4030555",
+        "registered_at": "2026-10-29T03:28:34.770389+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W220-01",
+            "workspace_task": "W220-01",
+            "related_tasks": [
+              "WP10-22",
+              "WP10-19"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Native return application Owner separated from authorization",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "391ce00842093e09e410a744569dba61699bab92",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T032834Z-wave220-start/MESSAGE.md",
+              "at": "2026-10-29T03:28:34.770389+00:00",
+              "branch": "codex/w220-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w220-01",
+            "planned_scope_ref": "docs/development/dispatch/20261029-wave220/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:RMA-native-application",
+              "Main:PostgreSQL-migration",
+              "Main:coordination-ledger"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W220-01/DELIVERY.md",
+            "validation": "16 local PostgreSQL/HTTP tests passed, zero skipped; one compile-only helper-name failure retained",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave220-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-29T03:26:15.016707+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            45,
+            75
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Continue actual D2 return authorization/fulfilment adoption and other original seven-day exits. Do not reopen completed waves or add qualification wrappers.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave220-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 16.9,
+        "actual_registered_wave_minutes": 19.61,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W220-01",
+            "source": "f19bfba3c2f91095b31f06ce489c86b6b125abc3",
+            "remote_target": "9f8708ea075f2b23258a28a35088325ad45312a4",
+            "branch": "codex/w220-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/643"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W220-HANDOFF",
+            "source": "2f08aa834becc3c1c466b6c04c59d82cece0693c",
+            "remote_target": "2c8e70de5d7a8cf7ed8ba0bce775c4b8fe95e2d2",
+            "branch": "codex/w220-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/196"
           }
         ]
       }

@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-10-29：W221 退货申请页面入口
+
+退货申请页面已接入真实来源选择、精确数量文本、保存/提交、列表和历史版本，以及按当前身份隔离的原操作恢复。2项PostgreSQL/HTTP、18项相关页面测试、类型检查和Chrome渲染检查通过。 [交付报告](../development/evidence/W221-01/DELIVERY.md)。正式授权/权益及D2完整出口仍未完成，七天目标继续；Handoff已释放，Main待正常PR/finish。
+
 ## 2026-10-29：W220 原生退货申请与授权分离
 
 原生退货申请API独立保存DRAFT/SUBMITTED不可变版本，不再将申请视为授权；实际出库来源、完整21,8数量、当前权限、同事务原操作与审计已落地。16项相关PostgreSQL/HTTP验证通过，0跳过。 [交付报告](../development/evidence/W220-01/DELIVERY.md)。API限定交付；前端、正式履约/权益和授权审批未完成。七天目标继续，Handoff已释放、Main待正常PR/finish。

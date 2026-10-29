@@ -2,10 +2,12 @@
 
 `RmaApplicationOwnerV1` 提供基于现有出库单与明细的退货意向申请。创建得到 `DRAFT`，提交得到新的不可变 `SUBMITTED` 版本；两者均没有退货授权、数量权益占用、收货、库存移动或财务效果。旧 RMA 命令仍保留原有未就绪错误。
 
-这是独立的 `RMA-NATIVE-APPLICATION/1` 合同，HTTP 根路径为 `/api/wms/rma/native-applications-v1`，不是正式 `/api/wms/rma/v1` 的 RMA-C01/C02。原生出库行 ID、单位编码和发货交易号保持其真实含义，不包装成正式 ShipmentLine、InvoiceLine、Schedule、版本化 UOM 或可授权范围。正式合同没有被改写、缩小或宣布验收；后续采用需有明确的来源映射。当前只有服务/API 入口，前端申请页面尚未接入。
+这是独立的 `RMA-NATIVE-APPLICATION/1` 合同，HTTP 根路径为 `/api/wms/rma/native-applications-v1`，不是正式 `/api/wms/rma/v1` 的 RMA-C01/C02。原生出库行 ID、单位编码和发货交易号保持其真实含义，不包装成正式 ShipmentLine、InvoiceLine、Schedule、版本化 UOM 或可授权范围。正式合同没有被改写、缩小或宣布验收；后续采用需有明确的来源映射。W221 已接入 `/wms/rma-applications` 页面，可从原退货查询页面进入。
 
 | 请求 | 行为 |
 |---|---|
+| `GET scope` | 当前服务端租户/用户，供页面隔离原操作恢复记录 |
+| `GET sources?keyword=...&page=1` | 当前 RMA 范围内的已完成客户出库单，按单号/客户编码查询，先授权过滤后每页 50 条 |
 | `GET sources/{outboundId}` | 在当前 RMA 权限范围内读取已完成客户出库单及其真实明细、数量、单位、批次、库位、发货交易号和来源版本 |
 | `POST /` | 保存申请草稿；请求含 operationId、applicationId、outboundId、sourceVersion、reason、requestedOutcome、lines、remarks；明细含 outboundLineId、quantity |
 | `GET /?page=1` | 按当前权限过滤后分页，50 条/页 |
@@ -25,3 +27,9 @@
 Head、不可变申请版本、原操作结果及审计在同一 PostgreSQL 事务提交。并发提交只有一个版本获胜，失败事务不留下版本或日志。提交回应丢失仍返回原有 UNKNOWN 语义，通过同一原操作查询/重放恢复，不能自行换操作 ID 重做。
 
 迁移 `20261030022000_RmaApplicationV1` 只创建新 schema 与两张表、不可变版本保护和 Head 外键，不修改原生业务数据；仅在隔离本地 PostgreSQL 验证，未应用于既有环境。正式部署仍按独立环境流程进行。
+
+## 页面操作与恢复
+
+页面从当前允许的发货单选择真实明细，数量使用文本输入，直接传递八位小数而不经 JavaScript Number。保存后可以查看申请，提交当前草稿，并查看已保存的历史版本；历史草稿不会显示提交按钮。原生来源与写入版本仍由服务端决定，页面不另加资格证明。
+
+写入前按服务端租户/用户取得页面锁，只在 localStorage 保存原操作 UUID；不保存原因、备注或数量。断线后保留 UUID，经原操作查询恢复；UNKNOWN 不重发，确认未提交时可以关闭原操作。登录身份改变后清空页面业务数据并忽略旧响应，保留对应身份的恢复记录。当前查询权限仍可恢复先前已提交的操作，不依赖仍持有 add 权限。共享 HTTP 已提供身份/CSRF/错误处理，页面直接复用，不逐层复验服务端 DTO 的字段、签名或哈希。

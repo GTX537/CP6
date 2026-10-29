@@ -7,11 +7,12 @@
 -->
 <template>
   <div class="wms-rma">
-    <el-alert v-if="!writesAvailable" :title="t('退货暂只支持查询，授权、收货和处置功能尚未开通。')" type="info" :closable="false" show-icon />
+    <el-alert v-if="!writesAvailable" :title="t('可进入退货申请保存和提交申请；退货授权、收货和处置功能尚未开通。')" type="info" :closable="false" show-icon />
     <el-alert v-if="readError || intent.error.value" :title="readError || intent.error.value" type="warning" :closable="false" show-icon />
     <!-- ───── 一覧 ───── -->
     <CpPageShell v-if="mode === 'list'" :title="t('wms.rma.title')" :count="total">
       <template #actions>
+        <RouterLink to="/wms/rma-applications"><el-button>{{ t('退货申请') }}</el-button></RouterLink>
         <el-button @click="reloadList">{{ t('刷新') }}</el-button>
         <el-button v-permission="'wms-rma:add'" :disabled="!canCreate" @click="openCreate">{{ t('wms.common.create') }}</el-button>
       </template>
