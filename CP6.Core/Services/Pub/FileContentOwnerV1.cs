@@ -137,15 +137,19 @@ public sealed class FileContentOwnerV1(CP6Context db, OperationsOwnerV1 owner, I
         }, ct);
         return outcome ?? throw Error("FILE_CONTENT_INTEGRITY_UNAVAILABLE", 503);
     }
-    internal async Task<FileContentSnapshotV1> BoundSource(OperationsAccessV1 root,FileContentRefV1 reference,Guid parent,bool requireAvailable,CancellationToken ct)
+    internal async Task<FileContentSnapshotV1> ReadOwnedAsync(OperationsAccessV1 root, Guid id, CancellationToken ct)
     {
         var a=await root.SourceAsync(OperationsOwnerV1.FileContent,ct);var store=new FileContentStoreV1(db);await store.Fence(false,ct);
-        var value=await Observe(a,await store.Read(reference.Id,null,ct),ct);
+        return await Observe(a,await store.Read(id,null,ct),ct);
+    }
+    internal async Task<FileContentSnapshotV1> BoundSource(OperationsAccessV1 root,FileContentRefV1 reference,Guid parent,bool requireAvailable,CancellationToken ct)
+    {
+        var value=await ReadOwnedAsync(root,reference.Id,ct);
         if(value.ContentRef!=reference || value.Parent.Id!=parent)throw Error("DOCUMENT_FILE_REFERENCE_CHANGED",412);
         if(requireAvailable)
         {
             if(value.Availability!="AVAILABLE")throw Error("FILE_CONTENT_NOT_AVAILABLE",409);
-            var row=await store.Row(reference.Id,ct);await VerifyStored(row.StorePath,row.ByteLength,row.Digest,ct);
+            var row=await new FileContentStoreV1(db).Row(reference.Id,ct);await VerifyStored(row.StorePath,row.ByteLength,row.Digest,ct);
         }
         return value;
     }

@@ -19,7 +19,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
     private sealed record FulfilmentFixture(OutboundService Service, string Number, Guid Id, Guid Product, UomProfileVersionV1 Unit);
     private async Task<FulfilmentFixture> AllocateFulfilment(Harness h, string numerator = "1", string denominator = "1", bool binding = true,
-        decimal quantity = 2.12345678m, int scale = 18, bool onlyLastLine = false, bool manualSource = false)
+        decimal quantity = 2.12345678m, int scale = 18, bool onlyLastLine = false, bool manualSource = false, string? formalCustomer = null)
     {
         await GrantOrderReads(h); await GrantOperations(h); await GrantUomProfile(h); await GrantProductUnitEdit(h);
         var unit = await MakeUnit(Units(h), BaseUnit(scale: scale));
@@ -33,12 +33,13 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var code = await h.Db.ProductMasters.Where(x => x.Id == product).Select(x => x.ProductCd).SingleAsync();
         await h.Db.OrderDetails.ExecuteUpdateAsync(s => s.SetProperty(x => x.ProductCd, code).SetProperty(x => x.QtyUnit, unit.Profile.Code)
             .SetProperty(x => x.Quantity, quantity));
+        if (formalCustomer != null) await h.Db.Orders.ExecuteUpdateAsync(s => s.SetProperty(x => x.CustomerCd, formalCustomer));
         var catalog = new AuthorizationCatalogStoreV1();
-        foreach (var resource in new[] { "order", "wms-outbound-order", "product", "uom-profile" })
+        foreach (var resource in new[] { "order", "wms-outbound-order", "product", "uom-profile", "erp-business-partner" })
         {
             catalog.RegisterScope(resource, resource, [1,2,3,4,5], 5);
             catalog.RegisterFields(resource, resource == "order" ? [new("UnitPrice","Price"), new("Amount","Amount")]
-                : resource == "wms-outbound-order" ? [new("UnitPrice","Price")] : []);
+                : resource == "wms-outbound-order" ? [new("UnitPrice","Price")] : resource == "erp-business-partner" ? [new("BpName","Name")] : []);
         }
         catalog.Seal(); var service = OperationsWms(h, new(h.Db, new OperationsHttp { HttpContext = h.Http }, _ => Task.FromResult(h.User), catalog.Capture));
         h.Db.Locations.Add(new() { WarehouseCd = "W01", LocationCd = "L" });

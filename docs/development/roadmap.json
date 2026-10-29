@@ -161392,6 +161392,16 @@
       "date": "2026-10-29",
       "change": "W223 actual shipment and partial immutable fulfilment sources validated; explicit capture, exact quantity conversion, atomic rollback and authorized historical read. Full formal return entitlement/authorization remains incomplete.",
       "evidence": "docs/development/evidence/W223-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W223 closed once; W224 admits formal RMA application intent with trusted scope and source selections. No entitlement/approval fabricated; original seven-day scope preserved.",
+      "evidence": "docs/development/dispatch/20261029-wave224/README.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W224 formal application intent lifecycle validated on actual shipments, trusted host coordinates and existing owner contracts. No entitlement/approval or full D2 acceptance claimed.",
+      "evidence": "docs/development/evidence/W224-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -188292,10 +188302,36 @@
         }
       },
       "wave223_fulfilment_source": {
-        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "status": "CLOSED",
         "scope": "Capture actual shipment, exact order/product/unit sources and quantity ranges atomically with physical shipment; expose immutable OriginalFulfilmentRef-shaped facts through current RMA authority. Existing native shipment remains available; capture is explicit.",
         "limitations": "Shipment source facts do not grant return entitlement or authorization. Schedule/delivery/commercial source observations remain partial; nullable refs are not proof of absence. No historical backfill or production migration.",
         "report": "docs/development/evidence/W223-01/DELIVERY.md",
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave223-final-verification.json"
+        },
+        "full_task_completed": false,
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W223-01",
+          "source": "21c81e4d07b3e8765fe14b1f3815ebd36afe7ff5",
+          "remote_target": "c1ce8741dc87fb271dfab70a47b40d480448291c",
+          "branch": "codex/w223-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/647"
+        }
+      },
+      "wave224_formal_application": {
+        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "scope": "Implement formal RMA application intent lifecycle using trusted scope and signed immutable source selections, actual fulfilment snapshots, exact request ranges, current authority and original-operation recovery.",
+        "limitations": "Application creation/submission grants no authorization, stock or financial effect. Source coverage and entitlement remain explicitly PARTIAL/UNKNOWN; no fabricated policy, zero quantities or independent approvals. UI adoption and full authorization/receipt remain subsequent direct work.",
+        "report": "docs/development/evidence/W224-01/DELIVERY.md",
         "lifecycle_complete": false,
         "lifecycle_snapshot": {
           "main_finish_required": true,
@@ -197393,10 +197429,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261029-wave223",
-      "path": "docs/development/dispatch/20261029-wave223/README.md",
-      "baseline_sha": "0ebd2b729ff27e09062201ba522993a40964b218",
-      "registered_at": "2026-10-29T04:56:15.870880+00:00",
+      "id": "20261029-wave224",
+      "path": "docs/development/dispatch/20261029-wave224/README.md",
+      "baseline_sha": "c1ce8741dc87fb271dfab70a47b40d480448291c",
+      "registered_at": "2026-10-29T05:30:50.278598+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -197415,28 +197451,28 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W223-01",
-          "workspace_task": "W223-01",
+          "id": "W224-01",
+          "workspace_task": "W224-01",
           "related_tasks": [
             "WP10-22"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Atomic shipment and return fulfilment sources",
+          "title": "Formal return application intent lifecycle",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "f68194540997eee33aab1a06d9961e3048c7258f",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T045615Z-wave223-start/MESSAGE.md",
-            "at": "2026-10-29T04:56:15.870880+00:00",
-            "branch": "codex/w223-handoff"
+            "commit": "9864cbf0324fa12b76e270a148ed3b3e3a8bdab7",
+            "branch": "codex/w224-handoff",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T053050Z-wave224-start/MESSAGE.md",
+            "at": "2026-10-29T05:30:50.278598+00:00"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w223-01",
-          "planned_scope_ref": "docs/development/dispatch/20261029-wave223/README.md",
+          "branch": "codex/w224-01",
+          "planned_scope_ref": "docs/development/dispatch/20261029-wave224/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -197445,12 +197481,15 @@
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
+            "Main:WMS-RMA-01",
+            "Main:rma-owner",
             "Main:outbound-fulfilment",
-            "Main:outbound-generation",
-            "Main:coordination-ledger"
+            "Main:rma-runtime-registration",
+            "Main:coordination-ledger",
+            "Main:file-content-owned-read"
           ],
-          "worker_delivery_ref": "docs/development/evidence/W223-01/DELIVERY.md",
-          "validation": "14 initial PostgreSQL/HTTP cases passed; focused review corrections passed 7 cases (2 additional, 16 distinct backend scenarios in total), zero skipped. 11 related Vue tests and vue-tsc passed. Unchanged evidence reused; no full-suite or remote run.",
+          "worker_delivery_ref": "docs/development/evidence/W224-01/DELIVERY.md",
+          "validation": "13 affected shipment cases passed in the initial mixed run (6 new fixture failures retained); corrected formal application suite passed 6 cases; focused review scenarios passed 5 cases with zero skipped. Actual HTTP response samples validate against the accepted 195-definition RMA schema. Unchanged successful evidence reused; no frontend change, Actions, production or existing-environment migration.",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -197461,11 +197500,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-29T04:52:58.541203+00:00",
+        "started_at": "2026-10-29T05:27:31.104020+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
-          45,
-          75
+          90,
+          150
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -197473,7 +197512,8 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Continue direct D2 return authorization/fulfilment adoption and other original seven-day exits; no new qualification wrapper or audit-only wave.",
+      "next_action": "Adopt the formal application endpoints in the actual return page, then continue actual entitlement/independent authorization and formal inbound consumption; preserve all original goal exits.",
+      "scope_refinement": "Actual shipment captures customer identity explicitly. Existing operational warehouses use trusted server tenant/warehouse/site coordinates; draft physical-use guard is unchanged. No guessed historical customer or site mapping.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -197481,7 +197521,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 21.6
+      "elapsed_registered_wave_minutes": 46.76
     },
     "wave_history": [
       {
@@ -226473,6 +226513,120 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/198"
           }
         ]
+      },
+      {
+        "id": "20261029-wave223",
+        "path": "docs/development/dispatch/20261029-wave223/README.md",
+        "baseline_sha": "0ebd2b729ff27e09062201ba522993a40964b218",
+        "registered_at": "2026-10-29T04:56:15.870880+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W223-01",
+            "workspace_task": "W223-01",
+            "related_tasks": [
+              "WP10-22"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Atomic shipment and return fulfilment sources",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "f68194540997eee33aab1a06d9961e3048c7258f",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T045615Z-wave223-start/MESSAGE.md",
+              "at": "2026-10-29T04:56:15.870880+00:00",
+              "branch": "codex/w223-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w223-01",
+            "planned_scope_ref": "docs/development/dispatch/20261029-wave223/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:outbound-fulfilment",
+              "Main:outbound-generation",
+              "Main:coordination-ledger"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W223-01/DELIVERY.md",
+            "validation": "14 initial PostgreSQL/HTTP cases passed; focused review corrections passed 7 cases (2 additional, 16 distinct backend scenarios in total), zero skipped. 11 related Vue tests and vue-tsc passed. Unchanged evidence reused; no full-suite or remote run.",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave223-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-29T04:52:58.541203+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            45,
+            75
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Continue direct D2 return authorization/fulfilment adoption and other original seven-day exits; no new qualification wrapper or audit-only wave.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave223-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 21.6,
+        "actual_registered_wave_minutes": 24.55,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W223-01",
+            "source": "21c81e4d07b3e8765fe14b1f3815ebd36afe7ff5",
+            "remote_target": "c1ce8741dc87fb271dfab70a47b40d480448291c",
+            "branch": "codex/w223-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/647"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W223-HANDOFF",
+            "source": "54caa9923d2a6bec72a8e5f083503809d068c5f9",
+            "remote_target": "41a6325d9e473e2c5283cf8a9d71cd9d0c78c0fd",
+            "branch": "codex/w223-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/199"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -226550,7 +226704,7 @@
           "id": "D2",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W218-01",
+          "current_window": "W224-01",
           "prerequisite_adjustment": "Formal SourceDemand/Transfer providers and RMA IN/terminal Owner contracts remain prerequisites; current read Owners and trusted creation/inheritance are adopted within their precise scope.",
           "adopted_window": "W42-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/395",
@@ -226560,7 +226714,7 @@
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "Audit each original D2/D3/D5/D6/D7 exit against adopted source and actual evidence, separating the seven-day deliverables from full formal product acceptance. Execute the next direct missing output; preserve all original exits and do not expand or shrink the goal.",
+          "next_action": "Adopt the formal application endpoints in the actual return page, then continue actual entitlement/independent authorization and formal inbound consumption; preserve all original goal exits.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W140-01/DELIVERY.md",
           "last_inheritance_report": "docs/development/evidence/W137-01/DELIVERY.md",
@@ -226581,7 +226735,9 @@
           "last_stock_assessment_report": "docs/development/evidence/W215-01/DELIVERY.md",
           "last_local_control_report": "docs/development/evidence/W216-01/DELIVERY.md",
           "last_stock_control_report": "docs/development/evidence/W217-01/DELIVERY.md",
-          "last_allocation_control_report": "docs/development/evidence/W218-01/DELIVERY.md"
+          "last_allocation_control_report": "docs/development/evidence/W218-01/DELIVERY.md",
+          "last_fulfilment_source_report": "docs/development/evidence/W223-01/DELIVERY.md",
+          "last_formal_application_report": "docs/development/evidence/W224-01/DELIVERY.md"
         },
         {
           "id": "D3",

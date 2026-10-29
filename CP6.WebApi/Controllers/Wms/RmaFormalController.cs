@@ -1,0 +1,65 @@
+using CP6.Core.Services.Erp;
+using CP6.Core.Services.Sys;
+using CP6.Core.Services.Wms;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+
+namespace CP6.WebApi.Controllers.Wms;
+
+// This is the external formal transport boundary; internal calls use the Owner's typed contract.
+public sealed class RmaFormalResultAttribute : ActionFilterAttribute
+{
+    public RmaFormalResultAttribute() { Order = -3000; }
+    public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+    {
+        var http = context.HttpContext; http.Response.Headers.CacheControl = "no-store";
+        var correlation = http.Request.Headers["X-Correlation-Id"].ToString();
+        if (!context.ModelState.IsValid || string.IsNullOrWhiteSpace(correlation) || correlation.Length > 200
+            || !http.Request.Headers.CacheControl.ToString().Split(',').Any(x => x.Trim().Equals("no-store", StringComparison.OrdinalIgnoreCase)))
+        { context.Result = Problem(400, "VALIDATION_FAILED", correlation, http.TraceIdentifier); return; }
+        var result = await next();
+        if (result.Exception is OrderPriceCorrectionException error)
+        { result.Result = Problem(error.Status, error.Message, correlation, http.TraceIdentifier); result.ExceptionHandled = true; }
+        else if (result.Exception is ScopeAuthorizationExceptionV1 scope)
+        { result.Result = Problem(scope.Status, scope.Message, correlation, http.TraceIdentifier); result.ExceptionHandled = true; }
+    }
+    private static ObjectResult Problem(int status, string code, string correlation, string trace)
+    {
+        var unknown = code == "OPERATIONS_OUTCOME_UNKNOWN";
+        return new(new { status, code, title = code, detail = code, correlationId = string.IsNullOrWhiteSpace(correlation) || correlation.Length > 200 ? trace : correlation,
+            retryable = false, commitKnowledge = unknown ? "UNKNOWN" : "NOT_ACCEPTED", bindingCreated = false, workCreated = false,
+            terminalReceiptCreated = false, recovery = new { action = unknown ? "QUERY_ORIGINAL" : status == 412 ? "REFRESH_HEAD" : "NONE",
+                queryPath = unknown ? "/api/wms/rma/v1/commands/query" : null, originalCommandRef = (object?)null,
+                originalEffectKey = (string?)null, ownerQueryIdentity = (object?)null }, fieldErrors = Array.Empty<object>() }) { StatusCode = status };
+    }
+}
+
+[ApiController, Authorize, Route("api/wms/rma/v1"), RmaFormalResult]
+[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+public sealed class RmaFormalController(RmaFormalOwnerV1 owner) : ControllerBase
+{
+    private Guid Command() => Guid.TryParse(Request.Headers["Idempotency-Key"], out var id) && id != Guid.Empty
+        ? id : throw new OrderPriceCorrectionException("VALIDATION_FAILED", 400);
+    private IActionResult Application(RmaFormalApplicationV1 value, int status = 200)
+    { Response.Headers.ETag = '"' + value.ApplicationRef.Digest + '"'; return StatusCode(status, value); }
+    [HttpGet("context")]
+    public async Task<IActionResult> Context(CancellationToken ct) => Ok(await owner.ContextAsync(ct));
+    [HttpPost("original-fulfilment-options/search"), RequestSizeLimit(1048576)]
+    public async Task<IActionResult> Sources(RmaFulfilmentQueryV1 query, CancellationToken ct) => Ok(await owner.SourcesAsync(query, ct));
+    [HttpPost("applications"), RequestSizeLimit(1048576)]
+    public async Task<IActionResult> Create(RmaFormalCreateV1 command, CancellationToken ct) => Application(await owner.CreateAsync(Command(), command, ct), 201);
+    [HttpPut("applications/{applicationId:guid}"), RequestSizeLimit(1048576)]
+    public async Task<IActionResult> Edit(Guid applicationId, RmaFormalEditV1 command, CancellationToken ct) =>
+        Application(await owner.EditAsync(applicationId, Command(), command, Request.Headers.IfMatch, ct));
+    [HttpPost("applications/{applicationId:guid}/submit"), RequestSizeLimit(1048576)]
+    public async Task<IActionResult> Submit(Guid applicationId, RmaFormalTransitionV1 command, CancellationToken ct) =>
+        Application(await owner.SubmitAsync(applicationId, Command(), command, Request.Headers.IfMatch, ct));
+    [HttpPost("applications/{applicationId:guid}/withdrawals"), RequestSizeLimit(1048576)]
+    public async Task<IActionResult> Withdraw(Guid applicationId, RmaFormalTransitionV1 command, CancellationToken ct) =>
+        Application(await owner.WithdrawAsync(applicationId, Command(), command, Request.Headers.IfMatch, ct));
+    [HttpGet("applications/{applicationId:guid}")]
+    public async Task<IActionResult> Read(Guid applicationId, [FromQuery] int? version, CancellationToken ct) => Application(await owner.ReadAsync(applicationId, version, ct));
+    [HttpPost("commands/query"), RequestSizeLimit(1048576)]
+    public async Task<IActionResult> Query(RmaCommandQueryV1 query, CancellationToken ct) => Ok(await owner.QueryCommandAsync(query, ct));
+}
