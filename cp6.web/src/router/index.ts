@@ -188,6 +188,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   // ───── Phase WM-5 拡張機能 ─────
   '/wms/inspection':           () => import('@/views/wms/QcInspectionView.vue'),
   '/wms/rma':                  () => import('@/views/wms/RmaView.vue'),
+  '/wms/rma-applications':     () => import('@/views/wms/RmaApplicationsView.vue'),
   '/wms/expiry':               () => import('@/views/wms/ExpiryView.vue'),
   '/wms/lot-trace':            () => import('@/views/wms/LotTraceView.vue'),
   '/wms/kit':                  () => import('@/views/wms/KitView.vue'),
@@ -484,6 +485,7 @@ export function addDynamicRoutes(menus: any[]) {
       { path: 'wms/warehouse/:id/rule-references', name: 'wms/location-rule-references', component: viewModules['/wms/location-rule-references']!, meta: { permission: 'wms-warehouse:query' } },
       { path: 'wms/warehouse/:id/clock-policy', name: 'wms/warehouse-clock', component: viewModules['/wms/warehouse-clock']!, meta: { permission: 'wms-warehouse:query' } },
       { path: 'wms/warehouse-drafts', name: 'wms/warehouse-drafts', component: viewModules['/wms/warehouse-drafts']!, meta: { permission: 'wms-warehouse:query' } },
+      { path: 'wms/rma-applications', name: 'wms/rma-applications', component: viewModules['/wms/rma-applications']!, meta: { permission: 'wms-rma:query' } },
       { path: 'wms/plate-mold', name: 'wms/plate-mold', component: viewModules['/wms/plate-mold']!, meta: { permission: 'wms-plate-mold:query' } },
       { path: 'plm/tool-specifications', name: 'plm/tool-specifications', component: viewModules['/plm/tool-specifications']!, meta: { permission: 'plm-tool-specification:query' } },
       { path: 'erp/plate-mold-sources', name: 'erp/plate-mold-sources', component: viewModules['/erp/plate-mold-sources']!, meta: { permission: 'erp-plate-mold:query' } },
