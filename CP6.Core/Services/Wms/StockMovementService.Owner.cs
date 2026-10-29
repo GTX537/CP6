@@ -55,22 +55,8 @@ public partial class StockMovementService
     }
     // Ordinary independent commands have no authenticated old-obligation/physical-fact capability.
     // UNRSV only reduces an existing reservation; parent-owned facts use their own bounded primitives.
-    private async Task GuardIndependentLocationUse(OperationsAccessV1 access,string warehouse,string location,string type,CancellationToken ct)
-    {
-        if(type==WmsTxnType.UNRSV)return;
-        async Task Check(CancellationToken token)
-        {
-            await access.RequireLocation(warehouse,location,token);
-            var blocked=await _db.Locations.AsNoTracking().Where(l=>!l.IsDeleted && l.WarehouseCd==warehouse
-                && l.LocationCd==location).Select(l=>(bool?)l.IsBlocked).SingleOrDefaultAsync(token);
-            if(blocked==null)throw new OrderPriceCorrectionException("LOCATION_CONTROL_UNAVAILABLE",409);
-            if(blocked.Value)
-                throw new OrderPriceCorrectionException("LOCATION_OPERATION_BLOCKED",409);
-        }
-        // OperationsOwner holds the native Location table fence until this stock transaction ends.
-        // Recheck too: a same-transaction participant can still change the control after admission.
-        await Check(ct);access.AtCommit(Check);
-    }
+    private Task GuardIndependentLocationUse(OperationsAccessV1 access,string warehouse,string location,string type,CancellationToken ct)
+        =>type==WmsTxnType.UNRSV?Task.CompletedTask:access.GuardNewLocationUse(warehouse,location,ct);
     // Only audited Core parent Owners call this assembly-internal primitive, after their own object/field checks.
     // A pre-existing transaction is never accepted by the public independent entry above.
     internal Task<string> ApplyWithinOwnerAsync(StockMovementRequest request,CancellationToken ct=default)

@@ -358,9 +358,9 @@ public partial class OutboundService : IOutboundService
     /// 指定倉庫内で、需要量を単一ロットで賄える在庫を FEFO（期限→受入日→ロット）で 1 行探す。
     /// QC・リコール・所有者・利用可能数の各条件は従来と同一。多倉庫ルーティングの各倉庫評価で使用。
     /// </summary>
-    private Task<Stock?> FindCandidateStockAsync(string warehouseCd, string productCd, decimal needed, OperationsAccessV1? access = null)
+    private async Task<(Stock? Stock,string? ControlFailure)> FindCandidateStockAsync(string warehouseCd, string productCd, decimal needed, OperationsAccessV1? access = null)
     {
-        return (access == null ? _db.Stocks : access.Stocks(_db.Stocks))
+        var candidates = (access == null ? _db.Stocks : access.Stocks(_db.Stocks))
             .Where(s => s.ProductCd == productCd
                         && s.WarehouseCd == warehouseCd
                         && !s.IsDeleted
@@ -375,11 +375,18 @@ public partial class OutboundService : IOutboundService
                             && _db.StockTakes.Any(h => h.StockTakeNo == d.StockTakeNo && !h.IsDeleted
                                 && (h.Status == StockTakeStatus.Counting
                                     || h.Status == StockTakeStatus.DiffReview
-                                    || h.Status == StockTakeStatus.AwaitingApproval))))
-            .OrderBy(s => s.ExpiryDate ?? DateTime.MaxValue)
+                                    || h.Status == StockTakeStatus.AwaitingApproval))));
+        var eligible=access==null?candidates:candidates.Where(s=>_db.Locations.Any(l=>!l.IsDeleted
+            && l.WarehouseCd==s.WarehouseCd && l.LocationCd==s.LocationCd && !l.IsBlocked));
+        var stock=await eligible.OrderBy(s => s.ExpiryDate ?? DateTime.MaxValue)
             .ThenBy(s => s.ReceiveDate ?? DateTime.MaxValue)
             .ThenBy(s => s.LotNo)
             .FirstOrDefaultAsync();
+        if(stock!=null || access==null)return(stock,null);
+        // Do not turn an unknown location/control or a blocked candidate into a zero-stock assertion.
+        if(await candidates.AnyAsync(s=>!_db.Locations.Any(l=>!l.IsDeleted && l.WarehouseCd==s.WarehouseCd && l.LocationCd==s.LocationCd)))
+            return(null,"LOCATION_CONTROL_UNAVAILABLE");
+        return(null,await candidates.AnyAsync()?"LOCATION_OPERATION_BLOCKED":null);
     }
 
     private async Task AllocateCoreAsync(string outboundNo, string? userName, OperationsAccessV1? access = null, List<Func<Task>>? effects = null)
@@ -416,10 +423,13 @@ public partial class OutboundService : IOutboundService
                 : new List<string> { header.WarehouseCd };
 
             Stock? candidate = null;
+            string? controlFailure = null;
             string chosenWarehouse = header.WarehouseCd;
             foreach (var wh in candidateWarehouses)
             {
-                candidate = await FindCandidateStockAsync(wh, d.ProductCd, needed, access);
+                var choice = await FindCandidateStockAsync(wh, d.ProductCd, needed, access);
+                candidate = choice.Stock;
+                if(choice.ControlFailure!=null && controlFailure!="LOCATION_CONTROL_UNAVAILABLE")controlFailure=choice.ControlFailure;
                 if (candidate != null)
                 {
                     chosenWarehouse = wh;
@@ -429,6 +439,7 @@ public partial class OutboundService : IOutboundService
 
             if (candidate == null)
             {
+                if(controlFailure!=null)throw new CP6.Core.Services.Erp.OrderPriceCorrectionException(controlFailure,409);
                 if (header.OutboundType == OutboundType.Material && _shortage != null)
                 {
                     var shortage = new MaterialShortage
@@ -460,6 +471,7 @@ public partial class OutboundService : IOutboundService
                 throw new InsufficientStockException(d.ProductCd, d.LotNo ?? "", needed, 0m);
             }
 
+            if(access!=null)await access.GuardNewLocationUse(chosenWarehouse,candidate.LocationCd,CancellationToken.None);
             // 引当（RSV）— 実際に引き当てた倉庫(chosenWarehouse)で発行
             var txnNo = await ApplyStockFromParentAsync(new StockMovementRequest
             {

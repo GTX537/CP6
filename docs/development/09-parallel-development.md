@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W217 独立库存库位控制](dispatch/20261029-wave217/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
+> 当前：[W218 出库分配库位控制](dispatch/20261029-wave218/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
+
+> 历史快照：[W217 独立库存库位控制](dispatch/20261029-wave217/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
 
 > 历史快照：[W216 库位本域控制](dispatch/20261029-wave216/README.md)：验证完成，Handoff已finish，Main待正常PR/finish；七天目标继续。
 

@@ -55,6 +55,21 @@ internal sealed partial class OperationsAccessV1
         }
         else if(!allowNew || authority.Scope is not (1 or 5))throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN",403);
     }
+    // The caller must already hold the actual stock/parent Owner transaction and object scope.
+    // This is admission for ordinary new use, not a capability for historical facts or old obligations.
+    internal async Task GuardNewLocationUse(string warehouse,string location,CancellationToken ct)
+    {
+        async Task Check(CancellationToken token)
+        {
+            await RequireLocation(warehouse,location,token);
+            var blocked=await db.Locations.AsNoTracking().Where(l=>!l.IsDeleted && l.WarehouseCd==warehouse
+                && l.LocationCd==location).Select(l=>(bool?)l.IsBlocked).SingleOrDefaultAsync(token);
+            if(blocked==null)throw new OrderPriceCorrectionException("LOCATION_CONTROL_UNAVAILABLE",409);
+            if(blocked.Value)throw new OrderPriceCorrectionException("LOCATION_OPERATION_BLOCKED",409);
+        }
+        // Native master table fences serialize other writers; recheck same-transaction changes too.
+        await Check(ct);AtCommit(Check);
+    }
     internal IQueryable<StockTake> StockTakes()
     {
         var rows=db.StockTakes.AsNoTracking().Where(s=>!s.IsDeleted);
