@@ -102,7 +102,11 @@ public partial class OutboundService
     }
     public async Task<string?> ShipAsync(string number,ShipRequest req,string? userName)
     {
-        if(!_db.Database.IsNpgsql())return await ShipCoreAsync(number,req,userName);
+        if(!_db.Database.IsNpgsql())
+        {
+            if(req.CaptureReturnSource)throw new OrderPriceCorrectionException("FULFILMENT_POSTGRESQL_REQUIRED",422);
+            return await ShipCoreAsync(number,req,userName);
+        }
         var frozen=OperationsOwnerV1.Freeze(req);var effects=new List<Func<Task>>();
         var result=await Owner.ExecuteAsync(OperationsOwnerV1.Outbound,"ship",true,async (a,ct)=>
         {
@@ -111,8 +115,10 @@ public partial class OutboundService
             await a.RequireActiveAssociations(row.WebOrderNo,row.WorkOrderNo,ct);
             if(row.OutboundType==OutboundType.Shipping && !string.IsNullOrWhiteSpace(row.WebOrderNo))await a.RequireSourceOrder(row.WebOrderNo,true,ct);
             await RequireStoredReservation(row,true,ct);
+            var fulfilment=frozen.CaptureReturnSource?await OutboundFulfilmentV1.Prepare(_db,a,row,ct):null;
             using var inheritance=((StockMovementService)_stock).InheritTransactions(a);
             var package=await ShipCoreAsync(number,frozen,a.Actor,effects);QueueStockEffects(effects);
+            if(fulfilment!=null)await OutboundFulfilmentV1.Capture(_db,row,fulfilment,package,ct);
             a.AtCommit(t=>a.RequireOutbound(number,false,t));return package;
         });
         await PublishEffects(effects);return result;

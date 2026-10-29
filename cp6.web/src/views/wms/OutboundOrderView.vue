@@ -134,6 +134,7 @@
 
     <el-dialog v-model="shipDialog" :title="t('wms.outbound.dlg.ship')" width="500">
       <el-form v-if="form.outboundType === 2" :model="shipReq" label-width="160px" size="small">
+        <el-form-item v-if="form.webOrderNo" label="退货来源"><el-checkbox v-model="shipReq.captureReturnSource">保存退货履约来源</el-checkbox></el-form-item>
         <el-form-item :label="t('wms.outbound.dlg.caseQty')"><el-input-number v-model="shipReq.caseQty" :min="1" /></el-form-item>
         <el-form-item :label="t('wms.outbound.dlg.totalWeight')"><el-input-number v-model="shipReq.totalWeightKg" :min="0" :precision="3" /></el-form-item>
         <el-form-item :label="t('wms.outbound.dlg.totalVolume')"><el-input-number v-model="shipReq.totalVolumeM3" :min="0" :precision="4" /></el-form-item>
@@ -268,7 +269,9 @@ const onConfirm = () => transition('confirm', 'wms.inbound.msg.confirmAsk')
 const onAllocate = () => transition('allocate', 'wms.outbound.msg.allocateAsk')
 const onCancel = () => transition('cancel', 'wms.outbound.msg.cancelAsk')
 const onDelete = () => transition('delete', 'wms.inbound.msg.deleteAsk')
-function onShipClick() { if (!saving.value && !intent.uncertain.value) shipDialog.value = true }
+function onShipClick() {
+  if (!saving.value && !intent.uncertain.value) { shipReq.captureReturnSource = false; shipDialog.value = true }
+}
 async function onConfirmShip() {
   const token = intent.begin(); if (!token) return
   const no = form.outboundNo, request = JSON.parse(JSON.stringify(shipReq)) as ShipRequest

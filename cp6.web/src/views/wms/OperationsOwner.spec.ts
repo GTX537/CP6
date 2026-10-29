@@ -38,6 +38,15 @@ beforeEach(()=>{
 })
 afterEach(()=>{view?.unmount();view=undefined})
 describe('independent manufacturing and outbound intent',()=>{
+ it('sends the explicit return-source choice with shipment and resets it for the next dialog',async()=>{
+  const vm=render(2);Object.assign(vm.form,{...outbound,outboundType:2,webOrderNo:'ORDER'})
+  vm.onShipClick();expect(vm.shipReq.captureReturnSource).toBe(false)
+  vm.shipReq.captureReturnSource=true
+  wms.ship.mockResolvedValueOnce({data:{packageNo:'PKG'}});wms.get.mockResolvedValueOnce({data:{...outbound,status:4}})
+  await vm.onConfirmShip()
+  expect(wms.ship).toHaveBeenCalledWith('OUT1',expect.objectContaining({captureReturnSource:true}))
+  vm.onShipClick();expect(vm.shipReq.captureReturnSource).toBe(false)
+ })
  it('keeps the original outbound line identity in the save request after deleting another line',async()=>{
   const vm=render(2)
   const remaining={lineNo:2,productCd:'SAME',requiredQty:2,unitCd:'EA'}

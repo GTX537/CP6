@@ -73,6 +73,12 @@ public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner
     }
     public Task<RmaApplicationSourceV1> SourceAsync(Guid id, CancellationToken ct = default) =>
         owner.ExecuteAsync(OperationsOwnerV1.Rma, "query", false, (a, t) => Source(a, id, t), ct);
+    public Task<OutboundFulfilmentSnapshotV1> FulfilmentAsync(Guid id, CancellationToken ct = default) =>
+        owner.ExecuteAsync(OperationsOwnerV1.Rma, "query", false, async (a, t) =>
+        {
+            if (!await a.Outbounds().AnyAsync(x => x.Id == id, t)) throw Error("OBJECT_FORBIDDEN", 403);
+            return await OutboundFulfilmentV1.Read(db, id, t);
+        }, ct);
     public Task<MasterOperationScopeV1> ScopeAsync(CancellationToken ct = default) =>
         owner.ExecuteAsync(OperationsOwnerV1.Rma, "query", false,
             (a, t) => Task.FromResult(new MasterOperationScopeV1(db.CurrentTenantId, a.ActorId)), ct);

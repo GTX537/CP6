@@ -100,6 +100,8 @@ public class OutboundOrderDetailDto
 
 public class ShipRequest
 {
+    /// <summary>Persist exact order/product/unit sources in the physical shipment transaction.</summary>
+    public bool CaptureReturnSource { get; set; }
     /// <summary>ケース数（出荷区分時のみ意味あり）</summary>
     public int CaseQty { get; set; } = 1;
     /// <summary>総重量(kg)</summary>

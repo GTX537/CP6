@@ -161382,6 +161382,16 @@
       "date": "2026-10-29",
       "change": "W222 exact order-line provenance in actual outbound generation and RMA reads validated; Issue645 physical quantity unit corrected. Formal authorization remains incomplete.",
       "evidence": "docs/development/evidence/W222-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W222 closed once; W223 admits actual atomic shipment and immutable return fulfilment sources using established product/unit contracts. Original seven-day scope preserved.",
+      "evidence": "docs/development/dispatch/20261029-wave223/README.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W223 actual shipment and partial immutable fulfilment sources validated; explicit capture, exact quantity conversion, atomic rollback and authorized historical read. Full formal return entitlement/authorization remains incomplete.",
+      "evidence": "docs/development/evidence/W223-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -188256,10 +188266,36 @@
         }
       },
       "wave222_order_lineage": {
-        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "status": "CLOSED",
         "scope": "Preserve exact order-line IDs and immutable quantity/unit generation snapshots in actual outbound creation; retain source identity across edits and expose it through authorized return sources without SKU inference.",
         "limitations": "Native order-line lineage is a direct fulfilment prerequisite, not formal ShipmentLine/InvoiceLine/Schedule/UOM adoption or return authorization. Existing historical unlinked rows remain unlinked; no fabricated backfill.",
         "report": "docs/development/evidence/W222-01/DELIVERY.md",
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave222-final-verification.json"
+        },
+        "full_task_completed": false,
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W222-01",
+          "source": "8a442fc531aa1b530142e6e56049adf36d6a3682",
+          "remote_target": "0ebd2b729ff27e09062201ba522993a40964b218",
+          "branch": "codex/w222-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/646"
+        }
+      },
+      "wave223_fulfilment_source": {
+        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "scope": "Capture actual shipment, exact order/product/unit sources and quantity ranges atomically with physical shipment; expose immutable OriginalFulfilmentRef-shaped facts through current RMA authority. Existing native shipment remains available; capture is explicit.",
+        "limitations": "Shipment source facts do not grant return entitlement or authorization. Schedule/delivery/commercial source observations remain partial; nullable refs are not proof of absence. No historical backfill or production migration.",
+        "report": "docs/development/evidence/W223-01/DELIVERY.md",
         "lifecycle_complete": false,
         "lifecycle_snapshot": {
           "main_finish_required": true,
@@ -197357,10 +197393,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261029-wave222",
-      "path": "docs/development/dispatch/20261029-wave222/README.md",
-      "baseline_sha": "0c5a95faf7f1fe3563da4c0b71293fc6229f7b64",
-      "registered_at": "2026-10-29T04:30:13.538707+00:00",
+      "id": "20261029-wave223",
+      "path": "docs/development/dispatch/20261029-wave223/README.md",
+      "baseline_sha": "0ebd2b729ff27e09062201ba522993a40964b218",
+      "registered_at": "2026-10-29T04:56:15.870880+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -197379,28 +197415,28 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W222-01",
-          "workspace_task": "W222-01",
+          "id": "W223-01",
+          "workspace_task": "W223-01",
           "related_tasks": [
             "WP10-22"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Exact outbound order-line lineage for returns",
+          "title": "Atomic shipment and return fulfilment sources",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "fd5a9023482a600311c88a0fe39ef23d8be3fffd",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T043013Z-wave222-start/MESSAGE.md",
-            "at": "2026-10-29T04:30:13.538707+00:00",
-            "branch": "codex/w222-handoff"
+            "commit": "f68194540997eee33aab1a06d9961e3048c7258f",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T045615Z-wave223-start/MESSAGE.md",
+            "at": "2026-10-29T04:56:15.870880+00:00",
+            "branch": "codex/w223-handoff"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w222-01",
-          "planned_scope_ref": "docs/development/dispatch/20261029-wave222/README.md",
+          "branch": "codex/w223-01",
+          "planned_scope_ref": "docs/development/dispatch/20261029-wave223/README.md",
           "full_task_completed": false,
           "business_acceptance": "NOT_RUN",
           "actions_authorized": false,
@@ -197409,24 +197445,23 @@
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
-            "Main:outbound-lineage",
+            "Main:outbound-fulfilment",
             "Main:outbound-generation",
             "Main:coordination-ledger"
           ],
-          "worker_delivery_ref": "docs/development/evidence/W222-01/DELIVERY.md",
-          "validation": "14 related PostgreSQL/HTTP tests passed, zero skipped; same-product identity, exact quantity/unit, edit preservation/rejection, atomic rollback, immutable history, old source-version compatibility and current authorization. Post-review UI line-identity fix: regression reproduced before fix, 10/10 related Vue tests passed; PostgreSQL evidence unchanged and reused. vue-tsc passed.",
+          "worker_delivery_ref": "docs/development/evidence/W223-01/DELIVERY.md",
+          "validation": "14 initial PostgreSQL/HTTP cases passed; focused review corrections passed 7 cases (2 additional, 16 distinct backend scenarios in total), zero skipped. 11 related Vue tests and vue-tsc passed. Unchanged evidence reused; no full-suite or remote run.",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
             "handoff_seat_released": true,
             "main_branch_deleted": false,
             "handoff_branch_deleted": true
-          },
-          "issue": "https://github.com/GTX537/CP6/issues/645"
+          }
         }
       ],
       "horizon": {
-        "started_at": "2026-10-29T04:28:25.088352+00:00",
+        "started_at": "2026-10-29T04:52:58.541203+00:00",
         "checkpoint_at": "2026-10-29T04:03:18Z",
         "estimated_agent_wall_time_minutes": [
           45,
@@ -197446,7 +197481,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 10.54
+      "elapsed_registered_wave_minutes": 21.6
     },
     "wave_history": [
       {
@@ -226321,6 +226356,121 @@
             "branch_absent": true,
             "seat_released": true,
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/197"
+          }
+        ]
+      },
+      {
+        "id": "20261029-wave222",
+        "path": "docs/development/dispatch/20261029-wave222/README.md",
+        "baseline_sha": "0c5a95faf7f1fe3563da4c0b71293fc6229f7b64",
+        "registered_at": "2026-10-29T04:30:13.538707+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W222-01",
+            "workspace_task": "W222-01",
+            "related_tasks": [
+              "WP10-22"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Exact outbound order-line lineage for returns",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "fd5a9023482a600311c88a0fe39ef23d8be3fffd",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T043013Z-wave222-start/MESSAGE.md",
+              "at": "2026-10-29T04:30:13.538707+00:00",
+              "branch": "codex/w222-handoff"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w222-01",
+            "planned_scope_ref": "docs/development/dispatch/20261029-wave222/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:outbound-lineage",
+              "Main:outbound-generation",
+              "Main:coordination-ledger"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W222-01/DELIVERY.md",
+            "validation": "14 related PostgreSQL/HTTP tests passed, zero skipped; same-product identity, exact quantity/unit, edit preservation/rejection, atomic rollback, immutable history, old source-version compatibility and current authorization. Post-review UI line-identity fix: regression reproduced before fix, 10/10 related Vue tests passed; PostgreSQL evidence unchanged and reused. vue-tsc passed.",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave222-final-verification.json"
+            },
+            "issue": "https://github.com/GTX537/CP6/issues/645"
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-29T04:28:25.088352+00:00",
+          "checkpoint_at": "2026-10-29T04:03:18Z",
+          "estimated_agent_wall_time_minutes": [
+            45,
+            75
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Continue direct D2 return authorization/fulfilment adoption and other original seven-day exits; no new qualification wrapper or audit-only wave.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave222-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 10.54,
+        "actual_registered_wave_minutes": 16.85,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W222-01",
+            "source": "8a442fc531aa1b530142e6e56049adf36d6a3682",
+            "remote_target": "0ebd2b729ff27e09062201ba522993a40964b218",
+            "branch": "codex/w222-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/646"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W222-HANDOFF",
+            "source": "44a2158f2402576b3ba8fea615fb3024fd8fc4b9",
+            "remote_target": "d5315361bc25cbcce1ad313386f72aa769777ac1",
+            "branch": "codex/w222-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/198"
           }
         ]
       }
