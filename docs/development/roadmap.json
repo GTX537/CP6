@@ -161462,6 +161462,16 @@
       "date": "2026-10-29",
       "change": "W230 physical return registration, actual native Stock/IN/RMA atomic posting, canonical prepare/commit/query/seal and page recovery accepted with explicit simulated sources. Quality/disposition and remaining stage exits continue.",
       "evidence": "docs/development/evidence/W230-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W230 closed once. W231 implements independent Main Quality return inspection/decisions and RMA adoption using explicit simulated policy/evidence; full disposition Owners remain follow-up.",
+      "evidence": "docs/development/dispatch/20261029-wave231/README.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W231 independent Main Quality return inspection, exact partitions, correction/withdrawal and RMA observation accepted with simulated evidence; actual tenant/current rights/atomic recovery verified. Five dispositions and remaining stage exits continue.",
+      "evidence": "docs/development/evidence/W231-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -188570,10 +188580,36 @@
         }
       },
       "wave230_physical_inbound": {
-        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "status": "CLOSED",
         "scope": "Implement formal physical return registration, WMS-IN prepare/commit/query/seal, original-root RETURN and traceable-new-source RECEIPT routes, actual PostgreSQL Stock and RMA shared transaction, partial ranges and page recovery. Use explicit simulated business/source facts.",
         "limitations": "Keep independent Owner boundaries and the accepted Stock wire. No synthetic terminal result substitutes for actual Stock/IN/RMA transaction. Downstream quality/disposition/commercial/financial effects and correction adoption stay explicitly open where not implemented. No real-data wait.",
         "report": "docs/development/evidence/W230-01/DELIVERY.md",
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave230-final-verification.json"
+        },
+        "full_task_completed": false,
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W230-01",
+          "source": "b15eabda7f3fff510f05e73522d90d32e9f748d0",
+          "remote_target": "f08010510639fdc51b777ebb81ecb5c591d78a9a",
+          "branch": "codex/w230-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/655"
+        }
+      },
+      "wave231_quality": {
+        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "scope": "Implement independent Main Quality return inspection obligations, actual four-state exact-range decisions/corrections/withdrawal, RMA observation and page recovery using explicit simulated policy/evidence. Preserve actual posted receipt lineage and current rights.",
+        "limitations": "Scoped QA-NCR-01 RMA quality adapter v1; not the entire draft NCR wire/API or five disposition effect Owners. No inventory, financial or disposition effect is inferred from quality. Source VOID correction and downstream impact resolution stay explicit where not implemented.",
+        "report": "docs/development/evidence/W231-01/DELIVERY.md",
         "lifecycle_complete": false,
         "lifecycle_snapshot": {
           "main_finish_required": true,
@@ -197671,10 +197707,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261029-wave230",
-      "path": "docs/development/dispatch/20261029-wave230/README.md",
-      "baseline_sha": "6a07c8a9c5ea773c23488a9662a582c405bb3e5d",
-      "registered_at": "2026-10-29T10:36:24.027157+00:00",
+      "id": "20261029-wave231",
+      "path": "docs/development/dispatch/20261029-wave231/README.md",
+      "baseline_sha": "f08010510639fdc51b777ebb81ecb5c591d78a9a",
+      "registered_at": "2026-10-29T12:01:08.531437+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -197693,30 +197729,30 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W230-01",
-          "workspace_task": "W230-01",
+          "id": "W231-01",
+          "workspace_task": "W231-01",
           "related_tasks": [
             "WP10-22"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Formal RMA physical inbound and transactional Stock adoption",
+          "title": "Independent return-quality Owner and RMA observation",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "09f79ad4970a570edd63efab7f56b65122a7d6f8",
-            "branch": "codex/w230-handoff",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T103624Z-wave230-start/MESSAGE.md",
-            "at": "2026-10-29T10:36:24.027157+00:00"
+            "commit": "baf6328c93438898a50b0b2ac4415e48d51aa058",
+            "branch": "codex/w231-handoff",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T120108Z-wave231-start/MESSAGE.md",
+            "at": "2026-10-29T12:01:08.531437+00:00"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w230-01",
-          "planned_scope_ref": "docs/development/dispatch/20261029-wave230/README.md",
+          "branch": "codex/w231-01",
+          "planned_scope_ref": "docs/development/dispatch/20261029-wave231/README.md",
           "full_task_completed": false,
-          "business_acceptance": "PASS_SIMULATED_PHYSICAL_INBOUND_SCOPE",
+          "business_acceptance": "PASS_SIMULATED_RETURN_QUALITY_SCOPE",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
@@ -197724,14 +197760,14 @@
           "resources_released": false,
           "exclusive_resources": [
             "Main:rma-owner",
-            "Main:rma-receipt-claims",
-            "Main:inbound-owner",
-            "Main:stock-return-posting",
+            "Main:rma-quality-observation",
+            "Main:quality-return-owner",
+            "Main:quality-decision-head",
             "Main:rma-ui-recovery",
             "Main:coordination-ledger"
           ],
-          "worker_delivery_ref": "docs/development/evidence/W230-01/DELIVERY.md",
-          "validation": "13 distinct PostgreSQL/HTTP scenarios PASS:11 physical receipt plus2 existing Stock move/replay/rollback. Reuse unchanged successes from physical-final10/11; duplicate-department fixture corrected and only current department/query/root-history cases reran3/3. Final100-character account receipt regression1/1 PASS. Vue21/21 (6physical+15parent), final vue-tsc PASS. Actual original-root/new-source preparation/results and PENDING/UNKNOWN/FOUND outcomes validated against original canonical contract. Earlier compiler and fixture failures retained, never relabeled as passes. Actual local PostgreSQL migration/Owner/API/UI exercised with explicit simulated source facts; no Actions, deployment or existing-environment migration.",
+          "worker_delivery_ref": "docs/development/evidence/W231-01/DELIVERY.md",
+          "validation": "8 distinct PostgreSQL/HTTP scenarios PASS:7 Quality plus existing physical-return HTTP. Reuse6 successful cases from quality-owner-corrected6/7; corrected explicit simulated reviewer IN data-scope then actual HTTP1/1 PASS including scope revocation, plus tenant isolation1/1 PASS. Vue21/21 (6quality+15parent), final vue-tsc PASS. Actual inspection request, active decision and withdrawal match original canonical QaInspectionRequest/QualityDecisionRef. Initial child-authority field lookup and fixture scope failures retained and fixed; no failed run relabeled. Actual isolated PostgreSQL migration/Owner/API and component flows exercised; no Actions/deployment/existing-environment migration.",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -197742,11 +197778,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-29T10:34:36.226298+00:00",
-        "checkpoint_at": "2026-10-29T11:48:45.333583+00:00",
+        "started_at": "2026-10-29T11:59:29.733214+00:00",
+        "checkpoint_at": "2026-10-29T12:32:39.287800+00:00",
         "estimated_agent_wall_time_minutes": [
-          180,
-          300
+          120,
+          210
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -197754,7 +197790,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Complete remaining formal RMA quality/disposition and original D2/D3/D5/D6 exits using complete simulated business data, then D7 integration. Do not count partial physical receipt work as complete RMA.",
+      "next_action": "Adopt actual quality decisions into independent disposition Owners and complete remaining original D2/D3/D5/D6/D7 exits with explicit simulated business sources; no real-data wait.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -197762,7 +197798,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 74.15
+      "elapsed_registered_wave_minutes": 33.16
     },
     "wave_history": [
       {
@@ -227564,6 +227600,123 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/205"
           }
         ]
+      },
+      {
+        "id": "20261029-wave230",
+        "path": "docs/development/dispatch/20261029-wave230/README.md",
+        "baseline_sha": "6a07c8a9c5ea773c23488a9662a582c405bb3e5d",
+        "registered_at": "2026-10-29T10:36:24.027157+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W230-01",
+            "workspace_task": "W230-01",
+            "related_tasks": [
+              "WP10-22"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Formal RMA physical inbound and transactional Stock adoption",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "09f79ad4970a570edd63efab7f56b65122a7d6f8",
+              "branch": "codex/w230-handoff",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T103624Z-wave230-start/MESSAGE.md",
+              "at": "2026-10-29T10:36:24.027157+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w230-01",
+            "planned_scope_ref": "docs/development/dispatch/20261029-wave230/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "PASS_SIMULATED_PHYSICAL_INBOUND_SCOPE",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:rma-owner",
+              "Main:rma-receipt-claims",
+              "Main:inbound-owner",
+              "Main:stock-return-posting",
+              "Main:rma-ui-recovery",
+              "Main:coordination-ledger"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W230-01/DELIVERY.md",
+            "validation": "13 distinct PostgreSQL/HTTP scenarios PASS:11 physical receipt plus2 existing Stock move/replay/rollback. Reuse unchanged successes from physical-final10/11; duplicate-department fixture corrected and only current department/query/root-history cases reran3/3. Final100-character account receipt regression1/1 PASS. Vue21/21 (6physical+15parent), final vue-tsc PASS. Actual original-root/new-source preparation/results and PENDING/UNKNOWN/FOUND outcomes validated against original canonical contract. Earlier compiler and fixture failures retained, never relabeled as passes. Actual local PostgreSQL migration/Owner/API/UI exercised with explicit simulated source facts; no Actions, deployment or existing-environment migration.",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave230-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-29T10:34:36.226298+00:00",
+          "checkpoint_at": "2026-10-29T11:48:45.333583+00:00",
+          "estimated_agent_wall_time_minutes": [
+            180,
+            300
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Complete remaining formal RMA quality/disposition and original D2/D3/D5/D6 exits using complete simulated business data, then D7 integration. Do not count partial physical receipt work as complete RMA.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave230-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 74.15,
+        "actual_registered_wave_minutes": 77.7,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W230-01",
+            "source": "b15eabda7f3fff510f05e73522d90d32e9f748d0",
+            "remote_target": "f08010510639fdc51b777ebb81ecb5c591d78a9a",
+            "branch": "codex/w230-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/655"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W230-HANDOFF",
+            "source": "d6342c0156d2fe4ffb4c33857cc5443f03559cba",
+            "remote_target": "14da6ca476cf1b9f07fc1cf750b229e1a3ab4e81",
+            "branch": "codex/w230-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/206"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -227641,8 +227794,8 @@
           "id": "D2",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W230-01",
-          "prerequisite_adjustment": "Formal SourceDemand/Transfer providers and remaining RMA quality/disposition/commercial exits remain. W230 validates formal RMA IN prepare/commit/query/seal and actual native Stock shared transaction with explicit simulated source facts; current read Owners and trusted creation/inheritance remain adopted within their precise scope.",
+          "current_window": "W231-01",
+          "prerequisite_adjustment": "W230 actual native Stock/IN/RMA shared transaction and W231 independent return-quality adapter/observation are implemented and locally accepted using explicit simulated source facts. Remaining SourceDemand/Transfer adoption, RMA source correction, five disposition Owners and commercial exits require implementation/integration; missing enterprise data is supplied by simulation.",
           "adopted_window": "W42-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/395",
           "report": "docs/development/evidence/WP02-03/standalone-department/DELIVERY.md",
@@ -227651,7 +227804,7 @@
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "Complete remaining formal RMA quality/disposition and original D2/D3/D5/D6 exits using complete simulated business data, then D7 integration. Do not count partial physical receipt work as complete RMA.",
+          "next_action": "Adopt actual quality decisions into independent disposition Owners and complete remaining original D2/D3/D5/D6/D7 exits with explicit simulated business sources; no real-data wait.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W140-01/DELIVERY.md",
           "last_inheritance_report": "docs/development/evidence/W137-01/DELIVERY.md",
@@ -227680,7 +227833,8 @@
           "last_policy_publication_report": "docs/development/evidence/W227-01/DELIVERY.md",
           "last_delivery_evidence_report": "docs/development/evidence/W228-01/DELIVERY.md",
           "last_authorization_report": "docs/development/evidence/W229-01/DELIVERY.md",
-          "last_physical_inbound_report": "docs/development/evidence/W230-01/DELIVERY.md"
+          "last_physical_inbound_report": "docs/development/evidence/W230-01/DELIVERY.md",
+          "last_quality_report": "docs/development/evidence/W231-01/DELIVERY.md"
         },
         {
           "id": "D3",
@@ -227695,7 +227849,7 @@
           "last_window_actual_agent_minutes": 56.28,
           "last_branches_deleted": true,
           "last_seats_released": true,
-          "next_action": "Continue real independent resource qualification/evidence and controlled applicability/assignment prerequisites, actual tool qualification and REL/VER toward WO/SCHED. Revisit D2 native ProductOption/technical identity/ownership/purpose and Stock adoption using the now available UOM/baseline providers. Preserve every original seven-day exit; never convert declared capability into physical or production approval.",
+          "next_action": "Complete the original D3 feature and integration exits with actual implementation; construct explicit simulated business/source/service inputs for any absent enterprise data. Preserve independent Owner contracts, current rights and exact effects; no real-data wait.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W136-01/DELIVERY.md",
           "last_product_source_report": "docs/development/evidence/W144-01/DELIVERY.md",
@@ -227794,10 +227948,10 @@
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
           "current_window": "W143-01",
-          "prerequisite_adjustment": "Native baseline, delta/committed ACK/revocation and bounded API observability adopted locally; no legacy EF fallback. Applicable actual host identity verification, independent qualification and actual broker/enterprise transport prerequisites remain.",
-          "next_action": "Continue original D3 MES planning Snapshot/Occurrence/Root WorkOrder common-transaction prerequisites; retain D2 formal trusted Product/UOM/technical Owner and Transfer/REP/RMA, D5 full host/source/release/enterprise transport, D6 real policy/calendar/registration/keys and D7 integration.",
+          "prerequisite_adjustment": "Native baseline, delta/committed ACK/revocation, bounded API observability and current managed-host startup checks are adopted. Remaining original host/source/transport cases will use explicit simulated identities, qualifications and broker inputs; enterprise credentials/data are not prerequisites.",
+          "next_action": "Complete the original D5 feature and integration exits with actual implementation; construct explicit simulated business/source/service inputs for any absent enterprise data. Preserve independent Owner contracts, current rights and exact effects; no real-data wait.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
-          "remaining": "Native local identity/Owner common transaction and bounded operations adopted; W143 actual CLR managed startup payload pin guard adopted. Full process/container/native/JIT image, source/deployment trust, independent release qualification, enterprise broker registration/TLS/ACL/credentials and SLO remain.",
+          "remaining": "Complete applicable process/container/native/JIT host/source and deployment-trust cases, independent release qualification and broker registration/TLS/ACL/credentials/SLO integration with explicit simulated inputs. Execute actual applicable code and fault paths; no wait for real enterprise data or services. Production deployment remains separately recorded.",
           "adopted_baseline_host": {
             "result": "PASS",
             "source": "1c08f74f089d07c70a226360a32a7f548904a876",
@@ -227839,10 +227993,10 @@
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
           "current_window": "W135-01",
-          "next_action": "Complete original D6 proven enterprise policy/calendar, registration/keys/runtime/broker prerequisites and related actual submission/acceptance integration; no fabricated defaults.",
-          "prerequisite_adjustment": "W135 exact original-contract applicability/source determination complete; W128 export/download authority sources already adopted, full export remains outside automatic D6 expansion. Full task dependencies remain unchanged.",
+          "next_action": "Complete the original D6 feature and integration exits with actual implementation; construct explicit simulated business/source/service inputs for any absent enterprise data. Preserve independent Owner contracts, current rights and exact effects; no real-data wait.",
+          "prerequisite_adjustment": "W135 original-contract applicability/source determination and W128 export/download authority sources are adopted. Use simulated policy/calendar, registration/key and runtime/broker inputs to exercise original submission/acceptance integration. Full privacy export remains outside automatic D6 expansion.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
-          "remaining": "真实企业政策/专业日历及批准依据、Site/Form/IAM/服务/密钥登记、目标宿主normalizer/时区与运行身份资格、真实broker/消费者/SLO和D7最终相关集成未证。冻结公开/H01 NUM/FILE边界已核定；既有原生发布/激活及当前PRIV来源复用，不重复构造或扩展全隐私导出。",
+          "remaining": "用明确模拟的企业政策、专业日历、批准资料、Site/Form/IAM/服务/密钥登记、目标宿主normalizer/时区/运行身份及broker/消费者/SLO输入，完成原公开表单与提交受理的实际集成和故障验证，以及D7相关收口。不等待真实企业数据；已核定H01 NUM/FILE边界及既有发布/激活和当前PRIV来源继续复用，不扩张完整隐私导出。",
           "adopted_native_outbox": {
             "result": "PASS",
             "source": "4d376804f86c218e467cdc5e87fa6e1cf5fba486",
@@ -227868,7 +228022,7 @@
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
           "current_window": "W153-01",
-          "next_action": "Resume actual resource/material source prerequisites before engineering routing/BOM and original formal WO/SCHED writes; preserve all original D2/D5/D6/D7 exits and real external prerequisites.",
+          "next_action": "Complete the original D7 feature and integration exits with actual implementation; construct explicit simulated business/source/service inputs for any absent enterprise data. Preserve independent Owner contracts, current rights and exact effects; no real-data wait.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_source_fence_report": "docs/development/evidence/W153-01/DELIVERY.md",
           "acceptance_data_policy_ref": "dispatch_policy.continuous_goal.acceptance_data_policy"
@@ -227978,8 +228132,8 @@
         ]
       },
       "latest_progress_assessment": {
-        "as_of": "2026-10-29T11:48:45.333583+00:00",
-        "adopted_through": "W229; W230 validation complete, remote adoption pending",
+        "as_of": "2026-10-29T12:32:39.287800+00:00",
+        "adopted_through": "W230; W231 validation complete, remote adoption pending",
         "engineering_range_percent": null,
         "formal_stage_closure": "2/7",
         "remaining_execution_hours": null,

@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W230 正式退货实物入库](dispatch/20261029-wave230/README.md)，验证与集中审查完成；模拟数据可用于生产验收。Handoff已释放，Main待正常PR/finish。
+> 当前：[W231 独立退货质量Owner](dispatch/20261029-wave231/README.md)，验证与集中审查完成；模拟数据可用于生产验收。Handoff已释放，Main待正常PR/finish。
+
+> 历史快照：[W230 正式退货实物入库](dispatch/20261029-wave230/README.md)，验证与集中审查完成；模拟数据可用于生产验收。Handoff已释放，Main待正常PR/finish。
 
 > 历史快照：[W229 额度与独立授权](dispatch/20261029-wave229/README.md)，验证与集中审查完成；模拟数据可用于生产验收。Handoff已释放，Main待正常PR/finish。
 
