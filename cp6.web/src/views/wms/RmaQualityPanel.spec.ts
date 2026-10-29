@@ -14,7 +14,7 @@ async function click(text: string) { await view!.findAll('button').find(x => x.t
 function accept(p: QualityPending): QualityResult {
   expect(stored.get(key)).toEqual(p); const choice = context.receipts[0]!
   const current: QualityView = choice.inspection ?? { inspection: { id: id(10), reference: reference(10), source: choice.source }, headRef: reference(11), decision: null, observation: null, observationCurrent: false }
-  if (p.kind === 'DECIDE') current.decision = { actorId: who.actorId, reason: p.body.reason, result: { owner: 'QA-NCR-01', decisionRef: reference(12), decisionVersion: '1', decisionState: 'ACTIVE', previousDecisionRef: null, partitions: p.body.partitions.map(x => ({ ...x, quantity: { value: x.ranges.length ? amount : '0', uom } })) } }
+  if (p.kind === 'DECIDE') current.decision = { actorId: who.actorId, reason: p.body.reason, result: { owner: 'QA-NCR-01', decisionRef: reference(12), decisionVersion: '1', decisionState: 'ACTIVE', previousDecisionRef: null, voidRanges: current.decision?.result.voidRanges ?? [], partitions: p.body.partitions.map(x => ({ ...x, quantity: { value: x.ranges.length ? amount : '0', uom } })) } }
   if (p.kind === 'OBSERVE') { current.observation = { decision: current.decision!.result }; current.observationCurrent = current.decision!.result.decisionState === 'ACTIVE' }
   if (p.kind === 'WITHDRAW') { current.decision!.result.decisionState = 'WITHDRAWN'; current.observationCurrent = false }
   choice.inspection = current; return structuredClone({ action: p.kind.toLowerCase(), value: current })
@@ -29,6 +29,16 @@ beforeEach(() => {
 afterEach(() => { view?.unmount(); view = undefined; vi.restoreAllMocks() })
 async function start() { await view!.get('[aria-label="质量处理原因"]').setValue('Inspection reason'); await click('建立退货检验') }
 describe('return quality page', () => {
+  it('shows source VOID and starts edits from the remaining effective quantity, including empty scope', async () => {
+    await render(); await start(); await click('签署质量判定')
+    const decision = context.receipts[0]!.inspection!.decision!.result
+    decision.voidRanges = [{ from: '0', to: '0.5' }]
+    decision.partitions = decision.partitions.map(p => ({ ...p, ranges: p.quality === 'PENDING' ? [{ from: '0.5', to: amount }] : [] }))
+    await click('刷新退货质量'); expect(view!.text()).toContain('已冲正范围 [0, 0.5)'); expect((view!.get('[aria-label="质量起点1"]').element as HTMLInputElement).value).toBe('0.5')
+    decision.voidRanges = [{ from: '0', to: amount }]; decision.partitions = decision.partitions.map(p => ({ ...p, ranges: [] }))
+    await click('刷新退货质量'); await view!.get('[aria-label="质量处理原因"]').setValue('All original quantity corrected'); await click('签署质量判定')
+    expect(mock.dispatch.mock.lastCall![0].body.partitions.every((p: { ranges: unknown[] }) => p.ranges.length === 0)).toBe(true)
+  })
   it('starts an inspection, signs exact ranges, adopts and withdraws the quality decision', async () => {
     await render(); await start(); expect(view!.text()).toContain('尚无质量判定')
     await view!.get('[aria-label="质量状态1"]').setValue('ACCEPTED'); await view!.get('[aria-label="检验证据1"]').setValue(true); await click('签署质量判定')

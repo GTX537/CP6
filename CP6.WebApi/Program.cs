@@ -674,6 +674,11 @@ foreach (var definition in CP6.Core.Services.Wms.ReturnDispositionOwnersV2.All)
 }
 builder.Services.Configure<CP6.Core.Services.Wms.ReturnDispositionSimulationOptionsV2>(builder.Configuration.GetSection("ReturnDispositionSimulation"));
 builder.Services.AddScoped<CP6.Core.Services.Wms.ReturnDispositionPolicyV2>();
+builder.Services.Configure<CP6.Core.Services.Wms.ReturnCorrectionSimulationOptionsV1>(builder.Configuration.GetSection("ReturnCorrectionSimulation"));
+builder.Services.AddScoped<CP6.Core.Services.Wms.ReturnCorrectionApprovalSourceV1>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.ReturnCorrectionOwnerV1>();
+CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-return-correction","退货纠错冲正",new[] { 1,2,3,4,5 },1);
+CP6.Core.Services.Sys.FieldRegistry.Register("wms-return-correction",Array.Empty<CP6.Core.Services.Sys.FieldRegistry.Field>());
 builder.Services.AddScoped<CP6.Core.Services.Wms.StockMovementService>(sp => (CP6.Core.Services.Wms.StockMovementService)sp.GetRequiredService<CP6.Core.Services.Wms.IStockMovementService>());
 builder.Services.AddScoped<CP6.Core.Services.Wms.StockQcService>(sp => (CP6.Core.Services.Wms.StockQcService)sp.GetRequiredService<CP6.Core.Services.Wms.IStockQcService>());
 builder.Services.AddScoped<CP6.Core.Services.Wms.ReturnResaleOwnerV2>();

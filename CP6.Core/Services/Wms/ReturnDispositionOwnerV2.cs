@@ -52,6 +52,9 @@ public abstract partial class ReturnDispositionOwnerV2(CP6Context db,OperationsO
         var lines =sources.Select(x => x.Source.LineId).ToArray();
         var claims =(await store.Rows().Where(x => x.State !="SEALED_NO_EFFECT" && lines.Contains(x.Line)).ToArrayAsync(ct))
             .Select(x => ReturnDispositionStoreV2.Decode<ReturnDispositionPreparationV2>(x.Body)).ToArray();
+        var corrections =new ReturnCorrectionStoreV1(db);
+        var effectiveClaims =new Dictionary<Guid,FulfilmentRangeV1[]>();
+        foreach (var claim in claims) effectiveClaims[claim.WorkId] =Ranges.Wire(Ranges.Except(Ranges.Read(claim.Ranges),Ranges.Read(await corrections.Reversed("DISPOSITION",claim.WorkId,ct))));
         var choices =new List<ReturnDispositionChoiceV2>();
         var bucket =DateTimeOffset.UtcNow.ToUnixTimeSeconds()/900; var expires =DateTimeOffset.FromUnixTimeSeconds((bucket+1)*900);
         foreach (var source in sources)
@@ -59,9 +62,10 @@ public abstract partial class ReturnDispositionOwnerV2(CP6Context db,OperationsO
             await Scope(access,source.Source,source.Source.RegistrarId,ct);
             if (source.Inspection?.Decision ==null) continue;
             var decision =source.Inspection.Decision.Result;
+            var closed =Ranges.Read(await corrections.Reversed("PHYSICAL_RECEIPT",source.Source.LineId,ct)).Concat(Ranges.Read(await corrections.Fenced(source.Source.LineId,null,ct)));
             foreach (var part in decision.Partitions)
             {
-                var available =Ranges.Except(Ranges.Read(part.Ranges),claims.Where(x => x.Source.LineId ==source.Source.LineId).SelectMany(x => Ranges.Read(x.Ranges)));
+                var available =Ranges.Except(Ranges.Read(part.Ranges),claims.Where(x => x.Source.LineId ==source.Source.LineId).SelectMany(x => Ranges.Read(effectiveClaims[x.WorkId])).Concat(closed));
                 if (available.Length ==0) continue;
                 var options =source.Inspection.ObservationCurrent && part.Quality is "ACCEPTED" or "REJECTED"
                     ? policies.Options(db.CurrentTenantId,source.Source,Kind,part.Quality) : [];

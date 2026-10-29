@@ -161482,6 +161482,16 @@
       "date": "2026-10-29",
       "change": "W232 five independent return disposition Owners with actual MOVE/LOSS/SHIP, exact ranges/QC release and atomic original recovery accepted using simulated business evidence. Source/disposition correction and remaining original stage exits continue.",
       "evidence": "docs/development/evidence/W232-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W232 closed once. W233 implements exact original-effect correction for receipt and five dispositions, source closure, Quality VOID and RMA successors using simulated approvals and error evidence.",
+      "evidence": "docs/development/dispatch/20261029-wave233/README.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W233 precise receipt and five-disposition correction with actual reverse Stock, independent simulated approval, exact budget, source closure, Quality VOID and RMA successor accepted; original remaining goals continue.",
+      "evidence": "docs/development/evidence/W233-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -188642,10 +188652,36 @@
         }
       },
       "wave232_disposition": {
-        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "status": "CLOSED",
         "scope": "Implement five independent return disposition effect Owners with versioned executable contracts: resale and internal repair MOVE, approved scrap ADJUST LOSS, supplier and customer return SHIP; exact range claims, durable preparation/commit/query/seal, actual Stock and Owner receipts, page recovery using explicit simulated business approvals.",
         "limitations": "Executable successor RMA-DISPOSITION/2; original R3 fenced adapters remain historical. Quality decision does not itself constitute disposition. Full Stock correction/SX adoption and commercial/financial follow-up remain separate; five terminal actions must create actual business and Stock effects.",
         "report": "docs/development/evidence/W232-01/DELIVERY.md",
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave232-final-verification.json"
+        },
+        "full_task_completed": false,
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W232-01",
+          "source": "601e60b8252f26fc1d608ea53915f41823ad92ce",
+          "remote_target": "bd86e6a76a6988f3441be87477ee329809a14172",
+          "branch": "codex/w232-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/657"
+        }
+      },
+      "wave233_correction": {
+        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "scope": "D2 complete return correction workflow: draft/edit/submit/approval binding/frozen execution, exact inverse for posted receipt and all five disposition kinds, reversal budget and current dependencies, source closure/VOID/RMA successor, private page recovery; explicit simulated approval and error evidence",
+        "limitations": "Versioned RMA-CORRECTION/1 adopts the Stock correction lifecycle for actual RMA receipt and disposition effects; original movements and quality history remain immutable. Broader non-RMA Stock corrections, commercial/financial and external dispatcher remain original follow-up scope.",
+        "report": "docs/development/evidence/W233-01/DELIVERY.md",
         "lifecycle_complete": false,
         "lifecycle_snapshot": {
           "main_finish_required": true,
@@ -197743,10 +197779,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261029-wave232",
-      "path": "docs/development/dispatch/20261029-wave232/README.md",
-      "baseline_sha": "c688ac23df3704586dd6be4a35203046904dc8d1",
-      "registered_at": "2026-10-29T12:50:15.164059+00:00",
+      "id": "20261029-wave233",
+      "path": "docs/development/dispatch/20261029-wave233/README.md",
+      "baseline_sha": "bd86e6a76a6988f3441be87477ee329809a14172",
+      "registered_at": "2026-10-29T13:56:33.001951+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -197765,45 +197801,46 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W232-01",
-          "workspace_task": "W232-01",
+          "id": "W233-01",
+          "workspace_task": "W233-01",
           "related_tasks": [
             "WP10-22"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Five independent return disposition effect Owners and actual Stock adoption",
+          "title": "Return source and disposition correction with actual Stock inverse and Quality VOID",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "01223e0eb32bfeae43a92c76e38cc4bdb0bb399a",
-            "branch": "codex/w232-handoff",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T125015Z-wave232-start/MESSAGE.md",
-            "at": "2026-10-29T12:50:15.164059+00:00"
+            "commit": "fba562b9df276285cce1052a0162bd41e997afb0",
+            "branch": "codex/w233-handoff",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T135633Z-wave233-start/MESSAGE.md",
+            "at": "2026-10-29T13:56:33.001951+00:00"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w232-01",
-          "planned_scope_ref": "docs/development/dispatch/20261029-wave232/README.md",
+          "branch": "codex/w233-01",
+          "planned_scope_ref": "docs/development/dispatch/20261029-wave233/README.md",
           "full_task_completed": false,
-          "business_acceptance": "PASS_SIMULATED_FIVE_DISPOSITION_SCOPE",
+          "business_acceptance": "PASS_SIMULATED_RETURN_CORRECTION_SCOPE",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
-            "Main:rma-disposition",
-            "Main:independent-effect-owners",
-            "Main:Stock-return-participant",
-            "Main:stock-qc-return-release",
+            "Main:return-correction",
+            "Main:stock-correction-participant",
+            "Main:rma-claim-successor",
+            "Main:quality-void",
+            "Main:disposition-effective-ranges",
             "Main:rma-ui-recovery",
             "Main:coordination-ledger"
           ],
-          "worker_delivery_ref": "docs/development/evidence/W232-01/DELIVERY.md",
-          "validation": "24 distinct local scenarios PASS:9 disposition PostgreSQL/HTTP plus15 related Stock regressions. Initial boundary batch23/23; final scope/tenant/HTTP/five-owner regression3/3, reusing unaffected successful scenarios. Vue22 distinct PASS (7disposition+15parent); final changed panel7/7 and final vue-tsc PASS. Actual five-owner proposals, Stock manifests/requests/responses match accepted canonical wire. Initial anonymous-property compile error and validator-environment/key errors retained and corrected; no failed run relabeled. No Actions, production deployment or existing-environment migration.",
+          "worker_delivery_ref": "docs/development/evidence/W233-01/DELIVERY.md",
+          "validation": "25 distinct PostgreSQL/actual HTTP scenarios passed:9 correction,9 disposition,7 Quality. Initial boundary run and final focused correction rerun jointly cover all scenarios; unchanged successes reused. Vue35/35 and final vue-tsc passed. Actual Stock correction responses and successor Quality VOID match accepted canonical wire. Initial tracked-fixture, transaction-number fixture and HTTP reserved-route-name failures and frontend pending-union omission and later test syntax error retained and fixed; no failed run relabeled. No Actions, deployment or existing-environment migration.",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -197814,11 +197851,11 @@
         }
       ],
       "horizon": {
-        "started_at": "2026-10-29T12:43:29.237655+00:00",
-        "checkpoint_at": "2026-10-29T13:36:15.592255+00:00",
+        "started_at": "2026-10-29T13:53:46.531891+00:00",
+        "checkpoint_at": "2026-10-29T14:44:23.972489+00:00",
         "estimated_agent_wall_time_minutes": [
-          150,
-          240
+          100,
+          160
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -197826,7 +197863,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Complete source/disposition correction and original remaining RMA commercial/financial and D3/D5/D6/D7 exits using explicit simulated business/source/service inputs, without real-data waiting.",
+      "next_action": "Continue RMA commercial/financial exits and original D3/D5/D6/D7 feature and integration delivery with explicit simulated business and service inputs.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -197834,7 +197871,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 52.77
+      "elapsed_registered_wave_minutes": 50.62
     },
     "wave_history": [
       {
@@ -227870,6 +227907,123 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/207"
           }
         ]
+      },
+      {
+        "id": "20261029-wave232",
+        "path": "docs/development/dispatch/20261029-wave232/README.md",
+        "baseline_sha": "c688ac23df3704586dd6be4a35203046904dc8d1",
+        "registered_at": "2026-10-29T12:50:15.164059+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W232-01",
+            "workspace_task": "W232-01",
+            "related_tasks": [
+              "WP10-22"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Five independent return disposition effect Owners and actual Stock adoption",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "01223e0eb32bfeae43a92c76e38cc4bdb0bb399a",
+              "branch": "codex/w232-handoff",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T125015Z-wave232-start/MESSAGE.md",
+              "at": "2026-10-29T12:50:15.164059+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w232-01",
+            "planned_scope_ref": "docs/development/dispatch/20261029-wave232/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "PASS_SIMULATED_FIVE_DISPOSITION_SCOPE",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:rma-disposition",
+              "Main:independent-effect-owners",
+              "Main:Stock-return-participant",
+              "Main:stock-qc-return-release",
+              "Main:rma-ui-recovery",
+              "Main:coordination-ledger"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W232-01/DELIVERY.md",
+            "validation": "24 distinct local scenarios PASS:9 disposition PostgreSQL/HTTP plus15 related Stock regressions. Initial boundary batch23/23; final scope/tenant/HTTP/five-owner regression3/3, reusing unaffected successful scenarios. Vue22 distinct PASS (7disposition+15parent); final changed panel7/7 and final vue-tsc PASS. Actual five-owner proposals, Stock manifests/requests/responses match accepted canonical wire. Initial anonymous-property compile error and validator-environment/key errors retained and corrected; no failed run relabeled. No Actions, production deployment or existing-environment migration.",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave232-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-29T12:43:29.237655+00:00",
+          "checkpoint_at": "2026-10-29T13:36:15.592255+00:00",
+          "estimated_agent_wall_time_minutes": [
+            150,
+            240
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Complete source/disposition correction and original remaining RMA commercial/financial and D3/D5/D6/D7 exits using explicit simulated business/source/service inputs, without real-data waiting.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave232-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 52.77,
+        "actual_registered_wave_minutes": 57.89,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W232-01",
+            "source": "601e60b8252f26fc1d608ea53915f41823ad92ce",
+            "remote_target": "bd86e6a76a6988f3441be87477ee329809a14172",
+            "branch": "codex/w232-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/657"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W232-HANDOFF",
+            "source": "c8133e037e91b9e38dd893d56af1535c658f30ef",
+            "remote_target": "0b64707ad819d2614dc9c0c0b732ec25b4627bae",
+            "branch": "codex/w232-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/208"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -227947,8 +228101,8 @@
           "id": "D2",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W232-01",
-          "prerequisite_adjustment": "W230 actual Stock/IN/RMA transaction, W231 independent Quality decisions/observation, and W232 five independent terminal disposition Owners with actual MOVE/LOSS/SHIP and page recovery are implemented and locally accepted with explicit simulated business inputs. Remaining SourceDemand/Transfer adoption, source/disposition correction and RMA commercial/financial exits require implementation/integration; missing enterprise data is supplied by simulation.",
+          "current_window": "W233-01",
+          "prerequisite_adjustment": "W230 actual Stock/IN/RMA, W231 independent Quality, W232 five disposition Owners and W233 receipt/disposition corrections with source VOID and accurate reverse budget are implemented and locally accepted using simulated business evidence. Remaining SourceDemand/Transfer adoption and RMA commercial/financial exits continue; absent business data is simulated.",
           "adopted_window": "W42-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/395",
           "report": "docs/development/evidence/WP02-03/standalone-department/DELIVERY.md",
@@ -227957,7 +228111,7 @@
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "Complete source/disposition correction and original remaining RMA commercial/financial and D3/D5/D6/D7 exits using explicit simulated business/source/service inputs, without real-data waiting.",
+          "next_action": "Continue RMA commercial/financial exits and original D3/D5/D6/D7 feature and integration delivery with explicit simulated business and service inputs.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W140-01/DELIVERY.md",
           "last_inheritance_report": "docs/development/evidence/W137-01/DELIVERY.md",
@@ -227988,7 +228142,8 @@
           "last_authorization_report": "docs/development/evidence/W229-01/DELIVERY.md",
           "last_physical_inbound_report": "docs/development/evidence/W230-01/DELIVERY.md",
           "last_quality_report": "docs/development/evidence/W231-01/DELIVERY.md",
-          "last_disposition_report": "docs/development/evidence/W232-01/DELIVERY.md"
+          "last_disposition_report": "docs/development/evidence/W232-01/DELIVERY.md",
+          "last_correction_report": "docs/development/evidence/W233-01/DELIVERY.md"
         },
         {
           "id": "D3",
@@ -228286,14 +228441,14 @@
         ]
       },
       "latest_progress_assessment": {
-        "as_of": "2026-10-29T13:36:15.592255+00:00",
-        "adopted_through": "W231; W232 validation complete, remote adoption pending",
+        "as_of": "2026-10-29T14:44:23.972489+00:00",
+        "adopted_through": "W232; W233 validation complete, remote adoption pending",
         "engineering_range_percent": null,
         "formal_stage_closure": "2/7",
         "remaining_execution_hours": null,
-        "confidence": "Re-estimate original remaining implementation with simulated production acceptance; no real-data wait",
+        "confidence": "Audit original remaining feature scope using actual adopted evidence; no real-data wait",
         "external_wait_excluded": true,
-        "basis": "D1/D4 closed; D2 five terminal disposition Owners actually validated with simulated business data. Original remaining stage exits still require implementation/integration; do not invent a percentage from wave count or 2/7 stage closure."
+        "basis": "D1/D4 closed; D2 receipt and five disposition corrections actually accepted with simulated inputs. Original remaining stage features/integration still required; wave counts and 2/7 closure are not engineering percentage."
       },
       "execution_principles_ref": "AGENTS.md",
       "acceptance_data_policy": {

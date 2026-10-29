@@ -31,7 +31,7 @@ public sealed partial class ReturnQualityOwnerV1
             if (view.HeadRef !=frozen.ExpectedHeadRef) throw Error("CAS_CONFLICT",412);
             var policy = Policy(source,frozen.ExpectedPolicyRef);
             if (policy.RequireIndependentRegistrar && source.RegistrarId ==a.ActorId) throw Error("QUALITY_INDEPENDENT_DECIDER_REQUIRED",403);
-            var all = ranges.Values.SelectMany(x => x).ToArray(); var effective = Ranges.Read(source.Receipt.ReceivedRanges);
+            var all = ranges.Values.SelectMany(x => x).ToArray(); var effective = Ranges.Except(Ranges.Read(source.Receipt.ReceivedRanges),Ranges.Read(await new ReturnCorrectionStoreV1(db).Reversed("PHYSICAL_RECEIPT",source.LineId,t)));
             if (all.Sum(x => x.To-x.From) !=Ranges.Measure(all) || !Ranges.Subset(all,effective) || !Ranges.Subset(effective,all))
                 throw Error("QUALITY_PARTITION_INVALID",422);
             foreach (var partition in frozen.Partitions)
@@ -59,15 +59,16 @@ public sealed partial class ReturnQualityOwnerV1
         },ct);
     }
     private async Task SaveDecision(ReturnQualityViewV1 before,Guid actor,FulfilmentRefV1 policy,ReturnQualityPartitionV1[] partitions,
-        string state,string reason,CancellationToken ct)
+        string state,string reason,CancellationToken ct,FulfilmentRangeV1[]? sourceVoids =null)
     {
+        var voids =sourceVoids ?? await new ReturnCorrectionStoreV1(db).Reversed("PHYSICAL_RECEIPT",before.Inspection.Source.LineId,ct);
         var previous = before.Decision?.Result; var revision = previous ==null ? 1 : checked(int.Parse(previous.DecisionVersion,CultureInfo.InvariantCulture)+1);
         var version = revision.ToString(CultureInfo.InvariantCulture); var at = DateTimeOffset.UtcNow; var id = before.Inspection.Id;
-        var body = new { Inspection = before.Inspection.Reference,actor,policy,partitions,state,reason,Previous = previous?.DecisionRef,revision,at };
+        var body = new { Inspection = before.Inspection.Reference,actor,policy,partitions,voids,state,reason,Previous = previous?.DecisionRef,revision,at };
         var reference = new FulfilmentRefV1("QA-NCR-01",id.ToString(),version,Digest(body));
         var head = new FulfilmentRefV1("QA-NCR-01.ReturnHead",id.ToString(),version,Digest(new { reference,state }));
         var result = new ReturnQualityDecisionV1("QA-NCR-01",reference,version,before.Inspection.Request.ScopeRef,
-            before.Inspection.Request.PhysicalReceiptRefs,partitions,[],head,Digest(body),state,previous?.DecisionRef,at,at);
+            before.Inspection.Request.PhysicalReceiptRefs,partitions,voids,head,Digest(body),state,previous?.DecisionRef,at,at);
         await store.Save(id,revision,new(result,actor,policy,reason),ct);
     }
     public Task<ReturnQualityCommandResultV1> ObserveAsync(Guid app,Guid inspection,Guid command,RmaObserveQualityV1 input,CancellationToken ct = default)
