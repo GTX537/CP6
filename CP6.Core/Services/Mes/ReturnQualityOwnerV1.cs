@@ -95,7 +95,17 @@ public sealed partial class ReturnQualityOwnerV1(CP6Context db, OperationsOwnerV
                 source.Receipt.Quantity,source.QualityPolicyRef,source.Receipt.RecordedAt,[source.Reference,source.Receipt.MovementRef],null);
             var reference = RmaInboundAdapterV1.Ref("QA-NCR-01.ReturnInspection",id.ToString(),new { id,request,Actor = a.ActorId,at });
             var value = new ReturnQualityInspectionV1(id,reference,a.ActorId,source,request,at);
-            await store.Start(value,t); return await View(qa,s,id,t);
+            await store.Start(value,t);
+            var voids =await new ReturnCorrectionStoreV1(db).Reversed("PHYSICAL_RECEIPT",source.LineId,t);
+            if (voids.Length >0)
+            {
+                // Mechanical source projection: no professional acceptance is inferred.
+                var remaining =Ranges.Except(Ranges.Read(source.Receipt.ReceivedRanges),Ranges.Read(voids));
+                var parts =States.Select(state => new ReturnQualityPartitionV1(state,state =="PENDING" ? Ranges.Wire(remaining) : [],
+                    new(state =="PENDING" ? Ranges.Text(Ranges.Measure(remaining)) : "0",source.Receipt.Quantity.Uom),[],[])).ToArray();
+                await SaveDecision(await View(qa,s,id,t),a.ActorId,frozen.ExpectedPolicyRef,parts,"ACTIVE",frozen.Reason,t,voids);
+            }
+            return await View(qa,s,id,t);
         },ct);
     }
     private Task<ReturnQualityCommandResultV1> Command<T>(Guid app,Guid command,string resource,string action,T input,

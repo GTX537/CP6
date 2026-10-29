@@ -31,6 +31,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     private static OperationsOwnerV1 FormalRmaAuthority(Harness h)
     {
         var catalog = new AuthorizationCatalogStoreV1();
+        catalog.RegisterScope("wms-return-correction","Return correction",[1,2,3,4,5],1); catalog.RegisterFields("wms-return-correction",[]);
         foreach (var definition in ReturnDispositionOwnersV2.All) { catalog.RegisterScope(definition.Resource,definition.Kind,[1,2,3,4,5],1); catalog.RegisterFields(definition.Resource,[]); }
         catalog.RegisterScope("wms-stock-qc","Stock QC",[1,2,3,4,5],1); catalog.RegisterFields("wms-stock-qc",[]);
         catalog.RegisterScope("quality-return-inspection","Return Quality",[1,2,3,4,5],5); catalog.RegisterFields("quality-return-inspection",[]);

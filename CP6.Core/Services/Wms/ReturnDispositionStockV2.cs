@@ -19,10 +19,10 @@ internal sealed class ReturnDispositionStockV2(CP6Context db,StockMovementServic
         public decimal To { get; init; }
     }
     private sealed class SequenceRow { public Guid Movement { get; init; } public long Sequence { get; init; } }
-    private Task<Stock?> Pool(ReturnDispositionStockKeyV2 key,CancellationToken ct) => db.Stocks.AsNoTracking().SingleOrDefaultAsync(x =>
+    internal Task<Stock?> Pool(ReturnDispositionStockKeyV2 key,CancellationToken ct) => db.Stocks.AsNoTracking().SingleOrDefaultAsync(x =>
         x.WarehouseCd ==key.Warehouse && x.LocationCd ==key.Location && x.ProductCd ==key.Product && x.LotNo ==key.Lot && !x.IsDeleted,ct);
-    private async Task<long> Revision(Guid pool,CancellationToken ct) => await db.Database.SqlQuery<long>($"SELECT coalesce(max(sequence),0) AS \"Value\" FROM cp6_stock_return_v1.movement_sequences WHERE tenant_id={db.CurrentTenantId} AND pool_id={pool}").SingleAsync(ct);
-    private async Task<ReturnStockPoolVersionV1[]> Pools(ReturnDispositionStockKeyV2 source,ReturnDispositionStockKeyV2? destination,CancellationToken ct)
+    internal async Task<long> Revision(Guid pool,CancellationToken ct) => await db.Database.SqlQuery<long>($"SELECT coalesce(max(sequence),0) AS \"Value\" FROM cp6_stock_return_v1.movement_sequences WHERE tenant_id={db.CurrentTenantId} AND pool_id={pool}").SingleAsync(ct);
+    internal async Task<ReturnStockPoolVersionV1[]> Pools(ReturnDispositionStockKeyV2 source,ReturnDispositionStockKeyV2? destination,CancellationToken ct)
     {
         var values =new List<ReturnStockPoolVersionV1>();
         foreach (var key in destination ==null ? new[] { source } : new[] { source,destination })
@@ -31,12 +31,12 @@ internal sealed class ReturnDispositionStockV2(CP6Context db,StockMovementServic
         }
         return values.OrderBy(x => x.PoolId).ToArray();
     }
-    private async Task<FulfilmentRefV1> Snapshot(ReturnDispositionStockKeyV2 source,ReturnDispositionStockKeyV2? destination,CancellationToken ct)
+    internal async Task<FulfilmentRefV1> Snapshot(ReturnDispositionStockKeyV2 source,ReturnDispositionStockKeyV2? destination,CancellationToken ct)
     {
         var a =await Pool(source,ct); var b =destination ==null ? null : await Pool(destination,ct);
         return RmaInboundAdapterV1.Ref("Main.Wms.ReturnStockSnapshot.v2",source.PoolId.ToString(),new { Source =a,Destination =b,Pools =await Pools(source,destination,ct) });
     }
-    private async Task RequireLineage(ReturnDispositionStockKeyV2 key,Guid sourceMovement,CancellationToken ct)
+    internal async Task RequireLineage(ReturnDispositionStockKeyV2 key,Guid sourceMovement,CancellationToken ct)
     {
         var first =await db.Database.SqlQuery<long>($"SELECT sequence AS \"Value\" FROM cp6_stock_return_v1.movement_sequences WHERE tenant_id={db.CurrentTenantId} AND movement_id={sourceMovement}").SingleAsync(ct);
         var later =await db.Database.SqlQuery<SequenceRow>($"SELECT movement_id AS \"Movement\",sequence AS \"Sequence\" FROM cp6_stock_return_v1.movement_sequences WHERE tenant_id={db.CurrentTenantId} AND pool_id={key.PoolId} AND sequence>{first}").ToArrayAsync(ct);
@@ -44,7 +44,8 @@ internal sealed class ReturnDispositionStockV2(CP6Context db,StockMovementServic
         var negative =await db.StockTransactions.AsNoTracking().Where(x => ids.Contains(x.Id) && (x.TxnType ==WmsTxnType.OUT || x.Qty <0)).Select(x => x.Id).ToArrayAsync(ct);
         if (negative.Length ==0) return;
         var known =await db.Database.SqlQuery<Guid>($"SELECT movement_id AS \"Value\" FROM cp6_return_disposition_v2.stock_movements WHERE tenant_id={db.CurrentTenantId} AND movement_id=ANY({negative})").ToArrayAsync(ct);
-        if (negative.Except(known).Any()) throw Error("RETURN_STOCK_LINEAGE_CHANGED",409);
+        var corrected =await db.Database.SqlQuery<Guid>($"SELECT movement_id AS \"Value\" FROM cp6_return_correction_v1.stock_movements WHERE tenant_id={db.CurrentTenantId} AND movement_id=ANY({negative})").ToArrayAsync(ct);
+        if (negative.Except(known).Except(corrected).Any()) throw Error("RETURN_STOCK_LINEAGE_CHANGED",409);
     }
     private static ReturnStockSpanV1[] Map(RmaInboundSourceFactsV1 source,RmaQualitySourceV1 receipt,FulfilmentRangeV1[] ranges,RootRow[] actualRoots)
     {

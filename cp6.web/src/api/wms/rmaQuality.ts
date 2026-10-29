@@ -3,7 +3,7 @@ import type { RmaQty, RmaRef } from './rmaFormalApplications'
 import type { ReturnRange } from './rmaAuthorizations'
 export type QualityState = 'ACCEPTED' | 'REJECTED' | 'HOLD' | 'PENDING'
 export interface QualityPartition { quality: QualityState; ranges: ReturnRange[]; quantity: RmaQty; basisRefs: RmaRef[]; reasonCodes: string[] }
-export interface QualityDecision { owner: 'QA-NCR-01'; decisionRef: RmaRef; decisionVersion: string; decisionState: 'ACTIVE' | 'WITHDRAWN' | 'SUPERSEDED'; partitions: QualityPartition[]; previousDecisionRef: RmaRef | null }
+export interface QualityDecision { owner: 'QA-NCR-01'; decisionRef: RmaRef; decisionVersion: string; decisionState: 'ACTIVE' | 'WITHDRAWN' | 'SUPERSEDED'; partitions: QualityPartition[]; voidRanges: ReturnRange[]; previousDecisionRef: RmaRef | null }
 export interface QualitySource { applicationId: string; lineId: string; registrarId: string; reference: RmaRef; physicalHeadRef: RmaRef; receipt: { receivedRanges: ReturnRange[]; quantity: RmaQty; movementRef: RmaRef } }
 export interface QualityView { inspection: { id: string; reference: RmaRef; source: QualitySource }; headRef: RmaRef; decision: { result: QualityDecision; reason: string; actorId: string } | null; observation: { decision: QualityDecision } | null; observationCurrent: boolean }
 export interface QualityChoice { source: QualitySource; inspection: QualityView | null; policy: { reference: RmaRef; evidenceRefs: RmaRef[]; simulation: boolean; requireIndependentRegistrar: boolean } | null }
