@@ -51,7 +51,7 @@ public partial class StockMovementService : IStockMovementService
     private async Task<string> ApplyInternalAsync(
         StockMovementRequest req,
         bool publishWhenCommitted,
-        CancellationToken ct, bool stockTakeApproval = false, MoveStockMetadata? moveMetadata = null)
+        CancellationToken ct, bool stockTakeApproval = false, MoveStockMetadata? moveMetadata = null, bool preserveReservations = false)
     {
         Validate(req);
 
@@ -101,7 +101,7 @@ public partial class StockMovementService : IStockMovementService
             var binding=_db.Database.IsNpgsql()?await InheritanceAccess.BeginStockTransaction(stock,ct):null;
 
             // 在庫数の更新（種別毎にロジック分岐）
-            ApplyDelta(stock, req);
+            ApplyDelta(stock, req, preserveReservations);
 
             // マイナス在庫チェック（AllowNegative=true の倉庫、または要求で明示的に上書きされた場合は除外）
             var allowNegative = req.AllowNegativeOverride || (await _db.Warehouses
@@ -331,7 +331,7 @@ public partial class StockMovementService : IStockMovementService
     }
 
     /// <summary>種別ごとに Stock の数量列を増減する</summary>
-    private static void ApplyDelta(Stock stock, StockMovementRequest req)
+    private static void ApplyDelta(Stock stock, StockMovementRequest req, bool preserveReservations = false)
     {
         switch (req.TxnType)
         {
@@ -340,12 +340,12 @@ public partial class StockMovementService : IStockMovementService
                 break;
             case WmsTxnType.OUT:
                 stock.PhysicalQty -= req.Qty;
-                stock.AllocatedQty = Math.Max(0m, stock.AllocatedQty - req.Qty);
+                if (!preserveReservations) stock.AllocatedQty = Math.Max(0m, stock.AllocatedQty - req.Qty);
                 break;
             case WmsTxnType.MOVE:
                 // MoveAsync 経由：源 OUT=Qty<0 / 先 IN=Qty>0 を符号で表現
                 stock.PhysicalQty += req.Qty;
-                if (req.Qty < 0)
+                if (req.Qty < 0 && !preserveReservations)
                     stock.AllocatedQty = Math.Max(0m, stock.AllocatedQty + req.Qty);
                 break;
             case WmsTxnType.ADJ:

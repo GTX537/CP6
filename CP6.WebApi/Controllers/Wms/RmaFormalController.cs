@@ -15,7 +15,8 @@ public sealed class RmaFormalResultAttribute : ActionFilterAttribute
     {
         var http = context.HttpContext; http.Response.Headers.CacheControl = "no-store";
         var correlation = http.Request.Headers["X-Correlation-Id"].ToString();
-        var queryPath = http.Request.Path.Value?.Contains("/quality",StringComparison.Ordinal) == true
+        var queryPath = http.Request.RouteValues.TryGetValue("kind",out var kind) && http.Request.Path.StartsWithSegments("/api/wms/rma/v2/dispositions")
+            ? "/api/wms/rma/v2/dispositions/"+kind+"/commands/query" : http.Request.Path.Value?.Contains("/quality",StringComparison.Ordinal) == true
             ? "/api/wms/rma/v1/quality/commands/query" : http.Request.Path.Value?.Contains("/physical",StringComparison.Ordinal) == true
             ? "/api/wms/rma/v1/physical/commands/query" : http.Request.Path.Value?.Contains("/authorization",StringComparison.Ordinal) == true
             ? "/api/wms/rma/v1/authorization/commands/query" : http.Request.Path.StartsWithSegments("/api/wms/rma/v1/delivery-evidence")

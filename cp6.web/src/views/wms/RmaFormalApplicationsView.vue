@@ -56,6 +56,7 @@
       <RmaAuthorizationPanel v-if="identity && isHead && !editing" :scope="identity" :application-id="detail.applicationId" :submitted="detail.state === 'SUBMITTED'" :can-decide="context!.capabilities.includes('wms.rma.authorization.decide')" :can-revoke="context!.capabilities.includes('wms.rma.authorization.revoke')" @current="authorization = $event" />
       <RmaPhysicalReturnPanel v-if="identity && isHead && !editing" :scope="identity" :application-id="detail.applicationId" :capabilities="context!.capabilities" />
       <RmaQualityPanel v-if="identity && isHead && !editing" :scope="identity" :application-id="detail.applicationId" />
+      <RmaDispositionPanel v-if="identity && isHead && !editing" :scope="identity" :application-id="detail.applicationId" />
     </section>
   </main>
 </template>
@@ -72,6 +73,7 @@ import RmaDeliveryEvidencePanel from './RmaDeliveryEvidencePanel.vue'
 import RmaAuthorizationPanel from './RmaAuthorizationPanel.vue'
 import RmaPhysicalReturnPanel from './RmaPhysicalReturnPanel.vue'
 import RmaQualityPanel from './RmaQualityPanel.vue'
+import RmaDispositionPanel from './RmaDispositionPanel.vue'
 import type { AuthorizationDecision } from '@/api/wms/rmaAuthorizations'
 
 type Choice = RmaOption & { shipment: string; customer: string; product: string; customerRef: RmaRef }
