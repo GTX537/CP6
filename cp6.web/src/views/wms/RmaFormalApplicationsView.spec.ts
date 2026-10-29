@@ -3,7 +3,7 @@ import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
 import View from './RmaFormalApplicationsView.vue'
 import { AUTH_EVENT } from '@/auth/identity'
 import type { FormalApplication, RmaContext, RmaPending, RmaRef } from '@/api/wms/rmaFormalApplications'
-const mock = vi.hoisted(() => ({ context: vi.fn(), scope: vi.fn(), sources: vi.fn(), labels: vi.fn(), list: vi.fn(), read: vi.fn(), editContext: vi.fn(), dispatch: vi.fn(), query: vi.fn(), authenticated: true, storageRead: vi.fn(), storageSave: vi.fn(), storageRemove: vi.fn() }))
+const mock = vi.hoisted(() => ({ context: vi.fn(), scope: vi.fn(), commercial: vi.fn(), sources: vi.fn(), labels: vi.fn(), list: vi.fn(), read: vi.fn(), editContext: vi.fn(), dispatch: vi.fn(), query: vi.fn(), authenticated: true, storageRead: vi.fn(), storageSave: vi.fn(), storageRemove: vi.fn() }))
 vi.mock('@/api/wms/rmaFormalApplications', () => ({ rmaFormalApi: mock }))
 vi.mock('@/api/wms/rmaApplications', () => ({ rmaApplicationsApi: mock }))
 vi.mock('@/auth/browserAuthentication', () => ({ authenticationCanRead: () => mock.authenticated }))
@@ -11,7 +11,7 @@ vi.mock('@/auth/rmaFormalPendingStore', () => ({ rmaPendingStore: { read: mock.s
 const id = (n: number) => `10000000-0000-4000-8000-${String(n).padStart(12, '0')}`
 const reference = (n: number): RmaRef => ({ owner: 'Test.Owner.v1', id: id(n), version: '1', digest: 'a'.repeat(64) })
 const who = { tenantId: id(1), actorId: id(2) }, key = `${who.tenantId}:${who.actorId}`, amount = '9999999999999.12345678'
-const qty = { value: amount, uom: { code: 'EA', version: '1' } }, source = { shipmentRef: reference(3), shipmentLineId: id(4), shipmentLineVersion: '1', orderRef: reference(5), orderLineId: id(6), productRef: reference(7), baseQty: qty }
+const qty = { value: amount, uom: { code: 'EA', version: '1' } }, source = { shipmentRef: reference(3), shipmentLineId: id(4), shipmentLineVersion: '1', orderRef: reference(5), orderLineId: id(6), productRef: reference(7), baseQty: qty, commercialSnapshotRef: reference(22) }
 const option = { optionRef: reference(8), original: source, remainingAuthorizableQuantity: null, coverage: 'PARTIAL', gates: ['ENTITLEMENT_UNKNOWN'] }
 let context: RmaContext, app: FormalApplication, stored: Map<string, unknown>, view: VueWrapper | undefined
 const page = (items: unknown[], nextCursor: string | null = null) => ({ items, nextCursor, snapshotRef: reference(19), capturedAt: '2026-10-29T00:00:00Z', coverage: 'PARTIAL' })
@@ -38,6 +38,26 @@ beforeEach(() => {
 })
 afterEach(() => { view?.unmount(); view = undefined; vi.restoreAllMocks() })
 describe('formal return entry', () => {
+  const commercialResult = () => ({ original: { orderNumber: 'ORIGINAL-ORDER', orderLineNumber: 2, productCode: 'PRODUCT', capturedAt: '2026-10-29', terms: { currencyCode: 'USD', fxRate: '1.234567', individualUnitPrice: amount, amount: null } }, current: { customerCode: 'CUSTOMER', productCode: 'PRODUCT', terms: { currencyCode: 'USD', fxRate: '1.234567', individualUnitPrice: '9', amount: '18' } }, currentState: 'TERMS_CHANGED' })
+  it('reads the exact shipment line and displays original money as text, null and changed current values separately', async () => {
+    mock.commercial.mockResolvedValue(commercialResult()); await render(); await click('查看申请'); await click('查看原商业记录')
+    expect(mock.commercial).toHaveBeenCalledWith(id(3), id(4))
+    const panel = view!.get('[aria-label="原订单商业记录"]'); expect(panel.text()).toContain(amount); expect(panel.text()).toContain('未记录'); expect(panel.text()).toContain('当前商业字段已变化')
+    expect(panel.text()).toContain('不代表可退额度'); await click('查看申请'); expect(view!.find('[aria-label="原订单商业记录"]').exists()).toBe(false)
+  })
+  it('clears commercial facts after denial and drops reads that complete under an old identity', async () => {
+    mock.commercial.mockResolvedValueOnce(commercialResult()); await render(); await click('查看申请'); await click('查看原商业记录')
+    mock.commercial.mockRejectedValueOnce({ response: { status: 403, data: { message: 'FIELD_READ_FORBIDDEN' } } }); await click('查看原商业记录')
+    expect(view!.text()).not.toContain('ORIGINAL-ORDER'); expect(view!.text()).toContain('FIELD_READ_FORBIDDEN')
+    await click('重新载入'); await click('查看申请'); let finish!: (value: unknown) => void
+    mock.commercial.mockImplementationOnce(() => new Promise(resolve => { finish = resolve })); await click('查看原商业记录')
+    mock.authenticated = false; window.dispatchEvent(new Event(AUTH_EVENT)); finish(commercialResult()); await flushPromises()
+    expect(view!.text()).not.toContain('ORIGINAL-ORDER')
+  })
+  it('shows missing historical capture explicitly instead of querying current prices as an original', async () => {
+    app.requestedLines[0]!.originalSnapshot = { ...source, commercialSnapshotRef: null }; await render(); await click('查看申请')
+    expect(view!.text()).toContain('发运时未保存'); expect(view!.findAll('button').some(x => x.text() === '查看原商业记录')).toBe(false); expect(mock.commercial).not.toHaveBeenCalled()
+  })
   it('saves exact decimal text and source/customer identity, then submits and withdraws with current CAS', async () => {
     await render(); await fill(); await save()
     const create = mock.dispatch.mock.calls[0]![0] as RmaPending
