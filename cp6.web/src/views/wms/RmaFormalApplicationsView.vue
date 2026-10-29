@@ -9,6 +9,7 @@
     <section v-if="context"><label>仓库<select v-model="scopeIndex" aria-label="仓库" :disabled="busy || blocked" @change="changeScope"><option v-for="(option, index) in context.scopeOptions" :key="option.optionRef.id" :value="index">{{ option.label }}</option></select></label>
       <p v-if="!context.scopeOptions.length">当前没有可用的仓库范围，请联系管理员核对仓库与站点配置及访问权限。</p>
     </section>
+    <RmaPolicyPanel v-if="selectedScope && identity" :key="selectedScope.optionRef.id" :scope="identity" :option="selectedScope.optionRef" :can-publish="context!.capabilities.includes('wms.rma.policy.publish')" />
     <section v-if="selectedScope"><h2>已保存申请</h2>
       <label>状态<select v-model="stateFilter" aria-label="申请状态" :disabled="busy" @change="searchApplications"><option value="">全部</option><option v-for="(label, state) in states" :key="state" :value="state">{{ label }}</option></select></label>
       <div class="scroll"><table><thead><tr><th>申请编号</th><th>状态</th><th>申请时间</th><th>查看</th></tr></thead><tbody><tr v-for="row in applications?.items" :key="row.rmaId"><td>{{ row.displayNo }}</td><td>{{ states[row.applicationState] }}</td><td>{{ row.recordedAt }}</td><td><button :disabled="busy" @click="open(row.rmaId)">查看申请</button></td></tr></tbody></table></div>
@@ -62,6 +63,7 @@ import { rmaApplicationsApi, type RmaScope } from '@/api/wms/rmaApplications'
 import { pendingFormal, recoverFormal, writeFormal } from '@/auth/rmaFormalRecovery'
 import { AUTH_EVENT } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
+import RmaPolicyPanel from './RmaPolicyPanel.vue'
 
 type Choice = RmaOption & { shipment: string; customer: string; product: string; customerRef: RmaRef }
 type DraftLine = RmaRequestedLine & { label: string }
