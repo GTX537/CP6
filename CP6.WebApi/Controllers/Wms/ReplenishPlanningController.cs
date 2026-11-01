@@ -20,6 +20,12 @@ public sealed class ReplenishPlanningController(ReplenishPlanningOwnerV1 owner):
     {var result=await owner.GenerateAsync(c,ct);return StatusCode(owner.Replayed?200:201,result);}
     [HttpGet("batches/{id:guid}")]public Task<RepBatchV1> Batch(Guid id,CancellationToken ct)=>owner.BatchAsync(id,ct);
     [HttpGet("orders/{id:guid}")]public Task<RepOrderV1> Order(Guid id,CancellationToken ct)=>owner.OrderAsync(id,ct);
+    [HttpPost("orders"),RequestSizeLimit(2097152)]public async Task<IActionResult> CreateDraft(RepDraftInputV1 c,CancellationToken ct)
+    {var result=await owner.CreateDraftAsync(c,ct);return StatusCode(owner.Replayed?200:201,result);}
+    [HttpPatch("orders/{id:guid}"),RequestSizeLimit(2097152)]public Task<RepOrderV1> EditDraft(Guid id,RepDraftInputV1 c,CancellationToken ct)=>owner.EditDraftAsync(id,c,ct);
+    [HttpGet("orders/{id:guid}/history")]public Task<object> History(Guid id,[FromQuery]long afterRevision=0,[FromQuery]int limit=50,CancellationToken ct=default)=>owner.OrderHistoryAsync(id,afterRevision,limit,ct);
+    [HttpPost("orders/{id:guid}/prepare")]public async Task<IActionResult> Prepare(Guid id,RepCommandV1 c,CancellationToken ct)
+    {var result=await owner.PrepareAsync(id,c,ct);return StatusCode(result.CanDispatch?200:202,result);}
     [HttpGet("active-intents/{id:guid}")]public Task<RepIntentV1> Intent(Guid id,CancellationToken ct)=>owner.IntentAsync(id,ct);
     [HttpGet("operations/{key}")]public Task<RepOperationV1> Operation(string key,CancellationToken ct)=>owner.OperationAsync(key,ct);
 }

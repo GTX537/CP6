@@ -6,6 +6,14 @@ namespace CP6.Core.Services.Integration;
 
 internal sealed partial class OperationsAccessV1
 {
+    internal void RequireReplenishRemarksWrite(string? before,string? after)
+    {if(before!=after&&(!authority.Fields.Fields.TryGetValue("Remarks",out var grant)||!grant.CanWrite))throw new OrderPriceCorrectionException("FIELD_WRITE_FORBIDDEN",403);}
+    internal T ProjectReplenishResult<T>(T result)
+    {
+        if(result is CP6.Core.Services.Wms.Replenish.RepOrderV1 order&&(!authority.Fields.Fields.TryGetValue("Remarks",out var grant)||!grant.CanRead))
+            return (T)(object)(order with{Input=order.Input with{Remarks=null}});
+        return result;
+    }
     internal void RequireReplenishSimulationScope()
     {if(authority.Scope!=5)throw new OrderPriceCorrectionException("REP_SIMULATION_SCOPE_REQUIRED",403);}
     internal IQueryable<Location> ReplenishPlanningLocations()

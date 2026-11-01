@@ -161532,6 +161532,16 @@
       "date": "2026-11-01",
       "change": "W237补货建议与批量登记：完整cut、准确维度及Root分配、类型化容量、原子批量和提交即计目标义务，实际API/页面及模拟生产验收。 模拟资料用于生产业务验收，实际建议/整批登记已执行；完整TF及REP执行/停止剩余范围保留。",
       "evidence": "docs/development/evidence/W237-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-01",
+      "change": "W237按最终Main/Handoff合并/finish证据归档一次，W238落实人工补货草稿与准备登记，缺失生产验收业务输入直接模拟。",
+      "evidence": "docs/development/dispatch/20261101-wave238/README.md"
+    },
+    {
+      "date": "2026-11-01",
+      "change": "W238人工补货草稿与准备登记：完整创建/编辑及版本历史，准确Root/目标预算、prepare原子登记、持久原键及发送知识，实际API/页面和模拟生产验收。 模拟资料用于生产业务验收，实际建议/整批登记已执行；完整TF及REP执行/停止剩余范围保留。",
+      "evidence": "docs/development/evidence/W238-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -188004,9 +188014,46 @@
         ]
       },
       "wave237_replenish_planning": {
-        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "status": "CLOSED",
         "scope": "W237补货建议与批量登记：完整cut、准确维度及Root分配、类型化容量、原子批量和提交即计目标义务，实际API/页面及模拟生产验收。",
         "report": "docs/development/evidence/W237-01/DELIVERY.md",
+        "full_task_completed": false,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave237-final-verification.json"
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W237-01",
+            "source": "7a9b3ef771654eb25456bd6f2960b2aa3b3e81d0",
+            "remote_target": "37994dddbe3c5d4fa7eff4b70af37baeb5cf84b7",
+            "branch": "codex/w237-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/662"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W237-HANDOFF",
+            "source": "1be739db28db1eaebb662ad34d452bc26d4aca31",
+            "remote_target": "d2172a3a45c9fc929b71a5f53287869dd5b13936",
+            "branch": "codex/w237-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/213"
+          }
+        ]
+      },
+      "wave238_replenish_drafts": {
+        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "scope": "W238人工补货草稿与准备登记：完整创建/编辑及版本历史，准确Root/目标预算、prepare原子登记、持久原键及发送知识，实际API/页面和模拟生产验收。",
+        "report": "docs/development/evidence/W238-01/DELIVERY.md",
         "full_task_completed": false,
         "lifecycle_complete": false,
         "lifecycle_snapshot": {
@@ -189401,9 +189448,46 @@
         ]
       },
       "wave237_replenish_planning": {
-        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "status": "CLOSED",
         "scope": "W237补货建议与批量登记：完整cut、准确维度及Root分配、类型化容量、原子批量和提交即计目标义务，实际API/页面及模拟生产验收。",
         "report": "docs/development/evidence/W237-01/DELIVERY.md",
+        "full_task_completed": false,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave237-final-verification.json"
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W237-01",
+            "source": "7a9b3ef771654eb25456bd6f2960b2aa3b3e81d0",
+            "remote_target": "37994dddbe3c5d4fa7eff4b70af37baeb5cf84b7",
+            "branch": "codex/w237-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/662"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W237-HANDOFF",
+            "source": "1be739db28db1eaebb662ad34d452bc26d4aca31",
+            "remote_target": "d2172a3a45c9fc929b71a5f53287869dd5b13936",
+            "branch": "codex/w237-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/213"
+          }
+        ]
+      },
+      "wave238_replenish_drafts": {
+        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "scope": "W238人工补货草稿与准备登记：完整创建/编辑及版本历史，准确Root/目标预算、prepare原子登记、持久原键及发送知识，实际API/页面和模拟生产验收。",
+        "report": "docs/development/evidence/W238-01/DELIVERY.md",
         "full_task_completed": false,
         "lifecycle_complete": false,
         "lifecycle_snapshot": {
@@ -198120,10 +198204,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261101-wave237",
-      "path": "docs/development/dispatch/20261101-wave237/README.md",
-      "baseline_sha": "6e20f08472a79743603b940bb28ff7ccb8a15847",
-      "registered_at": "2026-11-01T09:07:40.700802+00:00",
+      "id": "20261101-wave238",
+      "path": "docs/development/dispatch/20261101-wave238/README.md",
+      "baseline_sha": "37994dddbe3c5d4fa7eff4b70af37baeb5cf84b7",
+      "registered_at": "2026-11-01T09:51:11.119328+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -198142,31 +198226,31 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W237-01",
-          "workspace_task": "W237-01",
+          "id": "W238-01",
+          "workspace_task": "W238-01",
           "related_tasks": [
             "WP10-10",
             "WP10-31"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "REP D01–D02：正式规则与完整同cut需求观察、准确Root多源AllocationPlan、批量整组原子登记及提交即计ActiveIntent；模拟上游输入、实际PostgreSQL与API/页面验收。",
+          "title": "REP人工草稿完整创建/编辑、不可变选择历史、当前版本prepare登记、与批量共用准确目标/来源预算、原操作恢复及页面。模拟上游资料，实际PostgreSQL/API验收。",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "2b2e583a92e1f359535a421fa45263096b85cb2b",
-            "branch": "codex/w237-handoff",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261101T090740Z-wave237-start/MESSAGE.md",
-            "at": "2026-11-01T09:07:40.700802+00:00"
+            "commit": "a883e17e3d0bef692ab761fa2491238fc403443b",
+            "branch": "codex/w238-handoff",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261101T095111Z-wave238-start/MESSAGE.md",
+            "at": "2026-11-01T09:51:11.119328+00:00"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w237-01",
-          "planned_scope_ref": "docs/development/dispatch/20261101-wave237/README.md",
+          "branch": "codex/w238-01",
+          "planned_scope_ref": "docs/development/dispatch/20261101-wave238/README.md",
           "full_task_completed": false,
-          "business_acceptance": "PASS_SIMULATED_REPLENISH_PLANNING_SCOPE",
+          "business_acceptance": "PASS_SIMULATED_REPLENISH_DRAFT_PREPARE_REGISTRATION_SCOPE",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
@@ -198178,8 +198262,8 @@
             "Main:migration",
             "Main:coordination-ledger"
           ],
-          "worker_delivery_ref": "docs/development/evidence/W237-01/DELIVERY.md",
-          "validation": "11 distinct PostgreSQL18/actual HTTP scenarios PASS; 18 Vue scenarios PASS (8 planning,10 legacy); application vue-tsc PASS. Initial Json namespace compilation error retained and corrected. Exact unchanged successful evidence reused; final source/cut regressions executed.",
+          "worker_delivery_ref": "docs/development/evidence/W238-01/DELIVERY.md",
+          "validation": "14 distinct PostgreSQL18/actual HTTP scenarios PASS (11 draft/prepare,3 affected planning);15 Vue scenarios PASS (7 drafts,8 planning); application vue-tsc PASS. Initial field-permission fixture assumption failure retained/corrected; exact unchanged successes reused; source version/registration/current-revision regressions and final closed HTTP input executed.",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -198189,20 +198273,20 @@
           },
           "handoff_delivery": {
             "result": "PASS",
-            "source": "1be739db28db1eaebb662ad34d452bc26d4aca31",
-            "main": "d2172a3a45c9fc929b71a5f53287869dd5b13936",
-            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/213",
+            "source": "d5b97f9465357769c635de18846f6545a217eb0c",
+            "main": "4f303eb3e5a77e9e4d5dde65989c0477b37602bf",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/214",
             "exact_tree_adoption": true,
-            "at": "2026-11-01T09:39:03.798265+00:00"
+            "at": "2026-11-01T10:08:37.956803+00:00"
           }
         }
       ],
       "horizon": {
-        "started_at": "2026-11-01T09:06:46.046044+00:00",
-        "checkpoint_at": "2026-11-01T09:40:14.952658+00:00",
+        "started_at": "2026-11-01T09:50:28.653179+00:00",
+        "checkpoint_at": "2026-11-01T10:09:33.131499+00:00",
         "estimated_agent_wall_time_minutes": [
-          90,
-          150
+          60,
+          100
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -198210,7 +198294,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "继续REP人工DRAFT/prepare、SourceDemand与Transfer全Stage共享采用、实际物理最终门及停止；然后推进原D3计划写入。缺少验收资料直接模拟。",
+      "next_action": "继续REP实际Transfer准备/派发、SourceDemand全Stage共享采用、实际物理最终门及停止；然后推进原D3计划写入。缺少验收资料直接模拟。",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -198218,7 +198302,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "actual_minutes_so_far": 33.48
+      "actual_minutes_so_far": 19.07
     },
     "wave_history": [
       {
@@ -228878,6 +228962,130 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/212"
           }
         ]
+      },
+      {
+        "id": "20261101-wave237",
+        "path": "docs/development/dispatch/20261101-wave237/README.md",
+        "baseline_sha": "6e20f08472a79743603b940bb28ff7ccb8a15847",
+        "registered_at": "2026-11-01T09:07:40.700802+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W237-01",
+            "workspace_task": "W237-01",
+            "related_tasks": [
+              "WP10-10",
+              "WP10-31"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "REP D01–D02：正式规则与完整同cut需求观察、准确Root多源AllocationPlan、批量整组原子登记及提交即计ActiveIntent；模拟上游输入、实际PostgreSQL与API/页面验收。",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "2b2e583a92e1f359535a421fa45263096b85cb2b",
+              "branch": "codex/w237-handoff",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261101T090740Z-wave237-start/MESSAGE.md",
+              "at": "2026-11-01T09:07:40.700802+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w237-01",
+            "planned_scope_ref": "docs/development/dispatch/20261101-wave237/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "PASS_SIMULATED_REPLENISH_PLANNING_SCOPE",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:Replenish-planning-owner",
+              "Main:Replenish-target-budget",
+              "Main:migration",
+              "Main:coordination-ledger"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W237-01/DELIVERY.md",
+            "validation": "11 distinct PostgreSQL18/actual HTTP scenarios PASS; 18 Vue scenarios PASS (8 planning,10 legacy); application vue-tsc PASS. Initial Json namespace compilation error retained and corrected. Exact unchanged successful evidence reused; final source/cut regressions executed.",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave237-final-verification.json"
+            },
+            "handoff_delivery": {
+              "result": "PASS",
+              "source": "1be739db28db1eaebb662ad34d452bc26d4aca31",
+              "main": "d2172a3a45c9fc929b71a5f53287869dd5b13936",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/213",
+              "exact_tree_adoption": true,
+              "at": "2026-11-01T09:39:03.798265+00:00"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-11-01T09:06:46.046044+00:00",
+          "checkpoint_at": "2026-11-01T09:40:14.952658+00:00",
+          "estimated_agent_wall_time_minutes": [
+            90,
+            150
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "继续REP人工DRAFT/prepare、SourceDemand与Transfer全Stage共享采用、实际物理最终门及停止；然后推进原D3计划写入。缺少验收资料直接模拟。",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave237-final-verification.json"
+        },
+        "actual_minutes_so_far": 33.48,
+        "actual_registered_wave_minutes": 40.55,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W237-01",
+            "source": "7a9b3ef771654eb25456bd6f2960b2aa3b3e81d0",
+            "remote_target": "37994dddbe3c5d4fa7eff4b70af37baeb5cf84b7",
+            "branch": "codex/w237-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/662"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W237-HANDOFF",
+            "source": "1be739db28db1eaebb662ad34d452bc26d4aca31",
+            "remote_target": "d2172a3a45c9fc929b71a5f53287869dd5b13936",
+            "branch": "codex/w237-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/213"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -228955,17 +229163,17 @@
           "id": "D2",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W237-01",
-          "prerequisite_adjustment": "W237 executes REP suggestion and atomic batch registration with complete upstream cut, exact Root allocation, typed capacity, one target ActiveIntent and original recovery. Upstream inputs simulated; actual PostgreSQL/API/UI pass. No physical movement or complete REP claim.",
+          "current_window": "W238-01",
+          "prerequisite_adjustment": "W238 executes manual draft create/edit/history and atomic prepare registration with common target/source budget and original recovery. Upstream inputs simulated; actual PostgreSQL/API/UI pass. Actual Transfer prepare remains unimplemented; REGISTERED/NOT_SENT/WAITING_ADOPTION, no physical movement claim.",
           "adopted_window": "W42-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/395",
           "report": "docs/development/evidence/WP02-03/standalone-department/DELIVERY.md",
-          "remaining": "Original D2: manual replenishment draft/prepare, REP SourceDemand and complete Transfer physical execution/stop, true provider integration and remaining RMA commercial/financial seam. Planning and atomic batch registration now work with simulated upstream observations; no enterprise-data wait.",
+          "remaining": "Original D2: actual Transfer prepare/dispatch, REP SourceDemand and complete Transfer physical execution/stop, provider integration and remaining RMA commercial/financial seam. Manual drafts/edit/history and atomic prepare registration now work with simulated upstream observations; no enterprise-data wait.",
           "actual_agent_minutes": 39.91,
           "remote_main": "c91a50796a4bdb2acf4360b74900aee445e3ffc6",
           "branches_deleted": true,
           "seats_released": true,
-          "next_action": "继续REP人工DRAFT/prepare、SourceDemand与Transfer全Stage共享采用、实际物理最终门及停止；然后推进原D3计划写入。缺少验收资料直接模拟。",
+          "next_action": "继续REP实际Transfer准备/派发、SourceDemand全Stage共享采用、实际物理最终门及停止；然后推进原D3计划写入。缺少验收资料直接模拟。",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W140-01/DELIVERY.md",
           "last_inheritance_report": "docs/development/evidence/W137-01/DELIVERY.md",
@@ -229000,7 +229208,8 @@
           "last_correction_report": "docs/development/evidence/W233-01/DELIVERY.md",
           "last_request_report": "docs/development/evidence/W235-01/DELIVERY.md",
           "last_stage_report": "docs/development/evidence/W236-01/DELIVERY.md",
-          "last_replenish_planning_report": "docs/development/evidence/W237-01/DELIVERY.md"
+          "last_replenish_planning_report": "docs/development/evidence/W237-01/DELIVERY.md",
+          "last_replenish_draft_report": "docs/development/evidence/W238-01/DELIVERY.md"
         },
         {
           "id": "D3",
@@ -229299,13 +229508,13 @@
         ]
       },
       "latest_progress_assessment": {
-        "as_of": "2026-11-01T09:40:14.952658+00:00",
-        "adopted_through": "W236; W237 Main closeout pending",
+        "as_of": "2026-11-01T10:09:33.131499+00:00",
+        "adopted_through": "W237; W238 Main closeout pending",
         "engineering_range_percent": null,
         "formal_stage_closure": "2/7",
         "remaining_execution_hours": null,
         "external_wait_excluded": true,
-        "basis": "D1/D4 closed; W237 replenishment planning and batch registration accepted within D2. Replenish execution/stop and full applicable Transfer protocols and D3 planning plus D5/D7 integration remain. Stage ratio is not engineering effort percentage."
+        "basis": "D1/D4 closed; W238 manual drafts and prepare registration accepted within D2. Replenish execution/stop and full applicable Transfer protocols and D3 planning plus D5/D7 integration remain. Stage ratio is not engineering effort percentage."
       },
       "execution_principles_ref": "AGENTS.md",
       "acceptance_data_policy": {

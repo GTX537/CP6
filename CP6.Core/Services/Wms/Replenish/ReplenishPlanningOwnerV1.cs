@@ -9,7 +9,7 @@ using static CP6.Core.Services.Wms.Replenish.ReplenishPlanningValuesV1;
 using Store=CP6.Core.Services.Wms.Replenish.ReplenishPlanningStoreV1;
 namespace CP6.Core.Services.Wms.Replenish;
 
-public sealed class ReplenishPlanningOwnerV1(CP6Context db,OperationsOwnerV1 owner,ScopeAuthorizationFenceV1 scope,
+public sealed partial class ReplenishPlanningOwnerV1(CP6Context db,OperationsOwnerV1 owner,ScopeAuthorizationFenceV1 scope,
     IOptions<ReplenishSimulationOptionsV1> simulation)
 {
     public bool Replayed {get;private set;}
@@ -50,7 +50,6 @@ public sealed class ReplenishPlanningOwnerV1(CP6Context db,OperationsOwnerV1 own
     public Task<RepPlanV1> PlanAsync(Guid id,CancellationToken ct=default)=>Read<RepPlanV1>(id,"plan",ct);
     public Task<RepCutV1> CutAsync(Guid id,CancellationToken ct=default)=>Read<RepCutV1>(id,"cut",ct);
     public Task<RepBatchV1> BatchAsync(Guid id,CancellationToken ct=default)=>Read<RepBatchV1>(id,"batch",ct);
-    public Task<RepOrderV1> OrderAsync(Guid id,CancellationToken ct=default)=>Read<RepOrderV1>(id,"order",ct);
     public Task<RepIntentV1> IntentAsync(Guid id,CancellationToken ct=default)=>Read<RepIntentV1>(id,"intent",ct);
     public Task<object> ContextAsync(CancellationToken ct=default)=>Authority.ExecuteAsync<object>(OperationsOwnerV1.Replenish,"query",false,async(a,t)=>
     {
@@ -62,32 +61,36 @@ public sealed class ReplenishPlanningOwnerV1(CP6Context db,OperationsOwnerV1 own
         {var observation=await s.Observation(key,t);
          try{await Visible(a,observation,a.ActorId,observation.DepartmentId,t);}
          catch(CP6.Core.Services.Erp.OrderPriceCorrectionException e)when(e.Status is 403 or 404){continue;}
-         visible.Add(new{observation.Scope,observation.CutRef,observation.DataKind,observation.Coverage,observation.Rules,observation.Locations});}
+         visible.Add(new{observation.Scope,observation.CutRef,observation.DataKind,observation.Coverage,observation.Rules,observation.Locations,draftOptions=DraftOptions(observation)});}
         return new{tenantId=db.CurrentTenantId,actorId=a.ActorId,environmentId=scope.EnvironmentId,scopes=visible,dependencyHealth=keys.Length==0?"OBSERVATION_UNAVAILABLE":"AVAILABLE",
-            capabilities=new[]{"SUGGEST","REGISTER_BATCH"},dispatchCapability="WAITING_TRANSFER_ADOPTION"};
+            capabilities=new[]{"SUGGEST","REGISTER_BATCH","CREATE_DRAFT","EDIT_DRAFT","REGISTER_PREPARE"},dispatchCapability="WAITING_TRANSFER_ADOPTION"};
     },ct);
-    private Task<T> Command<T>(RepCommandV1 meta,string action,object input,Func<OperationsAccessV1,Store,CancellationToken,Task<(Guid,T)>> body,CancellationToken ct)
+    private Task<T> Command<T>(RepCommandV1 meta,string action,object input,Func<OperationsAccessV1,Store,CancellationToken,Task<(Guid,T)>> body,CancellationToken ct,bool create=true)
     {
-        Replayed=false;Key(meta.CommandKey);if(meta.ExpectedRevision!=null)throw Error("REP_CREATE_REVISION_MUST_BE_NULL");
+        Replayed=false;Key(meta.CommandKey);if(create&&meta.ExpectedRevision!=null)throw Error("REP_CREATE_REVISION_MUST_BE_NULL");
+        if(!create)Key(meta.ExpectedRevision);
         if(meta.Reason?.Length>500)throw Error("REP_REASON_TOO_LONG");var encoded=Bytes(input);if(encoded.Length>2*1024*1024)throw Error("REP_BODY_TOO_LARGE",413);
-        var digest=Hash(input);Store.SavedCommand? original=null;
+        var digest=Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(encoded)).ToLowerInvariant();Store.SavedCommand? original=null;
         return Authority.ExecuteAsync(OperationsOwnerV1.Replenish,action,true,async(a,t)=>
         {
             await Lease(a,t);var s=Persistence;
             if(original!=null)
             {Replayed=true;if(original.Action!=action||original.InputDigest!=digest)throw Error("REP_COMMAND_CONFLICT",409);
-             var saved=await s.Read(original.ResultId,null,t);await Visible(a,s,saved,t);return Store.Decode<T>(original.Body);}
-            var (id,result)=await body(a,s,t);await s.SaveCommand(a.ActorId,meta.CommandKey,action,digest,id,result!,t);return result;
+             var saved=await s.Read(original.ResultId,null,t);await Visible(a,s,saved,t);return a.ProjectReplenishResult(Store.Decode<T>(original.Body));}
+            var (id,result)=await body(a,s,t);await s.SaveCommand(a.ActorId,meta.CommandKey,action,digest,id,result!,t);return a.ProjectReplenishResult(result);
         },ct,actionAtFence:async t=>
         {var s=Persistence;await s.Fence(true,t);var actor=await owner.CurrentSubjectAsync(t);
          original=await s.Command(actor,meta.CommandKey,t);return original==null?action:"query";});
     }
-    private static async Task<(RepIntentV1[],RepPlanV1[])> Active(Store s,CancellationToken ct)
+    private static async Task<(RepIntentV1[],RepSpanV1[])> Active(Store s,CancellationToken ct)
     {
         var docs=await s.Documents().Where(x=>x.Kind=="intent"||x.Kind=="plan").ToArrayAsync(ct);
         var intents=docs.Where(x=>x.Kind=="intent").Select(x=>Store.Decode<RepIntentV1>(x.Body)).Where(x=>x.State!="SETTLED").ToArray();
-        var planIds=intents.Select(x=>x.AllocationPlanRef.Id).ToHashSet(StringComparer.Ordinal);
-        return(intents,docs.Where(x=>x.Kind=="plan"&&planIds.Contains(x.Id.ToString("D"))).Select(x=>Store.Decode<RepPlanV1>(x.Body)).ToArray());
+        var planIds=intents.Where(x=>x.AllocationPlanRef!=null).Select(x=>x.AllocationPlanRef!.Id).ToHashSet(StringComparer.Ordinal);
+        var spans=docs.Where(x=>x.Kind=="plan"&&planIds.Contains(x.Id.ToString("D"))).SelectMany(x=>Store.Decode<RepPlanV1>(x.Body).Splits).SelectMany(x=>x.Source.Spans).ToList();
+        foreach(var split in intents.Where(x=>x.AllocationPlanRef==null).SelectMany(x=>x.Splits))
+            spans.AddRange(Store.Decode<RepOrderV1>((await s.CurrentOrder(Id(split.OrderRef),ct)).Body).Input.Source.Spans);
+        return(intents,spans.ToArray());
     }
     public Task<RepSuggestionV1> SuggestAsync(RepSuggestInputV1 input,CancellationToken ct=default)
     {
@@ -188,7 +191,7 @@ public sealed class ReplenishPlanningOwnerV1(CP6Context db,OperationsOwnerV1 own
                     var id=Guid.NewGuid();var orderInput=new RepOrderInputV1(observation.Scope,row.ProductRef,row.TechnicalRef,row.OwnerRef,row.BaseUomRef,row.TargetLocationRef,
                         split.Source,split.Quantity,2,"BATCH",suggestion.Ref,c.Command.Reason??"批量补货登记",null);
                     var reference=Ref("order",id,orderInput);var order=new RepOrderV1(reference,orderInput,plan.Ref,"REGISTERED","KNOWN",split.Quantity,Q(0,row.BaseUomRef),split.Quantity,null,[],["READ"],suggestion.CutRef,"1");
-                    await s.Save(id,"order",a.ActorId,doc.DepartmentId,doc.ScopeKey,order,t);
+                    await s.SaveOrderVersion(id,id,order,a.ActorId,doc.DepartmentId,t);
                     await db.Database.ExecuteSqlInterpolatedAsync($"INSERT INTO cp6_replenish_v1.split_orders VALUES({db.CurrentTenantId},{scope.EnvironmentId},{Id(plan.Ref)},{split.SplitKey},{id})",t);
                     orders.Add(new(split.SplitKey,reference,split.Quantity,"CREATED"));intentSplits.Add(new(split.SplitKey,reference,split.Quantity,"REGISTERED"));
                 }
@@ -210,6 +213,7 @@ public sealed class ReplenishPlanningOwnerV1(CP6Context db,OperationsOwnerV1 own
         Key(key);return Authority.ExecuteAsync(OperationsOwnerV1.Replenish,"query",false,async(a,t)=>
         {await Lease(a,t);var s=Persistence;await s.Fence(false,t);var command=await s.Command(a.ActorId,key,t);
          if(command==null)return new RepOperationV1(key,"UNKNOWN",null);var doc=await s.Read(command.ResultId,null,t);await Visible(a,s,doc,t);
-         return new RepOperationV1(key,"COMMITTED",JsonSerializer.Deserialize<JsonElement>(command.Body));},ct);
+         object result=doc.Kind is "order" or "order-revision"?a.ProjectReplenishResult(Store.Decode<RepOrderV1>(command.Body)):JsonSerializer.Deserialize<JsonElement>(command.Body);
+         return new RepOperationV1(key,"COMMITTED",result);},ct);
     }
 }

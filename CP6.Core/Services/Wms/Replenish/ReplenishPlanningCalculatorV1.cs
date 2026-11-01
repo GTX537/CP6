@@ -6,7 +6,7 @@ internal static class ReplenishPlanningCalculatorV1
 {
     internal sealed record Allocation(RepRowV1 Row,RepSplitV1[] Splits,string Slot);
     internal static Allocation Calculate(RepObservationV1 observation,RepRuleV1 rule,RepRefV1 target,
-        RepIntentV1[] intents,RepPlanV1[] activePlans,DateTimeOffset now)
+        RepIntentV1[] intents,RepSpanV1[] reserved,DateTimeOffset now)
     {
         var slot=Slot(rule,target);var line=Hash(new{rule=rule.Ref,target});var unit=rule.BaseUomRef;
         var current=observation.Targets.SingleOrDefault(x=>Slot(x)==slot);
@@ -28,11 +28,10 @@ internal static class ReplenishPlanningCalculatorV1
         var onHand=Q(hand,unit);var open=Q(openAmount,unit);var effective=Q(effectiveAmount,unit);
         if(effectiveAmount>=Number(rule.MinQuantity.Value))return new(Row(onHand,open,effective,Q(0,unit),Q(0,unit),[],"COMPLETE","NO_NEED"),[],slot);
         var need=Number(rule.MaxQuantity.Value)-effectiveAmount;
-        var reserved=activePlans.SelectMany(x=>x.Splits).SelectMany(x=>x.Source.Spans).ToArray();
         var candidates=observation.Roots.Where(x=>x.Movable&&x.LocationRef!=target&&SameDimension(rule,x)&&x.SourceRuleRefs.Contains(rule.SourceRuleRef))
             .OrderBy(x=>x.ExpiryAt??DateTimeOffset.MaxValue).ThenBy(x=>x.ReceivedAt??DateTimeOffset.MaxValue)
             .ThenBy(x=>x.LocationRef.Id,StringComparer.Ordinal).ThenBy(x=>x.Span.RootRef.Id,StringComparer.Ordinal).ThenBy(x=>Number(x.Span.From))
-            .SelectMany(x=>Subtract(x.Span,reserved.Where(r=>r.RootRef==x.Span.RootRef)).Select(span=>x with{Span=span})).ToArray();
+            .SelectMany(x=>Subtract(x.Span,reserved.Where(r=>SameRoot(r.RootRef,x.Span.RootRef))).Select(span=>x with{Span=span})).ToArray();
         var total=candidates.Aggregate(BigInteger.Zero,(n,x)=>n+SpanAmount(x.Span));var proposed=BigInteger.Min(need,total);
         if(rule.LotMultiple is {} multiple){var lot=Number(multiple.Value,positive:true);proposed=proposed/lot*lot;}
         var chosen=new List<RepRootObservationV1>();var remaining=proposed;

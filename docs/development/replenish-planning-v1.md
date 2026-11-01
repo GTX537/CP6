@@ -1,4 +1,4 @@
-# 补货建议与批量登记 v1
+# 补货建议、人工草稿与登记 v1
 
 W237 按 [REP 设计](../design-handbook/modules/WMS-REP-01.md) 的 D01/D02 推进建议、AllocationPlan、订单和 ActiveIntent。接口为 `/api/wms/replenish/v1`，页面通过现有 `/wms/replenish` 的“补货建议与登记”进入。旧根响应和历史分页保留，旧 PostgreSQL 生成／执行链仍拒绝未采用写入，不调用 MobileTaskV2 代替 Transfer。
 
@@ -32,13 +32,27 @@ W237 按 [REP 设计](../design-handbook/modules/WMS-REP-01.md) 的 D01/D02 推�
 | POST `batches` | `command,suggestionRef,selectedPlans,selectionDigest`，整组登记 |
 | GET `batches/{id}` / `orders/{id}` / `active-intents/{id}` | 当前交付范围的原登记结果 |
 | GET `operations/{commandKey}` | COMMITTED 原结果或 UNKNOWN；空查询不表示无效果 |
+| POST `orders` | `command,input:OrderInput`，人工草稿首次 201；不计义务、不占库存 |
+| PATCH `orders/{id}` | 完整替换 DRAFT，必须带刚读取的 expectedRevision，旧版本 412、冻结状态 409 |
+| GET `orders/{id}/history?afterRevision=0&limit=50` | 不可变原版本，nextRevision 表示还有后页，每页最多 200 |
+| POST `orders/{id}/prepare` | 必须带当前 expectedRevision；原子登记后等 Transfer 准备时返回 202 |
 
-`command={commandKey,expectedRevision:null,reason}`。选择摘要是按 ordinal lineKey 排序后的 `[{lineKey,allocationPlanRef}]` 紧凑 camelCase JSON 的 SHA-256；分配引用由本服务产生，固定字段顺序为 owner/id/version/digestDomain/codecVersion/digest。输入未知字段拒绝，最多 200 行、2MiB。写入使用现有 `wms-replenish:generate`，读用 query；源与目标地点都须有权，部门范围使用当前健康组织映射。响应 no-store，保留既有认证及 CSRF。
+创建的 `command={commandKey,expectedRevision:null,reason}`；编辑和 prepare 的 expectedRevision 必须是当前订单原版本。选择摘要是按 ordinal lineKey 排序后的 `[{lineKey,allocationPlanRef}]` 紧凑 camelCase JSON 的 SHA-256；分配引用由本服务产生，固定字段顺序为 owner/id/version/digestDomain/codecVersion/digest。输入未知字段拒绝，最多 200 行、2MiB。建议／批量使用 `wms-replenish:generate`；人工创建 add、编辑 edit、准备 prepare、读 query，优先级 1 另需 expedite 和理由。备注沿当前字段读写权限。源与目标地点都须有权，部门范围使用当前健康组织映射。响应 no-store，保留既有认证及 CSRF。
+
+## W238 人工草稿与 prepare 登记
+
+context 中的 draftOptions 提供完整维度和来源原件，页面允许明确选择单一来源地点的 Root 范围和字符串数量，不在浏览器浮点求和。人工可选择正式规则允许的非 FEFO 来源；prepare 仍按准确目标预算、所选范围与容量核算，不能借人工入口绕过其他已登记义务。未保存的编辑必须保存后才能 prepare。
+
+草稿以稳定订单 id 和递增 revision 保存不可变原版本，当前 head 仅指向已保存版本。原创建／修改命令重放返回该命令原结果，不把它替换为当前版本；当前读与分页历史分别提供。完整替换改变维度或来源时清除未冻结选择，所有历史原件保留。迁移为既有批量订单回填版本 1，后续批量创建也登记历史。
+
+人工 prepare 在同一元数据事务内检查当前权限、规则、完整 cut、目标缺额、准确来源与 typed 容量；保存 selection、REGISTERED 版本、唯一 ActiveIntent、prepare 结果、稳定 dispatchKey／operationId／writerEpoch、NOT_SENT 发送知识和事件／原命令。任何写入失败整组回滚，响应丢失按原键恢复。同一选择换键也回原 prepare；批量 prepare 复用既有 ActiveIntent，不再增加义务。来源预算按 Root Owner/id 保留占用，换 Root 观察版本不能重新登记相同物理范围；单个上游 cut 不能同时宣称同根的不同版本。
+
+当前实际 Transfer 准备适配尚未接入，PrepareView 为 mode=ACCEPTED_TRANSFER、adoptionRef=null、canDispatch=false、blockers=[WAITING_TRANSFER_ADOPTION]；订单保持 REGISTERED，义务持续计入，未发送到 Transfer，不置 PREPARED。此持久等待是后续唯一原准备的恢复位置，不是准备或搬运成功回执。生产业务验收使用明确模拟资料，已实际执行草稿、编辑、目标与来源竞争、登记、回滚和原操作恢复。
 
 ## 剩余范围
 
 本轮订单为 REGISTERED，moved=0 且 dispatchSummary=NOT_REQUESTED；这些是确定尚未派发的本域事实，不是对未知物理效果填零。没有调用 Stock、建立 Claim、取得 Transfer Stage 或宣称搬运成功。
 
-后续继续人工 DRAFT／prepare、REP SourceDemand 与 Transfer 的共享采用、完整 Root/Claim/容量最终事务、执行和停止、已移与未移同 cut 关联，以及新订单分页／导出和历史任务族衔接。D01/D02 的本次交付范围不替代整个 REP 模块或 D2 阶段完成。待发布事件已持久保存，外部消费者未在本轮采用。
+后续继续实际 Transfer prepare／SourceDemand 共享采用、完整 Root/Claim/容量最终事务、派发、执行和停止、已移与未移同 cut 关联，以及新订单列表分页／导出和历史任务族衔接。人工草稿、版本历史与 prepare 登记已实现，完整执行链仍未完成。D01/D02 的本次交付范围不替代整个 REP 模块或 D2 阶段完成。待发布事件已持久保存，外部消费者未在本轮采用。
 
-验证与交付见 [W237 报告](evidence/W237-01/DELIVERY.md)。
+验证与交付见 [W237 报告](evidence/W237-01/DELIVERY.md)和 [W238 报告](evidence/W238-01/DELIVERY.md)。
