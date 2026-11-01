@@ -161492,6 +161492,16 @@
       "date": "2026-10-29",
       "change": "W233 precise receipt and five-disposition correction with actual reverse Stock, independent simulated approval, exact budget, source closure, Quality VOID and RMA successor accepted; original remaining goals continue.",
       "evidence": "docs/development/evidence/W233-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-10-29",
+      "change": "W233 closed once. W234 exercises inquiry original Owner and durable publication against explicit simulated production-acceptance business and external-service inputs; no wait for enterprise data.",
+      "evidence": "docs/development/dispatch/20261029-wave234/README.md"
+    },
+    {
+      "date": "2026-11-01",
+      "change": "W234 actual inquiry submission and original publication accepted against durable simulated consumer; real-data wait removed; original sender unknown outcome remains independent. CRM161 merged and released.",
+      "evidence": "docs/development/evidence/W234-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -176390,6 +176400,30 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/550"
         }
+      },
+      "wave234_simulated_acceptance": {
+        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "scope": "D6 simulated production acceptance: native public form/configuration, actual submission and H01/receipt, durable original Outbox through HTTP to simulated durable broker/consumer, duplicate and fault recovery",
+        "report": "docs/development/evidence/W234-01/DELIVERY.md",
+        "crm_delivery": {
+          "result": "PASS",
+          "source": "4209f64ff1ee8b6449bfbd4ff0ba10add693f400",
+          "main": "aa69c8991e05308f4efe14236a00b795796b8d78",
+          "pr": "https://github.com/GTX537/CP6.CRM/pull/161",
+          "exact_tree_adoption": true,
+          "at": "2026-11-01T07:46:29.304090+00:00"
+        },
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "crm_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": false,
+          "crm_branch_deleted": true,
+          "handoff_branch_deleted": true
+        },
+        "full_task_completed": false
       }
     },
     {
@@ -177093,6 +177127,30 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/550"
         }
+      },
+      "wave234_simulated_acceptance": {
+        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "scope": "D6 simulated production acceptance: native public form/configuration, actual submission and H01/receipt, durable original Outbox through HTTP to simulated durable broker/consumer, duplicate and fault recovery",
+        "report": "docs/development/evidence/W234-01/DELIVERY.md",
+        "crm_delivery": {
+          "result": "PASS",
+          "source": "4209f64ff1ee8b6449bfbd4ff0ba10add693f400",
+          "main": "aa69c8991e05308f4efe14236a00b795796b8d78",
+          "pr": "https://github.com/GTX537/CP6.CRM/pull/161",
+          "exact_tree_adoption": true,
+          "at": "2026-11-01T07:46:29.304090+00:00"
+        },
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "crm_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": false,
+          "crm_branch_deleted": true,
+          "handoff_branch_deleted": true
+        },
+        "full_task_completed": false
       }
     },
     {
@@ -188678,19 +188736,30 @@
         }
       },
       "wave233_correction": {
-        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "status": "CLOSED",
         "scope": "D2 complete return correction workflow: draft/edit/submit/approval binding/frozen execution, exact inverse for posted receipt and all five disposition kinds, reversal budget and current dependencies, source closure/VOID/RMA successor, private page recovery; explicit simulated approval and error evidence",
         "limitations": "Versioned RMA-CORRECTION/1 adopts the Stock correction lifecycle for actual RMA receipt and disposition effects; original movements and quality history remain immutable. Broader non-RMA Stock corrections, commercial/financial and external dispatcher remain original follow-up scope.",
         "report": "docs/development/evidence/W233-01/DELIVERY.md",
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "lifecycle_snapshot": {
-          "main_finish_required": true,
-          "main_seat_released": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
           "handoff_seat_released": true,
-          "main_branch_deleted": false,
-          "handoff_branch_deleted": true
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave233-final-verification.json"
         },
-        "full_task_completed": false
+        "full_task_completed": false,
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W233-01",
+          "source": "302be596a29040d8dcc2120ff393330fa7d1bafb",
+          "remote_target": "479ab556223c23ac925db62fc796d681724c28e1",
+          "branch": "codex/w233-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "pr": "https://github.com/GTX537/CP6/pull/658"
+        }
       }
     },
     {
@@ -197779,10 +197848,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261029-wave233",
-      "path": "docs/development/dispatch/20261029-wave233/README.md",
-      "baseline_sha": "bd86e6a76a6988f3441be87477ee329809a14172",
-      "registered_at": "2026-10-29T13:56:33.001951+00:00",
+      "id": "20261029-wave234",
+      "path": "docs/development/dispatch/20261029-wave234/README.md",
+      "baseline_sha": "479ab556223c23ac925db62fc796d681724c28e1",
+      "registered_at": "2026-10-29T15:01:52.557032+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -197801,61 +197870,68 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W233-01",
-          "workspace_task": "W233-01",
+          "id": "W234-01",
+          "workspace_task": "W234-01",
           "related_tasks": [
-            "WP10-22"
+            "WP03-01",
+            "WP03-02"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "Return source and disposition correction with actual Stock inverse and Quality VOID",
+          "title": "Inquiry simulated production acceptance with durable consumer recovery",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "fba562b9df276285cce1052a0162bd41e997afb0",
-            "branch": "codex/w233-handoff",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T135633Z-wave233-start/MESSAGE.md",
-            "at": "2026-10-29T13:56:33.001951+00:00"
+            "commit": "5c162cc339b3cd233020955ca515fe69cb41923b",
+            "branch": "codex/w234-handoff",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T150152Z-wave234-start/MESSAGE.md",
+            "at": "2026-10-29T15:01:52.557032+00:00"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w233-01",
-          "planned_scope_ref": "docs/development/dispatch/20261029-wave233/README.md",
+          "branch": "codex/w234-01",
+          "planned_scope_ref": "docs/development/dispatch/20261029-wave234/README.md",
           "full_task_completed": false,
-          "business_acceptance": "PASS_SIMULATED_RETURN_CORRECTION_SCOPE",
+          "business_acceptance": "PASS_SIMULATED_INQUIRY_DELIVERY_SCOPE",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
-            "Main:return-correction",
-            "Main:stock-correction-participant",
-            "Main:rma-claim-successor",
-            "Main:quality-void",
-            "Main:disposition-effective-ranges",
-            "Main:rma-ui-recovery",
+            "CRM:inquiry-acceptance-tests",
+            "CRM:simulated-consumer",
             "Main:coordination-ledger"
           ],
-          "worker_delivery_ref": "docs/development/evidence/W233-01/DELIVERY.md",
-          "validation": "25 distinct PostgreSQL/actual HTTP scenarios passed:9 correction,9 disposition,7 Quality. Initial boundary run and final focused correction rerun jointly cover all scenarios; unchanged successes reused. Vue35/35 and final vue-tsc passed. Actual Stock correction responses and successor Quality VOID match accepted canonical wire. Initial tracked-fixture, transaction-number fixture and HTTP reserved-route-name failures and frontend pending-union omission and later test syntax error retained and fixed; no failed run relabeled. No Actions, deployment or existing-environment migration.",
+          "worker_delivery_ref": "docs/development/evidence/W234-01/DELIVERY.md",
+          "validation": "6/6 actual PostgreSQL18 and HTTP checks PASS, 0 skipped; original final TRX acceptance-final-20261029T150807Z. Two simulated production-acceptance integration cases plus original HTTP unknown/commit recovery, native host publish/stop and current revocation. Unchanged result reused after interruption; initial xUnit analyzer failure retained. No Actions or deployment.",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
+            "crm_seat_released": true,
             "handoff_seat_released": true,
             "main_branch_deleted": false,
+            "crm_branch_deleted": true,
             "handoff_branch_deleted": true
+          },
+          "crm_delivery": {
+            "result": "PASS",
+            "source": "4209f64ff1ee8b6449bfbd4ff0ba10add693f400",
+            "main": "aa69c8991e05308f4efe14236a00b795796b8d78",
+            "pr": "https://github.com/GTX537/CP6.CRM/pull/161",
+            "exact_tree_adoption": true,
+            "at": "2026-11-01T07:46:29.304090+00:00"
           }
         }
       ],
       "horizon": {
-        "started_at": "2026-10-29T13:53:46.531891+00:00",
-        "checkpoint_at": "2026-10-29T14:44:23.972489+00:00",
+        "started_at": "2026-10-29T15:00:19.202323+00:00",
+        "checkpoint_at": "2026-11-01T07:50:28.535613+00:00",
         "estimated_agent_wall_time_minutes": [
-          100,
-          160
+          60,
+          100
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -197863,15 +197939,18 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Continue RMA commercial/financial exits and original D3/D5/D6/D7 feature and integration delivery with explicit simulated business and service inputs.",
+      "next_action": "Continue original D2 Replenish/Transfer and D3 planning writes plus remaining D5/D7 applicable integration; do not expand to all 125 product goals.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
+        "crm_seat_released": true,
         "handoff_seat_released": true,
         "main_branch_deleted": false,
+        "crm_branch_deleted": true,
         "handoff_branch_deleted": true
       },
-      "elapsed_registered_wave_minutes": 50.62
+      "estimated_active_minutes_so_far": 16.14,
+      "interruption_excluded": true
     },
     "wave_history": [
       {
@@ -228024,6 +228103,124 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/208"
           }
         ]
+      },
+      {
+        "id": "20261029-wave233",
+        "path": "docs/development/dispatch/20261029-wave233/README.md",
+        "baseline_sha": "bd86e6a76a6988f3441be87477ee329809a14172",
+        "registered_at": "2026-10-29T13:56:33.001951+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W233-01",
+            "workspace_task": "W233-01",
+            "related_tasks": [
+              "WP10-22"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "Return source and disposition correction with actual Stock inverse and Quality VOID",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "fba562b9df276285cce1052a0162bd41e997afb0",
+              "branch": "codex/w233-handoff",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261029T135633Z-wave233-start/MESSAGE.md",
+              "at": "2026-10-29T13:56:33.001951+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w233-01",
+            "planned_scope_ref": "docs/development/dispatch/20261029-wave233/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "PASS_SIMULATED_RETURN_CORRECTION_SCOPE",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:return-correction",
+              "Main:stock-correction-participant",
+              "Main:rma-claim-successor",
+              "Main:quality-void",
+              "Main:disposition-effective-ranges",
+              "Main:rma-ui-recovery",
+              "Main:coordination-ledger"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W233-01/DELIVERY.md",
+            "validation": "25 distinct PostgreSQL/actual HTTP scenarios passed:9 correction,9 disposition,7 Quality. Initial boundary run and final focused correction rerun jointly cover all scenarios; unchanged successes reused. Vue35/35 and final vue-tsc passed. Actual Stock correction responses and successor Quality VOID match accepted canonical wire. Initial tracked-fixture, transaction-number fixture and HTTP reserved-route-name failures and frontend pending-union omission and later test syntax error retained and fixed; no failed run relabeled. No Actions, deployment or existing-environment migration.",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave233-final-verification.json"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-10-29T13:53:46.531891+00:00",
+          "checkpoint_at": "2026-10-29T14:44:23.972489+00:00",
+          "estimated_agent_wall_time_minutes": [
+            100,
+            160
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Continue RMA commercial/financial exits and original D3/D5/D6/D7 feature and integration delivery with explicit simulated business and service inputs.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave233-final-verification.json"
+        },
+        "elapsed_registered_wave_minutes": 50.62,
+        "actual_registered_wave_minutes": 54.83,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W233-01",
+            "source": "302be596a29040d8dcc2120ff393330fa7d1bafb",
+            "remote_target": "479ab556223c23ac925db62fc796d681724c28e1",
+            "branch": "codex/w233-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/658"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W233-HANDOFF",
+            "source": "edbc8baa6bd9149c454c325bae338da24ce15b94",
+            "remote_target": "ee4f62c8f7844df3bc4a0bafe3502d9bfcac5be0",
+            "branch": "codex/w233-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/209"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -228082,7 +228279,7 @@
         35,
         55
       ],
-      "current_stage": "D2",
+      "current_stage": "D6",
       "stages": [
         {
           "id": "D1",
@@ -228301,11 +228498,11 @@
           "id": "D6",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W135-01",
-          "next_action": "Complete the original D6 feature and integration exits with actual implementation; construct explicit simulated business/source/service inputs for any absent enterprise data. Preserve independent Owner contracts, current rights and exact effects; no real-data wait.",
-          "prerequisite_adjustment": "W135 original-contract applicability/source determination and W128 export/download authority sources are adopted. Use simulated policy/calendar, registration/key and runtime/broker inputs to exercise original submission/acceptance integration. Full privacy export remains outside automatic D6 expansion.",
+          "current_window": "W234-01",
+          "next_action": "Continue original D2 Replenish/Transfer and D3 planning writes plus remaining D5/D7 applicable integration; do not expand to all 125 product goals.",
+          "prerequisite_adjustment": "W234 explicitly executes simulated policy/calendar/IAM/service inputs through existing native public submission/H01 and four original event routes into a durable simulated subscriber; rollback, dedup, restart and unknown acknowledgement recovery pass. No enterprise-data wait. D5 applicable runtime-host qualification and D7 final scope integration remain separate.",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
-          "remaining": "用明确模拟的企业政策、专业日历、批准资料、Site/Form/IAM/服务/密钥登记、目标宿主normalizer/时区/运行身份及broker/消费者/SLO输入，完成原公开表单与提交受理的实际集成和故障验证，以及D7相关收口。不等待真实企业数据；已核定H01 NUM/FILE边界及既有发布/激活和当前PRIV来源继续复用，不扩张完整隐私导出。",
+          "remaining": "Close applicable original D5 runtime-host acceptance and final D7 integration against current adopted evidence. Policy/calendar/IAM/service and external message inputs may be simulated; W234 proves the exercised inquiry flow. Complete original D2/D3 feature exits separately; do not expand to full privacy/125 product goals. Applicable target-host normalizer/time-zone cases and agreed propagation-SLO acceptance still need mapped simulation-driven evidence; W234 does not claim them.",
           "adopted_native_outbox": {
             "result": "PASS",
             "source": "4d376804f86c218e467cdc5e87fa6e1cf5fba486",
@@ -228324,7 +228521,8 @@
             "at": "2026-10-25T10:34:44.236026+00:00"
           },
           "applicability_audit_report": "docs/development/evidence/W135-01/DELIVERY.md",
-          "acceptance_data_policy_ref": "dispatch_policy.continuous_goal.acceptance_data_policy"
+          "acceptance_data_policy_ref": "dispatch_policy.continuous_goal.acceptance_data_policy",
+          "last_simulated_acceptance_report": "docs/development/evidence/W234-01/DELIVERY.md"
         },
         {
           "id": "D7",
@@ -228441,14 +228639,14 @@
         ]
       },
       "latest_progress_assessment": {
-        "as_of": "2026-10-29T14:44:23.972489+00:00",
-        "adopted_through": "W232; W233 validation complete, remote adoption pending",
+        "as_of": "2026-11-01T07:50:28.535613+00:00",
+        "adopted_through": "W233; W234 CRM merged, Main closeout pending",
         "engineering_range_percent": null,
         "formal_stage_closure": "2/7",
         "remaining_execution_hours": null,
-        "confidence": "Audit original remaining feature scope using actual adopted evidence; no real-data wait",
+        "confidence": "Original stage exits still audited against actual code; 2/7 is not engineering effort percentage",
         "external_wait_excluded": true,
-        "basis": "D1/D4 closed; D2 receipt and five disposition corrections actually accepted with simulated inputs. Original remaining stage features/integration still required; wave counts and 2/7 closure are not engineering percentage."
+        "basis": "D1/D4 closed. W234 inquiry native-to-simulated-consumer production acceptance passes; D2/D3 actual feature gaps and D5/D7 applicable integration remain."
       },
       "execution_principles_ref": "AGENTS.md",
       "acceptance_data_policy": {
