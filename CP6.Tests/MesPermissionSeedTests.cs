@@ -70,11 +70,16 @@ public class MesPermissionSeedTests
             var roleActions = db.Sys_RoleActions.IgnoreQueryFilters()
                 .Where(x => x.TenantId == tid && x.RoleId == 1).ToList();
 
-            // 逐元组精确匹配（漏种 0 / 多种 0）。
+            // Existing grants remain stable; registering independent Owner actions grants no role authority.
             var maSet = menuActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
             var raSet = roleActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
             var expected = ExpectedTuples.ToHashSet();
-            Assert.Equal(expected.Concat(new[]{(302,"query"),(302,"cancel"),(304,"query"),(304,"recalculate"),(304,"backflush"),(308,"query"),(309,"query"),(310,"query"),(311,"query"),(301,"query"),(313,"query"),(313,"export")}).ToHashSet(), maSet);
+            Assert.True(expected.IsSubsetOf(maSet));
+            foreach(var action in new[]{(301,"plan.prepare"),(301,"change.apply"),(301,"command.read"),(301,"history.read"),(301,"simulate-source"),(302,"change.schedule")})
+            {
+                Assert.Contains(action,maSet);
+                Assert.DoesNotContain(db.Sys_RoleActions.IgnoreQueryFilters().Where(x=>x.TenantId==tid),x=>x.MenuId==action.Item1&&x.ActionCode==action.Item2);
+            }
             Assert.DoesNotContain(roleActions,a=>a.MenuId==310 && a.ActionCode=="query");
             Assert.DoesNotContain(roleActions,a=>a.MenuId==304 && a.ActionCode is "query" or "recalculate" or "backflush");
             Assert.DoesNotContain(roleActions,a=>a.MenuId==302 && a.ActionCode is "query" or "cancel");

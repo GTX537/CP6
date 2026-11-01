@@ -82,7 +82,7 @@ public static class MesPermissionSeed
         var changed = false;
         foreach (var tid in tenantIds)
         {
-            foreach(var (menuId,code,name) in OwnerActions)
+            foreach(var (menuId,code,name) in OwnerActions.Concat(SchedulingActions))
             {
                 if(!db.Sys_MenuActions.IgnoreQueryFilters().Any(x=>x.TenantId==tid && x.MenuId==menuId && x.ActionCode==code))
                 {db.Sys_MenuActions.Add(new(){TenantId=tid,MenuId=menuId,ActionCode=code,ActionName=name});changed=true;}
@@ -122,4 +122,9 @@ public static class MesPermissionSeed
         if (changed)
             db.SaveChanges();
     }
+    // Register capabilities for new tenants; granting these independent actions remains explicit.
+    private static readonly (int MenuId,string Code,string Name)[] SchedulingActions =
+    [ (301,"plan.prepare","准备完整工单改期"),(301,"change.apply","应用完整工单改期"),
+      (301,"command.read","读取改期原结果"),(301,"history.read","读取改期历史"),
+      (301,"simulate-source","构造模拟排程资料"),(302,"change.schedule","工单根计划变更") ];
 }
