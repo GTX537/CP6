@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
-const mock = vi.hoisted(() => ({ createDraft: vi.fn(), editDraft: vi.fn(), order: vi.fn(), prepare: vi.fn(), operation: vi.fn(), history: vi.fn(), denied: '' }))
+const mock = vi.hoisted(() => ({ createDraft: vi.fn(), editDraft: vi.fn(), order: vi.fn(), prepare: vi.fn(), prepareTransfer: vi.fn(), execute: vi.fn(), operation: vi.fn(), history: vi.fn(), denied: '' }))
 vi.mock('@/api/wms/replenishPlanning', () => ({ replenishPlanningApi: mock }))
 vi.mock('@/auth/browserAuthentication', () => ({ authenticationCanRead: () => true }))
 vi.mock('@/stores/permission', () => ({ usePermissionStore: () => ({ has: (key: string) => key !== mock.denied }) }))
@@ -55,4 +55,26 @@ it('rejects a late result after identity changes', async () => {
 })
 it('does not offer prepare when the current action is unavailable', async () => {
   mock.denied = 'wms-replenish:prepare'; await render(); await create(); expect(button('准备补货').attributes()).toHaveProperty('disabled'); expect(mock.prepare).not.toHaveBeenCalled()
+})
+const link = { owner: 'WMS_TRANSFER', originalBusinessKey: 'original-dispatch', requestRef: ref('request'), stageRefs: [ref('stage')], receiptRefs: [], coverage: 'COMPLETE', state: 'REGISTERED' }
+async function loadExecution(lifecycle: string, capabilities: string[]) {
+  mock.order.mockResolvedValue({ ...draft, revision: '4', lifecycle, capabilities, executionLink: link })
+  await render(); await field('人工补货订单编号').setValue('order'); await click('读取订单')
+}
+it('persists the original dispatch device and occurrence and recovers without sending it twice', async () => {
+  await loadExecution('PREPARED', ['DISPATCH', 'STOP']); await field('补货执行设备').setValue('registered-device')
+  mock.execute.mockRejectedValueOnce(new Error('lost dispatch response')); await click('派发完整移动')
+  const sent = mock.execute.mock.calls[0]![2]; expect(sent.device).toBe('registered-device'); expect(sent.occurrenceKey).toBeTruthy(); expect(sent.command.expectedRevision).toBe('4')
+  mock.execute.mockResolvedValueOnce({ ...draft, revision: '5', lifecycle: 'TASK_ISSUED', capabilities: ['COMPLETE', 'STOP'], executionLink: { ...link, state: 'STARTED' } })
+  await click('重试草稿原请求'); expect(mock.execute.mock.calls[1]![2]).toEqual(sent); expect(view!.text()).toContain('已派发，尚无库存移动回执'); expect(localStorage.getItem('cp6_rep_draft_v1:env:tenant:actor')).toBeNull()
+})
+it('retains unknown movement quantities on stop and requires explicit physical-no-effect input', async () => {
+  await loadExecution('TASK_ISSUED', ['COMPLETE', 'STOP'])
+  mock.execute.mockResolvedValue({ ...draft, revision: '5', lifecycle: 'RECONCILIATION', knowledge: 'UNKNOWN', moved: null, remaining: null, capabilities: ['READ'], executionLink: { ...link, state: 'RECONCILIATION', coverage: 'UNKNOWN' } })
+  await click('停止补货'); expect(mock.execute.mock.calls[0]![2].physicalNotOccurred).toBe(false)
+  expect(view!.text()).toContain('实际移动结果未知'); expect(view!.text()).toContain('已移 未知'); expect(view!.findAll('button').some(x => x.text() === '完成整单移动')).toBe(false)
+})
+it('requires the transfer action as well as the replenishment action for physical completion', async () => {
+  mock.denied = 'wms-transfer-request:execute'; await loadExecution('TASK_ISSUED', ['COMPLETE', 'STOP'])
+  expect(button('完成整单移动').attributes()).toHaveProperty('disabled'); expect(mock.execute).not.toHaveBeenCalled()
 })

@@ -23,6 +23,25 @@
       <p>计划 {{ order.planned.value }}，已移 {{ order.moved?.value ?? '未知' }} {{ order.planned.uomRef.id }}</p>
       <p v-if="dirty">请先保存草稿修改，再准备补货。</p>
       <button :disabled="busy || !!pending || dirty || !can('prepare') || !['DRAFT', 'REGISTERED'].includes(order.lifecycle)" @click="prepare">准备补货</button>
+      <fieldset :disabled="busy || !!pending">
+        <button v-if="order.lifecycle === 'REGISTERED' && !order.executionLink" :disabled="!can('prepare')" @click="prepareTransfer">准备调拨执行</button>
+        <button v-if="!order.executionLink && ['DRAFT', 'REGISTERED'].includes(order.lifecycle)" :disabled="!can('cancel')" @click="execute('stop')">停止未派补货</button>
+        <template v-if="order.executionLink">
+          <p>调拨 {{ order.executionLink.requestRef?.id }} · {{ order.executionLink.state }}</p>
+          <p v-if="order.knowledge === 'UNKNOWN'" role="status">实际移动结果未知，补货范围继续保留；请按原调拨处理现场差异。</p>
+          <button v-if="order.capabilities.includes('APPROVE_TRANSFER')" :disabled="!can('prepare') || !transferCan('approve')" @click="execute('transfer-approve')">独立批准调拨</button>
+          <template v-if="order.capabilities.includes('DISPATCH')">
+            <label>已登记设备<input v-model="device" aria-label="补货执行设备" /></label>
+            <button :disabled="!can('execute') || !transferCan('prepare') || !device.trim()" @click="execute('dispatch')">派发完整移动</button>
+          </template>
+          <button v-if="order.capabilities.includes('COMPLETE')" :disabled="!can('execute') || !transferCan('execute')" @click="execute('complete')">完成整单移动</button>
+          <template v-if="order.capabilities.includes('STOP')">
+            <label v-if="order.lifecycle === 'TASK_ISSUED'"><input v-model="physicalNotOccurred" type="checkbox" aria-label="确认尚未发生实际移动" />确认尚未发生实际移动</label>
+            <button :disabled="!can('cancel') || !transferCan('close-stage')" @click="execute('stop')">停止补货</button>
+          </template>
+          <p v-if="order.stockReceiptRefs.length">库存回执：{{ order.stockReceiptRefs.map(r => r.id).join('、') }}</p>
+        </template>
+      </fieldset>
       <button :disabled="busy" @click="loadHistory(false)">读取版本历史</button>
       <ul><li v-for="h in history" :key="h.revision">版本 {{ h.revision }} · {{ lifecycle(h.lifecycle) }} · {{ h.planned.value }} {{ h.planned.uomRef.id }}</li></ul>
       <button v-if="nextRevision" :disabled="busy" @click="loadHistory(true)">更多历史</button>
@@ -32,13 +51,17 @@
 </template>
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { replenishPlanningApi as api, type RepContext, type RepOrderInput, type RepDraftInput, type RepOrder, type RepPrepare, type RepCommand } from '@/api/wms/replenishPlanning'
+import { replenishPlanningApi as api, type RepContext, type RepOrderInput, type RepDraftInput, type RepOrder, type RepPrepare, type RepCommand, type RepExecutionCommand, type RepExecutionAction } from '@/api/wms/replenishPlanning'
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
 import { usePermissionStore } from '@/stores/permission'
-type Pending = { kind: 'create' | 'edit'; id: string | null; body: RepDraftInput } | { kind: 'prepare'; id: string; body: RepCommand }
+type Pending = { kind: 'create'; id: string | null; body: RepDraftInput } | { kind: 'edit'; id: string | null; body: RepDraftInput }
+  | { kind: 'prepare'; id: string; body: RepCommand } | { kind: 'transfer-prepare'; id: string; body: RepCommand }
+  | { kind: 'execution'; id: string; action: RepExecutionAction; body: RepExecutionCommand }
 const props = defineProps<{ context: RepContext }>(), permissions = usePermissionStore()
 const can = (action: string) => permissions.has(`wms-replenish:${action}`)
+const transferCan = (action: string) => permissions.has(`wms-transfer-request:${action}`)
+const device = ref(''), physicalNotOccurred = ref(false)
 const options = computed(() => props.context.scopes.flatMap(s => s.draftOptions))
 const order = ref<RepOrder | null>(null), input = ref<RepOrderInput | null>(null), prepared = ref<RepPrepare | null>(null), pending = ref<Pending | null>(null)
 const choice = ref(''), orderId = ref(''), error = ref(''), notice = ref(''), busy = ref(false), history = ref<RepOrder[]>([]), nextRevision = ref<string | null>(null)
@@ -46,8 +69,8 @@ const dirty = computed(() => order.value?.lifecycle === 'DRAFT' && JSON.stringif
 const storage = computed(() => `cp6_rep_draft_v1:${props.context.environmentId}:${props.context.tenantId}:${props.context.actorId}`)
 let epoch = 0, live = true
 const clone = <T,>(v: T): T => JSON.parse(JSON.stringify(v))
-const lifecycle = (value: string) => ({ DRAFT: '草稿，未计入补货义务', REGISTERED: '已登记，未派发', PREPARED: '已准备' }[value] || value)
-function reset() { order.value = null; input.value = null; prepared.value = null; choice.value = ''; orderId.value = ''; history.value = []; nextRevision.value = null }
+const lifecycle = (value: string) => ({ DRAFT: '草稿，未计入补货义务', REGISTERED: '已登记，未派发', PREPARED: '已准备', TASK_ISSUED: '已派发，尚无库存移动回执', MOVED: '整单移动已记账', CANCELLED_NO_EFFECT: '已停止，原执行无效果', RECONCILIATION: '现场差异待处置' }[value] || value)
+function reset() { order.value = null; input.value = null; prepared.value = null; choice.value = ''; orderId.value = ''; history.value = []; nextRevision.value = null; device.value = ''; physicalNotOccurred.value = false }
 function newDraft() { reset(); notice.value = ''; error.value = '' }
 function choose() { input.value = choice.value === '' ? null : clone(options.value[Number(choice.value)]!); prepared.value = null }
 function show(o: RepOrder) { order.value = o; orderId.value = o.ref.id; input.value = clone(o.input); choice.value = ''; history.value = []; nextRevision.value = null }
@@ -65,12 +88,17 @@ async function lock(check: () => void, work: () => Promise<void>) {
 async function accept(p: Pending, result: RepOrder | RepPrepare, check: () => void) {
   localStorage.removeItem(storage.value); pending.value = null
   if (p.kind === 'prepare') { prepared.value = result as RepPrepare; const current = await api.order(p.id); check(); show(current) }
-  else { prepared.value = null; show(result as RepOrder); notice.value = '草稿已保存，未计入补货义务。' }
+  else { prepared.value = null; show(result as RepOrder); physicalNotOccurred.value = false; notice.value = p.kind === 'create' || p.kind === 'edit' ? '草稿已保存，未计入补货义务。' : '调拨原操作结果已保存。' }
 }
 async function send(p: Pending, check: () => void) {
   let result: RepOrder | RepPrepare
   try {
-    result = p.kind === 'prepare' ? await api.prepare(p.id, p.body) : p.kind === 'edit' ? await api.editDraft(p.id!, p.body) : await api.createDraft(p.body); check()
+    if (p.kind === 'prepare') result = await api.prepare(p.id, p.body)
+    else if (p.kind === 'transfer-prepare') result = await api.prepareTransfer(p.id, p.body)
+    else if (p.kind === 'execution') result = await api.execute(p.id, p.action, p.body)
+    else if (p.kind === 'edit') result = await api.editDraft(p.id!, p.body)
+    else result = await api.createDraft(p.body)
+    check()
   } catch (e: any) { check(); if ([400, 403, 404, 409, 412, 422].includes(e?.response?.status)) { localStorage.removeItem(storage.value); pending.value = null }; throw e }
   await accept(p, result, check)
 }
@@ -87,12 +115,21 @@ async function prepare() { await run(async check => {
   if (!can('prepare')) throw new Error('没有准备权限。')
   await submit({ kind: 'prepare', id: order.value!.ref.id, body: { commandKey: crypto.randomUUID(), expectedRevision: order.value!.revision, reason: '用户准备补货' } }, check)
 }) }
+async function prepareTransfer() { await run(async check => {
+  if (!can('prepare')) throw new Error('没有准备权限。')
+  await submit({ kind: 'transfer-prepare', id: order.value!.ref.id, body: { commandKey: crypto.randomUUID(), expectedRevision: order.value!.revision, reason: '准备原补货调拨执行' } }, check)
+}) }
+async function execute(action: RepExecutionAction) { await run(async check => {
+  const required = action === 'transfer-approve' ? ['prepare', 'approve'] : action === 'stop' ? ['cancel', 'close-stage'] : ['execute', action === 'dispatch' ? 'prepare' : 'execute']
+  if (!can(required[0]!) || (action !== 'stop' || order.value!.executionLink) && !transferCan(required[1]!)) throw new Error('没有当前调拨动作权限。')
+  await submit({ kind: 'execution', id: order.value!.ref.id, action, body: { command: { commandKey: crypto.randomUUID(), expectedRevision: order.value!.revision, reason: '用户执行补货调拨动作' }, device: action === 'dispatch' ? device.value.trim() : null, occurrenceKey: action === 'dispatch' ? crypto.randomUUID() : null, physicalNotOccurred: physicalNotOccurred.value } }, check)
+}) }
 async function loadOrder() { await run(async check => { const o = await api.order(orderId.value); check(); prepared.value = null; show(o) }) }
 async function loadHistory(more: boolean) { await run(async check => { const page = await api.history(order.value!.ref.id, more ? nextRevision.value! : '0'); check(); history.value = more ? [...history.value, ...page.items] : page.items; nextRevision.value = page.nextRevision }) }
 async function retry() { await run(async check => { await lock(check, async () => { const saved = localStorage.getItem(storage.value); if (!saved) throw new Error('没有待确认操作。'); await send(JSON.parse(saved), check) }) }) }
 async function recover() { await run(async check => { await lock(check, async () => {
   const saved = localStorage.getItem(storage.value); if (!saved) throw new Error('没有待确认操作。')
-  const p = JSON.parse(saved) as Pending, key = p.kind === 'prepare' ? p.body.commandKey : p.body.command.commandKey
+  const p = JSON.parse(saved) as Pending, key = p.kind === 'prepare' || p.kind === 'transfer-prepare' ? p.body.commandKey : p.body.command.commandKey
   const outcome = await api.operation<RepOrder | RepPrepare>(key); check()
   if (outcome.state === 'COMMITTED') { await accept(p, outcome.result!, check); notice.value = '已找回原操作结果。' }
   else notice.value = '原结果仍待核，请使用原请求重试。'

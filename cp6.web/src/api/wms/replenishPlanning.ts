@@ -12,7 +12,10 @@ export interface RepSpan { rootRef: RepRef; from: string; to: string }
 export interface RepSource { sourceLocationRef: RepRef; spans: RepSpan[]; quantity: RepQuantity; stockObservationRef: RepRef; expiryAt: string | null; receivedAt: string | null; masterConditionRef: RepRef }
 export interface RepOrderInput { scope: RepScope; productRef: RepRef; technicalRef: RepRef; ownerRef: RepRef; baseUomRef: RepRef; toLocationRef: RepRef; source: RepSource; quantity: RepQuantity; priority: number; trigger: string; suggestionRowRef: RepRef | null; reason: string; remarks: string | null }
 export interface RepDraftInput { command: RepCommand; input: RepOrderInput }
-export interface RepOrder { ref: RepRef; input: RepOrderInput; selectionRef: RepRef | null; lifecycle: string; knowledge: string; planned: RepQuantity; moved: RepQuantity | null; remaining: RepQuantity | null; executionLink: unknown; stockReceiptRefs: RepRef[]; capabilities: string[]; currentCutRef: RepRef | null; revision: string }
+export interface RepTransferLink { owner: string; originalBusinessKey: string; requestRef: RepRef | null; stageRefs: RepRef[]; receiptRefs: RepRef[]; coverage: string; state: string }
+export interface RepExecutionCommand { command: RepCommand; device: string | null; occurrenceKey: string | null; physicalNotOccurred: boolean }
+export type RepExecutionAction = 'transfer-approve' | 'dispatch' | 'complete' | 'stop'
+export interface RepOrder { ref: RepRef; input: RepOrderInput; selectionRef: RepRef | null; lifecycle: string; knowledge: string; planned: RepQuantity; moved: RepQuantity | null; remaining: RepQuantity | null; executionLink: RepTransferLink | null; stockReceiptRefs: RepRef[]; capabilities: string[]; currentCutRef: RepRef | null; revision: string }
 export interface RepPrepare { ref: RepRef; orderRef: RepRef; inputDigest: string; sourceSpans: RepSpan[]; capacityObservationRefs: RepRef[]; mode: string; adoptionRef: RepRef | null; blockers: string[]; canDispatch: boolean }
 export interface RepSuggestInput { command: RepCommand; scope: RepScope; ruleRefs: RepRef[]; targetLocationRefs: RepRef[] }
 export interface RepSelection { lineKey: string; allocationPlanRef: RepRef }
@@ -29,6 +32,8 @@ export const replenishPlanningApi = {
   order: (id: string) => http.get<any, RepOrder>(`${root}/orders/${encodeURIComponent(id)}`),
   history: (id: string, afterRevision = '0') => http.get<any, { items: RepOrder[]; nextRevision: string | null }>(`${root}/orders/${encodeURIComponent(id)}/history`, { params: { afterRevision, limit: 50 } }),
   prepare: (id: string, body: RepCommand) => http.post<any, RepPrepare>(`${root}/orders/${encodeURIComponent(id)}/prepare`, body),
+  prepareTransfer: (id: string, body: RepCommand) => http.post<any, RepOrder>(`${root}/orders/${encodeURIComponent(id)}/transfer-prepare`, body),
+  execute: (id: string, action: RepExecutionAction, body: RepExecutionCommand) => http.post<any, RepOrder>(`${root}/orders/${encodeURIComponent(id)}/${action}`, body),
 }
 export async function repSelectionDigest(selection: RepSelection[]) {
   const rows = [...selection].sort((a, b) => a.lineKey < b.lineKey ? -1 : a.lineKey > b.lineKey ? 1 : 0).map(x => ({ lineKey: x.lineKey, allocationPlanRef: { owner: x.allocationPlanRef.owner, id: x.allocationPlanRef.id, version: x.allocationPlanRef.version, digestDomain: x.allocationPlanRef.digestDomain, codecVersion: x.allocationPlanRef.codecVersion, digest: x.allocationPlanRef.digest } }))

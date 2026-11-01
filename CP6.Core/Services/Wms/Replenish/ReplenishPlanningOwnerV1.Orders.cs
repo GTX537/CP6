@@ -50,7 +50,7 @@ public sealed partial class ReplenishPlanningOwnerV1
         ValidateDraft(c);
         return Command(c.Command,"add",new{kind="draft-create",input=c},async(a,s,t)=>
         {
-            var o=await s.Observation(Hash(c.Input.Scope),t);await Visible(a,o,a.ActorId,o.DepartmentId,t);await Priority(a,c.Input,t);a.RequireReplenishRemarksWrite(null,c.Input.Remarks);
+            var o=await s.Observation(Hash(c.Input.Scope),t);await Visible(a,o,a.ActorId,o.DepartmentId,t,selectedLocations:OrderLocations(c.Input));await Priority(a,c.Input,t);a.RequireReplenishRemarksWrite(null,c.Input.Remarks);
             var rule=Rule(o,c.Input);await CheckSource(s,o,rule,c.Input,[],false,t);
             var id=Guid.NewGuid();var order=new RepOrderV1(Ref("order",id,c.Input),c.Input,null,"DRAFT","KNOWN",c.Input.Quantity,Q(0,c.Input.BaseUomRef),c.Input.Quantity,null,[],["READ","EDIT_DRAFT","PREPARE"],null,"1");
             await s.SaveOrderVersion(id,id,order,a.ActorId,o.DepartmentId,t);return(id,order);
@@ -63,7 +63,7 @@ public sealed partial class ReplenishPlanningOwnerV1
         {
             var doc=await s.CurrentOrder(id,t);await Visible(a,s,doc,t);var old=Store.Decode<RepOrderV1>(doc.Body);Revision(old,c.Command);
             if(old.Lifecycle!="DRAFT")throw Error("REP_DRAFT_FROZEN",409);a.RequireReplenishRemarksWrite(old.Input.Remarks,c.Input.Remarks);
-            var o=await s.Observation(Hash(c.Input.Scope),t);await Visible(a,o,doc.CreatorId,o.DepartmentId,t);await Priority(a,c.Input,t);
+            var o=await s.Observation(Hash(c.Input.Scope),t);await Visible(a,o,doc.CreatorId,o.DepartmentId,t,selectedLocations:OrderLocations(c.Input));await Priority(a,c.Input,t);
             var rule=Rule(o,c.Input);await CheckSource(s,o,rule,c.Input,[],false,t);
             var order=Version(old with{Input=c.Input,Planned=c.Input.Quantity,Moved=Q(0,c.Input.BaseUomRef),Remaining=c.Input.Quantity},"DRAFT",null,null);
             var snapshot=Guid.NewGuid();await s.SaveOrderVersion(id,snapshot,order,doc.CreatorId,o.DepartmentId,t);return(snapshot,order);
@@ -119,7 +119,7 @@ public sealed partial class ReplenishPlanningOwnerV1
                 WHERE tenant_id={db.CurrentTenantId} AND environment_id={scope.EnvironmentId} AND order_id={id} AND selection_version={order.SelectionRef?.Version??order.Revision}
                 """).SingleOrDefaultAsync(t);
             if(prior is {} previous){Replayed=true;return(previous,Store.Decode<RepPrepareV1>((await s.Read(previous,"prepare",t)).Body));}
-            var i=order.Input;var o=await s.Observation(doc.ScopeKey,t);await Visible(a,o,doc.CreatorId,doc.DepartmentId,t,current:true);await Priority(a,i,t);
+            var i=order.Input;var o=await s.Observation(doc.ScopeKey,t);await Visible(a,o,doc.CreatorId,doc.DepartmentId,t,current:true,selectedLocations:OrderLocations(i));await Priority(a,i,t);
             var rule=Rule(o,i);if(rule.ValidFrom>DateTimeOffset.UtcNow||rule.ValidTo<=DateTimeOffset.UtcNow||rule.Coverage!="COMPLETE"||o.Coverage!="COMPLETE")throw Error("REP_COMPLETE_CUT_REQUIRED",409);
             var (intents,reserved)=await Active(s,t);var slot=Slot(rule,i.ToLocationRef);
             var target=o.Targets.SingleOrDefault(x=>Slot(x)==slot)??throw Error("REP_TARGET_UNAVAILABLE",409);

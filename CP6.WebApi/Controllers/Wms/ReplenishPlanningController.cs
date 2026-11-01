@@ -11,6 +11,7 @@ public sealed class ReplenishPlanningController(ReplenishPlanningOwnerV1 owner):
 {
     [HttpGet("context")]public Task<object> Context(CancellationToken ct)=>owner.ContextAsync(ct);
     [HttpPost("simulation/observations"),RequestSizeLimit(2097152)]public Task<RepRefV1> Simulation(RepSimulationInputV1 c,CancellationToken ct)=>owner.PublishSimulationAsync(c,ct);
+    [HttpPost("simulation/stock-opening"),RequestSizeLimit(2097152)]public Task<RepRefV1> StockOpening(RepStockOpeningV1 c,CancellationToken ct)=>owner.OpenSimulatedStockAsync(c,ct);
     [HttpPost("suggestions"),RequestSizeLimit(2097152)]public async Task<IActionResult> Suggest(RepSuggestInputV1 c,CancellationToken ct)
     {var result=await owner.SuggestAsync(c,ct);return StatusCode(owner.Replayed?200:201,result);}
     [HttpGet("suggestions/{id:guid}")]public Task<RepSuggestionV1> Suggestion(Guid id,CancellationToken ct)=>owner.SuggestionAsync(id,ct);
@@ -26,6 +27,12 @@ public sealed class ReplenishPlanningController(ReplenishPlanningOwnerV1 owner):
     [HttpGet("orders/{id:guid}/history")]public Task<object> History(Guid id,[FromQuery]long afterRevision=0,[FromQuery]int limit=50,CancellationToken ct=default)=>owner.OrderHistoryAsync(id,afterRevision,limit,ct);
     [HttpPost("orders/{id:guid}/prepare")]public async Task<IActionResult> Prepare(Guid id,RepCommandV1 c,CancellationToken ct)
     {var result=await owner.PrepareAsync(id,c,ct);return StatusCode(result.CanDispatch?200:202,result);}
+    [HttpPost("orders/{id:guid}/transfer-prepare")]public Task<RepOrderV1> PrepareTransfer(Guid id,RepCommandV1 c,CancellationToken ct)=>owner.PrepareTransferAsync(id,c,ct);
+    [HttpPost("orders/{id:guid}/transfer-approve")]public Task<RepOrderV1> ApproveTransfer(Guid id,RepExecutionCommandV1 c,CancellationToken ct)=>owner.ExecutionAsync(id,"approve",c,ct);
+    [HttpPost("orders/{id:guid}/dispatch")]public Task<RepOrderV1> Dispatch(Guid id,RepExecutionCommandV1 c,CancellationToken ct)=>owner.ExecutionAsync(id,"dispatch",c,ct);
+    [HttpPost("orders/{id:guid}/complete")]public Task<RepOrderV1> Complete(Guid id,RepExecutionCommandV1 c,CancellationToken ct)=>owner.ExecutionAsync(id,"complete",c,ct);
+    [HttpPost("orders/{id:guid}/stop")]public Task<RepOrderV1> Stop(Guid id,RepExecutionCommandV1 c,CancellationToken ct)=>owner.ExecutionAsync(id,"stop",c,ct);
+    [HttpGet("orders/{id:guid}/execution-link")]public Task<RepTransferLinkV1?> ExecutionLink(Guid id,CancellationToken ct)=>owner.ExecutionLinkAsync(id,ct);
     [HttpGet("active-intents/{id:guid}")]public Task<RepIntentV1> Intent(Guid id,CancellationToken ct)=>owner.IntentAsync(id,ct);
     [HttpGet("operations/{key}")]public Task<RepOperationV1> Operation(string key,CancellationToken ct)=>owner.OperationAsync(key,ct);
 }
