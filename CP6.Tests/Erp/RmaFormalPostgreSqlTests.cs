@@ -21,12 +21,12 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     private static readonly JsonSerializerOptions RmaJson = new(JsonSerializerDefaults.Web);
     private static RmaApplicationOptionsV1 FormalCoordinates(Harness h) => new() { WarehouseSites = h.Db.Warehouses.AsNoTracking()
         .Select(x => new RmaWarehouseSiteV1 { TenantId = h.Tenant, WarehouseId = x.Id, SiteId = h.Db.Space_Sites.Where(s => s.SiteCode == "SITE").Select(s => s.Id).Single() }).ToArray() };
-    private static RmaFormalOwnerV1 FormalRma(Harness h, IDataProtectionProvider? keys = null, RmaApplicationOptionsV1? coordinates = null, IRmaReturnSourcesV1? sources = null, IRmaInboundSourcesV1? inboundSources = null)
+    private static RmaFormalOwnerV1 FormalRma(Harness h, IDataProtectionProvider? keys = null, RmaApplicationOptionsV1? coordinates = null, IRmaReturnSourcesV1? sources = null, IRmaInboundSourcesV1? inboundSources = null, IRmaCommercialGatewayV1? commercial = null)
     {
         var authority = FormalRmaAuthority(h);
         return new(h.Db, authority, ScopeFence(h), new QualitySpecificationRuntimeV1("DEMO"),
             keys ?? new EphemeralDataProtectionProvider(), ContentOwner(h, new ContentStore(), new ContentInspector()), Options.Create(coordinates ?? FormalCoordinates(h)),sources,
-            inboundSources == null ? null : new RmaInboundAdapterV1(h.Db,new StockMovementService(h.Db,new WmsSequenceService(h.Db),owner:authority),new WmsSequenceService(h.Db),inboundSources));
+            inboundSources == null ? null : new RmaInboundAdapterV1(h.Db,new StockMovementService(h.Db,new WmsSequenceService(h.Db),owner:authority),new WmsSequenceService(h.Db),inboundSources),commercial);
     }
     private static OperationsOwnerV1 FormalRmaAuthority(Harness h)
     {
