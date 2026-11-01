@@ -12,7 +12,7 @@ W235，服务 `Main.Wms.TransferRequest.v1`，命令合同 `Main.Wms.TransferReq
 
 创建时登记本地 `WMS_TRANSFER` SourceDemand 和 `[0, quantity)` 双轴绑定，使用已存在的 `TransferDemandBudgetV1`。编辑在一个事务内关闭旧绑定/需求，再登记新内容版本的需求/绑定；撤回或拒绝关闭全部绑定及需求。请求、不可变历史、待发布事件、部门映射及原操作日志共同提交。失败全部回滚，提交响应丢失保留 UNKNOWN 语义，经原操作查询恢复。
 
-库存尚未派发，返回 `executionState=NOT_DISPATCHED`。请求批准不写 Stock、Movement、Claim 或容量。`cp6_transfer_request_v1.events` 保存原子待发布原文；本轮未实现该事件的运输消费者，不能据此声称消息已投递。
+仅完成请求批准时，返回 `executionState=NOT_DISPATCHED`。请求批准不写 Stock、Movement、Claim 或容量。W236 已增加[原生执行阶段](transfer-native-stages-v1.md)，阶段执行后才根据实际 Stock 双腿回执更新移动状态。`cp6_transfer_request_v1.events` 保存原子待发布原文；尚未实现该事件的运输消费者，不能据此声称消息已投递。
 
 ## 入口
 
@@ -40,4 +40,4 @@ W235，服务 `Main.Wms.TransferRequest.v1`，命令合同 `Main.Wms.TransferReq
 
 生产业务验收允许构造这些业务数据和配置。`TransferRequestPostgreSqlTests` 创建明确模拟的租户、两个独立用户、产品/UOM/库存身份、站点、仓库和库位；实际执行 Owner、PostgreSQL 迁移/事务、权限、HTTP 登录/CSRF和审批。无需真实企业资料。测试环境是本地隔离 PostgreSQL 18 / .NET 宿主，不等同于生产部署。
 
-后续仍须完成已有目标中的 SourceDemand 共享义务采用、正式审批适配、Stage/Stock 同事务实际移动、补货派发及取消/恢复。这些内容不计入本轮请求业务验收，也不能用本轮通过结果关闭 WP10-10/WP10-31 全任务。
+W236 已完成原生库存池 Stage/Stock 同事务移动与阶段恢复。后续仍须完成已有目标中的 SourceDemand 共享义务采用、正式审批适配、完整 Root/Slice/Claim 与 typed 容量协议、补货派发及取消/恢复。这些内容不能由原生请求或阶段的局部通过结果关闭 WP10-10/WP10-31 全任务。

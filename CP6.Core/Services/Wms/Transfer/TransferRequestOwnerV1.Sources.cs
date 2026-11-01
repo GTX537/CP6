@@ -12,7 +12,7 @@ namespace CP6.Core.Services.Wms.Transfer;
 public sealed partial class TransferRequestOwnerV1
 {
     private sealed record ResolvedLine(Guid Id, TransferRequestLineInputV1 Input, InventoryProductOptionV1 Product,
-        EngineeringSourceRefV1 SourceSiteRef, EngineeringSourceRefV1 DestinationSiteRef, string BaseQuantity, string BudgetKey);
+        EngineeringSourceRefV1 SourceSiteRef, EngineeringSourceRefV1 DestinationSiteRef, string BaseQuantity, string BudgetKey, string BaseUnitCode);
     private async Task<Dictionary<Guid, EngineeringSourceRefV1>> Sites(OperationsAccessV1 a, TransferEnvironmentStoreV1 s,
         IEnumerable<Guid> warehouses, CancellationToken ct)
     {
@@ -72,7 +72,7 @@ public sealed partial class TransferRequestOwnerV1
             var quantity = Amount(split[0] + "." + fraction.PadRight(8, '0'));
             var lineId = previous.SingleOrDefault(x => x.Input.ClientLineKey == l.ClientLineKey)?.Id ?? Guid.NewGuid();
             result.Add(new(lineId, l, product.Product, sites[l.SourceWarehouseId], sites[l.DestinationWarehouseId], quantity,
-                $"MAIN_TRANSFER_REQUEST/{id:D}/{version}/{lineId:D}"));
+                $"MAIN_TRANSFER_REQUEST/{id:D}/{version}/{lineId:D}", unit.Base.Profile.Code));
         }
         return result.ToArray();
     }

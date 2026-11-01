@@ -15,9 +15,35 @@
       </section>
       <section v-if="selected"><h2>{{ selected.draftKey }}</h2><p>{{ stateName(selected.state) }} · 内容版本 {{ selected.version }}</p>
         <table><thead><tr><th>产品</th><th>申请数量</th><th>基本单位数量</th></tr></thead><tbody><tr v-for="line in selected.lines" :key="line.id"><td>{{ line.product.label }}</td><td>{{ line.input.inputQuantity }}</td><td>{{ line.baseQuantity }}</td></tr></tbody></table>
-        <p>此请求尚未派发，库存未因请求批准而移动。</p>
+        <p>{{ executionName(selected.executionState) }}</p>
         <label>操作原因<textarea v-model="reason" aria-label="操作原因" maxlength="1000" /></label>
         <button v-for="action in selected.allowedActions.filter(x => x !== 'EDIT')" v-show="has(permissionFor(action))" :key="action" :disabled="busy || !!pending || !reason.trim()" @click="act(action)">{{ actionName(action) }}</button>
+        <template v-if="selected.state === 'APPROVED'">
+          <h3>调拨执行阶段</h3>
+          <article v-for="stage in selected.stages || []" :key="stage.id">
+            <p>{{ stage.scanOccurrenceKey }} · {{ stageName(stage.state) }}</p>
+            <ul><li v-for="(line, i) in stage.lines" :key="i">批次 {{ line.lot || '无批次' }}，数量 {{ line.selection.quantity }}，请求起点 {{ line.selection.requestFrom }}</li></ul>
+            <template v-if="stage.state === 'PREPARED'">
+              <label><input v-model="confirmedStages[stage.id]" type="checkbox" :aria-label="`确认现场状态 ${stage.scanOccurrenceKey}`" />我已核实本次现场状态</label>
+              <button v-if="has('execute') && stage.performerId === context.actorId" :disabled="busy || !!pending || !reason.trim() || !confirmedStages[stage.id]" @click="decideStage(stage, true)">确认移库并记账</button>
+              <button v-if="has('close-stage')" :disabled="busy || !!pending || !reason.trim() || !confirmedStages[stage.id]" @click="decideStage(stage, false)">确认未发生并关闭</button>
+            </template>
+          </article>
+          <fieldset v-if="has('prepare') && selected.executionState !== 'COMPLETED'" :disabled="busy || !!pending">
+            <legend>准备新的移库阶段</legend>
+            <button type="button" @click="loadStockChoices">读取当前可用库存</button>
+            <label>设备标识<input v-model="device" aria-label="设备标识" maxlength="100" /></label>
+            <label>本次扫描流水<input v-model="scanKey" aria-label="本次扫描流水" maxlength="200" /></label>
+            <article v-for="(part, i) in stageParts" :key="i">
+              <label>库存<select v-model="part.choice" :aria-label="`阶段库存 ${i + 1}`"><option disabled value="">请选择库存</option><option v-for="choice in stockChoices" :key="`${choice.requestLineId}/${choice.stockId}`" :value="`${choice.requestLineId}/${choice.stockId}`">{{ selected.lines.find(l => l.id === choice.requestLineId)?.product.label }} · {{ choice.lot || '无批次' }} · 可用 {{ choice.available }} {{ choice.unitCode }}</option></select></label>
+              <label>请求数量起点<input v-model="part.from" :aria-label="`请求起点 ${i + 1}`" inputmode="decimal" /></label>
+              <label>本次数量<input v-model="part.quantity" :aria-label="`阶段数量 ${i + 1}`" inputmode="decimal" /></label>
+              <button type="button" @click="stageParts.splice(i, 1)">移除此段</button>
+            </article>
+            <button type="button" :disabled="stageParts.length >= 500" @click="stageParts.push({ choice: '', from: '0', quantity: '' })">添加移库段</button>
+            <button type="button" :disabled="!reason.trim() || !device.trim() || !scanKey.trim() || !stageParts.length" @click="prepareStage">保存待执行阶段</button>
+          </fieldset>
+        </template>
       </section>
       <form v-if="editing" @submit.prevent="save">
         <h2>{{ selected ? '编辑草稿' : '新建调拨请求' }}</h2>
@@ -41,7 +67,7 @@
 </template>
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { transferRequestsApi as api, type TransferLineInput, type TransferRequest, type TransferRequestContext } from '@/api/wms/transferRequests'
+import { transferRequestsApi as api, type TransferLineInput, type TransferRequest, type TransferRequestContext, type TransferStage, type TransferStockChoice } from '@/api/wms/transferRequests'
 import { pendingTransferRequest, recoverTransferRequest, sendTransferRequest, transferQuantity, transferRequestData as data } from '@/auth/transferRequestRecovery'
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
@@ -51,11 +77,16 @@ const context = ref<TransferRequestContext | null>(null), rows = ref<TransferReq
 const pending = ref<string | null>(null), busy = ref(false), error = ref(''), notice = ref(''), reason = ref(''), draftKey = ref(''), department = ref(''), page = ref(1), creating = ref(false)
 interface Line { key: string; product: string; unit: string; quantity: string; from: string; to: string }
 const lines = ref<Line[]>([]), editing = computed(() => creating.value || selected.value?.state === 'DRAFT')
+const stockChoices = ref<TransferStockChoice[]>([]), device = ref(''), scanKey = ref(''), confirmedStages = ref<Record<string, boolean>>({})
+const stageParts = ref<{ choice: string; from: string; quantity: string }[]>([])
 let generation = 0, live = true
 const stateName = (s: string) => ({ DRAFT: '草稿', SUBMITTED: '待审批', APPROVED: '已批准', REJECTED: '已驳回', WITHDRAWN: '已撤回' }[s] || s)
 const actionName = (s: string) => ({ SUBMIT: '送审', APPROVE: '批准', REJECT: '驳回', WITHDRAW: '撤回' }[s] || s)
 const permissionFor = (s: string) => s === 'APPROVE' || s === 'REJECT' ? 'approve' : s.toLowerCase()
-function clear() { context.value = null; rows.value = []; selected.value = null; pending.value = null; lines.value = []; reason.value = ''; creating.value = false }
+const executionName = (s: string) => ({ NOT_DISPATCHED: '尚未移动库存。', PARTIALLY_MOVED: '已完成部分移库。', COMPLETED: '请求数量已全部移动到目标库位。' }[s] || s)
+const stageName = (s: string) => ({ PREPARED: '待执行', POSTED: '已记账', CLOSED_NO_EFFECT: '未发生，已关闭' }[s] || s)
+function clearStage() { stockChoices.value = []; stageParts.value = []; device.value = ''; scanKey.value = ''; confirmedStages.value = {} }
+function clear() { context.value = null; rows.value = []; selected.value = null; pending.value = null; lines.value = []; reason.value = ''; creating.value = false; clearStage() }
 async function run(work: (check: () => void) => Promise<void>) {
   if (busy.value) return; const epoch = generation, stamp = identityStamp(); busy.value = true; error.value = ''; notice.value = ''
   const check = () => { requireIdentity(stamp); if (!live || generation !== epoch || !authenticationCanRead()) throw new Error('当前身份已变化。') }
@@ -66,7 +97,7 @@ async function refreshRows(check: () => void) { const r = data(await api.list(pa
 async function reload() { await run(async check => { clear(); if (!permissions.loaded) await permissions.loadMyActions(); check(); const c = data(await api.context()); check(); context.value = c; await refreshRows(check) }) }
 function addLine() { lines.value.push({ key: crypto.randomUUID(), product: '', unit: '', quantity: '', from: '', to: '' }) }
 function newRequest() { selected.value = null; creating.value = true; lines.value = []; addLine(); draftKey.value = `TF-${crypto.randomUUID()}`; department.value = context.value?.allowsUnbound ? '' : context.value?.departments[0]?.id || ''; reason.value = '' }
-function select(v: TransferRequest) { selected.value = v; creating.value = false; reason.value = ''; lines.value = v.lines.map(l => ({ key: l.input.clientLineKey, product: l.input.productCatalogueRef.id, unit: l.input.inputUomRef.id, quantity: l.input.inputQuantity, from: l.input.sourceLocationId, to: l.input.destinationLocationId })) }
+function select(v: TransferRequest) { clearStage(); selected.value = v; creating.value = false; reason.value = ''; lines.value = v.lines.map(l => ({ key: l.input.clientLineKey, product: l.input.productCatalogueRef.id, unit: l.input.inputUomRef.id, quantity: l.input.inputQuantity, from: l.input.sourceLocationId, to: l.input.destinationLocationId })) }
 async function loadRequest(id: string, check: () => void) { const v = data(await api.read(id)); check(); select(v) }
 async function open(id: string) { await run(check => loadRequest(id, check)) }
 async function changePage(delta: number) { await run(async check => { page.value += delta; await refreshRows(check) }) }
@@ -91,6 +122,23 @@ async function act(action: string) { await run(async check => {
   const result = await sendTransferRequest(context.value!, operationId => api.act(v.id, action, { operationId, expectedRevision: v.revision, etag: v.etag, contentDigest: v.contentDigest, reason: reason.value }), check)
   check(); select(result.request); notice.value = '请求状态已更新。'
   await loadRequest(result.request.id, check); await refreshRows(check)
+}) }
+async function loadStockChoices() { await run(async check => { const choices = data(await api.stockChoices(selected.value!.id)); check(); stockChoices.value = choices }) }
+async function prepareStage() { await run(async check => {
+  const v = selected.value!; if (!has('prepare') || !reason.value.trim()) throw new Error('请确认权限并填写操作原因。')
+  const items = stageParts.value.map(part => {
+    const choice = stockChoices.value.find(x => `${x.requestLineId}/${x.stockId}` === part.choice)
+    if (!choice) throw new Error('请先选择当前库存。')
+    const from = /^0(?:\.0{1,8})?$/.test(part.from.trim()) ? '0.00000000' : transferQuantity(part.from)
+    return { requestLineId: choice.requestLineId, stockId: choice.stockId, requestFrom: from, quantity: transferQuantity(part.quantity) }
+  })
+  const result = await sendTransferRequest(context.value!, operationId => api.prepareStage(v.id, { operationId, expectedRevision: v.revision, etag: v.etag, contentDigest: v.contentDigest, device: device.value, scanOccurrenceKey: scanKey.value, lines: items, reason: reason.value }), check)
+  check(); select(result.request); notice.value = '移库阶段已保存，尚未改变库存。'; await loadRequest(v.id, check); await refreshRows(check)
+}) }
+async function decideStage(stage: TransferStage, execute: boolean) { await run(async check => {
+  const v = selected.value!; if (!has(execute ? 'execute' : 'close-stage') || !reason.value.trim() || !confirmedStages.value[stage.id]) throw new Error('请核实现场状态并填写原因。')
+  const result = await sendTransferRequest(context.value!, operationId => api.decideStage(v.id, stage.id, execute, { operationId, expectedRevision: v.revision, etag: v.etag, stageDigest: stage.digest, physicalNotOccurred: !execute, reason: reason.value }), check)
+  check(); select(result.request); notice.value = execute ? '移库已记账。' : '未发生的阶段已永久关闭。'; await loadRequest(v.id, check); await refreshRows(check)
 }) }
 async function recover(close: boolean) { await run(async check => {
   const r = await recoverTransferRequest(context.value!, close, check); check()

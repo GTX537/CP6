@@ -14,6 +14,10 @@ public sealed class TransferRequestController(TransferRequestOwnerV1 owner) : Co
     [HttpGet("context")] public async Task<IActionResult> Context(CancellationToken ct) => Result(await owner.ContextAsync(ct));
     [HttpGet] public async Task<IActionResult> List([FromQuery] int page = 1, CancellationToken ct = default) => Result(await owner.ListAsync(page, ct));
     [HttpGet("{id:guid}")] public async Task<IActionResult> Read(Guid id, CancellationToken ct) => Result(await owner.ReadAsync(id, ct));
+    [HttpGet("{id:guid}/stock-choices")] public async Task<IActionResult> Stocks(Guid id, CancellationToken ct) => Result(await owner.StockChoicesAsync(id, ct));
+    [HttpPost("{id:guid}/stages"), RequestSizeLimit(2097152)] public async Task<IActionResult> Prepare(Guid id, TransferStagePrepareV1 c, CancellationToken ct) => Result(await owner.PrepareStageAsync(id, c, ct));
+    [HttpPost("{id:guid}/stages/{stage:guid}/execute"), RequestSizeLimit(8192)] public async Task<IActionResult> Execute(Guid id, Guid stage, TransferStageDecisionV1 c, CancellationToken ct) => Result(await owner.DecideStageAsync(id, stage, true, c, ct));
+    [HttpPost("{id:guid}/stages/{stage:guid}/close"), RequestSizeLimit(8192)] public async Task<IActionResult> CloseStage(Guid id, Guid stage, TransferStageDecisionV1 c, CancellationToken ct) => Result(await owner.DecideStageAsync(id, stage, false, c, ct));
     [HttpGet("{id:guid}/revisions/{revision}")] public async Task<IActionResult> History(Guid id, string revision, CancellationToken ct) => Result(await owner.HistoryAsync(id, revision, ct));
     [HttpPost, RequestSizeLimit(2097152)] public async Task<IActionResult> Create(TransferRequestCreateV1 command, CancellationToken ct) => Result(await owner.CreateAsync(command, ct));
     [HttpPost("{id:guid}/edit"), RequestSizeLimit(2097152)] public async Task<IActionResult> Edit(Guid id, TransferRequestEditV1 command, CancellationToken ct) => Result(await owner.EditAsync(id, command, ct));

@@ -17,7 +17,7 @@ namespace CP6.Core.Services.Wms.Transfer;
 
 public sealed partial class TransferRequestOwnerV1(CP6Context db, OperationsOwnerV1 owner, ScopeAuthorizationFenceV1 scope,
     IOptions<TransferEnvironmentOptionsV1> environment, IOptions<TransferRequestOptionsV1> options,
-    QualitySpecificationRuntimeV1 runtime, TransferProductSourcesV1 products)
+    QualitySpecificationRuntimeV1 runtime, TransferProductSourcesV1 products, StockMovementService stock)
 {
     private OperationsOwnerV1 Authority => owner.Owns(db) ? owner : throw Error("AUTHORITY_FENCE_UNAVAILABLE");
     private TransferEnvironmentStoreV1 EnvironmentStore() => new(db, scope, environment, runtime);
