@@ -8,6 +8,9 @@
       <button :disabled="!choiceId || !can('queue.read')" @click="read(0, true)">读取当前队列</button>
     </fieldset>
     <template v-if="view">
+      <a :href="'/mes/resource-queues/' + view.resourceRef.id + '?siteId=' + view.siteId">打开独立资源队列</a>
+      <button :disabled="busy || !can('history.read')" @click="readHistory">读取队列历史</button>
+      <ul><li v-for="h in history" :key="h.revision">队列版本 {{ h.revision }} · {{ h.members.map(m => m.operationId).join(' → ') }}</li></ul>
       <p>{{ view.authorizationScope }} · {{ view.asOf }} · 队列版本 {{ view.queueRevision }} · 总数 {{ view.totalCount ?? '未知' }} <strong v-if="stale">STALE：请重新读取</strong></p>
       <p v-if="!view.completeForWrite">当前范围不完整，只能查看，不能重排隐藏成员。</p>
       <table><thead><tr><th>位置 / 操作</th><th>执行状态</th><th>工艺路线序号</th></tr></thead><tbody><tr v-for="i in view.items" :key="i.member.itemId"><td>{{ i.queueOrdinal }} / {{ i.member.operationId }}</td><td>{{ i.state }} <strong v-if="i.reassessRequired">QUEUE_REASSESS_REQUIRED：迟到执行事实，请重新评估</strong></td><td>{{ i.member.routeSortOrder }}</td></tr></tbody></table>
@@ -39,13 +42,16 @@ import type { SchedApply } from '@/api/mes/scheduling'
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
 import { usePermissionStore } from '@/stores/permission'
+const props = defineProps<{ initialResourceId?: string; initialSiteId?: string }>()
 const permissions = usePermissionStore(), can = (action: string) => permissions.has(`mes-planning-board:${action}`)
 const context = ref<QueueContext | null>(null), choiceId = ref(''), view = ref<QueueView | null>(null), plan = ref<QueuePlan | null>(null), result = ref<QueueReply | null>(null)
+const history = ref<Awaited<ReturnType<typeof api.history>>>([])
+async function readHistory() { await run(async check => { const v = view.value!; const h = await api.history(v.siteId, v.resourceRef.id); check(); history.value = h }) }
 const pending = ref<Omit<SchedApply, 'reason'> | null>(null), move = ref(''), anchor = ref(''), position = ref<QueueMove['position']>('BEFORE'), reason = ref(''), confirmed = ref(false), cursor = ref(0), stale = ref(false), busy = ref(false), error = ref(''), notice = ref('')
 const key = computed(() => context.value ? `cp6_queue_v1:${context.value.environmentId}:${context.value.tenantId}:${context.value.actorId}` : '')
 let epoch = 0, live = true
 function invalidate() { plan.value = null; confirmed.value = false }
-function clear() { view.value = null; invalidate(); move.value = ''; anchor.value = ''; cursor.value = 0; stale.value = false; result.value = null }
+function clear() { history.value = []; view.value = null; invalidate(); move.value = ''; anchor.value = ''; cursor.value = 0; stale.value = false; result.value = null }
 async function run(work: (check: () => void) => Promise<void>) {
   if (busy.value) return
   const version = epoch, identity = identityStamp(); busy.value = true; error.value = ''; notice.value = ''
@@ -78,7 +84,14 @@ async function apply() { await run(async check => {
 async function recover() { await run(async check => { if (!can('command.read')) throw new Error('没有原结果读取权限。'); await locked(check, async () => { const value = await api.command(pending.value!.commandId); check(); if (value.status === 'FOUND') accepted(value.queueReply!); else notice.value = '尚未观察到结果，不能据此认定未提交。' }) }) }
 async function retry() { await run(async check => { if (!can('queue.apply')) throw new Error('没有提交权限，请查询原结果。'); await locked(check, async () => { const item = pending.value!, p = await api.plan(item.planId); check(); await send({ ...item, reason: p.input.reason }, check) }) }) }
 function identityChanged() { epoch++; busy.value = false; clear(); context.value = null; choiceId.value = ''; pending.value = null; reason.value = ''; error.value = ''; notice.value = '' }
-onMounted(() => { window.addEventListener(AUTH_EVENT, identityChanged); if (authenticationCanRead() && can('queue.read')) void load() })
+onMounted(async () => {
+  window.addEventListener(AUTH_EVENT, identityChanged)
+  if (!authenticationCanRead() || !can('queue.read')) return
+  await load(); if (!live || !context.value || !props.initialResourceId) return
+  const selected = context.value.resources.find(c => c.resourceRef.id === props.initialResourceId && c.siteId === props.initialSiteId)
+  if (!selected) { error.value = '当前资源队列不在可见范围'; return }
+  choiceId.value = selected.queueId; await read(0, true)
+})
 onBeforeUnmount(() => { live = false; epoch++; window.removeEventListener(AUTH_EVENT, identityChanged) })
 </script>
 <style scoped>

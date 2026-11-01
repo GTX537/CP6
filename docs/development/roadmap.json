@@ -161602,6 +161602,16 @@
       "date": "2026-11-01",
       "change": "W244统一排程看板：明确Site、完整引用筛选、同捕获KPI与稳定分页、未知/未排/历史状态、工厂日周时间轴和准确操作详情。 模拟资料生产业务验收通过；完整原阶段范围继续。",
       "evidence": "docs/development/evidence/W244-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-01",
+      "change": "W244按最终proof归档一次；W245操作链与原D3出口，模拟缺失资料。",
+      "evidence": "docs/development/dispatch/20261101-wave245/README.md"
+    },
+    {
+      "date": "2026-11-01",
+      "change": "W245排程操作链收口：UTC微秒拖拽草稿/确认、准确独立操作/计划/预览/队列/工作入口、原工作只读核对、当前能力和Owner链接；原七天D3限定出口核销。 模拟资料生产业务验收通过；完整原阶段范围继续。",
+      "evidence": "docs/development/evidence/W245-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -185580,9 +185590,46 @@
         ]
       },
       "wave244_board": {
-        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "status": "CLOSED",
         "scope": "W244统一排程看板：明确Site、完整引用筛选、同捕获KPI与稳定分页、未知/未排/历史状态、工厂日周时间轴和准确操作详情。",
         "report": "docs/development/evidence/W244-01/DELIVERY.md",
+        "full_task_completed": false,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave244-final-verification.json"
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W244-01",
+            "source": "03f1a8fe2ba712d10718270a67af1a681aeba5a8",
+            "remote_target": "80166305934a6716cf40df6e3eb7218f84965aab",
+            "branch": "codex/w244-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/671"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W244-HANDOFF",
+            "source": "13abc0274a6bd815fb20bc27ea8b0284279b527a",
+            "remote_target": "ca6fb430a8bfda6b582de09b1d685f13c389afc4",
+            "branch": "codex/w244-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/220"
+          }
+        ]
+      },
+      "wave245_flow": {
+        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "scope": "W245排程操作链收口：UTC微秒拖拽草稿/确认、准确独立操作/计划/预览/队列/工作入口、原工作只读核对、当前能力和Owner链接；原七天D3限定出口核销。",
+        "report": "docs/development/evidence/W245-01/DELIVERY.md",
         "full_task_completed": false,
         "lifecycle_complete": false,
         "lifecycle_snapshot": {
@@ -185785,9 +185832,46 @@
         ]
       },
       "wave244_board": {
-        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "status": "CLOSED",
         "scope": "W244统一排程看板：明确Site、完整引用筛选、同捕获KPI与稳定分页、未知/未排/历史状态、工厂日周时间轴和准确操作详情。",
         "report": "docs/development/evidence/W244-01/DELIVERY.md",
+        "full_task_completed": false,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave244-final-verification.json"
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W244-01",
+            "source": "03f1a8fe2ba712d10718270a67af1a681aeba5a8",
+            "remote_target": "80166305934a6716cf40df6e3eb7218f84965aab",
+            "branch": "codex/w244-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/671"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W244-HANDOFF",
+            "source": "13abc0274a6bd815fb20bc27ea8b0284279b527a",
+            "remote_target": "ca6fb430a8bfda6b582de09b1d685f13c389afc4",
+            "branch": "codex/w244-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/220"
+          }
+        ]
+      },
+      "wave245_flow": {
+        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "scope": "W245排程操作链收口：UTC微秒拖拽草稿/确认、准确独立操作/计划/预览/队列/工作入口、原工作只读核对、当前能力和Owner链接；原七天D3限定出口核销。",
+        "report": "docs/development/evidence/W245-01/DELIVERY.md",
         "full_task_completed": false,
         "lifecycle_complete": false,
         "lifecycle_snapshot": {
@@ -198708,10 +198792,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261101-wave244",
-      "path": "docs/development/dispatch/20261101-wave244/README.md",
-      "baseline_sha": "31b7f02bfd510da113c6889532ed2a11ab15be0a",
-      "registered_at": "2026-11-01T17:50:12.764905+00:00",
+      "id": "20261101-wave245",
+      "path": "docs/development/dispatch/20261101-wave245/README.md",
+      "baseline_sha": "80166305934a6716cf40df6e3eb7218f84965aab",
+      "registered_at": "2026-11-01T18:20:06.089786+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -198730,43 +198814,42 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W244-01",
-          "workspace_task": "W244-01",
+          "id": "W245-01",
+          "workspace_task": "W245-01",
           "related_tasks": [
             "WP08-10",
             "WP08-11"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "统一排程BoardCapture：Site/工序/班组/资源/状态/日期过滤、同捕获KPI与稳定分页、未知/未排/历史状态、日周时间轴及准确详情。模拟业务输入，实际PostgreSQL/API生产业务验收。",
+          "title": "排程操作链收口：看板UTC拖拽草稿与确认、准确独立详情入口、原工作只读回查/核对、当前能力和Owner链接；核对原D3限定出口与实际生产业务验收证据。",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "65386f436ad63125d102b2fb94ffa7d41a8b2e83",
-            "branch": "codex/w244-handoff",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261101T175012Z-wave244-start/MESSAGE.md",
-            "at": "2026-11-01T17:50:12.764905+00:00"
+            "commit": "f498bcf97ae41534ebe462adc7847300fc75c699",
+            "branch": "codex/w245-handoff",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261101T182006Z-wave245-start/MESSAGE.md",
+            "at": "2026-11-01T18:20:06.089786+00:00"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w244-01",
-          "planned_scope_ref": "docs/development/dispatch/20261101-wave244/README.md",
+          "branch": "codex/w245-01",
+          "planned_scope_ref": "docs/development/dispatch/20261101-wave245/README.md",
           "full_task_completed": false,
-          "business_acceptance": "PASS_SIMULATED_UNIFIED_BOARD_SCOPE",
+          "business_acceptance": "PASS_SIMULATED_SCHEDULING_INTERACTIONS_AND_BOUNDED_D3",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
-            "Main:SCHED-board-read-model",
-            "Main:migration",
+            "Main:SCHED-work-read-and-UI",
             "Main:coordination-ledger"
           ],
-          "worker_delivery_ref": "docs/development/evidence/W244-01/DELIVERY.md",
-          "validation": "9 relevant PostgreSQL18/actual HTTP board scenarios PASS;23 Vue scenarios PASS (8 board,7 time,8 existing planning);app vue-tsc PASS. Simulated production business inputs, actual captures/read transactions/authorization/API. Initial broad Board_ selector included15 unrelated successful tests and2 out-of-scope skips; exact selector8/8 plus affected delay regression2/2, skipped0; incidental results not counted.",
+          "worker_delivery_ref": "docs/development/evidence/W245-01/DELIVERY.md",
+          "validation": "12 distinct PostgreSQL18/actual HTTP scenarios PASS (9 board + 3 work/capability/current-authorization);64 distinct affected Vue/router scenarios PASS;app vue-tsc PASS. Original D3 evidence reused from W47/48/49/79/136/240–244 with adopted-main ancestry verified. Explicit simulated production business inputs; actual PostgreSQL, API, and component code. No Actions or production deployment.",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -198776,20 +198859,20 @@
           },
           "handoff_delivery": {
             "result": "PASS",
-            "source": "13abc0274a6bd815fb20bc27ea8b0284279b527a",
-            "main": "ca6fb430a8bfda6b582de09b1d685f13c389afc4",
-            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/220",
+            "source": "868bf50d5ca47db80985c2b91eb49420a1ce3268",
+            "main": "131e751812e55f6c028845894b288ae861e7fc60",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/221",
             "exact_tree_adoption": true,
-            "at": "2026-11-01T18:09:20.005554+00:00"
+            "at": "2026-11-01T18:40:48.489898+00:00"
           }
         }
       ],
       "horizon": {
-        "started_at": "2026-11-01T17:47:48.497677+00:00",
-        "checkpoint_at": "2026-11-01T18:10:17.728836+00:00",
+        "started_at": "2026-11-01T18:18:37.942323+00:00",
+        "checkpoint_at": "2026-11-01T18:41:50.492748+00:00",
         "estimated_agent_wall_time_minutes": [
           45,
-          80
+          75
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -198797,7 +198880,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "按原MES-SCHED-01 AC01–36核对D3综合验收，补齐拖拽草稿/独立详情路由等真实差距；继续原D2/D5/D6/D7直接剩余范围。生产业务验收缺失输入直接模拟，不等待企业数据。",
+      "next_action": "先核对原D5宿主采用的实际剩余与W130–143证据，以模拟身份/服务/传输执行适用集成；原D2/D6/D7按原出口核销，不继续扩成全APS或125目标。",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -198805,7 +198888,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "actual_minutes_so_far": 22.49
+      "actual_minutes_so_far": 23.21
     },
     "wave_history": [
       {
@@ -230331,6 +230414,129 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/219"
           }
         ]
+      },
+      {
+        "id": "20261101-wave244",
+        "path": "docs/development/dispatch/20261101-wave244/README.md",
+        "baseline_sha": "31b7f02bfd510da113c6889532ed2a11ab15be0a",
+        "registered_at": "2026-11-01T17:50:12.764905+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W244-01",
+            "workspace_task": "W244-01",
+            "related_tasks": [
+              "WP08-10",
+              "WP08-11"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "统一排程BoardCapture：Site/工序/班组/资源/状态/日期过滤、同捕获KPI与稳定分页、未知/未排/历史状态、日周时间轴及准确详情。模拟业务输入，实际PostgreSQL/API生产业务验收。",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "65386f436ad63125d102b2fb94ffa7d41a8b2e83",
+              "branch": "codex/w244-handoff",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261101T175012Z-wave244-start/MESSAGE.md",
+              "at": "2026-11-01T17:50:12.764905+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w244-01",
+            "planned_scope_ref": "docs/development/dispatch/20261101-wave244/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "PASS_SIMULATED_UNIFIED_BOARD_SCOPE",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:SCHED-board-read-model",
+              "Main:migration",
+              "Main:coordination-ledger"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W244-01/DELIVERY.md",
+            "validation": "9 relevant PostgreSQL18/actual HTTP board scenarios PASS;23 Vue scenarios PASS (8 board,7 time,8 existing planning);app vue-tsc PASS. Simulated production business inputs, actual captures/read transactions/authorization/API. Initial broad Board_ selector included15 unrelated successful tests and2 out-of-scope skips; exact selector8/8 plus affected delay regression2/2, skipped0; incidental results not counted.",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave244-final-verification.json"
+            },
+            "handoff_delivery": {
+              "result": "PASS",
+              "source": "13abc0274a6bd815fb20bc27ea8b0284279b527a",
+              "main": "ca6fb430a8bfda6b582de09b1d685f13c389afc4",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/220",
+              "exact_tree_adoption": true,
+              "at": "2026-11-01T18:09:20.005554+00:00"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-11-01T17:47:48.497677+00:00",
+          "checkpoint_at": "2026-11-01T18:10:17.728836+00:00",
+          "estimated_agent_wall_time_minutes": [
+            45,
+            80
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "按原MES-SCHED-01 AC01–36核对D3综合验收，补齐拖拽草稿/独立详情路由等真实差距；继续原D2/D5/D6/D7直接剩余范围。生产业务验收缺失输入直接模拟，不等待企业数据。",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave244-final-verification.json"
+        },
+        "actual_minutes_so_far": 22.49,
+        "actual_registered_wave_minutes": 24.98,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W244-01",
+            "source": "03f1a8fe2ba712d10718270a67af1a681aeba5a8",
+            "remote_target": "80166305934a6716cf40df6e3eb7218f84965aab",
+            "branch": "codex/w244-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/671"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W244-HANDOFF",
+            "source": "13abc0274a6bd815fb20bc27ea8b0284279b527a",
+            "remote_target": "ca6fb430a8bfda6b582de09b1d685f13c389afc4",
+            "branch": "codex/w244-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/220"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -230389,7 +230595,7 @@
         35,
         55
       ],
-      "current_stage": "D3",
+      "current_stage": "D5",
       "stages": [
         {
           "id": "D1",
@@ -230459,19 +230665,19 @@
         },
         {
           "id": "D3",
-          "phase": "PARTIALLY_ADOPTED",
+          "phase": "DONE",
           "full_business_acceptance": false,
-          "current_window": "W244-01",
+          "current_window": "W245-01",
           "prerequisite_adjustment": "W240-W243 contracts reused. W244 implements one BoardCapture for filtering, statistics and pages; simulated business sources, actual PostgreSQL/API reads and visibility checks.",
-          "adopted_window": "W49-01",
+          "adopted_window": "W245-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/402",
           "report": "docs/development/evidence/WP02-03/mes-realtime/DELIVERY.md",
-          "remaining": "本轮不关闭完整D3/WP08-10/WP08-11或原七天目标。原D3全部AC01–36、拖拽草稿/独立详情路由和跨阶段剩余仍待核对。模拟业务来源，实际本地隔离PostgreSQL18和HTTP；未生产部署、未既有环境迁移。",
+          "remaining": "No original bounded D3 feature remains after W245 merge/finish. D7 final affected integration and complete product scope remain separate.",
           "last_window_actual_agent_minutes": 56.28,
           "last_branches_deleted": true,
           "last_seats_released": true,
-          "next_action": "按原MES-SCHED-01 AC01–36核对D3综合验收，补齐拖拽草稿/独立详情路由等真实差距；继续原D2/D5/D6/D7直接剩余范围。生产业务验收缺失输入直接模拟，不等待企业数据。",
-          "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
+          "next_action": "先核对原D5宿主采用的实际剩余与W130–143证据，以模拟身份/服务/传输执行适用集成；原D2/D6/D7按原出口核销，不继续扩成全APS或125目标。",
+          "exit_audit_report": "docs/development/evidence/W245-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W136-01/DELIVERY.md",
           "last_product_source_report": "docs/development/evidence/W144-01/DELIVERY.md",
           "last_type_fix_report": "docs/development/evidence/W145-01/DELIVERY.md",
@@ -230537,7 +230743,16 @@
           "last_arrangement_report": "docs/development/evidence/W241-01/DELIVERY.md",
           "last_queue_report": "docs/development/evidence/W242-01/DELIVERY.md",
           "last_rebind_report": "docs/development/evidence/W243-01/DELIVERY.md",
-          "last_board_report": "docs/development/evidence/W244-01/DELIVERY.md"
+          "last_board_report": "docs/development/evidence/W244-01/DELIVERY.md",
+          "last_flow_report": "docs/development/evidence/W245-01/DELIVERY.md",
+          "exit_basis": "Original D3 bounded independent Owners/current scopes/same-transaction writes/trusted OEE worker and scheduling interactions accepted with explicit simulated inputs; ten prior adopted deliveries plus W245. Full WP08/APS/36 formal product acceptance separate.",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": true,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": true
+          }
         },
         {
           "id": "D4",
@@ -230759,13 +230974,13 @@
         ]
       },
       "latest_progress_assessment": {
-        "as_of": "2026-11-01T18:10:17.728836+00:00",
-        "adopted_through": "W243; W244 Main closeout pending",
+        "as_of": "2026-11-01T18:41:50.492748+00:00",
+        "adopted_through": "W244; W245 Main closeout pending",
         "engineering_range_percent": null,
-        "formal_stage_closure": "2/7",
+        "formal_stage_closure": "3/7 after W245 final adoption/finish",
         "remaining_execution_hours": null,
         "external_wait_excluded": true,
-        "basis": "D1/D4 closed; W244 unified board captured filters/KPI/paging passed actual PostgreSQL/API with simulated production business inputs. Original D3 acceptance consolidation and D2/D5/D6/D7 remain; no stage-ratio engineering percentage."
+        "basis": "D1/D3/D4 original bounded exits; D3 evidence explicitly audited. D2/D5/D6/D7 keep original remaining scope; no stage-ratio engineering percentage or enterprise-data wait."
       },
       "execution_principles_ref": "AGENTS.md",
       "acceptance_data_policy": {

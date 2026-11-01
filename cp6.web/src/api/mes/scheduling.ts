@@ -7,15 +7,18 @@ export interface SchedOperation { operationId: string; occurrenceRef: SchedRef; 
 export interface SchedContext { tenantId: string; actorId: string; environmentId: string; roots: { rootId: string; workOrderNo: string; siteRef: SchedRef; zoneId: string }[] }
 export interface SchedCapture { captureId: string; asOf: string; expiresAt: string; dataKind: string; completeForRoot: boolean; root: { rootId: string; workOrderNo: string; zoneId: string; expected: WoExpected; schedule: RootSchedule; operations: SchedOperation[] } }
 export interface SchedChange { captureId: string; operationId: string; expectedScheduleRevision: string; woExpected: WoExpected; kind: 'TIME_ONLY' | 'RESOURCE_CHANGE'; proposedStart: string; proposedEnd: string; proposedPriority: string | null; resourceChoiceRef: SchedRef | null; reason: string }
-export interface SchedPlan { planId: string; revision: string; digest: string; eligible: boolean; input: SchedChange; capture: SchedCapture; rootApplyGroup: { oldRootSchedule: RootSchedule; newRootSchedule: RootSchedule; changedOperations: { operationId: string; newInterval: SchedInterval }[]; unchangedOperationRefs: SchedRef[] }; gates: { code: string; operationId: string; state: string }[] }
+export interface SchedPlan { planId: string; revision: string; digest: string; eligible: boolean; input: SchedChange; capture: SchedCapture; rootApplyGroup: { groupId: string; rootWoId: string; oldRootSchedule: RootSchedule; newRootSchedule: RootSchedule; changedOperations: { operationId: string; newInterval: SchedInterval }[]; unchangedOperationRefs: SchedRef[] }; gates: { code: string; operationId: string; state: string }[] }
 export interface SchedApply { commandId: string; planId: string; expectedPlanRevision: string; expectedPlanDigest: string; reason: string }
 export interface SchedReply { commandId: string; outcome: string; workId: string; replayed: boolean; result: { applicationRef: SchedRef; oldWoExpected: WoExpected; newWoExpected: WoExpected; ownTransitionRef: SchedRef; operationResults: { operationId: string; oldScheduleRevision: string; newScheduleRevision: string; acceptedInterval: SchedInterval }[] } }
+export interface SchedWork { workId: string; planId: string; state: string; originalCommandId: string | null; payloadDigest: string | null; rootApplyGroup: SchedPlan['rootApplyGroup']; result: SchedReply['result'] | null; canInferNoEffect: false; asOf: string }
 const root = '/mes/scheduling'
 export const schedulingApi = {
   context: () => http.get<SchedContext>(`${root}/context`).then(r => r.data),
   capture: (id: string) => http.get<SchedCapture>(`${root}/roots/${id}/capture`).then(r => r.data),
   prepare: (body: SchedChange) => http.post<SchedPlan>(`${root}/change-plans`, body).then(r => r.data),
   plan: (id: string) => http.get<SchedPlan>(`${root}/change-plans/${id}`).then(r => r.data),
+  work: (id: string) => http.get<SchedWork>(`${root}/works/${id}`).then(r => r.data),
+  reconcile: (id: string) => http.post<SchedWork>(`${root}/works/${id}/reconcile`).then(r => r.data),
   apply: (body: SchedApply) => http.post<SchedReply>(`${root}/change-plans/${body.planId}/apply`, body).then(r => r.data),
   command: (id: string) => http.get<{ status: string; canInferNoEffect: false; reply?: SchedReply }>(`${root}/commands/${id}`).then(r => r.data)
 }

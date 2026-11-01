@@ -2,9 +2,9 @@
   <section aria-label="完整工单改期" class="schedule-time-panel">
     <h3>工单操作改期</h3><p>先准备并确认完整工单的前后计划，再应用改期。改期不代表释放工单或开始执行。</p>
     <p v-if="error" role="alert">{{ error }}</p><p v-if="notice" role="status">{{ notice }}</p>
-    <button :disabled="busy || !can('query')" @click="loadContext">读取可用工单</button>
+    <button v-if="!initialPlan" :disabled="busy || !can('query')" @click="loadContext">读取可用工单</button>
     <div v-if="pending"><p>原改期结果待核，请保留原操作。</p><button :disabled="busy || !can('command.read')" @click="recover">查询原改期结果</button><button :disabled="busy || !can('change.apply')" @click="retry">重试原改期</button></div>
-    <fieldset :disabled="busy || !!pending">
+    <fieldset v-if="!initialPlan" :disabled="busy || !!pending">
       <label>工单<select v-model="rootId" aria-label="改期工单" @change="clearPlan"><option value="">请选择</option><option v-for="r in context?.roots" :key="r.rootId" :value="r.rootId">{{ r.workOrderNo }} · {{ r.zoneId }}</option></select></label>
       <button :disabled="!rootId || !can('query')" @click="captureRoot">读取完整工单</button>
       <template v-if="capture">
@@ -22,13 +22,15 @@
       </template>
     </fieldset>
     <section v-if="plan">
+      <a :href="'/mes/planning-board/changes/' + plan.planId">打开独立计划详情</a>
+      <a v-if="can('work.read')" :href="'/mes/planning-board/work/' + plan.rootApplyGroup.groupId">核对本计划原工作</a>
       <h4>确认完整工单变化</h4><p>根计划：{{ interval(plan.rootApplyGroup.oldRootSchedule.interval) }} → {{ interval(plan.rootApplyGroup.newRootSchedule.interval) }}</p>
       <p>根优先级：{{ plan.rootApplyGroup.oldRootSchedule.priority }} → {{ plan.rootApplyGroup.newRootSchedule.priority }}</p>
       <ul><li v-for="o in plan.capture.root.operations" :key="o.operationId">{{ o.processLabel }}：{{ interval(o.interval) }} → {{ interval(plan.rootApplyGroup.changedOperations.find(c => c.operationId === o.operationId)?.newInterval ?? o.interval) }} {{ plan.rootApplyGroup.changedOperations.some(c => c.operationId === o.operationId) ? '改期' : '保持' }}</li></ul>
       <p v-for="g in plan.gates" :key="g.code + g.operationId">{{ g.code }} · {{ g.operationId }}</p>
       <button :disabled="busy || !!pending || !plan.eligible || !can('change.apply') || !permissions.has('mes-work-order:change.schedule')" @click="apply">确认应用改期</button>
     </section>
-    <section v-if="result"><p>改期已提交 · 原回执 {{ result.result.applicationRef.id }}</p><p>工单版本 {{ result.result.oldWoExpected.revision }} → {{ result.result.newWoExpected.revision }}</p><p>自身后继 {{ result.result.ownTransitionRef.id }}</p></section>
+    <section v-if="result"><p>改期已提交 · 原回执 {{ result.result.applicationRef.id }}</p><p>工单版本 {{ result.result.oldWoExpected.revision }} → {{ result.result.newWoExpected.revision }}</p><p>自身后继 {{ result.result.ownTransitionRef.id }}</p><a :href="'/mes/planning-board/work/' + result.workId">查看原工作和回执</a></section>
   </section>
 </template>
 <script setup lang="ts">
@@ -37,6 +39,8 @@ import { schedulingApi as api, type SchedContext, type SchedCapture, type SchedP
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
 import { usePermissionStore } from '@/stores/permission'
+const props = defineProps<{ initialRootId?: string; initialOperationId?: string; initialPlan?: SchedPlan }>()
+const emit = defineEmits<{ applied: [reply: SchedReply] }>()
 const permissions = usePermissionStore(), can = (action: string) => permissions.has(`mes-planning-board:${action}`)
 type Pending = Omit<SchedApply, 'reason'>
 const context = ref<SchedContext | null>(null), capture = ref<SchedCapture | null>(null), plan = ref<SchedPlan | null>(null), result = ref<SchedReply | null>(null), pending = ref<Pending | null>(null)
@@ -65,7 +69,7 @@ async function lock(check: () => void, work: () => Promise<void>) {
   if (!navigator.locks?.request) throw new Error('浏览器不支持多页面提交协调。')
   await navigator.locks.request(storage.value, { mode: 'exclusive', ifAvailable: true }, async active => { check(); if (!active) throw new Error('另一页面正在提交。'); await work() })
 }
-function accepted(value: SchedReply) { result.value = value; localStorage.removeItem(storage.value); pending.value = null; plan.value = null; capture.value = null; notice.value = '原改期结果已保存。' }
+function accepted(value: SchedReply) { result.value = value; localStorage.removeItem(storage.value); pending.value = null; plan.value = null; capture.value = null; notice.value = '原改期结果已保存。'; emit('applied', value) }
 async function send(body: SchedApply, check: () => void, firstAttempt = false) {
   try { const reply = await api.apply(body); check(); accepted(reply) }
   catch (e: any) { check(); if (firstAttempt && [400, 403, 404, 409, 412, 422].includes(e?.response?.status)) { localStorage.removeItem(storage.value); pending.value = null }; throw e }
@@ -84,7 +88,13 @@ async function retry() { await run(async check => {
   await lock(check, async () => { const item = pending.value!; const original = await api.plan(item.planId); check(); if (original.digest !== item.expectedPlanDigest || original.revision !== item.expectedPlanRevision) throw new Error('原计划身份不符。'); await send({ ...item, reason: original.input.reason }, check) })
 }) }
 function identityChanged() { epoch++; busy.value = false; clearPlan(); context.value = null; pending.value = null; rootId.value = ''; error.value = ''; notice.value = '' }
-onMounted(() => { window.addEventListener(AUTH_EVENT, identityChanged); if (authenticationCanRead() && can('query')) void loadContext() })
+onMounted(async () => {
+  window.addEventListener(AUTH_EVENT, identityChanged)
+  if (!authenticationCanRead() || !can('query')) return
+  await loadContext(); if (!live || !context.value) return
+  if (props.initialPlan) { const p = props.initialPlan; rootId.value = p.capture.root.rootId; capture.value = p.capture; operationId.value = p.input.operationId; choose(); start.value = p.input.proposedStart; end.value = p.input.proposedEnd; reason.value = p.input.reason; priority.value = p.input.proposedPriority ?? ''; plan.value = p }
+  else if (props.initialRootId) { rootId.value = props.initialRootId; await captureRoot(); if (capture.value && props.initialOperationId) { operationId.value = props.initialOperationId; choose() } }
+})
 onBeforeUnmount(() => { live = false; epoch++; window.removeEventListener(AUTH_EVENT, identityChanged) })
 </script>
 <style scoped>

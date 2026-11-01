@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
-const mock = vi.hoisted(() => ({ context: vi.fn(), capture: vi.fn(), prepare: vi.fn(), preview: vi.fn(), apply: vi.fn(), command: vi.fn(), continue: vi.fn(), stop: vi.fn(), denied: '' }))
+const mock = vi.hoisted(() => ({ context: vi.fn(), batch: vi.fn(), workContext: vi.fn(), capture: vi.fn(), prepare: vi.fn(), preview: vi.fn(), apply: vi.fn(), command: vi.fn(), continue: vi.fn(), stop: vi.fn(), denied: '' }))
 vi.mock('@/api/mes/arrangement', () => ({ arrangementApi: mock }))
+vi.mock('@/api/mes/rebind', () => ({ rebindApi: mock }))
 vi.mock('@/api/mes/scheduling', () => ({ schedulingApi: mock }))
 vi.mock('@/auth/browserAuthentication', () => ({ authenticationCanRead: () => true }))
 vi.mock('@/stores/permission', () => ({ usePermissionStore: () => ({ has: (key: string) => key !== mock.denied }) }))
@@ -27,7 +28,7 @@ async function apply() { await field('确认完整排列范围').setValue(true);
 beforeEach(() => {
   vi.resetAllMocks(); mock.denied = ''; localStorage.clear(); localStorage.setItem(AUTH_EPOCH, 'one')
   mock.context.mockResolvedValue({ tenantId: 'tenant', actorId: 'actor', environmentId: 'environment', roots: [{ rootId: 'root', siteRef: reference('site'), zoneId: 'America/New_York' }] })
-  mock.capture.mockResolvedValue(structuredClone(capture)); mock.prepare.mockResolvedValue(structuredClone(preview)); mock.preview.mockResolvedValue(structuredClone(preview)); mock.apply.mockResolvedValue(structuredClone(result)); mock.continue.mockResolvedValue(structuredClone(result))
+  mock.capture.mockResolvedValue(structuredClone(capture)); mock.prepare.mockResolvedValue(structuredClone(preview)); mock.preview.mockResolvedValue(structuredClone(preview)); mock.apply.mockImplementation(async input => ({ ...structuredClone(result), commandId: input.commandId })); mock.continue.mockResolvedValue(structuredClone(result))
   Object.defineProperty(navigator, 'locks', { configurable: true, value: { request: (_: string, _opts: unknown, run: (lock: object) => unknown) => run({}) } })
 })
 afterEach(() => { view?.unmount(); view = undefined })
@@ -38,7 +39,7 @@ it('requires an explicit site and whole-manifest confirmation, applies group ide
   await apply(); expect(mock.apply.mock.calls[0]![0]).toMatchObject({ explicitAtomicGroupIds: ['g1', 'g2'], expectedManifestDigest: 'manifest' }); expect(mock.apply.mock.calls[0]![0]).not.toHaveProperty('items'); expect(view!.text()).toContain('全部工单组已提交')
 })
 it('shows partial/unknown counts, preserves the original command, and continues the same batch', async () => {
-  mock.apply.mockResolvedValueOnce(structuredClone(pendingResult)); await render(); await prepare(); await apply()
+  mock.apply.mockImplementationOnce(async input => ({ ...structuredClone(pendingResult), commandId: input.commandId })); await render(); await prepare(); await apply()
   expect(view!.text()).toContain('批次逐组结果'); expect(view!.text()).toContain('未知 1'); expect(view!.text()).not.toContain('全部工单组已提交'); expect(localStorage.getItem(key)).toBeTruthy()
   await click('继续原批次'); expect(mock.continue).toHaveBeenCalledWith('batch'); expect(mock.apply).toHaveBeenCalledTimes(1); expect(localStorage.getItem(key)).toBeNull()
 })
@@ -60,7 +61,7 @@ it('does not lose an uncertain command when replay or final result reads are for
   mock.denied = 'mes-planning-board:arrange.apply'; mock.command.mockResolvedValue({ status: 'FOUND', batch: result }); await click('查询原排列结果'); expect(view!.text()).toContain('全部工单组已提交')
 })
 it('stops only unsent groups and keeps unknown work pending', async () => {
-  mock.apply.mockResolvedValueOnce({ ...pendingResult, submittedCount: 3, waitingCount: 1 }); await render(); await prepare(); await apply()
+  mock.apply.mockImplementationOnce(async input => ({ ...pendingResult, commandId: input.commandId, submittedCount: 3, waitingCount: 1 })); await render(); await prepare(); await apply()
   mock.stop.mockResolvedValue({ ...pendingResult, submittedCount: 3, cancelledCount: 1 }); await click('仅停止尚未发送组'); expect(mock.stop).toHaveBeenCalledWith('batch'); expect(localStorage.getItem(key)).toBeTruthy(); expect(view!.text()).toContain('未知 1')
 })
 it('invalidates edited previews, requires WO authority, and rejects an offsetless base time', async () => {
@@ -70,4 +71,20 @@ it('invalidates edited previews, requires WO authority, and rejects an offsetles
 it('ignores delayed preview results after the current identity changes', async () => {
   let resolve!: (value: unknown) => void; mock.prepare.mockImplementationOnce(() => new Promise(r => { resolve = r })); await render(); await prepare()
   localStorage.setItem(AUTH_EPOCH, 'two'); window.dispatchEvent(new Event(AUTH_EVENT)); resolve(preview); await flushPromises(); expect(view!.text()).not.toContain('确认完整排列清单'); expect(view!.text()).not.toContain('COMPLETE')
+})
+
+it('deep preview pages the complete server manifest and keeps all atomic groups when confirming', async () => {
+  mock.preview.mockImplementation(async (_id, cursor = 0) => ({ ...preview, items: preview.items.slice(cursor, cursor + 20), nextCursor: cursor === 0 ? 20 : null }))
+  view = mount(View, { props: { initialPreviewId: 'preview' } }); await flushPromises(); expect(view.findAll('tbody tr')).toHaveLength(20); await click('下一页')
+  expect(mock.preview).toHaveBeenLastCalledWith('preview', 20); expect(view.findAll('tbody tr')).toHaveLength(5); await apply(); expect(mock.apply.mock.calls[0]![0].explicitAtomicGroupIds).toEqual(['g1', 'g2'])
+})
+it('deep batch reads and continues only the original batch without a query or new apply', async () => {
+  mock.denied = 'mes-planning-board:query'; mock.workContext.mockResolvedValue({ tenantId: 'tenant', actorId: 'actor', environmentId: 'environment' }); mock.batch.mockResolvedValue(pendingResult)
+  view = mount(View, { props: { initialBatchId: 'batch' } }); await flushPromises(); expect(mock.batch).toHaveBeenCalledWith('batch'); expect(mock.context).not.toHaveBeenCalled(); await click('继续原批次'); expect(mock.continue).toHaveBeenCalledWith('batch'); expect(mock.apply).not.toHaveBeenCalled()
+})
+
+it('deep batch cannot overwrite a newer original command stored by another page', async () => {
+  mock.workContext.mockResolvedValue({ tenantId: 'tenant', actorId: 'actor', environmentId: 'environment' }); mock.batch.mockResolvedValue(pendingResult)
+  view = mount(View, { props: { initialBatchId: 'batch' } }); await flushPromises(); const saved = JSON.stringify({ commandId: 'other-command' }); localStorage.setItem(key, saved)
+  await click('继续原批次'); expect(mock.continue).not.toHaveBeenCalled(); expect(localStorage.getItem(key)).toBe(saved); expect(view.text()).toContain('另一原命令待核对')
 })

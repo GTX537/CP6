@@ -9,14 +9,20 @@ public sealed record BoardSourceV1(string DataKind,SchedRefV1 Reference,Guid Roo
 public sealed record BoardQueryV1(Guid SiteId,SchedIntervalV1 Window,string ZoneId,SchedRefV1? ProcessRef,SchedRefV1? WorkgroupRef,
     SchedRefV1? ResourceRef,string[] Statuses,string Sort="START_ASC");
 public sealed record BoardSiteV1(SchedRefV1 SiteRef,string ZoneId,SchedIntervalV1 DefaultWindow,SchedRefV1[] Processes,SchedRefV1[] Workgroups,SchedRefV1[] Resources);
-public sealed record BoardContextV1(Guid TenantId,Guid EnvironmentId,Guid ActorId,BoardSiteV1[] Sites);
+public sealed record BoardContextV1(Guid TenantId,Guid EnvironmentId,Guid ActorId,BoardSiteV1[] Sites)
+{public string[] ActorCapabilities {get;init;}=[];}
 public sealed record BoardConflictV1(Guid? OperationId,SchedIntervalV1 Interval,string Coverage);
 public sealed record BoardBarV1(Guid OperationId,Guid WoId,string WorkOrderNo,string ProductLabel,string ProcessLabel,int RouteSortOrder,
     SchedRefV1? OccurrenceRef,SchedRefV1? SnapshotRef,WoExpectedV1? WoExpected,string? ScheduleRevision,SchedRefV1[] QueueHeads,
     SchedRefV1? ProcessRef,SchedRefV1? WorkgroupRef,SchedRefV1? ResourceRef,SchedRefV1? ResourceAssignmentRef,
     SchedIntervalV1? PlannedInterval,SchedIntervalV1? ActualInterval,string ActualCoverage,DateTimeOffset? DeliveryDate,
     SchedQuantityV1? PlanQty,SchedQuantityV1? GoodQty,SchedQuantityV1? DefectQty,string State,string WorkOrderState,string Priority,
-    string Coverage,string Mode,bool Delayed,BoardConflictV1[] Conflicts);
+    string Coverage,string Mode,bool Delayed,BoardConflictV1[] Conflicts)
+{
+    public string[] Capabilities {get;init;}=[];
+    public SchedGateV1[] Gates {get;init;}=[];
+    public IReadOnlyDictionary<string,string> OwnerLinks {get;init;}=new Dictionary<string,string>();
+}
 public sealed record BoardMetricV1(string? Value,string Unit,string Coverage);
 public sealed record BoardKpiV1(BoardMetricV1 TotalOrders,BoardMetricV1 InProgressOrders,BoardMetricV1 CompletedOrders,
     BoardMetricV1 DelayedOrders,BoardMetricV1 CompletionRate,BoardMetricV1 AvgDelayDays,BoardMetricV1 Denominator,

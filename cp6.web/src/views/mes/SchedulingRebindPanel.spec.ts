@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
-const mock = vi.hoisted(() => ({ context: vi.fn(), capture: vi.fn(), rebindContext: vi.fn(), prepare: vi.fn(), plan: vi.fn(), apply: vi.fn(), read: vi.fn(), continue: vi.fn(), stop: vi.fn(), reconcile: vi.fn(), migrate: vi.fn(), command: vi.fn(), denied: '' }))
+const mock = vi.hoisted(() => ({ context: vi.fn(), workContext: vi.fn(), capture: vi.fn(), rebindContext: vi.fn(), prepare: vi.fn(), plan: vi.fn(), apply: vi.fn(), read: vi.fn(), continue: vi.fn(), stop: vi.fn(), reconcile: vi.fn(), migrate: vi.fn(), command: vi.fn(), denied: '' }))
 vi.mock('@/api/mes/rebind', () => ({ rebindApi: mock }))
 vi.mock('@/auth/browserAuthentication', () => ({ authenticationCanRead: () => true }))
 vi.mock('@/stores/permission', () => ({ usePermissionStore: () => ({ has: (key: string) => key !== mock.denied }) }))
@@ -10,7 +10,7 @@ const reference = (id: string) => ({ id, owner: 'SIMULATED', version: '1', diges
 const interval = { start: '2026-11-02T08:00:00Z', end: '2026-11-02T10:00:00Z' }
 const capture = { captureId: 'capture', root: { rootId: 'root', expected: { revision: '10' }, operations: [{ operationId: 'operation', processLabel: '工序 A', scheduleRevision: '5', interval }] } }
 const context = { contextId: 'context', capture, operationId: 'operation', oldBindingRef: reference('old'), oldClaims: [reference('claim')], oldExecutions: [], choices: [{ choiceRef: reference('choice'), resourceRef: reference('machine B'), qualified: true }], completeForRebind: true, dataKind: 'SIMULATED_EXEC_RES' }
-const plan = { planId: 'plan', revision: '1', digest: 'digest', input: { reason: '换机验收' }, rootApplyGroup: { changedOperations: [{}], unchangedOperationRefs: [{}] }, eligible: true, gates: [] }
+const plan = { planId: 'plan', revision: '1', digest: 'digest', input: { reason: '换机验收' }, rootApplyGroup: { oldRootSchedule: { interval }, newRootSchedule: { interval }, changedOperations: [{}], unchangedOperationRefs: [{}] }, eligible: true, gates: [] }
 const work = { workId: 'work', planId: 'plan', rootId: 'root', operationId: 'operation', revision: '1', state: 'PREPARED', pendingPhase: null, receipts: [], noNewExecution: false, stopped: false, bindingResult: null, queueMigrationState: 'NOT_REGISTERED' }
 const reply = { commandId: 'command', outcome: 'WORK_ACCEPTED', work, replayed: false }
 const key = 'cp6_rebind_v1:environment:tenant:actor'
@@ -61,4 +61,11 @@ it('drops a response from the previous identity', async () => {
 it('clears only a definite first apply rejection and retains the original work after a continuation rejection', async () => {
   mock.apply.mockRejectedValueOnce({ response: { status: 409, data: { message: 'SCHED_PLAN_EXPIRED' } } }); await render(); await prepare(); await click('申请换机'); expect(saved().pending).toBeUndefined()
   view!.unmount(); view = undefined; localStorage.setItem(key, JSON.stringify({ workId: 'work' })); mock.continue.mockRejectedValueOnce({ response: { status: 409, data: { message: 'OWNER_RESULT_UNKNOWN' } } }); await render(); await click('继续换机阶段'); expect(saved().pending.kind).toBe('continue')
+})
+
+it('opens original work with work.read after query revocation and does not prepare or apply', async () => {
+  mock.denied = 'mes-planning-board:query'; mock.workContext.mockResolvedValue({ tenantId: 'tenant', actorId: 'actor', environmentId: 'environment' }); mock.read.mockResolvedValue(work)
+  view = mount(View, { props: { initialWorkId: 'work' } }); await flushPromises()
+  expect(mock.read).toHaveBeenCalledWith('work'); expect(mock.context).not.toHaveBeenCalled(); expect(mock.prepare).not.toHaveBeenCalled(); expect(mock.apply).not.toHaveBeenCalled(); expect(view.text()).toContain('PREPARED')
+  view.unmount(); localStorage.setItem(key, JSON.stringify({ workId: 'work' })); mock.denied = ''; mock.read.mockResolvedValue({ ...work, state: 'COMPLETED' }); view = mount(View, { props: { initialPlan: plan as any } }); await flushPromises(); expect(view.text()).toContain('已保存的原换机工作'); await click('返回选择工单'); expect(view.text()).toContain('申请换机'); expect(view.text()).toContain('打开独立换机计划')
 })
