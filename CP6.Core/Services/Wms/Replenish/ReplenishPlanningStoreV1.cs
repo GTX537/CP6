@@ -17,6 +17,24 @@ internal sealed class ReplenishPlanningStoreV1(CP6Context db,Guid environment)
         """);
     internal async Task<Document> Read(Guid id,string? kind,CancellationToken ct)
         =>await Documents().Where(x=>x.Id==id&&(kind==null||x.Kind==kind)).SingleOrDefaultAsync(ct)??throw Error("REP_NOT_VISIBLE",404);
+    internal async Task<Document> CurrentOrder(Guid id,CancellationToken ct)
+    {
+        var snapshot=await db.Database.SqlQuery<Guid?>($"""
+            SELECT v.snapshot_id AS "Value" FROM cp6_replenish_v1.order_heads h
+            JOIN cp6_replenish_v1.order_versions v USING(tenant_id,environment_id,order_id,revision)
+            WHERE h.tenant_id={db.CurrentTenantId} AND h.environment_id={environment} AND h.order_id={id}
+            """).SingleOrDefaultAsync(ct)??throw Error("REP_NOT_VISIBLE",404);
+        return await Read(snapshot,null,ct);
+    }
+    internal async Task SaveOrderVersion(Guid id,Guid snapshot,RepOrderV1 order,Guid actor,Guid? department,CancellationToken ct)
+    {
+        await Save(snapshot,id==snapshot?"order":"order-revision",actor,department,Hash(order.Input.Scope),order,ct);
+        await db.Database.ExecuteSqlInterpolatedAsync($"""
+            INSERT INTO cp6_replenish_v1.order_versions VALUES({db.CurrentTenantId},{environment},{id},{order.Revision},{snapshot});
+            INSERT INTO cp6_replenish_v1.order_heads VALUES({db.CurrentTenantId},{environment},{id},{order.Revision})
+            ON CONFLICT(tenant_id,environment_id,order_id) DO UPDATE SET revision=EXCLUDED.revision;
+            """,ct);
+    }
     internal Task<SavedCommand?> Command(Guid actor,string key,CancellationToken ct)=>db.Database.SqlQuery<SavedCommand>($"""
         SELECT action AS "Action",input_digest AS "InputDigest",result_id AS "ResultId",result_body AS "Body" FROM cp6_replenish_v1.commands
         WHERE tenant_id={db.CurrentTenantId} AND environment_id={environment} AND actor_id={actor} AND command_key={key}
@@ -43,7 +61,7 @@ internal sealed class ReplenishPlanningStoreV1(CP6Context db,Guid environment)
         var body=await db.Database.SqlQuery<byte[]>($"""
             SELECT body AS "Value" FROM cp6_replenish_v1.observations
             WHERE tenant_id={db.CurrentTenantId} AND environment_id={environment} AND scope_key={key} AND cut_key={Hash(reference)}
-            """).SingleAsync(ct);return Decode<RepObservationV1>(body);
+            """).SingleOrDefaultAsync(ct)??throw Error("REP_SOURCE_CUT_NOT_FOUND",412);return Decode<RepObservationV1>(body);
     }
     // Trusted upstream ingestion boundary. Caller owns the transaction; public REP commands cannot publish rules/stock.
     internal async Task Publish(RepObservationV1 observation,CancellationToken ct=default)

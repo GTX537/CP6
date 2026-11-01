@@ -4,6 +4,7 @@
     <p v-if="error" role="alert">{{ error }}</p><p v-if="notice" role="status">{{ notice }}</p>
     <button :disabled="busy" @click="reload">读取补货规则</button>
     <template v-if="context">
+      <button :disabled="busy" @click="draftOpen = !draftOpen">人工补货</button><ReplenishDraftPanel v-if="draftOpen" :context="context" />
       <p v-if="!context.scopes.length">当前没有可用的补货观察资料。</p>
       <div v-if="pending"><p>上一笔操作结果待核，请查询或使用原请求重试。</p><button :disabled="busy" @click="recover">查询原操作</button><button :disabled="busy" @click="retry">按原请求重试</button></div>
       <fieldset :disabled="busy || !!pending || !allowed">
@@ -31,6 +32,8 @@ import { replenishPlanningApi as api, repSelectionDigest, type RepContext, type 
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
 import { usePermissionStore } from '@/stores/permission'
+import ReplenishDraftPanel from './ReplenishDraftPanel.vue'
+const draftOpen = ref(false)
 const permissions = usePermissionStore(), allowed = computed(() => permissions.has('wms-replenish:generate'))
 const context = ref<RepContext | null>(null), suggestion = ref<RepSuggestion | null>(null), batch = ref<RepBatch | null>(null), pending = ref<RepPending | null>(null)
 const busy = ref(false), error = ref(''), notice = ref(''), scopeIndex = ref(''), ruleIds = ref<string[]>([]), selectedLines = ref<string[]>([])
@@ -93,7 +96,7 @@ async function recover() { await run(async check => { await locked(check, async 
   if (result.state === 'COMMITTED') { localStorage.removeItem(key()); pending.value = null; apply(p, result.result!); notice.value = '已找回原操作结果。' }
   else notice.value = '原操作结果仍待核；可以使用同一原请求重试。'
 }) }) }
-function identityChanged() { generation++; busy.value = false; context.value = null; pending.value = null; scopeIndex.value = ''; resetSelection(); error.value = ''; notice.value = '' }
+function identityChanged() { generation++; busy.value = false; context.value = null; pending.value = null; scopeIndex.value = ''; draftOpen.value = false; resetSelection(); error.value = ''; notice.value = '' }
 onMounted(() => { window.addEventListener(AUTH_EVENT, identityChanged); void reload() })
 onBeforeUnmount(() => { live = false; generation++; window.removeEventListener(AUTH_EVENT, identityChanged) })
 </script>

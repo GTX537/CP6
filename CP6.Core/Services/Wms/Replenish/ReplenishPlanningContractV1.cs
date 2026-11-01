@@ -17,7 +17,7 @@ public sealed record RepRuleV1(RepRefV1 Ref,RepRefV1[] TargetLocationRefs,RepRef
     RepRefV1 SourceRuleRef,[property:JsonRequired]DateTimeOffset ValidFrom,[property:JsonRequired]DateTimeOffset? ValidTo,string Coverage);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record RepSourceV1(RepRefV1 SourceLocationRef,RepSpanV1[] Spans,RepQuantityV1 Quantity,
-    RepRefV1 StockObservationRef,DateTimeOffset? ExpiryAt,DateTimeOffset? ReceivedAt,RepRefV1 MasterConditionRef);
+    RepRefV1 StockObservationRef,[property:JsonRequired]DateTimeOffset? ExpiryAt,[property:JsonRequired]DateTimeOffset? ReceivedAt,RepRefV1 MasterConditionRef);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record RepRowV1(string LineKey,RepRefV1 RuleRef,RepRefV1 TargetLocationRef,RepRefV1 ProductRef,
     RepRefV1 TechnicalRef,RepRefV1 OwnerRef,RepRefV1 BaseUomRef,RepQuantityV1? OnHand,RepQuantityV1? OpenIncoming,
@@ -48,15 +48,21 @@ public sealed record RepBatchV1(RepRefV1 Ref,RepBatchItemV1[] Items,string Regis
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record RepOrderInputV1(RepScopeV1 Scope,RepRefV1 ProductRef,RepRefV1 TechnicalRef,RepRefV1 OwnerRef,
     RepRefV1 BaseUomRef,RepRefV1 ToLocationRef,RepSourceV1 Source,RepQuantityV1 Quantity,int Priority,string Trigger,
-    RepRefV1? SuggestionRowRef,string Reason,string? Remarks);
+    [property:JsonRequired]RepRefV1? SuggestionRowRef,string Reason,[property:JsonRequired]string? Remarks);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
-public sealed record RepOrderV1(RepRefV1 Ref,RepOrderInputV1 Input,RepRefV1 SelectionRef,string Lifecycle,string Knowledge,
+public sealed record RepOrderV1(RepRefV1 Ref,RepOrderInputV1 Input,RepRefV1? SelectionRef,string Lifecycle,string Knowledge,
     RepQuantityV1 Planned,RepQuantityV1? Moved,RepQuantityV1? Remaining,object? ExecutionLink,RepRefV1[] StockReceiptRefs,
-    string[] Capabilities,RepRefV1 CurrentCutRef,string Revision);
+    string[] Capabilities,RepRefV1? CurrentCutRef,string Revision);
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+public sealed record RepDraftInputV1(RepCommandV1 Command,RepOrderInputV1 Input);
+public sealed record RepPrepareV1(RepRefV1 Ref,RepRefV1 OrderRef,string InputDigest,RepSpanV1[] SourceSpans,
+    RepRefV1[] CapacityObservationRefs,string Mode,RepRefV1? AdoptionRef,string[] Blockers,bool CanDispatch);
+public sealed record RepPrepareRegistrationV1(RepRefV1 Ref,RepRefV1 OrderRef,RepRefV1 SelectionRef,RepRefV1 PrepareRef,
+    string DispatchKey,Guid OperationId,string WriterEpoch,string SendKnowledge,RepRefV1 RuleRef,RepRefV1 CutRef);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record RepIntentSplitV1(string SplitKey,RepRefV1 OrderRef,RepQuantityV1 Planned,string State);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
-public sealed record RepIntentV1(RepRefV1 Ref,string DemandSlotKey,RepRefV1 AllocationPlanRef,string State,
+public sealed record RepIntentV1(RepRefV1 Ref,string DemandSlotKey,RepRefV1? AllocationPlanRef,string State,
     RepQuantityV1 OriginalQuantity,RepQuantityV1? OpenIncoming,RepQuantityV1? ConfirmedMoved,RepQuantityV1? ClosedUnexecuted,
     RepIntentSplitV1[] Splits,RepRefV1 CutRef,string Coverage);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]

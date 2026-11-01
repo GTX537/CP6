@@ -43,6 +43,7 @@ internal static class ReplenishPlanningValuesV1
     internal static string Slot(RepRootObservationV1 r)=>Slot(r.LocationRef,r.ProductRef,r.TechnicalRef,r.OwnerRef,r.BaseUomRef);
     internal static string Slot(RepTargetObservationV1 r)=>Slot(r.LocationRef,r.ProductRef,r.TechnicalRef,r.OwnerRef,r.BaseUomRef);
     internal static bool SameDimension(RepRuleV1 r,RepRootObservationV1 s)=>r.ProductRef==s.ProductRef&&r.TechnicalRef==s.TechnicalRef&&r.OwnerRef==s.OwnerRef&&r.BaseUomRef==s.BaseUomRef;
+    internal static bool SameRoot(RepRefV1 a,RepRefV1 b)=>a.Owner==b.Owner&&a.Id==b.Id;
     internal static string SelectionDigest(RepSelectionV1[] selected)=>Hash(selected.OrderBy(x=>x.LineKey,StringComparer.Ordinal).ToArray());
     internal static BigInteger Union(IEnumerable<RepSpanV1> spans)
     {
@@ -88,8 +89,9 @@ internal static class ReplenishPlanningValuesV1
         {if(!Mapped(root.LocationRef))throw Error("REP_SOURCE_LOCATION_INVALID");Reference(root.Span.RootRef);SpanAmount(root.Span);Reference(root.StockObservationRef);Reference(root.MasterConditionRef);
          foreach(var r in root.SourceRuleRefs)Reference(r);
          foreach(var d in root.CapacityDeltas){Reference(d.DomainRef);Reference(d.MetricRef);Reference(d.UomRef);SignedNumber(d.Numerator);Number(d.Denominator,positive:true);}}
-        foreach(var group in o.Roots.GroupBy(x=>x.Span.RootRef))
+        foreach(var group in o.Roots.GroupBy(x=>new{x.Span.RootRef.Owner,x.Span.RootRef.Id}))
         {
+            if(group.Select(x=>x.Span.RootRef).Distinct().Count()!=1)throw Error("REP_SOURCE_VERSION_AMBIGUOUS");
             BigInteger end=-1;foreach(var r in group.OrderBy(x=>Number(x.Span.From)))
             {var from=Number(r.Span.From);if(from<end)throw Error("REP_SOURCE_OVERLAP");end=Number(r.Span.To);}
         }
