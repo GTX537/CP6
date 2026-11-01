@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W245 排程操作链与原D3出口](dispatch/20261101-wave245/README.md)，相关实际验收通过，Handoff已释放，Main待PR/finish。
+> 当前：[W246 身份与实际Owner生产业务验收](dispatch/20261101-wave246/README.md)，CRM/Handoff已合并清理释放，Main待PR/finish；原D5出口核销，D6继续。
+
+> 历史快照：[W245 排程操作链与原D3出口](dispatch/20261101-wave245/README.md)，相关实际验收通过，Handoff已释放，Main待PR/finish。
 
 > 历史快照：[W244 统一排程看板与同捕获统计](dispatch/20261101-wave244/README.md)，相关实际验收通过，Handoff已释放，Main待PR/finish。
 

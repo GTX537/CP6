@@ -161612,6 +161612,16 @@
       "date": "2026-11-01",
       "change": "W245排程操作链收口：UTC微秒拖拽草稿/确认、准确独立操作/计划/预览/队列/工作入口、原工作只读核对、当前能力和Owner链接；原七天D3限定出口核销。 模拟资料生产业务验收通过；完整原阶段范围继续。",
       "evidence": "docs/development/evidence/W245-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-01",
+      "change": "W245按最终proof归档一次；W246原D5身份贯通验收与D5/D6出口审计，模拟缺失资料。",
+      "evidence": "docs/development/dispatch/20261101-wave246/README.md"
+    },
+    {
+      "date": "2026-11-01",
+      "change": "W246身份HTTP基线/实际Owner/原生撤权的模拟生产业务验收通过；两种提交顺序、原键重放与撤权后披露拒绝已验证，原D5限定出口核销。 D6剩余映射继续；正式产品状态不提升。",
+      "evidence": "docs/development/evidence/W246-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -171641,6 +171651,30 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/546"
         }
+      },
+      "wave246_exit": {
+        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "scope": "W246身份HTTP基线/实际Owner/原生撤权的模拟生产业务验收通过；两种提交顺序、原键重放与撤权后披露拒绝已验证，原D5限定出口核销。",
+        "report": "docs/development/evidence/W246-01/DELIVERY.md",
+        "crm_delivery": {
+          "result": "PASS",
+          "source": "049f15d5b586fd4ba82e1bd06b352511d0d2b657",
+          "main": "5f5ab69dab040f14c0d668497157b8c43df89184",
+          "pr": "https://github.com/GTX537/CP6.CRM/pull/162",
+          "exact_tree_adoption": true,
+          "at": "2026-11-01T18:58:17.714068+00:00"
+        },
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "crm_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": false,
+          "crm_branch_deleted": true,
+          "handoff_branch_deleted": true
+        },
+        "full_task_completed": false
       }
     },
     {
@@ -172584,6 +172618,30 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/546"
         }
+      },
+      "wave246_exit": {
+        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "scope": "W246身份HTTP基线/实际Owner/原生撤权的模拟生产业务验收通过；两种提交顺序、原键重放与撤权后披露拒绝已验证，原D5限定出口核销。",
+        "report": "docs/development/evidence/W246-01/DELIVERY.md",
+        "crm_delivery": {
+          "result": "PASS",
+          "source": "049f15d5b586fd4ba82e1bd06b352511d0d2b657",
+          "main": "5f5ab69dab040f14c0d668497157b8c43df89184",
+          "pr": "https://github.com/GTX537/CP6.CRM/pull/162",
+          "exact_tree_adoption": true,
+          "at": "2026-11-01T18:58:17.714068+00:00"
+        },
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "crm_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": false,
+          "crm_branch_deleted": true,
+          "handoff_branch_deleted": true
+        },
+        "full_task_completed": false
       }
     },
     {
@@ -175698,6 +175756,30 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/560"
         }
+      },
+      "wave246_exit": {
+        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "scope": "W246身份HTTP基线/实际Owner/原生撤权的模拟生产业务验收通过；两种提交顺序、原键重放与撤权后披露拒绝已验证，原D5限定出口核销。",
+        "report": "docs/development/evidence/W246-01/DELIVERY.md",
+        "crm_delivery": {
+          "result": "PASS",
+          "source": "049f15d5b586fd4ba82e1bd06b352511d0d2b657",
+          "main": "5f5ab69dab040f14c0d668497157b8c43df89184",
+          "pr": "https://github.com/GTX537/CP6.CRM/pull/162",
+          "exact_tree_adoption": true,
+          "at": "2026-11-01T18:58:17.714068+00:00"
+        },
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "crm_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": false,
+          "crm_branch_deleted": true,
+          "handoff_branch_deleted": true
+        },
+        "full_task_completed": false
       }
     },
     {
@@ -176567,6 +176649,30 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/210"
           }
         ]
+      },
+      "wave246_exit": {
+        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "scope": "W246身份HTTP基线/实际Owner/原生撤权的模拟生产业务验收通过；两种提交顺序、原键重放与撤权后披露拒绝已验证，原D5限定出口核销。",
+        "report": "docs/development/evidence/W246-01/DELIVERY.md",
+        "crm_delivery": {
+          "result": "PASS",
+          "source": "049f15d5b586fd4ba82e1bd06b352511d0d2b657",
+          "main": "5f5ab69dab040f14c0d668497157b8c43df89184",
+          "pr": "https://github.com/GTX537/CP6.CRM/pull/162",
+          "exact_tree_adoption": true,
+          "at": "2026-11-01T18:58:17.714068+00:00"
+        },
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "crm_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": false,
+          "crm_branch_deleted": true,
+          "handoff_branch_deleted": true
+        },
+        "full_task_completed": false
       }
     },
     {
@@ -177327,6 +177433,30 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/210"
           }
         ]
+      },
+      "wave246_exit": {
+        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "scope": "W246身份HTTP基线/实际Owner/原生撤权的模拟生产业务验收通过；两种提交顺序、原键重放与撤权后披露拒绝已验证，原D5限定出口核销。",
+        "report": "docs/development/evidence/W246-01/DELIVERY.md",
+        "crm_delivery": {
+          "result": "PASS",
+          "source": "049f15d5b586fd4ba82e1bd06b352511d0d2b657",
+          "main": "5f5ab69dab040f14c0d668497157b8c43df89184",
+          "pr": "https://github.com/GTX537/CP6.CRM/pull/162",
+          "exact_tree_adoption": true,
+          "at": "2026-11-01T18:58:17.714068+00:00"
+        },
+        "lifecycle_complete": false,
+        "lifecycle_snapshot": {
+          "main_finish_required": true,
+          "main_seat_released": false,
+          "crm_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": false,
+          "crm_branch_deleted": true,
+          "handoff_branch_deleted": true
+        },
+        "full_task_completed": false
       }
     },
     {
@@ -185627,18 +185757,41 @@
         ]
       },
       "wave245_flow": {
-        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "status": "CLOSED",
         "scope": "W245排程操作链收口：UTC微秒拖拽草稿/确认、准确独立操作/计划/预览/队列/工作入口、原工作只读核对、当前能力和Owner链接；原七天D3限定出口核销。",
         "report": "docs/development/evidence/W245-01/DELIVERY.md",
         "full_task_completed": false,
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "lifecycle_snapshot": {
-          "main_finish_required": true,
-          "main_seat_released": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
           "handoff_seat_released": true,
-          "main_branch_deleted": false,
-          "handoff_branch_deleted": true
-        }
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave245-final-verification.json"
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W245-01",
+            "source": "8f00195e8c23c57859c677e50d2401d5d59adbd4",
+            "remote_target": "a5c2b52b9eecf7391dba96fb1e7b15b1efae65cb",
+            "branch": "codex/w245-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/672"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W245-HANDOFF",
+            "source": "868bf50d5ca47db80985c2b91eb49420a1ce3268",
+            "remote_target": "131e751812e55f6c028845894b288ae861e7fc60",
+            "branch": "codex/w245-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/221"
+          }
+        ]
       }
     },
     {
@@ -185869,18 +186022,41 @@
         ]
       },
       "wave245_flow": {
-        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "status": "CLOSED",
         "scope": "W245排程操作链收口：UTC微秒拖拽草稿/确认、准确独立操作/计划/预览/队列/工作入口、原工作只读核对、当前能力和Owner链接；原七天D3限定出口核销。",
         "report": "docs/development/evidence/W245-01/DELIVERY.md",
         "full_task_completed": false,
-        "lifecycle_complete": false,
+        "lifecycle_complete": true,
         "lifecycle_snapshot": {
-          "main_finish_required": true,
-          "main_seat_released": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
           "handoff_seat_released": true,
-          "main_branch_deleted": false,
-          "handoff_branch_deleted": true
-        }
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave245-final-verification.json"
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W245-01",
+            "source": "8f00195e8c23c57859c677e50d2401d5d59adbd4",
+            "remote_target": "a5c2b52b9eecf7391dba96fb1e7b15b1efae65cb",
+            "branch": "codex/w245-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/672"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W245-HANDOFF",
+            "source": "868bf50d5ca47db80985c2b91eb49420a1ce3268",
+            "remote_target": "131e751812e55f6c028845894b288ae861e7fc60",
+            "branch": "codex/w245-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/221"
+          }
+        ]
       }
     },
     {
@@ -198792,10 +198968,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261101-wave245",
-      "path": "docs/development/dispatch/20261101-wave245/README.md",
-      "baseline_sha": "80166305934a6716cf40df6e3eb7218f84965aab",
-      "registered_at": "2026-11-01T18:20:06.089786+00:00",
+      "id": "20261101-wave246",
+      "path": "docs/development/dispatch/20261101-wave246/README.md",
+      "baseline_sha": "a5c2b52b9eecf7391dba96fb1e7b15b1efae65cb",
+      "registered_at": "2026-11-01T18:49:18.577979+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -198814,65 +198990,78 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W245-01",
-          "workspace_task": "W245-01",
+          "id": "W246-01",
+          "workspace_task": "W246-01",
           "related_tasks": [
-            "WP08-10",
-            "WP08-11"
+            "WP02-06",
+            "WP02-09",
+            "WP02-29",
+            "WP03-01",
+            "WP03-02"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "排程操作链收口：看板UTC拖拽草稿与确认、准确独立详情入口、原工作只读回查/核对、当前能力和Owner链接；核对原D3限定出口与实际生产业务验收证据。",
+          "title": "原D5身份基线/增量/撤权与实际Owner宿主的模拟生产业务验收贯通；复核原D5/D6限定出口，保持完整产品/运行发布身份及部署状态独立。",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "f498bcf97ae41534ebe462adc7847300fc75c699",
-            "branch": "codex/w245-handoff",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261101T182006Z-wave245-start/MESSAGE.md",
-            "at": "2026-11-01T18:20:06.089786+00:00"
+            "commit": "ad81ab851dd03cdc2252748b63965a85f3a1aee2",
+            "branch": "codex/w246-handoff",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261101T184918Z-wave246-start/MESSAGE.md",
+            "at": "2026-11-01T18:49:18.577979+00:00"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w245-01",
-          "planned_scope_ref": "docs/development/dispatch/20261101-wave245/README.md",
+          "branch": "codex/w246-01",
+          "planned_scope_ref": "docs/development/dispatch/20261101-wave246/README.md",
           "full_task_completed": false,
-          "business_acceptance": "PASS_SIMULATED_SCHEDULING_INTERACTIONS_AND_BOUNDED_D3",
+          "business_acceptance": "PASS_SIMULATED_IDENTITY_OWNER_BOUNDED_D5",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
-            "Main:SCHED-work-read-and-UI",
+            "CRM:native-identity-and-owner-acceptance",
             "Main:coordination-ledger"
           ],
-          "worker_delivery_ref": "docs/development/evidence/W245-01/DELIVERY.md",
-          "validation": "12 distinct PostgreSQL18/actual HTTP scenarios PASS (9 board + 3 work/capability/current-authorization);64 distinct affected Vue/router scenarios PASS;app vue-tsc PASS. Original D3 evidence reused from W47/48/49/79/136/240–244 with adopted-main ancestry verified. Explicit simulated production business inputs; actual PostgreSQL, API, and component code. No Actions or production deployment.",
+          "worker_delivery_ref": "docs/development/evidence/W246-01/DELIVERY.md",
+          "validation": "Final local PostgreSQL18/native HTTP 2/2 PASS, zero skipped; acceptance-final-20261101T185625Z. Explicit simulated identity/source/transport/business inputs, actual native runtimes/Owner/locks/commits; scoped W130/131/132/143 and W234 evidence reused, CRM runtime/contracts unchanged since W143. No Actions or deployment.",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
+            "crm_seat_released": true,
             "handoff_seat_released": true,
             "main_branch_deleted": false,
+            "crm_branch_deleted": true,
             "handoff_branch_deleted": true
+          },
+          "crm_delivery": {
+            "result": "PASS",
+            "source": "049f15d5b586fd4ba82e1bd06b352511d0d2b657",
+            "main": "5f5ab69dab040f14c0d668497157b8c43df89184",
+            "pr": "https://github.com/GTX537/CP6.CRM/pull/162",
+            "exact_tree_adoption": true,
+            "at": "2026-11-01T18:58:17.714068+00:00"
           },
           "handoff_delivery": {
             "result": "PASS",
-            "source": "868bf50d5ca47db80985c2b91eb49420a1ce3268",
-            "main": "131e751812e55f6c028845894b288ae861e7fc60",
-            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/221",
+            "source": "f906c1a50766b0f06488730c0b27fcb7118298e5",
+            "main": "143c4bce156bd90577abb05b55adc47aa6d86a27",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/222",
             "exact_tree_adoption": true,
-            "at": "2026-11-01T18:40:48.489898+00:00"
+            "at": "2026-11-01T19:03:11.408524+00:00"
           }
         }
       ],
       "horizon": {
-        "started_at": "2026-11-01T18:18:37.942323+00:00",
-        "checkpoint_at": "2026-11-01T18:41:50.492748+00:00",
+        "started_at": "2026-11-01T18:48:42.712301+00:00",
+        "checkpoint_at": "2026-11-01T19:03:41.089831+00:00",
         "estimated_agent_wall_time_minutes": [
           45,
-          75
+          90
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -198880,15 +199069,17 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "先核对原D5宿主采用的实际剩余与W130–143证据，以模拟身份/服务/传输执行适用集成；原D2/D6/D7按原出口核销，不继续扩成全APS或125目标。",
+      "next_action": "继续D6目标宿主规范化/时区和适用传播时限的证据映射与缺项场景；随后完成原D2补货/退货余项和D7最终集成。业务资料及外部输入直接模拟，不等待企业数据，不扩展全125目标。",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
+        "crm_seat_released": true,
         "handoff_seat_released": true,
         "main_branch_deleted": false,
+        "crm_branch_deleted": true,
         "handoff_branch_deleted": true
       },
-      "actual_minutes_so_far": 23.21
+      "actual_minutes_so_far": 14.97
     },
     "wave_history": [
       {
@@ -230537,6 +230728,128 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/220"
           }
         ]
+      },
+      {
+        "id": "20261101-wave245",
+        "path": "docs/development/dispatch/20261101-wave245/README.md",
+        "baseline_sha": "80166305934a6716cf40df6e3eb7218f84965aab",
+        "registered_at": "2026-11-01T18:20:06.089786+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W245-01",
+            "workspace_task": "W245-01",
+            "related_tasks": [
+              "WP08-10",
+              "WP08-11"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "排程操作链收口：看板UTC拖拽草稿与确认、准确独立详情入口、原工作只读回查/核对、当前能力和Owner链接；核对原D3限定出口与实际生产业务验收证据。",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "f498bcf97ae41534ebe462adc7847300fc75c699",
+              "branch": "codex/w245-handoff",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261101T182006Z-wave245-start/MESSAGE.md",
+              "at": "2026-11-01T18:20:06.089786+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w245-01",
+            "planned_scope_ref": "docs/development/dispatch/20261101-wave245/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "PASS_SIMULATED_SCHEDULING_INTERACTIONS_AND_BOUNDED_D3",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:SCHED-work-read-and-UI",
+              "Main:coordination-ledger"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W245-01/DELIVERY.md",
+            "validation": "12 distinct PostgreSQL18/actual HTTP scenarios PASS (9 board + 3 work/capability/current-authorization);64 distinct affected Vue/router scenarios PASS;app vue-tsc PASS. Original D3 evidence reused from W47/48/49/79/136/240–244 with adopted-main ancestry verified. Explicit simulated production business inputs; actual PostgreSQL, API, and component code. No Actions or production deployment.",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave245-final-verification.json"
+            },
+            "handoff_delivery": {
+              "result": "PASS",
+              "source": "868bf50d5ca47db80985c2b91eb49420a1ce3268",
+              "main": "131e751812e55f6c028845894b288ae861e7fc60",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/221",
+              "exact_tree_adoption": true,
+              "at": "2026-11-01T18:40:48.489898+00:00"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-11-01T18:18:37.942323+00:00",
+          "checkpoint_at": "2026-11-01T18:41:50.492748+00:00",
+          "estimated_agent_wall_time_minutes": [
+            45,
+            75
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "先核对原D5宿主采用的实际剩余与W130–143证据，以模拟身份/服务/传输执行适用集成；原D2/D6/D7按原出口核销，不继续扩成全APS或125目标。",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave245-final-verification.json"
+        },
+        "actual_minutes_so_far": 23.21,
+        "actual_registered_wave_minutes": 25.96,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W245-01",
+            "source": "8f00195e8c23c57859c677e50d2401d5d59adbd4",
+            "remote_target": "a5c2b52b9eecf7391dba96fb1e7b15b1efae65cb",
+            "branch": "codex/w245-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/672"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W245-HANDOFF",
+            "source": "868bf50d5ca47db80985c2b91eb49420a1ce3268",
+            "remote_target": "131e751812e55f6c028845894b288ae861e7fc60",
+            "branch": "codex/w245-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/221"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -230595,7 +230908,7 @@
         35,
         55
       ],
-      "current_stage": "D5",
+      "current_stage": "D6",
       "stages": [
         {
           "id": "D1",
@@ -230747,11 +231060,12 @@
           "last_flow_report": "docs/development/evidence/W245-01/DELIVERY.md",
           "exit_basis": "Original D3 bounded independent Owners/current scopes/same-transaction writes/trusted OEE worker and scheduling interactions accepted with explicit simulated inputs; ten prior adopted deliveries plus W245. Full WP08/APS/36 formal product acceptance separate.",
           "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
+            "main_finish_required": false,
+            "main_seat_released": true,
             "handoff_seat_released": true,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": true
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave245-final-verification.json"
           }
         },
         {
@@ -230786,13 +231100,13 @@
         },
         {
           "id": "D5",
-          "phase": "PARTIALLY_ADOPTED",
+          "phase": "DONE",
           "full_business_acceptance": false,
-          "current_window": "W143-01",
-          "prerequisite_adjustment": "Native baseline, delta/committed ACK/revocation, bounded API observability and current managed-host startup checks are adopted. Remaining original host/source/transport cases will use explicit simulated identities, qualifications and broker inputs; enterprise credentials/data are not prerequisites.",
-          "next_action": "Complete the original D5 feature and integration exits with actual implementation; construct explicit simulated business/source/service inputs for any absent enterprise data. Preserve independent Owner contracts, current rights and exact effects; no real-data wait.",
-          "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
-          "remaining": "Complete applicable process/container/native/JIT host/source and deployment-trust cases, independent release qualification and broker registration/TLS/ACL/credentials/SLO integration with explicit simulated inputs. Execute actual applicable code and fault paths; no wait for real enterprise data or services. Production deployment remains separately recorded.",
+          "current_window": "W246-01",
+          "prerequisite_adjustment": "Simulated business data and external services explicitly accepted for production business acceptance; actual native PG/HTTP and Owner execution verified, no enterprise-input wait.",
+          "next_action": "继续D6目标宿主规范化/时区和适用传播时限的证据映射与缺项场景；随后完成原D2补货/退货余项和D7最终集成。业务资料及外部输入直接模拟，不等待企业数据，不扩展全125目标。",
+          "exit_audit_report": "docs/development/evidence/W246-01/DELIVERY.md",
+          "remaining": "No original bounded D5 implementation/acceptance gap after W246 merge/finish; D7 final affected integration and complete WP02-29/release qualification remain independently unfinished.",
           "adopted_baseline_host": {
             "result": "PASS",
             "source": "1c08f74f089d07c70a226360a32a7f548904a876",
@@ -230827,17 +231141,29 @@
             "exact_tree_adoption": true,
             "at": "2026-10-26T12:25:33.019243+00:00"
           },
-          "acceptance_data_policy_ref": "dispatch_policy.continuous_goal.acceptance_data_policy"
+          "acceptance_data_policy_ref": "dispatch_policy.continuous_goal.acceptance_data_policy",
+          "adopted_window": "W246-01",
+          "last_simulated_acceptance_report": "docs/development/evidence/W246-01/DELIVERY.md",
+          "exit_basis": "Original seven-day D5/W129: native baseline and delta host, committed Inbox/ACK/current revocation, original actual Owner same transaction, accepted package/observability/operational adoption. W130/131/132/143 and W246 actual competition integration. Full release/runtime qualification remains separate and Unproven.",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "crm_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": false,
+            "crm_branch_deleted": true,
+            "handoff_branch_deleted": true
+          }
         },
         {
           "id": "D6",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W234-01",
-          "next_action": "Continue original D2 Replenish/Transfer and D3 planning writes plus remaining D5/D7 applicable integration; do not expand to all 125 product goals.",
-          "prerequisite_adjustment": "W234 explicitly executes simulated policy/calendar/IAM/service inputs through existing native public submission/H01 and four original event routes into a durable simulated subscriber; rollback, dedup, restart and unknown acknowledgement recovery pass. No enterprise-data wait. D5 applicable runtime-host qualification and D7 final scope integration remain separate.",
-          "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
-          "remaining": "Close applicable original D5 runtime-host acceptance and final D7 integration against current adopted evidence. Policy/calendar/IAM/service and external message inputs may be simulated; W234 proves the exercised inquiry flow. Complete original D2/D3 feature exits separately; do not expand to full privacy/125 product goals. Applicable target-host normalizer/time-zone cases and agreed propagation-SLO acceptance still need mapped simulation-driven evidence; W234 does not claim them.",
+          "current_window": "W246-01",
+          "next_action": "继续D6目标宿主规范化/时区和适用传播时限的证据映射与缺项场景；随后完成原D2补货/退货余项和D7最终集成。业务资料及外部输入直接模拟，不等待企业数据，不扩展全125目标。",
+          "prerequisite_adjustment": "W246 closes original bounded D5 host/Owner adoption; full runtime/release qualification is not silently claimed. W135 sources may be simulated under the 2026-10-29 rule. Remaining D6 cases must execute or cite matching actual evidence; no automatic closure from documentation.",
+          "exit_audit_report": "docs/development/evidence/W246-01/DELIVERY.md",
+          "remaining": "Map applicable target-host normalization/time-zone and propagation-time cases to actual evidence, execute missing simulated-input scenarios. W234 actual inquiry/consumer acceptance and W135 NUM/FILE/PRIV applicability stand; D7 final integration remains separate. No real enterprise-data prerequisite.",
           "adopted_native_outbox": {
             "result": "PASS",
             "source": "4d376804f86c218e467cdc5e87fa6e1cf5fba486",
@@ -230974,13 +231300,13 @@
         ]
       },
       "latest_progress_assessment": {
-        "as_of": "2026-11-01T18:41:50.492748+00:00",
-        "adopted_through": "W244; W245 Main closeout pending",
+        "as_of": "2026-11-01T19:03:41.089831+00:00",
+        "adopted_through": "W245; W246 CRM/Handoff merged, Main closeout pending",
         "engineering_range_percent": null,
-        "formal_stage_closure": "3/7 after W245 final adoption/finish",
+        "formal_stage_closure": "4/7 after W246 final adoption/finish",
         "remaining_execution_hours": null,
         "external_wait_excluded": true,
-        "basis": "D1/D3/D4 original bounded exits; D3 evidence explicitly audited. D2/D5/D6/D7 keep original remaining scope; no stage-ratio engineering percentage or enterprise-data wait."
+        "basis": "Original D1/D3/D4/D5 bounded exits; D2/D6/D7 retain concrete remaining work. Stage ratio is not engineering effort; prior35–55h withdrawn."
       },
       "execution_principles_ref": "AGENTS.md",
       "acceptance_data_policy": {
