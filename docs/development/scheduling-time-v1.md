@@ -34,3 +34,5 @@ W240 承接 MES-SCHED-01 RECOVERY-R2 的 TIME_ONLY 子集。上游工程快照�
 实际验证、失败修复与环境见[W240 单份交付报告](evidence/W240-01/DELIVERY.md)。
 
 后续 W241 已接入[自动排列及完整Root批次](scheduling-arrangement-v1.md)，并在共同提交参与者补齐跨 Root 当前资源占用检查；W240 原验收范围和历史结果保持原记录。
+
+后续 W243 已实现[资源换机六阶段与准确绑定队列迁移](scheduling-rebind-v1.md)。本页此前未完成声明保留其历史范围，当前采用上述合同；原 TIME_ONLY 和普通队列 CAS 不变。

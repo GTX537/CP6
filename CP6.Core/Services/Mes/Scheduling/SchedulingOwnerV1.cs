@@ -58,8 +58,9 @@ public sealed partial class SchedulingOwnerV1(CP6Context db,OperationsOwnerV1 ow
     {
         if(input==null||input.CaptureId==Guid.Empty||input.OperationId==Guid.Empty)throw Error("SCHED_INPUT_INVALID");
         Reason(input.Reason);Expected(input.WoExpected);Version(input.ExpectedScheduleRevision);Interval(new(input.ProposedStart,input.ProposedEnd));
-        if(input.Kind!="TIME_ONLY"||input.ResourceChoiceRef!=null)throw Error("SCHED_TIME_ONLY_REQUIRED");
         if(input.ProposedPriority!=null&&input.ProposedPriority is not("NORMAL" or "URGENT" or "EXPEDITE"))throw Error("SCHED_PRIORITY_INVALID");
+        if(input.Kind=="RESOURCE_CHANGE"){Reference(input.ResourceChoiceRef!);return PrepareRebindAsync(input,ct);}
+        if(input.Kind!="TIME_ONLY"||input.ResourceChoiceRef!=null)throw Error("SCHED_TIME_ONLY_REQUIRED");
         var frozen=input;
         return Authority.ExecuteAsync(OperationsOwnerV1.Planning,"plan.prepare",true,async(a,t)=>
         {
@@ -88,11 +89,11 @@ public sealed partial class SchedulingOwnerV1(CP6Context db,OperationsOwnerV1 ow
         return Authority.ExecuteAsync(OperationsOwnerV1.Planning,"change.apply",true,async(a,t)=>
         {
             await Lease(a,true,t);var store=Store;var old=await store.Command(a.ActorId,frozen.CommandId,t);
-            if(await store.Batch(a.ActorId,frozen.CommandId,t)!=null||await store.QueueCommand(a.ActorId,frozen.CommandId,t)!=null)throw Error("SCHED_COMMAND_CONFLICT",409);
+            if(await store.RebindCommand(a.ActorId,frozen.CommandId,t)!=null||await store.Batch(a.ActorId,frozen.CommandId,t)!=null||await store.QueueCommand(a.ActorId,frozen.CommandId,t)!=null)throw Error("SCHED_COMMAND_CONFLICT",409);
             var d=await store.Read(frozen.PlanId,"plan",t);await Visible(a,d.RootId,t);
             if(d.ActorId!=a.ActorId)throw Error("SCHED_PLAN_ACTOR_MISMATCH",403);
             if(old!=null){if(old.InputDigest!=Digest(frozen))throw Error("SCHED_COMMAND_CONFLICT",409);return Decode<SchedReplyV1>(old.Body) with{Replayed=true};}
-            var plan=Decode<SchedPlanV1>(d.Body);
+            var plan=Decode<SchedPlanV1>(d.Body);if(plan.Rebind!=null)throw Error("REBIND_FLOW_REQUIRED",409);
             if(plan.Revision!=frozen.ExpectedPlanRevision||plan.Digest!=frozen.ExpectedPlanDigest||plan.Input.Reason!=frozen.Reason)throw Error("SCHED_PLAN_MISMATCH",409);
             var applied=await store.Applied(plan.PlanId,t);
             if(applied!=null)
@@ -112,7 +113,8 @@ public sealed partial class SchedulingOwnerV1(CP6Context db,OperationsOwnerV1 ow
     }
     public Task<object> CommandAsync(Guid id,CancellationToken ct=default)=>Authority.ExecuteAsync<object>(OperationsOwnerV1.Planning,"command.read",false,async(a,t)=>
     {await Lease(a,false,t);var row=await Store.Command(a.ActorId,id,t);if(row==null)
-     {var queue=await Store.QueueCommand(a.ActorId,id,t);if(queue!=null){await QueuePlan(a,queue.PlanId,t);return new{status="FOUND",queueReply=Decode<QueueReplyV1>(queue.Body),canInferNoEffect=false};}
+     {var rebind=await Store.RebindCommand(a.ActorId,id,t);if(rebind!=null){await RebindPlan(a,rebind.PlanId,t);return new{status="FOUND",rebindReply=Decode<RebindReplyV1>(rebind.Body),canInferNoEffect=false};}
+      var queue=await Store.QueueCommand(a.ActorId,id,t);if(queue!=null){await QueuePlan(a,queue.PlanId,t);return new{status="FOUND",queueReply=Decode<QueueReplyV1>(queue.Body),canInferNoEffect=false};}
       var batch=await Store.Batch(a.ActorId,id,t);if(batch!=null){var preview=Decode<ArrangementPreviewV1>((await Store.Arrangement(batch.Input.PreviewId,"preview",t)).Body);return new{status="FOUND",batch=await BatchView(a,batch,preview,true,t),canInferNoEffect=false};}
       return new{status="NOT_OBSERVED",canInferNoEffect=false,asOf=DateTimeOffset.UtcNow};}
      var d=await Store.Read(row.PlanId,"plan",t);await Visible(a,d.RootId,t);return new{status="FOUND",reply=Decode<SchedReplyV1>(row.Body),canInferNoEffect=false};},ct);

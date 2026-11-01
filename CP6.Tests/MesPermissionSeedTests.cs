@@ -75,7 +75,7 @@ public class MesPermissionSeedTests
             var raSet = roleActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
             var expected = ExpectedTuples.ToHashSet();
             Assert.True(expected.IsSubsetOf(maSet));
-            foreach(var action in new[]{(301,"plan.prepare"),(301,"change.apply"),(301,"command.read"),(301,"arrange.preview"),(301,"preview.read"),(301,"arrange.apply"),(301,"work.read"),(301,"queue.read"),(301,"queue.prepare"),(301,"queue.apply"),(301,"history.read"),(301,"simulate-source"),(302,"change.schedule")})
+            foreach(var action in new[]{(301,"plan.prepare"),(301,"change.apply"),(301,"command.read"),(301,"arrange.preview"),(301,"preview.read"),(301,"arrange.apply"),(301,"work.read"),(301,"queue.read"),(301,"queue.prepare"),(301,"queue.apply"),(301,"work.reconcile"),(301,"history.read"),(301,"simulate-source"),(302,"change.schedule")})
             {
                 Assert.Contains(action,maSet);
                 Assert.DoesNotContain(db.Sys_RoleActions.IgnoreQueryFilters().Where(x=>x.TenantId==tid),x=>x.MenuId==action.Item1&&x.ActionCode==action.Item2);
