@@ -9,6 +9,7 @@ export interface QueuePlan { planId: string; revision: string; digest: string; e
 export interface QueueReply { commandId: string; outcome: string; queueRef: SchedRef; auditRef: SchedRef; replayed: boolean }
 const root = '/mes/scheduling'
 export const queueApi = {
+  history: (siteId: string, resourceId: string) => http.get<{ revision: string; members: { itemId: string; operationId: string }[] }[]>(`${root}/resources/${resourceId}/queue-history`, { params: { siteId } }).then(r => r.data),
   context: () => http.get<QueueContext>(`${root}/queue-context`).then(r => r.data),
   read: (siteId: string, resourceId: string, captureId?: string, cursor = 0) => http.get<QueueView>(`${root}/resources/${resourceId}/queue`, { params: { siteId, captureId, cursor, pageSize: 20 } }).then(r => r.data),
   prepare: (input: QueueMove) => http.post<QueuePlan>(`${root}/resources/${input.resourceRef.id}/queue-plans`, input).then(r => r.data),

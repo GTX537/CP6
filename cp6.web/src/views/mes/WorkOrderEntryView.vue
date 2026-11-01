@@ -162,7 +162,10 @@ async function loadByNo(no: string) {
   try {
     const res = await workOrderApi.get(no)
     if (!intent.current(token) || id !== reads || edit !== revision) return
-    if (res.code === 0 && res.data) { Object.assign(form, emptyForm(), res.data); recoveredOnly.value = false }
+    if (res.code === 0 && res.data) {
+      if (typeof route.query.expectedId === 'string' && res.data.id !== route.query.expectedId) { Object.assign(form, emptyForm()); creationError.value = '工单身份已变化，请从原入口重新读取。'; return }
+      Object.assign(form, emptyForm(), res.data); recoveredOnly.value = false
+    }
   } catch {
     if (intent.current(token) && id === reads) ElMessage.warning(t('読込できませんでした。保存結果は一覧で確認してください。'))
   }
@@ -318,7 +321,7 @@ async function onIssue() {
   } catch (e) { intent.failed(token, e) } finally { intent.finish(token) }
 }
 
-watch(() => route.query.no, async (no) => {
+watch(() => [route.query.no, route.query.expectedId], async ([no]) => {
   intent.invalidate(); reads++; clearCreation(); Object.assign(form, emptyForm())
   if (typeof no === 'string' && no) await loadByNo(no)
   else if (permissions.has('mes-work-order:add')) await loadCreationContext()

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
-const mock = vi.hoisted(() => ({ context: vi.fn(), read: vi.fn(), prepare: vi.fn(), plan: vi.fn(), apply: vi.fn(), command: vi.fn(), denied: '' }))
+const mock = vi.hoisted(() => ({ context: vi.fn(), history: vi.fn(), read: vi.fn(), prepare: vi.fn(), plan: vi.fn(), apply: vi.fn(), command: vi.fn(), denied: '' }))
 vi.mock('@/api/mes/queue', () => ({ queueApi: mock }))
 vi.mock('@/auth/browserAuthentication', () => ({ authenticationCanRead: () => true }))
 vi.mock('@/stores/permission', () => ({ usePermissionStore: () => ({ has: (key: string) => key !== mock.denied }) }))
@@ -60,4 +60,9 @@ it('clears a definitely rejected first submission and requires recapture after a
 it('does not display an old identity response after a switch', async () => {
   let resolve!: (value: unknown) => void; mock.read.mockImplementationOnce(() => new Promise(r => { resolve = r })); await render(); await read()
   localStorage.setItem(AUTH_EPOCH, 'two'); window.dispatchEvent(new Event(AUTH_EVENT)); resolve(page); await flushPromises(); expect(view!.text()).not.toContain('COMPLETE'); expect(view!.findAll('tbody tr')).toHaveLength(0)
+})
+
+it('deep resource entry selects the exact site and reads authorized queue history', async () => {
+  mock.history.mockResolvedValue([{ revision: '1', members: [{ itemId: 'i', operationId: 'historical-op' }] }])
+  view = mount(View, { props: { initialResourceId: 'resource', initialSiteId: 'site' } }); await flushPromises(); expect(mock.read.mock.calls[0]!.slice(0, 2)).toEqual(['site', 'resource']); await click('读取队列历史'); expect(view.text()).toContain('historical-op'); expect(mock.apply).not.toHaveBeenCalled()
 })

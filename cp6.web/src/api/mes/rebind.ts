@@ -7,6 +7,7 @@ export interface RebindReply { commandId: string; outcome: string; work: RebindW
 export interface RebindAction { commandId: string; expectedWorkRevision: string; reason: string }
 const root = '/mes/scheduling'
 export const rebindApi = {
+  workContext: () => http.get<Omit<SchedContext, 'roots'>>(`${root}/work-context`).then(r => r.data),
   context: () => http.get<SchedContext>(`${root}/context`).then(r => r.data),
   capture: (id: string) => http.get<SchedCapture>(`${root}/roots/${id}/capture`).then(r => r.data),
   rebindContext: (rootId: string, operationId: string) => http.get<RebindContext>(`${root}/operations/${operationId}/rebind-context`, { params: { rootId } }).then(r => r.data),

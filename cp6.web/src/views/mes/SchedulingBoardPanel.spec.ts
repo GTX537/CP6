@@ -1,7 +1,9 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
-const mock = vi.hoisted(() => ({ context: vi.fn(), board: vi.fn(), detail: vi.fn() }))
+const mock = vi.hoisted(() => ({ context: vi.fn(), board: vi.fn(), detail: vi.fn(), capture: vi.fn(), prepare: vi.fn(), apply: vi.fn() }))
 vi.mock('@/api/mes/schedulingBoard', () => ({ schedulingBoardApi: mock }))
+vi.mock('@/api/mes/scheduling', () => ({ schedulingApi: mock }))
+vi.mock('vue-router', () => ({ onBeforeRouteLeave: vi.fn() }))
 vi.mock('@/auth/browserAuthentication', () => ({ authenticationCanRead: () => true }))
 vi.mock('@/stores/permission', () => ({ usePermissionStore: () => ({ has: () => true }) }))
 import View from './SchedulingBoardPanel.vue'
@@ -9,12 +11,12 @@ import { AUTH_EPOCH, AUTH_EVENT } from '@/auth/identity'
 const reference = (id: string) => ({ id, owner: 'owner', version: '1', digest: id })
 const interval = { start: '2026-11-01T01:30:00-04:00', end: '2026-11-01T01:30:00-05:00' }
 const site = { siteRef: reference('site'), zoneId: 'America/New_York', defaultWindow: { start: '2026-11-01T00:00:00-04:00', end: '2026-11-15T00:00:00-05:00' }, processes: [reference('process')], workgroups: [], resources: [] }
-const bar = { operationId: 'A', woId: 'wo', workOrderNo: 'SIM-WO', productLabel: '模拟产品', processLabel: '同一道工序', routeSortOrder: 1, occurrenceRef: reference('occ-a'), snapshotRef: reference('snapshot'), woExpected: { revision: '10' }, scheduleRevision: '5', plannedInterval: interval, actualInterval: null, actualCoverage: 'UNKNOWN', deliveryDate: null, state: 'NOT_STARTED', workOrderState: 'RELEASED', priority: 'NORMAL', coverage: 'COMPLETE', mode: 'SCHEDULING_V1', delayed: false, conflicts: [] }
+const bar = { capabilities: ['plan.prepare'], gates: [], ownerLinks: {}, operationId: 'A', woId: 'wo', workOrderNo: 'SIM-WO', productLabel: '模拟产品', processLabel: '同一道工序', routeSortOrder: 1, occurrenceRef: reference('occ-a'), snapshotRef: reference('snapshot'), woExpected: { revision: '10' }, scheduleRevision: '5', plannedInterval: interval, actualInterval: null, actualCoverage: 'UNKNOWN', deliveryDate: null, state: 'NOT_STARTED', workOrderState: 'RELEASED', priority: 'NORMAL', coverage: 'COMPLETE', mode: 'SCHEDULING_V1', delayed: false, conflicts: [] }
 const kpi = Object.fromEntries(['totalOrders', 'inProgressOrders', 'completedOrders', 'delayedOrders', 'completionRate', 'avgDelayDays', 'denominator', 'cancelledCount', 'unknownCount'].map(k => [k, { value: k === 'totalOrders' ? '3' : '0', unit: 'orders', coverage: 'COMPLETE' }]))
 const page = { captureId: 'cut', queryScopeHash: 'hash', asOf: '2026-11-01T12:00:00Z', expiresAt: '2026-11-01T12:30:00Z', zoneId: site.zoneId, bars: [bar], nextCursor: 20, kpi: { ...kpi, formulaVersion: 'BOARD_FILTERED_OPS_V1' }, coverage: 'COMPLETE', warnings: [], dataKind: 'SIMULATED_UPSTREAM' }
 let view: VueWrapper | undefined
 function pending() { let resolve!: (value: any) => void; const promise = new Promise(r => { resolve = r }); return { promise, resolve } }
-async function render() { view = mount(View); await flushPromises() }
+async function render() { view = mount(View, { global: { stubs: { SchedulingTimePanel: true } } }); await flushPromises() }
 async function load() { await view!.get('form').trigger('submit'); await flushPromises() }
 async function choose() { await view!.get('[aria-label="看板工厂"]').setValue('site') }
 async function click(text: string) { await view!.findAll('button').find(b => b.text() === text)!.trigger('click'); await flushPromises() }
@@ -57,4 +59,23 @@ it('clears private data on identity change and rejects late board and detail res
 it('a detail authorization failure also invalidates an in-flight board refresh', async () => {
   await render(); await choose(); await load(); const old = pending(); mock.board.mockReturnValueOnce(old.promise); await load(); mock.detail.mockRejectedValueOnce({ response: { status: 403 } })
   await view!.get('.row-label').trigger('click'); await flushPromises(); old.resolve(page); await flushPromises(); expect(view!.text()).not.toContain('SIM-WO')
+})
+
+it('drag is a local draft, preserves microseconds across DST, and Escape discards without preparing', async () => {
+  const precise = { ...bar, plannedInterval: { start: '2026-11-01T01:30:00.123456-04:00', end: '2026-11-01T01:30:00.654321-05:00' } }
+  mock.board.mockResolvedValue({ ...page, bars: [precise] }); await render(); await choose(); await load()
+  vi.spyOn(view!.get('.track').element, 'getBoundingClientRect').mockReturnValue({ width: 337 } as DOMRect)
+  view!.get('.planned').element.dispatchEvent(new MouseEvent('pointerdown', { button: 0, clientX: 0, bubbles: true })); window.dispatchEvent(new MouseEvent('pointermove', { clientX: 1 })); window.dispatchEvent(new Event('pointerup')); await flushPromises()
+  expect(view!.text()).toContain('2026-11-01T06:30:00.123456Z'); expect(view!.text()).toContain('2026-11-01T07:30:00.654321Z'); expect(mock.capture).not.toHaveBeenCalled(); expect(mock.prepare).not.toHaveBeenCalled(); expect(mock.apply).not.toHaveBeenCalled()
+  const leave = new Event('beforeunload', { cancelable: true }); window.dispatchEvent(leave); expect(leave.defaultPrevented).toBe(true)
+  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })); await flushPromises(); expect(view!.find('[aria-label="拖拽改期草稿"]').exists()).toBe(false)
+})
+it('prepares the original board predecessor only after reason, refuses stale captures and clears accepted draft', async () => {
+  await render(); await choose(); await load(); vi.spyOn(view!.get('.track').element, 'getBoundingClientRect').mockReturnValue({ width: 337 } as DOMRect)
+  view!.get('.planned').element.dispatchEvent(new MouseEvent('pointerdown', { button: 0, clientX: 0, bubbles: true })); window.dispatchEvent(new MouseEvent('pointermove', { clientX: 1 })); window.dispatchEvent(new Event('pointerup')); await flushPromises()
+  const capture = { captureId: 'new-capture', root: { expected: { revision: '11' }, operations: [{ operationId: 'A', scheduleRevision: '5' }] } }
+  mock.capture.mockResolvedValue(capture); await view!.get('[aria-label="拖拽改期理由"]').setValue('simulated change'); await click('准备拖拽改期'); expect(mock.prepare).not.toHaveBeenCalled(); expect(view!.text()).toContain('原看板版本已变化')
+  mock.capture.mockResolvedValue({ ...capture, root: { ...capture.root, expected: bar.woExpected } }); mock.prepare.mockResolvedValue({ planId: 'plan', rootApplyGroup: { groupId: 'group' } }); await click('准备拖拽改期')
+  expect(mock.prepare.mock.calls[0]![0]).toMatchObject({ captureId: 'new-capture', woExpected: bar.woExpected, expectedScheduleRevision: '5', proposedStart: '2026-11-01T06:30:00.000000Z', resourceChoiceRef: null }); expect(mock.apply).not.toHaveBeenCalled()
+  view!.getComponent({ name: 'SchedulingTimePanel' }).vm.$emit('applied', { workId: 'group' }); await flushPromises(); expect(view!.find('[aria-label="拖拽改期草稿"]').exists()).toBe(false); expect(view!.text()).toContain('STALE')
 })

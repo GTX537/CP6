@@ -2,8 +2,8 @@
   <section class="rebind-panel" aria-label="资源换机">
     <h2>资源换机</h2><p>换机保留工序与实际记录。完成后仍禁止新增执行，需另行取得执行许可。</p>
     <p v-if="error" role="alert">{{ error }}</p><p v-if="notice" role="status">{{ notice }}</p>
-    <button :disabled="busy || !can('query')" @click="load">刷新换机入口</button>
-    <div v-if="context && !saved.pending && !saved.workId">
+    <button :disabled="busy || !(initialWorkId ? can('work.read') : can('query'))" @click="load">刷新换机入口</button>
+    <div v-if="context && !initialPlan && !initialWorkId && !saved.pending && !saved.workId">
       <select v-model="rootId" aria-label="换机工单" @change="clearSelection"><option value="">选择工单</option><option v-for="r in context.roots" :key="r.rootId" :value="r.rootId">{{ r.workOrderNo }}</option></select>
       <button :disabled="busy || !rootId" @click="readRoot">读取工单工序</button>
       <select v-if="capture" v-model="operationId" aria-label="换机工序" @change="rebind = null; plan = null"><option value="">选择工序</option><option v-for="o in capture.root.operations" :key="o.operationId" :value="o.operationId">{{ o.processLabel }}</option></select>
@@ -18,6 +18,8 @@
       <button :disabled="busy || !can('plan.prepare') || !rebind.completeForRebind">准备换机计划</button>
     </form>
     <section v-if="plan && !work && !saved.pending">
+      <a :href="'/mes/planning-board/changes/' + plan.planId">打开独立换机计划</a>
+      <p>根计划 {{ plan.rootApplyGroup.oldRootSchedule.interval }} → {{ plan.rootApplyGroup.newRootSchedule.interval }}</p>
       <p>完整工单计划：变更 {{ plan.rootApplyGroup.changedOperations.length }} 项，保留 {{ plan.rootApplyGroup.unchangedOperationRefs.length }} 项。</p>
       <p v-for="g in plan.gates" :key="g.code">{{ g.code }}</p>
       <button :disabled="busy || !plan.eligible || !canWrite" @click="apply">申请换机</button>
@@ -28,6 +30,8 @@
       <button :disabled="busy || !canWrite" @click="retry">重试原换机命令</button>
     </section>
     <section v-if="work">
+      <a :href="'/mes/planning-board/work/' + work.workId + '?kind=rebind'">打开独立换机工作</a>
+      <p>当前自身五域 {{ work.accepted }} · 原计划 {{ work.planId }}</p>
       <p>状态 {{ work.state }} · 版本 {{ work.revision }}</p><p v-if="work.pendingPhase">原阶段 {{ work.pendingPhase }} 结果待查询</p>
       <p v-if="work.noNewExecution">NO_NEW_EXECUTION · 未授予执行许可</p>
       <p>队列迁移 {{ work.queueMigrationState }}</p>
@@ -48,6 +52,7 @@ import type { SchedContext, SchedCapture, SchedPlan } from '@/api/mes/scheduling
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
 import { usePermissionStore } from '@/stores/permission'
+const props = defineProps<{ initialPlan?: SchedPlan; initialWorkId?: string }>()
 const permissions = usePermissionStore(), can = (action: string) => permissions.has(`mes-planning-board:${action}`)
 const canWrite = computed(() => can('change.apply') && permissions.has('mes-work-order:change.schedule'))
 type Pending = { kind: 'apply'; commandId: string; planId: string; revision: string; digest: string } | { kind: 'continue' | 'stop'; commandId: string; workId: string; revision: string }
@@ -66,7 +71,16 @@ async function run(action: (check: () => void) => Promise<void>) {
   try { check(); await action(check) } catch (e: any) { if (live && version === epoch) { error.value = e?.response?.data?.message || e?.message || '换机失败。'; if ([401, 403, 404].includes(e?.response?.status)) { clearSelection(); work.value = null } } }
   finally { if (live && version === epoch) busy.value = false }
 }
-async function load() { await run(async check => { if (!can('query')) throw new Error('没有读取权限。'); const c = await api.context(); check(); context.value = c; clearSelection(); const raw = localStorage.getItem(storage.value); saved.value = raw ? JSON.parse(raw) : {}; if (saved.value.workId && can('work.read')) { const w = await api.read(saved.value.workId); check(); work.value = w } }) }
+async function load() { await run(async check => {
+  if (props.initialWorkId ? !can('work.read') : !can('query')) throw new Error('没有读取权限。')
+  const c = props.initialWorkId ? { ...await api.workContext(), roots: [] } : await api.context(); check(); context.value = c; clearSelection()
+  const raw = localStorage.getItem(storage.value); saved.value = raw ? JSON.parse(raw) : {}
+  if (props.initialWorkId) {
+    if (saved.value.pending && saved.value.workId !== props.initialWorkId) throw new Error('请先核对已保存的另一个原命令，再打开此工作。')
+    const w = await api.read(props.initialWorkId); check(); saved.value = { ...saved.value, workId: w.workId }; work.value = w
+  } else if (saved.value.workId && can('work.read')) { const w = await api.read(saved.value.workId); check(); work.value = w; if (props.initialPlan) notice.value = '当前显示已保存的原换机工作。完成后点击返回选择工单，继续查看链接中的目标计划。' }
+  else if (props.initialPlan) plan.value = props.initialPlan
+}) }
 async function readRoot() { await run(async check => { const c = await api.capture(rootId.value); check(); clearSelection(); capture.value = c }) }
 async function readRebind() { await run(async check => { const c = await api.rebindContext(rootId.value, operationId.value); check(); rebind.value = c; plan.value = null; choiceId.value = ''; const op = c.capture.root.operations.find(o => o.operationId === c.operationId)!; start.value = op.interval?.start ?? ''; end.value = op.interval?.end ?? '' }) }
 async function prepare() { await run(async check => {
@@ -107,7 +121,7 @@ async function retry() { await run(async check => { if (!canWrite.value) throw n
 async function refreshWork() { await run(async check => { const w = await api.read(saved.value.workId!); check(); work.value = w }) }
 async function reconcile() { await run(async check => { const w = await api.reconcile(saved.value.workId!); check(); work.value = w }) }
 async function migrate() { await run(async check => { await api.migrate(work.value!.workId); check(); const w = await api.read(work.value!.workId); check(); work.value = w }) }
-function finishView() { saved.value = {}; persist(); work.value = null; clearSelection() }
+function finishView() { saved.value = {}; persist(); work.value = null; clearSelection(); if (props.initialPlan) plan.value = props.initialPlan }
 function changed() { epoch++; busy.value = false; context.value = null; clearSelection(); work.value = null; saved.value = {}; error.value = ''; notice.value = '' }
 onMounted(() => { window.addEventListener(AUTH_EVENT, changed); void load() })
 onBeforeUnmount(() => { live = false; epoch++; window.removeEventListener(AUTH_EVENT, changed) })

@@ -85,3 +85,8 @@ describe('Work order creation page', () => {
   })
 
 })
+
+it('rejects a work-order number link whose exact Owner identity has changed', async () => {
+  route.query = { no: 'WO1', expectedId: 'expected-owner' }; api.get.mockResolvedValue(wrap({ id: 'different-owner', workOrderNo: 'WO1', processes: [], materials: [] })); const vm = render(); await flushPromises()
+  expect(vm.form.workOrderNo).toBe(''); expect(vm.creationError).toContain('工单身份已变化'); expect(api.update).not.toHaveBeenCalled()
+})

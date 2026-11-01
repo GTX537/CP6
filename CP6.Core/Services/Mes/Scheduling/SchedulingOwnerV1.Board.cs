@@ -58,7 +58,7 @@ public sealed partial class SchedulingOwnerV1
                 roots.Where(r=>r.SiteRef.Id==site.Key).SelectMany(r=>r.Operations).Where(o=>o.ResourceRef!=null).Select(o=>o.ResourceRef!)
                     .Concat(members.Where(o=>o.LegacyResourceRef!=null).Select(o=>o.LegacyResourceRef!)).Distinct().ToArray()));
         }
-        return new BoardContextV1(db.CurrentTenantId,scope.EnvironmentId,a.ActorId,sites.OrderBy(s=>s.SiteRef.Id).ToArray());
+        return new BoardContextV1(db.CurrentTenantId,scope.EnvironmentId,a.ActorId,sites.OrderBy(s=>s.SiteRef.Id).ToArray()){ActorCapabilities=await BoardCapabilities(a,t)};
     },ct);
     public Task<BoardPageV1> BoardAsync(BoardQueryV1 query,Guid? captureId=null,int cursor=0,int pageSize=20,CancellationToken ct=default)
     {
@@ -94,7 +94,8 @@ public sealed partial class SchedulingOwnerV1
                     &&(query.ResourceRef==null||b.ResourceRef==query.ResourceRef)&&(query.Statuses.Contains("ANY")||query.Statuses.Contains(b.State))
                     &&(b.PlannedInterval==null&&b.ActualInterval==null||b.PlannedInterval!=null&&Overlap(b.PlannedInterval,query.Window)||b.ActualInterval!=null&&Overlap(b.ActualInterval,query.Window))).ToArray();
                 var coverage=allowed.Length<allIds.Length?"PARTIAL":rows.Any(r=>r.Coverage!="COMPLETE")?"UNKNOWN":"COMPLETE";
-                selected=selected.Select(b=>b with{Conflicts=BoardConflicts(b,all,allowed)}).ToArray();
+                var capabilities=await BoardCapabilities(a,t);
+                selected=selected.Select(b=>b with{Conflicts=BoardConflicts(b,all,allowed),Capabilities=b.Mode=="LEGACY_READ_ONLY"?["query"]:capabilities}).ToArray();
                 IOrderedEnumerable<BoardBarV1> sorted=query.Sort switch
                 {"WO_ASC"=>selected.OrderBy(b=>b.WorkOrderNo,StringComparer.Ordinal),"PRIORITY_DESC"=>selected.OrderByDescending(b=>b.Priority switch{"EXPEDITE"=>3,"URGENT"=>2,_=>1}),_=>selected.OrderBy(b=>b.PlannedInterval?.Start??DateTimeOffset.MaxValue)};
                 selected=sorted.ThenBy(b=>b.WoId).ThenBy(b=>b.RouteSortOrder).ThenBy(b=>b.OperationId).ToArray();
@@ -115,7 +116,8 @@ public sealed partial class SchedulingOwnerV1
         var adopted=await Store.RootIds(null).ContainsAsync(wo.Id,t)?await Store.Root(wo.Id,t):null;
         var source=(await Store.BoardSources(t)).SingleOrDefault(s=>s.RootId==wo.Id);if(adopted==null&&source==null)throw Error("BOARD_SOURCE_NOT_AVAILABLE",409);
         var now=Now();var rows=await BoardProjection(adopted==null?[]:[adopted],source==null?[]:[source],now,t);
-        return new BoardDetailV1(rows.Single(b=>b.OperationId==operation),adopted,adopted!=null,adopted?.ZoneId??source!.ZoneId,now);
+        var bar=rows.Single(b=>b.OperationId==operation) with{Capabilities=adopted==null?["query"]:await BoardCapabilities(a,t)};
+        return new BoardDetailV1(bar,adopted,adopted!=null,adopted?.ZoneId??source!.ZoneId,now);
     },ct);
     private async Task<BoardBarV1[]> BoardProjection(SchedRootV1[] roots,BoardSourceV1[] sources,DateTimeOffset now,CancellationToken ct)
     {
@@ -140,7 +142,16 @@ public sealed partial class SchedulingOwnerV1
                 result.Add(new(row.Id,wo.Id,wo.WorkOrderNo,wo.ProductName??wo.ProductCd,op?.ProcessLabel??row.ProcessCd,row.SortOrder,
                     op?.OccurrenceRef,root?.SnapshotRef,root?.Expected,op?.ScheduleRevision,root?.QueueHeads??[],info?.ProcessRef,info?.WorkgroupRef,op?.ResourceRef??info?.LegacyResourceRef,op?.AssignmentRef,
                     plan,actual,actual!=null?"COMPLETE":state=="NOT_STARTED"?"NOT_OCCURRED":"UNKNOWN",delivery,op?.PlanQty,op?.GoodQty,op?.DefectQty,state,orderState,
-                    root?.Schedule.Priority??(wo.Priority switch{>=3=>"EXPEDITE",2=>"URGENT",_=>"NORMAL"}),coverage,root==null?"LEGACY_READ_ONLY":"SCHEDULING_V1",state!="CANCELLED"&&delivery!=null&&end>delivery,[]));
+                    root?.Schedule.Priority??(wo.Priority switch{>=3=>"EXPEDITE",2=>"URGENT",_=>"NORMAL"}),coverage,root==null?"LEGACY_READ_ONLY":"SCHEDULING_V1",state!="CANCELLED"&&delivery!=null&&end>delivery,[])
+                {
+                    Gates=root==null?[new("LEGACY_READ_ONLY",row.Id,"NOT_SATISFIED")]:state!="NOT_STARTED"?[new("EXECUTION_"+state,row.Id,state=="UNKNOWN"?"UNKNOWN":"NOT_SATISFIED")]:[],
+                    OwnerLinks=new Dictionary<string,string>
+                    {
+                        ["operation"]=$"/mes/planning-board/operations/{row.Id}",
+                        ["workOrder"]=$"/mes/work-order?no={Uri.EscapeDataString(wo.WorkOrderNo)}&expectedId={wo.Id}",
+                        ["rootHistory"]=$"/api/mes/scheduling/roots/{wo.Id}/history"
+                    }
+                });
             }
         }
         return result.ToArray();

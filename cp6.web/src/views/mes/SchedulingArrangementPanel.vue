@@ -2,8 +2,8 @@
   <section aria-label="自动排列完整批次" class="arrangement-panel">
     <h3>自动排列</h3><p>生成保留当前资源的排程建议。每个工单整组提交，多个工单可能部分完成；建议不会授予开工许可。</p>
     <p v-if="error" role="alert">{{ error }}</p><p v-if="notice" role="status">{{ notice }}</p>
-    <button :disabled="busy || !can('query')" @click="loadContext">读取排列范围</button>
-    <fieldset :disabled="busy || !!pending">
+    <button v-if="!initialPreviewId && !initialBatchId" :disabled="busy || !can('query')" @click="loadContext">读取排列范围</button>
+    <fieldset v-if="!initialPreviewId && !initialBatchId" :disabled="busy || !!pending">
       <label>工厂<select v-model="siteId" aria-label="排列工厂" @change="clearPreview"><option value="">请选择工厂</option><option v-for="site in sites" :key="site.id" :value="site.id">{{ site.id }} · {{ site.zone }}</option></select></label>
       <button :disabled="!siteId || !can('query')" @click="captureSite">读取完整排列范围</button>
       <template v-if="capture">
@@ -18,12 +18,12 @@
       </template>
     </fieldset>
     <section v-if="preview">
-      <h4>确认完整排列清单</h4><p>完整清单 {{ preview.manifestCount }} 项 · {{ preview.algorithmVersion }} · 预览到期 {{ preview.expiresAt }}</p>
+      <a :href="'/mes/planning-board/previews/' + preview.previewId">打开独立预览</a><h4>确认完整排列清单</h4><p>完整清单 {{ preview.manifestCount }} 项 · {{ preview.algorithmVersion }} · 预览到期 {{ preview.expiresAt }}</p>
       <p>旧 LeadTime 估计按 max(1,天数×8) 截为整数小时；缺省时长仅在没有技术时长或旧估计时使用。未知约束会阻止相应工单组。</p>
       <table><thead><tr><th>次序/操作</th><th>原时间 → 建议</th><th>时长来源</th><th>资格/原因</th></tr></thead><tbody>
         <tr v-for="item in pageItems" :key="item.operationId"><td>{{ item.rank }} · {{ item.operationId }}</td><td>{{ interval(item.oldInterval) }} → {{ interval(item.newInterval) }}</td><td>{{ item.durationBasis }}</td><td>{{ item.inclusion }} {{ item.reasonCodes.join(' / ') }}</td></tr>
       </tbody></table>
-      <button :disabled="page === 0" @click="page--">上一页</button><span>第 {{ page + 1 }} 页</span><button :disabled="(page + 1) * 20 >= preview.items.length" @click="page++">下一页</button>
+      <button :disabled="busy || page === 0" @click="goPage(page - 1)">上一页</button><span>第 {{ page + 1 }} 页</span><button :disabled="busy || (page + 1) * 20 >= preview.manifestCount" @click="goPage(page + 1)">下一页</button>
       <fieldset :disabled="busy || !!pending">
         <label v-for="group in preview.atomicGroups" :key="group.group.groupId" class="group">
           <input v-model="groups" type="checkbox" :value="group.group.groupId" :disabled="!group.eligible" />{{ group.capture.root.workOrderNo }}：{{ interval(group.group.oldRootSchedule.interval) }} → {{ interval(group.group.newRootSchedule.interval) }}
@@ -40,6 +40,8 @@
       <template v-if="result?.batchId"><button :disabled="busy || !can('arrange.apply')" @click="advance">继续原批次</button><button :disabled="busy || !can('arrange.apply')" @click="stop">仅停止尚未发送组</button></template>
     </section>
     <section v-if="result" aria-label="排列批次结果">
+      <a :href="'/mes/planning-board/work/' + result.batchId + '?kind=batch'">打开原批次工作</a>
+      <template v-if="initialBatchId && result.unknownCount + result.waitingCount > 0"><button :disabled="busy || !can('arrange.apply')" @click="advance">继续原批次</button><button :disabled="busy || !can('arrange.apply')" @click="stop">仅停止尚未发送组</button></template>
       <p>{{ result.committedCount === result.submittedCount ? '全部工单组已提交' : '批次逐组结果' }}：提交范围 {{ result.submittedCount }}，已提交 {{ result.committedCount }}，拒绝 {{ result.rejectedCount }}，未知 {{ result.unknownCount }}，等待 {{ result.waitingCount }}，已取消 {{ result.cancelledCount }}。</p>
       <ul><li v-for="group in result.groups" :key="group.groupId">{{ group.rootId }} · {{ group.state }} {{ group.errorCode }} <span v-if="group.result">原回执 {{ group.result.applicationRef.id }}</span></li></ul>
     </section>
@@ -48,10 +50,12 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { arrangementApi as api, type ArrangementCapture, type ArrangementPreview, type ArrangementApply, type ArrangementResult } from '@/api/mes/arrangement'
+import { rebindApi } from '@/api/mes/rebind'
 import { schedulingApi, type SchedContext, type SchedInterval, type SchedRef } from '@/api/mes/scheduling'
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
 import { usePermissionStore } from '@/stores/permission'
+const props = defineProps<{ initialPreviewId?: string; initialBatchId?: string }>()
 const permissions = usePermissionStore(), can = (action: string) => permissions.has(`mes-planning-board:${action}`)
 type Pending = Omit<ArrangementApply, 'reason'>
 const context = ref<SchedContext | null>(null), capture = ref<ArrangementCapture | null>(null), preview = ref<ArrangementPreview | null>(null), pending = ref<Pending | null>(null), result = ref<ArrangementResult | null>(null)
@@ -60,7 +64,7 @@ const selectedRoots = ref<string[]>([])
 const sites = computed(() => [...new Map(context.value?.roots.map(r => [r.siteRef.id, { id: r.siteRef.id, zone: r.zoneId }])).values()])
 const operationCount = computed(() => capture.value?.roots.reduce((n, r) => n + r.capture.root.operations.length, 0) ?? 0)
 const selectedOperations = computed(() => capture.value?.roots.filter(r => selectedRoots.value.includes(r.capture.root.rootId)).flatMap(r => r.capture.root.operations) ?? [])
-const pageItems = computed(() => preview.value?.items.slice(page.value * 20, page.value * 20 + 20) ?? [])
+const pageItems = computed(() => props.initialPreviewId ? preview.value?.items ?? [] : preview.value?.items.slice(page.value * 20, page.value * 20 + 20) ?? [])
 const storage = computed(() => context.value ? `cp6_arrangement_v1:${context.value.environmentId}:${context.value.tenantId}:${context.value.actorId}` : '')
 const interval = (value: SchedInterval | null) => value ? `${value.start} — ${value.end}` : '未知/未排'
 let epoch = 0, live = true
@@ -102,10 +106,21 @@ async function apply() { await run(async check => {
 }) }
 async function recover() { await run(async check => { if (!can('command.read')) throw new Error('没有原结果读取权限。'); await locked(check, async () => { const value = await api.command(pending.value!.commandId); check(); if (value.status === 'FOUND') accepted(value.batch!); else notice.value = '尚未观察到结果，不能据此认定未提交。' }) }) }
 async function retry() { await run(async check => { if (!can('arrange.apply')) throw new Error('没有继续提交权限，请查询原结果。'); await locked(check, async () => { const item = pending.value!, p = await api.preview(item.previewId); check(); await send({ ...item, reason: p.input.reason }, check) }) }) }
-async function advance() { await run(async check => { if (!can('arrange.apply')) throw new Error('没有继续提交权限。'); await locked(check, async () => { const value = await api.continue(result.value!.batchId); check(); accepted(value) }) }) }
-async function stop() { await run(async check => { if (!can('arrange.apply')) throw new Error('没有停止权限。'); await locked(check, async () => { const value = await api.stop(result.value!.batchId); check(); accepted(value) }) }) }
+function checkBatchPending() { const raw = localStorage.getItem(storage.value); if (raw && (JSON.parse(raw) as Pending).commandId !== result.value!.commandId) throw new Error('另一原命令待核对，不能覆盖其结果引用。') }
+async function advance() { await run(async check => { if (!can('arrange.apply')) throw new Error('没有继续提交权限。'); await locked(check, async () => { checkBatchPending(); const value = await api.continue(result.value!.batchId); check(); accepted(value) }) }) }
+async function stop() { await run(async check => { if (!can('arrange.apply')) throw new Error('没有停止权限。'); await locked(check, async () => { checkBatchPending(); const value = await api.stop(result.value!.batchId); check(); accepted(value) }) }) }
 function identityChanged() { epoch++; busy.value = false; clearPreview(); context.value = null; pending.value = null; siteId.value = ''; reason.value = ''; error.value = ''; notice.value = '' }
-onMounted(() => { window.addEventListener(AUTH_EVENT, identityChanged); if (authenticationCanRead() && can('query')) void loadContext() })
+async function goPage(next: number) { if (!props.initialPreviewId) { page.value = next; return }; await run(async check => { const value = await api.preview(props.initialPreviewId!, next * 20); check(); preview.value = value; page.value = next }) }
+onMounted(() => {
+  window.addEventListener(AUTH_EVENT, identityChanged)
+  if (props.initialPreviewId || props.initialBatchId) void run(async check => {
+    const c = { ...await (props.initialBatchId ? rebindApi.workContext() : api.context()), roots: [] }; check(); context.value = c
+    const raw = localStorage.getItem(storage.value); pending.value = raw ? JSON.parse(raw) : null
+    if (props.initialPreviewId) { const p = await api.preview(props.initialPreviewId); check(); preview.value = p; groups.value = p.atomicGroups.filter(g => g.eligible).map(g => g.group.groupId) }
+    else { const b = await api.batch(props.initialBatchId!); check(); if (pending.value && pending.value.commandId !== b.commandId) throw new Error('请先核对已保存的另一原批次。'); result.value = b }
+  })
+  else if (authenticationCanRead() && can('query')) void loadContext()
+})
 onBeforeUnmount(() => { live = false; epoch++; window.removeEventListener(AUTH_EVENT, identityChanged) })
 </script>
 <style scoped>

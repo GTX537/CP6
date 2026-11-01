@@ -1,3 +1,4 @@
+import { schedulingRoutes } from './schedulingRoutes'
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { prefetchNamespacesForPath } from '@/i18n'
 import { usePlatformStore } from '@/stores/platform'
@@ -477,6 +478,7 @@ export function addDynamicRoutes(menus: any[]) {
       ...platformChildren(),
       // Internal child pages stay mounted even though they are absent from Sys_Menu.
       ...internalSubChildren(),
+      ...schedulingRoutes,
       { path: 'plm/engineering-iteration/:iterationId/candidates', name: 'plm/iteration-candidates', component: () => import('@/views/plm/IterationCandidatesView.vue'), props: true, meta: { permission: 'plm-engineering-iteration:query' } },
       { path: 'plm/controlled-document/:documentId', name: 'plm/document-review-detail', component: viewModules['/plm/controlled-document']!, props: route => ({ documentId: route.params.documentId, reviewSubmission: typeof route.query.submission === 'string' ? route.query.submission : undefined }), meta: { permission: 'plm-controlled-document:query' } },
       { path: 'wms/location-rule/:id/review', name: 'wms/location-rule-review', component: viewModules['/wms/location-rule-review']!, meta: { permission: 'wms-location-rule:query' } },

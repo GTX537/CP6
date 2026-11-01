@@ -11,6 +11,10 @@ public sealed class SchedulingController(SchedulingOwnerV1 owner):ControllerBase
     [HttpGet("board-context")]public Task<BoardContextV1> BoardContext(CancellationToken ct)=>owner.BoardContextAsync(ct);
     [HttpPost("simulation/board-sources")]public Task<SchedRefV1> BoardSource(BoardSourceV1 input,CancellationToken ct)=>owner.PublishBoardSimulationAsync(input,ct);
     [HttpGet("operations/{id:guid}")]public Task<BoardDetailV1> Operation(Guid id,CancellationToken ct)=>owner.BoardDetailAsync(id,ct);
+    [HttpGet("works/{id:guid}")]public Task<SchedWorkV1> Work(Guid id,CancellationToken ct)=>owner.WorkAsync(id,ct);
+    [HttpGet("work-context")]public Task<object> WorkContext(CancellationToken ct)=>owner.WorkContextAsync(ct);
+    [HttpGet("preview-context")]public Task<object> PreviewContext(CancellationToken ct)=>owner.PreviewContextAsync(ct);
+    [HttpPost("works/{id:guid}/reconcile")]public Task<SchedWorkV1> Reconcile(Guid id,CancellationToken ct)=>owner.ReconcileWorkAsync(id,ct);
     [HttpGet("board")]public Task<BoardPageV1> Board([FromQuery]Guid siteId,[FromQuery]string from,[FromQuery]string to,[FromQuery]string zoneId,[FromQuery]string statuses,
         [FromQuery]string? processRef=null,[FromQuery]string? workgroupRef=null,[FromQuery]string? resourceRef=null,[FromQuery]string sort="START_ASC",
         [FromQuery]Guid? captureId=null,[FromQuery]int cursor=0,[FromQuery]int pageSize=20,CancellationToken ct=default)

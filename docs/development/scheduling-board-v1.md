@@ -35,3 +35,12 @@ FormulaVersion=BOARD_FILTERED_OPS_V1：工单数按筛选结果去重；执行�
 筛选请求序号阻止旧响应覆盖新查询；身份变化或授权失败清除旧私有结果。其他失败保留上次成功捕获并标 STALE/asOf；首次失败显示未知。分页过期保留旧数据，不拼接新捕获。统计与页使用同一 captureId/queryScopeHash。
 
 本窗口不宣称完成原 D3 全部 AC01–36、拖拽草稿/全部独立详情路由、浏览器布局验收或跨阶段综合验收；这些继续按原任务逐项核对。完整目标不因本窗口关闭。实际结果和生命周期见 [W244 单份报告](evidence/W244-01/DELIVERY.md)；生产部署单独记录。
+
+## W245 操作链
+
+- `/mes/planning-board/operations/:id`准确操作/完整Root；Owner工单链接同时携带业务号和expectedId，拒绝号重用后的错对象。
+- `/mes/planning-board/changes/:id`不可变TIME_ONLY/换机计划确认；`/previews/:id`服务端稳定分页，保留完整atomicGroups确认。
+- `/mes/resource-queues/:id?siteId=...`准确资源/工厂当前队列与历史；`/mes/planning-board/work/:id`原TIME_ONLY回执，`?kind=rebind`、`?kind=batch`分别复用换机和批次原工作。
+- `GET works/:id`仅work.read、`POST works/:id/reconcile`仅work.reconcile，均重新核原Actor与当前Root范围。读取documents里的原groupId和application/首次实际command，不能以NOT_OBSERVED推断无效果；核对不提交计划。`work-context`、`preview-context`仅提供各自已授权当前身份，不额外要求query。
+- Board新捕获和详情返回capabilities/gates/ownerLinks，能力是该捕获时前置显示，最终权限/条件仍由原Owner检查。旧持久capture的新字段默认空，不能凭它授予操作能力。
+- 拖拽按UTC毫秒增量平移、保留原微秒尾数，5分钟步长；本地草稿可Esc/放弃，离开提示。准备时原看板五域/操作版本必须仍相同，不能自动换成新版本。准备后完整Root确认使用原TIME_ONLY提交及未知恢复。
