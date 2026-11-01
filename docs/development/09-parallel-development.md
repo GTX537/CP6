@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W248退货商业/财务与原D2出口](dispatch/20261101-wave248/README.md)，实际验收通过，Handoff已释放，Main待PR/finish。
+> 当前：[W249原七天最终集成与总交付](dispatch/20261101-wave249/README.md)，七阶段业务/集成出口验收通过；Handoff已释放，Main待最终PR/finish，随后完成持续目标。
+
+> 历史快照：[W248退货商业/财务与原D2出口](dispatch/20261101-wave248/README.md)，实际验收通过，Handoff已释放，Main待PR/finish。
 
 > 历史快照：[W247询盘运行链路验收](dispatch/20261101-wave247/README.md)，CRM/Handoff已合并清理释放，Main待PR/finish；原D6限定出口核销，D2/D7继续。
 
