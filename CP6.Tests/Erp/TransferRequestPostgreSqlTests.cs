@@ -3,6 +3,7 @@ using System.Net;
 using System.Text.Json;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Erp;
+using CP6.Core.Services.Wms;
 using CP6.Core.Services.Wms.Transfer;
 using CP6.Entity.DomainModels.Wms;
 using CP6.Tests.Platform;
@@ -17,7 +18,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
     private sealed record TransferFixture(Harness Reviewer, TransferRequestOptionsV1 Options, TransferRequestCreateV1 Create);
     private static TransferRequestOwnerV1 Requests(Harness h, TransferRequestOptionsV1 options)
-        => new(h.Db, InventoryIdentityAuthority(h), ScopeFence(h), Options.Create(TransferOptions()), Options.Create(options), new("DEMO"), TransferSources(h));
+        => new(h.Db, InventoryIdentityAuthority(h), ScopeFence(h), Options.Create(TransferOptions()), Options.Create(options), new("DEMO"), TransferSources(h), new(h.Db, new WmsSequenceService(h.Db)));
     private async Task<TransferFixture> TransferRequestSetup(Harness h, bool ratio = false)
     {
         await GrantTransfer(h); await TransferEnvironment(h).SaveAsync(RegisterTransfer());

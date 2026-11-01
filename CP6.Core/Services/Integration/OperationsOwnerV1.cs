@@ -101,6 +101,8 @@ public sealed partial class OperationsOwnerV1
     internal Task<Authority> InventoryIdentityDecisionAuthorityAsync(string resource, string action, Guid actor, CancellationToken ct)
         => (resource == InventoryIdentity && action == "approve" || resource is Product or EngineeringProduct && action == "confirm-inventory")
             ? AuthorityCoreAsync(resource, action, actor, true, ct) : throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
+    internal Task<Authority> TransferApprovalAuthorityAsync(Guid actor, CancellationToken ct)
+        => AuthorityCoreAsync(TransferRequest, "approve", actor, true, ct);
     private async Task<Authority> AuthorityCoreAsync(string resource,string action,Guid subject,bool storedDecision,CancellationToken ct)
     {
         var definition=catalog();

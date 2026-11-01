@@ -38,6 +38,6 @@ public sealed record TransferRequestApprovalV1(Guid Id, Guid ActorId, string Req
 public sealed record TransferRequestViewV1(Guid Id, string DraftKey, Guid CreatorId, Guid AuthorId, Guid? DepartmentId,
     string Version, string Revision, string Etag, string State, TransferRequestLineV1[] Lines, string ContentDigest,
     Guid? SubmitterId, TransferRequestApprovalV1? Approval, TransferDeploymentV1 Deployment,
-    string[] AllowedActions, string ExecutionState = "NOT_DISPATCHED");
+    string[] AllowedActions, string ExecutionState = "NOT_DISPATCHED", TransferStageV1[]? Stages = null);
 public sealed record TransferRequestResultV1(Guid OperationId, TransferRequestViewV1 Request, bool Changed);
 public sealed record TransferRequestOperationV1(Guid OperationId, string State, TransferRequestResultV1? Result = null);
