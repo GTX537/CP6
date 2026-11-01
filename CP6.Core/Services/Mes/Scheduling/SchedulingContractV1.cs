@@ -15,7 +15,7 @@ public sealed record RootScheduleV1(SchedIntervalV1? Interval,string Priority,st
 public sealed record SchedQuantityV1(string Value,SchedRefV1 UnitRef,SchedRefV1 BasisRef);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record SchedOperationV1(Guid OperationId,SchedRefV1 OccurrenceRef,int RouteSortOrder,string ProcessLabel,
-    string ScheduleRevision,SchedIntervalV1? Interval,SchedRefV1 AssignmentRef,SchedRefV1 ResourceRef,
+    string ScheduleRevision,SchedIntervalV1? Interval,SchedRefV1? AssignmentRef,SchedRefV1? ResourceRef,
     SchedQuantityV1? PlanQty,SchedQuantityV1? GoodQty,SchedQuantityV1? DefectQty);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record SchedGuardV1(Guid OperationId,SchedRefV1 SourceWindowRef,SchedIntervalV1 SourceWindow,
@@ -36,7 +36,7 @@ public sealed record SchedChangeRequestV1(Guid CaptureId,Guid OperationId,string
     string Kind,[property:JsonConverter(typeof(SchedInstantConverterV1))]DateTimeOffset ProposedStart,
     [property:JsonConverter(typeof(SchedInstantConverterV1))]DateTimeOffset ProposedEnd,string? ProposedPriority,SchedRefV1? ResourceChoiceRef,string Reason);
 public sealed record SchedOperationChangeV1(Guid OperationId,SchedRefV1 OccurrenceRef,string ExpectedScheduleRevision,
-    SchedIntervalV1? OldInterval,SchedIntervalV1 NewInterval,SchedRefV1 AssignmentRef,SchedRefV1 SourceWindowRef);
+    SchedIntervalV1? OldInterval,SchedIntervalV1 NewInterval,SchedRefV1? AssignmentRef,SchedRefV1 SourceWindowRef);
 public sealed record RootApplyGroupV1(Guid GroupId,Guid RootWoId,WoExpectedV1 OriginalWoExpected,RootScheduleV1 OldRootSchedule,
     RootScheduleV1 NewRootSchedule,string RootPolicy,SchedRefV1 OldOperationSetRef,SchedRefV1 NewOperationManifestRef,
     SchedOperationChangeV1[] ChangedOperations,SchedRefV1[] UnchangedOperationRefs,SchedRefV1[] ExpectedQueueHeads,string GroupDigest,Guid ApplyKey);

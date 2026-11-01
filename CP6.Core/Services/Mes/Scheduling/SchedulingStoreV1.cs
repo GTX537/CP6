@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using static CP6.Core.Services.Mes.Scheduling.SchedulingValuesV1;
 namespace CP6.Core.Services.Mes.Scheduling;
 
-internal sealed class SchedulingStoreV1(CP6Context db,Guid environment)
+internal sealed partial class SchedulingStoreV1(CP6Context db,Guid environment)
 {
     internal sealed record Document(Guid Id,Guid RootId,string Kind,Guid ActorId,byte[] Body);
     internal sealed record CommandRow(string InputDigest,Guid PlanId,byte[] Body);
@@ -55,10 +55,12 @@ internal sealed class SchedulingStoreV1(CP6Context db,Guid environment)
         INSERT INTO cp6_scheduling_v1.commands VALUES({db.CurrentTenantId},{environment},{actor},{input.CommandId},{Digest(input)},{input.PlanId},{Bytes(reply)})
         """,ct);
     internal async Task SaveApplication(SchedPlanV1 plan,Guid actor,RootScheduleGroupResultV1 result,CancellationToken ct)
+        =>await SaveApplication(plan.PlanId,plan.RootApplyGroup.RootWoId,actor,result,plan.Input.Reason,ct);
+    internal async Task SaveApplication(Guid planId,Guid rootId,Guid actor,RootScheduleGroupResultV1 result,string reason,CancellationToken ct)
     {
         await db.Database.ExecuteSqlInterpolatedAsync($"""
-            INSERT INTO cp6_scheduling_v1.applications VALUES({db.CurrentTenantId},{environment},{plan.PlanId},{plan.RootApplyGroup.RootWoId},{result.ApplyKey},{actor},{Bytes(result)});
-            INSERT INTO cp6_scheduling_v1.audit_outbox VALUES({db.CurrentTenantId},{environment},{plan.PlanId},{result.AuditRef.Id},{Bytes(new{actor,acceptedAt=Now(),plan=plan.PlanId,result,reason=plan.Input.Reason})});
+            INSERT INTO cp6_scheduling_v1.applications VALUES({db.CurrentTenantId},{environment},{planId},{rootId},{result.ApplyKey},{actor},{Bytes(result)});
+            INSERT INTO cp6_scheduling_v1.audit_outbox VALUES({db.CurrentTenantId},{environment},{planId},{result.AuditRef.Id},{Bytes(new{actor,acceptedAt=Now(),plan=planId,result,reason})});
             """,ct);
     }
     internal async Task<SchedRootV1> Open(SchedOpeningV1 input,string number,CancellationToken ct)

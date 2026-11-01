@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 using static CP6.Core.Services.Mes.Scheduling.SchedulingValuesV1;
 namespace CP6.Core.Services.Mes.Scheduling;
 
-public sealed class SchedulingOwnerV1(CP6Context db,OperationsOwnerV1 owner,ScopeAuthorizationFenceV1 scope,IOptions<SchedulingSimulationOptionsV1> simulation)
+public sealed partial class SchedulingOwnerV1(CP6Context db,OperationsOwnerV1 owner,ScopeAuthorizationFenceV1 scope,IOptions<SchedulingSimulationOptionsV1> simulation)
 {
     private OperationsOwnerV1 Authority=>owner.Owns(db)&&scope.Owns(db)?owner:throw Error("AUTHORITY_FENCE_UNAVAILABLE",503);
     private SchedulingStoreV1 Store=>new(db,scope.EnvironmentId);
@@ -86,6 +86,7 @@ public sealed class SchedulingOwnerV1(CP6Context db,OperationsOwnerV1 owner,Scop
         return Authority.ExecuteAsync(OperationsOwnerV1.Planning,"change.apply",true,async(a,t)=>
         {
             await Lease(a,true,t);var store=Store;var old=await store.Command(a.ActorId,frozen.CommandId,t);
+            if(old==null&&await store.Batch(a.ActorId,frozen.CommandId,t)!=null)throw Error("SCHED_COMMAND_CONFLICT",409);
             var d=await store.Read(frozen.PlanId,"plan",t);await Visible(a,d.RootId,t);
             if(d.ActorId!=a.ActorId)throw Error("SCHED_PLAN_ACTOR_MISMATCH",403);
             if(old!=null){if(old.InputDigest!=Digest(frozen))throw Error("SCHED_COMMAND_CONFLICT",409);return Decode<SchedReplyV1>(old.Body) with{Replayed=true};}
@@ -108,7 +109,9 @@ public sealed class SchedulingOwnerV1(CP6Context db,OperationsOwnerV1 owner,Scop
         {var actor=await owner.CurrentSubjectAsync(t);return await Store.Command(actor,frozen.CommandId,t)!=null?"command.read":"change.apply";});
     }
     public Task<object> CommandAsync(Guid id,CancellationToken ct=default)=>Authority.ExecuteAsync<object>(OperationsOwnerV1.Planning,"command.read",false,async(a,t)=>
-    {await Lease(a,false,t);var row=await Store.Command(a.ActorId,id,t);if(row==null)return new{status="NOT_OBSERVED",canInferNoEffect=false,asOf=DateTimeOffset.UtcNow};
+    {await Lease(a,false,t);var row=await Store.Command(a.ActorId,id,t);if(row==null)
+     {var batch=await Store.Batch(a.ActorId,id,t);if(batch!=null){var preview=Decode<ArrangementPreviewV1>((await Store.Arrangement(batch.Input.PreviewId,"preview",t)).Body);return new{status="FOUND",batch=await BatchView(a,batch,preview,true,t),canInferNoEffect=false};}
+      return new{status="NOT_OBSERVED",canInferNoEffect=false,asOf=DateTimeOffset.UtcNow};}
      var d=await Store.Read(row.PlanId,"plan",t);await Visible(a,d.RootId,t);return new{status="FOUND",reply=Decode<SchedReplyV1>(row.Body),canInferNoEffect=false};},ct);
     public Task<object[]> HistoryAsync(Guid rootId,CancellationToken ct=default)=>Authority.ExecuteAsync(OperationsOwnerV1.Planning,"history.read",false,async(a,t)=>
     {

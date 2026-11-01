@@ -12,12 +12,13 @@ internal sealed class WorkOrderScheduleOwnerV1(CP6Context db,SchedulingStoreV1 s
         {
             var g=observation.Guards.Single(x=>x.OperationId==c.OperationId);var op=proposed.Single(x=>x.OperationId==c.OperationId);
             void Deny(string code){gates.Add(new(code,c.OperationId,"NOT_SATISFIED"));}
+            if(op.ResourceRef==null)Deny("RESOURCE_UNASSIGNED");
             if(g.ExecutionState!="NOT_STARTED")Deny(g.ExecutionState=="UNKNOWN"?"EXECUTION_UNKNOWN":"OPERATION_STARTED");
             if(!g.ClaimValid)Deny("RESOURCE_CLAIM_INVALID");if(!g.PurposeAllowed)Deny("SOURCE_PURPOSE_DENIED");
             if(!Contains(g.SourceWindow,c.NewInterval))Deny("SOURCE_WINDOW_VIOLATED");
             if(!Contains(g.UseInterval,c.NewInterval))Deny("RESOURCE_USE_INTERVAL_VIOLATED");
             if(g.UnavailableIntervals.Any(b=>Overlap(b,c.NewInterval)))Deny("RESOURCE_UNAVAILABLE");
-            if(proposed.Any(p=>p.OperationId!=op.OperationId&&p.ResourceRef==op.ResourceRef&&p.Interval!=null&&Overlap(p.Interval,c.NewInterval)))Deny("RESOURCE_INTERVAL_CONFLICT");
+            if(proposed.Any(p=>p.OperationId!=op.OperationId&&SameResource(p.ResourceRef,op.ResourceRef)&&p.Interval!=null&&Overlap(p.Interval,c.NewInterval)))Deny("RESOURCE_INTERVAL_CONFLICT");
         }
         // A changed predecessor must also preserve the unchanged successor's technical boundary.
         foreach(var op in proposed)
@@ -42,16 +43,35 @@ internal sealed class WorkOrderScheduleOwnerV1(CP6Context db,SchedulingStoreV1 s
         var content=new{root.RootId,root.Expected,old=root.Schedule,proposed,Policy,capture.OperationSetRef,manifest,changed=ordered,unchanged,root.QueueHeads,applyKey=key};
         return new(id,root.RootId,root.Expected,root.Schedule,proposed,Policy,capture.OperationSetRef,manifest,ordered,unchanged,root.QueueHeads,Digest(content),key);
     }
-    internal async Task<RootScheduleGroupResultV1> ApplyRootScheduleGroup(SchedPlanV1 plan,CancellationToken ct)
+    internal Task<RootScheduleGroupResultV1> ApplyRootScheduleGroup(SchedPlanV1 plan,CancellationToken ct)
+        =>ApplyRootScheduleGroup(plan.RootApplyGroup,plan.Capture,plan.PlanId,ct);
+    internal async Task<RootScheduleGroupResultV1> ApplyRootScheduleGroup(RootApplyGroupV1 group,SchedCaptureV1 capture,Guid planId,CancellationToken ct)
     {
         if(db.Database.CurrentTransaction==null)throw Error("SCHED_SHARED_TRANSACTION_REQUIRED",503);
-        var group=plan.RootApplyGroup;var root=await store.Root(group.RootWoId,ct);
+        var root=await store.Root(group.RootWoId,ct);
         if(root.Expected!=group.OriginalWoExpected)throw Error("WO_CUT_CHANGED",409);
         if(OperationSet(root)!=group.OldOperationSetRef||root.Schedule!=group.OldRootSchedule)throw Error("SCHED_ROOT_MEMBERS_CHANGED",409);
         if(!root.QueueHeads.SequenceEqual(group.ExpectedQueueHeads))throw Error("QUEUE_CHANGED",409);
         var current=await store.Observation(root.RootId,ct);var gates=Gates(root,current,group.ChangedOperations);
         if(gates.Length!=0)throw Error(gates[0].Code,422);
-        if(current.Reference!=plan.Capture.Observation.Reference)throw Error("SCHED_SOURCE_CUT_CHANGED",409);
+        if(current.Reference!=capture.Observation.Reference)throw Error("SCHED_SOURCE_CUT_CHANGED",409);
+        // Physical resource identity is stable across resource-reference versions. Other roots are read under the shared scheduling fence.
+        foreach(var other in await store.Roots(root.SiteRef.Id,ct))
+        if(other.RootId!=root.RootId)
+        {
+            var observed=await store.Observation(other.RootId,ct);
+            foreach(var change in group.ChangedOperations)
+            {
+                var operation=root.Operations.Single(o=>o.OperationId==change.OperationId);
+                foreach(var occupying in other.Operations.Where(o=>SameResource(o.ResourceRef,operation.ResourceRef)))
+                {
+                    var guard=observed.Guards.Single(g=>g.OperationId==occupying.OperationId);
+                    var interval=guard.ExecutionState is "STARTED" or "COMPLETED"?guard.ActualInterval:occupying.Interval;
+                    if(guard.ExecutionState=="UNKNOWN"||guard.ExecutionState is "STARTED" or "COMPLETED"&&interval==null)throw Error("RESOURCE_STATE_UNKNOWN",422);
+                    if(interval!=null&&Overlap(interval,change.NewInterval))throw Error("RESOURCE_INTERVAL_CONFLICT",422);
+                }
+            }
+        }
         var operations=root.Operations.ToDictionary(o=>o.OperationId);var results=new List<SchedOperationResultV1>();
         foreach(var change in group.ChangedOperations)
         {
@@ -64,7 +84,7 @@ internal sealed class WorkOrderScheduleOwnerV1(CP6Context db,SchedulingStoreV1 s
         var next=root with{Expected=expected,Schedule=group.NewRootSchedule,Operations=operations.Values.OrderBy(x=>x.OperationId).ToArray()};
         await store.SetRoot(next,ct);
         var transition=Ref("WO-SCHED-TRANSITION",Guid.NewGuid(),"1",new{group.ApplyKey,group.GroupDigest,before=root.Expected,after=expected});
-        var audit=Ref("SCHED-AUDIT",Guid.NewGuid(),"1",new{group.ApplyKey,plan.PlanId,group.GroupDigest});
+        var audit=Ref("SCHED-AUDIT",Guid.NewGuid(),"1",new{group.ApplyKey,planId,group.GroupDigest});
         return new(Ref("WO-SCHED-APPLICATION",Guid.NewGuid(),"1",new{group.ApplyKey,group.GroupDigest,transition}),group.ApplyKey,group.GroupDigest,
             Ref("MES-WO",root.RootId,expected.Revision,next),root.Expected,expected,root.Schedule,next.Schedule,results.ToArray(),
             Ref("SCHED-UNCHANGED",root.RootId,root.Expected.Revision,group.UnchangedOperationRefs),[],transition,audit);

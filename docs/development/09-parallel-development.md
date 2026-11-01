@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W240 完整Root改期](dispatch/20261101-wave240/README.md)，相关实际验收通过，Handoff已释放，Main待PR/finish。
+> 当前：[W241 自动排列与完整Root批次](dispatch/20261101-wave241/README.md)，相关实际验收通过，Handoff已释放，Main待PR/finish。
+
+> 历史快照：[W240 完整Root改期](dispatch/20261101-wave240/README.md)，相关实际验收通过，Handoff已释放，Main待PR/finish。
 
 > 历史快照：[W239 补货实际直接移动与停止](dispatch/20261101-wave239/README.md)，相关实际验收已通过，Handoff已释放，Main待PR/finish。
 

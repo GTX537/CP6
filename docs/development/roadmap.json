@@ -161562,6 +161562,16 @@
       "date": "2026-11-01",
       "change": "W240完整Root TIME_ONLY改期：准确Snapshot/Occurrence与五域、保留扩展根包络、WO/SCHED共同事务、单写范围、不可变计划及原结果恢复、独立权限与页面。 模拟资料生产业务验收通过；完整原阶段范围继续。",
       "evidence": "docs/development/evidence/W240-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-01",
+      "change": "W240按最终proof归档一次；W241实施MES自动排列与完整Root批次，缺失上游资料明确模拟。",
+      "evidence": "docs/development/dispatch/20261101-wave241/README.md"
+    },
+    {
+      "date": "2026-11-01",
+      "change": "W241自动排列与完整Root批次：稳定优先级/交期/路线/ID排序、完整500项清单、明确时长来源与未知约束、每Root原子组、跨RootDAG/部分完成/原键恢复及页面。 模拟资料生产业务验收通过；完整原阶段范围继续。",
+      "evidence": "docs/development/evidence/W241-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -185392,9 +185402,46 @@
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "wave240_scheduling_time": {
-        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "status": "CLOSED",
         "scope": "W240完整Root TIME_ONLY改期：准确Snapshot/Occurrence与五域、保留扩展根包络、WO/SCHED共同事务、单写范围、不可变计划及原结果恢复、独立权限与页面。",
         "report": "docs/development/evidence/W240-01/DELIVERY.md",
+        "full_task_completed": false,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave240-final-verification.json"
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W240-01",
+            "source": "351415f249ce3094c810431dea7d7ae00cd8fd1b",
+            "remote_target": "d65d48e72e96b27786ce96bb1385c677dbb7d952",
+            "branch": "codex/w240-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/667"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W240-HANDOFF",
+            "source": "ada57f217ba4db7580197af2bbab02651b0d7271",
+            "remote_target": "fcee33911033f441bdda22f860110efdc8997e1c",
+            "branch": "codex/w240-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/216"
+          }
+        ]
+      },
+      "wave241_arrangement": {
+        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "scope": "W241自动排列与完整Root批次：稳定优先级/交期/路线/ID排序、完整500项清单、明确时长来源与未知约束、每Root原子组、跨RootDAG/部分完成/原键恢复及页面。",
+        "report": "docs/development/evidence/W241-01/DELIVERY.md",
         "full_task_completed": false,
         "lifecycle_complete": false,
         "lifecycle_snapshot": {
@@ -185449,9 +185496,46 @@
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "wave240_scheduling_time": {
-        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "status": "CLOSED",
         "scope": "W240完整Root TIME_ONLY改期：准确Snapshot/Occurrence与五域、保留扩展根包络、WO/SCHED共同事务、单写范围、不可变计划及原结果恢复、独立权限与页面。",
         "report": "docs/development/evidence/W240-01/DELIVERY.md",
+        "full_task_completed": false,
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave240-final-verification.json"
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W240-01",
+            "source": "351415f249ce3094c810431dea7d7ae00cd8fd1b",
+            "remote_target": "d65d48e72e96b27786ce96bb1385c677dbb7d952",
+            "branch": "codex/w240-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/667"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W240-HANDOFF",
+            "source": "ada57f217ba4db7580197af2bbab02651b0d7271",
+            "remote_target": "fcee33911033f441bdda22f860110efdc8997e1c",
+            "branch": "codex/w240-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/216"
+          }
+        ]
+      },
+      "wave241_arrangement": {
+        "status": "DELIVERY_MAIN_CLOSEOUT",
+        "scope": "W241自动排列与完整Root批次：稳定优先级/交期/路线/ID排序、完整500项清单、明确时长来源与未知约束、每Root原子组、跨RootDAG/部分完成/原键恢复及页面。",
+        "report": "docs/development/evidence/W241-01/DELIVERY.md",
         "full_task_completed": false,
         "lifecycle_complete": false,
         "lifecycle_snapshot": {
@@ -198372,10 +198456,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261101-wave240",
-      "path": "docs/development/dispatch/20261101-wave240/README.md",
-      "baseline_sha": "976fa6db7eadbf81e6f94f6d084471c1dfe77964",
-      "registered_at": "2026-11-01T15:22:04.577219+00:00",
+      "id": "20261101-wave241",
+      "path": "docs/development/dispatch/20261101-wave241/README.md",
+      "baseline_sha": "d65d48e72e96b27786ce96bb1385c677dbb7d952",
+      "registered_at": "2026-11-01T15:58:27.638366+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -198394,31 +198478,31 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W240-01",
-          "workspace_task": "W240-01",
+          "id": "W241-01",
+          "workspace_task": "W241-01",
           "related_tasks": [
             "WP08-10",
             "WP08-11"
           ],
           "goal_id": "CP6-7D-20261022",
-          "title": "MES完整Root操作组TIME_ONLY改期：准确Snapshot/Occurrence、保留扩展根包络、五域前驱、WO/SCHED共同事务、单写范围、原键恢复及页面。上游工程/资源/执行资料明确模拟，实际PostgreSQL/API执行。",
+          "title": "MES自动排列完整捕获/清单、稳定可解释启发式、每Root一个原子组、跨Root持久批次/DAG和原结果恢复及页面。缺失时长/日历/维护等输入明确模拟，实际PostgreSQL/API执行。",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "852fcc426637bab91eb7c3a84203993e5011ee39",
-            "branch": "codex/w240-handoff",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261101T152204Z-wave240-start/MESSAGE.md",
-            "at": "2026-11-01T15:22:04.577219+00:00"
+            "commit": "83bdc59afe5d6ae7ef65dcc92e8ca54cb763aff8",
+            "branch": "codex/w241-handoff",
+            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261101T155827Z-wave241-start/MESSAGE.md",
+            "at": "2026-11-01T15:58:27.638366+00:00"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w240-01",
-          "planned_scope_ref": "docs/development/dispatch/20261101-wave240/README.md",
+          "branch": "codex/w241-01",
+          "planned_scope_ref": "docs/development/dispatch/20261101-wave241/README.md",
           "full_task_completed": false,
-          "business_acceptance": "PASS_SIMULATED_ROOT_TIME_ONLY_SCOPE",
+          "business_acceptance": "PASS_SIMULATED_ARRANGEMENT_ROOT_BATCH_SCOPE",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
@@ -198429,8 +198513,8 @@
             "Main:migration",
             "Main:coordination-ledger"
           ],
-          "worker_delivery_ref": "docs/development/evidence/W240-01/DELIVERY.md",
-          "validation": "19 distinct local backend scenarios PASS:11 scheduling PostgreSQL18/actual HTTP,2 existing planning PG/HTTP,6 existing permission-seed behaviors;15 Vue scenarios PASS (7 scheduling,8 existing planning); app vue-tsc PASS. Explicit simulated upstream inputs, actual WO/SCHED PostgreSQL transaction and HTTP. Unchanged successful results reused, failures retained.",
+          "worker_delivery_ref": "docs/development/evidence/W241-01/DELIVERY.md",
+          "validation": "28 distinct local backend scenarios PASS:11 arrangement PG18/actual HTTP,11 affected W240 scheduling PG/HTTP,6 permission-seed behaviors;23 Vue scenarios PASS (8 arrangement,7 time-only,8 existing planning); app vue-tsc PASS. Simulated business/source inputs, actual PostgreSQL effects and HTTP; unchanged successful evidence reused, initial compile failure retained.",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
@@ -198440,21 +198524,20 @@
           },
           "handoff_delivery": {
             "result": "PASS",
-            "source": "ada57f217ba4db7580197af2bbab02651b0d7271",
-            "main": "fcee33911033f441bdda22f860110efdc8997e1c",
-            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/216",
+            "source": "4d2dcfcabdaea312b891d99245e4626e0d0be79d",
+            "main": "0a04436206ebb3e3f9286dd39b0c49b804bc8b22",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/217",
             "exact_tree_adoption": true,
-            "at": "2026-11-01T15:48:45.734414+00:00"
+            "at": "2026-11-01T16:25:02.456564+00:00"
           }
         }
       ],
       "horizon": {
-        "started_at": "2026-11-01T11:15:20.196947+00:00",
-        "resumed_at": "2026-11-01T15:21:52.535173+00:00",
-        "checkpoint_at": "2026-11-01T15:49:27.487378+00:00",
+        "started_at": "2026-11-01T15:57:36.570646+00:00",
+        "checkpoint_at": "2026-11-01T16:31:34.605462+00:00",
         "estimated_agent_wall_time_minutes": [
           90,
-          180
+          150
         ],
         "parent_continuous_goal": "CP6-7D-20261022"
       },
@@ -198462,7 +198545,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "继续原D3自动排列的完整Root批次、资源变更与队列及实际看板接线；D2通用Transfer/RSV/ActualFact和退货商业财务、D5/D6/D7原剩余范围保留。缺失输入直接模拟，不等待企业数据或新增资格证明链。",
+      "next_action": "继续原D3资源队列、资源更换六阶段与统一看板接线；D2通用Transfer/RSV/ActualFact和退货商业财务、D5/D6/D7原剩余范围保留。缺少生产验收输入直接模拟，不等待企业数据或新增资格证明链。",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
@@ -198470,7 +198553,7 @@
         "main_branch_deleted": false,
         "handoff_branch_deleted": true
       },
-      "actual_resumed_minutes_so_far": 27.58
+      "actual_minutes_so_far": 33.97
     },
     "wave_history": [
       {
@@ -229502,6 +229585,131 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/215"
           }
         ]
+      },
+      {
+        "id": "20261101-wave240",
+        "path": "docs/development/dispatch/20261101-wave240/README.md",
+        "baseline_sha": "976fa6db7eadbf81e6f94f6d084471c1dfe77964",
+        "registered_at": "2026-11-01T15:22:04.577219+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W240-01",
+            "workspace_task": "W240-01",
+            "related_tasks": [
+              "WP08-10",
+              "WP08-11"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "MES完整Root操作组TIME_ONLY改期：准确Snapshot/Occurrence、保留扩展根包络、五域前驱、WO/SCHED共同事务、单写范围、原键恢复及页面。上游工程/资源/执行资料明确模拟，实际PostgreSQL/API执行。",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "852fcc426637bab91eb7c3a84203993e5011ee39",
+              "branch": "codex/w240-handoff",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261101T152204Z-wave240-start/MESSAGE.md",
+              "at": "2026-11-01T15:22:04.577219+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w240-01",
+            "planned_scope_ref": "docs/development/dispatch/20261101-wave240/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "PASS_SIMULATED_ROOT_TIME_ONLY_SCOPE",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:WO-SCHED-shared-transaction",
+              "Main:migration",
+              "Main:coordination-ledger"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W240-01/DELIVERY.md",
+            "validation": "19 distinct local backend scenarios PASS:11 scheduling PostgreSQL18/actual HTTP,2 existing planning PG/HTTP,6 existing permission-seed behaviors;15 Vue scenarios PASS (7 scheduling,8 existing planning); app vue-tsc PASS. Explicit simulated upstream inputs, actual WO/SCHED PostgreSQL transaction and HTTP. Unchanged successful results reused, failures retained.",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave240-final-verification.json"
+            },
+            "handoff_delivery": {
+              "result": "PASS",
+              "source": "ada57f217ba4db7580197af2bbab02651b0d7271",
+              "main": "fcee33911033f441bdda22f860110efdc8997e1c",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/216",
+              "exact_tree_adoption": true,
+              "at": "2026-11-01T15:48:45.734414+00:00"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-11-01T11:15:20.196947+00:00",
+          "resumed_at": "2026-11-01T15:21:52.535173+00:00",
+          "checkpoint_at": "2026-11-01T15:49:27.487378+00:00",
+          "estimated_agent_wall_time_minutes": [
+            90,
+            180
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "继续原D3自动排列的完整Root批次、资源变更与队列及实际看板接线；D2通用Transfer/RSV/ActualFact和退货商业财务、D5/D6/D7原剩余范围保留。缺失输入直接模拟，不等待企业数据或新增资格证明链。",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave240-final-verification.json"
+        },
+        "actual_resumed_minutes_so_far": 27.58,
+        "actual_registered_wave_minutes": 276.76,
+        "actual_resumed_minutes": 30.22,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W240-01",
+            "source": "351415f249ce3094c810431dea7d7ae00cd8fd1b",
+            "remote_target": "d65d48e72e96b27786ce96bb1385c677dbb7d952",
+            "branch": "codex/w240-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/667"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W240-HANDOFF",
+            "source": "ada57f217ba4db7580197af2bbab02651b0d7271",
+            "remote_target": "fcee33911033f441bdda22f860110efdc8997e1c",
+            "branch": "codex/w240-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/216"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -229632,16 +229840,16 @@
           "id": "D3",
           "phase": "PARTIALLY_ADOPTED",
           "full_business_acceptance": false,
-          "current_window": "W240-01",
-          "prerequisite_adjustment": "W202 engineering baseline and W203 resource catalog retained; W240 implements actual complete Root TIME_ONLY application and WO/SCHED UoW, with explicitly simulated upstream data valid for production business acceptance. No enterprise-data wait.",
+          "current_window": "W241-01",
+          "prerequisite_adjustment": "W240 complete Root UoW retained; W241 implements deterministic full-manifest arrangement and durable per-Root batches/DAG with actual PostgreSQL effects. Simulated planning inputs are valid for production acceptance; no enterprise-data wait.",
           "adopted_window": "W49-01",
           "product_pr": "https://github.com/GTX537/CP6/pull/402",
           "report": "docs/development/evidence/WP02-03/mes-realtime/DELIVERY.md",
-          "remaining": "当前只交付TIME_ONLY子集。完整自动排列/整Root批次、资源变更六阶段、资源队列、BoardCapture筛选KPI分页、真实工程资源执行宿主衔接及其他原D3范围仍未完成，不关闭完整WP08-10/WP08-11或D3。模拟上游并不冒充这些产品功能已实现。未部署生产、未迁移既有数据库。",
+          "remaining": "原D3仍有资源更换六阶段、资源队列/EXEC事件和统一BoardCapture筛选KPI分页等未完成，不关闭完整WP08-10/WP08-11或D3。本轮启发式不声称最优APS或产能/物料齐套证明。工程/资源/执行产品宿主接线尚有剩余，业务数据可模拟。未部署生产或迁移既有数据库。",
           "last_window_actual_agent_minutes": 56.28,
           "last_branches_deleted": true,
           "last_seats_released": true,
-          "next_action": "继续原D3自动排列的完整Root批次、资源变更与队列及实际看板接线；D2通用Transfer/RSV/ActualFact和退货商业财务、D5/D6/D7原剩余范围保留。缺失输入直接模拟，不等待企业数据或新增资格证明链。",
+          "next_action": "继续原D3资源队列、资源更换六阶段与统一看板接线；D2通用Transfer/RSV/ActualFact和退货商业财务、D5/D6/D7原剩余范围保留。缺少生产验收输入直接模拟，不等待企业数据或新增资格证明链。",
           "exit_audit_report": "docs/development/evidence/W129-01/DELIVERY.md",
           "last_creation_report": "docs/development/evidence/W136-01/DELIVERY.md",
           "last_product_source_report": "docs/development/evidence/W144-01/DELIVERY.md",
@@ -229704,7 +229912,8 @@
           "last_engineering_baseline_report": "docs/development/evidence/W202-01/DELIVERY.md",
           "last_resource_capability_report": "docs/development/evidence/W203-01/DELIVERY.md",
           "acceptance_data_policy_ref": "dispatch_policy.continuous_goal.acceptance_data_policy",
-          "last_scheduling_time_report": "docs/development/evidence/W240-01/DELIVERY.md"
+          "last_scheduling_time_report": "docs/development/evidence/W240-01/DELIVERY.md",
+          "last_arrangement_report": "docs/development/evidence/W241-01/DELIVERY.md"
         },
         {
           "id": "D4",
@@ -229926,13 +230135,13 @@
         ]
       },
       "latest_progress_assessment": {
-        "as_of": "2026-11-01T15:49:27.487378+00:00",
-        "adopted_through": "W239; W240 Main closeout pending",
+        "as_of": "2026-11-01T16:31:34.605462+00:00",
+        "adopted_through": "W240; W241 Main closeout pending",
         "engineering_range_percent": null,
         "formal_stage_closure": "2/7",
         "remaining_execution_hours": null,
         "external_wait_excluded": true,
-        "basis": "D1/D4 closed; D3 complete Root TIME_ONLY scope passed with actual PG/API effects and simulated upstream. Automatic arrangement/resource rebind/queues/full board and original D2/D5/D6/D7 remaining scope continue. No engineering percentage inferred from stage ratio."
+        "basis": "D1/D4 closed; D3 arrangement and whole-Root batches passed with actual PG/API effects and simulated upstream. Resource rebind/queues/full board and original D2/D5/D6/D7 remaining scope continue. No engineering percentage inferred from stage ratio."
       },
       "execution_principles_ref": "AGENTS.md",
       "acceptance_data_policy": {
