@@ -9,7 +9,7 @@ vi.mock('@/api/mes/planAchievement', () => ({ planAchievementApi: report }))
 vi.mock('element-plus', () => ({ ElMessage: ui, ElMessageBox: ui }))
 vi.mock('@/stores/permission', () => ({ usePermissionStore: () => permission }))
 vi.mock('vue-i18n', async original => ({ ...await original<typeof import('vue-i18n')>(), useI18n: () => ({ t: (key: string) => key }) }))
-import Board from './PlanningBoardView.vue'
+import Board from './LegacyPlanningBoardPanel.vue'
 import Report from './PlanAchievementView.vue'
 import { AUTH_EPOCH, AUTH_EVENT } from '@/auth/identity'
 let wrapper: ReturnType<typeof shallowMount> | undefined

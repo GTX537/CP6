@@ -8,6 +8,20 @@ namespace CP6.WebApi.Controllers.Mes;
 [ResponseCache(NoStore=true,Location=ResponseCacheLocation.None)]
 public sealed class SchedulingController(SchedulingOwnerV1 owner):ControllerBase
 {
+    [HttpGet("board-context")]public Task<BoardContextV1> BoardContext(CancellationToken ct)=>owner.BoardContextAsync(ct);
+    [HttpPost("simulation/board-sources")]public Task<SchedRefV1> BoardSource(BoardSourceV1 input,CancellationToken ct)=>owner.PublishBoardSimulationAsync(input,ct);
+    [HttpGet("operations/{id:guid}")]public Task<BoardDetailV1> Operation(Guid id,CancellationToken ct)=>owner.BoardDetailAsync(id,ct);
+    [HttpGet("board")]public Task<BoardPageV1> Board([FromQuery]Guid siteId,[FromQuery]string from,[FromQuery]string to,[FromQuery]string zoneId,[FromQuery]string statuses,
+        [FromQuery]string? processRef=null,[FromQuery]string? workgroupRef=null,[FromQuery]string? resourceRef=null,[FromQuery]string sort="START_ASC",
+        [FromQuery]Guid? captureId=null,[FromQuery]int cursor=0,[FromQuery]int pageSize=20,CancellationToken ct=default)
+    {
+        try
+        {
+            SchedRefV1? Ref(string? text)=>text==null?null:System.Text.Json.JsonSerializer.Deserialize<SchedRefV1>(text,new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web))??throw new System.Text.Json.JsonException();
+            return owner.BoardAsync(new(siteId,new(SchedInstantConverterV1.Parse(from),SchedInstantConverterV1.Parse(to)),zoneId,Ref(processRef),Ref(workgroupRef),Ref(resourceRef),statuses.Split(','),sort),captureId,cursor,pageSize,ct);
+        }
+        catch(System.Text.Json.JsonException){throw SchedulingError("BOARD_OFFSET_TIME_OR_REFERENCE_INVALID");}
+    }
     [HttpGet("context")]public Task<object> Context([FromQuery]Guid? siteId,CancellationToken ct)=>owner.ContextAsync(siteId,ct);
     [HttpPost("simulation/roots"),RequestSizeLimit(2097152)]public Task<SchedRootV1> Open(SchedOpeningV1 input,CancellationToken ct)=>owner.OpenSimulationAsync(input,ct);
     [HttpPost("simulation/observations"),RequestSizeLimit(2097152)]public Task<SchedRefV1> Publish(SchedObservationV1 input,CancellationToken ct)=>owner.PublishSimulationAsync(input,ct);
