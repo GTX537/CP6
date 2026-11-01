@@ -582,6 +582,8 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-transfer-environment", "�
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-transfer-environment");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-transfer-source", "调拨来源读取", new[] { 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-transfer-source");
+CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-transfer-request", "调拨请求", new[] { 1, 2, 3, 4, 5 }, 5);
+CP6.Core.Services.Sys.FieldRegistry.Register("wms-transfer-request");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("erp-plate-mold", "版型工具原来源", new[] { 1, 2, 3, 4, 5 }, 5);
 CP6.Core.Services.Sys.FieldRegistry.Register("erp-plate-mold");
 CP6.Core.Services.Sys.DataScopeRegistry.Register("currency-policy", "币种政策", new[] { 1, 2, 3, 4, 5 }, 5);
@@ -915,6 +917,8 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.InventoryIdentityOwnerV1>();
 builder.Services.Configure<CP6.Core.Services.Wms.Transfer.TransferEnvironmentOptionsV1>(builder.Configuration.GetSection("TransferEnvironment"));
 builder.Services.AddScoped<CP6.Core.Services.Wms.Transfer.TransferEnvironmentOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.Transfer.TransferProductSourcesV1>();
+builder.Services.Configure<CP6.Core.Services.Wms.Transfer.TransferRequestOptionsV1>(builder.Configuration.GetSection("TransferRequests"));
+builder.Services.AddScoped<CP6.Core.Services.Wms.Transfer.TransferRequestOwnerV1>();
 builder.Services.AddScoped<UomProfileOwnerV1>();
 builder.Services.AddScoped<UomTimeBasisOwnerV1>();
 builder.Services.AddScoped<PlateMoldSourceOwnerV1>();

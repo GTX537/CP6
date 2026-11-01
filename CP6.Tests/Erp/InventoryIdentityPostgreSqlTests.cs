@@ -29,6 +29,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
                 "plm-controlled-document"=>[new("Content","文档内容"),new("Metadata","文档资料")],"file-content"=>[new("Content","文件内容"),new("FileName","文件名称")],_=>[]});
         }
         foreach (var key in new[] { "wms-transfer-environment", "wms-transfer-source" }) { catalog.RegisterScope(key, key, [5], 5); catalog.RegisterFields(key, []); }
+        catalog.RegisterScope("wms-transfer-request", "调拨请求", [1,2,3,4,5], 5); catalog.RegisterFields("wms-transfer-request", []);
         catalog.Seal();return new(h.Db,new OperationsHttp{HttpContext=h.Http},actor??(_=>Task.FromResult(h.User)),catalog.Capture);
     }
     private static InventoryIdentityOwnerV1 InventoryIdentity(Harness h, ContentStore? files = null)
