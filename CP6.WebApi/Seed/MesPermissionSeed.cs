@@ -127,5 +127,6 @@ public static class MesPermissionSeed
     [ (301,"plan.prepare","准备完整工单改期"),(301,"change.apply","应用完整工单改期"),
       (301,"command.read","读取改期原结果"),(301,"history.read","读取改期历史"),
       (301,"simulate-source","构造模拟排程资料"),(302,"change.schedule","工单根计划变更"),
-      (301,"arrange.preview","准备自动排列"),(301,"preview.read","读取排列预览"),(301,"arrange.apply","应用排列批次"),(301,"work.read","读取排列批次结果") ];
+      (301,"arrange.preview","准备自动排列"),(301,"preview.read","读取排列预览"),(301,"arrange.apply","应用排列批次"),(301,"work.read","读取排列批次结果"),
+      (301,"queue.read","读取资源执行队列"),(301,"queue.prepare","准备队列顺序"),(301,"queue.apply","应用队列顺序") ];
 }

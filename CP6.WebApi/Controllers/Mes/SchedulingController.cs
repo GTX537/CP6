@@ -27,4 +27,23 @@ public sealed class SchedulingController(SchedulingOwnerV1 owner):ControllerBase
     [HttpGet("arrangement-batches/{id:guid}")]public Task<ArrangementBatchResultV1> Batch(Guid id,CancellationToken ct)=>owner.ArrangementBatchAsync(id,ct);
     [HttpPost("arrangement-batches/{id:guid}/continue")]public Task<ArrangementBatchResultV1> Continue(Guid id,CancellationToken ct)=>owner.ContinueArrangementAsync(id,ct);
     [HttpPost("arrangement-batches/{id:guid}/stop")]public Task<ArrangementBatchResultV1> Stop(Guid id,CancellationToken ct)=>owner.StopArrangementAsync(id,ct);
+    [HttpPost("simulation/queues/{resource:guid}")]public Task<QueueHeadV1> OpenQueue(Guid resource,[FromQuery]Guid siteId,SchedRefV1 input,CancellationToken ct)
+    {if(resource!=input.Id)throw SchedulingError("QUEUE_RESOURCE_ROUTE_MISMATCH");return owner.InitializeQueueSimulationAsync(siteId,input,ct);}
+    [HttpGet("queue-context")]public Task<object> QueueContext(CancellationToken ct)=>owner.QueueContextAsync(ct);
+    [HttpPost("simulation/queue-execution-events")]public Task<QueueExecutionResultV1> QueueExecution(QueueExecutionEventV1 input,CancellationToken ct)=>owner.PublishQueueExecutionSimulationAsync(input,ct);
+    [HttpGet("resources/{resource:guid}/queue")]public Task<QueueViewV1> Queue(Guid resource,[FromQuery]Guid siteId,[FromQuery]Guid? captureId=null,[FromQuery]int cursor=0,[FromQuery]int pageSize=20,
+        [FromQuery]string? windowFrom=null,[FromQuery]string? windowTo=null,CancellationToken ct=default)
+    {
+        if((windowFrom==null)!=(windowTo==null))throw SchedulingError("QUEUE_WINDOW_INVALID");
+        SchedIntervalV1? window;
+        try{window=windowFrom==null?null:new(SchedInstantConverterV1.Parse(windowFrom),SchedInstantConverterV1.Parse(windowTo!));}
+        catch(System.Text.Json.JsonException){throw SchedulingError("SCHED_OFFSET_TIME_REQUIRED");}
+        return owner.QueueAsync(siteId,resource,captureId,cursor,pageSize,window,ct);
+    }
+    [HttpPost("resources/{resource:guid}/queue-plans")]public Task<QueuePlanV1> PrepareQueue(Guid resource,QueuePlanRequestV1 input,CancellationToken ct)=>owner.PrepareQueueAsync(resource,input,ct);
+    [HttpGet("queue-plans/{id:guid}")]public Task<QueuePlanV1> QueuePlan(Guid id,CancellationToken ct)=>owner.QueuePlanAsync(id,ct);
+    [HttpPost("queue-plans/{id:guid}/apply")]public Task<QueueReplyV1> ApplyQueue(Guid id,SchedApplyV1 input,CancellationToken ct)
+    {if(id!=input.PlanId)throw SchedulingError("QUEUE_PLAN_ROUTE_MISMATCH");return owner.ApplyQueueAsync(input,ct);}
+    [HttpGet("resources/{resource:guid}/queue-history")]public Task<object[]> QueueHistory(Guid resource,[FromQuery]Guid siteId,CancellationToken ct)=>owner.QueueHistoryAsync(siteId,resource,ct);
+    private static CP6.Core.Services.Erp.OrderPriceCorrectionException SchedulingError(string code)=>new(code,400);
 }
