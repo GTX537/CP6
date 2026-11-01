@@ -32,7 +32,7 @@ public sealed partial class SchedulingOwnerV1
         var registered=await Authority.ExecuteAsync(OperationsOwnerV1.Planning,"arrange.apply",true,async(a,t)=>
         {
             await Lease(a,true,t);var old=await Store.Batch(a.ActorId,input.CommandId,t);
-            if(await Store.Command(a.ActorId,input.CommandId,t)!=null)throw Error("SCHED_COMMAND_CONFLICT",409);
+            if(await Store.Command(a.ActorId,input.CommandId,t)!=null||await Store.QueueCommand(a.ActorId,input.CommandId,t)!=null)throw Error("SCHED_COMMAND_CONFLICT",409);
             if(old!=null){if(old.InputDigest!=Digest(input))throw Error("SCHED_COMMAND_CONFLICT",409);return(old,true);}
             var d=await Store.Arrangement(input.PreviewId,"preview",t);if(d.ActorId!=a.ActorId)throw Error("SCHED_PREVIEW_ACTOR_MISMATCH",403);
             var preview=Decode<ArrangementPreviewV1>(d.Body);

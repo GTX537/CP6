@@ -7,7 +7,10 @@ public sealed class SchedInstantConverterV1:JsonConverter<DateTimeOffset>
 {
     public override DateTimeOffset Read(ref Utf8JsonReader reader,Type type,JsonSerializerOptions options)
     {
-        if(reader.TokenType!=JsonTokenType.String)throw new JsonException("SCHED_OFFSET_TIME_REQUIRED");var value=reader.GetString()!;
+        if(reader.TokenType!=JsonTokenType.String)throw new JsonException("SCHED_OFFSET_TIME_REQUIRED");return Parse(reader.GetString()!);
+    }
+    public static DateTimeOffset Parse(string value)
+    {
         if(!Regex.IsMatch(value,@"\A[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]{1,6})?(?:Z|[+-][0-9]{2}:[0-9]{2})\z")
             ||!DateTimeOffset.TryParse(value,CultureInfo.InvariantCulture,DateTimeStyles.None,out var result))throw new JsonException("SCHED_OFFSET_TIME_REQUIRED");return result;
     }
