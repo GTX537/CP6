@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## 2026-11-01：W241 自动排列与完整Root批次
+
+W241自动排列与完整Root批次：稳定优先级/交期/路线/ID排序、完整500项清单、明确时长来源与未知约束、每Root原子组、跨RootDAG/部分完成/原键恢复及页面。 28项不同后端、23项页面场景及类型检查通过。[报告](../development/evidence/W241-01/DELIVERY.md)。Handoff已合并清理释放，Main待PR/finish。模拟资料用于生产验收，实际本地隔离环境，未部署生产。原七天目标ACTIVE，不关闭完整D3。
+
+下一步：继续原D3资源队列、资源更换六阶段与统一看板接线；D2通用Transfer/RSV/ActualFact和退货商业财务、D5/D6/D7原剩余范围保留。缺少生产验收输入直接模拟，不等待企业数据或新增资格证明链。
+
 ## 2026-11-01：W240 完整Root操作改期
 
 W240完整Root TIME_ONLY改期：准确Snapshot/Occurrence与五域、保留扩展根包络、WO/SCHED共同事务、单写范围、不可变计划及原结果恢复、独立权限与页面。 19项不同后端、15项页面场景及类型检查通过。[报告](../development/evidence/W240-01/DELIVERY.md)。Handoff已合并清理释放，Main待PR/finish。模拟资料用于生产验收，实际本地隔离环境，未部署生产。原七天目标ACTIVE，不关闭完整D3。

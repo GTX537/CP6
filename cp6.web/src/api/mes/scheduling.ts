@@ -3,7 +3,7 @@ export interface SchedRef { owner: string; id: string; version: string; digest: 
 export interface WoExpected { revision: string; controlEpoch: string; evidenceVersion: string; bindingRegistryRevision: string; snapshotId: string }
 export interface SchedInterval { start: string; end: string }
 export interface RootSchedule { interval: SchedInterval | null; priority: string; reason: string }
-export interface SchedOperation { operationId: string; occurrenceRef: SchedRef; routeSortOrder: number; processLabel: string; scheduleRevision: string; interval: SchedInterval | null; assignmentRef: SchedRef; resourceRef: SchedRef; goodQty: { value: string } | null; defectQty: { value: string } | null }
+export interface SchedOperation { operationId: string; occurrenceRef: SchedRef; routeSortOrder: number; processLabel: string; scheduleRevision: string; interval: SchedInterval | null; assignmentRef: SchedRef | null; resourceRef: SchedRef | null; goodQty: { value: string } | null; defectQty: { value: string } | null }
 export interface SchedContext { tenantId: string; actorId: string; environmentId: string; roots: { rootId: string; workOrderNo: string; siteRef: SchedRef; zoneId: string }[] }
 export interface SchedCapture { captureId: string; asOf: string; expiresAt: string; dataKind: string; completeForRoot: boolean; root: { rootId: string; workOrderNo: string; zoneId: string; expected: WoExpected; schedule: RootSchedule; operations: SchedOperation[] } }
 export interface SchedChange { captureId: string; operationId: string; expectedScheduleRevision: string; woExpected: WoExpected; kind: 'TIME_ONLY'; proposedStart: string; proposedEnd: string; proposedPriority: string | null; resourceChoiceRef: null; reason: string }

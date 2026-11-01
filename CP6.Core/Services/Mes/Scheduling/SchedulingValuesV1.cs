@@ -48,6 +48,7 @@ internal static class SchedulingValuesV1
     {if(value==null)return;if(value.Value==null||!Regex.IsMatch(value.Value,@"\A(?:0|[1-9][0-9]{0,12})(?:\.[0-9]{1,8})?\z"))throw Error("SCHED_QUANTITY_INVALID");Reference(value.UnitRef);Reference(value.BasisRef);}
     internal static bool Contains(SchedIntervalV1 a,SchedIntervalV1 b)=>a.Start<=b.Start&&a.End>=b.End;
     internal static bool Overlap(SchedIntervalV1 a,SchedIntervalV1 b)=>a.Start<b.End&&b.Start<a.End;
+    internal static bool SameResource(SchedRefV1? a,SchedRefV1? b)=>a!=null&&b!=null&&a.Owner==b.Owner&&a.Id==b.Id;
     internal static SchedRefV1 OperationSet(SchedRootV1 r)=>Ref("WO-OPERATION-SET",r.RootId,r.Expected.Revision,r.Operations.OrderBy(x=>x.OperationId).ToArray());
     internal static void Opening(SchedOpeningV1 input)
     {
@@ -62,7 +63,8 @@ internal static class SchedulingValuesV1
         if(input.RootSchedule.Priority is not("NORMAL" or "URGENT" or "EXPEDITE"))throw Error("SCHED_PRIORITY_INVALID");
         foreach(var op in input.Operations)
         {if(op.OperationId==Guid.Empty||string.IsNullOrWhiteSpace(op.ProcessLabel)||op.ProcessLabel.Length>200)throw Error("SCHED_OPERATION_INVALID");
-         Reference(op.OccurrenceRef);Reference(op.AssignmentRef);Reference(op.ResourceRef);Version(op.ScheduleRevision);
+         Reference(op.OccurrenceRef);if((op.AssignmentRef==null)!=(op.ResourceRef==null))throw Error("SCHED_ASSIGNMENT_RESOURCE_MISMATCH");
+         if(op.AssignmentRef!=null){Reference(op.AssignmentRef);Reference(op.ResourceRef!);}Version(op.ScheduleRevision);
          if(op.Interval!=null)Interval(op.Interval);Quantity(op.PlanQty);Quantity(op.GoodQty);Quantity(op.DefectQty);}
         Observation(input.Observation,input.RootId,input.Operations);
     }
