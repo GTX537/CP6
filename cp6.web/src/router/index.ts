@@ -17,6 +17,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/wms/warehouse-drafts': () => import('@/views/wms/WarehouseDraftView.vue'),
   '/wms/inventory-identity': () => import('@/views/wms/InventoryIdentitiesView.vue'),
   '/wms/transfer-environment': () => import('@/views/wms/TransferEnvironmentView.vue'),
+  '/wms/transfer-requests': () => import('@/views/wms/TransferRequestsView.vue'),
   '/mes/machine-capabilities': () => import('@/views/mes/ResourceCapabilitiesView.vue'),
   '/mes/work-center-capabilities': () => import('@/views/mes/ResourceCapabilitiesView.vue'),
   '/mes/machine-sources': () => import('@/views/mes/ResourceSourcesView.vue'),

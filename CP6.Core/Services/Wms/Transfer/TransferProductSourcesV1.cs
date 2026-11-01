@@ -18,13 +18,19 @@ public sealed class TransferProductSourcesV1(CP6Context db, OperationsOwnerV1 ow
         return owner.ExecuteAsync(OperationsOwnerV1.TransferSource, "query", false, async (a, t) =>
         {
             var s = new TransferEnvironmentStoreV1(db, scope, options, runtime); var registration = await s.Acquire(a, t);
+            return await ReadWithinOwner(a, s, registration, reference, t);
+        }, ct);
+    }
+    internal async Task<TransferProductSourceV1> ReadWithinOwner(OperationsAccessV1 a, TransferEnvironmentStoreV1 s,
+        TransferEnvironmentRegistrationV1 registration, InventoryIdentityRefV1 reference, CancellationToken t)
+    {
+            if (!owner.Owns(db) || !identities.Owns(db)) throw TransferEnvironmentStoreV1.Error("AUTHORITY_FENCE_UNAVAILABLE");
             var product = await identities.CatalogueSource(a, reference, t);
             await s.RequireSource(new(reference.Owner, reference.Id, reference.Version, reference.Digest), t);
             foreach (var source in product.Sources) await Provenance(s, source, 0, t);
             var d = registration.Original.Deployment;
             return new TransferProductSourceV1(new(d.EnvironmentId, d.Mode, d.SandboxScopeId, registration.Reference.Version),
                 registration.Reference, product.CatalogueRef, product.Option);
-        }, ct);
     }
     private static async Task Provenance(TransferEnvironmentStoreV1 s, InventoryIdentitySourceV1 source, int depth, CancellationToken ct)
     {
