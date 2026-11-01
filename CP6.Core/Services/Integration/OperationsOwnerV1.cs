@@ -44,6 +44,7 @@ public sealed partial class OperationsOwnerV1
     private readonly CP6Context db;
     private readonly IHttpContextAccessor http;
     private readonly Func<CancellationToken,Task<Guid>> currentActor;
+    internal Task<Guid> CurrentSubjectAsync(CancellationToken ct)=>currentActor(ct);
     private readonly Func<AuthorizationCatalogSnapshotV1> catalog;
     public OperationsOwnerV1(CP6Context db,IHttpContextAccessor http,Func<CancellationToken,Task<Guid>> currentActor)
         :this(db,http,currentActor,AuthorizationCatalogV1.Capture) { }

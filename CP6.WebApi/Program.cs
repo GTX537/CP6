@@ -1065,6 +1065,8 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.IKittingService, CP6.Core.Servi
 // 4.17 MSBBWM110/120/130 Logistics（スロッティング + 補充 + クロスドック）
 builder.Services.AddScoped<CP6.Core.Services.Wms.ICrossDockService, CP6.Core.Services.Wms.CrossDockService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IReplenishService, CP6.Core.Services.Wms.ReplenishService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.Replenish.ReplenishPlanningOwnerV1>();
+builder.Services.Configure<CP6.Core.Services.Wms.Replenish.ReplenishSimulationOptionsV1>(builder.Configuration.GetSection("ReplenishSimulation"));
 builder.Services.AddScoped<CP6.Core.Services.Wms.ISlottingService, CP6.Core.Services.Wms.SlottingService>();
 
 // 4.18 MSBBWM200/230/240/250 紙器業特化（原紙ロール + インキ + パレット + VMI）
