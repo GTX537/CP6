@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W238 人工草稿与准备登记](dispatch/20261101-wave238/README.md)，相关实际验收已通过，Handoff已释放，Main待PR/finish。
+> 当前：[W239 补货实际直接移动与停止](dispatch/20261101-wave239/README.md)，相关实际验收已通过，Handoff已释放，Main待PR/finish。
+
+> 历史快照：[W238 人工草稿与准备登记](dispatch/20261101-wave238/README.md)，相关实际验收已通过，Handoff已释放，Main待PR/finish。
 
 > 历史快照：[W237 补货建议与登记](dispatch/20261101-wave237/README.md)，相关实际验收已通过，Handoff已释放，Main待PR/finish。
 

@@ -1,4 +1,4 @@
-# 补货建议、人工草稿与登记 v1
+# 补货建议、人工草稿、登记与直接移动 v1
 
 W237 按 [REP 设计](../design-handbook/modules/WMS-REP-01.md) 的 D01/D02 推进建议、AllocationPlan、订单和 ActiveIntent。接口为 `/api/wms/replenish/v1`，页面通过现有 `/wms/replenish` 的“补货建议与登记”进入。旧根响应和历史分页保留，旧 PostgreSQL 生成／执行链仍拒绝未采用写入，不调用 MobileTaskV2 代替 Transfer。
 
@@ -47,12 +47,12 @@ context 中的 draftOptions 提供完整维度和来源原件，页面允许明�
 
 人工 prepare 在同一元数据事务内检查当前权限、规则、完整 cut、目标缺额、准确来源与 typed 容量；保存 selection、REGISTERED 版本、唯一 ActiveIntent、prepare 结果、稳定 dispatchKey／operationId／writerEpoch、NOT_SENT 发送知识和事件／原命令。任何写入失败整组回滚，响应丢失按原键恢复。同一选择换键也回原 prepare；批量 prepare 复用既有 ActiveIntent，不再增加义务。来源预算按 Root Owner/id 保留占用，换 Root 观察版本不能重新登记相同物理范围；单个上游 cut 不能同时宣称同根的不同版本。
 
-当前实际 Transfer 准备适配尚未接入，PrepareView 为 mode=ACCEPTED_TRANSFER、adoptionRef=null、canDispatch=false、blockers=[WAITING_TRANSFER_ADOPTION]；订单保持 REGISTERED，义务持续计入，未发送到 Transfer，不置 PREPARED。此持久等待是后续唯一原准备的恢复位置，不是准备或搬运成功回执。生产业务验收使用明确模拟资料，已实际执行草稿、编辑、目标与来源竞争、登记、回滚和原操作恢复。
+W238 的元数据 prepare 原结果为 mode=ACCEPTED_TRANSFER、adoptionRef=null、canDispatch=false、blockers=[WAITING_TRANSFER_ADOPTION]；原结果保持不可变。W239 通过 `orders/{id}/transfer-prepare` 消费该原登记，创建实际 Transfer SourceDemand、Request 和完整 Stage；独立批准后推进 PREPARED，后续派发和移动见[直接移动合同](replenish-direct-move-v1.md)。不能把旧 prepare 回执改写为后来已执行的结果；当前状态由订单和 execution-link 查询。
 
 ## 剩余范围
 
-本轮订单为 REGISTERED，moved=0 且 dispatchSummary=NOT_REQUESTED；这些是确定尚未派发的本域事实，不是对未知物理效果填零。没有调用 Stock、建立 Claim、取得 Transfer Stage 或宣称搬运成功。
+W237/W238 的原批量响应仍为 REGISTERED、dispatchSummary=NOT_REQUESTED；它们是原登记时点的结果。W239 当前订单可以推进 PREPARED、TASK_ISSUED、MOVED 或 CANCELLED_NO_EFFECT；Stock 原回执与订单完成同事务保存，实际不确定时保留 RECONCILIATION/UNKNOWN 和 null 数量。
 
-后续继续实际 Transfer prepare／SourceDemand 共享采用、完整 Root/Claim/容量最终事务、派发、执行和停止、已移与未移同 cut 关联，以及新订单列表分页／导出和历史任务族衔接。人工草稿、版本历史与 prepare 登记已实现，完整执行链仍未完成。D01/D02 的本次交付范围不替代整个 REP 模块或 D2 阶段完成。待发布事件已持久保存，外部消费者未在本轮采用。
+后续继续完整 Transfer ActualFact/Case 与有权后继、通用 RSV Use/Claim 工作流、MASTER/质量专业 Owner 接线、新订单列表分页／导出和历史任务族衔接。W239 已实际执行模拟期初下的整单直接移动、永久无效果停止、同 cut 到货及原结果恢复；此范围不替代整个 REP/Stock/Transfer 模块或 D2 阶段完成。待发布事件已持久保存，外部消费者未在本轮采用。
 
-验证与交付见 [W237 报告](evidence/W237-01/DELIVERY.md)和 [W238 报告](evidence/W238-01/DELIVERY.md)。
+验证与交付见 [W237 报告](evidence/W237-01/DELIVERY.md)、[W238 报告](evidence/W238-01/DELIVERY.md)和 [W239 报告](evidence/W239-01/DELIVERY.md)。

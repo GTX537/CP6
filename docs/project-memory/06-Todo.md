@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 2026-11-01：W239 补货实际直接移动与停止
+
+W239补货实际直接移动与停止：Stock准确Root/Slice及既有Claim Binding、共享容量、Transfer原SourceDemand/完整Stage、独立批准和设备、REP共同事务及同cut未到转实存，原键恢复与页面。 20项不同PG/HTTP、18项页面场景通过。[报告](../development/evidence/W239-01/DELIVERY.md)。Handoff已合并、分支清理并释放；Main待PR/finish。模拟输入用于生产业务验收，部署单列未执行。原七天目标ACTIVE，不关闭完整D2。
+
+下一步：推进原D3计划写入；继续D2 ActualFact/Case有权处置、通用RSV/MASTER/质量接线、退货商业/财务衔接、历史任务族与原D5/D7集成。验收输入缺失直接模拟，不等待企业数据。
+
 ## 2026-11-01：W238 人工草稿与准备登记
 
 W238人工补货草稿与准备登记：完整创建/编辑及版本历史，准确Root/目标预算、prepare原子登记、持久原键及发送知识，实际API/页面和模拟生产验收。 14项PG/HTTP、15项页面实际场景通过。[报告](../development/evidence/W238-01/DELIVERY.md)。Handoff已合并并释放；Main待PR/finish。原七天目标继续，生产验收缺少数据直接模拟。

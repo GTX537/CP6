@@ -26,10 +26,12 @@ public sealed partial class ReplenishPlanningOwnerV1(CP6Context db,OperationsOwn
         {await Lease(a,t);a.RequireReplenishSimulationScope();await Visible(a,frozen,a.ActorId,frozen.DepartmentId,t);
          await Persistence.Publish(frozen,t);return frozen.CutRef;},ct);
     }
-    private async Task Visible(OperationsAccessV1 a,RepObservationV1 observation,Guid creator,Guid? department,CancellationToken ct,bool current=false)
+    private async Task Visible(OperationsAccessV1 a,RepObservationV1 observation,Guid creator,Guid? department,CancellationToken ct,bool current=false,RepRefV1[]? selectedLocations=null)
     {
         await a.RequireReplenishPlanningDocument(creator,department,ct);
-        var ids=observation.Locations.Select(x=>x.NativeLocationId).ToArray();
+        var mapped=selectedLocations==null?observation.Locations:observation.Locations.Where(x=>selectedLocations.Any(r=>SameRoot(r,x.Ref))).ToArray();
+        if(selectedLocations!=null&&mapped.Length!=selectedLocations.Distinct().Count())throw Error("REP_LOCATION_FORBIDDEN",403);
+        var ids=mapped.Select(x=>x.NativeLocationId).ToArray();
         var locations=a.ReplenishPlanningLocations();
         if(current)locations=locations.Where(x=>!x.IsBlocked&&!x.IsInitializationQuarantined);
         if(await locations.CountAsync(x=>ids.Contains(x.Id),ct)!=ids.Length)throw Error("REP_LOCATION_FORBIDDEN",403);
@@ -37,8 +39,25 @@ public sealed partial class ReplenishPlanningOwnerV1(CP6Context db,OperationsOwn
         {await a.RequireReplenishPlanningDocument(creator,department,t);
          if(await locations.CountAsync(x=>ids.Contains(x.Id),t)!=ids.Length)throw Error("REP_LOCATION_FORBIDDEN",403);});
     }
+    private static RepRefV1[] OrderLocations(RepOrderInputV1 input)=>[input.Source.SourceLocationRef,input.ToLocationRef];
     private async Task Visible(OperationsAccessV1 a,Store s,Store.Document d,CancellationToken ct)
-        =>await Visible(a,await s.Observation(d.ScopeKey,ct),d.CreatorId,d.DepartmentId,ct);
+    {
+        if(d.Kind is "order" or "order-revision")
+        {await Visible(a,await s.Observation(d.ScopeKey,ct),d.CreatorId,d.DepartmentId,ct,selectedLocations:OrderLocations(Store.Decode<RepOrderV1>(d.Body).Input));return;}
+        if(d.Kind is "prepare" or "prepare-registration")
+        {
+            var order=d.Kind=="prepare"?Store.Decode<RepPrepareV1>(d.Body).OrderRef:Store.Decode<RepPrepareRegistrationV1>(d.Body).OrderRef;
+            await Visible(a,s,await s.CurrentOrder(Id(order),ct),ct);return;
+        }
+        if(d.Kind=="intent")
+        {
+            var locations=new List<RepRefV1>();
+            foreach(var split in Store.Decode<RepIntentV1>(d.Body).Splits)
+                locations.AddRange(OrderLocations(Store.Decode<RepOrderV1>((await s.CurrentOrder(Id(split.OrderRef),ct)).Body).Input));
+            await Visible(a,await s.Observation(d.ScopeKey,ct),d.CreatorId,d.DepartmentId,ct,selectedLocations:locations.Distinct().ToArray());return;
+        }
+        await Visible(a,await s.Observation(d.ScopeKey,ct),d.CreatorId,d.DepartmentId,ct);
+    }
     private static Guid Id(RepRefV1 r)
     {Reference(r);return r.Owner==Owner&&Guid.TryParseExact(r.Id,"D",out var id)?id:throw Error("REP_REFERENCE_INVALID");}
     private static void Exact<T>(RepRefV1 expected,T actual,RepRefV1 reference)
@@ -50,7 +69,8 @@ public sealed partial class ReplenishPlanningOwnerV1(CP6Context db,OperationsOwn
     public Task<RepPlanV1> PlanAsync(Guid id,CancellationToken ct=default)=>Read<RepPlanV1>(id,"plan",ct);
     public Task<RepCutV1> CutAsync(Guid id,CancellationToken ct=default)=>Read<RepCutV1>(id,"cut",ct);
     public Task<RepBatchV1> BatchAsync(Guid id,CancellationToken ct=default)=>Read<RepBatchV1>(id,"batch",ct);
-    public Task<RepIntentV1> IntentAsync(Guid id,CancellationToken ct=default)=>Read<RepIntentV1>(id,"intent",ct);
+    public Task<RepIntentV1> IntentAsync(Guid id,CancellationToken ct=default)=>Authority.ExecuteAsync(OperationsOwnerV1.Replenish,"query",false,async(a,t)=>
+    {await Lease(a,t);var s=Persistence;await s.Fence(false,t);var d=await s.Read(id,"intent",t);await Visible(a,s,d,t);return await CurrentIntent(s,Store.Decode<RepIntentV1>(d.Body),t);},ct);
     public Task<object> ContextAsync(CancellationToken ct=default)=>Authority.ExecuteAsync<object>(OperationsOwnerV1.Replenish,"query",false,async(a,t)=>
     {
         await Lease(a,t);var s=Persistence;await s.Fence(false,t);
@@ -59,11 +79,15 @@ public sealed partial class ReplenishPlanningOwnerV1(CP6Context db,OperationsOwn
             """).ToArrayAsync(t);var visible=new List<object>();
         foreach(var key in keys)
         {var observation=await s.Observation(key,t);
-         try{await Visible(a,observation,a.ActorId,observation.DepartmentId,t);}
+         try{await a.RequireReplenishPlanningDocument(a.ActorId,observation.DepartmentId,t);}
          catch(CP6.Core.Services.Erp.OrderPriceCorrectionException e)when(e.Status is 403 or 404){continue;}
-         visible.Add(new{observation.Scope,observation.CutRef,observation.DataKind,observation.Coverage,observation.Rules,observation.Locations,draftOptions=DraftOptions(observation)});}
+         var allowed=await a.ReplenishPlanningLocations().Select(x=>x.Id).ToArrayAsync(t);
+         var locations=observation.Locations.Where(x=>allowed.Contains(x.NativeLocationId)).ToArray();if(locations.Length==0)continue;
+         var complete=locations.Length==observation.Locations.Length;var refs=locations.Select(x=>x.Ref).ToArray();
+         visible.Add(new{observation.Scope,observation.CutRef,observation.DataKind,coverage=complete?observation.Coverage:"PARTIAL",rules=complete?observation.Rules:[],locations,
+             draftOptions=DraftOptions(observation).Where(x=>refs.Contains(x.Source.SourceLocationRef)&&refs.Contains(x.ToLocationRef)).ToArray()});}
         return new{tenantId=db.CurrentTenantId,actorId=a.ActorId,environmentId=scope.EnvironmentId,scopes=visible,dependencyHealth=keys.Length==0?"OBSERVATION_UNAVAILABLE":"AVAILABLE",
-            capabilities=new[]{"SUGGEST","REGISTER_BATCH","CREATE_DRAFT","EDIT_DRAFT","REGISTER_PREPARE"},dispatchCapability="WAITING_TRANSFER_ADOPTION"};
+            capabilities=new[]{"SUGGEST","REGISTER_BATCH","CREATE_DRAFT","EDIT_DRAFT","REGISTER_PREPARE","TRANSFER_DIRECT_MOVE"},dispatchCapability="PER_ORDER_STOCK_PREPARATION"};
     },ct);
     private Task<T> Command<T>(RepCommandV1 meta,string action,object input,Func<OperationsAccessV1,Store,CancellationToken,Task<(Guid,T)>> body,CancellationToken ct,bool create=true)
     {
@@ -84,13 +108,26 @@ public sealed partial class ReplenishPlanningOwnerV1(CP6Context db,OperationsOwn
     }
     private static async Task<(RepIntentV1[],RepSpanV1[])> Active(Store s,CancellationToken ct)
     {
-        var docs=await s.Documents().Where(x=>x.Kind=="intent"||x.Kind=="plan").ToArrayAsync(ct);
-        var intents=docs.Where(x=>x.Kind=="intent").Select(x=>Store.Decode<RepIntentV1>(x.Body)).Where(x=>x.State!="SETTLED").ToArray();
-        var planIds=intents.Where(x=>x.AllocationPlanRef!=null).Select(x=>x.AllocationPlanRef!.Id).ToHashSet(StringComparer.Ordinal);
-        var spans=docs.Where(x=>x.Kind=="plan"&&planIds.Contains(x.Id.ToString("D"))).SelectMany(x=>Store.Decode<RepPlanV1>(x.Body).Splits).SelectMany(x=>x.Source.Spans).ToList();
-        foreach(var split in intents.Where(x=>x.AllocationPlanRef==null).SelectMany(x=>x.Splits))
-            spans.AddRange(Store.Decode<RepOrderV1>((await s.CurrentOrder(Id(split.OrderRef),ct)).Body).Input.Source.Spans);
-        return(intents,spans.ToArray());
+        var docs=await s.Documents().Where(x=>x.Kind=="intent").ToArrayAsync(ct);var intents=new List<RepIntentV1>();var spans=new List<RepSpanV1>();
+        foreach(var doc in docs)
+        {
+            var intent=await CurrentIntent(s,Store.Decode<RepIntentV1>(doc.Body),ct);if(intent.State=="SETTLED")continue;intents.Add(intent);
+            foreach(var split in intent.Splits.Where(x=>x.State is not ("MOVED" or "CANCELLED_NO_EFFECT")))
+                spans.AddRange(Store.Decode<RepOrderV1>((await s.CurrentOrder(Id(split.OrderRef),ct)).Body).Input.Source.Spans);
+        }
+        return(intents.ToArray(),spans.ToArray());
+    }
+    private static async Task<RepIntentV1> CurrentIntent(Store s,RepIntentV1 original,CancellationToken ct)
+    {
+        var orders=new List<RepOrderV1>();foreach(var split in original.Splits)orders.Add(Store.Decode<RepOrderV1>((await s.CurrentOrder(Id(split.OrderRef),ct)).Body));
+        var unknown=orders.Any(x=>x.Knowledge=="UNKNOWN");var settled=orders.All(x=>x.Lifecycle is "MOVED" or "CANCELLED_NO_EFFECT");
+        var moved=orders.Where(x=>x.Lifecycle=="MOVED").Aggregate(BigInteger.Zero,(n,x)=>n+Number(x.Planned.Value));
+        var closed=orders.Where(x=>x.Lifecycle=="CANCELLED_NO_EFFECT").Aggregate(BigInteger.Zero,(n,x)=>n+Number(x.Planned.Value));
+        var currentCut=(await s.Observation(Hash(orders[0].Input.Scope),ct)).CutRef;
+        return original with{State=settled?"SETTLED":unknown?"STOP_PENDING":orders.Any(x=>x.Lifecycle=="TASK_ISSUED")?"IN_PROGRESS":"REGISTERED_COUNTED",
+            OpenIncoming=unknown?null:Q(Number(original.OriginalQuantity.Value,total:true)-moved-closed,original.OriginalQuantity.UomRef),
+            ConfirmedMoved=unknown?null:Q(moved,original.OriginalQuantity.UomRef),ClosedUnexecuted=unknown?null:Q(closed,original.OriginalQuantity.UomRef),Coverage=unknown?"UNKNOWN":"COMPLETE",
+            CutRef=currentCut,Splits=original.Splits.Select((x,i)=>x with{State=orders[i].Lifecycle,OrderRef=orders[i].Ref}).ToArray()};
     }
     public Task<RepSuggestionV1> SuggestAsync(RepSuggestInputV1 input,CancellationToken ct=default)
     {
