@@ -66,6 +66,10 @@ public partial class PlanningBoardService
             var orders = await a.PlanningOrders(ct);
             if (!await _db.WorkOrderProcesses.AnyAsync(p => p.Id == frozen.Id && !p.IsDeleted
                 && orders.Any(w => w.WorkOrderNo == p.WorkOrderNo), ct)) throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN", 403);
+            var number=await _db.WorkOrderProcesses.Where(p=>p.Id==frozen.Id).Select(p=>p.WorkOrderNo).SingleAsync(ct);
+            if(await _db.Database.SqlQuery<bool>($"""
+                SELECT EXISTS(SELECT FROM cp6_scheduling_v1.openings WHERE tenant_id={_db.CurrentTenantId} AND work_order_no={number}) AS "Value"
+                """).SingleAsync(ct))throw new OrderPriceCorrectionException("MIGRATED_SCOPE_NEW_FLOW_REQUIRED",409);
             // Accepted SCHED R2: missing Snapshot/Occurrence is LEGACY_READ_ONLY. A process status or
             // machine code cannot stand in for the complete Root/WO/RES/EXEC adoption and common UoW.
             throw new OrderPriceCorrectionException("SCHED_OWNER_PROTOCOL_NOT_READY", 503);
@@ -75,9 +79,16 @@ public partial class PlanningBoardService
     public Task<int> AutoArrangeAsync(AutoArrangeRequest request, string? userName)
     {
         if (!_db.Database.IsNpgsql()) return AutoArrangeCoreAsync(request, userName);
+        var frozen=OperationsOwnerV1.Freeze(request);
         return Owner.ExecuteAsync<int>(OperationsOwnerV1.Planning, "arrange", false, async (a, ct) =>
         {
-            await a.PlanningOrders(ct);
+            var orders=await a.PlanningOrders(ct);
+            var numbers=await orders.Where(w=>_db.WorkOrderProcesses.Any(p=>p.WorkOrderNo==w.WorkOrderNo&&!p.IsDeleted
+                && (frozen.WgCd==null||frozen.WgCd==""||p.WgCd==frozen.WgCd)
+                && (frozen.ProcessCd==null||frozen.ProcessCd==""||p.ProcessCd==frozen.ProcessCd))).Select(w=>w.WorkOrderNo).ToArrayAsync(ct);
+            if(await _db.Database.SqlQuery<string>($"""
+                SELECT work_order_no AS "Value" FROM cp6_scheduling_v1.openings WHERE tenant_id={_db.CurrentTenantId}
+                """).AnyAsync(n=>numbers.Contains(n),ct))throw new OrderPriceCorrectionException("MIGRATED_SCOPE_NEW_FLOW_REQUIRED",409);
             throw new OrderPriceCorrectionException("SCHED_OWNER_PROTOCOL_NOT_READY", 503);
         });
     }

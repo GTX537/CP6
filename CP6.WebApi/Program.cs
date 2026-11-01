@@ -1066,6 +1066,8 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.IKittingService, CP6.Core.Servi
 builder.Services.AddScoped<CP6.Core.Services.Wms.ICrossDockService, CP6.Core.Services.Wms.CrossDockService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IReplenishService, CP6.Core.Services.Wms.ReplenishService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.Replenish.ReplenishPlanningOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Mes.Scheduling.SchedulingOwnerV1>();
+builder.Services.Configure<CP6.Core.Services.Mes.Scheduling.SchedulingSimulationOptionsV1>(builder.Configuration.GetSection("SchedulingSimulation"));
 builder.Services.Configure<CP6.Core.Services.Wms.Replenish.ReplenishSimulationOptionsV1>(builder.Configuration.GetSection("ReplenishSimulation"));
 builder.Services.AddScoped<CP6.Core.Services.Wms.ISlottingService, CP6.Core.Services.Wms.SlottingService>();
 

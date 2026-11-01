@@ -1680,3 +1680,7 @@ W238人工补货草稿与准备登记：完整创建/编辑及版本历史，准
 ## 2026-11-01 W239 实际直接移动与停止
 
 W239补货实际直接移动与停止：Stock准确Root/Slice及既有Claim Binding、共享容量、Transfer原SourceDemand/完整Stage、独立批准和设备、REP共同事务及同cut未到转实存，原键恢复与页面。 [报告](../evidence/W239-01/DELIVERY.md)。本轮为全新显式模拟期初下的整单DIRECT_MOVE。完整TRANSIT、ActualFact/Case认账、通用RSV Use与Claim创建/释放、全部MASTER/质量宿主接线、既有库存迁移、列表/导出、历史任务族及外部消费者未完成；原D2退货商业/财务衔接仍保留，不关闭完整WP10-10/WP10-31或D2。未部署生产或迁移既有数据库。 下一步：推进原D3计划写入；继续D2 ActualFact/Case有权处置、通用RSV/MASTER/质量接线、退货商业/财务衔接、历史任务族与原D5/D7集成。验收输入缺失直接模拟，不等待企业数据。
+
+## 2026-11-01 W240 完整Root改期
+
+W240完整Root TIME_ONLY改期：准确Snapshot/Occurrence与五域、保留扩展根包络、WO/SCHED共同事务、单写范围、不可变计划及原结果恢复、独立权限与页面。 [报告](../evidence/W240-01/DELIVERY.md)。当前只交付TIME_ONLY子集。完整自动排列/整Root批次、资源变更六阶段、资源队列、BoardCapture筛选KPI分页、真实工程资源执行宿主衔接及其他原D3范围仍未完成，不关闭完整WP08-10/WP08-11或D3。模拟上游并不冒充这些产品功能已实现。未部署生产、未迁移既有数据库。 下一步：继续原D3自动排列的完整Root批次、资源变更与队列及实际看板接线；D2通用Transfer/RSV/ActualFact和退货商业财务、D5/D6/D7原剩余范围保留。缺失输入直接模拟，不等待企业数据或新增资格证明链。

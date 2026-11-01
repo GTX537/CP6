@@ -1,5 +1,6 @@
 <template>
   <div class="planning-board">
+    <SchedulingTimePanel />
     <el-alert v-if="readMode === 'LEGACY_READ_ONLY'" :title="t('現在の計画は参照専用です。改期・設備変更は正式な排程手続きの利用開始後に行えます。')" type="info" :closable="false" />
     <el-alert v-if="intent.error.value" :title="intent.error.value" type="warning" :closable="false" />
     <!-- 検索 + KPI -->
@@ -173,6 +174,7 @@ import { MagicStick } from '@element-plus/icons-vue'
 import { useOperationsIntent } from '@/composables/useOperationsIntent'
 import { usePermissionStore } from '@/stores/permission'
 import { planningBoardApi } from '@/api/mes/mes'
+import SchedulingTimePanel from './SchedulingTimePanel.vue'
 import {
   PROCESS_STATUS_OPTIONS,
   type PlanningBarDto,

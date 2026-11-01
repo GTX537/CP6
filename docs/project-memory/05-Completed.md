@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-01：W240 完整Root操作改期
+
+W240完整Root TIME_ONLY改期：准确Snapshot/Occurrence与五域、保留扩展根包络、WO/SCHED共同事务、单写范围、不可变计划及原结果恢复、独立权限与页面。 19项不同后端、15项页面场景及类型检查通过。[报告](../development/evidence/W240-01/DELIVERY.md)。Handoff已合并清理释放，Main待PR/finish。模拟资料用于生产验收，实际本地隔离环境，未部署生产。原七天目标ACTIVE，不关闭完整D3。
+
+下一步：继续原D3自动排列的完整Root批次、资源变更与队列及实际看板接线；D2通用Transfer/RSV/ActualFact和退货商业财务、D5/D6/D7原剩余范围保留。缺失输入直接模拟，不等待企业数据或新增资格证明链。
+
 ## 2026-11-01：W239 补货实际直接移动与停止
 
 W239补货实际直接移动与停止：Stock准确Root/Slice及既有Claim Binding、共享容量、Transfer原SourceDemand/完整Stage、独立批准和设备、REP共同事务及同cut未到转实存，原键恢复与页面。 20项不同PG/HTTP、18项页面场景通过。[报告](../development/evidence/W239-01/DELIVERY.md)。Handoff已合并、分支清理并释放；Main待PR/finish。模拟输入用于生产业务验收，部署单列未执行。原七天目标ACTIVE，不关闭完整D2。
