@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## 2026-11-01：W248退货商业/财务与原D2出口
+
+W248退货商业/财务独立接线：冻结请求、全租户原发运行范围占用、外部原键派发/查询、不可变结果与独立财务轴、当前权限和页面恢复；原D2限定出口核销。 7 distinct PostgreSQL18/actual HTTP scenarios PASS, zero skipped (5 new commercial scenarios including five outcome variants,2 affected authorization/physical regressions);19 affected Vue scenarios and app vue-tsc PASS; original canonical commercial/financial output validation PASS. Native Windows/.NET8.0.30, isolated PostgreSQL18, explicit durable simulated external ERP/Finance. No Actions or deployment. [报告](../development/evidence/W248-01/DELIVERY.md)。Handoff已合并清理释放，Main待PR/finish。外部发票、批准、ERP/Finance结果及HTTP服务明确模拟并持久化，用于生产业务验收；实际RMA/Stock/PG/HTTP/UI执行。未部署生产、未迁移既有环境，完整WP10/11与财务账本/TRANSIT/通用RSV/H30全消费者独立。
+
+原七天目标ACTIVE；D1-D6限定出口收口后进入D7，6/7不是工程量百分比。下一步：进入原D7：核对本期六阶段已采用主线/合同，执行缺少的定向跨仓集成，处理实际失败，完成总台账与最终生命周期审计；不扩大为完整125目标或等待企业数据。
+
 ## 2026-11-01：W247询盘运行链路生产业务验收
 
 W247公开询盘原日历/时区、换版Attempt、NFC重放和实际后台到持久模拟消费者的生产业务验收通过；原D6限定出口核销。 6项不同有效结果、0跳过。[报告](../development/evidence/W247-01/DELIVERY.md)。CRM/Handoff已合并清理释放，Main待PR/finish。原D1/D3/D4/D5/D6限定出口闭合，D2/D7继续。5/7只是阶段数，不是工程完成百分比；不以此外推工时。H01仍按冻结合同仅Asia/Shanghai，完整WP03/隐私导出及运行/发布资格独立未完成；ops身份Unproven与正式ready不提升，生产部署未执行。

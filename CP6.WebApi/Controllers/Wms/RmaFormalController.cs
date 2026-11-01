@@ -15,25 +15,30 @@ public sealed class RmaFormalResultAttribute : ActionFilterAttribute
     {
         var http = context.HttpContext; http.Response.Headers.CacheControl = "no-store";
         var correlation = http.Request.Headers["X-Correlation-Id"].ToString();
-        var queryPath = http.Request.RouteValues.TryGetValue("kind",out var kind) && http.Request.Path.StartsWithSegments("/api/wms/rma/v2/dispositions")
+        var existingCommercial = http.Request.Path.StartsWithSegments("/api/wms/rma/v1/commercial")
+            && http.Request.RouteValues.ContainsKey("request");
+        var queryPath = http.Request.Path.StartsWithSegments("/api/wms/rma/v1/commercial") ? "/api/wms/rma/v1/commercial/commands/query"
+            : http.Request.RouteValues.TryGetValue("kind",out var kind) && http.Request.Path.StartsWithSegments("/api/wms/rma/v2/dispositions")
             ? "/api/wms/rma/v2/dispositions/"+kind+"/commands/query" : http.Request.Path.Value?.Contains("/quality",StringComparison.Ordinal) == true
             ? "/api/wms/rma/v1/quality/commands/query" : http.Request.Path.Value?.Contains("/physical",StringComparison.Ordinal) == true
             ? "/api/wms/rma/v1/physical/commands/query" : http.Request.Path.Value?.Contains("/authorization",StringComparison.Ordinal) == true
             ? "/api/wms/rma/v1/authorization/commands/query" : http.Request.Path.StartsWithSegments("/api/wms/rma/v1/delivery-evidence")
             ? "/api/wms/rma/v1/delivery-evidence/commands/query" : http.Request.Path.StartsWithSegments("/api/wms/rma/v1/policies")
             ? "/api/wms/rma/v1/policies/commands/query" : "/api/wms/rma/v1/commands/query";
+        if(existingCommercial) queryPath=$"/api/wms/rma/v1/commercial/applications/{http.Request.RouteValues["application"]}/requests/{http.Request.RouteValues["request"]}/refresh";
         if (!context.ModelState.IsValid || string.IsNullOrWhiteSpace(correlation) || correlation.Length > 200
             || !http.Request.Headers.CacheControl.ToString().Split(',').Any(x => x.Trim().Equals("no-store", StringComparison.OrdinalIgnoreCase)))
-        { context.Result = Problem(400, "VALIDATION_FAILED", correlation, http.TraceIdentifier, queryPath); return; }
+        { context.Result = Problem(400, "VALIDATION_FAILED", correlation, http.TraceIdentifier, queryPath, existingCommercial); return; }
         var result = await next();
         if (result.Exception is OrderPriceCorrectionException error)
-        { result.Result = Problem(error.Status, error.Message, correlation, http.TraceIdentifier, queryPath); result.ExceptionHandled = true; }
+        { result.Result = Problem(error.Status, error.Message, correlation, http.TraceIdentifier, queryPath, existingCommercial); result.ExceptionHandled = true; }
         else if (result.Exception is ScopeAuthorizationExceptionV1 scope)
-        { result.Result = Problem(scope.Status, scope.Message, correlation, http.TraceIdentifier, queryPath); result.ExceptionHandled = true; }
+        { result.Result = Problem(scope.Status, scope.Message, correlation, http.TraceIdentifier, queryPath, existingCommercial); result.ExceptionHandled = true; }
     }
-    private static ObjectResult Problem(int status, string code, string correlation, string trace, string queryPath)
+    private static ObjectResult Problem(int status, string code, string correlation, string trace, string queryPath, bool existingCommercial)
     {
-        var unknown = code == "OPERATIONS_OUTCOME_UNKNOWN";
+        // A failed dispatch/read says nothing about the commitment of an already durable external request.
+        var unknown = code == "OPERATIONS_OUTCOME_UNKNOWN" || existingCommercial;
         return new(new { status, code, title = code, detail = code, correlationId = string.IsNullOrWhiteSpace(correlation) || correlation.Length > 200 ? trace : correlation,
             retryable = false, commitKnowledge = unknown ? "UNKNOWN" : "NOT_ACCEPTED", bindingCreated = false, workCreated = false,
             terminalReceiptCreated = false, recovery = new { action = unknown ? "QUERY_ORIGINAL" : status == 412 ? "REFRESH_HEAD" : "NONE",

@@ -1,4 +1,5 @@
 import type { CorrectionPending } from '@/api/wms/rmaCorrections'
+import type { CommercialPending } from '@/api/wms/rmaCommercial'
 import type { RmaPending } from '@/api/wms/rmaFormalApplications'
 import type { RmaPolicyPending } from '@/api/wms/rmaPolicies'
 import type { DeliveryEvidencePending } from '@/api/wms/rmaDeliveryEvidence'
@@ -25,6 +26,6 @@ async function transaction<T>(mode: IDBTransactionMode, action: (store: IDBObjec
 }
 export const rmaPendingStore = {
   read: (key: string) => transaction<unknown>('readonly', s => s.get(key)),
-  save: (key: string, value: RmaPending | RmaPolicyPending | DeliveryEvidencePending | AuthorizationPending | PhysicalPending | QualityPending | DispositionPending | CorrectionPending) => transaction('readwrite', s => s.put(value, key)),
+  save: (key: string, value: RmaPending | RmaPolicyPending | DeliveryEvidencePending | AuthorizationPending | PhysicalPending | QualityPending | DispositionPending | CorrectionPending | CommercialPending) => transaction('readwrite', s => s.put(value, key)),
   remove: (key: string) => transaction('readwrite', s => s.delete(key)),
 }

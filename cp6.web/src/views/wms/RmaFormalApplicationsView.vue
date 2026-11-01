@@ -57,6 +57,7 @@
       <RmaPhysicalReturnPanel v-if="identity && isHead && !editing" :scope="identity" :application-id="detail.applicationId" :capabilities="context!.capabilities" />
       <RmaQualityPanel v-if="identity && isHead && !editing" :scope="identity" :application-id="detail.applicationId" />
       <RmaCorrectionPanel v-if="identity && isHead && !editing" :scope="identity" :application-id="detail.applicationId" />
+      <RmaCommercialPanel v-if="identity && isHead && !editing && context!.capabilities.includes('wms.rma.commercial.read')" :scope="identity" :application-id="detail.applicationId" />
       <RmaDispositionPanel v-if="identity && isHead && !editing" :scope="identity" :application-id="detail.applicationId" />
     </section>
   </main>
@@ -75,6 +76,7 @@ import RmaAuthorizationPanel from './RmaAuthorizationPanel.vue'
 import RmaPhysicalReturnPanel from './RmaPhysicalReturnPanel.vue'
 import RmaQualityPanel from './RmaQualityPanel.vue'
 import RmaCorrectionPanel from './RmaCorrectionPanel.vue'
+import RmaCommercialPanel from './RmaCommercialPanel.vue'
 import RmaDispositionPanel from './RmaDispositionPanel.vue'
 import type { AuthorizationDecision } from '@/api/wms/rmaAuthorizations'
 
