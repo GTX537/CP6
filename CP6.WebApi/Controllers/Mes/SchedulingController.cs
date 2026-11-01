@@ -14,8 +14,8 @@ public sealed class SchedulingController(SchedulingOwnerV1 owner):ControllerBase
     [HttpGet("roots/{id:guid}/capture")]public Task<SchedCaptureV1> Capture(Guid id,CancellationToken ct)=>owner.CaptureAsync(id,ct);
     [HttpPost("change-plans")]public Task<SchedPlanV1> Prepare(SchedChangeRequestV1 input,CancellationToken ct)=>owner.PrepareAsync(input,ct);
     [HttpGet("change-plans/{id:guid}")]public Task<SchedPlanV1> Plan(Guid id,CancellationToken ct)=>owner.PlanAsync(id,ct);
-    [HttpPost("change-plans/{id:guid}/apply")]public Task<SchedReplyV1> Apply(Guid id,SchedApplyV1 input,CancellationToken ct)
-    {if(id!=input.PlanId)throw new CP6.Core.Services.Erp.OrderPriceCorrectionException("SCHED_PLAN_ROUTE_MISMATCH",400);return owner.ApplyAsync(input,ct);}
+    [HttpPost("change-plans/{id:guid}/apply")]public Task<object> Apply(Guid id,SchedApplyV1 input,CancellationToken ct)
+    {if(id!=input.PlanId)throw new CP6.Core.Services.Erp.OrderPriceCorrectionException("SCHED_PLAN_ROUTE_MISMATCH",400);return owner.ApplyChangeAsync(input,ct);}
     [HttpGet("commands/{id:guid}")]public Task<object> Command(Guid id,CancellationToken ct)=>owner.CommandAsync(id,ct);
     [HttpGet("roots/{id:guid}/history")]public Task<object[]> History(Guid id,CancellationToken ct)=>owner.HistoryAsync(id,ct);
     [HttpPost("simulation/planning-inputs")]public Task<SchedRefV1> PlanningInput(SchedPlanningInputV1 input,CancellationToken ct)=>owner.PublishPlanningSimulationAsync(input,ct);
@@ -45,5 +45,15 @@ public sealed class SchedulingController(SchedulingOwnerV1 owner):ControllerBase
     [HttpPost("queue-plans/{id:guid}/apply")]public Task<QueueReplyV1> ApplyQueue(Guid id,SchedApplyV1 input,CancellationToken ct)
     {if(id!=input.PlanId)throw SchedulingError("QUEUE_PLAN_ROUTE_MISMATCH");return owner.ApplyQueueAsync(input,ct);}
     [HttpGet("resources/{resource:guid}/queue-history")]public Task<object[]> QueueHistory(Guid resource,[FromQuery]Guid siteId,CancellationToken ct)=>owner.QueueHistoryAsync(siteId,resource,ct);
+    [HttpPost("simulation/rebind-sources")]public Task<SchedRefV1> RebindSource(RebindSimulationV1 input,CancellationToken ct)=>owner.OpenRebindSimulationAsync(input,ct);
+    [HttpGet("operations/{id:guid}/rebind-context")]public Task<RebindContextV1> RebindContext(Guid id,[FromQuery]Guid rootId,CancellationToken ct)=>owner.RebindContextAsync(rootId,id,ct);
+    [HttpGet("rebind-works/{id:guid}")]public Task<RebindWorkV1> RebindWork(Guid id,CancellationToken ct)=>owner.RebindWorkAsync(id,ct);
+    [HttpPost("rebind-works/{id:guid}/continue")]public Task<RebindReplyV1> RebindContinue(Guid id,RebindActionV1 input,CancellationToken ct)=>owner.ContinueRebindAsync(id,input,ct);
+    [HttpPost("rebind-works/{id:guid}/stop")]public Task<RebindReplyV1> RebindStop(Guid id,RebindActionV1 input,CancellationToken ct)=>owner.StopRebindAsync(id,input,ct);
+    [HttpPost("rebind-works/{id:guid}/reconcile")]public Task<RebindWorkV1> RebindReconcile(Guid id,CancellationToken ct)=>owner.ReconcileRebindAsync(id,ct);
+    [HttpPost("rebind-works/{id:guid}/migrate-queue")]public Task<RebindMigrationV1> RebindQueue(Guid id,CancellationToken ct)=>owner.MigrateRebindQueueAsync(id,ct);
+    [HttpPost("simulation/rebind-works/{id:guid}/deliver")]public Task<RebindPhaseReceiptV1> RebindDeliver(Guid id,CancellationToken ct)=>owner.DeliverRebindSimulationAsync(id,ct);
+    [HttpPost("simulation/rebind-works/{id:guid}/conserve")]public Task<RebindWorkV1> RebindConserve(Guid id,CancellationToken ct)=>owner.ConserveRebindSimulationAsync(id,ct);
+    [HttpPost("simulation/rebind-works/{id:guid}/execution-resolution")]public Task<RebindExecutionV1> RebindExecutionResolution(Guid id,RebindExecutionV1 input,CancellationToken ct)=>owner.ResolveRebindExecutionSimulationAsync(id,input,ct);
     private static CP6.Core.Services.Erp.OrderPriceCorrectionException SchedulingError(string code)=>new(code,400);
 }

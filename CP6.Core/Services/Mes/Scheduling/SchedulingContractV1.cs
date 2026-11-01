@@ -42,7 +42,7 @@ public sealed record RootApplyGroupV1(Guid GroupId,Guid RootWoId,WoExpectedV1 Or
     SchedOperationChangeV1[] ChangedOperations,SchedRefV1[] UnchangedOperationRefs,SchedRefV1[] ExpectedQueueHeads,string GroupDigest,Guid ApplyKey);
 public sealed record SchedGateV1(string Code,Guid OperationId,string State);
 public sealed record SchedPlanV1(Guid PlanId,string Revision,string Digest,DateTimeOffset ExpiresAt,SchedChangeRequestV1 Input,
-    SchedCaptureV1 Capture,RootApplyGroupV1 RootApplyGroup,SchedGateV1[] Gates,bool Eligible);
+    SchedCaptureV1 Capture,RootApplyGroupV1 RootApplyGroup,SchedGateV1[] Gates,bool Eligible,RebindPlanV1? Rebind=null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record SchedApplyV1(Guid CommandId,Guid PlanId,string ExpectedPlanRevision,string ExpectedPlanDigest,string Reason);
 public sealed record SchedOperationResultV1(Guid OperationId,string OldScheduleRevision,string NewScheduleRevision,

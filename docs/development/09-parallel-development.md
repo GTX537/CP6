@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W242 资源队列与EXEC投影](dispatch/20261101-wave242/README.md)，相关实际验收通过，Handoff已释放，Main待PR/finish。
+> 当前：[W243 资源换机与准确队列迁移](dispatch/20261101-wave243/README.md)，相关实际验收通过，Handoff已释放，Main待PR/finish。
+
+> 历史快照：[W242 资源队列与EXEC投影](dispatch/20261101-wave242/README.md)，相关实际验收通过，Handoff已释放，Main待PR/finish。
 
 > 历史快照：[W241 自动排列与完整Root批次](dispatch/20261101-wave241/README.md)，相关实际验收通过，Handoff已释放，Main待PR/finish。
 

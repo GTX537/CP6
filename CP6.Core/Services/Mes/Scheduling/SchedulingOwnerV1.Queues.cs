@@ -46,20 +46,27 @@ public sealed partial class SchedulingOwnerV1
     private async Task<QueueHeadV1> QueueRequired(Guid site,Guid resource,CancellationToken ct)=>await Store.Queue(site,resource,ct)??throw Error("QUEUE_NOT_VISIBLE",404);
     private async Task<QueueItemV1[]> QueueProjection(QueueHeadV1 head,CancellationToken ct)
     {
-        var rows=new List<QueueItemV1>();var roots=await Store.Roots(head.SiteId,ct);
+        var rows=new List<QueueItemV1>();var roots=await Store.Roots(head.SiteId,ct);var migrations=await Store.RebindMigrations(ct);
         foreach(var m in head.Members)
         {
             var root=roots.Single(r=>r.RootId==m.RootId);var op=root.Operations.Single(o=>o.OperationId==m.OperationId);
-            if(op.AssignmentRef!=m.AssignmentRef||!SameResource(op.ResourceRef,head.ResourceRef))throw Error("QUEUE_ASSIGNMENT_MIGRATION_REQUIRED",409);
+            var superseded=op.AssignmentRef!=m.AssignmentRef||!SameResource(op.ResourceRef,head.ResourceRef);
+            if(superseded&&!migrations.Any(x=>x.State=="PENDING"&&x.OldMember==m&&x.NewAssignment==op.AssignmentRef))throw Error("QUEUE_ASSIGNMENT_MIGRATION_REQUIRED",409);
             var observation=await Store.Observation(root.RootId,ct);var guard=observation.Guards.Single(g=>g.OperationId==op.OperationId);
-            var state=guard.ExecutionState switch{"NOT_STARTED"=>"WAITING","STARTED"=>"LOCKED_IN_EXECUTION","COMPLETED"=>"COMPLETED",_=>"UNKNOWN"};
+            var state=superseded?"ASSIGNMENT_SUPERSEDED":guard.ExecutionState switch{"NOT_STARTED"=>"WAITING","STARTED"=>"LOCKED_IN_EXECUTION","COMPLETED"=>"COMPLETED",_=>"UNKNOWN"};
             rows.Add(new(m,rows.Count+1,state,Ref("SCHED",op.OperationId,op.ScheduleRevision,op),op.Interval,guard.PredecessorOccurrences,
                 "NO_EXECUTION_PERMISSION",state=="LOCKED_IN_EXECUTION"&&rows.Any(x=>x.State=="WAITING"),observation.Reference));
         }
         // New assignments cannot silently disappear from a purportedly complete queue.
         foreach(var r in roots)
         foreach(var op in r.Operations.Where(o=>SameResource(o.ResourceRef,head.ResourceRef)&&!head.Members.Any(m=>m.OperationId==o.OperationId)))
-            if((await Store.Observation(r.RootId,ct)).Guards.Single(g=>g.OperationId==op.OperationId).ExecutionState!="COMPLETED")throw Error("QUEUE_MEMBERSHIP_CHANGED",409);
+        {
+            var observed=await Store.Observation(r.RootId,ct);var guard=observed.Guards.Single(g=>g.OperationId==op.OperationId);if(guard.ExecutionState=="COMPLETED")continue;
+            var pending=migrations.SingleOrDefault(x=>x.State=="PENDING"&&x.OperationId==op.OperationId&&x.NewAssignment==op.AssignmentRef);
+            if(pending==null)throw Error("QUEUE_MEMBERSHIP_CHANGED",409);
+            rows.Add(new(pending.OldMember with{ItemId=pending.NewItemId,AssignmentRef=pending.NewAssignment},rows.Count+1,"PENDING_QUEUE_MIGRATION",
+                Ref("SCHED",op.OperationId,op.ScheduleRevision,op),op.Interval,guard.PredecessorOccurrences,"NO_EXECUTION_PERMISSION",false,observed.Reference));
+        }
         return rows.ToArray();
     }
     private static bool InQueueWindow(QueueItemV1 i,SchedIntervalV1? window)=>i.State!="COMPLETED"&&(window==null||i.Interval==null||Overlap(i.Interval,window));
@@ -81,7 +88,7 @@ public sealed partial class SchedulingOwnerV1
                 // Empty queues still require visibility of their historical root scopes.
                 if(head.Members.Length==0)
                 {var all=await Store.Roots(site,t);allowed=all.Where(r=>r.QueueHeads.Any(q=>q.Id==head.QueueId)).Select(r=>r.RootId).ToArray();foreach(var id in allowed)await Visible(a,id,t);}
-                var complete=items.All(i=>visible.Contains(i.Member.RootId)&&InQueueWindow(i,window));var now=Now();
+                var complete=items.All(i=>visible.Contains(i.Member.RootId)&&InQueueWindow(i,window)&&i.State!="PENDING_QUEUE_MIGRATION");var now=Now();
                 capture=new(Guid.NewGuid(),a.ActorId,head,items,allowed,now,now.AddMinutes(30),Digest(items),complete,window);
                 await Store.SaveArrangement(capture.CaptureId,site,"queue-capture",a.ActorId,capture,t);
             }
@@ -142,7 +149,7 @@ public sealed partial class SchedulingOwnerV1
         return Authority.ExecuteAsync(OperationsOwnerV1.Planning,"queue.apply",true,async(a,t)=>
         {
             await Lease(a,true,t);var old=await Store.QueueCommand(a.ActorId,input.CommandId,t);
-            if(await Store.Command(a.ActorId,input.CommandId,t)!=null||await Store.Batch(a.ActorId,input.CommandId,t)!=null)throw Error("SCHED_COMMAND_CONFLICT",409);
+            if(await Store.RebindCommand(a.ActorId,input.CommandId,t)!=null||await Store.Command(a.ActorId,input.CommandId,t)!=null||await Store.Batch(a.ActorId,input.CommandId,t)!=null)throw Error("SCHED_COMMAND_CONFLICT",409);
             var p=await QueuePlan(a,input.PlanId,t);
             if(old!=null){if(old.InputDigest!=Digest(input))throw Error("SCHED_COMMAND_CONFLICT",409);return Decode<QueueReplyV1>(old.Body) with{Replayed=true};}
             if(p.Revision!=input.ExpectedPlanRevision||p.Digest!=input.ExpectedPlanDigest||p.Input.Reason!=input.Reason)throw Error("QUEUE_PLAN_MISMATCH",409);
