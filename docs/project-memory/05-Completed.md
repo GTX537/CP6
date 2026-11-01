@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-01：W249原七天最终集成与总交付
+
+原七天D1–D7业务与集成出口全部核销；生产业务验收采用明确模拟输入，实际Owner/PostgreSQL/HTTP/页面与原键恢复执行。最终完成以本轮正常合并和官方finish为准。 [总报告](../development/evidence/W249-01/DELIVERY.md)。本轮8项实际PG/HTTP/宿主通过、零失败跳过；其余未变输入成功证据复用。模拟业务资料可用于生产验收，生产部署未执行。
+
+原七天业务/集成出口7/7通过；本提交快照Handoff已合并清理释放，Main待正常采用/finish，终态见同轮PR及wave249-final-verification.json。完整375任务仍24DONE/2IN_PROGRESS/349PLANNED，125/247状态保持；全产品余项与发布部署继续独立登记，不等待真实企业数据。
+
 ## 2026-11-01：W248退货商业/财务与原D2出口
 
 W248退货商业/财务独立接线：冻结请求、全租户原发运行范围占用、外部原键派发/查询、不可变结果与独立财务轴、当前权限和页面恢复；原D2限定出口核销。 7 distinct PostgreSQL18/actual HTTP scenarios PASS, zero skipped (5 new commercial scenarios including five outcome variants,2 affected authorization/physical regressions);19 affected Vue scenarios and app vue-tsc PASS; original canonical commercial/financial output validation PASS. Native Windows/.NET8.0.30, isolated PostgreSQL18, explicit durable simulated external ERP/Finance. No Actions or deployment. [报告](../development/evidence/W248-01/DELIVERY.md)。Handoff已合并清理释放，Main待PR/finish。外部发票、批准、ERP/Finance结果及HTTP服务明确模拟并持久化，用于生产业务验收；实际RMA/Stock/PG/HTTP/UI执行。未部署生产、未迁移既有环境，完整WP10/11与财务账本/TRANSIT/通用RSV/H30全消费者独立。
