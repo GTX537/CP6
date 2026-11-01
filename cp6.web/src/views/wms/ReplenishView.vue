@@ -13,8 +13,10 @@
       <el-button v-permission="'wms-replenish:generate'" :disabled="!canWrite('generate')" type="warning" @click="openBatch">{{ t('wms.replenish.btn.genBatch') }}</el-button>
     </template>
 
-    <el-alert v-if="!writesAvailable" :title="t('补充指示暂只支持查询，生成和派发功能尚未开通。')" type="info" :closable="false" show-icon />
+    <el-alert v-if="!writesAvailable" :title="t('历史补充指示暂只支持查询。新补货请使用下方建议与登记入口。')" type="info" :closable="false" show-icon />
     <el-alert v-if="readError || intent.error.value" :title="readError || intent.error.value" type="warning" :closable="false" show-icon />
+    <el-button @click="showPlanning = !showPlanning">补货建议与登记</el-button>
+    <ReplenishPlanningPanel v-if="showPlanning" />
     <CpListPage
       :key="listEpoch"
       :lazy="reloadRequired"
@@ -98,6 +100,8 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
+import ReplenishPlanningPanel from './ReplenishPlanningPanel.vue'
+const showPlanning = ref(false)
 import { ElMessage, ElMessageBox, type FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { readWmsPage } from '@/api/wms/readWmsPage'

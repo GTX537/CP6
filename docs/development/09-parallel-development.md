@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W236 调拨实际执行](dispatch/20261101-wave236/README.md)，相关实际验收已通过，Handoff已释放，Main待PR/finish。
+> 当前：[W237 补货建议与登记](dispatch/20261101-wave237/README.md)，相关实际验收已通过，Handoff已释放，Main待PR/finish。
+
+> 历史快照：[W236 调拨实际执行](dispatch/20261101-wave236/README.md)，相关实际验收已通过，Handoff已释放，Main待PR/finish。
 
 > 历史快照：[W235 调拨请求](dispatch/20261101-wave235/README.md)，相关实际验收已通过，Handoff已释放，Main待PR/finish。
 

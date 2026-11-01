@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-01：W237 补货建议与登记
+
+W237补货建议与批量登记：完整cut、准确维度及Root分配、类型化容量、原子批量和提交即计目标义务，实际API/页面及模拟生产验收。 11项PG/HTTP、18项页面实际场景通过。[报告](../development/evidence/W237-01/DELIVERY.md)。Handoff已合并并释放；Main待PR/finish。原七天目标继续，生产验收缺少数据直接模拟。
+
+下一步：继续REP人工DRAFT/prepare、SourceDemand与Transfer全Stage共享采用、实际物理最终门及停止；然后推进原D3计划写入。缺少验收资料直接模拟。
+
 ## 2026-11-01：W236 调拨实际执行
 
 W236原生调拨Stage及页面：准确请求份额、实际Stock双腿同事务移动、预留与属性保持、当前容量/权限、永久关闭和原操作恢复。 11项PG/HTTP、10项页面实际场景通过。[报告](../development/evidence/W236-01/DELIVERY.md)。Handoff已合并并释放；Main待PR/finish。原七天目标继续，生产验收缺少数据直接模拟。

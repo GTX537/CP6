@@ -6,6 +6,23 @@ namespace CP6.Core.Services.Integration;
 
 internal sealed partial class OperationsAccessV1
 {
+    internal void RequireReplenishSimulationScope()
+    {if(authority.Scope!=5)throw new OrderPriceCorrectionException("REP_SIMULATION_SCOPE_REQUIRED",403);}
+    internal IQueryable<Location> ReplenishPlanningLocations()
+    {
+        var rows=db.Locations.AsNoTracking().Where(x=>!x.IsDeleted&&db.Warehouses.Any(w=>!w.IsDeleted&&w.WarehouseCd==x.WarehouseCd));
+        if(authority.Actor.RoleIds.Contains(1))return rows;
+        var grants=db.WmsRoleScopes.Where(g=>authority.Actor.RoleIds.Contains(g.RoleId));
+        return rows.Where(x=>grants.Any(g=>(g.WarehouseCd=="*"||g.WarehouseCd==x.WarehouseCd)
+            &&(g.AreaCd==null||g.AreaCd==""||g.AreaCd=="*"||g.AreaCd==x.AreaCd)));
+    }
+    internal async Task RequireReplenishPlanningDocument(Guid creator,Guid? department,CancellationToken ct)
+    {
+        if(authority.Scope==5||authority.Scope==1&&creator==ActorId)return;
+        if(authority.Scope!=1&&department is {} id&&(await TransferDepartments(ct)).Departments.Any(x=>x.Id==id))return;
+        throw new OrderPriceCorrectionException("REP_NOT_VISIBLE",404);
+    }
+
     internal IQueryable<ReplenishOrder> Replenishments()
     {
         var rows = db.ReplenishOrders.AsNoTracking().Where(r => !r.IsDeleted);
