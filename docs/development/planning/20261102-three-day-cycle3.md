@@ -12,9 +12,9 @@
 
 ## D2：W259 / CRM匿名化后过期完整链路
 
-- [ ] 通过真实Owner形成合法已匿名化NeedsReview原件，再在原七天边界执行Expired；实际PG约束、HTTP/当前维护身份参与。
-- [ ] 保持原件/tombstone、原截止与原结果恢复，不复活PII；验证重复执行及失败原子性，修复实际链路缺陷。
-- [ ] 区分测试业务时间、真实身份/租约/数据库时间；不得回填原件或弱化约束伪造匿名化通过。
+- [x] 通过真实Owner形成合法已匿名化NeedsReview原件，再在原七天边界执行Expired；实际PG约束、HTTP/当前维护身份参与。
+- [x] 保持原件/tombstone、原截止与原结果恢复，不复活PII；验证重复执行及失败原子性，修复实际链路缺陷。
+- [x] 区分测试业务时间、真实身份/租约/数据库时间；不得回填原件或弱化约束伪造匿名化通过。
 
 已有W256成功输入直接复用；内存匿名化投影不能替代本期持久链路。新事件消费者及完整WP03-03仍按真实余项保留。
 
@@ -33,3 +33,5 @@ PostgreSQL为唯一目标；模拟业务数据注明实际执行环境。受影�
 D1实现与原步骤复测通过，见[W258交付](../evidence/W258-01/DELIVERY.md)；合并、Issue关闭、准确分支清理及finish已由wave258-final-verification.json核销。
 
 执行顺序调整：D2真实60分钟保留期测试运行期间，Main协调分支可靠保存/官方deferred并释放DEV-1，COORD单人转独立W260分支实现D3。D3实际HTTP已通过，见[交付](../evidence/W260-01/DELIVERY.md)；D2仍在运行，整期不提前完成。最终合并/通信/席位核销按同轮proof。
+
+第三期验收已收齐：D1菜单极值修复、D2实际60分钟匿名化后持久Expired、D3受权编号管理HTTP。D2真实结果见[交付](../evidence/W259-01/DELIVERY.md)；D1/D3与CRM/Handoff已准确采用/finish，Main最终收尾以wave260-final-verification.json为准，不能据此关闭完整375卡。

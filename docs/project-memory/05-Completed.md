@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-02：W259第三期D2与整期收尾
+
+第三期D2完成真实HTTP提交/撤回、实际60分钟保留期匿名化、已匿名化原件进入Expired、失败回滚及丢响应原结果恢复；原审查截止和擦除墓碑保持、PII不复活。D1菜单极值修复及D3受权编号管理API已先完成，第三期限定实现/验收收齐，整期最终生命周期按proof核销。 [交付](../development/evidence/W259-01/DELIVERY.md)。
+
+Two unique actual PostgreSQL18/HTTP checks PASS,0 skipped:complete elapsed anonymized-to-Expired lifecycle and real browser re-login/read preserving the existing result;3611.6 seconds from original receipt to final verification,at least60 real minutes before erasure. Original review business time alone is controlled;IAM/publication/lease/erasure/commit clocks remain real. Actual retained-to-erased-to-Expired graph,HTTP receipt/intake,rollback/lost-response recovery and five original-row comparisons executed. Initial full run failed at final HTTP401 because its ten-minute fixture browser token had expired;failure retained,real login/callback added and the complete lifecycle rerun. W256 unchanged other Owner boundary evidence referenced,not rerun. No Actions/deployment.
+
+D1/D3与CRM/Handoff已合并、准确分支删除和finish；Main W259本提交待正常采用/释放，最终以wave260-final-verification.json为准。原375卡真实范围保持。
+
 ## 2026-11-02：W260第三期D3
 
 第三期D3已实现新登记Main编号域的受权规则管理HTTP：当前/历史版本、格式CAS、原修改恢复及无副作用预览；实际Main登录、CSRF、当前会话与租户生效。D2真实60分钟保留期验收仍在运行，不能称三天全部完成。 [交付](../development/evidence/W260-01/DELIVERY.md)。
