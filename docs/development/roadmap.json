@@ -174936,10 +174936,36 @@
         ]
       },
       "wave262_codegen_metadata": {
-        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "status": "MERGED",
         "report": "docs/development/evidence/W262-01/DELIVERY.md",
         "full_task_completed": false,
-        "validation": "7 actual PostgreSQL 18 checks PASS/0 skipped:6 Owner/real-session HTTP cases plus1 nonempty legacy upgrade/idempotence case. Vue type-check exit0;actual Chrome/Vue behavior PASS with API/identity fixtures. Unchanged W261 comparison evidence reused. No test failures in W262. No Actions/deployment."
+        "validation": "7 actual PostgreSQL 18 checks PASS/0 skipped:6 Owner/real-session HTTP cases plus1 nonempty legacy upgrade/idempotence case. Vue type-check exit0;actual Chrome/Vue behavior PASS with API/identity fixtures. Unchanged W261 comparison evidence reused. No test failures in W262. No Actions/deployment.",
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W262-01",
+            "source": "cbbe57582562a10b506862dc281c4dab62acfad9",
+            "remote_target": "cf2c90f3ec678eb574c0da8950b1690a798274e2",
+            "pr": "https://github.com/GTX537/CP6/pull/690",
+            "branch": "codex/w262-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W262-HANDOFF",
+            "source": "81af735415e1acbe296a95c405d115f55c48d7ac",
+            "remote_target": "a8b08780717da5dd11e3ee7a95ad5adb0e32feeb",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/238",
+            "branch": "codex/w262-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     },
     {
@@ -200763,11 +200789,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261102-wave262",
-      "path": "docs/development/dispatch/20261102-wave262/README.md",
-      "baseline_sha": "77184c0e7568272f71ccee9fd47fa0cddf928f5e",
-      "registered_at": "2026-11-02T07:52:57.765646+00:00",
-      "phase": "DELIVERY_MAIN_CLOSEOUT",
+      "id": "20261102-wave263",
+      "path": "docs/development/dispatch/20261102-wave263/README.md",
+      "baseline_sha": "cf2c90f3ec678eb574c0da8950b1690a798274e2",
+      "registered_at": "2026-11-02T08:39:46.389106+00:00",
+      "phase": "IMPLEMENTING",
       "assigned_chats": [
         "COORD"
       ],
@@ -200785,58 +200811,39 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W262-01",
-          "workspace_task": "W262-01",
+          "id": "W263-01",
+          "workspace_task": "W263-01",
           "related_tasks": [
             "WP02-16"
           ],
-          "title": "第四期CodeGen版本化元数据三阶段",
+          "title": "第五期旧CodeGen元数据显式接入",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "DELIVERY_MAIN_CLOSEOUT",
+          "phase": "IMPLEMENTING",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": true,
+          "worker_delivery_received": false,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w262-01",
-          "planned_scope_ref": "docs/development/planning/20261102-three-day-cycle4.md",
+          "branch": "codex/w263-01",
+          "planned_scope_ref": "docs/development/planning/20261102-three-day-cycle5.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": true,
+          "candidate_review_completed": false,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
             "Main:CodeGen-metadata",
             "Main:Core-PG-migration"
-          ],
-          "worker_delivery_ref": "docs/development/evidence/W262-01/DELIVERY.md",
-          "validation": "7 actual PostgreSQL 18 checks PASS/0 skipped:6 Owner/real-session HTTP cases plus1 nonempty legacy upgrade/idempotence case. Vue type-check exit0;actual Chrome/Vue behavior PASS with API/identity fixtures. Unchanged W261 comparison evidence reused. No test failures in W262. No Actions/deployment.",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave262-final-verification.json"
-          },
-          "business_acceptance": "SIMULATED_METADATA_ON_ACTUAL_LOCAL_PG_AND_SESSION_HTTP_PASS;UI_FIXTURE_PASS;FULL_CARD_REMAINS"
+          ]
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "第四期三天限定任务：CodeGen新元数据V1的PG版本保存/CAS与原操作恢复、真实当前会话HTTP、页面冲突及未知结果恢复。单任务W262-01分三阶段连续实现，同一分支一次集中审查；不迁移旧元数据、不应用生成文件、不重跑旧三天/W261。",
-      "lifecycle_snapshot": {
-        "main_finish_required": true,
-        "main_seat_released": false,
-        "handoff_seat_released": false,
-        "main_branch_deleted": false,
-        "handoff_branch_deleted": false,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave262-final-verification.json"
-      }
+      "next_action": "第五期三天W263-01：显式把旧CodeGen元数据以原ID接入V1，保持原件/审计字段，当前原件CAS与原操作恢复，真实会话HTTP及页面。COORD单人、一个任务分支连续三阶段，不自动迁移、不应用文件。"
     },
     "wave_history": [
       {
@@ -234794,6 +234801,106 @@
             "workspace_clean": true
           }
         ]
+      },
+      {
+        "id": "20261102-wave262",
+        "path": "docs/development/dispatch/20261102-wave262/README.md",
+        "baseline_sha": "77184c0e7568272f71ccee9fd47fa0cddf928f5e",
+        "registered_at": "2026-11-02T07:52:57.765646+00:00",
+        "phase": "COMPLETE",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W262-01",
+            "workspace_task": "W262-01",
+            "related_tasks": [
+              "WP02-16"
+            ],
+            "title": "第四期CodeGen版本化元数据三阶段",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "COMPLETE",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w262-01",
+            "planned_scope_ref": "docs/development/planning/20261102-three-day-cycle4.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:CodeGen-metadata",
+              "Main:Core-PG-migration"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W262-01/DELIVERY.md",
+            "validation": "7 actual PostgreSQL 18 checks PASS/0 skipped:6 Owner/real-session HTTP cases plus1 nonempty legacy upgrade/idempotence case. Vue type-check exit0;actual Chrome/Vue behavior PASS with API/identity fixtures. Unchanged W261 comparison evidence reused. No test failures in W262. No Actions/deployment.",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave262-final-verification.json"
+            },
+            "business_acceptance": "SIMULATED_METADATA_ON_ACTUAL_LOCAL_PG_AND_SESSION_HTTP_PASS;UI_FIXTURE_PASS;FULL_CARD_REMAINS"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "第四期三天限定任务：CodeGen新元数据V1的PG版本保存/CAS与原操作恢复、真实当前会话HTTP、页面冲突及未知结果恢复。单任务W262-01分三阶段连续实现，同一分支一次集中审查；不迁移旧元数据、不应用生成文件、不重跑旧三天/W261。",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave262-final-verification.json"
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W262-01",
+            "source": "cbbe57582562a10b506862dc281c4dab62acfad9",
+            "remote_target": "cf2c90f3ec678eb574c0da8950b1690a798274e2",
+            "pr": "https://github.com/GTX537/CP6/pull/690",
+            "branch": "codex/w262-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W262-HANDOFF",
+            "source": "81af735415e1acbe296a95c405d115f55c48d7ac",
+            "remote_target": "a8b08780717da5dd11e3ee7a95ad5adb0e32feeb",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/238",
+            "branch": "codex/w262-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -235357,65 +235464,33 @@
       }
     },
     "next_execution_plan": {
-      "id": "CP6-3D4-20261102",
-      "path": "docs/development/planning/20261102-three-day-cycle4.md",
-      "state": "VERIFYING",
+      "id": "CP6-3D5-20261102",
+      "path": "docs/development/planning/20261102-three-day-cycle5.md",
+      "state": "IN_PROGRESS",
       "execution_owner": "COORD_SINGLE_CHAT",
       "execution_started": true,
-      "current_day": "D3",
+      "current_day": "D1",
       "core_capacity_hours": 18,
       "contingency_capacity_hours": 6,
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "windows": [
         {
-          "id": "W262-01",
+          "id": "W263-01",
           "day": "D1",
-          "state": "VERIFYING",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W262-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave262-final-verification.json"
-          }
+          "state": "IN_PROGRESS"
         },
         {
-          "id": "W262-01",
+          "id": "W263-01",
           "day": "D2",
-          "state": "VERIFYING",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W262-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave262-final-verification.json"
-          }
+          "state": "PLANNED"
         },
         {
-          "id": "W262-01",
+          "id": "W263-01",
           "day": "D3",
-          "state": "VERIFYING",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W262-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave262-final-verification.json"
-          }
+          "state": "PLANNED"
         }
-      ],
-      "required_implementation_complete": true,
-      "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave262-final-verification.json"
+      ]
     },
     "execution_plan_history": [
       {
@@ -235813,6 +235888,68 @@
         "required_implementation_complete": true,
         "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave261-final-verification.json",
         "completed_at": "2026-11-02T07:43:13.760966+00:00"
+      },
+      {
+        "id": "CP6-3D4-20261102",
+        "path": "docs/development/planning/20261102-three-day-cycle4.md",
+        "state": "COMPLETE",
+        "execution_owner": "COORD_SINGLE_CHAT",
+        "execution_started": true,
+        "current_day": "D3",
+        "core_capacity_hours": 18,
+        "contingency_capacity_hours": 6,
+        "estimate_is_guarantee": false,
+        "original_task_count": 375,
+        "windows": [
+          {
+            "id": "W262-01",
+            "day": "D1",
+            "state": "DONE",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W262-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave262-final-verification.json"
+            }
+          },
+          {
+            "id": "W262-01",
+            "day": "D2",
+            "state": "DONE",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W262-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave262-final-verification.json"
+            }
+          },
+          {
+            "id": "W262-01",
+            "day": "D3",
+            "state": "DONE",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W262-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave262-final-verification.json"
+            }
+          }
+        ],
+        "required_implementation_complete": true,
+        "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave262-final-verification.json",
+        "completed_at": "2026-11-02T08:19:17.482877+00:00"
       }
     ]
   },
