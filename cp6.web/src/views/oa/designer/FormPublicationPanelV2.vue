@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import DefinitionImpact from '../admin/DefinitionImpact.vue'
 import DefinitionClonePanelV2 from './DefinitionClonePanelV2.vue'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { AUTH_EPOCH, AUTH_RECORD, IMPERSONATION, AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
@@ -129,6 +130,7 @@ onBeforeUnmount(() => { live = false; generation++; controller?.abort(); window.
     </div>
     <div v-if="preview && matchingPreview">
       <p>预览有效至 {{ new Date(preview.expiresAtUtc).toLocaleString() }}。确认发布将冻结当前已保存版本，当前启停配置保持不变。</p>
+      <DefinitionImpact :impact="preview.impact" form />
       <p v-if="!preview.canPublish">当前草稿或依赖尚不满足发布条件：{{ preview.diagnostics.join('、') }}</p>
       <ul v-if="preview.dependencies.length"><li v-for="d in preview.dependencies" :key="d.location + d.kind">{{ d.kind }} · {{ d.reference }} · {{ ['UNPROVEN','REQUIRED'].includes(d.evidenceState) ? '来源待核定' : '已登记引用' }}</li></ul>
       <label>发布说明<textarea v-model="comment" maxlength="1000" :disabled="busy || !!pending" /></label>

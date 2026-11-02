@@ -1,4 +1,5 @@
 import http from '../http'
+import type { DefinitionImpact } from './definitionImpact'
 import type { FormAuthoringView } from './formAuthoring'
 export interface Activation {
   definitionId: string; key: string; revision: string; enabled: boolean; publishedVersionId: string | null
@@ -7,6 +8,7 @@ export interface Activation {
 export interface ActivationPreview {
   current: Activation; versions: { versionId: string; number: number; name: string | null }[]
   page: number; affectedEntries: string[]; inflightCount: number | null
+  impact?: DefinitionImpact | null
 }
 export interface ActivationHistory {
   revision: string; previousRevision: string; enabled: boolean; publishedVersionId: string; actorId: string; reason: string; changedAtUtc: string

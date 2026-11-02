@@ -148,7 +148,8 @@ public class InboxController : LocalizedControllerBase
     public async Task<IActionResult> MarkTaskRead([FromBody] IdReq r)
     {
         var me = await CurrentUserIdAsync();
-        await _inbox.MarkTaskReadAsync(me, r.Id);
+        try{await _inbox.MarkTaskReadAsync(me,r.Id);}
+        catch(ScopeAuthorizationExceptionV1 e){return StatusCode(e.Status,new{code=e.Message});}
         return Ok2(new { success = true });
     }
 
@@ -157,7 +158,8 @@ public class InboxController : LocalizedControllerBase
     public async Task<IActionResult> MarkCcRead([FromBody] IdReq r)
     {
         var me = await CurrentUserIdAsync();
-        await _inbox.MarkCcReadAsync(me, r.Id);
+        try{await _inbox.MarkCcReadAsync(me,r.Id);}
+        catch(ScopeAuthorizationExceptionV1 e){return StatusCode(e.Status,new{code=e.Message});}
         return Ok2(new { success = true });
     }
 

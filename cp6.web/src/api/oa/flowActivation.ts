@@ -1,5 +1,6 @@
 import http from '../http'
 import type { AuthoringView } from './flowAuthoring'
+import type { DefinitionImpact } from './definitionImpact'
 export interface Activation {
   definitionId: string; key: string; revision: string; enabled: boolean; publishedVersionId: string | null
   changedAtUtc: string | null; inflightUnchanged: boolean; consumerState: string
@@ -8,6 +9,7 @@ export interface ActivationPreview {
   current: Activation; versions: { versionId: string; number: number; name: string | null; formKey: string | null; formVersionId: string | null }[]
   page: number; affectedEntries: string[]; inflightCount: number | null
   formKey: string | null; formVersionId: string | null
+  impact?: DefinitionImpact | null
 }
 export interface ActivationHistory {
   revision: string; previousRevision: string; enabled: boolean; publishedVersionId: string; actorId: string; reason: string; changedAtUtc: string

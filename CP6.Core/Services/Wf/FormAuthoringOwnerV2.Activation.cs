@@ -10,12 +10,12 @@ namespace CP6.Core.Services.Wf;
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record FormActivationBodyV2([property: JsonRequired] bool Enabled, string ExpectedActivationRevision, Guid PublishedVersionId, string Reason);
 public sealed record FormActivationV2(Guid DefinitionId, string Key, Guid Revision, bool Enabled, Guid? PublishedVersionId,
-    DateTimeOffset? ChangedAtUtc, bool InflightUnchanged = true, string ConsumerState = "NOT_ADOPTED");
+    DateTimeOffset? ChangedAtUtc, bool InflightUnchanged = true, string ConsumerState = "PERSONAL_FORM_PINNED_RUNTIME_ADOPTED");
 public sealed record FormActivationHistoryV2(Guid Revision, Guid PreviousRevision, bool Enabled, Guid PublishedVersionId,
     Guid ActorId, string Reason, DateTimeOffset ChangedAtUtc);
 public sealed record FormActivationChoiceV2(Guid VersionId, int Number, string? Name);
 public sealed record FormActivationPreviewV2(FormActivationV2 Current, FormActivationChoiceV2[] Versions,
-    int Page, string[] AffectedEntries, int? InflightCount = null);
+    int Page, string[] AffectedEntries, int? InflightCount = null,DefinitionRuntimeImpactV2? Impact = null);
 public sealed record FormActivationResultV2(string CommandId, string Outcome, Guid? ResourceId, string? ResourceVersion,
     FormActivationV2? Result, DateTimeOffset? RecordedAtUtc, string? CorrelationId);
 
@@ -53,9 +53,9 @@ public sealed partial class FormAuthoringOwnerV2
             """).OrderByDescending(x => x.Number).Skip((page - 1) * 100).Take(100).ToArrayAsync(ct);
         var versions = rows.Select(r => new FormActivationChoiceV2(r.Id, r.Number, fields.Fields["Name"].CanRead
             ? JsonSerializer.Deserialize<FormPublicationV2>(r.Snapshot, Json)?.Fields.GetValueOrDefault("Name") : null)).ToArray();
+        var impact=await DefinitionRuntimeImpactReaderV2.Read(db,fence.EnvironmentId,head.Id,true,ct);
         if ((await Actor(ct)).UserId != actor.UserId) throw Error("REAUTH_REQUIRED", 401); CompletionClock();
-        // No v2 root consumer is registered yet: do not report a guessed zero or count legacy instances as v2.
-        return new(current, versions, page, []);
+        return new(current, versions, page,DefinitionRuntimeImpactReaderV2.Entries(impact),impact.RunningInstances+impact.SuspendedInstances,impact);
     }
     public async Task<FormActivationHistoryV2[]> ActivationHistoryAsync(string key, int page = 1, CancellationToken ct = default)
     {

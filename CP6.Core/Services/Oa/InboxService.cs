@@ -26,10 +26,10 @@ public partial class InboxService : IInboxService
         _db = db; _engine = engine; _forecast = forecast; _access = access; _projection = projection;
     }
 
-    // New ordinary FORM records use their current-policy read Owner. Legacy lists cannot
+    // Native APP and ordinary FORM records use their current-policy read Owner. Legacy lists cannot
     // disclose their metadata/counts through historical participation alone.
     private IQueryable<Wf_FlowInstance> LegacyInstances() => _db.Wf_FlowInstances
-        .Where(i => i.Creator != FlowEngine.PersonalFormRuntimeV2);
+        .Where(i => i.Creator != FlowEngine.PersonalFormRuntimeV2 && i.Creator != FlowEngine.ApprovalRuntimeV2);
 
     public async Task<IReadOnlyList<InboxPendingItem>> PendingAsync(Guid userId, string rowMode = "merged", int? page = null, int? pageSize = null)
     {
@@ -74,9 +74,6 @@ public partial class InboxService : IInboxService
                     .Select(b => b.DetailRoute).FirstOrDefault()
             }).ToDictionaryAsync(x => x.BizType, x => x.Route);
 
-        var nativeDocumentRoutes=await NativeDocumentRoutes(rows.Where(x=>x.i.Creator==FlowEngine.ApprovalRuntimeV2)
-            .Select(x=>x.i.Id).Distinct().ToArray());
-
         // Batch-load frozen stage plans for tokens that carry multi-stage plans
         var tokenIds = rows.Where(x => x.t.TokenId.HasValue).Select(x => x.t.TokenId!.Value).Distinct().ToList();
         var tokenPlans = new Dictionary<(Guid tokenId, int stageIndex), (string? name, string? code)>();
@@ -109,8 +106,7 @@ public partial class InboxService : IInboxService
                 StageIndex: x.t.StageIndex, StageRound: x.t.StageRound,
                 StageName: stageName, StageCode: stageCode,
                 CanSendBackPrevStage: x.t.StageIndex > 0,
-                DetailRoute: x.i.Creator==FlowEngine.PersonalFormRuntimeV2 ? "/oa/inbox?personalTask="+x.t.Id
-                    : nativeDocumentRoutes.TryGetValue(x.i.Id,out var nativeRoute) ? nativeRoute : x.i.BizType != null && x.i.BizId != null &&
+                DetailRoute: x.i.BizType != null && x.i.BizId != null &&
                     detailRoutes.TryGetValue(x.i.BizType, out var template)
                         ? ApprovalPanelService.RenderDetailRoute(template, x.i.BizId)
                         : null);
@@ -137,7 +133,9 @@ public partial class InboxService : IInboxService
     public async Task MarkTaskReadAsync(Guid userId, Guid taskId)
     {
         var t = await _db.Wf_FlowTasks.FirstOrDefaultAsync(x => x.Id == taskId && x.AssigneeId == userId);
-        if (t is null || t.IsRead) return;   // 幂等：不存在/非本人/已读 → no-op
+        if (t is null) return;
+        await RequireLegacyRead(t.InstanceId);
+        if (t.IsRead) return;
         t.IsRead = true; t.ReadAt = DateTime.Now;
         await _db.SaveChangesAsync();
     }
@@ -145,13 +143,21 @@ public partial class InboxService : IInboxService
     public async Task MarkCcReadAsync(Guid userId, Guid ccId)
     {
         var c = await _db.Wf_FlowCcs.FirstOrDefaultAsync(x => x.Id == ccId && x.RecipientId == userId);
-        if (c is null || c.IsRead) return;
+        if (c is null) return;
+        await RequireLegacyRead(c.InstanceId);
+        if (c.IsRead) return;
         c.IsRead = true; c.ReadAt = DateTime.Now;
         await _db.SaveChangesAsync();
     }
 
     private static string Name(Sys_User? u) =>
         u == null ? "" : (string.IsNullOrWhiteSpace(u.NickName) ? u.UserName : u.NickName!);
+
+    private async Task RequireLegacyRead(Guid instance)
+    {
+        if(await _db.Wf_FlowInstances.AnyAsync(i=>i.Id==instance && (i.Creator==FlowEngine.PersonalFormRuntimeV2||i.Creator==FlowEngine.ApprovalRuntimeV2)))
+            throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1("CURRENT_READ_OWNER_REQUIRED",409);
+    }
 
     public async Task<IReadOnlyList<InboxRunningItem>> RunningAsync(Guid userId)
     {
@@ -299,6 +305,8 @@ public partial class InboxService : IInboxService
         if (inst is null) return null;
         if (inst.Creator == FlowEngine.PersonalFormRuntimeV2)
             throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1("FORM_READ_OWNER_REQUIRED",409);
+        if (inst.Creator == FlowEngine.ApprovalRuntimeV2)
+            throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1("APP_READ_OWNER_REQUIRED",409);
         var flowVersion = inst.FlowDefVersionId is Guid flowVersionId
             ? await _db.Wf_FlowDefVersions.AsNoTracking().SingleOrDefaultAsync(x => x.Id == flowVersionId)
             : null;
@@ -470,6 +478,9 @@ public partial class InboxService : IInboxService
     {
         if (f?.TaskIds is { Count: > 0 } ids)
         {
+            if(await (from t in _db.Wf_FlowTasks join i in _db.Wf_FlowInstances on t.InstanceId equals i.Id
+                where t.AssigneeId==fromUserId && ids.Contains(t.Id) && (i.Creator==FlowEngine.PersonalFormRuntimeV2||i.Creator==FlowEngine.ApprovalRuntimeV2)
+                select t.Id).AnyAsync())throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1("NATIVE_TASK_ACTION_REQUIRED",409);
             var named = await (from t in _db.Wf_FlowTasks
                                where t.AssigneeId == fromUserId && ids.Contains(t.Id)
                                join i in _db.Wf_FlowInstances on t.InstanceId equals i.Id
@@ -480,7 +491,7 @@ public partial class InboxService : IInboxService
 
         var q = from t in _db.Wf_FlowTasks
                 where t.AssigneeId == fromUserId && t.Status == FlowTaskStatus.Pending
-                join i in _db.Wf_FlowInstances on t.InstanceId equals i.Id
+                join i in LegacyInstances() on t.InstanceId equals i.Id
                 where i.Status == FlowInstanceStatus.Running
                 select new { t.Id, i.FlowKey, t.CreateDate };
         if (!string.IsNullOrWhiteSpace(f?.FlowKey)) q = q.Where(x => x.FlowKey == f.FlowKey);

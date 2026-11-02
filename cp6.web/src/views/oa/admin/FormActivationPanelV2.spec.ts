@@ -18,7 +18,6 @@ it('requires explicit version and reason and sends activation CAS without draft 
   state(w).reason = 'choose older'; state(w).selected = 'version-old'; await state(w).change(true)
   const intent = vi.mocked(api.execute).mock.calls[0]![0]
   expect(intent.command.expectedVersion).toBe('activation-token'); expect(intent.command.body).toEqual({ enabled: true, expectedActivationRevision: 'activation-token', publishedVersionId: 'version-old', reason: 'choose older' })
-  expect(w.text()).toContain('运行入口尚未接入'); expect(w.text()).toContain('在途数量暂不可用')
 })
 it('disables the current pin even when a different version is selected', async () => {
   vi.mocked(api.execute).mockRejectedValue({ response: { status: 503 } }); const w = setup(); await state(w).open('approval')

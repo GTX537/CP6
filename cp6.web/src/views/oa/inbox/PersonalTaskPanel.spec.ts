@@ -29,6 +29,7 @@ it('clears private form content on forbidden recovery but retains the original c
   const command = state(w).pending.command
   vi.mocked(api.taskOriginal).mockRejectedValue({ response: { status: 403 } }); await state(w).run(true, true)
   expect(state(w).context).toBeUndefined(); expect(state(w).pending.command).toBe(command)
+  expect(w.emitted('privateClear')).toHaveLength(1)
   vi.mocked(api.close).mockResolvedValue({ commandId: command, outcome: 'CLOSED', resourceId: null, resourceVersion: null, result: null })
   vi.mocked(api.taskOriginal).mockResolvedValue({ commandId: command, state: 'CLOSED', voteId: null, task: null, queryRef: '/original' })
   await state(w).run(false, true, true); expect(state(w).result.state).toBe('CLOSED'); expect(api.decide).toHaveBeenCalledTimes(1)

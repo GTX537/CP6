@@ -24,7 +24,7 @@ public sealed partial class PersonalFormOwnerV2(CP6Context db, IHttpContextAcces
     private static string Encode(object value) => JsonSerializer.Serialize(value, Json);
     internal Func<DateTimeOffset> Clock { get; set; } = () => DateTimeOffset.UtcNow;
     internal Func<AuthorizationCatalogSnapshotV1> Catalog { get; set; } = AuthorizationCatalogV1.Capture;
-    private void Entry()
+    internal void Entry()
     {
         if (!db.Database.IsNpgsql() || db.Database.CurrentTransaction != null || db.ChangeTracker.HasChanges()
             || System.Transactions.Transaction.Current != null) throw Error("AUTHORITY_FENCE_UNAVAILABLE");
@@ -34,7 +34,7 @@ public sealed partial class PersonalFormOwnerV2(CP6Context db, IHttpContextAcces
     {
         if (!await db.Database.SqlQueryRaw<bool>("SELECT cp6_personal_form_v2.ready() AS \"Value\"").SingleAsync(ct)) throw Error("FORM_WRITER_COVERAGE_UNAVAILABLE");
     }
-    private async Task<ScopeAuthorizationLeaseV1> ReadLease(CancellationToken ct)
+    internal async Task<ScopeAuthorizationLeaseV1> ReadLease(CancellationToken ct)
     {
         await fence.Root(ct);var value=await fence.ReadLocked(ct)??throw Error("SCOPE_MAPPING_REQUIRED");
         return new(db,db.Database.CurrentTransaction!.TransactionId,value);
@@ -44,7 +44,7 @@ public sealed partial class PersonalFormOwnerV2(CP6Context db, IHttpContextAcces
         if(!lease.Snapshot.Enabled||lease.Snapshot.WriterProfile!=ScopeAuthorizationFenceV1.NativeWriterProfile)throw Error("SCOPE_MAPPING_DISABLED");
         await Ready(ct);
     }
-    private async Task<UserPermissionContext> Actor(CancellationToken ct)
+    internal async Task<UserPermissionContext> Actor(CancellationToken ct)
     {
         var id = await currentActor(ct);
         if (id != CurrentPermissionContext.RequireCurrentUser(db, http) || http.HttpContext!.User.HasClaim(x => x.Type == "impersonator_id")) throw Error("REAUTH_REQUIRED", 401);
@@ -54,7 +54,7 @@ public sealed partial class PersonalFormOwnerV2(CP6Context db, IHttpContextAcces
             || !await db.Sys_Users.AsNoTracking().AnyAsync(u => u.Id == id && u.Enable && (u.LockedUntil == null || u.LockedUntil <= DateTime.Now), ct)) throw Error("REAUTH_REQUIRED", 401);
         return await PostgreSqlPermissionReader.ReadAsync(db, id, ct);
     }
-    private async Task Action(UserPermissionContext actor, string action, CancellationToken ct, string menu = "oa-form-catalog")
+    internal async Task Action(UserPermissionContext actor, string action, CancellationToken ct, string menu = "oa-form-catalog")
     {
         if (!actor.MenuKeys.Contains(menu) || !actor.ActionKeys.Contains(menu + ":" + action)
             || !await (from a in db.Sys_MenuActions join m in db.Sys_Menus on a.MenuId equals m.MenuId
@@ -103,8 +103,8 @@ public sealed partial class PersonalFormOwnerV2(CP6Context db, IHttpContextAcces
         var access = actor.FieldPerms.GetValueOrDefault(Resource)?.GetValueOrDefault("Title",1) ?? 1;
         if (access == 3 && after != null || access != 1 && after != before) throw Error("FIELD_WRITE_FORBIDDEN",403);
     }
-    private sealed record Command<T>(string Id,string? Expected,T Body,string Digest,byte[] Raw,string? Correlation);
-    private static Command<T> CommandInput<T>(byte[] raw, bool versionRequired)
+    internal sealed record Command<T>(string Id,string? Expected,T Body,string Digest,byte[] Raw,string? Correlation);
+    internal static Command<T> CommandInput<T>(byte[] raw, bool versionRequired)
     {
         try
         {
@@ -145,12 +145,12 @@ public sealed partial class PersonalFormOwnerV2(CP6Context db, IHttpContextAcces
             """,ct);
         return result;
     }
-    private async Task Final(UserPermissionContext actor, ScopeAuthorizationLeaseV1 lease, CancellationToken ct,bool write=true)
+    internal async Task Final(UserPermissionContext actor, ScopeAuthorizationLeaseV1 lease, CancellationToken ct,bool write=true)
     {
         if ((await Actor(ct)).UserId != actor.UserId) throw Error("REAUTH_REQUIRED",401);
         await fence.ValidateAsync(lease,ct); if(write)await Ready(ct); ct.ThrowIfCancellationRequested();
     }
-    private async Task Rollback(Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction tx, bool committing, Exception error)
+    internal async Task Rollback(Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction tx, bool committing, Exception error)
     {
         // PostgreSQL's structured rejection of COMMIT (for example a deferred constraint)
         // proves rollback. A transport failure or 40003 still has an unknown outcome.

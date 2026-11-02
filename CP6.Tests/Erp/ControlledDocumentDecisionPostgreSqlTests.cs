@@ -86,8 +86,10 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var task=Assert.Single(tasks);Assert.Equal(f.Submission,task.SubmissionId);Assert.Equal("1",task.DocumentVersion);
         var inbox=new InboxService(actor.Db,Moq.Mock.Of<CP6.Core.Services.Wf.IFlowEngine>(Moq.MockBehavior.Strict),
             Moq.Mock.Of<IForecastService>(Moq.MockBehavior.Strict));
-        var item=Assert.Single(await inbox.PendingAsync(actor.User));
-        Assert.Equal($"/plm/controlled-document/{f.Document}?submission={f.Submission}",item.DetailRoute);
+        Assert.Empty(await inbox.PendingAsync(actor.User));
+        var current=NativeInbox(actor,business:new(ToolApproval(actor),DocumentReviews(actor,f.Files)));
+        var item=Assert.Single((await current.ListAsync("pending")).Items);
+        Assert.Equal($"/plm/controlled-document/{f.Document}?submission={f.Submission}",(await current.DetailAsync(item.InstanceId)).Business!.DetailRoute);
         var input=await DocumentDecisionInput(actor,f.Files);var closed=await owner.CloseAsync(input.Task,input.Input.CommandId);
         Assert.Equal("CLOSED",closed.State);
         Assert.Equal("COMMAND_CLOSED",(await Assert.ThrowsAsync<CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1>(()=>DocumentVote(actor,f.Files,input))).Message);
