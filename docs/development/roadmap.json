@@ -161717,6 +161717,11 @@
       "date": "2026-11-02",
       "change": "CodeGen新增固定模板差异与覆盖范围纯预览：精确建议路径、用户提供原文件、无损自定义区保留、线性差异及逐文件覆盖白名单，实际API和Vue页面已验证。没有文件应用或元数据持久化。",
       "evidence": "docs/development/evidence/W261-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-02",
+      "change": "第四期三天W262完成CodeGen新元数据V1：PostgreSQL租户版本保存/CAS、不可变历史与原操作恢复、真实当前会话HTTP、Vue冲突和未知结果恢复。旧数据不自动接管，生成文件未应用。",
+      "evidence": "docs/development/evidence/W262-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -174701,7 +174706,7 @@
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
-      "remaining_scope": "W254/W257/W260新域编号提供者、规则CAS和真实管理HTTP已交付，但真实业务编号消费者/旧域切换及完整规则生命周期未采用。CodeGen固定模板版本和W261纯比较diff/建议路径/覆盖白名单已实现；实际文件应用、元数据scope/CAS/unknown与整卡联合验收仍需核销。",
+      "remaining_scope": "新编号提供者/规则CAS/管理HTTP和CodeGen固定模板/差异预览/新元数据PG租户CAS及unknown恢复均已实现。实际业务编号消费者、旧域切换与完整规则生命周期；旧元数据明确接入、实际文件应用/路径与并发保护以及整卡联合验收仍需核销。",
       "wave9_delivery": {
         "status": "MERGED",
         "source_candidate_sha": "c455c44330f57ecc1a22983044a587d49f9c998e",
@@ -174838,17 +174843,18 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W261-01",
+        "window": "W262-01",
         "as_of": "2026-11-02",
         "classification": "明确实现余项",
-        "report": "docs/development/evidence/W261-01/DELIVERY.md",
-        "delivered": "已有新编号域组件/管理HTTP及旧固定模板预览；W261新增比较API/Vue、自定义区保留、线性diff与建议路径/显式覆盖清单，纯预览未应用。",
-        "remaining": "W254/W257/W260新域编号提供者、规则CAS和真实管理HTTP已交付，但真实业务编号消费者/旧域切换及完整规则生命周期未采用。CodeGen固定模板版本和W261纯比较diff/建议路径/覆盖白名单已实现；实际文件应用、元数据scope/CAS/unknown与整卡联合验收仍需核销。",
+        "report": "docs/development/evidence/W262-01/DELIVERY.md",
+        "delivered": "W261纯比较已采用；W262新增PG版本化元数据Owner、原操作恢复、真实会话HTTP及Vue冲突/未知恢复。限定新文档，不自动接管旧元数据或应用文件。",
+        "remaining": "新编号提供者/规则CAS/管理HTTP和CodeGen固定模板/差异预览/新元数据PG租户CAS及unknown恢复均已实现。实际业务编号消费者、旧域切换与完整规则生命周期；旧元数据明确接入、实际文件应用/路径与并发保护以及整卡联合验收仍需核销。",
         "evidence_refs": [
           "docs/development/evidence/W254-01/DELIVERY.md",
           "docs/development/evidence/W257-01/DELIVERY.md",
           "docs/development/evidence/W260-01/DELIVERY.md",
-          "docs/development/evidence/W261-01/DELIVERY.md"
+          "docs/development/evidence/W261-01/DELIVERY.md",
+          "docs/development/evidence/W262-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true
@@ -174928,6 +174934,12 @@
             "workspace_clean": true
           }
         ]
+      },
+      "wave262_codegen_metadata": {
+        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W262-01/DELIVERY.md",
+        "full_task_completed": false,
+        "validation": "7 actual PostgreSQL 18 checks PASS/0 skipped:6 Owner/real-session HTTP cases plus1 nonempty legacy upgrade/idempotence case. Vue type-check exit0;actual Chrome/Vue behavior PASS with API/identity fixtures. Unchanged W261 comparison evidence reused. No test failures in W262. No Actions/deployment."
       }
     },
     {
@@ -200755,7 +200767,7 @@
       "path": "docs/development/dispatch/20261102-wave262/README.md",
       "baseline_sha": "77184c0e7568272f71ccee9fd47fa0cddf928f5e",
       "registered_at": "2026-11-02T07:52:57.765646+00:00",
-      "phase": "IMPLEMENTING",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -200781,31 +200793,50 @@
           "title": "第四期CodeGen版本化元数据三阶段",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "IMPLEMENTING",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w262-01",
           "planned_scope_ref": "docs/development/planning/20261102-three-day-cycle4.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
             "Main:CodeGen-metadata",
             "Main:Core-PG-migration"
-          ]
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W262-01/DELIVERY.md",
+          "validation": "7 actual PostgreSQL 18 checks PASS/0 skipped:6 Owner/real-session HTTP cases plus1 nonempty legacy upgrade/idempotence case. Vue type-check exit0;actual Chrome/Vue behavior PASS with API/identity fixtures. Unchanged W261 comparison evidence reused. No test failures in W262. No Actions/deployment.",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave262-final-verification.json"
+          },
+          "business_acceptance": "SIMULATED_METADATA_ON_ACTUAL_LOCAL_PG_AND_SESSION_HTTP_PASS;UI_FIXTURE_PASS;FULL_CARD_REMAINS"
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "第四期三天限定任务：CodeGen新元数据V1的PG版本保存/CAS与原操作恢复、真实当前会话HTTP、页面冲突及未知结果恢复。单任务W262-01分三阶段连续实现，同一分支一次集中审查；不迁移旧元数据、不应用生成文件、不重跑旧三天/W261。"
+      "next_action": "第四期三天限定任务：CodeGen新元数据V1的PG版本保存/CAS与原操作恢复、真实当前会话HTTP、页面冲突及未知结果恢复。单任务W262-01分三阶段连续实现，同一分支一次集中审查；不迁移旧元数据、不应用生成文件、不重跑旧三天/W261。",
+      "lifecycle_snapshot": {
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_seat_released": false,
+        "main_branch_deleted": false,
+        "handoff_branch_deleted": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave262-final-verification.json"
+      }
     },
     "wave_history": [
       {
@@ -235328,10 +235359,10 @@
     "next_execution_plan": {
       "id": "CP6-3D4-20261102",
       "path": "docs/development/planning/20261102-three-day-cycle4.md",
-      "state": "IN_PROGRESS",
+      "state": "VERIFYING",
       "execution_owner": "COORD_SINGLE_CHAT",
       "execution_started": true,
-      "current_day": "D1",
+      "current_day": "D3",
       "core_capacity_hours": 18,
       "contingency_capacity_hours": 6,
       "estimate_is_guarantee": false,
@@ -235340,19 +235371,51 @@
         {
           "id": "W262-01",
           "day": "D1",
-          "state": "IN_PROGRESS"
+          "state": "VERIFYING",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W262-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave262-final-verification.json"
+          }
         },
         {
           "id": "W262-01",
           "day": "D2",
-          "state": "PLANNED"
+          "state": "VERIFYING",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W262-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave262-final-verification.json"
+          }
         },
         {
           "id": "W262-01",
           "day": "D3",
-          "state": "PLANNED"
+          "state": "VERIFYING",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W262-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave262-final-verification.json"
+          }
         }
-      ]
+      ],
+      "required_implementation_complete": true,
+      "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave262-final-verification.json"
     },
     "execution_plan_history": [
       {

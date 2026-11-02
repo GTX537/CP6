@@ -50,7 +50,10 @@ public class CodeGenController : ControllerBase
             c.GenTableId = t.Id;
             _db.Pub_GenColumns.Add(c);
         }
-        await _db.SaveChangesAsync();
+        try { await _db.SaveChangesAsync(); }
+        catch (DbUpdateException e) when (e.InnerException is Npgsql.PostgresException
+            { SqlState: "23514", MessageText: "CODEGEN_METADATA_OWNER_REQUIRED" })
+        { return Conflict(new { code = "CODEGEN_METADATA_OWNER_REQUIRED", message = "此元数据由版本化入口管理，请读取原版本后保存。" }); }
         return Ok(new { code = 0, data = new { t.Id } });
     }
 

@@ -54,10 +54,10 @@
 
     <div style="margin-bottom: 16px">
       <el-button v-permission="'pub-codegen:view'" type="primary" :loading="previewing" @click="preview">{{ t('预览生成') }}</el-button>
-      <el-button v-permission="'pub-codegen:save'" @click="save">{{ t('保存元数据') }}</el-button>
     </div>
 
     <el-alert v-if="previewError" :title="previewError" type="error" :closable="false" show-icon style="margin-bottom: 16px" />
+    <CodeGenMetadataPanel :table="table" :columns="columns" :preview="previewResult" @loaded="loaded" />
     <el-card v-if="previewResult">
       <template #header>
         <span>{{ t('生成产物预览') }}</span>
@@ -81,16 +81,17 @@
 <script setup lang="ts">
 import { onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { ElMessage } from 'element-plus'
+import { AUTH_EVENT, identityStamp } from '@/auth/identity'
 import CodeGenComparisonPanel from './CodeGenComparisonPanel.vue'
-import { codeGenApi, type CodeGenColumnInput, type CodeGenPreview, type CodeGenTableInput } from '@/api/pub/codegen'
+import CodeGenMetadataPanel from './CodeGenMetadataPanel.vue'
+import { codeGenApi, type CodeGenColumnInput, type CodeGenMetadataDocument, type CodeGenPreview, type CodeGenTableInput } from '@/api/pub/codegen'
 
 const { t } = useI18n()
 const clrTypes = ['string', 'int', 'int?', 'decimal?', 'DateTime?', 'bool', 'Guid?']
 
 const table = reactive<CodeGenTableInput>({
   entityName: '', module: 'Erp', tableName: '', resourceKey: '',
-  seqBizKey: '', codeField: '', routePath: ''
+  seqBizKey: '', codeField: '', routePath: '', menuName: null
 })
 const columns = ref<CodeGenColumnInput[]>([])
 const previewResult = ref<CodeGenPreview | null>(null)
@@ -104,7 +105,23 @@ watch([table, columns], () => {
   previewResult.value = null
   previewError.value = ''
 }, { deep: true, flush: 'sync' })
-onBeforeUnmount(() => { disposed = true })
+let stamp = identityStamp()
+function identityChanged() {
+  const next = identityStamp()
+  if (next === stamp) return
+  stamp = next
+  Object.assign(table, { entityName: '', module: 'Erp', tableName: '', resourceKey: '', seqBizKey: '', codeField: '', routePath: '', menuName: null })
+  columns.value = []; previewResult.value = null
+}
+window.addEventListener(AUTH_EVENT, identityChanged); window.addEventListener('storage', identityChanged)
+onBeforeUnmount(() => {
+  disposed = true
+  window.removeEventListener(AUTH_EVENT, identityChanged); window.removeEventListener('storage', identityChanged)
+})
+function loaded(document: CodeGenMetadataDocument) {
+  Object.assign(table, document.table)
+  columns.value = document.columns.map(x => ({ ...x }))
+}
 
 function addColumn() {
   columns.value.push({ name: '', clrType: 'string', label: '', required: false, inList: true, inForm: true, sort: columns.value.length + 1 })
@@ -129,10 +146,6 @@ async function preview() {
   }
 }
 
-async function save() {
-  await codeGenApi.save(table, columns.value)
-  ElMessage.success(t('元数据已保存'))
-}
 </script>
 
 <style scoped>

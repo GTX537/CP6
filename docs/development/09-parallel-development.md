@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W261 CodeGen比较预览](evidence/W261-01/DELIVERY.md)，COORD单人；上期三天已最终核销，继续原375真实余项。
+> 当前：[W262第四期三天元数据](evidence/W262-01/DELIVERY.md)，COORD单人；D1/D2/D3限定实现与验证完成，待正常采用及finish。
+
+> 历史快照：[W261 CodeGen比较预览](evidence/W261-01/DELIVERY.md)，COORD单人；上期三天已最终核销，继续原375真实余项。
 
 > 历史快照：[W259第三期最终收尾](evidence/W259-01/DELIVERY.md)，三天限定验收收齐，待Main最后采用/finish并核销。
 
