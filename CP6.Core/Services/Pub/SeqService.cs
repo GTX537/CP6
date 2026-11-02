@@ -53,6 +53,8 @@ public class SeqService : ISeqService
                 WHERE "TenantId" = {tenant} AND "BizKey" = CAST({bizKey} AS bpchar) FOR UPDATE
                 """).AsNoTracking().SingleOrDefaultAsync()
                 ?? throw new InvalidOperationException("E-PUB-051");
+            if (await _db.Database.SqlQuery<bool>($"SELECT EXISTS(SELECT FROM cp6_number_allocation_v1.scopes WHERE rule_id={seq.Id}) AS \"Value\"").SingleAsync())
+                throw new InvalidOperationException("NUMBER_ALLOCATION_OWNER_REQUIRED");
             var tracked = _db.ChangeTracker.Entries<Pub_DocSequence>().SingleOrDefault(e => e.Entity.Id == seq.Id);
             if (tracked is not null && tracked.State != EntityState.Unchanged)
                 throw new InvalidOperationException("SEQUENCE_STATE_DIRTY");
