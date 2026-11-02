@@ -15,13 +15,30 @@
           type="primary"
           :icon="Check"
           :loading="savingStructure"
-          :disabled="!structureDirty || writing || identityChanged"
+          :disabled="!structureDirty || writing || identityChanged || !canManageTree || !treeRevision || !!treePending || !!treeStorageError"
           @click="saveStructure"
         >
           保存树结构
         </el-button>
       </div>
     </header>
+
+    <section class="refresh-recovery tree-command" aria-live="polite">
+      <p v-if="!canManageTree">共享菜单树排序和层级仅限当前平台管理员，并需菜单编辑权限。</p>
+      <p v-else>共享树版本：{{ treeRevision || '待读取' }}。修改会影响所有使用该树的租户角色。</p>
+      <p v-if="treeNotice" role="status">{{ treeNotice }}</p>
+      <p v-if="treeStorageError" role="alert">{{ treeStorageError }}</p>
+      <template v-if="treeConflict">
+        <el-button :disabled="writing || identityChanged" @click="inspectCurrentTree">读取当前版本与差异</el-button>
+        <p>草稿已保留；核对后使用“刷新”放弃旧草稿并重新调整，不会自动覆盖。</p>
+        <ul v-if="treeComparison.length"><li v-for="line in treeComparison" :key="line">{{ line }}</li></ul>
+      </template>
+      <template v-if="treePending">
+        <p>原操作 {{ treePending.operationRef }} 尚待确认；请查询或按原请求重试。</p>
+        <el-button :disabled="writing || identityChanged || !!treeStorageError" @click="recoverTree(false)">查询原树操作</el-button>
+        <el-button :disabled="writing || identityChanged || !!treeStorageError" @click="recoverTree(true)">按原树请求重试</el-button>
+      </template>
+    </section>
 
     <section v-if="writeState !== 'idle' || listNeedsRecovery || navigationNeedsRecovery || navigationLoading || identityChanged" class="refresh-recovery" aria-live="polite">
       <p v-if="identityChanged" role="alert">登录身份或会话已变化，请重新打开菜单页面后继续。当前草稿未自动提交。</p>
@@ -40,7 +57,7 @@
       <div v-else-if="navigationLoading || writeState === 'confirmed'">{{ navigationLoading ? '当前浏览器导航正在刷新…' : '当前浏览器导航已刷新' }}</div>
     </section>
 
-    <section v-loading="loading" class="menu-editor-frame" :inert="writing || identityChanged">
+    <section v-loading="loading" class="menu-editor-frame" :inert="writing || identityChanged || !!treePending || !!treeStorageError">
       <aside class="tree-panel">
         <div class="tree-heading">
           <div><strong>MENU 菜单树</strong><small>支持任意层级 · 拖拽调整</small></div>
@@ -348,7 +365,8 @@ import {
   Setting,
   View,
 } from '@element-plus/icons-vue'
-import { menuApi, type MenuItem, type MenuTreePosition } from '@/api/sys/menu'
+import { menuApi, type MenuItem, type MenuTreePosition, type MenuTreeCommand, type MenuTreeReceipt } from '@/api/sys/menu'
+import { identityStamp, AUTH_EVENT } from '@/auth/identity'
 import { authApi } from '@/api/sys/auth'
 import { usePermissionStore } from '@/stores/permission'
 import { usePlatformStore } from '@/stores/platform'
@@ -388,7 +406,7 @@ const writeState = ref<'idle' | 'writing' | 'confirmed' | 'uncertain'>('idle')
 const identityChanged = ref(false)
 let disposed = false
 function identitySnapshot() {
-  return JSON.stringify([localStorage.getItem('cp6_authed'), localStorage.getItem('userName'),
+  return JSON.stringify([identityStamp(), localStorage.getItem('cp6_authed'), localStorage.getItem('userName'),
     localStorage.getItem('menus'), localStorage.getItem('cp6_isPlatformAdmin'),
     sessionStorage.getItem('cp6_impersonating'), platformStore.isPlatformAdmin, platformStore.impersonating])
 }
@@ -409,6 +427,15 @@ const listNeedsRecovery = computed(() => ['failed', 'pending'].includes(listReco
 const navigationNeedsRecovery = computed(() => ['failed', 'pending'].includes(navigationRecovery.state.value))
 watch(identitySnapshot, checkIdentity, { flush: 'sync' })
 const structureDirty = ref(false)
+const treeRevision = ref<string | null>(null)
+const treePending = ref<MenuTreeCommand | null>(null)
+const treeStorageError = ref('')
+const treeNotice = ref('')
+const treeConflict = ref(false)
+const treeComparison = ref<string[]>([])
+const treeStorageKey = 'cp6-menu-tree-pending-v1:' + identityStamp()
+try { treePending.value = JSON.parse(sessionStorage.getItem(treeStorageKey) || 'null') }
+catch { treeStorageError.value = '无法读取原树操作记录，请恢复浏览器存储后重新打开页面。' }
 const formDirty = ref(false)
 const isCreating = ref(false)
 const previewVisible = ref(false)
@@ -446,8 +473,9 @@ watch([keyword, nodeFilter], ([nextKeyword, nextFilter]) => {
 })
 
 const canEdit = computed(() => !permissionStore.loaded || permissionStore.has('menu:edit'))
+const canManageTree = computed(() => platformStore.isPlatformAdmin && !platformStore.impersonating && canEdit.value)
 const isFiltered = computed(() => Boolean(keyword.value.trim()) || nodeFilter.value !== 'all')
-const canDrag = computed(() => canEdit.value && !isFiltered.value)
+const canDrag = computed(() => canManageTree.value && !!treeRevision.value && !treePending.value && !treeStorageError.value && !isFiltered.value)
 const selectedInfo = computed(() => selectedId.value === null ? null : findNode(menuTree.value, selectedId.value))
 const selectedNode = computed(() => selectedInfo.value?.node ?? null)
 const hasEditor = computed(() => isCreating.value || Boolean(selectedNode.value))
@@ -611,10 +639,13 @@ async function confirmDiscardForm() {
 async function loadData(preferredId?: number | null) {
   if (writing.value || !checkIdentity()) return
   const draft = draftSnapshot()
-  await listRecovery.run(() => menuApi.getAll(), items => {
+  await listRecovery.run(async () => canManageTree.value ? menuApi.treeCurrent() : { revision: null, menus: await menuApi.getAll() }, snapshot => {
     // Confirmation covers the draft at request start, not edits made afterwards.
     if (draft !== draftSnapshot()) return false
-    const tree = buildTree(items)
+    const tree = buildTree(snapshot.menus)
+    treeRevision.value = snapshot.revision
+    treeConflict.value = false
+    treeComparison.value = []
     menuTree.value = tree
     structureDirty.value = false
     const nextId = preferredId ?? selectedId.value
@@ -691,7 +722,7 @@ function resetEditor() {
 }
 
 async function saveDetails() {
-  if (!formRef.value || writing.value || !checkIdentity()) return
+  if (!formRef.value || writing.value || treePending.value || treeStorageError.value || !checkIdentity()) return
   if (structureDirty.value) {
     ElMessage.warning('请先保存树结构，再保存节点内容。')
     return
@@ -781,27 +812,91 @@ function allowDrop() {
 }
 
 async function saveStructure() {
-  if (!structureDirty.value || writing.value || !checkIdentity()) return
+  if (!structureDirty.value || writing.value || !canManageTree.value || !treeRevision.value || treePending.value || treeStorageError.value || !checkIdentity()) return
+  const original: MenuTreeCommand = { operationRef: crypto.randomUUID(), expectedRevision: treeRevision.value,
+    positions: collectPositions(menuTree.value), reason: '管理员调整共享菜单树排序与层级' }
+  const draft = draftSnapshot()
   savingStructure.value = true
-  beginWrite()
-  const positions = collectPositions(menuTree.value)
-  const savedTree = JSON.stringify(menuTree.value)
   try {
-    await menuApi.updateTree(positions)
-    if (!checkIdentity()) return
-    if (savedTree === JSON.stringify(menuTree.value)) structureDirty.value = false
-    writeState.value = 'confirmed'
-    ElMessage.success('菜单树结构已保存')
-  } catch {
-    if (checkIdentity()) writeState.value = 'uncertain'
-  } finally {
-    savingStructure.value = false
-  }
+    const impact = await menuApi.treePreview(original)
+    if (!checkIdentity() || draft !== draftSnapshot()) return
+    try { await ElMessageBox.confirm(`将调整 ${impact.changedMenuIds.length} 个节点。共享树引用范围：${impact.affectedTenantsCount} 个租户、${impact.affectedRolesCount} 个角色，${impact.menuReferences} 条菜单引用、${impact.actionReferences} 条动作引用（全树保守统计）。确认提交？`, '共享菜单树影响', { type: 'warning' }) }
+    catch { return }
+    if (!checkIdentity() || draft !== draftSnapshot()) return
+    try { sessionStorage.setItem(treeStorageKey, JSON.stringify(original)) }
+    catch { treeStorageError.value = '无法保存原树请求，本次尚未发送。恢复浏览器存储后重新打开页面。'; return }
+    treePending.value = original; beginWrite()
+    try { const receipt = await menuApi.treeExecute(original); if (checkIdentity()) acceptTree(receipt) }
+    catch (error) { if (checkIdentity()) treeFailure(error, true) }
+  } catch (error) { if (checkIdentity()) treeFailure(error, true) }
+  finally { savingStructure.value = false }
   if (checkIdentity() && writeState.value === 'confirmed') await refreshAfterWrite(selectedId.value)
 }
 
-async function deleteSelected() {
+function clearTreePending() {
+  sessionStorage.removeItem(treeStorageKey)
+  treePending.value = null
+}
+function acceptTree(receipt: MenuTreeReceipt) {
+  const currentPositions: MenuTreePosition[] = []
+  walkTree(menuTree.value, node => currentPositions.push({ menuId: node.menuId, parentId: node.parentId, orderNo: node.orderNo }))
+  const newerDraft = structureDirty.value && JSON.stringify(currentPositions) !== JSON.stringify(treePending.value?.positions)
+  try { clearTreePending() }
+  catch { treeStorageError.value = '原操作已确认，但浏览器记录未清除；恢复存储后重新打开并查询。' }
+  structureDirty.value = newerDraft; treeRevision.value = null; treeConflict.value = newerDraft
+  treeNotice.value = `原操作已确认，提交时版本 ${receipt.appliedRevision}；当前树和导航另行读取。`
+  writeState.value = 'confirmed'
+}
+function treeFailure(error: unknown, initial: boolean) {
+  const response = (error as { response?: { status?: number; data?: { code?: string } } }).response
+  const code = response?.data?.code
+  // Version/structure rejection follows the authoritative original read. Later
+  // authorization failures or query misses cannot disprove an earlier commit.
+  const ownerRejected = ['MENU_TREE_VERSION_CHANGED', 'MENU_TREE_INPUT_INVALID', 'MENU_TREE_NODE_NOT_FOUND', 'MENU_TREE_PARENT_INVALID', 'MENU_TREE_STRUCTURE_INVALID', 'MENU_TREE_REASON_REQUIRED'].includes(code ?? '')
+  if (ownerRejected || initial && response?.status && [400, 401, 403, 404, 409, 412, 413, 422].includes(response.status)) {
+    try { clearTreePending() } catch { treeStorageError.value = '无法清除原树记录，请恢复浏览器存储后重新打开页面。' }
+    writeState.value = 'idle'
+  } else if (treePending.value) writeState.value = 'uncertain'
+  if (response?.status === 412) {
+    treeRevision.value = null; treeConflict.value = true
+    treeNotice.value = '菜单树已被修改，当前草稿保留。请读取当前版本与差异。'
+  } else treeNotice.value = code || (error as Error).message || '树操作未确认，请查询原操作。'
+}
+async function recoverTree(retry: boolean) {
+  if (!treePending.value || writing.value || treeStorageError.value || !checkIdentity()) return
+  const original = treePending.value; savingStructure.value = true
+  try {
+    const receipt = retry ? await menuApi.treeExecute(original) : await menuApi.treeOriginal(original.operationRef)
+    if (checkIdentity()) acceptTree(receipt)
+  } catch (error) {
+    if (checkIdentity()) {
+      if (!retry && (error as { response?: { status?: number } }).response?.status === 404)
+        treeNotice.value = '尚未查到原树结果，原请求仍保留；可按原请求重试。'
+      else treeFailure(error, false)
+    }
+  } finally { savingStructure.value = false }
+  if (checkIdentity() && writeState.value === 'confirmed') await refreshAfterWrite(selectedId.value)
+}
+async function inspectCurrentTree() {
   if (writing.value || !checkIdentity()) return
+  savingStructure.value = true
+  try {
+    const current = await menuApi.treeCurrent()
+    if (!checkIdentity()) return
+    const positions: MenuTreePosition[] = []
+    walkTree(menuTree.value, node => positions.push({ menuId: node.menuId, parentId: node.parentId, orderNo: node.orderNo }))
+    treeComparison.value = current.menus.flatMap(node => {
+      const draft = positions.find(x => x.menuId === node.menuId)
+      return !draft || draft.parentId !== node.parentId || draft.orderNo !== node.orderNo
+        ? [`${node.menuName} (#${node.menuId})：当前父级 ${node.parentId ?? '顶级'} / 顺序 ${node.orderNo}；草稿 ${draft ? `${draft.parentId ?? '顶级'} / ${draft.orderNo}` : '无该节点'}`] : []
+    }).concat(positions.filter(x => !current.menus.some(n => n.menuId === x.menuId)).map(x => `#${x.menuId} 已从当前树删除，仍保留在草稿中。`))
+    treeNotice.value = `当前版本 ${current.revision} 已读取，旧草稿保留。差异 ${treeComparison.value.length} 项。`
+  } catch (error) { if (checkIdentity()) treeNotice.value = (error as Error).message }
+  finally { savingStructure.value = false }
+}
+
+async function deleteSelected() {
+  if (writing.value || treePending.value || treeStorageError.value || !checkIdentity()) return
   const node = selectedNode.value
   if (!node) return
   if (structureDirty.value) {
@@ -884,12 +979,14 @@ async function refreshActiveNavigation() {
 }
 
 onMounted(() => {
+  window.addEventListener(AUTH_EVENT, checkIdentity)
   window.addEventListener('storage', checkIdentity)
   window.addEventListener('focus', checkIdentity)
   window.addEventListener('cp6-menu-updated', checkIdentity)
   void loadData()
 })
 onBeforeUnmount(() => {
+  window.removeEventListener(AUTH_EVENT, checkIdentity)
   disposed = true
   listRecovery.invalidate()
   navigationRecovery.invalidate()

@@ -161737,6 +161737,11 @@
       "date": "2026-11-02",
       "change": "第七期三天W265租户创建V1：固定现有IAM模板修订，原命令恢复与Tenant/角色/菜单/首用户/强审计同事务；当前平台会话HTTP和创建页面，密码仅首次成功响应，未知原请求可恢复。",
       "evidence": "docs/development/evidence/W265-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-02",
+      "change": "第八期三天W266共享菜单树V1：PG原生版本与CAS、全部租户角色引用预览、准确原命令和强审计同事务；当前平台管理员加menu:edit的真实会话HTTP，实际拖拽页面冲突差异与未知恢复。",
+      "evidence": "docs/development/evidence/W266-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -175283,7 +175288,7 @@
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
-      "remaining_scope": "只交付现有客户端状态与响应竞态；legacy后端KPI/全局缓存、scoped查询、租户/撤权、菜单CAS及20条原业务AC未验收。完整WP02-18保持PLANNED/NOT_CHECKED，WP02-03前置保留。",
+      "remaining_scope": "W266仅闭合共享树排序/层级V1及当前浏览器读取恢复。WP02-18仍余其他菜单字段/路由注册、个性配置、KPI Owner定义与scoped查询/授权缓存、全部相关导航传播及20条原业务AC整体验收；旧菜单/删除/PUT tree兼容入口仍未全面采用CAS/原命令和全局政策，不因V1交付宣称旧入口治理完成。命令历史保留/擦除归治理任务。WP02-03原整卡前置地位不变，本期直接复用已交付IAM共同门/当前权限。",
       "wave10_delivery": {
         "status": "MERGED",
         "source_candidate_sha": "19adab45c0151765b8becf544c3ebf69262ee59a",
@@ -175383,20 +175388,27 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
+        "window": "W266-01",
         "as_of": "2026-11-02",
         "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-18",
-        "delivered": "首页状态、深链和当前权限bootstrap已接入。",
-        "remaining": "服务端版本化菜单/个性配置CAS、各Owner KPI定义与授权缓存键仍需完整实现/验收；零值、无权和缺源必须分开。",
+        "report": "docs/development/evidence/W266-01/DELIVERY.md",
+        "delivered": "第八期三天W266共享菜单树V1：PG原生版本与CAS、全部租户角色引用预览、准确原命令和强审计同事务；当前平台管理员加menu:edit的真实会话HTTP，实际拖拽页面冲突差异与未知恢复。",
+        "remaining": "W266仅闭合共享树排序/层级V1及当前浏览器读取恢复。WP02-18仍余其他菜单字段/路由注册、个性配置、KPI Owner定义与scoped查询/授权缓存、全部相关导航传播及20条原业务AC整体验收；旧菜单/删除/PUT tree兼容入口仍未全面采用CAS/原命令和全局政策，不因V1交付宣称旧入口治理完成。命令历史保留/擦除归治理任务。WP02-03原整卡前置地位不变，本期直接复用已交付IAM共同门/当前权限。",
         "evidence_refs": [
           "docs/development/evidence/WP02-18/menu-refresh-recovery/DELIVERY.md",
           "docs/development/evidence/WP02-18/dashboard-states/DELIVERY.md",
           "docs/development/evidence/W146-01/DELIVERY.md",
-          "docs/development/evidence/W148-01/DELIVERY.md"
+          "docs/development/evidence/W148-01/DELIVERY.md",
+          "docs/development/evidence/W266-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
-        "new_product_validation": false
+        "new_product_validation": true
+      },
+      "wave266_menu_tree": {
+        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W266-01/DELIVERY.md",
+        "full_task_completed": false,
+        "validation": "24项相关本地后端测试通过/0跳过：7项新增PG18/真实Main会话HTTP、8项原菜单/IAM动作回归、9项当前权限PG读取回归；业务数据模拟。29项MenuView行为测试、Vue类型检查退出0、实际Chrome/Element Plus原生拖拽与API夹具PASS。首次编译、NUL审计jsonb、测试约束、夹具目录冲突、旧UI夹具及类型断言失败均保留并修正；仅定向复跑。无Actions或部署。"
       }
     },
     {
@@ -200910,7 +200922,7 @@
       "path": "docs/development/dispatch/20261102-wave266/README.md",
       "baseline_sha": "2acdf8199928d31f462f6e32f824dd6c0c28e493",
       "registered_at": "2026-11-02T11:22:09.696483+00:00",
-      "phase": "IMPLEMENTING",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -200936,31 +200948,50 @@
           "title": "共享菜单树版本化排序与层级",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "IMPLEMENTING",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w266-01",
           "planned_scope_ref": "docs/development/planning/20261102-three-day-cycle8.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
             "Main:workspace-ui",
             "Main:Core-PG-migration"
-          ]
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W266-01/DELIVERY.md",
+          "validation": "24项相关本地后端测试通过/0跳过：7项新增PG18/真实Main会话HTTP、8项原菜单/IAM动作回归、9项当前权限PG读取回归；业务数据模拟。29项MenuView行为测试、Vue类型检查退出0、实际Chrome/Element Plus原生拖拽与API夹具PASS。首次编译、NUL审计jsonb、测试约束、夹具目录冲突、旧UI夹具及类型断言失败均保留并修正；仅定向复跑。无Actions或部署。",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave266-final-verification.json"
+          },
+          "business_acceptance": "MENU_TREE_V1_LOCAL_PG_ACTUAL_HTTP_PASS;UI_FIXTURE_PASS;FULL_CARD_REMAINS"
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W266第八期三天：共享菜单树排序/层级PG版本CAS、全租户影响预览、原命令恢复、当前全局管理员及动作权限HTTP和拖拽页面；COORD单人。"
+      "next_action": "W266第八期三天：共享菜单树排序/层级PG版本CAS、全租户影响预览、原命令恢复、当前全局管理员及动作权限HTTP和拖拽页面；COORD单人。",
+      "lifecycle_snapshot": {
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_seat_released": false,
+        "main_branch_deleted": false,
+        "handoff_branch_deleted": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave266-final-verification.json"
+      }
     },
     "wave_history": [
       {
@@ -235883,10 +235914,10 @@
     "next_execution_plan": {
       "id": "CP6-3D8-20261102",
       "path": "docs/development/planning/20261102-three-day-cycle8.md",
-      "state": "IN_PROGRESS",
+      "state": "VERIFYING",
       "execution_owner": "COORD_SINGLE_CHAT",
       "execution_started": true,
-      "current_day": "D1",
+      "current_day": "D3",
       "core_capacity_hours": 18,
       "contingency_capacity_hours": 6,
       "estimate_is_guarantee": false,
@@ -235895,19 +235926,51 @@
         {
           "id": "W266-01",
           "day": "D1",
-          "state": "IN_PROGRESS"
+          "state": "VERIFYING",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W266-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave266-final-verification.json"
+          }
         },
         {
           "id": "W266-01",
           "day": "D2",
-          "state": "PLANNED"
+          "state": "VERIFYING",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W266-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave266-final-verification.json"
+          }
         },
         {
           "id": "W266-01",
           "day": "D3",
-          "state": "PLANNED"
+          "state": "VERIFYING",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W266-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave266-final-verification.json"
+          }
         }
-      ]
+      ],
+      "required_implementation_complete": true,
+      "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave266-final-verification.json"
     },
     "execution_plan_history": [
       {

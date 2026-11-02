@@ -5,7 +5,8 @@ import { nextTick } from 'vue'
 import MenuView from './MenuView.vue'
 import { usePlatformStore } from '@/stores/platform'
 
-const api = vi.hoisted(() => ({ getAll: vi.fn(), add: vi.fn(), update: vi.fn(), updateTree: vi.fn(), del: vi.fn(), profile: vi.fn(), confirm: vi.fn(), success: vi.fn() }))
+const api = vi.hoisted(() => ({ getAll: vi.fn(), add: vi.fn(), update: vi.fn(), updateTree: vi.fn(), del: vi.fn(), profile: vi.fn(), confirm: vi.fn(), success: vi.fn(),
+  treeCurrent: vi.fn(), treePreview: vi.fn(), treeExecute: vi.fn(), treeOriginal: vi.fn() }))
 vi.mock('@/api/sys/menu', () => ({ menuApi: api }))
 vi.mock('@/api/sys/auth', () => ({ authApi: { profile: api.profile } }))
 vi.mock('@/api/sys/rolePerm', () => ({ rolePermApi: { myActions: vi.fn() } }))
@@ -36,7 +37,7 @@ async function render() {
   return { view: wrapper, vm: wrapper.vm as any, pinia }
 }
 async function edit(vm: any, name = '已保存') { vm.editorForm.menuName = name; await nextTick() }
-function writes() { return [api.add, api.update, api.updateTree, api.del].reduce((n, fn) => n + fn.mock.calls.length, 0) }
+function writes() { return [api.add, api.update, api.updateTree, api.del, api.treeExecute].reduce((n, fn) => n + fn.mock.calls.length, 0) }
 beforeEach(() => {
   vi.resetAllMocks(); localStorage.clear(); sessionStorage.clear()
   localStorage.setItem('cp6_authed', '1'); localStorage.setItem('userName', 'one')
@@ -44,6 +45,9 @@ beforeEach(() => {
   api.getAll.mockResolvedValue([menu()]); api.profile.mockResolvedValue(profile())
   api.confirm.mockResolvedValue('confirm'); api.update.mockResolvedValue(menu('已保存'))
   api.add.mockResolvedValue(menu()); api.updateTree.mockResolvedValue(undefined); api.del.mockResolvedValue(undefined)
+  api.treeCurrent.mockResolvedValue({ revision: '9007199254740993', menus: [menu()] })
+  api.treePreview.mockResolvedValue({ revision: '9007199254740993', changedMenuIds: [1], affectedTenantsCount: 2, affectedRolesCount: 3, menuReferences: '4', actionReferences: '5' })
+  api.treeExecute.mockImplementation(async command => ({ operationRef: command.operationRef, appliedRevision: '9007199254740994' }))
 })
 afterEach(() => { wrapper?.unmount(); wrapper = undefined })
 
@@ -112,14 +116,15 @@ describe('menu write confirmation and independent read recovery (#243)', () => {
     expect(vm.formDirty).toBe(true); expect(writes()).toBe(1)
   })
   it('keeps a tree draft made during a tree write and does not replay it', async () => {
-    const { vm } = await render(); vm.handleNodeDrop()
-    const write = deferred(); api.updateTree.mockReturnValueOnce(write.promise)
-    const save = vm.saveStructure()
+    localStorage.setItem('cp6_isPlatformAdmin', '1')
+    const { vm } = await render(); vm.handleNodeDrop(); await nextTick()
+    const write = deferred(); api.treeExecute.mockReturnValueOnce(write.promise)
+    const save = vm.saveStructure(); await flushPromises()
     vm.menuTree[0].orderNo = 9
     vm.structureDirty = true
-    write.resolve(); await save
+    write.resolve({ appliedRevision: 'next' }); await save
     expect(vm.structureDirty).toBe(true); expect(vm.menuTree[0].orderNo).toBe(9)
-    expect(api.getAll).toHaveBeenCalledTimes(1); expect(api.profile).toHaveBeenCalledTimes(1)
+    expect(api.treeCurrent).toHaveBeenCalledTimes(1); expect(api.profile).toHaveBeenCalledTimes(1)
     expect(writes()).toBe(1)
   })
   it('rejects old success and old failure after a newer read', async () => {
@@ -187,12 +192,67 @@ describe('menu write confirmation and independent read recovery (#243)', () => {
     await vm.saveDetails(); expect(writes()).toBe(1)
   })
   it.each(['create', 'delete', 'tree'])('uses the same recovery boundary for %s', async kind => {
+    if (kind === 'tree') localStorage.setItem('cp6_isPlatformAdmin', '1')
     const { vm } = await render()
     api.getAll.mockRejectedValueOnce(new Error('offline')); api.profile.mockRejectedValueOnce(new Error('offline'))
+    if (kind === 'tree') api.treeCurrent.mockRejectedValueOnce(new Error('offline'))
     if (kind === 'create') { await vm.openCreate(null); await vm.saveDetails().catch(() => {}) }
     if (kind === 'delete') await vm.deleteSelected().catch(() => {})
     if (kind === 'tree') { vm.handleNodeDrop(); await vm.saveStructure() }
     expect(writes()).toBe(1); expect(api.profile).toHaveBeenCalledTimes(1)
     await vm.refreshData(); await vm.refreshActiveNavigation(); expect(writes()).toBe(1)
+  })
+})
+
+describe('versioned shared tree commands', () => {
+  beforeEach(() => { localStorage.setItem('cp6_isPlatformAdmin', '1') })
+  it('previews global references and preserves exact large version before committing', async () => {
+    const { vm } = await render(); vm.handleNodeDrop(); await nextTick(); await vm.saveStructure()
+    expect(api.confirm).toHaveBeenCalledWith(expect.stringContaining('2 个租户、3 个角色'), '共享菜单树影响', expect.anything())
+    expect(api.treeExecute.mock.calls[0]![0]).toEqual(api.treePreview.mock.calls[0]![0])
+    expect(api.treeExecute.mock.calls[0]![0].expectedRevision).toBe('9007199254740993')
+    expect(api.updateTree).not.toHaveBeenCalled(); expect(api.profile).toHaveBeenCalledTimes(1)
+  })
+  it('preserves conflict draft and reads differences without enabling blind overwrite', async () => {
+    const { vm, view } = await render(); vm.handleNodeDrop(); await nextTick()
+    api.treeExecute.mockRejectedValueOnce({ response: { status: 412, data: { code: 'MENU_TREE_VERSION_CHANGED' } } })
+    await vm.saveStructure(); expect(vm.structureDirty).toBe(true); expect(vm.treePending).toBeNull(); expect(vm.treeRevision).toBeNull()
+    api.treeCurrent.mockResolvedValueOnce({ revision: 'new', menus: [menu('别人修改')] })
+    await vm.inspectCurrentTree(); expect(view.text()).toContain('旧草稿保留'); expect(vm.treeRevision).toBeNull()
+    await vm.saveStructure(); expect(api.treeExecute).toHaveBeenCalledTimes(1)
+  })
+  it('restores unknown across remount and keeps exact request through query miss and later denial', async () => {
+    let page = await render(); page.vm.handleNodeDrop(); await nextTick()
+    api.treeExecute.mockRejectedValueOnce(new Error('connection lost')); await page.vm.saveStructure()
+    const original = structuredClone(api.treeExecute.mock.calls[0]![0]); wrapper!.unmount(); wrapper = undefined
+    page = await render(); expect(page.vm.treePending).toEqual(original)
+    api.treeOriginal.mockRejectedValueOnce({ response: { status: 404 } }); await page.vm.recoverTree(false)
+    api.treeExecute.mockRejectedValueOnce({ response: { status: 403, data: { code: 'MENU_TREE_ORIGINAL_FORBIDDEN' } } }); await page.vm.recoverTree(true)
+    expect(page.vm.treePending).toEqual(original); await page.vm.recoverTree(true)
+    expect(api.treeExecute.mock.calls.at(-1)![0]).toEqual(original); expect(page.vm.treePending).toBeNull()
+    expect(page.view.text()).toContain('原操作已确认'); expect(api.profile).toHaveBeenCalledTimes(1)
+  })
+  it('does not send when durable pending storage fails', async () => {
+    const { vm } = await render(); vm.handleNodeDrop(); await nextTick()
+    const original = Storage.prototype.setItem
+    const storage = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function(this: Storage, key, value) {
+      if (key.startsWith('cp6-menu-tree-pending-v1:')) throw new Error('quota')
+      return original.call(this, key, value)
+    })
+    try { await vm.saveStructure(); expect(api.treeExecute).not.toHaveBeenCalled(); expect(vm.treeStorageError).toContain('本次尚未发送') }
+    finally { storage.mockRestore() }
+  })
+  it('ignores delayed commit after same-name session epoch changes', async () => {
+    const { vm } = await render(); vm.handleNodeDrop(); await nextTick(); const pending = deferred(); api.treeExecute.mockReturnValueOnce(pending.promise)
+    const save = vm.saveStructure(); await flushPromises()
+    localStorage.setItem('cp6_auth_epoch', 'new-session'); window.dispatchEvent(new Event('cp6-auth-changed'))
+    pending.resolve({ appliedRevision: 'next' }); await save
+    expect(vm.identityChanged).toBe(true); expect(vm.treePending).not.toBeNull(); expect(api.profile).not.toHaveBeenCalled()
+  })
+  it('requires platform identity for tree writes and never falls back after version read fails', async () => {
+    api.treeCurrent.mockRejectedValueOnce(new Error('offline')); const { vm, pinia } = await render()
+    expect(api.getAll).not.toHaveBeenCalled(); expect(vm.canDrag).toBe(false)
+    usePlatformStore(pinia).isPlatformAdmin = false; vm.handleNodeDrop(); await vm.saveStructure()
+    expect(api.treePreview).not.toHaveBeenCalled(); expect(api.treeExecute).not.toHaveBeenCalled()
   })
 })

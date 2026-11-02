@@ -18,7 +18,24 @@ export interface MenuTreePosition {
   orderNo: number
 }
 
+export interface MenuTreeCommand {
+  operationRef: string
+  expectedRevision: string
+  positions: MenuTreePosition[]
+  reason: string
+}
+export interface MenuTreeSnapshot { revision: string; menus: MenuItem[] }
+export interface MenuTreeImpact {
+  revision: string; changedMenuIds: number[]; affectedTenantsCount: number; affectedRolesCount: number
+  menuReferences: string; actionReferences: string
+}
+export interface MenuTreeReceipt { operationRef: string; appliedRevision: string; impact: MenuTreeImpact; committedAt: string }
+
 export const menuApi = {
+  treeCurrent(): Promise<MenuTreeSnapshot> { return http.get('/menu/tree-v1') },
+  treePreview(command: MenuTreeCommand): Promise<MenuTreeImpact> { return http.post('/menu/tree-v1/preview', command) },
+  treeExecute(command: MenuTreeCommand): Promise<MenuTreeReceipt> { return http.post('/menu/tree-v1/commands', command) },
+  treeOriginal(operationRef: string): Promise<MenuTreeReceipt> { return http.post('/menu/tree-v1/commands/read', { operationRef }) },
   getAll(): Promise<MenuItem[]> {
     return http.get('/menu')
   },
