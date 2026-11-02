@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W254 D3交付](evidence/W254-01/DELIVERY.md)。三天必做实施/验证完成，COORD单人收尾；最终采用和释放见本轮核销。
+> 当前：[W255第二期D1](evidence/W255-01/DELIVERY.md)，单人执行[第二期三天](planning/20261102-three-day-cycle2.md)；第一期/七天已完成。D1后继续W256。
+
+> 历史快照：[W254 D3交付](evidence/W254-01/DELIVERY.md)。三天必做实施/验证完成，COORD单人收尾；最终采用和释放见本轮核销。
 
 > 历史快照：[W253 D2交付](evidence/W253-01/DELIVERY.md)。COORD单人，继续D3编号原命令提供者。
 

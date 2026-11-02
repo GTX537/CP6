@@ -316,19 +316,30 @@ def adopted_delivery(record, repository, root):
     if not isinstance(record, dict) or record.get("status") not in {"MERGED", "CLOSED", "INTEGRATED"}:
         return False
     repo = {"Main": "CP6", "CRM": "CP6.CRM", "Platform": "CP6.Platform"}.get(repository)
-    receipt = record.get("main_delivery")
+    # A Main coordination merge is not the CRM product's adoption receipt.
+    receipt = record.get("crm_delivery" if repository == "CRM" else "main_delivery")
     if isinstance(receipt, dict):
-        if receipt.get("repository") != repo:
+        if receipt.get("repository", repo if repository == "CRM" else None) != repo:
             return False
-        source, remote, pr = (receipt.get(k, "") for k in ("source", "remote_target", "pr"))
+        source, remote, pr = receipt.get("source", ""), receipt.get("remote_target", receipt.get("main", "")), receipt.get("pr", "")
+    elif repository == "CRM" and any(k.startswith("crm_") for k in record):
+        source, remote, pr = (record.get(k, "") for k in ("crm_source_sha", "crm_remote_main_sha", "crm_pull_request"))
     else:
         source = record.get("integrated_source_sha", record.get("source_candidate_sha", record.get("source", "")))
         remote = record.get("remote_main_sha", record.get("main", ""))
         pr = record.get("pull_request", record.get("pr", ""))
-    return (isinstance(pr, str) and re.fullmatch(rf"https://github\.com/GTX537/{re.escape(repo or '')}/pull/[1-9][0-9]*", pr)
-            and isinstance(remote, str) and re.fullmatch(r"[0-9a-f]{40}", remote)
-            and isinstance(record.get("report"), str) and isinstance(source, str)
-            and evidence_ok([{"path": record["report"], "source_sha": source, "scope": "existing delivery"}], root))
+    if (not repo or not isinstance(pr, str) or not re.fullmatch(rf"https://github\.com/GTX537/{re.escape(repo)}/pull/[1-9][0-9]*", pr)
+            or not isinstance(remote, str) or not re.fullmatch(r"[0-9a-f]{40}", remote)
+            or not isinstance(source, str) or not re.fullmatch(r"[0-9a-f]{40}", source)
+            or not isinstance(record.get("report"), str)):
+        return False
+    report = record["report"]
+    if report.startswith("https://"):
+        pinned = re.fullmatch(rf"https://github\.com/GTX537/{re.escape(repo)}/blob/({source}|{remote})/(docs/[^?#%\\]+\.md)", report)
+        # This validates a pinned source reference, not its natural-language scope;
+        # the coordinator reads the actual report and verifies remote adoption.
+        return bool(pinned and all(part not in {"", ".", ".."} for part in pinned[2].split("/")))
+    return evidence_ok([{"path": report, "source_sha": source, "scope": "existing delivery"}], root)
 
 
 def validate_prerequisites(task, definition, tasks, root):
