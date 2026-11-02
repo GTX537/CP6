@@ -1,5 +1,6 @@
 import http from '../http'
 export type FormMask = Record<string, 'edit' | 'readonly' | 'hidden'>
+export interface PersonalCatalogItem { formKey: string; name: string; category: string | null; subCategory: string | null; formVersionId: string; formVersion: number }
 export interface PersonalContext {
   formKey: string; formVersionId: string; formVersion: number; name: string; schemaJson: string
   activationRevision: string; bindingRevision: string | null; flowVersionId: string | null
@@ -23,6 +24,7 @@ const unwrap = <T>(v: any): T => v?.data ?? v
 const key = encodeURIComponent
 const root = '/oa/v2'
 export const personalFormApi = {
+  catalog: async (page: number, search: string, signal?: AbortSignal) => unwrap<{ items: PersonalCatalogItem[]; total: number; page: number; pageSize: number }>(await http.get(`${root}/forms/catalog`, { params: { page, search }, signal })),
   context: async (form: string, signal?: AbortSignal) => unwrap<PersonalContext>(await http.get(`${root}/forms/${key(form)}/initiation-context`, { signal })),
   references: async (form: string, field: string, search: string, draft?: string, signal?: AbortSignal) => unwrap<{ id: string; name: string }[]>(await http.get(`${root}/forms/${key(form)}/references/${key(field)}`, { params: { search, draft }, signal })),
   draft: async (id: string, signal?: AbortSignal) => unwrap<PersonalDraft>(await http.get(`${root}/drafts/${id}`, { signal })),

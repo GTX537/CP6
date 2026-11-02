@@ -9,6 +9,8 @@ namespace CP6.WebApi.Controllers.Oa;
 [ResponseCache(NoStore=true,Location=ResponseCacheLocation.None)]
 public sealed class PersonalFormController(PersonalFormOwnerV2 owner):ControllerBase
 {
+    [HttpGet("forms/catalog")]
+    public Task<IActionResult> Catalog([FromQuery]int page=1,[FromQuery]int pageSize=20,[FromQuery]string? search=null,CancellationToken ct=default)=>Run(async()=>await owner.CatalogAsync(page,pageSize,search,ct));
     [HttpGet("forms/{key}/initiation-context")]
     public Task<IActionResult> Context(string key,CancellationToken ct)=>Run(async()=>await owner.ContextAsync(key,ct));
     [HttpPost("forms/{key}/preview"),RequestSizeLimit(1024*1024)]
