@@ -197535,11 +197535,31 @@
         }
       },
       "wave277_delegation_reauthorization": {
-        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "status": "DELIVERED_REMOTE_VERIFIED",
         "report": "docs/development/evidence/W277-01/DELIVERY.md",
         "full_task_completed": false,
         "validation": "本地33项唯一PostgreSQL18行为通过，0跳过；35项Vue组件/恢复行为通过，应用vue-tsc通过。实际Main登录/CSRF/HTTP、两连接授权撤销及撤回/应用竞争、延迟提交失败回滚均有定向证据。模拟业务数据；内部Owner、事务、原生Workflow和历史原件真实执行。",
-        "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED，59局部仍3闭环/56余项，125/247正式状态保持。W278接续浏览器到真实PG完整链，W279原AC核对；历史比较/目录收藏下载、完整SFS patch/三版本、退回转交/无审批人、日历与期限Worker仍在后续窗口。其他业务Owner的委派撤回/应用未采用，不把迭代采用推广为全Owner完成。"
+        "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED，59局部仍3闭环/56余项，125/247正式状态保持。W278接续浏览器到真实PG完整链，W279原AC核对；历史比较/目录收藏下载、完整SFS patch/三版本、退回转交/无审批人、日历与期限Worker仍在后续窗口。其他业务Owner的委派撤回/应用未采用，不把迭代采用推广为全Owner完成。",
+        "remote_adoption": {
+          "repository": "CP6",
+          "task": "W277-01",
+          "source": "da4f438cdac0708cc4329694a8f19856fcf7c38d",
+          "remote_target": "c055d2b083a8ce0777255548777f24fe81180c61",
+          "pr": "https://github.com/GTX537/CP6/pull/707",
+          "branch": "codex/w277-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "workspace_clean": true
+        },
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave277-final-verification.json"
+        }
       }
     },
     {
@@ -197620,11 +197640,31 @@
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "wave277_delegation_reauthorization": {
-        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "status": "DELIVERED_REMOTE_VERIFIED",
         "report": "docs/development/evidence/W277-01/DELIVERY.md",
         "full_task_completed": false,
         "validation": "本地33项唯一PostgreSQL18行为通过，0跳过；35项Vue组件/恢复行为通过，应用vue-tsc通过。实际Main登录/CSRF/HTTP、两连接授权撤销及撤回/应用竞争、延迟提交失败回滚均有定向证据。模拟业务数据；内部Owner、事务、原生Workflow和历史原件真实执行。",
-        "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED，59局部仍3闭环/56余项，125/247正式状态保持。W278接续浏览器到真实PG完整链，W279原AC核对；历史比较/目录收藏下载、完整SFS patch/三版本、退回转交/无审批人、日历与期限Worker仍在后续窗口。其他业务Owner的委派撤回/应用未采用，不把迭代采用推广为全Owner完成。"
+        "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED，59局部仍3闭环/56余项，125/247正式状态保持。W278接续浏览器到真实PG完整链，W279原AC核对；历史比较/目录收藏下载、完整SFS patch/三版本、退回转交/无审批人、日历与期限Worker仍在后续窗口。其他业务Owner的委派撤回/应用未采用，不把迭代采用推广为全Owner完成。",
+        "remote_adoption": {
+          "repository": "CP6",
+          "task": "W277-01",
+          "source": "da4f438cdac0708cc4329694a8f19856fcf7c38d",
+          "remote_target": "c055d2b083a8ce0777255548777f24fe81180c61",
+          "pr": "https://github.com/GTX537/CP6/pull/707",
+          "branch": "codex/w277-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "workspace_clean": true
+        },
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave277-final-verification.json"
+        }
       }
     },
     {
@@ -198042,11 +198082,31 @@
         "new_product_validation": true
       },
       "wave277_delegation_reauthorization": {
-        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "status": "DELIVERED_REMOTE_VERIFIED",
         "report": "docs/development/evidence/W277-01/DELIVERY.md",
         "full_task_completed": false,
         "validation": "本地33项唯一PostgreSQL18行为通过，0跳过；35项Vue组件/恢复行为通过，应用vue-tsc通过。实际Main登录/CSRF/HTTP、两连接授权撤销及撤回/应用竞争、延迟提交失败回滚均有定向证据。模拟业务数据；内部Owner、事务、原生Workflow和历史原件真实执行。",
-        "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED，59局部仍3闭环/56余项，125/247正式状态保持。W278接续浏览器到真实PG完整链，W279原AC核对；历史比较/目录收藏下载、完整SFS patch/三版本、退回转交/无审批人、日历与期限Worker仍在后续窗口。其他业务Owner的委派撤回/应用未采用，不把迭代采用推广为全Owner完成。"
+        "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED，59局部仍3闭环/56余项，125/247正式状态保持。W278接续浏览器到真实PG完整链，W279原AC核对；历史比较/目录收藏下载、完整SFS patch/三版本、退回转交/无审批人、日历与期限Worker仍在后续窗口。其他业务Owner的委派撤回/应用未采用，不把迭代采用推广为全Owner完成。",
+        "remote_adoption": {
+          "repository": "CP6",
+          "task": "W277-01",
+          "source": "da4f438cdac0708cc4329694a8f19856fcf7c38d",
+          "remote_target": "c055d2b083a8ce0777255548777f24fe81180c61",
+          "pr": "https://github.com/GTX537/CP6/pull/707",
+          "branch": "codex/w277-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "workspace_clean": true
+        },
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave277-final-verification.json"
+        }
       }
     },
     {
@@ -201512,11 +201572,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261102-wave277",
-      "path": "docs/development/dispatch/20261102-wave277/README.md",
-      "baseline_sha": "69909b2ec52a56917a41770279072e3384bcd97b",
-      "registered_at": "2026-11-02T21:10:32.641506+00:00",
-      "phase": "DELIVERY_MAIN_CLOSEOUT",
+      "id": "20261102-wave278",
+      "path": "docs/development/dispatch/20261102-wave278/README.md",
+      "baseline_sha": "c055d2b083a8ce0777255548777f24fe81180c61",
+      "registered_at": "2026-11-02T22:35:16.200231+00:00",
+      "phase": "IMPLEMENTING",
       "assigned_chats": [
         "COORD"
       ],
@@ -201534,65 +201594,46 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W277-01",
-          "workspace_task": "W277-01",
+          "id": "W278-01",
+          "workspace_task": "W278-01",
           "related_tasks": [
+            "WP12-01",
+            "WP12-02",
+            "WP12-04",
             "WP12-08",
             "WP12-10",
             "WP12-19"
           ],
-          "title": "封闭代理授权与显式业务撤回恢复",
+          "title": "浏览器至真实PG连续采用",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "DELIVERY_MAIN_CLOSEOUT",
+          "phase": "IMPLEMENTING",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": true,
+          "worker_delivery_received": false,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w277-01",
+          "branch": "codex/w278-01",
           "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": true,
+          "candidate_review_completed": false,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
-            "Main:oa-task",
-            "Main:oa-delegation",
-            "Main:iteration-review",
-            "Main:approval-withdraw",
-            "Main:authorization-catalog",
-            "Main:EF-migrations"
-          ],
-          "worker_delivery_ref": "docs/development/evidence/W277-01/DELIVERY.md",
-          "validation": "本地33项唯一PostgreSQL18行为通过，0跳过；35项Vue组件/恢复行为通过，应用vue-tsc通过。实际Main登录/CSRF/HTTP、两连接授权撤销及撤回/应用竞争、延迟提交失败回滚均有定向证据。模拟业务数据；内部Owner、事务、原生Workflow和历史原件真实执行。",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave277-final-verification.json"
-          },
-          "business_acceptance": "CLOSED_TASK_GRANT_CURRENT_DUAL_ACTOR_AND_ITERATION_EXPLICIT_REAUTH_PG_HTTP_COMPONENT_PASS;BROWSER_W278;FULL_CARD_REMAINS"
+            "Main:oa-authoring-ui",
+            "Main:oa-task-ui",
+            "Main:iteration-review-ui",
+            "Main:local-browser-api-pg-acceptance"
+          ]
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W277正常远端采用、准确任务分支清理与官方finish；随后W278真实浏览器/PG链，24h目标持续。",
-      "lifecycle_snapshot": {
-        "main_finish_required": true,
-        "main_seat_released": false,
-        "handoff_seat_released": false,
-        "main_branch_deleted": false,
-        "handoff_branch_deleted": false,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave277-final-verification.json"
-      },
-      "integration_baseline": "69909b2ec52a56917a41770279072e3384bcd97b"
+      "next_action": "W278实际浏览器→Vue→Main Program→PostgreSQL连续业务验收及实际采用缺口修复；1.5–3h低置信度，COORD单人，下一累计10h校准，24h总目标持续。"
     },
     "wave_history": [
       {
@@ -237068,6 +237109,113 @@
             "workspace_clean": true
           }
         ]
+      },
+      {
+        "id": "20261102-wave277",
+        "path": "docs/development/dispatch/20261102-wave277/README.md",
+        "baseline_sha": "69909b2ec52a56917a41770279072e3384bcd97b",
+        "registered_at": "2026-11-02T21:10:32.641506+00:00",
+        "phase": "COMPLETE",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W277-01",
+            "workspace_task": "W277-01",
+            "related_tasks": [
+              "WP12-08",
+              "WP12-10",
+              "WP12-19"
+            ],
+            "title": "封闭代理授权与显式业务撤回恢复",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "COMPLETE",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w277-01",
+            "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:oa-task",
+              "Main:oa-delegation",
+              "Main:iteration-review",
+              "Main:approval-withdraw",
+              "Main:authorization-catalog",
+              "Main:EF-migrations"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W277-01/DELIVERY.md",
+            "validation": "本地33项唯一PostgreSQL18行为通过，0跳过；35项Vue组件/恢复行为通过，应用vue-tsc通过。实际Main登录/CSRF/HTTP、两连接授权撤销及撤回/应用竞争、延迟提交失败回滚均有定向证据。模拟业务数据；内部Owner、事务、原生Workflow和历史原件真实执行。",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave277-final-verification.json"
+            },
+            "business_acceptance": "CLOSED_TASK_GRANT_CURRENT_DUAL_ACTOR_AND_ITERATION_EXPLICIT_REAUTH_PG_HTTP_COMPONENT_PASS;BROWSER_W278;FULL_CARD_REMAINS"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W277正常远端采用、准确任务分支清理与官方finish；随后W278真实浏览器/PG链，24h目标持续。",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave277-final-verification.json"
+        },
+        "integration_baseline": "69909b2ec52a56917a41770279072e3384bcd97b",
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W277-01",
+            "source": "da4f438cdac0708cc4329694a8f19856fcf7c38d",
+            "remote_target": "c055d2b083a8ce0777255548777f24fe81180c61",
+            "pr": "https://github.com/GTX537/CP6/pull/707",
+            "branch": "codex/w277-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W277-HANDOFF",
+            "source": "ebc7f75c795c51b1b75aa397cc2228b09fea0537",
+            "remote_target": "b4026520479fea67397322e12ac9b8819a482fb5",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/253",
+            "branch": "codex/w277-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -237646,7 +237794,7 @@
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 33694,
+      "effective_seconds_recorded": 34119,
       "next_reestimate_at_effective_seconds": 36000,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
@@ -237953,7 +238101,7 @@
             1.25,
             2.5
           ],
-          "state": "VERIFYING",
+          "state": "DONE",
           "initial_estimate_hours": [
             2,
             3
@@ -237968,13 +238116,15 @@
           "implementation_complete": true,
           "report": "docs/development/evidence/W277-01/DELIVERY.md",
           "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
             "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave277-final-verification.json"
-          }
+          },
+          "actual_effective_seconds": 5061,
+          "estimate_variance": "5061s/1h24m21s, below3–5h. Existing real business Owner transaction/current authority/original recovery and native read framework reused; PostgreSQL authorization and explicit new fact paths implemented, browser-to-PG remains W278."
         },
         {
           "id": "W278-01",
@@ -237990,11 +238140,18 @@
             1,
             2
           ],
-          "state": "PLANNED",
+          "state": "IN_PROGRESS",
           "initial_estimate_hours": [
             1.5,
             3
-          ]
+          ],
+          "started_at": "2026-11-02T22:35:16.200231+00:00",
+          "revised_estimate_hours": [
+            1.5,
+            3
+          ],
+          "estimate_confidence": "LOW",
+          "scope_refinement": "First full Vue browser to actual Program/PostgreSQL chain for current authoring/publication/activation, ordinary form/task and delegation/explicit business recovery. Reuse valid PG/API/component evidence; fix actual adoption gaps discovered through real browser flow."
         },
         {
           "id": "W279-01",
@@ -238195,10 +238352,10 @@
           "next_reestimate_at_effective_seconds": 36000
         }
       ],
-      "timing_snapshot_at": "2026-11-02T22:28:11.436503+00:00",
+      "timing_snapshot_at": "2026-11-02T22:35:16.200231+00:00",
       "remaining_estimate_hours": [
-        11.25,
-        21.5
+        8.75,
+        17.5
       ]
     },
     "execution_plan_history": [
