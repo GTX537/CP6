@@ -175405,10 +175405,36 @@
         "new_product_validation": true
       },
       "wave266_menu_tree": {
-        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "status": "MERGED",
         "report": "docs/development/evidence/W266-01/DELIVERY.md",
         "full_task_completed": false,
-        "validation": "24项相关本地后端测试通过/0跳过：7项新增PG18/真实Main会话HTTP、8项原菜单/IAM动作回归、9项当前权限PG读取回归；业务数据模拟。29项MenuView行为测试、Vue类型检查退出0、实际Chrome/Element Plus原生拖拽与API夹具PASS。首次编译、NUL审计jsonb、测试约束、夹具目录冲突、旧UI夹具及类型断言失败均保留并修正；仅定向复跑。无Actions或部署。"
+        "validation": "24项相关本地后端测试通过/0跳过：7项新增PG18/真实Main会话HTTP、8项原菜单/IAM动作回归、9项当前权限PG读取回归；业务数据模拟。29项MenuView行为测试、Vue类型检查退出0、实际Chrome/Element Plus原生拖拽与API夹具PASS。首次编译、NUL审计jsonb、测试约束、夹具目录冲突、旧UI夹具及类型断言失败均保留并修正；仅定向复跑。无Actions或部署。",
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W266-01",
+            "source": "caa2f997ba2b3ca3eaca095f609ed34b42f2de7f",
+            "remote_target": "970ef3bbb2e05fb96ebd512359767f95f60874d2",
+            "pr": "https://github.com/GTX537/CP6/pull/694",
+            "branch": "codex/w266-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W266-HANDOFF",
+            "source": "db4c5c1e1a0351387b5b761600934e5d001040ab",
+            "remote_target": "4ff5dede9e3b3b2d8ccd154462f041cfc27f5d7f",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/242",
+            "branch": "codex/w266-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     },
     {
@@ -200918,11 +200944,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261102-wave266",
-      "path": "docs/development/dispatch/20261102-wave266/README.md",
-      "baseline_sha": "2acdf8199928d31f462f6e32f824dd6c0c28e493",
-      "registered_at": "2026-11-02T11:22:09.696483+00:00",
-      "phase": "DELIVERY_MAIN_CLOSEOUT",
+      "id": "20261102-wave267",
+      "path": "docs/development/dispatch/20261102-wave267/README.md",
+      "baseline_sha": "970ef3bbb2e05fb96ebd512359767f95f60874d2",
+      "registered_at": "2026-11-02T12:04:01.157678+00:00",
+      "phase": "IMPLEMENTING",
       "assigned_chats": [
         "COORD"
       ],
@@ -200940,58 +200966,39 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W266-01",
-          "workspace_task": "W266-01",
+          "id": "W267-01",
+          "workspace_task": "W267-01",
           "related_tasks": [
             "WP02-18"
           ],
-          "title": "共享菜单树版本化排序与层级",
+          "title": "菜单展示配置版本化管理",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "DELIVERY_MAIN_CLOSEOUT",
+          "phase": "IMPLEMENTING",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": true,
+          "worker_delivery_received": false,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w266-01",
-          "planned_scope_ref": "docs/development/planning/20261102-three-day-cycle8.md",
+          "branch": "codex/w267-01",
+          "planned_scope_ref": "docs/development/planning/20261102-three-day-cycle9.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": true,
+          "candidate_review_completed": false,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
             "Main:workspace-ui",
-            "Main:Core-PG-migration"
-          ],
-          "worker_delivery_ref": "docs/development/evidence/W266-01/DELIVERY.md",
-          "validation": "24项相关本地后端测试通过/0跳过：7项新增PG18/真实Main会话HTTP、8项原菜单/IAM动作回归、9项当前权限PG读取回归；业务数据模拟。29项MenuView行为测试、Vue类型检查退出0、实际Chrome/Element Plus原生拖拽与API夹具PASS。首次编译、NUL审计jsonb、测试约束、夹具目录冲突、旧UI夹具及类型断言失败均保留并修正；仅定向复跑。无Actions或部署。",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave266-final-verification.json"
-          },
-          "business_acceptance": "MENU_TREE_V1_LOCAL_PG_ACTUAL_HTTP_PASS;UI_FIXTURE_PASS;FULL_CARD_REMAINS"
+            "Main:MenuTreeOwner"
+          ]
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W266第八期三天：共享菜单树排序/层级PG版本CAS、全租户影响预览、原命令恢复、当前全局管理员及动作权限HTTP和拖拽页面；COORD单人。",
-      "lifecycle_snapshot": {
-        "main_finish_required": true,
-        "main_seat_released": false,
-        "handoff_seat_released": false,
-        "main_branch_deleted": false,
-        "handoff_branch_deleted": false,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave266-final-verification.json"
-      }
+      "next_action": "W267第九期三天：菜单名称/图标/Enable展示配置CAS、全租户预览、原命令恢复、当前平台/动作权限实际HTTP和页面；COORD单人。"
     },
     "wave_history": [
       {
@@ -235349,6 +235356,106 @@
             "workspace_clean": true
           }
         ]
+      },
+      {
+        "id": "20261102-wave266",
+        "path": "docs/development/dispatch/20261102-wave266/README.md",
+        "baseline_sha": "2acdf8199928d31f462f6e32f824dd6c0c28e493",
+        "registered_at": "2026-11-02T11:22:09.696483+00:00",
+        "phase": "COMPLETE",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W266-01",
+            "workspace_task": "W266-01",
+            "related_tasks": [
+              "WP02-18"
+            ],
+            "title": "共享菜单树版本化排序与层级",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "COMPLETE",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w266-01",
+            "planned_scope_ref": "docs/development/planning/20261102-three-day-cycle8.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:workspace-ui",
+              "Main:Core-PG-migration"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W266-01/DELIVERY.md",
+            "validation": "24项相关本地后端测试通过/0跳过：7项新增PG18/真实Main会话HTTP、8项原菜单/IAM动作回归、9项当前权限PG读取回归；业务数据模拟。29项MenuView行为测试、Vue类型检查退出0、实际Chrome/Element Plus原生拖拽与API夹具PASS。首次编译、NUL审计jsonb、测试约束、夹具目录冲突、旧UI夹具及类型断言失败均保留并修正；仅定向复跑。无Actions或部署。",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave266-final-verification.json"
+            },
+            "business_acceptance": "MENU_TREE_V1_LOCAL_PG_ACTUAL_HTTP_PASS;UI_FIXTURE_PASS;FULL_CARD_REMAINS"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W266第八期三天：共享菜单树排序/层级PG版本CAS、全租户影响预览、原命令恢复、当前全局管理员及动作权限HTTP和拖拽页面；COORD单人。",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave266-final-verification.json"
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W266-01",
+            "source": "caa2f997ba2b3ca3eaca095f609ed34b42f2de7f",
+            "remote_target": "970ef3bbb2e05fb96ebd512359767f95f60874d2",
+            "pr": "https://github.com/GTX537/CP6/pull/694",
+            "branch": "codex/w266-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W266-HANDOFF",
+            "source": "db4c5c1e1a0351387b5b761600934e5d001040ab",
+            "remote_target": "4ff5dede9e3b3b2d8ccd154462f041cfc27f5d7f",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/242",
+            "branch": "codex/w266-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -235912,65 +236019,33 @@
       }
     },
     "next_execution_plan": {
-      "id": "CP6-3D8-20261102",
-      "path": "docs/development/planning/20261102-three-day-cycle8.md",
-      "state": "VERIFYING",
+      "id": "CP6-3D9-20261102",
+      "path": "docs/development/planning/20261102-three-day-cycle9.md",
+      "state": "IN_PROGRESS",
       "execution_owner": "COORD_SINGLE_CHAT",
       "execution_started": true,
-      "current_day": "D3",
+      "current_day": "D1",
       "core_capacity_hours": 18,
       "contingency_capacity_hours": 6,
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "windows": [
         {
-          "id": "W266-01",
+          "id": "W267-01",
           "day": "D1",
-          "state": "VERIFYING",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W266-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave266-final-verification.json"
-          }
+          "state": "IN_PROGRESS"
         },
         {
-          "id": "W266-01",
+          "id": "W267-01",
           "day": "D2",
-          "state": "VERIFYING",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W266-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave266-final-verification.json"
-          }
+          "state": "PLANNED"
         },
         {
-          "id": "W266-01",
+          "id": "W267-01",
           "day": "D3",
-          "state": "VERIFYING",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W266-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave266-final-verification.json"
-          }
+          "state": "PLANNED"
         }
-      ],
-      "required_implementation_complete": true,
-      "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave266-final-verification.json"
+      ]
     },
     "execution_plan_history": [
       {
@@ -236616,6 +236691,68 @@
         "required_implementation_complete": true,
         "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave265-final-verification.json",
         "completed_at": "2026-11-02T11:12:07.950561+00:00"
+      },
+      {
+        "id": "CP6-3D8-20261102",
+        "path": "docs/development/planning/20261102-three-day-cycle8.md",
+        "state": "COMPLETE",
+        "execution_owner": "COORD_SINGLE_CHAT",
+        "execution_started": true,
+        "current_day": "D3",
+        "core_capacity_hours": 18,
+        "contingency_capacity_hours": 6,
+        "estimate_is_guarantee": false,
+        "original_task_count": 375,
+        "windows": [
+          {
+            "id": "W266-01",
+            "day": "D1",
+            "state": "DONE",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W266-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave266-final-verification.json"
+            }
+          },
+          {
+            "id": "W266-01",
+            "day": "D2",
+            "state": "DONE",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W266-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave266-final-verification.json"
+            }
+          },
+          {
+            "id": "W266-01",
+            "day": "D3",
+            "state": "DONE",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W266-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave266-final-verification.json"
+            }
+          }
+        ],
+        "required_implementation_complete": true,
+        "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave266-final-verification.json",
+        "completed_at": "2026-11-02T11:50:08.701484+00:00"
       }
     ]
   },
