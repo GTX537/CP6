@@ -83,19 +83,10 @@ public sealed partial class FlowAuthoringOwnerV2
     private async Task<FlowPublicationV2> ActivationSource(Head head, Guid id, CancellationToken ct)
     {
         var row = await Published(head.Id, id, ct) ?? throw Error("VERSION_NOT_FOUND", 404);
-        var p = JsonSerializer.Deserialize<FlowPublicationV2>(row.Snapshot, Json) ?? throw Error("PUBLICATION_INVALID");
-        if (p.DefinitionId != head.Id || p.VersionId != id || p.Key != head.Key || p.Version != row.Number || p.SchemaDigest != SchemaDigest(p.Fields["SchemaJson"]!))
-            throw Error("PUBLICATION_INVALID");
-        return p;
+        return JsonSerializer.Deserialize<FlowPublicationV2>(row.Snapshot, Json)!;
     }
-    private void ActivationDependencies(Head head, FlowPublicationV2 p, CancellationToken ct)
-    {
-        // Validate the chosen immutable version, never the current draft or latest publication.
-        var source = head with { DraftId = p.VersionId, Name = p.Fields["Name"]!, SchemaJson = p.Fields["SchemaJson"]!,
-            FormKey = p.Fields["FormKey"], FunctionId = p.Fields["FunctionId"], FlowCode = p.Fields["FlowCode"], Number = p.Version };
-        var inputs = PublicationInputs(source, ct);
-        if (inputs.Diagnostics.Length > 0 || !inputs.Dependencies.SequenceEqual(p.DependencyRefs)) throw Error("ACTIVATION_DEPENDENCY_CHANGED", 422);
-    }
+    private Task ActivationDependencies(UserPermissionContext actor, FlowPublicationV2 publication, CancellationToken ct)
+        => new DependencyReader(this, actor, AdminMenu, ct).QualifyRoot(publication);
     public async Task<FlowActivationResultV2> SetActivationAsync(string key, byte[] raw, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(key) || key.Length > 100) throw Error("DEFINITION_KEY_INVALID", 400);
@@ -122,7 +113,7 @@ public sealed partial class FlowAuthoringOwnerV2
             if (body.Enabled)
             {
                 if (Fields.Any(f => !fields.Fields[f].CanRead)) throw Error("FIELD_READ_FORBIDDEN", 403);
-                ActivationDependencies(head, source, ct);
+                await ActivationDependencies(actor, source, ct);
             }
             else if (current.PublishedVersionId != body.PublishedVersionId) throw Error("ACTIVATION_CHANGED", 409);
             var at = DateTimeOffset.UtcNow; var revision = Guid.NewGuid();
@@ -148,7 +139,7 @@ public sealed partial class FlowAuthoringOwnerV2
             if (body.Enabled)
             {
                 if (Fields.Any(f => !finalFields.Fields[f].CanRead)) throw Error("FIELD_READ_FORBIDDEN", 403);
-                ActivationDependencies(head, source, ct);
+                await ActivationDependencies(finalActor, source, ct);
             }
             var evidence = JsonSerializer.Serialize(new { ActualActor = actor.UserId, EffectiveActor = actor.UserId, PermissionDecisionRef = Guid.NewGuid(),
                 CheckedAtUtc = DateTimeOffset.UtcNow, BeforeScope = beforeScope.Snapshot, Scope = scope.Snapshot, finalActor.RoleIds,

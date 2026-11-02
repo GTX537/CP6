@@ -19,7 +19,8 @@ public sealed partial class FlowAuthoringOwnerV2
             ORDER BY version_number DESC LIMIT 1
             """).SingleOrDefaultAsync(ct);
         if(id==Guid.Empty)throw Error("FLOW_VERSION_UNAVAILABLE",422);
-        var source=await ActivationSource(head,id,ct);ActivationDependencies(head,source,ct);return source;
+        var source=await ActivationSource(head,id,ct);
+        await new DependencyReader(this,null,null,ct).QualifyRoot(source);return source;
     }
     // Called only by the binding Owner inside its authentication/Scope transaction. Never opens or commits one.
     internal async Task<ApprovalBindingFlowV2[]> BindingChoices(UserPermissionContext actor, CancellationToken ct)
@@ -53,6 +54,6 @@ public sealed partial class FlowAuthoringOwnerV2
             ORDER BY version_number DESC LIMIT 1
             """).SingleOrDefaultAsync(ct);
         if (id == Guid.Empty) throw Error("FLOW_VERSION_UNAVAILABLE", 422);
-        var source = await ActivationSource(head, id, ct); ActivationDependencies(head, source, ct); return source;
+        var source = await ActivationSource(head, id, ct); await ActivationDependencies(actor, source, ct); return source;
     }
 }

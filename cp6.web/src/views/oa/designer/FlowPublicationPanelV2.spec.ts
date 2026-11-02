@@ -9,7 +9,7 @@ vi.mock('@/api/oa/flowPublication', () => ({ flowPublicationApi: { preview: vi.f
 const current: AuthoringView = { definitionId: 'head', draftId: 'draft', key: 'leave', version: 'token', enabled: false,
   fields: { Name: 'Leave', SchemaJson: '{}' }, writableFields: ['Name', 'SchemaJson'], diagnostics: [] }
 const preview: PublicationPreview = { id: 'preview', digest: 'digest', draftVersionId: 'draft', expectedVersion: 'token', schemaDigest: 'hash', expiresAtUtc: '2099-01-01T00:00:00Z', diagnostics: [], dependencies: [], canPublish: true }
-const version: PublishedFlow = { definitionId: 'head', versionId: 'old-source', version: 1, key: 'leave', fields: { Name: 'Old name', SchemaJson: '{"old":true}' }, schemaDigest: 'hash', publisherRef: 'publisher', publishedAtUtc: '2026-10-27T00:00:00Z', activationChanged: false }
+const version: PublishedFlow = { definitionId: 'head', versionId: 'old-source', version: 1, key: 'leave', fields: { Name: 'Old name', SchemaJson: '{"old":true}' }, schemaDigest: 'hash', publisherRef: 'publisher', publishedAtUtc: '2026-10-27T00:00:00Z', activationChanged: false, dependencyRefs: [] }
 const mounted: ReturnType<typeof mount>[] = []
 const state = (w: any): any => w.vm.$.setupState
 function setup(props: Partial<{ current: AuthoringView; dirty: boolean; disabled: boolean }> = {}) {
@@ -61,4 +61,15 @@ it('clears private pending state on denial, logout, and ignores late identity re
   let complete!: (value: PublicationPreview) => void; vi.mocked(api.preview).mockImplementation(() => new Promise(resolve => { complete = resolve }))
   const request = state(w).prepare(); newEpoch(); window.dispatchEvent(new Event(AUTH_EVENT)); complete(preview); await request
   expect(state(w).preview).toBeUndefined()
+})
+
+it('shows exact preview pins and immutable historical dependency pins without substituting a newer selection',async()=>{
+  const pin={kind:'FORM',location:'formKey',reference:'leave-form',version:'form-version-1',evidenceState:'PUBLISHED_ENABLED'}
+  vi.mocked(api.preview).mockResolvedValue({...preview,dependencies:[pin]})
+  vi.mocked(api.versions).mockResolvedValue([{...version,dependencyRefs:[{...pin,version:'historical-form-version'}]}])
+  const w=setup();await state(w).prepare();expect(w.text()).toContain('form-version-1');expect(w.text()).toContain('不会改用更新版本')
+  await state(w).history();state(w).selected=state(w).versions[0];await flushPromises();expect(w.text()).toContain('historical-form-version')
+  vi.mocked(api.execute).mockRejectedValue({response:{status:409}});await state(w).publish()
+  expect(vi.mocked(api.execute).mock.calls[0]![0].command.body.previewId).toBe(preview.id)
+  expect(api.preview).toHaveBeenCalledTimes(1)
 })

@@ -1,12 +1,14 @@
 import http from '../http'
 import type { AuthoringView } from './flowAuthoring'
+export interface DependencyReference { kind: string; location: string; reference: string; version: string | null; evidenceState: string }
 export interface PublicationPreview {
   id: string; digest: string; draftVersionId: string; expectedVersion: string; schemaDigest: string
   expiresAtUtc: string; diagnostics: string[]; canPublish: boolean
-  dependencies: { kind: string; location: string; reference: string; version: string | null; evidenceState: string }[]
+  dependencies: DependencyReference[]
 }
 export interface PublishedFlow {
   definitionId: string; versionId: string; version: number; key: string; fields: AuthoringView['fields']
+  dependencyRefs: DependencyReference[]
   schemaDigest: string | null; publishedAtUtc: string; publisherRef: string; activationChanged: false
 }
 export type LifecycleOperation = 'FLOW_PUBLISH' | 'FLOW_CREATE_DRAFT'

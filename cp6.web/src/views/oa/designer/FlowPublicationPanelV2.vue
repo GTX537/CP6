@@ -111,7 +111,8 @@ onBeforeUnmount(() => { live = false; generation++; controller?.abort(); window.
     <div v-if="preview && matchingPreview">
       <p>预览有效至 {{ new Date(preview.expiresAtUtc).toLocaleString() }}。确认发布将冻结当前已保存版本，当前启停配置保持不变。</p>
       <p v-if="!preview.canPublish">当前草稿或依赖尚不满足发布条件：{{ preview.diagnostics.join('、') }}</p>
-      <ul v-if="preview.dependencies.length"><li v-for="d in preview.dependencies" :key="d.location + d.kind">{{ d.kind }} · {{ d.reference }} · {{ d.evidenceState === 'UNPROVEN' ? '来源待核定' : '已登记引用' }}</li></ul>
+      <p v-if="preview.dependencies.length">以下依赖版本固定在本次预览；确认发布不会改用更新版本。</p>
+      <ul v-if="preview.dependencies.length"><li v-for="d in preview.dependencies" :key="d.location + d.kind">{{ d.kind }} · {{ d.reference }} · {{ d.location }} · 版本 {{ d.version ?? '未解析' }} · {{ d.evidenceState === 'PUBLISHED_ENABLED' ? '已发布且启用' : d.evidenceState === 'CURRENT_HOST_REGISTRATION' ? '当前服务注册' : '当前不可采用' }}</li></ul>
       <label>发布说明<textarea v-model="comment" maxlength="1000" :disabled="busy || !!pending" /></label>
       <button :disabled="unavailable || !preview.canPublish" @click="publish">确认发布此版本</button>
     </div>
@@ -121,7 +122,7 @@ onBeforeUnmount(() => { live = false; generation++; controller?.abort(); window.
       <button :disabled="unavailable || !current?.published" @click="next(version)">从此版本创建下一草稿</button>
     </li></ol>
     <div v-if="versions.length || page > 1"><button :disabled="unavailable || page === 1" @click="page--; history()">上一页版本</button><span>{{ page }}</span><button :disabled="unavailable || versions.length < 100" @click="page++; history()">下一页版本</button></div>
-    <div v-if="selected"><h4>版本 {{ selected.version }}（只读）</h4><pre v-if="selected.fields.SchemaJson">{{ selected.fields.SchemaJson }}</pre><p v-else>当前无权读取流程结构。</p></div>
+    <div v-if="selected"><h4>版本 {{ selected.version }}（只读）</h4><pre v-if="selected.fields.SchemaJson">{{ selected.fields.SchemaJson }}</pre><p v-else>当前无权读取流程结构。</p><ul v-if="selected.dependencyRefs.length"><li v-for="d in selected.dependencyRefs" :key="d.kind + d.location">发布时固定：{{ d.kind }} · {{ d.reference }} · {{ d.location }} · {{ d.version }}</li></ul></div>
     <DefinitionClonePanelV2 kind="FLOW" :source="selected ? { key: selected.key, versionId: selected.versionId, version: selected.version } : undefined" :disabled="busy || !!pending || disabled || dirty" @locked="cloneLocked = $event; emit('locked', $event || busy || !!pending)" @reload="emit('reload', $event)" @private-clear="preview = undefined; versions = []; selected = undefined; emit('privateClear')" />
   </section>
 </template>
