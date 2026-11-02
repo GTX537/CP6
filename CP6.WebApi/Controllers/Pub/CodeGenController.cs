@@ -82,6 +82,14 @@ public class CodeGenController : ControllerBase
     public IActionResult PreviewInlineV1([FromBody] GenSaveReq? req) =>
         PreviewResponse(() => _gen.GeneratePreview(req?.Table!, req?.Columns!));
 
+    /// <summary>Compare supplied file snapshots against fixed templates; never read or write disk.</summary>
+    [HttpPost("comparison/v1")]
+    [RequirePermission("pub-codegen", "view")]
+    [CodeGenPreviewRequest]
+    [RequestSizeLimit(CodeGenService.PreviewMaxRequestBytes)]
+    public IActionResult Comparison([FromBody] CodeGenComparisonRequest? req) =>
+        PreviewResponse(() => _gen.Compare(req));
+
     private IActionResult PreviewResponse(Func<object> generate)
     {
         try { return Ok(new { code = 0, data = generate() }); }

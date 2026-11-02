@@ -29,6 +29,26 @@ export interface CodeGenPreview {
   outputs: { fileName: string; language: string; content: string }[]
 }
 
+export interface CodeGenSourceFile { targetPath: string; content: string }
+export interface CodeGenComparison {
+  schemaVersion: 'codegen-comparison-v1'
+  templateRef: string
+  templateVersion: string
+  inputDigest: string
+  comparisonDigest: string
+  applied: false
+  outputs: {
+    fileName: string
+    targetPath: string
+    language: string
+    status: 'NoBaseline' | 'Unchanged' | 'OverwriteAllowed' | 'OverwriteBlocked' | 'CustomBlockConflict'
+    reason: string | null
+    preservedCustomBlocks: number
+    content: string | null
+    difference: { startLine: number; removedLines: string[]; addedLines: string[] } | null
+  }[]
+}
+
 export const codeGenApi = {
   async tables(): Promise<any[]> {
     const res: any = await http.get('/pub/codegen/tables')
@@ -43,6 +63,13 @@ export const codeGenApi = {
   },
   async previewV1(table: CodeGenTableInput, columns: CodeGenColumnInput[]): Promise<CodeGenPreview> {
     const res = await http.post<unknown, { code: number; data: CodeGenPreview }>('/pub/codegen/preview/v1', { table, columns })
+    return res.data
+  },
+  async compare(table: CodeGenTableInput, columns: CodeGenColumnInput[], template: Pick<CodeGenPreview, 'templateRef' | 'templateVersion'>,
+    existingFiles: CodeGenSourceFile[], overwritePaths: string[]): Promise<CodeGenComparison> {
+    const res = await http.post<unknown, { code: number; data: CodeGenComparison }>('/pub/codegen/comparison/v1', {
+      table, columns, templateRef: template.templateRef, templateVersion: template.templateVersion, existingFiles, overwritePaths,
+    })
     return res.data
   },
 }
