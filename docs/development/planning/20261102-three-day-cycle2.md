@@ -50,26 +50,31 @@ D2准确结果见[W256](../evidence/W256-01/DELIVERY.md)：已匿名化分支仅
 
 直接前置为W254 `NumberAllocationOwnerV1`，只处理已明确登记的新Main tenant/BizKey域。先完成可安全采用的规则版本控制；历史ERP/WMS/Common/DocNumber域切换、全局域和CodeGen仍独立余项。
 
-文件：`CP6.Core/Services/Pub/NumberAllocationContractV1.cs`增加版本读取/修改命令和原结果；Owner/Store保存规则历史并与分配共用登记规则锁；`NumberAllocationAuthorityV1.cs`采用实际`pub-seq:edit`当前动作；新增Core PG前向迁移，保留W254原scope/分配原件；`CP6.Tests/NumberAllocationPostgreSqlTests.cs`覆盖实际并发/故障。修改合同说明`docs/development/number-allocation-v1.md`，不默认注册生产DI或开放任意领号接口。
+文件：`CP6.Core/Services/Pub/NumberAllocationContractV1.cs`增加版本读取/修改命令和原结果；Owner/Store的`NumberRuleOwnerV1.cs`、`NumberRuleStoreV1.cs`分部保存规则历史并与分配共用登记规则锁；`NumberAllocationAuthorityV1.cs`采用实际`pub-seq:edit`当前动作；新增Core PG前向迁移，保留W254原scope/分配原件；`CP6.Tests/NumberRulePostgreSqlTests.cs`覆盖实际并发/故障并复用原分配夹具。修改合同说明`docs/development/number-allocation-v1.md`，不默认注册生产DI或开放任意领号接口。
 
-- [ ] 固定可变格式与不可变编号域/周期身份边界，明确版本对新分配和原结果恢复的不同作用；合法旧输入不缩水。
-- [ ] 先测两命令竞争同expectedVersion只能一个成功，以及修改后原分配仍返回原号码/旧版本。规则版本不可重复绑定不同内容。
-- [ ] 同事务保存规则新版本、当前指针/CAS、修改命令原输入/结果；同key异义409，旧expectedVersion412；提交结果未知只查原命令，不能猜测修改失败。
-- [ ] 原周期计数与号码历史不清零、不删除、不改写；旧管理入口DB/服务守卫保持，格式改动引起历史号码冲突明确失败。
-- [ ] 验证当前edit/read权限、跨tenant/Owner、preview无副作用、配置/分配并发、提交前故障及提交后丢响应。普通未登记域复用/补跑受影响旧Seq回归。
+- [x] 固定可变格式与不可变编号域/周期身份边界，明确版本对新分配和原结果恢复的不同作用；合法旧输入不缩水。
+- [x] 先测两命令竞争同expectedVersion只能一个成功，以及修改后原分配仍返回原号码/旧版本。规则版本不可重复绑定不同内容。
+- [x] 同事务保存规则新版本、当前指针/CAS、修改命令原输入/结果；同key异义409，旧expectedVersion412；提交结果未知只查原命令，不能猜测修改失败。
+- [x] 原周期计数与号码历史不清零、不删除、不改写；旧管理入口DB/服务守卫保持，格式改动引起历史号码冲突明确失败。
+- [x] 验证当前edit/read权限、跨tenant/Owner、preview无副作用、配置/分配并发、提交前故障及提交后丢响应。普通未登记域复用/补跑受影响旧Seq回归。
 
 ```powershell
-dotnet test CP6.Tests/CP6.Tests.csproj --no-restore --filter "FullyQualifiedName~Number_rule|FullyQualifiedName~Number_allocation|FullyQualifiedName~SeqServicePostgreSqlTests"
+dotnet test CP6.Tests/CP6.Tests.csproj --no-restore --filter "FullyQualifiedName~.Number_rule|FullyQualifiedName~.Number_allocation|FullyQualifiedName~SeqServicePostgreSqlTests"
 ```
 
 使用已有隔离PG夹具和自有`CP6_PERMISSION_PG_ROOT`；0skip，不使用InMemory证明锁或提交恢复。
 
+
+D3实际结果见[W257](../evidence/W257-01/DELIVERY.md)。当前指针采用只追加版本的最新revision，省去重复head；旧菜单极值BUG单列Issue684，不计为通过。
+
 ## 每窗口交付与固定席位
 
-- [ ] 按最新远端基线官方status/start，独立准确任务分支；中断resume原任务。
-- [ ] DEV-2从Handoff固定START提交保存后deferred finish释放，再bind CRM；CRM完成后bind回Handoff并resume原分支交付。不得并行增加目录。
-- [ ] 一份报告记录真实执行、复用证据、模拟范围和未完成原scope；四状态和台账同步。提交前快照与最终PR/finish核销分开。
+- [x] 按最新远端基线官方status/start，独立准确任务分支；中断resume原任务。
+- [x] DEV-2从Handoff固定START提交保存后deferred finish释放，再bind CRM；CRM完成后bind回Handoff并resume原分支交付。不得并行增加目录。
+- [x] 一份报告记录真实执行、复用证据、模拟范围和未完成原scope；四状态和台账同步。提交前快照与最终PR/finish核销分开。
 - [ ] 工作流/依赖未变时复用原手动触发结论，只核当前引用和路径；本期不触发Actions、不部署、不迁移既有环境。
 - [ ] 正常PR合并、远端准确采用、停止自有进程、条件删除准确任务分支、官方finish释放；每日报告分支/工作区/席位结果。
 
 D1核对发现实质缺实现时记录精确缺口，不把核销窗口变成全库改造；D2/D3必做边界如需扩大，先记录真实原因及重新分配容量，不能删原合同换完成。候补仅在必做完成后安排，不预先占席位。
+
+第二期D1/D2已准确采用/finish；D3实施、验证、集中审查及Handoff已完成。上述通用生命周期清单保留提交前真实快照，最终正常合并/准确分支删除/席位释放见wave257-final-verification.json。

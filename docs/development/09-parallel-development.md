@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W256第二期D2](evidence/W256-01/DELIVERY.md)，单人继续W257。
+> 当前：[W257第二期D3](evidence/W257-01/DELIVERY.md)，三天限定必做已实现验证，正常采用/释放按最终proof核销。
+
+> 历史快照：[W256第二期D2](evidence/W256-01/DELIVERY.md)，单人继续W257。
 
 > 历史快照：[W255第二期D1](evidence/W255-01/DELIVERY.md)，单人执行[第二期三天](planning/20261102-three-day-cycle2.md)；第一期/七天已完成。D1后继续W256。
 

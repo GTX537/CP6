@@ -21,8 +21,8 @@ public sealed class NumberAllocationAuthorityV1(IHttpContextAccessor http,
         if (!await db.Sys_Users.AsNoTracking().AnyAsync(x => x.Id == actor && x.Enable && (x.LockedUntil == null || x.LockedUntil <= DateTime.Now), ct)
             || !await db.Sys_Tenants.AsNoTracking().AnyAsync(x => x.Id == db.CurrentTenantId && x.Enable && (x.ExpireDate == null || x.ExpireDate > DateTime.Now), ct))
             throw new NumberAllocationExceptionV1("REAUTH_REQUIRED", 401);
-        var menu = purpose == "register" ? "pub-seq" : resource;
-        var action = purpose == "register" ? "add" : purpose == "read" ? readAction : allocateAction;
+        var menu = purpose is "register" or "change-rule" ? "pub-seq" : resource;
+        var action = purpose == "register" ? "add" : purpose == "change-rule" ? "edit" : purpose == "read" ? readAction : allocateAction;
         if (!p.ActionKeys.Contains(menu + ":" + action) || !await
             (from a in db.Sys_MenuActions.AsNoTracking() join m in db.Sys_Menus.AsNoTracking() on a.MenuId equals m.MenuId
              where m.Enable && m.MenuKey == menu && a.ActionCode == action select a.Id).AnyAsync(ct))

@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## 2026-11-02：W257第二期D3
+
+第二期D3新登记Main编号域格式规则CAS、不可变版本历史和原修改恢复已交付；旧号码/周期计数保持、当前权限及旧写者拒绝通过真实PG。第二期三天限定必做均已实现验证；完整375卡/旧消费者/全局域/CodeGen和CRM后续范围保留。 [交付](../development/evidence/W257-01/DELIVERY.md)。
+
+26 relevant PostgreSQL cases PASS,0 skipped:9 rule-change cases,9 allocation cases,8 legacy Seq regressions. Final2 strengthened original-command concurrency/deferred-integrity cases executed;24 unchanged successes reused from this window. Actual PG18 migrations,current permission facts,independent connections,rollback/unknown-commit recovery;mock business/IAM data and host-session resolver. Historical unrelated menu-max migration failure retained as open Issue684;not claimed passed. No Actions/deployment.
+
+D1/D2已正常采用并释放；Handoff本轮已清理/释放，Main本提交待正常采用/finish。最终三天完成由wave257-final-verification.json核销。375仍27DONE/2IN_PROGRESS/346PLANNED，原59局部卡余56；后续消费者及真实剩余范围保留。
+
 ## 2026-11-02：W256第二期D2
 
 第二期D2交付原生审核Expired持久终态、原截止派生保留、当前维护/编辑范围、原结果恢复和实际HTTP竞争；完整WP03-03及新事件消费者仍独立。继续D3/W257编号规则CAS。 [交付](../development/evidence/W256-01/DELIVERY.md)。
