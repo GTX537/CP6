@@ -7,7 +7,7 @@ namespace CP6.WebApi.Controllers.Oa;
 
 [ApiController, Authorize, Route("api/oa/v2")]
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-public sealed class FlowAuthoringController(FlowAuthoringOwnerV2 owner) : ControllerBase
+public sealed class FlowAuthoringController(FlowAuthoringOwnerV2 owner, FormAuthoringOwnerV2 forms) : ControllerBase
 {
     [HttpGet("definitions/FLOW/entry")]
     public Task<IActionResult> Entry(CancellationToken ct) => Run(async () => await owner.EntryAsync(ct));
@@ -50,8 +50,9 @@ public sealed class FlowAuthoringController(FlowAuthoringOwnerV2 owner) : Contro
     [HttpGet("commands/{commandId}")]
     public Task<IActionResult> Original(string commandId, [FromQuery] string operation, [FromQuery] string resource, CancellationToken ct) => Run(async () =>
     {
-        if (operation is not (FlowAuthoringOwnerV2.Operation or FlowAuthoringOwnerV2.PublishOperation or FlowAuthoringOwnerV2.NextDraftOperation or FlowAuthoringOwnerV2.ActivationOperation) || string.IsNullOrWhiteSpace(resource) || resource.Length > 100)
+        if (operation is not (FormAuthoringOwnerV2.Operation or FlowAuthoringOwnerV2.Operation or FlowAuthoringOwnerV2.PublishOperation or FlowAuthoringOwnerV2.NextDraftOperation or FlowAuthoringOwnerV2.ActivationOperation) || string.IsNullOrWhiteSpace(resource) || resource.Length > 100)
             throw new ScopeAuthorizationExceptionV1("COMMAND_SCOPE_INVALID", 400);
+        if (operation == FormAuthoringOwnerV2.Operation) return (object)await forms.OriginalAsync(resource, commandId, ct);
         if (operation == FlowAuthoringOwnerV2.ActivationOperation) return (object)await owner.ActivationOriginalAsync(resource, commandId, ct);
         return operation == FlowAuthoringOwnerV2.Operation ? (object)await owner.OriginalAsync(resource, commandId, ct) : await owner.LifecycleOriginalAsync(resource, operation, commandId, ct);
     });

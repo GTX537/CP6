@@ -1,19 +1,21 @@
 <template>
-  <div class="form-designer">
+  <FormAuthoringDesignerV2 v-if="authoringOpen && !managedSource" @close="authoringOpen = false" />
+  <div v-else class="form-designer">
     <!-- 工具栏 -->
     <el-card shadow="never" class="toolbar">
       <el-space wrap>
-        <el-input v-model="formKey" :placeholder="t('表单标识')" style="width: 160px" size="small" />
-        <el-input v-model="formName" :placeholder="t('表单名称')" style="width: 160px" size="small" />
-        <el-button size="small" @click="load">{{ t('加载') }}</el-button>
-        <el-button size="small" :disabled="!canUndo" @click="undo">{{ t('撤销') }}</el-button>
-        <el-button size="small" :disabled="!canRedo" @click="redo">{{ t('重做') }}</el-button>
-        <el-button v-permission="'oa-designer:form-save'" size="small" @click="save">{{ t('保存草稿') }}</el-button>
-        <el-button v-permission="'oa-designer:form-publish'" type="primary" size="small" @click="publish">{{ t('发布') }}</el-button>
+        <el-button v-if="!managedSource" size="small" data-test="form-authoring" @click="authoringOpen = true">{{ t('表单草稿工作区') }}</el-button>
+        <el-input v-if="!managedSource" v-model="formKey" :placeholder="t('表单标识')" style="width: 160px" size="small" />
+        <el-input v-if="!managedSource" v-model="formName" :placeholder="t('表单名称')" style="width: 160px" size="small" />
+        <el-button v-if="!managedSource" size="small" @click="load">{{ t('加载') }}</el-button>
+        <el-button size="small" :disabled="readOnly || !canUndo" @click="undo">{{ t('撤销') }}</el-button>
+        <el-button size="small" :disabled="readOnly || !canRedo" @click="redo">{{ t('重做') }}</el-button>
+        <el-button v-if="!managedSource" v-permission="'oa-designer:form-save'" size="small" @click="save">{{ t('保存草稿') }}</el-button>
+        <el-button v-if="!managedSource" v-permission="'oa-designer:form-publish'" type="primary" size="small" @click="publish">{{ t('发布') }}</el-button>
       </el-space>
     </el-card>
 
-    <div class="panes">
+    <fieldset class="panes" :disabled="readOnly">
       <!-- 左：控件库 -->
       <el-card shadow="never" class="pane lib">
         <template #header><span class="pane-title">{{ t('控件库') }}</span></template>
@@ -53,7 +55,7 @@
       <el-card shadow="never" class="pane prop">
         <template #header><span class="pane-title">{{ t('属性') }}</span></template>
         <el-empty v-if="!selected" :description="t('请先选择字段')" :image-size="60" />
-        <el-form v-else label-width="84px" size="small">
+        <el-form v-else :disabled="readOnly" label-width="84px" size="small">
           <el-form-item :label="t('字段标识')">
             <el-input v-model="selected.name" />
           </el-form-item>
@@ -154,12 +156,12 @@
           </template>
         </el-form>
       </el-card>
-    </div>
+    </fieldset>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import DynamicForm from '../DynamicForm.vue'
@@ -176,11 +178,15 @@ import { preserveSchema } from '@/views/oa/designer/preserveSchema'
 import { parseStrictJson } from '@/contracts/quality/strictJson'
 import type { FormSchema, FormFieldDef, FormTableColumnDef } from '@/types/wf/wf'
 
+const props = defineProps<{ managedSource?: { schemaJson: string; version: string }; readOnly?: boolean }>()
+const emit = defineEmits<{ schemaChange: [raw: string] }>()
+const FormAuthoringDesignerV2 = defineAsyncComponent(() => import('@/views/oa/designer/FormAuthoringDesignerV2.vue'))
+const authoringOpen = ref(false)
 const { t } = useI18n()
 
 /**
  * 表单设计器（OA 章09 §2/§5）。三栏：控件库 / 画布(复用 DynamicForm 预览) / 属性面板。
- * 直接读写运行时 schema（FormDef.SchemaJson，同构 OA4-D6），保存即 Version+1，无中间格式。
+ * 受控模式由 FORM Owner 工作区加载和保存完整 schema；旧入口保留原 FormService 合同。
  */
 const formKey = ref('')
 const formName = ref('')
@@ -221,6 +227,7 @@ watch(
     // Record exact fragments after each atomic edit. A later rename/reorder or undo cannot
     // lose precision by rebasing several edits onto the originally loaded positional array.
     originalSchema = preserveSchema(originalSchema, snapshot(), 'name')
+    emit('schemaChange', originalSchema)
     history.push(originalSchema)
     syncHistoryFlags()
   },
@@ -231,22 +238,26 @@ function syncHistoryFlags() {
   canRedo.value = history.canRedo
 }
 function undo() {
+  if (props.readOnly) return
   const s = history.undo()
-  if (s) applySnapshot(JSON.parse(s), s)
+  if (s) { applySnapshot(JSON.parse(s), s); emit('schemaChange', s) }
   syncHistoryFlags()
 }
 function redo() {
+  if (props.readOnly) return
   const s = history.redo()
-  if (s) applySnapshot(JSON.parse(s), s)
+  if (s) { applySnapshot(JSON.parse(s), s); emit('schemaChange', s) }
   syncHistoryFlags()
 }
 
 // ── 编辑动作 ──
 function addField(type: string) {
+  if (props.readOnly) return
   schema.fields.push(defaultFieldOf(type, schema.fields))
   selectedIdx.value = schema.fields.length - 1
 }
 function move(i: number, dir: number) {
+  if (props.readOnly) return
   const j = i + dir
   if (j < 0 || j >= schema.fields.length) return
   const arr = [...schema.fields]
@@ -255,19 +266,23 @@ function move(i: number, dir: number) {
   selectedIdx.value = j
 }
 function remove(i: number) {
+  if (props.readOnly) return
   schema.fields.splice(i, 1)
   if (selectedIdx.value === i) selectedIdx.value = -1
   else if (selectedIdx.value > i) selectedIdx.value--
 }
 function addOption() {
+  if (props.readOnly) return
   if (!selected.value) return
   selected.value.options = selected.value.options || []
   selected.value.options.push({ label: '', value: '' })
 }
 function removeOption(oi: number) {
+  if (props.readOnly) return
   selected.value?.options?.splice(oi, 1)
 }
 function onFieldTypeChange(type: string) {
+  if (props.readOnly) return
   if (!selected.value) return
   if (type === 'table') {
     selected.value.minRows ??= 0
@@ -283,6 +298,7 @@ function onFieldTypeChange(type: string) {
   }
 }
 function addTableColumn() {
+  if (props.readOnly) return
   if (!selected.value) return
   selected.value.columns = selected.value.columns || []
   const used = new Set(selected.value.columns.map((column) => column.name))
@@ -296,9 +312,11 @@ function addTableColumn() {
   })
 }
 function removeTableColumn(index: number) {
+  if (props.readOnly) return
   selected.value?.columns?.splice(index, 1)
 }
 function onColumnTypeChange(column: FormTableColumnDef) {
+  if (props.readOnly) return
   if (column.type === 'select' && !column.options?.length) {
     column.options = [
       { label: '选项1', value: '1' },
@@ -307,17 +325,25 @@ function onColumnTypeChange(column: FormTableColumnDef) {
   }
 }
 function addColumnOption(column: FormTableColumnDef) {
+  if (props.readOnly) return
   column.options = column.options || []
   column.options.push({ label: '', value: '' })
 }
 function removeColumnOption(column: FormTableColumnDef, index: number) {
+  if (props.readOnly) return
   column.options?.splice(index, 1)
 }
+
+watch(() => props.managedSource, value => {
+  if (!value) return
+  applySnapshot(JSON.parse(value.schemaJson), value.schemaJson)
+  history.reset(value.schemaJson); syncHistoryFlags(); selectedIdx.value = -1
+}, { immediate: true })
 
 // ── 加载 / 保存（接运行时 FormDef，章09 §5）──
 const draftRowVersion = ref<string>()
 async function load() {
-  if (busy.value) return
+  if (props.managedSource || busy.value) return
   if (!formKey.value.trim()) {
     ElMessage.warning(t('请输入表单标识'))
     return
@@ -349,7 +375,7 @@ async function load() {
 }
 
 async function save() {
-  if (busy.value) return
+  if (props.managedSource || busy.value) return
   const key = formKey.value.trim()
   if (loadedKey !== undefined && loadedKey !== key) {
     ElMessage.warning(t('表单标识已改变，请加载目标表单或恢复原标识'))
@@ -380,7 +406,7 @@ async function save() {
   } finally { busy.value = false }
 }
 async function publish() {
-  if (busy.value) return
+  if (props.managedSource || busy.value) return
   if (loadedKey !== formKey.value.trim()) { ElMessage.warning(t('请先加载或保存当前表单')); return }
   if (!draftRowVersion.value) { ElMessage.warning(t('请先保存草稿')); return }
   busy.value = true
@@ -399,7 +425,7 @@ async function publish() {
 <style scoped>
 .form-designer { display: flex; flex-direction: column; gap: 8px; height: 100%; }
 .toolbar { flex: none; }
-.panes { display: flex; gap: 8px; flex: 1; min-height: 0; }
+.panes { border: 0; margin: 0; padding: 0; display: flex; gap: 8px; flex: 1; min-height: 0; }
 .pane { overflow: auto; }
 .pane.lib { width: 180px; flex: none; }
 .pane.canvas { flex: 1; }
