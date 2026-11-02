@@ -50,7 +50,7 @@ public sealed partial class ApprovalTaskDecisionOwnerV2
         var fence=await scope.AcquireAsync(ct);await Ready(ct);var actor=await authority.CurrentActor(false,ct);var principal=behalf??actor;
         var ids=await db.Database.SqlQuery<Guid>($"""
             SELECT t."Id" AS "Value" FROM public."Wf_FlowTask" t
-            JOIN cp6_approval_start_v2.starts s ON s.tenant_id=t."TenantId" AND s.instance_id=t."InstanceId"
+            JOIN cp6_approval_runtime_v2.instances s ON s.tenant_id=t."TenantId" AND s.instance_id=t."InstanceId"
             JOIN cp6_document_review_v1.submissions d ON d.tenant_id=s.tenant_id AND d.environment_id=s.environment_id AND d.id=s.submission_id
             WHERE s.tenant_id={db.CurrentTenantId} AND s.environment_id={scope.EnvironmentId} AND s.owner={ApprovalBusinessProfileV2.DocumentOwner}
               AND d.document_id={document} AND t."Status"=0 AND t."AssigneeId"={principal} ORDER BY t."Id"
@@ -73,7 +73,7 @@ public sealed partial class ApprovalTaskDecisionOwnerV2
         var fence=await scope.AcquireAsync(ct);await Ready(ct);var actor=await authority.CurrentActor(false,ct);var principal=behalf??actor;
         var ids=await db.Database.SqlQuery<Guid>($"""
             SELECT t."Id" AS "Value" FROM public."Wf_FlowTask" t
-            JOIN cp6_approval_start_v2.starts s ON s.tenant_id=t."TenantId" AND s.instance_id=t."InstanceId"
+            JOIN cp6_approval_runtime_v2.instances s ON s.tenant_id=t."TenantId" AND s.instance_id=t."InstanceId"
             JOIN cp6_requirement_set_review_v1.submissions d ON d.tenant_id=s.tenant_id AND d.environment_id=s.environment_id AND d.id=s.submission_id
             WHERE s.tenant_id={db.CurrentTenantId} AND s.environment_id={scope.EnvironmentId} AND s.owner={ApprovalBusinessProfileV2.RequirementSetOwner}
               AND d.requirement_set_id={requirementSet} AND t."Status"=0 AND t."AssigneeId"={principal} ORDER BY t."Id"
@@ -96,7 +96,7 @@ public sealed partial class ApprovalTaskDecisionOwnerV2
         var fence=await scope.AcquireAsync(ct);await Ready(ct);var actor=await authority.CurrentActor(false,ct);var principal=behalf??actor;
         var ids=await db.Database.SqlQuery<Guid>($"""
             SELECT t."Id" AS "Value" FROM public."Wf_FlowTask" t
-            JOIN cp6_approval_start_v2.starts s ON s.tenant_id=t."TenantId" AND s.instance_id=t."InstanceId"
+            JOIN cp6_approval_runtime_v2.instances s ON s.tenant_id=t."TenantId" AND s.instance_id=t."InstanceId"
             JOIN cp6_location_rule_review_v1.submissions d ON d.tenant_id=s.tenant_id AND d.environment_id=s.environment_id AND d.id=s.submission_id
             WHERE s.tenant_id={db.CurrentTenantId} AND s.environment_id={scope.EnvironmentId} AND s.owner={ApprovalBusinessProfileV2.LocationRuleOwner}
               AND d.location_rule_id={locationRule} AND t."Status"=0 AND t."AssigneeId"={principal} ORDER BY t."Id"
@@ -119,7 +119,7 @@ public sealed partial class ApprovalTaskDecisionOwnerV2
         var fence=await scope.AcquireAsync(ct);await Ready(ct);var actor=await authority.CurrentActor(false,ct);var principal=behalf??actor;
         var ids=await db.Database.SqlQuery<Guid>($"""
             SELECT t."Id" AS "Value" FROM public."Wf_FlowTask" t
-            JOIN cp6_approval_start_v2.starts s ON s.tenant_id=t."TenantId" AND s.instance_id=t."InstanceId"
+            JOIN cp6_approval_runtime_v2.instances s ON s.tenant_id=t."TenantId" AND s.instance_id=t."InstanceId"
             JOIN cp6_iteration_review_v1.submissions d ON d.tenant_id=s.tenant_id AND d.environment_id=s.environment_id AND d.id=s.submission_id
             WHERE s.tenant_id={db.CurrentTenantId} AND s.environment_id={scope.EnvironmentId} AND s.owner={ApprovalBusinessProfileV2.IterationOwner}
               AND d.id={submission} AND t."Status"=0 AND t."AssigneeId"={principal} ORDER BY t."Id"

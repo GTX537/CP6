@@ -63,7 +63,7 @@ public sealed class ApprovalTaskAuthorityV2(CP6Context db, IHttpContextAccessor 
             || assignment.StageIndex != task.StageIndex || assignment.StageRound != task.StageRound)
             throw Error("APP_TASK_EVIDENCE_UNAVAILABLE", 503);
         var raw = await db.Database.SqlQuery<Original>($"""
-            SELECT p.payload AS "Payload" FROM cp6_approval_start_v2.starts s JOIN cp6_approval_intake_v2.submissions p
+            SELECT p.payload AS "Payload" FROM cp6_approval_runtime_v2.instances s JOIN cp6_approval_intake_v2.submissions p
               ON p.tenant_id=s.tenant_id AND p.environment_id=s.environment_id AND p.owner=s.owner AND p.id=s.submission_id
             WHERE s.tenant_id={db.CurrentTenantId} AND s.environment_id={fence.EnvironmentId} AND s.instance_id={instance.Id}
             """).SingleAsync(ct);

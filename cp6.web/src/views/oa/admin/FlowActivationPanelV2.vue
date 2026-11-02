@@ -111,7 +111,7 @@ onBeforeUnmount(() => { live = false; generation++; controller?.abort(); window.
 <template>
   <section aria-label="准确版本启停" class="activation">
     <h3>准确版本启停</h3>
-    <p>管理新发布流程的启停配置。运行入口尚未接入，此处启用不代表已可发起审批；在途数量暂不可用。</p>
+    <p>已接入的业务审批按准入时固定版本运行，停用只阻止新申请。普通表单发起入口仍待接入；在途数量暂不可用。</p>
     <p v-if="error" role="alert">{{ error }}</p><p v-if="message" role="status">{{ message }}</p>
     <button :disabled="locked" @click="list">读取流程</button>
     <template v-if="pending"><button :disabled="busy || unavailableCache" @click="recover">查询原启停结果</button><button :disabled="busy || unavailableCache" @click="retry">以原意图重试</button></template>

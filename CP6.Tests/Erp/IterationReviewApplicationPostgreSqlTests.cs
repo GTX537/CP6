@@ -10,7 +10,7 @@ namespace CP6.Tests.Erp;
 public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
     private sealed record IterationDecisionFixture(IterationReviewFixture Source,Guid Submission,IntakeAuthority Service);
-    private async Task<IterationDecisionFixture> IterationDecisionSetup(Harness h,string rejectDisposition="RETURN",Func<Task>? beforeCheck=null)
+    private async Task<IterationDecisionFixture> IterationDecisionSetup(Harness h,string rejectDisposition="RETURN",Func<Task>? beforeCheck=null,bool subflow=false,string? subflowSchema=null)
     {
         var f=await IterationReviewSetup(h,1,async iteration=>{
             foreach(var action in new[]{"review-apply","review-withdraw","review-issue","review-issue-verify","review-issue-degrade"})await EngineeringAction(h,"plm-engineering-iteration",action);
@@ -20,8 +20,16 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             if(beforeCheck!=null)await beforeCheck();
         },rejectDisposition);
         var(binding,flows,initial)=await ExistingReviewBinding(h);var head=await flows.ReadHeadAsync("binding-flow");
+        var runtimeSchema=StartSchema.Replace("\"approverRoleId\":73","\"approverRoleId\":76");
+        if(subflow)
+        {
+            var child=await flows.SaveAsync("iteration-child",DependentCommand(schema:subflowSchema??runtimeSchema));
+            var version=(await flows.PublishAsync("iteration-child",PublicationCommand(await Preview(flows,"iteration-child",child)))).Result!.Publication!;
+            await flows.SetActivationAsync("iteration-child",ActivationCommand((await flows.ActivationPreviewAsync("iteration-child")).Current,version.VersionId));
+            runtimeSchema=ChildSchema("iteration-child");
+        }
         var draft=await flows.CreateNextDraftAsync("binding-flow",NextDraftCommand(head.Version,initial,"iteration-decision-next"));
-        var edit=await flows.SaveAsync("binding-flow",AuthoringCommand("iteration-decision-flow",draft.ResourceVersion,"iteration professional",StartSchema.Replace("\"approverRoleId\":73","\"approverRoleId\":76")));
+        var edit=await flows.SaveAsync("binding-flow",AuthoringCommand("iteration-decision-flow",draft.ResourceVersion,"iteration professional",runtimeSchema));
         var published=await flows.PublishAsync("binding-flow",PublicationCommand(await Preview(flows,"binding-flow",edit),"iteration-decision-publish"));
         var at=BindingTime();await binding.SaveAsync(null,null,BindingBytes(BindingInput(published.Result!.Publication!.VersionId,at) with{BizType="PLM_ITER_REVIEW",SubjectKind="PLM_ITER_REVIEW",DetailRoute="/plm/engineering-iteration/{bizId}"}));
         var owner=IterationReviews(h,f.Files);f=f with{Context=await owner.ContextAsync(f.Context.IterationId)};

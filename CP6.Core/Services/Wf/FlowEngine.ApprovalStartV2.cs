@@ -32,11 +32,13 @@ public partial class FlowEngine
             throw new ScopeAuthorizationExceptionV1("APP_START_TRANSACTION_REQUIRED");
         _approvalStartV2 = true;
         _approvalOriginal = command;
+        _approvalPublications.Add(publication.VersionId, publication);
         var schema = Deserialize(publication.Fields["SchemaJson"]!);
         var first = FirstNode(schema) ?? throw new ScopeAuthorizationExceptionV1("FLOW_VERSION_UNAVAILABLE", 422);
         var instance = new Wf_FlowInstance
         {
             Id = ApprovalInstanceId(command), FlowDefVersionId = publication.VersionId, FlowKey = publication.Key,
+            FormDefVersionId = ApprovalFormPin(publication),
             // The authoritative v2 Subject is starts -> immutable submission. Legacy callback
             // keys have narrower lengths, collation and latest-object semantics; do not use them.
             BizType = null, BizId = null, StarterId = command.StarterId,
@@ -46,7 +48,8 @@ public partial class FlowEngine
         AddHistory(instance.Id, first.Id, command.StarterId, "submit", "Accepted original Owner submission");
         var root = SpawnToken(instance, first);
         await EnterNodeAsync(instance, schema, first, root);
-        if (instance.Status == FlowInstanceStatus.Approved)
+        await DrainApprovalSubflows(ct);
+        if (instance.Status is FlowInstanceStatus.Approved or FlowInstanceStatus.Rejected)
             throw new ScopeAuthorizationExceptionV1("APP_EXPLICIT_DECISION_REQUIRED", 409);
         ct.ThrowIfCancellationRequested();
         return instance;

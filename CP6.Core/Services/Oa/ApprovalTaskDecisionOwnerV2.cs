@@ -29,9 +29,9 @@ public sealed partial class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuth
 {
     private ApprovalBusinessEvidenceV2 Business=>businesses??new(tool);
     private static ScopeAuthorizationExceptionV1 Error(string code, int status = 503) => new(code, status);
-    private sealed record Source(byte[] Payload, string Ack, string Publication);
+    private sealed record Source(byte[] Payload, string Ack, string Publication, Guid Root);
     private sealed record Command(Guid Actor, Guid Task, string Digest, string Result);
-    private sealed record StoredVote(string Body, string Digest);
+    private sealed record StoredVote(string Body);
     private static T Parse<T>(string text) => JsonSerializer.Deserialize<T>(text, ApprovalBindingOwnerV2.Json)!;
     private static string Json(object value) => Encoding.UTF8.GetString(ApprovalCanonicalV2.Bytes(value));
     private void Entry()
@@ -49,8 +49,8 @@ public sealed partial class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuth
             where t.Id == task && t.InstanceId == i.Id && i.Creator == FlowEngine.ApprovalRuntimeV2 select t.Id).AnyAsync(ct);
     private async Task<Source> ReadSource(Guid task, CancellationToken ct)
         => await db.Database.SqlQuery<Source>($"""
-            SELECT p.payload AS "Payload",p.ack_json AS "Ack",v.snapshot_json AS "Publication"
-            FROM public."Wf_FlowTask" t JOIN cp6_approval_start_v2.starts s ON s.instance_id=t."InstanceId" AND s.tenant_id=t."TenantId"
+            SELECT p.payload AS "Payload",p.ack_json AS "Ack",v.snapshot_json AS "Publication",s.root_instance_id AS "Root"
+            FROM public."Wf_FlowTask" t JOIN cp6_approval_runtime_v2.instances s ON s.instance_id=t."InstanceId" AND s.tenant_id=t."TenantId"
             JOIN cp6_approval_intake_v2.submissions p ON p.tenant_id=s.tenant_id AND p.environment_id=s.environment_id AND p.owner=s.owner AND p.id=s.submission_id
             JOIN cp6_workflow_authoring_v2.versions v ON v.tenant_id=s.tenant_id AND v.environment_id=s.environment_id AND v.head_id=s.flow_head AND v.id=s.flow_version
             WHERE t."Id"={task} AND s.tenant_id={db.CurrentTenantId} AND s.environment_id={scope.EnvironmentId}
@@ -135,16 +135,13 @@ public sealed partial class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuth
             var view = await View(task, ct);
             if (view.TaskRowVersion != input.TaskRowVersion || view.InstanceRowVersion != input.InstanceRowVersion)
                 throw Error("PRECONDITION_FAILED", 412);
-            if (publication.VersionId != ack.FlowDefVersionId || !publication.Fields.TryGetValue("SchemaJson", out var schema)
-                || schema == null || publication.SchemaDigest != ApprovalCanonicalV2.Hash(Encoding.UTF8.GetBytes(schema)))
-                throw Error("FLOW_VERSION_UNAVAILABLE");
             await db.Database.ExecuteSqlInterpolatedAsync($"""
                 INSERT INTO cp6_approval_decision_v2.commands(tenant_id,environment_id,id,instance_id,task_id,actor_id,request_body,request_digest)
                 VALUES({db.CurrentTenantId},{scope.EnvironmentId},{input.CommandId},{view.InstanceId},{task},{actor},{request},{digest})
                 """, ct);
             await db.Database.ExecuteSqlInterpolatedAsync($"""
-                SELECT 1 FROM public."Wf_FlowInstance" WHERE "Id"={view.InstanceId} AND "TenantId"={db.CurrentTenantId} FOR UPDATE;
-                SELECT 1 FROM public."Wf_FlowTask" WHERE "InstanceId"={view.InstanceId} AND "TenantId"={db.CurrentTenantId} ORDER BY "Id" FOR UPDATE;
+                SELECT 1 FROM public."Wf_FlowInstance" WHERE "Id" IN(SELECT instance_id FROM cp6_approval_runtime_v2.instances WHERE root_instance_id={source.Root}) AND "TenantId"={db.CurrentTenantId} ORDER BY "Id" FOR UPDATE;
+                SELECT 1 FROM public."Wf_FlowTask" WHERE "InstanceId" IN(SELECT instance_id FROM cp6_approval_runtime_v2.instances WHERE root_instance_id={source.Root}) AND "TenantId"={db.CurrentTenantId} ORDER BY "Id" FOR UPDATE;
                 """, ct);
             var policy = await Business.Decision(original,lease.Evidence.PrincipalId,true,ct,input.Decision=="approve");
             var occurred = await db.Database.SqlQueryRaw<DateTimeOffset>("SELECT date_trunc('milliseconds',clock_timestamp()) AS \"Value\"").SingleAsync(ct);
@@ -156,6 +153,7 @@ public sealed partial class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuth
             if (last != null && occurred < last) throw Error("APP_CLOCK_REGRESSION", 409);
             var engine = new FlowEngine(db, new ApproverResolver(db, exactConditions: true));
             var instance = await engine.StageApprovalDecisionV2(publication, original, lease.Evidence, input.Decision == "approve", input.Comment, ct);
+            await engine.SaveApprovalRuntime(ct);
             await db.SaveChangesAsync(ct); await engine.SaveApprovalAssignments(ct);
             var assignment = lease.Evidence.Assignment;
             // A task duty is the actual immutable routing rule at a pinned version/node/stage,
@@ -173,8 +171,9 @@ public sealed partial class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuth
                   {actor},{vote.Approved},{voteBody},{ApprovalCanonicalV2.Hash(Encoding.UTF8.GetBytes(voteBody))},{occurred})
                 """, ct);
             Guid? decision = null;
-            if (instance.Status is FlowInstanceStatus.Approved or FlowInstanceStatus.Rejected)
-                decision = await Terminal(original, ack, instance, vote, policy, ct);
+            var root = await db.Wf_FlowInstances.SingleAsync(x => x.Id == source.Root, ct);
+            if (root.Status is FlowInstanceStatus.Approved or FlowInstanceStatus.Rejected)
+                decision = await Terminal(original, ack, root, vote, policy, ct);
             var result = new ApprovalTaskDecisionResultV2(input.CommandId, "COMPLETED", new(vote.Id, decision, await View(task, ct)),
                 "/api/oa/tasks/decision-commands/" + input.CommandId);
             var audit = Json(new { profile = "oa.app.txd/2.0", input.CommandId, vote.Id, decision, before = view, after = result.Result.Task,
@@ -202,28 +201,52 @@ public sealed partial class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuth
         Wf_FlowInstance instance, ApprovalVoteV2 terminal, ApprovalBusinessDecisionProofV2 policy, CancellationToken ct)
     {
         var stored = await db.Database.SqlQuery<StoredVote>($"""
-            SELECT body AS "Body",digest AS "Digest" FROM cp6_approval_decision_v2.votes
-            WHERE tenant_id={db.CurrentTenantId} AND environment_id={scope.EnvironmentId} AND instance_id={instance.Id} ORDER BY occurred_at,id
+            SELECT body AS "Body" FROM cp6_approval_decision_v2.votes
+            WHERE tenant_id={db.CurrentTenantId} AND environment_id={scope.EnvironmentId} AND instance_id IN(SELECT instance_id FROM cp6_approval_runtime_v2.instances
+              WHERE tenant_id={db.CurrentTenantId} AND environment_id={scope.EnvironmentId} AND root_instance_id={instance.Id}) ORDER BY occurred_at,id
             """).ToArrayAsync(ct);
-        var votes = stored.Select(x => {
-            var v = Parse<ApprovalVoteV2>(x.Body);
-            if (Json(v) != x.Body || ApprovalCanonicalV2.Hash(Encoding.UTF8.GetBytes(x.Body)) != x.Digest)
-                throw Error("DECISION_EVIDENCE_INCOMPLETE", 422);
-            return v;
-        }).ToArray();
-        var tasks = await db.Wf_FlowTasks.AsNoTracking().Where(x => x.InstanceId == instance.Id).ToArrayAsync(ct);
+        // Immutable native vote rows were validated by the writing boundary.
+        var votes = stored.Select(x => Parse<ApprovalVoteV2>(x.Body)).ToArray();
+        var members = await db.Database.SqlQuery<Guid>($"""
+            SELECT instance_id AS "Value" FROM cp6_approval_runtime_v2.instances
+            WHERE tenant_id={db.CurrentTenantId} AND environment_id={scope.EnvironmentId} AND root_instance_id={instance.Id}
+            """).ToArrayAsync(ct);
+        var tasks = await db.Wf_FlowTasks.AsNoTracking().Where(x => members.Contains(x.InstanceId)).ToArrayAsync(ct);
         foreach (var task in tasks.Where(t => t.Status is FlowTaskStatus.Approved or FlowTaskStatus.Rejected))
             if (!votes.Any(v => v.TaskId == task.Id && v.Authority.PrincipalId == task.AssigneeId
                 && v.Approved == (task.Status == FlowTaskStatus.Approved))) throw Error("DECISION_EVIDENCE_INCOMPLETE", 422);
         if (votes.Length == 0 || tasks.Any(t => t.Status is FlowTaskStatus.Pending or FlowTaskStatus.Suspended))
             throw Error("DECISION_EVIDENCE_INCOMPLETE", 422);
         var approved = instance.Status == FlowInstanceStatus.Approved;
-        if (approved && votes.Where(v => v.Approved).Select(v => v.Authority.PrincipalId).Distinct().Count() < policy.RequiredHumanApprovals)
+        var policyVotes = votes;
+        if (approved)
+        {
+            var instances = await db.Wf_FlowInstances.AsNoTracking().Where(x => members.Contains(x.Id)).ToDictionaryAsync(x => x.Id, ct);
+            var tokens = await db.Wf_FlowTokens.AsNoTracking().Where(x => members.Contains(x.InstanceId)).ToDictionaryAsync(x => x.Id, ct);
+            bool EffectiveToken(Guid id)
+            {
+                for (Guid? current = id; current is Guid key; current = tokens[key].ParentTokenId)
+                    if (tokens[key].Status is FlowTokenStatus.Pruned or FlowTokenStatus.Cancelled) return false;
+                return true;
+            }
+            bool EffectiveInstance(Guid id)
+            {
+                for (Guid? current = id; current is Guid key; current = instances[key].ParentInstanceId)
+                {
+                    var value = instances[key];
+                    if (value.Status != FlowInstanceStatus.Approved || value.ParentTokenId is Guid call && !EffectiveToken(call)) return false;
+                }
+                return true;
+            }
+            policyVotes = votes.Where(v => v.Approved && EffectiveInstance(v.InstanceId)
+                && EffectiveToken(v.Authority.Assignment.TokenId)).ToArray();
+        }
+        if (approved && policyVotes.Select(v => v.Authority.PrincipalId).Distinct().Count() < policy.RequiredHumanApprovals)
             throw Error("DECISION_EVIDENCE_INCOMPLETE", 422);
         if (!approved && !votes.Any(v => !v.Approved)) throw Error("DECISION_EVIDENCE_INCOMPLETE", 422);
-        var requirements = votes.Select(v => v.RequirementId).Distinct().Order(StringComparer.Ordinal).ToList();
+        var requirements = policyVotes.Select(v => v.RequirementId).Distinct().Order(StringComparer.Ordinal).ToList();
         requirements.Add(approved ? policy.RequirementPrefix+".human-approvals/"+policy.RequiredHumanApprovals : policy.RequirementPrefix+".explicit-rejection/1");
-        requirements.AddRange(await Business.Requirements(original,policy,votes,approved,ct));
+        requirements.AddRange(await Business.Requirements(original,policy,policyVotes,approved,ct));
         var decision = Guid.NewGuid(); var eventId = Guid.NewGuid();
         var decided = await db.Database.SqlQueryRaw<DateTimeOffset>("SELECT date_trunc('milliseconds',clock_timestamp()) AS \"Value\"").SingleAsync(ct);
         if (decided < terminal.OccurredAt) throw Error("APP_CLOCK_REGRESSION", 409);
