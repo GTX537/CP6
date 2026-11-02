@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W264第六期三天租户配置与启停](evidence/W264-01/DELIVERY.md)，COORD单人；限定实现与验证完成，待正常采用及finish。
+> 当前：[W265第七期三天租户创建](evidence/W265-01/DELIVERY.md)，COORD单人；限定实现验证完成，待正常采用与finish。
+
+> 历史快照：[W264第六期三天租户配置与启停](evidence/W264-01/DELIVERY.md)，COORD单人；限定实现与验证完成，待正常采用及finish。
 
 > 历史快照：[W263第五期三天旧元数据接入](evidence/W263-01/DELIVERY.md)，COORD单人；限定实现与验证完成，待正常采用及finish。
 

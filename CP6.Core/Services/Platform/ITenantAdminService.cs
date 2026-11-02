@@ -4,7 +4,7 @@ namespace CP6.Core.Services.Platform;
 /// 平台租户管理服务（多租户合规 #5 块①）。平台超管对租户花名册的 CRUD + 停用/重启用。
 /// 建租户为原子操作（R9-a）：同一 <c>SaveChanges</c> 落 <c>Sys_Tenant</c> + 首个 admin 用户，
 /// 必需平台管理审计与业务同事务，任一保存阶段失败整体回滚；首个 admin 的临时明文密码仅在 <see cref="CreateTenantResult"/> 返回一次。
-/// 创建不提供请求幂等恢复；响应未知时不能据此自动重放创建。失败后结束该 DbContext 工作单元，不重试其残留跟踪状态。
+/// 旧CreateAsync不提供请求幂等恢复；V1创建可恢复无密码原结果。失败后结束该DbContext工作单元，不重试其残留跟踪状态。
 /// <para>错误经 <see cref="System.InvalidOperationException"/> 携带 E-SEC 错误码（Core 层惯例）——
 /// WebApi 边界（<c>TenantController</c>）转 <c>BizException</c> 本地化：
 /// E-SEC-032=租户不存在；E-SEC-033=租户编码冲突。</para>
@@ -22,6 +22,9 @@ public interface ITenantAdminService
     Task<TenantManagementSnapshotV1?> ReadManagementAsync(Guid id, TenantManagementSessionV1 currentSession, CancellationToken ct = default);
     Task<TenantManagementReceiptV1> ExecuteManagementAsync(Guid id, TenantManagementCommandV1 command, TenantManagementSessionV1 currentSession, CancellationToken ct = default);
     Task<TenantManagementReceiptV1?> ReadManagementOperationAsync(Guid id, string operation, TenantManagementSessionV1 currentSession, CancellationToken ct = default);
+    Task<TenantCreationTemplateV1> ReadCreationTemplateAsync(TenantManagementSessionV1 session, CancellationToken ct = default);
+    Task<TenantCreationResultV1> CreateVersionedAsync(TenantCreationCommandV1 command, TenantManagementSessionV1 session, CancellationToken ct = default);
+    Task<TenantCreationResultV1?> ReadCreationOperationAsync(string operation, TenantManagementSessionV1 session, CancellationToken ct = default);
 }
 
 /// <summary>通用分页结果包。</summary>

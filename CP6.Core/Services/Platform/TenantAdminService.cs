@@ -77,7 +77,7 @@ public partial class TenantAdminService : ITenantAdminService
         => MutateAsync((actor, ct) => CreateCoreAsync(code, name, expire, remark, adminUserName, actor, ct), cancellationToken);
 
     private async Task<CreateTenantResult> CreateCoreAsync(string code, string name, DateTime? expire, string? remark,
-        string adminUserName, PlatformAdminAuthorization.Actor? actor, CancellationToken cancellationToken)
+        string adminUserName, PlatformAdminAuthorization.Actor? actor, CancellationToken cancellationToken, IReadOnlyList<int>? approvedMenuIds = null)
     {
         // 1. 编码冲突校验（共享表，不需要 IgnoreQueryFilters）。
         if (await _db.Sys_Tenants.AnyAsync(t => t.TenantCode == code, cancellationToken))
@@ -124,7 +124,7 @@ public partial class TenantAdminService : ITenantAdminService
 
         // 4c. P0-T3 补口：Sys_RoleMenu 已租户化 → 新租户管理员角色须自带菜单映射副本
         //     （从默认租户 RoleId=1 的映射集复制；否则新租户 admin 登录后菜单为空）。
-        var defaultAdminMenuIds = await _db.Sys_RoleMenus.IgnoreQueryFilters()
+        var defaultAdminMenuIds = approvedMenuIds ?? await _db.Sys_RoleMenus.IgnoreQueryFilters()
             .Where(rm => rm.TenantId == TenantContext.DefaultTenant && rm.RoleId == 1)
             .Select(rm => rm.MenuId)
             .Distinct()

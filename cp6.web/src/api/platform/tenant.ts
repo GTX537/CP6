@@ -15,10 +15,29 @@ export interface TenantManagementCommand {
 export interface TenantManagementReceipt {
   operationRef: string; kind: TenantManagementCommand['kind']; snapshot: TenantManagementSnapshot; committedAt: string
 }
+export interface TenantCreationTemplate { version: string; menuIds: number[] }
+export interface TenantCreationCommand {
+  operationRef: string; expectedTemplateVersion: string; code: string; name: string
+  expireDate: string | null; remark: string | null; adminUserName: string
+}
+export interface TenantCreationReceipt {
+  operationRef: string; tenantId: string; tenantCode: string; adminUserId: string; adminUserName: string
+  template: TenantCreationTemplate; committedAt: string
+}
+export interface TenantCreationResult { receipt: TenantCreationReceipt; tempPassword: string | null; needsCredentialReset: boolean }
 
 // 多租户合规 #5（块①）租户管理 API。带外平台区，后端 [RequirePlatformAdmin] 真闸门。
 // http 拦截器返回 response.data，故运行期即解包后的数据；axios 静态类型仍为 AxiosResponse 需断言。
 export const tenantApi = {
+  creationTemplate(): Promise<TenantCreationTemplate> {
+    return http.get('/platform/tenant/creation-v1/template') as unknown as Promise<TenantCreationTemplate>
+  },
+  createVersioned(command: TenantCreationCommand): Promise<TenantCreationResult> {
+    return http.post('/platform/tenant/creation-v1/commands', command) as unknown as Promise<TenantCreationResult>
+  },
+  originalCreation(operationRef: string): Promise<TenantCreationResult> {
+    return http.post('/platform/tenant/creation-v1/commands/read', { operationRef }) as unknown as Promise<TenantCreationResult>
+  },
   management(id: string): Promise<TenantManagementSnapshot> {
     return http.get(`/platform/tenant/${id}/management-v1`) as unknown as Promise<TenantManagementSnapshot>
   },

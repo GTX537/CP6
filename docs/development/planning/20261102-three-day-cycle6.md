@@ -21,10 +21,12 @@
 
 - [x] cp6.web/src/api/platform/tenant.ts增加V1类型/调用；TenantListView.vue接入TenantManagementPanel.vue，编辑先加载完整当前快照，读取失败不允许空字段覆盖。配置保留完整过期时间和字段值，启停使用已读版本；412保留草稿并明确重新读取后才能新提交。
 - [x] 发送前在当前用户/租户隔离的sessionStorage保存准确命令；未知结果保留原键并提供查询/原样重试，刷新可恢复，未确认期间不接受新命令或静默改键。身份变化隐藏旧身份数据和待确认命令，原结果和当前状态分别呈现。
-- [ ] 本地PG/实际HTTP相关验证、Vue类型检查、实际Chrome/Vue页面夹具。集中审查完整diff，失败仅补受影响验证；同步roadmap/生成视图/四状态和一份报告，正常PR合并并核对远端，准确删除任务分支、官方finish释放席位。
+- [x] 本地PG/实际HTTP相关验证、Vue类型检查、实际Chrome/Vue页面夹具。集中审查完整diff，失败仅补受影响验证；同步roadmap/生成视图/四状态和一份报告，正常PR合并并核对远端，准确删除任务分支、官方finish释放席位。
 
 验证入口：run_wave264_main.py management 'FullyQualifiedName~Tenant_management_v1|FullyQualifiedName~TenantManagementCurrentActorPostgreSqlTests|FullyQualifiedName~TenantManagementAuditPostgreSqlTests'；Node22 node_modules/vue-tsc/bin/vue-tsc.js --build；Node22 docs/development/evidence/W264-01/check-page.mjs。验收采用模拟业务数据，真实运行本地Main/PG；不以跳过或候选代替通过。
 
 边界：WP02-04整卡不因此DONE。租户创建原命令/模板版本、其他配置Owner和旧接口全面CAS采用仍保留；认证策略字段由原Owner管理，不受本窗口配置覆盖；不改变TenantId、共享数据布局或生产部署权限。
 
 三阶段实现、本地验证和集中审查完成；最后一项状态同步完成，正常合并/准确清理/席位收尾由wave264-final-verification.json核销。提交前VERIFYING。最终会话检查按效果前授权与效果后时钟/注销分开，允许自身租户变更合法生效，见合同。
+
+W265按wave264-final-verification.json核销第六期正常采用、准确分支清理和官方finish；只归档不重跑。

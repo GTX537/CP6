@@ -20,10 +20,13 @@ public partial class TenantAdminService
     }
     // Each public V1 call owns a fresh unit of work. currentSession is supplied by the host,
     // and uses this context to validate the original authenticated session under the IAM gate.
-    private async Task<T> ManagementTransaction<T>(Guid id, bool write, TenantManagementSessionV1 currentSession,
-        Func<PlatformAdminAuthorization.Actor, CancellationToken, Task<T>> body, CancellationToken ct)
+    private static void ManagementTargetId(Guid id)
     {
         if (id == Guid.Empty) throw new TenantManagementExceptionV1("TENANT_ID_REQUIRED", 400);
+    }
+    private async Task<T> ManagementTransaction<T>(bool write, TenantManagementSessionV1 currentSession,
+        Func<PlatformAdminAuthorization.Actor, CancellationToken, Task<T>> body, CancellationToken ct)
+    {
         if (!_db.Database.IsNpgsql() || _db.Database.CurrentTransaction != null || _db.ChangeTracker.HasChanges()
             || System.Transactions.Transaction.Current != null)
             throw new TenantManagementExceptionV1("TENANT_INDEPENDENT_CONTEXT_REQUIRED", 503);
@@ -79,11 +82,14 @@ public partial class TenantAdminService
         return JsonSerializer.Deserialize<TenantManagementReceiptV1>(saved.Result)!;
     }
     public Task<TenantManagementSnapshotV1?> ReadManagementAsync(Guid id, TenantManagementSessionV1 currentSession, CancellationToken ct = default)
-        => ManagementTransaction(id, false, currentSession, (_, token) => ManagementSnapshot(id, token), ct);
+    {
+        ManagementTargetId(id);
+        return ManagementTransaction(false, currentSession, (_, token) => ManagementSnapshot(id, token), ct);
+    }
     public Task<TenantManagementReceiptV1?> ReadManagementOperationAsync(Guid id, string operation, TenantManagementSessionV1 currentSession, CancellationToken ct = default)
     {
-        ManagementOperation(operation);
-        return ManagementTransaction<TenantManagementReceiptV1?>(id, false, currentSession, async (actor, token) =>
+        ManagementTargetId(id); ManagementOperation(operation);
+        return ManagementTransaction<TenantManagementReceiptV1?>(false, currentSession, async (actor, token) =>
         {
             var original = await ManagementOriginal(id, operation, token);
             return original == null ? null : ManagementReceipt(original, actor, operation, null);
@@ -91,12 +97,12 @@ public partial class TenantAdminService
     }
     public Task<TenantManagementReceiptV1> ExecuteManagementAsync(Guid id, TenantManagementCommandV1 command, TenantManagementSessionV1 currentSession, CancellationToken ct = default)
     {
-        ManagementOperation(command.OperationRef);
+        ManagementTargetId(id); ManagementOperation(command.OperationRef);
         if (command.ExpectedRevision <= 0 || command.Kind is not ("update" or "suspend" or "reactivate")
             || (command.Kind == "update") != (command.Configuration != null))
             throw new TenantManagementExceptionV1("TENANT_COMMAND_INVALID", 400);
         var input = ManagementBytes(command);
-        return ManagementTransaction(id, true, currentSession, async (actor, token) =>
+        return ManagementTransaction(true, currentSession, async (actor, token) =>
         {
             var original = await ManagementOriginal(id, command.OperationRef, token);
             if (original != null) return ManagementReceipt(original, actor, command.OperationRef, input);
