@@ -284,6 +284,37 @@ class DispatchIntegrityTests(unittest.TestCase):
         self.assertEqual(self.errors(), [])
 
 
+class CrossRepositoryAdoptionTests(unittest.TestCase):
+    def setUp(self):
+        self.source, self.remote = "a" * 40, "b" * 40
+        self.record = dict(status="MERGED", crm_source_sha=self.source,
+            crm_remote_main_sha=self.remote, crm_pull_request="https://github.com/GTX537/CP6.CRM/pull/129",
+            report=f"https://github.com/GTX537/CP6.CRM/blob/{self.remote}/docs/evidence/DELIVERY.md")
+
+    def test_pinned_crm_product_report_can_supply_its_actual_repository(self):
+        self.assertTrue(roadmap.adopted_delivery(self.record, "CRM", ROOT))
+
+    def test_main_coordination_receipt_cannot_replace_crm_product_adoption(self):
+        self.record["main_delivery"] = dict(repository="CP6", source=self.source,
+            remote_target=self.remote, pr="https://github.com/GTX537/CP6/pull/514")
+        self.assertTrue(roadmap.adopted_delivery(self.record, "CRM", ROOT))
+        del self.record["crm_source_sha"]
+        self.assertFalse(roadmap.adopted_delivery(self.record, "CRM", ROOT))
+
+    def test_wrong_repository_mutable_or_unrelated_report_ref_is_rejected(self):
+        for repo, ref in [("CP6", self.remote), ("CP6.CRM", "main"), ("CP6.CRM", "c" * 40)]:
+            with self.subTest(repo=repo, ref=ref):
+                self.record["report"] = f"https://github.com/GTX537/{repo}/blob/{ref}/docs/evidence/DELIVERY.md"
+                self.assertFalse(roadmap.adopted_delivery(self.record, "CRM", ROOT))
+
+    def test_candidate_or_missing_product_sha_is_not_an_adoption(self):
+        self.record["status"] = "VERIFYING"
+        self.assertFalse(roadmap.adopted_delivery(self.record, "CRM", ROOT))
+        self.record["status"] = "MERGED"
+        self.record["crm_source_sha"] = ""
+        self.assertFalse(roadmap.adopted_delivery(self.record, "CRM", ROOT))
+
+
 class TaskDefinitionTests(unittest.TestCase):
     """Real files in an isolated directory; no workflow or business state changes."""
 

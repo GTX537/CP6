@@ -175,3 +175,7 @@ W250终态已核对：Main PR677、Handoff PR226完整采用，准确分支已�
 本计划由作者检查容量、依赖、原scope、准确源码/测试入口、引用、模拟/部署边界和生命周期顺序；只做文档与台账一致性验证，不把计划步骤记为业务PASS。Main/Handoff正常采用及finish的最终状态由本轮PR和`C:/Users/tt/CP6-planning-reports/20261017-foundation/wave251-final-verification.json`核销，提交前不提前声称席位释放。
 
 提交前快照：Handoff [PR](https://github.com/GTX537/CP6.AI-Handoff/pull/227)已准确采用并清理分支、释放DEV-2；Main待最终正常PR/finish。
+
+## 第一期最终核销（W255接续归档）
+
+D1/W252、D2/W253、D3/W254已全部正常采用并finish，准确任务分支已删除、席位释放；最终证明wave254-final-verification.json为PASS。此前VERIFYING为提交前历史快照，不再作为待办。原375卡余项保持真实范围。本期三天目标COMPLETE。

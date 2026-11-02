@@ -1,5 +1,13 @@
 # AI 可读变更日志
 
+## 2026-11-02：W255第二期三天D1
+
+第二期D1核清Main共享连接尚未采用WP02-02新租户连接profile；WP03-01按原完整配置范围核销DONE，WP03-02冻结公开路径NUM/FILE不适用但整卡未来共同服务前置保留。375卡27DONE，原59局部卡余56。继续W256审核Expired持久终态。 [交付](../development/evidence/W255-01/DELIVERY.md) / [计划](../development/planning/20261102-three-day-cycle2.md)。
+
+82 related local roadmap tests PASS,including4 cross-repository adoption regressions;2 positive cases failed before implementation. CRM pinned product receipts now resolve their own repository,never Main coordination adoption;mutable/wrong/unrelated refs rejected. Unchanged W102/W105/W247 product PG/HTTP/UI evidence reused;no product tests rerun. One author SPEC/QUALITY review;no Actions/deployment.
+
+Handoff已采用/finish；Main最终分支/工作区/席位由同轮PR及wave255-final-verification.json核销。
+
 ## 2026-11-02：W254三天目标D3
 
 D3编号原命令提供者已实现并通过真实PG验证：新登记Main租户域独立持久分配/原结果恢复、不回收、当前权限和同域唯一写者。旧域保留原Owner；完整规则CAS、业务调用者切换、全局域和CodeGen仍为WP02-16余项。三天必做限定交付进入最终采用/释放核销。 [单份交付](../development/evidence/W254-01/DELIVERY.md)。
