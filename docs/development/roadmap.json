@@ -161752,6 +161752,11 @@
       "date": "2026-11-02",
       "change": "W268：FORM完整schema与原数字片段往返、逐编辑精确撤销/重做，保存/发布同一服务端schema边界；FLOW致命结构与未完草图诊断分开。24小时目标仅首窗口，继续W269。",
       "evidence": "docs/development/evidence/W268-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-02",
+      "change": "W269：FORM独立草稿Owner/显式政策、当前会话/资源/字段权限、WFC原命令及CAS、旧身份互斥、完整表单设计器工作区已实现验证。24小时持续目标第二窗口，下一步W270。",
+      "evidence": "docs/development/evidence/W269-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -196305,18 +196310,19 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W268-01",
+        "window": "W269-01",
         "as_of": "2026-11-02",
         "classification": "明确实现余项",
-        "report": "docs/development/evidence/W268-01/DELIVERY.md",
-        "delivered": "W170/172不可变FLOW草稿和W173/174发布/激活已经实现，GET不隐式写草稿。 W268完整FORM往返/schema与FLOW致命结构。",
-        "remaining": "WP12-01仍余FORM完整Owner当前资源/字段权限、原命令/CAS/显式草稿、固定sourceVersion克隆和设计器正式采用；WP12-02余FORM/子流程精确依赖、唯一绑定、实际运行及旧写入口；文件/选项Owner实际资格、提交专业精度/权限与原AC全范围在后续窗口。当前不标整卡完成。",
+        "report": "docs/development/evidence/W269-01/DELIVERY.md",
+        "delivered": "W170/172不可变FLOW草稿和W173/174发布/激活已经实现，GET不隐式写草稿。 W268完整FORM往返/schema与FLOW致命结构。 W269独立FORM草稿Owner/当前权限/CAS/原件及设计器工作区。",
+        "remaining": "WP12-01仍余FORM不可变发布/独立启停与固定sourceVersion克隆、完整原AC；WP12-02余FORM/子流程精确依赖、唯一绑定及实际运行/旧入口采用；表单个人草稿/提交字段规则授权、文件/选项Owner资格、跨窗口浏览器到PG全链按后续窗口执行。原59局部仍3闭环/56余项，不以本切片关闭整卡。",
         "evidence_refs": [
           "docs/development/evidence/W170-01/DELIVERY.md",
           "docs/development/evidence/W172-01/DELIVERY.md",
           "docs/development/evidence/W173-01/DELIVERY.md",
           "docs/development/evidence/W174-01/DELIVERY.md",
-          "docs/development/evidence/W268-01/DELIVERY.md"
+          "docs/development/evidence/W268-01/DELIVERY.md",
+          "docs/development/evidence/W269-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true
@@ -196353,6 +196359,13 @@
             "workspace_clean": true
           }
         ]
+      },
+      "wave269_form_authoring": {
+        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W269-01/DELIVERY.md",
+        "full_task_completed": false,
+        "validation": "本地16项PG18行为通过、0跳过（15项新增FORM，1项既有FLOW实际HTTP回归）；20项Vue组件行为通过（最后13项FORM复查，7项未变FLOW复用同任务成功结果）；最终vue-tsc退出0。实际Main登录会话/CSRF/HTTP和真实隔离PG；业务政策/IAM/数据为明确模拟。无Actions、工作流调整、既有环境迁移或生产部署。",
+        "remaining": "WP12-01仍余FORM不可变发布/独立启停与固定sourceVersion克隆、完整原AC；WP12-02余FORM/子流程精确依赖、唯一绑定及实际运行/旧入口采用；表单个人草稿/提交字段规则授权、文件/选项Owner资格、跨窗口浏览器到PG全链按后续窗口执行。原59局部仍3闭环/56余项，不以本切片关闭整卡。"
       }
     },
     {
@@ -201025,7 +201038,7 @@
       "path": "docs/development/dispatch/20261102-wave269/README.md",
       "baseline_sha": "feed7f6a4374a50233c8377e72b3972ec66982d9",
       "registered_at": "2026-11-02T13:43:46.434889+00:00",
-      "phase": "IMPLEMENTING",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -201051,17 +201064,17 @@
           "title": "FORM草稿Owner与当前授权/原命令",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "IMPLEMENTING",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w269-01",
           "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
@@ -201069,14 +201082,33 @@
             "Main:oa-definition",
             "Main:Core-PG-migration",
             "Main:authorization-catalog"
-          ]
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W269-01/DELIVERY.md",
+          "validation": "本地16项PG18行为通过、0跳过（15项新增FORM，1项既有FLOW实际HTTP回归）；20项Vue组件行为通过（最后13项FORM复查，7项未变FLOW复用同任务成功结果）；最终vue-tsc退出0。实际Main登录会话/CSRF/HTTP和真实隔离PG；业务政策/IAM/数据为明确模拟。无Actions、工作流调整、既有环境迁移或生产部署。",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave269-final-verification.json"
+          },
+          "business_acceptance": "FORM_DRAFT_OWNER_CURRENT_AUTH_AND_LOCAL_PG_HTTP_PASS;PUBLICATION_RUNTIME_FULL_CARD_REMAIN"
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W269 FORM草稿Owner：独立显式FORM编写政策、当前实际会话/资源/字段授权、完整schema与分类、WFC原命令/CAS、旧身份互斥及新表单工作区；24h持续目标第二窗口。"
+      "next_action": "W269 FORM草稿Owner：独立显式FORM编写政策、当前实际会话/资源/字段授权、完整schema与分类、WFC原命令/CAS、旧身份互斥及新表单工作区；24h持续目标第二窗口。",
+      "lifecycle_snapshot": {
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_seat_released": false,
+        "main_branch_deleted": false,
+        "handoff_branch_deleted": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave269-final-verification.json"
+      }
     },
     "wave_history": [
       {
@@ -236311,7 +236343,7 @@
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 2229,
+      "effective_seconds_recorded": 3780,
       "next_reestimate_at_effective_seconds": 7200,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
@@ -236351,8 +236383,18 @@
             0.75,
             1.75
           ],
-          "state": "IN_PROGRESS",
-          "started_at": "2026-11-02T13:43:46.434889+00:00"
+          "state": "VERIFYING",
+          "started_at": "2026-11-02T13:43:46.434889+00:00",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W269-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave269-final-verification.json"
+          }
         },
         {
           "id": "W270-01",
@@ -236496,7 +236538,7 @@
         }
       ],
       "reestimates": [],
-      "timing_snapshot_at": "2026-11-02T13:43:46.434889+00:00"
+      "timing_snapshot_at": "2026-11-02T14:09:37.790738+00:00"
     },
     "execution_plan_history": [
       {

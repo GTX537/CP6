@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## 2026-11-02：24小时持续目标 / W269 FORM草稿
+
+W269：FORM独立草稿Owner/显式政策、当前会话/资源/字段权限、WFC原命令及CAS、旧身份互斥、完整表单设计器工作区已实现验证。24小时持续目标第二窗口，下一步W270。 [交付](../development/evidence/W269-01/DELIVERY.md)。
+
+本地16项PG18行为通过、0跳过（15项新增FORM，1项既有FLOW实际HTTP回归）；20项Vue组件行为通过（最后13项FORM复查，7项未变FLOW复用同任务成功结果）；最终vue-tsc退出0。实际Main登录会话/CSRF/HTTP和真实隔离PG；业务政策/IAM/数据为明确模拟。无Actions、工作流调整、既有环境迁移或生产部署。
+
+WP12-01仍余FORM不可变发布/独立启停与固定sourceVersion克隆、完整原AC；WP12-02余FORM/子流程精确依赖、唯一绑定及实际运行/旧入口采用；表单个人草稿/提交字段规则授权、文件/选项Owner资格、跨窗口浏览器到PG全链按后续窗口执行。原59局部仍3闭环/56余项，不以本切片关闭整卡。 总目标仍IN_PROGRESS，下一步W270。采用/清理/官方finish以wave269-final-verification.json核销。
+
 ## 2026-11-02：24小时实际Codex目标 / W268首窗口
 
 W268：FORM完整schema与原数字片段往返、逐编辑精确撤销/重做，保存/发布同一服务端schema边界；FLOW致命结构与未完草图诊断分开。24小时目标仅首窗口，继续W269。 [交付](../development/evidence/W268-01/DELIVERY.md)。

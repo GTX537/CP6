@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[24小时实际Codex连续目标](planning/20261102-codex-24h-oa.md)，COORD单人；[W268](evidence/W268-01/DELIVERY.md)首窗口已实现验证，待正常采用/finish；继续W269，非整期完成。
+> 当前：[24小时实际Codex连续目标](planning/20261102-codex-24h-oa.md)，COORD单人；[W269](evidence/W269-01/DELIVERY.md)FORM草稿已实现验证，待正常采用/finish；继续W270，不结束整期。
+
+> 历史快照：[24小时实际Codex连续目标](planning/20261102-codex-24h-oa.md)，COORD单人；[W268](evidence/W268-01/DELIVERY.md)首窗口已实现验证，待正常采用/finish；继续W269，非整期完成。
 
 > 历史快照：[W267第九期三天共享菜单树](evidence/W267-01/DELIVERY.md)，COORD单人；限定实现验证完成，待正常采用与finish。
 

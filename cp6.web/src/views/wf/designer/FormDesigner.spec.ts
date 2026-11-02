@@ -66,3 +66,12 @@ it('nested table columns use stable names while array order and original precisi
   expect(saved.indexOf('9007199254740995.00')).toBeLessThan(saved.indexOf('9007199254740993.00'))
   expect(preserveSchema(source, JSON.parse(source), 'name')).toBe(source)
 })
+it('managed editor emits full precision through edit/undo/redo and never calls legacy save or publish', async () => {
+  const w = mount(FormDesigner, { props: { managedSource: { schemaJson: raw, version: 'v1' } }, global: { stubs: { DynamicForm: { props: ['schema', 'modelValue'], template: '<div />' } }, directives: { permission: {} } } }); mounted.push(w)
+  state(w).schema.fields[0].label = 'managed'; state(w).undo(); state(w).redo()
+  expect(w.emitted('schemaChange')!.at(-1)![0]).toContain('9007199254740993.00')
+  expect(w.emitted('schemaChange')!.at(-1)![0]).toContain('managed')
+  await state(w).save(); await state(w).publish(); await state(w).load(); expect(formApi.saveDraft).not.toHaveBeenCalled(); expect(formApi.publish).not.toHaveBeenCalled(); expect(formApi.getDraft).not.toHaveBeenCalled()
+  await w.setProps({ readOnly: true }); state(w).addField('input'); state(w).undo(); expect(state(w).schema.fields).toHaveLength(2)
+  await w.setProps({ managedSource: { schemaJson: '{"fields":[]}', version: 'v2' } }); expect(state(w).schema.layout).toBeUndefined(); expect(state(w).canUndo).toBe(false)
+})
