@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W249原七天最终集成与总交付](dispatch/20261101-wave249/README.md)，七阶段业务/集成出口验收通过；Handoff已释放，Main待最终PR/finish，随后完成持续目标。
+> 当前：[W250原59张局部卡核对](dispatch/20261102-wave250/README.md)，COORD单人执行；七天一期已完成。下一步按逐卡真实剩余推进，3张优先整卡核销，普通实现不重做七天。
+
+> 历史快照：[W249原七天最终集成与总交付](dispatch/20261101-wave249/README.md)，七阶段业务/集成出口验收通过；Handoff已释放，Main待最终PR/finish，随后完成持续目标。
 
 > 历史快照：[W248退货商业/财务与原D2出口](dispatch/20261101-wave248/README.md)，实际验收通过，Handoff已释放，Main待PR/finish。
 
