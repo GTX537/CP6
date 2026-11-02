@@ -13,9 +13,9 @@ public sealed record FlowActivationV2(Guid DefinitionId, string Key, Guid Revisi
     DateTimeOffset? ChangedAtUtc, bool InflightUnchanged = true, string ConsumerState = "NOT_ADOPTED");
 public sealed record FlowActivationHistoryV2(Guid Revision, Guid PreviousRevision, bool Enabled, Guid PublishedVersionId,
     Guid ActorId, string Reason, DateTimeOffset ChangedAtUtc);
-public sealed record FlowActivationChoiceV2(Guid VersionId, int Number, string? Name);
+public sealed record FlowActivationChoiceV2(Guid VersionId, int Number, string? Name, string? FormKey = null, Guid? FormVersionId = null);
 public sealed record FlowActivationPreviewV2(FlowActivationV2 Current, FlowActivationChoiceV2[] Versions,
-    int Page, string[] AffectedEntries, int? InflightCount = null);
+    int Page, string[] AffectedEntries, int? InflightCount = null, string? FormKey = null, Guid? FormVersionId = null);
 public sealed record FlowActivationResultV2(string CommandId, string Outcome, Guid? ResourceId, string? ResourceVersion,
     FlowActivationV2? Result, DateTimeOffset? RecordedAtUtc, string? CorrelationId);
 
@@ -31,7 +31,7 @@ public sealed partial class FlowAuthoringOwnerV2
     private static FlowActivationV2 ActivationView(Head head, ActivationRow row) => new(head.Id, head.Key, row.Revision, row.Enabled, row.PublishedVersionId, row.ChangedAtUtc);
     private async Task ActivationReady(CancellationToken ct)
     {
-        if (!await db.Database.SqlQueryRaw<bool>("SELECT cp6_workflow_authoring_v2.activation_ready() AS \"Value\"").SingleAsync(ct))
+        if (!await db.Database.SqlQueryRaw<bool>("SELECT cp6_workflow_authoring_v2.form_binding_ready() AS \"Value\"").SingleAsync(ct))
             throw Error("ACTIVATION_WRITER_COVERAGE_UNAVAILABLE");
     }
     private async Task<FieldPermissionDecisionV1> ActivationPermission(UserPermissionContext actor, Head head, bool write, CancellationToken ct)
@@ -51,11 +51,20 @@ public sealed partial class FlowAuthoringOwnerV2
             SELECT id AS "Id",snapshot_json AS "Snapshot",version_number AS "Number" FROM cp6_workflow_authoring_v2.versions
             WHERE tenant_id={db.CurrentTenantId} AND environment_id={fence.EnvironmentId} AND head_id={head.Id}
             """).OrderByDescending(x => x.Number).Skip((page - 1) * 100).Take(100).ToArrayAsync(ct);
-        var versions = rows.Select(r => new FlowActivationChoiceV2(r.Id, r.Number, fields.Fields["Name"].CanRead
-            ? JsonSerializer.Deserialize<FlowPublicationV2>(r.Snapshot, Json)?.Fields.GetValueOrDefault("Name") : null)).ToArray();
+        FlowActivationChoiceV2 Choice(PublicationRow row)
+        {
+            var publication = JsonSerializer.Deserialize<FlowPublicationV2>(row.Snapshot, Json)!;
+            var form = fields.Fields["FormKey"].CanRead && fields.Fields["SchemaJson"].CanRead
+                ? publication.DependencyRefs.SingleOrDefault(d => d.Kind == "FORM" && d.Location == "formKey") : null;
+            return new(row.Id, row.Number, fields.Fields["Name"].CanRead ? publication.Fields["Name"] : null,
+                form?.Reference, form == null ? null : Pin(form));
+        }
+        var versions = rows.Select(Choice).ToArray();
+        var active = current.PublishedVersionId is { } id
+            ? versions.SingleOrDefault(v => v.VersionId == id) ?? Choice((await Published(head.Id, id, ct))!) : null;
         if ((await Actor(ct)).UserId != actor.UserId) throw Error("REAUTH_REQUIRED", 401); CompletionClock();
         // No v2 root consumer is registered yet: do not report a guessed zero or count legacy instances as v2.
-        return new(current, versions, page, []);
+        return new(current, versions, page, [], FormKey: active?.FormKey, FormVersionId: active?.FormVersionId);
     }
     public async Task<FlowActivationHistoryV2[]> ActivationHistoryAsync(string key, int page = 1, CancellationToken ct = default)
     {
@@ -159,6 +168,7 @@ public sealed partial class FlowAuthoringOwnerV2
             try { await tx.RollbackAsync(CancellationToken.None); }
             catch (Exception rollback) { throw new ScopeAuthorizationExceptionV1("COMMAND_OUTCOME_UNKNOWN", 503, new AggregateException(error, rollback)); }
             if (committing) throw new ScopeAuthorizationExceptionV1("COMMAND_OUTCOME_UNKNOWN", 503, error);
+            if (error is Npgsql.PostgresException { SqlState: "23505", ConstraintName: "ux_activation_form" }) throw Error("E-WF-008", 409);
             if (error is Npgsql.PostgresException { SqlState: "23505" }) throw Error("ACTIVATION_CHANGED", 409);
             throw;
         }
