@@ -196361,11 +196361,37 @@
         ]
       },
       "wave269_form_authoring": {
-        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "status": "MERGED",
         "report": "docs/development/evidence/W269-01/DELIVERY.md",
         "full_task_completed": false,
         "validation": "本地16项PG18行为通过、0跳过（15项新增FORM，1项既有FLOW实际HTTP回归）；20项Vue组件行为通过（最后13项FORM复查，7项未变FLOW复用同任务成功结果）；最终vue-tsc退出0。实际Main登录会话/CSRF/HTTP和真实隔离PG；业务政策/IAM/数据为明确模拟。无Actions、工作流调整、既有环境迁移或生产部署。",
-        "remaining": "WP12-01仍余FORM不可变发布/独立启停与固定sourceVersion克隆、完整原AC；WP12-02余FORM/子流程精确依赖、唯一绑定及实际运行/旧入口采用；表单个人草稿/提交字段规则授权、文件/选项Owner资格、跨窗口浏览器到PG全链按后续窗口执行。原59局部仍3闭环/56余项，不以本切片关闭整卡。"
+        "remaining": "WP12-01仍余FORM不可变发布/独立启停与固定sourceVersion克隆、完整原AC；WP12-02余FORM/子流程精确依赖、唯一绑定及实际运行/旧入口采用；表单个人草稿/提交字段规则授权、文件/选项Owner资格、跨窗口浏览器到PG全链按后续窗口执行。原59局部仍3闭环/56余项，不以本切片关闭整卡。",
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W269-01",
+            "source": "5cde29b1653f84e344211c03a258e00f2fd9ca2a",
+            "remote_target": "782ec746f78031059ec50b4987a48e325427f202",
+            "pr": "https://github.com/GTX537/CP6/pull/697",
+            "branch": "codex/w269-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W269-HANDOFF",
+            "source": "53c5dc4bda9a53b42d378aac507cbb39e4bc351e",
+            "remote_target": "2caa268fd376f6fe5de4f49d5d35be0ecf31a025",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/245",
+            "branch": "codex/w269-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     },
     {
@@ -201034,11 +201060,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261102-wave269",
-      "path": "docs/development/dispatch/20261102-wave269/README.md",
-      "baseline_sha": "feed7f6a4374a50233c8377e72b3972ec66982d9",
-      "registered_at": "2026-11-02T13:43:46.434889+00:00",
-      "phase": "DELIVERY_MAIN_CLOSEOUT",
+      "id": "20261102-wave270",
+      "path": "docs/development/dispatch/20261102-wave270/README.md",
+      "baseline_sha": "782ec746f78031059ec50b4987a48e325427f202",
+      "registered_at": "2026-11-02T14:19:59.057423+00:00",
+      "phase": "IMPLEMENTING",
       "assigned_chats": [
         "COORD"
       ],
@@ -201056,25 +201082,26 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W269-01",
-          "workspace_task": "W269-01",
+          "id": "W270-01",
+          "workspace_task": "W270-01",
           "related_tasks": [
-            "WP12-01"
+            "WP12-01",
+            "WP12-02"
           ],
-          "title": "FORM草稿Owner与当前授权/原命令",
+          "title": "FORM发布版本与独立激活",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "DELIVERY_MAIN_CLOSEOUT",
+          "phase": "IMPLEMENTING",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": true,
+          "worker_delivery_received": false,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w269-01",
+          "branch": "codex/w270-01",
           "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": true,
+          "candidate_review_completed": false,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
@@ -201082,33 +201109,14 @@
             "Main:oa-definition",
             "Main:Core-PG-migration",
             "Main:authorization-catalog"
-          ],
-          "worker_delivery_ref": "docs/development/evidence/W269-01/DELIVERY.md",
-          "validation": "本地16项PG18行为通过、0跳过（15项新增FORM，1项既有FLOW实际HTTP回归）；20项Vue组件行为通过（最后13项FORM复查，7项未变FLOW复用同任务成功结果）；最终vue-tsc退出0。实际Main登录会话/CSRF/HTTP和真实隔离PG；业务政策/IAM/数据为明确模拟。无Actions、工作流调整、既有环境迁移或生产部署。",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave269-final-verification.json"
-          },
-          "business_acceptance": "FORM_DRAFT_OWNER_CURRENT_AUTH_AND_LOCAL_PG_HTTP_PASS;PUBLICATION_RUNTIME_FULL_CARD_REMAIN"
+          ]
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W269 FORM草稿Owner：独立显式FORM编写政策、当前实际会话/资源/字段授权、完整schema与分类、WFC原命令/CAS、旧身份互斥及新表单工作区；24h持续目标第二窗口。",
-      "lifecycle_snapshot": {
-        "main_finish_required": true,
-        "main_seat_released": false,
-        "handoff_seat_released": false,
-        "main_branch_deleted": false,
-        "handoff_branch_deleted": false,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave269-final-verification.json"
-      }
+      "next_action": "W270 FORM准确发布预览、不可变发布版本、显式下一草稿及独立启停；当前政策/权限、原命令、CAS、强审计和实际页面采用。24h持续目标第三窗口。"
     },
     "wave_history": [
       {
@@ -235765,6 +235773,107 @@
             "workspace_clean": true
           }
         ]
+      },
+      {
+        "id": "20261102-wave269",
+        "path": "docs/development/dispatch/20261102-wave269/README.md",
+        "baseline_sha": "feed7f6a4374a50233c8377e72b3972ec66982d9",
+        "registered_at": "2026-11-02T13:43:46.434889+00:00",
+        "phase": "COMPLETE",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W269-01",
+            "workspace_task": "W269-01",
+            "related_tasks": [
+              "WP12-01"
+            ],
+            "title": "FORM草稿Owner与当前授权/原命令",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "COMPLETE",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w269-01",
+            "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:oa-definition",
+              "Main:Core-PG-migration",
+              "Main:authorization-catalog"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W269-01/DELIVERY.md",
+            "validation": "本地16项PG18行为通过、0跳过（15项新增FORM，1项既有FLOW实际HTTP回归）；20项Vue组件行为通过（最后13项FORM复查，7项未变FLOW复用同任务成功结果）；最终vue-tsc退出0。实际Main登录会话/CSRF/HTTP和真实隔离PG；业务政策/IAM/数据为明确模拟。无Actions、工作流调整、既有环境迁移或生产部署。",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave269-final-verification.json"
+            },
+            "business_acceptance": "FORM_DRAFT_OWNER_CURRENT_AUTH_AND_LOCAL_PG_HTTP_PASS;PUBLICATION_RUNTIME_FULL_CARD_REMAIN"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W269 FORM草稿Owner：独立显式FORM编写政策、当前实际会话/资源/字段授权、完整schema与分类、WFC原命令/CAS、旧身份互斥及新表单工作区；24h持续目标第二窗口。",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave269-final-verification.json"
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W269-01",
+            "source": "5cde29b1653f84e344211c03a258e00f2fd9ca2a",
+            "remote_target": "782ec746f78031059ec50b4987a48e325427f202",
+            "pr": "https://github.com/GTX537/CP6/pull/697",
+            "branch": "codex/w269-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W269-HANDOFF",
+            "source": "53c5dc4bda9a53b42d378aac507cbb39e4bc351e",
+            "remote_target": "2caa268fd376f6fe5de4f49d5d35be0ecf31a025",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/245",
+            "branch": "codex/w269-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -236343,7 +236452,7 @@
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 3780,
+      "effective_seconds_recorded": 4402,
       "next_reestimate_at_effective_seconds": 7200,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
@@ -236383,18 +236492,20 @@
             0.75,
             1.75
           ],
-          "state": "VERIFYING",
+          "state": "DONE",
           "started_at": "2026-11-02T13:43:46.434889+00:00",
           "implementation_complete": true,
           "report": "docs/development/evidence/W269-01/DELIVERY.md",
           "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
             "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave269-final-verification.json"
-          }
+          },
+          "actual_effective_seconds": 2297,
+          "estimate_variance": "38m17s actual versus 45–105min initial. Two small windows faster; re-estimate at cumulative 2h, continue authorized original scope."
         },
         {
           "id": "W270-01",
@@ -236408,7 +236519,8 @@
             1,
             2
           ],
-          "state": "PLANNED"
+          "state": "IN_PROGRESS",
+          "started_at": "2026-11-02T14:19:59.057423+00:00"
         },
         {
           "id": "W271-01",
@@ -236538,7 +236650,7 @@
         }
       ],
       "reestimates": [],
-      "timing_snapshot_at": "2026-11-02T14:09:37.790738+00:00"
+      "timing_snapshot_at": "2026-11-02T14:19:59.057423+00:00"
     },
     "execution_plan_history": [
       {
