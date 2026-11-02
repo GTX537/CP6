@@ -1,10 +1,23 @@
 using System.Text.Json;
+using CP6.Core.EFDbContext;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Pub;
 
 public sealed partial class NumberAllocationOwnerV1
 {
+    /// <summary>Host binding from the current trusted tenant and immutable registration.
+    /// Does not authorize disclosure; the resulting Owner enforces current authority.</summary>
+    public static async Task<NumberAllocationScopeV1?> FindRegisteredScopeAsync(CP6Context db, Guid ruleId, CancellationToken ct = default)
+    {
+        if (!db.Database.IsNpgsql()) throw Error("NUMBER_POSTGRESQL_REQUIRED", 503);
+        var bytes = await db.Database.SqlQuery<byte[]>($"""
+            SELECT body AS "Value" FROM cp6_number_allocation_v1.scopes
+             WHERE tenant_id={db.CurrentTenantId} AND rule_id={ruleId}
+            """).SingleOrDefaultAsync(ct);
+        return bytes == null ? null : JsonSerializer.Deserialize<NumberAllocationStoreV1.Registration>(bytes)!.Scope;
+    }
+
     private static NumberRuleChangeReceiptV1 OriginalChange(NumberAllocationStoreV1.Saved original,
         Guid actor, string operation, byte[]? input)
     {
