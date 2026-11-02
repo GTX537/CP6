@@ -1,5 +1,13 @@
 # 当前待办与优先级
 
+## 2026-11-02：W252三天目标D1
+
+D1准确交付依赖规则已实现；WP09-11与WP12-07按原范围核销，WP02-10保留租户连接采用关系待核对。原375卡变为26 DONE，125目标/247正式验收不变；继续D2 CRM两条验收。 [单份交付](../development/evidence/W252-01/DELIVERY.md)。
+
+78 local roadmap behavioral tests passed, including7 new scoped-adoption regressions;initial2 RED failures observed. Existing adopted PG/HTTP/UI evidence explicitly reused for original provider scope;no new product execution claimed. Definitions/generated views/links checked;one author SPEC/QUALITY review. No Actions/deployment.
+
+Handoff已准确合并清理并释放，Main本提交待正常采用/finish；最终状态见同轮PR及wave252-final-verification.json。
+
 ## 2026-11-02：W251三天执行计划
 
 三天单人执行计划：D1三张提供者整卡核销/台账依赖对齐，D2 CRM切组织与审核到期验收补项，D3编号原命令分配/恢复限定实现；候补为公开询盘适用核销与租户CAS细化。计划未开工，原375/125/247状态不变。 [执行计划](../development/planning/20261102-three-day-execution.md)。每天约6小时主任务+2小时机动，实际耗时和整卡关闭以执行结果为准；本轮不执行计划中的产品任务。

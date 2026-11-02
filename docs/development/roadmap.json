@@ -161667,6 +161667,16 @@
       "date": "2026-11-02",
       "change": "三天单人执行计划：D1三张提供者整卡核销/台账依赖对齐，D2 CRM切组织与审核到期验收补项，D3编号原命令分配/恢复限定实现；候补为公开询盘适用核销与租户CAS细化。计划未开工，原375/125/247状态不变。",
       "evidence": "docs/development/planning/20261102-three-day-execution.md"
+    },
+    {
+      "date": "2026-11-02",
+      "change": "用户授权执行三天目标；W252单人开始D1。原七天保持完成，W251终态归档一次。",
+      "evidence": "docs/development/dispatch/20261102-wave252/README.md"
+    },
+    {
+      "date": "2026-11-02",
+      "change": "D1准确交付依赖规则已实现；WP09-11与WP12-07按原范围核销，WP02-10保留租户连接采用关系待核对。原375卡变为26 DONE，125目标/247正式验收不变；继续D2 CRM两条验收。",
+      "evidence": "docs/development/evidence/W252-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -173784,27 +173794,9 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "优先整卡核销",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-10",
-        "delivered": "共同事务/不可变原命令结果、最终授权门、故障点和实际Stock/PA090代表Owner已交付；W249当前PG/HTTP/Outbox回归通过。本轮盘点writer职责见下文。",
-        "remaining": "原卡明确消费者逐项接入归各域卡，不能因此长期扣留本提供者。优先完成整卡原正反验收登记；旧validator要求所有前置整卡DONE，需按现行准确交付采用规则处理，而非增加产品证明层或批量关闭前置。",
-        "evidence_refs": [
-          "docs/development/evidence/WP02-10/main-original-operation/DELIVERY.md",
-          "docs/development/evidence/WP02-10/stock-original-operation/DELIVERY.md",
-          "docs/development/evidence/WP02-10/stock-outbox/DELIVERY.md",
-          "docs/development/evidence/W136-01/DELIVERY.md",
-          "docs/development/evidence/W137-01/DELIVERY.md",
-          "docs/development/evidence/W138-01/DELIVERY.md",
-          "docs/development/evidence/W139-01/DELIVERY.md",
-          "docs/development/evidence/W140-01/DELIVERY.md",
-          "docs/development/evidence/W171-01/DELIVERY.md",
-          "docs/development/evidence/W98-01/DELIVERY.md",
-          "docs/development/evidence/W249-01/DELIVERY.md"
-        ],
-        "formal_state_changed": false,
-        "new_product_validation": false
+        "report": "docs/development/evidence/W252-01/DELIVERY.md#wp02-10",
+        "classification": "PREREQUISITE_ADOPTION_RECONCILIATION",
+        "remaining": "代表Main Owner共同事务/原结果/故障语义已有运行；尚需明确原直接前置WP02-02哪些交付实际用于当前Main Owner租户/连接入口。现有tenant-connections/ERP隔离组件明确未接入该Owner，不能用组件合并记录冒充采用。不要求所有消费者迁入或全库schema切换。"
       }
     },
     {
@@ -187998,14 +187990,35 @@
         "file:Main:CP6.Tests/QualityInspection_AutoQcLinkTests.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP09.md",
       "card_anchor": "wp09-11",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "COORD",
+        "branch": "codex/w252-01",
+        "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+        "claimed_at": "2026-11-02T01:18:43.500252+00:00"
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/W192-01/DELIVERY.md",
+          "source_sha": "7b44b6e4f02e7bde0943866316478c3f254acbc4",
+          "scope": "原卡提供者正反验收；W252范围核销说明与补充采用见docs/development/evidence/W252-01/DELIVERY.md",
+          "command": "dotnet test CP6.Tests/CP6.Tests.csproj; scoped selectors and original TRX listed in the cited report",
+          "environment": "Original isolated Windows/.NET8/PostgreSQL18 and actual HTTP/TLS; simulated business/IAM input; REUSED, not newly executed",
+          "observed_at": "2026-10-28T01:55:48.189153+00:00",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/W192-01/DELIVERY.md",
+        "source_sha": "7b44b6e4f02e7bde0943866316478c3f254acbc4",
+        "remote_main_sha": "336e1ea0d7906f82bc1ce0a369c7383f2f8d8eaf",
+        "pr_url": "https://github.com/GTX537/CP6/pull/615",
+        "scope": "原卡限定提供者交付，现有报告/后续实际采用由W252核销；无生产部署"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02-10公共Main原生PostgreSQL事务/最终授权fence由根统一加入；精确值/身份保原Owner协议。",
@@ -188049,18 +188062,70 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "优先整卡核销",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp09-11",
-        "delivered": "W192独立专业规格完整Requirements/NA/waivable/原文批准、current/撤回/同门HoldExact和页面均已验证；W193工程在冻结前实际采用。",
-        "remaining": "优先整卡核销：原正反验收与既有PG/HTTP/UI证据逐条绑定即可，未发现需要以生产Use为前置的本卡实现缺口。正式生产解析/任务族/Use原文明确交WP09-01/02；模拟专业资料可验收。",
-        "evidence_refs": [
-          "docs/development/evidence/W192-01/DELIVERY.md",
-          "docs/development/evidence/W193-01/DELIVERY.md"
-        ],
-        "formal_state_changed": false,
-        "new_product_validation": false
+        "report": "docs/development/evidence/W252-01/DELIVERY.md#wp09-11",
+        "classification": "FULL_CARD_RECONCILED",
+        "remaining": "本原卡提供者范围无剩余；后续消费者、完整Target和发布分别记账。"
+      },
+      "prerequisite_adoptions": [
+        {
+          "task_id": "WP02-10",
+          "requirement": "所属仓库的可信租户、当前授权、同事务原结果及审计基础",
+          "deliveries": [
+            "wave43_delivery",
+            "wave44_delivery"
+          ],
+          "scope": "Main当前CP6Context同一PG连接/事务、固定原输入/结果和共同最终权限门；不要求其他Owner全部迁入。"
+        },
+        {
+          "task_id": "WP02-13",
+          "requirement": "所属仓库的可信租户、当前授权、同事务原结果及审计基础",
+          "deliveries": [
+            "wave153_nested_source_fence"
+          ],
+          "scope": "原命令审计与业务共同提交，根/嵌套来源的当前字段/对象权限在同事务最终核对；不采用全域审计/隐私余项。"
+        },
+        {
+          "task_id": "WP02-03",
+          "requirement": "建议拆独立专业质量标准/Requirements批准和固定源提供者；文档批准/原件有来源，但不要求ENG冻结或QA对生产源解析。",
+          "deliveries": [
+            "wave13_delivery",
+            "wave37_delivery"
+          ],
+          "scope": "当前原会话/角色/字段/对象权限与Main OperationsOwner实际事务fence；不等待全部业务菜单和消费者。"
+        },
+        {
+          "task_id": "WP02-14",
+          "requirement": "建议拆独立专业质量标准/Requirements批准和固定源提供者；文档批准/原件有来源，但不要求ENG冻结或QA对生产源解析。",
+          "deliveries": [
+            "wave189_file"
+          ],
+          "scope": "受控文档使用的实际固定文件原文/摘要/版本及当前授权；扫描器和字节存储故障输入为明确测试替身。"
+        },
+        {
+          "task_id": "WP05-16",
+          "requirement": "建议拆独立专业质量标准/Requirements批准和固定源提供者；文档批准/原件有来源，但不要求ENG冻结或QA对生产源解析。",
+          "deliveries": [
+            "wave191_document_review"
+          ],
+          "scope": "质量批准来源采用真实受控文档专业审批和原生FLOW决定/Owner应用，不以模板替代批准。"
+        },
+        {
+          "task_id": "WP12-07",
+          "requirement": "建议拆独立专业质量标准/Requirements批准和固定源提供者；文档批准/原件有来源，但不要求ENG冻结或QA对生产源解析。",
+          "deliveries": [
+            "wave183_decision_delivery",
+            "wave185_receipt_return"
+          ],
+          "scope": "真实决定投递、Owner接收/应用分轴、原ApplicationReceipt连续链和恢复；不把运输ACK作为业务APPLIED。"
+        }
+      ],
+      "full_card_reconciliation": {
+        "state": "DONE",
+        "report": "docs/development/evidence/W252-01/DELIVERY.md",
+        "window": "W252-01",
+        "acceptance": "PASS_SIMULATED_REUSED",
+        "scope_preserved": true,
+        "consumer_completion_not_inferred": true
       }
     },
     {
@@ -196338,14 +196403,35 @@
         "file:Main:CP6.Core/Services/Oa/TaskDecisionService.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP12.md",
       "card_anchor": "wp12-07",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "COORD",
+        "branch": "codex/w252-01",
+        "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+        "claimed_at": "2026-11-02T01:18:43.500252+00:00"
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/W185-01/DELIVERY.md",
+          "source_sha": "3ae2fa9e720919a586fa73104df2bd0491bbb93c",
+          "scope": "原卡提供者正反验收；W252范围核销说明与补充采用见docs/development/evidence/W252-01/DELIVERY.md",
+          "command": "dotnet test CP6.Tests/CP6.Tests.csproj; scoped selectors and original TRX listed in the cited report",
+          "environment": "Original isolated Windows/.NET8/PostgreSQL18 and actual HTTP/TLS; simulated business/IAM input; REUSED, not newly executed",
+          "observed_at": "2026-10-27T19:40:14.447363+00:00",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/W185-01/DELIVERY.md",
+        "source_sha": "3ae2fa9e720919a586fa73104df2bd0491bbb93c",
+        "remote_main_sha": "14c352afc9570fdaffb647281a7f48673af82f9c",
+        "pr_url": "https://github.com/GTX537/CP6/pull/607",
+        "scope": "原卡限定提供者交付，现有报告/后续实际采用由W252核销；无生产部署"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：按S02-00采用的PostgreSQL布局、可信上下文/当前授权和全部写者共同最终fence、Main Owner事务及原键结果/审计。",
@@ -196427,23 +196513,44 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "优先整卡核销",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp12-07",
-        "delivered": "W181 TxD、W183投递、W184Owner receipt及W185连续链/GAP恢复已交付；W191/196/200已有业务真实应用。",
-        "remaining": "优先整卡核销原Decision/Outbox、Owner应用与TxR正反验收；工具报废/借用等具体业务由各域卡完成，不能成为此协议底座的无限完成门。完整合同身份范围仍按准确已有测试核对。",
-        "evidence_refs": [
-          "docs/development/evidence/W183-01/DELIVERY.md",
-          "docs/development/evidence/W185-01/DELIVERY.md",
-          "docs/development/evidence/W181-01/DELIVERY.md",
-          "docs/development/evidence/W184-01/DELIVERY.md",
-          "docs/development/evidence/W191-01/DELIVERY.md",
-          "docs/development/evidence/W196-01/DELIVERY.md",
-          "docs/development/evidence/W200-01/DELIVERY.md"
-        ],
-        "formal_state_changed": false,
-        "new_product_validation": false
+        "report": "docs/development/evidence/W252-01/DELIVERY.md#wp12-07",
+        "classification": "FULL_CARD_RECONCILED",
+        "remaining": "本原卡提供者范围无剩余；后续消费者、完整Target和发布分别记账。"
+      },
+      "prerequisite_adoptions": [
+        {
+          "task_id": "WP02-10",
+          "requirement": "所属仓库的可信租户、当前授权、同事务原结果及审计基础",
+          "deliveries": [
+            "wave43_delivery",
+            "wave44_delivery"
+          ],
+          "scope": "Main当前CP6Context同一PG连接/事务、固定原输入/结果和共同最终权限门；不要求其他Owner全部迁入。"
+        },
+        {
+          "task_id": "WP02-13",
+          "requirement": "所属仓库的可信租户、当前授权、同事务原结果及审计基础",
+          "deliveries": [
+            "wave153_nested_source_fence"
+          ],
+          "scope": "原命令审计与业务共同提交，根/嵌套来源的当前字段/对象权限在同事务最终核对；不采用全域审计/隐私余项。"
+        },
+        {
+          "task_id": "WP12-06",
+          "requirement": "已采用的原生审批发布/接收/TxE启动及其准确引擎实例",
+          "deliveries": [
+            "wave179_approval_start"
+          ],
+          "scope": "原生准确发布、接收与TxE创建的实际引擎实例/任务；TxD在该实例终态事务写入。"
+        }
+      ],
+      "full_card_reconciliation": {
+        "state": "DONE",
+        "report": "docs/development/evidence/W252-01/DELIVERY.md",
+        "window": "W252-01",
+        "acceptance": "PASS_SIMULATED_REUSED",
+        "scope_preserved": true,
+        "consumer_completion_not_inferred": true
       }
     },
     {
@@ -200442,10 +200549,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261102-wave251",
-      "path": "docs/development/dispatch/20261102-wave251/README.md",
-      "baseline_sha": "e5e7a9dc18d49c93e7d93341ac9a179a07a0f76b",
-      "registered_at": "2026-11-02T00:55:55.352332+00:00",
+      "id": "20261102-wave252",
+      "path": "docs/development/dispatch/20261102-wave252/README.md",
+      "baseline_sha": "37368015b096d6239f796ed337df93e8f6f096e6",
+      "registered_at": "2026-11-02T01:07:34.411707+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -200464,83 +200571,79 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W251-01",
-          "workspace_task": "W251-01",
+          "id": "W252-01",
+          "workspace_task": "W252-01",
           "related_tasks": [
             "WP02-10",
             "WP09-11",
-            "WP12-07",
-            "WP02-06",
-            "WP03-03",
-            "WP02-16"
+            "WP12-07"
           ],
-          "title": "三天单人执行计划：D1三张提供者整卡核销/台账依赖对齐，D2 CRM切组织与审核到期验收补项，D3编号原命令分配/恢复限定实现；候补为公开询盘适用核销与租户CAS细化。计划未开工，原375/125/247状态不变。",
+          "title": "D1准确交付依赖和三张提供者整卡核销",
           "chat": "COORD",
-          "mode": "SINGLE_CHAT_PLANNING",
+          "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "6b4084c60dc353ffdd21db5d3396e8045d37f575",
-            "branch": "codex/w251-handoff",
-            "path": "handoffs/CP6-DEV-20261012/tasks/W251-01/messages/20261102T005555Z-start/MESSAGE.md",
-            "at": "2026-11-02T00:55:55.352332+00:00"
+            "commit": "07e625b53662f70aa88c0df8885d4224f7004a47",
+            "branch": "codex/w252-handoff",
+            "path": "handoffs/CP6-DEV-20261012/tasks/W252-01/messages/20261102T010734Z-start/MESSAGE.md",
+            "at": "2026-11-02T01:07:34.411707+00:00"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w251-01",
+          "branch": "codex/w252-01",
           "planned_scope_ref": "docs/development/planning/20261102-three-day-execution.md",
           "full_task_completed": false,
-          "business_acceptance": "NOT_RUN_PLANNING_ONLY",
+          "business_acceptance": "2_FULL_PROVIDER_CARDS_RECONCILED;1_ADOPTION_RELATION_PENDING",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
-            "Main:coordination-ledger"
+            "Main:coordination-ledger",
+            "Main:roadmap-validator"
           ],
-          "worker_delivery_ref": "docs/development/planning/20261102-three-day-execution.md",
-          "validation": "Planning only:source/test paths and original scope checked;3 days with18h core+6h buffer;dependencies,conditional evidence reuse,PostgreSQL concurrency and simulated input boundaries reviewed;single-chat2+1 seat choreography;document links/generated views/formal states verified. No product tests,Actions or deployment.",
+          "worker_delivery_ref": "docs/development/evidence/W252-01/DELIVERY.md",
+          "validation": "78 local roadmap behavioral tests passed, including7 new scoped-adoption regressions;initial2 RED failures observed. Existing adopted PG/HTTP/UI evidence explicitly reused for original provider scope;no new product execution claimed. Definitions/generated views/links checked;one author SPEC/QUALITY review. No Actions/deployment.",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
             "handoff_seat_released": true,
             "main_branch_deleted": false,
             "handoff_branch_deleted": true,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave251-final-verification.json",
-            "snapshot": "Before Main normal adoption and official finish; final PR resolves this immutable snapshot."
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave252-final-verification.json"
           },
           "handoff_delivery": {
             "result": "PASS",
-            "source": "3634c4dc62090eab716132aac9a15f0878f72665",
-            "main": "e1d93c73d04b9ca0d9201f05ec9bd4ef09e5c22f",
-            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/227",
+            "source": "4c206a34f3324b126f081452cd035f336a452b31",
+            "main": "d682d784240dae87029e8c68ca87771d8dbc1bd9",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/228",
             "exact_tree_adoption": true,
-            "at": "2026-11-02T00:57:19.410465+00:00"
+            "at": "2026-11-02T01:20:10.416582+00:00"
           }
         }
       ],
       "horizon": {
-        "started_at": "2026-11-02T00:49:59.644897+00:00",
+        "started_at": "2026-11-02T01:05:04.179175+00:00",
         "estimated_agent_wall_time_minutes": [
-          15,
-          30
+          60,
+          120
         ]
       },
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Deliver the three-day plan only; proposed W252/W253/W254 are not started.",
+      "next_action": "Implement exact prerequisite adoption and reconcile3 provider cards; then continue D2 CRM and D3 number allocation without repeating seven-day work.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
         "handoff_seat_released": true,
         "main_branch_deleted": false,
         "handoff_branch_deleted": true,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave251-final-verification.json",
-        "snapshot": "Before Main normal adoption and official finish; final PR resolves this immutable snapshot."
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave252-final-verification.json"
       }
     },
     "wave_history": [
@@ -233023,6 +233126,127 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/226"
           }
         ]
+      },
+      {
+        "id": "20261102-wave251",
+        "path": "docs/development/dispatch/20261102-wave251/README.md",
+        "baseline_sha": "e5e7a9dc18d49c93e7d93341ac9a179a07a0f76b",
+        "registered_at": "2026-11-02T00:55:55.352332+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W251-01",
+            "workspace_task": "W251-01",
+            "related_tasks": [
+              "WP02-10",
+              "WP09-11",
+              "WP12-07",
+              "WP02-06",
+              "WP03-03",
+              "WP02-16"
+            ],
+            "title": "三天单人执行计划：D1三张提供者整卡核销/台账依赖对齐，D2 CRM切组织与审核到期验收补项，D3编号原命令分配/恢复限定实现；候补为公开询盘适用核销与租户CAS细化。计划未开工，原375/125/247状态不变。",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_PLANNING",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "6b4084c60dc353ffdd21db5d3396e8045d37f575",
+              "branch": "codex/w251-handoff",
+              "path": "handoffs/CP6-DEV-20261012/tasks/W251-01/messages/20261102T005555Z-start/MESSAGE.md",
+              "at": "2026-11-02T00:55:55.352332+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w251-01",
+            "planned_scope_ref": "docs/development/planning/20261102-three-day-execution.md",
+            "full_task_completed": false,
+            "business_acceptance": "NOT_RUN_PLANNING_ONLY",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger"
+            ],
+            "worker_delivery_ref": "docs/development/planning/20261102-three-day-execution.md",
+            "validation": "Planning only:source/test paths and original scope checked;3 days with18h core+6h buffer;dependencies,conditional evidence reuse,PostgreSQL concurrency and simulated input boundaries reviewed;single-chat2+1 seat choreography;document links/generated views/formal states verified. No product tests,Actions or deployment.",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave251-final-verification.json"
+            },
+            "handoff_delivery": {
+              "result": "PASS",
+              "source": "3634c4dc62090eab716132aac9a15f0878f72665",
+              "main": "e1d93c73d04b9ca0d9201f05ec9bd4ef09e5c22f",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/227",
+              "exact_tree_adoption": true,
+              "at": "2026-11-02T00:57:19.410465+00:00"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-11-02T00:49:59.644897+00:00",
+          "estimated_agent_wall_time_minutes": [
+            15,
+            30
+          ]
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Deliver the three-day plan only; proposed W252/W253/W254 are not started.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave251-final-verification.json"
+        },
+        "actual_registered_wave_minutes": 11.41,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W251-01",
+            "source": "a8a513cccf4127b3c6495fc078a492baba302530",
+            "remote_target": "37368015b096d6239f796ed337df93e8f6f096e6",
+            "branch": "codex/w251-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/678"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W251-HANDOFF",
+            "source": "3634c4dc62090eab716132aac9a15f0878f72665",
+            "remote_target": "e1d93c73d04b9ca0d9201f05ec9bd4ef09e5c22f",
+            "branch": "codex/w251-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/227"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -233573,14 +233797,23 @@
       ],
       "original_task_count": 375,
       "new_product_validation": false,
-      "formal_states_unchanged": true
+      "formal_states_unchanged": true,
+      "followup": {
+        "window": "W252-01",
+        "report": "docs/development/evidence/W252-01/DELIVERY.md",
+        "full_cards_reconciled": [
+          "WP09-11",
+          "WP12-07"
+        ],
+        "remaining_original_partial_cards": 57
+      }
     },
     "next_execution_plan": {
       "id": "CP6-3D-20261102",
       "path": "docs/development/planning/20261102-three-day-execution.md",
-      "state": "PLANNED",
+      "state": "IN_PROGRESS",
       "created_by_window": "W251-01",
-      "execution_started": false,
+      "execution_started": true,
       "execution_owner": "COORD_SINGLE_CHAT",
       "days_relative_to_execution_start": true,
       "core_capacity_hours": 18,
@@ -233591,7 +233824,7 @@
         {
           "id": "W252",
           "day": "D1",
-          "state": "PLANNED",
+          "state": "VERIFYING",
           "related_tasks": [
             "WP02-10",
             "WP09-11",
@@ -233601,7 +233834,19 @@
             "Main": "W252-01"
           },
           "scope": "Accurate adopted-prerequisite rules and full-scope reconciliation of3 provider cards; no automatic DONE.",
-          "entry": "Latest verified Main and exact adopted dependencies; original criteria/evidence required."
+          "entry": "Latest verified Main and exact adopted dependencies; original criteria/evidence required.",
+          "actual_start_ref": {
+            "commit": "07e625b53662f70aa88c0df8885d4224f7004a47",
+            "branch": "codex/w252-handoff",
+            "path": "handoffs/CP6-DEV-20261012/tasks/W252-01/messages/20261102T010734Z-start/MESSAGE.md",
+            "at": "2026-11-02T01:07:34.411707+00:00"
+          },
+          "full_cards_reconciled": [
+            "WP09-11",
+            "WP12-07"
+          ],
+          "remaining_card": "WP02-10",
+          "report": "docs/development/evidence/W252-01/DELIVERY.md"
         },
         {
           "id": "W253",
@@ -233657,7 +233902,10 @@
         "No Actions or production deployment",
         "Single chat;fixed DEV-1 Main;DEV-2 serial CRM/Handoff;finish per task"
       ],
-      "completion": "Each executed window has relevant validation,one review,normal adoption,branch disposal and released seats;full-card DONE only on original scope coverage."
+      "completion": "Each executed window has relevant validation,one review,normal adoption,branch disposal and released seats;full-card DONE only on original scope coverage.",
+      "authorized_at": "2026-11-02T01:07:34.411707+00:00",
+      "current_day": "D1",
+      "execution_goal": "CP6-3D-20261102"
     }
   },
   "acceptance_basis": {
