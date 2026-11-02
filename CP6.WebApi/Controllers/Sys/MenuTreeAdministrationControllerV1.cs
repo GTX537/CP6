@@ -21,6 +21,10 @@ public sealed class MenuTreeAdministrationControllerV1(IServiceScopeFactory scop
     public Task<IActionResult> Preview(MenuTreeCommandV1 command, CancellationToken ct) => Execute((owner, session) => owner.PreviewAsync(command, session, ct));
     [HttpPost("commands"), RequestSizeLimit(1048576)]
     public Task<IActionResult> Command(MenuTreeCommandV1 command, CancellationToken ct) => Execute((owner, session) => owner.ExecuteAsync(command, session, ct));
+    [HttpPost("display/preview"), RequestSizeLimit(1048576)]
+    public Task<IActionResult> DisplayPreview(MenuDisplayCommandV1 command, CancellationToken ct) => Execute((owner, session) => owner.PreviewDisplayAsync(command, session, ct));
+    [HttpPost("display/commands"), RequestSizeLimit(1048576)]
+    public Task<IActionResult> DisplayCommand(MenuDisplayCommandV1 command, CancellationToken ct) => Execute((owner, session) => owner.ExecuteDisplayAsync(command, session, ct));
     [HttpPost("commands/read"), RequestSizeLimit(1048576)]
     public Task<IActionResult> Original(OriginalRequest request, CancellationToken ct) => Execute((owner, session) => owner.ReadOriginalAsync(request.OperationRef, session, ct));
     private async Task<IActionResult> Execute<T>(Func<MenuTreeAdministrationV1, CP6.Core.Services.Platform.TenantManagementSessionV1, Task<T>> action)
