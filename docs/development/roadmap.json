@@ -161687,6 +161687,11 @@
       "date": "2026-11-02",
       "change": "第二期D1核清Main共享连接尚未采用WP02-02新租户连接profile；WP03-01按原完整配置范围核销DONE，WP03-02冻结公开路径NUM/FILE不适用但整卡未来共同服务前置保留。375卡27DONE，原59局部卡余56。继续W256审核Expired持久终态。",
       "evidence": "docs/development/evidence/W255-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-02",
+      "change": "第二期D2交付原生审核Expired持久终态、原截止派生保留、当前维护/编辑范围、原结果恢复和实际HTTP竞争；完整WP03-03及新事件消费者仍独立。继续D3/W257编号规则CAS。",
+      "evidence": "docs/development/evidence/W256-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -178796,6 +178801,21 @@
         "validation": "11 unique relevant PostgreSQL/HTTP scenarios passed,0 skipped: final8 review boundary/rollback cases,final1 browser login/switch case,and2 unchanged original decision cases from acceptance batch. Signed mock IdP/policy/business inputs;actual CRM OIDC/cookie/session/Owner/PG graph executed. Review/capability clocks controlled;IAM/retention/disclosure use real clocks. One author full SPEC/QUALITY review;no UI changes,Actions or deployment.",
         "full_task_completed": false,
         "scope": "Actual original seven-day review boundary/late rollback/original recovery;read removes actions,persistent Expired transition remains"
+      },
+      "wave256_delivery": {
+        "status": "MERGED",
+        "report": "docs/development/evidence/W256-01/DELIVERY.md",
+        "crm_delivery": {
+          "result": "PASS",
+          "source": "995490872e68e4cb88271c16d8019065235a23d4",
+          "main": "0a8e17aa61f4d57f95f7b4fa3a20f15c6d1d5e06",
+          "pr": "https://github.com/GTX537/CP6.CRM/pull/166",
+          "exact_tree_adoption": true,
+          "at": "2026-11-02T03:49:33.609587+00:00"
+        },
+        "validation": "26 unique relevant checks PASS,0 skipped:18 final expiry/hosted/PG/HTTP/migration and prior-decision/retention checks,including1 explicitly in-memory anonymous-state projection;8 unchanged W253 review-boundary cases reused from this window. Signed mock business/IAM inputs and controlled review time;actual native HTTP/PG/Outbox and real IAM/lease/commit clocks. No production deployment or Actions.",
+        "full_task_completed": false,
+        "scope": "Persistent original-deadline review expiry;new event consumer and complete original card remain. Anonymous projection tested in memory only."
       }
     },
     {
@@ -200624,10 +200644,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261102-wave255",
-      "path": "docs/development/dispatch/20261102-wave255/README.md",
-      "baseline_sha": "b807ae9da839a8334b49592cf24b3bbbf4b15e1e",
-      "registered_at": "2026-11-02T03:00:26.847176+00:00",
+      "id": "20261102-wave256",
+      "path": "docs/development/dispatch/20261102-wave256/README.md",
+      "baseline_sha": "9a161c73d8f0911486011118a35d104c31c3c182",
+      "crm_baseline_sha": "6741882cfa4b500536fb3dd7749291e7a24f782a",
+      "registered_at": "2026-11-02T03:17:26.348403+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -200646,31 +200667,29 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W255-01",
-          "workspace_task": "W255-01",
+          "id": "W256-01",
+          "workspace_task": "W256-01",
           "related_tasks": [
-            "WP02-10",
-            "WP03-01",
-            "WP03-02"
+            "WP03-03"
           ],
-          "title": "第二期D1准确采用与CRM原卡核销",
+          "title": "第二期D2持久审核到期",
           "chat": "COORD",
-          "mode": "SINGLE_CHAT_RECONCILIATION",
+          "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "3ec03761f8ef9c3ead04366c0ce77c6627500bf8",
-            "branch": "codex/w255-handoff",
-            "path": "handoffs/CP6-DEV-20261012/tasks/W255-01/messages/20261102T030026Z-start/MESSAGE.md",
-            "at": "2026-11-02T03:00:26.847176+00:00"
+            "commit": "5fc400d3acb7d1e4bf8b8f0b8554900052878201",
+            "branch": "codex/w256-handoff",
+            "path": "handoffs/CP6-DEV-20261012/tasks/W256-01/messages/20261102T031726Z-start/MESSAGE.md",
+            "at": "2026-11-02T03:17:26.348403+00:00"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w255-01",
+          "branch": "codex/w256-01",
+          "crm_branch": "codex/w256-02",
           "planned_scope_ref": "docs/development/planning/20261102-three-day-cycle2.md",
           "full_task_completed": false,
-          "business_acceptance": "WP03-01_FULL_SCOPE_RECONCILED;OTHER_CARDS_REMAIN",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
@@ -200678,47 +200697,63 @@
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
-            "Main:roadmap-validator"
+            "CRM:review-expiry-owner",
+            "CRM:native-runtime-graph",
+            "CRM:maintenance-store",
+            "CRM:native-host"
           ],
-          "worker_delivery_ref": "docs/development/evidence/W255-01/DELIVERY.md",
-          "validation": "82 related local roadmap tests PASS,including4 cross-repository adoption regressions;2 positive cases failed before implementation. CRM pinned product receipts now resolve their own repository,never Main coordination adoption;mutable/wrong/unrelated refs rejected. Unchanged W102/W105/W247 product PG/HTTP/UI evidence reused;no product tests rerun. One author SPEC/QUALITY review;no Actions/deployment.",
+          "worker_delivery_ref": "docs/development/evidence/W256-01/DELIVERY.md",
+          "validation": "26 unique relevant checks PASS,0 skipped:18 final expiry/hosted/PG/HTTP/migration and prior-decision/retention checks,including1 explicitly in-memory anonymous-state projection;8 unchanged W253 review-boundary cases reused from this window. Signed mock business/IAM inputs and controlled review time;actual native HTTP/PG/Outbox and real IAM/lease/commit clocks. No production deployment or Actions.",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
+            "crm_seat_released": true,
             "handoff_seat_released": true,
             "main_branch_deleted": false,
+            "crm_branch_deleted": true,
             "handoff_branch_deleted": true,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave255-final-verification.json"
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave256-final-verification.json"
+          },
+          "crm_delivery": {
+            "result": "PASS",
+            "source": "995490872e68e4cb88271c16d8019065235a23d4",
+            "main": "0a8e17aa61f4d57f95f7b4fa3a20f15c6d1d5e06",
+            "pr": "https://github.com/GTX537/CP6.CRM/pull/166",
+            "exact_tree_adoption": true,
+            "at": "2026-11-02T03:49:33.609587+00:00"
           },
           "handoff_delivery": {
             "result": "PASS",
-            "source": "55767a3a85162bf152adb16387f40fd9c5b9dbf9",
-            "main": "4be238c02caf596d69bb49b039a32a3b003151ca",
-            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/231",
+            "source": "abdd7cb964c0174e6b6618dc1984473a87855c9c",
+            "main": "0ebef28ec089d05a87fcb39210d5d32bbf3c0edb",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/232",
             "exact_tree_adoption": true,
-            "at": "2026-11-02T03:08:11.570349+00:00"
-          }
+            "at": "2026-11-02T03:52:22.053070+00:00"
+          },
+          "business_acceptance": "PERSISTENT_EXPIRED_SCOPED_PASS;FULL_CARD_REMAINS"
         }
       ],
       "horizon": {
-        "started_at": "2026-11-02T02:55:53.165165+00:00",
+        "started_at": "2026-11-02T03:16:30.503697+00:00",
         "estimated_agent_wall_time_minutes": [
-          30,
-          60
+          120,
+          360
         ]
       },
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Second three-day cycle,COORD single chat: D1 exact Main tenant/storage adoption and CRM configuration/public-flow applicability; D2 persistent review Expired terminal and deadline-preserving competition; D3 versioned rule CAS/original recovery for W254 new numbering domains. No old-domain migration,Actions or deployment;completed first cycle/seven-day not repeated.",
+      "next_action": "第二期D2：CRM原七天审核到期的Expired持久终态、原截止派生保留、当前维护身份与业务编辑grant、行锁竞争和原结果恢复；独立内部维护边界，不扩写冻结外部权限/命令枚举。实际PG/HTTP模拟业务验收，禁止生产部署/既有库迁移/Actions。",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
+        "crm_seat_released": true,
         "handoff_seat_released": true,
         "main_branch_deleted": false,
+        "crm_branch_deleted": true,
         "handoff_branch_deleted": true,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave255-final-verification.json"
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave256-final-verification.json"
       }
     },
     "wave_history": [
@@ -233747,6 +233782,124 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/230"
           }
         ]
+      },
+      {
+        "id": "20261102-wave255",
+        "path": "docs/development/dispatch/20261102-wave255/README.md",
+        "baseline_sha": "b807ae9da839a8334b49592cf24b3bbbf4b15e1e",
+        "registered_at": "2026-11-02T03:00:26.847176+00:00",
+        "phase": "COMPLETE",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W255-01",
+            "workspace_task": "W255-01",
+            "related_tasks": [
+              "WP02-10",
+              "WP03-01",
+              "WP03-02"
+            ],
+            "title": "第二期D1准确采用与CRM原卡核销",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_RECONCILIATION",
+            "phase": "COMPLETE",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "3ec03761f8ef9c3ead04366c0ce77c6627500bf8",
+              "branch": "codex/w255-handoff",
+              "path": "handoffs/CP6-DEV-20261012/tasks/W255-01/messages/20261102T030026Z-start/MESSAGE.md",
+              "at": "2026-11-02T03:00:26.847176+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w255-01",
+            "planned_scope_ref": "docs/development/planning/20261102-three-day-cycle2.md",
+            "full_task_completed": false,
+            "business_acceptance": "WP03-01_FULL_SCOPE_RECONCILED;OTHER_CARDS_REMAIN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:roadmap-validator"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W255-01/DELIVERY.md",
+            "validation": "82 related local roadmap tests PASS,including4 cross-repository adoption regressions;2 positive cases failed before implementation. CRM pinned product receipts now resolve their own repository,never Main coordination adoption;mutable/wrong/unrelated refs rejected. Unchanged W102/W105/W247 product PG/HTTP/UI evidence reused;no product tests rerun. One author SPEC/QUALITY review;no Actions/deployment.",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave255-final-verification.json"
+            },
+            "handoff_delivery": {
+              "result": "PASS",
+              "source": "55767a3a85162bf152adb16387f40fd9c5b9dbf9",
+              "main": "4be238c02caf596d69bb49b039a32a3b003151ca",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/231",
+              "exact_tree_adoption": true,
+              "at": "2026-11-02T03:08:11.570349+00:00"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-11-02T02:55:53.165165+00:00",
+          "estimated_agent_wall_time_minutes": [
+            30,
+            60
+          ]
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Second three-day cycle,COORD single chat: D1 exact Main tenant/storage adoption and CRM configuration/public-flow applicability; D2 persistent review Expired terminal and deadline-preserving competition; D3 versioned rule CAS/original recovery for W254 new numbering domains. No old-domain migration,Actions or deployment;completed first cycle/seven-day not repeated.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave255-final-verification.json"
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W255-01",
+            "source": "eff7f417e4e1343ac73349a7013676f86d4b3096",
+            "remote_target": "9a161c73d8f0911486011118a35d104c31c3c182",
+            "branch": "codex/w255-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/682"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W255-HANDOFF",
+            "source": "55767a3a85162bf152adb16387f40fd9c5b9dbf9",
+            "remote_target": "4be238c02caf596d69bb49b039a32a3b003151ca",
+            "branch": "codex/w255-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/231"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -234317,7 +234470,7 @@
       "execution_started": true,
       "execution_owner": "COORD_SINGLE_CHAT",
       "authorized_at": "2026-11-02T03:00:26.847176+00:00",
-      "current_day": "D1",
+      "current_day": "D2",
       "core_capacity_hours": 18,
       "contingency_capacity_hours": 6,
       "estimate_is_guarantee": false,
@@ -234325,7 +234478,7 @@
         {
           "id": "W255",
           "day": "D1",
-          "state": "VERIFYING",
+          "state": "DONE",
           "related_tasks": [
             "WP02-10",
             "WP03-01",
@@ -234348,12 +234501,20 @@
           "remaining_cards": [
             "WP02-10",
             "WP03-02"
-          ]
+          ],
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave255-final-verification.json"
+          }
         },
         {
           "id": "W256",
           "day": "D2",
-          "state": "PLANNED",
+          "state": "VERIFYING",
           "related_tasks": [
             "WP03-03"
           ],
@@ -234361,7 +234522,24 @@
             "Main": "W256-01",
             "CRM": "W256-02"
           },
-          "scope": "Persist Expired at the original seven-day review boundary;derive terminal retention from original deadline,atomic competition/history/receipt and current maintenance authority."
+          "scope": "Persist Expired at the original seven-day review boundary;derive terminal retention from original deadline,atomic competition/history/receipt and current maintenance authority.",
+          "actual_start_ref": {
+            "commit": "5fc400d3acb7d1e4bf8b8f0b8554900052878201",
+            "branch": "codex/w256-handoff",
+            "path": "handoffs/CP6-DEV-20261012/tasks/W256-01/messages/20261102T031726Z-start/MESSAGE.md",
+            "at": "2026-11-02T03:17:26.348403+00:00"
+          },
+          "report": "docs/development/evidence/W256-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "crm_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": false,
+            "crm_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave256-final-verification.json"
+          }
         },
         {
           "id": "W257",

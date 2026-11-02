@@ -1,5 +1,13 @@
 # 当前待办与优先级
 
+## 2026-11-02：W256第二期D2
+
+第二期D2交付原生审核Expired持久终态、原截止派生保留、当前维护/编辑范围、原结果恢复和实际HTTP竞争；完整WP03-03及新事件消费者仍独立。继续D3/W257编号规则CAS。 [交付](../development/evidence/W256-01/DELIVERY.md)。
+
+26 unique relevant checks PASS,0 skipped:18 final expiry/hosted/PG/HTTP/migration and prior-decision/retention checks,including1 explicitly in-memory anonymous-state projection;8 unchanged W253 review-boundary cases reused from this window. Signed mock business/IAM inputs and controlled review time;actual native HTTP/PG/Outbox and real IAM/lease/commit clocks. No production deployment or Actions.
+
+CRM/Handoff已合并、准确分支删除、DEV-2释放；Main最终以同轮PR/finish为准。
+
 ## 2026-11-02：W255第二期三天D1
 
 第二期D1核清Main共享连接尚未采用WP02-02新租户连接profile；WP03-01按原完整配置范围核销DONE，WP03-02冻结公开路径NUM/FILE不适用但整卡未来共同服务前置保留。375卡27DONE，原59局部卡余56。继续W256审核Expired持久终态。 [交付](../development/evidence/W255-01/DELIVERY.md) / [计划](../development/planning/20261102-three-day-cycle2.md)。
