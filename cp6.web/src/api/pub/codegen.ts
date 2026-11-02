@@ -43,6 +43,8 @@ export interface CodeGenMetadataSnapshot {
   savedBy: string; savedAtUtc: string
 }
 export interface CodeGenMetadataReceipt { operationRef: string; snapshot: CodeGenMetadataSnapshot }
+export interface CodeGenMetadataLegacy { metadataId: string; sourceFingerprint: string; document: CodeGenMetadataDocument }
+export interface CodeGenMetadataAdopt { operationRef: string; sourceFingerprint: string }
 export interface CodeGenComparison {
   schemaVersion: 'codegen-comparison-v1'
   templateRef: string
@@ -63,6 +65,14 @@ export interface CodeGenComparison {
 }
 
 export const codeGenApi = {
+  async legacyMetadata(id: string): Promise<CodeGenMetadataLegacy> {
+    const res = await http.get<unknown, { data: CodeGenMetadataLegacy }>(`/pub/codegen/metadata-v1/${encodeURIComponent(id)}/legacy`)
+    return res.data
+  },
+  async adoptMetadata(id: string, command: CodeGenMetadataAdopt): Promise<CodeGenMetadataReceipt> {
+    const res = await http.post<unknown, { data: CodeGenMetadataReceipt }>(`/pub/codegen/metadata-v1/${encodeURIComponent(id)}/legacy/adopt`, command)
+    return res.data
+  },
   async metadata(id: string): Promise<CodeGenMetadataSnapshot> {
     const res = await http.get<unknown, { data: CodeGenMetadataSnapshot }>(`/pub/codegen/metadata-v1/${encodeURIComponent(id)}`)
     return res.data

@@ -18,8 +18,10 @@ COORD单人，采用writing-plans/executing-plans。以W261远端Main77184c0为�
 
 - [x] cp6.web/src/api/pub/codegen.ts和CodeGenMetadataPanel.vue接入版本化元数据；CodeGenView保持独立即时预览/比较。新保存生成固定operation并保留原输入，unknown期间禁止发新保存，可查原结果或原键重试；412保留草稿并明确重读版本，不静默套用。
 - [x] 读取已存V1文档载入元数据后按原preview/comparison展示；浏览器会话/租户变更拒绝旧回复。页面不把旧无版本Save作为V1保存；旧API不被静默迁移。
-- [ ] 相关PG/HTTP和页面行为验证、类型检查；复用W261不变比较证据。唯一交付报告、台账/生成页/四状态同步，正常合并/远端核对、准确分支删除和官方finish。本期不宣称完整WP02-16或原375全完成。
+- [x] 相关PG/HTTP和页面行为验证、类型检查；复用W261不变比较证据。唯一交付报告、台账/生成页/四状态同步，正常合并/远端核对、准确分支删除和官方finish。本期不宣称完整WP02-16或原375全完成。
 
 数据库仅PostgreSQL；模拟业务验收注明输入/环境。新增schema为共享Owner命名空间，每行TenantId及授权保持，不宣称一租户一schema或权限隔离。无Actions、生产部署、既有环境迁移、自动文件应用或旧业务编号切换。
 
 D1/D2/D3实现及本地验证完成；最后一项的审查/状态同步完成，正常合并和席位收尾由wave262-final-verification.json核销，提交前保持VERIFYING。
+
+W263接续按wave262-final-verification.json核销：第四期实际全部采用、准确分支清理和官方finish完成；此处只归档最终事实，不重复执行。

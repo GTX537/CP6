@@ -31,6 +31,13 @@ public sealed class CodeGenMetadataControllerV1(IServiceScopeFactory scopes, ITe
     public Task<IActionResult> Original(Guid metadataId, OriginalRequest request, CancellationToken ct)
         => Execute(metadataId, async owner => await owner.ReadOperationAsync(request.OperationRef, ct), ct);
 
+    [HttpGet("legacy")]
+    public Task<IActionResult> Legacy(Guid metadataId, CancellationToken ct)
+        => Execute(metadataId, async owner => await owner.ReadLegacyAsync(ct), ct);
+    [HttpPost("legacy/adopt"), RequestSizeLimit(CodeGenService.PreviewMaxRequestBytes)]
+    public Task<IActionResult> Adopt(Guid metadataId, CodeGenMetadataAdoptV1 command, CancellationToken ct)
+        => Execute(metadataId, async owner => await owner.AdoptAsync(command, ct), ct);
+
     private async Task<IActionResult> Execute(Guid metadataId, Func<CodeGenMetadataOwnerV1, Task<object?>> action, CancellationToken ct)
     {
         await using var scope = scopes.CreateAsyncScope(); var services = scope.ServiceProvider;
