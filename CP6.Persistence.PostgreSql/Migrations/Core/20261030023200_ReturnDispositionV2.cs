@@ -40,7 +40,9 @@ public sealed class ReturnDispositionV2 : Migration
         LOCK TABLE public."Sys_Menus" IN SHARE ROW EXCLUSIVE MODE;
         DO $$ DECLARE resource text; BEGIN FOREACH resource IN ARRAY ARRAY['wms-return-resale','mes-return-repair','quality-return-scrap','purchasing-return-shipment','wms-customer-return-shipment'] LOOP
           INSERT INTO public."Sys_Menus"("MenuId","MenuKey","MenuName","RoutePath","Icon","ParentId","OrderNo","Enable","CreateDate")
-          SELECT (SELECT coalesce(max("MenuId"),0)+1 FROM public."Sys_Menus"),resource,resource,'/wms/rma-applications','Switch',NULL,160,true,LOCALTIMESTAMP
+          SELECT (SELECT CASE WHEN COALESCE(MAX("MenuId"),0)<2147483647 THEN COALESCE(MAX("MenuId"),0)+1 ELSE
+          (SELECT min(candidate) FROM (SELECT 1 AS candidate UNION SELECT "MenuId"+1 FROM public."Sys_Menus" WHERE "MenuId">=1 AND "MenuId"<2147483647) a
+           WHERE NOT EXISTS(SELECT FROM public."Sys_Menus" x WHERE x."MenuId"=a.candidate)) END FROM public."Sys_Menus"),resource,resource,'/wms/rma-applications','Switch',NULL,160,true,LOCALTIMESTAMP
           WHERE NOT EXISTS(SELECT FROM public."Sys_Menus" WHERE "MenuKey"=resource);
         END LOOP; END $$;
         INSERT INTO public."Sys_MenuAction"("Id","MenuId","ActionCode","ActionName","Sort","TenantId","CreateDate")

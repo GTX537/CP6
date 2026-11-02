@@ -49,7 +49,9 @@ public sealed class TransferRequestV1 : Migration
         END $$;
         LOCK TABLE public."Sys_Menus" IN SHARE ROW EXCLUSIVE MODE;
         INSERT INTO public."Sys_Menus"("MenuId","MenuKey","MenuName","RoutePath","Icon","ParentId","OrderNo","Enable","CreateDate")
-        SELECT COALESCE(MAX("MenuId"),0)+1,'wms-transfer-request','调拨请求','/wms/transfer-requests','Switch',NULL,161,true,LOCALTIMESTAMP
+        SELECT CASE WHEN COALESCE(MAX("MenuId"),0)<2147483647 THEN COALESCE(MAX("MenuId"),0)+1 ELSE
+          (SELECT min(candidate) FROM (SELECT 1 AS candidate UNION SELECT "MenuId"+1 FROM public."Sys_Menus" WHERE "MenuId">=1 AND "MenuId"<2147483647) a
+           WHERE NOT EXISTS(SELECT FROM public."Sys_Menus" x WHERE x."MenuId"=a.candidate)) END,'wms-transfer-request','调拨请求','/wms/transfer-requests','Switch',NULL,161,true,LOCALTIMESTAMP
         FROM public."Sys_Menus" HAVING NOT EXISTS(SELECT FROM public."Sys_Menus" WHERE "MenuKey"='wms-transfer-request');
         INSERT INTO public."Sys_MenuAction"("Id","MenuId","ActionCode","ActionName","Sort","TenantId","CreateDate")
         SELECT gen_random_uuid(),m."MenuId",a.code,a.name,a.sort,t."Id",LOCALTIMESTAMP

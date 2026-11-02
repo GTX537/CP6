@@ -47,7 +47,9 @@ public sealed class ReturnCorrectionV1 : Migration
         CREATE TRIGGER no_truncate BEFORE TRUNCATE ON cp6_return_correction_v1.proposals FOR EACH STATEMENT EXECUTE FUNCTION cp6_rma_formal_v1.immutable();
         LOCK TABLE public."Sys_Menus" IN SHARE ROW EXCLUSIVE MODE;
         INSERT INTO public."Sys_Menus"("MenuId","MenuKey","MenuName","RoutePath","Icon","ParentId","OrderNo","Enable","CreateDate")
-        SELECT (SELECT coalesce(max("MenuId"),0)+1 FROM public."Sys_Menus"),'wms-return-correction','退货纠错冲正','/wms/rma-applications','RefreshLeft',NULL,165,true,LOCALTIMESTAMP
+        SELECT (SELECT CASE WHEN COALESCE(MAX("MenuId"),0)<2147483647 THEN COALESCE(MAX("MenuId"),0)+1 ELSE
+          (SELECT min(candidate) FROM (SELECT 1 AS candidate UNION SELECT "MenuId"+1 FROM public."Sys_Menus" WHERE "MenuId">=1 AND "MenuId"<2147483647) a
+           WHERE NOT EXISTS(SELECT FROM public."Sys_Menus" x WHERE x."MenuId"=a.candidate)) END FROM public."Sys_Menus"),'wms-return-correction','退货纠错冲正','/wms/rma-applications','RefreshLeft',NULL,165,true,LOCALTIMESTAMP
         WHERE NOT EXISTS(SELECT FROM public."Sys_Menus" WHERE "MenuKey"='wms-return-correction');
         INSERT INTO public."Sys_MenuAction"("Id","MenuId","ActionCode","ActionName","Sort","TenantId","CreateDate")
         SELECT gen_random_uuid(),m."MenuId",a.code,a.code,a.sort,t."Id",LOCALTIMESTAMP FROM public."Sys_Menus" m CROSS JOIN public."Sys_Tenants" t

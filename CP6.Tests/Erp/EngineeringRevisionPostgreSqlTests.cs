@@ -244,6 +244,10 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         db.Sys_Tenants.Add(new() { Id = tenant.CurrentTenantId, TenantCode = name, TenantName = "Original tenant" });
         db.Pub_DocSequences.Add(new() { BizKey = "ENG_REV", Prefix = "ORIGINAL", SeqLength = 5, ResetCycle = 0, CurrentValue = 7 });
         db.Sys_Menus.Add(new() { MenuId = int.MaxValue, MenuKey = "original-menu-max", MenuName = "Original menu" });
+        db.Sys_Menus.Add(new() { MenuId = int.MaxValue - 1, MenuKey = "original-menu-near-max", MenuName = "Original adjacent menu" });
+        db.Sys_Roles.Add(new() { RoleId = 684, RoleName = "Original menu role" });
+        db.Sys_MenuActions.Add(new() { MenuId = int.MaxValue, ActionCode = "query", ActionName = "Original read" });
+        db.Sys_RoleActions.Add(new() { RoleId = 684, MenuId = int.MaxValue, ActionCode = "query" });
         await db.SaveChangesAsync(); db.ChangeTracker.Clear(); EngineeringProductVersionV1 original;
         await using (var transaction = await db.Database.BeginTransactionAsync())
         {
@@ -260,5 +264,21 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var menu = await db.Sys_Menus.Where(x => x.MenuKey == "plm-engineering-revision").SingleAsync(); Assert.NotEqual(int.MaxValue, menu.MenuId);
         Assert.False(await db.Sys_RoleActions.AnyAsync(x => x.MenuId == menu.MenuId));
         Assert.Equal(0, await db.Database.SqlQueryRaw<int>("SELECT count(*)::int AS \"Value\" FROM cp6_engineering_revision_v1.heads").SingleAsync());
+        string[] addedKeys = ["quality-return-inspection", "wms-return-resale", "mes-return-repair", "quality-return-scrap",
+            "purchasing-return-shipment", "wms-customer-return-shipment", "wms-return-correction", "wms-transfer-request"];
+        var added = await db.Sys_Menus.Where(x => addedKeys.Contains(x.MenuKey!)).OrderBy(x => x.MenuId).ToArrayAsync();
+        Assert.Equal(addedKeys.Length, added.Length);
+        Assert.All(added, x => Assert.InRange(x.MenuId, 1, int.MaxValue - 2));
+        Assert.Equal(added.Length, added.Select(x => x.MenuId).Distinct().Count());
+        Assert.Equal("Original menu", (await db.Sys_Menus.SingleAsync(x => x.MenuId == int.MaxValue)).MenuName);
+        Assert.Equal("original-menu-near-max", (await db.Sys_Menus.SingleAsync(x => x.MenuId == int.MaxValue - 1)).MenuKey);
+        var grant = Assert.Single(await db.Sys_RoleActions.ToArrayAsync());
+        Assert.Equal(684, grant.RoleId); Assert.Equal(int.MaxValue, grant.MenuId); Assert.Equal("query", grant.ActionCode);
+        var menus = await db.Sys_Menus.OrderBy(x => x.MenuId).Select(x => new { x.MenuId, x.MenuKey }).ToArrayAsync();
+        var actionCount = await db.Sys_MenuActions.CountAsync();
+        await db.Database.MigrateAsync();
+        Assert.Equal(menus, await db.Sys_Menus.OrderBy(x => x.MenuId).Select(x => new { x.MenuId, x.MenuKey }).ToArrayAsync());
+        Assert.Equal(actionCount, await db.Sys_MenuActions.CountAsync());
+        Assert.Single(await db.Sys_RoleActions.ToArrayAsync());
     }
 }

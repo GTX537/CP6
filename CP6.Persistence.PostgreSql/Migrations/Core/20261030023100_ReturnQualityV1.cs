@@ -33,7 +33,9 @@ public sealed class ReturnQualityV1 : Migration
         END LOOP; END $$;
         LOCK TABLE public."Sys_Menus" IN SHARE ROW EXCLUSIVE MODE;
         INSERT INTO public."Sys_Menus"("MenuId","MenuKey","MenuName","RoutePath","Icon","ParentId","OrderNo","Enable","CreateDate")
-        SELECT (SELECT coalesce(max("MenuId"),0)+1 FROM public."Sys_Menus"),'quality-return-inspection','退货质量判定','/wms/rma-applications','CircleCheck',NULL,159,true,LOCALTIMESTAMP
+        SELECT (SELECT CASE WHEN COALESCE(MAX("MenuId"),0)<2147483647 THEN COALESCE(MAX("MenuId"),0)+1 ELSE
+          (SELECT min(candidate) FROM (SELECT 1 AS candidate UNION SELECT "MenuId"+1 FROM public."Sys_Menus" WHERE "MenuId">=1 AND "MenuId"<2147483647) a
+           WHERE NOT EXISTS(SELECT FROM public."Sys_Menus" x WHERE x."MenuId"=a.candidate)) END FROM public."Sys_Menus"),'quality-return-inspection','退货质量判定','/wms/rma-applications','CircleCheck',NULL,159,true,LOCALTIMESTAMP
           WHERE NOT EXISTS(SELECT FROM public."Sys_Menus" WHERE "MenuKey"='quality-return-inspection');
         INSERT INTO public."Sys_MenuAction"("Id","MenuId","ActionCode","ActionName","Sort","TenantId","CreateDate")
         SELECT gen_random_uuid(),m."MenuId",a.code,a.name,a.sort,t."Id",LOCALTIMESTAMP FROM public."Sys_Menus" m CROSS JOIN public."Sys_Tenants" t
