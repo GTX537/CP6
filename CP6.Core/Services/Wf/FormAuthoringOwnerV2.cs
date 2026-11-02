@@ -13,7 +13,7 @@ namespace CP6.Core.Services.Wf;
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record FormAuthoringBodyV2(string Name, string SchemaJson, string? Category, string? SubCategory);
 public sealed record FormAuthoringViewV2(Guid DefinitionId, Guid DraftId, string Key, string Version,
-    Dictionary<string,string?> Fields, string[] WritableFields, bool Enabled = false, bool Published = false, int VersionNumber = 1);
+    Dictionary<string,string?> Fields, string[] WritableFields, bool Enabled = false, bool Published = false, int VersionNumber = 1, string? ActivationRevision = null);
 public sealed record FormAuthoringResultV2(string CommandId, string Outcome, Guid? ResourceId, string? ResourceVersion,
     FormAuthoringViewV2? Result, DateTimeOffset? RecordedAtUtc, string? CorrelationId);
 
@@ -73,17 +73,18 @@ public sealed partial class FormAuthoringOwnerV2
     }
 
     private sealed record Head(Guid Id,Guid DraftId,string Key,Guid OwnerId,Guid? DeptId,Guid Version,
-        string Name,string SchemaJson,string? Category,string? SubCategory,Guid SavedBy);
+        string Name,string SchemaJson,string? Category,string? SubCategory,Guid SavedBy, int Status = 0, int Number = 1, bool Enabled = false, Guid ActivationRevision = default);
     private IQueryable<Head> Heads()=>db.Database.SqlQuery<Head>($"""
         SELECT h.id AS "Id",h.draft_id AS "DraftId",h.form_key AS "Key",h.owner_id AS "OwnerId",h.owner_dept_id AS "DeptId",
-          d.row_version AS "Version",d.name AS "Name",d.schema_json AS "SchemaJson",d.category AS "Category",d.sub_category AS "SubCategory",d.saved_by AS "SavedBy"
+          d.row_version AS "Version",d.name AS "Name",d.schema_json AS "SchemaJson",d.category AS "Category",d.sub_category AS "SubCategory",d.saved_by AS "SavedBy",d.status AS "Status",d.version_number AS "Number",a.enabled AS "Enabled",a.revision AS "ActivationRevision"
         FROM cp6_form_authoring_v2.heads h JOIN cp6_form_authoring_v2.drafts d
           ON d.tenant_id=h.tenant_id AND d.environment_id=h.environment_id AND d.head_id=h.id AND d.id=h.draft_id
+        JOIN cp6_form_authoring_v2.activation_current a ON a.tenant_id=h.tenant_id AND a.environment_id=h.environment_id AND a.head_id=h.id
         WHERE h.tenant_id={db.CurrentTenantId} AND h.environment_id={fence.EnvironmentId}
         """);
     private async Task Ready(CancellationToken ct)
     {
-        if(!await db.Database.SqlQueryRaw<bool>("SELECT cp6_form_authoring_v2.ready() AS \"Value\"").SingleAsync(ct))
+        if(!await db.Database.SqlQueryRaw<bool>("SELECT cp6_form_authoring_v2.activation_ready() AS \"Value\"").SingleAsync(ct))
             throw Error("FORM_AUTHORING_WRITER_COVERAGE_UNAVAILABLE");
     }
     private int ResourceScope(UserPermissionContext actor)
@@ -145,7 +146,7 @@ public sealed partial class FormAuthoringOwnerV2
     private static Dictionary<string,string?> Values(Head head)=>new()
     { ["Name"]=head.Name,["SchemaJson"]=head.SchemaJson,["Category"]=head.Category,["SubCategory"]=head.SubCategory };
     private static FormAuthoringViewV2 View(Head head,FieldPermissionDecisionV1 permission)=>new(head.Id,head.DraftId,head.Key,head.Version.ToString("D"),
-        Values(head).Where(x=>permission.Fields[x.Key].CanRead).ToDictionary(),Fields.Where(x=>permission.Fields[x].CanWrite).ToArray());
+        Values(head).Where(x=>permission.Fields[x.Key].CanRead).ToDictionary(),Fields.Where(x=>permission.Fields[x].CanWrite).ToArray(),head.Enabled,head.Status==1,head.Number,head.ActivationRevision.ToString("D"));
     private async Task<bool> CanEdit(UserPermissionContext actor, CancellationToken ct)
     {
         var policy = await ReadPolicy(ct);
@@ -154,18 +155,21 @@ public sealed partial class FormAuthoringOwnerV2
             (from a in db.Sys_MenuActions join m in db.Sys_Menus on a.MenuId equals m.MenuId where m.Enable && m.MenuKey == "oa-designer" && a.ActionCode == "form-save" select a).AnyAsync(ct);
     }
 
-    public async Task<FormAuthoringViewV2> ReadAsync(string key,CancellationToken ct=default)
+    public Task<FormAuthoringViewV2> ReadAsync(string key,CancellationToken ct=default)=>ReadCurrentAsync(key,true,ct);
+    public Task<FormAuthoringViewV2> ReadHeadAsync(string key,CancellationToken ct=default)=>ReadCurrentAsync(key,false,ct);
+    private async Task<FormAuthoringViewV2> ReadCurrentAsync(string key,bool draftOnly,CancellationToken ct)
     {
         Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);await Root(ct);var actor=await Actor(ct);
         var head=await Heads().SingleOrDefaultAsync(x=>x.Key==key,ct)??throw Error("DEFINITION_NOT_FOUND",404);
-        var permission=await Permission(actor,head,await CanEdit(actor,ct),false,ct);
+        var permission=await Permission(actor,head,head.Status==0&&await CanEdit(actor,ct),false,ct);
+        if(draftOnly&&head.Status!=0)throw Error("DRAFT_NOT_FOUND",404);
         if((await Actor(ct)).UserId!=actor.UserId)throw Error("REAUTH_REQUIRED",401);CompletionClock();return View(head,permission);
     }
-    public async Task<FormAuthoringViewV2[]> ListAsync(int page=1,CancellationToken ct=default)
+    public async Task<FormAuthoringViewV2[]> ListAsync(int page=1,CancellationToken ct=default,string readMenu="oa-designer")
     {
         if(page<1||page>100000)throw Error("PAGE_INVALID",400);
         Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);await Root(ct);var actor=await Actor(ct);
-        await ReadCapability(actor,ct);var query=Heads();var scope=ResourceScope(actor);
+        await ReadCapability(actor,ct,readMenu);var query=Heads();var scope=ResourceScope(actor);
         if(scope==1)query=query.Where(h=>h.OwnerId==actor.UserId);
         else if(scope is 2 or 3 or 4)
         {
@@ -176,9 +180,9 @@ public sealed partial class FormAuthoringOwnerV2
         }
         var result=new List<FormAuthoringViewV2>();
         foreach(var head in await query.OrderBy(h=>h.Key).Skip((page-1)*100).Take(100)
-            .Select(h=>new Head(h.Id,h.DraftId,h.Key,h.OwnerId,h.DeptId,h.Version,h.Name,"",h.Category,h.SubCategory,h.SavedBy)).ToArrayAsync(ct))
+            .Select(h=>new Head(h.Id,h.DraftId,h.Key,h.OwnerId,h.DeptId,h.Version,h.Name,"",h.Category,h.SubCategory,h.SavedBy,h.Status,h.Number,h.Enabled,h.ActivationRevision)).ToArrayAsync(ct))
         {
-            var permission=await Permission(actor,head,false,false,ct);var view=View(head,permission);view.Fields.Remove("SchemaJson");result.Add(view);
+            var permission=await Permission(actor,head,false,false,ct,readMenu);var view=View(head,permission);view.Fields.Remove("SchemaJson");result.Add(view);
         }
         if((await Actor(ct)).UserId!=actor.UserId)throw Error("REAUTH_REQUIRED",401);CompletionClock();return result.ToArray();
     }
@@ -244,6 +248,7 @@ public sealed partial class FormAuthoringOwnerV2
             var permission=await Permission(actor,head,true,old==null,ct);
             if(old!=null&&command.Expected==null)throw Error("DEFINITION_EXISTS",409);
             if(old==null&&command.Expected!=null||old!=null&&command.Expected!=old.Version.ToString("D"))throw Error("DEFINITION_CHANGED",409);
+            if(old?.Status==1)throw Error("DRAFT_REQUIRED",409);
             var b=command.Body;var next=head with {Name=b.Name,SchemaJson=b.SchemaJson,Category=b.Category,SubCategory=b.SubCategory,SavedBy=actor.UserId};
             CheckWrites(old,next,permission);
             try{_ = FormSchemaValidationV1.Parse(b.SchemaJson);}
@@ -268,7 +273,7 @@ public sealed partial class FormAuthoringOwnerV2
                 if(changed!=1)throw Error("DEFINITION_CHANGED",409);
             }
             next=await Heads().SingleAsync(x=>x.Key==key,ct);var at=DateTimeOffset.UtcNow;
-            var snapshot=new FormAuthoringViewV2(next.Id,next.DraftId,key,next.Version.ToString("D"),Values(next),[]);
+            var snapshot=new FormAuthoringViewV2(next.Id,next.DraftId,key,next.Version.ToString("D"),Values(next),[],next.Enabled,false,next.Number,next.ActivationRevision.ToString("D"));
             var saved=new FormAuthoringResultV2(command.Id,"SUCCEEDED",next.Id,snapshot.Version,snapshot,at,command.Correlation);
             var text=JsonSerializer.Serialize(saved,Json);
             await db.Database.ExecuteSqlInterpolatedAsync($"""

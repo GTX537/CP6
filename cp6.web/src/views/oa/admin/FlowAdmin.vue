@@ -40,6 +40,7 @@
         </CpListPage>
       </el-tab-pane>
       <el-tab-pane label="审批业务绑定" name="binding" lazy><ApprovalBindingPanelV2 /></el-tab-pane>
+      <el-tab-pane label="表单版本启停" name="form-activation" lazy><FormActivationPanelV2 /></el-tab-pane>
       <el-tab-pane label="准确版本启停" name="activation" lazy><FlowActivationPanelV2 /></el-tab-pane>
       <el-tab-pane :label="t('oa.flowtrigger.tab')" name="triggers" lazy>
         <FlowTriggerPanel />
@@ -62,6 +63,7 @@ import CpPageShell from '@/components/templates/CpPageShell.vue'
 import CpListPage, { type ListColumn, type ListFetch, type ListPageExpose } from '@/components/templates/CpListPage.vue'
 import FlowTriggerPanel from './FlowTriggerPanel.vue'
 import FlowActivationPanelV2 from './FlowActivationPanelV2.vue'
+import FormActivationPanelV2 from './FormActivationPanelV2.vue'
 import ApprovalBindingPanelV2 from './ApprovalBindingPanelV2.vue'
 import WfConnectorPanel from './WfConnectorPanel.vue'
 import BatchTransferDialog from './BatchTransferDialog.vue'

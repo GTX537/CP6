@@ -17,7 +17,7 @@ const data = <T>(value: any): T => value?.data ?? value
 export const formAuthoringApi = {
   entry: async (signal?: AbortSignal) => data<FormAuthoringEntry>(await http.get('/oa/v2/definitions/FORM/entry', { signal })),
   list: async (page: number, signal?: AbortSignal) => data<FormAuthoringView[]>(await http.get('/oa/v2/definitions/FORM', { params: { page }, signal })),
-  read: async (key: string, signal?: AbortSignal) => data<FormAuthoringView>(await http.get(`/oa/v2/definitions/FORM/${encodeURIComponent(key)}/draft`, { signal })),
+  read: async (key: string, signal?: AbortSignal) => data<FormAuthoringView>(await http.get(`/oa/v2/definitions/FORM/${encodeURIComponent(key)}`, { signal })),
   save: async (key: string, command: FormAuthoringCommand, signal?: AbortSignal) => data<FormAuthoringResult>(await http.put(`/oa/v2/definitions/FORM/${encodeURIComponent(key)}/draft`, command, { signal })),
   original: async (key: string, command: string, signal?: AbortSignal) => data<FormAuthoringResult>(await http.get(`/oa/v2/commands/${encodeURIComponent(command)}`, { params: { operation: 'FORM_SAVE_DRAFT', resource: key }, signal })),
 }

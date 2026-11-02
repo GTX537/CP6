@@ -161757,6 +161757,11 @@
       "date": "2026-11-02",
       "change": "W269：FORM独立草稿Owner/显式政策、当前会话/资源/字段权限、WFC原命令及CAS、旧身份互斥、完整表单设计器工作区已实现验证。24小时持续目标第二窗口，下一步W270。",
       "evidence": "docs/development/evidence/W269-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-02",
+      "change": "W270：FORM准确发布预览/不可变版本、显式准确来源下一草稿、独立激活CAS/历史/原件及设计器/管理页采用已实现验证；24h持续目标第三窗口，继续W271。",
+      "evidence": "docs/development/evidence/W270-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -196310,19 +196315,20 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W269-01",
+        "window": "W270-01",
         "as_of": "2026-11-02",
         "classification": "明确实现余项",
-        "report": "docs/development/evidence/W269-01/DELIVERY.md",
-        "delivered": "W170/172不可变FLOW草稿和W173/174发布/激活已经实现，GET不隐式写草稿。 W268完整FORM往返/schema与FLOW致命结构。 W269独立FORM草稿Owner/当前权限/CAS/原件及设计器工作区。",
-        "remaining": "WP12-01仍余FORM不可变发布/独立启停与固定sourceVersion克隆、完整原AC；WP12-02余FORM/子流程精确依赖、唯一绑定及实际运行/旧入口采用；表单个人草稿/提交字段规则授权、文件/选项Owner资格、跨窗口浏览器到PG全链按后续窗口执行。原59局部仍3闭环/56余项，不以本切片关闭整卡。",
+        "report": "docs/development/evidence/W270-01/DELIVERY.md",
+        "delivered": "W170/172不可变FLOW草稿和W173/174发布/激活已经实现，GET不隐式写草稿。 W268完整FORM往返/schema与FLOW致命结构。 W269独立FORM草稿Owner/当前权限/CAS/原件及设计器工作区。 W270准确FORM发布/不可变版本、显式下一草稿及独立激活和页面。",
+        "remaining": "WP12-01仍余FLOW/FORM固定sourceVersion克隆、完整原AC与比较等原范围；WP12-02仍余FORM/子流程精确依赖、唯一绑定和实际运行/旧入口采用。文件Owner准入、提交字段/规则权限、个人草稿及跨窗口浏览器到PG全链按W272–279推进。新FORM启用配置不代表运行入口已接入，未知影响数不写0；125/247及原375整卡状态保持，59局部仍3闭环/56余项。",
         "evidence_refs": [
           "docs/development/evidence/W170-01/DELIVERY.md",
           "docs/development/evidence/W172-01/DELIVERY.md",
           "docs/development/evidence/W173-01/DELIVERY.md",
           "docs/development/evidence/W174-01/DELIVERY.md",
           "docs/development/evidence/W268-01/DELIVERY.md",
-          "docs/development/evidence/W269-01/DELIVERY.md"
+          "docs/development/evidence/W269-01/DELIVERY.md",
+          "docs/development/evidence/W270-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true
@@ -196392,6 +196398,13 @@
             "workspace_clean": true
           }
         ]
+      },
+      "wave270_form_publication": {
+        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W270-01/DELIVERY.md",
+        "full_task_completed": false,
+        "validation": "本地36项唯一PG18行为通过、0跳过（15 FORM草稿回归、19 FORM发布/激活、2既有FLOW实际HTTP回归）；24项Vue组件行为通过；显式应用配置vue-tsc --noEmit -p tsconfig.app.json --extendedDiagnostics通过，实际检查3325文件。当前Main真实登录/CSRF/HTTP与隔离PG执行，政策/业务数据模拟；无Actions/工作流变更/既有环境迁移/生产部署。",
+        "remaining": "WP12-01仍余FLOW/FORM固定sourceVersion克隆、完整原AC与比较等原范围；WP12-02仍余FORM/子流程精确依赖、唯一绑定和实际运行/旧入口采用。文件Owner准入、提交字段/规则权限、个人草稿及跨窗口浏览器到PG全链按W272–279推进。新FORM启用配置不代表运行入口已接入，未知影响数不写0；125/247及原375整卡状态保持，59局部仍3闭环/56余项。"
       }
     },
     {
@@ -196484,6 +196497,13 @@
         ],
         "formal_state_changed": false,
         "new_product_validation": false
+      },
+      "wave270_form_activation": {
+        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W270-01/DELIVERY.md",
+        "full_task_completed": false,
+        "consumer_state": "NOT_ADOPTED",
+        "remaining": "WP12-01仍余FLOW/FORM固定sourceVersion克隆、完整原AC与比较等原范围；WP12-02仍余FORM/子流程精确依赖、唯一绑定和实际运行/旧入口采用。文件Owner准入、提交字段/规则权限、个人草稿及跨窗口浏览器到PG全链按W272–279推进。新FORM启用配置不代表运行入口已接入，未知影响数不写0；125/247及原375整卡状态保持，59局部仍3闭环/56余项。"
       }
     },
     {
@@ -201064,7 +201084,7 @@
       "path": "docs/development/dispatch/20261102-wave270/README.md",
       "baseline_sha": "782ec746f78031059ec50b4987a48e325427f202",
       "registered_at": "2026-11-02T14:19:59.057423+00:00",
-      "phase": "IMPLEMENTING",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -201091,17 +201111,17 @@
           "title": "FORM发布版本与独立激活",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "IMPLEMENTING",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w270-01",
           "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
@@ -201109,14 +201129,33 @@
             "Main:oa-definition",
             "Main:Core-PG-migration",
             "Main:authorization-catalog"
-          ]
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W270-01/DELIVERY.md",
+          "validation": "本地36项唯一PG18行为通过、0跳过（15 FORM草稿回归、19 FORM发布/激活、2既有FLOW实际HTTP回归）；24项Vue组件行为通过；显式应用配置vue-tsc --noEmit -p tsconfig.app.json --extendedDiagnostics通过，实际检查3325文件。当前Main真实登录/CSRF/HTTP与隔离PG执行，政策/业务数据模拟；无Actions/工作流变更/既有环境迁移/生产部署。",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave270-final-verification.json"
+          },
+          "business_acceptance": "FORM_PUBLICATION_ACTIVATION_LOCAL_PG_HTTP_PASS;RUNTIME_DEPENDENCIES_FULL_CARD_REMAIN"
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W270 FORM准确发布预览、不可变发布版本、显式下一草稿及独立启停；当前政策/权限、原命令、CAS、强审计和实际页面采用。24h持续目标第三窗口。"
+      "next_action": "W270 FORM准确发布预览、不可变发布版本、显式下一草稿及独立启停；当前政策/权限、原命令、CAS、强审计和实际页面采用。24h持续目标第三窗口。",
+      "lifecycle_snapshot": {
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_seat_released": false,
+        "main_branch_deleted": false,
+        "handoff_branch_deleted": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave270-final-verification.json"
+      }
     },
     "wave_history": [
       {
@@ -236452,7 +236491,7 @@
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 4402,
+      "effective_seconds_recorded": 6125,
       "next_reestimate_at_effective_seconds": 7200,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
@@ -236519,8 +236558,18 @@
             1,
             2
           ],
-          "state": "IN_PROGRESS",
-          "started_at": "2026-11-02T14:19:59.057423+00:00"
+          "state": "VERIFYING",
+          "started_at": "2026-11-02T14:19:59.057423+00:00",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W270-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave270-final-verification.json"
+          }
         },
         {
           "id": "W271-01",
@@ -236650,7 +236699,7 @@
         }
       ],
       "reestimates": [],
-      "timing_snapshot_at": "2026-11-02T14:19:59.057423+00:00"
+      "timing_snapshot_at": "2026-11-02T14:48:42.279083+00:00"
     },
     "execution_plan_history": [
       {
