@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
+import { defineComponent, h, ref } from 'vue'
 import type { ReviewDetail } from '@/api/plm/iterationReview'
 import type { IssueCommand } from '@/api/plm/iterationReviewActions'
 const api = vi.hoisted(() => ({ context: vi.fn(), issues: vi.fn(), issue: vi.fn(), apply: vi.fn(), withdraw: vi.fn(), businessGrants: vi.fn(), grantBusiness: vi.fn(), tasks: vi.fn(), decide: vi.fn(), operation: vi.fn(), decisionOperation: vi.fn(), reviewers: vi.fn(), scope: vi.fn(), list: vi.fn(), read: vi.fn(), authenticated: true, denied: [] as string[] }))
@@ -28,6 +29,22 @@ beforeEach(() => {
   Object.defineProperty(navigator, 'locks', { configurable: true, value: { request: (_a: string, _b: unknown, action: (lock: object) => unknown) => action({}) } })
 })
 afterEach(() => { view?.unmount(); view = undefined })
+it('keeps a committed application result when its changed event makes the parent temporarily busy', async () => {
+  const parentBusy = ref(false), applied = { ...receipt, application: 'APPLIED', outcomeCode: 'ITERATION_APPROVED', receiptRevision: '2' }
+  api.apply.mockImplementation(async (_id, _etag, command) => {
+    api.context.mockResolvedValue(ok({ iterationId: id(3), submissionId: id(4), businessStage: 'REVIEW_APPROVED', decision: 'APPROVED', receipt: applied }))
+    return ok({ operationId: command.operationId, objectId: id(3), receipt: applied })
+  })
+  view = mount(defineComponent({ setup: () => () => h(Panel, { iterationId: id(3), detail, submissions: [detail.submission], currentSubmission: id(4), scope, disabled: parentBusy.value, onChanged: () => { parentBusy.value = true } }) }))
+  await flushPromises(); await field('迭代批准应用原因').setValue('Apply then refresh parent')
+  await button('应用本轮审批决定').trigger('submit'); await flushPromises()
+  expect(parentBusy.value).toBe(true)
+  expect(view.find('[role="alert"]').exists()).toBe(false)
+  expect(view.text()).toContain('回执版本 2'); expect(view.text()).toContain('当前业务阶段：评审批准')
+  expect(pendingIterationAction(scope)).toBeNull()
+  parentBusy.value = false; await flushPromises()
+  expect(view.text()).toContain('回执版本 2'); expect(api.apply).toHaveBeenCalledTimes(1)
+})
 it('creates exact round business authorization and retains only original recovery identifiers after a lost response', async () => {
   api.businessGrants.mockResolvedValue(ok([])); api.grantBusiness.mockRejectedValue(new Error('lost grant acknowledgement'))
   await start(); await field('业务受托人').setValue(id(6)); await field('业务委派生效时间').setValue('2026-11-02T10:00'); await field('业务委派结束时间').setValue('2026-11-03T10:00'); await field('业务委派原因').setValue('Private exact-round authorization')
