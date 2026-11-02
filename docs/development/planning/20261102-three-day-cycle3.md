@@ -35,3 +35,7 @@ D1实现与原步骤复测通过，见[W258交付](../evidence/W258-01/DELIVERY.
 执行顺序调整：D2真实60分钟保留期测试运行期间，Main协调分支可靠保存/官方deferred并释放DEV-1，COORD单人转独立W260分支实现D3。D3实际HTTP已通过，见[交付](../evidence/W260-01/DELIVERY.md)；D2仍在运行，整期不提前完成。最终合并/通信/席位核销按同轮proof。
 
 第三期验收已收齐：D1菜单极值修复、D2实际60分钟匿名化后持久Expired、D3受权编号管理HTTP。D2真实结果见[交付](../evidence/W259-01/DELIVERY.md)；D1/D3与CRM/Handoff已准确采用/finish，Main最终收尾以wave260-final-verification.json为准，不能据此关闭完整375卡。
+
+## 第三期最终核销（W261接续）
+
+wave260-final-verification.json为PASS：D1/W258、D2/W259、D3/W260全部正常采用，精确分支删除、官方finish及席位释放完成。先前待Main最后finish是提交前历史快照。本次归档只核销已完成事实，不重复运行。原375卡真实余项保留。

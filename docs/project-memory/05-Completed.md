@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-02：W261 CodeGen差异预览
+
+CodeGen新增固定模板差异与覆盖范围纯预览：精确建议路径、用户提供原文件、无损自定义区保留、线性差异及逐文件覆盖白名单，实际API和Vue页面已验证。没有文件应用或元数据持久化。 [交付](../development/evidence/W261-01/DELIVERY.md)。
+
+42 affected CodeGen checks PASS,0 skipped (including new comparison behavior and real MVC routing/auth/permission with identity and in-memory metadata fixtures);Vue type-check exit0;actual Chrome/Vue page behavior PASS with simulated API/identity. No PostgreSQL instance required or started for pure text comparison. Initial missing-route RED,two test compilation failures,and first page-selector timeout retained;fixed and relevant checks passed. No Actions or deployment.
+
+第三期三天按最终proof归档完成；375原卡与原59局部余56保持。实际文件应用、元数据CAS及编号业务消费者仍余项。Main/Handoff本提交待正常采用/finish，以wave261-final-verification.json核销分支、工作区和席位。
+
 ## 2026-11-02：W259第三期D2与整期收尾
 
 第三期D2完成真实HTTP提交/撤回、实际60分钟保留期匿名化、已匿名化原件进入Expired、失败回滚及丢响应原结果恢复；原审查截止和擦除墓碑保持、PII不复活。D1菜单极值修复及D3受权编号管理API已先完成，第三期限定实现/验收收齐，整期最终生命周期按proof核销。 [交付](../development/evidence/W259-01/DELIVERY.md)。

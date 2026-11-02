@@ -73,6 +73,7 @@
           <pre class="codegen-pre">{{ output.content }}</pre>
         </el-tab-pane>
       </el-tabs>
+      <CodeGenComparisonPanel :table="table" :columns="columns" :preview="previewResult" />
     </el-card>
   </div>
 </template>
@@ -81,6 +82,7 @@
 import { onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
+import CodeGenComparisonPanel from './CodeGenComparisonPanel.vue'
 import { codeGenApi, type CodeGenColumnInput, type CodeGenPreview, type CodeGenTableInput } from '@/api/pub/codegen'
 
 const { t } = useI18n()

@@ -28,6 +28,33 @@ namespace CP6.Tests;
 public class CodeGenPreviewHttpTests
 {
     [Fact]
+    public async Task Comparison_requires_view_and_compares_only_supplied_files_without_saves()
+    {
+        await using var host = await PreviewHost.Start();
+        var (table, columns) = CodeGenPreviewTests.Input();
+        var target = "CP6.Entity/DomainModels/Erp/Demo.cs";
+        var body = new { table, columns, templateRef = CodeGenService.PreviewTemplateRef,
+            templateVersion = CodeGenService.PreviewTemplateVersion,
+            existingFiles = new[] { new { targetPath = target, content = "old\r\n" } },
+            overwritePaths = Array.Empty<string>() };
+        Assert.Equal(HttpStatusCode.Unauthorized, (await host.Send("comparison/v1", body, null)).StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, (await host.Send("comparison/v1", body, "save")).StatusCode);
+        using var response = await host.Send("comparison/v1", body, "view");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        using var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        var result = json.RootElement.GetProperty("data");
+        Assert.False(result.GetProperty("applied").GetBoolean());
+        Assert.Equal("OverwriteBlocked", result.GetProperty("outputs")[0].GetProperty("status").GetString());
+        Assert.Equal("old\r\n", result.GetProperty("outputs")[0].GetProperty("difference").GetProperty("removedLines")[0].GetString());
+        Assert.Equal("NoBaseline", result.GetProperty("outputs")[1].GetProperty("status").GetString());
+        using var invalid = await host.Send("comparison/v1", body with { overwritePaths = new[] { "../appsettings.json" } }, "view");
+        await SafeBadRequest(invalid);
+        using var missing = await host.Send("comparison/v1", new { table, columns }, "view");
+        await SafeBadRequest(missing);
+        Assert.Equal(0, host.Writes.Attempts);
+    }
+
+    [Fact]
     public async Task Real_routes_enforce_authentication_view_permission_compatibility_and_no_saves()
     {
         await using var host = await PreviewHost.Start();
