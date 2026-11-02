@@ -14,7 +14,7 @@ namespace CP6.Core.Services.Platform;
 /// <para>建租户原子（R9-a）：<c>Sys_Tenant</c> + 首个 admin 用户走单 <c>SaveChangesAsync</c>，EF 单事务包裹。</para>
 /// <para>必需管理审计（TenantCreated/Updated/Suspended/Reactivated）显式落平台租户，与业务同事务。</para>
 /// </summary>
-public class TenantAdminService : ITenantAdminService
+public partial class TenantAdminService : ITenantAdminService
 {
     private readonly CP6Context _db;
     private readonly IPasswordHasher _hasher;

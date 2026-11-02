@@ -39,19 +39,7 @@
       <el-table-column prop="userCount" :label="t('platform.tenant.userCount')" width="90" align="center" />
       <el-table-column :label="t('table.operation')" width="220">
         <template #default="{ row }">
-          <el-button link type="primary" @click="openEdit(row)">{{ t('table.edit') }}</el-button>
-          <el-button
-            v-if="row.enable"
-            link
-            type="warning"
-            @click="doSuspend(row)"
-          >{{ t('platform.tenant.suspend') }}</el-button>
-          <el-button
-            v-else
-            link
-            type="success"
-            @click="doReactivate(row)"
-          >{{ t('platform.tenant.reactivate') }}</el-button>
+          <el-button link type="primary" @click="management?.open(row.id)">{{ t('管理配置与启停') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -110,41 +98,7 @@
       </template>
     </el-dialog>
 
-    <!-- 编辑租户对话框 -->
-    <el-dialog v-model="editVisible" :title="t('table.edit')" width="520px">
-      <el-form :model="editForm" label-width="120px">
-        <el-form-item :label="t('platform.tenant.name')">
-          <el-input v-model="editForm.name" />
-        </el-form-item>
-        <el-form-item :label="t('platform.tenant.expire')">
-          <el-date-picker v-model="editForm.expire" type="date" value-format="YYYY-MM-DD" style="width: 100%" />
-        </el-form-item>
-        <el-form-item :label="t('platform.tenant.timeZone')">
-          <el-select
-            v-model="editForm.timeZoneId"
-            filterable
-            clearable
-            :placeholder="t('platform.tenant.timeZonePlaceholder')"
-            style="width: 100%"
-          >
-            <el-option
-              v-for="tz in TIMEZONE_OPTIONS"
-              :key="tz.value"
-              :label="tz.label"
-              :value="tz.value"
-            />
-          </el-select>
-          <div class="tz-hint">{{ t('platform.tenant.timeZoneHint') }}</div>
-        </el-form-item>
-        <el-form-item :label="t('platform.tenant.remark')">
-          <el-input v-model="editForm.remark" type="textarea" :rows="2" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="editVisible = false">{{ t('table.cancel') }}</el-button>
-        <el-button type="primary" :loading="saving" @click="doUpdate">{{ t('table.confirm') }}</el-button>
-      </template>
-    </el-dialog>
+    <TenantManagementPanel ref="management" @changed="loadData" />
   </div>
 </template>
 
@@ -154,10 +108,11 @@ import { useI18n } from 'vue-i18n'
 import { Search, Plus, CopyDocument } from '@element-plus/icons-vue'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { tenantApi } from '@/api/platform/tenant'
-import { TIMEZONE_OPTIONS, normalizeTimeZoneId } from '@/api/platform/timezones'
+import TenantManagementPanel from './TenantManagementPanel.vue'
 import type { TenantRow, CreateTenantResult } from '@/types/platform/platform'
 
 const { t } = useI18n()
+const management = ref<InstanceType<typeof TenantManagementPanel>>()
 
 const tableData = ref<TenantRow[]>([])
 const total = ref(0)
@@ -244,65 +199,6 @@ async function copyTempPwd() {
   }
 }
 
-// ── 编辑 ────────────────────────────────────────────
-const editVisible = ref(false)
-const saving = ref(false)
-const editForm = reactive({
-  id: '',
-  name: '',
-  expire: '' as string | null,
-  remark: '' as string | null,
-  timeZoneId: '' as string | null
-})
-
-async function openEdit(row: TenantRow) {
-  editForm.id = row.id
-  editForm.name = row.tenantName
-  editForm.expire = row.expireDate ? row.expireDate.slice(0, 10) : ''
-  editForm.remark = ''
-  editForm.timeZoneId = ''
-  editVisible.value = true
-  // 拉详情回填 remark + 当前时区（列表行不含此二者）
-  try {
-    const d = await tenantApi.get(row.id)
-    editForm.remark = d.remark ?? ''
-    editForm.timeZoneId = d.timeZoneId ?? ''
-  } catch {
-    // 详情拉取失败不阻断编辑（拦截器已提示）
-  }
-}
-
-async function doUpdate() {
-  saving.value = true
-  try {
-    await tenantApi.update(editForm.id, {
-      name: editForm.name.trim(),
-      expire: editForm.expire || null,
-      remark: editForm.remark || null,
-      timeZoneId: normalizeTimeZoneId(editForm.timeZoneId)
-    })
-    editVisible.value = false
-    ElMessage.success(t('platform.saved'))
-    loadData()
-  } catch {
-    // E-SEC-032 由拦截器提示
-  } finally {
-    saving.value = false
-  }
-}
-
-// ── 停用 / 重启用 ────────────────────────────────────
-async function doSuspend(row: TenantRow) {
-  await tenantApi.suspend(row.id)
-  ElMessage.success(t('platform.saved'))
-  loadData()
-}
-async function doReactivate(row: TenantRow) {
-  await tenantApi.reactivate(row.id)
-  ElMessage.success(t('platform.saved'))
-  loadData()
-}
-
 onMounted(() => loadData())
 </script>
 
@@ -345,11 +241,5 @@ onMounted(() => loadData())
   font-weight: 600;
   color: #b45309;
   letter-spacing: 0.04em;
-}
-.tz-hint {
-  margin-top: 4px;
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--el-text-color-secondary);
 }
 </style>
