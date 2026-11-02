@@ -2,7 +2,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
 import type { ReviewDetail } from '@/api/plm/iterationReview'
 import type { IssueCommand } from '@/api/plm/iterationReviewActions'
-const api = vi.hoisted(() => ({ context: vi.fn(), issues: vi.fn(), issue: vi.fn(), apply: vi.fn(), withdraw: vi.fn(), tasks: vi.fn(), decide: vi.fn(), operation: vi.fn(), decisionOperation: vi.fn(), reviewers: vi.fn(), scope: vi.fn(), list: vi.fn(), read: vi.fn(), authenticated: true, denied: [] as string[] }))
+const api = vi.hoisted(() => ({ context: vi.fn(), issues: vi.fn(), issue: vi.fn(), apply: vi.fn(), withdraw: vi.fn(), businessGrants: vi.fn(), grantBusiness: vi.fn(), tasks: vi.fn(), decide: vi.fn(), operation: vi.fn(), decisionOperation: vi.fn(), reviewers: vi.fn(), scope: vi.fn(), list: vi.fn(), read: vi.fn(), authenticated: true, denied: [] as string[] }))
 vi.mock('@/api/plm/iterationReviewActions', () => ({ iterationReviewActions: api }))
 vi.mock('@/api/plm/iterationReview', () => ({ iterationReviewApi: api }))
 vi.mock('@/api/plm/engineeringIteration', () => ({ engineeringIterationApi: api }))
@@ -28,6 +28,28 @@ beforeEach(() => {
   Object.defineProperty(navigator, 'locks', { configurable: true, value: { request: (_a: string, _b: unknown, action: (lock: object) => unknown) => action({}) } })
 })
 afterEach(() => { view?.unmount(); view = undefined })
+it('creates exact round business authorization and retains only original recovery identifiers after a lost response', async () => {
+  api.businessGrants.mockResolvedValue(ok([])); api.grantBusiness.mockRejectedValue(new Error('lost grant acknowledgement'))
+  await start(); await field('业务受托人').setValue(id(6)); await field('业务委派生效时间').setValue('2026-11-02T10:00'); await field('业务委派结束时间').setValue('2026-11-03T10:00'); await field('业务委派原因').setValue('Private exact-round authorization')
+  await button('保存业务授权').trigger('submit'); await flushPromises()
+  expect(api.grantBusiness).toHaveBeenCalledTimes(1); expect(api.grantBusiness.mock.calls[0]?.[1]).toMatchObject({ submissionId: id(4), delegateId: id(6), fromUtc: '2026-11-02T10:00:00.000Z', actions: ['review-withdraw'], grantId: null })
+  const pending = pendingIterationAction(scope)!; expect(pending.kind).toBe('BUSINESS_GRANT'); expect(JSON.stringify(localStorage)).not.toContain('Private exact-round authorization')
+  api.operation.mockResolvedValue(ok({ operationId: pending.operationId, state: 'UNKNOWN' })); await click('查询原处理结果'); expect(pendingIterationAction(scope)).toEqual(pending); expect(api.grantBusiness).toHaveBeenCalledTimes(1)
+})
+it('requires explicit withdrawal reauthorization and links its new command to the exact blocked predecessor', async () => {
+  api.context.mockResolvedValue(ok({ iterationId: id(3), submissionId: id(4), etag: '"current"', businessStage: 'IN_DESIGN', controlRowVersion: 'AAAAAAAAAAI=', decision: null, receipt: null,
+    withdrawalAuthorizations: [{ commandId: id(30), previousCommandId: null, state: 'BLOCKED', actualHandlerId: id(6), requesterId: id(2), grantId: id(31), grantRevision: '1' }] }))
+  api.businessGrants.mockResolvedValue(ok([{ grantId: id(32), grantorId: id(6), delegateId: scope.actorId, enabled: true, fromUtc: '2000-01-01T00:00:00Z', toUtc: '2100-01-01T00:00:00Z', actions: ['review-withdraw'] }]))
+  api.withdraw.mockRejectedValue(new Error('lost new command')); await start(); expect(api.withdraw).not.toHaveBeenCalled(); await click('读取本轮业务委派'); await field('业务委托人').setValue(id(6)); await field('撤回重新授权原因').setValue('Current new authority')
+  await button('以当前身份明确重新授权撤回').trigger('submit'); await flushPromises()
+  expect(api.withdraw).toHaveBeenCalledTimes(1); expect(api.withdraw.mock.calls[0]?.slice(0, 3)).toEqual([id(3), id(4), 'AAAAAAAAAAI=']); expect(api.withdraw.mock.calls[0]?.slice(4)).toEqual([id(6), id(30)])
+  expect(pendingIterationAction(scope)).toMatchObject({ kind: 'WITHDRAWAL', targetId: id(30) }); expect(view!.text()).not.toContain('实际操作人')
+})
+it('uses the separate explicit application authorization endpoint only after the user requests it', async () => {
+  api.context.mockResolvedValue(ok({ iterationId: id(3), submissionId: id(4), etag: '"blocked"', businessStage: 'IN_REVIEW', decision: 'APPROVED', receipt }))
+  api.apply.mockRejectedValue(new Error('unknown explicit authorization')); await start(); expect(api.apply).not.toHaveBeenCalled(); await field('迭代批准应用原因').setValue('Take current responsibility'); await click('以当前身份明确重新授权应用')
+  expect(api.apply).toHaveBeenCalledTimes(1); expect(api.apply.mock.calls[0]?.[2]).toMatchObject({ expectedReceiptId: id(7), reason: 'Take current responsibility' }); expect(api.apply.mock.calls[0]?.[4]).toBe(true)
+})
 it('creates a blocking issue at the selected exact candidate and assigned project member', async () => {
   api.issue.mockImplementation(async (_id, _etag, c: IssueCommand) => ok({ operationId: c.operationId, iterationId: id(3), issue: { id: c.issueId, iterationId: id(3), submissionId: c.submissionId, revision: '1' } }))
   await start(); await click('登记评审问题'); await field('评审问题位置').setValue(id(8)); await field('候选字段路径').setValue('/definition/changeSummary'); await field('问题责任人').setValue(id(6)); await field('问题截止日期').setValue('2026-11-01'); await field('问题处理内容').setValue('Clarify source'); await field('问题处理原因').setValue('Independent review'); await button('保存问题处理').trigger('submit'); await flushPromises()

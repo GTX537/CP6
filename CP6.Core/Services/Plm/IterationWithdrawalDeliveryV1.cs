@@ -249,8 +249,10 @@ public sealed class IterationWithdrawalDeliveryV1(CP6Context db, ScopeAuthorizat
     internal static async Task<ToolApplicationDeliveryViewV2?> ForSubmission(CP6Context db,Guid environment,Guid submission,CancellationToken ct)
     {
         var id=await db.Database.SqlQuery<Guid?>($"""
-            SELECT id AS "Value" FROM cp6_iteration_review_control_v1.withdraw_outbox
-            WHERE environment_id={environment} AND tenant_id={db.CurrentTenantId} AND submission_id={submission}
+            SELECT o.id AS "Value" FROM cp6_iteration_review_control_v1.withdraw_outbox o
+            WHERE o.environment_id={environment} AND o.tenant_id={db.CurrentTenantId} AND o.submission_id={submission}
+              AND NOT EXISTS(SELECT FROM cp6_iteration_review_control_v1.withdrawals next WHERE next.environment_id=o.environment_id
+                AND next.tenant_id=o.tenant_id AND next.previous_command_id=o.command_id)
             """).SingleOrDefaultAsync(ct);
         return id==null?null:await ReadAsync(db,environment,id.Value,ct)??new(id.Value,"PENDING",0,null,null);
     }

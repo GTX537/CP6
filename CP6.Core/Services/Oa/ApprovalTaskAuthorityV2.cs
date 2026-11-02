@@ -10,7 +10,7 @@ namespace CP6.Core.Services.Oa;
 internal sealed record ApprovalTaskAuthorityEvidenceV2(ApprovalTaskAssignmentV2 Assignment, Guid PrincipalId,
     Guid ActualHandlerId, Guid? OnBehalfOfId, Guid? GrantId, string? GrantRevision, string? GrantBody,
     Guid[] SeparationSubjectIds, ScopeAuthorizationSnapshotV1 Scope, string PermissionJson);
-internal sealed record ApprovalTaskAuthorityLeaseV2(ScopeAuthorizationLeaseV1 Scope, ApprovalTaskAuthorityEvidenceV2 Evidence);
+internal sealed record ApprovalTaskAuthorityLeaseV2(ScopeAuthorizationLeaseV1 Scope, ApprovalTaskAuthorityEvidenceV2 Evidence,string Action="TASK_APPROVE");
 
 /// <summary>Transaction participant for the native TxD writer. This captures current human authority;
 /// it does not cast a vote, satisfy the terminal business policy or authorize an external callback.</summary>
@@ -45,7 +45,7 @@ public sealed class ApprovalTaskAuthorityV2(CP6Context db, IHttpContextAccessor 
     }
     private sealed record Original(byte[] Payload);
     private async Task<ApprovalTaskAuthorityEvidenceV2> Check(Guid taskId, Guid? onBehalfOf,
-        ScopeAuthorizationLeaseV1 lease, CancellationToken ct, bool requirePending = true)
+        ScopeAuthorizationLeaseV1 lease, CancellationToken ct, bool requirePending = true,string action="TASK_APPROVE")
     {
         var actual = await CurrentActor(true, ct);
         var actualPermission = await User(actual, ct);
@@ -77,19 +77,10 @@ public sealed class ApprovalTaskAuthorityV2(CP6Context db, IHttpContextAccessor 
         Guid? grantId = null; string? grantRevision = null, grantBody = null;
         if (principal != actual)
         {
-            var now = DateTime.Now;
-            var candidates = await db.Wf_FlowDelegates.AsNoTracking().Where(g => g.GrantorId == principal
-                && g.DelegateId == actual && g.Enable && g.ValidFrom <= now && now <= g.ValidTo)
-                .OrderByDescending(g => g.CreateDate).ThenBy(g => g.Id).ToArrayAsync(ct);
-            // Scope is the exact FlowKey. Database collation must not broaden this grant.
-            var grant = candidates.FirstOrDefault(g => string.IsNullOrEmpty(g.Scope) || string.Equals(g.Scope, instance.FlowKey, StringComparison.Ordinal))
-                ?? throw Error("DELEGATION_EXPIRED");
-            grantId = grant.Id;
-            grantBody = ApprovalBindingOwnerV2.Serialize(grant);
-            // The native fence changes for every grant mutation, including delete/recreate/ABA.
-            // The exact source bytes are retained with the version; no mutable latest reference.
-            grantRevision = lease.Snapshot.Epoch.ToString(System.Globalization.CultureInfo.InvariantCulture)
-                + ":" + ApprovalCanonicalV2.Hash(ApprovalCanonicalV2.Bytes(grant));
+            var grant=await new TaskDelegationReaderV2(db,fence.EnvironmentId).Require(actual,principal,action,instance.FlowKey,original.Subject.BizType,ct);
+            grantId = grant.GrantId;
+            grantBody = JsonSerializer.Serialize(grant,PersonalFormOwnerV2.Json);
+            grantRevision = grant.Revision;
         }
         var permission = PermissionEvidence(actualPermission,principalPermission);
         return new(assignment, principal, actual, principal == actual ? null : principal, grantId, grantRevision,
@@ -106,17 +97,17 @@ public sealed class ApprovalTaskAuthorityV2(CP6Context db, IHttpContextAccessor 
         return System.Text.Encoding.UTF8.GetString(ApprovalCanonicalV2.Bytes(new {
             profile="oa.app.current-task-authority/2.0",actual=Facts(actual),principal=Facts(principal),action="oa-inbox:approve" }));
     }
-    internal async Task<ApprovalTaskAuthorityLeaseV2> AcquireAsync(Guid taskId, Guid? onBehalfOf = null, CancellationToken ct = default)
+    internal async Task<ApprovalTaskAuthorityLeaseV2> AcquireAsync(Guid taskId, Guid? onBehalfOf = null, CancellationToken ct = default,string action="TASK_APPROVE")
     {
         var scope = await fence.AcquireAsync(ct);
-        var evidence = await Check(taskId, onBehalfOf, scope, ct);
+        var evidence = await Check(taskId, onBehalfOf, scope, ct,action:action);
         await fence.ValidateAsync(scope, ct);
-        return new(scope, evidence);
+        return new(scope, evidence,action);
     }
     internal async Task ValidateAsync(ApprovalTaskAuthorityLeaseV2 lease, CancellationToken ct = default, bool afterVote = false)
     {
         await fence.ValidateAsync(lease.Scope, ct);
-        var current = await Check(lease.Evidence.Assignment.TaskId, lease.Evidence.OnBehalfOfId, lease.Scope, ct, !afterVote);
+        var current = await Check(lease.Evidence.Assignment.TaskId, lease.Evidence.OnBehalfOfId, lease.Scope, ct, !afterVote,lease.Action);
         if (!ApprovalCanonicalV2.Bytes(current).SequenceEqual(ApprovalCanonicalV2.Bytes(lease.Evidence)))
             throw Error("TASK_AUTHORITY_CHANGED", 409);
         await fence.ValidateAsync(lease.Scope, ct);

@@ -39,7 +39,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         using var after=await host.Send(BoundRequest(cookies,root+"/instances/"+f.Instance));Assert.Equal(detail.Tasks[0].TaskRowVersion,(await PersonalHttpResult<NativeInstanceReadV2>(after)).Tasks[0].TaskRowVersion);
         using var legacy=await host.Send(BoundRequest(cookies,"/api/oa/inbox/task/read",new{id=f.Task}));Assert.Equal(HttpStatusCode.Conflict,legacy.StatusCode);
         using var acted=BoundRequest(cookies,root+"/pending");acted.Headers.Add("X-Acting-As",Guid.NewGuid().ToString("D"));
-        using var denied=await host.Send(acted);Assert.Equal(HttpStatusCode.UnprocessableEntity,denied.StatusCode);
+        using var denied=await host.Send(acted);Assert.Equal(HttpStatusCode.Forbidden,denied.StatusCode);
         var policy=(await f.Owner.PolicyAsync("personal"))!;await f.Owner.ConfigureAsync("personal",new(Guid.NewGuid(),policy.Version.ToString("D"),true,true,[],policy.RetentionPolicyRef,30,true,"revoke current resource"));
         using var hidden=await host.Send(BoundRequest(cookies,root+"/counts"));Assert.Equal(0,(await PersonalHttpResult<NativeInboxCountsV2>(hidden)).Pending);
         using var forbidden=await host.Send(BoundRequest(cookies,fact.QueryRef));Assert.Equal(HttpStatusCode.NotFound,forbidden.StatusCode);

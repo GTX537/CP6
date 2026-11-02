@@ -2,7 +2,8 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { AUTH_EVENT, AUTH_EPOCH, AUTH_RECORD, IMPERSONATION, identityStamp } from '@/auth/identity'
-import { clearActingAs, getActingAs } from '@/stores/oaActingAs'
+import { clearActingAs, getActingAs, setActingAs } from '@/stores/oaActingAs'
+import { taskDelegationApi, type TaskGrantPrincipal } from '@/api/oa/taskDelegation'
 import { nativeInboxApi as api, type InboxKind, type NativeDetail, type NativeInboxPage, type NativeReadIntent, type NativeReadResult } from '@/api/oa/nativeInbox'
 import { formObject, readFormJson, schemaFields } from '../catalog/personalFormJson'
 import PersonalFormFields from '../catalog/PersonalFormFields.vue'
@@ -12,6 +13,7 @@ const route = useRoute(), kind = ref<InboxKind>('pending'), mode = ref<'expanded
 const rows = ref<NativeInboxPage>(), detail = ref<NativeDetail>(), busy = ref(false), detailBusy = ref(false), commandBusy = ref(false)
 const error = ref(''), message = ref(''), selected = ref(''), selectedTask = ref(typeof route.query.personalTask === 'string' ? route.query.personalTask : '')
 const pending = ref<NativeReadIntent>(), storageBlocked = ref(false), actingAs = ref(getActingAs())
+const principals = ref<TaskGrantPrincipal[]>([]), grantError = ref(''), chosenPrincipal = ref(getActingAs()?.userId ?? '')
 const cache = 'cp6-native-inbox-read-pending'
 const folders: { value: InboxKind; label: string }[] = [{ value: 'pending', label: '待办' }, { value: 'cc', label: '抄送' }, { value: 'running', label: '参与的在途' }, { value: 'done', label: '已办' }]
 const fields = computed(() => detail.value?.form ? schemaFields(detail.value.form.schemaJson) : [])
@@ -40,6 +42,21 @@ function clearView() {
 function identityChanged() {
   epoch++; clearView(); commandBusy.value = false; pending.value = undefined; message.value = ''; error.value = '身份已改变，请刷新读取当前任务。'; actingAs.value = getActingAs()
   try { remember(); storageBlocked.value = false } catch { storageBlocked.value = true }
+  principals.value = []; chosenPrincipal.value = getActingAs()?.userId ?? ''
+}
+async function loadPrincipals() {
+  const identity = stamp(), captured = epoch; grantError.value = ''; principals.value = []
+  try { const value = await taskDelegationApi.received(); current(identity, captured); principals.value = value }
+  catch { try { current(identity, captured); grantError.value = '暂时无法读取当前可代理人员，请重试。' } catch { /* obsolete identity */ } }
+}
+function choosePrincipal() {
+  if (pending.value || commandBusy.value) return
+  try {
+    const selected = principals.value.find(x => x.userId === chosenPrincipal.value)
+    if (chosenPrincipal.value && !selected) { grantError.value = '当前选择不在有效委派中，请重新读取。'; return }
+    if (selected) setActingAs({ userId: selected.userId, userName: selected.name }); else clearActingAs()
+    identityChanged(); void load(true); void loadPrincipals()
+  } catch { clearView(); grantError.value = '无法保存身份选择，请重试。' }
 }
 function taskPrivateClear() {
   const task = selectedTask.value; clearView(); selectedTask.value = task
@@ -48,7 +65,7 @@ function taskPrivateClear() {
 function rejected(e: any) {
   const code = e?.response?.data?.code, status = e?.response?.status
   if ([401, 403, 404].includes(status)) clearView()
-  error.value = code === 'DELEGATED_READ_OWNER_NOT_ADOPTED' ? '此查询入口尚未接入新版代理授权。请切回本人查看，已有代理办理入口继续按其授权规则使用。'
+  error.value = ['GRANT_SCOPE_DENIED', 'GRANT_AUTHORITY_CHANGED', 'GRANT_PRINCIPAL_UNAVAILABLE'].includes(code) ? '代理授权已到期、撤销或不覆盖当前操作，请重新读取授权或切回本人。'
     : [401, 403, 404].includes(status) ? '当前身份已不能读取这些内容，页面已清除。'
       : pending.value ? '已读命令的结果尚未确认，请查询原结果或按原命令重试。' : '暂时无法读取当前任务，请重试。'
 }
@@ -115,7 +132,8 @@ onBeforeUnmount(() => { live = false; epoch++; listController?.abort(); detailCo
   <section class="native-inbox">
     <h2>当前任务</h2>
     <p>列表和详情按当前权限读取。打开详情不会标记已读，也不会办理审批。</p>
-    <p v-if="actingAs" role="status">当前保存了代理身份：{{ actingAs.userName }}。<el-button @click="self">切回本人</el-button></p>
+    <p v-if="actingAs" role="status">当前保存了代理身份：{{ actingAs.userName }}。<el-button :disabled="!!pending || commandBusy" @click="self">切回本人</el-button></p>
+    <div class="toolbar"><label>查看身份 <select v-model="chosenPrincipal" aria-label="当前本人或代理身份" :disabled="!!pending || commandBusy" @change="choosePrincipal"><option value="">本人</option><option v-for="p in principals" :key="p.userId" :value="p.userId">代理 {{ p.name }}</option></select></label><el-button @click="loadPrincipals">读取可代理人员</el-button></div><p v-if="grantError" role="alert">{{ grantError }}</p>
     <div class="toolbar">
       <el-select v-model="kind" aria-label="任务分类" @change="load(true)"><el-option v-for="f in folders" :key="f.value" :label="f.label" :value="f.value" /></el-select>
       <el-select v-model="mode" aria-label="显示方式" @change="load(true)"><el-option label="逐项显示" value="expanded" /><el-option label="按实例合并" value="merged" /></el-select>
@@ -130,7 +148,7 @@ onBeforeUnmount(() => { live = false; epoch++; listController?.abort(); detailCo
       <el-button :disabled="commandBusy" @click="recover('close')">关闭原命令</el-button>
     </aside>
     <template v-if="rows">
-      <p>当前可见 {{ rows.totalItems }} 项，{{ rows.totalGroups }} 个实例。当前本人：{{ rows.actualUserId }}</p>
+      <p>当前可见 {{ rows.totalItems }} 项，{{ rows.totalGroups }} 个实例。实际登录人：{{ rows.actualUserId }}；当前职责人：{{ rows.effectiveUserId }}</p>
       <el-table :data="rows.items" aria-label="当前任务列表">
         <el-table-column label="流程"><template #default="{ row }">{{ row.flowKey }} · {{ row.contextKind === 'APP' ? '业务审批' : '表单审批' }}</template></el-table-column>
         <el-table-column label="可见摘要"><template #default="{ row }">{{ row.title || row.businessType || '—' }}</template></el-table-column>
@@ -158,7 +176,7 @@ onBeforeUnmount(() => { live = false; epoch++; listController?.abort(); detailCo
         <p>任务 {{ task.taskId }} · {{ taskStatus(task.status) }} · 节点 {{ task.nodeId }} · 阶段 {{ task.stageIndex }} / 轮次 {{ task.stageRound }} · 指定处理人 {{ task.principalId }}</p>
         <details><summary>核对版本与流转位置</summary><p>任务版本 {{ task.taskRowVersion }}；流转位置 {{ task.tokenId || '无' }}；所属实例 {{ task.instanceId }}。</p></details>
         <p>{{ task.read ? `首次已读 ${task.read.firstReadAtUtc}，实际阅读人 ${task.read.actualUserId}` : '尚无阅读记录' }}</p>
-        <el-button v-if="task.principalId === detail.actualUserId && !task.read" :disabled="!!pending || commandBusy || storageBlocked" @click="mark('TASK', task.taskId)">标记已读</el-button>
+        <el-button v-if="task.principalId === detail.effectiveUserId && !task.read" :disabled="!!pending || commandBusy || storageBlocked" @click="mark('TASK', task.taskId)">标记已读</el-button>
         <el-button v-if="detail.contextKind === 'SFS' && task.canRequestDecisionContext" @click="selectedTask = task.taskId">读取当前办理条件</el-button>
       </li></ul>
       <h4 v-if="detail.cc.length">我的抄送</h4>

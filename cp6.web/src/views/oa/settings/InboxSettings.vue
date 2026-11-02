@@ -1,8 +1,10 @@
 <template>
   <div class="inbox-settings">
     <el-tabs v-model="activeTab">
+      <el-tab-pane label="当前任务委派" name="current-delegation"><TaskDelegationPanel v-if="activeTab === 'current-delegation'" /></el-tab-pane>
       <!-- Tab 1: 代理人設定 -->
-      <el-tab-pane :label="t('oa.settings.delegateTab')" name="delegate">
+      <el-tab-pane label="旧版任务委派" name="delegate">
+        <p>此处授权沿用旧版任务规则。当前原生任务请在“当前任务委派”中明确设置动作、范围和有效期。</p>
         <div class="tab-toolbar">
           <el-button v-permission="'oa-settings:delegate'" type="primary" @click="openAddDialog">{{ t('oa.settings.addDelegate') }}</el-button>
         </div>
@@ -145,6 +147,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import TaskDelegationPanel from './TaskDelegationPanel.vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { delegateApi } from '@/api/oa/delegate'
@@ -155,7 +158,7 @@ import { buildMatrixState, toNotifyPatch, type MatrixState, type NotifyMatrixRow
 
 const { t } = useI18n()
 
-const activeTab = ref('delegate')
+const activeTab = ref('current-delegation')
 
 // ─── Delegate tab ────────────────────────────────────────────────────────────
 

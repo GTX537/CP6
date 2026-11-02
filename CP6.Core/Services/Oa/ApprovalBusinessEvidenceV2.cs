@@ -34,7 +34,7 @@ public sealed class ApprovalBusinessEvidenceV2(ToolDispositionApprovalOwnerV1 to
         Guid? principal,bool deciding,CancellationToken ct,bool approving=true)
     {
         if(original.Subject.BusinessOwner=="Main.Wms.ToolDisposition.v1")
-        {var p=await tools.ReadDecisionPolicy(original,ct);return new(p.FrozenPolicy,p.FrozenPolicy.Body.RequiredHumanApprovals,"tool",p.ReadAuthority);}
+        {var p=await tools.ReadDecisionPolicy(original,ct,principal);return new(p.FrozenPolicy,p.FrozenPolicy.Body.RequiredHumanApprovals,"tool",p.ReadAuthority);}
         if(original.Subject.BusinessOwner==ControlledDocumentReviewStoreV1.Owner && documents!=null)
             return await documents.ReadDecisionPolicy(original,principal,deciding,ct);
         if(original.Subject.BusinessOwner==LocationRuleReviewStoreV1.Owner && rules!=null)

@@ -3,17 +3,27 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { nativeInboxApi as api, type NativeDetail, type NativeInboxPage } from '@/api/oa/nativeInbox'
 import { newEpoch } from '@/auth/identity'
+import { taskDelegationApi } from '@/api/oa/taskDelegation'
+import { getActingAs } from '@/stores/oaActingAs'
 import Panel from './NativeInboxPanel.vue'
 vi.mock('vue-router', () => ({ useRoute: () => ({ query: {} }) }))
 vi.mock('./PersonalTaskPanel.vue', () => ({ default: { template: '<div />' } }))
 vi.mock('../catalog/PersonalFormFields.vue', () => ({ default: { props: ['fields', 'modelValue', 'mask', 'disabled'], template: '<div />' } }))
 vi.mock('@/api/oa/nativeInbox', () => ({ nativeInboxApi: { list: vi.fn(), detail: vi.fn(), read: vi.fn(), original: vi.fn(), close: vi.fn() } }))
+vi.mock('@/api/oa/taskDelegation', () => ({ taskDelegationApi: { received: vi.fn() } }))
 const page: NativeInboxPage = { items: [], totalItems: 0, totalGroups: 0, page: 1, pageSize: 20, rowMode: 'expanded', actualUserId: 'me', effectiveUserId: 'me' }
 const detail: NativeDetail = { instanceId: 'one', rootInstanceId: 'root', contextKind: 'SFS', actualUserId: 'me', effectiveUserId: 'me', graph: [], tasks: [], cc: [], history: [], votes: [], form: { formDataId: 'data', formVersionId: 'original-form', title: 'private title', schemaJson: '{"fields":[]}', dataJson: '{}', fieldMask: {}, dataSource: 'ROOT_SUBMISSION' }, business: null }
 const wrappers: ReturnType<typeof mount>[] = [], state = (w: any): any => w.vm.$.setupState
 beforeEach(() => { vi.resetAllMocks(); localStorage.clear(); sessionStorage.clear(); vi.mocked(api.list).mockResolvedValue(page); vi.mocked(api.detail).mockResolvedValue(detail) })
 afterEach(() => { wrappers.splice(0).forEach(w => w.unmount()); vi.restoreAllMocks() })
 async function setup() { const w = mount(Panel, { global: { stubs: { ElTable: true, ElTableColumn: true, PersonalTaskPanel: true, PersonalFormFields: { inheritAttrs: false, template: '<div />' } } } }); wrappers.push(w); await flushPromises(); return w }
+it('changes explicit principal only from current grants and clears the prior detail before reloading', async () => {
+  const w = await setup(); await state(w).open('one')
+  vi.mocked(taskDelegationApi.received).mockResolvedValue([{ userId: 'principal', name: '原职责人', grants: [] }]); await state(w).loadPrincipals()
+  state(w).chosenPrincipal = 'principal'; state(w).choosePrincipal(); expect(state(w).detail).toBeUndefined(); await flushPromises()
+  expect(getActingAs()?.userId).toBe('principal'); expect(api.list).toHaveBeenCalledTimes(2)
+  state(w).chosenPrincipal = 'not-granted'; state(w).choosePrincipal(); expect(getActingAs()?.userId).toBe('principal'); expect(api.list).toHaveBeenCalledTimes(2)
+})
 it('does not mark reads on GET and recovers an unknown explicit read with the exact same command', async () => {
   const w = await setup(); await state(w).open('one'); expect(api.read).not.toHaveBeenCalled()
   vi.mocked(api.read).mockRejectedValue({ response: { status: 503 } }); state(w).mark('TASK', '11111111-1111-1111-1111-111111111111'); await flushPromises()

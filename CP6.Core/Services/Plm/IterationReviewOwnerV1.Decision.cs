@@ -30,6 +30,16 @@ public sealed partial class IterationReviewOwnerV1
         await DisclosePackage(access,row,deciding&&approving,ct);
         var policy=c.Policies.SingleOrDefault(p=>p.Reference==package.Policy)??throw Error("ITERATION_REVIEW_POLICY_UNAVAILABLE",503);
         var principalId=principal??access.ActorId;var roles=authority.Actor.RoleIds.Order().ToArray();IterationReviewAuthorityV1[] delegated=[];
+        if(principalId!=access.ActorId)
+        {
+            Task<OperationsOwnerV1.Authority> Current(string r,string a,CancellationToken t)=>Authority.IterationReviewAuthorityAsync(r,a,principalId,t);
+            var assigned=await Current(OperationsOwnerV1.EngineeringIteration,deciding?"review-decide":"query",ct);
+            var assignedAccess=new OperationsAccessV1(db,owner,assigned,storedSubjectSource:Current);
+            await DisclosePackage(assignedAccess,row,deciding&&approving,ct);
+            await iterations.ReviewSource(assignedAccess,row.Iteration,deciding&&approving,ct);
+            await ValidateParticipant(assignedAccess,principalId,ct);
+            roles=roles.Intersect(assigned.Actor.RoleIds).Order().ToArray();delegated=Witnesses(assignedAccess);
+        }
         if(deciding)
         {
             var link=c.Iteration.Body.Iteration!.CurrentReview;
@@ -38,16 +48,7 @@ public sealed partial class IterationReviewOwnerV1
             if(!package.Reviewers.Contains(principalId))throw Error("ITERATION_REVIEW_ASSIGNED_REVIEWER_REQUIRED",403);
             if(original.SeparationSubjectIds.Any(x=>x==access.ActorId || x==principalId))throw Error("ITERATION_REVIEW_SEPARATION_REQUIRED",403);
             await Policy(c,package.Policy,ct);
-            if(principalId!=access.ActorId)
-            {
-                Task<OperationsOwnerV1.Authority> Current(string r,string a,CancellationToken t)=>Authority.IterationReviewAuthorityAsync(r,a,principalId,t);
-                var assigned=await Current(OperationsOwnerV1.EngineeringIteration,"review-decide",ct);
-                var assignedAccess=new OperationsAccessV1(db,owner,assigned,storedSubjectSource:Current);
-                await DisclosePackage(assignedAccess,row,approving,ct);
-                await iterations.ReviewSource(assignedAccess,row.Iteration,approving,ct);
-                await ValidateParticipant(assignedAccess,principalId,ct);
-                roles=roles.Intersect(assigned.Actor.RoleIds).Order().ToArray();delegated=Witnesses(assignedAccess);
-            }
+
             if(!policy.Fact.Body.Requirements.Any(r=>roles.Contains(r.RoleId)))throw Error("ITERATION_REVIEW_PROFESSIONAL_ROLE_REQUIRED",403);
         }
         await ValidateParticipant(access,access.ActorId,ct);

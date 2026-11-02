@@ -34,7 +34,19 @@ public sealed class IterationReviewController(IterationReviewOwnerV1 owner):Cont
     [HttpGet("{id:guid}/review-submissions/{submission:guid}/application")]
     public async Task<IActionResult> Application(Guid id,Guid submission,CancellationToken ct)=>Result(await owner.ApplicationAsync(id,submission,ct));
     [HttpPost("{id:guid}/review-application")]
-    public async Task<IActionResult> Apply(Guid id,[FromBody]IterationApplicationCommandV1 input,CancellationToken ct)=>Result(await owner.ApplyAsync(id,Request.Headers.IfMatch.ToString(),input,ct));
+    public async Task<IActionResult> Apply(Guid id,[FromBody]IterationApplicationCommandV1 input,CancellationToken ct)=>Result(await owner.ApplyAsync(id,Request.Headers.IfMatch.ToString(),input,ct,ActingAs()));
+    [HttpPost("{id:guid}/review-application/reauthorize")]
+    public async Task<IActionResult> ReauthorizeApplication(Guid id,[FromBody]IterationApplicationCommandV1 input,CancellationToken ct)
+        =>Result(await owner.ReauthorizeApplicationAsync(id,Request.Headers.IfMatch.ToString(),input,ct,ActingAs()));
+    [HttpGet("{id:guid}/review-submissions/{submission:guid}/business-grants")]
+    public async Task<IActionResult> BusinessGrants(Guid id,Guid submission,CancellationToken ct)=>Result(await owner.BusinessGrantsAsync(id,submission,ct));
+    [HttpPost("{id:guid}/review-business-grants")]
+    public async Task<IActionResult> GrantBusiness(Guid id,[FromBody]IterationBusinessGrantCommandV1 input,CancellationToken ct)
+        =>Result(await owner.GrantBusinessAsync(id,input,ActingAs(),ct));
+    [HttpGet("review-business-grant-operations/{id:guid}")]
+    public async Task<IActionResult> BusinessGrantOperation(Guid id,CancellationToken ct)=>Result(await owner.BusinessGrantOperationAsync(id,false,ct));
+    [HttpPost("review-business-grant-operations/{id:guid}/close")]
+    public async Task<IActionResult> CloseBusinessGrant(Guid id,CancellationToken ct)=>Result(await owner.BusinessGrantOperationAsync(id,true,ct));
     [HttpGet("review-application-operations/{id:guid}")]
     public async Task<IActionResult> ApplicationOperation(Guid id,CancellationToken ct)=>Result(await owner.ApplicationOperationAsync(id,false,ct));
     [HttpPost("review-application-operations/{id:guid}/close")]
@@ -50,8 +62,20 @@ public sealed class IterationReviewController(IterationReviewOwnerV1 owner):Cont
     [HttpPost("{id:guid}/review-submissions/{submission:guid}/withdraw")]
     public async Task<IActionResult> Withdraw(Guid id,Guid submission,[FromBody]ApprovalUserWithdrawV2 input,CancellationToken ct)
     {
-        var value=await owner.WithdrawAsync(id,submission,Request.Headers.IfMatch.ToString(),input,ct);
+        var value=await owner.WithdrawAsync(id,submission,Request.Headers.IfMatch.ToString(),input,ct,ActingAs());
         return value.State=="CONFLICT"?StatusCode(409,new{code=0,data=value}):Result(value);
+    }
+    [HttpPost("{id:guid}/review-submissions/{submission:guid}/withdrawals/{previous:guid}/reauthorize")]
+    public async Task<IActionResult> ReauthorizeWithdrawal(Guid id,Guid submission,Guid previous,[FromBody]ApprovalUserWithdrawV2 input,CancellationToken ct)
+    {
+        var value=await owner.ReauthorizeWithdrawalAsync(id,submission,previous,Request.Headers.IfMatch.ToString(),input,ct,ActingAs());
+        return value.State=="CONFLICT"?StatusCode(409,new{code=0,data=value}):Result(value);
+    }
+    private Guid? ActingAs()
+    {
+        var raw=Request.Headers["X-Acting-As"].ToString();if(raw.Length==0)return null;
+        if(Guid.TryParseExact(raw,"D",out var id)&&id!=Guid.Empty)return id;
+        throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1("ACT_AS_INVALID",422);
     }
     [HttpGet("review-withdrawal-operations/{id:guid}")]
     public async Task<IActionResult> WithdrawalOperation(Guid id,CancellationToken ct)=>Result(await owner.WithdrawalOperationAsync(id,false,ct));

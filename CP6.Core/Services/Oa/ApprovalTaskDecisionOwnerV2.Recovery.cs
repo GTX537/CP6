@@ -58,7 +58,7 @@ public sealed partial class ApprovalTaskDecisionOwnerV2
         var result=new List<DocumentReviewTaskV1>();
         foreach(var id in ids)
         {
-            var lease=await authority.AcquireAsync(id,behalf,ct);
+            var lease=await authority.AcquireAsync(id,behalf,ct,"TASK_READ");
             var original=ApprovalSubmissionWireV2.Parse((await ReadSource(id,ct)).Payload).Value;
             await Business.Decision(original,lease.Evidence.PrincipalId,false,ct);
             result.Add(new(original.SubmissionId,document,original.Subject.BusinessRevision,await View(id,ct)));
@@ -81,7 +81,7 @@ public sealed partial class ApprovalTaskDecisionOwnerV2
         var result=new List<RequirementSetReviewTaskV1>();
         foreach(var id in ids)
         {
-            var lease=await authority.AcquireAsync(id,behalf,ct);
+            var lease=await authority.AcquireAsync(id,behalf,ct,"TASK_READ");
             var original=ApprovalSubmissionWireV2.Parse((await ReadSource(id,ct)).Payload).Value;
             await Business.Decision(original,lease.Evidence.PrincipalId,false,ct);
             result.Add(new(original.SubmissionId,requirementSet,original.Subject.BusinessRevision,await View(id,ct)));
@@ -104,7 +104,7 @@ public sealed partial class ApprovalTaskDecisionOwnerV2
         var result=new List<LocationRuleReviewTaskV1>();
         foreach(var id in ids)
         {
-            var lease=await authority.AcquireAsync(id,behalf,ct);
+            var lease=await authority.AcquireAsync(id,behalf,ct,"TASK_READ");
             var original=ApprovalSubmissionWireV2.Parse((await ReadSource(id,ct)).Payload).Value;
             await Business.Decision(original,lease.Evidence.PrincipalId,false,ct);
             result.Add(new(original.SubmissionId,locationRule,original.Subject.BusinessRevision,await View(id,ct)));
@@ -127,7 +127,7 @@ public sealed partial class ApprovalTaskDecisionOwnerV2
         var result=new List<IterationReviewTaskV1>();
         foreach(var id in ids)
         {
-            var lease=await authority.AcquireAsync(id,behalf,ct);
+            var lease=await authority.AcquireAsync(id,behalf,ct,"TASK_READ");
             var original=ApprovalSubmissionWireV2.Parse((await ReadSource(id,ct)).Payload).Value;
             await Business.Decision(original,lease.Evidence.PrincipalId,false,ct);
             var iteration=await db.Database.SqlQuery<Guid>($"""

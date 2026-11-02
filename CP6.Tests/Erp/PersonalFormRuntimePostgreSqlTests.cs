@@ -12,7 +12,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     [CurrentPermissionPostgresFact]
     public async Task PersonalForm_delegation_expiring_at_commit_rolls_back_vote_and_same_intent_keeps_principal_and_actor()
     {
-        await using var h=await Seed();var(owner,_,flow)=await PreparePersonal(h);
+        var hook=new StartWriteHook();await using var h=await Seed(hook);var(owner,_,flow)=await PreparePersonal(h);
         var schema=JsonSerializer.Serialize(new{start="s",nodes=new object[]{new{id="s",type="start"},new{id="a",type="approval",approverStrategy="Specified",approverUserId=h.User},new{id="e",type="end"}},edges=new[]{new{from="s",to="a"},new{from="a",to="e"}}});
         var f=await flow.SaveAsync("personal-delegate",DependentCommand("personal",schema:schema));
         var p=(await flow.PublishAsync("personal-delegate",PublicationCommand(await Preview(flow,"personal-delegate",f)))).Result!.Publication!;
@@ -20,18 +20,26 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await owner.SubmitDirectAsync("personal",PersonalCommand(PersonalDirect(await owner.ContextAsync("personal")),"start"));
         var task=await h.Db.Wf_FlowTasks.AsNoTracking().SingleAsync();var actor=Guid.NewGuid();
         h.Db.Sys_Users.Add(new(){Id=actor,UserName="personal-delegate",Password="unused",RoleId=72});
-        var grant=new Wf_FlowDelegate{GrantorId=h.User,DelegateId=actor,Scope="personal-delegate",ValidFrom=DateTime.Now.AddMinutes(-1),ValidTo=DateTime.Now.AddHours(1)};
-        h.Db.Wf_FlowDelegates.Add(grant);await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();TaskActor(h,actor);
+        await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();
+        var grant=await CreateTaskGrant(h,h.User,actor,"personal-delegate");var grants=TaskGrants(DecisionActor(h,h.User));
+        var shortInput=GrantInput(actor,"personal-delegate") with{ValidToUtc=DateTimeOffset.UtcNow.AddSeconds(3)};
+        grant=(await grants.WriteAsync("REVISE",grant.GrantId,PersonalCommand(shortInput,"short-expiry",grant.Version.ToString("D")))).Result!;
+        TaskActor(h,actor);
         var peer=h with{User=actor};var delegated=PersonalForm(peer);var view=await delegated.TaskContextAsync(task.Id,h.User);
         var command=new ApprovalTaskDecisionInputV2(Guid.NewGuid(),"approve","delegated",view.Task.TaskRowVersion,view.Task.InstanceRowVersion);
-        var at=DateTimeOffset.UtcNow;var calls=0;var expiring=PersonalForm(peer,_=>{if(++calls==2)at=at.AddHours(2);return Task.FromResult(actor);});expiring.Clock=()=>at;
-        Assert.Equal("DELEGATION_EXPIRED",(await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(()=>expiring.DecideTaskAsync(task.Id,command,h.User,"\""+command.TaskRowVersion+"\""))).Message);
+        hook.Before=async sql=>{
+            if(!sql.CommandText.Contains("INSERT INTO cp6_personal_form_v2.votes"))return;
+            hook.Before=null;var remaining=grant.ToUtc-DateTimeOffset.UtcNow+TimeSpan.FromMilliseconds(100);
+            if(remaining>TimeSpan.Zero)await Task.Delay(remaining);
+        };
+        Assert.Equal("GRANT_AUTHORITY_CHANGED",(await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(()=>delegated.DecideTaskAsync(task.Id,command,h.User,"\""+command.TaskRowVersion+"\""))).Message);
         Assert.Equal(0,(await h.Db.Wf_FlowTasks.AsNoTracking().SingleAsync()).Status);Assert.Null(await delegated.TaskOriginalAsync(task.Id,command.CommandId));
         Assert.False(await h.Db.Database.SqlQuery<bool>($"SELECT EXISTS(SELECT FROM cp6_personal_form_v2.votes v JOIN cp6_personal_form_v2.commands c ON c.id=v.command_id WHERE c.tenant_id={h.Tenant}) AS \"Value\"").SingleAsync());
+        grant=(await grants.WriteAsync("REVISE",grant.GrantId,PersonalCommand(GrantInput(actor,"personal-delegate"),"renew-explicitly",grant.Version.ToString("D")))).Result!;
         var accepted=await delegated.DecideTaskAsync(task.Id,command,h.User,"\""+command.TaskRowVersion+"\"");
         var vote=await h.Db.Database.SqlQuery<string>($"SELECT body AS \"Value\" FROM cp6_personal_form_v2.votes WHERE id={accepted.VoteId}").SingleAsync();
         using var doc=JsonDocument.Parse(vote);Assert.Equal(actor,doc.RootElement.GetProperty("actual").GetGuid());Assert.Equal(h.User,doc.RootElement.GetProperty("principal").GetGuid());
-        await h.Db.Wf_FlowDelegates.Where(x=>x.Id==grant.Id).ExecuteUpdateAsync(x=>x.SetProperty(g=>g.Enable,false));
+        await grants.WriteAsync("REVOKE",grant.GrantId,PersonalCommand(new TaskDelegationRevokeV2("done"),"stop",grant.Version.ToString("D")));
         Assert.Equal(accepted,await delegated.TaskOriginalAsync(task.Id,command.CommandId));
     }
     [CurrentPermissionPostgresFact]

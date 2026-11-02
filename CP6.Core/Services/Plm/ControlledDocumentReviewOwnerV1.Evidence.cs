@@ -72,18 +72,19 @@ public sealed partial class ControlledDocumentReviewOwnerV1
         var policy=policies.SingleOrDefault(p=>p.Reference==view.Policy)??throw Error("DOCUMENT_POLICY_UNAVAILABLE",503);
         var roles=authority.Actor.RoleIds.Order().ToArray();DocumentReviewAuthorityV1[] principalAuthority=[];
         var principalId=principal??access.ActorId;
+        if(principalId!=access.ActorId)
+        {
+            Task<OperationsOwnerV1.Authority> Current(string r,string a,CancellationToken token)=>Authority.DocumentReviewAuthorityAsync(r,a,principalId,token);
+            var assigned=await Current(OperationsOwnerV1.ControlledDocument,deciding?"review-decide":"query",ct);
+            var assignedAccess=new OperationsAccessV1(db,owner,assigned,storedSubjectSource:Current);
+            await documents.ReviewSource(assignedAccess,view.Document,deciding,ct);
+            await ValidateParticipant(assignedAccess,principalId,ct);
+            roles=roles.Intersect(assigned.Actor.RoleIds).Order().ToArray();principalAuthority=Witnesses(assignedAccess);
+        }
         if(deciding)
         {
             await RequireRoles(policy.Fact.Body.Requirements,ct);
-            if(principalId!=access.ActorId)
-            {
-                Task<OperationsOwnerV1.Authority> Current(string r,string a,CancellationToken token)=>Authority.DocumentReviewAuthorityAsync(r,a,principalId,token);
-                var assigned=await Current(OperationsOwnerV1.ControlledDocument,"review-decide",ct);
-                var assignedAccess=new OperationsAccessV1(db,owner,assigned,storedSubjectSource:Current);
-                await documents.ReviewSource(assignedAccess,view.Document,true,ct);
-                await ValidateParticipant(assignedAccess,principalId,ct);
-                roles=roles.Intersect(assigned.Actor.RoleIds).Order().ToArray();principalAuthority=Witnesses(assignedAccess);
-            }
+
             if(!policy.Fact.Body.Requirements.Any(r=>roles.Contains(r.RoleId)))throw Error("DOCUMENT_PROFESSIONAL_ROLE_REQUIRED",403);
             if(policy.Fact.Body.SeparateAuthorAndReviewer && original.SeparationSubjectIds.Any(id=>id==access.ActorId || id==principalId))
                 throw Error("DOCUMENT_REVIEW_SEPARATION_REQUIRED",403);

@@ -95,7 +95,7 @@ public sealed partial class OperationsOwnerV1
         => action=="query" || resource==RequirementSet && action is "review-policy" or "review-submit" or "review-decide"
             ? AuthorityCoreAsync(resource,action,actor,true,ct) : throw new OrderPriceCorrectionException("ACTION_FORBIDDEN",403);
     internal Task<Authority> IterationReviewAuthorityAsync(string resource,string action,Guid actor,CancellationToken ct)
-        => action=="query" || resource==EngineeringIteration && action is "review-policy" or "review-submit" or "review-decide" or "review-withdraw"
+        => action=="query" || resource==EngineeringIteration && action is "review-policy" or "review-submit" or "review-decide" or "review-withdraw" or "review-apply"
             ? AuthorityCoreAsync(resource,action,actor,true,ct) : throw new OrderPriceCorrectionException("ACTION_FORBIDDEN",403);
     internal Task<Authority> RequirementPolicyAuthorityAsync(Guid actor,CancellationToken ct)
         =>AuthorityCoreAsync(EngineeringRequirement,"review-policy",actor,true,ct);
