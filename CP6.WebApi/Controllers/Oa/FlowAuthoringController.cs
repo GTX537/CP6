@@ -23,6 +23,8 @@ public sealed class FlowAuthoringController(FlowAuthoringOwnerV2 owner, FormAuth
     public Task<IActionResult> Preview(string key, FlowPublicationPreviewInputV2 input, CancellationToken ct) => Run(async () => await owner.PreviewPublicationAsync(key, input, ct));
     [HttpPost("definitions/FLOW/{key}/publish"), RequestSizeLimit(1024 * 1024)]
     public Task<IActionResult> Publish(string key, CancellationToken ct) => Run(async () => await owner.PublishAsync(key, await Raw(ct), ct));
+    [HttpPost("definitions/FLOW/{key}/clone"), RequestSizeLimit(1024 * 1024)]
+    public Task<IActionResult> Clone(string key, CancellationToken ct) => Run(async () => await owner.CloneAsync(key, await Raw(ct), ct));
     [HttpPost("definitions/FLOW/{key}/drafts"), RequestSizeLimit(1024 * 1024)]
     public Task<IActionResult> Next(string key, CancellationToken ct) => Run(async () => await owner.CreateNextDraftAsync(key, await Raw(ct), ct));
     [HttpGet("activations/FLOW")]
@@ -50,8 +52,10 @@ public sealed class FlowAuthoringController(FlowAuthoringOwnerV2 owner, FormAuth
     [HttpGet("commands/{commandId}")]
     public Task<IActionResult> Original(string commandId, [FromQuery] string operation, [FromQuery] string resource, CancellationToken ct) => Run(async () =>
     {
-        if (operation is not (FormAuthoringOwnerV2.Operation or FormAuthoringOwnerV2.PublishOperation or FormAuthoringOwnerV2.NextDraftOperation or FormAuthoringOwnerV2.ActivationOperation or FlowAuthoringOwnerV2.Operation or FlowAuthoringOwnerV2.PublishOperation or FlowAuthoringOwnerV2.NextDraftOperation or FlowAuthoringOwnerV2.ActivationOperation) || string.IsNullOrWhiteSpace(resource) || resource.Length > 100)
+        if (operation is not (FlowAuthoringOwnerV2.CloneOperation or FormAuthoringOwnerV2.CloneOperation or FormAuthoringOwnerV2.Operation or FormAuthoringOwnerV2.PublishOperation or FormAuthoringOwnerV2.NextDraftOperation or FormAuthoringOwnerV2.ActivationOperation or FlowAuthoringOwnerV2.Operation or FlowAuthoringOwnerV2.PublishOperation or FlowAuthoringOwnerV2.NextDraftOperation or FlowAuthoringOwnerV2.ActivationOperation) || string.IsNullOrWhiteSpace(resource) || resource.Length > 100)
             throw new ScopeAuthorizationExceptionV1("COMMAND_SCOPE_INVALID", 400);
+        if (operation == FormAuthoringOwnerV2.CloneOperation) return (object)await forms.CloneOriginalAsync(resource, commandId, ct);
+        if (operation == FlowAuthoringOwnerV2.CloneOperation) return (object)await owner.CloneOriginalAsync(resource, commandId, ct);
         if (operation == FormAuthoringOwnerV2.Operation) return (object)await forms.OriginalAsync(resource, commandId, ct);
         if (operation == FormAuthoringOwnerV2.ActivationOperation) return (object)await forms.ActivationOriginalAsync(resource, commandId, ct);
         if (operation is FormAuthoringOwnerV2.PublishOperation or FormAuthoringOwnerV2.NextDraftOperation) return (object)await forms.LifecycleOriginalAsync(resource, operation, commandId, ct);

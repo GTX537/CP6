@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## 2026-11-02：24小时持续目标 / W271固定发布源克隆
+
+W271：FLOW/FORM从准确Published版本克隆新停用草稿，清流程身份码、不可变clonedFromRef、当前读源/创建权限与原命令恢复；Main HTTP及版本面板采用。24h持续目标第四窗口，继续W272。 [交付](../development/evidence/W271-01/DELIVERY.md)。
+
+本地48项唯一PG18行为通过、0跳过（16克隆行为含实际Main HTTP/并发/权限/回滚，32受影响草稿与版本回归）；22项Vue行为通过；显式vue-tsc --noEmit -p tsconfig.app.json --extendedDiagnostics通过，实际3328文件。政策/业务数据模拟、真实隔离PG与Main登录会话；组件API模拟，无浏览器到PG整链、Actions、既有环境迁移或生产部署。
+
+WP12-01仍余准确版本比较/完整原AC；WP12-02仍余FORM/子流程依赖pin、递归资格、唯一绑定、实际运行和旧入口采用。克隆仅v2 managed定义路径，不称旧Designer.CloneAsync已退役，不复制运行/审批/外呼事实。125/247和原375整卡状态保持，59局部仍3闭环/56余项。 首个2h已校准，扩展W280–283仍PLANNED；总目标IN_PROGRESS继续W272，下一校准4h。采用/清理/finish见wave271-final-verification.json。
+
 ## 2026-11-02：24小时持续目标 / W270 FORM发布和启停
 
 W270：FORM准确发布预览/不可变版本、显式准确来源下一草稿、独立激活CAS/历史/原件及设计器/管理页采用已实现验证；24h持续目标第三窗口，继续W271。 [交付](../development/evidence/W270-01/DELIVERY.md)。

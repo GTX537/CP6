@@ -161762,6 +161762,11 @@
       "date": "2026-11-02",
       "change": "W270：FORM准确发布预览/不可变版本、显式准确来源下一草稿、独立激活CAS/历史/原件及设计器/管理页采用已实现验证；24h持续目标第三窗口，继续W271。",
       "evidence": "docs/development/evidence/W270-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-02",
+      "change": "W271：FLOW/FORM从准确Published版本克隆新停用草稿，清流程身份码、不可变clonedFromRef、当前读源/创建权限与原命令恢复；Main HTTP及版本面板采用。24h持续目标第四窗口，继续W272。",
+      "evidence": "docs/development/evidence/W271-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -196315,12 +196320,12 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W270-01",
+        "window": "W271-01",
         "as_of": "2026-11-02",
         "classification": "明确实现余项",
-        "report": "docs/development/evidence/W270-01/DELIVERY.md",
-        "delivered": "W170/172不可变FLOW草稿和W173/174发布/激活已经实现，GET不隐式写草稿。 W268完整FORM往返/schema与FLOW致命结构。 W269独立FORM草稿Owner/当前权限/CAS/原件及设计器工作区。 W270准确FORM发布/不可变版本、显式下一草稿及独立激活和页面。",
-        "remaining": "WP12-01仍余FLOW/FORM固定sourceVersion克隆、完整原AC与比较等原范围；WP12-02仍余FORM/子流程精确依赖、唯一绑定和实际运行/旧入口采用。文件Owner准入、提交字段/规则权限、个人草稿及跨窗口浏览器到PG全链按W272–279推进。新FORM启用配置不代表运行入口已接入，未知影响数不写0；125/247及原375整卡状态保持，59局部仍3闭环/56余项。",
+        "report": "docs/development/evidence/W271-01/DELIVERY.md",
+        "delivered": "W170/172不可变FLOW草稿和W173/174发布/激活已经实现，GET不隐式写草稿。 W268完整FORM往返/schema与FLOW致命结构。 W269独立FORM草稿Owner/当前权限/CAS/原件及设计器工作区。 W270准确FORM发布/不可变版本、显式下一草稿及独立激活和页面。 W271准确发布源FLOW/FORM克隆及原件/页面采用。",
+        "remaining": "WP12-01仍余准确版本比较/完整原AC；WP12-02仍余FORM/子流程依赖pin、递归资格、唯一绑定、实际运行和旧入口采用。克隆仅v2 managed定义路径，不称旧Designer.CloneAsync已退役，不复制运行/审批/外呼事实。125/247和原375整卡状态保持，59局部仍3闭环/56余项。",
         "evidence_refs": [
           "docs/development/evidence/W170-01/DELIVERY.md",
           "docs/development/evidence/W172-01/DELIVERY.md",
@@ -196328,7 +196333,8 @@
           "docs/development/evidence/W174-01/DELIVERY.md",
           "docs/development/evidence/W268-01/DELIVERY.md",
           "docs/development/evidence/W269-01/DELIVERY.md",
-          "docs/development/evidence/W270-01/DELIVERY.md"
+          "docs/development/evidence/W270-01/DELIVERY.md",
+          "docs/development/evidence/W271-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true
@@ -196431,6 +196437,13 @@
             "workspace_clean": true
           }
         ]
+      },
+      "wave271_exact_clone": {
+        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W271-01/DELIVERY.md",
+        "full_task_completed": false,
+        "validation": "本地48项唯一PG18行为通过、0跳过（16克隆行为含实际Main HTTP/并发/权限/回滚，32受影响草稿与版本回归）；22项Vue行为通过；显式vue-tsc --noEmit -p tsconfig.app.json --extendedDiagnostics通过，实际3328文件。政策/业务数据模拟、真实隔离PG与Main登录会话；组件API模拟，无浏览器到PG整链、Actions、既有环境迁移或生产部署。",
+        "remaining": "WP12-01仍余准确版本比较/完整原AC；WP12-02仍余FORM/子流程依赖pin、递归资格、唯一绑定、实际运行和旧入口采用。克隆仅v2 managed定义路径，不称旧Designer.CloneAsync已退役，不复制运行/审批/外呼事实。125/247和原375整卡状态保持，59局部仍3闭环/56余项。"
       }
     },
     {
@@ -201136,7 +201149,7 @@
       "path": "docs/development/dispatch/20261102-wave271/README.md",
       "baseline_sha": "ea4236450ade3e0fa5ffe98e1e5aa04aaeec3766",
       "registered_at": "2026-11-02T15:01:10.484328+00:00",
-      "phase": "IMPLEMENTING",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -201162,17 +201175,17 @@
           "title": "固定发布源FLOW/FORM克隆",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "IMPLEMENTING",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w271-01",
           "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
@@ -201180,14 +201193,33 @@
             "Main:oa-definition",
             "Main:Core-PG-migration",
             "Main:authorization-catalog"
-          ]
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W271-01/DELIVERY.md",
+          "validation": "本地48项唯一PG18行为通过、0跳过（16克隆行为含实际Main HTTP/并发/权限/回滚，32受影响草稿与版本回归）；22项Vue行为通过；显式vue-tsc --noEmit -p tsconfig.app.json --extendedDiagnostics通过，实际3328文件。政策/业务数据模拟、真实隔离PG与Main登录会话；组件API模拟，无浏览器到PG整链、Actions、既有环境迁移或生产部署。",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave271-final-verification.json"
+          },
+          "business_acceptance": "EXACT_PUBLISHED_CLONE_LOCAL_PG_HTTP_PASS;FULL_CARD_REMAINS"
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W271 从准确Published sourceVersionId克隆FLOW/FORM为新停用草稿；清流程身份码、保不可变来源、当前读源/创建权限与命令原子恢复；24h持续目标第四窗口。"
+      "next_action": "W271 从准确Published sourceVersionId克隆FLOW/FORM为新停用草稿；清流程身份码、保不可变来源、当前读源/创建权限与命令原子恢复；24h持续目标第四窗口。",
+      "lifecycle_snapshot": {
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_seat_released": false,
+        "main_branch_deleted": false,
+        "handoff_branch_deleted": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave271-final-verification.json"
+      }
     },
     "wave_history": [
       {
@@ -236621,12 +236653,12 @@
         15.75,
         29.75
       ],
-      "estimate_confidence": "LOW_UNTIL_MEASURED",
+      "estimate_confidence": "LOW_ROLLING_AT_2H",
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 6873,
-      "next_reestimate_at_effective_seconds": 7200,
+      "effective_seconds_recorded": 8040,
+      "next_reestimate_at_effective_seconds": 14400,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
         {
@@ -236718,8 +236750,22 @@
             0.5,
             1
           ],
-          "state": "IN_PROGRESS",
-          "started_at": "2026-11-02T15:01:10.484328+00:00"
+          "state": "VERIFYING",
+          "started_at": "2026-11-02T15:01:10.484328+00:00",
+          "initial_estimate_hours": [
+            0.5,
+            1
+          ],
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W271-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave271-final-verification.json"
+          }
         },
         {
           "id": "W272-01",
@@ -236729,10 +236775,14 @@
           ],
           "title": "FORM与子流程完整依赖pin及递归资格",
           "estimate_hours": [
+            1,
+            2
+          ],
+          "state": "PLANNED",
+          "initial_estimate_hours": [
             1.5,
             3
-          ],
-          "state": "PLANNED"
+          ]
         },
         {
           "id": "W273-01",
@@ -236742,10 +236792,14 @@
           ],
           "title": "唯一form-flow绑定、激活CAS与并发裁决",
           "estimate_hours": [
+            0.5,
+            1
+          ],
+          "state": "PLANNED",
+          "initial_estimate_hours": [
             0.75,
             1.5
-          ],
-          "state": "PLANNED"
+          ]
         },
         {
           "id": "W274-01",
@@ -236756,10 +236810,14 @@
           ],
           "title": "新根运行采用精确pin与旧入口写门",
           "estimate_hours": [
+            1.5,
+            3
+          ],
+          "state": "PLANNED",
+          "initial_estimate_hours": [
             2,
             4
-          ],
-          "state": "PLANNED"
+          ]
         },
         {
           "id": "W275-01",
@@ -236770,10 +236828,14 @@
           ],
           "title": "表单草稿/提交采用版本和字段规则授权",
           "estimate_hours": [
+            1.5,
+            3
+          ],
+          "state": "PLANNED",
+          "initial_estimate_hours": [
             2,
             4
-          ],
-          "state": "PLANNED"
+          ]
         },
         {
           "id": "W276-01",
@@ -236784,10 +236846,14 @@
           ],
           "title": "实际任务使用冻结版本、停新不伤在途",
           "estimate_hours": [
+            0.75,
+            1.5
+          ],
+          "state": "PLANNED",
+          "initial_estimate_hours": [
             1,
             2
-          ],
-          "state": "PLANNED"
+          ]
         },
         {
           "id": "W277-01",
@@ -236798,10 +236864,14 @@
           ],
           "title": "委派撤回与BLOCKED显式新授权恢复",
           "estimate_hours": [
+            1.25,
+            2.5
+          ],
+          "state": "PLANNED",
+          "initial_estimate_hours": [
             2,
             3
-          ],
-          "state": "PLANNED"
+          ]
         },
         {
           "id": "W278-01",
@@ -236814,10 +236884,14 @@
           ],
           "title": "设计器/管理/办理页面连真实PG与HTTP",
           "estimate_hours": [
+            1,
+            2
+          ],
+          "state": "PLANNED",
+          "initial_estimate_hours": [
             1.5,
             3
-          ],
-          "state": "PLANNED"
+          ]
         },
         {
           "id": "W279-01",
@@ -236829,14 +236903,109 @@
           ],
           "title": "原AC业务验收、实际缺口修复与整卡盘点",
           "estimate_hours": [
-            2,
+            1.5,
             3
           ],
-          "state": "PLANNED"
+          "state": "PLANNED",
+          "initial_estimate_hours": [
+            2,
+            3
+          ]
+        },
+        {
+          "id": "W280-01",
+          "day": "ROLLING_EXTENSION",
+          "related_tasks": [
+            "WP12-01"
+          ],
+          "title": "定义历史精确版本比较与当前披露",
+          "estimate_hours": [
+            0.75,
+            1.5
+          ],
+          "state": "PLANNED",
+          "admission": "Inspect direct providers/current source before START; no stub substitution",
+          "reason": "First 2h throughput calibration: original authorized adjacent remaining scope"
+        },
+        {
+          "id": "W281-01",
+          "day": "ROLLING_EXTENSION",
+          "related_tasks": [
+            "WP12-05"
+          ],
+          "title": "表单目录收藏、历史查询及最终下载披露真实缺口",
+          "estimate_hours": [
+            1.5,
+            3
+          ],
+          "state": "PLANNED",
+          "admission": "Inspect direct providers/current source before START; no stub substitution",
+          "reason": "First 2h throughput calibration: original authorized adjacent remaining scope"
+        },
+        {
+          "id": "W282-01",
+          "day": "ROLLING_EXTENSION",
+          "related_tasks": [
+            "WP12-09"
+          ],
+          "title": "实际退回重送、转交加签与无人审批恢复",
+          "estimate_hours": [
+            2,
+            4
+          ],
+          "state": "PLANNED",
+          "admission": "Inspect direct providers/current source before START; no stub substitution",
+          "reason": "First 2h throughput calibration: original authorized adjacent remaining scope"
+        },
+        {
+          "id": "W283-01",
+          "day": "ROLLING_EXTENSION",
+          "related_tasks": [
+            "WP12-11"
+          ],
+          "title": "准确截止政策与超时worker竞争",
+          "estimate_hours": [
+            1.5,
+            3
+          ],
+          "state": "PLANNED",
+          "admission": "Inspect direct providers/current source before START; no stub substitution",
+          "reason": "First 2h throughput calibration: original authorized adjacent remaining scope"
         }
       ],
-      "reestimates": [],
-      "timing_snapshot_at": "2026-11-02T15:01:10.484328+00:00"
+      "reestimates": [
+        {
+          "at": "2026-11-02T15:07:51.133488+00:00",
+          "effective_seconds": 7274,
+          "completed_windows": [
+            "W268-01",
+            "W269-01",
+            "W270-01"
+          ],
+          "actual_completed_seconds": 6743,
+          "initial_completed_estimate_hours": [
+            2.5,
+            5.25
+          ],
+          "remaining_estimate_hours": [
+            15.25,
+            30.5
+          ],
+          "confidence": "LOW: three highly reusable definition windows; runtime and cross-boundary complexity not yet measured",
+          "added_windows": [
+            "W280-01",
+            "W281-01",
+            "W282-01",
+            "W283-01"
+          ],
+          "basis": "Evidence wave268/269/270-final-verification.json; code gap: no definition comparison route, FORM history/download remaining WP12-05; WfTimeoutService still native SystemActor/relative hours; review exact WP12-09 and provider contracts before implementation. No intentional idle or paused intervals."
+        }
+      ],
+      "timing_snapshot_at": "2026-11-02T15:20:37.808453+00:00",
+      "remaining_estimate_hours": [
+        15.25,
+        30.5
+      ]
     },
     "execution_plan_history": [
       {

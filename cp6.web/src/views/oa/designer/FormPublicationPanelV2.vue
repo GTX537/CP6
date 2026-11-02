@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import DefinitionClonePanelV2 from './DefinitionClonePanelV2.vue'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { AUTH_EPOCH, AUTH_RECORD, IMPERSONATION, AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import type { FormAuthoringView } from '@/api/oa/formAuthoring'
@@ -10,7 +11,8 @@ const pending = ref<LifecycleIntent>(), busy = ref(false), error = ref(''), mess
 const cacheUnavailable = ref(false)
 const cache = 'cp6-form-publication-pending'
 let generation = 0, live = true, controller: AbortController | undefined
-const unavailable = computed(() => cacheUnavailable.value || busy.value || !!pending.value || props.disabled || props.dirty || !props.current)
+const cloneLocked = ref(false)
+const unavailable = computed(() => cloneLocked.value || cacheUnavailable.value || busy.value || !!pending.value || props.disabled || props.dirty || !props.current)
 const matchingPreview = computed(() => preview.value?.expectedVersion === props.current?.version && preview.value?.draftVersionId === props.current?.draftId)
 class CommandStorageError extends Error {}
 function storageChanged(event: StorageEvent) {
@@ -22,7 +24,7 @@ function remember() {
 }
 function clear() {
   cacheUnavailable.value=false; generation++; controller?.abort(); preview.value = undefined; versions.value = []; selected.value = undefined
-  pending.value = undefined; busy.value = false; comment.value = ''; error.value = ''; message.value = ''; remember(); emit('locked', false)
+  pending.value = undefined; busy.value = false; comment.value = ''; error.value = ''; message.value = ''; remember(); emit('locked', cloneLocked.value)
 }
 watch(() => [props.current?.key, props.current?.version], () => {
   preview.value = undefined; versions.value = []; selected.value = undefined; page.value = 1
@@ -42,7 +44,7 @@ async function run(action: (check: () => void, signal: AbortSignal) => Promise<v
         preview.value=undefined; error.value='操作未被接受，请重新读取当前状态并确认意图。'
       } else error.value=pending.value ? '结果尚未确认，请查询原结果或以原意图重试。' : '当前无法读取，请稍后重试。'
     } catch { /* Ignore responses belonging to another identity. */ }
-  } finally { if (live && generation === request) { busy.value = false; emit('locked', !!pending.value) } }
+  } finally { if (live && generation === request) { busy.value = false; emit('locked', !!pending.value || cloneLocked.value) } }
 }
 function prepare() {
   if (unavailable.value || props.current?.published) return
@@ -62,7 +64,7 @@ async function accept(result: LifecycleResult, check: () => void) {
   if (intent.operation === 'FORM_CREATE_DRAFT' && (!draft || draft.key !== intent.key || draft.definitionId !== intent.definitionId || draft.version !== result.resourceVersion)) throw new Error('草稿结果不匹配')
   check(); pending.value = undefined; remember(); preview.value = undefined
   message.value = publication ? '发布已确认。当前启停配置保持不变。' : '下一草稿已创建，原发布版本保持不变。'
-  emit('locked', false); emit('reload', intent.key)
+  emit('locked', cloneLocked.value); emit('reload', intent.key)
 }
 function retry() {
   if (!pending.value) return
@@ -133,12 +135,13 @@ onBeforeUnmount(() => { live = false; generation++; controller?.abort(); window.
       <button :disabled="unavailable || !preview.canPublish" @click="publish">确认发布此版本</button>
     </div>
     <ol v-if="versions.length"><li v-for="version in versions" :key="version.versionId">
-      <button :disabled="busy || !!pending" @click="selected = version">版本 {{ version.version }} · {{ version.fields.Name ?? '名称不可见' }}</button>
+      <button :disabled="busy || !!pending || cloneLocked" @click="selected = version">版本 {{ version.version }} · {{ version.fields.Name ?? '名称不可见' }}</button>
       <span>发布于 {{ new Date(version.publishedAtUtc).toLocaleString() }}</span>
       <button :disabled="unavailable || !current?.published" @click="next(version)">从此版本创建下一草稿</button>
     </li></ol>
     <div v-if="versions.length || page > 1"><button :disabled="unavailable || page === 1" @click="page--; history()">上一页版本</button><span>{{ page }}</span><button :disabled="unavailable || versions.length < 100" @click="page++; history()">下一页版本</button></div>
     <div v-if="selected"><h4>版本 {{ selected.version }}（只读）</h4><pre v-if="selected.fields.SchemaJson">{{ selected.fields.SchemaJson }}</pre><p v-else>当前无权读取表单结构。</p></div>
+    <DefinitionClonePanelV2 kind="FORM" :source="selected ? { key: selected.key, versionId: selected.versionId, version: selected.version } : undefined" :disabled="busy || !!pending || disabled || dirty" @locked="cloneLocked = $event; emit('locked', $event || busy || !!pending)" @reload="emit('reload', $event)" @private-clear="preview = undefined; versions = []; selected = undefined; emit('privateClear')" />
   </section>
 </template>
 <style scoped>

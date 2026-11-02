@@ -13,7 +13,7 @@ namespace CP6.Core.Services.Wf;
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record FormAuthoringBodyV2(string Name, string SchemaJson, string? Category, string? SubCategory);
 public sealed record FormAuthoringViewV2(Guid DefinitionId, Guid DraftId, string Key, string Version,
-    Dictionary<string,string?> Fields, string[] WritableFields, bool Enabled = false, bool Published = false, int VersionNumber = 1, string? ActivationRevision = null);
+    Dictionary<string,string?> Fields, string[] WritableFields, bool Enabled = false, bool Published = false, int VersionNumber = 1, string? ActivationRevision = null, Guid? ClonedFromRef = null);
 public sealed record FormAuthoringResultV2(string CommandId, string Outcome, Guid? ResourceId, string? ResourceVersion,
     FormAuthoringViewV2? Result, DateTimeOffset? RecordedAtUtc, string? CorrelationId);
 
@@ -73,10 +73,10 @@ public sealed partial class FormAuthoringOwnerV2
     }
 
     private sealed record Head(Guid Id,Guid DraftId,string Key,Guid OwnerId,Guid? DeptId,Guid Version,
-        string Name,string SchemaJson,string? Category,string? SubCategory,Guid SavedBy, int Status = 0, int Number = 1, bool Enabled = false, Guid ActivationRevision = default);
+        string Name,string SchemaJson,string? Category,string? SubCategory,Guid SavedBy, int Status = 0, int Number = 1, bool Enabled = false, Guid ActivationRevision = default, Guid? ClonedFromRef = null);
     private IQueryable<Head> Heads()=>db.Database.SqlQuery<Head>($"""
         SELECT h.id AS "Id",h.draft_id AS "DraftId",h.form_key AS "Key",h.owner_id AS "OwnerId",h.owner_dept_id AS "DeptId",
-          d.row_version AS "Version",d.name AS "Name",d.schema_json AS "SchemaJson",d.category AS "Category",d.sub_category AS "SubCategory",d.saved_by AS "SavedBy",d.status AS "Status",d.version_number AS "Number",a.enabled AS "Enabled",a.revision AS "ActivationRevision"
+          d.row_version AS "Version",d.name AS "Name",d.schema_json AS "SchemaJson",d.category AS "Category",d.sub_category AS "SubCategory",d.saved_by AS "SavedBy",d.status AS "Status",d.version_number AS "Number",a.enabled AS "Enabled",a.revision AS "ActivationRevision",h.cloned_from_version_id AS "ClonedFromRef"
         FROM cp6_form_authoring_v2.heads h JOIN cp6_form_authoring_v2.drafts d
           ON d.tenant_id=h.tenant_id AND d.environment_id=h.environment_id AND d.head_id=h.id AND d.id=h.draft_id
         JOIN cp6_form_authoring_v2.activation_current a ON a.tenant_id=h.tenant_id AND a.environment_id=h.environment_id AND a.head_id=h.id
@@ -146,7 +146,7 @@ public sealed partial class FormAuthoringOwnerV2
     private static Dictionary<string,string?> Values(Head head)=>new()
     { ["Name"]=head.Name,["SchemaJson"]=head.SchemaJson,["Category"]=head.Category,["SubCategory"]=head.SubCategory };
     private static FormAuthoringViewV2 View(Head head,FieldPermissionDecisionV1 permission)=>new(head.Id,head.DraftId,head.Key,head.Version.ToString("D"),
-        Values(head).Where(x=>permission.Fields[x.Key].CanRead).ToDictionary(),Fields.Where(x=>permission.Fields[x].CanWrite).ToArray(),head.Enabled,head.Status==1,head.Number,head.ActivationRevision.ToString("D"));
+        Values(head).Where(x=>permission.Fields[x.Key].CanRead).ToDictionary(),Fields.Where(x=>permission.Fields[x].CanWrite).ToArray(),head.Enabled,head.Status==1,head.Number,head.ActivationRevision.ToString("D"),head.ClonedFromRef);
     private async Task<bool> CanEdit(UserPermissionContext actor, CancellationToken ct)
     {
         var policy = await ReadPolicy(ct);
@@ -180,7 +180,7 @@ public sealed partial class FormAuthoringOwnerV2
         }
         var result=new List<FormAuthoringViewV2>();
         foreach(var head in await query.OrderBy(h=>h.Key).Skip((page-1)*100).Take(100)
-            .Select(h=>new Head(h.Id,h.DraftId,h.Key,h.OwnerId,h.DeptId,h.Version,h.Name,"",h.Category,h.SubCategory,h.SavedBy,h.Status,h.Number,h.Enabled,h.ActivationRevision)).ToArrayAsync(ct))
+            .Select(h=>new Head(h.Id,h.DraftId,h.Key,h.OwnerId,h.DeptId,h.Version,h.Name,"",h.Category,h.SubCategory,h.SavedBy,h.Status,h.Number,h.Enabled,h.ActivationRevision,h.ClonedFromRef)).ToArrayAsync(ct))
         {
             var permission=await Permission(actor,head,false,false,ct,readMenu);var view=View(head,permission);view.Fields.Remove("SchemaJson");result.Add(view);
         }
@@ -208,10 +208,10 @@ public sealed partial class FormAuthoringOwnerV2
         catch(Exception e)when(e is JsonException or InvalidOperationException or KeyNotFoundException){throw Error("COMMAND_SHAPE_INVALID",400);}
     }
     private sealed record Saved(string BodyDigest,string ResultJson);
-    private Task<Saved?> Original(Guid actor,string key,string command,CancellationToken ct)=>db.Database.SqlQuery<Saved>($"""
+    private Task<Saved?> Original(Guid actor,string key,string command,CancellationToken ct,string operation=Operation)=>db.Database.SqlQuery<Saved>($"""
         SELECT body_digest AS "BodyDigest",result_json AS "ResultJson" FROM cp6_form_authoring_v2.commands
         WHERE tenant_id={db.CurrentTenantId} AND environment_id={fence.EnvironmentId} AND actor_id={actor}
-          AND operation='FORM_SAVE_DRAFT' AND resource_key={key} AND command_id={command}
+          AND operation={operation} AND resource_key={key} AND command_id={command}
         """).SingleOrDefaultAsync(ct);
     private async Task<FormAuthoringResultV2> ProjectOriginal(UserPermissionContext actor,string key,Saved original,CancellationToken ct)
     {
@@ -220,22 +220,24 @@ public sealed partial class FormAuthoringOwnerV2
         var result=JsonSerializer.Deserialize<FormAuthoringResultV2>(original.ResultJson,Json)!;
         return result with {Result=result.Result! with {Fields=result.Result!.Fields.Where(x=>permission.Fields[x.Key].CanRead).ToDictionary(),WritableFields=[]}};
     }
-    public async Task<FormAuthoringResultV2> OriginalAsync(string key,string command,CancellationToken ct=default)
+    public Task<FormAuthoringResultV2> OriginalAsync(string key,string command,CancellationToken ct=default)=>OriginalCore(key,command,Operation,ct);
+    private async Task<FormAuthoringResultV2> OriginalCore(string key,string command,string operation,CancellationToken ct)
     {
         if(!Regex.IsMatch(command,"\\A[A-Za-z0-9_.-]{1,100}\\z"))throw Error("COMMAND_SHAPE_INVALID",400);
         Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);await Root(ct);var actor=await Actor(ct);
         var head=await Heads().SingleOrDefaultAsync(x=>x.Key==key,ct)??new Head(Guid.Empty,Guid.Empty,key,actor.UserId,actor.DeptId,Guid.Empty,"","",null,null,actor.UserId);
-        await Permission(actor,head,false,false,ct);var previous=await Original(actor.UserId,key,command,ct);
+        await Permission(actor,head,false,false,ct);var previous=await Original(actor.UserId,key,command,ct,operation);
         FormAuthoringResultV2 result=previous==null?new(command,"NOT_OBSERVED",null,null,null,null,null):await ProjectOriginal(actor,key,previous,ct);
         if((await Actor(ct)).UserId!=actor.UserId)throw Error("REAUTH_REQUIRED",401);CompletionClock();return result;
     }
-    public async Task<FormAuthoringResultV2> SaveAsync(string key,byte[] raw,CancellationToken ct=default)
+    public Task<FormAuthoringResultV2> SaveAsync(string key,byte[] raw,CancellationToken ct=default)=>WriteDraft(key,Parse(raw),null,ct);
+    private async Task<FormAuthoringResultV2> WriteDraft(string key,Command command,DefinitionCloneCommandV2? clone,CancellationToken ct)
     {
         if(string.IsNullOrWhiteSpace(key)||key.Length>100||key.Contains('\0'))throw Error("DEFINITION_KEY_INVALID",400);
-        var command=Parse(raw);Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var committing=false;
+        var operation=clone==null?Operation:CloneOperation;Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var committing=false;
         try
         {
-            await Root(ct);var actor=await Actor(ct);var original=await Original(actor.UserId,key,command.Id,ct);
+            await Root(ct);var actor=await Actor(ct);var original=await Original(actor.UserId,key,command.Id,ct,operation);
             if(original!=null)
             {
                 var result=await ProjectOriginal(actor,key,original,ct);
@@ -243,21 +245,22 @@ public sealed partial class FormAuthoringOwnerV2
                 if((await Actor(ct)).UserId!=actor.UserId)throw Error("REAUTH_REQUIRED",401);CompletionClock();return result;
             }
             var lease=await fence.AcquireAsync(ct);await Ready(ct);
+            var source=clone==null?null:await CloneSource(actor,clone,ct);
             var old=await Heads().SingleOrDefaultAsync(x=>x.Key==key,ct);
             var head=old??new Head(Guid.NewGuid(),Guid.NewGuid(),key,actor.UserId,actor.DeptId,Guid.Empty,"","",null,null,actor.UserId);
             var permission=await Permission(actor,head,true,old==null,ct);
             if(old!=null&&command.Expected==null)throw Error("DEFINITION_EXISTS",409);
             if(old==null&&command.Expected!=null||old!=null&&command.Expected!=old.Version.ToString("D"))throw Error("DEFINITION_CHANGED",409);
             if(old?.Status==1)throw Error("DRAFT_REQUIRED",409);
-            var b=command.Body;var next=head with {Name=b.Name,SchemaJson=b.SchemaJson,Category=b.Category,SubCategory=b.SubCategory,SavedBy=actor.UserId};
+            var b=source?.Body??command.Body;var next=head with {Name=b.Name,SchemaJson=b.SchemaJson,Category=b.Category,SubCategory=b.SubCategory,SavedBy=actor.UserId,ClonedFromRef=clone?.Body.SourceVersionId??head.ClonedFromRef};
             CheckWrites(old,next,permission);
-            try{_ = FormSchemaValidationV1.Parse(b.SchemaJson);}
+            try{if(clone==null)_ = FormSchemaValidationV1.Parse(b.SchemaJson);}
             catch(InvalidOperationException e){throw Error(e.Message,422);}
             if(old==null)
             {
                 await db.Database.ExecuteSqlInterpolatedAsync($"""
-                    INSERT INTO cp6_form_authoring_v2.heads(tenant_id,environment_id,id,form_key,owner_id,owner_dept_id,draft_id)
-                    VALUES({db.CurrentTenantId},{fence.EnvironmentId},{head.Id},{key},{actor.UserId},{actor.DeptId},{head.DraftId})
+                    INSERT INTO cp6_form_authoring_v2.heads(tenant_id,environment_id,id,form_key,owner_id,owner_dept_id,draft_id,cloned_from_version_id)
+                    VALUES({db.CurrentTenantId},{fence.EnvironmentId},{head.Id},{key},{actor.UserId},{actor.DeptId},{head.DraftId},{next.ClonedFromRef})
                     """,ct);
                 await db.Database.ExecuteSqlInterpolatedAsync($"""
                     INSERT INTO cp6_form_authoring_v2.drafts(tenant_id,environment_id,head_id,id,name,schema_json,category,sub_category,saved_by)
@@ -273,24 +276,25 @@ public sealed partial class FormAuthoringOwnerV2
                 if(changed!=1)throw Error("DEFINITION_CHANGED",409);
             }
             next=await Heads().SingleAsync(x=>x.Key==key,ct);var at=DateTimeOffset.UtcNow;
-            var snapshot=new FormAuthoringViewV2(next.Id,next.DraftId,key,next.Version.ToString("D"),Values(next),[],next.Enabled,false,next.Number,next.ActivationRevision.ToString("D"));
+            var snapshot=new FormAuthoringViewV2(next.Id,next.DraftId,key,next.Version.ToString("D"),Values(next),[],next.Enabled,false,next.Number,next.ActivationRevision.ToString("D"),next.ClonedFromRef);
             var saved=new FormAuthoringResultV2(command.Id,"SUCCEEDED",next.Id,snapshot.Version,snapshot,at,command.Correlation);
             var text=JsonSerializer.Serialize(saved,Json);
             await db.Database.ExecuteSqlInterpolatedAsync($"""
                 INSERT INTO cp6_form_authoring_v2.commands(tenant_id,environment_id,actor_id,operation,resource_key,command_id,canonical_version,body_digest,raw_body,raw_digest,result_json,recorded_at)
-                VALUES({db.CurrentTenantId},{fence.EnvironmentId},{actor.UserId},'FORM_SAVE_DRAFT',{key},{command.Id},'WFC-CJ-1',{command.Digest},{command.Raw},{MainOwnerOperationJournalV1.Digest(command.Raw)},{text},{at})
+                VALUES({db.CurrentTenantId},{fence.EnvironmentId},{actor.UserId},{operation},{key},{command.Id},'WFC-CJ-1',{command.Digest},{command.Raw},{MainOwnerOperationJournalV1.Digest(command.Raw)},{text},{at})
                 """,ct);
             var finalActor=await Actor(ct);if(finalActor.UserId!=actor.UserId)throw Error("REAUTH_REQUIRED",401);
             var finalPermission=await Permission(finalActor,head,true,old==null,ct);CheckWrites(old,next,finalPermission);
+            if(source!=null){await AuthorizeCloneSource(finalActor,source.Head,ct);await CloneReady(ct);}
             var policy=await ReadPolicy(ct);
             var evidence=JsonSerializer.Serialize(new {ActualActor=actor.UserId,EffectiveActor=actor.UserId,Policy=policy,Scope=lease.Snapshot,
                 CheckedAtUtc=DateTimeOffset.UtcNow,Action="oa-designer:form-save",finalActor.RoleIds,ActorDepartment=finalActor.DeptId,finalActor.DeptPath,
                 ResourceScope=finalActor.DataScopes.GetValueOrDefault(Resource,1),CustomDepartments=finalActor.CustomDeptIds.GetValueOrDefault(Resource),
                 FieldVersions=finalPermission.Input.Versions,FieldRows=finalPermission.Input.Rows,FieldAccess=finalPermission.Fields.ToDictionary(x=>x.Key,x=>x.Value.Access),
-                next.OwnerId,OwnerDepartment=next.DeptId,command.Digest,RawDigest=MainOwnerOperationJournalV1.Digest(command.Raw)},Json);
+                next.OwnerId,OwnerDepartment=next.DeptId,next.ClonedFromRef,CloneSourceDefinition=source?.Head.Id,command.Digest,RawDigest=MainOwnerOperationJournalV1.Digest(command.Raw)},Json);
             await db.Database.ExecuteSqlInterpolatedAsync($"""
-                INSERT INTO cp6_form_authoring_v2.audit(tenant_id,environment_id,actor_id,resource_key,command_id,evidence_json,recorded_at)
-                VALUES({db.CurrentTenantId},{fence.EnvironmentId},{actor.UserId},{key},{command.Id},{evidence},{at})
+                INSERT INTO cp6_form_authoring_v2.audit(tenant_id,environment_id,actor_id,resource_key,command_id,operation,evidence_json,recorded_at)
+                VALUES({db.CurrentTenantId},{fence.EnvironmentId},{actor.UserId},{key},{command.Id},{operation},{evidence},{at})
                 """,ct);
             if(await Heads().SingleAsync(x=>x.Key==key,ct)!=next)throw Error("DEFINITION_CHANGED",409);
             await Ready(ct);await fence.ValidateAsync(lease,ct);CompletionClock();ct.ThrowIfCancellationRequested();
