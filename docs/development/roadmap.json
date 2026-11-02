@@ -161792,6 +161792,11 @@
       "date": "2026-11-02",
       "change": "W276：原生APP/普通FORM本人当前授权信箱、准确根子pin、独立已读原事实及实际定义在途影响已实现。",
       "evidence": "docs/development/evidence/W276-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-02",
+      "change": "W277：TASK-R2封闭范围委派、当前双身份任务读写，以及迭代Owner独立业务委派、BLOCKED显式重新授权和连续原事实已实现。",
+      "evidence": "docs/development/evidence/W277-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -197528,6 +197533,13 @@
           "handoff_branch_deleted": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave276-final-verification.json"
         }
+      },
+      "wave277_delegation_reauthorization": {
+        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W277-01/DELIVERY.md",
+        "full_task_completed": false,
+        "validation": "本地33项唯一PostgreSQL18行为通过，0跳过；35项Vue组件/恢复行为通过，应用vue-tsc通过。实际Main登录/CSRF/HTTP、两连接授权撤销及撤回/应用竞争、延迟提交失败回滚均有定向证据。模拟业务数据；内部Owner、事务、原生Workflow和历史原件真实执行。",
+        "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED，59局部仍3闭环/56余项，125/247正式状态保持。W278接续浏览器到真实PG完整链，W279原AC核对；历史比较/目录收藏下载、完整SFS patch/三版本、退回转交/无审批人、日历与期限Worker仍在后续窗口。其他业务Owner的委派撤回/应用未采用，不把迭代采用推广为全Owner完成。"
       }
     },
     {
@@ -197606,7 +197618,14 @@
         "WP02：按S02-00采用的PostgreSQL布局、可信上下文/当前授权和全部写者共同最终fence、Main Owner事务及原键结果/审计。",
         "WP02：IAM当前委派/角色/撤权写者共同最终门；时钟/时区可信来源。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "wave277_delegation_reauthorization": {
+        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W277-01/DELIVERY.md",
+        "full_task_completed": false,
+        "validation": "本地33项唯一PostgreSQL18行为通过，0跳过；35项Vue组件/恢复行为通过，应用vue-tsc通过。实际Main登录/CSRF/HTTP、两连接授权撤销及撤回/应用竞争、延迟提交失败回滚均有定向证据。模拟业务数据；内部Owner、事务、原生Workflow和历史原件真实执行。",
+        "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED，59局部仍3闭环/56余项，125/247正式状态保持。W278接续浏览器到真实PG完整链，W279原AC核对；历史比较/目录收藏下载、完整SFS patch/三版本、退回转交/无审批人、日历与期限Worker仍在后续窗口。其他业务Owner的委派撤回/应用未采用，不把迭代采用推广为全Owner完成。"
+      }
     },
     {
       "id": "WP12-11",
@@ -198009,17 +198028,25 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
+        "window": "W277-01",
         "as_of": "2026-11-02",
         "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp12-19",
-        "delivered": "W200真实非委派撤回、Owner apply同控制CAS及两种竞争顺序已交付，终态不可改写。",
+        "report": "docs/development/evidence/W277-01/DELIVERY.md",
+        "delivered": "W200真实非委派撤回、Owner apply同控制CAS及两种竞争顺序已交付，终态不可改写。 W277：TASK-R2封闭范围委派、当前双身份任务读写，以及迭代Owner独立业务委派、BLOCKED显式重新授权和连续原事实已实现。",
         "remaining": "委派撤回与BLOCKED新actor/新grant的明确再授权和连续回执尚未完整实现；worker不能自选人员替代授权，不重做已通过非委派竞争。",
         "evidence_refs": [
-          "docs/development/evidence/W200-01/DELIVERY.md"
+          "docs/development/evidence/W200-01/DELIVERY.md",
+          "docs/development/evidence/W277-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
-        "new_product_validation": false
+        "new_product_validation": true
+      },
+      "wave277_delegation_reauthorization": {
+        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W277-01/DELIVERY.md",
+        "full_task_completed": false,
+        "validation": "本地33项唯一PostgreSQL18行为通过，0跳过；35项Vue组件/恢复行为通过，应用vue-tsc通过。实际Main登录/CSRF/HTTP、两连接授权撤销及撤回/应用竞争、延迟提交失败回滚均有定向证据。模拟业务数据；内部Owner、事务、原生Workflow和历史原件真实执行。",
+        "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED，59局部仍3闭环/56余项，125/247正式状态保持。W278接续浏览器到真实PG完整链，W279原AC核对；历史比较/目录收藏下载、完整SFS patch/三版本、退回转交/无审批人、日历与期限Worker仍在后续窗口。其他业务Owner的委派撤回/应用未采用，不把迭代采用推广为全Owner完成。"
       }
     },
     {
@@ -201489,7 +201516,7 @@
       "path": "docs/development/dispatch/20261102-wave277/README.md",
       "baseline_sha": "69909b2ec52a56917a41770279072e3384bcd97b",
       "registered_at": "2026-11-02T21:10:32.641506+00:00",
-      "phase": "IMPLEMENTING",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -201510,25 +201537,24 @@
           "id": "W277-01",
           "workspace_task": "W277-01",
           "related_tasks": [
-            "WP12-09",
             "WP12-08",
-            "WP12-19",
-            "WP12-10"
+            "WP12-10",
+            "WP12-19"
           ],
           "title": "封闭代理授权与显式业务撤回恢复",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "IMPLEMENTING",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w277-01",
           "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
@@ -201539,14 +201565,34 @@
             "Main:approval-withdraw",
             "Main:authorization-catalog",
             "Main:EF-migrations"
-          ]
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W277-01/DELIVERY.md",
+          "validation": "本地33项唯一PostgreSQL18行为通过，0跳过；35项Vue组件/恢复行为通过，应用vue-tsc通过。实际Main登录/CSRF/HTTP、两连接授权撤销及撤回/应用竞争、延迟提交失败回滚均有定向证据。模拟业务数据；内部Owner、事务、原生Workflow和历史原件真实执行。",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave277-final-verification.json"
+          },
+          "business_acceptance": "CLOSED_TASK_GRANT_CURRENT_DUAL_ACTOR_AND_ITERATION_EXPLICIT_REAUTH_PG_HTTP_COMPONENT_PASS;BROWSER_W278;FULL_CARD_REMAINS"
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W277封闭代理授权/当前代理读面及委派撤回、BLOCKED显式新授权恢复；3–5h低置信度，单人复用两席位，下一累计10h校准，24h目标持续。"
+      "next_action": "W277正常远端采用、准确任务分支清理与官方finish；随后W278真实浏览器/PG链，24h目标持续。",
+      "lifecycle_snapshot": {
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_seat_released": false,
+        "main_branch_deleted": false,
+        "handoff_branch_deleted": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave277-final-verification.json"
+      },
+      "integration_baseline": "69909b2ec52a56917a41770279072e3384bcd97b"
     },
     "wave_history": [
       {
@@ -237600,7 +237646,7 @@
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 29035,
+      "effective_seconds_recorded": 33694,
       "next_reestimate_at_effective_seconds": 36000,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
@@ -237898,15 +237944,16 @@
           "id": "W277-01",
           "day": "D3",
           "related_tasks": [
-            "WP12-19",
-            "WP12-10"
+            "WP12-08",
+            "WP12-10",
+            "WP12-19"
           ],
           "title": "委派撤回与BLOCKED显式新授权恢复",
           "estimate_hours": [
             1.25,
             2.5
           ],
-          "state": "IN_PROGRESS",
+          "state": "VERIFYING",
           "initial_estimate_hours": [
             2,
             3
@@ -237916,8 +237963,18 @@
             5
           ],
           "estimate_confidence": "LOW",
-          "scope_refinement": "Actual TASK-R2 closed grants/current delegated read and native task actor evidence as direct prerequisite; distinct business withdrawal authority cannot be inferred from task grant. Explicit Owner delegated withdrawal and BLOCKED new-actor/new-grant recovery preserve accepted oa.app/2.0 wire and original facts.",
-          "started_at": "2026-11-02T21:10:32.641506+00:00"
+          "scope_refinement": "TASK closed grants/current dual-actor read/actions; separate real Iteration Owner business grant and explicit blocked withdrawal/application authorization. No WP12-09 sendback/transfer adoption; no other business Owner withdrawal adoption.",
+          "started_at": "2026-11-02T21:10:32.641506+00:00",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W277-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave277-final-verification.json"
+          }
         },
         {
           "id": "W278-01",
@@ -238138,7 +238195,7 @@
           "next_reestimate_at_effective_seconds": 36000
         }
       ],
-      "timing_snapshot_at": "2026-11-02T21:10:32.641506+00:00",
+      "timing_snapshot_at": "2026-11-02T22:28:11.436503+00:00",
       "remaining_estimate_hours": [
         11.25,
         21.5

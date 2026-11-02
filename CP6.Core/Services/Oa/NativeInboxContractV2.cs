@@ -8,7 +8,7 @@ public sealed record NativeInboxCountsV2(int Pending,int Cc,int Running,int Done
 public sealed record NativeInstancePinV2(Guid InstanceId,Guid? ParentInstanceId,Guid FlowVersionId,Guid? FormVersionId,
     string FlowKey,int Status,string InstanceRowVersion);
 public sealed record NativeReadFactV2(string Kind,Guid TargetId,Guid PrincipalId,Guid ActualUserId,
-    DateTimeOffset FirstReadAtUtc,string FirstCommandId);
+    DateTimeOffset FirstReadAtUtc,string FirstCommandId,Guid? GrantId=null,string? GrantRevision=null);
 public sealed record NativeTaskReadV2(Guid TaskId,Guid InstanceId,string NodeId,Guid? TokenId,int StageIndex,int StageRound,
     Guid PrincipalId,int Status,string TaskRowVersion,NativeReadFactV2? Read,bool CanRequestDecisionContext);
 public sealed record NativeCcReadV2(Guid CcId,Guid InstanceId,Guid RecipientId,string? NodeId,NativeReadFactV2? Read);

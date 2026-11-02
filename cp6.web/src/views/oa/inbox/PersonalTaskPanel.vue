@@ -62,7 +62,7 @@ async function run(read: boolean, wasUnknown: boolean, close = false) {
   } finally { if (live && generation === current) busy.value = false }
 }
 async function decide(decision: string) {
-  if (!context.value || locked.value) return
+  if (!context.value || locked.value || !context.value.allowedDecisions?.includes(decision)) return
   if (decision === 'reject' && !comment.value.trim()) { error.value = '拒绝时请填写意见。'; return }
   const intent: Intent = { identity: identityStamp(), task: props.taskId, command: crypto.randomUUID(), behalf: getActingAs()?.userId ?? null }
   try { sessionStorage.setItem(cache, JSON.stringify(intent)) } catch { storageBlocked.value = true; error.value = '无法保存恢复标识，未发送办理请求。'; return }
@@ -83,7 +83,7 @@ onBeforeUnmount(() => { live = false; generation++; window.removeEventListener(A
       <h4>{{ context.name }}</h4><p>表单编号：{{ context.formDataId }}</p>
       <PersonalFormFields :fields="fields" :model-value="data" :mask="context.fieldMask" disabled />
       <el-input v-model="comment" type="textarea" maxlength="500" placeholder="办理意见" :disabled="locked" />
-      <div class="actions"><el-button type="primary" :disabled="locked" @click="decide('approve')">同意</el-button><el-button type="danger" :disabled="locked" @click="decide('reject')">拒绝</el-button></div>
+      <div class="actions"><el-button type="primary" :disabled="locked || !context.allowedDecisions?.includes('approve')" @click="decide('approve')">同意</el-button><el-button type="danger" :disabled="locked || !context.allowedDecisions?.includes('reject')" @click="decide('reject')">拒绝</el-button></div>
     </template>
     <p v-if="result" role="status">{{ result.state === 'CLOSED' ? '原命令已关闭，没有产生办理效果。' : '已办理。' }}原命令：{{ result.commandId }}</p>
     <el-button v-if="result?.state === 'CLOSED'" @click="load">重新读取待办</el-button>

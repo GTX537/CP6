@@ -30,9 +30,10 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await using var h = await Seed(); var (f, reviewer) = await StartSetup(h); await TaskPermission(h, reviewer);
         var delegateUser = Guid.NewGuid();
         h.Db.Sys_Users.Add(new() { Id = delegateUser, UserName = "actual-delegate", Password = "unused", RoleId = 72 });
-        var grant = new Wf_FlowDelegate { GrantorId = reviewer, DelegateId = delegateUser, Scope = "binding-flow",
+        var legacy = new Wf_FlowDelegate { GrantorId = reviewer, DelegateId = delegateUser, Scope = "binding-flow",
             ValidFrom = DateTime.Now.AddMinutes(-1), ValidTo = DateTime.Now.AddHours(1) };
-        h.Db.Wf_FlowDelegates.Add(grant); await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear();
+        h.Db.Wf_FlowDelegates.Add(legacy); await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear();
+        var grant=await CreateTaskGrant(h,reviewer,delegateUser,"binding-flow");
         await Starter(h).RunAsync(h.Tenant); var task = await h.Db.Wf_FlowTasks.AsNoTracking().SingleAsync();
         Assert.Equal(reviewer, task.AssigneeId);
         var fact = await ApprovalTaskAssignmentsV2.Read(h.Db, ScopeEnvironment, task.Id, default);
@@ -45,7 +46,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await using var tx = await h.Db.Database.BeginTransactionAsync();
         var authority = TaskAuthority(h); var proof = await authority.AcquireAsync(task.Id, reviewer);
         Assert.Equal(reviewer, proof.Evidence.PrincipalId); Assert.Equal(delegateUser, proof.Evidence.ActualHandlerId);
-        Assert.Equal(reviewer, proof.Evidence.OnBehalfOfId); Assert.Equal(grant.Id, proof.Evidence.GrantId);
+        Assert.Equal(reviewer, proof.Evidence.OnBehalfOfId); Assert.Equal(grant.GrantId, proof.Evidence.GrantId);
         Assert.NotNull(proof.Evidence.GrantRevision); Assert.Contains("binding-flow", proof.Evidence.GrantBody!);
         await authority.ValidateAsync(proof); await tx.CommitAsync();
         Assert.Equal(0, (await h.Db.Wf_FlowTasks.AsNoTracking().SingleAsync()).Status); // Authority is not a vote.
@@ -69,10 +70,10 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             await tx.RollbackAsync(); return error.Message;
         }
         Assert.Equal("RESOURCE_NOT_FOUND", await Denied(null));
-        Assert.Equal("DELEGATION_EXPIRED", await Denied(taskOwner)); // Exact case-sensitive Scope.
+        Assert.Equal("GRANT_SCOPE_UNVERIFIED", await Denied(taskOwner)); // Legacy strings never become current closed grants.
         await h.Db.Wf_FlowDelegates.Where(x => x.Id == grant.Id).ExecuteUpdateAsync(x => x.SetProperty(g => g.Scope, "binding-flow")
             .SetProperty(g => g.ValidTo, DateTime.Now.AddMinutes(-1)));
-        Assert.Equal("DELEGATION_EXPIRED", await Denied(taskOwner));
+        Assert.Equal("GRANT_SCOPE_UNVERIFIED", await Denied(taskOwner));
         TaskActor(h, h.User); // Starter cannot act through somebody else's legitimate duty.
         Assert.Equal("SOD_VIOLATION", await Denied(taskOwner));
         TaskActor(h, taskOwner);
@@ -90,30 +91,30 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     {
         await using var h = await Seed(); var (_, reviewer) = await StartSetup(h); await TaskPermission(h, reviewer);
         var actor = Guid.NewGuid(); h.Db.Sys_Users.Add(new() { Id = actor, UserName = "delegate-race", Password = "unused", RoleId = 72 });
-        var grant = new Wf_FlowDelegate { GrantorId = reviewer, DelegateId = actor, Scope = "binding-flow",
-            ValidFrom = DateTime.Now.AddMinutes(-1), ValidTo = DateTime.Now.AddHours(1) };
-        h.Db.Wf_FlowDelegates.Add(grant); await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear();
+        await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear();
+        var grant=await CreateTaskGrant(h,reviewer,actor,"binding-flow");
         await Starter(h).RunAsync(h.Tenant); var task = await h.Db.Wf_FlowTasks.SingleAsync(); TaskActor(h, actor);
         Assert.Equal("SCOPE_TRANSACTION_REQUIRED", (await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(() => TaskAuthority(h).AcquireAsync(task.Id, reviewer))).Message);
         await using (var tx = await h.Db.Database.BeginTransactionAsync())
         {
             var authority = TaskAuthority(h); var proof = await authority.AcquireAsync(task.Id, reviewer);
-            await h.Db.Wf_FlowDelegates.Where(x => x.Id == grant.Id).ExecuteUpdateAsync(x => x.SetProperty(u => u.Enable, false));
+            await h.Db.Sys_Users.Where(x=>x.Id==actor).ExecuteUpdateAsync(x=>x.SetProperty(u=>u.Enable,false));
             Assert.Equal("SCOPE_AUTHORITY_CHANGED", (await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(() => authority.ValidateAsync(proof))).Message);
             await tx.RollbackAsync();
         }
-        Assert.True(await h.Db.Wf_FlowDelegates.AnyAsync(x => x.Id == grant.Id && x.Enable));
+        Assert.True(await h.Db.Sys_Users.AnyAsync(x=>x.Id==actor&&x.Enable));
         await using var peer = server.Context(new CP6.Core.Services.Common.TenantContext { CurrentTenantId = h.Tenant });
         await using (var tx = await h.Db.Database.BeginTransactionAsync())
         {
             var authority = TaskAuthority(h); var proof = await authority.AcquireAsync(task.Id, reviewer);
-            var revoke = peer.Wf_FlowDelegates.Where(x => x.Id == grant.Id).ExecuteUpdateAsync(x => x.SetProperty(u => u.Enable, false));
+            var revoke = TaskGrants(DecisionActor(h with{Db=peer},reviewer)).WriteAsync("REVOKE",grant.GrantId,
+                PersonalCommand(new TaskDelegationRevokeV2("two connection revocation"),"revoke-race",grant.Version.ToString("D")));
             await Task.Delay(150); Assert.False(revoke.IsCompleted);
             await authority.ValidateAsync(proof); await tx.CommitAsync(); await revoke;
         }
         await using (var tx = await h.Db.Database.BeginTransactionAsync())
         {
-            Assert.Equal("DELEGATION_EXPIRED", (await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(() => TaskAuthority(h).AcquireAsync(task.Id, reviewer))).Message);
+            Assert.Equal("GRANT_SCOPE_DENIED", (await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(() => TaskAuthority(h).AcquireAsync(task.Id, reviewer))).Message);
             await tx.RollbackAsync();
         }
         Assert.Equal(0, (await h.Db.Wf_FlowTasks.AsNoTracking().SingleAsync()).Status);

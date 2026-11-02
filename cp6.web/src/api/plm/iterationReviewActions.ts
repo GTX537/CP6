@@ -12,6 +12,7 @@ export interface IterationApplication {
   receiptStreamId: string | null; decisionId: string | null; decision: string | null; receipt: IterationReceipt | null
   application: { id: string; approved: boolean; businessStage: string; appliedIteration: EngineeringReference } | null
   withdrawalDelivery?: { state: string; attempts: number; error: string | null } | null
+  withdrawalAuthorizations?: { commandId: string; previousCommandId: string | null; state: string; actualHandlerId: string; requesterId: string; grantId: string | null; grantRevision: string | null }[]
 }
 export interface IssueTarget { kind: 'PROCESS' | 'CANDIDATE'; candidate: EngineeringReference | null; path: string | null }
 export interface ReviewIssue {
@@ -30,21 +31,28 @@ export interface IssueResult { operationId: string; iterationId: string; issue: 
 export interface WithdrawalResult {
   operationId: string; iterationId: string; state: 'WITHDRAWN' | 'CONFLICT'; transportCommandId: string | null
   appliedReceipt: IterationReceipt | null
+  previousCommandId?: string | null
   fact: { submissionId: string; owner: string; ownerCommandId: string; subject: { subjectId: string }; scope: { environmentId: string; tenantId: string }; actor: { actualHandlerId: string } } | null
 }
-export type ActionKind = 'APPLICATION' | 'ISSUE' | 'WITHDRAWAL'
-export type ActionResult = ApplicationResult | IssueResult | WithdrawalResult
+export interface BusinessGrant { grantId: string; revision: string; version: string; iterationId: string; submissionId: string; grantorId: string; delegateId: string; fromUtc: string; toUtc: string; actions: string[]; enabled: boolean; operationId: string; recordedAtUtc: string; reason: string }
+export interface BusinessGrantCommand { operationId: string; submissionId: string; grantId: string | null; expectedVersion: string | null; delegateId: string; fromUtc: string; toUtc: string; actions: string[]; enabled: boolean; reason: string }
+export interface BusinessGrantResult { operationId: string; grant: BusinessGrant }
+export type ActionKind = 'APPLICATION' | 'ISSUE' | 'WITHDRAWAL' | 'BUSINESS_GRANT'
+export type ActionResult = ApplicationResult | IssueResult | WithdrawalResult | BusinessGrantResult
 export interface ActionOperation { operationId: string; state: 'COMMITTED' | 'CLOSED' | 'UNKNOWN'; result?: ActionResult | null }
 export interface IterationTask { submissionId: string; iterationId: string; task: NativeReviewTask }
 const root = '/engineering-iterations/owner-v1'
-const operationPath = { APPLICATION: 'review-application-operations', ISSUE: 'review-issue-operations', WITHDRAWAL: 'review-withdrawal-operations' }
+const operationPath = { APPLICATION: 'review-application-operations', ISSUE: 'review-issue-operations', WITHDRAWAL: 'review-withdrawal-operations', BUSINESS_GRANT: 'review-business-grant-operations' }
+const acting = (behalf?: string) => behalf ? { 'X-Acting-As': behalf } : {}
 export const iterationReviewActions = {
   context: (id: string, submission: string) => http.get<any, EngineeringEnvelope<IterationApplication>>(`${root}/${encodeURIComponent(id)}/review-submissions/${encodeURIComponent(submission)}/application`),
   issues: (id: string) => http.get<any, EngineeringEnvelope<IssueContext>>(`${root}/${encodeURIComponent(id)}/review-issues`),
   issue: (id: string, etag: string, body: IssueCommand) => http.post<any, EngineeringEnvelope<IssueResult>>(`${root}/${encodeURIComponent(id)}/review-issues`, body, { headers: { 'If-Match': etag } }),
-  apply: (id: string, etag: string, body: { operationId: string; submissionId: string; expectedReceiptId: string | null; reason: string }) => http.post<any, EngineeringEnvelope<ApplicationResult>>(`${root}/${encodeURIComponent(id)}/review-application`, body, { headers: { 'If-Match': etag } }),
-  withdraw: async (id: string, submission: string, version: string, body: { commandId: string; reason: string }): Promise<EngineeringEnvelope<WithdrawalResult>> => {
-    try { return await http.post<any, EngineeringEnvelope<WithdrawalResult>>(`${root}/${encodeURIComponent(id)}/review-submissions/${encodeURIComponent(submission)}/withdraw`, body, { headers: { 'If-Match': `"${version}"` } }) }
+  apply: (id: string, etag: string, body: { operationId: string; submissionId: string; expectedReceiptId: string | null; reason: string }, behalf?: string, reauthorize = false) => http.post<any, EngineeringEnvelope<ApplicationResult>>(`${root}/${encodeURIComponent(id)}/review-application${reauthorize ? '/reauthorize' : ''}`, body, { headers: { 'If-Match': etag, ...acting(behalf) } }),
+  businessGrants: (id: string, submission: string) => http.get<any, EngineeringEnvelope<BusinessGrant[]>>(`${root}/${encodeURIComponent(id)}/review-submissions/${encodeURIComponent(submission)}/business-grants`),
+  grantBusiness: (id: string, body: BusinessGrantCommand) => http.post<any, EngineeringEnvelope<BusinessGrantResult>>(`${root}/${encodeURIComponent(id)}/review-business-grants`, body),
+  withdraw: async (id: string, submission: string, version: string, body: { commandId: string; reason: string }, behalf?: string, previous?: string): Promise<EngineeringEnvelope<WithdrawalResult>> => {
+    try { return await http.post<any, EngineeringEnvelope<WithdrawalResult>>(`${root}/${encodeURIComponent(id)}/review-submissions/${encodeURIComponent(submission)}/${previous ? `withdrawals/${encodeURIComponent(previous)}/reauthorize` : 'withdraw'}`, body, { headers: { 'If-Match': `"${version}"`, ...acting(behalf) } }) }
     catch (e: any) { if (e?.response?.status === 409 && e?.response?.data?.data?.state === 'CONFLICT') return e.response.data; throw e }
   },
   operation: (kind: ActionKind, id: string, close: boolean) => close

@@ -7,6 +7,25 @@
       <p>当前业务阶段：{{ stage(application.businessStage) }} · 审批决定：{{ decision(application.decision) }}</p>
       <p>业务应用：{{ applicationState(application.receipt?.application) }}<span v-if="application.receipt"> · 回执版本 {{ application.receipt.receiptRevision }} · {{ outcome(application.receipt.outcomeCode) }}</span></p>
       <p v-if="application.withdrawalDelivery">审批撤回通知：{{ withdrawalState(application.withdrawalDelivery.state) }}</p>
+      <details><summary>本轮业务委派</summary>
+        <p>授权仅用于本轮迭代的撤回或应用。实际操作人和委托人都须保有当前业务权限。</p>
+        <button :disabled="locked" @click="readGrants">读取本轮业务委派</button>
+        <label>业务操作身份<select v-model="businessPrincipal" aria-label="业务委托人" :disabled="locked"><option value="">本人</option><option v-for="id in grantPrincipals" :key="id" :value="id">代理 {{ person(id) }}</option></select></label>
+        <article v-for="g in grants" :key="g.grantId"><p>{{ person(g.grantorId) }} → {{ person(g.delegateId) }} · 版本 {{ g.revision }} · {{ g.enabled ? '启用' : '已撤销' }} · {{ g.fromUtc }} 至 {{ g.toUtc }}</p>
+          <p>{{ g.actions.map(a => a === 'review-withdraw' ? '撤回' : '应用').join('、') }}</p>
+          <button v-if="g.grantorId === scope.actorId && can('review-delegate')" :disabled="locked" @click="editGrant(g)">修订授权</button>
+          <button v-if="g.grantorId === scope.actorId && g.enabled && can('review-delegate')" :disabled="locked || !grantReason.trim()" @click="saveGrant(g)">撤销授权</button>
+        </article>
+        <form v-if="can('review-delegate')" @submit.prevent="saveGrant()"><fieldset :disabled="locked">
+          <h4>{{ editingGrant ? '修订本人的业务授权' : '授予本轮业务权限' }}</h4>
+          <label>受托人<select v-model="grantDelegate" aria-label="业务受托人" required><option value="">请选择项目成员</option><option v-for="p in members.filter(p => p.id !== scope.actorId)" :key="p.id" :value="p.id">{{ p.name }}</option></select></label>
+          <label>生效时间（UTC）<input v-model="grantFrom" aria-label="业务委派生效时间" type="datetime-local" required /></label><label>结束时间（UTC）<input v-model="grantTo" aria-label="业务委派结束时间" type="datetime-local" required /></label>
+          <label><input v-model="grantWithdraw" type="checkbox" />允许撤回</label><label><input v-model="grantApply" type="checkbox" />允许应用审批决定</label>
+          <label>授权或撤销原因<textarea v-model="grantReason" aria-label="业务委派原因" required maxlength="1000" /></label>
+          <button>保存业务授权</button><button type="button" @click="editingGrant = null">新建授权</button>
+        </fieldset></form>
+      </details>
+      <ol v-if="application.withdrawalAuthorizations?.length"><li v-for="a in application.withdrawalAuthorizations" :key="a.commandId">撤回 {{ a.commandId }} · {{ withdrawalState(a.state) }} · 实际操作人 {{ person(a.actualHandlerId) }}<span v-if="a.previousCommandId"> · 接续 {{ a.previousCommandId }}</span></li></ol>
       <form v-if="canDecide && tasks.length" @submit.prevent="vote"><fieldset :disabled="locked || !active">
         <h4>专业评审</h4><label>待办<select v-model="taskId" aria-label="迭代评审待办" required><option value="">请选择当前待办</option><option v-for="t in tasks" :key="t.task.taskId" :value="t.task.taskId">{{ taskState(t.task.taskStatus) }} · {{ t.task.taskId }}</option></select></label>
         <label>结论<select v-model="voteValue" aria-label="迭代评审结论"><option value="approve">通过</option><option value="reject">不通过</option></select></label>
@@ -42,8 +61,10 @@
         </template>
         <button>保存问题处理</button><button type="button" @click="issueAction = null">取消编辑</button>
       </fieldset></form>
-      <form v-if="can('review-apply') && application.decision && !terminal" @submit.prevent="apply"><fieldset :disabled="locked"><label>应用原因<textarea v-model="applyReason" aria-label="迭代批准应用原因" required maxlength="1000" /></label><button>应用本轮审批决定</button></fieldset></form>
-      <form v-if="can('review-withdraw') && active" @submit.prevent="withdraw"><fieldset :disabled="locked"><label>撤回原因<textarea v-model="withdrawReason" aria-label="迭代撤回原因" required maxlength="500" /></label><p>撤回后返回设计，本轮原件和问题记录继续保留。</p><button>撤回本轮评审</button></fieldset></form>
+      <form v-if="can('review-apply') && application.decision && !terminal" @submit.prevent="apply()"><fieldset :disabled="locked"><label>应用原因<textarea v-model="applyReason" aria-label="迭代批准应用原因" required maxlength="1000" /></label><button>应用本轮审批决定</button></fieldset></form>
+      <button v-if="can('review-apply') && application.receipt?.application === 'BLOCKED'" :disabled="locked || !applyReason.trim()" @click="apply(true)">以当前身份明确重新授权应用</button>
+      <form v-if="can('review-withdraw') && active" @submit.prevent="withdraw()"><fieldset :disabled="locked"><label>撤回原因<textarea v-model="withdrawReason" aria-label="迭代撤回原因" required maxlength="500" /></label><p>撤回后返回设计，本轮原件和问题记录继续保留。</p><button>撤回本轮评审</button></fieldset></form>
+      <form v-if="can('review-withdraw') && blockedWithdrawal" @submit.prevent="withdraw(true)"><fieldset :disabled="locked"><label>重新授权原因<textarea v-model="withdrawReason" aria-label="撤回重新授权原因" required maxlength="500" /></label><p>生成新命令，接续 {{ blockedWithdrawal.commandId }}。原撤回事实继续保留。</p><button>以当前身份明确重新授权撤回</button></fieldset></form>
     </template>
   </section>
 </template>
@@ -52,7 +73,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { EngineeringIterationScope } from '@/api/plm/engineeringIteration'
 import type { EngineeringReference } from '@/api/plm/engineeringProducts'
 import { iterationReviewApi, type ReviewDetail, type ReviewSubmission } from '@/api/plm/iterationReview'
-import { iterationReviewActions as api, type IterationApplication, type IssueContext, type IssueCommand, type ReviewIssue, type IterationTask, type ActionKind, type ActionResult } from '@/api/plm/iterationReviewActions'
+import { iterationReviewActions as api, type IterationApplication, type IssueContext, type IssueCommand, type ReviewIssue, type IterationTask, type ActionKind, type ActionResult, type BusinessGrant, type BusinessGrantCommand } from '@/api/plm/iterationReviewActions'
 import type { EngineeringEnvelope } from '@/api/plm/engineeringProducts'
 import { documentApi, type DocumentSnapshot } from '@/api/plm/controlledDocument'
 import { requirementSetResponse as response } from '@/auth/requirementSetRecovery'
@@ -70,6 +91,10 @@ const members = ref<{ id: string; name: string }[]>([]), issueAction = ref<Issue
 const candidateId = ref(''), targetPath = ref(''), responsible = ref(''), due = ref(''), issueText = ref(''), issueReason = ref('')
 const documents = ref<DocumentSnapshot[]>([]), documentSearch = ref(''), documentPage = ref(1), evidence = ref<{ reference: EngineeringReference; name: string }[]>([])
 const locked = computed(() => busy.value || props.disabled || !!pending.value)
+const grants = ref<BusinessGrant[]>([]), businessPrincipal = ref(''), editingGrant = ref<BusinessGrant | null>(null)
+const grantDelegate = ref(''), grantFrom = ref(''), grantTo = ref(''), grantReason = ref(''), grantWithdraw = ref(true), grantApply = ref(false)
+const grantPrincipals = computed(() => [...new Set(grants.value.filter(g => g.delegateId === props.scope.actorId && g.enabled && Date.parse(g.fromUtc) <= Date.now() && Date.now() < Date.parse(g.toUtc)).map(g => g.grantorId))])
+const blockedWithdrawal = computed(() => { const latest = application.value?.withdrawalAuthorizations?.at(-1); return latest?.state === 'BLOCKED' && application.value?.businessStage === 'IN_DESIGN' ? latest : null })
 const active = computed(() => props.currentSubmission === props.detail.submission.submissionId && application.value?.businessStage === 'IN_REVIEW')
 const terminal = computed(() => ['APPLIED', 'STALE', 'CONFLICT'].includes(application.value?.receipt?.application ?? ''))
 const issueActionName = computed(() => ({ CREATE: '登记阻塞问题', RESPOND: '答复问题', VERIFY: '独立验证关闭', DOWNGRADE: '降为非阻塞', NOTE: '补充说明' } as Record<string, string>)[issueAction.value ?? ''])
@@ -85,14 +110,15 @@ const copy = <T,>(v: T): T => JSON.parse(JSON.stringify(v))
 const independent = (i: ReviewIssue) => i.state !== 'VERIFIED_CLOSED' && i.responses.some(r => !r.correctiveNote) && i.authorId !== props.scope.actorId && i.responsibleId !== props.scope.actorId && !i.responses.some(r => !r.correctiveNote && r.actorId === props.scope.actorId) && props.detail.package.reviewers.includes(props.scope.actorId)
 let generation = 0, live = true
 function syncPending() { pending.value = pendingIterationAction(props.scope) }
-function clear() { generation++; busy.value = false; application.value = null; issues.value = null; tasks.value = []; members.value = []; pending.value = null; documents.value = []; evidence.value = []; issueAction.value = null; selectedIssue.value = null; taskId.value = comment.value = applyReason.value = withdrawReason.value = candidateId.value = targetPath.value = responsible.value = due.value = issueText.value = issueReason.value = documentSearch.value = error.value = notice.value = '' }
+function clearGrants() { grants.value = []; businessPrincipal.value = ''; editingGrant.value = null; grantDelegate.value = grantFrom.value = grantTo.value = grantReason.value = '' }
+function clear() { generation++; clearGrants(); busy.value = false; application.value = null; issues.value = null; tasks.value = []; members.value = []; pending.value = null; documents.value = []; evidence.value = []; issueAction.value = null; selectedIssue.value = null; taskId.value = comment.value = applyReason.value = withdrawReason.value = candidateId.value = targetPath.value = responsible.value = due.value = issueText.value = issueReason.value = documentSearch.value = error.value = notice.value = '' }
 async function run(action: (check: () => void) => Promise<void>) {
   if (busy.value || props.disabled || !can('query') || !authenticationCanRead()) return
   const current = ++generation, stamp = identityStamp(), identity = JSON.stringify(props.scope), id = props.iterationId, submission = props.detail.submission.submissionId
   const check = () => { requireIdentity(stamp); if (!live || current !== generation || props.disabled || !can('query') || !authenticationCanRead() || JSON.stringify(props.scope) !== identity || props.iterationId !== id || props.detail.submission.submissionId !== submission) throw new Error('当前身份或评审轮次已变化。') }
   busy.value = true; error.value = notice.value = ''
   try { check(); syncPending(); await action(check); check(); syncPending() }
-  catch (e) { if (live && current === generation) { application.value = null; issues.value = null; tasks.value = []; documents.value = []; evidence.value = []; members.value = []; error.value = e instanceof Error ? e.message : '评审处理失败。'; try { syncPending() } catch { error.value = '原操作记录异常，请保留记录。' } } }
+  catch (e) { if (live && current === generation) { clearGrants(); application.value = null; issues.value = null; tasks.value = []; documents.value = []; evidence.value = []; members.value = []; error.value = e instanceof Error ? e.message : '评审处理失败。'; try { syncPending() } catch { error.value = '原操作记录异常，请保留记录。' } } }
   finally { if (current === generation) busy.value = false }
 }
 async function load(check: () => void) {
@@ -116,8 +142,21 @@ async function vote() {
   const body = { decision: voteValue.value, comment: comment.value, taskRowVersion: selected.task.taskRowVersion, instanceRowVersion: selected.task.instanceRowVersion }
   await run(async check => { await writeIterationDecision(props.scope, { kind: 'DECISION', objectId: props.iterationId, submissionId: props.detail.submission.submissionId, roundId: props.detail.submission.roundId, targetId: selected.task.taskId }, () => { check(); if (!canDecide.value) throw new Error('评审权限已变化。') }, commandId => api.decide(selected.task.taskId, { ...body, commandId })); check(); await load(check); comment.value = ''; notice.value = '专业意见已记录，业务应用状态以回执为准。'; emit('changed') })
 }
-async function apply() { const a = application.value; if (!a || terminal.value || !applyReason.value.trim()) return; await write('APPLICATION', 'review-apply', null, props.detail.submission, operationId => api.apply(props.iterationId, a.etag, { operationId, submissionId: a.submissionId, expectedReceiptId: a.receipt?.receiptId ?? null, reason: applyReason.value }), '审批决定已处理。') }
-async function withdraw() { const a = application.value; if (!a?.controlRowVersion || !active.value || !withdrawReason.value.trim()) return; await write('WITHDRAWAL', 'review-withdraw', null, props.detail.submission, commandId => api.withdraw(props.iterationId, a.submissionId, a.controlRowVersion!, { commandId, reason: withdrawReason.value }), '本轮已撤回，审批撤回状态等待投递确认。') }
+async function apply(reauthorize = false) { const a = application.value, principal = businessPrincipal.value; if (!a || terminal.value || !applyReason.value.trim() || reauthorize && a.receipt?.application !== 'BLOCKED') return; await write('APPLICATION', 'review-apply', null, props.detail.submission, operationId => api.apply(props.iterationId, a.etag, { operationId, submissionId: a.submissionId, expectedReceiptId: a.receipt?.receiptId ?? null, reason: applyReason.value }, principal || undefined, reauthorize), '审批决定已处理。') }
+async function withdraw(reauthorize = false) { const a = application.value, principal = businessPrincipal.value, previous = reauthorize ? blockedWithdrawal.value?.commandId : undefined; if (!a?.controlRowVersion || (reauthorize ? !previous : !active.value) || !withdrawReason.value.trim()) return; await write('WITHDRAWAL', 'review-withdraw', previous ?? null, props.detail.submission, commandId => api.withdraw(props.iterationId, a.submissionId, a.controlRowVersion!, { commandId, reason: withdrawReason.value }, principal || undefined, previous), '本轮撤回授权已保存，审批撤回状态等待投递确认。') }
+async function readGrants() { await run(async check => { const value = response(await api.businessGrants(props.iterationId, props.detail.submission.submissionId)); check(); grants.value = value; if (!grantPrincipals.value.includes(businessPrincipal.value)) businessPrincipal.value = '' }) }
+function editGrant(grant: BusinessGrant) { if (locked.value) return; editingGrant.value = copy(grant); grantDelegate.value = grant.delegateId; grantFrom.value = grant.fromUtc.slice(0, 16); grantTo.value = grant.toUtc.slice(0, 16); grantWithdraw.value = grant.actions.includes('review-withdraw'); grantApply.value = grant.actions.includes('review-apply'); grantReason.value = '' }
+async function saveGrant(revoke?: BusinessGrant) {
+  if (locked.value || !can('review-delegate') || !grantReason.value.trim()) return
+  const old = revoke ?? editingGrant.value
+  if (!revoke && (!grantDelegate.value || !grantFrom.value || !grantTo.value || !grantWithdraw.value && !grantApply.value)) { error.value = '请选择受托人、UTC 时间范围和授权动作。'; return }
+  const body: Omit<BusinessGrantCommand, 'operationId'> = { submissionId: props.detail.submission.submissionId, grantId: old?.grantId ?? null, expectedVersion: old?.version ?? null,
+    delegateId: revoke?.delegateId ?? grantDelegate.value, fromUtc: revoke?.fromUtc ?? (old && grantFrom.value === old.fromUtc.slice(0, 16) ? old.fromUtc : new Date(grantFrom.value + 'Z').toISOString()), toUtc: revoke?.toUtc ?? (old && grantTo.value === old.toUtc.slice(0, 16) ? old.toUtc : new Date(grantTo.value + 'Z').toISOString()),
+    actions: revoke?.actions ?? [...(grantWithdraw.value ? ['review-withdraw'] : []), ...(grantApply.value ? ['review-apply'] : [])], enabled: !revoke, reason: grantReason.value }
+  if (Date.parse(body.toUtc) < Date.parse(body.fromUtc)) { error.value = '结束时间必须晚于生效时间。'; return }
+  await write('BUSINESS_GRANT', 'review-delegate', old?.grantId ?? null, props.detail.submission, operationId => api.grantBusiness(props.iterationId, { ...body, operationId }), revoke ? '业务授权已撤销。' : '业务授权已保存。')
+  if (!pending.value && application.value) { editingGrant.value = null; await readGrants() }
+}
 function newIssue() { if (locked.value || !active.value) return; selectedIssue.value = null; issueAction.value = 'CREATE'; issueText.value = issueReason.value = candidateId.value = targetPath.value = responsible.value = due.value = ''; evidence.value = []; documents.value = [] }
 function editIssue(i: ReviewIssue, action: IssueCommand['action']) { if (locked.value) return; selectedIssue.value = copy(i); issueAction.value = action; issueText.value = issueReason.value = ''; evidence.value = []; documents.value = [] }
 async function saveIssue() {

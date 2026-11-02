@@ -6,12 +6,17 @@ import { newEpoch } from '@/auth/identity'
 import { setActingAs } from '@/stores/oaActingAs'
 import Panel from './PersonalTaskPanel.vue'
 vi.mock('@/api/oa/personalForm', () => ({ personalFormApi: { task: vi.fn(), decide: vi.fn(), taskOriginal: vi.fn(), close: vi.fn() } }))
-const context: PersonalTask = { task: { taskId: 'task', instanceId: 'instance', taskStatus: 0, instanceStatus: 0, taskRowVersion: 'task-version', instanceRowVersion: 'instance-version' }, formDataId: 'form-data', rootInstanceId: 'root', formVersionId: 'pin', name: '审核金额', schemaJson: '{"fields":[{"name":"amount","type":"number"}]}', dataJson: '{"amount":9007199254740993.1}', fieldMask: { amount: 'readonly' } }
+const context: PersonalTask = { task: { taskId: 'task', instanceId: 'instance', taskStatus: 0, instanceStatus: 0, taskRowVersion: 'task-version', instanceRowVersion: 'instance-version' }, formDataId: 'form-data', rootInstanceId: 'root', formVersionId: 'pin', name: '审核金额', schemaJson: '{"fields":[{"name":"amount","type":"number"}]}', dataJson: '{"amount":9007199254740993.1}', fieldMask: { amount: 'readonly' }, allowedDecisions: ['approve', 'reject'] }
 const wrappers: ReturnType<typeof mount>[] = []
 const state = (w: any): any => w.vm.$.setupState
 beforeEach(() => { vi.resetAllMocks(); localStorage.clear(); sessionStorage.clear(); vi.mocked(api.task).mockResolvedValue(context) })
 afterEach(() => { wrappers.splice(0).forEach(w => w.unmount()) })
 async function setup() { const w = mount(Panel, { props: { taskId: 'task' } }); wrappers.push(w); await flushPromises(); return w }
+it('does not send decisions outside the current exact grant action projection', async () => {
+  vi.mocked(api.task).mockResolvedValue({ ...context, allowedDecisions: ['reject'] }); const w = await setup()
+  state(w).comment = 'reviewed'; await state(w).decide('approve'); expect(api.decide).not.toHaveBeenCalled()
+  vi.mocked(api.decide).mockRejectedValue({ response: { status: 403 } }); await state(w).decide('reject'); expect(api.decide).toHaveBeenCalledTimes(1); expect(state(w).context).toBeUndefined()
+})
 it('uses the actual two versions, rejects empty rejection, and keeps the same command after an unknown result', async () => {
   vi.mocked(api.decide).mockRejectedValue({ response: { status: 503 } }); const w = await setup()
   await state(w).decide('reject'); expect(api.decide).not.toHaveBeenCalled()

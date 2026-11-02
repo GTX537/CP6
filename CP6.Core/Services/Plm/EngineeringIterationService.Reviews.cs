@@ -62,4 +62,20 @@ public sealed partial class EngineeringIterationService
             new{action,submission,stage,result,a.ActorId},ct);
         return await Observe(a,s,saved,ct);
     }
+    internal async Task<EngineeringIterationSnapshotV1> ReauthorizeWithdrawal(OperationsAccessV1 a,EngineeringIterationSnapshotV1 expected,
+        Guid submission,Guid operation,string reason,CancellationToken ct)
+    {
+        a.RequireEngineeringIterationFields(true);var store=new EngineeringIterationStoreV1(db);await store.Fence(true,ct);
+        var current=await ReviewSource(a,expected.Reference.Id,false,ct);
+        if(current.Reference!=expected.Reference||current.Etag!=expected.Etag||current.Body.Iteration!.Stage!="IN_DESIGN"||current.Body.Iteration.CurrentReview!=null)
+            throw Error("ITERATION_REVIEW_CONTROL_CHANGED",409);
+        // An explicit Owner authorization transition advances the actual business control/history.
+        // The already-withdrawn content is retained; this never manufactures another review round.
+        var saved=await store.Append(new(operation,current.Reference.Id,"REVISE",current.Reference.Version,current.Etag,reason,current.Body),a.ActorId,ct);
+        var result=new EngineeringIterationResultV1(operation,saved.Body.Kind,saved.Reference.Id,saved.Reference.Version,saved.Reference.Digest);
+        await new MainOwnerOperationJournalV1(db).Store(EngineeringIterationValuesV1.Owner,EngineeringIterationValuesV1.Contract,operation,a.ActorId,
+            MainOwnerOperationJournalV1.Encode(new{action="reauthorize-withdrawal",expected.Reference,expected.Etag,submission,reason}),result,[current.Reference.Id],
+            new{action="reauthorize-withdrawal",submission,result,a.ActorId},ct);
+        return await Observe(a,store,saved,ct);
+    }
 }

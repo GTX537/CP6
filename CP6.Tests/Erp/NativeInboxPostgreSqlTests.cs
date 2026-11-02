@@ -66,7 +66,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(0,(await inbox.CountsAsync()).Pending);Assert.Empty((await inbox.ListAsync("pending",search:"native-inbox")).Items);
         Assert.Equal(404,(await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(()=>inbox.DetailAsync(f.Instance))).Status);
         Assert.Equal(404,(await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(()=>inbox.ReadOriginalAsync("TASK",f.Task,"read"))).Status);
-        Assert.Equal("DELEGATED_READ_OWNER_NOT_ADOPTED",(await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(()=>inbox.ListAsync("pending",behalf:Guid.NewGuid()))).Message);
+        Assert.Equal("GRANT_PRINCIPAL_UNAVAILABLE",(await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(()=>inbox.ListAsync("pending",behalf:Guid.NewGuid()))).Message);
     }
     [CurrentPermissionPostgresFact]
     public async Task NativeInbox_close_missing_guard_and_unknown_commit_preserve_original_read_identity()

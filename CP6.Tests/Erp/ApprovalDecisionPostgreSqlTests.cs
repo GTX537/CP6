@@ -155,16 +155,15 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     {
         await using var h = await Seed(); var (_, first, second) = await DecisionSetup(h);
         var delegateUser = await ActualReviewer(h); await EngineeringAction(h, "oa-inbox", "query");
-        var grant = new CP6.Entity.DomainModels.Wf.Wf_FlowDelegate { GrantorId = first, DelegateId = delegateUser.User,
-            Scope = "binding-flow", ValidFrom = DateTime.Now.AddMinutes(-1), ValidTo = DateTime.Now.AddHours(1) };
-        h.Db.Wf_FlowDelegates.Add(grant); await h.Db.SaveChangesAsync(); h.Db.ChangeTracker.Clear();
+        var grant=await CreateTaskGrant(h,first,delegateUser.User,"binding-flow");
         var cmd = await DecisionInput(delegateUser, behalf: first); var result = await Vote(delegateUser, cmd, first);
         var body = await h.Db.Database.SqlQuery<string>($"SELECT body AS \"Value\" FROM cp6_approval_decision_v2.votes WHERE tenant_id={h.Tenant}").SingleAsync();
         var proof = JsonSerializer.Deserialize<ApprovalVoteV2>(body, ApprovalBindingOwnerV2.Json)!;
         Assert.Equal(first, proof.Authority.PrincipalId); Assert.Equal(delegateUser.User, proof.Authority.ActualHandlerId);
-        Assert.Equal(grant.Id, proof.Authority.GrantId); Assert.NotNull(proof.Authority.GrantRevision);
+        Assert.Equal(grant.GrantId, proof.Authority.GrantId); Assert.Equal(grant.Revision,proof.Authority.GrantRevision);
         Assert.Equal(first, (await h.Db.Wf_FlowTasks.AsNoTracking().SingleAsync(x => x.Id == cmd.Task)).AssigneeId);
-        await h.Db.Wf_FlowDelegates.Where(x => x.Id == grant.Id).ExecuteUpdateAsync(x => x.SetProperty(g => g.Enable, false));
+        await TaskGrants(DecisionActor(h,first)).WriteAsync("REVOKE",grant.GrantId,
+            PersonalCommand(new TaskDelegationRevokeV2("completed duty"),"revoke",grant.Version.ToString("D")));
         Assert.Equal(result, await Vote(delegateUser, cmd, first)); // Historical read needs no live grant.
         var secondActor = DecisionActor(h, second); Assert.NotNull((await Vote(secondActor, await DecisionInput(secondActor))).Result.DecisionId);
     }

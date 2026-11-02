@@ -12,7 +12,7 @@ public sealed record IterationApprovalV1(Guid Id,EngineeringSourceRefV1 Iteratio
 public sealed record IterationApplicationCommandV1(Guid OperationId,Guid SubmissionId,[property:JsonRequired] Guid? ExpectedReceiptId,string Reason);
 public sealed record IterationApplicationContextV1(Guid IterationId,Guid SubmissionId,string Etag,string State,string? ControlRowVersion,
     string BusinessStage,Guid? ReceiptStreamId,Guid? DecisionId,string? Decision,ApprovalApplicationReceiptV2? Receipt,IterationApprovalV1? Application,
-    ToolApplicationDeliveryViewV2? WithdrawalDelivery);
+    ToolApplicationDeliveryViewV2? WithdrawalDelivery,IterationWithdrawalAuthorizationV1[]? WithdrawalAuthorizations=null);
 public sealed record IterationApplicationResultV1(Guid OperationId,Guid ObjectId,ApprovalApplicationReceiptV2 Receipt);
 public sealed record IterationApplicationOperationV1(Guid OperationId,string State,IterationApplicationResultV1? Result=null);
 
@@ -36,7 +36,7 @@ public sealed partial class IterationReviewOwnerV1
     private async Task<IterationApplicationContextV1> ApplicationView(ApplicationContext c,CancellationToken ct)
         =>new(c.Submission.Iteration,c.Submission.Id,c.Etag,c.Source==null?"NOT_RECEIVED":"RECEIVED",c.Control?.RowVersion,
             c.Context.Iteration.Body.Iteration!.Stage,c.Source?.Stream,c.Source?.Decision.DecisionId,c.Source?.Decision.Decision,c.Receipt,await c.Store.Application(c.Submission.Id,ct),
-            await IterationWithdrawalDeliveryV1.ForSubmission(db,Environment,c.Submission.Id,ct));
+            await IterationWithdrawalDeliveryV1.ForSubmission(db,Environment,c.Submission.Id,ct),await WithdrawalAuthorizations(c.Submission.Id,ct));
     public Task<IterationApplicationContextV1> ApplicationAsync(Guid id,Guid submission,CancellationToken ct=default)
         =>Authority.ExecuteAsync(OperationsOwnerV1.EngineeringIteration,"query",false,async(a,t)=>await ApplicationView(await ApplicationContextAsync(a,id,submission,false,t),t),ct);
     private async Task<string?> QualifyApplication(ApplicationContext c,CancellationToken ct)
@@ -55,23 +55,30 @@ public sealed partial class IterationReviewOwnerV1
                 throw Error("ITERATION_REVIEW_PROFESSIONAL_REVIEW_INCOMPLETE",422);
         return null;
     }
-    public Task<IterationApplicationResultV1> ApplyAsync(Guid id,string? etag,IterationApplicationCommandV1 input,CancellationToken ct=default)
+    public Task<IterationApplicationResultV1> ApplyAsync(Guid id,string? etag,IterationApplicationCommandV1 input,CancellationToken ct=default,Guid? behalf=null)
+        =>ApplyCore(id,etag,input,false,behalf,ct);
+    public Task<IterationApplicationResultV1> ReauthorizeApplicationAsync(Guid id,string? etag,IterationApplicationCommandV1 input,CancellationToken ct=default,Guid? behalf=null)
+        =>ApplyCore(id,etag,input,true,behalf,ct);
+    private Task<IterationApplicationResultV1> ApplyCore(Guid id,string? etag,IterationApplicationCommandV1 input,bool reauthorize,Guid? behalf,CancellationToken ct)
     {
         if(input==null || id==Guid.Empty || input.OperationId==Guid.Empty || input.SubmissionId==Guid.Empty)throw Error("ITERATION_REVIEW_APPLICATION_COMMAND_INVALID",400);
         Text(input.Reason,true,1000);var command=OperationsOwnerV1.Freeze(input);
         var journal=new MainOwnerOperationJournalV1(db);MainOwnerOperationJournalV1.Original? original=null;
-        var bytes=MainOwnerOperationJournalV1.Encode(new{contract=IterationReviewApplicationStoreV1.Contract,environment=Environment,id,etag,command});
+        var bytes=!reauthorize&&behalf==null?MainOwnerOperationJournalV1.Encode(new{contract=IterationReviewApplicationStoreV1.Contract,environment=Environment,id,etag,command})
+            :MainOwnerOperationJournalV1.Encode(new{contract=IterationReviewApplicationStoreV1.Contract,environment=Environment,id,etag,command,reauthorize,behalf});
         return Authority.ExecuteAsync(OperationsOwnerV1.EngineeringIteration,"review-apply",true,async(a,t)=>{
             var c=await ApplicationContextAsync(a,id,command.SubmissionId,original==null,t);
             if(original!=null)return await DiscloseApplication(c,command.OperationId,original,bytes,t);
             if(string.IsNullOrEmpty(etag))throw Error("IF_MATCH_REQUIRED",428);
             if(etag!=c.Etag || c.Receipt?.ReceiptId!=command.ExpectedReceiptId)throw Error("ITERATION_REVIEW_APPLICATION_CONTEXT_CHANGED",412);
+            if(reauthorize&&(c.Receipt?.Application!="BLOCKED"||command.ExpectedReceiptId==null))throw Error("ITERATION_REVIEW_BLOCKED_RECEIPT_REQUIRED",409);
+            var grant=await BusinessAct(a,c.Context,c.Submission,"review-apply",behalf,t);
             a.RequireEngineeringIterationFields(true);
             var source=c.Source??throw Error("ITERATION_REVIEW_DECISION_NOT_RECEIVED",422);
             var receipt=c.Receipt;
             if(receipt?.Application is not("APPLIED" or "STALE" or "CONFLICT"))
             {
-                if(receipt is {Application:"BLOCKED"} && receipt.ActionActorId!=a.ActorId)throw Error("ITERATION_REVIEW_ORIGINAL_APPLIER_REQUIRED",403);
+                if(!reauthorize&&receipt is {Application:"BLOCKED"} && receipt.ActionActorId!=a.ActorId)throw Error("ITERATION_REVIEW_ORIGINAL_APPLIER_REQUIRED",403);
                 var current=c.Context.Iteration;var work=current.Body.Iteration!;var package=IterationReviewStoreV1.ReadPackage(c.Submission);
                 string state,outcome;IterationApprovalV1? applied=null;
                 if(c.Control?.Submission!=c.Submission.Id || c.Control.State!="IN_REVIEW" || work.CurrentReview?.SubmissionId!=c.Submission.Id
@@ -98,13 +105,16 @@ public sealed partial class IterationReviewOwnerV1
                     }
                 }
                 receipt=await c.Store.Append(source,a.ActorId,command.OperationId,c.Receipt,state,outcome,applied?.AppliedIteration.Version??current.Reference.Version,
-                    new{profile="Main.Plm.IterationApplication/1",command,applied,beforeControl=c.Control?.RowVersion,issues=c.Issues,
+                    new{profile="Main.Plm.IterationApplication/1",command,reauthorize,behalf,grantBody=grant==null?null:JsonSerializer.Serialize(grant,PersonalFormOwnerV2.Json),previousReceiptId=c.Receipt?.ReceiptId,applied,beforeControl=c.Control?.RowVersion,issues=c.Issues,
                         authorities=Witnesses(a),source.OriginalHash,source.EvidenceMode},applied,t);
             }
             var result=new IterationApplicationResultV1(command.OperationId,id,receipt!);
             await journal.Store(IterationReviewApplicationStoreV1.Journal,IterationReviewApplicationStoreV1.Contract,command.OperationId,a.ActorId,bytes,result,[id],
                 new{command,receipt!.ReceiptId,receipt.PayloadDigest,source.OriginalHash,authorities=Witnesses(a)},t);
             a.AtCommit(async token=>{
+                await a.EngineeringFinalObservation(async(observation,t)=>{
+                    await BusinessAct(observation,c.Context with{Access=observation},c.Submission,"review-apply",behalf,t,grant);return true;
+                },token);
                 await c.Store.Ready(token);
                 if((await c.Store.ForSubmission(command.SubmissionId,token))?.OriginalHash!=source.OriginalHash
                     || (await c.Store.Latest(source.Stream,token))?.ReceiptId!=receipt.ReceiptId)throw Error("ITERATION_REVIEW_APPLICATION_CONTEXT_CHANGED",412);

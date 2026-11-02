@@ -88,7 +88,7 @@ public sealed partial class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuth
     public async Task<ApprovalTaskDecisionViewV2> ContextAsync(Guid task, Guid? behalf = null, CancellationToken ct = default)
     {
         Entry(); await using var tx = await db.Database.BeginTransactionAsync(ct);
-        var lease = await authority.AcquireAsync(task, behalf, ct); await Ready(ct);
+        var lease = await authority.AcquireAsync(task, behalf, ct,"TASK_READ"); await Ready(ct);
         await Business.Decision(ApprovalSubmissionWireV2.Parse((await ReadSource(task, ct)).Payload).Value,lease.Evidence.PrincipalId,false,ct);
         var result = await View(task, ct); await authority.ValidateAsync(lease, ct); await tx.CommitAsync(ct); return result;
     }
@@ -131,7 +131,7 @@ public sealed partial class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuth
             if(original.Subject.BusinessOwner is "Main.Plm.ControlledDocument.v1" or "Main.Plm.RequirementSet.v1" or "Main.Plm.EngineeringIteration.v1" or "Main.Wms.LocationRuleProposal.v1" && string.IsNullOrWhiteSpace(input.Comment))
                 throw Error("DOCUMENT_REVIEW_COMMENT_REQUIRED",422);
             var publication = Parse<FlowPublicationV2>(source.Publication); var ack = Parse<ApprovalSubmissionAckV2>(source.Ack);
-            var lease = await authority.AcquireAsync(task, behalf, ct);
+            var lease = await authority.AcquireAsync(task, behalf, ct,input.Decision=="approve"?"TASK_APPROVE":"TASK_REJECT");
             var view = await View(task, ct);
             if (view.TaskRowVersion != input.TaskRowVersion || view.InstanceRowVersion != input.InstanceRowVersion)
                 throw Error("PRECONDITION_FAILED", 412);

@@ -1,6 +1,6 @@
 import type { EngineeringIterationScope } from '@/api/plm/engineeringIteration'
 import { engineeringIterationApi } from '@/api/plm/engineeringIteration'
-import { iterationReviewActions, type ActionKind, type ActionOperation, type ActionResult, type ApplicationResult, type IssueResult, type WithdrawalResult } from '@/api/plm/iterationReviewActions'
+import { iterationReviewActions, type ActionKind, type ActionOperation, type ActionResult, type ApplicationResult, type IssueResult, type WithdrawalResult, type BusinessGrantResult } from '@/api/plm/iterationReviewActions'
 import type { EngineeringEnvelope } from '@/api/plm/engineeringProducts'
 import type { NativeReviewResult, NativeReviewResolution } from '@/api/plm/requirementSetReview'
 import { requirementSetResponse as response } from './requirementSetRecovery'
@@ -14,8 +14,8 @@ function key(scope: EngineeringIterationScope) {
 export function pendingIterationAction(scope: EngineeringIterationScope): PendingIterationAction | null {
   const text = localStorage.getItem(key(scope)); if (text === null) return null
   const v = JSON.parse(text) as PendingIterationAction
-  if (!v || ![v.operationId, v.objectId, v.submissionId, v.roundId].every(x => uuid.test(x)) || !['APPLICATION', 'ISSUE', 'WITHDRAWAL', 'DECISION'].includes(v.kind)
-    || (v.kind === 'DECISION' || v.kind === 'ISSUE' ? !uuid.test(v.targetId ?? '') : v.targetId !== null)) throw new Error('评审处理恢复记录异常，请保留记录。')
+  if (!v || ![v.operationId, v.objectId, v.submissionId, v.roundId].every(x => uuid.test(x)) || !['APPLICATION', 'ISSUE', 'WITHDRAWAL', 'DECISION', 'BUSINESS_GRANT'].includes(v.kind)
+    || (v.kind === 'DECISION' || v.kind === 'ISSUE' ? !uuid.test(v.targetId ?? '') : v.kind === 'WITHDRAWAL' || v.kind === 'BUSINESS_GRANT' ? v.targetId !== null && !uuid.test(v.targetId) : v.targetId !== null)) throw new Error('评审处理恢复记录异常，请保留记录。')
   return { operationId: v.operationId, objectId: v.objectId, submissionId: v.submissionId, roundId: v.roundId, kind: v.kind, targetId: v.targetId }
 }
 async function exclusive<T>(scope: EngineeringIterationScope, guard: () => void, action: (check: () => void) => Promise<T>) {
@@ -44,6 +44,10 @@ function accept(scope: EngineeringIterationScope, p: PendingIterationAction, op:
       valid = valid && v.objectId === p.objectId && v.receipt?.submissionId === p.submissionId && v.receipt?.subject?.subjectId === p.roundId
         && v.receipt?.producerOwner === 'Main.Plm.EngineeringIteration.v1' && v.receipt?.action === 'PLM_ITER_REVIEW_DECISION'
         && ['APPLIED', 'BLOCKED', 'STALE', 'CONFLICT'].includes(v.receipt?.application) && uuid.test(v.receipt?.receiptId)
+    } else if (p.kind === 'BUSINESS_GRANT') {
+      const v = r as BusinessGrantResult
+      valid = valid && v.grant?.iterationId === p.objectId && v.grant?.submissionId === p.submissionId && v.grant?.grantorId === scope.actorId
+        && uuid.test(v.grant?.grantId ?? '') && (p.targetId === null || v.grant.grantId === p.targetId)
     } else if (p.kind === 'ISSUE') {
       const v = r as IssueResult
       valid = valid && v.iterationId === p.objectId && v.issue?.iterationId === p.objectId && v.issue?.submissionId === p.submissionId && v.issue?.id === p.targetId
@@ -54,7 +58,8 @@ function accept(scope: EngineeringIterationScope, p: PendingIterationAction, op:
         ? v.fact === null && v.transportCommandId === null && v.appliedReceipt?.submissionId === p.submissionId && v.appliedReceipt?.application === 'APPLIED'
         : v.state === 'WITHDRAWN' && v.fact?.ownerCommandId === p.operationId && v.fact?.submissionId === p.submissionId && v.fact?.subject?.subjectId === p.roundId
           && v.fact?.owner === 'Main.Plm.EngineeringIteration.v1' && v.fact?.actor?.actualHandlerId === scope.actorId
-          && v.fact?.scope?.tenantId === scope.tenantId && v.fact?.scope?.environmentId === scope.environmentId && uuid.test(v.transportCommandId ?? ''))
+          && v.fact?.scope?.tenantId === scope.tenantId && v.fact?.scope?.environmentId === scope.environmentId && uuid.test(v.transportCommandId ?? '')
+          && (v.previousCommandId ?? null) === p.targetId)
     }
   } else valid = valid && r == null
   if (!valid) throw new Error('返回结果与原评审处理操作不一致，请保留记录。')

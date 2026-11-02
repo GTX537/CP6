@@ -44,6 +44,15 @@ internal sealed class IterationReviewControlStoreV1(CP6Context db,Guid environme
         return (await Read(expected.Iteration,ct))!;
     }
     private sealed record IssueRow(byte[] Body,string Digest);
+    internal async Task<Head> ReauthorizeWithdrawal(Head expected,CancellationToken ct)
+    {
+        if(await db.Database.ExecuteSqlInterpolatedAsync($"""
+            UPDATE cp6_iteration_review_control_v1.heads SET state='WITHDRAWN'
+            WHERE environment_id={environment} AND tenant_id={db.CurrentTenantId} AND iteration_id={expected.Iteration}
+              AND submission_id={expected.Submission} AND row_version={expected.Version} AND state='WITHDRAWN'
+            """,ct)!=1)throw Error("ITERATION_REVIEW_CONTROL_CHANGED",409);
+        return (await Read(expected.Iteration,ct))!;
+    }
     internal async Task<IterationReviewIssueV1[]> Issues(Guid iteration,CancellationToken ct)
     {
         await Ready(ct);

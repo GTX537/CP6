@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace CP6.Core.Services.Oa;
 
 public sealed record PersonalFormTaskContextV2(ApprovalTaskDecisionViewV2 Task, Guid FormDataId, Guid RootInstanceId,
-    Guid FormVersionId, string Name, string SchemaJson, string DataJson, Dictionary<string,string> FieldMask);
+    Guid FormVersionId, string Name, string SchemaJson, string DataJson, Dictionary<string,string> FieldMask,string[] AllowedDecisions);
 public sealed record PersonalFormTaskResultV2(Guid CommandId, string State, Guid? VoteId,
     ApprovalTaskDecisionViewV2? Task, string QueryRef);
 
@@ -18,7 +18,7 @@ public sealed partial class PersonalFormOwnerV2
     private const string Decision="FORM_TASK_DECISION";
     private sealed record TaskSource(Guid Data,Guid Root,Guid FormHead,Guid FormVersion,string Publication,string Assignment);
     private sealed record TaskAuthority(PersonalFormAssignmentV2 Assignment,UserPermissionContext Actor,Guid Principal,
-        Guid? OnBehalfOf,Wf_FlowDelegate? Grant,Dictionary<string,string> Mask);
+        Guid? OnBehalfOf,TaskDelegationRevisionV2? Grant,Dictionary<string,string> Mask,string Action,string FlowKey,string? BusinessType);
     public Task<bool> IsPersonalTaskAsync(Guid task,CancellationToken ct=default)=>(from t in db.Wf_FlowTasks from i in db.Wf_FlowInstances
         where t.Id==task && t.InstanceId==i.Id && i.Creator==FlowEngine.PersonalFormRuntimeV2 select t.Id).AnyAsync(ct);
     private async Task<TaskSource> TaskSourceAsync(Guid task,CancellationToken ct)=>await db.Database.SqlQuery<TaskSource>($"""
@@ -36,21 +36,19 @@ public sealed partial class PersonalFormOwnerV2
         var token=await db.Database.SqlQuery<byte[]>($"SELECT \"ApprovalRowVersion\" AS \"Value\" FROM public.\"Wf_FlowTask\" WHERE \"Id\"={task} AND \"TenantId\"={db.CurrentTenantId}").SingleAsync(ct);
         return new(t.Id,i.Id,t.Status,i.Status,Convert.ToBase64String(token),Convert.ToBase64String(i.RowVersion!));
     }
-    private async Task<TaskAuthority> TaskAccess(TaskSource source,UserPermissionContext actor,Guid? behalf,bool write,CancellationToken ct)
+    private async Task<TaskAuthority> TaskAccess(TaskSource source,UserPermissionContext actor,Guid? behalf,bool write,CancellationToken ct,string action="TASK_APPROVE")
     {
         await Action(actor,write?"approve":"query",ct,"oa-inbox");
         var assignment=Parse<PersonalFormAssignmentV2>(source.Assignment);var principal=behalf??actor.UserId;
         if(assignment.PrincipalId!=principal)throw Error("RESOURCE_NOT_FOUND",404);
         var instance=await db.Wf_FlowInstances.AsNoTracking().SingleAsync(i=>i.Id==assignment.InstanceId,ct);
-        Wf_FlowDelegate? grant=null;
+        TaskDelegationRevisionV2? grant=null;UserPermissionContext? principalPermission=null;
         if(principal!=actor.UserId)
         {
             if(!await db.Sys_Users.AnyAsync(u=>u.Id==principal && u.Enable && (u.LockedUntil==null||u.LockedUntil<=DateTime.Now),ct))throw Error("TASK_DUTY_REVOKED",403);
-            await Action(await PostgreSqlPermissionReader.ReadAsync(db,principal,ct),write?"approve":"query",ct,"oa-inbox");
-            var now=Clock().LocalDateTime;
-            var grants=await db.Wf_FlowDelegates.AsNoTracking().Where(g=>g.GrantorId==principal && g.DelegateId==actor.UserId && g.Enable && g.ValidFrom<=now && now<=g.ValidTo)
-                .OrderByDescending(g=>g.CreateDate).ThenBy(g=>g.Id).ToArrayAsync(ct);
-            grant=grants.FirstOrDefault(g=>string.IsNullOrEmpty(g.Scope)||string.Equals(g.Scope,instance.FlowKey,StringComparison.Ordinal))??throw Error("DELEGATION_EXPIRED",403);
+            principalPermission=await PostgreSqlPermissionReader.ReadAsync(db,principal,ct);
+            await Action(principalPermission,write?"approve":"query",ct,"oa-inbox");
+            grant=await new TaskDelegationReaderV2(db,fence.EnvironmentId).Require(actor.UserId,principal,action,instance.FlowKey,instance.BizType,ct);
         }
         if(write)
         {
@@ -59,22 +57,26 @@ public sealed partial class PersonalFormOwnerV2
             var duty=await new ApproverResolver(db,exactConditions:true).ResolveAsync(assignment.Rule,new(){StarterUserId=instance.StarterId,VarsJson=instance.VarsJson});
             if(!duty.ApproverIds.Contains(principal))throw Error("TASK_DUTY_REVOKED",403);
         }
-        var mask=await Mask(actor,source.FormHead,await Publication(source.FormHead,source.FormVersion,ct),ct);
-        return new(assignment,actor,principal,principal==actor.UserId?null:principal,grant,mask);
+        var publication=await Publication(source.FormHead,source.FormVersion,ct);var mask=await Mask(actor,source.FormHead,publication,ct);
+        if(principalPermission!=null)mask=IntersectMasks(mask,await Mask(principalPermission,source.FormHead,publication,ct));
+        return new(assignment,actor,principal,principal==actor.UserId?null:principal,grant,mask,action,instance.FlowKey,instance.BizType);
     }
     public async Task<PersonalFormTaskContextV2> TaskContextAsync(Guid task,Guid? behalf=null,CancellationToken ct=default)
     {
         Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var lease=await ReadLease(ct);
-        await WriteReady(lease,ct);var actor=await Actor(ct);var source=await TaskSourceAsync(task,ct);var access=await TaskAccess(source,actor,behalf,true,ct);
+        await WriteReady(lease,ct);var actor=await Actor(ct);var source=await TaskSourceAsync(task,ct);var access=await TaskAccess(source,actor,behalf,true,ct,"TASK_READ");
         var form=await Publication(source.FormHead,source.FormVersion,ct);var data=await db.Wf_FormDatas.AsNoTracking().SingleAsync(f=>f.Id==source.Data,ct);
+        var allowed=new List<string>();var reader=new TaskDelegationReaderV2(db,fence.EnvironmentId);
+        foreach(var decision in new[]{"approve","reject"})
+            if(access.OnBehalfOf==null||await reader.Match(actor.UserId,access.Principal,decision=="approve"?"TASK_APPROVE":"TASK_REJECT",access.FlowKey,access.BusinessType,ct)!=null)allowed.Add(decision);
         var result=new PersonalFormTaskContextV2(await TaskView(task,ct),source.Data,source.Root,form.VersionId,form.Fields["Name"]!,
-            ProjectSchema(form.Fields["SchemaJson"]!,access.Mask),PersonalFormValuesV2.Project(data.DataJson,access.Mask),access.Mask);
+            ProjectSchema(form.Fields["SchemaJson"]!,access.Mask),PersonalFormValuesV2.Project(data.DataJson,access.Mask),access.Mask,allowed.ToArray());
         await FinalTask(access,lease,ct);return result;
     }
     private async Task FinalTask(TaskAuthority access,ScopeAuthorizationLeaseV1 lease,CancellationToken ct)
     {
         await Final(access.Actor,lease,ct);
-        if(access.Grant is {} grant && (Clock().LocalDateTime<grant.ValidFrom||Clock().LocalDateTime>grant.ValidTo))throw Error("DELEGATION_EXPIRED",403);
+        if(access.Grant is {} grant)await new TaskDelegationReaderV2(db,fence.EnvironmentId).ValidateExact(grant,access.Action,access.FlowKey,access.BusinessType,ct);
     }
     public async Task<PersonalFormTaskResultV2?> TaskOriginalAsync(Guid task,Guid command,CancellationToken ct=default)
     {
@@ -122,7 +124,7 @@ public sealed partial class PersonalFormOwnerV2
             await WriteReady(lease,ct);
             if(string.IsNullOrEmpty(ifMatch))throw Error("PRECONDITION_REQUIRED",428);
             if(ifMatch!="\""+input.TaskRowVersion+"\"")throw Error("PRECONDITION_FAILED",412);
-            var source=await TaskSourceAsync(task,ct);var access=await TaskAccess(source,actor,behalf,true,ct);var before=await TaskView(task,ct);
+            var source=await TaskSourceAsync(task,ct);var access=await TaskAccess(source,actor,behalf,true,ct,input.Decision=="approve"?"TASK_APPROVE":"TASK_REJECT");var before=await TaskView(task,ct);
             if(before.TaskRowVersion!=input.TaskRowVersion||before.InstanceRowVersion!=input.InstanceRowVersion)throw Error("PRECONDITION_FAILED",412);
             var write=Guid.NewGuid();await BeginCommand(write,actor.UserId,Decision,resource,command,null,source.Data,source.Root,task,ct);
             var engine=new FlowEngine(db,new ApproverResolver(db,exactConditions:true));

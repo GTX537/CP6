@@ -22,7 +22,7 @@ public sealed partial class ToolDispositionApprovalOwnerV1
 
     // A read/qualification participant in Workflow's already-open local transaction. It
     // neither approves disposal nor rewrites the current Owner policy/control head.
-    internal async Task<DecisionPolicyProof> ReadDecisionPolicy(ApprovalSubmitCommandV2 original, CancellationToken ct)
+    internal async Task<DecisionPolicyProof> ReadDecisionPolicy(ApprovalSubmitCommandV2 original, CancellationToken ct,Guid? principal=null)
     {
         await scope.Root(ct);
         if (original.Subject.BusinessOwner != ToolDispositionStoreV1.DispositionOwner
@@ -42,6 +42,15 @@ public sealed partial class ToolDispositionApprovalOwnerV1
         // The decision concerns the frozen request's complete reason, never a masked
         // substitute. The Owner's current field gate must allow that disclosure.
         access.RequireToolFieldRead("Remarks");
+        OperationsOwnerV1.Authority? principalAuthority=null;
+        if(principal.HasValue&&principal!=access.ActorId)
+        {
+            Task<OperationsOwnerV1.Authority> Current(string resource,string action,CancellationToken token)
+                =>Authority.ToolApprovalIntakeAuthorityAsync(resource,action,principal.Value,token);
+            principalAuthority=await Current(OperationsOwnerV1.ToolInstance,"query",ct);
+            var assigned=new OperationsAccessV1(db,owner,principalAuthority,storedSubjectSource:Current);
+            await assigned.RequireToolInstance(db,source.Tool,ct);assigned.RequireToolFieldRead("Remarks");
+        }
         var policy = (await new ToolDispositionApprovalStoreV1(db, Environment).Policies(source.Tool, ct))
             .SingleOrDefault(p => p.Reference.Id == source.Policy) ?? throw Error("MISSING_EVIDENCE", 422);
         if (original.Policy.Ref.Owner != policy.Reference.Owner || original.Policy.Ref.Id != policy.Reference.Id.ToString()
@@ -50,7 +59,7 @@ public sealed partial class ToolDispositionApprovalOwnerV1
             throw Error("DECISION_POLICY_MISMATCH", 422);
         var evidence = ApprovalBindingOwnerV2.Serialize(new { profile = "Main.Wms.ToolDisposition.decision-read/1",
             source.Tool, original.Subject, authority.Actor.UserId, authority.Source.SourcePermissionVersion,
-            authority.OrganizationVersion, authority.Scope, policy = policy.Reference });
+            authority.OrganizationVersion, authority.Scope, principalAuthority, policy = policy.Reference });
         return new(policy.Fact, evidence);
     }
 }
