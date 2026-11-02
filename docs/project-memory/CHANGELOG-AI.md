@@ -1,5 +1,13 @@
 # AI 可读变更日志
 
+## 2026-11-02：W263第五期三天旧元数据显式接入
+
+第五期三天W263完成旧CodeGen元数据显式接入：保留原ID/表列/审计原件，原件指纹CAS，同事务建立V1与原操作恢复，接入后数据库禁止旧写；真实会话HTTP及Vue接入/未知恢复已验证。 [交付](../development/evidence/W263-01/DELIVERY.md)。
+
+13 actual PostgreSQL18 checks PASS/0 skipped (6 adoption cases and7 affected W262 regressions);Vue type-check exit0;new adoption and W262 normal-save actual Chrome/Vue checks PASS with API/identity fixtures. No failed tests in W263. Owned PG/browser stopped;no Actions/deployment.
+
+原375卡及原59局部余56保持；未做存量批量迁移、文件应用或编号消费者切换。Main/Handoff待正常采用/finish，wave263-final-verification.json核销分支、工作区和席位。
+
 ## 2026-11-02：W262第四期三天元数据交付
 
 第四期三天W262完成CodeGen新元数据V1：PostgreSQL租户版本保存/CAS、不可变历史与原操作恢复、真实当前会话HTTP、Vue冲突和未知结果恢复。旧数据不自动接管，生成文件未应用。 [交付](../development/evidence/W262-01/DELIVERY.md)。

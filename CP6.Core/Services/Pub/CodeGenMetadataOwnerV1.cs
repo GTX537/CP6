@@ -11,7 +11,7 @@ namespace CP6.Core.Services.Pub;
 
 /// <summary>The host resolver supplies the current original session, using this Owner's context.
 /// The Owner decides pub-codegen permissions under the existing shared IAM transaction gate.</summary>
-public sealed class CodeGenMetadataOwnerV1(Func<CP6Context> contexts, Guid tenant, Guid metadataId,
+public sealed partial class CodeGenMetadataOwnerV1(Func<CP6Context> contexts, Guid tenant, Guid metadataId,
     Func<CP6Context, CancellationToken, Task<Guid>> currentActor)
 {
     private static byte[] Bytes<T>(T value) => JsonSerializer.SerializeToUtf8Bytes(value);
@@ -84,10 +84,11 @@ public sealed class CodeGenMetadataOwnerV1(Func<CP6Context> contexts, Guid tenan
             if (original != null) return (Receipt(original, actor, command.OperationRef, input), actor, "view");
             await Require(db, "save", token);
             _ = command.Document.Preview();
-            // Same table lock as the legacy write path's native row-exclusive lock. New documents
-            // never adopt old metadata; the migration's legacy trigger closes the reverse route.
+            // A legacy identity can only enter V1 through explicit adoption. Its original rows stay frozen.
             await db.Database.ExecuteSqlRawAsync("LOCK TABLE public.\"Pub_GenTable\" IN SHARE ROW EXCLUSIVE MODE", token);
-            if (await db.Pub_GenTables.AnyAsync(x => x.EntityName == command.Document.Table.EntityName, token))
+            var adopted = await IsAdopted(db, token);
+            if (await db.Pub_GenTables.AnyAsync(x => (x.EntityName == command.Document.Table.EntityName || x.Id == metadataId)
+                && !(adopted && x.Id == metadataId), token))
                 throw new CodeGenMetadataExceptionV1("CODEGEN_LEGACY_METADATA_REQUIRES_ADOPTION");
             var revision = await db.Database.SqlQuery<long?>($"""
                 SELECT revision AS "Value" FROM cp6_codegen_metadata_v1.documents
@@ -95,18 +96,25 @@ public sealed class CodeGenMetadataOwnerV1(Func<CP6Context> contexts, Guid tenan
                 """).SingleOrDefaultAsync(token) ?? 0;
             if (revision != command.ExpectedRevision) throw new CodeGenMetadataExceptionV1("CODEGEN_VERSION_CHANGED", 412);
             if (revision == long.MaxValue) throw new CodeGenMetadataExceptionV1("CODEGEN_REVISION_EXHAUSTED", 422);
+            var result = await Persist(db, command.OperationRef, input, command.Document, revision, actor, token);
+            return (result, actor, "save");
+        }, ct);
+    }
+    private async Task<CodeGenMetadataReceiptV1> Persist(CP6Context db, string operation, byte[] input,
+        CodeGenMetadataDocumentV1 document, long revision, Guid actor, CancellationToken token)
+    {
             var next = revision + 1;
             var at = await db.Database.SqlQueryRaw<DateTimeOffset>("SELECT clock_timestamp() AS \"Value\"").SingleAsync(token);
-            var snapshot = new CodeGenMetadataSnapshotV1(metadataId, tenant, next, command.Document, actor, at);
-            var result = new CodeGenMetadataReceiptV1(command.OperationRef, snapshot);
+            var snapshot = new CodeGenMetadataSnapshotV1(metadataId, tenant, next, document, actor, at);
+            var result = new CodeGenMetadataReceiptV1(operation, snapshot);
             try
             {
                 if (revision == 0) await db.Database.ExecuteSqlInterpolatedAsync($"""
                     INSERT INTO cp6_codegen_metadata_v1.documents(tenant_id,metadata_id,entity_name,revision)
-                    VALUES({tenant},{metadataId},{command.Document.Table.EntityName},{next})
+                    VALUES({tenant},{metadataId},{document.Table.EntityName},{next})
                     """, token);
                 else await db.Database.ExecuteSqlInterpolatedAsync($"""
-                    UPDATE cp6_codegen_metadata_v1.documents SET entity_name={command.Document.Table.EntityName},revision={next}
+                    UPDATE cp6_codegen_metadata_v1.documents SET entity_name={document.Table.EntityName},revision={next}
                       WHERE tenant_id={tenant} AND metadata_id={metadataId}
                     """, token);
             }
@@ -116,10 +124,9 @@ public sealed class CodeGenMetadataOwnerV1(Func<CP6Context> contexts, Guid tenan
                 INSERT INTO cp6_codegen_metadata_v1.versions(tenant_id,metadata_id,revision,body)
                   VALUES({tenant},{metadataId},{next},{Bytes(snapshot)});
                 INSERT INTO cp6_codegen_metadata_v1.commands(tenant_id,metadata_id,operation_hash,operation_bytes,input_bytes,actor_id,revision,result_bytes)
-                  VALUES({tenant},{metadataId},{Key(command.OperationRef)},{Bytes(command.OperationRef)},{input},{actor},{next},{Bytes(result)});
+                  VALUES({tenant},{metadataId},{Key(operation)},{Bytes(operation)},{input},{actor},{next},{Bytes(result)});
                 """, token);
-            return (result, actor, "save");
-        }, ct);
+            return result;
     }
     public Task<CodeGenMetadataReceiptV1?> ReadOperationAsync(string operation, CancellationToken ct = default)
     {
