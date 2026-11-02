@@ -115,7 +115,9 @@ function clear() { generation++; clearGrants(); busy.value = false; application.
 async function run(action: (check: () => void) => Promise<void>) {
   if (busy.value || props.disabled || !can('query') || !authenticationCanRead()) return
   const current = ++generation, stamp = identityStamp(), identity = JSON.stringify(props.scope), id = props.iterationId, submission = props.detail.submission.submissionId
-  const check = () => { requireIdentity(stamp); if (!live || current !== generation || props.disabled || !can('query') || !authenticationCanRead() || JSON.stringify(props.scope) !== identity || props.iterationId !== id || props.detail.submission.submissionId !== submission) throw new Error('当前身份或评审轮次已变化。') }
+  // A successful action may make its parent busy while refreshing the iteration.
+  // That UI lock prevents new actions; it does not invalidate this action's identity.
+  const check = () => { requireIdentity(stamp); if (!live || current !== generation || !can('query') || !authenticationCanRead() || JSON.stringify(props.scope) !== identity || props.iterationId !== id || props.detail.submission.submissionId !== submission) throw new Error('当前身份或评审轮次已变化。') }
   busy.value = true; error.value = notice.value = ''
   try { check(); syncPending(); await action(check); check(); syncPending() }
   catch (e) { if (live && current === generation) { clearGrants(); application.value = null; issues.value = null; tasks.value = []; documents.value = []; evidence.value = []; members.value = []; error.value = e instanceof Error ? e.message : '评审处理失败。'; try { syncPending() } catch { error.value = '原操作记录异常，请保留记录。' } } }
