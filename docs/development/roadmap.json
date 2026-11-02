@@ -161662,6 +161662,11 @@
       "date": "2026-11-02",
       "change": "原59张局部卡逐项核对：37张明确实现余项、19张合同/验收待核、3张优先整卡核销（WP02-10/WP09-11/WP12-07）。375原卡状态不变；七天一期/W249已完成，不重做。",
       "evidence": "docs/development/evidence/W250-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-02",
+      "change": "三天单人执行计划：D1三张提供者整卡核销/台账依赖对齐，D2 CRM切组织与审核到期验收补项，D3编号原命令分配/恢复限定实现；候补为公开询盘适用核销与租户CAS细化。计划未开工，原375/125/247状态不变。",
+      "evidence": "docs/development/planning/20261102-three-day-execution.md"
     }
   ],
   "implementation_assessment": {
@@ -200437,10 +200442,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261102-wave250",
-      "path": "docs/development/dispatch/20261102-wave250/README.md",
-      "baseline_sha": "91a0eea66c25109141c410831d0030782480923c",
-      "registered_at": "2026-11-02T00:22:57.424496+00:00",
+      "id": "20261102-wave251",
+      "path": "docs/development/dispatch/20261102-wave251/README.md",
+      "baseline_sha": "e5e7a9dc18d49c93e7d93341ac9a179a07a0f76b",
+      "registered_at": "2026-11-02T00:55:55.352332+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -200459,87 +200464,34 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W250-01",
-          "workspace_task": "W250-01",
+          "id": "W251-01",
+          "workspace_task": "W251-01",
           "related_tasks": [
-            "WP01-01",
-            "WP02-02",
-            "WP02-03",
-            "WP02-04",
-            "WP02-05",
-            "WP02-06",
-            "WP02-09",
             "WP02-10",
-            "WP02-13",
-            "WP02-14",
-            "WP02-15",
-            "WP02-16",
-            "WP02-18",
-            "WP02-28",
-            "WP02-29",
-            "WP03-01",
-            "WP03-02",
-            "WP03-03",
-            "WP03-04",
-            "WP04-33",
-            "WP04-34",
-            "WP05-02",
-            "WP05-03",
-            "WP05-04",
-            "WP05-05",
-            "WP05-06",
-            "WP05-08",
-            "WP05-09",
-            "WP05-10",
-            "WP05-11",
-            "WP05-12",
-            "WP05-13",
-            "WP05-14",
-            "WP05-16",
-            "WP05-18",
-            "WP05-19",
-            "WP05-20",
-            "WP05-39",
-            "WP08-01",
-            "WP08-10",
-            "WP08-11",
-            "WP08-16",
             "WP09-11",
-            "WP10-01",
-            "WP10-03",
-            "WP10-10",
-            "WP10-19",
-            "WP10-22",
-            "WP10-31",
-            "WP10-36",
-            "WP10-47",
-            "WP10-48",
-            "WP11-32",
-            "WP11-33",
-            "WP12-01",
-            "WP12-02",
-            "WP12-06",
             "WP12-07",
-            "WP12-19"
+            "WP02-06",
+            "WP03-03",
+            "WP02-16"
           ],
-          "title": "逐项核对原375细项中的59张局部交付卡：原scope/正反验收、历次已采用交付、当前源码及真实剩余；按证据核销，不重做七天一期。",
+          "title": "三天单人执行计划：D1三张提供者整卡核销/台账依赖对齐，D2 CRM切组织与审核到期验收补项，D3编号原命令分配/恢复限定实现；候补为公开询盘适用核销与租户CAS细化。计划未开工，原375/125/247状态不变。",
           "chat": "COORD",
-          "mode": "SINGLE_CHAT_SCOPE_RECONCILIATION",
+          "mode": "SINGLE_CHAT_PLANNING",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "42930aca53670e66804a907659bd2ed3c3c7ba13",
-            "branch": "codex/w250-handoff",
-            "path": "handoffs/CP6-DEV-20261012/tasks/W250-01/messages/20261102T002257Z-start/MESSAGE.md",
-            "at": "2026-11-02T00:22:57.424496+00:00"
+            "commit": "6b4084c60dc353ffdd21db5d3396e8045d37f575",
+            "branch": "codex/w251-handoff",
+            "path": "handoffs/CP6-DEV-20261012/tasks/W251-01/messages/20261102T005555Z-start/MESSAGE.md",
+            "at": "2026-11-02T00:55:55.352332+00:00"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w250-01",
-          "planned_scope_ref": "docs/development/dispatch/20261102-wave250/README.md",
+          "branch": "codex/w251-01",
+          "planned_scope_ref": "docs/development/planning/20261102-three-day-execution.md",
           "full_task_completed": false,
-          "business_acceptance": "EVIDENCE_REUSE_ONLY_NO_NEW_PRODUCT_RUN",
+          "business_acceptance": "NOT_RUN_PLANNING_ONLY",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
@@ -200548,48 +200500,47 @@
           "exclusive_resources": [
             "Main:coordination-ledger"
           ],
-          "worker_delivery_ref": "docs/development/evidence/W250-01/DELIVERY.md",
-          "validation": "Documentation-only:59 unique cards reconciled with original scope/positive-negative criteria and later adopted evidence/current source;375 task states and125 targets/247 revision acceptances unchanged;generated views and added links checked;one author task SPEC/QUALITY review. No new product tests,Actions or deployment.",
+          "worker_delivery_ref": "docs/development/planning/20261102-three-day-execution.md",
+          "validation": "Planning only:source/test paths and original scope checked;3 days with18h core+6h buffer;dependencies,conditional evidence reuse,PostgreSQL concurrency and simulated input boundaries reviewed;single-chat2+1 seat choreography;document links/generated views/formal states verified. No product tests,Actions or deployment.",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
             "handoff_seat_released": true,
             "main_branch_deleted": false,
             "handoff_branch_deleted": true,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave250-final-verification.json",
-            "snapshot": "Before Main merge; resolve exact final PR and official finish without a second bookkeeping task."
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave251-final-verification.json",
+            "snapshot": "Before Main normal adoption and official finish; final PR resolves this immutable snapshot."
           },
           "handoff_delivery": {
             "result": "PASS",
-            "source": "e4bc608cf5092ea1b17a60464e14d4f83e905e79",
-            "main": "3267a8f18ffb8a786db20bfb20cd523684da5484",
-            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/226",
+            "source": "3634c4dc62090eab716132aac9a15f0878f72665",
+            "main": "e1d93c73d04b9ca0d9201f05ec9bd4ef09e5c22f",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/227",
             "exact_tree_adoption": true,
-            "at": "2026-11-02T00:39:50.059617+00:00"
+            "at": "2026-11-02T00:57:19.410465+00:00"
           }
         }
       ],
       "horizon": {
-        "started_at": "2026-11-02T00:21:15.302625+00:00",
-        "checkpoint_at": "2026-11-02T00:22:57.424496+00:00",
+        "started_at": "2026-11-02T00:49:59.644897+00:00",
         "estimated_agent_wall_time_minutes": [
-          60,
-          90
+          15,
+          30
         ]
       },
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "First reconcile WP02-10,WP09-11,WP12-07 against original criteria and adopted provider outputs; align legacy whole-dependency validator without weakening actual contracts. Then targeted CRM expiry/session evidence and concrete original-command/CAS gaps. Single-chat execution.",
+      "next_action": "Deliver the three-day plan only; proposed W252/W253/W254 are not started.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
         "handoff_seat_released": true,
         "main_branch_deleted": false,
         "handoff_branch_deleted": true,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave250-final-verification.json",
-        "snapshot": "Before Main merge; resolve exact final PR and official finish without a second bookkeeping task."
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave251-final-verification.json",
+        "snapshot": "Before Main normal adoption and official finish; final PR resolves this immutable snapshot."
       }
     },
     "wave_history": [
@@ -232897,6 +232848,181 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/225"
           }
         ]
+      },
+      {
+        "id": "20261102-wave250",
+        "path": "docs/development/dispatch/20261102-wave250/README.md",
+        "baseline_sha": "91a0eea66c25109141c410831d0030782480923c",
+        "registered_at": "2026-11-02T00:22:57.424496+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W250-01",
+            "workspace_task": "W250-01",
+            "related_tasks": [
+              "WP01-01",
+              "WP02-02",
+              "WP02-03",
+              "WP02-04",
+              "WP02-05",
+              "WP02-06",
+              "WP02-09",
+              "WP02-10",
+              "WP02-13",
+              "WP02-14",
+              "WP02-15",
+              "WP02-16",
+              "WP02-18",
+              "WP02-28",
+              "WP02-29",
+              "WP03-01",
+              "WP03-02",
+              "WP03-03",
+              "WP03-04",
+              "WP04-33",
+              "WP04-34",
+              "WP05-02",
+              "WP05-03",
+              "WP05-04",
+              "WP05-05",
+              "WP05-06",
+              "WP05-08",
+              "WP05-09",
+              "WP05-10",
+              "WP05-11",
+              "WP05-12",
+              "WP05-13",
+              "WP05-14",
+              "WP05-16",
+              "WP05-18",
+              "WP05-19",
+              "WP05-20",
+              "WP05-39",
+              "WP08-01",
+              "WP08-10",
+              "WP08-11",
+              "WP08-16",
+              "WP09-11",
+              "WP10-01",
+              "WP10-03",
+              "WP10-10",
+              "WP10-19",
+              "WP10-22",
+              "WP10-31",
+              "WP10-36",
+              "WP10-47",
+              "WP10-48",
+              "WP11-32",
+              "WP11-33",
+              "WP12-01",
+              "WP12-02",
+              "WP12-06",
+              "WP12-07",
+              "WP12-19"
+            ],
+            "title": "逐项核对原375细项中的59张局部交付卡：原scope/正反验收、历次已采用交付、当前源码及真实剩余；按证据核销，不重做七天一期。",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SCOPE_RECONCILIATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "42930aca53670e66804a907659bd2ed3c3c7ba13",
+              "branch": "codex/w250-handoff",
+              "path": "handoffs/CP6-DEV-20261012/tasks/W250-01/messages/20261102T002257Z-start/MESSAGE.md",
+              "at": "2026-11-02T00:22:57.424496+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w250-01",
+            "planned_scope_ref": "docs/development/dispatch/20261102-wave250/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "EVIDENCE_REUSE_ONLY_NO_NEW_PRODUCT_RUN",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W250-01/DELIVERY.md",
+            "validation": "Documentation-only:59 unique cards reconciled with original scope/positive-negative criteria and later adopted evidence/current source;375 task states and125 targets/247 revision acceptances unchanged;generated views and added links checked;one author task SPEC/QUALITY review. No new product tests,Actions or deployment.",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave250-final-verification.json"
+            },
+            "handoff_delivery": {
+              "result": "PASS",
+              "source": "e4bc608cf5092ea1b17a60464e14d4f83e905e79",
+              "main": "3267a8f18ffb8a786db20bfb20cd523684da5484",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/226",
+              "exact_tree_adoption": true,
+              "at": "2026-11-02T00:39:50.059617+00:00"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-11-02T00:21:15.302625+00:00",
+          "checkpoint_at": "2026-11-02T00:22:57.424496+00:00",
+          "estimated_agent_wall_time_minutes": [
+            60,
+            90
+          ]
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "First reconcile WP02-10,WP09-11,WP12-07 against original criteria and adopted provider outputs; align legacy whole-dependency validator without weakening actual contracts. Then targeted CRM expiry/session evidence and concrete original-command/CAS gaps. Single-chat execution.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave250-final-verification.json"
+        },
+        "actual_registered_wave_minutes": 21.93,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W250-01",
+            "source": "41db8cdfc611d982f1eba0ad71f54747b1236ad1",
+            "remote_target": "e5e7a9dc18d49c93e7d93341ac9a179a07a0f76b",
+            "branch": "codex/w250-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/677"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W250-HANDOFF",
+            "source": "e4bc608cf5092ea1b17a60464e14d4f83e905e79",
+            "remote_target": "3267a8f18ffb8a786db20bfb20cd523684da5484",
+            "branch": "codex/w250-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/226"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -233448,6 +233574,90 @@
       "original_task_count": 375,
       "new_product_validation": false,
       "formal_states_unchanged": true
+    },
+    "next_execution_plan": {
+      "id": "CP6-3D-20261102",
+      "path": "docs/development/planning/20261102-three-day-execution.md",
+      "state": "PLANNED",
+      "created_by_window": "W251-01",
+      "execution_started": false,
+      "execution_owner": "COORD_SINGLE_CHAT",
+      "days_relative_to_execution_start": true,
+      "core_capacity_hours": 18,
+      "contingency_capacity_hours": 6,
+      "estimate_is_guarantee": false,
+      "original_task_count": 375,
+      "windows": [
+        {
+          "id": "W252",
+          "day": "D1",
+          "state": "PLANNED",
+          "related_tasks": [
+            "WP02-10",
+            "WP09-11",
+            "WP12-07"
+          ],
+          "repository_tasks": {
+            "Main": "W252-01"
+          },
+          "scope": "Accurate adopted-prerequisite rules and full-scope reconciliation of3 provider cards; no automatic DONE.",
+          "entry": "Latest verified Main and exact adopted dependencies; original criteria/evidence required."
+        },
+        {
+          "id": "W253",
+          "day": "D2",
+          "state": "PLANNED",
+          "related_tasks": [
+            "WP02-06",
+            "WP03-03"
+          ],
+          "repository_tasks": {
+            "CRM": "W253-02",
+            "Main": "W253-01"
+          },
+          "scope": "Organization-switch old-session invalidation and actual inquiry review-expiry acceptance; fix actual failures only.",
+          "entry": "Current native identity/intake contracts; D1 bookkeeping is not an extra product eligibility gate."
+        },
+        {
+          "id": "W254",
+          "day": "D3",
+          "state": "PLANNED",
+          "related_tasks": [
+            "WP02-16"
+          ],
+          "repository_tasks": {
+            "Main": "W254-01"
+          },
+          "scope": "Number allocation provider with trusted scope/rule version,original-operation receipts,concurrency and unknown recovery;fullCodeGen/consumer adoption excluded.",
+          "entry": "Adopted Main owner transaction/current authorization; preserve original legal numbering domain and single allocator writer."
+        }
+      ],
+      "reserve": [
+        {
+          "id": "B1",
+          "related_tasks": [
+            "WP03-01",
+            "WP03-02"
+          ],
+          "scope": "Original closed-contract applicability reconciliation if core D2 ends early."
+        },
+        {
+          "id": "B2",
+          "related_tasks": [
+            "WP02-04"
+          ],
+          "scope": "Concrete tenant original-command/CAS implementation scoping if core D3 is complete; no automatic code start."
+        }
+      ],
+      "constraints": [
+        "PostgreSQL only",
+        "Simulated business/external inputs permitted;actual product execution required",
+        "Trust Internal Contracts and Fail-Fast",
+        "No repeated seven-day/W249 work",
+        "No Actions or production deployment",
+        "Single chat;fixed DEV-1 Main;DEV-2 serial CRM/Handoff;finish per task"
+      ],
+      "completion": "Each executed window has relevant validation,one review,normal adoption,branch disposal and released seats;full-card DONE only on original scope coverage."
     }
   },
   "acceptance_basis": {
