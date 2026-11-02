@@ -1,10 +1,18 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-02：24小时持续目标 / W273唯一绑定
+
+W273：同FORM唯一启用FLOW绑定由准确Published源派生，PG条件唯一约束/CAS裁决竞争；保历史、未知恢复与回滚，管理页准确表单展示。24h目标第六窗口，继续W274真实运行采用。 [交付](../development/evidence/W273-01/DELIVERY.md)。
+
+本地47项唯一后端行为通过（45项PG18、2项纯规则合同）、0跳过，含真实Main登录/HTTP、唯一绑定/并发/迁移与受影响激活/依赖/APP绑定及提交；8项Vue行为通过，显式vue-tsc --noEmit -p tsconfig.app.json --extendedDiagnostics通过（3328文件）。政策/业务数据模拟；实际隔离PG/Main。组件API模拟，无浏览器到PG整链、Actions、既有环境迁移或生产部署。
+
+WP12-02仍余实际根/子流程/任务pin与旧运行入口同门、完整原AC；本次启停绑定不是引擎启动或业务Owner应用。375仍27DONE/2IN_PROGRESS/346PLANNED，59局部3闭环/56余项，125/247正式状态保持。 总目标IN_PROGRESS继续W274，下一校准4h。采用/清理/finish见wave273-final-verification.json。
+
 ## 2026-11-02：24小时持续目标 / W272准确依赖
 
 W272：发布预览冻结准确FORM/子FLOW版本，确认及激活递归复核当前资格，保留历史pin；实际PG/HTTP、审批绑定/受控提交及页面采用。24h持续目标第五窗口，继续W273唯一FORM-FLOW绑定。 [交付](../development/evidence/W272-01/DELIVERY.md)。
 
-本地49项唯一PG18行为通过、0跳过，含真实Main登录/HTTP、精确递归依赖与受影响发布/激活/APP绑定及提交；7项Vue行为通过，显式vue-tsc --noEmit -p tsconfig.app.json --extendedDiagnostics通过（3328文件）。政策/业务数据模拟；实际隔离PG/Main。组件API模拟，无浏览器到PG整链、Actions、既有环境迁移或生产部署。
+本地49项唯一后端行为通过（47项PG18、2项纯规则合同）、0跳过，含真实Main登录/HTTP、精确递归依赖与受影响发布/激活/APP绑定及提交；7项Vue行为通过，显式vue-tsc --noEmit -p tsconfig.app.json --extendedDiagnostics通过（3328文件）。政策/业务数据模拟；实际隔离PG/Main。组件API模拟，无浏览器到PG整链、Actions、既有环境迁移或生产部署。
 
 WP12-02仍余唯一FORM-FLOW绑定及其并发/CAS、实际运行根与子流程/任务pin、旧运行入口同门和完整原AC；现APP Binding采用不是FORM-FLOW绑定或运行实例交付。375仍27DONE/2IN_PROGRESS/346PLANNED，59局部3闭环/56余项，125/247正式状态不变。 总目标IN_PROGRESS继续W273，下一校准4h。采用/清理/finish见wave272-final-verification.json。
 

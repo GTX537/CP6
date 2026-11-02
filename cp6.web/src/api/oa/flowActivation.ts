@@ -5,14 +5,16 @@ export interface Activation {
   changedAtUtc: string | null; inflightUnchanged: boolean; consumerState: string
 }
 export interface ActivationPreview {
-  current: Activation; versions: { versionId: string; number: number; name: string | null }[]
+  current: Activation; versions: { versionId: string; number: number; name: string | null; formKey: string | null; formVersionId: string | null }[]
   page: number; affectedEntries: string[]; inflightCount: number | null
+  formKey: string | null; formVersionId: string | null
 }
 export interface ActivationHistory {
   revision: string; previousRevision: string; enabled: boolean; publishedVersionId: string; actorId: string; reason: string; changedAtUtc: string
 }
 export interface ActivationIntent {
   key: string; definitionId: string
+  unknown?: boolean
   command: { commandId: string; expectedVersion: string; body: { enabled: boolean; expectedActivationRevision: string; publishedVersionId: string; reason: string } }
 }
 export interface ActivationResult {

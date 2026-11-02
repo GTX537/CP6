@@ -16,7 +16,7 @@ FLOW发布面板显示依赖Key、位置、准确版本和资格；历史面板�
 
 ## 实际验证与一次审查
 
-本地49项唯一PG18行为通过、0跳过，含真实Main登录/HTTP、精确递归依赖与受影响发布/激活/APP绑定及提交；7项Vue行为通过，显式vue-tsc --noEmit -p tsconfig.app.json --extendedDiagnostics通过（3328文件）。政策/业务数据模拟；实际隔离PG/Main。组件API模拟，无浏览器到PG整链、Actions、既有环境迁移或生产部署。
+本地49项唯一后端行为通过（47项PG18、2项纯规则合同）、0跳过，含真实Main登录/HTTP、精确递归依赖与受影响发布/激活/APP绑定及提交；7项Vue行为通过，显式vue-tsc --noEmit -p tsconfig.app.json --extendedDiagnostics通过（3328文件）。政策/业务数据模拟；实际隔离PG/Main。组件API模拟，无浏览器到PG整链、Actions、既有环境迁移或生产部署。
 
 证据D:/CP6-local-test/wave272/foundation/final-validation.json及其中逐行为复用来源。依赖场景覆盖准确FORM升级后仍用预览版本、深层停用/恢复、旧子版本链、循环/8层、当前字段撤权最终回滚、APP动态/准确双模式、准确schema兼容、FORM保护缺失、跨租户来源隔离、深层服务注册消失和Main HTTP。
 
@@ -29,3 +29,5 @@ FLOW发布面板显示依赖Key、位置、准确版本和资格；历史面板�
 WP12-02仍余唯一FORM-FLOW绑定及其并发/CAS、实际运行根与子流程/任务pin、旧运行入口同门和完整原AC；现APP Binding采用不是FORM-FLOW绑定或运行实例交付。375仍27DONE/2IN_PROGRESS/346PLANNED，59局部3闭环/56余项，125/247正式状态不变。
 
 W271最终累计8712秒；本窗口完整耗时/累计按wave272-final-verification.json核销。下一工时校准累计4小时，目标仍IN_PROGRESS，不将本窗口当作24h完成。合并前快照：Main/Handoff正常远端采用、精确分支删除、进程停止及官方finish/席位释放以最终证明核销；主目录原资料保留。
+
+W273复核分类：49项为47项PG集成与2项已有表达式/精度纯合同测试；修正分类统计，原运行日志及全部结果保留。
