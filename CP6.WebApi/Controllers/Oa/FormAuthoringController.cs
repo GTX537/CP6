@@ -17,6 +17,26 @@ public sealed class FormAuthoringController(FormAuthoringOwnerV2 owner) : Contro
     public Task<IActionResult> Read(string key, CancellationToken ct) => Run(async () => await owner.ReadAsync(key, ct));
     [HttpPut("{key}/draft"), RequestSizeLimit(1024 * 1024)]
     public Task<IActionResult> Save(string key, CancellationToken ct) => Run(async () => await owner.SaveAsync(key, await Raw(ct), ct));
+    [HttpGet("{key}")]
+    public Task<IActionResult> Head(string key, CancellationToken ct) => Run(async () => await owner.ReadHeadAsync(key, ct));
+    [HttpGet("{key}/versions")]
+    public Task<IActionResult> Versions(string key, [FromQuery] int page = 1, CancellationToken ct = default) => Run(async () => await owner.VersionsAsync(key, page, ct: ct));
+    [HttpGet("{key}/versions/{version:guid}")]
+    public Task<IActionResult> Version(string key, Guid version, CancellationToken ct) => Run(async () => (await owner.VersionsAsync(key, version: version, ct: ct)).Single());
+    [HttpPost("{key}/publish-preview")]
+    public Task<IActionResult> Preview(string key, FormPublicationPreviewInputV2 input, CancellationToken ct) => Run(async () => await owner.PreviewPublicationAsync(key, input, ct));
+    [HttpPost("{key}/publish"), RequestSizeLimit(1024 * 1024)]
+    public Task<IActionResult> Publish(string key, CancellationToken ct) => Run(async () => await owner.PublishAsync(key, await Raw(ct), ct));
+    [HttpPost("{key}/drafts"), RequestSizeLimit(1024 * 1024)]
+    public Task<IActionResult> Next(string key, CancellationToken ct) => Run(async () => await owner.CreateNextDraftAsync(key, await Raw(ct), ct));
+    [HttpGet("/api/oa/v2/activations/FORM")]
+    public Task<IActionResult> ActivationList([FromQuery] int page = 1, CancellationToken ct = default) => Run(async () => await owner.ActivationListAsync(page, ct));
+    [HttpGet("{key}/activation")]
+    public Task<IActionResult> Activation(string key, [FromQuery] int page = 1, CancellationToken ct = default) => Run(async () => await owner.ActivationPreviewAsync(key, page, ct));
+    [HttpGet("{key}/activation-history")]
+    public Task<IActionResult> ActivationHistory(string key, [FromQuery] int page = 1, CancellationToken ct = default) => Run(async () => await owner.ActivationHistoryAsync(key, page, ct));
+    [HttpPost("{key}/activation"), RequestSizeLimit(1024 * 1024)]
+    public Task<IActionResult> Activate(string key, CancellationToken ct) => Run(async () => await owner.SetActivationAsync(key, await Raw(ct), ct));
     private async Task<byte[]> Raw(CancellationToken ct)
     {
         using var bytes = new MemoryStream(); var buffer = new byte[8192]; int count;
@@ -50,6 +70,25 @@ public sealed class FormAuthoringPolicyController(FormAuthoringOwnerV2 owner) : 
     public Task<IActionResult> Save(FormAuthoringPolicyCommandV2 command, CancellationToken ct) => Run(async () => await owner.ConfigureAsync(command, ct));
     [HttpGet("operations/{operation:guid}")]
     public Task<IActionResult> Original(Guid operation, CancellationToken ct) => Run(async () => await owner.PolicyOriginalAsync(operation, ct));
+    private async Task<IActionResult> Run(Func<Task<object?>> action)
+    {
+        try { return Ok(new { code = 0, data = await action() }); }
+        catch (ScopeAuthorizationExceptionV1 e) { return StatusCode(e.Status, new { code = e.Message }); }
+        catch (Exception e) when (e is Npgsql.NpgsqlException or CurrentPermissionUnavailableException)
+        { return StatusCode(503, new { code = "AUTHORITY_FENCE_UNAVAILABLE" }); }
+    }
+}
+
+[ApiController, Authorize, Route("api/iam/form-publication-policy")]
+[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+public sealed class FormPublicationPolicyController(FormAuthoringOwnerV2 owner) : ControllerBase
+{
+    [HttpGet]
+    public Task<IActionResult> Read(CancellationToken ct) => Run(async () => await owner.PublicationPolicyAsync(ct));
+    [HttpPost]
+    public Task<IActionResult> Save(FormPublicationPolicyCommandV2 command, CancellationToken ct) => Run(async () => await owner.ConfigurePublicationAsync(command, ct));
+    [HttpGet("operations/{operation:guid}")]
+    public Task<IActionResult> Original(Guid operation, CancellationToken ct) => Run(async () => await owner.PublicationPolicyOriginalAsync(operation, ct));
     private async Task<IActionResult> Run(Func<Task<object?>> action)
     {
         try { return Ok(new { code = 0, data = await action() }); }

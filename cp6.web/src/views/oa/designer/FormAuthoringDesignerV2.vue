@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { AUTH_EPOCH, AUTH_EVENT, AUTH_RECORD, IMPERSONATION, identityStamp, requireIdentity } from '@/auth/identity'
 import { formAuthoringApi as api, type FormAuthoringCommand, type FormAuthoringEntry, type FormAuthoringField, type FormAuthoringResult, type FormAuthoringView } from '@/api/oa/formAuthoring'
+import FormPublicationPanelV2 from './FormPublicationPanelV2.vue'
 import FormDesigner from '@/views/wf/designer/FormDesigner.vue'
 
 const emit = defineEmits<{ close: [] }>()
@@ -11,13 +12,16 @@ const labels = { Name: '表单名称', SchemaJson: '表单结构', Category: '�
 const entry = ref<FormAuthoringEntry>(), items = ref<FormAuthoringView[]>([]), current = ref<FormAuthoringView>()
 const key = ref(''), fields = ref<Partial<Record<FormAuthoringField, string | null>>>({})
 const editorSource = ref<{ schemaJson: string; version: string }>()
+const cacheUnavailable = ref(false)
+const publicationLocked = ref(false)
 const busy = ref(false), error = ref(''), message = ref(''), stale = ref(false), page = ref(1)
 type Pending = { key: string; command: FormAuthoringCommand; unknown: boolean }
 const pending = ref<Pending>()
 const writable = computed(() => current.value?.writableFields ?? entry.value?.writableFields ?? [])
 const readable = computed(() => allFields.every(f => Object.hasOwn(fields.value, f)))
-const canSave = computed(() => !stale.value && readable.value && writable.value.length > 0 && (!!current.value || !!entry.value?.canCreate))
-const dirty = computed(() => current.value && allFields.some(f => fields.value[f] !== current.value?.fields[f]))
+const canSave = computed(() => !cacheUnavailable.value && !publicationLocked.value && !current.value?.published && !stale.value && readable.value && writable.value.length > 0 && (!!current.value || !!entry.value?.canCreate))
+const dirty = computed(() => current.value ? allFields.some(f => fields.value[f] !== current.value?.fields[f])
+  : Object.keys(fields.value).length > 0 && !!(key.value || fields.value.Name || fields.value.SchemaJson !== initial || fields.value.Category != null || fields.value.SubCategory != null))
 let generation = 0, live = true, controller: AbortController | undefined
 class CommandStorageError extends Error {}
 function storageChanged(event: StorageEvent) {
@@ -31,12 +35,12 @@ function clearFields() {
   entry.value = undefined; items.value = []; current.value = undefined; fields.value = {}; editorSource.value = undefined
 }
 function identityChanged() {
-  generation++; controller?.abort(); clearFields(); key.value = ''; pending.value = undefined
+  cacheUnavailable.value=false; generation++; controller?.abort(); clearFields(); key.value = ''; pending.value = undefined
   message.value = ''; stale.value = false; busy.value = false; error.value = '登录身份已变化，请重新读取。'
   try { sessionStorage.removeItem(cache) } catch { error.value += ' 浏览器未能清除保存缓存。' }
 }
 async function run(action: (check: () => void, signal: AbortSignal) => Promise<void>) {
-  if (busy.value) return
+  if (cacheUnavailable.value || busy.value) return
   const epoch = identityStamp(), request = generation; controller = new AbortController(); busy.value = true; error.value = ''
   const check = () => { requireIdentity(epoch); if (!live || generation !== request) throw new Error('STALE') }
   try { await action(check, controller.signal); check() }
@@ -55,10 +59,10 @@ function apply(view: FormAuthoringView) {
   editorSource.value = typeof view.fields.SchemaJson === 'string' ? { schemaJson: view.fields.SchemaJson, version: view.version } : undefined
 }
 function schemaChanged(raw: string) {
-  if (!busy.value && !pending.value && writable.value.includes('SchemaJson')) fields.value.SchemaJson = raw
+  if (!busy.value && !pending.value && !publicationLocked.value && !current.value?.published && writable.value.includes('SchemaJson')) fields.value.SchemaJson = raw
 }
 function reload() {
-  if (pending.value) return
+  if (pending.value || publicationLocked.value) return
   return run(async (check, signal) => {
     const list = await api.list(page.value, signal); check(); items.value = list
     entry.value = undefined
@@ -66,12 +70,14 @@ function reload() {
     catch (e: any) { check(); if (e?.response?.status === 401) throw e; message.value = '当前无法新建；仍可读取有权限查看的草稿。' }
   })
 }
+function mayDiscard() { return !dirty.value || window.confirm('有未保存修改，是否放弃本地修改并切换？') }
 function load(value: string) {
-  if (pending.value) return
+  if (pending.value || publicationLocked.value) return
+  if (!mayDiscard()) return
   return run(async (check, signal) => { const loaded = await api.read(value, signal); check(); apply(loaded); message.value = '' })
 }
 function create() {
-  if (busy.value || pending.value || !entry.value?.canCreate) return
+  if (cacheUnavailable.value || busy.value || pending.value || publicationLocked.value || !entry.value?.canCreate || !mayDiscard()) return
   current.value = undefined; key.value = ''; fields.value = { Name: '', SchemaJson: initial, Category: null, SubCategory: null }
   editorSource.value = { schemaJson: initial, version: crypto.randomUUID() }; stale.value = false; message.value = ''; error.value = ''
 }
@@ -80,7 +86,7 @@ async function accept(result: FormAuthoringResult, check: () => void, signal: Ab
   // Correlation is a network boundary; body/schema contracts are owned by the server.
   if (!intent || result.commandId !== intent.command.commandId || result.outcome !== 'SUCCEEDED' || !result.result || result.result.key !== intent.key)
     throw new Error('原结果与当前保存不匹配')
-  apply(result.result); pending.value = undefined; remember(); message.value = '保存已确认。表单草稿尚未发布或启用。'
+  apply(result.result); pending.value = undefined; remember(); message.value = '草稿保存已确认；现有发布版本和启停配置保持不变。'
   const latest = await api.read(intent.key, signal); check(); apply(latest)
   const list = await api.list(page.value, signal); check(); items.value = list
 }
@@ -115,7 +121,7 @@ function recover() {
     else message.value = '尚未观察到原结果；这不能证明未保存。请继续查询或以原意图重试。'
   })
 }
-function leave() { if (!busy.value && !pending.value) emit('close') }
+function leave() { if (!busy.value && !pending.value && !publicationLocked.value && mayDiscard()) emit('close') }
 onMounted(() => {
   window.addEventListener(AUTH_EVENT, identityChanged); window.addEventListener('storage', storageChanged)
   try {
@@ -123,8 +129,9 @@ onMounted(() => {
     if (saved?.identity === identityStamp() && saved.pending?.command?.commandId && typeof saved.pending.key === 'string') {
       pending.value = { ...saved.pending, unknown: true }; key.value = saved.pending.key; message.value = '有一次保存尚待确认，请先查询原结果。'; return
     }
+    if(saved?.identity===identityStamp() && saved.pending) throw new Error('INVALID_PENDING')
     sessionStorage.removeItem(cache)
-  } catch { error.value = '无法读取浏览器保存记录，请恢复浏览器存储后重试。'; return }
+  } catch { cacheUnavailable.value=true; error.value = '无法读取浏览器保存记录，请恢复浏览器存储后重试。'; return }
   void reload()
 })
 onBeforeUnmount(() => { live = false; controller?.abort(); window.removeEventListener(AUTH_EVENT, identityChanged); window.removeEventListener('storage', storageChanged) })
@@ -132,29 +139,30 @@ onBeforeUnmount(() => { live = false; controller?.abort(); window.removeEventLis
 
 <template>
   <section class="form-authoring">
-    <header><h2>表单草稿工作区</h2><button :disabled="busy || !!pending" @click="leave">返回</button></header>
-    <p>保存后为未发布、未启用的草稿。发布和启用分别执行。</p>
+    <header><h2>表单草稿工作区</h2><button :disabled="busy || !!pending || publicationLocked" @click="leave">返回</button></header>
+    <p>保存只更新草稿，不改变已发布版本和当前启停配置。</p>
     <p v-if="error" role="alert">{{ error }}</p><p v-if="message" role="status">{{ message }}</p>
     <nav>
-      <button :disabled="busy || !!pending" @click="reload">刷新列表</button>
-      <button :disabled="busy || !!pending || !entry?.canCreate" @click="create">新建表单</button>
-      <button :disabled="busy || !!pending || page === 1" @click="page--; reload()">上一页</button><span>第 {{ page }} 页</span>
-      <button :disabled="busy || !!pending || items.length < 100" @click="page++; reload()">下一页</button>
+      <button :disabled="busy || !!pending || publicationLocked" @click="reload">刷新列表</button>
+      <button :disabled="busy || !!pending || publicationLocked || !entry?.canCreate" @click="create">新建表单</button>
+      <button :disabled="busy || !!pending || publicationLocked || page === 1" @click="page--; reload()">上一页</button><span>第 {{ page }} 页</span>
+      <button :disabled="busy || !!pending || publicationLocked || items.length < 100" @click="page++; reload()">下一页</button>
     </nav>
-    <ul><li v-for="item in items" :key="item.definitionId"><button :disabled="busy || !!pending" @click="load(item.key)">{{ item.key }} · {{ item.fields.Name ?? '名称不可见' }}</button></li></ul>
+    <ul><li v-for="item in items" :key="item.definitionId"><button :disabled="busy || !!pending || publicationLocked" @click="load(item.key)">{{ item.key }} · {{ item.fields.Name ?? '名称不可见' }}</button></li></ul>
     <div v-if="pending" class="pending"><span>待确认：{{ pending.key }}</span><button :disabled="busy" @click="recover">查询原保存结果</button><button :disabled="busy" @click="save">以原意图重试</button></div>
     <div v-if="Object.keys(fields).length">
-      <label>表单标识 <input v-model="key" :disabled="!!current || busy || !!pending" maxlength="100" /></label>
+      <label>表单标识 <input v-model="key" :disabled="!!current || busy || !!pending || publicationLocked" maxlength="100" /></label>
       <label v-for="field in (['Name', 'Category', 'SubCategory'] as const)" v-show="Object.hasOwn(fields, field)" :key="field">{{ labels[field] }}
-        <input v-model="fields[field]" :disabled="busy || !!pending || !writable.includes(field)" :maxlength="field === 'Name' ? 200 : 100" />
-        <button v-if="field !== 'Name'" :disabled="busy || !!pending || !writable.includes(field)" @click="fields[field] = null">清除分类</button>
+        <input v-model="fields[field]" :disabled="busy || !!pending || publicationLocked || !!current?.published || !writable.includes(field)" :maxlength="field === 'Name' ? 200 : 100" />
+        <button v-if="field !== 'Name'" :disabled="busy || !!pending || publicationLocked || !!current?.published || !writable.includes(field)" @click="fields[field] = null">清除分类</button>
       </label>
       <span v-if="dirty">有未保存修改</span>
-      <button :disabled="busy || !!pending || !canSave" @click="save">保存草稿</button>
-      <button v-if="current" :disabled="busy || !!pending" @click="load(current.key)">重新读取当前草稿（放弃本地修改）</button>
-      <FormDesigner v-if="editorSource" :managed-source="editorSource" :read-only="busy || !!pending || !writable.includes('SchemaJson')" @schema-change="schemaChanged" />
+      <button :disabled="busy || !!pending || publicationLocked || !canSave" @click="save">保存草稿</button>
+      <button v-if="current" :disabled="busy || !!pending || publicationLocked" @click="load(current.key)">重新读取当前草稿（放弃本地修改）</button>
+      <FormDesigner v-if="editorSource" :managed-source="editorSource" :read-only="busy || !!pending || publicationLocked || !!current?.published || !writable.includes('SchemaJson')" @schema-change="schemaChanged" />
       <p v-else>表单结构当前不可见，不能保存整份草稿。</p>
     </div>
+    <FormPublicationPanelV2 :current="current" :dirty="!!dirty" :disabled="busy || !!pending" @reload="load" @locked="publicationLocked = $event" @private-clear="clearFields" />
   </section>
 </template>
 

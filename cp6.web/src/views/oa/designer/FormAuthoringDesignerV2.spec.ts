@@ -9,7 +9,7 @@ const raw = '{"fields":[{"name":"a","type":"input","label":"原文"}],"layout":{
 const draft = (overrides: Partial<FormAuthoringView> = {}): FormAuthoringView => ({ definitionId: 'head', draftId: 'draft', key: 'leave', version: 'v1', enabled: false,
   fields: { Name: 'leave', SchemaJson: raw, Category: ' 原分类 ', SubCategory: null }, writableFields: ['Name', 'SchemaJson', 'Category', 'SubCategory'], ...overrides })
 const mounted: ReturnType<typeof mount>[] = [], state = (w: any): any => w.vm.$.setupState
-function setup() { const w = mount(Designer, { global: { stubs: { FormDesigner: { name: 'FormDesigner', props: ['managedSource', 'readOnly'], emits: ['schemaChange'], template: '<div data-test="editor" />' } } } }); mounted.push(w); return w }
+function setup() { const w = mount(Designer, { global: { stubs: { FormPublicationPanelV2: true, FormDesigner: { name: 'FormDesigner', props: ['managedSource', 'readOnly'], emits: ['schemaChange'], template: '<div data-test="editor" />' } } } }); mounted.push(w); return w }
 beforeEach(() => {
   vi.resetAllMocks(); localStorage.clear(); sessionStorage.clear()
   vi.mocked(api.list).mockResolvedValue([]); vi.mocked(api.entry).mockResolvedValue({ canCreate: true, state: 'READY', writableFields: draft().writableFields }); vi.mocked(api.read).mockResolvedValue(draft())
@@ -73,4 +73,14 @@ it('uses visual editor changes without replacing its input on each keystroke', a
   state(w).schemaChanged(raw.replace('原文', '修改')); expect(state(w).fields.SchemaJson).toContain('修改'); expect(state(w).editorSource).toBe(source)
   window.dispatchEvent(new StorageEvent('storage', { key: 'theme' })); expect(state(w).fields.SchemaJson).toContain('修改')
   vi.mocked(api.save).mockRejectedValue({ response: { status: 503 } }); await state(w).save(); expect(vi.mocked(api.save).mock.calls[0]![1].body.schemaJson).toContain('9007199254740993.00')
+})
+
+it('keeps unsaved work when navigation is canceled and opens published snapshots read-only',async()=>{
+  const w=setup();await flushPromises();await state(w).load('leave');state(w).fields.Name='unsaved'
+  const confirm=vi.spyOn(window,'confirm').mockReturnValue(false)
+  await state(w).load('other');expect(state(w).fields.Name).toBe('unsaved');expect(api.read).toHaveBeenCalledTimes(1)
+  confirm.mockReturnValue(true);vi.mocked(api.read).mockResolvedValue(draft({published:true}));await state(w).load('other')
+  expect(state(w).canSave).toBe(false);state(w).schemaChanged('{"fields":[]}');expect(state(w).fields.SchemaJson).toBe(raw)
+  state(w).create();state(w).key='unsaved-new';state(w).fields.Name='new';confirm.mockReturnValue(false);await state(w).load('leave')
+  expect(state(w).fields.Name).toBe('new')
 })

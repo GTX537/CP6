@@ -50,9 +50,11 @@ public sealed class FlowAuthoringController(FlowAuthoringOwnerV2 owner, FormAuth
     [HttpGet("commands/{commandId}")]
     public Task<IActionResult> Original(string commandId, [FromQuery] string operation, [FromQuery] string resource, CancellationToken ct) => Run(async () =>
     {
-        if (operation is not (FormAuthoringOwnerV2.Operation or FlowAuthoringOwnerV2.Operation or FlowAuthoringOwnerV2.PublishOperation or FlowAuthoringOwnerV2.NextDraftOperation or FlowAuthoringOwnerV2.ActivationOperation) || string.IsNullOrWhiteSpace(resource) || resource.Length > 100)
+        if (operation is not (FormAuthoringOwnerV2.Operation or FormAuthoringOwnerV2.PublishOperation or FormAuthoringOwnerV2.NextDraftOperation or FormAuthoringOwnerV2.ActivationOperation or FlowAuthoringOwnerV2.Operation or FlowAuthoringOwnerV2.PublishOperation or FlowAuthoringOwnerV2.NextDraftOperation or FlowAuthoringOwnerV2.ActivationOperation) || string.IsNullOrWhiteSpace(resource) || resource.Length > 100)
             throw new ScopeAuthorizationExceptionV1("COMMAND_SCOPE_INVALID", 400);
         if (operation == FormAuthoringOwnerV2.Operation) return (object)await forms.OriginalAsync(resource, commandId, ct);
+        if (operation == FormAuthoringOwnerV2.ActivationOperation) return (object)await forms.ActivationOriginalAsync(resource, commandId, ct);
+        if (operation is FormAuthoringOwnerV2.PublishOperation or FormAuthoringOwnerV2.NextDraftOperation) return (object)await forms.LifecycleOriginalAsync(resource, operation, commandId, ct);
         if (operation == FlowAuthoringOwnerV2.ActivationOperation) return (object)await owner.ActivationOriginalAsync(resource, commandId, ct);
         return operation == FlowAuthoringOwnerV2.Operation ? (object)await owner.OriginalAsync(resource, commandId, ct) : await owner.LifecycleOriginalAsync(resource, operation, commandId, ct);
     });

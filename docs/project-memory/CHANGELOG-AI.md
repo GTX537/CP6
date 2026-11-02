@@ -1,5 +1,13 @@
 # AI 可读变更日志
 
+## 2026-11-02：24小时持续目标 / W270 FORM发布和启停
+
+W270：FORM准确发布预览/不可变版本、显式准确来源下一草稿、独立激活CAS/历史/原件及设计器/管理页采用已实现验证；24h持续目标第三窗口，继续W271。 [交付](../development/evidence/W270-01/DELIVERY.md)。
+
+本地36项唯一PG18行为通过、0跳过（15 FORM草稿回归、19 FORM发布/激活、2既有FLOW实际HTTP回归）；24项Vue组件行为通过；显式应用配置vue-tsc --noEmit -p tsconfig.app.json --extendedDiagnostics通过，实际检查3325文件。当前Main真实登录/CSRF/HTTP与隔离PG执行，政策/业务数据模拟；无Actions/工作流变更/既有环境迁移/生产部署。 先前根配置类型命令未检查应用，历史报告已更正，本次显式应用检查独立有效。
+
+WP12-01仍余FLOW/FORM固定sourceVersion克隆、完整原AC与比较等原范围；WP12-02仍余FORM/子流程精确依赖、唯一绑定和实际运行/旧入口采用。文件Owner准入、提交字段/规则权限、个人草稿及跨窗口浏览器到PG全链按W272–279推进。新FORM启用配置不代表运行入口已接入，未知影响数不写0；125/247及原375整卡状态保持，59局部仍3闭环/56余项。 总目标IN_PROGRESS，继续W271。采用/分支清理/官方finish以wave270-final-verification.json核销。
+
 ## 2026-11-02：24小时持续目标 / W269 FORM草稿
 
 W269：FORM独立草稿Owner/显式政策、当前会话/资源/字段权限、WFC原命令及CAS、旧身份互斥、完整表单设计器工作区已实现验证。24小时持续目标第二窗口，下一步W270。 [交付](../development/evidence/W269-01/DELIVERY.md)。

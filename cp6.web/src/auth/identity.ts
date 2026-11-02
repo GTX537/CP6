@@ -15,6 +15,8 @@ export function identityStamp(): string {
 export function clearTabIdentity(): void {
   sessionStorage.removeItem('cp6-workflow-authoring-pending')
   sessionStorage.removeItem('cp6-form-authoring-pending')
+  sessionStorage.removeItem('cp6-form-publication-pending')
+  sessionStorage.removeItem('cp6-form-activation-pending')
   sessionStorage.removeItem('cp6-workflow-publication-pending')
   sessionStorage.removeItem('cp6-workflow-activation-pending')
   sessionStorage.removeItem('cp6-approval-binding-pending')
