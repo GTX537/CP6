@@ -196322,11 +196322,37 @@
         "new_product_validation": true
       },
       "wave268_schema_boundary": {
-        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "status": "MERGED",
         "report": "docs/development/evidence/W268-01/DELIVERY.md",
         "full_task_completed": false,
         "validation": "本地64项后端唯一行为通过/0跳过：63项相关（16项PG18含实际Main会话HTTP，47项单元/InMemory）及宽筛选附带1项既有Space OpenAPI检查；前端22项通过（最后11项复查，未变的11项复用首轮）；最终vue-tsc退出0。业务输入模拟；无Actions、工作流调整、既有环境迁移或部署。",
-        "remaining": "WP12-01仍余FORM完整Owner当前资源/字段权限、原命令/CAS/显式草稿、固定sourceVersion克隆和设计器正式采用；WP12-02余FORM/子流程精确依赖、唯一绑定、实际运行及旧写入口；文件/选项Owner实际资格、提交专业精度/权限与原AC全范围在后续窗口。当前不标整卡完成。"
+        "remaining": "WP12-01仍余FORM完整Owner当前资源/字段权限、原命令/CAS/显式草稿、固定sourceVersion克隆和设计器正式采用；WP12-02余FORM/子流程精确依赖、唯一绑定、实际运行及旧写入口；文件/选项Owner实际资格、提交专业精度/权限与原AC全范围在后续窗口。当前不标整卡完成。",
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W268-01",
+            "source": "6355c84d6ae6c986ed623cab628a289d95c6bf91",
+            "remote_target": "feed7f6a4374a50233c8377e72b3972ec66982d9",
+            "pr": "https://github.com/GTX537/CP6/pull/696",
+            "branch": "codex/w268-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W268-HANDOFF",
+            "source": "25998639be4f9120009014593ac64fc7ad68ed1c",
+            "remote_target": "b5993de74ae0482b5db6626375d4cba355127198",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/244",
+            "branch": "codex/w268-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     },
     {
@@ -200995,11 +201021,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261102-wave268",
-      "path": "docs/development/dispatch/20261102-wave268/README.md",
-      "baseline_sha": "4db343ab924769a20893d199f2178ce411a4d682",
-      "registered_at": "2026-11-02T13:10:32.042186+00:00",
-      "phase": "DELIVERY_MAIN_CLOSEOUT",
+      "id": "20261102-wave269",
+      "path": "docs/development/dispatch/20261102-wave269/README.md",
+      "baseline_sha": "feed7f6a4374a50233c8377e72b3972ec66982d9",
+      "registered_at": "2026-11-02T13:43:46.434889+00:00",
+      "phase": "IMPLEMENTING",
       "assigned_chats": [
         "COORD"
       ],
@@ -201017,57 +201043,40 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W268-01",
-          "workspace_task": "W268-01",
+          "id": "W269-01",
+          "workspace_task": "W269-01",
           "related_tasks": [
             "WP12-01"
           ],
-          "title": "完整schema往返与致命结构边界",
+          "title": "FORM草稿Owner与当前授权/原命令",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "DELIVERY_MAIN_CLOSEOUT",
+          "phase": "IMPLEMENTING",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": true,
+          "worker_delivery_received": false,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w268-01",
+          "branch": "codex/w269-01",
           "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": true,
+          "candidate_review_completed": false,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
-            "Main:oa-definition"
-          ],
-          "worker_delivery_ref": "docs/development/evidence/W268-01/DELIVERY.md",
-          "validation": "本地64项后端唯一行为通过/0跳过：63项相关（16项PG18含实际Main会话HTTP，47项单元/InMemory）及宽筛选附带1项既有Space OpenAPI检查；前端22项通过（最后11项复查，未变的11项复用首轮）；最终vue-tsc退出0。业务输入模拟；无Actions、工作流调整、既有环境迁移或部署。",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave268-final-verification.json"
-          },
-          "business_acceptance": "SCHEMA_BOUNDARY_AND_LOCAL_PG_PASS;FULL_FORM_OWNER_AND_FULL_CARD_REMAIN"
+            "Main:oa-definition",
+            "Main:Core-PG-migration",
+            "Main:authorization-catalog"
+          ]
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "24小时实际Codex连续目标首窗口W268：FORM完整schema往返与服务端致命结构边界、FLOW稳定图身份；后续FORM Owner/依赖pin/实际运行/撤回恢复继续。",
-      "lifecycle_snapshot": {
-        "main_finish_required": true,
-        "main_seat_released": false,
-        "handoff_seat_released": false,
-        "main_branch_deleted": false,
-        "handoff_branch_deleted": false,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave268-final-verification.json"
-      }
+      "next_action": "W269 FORM草稿Owner：独立显式FORM编写政策、当前实际会话/资源/字段授权、完整schema与分类、WFC原命令/CAS、旧身份互斥及新表单工作区；24h持续目标第二窗口。"
     },
     "wave_history": [
       {
@@ -235625,6 +235634,105 @@
             "workspace_clean": true
           }
         ]
+      },
+      {
+        "id": "20261102-wave268",
+        "path": "docs/development/dispatch/20261102-wave268/README.md",
+        "baseline_sha": "4db343ab924769a20893d199f2178ce411a4d682",
+        "registered_at": "2026-11-02T13:10:32.042186+00:00",
+        "phase": "COMPLETE",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W268-01",
+            "workspace_task": "W268-01",
+            "related_tasks": [
+              "WP12-01"
+            ],
+            "title": "完整schema往返与致命结构边界",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "COMPLETE",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w268-01",
+            "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:oa-definition"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W268-01/DELIVERY.md",
+            "validation": "本地64项后端唯一行为通过/0跳过：63项相关（16项PG18含实际Main会话HTTP，47项单元/InMemory）及宽筛选附带1项既有Space OpenAPI检查；前端22项通过（最后11项复查，未变的11项复用首轮）；最终vue-tsc退出0。业务输入模拟；无Actions、工作流调整、既有环境迁移或部署。",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave268-final-verification.json"
+            },
+            "business_acceptance": "SCHEMA_BOUNDARY_AND_LOCAL_PG_PASS;FULL_FORM_OWNER_AND_FULL_CARD_REMAIN"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "24小时实际Codex连续目标首窗口W268：FORM完整schema往返与服务端致命结构边界、FLOW稳定图身份；后续FORM Owner/依赖pin/实际运行/撤回恢复继续。",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave268-final-verification.json"
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W268-01",
+            "source": "6355c84d6ae6c986ed623cab628a289d95c6bf91",
+            "remote_target": "feed7f6a4374a50233c8377e72b3972ec66982d9",
+            "pr": "https://github.com/GTX537/CP6/pull/696",
+            "branch": "codex/w268-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W268-HANDOFF",
+            "source": "25998639be4f9120009014593ac64fc7ad68ed1c",
+            "remote_target": "b5993de74ae0482b5db6626375d4cba355127198",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/244",
+            "branch": "codex/w268-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -236203,7 +236311,7 @@
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 1471,
+      "effective_seconds_recorded": 2229,
       "next_reestimate_at_effective_seconds": 7200,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
@@ -236218,17 +236326,19 @@
             0.75,
             1.5
           ],
-          "state": "VERIFYING",
+          "state": "DONE",
           "implementation_complete": true,
           "report": "docs/development/evidence/W268-01/DELIVERY.md",
           "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
             "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave268-final-verification.json"
-          }
+          },
+          "actual_effective_seconds": 1841,
+          "estimate_variance": "30m41s actual versus initial 45–90min. First small sample; full re-estimate at cumulative 2h, continue authorized backlog."
         },
         {
           "id": "W269-01",
@@ -236241,7 +236351,8 @@
             0.75,
             1.75
           ],
-          "state": "PLANNED"
+          "state": "IN_PROGRESS",
+          "started_at": "2026-11-02T13:43:46.434889+00:00"
         },
         {
           "id": "W270-01",
@@ -236385,7 +236496,7 @@
         }
       ],
       "reestimates": [],
-      "timing_snapshot_at": "2026-11-02T13:31:08.333200+00:00"
+      "timing_snapshot_at": "2026-11-02T13:43:46.434889+00:00"
     },
     "execution_plan_history": [
       {
