@@ -200662,11 +200662,12 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261102-wave258",
-      "path": "docs/development/dispatch/20261102-wave258/README.md",
-      "baseline_sha": "3d8fe1c5f02efc97498ec628419be3dd7da2277c",
-      "registered_at": "2026-11-02T04:31:42.240192+00:00",
-      "phase": "DELIVERY_MAIN_CLOSEOUT",
+      "id": "20261102-wave259",
+      "path": "docs/development/dispatch/20261102-wave259/README.md",
+      "baseline_sha": "6a5c72467bb588ae34fe9c7d60e4626d89265832",
+      "crm_baseline_sha": "0a8e17aa61f4d57f95f7b4fa3a20f15c6d1d5e06",
+      "registered_at": "2026-11-02T04:40:40.242101+00:00",
+      "phase": "IMPLEMENTING",
       "assigned_chats": [
         "COORD"
       ],
@@ -200684,78 +200685,57 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W258-01",
-          "workspace_task": "BUG-684-MENU-ID",
+          "id": "W259-01",
+          "workspace_task": "W259-01",
           "related_tasks": [
-            "WP02-16"
+            "WP03-03"
           ],
-          "title": "第三期D1历史菜单ID极值迁移修复",
+          "title": "第三期D2匿名化后完整过期链路",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "DELIVERY_MAIN_CLOSEOUT",
+          "phase": "IMPLEMENTING",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "e9a8400e3cfa5de3f016b1c8379faff9907871f9",
-            "branch": "codex/w258-handoff",
-            "path": "handoffs/CP6-DEV-20261012/tasks/W258-01/messages/20261102T043142Z-start/MESSAGE.md",
-            "at": "2026-11-02T04:31:42.240192+00:00"
+            "commit": "b8fd612e29de3195f8319df4da1fa27208efe55a",
+            "branch": "codex/w259-handoff",
+            "path": "handoffs/CP6-DEV-20261012/tasks/W259-01/messages/20261102T044040Z-start/MESSAGE.md",
+            "at": "2026-11-02T04:40:40.242101+00:00"
           },
           "worker_start_received": true,
-          "worker_delivery_received": true,
+          "worker_delivery_received": false,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/bug-684-menu-id",
+          "branch": "codex/w259-01",
+          "crm_branch": "codex/w259-02",
           "planned_scope_ref": "docs/development/planning/20261102-three-day-cycle3.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": true,
+          "candidate_review_completed": false,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
-            "Main:Core-PG-migration"
+            "CRM:review-expiry-owner",
+            "CRM:native-runtime-graph",
+            "CRM:maintenance-store",
+            "CRM:native-host"
           ],
-          "worker_delivery_ref": "docs/development/evidence/W258-01/DELIVERY.md",
-          "validation": "Original EngineeringRevision forward-migration regression reproduced SQLSTATE22003 before fix, then passed with added max/max-1, all8 new menus, original role grant/product/numbering preservation and repeat-migration assertions. Actual owned PostgreSQL18 and EF migrations; simulated business/IAM inputs. No Actions/deployment/existing environment migration.",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": true,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": true,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave258-final-verification.json"
-          },
-          "handoff_delivery": {
-            "result": "PASS",
-            "source": "5e83f6aefee583ec37a5611adc2e746cd87b9983",
-            "main": "9dd6f72fbf8bf1d582ed0763a663b9e39379301d",
-            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/234",
-            "exact_tree_adoption": true,
-            "at": "2026-11-02T04:36:35.181033+00:00"
-          },
-          "business_acceptance": "ISSUE684_ACTUAL_PG_REGRESSION_PASS;FULL_CARD_REMAINS"
+          "worker_delivery_ref": "docs/development/evidence/W259-01/DELIVERY.md"
         }
       ],
       "horizon": {
-        "started_at": "2026-11-02T04:26:22.623560+00:00",
+        "started_at": "2026-11-02T04:40:04.801259+00:00",
         "estimated_agent_wall_time_minutes": [
-          60,
-          180
+          120,
+          360
         ]
       },
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "第三期三天单人执行：D1独立修复Issue684菜单ID极值迁移；D2真实PG/HTTP已匿名化询盘过期及原件保持；D3已登记新编号域受权HTTP管理入口。原375卡范围保持；不重复前两期/七天/W249，不触发Actions、部署或迁移既有环境。",
-      "lifecycle_snapshot": {
-        "main_finish_required": true,
-        "main_seat_released": false,
-        "handoff_seat_released": true,
-        "main_branch_deleted": false,
-        "handoff_branch_deleted": true,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave258-final-verification.json"
-      }
+      "next_action": "第三期D2已登记并在CRM独立分支codex/w259-02执行真实匿名化后Expired链路。实际公开提交及撤回已完成，60分钟合法保留期截止UTC 2026-11-02T05:44:02.095099；完整验收仍在运行，不能称通过。为利用等待，Main协调分支保存后官方deferred释放DEV-1，串行切到独立D3/W260；CRM继续占DEV-2，COORD单人执行，2+1配额不变。D2结果将回来本分支收尾，必要时正常合并新主线，保留D3已采用事实。",
+      "coordination_disposition": "SAVED_FOR_SERIAL_D3_WHILE_CRM_ELAPSED_TEST_RUNS"
     },
     "wave_history": [
       {
@@ -234211,6 +234191,122 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/233"
           }
         ]
+      },
+      {
+        "id": "20261102-wave258",
+        "path": "docs/development/dispatch/20261102-wave258/README.md",
+        "baseline_sha": "3d8fe1c5f02efc97498ec628419be3dd7da2277c",
+        "registered_at": "2026-11-02T04:31:42.240192+00:00",
+        "phase": "COMPLETE",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W258-01",
+            "workspace_task": "BUG-684-MENU-ID",
+            "related_tasks": [
+              "WP02-16"
+            ],
+            "title": "第三期D1历史菜单ID极值迁移修复",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "COMPLETE",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "e9a8400e3cfa5de3f016b1c8379faff9907871f9",
+              "branch": "codex/w258-handoff",
+              "path": "handoffs/CP6-DEV-20261012/tasks/W258-01/messages/20261102T043142Z-start/MESSAGE.md",
+              "at": "2026-11-02T04:31:42.240192+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/bug-684-menu-id",
+            "planned_scope_ref": "docs/development/planning/20261102-three-day-cycle3.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:Core-PG-migration"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W258-01/DELIVERY.md",
+            "validation": "Original EngineeringRevision forward-migration regression reproduced SQLSTATE22003 before fix, then passed with added max/max-1, all8 new menus, original role grant/product/numbering preservation and repeat-migration assertions. Actual owned PostgreSQL18 and EF migrations; simulated business/IAM inputs. No Actions/deployment/existing environment migration.",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave258-final-verification.json"
+            },
+            "handoff_delivery": {
+              "result": "PASS",
+              "source": "5e83f6aefee583ec37a5611adc2e746cd87b9983",
+              "main": "9dd6f72fbf8bf1d582ed0763a663b9e39379301d",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/234",
+              "exact_tree_adoption": true,
+              "at": "2026-11-02T04:36:35.181033+00:00"
+            },
+            "business_acceptance": "ISSUE684_ACTUAL_PG_REGRESSION_PASS;FULL_CARD_REMAINS"
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-11-02T04:26:22.623560+00:00",
+          "estimated_agent_wall_time_minutes": [
+            60,
+            180
+          ]
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "第三期三天单人执行：D1独立修复Issue684菜单ID极值迁移；D2真实PG/HTTP已匿名化询盘过期及原件保持；D3已登记新编号域受权HTTP管理入口。原375卡范围保持；不重复前两期/七天/W249，不触发Actions、部署或迁移既有环境。",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave258-final-verification.json"
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "BUG-684-MENU-ID",
+            "source": "2b1ac3768eef9e996bd36ced6e1b9a86f2545dba",
+            "remote_target": "6a5c72467bb588ae34fe9c7d60e4626d89265832",
+            "branch": "codex/bug-684-menu-id",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/686"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W258-HANDOFF",
+            "source": "5e83f6aefee583ec37a5611adc2e746cd87b9983",
+            "remote_target": "9dd6f72fbf8bf1d582ed0763a663b9e39379301d",
+            "branch": "codex/w258-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/234"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -234781,7 +234877,7 @@
       "execution_started": true,
       "execution_owner": "COORD_SINGLE_CHAT",
       "authorized_at": "2026-11-02T04:31:42.240192+00:00",
-      "current_day": "D1",
+      "current_day": "D2",
       "core_capacity_hours": 18,
       "contingency_capacity_hours": 6,
       "estimate_is_guarantee": false,
@@ -234789,7 +234885,7 @@
         {
           "id": "W258",
           "day": "D1",
-          "state": "VERIFYING",
+          "state": "DONE",
           "related_tasks": [
             "WP02-16"
           ],
@@ -234805,10 +234901,10 @@
           },
           "report": "docs/development/evidence/W258-01/DELIVERY.md",
           "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
+            "main_finish_required": false,
+            "main_seat_released": true,
             "handoff_seat_released": true,
-            "main_branch_deleted": false,
+            "main_branch_deleted": true,
             "handoff_branch_deleted": true,
             "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave258-final-verification.json"
           }
@@ -234816,7 +234912,7 @@
         {
           "id": "W259",
           "day": "D2",
-          "state": "PLANNED",
+          "state": "IN_PROGRESS",
           "related_tasks": [
             "WP03-03"
           ],
@@ -234824,7 +234920,13 @@
             "Main": "W259-01",
             "CRM": "W259-02"
           },
-          "scope": "Actual anonymized NeedsReview to Expired PG/HTTP chain, original deadlines/tombstones and original-result recovery; repair defects found."
+          "scope": "Actual anonymized NeedsReview to Expired PG/HTTP chain, original deadlines/tombstones and original-result recovery; repair defects found.",
+          "actual_start_ref": {
+            "commit": "b8fd612e29de3195f8319df4da1fa27208efe55a",
+            "branch": "codex/w259-handoff",
+            "path": "handoffs/CP6-DEV-20261012/tasks/W259-01/messages/20261102T044040Z-start/MESSAGE.md",
+            "at": "2026-11-02T04:40:40.242101+00:00"
+          }
         },
         {
           "id": "W260",
@@ -234840,7 +234942,8 @@
         }
       ],
       "original_task_count": 375,
-      "completion": "Scoped outcomes reviewed,validated,adopted normally;exact task branches disposed and seats officially released. Full-card remaining scope preserved."
+      "completion": "Scoped outcomes reviewed,validated,adopted normally;exact task branches disposed and seats officially released. Full-card remaining scope preserved.",
+      "execution_order_note": "第三期D2已登记并在CRM独立分支codex/w259-02执行真实匿名化后Expired链路。实际公开提交及撤回已完成，60分钟合法保留期截止UTC 2026-11-02T05:44:02.095099；完整验收仍在运行，不能称通过。为利用等待，Main协调分支保存后官方deferred释放DEV-1，串行切到独立D3/W260；CRM继续占DEV-2，COORD单人执行，2+1配额不变。D2结果将回来本分支收尾，必要时正常合并新主线，保留D3已采用事实。"
     },
     "execution_plan_history": [
       {
