@@ -161702,6 +161702,11 @@
       "date": "2026-11-02",
       "change": "第三期D1修复Issue684：四处待执行PostgreSQL迁移在历史菜单ID达到int.MaxValue时选择正整数空闲ID，保留历史菜单、授权、工程原件及编号。第二期已按最终证明归档；D2/D3接续，原375卡状态不变。",
       "evidence": "docs/development/evidence/W258-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-02",
+      "change": "第三期D3已实现新登记Main编号域的受权规则管理HTTP：当前/历史版本、格式CAS、原修改恢复及无副作用预览；实际Main登录、CSRF、当前会话与租户生效。D2真实60分钟保留期验收仍在运行，不能称三天全部完成。",
+      "evidence": "docs/development/evidence/W260-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -174852,6 +174857,12 @@
         "full_task_completed": false,
         "scope": "Existing W254 new tenant-domain format CAS and original change recovery only;historical consumers,global domains,CodeGen and full lifecycle remain.",
         "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave257-final-verification.json"
+      },
+      "wave260_http_administration": {
+        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W260-01/DELIVERY.md",
+        "full_task_completed": false,
+        "validation": "4 actual PostgreSQL18/Program HTTP cases PASS,0 skipped:format history/CAS/3000-character NUL original recovery/preview;current query-edit grants/cross-tenant/logout;two in-flight revoke cases after waiting for the shared authentication gate. Original missing-entry RED and MVC record metadata failure retained;annotation placement corrected and all4 rerun PASS. W257 unchanged Owner/store behavior evidence referenced,not rerun. No Actions/deployment/new migration."
       }
     },
     {
@@ -200662,12 +200673,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261102-wave259",
-      "path": "docs/development/dispatch/20261102-wave259/README.md",
+      "id": "20261102-wave260",
+      "path": "docs/development/dispatch/20261102-wave260/README.md",
       "baseline_sha": "6a5c72467bb588ae34fe9c7d60e4626d89265832",
-      "crm_baseline_sha": "0a8e17aa61f4d57f95f7b4fa3a20f15c6d1d5e06",
-      "registered_at": "2026-11-02T04:40:40.242101+00:00",
-      "phase": "IMPLEMENTING",
+      "registered_at": "2026-11-02T04:48:54.198751+00:00",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -200685,57 +200695,62 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W259-01",
-          "workspace_task": "W259-01",
+          "id": "W260-01",
+          "workspace_task": "W260-01",
           "related_tasks": [
-            "WP03-03"
+            "WP02-16"
           ],
-          "title": "第三期D2匿名化后完整过期链路",
+          "title": "第三期D3新编号域受权管理HTTP",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "IMPLEMENTING",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "b8fd612e29de3195f8319df4da1fa27208efe55a",
-            "branch": "codex/w259-handoff",
-            "path": "handoffs/CP6-DEV-20261012/tasks/W259-01/messages/20261102T044040Z-start/MESSAGE.md",
-            "at": "2026-11-02T04:40:40.242101+00:00"
+            "commit": "d0cd36cd195ecde1fb39ceebc785503479d848fb",
+            "branch": "codex/w260-01",
+            "path": "docs/development/dispatch/20261102-wave260/README.md",
+            "at": "2026-11-02T04:48:54.198751+00:00",
+            "repository": "CP6"
           },
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w259-01",
-          "crm_branch": "codex/w259-02",
+          "branch": "codex/w260-01",
           "planned_scope_ref": "docs/development/planning/20261102-three-day-cycle3.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
-            "CRM:review-expiry-owner",
-            "CRM:native-runtime-graph",
-            "CRM:maintenance-store",
-            "CRM:native-host"
+            "Main:number-owner-http"
           ],
-          "worker_delivery_ref": "docs/development/evidence/W259-01/DELIVERY.md"
+          "worker_delivery_ref": "docs/development/evidence/W260-01/DELIVERY.md",
+          "validation": "4 actual PostgreSQL18/Program HTTP cases PASS,0 skipped:format history/CAS/3000-character NUL original recovery/preview;current query-edit grants/cross-tenant/logout;two in-flight revoke cases after waiting for the shared authentication gate. Original missing-entry RED and MVC record metadata failure retained;annotation placement corrected and all4 rerun PASS. W257 unchanged Owner/store behavior evidence referenced,not rerun. No Actions/deployment/new migration.",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_pending_serial_slot": true,
+            "main_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave260-final-verification.json"
+          },
+          "business_acceptance": "NEW_DOMAIN_RULE_MANAGEMENT_ACTUAL_HTTP_PASS;FULL_CARD_REMAINS"
         }
       ],
-      "horizon": {
-        "started_at": "2026-11-02T04:40:04.801259+00:00",
-        "estimated_agent_wall_time_minutes": [
-          120,
-          360
-        ]
-      },
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "第三期D2已登记并在CRM独立分支codex/w259-02执行真实匿名化后Expired链路。实际公开提交及撤回已完成，60分钟合法保留期截止UTC 2026-11-02T05:44:02.095099；完整验收仍在运行，不能称通过。为利用等待，Main协调分支保存后官方deferred释放DEV-1，串行切到独立D3/W260；CRM继续占DEV-2，COORD单人执行，2+1配额不变。D2结果将回来本分支收尾，必要时正常合并新主线，保留D3已采用事实。",
-      "coordination_disposition": "SAVED_FOR_SERIAL_D3_WHILE_CRM_ELAPSED_TEST_RUNS"
+      "next_action": "第三期D3：W254已登记新编号域当前/历史格式规则、CAS修改、原修改恢复及无副作用预览的实际受权HTTP入口。服务器绑定当前租户、原登记scope、pub-seq查询/编辑权限与独立事务内真实当前会话；JSON保留长字符串/Unicode原键。不开放领号/登记/删除/重置，不切换旧业务域。",
+      "lifecycle_snapshot": {
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_pending_serial_slot": true,
+        "main_branch_deleted": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave260-final-verification.json"
+      }
     },
     "wave_history": [
       {
@@ -234877,7 +234892,7 @@
       "execution_started": true,
       "execution_owner": "COORD_SINGLE_CHAT",
       "authorized_at": "2026-11-02T04:31:42.240192+00:00",
-      "current_day": "D2",
+      "current_day": "D3_WITH_D2_ELAPSED_WAIT",
       "core_capacity_hours": 18,
       "contingency_capacity_hours": 6,
       "estimate_is_guarantee": false,
@@ -234931,14 +234946,29 @@
         {
           "id": "W260",
           "day": "D3",
-          "state": "PLANNED",
+          "state": "VERIFYING",
           "related_tasks": [
             "WP02-16"
           ],
           "repository_tasks": {
             "Main": "W260-01"
           },
-          "scope": "Authenticated HTTP rule current/version reads,format CAS,original change recovery and side-effect-free preview for registered new domains;actual current session/tenant."
+          "scope": "Authenticated HTTP rule current/version reads,format CAS,original change recovery and side-effect-free preview for registered new domains;actual current session/tenant.",
+          "actual_start_ref": {
+            "commit": "d0cd36cd195ecde1fb39ceebc785503479d848fb",
+            "branch": "codex/w260-01",
+            "path": "docs/development/dispatch/20261102-wave260/README.md",
+            "at": "2026-11-02T04:48:54.198751+00:00",
+            "repository": "CP6"
+          },
+          "report": "docs/development/evidence/W260-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_pending_serial_slot": true,
+            "main_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave260-final-verification.json"
+          }
         }
       ],
       "original_task_count": 375,
@@ -235204,7 +235234,84 @@
         "completion_snapshot": "This committed snapshot precedes own Main adoption/finish;final proof closes the already validated scope and lifecycle,not full375 cards.",
         "completed_at": "2026-11-02T04:18:01.369709+00:00"
       }
-    ]
+    ],
+    "elapsed_acceptance_window": {
+      "id": "20261102-wave259",
+      "path": "docs/development/dispatch/20261102-wave259/README.md",
+      "baseline_sha": "6a5c72467bb588ae34fe9c7d60e4626d89265832",
+      "crm_baseline_sha": "0a8e17aa61f4d57f95f7b4fa3a20f15c6d1d5e06",
+      "registered_at": "2026-11-02T04:40:40.242101+00:00",
+      "phase": "IMPLEMENTING",
+      "assigned_chats": [
+        "COORD"
+      ],
+      "authorized_implementation_chats": [
+        "COORD"
+      ],
+      "authorized_review_chats": [
+        "COORD"
+      ],
+      "active_implementation_chats": [
+        "COORD"
+      ],
+      "workers_started": true,
+      "windows_closed": false,
+      "product_integrated": false,
+      "windows": [
+        {
+          "id": "W259-01",
+          "workspace_task": "W259-01",
+          "related_tasks": [
+            "WP03-03"
+          ],
+          "title": "第三期D2匿名化后完整过期链路",
+          "chat": "COORD",
+          "mode": "SINGLE_CHAT_IMPLEMENTATION",
+          "phase": "IMPLEMENTING",
+          "gate": "CONFIRMED",
+          "actual_start_ref": {
+            "commit": "b8fd612e29de3195f8319df4da1fa27208efe55a",
+            "branch": "codex/w259-handoff",
+            "path": "handoffs/CP6-DEV-20261012/tasks/W259-01/messages/20261102T044040Z-start/MESSAGE.md",
+            "at": "2026-11-02T04:40:40.242101+00:00"
+          },
+          "worker_start_received": true,
+          "worker_delivery_received": false,
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "branch": "codex/w259-01",
+          "crm_branch": "codex/w259-02",
+          "planned_scope_ref": "docs/development/planning/20261102-three-day-cycle3.md",
+          "full_task_completed": false,
+          "actions_authorized": false,
+          "deployment_authorized": false,
+          "candidate_review_completed": false,
+          "candidate_integrated": false,
+          "resources_released": false,
+          "exclusive_resources": [
+            "Main:coordination-ledger",
+            "CRM:review-expiry-owner",
+            "CRM:native-runtime-graph",
+            "CRM:maintenance-store",
+            "CRM:native-host"
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W259-01/DELIVERY.md"
+        }
+      ],
+      "horizon": {
+        "started_at": "2026-11-02T04:40:04.801259+00:00",
+        "estimated_agent_wall_time_minutes": [
+          120,
+          360
+        ]
+      },
+      "storage": {
+        "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+        "new_worktrees": 0
+      },
+      "next_action": "第三期D2已登记并在CRM独立分支codex/w259-02执行真实匿名化后Expired链路。实际公开提交及撤回已完成，60分钟合法保留期截止UTC 2026-11-02T05:44:02.095099；完整验收仍在运行，不能称通过。为利用等待，Main协调分支保存后官方deferred释放DEV-1，串行切到独立D3/W260；CRM继续占DEV-2，COORD单人执行，2+1配额不变。D2结果将回来本分支收尾，必要时正常合并新主线，保留D3已采用事实。",
+      "coordination_disposition": "SAVED_FOR_SERIAL_D3_WHILE_CRM_ELAPSED_TEST_RUNS",
+      "coordination_branch_saved": "040695a906c396dd9dd017d355449e4448404b3f"
+    }
   },
   "acceptance_basis": {
     "manifest": {

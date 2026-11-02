@@ -9,10 +9,15 @@ namespace CP6.WebApi.Services;
 
 public static class IamAdministrationHttpV1
 {
-    public static async Task<Guid> CurrentActor(HttpContext context,CancellationToken ct)
+    public static Task<Guid> CurrentActor(HttpContext context,CancellationToken ct)
+        => CurrentActor(context,context.RequestServices,ct);
+
+    // Independent Owners supply their own DI scope so authentication reads use the same
+    // fresh context and transaction as the business decision, including the final recheck.
+    internal static async Task<Guid> CurrentActor(HttpContext context,IServiceProvider services,CancellationToken ct)
     {
         bool current;
-        try { current=await AccessTokenAuthentication.IsCurrentAsync(context.RequestServices,context.User,ct); }
+        try { current=await AccessTokenAuthentication.IsCurrentAsync(services,context.User,ct); }
         catch(InvalidOperationException e) when(e.Message is "REAUTH_REQUIRED" or "AUTHENTICATION_DENIED" or "SSO_REQUIRED")
         { throw new IamAdministrationExceptionV1(401,"REAUTH_REQUIRED"); }
         var user=context.User;
