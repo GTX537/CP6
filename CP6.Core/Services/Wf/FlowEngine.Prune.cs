@@ -43,7 +43,7 @@ public partial class FlowEngine
         CancelPendingTasksOfToken(inst.Id, token.Id);
         VoidPendingFormTos(inst.Id, tokenId: token.Id);
         AddHistory(inst.Id, token.NodeId, actorId, "branchPruned", comment);
-        await _notifier.BranchPrunedAsync(inst.StarterId, inst.Id, inst.FlowKey, token.NodeId, comment);
+        if (!ManagedRuntime) await _notifier.BranchPrunedAsync(inst.StarterId, inst.Id, inst.FlowKey, token.NodeId, comment);
         await ReleaseOrCollapseAsync(inst, schema, token, actorId, comment);
     }
 
@@ -86,9 +86,9 @@ public partial class FlowEngine
         {
             // 外层 prune：视同 forkParent（外层该支代表）被驳回 → 剪外层该支并继续递归收束。
             // Native APP evidence must retain this collapsed branch outcome as well as history.
-            if (_approvalStartV2) forkParent.Status = FlowTokenStatus.Pruned;
+            if (ManagedRuntime) forkParent.Status = FlowTokenStatus.Pruned;
             AddHistory(inst.Id, forkParent.NodeId, actorId, "branchPruned", comment);
-            await _notifier.BranchPrunedAsync(inst.StarterId, inst.Id, inst.FlowKey, forkParent.NodeId, comment);
+            if (!ManagedRuntime) await _notifier.BranchPrunedAsync(inst.StarterId, inst.Id, inst.FlowKey, forkParent.NodeId, comment);
             await ReleaseOrCollapseAsync(inst, schema, forkParent, actorId, comment);
         }
         else

@@ -26,7 +26,7 @@ internal sealed class SubFlowNodeHandler : INodeHandler
 
         // Native APP executes the immutable dependency graph already accepted at TxS.
         // Legacy definitions retain their historical runtime validation path.
-        if (inst.Creator != FlowEngine.ApprovalRuntimeV2)
+        if (!eng.ManagedRuntime)
         {
             // ① 防御式配置复检（E-WF-025；保存时校验已拦，坏 schema 直发兜底）
             if (string.IsNullOrWhiteSpace(node.SubFlowKey))

@@ -162,14 +162,12 @@ public partial class FlowEngine : IFlowEngine
     {
         var task = await _db.Wf_FlowTasks.FirstOrDefaultAsync(t => t.Id == taskId)
                    ?? throw new InvalidOperationException("任务不存在");
-        if (task.Status != FlowTaskStatus.Pending) return;   // 幂等闸门：已办无效
-
         var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == task.InstanceId);
-        if (inst is null || inst.Status != FlowInstanceStatus.Running) return;   // 实例已结束/挂起
+        if (inst is null) return;
+        if (!ManagedDecision) RequireLegacyRuntime(inst);
+        if (task.Status != FlowTaskStatus.Pending || inst.Status != FlowInstanceStatus.Running) return;
 
-        if (!_approvalDecisionV2) RequireLegacyRuntime(inst);
-
-        if (!_approvalDecisionV2) await AssertActorMayHandleAsync(task, actorId, onBehalfOf);   // ★ 归属闸（P0 票#1）：非本人/非委派/非系统 → E-WF-029
+        if (!ManagedDecision) await AssertActorMayHandleAsync(task, actorId, onBehalfOf);   // ★ 归属闸（P0 票#1）：非本人/非委派/非系统 → E-WF-029
 
         task.Status = approve ? FlowTaskStatus.Approved : FlowTaskStatus.Rejected;
         task.Comment = comment;
@@ -212,7 +210,7 @@ public partial class FlowEngine : IFlowEngine
 
         if (!decided)
         {
-            if (!_approvalDecisionV2) await _db.SaveChangesAsync();   // Native TxD saves the whole operation.
+            if (!ManagedDecision) await _db.SaveChangesAsync();   // Native TxD saves the whole operation.
             return;
         }
 
@@ -260,13 +258,13 @@ public partial class FlowEngine : IFlowEngine
             if (!pruned)
             {
                 inst.Status = FlowInstanceStatus.Rejected;
-                if (_approvalDecisionV2)
+                if (ManagedDecision)
                     foreach (var active in SnapshotTokens(inst.Id)) CancelPendingTasksOfToken(inst.Id, active.Id);
                 CancelAllActiveTokens(inst.Id);   // ★ 驳回 = terminate，兄弟分支连坐
                 VoidPendingFormTos(inst.Id);      // ★ T9：驳回连坐，全 Pending 传签履历行 → 作废
             }
         }
-        if (!_approvalDecisionV2)
+        if (!ManagedDecision)
         {
             await DispatchIfFinishedAsync(inst, actorId, comment);
             await _db.SaveChangesAsync();
@@ -321,17 +319,17 @@ public partial class FlowEngine : IFlowEngine
     {
         inst.CurrentNode = node.Id;   // 兼容：保留代表节点
         var type = (node.Type ?? "approval").Trim().ToLowerInvariant();
-        if (_approvalStartV2)
+        if (ManagedRuntime)
         {
-            if (++_approvalTransitions > 1000) throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1("APP_START_TRANSITION_LIMIT", 422);
+            if (++_approvalTransitions > 1000) throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1(_personalFormRuntime ? "FORM_TRANSITION_LIMIT" : "APP_START_TRANSITION_LIMIT", 422);
             // Automatic business/service effects need their own adopted Owner protocol. Preserve the
             // actual token and reason; neither execute the legacy side effect nor manufacture approval.
             if (type == "servicetask")
-            { Suspend(inst, node, "APP_NODE_OWNER_REQUIRED"); return; }
+            { if (_personalFormRuntime) throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1("FORM_SERVICE_OWNER_REQUIRED",422); Suspend(inst, node, "APP_NODE_OWNER_REQUIRED"); return; }
             if (type == "end")
             {
                 ConsumeToken(token);
-                AddHistory(inst.Id, node.Id, Guid.Empty, "end", _approvalDecisionV2
+                AddHistory(inst.Id, node.Id, Guid.Empty, "end", ManagedDecision
                     ? "Reached end during recorded human decision" : "Reached end without an approval decision");
                 FinishIfDrained(inst); return;
             }
@@ -352,7 +350,7 @@ public partial class FlowEngine : IFlowEngine
     {
         // Native approval preserves the person entrusted with the duty. A current act-as grant
         // authorizes a later human action; it never replaces the original task principal.
-        if (_approvalStartV2) return (approverId, null);
+        if (ManagedRuntime) return (approverId, null);
         var now = DateTime.Now;
         var d = await _db.Wf_FlowDelegates
             .Where(x => x.GrantorId == approverId && x.Enable && x.ValidFrom <= now && x.ValidTo >= now)
@@ -366,7 +364,7 @@ public partial class FlowEngine : IFlowEngine
     internal void Suspend(Wf_FlowInstance inst, FlowNode node, string reason)
     {
         inst.Status = FlowInstanceStatus.Suspended;
-        AddHistory(inst.Id, node.Id, _approvalStartV2 ? Guid.Empty : inst.StarterId, "suspend", reason);
+        AddHistory(inst.Id, node.Id, ManagedRuntime ? Guid.Empty : inst.StarterId, "suspend", reason);
     }
 
     /// <summary>
@@ -504,7 +502,7 @@ public partial class FlowEngine : IFlowEngine
 
     internal async Task<FlowSchema> LoadSchemaAsync(Wf_FlowInstance instance, CancellationToken ct = default)
     {
-        if (_approvalStartV2 && instance.Creator == ApprovalRuntimeV2)
+        if (ManagedRuntime && instance.Creator is ApprovalRuntimeV2 or PersonalFormRuntimeV2)
             return Deserialize((await ApprovalPublication(instance.FlowDefVersionId!.Value, ct)).Fields["SchemaJson"]!);
         RequireLegacyRuntime(instance);
         if (instance.FlowDefVersionId is not Guid versionId)
@@ -555,7 +553,7 @@ public partial class FlowEngine : IFlowEngine
     internal async Task<Guid> ResolvePinnedSubFlowVersionAsync(
         Wf_FlowInstance parent, string nodeId, string legacySubFlowKey, CancellationToken ct = default)
     {
-        if (_approvalStartV2)
+        if (ManagedRuntime)
         {
             var publication = await ApprovalPublication(parent.FlowDefVersionId!.Value, ct);
             return Guid.Parse(publication.DependencyRefs.Single(x => x.Kind == "FLOW" && x.Location == nodeId).Version!);

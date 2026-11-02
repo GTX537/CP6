@@ -43,7 +43,7 @@
           @selection-change="onSelectionChange"
           @row-click="onReviewRowClick"
         >
-          <el-table-column type="selection" width="46" />
+          <el-table-column type="selection" width="46" :selectable="canBatch" />
           <el-table-column prop="flowName" :label="t('oa.col.flowName')" min-width="160">
             <template #default="{ row }">
               <span
@@ -69,6 +69,7 @@
             <div class="mobile-main">
               <el-checkbox
                 :model-value="isSelected(row)"
+                :disabled="!canBatch(row)"
                 @click.stop
                 @change="toggleMobileSelect(row)"
               />
@@ -209,8 +210,9 @@ async function loadReview() {
 }
 
 function onSelectionChange(rows: PendingItem[]) {
-  selected.value = rows
+  selected.value = rows.filter(canBatch)
 }
+function canBatch(row: PendingItem) { return !row.detailRoute?.startsWith('/oa/inbox?personalTask=') }
 
 /**
  * 跨断点多选回填：el-table 受 v-if 门控，mobile→desktop 时表格重挂载内部选中态为空，
@@ -234,6 +236,7 @@ function reviewRowClass({ row }: { row: PendingItem }): string {
 }
 
 async function onReviewRowClick(row: PendingItem) {
+  if (!canBatch(row)) { await router.push(row.detailRoute!); return }
   try {
     await inboxApi.markTaskRead(row.taskId)
     row.isRead = true

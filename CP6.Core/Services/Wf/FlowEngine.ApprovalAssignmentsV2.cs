@@ -12,6 +12,13 @@ public partial class FlowEngine
     internal void RecordApprovalAssignment(Wf_FlowInstance instance, Wf_FlowTask task,
         ApproverRule rule, IEnumerable<Guid> candidates, string? stageCode = null)
     {
+        if (_personalFormRuntime)
+        {
+            _personalAssignments.Add(new(task.Id, instance.Id, task.TokenId!.Value, instance.FlowDefVersionId!.Value,
+                task.NodeId, task.StageIndex, task.StageRound, stageCode, task.Countersign, task.AssigneeId,
+                candidates.Distinct().ToArray(), rule, DateTimeOffset.UtcNow));
+            return;
+        }
         if (!_approvalStartV2) return;
         var original = _approvalOriginal ?? throw new ScopeAuthorizationExceptionV1("APP_TASK_EVIDENCE_UNAVAILABLE");
         if (task.TokenId == null || instance.FlowDefVersionId == null || task.AssigneeId == Guid.Empty)

@@ -161782,6 +161782,11 @@
       "date": "2026-11-02",
       "change": "W274：APP采用精确FORM/子FLOW版本，真实子任务、同事务父恢复、仅根业务决定及整树撤回闭环；按有效分支计算审批职责，保留全部审计票。",
       "evidence": "docs/development/evidence/W274-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-02",
+      "change": "W275：普通FORM本人草稿、精确字段/规则/五上下文、同一PG事务提交/真实根子流程/人工任务/通知、墓碑恢复与显式重基、原意图恢复闭环。",
+      "evidence": "docs/development/evidence/W275-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -196720,7 +196725,14 @@
         "WP02：按S02-00采用的PostgreSQL布局、可信上下文/当前授权和全部写者共同最终fence、Main Owner事务及原键结果/审计。",
         "WP02：FILE精确版本/当前写读权；PRIV草稿保留/删除和恢复依据。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "wave275_personal_form": {
+        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W275-01/DELIVERY.md",
+        "full_task_completed": false,
+        "validation": "本地55项唯一后端行为通过（36项隔离PostgreSQL18、19项内核/旧读面/纯规则），0跳过；15项唯一Vue/精确JSON行为通过；显式应用vue-tsc通过。含实际Main登录/CSRF/HTTP和两连接竞争。模拟业务数据/政策，真实内部Owner、数据库事务、内核和通知表。",
+        "remaining": "WP12-03/04/08仍余完整原AC：W276当前授权读面/统计/在途披露，W278浏览器到真实HTTP/PG，W279原AC核对，W281目录/收藏/历史/正式下载，W282退回等任务操作，W283定时Worker。上传FileRef及服务任务尚无本普通FORM入口的实际Owner采用，已在发布/准入边界明确拒绝，不能称已验收。原375仍27DONE/2IN_PROGRESS/346PLANNED，59局部3闭环/56余项，125/247正式状态不变。"
+      }
     },
     {
       "id": "WP12-04",
@@ -196760,7 +196772,14 @@
         "WP02：按S02-00采用的PostgreSQL布局、可信上下文/当前授权和全部写者共同最终fence、Main Owner事务及原键结果/审计。",
         "WP02：真实Main Uow参与的工作流启动与缺失绑定键保护，不能先FORM提交再异步补实例。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "wave275_personal_form": {
+        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W275-01/DELIVERY.md",
+        "full_task_completed": false,
+        "validation": "本地55项唯一后端行为通过（36项隔离PostgreSQL18、19项内核/旧读面/纯规则），0跳过；15项唯一Vue/精确JSON行为通过；显式应用vue-tsc通过。含实际Main登录/CSRF/HTTP和两连接竞争。模拟业务数据/政策，真实内部Owner、数据库事务、内核和通知表。",
+        "remaining": "WP12-03/04/08仍余完整原AC：W276当前授权读面/统计/在途披露，W278浏览器到真实HTTP/PG，W279原AC核对，W281目录/收藏/历史/正式下载，W282退回等任务操作，W283定时Worker。上传FileRef及服务任务尚无本普通FORM入口的实际Owner采用，已在发布/准入边界明确拒绝，不能称已验收。原375仍27DONE/2IN_PROGRESS/346PLANNED，59局部3闭环/56余项，125/247正式状态不变。"
+      }
     },
     {
       "id": "WP12-05",
@@ -197354,6 +197373,13 @@
           "handoff_branch_deleted": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave274-final-verification.json"
         }
+      },
+      "wave275_personal_form": {
+        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W275-01/DELIVERY.md",
+        "full_task_completed": false,
+        "validation": "本地55项唯一后端行为通过（36项隔离PostgreSQL18、19项内核/旧读面/纯规则），0跳过；15项唯一Vue/精确JSON行为通过；显式应用vue-tsc通过。含实际Main登录/CSRF/HTTP和两连接竞争。模拟业务数据/政策，真实内部Owner、数据库事务、内核和通知表。",
+        "remaining": "WP12-03/04/08仍余完整原AC：W276当前授权读面/统计/在途披露，W278浏览器到真实HTTP/PG，W279原AC核对，W281目录/收藏/历史/正式下载，W282退回等任务操作，W283定时Worker。上传FileRef及服务任务尚无本普通FORM入口的实际Owner采用，已在发布/准入边界明确拒绝，不能称已验收。原375仍27DONE/2IN_PROGRESS/346PLANNED，59局部3闭环/56余项，125/247正式状态不变。"
       }
     },
     {
@@ -201315,7 +201341,7 @@
       "path": "docs/development/dispatch/20261102-wave275/README.md",
       "baseline_sha": "40ebdcabc903895bbc6070fd79919b39a086a291",
       "registered_at": "2026-11-02T18:16:50.833640+00:00",
-      "phase": "IMPLEMENTING",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -201343,17 +201369,17 @@
           "title": "个人FORM草稿与五上下文原子提交",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "IMPLEMENTING",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w275-01",
           "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
@@ -201362,14 +201388,34 @@
             "Main:workflow-engine",
             "Main:oa-task",
             "Main:EF-migrations"
-          ]
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W275-01/DELIVERY.md",
+          "validation": "本地55项唯一后端行为通过（36项隔离PostgreSQL18、19项内核/旧读面/纯规则），0跳过；15项唯一Vue/精确JSON行为通过；显式应用vue-tsc通过。含实际Main登录/CSRF/HTTP和两连接竞争。模拟业务数据/政策，真实内部Owner、数据库事务、内核和通知表。",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave275-final-verification.json"
+          },
+          "business_acceptance": "ORDINARY_FORM_ATOMIC_PG_HTTP_COMPONENT_PASS;FULL_CARD_REMAINS"
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W275普通FORM本人草稿、准确pin/字段规则、五上下文DIRECT/DRAFT同事务提交及真实普通任务入口；复用原WFC/WF_AUTH和PG，保留APP冻结Subject边界。源码核实估计3–6h，低置信度；每累计2h校准。"
+      "next_action": "W275普通FORM本人草稿、准确pin/字段规则、五上下文DIRECT/DRAFT同事务提交及真实普通任务入口；复用原WFC/WF_AUTH和PG，保留APP冻结Subject边界。源码核实估计3–6h，低置信度；每累计2h校准。",
+      "lifecycle_snapshot": {
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_seat_released": false,
+        "main_branch_deleted": false,
+        "handoff_branch_deleted": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave275-final-verification.json"
+      },
+      "integration_baseline": "40ebdcabc903895bbc6070fd79919b39a086a291"
     },
     "wave_history": [
       {
@@ -237212,8 +237258,8 @@
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 18613,
-      "next_reestimate_at_effective_seconds": 21600,
+      "effective_seconds_recorded": 25275,
+      "next_reestimate_at_effective_seconds": 28800,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
         {
@@ -237434,14 +237480,15 @@
           "day": "D2",
           "related_tasks": [
             "WP12-03",
-            "WP12-04"
+            "WP12-04",
+            "WP12-08"
           ],
           "title": "表单草稿/提交采用版本和字段规则授权",
           "estimate_hours": [
             1.5,
             3
           ],
-          "state": "IN_PROGRESS",
+          "state": "VERIFYING",
           "initial_estimate_hours": [
             2,
             4
@@ -237452,7 +237499,17 @@
             6
           ],
           "estimate_confidence": "LOW",
-          "scope_refinement": "Current legacy drafts/submissions lack v2 definition adoption, five-context/WFC admission, tombstone and exact field/rule boundaries. Include ordinary FORM same-transaction runtime/task direct dependencies; reuse APP-independent native kernel, never impersonate an APP business Owner."
+          "scope_refinement": "Current legacy drafts/submissions lack v2 definition adoption, five-context/WFC admission, tombstone and exact field/rule boundaries. Include ordinary FORM same-transaction runtime/task direct dependencies; reuse APP-independent native kernel, never impersonate an APP business Owner.",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W275-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave275-final-verification.json"
+          }
         },
         {
           "id": "W276-01",
@@ -237471,7 +237528,7 @@
             1,
             2
           ],
-          "scope_reuse": "Reuse W274 APP child tasks/current authority/pinned versions; implement remaining ordinary FORM task adoption, task read surfaces and actual in-flight/activation impact disclosure."
+          "scope_reuse": "W274 APP and W275 ordinary FORM task write Owners already real. Add current actual/effective authorized read surfaces, counts, pinned details, current act-as and in-flight activation impact; legacy participation-only lists intentionally exclude new ordinary records."
         },
         {
           "id": "W277-01",
@@ -237646,12 +237703,42 @@
             3.5
           ],
           "basis": "First six exact remote deliveries: 13073 seconds (3h37m53s). W271–273 6330 seconds (1h45m30s), revised combined 2–4h. W274 root pipeline already existed; actual gap is child membership, pinned runtime, child decisions, root-only terminal outbox and tree withdrawal. Three new PG scenarios passed after correcting fixture policy/IAM order; broader boundaries still running, not delivery proof. W275–283 estimates unchanged; do not infer runtime completion or original-card closure from code written. No paused/idle intervals."
+        },
+        {
+          "at": "2026-11-02T19:13:00.583517+00:00",
+          "effective_seconds": 21983,
+          "completed_windows": [
+            "W268-01",
+            "W269-01",
+            "W270-01",
+            "W271-01",
+            "W272-01",
+            "W273-01",
+            "W274-01"
+          ],
+          "actual_completed_seconds": 18444,
+          "remaining_estimate_hours": [
+            12.75,
+            25.5
+          ],
+          "confidence": "LOW: ordinary FORM Owner and kernel landed locally; UI adoption, HTTP and concurrent boundaries not complete",
+          "added_windows": [],
+          "current_window": "W275-01",
+          "current_window_estimate_hours": [
+            3,
+            6
+          ],
+          "current_window_remaining_hours": [
+            2.5,
+            5
+          ],
+          "basis": "W274 completed 5371s including BUG702; cumulative completed 18444s. W275 10 distinct backend checks (8 isolated PostgreSQL, 2 pure) and 3 lossless JSON checks passed; native notification rollback fault injection was corrected and rerun. No UI adoption/typecheck, HTTP or dual-connection proof yet. Other windows retain actual remaining scope; W276 will reuse ordinary task adoption. No idle/paused intervals; context restoration and code reading are effective work."
         }
       ],
-      "timing_snapshot_at": "2026-11-02T18:16:50.833640+00:00",
+      "timing_snapshot_at": "2026-11-02T20:07:52.756818+00:00",
       "remaining_estimate_hours": [
-        13.25,
-        27
+        12.75,
+        25.5
       ]
     },
     "execution_plan_history": [

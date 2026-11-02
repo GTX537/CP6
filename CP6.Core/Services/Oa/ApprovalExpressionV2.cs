@@ -9,24 +9,48 @@ namespace CP6.Core.Services.Oa;
 internal static class ApprovalExpressionV2
 {
     internal static bool Evaluate(string expression, JsonElement snapshot, string[] fields)
+        => EvaluateValue(expression, snapshot, fields) is bool value ? value
+            : throw new ScopeAuthorizationExceptionV1("SNAPSHOT_SCHEMA_INVALID", 422);
+
+    // FORM uses the same arithmetic without converting JSON numbers to binary doubles.
+    // Its already accepted schema has no APP-specific expression/token length limit.
+    internal static JsonElement FormValue(string expression, JsonElement data, string[] fields)
     {
         try
         {
-            if(expression.Length>4000 || snapshot.ValueKind!=JsonValueKind.Object)throw new FormatException();
+            var value = EvaluateValue(expression, data, fields, form: true);
+            if (value is Number number)
+            {
+                using var doc = JsonDocument.Parse(number.Text());
+                return doc.RootElement.Clone();
+            }
+            return JsonSerializer.SerializeToElement(value);
+        }
+        catch (Exception e) when (e is ScopeAuthorizationExceptionV1 or FormatException or ArithmeticException)
+        { throw new ScopeAuthorizationExceptionV1("FORM_RULE_EVALUATION_FAILED", 422, e); }
+    }
+    internal static bool FormCondition(string expression, JsonElement data, string[] fields)
+        => string.IsNullOrWhiteSpace(expression) || ToBool(EvaluateValue(expression, data, fields, form: true));
+
+    private static object? EvaluateValue(string expression, JsonElement snapshot, string[] fields, bool form = false)
+    {
+        try
+        {
+            if(!form && expression.Length>4000 || snapshot.ValueKind!=JsonValueKind.Object)throw new FormatException();
             var vars=new Dictionary<string,object?>(StringComparer.Ordinal);
             foreach(var field in fields)
             {
                 var value=snapshot;
-                foreach(var part in field.Split('.'))
+                foreach(var part in form ? new[] { field } : field.Split('.'))
                 {
                     if(value.ValueKind!=JsonValueKind.Object||!value.TryGetProperty(part,out value)){value=default;break;}
                 }
-                if(value.ValueKind!=JsonValueKind.Undefined)vars.Add(field,value.ValueKind switch {
+                if(form || value.ValueKind!=JsonValueKind.Undefined)vars.Add(field,value.ValueKind switch {
                     JsonValueKind.Number=>Number.Parse(value.GetRawText()),JsonValueKind.String=>value.GetString(),
-                    JsonValueKind.True=>true,JsonValueKind.False=>false,JsonValueKind.Null=>null,_=>value});
+                    JsonValueKind.True=>true,JsonValueKind.False=>false,JsonValueKind.Null or JsonValueKind.Undefined=>null,_=>value});
             }
-            var parser=new Parser(Tokenize(expression),vars);var result=parser.ParseExpr();parser.ExpectEnd();
-            return result is bool b?b:throw new FormatException();
+            var parser=new Parser(Tokenize(expression, !form),vars);var result=parser.ParseExpr();parser.ExpectEnd();
+            return result;
         }
         catch(Exception e)when(e is FormatException or KeyNotFoundException or ArgumentException or InvalidOperationException or ArithmeticException)
         {throw new ScopeAuthorizationExceptionV1("SNAPSHOT_SCHEMA_INVALID",422,e);}
@@ -41,7 +65,7 @@ internal static class ApprovalExpressionV2
     }
     private readonly record struct Token(TokType Type, object? Value);
 
-    private static List<Token> Tokenize(string s)
+    private static List<Token> Tokenize(string s, bool enforceLimits = true)
     {
         var tokens = new List<Token>();
         int i = 0, n = s.Length;
@@ -110,7 +134,7 @@ internal static class ApprovalExpressionV2
                     break;
             }
         }
-        if(tokens.Count>512)throw new FormatException();
+        if(enforceLimits && tokens.Count>512)throw new FormatException();
         return tokens;
     }
 

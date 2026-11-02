@@ -35,7 +35,9 @@ public sealed class OaInstanceAccessService : IOaInstanceAccessService
             .Where(x => x.RecipientId == effectiveUserId)
             .Select(x => x.InstanceId);
 
-        return started.Concat(tasks).Concat(expected).Concat(actual).Concat(onBehalf).Concat(cc).Distinct();
+        var historical = started.Concat(tasks).Concat(expected).Concat(actual).Concat(onBehalf).Concat(cc).Distinct();
+        return historical.Where(id => _db.Wf_FlowInstances.Any(i => i.Id == id
+            && i.Creator != CP6.Core.Services.Wf.FlowEngine.PersonalFormRuntimeV2));
     }
 
     public async Task<InstanceAccessDecision> GetAsync(

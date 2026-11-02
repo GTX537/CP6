@@ -133,6 +133,7 @@ public class InboxController : LocalizedControllerBase
                 ? NotFound(new { code = 404, message = "E-WF-007" })
                 : Ok2(detail);
         }
+        catch (ScopeAuthorizationExceptionV1 e) { return StatusCode(e.Status,new {code=e.Message,messageKey=e.Message}); }
         catch (UnauthorizedAccessException)
         {
             return StatusCode(StatusCodes.Status403Forbidden, new { code = "E-WF-043", message = "E-WF-043" });

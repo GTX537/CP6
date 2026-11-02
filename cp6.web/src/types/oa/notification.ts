@@ -9,6 +9,8 @@ export const NotificationType = {
   FlowRejected: 3,
   Timeout:      4,
   BranchPruned: 5,
+  FormSubmitted: 6,
+  TaskHandled: 7,
 } as const
 
 export type NotificationType = typeof NotificationType[keyof typeof NotificationType]
