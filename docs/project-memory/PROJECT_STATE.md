@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## 2026-11-02：24小时持续目标 / W278实际页面业务链
+
+W278：当前发布表单目录，以及实际Vue/Chrome经Main Program到PostgreSQL的定义发布、填单恢复、代理办理、迭代BLOCKED应用与撤回显式新授权链已验证。 [交付](../development/evidence/W278-01/DELIVERY.md)。
+
+6项唯一相关PostgreSQL18行为通过（3条真实Vue/Chrome→Main Program→PG业务链、3条目录Owner边界），0跳过；3项目录Vue行为和显式应用vue-tsc通过。模拟业务输入，内部Owner及HTTP真实执行；撤回新授权由页面产生，最终Workflow投递由同一PG场景的真实接收器执行。
+
+原375保持27DONE/2IN_PROGRESS/346PLANNED；59局部卡3闭环/56仍有余项，125/247正式状态保持。W279核原AC；预演/历史比较、收藏下载、完整SFS patch/三版本、退回重送/转交加签/无人审批、准确日历与期限Worker，以及其他业务Owner采用仍按真实范围保留。 总目标IN_PROGRESS；分支/工作区/席位最终状态见wave278-final-verification.json。
+
 ## 2026-11-02：W278依赖修复 / BUG #710
 
 修复迭代评审成功后父页面刷新被误判为身份变化：临时UI禁用只阻止新动作，不清除已确认结果；真实认证、权限、租户及轮次检查保留。 [修复与实际证据](../development/evidence/BUG-710/DELIVERY.md)。
