@@ -31,17 +31,20 @@ D1核对完成，结果见[W255交付](../evidence/W255-01/DELIVERY.md)；合并
 
 文件职责：CRM `src/CP6.CRM.Api/Inquiry/CrmInquiryReviewExpiryOwnerV1.cs`负责有界到期事务；`CrmInquiryRetentionOwnerV1.cs`/宿主worker只在既有维护权限准确适用时接入，不能默把PII清除权限扩成放行权限；`src/CP6.CRM.Infrastructure/Inquiry/`保存必要的原终态结果/审计和受保护约束。现有`CrmInquiryIntakeReadOwnerV1.cs`只读原行，不在GET偷偷写终态。测试扩展`InquiryReviewExpiryTests.cs`与相关保留/HTTP夹具。
 
-- [ ] 首先固定维护actor/用途与原状态机的准确关系；若冻结签名合同不含所需动作，采用明确的版本化内部维护边界，不扩写冻结外部枚举，不绕过当前身份/tenant门。
-- [ ] 新增真实失败场景：到期后执行处理仍NeedsReview。通过实际公开提交创建完整原图，以已有受控时钟到原七天边界，不更新不可变原件。
-- [ ] 在同一当前身份/租户与行锁事务内重读状态及期限；仅NeedsReview且now>=原截止进入Expired，历史、行版本、非PII结果与必需审计共同提交。已终态恢复原结果，不能覆盖放行/拒绝，也不能创建Lead。
-- [ ] 独立核Expired保留截止、ConsentFact和匿名化职责；原Receipt/Attempt/历史时间保留。晚到worker不能用执行时间重新加保留时长；LegalHold只影响清除，不使业务重新可审核。
-- [ ] 验证期限前/等于/后、重复/重启恢复、真实并发放行与到期、租户/撤权、故障全回滚、HTTP列表/详情和公开回执不泄露。页面未变时复用原Expired展示证据。
+- [x] 首先固定维护actor/用途与原状态机的准确关系；若冻结签名合同不含所需动作，采用明确的版本化内部维护边界，不扩写冻结外部枚举，不绕过当前身份/tenant门。
+- [x] 新增真实失败场景：到期后执行处理仍NeedsReview。通过实际公开提交创建完整原图，以已有受控时钟到原七天边界，不更新不可变原件。
+- [x] 在同一当前身份/租户与行锁事务内重读状态及期限；仅NeedsReview且now>=原截止进入Expired，历史、行版本、非PII结果与必需审计共同提交。已终态恢复原结果，不能覆盖放行/拒绝，也不能创建Lead。
+- [x] 独立核Expired保留截止、ConsentFact和匿名化职责；原Receipt/Attempt/历史时间保留。晚到worker不能用执行时间重新加保留时长；LegalHold只影响清除，不使业务重新可审核。
+- [x] 验证期限前/等于/后、重复/重启恢复、真实并发放行与到期、租户/撤权、故障全回滚、HTTP列表/详情和公开回执不泄露。页面未变时复用原Expired展示证据。
 
 ```powershell
 dotnet test tests/CP6.CRM.IdentityPostgreSqlTests/CP6.CRM.IdentityPostgreSqlTests.csproj --no-restore --filter "FullyQualifiedName~Review_expiry|FullyQualifiedName~Review_terminal"
 ```
 
 由现有隔离引导设置自有`CP6_CRM_PG_SETTINGS`；要求实际PG/HTTP、必需场景0skip。权限合同/存储适用检查在本窗口完成，不以缺企业数据阻塞，也不把仅组件测试写成生产部署。
+
+
+D2准确结果见[W256](../evidence/W256-01/DELIVERY.md)：已匿名化分支仅内存投影，新事件消费者独立，正常采用/finish按最终proof核销。
 
 ## D3：新登记编号域规则治理
 
