@@ -196693,11 +196693,31 @@
         }
       },
       "wave276_native_read": {
-        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "status": "DELIVERED_REMOTE_VERIFIED",
         "report": "docs/development/evidence/W276-01/DELIVERY.md",
         "full_task_completed": false,
         "validation": "本地31项唯一后端行为通过（11项隔离PostgreSQL18、20项既有读面/内核），0跳过；25项Vue组件行为通过，应用vue-tsc通过。实际Main登录/CSRF/HTTP、两连接已读竞争、当前权限和租户隔离均有定向证据。模拟业务数据，内部Owner/PG事务/原生内核真实执行。",
-        "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED，59局部仍3闭环/56余项，125/247正式状态保持。W277接续封闭代理授权/当前代理读面、代理撤回及BLOCKED新授权；完整SFS patch/三版本、历史下载/目录、浏览器到真实PG、退回等操作和定时Worker仍在后续窗口。"
+        "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED，59局部仍3闭环/56余项，125/247正式状态保持。W277接续封闭代理授权/当前代理读面、代理撤回及BLOCKED新授权；完整SFS patch/三版本、历史下载/目录、浏览器到真实PG、退回等操作和定时Worker仍在后续窗口。",
+        "remote_adoption": {
+          "repository": "CP6",
+          "task": "W276-01",
+          "source": "4de8dd763e70265f2098e5d59a0d057662e15249",
+          "remote_target": "69909b2ec52a56917a41770279072e3384bcd97b",
+          "pr": "https://github.com/GTX537/CP6/pull/706",
+          "branch": "codex/w276-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "workspace_clean": true
+        },
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave276-final-verification.json"
+        }
       }
     },
     {
@@ -197187,11 +197207,31 @@
         }
       },
       "wave276_native_read": {
-        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "status": "DELIVERED_REMOTE_VERIFIED",
         "report": "docs/development/evidence/W276-01/DELIVERY.md",
         "full_task_completed": false,
         "validation": "本地31项唯一后端行为通过（11项隔离PostgreSQL18、20项既有读面/内核），0跳过；25项Vue组件行为通过，应用vue-tsc通过。实际Main登录/CSRF/HTTP、两连接已读竞争、当前权限和租户隔离均有定向证据。模拟业务数据，内部Owner/PG事务/原生内核真实执行。",
-        "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED，59局部仍3闭环/56余项，125/247正式状态保持。W277接续封闭代理授权/当前代理读面、代理撤回及BLOCKED新授权；完整SFS patch/三版本、历史下载/目录、浏览器到真实PG、退回等操作和定时Worker仍在后续窗口。"
+        "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED，59局部仍3闭环/56余项，125/247正式状态保持。W277接续封闭代理授权/当前代理读面、代理撤回及BLOCKED新授权；完整SFS patch/三版本、历史下载/目录、浏览器到真实PG、退回等操作和定时Worker仍在后续窗口。",
+        "remote_adoption": {
+          "repository": "CP6",
+          "task": "W276-01",
+          "source": "4de8dd763e70265f2098e5d59a0d057662e15249",
+          "remote_target": "69909b2ec52a56917a41770279072e3384bcd97b",
+          "pr": "https://github.com/GTX537/CP6/pull/706",
+          "branch": "codex/w276-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "workspace_clean": true
+        },
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave276-final-verification.json"
+        }
       }
     },
     {
@@ -197463,11 +197503,31 @@
         }
       },
       "wave276_native_read": {
-        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "status": "DELIVERED_REMOTE_VERIFIED",
         "report": "docs/development/evidence/W276-01/DELIVERY.md",
         "full_task_completed": false,
         "validation": "本地31项唯一后端行为通过（11项隔离PostgreSQL18、20项既有读面/内核），0跳过；25项Vue组件行为通过，应用vue-tsc通过。实际Main登录/CSRF/HTTP、两连接已读竞争、当前权限和租户隔离均有定向证据。模拟业务数据，内部Owner/PG事务/原生内核真实执行。",
-        "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED，59局部仍3闭环/56余项，125/247正式状态保持。W277接续封闭代理授权/当前代理读面、代理撤回及BLOCKED新授权；完整SFS patch/三版本、历史下载/目录、浏览器到真实PG、退回等操作和定时Worker仍在后续窗口。"
+        "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED，59局部仍3闭环/56余项，125/247正式状态保持。W277接续封闭代理授权/当前代理读面、代理撤回及BLOCKED新授权；完整SFS patch/三版本、历史下载/目录、浏览器到真实PG、退回等操作和定时Worker仍在后续窗口。",
+        "remote_adoption": {
+          "repository": "CP6",
+          "task": "W276-01",
+          "source": "4de8dd763e70265f2098e5d59a0d057662e15249",
+          "remote_target": "69909b2ec52a56917a41770279072e3384bcd97b",
+          "pr": "https://github.com/GTX537/CP6/pull/706",
+          "branch": "codex/w276-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "workspace_clean": true
+        },
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave276-final-verification.json"
+        }
       }
     },
     {
@@ -201425,11 +201485,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261102-wave276",
-      "path": "docs/development/dispatch/20261102-wave276/README.md",
-      "baseline_sha": "ee236f554ebde05203bed63b1baaebab41834c35",
-      "registered_at": "2026-11-02T20:19:48.492844+00:00",
-      "phase": "DELIVERY_MAIN_CLOSEOUT",
+      "id": "20261102-wave277",
+      "path": "docs/development/dispatch/20261102-wave277/README.md",
+      "baseline_sha": "69909b2ec52a56917a41770279072e3384bcd97b",
+      "registered_at": "2026-11-02T21:10:32.641506+00:00",
+      "phase": "IMPLEMENTING",
       "assigned_chats": [
         "COORD"
       ],
@@ -201447,64 +201507,46 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W276-01",
-          "workspace_task": "W276-01",
+          "id": "W277-01",
+          "workspace_task": "W277-01",
           "related_tasks": [
-            "WP12-02",
-            "WP12-06",
-            "WP12-08"
+            "WP12-09",
+            "WP12-08",
+            "WP12-19",
+            "WP12-10"
           ],
-          "title": "当前任务读面与真实在途披露",
+          "title": "封闭代理授权与显式业务撤回恢复",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "DELIVERY_MAIN_CLOSEOUT",
+          "phase": "IMPLEMENTING",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": true,
+          "worker_delivery_received": false,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w276-01",
+          "branch": "codex/w277-01",
           "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": true,
+          "candidate_review_completed": false,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
             "Main:oa-task",
-            "Main:oa-form",
-            "Main:definition-activation",
+            "Main:oa-delegation",
+            "Main:iteration-review",
+            "Main:approval-withdraw",
             "Main:authorization-catalog",
             "Main:EF-migrations"
-          ],
-          "worker_delivery_ref": "docs/development/evidence/W276-01/DELIVERY.md",
-          "validation": "本地31项唯一后端行为通过（11项隔离PostgreSQL18、20项既有读面/内核），0跳过；25项Vue组件行为通过，应用vue-tsc通过。实际Main登录/CSRF/HTTP、两连接已读竞争、当前权限和租户隔离均有定向证据。模拟业务数据，内部Owner/PG事务/原生内核真实执行。",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave276-final-verification.json"
-          },
-          "business_acceptance": "CURRENT_DIRECT_NATIVE_READ_FACTS_IMPACT_PG_HTTP_COMPONENT_PASS;DELEGATION_W277;FULL_CARD_REMAINS"
+          ]
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W276当前授权任务列表/详情/计数/已读事实与定义在途影响披露；复用W274/W275真实办理和pin，不重复运行写Owner。单人2–4h低置信度，下一累计8h校准，24h目标持续。",
-      "lifecycle_snapshot": {
-        "main_finish_required": true,
-        "main_seat_released": false,
-        "handoff_seat_released": false,
-        "main_branch_deleted": false,
-        "handoff_branch_deleted": false,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave276-final-verification.json"
-      },
-      "integration_baseline": "ee236f554ebde05203bed63b1baaebab41834c35"
+      "next_action": "W277封闭代理授权/当前代理读面及委派撤回、BLOCKED显式新授权恢复；3–5h低置信度，单人复用两席位，下一累计10h校准，24h目标持续。"
     },
     "wave_history": [
       {
@@ -236874,6 +236916,112 @@
             "workspace_clean": true
           }
         ]
+      },
+      {
+        "id": "20261102-wave276",
+        "path": "docs/development/dispatch/20261102-wave276/README.md",
+        "baseline_sha": "ee236f554ebde05203bed63b1baaebab41834c35",
+        "registered_at": "2026-11-02T20:19:48.492844+00:00",
+        "phase": "COMPLETE",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W276-01",
+            "workspace_task": "W276-01",
+            "related_tasks": [
+              "WP12-02",
+              "WP12-06",
+              "WP12-08"
+            ],
+            "title": "当前任务读面与真实在途披露",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "COMPLETE",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w276-01",
+            "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:oa-task",
+              "Main:oa-form",
+              "Main:definition-activation",
+              "Main:authorization-catalog",
+              "Main:EF-migrations"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W276-01/DELIVERY.md",
+            "validation": "本地31项唯一后端行为通过（11项隔离PostgreSQL18、20项既有读面/内核），0跳过；25项Vue组件行为通过，应用vue-tsc通过。实际Main登录/CSRF/HTTP、两连接已读竞争、当前权限和租户隔离均有定向证据。模拟业务数据，内部Owner/PG事务/原生内核真实执行。",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave276-final-verification.json"
+            },
+            "business_acceptance": "CURRENT_DIRECT_NATIVE_READ_FACTS_IMPACT_PG_HTTP_COMPONENT_PASS;DELEGATION_W277;FULL_CARD_REMAINS"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W276当前授权任务列表/详情/计数/已读事实与定义在途影响披露；复用W274/W275真实办理和pin，不重复运行写Owner。单人2–4h低置信度，下一累计8h校准，24h目标持续。",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave276-final-verification.json"
+        },
+        "integration_baseline": "ee236f554ebde05203bed63b1baaebab41834c35",
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W276-01",
+            "source": "4de8dd763e70265f2098e5d59a0d057662e15249",
+            "remote_target": "69909b2ec52a56917a41770279072e3384bcd97b",
+            "pr": "https://github.com/GTX537/CP6/pull/706",
+            "branch": "codex/w276-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W276-HANDOFF",
+            "source": "bc69f78823316c7ce765636afca0428a0e84e058",
+            "remote_target": "9497324f4e039b375cab2924e7648b37e1b1ad6e",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/252",
+            "branch": "codex/w276-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -237452,8 +237600,8 @@
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 28627,
-      "next_reestimate_at_effective_seconds": 28800,
+      "effective_seconds_recorded": 29035,
+      "next_reestimate_at_effective_seconds": 36000,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
         {
@@ -237720,7 +237868,7 @@
             0.75,
             1.5
           ],
-          "state": "VERIFYING",
+          "state": "DONE",
           "initial_estimate_hours": [
             1,
             2
@@ -237736,13 +237884,15 @@
           "implementation_complete": true,
           "report": "docs/development/evidence/W276-01/DELIVERY.md",
           "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
             "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave276-final-verification.json"
-          }
+          },
+          "actual_effective_seconds": 3283,
+          "estimate_variance": "3283s/54m43s, below2–4h. Existing business/form authority and native pins were reusable; full closed delegated reads were explicitly transferred to W277, not claimed complete."
         },
         {
           "id": "W277-01",
@@ -237756,7 +237906,7 @@
             1.25,
             2.5
           ],
-          "state": "PLANNED",
+          "state": "IN_PROGRESS",
           "initial_estimate_hours": [
             2,
             3
@@ -237766,7 +237916,8 @@
             5
           ],
           "estimate_confidence": "LOW",
-          "scope_refinement": "Adopt real TASK-R2 closed grant Owner/current delegated read as prerequisite, then delegated withdraw and BLOCKED new authorization. Current provider uses legacy inclusive local-time/empty scope; cannot count it as complete new grant contract."
+          "scope_refinement": "Actual TASK-R2 closed grants/current delegated read and native task actor evidence as direct prerequisite; distinct business withdrawal authority cannot be inferred from task grant. Explicit Owner delegated withdrawal and BLOCKED new-actor/new-grant recovery preserve accepted oa.app/2.0 wire and original facts.",
+          "started_at": "2026-11-02T21:10:32.641506+00:00"
         },
         {
           "id": "W278-01",
@@ -237953,12 +238104,44 @@
             5
           ],
           "basis": "W274 completed 5371s including BUG702; cumulative completed 18444s. W275 10 distinct backend checks (8 isolated PostgreSQL, 2 pure) and 3 lossless JSON checks passed; native notification rollback fault injection was corrected and rerun. No UI adoption/typecheck, HTTP or dual-connection proof yet. Other windows retain actual remaining scope; W276 will reuse ordinary task adoption. No idle/paused intervals; context restoration and code reading are effective work."
+        },
+        {
+          "at": "2026-11-02T21:07:01.143639+00:00",
+          "effective_seconds": 28824,
+          "completed_windows": [
+            "W268-01",
+            "W269-01",
+            "W270-01",
+            "W271-01",
+            "W272-01",
+            "W273-01",
+            "W274-01",
+            "W275-01"
+          ],
+          "actual_completed_seconds": 25628,
+          "remaining_estimate_hours": [
+            11.25,
+            21.5
+          ],
+          "confidence": "LOW: recent reusable providers completed faster than estimates; closed delegation and withdrawal recovery require actual new authority adoption",
+          "added_windows": [],
+          "current_window": "W276-01",
+          "current_window_estimate_hours": [
+            2,
+            4
+          ],
+          "current_window_remaining_hours": [
+            0,
+            0.15
+          ],
+          "basis": "W275 actual7184s, cumulative25628s. W276 implemented/reviewed with31 backend(11PG/20legacy) and25Vue, typecheck; MainPR706 remote adopted andDEV1 released, Handoff closing. Direct reader delivered; full TASK-R2 closed delegation moved explicitly into W277 prerequisite, estimate3–5h. Remaining windows retain original scope. No idle/paused intervals. Record external while Main seat released; adopt calibration into roadmap at W277 START.",
+          "next_reestimate_at_effective_seconds": 36000
         }
       ],
-      "timing_snapshot_at": "2026-11-02T21:03:44.352715+00:00",
+      "timing_snapshot_at": "2026-11-02T21:10:32.641506+00:00",
       "remaining_estimate_hours": [
-        12.75,
-        25.5
+        11.25,
+        21.5
       ]
     },
     "execution_plan_history": [
