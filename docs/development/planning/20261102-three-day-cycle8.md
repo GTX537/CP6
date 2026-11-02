@@ -22,8 +22,10 @@
 
 - [x] `cp6.web/src/api/sys/menu.ts`增加V1 API/DTO；`cp6.web/src/views/pms/MenuView.vue`排序/层级保存采用已读版本，显示全局影响后确认；读取失败不拿空树覆盖。412保留草稿并提示重读差异，避免盲目覆盖。
 - [x] 发送前以当前身份隔离的sessionStorage保留准确命令；刷新、超时后按原件查询/原样重试，404或后续权限拒绝不能当未提交；身份切换忽略晚到响应。确认后刷新当前权威树和导航，刷新失败明确部分完成，不能把历史回执当当前树。
-- [ ] 相关PG/实际HTTP测试、Vue类型检查和实际浏览器拖拽/保存夹具；完整diff一次集中SPEC/QUALITY审查，台账/生成页/四状态同步、一份DELIVERY。正常Main/Handoff PR采用，核对远端完整树，准确任务分支条件删除、官方finish和席位释放。
+- [x] 相关PG/实际HTTP测试、Vue类型检查和实际浏览器拖拽/保存夹具；完整diff一次集中SPEC/QUALITY审查，台账/生成页/四状态同步、一份DELIVERY。正常Main/Handoff PR采用，核对远端完整树，准确任务分支条件删除、官方finish和席位释放。
 
 范围：WP02-18整卡仍有菜单其他字段/路由注册/个性配置及Owner KPI、授权缓存/导航完整采用等余项。此次只闭合共享树排序和层级实际用户流程，不改变菜单命名空间或权限定义，不新增生产授权。所有验收可用模拟业务数据，明确真实PG/Main与页面夹具边界；不运行Actions、不部署或迁移既有环境。
 
 实现与相关验证完成，最后一项状态同步、远端采用、清理/finish由wave266-final-verification.json核销。提交前VERIFYING。
+
+W267按wave266-final-verification.json核销第八期正常采用、准确分支清理和官方finish；只归档不重跑。

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Sys;
 
-public sealed class MenuTreeAdministrationV1(CP6Context db, ICurrentPermissionContext permissions, IHttpContextAccessor http)
+public sealed partial class MenuTreeAdministrationV1(CP6Context db, ICurrentPermissionContext permissions, IHttpContextAccessor http)
 {
     private static byte[] Bytes<T>(T value) => JsonSerializer.SerializeToUtf8Bytes(value);
     private static byte[] Key(string operation) => SHA256.HashData(Bytes(operation));
@@ -86,10 +86,14 @@ public sealed class MenuTreeAdministrationV1(CP6Context db, ICurrentPermissionCo
             }
         }
         var changed = command.Positions.Where(x => before[x.MenuId].ParentId != x.ParentId || before[x.MenuId].OrderNo != x.OrderNo).Select(x => x.MenuId).Order().ToArray();
+        return await References(current, changed, ct);
+    }
+    private async Task<MenuTreeImpactV1> References(MenuTreeSnapshotV1 current, int[] changed, CancellationToken ct)
+    {
         // A shared tree is rendered for every referenced role. Counts conservatively cover
         // the full referenced tree, including ancestor/descendant navigation contexts.
         if (changed.Length == 0) return new(current.Revision, changed, 0, 0, 0, 0);
-        var ids = before.Keys.ToArray();
+        var ids = current.Menus.Select(x => x.MenuId).ToArray();
         var menuRefs = db.Sys_RoleMenus.IgnoreQueryFilters().Where(x => ids.Contains(x.MenuId));
         var actionRefs = db.Sys_RoleActions.IgnoreQueryFilters().Where(x => ids.Contains(x.MenuId));
         var roles = await menuRefs.Select(x => new { x.TenantId, x.RoleId }).Union(actionRefs.Select(x => new { x.TenantId, x.RoleId })).ToArrayAsync(ct);
@@ -135,18 +139,23 @@ public sealed class MenuTreeAdministrationV1(CP6Context db, ICurrentPermissionCo
             var nodes = await db.Sys_Menus.Where(x => ids.Contains(x.MenuId)).ToDictionaryAsync(x => x.MenuId, token);
             foreach (var position in command.Positions.Where(x => nodes.ContainsKey(x.MenuId)))
             { nodes[position.MenuId].ParentId = position.ParentId; nodes[position.MenuId].OrderNo = position.OrderNo; }
+            return await CompleteCommand(actor, command.OperationRef, input, command.Reason, "shared-menu-tree-v1", impact, token);
+        }, ct);
+    }
+    private async Task<MenuTreeReceiptV1> CompleteCommand(PlatformAdminAuthorization.Actor actor, string operation, byte[] input,
+        string reason, string kind, MenuTreeImpactV1 impact, CancellationToken token)
+    {
             db.Sys_SecurityLogs.Add(new Sys_SecurityLog { TenantId = TenantContext.DefaultTenant, UserId = actor.Id, UserName = actor.UserName,
-                EventType = (int)SecurityEventType.IamAdministrationChanged, CreatedAt = DateTime.Now, Reason = command.Reason,
-                ContextJson = JsonSerializer.Serialize(new { kind = "shared-menu-tree-v1", operationHash = Convert.ToHexString(Key(command.OperationRef)), impact }) });
+                EventType = (int)SecurityEventType.IamAdministrationChanged, CreatedAt = DateTime.Now, Reason = reason,
+                ContextJson = JsonSerializer.Serialize(new { kind, operationHash = Convert.ToHexString(Key(operation)), impact }) });
             await db.SaveChangesAsync(token);
             var applied = await db.Database.SqlQueryRaw<long>("SELECT revision AS \"Value\" FROM cp6_menu_tree_v1.root WHERE singleton").SingleAsync(token);
             var at = await db.Database.SqlQueryRaw<DateTimeOffset>("SELECT clock_timestamp() AS \"Value\"").SingleAsync(token);
-            var receipt = new MenuTreeReceiptV1(command.OperationRef, applied, impact, at);
+            var receipt = new MenuTreeReceiptV1(operation, applied, impact, at);
             await db.Database.ExecuteSqlInterpolatedAsync($"""
                 INSERT INTO cp6_menu_tree_v1.commands(operation_hash,operation_bytes,input_bytes,actor_id,actor_tenant,result_bytes)
-                VALUES({Key(command.OperationRef)},{Bytes(command.OperationRef)},{input},{actor.Id},{actor.TenantId},{Bytes(receipt)})
+                VALUES({Key(operation)},{Bytes(operation)},{input},{actor.Id},{actor.TenantId},{Bytes(receipt)})
                 """, token);
             return receipt;
-        }, ct);
     }
 }

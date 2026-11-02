@@ -57,6 +57,10 @@
       <div v-else-if="navigationLoading || writeState === 'confirmed'">{{ navigationLoading ? '当前浏览器导航正在刷新…' : '当前浏览器导航已刷新' }}</div>
     </section>
 
+    <MenuDisplayPanel v-if="canManageTree" :menu-id="selectedId"
+      :disabled="savingStructure || savingDetails || deleting || identityChanged || !!treePending || structureDirty || formDirty"
+      @blocked="displayBlocked = $event" @changed="displayChanged" />
+
     <section v-loading="loading" class="menu-editor-frame" :inert="writing || identityChanged || !!treePending || !!treeStorageError">
       <aside class="tree-panel">
         <div class="tree-heading">
@@ -371,6 +375,7 @@ import { authApi } from '@/api/sys/auth'
 import { usePermissionStore } from '@/stores/permission'
 import { usePlatformStore } from '@/stores/platform'
 import { createMenuReadRecovery, readNavigationMenus } from './menuRefreshRecovery'
+import MenuDisplayPanel from './MenuDisplayPanel.vue'
 
 interface MenuNode extends MenuItem {
   children: MenuNode[]
@@ -401,7 +406,8 @@ const nodeFilter = ref<NodeFilter>('all')
 const savingStructure = ref(false)
 const savingDetails = ref(false)
 const deleting = ref(false)
-const writing = computed(() => savingStructure.value || savingDetails.value || deleting.value)
+const displayBlocked = ref(false)
+const writing = computed(() => savingStructure.value || savingDetails.value || deleting.value || displayBlocked.value)
 const writeState = ref<'idle' | 'writing' | 'confirmed' | 'uncertain'>('idle')
 const identityChanged = ref(false)
 let disposed = false
@@ -782,6 +788,12 @@ async function refreshAfterWrite(preferredId?: number | null) {
     formDirty.value || structureDirty.value ? Promise.resolve() : loadData(preferredId),
     refreshActiveNavigation(),
   ])
+}
+async function displayChanged() {
+  if (!checkIdentity()) return
+  writeState.value = 'confirmed'
+  listRecovery.invalidate(); navigationRecovery.invalidate()
+  await refreshAfterWrite(selectedId.value)
 }
 
 function collectPositions(nodes: MenuNode[], parentId: number | null = null, output: MenuTreePosition[] = []) {

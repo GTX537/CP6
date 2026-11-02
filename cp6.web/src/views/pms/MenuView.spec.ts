@@ -25,6 +25,7 @@ let wrapper: ReturnType<typeof mount> | undefined
 async function render() {
   const pinia = createPinia()
   wrapper = mount(MenuView, { global: { plugins: [pinia], directives: { permission: {}, loading: {} }, stubs: {
+    MenuDisplayPanel: true,
     ElButton: { props: ['loading', 'disabled'], template: '<button :disabled="loading || disabled"><slot /></button>' },
     ElForm: { template: '<form><slot /></form>', methods: { validate: () => Promise.resolve(true), clearValidate: () => {} } },
     ElFormItem: { template: '<div><slot /></div>' }, ElInput: true, ElInputNumber: true,

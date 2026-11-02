@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W266第八期三天共享菜单树](evidence/W266-01/DELIVERY.md)，COORD单人；限定实现验证完成，待正常采用与finish。
+> 当前：[W267第九期三天共享菜单树](evidence/W267-01/DELIVERY.md)，COORD单人；限定实现验证完成，待正常采用与finish。
+
+> 历史快照：[W266第八期三天共享菜单树](evidence/W266-01/DELIVERY.md)，COORD单人；限定实现验证完成，待正常采用与finish。
 
 > 历史快照：[W265第七期三天租户创建](evidence/W265-01/DELIVERY.md)，COORD单人；限定实现验证完成，待正常采用与finish。
 
