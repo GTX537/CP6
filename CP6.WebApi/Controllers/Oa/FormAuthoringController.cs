@@ -27,6 +27,8 @@ public sealed class FormAuthoringController(FormAuthoringOwnerV2 owner) : Contro
     public Task<IActionResult> Preview(string key, FormPublicationPreviewInputV2 input, CancellationToken ct) => Run(async () => await owner.PreviewPublicationAsync(key, input, ct));
     [HttpPost("{key}/publish"), RequestSizeLimit(1024 * 1024)]
     public Task<IActionResult> Publish(string key, CancellationToken ct) => Run(async () => await owner.PublishAsync(key, await Raw(ct), ct));
+    [HttpPost("{key}/clone"), RequestSizeLimit(1024 * 1024)]
+    public Task<IActionResult> Clone(string key, CancellationToken ct) => Run(async () => await owner.CloneAsync(key, await Raw(ct), ct));
     [HttpPost("{key}/drafts"), RequestSizeLimit(1024 * 1024)]
     public Task<IActionResult> Next(string key, CancellationToken ct) => Run(async () => await owner.CreateNextDraftAsync(key, await Raw(ct), ct));
     [HttpGet("/api/oa/v2/activations/FORM")]

@@ -1,7 +1,7 @@
 import http from '../http'
 export type FormAuthoringField = 'Name' | 'SchemaJson' | 'Category' | 'SubCategory'
 export interface FormAuthoringView {
-  definitionId: string; draftId: string; key: string; version: string; enabled: boolean; activationRevision?: string; published?: boolean; versionNumber?: number
+  definitionId: string; draftId: string; key: string; version: string; enabled: boolean; activationRevision?: string; clonedFromRef?: string | null; published?: boolean; versionNumber?: number
   fields: Partial<Record<FormAuthoringField, string | null>>; writableFields: FormAuthoringField[]
 }
 export interface FormAuthoringCommand {

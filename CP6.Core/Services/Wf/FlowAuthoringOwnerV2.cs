@@ -14,7 +14,7 @@ namespace CP6.Core.Services.Wf;
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record FlowAuthoringBodyV2(string Name, string SchemaJson, string? FormKey, string? FunctionId, string? FlowCode);
 public sealed record FlowAuthoringViewV2(Guid DefinitionId, Guid DraftId, string Key, string Version,
-    Dictionary<string, string?> Fields, string[] WritableFields, string[] Diagnostics, bool Enabled = false, bool Published = false, int VersionNumber = 1, string? ActivationRevision = null);
+    Dictionary<string, string?> Fields, string[] WritableFields, string[] Diagnostics, bool Enabled = false, bool Published = false, int VersionNumber = 1, string? ActivationRevision = null, Guid? ClonedFromRef = null);
 public sealed record WorkflowCommandResultV1(string CommandId, string Outcome, Guid? ResourceId, string? ResourceVersion,
     FlowAuthoringViewV2? Result, DateTimeOffset? RecordedAtUtc, string? CorrelationId);
 
@@ -78,11 +78,11 @@ public sealed partial class FlowAuthoringOwnerV2
              where m.Enable && m.MenuKey == menu && a.ActionCode == action select a).AnyAsync(ct)) throw Error("ACTION_FORBIDDEN", 403);
     }
     private sealed record Head(Guid Id, Guid DraftId, string Key, Guid OwnerId, Guid? DeptId, Guid Version,
-        string Name, string SchemaJson, string? FormKey, string? FunctionId, string? FlowCode, int Status = 0, int Number = 1, Guid? SavedBy = null, bool Enabled = false, Guid ActivationVersion = default);
+        string Name, string SchemaJson, string? FormKey, string? FunctionId, string? FlowCode, int Status = 0, int Number = 1, Guid? SavedBy = null, bool Enabled = false, Guid ActivationVersion = default, Guid? ClonedFromRef = null);
     private IQueryable<Head> Heads() => db.Database.SqlQuery<Head>($"""
         SELECT h.id AS "Id",h.draft_id AS "DraftId",h.flow_key AS "Key",h.owner_id AS "OwnerId",h.owner_dept_id AS "DeptId",
           d.row_version AS "Version",d.name AS "Name",d.schema_json AS "SchemaJson",d.form_key AS "FormKey",
-          h.function_id AS "FunctionId",h.flow_code AS "FlowCode",d.status AS "Status",d.version_number AS "Number",d.saved_by AS "SavedBy",a.enabled AS "Enabled",a.revision AS "ActivationVersion" FROM cp6_workflow_authoring_v2.heads h
+          h.function_id AS "FunctionId",h.flow_code AS "FlowCode",d.status AS "Status",d.version_number AS "Number",d.saved_by AS "SavedBy",a.enabled AS "Enabled",a.revision AS "ActivationVersion",h.cloned_from_version_id AS "ClonedFromRef" FROM cp6_workflow_authoring_v2.heads h
           JOIN cp6_workflow_authoring_v2.drafts d ON d.tenant_id=h.tenant_id AND d.environment_id=h.environment_id AND d.head_id=h.id AND d.id=h.draft_id
           JOIN cp6_workflow_authoring_v2.activation_current a ON a.tenant_id=h.tenant_id AND a.environment_id=h.environment_id AND a.head_id=h.id
           WHERE h.tenant_id={db.CurrentTenantId} AND h.environment_id={fence.EnvironmentId}
@@ -146,7 +146,7 @@ public sealed partial class FlowAuthoringOwnerV2
     { ["Name"] = head.Name, ["SchemaJson"] = head.SchemaJson, ["FormKey"] = head.FormKey, ["FunctionId"] = head.FunctionId, ["FlowCode"] = head.FlowCode };
     private static FlowAuthoringViewV2 View(Head head, FieldPermissionDecisionV1 permission, string[] diagnostics) => new(
         head.Id, head.DraftId, head.Key, head.Version.ToString("D"), Values(head).Where(x => permission.Fields[x.Key].CanRead).ToDictionary(),
-        head.Status == 0 ? Fields.Where(x => permission.Fields[x].CanWrite).ToArray() : [], permission.Fields["SchemaJson"].CanRead ? diagnostics : [], head.Enabled, head.Status == 1, head.Number, head.ActivationVersion.ToString("D"));
+        head.Status == 0 ? Fields.Where(x => permission.Fields[x].CanWrite).ToArray() : [], permission.Fields["SchemaJson"].CanRead ? diagnostics : [], head.Enabled, head.Status == 1, head.Number, head.ActivationVersion.ToString("D"), head.ClonedFromRef);
     private async Task<bool> CanEdit(UserPermissionContext actor, CancellationToken ct)
     {
         var policy = await ReadPolicy(ct);
@@ -180,7 +180,7 @@ public sealed partial class FlowAuthoringOwnerV2
         }
         var result = new List<FlowAuthoringViewV2>();
         var pageRows = await query.OrderBy(h => h.Key).Skip((page - 1) * 100).Take(100)
-            .Select(h => new Head(h.Id, h.DraftId, h.Key, h.OwnerId, h.DeptId, h.Version, h.Name, "", h.FormKey, h.FunctionId, h.FlowCode, h.Status, h.Number, h.SavedBy, h.Enabled, h.ActivationVersion)).ToListAsync(ct);
+            .Select(h => new Head(h.Id, h.DraftId, h.Key, h.OwnerId, h.DeptId, h.Version, h.Name, "", h.FormKey, h.FunctionId, h.FlowCode, h.Status, h.Number, h.SavedBy, h.Enabled, h.ActivationVersion, h.ClonedFromRef)).ToListAsync(ct);
         foreach (var head in pageRows)
         {
             var permission = await Permission(actor, head, false, false, ct, readMenu);
@@ -246,68 +246,71 @@ public sealed partial class FlowAuthoringOwnerV2
         catch (Exception e) when (e is JsonException or InvalidOperationException) { throw Error("SCHEMA_INVALID", 422); }
     }
     private sealed record Saved(string BodyDigest, string ResultJson);
-    private Task<Saved?> Original(Guid actor, string key, string command, CancellationToken ct) => db.Database.SqlQuery<Saved>($"""
+    private Task<Saved?> Original(Guid actor, string key, string command, CancellationToken ct, string operation = Operation) => db.Database.SqlQuery<Saved>($"""
         SELECT body_digest AS "BodyDigest",result_json AS "ResultJson" FROM cp6_workflow_authoring_v2.commands
         WHERE tenant_id={db.CurrentTenantId} AND environment_id={fence.EnvironmentId} AND actor_id={actor}
-          AND operation='FLOW_SAVE_DRAFT' AND resource_key={key} AND command_id={command}
+          AND operation={operation} AND resource_key={key} AND command_id={command}
         """).SingleOrDefaultAsync(ct);
     private async Task<WorkflowCommandResultV1> ProjectOriginal(UserPermissionContext actor, string key, Saved saved, CancellationToken ct)
     {
         var head = await Heads().SingleOrDefaultAsync(x => x.Key == key, ct) ?? throw Error("DEFINITION_NOT_FOUND", 404);
         var permissions = await Permission(actor, head, false, false, ct);
-        var original = JsonSerializer.Deserialize<WorkflowCommandResultV1>(saved.ResultJson, Json) ?? throw Error("ORIGINAL_RESULT_INVALID");
-        if (original.Result == null || original.ResourceId != head.Id || original.Result.Key != key) throw Error("ORIGINAL_RESULT_INVALID");
-        var projected = original.Result with { Fields = original.Result.Fields.Where(x => permissions.Fields[x.Key].CanRead).ToDictionary(), WritableFields = [],
-            Diagnostics = permissions.Fields["SchemaJson"].CanRead ? original.Result.Diagnostics : [] };
+        var original = JsonSerializer.Deserialize<WorkflowCommandResultV1>(saved.ResultJson, Json)!;
+        var projected = original.Result! with { Fields = original.Result!.Fields.Where(x => permissions.Fields[x.Key].CanRead).ToDictionary(), WritableFields = [],
+            Diagnostics = permissions.Fields["SchemaJson"].CanRead ? original.Result!.Diagnostics : [] };
         return original with { Result = projected };
     }
-    public async Task<WorkflowCommandResultV1> OriginalAsync(string key, string command, CancellationToken ct = default)
+    public Task<WorkflowCommandResultV1> OriginalAsync(string key, string command, CancellationToken ct = default) => OriginalCore(key, command, Operation, ct);
+    private async Task<WorkflowCommandResultV1> OriginalCore(string key, string command, string operation, CancellationToken ct)
     {
         if (!Regex.IsMatch(command, "\\A[A-Za-z0-9_.-]{1,100}\\z")) throw Error("COMMAND_SHAPE_INVALID", 400);
         Entry(); await using var tx = await db.Database.BeginTransactionAsync(ct); await Root(ct); var actor = await Actor(ct);
         var head = await Heads().SingleOrDefaultAsync(x => x.Key == key, ct)
             ?? new Head(Guid.Empty, Guid.Empty, key, actor.UserId, actor.DeptId, Guid.Empty, "", "", null, null, null);
         await Permission(actor, head, false, false, ct);
-        var saved = await Original(actor.UserId, key, command, ct);
+        var saved = await Original(actor.UserId, key, command, ct, operation);
         var result = saved == null ? new(command, "NOT_OBSERVED", null, null, null, null, null) : await ProjectOriginal(actor, key, saved, ct);
         if ((await Actor(ct)).UserId != actor.UserId) throw Error("REAUTH_REQUIRED", 401);
-        return result;
+        CompletionClock(); return result;
     }
-    public async Task<WorkflowCommandResultV1> SaveAsync(string key, byte[] raw, CancellationToken ct = default)
+    public Task<WorkflowCommandResultV1> SaveAsync(string key, byte[] raw, CancellationToken ct = default) => WriteDraft(key, Parse(raw), null, ct);
+    private async Task<WorkflowCommandResultV1> WriteDraft(string key, Command command, DefinitionCloneCommandV2? clone, CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(key) || key.Length > 100) throw Error("DEFINITION_KEY_INVALID", 400);
-        var command = Parse(raw); Entry();
+        if (string.IsNullOrWhiteSpace(key) || key.Length > 100 || key.Contains('\0')) throw Error("DEFINITION_KEY_INVALID", 400);
+        var operation = clone == null ? Operation : CloneOperation; Entry();
         await using var tx = await db.Database.BeginTransactionAsync(ct); var committing = false;
         try
         {
             await Root(ct); var actor = await Actor(ct);
-            var oldCommand = await Original(actor.UserId, key, command.CommandId, ct);
+            var oldCommand = await Original(actor.UserId, key, command.CommandId, ct, operation);
             if (oldCommand != null)
             {
                 var original = await ProjectOriginal(actor, key, oldCommand, ct);
                 if (oldCommand.BodyDigest != command.Digest) throw Error("COMMAND_BODY_CONFLICT", 409);
                 if ((await Actor(ct)).UserId != actor.UserId) throw Error("REAUTH_REQUIRED", 401);
-                return original;
+                CompletionClock(); return original;
             }
             var lease = await fence.AcquireAsync(ct);
             if (!await db.Database.SqlQueryRaw<bool>("SELECT cp6_workflow_authoring_v2.ready() AS \"Value\"").SingleAsync(ct)) throw Error("AUTHORING_WRITER_COVERAGE_UNAVAILABLE");
             await ActivationReady(ct);
+            var source = clone == null ? null : await CloneSource(actor, clone, ct);
             var old = await Heads().SingleOrDefaultAsync(x => x.Key == key, ct);
             var head = old ?? new Head(Guid.NewGuid(), Guid.NewGuid(), key, actor.UserId, actor.DeptId, Guid.NewGuid(), "", "", null, null, null);
             var permission = await Permission(actor, head, true, old == null, ct);
             if (old?.Status == 1) throw Error("DRAFT_REQUIRED", 409);
             if (old != null && command.ExpectedVersion == null) throw Error("DEFINITION_EXISTS", 409);
             if (old == null && command.ExpectedVersion != null || old != null && command.ExpectedVersion != old.Version.ToString("D")) throw Error("DEFINITION_CHANGED", 409);
-            var body = command.Body with { FunctionId = string.IsNullOrWhiteSpace(command.Body.FunctionId) ? null : command.Body.FunctionId,
-                FlowCode = string.IsNullOrWhiteSpace(command.Body.FlowCode) ? null : command.Body.FlowCode };
-            var next = head with { Version = Guid.NewGuid(), SavedBy = actor.UserId, Name = body.Name, SchemaJson = body.SchemaJson, FormKey = body.FormKey, FunctionId = body.FunctionId, FlowCode = body.FlowCode };
+            var input = source?.Body ?? command.Body;
+            var body = input with { FunctionId = string.IsNullOrWhiteSpace(input.FunctionId) ? null : input.FunctionId,
+                FlowCode = string.IsNullOrWhiteSpace(input.FlowCode) ? null : input.FlowCode };
+            var next = head with { Version = Guid.NewGuid(), SavedBy = actor.UserId, Name = body.Name, SchemaJson = body.SchemaJson, FormKey = body.FormKey, FunctionId = body.FunctionId, FlowCode = body.FlowCode, ClonedFromRef = clone?.Body.SourceVersionId ?? head.ClonedFromRef };
             CheckWrites(old, next, permission);
-            var diagnostics = ValidateSchema(key, body.SchemaJson, ct);
+            var diagnostics = clone == null ? ValidateSchema(key, body.SchemaJson, ct) : [];
             if (old == null)
             {
                 await db.Database.ExecuteSqlInterpolatedAsync($"""
-                    INSERT INTO cp6_workflow_authoring_v2.heads(tenant_id,environment_id,id,flow_key,owner_id,owner_dept_id,function_id,flow_code,draft_id,row_version)
-                    VALUES({db.CurrentTenantId},{fence.EnvironmentId},{next.Id},{key},{actor.UserId},{actor.DeptId},{body.FunctionId},{body.FlowCode},{next.DraftId},{next.Version})
+                    INSERT INTO cp6_workflow_authoring_v2.heads(tenant_id,environment_id,id,flow_key,owner_id,owner_dept_id,function_id,flow_code,draft_id,row_version,cloned_from_version_id)
+                    VALUES({db.CurrentTenantId},{fence.EnvironmentId},{next.Id},{key},{actor.UserId},{actor.DeptId},{body.FunctionId},{body.FlowCode},{next.DraftId},{next.Version},{next.ClonedFromRef})
                     """, ct);
                 await db.Database.ExecuteSqlInterpolatedAsync($"""
                     INSERT INTO cp6_workflow_authoring_v2.drafts(tenant_id,environment_id,head_id,id,name,form_key,schema_json,row_version,saved_by)
@@ -329,16 +332,17 @@ public sealed partial class FlowAuthoringOwnerV2
             var at = DateTimeOffset.UtcNow;
             // Store the complete original snapshot. Each response (including replay) applies current field projection.
             next = next with { ActivationVersion = (await Activation(next.Id, ct)).Revision };
-            var snapshot = new FlowAuthoringViewV2(next.Id, next.DraftId, key, next.Version.ToString("D"), Values(next), [], diagnostics, next.Enabled, false, next.Number, next.ActivationVersion.ToString("D"));
+            var snapshot = new FlowAuthoringViewV2(next.Id, next.DraftId, key, next.Version.ToString("D"), Values(next), [], diagnostics, next.Enabled, false, next.Number, next.ActivationVersion.ToString("D"), next.ClonedFromRef);
             var saved = new WorkflowCommandResultV1(command.CommandId, "SUCCEEDED", next.Id, snapshot.Version, snapshot, at, command.Correlation);
             var text = JsonSerializer.Serialize(saved, Json);
             await db.Database.ExecuteSqlInterpolatedAsync($"""
                 INSERT INTO cp6_workflow_authoring_v2.commands(tenant_id,environment_id,actor_id,operation,resource_key,command_id,canonical_version,body_digest,raw_body,raw_digest,result_json,recorded_at)
-                VALUES({db.CurrentTenantId},{fence.EnvironmentId},{actor.UserId},'FLOW_SAVE_DRAFT',{key},{command.CommandId},'WFC-CJ-1',{command.Digest},{command.Raw},{MainOwnerOperationJournalV1.Digest(command.Raw)},{text},{at})
+                VALUES({db.CurrentTenantId},{fence.EnvironmentId},{actor.UserId},{operation},{key},{command.CommandId},'WFC-CJ-1',{command.Digest},{command.Raw},{MainOwnerOperationJournalV1.Digest(command.Raw)},{text},{at})
                 """, ct);
             var finalActor = await Actor(ct);
             if (finalActor.UserId != actor.UserId) throw Error("REAUTH_REQUIRED", 401);
             var finalPermission = await Permission(finalActor, head, true, old == null, ct); CheckWrites(old, next, finalPermission);
+            if (source != null) { await AuthorizeCloneSource(finalActor, source.Head, ct); await CloneReady(ct); }
             var policy = await ReadPolicy(ct);
             var evidence = JsonSerializer.Serialize(new { ActualActor = actor.UserId, EffectiveActor = actor.UserId, Policy = policy, Scope = lease.Snapshot,
                 PermissionDecisionRef = Guid.NewGuid(), CheckedAtUtc = DateTimeOffset.UtcNow, Fields = finalPermission.Input.Versions,
@@ -348,10 +352,10 @@ public sealed partial class FlowAuthoringOwnerV2
                 CustomDepartments = finalActor.CustomDeptIds.GetValueOrDefault(Resource),
                 FieldRoles = finalPermission.Input.Roles, FieldRows = finalPermission.Input.Rows,
                 FieldAccess = finalPermission.Fields.ToDictionary(x => x.Key, x => x.Value.Access),
-                next.OwnerId, next.DeptId, CommandDigest = command.Digest, RawDigest = MainOwnerOperationJournalV1.Digest(command.Raw) }, Json);
+                next.OwnerId, next.DeptId, next.ClonedFromRef, CloneSourceDefinition = source?.Head.Id, CommandDigest = command.Digest, RawDigest = MainOwnerOperationJournalV1.Digest(command.Raw) }, Json);
             await db.Database.ExecuteSqlInterpolatedAsync($"""
-                INSERT INTO cp6_workflow_authoring_v2.audit(tenant_id,environment_id,actor_id,resource_key,command_id,evidence_json,recorded_at)
-                VALUES({db.CurrentTenantId},{fence.EnvironmentId},{actor.UserId},{key},{command.CommandId},{evidence},{at})
+                INSERT INTO cp6_workflow_authoring_v2.audit(tenant_id,environment_id,actor_id,resource_key,command_id,operation,evidence_json,recorded_at)
+                VALUES({db.CurrentTenantId},{fence.EnvironmentId},{actor.UserId},{key},{command.CommandId},{operation},{evidence},{at})
                 """, ct);
             if (await Heads().SingleAsync(x => x.Key == key, ct) != next) throw Error("DEFINITION_CHANGED", 409);
             if (!await db.Database.SqlQueryRaw<bool>("SELECT cp6_workflow_authoring_v2.ready() AS \"Value\"").SingleAsync(ct)) throw Error("AUTHORING_WRITER_COVERAGE_UNAVAILABLE");
@@ -364,7 +368,7 @@ public sealed partial class FlowAuthoringOwnerV2
             try { await tx.RollbackAsync(CancellationToken.None); }
             catch (Exception rollback) { throw new ScopeAuthorizationExceptionV1("COMMAND_OUTCOME_UNKNOWN", 503, new AggregateException(error, rollback)); }
             if (committing) throw new ScopeAuthorizationExceptionV1("COMMAND_OUTCOME_UNKNOWN", 503, error);
-            if (error is Npgsql.PostgresException { SqlState: "23505" or "23514" }) throw Error("DEFINITION_IDENTITY_CONFLICT", 409);
+            if (error is Npgsql.PostgresException { SqlState: "23505", TableName: "heads" } or Npgsql.PostgresException { SqlState: "23514", MessageText: "DEFINITION_IDENTITY_CONFLICT" }) throw Error("DEFINITION_IDENTITY_CONFLICT", 409);
             if (error is Npgsql.NpgsqlException or CurrentPermissionUnavailableException) throw new ScopeAuthorizationExceptionV1("AUTHORITY_FENCE_UNAVAILABLE", 503, error);
             throw;
         }
