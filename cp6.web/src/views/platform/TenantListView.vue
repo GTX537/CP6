@@ -19,7 +19,7 @@
           <el-option :label="t('sec.2fa.status.off')" :value="false" />
         </el-select>
         <el-button type="primary" :icon="Search" @click="search">{{ t('table.search') }}</el-button>
-        <el-button type="success" :icon="Plus" @click="openCreate">{{ t('platform.tenant.create') }}</el-button>
+        <el-button type="success" :icon="Plus" @click="creation?.open()">{{ t('platform.tenant.create') }}</el-button>
       </div>
     </div>
 
@@ -56,62 +56,23 @@
       />
     </div>
 
-    <!-- 新建租户对话框 -->
-    <el-dialog v-model="createVisible" :title="t('platform.tenant.create')" width="520px">
-      <el-form ref="createFormRef" :model="createForm" :rules="createRules" label-width="120px">
-        <el-form-item :label="t('platform.tenant.code')" prop="code">
-          <el-input v-model="createForm.code" />
-        </el-form-item>
-        <el-form-item :label="t('platform.tenant.name')" prop="name">
-          <el-input v-model="createForm.name" />
-        </el-form-item>
-        <el-form-item :label="t('platform.tenant.adminUser')" prop="adminUserName">
-          <el-input v-model="createForm.adminUserName" />
-        </el-form-item>
-        <el-form-item :label="t('platform.tenant.expire')">
-          <el-date-picker v-model="createForm.expire" type="date" value-format="YYYY-MM-DD" style="width: 100%" />
-        </el-form-item>
-        <el-form-item :label="t('platform.tenant.remark')">
-          <el-input v-model="createForm.remark" type="textarea" :rows="2" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="createVisible = false">{{ t('table.cancel') }}</el-button>
-        <el-button type="primary" :loading="creating" @click="doCreate">{{ t('table.confirm') }}</el-button>
-      </template>
-    </el-dialog>
-
-    <!-- 一次性临时密码对话框 -->
-    <el-dialog v-model="tempPwdVisible" :title="t('platform.tenant.tempPassword')" width="480px" :close-on-click-modal="false">
-      <el-alert :title="t('platform.tenant.tempPasswordHint')" type="warning" :closable="false" show-icon />
-      <div class="temp-pwd-row">
-        <span class="temp-pwd-label">{{ t('platform.tenant.adminUser') }}</span>
-        <code>{{ createdResult?.adminUserName }}</code>
-      </div>
-      <div class="temp-pwd-row">
-        <span class="temp-pwd-label">{{ t('platform.tenant.tempPassword') }}</span>
-        <code class="temp-pwd-value">{{ createdResult?.tempPassword }}</code>
-        <el-button size="small" :icon="CopyDocument" @click="copyTempPwd">{{ t('platform.copy') }}</el-button>
-      </div>
-      <template #footer>
-        <el-button type="primary" @click="tempPwdVisible = false">{{ t('table.confirm') }}</el-button>
-      </template>
-    </el-dialog>
+    <TenantCreationPanel ref="creation" @changed="loadData" />
 
     <TenantManagementPanel ref="management" @changed="loadData" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Search, Plus, CopyDocument } from '@element-plus/icons-vue'
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+import { Search, Plus } from '@element-plus/icons-vue'
 import { tenantApi } from '@/api/platform/tenant'
 import TenantManagementPanel from './TenantManagementPanel.vue'
-import type { TenantRow, CreateTenantResult } from '@/types/platform/platform'
+import TenantCreationPanel from './TenantCreationPanel.vue'
+import type { TenantRow } from '@/types/platform/platform'
 
 const { t } = useI18n()
+const creation = ref<InstanceType<typeof TenantCreationPanel>>()
 const management = ref<InstanceType<typeof TenantManagementPanel>>()
 
 const tableData = ref<TenantRow[]>([])
@@ -143,62 +104,6 @@ function search() {
   loadData()
 }
 
-// ── 新建 ────────────────────────────────────────────
-const createVisible = ref(false)
-const creating = ref(false)
-const createFormRef = ref<FormInstance>()
-const createForm = reactive({ code: '', name: '', adminUserName: '', expire: '' as string | null, remark: '' })
-const createRules = reactive<FormRules>({
-  code: [{ required: true, message: t('platform.tenant.code'), trigger: 'blur' }],
-  name: [{ required: true, message: t('platform.tenant.name'), trigger: 'blur' }],
-  adminUserName: [{ required: true, message: t('platform.tenant.adminUser'), trigger: 'blur' }]
-})
-
-const tempPwdVisible = ref(false)
-const createdResult = ref<CreateTenantResult | null>(null)
-
-function openCreate() {
-  createForm.code = ''
-  createForm.name = ''
-  createForm.adminUserName = ''
-  createForm.expire = ''
-  createForm.remark = ''
-  createVisible.value = true
-}
-
-async function doCreate() {
-  if (!createFormRef.value) return
-  await createFormRef.value.validate()
-  creating.value = true
-  try {
-    const res = await tenantApi.create({
-      code: createForm.code.trim(),
-      name: createForm.name.trim(),
-      adminUserName: createForm.adminUserName.trim(),
-      expire: createForm.expire || null,
-      remark: createForm.remark || null
-    })
-    createVisible.value = false
-    createdResult.value = res
-    tempPwdVisible.value = true
-    loadData()
-  } catch {
-    // E-SEC-033（编码冲突）由 http.ts 拦截器统一提示
-  } finally {
-    creating.value = false
-  }
-}
-
-async function copyTempPwd() {
-  if (!createdResult.value) return
-  try {
-    await navigator.clipboard.writeText(createdResult.value.tempPassword)
-    ElMessage.success(t('platform.copied'))
-  } catch {
-    ElMessage.warning(createdResult.value.tempPassword)
-  }
-}
-
 onMounted(() => loadData())
 </script>
 
@@ -225,21 +130,5 @@ onMounted(() => loadData())
   display: flex;
   justify-content: flex-end;
   margin-top: 16px;
-}
-.temp-pwd-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 14px;
-}
-.temp-pwd-label {
-  width: 90px;
-  color: #606266;
-}
-.temp-pwd-value {
-  font-size: 16px;
-  font-weight: 600;
-  color: #b45309;
-  letter-spacing: 0.04em;
 }
 </style>

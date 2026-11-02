@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using System.Text.Json.Serialization;
 using CP6.Core.Auth;
 using CP6.Core.Services.Common;
@@ -33,16 +32,7 @@ public sealed class TenantManagementControllerV1(IServiceScopeFactory scopes, IT
         services.GetRequiredService<ITenantContext>().CurrentTenantId = tenant.CurrentTenantId;
         try
         {
-            var session = new TenantManagementSessionV1(token => IamAdministrationHttpV1.CurrentActor(HttpContext, services, token), async token =>
-            {
-                // These claims were validated by CurrentActor. Database-backed authority is
-                // held by the Owner gate; blacklist/clock remain external changing conditions.
-                var expires = long.Parse(User.FindFirst("exp")!.Value, CultureInfo.InvariantCulture);
-                if (expires <= DateTimeOffset.UtcNow.ToUnixTimeSeconds()
-                    || await services.GetRequiredService<ITokenBlacklistService>().IsBlacklistedAsync(User.FindFirst("jti")!.Value))
-                    throw new IamAdministrationExceptionV1(401, "REAUTH_REQUIRED");
-                token.ThrowIfCancellationRequested();
-            });
+            var session = TenantAdministrationHttpV1.Session(HttpContext, services);
             var value = await action(services.GetRequiredService<ITenantAdminService>(), session);
             return value == null ? NotFound(new { code = "TENANT_NOT_FOUND" }) : Ok(value);
         }
