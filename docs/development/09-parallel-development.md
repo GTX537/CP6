@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W260第三期D3](evidence/W260-01/DELIVERY.md)，利用D2真实保留期等待完成独立Main API；D2实际结果仍待运行，COORD单人。
+> 当前：[W259第三期最终收尾](evidence/W259-01/DELIVERY.md)，三天限定验收收齐，待Main最后采用/finish并核销。
+
+> 历史快照：[W260第三期D3](evidence/W260-01/DELIVERY.md)，利用D2真实保留期等待完成独立Main API；D2实际结果仍待运行，COORD单人。
 
 > 历史快照：[W258第三期D1](evidence/W258-01/DELIVERY.md)，Issue684原步骤PG复测通过，正常采用/释放按最终proof核销。
 

@@ -1,5 +1,13 @@
 # 当前待办与优先级
 
+## 2026-11-02：W259第三期D2与整期收尾
+
+第三期D2完成真实HTTP提交/撤回、实际60分钟保留期匿名化、已匿名化原件进入Expired、失败回滚及丢响应原结果恢复；原审查截止和擦除墓碑保持、PII不复活。D1菜单极值修复及D3受权编号管理API已先完成，第三期限定实现/验收收齐，整期最终生命周期按proof核销。 [交付](../development/evidence/W259-01/DELIVERY.md)。
+
+Two unique actual PostgreSQL18/HTTP checks PASS,0 skipped:complete elapsed anonymized-to-Expired lifecycle and real browser re-login/read preserving the existing result;3611.6 seconds from original receipt to final verification,at least60 real minutes before erasure. Original review business time alone is controlled;IAM/publication/lease/erasure/commit clocks remain real. Actual retained-to-erased-to-Expired graph,HTTP receipt/intake,rollback/lost-response recovery and five original-row comparisons executed. Initial full run failed at final HTTP401 because its ten-minute fixture browser token had expired;failure retained,real login/callback added and the complete lifecycle rerun. W256 unchanged other Owner boundary evidence referenced,not rerun. No Actions/deployment.
+
+D1/D3与CRM/Handoff已合并、准确分支删除和finish；Main W259本提交待正常采用/释放，最终以wave260-final-verification.json为准。原375卡真实范围保持。
+
 ## 2026-11-02：W260第三期D3
 
 第三期D3已实现新登记Main编号域的受权规则管理HTTP：当前/历史版本、格式CAS、原修改恢复及无副作用预览；实际Main登录、CSRF、当前会话与租户生效。D2真实60分钟保留期验收仍在运行，不能称三天全部完成。 [交付](../development/evidence/W260-01/DELIVERY.md)。
@@ -7,6 +15,10 @@
 4 actual PostgreSQL18/Program HTTP cases PASS,0 skipped:format history/CAS/3000-character NUL original recovery/preview;current query-edit grants/cross-tenant/logout;two in-flight revoke cases after waiting for the shared authentication gate. Original missing-entry RED and MVC record metadata failure retained;annotation placement corrected and all4 rerun PASS. W257 unchanged Owner/store behavior evidence referenced,not rerun. No Actions/deployment/new migration.
 
 Main本提交待正常采用/finish；Handoff待CRM席位释放后串行发布，D2/Main准备分支已保存供恢复。原375卡及其真实余项保持。
+
+## 2026-11-02：W259开工与真实等待
+
+第三期D2已登记并在CRM独立分支codex/w259-02执行真实匿名化后Expired链路。实际公开提交及撤回已完成，60分钟合法保留期截止UTC 2026-11-02T05:44:02.095099；完整验收仍在运行，不能称通过。为利用等待，Main协调分支保存后官方deferred释放DEV-1，串行切到独立D3/W260；CRM继续占DEV-2，COORD单人执行，2+1配额不变。D2结果将回来本分支收尾，必要时正常合并新主线，保留D3已采用事实。 [当前记录](../development/evidence/W259-01/DELIVERY.md)。
 
 ## 2026-11-02：W258第三期D1
 
