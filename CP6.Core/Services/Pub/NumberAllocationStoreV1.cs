@@ -7,7 +7,7 @@ using Npgsql;
 
 namespace CP6.Core.Services.Pub;
 
-internal sealed class NumberAllocationStoreV1(CP6Context db, NumberAllocationScopeV1 scope)
+internal sealed partial class NumberAllocationStoreV1(CP6Context db, NumberAllocationScopeV1 scope)
 {
     internal sealed record Registration(NumberAllocationScopeV1 Scope, NumberAllocationRuleV1 Rule);
     internal sealed record Saved(Guid Actor, byte[] Operation, byte[] Input, byte[] Result);
@@ -53,9 +53,9 @@ internal sealed class NumberAllocationStoreV1(CP6Context db, NumberAllocationSco
         {
             await db.Database.ExecuteSqlInterpolatedAsync($"""
                 INSERT INTO cp6_number_allocation_v1.receipts
-                (rule_id,operation_hash,operation_bytes,input_bytes,actor_id,result_bytes,period_key,sequence_value,number_hash,number_bytes,allocated_at)
+                (rule_id,operation_hash,operation_bytes,input_bytes,actor_id,result_bytes,period_key,sequence_value,number_hash,number_bytes,allocated_at,rule_version_hash)
                 VALUES({scope.RuleId},{Key(command.OperationRef)},{Encode(command.OperationRef)},{Encode(command)},
-                  {actor},{Encode(receipt)},{receipt.PeriodKey},{receipt.SequenceValue},{Key(receipt.Number)},{Encode(receipt.Number)},{receipt.AllocatedAtUtc})
+                  {actor},{Encode(receipt)},{receipt.PeriodKey},{receipt.SequenceValue},{Key(receipt.Number)},{Encode(receipt.Number)},{receipt.AllocatedAtUtc},{Key(receipt.RuleVersion)})
                 """, ct);
         }
         catch (PostgresException e) when (e.SqlState == PostgresErrorCodes.UniqueViolation && e.ConstraintName == "number_unique")

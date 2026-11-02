@@ -11,7 +11,7 @@ namespace CP6.Core.Services.Pub;
 
 /// <summary>Independent durable allocation. Every call owns a fresh context/transaction; it never
 /// enlists the later business save. No public Next HTTP endpoint or implicit legacy cutover.</summary>
-public sealed class NumberAllocationOwnerV1(Func<CP6Context> contexts, NumberAllocationScopeV1 scope,
+public sealed partial class NumberAllocationOwnerV1(Func<CP6Context> contexts, NumberAllocationScopeV1 scope,
     NumberAllocationAuthorityV1 authority)
 {
     private static NumberAllocationExceptionV1 Error(string code, int status = 409) => new(code, status);
@@ -49,7 +49,7 @@ public sealed class NumberAllocationOwnerV1(Func<CP6Context> contexts, NumberAll
     {
         var registration = await store.RegistrationAsync(ct) ?? throw Error("E-PUB-051", 404);
         if (registration.Scope != scope) throw Error("NUMBER_OWNER_SCOPE_MISMATCH", 403);
-        return registration.Rule;
+        return await store.CurrentRule(ct) ?? registration.Rule;
     }
     public Task<bool> RegisterNewAsync(NumberAllocationRuleV1 rule, CancellationToken ct = default)
     {
