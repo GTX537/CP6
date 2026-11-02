@@ -17,12 +17,14 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
     private sealed class AuthoringHttpAccessor : IHttpContextAccessor { public HttpContext? HttpContext { get; set; } }
     private const string AuthoringSchema = "{\"start\":\"s\",\"nodes\":[{\"id\":\"s\",\"type\":\"start\"},{\"id\":\"e\",\"type\":\"end\"}],\"edges\":[{\"from\":\"s\",\"to\":\"e\"}],\"layout\":{\"number\":1.0,\"name\":\"原文\"}}";
-    private FlowAuthoringOwnerV2 Authoring(Harness h, Func<CancellationToken, Task<Guid>>? actor = null)
+    private FlowAuthoringOwnerV2 Authoring(Harness h, Func<CancellationToken, Task<Guid>>? actor = null, IEnumerable<IWfConnector>? connectors = null)
     {
         var catalog = new AuthorizationCatalogStoreV1();
         catalog.RegisterScope(FlowAuthoringOwnerV2.Resource, "flow", [1, 2, 3, 4, 5], 1);
-        catalog.RegisterFields(FlowAuthoringOwnerV2.Resource, FlowAuthoringOwnerV2.Fields.Select(f => new FieldRegistry.Field(f, f))); catalog.Seal();
-        return new(h.Db, new AuthoringHttpAccessor { HttpContext = h.Http }, ScopeFence(h), actor ?? (_ => Task.FromResult(h.User)), [], [], catalog.Capture);
+        catalog.RegisterFields(FlowAuthoringOwnerV2.Resource, FlowAuthoringOwnerV2.Fields.Select(f => new FieldRegistry.Field(f, f)));
+        catalog.RegisterScope(FormAuthoringOwnerV2.Resource, "form", [1, 2, 3, 4, 5], 1);
+        catalog.RegisterFields(FormAuthoringOwnerV2.Resource, FormAuthoringOwnerV2.Fields.Select(f => new FieldRegistry.Field(f, f))); catalog.Seal();
+        return new(h.Db, new AuthoringHttpAccessor { HttpContext = h.Http }, ScopeFence(h), actor ?? (_ => Task.FromResult(h.User)), [], connectors ?? [], catalog.Capture);
     }
     private async Task<FlowAuthoringOwnerV2> PrepareAuthoring(Harness h)
     {

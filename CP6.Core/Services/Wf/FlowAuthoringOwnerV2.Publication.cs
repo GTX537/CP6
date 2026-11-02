@@ -66,39 +66,6 @@ public sealed partial class FlowAuthoringOwnerV2
     }
     private static string SchemaDigest(string schema) => MainOwnerOperationJournalV1.Digest(Encoding.UTF8.GetBytes(schema));
     private static FlowSchema Schema(string text) => JsonSerializer.Deserialize<FlowSchema>(text, new JsonSerializerOptions(JsonSerializerDefaults.Web)) ?? throw Error("SCHEMA_INVALID", 422);
-    private (string[] Diagnostics, FlowDependencyRefV2[] Dependencies) PublicationInputs(Head head, CancellationToken ct)
-    {
-        var diagnostics = new List<string>();
-        try { diagnostics.AddRange(ValidateSchema(head.Key, head.SchemaJson, ct)); }
-        catch (ScopeAuthorizationExceptionV1 e) when (e.Status == 422) { diagnostics.Add(e.Message); }
-        var schema = Schema(head.SchemaJson); var dependencies = new List<FlowDependencyRefV2>();
-        // Native legacy heads have neither the current v2 resource-owner mapping nor original
-        // publication/activation evidence. Do not infer authority or historical pins from their name/latest.
-        if (!string.IsNullOrWhiteSpace(head.FormKey))
-        {
-            diagnostics.Add("FORM_PUBLICATION_SOURCE_UNPROVEN");
-            dependencies.Add(new("FORM", "formKey", head.FormKey, null, "UNPROVEN"));
-        }
-        foreach (var node in schema.Nodes)
-        {
-            if (string.Equals(node.Type?.Trim(), "subFlow", StringComparison.OrdinalIgnoreCase))
-            {
-                diagnostics.Add("SUBFLOW_ACTIVATION_SOURCE_UNPROVEN");
-                dependencies.Add(new("FLOW", node.Id, node.SubFlowKey ?? "", null, "UNPROVEN"));
-            }
-            if (!string.Equals(node.Type?.Trim(), "serviceTask", StringComparison.OrdinalIgnoreCase)) continue;
-            object? provider = node.ServiceKind == ServiceKind.DataWriteback
-                ? executors.SingleOrDefault(x => x.Kind == ServiceKind.DataWriteback && string.Equals(x.Key, node.ServiceActionName, StringComparison.OrdinalIgnoreCase))
-                : node.ServiceKind == ServiceKind.WebApi ? connectors.SingleOrDefault(x => string.Equals(x.Name, node.ServiceConnectorName, StringComparison.OrdinalIgnoreCase)) : null;
-            if (provider != null)
-            {
-                var type = provider.GetType();
-                dependencies.Add(new("SERVICE", node.Id, node.ServiceActionName ?? node.ServiceConnectorName ?? "",
-                    type.AssemblyQualifiedName + ":" + type.Module.ModuleVersionId.ToString("D"), "CURRENT_HOST_REGISTRATION"));
-            }
-        }
-        return (diagnostics.Distinct().ToArray(), dependencies.ToArray());
-    }
     private static string PreviewDigest(Head head, Guid policy, string[] diagnostics, FlowDependencyRefV2[] dependencies)
         => MainOwnerOperationJournalV1.Digest(JsonSerializer.SerializeToUtf8Bytes(new
         { Contract = "FLOW-PUBLICATION-PREVIEW-1", head.Id, head.DraftId, head.Version, head.Number, head.SavedBy, Fields = Values(head), PolicyVersion = policy, diagnostics, dependencies }, Json));
@@ -110,7 +77,7 @@ public sealed partial class FlowAuthoringOwnerV2
         var head = await Heads().SingleOrDefaultAsync(x => x.Key == key, ct) ?? throw Error("DEFINITION_NOT_FOUND", 404);
         var permission = await PublishingPermission(actor, head, ct);
         if (head.Status != 0 || head.DraftId != input.DraftVersionId || head.Version != expected) throw Error("DEFINITION_CHANGED", 409);
-        var inputs = PublicationInputs(head, ct); var digest = PreviewDigest(head, permission.Policy.Version, inputs.Diagnostics, inputs.Dependencies);
+        var inputs = await PublicationInputs(head, actor, ct); var digest = PreviewDigest(head, permission.Policy.Version, inputs.Diagnostics, inputs.Dependencies);
         var result = new FlowPublicationPreviewV2(Guid.NewGuid(), digest, head.DraftId, input.ExpectedVersion, SchemaDigest(head.SchemaJson),
             PublicationClock().AddMinutes(10), inputs.Diagnostics, inputs.Dependencies, inputs.Diagnostics.Length == 0);
         var snapshot = JsonSerializer.Serialize(result, Json);
@@ -119,7 +86,7 @@ public sealed partial class FlowAuthoringOwnerV2
             VALUES({db.CurrentTenantId},{fence.EnvironmentId},{result.Id},{actor.UserId},{head.Id},{head.DraftId},{head.Version},{digest},{result.ExpiresAtUtc},{snapshot})
             """, ct);
         var finalActor = await Actor(ct); if (finalActor.UserId != actor.UserId) throw Error("REAUTH_REQUIRED", 401);
-        var final = await PublishingPermission(finalActor, head, ct); var finalInputs = PublicationInputs(head, ct);
+        var final = await PublishingPermission(finalActor, head, ct); var finalInputs = await PublicationInputs(head, finalActor, ct);
         if (await Heads().SingleAsync(x => x.Key == key, ct) != head || PreviewDigest(head, final.Policy.Version, finalInputs.Diagnostics, finalInputs.Dependencies) != digest) throw Error("PREVIEW_STALE", 409);
         await PublicationReady(ct); await fence.ValidateAsync(lease, ct); CompletionClock(); await tx.CommitAsync(ct); return result;
     }
@@ -209,7 +176,10 @@ public sealed partial class FlowAuthoringOwnerV2
                 if (preview == null || preview.Actor != actor.UserId || preview.HeadId != head.Id || preview.DraftId != head.DraftId || preview.Token != head.Version
                     || preview.Digest != body.PreviewDigest || preview.Expires <= PublicationClock()) throw Error("PREVIEW_STALE", 409);
                 previewDeadline = preview.Expires;
-                var policy = await ReadPublicationPolicy(ct) ?? throw Error("PUBLICATION_POLICY_REQUIRED"); var inputs = PublicationInputs(head, ct);
+                var confirmed = JsonSerializer.Deserialize<FlowPublicationPreviewV2>(preview.Snapshot, Json)!;
+                if (!confirmed.CanPublish) throw Error("PUBLICATION_VALIDATION_FAILED", 422);
+                var policy = await ReadPublicationPolicy(ct) ?? throw Error("PUBLICATION_POLICY_REQUIRED");
+                var inputs = await PublicationInputs(head, actor, ct, confirmed.Dependencies);
                 if (PreviewDigest(head, policy.Version, inputs.Diagnostics, inputs.Dependencies) != preview.Digest) throw Error("PREVIEW_STALE", 409);
                 if (inputs.Diagnostics.Length > 0) throw Error("PUBLICATION_VALIDATION_FAILED", 422);
                 var publication = new FlowPublicationV2(head.Id, head.DraftId, head.Number, key, Values(head), SchemaDigest(head.SchemaJson), at, actor.UserId, inputs.Dependencies, command.Expected);
@@ -254,6 +224,13 @@ public sealed partial class FlowAuthoringOwnerV2
             var finalActor = await Actor(ct); if (finalActor.UserId != actor.UserId) throw Error("REAUTH_REQUIRED", 401);
             var finalFields = operation == PublishOperation ? (await PublishingPermission(finalActor, head, ct)).Fields : await Permission(finalActor, head, true, false, ct);
             if (operation == NextDraftOperation) CheckWrites(head, next, finalFields);
+            if (result.Publication is { } published && command.Body is FlowPublicationBodyV2 publishing)
+            {
+                var finalInputs = await PublicationInputs(head, finalActor, ct, published.DependencyRefs);
+                var currentPolicy = (await ReadPublicationPolicy(ct))!;
+                if (PreviewDigest(head, currentPolicy.Version, finalInputs.Diagnostics, finalInputs.Dependencies) != publishing.PreviewDigest)
+                    throw Error("PREVIEW_STALE", 409);
+            }
             var evidence = JsonSerializer.Serialize(new { ActualActor = actor.UserId, EffectiveActor = actor.UserId, operation,
                 PermissionDecisionRef = Guid.NewGuid(), CheckedAtUtc = DateTimeOffset.UtcNow, Scope = lease.Snapshot,
                 PublicationPolicy = operation == PublishOperation ? await ReadPublicationPolicy(ct) : null, AuthoringPolicy = await ReadPolicy(ct),

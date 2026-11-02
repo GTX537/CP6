@@ -128,8 +128,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var body = JsonSerializer.SerializeToUtf8Bytes(new { commandId = "form", expectedVersion = (string?)null,
             body = new { name = "with form", schemaJson = AuthoringSchema, formKey = "legacy-form", functionId = (string?)null, flowCode = (string?)null } });
         var saved = await owner.SaveAsync("form-source", body); var preview = await Preview(owner, "form-source", saved);
-        Assert.False(preview.CanPublish); Assert.Contains("FORM_PUBLICATION_SOURCE_UNPROVEN", preview.Diagnostics);
-        Assert.Equal("UNPROVEN", Assert.Single(preview.Dependencies).EvidenceState);
+        Assert.False(preview.CanPublish); Assert.Contains("DEPENDENCY_NOT_AVAILABLE", preview.Diagnostics);
+        Assert.Equal("UNAVAILABLE", Assert.Single(preview.Dependencies).EvidenceState);
         Assert.Equal("PUBLICATION_VALIDATION_FAILED", (await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(() => owner.PublishAsync("form-source", PublicationCommand(preview)))).Message);
         Assert.Empty(await owner.VersionsAsync("form-source"));
     }

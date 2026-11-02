@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[24小时Codex实际执行计划](planning/20261102-codex-24h-oa.md)，COORD单人；[W271](evidence/W271-01/DELIVERY.md)固定发布源克隆已验证，待采用/finish；2h校准已记录，继续W272。
+> 当前：[24小时Codex实际执行计划](planning/20261102-codex-24h-oa.md)，COORD单人；[W272](evidence/W272-01/DELIVERY.md)准确依赖已验证，待采用/finish；继续W273唯一绑定。
+
+> 历史快照：[24小时Codex实际执行计划](planning/20261102-codex-24h-oa.md)，COORD单人；[W271](evidence/W271-01/DELIVERY.md)固定发布源克隆已验证，待采用/finish；2h校准已记录，继续W272。
 
 > 历史快照：[24小时实际Codex连续目标](planning/20261102-codex-24h-oa.md)，COORD单人；[W270](evidence/W270-01/DELIVERY.md)FORM发布/激活已实现验证，待采用/finish；继续W271，总目标不结束。
 

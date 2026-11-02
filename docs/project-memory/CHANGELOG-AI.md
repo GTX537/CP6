@@ -1,5 +1,13 @@
 # AI 可读变更日志
 
+## 2026-11-02：24小时持续目标 / W272准确依赖
+
+W272：发布预览冻结准确FORM/子FLOW版本，确认及激活递归复核当前资格，保留历史pin；实际PG/HTTP、审批绑定/受控提交及页面采用。24h持续目标第五窗口，继续W273唯一FORM-FLOW绑定。 [交付](../development/evidence/W272-01/DELIVERY.md)。
+
+本地49项唯一PG18行为通过、0跳过，含真实Main登录/HTTP、精确递归依赖与受影响发布/激活/APP绑定及提交；7项Vue行为通过，显式vue-tsc --noEmit -p tsconfig.app.json --extendedDiagnostics通过（3328文件）。政策/业务数据模拟；实际隔离PG/Main。组件API模拟，无浏览器到PG整链、Actions、既有环境迁移或生产部署。
+
+WP12-02仍余唯一FORM-FLOW绑定及其并发/CAS、实际运行根与子流程/任务pin、旧运行入口同门和完整原AC；现APP Binding采用不是FORM-FLOW绑定或运行实例交付。375仍27DONE/2IN_PROGRESS/346PLANNED，59局部3闭环/56余项，125/247正式状态不变。 总目标IN_PROGRESS继续W273，下一校准4h。采用/清理/finish见wave272-final-verification.json。
+
 ## 2026-11-02：24小时持续目标 / W271固定发布源克隆
 
 W271：FLOW/FORM从准确Published版本克隆新停用草稿，清流程身份码、不可变clonedFromRef、当前读源/创建权限与原命令恢复；Main HTTP及版本面板采用。24h持续目标第四窗口，继续W272。 [交付](../development/evidence/W271-01/DELIVERY.md)。

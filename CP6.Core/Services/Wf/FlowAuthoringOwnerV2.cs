@@ -239,7 +239,7 @@ public sealed partial class FlowAuthoringOwnerV2
             // Graph incompleteness remains explicit diagnostics, not an executable published artifact.
             var fatal = errors.FirstOrDefault(e => e is "E-WF-028");
             if (fatal != null) throw Error(fatal, 422);
-            SubFlowRefValidator.Validate(db, key, schema);
+            // Managed v2 references are resolved to exact published pins by publication; legacy mutable heads are not a source.
             return errors.Distinct().ToArray();
         }
         catch (ScopeAuthorizationExceptionV1) { throw; }
