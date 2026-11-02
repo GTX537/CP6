@@ -85,7 +85,8 @@ public partial class FlowEngine
         if (forkParent is not null && outerSplit is not null && IsPrune(outerSplit))
         {
             // 外层 prune：视同 forkParent（外层该支代表）被驳回 → 剪外层该支并继续递归收束。
-            // forkParent 已 Consumed（进 split 时退场），无需改状态；其在途后代刚被判定为零。
+            // Native APP evidence must retain this collapsed branch outcome as well as history.
+            if (_approvalStartV2) forkParent.Status = FlowTokenStatus.Pruned;
             AddHistory(inst.Id, forkParent.NodeId, actorId, "branchPruned", comment);
             await _notifier.BranchPrunedAsync(inst.StarterId, inst.Id, inst.FlowKey, forkParent.NodeId, comment);
             await ReleaseOrCollapseAsync(inst, schema, forkParent, actorId, comment);

@@ -24,30 +24,35 @@ internal sealed class SubFlowNodeHandler : INodeHandler
     {
         var eng = ctx.Engine; var inst = ctx.Inst; var schema = ctx.Schema; var node = ctx.Node; var token = ctx.Token;
 
-        // ① 防御式配置复检（E-WF-025；保存时校验已拦，坏 schema 直发兜底）
-        if (string.IsNullOrWhiteSpace(node.SubFlowKey))
-            throw new InvalidOperationException("E-WF-025: subFlow 节点缺 SubFlowKey");
-        var policy = (node.SubCompletionPolicy ?? SubFlowCompletionPolicy.All).Trim().ToLowerInvariant();
-        if (policy != SubFlowCompletionPolicy.All && policy != SubFlowCompletionPolicy.Any)
-            throw new InvalidOperationException("E-WF-025: SubCompletionPolicy 非法");
-        if (!SubFlowVarsMapper.TryParseMap(node.SubVarsInJson, out _) || !SubFlowVarsMapper.TryParseMap(node.SubVarsOutJson, out _))
-            throw new InvalidOperationException("E-WF-025: 变量映射 JSON 非法");
-
-        // ② 深度守卫（E-WF-026）：沿 ParentInstanceId 链上溯计数（spec §3.1）。
-        //    Local ∪ DB 惯用法：同请求递归起子的祖先实例尚未 SaveChanges（三律②不落盘），只在变更
-        //    追踪器里可见，纯 DB 查询会漏它们令链在首层断裂；故先查 Local（含未落盘 Add）再补 DB
-        //    （worker 跨事务的已持久化深链）——与本 handler ④ 的槽位防重、引擎 HasActiveToken 同款口径。
-        int depth = 0;
-        var pid = inst.ParentInstanceId;
-        while (pid is Guid p)
+        // Native APP executes the immutable dependency graph already accepted at TxS.
+        // Legacy definitions retain their historical runtime validation path.
+        if (inst.Creator != FlowEngine.ApprovalRuntimeV2)
         {
-            if (++depth >= SubFlowLimits.MaxDepth)
-                throw new InvalidOperationException("E-WF-026: 子流程嵌套深度超限");
-            var localParent = eng.Db.Wf_FlowInstances.Local.FirstOrDefault(i => i.Id == p);
-            pid = localParent is not null
-                ? localParent.ParentInstanceId
-                : await eng.Db.Wf_FlowInstances.Where(i => i.Id == p)
-                    .Select(i => i.ParentInstanceId).FirstOrDefaultAsync();
+            // ① 防御式配置复检（E-WF-025；保存时校验已拦，坏 schema 直发兜底）
+            if (string.IsNullOrWhiteSpace(node.SubFlowKey))
+                throw new InvalidOperationException("E-WF-025: subFlow 节点缺 SubFlowKey");
+            var policy = (node.SubCompletionPolicy ?? SubFlowCompletionPolicy.All).Trim().ToLowerInvariant();
+            if (policy != SubFlowCompletionPolicy.All && policy != SubFlowCompletionPolicy.Any)
+                throw new InvalidOperationException("E-WF-025: SubCompletionPolicy 非法");
+            if (!SubFlowVarsMapper.TryParseMap(node.SubVarsInJson, out _) || !SubFlowVarsMapper.TryParseMap(node.SubVarsOutJson, out _))
+                throw new InvalidOperationException("E-WF-025: 变量映射 JSON 非法");
+
+            // ② 深度守卫（E-WF-026）：沿 ParentInstanceId 链上溯计数（spec §3.1）。
+            //    Local ∪ DB 惯用法：同请求递归起子的祖先实例尚未 SaveChanges（三律②不落盘），只在变更
+            //    追踪器里可见，纯 DB 查询会漏它们令链在首层断裂；故先查 Local（含未落盘 Add）再补 DB
+            //    （worker 跨事务的已持久化深链）——与本 handler ④ 的槽位防重、引擎 HasActiveToken 同款口径。
+            int depth = 0;
+            var pid = inst.ParentInstanceId;
+            while (pid is Guid p)
+            {
+                if (++depth >= SubFlowLimits.MaxDepth)
+                    throw new InvalidOperationException("E-WF-026: 子流程嵌套深度超限");
+                var localParent = eng.Db.Wf_FlowInstances.Local.FirstOrDefault(i => i.Id == p);
+                pid = localParent is not null
+                    ? localParent.ParentInstanceId
+                    : await eng.Db.Wf_FlowInstances.Where(i => i.Id == p)
+                        .Select(i => i.ParentInstanceId).FirstOrDefaultAsync();
+            }
         }
 
         // ③ 集合解析（spec §3.1 第 2 步）
@@ -76,18 +81,19 @@ internal sealed class SubFlowNodeHandler : INodeHandler
         }
         int n = coll?.Count ?? 1;
         var childVersionId = await eng.ResolvePinnedSubFlowVersionAsync(inst, node.Id, node.SubFlowKey!);
+        var call = eng.SubFlowCallToken(inst, node, token);
 
         // ④ 逐 i 起子实例（停泊重入幂等：槽已存在跳过——Local ∪ DB 惯用法 + filtered unique 双保险）
         var childIds = new List<Guid>();
         for (int i = 0; i < n; i++)
         {
             int idx = i;
-            bool exists = eng.Db.Wf_FlowInstances.Local.Any(x => x.ParentTokenId == token.Id && x.SubIndex == idx)
-                || await eng.Db.Wf_FlowInstances.AnyAsync(x => x.ParentTokenId == token.Id && x.SubIndex == idx);
+            bool exists = eng.Db.Wf_FlowInstances.Local.Any(x => x.ParentTokenId == call.Id && x.SubIndex == idx)
+                || await eng.Db.Wf_FlowInstances.AnyAsync(x => x.ParentTokenId == call.Id && x.SubIndex == idx);
             if (exists) continue;
             var childVars = SubFlowVarsMapper.BuildChildVars(node.SubVarsInJson, inst.VarsJson,
                 coll?[i], coll is null ? null : i);
-            childIds.Add(await eng.SubmitChildAsync(childVersionId, inst.StarterId, childVars, inst.Id, token.Id, i));
+            childIds.Add(await eng.SubmitChildAsync(childVersionId, inst.StarterId, childVars, inst.Id, call.Id, i));
         }
         eng.AddHistory(inst.Id, node.Id, inst.StarterId, "subFlowStarted",
             $"n={n}; children=[{string.Join(",", childIds)}]");

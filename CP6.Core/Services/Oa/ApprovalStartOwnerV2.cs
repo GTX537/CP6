@@ -84,6 +84,7 @@ public sealed class ApprovalStartOwnerV2(CP6Context db, ScopeAuthorizationFenceV
             var engine = new FlowEngine(db, new ApproverResolver(db, exactConditions: true));
             var instance = await engine.StageApprovalStartV2(publication, e,
                 Encoding.UTF8.GetString(Convert.FromBase64String(e.Snapshot.CanonicalBytesBase64)), ct);
+            await engine.SaveApprovalRuntime(ct);
             await db.SaveChangesAsync(ct); // Participates in this outer native transaction; never a separate commit.
             await engine.SaveApprovalAssignments(ct);
             var original = JsonSerializer.Deserialize<ApprovalSubmissionAckV2>(pending.Ack, ApprovalBindingOwnerV2.Json)!;

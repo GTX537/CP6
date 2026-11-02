@@ -10,7 +10,7 @@ namespace CP6.Core.Services.Wf;
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record FlowActivationBodyV2([property: JsonRequired] bool Enabled, string ExpectedActivationRevision, Guid PublishedVersionId, string Reason);
 public sealed record FlowActivationV2(Guid DefinitionId, string Key, Guid Revision, bool Enabled, Guid? PublishedVersionId,
-    DateTimeOffset? ChangedAtUtc, bool InflightUnchanged = true, string ConsumerState = "NOT_ADOPTED");
+    DateTimeOffset? ChangedAtUtc, bool InflightUnchanged = true, string ConsumerState = "APP_PINNED_RUNTIME_ADOPTED");
 public sealed record FlowActivationHistoryV2(Guid Revision, Guid PreviousRevision, bool Enabled, Guid PublishedVersionId,
     Guid ActorId, string Reason, DateTimeOffset ChangedAtUtc);
 public sealed record FlowActivationChoiceV2(Guid VersionId, int Number, string? Name, string? FormKey = null, Guid? FormVersionId = null);
@@ -63,7 +63,8 @@ public sealed partial class FlowAuthoringOwnerV2
         var active = current.PublishedVersionId is { } id
             ? versions.SingleOrDefault(v => v.VersionId == id) ?? Choice((await Published(head.Id, id, ct))!) : null;
         if ((await Actor(ct)).UserId != actor.UserId) throw Error("REAUTH_REQUIRED", 401); CompletionClock();
-        // No v2 root consumer is registered yet: do not report a guessed zero or count legacy instances as v2.
+        // APP consumes accepted pins. Scoped affected-entry/in-flight disclosure remains unavailable;
+        // do not report a guessed zero or count legacy instances as adopted v2 instances.
         return new(current, versions, page, [], FormKey: active?.FormKey, FormVersionId: active?.FormVersionId);
     }
     public async Task<FlowActivationHistoryV2[]> ActivationHistoryAsync(string key, int page = 1, CancellationToken ct = default)

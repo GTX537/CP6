@@ -181,16 +181,21 @@ public sealed class ApprovalWithdrawalOwnerV2(CP6Context db,ScopeAuthorizationFe
     }
     private async Task CancelRuntime(Guid instance,Guid actor,string reason,CancellationToken ct)
     {
-        var i=await db.Wf_FlowInstances.SingleAsync(x=>x.Id==instance,ct);
-        if(i.Creator!=FlowEngine.ApprovalRuntimeV2)throw Error("WITHDRAW_ENGINE_STATE_UNAVAILABLE");
-        // Native runtime suspends service/subflow nodes before their legacy effects. Fail closed if a future runtime expands that boundary.
-        if(await db.Wf_ServiceJobs.AnyAsync(x=>x.InstanceId==instance && (x.Status==ServiceJobStatus.Pending || x.Status==ServiceJobStatus.Running),ct))throw Error("WITHDRAW_ENGINE_CAPABILITY_UNAVAILABLE",422);
-        i.Status=FlowInstanceStatus.Withdrawn;i.Modifier=actor.ToString();i.ModifyDate=DateTime.Now;
-        foreach(var task in await db.Wf_FlowTasks.Where(x=>x.InstanceId==instance && (x.Status==FlowTaskStatus.Pending || x.Status==FlowTaskStatus.Suspended)).ToArrayAsync(ct))
+        var members=await db.Database.SqlQuery<Guid>($"""
+            SELECT instance_id AS "Value" FROM cp6_approval_runtime_v2.instances
+            WHERE tenant_id={db.CurrentTenantId} AND environment_id={scope.EnvironmentId} AND root_instance_id={instance}
+            """).ToArrayAsync(ct);
+        if(await db.Wf_ServiceJobs.AnyAsync(x=>members.Contains(x.InstanceId) && (x.Status==ServiceJobStatus.Pending || x.Status==ServiceJobStatus.Running),ct))
+            throw Error("WITHDRAW_ENGINE_CAPABILITY_UNAVAILABLE",422);
+        foreach(var i in await db.Wf_FlowInstances.Where(x=>members.Contains(x.Id) && (x.Status==FlowInstanceStatus.Running || x.Status==FlowInstanceStatus.Suspended)).ToArrayAsync(ct))
+        {
+            i.Status=FlowInstanceStatus.Withdrawn;i.Modifier=actor.ToString();i.ModifyDate=DateTime.Now;
+            db.Wf_FlowHistories.Add(new(){Id=Guid.NewGuid(),InstanceId=i.Id,NodeId=i.CurrentNode,ActorId=actor,Action="withdraw",Comment=reason});
+        }
+        foreach(var task in await db.Wf_FlowTasks.Where(x=>members.Contains(x.InstanceId) && (x.Status==FlowTaskStatus.Pending || x.Status==FlowTaskStatus.Suspended)).ToArrayAsync(ct))
         {task.Status=FlowTaskStatus.Cancelled;task.Comment=reason;task.Modifier=actor.ToString();task.ModifyDate=DateTime.Now;}
-        foreach(var token in await db.Wf_FlowTokens.Where(x=>x.InstanceId==instance && x.Status==FlowTokenStatus.Active).ToArrayAsync(ct))token.Status=FlowTokenStatus.Cancelled;
-        foreach(var form in await db.Wf_FlowFormTos.Where(x=>x.InstanceId==instance && x.Status==FlowFormToStatus.Pending).ToArrayAsync(ct))form.Status=FlowFormToStatus.Voided;
-        db.Wf_FlowHistories.Add(new(){Id=Guid.NewGuid(),InstanceId=instance,NodeId=i.CurrentNode,ActorId=actor,Action="withdraw",Comment=reason});
+        foreach(var token in await db.Wf_FlowTokens.Where(x=>members.Contains(x.InstanceId) && x.Status==FlowTokenStatus.Active).ToArrayAsync(ct))token.Status=FlowTokenStatus.Cancelled;
+        foreach(var form in await db.Wf_FlowFormTos.Where(x=>members.Contains(x.InstanceId) && x.Status==FlowFormToStatus.Pending).ToArrayAsync(ct))form.Status=FlowFormToStatus.Voided;
         await db.SaveChangesAsync(ct);
     }
     private async Task<Guid> Terminal(ApprovalWithdrawCommandV2 e,Source source,CancellationToken ct)

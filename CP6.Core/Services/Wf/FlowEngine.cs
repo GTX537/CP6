@@ -169,7 +169,7 @@ public partial class FlowEngine : IFlowEngine
 
         if (!_approvalDecisionV2) RequireLegacyRuntime(inst);
 
-        await AssertActorMayHandleAsync(task, actorId, onBehalfOf);   // ★ 归属闸（P0 票#1）：非本人/非委派/非系统 → E-WF-029
+        if (!_approvalDecisionV2) await AssertActorMayHandleAsync(task, actorId, onBehalfOf);   // ★ 归属闸（P0 票#1）：非本人/非委派/非系统 → E-WF-029
 
         task.Status = approve ? FlowTaskStatus.Approved : FlowTaskStatus.Rejected;
         task.Comment = comment;
@@ -260,6 +260,8 @@ public partial class FlowEngine : IFlowEngine
             if (!pruned)
             {
                 inst.Status = FlowInstanceStatus.Rejected;
+                if (_approvalDecisionV2)
+                    foreach (var active in SnapshotTokens(inst.Id)) CancelPendingTasksOfToken(inst.Id, active.Id);
                 CancelAllActiveTokens(inst.Id);   // ★ 驳回 = terminate，兄弟分支连坐
                 VoidPendingFormTos(inst.Id);      // ★ T9：驳回连坐，全 Pending 传签履历行 → 作废
             }
@@ -324,7 +326,7 @@ public partial class FlowEngine : IFlowEngine
             if (++_approvalTransitions > 1000) throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1("APP_START_TRANSITION_LIMIT", 422);
             // Automatic business/service effects need their own adopted Owner protocol. Preserve the
             // actual token and reason; neither execute the legacy side effect nor manufacture approval.
-            if (type is "servicetask" or "subflow")
+            if (type == "servicetask")
             { Suspend(inst, node, "APP_NODE_OWNER_REQUIRED"); return; }
             if (type == "end")
             {
@@ -502,9 +504,8 @@ public partial class FlowEngine : IFlowEngine
 
     internal async Task<FlowSchema> LoadSchemaAsync(Wf_FlowInstance instance, CancellationToken ct = default)
     {
-        if (_approvalDecisionV2 && instance.Creator == ApprovalRuntimeV2
-            && instance.Id == ApprovalInstanceId(_approvalOriginal!))
-            return _approvalDecisionSchema!;
+        if (_approvalStartV2 && instance.Creator == ApprovalRuntimeV2)
+            return Deserialize((await ApprovalPublication(instance.FlowDefVersionId!.Value, ct)).Fields["SchemaJson"]!);
         RequireLegacyRuntime(instance);
         if (instance.FlowDefVersionId is not Guid versionId)
         {
@@ -554,6 +555,12 @@ public partial class FlowEngine : IFlowEngine
     internal async Task<Guid> ResolvePinnedSubFlowVersionAsync(
         Wf_FlowInstance parent, string nodeId, string legacySubFlowKey, CancellationToken ct = default)
     {
+        if (_approvalStartV2)
+        {
+            var publication = await ApprovalPublication(parent.FlowDefVersionId!.Value, ct);
+            return Guid.Parse(publication.DependencyRefs.Single(x => x.Kind == "FLOW" && x.Location == nodeId).Version!);
+        }
+        RequireLegacyRuntime(parent);
         if (parent.FlowDefVersionId is Guid parentVersionId)
         {
             var dependency = await _db.Wf_FlowDefVersionDependencies.AsNoTracking()
