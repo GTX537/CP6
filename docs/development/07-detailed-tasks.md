@@ -2,7 +2,7 @@
 
 台账日期：2026-11-02。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
 
-全部已登记任务 375 项，已交付 24 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
+全部已登记任务 375 项，已交付 26 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
 
 任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)，分配步骤见[多对话协作](09-parallel-development.md)。所有状态/领取/证据只在JSON登记；未领取的候选不自动READY。
 
@@ -258,7 +258,7 @@
 | [WP09-08 NCR返工准入、实际完成和重检闭环](../../docs/development/task-plans/WP09.md#wp09-08) | Main | 待安排 | S01-02, S01-05, S02-00, WP02-10, WP02-13, WP08-14, WP09-07 | CODE / L | 未领取 |
 | [WP09-09 NCR处置财务采用、H30与全义务关闭](../../docs/development/task-plans/WP09.md#wp09-09) | Main | 待安排 | S01-02, S01-05, S02-00, WP02-10, WP02-13, WP04-31, WP09-07, WP09-12, WP10-04, WP11-44, WP11-63 | CODE / L | 未领取 |
 | [WP09-10 质量工程反馈、变更影响和技术偏离双授权](../../docs/development/task-plans/WP09.md#wp09-10) | Main | 待安排 | S01-02, S01-05, S02-00, WP02-10, WP02-13, WP05-25, WP05-26, WP05-29, WP05-30, WP05-33, WP05-37, WP09-07 | CODE / L | 未领取 |
-| [WP09-11 独立质量规格、Requirements与固定源证明](../../docs/development/task-plans/WP09.md#wp09-11) | Main | 待安排 | S01-07, S02-00, WP02-03, WP02-10, WP02-13, WP02-14, WP05-16, WP12-07 | CODE / M | 未领取 |
+| [WP09-11 独立质量规格、Requirements与固定源证明](../../docs/development/task-plans/WP09.md#wp09-11) | Main | 已交付 | S01-07, S02-00, WP02-03, WP02-10, WP02-13, WP02-14, WP05-16, WP12-07 | CODE / M | COORD |
 | [WP09-12 NCR专业物理应用与当前来源结果提供者](../../docs/development/task-plans/WP09.md#wp09-12) | Main | 待安排 | WP02-10, WP02-13, WP09-07, WP10-04 | CODE / M | 未领取 |
 
 ## WP10 仓储与物流
@@ -399,7 +399,7 @@
 | [WP12-04 DIRECT/DRAFT提交的五上下文原子准入](../../docs/development/task-plans/WP12.md#wp12-04) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP12-02, WP12-03 | CODE / L | 未领取 |
 | [WP12-05 表单目录收藏、历史查询和最终下载披露](../../docs/development/task-plans/WP12.md#wp12-05) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP02-14, WP02-15, WP12-04, WP12-07 | CODE / M | 未领取 |
 | [WP12-06 审批业务绑定与冻结提交TxS/TxE](../../docs/development/task-plans/WP12.md#wp12-06) | Main | 待安排 | S01-02, S01-07, S02-00, WP02-10, WP02-13, WP12-02 | CODE / L | 未领取 |
-| [WP12-07 审批决定TxD、Owner交付与回执连续链](../../docs/development/task-plans/WP12.md#wp12-07) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP12-06 | CODE / L | 未领取 |
+| [WP12-07 审批决定TxD、Owner交付与回执连续链](../../docs/development/task-plans/WP12.md#wp12-07) | Main | 已交付 | S01-02, S02-00, WP02-10, WP02-13, WP12-06 | CODE / L | COORD |
 | [WP12-08 待办办理双CAS、真实Actor与会签轮次](../../docs/development/task-plans/WP12.md#wp12-08) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP12-04, WP12-07, WP12-10 | CODE / L | 未领取 |
 | [WP12-09 退回重送、转交加签和无人审批恢复](../../docs/development/task-plans/WP12.md#wp12-09) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP12-08 | CODE / L | 未领取 |
 | [WP12-10 委派授权修订与历史职责映射](../../docs/development/task-plans/WP12.md#wp12-10) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP12-02 | CODE / M | 未领取 |

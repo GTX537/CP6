@@ -25994,6 +25994,14 @@
           ],
           "mode": "TASK_DELIVERY",
           "condition": "该仓真实Owner写入前交付；不能以接口存在代替采用。"
+        },
+        {
+          "requirement": "已采用的原生审批发布/接收/TxE启动及其准确引擎实例",
+          "task_ids": [
+            "WP12-06"
+          ],
+          "mode": "TASK_DELIVERY",
+          "condition": "TxD在原实例终态事务记录之前；本卡不要求所有服务/子流程业务节点实现。"
         }
       ],
       "source_refs": [

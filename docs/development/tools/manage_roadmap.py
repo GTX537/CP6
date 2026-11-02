@@ -209,7 +209,8 @@ def validate_tasks(data, root: Path, targets):
         deps = task.get("dependencies", [])
         if len(set(deps)) != len(deps) or set(deps) - set(tasks) or tid in deps:
             errors.append(f"{tid}: invalid task dependency")
-        if task["state"] in {"READY", "IN_PROGRESS", "VERIFYING", "DONE"} and any(d not in tasks or tasks[d]["state"] != "DONE" for d in deps):
+        # WP prerequisites are checked against their explicit definition bindings below.
+        if not tid.startswith("WP") and task["state"] in {"READY", "IN_PROGRESS", "VERIFYING", "DONE"} and any(d not in tasks or tasks[d]["state"] != "DONE" for d in deps):
             errors.append(f"{tid}: unfinished task dependencies")
         if task["state"] == "BLOCKED" and not task.get("blockers"):
             errors.append(f"{tid}: task BLOCKED needs a reason")
@@ -310,6 +311,64 @@ def string_list(value, *, nonempty=False):
             and all(isinstance(item, str) and item.strip() for item in value))
 
 
+def adopted_delivery(record, repository, root):
+    """Read existing delivery records; do not invent a second receipt registry."""
+    if not isinstance(record, dict) or record.get("status") not in {"MERGED", "CLOSED", "INTEGRATED"}:
+        return False
+    repo = {"Main": "CP6", "CRM": "CP6.CRM", "Platform": "CP6.Platform"}.get(repository)
+    receipt = record.get("main_delivery")
+    if isinstance(receipt, dict):
+        if receipt.get("repository") != repo:
+            return False
+        source, remote, pr = (receipt.get(k, "") for k in ("source", "remote_target", "pr"))
+    else:
+        source = record.get("integrated_source_sha", record.get("source_candidate_sha", record.get("source", "")))
+        remote = record.get("remote_main_sha", record.get("main", ""))
+        pr = record.get("pull_request", record.get("pr", ""))
+    return (isinstance(pr, str) and re.fullmatch(rf"https://github\.com/GTX537/{re.escape(repo or '')}/pull/[1-9][0-9]*", pr)
+            and isinstance(remote, str) and re.fullmatch(r"[0-9a-f]{40}", remote)
+            and isinstance(record.get("report"), str) and isinstance(source, str)
+            and evidence_ok([{"path": record["report"], "source_sha": source, "scope": "existing delivery"}], root))
+
+
+def validate_prerequisites(task, definition, tasks, root):
+    """The coordinator reviews scope; this boundary checks its exact recorded references."""
+    errors, required, accepted = [], set(), set()
+    tid = task["id"]
+    for binding in definition.get("prerequisite_bindings", []):
+        if (isinstance(binding, dict) and binding.get("mode") == "TASK_DELIVERY"
+                and isinstance(binding.get("requirement"), str) and string_list(binding.get("task_ids"))):
+            required.update((dep, binding["requirement"]) for dep in binding["task_ids"] if dep in task.get("dependencies", []))
+    adoptions = task.get("prerequisite_adoptions", [])
+    if not isinstance(adoptions, list):
+        errors.append(f"{tid}: invalid prerequisite adoptions")
+        adoptions = []
+    seen = set()
+    for adoption in adoptions:
+        if (not isinstance(adoption, dict)
+                or not all(isinstance(adoption.get(k), str) and adoption[k].strip() for k in ("task_id", "requirement", "scope"))
+                or not string_list(adoption.get("deliveries"), nonempty=True)):
+            errors.append(f"{tid}: invalid prerequisite adoption")
+            continue
+        pair = (adoption["task_id"], adoption["requirement"])
+        refs = adoption["deliveries"]
+        if pair not in required or pair in seen or len(set(refs)) != len(refs):
+            errors.append(f"{tid}: invalid prerequisite adoption")
+            continue
+        seen.add(pair)
+        provider = tasks.get(pair[0])
+        if provider is None or any(not adopted_delivery(provider.get(ref), provider["repository"], root) for ref in refs):
+            errors.append(f"{tid}: prerequisite delivery is not adopted: {pair[0]}")
+            continue
+        accepted.add(pair)
+    satisfied = {dep for dep, _ in required if {pair for pair in required if pair[0] == dep} <= accepted}
+    if task["state"] in {"READY", "IN_PROGRESS", "VERIFYING", "DONE"} and any(
+            dep not in tasks or (tasks[dep]["state"] != "DONE" and dep not in satisfied)
+            for dep in task.get("dependencies", [])):
+        errors.append(f"{tid}: unfinished task dependencies")
+    return errors
+
+
 def validate_definitions(data, root: Path, targets):
     """Definitions own card content; roadmap alone owns delivery/assignment state."""
     policy = data.get("dispatch_policy", {})
@@ -355,7 +414,7 @@ def validate_definitions(data, root: Path, targets):
         for key in DEFINITION_METADATA:
             if key not in definition or definition[key] != task.get(key):
                 errors.append(f"{tid}: definition metadata differs: {key}")
-        for key in ("state", "assignment", "validation_evidence", "delivery_evidence", "entry_gate", "blockers"):
+        for key in ("state", "assignment", "validation_evidence", "delivery_evidence", "entry_gate", "blockers", "prerequisite_adoptions"):
             if key in definition:
                 errors.append(f"{tid}: mutable ledger field in definition: {key}")
         pid = definition.get("package_id")
@@ -400,6 +459,7 @@ def validate_definitions(data, root: Path, targets):
             if binding["mode"] == "TASK_DELIVERY":
                 if not refs or set(refs) - set(task.get("dependencies", [])):
                     errors.append(f"{tid}: TASK_DELIVERY binding missing dependency")
+        errors.extend(validate_prerequisites(task, definition, tasks, root))
     return errors
 
 

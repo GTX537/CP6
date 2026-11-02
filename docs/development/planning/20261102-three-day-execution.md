@@ -1,6 +1,6 @@
 # CP6 三天执行计划：提供者核销、CRM验收补项与原命令编号
 
-> 状态：计划已编制，产品执行尚未开始。COORD由本对话单人执行，不启用并行代理。D1–D3是开始执行后的三个工作日，不是后台定时任务。
+> 状态：用户已授权执行三天目标，W252/D1已开工。COORD由本对话单人执行，不启用并行代理。D1–D3是开始执行后的三个工作日，不是后台定时任务。
 
 **目标：** 在原375细项内，先核销已有交付的完整提供者范围，再补CRM两条明确验收缺口，最后交付编号按原命令分配与恢复的限定实现。
 
@@ -38,11 +38,11 @@
 
 **执行顺序：**
 
-- [ ] 用当前源码和原报告核对三张卡的scope/正反验收，标出已运行、需复用与确有变化影响的部分。复用来源：WP02-10的共同事务/Stock原操作与[W249](../evidence/W249-01/DELIVERY.md)；质量规格[W192](../evidence/W192-01/DELIVERY.md)/[W193](../evidence/W193-01/DELIVERY.md)；OA [W181](../evidence/W181-01/DELIVERY.md)、[W183](../evidence/W183-01/DELIVERY.md)–[W185](../evidence/W185-01/DELIVERY.md)及[W191](../evidence/W191-01/DELIVERY.md)/[W200](../evidence/W200-01/DELIVERY.md)真实消费者。
-- [ ] 修正旧“全部dependencies整卡DONE”硬判断：完整前置DONE仍直接接受；本卡按既有`prerequisite_bindings`消费的准确已交付合同可独立满足。引用只能指向唯一台账内现有采用记录，并在本卡交付报告说明被消费范围；不接受无关交付、未采用候选或缺失引用。
-- [ ] 增加针对该决策的回归：准确子范围可采用；无关报告、缺少实际交付与伪造DONE拒绝；不能由提供者局部采用自动关闭消费者、125目标或247验收。依赖存在性、环路和真实未满足条件继续检查。
-- [ ] 按输入是否改变选择已有行为证据。只有共享代码、依赖或环境变化确实影响原结论时，运行对应代表Owner/质量规格/OA回执测试；不因SHA改变重跑全仓。
-- [ ] 三张卡逐一判断整卡出口，填写原scope覆盖、正反运行证据、当前采用与剩余。不完整者保留原状态并准确写缺项，不删除scope换完成数。
+- [x] 用当前源码和原报告核对三张卡的scope/正反验收，标出已运行、需复用与确有变化影响的部分。复用来源：WP02-10的共同事务/Stock原操作与[W249](../evidence/W249-01/DELIVERY.md)；质量规格[W192](../evidence/W192-01/DELIVERY.md)/[W193](../evidence/W193-01/DELIVERY.md)；OA [W181](../evidence/W181-01/DELIVERY.md)、[W183](../evidence/W183-01/DELIVERY.md)–[W185](../evidence/W185-01/DELIVERY.md)及[W191](../evidence/W191-01/DELIVERY.md)/[W200](../evidence/W200-01/DELIVERY.md)真实消费者。
+- [x] 修正旧“全部dependencies整卡DONE”硬判断：完整前置DONE仍直接接受；本卡按既有`prerequisite_bindings`消费的准确已交付合同可独立满足。引用只能指向唯一台账内现有采用记录，并在本卡交付报告说明被消费范围；不接受无关交付、未采用候选或缺失引用。
+- [x] 增加针对该决策的回归：准确子范围可采用；无关报告、缺少实际交付与伪造DONE拒绝；不能由提供者局部采用自动关闭消费者、125目标或247验收。依赖存在性、环路和真实未满足条件继续检查。
+- [x] 按输入是否改变选择已有行为证据。只有共享代码、依赖或环境变化确实影响原结论时，运行对应代表Owner/质量规格/OA回执测试；不因SHA改变重跑全仓。
+- [x] 三张卡逐一判断整卡出口，填写原scope覆盖、正反运行证据、当前采用与剩余。不完整者保留原状态并准确写缺项，不删除scope换完成数。
 - [ ] 一次完整diff审查，正常PR合并、远端核对、准确清理及finish。
 
 **本窗口不能额外要求：** WP02-10不等待全部消费者迁入；WP09-11不等待生产source解析/任务族/最终Use；WP12-07不等待版模实际搬位/报废等所有域效果。上述范围由原卡明确交后续消费者。
@@ -60,6 +60,9 @@ python -B docs/development/tools/manage_roadmap.py
 如产品输入确有影响，相关测试入口为`CP6.Tests/Erp/StockOriginalOperationPostgreSqlTests.cs`、`QualitySpecificationPostgreSqlTests.cs`、`QualitySpecificationBoundariesPostgreSqlTests.cs`、`ApprovalDecisionPostgreSqlTests.cs`、`ApprovalReceiptRecoveryPostgreSqlTests.cs`及对应HTTP测试。按具体未覆盖风险筛选，不把这些文件全部机械重跑。
 
 **日终出口：** 台账可按准确已交付合同处理依赖；三张候选各有明确核销结论。目标是完成三卡，不以“计划了三卡”或“已有报告数量”代替实际核销。
+
+
+D1本轮结果：D1准确交付依赖规则已实现；WP09-11与WP12-07按原范围核销，WP02-10保留租户连接采用关系待核对。原375卡变为26 DONE，125目标/247正式验收不变；继续D2 CRM两条验收。 采用收尾见[W252报告](../evidence/W252-01/DELIVERY.md)。
 
 ## D2 / W253：CRM两条验收补项
 
@@ -140,7 +143,7 @@ D3主要不确定性是实际scope和旧新writer切换。若在首个核对阶�
 
 ## 单人、跨仓与生命周期执行
 
-1. 本计划只登记候选窗口，W252/W253/W254当前均`PLANNED`、未领取、未启动；用户当前要求是先交付计划。实际开始后才做START，不为计划创建后台目标或定时执行。
+1. 用户已授权执行三天目标；W252/D1已真实START，W253/D2和W254/D3尚未开工。按前置与当前主线依次推进，不按日历定时启动。W251计划阶段“未开工”记录保留其历史含义。
 2. 每个窗口从所属仓库当时确认的最新`origin/main`创建任务分支。Main候选`codex/w252-01`、`codex/w253-01`（CRM采用台账）、`codex/w254-01`；CRM候选`codex/w253-02`。创建前仍查重复任务/PR，不能把这些拟名当已领取。
 3. 复用DEV-1 `D:/CP6-worktrees/wave17-dispatch-20261018`与DEV-2 `D:/CP6-worktrees/dev-2`，INTEGRATION-1默认空闲。DEV-1保持Main，保留可复用前端缓存；DEV-2在Handoff与CRM之间串行复用。所有写入均官方`status/start`，中断`resume`，收尾`finish`。
 4. D2先将DEV-2上的Handoff START固定提交推送保存，再以`finish --outcome deferred`记录“暂让CRM使用席位”、准确HEAD与恢复位置；保留该任务分支，释放后官方`bind`为CRM。CRM提交/合并/finish后bind回Handoff，以原任务、原Owner和已保存HEAD执行`resume`，在同一分支补DELIVERY，再正常PR合并/清理/finish。不能将已完成并删除的任务分支重新开工。DEV-1承载Main协调台账，登记准确CRM采用；含Handoff在内始终不超过2开发+1集成配额，不新增整仓副本。

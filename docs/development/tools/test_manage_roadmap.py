@@ -357,6 +357,86 @@ class TaskDefinitionTests(unittest.TestCase):
     def test_definition_matches_metadata_and_external_evidence_need_not_be_a_task(self):
         self.assertEqual(self.errors(), [])
 
+    def adopt_partial_foundation(self):
+        provider, consumer = self.data["implementation_tasks"]
+        provider["fixture_delivery"] = {
+            "status": "MERGED", "report": provider["plan_path"],
+            "source_candidate_sha": "a" * 40, "remote_main_sha": "b" * 40,
+            "pull_request": "https://github.com/GTX537/CP6/pull/1",
+        }
+        consumer.update(state="READY", entry_gate="CONFIRMED", assignment={
+            "chat_label": "fixture", "branch": "fixture", "worktree": "fixture",
+            "claimed_at": "2026-11-02T00:00:00Z"})
+        consumer["prerequisite_adoptions"] = [{
+            "task_id": provider["id"],
+            "requirement": self.definition["prerequisite_bindings"][0]["requirement"],
+            "deliveries": ["fixture_delivery"], "scope": "Exact-value provider only",
+        }]
+        return provider, consumer
+
+    def test_scoped_adoption_allows_consumer_without_closing_provider_or_target(self):
+        provider, consumer = self.adopt_partial_foundation()
+        self.assertEqual(self.errors(), [])
+        self.assertEqual(provider["state"], "PLANNED")
+        self.assertEqual(self.targets["T-A"]["delivery_state"], "PLANNED")
+        consumer["state"] = "DONE"
+        self.reject("task DONE lacks validation evidence")
+        self.reject("task DONE lacks audited remote-main")
+
+    def test_adoption_must_match_direct_task_delivery_requirement(self):
+        _, consumer = self.adopt_partial_foundation()
+        adoption = consumer["prerequisite_adoptions"][0]
+        adoption["requirement"] = "Unrelated report"
+        self.reject("invalid prerequisite adoption")
+        self.reject("unfinished task dependencies")
+        adoption["requirement"] = self.definition["prerequisite_bindings"][0]["requirement"]
+        self.definition["prerequisite_bindings"][0]["mode"] = "CONDITIONAL_CONSUMER"
+        self.reject("invalid prerequisite adoption")
+
+    def test_all_requirements_for_partial_dependency_must_be_adopted(self):
+        self.adopt_partial_foundation()
+        second = copy.deepcopy(self.definition["prerequisite_bindings"][0])
+        second["requirement"] = "Another required provider behavior"
+        self.definition["prerequisite_bindings"].append(second)
+        self.reject("unfinished task dependencies")
+
+    def test_candidate_missing_report_or_wrong_repository_cannot_supply_adoption(self):
+        provider, _ = self.adopt_partial_foundation()
+        original = copy.deepcopy(provider["fixture_delivery"])
+        for changes in ({"status": "CANDIDATE"}, {"report": "docs/missing.md"},
+                        {"report": "../outside.md"}, {"remote_main_sha": ""},
+                        {"pull_request": "https://github.com/GTX537/CP6.Platform/pull/1"}):
+            with self.subTest(changes=changes):
+                provider["fixture_delivery"] = {**original, **changes}
+                self.reject("prerequisite delivery is not adopted")
+                self.reject("unfinished task dependencies")
+
+    def test_unknown_duplicate_or_malformed_adoption_is_rejected(self):
+        _, consumer = self.adopt_partial_foundation()
+        original = copy.deepcopy(consumer["prerequisite_adoptions"])
+        for value in (None, {}, [None], original * 2,
+                      [{**original[0], "task_id": "UNKNOWN"}],
+                      [{**original[0], "deliveries": ["missing"]}],
+                      [{**original[0], "scope": ""}]):
+            with self.subTest(value=value):
+                consumer["prerequisite_adoptions"] = value
+                self.assertTrue(self.errors())
+
+    def test_existing_closed_main_delivery_can_be_referenced(self):
+        provider, _ = self.adopt_partial_foundation()
+        provider["fixture_delivery"] = {
+            "status": "CLOSED", "report": provider["plan_path"],
+            "main_delivery": {"repository": "CP6", "source": "a" * 40,
+                              "remote_target": "b" * 40,
+                              "pr": "https://github.com/GTX537/CP6/pull/1"},
+        }
+        self.assertEqual(self.errors(), [])
+
+    def test_adoption_never_bypasses_entry_confirmation(self):
+        _, consumer = self.adopt_partial_foundation()
+        consumer["entry_gate"] = "NOT_CHECKED"
+        self.reject("entry gate not confirmed")
+
     def test_definitions_must_cover_exactly_the_new_wp_tasks(self):
         self.definitions["tasks"] = []
         self.reject("definition task IDs differ")
