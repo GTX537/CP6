@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## 2026-11-02：W253三天目标D2
+
+D2实际CRM登录/切组织/旧会话失效通过；七天审核期限前、整点、之后及写入越界回滚通过，修复CRM Issue164。读取到期禁用动作；Expired持久终态与对应保留策略仍未实现，不关闭整卡。继续D3编号原命令提供者。 [单份交付](../development/evidence/W253-01/DELIVERY.md)。
+
+11 unique relevant PostgreSQL/HTTP scenarios passed,0 skipped: final8 review boundary/rollback cases,final1 browser login/switch case,and2 unchanged original decision cases from acceptance batch. Signed mock IdP/policy/business inputs;actual CRM OIDC/cookie/session/Owner/PG graph executed. Review/capability clocks controlled;IAM/retention/disclosure use real clocks. One author full SPEC/QUALITY review;no UI changes,Actions or deployment.
+
+CRM/Handoff已准确合并、清理并释放，Main本提交待正常采用/finish；最终见wave253-final-verification.json。
+
 ## 2026-11-02：W252三天目标D1
 
 D1准确交付依赖规则已实现；WP09-11与WP12-07按原范围核销，WP02-10保留租户连接采用关系待核对。原375卡变为26 DONE，125目标/247正式验收不变；继续D2 CRM两条验收。 [单份交付](../development/evidence/W252-01/DELIVERY.md)。

@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W252 D1交付](evidence/W252-01/DELIVERY.md)。三天目标已获授权并执行，COORD单人；D1收尾后连续推进D2 CRM。
+> 当前：[W253 D2交付](evidence/W253-01/DELIVERY.md)。COORD单人，继续D3编号原命令提供者。
+
+> 历史快照：[W252 D1交付](evidence/W252-01/DELIVERY.md)。三天目标已获授权并执行，COORD单人；D1收尾后连续推进D2 CRM。
 
 > 历史快照：[W251三天执行计划](planning/20261102-three-day-execution.md)已编制，W252/W253/W254仅PLANNED、未开工；COORD单人。W250已正常采用并finish，原七天保持完成。
 
