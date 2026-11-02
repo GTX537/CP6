@@ -1,5 +1,13 @@
 # AI 可读变更日志
 
+## 2026-11-02：W258第三期D1
+
+第三期D1修复Issue684：四处待执行PostgreSQL迁移在历史菜单ID达到int.MaxValue时选择正整数空闲ID，保留历史菜单、授权、工程原件及编号。第二期已按最终证明归档；D2/D3接续，原375卡状态不变。 [交付](../development/evidence/W258-01/DELIVERY.md)。
+
+Original EngineeringRevision forward-migration regression reproduced SQLSTATE22003 before fix, then passed with added max/max-1, all8 new menus, original role grant/product/numbering preservation and repeat-migration assertions. Actual owned PostgreSQL18 and EF migrations; simulated business/IAM inputs. No Actions/deployment/existing environment migration.
+
+Handoff已采用/清理/释放，Main本提交待正常采用/finish与Issue684关闭。D2真实匿名化过期链路、D3受权编号管理HTTP入口继续。
+
 ## 2026-11-02：W257第二期D3
 
 第二期D3新登记Main编号域格式规则CAS、不可变版本历史和原修改恢复已交付；旧号码/周期计数保持、当前权限及旧写者拒绝通过真实PG。第二期三天限定必做均已实现验证；完整375卡/旧消费者/全局域/CodeGen和CRM后续范围保留。 [交付](../development/evidence/W257-01/DELIVERY.md)。
