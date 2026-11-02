@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "baseline_id": "CP6-DEV-ROADMAP-20261011/R1",
-  "as_of": "2026-10-21",
+  "as_of": "2026-11-02",
   "scope": "125已接受设计目标的全量大任务计划与进度登记。247仅为修订运行场景；原模块验收需继续盘点。不是125目标实现已完成的证明。",
   "main_baseline_sha": "90ea752e9029d171e6a0307fcda06c66c3e04a69",
   "sources": [
@@ -161652,6 +161652,16 @@
       "date": "2026-11-01",
       "change": "原七天D1–D7业务与集成出口全部核销；生产业务验收采用明确模拟输入，实际Owner/PostgreSQL/HTTP/页面与原键恢复执行。最终完成以本轮正常合并和官方finish为准。 完整375/125/247状态保持。",
       "evidence": "docs/development/evidence/W249-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-02",
+      "change": "W249终态归档一次，原七天已完成；W250单人核对59张局部卡的原范围与真实剩余。",
+      "evidence": "docs/development/dispatch/20261102-wave250/README.md"
+    },
+    {
+      "date": "2026-11-02",
+      "change": "原59张局部卡逐项核对：37张明确实现余项、19张合同/验收待核、3张优先整卡核销（WP02-10/WP09-11/WP12-07）。375原卡状态不变；七天一期/W249已完成，不重做。",
+      "evidence": "docs/development/evidence/W250-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -161947,6 +161957,19 @@
         "remote_main_sha": "ceb02a60ab4628e4ef41fa9136001fdb03babfc7",
         "integrated_source_sha": "01a42c4d86df4dd7434c853dd5dd3f95123210ef",
         "remote_verified_at": "2026-10-16T12:17:14.768909+00:00"
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "合同/验收待核",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp01-01",
+        "delivered": "有版本替代资产、信任阶段和579项义务的ITER/REL划分已经交付。",
+        "remaining": "逐125目标采用判断仍需对照旧缺件覆盖/不能覆盖；不可恢复的历史原件保持缺失。模拟业务输入不伪造历史原件或签名；不重做已接受替代方案。",
+        "evidence_refs": [
+          "docs/development/evidence/WP01-01/trust-stages/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -164195,6 +164218,28 @@
           "kind": "DELIVERY",
           "at": "2026-10-19T03:35:03.633717+00:00"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-02",
+        "delivered": "S02-00混合布局已定；租户连接组件、ERP八表隔离及目录普通LOGIN/安装/HTTP均有交付。",
+        "remaining": "连接组件报告明确未全宿主接线：落实当前Main运行模型缓存、可信映射/池上下文及逐租户初始化版本和普通写入权限；历史数据切换另立任务，不全库自动转schema。",
+        "evidence_refs": [
+          "docs/development/evidence/WP02-02/directory-installation/DELIVERY.md",
+          "docs/development/evidence/WP02-02/tenant-connections/DELIVERY.md",
+          "docs/development/evidence/WP02-02/erp-tenant-isolation/DELIVERY.md",
+          "docs/development/evidence/WP02-02/identity-priority-tenant-isolation/DELIVERY.md",
+          "docs/development/evidence/WP02-02/provisioning/DELIVERY.md",
+          "docs/development/evidence/WP02-02/service-revocation/DELIVERY.md",
+          "docs/development/evidence/WP02-02/service-issuance/DELIVERY.md",
+          "docs/development/evidence/WP02-02/tenant-eligibility-control/DELIVERY.md",
+          "docs/development/evidence/WP02-02/identity-directory-isolation/DELIVERY.md",
+          "docs/development/evidence/WP02-02/directory-authorization/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -170169,6 +170214,61 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/567"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-03",
+        "delivered": "IAM CAS、当前权限、撤权共同门、字段和动作权限已有多轮实际Owner采用；浏览器bootstrap也已交付。",
+        "remaining": "按全字段注册表与现存写者清单补query/write/export/download未纳管入口；逐入口复用当前权限，不重新实现公共fence。",
+        "evidence_refs": [
+          "docs/development/evidence/WP02-03/field-decisions/DELIVERY.md",
+          "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md",
+          "docs/development/evidence/WP02-03/consistent-permission-read/DELIVERY.md",
+          "docs/development/evidence/WP02-03/platform-admin-transaction/DELIVERY.md",
+          "docs/development/evidence/WP02-03/user-create-whitelist/DELIVERY.md",
+          "docs/development/evidence/WP02-03/platform-admin-current-actor/DELIVERY.md",
+          "docs/development/evidence/WP02-03/impersonation-final-gate/DELIVERY.md",
+          "docs/development/evidence/WP02-03/session-authentication-current-state/DELIVERY.md",
+          "docs/development/evidence/WP02-03/authentication-policy-gate/DELIVERY.md",
+          "docs/development/evidence/WP02-03/authentication-entry-completion/DELIVERY.md",
+          "docs/development/evidence/WP02-03/authentication-session-continuity/DELIVERY.md",
+          "docs/development/evidence/WP02-03/authentication-browser-recovery/DELIVERY.md",
+          "docs/development/evidence/WP02-03/sso-admission-policy/DELIVERY.md",
+          "docs/development/evidence/WP02-03/sso-identity-admission/DELIVERY.md",
+          "docs/development/evidence/WP02-03/iam-user-assignments/DELIVERY.md",
+          "docs/development/evidence/WP02-03/organization-administration/DELIVERY.md",
+          "docs/development/evidence/WP02-03/role-administration/DELIVERY.md",
+          "docs/development/evidence/WP02-03/integer-role-identity/DELIVERY.md",
+          "docs/development/evidence/WP02-03/order-cancel-owner/DELIVERY.md",
+          "docs/development/evidence/WP02-03/operations-owner/DELIVERY.md",
+          "docs/development/evidence/WP02-03/production-inbound-owner/DELIVERY.md",
+          "docs/development/evidence/WP02-03/menu-action-administration/DELIVERY.md",
+          "docs/development/evidence/WP02-03/trusted-field-source/DELIVERY.md",
+          "docs/development/evidence/WP02-03/order-price-correction-owner/DELIVERY.md",
+          "docs/development/evidence/WP02-03/order-department-owner/DELIVERY.md",
+          "docs/development/evidence/WP02-03/order-read-owner/DELIVERY.md",
+          "docs/development/evidence/WP02-03/order-write-owner/DELIVERY.md",
+          "docs/development/evidence/WP02-03/stocktake-dashboard-owner/DELIVERY.md",
+          "docs/development/evidence/WP02-03/defect-owner/DELIVERY.md",
+          "docs/development/evidence/WP02-03/quality-owners/DELIVERY.md",
+          "docs/development/evidence/WP02-03/standalone-department/DELIVERY.md",
+          "docs/development/evidence/WP02-03/mes-realtime/DELIVERY.md",
+          "docs/development/evidence/WP02-03/wms-hub-scope/DELIVERY.md",
+          "docs/development/evidence/WP02-03/machine-owner/DELIVERY.md",
+          "docs/development/evidence/WP02-03/oee-owner/DELIVERY.md",
+          "docs/development/evidence/WP02-03/planning-owner/DELIVERY.md",
+          "docs/development/evidence/W136-01/DELIVERY.md",
+          "docs/development/evidence/W137-01/DELIVERY.md",
+          "docs/development/evidence/W138-01/DELIVERY.md",
+          "docs/development/evidence/W139-01/DELIVERY.md",
+          "docs/development/evidence/W140-01/DELIVERY.md",
+          "docs/development/evidence/W141-01/DELIVERY.md",
+          "docs/development/evidence/W148-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -170353,7 +170453,21 @@
           "pull_request": "https://github.com/GTX537/CP6/pull/278",
           "issue_state": "CLOSED"
         }
-      ]
+      ],
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-04",
+        "delivered": "租户管理和审计已同SaveChanges提交，暂停/恢复入口已有实际验证。",
+        "remaining": "TenantAdminService创建仍缺固定命令结果与模板版本，配置/生命周期命令CAS及单调版本需补；保合法历史只读和业务/登录共同fence。",
+        "evidence_refs": [
+          "docs/development/evidence/WP02-04/current-actor-final-gate/DELIVERY.md",
+          "docs/development/evidence/WP02-04/tenant-management-audit/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
+      }
     },
     {
       "id": "WP02-05",
@@ -171196,6 +171310,32 @@
         "original_reproduction_passed": true,
         "branch_deleted": true,
         "seat_released": true
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "合同/验收待核",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-05",
+        "delivered": "完整身份快照、目录/基线/水位、原字节与撤权链已交付，后续BUG419/543修复已采用。",
+        "remaining": "以当前全部权威写者核完tenant/org/user/permission/issuer向量及原字节；旧维护写者与issuer变更是否全部纳管尚需逐入口映射，不能从旧报告推断CRM未实现。",
+        "evidence_refs": [
+          "docs/development/evidence/WP02-05/identity-writer-coverage/DELIVERY.md",
+          "docs/development/evidence/WP02-05/identity-consistency/DELIVERY.md",
+          "docs/development/evidence/WP02-05/directory-consistency/DELIVERY.md",
+          "docs/development/evidence/WP02-05/trusted-directory-reader/DELIVERY.md",
+          "docs/development/evidence/WP02-05/directory-http-integration/DELIVERY.md",
+          "docs/development/evidence/WP02-05/directory-host/DELIVERY.md",
+          "docs/development/evidence/WP02-05/directory-configured-matrix/DELIVERY.md",
+          "docs/development/evidence/WP02-05/baseline-contract/DELIVERY.md",
+          "docs/development/evidence/WP02-05/baseline-raw-http/DELIVERY.md",
+          "docs/development/evidence/WP02-05/baseline-collector/DELIVERY.md",
+          "docs/development/evidence/WP02-05/baseline-integration/DELIVERY.md",
+          "docs/development/evidence/BUG-419/DELIVERY.md",
+          "docs/development/evidence/BUG-543/DELIVERY.md",
+          "docs/development/evidence/W130-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -171738,6 +171878,21 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/222"
           }
         ]
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "合同/验收待核",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-06",
+        "delivered": "原生IdentityIngress precheckpoint在重复/旧/同版早返前执行，身份与业务撤权共享本地门；W246两种竞争顺序通过。切组织端点注销持久旧会话，callback也轮换旧会话。",
+        "remaining": "切组织旧会话失效属于执行证据待核，不是缺代码；补原卡正反验收与现有测试映射，仅在没有有效执行证据时运行该场景。不得重复整个身份同步链。",
+        "evidence_refs": [
+          "docs/development/evidence/W130-01/DELIVERY.md",
+          "docs/development/evidence/W131-01/DELIVERY.md",
+          "docs/development/evidence/W246-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -172738,6 +172893,23 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/222"
           }
         ]
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-09",
+        "delivered": "Config/H01实际业务全图、回执/审计/Outbox与原结果在本仓PG事务；未知提交恢复和撤权竞争已执行。",
+        "remaining": "Inquiry模型明确Ignore平台Inbox；身份入站的Inbox不能证明业务入站Inbox。确认原卡适用的真实入站Owner并接完整收件/业务/原结果同事务，不能为公开HTTP凭空造消息或声称所有CRM已具备。",
+        "evidence_refs": [
+          "docs/development/evidence/W130-01/DELIVERY.md",
+          "docs/development/evidence/W131-01/DELIVERY.md",
+          "docs/development/evidence/W246-01/DELIVERY.md",
+          "docs/development/evidence/W117-01/DELIVERY.md",
+          "docs/development/evidence/W118-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -173605,6 +173777,29 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/593"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "优先整卡核销",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-10",
+        "delivered": "共同事务/不可变原命令结果、最终授权门、故障点和实际Stock/PA090代表Owner已交付；W249当前PG/HTTP/Outbox回归通过。本轮盘点writer职责见下文。",
+        "remaining": "原卡明确消费者逐项接入归各域卡，不能因此长期扣留本提供者。优先完成整卡原正反验收登记；旧validator要求所有前置整卡DONE，需按现行准确交付采用规则处理，而非增加产品证明层或批量关闭前置。",
+        "evidence_refs": [
+          "docs/development/evidence/WP02-10/main-original-operation/DELIVERY.md",
+          "docs/development/evidence/WP02-10/stock-original-operation/DELIVERY.md",
+          "docs/development/evidence/WP02-10/stock-outbox/DELIVERY.md",
+          "docs/development/evidence/W136-01/DELIVERY.md",
+          "docs/development/evidence/W137-01/DELIVERY.md",
+          "docs/development/evidence/W138-01/DELIVERY.md",
+          "docs/development/evidence/W139-01/DELIVERY.md",
+          "docs/development/evidence/W140-01/DELIVERY.md",
+          "docs/development/evidence/W171-01/DELIVERY.md",
+          "docs/development/evidence/W98-01/DELIVERY.md",
+          "docs/development/evidence/W249-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -173986,6 +174181,21 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/573"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-13",
+        "delivered": "字段历史、操作审计及嵌套来源最终事务已有交付，多类原生Owner复用。",
+        "remaining": "全域actor/effectiveActor/UTC与脱敏、总数/明细/导出同授权及policy/hold/unknown清理收据仍需落到各权威出口；不能把Machine字段历史视为整个AUD。",
+        "evidence_refs": [
+          "docs/development/evidence/W135-01/DELIVERY.md",
+          "docs/development/evidence/W153-01/DELIVERY.md",
+          "docs/development/evidence/W64-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -174183,6 +174393,21 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/611"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-14",
+        "delivered": "W189大小/扫描/隔离/不可变内容/当前下载和hold已实现，W190真实DOC绑定已采用。",
+        "remaining": "补全Owner引用图与清理决定、通用草稿转正式原操作及ACT-FILE LOCAL_AUTHORITATIVE_GUARD实际适配；不要重复DOC绑定或以未做生产部署否定本地实际扫描。",
+        "evidence_refs": [
+          "docs/development/evidence/W135-01/DELIVERY.md",
+          "docs/development/evidence/W189-01/DELIVERY.md",
+          "docs/development/evidence/W190-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -174320,6 +174545,22 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/550"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-15",
+        "delivered": "稳定subject目录身份修复已交付；CRM同意撤回和保留已有独立原生行为。",
+        "remaining": "逐Owner导出清单及遗漏/不可用、擦除预览/批准/hold、UNKNOWN责任与墓碑恢复/下载编排尚未完整实现；真实各域适配仍各自接入。",
+        "evidence_refs": [
+          "docs/development/evidence/W125-01/DELIVERY.md",
+          "docs/development/evidence/W135-01/DELIVERY.md",
+          "docs/development/evidence/W127-01/DELIVERY.md",
+          "docs/development/evidence/W128-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -174540,6 +174781,21 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/550"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-16",
+        "delivered": "PG序号原子锁、租户/BizKey及调用者事务savepoint已实现，代码生成preview已有交付。",
+        "remaining": "NextAsync只有bizKey/日期，尚无command到原号码持久映射；补法人/业务scope/规则版本、永不回收，以及生成器模板版本/diff/路径覆盖白名单。",
+        "evidence_refs": [
+          "docs/development/evidence/WP02-16/codegen-preview/DELIVERY.md",
+          "docs/development/evidence/W135-01/DELIVERY.md",
+          "docs/development/evidence/W65-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -174838,6 +175094,22 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/564"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-18",
+        "delivered": "首页状态、深链和当前权限bootstrap已接入。",
+        "remaining": "服务端版本化菜单/个性配置CAS、各Owner KPI定义与授权缓存键仍需完整实现/验收；零值、无权和缺源必须分开。",
+        "evidence_refs": [
+          "docs/development/evidence/WP02-18/menu-refresh-recovery/DELIVERY.md",
+          "docs/development/evidence/WP02-18/dashboard-states/DELIVERY.md",
+          "docs/development/evidence/W146-01/DELIVERY.md",
+          "docs/development/evidence/W148-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -175562,7 +175834,21 @@
           },
           "window_closed_at": "2026-10-16T12:24:58.205425+00:00"
         }
-      ]
+      ],
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-28",
+        "delivered": "Main固定包/实际加载观察和回退拒绝路径已有交付，相关本地证据可复用。",
+        "remaining": "尚无两份兼容实际制品的正向更新/回退采用证明；需隔离PG schema/驱动兼容验证及准确采用清单。正式R2/GHCR候选和推广另行办理，不能拿本地文件替代。",
+        "evidence_refs": [
+          "docs/development/evidence/WP02-28/published-host/DELIVERY.md",
+          "docs/development/evidence/WP02-28/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
+      }
     },
     {
       "id": "WP02-29",
@@ -175909,6 +176195,23 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/222"
           }
         ]
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "合同/验收待核",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-29",
+        "delivered": "CRM平台0.10.3、原生HTTP/消息/操作观测及managed payload启动核验已交付；W246限定D5完成。",
+        "remaining": "对原卡“实际加载版本/配置及Owner边界”逐项核销剩余身份观察项，区分已证实托管payload与未证实进程/native身份；正式发布与环境推广不是此卡额外开工门。",
+        "evidence_refs": [
+          "docs/development/evidence/W130-01/DELIVERY.md",
+          "docs/development/evidence/W131-01/DELIVERY.md",
+          "docs/development/evidence/W132-01/DELIVERY.md",
+          "docs/development/evidence/W143-01/DELIVERY.md",
+          "docs/development/evidence/W246-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -176892,6 +177195,23 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/223"
           }
         ]
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "合同/验收待核",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp03-01",
+        "delivered": "不可变Bundle/日历、Draft/Preview/Activate、替代退休与DB时钟已交付；W247实际日历/DST和旧Attempt冻结验证通过。",
+        "remaining": "核完整effectivity及同day/holiday合法域与原验收映射，不能沿用“等真实企业政策”的旧阻塞。现合同H01仅Asia/Shanghai，任意时区自动转Lead属于另版合同，不能暗增本卡范围。",
+        "evidence_refs": [
+          "docs/development/evidence/W133-01/DELIVERY.md",
+          "docs/development/evidence/W135-01/DELIVERY.md",
+          "docs/development/evidence/W234-01/DELIVERY.md",
+          "docs/development/evidence/W246-01/DELIVERY.md",
+          "docs/development/evidence/W247-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -177766,6 +178086,27 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/223"
           }
         ]
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "合同/验收待核",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp03-02",
+        "delivered": "IssuedAttempt/浏览器CSRF、Submission/H01同事务全图及原回执恢复已采用，W234/247补实际传播、规范化与日历验收。",
+        "remaining": "整卡共同NUM/FILE/PRIV适用需按W135原闭合合同准确核销：LeadNo可未分配、无附件输入，不应新增虚构调用；PRIV当前同意/保留与全域导出分开。完成原公开流程状态验收映射。",
+        "evidence_refs": [
+          "docs/development/evidence/W115-01/DELIVERY.md",
+          "docs/development/evidence/W133-01/DELIVERY.md",
+          "docs/development/evidence/W134-01/DELIVERY.md",
+          "docs/development/evidence/W135-01/DELIVERY.md",
+          "docs/development/evidence/W234-01/DELIVERY.md",
+          "docs/development/evidence/W246-01/DELIVERY.md",
+          "docs/development/evidence/W247-01/DELIVERY.md",
+          "docs/development/evidence/W117-01/DELIVERY.md",
+          "docs/development/evidence/W118-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -178366,6 +178707,23 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/548"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "合同/验收待核",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp03-03",
+        "delivered": "W120–122审核队列/字段裁剪、真实H01放行/拒绝及React/BFF/PG场景已交付；W124保留匿名化、W133发布已采用。",
+        "remaining": "独立审核到期终态的实际过期HTTP/worker效果证据尚未定位；60分钟PII保留与7天审核到期不同。优先核源码/已有测试，再补缺失执行，不重做放行和拒绝。",
+        "evidence_refs": [
+          "docs/development/evidence/W133-01/DELIVERY.md",
+          "docs/development/evidence/W120-01/DELIVERY.md",
+          "docs/development/evidence/W121-01/DELIVERY.md",
+          "docs/development/evidence/W122-01/DELIVERY.md",
+          "docs/development/evidence/W124-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -178849,6 +179207,23 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/548"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp03-04",
+        "delivered": "Consent撤回当前权限、60分钟保留/Attempt墓碑和hold worker已经实际验证；导出下载权限来源已提供。",
+        "remaining": "原生导出制品20/30/90/99、单次下载及FILE/PRIV/NUM适用编排未完成；Lead月度保留真实边界仅有投影证据的部分需按合同执行，不偷改期限换通过。",
+        "evidence_refs": [
+          "docs/development/evidence/W126-01/DELIVERY.md",
+          "docs/development/evidence/W127-01/DELIVERY.md",
+          "docs/development/evidence/W128-01/DELIVERY.md",
+          "docs/development/evidence/W133-01/DELIVERY.md",
+          "docs/development/evidence/W124-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -181223,6 +181598,24 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/627"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp04-33",
+        "delivered": "现有ERP产品主账准确商业身份/单位及工程双Owner映射已有交付，库存身份W204已补。",
+        "remaining": "当前映射明确IDENTITY_SITE_ONLY；法人/制造等完整scope版本适用及所有legacy资格变更frontier继续补，币种/有效状态按原主账读取，禁止另建ERP表。",
+        "evidence_refs": [
+          "docs/development/evidence/W144-01/DELIVERY.md",
+          "docs/development/evidence/W145-01/DELIVERY.md",
+          "docs/development/evidence/W147-01/DELIVERY.md",
+          "docs/development/evidence/W149-01/DELIVERY.md",
+          "docs/development/evidence/W150-01/DELIVERY.md",
+          "docs/development/evidence/W204-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -181289,6 +181682,25 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/651"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "合同/验收待核",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp04-34",
+        "delivered": "原商业行快照W226、Shipment份额W222/223、政策/Delivery/退货授权W227–229均已采用，W248商业桥接受明确模拟外部输入。",
+        "remaining": "核完整旧发运/已退份额和撤销/current来源覆盖，落实原商业Owner允许退货依据的准确适配；模拟外部服务可验收边界，不能被说成内部ERP所有来源均已实现。",
+        "evidence_refs": [
+          "docs/development/evidence/W226-01/DELIVERY.md",
+          "docs/development/evidence/W222-01/DELIVERY.md",
+          "docs/development/evidence/W223-01/DELIVERY.md",
+          "docs/development/evidence/W227-01/DELIVERY.md",
+          "docs/development/evidence/W228-01/DELIVERY.md",
+          "docs/development/evidence/W229-01/DELIVERY.md",
+          "docs/development/evidence/W248-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -181534,6 +181946,19 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/569"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-02",
+        "delivered": "稳定工程产品、原商业身份/Site与双Owner确认及映射历史已交付。",
+        "remaining": "当前只证IDENTITY_SITE_ONLY；类别/来源、法人适用及技术修订/配置范围要按原scope补，停用改型保原身份与历史，不重建产品号。",
+        "evidence_refs": [
+          "docs/development/evidence/W150-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -181641,6 +182066,26 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/571"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-03",
+        "delivered": "EngineeringRevision/WorkingSnapshot/Candidate成员原Ref及快照/选项已实现；后续ROU/BOM/DOC/QUALITY/关系/基线已有真实采用。",
+        "remaining": "完整三方rebase逐项KEEP/ACCEPT/MANUAL与旧CheckRun失效、父基线/变更和legacy入口覆盖仍需实施/验收，不能把已交付成员类型继续列空缺。",
+        "evidence_refs": [
+          "docs/development/evidence/W151-01/DELIVERY.md",
+          "docs/development/evidence/W152-01/DELIVERY.md",
+          "docs/development/evidence/W186-01/DELIVERY.md",
+          "docs/development/evidence/W187-01/DELIVERY.md",
+          "docs/development/evidence/W190-01/DELIVERY.md",
+          "docs/development/evidence/W192-01/DELIVERY.md",
+          "docs/development/evidence/W201-01/DELIVERY.md",
+          "docs/development/evidence/W202-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -181791,6 +182236,22 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/579"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "合同/验收待核",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-04",
+        "delivered": "旧版模创建/改版/纠正及版本化原结果、两旧页与Order意图已交付，BaseCd/WdPtnNo/WdRev保留。",
+        "remaining": "按全部旧写者核expectedNativeRowVersion+expectedTechnicalControl、有效区间/删除/导入与Unknown恢复覆盖；技术规格当前DRAFT不等正式控制批准，但不得将后续制造许可扩大成本卡。",
+        "evidence_refs": [
+          "docs/development/evidence/W156-01/DELIVERY.md",
+          "docs/development/evidence/W158-01/DELIVERY.md",
+          "docs/development/evidence/W159-01/DELIVERY.md",
+          "docs/development/evidence/W157-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -181905,6 +182366,20 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/578"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-05",
+        "delivered": "CREATE_OR_LINK真实订单采用、完整订单身份及CHANGE/CANCEL请求原结果已交付。",
+        "remaining": "CHANGE_REQUEST/CANCEL_REQUEST仍仅REQUESTED；接真实ERP/PE决定/应用/回执和恢复，替换旧直接联动/重建关联路径，不能以请求或NoOp算OWNER_APPLIED。",
+        "evidence_refs": [
+          "docs/development/evidence/W157-01/DELIVERY.md",
+          "docs/development/evidence/W158-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -181986,6 +182461,23 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/579"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "合同/验收待核",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-06",
+        "delivered": "W165已实现实际双Role当前轮关联和技术/实物HoldExact共同提交；W166–168后续维护/使用也存在，W159不是当前全部范围。",
+        "remaining": "逐原协议核不可变证据Inbox、迟到/冲突/observationGeneration及各Owner准确控制适用；当前技术DRAFT路径不自动获得批准资格。需要外部Owner原件的路径按真实调用补，不重做双Role关联。",
+        "evidence_refs": [
+          "docs/development/evidence/W159-01/DELIVERY.md",
+          "docs/development/evidence/W165-01/DELIVERY.md",
+          "docs/development/evidence/W166-01/DELIVERY.md",
+          "docs/development/evidence/W167-01/DELIVERY.md",
+          "docs/development/evidence/W168-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -182148,6 +182640,20 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/626"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-08",
+        "delivered": "W186路线稳定operation occurrence/依赖及ProductProcess原源已实现，W203资源能力引用已接入。",
+        "remaining": "正式资源/工具规格与替代工艺的适用及参数来源继续补；当前DRAFT_ONLY和声明能力不能声称完整受控路线资格。生产Claim/Start属资源/执行卡，勿扩大本卡。",
+        "evidence_refs": [
+          "docs/development/evidence/W186-01/DELIVERY.md",
+          "docs/development/evidence/W203-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -182226,6 +182732,19 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/609"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-09",
+        "delivered": "W187 BOM occurrence、超常精度数量、原ProductMaterial来源、CAS/差异/where-used已交付。",
+        "remaining": "补批准单位转换、替代/配置条件与完整适用域；不得以隐含倍率1或缩小合法精度代替，旧行历史继续保持。",
+        "evidence_refs": [
+          "docs/development/evidence/W187-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -182344,6 +182863,21 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/624"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "合同/验收待核",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-10",
+        "delivered": "W188制造模型后，W201 ENG-OUTPUT-RELATIONS/1闭包/主产品/多输出原关系已实际采用，W202冻结也已消费。",
+        "remaining": "核外部Item/Spec准确来源适用、完整合法配置/关系输入及大合法包验收证据；缺的是原卡完整覆盖映射，不能把REL/WO全部实现列为此卡前置。",
+        "evidence_refs": [
+          "docs/development/evidence/W188-01/DELIVERY.md",
+          "docs/development/evidence/W201-01/DELIVERY.md",
+          "docs/development/evidence/W202-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -182458,6 +182992,21 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/624"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-11",
+        "delivered": "W193完整输入/水位/策略CheckRun、真实QUALITY/DOC等pin/current/HoldExact已交付；W201输出关系已纳管。",
+        "remaining": "资源/工具等尚未具备资格的来源参与者必须保持UNKNOWN/BLOCK；补其实际原生资格/current参加和完整内部制造正例，签名或GET不替代共同最终检查。",
+        "evidence_refs": [
+          "docs/development/evidence/W193-01/DELIVERY.md",
+          "docs/development/evidence/W201-01/DELIVERY.md",
+          "docs/development/evidence/W203-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -182531,6 +183080,20 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/625"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-12",
+        "delivered": "W202同PG冻结完整成员/原manifest/关系/输出绑定/回执与恢复已通过；实际正例为PURCHASED_FINISHED。",
+        "remaining": "INTERNAL技术冻结仍受实际资源/工具资格来源缺项限制；补全所需参与者与合法大包/后继覆盖，REL只保真实Owner关联，不以委托字符串授制造许可。",
+        "evidence_refs": [
+          "docs/development/evidence/W202-01/DELIVERY.md",
+          "docs/development/evidence/W203-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -182647,6 +183210,20 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/618"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-13",
+        "delivered": "W194不可变来源/需求分解/依赖防环/精确判据与W195专业评估已实现。",
+        "remaining": "接CRM/销售实际原件读取和DOC/FILE澄清来源，补准确方法需求/必要性与可见域覆盖；不预造ITER/VER正式ID，已做UOM判据不重复。",
+        "evidence_refs": [
+          "docs/development/evidence/W194-01/DELIVERY.md",
+          "docs/development/evidence/W195-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -182723,6 +183300,20 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/619"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-14",
+        "delivered": "W196完整ReqSet受控评审/批准与真实FLOW已实现，W197迭代已消费。",
+        "remaining": "真实适用交集冲突裁决、澄清/范围分离/ECM/DEV去向以及后继差分/已采用消费者影响意图仍需完整闭合，不把普通批准当冲突裁决。",
+        "evidence_refs": [
+          "docs/development/evidence/W196-01/DELIVERY.md",
+          "docs/development/evidence/W197-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -182877,6 +183468,21 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/614"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "合同/验收待核",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-16",
+        "delivered": "W190准确原件/派生/语言/永久绑定/历史下载与W191冻结专业评审/批准、真实FLOW/回执均已交付。",
+        "remaining": "独立旧版hold/撤回/可用性与失权旧URL拒绝逐原验收核销；不能由FILE hold推定DOC独立撤回已有。源中未定位完整DOC撤回动作，需确认职责后只补真实缺项。",
+        "evidence_refs": [
+          "docs/development/evidence/W190-01/DELIVERY.md",
+          "docs/development/evidence/W191-01/DELIVERY.md",
+          "docs/development/evidence/W189-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -182996,6 +183602,22 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/620"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "合同/验收待核",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-18",
+        "delivered": "项目/里程碑/任务/固定权重与确认角色W197已交付，候选/评审/应用W198–200已后续采用。",
+        "remaining": "按原卡核暂停恢复对未决外部请求和输入变化的当前重核、来源/变更/父基线适用及0分母；CHANGE/LEGACY路径待确认，不能用后续OA未实现的旧说法阻塞。",
+        "evidence_refs": [
+          "docs/development/evidence/W197-01/DELIVERY.md",
+          "docs/development/evidence/W198-01/DELIVERY.md",
+          "docs/development/evidence/W199-01/DELIVERY.md",
+          "docs/development/evidence/W200-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -183110,6 +183732,21 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/622"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "合同/验收待核",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-19",
+        "delivered": "完整候选/ReviewIssue W198、冻结包与原生OA同事务提交W199已交付，W200决定应用也已接。",
+        "remaining": "核ITER-OA-APPLICATION/1原身份与UUID别名完整合法域，当前native UUID正例不能代替全部外部身份映射；只补真实未覆盖路径，不另造第二种权威摘要。",
+        "evidence_refs": [
+          "docs/development/evidence/W198-01/DELIVERY.md",
+          "docs/development/evidence/W199-01/DELIVERY.md",
+          "docs/development/evidence/W200-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -183187,6 +183824,19 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/623"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "合同/验收待核",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-20",
+        "delivered": "W200真实Inbox/决定、Blocking独立VerifiedClosed、当前控制与撤回竞争及Owner应用回执已交付。",
+        "remaining": "核完整外部身份/alias及GAP/迟到/退回拒绝映射的原正反验收范围；模拟业务角色可执行，不能因没有真实企业数据扣留整卡。",
+        "evidence_refs": [
+          "docs/development/evidence/W200-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -184011,6 +184661,19 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/571"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-39",
+        "delivered": "W152已有工程配置选项维护/快照。",
+        "remaining": "当前ENGINEERING_OPTIONS_ONLY；完整Required/Provided occurrence组合、方向/比例/工程依据、客户Site活动窗口/取整损耗、MATCH等解析与显式备选选择仍需实现。",
+        "evidence_refs": [
+          "docs/development/evidence/W152-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -185477,6 +186140,22 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/551"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp08-01",
+        "delivered": "普通设备归属、资源原件/时间UOM/声明能力W136/154/155/203已交付。",
+        "remaining": "路线适用性、完整效力段、RES-WRITE-1 token最终写门、未来切段失效及SCHED/EXEC真实Claim准入仍需实现；身份读取不等资格。",
+        "evidence_refs": [
+          "docs/development/evidence/W136-01/DELIVERY.md",
+          "docs/development/evidence/W154-01/DELIVERY.md",
+          "docs/development/evidence/W155-01/DELIVERY.md",
+          "docs/development/evidence/W203-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -186101,6 +186780,24 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/221"
           }
         ]
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "合同/验收待核",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp08-10",
+        "delivered": "W240 Root TIME、W241自动排列、W242队列及W244/245统一Board与页面实际通过，原D3已经完成。",
+        "remaining": "按完整RootWO/快照/operation源核原卡支持域和冲突/冻结计划的未覆盖情况；部分源由SIM profile登记，需区分允许的模拟外部输入与尚未接入的产品内部来源，不能因模拟本身判失败。",
+        "evidence_refs": [
+          "docs/development/evidence/W240-01/DELIVERY.md",
+          "docs/development/evidence/W241-01/DELIVERY.md",
+          "docs/development/evidence/W242-01/DELIVERY.md",
+          "docs/development/evidence/W243-01/DELIVERY.md",
+          "docs/development/evidence/W244-01/DELIVERY.md",
+          "docs/development/evidence/W245-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -186366,6 +187063,24 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/221"
           }
         ]
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "合同/验收待核",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp08-11",
+        "delivered": "W243六阶段和W245恢复页面、未知结果/唯一队列/WO共同事务已实际执行，不能重做六阶段。",
+        "remaining": "核原协议全部WO/RES/EXEC当前参与者及已开始竞争在当前SIM profile以外的适用边界；仅原卡未覆盖路径追加验证，模拟输入本身不是缺口。",
+        "evidence_refs": [
+          "docs/development/evidence/W240-01/DELIVERY.md",
+          "docs/development/evidence/W241-01/DELIVERY.md",
+          "docs/development/evidence/W242-01/DELIVERY.md",
+          "docs/development/evidence/W243-01/DELIVERY.md",
+          "docs/development/evidence/W244-01/DELIVERY.md",
+          "docs/development/evidence/W245-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -186693,6 +187408,21 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/626"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp08-16",
+        "delivered": "W154资源原件/工作中心同事务、W155时间UOM和W203基础声明能力已交付。",
+        "remaining": "稳定Assignment原件、准确受控能力/批准来源与当前版本尚需补全；DECLARED_NOT_QUALIFIED不视为专业资格。路线相关RES token及执行许可交WP08-01，不扩大此提供者。",
+        "evidence_refs": [
+          "docs/development/evidence/W154-01/DELIVERY.md",
+          "docs/development/evidence/W155-01/DELIVERY.md",
+          "docs/development/evidence/W203-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -187312,6 +188042,20 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/615"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "优先整卡核销",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp09-11",
+        "delivered": "W192独立专业规格完整Requirements/NA/waivable/原文批准、current/撤回/同门HoldExact和页面均已验证；W193工程在冻结前实际采用。",
+        "remaining": "优先整卡核销：原正反验收与既有PG/HTTP/UI证据逐条绑定即可，未发现需要以生产Use为前置的本卡实现缺口。正式生产解析/任务族/Use原文明确交WP09-01/02；模拟专业资料可验收。",
+        "evidence_refs": [
+          "docs/development/evidence/W192-01/DELIVERY.md",
+          "docs/development/evidence/W193-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -187872,6 +188616,31 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/641"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp10-01",
+        "delivered": "W206–218位置DRAFT/QUARANTINED、类型化容量/审批/时钟/库存独立控制及出库采用已交付。",
+        "remaining": "SPACE CREATE与手工共享初始化器、REUSE_EXISTING保旧量/控制和所有旧写者初始化Fence尚需完整接入；不能因新位置审批完成声称SPACE路径完成。",
+        "evidence_refs": [
+          "docs/development/evidence/W206-01/DELIVERY.md",
+          "docs/development/evidence/W207-01/DELIVERY.md",
+          "docs/development/evidence/W208-01/DELIVERY.md",
+          "docs/development/evidence/W209-01/DELIVERY.md",
+          "docs/development/evidence/W210-01/DELIVERY.md",
+          "docs/development/evidence/W211-01/DELIVERY.md",
+          "docs/development/evidence/W212-01/DELIVERY.md",
+          "docs/development/evidence/W213-01/DELIVERY.md",
+          "docs/development/evidence/W214-01/DELIVERY.md",
+          "docs/development/evidence/W215-01/DELIVERY.md",
+          "docs/development/evidence/W216-01/DELIVERY.md",
+          "docs/development/evidence/W217-01/DELIVERY.md",
+          "docs/development/evidence/W218-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -188071,6 +188840,28 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/640"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp10-03",
+        "delivered": "ADJ/MOVE原操作、未知恢复及实际Stock/IN/调拨/退货入口已有多轮共同事务与当前权限验证。",
+        "remaining": "完整WriteKind合法来源、RSV预算/容量/质量/用途同QuantityUoW及manual/import/job/legacy所有写者继续补；不重跑已稳定Stock恢复链或缩小数量合法域。",
+        "evidence_refs": [
+          "docs/development/evidence/W204-01/DELIVERY.md",
+          "docs/development/evidence/W205-01/DELIVERY.md",
+          "docs/development/evidence/W217-01/DELIVERY.md",
+          "docs/development/evidence/W98-01/DELIVERY.md",
+          "docs/development/evidence/W137-01/DELIVERY.md",
+          "docs/development/evidence/W140-01/DELIVERY.md",
+          "docs/development/evidence/W230-01/DELIVERY.md",
+          "docs/development/evidence/W236-01/DELIVERY.md",
+          "docs/development/evidence/W239-01/DELIVERY.md",
+          "docs/development/evidence/W249-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -189076,6 +189867,37 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/215"
           }
         ]
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp10-10",
+        "delivered": "可信SourceDemand/Request及直接MOVE阶段W142/205/235/236已实现，REP执行W239已消费。",
+        "remaining": "在途TRANSIT坐标、完整Selection/全部RSV Use与StockPrepareCall、现场指令/实际事实及所有来源类型继续接入；现MOVE正例不等全Transfer。",
+        "evidence_refs": [
+          "docs/development/evidence/W142-01/DELIVERY.md",
+          "docs/development/evidence/W204-01/DELIVERY.md",
+          "docs/development/evidence/W205-01/DELIVERY.md",
+          "docs/development/evidence/W206-01/DELIVERY.md",
+          "docs/development/evidence/W207-01/DELIVERY.md",
+          "docs/development/evidence/W208-01/DELIVERY.md",
+          "docs/development/evidence/W209-01/DELIVERY.md",
+          "docs/development/evidence/W210-01/DELIVERY.md",
+          "docs/development/evidence/W211-01/DELIVERY.md",
+          "docs/development/evidence/W212-01/DELIVERY.md",
+          "docs/development/evidence/W213-01/DELIVERY.md",
+          "docs/development/evidence/W214-01/DELIVERY.md",
+          "docs/development/evidence/W215-01/DELIVERY.md",
+          "docs/development/evidence/W216-01/DELIVERY.md",
+          "docs/development/evidence/W235-01/DELIVERY.md",
+          "docs/development/evidence/W236-01/DELIVERY.md",
+          "docs/development/evidence/W237-01/DELIVERY.md",
+          "docs/development/evidence/W238-01/DELIVERY.md",
+          "docs/development/evidence/W239-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -189509,6 +190331,21 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/641"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp10-19",
+        "delivered": "位置分配守卫W218，准确订单行/Shipment原件W222/223已交付。",
+        "remaining": "完整RSV Allocation→Pick→Stage→Package→Shipment、scan/封箱/称重与Stock同最终门，以及采购退运Part具名来源仍需实施。",
+        "evidence_refs": [
+          "docs/development/evidence/W218-01/DELIVERY.md",
+          "docs/development/evidence/W222-01/DELIVERY.md",
+          "docs/development/evidence/W223-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -190041,6 +190878,33 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/224"
           }
         ]
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp10-22",
+        "delivered": "W220–233 RMA来源/申请/entitlement/授权/实收IN/质量/处置/更正和W248独立商业/财务观察已交付。",
+        "remaining": "非空例外批准路径、完整H30原source/claim共同资源计划及NCR/FININV实际消费者尚需闭合；财务全部关闭归WP10-23，不能以观察POSTED冒充内部Finance已实现。",
+        "evidence_refs": [
+          "docs/development/evidence/W220-01/DELIVERY.md",
+          "docs/development/evidence/W221-01/DELIVERY.md",
+          "docs/development/evidence/W222-01/DELIVERY.md",
+          "docs/development/evidence/W223-01/DELIVERY.md",
+          "docs/development/evidence/W224-01/DELIVERY.md",
+          "docs/development/evidence/W225-01/DELIVERY.md",
+          "docs/development/evidence/W226-01/DELIVERY.md",
+          "docs/development/evidence/W227-01/DELIVERY.md",
+          "docs/development/evidence/W228-01/DELIVERY.md",
+          "docs/development/evidence/W229-01/DELIVERY.md",
+          "docs/development/evidence/W230-01/DELIVERY.md",
+          "docs/development/evidence/W231-01/DELIVERY.md",
+          "docs/development/evidence/W232-01/DELIVERY.md",
+          "docs/development/evidence/W233-01/DELIVERY.md",
+          "docs/development/evidence/W248-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -190607,6 +191471,23 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/215"
           }
         ]
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp10-31",
+        "delivered": "W237/238规划和W239原Transfer/Stock直接MOVE执行/完成/停止及原键恢复已交付。",
+        "remaining": "多阶段/在途、部分covered/remaining与已发生后的取消、旧任务族显式迁移及source-task一致性仍需完善；不等待真实补货数据。",
+        "evidence_refs": [
+          "docs/development/evidence/W235-01/DELIVERY.md",
+          "docs/development/evidence/W236-01/DELIVERY.md",
+          "docs/development/evidence/W237-01/DELIVERY.md",
+          "docs/development/evidence/W238-01/DELIVERY.md",
+          "docs/development/evidence/W239-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -190825,7 +191706,26 @@
         "WP02：Main PostgreSQL租户存储采用、当前授权与披露、同连接原生UoW/最终授权撤权门、原命令恢复及同事务Outbox/Inbox；按实际用途采用NUM/FILE/JOB。",
         "WP05：ENG-TOOL原工程号/版/适用性及发布效力；WP11：实际报废资产/库存价值接收",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp10-36",
+        "delivered": "W165双角色关联、W166–168使用维护追加事实/周期、W169意图及W176/184审批回执已交付。",
+        "remaining": "真实搬位/报废仍需Transfer/Stock/Finance原Owner应用和迟到恢复，准确技术当前用途与外部使用原件继续补；不得把APPLIED工作流回执当库存/财务业务效果。",
+        "evidence_refs": [
+          "docs/development/evidence/W176-01/DELIVERY.md",
+          "docs/development/evidence/W165-01/DELIVERY.md",
+          "docs/development/evidence/W166-01/DELIVERY.md",
+          "docs/development/evidence/W167-01/DELIVERY.md",
+          "docs/development/evidence/W168-01/DELIVERY.md",
+          "docs/development/evidence/W169-01/DELIVERY.md",
+          "docs/development/evidence/W184-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
+      }
     },
     {
       "id": "WP10-37",
@@ -191337,6 +192237,21 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/575"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp10-47",
+        "delivered": "时间UOM、BOM材料及库存身份/单位来源W155/187/204已有交付。",
+        "remaining": "原Owner批准的完整单位转换/量纲/容量metric及当前控制尚需提供；准确物料/Site/位置身份按原主账读取，歧义UNKNOWN，不建第二套可写WMS字典。",
+        "evidence_refs": [
+          "docs/development/evidence/W155-01/DELIVERY.md",
+          "docs/development/evidence/W187-01/DELIVERY.md",
+          "docs/development/evidence/W204-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -191857,6 +192772,31 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/606"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "合同/验收待核",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp10-48",
+        "delivered": "W160–164实物实例/合作方/来源原件，W165真实HoldExact/current，W167/168计量周期均已采用。",
+        "remaining": "核完整旧ENG技术号候选读取与provenance适用域、外部来源原件及current版本覆盖；未知历史不能假造。正式关联/生产使用/退役归WP05-06/WP10-36，不能据此扣留本提供者。",
+        "evidence_refs": [
+          "docs/development/evidence/W160-01/DELIVERY.md",
+          "docs/development/evidence/W161-01/DELIVERY.md",
+          "docs/development/evidence/W162-01/DELIVERY.md",
+          "docs/development/evidence/W163-01/DELIVERY.md",
+          "docs/development/evidence/W164-01/DELIVERY.md",
+          "docs/development/evidence/W165-01/DELIVERY.md",
+          "docs/development/evidence/W166-01/DELIVERY.md",
+          "docs/development/evidence/W167-01/DELIVERY.md",
+          "docs/development/evidence/W168-01/DELIVERY.md",
+          "docs/development/evidence/W169-01/DELIVERY.md",
+          "docs/development/evidence/W176-01/DELIVERY.md",
+          "docs/development/evidence/W182-01/DELIVERY.md",
+          "docs/development/evidence/W184-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -193322,6 +194262,19 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/224"
           }
         ]
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp11-32",
+        "delivered": "W248已实现RMA商业请求/不可变财务观察与当前授权，实际PG/HTTP采用持久模拟外部ERP/Finance。",
+        "remaining": "内部AR CreditFact/余额/预算与source/frontier共同最终事务、原票逐行精确额度及INV唯一COGS/Inventory来源仍未由观察桥替代；partial claims与撤销全链继续实现。",
+        "evidence_refs": [
+          "docs/development/evidence/W248-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -193400,6 +194353,19 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/224"
           }
         ]
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp11-33",
+        "delivered": "W248区分退款授权、现金POSTED观察和商业批准，并保原键/来源。",
+        "remaining": "真实Funds退款执行记录/会计/AR分轴、执行key完整别名预算/原claim与撤销和未知恢复仍需实现；外部模拟结果不是本产品资金账。",
+        "evidence_refs": [
+          "docs/development/evidence/W248-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -194829,6 +195795,22 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/595"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp12-01",
+        "delivered": "W170/172不可变FLOW草稿和W173/174发布/激活已经实现，GET不隐式写草稿。",
+        "remaining": "克隆固定sourceVersion并清身份、FORM完整schema/layout及设计器往返/未知可执行类型和致命结构约束尚需全面覆盖；不复制实例历史。",
+        "evidence_refs": [
+          "docs/development/evidence/W170-01/DELIVERY.md",
+          "docs/development/evidence/W172-01/DELIVERY.md",
+          "docs/development/evidence/W173-01/DELIVERY.md",
+          "docs/development/evidence/W174-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -194907,6 +195889,20 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/596"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp12-02",
+        "delivered": "准确草稿发布预览、当前权限/原结果与激活CAS已有交付。",
+        "remaining": "FORM/子流程完整依赖pin和唯一form-flow绑定CAS仍需补全；OA APP binding不是FORM-FLOW绑定，在途保原pin及旧入口同门继续核。",
+        "evidence_refs": [
+          "docs/development/evidence/W174-01/DELIVERY.md",
+          "docs/development/evidence/W173-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -195290,6 +196286,27 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/603"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "合同/验收待核",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp12-06",
+        "delivered": "W175–181可信binding/路由、TxS/TxE原生启动恢复已交付，后续DOC/ReqSet/ITER真实业务也已消费。",
+        "remaining": "核原subjectKind/身份合法域、完整alias与legacy callback冲突采用；不得把所有业务消费者未完成当协议提供者未实现。仅补当前native UUID profile未覆盖的真实合同路径。",
+        "evidence_refs": [
+          "docs/development/evidence/W175-01/DELIVERY.md",
+          "docs/development/evidence/W177-01/DELIVERY.md",
+          "docs/development/evidence/W178-01/DELIVERY.md",
+          "docs/development/evidence/W179-01/DELIVERY.md",
+          "docs/development/evidence/W180-01/DELIVERY.md",
+          "docs/development/evidence/W181-01/DELIVERY.md",
+          "docs/development/evidence/W191-01/DELIVERY.md",
+          "docs/development/evidence/W196-01/DELIVERY.md",
+          "docs/development/evidence/W199-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -195403,6 +196420,25 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/607"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "优先整卡核销",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp12-07",
+        "delivered": "W181 TxD、W183投递、W184Owner receipt及W185连续链/GAP恢复已交付；W191/196/200已有业务真实应用。",
+        "remaining": "优先整卡核销原Decision/Outbox、Owner应用与TxR正反验收；工具报废/借用等具体业务由各域卡完成，不能成为此协议底座的无限完成门。完整合同身份范围仍按准确已有测试核对。",
+        "evidence_refs": [
+          "docs/development/evidence/W183-01/DELIVERY.md",
+          "docs/development/evidence/W185-01/DELIVERY.md",
+          "docs/development/evidence/W181-01/DELIVERY.md",
+          "docs/development/evidence/W184-01/DELIVERY.md",
+          "docs/development/evidence/W191-01/DELIVERY.md",
+          "docs/development/evidence/W196-01/DELIVERY.md",
+          "docs/development/evidence/W200-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -195923,6 +196959,19 @@
           "seat_released": true,
           "pr": "https://github.com/GTX537/CP6/pull/623"
         }
+      },
+      "scope_reconciliation": {
+        "window": "W250-01",
+        "as_of": "2026-11-02",
+        "classification": "明确实现余项",
+        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp12-19",
+        "delivered": "W200真实非委派撤回、Owner apply同控制CAS及两种竞争顺序已交付，终态不可改写。",
+        "remaining": "委派撤回与BLOCKED新actor/新grant的明确再授权和连续回执尚未完整实现；worker不能自选人员替代授权，不重做已通过非委派竞争。",
+        "evidence_refs": [
+          "docs/development/evidence/W200-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -199388,10 +200437,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261101-wave249",
-      "path": "docs/development/dispatch/20261101-wave249/README.md",
-      "baseline_sha": "afdd5afb49ef4a8974cad8a0e89a1da00eb6bf7d",
-      "registered_at": "2026-11-01T20:11:25.916948+00:00",
+      "id": "20261102-wave250",
+      "path": "docs/development/dispatch/20261102-wave250/README.md",
+      "baseline_sha": "91a0eea66c25109141c410831d0030782480923c",
+      "registered_at": "2026-11-02T00:22:57.424496+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -199410,84 +200459,138 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W249-01",
-          "workspace_task": "W249-01",
+          "id": "W250-01",
+          "workspace_task": "W250-01",
           "related_tasks": [
-            "WP14-01"
+            "WP01-01",
+            "WP02-02",
+            "WP02-03",
+            "WP02-04",
+            "WP02-05",
+            "WP02-06",
+            "WP02-09",
+            "WP02-10",
+            "WP02-13",
+            "WP02-14",
+            "WP02-15",
+            "WP02-16",
+            "WP02-18",
+            "WP02-28",
+            "WP02-29",
+            "WP03-01",
+            "WP03-02",
+            "WP03-03",
+            "WP03-04",
+            "WP04-33",
+            "WP04-34",
+            "WP05-02",
+            "WP05-03",
+            "WP05-04",
+            "WP05-05",
+            "WP05-06",
+            "WP05-08",
+            "WP05-09",
+            "WP05-10",
+            "WP05-11",
+            "WP05-12",
+            "WP05-13",
+            "WP05-14",
+            "WP05-16",
+            "WP05-18",
+            "WP05-19",
+            "WP05-20",
+            "WP05-39",
+            "WP08-01",
+            "WP08-10",
+            "WP08-11",
+            "WP08-16",
+            "WP09-11",
+            "WP10-01",
+            "WP10-03",
+            "WP10-10",
+            "WP10-19",
+            "WP10-22",
+            "WP10-31",
+            "WP10-36",
+            "WP10-47",
+            "WP10-48",
+            "WP11-32",
+            "WP11-33",
+            "WP12-01",
+            "WP12-02",
+            "WP12-06",
+            "WP12-07",
+            "WP12-19"
           ],
-          "goal_id": "CP6-7D-20261022",
-          "title": "原七天D7最后集成与总收尾：六阶段实际采用、变化输入下质量/库存/Outbox宿主定向验证、活动BUG核对和原范围逐项核销；生产业务验收使用明确模拟资料，部署独立。",
+          "title": "逐项核对原375细项中的59张局部交付卡：原scope/正反验收、历次已采用交付、当前源码及真实剩余；按证据核销，不重做七天一期。",
           "chat": "COORD",
-          "mode": "SINGLE_CHAT_IMPLEMENTATION",
+          "mode": "SINGLE_CHAT_SCOPE_RECONCILIATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "actual_start_ref": {
-            "commit": "377ce854ec18a5177a2d75af89b0f913340fe108",
-            "branch": "codex/w249-handoff",
-            "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261101T201125Z-wave249-start/MESSAGE.md",
-            "at": "2026-11-01T20:11:25.916948+00:00"
+            "commit": "42930aca53670e66804a907659bd2ed3c3c7ba13",
+            "branch": "codex/w250-handoff",
+            "path": "handoffs/CP6-DEV-20261012/tasks/W250-01/messages/20261102T002257Z-start/MESSAGE.md",
+            "at": "2026-11-02T00:22:57.424496+00:00"
           },
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w249-01",
-          "planned_scope_ref": "docs/development/dispatch/20261101-wave249/README.md",
+          "branch": "codex/w250-01",
+          "planned_scope_ref": "docs/development/dispatch/20261102-wave250/README.md",
           "full_task_completed": false,
-          "business_acceptance": "PASS_SIMULATED_PRODUCTION_BUSINESS_ACCEPTANCE_ORIGINAL_SEVEN_STAGE_SCOPE",
+          "business_acceptance": "EVIDENCE_REUSE_ONLY_NO_NEW_PRODUCT_RUN",
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
-            "Main:coordination-ledger",
-            "Main:final-affected-integration"
+            "Main:coordination-ledger"
           ],
-          "worker_delivery_ref": "docs/development/evidence/W249-01/DELIVERY.md",
-          "validation": "W249 final affected integration8/8 PASS, zero failed/skipped: quality linked transactions/revocation/HTTP, stock original commit-ack loss/rollback/HTTP, actual Program durable Outbox to authenticated WebSocket. Actual Windows/.NET8.0.30/PostgreSQL18, simulated business/IAM inputs. W245/246/247/248 and unchanged historical cross-repository/UI evidence explicitly reused;81 adopted commits verified;0 registered open Issues. No Actions/deployment.",
+          "worker_delivery_ref": "docs/development/evidence/W250-01/DELIVERY.md",
+          "validation": "Documentation-only:59 unique cards reconciled with original scope/positive-negative criteria and later adopted evidence/current source;375 task states and125 targets/247 revision acceptances unchanged;generated views and added links checked;one author task SPEC/QUALITY review. No new product tests,Actions or deployment.",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
             "handoff_seat_released": true,
             "main_branch_deleted": false,
             "handoff_branch_deleted": true,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave249-final-verification.json",
-            "snapshot": "Before Main merge; resolve using exact final PR and official finish without treating pending work as passed"
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave250-final-verification.json",
+            "snapshot": "Before Main merge; resolve exact final PR and official finish without a second bookkeeping task."
           },
           "handoff_delivery": {
             "result": "PASS",
-            "source": "3e407d4b4a8c8c1539779c050fd510ec9d1fdd13",
-            "main": "22875f623e0f87aa854d9ef843398f2f51f1c2b6",
-            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/225",
+            "source": "e4bc608cf5092ea1b17a60464e14d4f83e905e79",
+            "main": "3267a8f18ffb8a786db20bfb20cd523684da5484",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/226",
             "exact_tree_adoption": true,
-            "at": "2026-11-01T20:17:16.998107+00:00"
+            "at": "2026-11-02T00:39:50.059617+00:00"
           }
         }
       ],
       "horizon": {
-        "started_at": "2026-11-01T20:10:36.586339+00:00",
-        "checkpoint_at": "2026-11-01T20:17:57.346892+00:00",
+        "started_at": "2026-11-02T00:21:15.302625+00:00",
+        "checkpoint_at": "2026-11-02T00:22:57.424496+00:00",
         "estimated_agent_wall_time_minutes": [
-          20,
-          40
-        ],
-        "parent_continuous_goal": "CP6-7D-20261022"
+          60,
+          90
+        ]
       },
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "Complete normal Main PR/remote adoption and official finish, then mark the original continuous goal complete.",
+      "next_action": "First reconcile WP02-10,WP09-11,WP12-07 against original criteria and adopted provider outputs; align legacy whole-dependency validator without weakening actual contracts. Then targeted CRM expiry/session evidence and concrete original-command/CAS gaps. Single-chat execution.",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
         "handoff_seat_released": true,
         "main_branch_deleted": false,
         "handoff_branch_deleted": true,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave249-final-verification.json",
-        "snapshot": "Before Main merge; resolve using exact final PR and official finish without treating pending work as passed"
-      },
-      "actual_minutes_so_far": 7.35
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave250-final-verification.json",
+        "snapshot": "Before Main merge; resolve exact final PR and official finish without a second bookkeeping task."
+      }
     },
     "wave_history": [
       {
@@ -231673,6 +232776,127 @@
             "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/224"
           }
         ]
+      },
+      {
+        "id": "20261101-wave249",
+        "path": "docs/development/dispatch/20261101-wave249/README.md",
+        "baseline_sha": "afdd5afb49ef4a8974cad8a0e89a1da00eb6bf7d",
+        "registered_at": "2026-11-01T20:11:25.916948+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W249-01",
+            "workspace_task": "W249-01",
+            "related_tasks": [
+              "WP14-01"
+            ],
+            "goal_id": "CP6-7D-20261022",
+            "title": "原七天D7最后集成与总收尾：六阶段实际采用、变化输入下质量/库存/Outbox宿主定向验证、活动BUG核对和原范围逐项核销；生产业务验收使用明确模拟资料，部署独立。",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "actual_start_ref": {
+              "commit": "377ce854ec18a5177a2d75af89b0f913340fe108",
+              "branch": "codex/w249-handoff",
+              "path": "handoffs/CP6-DEV-20261012/tasks/CP6-7D-20261022/messages/20261101T201125Z-wave249-start/MESSAGE.md",
+              "at": "2026-11-01T20:11:25.916948+00:00"
+            },
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w249-01",
+            "planned_scope_ref": "docs/development/dispatch/20261101-wave249/README.md",
+            "full_task_completed": false,
+            "business_acceptance": "PASS_SIMULATED_PRODUCTION_BUSINESS_ACCEPTANCE_ORIGINAL_SEVEN_STAGE_SCOPE",
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:final-affected-integration"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W249-01/DELIVERY.md",
+            "validation": "W249 final affected integration8/8 PASS, zero failed/skipped: quality linked transactions/revocation/HTTP, stock original commit-ack loss/rollback/HTTP, actual Program durable Outbox to authenticated WebSocket. Actual Windows/.NET8.0.30/PostgreSQL18, simulated business/IAM inputs. W245/246/247/248 and unchanged historical cross-repository/UI evidence explicitly reused;81 adopted commits verified;0 registered open Issues. No Actions/deployment.",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave249-final-verification.json"
+            },
+            "handoff_delivery": {
+              "result": "PASS",
+              "source": "3e407d4b4a8c8c1539779c050fd510ec9d1fdd13",
+              "main": "22875f623e0f87aa854d9ef843398f2f51f1c2b6",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/225",
+              "exact_tree_adoption": true,
+              "at": "2026-11-01T20:17:16.998107+00:00"
+            }
+          }
+        ],
+        "horizon": {
+          "started_at": "2026-11-01T20:10:36.586339+00:00",
+          "checkpoint_at": "2026-11-01T20:17:57.346892+00:00",
+          "estimated_agent_wall_time_minutes": [
+            20,
+            40
+          ],
+          "parent_continuous_goal": "CP6-7D-20261022"
+        },
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "Complete normal Main PR/remote adoption and official finish, then mark the original continuous goal complete.",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave249-final-verification.json"
+        },
+        "actual_minutes_so_far": 7.35,
+        "actual_registered_wave_minutes": 10.01,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W249-01",
+            "source": "131b0c094503a8822555a4c54c45be915342d27b",
+            "remote_target": "91a0eea66c25109141c410831d0030782480923c",
+            "branch": "codex/w249-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6/pull/676"
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W249-HANDOFF",
+            "source": "3e407d4b4a8c8c1539779c050fd510ec9d1fdd13",
+            "remote_target": "22875f623e0f87aa854d9ef843398f2f51f1c2b6",
+            "branch": "codex/w249-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/225"
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -231724,7 +232948,7 @@
       "path": "docs/development/planning/20261022-seven-day-delivery.md",
       "owner": "COORD",
       "mode": "SINGLE_CHAT_SERIAL",
-      "phase": "ACCEPTED_PENDING_FINAL_LIFECYCLE",
+      "phase": "COMPLETE",
       "started_at": "2026-10-22T04:03:18Z",
       "checkpoint_at": "2026-10-29T04:03:18Z",
       "estimated_agent_hours": [
@@ -232049,21 +233273,20 @@
           "phase": "DONE",
           "full_business_acceptance": false,
           "current_window": "W249-01",
-          "next_action": "Complete normal Main PR/remote adoption and official finish, then mark the original continuous goal complete.",
+          "next_action": "Original stage complete; full product card work is separate.",
           "exit_audit_report": "docs/development/evidence/W249-01/DELIVERY.md",
           "last_source_fence_report": "docs/development/evidence/W153-01/DELIVERY.md",
           "acceptance_data_policy_ref": "dispatch_policy.continuous_goal.acceptance_data_policy",
           "adopted_window": "W249-01",
           "exit_basis": "Original D7 source/adoption audit, W153 actual integration fix and W249 affected PG/HTTP/native Outbox integration with valid prior UI/cross-repository evidence reused; final lifecycle remains explicit until finish.",
-          "remaining": "No original business/integration gap; W249 final normal adoption and finish pending in this commit snapshot.",
+          "remaining": "No remaining original seven-day scope.",
           "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
+            "main_finish_required": false,
+            "main_seat_released": true,
             "handoff_seat_released": true,
-            "main_branch_deleted": false,
+            "main_branch_deleted": true,
             "handoff_branch_deleted": true,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave249-final-verification.json",
-            "snapshot": "Before Main merge; resolve using exact final PR and official finish without treating pending work as passed"
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave249-final-verification.json"
           },
           "bounded_goal_acceptance": "PASS_SIMULATED_PRODUCTION_BUSINESS_ACCEPTANCE",
           "full_business_acceptance_scope": "Complete formal product card, independent of this bounded seven-day delivery"
@@ -232176,10 +233399,10 @@
       },
       "latest_progress_assessment": {
         "as_of": "2026-11-01T20:17:57.346892+00:00",
-        "adopted_through": "W248; W249 business/integration accepted, Main closeout pending",
+        "adopted_through": "W249 remote adoption and official finish verified",
         "original_scope_acceptance_percent": 100,
-        "overall_goal_complete": false,
-        "formal_stage_closure": "7/7 original bounded business/integration exits; final lifecycle pending",
+        "overall_goal_complete": true,
+        "formal_stage_closure": "7/7 original bounded exits and final lifecycle complete",
         "remaining_execution_hours": null,
         "basis": "Requirement-by-requirement actual acceptance, not round/test/file count or elapsed time. Goal completion only after final adoption/finish; full125/deployment independent.",
         "final_report": "docs/development/evidence/W249-01/DELIVERY.md"
@@ -232195,7 +233418,9 @@
       "final_report": "docs/development/evidence/W249-01/DELIVERY.md",
       "completion_condition": "All original seven-stage outputs accepted; completion requires W249 normal remote adoption and official finish. Resolve immutable pre-merge lifecycle snapshot from final proof/PR.",
       "final_lifecycle_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave249-final-verification.json",
-      "estimated_agent_hours_status": "Historical initial35-55h withdrawn; original-scope acceptance and final lifecycle now reported by W249."
+      "estimated_agent_hours_status": "Historical initial35-55h withdrawn; original-scope acceptance and final lifecycle now reported by W249.",
+      "completed_at": "2026-11-01T20:20:56.572784+00:00",
+      "next_action": "Original seven-day scope complete; continue original375 cards in separate single-chat windows."
     },
     "execution_principles": {
       "source": "User instruction 2026-10-28: Trust Internal Contracts and Fail-Fast; reduce unnecessary gates",
@@ -232204,6 +233429,25 @@
       "internal_contracts": "Trust validated internal contracts without per-layer duplicate validation or qualification",
       "failure": "Fail fast at the responsible boundary; no silent fallback or success-shaped defaults",
       "validation": "Affected behavior only; one task review; reuse valid evidence; documents do not run product tests"
+    },
+    "partial_card_reconciliation": {
+      "window": "W250-01",
+      "as_of": "2026-11-02",
+      "report": "docs/development/evidence/W250-01/DELIVERY.md",
+      "card_count": 59,
+      "counts": {
+        "合同/验收待核": 19,
+        "明确实现余项": 37,
+        "优先整卡核销": 3
+      },
+      "priority_full_card_reconciliation": [
+        "WP02-10",
+        "WP09-11",
+        "WP12-07"
+      ],
+      "original_task_count": 375,
+      "new_product_validation": false,
+      "formal_states_unchanged": true
     }
   },
   "acceptance_basis": {
