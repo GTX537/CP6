@@ -16,7 +16,7 @@ public partial class FlowEngine
     private async Task<FlowPublicationV2> ApprovalPublication(Guid version, CancellationToken ct = default)
     {
         if (_approvalPublications.TryGetValue(version, out var known)) return known;
-        var environment = Guid.Parse(_approvalOriginal!.Scope.EnvironmentId);
+        var environment = ManagedEnvironment;
         var json = await _db.Database.SqlQuery<string>($"""
             SELECT snapshot_json AS "Value" FROM cp6_workflow_authoring_v2.versions
             WHERE tenant_id={_db.CurrentTenantId} AND environment_id={environment} AND id={version}
@@ -32,7 +32,7 @@ public partial class FlowEngine
     // A call owns a distinct parked token beneath the executing branch token. Preserve its
     // node/slot identity while the original branch continues, including later prune/return.
     internal Wf_FlowToken SubFlowCallToken(Wf_FlowInstance instance, FlowNode node, Wf_FlowToken branch)
-        => !_approvalStartV2 ? branch : SnapshotTokens(instance.Id).SingleOrDefault(x =>
+        => !ManagedRuntime ? branch : SnapshotTokens(instance.Id).SingleOrDefault(x =>
             x.ParentTokenId == branch.Id && x.NodeId == node.Id && x.Status == FlowTokenStatus.Active)
             ?? SpawnToken(instance, node, branch.Id, branch.ForkId);
 
@@ -45,7 +45,11 @@ public partial class FlowEngine
         var child = new Wf_FlowInstance
         {
             Id = Guid.NewGuid(), FlowDefVersionId = version, FormDefVersionId = ApprovalFormPin(publication),
-            FlowKey = publication.Key, StarterId = starter, VarsJson = vars, Creator = ApprovalRuntimeV2,
+            FlowKey = publication.Key, StarterId = starter, VarsJson = vars, Creator = _personalFormRuntime ? PersonalFormRuntimeV2 : ApprovalRuntimeV2,
+            FormDataId = _personalFormRuntime ? _personalData : null,
+            // Only the root owns the business submission identity. Child membership and
+            // FormDataId link back to it without claiming another active business root.
+            BizType = null, BizId = null,
             Status = FlowInstanceStatus.Running, CurrentNode = first.Id,
             ParentInstanceId = parentId, ParentTokenId = parentTokenId, SubIndex = index
         };
@@ -59,8 +63,8 @@ public partial class FlowEngine
     // together with starts/commands at the caller's single commit, including new grandchildren.
     internal async Task SaveApprovalRuntime(CancellationToken ct)
     {
-        var environment = Guid.Parse(_approvalOriginal!.Scope.EnvironmentId);
-        var root = ApprovalInstanceId(_approvalOriginal);
+        var environment = ManagedEnvironment;
+        var root = ApprovalInstanceId(_approvalOriginal!);
         foreach (var (child, publication, node) in _approvalChildren)
             await _db.Database.ExecuteSqlInterpolatedAsync($"""
                 INSERT INTO cp6_approval_runtime_v2.children(tenant_id,environment_id,instance_id,root_instance_id,
@@ -75,12 +79,17 @@ public partial class FlowEngine
     // each terminal child can therefore resume its parent and ancestors in this same TxD.
     private async Task DrainApprovalSubflows(CancellationToken ct)
     {
-        var root = ApprovalInstanceId(_approvalOriginal!);
-        var environment = Guid.Parse(_approvalOriginal!.Scope.EnvironmentId);
-        var ids = await _db.Database.SqlQuery<Guid>($"""
-            SELECT instance_id AS "Value" FROM cp6_approval_runtime_v2.instances
-            WHERE tenant_id={_db.CurrentTenantId} AND environment_id={environment} AND root_instance_id={root}
-            """).ToArrayAsync(ct);
+        var root = ManagedRoot;
+        var environment = ManagedEnvironment;
+        var ids = _personalFormRuntime
+            ? await _db.Database.SqlQuery<Guid>($"""
+                SELECT instance_id AS "Value" FROM cp6_personal_form_v2.instances
+                WHERE tenant_id={_db.CurrentTenantId} AND environment_id={environment} AND root_id={root}
+                """).ToArrayAsync(ct)
+            : await _db.Database.SqlQuery<Guid>($"""
+                SELECT instance_id AS "Value" FROM cp6_approval_runtime_v2.instances
+                WHERE tenant_id={_db.CurrentTenantId} AND environment_id={environment} AND root_instance_id={root}
+                """).ToArrayAsync(ct);
         await _db.Wf_FlowInstances.Where(x => ids.Contains(x.Id)).LoadAsync(ct);
         var members = ids.ToHashSet(); members.Add(root);
         foreach (var child in _approvalChildren) members.Add(child.Instance.Id);

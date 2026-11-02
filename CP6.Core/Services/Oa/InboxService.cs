@@ -26,11 +26,16 @@ public partial class InboxService : IInboxService
         _db = db; _engine = engine; _forecast = forecast; _access = access; _projection = projection;
     }
 
+    // New ordinary FORM records use their current-policy read Owner. Legacy lists cannot
+    // disclose their metadata/counts through historical participation alone.
+    private IQueryable<Wf_FlowInstance> LegacyInstances() => _db.Wf_FlowInstances
+        .Where(i => i.Creator != FlowEngine.PersonalFormRuntimeV2);
+
     public async Task<IReadOnlyList<InboxPendingItem>> PendingAsync(Guid userId, string rowMode = "merged", int? page = null, int? pageSize = null)
     {
         var taskScope = from t in _db.Wf_FlowTasks
                         where t.AssigneeId == userId && t.Status == FlowTaskStatus.Pending
-                        join i in _db.Wf_FlowInstances on t.InstanceId equals i.Id
+                        join i in LegacyInstances() on t.InstanceId equals i.Id
                         where i.Status == FlowInstanceStatus.Running
                         select t;
         if (rowMode != "expanded")
@@ -49,7 +54,7 @@ public partial class InboxService : IInboxService
         }
 
         var rows = await (from t in taskScope
-                          join i in _db.Wf_FlowInstances on t.InstanceId equals i.Id
+                          join i in LegacyInstances() on t.InstanceId equals i.Id
                           join d in _db.Wf_FlowDefs on i.FlowKey equals d.FlowKey into dd
                           from d in dd.DefaultIfEmpty()
                           join s in _db.Sys_Users on i.StarterId equals s.Id into ss
@@ -104,7 +109,8 @@ public partial class InboxService : IInboxService
                 StageIndex: x.t.StageIndex, StageRound: x.t.StageRound,
                 StageName: stageName, StageCode: stageCode,
                 CanSendBackPrevStage: x.t.StageIndex > 0,
-                DetailRoute: nativeDocumentRoutes.TryGetValue(x.i.Id,out var nativeRoute) ? nativeRoute : x.i.BizType != null && x.i.BizId != null &&
+                DetailRoute: x.i.Creator==FlowEngine.PersonalFormRuntimeV2 ? "/oa/inbox?personalTask="+x.t.Id
+                    : nativeDocumentRoutes.TryGetValue(x.i.Id,out var nativeRoute) ? nativeRoute : x.i.BizType != null && x.i.BizId != null &&
                     detailRoutes.TryGetValue(x.i.BizType, out var template)
                         ? ApprovalPanelService.RenderDetailRoute(template, x.i.BizId)
                         : null);
@@ -115,7 +121,7 @@ public partial class InboxService : IInboxService
     {
         var rows = await (from c in _db.Wf_FlowCcs
                           where c.RecipientId == userId
-                          join i in _db.Wf_FlowInstances on c.InstanceId equals i.Id
+                          join i in LegacyInstances() on c.InstanceId equals i.Id
                           join d in _db.Wf_FlowDefs on i.FlowKey equals d.FlowKey into dd
                           from d in dd.DefaultIfEmpty()
                           join s in _db.Sys_Users on i.StarterId equals s.Id into ss
@@ -149,7 +155,7 @@ public partial class InboxService : IInboxService
 
     public async Task<IReadOnlyList<InboxRunningItem>> RunningAsync(Guid userId)
     {
-        var rows = await (from i in _db.Wf_FlowInstances
+        var rows = await (from i in LegacyInstances()
                           where i.StarterId == userId && i.Status == FlowInstanceStatus.Running
                           join d in _db.Wf_FlowDefs on i.FlowKey equals d.FlowKey into dd
                           from d in dd.DefaultIfEmpty()
@@ -180,7 +186,7 @@ public partial class InboxService : IInboxService
                                        && (f.Status == FlowFormToStatus.Approved
                                            || f.Status == FlowFormToStatus.Rejected
                                            || f.Status == FlowFormToStatus.Transferred)
-                                 join i in _db.Wf_FlowInstances on f.InstanceId equals i.Id
+                                 join i in LegacyInstances() on f.InstanceId equals i.Id
                                  join d in _db.Wf_FlowDefs on i.FlowKey equals d.FlowKey into dd
                                  from d in dd.DefaultIfEmpty()
                                  join s in _db.Sys_Users on i.StarterId equals s.Id into ss
@@ -199,7 +205,7 @@ public partial class InboxService : IInboxService
         {
             var ccRows = await (from c in _db.Wf_FlowCcs
                                 where c.RecipientId == userId
-                                join i in _db.Wf_FlowInstances on c.InstanceId equals i.Id
+                                join i in LegacyInstances() on c.InstanceId equals i.Id
                                 join d in _db.Wf_FlowDefs on i.FlowKey equals d.FlowKey into dd
                                 from d in dd.DefaultIfEmpty()
                                 join s in _db.Sys_Users on i.StarterId equals s.Id into ss
@@ -275,7 +281,7 @@ public partial class InboxService : IInboxService
 
     private async Task<bool> HasEditableFieldsAsync(Wf_FlowTask task)
     {
-        var versionId = await _db.Wf_FlowInstances.Where(x => x.Id == task.InstanceId)
+        var versionId = await LegacyInstances().Where(x => x.Id == task.InstanceId)
             .Select(x => x.FlowDefVersionId).SingleAsync();
         if (versionId == null) return false;
         var json = await _db.Wf_FlowDefVersions.Where(x => x.Id == versionId)
@@ -291,6 +297,8 @@ public partial class InboxService : IInboxService
         await _access.GetAsync(actualUserId, effectiveUserId, instanceId);
         var inst = await _db.Wf_FlowInstances.AsNoTracking().FirstOrDefaultAsync(i => i.Id == instanceId);
         if (inst is null) return null;
+        if (inst.Creator == FlowEngine.PersonalFormRuntimeV2)
+            throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1("FORM_READ_OWNER_REQUIRED",409);
         var flowVersion = inst.FlowDefVersionId is Guid flowVersionId
             ? await _db.Wf_FlowDefVersions.AsNoTracking().SingleOrDefaultAsync(x => x.Id == flowVersionId)
             : null;
@@ -326,7 +334,7 @@ public partial class InboxService : IInboxService
             var visibleParent = await _access.VisibleInstanceIds(effectiveUserId).AnyAsync(x => x == parentId);
             if (visibleParent)
             {
-                var p = await _db.Wf_FlowInstances.AsNoTracking().FirstOrDefaultAsync(x => x.Id == parentId);
+                var p = await LegacyInstances().AsNoTracking().FirstOrDefaultAsync(x => x.Id == parentId);
                 var pVersion = p?.FlowDefVersionId is Guid id
                     ? await _db.Wf_FlowDefVersions.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id)
                     : null;
@@ -335,7 +343,7 @@ public partial class InboxService : IInboxService
         }
         var visibleIds = _access.VisibleInstanceIds(effectiveUserId);
         var childRows = await (
-            from c in _db.Wf_FlowInstances
+            from c in LegacyInstances()
             where c.ParentInstanceId == instanceId && visibleIds.Contains(c.Id)
             join tk in _db.Wf_FlowTokens on c.ParentTokenId equals tk.Id
             join cv in _db.Wf_FlowDefVersions on c.FlowDefVersionId equals cv.Id into cvs
@@ -385,7 +393,7 @@ public partial class InboxService : IInboxService
     public async Task<FormQueryPage> QueryAsync(Guid effectiveUserId, FormQueryFilter f)
     {
         var visible = _access.VisibleInstanceIds(effectiveUserId);
-        var q = _db.Wf_FlowInstances.Where(x => visible.Contains(x.Id));
+        var q = LegacyInstances().Where(x => visible.Contains(x.Id));
         if (f.StarterId is { } s) q = q.Where(i => i.StarterId == s);
         if (!string.IsNullOrWhiteSpace(f.FlowKey)) q = q.Where(i => i.FlowKey == f.FlowKey);
         if (f.Status is { } st) q = q.Where(i => i.Status == st);
@@ -417,21 +425,23 @@ public partial class InboxService : IInboxService
     {
         var pendingCount = await (from task in _db.Wf_FlowTasks
                                   where task.AssigneeId == userId && task.Status == FlowTaskStatus.Pending
-                                  join instance in _db.Wf_FlowInstances on task.InstanceId equals instance.Id
+                                  join instance in LegacyInstances() on task.InstanceId equals instance.Id
                                   where instance.Status == FlowInstanceStatus.Running
                                   select task.InstanceId).Distinct().CountAsync();
-        var runningCount = await _db.Wf_FlowInstances
+        var runningCount = await LegacyInstances()
             .CountAsync(x => x.StarterId == userId && x.Status == FlowInstanceStatus.Running);
         var monthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
         var monthEnd = monthStart.AddMonths(1);
         var doneThisMonth = await _db.Wf_FlowFormTos
+            .Where(f => LegacyInstances().Any(i => i.Id == f.InstanceId))
             .Where(x => x.ActualHandlerId == userId && x.HandledAt >= monthStart && x.HandledAt < monthEnd)
             .Select(x => x.InstanceId).Distinct().CountAsync();
-        var rejectedBack = await _db.Wf_FlowInstances
+        var rejectedBack = await LegacyInstances()
             .CountAsync(i => i.StarterId == userId && i.Status == FlowInstanceStatus.Rejected);
 
         var since = DateTime.Now.Date.AddDays(-6);
         var handledRows = await _db.Wf_FlowFormTos
+            .Where(f => LegacyInstances().Any(i => i.Id == f.InstanceId))
             .Where(f => f.ActualHandlerId == userId && f.HandledAt != null && f.HandledAt >= since)
             .Select(f => f.HandledAt!.Value).ToListAsync();
         var trend = Enumerable.Range(0, 7).Select(d =>

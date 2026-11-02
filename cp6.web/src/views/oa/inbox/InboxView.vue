@@ -93,6 +93,7 @@
       </el-aside>
 
       <el-main class="inbox-main">
+        <PersonalTaskPanel v-if="personalTask" :task-id="personalTask" />
         <component :is="currentComp" @open-detail="openDetail" />
       </el-main>
     </el-container>
@@ -137,7 +138,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, type Component } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { UserFilled, ArrowDown } from '@element-plus/icons-vue'
 import { inboxApi } from '@/api/oa/inbox'
 import { flowAdminApi } from '@/api/oa/flowAdmin'
@@ -153,11 +154,14 @@ import InboxRunning from './InboxRunning.vue'
 import InboxDone from './InboxDone.vue'
 import InboxDraft from './InboxDraft.vue'
 import FormDetail from './FormDetail.vue'
+import PersonalTaskPanel from './PersonalTaskPanel.vue'
 import CpTag from '@/components/base/CpTag.vue'
 import { useBreakpoint } from '@/composables/useBreakpoint'
 
 const { t } = useI18n()
 const router = useRouter()
+const route = useRoute()
+const personalTask = computed(() => typeof route.query.personalTask === 'string' ? route.query.personalTask : '')
 const { isMobile } = useBreakpoint()
 
 /** 移动端文件夹横滑条（含流程管理路由项） */

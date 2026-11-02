@@ -17,24 +17,36 @@ public sealed class TaskDecisionController : ControllerBase
     private readonly ICurrentPermissionContext _context;
     private readonly IDelegateService _delegates;
     private readonly ApprovalTaskDecisionOwnerV2 _native;
+    private readonly PersonalFormOwnerV2 _personal;
     private readonly IPermissionService _permissions;
 
     public TaskDecisionController(
         ITaskDecisionService decisions, ICurrentPermissionContext context, IDelegateService delegates,
-        ApprovalTaskDecisionOwnerV2 native, IPermissionService permissions)
+        ApprovalTaskDecisionOwnerV2 native, IPermissionService permissions, PersonalFormOwnerV2 personal)
     {
         _decisions = decisions;
         _context = context;
         _delegates = delegates;
         _native = native;
+        _personal = personal;
         _permissions = permissions;
     }
 
     [HttpPost("{taskId:guid}/decision")]
     public async Task<IActionResult> Decide(Guid taskId, [FromBody] DecisionRequest request, CancellationToken ct)
     {
+        var personal=false;
         try
         {
+            personal=await _personal.IsPersonalTaskAsync(taskId,ct);
+            if(personal)
+            {
+                if(request.CommandId==null || request.TaskRowVersion==null || request.InstanceRowVersion==null
+                    || request.ExpectedFormDataRowVersion!=null || request.DataPatch.ValueKind is not(JsonValueKind.Undefined or JsonValueKind.Null))
+                    throw new ScopeAuthorizationExceptionV1("FORM_DECISION_CONTEXT_REQUIRED",422);
+                return Ok(await _personal.DecideTaskAsync(taskId,new(request.CommandId.Value,request.Decision,request.Comment??"",
+                    request.TaskRowVersion,request.InstanceRowVersion),ActingAs(),Request.Headers.IfMatch.FirstOrDefault(),ct));
+            }
             if (await _native.IsNativeAsync(taskId, ct))
             {
                 if (request.CommandId == null || request.TaskRowVersion == null || request.InstanceRowVersion == null
@@ -61,11 +73,13 @@ public sealed class TaskDecisionController : ControllerBase
                 request.DataPatch, Decode(request.ExpectedFormDataRowVersion)), ct);
             return Ok(new { code = 0, message = "OK", data = result });
         }
-        catch (ScopeAuthorizationExceptionV1 ex) { return NativeError(ex, request.CommandId); }
+        catch (ScopeAuthorizationExceptionV1 ex) { return NativeError(ex, request.CommandId,personal?taskId:null); }
         catch (CP6.Core.Services.Erp.OrderPriceCorrectionException ex)
         { return NativeError(new(ex.Message, ex.Status), request.CommandId); }
         catch (CurrentPermissionUnavailableException)
-        { return NativeError(new("AUTHORITY_UNAVAILABLE", 503), request.CommandId); }
+        { return NativeError(new("AUTHORITY_UNAVAILABLE", 503), request.CommandId,personal?taskId:null); }
+        catch(Exception ex)when(personal && ex is Npgsql.NpgsqlException or Microsoft.EntityFrameworkCore.DbUpdateException)
+        {return NativeError(new("FORM_STORAGE_UNAVAILABLE",503),request.CommandId,taskId);}
         catch (UnauthorizedAccessException ex)
         {
             return StatusCode(StatusCodes.Status403Forbidden,
@@ -84,6 +98,11 @@ public sealed class TaskDecisionController : ControllerBase
     {
         try
         {
+            if(await _personal.IsPersonalTaskAsync(taskId,ct))
+            {
+                var personal=(await _personal.TaskContextAsync(taskId,ActingAs(),ct)).Task;
+                Response.Headers.ETag="\""+personal.TaskRowVersion+"\"";Response.Headers.CacheControl="no-store";return Ok(personal);
+            }
             var result = await _native.ContextAsync(taskId, ActingAs(), ct);
             Response.Headers.ETag = "\"" + result.TaskRowVersion + "\"";
             Response.Headers.CacheControl = "no-store";
@@ -149,10 +168,10 @@ public sealed class TaskDecisionController : ControllerBase
         catch(ScopeAuthorizationExceptionV1 ex){return NativeError(ex,commandId);}
         catch(CP6.Core.Services.Erp.OrderPriceCorrectionException ex){return NativeError(new(ex.Message,ex.Status),commandId);}
     }
-    private IActionResult NativeError(ScopeAuthorizationExceptionV1 error, Guid? commandId = null)
+    private IActionResult NativeError(ScopeAuthorizationExceptionV1 error, Guid? commandId = null,Guid? personalTask=null)
         => StatusCode(error.Status, new { code = error.Message, messageKey = error.Message, correlationId = Guid.NewGuid(),
             retryable = error.Status is 503 or 504, fieldErrors = Array.Empty<object>(), currentRowVersion = (string?)null,
-            resultQueryRef = commandId is Guid id ? "/api/oa/tasks/decision-commands/" + id : null });
+            resultQueryRef = commandId is Guid id ? personalTask is Guid task?"/api/oa/v2/personal-forms/tasks/"+task+"/commands/"+id:"/api/oa/tasks/decision-commands/" + id : null });
 
     private static byte[]? Decode(string? value)
     {

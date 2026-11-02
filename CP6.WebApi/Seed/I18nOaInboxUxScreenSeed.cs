@@ -33,6 +33,8 @@ public static class I18nOaInboxUxScreenSeed
         new Sys_Lang { LangKey = "oa.notify.type.flowRejected", ZhCN = "流程驳回", ZhTW = "流程駁回", En = "Flow rejected", Ja = "却下", Ko = "반려" },
         new Sys_Lang { LangKey = "oa.notify.type.timeout", ZhCN = "超时提醒", ZhTW = "超時提醒", En = "Timeout reminder", Ja = "タイムアウト通知", Ko = "시간 초과 알림" },
         new Sys_Lang { LangKey = "oa.notify.type.branchPruned", ZhCN = "分支剪枝", ZhTW = "分支剪枝", En = "Branch pruned", Ja = "ブランチ剪定", Ko = "분기 정리" },
+        new Sys_Lang { LangKey = "oa.notify.type.formSubmitted", ZhCN = "表单已提交", ZhTW = "表單已提交", En = "Form submitted", Ja = "フォーム送信済み", Ko = "양식 제출됨" },
+        new Sys_Lang { LangKey = "oa.notify.type.taskHandled", ZhCN = "待办已办理", ZhTW = "待辦已辦理", En = "Task handled", Ja = "タスク処理済み", Ko = "작업 처리됨" },
 
         // ── 偏好保存（PrefService 抛出）──
         new Sys_Lang { LangKey = "oa.pref.errBadJson", ZhCN = "偏好格式错误", ZhTW = "偏好格式錯誤", En = "Invalid preferences payload", Ja = "設定の形式が不正です", Ko = "설정 형식이 잘못되었습니다" },

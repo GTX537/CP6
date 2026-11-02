@@ -61,6 +61,7 @@ public sealed class TaskDecisionService : ITaskDecisionService
             ?? throw new InvalidOperationException("E-WF-004");
         if (task.Status != FlowTaskStatus.Pending) throw new InvalidOperationException("E-WF-004");
         var instance = await _db.Wf_FlowInstances.SingleAsync(x => x.Id == task.InstanceId, ct);
+        FlowEngine.RequireLegacyRuntime(instance);
         if (instance.Status != FlowInstanceStatus.Running || task.AssigneeId != command.EffectiveUserId)
             throw new InvalidOperationException("E-WF-004");
         await _access.GetAsync(command.ActualUserId, command.EffectiveUserId, instance.Id, ct);

@@ -96,6 +96,7 @@ public class FlowController : LocalizedControllerBase
             var detail = await _inbox.DetailAsync(actual, effective, id);
             return detail is null ? NotFound(new { code = 404, message = "E-WF-007" }) : Ok2(detail);
         }
+        catch (CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1 e) { return StatusCode(e.Status,new {code=e.Message,messageKey=e.Message}); }
         catch (UnauthorizedAccessException)
         {
             return StatusCode(StatusCodes.Status403Forbidden, new { code = "E-WF-043", message = "E-WF-043" });

@@ -17,7 +17,7 @@ public partial class FlowEngine
     internal async Task<Guid> SubmitChildAsync(Guid flowDefVersionId, Guid starterId, string varsJson,
         Guid parentInstanceId, Guid parentTokenId, int subIndex)
     {
-        if (_approvalStartV2)
+        if (ManagedRuntime)
             return await SubmitApprovalChild(flowDefVersionId, starterId, varsJson, parentInstanceId, parentTokenId, subIndex);
         var version = await _db.Wf_FlowDefVersions.AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == flowDefVersionId && x.Status == WfDefinitionVersionStatus.Published)
@@ -69,7 +69,7 @@ public partial class FlowEngine
         if (token.ForkId is not null && await TryPruneBranchAsync(inst, schema, token, inst.StarterId, "subFlowError"))
             return;
         inst.Status = FlowInstanceStatus.Rejected;
-        if (_approvalStartV2)
+        if (ManagedRuntime)
             foreach (var active in SnapshotTokens(inst.Id)) CancelPendingTasksOfToken(inst.Id, active.Id);
         CancelAllActiveTokens(inst.Id);   // 驳回 = terminate（S-C 级联钩子在其内递归取消子实例）
         VoidPendingFormTos(inst.Id);

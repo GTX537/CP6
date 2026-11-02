@@ -59,10 +59,12 @@ public partial class FlowEngine
     {
         if (instance.Creator == ApprovalRuntimeV2)
             throw new ScopeAuthorizationExceptionV1("APP_DECISION_OWNER_REQUIRED", 409);
+        if (instance.Creator == PersonalFormRuntimeV2)
+            throw new ScopeAuthorizationExceptionV1("FORM_DECISION_OWNER_REQUIRED", 409);
     }
 
     internal bool EvaluateCondition(string? expression, string vars)
-        => _approvalStartV2 ? ExactCondition(expression, vars) : ExpressionEvaluator.Evaluate(expression, vars);
+        => ManagedRuntime ? ExactCondition(expression, vars) : ExpressionEvaluator.Evaluate(expression, vars);
 
     internal static bool ExactCondition(string? expression, string vars)
     {

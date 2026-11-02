@@ -335,6 +335,14 @@ builder.Services.AddScoped(sp => new CP6.Core.Services.Wf.FormAuthoringOwnerV2(
         { throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1(e.Message, e.Status, e); }
     }));
 builder.Services.AddScoped<CP6.Core.Services.Wf.IWfNotifier, CP6.WebApi.Services.PersistentWfNotifier>();     // 事务内仅写通知 outbox；提交后由 worker 定向推送/发邮件
+builder.Services.AddScoped(sp => new CP6.Core.Services.Oa.PersonalFormOwnerV2(
+    sp.GetRequiredService<CP6Context>(), sp.GetRequiredService<IHttpContextAccessor>(),
+    sp.GetRequiredService<CP6.Core.Services.Sys.ScopeAuthorizationFenceV1>(), async ct =>
+    {
+        try { return await CP6.WebApi.Services.IamAdministrationHttpV1.CurrentActor(sp.GetRequiredService<IHttpContextAccessor>().HttpContext!, ct); }
+        catch (CP6.Core.Services.Sys.IamAdministrationExceptionV1 e)
+        { throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1(e.Message, e.Status, e); }
+    }, sp.GetRequiredService<CP6.Core.Services.Wf.FlowAuthoringOwnerV2>()));
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfNotificationDispatchWorker>();
 builder.Services.AddScoped<CP6.Core.Services.Wf.ITaskCenterService, CP6.Core.Services.Wf.TaskCenterService>(); // 章04 待办中心（待办/我的申请/撤回）
 
@@ -577,6 +585,9 @@ CP6.Core.Services.Sys.FieldRegistry.Register(CP6.Core.Services.Wf.FlowAuthoringO
 CP6.Core.Services.Sys.DataScopeRegistry.Register(CP6.Core.Services.Wf.FormAuthoringOwnerV2.Resource, "表单定义草稿", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.FieldRegistry.Register(CP6.Core.Services.Wf.FormAuthoringOwnerV2.Resource,
     CP6.Core.Services.Wf.FormAuthoringOwnerV2.Fields.Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
+CP6.Core.Services.Sys.DataScopeRegistry.Register(CP6.Core.Services.Oa.PersonalFormOwnerV2.Resource, "个人表单", new[] { 1 }, 1);
+CP6.Core.Services.Sys.FieldRegistry.Register(CP6.Core.Services.Oa.PersonalFormOwnerV2.Resource,
+    CP6.Core.Services.Oa.PersonalFormOwnerV2.Fields.Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
 CP6.Core.Services.Sys.DataScopeRegistry.Register("product", "製品", new[] { 1, 2, 3, 4, 5 }, 5);
 // Native identity source exposes no price or customer fields. Existing scope semantics are retained.
 CP6.Core.Services.Sys.FieldRegistry.Register("product");

@@ -53,7 +53,7 @@ internal sealed class ApprovalNodeHandler : INodeHandler
                     expectedHandler: assignee, onBehalfOf: delegatedFrom, stepSeq: step);
                 if (delegatedFrom is Guid g)
                     eng.AddHistory(inst.Id, node.Id, assignee, "delegate", $"代 {g} 审批");   // 双痕：代理人 + 被代理人
-                await eng.Notifier.TodoCreatedAsync(assignee, inst.Id, task.Id, inst.FlowKey);   // 推送待办（空实现=no-op）
+                if (!eng.ManagedRuntime) await eng.Notifier.TodoCreatedAsync(assignee, inst.Id, task.Id, inst.FlowKey);
             }
             // token 停泊（保持 Active）
             return;
