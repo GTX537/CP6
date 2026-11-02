@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { applyGraphEdits } from './graphSourceEdits'
 import { Background } from '@vue-flow/background'
 import {
   ConnectionMode,
@@ -104,6 +105,9 @@ let dragKey = ''
 let emitTimer: ReturnType<typeof setTimeout> | undefined
 let ignoreGraphChanges = false
 let lastEmitted = ''
+let graphSource = props.modelValue
+let initialProjection: FlowSchemaDto
+let lastProjection = ''
 
 const iconByPaletteKey: Record<string, typeof VideoPlay> = {
   start: VideoPlay,
@@ -163,9 +167,14 @@ function decorateEdge(edge: Edge): Edge {
 
 function loadGraph(schema: FlowSchemaDto, resetHistoryAfter = false) {
   ignoreGraphChanges = true
+  if (emitTimer) clearTimeout(emitTimer)
   const graph = schemaToGraph(schema)
+  const decorated = graph.edges.map(edge => decorateEdge(edge as Edge))
+  graphSource = schema
+  initialProjection = graphToSchema(graph.nodes as Node[], decorated)
+  lastProjection = JSON.stringify(initialProjection)
   setNodes(graph.nodes as Node[])
-  setEdges(graph.edges.map(edge => decorateEdge(edge as Edge)))
+  setEdges(decorated)
   nextTick(() => {
     ignoreGraphChanges = false
     if (resetHistoryAfter) {
@@ -178,11 +187,14 @@ function loadGraph(schema: FlowSchemaDto, resetHistoryAfter = false) {
 loadGraph(props.modelValue)
 
 function currentSchema(): FlowSchemaDto {
-  return graphToSchema(nodes.value as Node[], edges.value as Edge[])
+  return applyGraphEdits(graphSource, initialProjection, graphToSchema(nodes.value as Node[], edges.value as Edge[]))
 }
 
 function emitSchemaNow() {
   if (ignoreGraphChanges) return
+  const projected = JSON.stringify(graphToSchema(nodes.value as Node[], edges.value as Edge[]))
+  if (projected === lastProjection) return
+  lastProjection = projected
   const value = currentSchema()
   lastEmitted = JSON.stringify(value)
   emit('update:modelValue', value)
