@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-02：W254三天目标D3
+
+D3编号原命令提供者已实现并通过真实PG验证：新登记Main租户域独立持久分配/原结果恢复、不回收、当前权限和同域唯一写者。旧域保留原Owner；完整规则CAS、业务调用者切换、全局域和CodeGen仍为WP02-16余项。三天必做限定交付进入最终采用/释放核销。 [单份交付](../development/evidence/W254-01/DELIVERY.md)。
+
+17 unique relevant PostgreSQL cases PASS/0skip:9 allocation/current-authority scenarios and8 unchanged legacy Seq regressions. Sources allocation-related-20261102T020936Z(16),final-authority-20261102T021202Z(1). Actual fresh PG migrations/transactions/connections/permission data;simulated business actor and host-session resolver,no actual consumer adoption claimed. One author SPEC/QUALITY review;no Actions/deployment.
+
+D1/D2已正常采用释放；Handoff本轮已清理/释放，Main本提交待正常采用/finish。最终三天完成由wave254-final-verification.json核销。375仍26DONE；WP02-10、CRM Expired终态、编号规则/全消费者/CodeGen明确后续。
+
 ## 2026-11-02：W253三天目标D2
 
 D2实际CRM登录/切组织/旧会话失效通过；七天审核期限前、整点、之后及写入越界回滚通过，修复CRM Issue164。读取到期禁用动作；Expired持久终态与对应保留策略仍未实现，不关闭整卡。继续D3编号原命令提供者。 [单份交付](../development/evidence/W253-01/DELIVERY.md)。

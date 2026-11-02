@@ -46,6 +46,7 @@ public class SeqController : LocalizedControllerBase
     {
         var cur = await _db.Pub_DocSequences.FindAsync(entity.Id);
         if (cur == null) return NotFound();
+        if (await Managed([cur.Id])) return Conflict(new { code = "NUMBER_ALLOCATION_OWNER_REQUIRED" });
         cur.Prefix = entity.Prefix;
         cur.DateFormat = entity.DateFormat;
         cur.SeqLength = entity.SeqLength;
@@ -59,6 +60,7 @@ public class SeqController : LocalizedControllerBase
     [RequirePermission("pub-seq", "delete")]
     public async Task<IActionResult> Delete([FromBody] Guid[] ids)
     {
+        if (await Managed(ids)) return Conflict(new { code = "NUMBER_ALLOCATION_OWNER_REQUIRED" });
         var rows = await _db.Pub_DocSequences.Where(x => ids.Contains(x.Id)).ToListAsync();
         _db.Pub_DocSequences.RemoveRange(rows);
         var count = await _db.SaveChangesAsync();
@@ -71,8 +73,13 @@ public class SeqController : LocalizedControllerBase
     {
         var s = await _db.Pub_DocSequences.FirstOrDefaultAsync(x => x.BizKey == bizKey);
         if (s == null) return NotFound();
+        if (await Managed([s.Id])) return Conflict(new { code = "NUMBER_ALLOCATION_OWNER_REQUIRED" });
         var datePart = string.IsNullOrEmpty(s.DateFormat) ? "" : DateTime.Now.ToString(s.DateFormat);
         var sample = s.Prefix + datePart + (s.CurrentValue + 1).ToString().PadLeft(s.SeqLength, '0');
         return Ok(new { sample });
     }
+
+    private Task<bool> Managed(Guid[] ids) => _db.Database.IsNpgsql()
+        ? _db.Database.SqlQuery<bool>($"SELECT EXISTS(SELECT FROM cp6_number_allocation_v1.scopes WHERE tenant_id={_db.CurrentTenantId} AND rule_id=ANY({ids})) AS \"Value\"").SingleAsync()
+        : Task.FromResult(false);
 }
