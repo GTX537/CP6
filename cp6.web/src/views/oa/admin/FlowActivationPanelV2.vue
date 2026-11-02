@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import DefinitionImpact from './DefinitionImpact.vue'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { AUTH_EPOCH, AUTH_RECORD, IMPERSONATION, AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import type { AuthoringView } from '@/api/oa/flowAuthoring'
@@ -111,13 +112,14 @@ onBeforeUnmount(() => { live = false; generation++; controller?.abort(); window.
 <template>
   <section aria-label="准确版本启停" class="activation">
     <h3>准确版本启停</h3>
-    <p>已接入的业务审批按准入时固定版本运行，停用只阻止新申请。普通表单发起入口仍待接入；在途数量暂不可用。</p>
+    <p>已接入的业务审批和普通表单按提交时固定的版本运行；启停控制新的发起资格，在途版本保持不变。</p>
     <p v-if="error" role="alert">{{ error }}</p><p v-if="message" role="status">{{ message }}</p>
     <button :disabled="locked" @click="list">读取流程</button>
     <template v-if="pending"><button :disabled="busy || unavailableCache" @click="recover">查询原启停结果</button><button :disabled="busy || unavailableCache" @click="retry">以原意图重试</button></template>
     <ul><li v-for="row in rows" :key="row.definitionId"><button :disabled="locked" @click="open(row.key)">{{ row.fields.Name ?? '名称不可见' }} · {{ row.key }}</button></li></ul>
     <div v-if="rows.length || page > 1"><button :disabled="locked || page === 1" @click="page--; list()">上一页流程</button><span>{{ page }}</span><button :disabled="locked || rows.length < 100" @click="page++; list()">下一页流程</button></div>
     <div v-if="preview">
+      <DefinitionImpact :impact="preview.impact" />
       <h4>{{ preview.current.key }}</h4><p>配置：{{ preview.current.enabled ? '已启用' : '已停用' }} · 所选发布版本 {{ preview.current.publishedVersionId ?? '尚未选择' }}</p>
       <p v-if="preview.formKey">当前配置关联表单：{{ preview.formKey }} · 固定版本 {{ preview.formVersionId }}。{{ preview.current.enabled ? '已占用该表单的新发起绑定。' : '已停用，不占用启用绑定。' }}</p>
       <label>发布版本<select v-model="selected" :disabled="locked"><option value="">请明确选择一个版本</option><option v-for="v in preview.versions" :key="v.versionId" :value="v.versionId">版本 {{ v.number }} · {{ v.name ?? '名称不可见' }}</option></select></label>

@@ -15,7 +15,8 @@ public sealed record FlowActivationHistoryV2(Guid Revision, Guid PreviousRevisio
     Guid ActorId, string Reason, DateTimeOffset ChangedAtUtc);
 public sealed record FlowActivationChoiceV2(Guid VersionId, int Number, string? Name, string? FormKey = null, Guid? FormVersionId = null);
 public sealed record FlowActivationPreviewV2(FlowActivationV2 Current, FlowActivationChoiceV2[] Versions,
-    int Page, string[] AffectedEntries, int? InflightCount = null, string? FormKey = null, Guid? FormVersionId = null);
+    int Page, string[] AffectedEntries, int? InflightCount = null, string? FormKey = null, Guid? FormVersionId = null,
+    DefinitionRuntimeImpactV2? Impact = null);
 public sealed record FlowActivationResultV2(string CommandId, string Outcome, Guid? ResourceId, string? ResourceVersion,
     FlowActivationV2? Result, DateTimeOffset? RecordedAtUtc, string? CorrelationId);
 
@@ -62,10 +63,10 @@ public sealed partial class FlowAuthoringOwnerV2
         var versions = rows.Select(Choice).ToArray();
         var active = current.PublishedVersionId is { } id
             ? versions.SingleOrDefault(v => v.VersionId == id) ?? Choice((await Published(head.Id, id, ct))!) : null;
+        var impact=await DefinitionRuntimeImpactReaderV2.Read(db,fence.EnvironmentId,head.Id,false,ct);
         if ((await Actor(ct)).UserId != actor.UserId) throw Error("REAUTH_REQUIRED", 401); CompletionClock();
-        // APP consumes accepted pins. Scoped affected-entry/in-flight disclosure remains unavailable;
-        // do not report a guessed zero or count legacy instances as adopted v2 instances.
-        return new(current, versions, page, [], FormKey: active?.FormKey, FormVersionId: active?.FormVersionId);
+        return new(current, versions, page, DefinitionRuntimeImpactReaderV2.Entries(impact),impact.RunningInstances+impact.SuspendedInstances,
+            active?.FormKey,active?.FormVersionId,impact);
     }
     public async Task<FlowActivationHistoryV2[]> ActivationHistoryAsync(string key, int page = 1, CancellationToken ct = default)
     {

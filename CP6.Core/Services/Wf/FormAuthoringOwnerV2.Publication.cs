@@ -16,7 +16,7 @@ public sealed record FormPublicationBodyV2(Guid DraftVersionId, Guid PreviewId, 
 public sealed record FormNextDraftBodyV2(Guid SourceVersionId);
 public sealed record FormPublicationPreviewV2(Guid Id, string Digest, Guid DraftVersionId, string ExpectedVersion,
     string SchemaDigest, DateTimeOffset ExpiresAtUtc, string[] Diagnostics, FlowDependencyRefV2[] Dependencies,
-    bool CanPublish, int? AffectedDraftCount = null, string ConsumerState = "NOT_ADOPTED");
+    bool CanPublish, int? AffectedDraftCount = null, string ConsumerState = "PERSONAL_FORM_PINNED_RUNTIME_ADOPTED",DefinitionRuntimeImpactV2? Impact = null);
 public sealed record FormPublicationV2(Guid DefinitionId, Guid VersionId, int Version, string Key,
     Dictionary<string, string?> Fields, string? SchemaDigest, DateTimeOffset PublishedAtUtc, Guid PublisherRef,
     FlowDependencyRefV2[] DependencyRefs, string SourceDraftToken, bool ActivationChanged = false, string EvidenceState = "ORIGINAL_PUBLICATION");
@@ -85,8 +85,9 @@ public sealed partial class FormAuthoringOwnerV2
         var permission = await PublishingPermission(actor, head, ct);
         if (head.Status != 0 || head.DraftId != input.DraftVersionId || head.Version != expected) throw Error("DEFINITION_CHANGED", 409);
         var inputs = PublicationInputs(head, ct); var digest = PreviewDigest(head, permission.Policy.Version, inputs.Diagnostics, inputs.Dependencies);
+        var impact=await DefinitionRuntimeImpactReaderV2.Read(db,fence.EnvironmentId,head.Id,true,ct);
         var result = new FormPublicationPreviewV2(Guid.NewGuid(), digest, head.DraftId, input.ExpectedVersion, SchemaDigest(head.SchemaJson),
-            PublicationClock().AddMinutes(10), inputs.Diagnostics, inputs.Dependencies, inputs.Diagnostics.Length == 0);
+            PublicationClock().AddMinutes(10), inputs.Diagnostics, inputs.Dependencies, inputs.Diagnostics.Length == 0,impact.ActiveDrafts,Impact:impact);
         var snapshot = JsonSerializer.Serialize(result, Json);
         await db.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO cp6_form_authoring_v2.publication_previews(tenant_id,environment_id,id,actor_id,head_id,draft_id,draft_token,digest,expires_at,snapshot_json)

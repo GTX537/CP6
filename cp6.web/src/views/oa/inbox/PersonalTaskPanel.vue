@@ -7,7 +7,7 @@ import { personalFormApi as api, type PersonalTask, type PersonalTaskResult } fr
 import { schemaFields, formObject, readFormJson } from '../catalog/personalFormJson'
 import PersonalFormFields from '../catalog/PersonalFormFields.vue'
 const props = defineProps<{ taskId: string }>()
-const emit = defineEmits<{ completed: [] }>()
+const emit = defineEmits<{ completed: []; privateClear: [] }>()
 interface Intent { identity: string; task: string; command: string; behalf: string | null }
 interface Decision { commandId: string; decision: string; comment: string; taskRowVersion: string; instanceRowVersion: string }
 const cache = 'cp6-personal-task-pending'
@@ -36,7 +36,7 @@ async function load() {
   if (busy.value) return
   const identity = identityStamp(), current = ++generation; busy.value = true; error.value = ''
   try { const value = await api.task(props.taskId); requireIdentity(identity); if (live && current === generation) { context.value = value; result.value = undefined } }
-  catch (e: any) { if (live && current === generation && identity === identityStamp()) { clearPrivate(); error.value = personalFormError(e) } }
+  catch (e: any) { if (live && current === generation && identity === identityStamp()) { clearPrivate(); if ([401, 403, 404].includes(e?.response?.status)) emit('privateClear'); error.value = personalFormError(e) } }
   finally { if (live && current === generation) busy.value = false }
 }
 async function run(read: boolean, wasUnknown: boolean, close = false) {
@@ -55,7 +55,7 @@ async function run(read: boolean, wasUnknown: boolean, close = false) {
   } catch (e: any) {
     try {
       check(); const status = e?.response?.status
-      if ([401, 403, 404].includes(status)) { clearPrivate(); body = undefined }
+      if ([401, 403, 404].includes(status)) { clearPrivate(); body = undefined; emit('privateClear') }
       if (!read && !wasUnknown && status >= 400 && status < 500 && status !== 408 && status !== 429) { sessionStorage.removeItem(cache); pending.value = undefined; body = undefined }
       error.value = personalFormError(e)
     } catch { /* obsolete identity */ }

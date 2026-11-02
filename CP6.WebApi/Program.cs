@@ -975,6 +975,7 @@ builder.Services.AddScoped<CP6.Core.Services.Plm.ControlledDocumentReviewOwnerV1
 builder.Services.AddSingleton(new CP6.Core.Services.Mes.QualitySpecificationRuntimeV1(builder.Configuration["QualitySpecification:EvidenceMode"] ?? ""));
 builder.Services.AddScoped<CP6.Core.Services.Mes.QualitySpecificationAuthorityService>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.ApprovalBusinessEvidenceV2>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.NativeInboxOwnerV2>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.ToolSpecificationOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.ToolAssociationOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.ToolAssociationEngineeringOwnerV1>();

@@ -16,7 +16,7 @@ public class TaskCenterService : ITaskCenterService
         var q = from t in _db.Wf_FlowTasks
                 where t.AssigneeId == userId && t.Status == FlowTaskStatus.Pending
                 join i in _db.Wf_FlowInstances on t.InstanceId equals i.Id
-                where i.Status == FlowInstanceStatus.Running && i.Creator != FlowEngine.PersonalFormRuntimeV2
+                where i.Status == FlowInstanceStatus.Running && i.Creator != FlowEngine.PersonalFormRuntimeV2 && i.Creator != FlowEngine.ApprovalRuntimeV2
                 orderby t.CreateDate descending
                 select new TodoItem(t.Id, i.Id, i.FlowKey, t.NodeId, i.StarterId, t.CreateDate);
         return await q.ToListAsync();
@@ -24,7 +24,7 @@ public class TaskCenterService : ITaskCenterService
 
     public Task<List<MyApplicationItem>> MyApplicationsAsync(Guid userId) =>
         _db.Wf_FlowInstances
-            .Where(i => i.StarterId == userId && i.Creator != FlowEngine.PersonalFormRuntimeV2)
+            .Where(i => i.StarterId == userId && i.Creator != FlowEngine.PersonalFormRuntimeV2 && i.Creator != FlowEngine.ApprovalRuntimeV2)
             .OrderByDescending(i => i.CreateDate)
             .Select(i => new MyApplicationItem(i.Id, i.FlowKey, i.CurrentNode, i.Status, i.CreateDate))
             .ToListAsync();

@@ -5,21 +5,28 @@ using CP6.Entity.DomainModels.Sys;
 using CP6.Entity.DomainModels.Wf;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using CP6.Core.Services.Common;
+using CP6.Tests.Platform;
+using System.Data.Common;
 
 namespace CP6.Tests.Oa;
 
-public sealed class InboxQueryPagingTests
+[Collection("TenantManagementPostgres")]
+public sealed class InboxQueryPagingTests(TenantManagementPostgresFixture server)
 {
-    [Fact]
+    private sealed class Commands(List<string> values):DbCommandInterceptor
+    {
+        public override ValueTask<InterceptionResult<DbDataReader>> ReaderExecutingAsync(DbCommand command,CommandEventData eventData,
+            InterceptionResult<DbDataReader> result,CancellationToken cancellationToken=default)
+        {values.Add(command.CommandText);return base.ReaderExecutingAsync(command,eventData,result,cancellationToken);}
+    }
+    [CurrentPermissionPostgresFact]
     public async Task Pending_and_stats_emit_server_side_limit_and_count_queries()
     {
-        await using var connection = WfTestDb.NewSqliteWithSchema();
         var commands = new List<string>();
-        var options = new DbContextOptionsBuilder<CP6Context>()
-            .UseSqlite(connection)
-            .LogTo(commands.Add, new[] { RelationalEventId.CommandExecuted })
-            .Options;
-        await using var db = new CP6Context(options);
+        var tenant=Guid.NewGuid();
+        await using var db=server.Context(new TenantContext{CurrentTenantId=tenant},null,new Commands(commands));
+        db.Sys_Tenants.Add(new(){Id=tenant,TenantCode=tenant.ToString("N"),TenantName="Inbox pagination fixture"});
         var user = new Sys_User
         {
             Id = Guid.NewGuid(), UserName = "approver", Password = "x", Enable = true

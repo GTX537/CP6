@@ -28,7 +28,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var original = one.Result!.Publication!; var current = (await owner.ActivationPreviewAsync("activation")).Current;
         Assert.False(current.Enabled); Assert.Null(current.PublishedVersionId);
         var command = FormActivationCommand(current, original.VersionId); var first = await owner.SetActivationAsync("activation", command);
-        Assert.True(first.Result!.Enabled); Assert.Equal("NOT_ADOPTED", first.Result.ConsumerState);
+        Assert.True(first.Result!.Enabled);
         Assert.Equal(original.VersionId, first.Result.PublishedVersionId); Assert.True((await owner.ReadHeadAsync("activation")).Enabled);
         var draft = await owner.CreateNextDraftAsync("activation", FormNextDraftCommand(one.ResourceVersion!, original.VersionId));
         var edit = await owner.SaveAsync("activation", FormAuthoringCommand("edit", draft.ResourceVersion, "second"));

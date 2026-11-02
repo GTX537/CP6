@@ -196,6 +196,8 @@ public class FlowDefService : IFlowDefService
         if (inst == null) return null;
         if (inst.Creator == FlowEngine.PersonalFormRuntimeV2)
             throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1("FORM_READ_OWNER_REQUIRED",409);
+        if (inst.Creator == FlowEngine.ApprovalRuntimeV2)
+            throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1("APP_READ_OWNER_REQUIRED",409);
 
         return new FlowInstanceDetail
         {

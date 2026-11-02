@@ -1,8 +1,10 @@
 import http from '../http'
 import type { FormAuthoringView } from './formAuthoring'
+import type { DefinitionImpact } from './definitionImpact'
 export interface PublicationPreview {
   id: string; digest: string; draftVersionId: string; expectedVersion: string; schemaDigest: string
   expiresAtUtc: string; diagnostics: string[]; canPublish: boolean
+  affectedDraftCount?: number | null; impact?: DefinitionImpact | null
   dependencies: { kind: string; location: string; reference: string; version: string | null; evidenceState: string }[]
 }
 export interface PublishedForm {

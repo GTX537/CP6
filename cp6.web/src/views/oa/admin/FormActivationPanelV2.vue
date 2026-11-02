@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import DefinitionImpact from './DefinitionImpact.vue'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { AUTH_EPOCH, AUTH_RECORD, IMPERSONATION, AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import type { FormAuthoringView } from '@/api/oa/formAuthoring'
@@ -111,13 +112,14 @@ onBeforeUnmount(() => { live = false; generation++; controller?.abort(); window.
 <template>
   <section aria-label="准确版本启停" class="activation">
     <h3>准确版本启停</h3>
-    <p>管理新发布表单的启停配置。运行入口尚未接入，此处启用不代表已可发起审批；在途数量暂不可用。</p>
+    <p>管理已发布表单的启停配置。新发起还需满足当前表单使用权限和流程绑定；停用不改写已有提交。</p>
     <p v-if="error" role="alert">{{ error }}</p><p v-if="message" role="status">{{ message }}</p>
     <button :disabled="locked" @click="list">读取表单</button>
     <template v-if="pending"><button :disabled="busy" @click="recover">查询原启停结果</button><button :disabled="busy" @click="retry">以原意图重试</button></template>
     <ul><li v-for="row in rows" :key="row.definitionId"><button :disabled="locked" @click="open(row.key)">{{ row.fields.Name ?? '名称不可见' }} · {{ row.key }}</button></li></ul>
     <div v-if="rows.length || page > 1"><button :disabled="locked || page === 1" @click="page--; list()">上一页表单</button><span>{{ page }}</span><button :disabled="locked || rows.length < 100" @click="page++; list()">下一页表单</button></div>
     <div v-if="preview">
+      <DefinitionImpact :impact="preview.impact" form />
       <h4>{{ preview.current.key }}</h4><p>配置：{{ preview.current.enabled ? '已启用' : '已停用' }} · 所选发布版本 {{ preview.current.publishedVersionId ?? '尚未选择' }}</p>
       <label>发布版本<select v-model="selected" :disabled="locked"><option value="">请明确选择一个版本</option><option v-for="v in preview.versions" :key="v.versionId" :value="v.versionId">版本 {{ v.number }} · {{ v.name ?? '名称不可见' }}</option></select></label>
       <div v-if="preview.versions.length || versionPage > 1"><button :disabled="locked || versionPage === 1" @click="open(preview.current.key, versionPage - 1)">上一页版本</button><span>{{ versionPage }}</span><button :disabled="locked || preview.versions.length < 100" @click="open(preview.current.key, versionPage + 1)">下一页版本</button></div>
