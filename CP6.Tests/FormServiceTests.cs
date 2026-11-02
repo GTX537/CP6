@@ -135,19 +135,17 @@ public class FormServiceTests
     }
 
     [Fact]
-    public async Task Publish_InvalidTableSchema_FailsClosed()
+    public async Task SaveDraft_InvalidTableSchema_FailsBeforeCreatingDefinition()
     {
         using var db = NewDb();
         var svc = new FormService(db);
         const string invalid =
             """{"fields":[{"name":"items","type":"table","minRows":2,"maxRows":1,"columns":[]}]}""";
-        var draft = await svc.SaveDraftAsync("purchase", "采购单", invalid, null);
-
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-            () => svc.PublishAsync("purchase", draft.RowVersion, Guid.NewGuid()));
+            () => svc.SaveDraftAsync("purchase", "采购单", invalid, null));
 
-        Assert.Equal("E-WF-036", ex.Message);
-        Assert.Empty(await db.Wf_FormDefVersions
-            .Where(x => x.Status == WfDefinitionVersionStatus.Published).ToListAsync());
+        Assert.StartsWith("FORM_SCHEMA_INVALID:", ex.Message);
+        Assert.Empty(await db.Wf_FormDefVersions.ToListAsync());
+        Assert.Empty(await db.Wf_FormDefs.ToListAsync());
     }
 }

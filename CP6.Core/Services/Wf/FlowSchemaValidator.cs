@@ -26,20 +26,18 @@ public static class FlowSchemaValidator
         new(StringComparer.OrdinalIgnoreCase) { "GET", "POST", "PUT", "DELETE" };
 
     public static IReadOnlyList<string> Validate(FlowSchema schema)
+        => HasValidDraftStructure(schema) ? ValidateKnownStructure(schema) : ["E-WF-010"];
+
+    internal static IReadOnlyList<string> ValidateKnownStructure(FlowSchema schema)
     {
         var errs = new List<string>();
-        if (schema is null || schema.Nodes.Count == 0) { errs.Add("E-WF-010"); return errs; }
+        if (schema.Nodes.Count == 0) { errs.Add("E-WF-010"); return errs; }
 
         string T(FlowNode n) => (n.Type ?? "approval").Trim().ToLowerInvariant();
-        var ids = schema.Nodes.Select(n => n.Id).ToHashSet();
 
         // ① 恰一 start ② 至少一 end
         if (schema.Nodes.Count(n => T(n) == "start") != 1) errs.Add("E-WF-010");
         if (!schema.Nodes.Any(n => T(n) == "end")) errs.Add("E-WF-010");
-
-        // ③ 边引用存在节点
-        foreach (var e in schema.Edges)
-            if (!ids.Contains(e.From) || !ids.Contains(e.To)) { errs.Add("E-WF-010"); break; }
 
         // ⑤ approval 须有合法策略（仅单档节点；串簽节点由⑦单独校验）
         foreach (var n in schema.Nodes.Where(n => T(n) == "approval" && (n.Stages is null || n.Stages.Count == 0)))
@@ -201,5 +199,22 @@ public static class FlowSchemaValidator
         }
 
         return errs.Distinct().ToList();
+    }
+
+    /// <summary>Fatal structure differs from an unfinished graph. Missing legacy edge IDs remain legal.</summary>
+    public static bool HasValidDraftStructure(FlowSchema? schema)
+    {
+        if (schema?.Nodes == null || schema.Edges == null) return false;
+        var nodes = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var node in schema.Nodes)
+            if (node == null || string.IsNullOrWhiteSpace(node.Id) || !nodes.Add(node.Id)
+                || node.Type?.Trim().ToLowerInvariant() is not ("start" or "end" or "approval" or "gateway" or "parallelsplit" or "paralleljoin" or "inclusivesplit" or "inclusivejoin" or "servicetask" or "subflow")
+                || node.Stages?.Any(x => x == null) == true) return false;
+        if (!string.IsNullOrEmpty(schema.Start) && !nodes.Contains(schema.Start)) return false;
+        var edges = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var edge in schema.Edges)
+            if (edge == null || !nodes.Contains(edge.From) || !nodes.Contains(edge.To)
+                || edge.Id != null && (string.IsNullOrWhiteSpace(edge.Id) || !edges.Add(edge.Id))) return false;
+        return true;
     }
 }

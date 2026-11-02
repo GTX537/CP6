@@ -218,11 +218,9 @@ public sealed partial class FlowAuthoringOwnerV2
         {
             using var doc = WorkflowCommandJsonV1.Parse(Encoding.UTF8.GetBytes(schemaJson));
             var schema = doc.Deserialize<FlowSchema>(new JsonSerializerOptions(JsonSerializerDefaults.Web)) ?? throw new JsonException();
-            if (schema.Nodes == null || schema.Edges == null || schema.Nodes.Any(x => x == null || string.IsNullOrWhiteSpace(x.Id)
-                || x.Type?.Trim().ToLowerInvariant() is not ("start" or "end" or "approval" or "gateway" or "parallelsplit" or "paralleljoin" or "inclusivesplit" or "inclusivejoin" or "servicetask" or "subflow"))
-                || schema.Nodes.GroupBy(x => x.Id, StringComparer.Ordinal).Any(g => g.Count() != 1) || schema.Edges.Any(x => x == null))
+            if (!FlowSchemaValidator.HasValidDraftStructure(schema))
                 throw Error("SCHEMA_SHAPE_INVALID", 422);
-            var errors = FlowSchemaValidator.Validate(schema);
+            var errors = FlowSchemaValidator.ValidateKnownStructure(schema);
             foreach (var node in schema.Nodes.Where(x => string.Equals(x.Type?.Trim(), "serviceTask", StringComparison.OrdinalIgnoreCase)))
             {
                 // E-WF-016 also covers a missing outgoing edge. Keep that graph diagnostic

@@ -20,10 +20,12 @@ Architecture：复用W266共享树版本、IAM共同门、不可变commands和�
 
 - [x] cp6.web/src/api/sys/menu.ts增加展示DTO/API；新增MenuDisplayPanel.vue并接入MenuView.vue当前选中节点。明确名称/图标/显示状态独立保存；先读当前版本和预览全局影响，412留草稿并可重读当前值，确认后重新提交；存储失败不发送。
 - [x] 原请求按当前身份epoch保存sessionStorage，刷新可查询/原样重试，后续404/403不消除未知；选中节点变化和身份变化丢弃晚答，确认后刷新当前列表/导航，与树/旧节点编辑互斥。已有旧接口全面改造留待对应窗口。
-- [ ] 相关PG/实际HTTP测试、Vue行为/类型检查和Chrome实际页面夹具；一次任务审查，报告/台账/四状态同步，正常Main/Handoff采用，准确分支清理、官方finish和席位释放。
+- [x] 相关PG/实际HTTP测试、Vue行为/类型检查和Chrome实际页面夹具；一次任务审查，报告/台账/四状态同步，正常Main/Handoff采用，准确分支清理、官方finish和席位释放。
 
 验证命令使用本地run_wave267_main.py的Menu_display_v1及受影响Menu_tree_v1筛选，Vue运行MenuDisplayPanel/MenuView相关测试和vue-tsc。验收均可模拟数据；PG和实际HTTP是真执行，页面API夹具明确标注。无Actions、既有环境迁移或部署。
 
 原375状态和59局部卡真实边界保留；WP02-18仍余RoutePath/MenuKey/路由注册、个性配置、KPI/scoped授权缓存、全用户导航传播、旧入口全面采用与原20AC整体。不能以本期替代整卡完成。
 
 实现与相关验证完成，最后一项状态同步、远端采用、清理/finish由wave267-final-verification.json核销。提交前VERIFYING。
+
+W268依wave267-final-verification.json核销W267实际采用/清理/finish；历史24h估算失准，实际约19分钟，本轮改为24h有效投入滚动预测。

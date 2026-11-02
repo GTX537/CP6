@@ -172,6 +172,8 @@ import {
 import { SchemaHistory } from './schemaHistory'
 import { validateFormSchema } from './designValidate'
 import { formApi } from '@/api/wf/form'
+import { preserveSchema } from '@/views/oa/designer/preserveSchema'
+import { parseStrictJson } from '@/contracts/quality/strictJson'
 import type { FormSchema, FormFieldDef, FormTableColumnDef } from '@/types/wf/wf'
 
 const { t } = useI18n()
@@ -182,7 +184,10 @@ const { t } = useI18n()
  */
 const formKey = ref('')
 const formName = ref('')
-const schema = reactive<FormSchema>({ fields: [], rules: [] })
+const schema = reactive<FormSchema>(Object.assign(Object.create(null), { fields: [], rules: [] }))
+let originalSchema = '{"fields":[],"rules":[]}'
+const busy = ref(false)
+let loadedKey: string | undefined
 const selectedIdx = ref(-1)
 const previewModel = ref<Record<string, any>>({})
 
@@ -191,18 +196,20 @@ const selected = computed<FormFieldDef | null>(() =>
 )
 
 // ── 撤销/重做（快照栈，章09 §5）──
-const history = new SchemaHistory(snapshot())
+const history = new SchemaHistory(originalSchema)
 const canUndo = ref(false)
 const canRedo = ref(false)
 let restoring = false
 
 function snapshot(): FormSchema {
-  return JSON.parse(JSON.stringify({ fields: schema.fields, rules: schema.rules || [] }))
+  return JSON.parse(JSON.stringify(schema))
 }
-function applySnapshot(s: FormSchema) {
+function applySnapshot(s: FormSchema, raw: string) {
   restoring = true
-  schema.fields = s.fields || []
-  schema.rules = s.rules || []
+  originalSchema = raw
+  // Remove properties from the previous form as well as copying the complete new schema.
+  for (const key of Object.keys(schema)) delete schema[key]
+  Object.assign(schema, s)
   if (selectedIdx.value >= schema.fields.length) selectedIdx.value = -1
   restoring = false
 }
@@ -211,10 +218,13 @@ watch(
   () => snapshot(),
   () => {
     if (restoring) return
-    history.push(snapshot())
+    // Record exact fragments after each atomic edit. A later rename/reorder or undo cannot
+    // lose precision by rebasing several edits onto the originally loaded positional array.
+    originalSchema = preserveSchema(originalSchema, snapshot(), 'name')
+    history.push(originalSchema)
     syncHistoryFlags()
   },
-  { deep: true },
+  { deep: true, flush: 'sync' },
 )
 function syncHistoryFlags() {
   canUndo.value = history.canUndo
@@ -222,12 +232,12 @@ function syncHistoryFlags() {
 }
 function undo() {
   const s = history.undo()
-  if (s) applySnapshot(s)
+  if (s) applySnapshot(JSON.parse(s), s)
   syncHistoryFlags()
 }
 function redo() {
   const s = history.redo()
-  if (s) applySnapshot(s)
+  if (s) applySnapshot(JSON.parse(s), s)
   syncHistoryFlags()
 }
 
@@ -239,8 +249,9 @@ function addField(type: string) {
 function move(i: number, dir: number) {
   const j = i + dir
   if (j < 0 || j >= schema.fields.length) return
-  const arr = schema.fields
+  const arr = [...schema.fields]
   ;[arr[i], arr[j]] = [arr[j]!, arr[i]!]
+  schema.fields = arr
   selectedIdx.value = j
 }
 function remove(i: number) {
@@ -306,24 +317,44 @@ function removeColumnOption(column: FormTableColumnDef, index: number) {
 // ── 加载 / 保存（接运行时 FormDef，章09 §5）──
 const draftRowVersion = ref<string>()
 async function load() {
+  if (busy.value) return
   if (!formKey.value.trim()) {
     ElMessage.warning(t('请输入表单标识'))
     return
   }
-  const res = await formApi.getDraft(formKey.value.trim())
+  busy.value = true
+  const key = formKey.value.trim()
+  try {
+  const res = await formApi.getDraft(key)
+  if (formKey.value.trim() !== key) return
   if (!res.data) {
     ElMessage.info(t('该表单尚未定义'))
     return
   }
+  const raw: string = res.data.schemaJson
+  parseStrictJson(raw)
+  const parsed = JSON.parse(raw) as FormSchema
+  if (!parsed || !Array.isArray(parsed.fields) ||
+      parsed.fields.some(f => !f || typeof f !== 'object') ||
+      (parsed.rules !== undefined && !Array.isArray(parsed.rules))) throw new Error('表单结构无效')
   formName.value = res.data.name || ''
   draftRowVersion.value = res.data.rowVersion
-  const parsed: FormSchema = JSON.parse(res.data.schemaJson || '{"fields":[]}')
-  applySnapshot({ fields: parsed.fields || [], rules: parsed.rules || [] })
-  history.reset(snapshot())
+  loadedKey = key
+  applySnapshot(parsed, raw)
+  history.reset(raw)
   syncHistoryFlags()
+  } catch (error) {
+    ElMessage.error(error instanceof Error ? error.message : t('加载失败，已保留当前草稿'))
+  } finally { busy.value = false }
 }
 
 async function save() {
+  if (busy.value) return
+  const key = formKey.value.trim()
+  if (loadedKey !== undefined && loadedKey !== key) {
+    ElMessage.warning(t('表单标识已改变，请加载目标表单或恢复原标识'))
+    return
+  }
   if (!formKey.value.trim() || !formName.value.trim()) {
     ElMessage.warning(t('请填写表单标识与名称'))
     return
@@ -333,19 +364,35 @@ async function save() {
     ElMessage.error(errors[0])
     return
   }
-  const res = await formApi.saveDraft(formKey.value.trim(), {
+  busy.value = true
+  try {
+  const schemaJson = preserveSchema(originalSchema, snapshot(), 'name')
+  const res = await formApi.saveDraft(key, {
     name: formName.value.trim(),
-    schemaJson: JSON.stringify({ fields: schema.fields, rules: schema.rules || [] }),
+    schemaJson,
     rowVersion: draftRowVersion.value,
   })
   draftRowVersion.value = res.data.rowVersion
+  loadedKey = key
   ElMessage.success(t('保存成功'))
+  } catch (error) {
+    ElMessage.error(error instanceof Error ? error.message : t('保存失败，已保留当前草稿'))
+  } finally { busy.value = false }
 }
 async function publish() {
+  if (busy.value) return
+  if (loadedKey !== formKey.value.trim()) { ElMessage.warning(t('请先加载或保存当前表单')); return }
   if (!draftRowVersion.value) { ElMessage.warning(t('请先保存草稿')); return }
-  await formApi.publish(formKey.value.trim(), draftRowVersion.value)
-  ElMessage.success(t('发布成功'))
-  await load()
+  busy.value = true
+  try {
+    await formApi.publish(formKey.value.trim(), draftRowVersion.value)
+    ElMessage.success(t('发布成功'))
+    // Publication is complete even if the following read fails; do not publish twice on read failure.
+    busy.value = false
+    await load()
+  } catch (error) {
+    ElMessage.error(error instanceof Error ? error.message : t('未能确认发布结果，请核对发布版本；当前草稿已保留'))
+  } finally { busy.value = false }
 }
 </script>
 
