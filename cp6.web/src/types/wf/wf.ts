@@ -62,6 +62,8 @@ export interface FormRule {
 
 /** 表单 schema */
 export interface FormSchema {
+  /** Passive layout/extension properties survive designer edits; runtime consumes only registered fields/rules. */
+  [key: string]: unknown
   fields: FormFieldDef[]
   /** 显隐/计算/联动/必填规则（章06，可选） */
   rules?: FormRule[]

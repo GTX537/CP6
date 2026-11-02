@@ -71,6 +71,7 @@ public class FormService : IFormService
         string formKey, string formName, string schemaJson, byte[]? rowVersion, string? user = null)
     {
         if (string.IsNullOrWhiteSpace(formKey)) throw new InvalidOperationException("FormKey 不能为空");
+        _ = FormSchemaValidationV1.Parse(schemaJson);
         var head = await _db.Wf_FormDefs.FirstOrDefaultAsync(x => x.FormKey == formKey);
         if (head == null)
         {
@@ -127,11 +128,7 @@ public class FormService : IFormService
         EnsureRowVersion(draft.RowVersion, rowVersion);
         if (rowVersion != null) _db.Entry(draft).Property(x => x.RowVersion).OriginalValue = rowVersion;
 
-        FormSchema? schema;
-        try { schema = JsonSerializer.Deserialize<FormSchema>(draft.SchemaJson, JsonOpts); }
-        catch (JsonException) { throw new InvalidOperationException("E-WF-036"); }
-        if (schema == null || FormDataValidator.ValidateSchema(schema).Count > 0)
-            throw new InvalidOperationException("E-WF-036");
+        _ = FormSchemaValidationV1.Parse(draft.SchemaJson);
         await new FlowFormCompatibilityValidator(_db).ValidateFormPublishAsync(head.Id, draft.SchemaJson, ct);
 
         var at = DateTime.UtcNow;

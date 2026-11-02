@@ -3,7 +3,7 @@ interface Node { raw: string; value: any; children?: Map<string, Node>; items?: 
 /** Reuse untouched original fragments, including number spelling/precision and opaque extensions.
  * The visual editor receives ordinary values; it never reserializes untouched source subtrees.
  */
-export function preserveSchema(original: string, next: unknown): string {
+export function preserveSchema(original: string, next: unknown, arrayIdentity: 'id' | 'name' = 'id'): string {
   parseStrictJson(original)
   let at = 0
   const white = () => { while (/\s/.test(original[at] ?? '') && at < original.length) at++ }
@@ -33,8 +33,11 @@ export function preserveSchema(original: string, next: unknown): string {
   function write(value: any, source?: Node): string {
     if (source && JSON.stringify(source.value) === JSON.stringify(value)) return source.raw
     if (Array.isArray(value)) return '[' + value.map((item, index) => {
-      const matching = item && typeof item === 'object' && typeof item.id === 'string'
-        ? source?.items?.find(n => n.value?.id === item.id) : source?.items?.[index]
+      const identity = item && typeof item === 'object' ? item[arrayIdentity] : undefined
+      const candidates = typeof identity === 'string'
+        ? source?.items?.filter(n => n.value?.[arrayIdentity] === identity) : undefined
+      const matching = typeof identity === 'string'
+        ? (candidates?.length === 1 ? candidates[0] : arrayIdentity === 'name' ? source?.items?.[index] : undefined) : source?.items?.[index]
       return write(item, matching)
     }).join(',') + ']'
     if (value && typeof value === 'object') return '{' + Object.entries(value).filter(([, v]) => v !== undefined)

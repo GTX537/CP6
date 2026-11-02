@@ -1,14 +1,16 @@
 // OA 章09 §5 设计时校验。过不了不让坏 schema 进库（漏必填/重复 key/断头节点/审批人不完整）。
 // 返回中文诊断串（瞬时提示，不走 i18n key）。纯函数，便于 vitest。
 import type { FormSchema, FlowDesignSchema } from '@/types/wf/wf'
-import { isOptionType, TABLE_COLUMN_TYPES } from './controlLibrary'
+import { CONTROL_LIBRARY, isOptionType, TABLE_COLUMN_TYPES } from './controlLibrary'
 import { reachableEndIds } from './flowGraph'
 
 /** 校验表单 schema：字段标识非空且不重复、选项类控件至少 1 个选项。返回错误清单（空=通过）。 */
 export function validateFormSchema(schema: FormSchema): string[] {
   const errors: string[] = []
+  if (!schema || !Array.isArray(schema.fields)) return ['字段必须是数组']
   const seen = new Set<string>()
   for (const f of schema.fields || []) {
+    if (!f || typeof f !== 'object') { errors.push('字段必须是对象'); continue }
     const name = (f.name || '').trim()
     if (!name) {
       errors.push('存在未命名字段（字段标识不能为空）')
@@ -17,6 +19,7 @@ export function validateFormSchema(schema: FormSchema): string[] {
     } else {
       seen.add(name)
     }
+    if (!CONTROL_LIBRARY.some(c => c.type === f.type)) errors.push(`${f.label || name} 的字段类型不受支持`)
     if (isOptionType(f.type) && !(f.options && f.options.length > 0)) {
       errors.push(`${f.label || name} 缺少选项`)
     }
@@ -62,6 +65,15 @@ export function validateFormSchema(schema: FormSchema): string[] {
           minRows < 0 || maxRows < 1 || maxRows > 200 || minRows > maxRows) {
         errors.push(`${label} 的行数范围无效`)
       }
+    }
+  }
+  const actions = new Set(['show', 'hide', 'require', 'optional', 'disable', 'enable', 'setOptions', 'compute'])
+  if (schema.rules !== undefined && !Array.isArray(schema.rules)) errors.push('规则必须是数组')
+  else for (const rule of schema.rules || []) {
+    if (!rule || !Array.isArray(rule.then)) { errors.push('规则动作必须是数组'); continue }
+    for (const effect of rule.then) {
+      if (!effect || !actions.has(effect.action)) { errors.push('规则动作不受支持'); continue }
+      if (!seen.has(effect.target)) errors.push(`规则目标不存在：${effect.target}`)
     }
   }
   return errors

@@ -1,5 +1,13 @@
 # AI 可读变更日志
 
+## 2026-11-02：24小时实际Codex目标 / W268首窗口
+
+W268：FORM完整schema与原数字片段往返、逐编辑精确撤销/重做，保存/发布同一服务端schema边界；FLOW致命结构与未完草图诊断分开。24小时目标仅首窗口，继续W269。 [交付](../development/evidence/W268-01/DELIVERY.md)。
+
+本地64项后端唯一行为通过/0跳过：63项相关（16项PG18含实际Main会话HTTP，47项单元/InMemory）及宽筛选附带1项既有Space OpenAPI检查；前端22项通过（最后11项复查，未变的11项复用首轮）；最终vue-tsc退出0。业务输入模拟；无Actions、工作流调整、既有环境迁移或部署。
+
+WP12-01仍余FORM完整Owner当前资源/字段权限、原命令/CAS/显式草稿、固定sourceVersion克隆和设计器正式采用；WP12-02余FORM/子流程精确依赖、唯一绑定、实际运行及旧写入口；文件/选项Owner实际资格、提交专业精度/权限与原AC全范围在后续窗口。当前不标整卡完成。 总目标保持IN_PROGRESS，每2小时按实际吞吐重估；原375和56局部余项保持。采用/清理/finish以wave268-final-verification.json核销。
+
 ## 2026-11-02：W267第九期三天共享菜单树
 
 第九期三天W267菜单展示配置V1：名称/图标/Enable共享树CAS、全tenant引用预览、强审计/原件同事务、当前平台及menu:edit实际HTTP、集成页面冲突与未知原请求恢复。 [交付](../development/evidence/W267-01/DELIVERY.md)。

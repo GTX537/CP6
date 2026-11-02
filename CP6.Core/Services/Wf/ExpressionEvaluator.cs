@@ -17,13 +17,13 @@ namespace CP6.Core.Services.Wf;
 public static class ExpressionEvaluator
 {
     /// <summary>Compile-only validation for a registered immutable snapshot schema; never substitutes sample values.</summary>
-    internal static bool ValidateSchemaExpression(string expression, IEnumerable<string> fields)
+    internal static bool ValidateSchemaExpression(string expression, IEnumerable<string> fields, bool enforceLimits = true)
     {
-        if (string.IsNullOrWhiteSpace(expression) || expression.Length > 4000) return false;
+        if (string.IsNullOrWhiteSpace(expression) || enforceLimits && expression.Length > 4000) return false;
         try
         {
             var tokens = Tokenize(expression);
-            if (tokens.Count > 512) return false;
+            if (enforceLimits && tokens.Count > 512) return false;
             var parser = new Parser(tokens, fields.ToDictionary(x => x, _ => (object?)1d, StringComparer.Ordinal), true);
             parser.ParseExpr(); parser.ExpectEnd(); return true;
         }
