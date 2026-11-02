@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## 2026-11-02：W260第三期D3
+
+第三期D3已实现新登记Main编号域的受权规则管理HTTP：当前/历史版本、格式CAS、原修改恢复及无副作用预览；实际Main登录、CSRF、当前会话与租户生效。D2真实60分钟保留期验收仍在运行，不能称三天全部完成。 [交付](../development/evidence/W260-01/DELIVERY.md)。
+
+4 actual PostgreSQL18/Program HTTP cases PASS,0 skipped:format history/CAS/3000-character NUL original recovery/preview;current query-edit grants/cross-tenant/logout;two in-flight revoke cases after waiting for the shared authentication gate. Original missing-entry RED and MVC record metadata failure retained;annotation placement corrected and all4 rerun PASS. W257 unchanged Owner/store behavior evidence referenced,not rerun. No Actions/deployment/new migration.
+
+Main本提交待正常采用/finish；Handoff待CRM席位释放后串行发布，D2/Main准备分支已保存供恢复。原375卡及其真实余项保持。
+
 ## 2026-11-02：W258第三期D1
 
 第三期D1修复Issue684：四处待执行PostgreSQL迁移在历史菜单ID达到int.MaxValue时选择正整数空闲ID，保留历史菜单、授权、工程原件及编号。第二期已按最终证明归档；D2/D3接续，原375卡状态不变。 [交付](../development/evidence/W258-01/DELIVERY.md)。
