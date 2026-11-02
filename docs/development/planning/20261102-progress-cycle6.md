@@ -15,7 +15,7 @@
 | WP02-03 | PLANNED | 按全字段注册表与现存写者清单补query/write/export/download未纳管入口；逐入口复用当前权限，不重新实现公共fence。 |
 | WP02-04 | PLANNED | TenantAdminService创建仍缺固定命令结果与模板版本，配置/生命周期命令CAS及单调版本需补；保合法历史只读和业务/登录共同fence。 |
 | WP02-05 | PLANNED | 以当前全部权威写者核完tenant/org/user/permission/issuer向量及原字节；旧维护写者与issuer变更是否全部纳管尚需逐入口映射，不能从旧报告推断CRM未实现。 |
-| WP02-06 | PLANNED | 切组织旧会话失效属于执行证据待核，不是缺代码；补原卡正反验收与现有测试映射，仅在没有有效执行证据时运行该场景。不得重复整个身份同步链。 |
+| WP02-06 | PLANNED | W253已执行真实双组织切换、旧会话失效和隔离场景并远端采用，此路径不再待执行。继续对照原卡其余正反验收与全部身份写者适用范围；只补没有有效证据的真实缺项，不重复整条身份链。 |
 | WP02-09 | PLANNED | Inquiry模型明确Ignore平台Inbox；身份入站的Inbox不能证明业务入站Inbox。确认原卡适用的真实入站Owner并接完整收件/业务/原结果同事务，不能为公开HTTP凭空造消息或声称所有CRM已具备。 |
 | WP02-10 | PLANNED | 实际Program对CP6Context使用宿主统一databaseConnection；TenantMiddleware和EF过滤/盖章传递TenantId，OperationsOwner持同Context/事务。WP02-02 TenantConnectionManager及ERP/Identity profile未覆盖Stock/主业务表，无Main业务EF适配。已从待核关系明确为未采用的新连接profile范围，完整卡保留；不判为已证泄露，不要求全库schema切换。 |
 | WP02-13 | PLANNED | 全域actor/effectiveActor/UTC与脱敏、总数/明细/导出同授权及policy/hold/unknown清理收据仍需落到各权威出口；不能把Machine字段历史视为整个AUD。 |
@@ -69,3 +69,5 @@
 | WP12-06 | PLANNED | 核原subjectKind/身份合法域、完整alias与legacy callback冲突采用；不得把所有业务消费者未完成当协议提供者未实现。仅补当前native UUID profile未覆盖的真实合同路径。 |
 | WP12-07 | DONE | 本原卡提供者范围无剩余；后续消费者、完整Target和发布分别记账。 |
 | WP12-19 | PLANNED | 委派撤回与BLOCKED新actor/新grant的明确再授权和连续回执尚未完整实现；worker不能自选人员替代授权，不重做已通过非委派竞争。 |
+
+本期实施增量：第六期三天W264完成进度盘点与租户配置/启停V1：PG单调版本识别旧写和ABA，CAS与原命令/审计同事务，当前平台会话HTTP，页面保留完整字段、草稿和未知原请求。 仅交付限定V1范围，原卡计数不变；详细余项见[报告](../evidence/W264-01/DELIVERY.md)。

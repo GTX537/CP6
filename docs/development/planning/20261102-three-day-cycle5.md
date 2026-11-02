@@ -17,8 +17,10 @@ COORD单人按writing-plans/executing-plans执行。W262远端Main cf2c90f为基
 
 - [x] CodeGenMetadataPanel和api/pub/codegen.ts加入读取旧原件、按读取原件接入V1。保持读取ID，不把草稿编辑偷偷纳入接入；接入后当前草稿可重新预览按V1保存。pending兼容已存在W262保存记录，新增接入命令类型，发送前存原请求，刷新/查询/原样重试，身份变化隔离和412保留草稿继续有效。
 - [x] 实际Chrome/Vue夹具检查接入原键/原ID、来源冲突、未知刷新/恢复、接入后CAS、旧pending兼容；Vue类型检查。相关PG/HTTP运行一次、一次任务级集中SPEC/QUALITY审查，报告真实边界与余项。
-- [ ] 同步roadmap/生成视图/四状态，核销W262最终完成，正常PR采用/远端核对、准确任务分支清理、官方finish释放席位；原375卡状态不因局部接入改DONE。
+- [x] 同步roadmap/生成视图/四状态，核销W262最终完成，正常PR采用/远端核对、准确任务分支清理、官方finish释放席位；原375卡状态不因局部接入改DONE。
 
 执行验证命令：本地run_wave263_main.py adoption 'FullyQualifiedName~Codegen_metadata'；Node22 node_modules/vue-tsc/bin/vue-tsc.js --build；Node22 docs/development/evidence/W263-01/check-page.mjs。PG测试使用自有隔离实例，失败先分析原因只补受影响检查。新增schema仍共享Owner命名空间，TenantId/当前权限不变；没有Actions、生产部署、文件应用或编号消费者切换。
 
 三阶段实现及本地验证/集中审查完成；最后一项状态同步完成，合并和席位收尾由wave263-final-verification.json核销，提交前VERIFYING。
+
+W264接续按wave263-final-verification.json核销：第五期已全部采用、准确分支清理、官方finish。仅归档事实，不重复执行。

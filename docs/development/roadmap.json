@@ -161727,6 +161727,11 @@
       "date": "2026-11-02",
       "change": "第五期三天W263完成旧CodeGen元数据显式接入：保留原ID/表列/审计原件，原件指纹CAS，同事务建立V1与原操作恢复，接入后数据库禁止旧写；真实会话HTTP及Vue接入/未知恢复已验证。",
       "evidence": "docs/development/evidence/W263-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-02",
+      "change": "第六期三天W264完成进度盘点与租户配置/启停V1：PG单调版本识别旧写和ABA，CAS与原命令/审计同事务，当前平台会话HTTP，页面保留完整字段、草稿和未知原请求。",
+      "evidence": "docs/development/evidence/W264-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -170520,18 +170525,26 @@
         }
       ],
       "scope_reconciliation": {
-        "window": "W250-01",
+        "window": "W264-01",
         "as_of": "2026-11-02",
         "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-04",
-        "delivered": "租户管理和审计已同SaveChanges提交，暂停/恢复入口已有实际验证。",
-        "remaining": "TenantAdminService创建仍缺固定命令结果与模板版本，配置/生命周期命令CAS及单调版本需补；保合法历史只读和业务/登录共同fence。",
+        "report": "docs/development/evidence/W264-01/DELIVERY.md",
+        "delivered": "第六期三天W264完成进度盘点与租户配置/启停V1：PG单调版本识别旧写和ABA，CAS与原命令/审计同事务，当前平台会话HTTP，页面保留完整字段、草稿和未知原请求。",
+        "remaining": "W264配置/启停V1已提供PG单调版本、CAS、原命令与实际HTTP/页面，旧写变化可见。创建原命令结果与模板版本、其他配置Owner、旧兼容接口全面强制CAS采用及整卡验收仍需补；命令历史保留/擦除编排按相关治理任务处理。合法历史只读和业务/登录共同fence保留。 全部业务writer共同fence、跨系统映射/传播与worker恢复仍按原卡准确范围核销，本期不声称所有下游已采用。",
         "evidence_refs": [
           "docs/development/evidence/WP02-04/current-actor-final-gate/DELIVERY.md",
-          "docs/development/evidence/WP02-04/tenant-management-audit/DELIVERY.md"
+          "docs/development/evidence/WP02-04/tenant-management-audit/DELIVERY.md",
+          "docs/development/evidence/W264-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
-        "new_product_validation": false
+        "new_product_validation": true
+      },
+      "remaining_scope": "W264配置/启停V1已提供PG单调版本、CAS、原命令与实际HTTP/页面，旧写变化可见。创建原命令结果与模板版本、其他配置Owner、旧兼容接口全面强制CAS采用及整卡验收仍需补；命令历史保留/擦除编排按相关治理任务处理。合法历史只读和业务/登录共同fence保留。 全部业务writer共同fence、跨系统映射/传播与worker恢复仍按原卡准确范围核销，本期不声称所有下游已采用。",
+      "wave264_tenant_management": {
+        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W264-01/DELIVERY.md",
+        "full_task_completed": false,
+        "validation": "34项相关实际本地PG18行为通过/0跳过（11项V1含实际Main HTTP、23项既有租户权限/审计回归）；Vue类型检查退出0，实际Chrome/Vue页面夹具PASS。按受影响范围复跑并复用未变证据；早期编译/迁移/HTTP绑定失败及一次错误401预期保留。无Actions或部署。"
       }
     },
     {
@@ -171945,16 +171958,18 @@
         ]
       },
       "scope_reconciliation": {
-        "window": "W250-01",
+        "window": "W264-01",
         "as_of": "2026-11-02",
         "classification": "合同/验收待核",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-06",
+        "report": "docs/development/evidence/W264-01/DELIVERY.md",
         "delivered": "原生IdentityIngress precheckpoint在重复/旧/同版早返前执行，身份与业务撤权共享本地门；W246两种竞争顺序通过。切组织端点注销持久旧会话，callback也轮换旧会话。",
-        "remaining": "切组织旧会话失效属于执行证据待核，不是缺代码；补原卡正反验收与现有测试映射，仅在没有有效执行证据时运行该场景。不得重复整个身份同步链。",
+        "remaining": "W253已执行真实双组织切换、旧会话失效和隔离场景并远端采用，此路径不再待执行。继续对照原卡其余正反验收与全部身份写者适用范围；只补没有有效证据的真实缺项，不重复整条身份链。",
         "evidence_refs": [
           "docs/development/evidence/W130-01/DELIVERY.md",
           "docs/development/evidence/W131-01/DELIVERY.md",
-          "docs/development/evidence/W246-01/DELIVERY.md"
+          "docs/development/evidence/W246-01/DELIVERY.md",
+          "docs/development/evidence/W253-01/DELIVERY.md",
+          "docs/development/evidence/W264-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -200831,7 +200846,7 @@
       "path": "docs/development/dispatch/20261102-wave264/README.md",
       "baseline_sha": "e4fd9d0d547eb6012a58d44516e45c5e60f69903",
       "registered_at": "2026-11-02T09:40:57.712776+00:00",
-      "phase": "IMPLEMENTING",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -200857,31 +200872,50 @@
           "title": "租户配置与启停版本化操作",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "IMPLEMENTING",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w264-01",
           "planned_scope_ref": "docs/development/planning/20261102-three-day-cycle6.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
             "Main:Tenant-management",
             "Main:Core-PG-migration"
-          ]
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W264-01/DELIVERY.md",
+          "validation": "34项相关实际本地PG18行为通过/0跳过（11项V1含实际Main HTTP、23项既有租户权限/审计回归）；Vue类型检查退出0，实际Chrome/Vue页面夹具PASS。按受影响范围复跑并复用未变证据；早期编译/迁移/HTTP绑定失败及一次错误401预期保留。无Actions或部署。",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave264-final-verification.json"
+          },
+          "business_acceptance": "TENANT_CONFIG_LIFECYCLE_V1_ACTUAL_LOCAL_PG_AND_SESSION_HTTP_PASS;UI_FIXTURE_PASS;CREATE_AND_FULL_CARD_REMAIN"
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "第六期三天W264-01：375/59盘点，租户配置与停用/恢复的PG单调版本CAS、原命令恢复、当前平台管理员HTTP和管理页面。COORD单人，一项任务三阶段，不部署、不运行Actions。"
+      "next_action": "第六期三天W264-01：375/59盘点，租户配置与停用/恢复的PG单调版本CAS、原命令恢复、当前平台管理员HTTP和管理页面。COORD单人，一项任务三阶段，不部署、不运行Actions。",
+      "lifecycle_snapshot": {
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_seat_released": false,
+        "main_branch_deleted": false,
+        "handoff_branch_deleted": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave264-final-verification.json"
+      }
     },
     "wave_history": [
       {
@@ -235604,10 +235638,10 @@
     "next_execution_plan": {
       "id": "CP6-3D6-20261102",
       "path": "docs/development/planning/20261102-three-day-cycle6.md",
-      "state": "IN_PROGRESS",
+      "state": "VERIFYING",
       "execution_owner": "COORD_SINGLE_CHAT",
       "execution_started": true,
-      "current_day": "D1",
+      "current_day": "D3",
       "core_capacity_hours": 18,
       "contingency_capacity_hours": 6,
       "estimate_is_guarantee": false,
@@ -235616,19 +235650,51 @@
         {
           "id": "W264-01",
           "day": "D1",
-          "state": "IN_PROGRESS"
+          "state": "VERIFYING",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W264-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave264-final-verification.json"
+          }
         },
         {
           "id": "W264-01",
           "day": "D2",
-          "state": "PLANNED"
+          "state": "VERIFYING",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W264-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave264-final-verification.json"
+          }
         },
         {
           "id": "W264-01",
           "day": "D3",
-          "state": "PLANNED"
+          "state": "VERIFYING",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W264-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave264-final-verification.json"
+          }
         }
-      ]
+      ],
+      "required_implementation_complete": true,
+      "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave264-final-verification.json"
     },
     "execution_plan_history": [
       {
