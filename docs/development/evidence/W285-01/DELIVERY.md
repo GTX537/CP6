@@ -1,6 +1,6 @@
 # W285-01 普通FORM内容与引用绑定
 
-当前状态：实现和定向验收完成，暂缓合并，先独立修复[BUG721](https://github.com/GTX537/CP6/issues/721)，随后原分支恢复。此报告是同一任务的持续报告，不能据此声明远端采用或整卡完成。
+W285：普通FORM不可变内容/扫描/原操作、草稿与提交及退回的同事务引用绑定、当前业务对象和字段权限下载已贯通实际页面；真实PG/HTTP/Chrome/Defender完成限定验收。 本地相关验收和集中审查通过，远端采用/准确清理/finish待最终核销，不等同整卡完成。
 
 基线094627927cb50e60f896a76d1d9a35216119020f；COORD单人，固定DEV1/Main、DEV2/Handoff。按原OA-FORM-01 R1和SYS-FILE-01全文，采用PostgreSQL、Trust Internal Contracts和Fail-Fast。
 
@@ -16,18 +16,20 @@ Vue实际上传文件、UTF8命令头、原件下载与当前状态；浏览器�
 
 ## 实际验证与集中审查
 
+11项唯一相关PostgreSQL/HTTP行为和1条实际Chrome→Vue→Main→PostgreSQL/Defender链通过，0跳过；42项相关Vue行为及vue-tsc --build通过。覆盖同事务绑定与整事务回滚、未知原操作与当前撤权、并发认领、退回替换、隐藏值保留/重基、扫描/保留/损坏状态、当前对象字段授权、精确原件下载及刷新恢复不重传。 唯一行为及每项真实执行来源见D:/CP6-local-test/wave285/foundation/final-validation.json。
+
 实际隔离新PostgreSQL18、Main Program/cookie/CSRF HTTP、真实Chrome/Vue和Microsoft Defender。业务身份、表单、政策、租户时区和原文件是模拟业务输入；内部Owner/事务/存储/扫描均真实执行。针对故障的内存存储/扫描器双替身另用于确定性PG边界测试，不冒充真实扫描。
 
 已覆盖：原操作提交未知/当前撤权/上传前拒绝零读字节；缺事务绑定全回滚与同命令修复重试；同操作竞争及双草稿不能重复认领；退回替换与原快照保留、重送同实例、旧引用失去当前下载权；隐藏值保留与重基不改变原内容身份；PENDING、HOLD权限、完整性损坏及删除草稿不清文件；HTTP精确字节/摘要/响应头、当前隐藏和伪造字段拒绝。浏览器真实上传成功后丢响应，刷新查询原件，保存草稿、提交、历史只读下载均执行；原件字节逐字节相等。后续时间区模拟输入已补足，未将初次缺时区的查询页截图称为全页无错误。
 
-实际来源：D:/CP6-local-test/wave285/foundation下file-binding-alias、file-runtime、file-http-route、file-review、file-browser-reviewed及相关Vue日志；web-typecheck-reviewed.log退出0。每项复用保留原执行来源，不因提交或SHA改变重跑。所有早期编译、迁移SQL别名、验收路由和组件mock导入失败日志保留，未将失败整包写为通过。原Main的PersonalFormEditor既有移除/空值测试已在精确基线单独复现失败，见ui-baseline-unset.log与wave285-baseline-field-probe.json；#721尚未修复，受影响UI整包尚不能宣称全绿。
+实际来源：D:/CP6-local-test/wave285/foundation下file-binding-alias、file-runtime、file-http-route、file-review、file-browser-reviewed及相关Vue日志；web-typecheck-reviewed.log退出0。每项复用保留原执行来源，不因提交或SHA改变重跑。所有早期编译、迁移SQL别名、验收路由和组件mock导入失败日志保留，未将失败整包写为通过。原Main的PersonalFormEditor既有移除/空值测试先在精确基线单独复现失败，见ui-baseline-unset.log与wave285-baseline-field-probe.json；独立BUG721经PR722远端采用、Issue关闭与官方finish后，本分支官方resume并正常merge最新main。合并保留fileContext与默认allowUnset=true，实际42项相关Vue整包和最终类型检查通过；恢复历史见bug721-final-verification.json及wave285-merge-bug721.json。
 
-一次作者SPEC/QUALITY集中审查覆盖完整差异、原合同、版本化内容/业务身份、租户/字段授权、同事务约束、未知提交、保留控制、当前下载与页面清私有边界。审查中修正普通表单编辑不能获得HOLD/RELEASE权限、原回执不能充当当前状态、未确认附件不能置空，并复用已经读取的内部actor/mask/content。对应定向验证通过；合并前仍需采用#721并复查实际合并差异与相关UI结果。
+一次作者SPEC/QUALITY集中审查覆盖完整差异、原合同、版本化内容/业务身份、租户/字段授权、同事务约束、未知提交、保留控制、当前下载与页面清私有边界。审查中修正普通表单编辑不能获得HOLD/RELEASE权限、原回执不能充当当前状态、未确认附件不能置空，并复用已经读取的内部actor/mask/content。对应定向验证通过；采用#721的合并差异已复查，未确认附件的两种清空动作又以实际父组件行为验证，42项UI和最终类型检查通过。未受影响的后端/浏览器结果保留真实来源，不因合并SHA改变重跑。
 
 ## 余项与处置
 
 不覆盖全Owner引用图/物理清理、部门范围文件管理员适配、历史任意快照附件下载、外部选项Owner等剩余范围。不改已有工程/DOC身份，不执行既有数据库迁移或生产部署，不增加SQL Server要求。原375仍27DONE/2IN_PROGRESS/346PLANNED，59局部3闭环/56余项，125/247正式状态不变，WP12-03/05与WP02-14整卡不关闭。
 
-为修复受影响必需UI检查，当前分支将精确保存远端后官方finish(deferred)，保留原分支；DEV1释放后从最新main创建BUG721独立分支，修复、实际复现步骤/回归、正常合并并核远端、清理释放。随后官方resume W285，正常merge采用最新main，复查合并部分并继续本报告最终交付。W285-HANDOFF保持原任务，未新增工作树。最终以官方生命周期记录为准。24h总目标持续ACTIVE，暂缓某分支不表示暂停总目标。
+曾因独立主线BUG721将W285精确保存远端并官方finish(deferred)，后复用DEV1修复；PR722远端采用且Issue关闭、准确分支删除/finish完成。本分支已官方resume并正常merge最新main，四状态保留两项任务历史，无覆盖或新增工作树。当前准备Main/Handoff正常交付，最终远端采用、分支删除、干净工作区和席位释放由C:/Users/tt/CP6-planning-reports/20261017-foundation/wave285-final-verification.json核销。24h总目标持续ACTIVE；18h校准已登记，下一20h，W286随后开工。
 
 无Actions触发/取消、无工作流修改、无生产部署，根目录用户资料保留。

@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-03：24小时目标 / W285普通FORM文件
+
+W285：普通FORM不可变内容/扫描/原操作、草稿与提交及退回的同事务引用绑定、当前业务对象和字段权限下载已贯通实际页面；真实PG/HTTP/Chrome/Defender完成限定验收。 [交付](../development/evidence/W285-01/DELIVERY.md)。
+
+11项唯一相关PostgreSQL/HTTP行为和1条实际Chrome→Vue→Main→PostgreSQL/Defender链通过，0跳过；42项相关Vue行为及vue-tsc --build通过。覆盖同事务绑定与整事务回滚、未知原操作与当前撤权、并发认领、退回替换、隐藏值保留/重基、扫描/保留/损坏状态、当前对象字段授权、精确原件下载及刷新恢复不重传。
+
+原375仍27DONE/2IN_PROGRESS/346PLANNED；59局部3闭环/56余项，125/247正式状态不变。WP12-03/05及WP02-14整卡不关闭；全Owner引用图/物理清理、部门文件管理、历史任意快照附件与外部选项范围未覆盖；W286定义原竞争和legacy来源/完整旧caller接续。 最终分支/工作区/席位状态按wave285-final-verification.json核销。
+
 ## 2026-11-03：字段默认行为修复 / BUG #721
 
 普通表单字段默认提供“移除填写”和“设为空值”两个明确动作；退回patch显式allowUnset=false仍仅提供设为空值。 [修复与证据](../development/evidence/BUG-721/DELIVERY.md)。
@@ -8,9 +16,6 @@
 
 本次不改变原375与局部卡状态；远端采用/Issue关闭/分支清理/席位释放以bug721-final-verification.json核销，随后恢复W285继续24h目标。
 
-## 2026-11-03：W285实施中
-
-普通FORM附件的真实内容、同事务绑定和当前授权下载已有定向PG/HTTP/Chrome证据；[任务报告](../development/evidence/W285-01/DELIVERY.md)记录实际范围与尚待完成的依赖/合并门禁。本窗口未交付、整卡不关闭，24h目标继续。
 
 ## 2026-11-03：24小时目标 / W284定义定位与规则预览
 
