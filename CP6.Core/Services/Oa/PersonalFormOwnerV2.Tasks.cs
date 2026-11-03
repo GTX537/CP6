@@ -79,7 +79,9 @@ public sealed partial class PersonalFormOwnerV2
                 return access with{Grant=grant,Action=action};
         throw Error("TASK_EDIT_FORBIDDEN",403);
     }
-    public async Task<PersonalFormTaskContextV2> TaskContextAsync(Guid task,Guid? behalf=null,CancellationToken ct=default)
+    public Task<PersonalFormTaskContextV2> TaskContextAsync(Guid task,Guid? behalf=null,CancellationToken ct=default)
+        =>ReadTaskContext(task,behalf,(c,_)=>c,ct);
+    private async Task<T> ReadTaskContext<T>(Guid task,Guid? behalf,Func<PersonalFormTaskContextV2,TaskAuthority,T> project,CancellationToken ct)
     {
         Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var lease=await ReadLease(ct);
         await WriteReady(lease,ct);var actor=await Actor(ct);var source=await TaskSourceAsync(task,ct);var access=await TaskAccess(source,actor,behalf,true,ct,"TASK_READ");
@@ -91,7 +93,7 @@ public sealed partial class PersonalFormOwnerV2
             ProjectSchema(form.Fields["SchemaJson"]!,access.Mask),PersonalFormValuesV2.Project(data.DataJson,access.Mask),access.Mask,allowed.ToArray(),
             "SFS",Convert.ToBase64String(data.RowVersion!),form.Key,access.Assignment.FlowVersionId,access.Assignment.NodeId,
             access.Assignment.TokenId,access.Assignment.StageIndex,access.Assignment.StageRound);
-        await FinalTask(access,lease,ct);return result;
+        await FinalTask(access,lease,ct);return project(result,access);
     }
     private async Task FinalTask(TaskAuthority access,ScopeAuthorizationLeaseV1 lease,CancellationToken ct)
     {

@@ -1,4 +1,5 @@
 import http from '../http'
+import { taskActionApi } from './taskAction'
 export type FormMask = Record<string, 'edit' | 'readonly' | 'hidden'>
 export interface PersonalCatalogItem { formKey: string; name: string; category: string | null; subCategory: string | null; formVersionId: string; formVersion: number; favorite: boolean }
 export interface PersonalFavoriteItem { formKey: string; available: boolean; publication: PersonalCatalogItem | null }
@@ -37,9 +38,9 @@ export const personalFormApi = {
   close: async (operation: string, resource: string, command: string, signal?: AbortSignal) => unwrap<PersonalResult>(await http.post(`${root}/personal-forms/commands/${key(operation)}/${key(resource)}/${key(command)}/close`, undefined, { signal })),
   preview: async (url: string, raw: string, signal?: AbortSignal) => unwrap<ValuePreview>(await http.post(url, raw, { headers: { 'Content-Type': 'application/json' }, signal })),
   rebasePreview: async (id: string, targetVersionId: string, expectedVersion: string, signal?: AbortSignal) => unwrap<RebasePreview>(await http.post(`${root}/drafts/${id}/rebase-preview`, { targetVersionId, expectedVersion }, { signal })),
-  task: async (id: string, signal?: AbortSignal) => unwrap<PersonalTask>(await http.get(`${root}/personal-forms/tasks/${id}/context`, { signal })),
+  task: async (id: string, signal?: AbortSignal) => { const value = await taskActionApi.context(id, signal); if (value.contextKind !== 'SFS') throw new Error('当前任务不是表单审批，请从任务详情重新进入。'); return value.form! },
   decide: async (id: string, body: unknown, token: string, signal?: AbortSignal) => unwrap<PersonalTaskResult>(await http.post(`${root}/personal-forms/tasks/${id}/decision`, body, { headers: { 'If-Match': `"${token}"` }, signal })),
-  decideSfs: async (id: string, raw: string, signal?: AbortSignal) => unwrap<PersonalResult>(await http.post(`${root}/personal-forms/tasks/${id}/decisions`, raw, { headers: { 'Content-Type': 'application/json' }, signal })),
+  decideSfs: async (id: string, raw: string, signal?: AbortSignal) => unwrap<PersonalResult>(await http.post(`${root}/tasks/${id}/decisions`, raw, { headers: { 'Content-Type': 'application/json' }, signal })),
   taskOriginal: async (id: string, command: string, signal?: AbortSignal) => unwrap<PersonalTaskResult | null>(await http.get(`${root}/personal-forms/tasks/${id}/commands/${command}`, { signal })),
 }
 export function submissionContext(c: PersonalContext, kind: 'DIRECT' | 'DRAFT') {

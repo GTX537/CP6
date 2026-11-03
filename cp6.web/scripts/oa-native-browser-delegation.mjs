@@ -45,7 +45,7 @@ export async function runNativeDelegation(page, browser, origin, output, runtime
   const task = delegate.locator('.task-panel')
   await expect(task.getByRole('heading', { name: 'Browser accepted form', exact: true })).toBeVisible()
   await task.getByPlaceholder('办理意见').fill('Browser delegate approves the exact accepted submission')
-  const decision = delegate.waitForResponse(r => /\/api\/oa\/v2\/personal-forms\/tasks\/[^/]+\/decisions$/.test(new URL(r.url()).pathname) && r.request().method() === 'POST')
+  const decision = delegate.waitForResponse(r => /\/api\/oa\/v2\/tasks\/[^/]+\/decisions$/.test(new URL(r.url()).pathname) && r.request().method() === 'POST')
   await task.getByRole('button', { name: '同意', exact: true }).click()
   expect((await decision).status()).toBe(200)
   await expect(detail).toContainText('实际办理人 ' + process.env.CP6_OA_BROWSER_DELEGATE)
