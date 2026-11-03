@@ -205,7 +205,7 @@ public sealed class ApprovalBindingOwnerV2
     {var v=value.GetProperty(field);if(nullable&&v.ValueKind==JsonValueKind.Null)return;var s=v.GetString();if(!Guid.TryParseExact(s,"D",out var id)||id==Guid.Empty||s!=id.ToString("D"))throw new JsonException();}
     private static void Instant(JsonElement value,string field,bool nullable=false)
     {var v=value.GetProperty(field);if(nullable&&v.ValueKind==JsonValueKind.Null)return;var s=v.GetString();if(s==null||!Regex.IsMatch(s,@"\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.000Z\z"))throw new JsonException();}
-    private static bool Key(string? value,int max)=>!string.IsNullOrWhiteSpace(value)&&value.Length<=max;
+    private static bool Key(string? value,int max)=>!string.IsNullOrWhiteSpace(value)&&value.EnumerateRunes().Count()<=max;
     private static (Guid Id,ApprovalBindingWriteV2? Body,string? Reason,string Digest) Parse(byte[] raw,bool disable)
     {
         if(raw.Length>1024*1024)throw Error("BINDING_SHAPE_INVALID",422);
@@ -224,7 +224,7 @@ public sealed class ApprovalBindingOwnerV2
             Shape(root,"commandId","bizType","subjectKind","selectionMode","flowKey","flowDefVersionId","effectiveFrom","effectiveTo","ruleMode","rules","detailRoute","remark");Id(root,"flowDefVersionId",true);Instant(root,"effectiveFrom");Instant(root,"effectiveTo",true);
             foreach(var rule in root.GetProperty("rules").EnumerateArray()){Shape(rule,"ruleId","priority","when","flowKey","flowDefVersionId");Id(rule,"ruleId");Id(rule,"flowDefVersionId",true);}
             var body=root.Deserialize<ApprovalBindingWriteV2>(Json)!;
-            if(!Key(body.BizType,50)||!Key(body.SubjectKind,50)||!Key(body.FlowKey,100)||body.SelectionMode is not ("EXACT_PINNED" or "RESOLVE_PUBLISHED_ON_SUBMIT")
+            if(!Key(body.BizType,100)||!Key(body.SubjectKind,100)||!Key(body.FlowKey,100)||body.SelectionMode is not ("EXACT_PINNED" or "RESOLVE_PUBLISHED_ON_SUBMIT")
                 ||body.RuleMode is not ("ORDERED_FIRST_MATCH" or "EXCLUSIVE_MATCH")||body.Rules==null||body.Rules.Length>1000||body.Remark==null||body.Remark.Length>200
                 ||body.EffectiveTo<=body.EffectiveFrom||body.Rules.Select(x=>x.RuleId).Distinct().Count()!=body.Rules.Length||body.Rules.Select(x=>x.Priority).Distinct().Count()!=body.Rules.Length
                 ||body.Rules.Any(x=>x.Priority is <0 or >9999||!Key(x.FlowKey,100)||!Key(x.When,4000))
