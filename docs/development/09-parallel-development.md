@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[24小时持续计划](planning/20261102-codex-24h-oa.md)，COORD单人；[W287](evidence/W287-01/DELIVERY.md)相关本地验收完成，待远端采用/finish后核原完整卡继续。
+> 当前：[W288原整卡核销](evidence/W288-01/DELIVERY.md)，WP12-01 DONE，原59局部余55；24h目标单人继续，下一SFS任务编辑。
+
+> 历史快照：[24小时持续计划](planning/20261102-codex-24h-oa.md)，COORD单人；[W287](evidence/W287-01/DELIVERY.md)相关本地验收完成，待远端采用/finish后核原完整卡继续。
 
 > 历史快照：[24小时持续计划](planning/20261102-codex-24h-oa.md)，COORD单人；[W286](evidence/W286-01/DELIVERY.md)相关本地验收完成，待远端采用/finish后核真实余项继续。
 
