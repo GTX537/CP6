@@ -198300,11 +198300,12 @@
         }
       },
       "wave292_legacy_actor_disclosure": {
-        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "status": "IMPLEMENTED_VALIDATED_REMOTE_ADOPTED",
         "report": "docs/development/evidence/W292-01/DELIVERY.md",
         "validation": "本地隔离PostgreSQL18/真实Main HTTP旧引擎身份场景通过，另2项既有详情行为通过；1项Vue生命周期/原记录展示行为通过，显式应用vue-tsc --build通过。旧任务v2入口404、无权读403、无原历史改写/无v2投票均实际验证；没有执行迁移或新浏览器到数据库链。",
         "remaining": "原375仍28DONE/2IN_PROGRESS/345PLANNED；原59局部4闭环/55余项，125完整目标与247正式验收状态不变。WP12-10及其定义发布前置尚待整卡核销；WP12-04/08原依赖保留。",
-        "full_task_completed": false
+        "full_task_completed": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave292-final-verification.json"
       },
       "scope_reconciliation": {
         "classification": "明确实现余项",
@@ -202298,11 +202299,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261103-wave292",
-      "path": "docs/development/dispatch/20261103-wave292/README.md",
-      "baseline_sha": "22978c916a9e656d2bde3a46024da5fddff2b89d",
-      "registered_at": "2026-11-03T13:41:51.909973+00:00",
-      "phase": "DELIVERY_MAIN_CLOSEOUT",
+      "id": "20261103-wave293",
+      "path": "docs/development/dispatch/20261103-wave293/README.md",
+      "baseline_sha": "253d31f056a8dae779c72520041dd68761a8111b",
+      "registered_at": "2026-11-03T13:58:07.480509+00:00",
+      "phase": "IMPLEMENTING",
       "assigned_chats": [
         "COORD"
       ],
@@ -202320,59 +202321,39 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W292-01",
-          "workspace_task": "W292-01",
+          "id": "W293-01",
+          "workspace_task": "W293-01",
           "related_tasks": [
-            "WP12-10"
+            "WP12-03"
           ],
-          "title": "历史任务身份缺证披露与受控映射边界",
+          "title": "个人草稿重基预览分类与准确诊断",
           "chat": "COORD",
           "mode": "SINGLE_CHAT",
-          "phase": "DELIVERY_MAIN_CLOSEOUT",
+          "phase": "IMPLEMENTING",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": true,
+          "worker_delivery_received": false,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w292-01",
+          "branch": "codex/w293-01",
           "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": true,
+          "candidate_review_completed": false,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
-            "Main:oa-delegation",
-            "Main:oa-task"
-          ],
-          "worker_delivery_ref": "docs/development/evidence/W292-01/DELIVERY.md",
-          "validation": "本地隔离PostgreSQL18/真实Main HTTP旧引擎身份场景通过，另2项既有详情行为通过；1项Vue生命周期/原记录展示行为通过，显式应用vue-tsc --build通过。旧任务v2入口404、无权读403、无原历史改写/无v2投票均实际验证；没有执行迁移或新浏览器到数据库链。",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave292-final-verification.json"
-          },
-          "business_acceptance": "LEGACY_ACTOR_DISCLOSURE_PG_HTTP_AND_VUE_PASS;NO_MIGRATION",
-          "local_validation": "PASS_AFFECTED_SCOPE"
+            "Main:oa-form",
+            "Main:workflow-engine"
+          ]
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W292正常远端采用/准确清理/finish后按原依赖顺序核对定义发布、个人草稿与原子提交，24h目标继续。",
-      "lifecycle_snapshot": {
-        "main_finish_required": true,
-        "main_seat_released": false,
-        "handoff_seat_released": false,
-        "main_branch_deleted": false,
-        "handoff_branch_deleted": false,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave292-final-verification.json"
-      }
+      "next_action": "原WP12-03/OA-FORM R1 UC-F09/F10重基预览：准确sourceDraftVersion/targetSchemaDigest、可见保留/移除/新增/类型变更/默认值路径、目标规则后的必填和缺失诊断、行限制收紧逐行提示；沿现权威规则/校验复用，不复制解释器。服务端保持精确数字/unset/null/empty、原行不截断、隐藏损失拒绝、同事务原结果。页面分类确认、编辑后失效；PG/HTTP/相关Vue验证。隐藏损失受控处置Ref等未完成跨Owner范围仍真实保留，不提前关整卡。"
     },
     "wave_history": [
       {
@@ -239307,6 +239288,99 @@
             "workspace_clean": true
           }
         ]
+      },
+      {
+        "id": "20261103-wave292",
+        "path": "docs/development/dispatch/20261103-wave292/README.md",
+        "baseline_sha": "22978c916a9e656d2bde3a46024da5fddff2b89d",
+        "registered_at": "2026-11-03T13:41:51.909973+00:00",
+        "phase": "DONE",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W292-01",
+            "workspace_task": "W292-01",
+            "related_tasks": [
+              "WP12-10"
+            ],
+            "title": "历史任务身份缺证披露与受控映射边界",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "DONE",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w292-01",
+            "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:oa-delegation",
+              "Main:oa-task"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W292-01/DELIVERY.md",
+            "validation": "本地隔离PostgreSQL18/真实Main HTTP旧引擎身份场景通过，另2项既有详情行为通过；1项Vue生命周期/原记录展示行为通过，显式应用vue-tsc --build通过。旧任务v2入口404、无权读403、无原历史改写/无v2投票均实际验证；没有执行迁移或新浏览器到数据库链。",
+            "lifecycle_snapshot": {
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave292-final-verification.json",
+              "all_slots_released": true
+            },
+            "business_acceptance": "LEGACY_ACTOR_DISCLOSURE_PG_HTTP_AND_VUE_PASS;NO_MIGRATION",
+            "local_validation": "PASS_AFFECTED_SCOPE"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W292正常远端采用/准确清理/finish后按原依赖顺序核对定义发布、个人草稿与原子提交，24h目标继续。",
+        "lifecycle_snapshot": {
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave292-final-verification.json",
+          "all_slots_released": true
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W292-01",
+            "source": "ef8e942f1e3fab061e4f8b997dea677a8355fed9",
+            "remote_target": "253d31f056a8dae779c72520041dd68761a8111b",
+            "pr": "https://github.com/GTX537/CP6/pull/734",
+            "branch": "codex/w292-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W292-HANDOFF",
+            "source": "b853744d19ae0f2f75d5d1bae27b2fb800a16be3",
+            "remote_target": "d48be124a3273f330da0215c5714c26f4f6bb538",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/269",
+            "branch": "codex/w292-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -239886,7 +239960,7 @@
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 81462,
+      "effective_seconds_recorded": 81932,
       "next_reestimate_at_effective_seconds": 86400,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
@@ -240926,20 +241000,60 @@
             1.2
           ],
           "estimate_confidence": "LOW",
-          "state": "VERIFYING",
+          "state": "DONE",
           "started_at": "2026-11-03T13:41:51.909973+00:00",
           "scope_refinement": "原WP12-10/原TASK R2 §5.1存量身份缺证：历史信箱明确LEGACY_ACTOR_INCOMPLETE及准确FormTo Ref，页面将观察到的旧字段与已核实职责/代理证据区分；真实旧引擎自动替换与办理覆盖场景PG/HTTP验证，不用当前grant猜历史。受控LegacyPrincipalMapping设计写清原pin/token/stage/round、原路由/FormTo/grant revision/hash、原子切换fence与缺证拒绝；按原规范本轮不执行迁移、不补写历史、不升级旧票。",
           "reason": "W291核对发现原历史缺证标记/映射设计尚未实现；开发实际读面缺口，保留原迁移授权边界",
           "implementation_complete": true,
           "report": "docs/development/evidence/W292-01/DELIVERY.md",
           "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave292-final-verification.json"
-          }
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave292-final-verification.json",
+            "all_slots_released": true
+          },
+          "actual_effective_seconds": 830,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W292-01",
+              "source": "ef8e942f1e3fab061e4f8b997dea677a8355fed9",
+              "remote_target": "253d31f056a8dae779c72520041dd68761a8111b",
+              "pr": "https://github.com/GTX537/CP6/pull/734",
+              "branch": "codex/w292-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W292-HANDOFF",
+              "source": "b853744d19ae0f2f75d5d1bae27b2fb800a16be3",
+              "remote_target": "d48be124a3273f330da0215c5714c26f4f6bb538",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/269",
+              "branch": "codex/w292-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W293-01",
+          "day": "ROLLING_EXTENSION",
+          "related_tasks": [
+            "WP12-03"
+          ],
+          "title": "个人草稿重基预览分类与准确诊断",
+          "estimate_hours": [
+            0.4,
+            0.8
+          ],
+          "estimate_confidence": "LOW",
+          "state": "IN_PROGRESS",
+          "started_at": "2026-11-03T13:58:07.480509+00:00",
+          "scope_refinement": "原WP12-03/OA-FORM R1 UC-F09/F10重基预览：准确sourceDraftVersion/targetSchemaDigest、可见保留/移除/新增/类型变更/默认值路径、目标规则后的必填和缺失诊断、行限制收紧逐行提示；沿现权威规则/校验复用，不复制解释器。服务端保持精确数字/unset/null/empty、原行不截断、隐藏损失拒绝、同事务原结果。页面分类确认、编辑后失效；PG/HTTP/相关Vue验证。隐藏损失受控处置Ref等未完成跨Owner范围仍真实保留，不提前关整卡。",
+          "reason": "原卡核查发现真实缺口；W292实测830秒短于估计，复用已有Owner/夹具，继续缩小下一窗口估计"
         }
       ],
       "reestimates": [
@@ -241372,7 +241486,7 @@
           "unchanged": "Single chat;PostgreSQL;simulated business data;affected local checks and one task review;no Actions,production,existing database migration. Original37528DONE/2IN_PROGRESS/345PLANNED;59partial4closed/55remaining;125/247 unchanged."
         }
       ],
-      "timing_snapshot_at": "2026-11-03T13:50:17.781154+00:00",
+      "timing_snapshot_at": "2026-11-03T13:58:07.480509+00:00",
       "remaining_estimate_hours": [
         1.5,
         3
