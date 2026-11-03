@@ -161917,6 +161917,11 @@
       "date": "2026-11-03",
       "change": "W295按原WP12-02逐项核销发布预览、准确依赖pin与独立启停；BUG736已修复并远端采用，原卡正式DONE。 原375现29DONE/2IN_PROGRESS/344PLANNED；原59局部5闭环/54剩余。125完整业务目标0关闭、247正式验收NOT_RUN保持；其他卡不连带关闭。",
       "evidence": "docs/development/evidence/W295-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-03",
+      "change": "W296核销原WP12-06可信审批绑定、冻结提交TxS/TxE；原合同合法Key修复已采用，三层去重/alias、旧回调隔离及无实例当前业务读面证据完整。 原375为30DONE/2IN_PROGRESS/343PLANNED；原59局部6闭环/53剩余。本24h周期新增整卡闭环WP12-01、WP12-02、WP12-06，起点为27DONE及56剩余。125完整目标0关闭、247正式验收NOT_RUN不变。",
+      "evidence": "docs/development/evidence/W296-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -174555,6 +174560,18 @@
           "source": "0d4cd5b4c5f39efadf5f56b384d8df8939883f92",
           "remote_target": "32103247c36e3f44bef82494d550e7c98a1878f8",
           "pr": "https://github.com/GTX537/CP6/pull/701"
+        }
+      },
+      "wave177_submission_audit_adoption": {
+        "status": "CLOSED",
+        "report": "docs/development/evidence/W177-01/DELIVERY.md",
+        "scope": "Actual APP frozen submission/TxS original command and audit, W176-W179; limited WP12-06 direct foundation adoption, not global audit retention.",
+        "full_task_complete": false,
+        "main_delivery": {
+          "repository": "CP6",
+          "source": "0db99a523bbce74e9bc37816a1be1204eda950c6",
+          "remote_target": "bcfb6504aeb41dde5f0d563d392679e79353f4c6",
+          "pr": "https://github.com/GTX537/CP6/pull/599"
         }
       }
     },
@@ -197682,14 +197699,145 @@
         "file:Main:CP6.Core/Services/Oa/TaskDecisionService.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP12.md",
       "card_anchor": "wp12-06",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "COORD / W296-01",
+        "branch": "codex/w296-01",
+        "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+        "claimed_at": "2026-11-03T14:53:11.484717+00:00",
+        "baseline_sha": "6521575d4b2aab41fde64630006d684f4ec3b50a",
+        "scope": "Original WP12-06 provider card; exact adopted product evidence and scope reconciliation"
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/W175-01/DELIVERY.md",
+          "source_sha": "5ffee88cfa3929c9bec0c2d9943e2602ebe3b68f",
+          "command": "Reuse original actual local execution and final-validation.json; no new product test in W296",
+          "environment": "Original isolated PostgreSQL18/HTTP/UI as labeled; simulated business inputs",
+          "observed_at": "2026-11-03T14:56:51.817322+00:00",
+          "scope": "Current-source applicability and original-card mapping in docs/development/evidence/W296-01/DELIVERY.md",
+          "result": "PASS"
+        },
+        {
+          "path": "docs/development/evidence/W176-01/DELIVERY.md",
+          "source_sha": "75560d2e10ce8dd436aa2177760cef1a7e547a05",
+          "command": "Reuse original actual local execution and final-validation.json; no new product test in W296",
+          "environment": "Original isolated PostgreSQL18/HTTP/UI as labeled; simulated business inputs",
+          "observed_at": "2026-11-03T14:56:51.817322+00:00",
+          "scope": "Current-source applicability and original-card mapping in docs/development/evidence/W296-01/DELIVERY.md",
+          "result": "PASS"
+        },
+        {
+          "path": "docs/development/evidence/W177-01/DELIVERY.md",
+          "source_sha": "0db99a523bbce74e9bc37816a1be1204eda950c6",
+          "command": "Reuse original actual local execution and final-validation.json; no new product test in W296",
+          "environment": "Original isolated PostgreSQL18/HTTP/UI as labeled; simulated business inputs",
+          "observed_at": "2026-11-03T14:56:51.817322+00:00",
+          "scope": "Current-source applicability and original-card mapping in docs/development/evidence/W296-01/DELIVERY.md",
+          "result": "PASS"
+        },
+        {
+          "path": "docs/development/evidence/W178-01/DELIVERY.md",
+          "source_sha": "cd7aa32123c6e7cd2108777e709ba4791d4270d2",
+          "command": "Reuse original actual local execution and final-validation.json; no new product test in W296",
+          "environment": "Original isolated PostgreSQL18/HTTP/UI as labeled; simulated business inputs",
+          "observed_at": "2026-11-03T14:56:51.817322+00:00",
+          "scope": "Current-source applicability and original-card mapping in docs/development/evidence/W296-01/DELIVERY.md",
+          "result": "PASS"
+        },
+        {
+          "path": "docs/development/evidence/W179-01/DELIVERY.md",
+          "source_sha": "6036d33c1d16fe38f839d2a938734f92db30a148",
+          "command": "Reuse original actual local execution and final-validation.json; no new product test in W296",
+          "environment": "Original isolated PostgreSQL18/HTTP/UI as labeled; simulated business inputs",
+          "observed_at": "2026-11-03T14:56:51.817322+00:00",
+          "scope": "Current-source applicability and original-card mapping in docs/development/evidence/W296-01/DELIVERY.md",
+          "result": "PASS"
+        },
+        {
+          "path": "docs/development/evidence/W191-01/DELIVERY.md",
+          "source_sha": "97deedd95feedeeb1e217b7df37c4df551bac6ba",
+          "command": "Reuse original actual local execution and final-validation.json; no new product test in W296",
+          "environment": "Original isolated PostgreSQL18/HTTP/UI as labeled; simulated business inputs",
+          "observed_at": "2026-11-03T14:56:51.817322+00:00",
+          "scope": "Current-source applicability and original-card mapping in docs/development/evidence/W296-01/DELIVERY.md",
+          "result": "PASS"
+        },
+        {
+          "path": "docs/development/evidence/W196-01/DELIVERY.md",
+          "source_sha": "604e0a1145e2b598179536d3417b54887cc10841",
+          "command": "Reuse original actual local execution and final-validation.json; no new product test in W296",
+          "environment": "Original isolated PostgreSQL18/HTTP/UI as labeled; simulated business inputs",
+          "observed_at": "2026-11-03T14:56:51.817322+00:00",
+          "scope": "Current-source applicability and original-card mapping in docs/development/evidence/W296-01/DELIVERY.md",
+          "result": "PASS"
+        },
+        {
+          "path": "docs/development/evidence/W199-01/DELIVERY.md",
+          "source_sha": "577239654b565cede69e122e341a958436e85753",
+          "command": "Reuse original actual local execution and final-validation.json; no new product test in W296",
+          "environment": "Original isolated PostgreSQL18/HTTP/UI as labeled; simulated business inputs",
+          "observed_at": "2026-11-03T14:56:51.817322+00:00",
+          "scope": "Current-source applicability and original-card mapping in docs/development/evidence/W296-01/DELIVERY.md",
+          "result": "PASS"
+        },
+        {
+          "path": "docs/development/evidence/W274-01/DELIVERY.md",
+          "source_sha": "bf7bf9d3dfe5ccb83a23016ff0f555a2094a5e77",
+          "command": "Reuse original actual local execution and final-validation.json; no new product test in W296",
+          "environment": "Original isolated PostgreSQL18/HTTP/UI as labeled; simulated business inputs",
+          "observed_at": "2026-11-03T14:56:51.817322+00:00",
+          "scope": "Current-source applicability and original-card mapping in docs/development/evidence/W296-01/DELIVERY.md",
+          "result": "PASS"
+        },
+        {
+          "path": "docs/development/evidence/W276-01/DELIVERY.md",
+          "source_sha": "4de8dd763e70265f2098e5d59a0d057662e15249",
+          "command": "Reuse original actual local execution and final-validation.json; no new product test in W296",
+          "environment": "Original isolated PostgreSQL18/HTTP/UI as labeled; simulated business inputs",
+          "observed_at": "2026-11-03T14:56:51.817322+00:00",
+          "scope": "Current-source applicability and original-card mapping in docs/development/evidence/W296-01/DELIVERY.md",
+          "result": "PASS"
+        },
+        {
+          "path": "docs/development/evidence/W278-01/DELIVERY.md",
+          "source_sha": "b445a2c672253ff11025106aca97fb30645ea520",
+          "command": "Reuse original actual local execution and final-validation.json; no new product test in W296",
+          "environment": "Original isolated PostgreSQL18/HTTP/UI as labeled; simulated business inputs",
+          "observed_at": "2026-11-03T14:56:51.817322+00:00",
+          "scope": "Current-source applicability and original-card mapping in docs/development/evidence/W296-01/DELIVERY.md",
+          "result": "PASS"
+        },
+        {
+          "path": "docs/development/evidence/BUG-740/DELIVERY.md",
+          "source_sha": "2c1ede517e9596aac128e51863384771fd56b6da",
+          "command": "Reuse six affected tests from BUG740 final-validation.json",
+          "environment": "Actual PostgreSQL18/Main login HTTP and wire boundaries",
+          "observed_at": "2026-11-03T14:56:51.817322+00:00",
+          "scope": "Original100-character Key domain; exact original/rejection with no writes",
+          "result": "PASS"
+        },
+        {
+          "path": "docs/development/evidence/W282-01/DELIVERY.md",
+          "source_sha": "759d89c723482f392c4eccfa5a7953959167979c",
+          "command": "Reuse NativeApp_pending_recovery_creates_human_tasks_and_original_resolution_then_terminal_evidence",
+          "environment": "Actual isolated PostgreSQL18",
+          "observed_at": "2026-11-03T15:06:36.020008+00:00",
+          "scope": "Current APP startup persists exact pending-approver slot in the original transaction; actual pinned-policy recovery creates human tasks and reaches terminal evidence.",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/BUG-740/DELIVERY.md",
+        "source_sha": "2c1ede517e9596aac128e51863384771fd56b6da",
+        "remote_main_sha": "6521575d4b2aab41fde64630006d684f4ec3b50a",
+        "pr_url": "https://github.com/GTX537/CP6/pull/741",
+        "scope": "Main contains all original WP12-06 delivery sources; W296 maps full card, BUG740 alone is not whole implementation."
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：按S02-00采用的PostgreSQL布局、可信上下文/当前授权和全部写者共同最终fence、Main Owner事务及原键结果/审计。",
@@ -197919,12 +198067,12 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W276-01",
-        "as_of": "2026-11-02",
-        "classification": "合同/验收待核",
-        "report": "docs/development/evidence/W276-01/DELIVERY.md",
+        "window": "W296-01",
+        "as_of": "2026-11-03",
+        "classification": "FULL_CARD_RECONCILED",
+        "report": "docs/development/evidence/W296-01/DELIVERY.md",
         "delivered": "W175–181可信binding/路由、TxS/TxE原生启动恢复已交付，后续DOC/ReqSet/ITER真实业务也已消费。 W274 APP真实根/子流程采用精确FORM/FLOW版本，子任务当前权限、有效分支职责、根决定及整树撤回原子性已验证。 W276：原生APP/普通FORM本人当前授权信箱、准确根子pin、独立已读原事实及实际定义在途影响已实现。",
-        "remaining": "核原subjectKind/身份合法域、完整alias与legacy callback冲突采用；不得把所有业务消费者未完成当协议提供者未实现。仅补当前native UUID profile未覆盖的真实合同路径。",
+        "remaining": "本原卡可信绑定/冻结提交TxS/TxE提供者范围无剩余；各业务Owner的后续应用/撤回和完整OA-APP目标分别记账。",
         "evidence_refs": [
           "docs/development/evidence/W175-01/DELIVERY.md",
           "docs/development/evidence/W177-01/DELIVERY.md",
@@ -197936,10 +198084,12 @@
           "docs/development/evidence/W196-01/DELIVERY.md",
           "docs/development/evidence/W199-01/DELIVERY.md",
           "docs/development/evidence/W274-01/DELIVERY.md",
-          "docs/development/evidence/W276-01/DELIVERY.md"
+          "docs/development/evidence/W276-01/DELIVERY.md",
+          "docs/development/evidence/BUG-740/DELIVERY.md",
+          "docs/development/evidence/W296-01/DELIVERY.md"
         ],
-        "formal_state_changed": false,
-        "new_product_validation": true
+        "formal_state_changed": true,
+        "new_product_validation": false
       },
       "wave274_pinned_runtime": {
         "status": "DELIVERED_REMOTE_VERIFIED",
@@ -197994,6 +198144,30 @@
           "handoff_branch_deleted": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave276-final-verification.json"
         }
+      },
+      "prerequisite_adoptions": [
+        {
+          "task_id": "WP02-10",
+          "requirement": "所属仓库的可信租户、当前授权、同事务原结果及审计基础",
+          "deliveries": [
+            "wave171_scope_authorization"
+          ],
+          "scope": "Current Main trusted native authentication/Scope fence and actual APP service/Owner writers."
+        },
+        {
+          "task_id": "WP02-13",
+          "requirement": "所属仓库的可信租户、当前授权、同事务原结果及审计基础",
+          "deliveries": [
+            "wave177_submission_audit_adoption"
+          ],
+          "scope": "Frozen submission, TxS/TxE original/audit atomicity with actual Owner adoption; no claim of all audit retention."
+        }
+      ],
+      "wave296_full_card_reconciliation": {
+        "status": "FULL_CARD_RECONCILED",
+        "report": "docs/development/evidence/W296-01/DELIVERY.md",
+        "full_task_completed": true,
+        "validation": "Actual adopted provider and consumers; applicable prior evidence reused, original Id/Key domains distinguished."
       }
     },
     {
@@ -202495,7 +202669,7 @@
       "path": "docs/development/dispatch/20261103-wave296/README.md",
       "baseline_sha": "6521575d4b2aab41fde64630006d684f4ec3b50a",
       "registered_at": "2026-11-03T14:53:11.484717+00:00",
-      "phase": "IMPLEMENTING",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -202521,30 +202695,44 @@
           "title": "原APP绑定提交卡与24h实际执行收口",
           "chat": "COORD",
           "mode": "SINGLE_CHAT",
-          "phase": "IMPLEMENTING",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w296-01",
           "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
-          "full_task_completed": false,
+          "full_task_completed": true,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
             "Main:oa-application"
-          ]
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W296-01/DELIVERY.md",
+          "validation": "Prior actual evidence/current-source/card audit; no new product test",
+          "lifecycle_snapshot": {
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave296-final-verification.json",
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false
+          }
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "核原WP12-06三项TxS/TxE提供者范围和正反验收，特别是合法Key、alias与旧回调隔离；只在完整满足时核销。汇总原59卡当前余项、28窗口与9个独立BUG真实交付和估时偏差，达到约24h有效投入并完成当前窗口正常交付后收妥目标。"
+      "next_action": "本周期有效24h与任务范围完成；执行当前Main/Handoff正常采用、准确清理和finish，最终证明PASS后整个目标完成；不自动开新周期。",
+      "lifecycle_snapshot": {
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave296-final-verification.json",
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_seat_released": false
+      }
     },
     "wave_history": [
       {
@@ -240399,22 +240587,23 @@
       "new_product_validation": false,
       "formal_states_unchanged": true,
       "followup": {
-        "window": "W295-01",
-        "report": "docs/development/evidence/W295-01/DELIVERY.md",
+        "window": "W296-01",
+        "report": "docs/development/evidence/W296-01/DELIVERY.md",
         "full_cards_reconciled": [
           "WP09-11",
           "WP12-07",
           "WP03-01",
           "WP12-01",
-          "WP12-02"
+          "WP12-02",
+          "WP12-06"
         ],
-        "remaining_original_partial_cards": 54
+        "remaining_original_partial_cards": 53
       }
     },
     "next_execution_plan": {
       "id": "CP6-24H-20261102",
       "path": "docs/development/planning/20261102-codex-24h-oa.md",
-      "state": "IN_PROGRESS",
+      "state": "COMPLETED",
       "execution_owner": "COORD_SINGLE_CHAT",
       "execution_started": true,
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
@@ -240427,8 +240616,8 @@
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 85236,
-      "next_reestimate_at_effective_seconds": 86400,
+      "effective_seconds_recorded": 86041,
+      "next_reestimate_at_effective_seconds": null,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
         {
@@ -241667,10 +241856,21 @@
             0.5
           ],
           "estimate_confidence": "LOW",
-          "state": "IN_PROGRESS",
+          "state": "DONE",
           "started_at": "2026-11-03T14:53:11.484717+00:00",
           "scope_refinement": "核原WP12-06三项TxS/TxE提供者范围和正反验收，特别是合法Key、alias与旧回调隔离；只在完整满足时核销。汇总原59卡当前余项、28窗口与9个独立BUG真实交付和估时偏差，达到约24h有效投入并完成当前窗口正常交付后收妥目标。",
-          "reason": "文档/原证据核销及54余项检查；不新增产品验证，不空等、不延时凑满预算。若必要收尾超24h如实记录。"
+          "reason": "文档/原证据核销及54余项检查；不新增产品验证，不空等、不延时凑满预算。若必要收尾超24h如实记录。",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W296-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave296-final-verification.json",
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false
+          },
+          "actual_effective_seconds": 805,
+          "actual_effective_seconds_scope": "Pre-merge snapshot; final verification includes normal closeout once.",
+          "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave296-final-verification.json"
         }
       ],
       "reestimates": [
@@ -242101,12 +242301,26 @@
           "observed": "W2892473s/41min and W2901605s/27min remain below earlier predictions because existing owners and browser fixtures cover much of the work. These are subwindows, never renamed three-day completion. Preserve actual timing and use remaining 24h capacity on original card evidence and real gaps.",
           "basis": "45141s at03:44:56Z plus continuous useful work;7558s scheduling gap excluded. No idle padding, repeated gates or synthetic person-day estimates.",
           "unchanged": "Single chat;PostgreSQL;simulated business data;affected local checks and one task review;no Actions,production,existing database migration. Original37528DONE/2IN_PROGRESS/345PLANNED;59partial4closed/55remaining;125/247 unchanged."
+        },
+        {
+          "at": "2026-11-03T15:06:36.020008+00:00",
+          "checkpoint": "24h-budget-end",
+          "effective_seconds": 86041,
+          "excluded_wall_seconds": 7558,
+          "remaining_capacity_hours": 0,
+          "remaining_estimate_hours": [
+            0,
+            0
+          ],
+          "observed": "29 windows including final reconciliation;9 closed bugs. Initial12 windows41089s versus15.75–29.75h estimate. Scope expanded continuously using original remaining work; no padded execution.",
+          "remaining": "Only current normal Main/Handoff delivery and official finish.53 original partial cards and other original375 tasks remain recorded; no next cycle started.",
+          "basis": "Actual final seconds in final lifecycle proof; approximately24h per user, no waiting for an exact second."
         }
       ],
-      "timing_snapshot_at": "2026-11-03T14:53:11.484717+00:00",
+      "timing_snapshot_at": "2026-11-03T15:06:36.020008+00:00",
       "remaining_estimate_hours": [
-        1.5,
-        3
+        0,
+        0
       ],
       "runtime_timing_anchor": {
         "at": "2026-11-03T03:44:56+00:00",
@@ -242191,13 +242405,31 @@
         }
       ],
       "latest_independent_bug": {
-        "issue": 736,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug736-final-verification.json",
-        "actual_effective_seconds": 576,
-        "source": "11a98c2c641ad56d6fff76d61949b8432a330b52",
-        "main": "cebf6702661eeba2596463e0534d6069dc447fb9",
+        "issue": 740,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug740-final-verification.json",
+        "actual_effective_seconds": 435,
+        "source": "2c1ede517e9596aac128e51863384771fd56b6da",
+        "main": "6521575d4b2aab41fde64630006d684f4ec3b50a",
         "closed": true
-      }
+      },
+      "capacity_closeout": {
+        "report": "docs/development/evidence/W296-01/DELIVERY.md",
+        "scope": "28 completed windows,9 closed BUGs plus W296 final audit; no new automatic cycle",
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave296-final-verification.json",
+        "completion_requires_all_seats_released": true,
+        "target_effective_seconds": 86400,
+        "target_is_approximate": true,
+        "budget_end_review_completed": true,
+        "effective_seconds_at_commit": 86041,
+        "recorded_at": "2026-11-03T15:06:36.020008+00:00",
+        "scope_completed": true,
+        "lifecycle_completed": false,
+        "lifecycle_state": "PENDING_NORMAL_DELIVERY",
+        "next_cycle_started": false
+      },
+      "completed_scope_at": "2026-11-03T15:06:36.020008+00:00",
+      "completion_semantics": "User authorized approximately24h, not mandatory idle until an exact second. Budget-end inventory and implementation scope complete; remote delivery/cleanup remains a separate pending snapshot. Actual final seconds are reported without rounding up; whole-goal completion requires PASS final proof after both official finishes.",
+      "final_lifecycle_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave296-final-verification.json"
     },
     "execution_plan_history": [
       {
