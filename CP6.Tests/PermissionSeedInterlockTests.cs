@@ -7,45 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace CP6.Tests;
 
 /// <summary>
-/// X-SWEEP T2 —「贴点⊆种子」互锁测试（跨波双票 sweep 第二票，六模块）。
-///
-/// 背景盲区（票源：M-ERP 完成记录票#3 起，逐波扩容 M-MES/M-OA/WF/M-PUR/M-PLAN·PUB 各票#3）：
-///   既有各波 <c>*PermissionAttributeTests</c> 反射守卫锁「漏贴」（非 GET 无 [RequirePermission] 报红）；
-///   既有各波 <c>*PermissionSeedTests</c> DB 播种守卫锁「种子偏离测试 oracle」。
-///   **但存在缝隙**：新端点**贴了键、却忘了往 *PermissionSeed 加行**——两类闸皆不红
-///   （反射测试只看有没贴属性；种子测试只把种子与其自身 oracle 比），只会在现网表现为
-///   admin 403（PermissionAggregator 以 Sys_RoleActions join Sys_Menus 聚合 ActionKeys，
-///   种子无该 (MenuId,ActionCode) 行 → admin 也拿不到键 → 403）。
-///
-/// 本测试直接把两侧对上：对每个模块——
-///   ① 反射读该模块命名空间控制器全部变更端点（POST/PUT/PATCH/DELETE）的
-///      <c>[RequirePermission("menu-key","action")]</c> 贴点元组；
-///   ② 经**测试内字面量锚定表**（menu-key→MenuId，照真相源 docs/seeds/*-key-menu-anchor.md /
-///      *-permission-keys.md 锚定小节誊写，零引用生产菜单常量）把 menu-key 换成 MenuId；
-///   ③ 断言每个 (MenuId, action) 在该模块 *PermissionSeed 的 <c>Actions</c> 清单中**存在**
-///      （⊆ 方向：种子可多于贴点——view 类种子键/词表补位属正常，不红）。
-///
-/// 对账对象是**种子类实际内容**（反射读其 private static Actions 字段）——这是本测试蓄意的对账面，
-/// 与 <c>*PermissionAttributeTests</c> 的独立 oracle 相互独立（brief 要求：本票不复用 oracle）。
-///
-/// 种子对应面（brief §2，已核实）：
-///   WMS→<see cref="WmsPermissionSeed"/> / ERP→<see cref="ErpPermissionSeed"/> /
-///   MES→<see cref="MesPermissionSeed"/> / PUR→<see cref="PurPermissionSeed"/> /
-///   PLAN+PUB→<see cref="PlanPubPermissionSeed"/> /
-///   **OA/WF→种子并集** <see cref="OawfPermissionSeed"/> ∪ <see cref="InboxBatchTransferPermissionSeed"/>
-///     ∪ <see cref="FlowTriggerPermissionSeed"/> ∪ <see cref="WorkCalendarConnectorPermissionSeed"/>
-///     （后三个系 WFS 波④/③/⑤ 追加，贴点面横跨四种子）。
-///
-/// 首跑归因（brief §4）：全六模块首跑即绿——各波 *PermissionSeed 本就按「与去重贴点 1:1」构造，
-/// 故不存在贴点∉种子的形态；六模块显式豁免表 <c>Exemptions</c> 全空（无一条既知缺陷需登记）。
-/// M-OA/WF 票#4 的「2 view 豁免键无 MenuAction 行」= <c>oa-form-catalog:view</c>(Forecast.Preview) /
-/// <c>oa-form-search:view</c>(Query.Search)：二者均**只读 POST 豁免、未贴 [RequirePermission]**
-/// （见 OawfPermissionAttributeTests.ReadOnlyPostExemptions），故不产生贴点元组、天然不入本互锁面，
-/// 无需豁免登记（贴点无→不参与⊆检查）。将来谁贴键忘种，本测试立即红。
-///
-/// 范围注记：<c>pub-*</c> 键族是拆分的——本面只覆盖 Controllers.Pub 下的 pub-codegen/pub-seq
-/// （M-PLAN/PUB 波产物）；pub-dept/pub-role-perm/pub-data-scope/pub-field-perm 系 Controllers.Sys
-/// 平台面（菜单 108-111，Sys 内联播种），蓄意不在六模块互锁面内，勿误读为全 pub-* 覆盖。
+/// Every declared controller capability must exist in the module's registered permission catalog.
+/// Historical Actions may grant admin roles; ReadActions/OwnerActions only register capabilities
+/// and require explicit IAM grants. Catalog registration never implies default role authority.
+/// BUG715: include OwnerActions and the current MES achievement menu anchor; no exemptions.
+/// Native Owner-internal action checks remain covered by their behavioral tests.
 /// </summary>
 public class PermissionSeedInterlockTests
 {
@@ -91,8 +57,9 @@ public class PermissionSeedInterlockTests
             var field = st.GetField("Actions", BindingFlags.NonPublic | BindingFlags.Static)
                         ?? throw new InvalidOperationException($"{st.Name} 无 private static Actions 字段——种子形状变更须同步本测试");
             var arr = ((Array)field.GetValue(null)!).Cast<object>();
-            if (st.GetField("ReadActions", BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null) is Array read)
-                arr = arr.Concat(read.Cast<object>());
+            foreach (var catalog in new[] { "ReadActions", "OwnerActions" })
+                if (st.GetField(catalog, BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null) is Array read)
+                    arr = arr.Concat(read.Cast<object>());
             foreach (var element in arr)
             {
                 var tuple = (ITuple)element!;
@@ -144,7 +111,7 @@ public class PermissionSeedInterlockTests
         {
             ["mes-planning-board"] = 301, ["mes-work-order"] = 302, ["mes-production-result"] = 304,
             ["mes-quality-inspection"] = 306, ["mes-defect"] = 308, ["mes-machine"] = 310, ["mes-oee"] = 311,
-            ["mes-work-center"] = 314, ["mes-process-cost-rate"] = 315,
+            ["mes-work-center"] = 314, ["mes-process-cost-rate"] = 315, ["mes-plan-achievement"] = 313,
         },
         new[] { typeof(MesPermissionSeed) },
         new());
@@ -215,11 +182,11 @@ public class PermissionSeedInterlockTests
 
                 if (!seed.Contains((menuId, action)))
                 {
-                    // ⊆ 破：贴了键但种子无对应行 → 现网 admin 403。唯有显式豁免（既知缺陷）才放行。
+                    // The action must be discoverable in the catalog; assigning roles is a separate IAM contract.
                     if (!f.Exemptions.Contains($"{menu}:{action}"))
                         offenders.Add(
                             $"{c.Name}.{m.Name}：贴点 ({menu}={menuId}, {action}) 在 {string.Join("∪", f.SeedTypes.Select(t => t.Name))} 中无对应 (MenuId,ActionCode) 行"
-                            + "——种子漏行，admin 将 403（若属既知缺陷须登记豁免表并附票号）");
+                            + "——权限能力目录漏登记（目录存在不等于角色已获权）");
                 }
             }
         }
@@ -236,7 +203,7 @@ public class PermissionSeedInterlockTests
             $"[{f.Name}] 未扫到任何 [RequirePermission] 贴点——疑似命名空间/程序集变动致空扫假绿");
 
         Assert.True(offenders.Count == 0,
-            $"[{f.Name}] 「贴点⊆种子」互锁破（贴键漏种，现网 admin 403）:\n" + string.Join("\n", offenders));
+            $"[{f.Name}] 「贴点⊆权限能力目录」互锁失败:\n" + string.Join("\n", offenders));
     }
 
     [Fact] public void Wms_Decorators_AreSubsetOf_Seed() => AssertInterlock(Wms());
