@@ -12,6 +12,8 @@ public sealed class FormAuthoringController(FormAuthoringOwnerV2 owner) : Contro
     [HttpGet("{key}/compare")]
     public Task<IActionResult> Compare(string key, [FromQuery] Guid leftVersionId, [FromQuery] Guid rightVersionId, [FromQuery] int page = 1, CancellationToken ct = default)
         => Run(async () => await owner.CompareAsync(key, leftVersionId, rightVersionId, page, ct));
+    [HttpGet("/api/oa/v2/form-option-sources")]
+    public Task<IActionResult> OptionSources([FromQuery]string search="",[FromQuery]int page=1,CancellationToken ct=default)=>Run(async()=>await owner.OptionSourcesAsync(search,page,ct));
     [HttpGet("entry")]
     public Task<IActionResult> Entry(CancellationToken ct) => Run(async () => await owner.EntryAsync(ct));
     [HttpGet]

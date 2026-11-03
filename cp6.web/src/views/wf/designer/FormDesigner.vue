@@ -45,6 +45,7 @@
         <el-divider v-if="schema.fields.length">{{ t('预览') }}</el-divider>
         <DynamicForm v-if="schema.fields.length && previewEnabled !== false" :schema="schema" v-model="previewModel" />
         <p v-else-if="schema.fields.length">保存并通过校验后可预览控件。</p>
+        <p v-if="schema.fields.some(f => f.optionSourceV1 || f.columns?.some(c => c.optionSourceV1))">外部字典选项在实际填写时读取；此处预览控件结构。</p>
       </el-card>
 
       <!-- 右：属性面板 -->
@@ -79,12 +80,15 @@
           </template>
           <template v-if="isOptionType(selected.type)">
             <el-divider>{{ t('选项') }}</el-divider>
+            <FormOptionSourcePicker :model-value="selected.optionSourceV1" :disabled="readOnly" @update:model-value="setOptionSource(selected!, $event)" />
+            <template v-if="!selected.optionSourceV1">
             <div v-for="(o, oi) in selected.options || []" :key="oi" class="opt-row">
               <el-input v-model="o.label" :placeholder="t('标签')" size="small" style="width: 96px" />
               <el-input v-model="o.value" :placeholder="t('值')" size="small" style="width: 96px" />
               <el-button link type="danger" size="small" @click="removeOption(oi)">{{ t('删除') }}</el-button>
             </div>
             <el-button link size="small" @click="addOption">{{ t('添加选项') }}</el-button>
+            </template>
           </template>
           <template v-if="selected.type === 'table'">
             <el-form-item :label="t('最少行数')">
@@ -136,6 +140,8 @@
                 <el-input v-model="column.pattern" :placeholder="t('校验正则')" size="small" />
               </template>
               <template v-if="column.type === 'select'">
+                <FormOptionSourcePicker :model-value="column.optionSourceV1" :disabled="readOnly" @update:model-value="setOptionSource(column, $event)" />
+                <template v-if="!column.optionSourceV1">
                 <div v-for="(option, oi) in column.options || []" :key="oi" class="opt-row">
                   <el-input v-model="option.label" :placeholder="t('标签')" size="small" />
                   <el-input v-model="option.value" :placeholder="t('值')" size="small" />
@@ -144,6 +150,7 @@
                   </el-button>
                 </div>
                 <el-button link size="small" @click="addColumnOption(column)">{{ t('添加选项') }}</el-button>
+                </template>
               </template>
             </div>
             <el-button link size="small" data-test="add-table-column" @click="addTableColumn">
@@ -161,6 +168,8 @@ import { computed, defineAsyncComponent, nextTick, reactive, ref, watch } from '
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import DynamicForm from '../DynamicForm.vue'
+import FormOptionSourcePicker from './FormOptionSourcePicker.vue'
+import type { FormOptionSource } from '@/api/oa/formOptions'
 import {
   CONTROL_LIBRARY,
   TABLE_COLUMN_TYPES,
@@ -270,6 +279,14 @@ function remove(i: number) {
   if (selectedIdx.value === i) selectedIdx.value = -1
   else if (selectedIdx.value > i) selectedIdx.value--
 }
+function setOptionSource(field: FormFieldDef | FormTableColumnDef, source?: FormOptionSource) {
+  if (props.readOnly) return
+  const next = { ...field }
+  if (source) { next.optionSourceV1 = source; delete next.options } else delete next.optionSourceV1
+  const index = schema.fields.indexOf(field as FormFieldDef)
+  if (index >= 0) schema.fields[index] = next as FormFieldDef
+  else if (selected.value?.columns) { const col = selected.value.columns.indexOf(field as FormTableColumnDef); if (col >= 0) selected.value.columns[col] = next as FormTableColumnDef }
+}
 function addOption() {
   if (props.readOnly) return
   if (!selected.value) return
@@ -283,13 +300,14 @@ function removeOption(oi: number) {
 function onFieldTypeChange(type: string) {
   if (props.readOnly) return
   if (!selected.value) return
+  if (!isOptionType(type)) delete selected.value.optionSourceV1
   if (type === 'table') {
     selected.value.minRows ??= 0
     selected.value.maxRows ??= 20
     selected.value.columns ??= [
       { name: 'column1', label: '列1', type: 'input', required: false },
     ]
-  } else if (isOptionType(type) && !selected.value.options?.length) {
+  } else if (isOptionType(type) && !selected.value.optionSourceV1 && !selected.value.options?.length) {
     selected.value.options = [
       { label: '选项1', value: '1' },
       { label: '选项2', value: '2' },
@@ -316,7 +334,8 @@ function removeTableColumn(index: number) {
 }
 function onColumnTypeChange(column: FormTableColumnDef) {
   if (props.readOnly) return
-  if (column.type === 'select' && !column.options?.length) {
+  if (column.type !== 'select') delete column.optionSourceV1
+  if (column.type === 'select' && !column.optionSourceV1 && !column.options?.length) {
     column.options = [
       { label: '选项1', value: '1' },
       { label: '选项2', value: '2' },

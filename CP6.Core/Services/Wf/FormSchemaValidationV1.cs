@@ -24,11 +24,12 @@ public static class FormSchemaValidationV1
             var fields = Property(root, "fields");
             if (fields.ValueKind != JsonValueKind.Array) throw Invalid("$.fields", "ARRAY_REQUIRED");
             var names = new HashSet<string>(StringComparer.Ordinal);
+            var externalOptions = new HashSet<string>(StringComparer.Ordinal);
             var index = 0;
             foreach (var value in fields.EnumerateArray())
             {
                 var path = $"$.fields[{index++}]";
-                var field = Object(value, path, "name", "type", "required", "label", "maxLength", "pattern", "columns", "minRows", "maxRows", "default", "options");
+                var field = Object(value, path, "name", "type", "required", "label", "maxLength", "pattern", "columns", "minRows", "maxRows", "default", "options", "optionSourceV1");
                 var name = Text(Property(field, "name"), path + ".name");
                 if (string.IsNullOrWhiteSpace(name) || !names.Add(name)) throw Invalid(path + ".name", "EMPTY_OR_DUPLICATE");
                 var typeValue = Property(field, "type");
@@ -36,7 +37,9 @@ public static class FormSchemaValidationV1
                 if (!Types.Contains(type)) throw Invalid(path + ".type", "UNSUPPORTED_CONTROL");
                 ValidateDefault(field, type, path);
                 ValidateOptions(Property(field, "options"), path + ".options");
-                if (type == "table")
+                ValidateOptionSource(field,type,path);
+                if(Property(field,"optionSourceV1").ValueKind!=JsonValueKind.Undefined)externalOptions.Add(name);
+                if (type.Equals("table",StringComparison.OrdinalIgnoreCase))
                 {
                     var columns = Property(field, "columns");
                     if (columns.ValueKind != JsonValueKind.Array) throw Invalid(path + ".columns", "ARRAY_REQUIRED");
@@ -44,10 +47,11 @@ public static class FormSchemaValidationV1
                     foreach (var item in columns.EnumerateArray())
                     {
                         var columnPath = path + $".columns[{columnIndex++}]";
-                        var column = Object(item, columnPath, "name", "type", "required", "label", "maxLength", "pattern", "default", "options");
+                        var column = Object(item, columnPath, "name", "type", "required", "label", "maxLength", "pattern", "default", "options", "optionSourceV1");
                         var columnType = Property(column, "type");
                         ValidateDefault(column, columnType.ValueKind == JsonValueKind.Undefined ? "input" : Text(columnType, columnPath + ".type"), columnPath);
                         ValidateOptions(Property(column, "options"), columnPath + ".options");
+                        ValidateOptionSource(column,columnType.ValueKind==JsonValueKind.Undefined?"input":columnType.GetString()!,columnPath);
                     }
                 }
             }
@@ -80,6 +84,7 @@ public static class FormSchemaValidationV1
                         if (action == "compute" && !ExpressionEvaluator.ValidateSchemaExpression(Text(Property(effect, "expr"), effectPath + ".expr"), names, enforceLimits: false))
                             throw Invalid(effectPath + ".expr", "EXPRESSION_INVALID");
                         if (action == "setOptions") ValidateOptions(Property(effect, "options"), effectPath + ".options", required: true);
+                        if(action=="setOptions"&&externalOptions.Contains(Text(Property(effect,"target"),effectPath+".target")))throw Invalid(effectPath,"OPTION_SOURCE_CONFLICT");
                     }
                 }
             }
@@ -123,6 +128,18 @@ public static class FormSchemaValidationV1
             if (Property(option, "value").ValueKind is not (JsonValueKind.String or JsonValueKind.Number))
                 throw Invalid(optionPath + ".value", "OPTION_VALUE_INVALID");
         }
+    }
+    private static void ValidateOptionSource(JsonElement field,string type,string path)
+    {
+        var source=Property(field,"optionSourceV1");if(source.ValueKind==JsonValueKind.Undefined)return;
+        var at=path+".optionSourceV1";Object(source,at,"owner","scope","typeId");
+        if(type.ToLowerInvariant() is not("select" or "radio" or "checkbox"))throw Invalid(at,"OPTION_CONTROL_REQUIRED");
+        if(source.EnumerateObject().Any(p=>!new[]{"owner","scope","typeId"}.Contains(p.Name,StringComparer.OrdinalIgnoreCase))
+            ||Property(source,"owner").ValueKind!=JsonValueKind.String||Property(source,"owner").GetString()!=CP6.Core.Services.Sys.FormOptionSourceV1.OwnerName
+            ||Property(source,"scope").ValueKind!=JsonValueKind.String||Property(source,"scope").GetString()!="SHARED"
+            ||Property(source,"typeId").ValueKind!=JsonValueKind.Number||!Property(source,"typeId").TryGetInt32(out var id)||id<=0)throw Invalid(at,"OPTION_SOURCE_INVALID");
+        var options=Property(field,"options");
+        if(options.ValueKind!=JsonValueKind.Undefined&&options.GetArrayLength()!=0)throw Invalid(at,"OPTION_SOURCE_CONFLICT");
     }
     private static void ValidateDefault(JsonElement field, string type, string path)
     {

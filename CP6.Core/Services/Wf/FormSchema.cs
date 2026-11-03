@@ -44,6 +44,7 @@ public class RuleEffect
 
 public class FormField
 {
+    public CP6.Core.Services.Sys.FormOptionSourceV1? OptionSourceV1 { get; set; }
     /// <summary>字段名（DataJson 的 key）</summary>
     public string Name { get; set; } = string.Empty;
 
@@ -78,6 +79,7 @@ public class FormField
 /// </summary>
 public class FormTableColumn
 {
+    public CP6.Core.Services.Sys.FormOptionSourceV1? OptionSourceV1 { get; set; }
     /// <summary>列标识（行对象的 key）。</summary>
     public string Name { get; set; } = string.Empty;
 

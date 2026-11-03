@@ -136,6 +136,7 @@ public sealed partial class PersonalFormOwnerV2
             var computed=PersonalFormValuesV2.Recompute(schema,merged);
             if(resubmit&&computed.Errors.Length>0)throw Error("FORM_VALIDATION_FAILED",422);
             await References(schema,computed.Data,ct);
+            await CheckOptions(schema,computed.Data,before,resubmit,ct);
             await CheckFiles(source.Head,source.FormVersion,"SUBMISSION",data.Id,actor.UserId,schema,computed.Data,before,resubmit,mask,ct);
             var write=Guid.NewGuid();await BeginCommand(write,actor.UserId,operation,instance.ToString("D"),command,null,data.Id,instance,null,ct);
             Guid cycle=record.Cycle;

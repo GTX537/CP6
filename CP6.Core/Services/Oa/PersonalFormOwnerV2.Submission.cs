@@ -67,6 +67,7 @@ public sealed partial class PersonalFormOwnerV2
             // Error details can contain currently hidden field names. They remain a server concern.
             if(computed.Errors.Length!=0)throw Error("FORM_VALIDATION_FAILED",422);
             await References(PersonalFormValuesV2.Schema(source.Form.Fields["SchemaJson"]!),computed.Data,ct);
+            await CheckOptions(PersonalFormValuesV2.Schema(source.Form.Fields["SchemaJson"]!),computed.Data,row?.Data,true,ct);
             await CheckFiles(source.Head.Id,source.Form.VersionId,row==null?"FORM":"DRAFT",row?.Id,actor.UserId,
                 PersonalFormValuesV2.Schema(source.Form.Fields["SchemaJson"]!),computed.Data,row?.Data,true,source.Mask,ct);
             var write=Guid.NewGuid();var dataId=Guid.NewGuid();Guid? root=source.Flow==null?null:Guid.NewGuid();var at=Clock();

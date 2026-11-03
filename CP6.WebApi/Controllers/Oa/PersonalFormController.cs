@@ -19,6 +19,8 @@ public sealed class PersonalFormController(PersonalFormOwnerV2 owner,ApprovalTas
     public Task<IActionResult> Context(string key,CancellationToken ct)=>Run(async()=>await owner.ContextAsync(key,ct));
     [HttpPost("forms/{key}/preview"),RequestSizeLimit(1024*1024)]
     public Task<IActionResult> FormPreview(string key,PersonalFormPreviewInputV2 input,CancellationToken ct)=>Run(async()=>await owner.PreviewAsync(key,input,ct));
+    [HttpPost("form-options/query"),RequestSizeLimit(2*1024*1024)]
+    public Task<IActionResult> Options(FormOptionQueryV1 input,CancellationToken ct)=>Run(async()=>await owner.OptionsAsync(input,ct));
     [HttpGet("forms/{key}/references/{field}")]
     public Task<IActionResult> References(string key,string field,[FromQuery]string? search=null,[FromQuery]Guid? draft=null,CancellationToken ct=default)=>Run(async()=>await owner.ReferencesAsync(key,field,search??"",draft,ct));
     [HttpPost("forms/{key}/drafts"),RequestSizeLimit(1024*1024)]
