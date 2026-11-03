@@ -161827,6 +161827,11 @@
       "date": "2026-11-03",
       "change": "补齐单价订正原操作query能力目录；纠正权限互锁漏读WMS/MES仅目录OwnerActions及MES313锚定，不增加角色授权。",
       "evidence": "docs/development/evidence/BUG-715/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-03",
+      "change": "24h目标累计14h实际校准：余约10h容量；W282尚未交付，余管理批量/定向边界/真实浏览器及闭环。W282–286合计剩余7–14h低置信区间，优先闭环已开工完整任务，原大卡状态不变。",
+      "evidence": "docs/development/planning/20261102-codex-24h-oa.md"
     }
   ],
   "implementation_assessment": {
@@ -238480,8 +238485,8 @@
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 47515,
-      "next_reestimate_at_effective_seconds": 50400,
+      "effective_seconds_recorded": 50423,
+      "next_reestimate_at_effective_seconds": 57600,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
         {
@@ -238976,7 +238981,12 @@
           ],
           "estimate_confidence": "LOW",
           "started_at": "2026-11-03T04:24:30.268958+00:00",
-          "scope_refinement": "Original TASK R2 returned SFS dual CAS/execution cycles, native sendback preview and confirmed branch/stage scope, transfer/addsign current versus created principal, explicit pinned-policy PendingResolution. Reuse completed delegation/withdrawal. Full card remains open until all original acceptance proved."
+          "scope_refinement": "Original TASK R2 returned SFS dual CAS/execution cycles, native sendback preview and confirmed branch/stage scope, transfer/addsign current versus created principal, explicit pinned-policy PendingResolution. Reuse completed delegation/withdrawal. Full card remains open until all original acceptance proved.",
+          "remaining_estimate_hours": [
+            2,
+            4
+          ],
+          "actual_effective_seconds_so_far": 2908
         },
         {
           "id": "W283-01",
@@ -239241,12 +239251,65 @@
           ],
           "basis": "Recent actual complete windows are materially faster than prior estimates; W280 1608s versus0.5–1.25h. W281 favorites/history has new persistence, current-scope query and timezone work; FILE adoption has an actual missing ordinary-FORM parent authority, so not priced as a mechanical reuse. Preserve prediction range and measure every2h; no idle/redundant tests.",
           "unchanged": "24h effective execution target, original375/full-card states, single chat and local validation."
+        },
+        {
+          "at": "2026-11-03T05:12:58.736229+00:00",
+          "checkpoint": "14h",
+          "effective_seconds": 50423,
+          "excluded_wall_seconds": 7558,
+          "observed_windows": [
+            {
+              "window": "W281-01",
+              "actual_seconds": 3687
+            },
+            {
+              "window": "BUG715",
+              "actual_seconds": 870
+            },
+            {
+              "window": "W282-01",
+              "actual_seconds_so_far": 2908,
+              "state": "IN_PROGRESS"
+            }
+          ],
+          "remaining_capacity_hours": 9.99,
+          "remaining_estimate_hours": [
+            7,
+            14
+          ],
+          "confidence": "LOW",
+          "remaining_windows": {
+            "W282-01": [
+              2,
+              4
+            ],
+            "W283-01": [
+              1,
+              2
+            ],
+            "W284-01": [
+              1,
+              2
+            ],
+            "W285-01": [
+              2,
+              4
+            ],
+            "W286-01": [
+              1,
+              2
+            ]
+          },
+          "observed": "Native SFS/APP sendback/transfer/addsign/explicit pending recovery implemented; 14 distinct PostgreSQL behavior tests and 5 seed tests passed across recorded runs. Three races/original-command tests passed; 13 UI behavior tests passed; browser acceptance not yet executed. Latest subsequent changes are not represented as already retested.",
+          "remaining": "W282 management batch transfer max500 with frozen candidate snapshot; exact scope/authority boundary regressions, real HTTP/Chrome use, concentrated review and delivery. Reuse prior delegation/withdrawal and valid evidence; no artificial waits or repeated whole-repository gates.",
+          "basis": "Measured window remains open, so partial implementation is not extrapolated to a finished delivery. Source review found returned-form patch/start-field-mask/exact resubmit permission requirements and exact task/FormTo identity for overlapping approvers. These are actual accepted contract work, not extra proof layers.",
+          "unchanged": "Original375/56 partial cards and125/247 full acceptance states; single chat,24h effective target,PostgreSQL/local gates,no Actions or production deployment."
         }
       ],
-      "timing_snapshot_at": "2026-11-03T04:24:30.268958+00:00",
+      "timing_snapshot_at": "2026-11-03T05:12:58.736229+00:00",
       "remaining_estimate_hours": [
-        7.5,
-        15.5
+        7,
+        14
       ],
       "runtime_timing_anchor": {
         "at": "2026-11-03T03:44:56+00:00",
