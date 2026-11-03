@@ -5,12 +5,14 @@ namespace CP6.Core.Services.Wf;
 /// <summary>流程定义 CRUD + 实例详情查询（OA 章03/04）。执行态在 IFlowEngine，这里只管定义与查询。</summary>
 public interface IFlowDefService
 {
-    /// <summary>建/改流程定义（按 FlowKey upsert，schema 变更自增 Version）。返回 FlowDef.Id。</summary>
+    /// <summary>Retired legacy writer; rejects with DEFINITION_V2_COMMAND_REQUIRED. Use FlowAuthoringOwnerV2.</summary>
     Task<Guid> SaveDefAsync(string flowKey, string flowName, string? formKey, string schemaJson, string? user = null);
 
     /// <summary>Read only. The retained createIfMissing argument never causes a write.</summary>
     Task<DefinitionDraftDto?> GetDraftAsync(string flowKey, bool createIfMissing = false, string? user = null);
+    /// <summary>Retired legacy writer; rejects before any mutation.</summary>
     Task<DefinitionDraftDto> SaveDraftAsync(string flowKey, string flowName, string? formKey, string schemaJson, byte[]? rowVersion, string? user = null);
+    /// <summary>Retired legacy publisher; use current Owner preview and publication commands.</summary>
     Task<DefinitionPublishResult> PublishAsync(string flowKey, byte[]? rowVersion, Guid publishedBy, CancellationToken ct = default);
     Task<IReadOnlyList<DefinitionVersionItem>> ListVersionsAsync(string flowKey, CancellationToken ct = default);
     Task<DefinitionVersionDto?> GetVersionAsync(string flowKey, int version, CancellationToken ct = default);

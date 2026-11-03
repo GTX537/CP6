@@ -90,6 +90,7 @@ internal static class FlowTriggerTestHarness
             SchemaJson = MinimalSchemaJson(approver), Version = 1, Enable = flowEnabled,
         });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         return (starter, approver);
     }
 

@@ -28,17 +28,5 @@ public class FlowAdminService : IFlowAdminService
                 d.Enable))
             .FirstOrDefaultAsync();
 
-    public async Task SetEnabledAsync(string flowKey, bool enabled)
-    {
-        var def = await _db.Wf_FlowDefs.FirstOrDefaultAsync(d => d.FlowKey == flowKey)
-                  ?? throw new InvalidOperationException("E-WF-006");
-        if (enabled && !def.Enable)
-        {
-            var conflict = await _db.Wf_FlowDefs.AnyAsync(d =>
-                d.FormKey == def.FormKey && d.FlowKey != def.FlowKey && d.Enable);
-            if (conflict) throw new InvalidOperationException("E-WF-008");   // 1 表单 ↔ 1 启用流程
-        }
-        def.Enable = enabled;
-        await _db.SaveChangesAsync();
-    }
+    public Task SetEnabledAsync(string flowKey, bool enabled) => Wf.LegacyDefinitionWrites.Rejected<object>();
 }

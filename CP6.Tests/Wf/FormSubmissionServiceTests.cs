@@ -28,14 +28,14 @@ public class FormSubmissionServiceTests
         CP6Context db, bool bind, string schema = FormSchema)
     {
         var forms = new FormService(db);
-        var formDraft = await forms.SaveDraftAsync("order", "Order", schema, null);
-        await forms.PublishAsync("order", formDraft.RowVersion, Guid.NewGuid());
+        var formDraft = await CP6.Tests.Wf.LegacyDefinitionFixture.FormDraft(db, "order", "Order", schema, null);
+        await CP6.Tests.Wf.LegacyDefinitionFixture.FormPublished(db, "order", formDraft.RowVersion, Guid.NewGuid());
         var form = await db.Wf_FormDefs.SingleAsync();
         if (bind)
         {
             var flows = new FlowDefService(db);
-            var flowDraft = await flows.SaveDraftAsync("order-flow", "Order flow", null, FlowSchema, null);
-            await flows.PublishAsync("order-flow", flowDraft.RowVersion, Guid.NewGuid());
+            var flowDraft = await CP6.Tests.Wf.LegacyDefinitionFixture.FlowDraft(db, "order-flow", "Order flow", null, FlowSchema, null);
+            await CP6.Tests.Wf.LegacyDefinitionFixture.FlowPublished(db, "order-flow", flowDraft.RowVersion, Guid.NewGuid());
             var flow = await db.Wf_FlowDefs.SingleAsync();
             db.Wf_FormFlowBindings.Add(new Wf_FormFlowBinding
             {

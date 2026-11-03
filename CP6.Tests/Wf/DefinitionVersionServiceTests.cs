@@ -22,17 +22,17 @@ public class DefinitionVersionServiceTests
     {
         await using var db = NewDb();
         var service = new FlowDefService(db);
-        var firstDraft = await service.SaveDraftAsync("leave", "Leave v1", null, FlowV1, null);
-        var first = await service.PublishAsync("leave", firstDraft.RowVersion, Guid.NewGuid());
+        var firstDraft = await LegacyDefinitionFixture.FlowDraft(db, "leave", "Leave v1", null, FlowV1, null);
+        var first = await LegacyDefinitionFixture.FlowPublished(db, "leave", firstDraft.RowVersion, Guid.NewGuid());
 
         await DefinitionDraftFixture.FromPublished(db, first.VersionId);
-        var secondDraft = await service.SaveDraftAsync("leave", "Leave v2", null, FlowV2, null);
+        var secondDraft = await LegacyDefinitionFixture.FlowDraft(db, "leave", "Leave v2", null, FlowV2, null);
         var resolver = new DefinitionVersionResolver(db);
         var beforePublish = await resolver.ResolveLatestFlowAsync("leave");
         Assert.Equal(first.VersionId, beforePublish.Version.Id);
         Assert.Equal(1, beforePublish.Version.Version);
 
-        var second = await service.PublishAsync("leave", secondDraft.RowVersion, Guid.NewGuid());
+        var second = await LegacyDefinitionFixture.FlowPublished(db, "leave", secondDraft.RowVersion, Guid.NewGuid());
         var afterPublish = await resolver.ResolveLatestFlowAsync("leave");
         Assert.Equal(second.VersionId, afterPublish.Version.Id);
         Assert.Equal(2, afterPublish.Version.Version);
@@ -40,18 +40,18 @@ public class DefinitionVersionServiceTests
     }
 
     [Fact]
-    public async Task Definition_draft_rejects_stale_rowversion()
+    public async Task Retired_definition_writer_rejects_even_with_a_version_token()
     {
         await using var db = NewDb();
         var service = new FlowDefService(db);
-        var created = await service.SaveDraftAsync("leave", "Leave", null, FlowV1, null);
+        var created = await LegacyDefinitionFixture.FlowDraft(db, "leave", "Leave", null, FlowV1, null);
         var row = await db.Wf_FlowDefVersions.SingleAsync(x => x.Id == created.VersionId);
         row.RowVersion = new byte[] { 1 };
         await db.SaveChangesAsync();
 
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
             service.SaveDraftAsync("leave", "Other", null, FlowV2, new byte[] { 2 }));
-        Assert.Equal("E-WF-045", ex.Message);
+        Assert.Equal(LegacyDefinitionWrites.Code, ex.Message);
         Assert.Equal("Leave", (await db.Wf_FlowDefVersions.SingleAsync()).FlowNameSnapshot);
     }
 
@@ -60,10 +60,12 @@ public class DefinitionVersionServiceTests
     {
         await using var db = NewDb();
         var service = new FormService(db);
-        var draft = await service.SaveDraftAsync("leave", "Leave",
+        var draft = await LegacyDefinitionFixture.FormDraft(db, "leave", "Leave",
             """{"fields":[{"name":"reason","type":"input"}]}""", null);
-        await service.PublishAsync("leave", draft.RowVersion, Guid.NewGuid());
+        await LegacyDefinitionFixture.FormPublished(db, "leave", draft.RowVersion, Guid.NewGuid());
 
+        Assert.Null(await service.GetDraftAsync("leave", true));
+        await LegacyDefinitionFixture.FormDraft(db, "leave", "Copy", "{\"fields\":[]}");
         var copy = await service.GetDraftAsync("leave");
         Assert.NotNull(copy);
         Assert.Equal(2, copy!.Version);

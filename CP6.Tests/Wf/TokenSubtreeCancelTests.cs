@@ -51,6 +51,7 @@ public class TokenSubtreeCancelTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "sub", FlowName = "x", FormKey = "f",
             SchemaJson = JsonSerializer.Serialize(Nested(u1, u2, ub)), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         var instId = await Engine(db).SubmitAsync("sub", Guid.NewGuid(), "{}");
 
         // 剥离层 = 外层「inner 支」代表 token：进了 inner split 的那枚（NodeId=="inner"，Consumed）

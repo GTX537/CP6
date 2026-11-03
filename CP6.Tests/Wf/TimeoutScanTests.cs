@@ -43,6 +43,7 @@ public class TimeoutScanTests
             SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true,
         });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
     }
 
     private static (FlowEngine engine, WfTimeoutService svc) Build(CP6Context db)

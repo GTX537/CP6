@@ -43,7 +43,7 @@ try {
   await login(page, 'price-owner')
   steps.push('actual cookie login')
   await page.goto(origin + '/wf/form-designer/window')
-  await page.getByRole('button', { name: '表单草稿工作区', exact: true }).click()
+
   await page.getByRole('button', { name: /^personal ·/ }).click()
   const publication = page.getByRole('region', { name: '发布与版本' })
   await publication.getByRole('button', { name: '读取历史版本', exact: true }).click()

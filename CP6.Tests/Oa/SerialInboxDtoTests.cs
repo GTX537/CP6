@@ -35,6 +35,7 @@ public class SerialInboxDtoTests
         db.Wf_FlowDefs.Add(new() { Id=Guid.NewGuid(), FlowKey="ser2", FlowName="x", FormKey="t",
             SchemaJson=JsonSerializer.Serialize(schema), Version=1, Enable=true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         var instId = await Engine(db).SubmitAsync("ser2", Guid.NewGuid(), "{}");
         var p0 = (await Inbox(db).PendingAsync(s1)).Single(i => i.InstanceId == instId);

@@ -19,11 +19,11 @@ public class FlowDefServiceTests
         """{"nodes":[{"id":"n1","type":"approval","approverStrategy":"Specified","approverUserId":"11111111-1111-1111-1111-111111111111"},{"id":"end","type":"end"}],"edges":[{"from":"n1","to":"end"}]}""";
 
     [Fact]
-    public async Task SaveDef_Then_GetDef_RoundTrip()
+    public async Task Historical_definition_read_preserves_stored_snapshot()
     {
         using var db = NewDb();
         var svc = new FlowDefService(db);
-        await svc.SaveDefAsync("leave", "请假流程", "leave", Schema, "tester");
+        await CP6.Tests.Wf.LegacyDefinitionFixture.Flow(db, "leave", "请假流程", "leave", Schema, "tester");
 
         var def = await svc.GetDefAsync("leave");
         Assert.NotNull(def);
@@ -33,12 +33,12 @@ public class FlowDefServiceTests
     }
 
     [Fact]
-    public async Task SaveDef_SchemaChange_BumpsVersion()
+    public async Task Historical_versions_remain_independent()
     {
         using var db = NewDb();
         var svc = new FlowDefService(db);
-        await svc.SaveDefAsync("leave", "请假流程", "leave", Schema, null);
-        await svc.SaveDefAsync("leave", "请假流程v2", "leave", Schema.Replace("end", "done"), null);
+        await CP6.Tests.Wf.LegacyDefinitionFixture.Flow(db, "leave", "请假流程", "leave", Schema, null);
+        await CP6.Tests.Wf.LegacyDefinitionFixture.Flow(db, "leave", "请假流程v2", "leave", Schema.Replace("end", "done"), null);
 
         var def = await svc.GetDefAsync("leave");
         Assert.Equal(2, def!.Version);
@@ -50,7 +50,7 @@ public class FlowDefServiceTests
     {
         using var db = NewDb();
         var defSvc = new FlowDefService(db);
-        await defSvc.SaveDefAsync("leave", "请假流程", "leave", Schema, null);
+        await CP6.Tests.Wf.LegacyDefinitionFixture.Flow(db, "leave", "请假流程", "leave", Schema, null);
 
         var engine = new FlowEngine(db, new ApproverResolver(db));
         var instId = await engine.SubmitAsync("leave", Guid.NewGuid(), """{"days":2}""");

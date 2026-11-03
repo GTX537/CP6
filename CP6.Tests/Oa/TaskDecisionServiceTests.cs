@@ -25,11 +25,11 @@ public sealed class TaskDecisionServiceTests
     private static async Task<(TaskDecisionService Service, Guid TaskId, Wf_FormData Data)> SetupAsync(CP6Context db)
     {
         var forms = new FormService(db);
-        var formDraft = await forms.SaveDraftAsync("expense", "Expense", FormSchema, null);
-        await forms.PublishAsync("expense", formDraft.RowVersion, Guid.NewGuid());
+        var formDraft = await CP6.Tests.Wf.LegacyDefinitionFixture.FormDraft(db, "expense", "Expense", FormSchema, null);
+        await CP6.Tests.Wf.LegacyDefinitionFixture.FormPublished(db, "expense", formDraft.RowVersion, Guid.NewGuid());
         var flows = new FlowDefService(db);
-        var flowDraft = await flows.SaveDraftAsync("expense-flow", "Expense flow", null, FlowSchema, null);
-        await flows.PublishAsync("expense-flow", flowDraft.RowVersion, Guid.NewGuid());
+        var flowDraft = await CP6.Tests.Wf.LegacyDefinitionFixture.FlowDraft(db, "expense-flow", "Expense flow", null, FlowSchema, null);
+        await CP6.Tests.Wf.LegacyDefinitionFixture.FlowPublished(db, "expense-flow", flowDraft.RowVersion, Guid.NewGuid());
         var form = await db.Wf_FormDefs.SingleAsync();
         var flow = await db.Wf_FlowDefs.SingleAsync();
         db.Wf_FormFlowBindings.Add(new Wf_FormFlowBinding

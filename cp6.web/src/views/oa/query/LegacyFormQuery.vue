@@ -45,21 +45,8 @@
           </el-select>
         </el-form-item>
 
-        <!-- 流程类型 -->
-        <el-form-item label="流程类型">
-          <el-select
-            v-model="filter.flowKey"
-            clearable
-            placeholder="全部流程"
-            style="width: 180px"
-          >
-            <el-option
-              v-for="f in flows"
-              :key="f.flowKey"
-              :label="f.flowName"
-              :value="f.flowKey"
-            />
-          </el-select>
+        <el-form-item label="流程标识">
+          <el-input v-model="filter.flowKey" clearable placeholder="可选，输入历史流程标识" style="width: 180px" />
         </el-form-item>
 
         <!-- 状态 -->
@@ -164,17 +151,15 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { queryApi } from '@/api/oa/query'
-import { flowAdminApi } from '@/api/oa/flowAdmin'
 import { userApi } from '@/api/sys/user'
 import { instanceStatusText } from '@/views/oa/inbox/inboxModel'
 import CpTag, { type Tone } from '@/components/base/CpTag.vue'
 import CpEmpty from '@/components/base/CpEmpty.vue'
 import FormDetail from '@/views/oa/inbox/FormDetail.vue'
 import type { FormQueryFilter, FormQueryItem } from '@/types/oa/advanced'
-import type { FlowAdminItem } from '@/types/oa/inbox'
 import { formatDateTimeCell } from '@/utils/format'
 
 const { t } = useI18n()
@@ -234,16 +219,6 @@ async function searchHandlerUsers(keyword: string) {
     }))
   } catch { /* HTTP interceptor toasts */ } finally { handlerLoading.value = false }
 }
-
-// ── 流程列表 ──────────────────────────────────────────────────────
-const flows = ref<FlowAdminItem[]>([])
-
-onMounted(async () => {
-  try {
-    const res = await flowAdminApi.list()
-    flows.value = ((res as any).data as FlowAdminItem[]) || []
-  } catch { /* ignore */ }
-})
 
 // ── 查询 ──────────────────────────────────────────────────────────
 const rows = ref<FormQueryItem[]>([])

@@ -52,6 +52,7 @@ public class DynamicJoinCountTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "nst", FlowName = "nst", FormKey = "f",
             SchemaJson = JsonSerializer.Serialize(NestedSchema(u1, u2, ub)), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         await Engine(db).SubmitAsync("nst", Guid.NewGuid(), "{}");
 
         // ★ 先审 b：外层 A 支在内层子 fork 在途（同外层 ForkId 无 Active，只有血缘链）→ 外层 join 必须等
@@ -99,6 +100,7 @@ public class DynamicJoinCountTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "nullfork", FlowName = "x", FormKey = "f",
             SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         await Engine(db).SubmitAsync("nullfork", Guid.NewGuid(), "{}");
 
         var ta = await db.Wf_FlowTasks.SingleAsync(t => t.AssigneeId == ua && t.Status == FlowTaskStatus.Pending);

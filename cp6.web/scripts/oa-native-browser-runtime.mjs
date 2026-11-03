@@ -15,7 +15,7 @@ export async function runNativeRuntime(page, origin, output, steps) {
   steps.push('FORM exact new publication activated')
 
   await page.goto(origin + '/oa/designer/window')
-  await page.getByRole('button', { name: '新草稿工作区', exact: true }).click()
+
   const designer = page.getByRole('region', { name: '流程草稿工作区' })
   await designer.locator('.workbench > aside').getByRole('button', { name: /已发布/ }).click()
   const publication = designer.getByRole('region', { name: '发布与版本' })

@@ -60,6 +60,7 @@ public class BranchPruneNestedTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "nstpr", FlowName = "x", FormKey = "f",
             SchemaJson = JsonSerializer.Serialize(Nested(u1, u2, ub, outerPolicy)), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
     }
 
     [Fact]

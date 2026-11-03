@@ -26,6 +26,7 @@ public class SerialSendBackTests
         db.Wf_FlowDefs.Add(new() { Id = Guid.NewGuid(), FlowKey = "lin3", FlowName = "x", FormKey = "t",
             SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
     }
 
     [Fact]
@@ -75,6 +76,7 @@ public class SerialSendBackTests
         db.Wf_FlowDefs.Add(new() { Id=Guid.NewGuid(), FlowKey="ser3", FlowName="x", FormKey="t",
             SchemaJson=JsonSerializer.Serialize(schema), Version=1, Enable=true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
     }
 
     [Fact]

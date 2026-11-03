@@ -52,6 +52,7 @@ public sealed class InboxQueryPagingTests(TenantManagementPostgresFixture server
             });
         }
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         commands.Clear();
         var resolver = new ApproverResolver(db);
         var inbox = new InboxService(db, new FlowEngine(db, resolver),

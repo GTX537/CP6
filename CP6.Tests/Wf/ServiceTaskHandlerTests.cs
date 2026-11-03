@@ -75,6 +75,7 @@ public class ServiceTaskHandlerTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "svcflow", FlowName = "s", FormKey = "f",
             SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         return await eng.SubmitAsync("svcflow", Guid.NewGuid(), vars);
     }
 

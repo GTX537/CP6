@@ -49,6 +49,7 @@ public class DesignerIsomorphismTests
             SchemaJson = schemaJson, Version = 1, Enable = true,
         });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         // 起流程（vars days=2 满足条件）→ n1 给指定审批人建待办（坐标/超时字段被忽略不报错）
         var instId = await Engine(db).SubmitAsync("designer-flow", Guid.NewGuid(), """{"days":2}""");
@@ -84,6 +85,7 @@ public class DesignerIsomorphismTests
             SchemaJson = schemaJson, Version = 1, Enable = true,
         });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         var instId = await Engine(db).SubmitAsync("designer-cond", Guid.NewGuid(), """{"days":9}""");
         var task = await db.Wf_FlowTasks.SingleAsync(t => t.Status == FlowTaskStatus.Pending);

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Oa;
 using CP6.Core.Services.Wf;
+using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wf.Executors;
 using CP6.Entity.DomainModels.Wf;
 using Microsoft.EntityFrameworkCore;
@@ -181,11 +182,11 @@ public class NodeHttpOverrideTests
     public async Task SaveSide_TimeoutAtOrAboveLease_E028()
     {
         using var db = NewDb();
-        var svc = DesignerSvc(db);
+        var connectors = new IWfConnector[] { new FakeConnector() };
         var schemaJson = JsonSerializer.Serialize(OneServiceTaskSchema(WebApiNode(timeout: 600)));
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-            () => svc.SaveAsync(new SaveFlowRequest("f", "F", "form", null, null, schemaJson), null));
-        Assert.Equal("E-WF-028", ex.Message);
+        var ex = Assert.Throws<ScopeAuthorizationExceptionV1>(
+            () => FlowAuthoringOwnerV2.ValidateDraftSchema(schemaJson, [], connectors));
+        Assert.Equal("SERVICE_TIMEOUT_INVALID", ex.Message);
     }
 
     // ── E-WF-028 保存侧：ServiceTimeoutSec < 租约 → 放行 ────────────────
@@ -193,10 +194,10 @@ public class NodeHttpOverrideTests
     public async Task SaveSide_TimeoutBelowLease_Accepted()
     {
         using var db = NewDb();
-        var svc = DesignerSvc(db);
+        var connectors = new IWfConnector[] { new FakeConnector() };
         var schemaJson = JsonSerializer.Serialize(OneServiceTaskSchema(WebApiNode(timeout: 60)));
-        await svc.SaveAsync(new SaveFlowRequest("f", "F", "form", null, null, schemaJson), null);
-        Assert.True(await db.Wf_FlowDefs.AnyAsync(d => d.FlowKey == "f"));
+        Assert.Empty(FlowAuthoringOwnerV2.ValidateDraftSchema(schemaJson, [], connectors));
+        Assert.Empty(await db.Wf_FlowDefs.ToArrayAsync());
     }
 
     // ── 脚手架 ────────────────────────────────────────────────────────

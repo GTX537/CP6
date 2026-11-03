@@ -11,7 +11,7 @@ public sealed class FlowDraftController(FlowDraftOwnerV1 owner) : ControllerBase
     private IActionResult Result<T>(T value) => Ok(new { code = 0, data = value });
     [HttpGet("draft-context")]
     public async Task<IActionResult> Context(string flowKey, CancellationToken ct) => Result(await owner.ContextAsync(flowKey, ct));
-    // The Owner checks current edit authority inside the actual transaction. Replays need current read only.
+    // Only exact existing results remain readable with current authority. A new intent is explicitly retired.
     [HttpPost("drafts")]
     public async Task<IActionResult> Create(string flowKey, [FromBody] FlowDraftCreateV1 body, CancellationToken ct) => Result(await owner.CreateAsync(flowKey, body, ct));
     [HttpGet("draft-operations/{operation:guid}")]

@@ -7,7 +7,7 @@
       <select v-model="source" aria-label="草稿来源版本" :disabled="busy || !!pending">
         <option v-for="item in context.sources" :key="item.versionId" :value="item.versionId">V{{ item.version }} · {{ item.name }}</option>
       </select>
-      <button v-permission="'oa-designer:edit'" :disabled="busy || !source" @click="create">{{ pending ? '以原意图重试创建' : '从所选版本创建草稿' }}</button>
+      <button v-if="!retired" v-permission="'oa-designer:edit'" :disabled="busy || !source" @click="create">{{ pending ? '以原意图重试创建' : '从所选版本创建草稿' }}</button>
     </template>
     <button v-if="pending" :disabled="busy" @click="recover">查询原创建结果</button>
     <button v-else :disabled="busy" @click="reload">重新读取</button>
@@ -21,8 +21,9 @@ import { flowDraftApi, type DraftCommand, type DraftContext, type DraftCreated }
 const props = defineProps<{ flowKey: string }>()
 const emit = defineEmits<{ created: []; denied: [] }>()
 const context = ref<DraftContext>(), source = ref(''), pending = ref<DraftCommand>(), busy = ref(false), error = ref('')
+const retired = ref(false)
 let generation = 0, live = true
-function clear() { generation++; context.value = undefined; source.value = ''; pending.value = undefined; error.value = ''; busy.value = false }
+function clear() { generation++; context.value = undefined; source.value = ''; pending.value = undefined; retired.value = false; error.value = ''; busy.value = false }
 async function run(action: (key: string, check: () => void) => Promise<void>) {
   if (busy.value) return
   const key = props.flowKey, epoch = identityStamp(), current = generation
@@ -32,6 +33,7 @@ async function run(action: (key: string, check: () => void) => Promise<void>) {
     try {
       check()
       if ([401, 403].includes(e?.response?.status)) { clear(); emit('denied'); error.value = '权限已变化，请重新读取。' }
+      else if (e?.response?.status === 410) { retired.value = true; if (!pending.value) context.value = undefined; error.value = '旧版创建入口已停用，请进入草稿工作区。已有原创建意图仍可查询结果。' }
       else if ([409, 412, 422, 400].includes(e?.response?.status)) { pending.value = undefined; context.value = undefined; error.value = '来源或流程版本已变化，请重新读取后明确选择。' }
       else error.value = '创建结果尚未确认。请查询原创建结果，或以原意图重试。'
     } catch { /* Obsolete identity/object responses never populate the current view. */ }

@@ -46,6 +46,7 @@ public class SubFlowCascadeTests
         SeedDef(db, "mid", ParentSchema(pa, "leaf"));
         SeedDef(db, "top", ParentSchema(pa, "mid"));
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
         var eng = Engine(db);
         var topId = await eng.SubmitAsync("top", Guid.NewGuid(), "{}");
         var mid = await db.Wf_FlowInstances.SingleAsync(i => i.ParentInstanceId == topId);
@@ -74,6 +75,7 @@ public class SubFlowCascadeTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "pp", FlowName = "pp", FormKey = "f",
             SchemaJson = System.Text.Json.JsonSerializer.Serialize(ParallelParent(ub, "child")), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         var eng = Engine(db);
         var pid = await eng.SubmitAsync("pp", Guid.NewGuid(), "{}");
         var child = await db.Wf_FlowInstances.SingleAsync(i => i.ParentInstanceId == pid);
@@ -95,6 +97,7 @@ public class SubFlowCascadeTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "pp", FlowName = "pp", FormKey = "f",
             SchemaJson = System.Text.Json.JsonSerializer.Serialize(ParallelParent(ub, "child")), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         var eng = Engine(db);
         var pid = await eng.SubmitAsync("pp", Guid.NewGuid(), "{}");
         var child = await db.Wf_FlowInstances.SingleAsync(i => i.ParentInstanceId == pid);

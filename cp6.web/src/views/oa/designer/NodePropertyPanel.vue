@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, computed, watch, nextTick } from 'vue'
+import { ref, computed, watch, nextTick, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { userApi } from '@/api/sys/user'
 import { roleApi } from '@/api/sys/role'
 import { designerApi } from '@/api/oa/designer'
 import type { ServiceCatalog } from '@/api/oa/designer'
-import type { FlowDefSummary } from '@/types/oa/designer'
+import { flowAuthoringApi } from '@/api/oa/flowAuthoring'
+import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import CpTag from '@/components/base/CpTag.vue'
 import type { SchemaNode } from './designerModel'
 import { TIMEOUT_ACTIONS } from './designerModel'
@@ -172,20 +173,27 @@ watch(
 )
 
 // ── 子流程（subFlow，E-T2）：目标已发布流程目录（懒加载，仿服务目录 catalog 模式）──
-// 数据源 GET /api/oa/designer/list（designerApi.list()）；面板过滤 enable && flowKey!==当前流程自身。
-// 返回体剥壳沿 DesignerView 约定（interceptor 可能返 {data:[...]} 或 [...]）。
+// Current Owner scope/field projection supplies candidates. Publication still pins the exact source.
 const publishedFlows = ref<Array<{ flowKey: string; flowName: string }>>([])
 const flowsLoaded = ref(false)
+const flowsPage = ref(1), flowsMore = ref(false), flowsBusy = ref(false), flowsError = ref('')
+let flowsGeneration = 0
+function clearFlows() { flowsGeneration++; publishedFlows.value = []; flowsLoaded.value = false; flowsPage.value = 1; flowsMore.value = false; flowsBusy.value = false; flowsError.value = '' }
 
-async function loadPublishedFlows() {
+async function loadPublishedFlows(more = false) {
+  if (flowsBusy.value) return
+  const generation = flowsGeneration, epoch = identityStamp(), page = more ? flowsPage.value + 1 : 1
+  flowsBusy.value = true; flowsError.value = ''
   try {
-    const res = await designerApi.list() as any
-    const list: FlowDefSummary[] = Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : [])
-    publishedFlows.value = list.filter(d => d.enable && d.flowKey !== props.currentFlowKey)
-    flowsLoaded.value = true
+    const list = await flowAuthoringApi.list(page)
+    requireIdentity(epoch); if (generation !== flowsGeneration) return
+    const available = list.filter(d => d.enabled && d.key !== props.currentFlowKey)
+      .map(d => ({ flowKey: d.key, flowName: d.fields.Name ?? d.key }))
+    publishedFlows.value = more ? [...publishedFlows.value, ...available] : available
+    flowsPage.value = page; flowsMore.value = list.length === 100; flowsLoaded.value = true
   } catch {
-    flowsLoaded.value = false   // HTTP interceptor 已 toast；失败可经重新进入节点再拉
-  }
+    if (generation === flowsGeneration) { publishedFlows.value = []; flowsLoaded.value = false; flowsError.value = '未能读取当前可用流程，请重新读取。' }
+  } finally { if (generation === flowsGeneration) flowsBusy.value = false }
 }
 
 watch(
@@ -193,6 +201,9 @@ watch(
   (v) => { if (v && !flowsLoaded.value) void loadPublishedFlows() },
   { immediate: true },
 )
+watch(() => props.currentFlowKey, () => { clearFlows(); if (isSubFlow.value) void loadPublishedFlows() })
+window.addEventListener(AUTH_EVENT, clearFlows); window.addEventListener('storage', clearFlows)
+onBeforeUnmount(() => { clearFlows(); window.removeEventListener(AUTH_EVENT, clearFlows); window.removeEventListener('storage', clearFlows) })
 
 // ── 多实例开关 subMulti —— backing ref（审查修复模式，同 timerActionKind）──
 // 纯 computed（getter 从 subCollectionVar 派生 / setter 开启时置 ''）在新建 subFlow 上开启后，
@@ -702,6 +713,9 @@ async function searchCcUsers(kw: string) {
                 :label="`${d.flowName} (${d.flowKey})`"
               />
             </el-select>
+            <span v-if="flowsError" role="alert">{{ flowsError }}</span>
+            <button type="button" :disabled="flowsBusy" @click="loadPublishedFlows()">重新读取可用流程</button>
+            <button v-if="flowsMore" type="button" :disabled="flowsBusy" @click="loadPublishedFlows(true)">加载更多流程</button>
             <div class="gw-hint">{{ t('oa.designer.subflow.targetHint') }}</div>
           </el-form-item>
 

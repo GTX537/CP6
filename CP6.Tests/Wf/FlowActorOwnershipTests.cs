@@ -43,6 +43,7 @@ public class FlowActorOwnershipTests
             SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true,
         });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
     }
 
     /// <summary>起流程并取 n1 待办（assignee=a）。</summary>

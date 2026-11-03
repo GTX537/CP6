@@ -47,6 +47,7 @@ public class SendBackThreeRuleTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "tr", FlowName = "tr", FormKey = "f",
             SchemaJson = JsonSerializer.Serialize(P(u0, ua1, ua2, ub)), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         var instId = await Engine(db).SubmitAsync("tr", Guid.NewGuid(), "{}");
         var t0 = await db.Wf_FlowTasks.SingleAsync(t => t.AssigneeId == u0 && t.Status == FlowTaskStatus.Pending);
         await Engine(db).ActAsync(t0.Id, u0, approve: true);              // 进 split → a1/b1
@@ -173,6 +174,7 @@ public class SendBackThreeRuleTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "itr", FlowName = "x", FormKey = "f",
             SchemaJson = JsonSerializer.Serialize(Inc(ua1, ua2, ub, ud)), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         await Engine(db).SubmitAsync("itr", Guid.NewGuid(), "{\"goA\":1,\"goB\":1}");   // a/b 两支激活
 
         var t1 = await db.Wf_FlowTasks.SingleAsync(t => t.AssigneeId == ua1 && t.Status == FlowTaskStatus.Pending);
@@ -213,6 +215,7 @@ public class SendBackThreeRuleTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "ghost", FlowName = "x", FormKey = "f",
             SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         await Engine(db).SubmitAsync("ghost", Guid.NewGuid(), "{}");
         var t0 = await db.Wf_FlowTasks.SingleAsync(t => t.AssigneeId == u0 && t.Status == FlowTaskStatus.Pending);
         await Engine(db).ActAsync(t0.Id, u0, approve: true);
@@ -267,6 +270,7 @@ public class SendBackThreeRuleTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "nsb", FlowName = "x", FormKey = "f",
             SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         await Engine(db).SubmitAsync("nsb", Guid.NewGuid(), "{}");
 
         var th = await db.Wf_FlowTasks.SingleAsync(t => t.AssigneeId == uh && t.Status == FlowTaskStatus.Pending);

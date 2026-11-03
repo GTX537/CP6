@@ -25,11 +25,11 @@ public class FormServiceTests
         """;
 
     [Fact]
-    public async Task SaveDef_Then_GetDef_RoundTrip()
+    public async Task Historical_definition_read_preserves_stored_snapshot()
     {
         using var db = NewDb();
         var svc = new FormService(db);
-        await svc.SaveDefAsync("leave", "请假单", LeaveSchema, "tester");
+        await CP6.Tests.Wf.LegacyDefinitionFixture.Form(db, "leave", "请假单", LeaveSchema, "tester");
 
         var def = await svc.GetDefAsync("leave");
         Assert.NotNull(def);
@@ -43,7 +43,7 @@ public class FormServiceTests
     {
         using var db = NewDb();
         var svc = new FormService(db);
-        await svc.SaveDefAsync("leave", "请假单", LeaveSchema);
+        await CP6.Tests.Wf.LegacyDefinitionFixture.Form(db, "leave", "请假单", LeaveSchema);
 
         var id = await svc.SubmitDataAsync("leave", bizId: null, """{"reason":"年假","days":3}""");
 
@@ -58,7 +58,7 @@ public class FormServiceTests
     {
         using var db = NewDb();
         var svc = new FormService(db);
-        await svc.SaveDefAsync("leave", "请假单", LeaveSchema);
+        await CP6.Tests.Wf.LegacyDefinitionFixture.Form(db, "leave", "请假单", LeaveSchema);
 
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(
             () => svc.SubmitDataAsync("leave", null, """{"reason":"年假"}"""));   // 缺 days
@@ -72,7 +72,7 @@ public class FormServiceTests
     {
         using var db = NewDb();
         var svc = new FormService(db);
-        await svc.SaveDefAsync("leave", "请假单", LeaveSchema);
+        await CP6.Tests.Wf.LegacyDefinitionFixture.Form(db, "leave", "请假单", LeaveSchema);
 
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(
             () => svc.SubmitDataAsync("leave", null, """{"reason":"年假","days":"three"}"""));
@@ -81,15 +81,15 @@ public class FormServiceTests
     }
 
     [Fact]
-    public async Task SaveDef_SchemaChange_BumpsVersion_OldDataUntouched()
+    public async Task Historical_versions_remain_independent_OldDataUntouched()
     {
         using var db = NewDb();
         var svc = new FormService(db);
-        await svc.SaveDefAsync("leave", "请假单", LeaveSchema);
+        await CP6.Tests.Wf.LegacyDefinitionFixture.Form(db, "leave", "请假单", LeaveSchema);
         await svc.SubmitDataAsync("leave", null, """{"reason":"年假","days":3}""");   // v1 数据
 
         const string v2 = """{"fields":[{"name":"reason","label":"事由","type":"input","required":true}]}""";
-        await svc.SaveDefAsync("leave", "请假单v2", v2);   // 改 schema → 升版
+        await CP6.Tests.Wf.LegacyDefinitionFixture.Form(db, "leave", "请假单v2", v2);   // 改 schema → 升版
 
         var def = await svc.GetDefAsync("leave");
         Assert.Equal(2, def!.Version);
@@ -104,7 +104,7 @@ public class FormServiceTests
     {
         using var db = NewDb();
         var svc = new FormService(db);
-        await svc.SaveDefAsync("purchase", "采购单", PurchaseSchema);
+        await CP6.Tests.Wf.LegacyDefinitionFixture.Form(db, "purchase", "采购单", PurchaseSchema);
 
         await svc.SubmitDataAsync("purchase", null,
             """{"items":[{"material":"A-01","qty":2,"unit":"pc"}]}""");
@@ -125,7 +125,7 @@ public class FormServiceTests
     {
         using var db = NewDb();
         var svc = new FormService(db);
-        await svc.SaveDefAsync("purchase", "采购单", PurchaseSchema);
+        await CP6.Tests.Wf.LegacyDefinitionFixture.Form(db, "purchase", "采购单", PurchaseSchema);
 
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(
             () => svc.SubmitDataAsync("purchase", null, json));
@@ -135,7 +135,7 @@ public class FormServiceTests
     }
 
     [Fact]
-    public async Task SaveDraft_InvalidTableSchema_FailsBeforeCreatingDefinition()
+    public async Task Retired_draft_writer_rejects_before_parsing_or_creating_definition()
     {
         using var db = NewDb();
         var svc = new FormService(db);
@@ -144,7 +144,7 @@ public class FormServiceTests
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(
             () => svc.SaveDraftAsync("purchase", "采购单", invalid, null));
 
-        Assert.StartsWith("FORM_SCHEMA_INVALID:", ex.Message);
+        Assert.Equal(LegacyDefinitionWrites.Code, ex.Message);
         Assert.Empty(await db.Wf_FormDefVersions.ToListAsync());
         Assert.Empty(await db.Wf_FormDefs.ToListAsync());
     }

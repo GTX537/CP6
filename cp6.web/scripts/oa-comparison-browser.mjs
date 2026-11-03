@@ -42,10 +42,10 @@ try {
     steps.push(`${kind} explicit published versions compared through actual Vue/API/PostgreSQL`)
     return panel
   }
-  await page.goto(origin + '/oa/designer/window'); await page.getByRole('button', { name: '新草稿工作区', exact: true }).click()
+  await page.goto(origin + '/oa/designer/window')
   await page.getByRole('region', { name: '流程草稿工作区' }).locator('.workbench > aside').getByRole('button', { name: /^Flow comparison two（已发布）$/ }).click()
   const flow = await compare('FLOW', 'browser-flow'); await expect(flow).toContainText('Flow comparison one'); await expect(flow).toContainText('Flow comparison two')
-  await page.goto(origin + '/wf/form-designer/window'); await page.getByRole('button', { name: '表单草稿工作区', exact: true }).click()
+  await page.goto(origin + '/wf/form-designer/window')
   await page.getByRole('button', { name: /^browser-form ·/ }).click()
   const form = await compare('FORM', 'browser-form'); await expect(form).toContainText('9007199254740993.00'); await expect(form).toContainText('9007199254740992.00')
   await form.getByLabel('右侧版本', { exact: true }).selectOption(process.env.CP6_COMPARE_FORM_LEFT)

@@ -19,24 +19,8 @@ public class FormController : LocalizedControllerBase
     private IActionResult Ok2(object? data = null) => Ok(new { code = 0, message = "OK", data });
     private IActionResult Err(InvalidOperationException e) => BadRequest(new { code = 400, message = e.Message });
 
-    [HttpPost("form/def")]
-    [RequirePermission("oa-designer", "form-save")]
-    public async Task<IActionResult> SaveDef([FromBody] FormDefReq r)
-    {
-        try
-        {
-            var draft = await _svc.SaveDraftAsync(r.FormKey, r.FormName, r.SchemaJson, null, CurrentUser);
-            return Ok2(new { id = draft.DefinitionId, versionId = draft.VersionId, status = "draft" });
-        }
-        catch (InvalidOperationException e) { return Err(e); }
-    }
-
-    [HttpGet("form/def/{formKey}")]
-    public async Task<IActionResult> GetDef(string formKey)
-    {
-        var def = await _svc.GetDefAsync(formKey);
-        return def is null ? NotFound(new { code = 404, message = Localizer["表单定义不存在"] }) : Ok2(def);
-    }
+    [HttpPost("form/def"), HttpGet("form/def/{key}")]
+    public IActionResult DefinitionRetired() => CP6.WebApi.Controllers.Oa.LegacyDefinitionResult.Gone();
 
     [HttpPost("form/data")]
     [RequirePermission("oa-form-catalog", "submit")]

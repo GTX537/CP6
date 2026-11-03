@@ -33,6 +33,7 @@ public class TaskCenterServiceTests
             SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true,
         });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
     }
 
     private static FlowEngine Engine(CP6Context db) => new(db, new ApproverResolver(db));

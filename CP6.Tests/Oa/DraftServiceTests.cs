@@ -37,8 +37,8 @@ public sealed class DraftServiceTests
     private static async Task PublishAsync(CP6Context db, string schema, string name = "Form")
     {
         var forms = new FormService(db);
-        var draft = await forms.SaveDraftAsync("form", name, schema, null);
-        await forms.PublishAsync("form", draft.RowVersion, Guid.NewGuid());
+        var draft = await CP6.Tests.Wf.LegacyDefinitionFixture.FormDraft(db, "form", name, schema, null);
+        await CP6.Tests.Wf.LegacyDefinitionFixture.FormPublished(db, "form", draft.RowVersion, Guid.NewGuid());
     }
 
     private static JsonElement Json(string value)

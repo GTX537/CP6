@@ -50,6 +50,7 @@ public class SplitDirectEdgeToJoinTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "pdj", FlowName = "pdj", FormKey = "f",
             SchemaJson = JsonSerializer.Serialize(ParallelDirect(ua, upost)), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         await Engine(db).SubmitAsync("pdj", Guid.NewGuid(), "{}");
 
         // ★① 提交后 join 绝不能已放行（a 支还没审）→ post 零任务（否则=审批绕过）
@@ -102,6 +103,7 @@ public class SplitDirectEdgeToJoinTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "idj", FlowName = "idj", FormKey = "f",
             SchemaJson = JsonSerializer.Serialize(InclusiveDirect(ua, ud, upost)), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         await Engine(db).SubmitAsync("idj", Guid.NewGuid(), "{\"go\":1}");
 
         // ★① 提交后 ijoin 绝不能已放行 → post 零任务；default 支 d 不走

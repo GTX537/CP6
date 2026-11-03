@@ -20,12 +20,8 @@ public class FormService : IFormService
     private readonly CP6Context _db;
     public FormService(CP6Context db) => _db = db;
 
-    public async Task<Guid> SaveDefAsync(string formKey, string formName, string schemaJson, string? user = null)
-    {
-        var draft = await SaveDraftAsync(formKey, formName, schemaJson, null, user);
-        await PublishAsync(formKey, draft.RowVersion, Guid.Empty);
-        return draft.DefinitionId;
-    }
+    public Task<Guid> SaveDefAsync(string formKey, string formName, string schemaJson, string? user = null)
+        => LegacyDefinitionWrites.Rejected<Guid>();
 
     public async Task<Wf_FormDef?> GetDefAsync(string formKey)
     {
@@ -43,105 +39,21 @@ public class FormService : IFormService
         return head;
     }
 
-    public async Task<DefinitionDraftDto?> GetDraftAsync(string formKey, bool createIfMissing = true, string? user = null)
+    public async Task<DefinitionDraftDto?> GetDraftAsync(string formKey, bool createIfMissing = false, string? user = null)
     {
-        var head = await _db.Wf_FormDefs.FirstOrDefaultAsync(x => x.FormKey == formKey);
+        // The retained legacy argument cannot make a read create a draft.
+        var head = await _db.Wf_FormDefs.AsNoTracking().SingleOrDefaultAsync(x => x.FormKey == formKey);
         if (head == null) return null;
-        var draft = await _db.Wf_FormDefVersions
+        var draft = await _db.Wf_FormDefVersions.AsNoTracking()
             .SingleOrDefaultAsync(x => x.FormDefId == head.Id && x.Status == WfDefinitionVersionStatus.Draft);
-        if (draft == null && createIfMissing)
-        {
-            var latest = await _db.Wf_FormDefVersions.AsNoTracking()
-                .Where(x => x.FormDefId == head.Id && x.Status == WfDefinitionVersionStatus.Published)
-                .OrderByDescending(x => x.Version).FirstOrDefaultAsync();
-            draft = new Wf_FormDefVersion
-            {
-                Id = Guid.NewGuid(), FormDefId = head.Id, Version = (latest?.Version ?? 0) + 1,
-                Status = WfDefinitionVersionStatus.Draft,
-                FormNameSnapshot = latest?.FormNameSnapshot ?? head.FormName,
-                SchemaJson = latest?.SchemaJson ?? head.SchemaJson, Creator = user
-            };
-            _db.Wf_FormDefVersions.Add(draft);
-            await _db.SaveChangesAsync();
-        }
         return draft == null ? null : ToDraft(head.Id, draft);
     }
 
-    public async Task<DefinitionDraftDto> SaveDraftAsync(
-        string formKey, string formName, string schemaJson, byte[]? rowVersion, string? user = null)
-    {
-        if (string.IsNullOrWhiteSpace(formKey)) throw new InvalidOperationException("FormKey 不能为空");
-        _ = FormSchemaValidationV1.Parse(schemaJson);
-        var head = await _db.Wf_FormDefs.FirstOrDefaultAsync(x => x.FormKey == formKey);
-        if (head == null)
-        {
-            head = new Wf_FormDef
-            {
-                Id = Guid.NewGuid(), FormKey = formKey, FormName = formName,
-                SchemaJson = schemaJson, Version = 1, Creator = user
-            };
-            _db.Wf_FormDefs.Add(head);
-        }
-        else
-        {
-            head.FormName = formName;
-            head.Modifier = user;
-            head.ModifyDate = DateTime.UtcNow;
-        }
+    public Task<DefinitionDraftDto> SaveDraftAsync(string formKey, string formName, string schemaJson,
+        byte[]? rowVersion, string? user = null) => LegacyDefinitionWrites.Rejected<DefinitionDraftDto>();
 
-        var draft = await _db.Wf_FormDefVersions
-            .SingleOrDefaultAsync(x => x.FormDefId == head.Id && x.Status == WfDefinitionVersionStatus.Draft);
-        if (draft == null)
-        {
-            var maxVersion = await _db.Wf_FormDefVersions.Where(x => x.FormDefId == head.Id)
-                .Select(x => (int?)x.Version).MaxAsync() ?? 0;
-            draft = new Wf_FormDefVersion
-            {
-                Id = Guid.NewGuid(), FormDefId = head.Id, Version = maxVersion + 1,
-                Status = WfDefinitionVersionStatus.Draft, FormNameSnapshot = formName,
-                SchemaJson = schemaJson, Creator = user
-            };
-            _db.Wf_FormDefVersions.Add(draft);
-        }
-        else
-        {
-            EnsureRowVersion(draft.RowVersion, rowVersion);
-            if (rowVersion != null) _db.Entry(draft).Property(x => x.RowVersion).OriginalValue = rowVersion;
-            draft.FormNameSnapshot = formName;
-            draft.SchemaJson = schemaJson;
-            draft.Modifier = user;
-            draft.ModifyDate = DateTime.UtcNow;
-        }
-        try { await _db.SaveChangesAsync(); }
-        catch (DbUpdateConcurrencyException) { throw new InvalidOperationException("E-WF-045"); }
-        return ToDraft(head.Id, draft);
-    }
-
-    public async Task<DefinitionPublishResult> PublishAsync(
-        string formKey, byte[]? rowVersion, Guid publishedBy, CancellationToken ct = default)
-    {
-        var head = await _db.Wf_FormDefs.SingleOrDefaultAsync(x => x.FormKey == formKey, ct)
-                   ?? throw new InvalidOperationException("E-WF-036");
-        var draft = await _db.Wf_FormDefVersions
-            .SingleOrDefaultAsync(x => x.FormDefId == head.Id && x.Status == WfDefinitionVersionStatus.Draft, ct)
-                    ?? throw new InvalidOperationException("E-WF-036");
-        EnsureRowVersion(draft.RowVersion, rowVersion);
-        if (rowVersion != null) _db.Entry(draft).Property(x => x.RowVersion).OriginalValue = rowVersion;
-
-        _ = FormSchemaValidationV1.Parse(draft.SchemaJson);
-        await new FlowFormCompatibilityValidator(_db).ValidateFormPublishAsync(head.Id, draft.SchemaJson, ct);
-
-        var at = DateTime.UtcNow;
-        draft.Status = WfDefinitionVersionStatus.Published;
-        draft.PublishedAtUtc = at;
-        draft.PublishedBy = publishedBy;
-        head.FormName = draft.FormNameSnapshot;
-        head.SchemaJson = draft.SchemaJson;
-        head.Version = draft.Version;
-        try { await _db.SaveChangesAsync(ct); }
-        catch (DbUpdateConcurrencyException) { throw new InvalidOperationException("E-WF-045"); }
-        return new(head.Id, draft.Id, draft.Version, at);
-    }
+    public Task<DefinitionPublishResult> PublishAsync(string formKey, byte[]? rowVersion, Guid publishedBy,
+        CancellationToken ct = default) => LegacyDefinitionWrites.Rejected<DefinitionPublishResult>();
 
     public async Task<IReadOnlyList<DefinitionVersionItem>> ListVersionsAsync(string formKey, CancellationToken ct = default)
     {
@@ -268,9 +180,5 @@ public class FormService : IFormService
     private static DefinitionDraftDto ToDraft(Guid defId, Wf_FormDefVersion draft) =>
         new(defId, draft.Id, draft.Version, draft.FormNameSnapshot, draft.SchemaJson, draft.RowVersion, draft.Status);
 
-    private static void EnsureRowVersion(byte[]? current, byte[]? expected)
-    {
-        if (expected != null && current != null && !current.SequenceEqual(expected))
-            throw new InvalidOperationException("E-WF-045");
-    }
+
 }

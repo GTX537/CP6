@@ -28,6 +28,7 @@ public class TransferServiceTests
                 Edges = { new FlowEdge { From = "n1", To = "end" } } }),
             Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         var inst = await Engine(db).SubmitAsync("leave", starter, "{}");
         var task = await db.Wf_FlowTasks.Where(t => t.Status == FlowTaskStatus.Pending).Select(t => t.Id).SingleAsync();
         return (inst, task);

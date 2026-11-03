@@ -168,6 +168,8 @@ public partial class FlowEngine : IFlowEngine
         if (task.Status != FlowTaskStatus.Pending || inst.Status != FlowInstanceStatus.Running) return;
 
         if (!ManagedDecision) await AssertActorMayHandleAsync(task, actorId, onBehalfOf);   // ★ 归属闸（P0 票#1）：非本人/非委派/非系统 → E-WF-029
+        // Resolve the exact accepted source before touching votes, history or form snapshots.
+        var schema = await LoadSchemaAsync(inst);
 
         task.Status = approve ? FlowTaskStatus.Approved : FlowTaskStatus.Rejected;
         task.Comment = comment;
@@ -183,7 +185,7 @@ public partial class FlowEngine : IFlowEngine
             var seq = handledStep ?? await _db.Wf_FlowFormTos
                 .Where(f => f.InstanceId == inst.Id && f.NodeId == task.NodeId && f.TokenId == task.TokenId)
                 .Select(f => (int?)f.StepSeq).MaxAsync() ?? NextStepSeq(inst.Id);
-            var snapNode = FindNode(await LoadSchemaAsync(inst), task.NodeId);
+            var snapNode = FindNode(schema, task.NodeId);
             if (snapNode is not null) WriteSnapshot(inst, snapNode, doneTok, seq);
         }
 
@@ -226,7 +228,6 @@ public partial class FlowEngine : IFlowEngine
         CancelPendingTasks(nodeTasks);   // 节点已决，作废本节点其余在途
         if (passed)
         {
-            var schema = await LoadSchemaAsync(inst);
             var tok = await _db.Wf_FlowTokens.FirstOrDefaultAsync(t => t.Id == task.TokenId);
             var plan = (tok is null || string.IsNullOrEmpty(tok.StagePlanJson))
                 ? null
@@ -256,13 +257,12 @@ public partial class FlowEngine : IFlowEngine
         else
         {
             // hardening B-T2 驳回分流（spec §4.1）：token 有 fork 血缘且本层 split 配 prune → 剪枝；否则既有连坐一行不改。
-            // ForkId==null 时不 LoadSchema（cascade 默认路径零额外开销）。
+            // Reuse the exact source resolved before the decision mutation.
             var rejTok = await _db.Wf_FlowTokens.FirstOrDefaultAsync(t => t.Id == task.TokenId);
             var pruned = false;
             if (rejTok is not null && rejTok.ForkId is not null)
             {
-                var pruneSchema = await LoadSchemaAsync(inst);
-                pruned = await TryPruneBranchAsync(inst, pruneSchema, rejTok, actorId, comment);
+                pruned = await TryPruneBranchAsync(inst, schema, rejTok, actorId, comment);
             }
             if (!pruned)
             {
@@ -516,10 +516,8 @@ public partial class FlowEngine : IFlowEngine
         RequireLegacyRuntime(instance);
         if (instance.FlowDefVersionId is not Guid versionId)
         {
-            // Explicit compatibility path for pre-P0 rows. New starts always pin before insert.
-            var legacy = await ResolveLatestFlowVersionAsync(instance.FlowKey, ct);
-            instance.FlowDefVersionId = legacy.Version.Id;
-            return Deserialize(legacy.Version.SchemaJson);
+            // A current head cannot establish what this historical instance actually executed.
+            throw new InvalidOperationException("UNVERIFIED_LEGACY");
         }
         var version = await _db.Wf_FlowDefVersions.AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == versionId && x.Status == WfDefinitionVersionStatus.Published, ct)
@@ -543,18 +541,7 @@ public partial class FlowEngine : IFlowEngine
             .OrderByDescending(x => x.Version).FirstOrDefaultAsync(ct);
         if (version == null)
         {
-            if (await _db.Wf_FlowDefVersions.AnyAsync(x => x.FlowDefId == head.Id, ct))
-                throw new InvalidOperationException("E-WF-029");
-            // Explicit legacy compatibility: materialize the exact head bytes once, equivalent to backfill.
-            version = new Wf_FlowDefVersion
-            {
-                Id = Guid.NewGuid(), FlowDefId = head.Id, Version = head.Version,
-                Status = WfDefinitionVersionStatus.Published, FlowNameSnapshot = head.FlowName,
-                SchemaJson = head.SchemaJson, PublishedAtUtc = DateTime.UtcNow,
-                Creator = "legacy-runtime-backfill"
-            };
-            _db.Wf_FlowDefVersions.Add(version);
-            await _db.SaveChangesAsync(ct);
+            throw new InvalidOperationException("UNVERIFIED_LEGACY");
         }
         return new(head, version);
     }
@@ -574,10 +561,8 @@ public partial class FlowEngine : IFlowEngine
                 .SingleOrDefaultAsync(x => x.FlowDefVersionId == parentVersionId &&
                                            x.NodeId == nodeId && x.DependencyType == "SubFlow", ct);
             if (dependency != null) return dependency.TargetFlowDefVersionId;
-            if (await _db.Wf_FlowDefVersionDependencies.AnyAsync(x => x.FlowDefVersionId == parentVersionId, ct))
-                throw new InvalidOperationException("E-WF-046");
         }
-        return (await ResolveLatestFlowVersionAsync(legacySubFlowKey, ct)).Version.Id;
+        throw new InvalidOperationException("UNVERIFIED_LEGACY");
     }
 
     private static FlowSchema Deserialize(string json)

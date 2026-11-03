@@ -132,6 +132,7 @@ public class ServiceJobScanTests
         var exec = new FakeExec("act", succeed: true);
         var (inst, _, job) = Park(db, eng, SchemaNoErrorEdge(), nextAttemptAtUtc: T0);
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         var processed = await Svc(db, eng, exec).ScanOnceAsync(T0, "w1");
 
@@ -153,6 +154,7 @@ public class ServiceJobScanTests
         var exec = new FakeExec("act", succeed: true);
         var (_, _, job) = Park(db, eng, SchemaNoErrorEdge(), nextAttemptAtUtc: T0.AddHours(1));   // 未到期
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         var processed = await Svc(db, eng, exec).ScanOnceAsync(T0, "w1");
 
@@ -172,6 +174,7 @@ public class ServiceJobScanTests
         var exec = new FakeExec("act", succeed: false);
         var (_, _, job) = Park(db, eng, SchemaNoErrorEdge(), nextAttemptAtUtc: T0, attemptCount: 0, maxAttempts: 2);
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         var svc = Svc(db, eng, exec);
 
@@ -204,6 +207,7 @@ public class ServiceJobScanTests
         var exec = new FakeExec("act", succeed: false);
         var (inst, _, _) = Park(db, eng, SchemaNoErrorEdge(), nextAttemptAtUtc: T0, attemptCount: 0, maxAttempts: 1);
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         await Svc(db, eng, exec).ScanOnceAsync(T0, "w1");
 
@@ -221,6 +225,7 @@ public class ServiceJobScanTests
         var exec = new FakeExec("act", succeed: false);
         var (inst, _, _) = Park(db, eng, SchemaWithErrorEdge(approver), nextAttemptAtUtc: T0, attemptCount: 0, maxAttempts: 1);
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         await Svc(db, eng, exec).ScanOnceAsync(T0, "w1");
 
@@ -301,6 +306,7 @@ public class ServiceJobScanTests
         var (inst, _, _) = Park(db, eng, SchemaNoErrorEdge(), nextAttemptAtUtc: T0,
             instStatus: FlowInstanceStatus.Withdrawn);   // 实例已撤回
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         await Svc(db, eng, exec).ScanOnceAsync(T0, "w1");
 
@@ -319,6 +325,7 @@ public class ServiceJobScanTests
         var (inst, _, _) = Park(db, eng, SchemaNoErrorEdge(), nextAttemptAtUtc: T0,
             tokNodeId: "end");   // token 已离开 svc
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         await Svc(db, eng, exec).ScanOnceAsync(T0, "w1");
 
@@ -352,6 +359,7 @@ public class ServiceJobScanTests
             DueAtUtc = T0, Status = ServiceJobStatus.Pending, AttemptCount = 0, MaxAttempts = 4,
             NextAttemptAtUtc = T0, CreateDate = DateTime.UtcNow });
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         await Svc(db, eng, exec).ScanOnceAsync(T0, "w1");
 

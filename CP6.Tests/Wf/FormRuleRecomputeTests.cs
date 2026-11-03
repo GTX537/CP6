@@ -97,7 +97,7 @@ public class FormRuleRecomputeTests
     {
         using var db = NewDb();
         var svc = Svc(db);
-        await svc.SaveDefAsync("leave", "请假单", LeaveSchema);
+        await LegacyDefinitionFixture.Form(db, "leave", "请假单", LeaveSchema);
 
         await svc.SubmitDataAsync("leave", null,
             """{"type":"annual","start":"2026-06-10","end":"2026-06-15","days":1}""");
