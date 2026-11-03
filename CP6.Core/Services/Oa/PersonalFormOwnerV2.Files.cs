@@ -12,10 +12,11 @@ public sealed partial class PersonalFormOwnerV2
 {
     private FormFileContentV2 Files=>fileContent??throw Error("FORM_FILE_OWNER_UNAVAILABLE");
     private string FileJournalOwner=>FormFileReferenceV2.Owner+"/"+fence.EnvironmentId.ToString("D");
-    private sealed record FileContext(Guid Head,Guid Version,string Kind,Guid? Id,string Data,FormSchema Schema,Dictionary<string,string> Mask);
-    private async Task<FileContext> FileAccess(FormFileScopeV2 scope,string field,UserPermissionContext actor,bool write,CancellationToken ct)
+    private sealed record FileContext(Guid Head,Guid Version,string Kind,Guid? Id,string Data,FormSchema Schema,Dictionary<string,string> Mask,TaskAuthority? Task=null);
+    private async Task<FileContext> FileAccess(FormFileScopeV2 scope,string field,UserPermissionContext actor,bool write,CancellationToken ct,Guid? behalf=null,bool original=false)
     {
         if(scope==null||scope.FormVersionId==Guid.Empty||string.IsNullOrEmpty(field)||field.Length>200)throw Error("FORM_FILE_SCOPE_INVALID",400);
+        if(behalf!=null&&scope.Kind!="TASK")throw Error("FORM_FILE_ACTUAL_ONLY",403);
         FileContext context;
         if(scope.Kind=="FORM"&&scope.Id==null&&!string.IsNullOrEmpty(scope.Key))
         {
@@ -55,6 +56,19 @@ public sealed partial class PersonalFormOwnerV2
             var form=await Publication(source.Head,source.FormVersion,ct);
             context=new(source.Head,source.FormVersion,"SUBMISSION",data.Id,data.DataJson,PersonalFormValuesV2.Schema(form.Fields["SchemaJson"]!),mask);
         }
+        else if(scope.Kind=="TASK"&&scope.Id is Guid task&&scope.Key==null)
+        {
+            var source=await TaskSourceAsync(task,ct);var form=await Publication(source.FormHead,source.FormVersion,ct);
+            var data=await db.Wf_FormDatas.AsNoTracking().SingleAsync(f=>f.Id==source.Data,ct);TaskAuthority? access=null;Dictionary<string,string> mask;
+            if(original){await Action(actor,"query",ct,"oa-inbox");mask=PinnedTaskMask(source,await Mask(actor,source.FormHead,form,ct));}
+            else{access=write?await TaskEditable(source,actor,behalf,ct):await TaskAccess(source,actor,behalf,false,ct,"TASK_READ");mask=access.Mask;}
+            if(write)
+            {
+                var current=await TaskView(task,ct);
+                if(current.TaskRowVersion!=scope.ExpectedVersion||Convert.ToBase64String(data.RowVersion!)!=scope.ExpectedDataVersion)throw Error("TASK_CONTEXT_CHANGED",409);
+            }
+            context=new(source.FormHead,source.FormVersion,"SUBMISSION",data.Id,data.DataJson,PersonalFormValuesV2.Schema(form.Fields["SchemaJson"]!),mask,access);
+        }
         else if(scope.Kind=="HISTORY"&&scope.Id is Guid data&&scope.Key==null&&!write)
         {
             await Action(actor,"query",ct);var row=await Unbound(actor.UserId).SingleOrDefaultAsync(s=>s.Data==data,ct)??throw Error("RESOURCE_NOT_FOUND",404);
@@ -66,6 +80,11 @@ public sealed partial class PersonalFormOwnerV2
         if(!context.Mask.TryGetValue(field,out var permission)||permission=="hidden"||write&&permission!="edit"
             ||!context.Schema.Fields.Any(f=>f.Name==field&&f.Type.Equals("upload",StringComparison.OrdinalIgnoreCase)))throw Error("FIELD_FILE_FORBIDDEN",403);
         return context;
+    }
+    private async Task FinalFile(FileContext context,UserPermissionContext actor,ScopeAuthorizationLeaseV1 lease,CancellationToken ct,bool write=true)
+    {
+        await Final(actor,lease,ct,write);
+        if(context.Task is {Grant:{} grant} access)await new TaskDelegationReaderV2(db,fence.EnvironmentId).ValidateExact(grant,access.Action,access.FlowKey,access.BusinessType,ct);
     }
     private static bool ContainsFile(string data,string field,string reference)
     {
@@ -90,7 +109,7 @@ public sealed partial class PersonalFormOwnerV2
             if(reading&&(!ContainsFile(context.Data,field,reference)||!await Files.Bound(fence.EnvironmentId,row.Id,field,context.Kind,context.Id!.Value,ct)))throw Error("FORM_FILE_NOT_FOUND",404);
         }
         else if(row.Actor!=actor||row.FormVersion!=context.Version||row.ScopeKind=="DRAFT"&&(context.Kind!="DRAFT"||row.ScopeId!=context.Id)
-            ||row.ScopeKind=="RETURNED"&&(context.Kind!="SUBMISSION"||row.ScopeId!=context.Id))throw Error("FORM_FILE_REFERENCE_SCOPE",422);
+            ||(row.ScopeKind is "RETURNED" or "TASK")&&(context.Kind!="SUBMISSION"||row.ScopeId!=context.Id))throw Error("FORM_FILE_REFERENCE_SCOPE",422);
         if(available)
         {
             if((await Files.View(fence.EnvironmentId,row,ct)).Availability!="AVAILABLE")throw Error("FILE_CONTENT_NOT_AVAILABLE",409);
@@ -109,22 +128,22 @@ public sealed partial class PersonalFormOwnerV2
         using var input=JsonDocument.Parse(original.Input!);
         if(!input.RootElement.TryGetProperty("Scope",out var frozenScope))throw Error("ORIGINAL_OPERATION_FORBIDDEN",403);
         var scope=frozenScope.Deserialize<FormFileScopeV2>()!;
-        var field=input.RootElement.GetProperty("Field").GetString()!;await FileAccess(scope,field,actor,false,ct);
+        var field=input.RootElement.GetProperty("Field").GetString()!;await FileAccess(scope,field,actor,false,ct,original:true);
         return value;
     }
     private Task FileReceipt(Guid operation,Guid actor,byte[] input,FormFileViewV2 result,object audit,CancellationToken ct)
         =>new MainOwnerOperationJournalV1(db).Store(FileJournalOwner,FormFileReferenceV2.Contract,operation,actor,input,
             new FormFileOperationV2(operation,"COMMITTED",result),[result.ContentRef.Id],audit,ct);
-    public async Task<FormFileOperationV2> UploadFileAsync(FormFileUploadV2 input,Stream stream,CancellationToken ct=default)
+    public async Task<FormFileOperationV2> UploadFileAsync(FormFileUploadV2 input,Stream stream,CancellationToken ct=default,Guid? behalf=null)
     {
-        FormFileReferenceV2.Upload(input);var raw=MainOwnerOperationJournalV1.Encode(input);Entry();
+        FormFileReferenceV2.Upload(input);var raw=input.Scope.Kind=="TASK"?MainOwnerOperationJournalV1.Encode(new{input.OperationId,input.FileId,input.Scope,input.Field,input.FileName,input.ByteLength,input.Digest,OnBehalfOf=behalf}):MainOwnerOperationJournalV1.Encode(input);Entry();
         Guid expectedActor;
         await using(var pre=await db.Database.BeginTransactionAsync(ct))
         {
             var lease=await ReadLease(ct);var actor=await Actor(ct);expectedActor=actor.UserId;await Files.Ready(ct);
             var old=await FileOriginal(input.OperationId,actor,raw,ct);
             if(old!=null){await Final(actor,lease,ct,false);return old;}
-            await WriteReady(lease,ct);await FileAccess(input.Scope,input.Field,actor,true,ct);await Final(actor,lease,ct);
+            await WriteReady(lease,ct);var context=await FileAccess(input.Scope,input.Field,actor,true,ct,behalf);await FinalFile(context,actor,lease,ct);
         }
         var staged=await Files.Stage(input,stream,ct);
         await using var tx=await db.Database.BeginTransactionAsync(ct);var committing=false;
@@ -133,11 +152,11 @@ public sealed partial class PersonalFormOwnerV2
             var lease=await ReadLease(ct);var actor=await Actor(ct);if(actor.UserId!=expectedActor)throw Error("REAUTH_REQUIRED",401);await Files.Ready(ct);
             var old=await FileOriginal(input.OperationId,actor,raw,ct);
             if(old!=null){await Final(actor,lease,ct,false);return old;}
-            await WriteReady(lease,ct);var context=await FileAccess(input.Scope,input.Field,actor,true,ct);
+            await WriteReady(lease,ct);var context=await FileAccess(input.Scope,input.Field,actor,true,ct,behalf);
             if(await Files.Find(fence.EnvironmentId,input.FileId,ct)!=null)throw Error("FILE_ID_CONFLICT",409);
             var value=await Files.Create(fence.EnvironmentId,actor.UserId,context.Head,input.Scope.Kind,context.Id,input,staged,ct);
             await FileReceipt(input.OperationId,actor.UserId,raw,value,new{Scope=input.Scope,input.Field,lease.Snapshot},ct);
-            await Final(actor,lease,ct);committing=true;await tx.CommitAsync(ct);return new(input.OperationId,"COMMITTED",value);
+            await FinalFile(context,actor,lease,ct);committing=true;await tx.CommitAsync(ct);return new(input.OperationId,"COMMITTED",value);
         }
         catch(Exception ex){await Rollback(tx,committing,ex);throw;}
     }
@@ -149,7 +168,7 @@ public sealed partial class PersonalFormOwnerV2
             var lease=await ReadLease(ct);var actor=await Actor(ct);await Files.Ready(ct);
             var old=await FileOriginal(operation,actor,null,ct);
             if(old!=null){await Final(actor,lease,ct,false);return old;}
-            await Action(actor,"query",ct);var result=new FormFileOperationV2(operation,close?"CLOSED":"UNKNOWN");
+            await Action(actor,"query",ct,actor.MenuKeys.Contains("oa-form-catalog")&&actor.ActionKeys.Contains("oa-form-catalog:query")?"oa-form-catalog":"oa-inbox");var result=new FormFileOperationV2(operation,close?"CLOSED":"UNKNOWN");
             if(close)
             {
                 await WriteReady(lease,ct);await new MainOwnerOperationJournalV1(db).Store(FileJournalOwner,FormFileReferenceV2.Contract,operation,actor.UserId,null,result,[],new{Action="CLOSE_UNOBSERVED_FORM_FILE"},ct);
@@ -159,22 +178,22 @@ public sealed partial class PersonalFormOwnerV2
         }
         catch(Exception ex){await Rollback(tx,committing,ex);throw;}
     }
-    public async Task<FormFileViewV2> ReadFileAsync(FormFileReadV2 input,CancellationToken ct=default)
+    public async Task<FormFileViewV2> ReadFileAsync(FormFileReadV2 input,CancellationToken ct=default,Guid? behalf=null)
     {
         Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var lease=await ReadLease(ct);var actor=await Actor(ct);
-        var context=await FileAccess(input.Scope,input.Field,actor,false,ct);await Files.Ready(ct);
+        var context=await FileAccess(input.Scope,input.Field,actor,false,ct,behalf);await Files.Ready(ct);
         var row=await FileReference(context,input.Field,input.Reference,actor.UserId,true,false,ct);var value=await Files.View(fence.EnvironmentId,row,ct);
-        await Final(actor,lease,ct,false);return value;
+        await FinalFile(context,actor,lease,ct,false);return value;
     }
-    public async Task<FormFileOperationV2> ChangeFileAsync(FormFileStateCommandV2 input,CancellationToken ct=default)
+    public async Task<FormFileOperationV2> ChangeFileAsync(FormFileStateCommandV2 input,CancellationToken ct=default,Guid? behalf=null)
     {
-        if(input.OperationId==Guid.Empty||input.Action is not("HOLD" or "RELEASE" or "INSPECT")||string.IsNullOrWhiteSpace(input.Reason)||input.Reason.Length>1000)throw Error("FILE_COMMAND_INVALID",400);
-        var raw=MainOwnerOperationJournalV1.Encode(input);Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var committing=false;
+        if(input.OperationId==Guid.Empty||input.Scope==null||input.Action is not("HOLD" or "RELEASE" or "INSPECT")||string.IsNullOrWhiteSpace(input.Reason)||input.Reason.Length>1000)throw Error("FILE_COMMAND_INVALID",400);
+        var raw=input.Scope.Kind=="TASK"?MainOwnerOperationJournalV1.Encode(new{input.OperationId,input.Scope,input.Field,input.Reference,input.ExpectedStateVersion,input.Action,input.Reason,OnBehalfOf=behalf}):MainOwnerOperationJournalV1.Encode(input);Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var committing=false;
         try
         {
             var lease=await ReadLease(ct);var actor=await Actor(ct);await Files.Ready(ct);var old=await FileOriginal(input.OperationId,actor,raw,ct);
             if(old!=null){await Final(actor,lease,ct,false);return old;}
-            await WriteReady(lease,ct);var context=await FileAccess(input.Scope,input.Field,actor,true,ct);
+            await WriteReady(lease,ct);var context=await FileAccess(input.Scope,input.Field,actor,true,ct,behalf);
             var row=await FileReference(context,input.Field,input.Reference,actor.UserId,true,false,ct);var before=await Files.View(fence.EnvironmentId,row,ct);
             if(input.Action is "HOLD" or "RELEASE")
             {
@@ -188,7 +207,7 @@ public sealed partial class PersonalFormOwnerV2
             }
             if(before.StateVersion!=input.ExpectedStateVersion)throw Error("FILE_STATE_CHANGED",412);
             var value=await Files.Change(fence.EnvironmentId,actor.UserId,row,before,input.OperationId,input.Action,ct);
-            await FileReceipt(input.OperationId,actor.UserId,raw,value,new{input.Action,input.Reason,lease.Snapshot},ct);await Final(actor,lease,ct);
+            await FileReceipt(input.OperationId,actor.UserId,raw,value,new{input.Action,input.Reason,lease.Snapshot},ct);await FinalFile(context,actor,lease,ct);
             committing=true;await tx.CommitAsync(ct);return new(input.OperationId,"COMMITTED",value);
         }
         catch(Exception ex){await Rollback(tx,committing,ex);throw;}
@@ -203,13 +222,13 @@ public sealed partial class PersonalFormOwnerV2
             await FileReceipt(id,actor,MainOwnerOperationJournalV1.Encode(new{Action="INTEGRITY_FAILURE",row.Id}),after,new{Action="INTEGRITY_FAILURE"},ct);return null;
         }
     }
-    public async Task<FileContentDownloadV1> DownloadFileAsync(FormFileReadV2 input,CancellationToken ct=default)
+    public async Task<FileContentDownloadV1> DownloadFileAsync(FormFileReadV2 input,CancellationToken ct=default,Guid? behalf=null)
     {
         Entry();FileContentDownloadV1? result;await using(var tx=await db.Database.BeginTransactionAsync(ct))
         {
-            var lease=await ReadLease(ct);var actor=await Actor(ct);var context=await FileAccess(input.Scope,input.Field,actor,false,ct);await Files.Ready(ct);
+            var lease=await ReadLease(ct);var actor=await Actor(ct);var context=await FileAccess(input.Scope,input.Field,actor,false,ct,behalf);await Files.Ready(ct);
             var row=await FileReference(context,input.Field,input.Reference,actor.UserId,true,false,ct);result=await FileBytes(row,actor.UserId,ct);
-            await Final(actor,lease,ct,false);await tx.CommitAsync(ct);
+            await FinalFile(context,actor,lease,ct,false);await tx.CommitAsync(ct);
         }
         return result??throw Error("FILE_CONTENT_INTEGRITY_UNAVAILABLE");
     }

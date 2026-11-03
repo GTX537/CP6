@@ -27,24 +27,24 @@ public sealed class FormFilesController(PersonalFormOwnerV2 forms,NativeInboxOwn
     [HttpPost("uploads"),RequestSizeLimit(20971520)]
     public Task<IActionResult> Upload([FromHeader(Name="X-File-Command")]string encoded,CancellationToken ct)=>Run(async()=>
     {
-        Actual();FormFileUploadV2 input;
+        FormFileUploadV2 input;
         try
         {
             if(encoded.Length>32768)throw new FormatException();input=JsonSerializer.Deserialize<FormFileUploadV2>(Convert.FromBase64String(encoded),Json)??throw new JsonException();
         }
         catch(Exception e)when(e is FormatException or JsonException){throw new ScopeAuthorizationExceptionV1("FILE_UPLOAD_INVALID",400);}
-        return await forms.UploadFileAsync(input,Request.Body,ct);
+        if(input.Scope?.Kind!="TASK")Actual();return await forms.UploadFileAsync(input,Request.Body,ct,ActingAs());
     });
     [HttpPost("read")]
-    public Task<IActionResult> Read(FormFileReadV2 input,CancellationToken ct)=>Run(async()=>{Actual();return await forms.ReadFileAsync(input,ct);});
+    public Task<IActionResult> Read(FormFileReadV2 input,CancellationToken ct)=>Run(async()=>{if(input.Scope?.Kind!="TASK")Actual();return await forms.ReadFileAsync(input,ct,ActingAs());});
     [HttpPost("commands")]
-    public Task<IActionResult> Command(FormFileStateCommandV2 input,CancellationToken ct)=>Run(async()=>{Actual();return await forms.ChangeFileAsync(input,ct);});
+    public Task<IActionResult> Command(FormFileStateCommandV2 input,CancellationToken ct)=>Run(async()=>{if(input.Scope?.Kind!="TASK")Actual();return await forms.ChangeFileAsync(input,ct,ActingAs());});
     [HttpGet("operations/{id:guid}")]
-    public Task<IActionResult> Operation(Guid id,CancellationToken ct)=>Run(async()=>{Actual();return await forms.FileOperationAsync(id,false,ct);});
+    public Task<IActionResult> Operation(Guid id,CancellationToken ct)=>Run(async()=>await forms.FileOperationAsync(id,false,ct));
     [HttpPost("operations/{id:guid}/close")]
-    public Task<IActionResult> Close(Guid id,CancellationToken ct)=>Run(async()=>{Actual();return await forms.FileOperationAsync(id,true,ct);});
+    public Task<IActionResult> Close(Guid id,CancellationToken ct)=>Run(async()=>await forms.FileOperationAsync(id,true,ct));
     [HttpPost("download")]
-    public Task<IActionResult> Download(FormFileReadV2 input,CancellationToken ct)=>Download(async()=>{Actual();return await forms.DownloadFileAsync(input,ct);});
+    public Task<IActionResult> Download(FormFileReadV2 input,CancellationToken ct)=>Download(async()=>{if(input.Scope?.Kind!="TASK")Actual();return await forms.DownloadFileAsync(input,ct,ActingAs());});
     [HttpPost("/api/oa/v2/inbox/instances/{instance:guid}/files/read")]
     public Task<IActionResult> InboxRead(Guid instance,FormBoundFileReadV2 input,CancellationToken ct)=>Run(async()=>await inbox.ReadFileAsync(instance,input,ActingAs(),ct));
     [HttpPost("/api/oa/v2/inbox/instances/{instance:guid}/files/download")]

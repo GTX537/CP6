@@ -161882,6 +161882,11 @@
       "date": "2026-11-03",
       "change": "W288按原卡核销WP12-01不可变流程表单草稿与设计器版本：全部卡内范围、正反验收和Main共同事务/审计直接前置已有实际采用与有效证据；正式卡状态改DONE。 原375现28DONE/2IN_PROGRESS/345PLANNED；原59局部4闭环/55余项。125完整业务目标0关闭、247正式运行验收NOT_RUN保持，WP12-02发布/运行与实际服务Owner、WP12-03/04个人表单、WP12-08任务三版本编辑等其他原卡不被连带关闭。",
       "evidence": "docs/development/evidence/W288-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-03",
+      "change": "W289：SFS待办已采用字段补丁与任务/实例/表单数据三版本，固定节点与当前IAM/委派权限相交，表单/运行变量/决定/历史/文件绑定/原结果同事务；真实编辑页面、选项与附件及未知结果恢复闭环。",
+      "evidence": "docs/development/evidence/W289-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -198093,6 +198098,26 @@
           "handoff_branch_deleted": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave277-final-verification.json"
         }
+      },
+      "wave289_sfs_task_edit": {
+        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W289-01/DELIVERY.md",
+        "validation": "实际隔离PostgreSQL18/HTTP验证SFS三版本、精确补丁/重算、节点/IAM/委派权限、当前字典、文件绑定、两连接竞争及故障原子回滚；15项既有任务动作回归通过。3条实际Chrome链通过（新编辑/代理办理/退回重送），文件链使用真实Defender。46项相关Vue行为通过，新增清空补丁行为通过，显式应用vue-tsc通过。各次执行及复用范围见final-validation.json，未跑全仓。",
+        "remaining": "原375仍28DONE/2IN_PROGRESS/345PLANNED；原59局部4闭环/55余项，125完整目标与247正式验收状态不变。WP12-08仍需原卡逐项核证及统一action-context/APP WFC适配等真实余项，不能由本项自动关整卡。",
+        "full_task_completed": false
+      },
+      "scope_reconciliation": {
+        "classification": "明确实现余项",
+        "delivered": " W289：SFS待办已采用字段补丁与任务/实例/表单数据三版本，固定节点与当前IAM/委派权限相交，表单/运行变量/决定/历史/文件绑定/原结果同事务；真实编辑页面、选项与附件及未知结果恢复闭环。",
+        "evidence_refs": [
+          "docs/development/evidence/W289-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "window": "W289-01",
+        "as_of": "2026-11-03",
+        "report": "docs/development/evidence/W289-01/DELIVERY.md",
+        "new_product_validation": true,
+        "remaining": "原375仍28DONE/2IN_PROGRESS/345PLANNED；原59局部4闭环/55余项，125完整目标与247正式验收状态不变。WP12-08仍需原卡逐项核证及统一action-context/APP WFC适配等真实余项，不能由本项自动关整卡。"
       }
     },
     {
@@ -202196,7 +202221,7 @@
       "path": "docs/development/dispatch/20261103-wave289/README.md",
       "baseline_sha": "72a459e9718ce523276a2589db0a91415d213cd8",
       "registered_at": "2026-11-03T11:56:14.461846+00:00",
-      "phase": "IMPLEMENTING",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -202222,17 +202247,17 @@
           "title": "SFS审批字段补丁与三版本原子办理",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "IMPLEMENTING",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w289-01",
           "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
@@ -202240,14 +202265,34 @@
             "Main:native-task-page",
             "Main:personal-form-migrations",
             "Main:coordination-ledger"
-          ]
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W289-01/DELIVERY.md",
+          "validation": "实际隔离PostgreSQL18/HTTP验证SFS三版本、精确补丁/重算、节点/IAM/委派权限、当前字典、文件绑定、两连接竞争及故障原子回滚；15项既有任务动作回归通过。3条实际Chrome链通过（新编辑/代理办理/退回重送），文件链使用真实Defender。46项相关Vue行为通过，新增清空补丁行为通过，显式应用vue-tsc通过。各次执行及复用范围见final-validation.json，未跑全仓。",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave289-final-verification.json"
+          },
+          "business_acceptance": "SFS_TASK_THREE_VERSION_EDIT_ATOMIC_PG_HTTP_CHROME_PASS;FULL_CARD_REMAINS",
+          "local_validation": "PASS_AFFECTED_SCOPE"
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "原OA-TASK R2第3节SFS审批编辑：独立WFC命令、task/instance/formData三版本、固定节点字段权限与当前IAM/委派交集、精确数字补丁和重算、表单/Vars/决定/快照/原结果同事务；页面编辑与未知结果恢复，实际PostgreSQL/HTTP/Chrome验证。接入实际字典选项及文件Owner所需TASK边界；APP五字段合同不变，旧SFS命令仅保留原结果恢复。不据此宣布整个WP12-08或OA-TASK目标完成。"
+      "next_action": "W289正常远端采用、准确清理/finish后继续原任务动作上下文和APP适配合同核对；24h目标继续。",
+      "lifecycle_snapshot": {
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_seat_released": false,
+        "main_branch_deleted": false,
+        "handoff_branch_deleted": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave289-final-verification.json"
+      }
     },
     "wave_history": [
       {
@@ -239482,7 +239527,7 @@
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 74619,
+      "effective_seconds_recorded": 76750,
       "next_reestimate_at_effective_seconds": 79200,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
@@ -240372,10 +240417,20 @@
             2.75
           ],
           "estimate_confidence": "LOW",
-          "state": "IN_PROGRESS",
+          "state": "VERIFYING",
           "started_at": "2026-11-03T11:56:14.461846+00:00",
           "scope_refinement": "原OA-TASK R2第3节SFS审批编辑：独立WFC命令、task/instance/formData三版本、固定节点字段权限与当前IAM/委派交集、精确数字补丁和重算、表单/Vars/决定/快照/原结果同事务；页面编辑与未知结果恢复，实际PostgreSQL/HTTP/Chrome验证。接入实际字典选项及文件Owner所需TASK边界；APP五字段合同不变，旧SFS命令仅保留原结果恢复。不据此宣布整个WP12-08或OA-TASK目标完成。",
-          "reason": "实际源码确认native审批只有APP式两版本意见输入，原SFS编辑合同未采用；原卡余项连续推进"
+          "reason": "实际源码确认native审批只有APP式两版本意见输入，原SFS编辑合同未采用；原卡余项连续推进",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W289-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave289-final-verification.json"
+          }
         }
       ],
       "reestimates": [
@@ -240759,7 +240814,7 @@
           "unchanged": "Single chat, goal active until24h budget inventory and current full delivery closure. No Actions/production/existing-environment migration; original counts change only on proven full-card acceptance."
         }
       ],
-      "timing_snapshot_at": "2026-11-03T11:56:14.461846+00:00",
+      "timing_snapshot_at": "2026-11-03T12:31:45.724451+00:00",
       "remaining_estimate_hours": [
         1.5,
         4

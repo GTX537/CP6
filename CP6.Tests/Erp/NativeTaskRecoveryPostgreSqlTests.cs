@@ -20,8 +20,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     private static FlowSchema LinearNative(Guid user)=>new(){Start="s",Nodes=[new(){Id="s",Type="start"},new(){Id="a",ApproverStrategy="Specified",ApproverUserId=user},new(){Id="b",ApproverStrategy="Specified",ApproverUserId=user},new(){Id="e",Type="end"}],Edges=[new(){From="s",To="a"},new(){From="a",To="b"},new(){From="b",To="e"}]};
     private static async Task NativeApprove(PersonalFormOwnerV2 owner,Guid task)
     {
-        var c=await owner.TaskContextAsync(task);var input=new ApprovalTaskDecisionInputV2(Guid.NewGuid(),"approve","actual task vote",c.Task.TaskRowVersion,c.Task.InstanceRowVersion);
-        await owner.DecideTaskAsync(task,input,ifMatch:"\""+input.TaskRowVersion+"\"");
+        var c=await owner.TaskContextAsync(task);var input=NativeVote(c,"actual task vote","approve");
+        await DecideNative(owner,task,input);
     }
     private static byte[] ResolveCommand(PendingResolutionContextV2 c,Guid target,string id)=>PersonalCommand(new ResolveApproverInputV2(c.InstanceVersion,c.ExecutionCycleId,c.NodeId,c.TokenId,c.StageIndex,c.StageRound,[target],c.RoutePolicyRef,"manual assignment under published policy"),id,c.ResolutionVersion);
 

@@ -20,7 +20,7 @@ export interface PersonalResult { commandId: string; outcome: string; resourceId
 export interface RebasePreview { previewId: string; digest: string; sourceVersionId: string; targetVersionId: string; expectedVersion: string; expiresAtUtc: string; changes: { path: string; kind: string; hasValue: boolean }[]; validationErrors: string[]; requiresConfirmation: boolean }
 export interface ValuePreview { dataJson: string; hiddenFields: string[]; valid: boolean; errors: string[] }
 export interface TaskVersion { taskId: string; instanceId: string; taskStatus: number; instanceStatus: number; taskRowVersion: string; instanceRowVersion: string }
-export interface PersonalTask { task: TaskVersion; formDataId: string; rootInstanceId: string; formVersionId: string; name: string; schemaJson: string; dataJson: string; fieldMask: FormMask; allowedDecisions: string[] }
+export interface PersonalTask { task: TaskVersion; formDataId: string; rootInstanceId: string; formVersionId: string; name: string; schemaJson: string; dataJson: string; fieldMask: FormMask; allowedDecisions: string[]; kind: 'SFS'; formDataVersion: string; formKey: string; flowVersionId: string; nodeId: string; tokenId: string; stageIndex: number; stageRound: number }
 export interface PersonalTaskResult { commandId: string; state: string; voteId: string | null; task: TaskVersion | null; queryRef: string }
 const unwrap = <T>(v: any): T => v?.data ?? v
 const key = encodeURIComponent
@@ -39,6 +39,7 @@ export const personalFormApi = {
   rebasePreview: async (id: string, targetVersionId: string, expectedVersion: string, signal?: AbortSignal) => unwrap<RebasePreview>(await http.post(`${root}/drafts/${id}/rebase-preview`, { targetVersionId, expectedVersion }, { signal })),
   task: async (id: string, signal?: AbortSignal) => unwrap<PersonalTask>(await http.get(`${root}/personal-forms/tasks/${id}/context`, { signal })),
   decide: async (id: string, body: unknown, token: string, signal?: AbortSignal) => unwrap<PersonalTaskResult>(await http.post(`${root}/personal-forms/tasks/${id}/decision`, body, { headers: { 'If-Match': `"${token}"` }, signal })),
+  decideSfs: async (id: string, raw: string, signal?: AbortSignal) => unwrap<PersonalResult>(await http.post(`${root}/personal-forms/tasks/${id}/decisions`, raw, { headers: { 'Content-Type': 'application/json' }, signal })),
   taskOriginal: async (id: string, command: string, signal?: AbortSignal) => unwrap<PersonalTaskResult | null>(await http.get(`${root}/personal-forms/tasks/${id}/commands/${command}`, { signal })),
 }
 export function submissionContext(c: PersonalContext, kind: 'DIRECT' | 'DRAFT') {

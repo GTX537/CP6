@@ -20,7 +20,7 @@ public sealed class PersonalFormController(PersonalFormOwnerV2 owner,ApprovalTas
     [HttpPost("forms/{key}/preview"),RequestSizeLimit(1024*1024)]
     public Task<IActionResult> FormPreview(string key,PersonalFormPreviewInputV2 input,CancellationToken ct)=>Run(async()=>await owner.PreviewAsync(key,input,ct));
     [HttpPost("form-options/query"),RequestSizeLimit(2*1024*1024)]
-    public Task<IActionResult> Options(FormOptionQueryV1 input,CancellationToken ct)=>Run(async()=>await owner.OptionsAsync(input,ct));
+    public Task<IActionResult> Options(FormOptionQueryV1 input,CancellationToken ct)=>Run(async()=>await owner.OptionsAsync(input,ct,ActingAs()));
     [HttpGet("forms/{key}/references/{field}")]
     public Task<IActionResult> References(string key,string field,[FromQuery]string? search=null,[FromQuery]Guid? draft=null,CancellationToken ct=default)=>Run(async()=>await owner.ReferencesAsync(key,field,search??"",draft,ct));
     [HttpPost("forms/{key}/drafts"),RequestSizeLimit(1024*1024)]
@@ -77,6 +77,8 @@ public sealed class PersonalFormController(PersonalFormOwnerV2 owner,ApprovalTas
     public Task<IActionResult> ResolveApprover(Guid id,CancellationToken ct)=>Run(async()=>{RequireActual();return await app.IsAppResolutionAsync(id,ct)?await app.ResolveApproverAsync(id,await Raw(ct),ct):await owner.ResolveApproverAsync(id,await Raw(ct),ct);});
     [HttpPost("personal-forms/tasks/{task:guid}/decision")]
     public Task<IActionResult> Decide(Guid task,ApprovalTaskDecisionInputV2 input,CancellationToken ct)=>Run(async()=>await owner.DecideTaskAsync(task,input,ActingAs(),Request.Headers.IfMatch.FirstOrDefault(),ct));
+    [HttpPost("personal-forms/tasks/{task:guid}/decisions"),RequestSizeLimit(1024*1024)]
+    public Task<IActionResult> DecideSfs(Guid task,CancellationToken ct)=>Run(async()=>await owner.DecideSfsTaskAsync(task,await Raw(ct),ActingAs(),ct));
     [HttpGet("personal-forms/tasks/{task:guid}/commands/{command:guid}")]
     public Task<IActionResult> TaskOriginal(Guid task,Guid command,CancellationToken ct)=>Run(async()=>await owner.TaskOriginalAsync(task,command,ct));
     [HttpGet("/api/iam/personal-form-policies/{key}")]

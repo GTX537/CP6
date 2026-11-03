@@ -26,21 +26,21 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         grant=(await grants.WriteAsync("REVISE",grant.GrantId,PersonalCommand(shortInput,"short-expiry",grant.Version.ToString("D")))).Result!;
         TaskActor(h,actor);
         var peer=h with{User=actor};var delegated=PersonalForm(peer);var view=await delegated.TaskContextAsync(task.Id,h.User);
-        var command=new ApprovalTaskDecisionInputV2(Guid.NewGuid(),"approve","delegated",view.Task.TaskRowVersion,view.Task.InstanceRowVersion);
+        var command=NativeVote(view,"delegated","approve");
         hook.Before=async sql=>{
             if(!sql.CommandText.Contains("INSERT INTO cp6_personal_form_v2.votes"))return;
             hook.Before=null;var remaining=grant.ToUtc-DateTimeOffset.UtcNow+TimeSpan.FromMilliseconds(100);
             if(remaining>TimeSpan.Zero)await Task.Delay(remaining);
         };
-        Assert.Equal("GRANT_AUTHORITY_CHANGED",(await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(()=>delegated.DecideTaskAsync(task.Id,command,h.User,"\""+command.TaskRowVersion+"\""))).Message);
-        Assert.Equal(0,(await h.Db.Wf_FlowTasks.AsNoTracking().SingleAsync()).Status);Assert.Null(await delegated.TaskOriginalAsync(task.Id,command.CommandId));
+        Assert.Equal("GRANT_AUTHORITY_CHANGED",(await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(()=>DecideNative(delegated,task.Id,command,h.User))).Message);
+        Assert.Equal(0,(await h.Db.Wf_FlowTasks.AsNoTracking().SingleAsync()).Status);Assert.Null(await NativeOriginal(delegated,task.Id,command.CommandId));
         Assert.False(await h.Db.Database.SqlQuery<bool>($"SELECT EXISTS(SELECT FROM cp6_personal_form_v2.votes v JOIN cp6_personal_form_v2.commands c ON c.id=v.command_id WHERE c.tenant_id={h.Tenant}) AS \"Value\"").SingleAsync());
         grant=(await grants.WriteAsync("REVISE",grant.GrantId,PersonalCommand(GrantInput(actor,"personal-delegate"),"renew-explicitly",grant.Version.ToString("D")))).Result!;
-        var accepted=await delegated.DecideTaskAsync(task.Id,command,h.User,"\""+command.TaskRowVersion+"\"");
+        var accepted=await DecideNative(delegated,task.Id,command,h.User);
         var vote=await h.Db.Database.SqlQuery<string>($"SELECT body AS \"Value\" FROM cp6_personal_form_v2.votes WHERE id={accepted.VoteId}").SingleAsync();
         using var doc=JsonDocument.Parse(vote);Assert.Equal(actor,doc.RootElement.GetProperty("actual").GetGuid());Assert.Equal(h.User,doc.RootElement.GetProperty("principal").GetGuid());
         await grants.WriteAsync("REVOKE",grant.GrantId,PersonalCommand(new TaskDelegationRevokeV2("done"),"stop",grant.Version.ToString("D")));
-        Assert.Equal(accepted,await delegated.TaskOriginalAsync(task.Id,command.CommandId));
+        Assert.Equal(accepted,await NativeOriginal(delegated,task.Id,command.CommandId));
     }
     [CurrentPermissionPostgresFact]
     public async Task PersonalForm_deferred_commit_rejection_is_definite_rollback_not_unknown_transport_success()
@@ -86,8 +86,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var tasks=await h.Db.Wf_FlowTasks.AsNoTracking().OrderBy(t=>t.Id).ToArrayAsync();
         foreach(var task in tasks.Take(completion=="any"?1:2))
         {
-            var view=await owner.TaskContextAsync(task.Id);var command=new ApprovalTaskDecisionInputV2(Guid.NewGuid(),"approve","pinned child",view.Task.TaskRowVersion,view.Task.InstanceRowVersion);
-            await owner.DecideTaskAsync(task.Id,command,ifMatch:"\""+command.TaskRowVersion+"\"");
+            var view=await owner.TaskContextAsync(task.Id);var command=NativeVote(view,"pinned child","approve");
+            await DecideNative(owner,task.Id,command);
         }
         Assert.Equal(FlowInstanceStatus.Approved,(await h.Db.Wf_FlowInstances.AsNoTracking().SingleAsync(i=>i.Id==submitted.FlowInstanceId)).Status);
         Assert.False(await h.Db.Wf_FlowTasks.AnyAsync(t=>t.Status==0||t.Status==4));Assert.False(await h.Db.Wf_FlowTokens.AnyAsync(t=>t.Status==0));

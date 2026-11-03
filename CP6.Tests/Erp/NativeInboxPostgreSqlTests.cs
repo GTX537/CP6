@@ -10,9 +10,10 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
     private NativeInboxOwnerV2 NativeInbox(Harness h,PersonalFormOwnerV2? form=null,ApprovalBusinessEvidenceV2? business=null)
         =>new(h.Db,ScopeFence(h),form??PersonalForm(h),business??new(ToolApproval(h)));
-    private async Task<(PersonalFormOwnerV2 Owner,FlowAuthoringOwnerV2 Flow,Guid Instance,Guid Task)> NativeFormSetup(Harness h,bool parallel=false,string? title=null,Action<FlowSchema>? configure=null,Func<Task>? beforePublish=null)
+    private async Task<(PersonalFormOwnerV2 Owner,FlowAuthoringOwnerV2 Flow,Guid Instance,Guid Task)> NativeFormSetup(Harness h,bool parallel=false,string? title=null,Action<FlowSchema>? configure=null,Func<Task>? beforePublish=null,string formSchema=FormAuthoringSchema,string values="{\"a\":\"saved\"}",CP6.Core.Services.Pub.FormFileContentV2? files=null)
     {
-        var(owner,_,flow)=await PreparePersonal(h);
+        var(owner,_,flow)=await PreparePersonal(h,formSchema);
+        if(files!=null)owner=PersonalForm(h,files:files);
         await EngineeringAction(h,"oa-inbox","read");
         if(beforePublish!=null)await beforePublish();
         var graph=new FlowSchema{Start="s",Nodes=[new(){Id="s",Type="start"},new(){Id="a",Type="approval",ApproverStrategy="Specified",ApproverUserId=h.User,CcUsers=[h.User]},new(){Id="e",Type="end"}],
@@ -28,7 +29,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var published=(await flow.PublishAsync("native-inbox",PublicationCommand(await Preview(flow,"native-inbox",saved)))).Result!.Publication!;
         await flow.SetActivationAsync("native-inbox",ActivationCommand((await flow.ActivationPreviewAsync("native-inbox")).Current,published.VersionId));
         var context=await owner.ContextAsync("personal");PersonalFormSubmissionV2 submitted;
-        if(title==null)submitted=PersonalResult<PersonalFormSubmissionV2>(await owner.SubmitDirectAsync("personal",PersonalCommand(PersonalDirect(context),"start")));
+        if(title==null)submitted=PersonalResult<PersonalFormSubmissionV2>(await owner.SubmitDirectAsync("personal",PersonalCommand(PersonalDirect(context,values),"start")));
         else
         {
             var draft=PersonalResult<PersonalFormDraftV2>(await owner.CreateDraftAsync("personal",PersonalCommand(new PersonalFormCreateV2(context.FormVersionId,PersonalData("{\"a\":\"private field\"}"),title),"draft")));
@@ -51,8 +52,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(read,await inbox.ReadOriginalAsync("TASK",f.Task,"first"));
         var after=await f.Owner.TaskContextAsync(f.Task);Assert.Equal(before.Task,after.Task);Assert.Equal(0,(await inbox.CountsAsync()).UnreadTasks);
         Assert.False((await h.Db.Wf_FlowTasks.AsNoTracking().SingleAsync()).IsRead);
-        var decision=new ApprovalTaskDecisionInputV2(Guid.NewGuid(),"approve","real human vote",before.Task.TaskRowVersion,before.Task.InstanceRowVersion);
-        await f.Owner.DecideTaskAsync(f.Task,decision,ifMatch:"\""+decision.TaskRowVersion+"\"");
+        var decision=NativeVote(before,"real human vote","approve");
+        await DecideNative(f.Owner,f.Task,decision);
         Assert.Equal(0,(await inbox.CountsAsync()).Pending);Assert.Equal(1,(await inbox.ListAsync("done")).TotalItems);
         var vote=Assert.Single((await inbox.DetailAsync(f.Instance)).Votes);Assert.Equal(h.User,vote.ActualUserId);Assert.Equal("HUMAN",vote.EvidenceKind);
         Assert.Equal(read,await inbox.ReadOriginalAsync("TASK",f.Task,"first"));

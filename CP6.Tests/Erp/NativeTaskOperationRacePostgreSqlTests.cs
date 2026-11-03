@@ -12,13 +12,13 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     {
         var hook=new StartWriteHook();await using var h=await Seed(hook);var f=await NativeFormSetup(h);await NativeOperationPermissions(h);var target=await GrantDelegate(h);
         var inbox=NativeInbox(h);var oldRead=await inbox.MarkReadAsync("TASK",f.Task,PersonalCommand(new{},"read-before-transfer"));
-        var context=await f.Owner.TaskContextAsync(f.Task);var vote=new ApprovalTaskDecisionInputV2(Guid.NewGuid(),"approve","stale competing approval",context.Task.TaskRowVersion,context.Task.InstanceRowVersion);
+        var context=await f.Owner.TaskContextAsync(f.Task);var vote=NativeVote(context,"stale competing approval","approve");
         var entered=new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);var release=new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         hook.Before=async c=>{if(c.CommandText.Contains("INSERT INTO cp6_personal_form_v2.assignment_changes")){entered.SetResult();await release.Task;}};
         var transfer=f.Owner.TransferTaskAsync(f.Task,PersonalCommand(new NativeTransferInputV2(f.Task,target,"explicit handoff",context.Task.TaskRowVersion),"race-transfer",context.Task.InstanceRowVersion));
         await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
         await using var peer=server.Context(new TenantContext{CurrentTenantId=h.Tenant});var peerOwner=PersonalForm(h with{Db=peer});
-        var losing=Record.ExceptionAsync(()=>peerOwner.DecideTaskAsync(f.Task,vote,ifMatch:"\""+vote.TaskRowVersion+"\""));
+        var losing=Record.ExceptionAsync(()=>DecideNative(peerOwner,f.Task,vote));
         await Task.Delay(100);Assert.False(losing.IsCompleted);release.SetResult();await transfer;Assert.IsType<ScopeAuthorizationExceptionV1>(await losing);
         Assert.Equal(target,(await h.Db.Wf_FlowTasks.AsNoTracking().SingleAsync(t=>t.Id==f.Task)).AssigneeId);
         Assert.Equal(0,await h.Db.Database.SqlQuery<int>($"SELECT count(*)::int AS \"Value\" FROM cp6_personal_form_v2.votes WHERE task_id={f.Task}").SingleAsync());

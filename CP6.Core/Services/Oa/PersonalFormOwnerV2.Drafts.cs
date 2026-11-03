@@ -54,7 +54,7 @@ public sealed partial class PersonalFormOwnerV2
         """,ct);
     private async Task<PersonalFormResultV2> Disclose(StoredCommand old,UserPermissionContext actor,CancellationToken ct)
     {
-        if(old.Operation is SendBack or Transfer or AddSign or ReturnedEdit or ReturnedResubmit or ResolveApprover)return await DiscloseTaskOperation(old,actor,ct);
+        if(old.Operation is SendBack or Transfer or AddSign or SfsDecision or ReturnedEdit or ReturnedResubmit or ResolveApprover)return await DiscloseTaskOperation(old,actor,ct);
         var result=Parse<PersonalFormResultV2>(old.Result);
         if(old.Draft is Guid draft)
         {
@@ -79,10 +79,10 @@ public sealed partial class PersonalFormOwnerV2
     }
     public async Task<PersonalFormResultV2> OriginalAsync(string operation,string resource,string command,CancellationToken ct=default)
     {
-        if(operation is not(Create or Save or Delete or Restore or Rebase or Direct or Submit or Favorite or SendBack or Transfer or AddSign or ReturnedEdit or ReturnedResubmit or ResolveApprover) || !System.Text.RegularExpressions.Regex.IsMatch(command,"\\A[A-Za-z0-9_.-]{1,100}\\z"))throw Error("COMMAND_SCOPE_INVALID",400);
+        if(operation is not(Create or Save or Delete or Restore or Rebase or Direct or Submit or Favorite or SendBack or Transfer or AddSign or SfsDecision or ReturnedEdit or ReturnedResubmit or ResolveApprover) || !System.Text.RegularExpressions.Regex.IsMatch(command,"\\A[A-Za-z0-9_.-]{1,100}\\z"))throw Error("COMMAND_SCOPE_INVALID",400);
         resource=CommandResource(operation,resource);
         Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var lease=await ReadLease(ct);
-        var actor=await Actor(ct);await Action(actor,"query",ct,operation is SendBack or Transfer or AddSign or ReturnedEdit or ReturnedResubmit or ResolveApprover?"oa-inbox":"oa-form-catalog");var old=await Original(actor.UserId,operation,resource,command,ct);
+        var actor=await Actor(ct);await Action(actor,"query",ct,operation is SendBack or Transfer or AddSign or SfsDecision or ReturnedEdit or ReturnedResubmit or ResolveApprover?"oa-inbox":"oa-form-catalog");var old=await Original(actor.UserId,operation,resource,command,ct);
         var result=old==null?new PersonalFormResultV2(command,"NOT_OBSERVED",null,null,null,null,null):await Disclose(old,actor,ct);
         await Final(actor,lease,ct,false);return result;
     }
