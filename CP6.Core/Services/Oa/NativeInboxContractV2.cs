@@ -21,5 +21,6 @@ public sealed record NativeBusinessReadV2(string Owner,string BusinessType,strin
     Guid? ApplicationReceiptId=null,string? ReceiptRevision=null,ApprovalRefV2? BusinessResultRef=null,bool PendingReceiptGap=false);
 public sealed record NativeInstanceReadV2(Guid InstanceId,Guid RootInstanceId,string ContextKind,Guid ActualUserId,
     Guid EffectiveUserId,NativeInstancePinV2[] Graph,NativeTaskReadV2[] Tasks,NativeCcReadV2[] Cc,
-    NativeWorkflowEventV2[] History,NativeVoteReadV2[] Votes,NativeFormContentV2? Form,NativeBusinessReadV2? Business);
+    NativeWorkflowEventV2[] History,NativeVoteReadV2[] Votes,NativeFormContentV2? Form,NativeBusinessReadV2? Business,
+    NativeTimeoutDiagnosticsV2? Timeout=null);
 public sealed record NativeReadCommandResultV2(string CommandId,string State,NativeReadFactV2? Result,string QueryRef);

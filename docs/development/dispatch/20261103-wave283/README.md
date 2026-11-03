@@ -7,3 +7,7 @@ TASK R2全文与SYS-JOB原文87行已读。现WfTimeoutService明确排除oa.app
 现FLOW审批节点限时合法输入是TimeoutHours瞬时duration，不是工作日；本窗按UTC小时固定、同时冻结可信租户timezone/offset，calendar标明不适用，不编造revision或调用legacy回落。版本化工作日维护/重算等独立日历余项保留。现已采用APP业务政策要求人工审批，超时不能降低门槛；缺少自动决定授权必须明确BLOCKED_POLICY并保原任务，允许的原生表单系统动作须真实SYSTEM_EXECUTION。完整其他Owner的系统决定采用不由wire枚举存在推断完成。
 
 W282 PR718/259已远端采用，准确任务分支清理、官方finish与席位释放完成；本窗复用DEV1/DEV2。1.5–3h低置信度，按真实吞吐校准。原375/59局部/125/247状态不变，无Actions、生产部署或既有环境迁移。
+
+## DELIVERY
+
+W283：原生APP/SFS固定UTC截止事实、Owner内租约/epoch、实际服务授权、提醒/升级/错误边与明确系统决定、原结果及只读运行诊断已实现；真实Host、PG、HTTP与Chrome完成限定验收。 [单一交付报告](../../evidence/W283-01/DELIVERY.md)。本地相关验收及一次集中审查通过，远端采用与finish待核销，随后W284。

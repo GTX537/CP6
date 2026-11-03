@@ -13,6 +13,13 @@ export interface NativeDetail {
   votes: { voteId: string; taskId: string; instanceId: string; approved: boolean; comment: string; principalId: string; actualUserId: string; onBehalfOfId: string | null; occurredAtUtc: string; evidenceKind: string }[]
   form: { formDataId: string; formVersionId: string; title: string | null; schemaJson: string; dataJson: string; fieldMask: FormMask; dataSource: string } | null
   business: { owner: string; businessType: string; subjectKind: string; subjectId: string; businessRevision: string; submissionId: string; detailRoute: string | null; applicationState: string } | null
+  timeout?: {
+    runtimeState: string; lastScan: string | null; lastEffect: string | null; overdueCount: number; oldestDue: string | null; missingEvidenceTaskIds: string[]
+    deadlines: { taskId: string; revision: number; createdAt: string; dueAt: string | null; state: string; occurrence: number; nextDue: string | null; claimEpoch: number | null; leaseUntil: string | null
+      policy: { flowVersionId: string; nodeId: string; hours: number | null; action: string | null; timeZoneId: string; offsetMinutes: number; basis: string; calendarRevision: string; escalationReset: string }
+      lastResult: { executionId: string; state: string; reason: string | null; serviceId: string; occurredAt: string; commandId: string | null; originalTaskVersion: string | null; originalInstanceVersion: string | null } | null
+    }[]
+  }
 }
 export interface NativeReadResult { commandId: string; state: 'READ' | 'CLOSED' | 'NOT_OBSERVED'; result: NativeReadFact | null; queryRef: string }
 export interface NativeReadIntent { identity: string; kind: 'TASK' | 'CC'; target: string; command: string }

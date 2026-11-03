@@ -213,6 +213,13 @@ public partial class FlowEngine
     /// （防超时扫描重投二次推进）。不 SaveChanges——由 <see cref="WfTimeoutService.ScanOnceAsync"/> 尾统一保存。</summary>
     public async Task TimeoutAdvanceErrorEdgeAsync(Guid taskId, Guid actorId, CancellationToken ct = default)
     {
+        var instance = await (from t in _db.Wf_FlowTasks join i in _db.Wf_FlowInstances on t.InstanceId equals i.Id where t.Id == taskId select i).SingleOrDefaultAsync(ct);
+        if (instance == null) return;
+        RequireLegacyRuntime(instance);
+        await TimeoutErrorKernel(taskId, actorId, ct);
+    }
+    private async Task TimeoutErrorKernel(Guid taskId, Guid actorId, CancellationToken ct)
+    {
         var task = await _db.Wf_FlowTasks.FirstOrDefaultAsync(t => t.Id == taskId, ct);
         if (task is null || task.Status != FlowTaskStatus.Pending) return;
         var inst = await _db.Wf_FlowInstances.FirstOrDefaultAsync(i => i.Id == task.InstanceId, ct);
@@ -223,13 +230,17 @@ public partial class FlowEngine
         // → 路由/作废/void 全打错支。三面（lookup/cancel/void）同源 task.TokenId。
         var token = await _db.Wf_FlowTokens.FirstOrDefaultAsync(
             t => t.Id == task.TokenId && t.NodeId == task.NodeId && t.Status == FlowTokenStatus.Active, ct);
-        if (token is null) return;
+        if (token is null)
+        {
+            if (ManagedRuntime) throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1("TIMEOUT_EXECUTION_STATE_CHANGED",409);
+            return;
+        }
 
         // ① 节点级作废在途待办（对齐退回清理口径 AdvancedFlow.cs SameBranch，不用实例级驳回连坐）；
         //    带 TokenId 过滤（终审 Important#1）——与下行 void 五元组同源，兄弟 token 同节点待办零扰动
         var cur = await _db.Wf_FlowTasks
             .Where(t => t.InstanceId == inst.Id && t.NodeId == task.NodeId && t.TokenId == token.Id
-                        && t.Status == FlowTaskStatus.Pending).ToListAsync(ct);
+                        && (t.Status == FlowTaskStatus.Pending || ManagedRuntime && t.Status == FlowTaskStatus.Suspended)).ToListAsync(ct);
         foreach (var t in cur) t.Status = FlowTaskStatus.Cancelled;
         VoidPendingFormTos(inst.Id, task.NodeId, token.Id, task.StageIndex, task.StageRound, FlowFormToStatus.SentBack);
 

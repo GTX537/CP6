@@ -12,6 +12,7 @@ import NativeTaskOperations from './NativeTaskOperations.vue'
 import ReturnedFormPanel from './ReturnedFormPanel.vue'
 import PendingResolutionPanel from './PendingResolutionPanel.vue'
 import NativeTransferBatchPanel from './NativeTransferBatchPanel.vue'
+import NativeTimeoutStatus from './NativeTimeoutStatus.vue'
 
 const route = useRoute(), kind = ref<InboxKind>('pending'), mode = ref<'expanded' | 'merged'>('expanded'), search = ref(''), page = ref(1)
 const rows = ref<NativeInboxPage>(), detail = ref<NativeDetail>(), busy = ref(false), detailBusy = ref(false), commandBusy = ref(false)
@@ -180,6 +181,7 @@ onBeforeUnmount(() => { live = false; epoch++; listController?.abort(); detailCo
       </section>
       <h4>实例与固定版本</h4>
       <ul><li v-for="pin in detail.graph" :key="pin.instanceId">{{ pin.flowKey }}：{{ status(pin.status) }}；流程版本 {{ pin.flowVersionId }}；此实例表单版本 {{ pin.formVersionId || '无' }}；父实例 {{ pin.parentInstanceId || '无' }}<el-button v-if="pin.status === 4 && !actingAs" @click="selectedResolution = pin.instanceId">无人审批恢复条件</el-button></li></ul>
+      <NativeTimeoutStatus v-if="detail.timeout" :value="detail.timeout" />
       <h4>具体任务</h4>
       <ul><li v-for="task in detail.tasks" :key="task.taskId" class="task-item">
         <p>任务 {{ task.taskId }} · {{ taskStatus(task.status) }} · 节点 {{ task.nodeId }} · 阶段 {{ task.stageIndex }} / 轮次 {{ task.stageRound }} · 当前处理人 {{ task.principalId }}<span v-if="task.createdPrincipalId && task.createdPrincipalId !== task.principalId"> · 最初处理人 {{ task.createdPrincipalId }}</span></p>
