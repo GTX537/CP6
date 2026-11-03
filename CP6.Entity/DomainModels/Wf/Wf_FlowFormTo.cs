@@ -16,6 +16,8 @@ public class Wf_FlowFormTo : BaseTenantEntity
 {
     public Guid InstanceId { get; set; }
     public Guid? TokenId { get; set; }
+    /// <summary>Exact task identity for native assignments; old rows retain null provenance.</summary>
+    public Guid? NativeTaskId { get; set; }
     public int StepSeq { get; set; }
 
     [MaxLength(100)] public string? FromNodeId { get; set; }

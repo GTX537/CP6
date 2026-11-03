@@ -41,7 +41,7 @@ public sealed partial class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuth
     }
     private async Task Ready(CancellationToken ct)
     {
-        if (!await db.Database.SqlQueryRaw<bool>("SELECT cp6_approval_decision_v2.ready() AS \"Value\"").SingleAsync(ct))
+        if (!await db.Database.SqlQueryRaw<bool>("SELECT cp6_approval_decision_v2.ready() AND cp6_native_tasks_v2.ready() AS \"Value\"").SingleAsync(ct))
             throw Error("APP_DECISION_STORE_UNAVAILABLE");
     }
     public Task<bool> IsNativeAsync(Guid task, CancellationToken ct = default)
@@ -155,6 +155,7 @@ public sealed partial class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuth
             var instance = await engine.StageApprovalDecisionV2(publication, original, lease.Evidence, input.Decision == "approve", input.Comment, ct);
             await engine.SaveApprovalRuntime(ct);
             await db.SaveChangesAsync(ct); await engine.SaveApprovalAssignments(ct);
+            await engine.SavePendingApproversV2(input.CommandId,"APP_COMMAND",ct);
             var assignment = lease.Evidence.Assignment;
             // A task duty is the actual immutable routing rule at a pinned version/node/stage,
             // not a claimed IAM role inferred from the last actor. The full rule is retained.
@@ -238,8 +239,10 @@ public sealed partial class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuth
                 }
                 return true;
             }
+            var rounds=tasks.GroupBy(t=>new{t.InstanceId,t.TokenId,t.NodeId,t.StageIndex}).ToDictionary(g=>g.Key,g=>g.Max(t=>t.StageRound));
             policyVotes = votes.Where(v => v.Approved && EffectiveInstance(v.InstanceId)
-                && EffectiveToken(v.Authority.Assignment.TokenId)).ToArray();
+                && EffectiveToken(v.Authority.Assignment.TokenId)
+                && v.Authority.Assignment.StageRound==rounds[new{v.InstanceId,TokenId=(Guid?)v.Authority.Assignment.TokenId,v.Authority.Assignment.NodeId,v.Authority.Assignment.StageIndex}]).ToArray();
         }
         if (approved && policyVotes.Select(v => v.Authority.PrincipalId).Distinct().Count() < policy.RequiredHumanApprovals)
             throw Error("DECISION_EVIDENCE_INCOMPLETE", 422);

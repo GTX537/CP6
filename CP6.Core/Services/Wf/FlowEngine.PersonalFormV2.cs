@@ -7,7 +7,8 @@ namespace CP6.Core.Services.Wf;
 
 internal sealed record PersonalFormAssignmentV2(Guid TaskId, Guid InstanceId, Guid TokenId, Guid FlowVersionId,
     string NodeId, int StageIndex, int StageRound, string? StageCode, string? Countersign,
-    Guid PrincipalId, Guid[] Candidates, ApproverRule Rule, DateTimeOffset AssignedAt);
+    Guid PrincipalId, Guid[] Candidates, ApproverRule Rule, DateTimeOffset AssignedAt,
+    Guid? CreatedPrincipalId=null,long AssignmentRevision=0);
 
 public partial class FlowEngine
 {
@@ -59,6 +60,11 @@ public partial class FlowEngine
 
     internal async Task<IReadOnlyList<PersonalFormAssignmentV2>> SavePersonalRuntime(Guid command, CancellationToken ct)
     {
+        if (_approvalChildren.Any(x => x.Instance.Id == _personalRoot))
+            await _db.Database.ExecuteSqlInterpolatedAsync($"""
+                INSERT INTO cp6_personal_form_v2.execution_cycles(id,root_id,cycle_number,command_id)
+                VALUES({_personalRoot},{_personalRoot},1,{command})
+                """,ct);
         foreach (var (instance, publication, node) in _approvalChildren)
             await _db.Database.ExecuteSqlInterpolatedAsync($"""
                 INSERT INTO cp6_personal_form_v2.instances(instance_id,tenant_id,environment_id,form_data_id,root_id,
@@ -72,6 +78,9 @@ public partial class FlowEngine
                 INSERT INTO cp6_personal_form_v2.assignments(task_id,instance_id,command_id,body)
                 VALUES({assignment.TaskId},{assignment.InstanceId},{command},{JsonSerializer.Serialize(assignment,PersonalFormOwnerV2.Json)})
                 """, ct);
-        _approvalChildren.Clear(); return _personalAssignments;
+        _approvalChildren.Clear();
+        await _db.SaveChangesAsync(ct);
+        await SavePendingApproversV2(command,"SFS_COMMAND",ct);
+        return _personalAssignments;
     }
 }

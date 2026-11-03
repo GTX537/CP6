@@ -9,6 +9,7 @@ import type { FlowDefSummary } from '@/types/oa/designer'
 import CpTag from '@/components/base/CpTag.vue'
 import type { SchemaNode } from './designerModel'
 import { TIMEOUT_ACTIONS } from './designerModel'
+import ApproverRecoveryPolicyEditor from './ApproverRecoveryPolicyEditor.vue'
 
 // currentFlowKey：由 DesignerView 下传的当前编辑流程 FlowKey（只读），用于子流程下拉排除自身。
 const props = defineProps<{ node: SchemaNode; currentFlowKey?: string }>()
@@ -20,7 +21,8 @@ function cloneNode(n: SchemaNode): SchemaNode {
   return {
     ...n,
     ccUsers: n.ccUsers ? [...n.ccUsers] : [],
-    stages: n.stages ? n.stages.map(s => ({ ...s })) : undefined,
+    stages: n.stages ? n.stages.map(s => ({ ...s, approverRecoveryPolicy: s.approverRecoveryPolicy ? { ...s.approverRecoveryPolicy, eligibleRoleIds: [...s.approverRecoveryPolicy.eligibleRoleIds] } : undefined })) : undefined,
+    approverRecoveryPolicy: n.approverRecoveryPolicy ? { ...n.approverRecoveryPolicy, eligibleRoleIds: [...n.approverRecoveryPolicy.eligibleRoleIds] } : undefined,
     approverMembers: n.approverMembers ? n.approverMembers.map(m => ({ ...m })) : undefined,
   }
 }
@@ -924,6 +926,7 @@ async function searchCcUsers(kw: string) {
                   <el-option value="veto" :label="t('oa.designer.countersign.veto')" />
                 </el-select>
               </el-form-item>
+              <ApproverRecoveryPolicyEditor v-model="stage.approverRecoveryPolicy" :roles="roleOptions" stage @load-roles="loadRoles" />
             </div>
 
             <!-- 加档按钮 -->
@@ -936,6 +939,7 @@ async function searchCcUsers(kw: string) {
       </el-collapse-item>
 
       <!-- ── 進階參數 ──────────────────────────────────── -->
+      <ApproverRecoveryPolicyEditor v-if="local.type === 'approval'" v-model="local.approverRecoveryPolicy" :roles="roleOptions" @load-roles="loadRoles" />
       <el-collapse-item :title="t('oa.designer.advancedParams')" name="advanced">
         <el-form label-position="top" size="small" class="prop-form">
           <el-form-item :label="t('oa.designer.timeoutDays')">

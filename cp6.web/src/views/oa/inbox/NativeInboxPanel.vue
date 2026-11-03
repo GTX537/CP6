@@ -8,12 +8,18 @@ import { nativeInboxApi as api, type InboxKind, type NativeDetail, type NativeIn
 import { formObject, readFormJson, schemaFields } from '../catalog/personalFormJson'
 import PersonalFormFields from '../catalog/PersonalFormFields.vue'
 import PersonalTaskPanel from './PersonalTaskPanel.vue'
+import NativeTaskOperations from './NativeTaskOperations.vue'
+import ReturnedFormPanel from './ReturnedFormPanel.vue'
+import PendingResolutionPanel from './PendingResolutionPanel.vue'
+import NativeTransferBatchPanel from './NativeTransferBatchPanel.vue'
 
 const route = useRoute(), kind = ref<InboxKind>('pending'), mode = ref<'expanded' | 'merged'>('expanded'), search = ref(''), page = ref(1)
 const rows = ref<NativeInboxPage>(), detail = ref<NativeDetail>(), busy = ref(false), detailBusy = ref(false), commandBusy = ref(false)
 const error = ref(''), message = ref(''), selected = ref(''), selectedTask = ref(typeof route.query.personalTask === 'string' ? route.query.personalTask : '')
 const pending = ref<NativeReadIntent>(), storageBlocked = ref(false), actingAs = ref(getActingAs())
 const principals = ref<TaskGrantPrincipal[]>([]), grantError = ref(''), chosenPrincipal = ref(getActingAs()?.userId ?? '')
+const selectedOperation = ref(''), selectedResolution = ref('')
+const returnedInstance = computed(() => !actingAs.value && detail.value?.contextKind === 'SFS' && detail.value.graph.some(i => i.instanceId === detail.value?.rootInstanceId && i.status === 5) ? detail.value.rootInstanceId : '')
 const cache = 'cp6-native-inbox-read-pending'
 const folders: { value: InboxKind; label: string }[] = [{ value: 'pending', label: '待办' }, { value: 'cc', label: '抄送' }, { value: 'running', label: '参与的在途' }, { value: 'done', label: '已办' }]
 const fields = computed(() => detail.value?.form ? schemaFields(detail.value.form.schemaJson) : [])
@@ -36,6 +42,7 @@ function current(identity: string, captured: number) {
   if (!live || epoch !== captured || identity !== stamp()) throw new Error('STALE')
 }
 function clearView() {
+  selectedOperation.value = ''; selectedResolution.value = ''
   rows.value = undefined; detail.value = undefined; selected.value = ''; selectedTask.value = ''
   listGeneration++; detailGeneration++; listController?.abort(); detailController?.abort(); busy.value = detailBusy.value = false
 }
@@ -70,6 +77,7 @@ function rejected(e: any) {
       : pending.value ? '已读命令的结果尚未确认，请查询原结果或按原命令重试。' : '暂时无法读取当前任务，请重试。'
 }
 async function load(reset = false) {
+  selectedOperation.value = ''; selectedResolution.value = ''
   if (reset) page.value = 1
   const identity = stamp(), captured = epoch, request = ++listGeneration
   listController?.abort(); listController = new AbortController(); rows.value = undefined; detail.value = undefined; selected.value = ''; selectedTask.value = ''
@@ -81,6 +89,7 @@ async function load(reset = false) {
   finally { if (live && request === listGeneration && captured === epoch) busy.value = false }
 }
 async function open(id: string) {
+  selectedOperation.value = ''; selectedResolution.value = ''
   const identity = stamp(), captured = epoch, request = ++detailGeneration
   detailController?.abort(); detailController = new AbortController(); selected.value = id; detail.value = undefined; selectedTask.value = ''; detailBusy.value = true; error.value = ''
   try {
@@ -119,7 +128,7 @@ function mark(kind: 'TASK' | 'CC', target: string) {
   void recover('send')
 }
 function self() { clearActingAs(); identityChanged(); void load(true) }
-const status = (value: number) => ['进行中', '已通过', '已拒绝', '已撤回或取消', '已挂起'][value] ?? `状态 ${value}`
+const status = (value: number) => ['进行中', '已通过', '已拒绝', '已撤回或取消', '已挂起', '退回待修改'][value] ?? `状态 ${value}`
 const taskStatus = (value: number) => ['待办', '已同意', '已拒绝', '已作废', '已挂起'][value] ?? `状态 ${value}`
 onMounted(() => { if (!selectedTask.value) void load() })
 window.addEventListener(AUTH_EVENT, identityChanged)
@@ -162,7 +171,7 @@ onBeforeUnmount(() => { live = false; epoch++; listController?.abort(); detailCo
     <article v-if="detail" aria-label="当前授权详情">
       <h3>{{ detail.form?.title || detail.business?.businessType || '流程详情' }}</h3>
       <p>当前查看：{{ detail.instanceId }}；根实例：{{ detail.rootInstanceId }}</p>
-      <section v-if="detail.form"><p>内容来自原始提交表单，版本 {{ detail.form.formVersionId }}。</p><PersonalFormFields :fields="fields" :model-value="data" :mask="detail.form.fieldMask" disabled /></section>
+      <section v-if="detail.form"><p>{{ detail.form.dataSource === 'RETURNED_CURRENT_CYCLE' ? '内容为退回后当前审批周期的表单' : '内容来自原始提交表单' }}，版本 {{ detail.form.formVersionId }}。</p><PersonalFormFields :fields="fields" :model-value="data" :mask="detail.form.fieldMask" disabled /></section>
       <section v-if="detail.business">
         <p>业务对象：{{ detail.business.subjectId }}，提交时版本 {{ detail.business.businessRevision }}。</p>
         <p>流程审批状态与业务应用状态分别记录，请在业务页面查询应用结果。</p>
@@ -170,14 +179,15 @@ onBeforeUnmount(() => { live = false; epoch++; listController?.abort(); detailCo
         <p v-else>请从对应业务模块打开该对象的审批页面。</p>
       </section>
       <h4>实例与固定版本</h4>
-      <ul><li v-for="pin in detail.graph" :key="pin.instanceId">{{ pin.flowKey }}：{{ status(pin.status) }}；流程版本 {{ pin.flowVersionId }}；此实例表单版本 {{ pin.formVersionId || '无' }}；父实例 {{ pin.parentInstanceId || '无' }}</li></ul>
+      <ul><li v-for="pin in detail.graph" :key="pin.instanceId">{{ pin.flowKey }}：{{ status(pin.status) }}；流程版本 {{ pin.flowVersionId }}；此实例表单版本 {{ pin.formVersionId || '无' }}；父实例 {{ pin.parentInstanceId || '无' }}<el-button v-if="pin.status === 4 && !actingAs" @click="selectedResolution = pin.instanceId">无人审批恢复条件</el-button></li></ul>
       <h4>具体任务</h4>
       <ul><li v-for="task in detail.tasks" :key="task.taskId" class="task-item">
-        <p>任务 {{ task.taskId }} · {{ taskStatus(task.status) }} · 节点 {{ task.nodeId }} · 阶段 {{ task.stageIndex }} / 轮次 {{ task.stageRound }} · 指定处理人 {{ task.principalId }}</p>
+        <p>任务 {{ task.taskId }} · {{ taskStatus(task.status) }} · 节点 {{ task.nodeId }} · 阶段 {{ task.stageIndex }} / 轮次 {{ task.stageRound }} · 当前处理人 {{ task.principalId }}<span v-if="task.createdPrincipalId && task.createdPrincipalId !== task.principalId"> · 最初处理人 {{ task.createdPrincipalId }}</span></p>
         <details><summary>核对版本与流转位置</summary><p>任务版本 {{ task.taskRowVersion }}；流转位置 {{ task.tokenId || '无' }}；所属实例 {{ task.instanceId }}。</p></details>
         <p>{{ task.read ? `首次已读 ${task.read.firstReadAtUtc}，实际阅读人 ${task.read.actualUserId}` : '尚无阅读记录' }}</p>
         <el-button v-if="task.principalId === detail.effectiveUserId && !task.read" :disabled="!!pending || commandBusy || storageBlocked" @click="mark('TASK', task.taskId)">标记已读</el-button>
         <el-button v-if="detail.contextKind === 'SFS' && task.canRequestDecisionContext" @click="selectedTask = task.taskId">读取当前办理条件</el-button>
+        <el-button v-if="task.canRequestDecisionContext" @click="selectedOperation = task.taskId">退回、转交或加签</el-button>
       </li></ul>
       <h4 v-if="detail.cc.length">我的抄送</h4>
       <ul><li v-for="cc in detail.cc" :key="cc.ccId">{{ cc.ccId }} · {{ cc.read ? `首次已读 ${cc.read.firstReadAtUtc}` : '未读' }} <el-button v-if="!cc.read" :disabled="!!pending || commandBusy || storageBlocked" @click="mark('CC', cc.ccId)">标记抄送已读</el-button></li></ul>
@@ -187,6 +197,10 @@ onBeforeUnmount(() => { live = false; epoch++; listController?.abort(); detailCo
       <ul><li v-for="event in detail.history" :key="event.eventId">{{ event.recordedAt }} · {{ event.action }} · {{ event.actorKind === 'SYSTEM' ? '系统事件' : event.actorId }} · {{ event.comment }}</li></ul>
     </article>
     <PersonalTaskPanel v-if="selectedTask" :key="selectedTask" :task-id="selectedTask" @completed="selected ? open(selected) : load()" @private-clear="taskPrivateClear" />
+    <NativeTaskOperations :task-id="selectedOperation" :context-kind="detail?.contextKind ?? 'APP'" @completed="selected ? open(selected) : load()" @private-clear="clearView" />
+    <ReturnedFormPanel :instance-id="returnedInstance" @completed="selected ? open(selected) : load()" @private-clear="clearView" />
+    <PendingResolutionPanel :instance-id="selectedResolution" @completed="selected ? open(selected) : load()" @private-clear="clearView" />
+    <NativeTransferBatchPanel />
   </section>
 </template>
 <style scoped>

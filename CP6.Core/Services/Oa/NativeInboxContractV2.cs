@@ -10,7 +10,7 @@ public sealed record NativeInstancePinV2(Guid InstanceId,Guid? ParentInstanceId,
 public sealed record NativeReadFactV2(string Kind,Guid TargetId,Guid PrincipalId,Guid ActualUserId,
     DateTimeOffset FirstReadAtUtc,string FirstCommandId,Guid? GrantId=null,string? GrantRevision=null);
 public sealed record NativeTaskReadV2(Guid TaskId,Guid InstanceId,string NodeId,Guid? TokenId,int StageIndex,int StageRound,
-    Guid PrincipalId,int Status,string TaskRowVersion,NativeReadFactV2? Read,bool CanRequestDecisionContext);
+    Guid PrincipalId,int Status,string TaskRowVersion,NativeReadFactV2? Read,bool CanRequestDecisionContext,Guid? CreatedPrincipalId=null);
 public sealed record NativeCcReadV2(Guid CcId,Guid InstanceId,Guid RecipientId,string? NodeId,NativeReadFactV2? Read);
 public sealed record NativeWorkflowEventV2(Guid EventId,Guid InstanceId,string NodeId,string Action,Guid ActorId,
     string ActorKind,string? Comment,DateTime RecordedAt);

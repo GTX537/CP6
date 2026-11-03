@@ -34,6 +34,13 @@ public static class FlowSchemaValidator
         if (schema.Nodes.Count == 0) { errs.Add("E-WF-010"); return errs; }
 
         string T(FlowNode n) => (n.Type ?? "approval").Trim().ToLowerInvariant();
+        foreach(var n in schema.Nodes)
+        {
+            var policies=new[]{n.ApproverRecoveryPolicy}.Concat(n.Stages?.Select(s=>s.ApproverRecoveryPolicy)??[]);
+            foreach(var p in policies.Where(p=>p!=null))
+                if(T(n)!="approval"||p!.Mode!="MANUAL_ASSIGNMENT"||p.EligibleRoleIds==null||p.EligibleRoleIds.Length is <1 or >100
+                    ||p.EligibleRoleIds.Any(id=>id<=0)||p.EligibleRoleIds.Distinct().Count()!=p.EligibleRoleIds.Length)errs.Add("APPROVER_RECOVERY_POLICY_INVALID");
+        }
 
         // ① 恰一 start ② 至少一 end
         if (schema.Nodes.Count(n => T(n) == "start") != 1) errs.Add("E-WF-010");

@@ -43,6 +43,58 @@ public sealed class ApprovalTaskAuthorityV2(CP6Context db, IHttpContextAccessor 
         await User(actual, ct, write);
         return actual;
     }
+    internal async Task RequireAction(Guid user,string action,CancellationToken ct)
+    {
+        var permission=await User(user,ct,false);
+        if(!permission.ActionKeys.Contains("oa-inbox:"+action)||!await (from a in db.Sys_MenuActions join m in db.Sys_Menus on a.MenuId equals m.MenuId
+            where m.Enable&&m.MenuKey=="oa-inbox"&&a.ActionCode==action select a).AnyAsync(ct))throw Error("ACTION_FORBIDDEN");
+    }
+    internal Task<UserPermissionContext> QualifiedTarget(Guid id,CancellationToken ct)=>User(id,ct);
+    internal async Task<ApprovalTaskAuthorityLeaseV2> AcquireAdministrativeTransfer(Guid taskId,Guid from,CancellationToken ct)
+    {
+        var lease=await fence.AcquireAsync(ct);var actual=await CurrentActor(false,ct);
+        await RequireAction(actual,"batch-transfer",ct);
+        var task=await db.Wf_FlowTasks.AsNoTracking().SingleOrDefaultAsync(t=>t.Id==taskId,ct)??throw Error("RESOURCE_NOT_FOUND",404);
+        var instance=await db.Wf_FlowInstances.AsNoTracking().SingleAsync(i=>i.Id==task.InstanceId,ct);
+        if(instance.Creator!=FlowEngine.ApprovalRuntimeV2)throw Error("RESOURCE_NOT_FOUND",404);
+        if(task.AssigneeId!=from)throw Error("TASK_ASSIGNEE_CHANGED",409);
+        if(task.Status!=0||instance.Status!=0)throw Error("TASK_NOT_PENDING",409);
+        var assignment=await ApprovalTaskAssignmentsV2.Read(db,fence.EnvironmentId,taskId,ct);
+        var payload=await db.Database.SqlQuery<byte[]>($"""
+            SELECT p.payload AS "Value" FROM cp6_approval_runtime_v2.instances i JOIN cp6_approval_intake_v2.submissions p
+              ON p.tenant_id=i.tenant_id AND p.environment_id=i.environment_id AND p.owner=i.owner AND p.id=i.submission_id
+            WHERE i.instance_id={instance.Id} AND i.tenant_id={db.CurrentTenantId} AND i.environment_id={fence.EnvironmentId}
+            """).SingleAsync(ct);
+        var original=JsonSerializer.Deserialize<ApprovalSubmitCommandV2>(payload,ApprovalBindingOwnerV2.Json)!;
+        if(original.SeparationSubjectIds.Contains(actual))throw Error("SOD_VIOLATION");
+        var manager=await User(actual,ct,false);
+        return new(lease,new(assignment,from,actual,null,null,null,null,original.SeparationSubjectIds,lease.Snapshot,
+            PermissionEvidence(manager,await PostgreSqlPermissionReader.ReadAsync(db,from,ct))),"ADMIN_TRANSFER");
+    }
+    internal async Task ValidateOperationAsync(ApprovalTaskAuthorityLeaseV2 lease,CancellationToken ct)
+    {
+        if(lease.Action=="ADMIN_TRANSFER")
+        {
+            if(await CurrentActor(false,ct)!=lease.Evidence.ActualHandlerId)throw Error("AUTHORITY_CHANGED");
+            await RequireAction(lease.Evidence.ActualHandlerId,"batch-transfer",ct);
+            await fence.ValidateAsync(lease.Scope,ct);return;
+        }
+        var proof=lease.Evidence;if(await CurrentActor(true,ct)!=proof.ActualHandlerId)throw Error("AUTHORITY_CHANGED");
+        if(PermissionEvidence(await User(proof.ActualHandlerId,ct),await User(proof.PrincipalId,ct))!=proof.PermissionJson)throw Error("AUTHORITY_CHANGED",409);
+        if(proof.GrantBody is {} body)
+        {
+            var grant=JsonSerializer.Deserialize<TaskDelegationRevisionV2>(body,PersonalFormOwnerV2.Json)!;
+            var instance=await db.Wf_FlowInstances.AsNoTracking().SingleAsync(i=>i.Id==proof.Assignment.InstanceId,ct);
+            var payload=await db.Database.SqlQuery<byte[]>($"""
+                SELECT p.payload AS "Value" FROM cp6_approval_runtime_v2.instances i JOIN cp6_approval_intake_v2.submissions p
+                  ON p.tenant_id=i.tenant_id AND p.environment_id=i.environment_id AND p.owner=i.owner AND p.id=i.submission_id
+                WHERE i.instance_id={instance.Id} AND i.tenant_id={db.CurrentTenantId} AND i.environment_id={fence.EnvironmentId}
+                """).SingleAsync(ct);
+            var original=JsonSerializer.Deserialize<ApprovalSubmitCommandV2>(payload,ApprovalBindingOwnerV2.Json)!;
+            await new TaskDelegationReaderV2(db,fence.EnvironmentId).ValidateExact(grant,lease.Action,instance.FlowKey,original.Subject.BizType,ct);
+        }
+        await fence.ValidateAsync(lease.Scope,ct);
+    }
     private sealed record Original(byte[] Payload);
     private async Task<ApprovalTaskAuthorityEvidenceV2> Check(Guid taskId, Guid? onBehalfOf,
         ScopeAuthorizationLeaseV1 lease, CancellationToken ct, bool requirePending = true,string action="TASK_APPROVE")

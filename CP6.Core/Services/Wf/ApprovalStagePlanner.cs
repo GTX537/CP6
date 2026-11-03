@@ -20,6 +20,7 @@ public sealed class ApprovalStagePlanner : IApprovalStagePlanner
                 StageIndex = 0, Kind = ApprovalStageKinds.Fixed,
                 Rule = rule ?? new ApproverRule(ApproverStrategy.Specified, null, null, null),
                 Countersign = node.Countersign,
+                ApproverRecoveryPolicy=node.ApproverRecoveryPolicy,
             });
             return result;
         }
@@ -46,6 +47,7 @@ public sealed class ApprovalStagePlanner : IApprovalStagePlanner
                     {
                         StageIndex = idx++, Kind = ApprovalStageKinds.ManagerChain,
                         StageName = st.Name, StageCode = st.Code,
+                        ApproverRecoveryPolicy=st.ApproverRecoveryPolicy??node.ApproverRecoveryPolicy,
                         Rule = new ApproverRule(ApproverStrategy.DirectManager, j, null, null),
                         Countersign = string.IsNullOrWhiteSpace(st.Countersign) ? CountersignModes.All : st.Countersign,
                     });
@@ -57,6 +59,7 @@ public sealed class ApprovalStagePlanner : IApprovalStagePlanner
                     {
                         StageIndex = idx++, Kind = ApprovalStageKinds.ManagerChain,
                         StageName = st.Name, StageCode = st.Code,
+                        ApproverRecoveryPolicy=st.ApproverRecoveryPolicy??node.ApproverRecoveryPolicy,
                         Rule = new ApproverRule(ApproverStrategy.DirectManager, 1, null, null),
                         Countersign = string.IsNullOrWhiteSpace(st.Countersign) ? CountersignModes.All : st.Countersign,
                     });
@@ -69,6 +72,7 @@ public sealed class ApprovalStagePlanner : IApprovalStagePlanner
                 {
                     StageIndex = idx++, Kind = ApprovalStageKinds.Fixed,
                     StageName = st.Name, StageCode = st.Code,
+                    ApproverRecoveryPolicy=st.ApproverRecoveryPolicy??node.ApproverRecoveryPolicy,
                     Rule = new ApproverRule(strat, st.ApproverLevels, st.ApproverRoleId, st.ApproverUserId)
                     {
                         FieldName = st.ApproverFieldName, MapKey = st.ApproverMapKey,

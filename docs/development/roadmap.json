@@ -161827,6 +161827,16 @@
       "date": "2026-11-03",
       "change": "补齐单价订正原操作query能力目录；纠正权限互锁漏读WMS/MES仅目录OwnerActions及MES313锚定，不增加角色授权。",
       "evidence": "docs/development/evidence/BUG-715/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-03",
+      "change": "24h目标累计14h实际校准：余约10h容量；W282尚未交付，余管理批量/定向边界/真实浏览器及闭环。W282–286合计剩余7–14h低置信区间，优先闭环已开工完整任务，原大卡状态不变。",
+      "evidence": "docs/development/planning/20261102-codex-24h-oa.md"
+    },
+    {
+      "date": "2026-11-03",
+      "change": "W282：APP/SFS原生退回预览与确认、准确转交/前后加签、SFS同实例退回编辑重送、显式政策无人审批恢复及管理批量转交已实现；真实Chrome、HTTP、PostgreSQL和故障恢复通过。",
+      "evidence": "docs/development/evidence/W282-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -197839,7 +197849,19 @@
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：按S02-00采用的PostgreSQL布局、可信上下文/当前授权和全部写者共同最终fence、Main Owner事务及原键结果/审计。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
-      ]
+      ],
+      "wave282_native_task_operations": {
+        "status": "IN_PROGRESS",
+        "scope": "原TASK R2退回预览/确认、原SFS实例编辑重送与新轮、转交/加签当前职责、显式精准pin政策下无人审批恢复；沿当前WFC/权限fence/同事务结果，不借旧入口或创建新实例替代。3–5h低置信度，单人连续实现，下一累计14h校准。",
+        "full_task_completed": false
+      },
+      "wave282_task_recovery": {
+        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W282-01/DELIVERY.md",
+        "full_task_completed": false,
+        "validation": "本地31项唯一相关后端行为通过，来源逐项列明，包含隔离PostgreSQL18实际迁移/Owner/HTTP、APP/SFS任务办理、准确FormTo与旧票隔离、返回编辑与双连接重送、当前授权/SOD、显式政策无人审批恢复、管理批量固定名单/部分结果/同实例版本链/断响应恢复及授权后500项上限。含2条真实Chrome→Vue→Main→PostgreSQL路径：退回编辑重送至通过、管理批量转交丢响应刷新恢复。18项前端组件行为与应用vue-tsc通过，四张截图已查看。复用未受后续改动影响的成功来源；失败日志保留，不把混合运行改称全绿。模拟用户、业务、政策和服务登记，产品Owner/HTTP/数据库/浏览器实际运行。无Actions、生产部署或既有数据库迁移。",
+        "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED；59局部3闭环/56余项，125/247正式状态不变。WP12-09整卡保持原状态；期限/Worker原生采用留W283，完整字段/图诊断及纯FORM规则预览留W284，普通FORM实际文件准入与最终下载留W285，FLOW原竞争及legacy来源/旧caller处置留W286。"
+      }
     },
     {
       "id": "WP12-10",
@@ -201869,11 +201891,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261103-wave281",
-      "path": "docs/development/dispatch/20261103-wave281/README.md",
-      "baseline_sha": "87f9c5fde2cb42c95e205f2545160bd45112e132",
-      "registered_at": "2026-11-03T01:01:10.201720+00:00",
-      "phase": "CLOSED",
+      "id": "20261103-wave282",
+      "path": "docs/development/dispatch/20261103-wave282/README.md",
+      "baseline_sha": "854f52721a06f22c22f82c8aa4d714a82acfb698",
+      "registered_at": "2026-11-03T04:24:30.268958+00:00",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -201883,66 +201905,68 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [],
+      "active_implementation_chats": [
+        "COORD"
+      ],
       "workers_started": true,
-      "windows_closed": true,
-      "product_integrated": true,
+      "windows_closed": false,
+      "product_integrated": false,
       "windows": [
         {
-          "id": "W281-01",
-          "workspace_task": "W281-01",
+          "id": "W282-01",
+          "workspace_task": "W282-01",
           "related_tasks": [
-            "WP12-05"
+            "WP12-09"
           ],
-          "title": "原生收藏与统一授权历史查询",
+          "title": "退回重送、转交加签与无人审批恢复",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "CLOSED",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w281-01",
+          "branch": "codex/w282-01",
           "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "candidate_integrated": true,
-          "resources_released": true,
+          "candidate_integrated": false,
+          "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
-            "Main:oa-form",
-            "Main:oa-inbox-read",
+            "Main:oa-task",
+            "Main:workflow-engine",
             "Main:EF-migration-history"
           ],
-          "worker_delivery_ref": "docs/development/evidence/W281-01/DELIVERY.md",
-          "validation": "本地29项唯一相关后端行为通过，含真实PostgreSQL/HTTP收藏并发、原命令恢复、原子性、当前租户/资源/字段权限、未绑定与已绑定历史、准确发布版本、租户日历/DST、分页截点、真实连续业务回执、SFS/APP子流程回归、OA权限种子与互锁，以及实际Chrome→Vue→Main→PostgreSQL收藏断响应恢复和历史详情。前端20项相关组件行为与应用vue-tsc通过；浏览器截图已查看。各来源中的失败仍保留，不将混合运行改称全绿。跨领域3项权限互锁失败登记独立P1 #715，相关源码与开工主线一致，尚未做这些端点的默认管理员HTTP复测。无Actions、生产部署或既有环境迁移。",
+          "worker_delivery_ref": "docs/development/evidence/W282-01/DELIVERY.md",
+          "validation": "本地31项唯一相关后端行为通过，来源逐项列明，包含隔离PostgreSQL18实际迁移/Owner/HTTP、APP/SFS任务办理、准确FormTo与旧票隔离、返回编辑与双连接重送、当前授权/SOD、显式政策无人审批恢复、管理批量固定名单/部分结果/同实例版本链/断响应恢复及授权后500项上限。含2条真实Chrome→Vue→Main→PostgreSQL路径：退回编辑重送至通过、管理批量转交丢响应刷新恢复。18项前端组件行为与应用vue-tsc通过，四张截图已查看。复用未受后续改动影响的成功来源；失败日志保留，不把混合运行改称全绿。模拟用户、业务、政策和服务登记，产品Owner/HTTP/数据库/浏览器实际运行。无Actions、生产部署或既有数据库迁移。",
           "lifecycle_snapshot": {
-            "main_finish_required": false,
-            "main_seat_released": true,
-            "handoff_seat_released": true,
-            "main_branch_deleted": true,
-            "handoff_branch_deleted": true,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave281-final-verification.json"
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave282-final-verification.json"
           },
-          "business_acceptance": "NATIVE_FAVORITES_AND_CURRENT_AUTHORIZED_HISTORY_ACTUAL_BROWSER_POSTGRES_PASS;FULL_CARD_REMAINS"
+          "business_acceptance": "NATIVE_TASK_RECOVERY_AND_MANAGEMENT_BATCH_ACTUAL_BROWSER_POSTGRES_PASS;FULL_CARD_REMAINS"
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "独立BUG715权限目录与互锁修复后继续W282；24h目标持续",
+      "next_action": "W282正常远端采用/准确清理/finish后接W283期限与Worker；24h目标持续。",
       "lifecycle_snapshot": {
-        "main_finish_required": false,
-        "main_seat_released": true,
-        "handoff_seat_released": true,
-        "main_branch_deleted": true,
-        "handoff_branch_deleted": true,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave281-final-verification.json"
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_seat_released": false,
+        "main_branch_deleted": false,
+        "handoff_branch_deleted": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave282-final-verification.json"
       },
-      "integration_baseline": "87f9c5fde2cb42c95e205f2545160bd45112e132"
+      "integration_baseline": "854f52721a06f22c22f82c8aa4d714a82acfb698"
     },
     "wave_history": [
       {
@@ -237839,6 +237863,82 @@
             "workspace_clean": true
           }
         ]
+      },
+      {
+        "id": "20261103-wave281",
+        "path": "docs/development/dispatch/20261103-wave281/README.md",
+        "baseline_sha": "87f9c5fde2cb42c95e205f2545160bd45112e132",
+        "registered_at": "2026-11-03T01:01:10.201720+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W281-01",
+            "workspace_task": "W281-01",
+            "related_tasks": [
+              "WP12-05"
+            ],
+            "title": "原生收藏与统一授权历史查询",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w281-01",
+            "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:oa-form",
+              "Main:oa-inbox-read",
+              "Main:EF-migration-history"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W281-01/DELIVERY.md",
+            "validation": "本地29项唯一相关后端行为通过，含真实PostgreSQL/HTTP收藏并发、原命令恢复、原子性、当前租户/资源/字段权限、未绑定与已绑定历史、准确发布版本、租户日历/DST、分页截点、真实连续业务回执、SFS/APP子流程回归、OA权限种子与互锁，以及实际Chrome→Vue→Main→PostgreSQL收藏断响应恢复和历史详情。前端20项相关组件行为与应用vue-tsc通过；浏览器截图已查看。各来源中的失败仍保留，不将混合运行改称全绿。跨领域3项权限互锁失败登记独立P1 #715，相关源码与开工主线一致，尚未做这些端点的默认管理员HTTP复测。无Actions、生产部署或既有环境迁移。",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave281-final-verification.json"
+            },
+            "business_acceptance": "NATIVE_FAVORITES_AND_CURRENT_AUTHORIZED_HISTORY_ACTUAL_BROWSER_POSTGRES_PASS;FULL_CARD_REMAINS"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "独立BUG715权限目录与互锁修复后继续W282；24h目标持续",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave281-final-verification.json"
+        },
+        "integration_baseline": "87f9c5fde2cb42c95e205f2545160bd45112e132"
       }
     ],
     "development_priority": {
@@ -238417,8 +238517,8 @@
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 46852,
-      "next_reestimate_at_effective_seconds": 50400,
+      "effective_seconds_recorded": 52619,
+      "next_reestimate_at_effective_seconds": 57600,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
         {
@@ -238904,14 +239004,31 @@
             2,
             4
           ],
-          "state": "PLANNED",
+          "state": "VERIFYING",
           "admission": "Inspect direct providers/current source before START; no stub substitution",
           "reason": "First 2h throughput calibration: original authorized adjacent remaining scope",
           "revised_estimate_hours": [
-            1.5,
-            3
+            3,
+            5
           ],
-          "estimate_confidence": "LOW"
+          "estimate_confidence": "LOW",
+          "started_at": "2026-11-03T04:24:30.268958+00:00",
+          "scope_refinement": "Native task recovery and management batch adopted; deadline/Worker and legacy caller disposition remain separate. Full card not closed.",
+          "remaining_estimate_hours": [
+            2,
+            4
+          ],
+          "actual_effective_seconds_so_far": 2908,
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W282-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave282-final-verification.json"
+          }
         },
         {
           "id": "W283-01",
@@ -239176,12 +239293,65 @@
           ],
           "basis": "Recent actual complete windows are materially faster than prior estimates; W280 1608s versus0.5–1.25h. W281 favorites/history has new persistence, current-scope query and timezone work; FILE adoption has an actual missing ordinary-FORM parent authority, so not priced as a mechanical reuse. Preserve prediction range and measure every2h; no idle/redundant tests.",
           "unchanged": "24h effective execution target, original375/full-card states, single chat and local validation."
+        },
+        {
+          "at": "2026-11-03T05:12:58.736229+00:00",
+          "checkpoint": "14h",
+          "effective_seconds": 50423,
+          "excluded_wall_seconds": 7558,
+          "observed_windows": [
+            {
+              "window": "W281-01",
+              "actual_seconds": 3687
+            },
+            {
+              "window": "BUG715",
+              "actual_seconds": 870
+            },
+            {
+              "window": "W282-01",
+              "actual_seconds_so_far": 2908,
+              "state": "IN_PROGRESS"
+            }
+          ],
+          "remaining_capacity_hours": 9.99,
+          "remaining_estimate_hours": [
+            7,
+            14
+          ],
+          "confidence": "LOW",
+          "remaining_windows": {
+            "W282-01": [
+              2,
+              4
+            ],
+            "W283-01": [
+              1,
+              2
+            ],
+            "W284-01": [
+              1,
+              2
+            ],
+            "W285-01": [
+              2,
+              4
+            ],
+            "W286-01": [
+              1,
+              2
+            ]
+          },
+          "observed": "Native SFS/APP sendback/transfer/addsign/explicit pending recovery implemented; 14 distinct PostgreSQL behavior tests and 5 seed tests passed across recorded runs. Three races/original-command tests passed; 13 UI behavior tests passed; browser acceptance not yet executed. Latest subsequent changes are not represented as already retested.",
+          "remaining": "W282 management batch transfer max500 with frozen candidate snapshot; exact scope/authority boundary regressions, real HTTP/Chrome use, concentrated review and delivery. Reuse prior delegation/withdrawal and valid evidence; no artificial waits or repeated whole-repository gates.",
+          "basis": "Measured window remains open, so partial implementation is not extrapolated to a finished delivery. Source review found returned-form patch/start-field-mask/exact resubmit permission requirements and exact task/FormTo identity for overlapping approvers. These are actual accepted contract work, not extra proof layers.",
+          "unchanged": "Original375/56 partial cards and125/247 full acceptance states; single chat,24h effective target,PostgreSQL/local gates,no Actions or production deployment."
         }
       ],
-      "timing_snapshot_at": "2026-11-03T04:13:27.916551+00:00",
+      "timing_snapshot_at": "2026-11-03T05:49:34.935533+00:00",
       "remaining_estimate_hours": [
-        7.5,
-        15.5
+        7,
+        14
       ],
       "runtime_timing_anchor": {
         "at": "2026-11-03T03:44:56+00:00",
@@ -239190,7 +239360,6 @@
         "source": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave281-runtime-timing.json",
         "basis": "Conservative runtime effective-time anchor after an uncounted scheduling interval; add only verified continuous active execution after this timestamp. Do not infer effective time from goal creation wall time. No intentional padding."
       },
-      "next_priority_issue": "https://github.com/GTX537/CP6/issues/715",
       "priority_issue_execution": {
         "issue": "https://github.com/GTX537/CP6/issues/715",
         "task": "BUG-715",
@@ -239205,7 +239374,36 @@
         ],
         "report": "docs/development/evidence/BUG-715/DELIVERY.md",
         "validation": "本地20项相关行为通过、0跳过：ERP/MES实际种子跨租户登记/幂等/授权保持，六领域贴点与能力目录互锁，以及实际Program登录→HTTP→PG的未授权拒绝、显式query授权读取/关闭原意图、CSRF拒绝和撤权再拒绝。新增种子期望先红后绿；原W281的3项互锁失败在修复后通过，原日志保留。",
-        "remote_adoption_pending": true
+        "remote_adoption_pending": false,
+        "state": "CLOSED",
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug715-final-verification.json",
+        "actual_effective_seconds": 870,
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "BUG-715",
+            "source": "181773e903d4a5425515cca2bf866a66fa38159f",
+            "remote_target": "854f52721a06f22c22f82c8aa4d714a82acfb698",
+            "pr": "https://github.com/GTX537/CP6/pull/717",
+            "branch": "codex/bug-715",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "BUG-715-HANDOFF",
+            "source": "efd88af907f1bd7e62efe41c5bd597c5f765c8cb",
+            "remote_target": "bd8034427eed9a4d79f1316ca5c84df899294f67",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/258",
+            "branch": "codex/bug-715-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     },
     "execution_plan_history": [

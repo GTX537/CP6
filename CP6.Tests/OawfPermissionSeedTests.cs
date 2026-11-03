@@ -39,6 +39,7 @@ public class OawfPermissionSeedTests
     {
         // 733 oa-inbox（信箱 + /wf 引擎审批动作）
         (733, "read"), (733, "approve"), (733, "transfer"), (733, "sendback"), (733, "addsign"), (733, "withdraw"),
+        (733, "returned-edit"), (733, "resubmit"), (733, "resolve-approver"),
         // 734 oa-flow-admin
         (734, "enable"),
         // 735 oa-form-catalog（填單：收藏 + 草稿 CRUD + 起流程/提交）
@@ -79,9 +80,9 @@ public class OawfPermissionSeedTests
             var roleActions = db.Sys_RoleActions.IgnoreQueryFilters()
                 .Where(x => x.TenantId == tid && x.RoleId == 1).ToList();
 
-            // 20 legacy writes + current native history query.
-            Assert.Equal(21, menuActions.Count);
-            Assert.Equal(21, roleActions.Count);
+            // Existing actions plus native history and explicit recovery capabilities.
+            Assert.Equal(24, menuActions.Count);
+            Assert.Equal(24, roleActions.Count);
 
             // 逐元组精确匹配（漏种 0 / 多种 0）。
             var maSet = menuActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
@@ -106,9 +107,9 @@ public class OawfPermissionSeedTests
         Assert.Equal(ma1, db.Sys_MenuActions.IgnoreQueryFilters().Count());
         Assert.Equal(ra1, db.Sys_RoleActions.IgnoreQueryFilters().Count());
 
-        // 2 tenants × 21 grants; restarting never duplicates a grant.
-        Assert.Equal(42, ma1);
-        Assert.Equal(42, ra1);
+        // 2 tenants × 24 grants; restarting never duplicates a grant.
+        Assert.Equal(48, ma1);
+        Assert.Equal(48, ra1);
     }
 
     [Fact]

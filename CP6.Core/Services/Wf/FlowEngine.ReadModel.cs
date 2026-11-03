@@ -28,13 +28,14 @@ public partial class FlowEngine
     /// 串簽多档路径可选传 stageIndex/stageRound；单档/旧路径不传（默认 null），行为零变化。
     /// </summary>
     internal void WriteFormToOnSend(Wf_FlowInstance inst, FlowNode node, Wf_FlowToken token,
-        Guid expectedHandler, Guid? onBehalfOf, int stepSeq, int? stageIndex = null, int? stageRound = null)
+        Guid expectedHandler, Guid? onBehalfOf, int stepSeq, int? stageIndex = null, int? stageRound = null, Guid? nativeTaskId=null)
     {
         _db.Wf_FlowFormTos.Add(new Wf_FlowFormTo
         {
             Id = Guid.NewGuid(),
             InstanceId = inst.Id,
             TokenId = token.Id,
+            NativeTaskId = ManagedRuntime?nativeTaskId:null,
             StepSeq = stepSeq,
             NodeId = node.Id,
             NodeCode = node.Id,
@@ -62,13 +63,13 @@ public partial class FlowEngine
     }
 
     /// <summary>
-    /// 办结：更新该 (inst, node, token, expectedHandler) 的待签行为已办结状态。
-    /// 若行不存在（幂等 / 加签 / 旁路路径），静默跳过。
+    /// 原生办结按准确 TaskId 更新待签履历；旧原生行仅接受唯一槽位匹配，缺证明确失败。
+    /// 旧引擎保留其既有按实例/节点/人员查找及无行跳过的兼容行为。
     /// </summary>
-    internal async Task UpdateFormToOnHandleAsync(Wf_FlowTask task, Guid actorId, bool approve, string? comment,
+    internal async Task<int?> UpdateFormToOnHandleAsync(Wf_FlowTask task, Guid actorId, bool approve, string? comment,
         Guid? onBehalfOf = null)
     {
-        var row = await _db.Wf_FlowFormTos
+        var row = ManagedDecision?await NativePendingFormTo(task):await _db.Wf_FlowFormTos
             .Where(f => f.InstanceId == task.InstanceId
                         && f.NodeId == task.NodeId
                         && f.TokenId == task.TokenId
@@ -76,12 +77,22 @@ public partial class FlowEngine
                         && f.Status == FlowFormToStatus.Pending)
             .OrderByDescending(f => f.SentAt)   // 万一存在两行 Pending，优先关最近送签那行
             .FirstOrDefaultAsync();
-        if (row is null) return;
+        if (row is null) return null;
         row.Status = approve ? FlowFormToStatus.Approved : FlowFormToStatus.Rejected;
         row.ActualHandlerId = actorId;   // 实际点击办理的人（act-as 时 = 代理人 me）
         row.OnBehalfOfId = onBehalfOf;   // 代谁签（非 act-as 时 = null，既有路径零改）
         row.HandledAt = DateTime.Now;
         row.Comment = comment;
+        return row.StepSeq;
+    }
+    private async Task<Wf_FlowFormTo> NativePendingFormTo(Wf_FlowTask task,CancellationToken ct=default)
+    {
+        var exact=await _db.Wf_FlowFormTos.SingleOrDefaultAsync(f=>f.NativeTaskId==task.Id&&f.Status==FlowFormToStatus.Pending,ct);
+        if(exact!=null)return exact;
+        // Only an unambiguous old native slot is compatible. Never select the latest row or invent provenance.
+        var prior=await _db.Wf_FlowFormTos.Where(f=>f.NativeTaskId==null&&f.InstanceId==task.InstanceId&&f.TokenId==task.TokenId&&f.NodeId==task.NodeId
+            &&f.ExpectedHandlerId==task.AssigneeId&&f.Status==FlowFormToStatus.Pending&&(f.StageIndex??0)==task.StageIndex&&(f.StageRound??0)==task.StageRound).Take(2).ToArrayAsync(ct);
+        return prior.Length==1?prior[0]:throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1("TASK_FORMTO_EVIDENCE_UNAVAILABLE",503);
     }
 
     /// <summary>存一份该关卡当时表单快照（来源 inst.VarsJson）。</summary>

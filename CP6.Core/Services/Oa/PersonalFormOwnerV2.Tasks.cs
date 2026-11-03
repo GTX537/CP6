@@ -23,7 +23,7 @@ public sealed partial class PersonalFormOwnerV2
         where t.Id==task && t.InstanceId==i.Id && i.Creator==FlowEngine.PersonalFormRuntimeV2 select t.Id).AnyAsync(ct);
     private async Task<TaskSource> TaskSourceAsync(Guid task,CancellationToken ct)=>await db.Database.SqlQuery<TaskSource>($"""
         SELECT x.form_data_id AS "Data",x.root_id AS "Root",s.head_id AS "FormHead",s.form_version AS "FormVersion",
-          v.snapshot_json AS "Publication",a.body AS "Assignment"
+          v.snapshot_json AS "Publication",COALESCE((SELECT body FROM cp6_personal_form_v2.assignment_changes WHERE task_id=a.task_id ORDER BY revision DESC LIMIT 1),a.body) AS "Assignment"
         FROM cp6_personal_form_v2.assignments a JOIN cp6_personal_form_v2.instances x ON x.instance_id=a.instance_id
         JOIN cp6_personal_form_v2.submissions s ON s.form_data_id=x.form_data_id
         JOIN cp6_workflow_authoring_v2.versions v ON v.tenant_id=x.tenant_id AND v.environment_id=x.environment_id AND v.head_id=x.flow_head AND v.id=x.flow_version
