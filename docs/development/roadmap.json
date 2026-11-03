@@ -174667,6 +174667,13 @@
         ],
         "formal_state_changed": false,
         "new_product_validation": false
+      },
+      "wave285_form_files": {
+        "status": "IN_PROGRESS",
+        "scope": "普通FORM真实文件Owner：当前表单/字段授权先于上传字节；明确FORM暂存与不可变内容身份，扫描和完整性状态；草稿/直接提交/退回修改的引用准入与同事务绑定；当前业务对象和字段权限下的精确内容下载及实际页面采用。",
+        "direct_dependencies": "原OA-FORM-01 R1与SYS-FILE-01完整候选已读取。现有FileContentOwnerV1/Store以EngineeringRevision作为强制父引用，不能伪装普通FORM；复用实际IFileStore、限长读取、Defender扫描与既有WF_AUTH，增加明确版本的FORM内容/业务引用。PersonalFormOwner的草稿、直接提交、退回和当前任务读权为业务权威；FORM发布尚以FORM_FILE_SOURCE_REQUIRED拒绝upload，只有实际端口与运行采用一起落实才放开。",
+        "limits": "范围只覆盖实际普通FORM调用链；不更改已有工程/DOC身份，不创建万能权限旁路，不做物理清理/全Owner引用图，不实施既有数据库迁移或生产部署。安全状态与未知原操作必须真实保留，字段隐藏不泄露引用或文件元数据。W286的定义并发及旧caller处置保持待办，原375/56局部卡及125/247口径不变。",
+        "full_task_completed": false
       }
     },
     {
@@ -196658,14 +196665,15 @@
         }
       },
       "wave284_diagnostics_rules": {
-        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "status": "IMPLEMENTED_VALIDATED_REMOTE_ADOPTED",
         "scope": "FLOW图/注册依赖及FORM字段/子表/规则的结构化定位贯通保存、发布诊断与既有设计器；准确FORM草稿的纯计算预览复用实际顺序规则，展示服务端结果与前端体验，当前授权、原数字精度及无业务副作用。",
         "direct_dependencies": "原OA-DEF R1全文及W279原27AC核对已读，直接缺口AC-D01-05/D02-02/D02-03。FlowSchemaValidator当前返回去重码，FormSchemaValidationV1大部分有字符串路径而table聚合丢位置，两个Controller的fieldErrors均空；页面未提供完整定位。PersonalFormValuesV2已采用精确顺序复算，DynamicForm/ruleEngine拥有前端体验；本窗由同一权威规则复用输出，不另写近似计算器。当前FORM/FLOW Owner的只读授权与准确draft/token、WFC错误/原结果和W279只读预演边界直接复用。",
         "limits": "预览只使用用户明确模拟输入与当前可读准确草稿，不创建FormData/实例/任务/命令/通知/发布预览，不查询或执行外部文件/选项/连接器。前端disable/enable/setOptions不授字段写权；实际提交仍由原Owner权限与复算决定。普通FORM文件与所有旧caller分别留W285/W286，不在本窗迁移既有环境或关闭整卡。",
         "full_task_completed": false,
         "report": "docs/development/evidence/W284-01/DELIVERY.md",
         "validation": "35项唯一纯校验/规则相关行为、6项唯一隔离PostgreSQL/HTTP行为及1条真实登录→Vue/Chrome→HTTP→PG路径通过；47项唯一相关Vue行为及vue-tsc --build（包含app/node两项目）通过。覆盖节点/边/字段/列/规则精确定位，重复字段/复杂子表/200行上限，循环/深度/未注册服务、原字段读权投影，准确顺序计算与大数、纯预览零业务写入、过期/拒权/迟到响应、首次校验失败保留可编辑输入和未知原保存不能被后续拒绝抹除。",
-        "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED；59局部3闭环/56余项，125/247正式状态保持。WP12-01整卡不关闭；普通FORM文件/外部选项Owner准入、FLOW双作者/下一草稿原竞争、全部legacy调用面与来源仍有余项。W285普通FORM文件及最终下载、W286原竞争/旧caller顺序继续。"
+        "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED；59局部3闭环/56余项，125/247正式状态保持。WP12-01整卡不关闭；普通FORM文件/外部选项Owner准入、FLOW双作者/下一草稿原竞争、全部legacy调用面与来源仍有余项。W285普通FORM文件及最终下载、W286原竞争/旧caller顺序继续。",
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave284-final-verification.json"
       }
     },
     {
@@ -197040,6 +197048,13 @@
           "handoff_branch_deleted": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave275-final-verification.json"
         }
+      },
+      "wave285_form_files": {
+        "status": "IN_PROGRESS",
+        "scope": "普通FORM真实文件Owner：当前表单/字段授权先于上传字节；明确FORM暂存与不可变内容身份，扫描和完整性状态；草稿/直接提交/退回修改的引用准入与同事务绑定；当前业务对象和字段权限下的精确内容下载及实际页面采用。",
+        "direct_dependencies": "原OA-FORM-01 R1与SYS-FILE-01完整候选已读取。现有FileContentOwnerV1/Store以EngineeringRevision作为强制父引用，不能伪装普通FORM；复用实际IFileStore、限长读取、Defender扫描与既有WF_AUTH，增加明确版本的FORM内容/业务引用。PersonalFormOwner的草稿、直接提交、退回和当前任务读权为业务权威；FORM发布尚以FORM_FILE_SOURCE_REQUIRED拒绝upload，只有实际端口与运行采用一起落实才放开。",
+        "limits": "范围只覆盖实际普通FORM调用链；不更改已有工程/DOC身份，不创建万能权限旁路，不做物理清理/全Owner引用图，不实施既有数据库迁移或生产部署。安全状态与未知原操作必须真实保留，字段隐藏不泄露引用或文件元数据。W286的定义并发及旧caller处置保持待办，原375/56局部卡及125/247口径不变。",
+        "full_task_completed": false
       }
     },
     {
@@ -197190,6 +197205,13 @@
         "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED；59局部3闭环/56余项，125/247正式状态不变。普通FORM文件准入及最终下载留W285，完整字段/图诊断留W284，FLOW原竞争与legacy来源/旧caller留W286；退回/转交/加签W282、期限/Worker W283及其他业务Owner采用仍待实施。新发现跨领域权限种子P1 #715按规则作为下一独立任务，之后接续W282。",
         "remote_main": "ee2c777335bfc7b444cc6f8c6601ea5c2d998e1a",
         "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave281-final-verification.json"
+      },
+      "wave285_form_files": {
+        "status": "IN_PROGRESS",
+        "scope": "普通FORM真实文件Owner：当前表单/字段授权先于上传字节；明确FORM暂存与不可变内容身份，扫描和完整性状态；草稿/直接提交/退回修改的引用准入与同事务绑定；当前业务对象和字段权限下的精确内容下载及实际页面采用。",
+        "direct_dependencies": "原OA-FORM-01 R1与SYS-FILE-01完整候选已读取。现有FileContentOwnerV1/Store以EngineeringRevision作为强制父引用，不能伪装普通FORM；复用实际IFileStore、限长读取、Defender扫描与既有WF_AUTH，增加明确版本的FORM内容/业务引用。PersonalFormOwner的草稿、直接提交、退回和当前任务读权为业务权威；FORM发布尚以FORM_FILE_SOURCE_REQUIRED拒绝upload，只有实际端口与运行采用一起落实才放开。",
+        "limits": "范围只覆盖实际普通FORM调用链；不更改已有工程/DOC身份，不创建万能权限旁路，不做物理清理/全Owner引用图，不实施既有数据库迁移或生产部署。安全状态与未知原操作必须真实保留，字段隐藏不泄露引用或文件元数据。W286的定义并发及旧caller处置保持待办，原375/56局部卡及125/247口径不变。",
+        "full_task_completed": false
       }
     },
     {
@@ -201951,11 +201973,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261103-wave284",
-      "path": "docs/development/dispatch/20261103-wave284/README.md",
-      "baseline_sha": "32fcf2767435658b2f1aa362b9a84e640291f79b",
-      "registered_at": "2026-11-03T07:47:28.233845+00:00",
-      "phase": "DELIVERY_MAIN_CLOSEOUT",
+      "id": "20261103-wave285",
+      "path": "docs/development/dispatch/20261103-wave285/README.md",
+      "baseline_sha": "094627927cb50e60f896a76d1d9a35216119020f",
+      "registered_at": "2026-11-03T08:27:10.240064+00:00",
+      "phase": "IMPLEMENTING",
       "assigned_chats": [
         "COORD"
       ],
@@ -201973,61 +201995,44 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W284-01",
-          "workspace_task": "W284-01",
+          "id": "W285-01",
+          "workspace_task": "W285-01",
           "related_tasks": [
-            "WP12-01"
+            "WP12-05",
+            "WP12-03",
+            "WP02-14"
           ],
-          "title": "设计器完整字段/图定位与纯计算规则预览",
+          "title": "普通FORM实际FileRef准入与最终当前授权下载",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "DELIVERY_MAIN_CLOSEOUT",
+          "phase": "IMPLEMENTING",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": true,
+          "worker_delivery_received": false,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w284-01",
+          "branch": "codex/w285-01",
           "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": true,
+          "candidate_review_completed": false,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
-            "Main:definition-authoring",
-            "Main:schema-validation",
-            "Main:form-rule-evaluation",
-            "Main:designer-ui"
-          ],
-          "worker_delivery_ref": "docs/development/evidence/W284-01/DELIVERY.md",
-          "validation": "35项唯一纯校验/规则相关行为、6项唯一隔离PostgreSQL/HTTP行为及1条真实登录→Vue/Chrome→HTTP→PG路径通过；47项唯一相关Vue行为及vue-tsc --build（包含app/node两项目）通过。覆盖节点/边/字段/列/规则精确定位，重复字段/复杂子表/200行上限，循环/深度/未注册服务、原字段读权投影，准确顺序计算与大数、纯预览零业务写入、过期/拒权/迟到响应、首次校验失败保留可编辑输入和未知原保存不能被后续拒绝抹除。",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave284-final-verification.json"
-          },
-          "business_acceptance": "LOCATED_DEFINITION_AND_PURE_RULE_POSTGRES_HTTP_BROWSER_PASS;FULL_CARD_REMAINS"
+            "Main:personal-form",
+            "Main:file-content",
+            "Main:form-publication",
+            "Main:PostgreSQL-migration",
+            "Main:personal-form-ui"
+          ]
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W284正常远端采用/准确清理/finish后接W285普通FORM文件；24h目标持续。",
-      "lifecycle_snapshot": {
-        "main_finish_required": true,
-        "main_seat_released": false,
-        "handoff_seat_released": false,
-        "main_branch_deleted": false,
-        "handoff_branch_deleted": false,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave284-final-verification.json"
-      },
-      "integration_baseline": "32fcf2767435658b2f1aa362b9a84e640291f79b"
+      "next_action": "普通FORM真实文件Owner：当前表单/字段授权先于上传字节；明确FORM暂存与不可变内容身份，扫描和完整性状态；草稿/直接提交/退回修改的引用准入与同事务绑定；当前业务对象和字段权限下的精确内容下载及实际页面采用。"
     },
     "wave_history": [
       {
@@ -238190,6 +238195,101 @@
             "workspace_clean": true
           }
         ]
+      },
+      {
+        "id": "20261103-wave284",
+        "path": "docs/development/dispatch/20261103-wave284/README.md",
+        "baseline_sha": "32fcf2767435658b2f1aa362b9a84e640291f79b",
+        "registered_at": "2026-11-03T07:47:28.233845+00:00",
+        "phase": "DONE",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W284-01",
+            "workspace_task": "W284-01",
+            "related_tasks": [
+              "WP12-01"
+            ],
+            "title": "设计器完整字段/图定位与纯计算规则预览",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "DONE",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w284-01",
+            "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:definition-authoring",
+              "Main:schema-validation",
+              "Main:form-rule-evaluation",
+              "Main:designer-ui"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W284-01/DELIVERY.md",
+            "validation": "35项唯一纯校验/规则相关行为、6项唯一隔离PostgreSQL/HTTP行为及1条真实登录→Vue/Chrome→HTTP→PG路径通过；47项唯一相关Vue行为及vue-tsc --build（包含app/node两项目）通过。覆盖节点/边/字段/列/规则精确定位，重复字段/复杂子表/200行上限，循环/深度/未注册服务、原字段读权投影，准确顺序计算与大数、纯预览零业务写入、过期/拒权/迟到响应、首次校验失败保留可编辑输入和未知原保存不能被后续拒绝抹除。",
+            "lifecycle_snapshot": {
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave284-final-verification.json",
+              "all_slots_released": true
+            },
+            "business_acceptance": "LOCATED_DEFINITION_AND_PURE_RULE_POSTGRES_HTTP_BROWSER_PASS;FULL_CARD_REMAINS"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W284正常远端采用/准确清理/finish后接W285普通FORM文件；24h目标持续。",
+        "lifecycle_snapshot": {
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave284-final-verification.json",
+          "all_slots_released": true
+        },
+        "integration_baseline": "32fcf2767435658b2f1aa362b9a84e640291f79b",
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W284-01",
+            "source": "06b1b458889213f939025f783b48bf461e7b385a",
+            "remote_target": "094627927cb50e60f896a76d1d9a35216119020f",
+            "pr": "https://github.com/GTX537/CP6/pull/720",
+            "branch": "codex/w284-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W284-HANDOFF",
+            "source": "d022cef4a63f69d5b3b37c6f8d95d1540a973f08",
+            "remote_target": "ccef7c81971e6418e0ceb210bcb21b43e23e8683",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/261",
+            "branch": "codex/w284-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -238768,7 +238868,7 @@
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 61444,
+      "effective_seconds_recorded": 62075,
       "next_reestimate_at_effective_seconds": 64800,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
@@ -239376,7 +239476,7 @@
             2
           ],
           "estimate_confidence": "LOW",
-          "state": "VERIFYING",
+          "state": "DONE",
           "admission": "Inspect exact current source/direct providers before START; single chat and fixed seats; no stub substitution",
           "reason": "W279原27AC核对确认D01-05/D02-02/03未闭环；已有保存验证/准确草稿预演复用，补当前可见路径和可执行纯规则说明。",
           "started_at": "2026-11-03T07:47:28.233845+00:00",
@@ -239388,13 +239488,36 @@
           "implementation_complete": true,
           "report": "docs/development/evidence/W284-01/DELIVERY.md",
           "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave284-final-verification.json"
-          }
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave284-final-verification.json",
+            "all_slots_released": true
+          },
+          "actual_effective_seconds": 2456,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W284-01",
+              "source": "06b1b458889213f939025f783b48bf461e7b385a",
+              "remote_target": "094627927cb50e60f896a76d1d9a35216119020f",
+              "pr": "https://github.com/GTX537/CP6/pull/720",
+              "branch": "codex/w284-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W284-HANDOFF",
+              "source": "d022cef4a63f69d5b3b37c6f8d95d1540a973f08",
+              "remote_target": "ccef7c81971e6418e0ceb210bcb21b43e23e8683",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/261",
+              "branch": "codex/w284-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
         },
         {
           "id": "W285-01",
@@ -239410,9 +239533,15 @@
             4
           ],
           "estimate_confidence": "LOW",
-          "state": "PLANNED",
+          "state": "IN_PROGRESS",
           "admission": "Inspect exact current source/direct providers before START; single chat and fixed seats; no stub substitution",
-          "reason": "W281直接提供者核对：FileContentOwnerV1绑定EngineeringRevision，普通FORM仍FORM_FILE_SOURCE_REQUIRED。采用真实存储/扫描端口及草稿/提交/字段Owner边界，不能借工程父级、空结果或占位下载宣称采用；不新增原册未要求的批量导出。"
+          "reason": "W281直接提供者核对：FileContentOwnerV1绑定EngineeringRevision，普通FORM仍FORM_FILE_SOURCE_REQUIRED。采用真实存储/扫描端口及草稿/提交/字段Owner边界，不能借工程父级、空结果或占位下载宣称采用；不新增原册未要求的批量导出。",
+          "started_at": "2026-11-03T08:27:10.240064+00:00",
+          "revised_estimate_hours": [
+            2,
+            4
+          ],
+          "scope_refinement": "普通FORM真实文件Owner：当前表单/字段授权先于上传字节；明确FORM暂存与不可变内容身份，扫描和完整性状态；草稿/直接提交/退回修改的引用准入与同事务绑定；当前业务对象和字段权限下的精确内容下载及实际页面采用。"
         },
         {
           "id": "W286-01",
@@ -239723,7 +239852,7 @@
           "unchanged": "24h effective active goal, original375 and56 partial cards and125/247 full acceptance states; single chat,PostgreSQL/local verification,no Actions,production deployment or existing-database migration."
         }
       ],
-      "timing_snapshot_at": "2026-11-03T08:16:39.560064+00:00",
+      "timing_snapshot_at": "2026-11-03T08:27:10.240064+00:00",
       "remaining_estimate_hours": [
         5,
         10.5
