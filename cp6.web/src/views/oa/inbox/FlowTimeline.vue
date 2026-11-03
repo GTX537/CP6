@@ -1,5 +1,8 @@
 <template>
   <div class="flow-timeline">
+    <p v-if="hasIncompleteActors" role="note" class="legacy-actor-note">
+      历史身份未经核实。以下人员按原记录展示，不能据此认定原审批职责或有效委派，也不能作为新版审批凭据。旧流程办理仍按原处理链执行。
+    </p>
     <template v-for="([branchKey, branchRows], bi) in branchEntries" :key="branchKey">
       <div v-if="branchEntries.length > 1" class="branch-header">
         {{ t('分支') }} {{ bi + 1 }}
@@ -32,13 +35,14 @@
               </div>
               <div class="tl-handler">
                 <template v-if="row.actualHandlerName">
-                  {{ t('实办') }}：{{ row.actualHandlerName }}
+                  {{ row.actorEvidenceStatus === 'LEGACY_ACTOR_INCOMPLETE' ? '原记录实办' : t('实办') }}：{{ row.actualHandlerName }}
                   <span v-if="row.onBehalfOfName">
-                    （代 {{ row.onBehalfOfName }} 签）
+                    <template v-if="row.actorEvidenceStatus === 'LEGACY_ACTOR_INCOMPLETE'">（原记录代办对象：{{ row.onBehalfOfName }}）</template>
+                    <template v-else>（代 {{ row.onBehalfOfName }} 签）</template>
                   </span>
                 </template>
                 <template v-else>
-                  {{ t('应办') }}：{{ row.expectedHandlerName }}
+                  {{ row.actorEvidenceStatus === 'LEGACY_ACTOR_INCOMPLETE' ? '原记录应办' : t('应办') }}：{{ row.expectedHandlerName }}
                 </template>
               </div>
               <div v-if="row.comment" class="tl-comment">{{ row.comment }}</div>
@@ -83,6 +87,7 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
+const hasIncompleteActors = computed(() => props.timeline.some(row => row.actorEvidenceStatus === 'LEGACY_ACTOR_INCOMPLETE'))
 
 const mergedRows = computed<MergedRow[]>(() =>
   mergeTimeline(props.timeline, props.forecast),
@@ -131,6 +136,7 @@ function formatTime(s?: string): string {
 .flow-timeline {
   padding: 4px 0;
 }
+.legacy-actor-note { color: var(--cp-muted); font-size: 12px; line-height: 1.6; }
 
 .branch-header {
   font-size: 12px;

@@ -16,6 +16,7 @@ export function instanceStatusText(s: number): string {
 }
 
 export interface MergedRow {
+  actorEvidenceStatus?: TimelineRow['actorEvidenceStatus'];
   forecast: boolean; nodeId: string; nodeName?: string; status?: number;
   expectedHandlerName?: string; actualHandlerName?: string; onBehalfOfName?: string;
   approvers?: string[]; resolved?: boolean; comment?: string; sentAt?: string; handledAt?: string; tokenId?: string;
@@ -25,6 +26,7 @@ export interface MergedRow {
 /** 时间线 = 持久行（完成/当前）+ 预计段（灰）。预计行 forecast=true。 */
 export function mergeTimeline(rows: TimelineRow[], forecast: ForecastStep[]): MergedRow[] {
   const persisted: MergedRow[] = rows.map(r => ({
+    actorEvidenceStatus: r.actorEvidenceStatus,
     forecast: false, nodeId: r.nodeId, nodeName: r.nodeName, status: r.status,
     expectedHandlerName: r.expectedHandlerName, actualHandlerName: r.actualHandlerName ?? undefined,
     onBehalfOfName: r.onBehalfOfName ?? undefined, comment: r.comment ?? undefined,

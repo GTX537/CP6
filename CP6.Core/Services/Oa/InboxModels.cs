@@ -34,7 +34,8 @@ public record BatchTransferPreview(int Total, IReadOnlyList<InboxPendingItem> Sa
 public record TimelineRow(int StepSeq, Guid? TokenId, string NodeId, string? NodeName,
     Guid ExpectedHandlerId, string ExpectedHandlerName, Guid? ActualHandlerId, string? ActualHandlerName,
     Guid? OnBehalfOfId, string? OnBehalfOfName, int Status, string? Comment, DateTime SentAt, DateTime? HandledAt,
-    int? StageIndex = null, int? StageRound = null);
+    int? StageIndex = null, int? StageRound = null,
+    Guid? FormToId = null, string? ActorEvidenceStatus = null);
 
 public record SnapshotRow(int StepSeq, string NodeId, string DataJson);
 public record CcRow(Guid RecipientId, string RecipientName, string? AtNodeId, bool IsRead);
