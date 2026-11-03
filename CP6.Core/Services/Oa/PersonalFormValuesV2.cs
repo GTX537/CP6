@@ -101,7 +101,7 @@ internal static class PersonalFormValuesV2
         if (!partial && FormDataValidator.ValidateFields(schema, data, null, null).Count != 0) throw Error("FORM_VALIDATION_FAILED");
     }
     internal static (string Data, string[] Errors, HashSet<string> Hidden) Recompute(FormSchema schema, string original, bool validateShape = true,
-        Action<int,int,RuleEffect,JsonObject>? observedEffect=null)
+        Action<int,int,RuleEffect,JsonObject>? observedEffect=null, Action<string,string,bool>? observeRequired=null)
     {
         var data = JsonNode.Parse(original)!.AsObject();
         var names = schema.Fields.Select(f => f.Name).ToArray();
@@ -136,7 +136,7 @@ internal static class PersonalFormValuesV2
         }
         var output = data.ToJsonString(); using var doc = JsonDocument.Parse(output);
         if(validateShape) Validate(schema, doc.RootElement, partial: true);
-        return (output, FormDataValidator.ValidateFields(schema, doc.RootElement, required, hidden).ToArray(), hidden);
+        return (output, FormDataValidator.ValidateFields(schema, doc.RootElement, required, hidden, observeRequired).ToArray(), hidden);
     }
     internal static string Project(string data, IReadOnlyDictionary<string, string> mask)
     {

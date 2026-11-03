@@ -5,6 +5,18 @@ namespace CP6.Tests.Oa;
 public sealed class PersonalFormValueTests
 {
     [Fact]
+    public void Rebase_preview_uses_final_rules_masks_and_preserves_unset_null_empty_and_false()
+    {
+        const string schema="""{"fields":[{"name":"unset","type":"input"},{"name":"nil","type":"input"},{"name":"empty","type":"input"},{"name":"flag","type":"checkbox","required":true},{"name":"optional","type":"input","required":true},{"name":"secret","type":"input","required":true},{"name":"ruleHidden","type":"input","required":true},{"name":"required","type":"input"}],"rules":[{"when":"true","then":[{"action":"optional","target":"optional"},{"action":"hide","target":"ruleHidden"},{"action":"require","target":"required"}]}]}""";
+        var mask=PersonalFormValuesV2.Schema(schema).Fields.ToDictionary(f=>f.Name,f=>f.Name=="secret"?"hidden":"edit");
+        var plan=PersonalFormRebaseV2.Build(schema,schema,"""{"nil":null,"empty":"","flag":false}""",mask,mask);
+        using var data=System.Text.Json.JsonDocument.Parse(plan.Data);
+        Assert.False(data.RootElement.TryGetProperty("unset",out _));Assert.Equal(System.Text.Json.JsonValueKind.Null,data.RootElement.GetProperty("nil").ValueKind);
+        Assert.Equal("",data.RootElement.GetProperty("empty").GetString());Assert.False(data.RootElement.GetProperty("flag").GetBoolean());
+        Assert.Equal(new[]{"flag","required"},plan.RequiredAfterRebase);Assert.Equal(new PersonalFormRebaseDiagnosticV2("required","REQUIRED"),Assert.Single(plan.Diagnostics));
+        Assert.DoesNotContain("secret",plan.RetainedPaths);Assert.DoesNotContain("ruleHidden",plan.RetainedPaths);Assert.Empty(plan.DefaultedPaths);Assert.False(plan.Loss);
+    }
+    [Fact]
     public void PersonalForm_rebase_preserves_rows_and_exact_values_when_target_row_limit_shrinks()
     {
         const string one="{\"Fields\":[{\"Name\":\"Rows\",\"Type\":\"table\",\"MaxRows\":5,\"Columns\":[{\"Name\":\"n\",\"Type\":\"number\"}]}],\"extension\":{\"a\":1,\"A\":2}}";

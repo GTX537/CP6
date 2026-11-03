@@ -43,8 +43,11 @@ public sealed record PersonalFormSubmissionV2(Guid FormDataId, Guid FormDefVersi
 public sealed record PersonalFormResultV2(string CommandId, string Outcome, Guid? ResourceId, string? ResourceVersion,
     JsonElement? Result, DateTimeOffset? RecordedAtUtc, string? CorrelationId);
 public sealed record PersonalFormRebaseChangeV2(string Path, string Kind, bool HasValue);
+public sealed record PersonalFormRebaseDiagnosticV2(string Path, string Code);
 public sealed record PersonalFormRebasePreviewV2(Guid PreviewId, string Digest, Guid SourceVersionId, Guid TargetVersionId,
-    string ExpectedVersion, DateTimeOffset ExpiresAtUtc, PersonalFormRebaseChangeV2[] Changes, string[] ValidationErrors, bool RequiresConfirmation);
+    string ExpectedVersion, DateTimeOffset ExpiresAtUtc, PersonalFormRebaseChangeV2[] Changes, string[] ValidationErrors, bool RequiresConfirmation,
+    string SourceDraftVersion, string TargetSchemaDigest, string[] RetainedPaths, string[] RemovedPaths, string[] AddedPaths,
+    string[] TypeChangedPaths, string[] DefaultedPaths, string[] RequiredAfterRebase, PersonalFormRebaseDiagnosticV2[] Diagnostics);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record PersonalFormPreviewInputV2(Guid FormVersionId, JsonElement Data);
 public sealed record PersonalFormPreviewV2(string DataJson, string[] HiddenFields, bool Valid, string[] Errors);

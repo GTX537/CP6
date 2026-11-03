@@ -13,6 +13,14 @@ const emit = defineEmits<{ changed: []; locked: [value: boolean] }>()
 const context = ref<PersonalContext>(), draft = ref<PersonalDraft>(), submission = ref<FormSubmission>()
 const model = ref<FormObject>({}), title = ref(''), loading = ref(false), readError = ref(''), valuesValid = ref(true)
 const preview = ref<ValuePreview>(), rebase = ref<RebasePreview>(), confirmedLoss = ref(false)
+const rebaseGroups = computed(() => {
+  const value = rebase.value
+  return value ? [
+    { label: '保留', paths: value.retainedPaths }, { label: '移除原值', paths: value.removedPaths },
+    { label: '新增', paths: value.addedPaths }, { label: '类型变更（不自动转换原值）', paths: value.typeChangedPaths },
+    { label: '应用默认值', paths: value.defaultedPaths }, { label: '新版必填', paths: value.requiredAfterRebase }
+  ].filter(group => group.paths.length) : []
+})
 let generation = 0, readGeneration = 0, live = true
 function clearPrivate() { generation++; readGeneration++; loading.value = false; context.value = undefined; draft.value = undefined; model.value = {}; title.value = ''; submission.value = undefined; preview.value = undefined; rebase.value = undefined }
 const commands = usePersonalCommand(clearPrivate, async result => {
@@ -109,7 +117,7 @@ async function applyRebase() {
   await commands.execute('FORM_DRAFT_REBASE', draft.value.draftId, rebase.value.expectedVersion, JSON.stringify({ previewId: rebase.value.previewId, previewDigest: rebase.value.digest, targetVersionId: rebase.value.targetVersionId, confirmRemovedValues: confirmedLoss.value }))
 }
 watch(() => [props.formKey, props.draftId], () => { clearPrivate(); void load() }, { immediate: true })
-watch(model, () => { preview.value = undefined }, { deep: true })
+watch([model, title], () => { preview.value = undefined; rebase.value = undefined; confirmedLoss.value = false }, { deep: true })
 onBeforeUnmount(() => { live = false; generation++ })
 </script>
 <template>
@@ -139,8 +147,9 @@ onBeforeUnmount(() => { live = false; generation++ })
       </section>
       <section v-if="rebase">
         <h4>重基预览</h4><p>有效期至 {{ rebase.expiresAtUtc }}。重基使用已保存内容。</p>
-        <ul><li v-for="(change, index) in rebase.changes" :key="index">{{ change.path }}：{{ change.kind }}{{ change.hasValue ? '（原值非空）' : '' }}</li></ul>
-        <p v-if="rebase.validationErrors.length">新版本校验提示：{{ rebase.validationErrors.join('；') }}</p>
+        <dl><template v-for="group in rebaseGroups" :key="group.label"><dt>{{ group.label }}</dt><dd>{{ group.paths.join('、') }}</dd></template></dl>
+        <ul><li v-for="item in rebase.diagnostics" :key="`${item.path}:${item.code}`">{{ item.path }}：{{ item.code === 'REQUIRED' ? '待补填' : item.code === 'ROW_COUNT_EXCEEDS_TARGET' ? '行数超过新版限制，保留此行；请在重基后明确调整' : item.code }}</li></ul>
+        <p v-if="rebase.validationErrors.length">重基后草稿仍可保留，但须处理校验问题后才能提交。</p>
         <el-checkbox v-if="rebase.requiresConfirmation" v-model="confirmedLoss">确认预览中列明的有值字段损失</el-checkbox>
         <el-button :disabled="locked || (rebase.requiresConfirmation && !confirmedLoss)" @click="applyRebase">按此预览重基</el-button>
       </section>
