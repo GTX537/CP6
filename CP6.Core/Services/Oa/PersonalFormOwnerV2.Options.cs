@@ -16,13 +16,14 @@ public sealed partial class PersonalFormOwnerV2
     private Task CheckOptions(FormSchema schema,string data,string? before,bool requireAll,CancellationToken ct)
         =>new SharedDictionaryOptionsV1(db).Check(schema,data,before,requireAll,ct);
 
-    public async Task<FormOptionPageV1> OptionsAsync(FormOptionQueryV1 input,CancellationToken ct=default)
+    public async Task<FormOptionPageV1> OptionsAsync(FormOptionQueryV1 input,CancellationToken ct=default,Guid? behalf=null)
     {
         if(input.Context==null||input.Context.FormVersionId==Guid.Empty||input.FieldPath==null||input.FieldPath.Length is <1 or >2
             ||input.FieldPath.Any(string.IsNullOrEmpty)||input.Search==null||input.Search.Length>100||input.Page is <1 or >100000)
             throw Error("FORM_OPTION_QUERY_INVALID",400);
         Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var lease=await ReadLease(ct);var actor=await Actor(ct);
-        var context=input.Context;FormPublicationV2 form;Dictionary<string,string> mask;
+        var context=input.Context;FormPublicationV2 form;Dictionary<string,string> mask;TaskAuthority? taskAuthority=null;
+        if(behalf!=null&&context.Kind!="TASK")throw Error("FORM_ACTUAL_ONLY",403);
         if(context.Kind=="FORM"&&context.Id==null&&!string.IsNullOrEmpty(context.Key))
         {
             await Action(actor,"query",ct);var source=await Resolve(actor,context.Key,false,ct);form=source.Form;mask=source.Mask;
@@ -38,6 +39,11 @@ public sealed partial class PersonalFormOwnerV2
             if((await db.Wf_FlowInstances.AsNoTracking().SingleAsync(i=>i.Id==instance,ct)).Status!=FlowInstanceStatus.Draft)throw Error("ALREADY_RESUBMITTED",409);
             form=await Publication(source.Head,source.FormVersion,ct);
         }
+        else if(context.Kind=="TASK"&&context.Id is Guid task&&context.Key==null)
+        {
+            var source=await TaskSourceAsync(task,ct);taskAuthority=await TaskEditable(source,actor,behalf,ct);
+            form=await Publication(source.FormHead,source.FormVersion,ct);mask=taskAuthority.Mask;
+        }
         else throw Error("FORM_OPTION_QUERY_INVALID",400);
         if(form.VersionId!=context.FormVersionId)throw Error("FORM_CONTEXT_CHANGED",409);
         if(mask.GetValueOrDefault(input.FieldPath[0])!="edit")throw Error("FIELD_OPTION_FORBIDDEN",403);
@@ -45,6 +51,6 @@ public sealed partial class PersonalFormOwnerV2
             &&f.Column==(input.FieldPath.Length==2?input.FieldPath[1]:null));
         if(field==null)throw Error("FIELD_OPTION_FORBIDDEN",403);
         var result=await new SharedDictionaryOptionsV1(db).Options(field.Source,input.Search,input.Page,ct);
-        await Final(actor,lease,ct,false);return result;
+        if(taskAuthority!=null)await FinalTask(taskAuthority,lease,ct);else await Final(actor,lease,ct,false);return result;
     }
 }

@@ -9,7 +9,8 @@ using Microsoft.EntityFrameworkCore;
 namespace CP6.Core.Services.Oa;
 
 public sealed record PersonalFormTaskContextV2(ApprovalTaskDecisionViewV2 Task, Guid FormDataId, Guid RootInstanceId,
-    Guid FormVersionId, string Name, string SchemaJson, string DataJson, Dictionary<string,string> FieldMask,string[] AllowedDecisions);
+    Guid FormVersionId, string Name, string SchemaJson, string DataJson, Dictionary<string,string> FieldMask,string[] AllowedDecisions,
+    string Kind,string FormDataVersion,string FormKey,Guid FlowVersionId,string NodeId,Guid TokenId,int StageIndex,int StageRound);
 public sealed record PersonalFormTaskResultV2(Guid CommandId, string State, Guid? VoteId,
     ApprovalTaskDecisionViewV2? Task, string QueryRef);
 
@@ -59,7 +60,24 @@ public sealed partial class PersonalFormOwnerV2
         }
         var publication=await Publication(source.FormHead,source.FormVersion,ct);var mask=await Mask(actor,source.FormHead,publication,ct);
         if(principalPermission!=null)mask=IntersectMasks(mask,await Mask(principalPermission,source.FormHead,publication,ct));
+        mask=PinnedTaskMask(source,mask);
         return new(assignment,actor,principal,principal==actor.UserId?null:principal,grant,mask,action,instance.FlowKey,instance.BizType);
+    }
+    private static Dictionary<string,string> PinnedTaskMask(TaskSource source,Dictionary<string,string> mask)
+    {
+        var graph=JsonSerializer.Deserialize<FlowSchema>(Parse<FlowPublicationV2>(source.Publication).Fields["SchemaJson"]!,new JsonSerializerOptions{PropertyNameCaseInsensitive=true})!;
+        var node=graph.Nodes.Single(n=>n.Id==Parse<PersonalFormAssignmentV2>(source.Assignment).NodeId);
+        return node.FieldPerms is {} fields?IntersectMasks(mask,mask.Keys.ToDictionary(k=>k,k=>fields.GetValueOrDefault(k,"edit"),StringComparer.Ordinal)):mask;
+    }
+    private async Task<TaskAuthority> TaskEditable(TaskSource source,UserPermissionContext actor,Guid? behalf,CancellationToken ct)
+    {
+        var access=await TaskAccess(source,actor,behalf,true,ct,"TASK_READ");
+        if(access.OnBehalfOf==null)return access;
+        var reader=new TaskDelegationReaderV2(db,fence.EnvironmentId);
+        foreach(var action in new[]{"TASK_APPROVE","TASK_REJECT"})
+            if(await reader.Match(actor.UserId,access.Principal,action,access.FlowKey,access.BusinessType,ct) is {} grant)
+                return access with{Grant=grant,Action=action};
+        throw Error("TASK_EDIT_FORBIDDEN",403);
     }
     public async Task<PersonalFormTaskContextV2> TaskContextAsync(Guid task,Guid? behalf=null,CancellationToken ct=default)
     {
@@ -70,7 +88,9 @@ public sealed partial class PersonalFormOwnerV2
         foreach(var decision in new[]{"approve","reject"})
             if(access.OnBehalfOf==null||await reader.Match(actor.UserId,access.Principal,decision=="approve"?"TASK_APPROVE":"TASK_REJECT",access.FlowKey,access.BusinessType,ct)!=null)allowed.Add(decision);
         var result=new PersonalFormTaskContextV2(await TaskView(task,ct),source.Data,source.Root,form.VersionId,form.Fields["Name"]!,
-            ProjectSchema(form.Fields["SchemaJson"]!,access.Mask),PersonalFormValuesV2.Project(data.DataJson,access.Mask),access.Mask,allowed.ToArray());
+            ProjectSchema(form.Fields["SchemaJson"]!,access.Mask),PersonalFormValuesV2.Project(data.DataJson,access.Mask),access.Mask,allowed.ToArray(),
+            "SFS",Convert.ToBase64String(data.RowVersion!),form.Key,access.Assignment.FlowVersionId,access.Assignment.NodeId,
+            access.Assignment.TokenId,access.Assignment.StageIndex,access.Assignment.StageRound);
         await FinalTask(access,lease,ct);return result;
     }
     private async Task FinalTask(TaskAuthority access,ScopeAuthorizationLeaseV1 lease,CancellationToken ct)
@@ -121,28 +141,7 @@ public sealed partial class PersonalFormOwnerV2
                 var replay=Parse<PersonalFormResultV2>(old.Result).Result!.Value.Deserialize<PersonalFormTaskResultV2>(Json)!;
                 await Final(actor,lease,ct,false);return replay;
             }
-            await WriteReady(lease,ct);
-            if(string.IsNullOrEmpty(ifMatch))throw Error("PRECONDITION_REQUIRED",428);
-            if(ifMatch!="\""+input.TaskRowVersion+"\"")throw Error("PRECONDITION_FAILED",412);
-            var source=await TaskSourceAsync(task,ct);var access=await TaskAccess(source,actor,behalf,true,ct,input.Decision=="approve"?"TASK_APPROVE":"TASK_REJECT");var before=await TaskView(task,ct);
-            if(before.TaskRowVersion!=input.TaskRowVersion||before.InstanceRowVersion!=input.InstanceRowVersion)throw Error("PRECONDITION_FAILED",412);
-            var write=Guid.NewGuid();await BeginCommand(write,actor.UserId,Decision,resource,command,null,source.Data,source.Root,task,ct);
-            var engine=new FlowEngine(db,new ApproverResolver(db,exactConditions:true));
-            var root=await engine.StagePersonalDecisionV2(fence.EnvironmentId,source.Data,source.Root,Parse<FlowPublicationV2>(source.Publication),
-                access.Assignment,actor.UserId,access.OnBehalfOf,input.Decision=="approve",input.Comment,ct);
-            await AssignmentNotifications(write,await engine.SavePersonalRuntime(write,ct),ct);
-            var vote=Guid.NewGuid();
-            await db.Database.ExecuteSqlInterpolatedAsync($"""
-                INSERT INTO cp6_personal_form_v2.votes(id,command_id,task_id,body)
-                VALUES({vote},{write},{task},{Encode(new{approved=input.Decision=="approve",input.Comment,Principal=access.Principal,Actual=actor.UserId,access.OnBehalfOf,access.Grant,access.Assignment,Scope=lease.Snapshot,Occurred=Clock()})})
-                """,ct);
-            await Notification(write,"TASK_DECIDED",actor.UserId,WfNotificationType.TaskHandled,"待办已办理",before.InstanceId,task,root.FlowKey,ct);
-            if(root.Status is FlowInstanceStatus.Approved or FlowInstanceStatus.Rejected)await TerminalNotification(write,root,ct);
-            await db.SaveChangesAsync(ct);
-            var result=new PersonalFormTaskResultV2(input.CommandId,"COMPLETED",vote,await TaskView(task,ct),
-                "/api/oa/v2/personal-forms/tasks/"+task+"/commands/"+input.CommandId);
-            await Complete(write,command,task,result.Task.TaskRowVersion,result,new{Before=before,After=result.Task,access.Principal,Actor=actor.UserId,access.Grant,access.Mask,Scope=lease.Snapshot},ct);
-            await FinalTask(access,lease,ct);committing=true;await tx.CommitAsync(ct);return result;
+            throw Error("SFS_THREE_VERSIONS_REQUIRED",410);
         }
         catch(Exception ex){await Rollback(tx,committing,ex);throw;}
     }

@@ -39,8 +39,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(0,await h.Db.Database.SqlQuery<int>($"SELECT count(*)::int AS \"Value\" FROM cp6_native_timeout_v2.results WHERE execution_id={claim.ExecutionId}").SingleAsync());
         var child=added.Result!.Value.GetProperty("task").GetProperty("taskId").GetGuid();
         TaskActor(h,target);var reviewer=PersonalForm(h with{User=target});var c=await reviewer.TaskContextAsync(child);
-        var vote=new ApprovalTaskDecisionInputV2(Guid.NewGuid(),"approve","before sign complete",c.Task.TaskRowVersion,c.Task.InstanceRowVersion);
-        await reviewer.DecideTaskAsync(child,vote,ifMatch:"\""+vote.TaskRowVersion+"\"");TaskActor(h,h.User);
+        var vote=NativeVote(c,"before sign complete","approve");
+        await DecideNative(reviewer,child,vote);TaskActor(h,h.User);
         var resumed=Assert.Single(await worker.ClaimAsync());Assert.Equal(claim.ExecutionId,resumed.ExecutionId);Assert.Equal(claim.Occurrence,resumed.Occurrence);
         Assert.Equal("COMPLETED",(await worker.ExecuteAsync(resumed)).State);
     }
@@ -51,12 +51,12 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var f=await NativeFormSetup(h,configure:g=>{var n=g.Nodes.Single(n=>n.Id=="a");n.TimeoutHours=1;n.TimeoutAction="reject";});
         var due=await h.Db.Database.SqlQuery<DateTimeOffset>($"SELECT due_at AS \"Value\" FROM cp6_native_timeout_v2.deadlines WHERE task_id={f.Task}").SingleAsync();
         var worker=await TimeoutOwner(h,f.Owner,due.AddSeconds(1));var claim=Assert.Single(await worker.ClaimAsync());
-        var c=await f.Owner.TaskContextAsync(f.Task);var vote=new ApprovalTaskDecisionInputV2(Guid.NewGuid(),"approve","concurrent human",c.Task.TaskRowVersion,c.Task.InstanceRowVersion);
+        var c=await f.Owner.TaskContextAsync(f.Task);var vote=NativeVote(c,"concurrent human","approve");
         var entered=new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);var release=new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         hook.Before=async command=>{if(command.CommandText.Contains("INSERT INTO cp6_personal_form_v2.outbox")){entered.TrySetResult();await release.Task;}};
         var executing=worker.ExecuteAsync(claim);await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
         await using var peer=server.Context(new TenantContext{CurrentTenantId=h.Tenant});var human=PersonalForm(h with{Db=peer});
-        var competing=Record.ExceptionAsync(()=>human.DecideTaskAsync(f.Task,vote,ifMatch:"\""+vote.TaskRowVersion+"\""));
+        var competing=Record.ExceptionAsync(()=>DecideNative(human,f.Task,vote));
         try{await Task.Delay(100);Assert.False(competing.IsCompleted);}finally{release.TrySetResult();}
         Assert.Equal("COMPLETED",(await executing).State);Assert.IsType<ScopeAuthorizationExceptionV1>(await competing);
         Assert.Equal(2,(await h.Db.Wf_FlowInstances.AsNoTracking().SingleAsync()).Status);

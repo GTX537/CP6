@@ -64,8 +64,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var worker=await TimeoutOwner(h,f.Owner,due.AddSeconds(1));var claim=Assert.Single(await worker.ClaimAsync());
         await h.Db.Database.ExecuteSqlInterpolatedAsync($"UPDATE cp6_native_timeout_v2.registrations SET enabled=false WHERE service_id={claim.ServiceId}");
         Assert.Equal("TIMEOUT_SERVICE_NOT_AUTHORIZED",(await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(()=>worker.ExecuteAsync(claim))).Message);
-        var view=await f.Owner.TaskContextAsync(f.Task);var vote=new ApprovalTaskDecisionInputV2(Guid.NewGuid(),"approve","human acted first",view.Task.TaskRowVersion,view.Task.InstanceRowVersion);
-        await f.Owner.DecideTaskAsync(f.Task,vote,ifMatch:"\""+vote.TaskRowVersion+"\"");
+        var view=await f.Owner.TaskContextAsync(f.Task);var vote=NativeVote(view,"human acted first","approve");
+        await DecideNative(f.Owner,f.Task,vote);
         await h.Db.Database.ExecuteSqlInterpolatedAsync($"UPDATE cp6_native_timeout_v2.registrations SET enabled=true WHERE service_id={claim.ServiceId}");
         Assert.Equal("TIMEOUT_LEASE_LOST",(await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(()=>worker.ExecuteAsync(claim))).Message);
         Assert.Equal(FlowInstanceStatus.Approved,(await h.Db.Wf_FlowInstances.AsNoTracking().SingleAsync()).Status);
@@ -118,8 +118,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(2,deadline.Revision);Assert.Null(deadline.DueAt);Assert.Equal("NONE",deadline.Policy.EscalationReset);
         Assert.Contains(await h.Db.Wf_FlowFormTos.AsNoTracking().ToArrayAsync(),t=>t.Status==FlowFormToStatus.Transferred&&t.ActualHandlerId==claim.ServiceId&&t.ExpectedHandlerId==h.User);
         TaskActor(h,target);var owner=PersonalForm(h with{User=target});var c=await owner.TaskContextAsync(f.Task);
-        var input=new ApprovalTaskDecisionInputV2(Guid.NewGuid(),"approve","new principal human vote",c.Task.TaskRowVersion,c.Task.InstanceRowVersion);
-        Assert.Equal(FlowInstanceStatus.Approved,(await owner.DecideTaskAsync(f.Task,input,ifMatch:"\""+input.TaskRowVersion+"\"")).Task!.InstanceStatus);
+        var input=NativeVote(c,"new principal human vote","approve");
+        Assert.Equal(FlowInstanceStatus.Approved,(await DecideNative(owner,f.Task,input)).Task!.InstanceStatus);
     }
 
     [CurrentPermissionPostgresFact]
@@ -148,8 +148,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var f=await NativeFormSetup(h,configure:g=>{var n=g.Nodes.Single(n=>n.Id=="a");n.TimeoutHours=1;n.TimeoutAction="reject";});
         var due=await h.Db.Database.SqlQuery<DateTimeOffset>($"SELECT due_at AS \"Value\" FROM cp6_native_timeout_v2.deadlines WHERE task_id={f.Task}").SingleAsync();
         var worker=await TimeoutOwner(h,f.Owner,due.AddSeconds(1));var claim=Assert.Single(await worker.ClaimAsync());
-        var c=await f.Owner.TaskContextAsync(f.Task);var vote=new ApprovalTaskDecisionInputV2(Guid.NewGuid(),"approve","human winner",c.Task.TaskRowVersion,c.Task.InstanceRowVersion);
-        await f.Owner.DecideTaskAsync(f.Task,vote,ifMatch:"\""+vote.TaskRowVersion+"\"");
+        var c=await f.Owner.TaskContextAsync(f.Task);var vote=NativeVote(c,"human winner","approve");
+        await DecideNative(f.Owner,f.Task,vote);
         var result=await worker.ExecuteAsync(claim);Assert.Equal("SKIPPED_ALREADY_HANDLED",result.State);Assert.Null(result.CommandId);
         Assert.Equal(1,(await NativeInbox(h,f.Owner).DetailAsync(f.Instance)).Votes.Length);Assert.Equal(result,await worker.ExecuteAsync(claim));
     }

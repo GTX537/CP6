@@ -1,5 +1,5 @@
 import http from '../http'
-export interface FormFileScope { kind: 'FORM' | 'DRAFT' | 'RETURNED' | 'HISTORY'; key: string | null; id: string | null; formVersionId: string; expectedVersion?: string | null; expectedDataVersion?: string | null }
+export interface FormFileScope { kind: 'FORM' | 'DRAFT' | 'RETURNED' | 'HISTORY' | 'TASK'; key: string | null; id: string | null; formVersionId: string; expectedVersion?: string | null; expectedDataVersion?: string | null }
 export interface FormFileReadContext { scope?: FormFileScope; instanceId?: string; queryDataId?: string }
 export interface FormFileView { reference: string; fileName: string; contentRef: { id: string; digest: string; byteLength: number; mediaType: string }; stateVersion: string; inspection: { status: string; provider: string; reason: string }; held: boolean; availability: string }
 export interface FormFileOperation { operationId: string; state: 'COMMITTED' | 'CLOSED' | 'UNKNOWN'; result?: FormFileView }

@@ -180,7 +180,7 @@ public sealed partial class PersonalFormOwnerV2
     }
     private async Task<PersonalFormResultV2> DiscloseTaskOperation(StoredCommand old,UserPermissionContext actor,CancellationToken ct)
     {
-        if(old.Operation is SendBack or Transfer or AddSign)
+        if(old.Operation is SendBack or Transfer or AddSign or SfsDecision)
         {var source=await TaskSourceAsync(Guid.Parse(old.Resource),ct);await Mask(actor,source.FormHead,await Publication(source.FormHead,source.FormVersion,ct),ct);}
         else if(old.Operation==ResolveApprover){var row=await Resolution(Guid.Parse(old.Resource),ct);await ResolutionAccess(await PersonalInstanceSource(row.Instance,ct),actor,ct);}
         else await ReturnedAccess(await ReturnedSourceAsync(Guid.Parse(old.Resource),ct),actor,ct);

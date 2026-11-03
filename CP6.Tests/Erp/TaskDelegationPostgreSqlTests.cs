@@ -72,15 +72,15 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var read=await inbox.MarkReadAsync("TASK",runtime.Task,PersonalCommand(new{},"delegate-read"),h.User);
         Assert.Equal(actual,read.Result!.ActualUserId);Assert.Equal(h.User,read.Result.PrincipalId);Assert.Equal(grant.GrantId,read.Result.GrantId);Assert.Equal(grant.Revision,read.Result.GrantRevision);
         var context=await form.TaskContextAsync(runtime.Task,h.User);
-        var input=new ApprovalTaskDecisionInputV2(Guid.NewGuid(),"approve","explicit delegate decision",context.Task.TaskRowVersion,context.Task.InstanceRowVersion);
-        Assert.Equal("GRANT_SCOPE_DENIED",(await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(()=>form.DecideTaskAsync(runtime.Task,input,h.User,"\""+input.TaskRowVersion+"\""))).Message);
+        var input=NativeVote(context,"explicit delegate decision","approve");
+        Assert.Equal("GRANT_SCOPE_DENIED",(await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(()=>DecideNative(form,runtime.Task,input,h.User))).Message);
         TaskActor(h,h.User);var revised=(await owner.WriteAsync("REVISE",grant.GrantId,PersonalCommand(GrantInput(actual),"allow-approve",grant.Version.ToString("D")))).Result!;
         TaskActor(h,actual);Assert.True(Assert.Single((await inbox.DetailAsync(runtime.Instance,h.User)).Tasks).CanRequestDecisionContext);
-        var result=await form.DecideTaskAsync(runtime.Task,input,h.User,"\""+input.TaskRowVersion+"\"");Assert.Equal("COMPLETED",result.State);
+        var result=await DecideNative(form,runtime.Task,input,h.User);Assert.Equal("COMPLETED",result.State);
         var vote=Assert.Single((await inbox.DetailAsync(runtime.Instance,h.User)).Votes);Assert.Equal(actual,vote.ActualUserId);Assert.Equal(h.User,vote.PrincipalId);Assert.Equal(h.User,vote.OnBehalfOfId);
         TaskActor(h,h.User);await owner.WriteAsync("REVOKE",grant.GrantId,PersonalCommand(new TaskDelegationRevokeV2("finished"),"revoke",revised.Version.ToString("D")));
         TaskActor(h,actual);Assert.Equal(403,(await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(()=>inbox.ListAsync("done",behalf:h.User))).Status);
-        Assert.Equal(result.VoteId,(await form.TaskOriginalAsync(runtime.Task,input.CommandId))!.VoteId);
+        Assert.Equal(result.VoteId,(await NativeOriginal(form,runtime.Task,input.CommandId))!.VoteId);
         Assert.Equal(h.User,(await h.Db.Wf_FlowTasks.SingleAsync(t=>t.Id==runtime.Task)).AssigneeId);
     }
     private TaskDelegationOwnerV2 TaskGrants(Harness h)=>new(h.Db,ScopeFence(h),PersonalForm(h,_=>Task.FromResult(

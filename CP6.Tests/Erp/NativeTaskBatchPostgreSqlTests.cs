@@ -34,8 +34,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             if(intervene)
             {
                 var to=PersonalForm(DecisionActor(h,target));var context=await to.TaskContextAsync(first.TaskId);
-                var vote=new ApprovalTaskDecisionInputV2(Guid.NewGuid(),"approve","intervening independent decision",context.Task.TaskRowVersion,context.Task.InstanceRowVersion);
-                await to.DecideTaskAsync(first.TaskId,vote,ifMatch:"\""+vote.TaskRowVersion+"\"");
+                var vote=NativeVote(context,"intervening independent decision","approve");
+                await DecideNative(to,first.TaskId,vote);
             }
             var report=await owner.ExecuteAsync(new(preview.BatchId,preview.PreviewDigest));
             Assert.Equal("SUCCEEDED",report.Items[0].State);Assert.Equal(intervene?"REJECTED":"SUCCEEDED",report.Items[1].State);
@@ -57,8 +57,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(ApprovalCanonicalV2.Bytes(preview),ApprovalCanonicalV2.Bytes(await owner.OriginalPreviewAsync("preview-two")));
         Assert.Equal(ApprovalCanonicalV2.Bytes(preview),ApprovalCanonicalV2.Bytes(await owner.PreviewAsync(raw)));
         var later=PersonalResult<PersonalFormSubmissionV2>(await f.Owner.SubmitDirectAsync("personal",PersonalCommand(PersonalDirect(context),"later")));
-        var vote=await f.Owner.TaskContextAsync(f.Task);var command=new ApprovalTaskDecisionInputV2(Guid.NewGuid(),"approve","completed after preview",vote.Task.TaskRowVersion,vote.Task.InstanceRowVersion);
-        await f.Owner.DecideTaskAsync(f.Task,command,ifMatch:"\""+command.TaskRowVersion+"\"");
+        var vote=await f.Owner.TaskContextAsync(f.Task);var command=NativeVote(vote,"completed after preview","approve");
+        await DecideNative(f.Owner,f.Task,command);
         var report=await owner.ExecuteAsync(new(preview.BatchId,preview.PreviewDigest));
         Assert.Equal("REJECTED",report.Items.Single(x=>x.TaskId==f.Task).State);Assert.Equal("TASK_NOT_PENDING",report.Items.Single(x=>x.TaskId==f.Task).Error);
         Assert.Equal("SUCCEEDED",report.Items.Single(x=>x.TaskId==secondTask.Id).State);

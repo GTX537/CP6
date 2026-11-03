@@ -30,8 +30,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(JsonSerializer.Serialize(result),JsonSerializer.Serialize(await f.Owner.TransferTaskAsync(f.Task,raw)));
         Assert.Equal(404,(await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(()=>f.Owner.TaskContextAsync(f.Task))).Status);
         TaskActor(h,target);var targetOwner=PersonalForm(h with{User=target});var current=await targetOwner.TaskContextAsync(f.Task);
-        var vote=new ApprovalTaskDecisionInputV2(Guid.NewGuid(),"approve","authorized transferee",current.Task.TaskRowVersion,current.Task.InstanceRowVersion);
-        Assert.Equal(FlowInstanceStatus.Approved,(await targetOwner.DecideTaskAsync(f.Task,vote,ifMatch:"\""+vote.TaskRowVersion+"\"")).Task!.InstanceStatus);
+        var vote=NativeVote(current,"authorized transferee","approve");
+        Assert.Equal(FlowInstanceStatus.Approved,(await DecideNative(targetOwner,f.Task,vote)).Task!.InstanceStatus);
         Assert.Contains(await h.Db.Wf_FlowFormTos.AsNoTracking().ToArrayAsync(),f=>f.Status==FlowFormToStatus.Transferred&&f.ExpectedHandlerId==h.User&&f.ActualHandlerId==h.User);
         Assert.Contains(await h.Db.Wf_FlowFormTos.AsNoTracking().ToArrayAsync(),f=>f.Status==FlowFormToStatus.Approved&&f.ExpectedHandlerId==target&&f.ActualHandlerId==target);
     }
@@ -46,8 +46,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(FlowTaskStatus.Suspended,(await h.Db.Wf_FlowTasks.AsNoTracking().SingleAsync(t=>t.Id==f.Task)).Status);
         Assert.Equal(JsonSerializer.Serialize(result),JsonSerializer.Serialize(await f.Owner.AddSignTaskAsync(f.Task,raw)));
         TaskActor(h,target);var owner=PersonalForm(h with{User=target});var c=await owner.TaskContextAsync(added);
-        var vote=new ApprovalTaskDecisionInputV2(Guid.NewGuid(),"approve","additional review complete",c.Task.TaskRowVersion,c.Task.InstanceRowVersion);
-        Assert.Equal(FlowInstanceStatus.Running,(await owner.DecideTaskAsync(added,vote,ifMatch:"\""+vote.TaskRowVersion+"\"")).Task!.InstanceStatus);
+        var vote=NativeVote(c,"additional review complete","approve");
+        Assert.Equal(FlowInstanceStatus.Running,(await DecideNative(owner,added,vote)).Task!.InstanceStatus);
         Assert.Equal(FlowTaskStatus.Pending,(await h.Db.Wf_FlowTasks.AsNoTracking().SingleAsync(t=>t.Id==f.Task)).Status);
         Assert.Equal(2,await h.Db.Wf_FlowTasks.CountAsync(t=>t.Status==FlowTaskStatus.Pending));
     }
@@ -82,8 +82,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(JsonSerializer.Serialize(returned,PersonalFormOwnerV2.Json),JsonSerializer.Serialize(await f.Owner.OriginalAsync("OA_TASK_SENDBACK",f.Task.ToString(),"return"),PersonalFormOwnerV2.Json));
         var current=await f.Owner.TaskContextAsync(task);Assert.Contains("edited",current.DataJson);
         Assert.Equal(context.FormDefVersionId,current.FormVersionId);
-        var decision=new ApprovalTaskDecisionInputV2(Guid.NewGuid(),"approve","new cycle only",current.Task.TaskRowVersion,current.Task.InstanceRowVersion);
-        var finished=await f.Owner.DecideTaskAsync(task,decision,ifMatch:"\""+decision.TaskRowVersion+"\"");
+        var decision=NativeVote(current,"new cycle only","approve");
+        var finished=await DecideNative(f.Owner,task,decision);
         Assert.Equal(FlowInstanceStatus.Approved,finished.Task!.InstanceStatus);
         Assert.Equal(1,await h.Db.Wf_FlowInstances.CountAsync());Assert.Equal(1,await h.Db.Wf_FormDatas.CountAsync());
         Assert.Equal(1,await h.Db.Database.SqlQuery<int>($"SELECT count(*)::int AS \"Value\" FROM cp6_personal_form_v2.votes WHERE task_id={task}").SingleAsync());

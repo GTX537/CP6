@@ -21,6 +21,7 @@ watch(valid, value => emit('validity', value), { immediate: true })
 watch(() => writeFormJson(props.fields), () => { errors.value = {}; edits.value = {}; children.value = {} })
 function assign(field: FormObject, value: FormValue | undefined) {
   if (locked(field)) return
+  if (value === undefined && props.allowUnset === false) value = null
   const result = { ...props.modelValue }
   if (value === undefined) delete result[name(field)]; else result[name(field)] = value
   delete errors.value[name(field)]; delete edits.value[name(field)]

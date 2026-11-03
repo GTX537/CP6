@@ -50,11 +50,12 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         using var taskResponse=await host.Send(BoundRequest(cookies,root+"/personal-forms/tasks/"+task.Id+"/context"));
         var current=await PersonalHttpResult<PersonalFormTaskContextV2>(taskResponse);Assert.Contains("HTTP draft",current.DataJson);
         var input=new ApprovalTaskDecisionInputV2(Guid.NewGuid(),"approve","HTTP verified",current.Task.TaskRowVersion,current.Task.InstanceRowVersion);
-        using var missing=await host.Send(BoundRequest(cookies,root+"/personal-forms/tasks/"+task.Id+"/decision",input));Assert.Equal((HttpStatusCode)428,missing.StatusCode);
-        using var decision=BoundRequest(cookies,root+"/personal-forms/tasks/"+task.Id+"/decision",input);decision.Headers.TryAddWithoutValidation("If-Match","\""+input.TaskRowVersion+"\"");
-        using var decided=await host.Send(decision);var accepted=await PersonalHttpResult<PersonalFormTaskResultV2>(decided);Assert.Equal(1,accepted.Task!.InstanceStatus);
-        using var original=await host.Send(BoundRequest(cookies,root+"/personal-forms/tasks/"+task.Id+"/commands/"+input.CommandId));
-        Assert.Equal(accepted,await PersonalHttpResult<PersonalFormTaskResultV2>(original));
+        using var retired=await host.Send(BoundRequest(cookies,root+"/personal-forms/tasks/"+task.Id+"/decision",input));Assert.Equal(HttpStatusCode.Gone,retired.StatusCode);
+        var vote=new SfsTaskDecisionInputV2("SFS",task.Id,"APPROVE",PersonalData("{}"),current.Task.TaskRowVersion,current.Task.InstanceRowVersion,current.FormDataVersion,"HTTP verified");
+        using var decision=PersonalHttp(cookies,root+"/personal-forms/tasks/"+task.Id+"/decisions",PersonalCommand(vote,input.CommandId.ToString("D"),vote.ExpectedTaskVersion));
+        using var decided=await host.Send(decision);var accepted=await PersonalHttpResult<PersonalFormResultV2>(decided);Assert.Equal(1,PersonalResult<SfsTaskDecisionResultV2>(accepted).Task.InstanceStatus);
+        using var original=await host.Send(BoundRequest(cookies,root+"/personal-forms/commands/SFS_TASK_DECISION/"+task.Id+"/"+input.CommandId));
+        Assert.Equal(ApprovalCanonicalV2.Bytes(accepted),ApprovalCanonicalV2.Bytes(await PersonalHttpResult<PersonalFormResultV2>(original)));
         Assert.Equal("FORM_DECISION_OWNER_REQUIRED",(await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(()=>new FlowEngine(h.Db,new ApproverResolver(h.Db)).ActAsync(task.Id,h.User,true))).Message);
         await Assert.ThrowsAsync<Npgsql.PostgresException>(()=>h.Db.Wf_FormDatas.Where(x=>x.Id==form.FormDataId).ExecuteUpdateAsync(x=>x.SetProperty(f=>f.DataJson,"{}")));
         await Assert.ThrowsAsync<Npgsql.PostgresException>(()=>h.Db.Wf_FlowTasks.Where(x=>x.Id==task.Id).ExecuteUpdateAsync(x=>x.SetProperty(t=>t.Status,0)));
