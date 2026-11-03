@@ -68,6 +68,9 @@ export interface InboxStats {
 }
 
 export interface TimelineRow {
+  /** Original read-model row, not an inferred task or principal mapping. */
+  formToId?: string
+  actorEvidenceStatus?: 'LEGACY_ACTOR_INCOMPLETE'
   stepSeq: number
   tokenId?: string
   nodeId: string

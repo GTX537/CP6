@@ -161897,6 +161897,11 @@
       "date": "2026-11-03",
       "change": "W291按原卡逐项核销WP12-08任务办理：SFS三版本/APP双版本、服务器实际分型、当前双身份与SOD、轮次计票、原命令/TxD、稳定TaskId及CC拒绝审批均有实际证据；正式整卡前置WP12-04/10尚未核销，保持PLANNED。 原375仍28DONE/2IN_PROGRESS/345PLANNED；原59局部4闭环/55余项。125完整业务目标0关闭、247正式运行验收NOT_RUN保持；其他OA卡与部署状态不连带完成。",
       "evidence": "docs/development/evidence/W291-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-03",
+      "change": "W292：历史任务读面明确身份缺证与准确原FormTo引用，保留原字段/旧链并区分未核实身份；受控LegacyPrincipalMapping迁移设计边界已记录，本轮不执行转换。",
+      "evidence": "docs/development/evidence/W292-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -198172,7 +198177,8 @@
         "report": "docs/development/evidence/W291-01/DELIVERY.md",
         "full_task_completed": false,
         "validation": "本轮新执行2项实际Main HTTP/隔离PostgreSQL18 CC拒绝审批：SFS和APP仅抄送用户具有菜单approve仍不可获取办理上下文或借他人任务提交；任务与投票/命令无变化。其他卡内行为复用W274–W290已采用的准确有效证据，BUG730评论容量修复证据另引用；未重跑产品全套。",
-        "remaining": "原定义WP12-04与WP12-10为整卡前置，仍PLANNED；先分别核销提供者原卡，不能以未定义局部采用绕过台账。"
+        "remaining": "原定义WP12-04与WP12-10为整卡前置，仍PLANNED；先分别核销提供者原卡，不能以未定义局部采用绕过台账。",
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave291-final-verification.json"
       }
     },
     {
@@ -198292,6 +198298,26 @@
           "handoff_branch_deleted": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave277-final-verification.json"
         }
+      },
+      "wave292_legacy_actor_disclosure": {
+        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W292-01/DELIVERY.md",
+        "validation": "本地隔离PostgreSQL18/真实Main HTTP旧引擎身份场景通过，另2项既有详情行为通过；1项Vue生命周期/原记录展示行为通过，显式应用vue-tsc --build通过。旧任务v2入口404、无权读403、无原历史改写/无v2投票均实际验证；没有执行迁移或新浏览器到数据库链。",
+        "remaining": "原375仍28DONE/2IN_PROGRESS/345PLANNED；原59局部4闭环/55余项，125完整目标与247正式验收状态不变。WP12-10及其定义发布前置尚待整卡核销；WP12-04/08原依赖保留。",
+        "full_task_completed": false
+      },
+      "scope_reconciliation": {
+        "classification": "明确实现余项",
+        "delivered": " W292：历史任务读面明确身份缺证与准确原FormTo引用，保留原字段/旧链并区分未核实身份；受控LegacyPrincipalMapping迁移设计边界已记录，本轮不执行转换。",
+        "evidence_refs": [
+          "docs/development/evidence/W292-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "window": "W292-01",
+        "as_of": "2026-11-03",
+        "report": "docs/development/evidence/W292-01/DELIVERY.md",
+        "new_product_validation": true,
+        "remaining": "原375仍28DONE/2IN_PROGRESS/345PLANNED；原59局部4闭环/55余项，125完整目标与247正式验收状态不变。WP12-10及其定义发布前置尚待整卡核销；WP12-04/08原依赖保留。"
       }
     },
     {
@@ -202272,10 +202298,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261103-wave291",
-      "path": "docs/development/dispatch/20261103-wave291/README.md",
-      "baseline_sha": "27ec7cbeebd639486e8f647ffbfd45640816c62a",
-      "registered_at": "2026-11-03T13:26:27.659262+00:00",
+      "id": "20261103-wave292",
+      "path": "docs/development/dispatch/20261103-wave292/README.md",
+      "baseline_sha": "22978c916a9e656d2bde3a46024da5fddff2b89d",
+      "registered_at": "2026-11-03T13:41:51.909973+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -202294,20 +202320,20 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W291-01",
-          "workspace_task": "W291-01",
+          "id": "W292-01",
+          "workspace_task": "W292-01",
           "related_tasks": [
-            "WP12-08"
+            "WP12-10"
           ],
-          "title": "原任务办理卡逐项证据核销",
+          "title": "历史任务身份缺证披露与受控映射边界",
           "chat": "COORD",
-          "mode": "SINGLE_CHAT_RECONCILIATION",
+          "mode": "SINGLE_CHAT",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w291-01",
+          "branch": "codex/w292-01",
           "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
           "full_task_completed": false,
           "actions_authorized": false,
@@ -202317,28 +202343,35 @@
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
+            "Main:oa-delegation",
             "Main:oa-task"
           ],
-          "worker_delivery_ref": "docs/development/evidence/W291-01/DELIVERY.md",
-          "validation": "本轮新执行2项实际Main HTTP/隔离PostgreSQL18 CC拒绝审批：SFS和APP仅抄送用户具有菜单approve仍不可获取办理上下文或借他人任务提交；任务与投票/命令无变化。其他卡内行为复用W274–W290已采用的准确有效证据，BUG730评论容量修复证据另引用；未重跑产品全套。",
+          "worker_delivery_ref": "docs/development/evidence/W292-01/DELIVERY.md",
+          "validation": "本地隔离PostgreSQL18/真实Main HTTP旧引擎身份场景通过，另2项既有详情行为通过；1项Vue生命周期/原记录展示行为通过，显式应用vue-tsc --build通过。旧任务v2入口404、无权读403、无原历史改写/无v2投票均实际验证；没有执行迁移或新浏览器到数据库链。",
           "lifecycle_snapshot": {
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave291-final-verification.json",
             "main_finish_required": true,
             "main_seat_released": false,
-            "handoff_seat_released": false
-          }
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave292-final-verification.json"
+          },
+          "business_acceptance": "LEGACY_ACTOR_DISCLOSURE_PG_HTTP_AND_VUE_PASS;NO_MIGRATION",
+          "local_validation": "PASS_AFFECTED_SCOPE"
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "正常远端采用/准确清理/finish后，继续原卡真实余项，24h目标持续。",
+      "next_action": "W292正常远端采用/准确清理/finish后按原依赖顺序核对定义发布、个人草稿与原子提交，24h目标继续。",
       "lifecycle_snapshot": {
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave291-final-verification.json",
         "main_finish_required": true,
         "main_seat_released": false,
-        "handoff_seat_released": false
+        "handoff_seat_released": false,
+        "main_branch_deleted": false,
+        "handoff_branch_deleted": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave292-final-verification.json"
       }
     },
     "wave_history": [
@@ -239184,6 +239217,96 @@
             "workspace_clean": true
           }
         ]
+      },
+      {
+        "id": "20261103-wave291",
+        "path": "docs/development/dispatch/20261103-wave291/README.md",
+        "baseline_sha": "27ec7cbeebd639486e8f647ffbfd45640816c62a",
+        "registered_at": "2026-11-03T13:26:27.659262+00:00",
+        "phase": "DONE",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W291-01",
+            "workspace_task": "W291-01",
+            "related_tasks": [
+              "WP12-08"
+            ],
+            "title": "原任务办理卡逐项证据核销",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_RECONCILIATION",
+            "phase": "DONE",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w291-01",
+            "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:oa-task"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W291-01/DELIVERY.md",
+            "validation": "本轮新执行2项实际Main HTTP/隔离PostgreSQL18 CC拒绝审批：SFS和APP仅抄送用户具有菜单approve仍不可获取办理上下文或借他人任务提交；任务与投票/命令无变化。其他卡内行为复用W274–W290已采用的准确有效证据，BUG730评论容量修复证据另引用；未重跑产品全套。",
+            "lifecycle_snapshot": {
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave291-final-verification.json",
+              "all_slots_released": true
+            }
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "正常远端采用/准确清理/finish后，继续原卡真实余项，24h目标持续。",
+        "lifecycle_snapshot": {
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave291-final-verification.json",
+          "all_slots_released": true
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W291-01",
+            "source": "d65531c81c0010214cc3a691d1288c42c46de50e",
+            "remote_target": "22978c916a9e656d2bde3a46024da5fddff2b89d",
+            "pr": "https://github.com/GTX537/CP6/pull/733",
+            "branch": "codex/w291-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W291-HANDOFF",
+            "source": "55e8006b41285f6a4466e4ebd37c1f11a337b391",
+            "remote_target": "5d1991c95049c45b795b7a85cd5f28a5051c4400",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/268",
+            "branch": "codex/w291-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -239763,7 +239886,7 @@
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 80533,
+      "effective_seconds_recorded": 81462,
       "next_reestimate_at_effective_seconds": 86400,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
@@ -240753,7 +240876,7 @@
             0.75
           ],
           "estimate_confidence": "LOW",
-          "state": "VERIFYING",
+          "state": "DONE",
           "started_at": "2026-11-03T13:26:27.659262+00:00",
           "scope_refinement": "原WP12-08逐项核对统一动作上下文/真实版本、服务端SFS与APP封闭输入、原职责和实际Actor/委派/SOD、token/node/stage/round计票、并发单一决定/原命令回放、新轮不复用旧票、稳定TaskId和CC拒绝审批；核直接前置实际采用与当前适用证据。仅缺失的实际边界补定向验证；充分才关整卡，不复跑已有效证据。",
           "reason": "统一入口与三版本已交付，核清原卡真实剩余；先补实际缺口，不以窗口数量当原卡完成",
@@ -240761,9 +240884,61 @@
           "report": "docs/development/evidence/W291-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave291-final-verification.json",
+            "all_slots_released": true
+          },
+          "actual_effective_seconds": 801,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W291-01",
+              "source": "d65531c81c0010214cc3a691d1288c42c46de50e",
+              "remote_target": "22978c916a9e656d2bde3a46024da5fddff2b89d",
+              "pr": "https://github.com/GTX537/CP6/pull/733",
+              "branch": "codex/w291-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W291-HANDOFF",
+              "source": "55e8006b41285f6a4466e4ebd37c1f11a337b391",
+              "remote_target": "5d1991c95049c45b795b7a85cd5f28a5051c4400",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/268",
+              "branch": "codex/w291-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W292-01",
+          "day": "ROLLING_EXTENSION",
+          "related_tasks": [
+            "WP12-10"
+          ],
+          "title": "历史任务身份缺证披露与受控映射边界",
+          "estimate_hours": [
+            0.6,
+            1.2
+          ],
+          "estimate_confidence": "LOW",
+          "state": "VERIFYING",
+          "started_at": "2026-11-03T13:41:51.909973+00:00",
+          "scope_refinement": "原WP12-10/原TASK R2 §5.1存量身份缺证：历史信箱明确LEGACY_ACTOR_INCOMPLETE及准确FormTo Ref，页面将观察到的旧字段与已核实职责/代理证据区分；真实旧引擎自动替换与办理覆盖场景PG/HTTP验证，不用当前grant猜历史。受控LegacyPrincipalMapping设计写清原pin/token/stage/round、原路由/FormTo/grant revision/hash、原子切换fence与缺证拒绝；按原规范本轮不执行迁移、不补写历史、不升级旧票。",
+          "reason": "W291核对发现原历史缺证标记/映射设计尚未实现；开发实际读面缺口，保留原迁移授权边界",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W292-01/DELIVERY.md",
+          "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
-            "handoff_seat_released": false
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave292-final-verification.json"
           }
         }
       ],
@@ -241197,7 +241372,7 @@
           "unchanged": "Single chat;PostgreSQL;simulated business data;affected local checks and one task review;no Actions,production,existing database migration. Original37528DONE/2IN_PROGRESS/345PLANNED;59partial4closed/55remaining;125/247 unchanged."
         }
       ],
-      "timing_snapshot_at": "2026-11-03T13:34:48.539110+00:00",
+      "timing_snapshot_at": "2026-11-03T13:50:17.781154+00:00",
       "remaining_estimate_hours": [
         1.5,
         3

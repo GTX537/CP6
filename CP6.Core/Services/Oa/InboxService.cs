@@ -322,12 +322,16 @@ public partial class InboxService : IInboxService
         var names = await OaUserNames.ResolveAsync(_db, ids);
         string? N(Guid? id) => id is null || id == Guid.Empty ? null : names.GetValueOrDefault(id.Value, id.Value.ToString());
 
+        // Legacy FormTo may contain a delivery substitute, and handling may overwrite OnBehalfOf.
+        // No captured original grant revision exists here: neither these fields nor today's grant
+        // establish a v2 principal mapping. Preserve observations and expose their provenance limit.
         var timeline = formTos.Select(f => new TimelineRow(
             f.StepSeq, f.TokenId, f.NodeId, f.NodeName,
             f.ExpectedHandlerId, names.GetValueOrDefault(f.ExpectedHandlerId, f.ExpectedHandlerId.ToString()),
             f.ActualHandlerId, N(f.ActualHandlerId), f.OnBehalfOfId, N(f.OnBehalfOfId),
             f.Status, f.Comment, f.SentAt, f.HandledAt,
-            StageIndex: f.StageIndex, StageRound: f.StageRound)).ToList();
+            StageIndex: f.StageIndex, StageRound: f.StageRound,
+            FormToId: f.Id, ActorEvidenceStatus: "LEGACY_ACTOR_INCOMPLETE")).ToList();
         var ccRows = ccs.Select(c => new CcRow(c.RecipientId, N(c.RecipientId) ?? "", c.AtNodeId, c.IsRead)).ToList();
 
         IReadOnlyList<ForecastStep> forecast = inst.Status == FlowInstanceStatus.Running

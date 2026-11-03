@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W291范围核对](evidence/W291-01/DELIVERY.md)，WP12-08保留PLANNED，原59局部余55；24h目标单人继续。
+> 当前：[W292](evidence/W292-01/DELIVERY.md)历史身份缺证披露本地验收完成；24h单人目标继续，远端采用/finish后转下一原范围。
+
+> 历史快照：[W291范围核对](evidence/W291-01/DELIVERY.md)，WP12-08保留PLANNED，原59局部余55；24h目标单人继续。
 
 > 历史快照：[W290](evidence/W290-01/DELIVERY.md)统一动作/APP原命令适配本地验收完成；24h单人目标继续，远端采用/finish后转下一原范围。
 
