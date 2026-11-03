@@ -79,7 +79,7 @@ internal static class ApprovalSubmissionWireV2
             var scope=root.GetProperty("scope");Shape(scope,"environmentId","tenantId");Key(scope.GetProperty("environmentId"));Id(scope.GetProperty("tenantId"));
             foreach(var f in new[]{"commandId","submissionId","starterId","ownerOutboxId"})Id(root.GetProperty(f));Id(root.GetProperty("replacesSubmissionId"),true);
             var subject=root.GetProperty("subject");Shape(subject,"businessOwner","bizType","subjectKind","subjectId","businessRevision","contentDigest");
-            foreach(var p in subject.EnumerateObject())if(p.Name=="contentDigest")Digest(p.Value);else Key(p.Value,p.Name switch{"businessRevision"=>128,"bizType" or "subjectKind"=>50,_=>100});
+            foreach(var p in subject.EnumerateObject())if(p.Name=="contentDigest")Digest(p.Value);else Key(p.Value,p.Name=="businessRevision"?128:100);
             var policy=root.GetProperty("policy");Shape(policy,"ref","version","digest");Ref(policy.GetProperty("ref"));Key(policy.GetProperty("version"));Digest(policy.GetProperty("digest"));
             if(policy.GetProperty("version").GetString()!=policy.GetProperty("ref").GetProperty("version").GetString())throw Error("POLICY_REF_VERSION_MISMATCH");
             if(root.GetProperty("roundId").ValueKind!=JsonValueKind.Null)Key(root.GetProperty("roundId"));Ref(root.GetProperty("submitAuthorizationRef"));

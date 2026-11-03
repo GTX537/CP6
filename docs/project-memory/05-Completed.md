@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-03：APP业务Key原合法域 / BUG #740
+
+APP绑定与提交入口恢复原oa.app/2.0允许的100字符bizType/subjectKind，按Unicode字符计数，101明确拒绝，原字符串无截断或规范化。 [修复与证据](../development/evidence/BUG-740/DELIVERY.md)。
+
+6项相关本地行为通过、0跳过：真实Main登录HTTP→PostgreSQL保存100个补充字符业务Key及100个中文主体Key，原件/重放/历史完整；101分别拒绝且无新命令。两个wire边界与既有封闭输入、三层去重/alias、跨Scope/伪造冻结事实拒绝回归通过。
+
+原37529DONE/2IN_PROGRESS/344PLANNED，原59余54；24h目标继续，下一末轮真实余项盘点。远端采用、Issue关闭、分支与席位以bug740-final-verification.json核销。
+
 ## 2026-11-03：WP12-02整卡核销，24h目标继续
 
 W295按原WP12-02逐项核销发布预览、准确依赖pin与独立启停；BUG736已修复并远端采用，原卡正式DONE。 [报告](../development/evidence/W295-01/DELIVERY.md)。
