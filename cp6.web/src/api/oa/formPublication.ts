@@ -1,9 +1,10 @@
 import http from '../http'
 import type { FormAuthoringView } from './formAuthoring'
 import type { DefinitionImpact } from './definitionImpact'
+import type { DefinitionDiagnostic } from './definitionDiagnostics'
 export interface PublicationPreview {
   id: string; digest: string; draftVersionId: string; expectedVersion: string; schemaDigest: string
-  expiresAtUtc: string; diagnostics: string[]; canPublish: boolean
+  expiresAtUtc: string; diagnostics: string[]; canPublish: boolean; diagnosticDetails?: DefinitionDiagnostic[] | null
   affectedDraftCount?: number | null; impact?: DefinitionImpact | null
   dependencies: { kind: string; location: string; reference: string; version: string | null; evidenceState: string }[]
 }

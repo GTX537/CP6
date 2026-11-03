@@ -84,15 +84,15 @@ public static class FormSchemaValidationV1
                 }
             }
             var schema = doc.Deserialize<FormSchema>(Json)!;
-            var errors = FormDataValidator.ValidateSchema(schema);
-            if (errors.Count != 0) throw Invalid("$.fields", string.Join(";", errors));
+            var errors = FormDataValidator.SchemaDiagnostics(schema);
+            if (errors.Count != 0) throw new DefinitionDiagnosticExceptionV2("FORM_SCHEMA_INVALID:$.fields:"+string.Join(";",errors.Select(e=>e.Message)),errors.ToArray());
             return schema;
         }
         catch (Exception e) when (e is JsonException or EncoderFallbackException or ArgumentNullException)
-        { throw new InvalidOperationException("FORM_SCHEMA_INVALID:$:JSON_SHAPE", e); }
+        { throw Invalid("$", "JSON_SHAPE"); }
     }
 
-    private static InvalidOperationException Invalid(string path, string code) => new($"FORM_SCHEMA_INVALID:{path}:{code}");
+    private static InvalidOperationException Invalid(string path, string code) => new DefinitionDiagnosticExceptionV2($"FORM_SCHEMA_INVALID:{path}:{code}",[new(path,code)]);
     private static JsonElement Object(JsonElement value, string path, params string[] interpreted)
     {
         if (value.ValueKind != JsonValueKind.Object) throw Invalid(path, "OBJECT_REQUIRED");
@@ -117,10 +117,11 @@ public static class FormSchemaValidationV1
         var index = 0;
         foreach (var item in options.EnumerateArray())
         {
-            var option = Object(item, path + $"[{index++}]", "label", "value");
-            _ = Text(Property(option, "label"), path + ".label");
+            var optionPath=path+$"[{index++}]";
+            var option = Object(item, optionPath, "label", "value");
+            _ = Text(Property(option, "label"), optionPath + ".label");
             if (Property(option, "value").ValueKind is not (JsonValueKind.String or JsonValueKind.Number))
-                throw Invalid(path + ".value", "OPTION_VALUE_INVALID");
+                throw Invalid(optionPath + ".value", "OPTION_VALUE_INVALID");
         }
     }
     private static void ValidateDefault(JsonElement field, string type, string path)

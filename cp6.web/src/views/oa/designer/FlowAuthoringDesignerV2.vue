@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { flowAuthoringApi as api, type AuthoringCommand, type AuthoringEntry, type AuthoringField, type AuthoringResult, type AuthoringView } from '@/api/oa/flowAuthoring'
 import DesignerCanvas from './DesignerCanvas.vue'
@@ -9,6 +9,8 @@ import NodePropertyPanel from './NodePropertyPanel.vue'
 import EdgePropertyPanel from './EdgePropertyPanel.vue'
 import { type FlowSchemaDto, type SchemaNode, type SchemaEdge } from './designerModel'
 import { preserveSchema } from './preserveSchema'
+import DefinitionDiagnosticsPanelV2 from './DefinitionDiagnosticsPanelV2.vue'
+import type { DefinitionDiagnostic } from '@/api/oa/definitionDiagnostics'
 
 const emit = defineEmits<{ close: [] }>()
 const cache = 'cp6-workflow-authoring-pending'
@@ -22,6 +24,15 @@ const dirty = computed(() => !!current.value && (allFields.some(f => f !== 'Sche
 const busy = ref(false), error = ref(''), message = ref(''), stale = ref(false), page = ref(1)
 const pending = ref<{ key: string; command: AuthoringCommand }>()
 const selected = ref<{ kind: 'node' | 'edge' | null; id: string | null }>({ kind: null, id: null })
+const canvas = ref<InstanceType<typeof DesignerCanvas>>(), fieldErrors = ref<DefinitionDiagnostic[]>([])
+const diagnostics = computed(() => fieldErrors.value.length ? fieldErrors.value : !dirty.value ? current.value?.diagnosticDetails ?? [] : [])
+watch([schema, fields], () => { fieldErrors.value = [] }, { deep: true })
+function locate(item: DefinitionDiagnostic) {
+  const node = /^\$\.nodes\[(\d+)\]/.exec(item.path), edge = /^\$\.edges\[(\d+)\]/.exec(item.path)
+  if (node && schema.value.nodes[Number(node[1])]) { const id = schema.value.nodes[Number(node[1])]!.id; selected.value = { kind: 'node', id }; canvas.value?.focusNode(id) }
+  else if (edge && schema.value.edges[Number(edge[1])]) { const index = Number(edge[1]), value = schema.value.edges[index]!; const id = value.id || `${value.from}__${value.to}__${index}`; selected.value = { kind: 'edge', id }; canvas.value?.focusEdge(index) }
+  else message.value = `请检查 ${item.path}：${item.code}`
+}
 const selectedNode = computed(() => selected.value.kind === 'node' ? schema.value.nodes.find(n => n.id === selected.value.id) : undefined)
 const edgeIndex = computed(() => selected.value.kind === 'edge' ? schema.value.edges.findIndex((e, i) => (e.id || `${e.from}__${e.to}__${i}`) === selected.value.id) : -1)
 const writable = computed(() => current.value?.writableFields ?? entry.value?.writableFields ?? [])
@@ -32,12 +43,14 @@ function remember() {
   if (pending.value) sessionStorage.setItem(cache, JSON.stringify({ identity: identityStamp(), pending: pending.value }))
   else sessionStorage.removeItem(cache)
 }
-function clearPrivate() {
+function clearPrivate(keepPending = false) {
+  fieldErrors.value = []
+  const unresolved = keepPending ? pending.value : undefined
   generation++; controller?.abort(); entry.value = undefined; items.value = []; current.value = undefined
-  key.value = ''; fields.value = {}; originalSchema.value = initial; schema.value = JSON.parse(initial); pending.value = undefined
+  key.value = ''; fields.value = {}; originalSchema.value = initial; schema.value = JSON.parse(initial); pending.value = unresolved
   selected.value = { kind: null, id: null }; message.value = ''; error.value = ''; stale.value = false; busy.value = false; remember()
 }
-async function run(action: (check: () => void, signal: AbortSignal) => Promise<void>) {
+async function run(action: (check: () => void, signal: AbortSignal) => Promise<void>, retainUnknown = false) {
   if (busy.value) return
   const epoch = identityStamp(), request = generation; controller = new AbortController(); busy.value = true; error.value = ''
   const check = () => { requireIdentity(epoch); if (!live || generation !== request) throw new Error('STALE') }
@@ -46,9 +59,12 @@ async function run(action: (check: () => void, signal: AbortSignal) => Promise<v
     try {
       check()
       const status = e?.response?.status
-      if ([401, 403].includes(status)) { clearPrivate(); error.value = '权限已变化，已清除页面内容。请重新读取。' }
+      if ([401, 403].includes(status)) { clearPrivate(retainUnknown); error.value = retainUnknown ? '当前权限无法确认原结果；已清除页面内容，原保存意图保留。' : '权限已变化，已清除页面内容。请重新读取。' }
       else if ([400, 409, 412, 422].includes(status)) {
-        pending.value = undefined; remember(); stale.value = true; error.value = '保存未被接受。请重新读取当前草稿后确认修改。'
+        if (retainUnknown && pending.value) { error.value = '原保存结果仍未确认；本次拒绝不能证明上次未保存，请继续查询原结果。'; return }
+        pending.value = undefined; remember(); stale.value = [409, 412].includes(status)
+        fieldErrors.value = e?.response?.data?.fieldErrors ?? []
+        error.value = stale.value ? '版本已变化。修改已保留，请重新读取后确认。' : '结构未通过校验，修改已保留；请定位并修正后保存。'
       } else error.value = pending.value ? '保存结果尚未确认，请查询原结果或以原意图重试。' : '当前无法读取草稿，请稍后重试。'
     } catch { /* Discard obsolete identity/generation responses. */ }
   } finally { if (live && generation === request) busy.value = false }
@@ -88,6 +104,7 @@ async function accept(result: AuthoringResult, check: () => void, signal: AbortS
 }
 function save() {
   if (!pending.value && (!canSave.value || !key.value.trim() || !fields.value.Name?.trim())) return
+  const retrying = !!pending.value
   return run(async (check, signal) => {
     if (!pending.value) {
       const body = { name: fields.value.Name!, schemaJson: preserveSchema(originalSchema.value, schema.value),
@@ -96,7 +113,7 @@ function save() {
     }
     const intent = pending.value
     const result = await api.save(intent.key, JSON.parse(JSON.stringify(intent.command)), signal); check(); await accept(result, check, signal)
-  })
+  }, retrying)
 }
 function recover() {
   return run(async (check, signal) => {
@@ -104,7 +121,7 @@ function recover() {
     const result = await api.original(pending.value.key, pending.value.command.commandId, signal); check()
     if (result.outcome === 'SUCCEEDED') await accept(result, check, signal)
     else message.value = '尚未观察到原结果；这不能证明未保存。请继续查询或以原意图重试。'
-  })
+  }, true)
 }
 function patchNode(patch: Partial<SchemaNode>) {
   if (!writable.value.includes('SchemaJson') || pending.value) return
@@ -139,7 +156,7 @@ onBeforeUnmount(() => { live = false; generation++; controller?.abort(); window.
         <button v-if="pending" :disabled="busy" @click="recover">查询原保存结果</button></div></header>
     <p v-if="error" role="alert">{{ error }}</p><p v-if="message" role="status">{{ message }}</p>
     <p v-if="!entry?.canCreate && !pending">当前不能新建草稿。请确认流程设计权限及本租户的草稿登记策略。</p>
-    <FlowPublicationPanelV2 :current="current" :dirty="dirty" :disabled="busy || !!pending" @locked="publicationLocked = $event" @reload="load" @private-clear="clearPrivate" />
+    <FlowPublicationPanelV2 :current="current" :dirty="dirty" :disabled="busy || !!pending" @locked="publicationLocked = $event" @reload="load" @private-clear="clearPrivate" @locate="locate" />
     <FlowSimulationPanelV2 :current="current" :dirty="dirty" :disabled="busy || publicationLocked || !!pending || stale" @private-clear="clearPrivate" />
     <div class="workbench">
       <aside><h3>流程定义</h3><button v-for="item in items" :key="item.definitionId" :disabled="busy || publicationLocked || !!pending" @click="load(item.key)">{{ item.fields.Name ?? item.key }}{{ item.published ? '（已发布）' : '' }}</button>
@@ -150,8 +167,9 @@ onBeforeUnmount(() => { live = false; generation++; controller?.abort(); window.
           <label v-for="field in allFields.filter(f => f !== 'SchemaJson')" :key="field" v-show="Object.hasOwn(fields, field)">{{ labels[field] }}<input v-model="fields[field]" :disabled="!writable.includes(field)" :maxlength="field === 'Name' ? 200 : field === 'FormKey' ? 100 : 50" /></label>
         </div>
         <p v-if="!Object.hasOwn(fields, 'SchemaJson')">当前无权读取流程结构。</p>
-        <div v-else class="canvas" :inert="busy || publicationLocked || !!pending || stale || !writable.includes('SchemaJson')"><DesignerCanvas v-model="schema" @select="selected = $event" /></div>
-        <p v-if="current?.diagnostics.length">草稿仍有待完善项目：{{ current.diagnostics.join('、') }}。保存不代表可发布。</p>
+        <div v-else class="canvas" :inert="busy || publicationLocked || !!pending || stale || !writable.includes('SchemaJson')"><DesignerCanvas ref="canvas" v-model="schema" @select="selected = $event" /></div>
+        <DefinitionDiagnosticsPanelV2 :items="diagnostics" :disabled="busy || !!pending" @locate="locate" />
+        <p v-if="!dirty && !diagnostics.length && current?.diagnostics.length">草稿仍有待完善项目：{{ current.diagnostics.join('、') }}。保存不代表可发布。</p>
       </main>
       <aside :inert="busy || publicationLocked || !!pending || stale || !writable.includes('SchemaJson')">
         <NodePropertyPanel v-if="selectedNode" :node="selectedNode" :current-flow-key="key" @update="patchNode" />

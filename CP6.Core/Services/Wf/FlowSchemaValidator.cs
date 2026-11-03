@@ -29,9 +29,15 @@ public static class FlowSchemaValidator
         => HasValidDraftStructure(schema) ? ValidateKnownStructure(schema) : ["E-WF-010"];
 
     internal static IReadOnlyList<string> ValidateKnownStructure(FlowSchema schema)
+        =>ValidateKnownStructureDetailed(schema).Select(e=>e.Code).Distinct().ToArray();
+
+    internal static IReadOnlyList<DefinitionDiagnosticV2> ValidateKnownStructureDetailed(FlowSchema schema)
     {
-        var errs = new List<string>();
-        if (schema.Nodes.Count == 0) { errs.Add("E-WF-010"); return errs; }
+        var errs = new List<DefinitionDiagnosticV2>();
+        void Add(string code,FlowNode? node=null,string suffix="",FlowEdge? edge=null)
+            =>errs.Add(new(node!=null?$"$.nodes[{schema.Nodes.IndexOf(node)}]{suffix}":edge!=null?$"$.edges[{schema.Edges.IndexOf(edge)}]{suffix}":"$.nodes"+suffix,
+                code,NodeId:node?.Id,EdgeId:edge?.Id));
+        if (schema.Nodes.Count == 0) { Add("E-WF-010"); return errs; }
 
         string T(FlowNode n) => (n.Type ?? "approval").Trim().ToLowerInvariant();
         foreach(var n in schema.Nodes)
@@ -39,29 +45,30 @@ public static class FlowSchemaValidator
             var policies=new[]{n.ApproverRecoveryPolicy}.Concat(n.Stages?.Select(s=>s.ApproverRecoveryPolicy)??[]);
             foreach(var p in policies.Where(p=>p!=null))
                 if(T(n)!="approval"||p!.Mode!="MANUAL_ASSIGNMENT"||p.EligibleRoleIds==null||p.EligibleRoleIds.Length is <1 or >100
-                    ||p.EligibleRoleIds.Any(id=>id<=0)||p.EligibleRoleIds.Distinct().Count()!=p.EligibleRoleIds.Length)errs.Add("APPROVER_RECOVERY_POLICY_INVALID");
+                    ||p.EligibleRoleIds.Any(id=>id<=0)||p.EligibleRoleIds.Distinct().Count()!=p.EligibleRoleIds.Length)
+                    Add("APPROVER_RECOVERY_POLICY_INVALID",n,p==n.ApproverRecoveryPolicy?".approverRecoveryPolicy":$".stages[{n.Stages!.FindIndex(s=>s.ApproverRecoveryPolicy==p)}].approverRecoveryPolicy");
         }
 
         // ① 恰一 start ② 至少一 end
-        if (schema.Nodes.Count(n => T(n) == "start") != 1) errs.Add("E-WF-010");
-        if (!schema.Nodes.Any(n => T(n) == "end")) errs.Add("E-WF-010");
+        if (schema.Nodes.Count(n => T(n) == "start") != 1) Add("E-WF-010");
+        if (!schema.Nodes.Any(n => T(n) == "end")) Add("E-WF-010");
 
         // ⑤ approval 须有合法策略（仅单档节点；串簽节点由⑦单独校验）
         foreach (var n in schema.Nodes.Where(n => T(n) == "approval" && (n.Stages is null || n.Stages.Count == 0)))
-            if (n.ApproverStrategy is null || !KnownStrategies.Contains(n.ApproverStrategy)) { errs.Add("E-WF-010"); break; }
+            if (n.ApproverStrategy is null || !KnownStrategies.Contains(n.ApproverStrategy)) Add("E-WF-010",n,".approverStrategy");
 
         // ⑤b 新策略配置完整性(E-WF-014)：单档节点
         foreach (var n in schema.Nodes.Where(n => T(n) == "approval" && (n.Stages is null || n.Stages.Count == 0)))
         {
-            if (n.ApproverStrategy == "FormField" && string.IsNullOrWhiteSpace(n.ApproverFieldName)) { errs.Add("E-WF-014"); break; }
-            if (n.ApproverStrategy == "DataMap" && (string.IsNullOrWhiteSpace(n.ApproverMapKey) || string.IsNullOrWhiteSpace(n.ApproverFieldName))) { errs.Add("E-WF-014"); break; }
-            if (n.ApproverStrategy == "Group" && (n.ApproverMembers is null || n.ApproverMembers.Count == 0)) { errs.Add("E-WF-014"); break; }
+            if (n.ApproverStrategy == "FormField" && string.IsNullOrWhiteSpace(n.ApproverFieldName)) Add("E-WF-014",n,".approverFieldName");
+            if (n.ApproverStrategy == "DataMap" && string.IsNullOrWhiteSpace(n.ApproverMapKey)) Add("E-WF-014",n,".approverMapKey");
+            if (n.ApproverStrategy == "DataMap" && string.IsNullOrWhiteSpace(n.ApproverFieldName)) Add("E-WF-014",n,".approverFieldName");
+            if (n.ApproverStrategy == "Group" && (n.ApproverMembers is null || n.ApproverMembers.Count == 0)) Add("E-WF-014",n,".approverMembers");
         }
 
         // ⑦ 串簽档配置(E-WF-011):有 Stages 时每档合法
         foreach (var n in schema.Nodes.Where(n => T(n) == "approval" && n.Stages is { Count: > 0 }))
         {
-            bool bad = false;
             foreach (var st in n.Stages!)
             {
                 var kind = (st.Kind ?? "fixed").Trim().ToLowerInvariant();
@@ -70,15 +77,13 @@ public static class FlowSchemaValidator
                     : st.ApproverStrategy is not null && KnownStrategies.Contains(st.ApproverStrategy);
                 var cs = (st.Countersign ?? "all").Trim().ToLowerInvariant();
                 bool csOk = cs is "all" or "any" or "veto";
-                if (!ruleOk || !csOk) { bad = true; break; }
+                if (!ruleOk || !csOk) Add("E-WF-011",n,$".stages[{n.Stages.IndexOf(st)}]"+(ruleOk?".countersign":""));
             }
-            if (bad) { errs.Add("E-WF-011"); break; }
         }
 
         // ⑦b 串簽档新策略配置完整性(E-WF-014)：fixed 档
         foreach (var n in schema.Nodes.Where(n => T(n) == "approval" && n.Stages is { Count: > 0 }))
         {
-            bool stageBad014 = false;
             foreach (var st in n.Stages!)
             {
                 var kind = (st.Kind ?? "fixed").Trim().ToLowerInvariant();
@@ -87,17 +92,16 @@ public static class FlowSchemaValidator
                     (st.ApproverStrategy == "DataMap" && (string.IsNullOrWhiteSpace(st.ApproverMapKey) || string.IsNullOrWhiteSpace(st.ApproverFieldName))) ||
                     (st.ApproverStrategy == "Group" && (st.ApproverMembers is null || st.ApproverMembers.Count == 0)))
                 {
-                    stageBad014 = true; break;
+                    Add("E-WF-014",n,$".stages[{n.Stages.IndexOf(st)}]");
                 }
             }
-            if (stageBad014) { errs.Add("E-WF-014"); break; }
         }
 
         // ⑥ 并行网关入/出边数
         foreach (var n in schema.Nodes.Where(n => T(n) == "parallelsplit"))
-            if (schema.Edges.Count(e => e.From == n.Id) < 2) { errs.Add("E-WF-010"); break; }
+            if (schema.Edges.Count(e => e.From == n.Id) < 2) Add("E-WF-010",n);
         foreach (var n in schema.Nodes.Where(n => T(n) == "paralleljoin"))
-            if (schema.Edges.Count(e => e.To == n.Id) < 2) { errs.Add("E-WF-010"); break; }
+            if (schema.Edges.Count(e => e.To == n.Id) < 2) Add("E-WF-010",n);
 
         // ⑧ 服务任务节点配置完整性(E-WF-016) + 非 end 须有成功出边(P2-3)。
         //    kind 非法 / dataWriteback 缺 ActionName / webApi 缺 Connector|Path / timer 缺 DelayMode|DelayValue → E-WF-016。
@@ -114,7 +118,7 @@ public static class FlowSchemaValidator
                 || ServiceVarsHelper.ContainsUnsupportedSubscript(n.ServicePath)         // 票4：路径模板不得含数组下标
                 || ServiceVarsHelper.ContainsUnsupportedSubscript(n.ServiceParamsJson)   // 票4：参数模板不得含数组下标
                 || !schema.Edges.Any(e => e.From == n.Id && e.IsError != true);   // P2-3：无非错误出边
-            if (bad) { errs.Add("E-WF-016"); break; }
+            if (bad) Add("E-WF-016",n);
         }
 
         // ⑧b E-WF-028 静态（节点级 HTTP 覆盖值域，E-T1）：ServiceTimeoutSec 有值须 >0 且 <=上限(3600)；
@@ -125,18 +129,19 @@ public static class FlowSchemaValidator
             bool bad028 =
                 (n.ServiceTimeoutSec is int ts && (ts <= 0 || ts > 3600))
                 || (!string.IsNullOrWhiteSpace(n.ServiceHttpMethod) && !HttpMethods.Contains(n.ServiceHttpMethod.Trim()));
-            if (bad028) { errs.Add("E-WF-028"); break; }
+            if (bad028) Add("E-WF-028",n);
         }
 
         // ⑨ 错误出边(E-WF-017)：任一节点至多 1 条 IsError 出边；IsError 边来源类型 ∈ ErrorEdgeSourceTypes
         //    （放宽：由「仅 serviceTask」→ {serviceTask, approval, subFlow}，供 approval 超时 errorEdge / 子流程失败路由复用）。
         var errorSourceIds = schema.Nodes.Where(n => ErrorEdgeSourceTypes.Contains(T(n))).Select(n => n.Id).ToHashSet();
-        if (schema.Edges.Where(e => e.IsError == true).GroupBy(e => e.From).Any(g => g.Count() > 1)) errs.Add("E-WF-017");
-        if (schema.Edges.Any(e => e.IsError == true && !errorSourceIds.Contains(e.From))) errs.Add("E-WF-017");
+        foreach(var group in schema.Edges.Where(e=>e.IsError==true).GroupBy(e=>e.From).Where(g=>g.Count()>1))
+            foreach(var edge in group) Add("E-WF-017",suffix:".isError",edge:edge);
+        foreach(var edge in schema.Edges.Where(e=>e.IsError==true&&!errorSourceIds.Contains(e.From))) Add("E-WF-017",suffix:".isError",edge:edge);
 
         // E-WF-027：TimeoutAction=errorEdge 的节点必须有 IsError 出边（否则超时无处路由 → 只能 Suspend，设计期拦下）
         foreach (var n in schema.Nodes.Where(n => string.Equals(n.TimeoutAction, "errorEdge", StringComparison.OrdinalIgnoreCase)))
-            if (!schema.Edges.Any(e => e.From == n.Id && e.IsError == true)) { errs.Add("E-WF-027"); break; }
+            if (!schema.Edges.Any(e => e.From == n.Id && e.IsError == true)) Add("E-WF-027",n,".timeoutAction");
 
         // ⑪ 子流程节点(E-WF-025,子流程 spec §5)：SubFlowKey 非空;非错误出边必有(对齐 serviceTask E-WF-016 同款);
         //    SubCompletionPolicy ∈ {null,all,any};SubCollectionVar 非空串;SubVarsIn/OutJson 合法映射且无下标。
@@ -153,7 +158,7 @@ public static class FlowSchemaValidator
                 || !SubFlowVarsMapper.TryParseMap(n.SubVarsOutJson, out _)
                 || ServiceVarsHelper.ContainsUnsupportedSubscript(n.SubVarsInJson)
                 || ServiceVarsHelper.ContainsUnsupportedSubscript(n.SubVarsOutJson);
-            if (bad) { errs.Add("E-WF-025"); break; }
+            if (bad) Add("E-WF-025",n);
         }
 
         // ⑩ inclusive 网关（hardening E-WF-020/021）
@@ -162,7 +167,7 @@ public static class FlowSchemaValidator
         {
             var outs = schema.Edges.Where(e => e.From == n.Id && e.IsError != true).ToList();
             var dflt = outs.Count(e => string.IsNullOrWhiteSpace(e.Condition));
-            if (outs.Count < 2 || dflt != 1) { errs.Add("E-WF-020"); break; }
+            if (outs.Count < 2 || dflt != 1) Add("E-WF-020",n);
         }
 
         // E-WF-021a：每个 inclusiveSplit 的最近公共汇聚须存在且类型为 inclusiveJoin
@@ -170,20 +175,20 @@ public static class FlowSchemaValidator
         foreach (var n in schema.Nodes.Where(n => T(n) == "inclusivesplit"))
         {
             var join = FlowGraph.NearestCommonJoin(schema, n);
-            if (join is null || T(join) != "inclusivejoin") { errs.Add("E-WF-021"); continue; }
+            if (join is null || T(join) != "inclusivejoin") { Add("E-WF-021",n); continue; }
             pairedJoinIds.Add(join.Id);
         }
         // E-WF-021b：inclusiveJoin 入边 ≥2 且被至少一个 inclusiveSplit 配对（孤立 join 报错）
         foreach (var n in schema.Nodes.Where(n => T(n) == "inclusivejoin"))
             if (schema.Edges.Count(e => e.To == n.Id) < 2 || !pairedJoinIds.Contains(n.Id))
-            { errs.Add("E-WF-021"); break; }
+            Add("E-WF-021",n);
         // E-WF-021c：onBranchReject 值域 ∈ {cascade, prune}（大小写不敏感）且仅允许写在 split 型节点上
         foreach (var n in schema.Nodes)
         {
             if (string.IsNullOrWhiteSpace(n.OnBranchReject)) continue;
             var v = n.OnBranchReject.Trim().ToLowerInvariant();
             bool onSplit = T(n) is "parallelsplit" or "inclusivesplit";
-            if (!onSplit || (v != "cascade" && v != "prune")) { errs.Add("E-WF-021"); break; }
+            if (!onSplit || (v != "cascade" && v != "prune")) Add("E-WF-021",n,".onBranchReject");
         }
 
         // ④ 从 start 可达某 end（BFS）
@@ -202,7 +207,7 @@ public static class FlowSchemaValidator
                 if (adj.TryGetValue(cur, out var outs))
                     foreach (var to in outs) if (seen.Add(to)) q.Enqueue(to);
             }
-            if (!reachedEnd) errs.Add("E-WF-010");
+            if (!reachedEnd) Add("E-WF-010",start);
         }
 
         return errs.Distinct().ToList();
@@ -210,18 +215,32 @@ public static class FlowSchemaValidator
 
     /// <summary>Fatal structure differs from an unfinished graph. Missing legacy edge IDs remain legal.</summary>
     public static bool HasValidDraftStructure(FlowSchema? schema)
+        =>DraftStructureDiagnostics(schema).Count==0;
+
+    public static IReadOnlyList<DefinitionDiagnosticV2> DraftStructureDiagnostics(FlowSchema? schema)
     {
-        if (schema?.Nodes == null || schema.Edges == null) return false;
+        if (schema?.Nodes == null || schema.Edges == null) return [new("$","SCHEMA_SHAPE_INVALID")];
+        var errors=new List<DefinitionDiagnosticV2>();
         var nodes = new HashSet<string>(StringComparer.Ordinal);
-        foreach (var node in schema.Nodes)
-            if (node == null || string.IsNullOrWhiteSpace(node.Id) || !nodes.Add(node.Id)
-                || node.Type?.Trim().ToLowerInvariant() is not ("start" or "end" or "approval" or "gateway" or "parallelsplit" or "paralleljoin" or "inclusivesplit" or "inclusivejoin" or "servicetask" or "subflow")
-                || node.Stages?.Any(x => x == null) == true) return false;
-        if (!string.IsNullOrEmpty(schema.Start) && !nodes.Contains(schema.Start)) return false;
+        for(var index=0;index<schema.Nodes.Count;index++)
+        {
+            var node=schema.Nodes[index];var path=$"$.nodes[{index}]";
+            if(node==null){errors.Add(new(path,"SCHEMA_SHAPE_INVALID"));continue;}
+            if(string.IsNullOrWhiteSpace(node.Id)||!nodes.Add(node.Id))errors.Add(new(path+".id","SCHEMA_SHAPE_INVALID",NodeId:node.Id));
+            if(node.Type?.Trim().ToLowerInvariant() is not("start" or "end" or "approval" or "gateway" or "parallelsplit" or "paralleljoin" or "inclusivesplit" or "inclusivejoin" or "servicetask" or "subflow"))errors.Add(new(path+".type","SCHEMA_SHAPE_INVALID",NodeId:node.Id));
+            for(var stage=0;stage<(node.Stages?.Count??0);stage++)
+                if(node.Stages![stage]==null)errors.Add(new(path+$".stages[{stage}]","SCHEMA_SHAPE_INVALID",NodeId:node.Id));
+        }
+        if (!string.IsNullOrEmpty(schema.Start) && !nodes.Contains(schema.Start)) errors.Add(new("$.start","SCHEMA_SHAPE_INVALID"));
         var edges = new HashSet<string>(StringComparer.Ordinal);
-        foreach (var edge in schema.Edges)
-            if (edge == null || !nodes.Contains(edge.From) || !nodes.Contains(edge.To)
-                || edge.Id != null && (string.IsNullOrWhiteSpace(edge.Id) || !edges.Add(edge.Id))) return false;
-        return true;
+        for(var index=0;index<schema.Edges.Count;index++)
+        {
+            var edge=schema.Edges[index];var path=$"$.edges[{index}]";
+            if(edge==null){errors.Add(new(path,"SCHEMA_SHAPE_INVALID"));continue;}
+            if(!nodes.Contains(edge.From))errors.Add(new(path+".from","SCHEMA_SHAPE_INVALID",EdgeId:edge.Id));
+            if(!nodes.Contains(edge.To))errors.Add(new(path+".to","SCHEMA_SHAPE_INVALID",EdgeId:edge.Id));
+            if(edge.Id!=null&&(string.IsNullOrWhiteSpace(edge.Id)||!edges.Add(edge.Id)))errors.Add(new(path+".id","SCHEMA_SHAPE_INVALID",EdgeId:edge.Id));
+        }
+        return errors;
     }
 }

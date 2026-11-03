@@ -532,10 +532,19 @@ const searchResults = computed(() => {
 })
 
 function focusNode(nodeId: string) {
+  canvasRoot.value?.scrollIntoView({ block: 'center', behavior: 'smooth' })
   void fitView({ nodes: [nodeId], maxZoom: 1.45, duration: 220 })
   emit('select', { kind: 'node', id: nodeId })
   searchQuery.value = ''
 }
+function focusEdge(index: number) {
+  const edge = props.modelValue.edges[index]
+  if (!edge) return
+  canvasRoot.value?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+  void fitView({ nodes: [edge.from, edge.to], maxZoom: 1.45, duration: 220 })
+  emit('select', { kind: 'edge', id: edge.id || `${edge.from}__${edge.to}__${index}` })
+}
+defineExpose({ focusNode, focusEdge })
 
 function closeContextMenu() {
   contextMenu.value.visible = false

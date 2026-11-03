@@ -14,7 +14,8 @@ namespace CP6.Core.Services.Wf;
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record FlowAuthoringBodyV2(string Name, string SchemaJson, string? FormKey, string? FunctionId, string? FlowCode);
 public sealed record FlowAuthoringViewV2(Guid DefinitionId, Guid DraftId, string Key, string Version,
-    Dictionary<string, string?> Fields, string[] WritableFields, string[] Diagnostics, bool Enabled = false, bool Published = false, int VersionNumber = 1, string? ActivationRevision = null, Guid? ClonedFromRef = null);
+    Dictionary<string, string?> Fields, string[] WritableFields, string[] Diagnostics, bool Enabled = false, bool Published = false, int VersionNumber = 1, string? ActivationRevision = null, Guid? ClonedFromRef = null,
+    DefinitionDiagnosticV2[]? DiagnosticDetails = null);
 public sealed record WorkflowCommandResultV1(string CommandId, string Outcome, Guid? ResourceId, string? ResourceVersion,
     FlowAuthoringViewV2? Result, DateTimeOffset? RecordedAtUtc, string? CorrelationId);
 
@@ -144,9 +145,10 @@ public sealed partial class FlowAuthoringOwnerV2
     }
     private static Dictionary<string, string?> Values(Head head) => new()
     { ["Name"] = head.Name, ["SchemaJson"] = head.SchemaJson, ["FormKey"] = head.FormKey, ["FunctionId"] = head.FunctionId, ["FlowCode"] = head.FlowCode };
-    private static FlowAuthoringViewV2 View(Head head, FieldPermissionDecisionV1 permission, string[] diagnostics) => new(
+    private static FlowAuthoringViewV2 View(Head head, FieldPermissionDecisionV1 permission, string[] diagnostics,DefinitionDiagnosticV2[]? details=null) => new(
         head.Id, head.DraftId, head.Key, head.Version.ToString("D"), Values(head).Where(x => permission.Fields[x.Key].CanRead).ToDictionary(),
-        head.Status == 0 ? Fields.Where(x => permission.Fields[x].CanWrite).ToArray() : [], permission.Fields["SchemaJson"].CanRead ? diagnostics : [], head.Enabled, head.Status == 1, head.Number, head.ActivationVersion.ToString("D"), head.ClonedFromRef);
+        head.Status == 0 ? Fields.Where(x => permission.Fields[x].CanWrite).ToArray() : [], permission.Fields["SchemaJson"].CanRead ? diagnostics : [], head.Enabled, head.Status == 1, head.Number, head.ActivationVersion.ToString("D"), head.ClonedFromRef,
+        permission.Fields["SchemaJson"].CanRead?details??[]:[]);
     private async Task<bool> CanEdit(UserPermissionContext actor, CancellationToken ct)
     {
         var policy = await ReadPolicy(ct);
@@ -161,7 +163,8 @@ public sealed partial class FlowAuthoringOwnerV2
         var permission = await Permission(actor, head, await CanEdit(actor, ct), false, ct);
         if (head.Status != 0) throw Error("DRAFT_REQUIRED", 404);
         if ((await Actor(ct)).UserId != actor.UserId) throw Error("REAUTH_REQUIRED", 401);
-        return View(head, permission, []);
+        var details=permission.Fields["SchemaJson"].CanRead?FlowSchemaValidator.ValidateKnownStructureDetailed(Schema(head.SchemaJson)).ToArray():[];
+        return View(head, permission, details.Select(d=>d.Code).Distinct().ToArray(),details);
     }
     public async Task<FlowAuthoringViewV2[]> ListAsync(int page = 1, CancellationToken ct = default, string readMenu = "oa-designer")
     {
@@ -211,16 +214,16 @@ public sealed partial class FlowAuthoringOwnerV2
         catch (Exception e) when (e is JsonException or InvalidOperationException or KeyNotFoundException)
         { throw Error("COMMAND_SHAPE_INVALID", 400); }
     }
-    private string[] ValidateSchema(string key, string schemaJson, CancellationToken ct)
+    private DefinitionDiagnosticV2[] ValidateSchema(string key, string schemaJson, CancellationToken ct)
     {
         ct.ThrowIfCancellationRequested();
         try
         {
             using var doc = WorkflowCommandJsonV1.Parse(Encoding.UTF8.GetBytes(schemaJson));
             var schema = doc.Deserialize<FlowSchema>(new JsonSerializerOptions(JsonSerializerDefaults.Web)) ?? throw new JsonException();
-            if (!FlowSchemaValidator.HasValidDraftStructure(schema))
-                throw Error("SCHEMA_SHAPE_INVALID", 422);
-            var errors = FlowSchemaValidator.ValidateKnownStructure(schema);
+            var structure=FlowSchemaValidator.DraftStructureDiagnostics(schema);
+            if (structure.Count!=0) throw DefinitionDiagnosticsV2.Error("SCHEMA_SHAPE_INVALID",structure.ToArray());
+            var errors = FlowSchemaValidator.ValidateKnownStructureDetailed(schema);
             foreach (var node in schema.Nodes.Where(x => string.Equals(x.Type?.Trim(), "serviceTask", StringComparison.OrdinalIgnoreCase)))
             {
                 // E-WF-016 also covers a missing outgoing edge. Keep that graph diagnostic
@@ -231,19 +234,21 @@ public sealed partial class FlowAuthoringOwnerV2
                     || kind == ServiceKind.Timer && (string.IsNullOrWhiteSpace(node.ServiceDelayMode) || string.IsNullOrWhiteSpace(node.ServiceDelayValue))
                     || kind == ServiceKind.WebApi && string.IsNullOrWhiteSpace(node.ServicePath)
                     || ServiceVarsHelper.ContainsUnsupportedSubscript(node.ServicePath) || ServiceVarsHelper.ContainsUnsupportedSubscript(node.ServiceParamsJson))
-                    throw Error("SCHEMA_EXECUTION_INVALID", 422);
+                    throw DefinitionDiagnosticsV2.Error("SCHEMA_EXECUTION_INVALID",new DefinitionDiagnosticV2($"$.nodes[{schema.Nodes.IndexOf(node)}]","SCHEMA_EXECUTION_INVALID",NodeId:node.Id));
                 if (kind == ServiceKind.DataWriteback && !executors.Any(e => e.Kind == ServiceKind.DataWriteback && string.Equals(e.Key, node.ServiceActionName, StringComparison.OrdinalIgnoreCase))
-                    || kind == ServiceKind.WebApi && !connectors.Any(c => string.Equals(c.Name, node.ServiceConnectorName, StringComparison.OrdinalIgnoreCase))) throw Error("SERVICE_REFERENCE_INVALID", 422);
-                if (node.ServiceTimeoutSec is int seconds && seconds >= WfServiceJobService.LeaseDuration.TotalSeconds) throw Error("SERVICE_TIMEOUT_INVALID", 422);
+                    || kind == ServiceKind.WebApi && !connectors.Any(c => string.Equals(c.Name, node.ServiceConnectorName, StringComparison.OrdinalIgnoreCase)))
+                    throw DefinitionDiagnosticsV2.Error("SERVICE_REFERENCE_INVALID",new DefinitionDiagnosticV2($"$.nodes[{schema.Nodes.IndexOf(node)}]"+(kind==ServiceKind.DataWriteback?".serviceActionName":".serviceConnectorName"),"SERVICE_REFERENCE_INVALID",NodeId:node.Id));
+                if (node.ServiceTimeoutSec is int seconds && seconds >= WfServiceJobService.LeaseDuration.TotalSeconds)
+                    throw DefinitionDiagnosticsV2.Error("SERVICE_TIMEOUT_INVALID",new DefinitionDiagnosticV2($"$.nodes[{schema.Nodes.IndexOf(node)}].serviceTimeoutSec","SERVICE_TIMEOUT_INVALID",NodeId:node.Id));
             }
             // Graph incompleteness remains explicit diagnostics, not an executable published artifact.
-            var fatal = errors.FirstOrDefault(e => e is "E-WF-028" or "APPROVER_RECOVERY_POLICY_INVALID");
-            if (fatal != null) throw Error(fatal, 422);
+            var fatal = errors.FirstOrDefault(e => e.Code is "E-WF-028" or "APPROVER_RECOVERY_POLICY_INVALID");
+            if (fatal != null) throw DefinitionDiagnosticsV2.Error(fatal.Code,errors.Where(e=>e.Code==fatal.Code).ToArray());
             // Managed v2 references are resolved to exact published pins by publication; legacy mutable heads are not a source.
             return errors.Distinct().ToArray();
         }
         catch (ScopeAuthorizationExceptionV1) { throw; }
-        catch (Exception e) when (e is JsonException or InvalidOperationException) { throw Error("SCHEMA_INVALID", 422); }
+        catch (Exception e) when (e is JsonException or InvalidOperationException) { throw DefinitionDiagnosticsV2.Error("SCHEMA_INVALID",new DefinitionDiagnosticV2("$","SCHEMA_INVALID")); }
     }
     private sealed record Saved(string BodyDigest, string ResultJson);
     private Task<Saved?> Original(Guid actor, string key, string command, CancellationToken ct, string operation = Operation) => db.Database.SqlQuery<Saved>($"""
@@ -257,7 +262,8 @@ public sealed partial class FlowAuthoringOwnerV2
         var permissions = await Permission(actor, head, false, false, ct);
         var original = JsonSerializer.Deserialize<WorkflowCommandResultV1>(saved.ResultJson, Json)!;
         var projected = original.Result! with { Fields = original.Result!.Fields.Where(x => permissions.Fields[x.Key].CanRead).ToDictionary(), WritableFields = [],
-            Diagnostics = permissions.Fields["SchemaJson"].CanRead ? original.Result!.Diagnostics : [] };
+            Diagnostics = permissions.Fields["SchemaJson"].CanRead ? original.Result!.Diagnostics : [],
+            DiagnosticDetails=permissions.Fields["SchemaJson"].CanRead?original.Result!.DiagnosticDetails:[] };
         return original with { Result = projected };
     }
     public Task<WorkflowCommandResultV1> OriginalAsync(string key, string command, CancellationToken ct = default) => OriginalCore(key, command, Operation, ct);
@@ -305,7 +311,8 @@ public sealed partial class FlowAuthoringOwnerV2
                 FlowCode = string.IsNullOrWhiteSpace(input.FlowCode) ? null : input.FlowCode };
             var next = head with { Version = Guid.NewGuid(), SavedBy = actor.UserId, Name = body.Name, SchemaJson = body.SchemaJson, FormKey = body.FormKey, FunctionId = body.FunctionId, FlowCode = body.FlowCode, ClonedFromRef = clone?.Body.SourceVersionId ?? head.ClonedFromRef };
             CheckWrites(old, next, permission);
-            var diagnostics = clone == null ? ValidateSchema(key, body.SchemaJson, ct) : [];
+            var details = clone == null ? ValidateSchema(key, body.SchemaJson, ct) : [];
+            var diagnostics=details.Select(d=>d.Code).Distinct().ToArray();
             if (old == null)
             {
                 await db.Database.ExecuteSqlInterpolatedAsync($"""
@@ -332,7 +339,7 @@ public sealed partial class FlowAuthoringOwnerV2
             var at = DateTimeOffset.UtcNow;
             // Store the complete original snapshot. Each response (including replay) applies current field projection.
             next = next with { ActivationVersion = (await Activation(next.Id, ct)).Revision };
-            var snapshot = new FlowAuthoringViewV2(next.Id, next.DraftId, key, next.Version.ToString("D"), Values(next), [], diagnostics, next.Enabled, false, next.Number, next.ActivationVersion.ToString("D"), next.ClonedFromRef);
+            var snapshot = new FlowAuthoringViewV2(next.Id, next.DraftId, key, next.Version.ToString("D"), Values(next), [], diagnostics, next.Enabled, false, next.Number, next.ActivationVersion.ToString("D"), next.ClonedFromRef,details);
             var saved = new WorkflowCommandResultV1(command.CommandId, "SUCCEEDED", next.Id, snapshot.Version, snapshot, at, command.Correlation);
             var text = JsonSerializer.Serialize(saved, Json);
             await db.Database.ExecuteSqlInterpolatedAsync($"""
@@ -361,7 +368,7 @@ public sealed partial class FlowAuthoringOwnerV2
             if (!await db.Database.SqlQueryRaw<bool>("SELECT cp6_workflow_authoring_v2.ready() AS \"Value\"").SingleAsync(ct)) throw Error("AUTHORING_WRITER_COVERAGE_UNAVAILABLE");
             await fence.ValidateAsync(lease, ct);
             CompletionClock(); ct.ThrowIfCancellationRequested(); committing = true; await tx.CommitAsync(ct);
-            return saved with { Result = View(next, finalPermission, diagnostics) };
+            return saved with { Result = View(next, finalPermission, diagnostics,details) };
         }
         catch (Exception error)
         {

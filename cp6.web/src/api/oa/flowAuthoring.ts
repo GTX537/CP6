@@ -1,8 +1,9 @@
 import http from '../http'
+import type { DefinitionDiagnostic } from './definitionDiagnostics'
 export type AuthoringField = 'Name' | 'SchemaJson' | 'FormKey' | 'FunctionId' | 'FlowCode'
 export interface AuthoringView {
   definitionId: string; draftId: string; key: string; version: string; enabled: boolean; activationRevision?: string; clonedFromRef?: string | null; published?: boolean; versionNumber?: number
-  fields: Partial<Record<AuthoringField, string | null>>; writableFields: AuthoringField[]; diagnostics: string[]
+  fields: Partial<Record<AuthoringField, string | null>>; writableFields: AuthoringField[]; diagnostics: string[]; diagnosticDetails?: DefinitionDiagnostic[] | null
 }
 export interface AuthoringCommand {
   commandId: string; expectedVersion: string | null

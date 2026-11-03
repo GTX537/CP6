@@ -2,12 +2,14 @@
 import DefinitionComparisonPanelV2 from './DefinitionComparisonPanelV2.vue'
 import DefinitionImpact from '../admin/DefinitionImpact.vue'
 import DefinitionClonePanelV2 from './DefinitionClonePanelV2.vue'
+import DefinitionDiagnosticsPanelV2 from './DefinitionDiagnosticsPanelV2.vue'
+import type { DefinitionDiagnostic } from '@/api/oa/definitionDiagnostics'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { AUTH_EPOCH, AUTH_RECORD, IMPERSONATION, AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import type { FormAuthoringView } from '@/api/oa/formAuthoring'
 import { formPublicationApi as api, type LifecycleIntent, type LifecycleResult, type PublicationPreview, type PublishedForm } from '@/api/oa/formPublication'
 const props = defineProps<{ current?: FormAuthoringView; dirty: boolean; disabled: boolean }>()
-const emit = defineEmits<{ reload: [key: string]; locked: [value: boolean]; privateClear: [] }>()
+const emit = defineEmits<{ reload: [key: string]; locked: [value: boolean]; privateClear: []; locate: [item: DefinitionDiagnostic] }>()
 const preview = ref<PublicationPreview>(), versions = ref<PublishedForm[]>([]), selected = ref<PublishedForm>()
 const pending = ref<LifecycleIntent>(), busy = ref(false), error = ref(''), message = ref(''), comment = ref(''), page = ref(1)
 const cacheUnavailable = ref(false)
@@ -132,7 +134,8 @@ onBeforeUnmount(() => { live = false; generation++; controller?.abort(); window.
     <div v-if="preview && matchingPreview">
       <p>预览有效至 {{ new Date(preview.expiresAtUtc).toLocaleString() }}。确认发布将冻结当前已保存版本，当前启停配置保持不变。</p>
       <DefinitionImpact :impact="preview.impact" form />
-      <p v-if="!preview.canPublish">当前草稿或依赖尚不满足发布条件：{{ preview.diagnostics.join('、') }}</p>
+      <DefinitionDiagnosticsPanelV2 :items="preview.diagnosticDetails ?? []" :disabled="unavailable" @locate="emit('locate', $event)" />
+      <p v-if="!preview.canPublish && !preview.diagnosticDetails?.length">当前草稿或依赖尚不满足发布条件：{{ preview.diagnostics.join('、') }}</p>
       <ul v-if="preview.dependencies.length"><li v-for="d in preview.dependencies" :key="d.location + d.kind">{{ d.kind }} · {{ d.reference }} · {{ ['UNPROVEN','REQUIRED'].includes(d.evidenceState) ? '来源待核定' : '已登记引用' }}</li></ul>
       <label>发布说明<textarea v-model="comment" maxlength="1000" :disabled="busy || !!pending" /></label>
       <button :disabled="unavailable || !preview.canPublish" @click="publish">确认发布此版本</button>

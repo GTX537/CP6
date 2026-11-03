@@ -74,7 +74,7 @@ public sealed partial class FlowAuthoringOwnerV2
             throw Error("DEFINITION_CHANGED", 409);
 
         var dependencies = await PublicationInputs(head, actor, ct);
-        var diagnostics = dependencies.Diagnostics.Select(code => new FlowSimulationDiagnosticV2("$", code)).ToList();
+        var diagnostics = dependencies.Details.Select(d => new FlowSimulationDiagnosticV2(d.Path, d.Code)).ToList();
         var schema = Schema(head.SchemaJson);
         var resolver = new ApproverResolver(db, exactConditions: true);
         var stages = new ApprovalStagePlanner(resolver);

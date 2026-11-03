@@ -79,10 +79,12 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var next=await flow.CreateNextDraftAsync("a",NextDraftCommand((await flow.ReadHeadAsync("a")).Version,first.VersionId));
         var edit=await flow.SaveAsync("a",DependentCommand(child:"b",id:"cycle",token:next.ResourceVersion));
         var cycle=await Preview(flow,"a",edit);Assert.False(cycle.CanPublish);Assert.Contains("DEPENDENCY_CYCLE",cycle.Diagnostics);
+        Assert.Contains(cycle.DiagnosticDetails!,d=>d.Code=="DEPENDENCY_CYCLE"&&d.Path=="$.nodes[1].subFlowKey"&&d.NodeId=="sub");
         var key="depth0";await ActiveDependencyFlow(flow,key);
         for(var i=1;i<SubFlowLimits.MaxDepth;i++){var parent="depth"+i;await ActiveDependencyFlow(flow,parent,child:key);key=parent;}
         var over=await flow.SaveAsync("over-depth",DependentCommand(child:key));var deep=await Preview(flow,"over-depth",over);
         Assert.False(deep.CanPublish);Assert.Contains("DEPENDENCY_DEPTH_EXCEEDED",deep.Diagnostics);
+        Assert.Contains(deep.DiagnosticDetails!,d=>d.Code=="DEPENDENCY_DEPTH_EXCEEDED"&&d.Path=="$.nodes[1].subFlowKey"&&d.NodeId=="sub");
     }
     [CurrentPermissionPostgresFact]
     public async Task Dependencies_current_form_disclosure_and_final_revoke_are_checked_without_partial_publication()

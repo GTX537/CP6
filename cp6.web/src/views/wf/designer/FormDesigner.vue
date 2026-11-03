@@ -1,6 +1,6 @@
 <template>
   <FormAuthoringDesignerV2 v-if="authoringOpen && !managedSource" @close="authoringOpen = false" />
-  <div v-else class="form-designer">
+  <div v-else ref="designerRoot" class="form-designer">
     <!-- 工具栏 -->
     <el-card shadow="never" class="toolbar">
       <el-space wrap>
@@ -33,6 +33,7 @@
           v-for="(f, i) in schema.fields"
           :key="f.name"
           class="field-row"
+          :data-field-index="i"
           :class="{ active: i === selectedIdx }"
           @click="selectedIdx = i"
         >
@@ -48,7 +49,8 @@
           </div>
         </div>
         <el-divider v-if="schema.fields.length">{{ t('预览') }}</el-divider>
-        <DynamicForm v-if="schema.fields.length" :schema="schema" v-model="previewModel" />
+        <DynamicForm v-if="schema.fields.length && previewEnabled !== false" :schema="schema" v-model="previewModel" />
+        <p v-else-if="schema.fields.length">保存并通过校验后可预览控件。</p>
       </el-card>
 
       <!-- 右：属性面板 -->
@@ -161,7 +163,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent, reactive, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, nextTick, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import DynamicForm from '../DynamicForm.vue'
@@ -178,7 +180,7 @@ import { preserveSchema } from '@/views/oa/designer/preserveSchema'
 import { parseStrictJson } from '@/contracts/quality/strictJson'
 import type { FormSchema, FormFieldDef, FormTableColumnDef } from '@/types/wf/wf'
 
-const props = defineProps<{ managedSource?: { schemaJson: string; version: string }; readOnly?: boolean }>()
+const props = defineProps<{ managedSource?: { schemaJson: string; version: string }; readOnly?: boolean; previewEnabled?: boolean }>()
 const emit = defineEmits<{ schemaChange: [raw: string] }>()
 const FormAuthoringDesignerV2 = defineAsyncComponent(() => import('@/views/oa/designer/FormAuthoringDesignerV2.vue'))
 const authoringOpen = ref(false)
@@ -196,6 +198,17 @@ const busy = ref(false)
 let loadedKey: string | undefined
 const selectedIdx = ref(-1)
 const previewModel = ref<Record<string, any>>({})
+const designerRoot = ref<HTMLElement>()
+async function locate(path: string) {
+  const match = /^\$\.fields\[(\d+)\]/.exec(path)
+  if (!match || !schema.fields[Number(match[1])]) return
+  selectedIdx.value = Number(match[1]); await nextTick()
+  const column = /\.columns\[(\d+)\]/.exec(path)
+  const target = designerRoot.value?.querySelector(column ? `[data-test="table-column-${Number(column[1])}"]` : `[data-field-index="${selectedIdx.value}"]`)
+  target?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+  target?.querySelector('input')?.focus()
+}
+defineExpose({ locate })
 
 const selected = computed<FormFieldDef | null>(() =>
   selectedIdx.value >= 0 && selectedIdx.value < schema.fields.length ? schema.fields[selectedIdx.value]! : null,

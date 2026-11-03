@@ -161847,6 +161847,11 @@
       "date": "2026-11-03",
       "change": "W283：原生APP/SFS固定UTC截止事实、Owner内租约/epoch、实际服务授权、提醒/升级/错误边与明确系统决定、原结果及只读运行诊断已实现；真实Host、PG、HTTP与Chrome完成限定验收。",
       "evidence": "docs/development/evidence/W283-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-03",
+      "change": "W284：FLOW/FORM保存、发布、读取和规则求值的准确结构诊断已贯通现有设计器；FORM准确草稿的纯顺序规则预览、服务端精确结果与浏览器体验对照完成真实PG/HTTP/Chrome限定验收。",
+      "evidence": "docs/development/evidence/W284-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -196416,12 +196421,12 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W280-01",
+        "window": "W284-01",
         "as_of": "2026-11-03",
         "classification": "明确实现余项",
-        "report": "docs/development/evidence/W280-01/DELIVERY.md",
-        "delivered": "W170/172不可变FLOW草稿和W173/174发布/激活已经实现，GET不隐式写草稿。 W268完整FORM往返/schema与FLOW致命结构。 W269独立FORM草稿Owner/当前权限/CAS/原件及设计器工作区。 W270准确FORM发布/不可变版本、显式下一草稿及独立激活和页面。 W271准确发布源FLOW/FORM克隆及原件/页面采用。 W278：当前发布表单目录，以及实际Vue/Chrome经Main Program到PostgreSQL的定义发布、填单恢复、代理办理、迭代BLOCKED应用与撤回显式新授权链已验证。 W279：原OA-DEF27项验收逐项核对，并补准确草稿/当前授权/无业务写入的EXPLANATION_ONLY预演，实际页面到PostgreSQL已验证。 W280：FLOW/FORM准确Published GUID版本比较已实现，按稳定字段/节点/连线身份分类差异，保留顺序和精确数字词元；当前资源与字段权限裁剪后比较，实际Chrome/Vue→Main→PostgreSQL采用。",
-        "remaining": "完整图/字段错误定位与纯计算规则预览；文件/外部选项Owner准入；FLOW双作者竞争原场景；全部旧caller处置。FORM草稿/发布/克隆和准确草稿解释预演已有实际交付，不再列为未实现。",
+        "report": "docs/development/evidence/W284-01/DELIVERY.md",
+        "delivered": "W170/172不可变FLOW草稿和W173/174发布/激活已经实现，GET不隐式写草稿。 W268完整FORM往返/schema与FLOW致命结构。 W269独立FORM草稿Owner/当前权限/CAS/原件及设计器工作区。 W270准确FORM发布/不可变版本、显式下一草稿及独立激活和页面。 W271准确发布源FLOW/FORM克隆及原件/页面采用。 W278：当前发布表单目录，以及实际Vue/Chrome经Main Program到PostgreSQL的定义发布、填单恢复、代理办理、迭代BLOCKED应用与撤回显式新授权链已验证。 W279：原OA-DEF27项验收逐项核对，并补准确草稿/当前授权/无业务写入的EXPLANATION_ONLY预演，实际页面到PostgreSQL已验证。 W280：FLOW/FORM准确Published GUID版本比较已实现，按稳定字段/节点/连线身份分类差异，保留顺序和精确数字词元；当前资源与字段权限裁剪后比较，实际Chrome/Vue→Main→PostgreSQL采用。 W284：FLOW/FORM保存、发布、读取和规则求值的准确结构诊断已贯通现有设计器；FORM准确草稿的纯顺序规则预览、服务端精确结果与浏览器体验对照完成真实PG/HTTP/Chrome限定验收。",
+        "remaining": "普通FORM文件与外部选项Owner真实准入、FLOW双作者及下一草稿原竞争场景、全部旧caller和legacy来源处置。准确结构诊断与纯规则预览已有W284实际交付，不再列为未实现。",
         "evidence_refs": [
           "docs/development/evidence/W170-01/DELIVERY.md",
           "docs/development/evidence/W172-01/DELIVERY.md",
@@ -196433,7 +196438,8 @@
           "docs/development/evidence/W271-01/DELIVERY.md",
           "docs/development/evidence/W278-01/DELIVERY.md",
           "docs/development/evidence/W279-01/DELIVERY.md",
-          "docs/development/evidence/W280-01/DELIVERY.md"
+          "docs/development/evidence/W280-01/DELIVERY.md",
+          "docs/development/evidence/W284-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true
@@ -196652,11 +196658,14 @@
         }
       },
       "wave284_diagnostics_rules": {
-        "status": "IN_PROGRESS",
+        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
         "scope": "FLOW图/注册依赖及FORM字段/子表/规则的结构化定位贯通保存、发布诊断与既有设计器；准确FORM草稿的纯计算预览复用实际顺序规则，展示服务端结果与前端体验，当前授权、原数字精度及无业务副作用。",
         "direct_dependencies": "原OA-DEF R1全文及W279原27AC核对已读，直接缺口AC-D01-05/D02-02/D02-03。FlowSchemaValidator当前返回去重码，FormSchemaValidationV1大部分有字符串路径而table聚合丢位置，两个Controller的fieldErrors均空；页面未提供完整定位。PersonalFormValuesV2已采用精确顺序复算，DynamicForm/ruleEngine拥有前端体验；本窗由同一权威规则复用输出，不另写近似计算器。当前FORM/FLOW Owner的只读授权与准确draft/token、WFC错误/原结果和W279只读预演边界直接复用。",
         "limits": "预览只使用用户明确模拟输入与当前可读准确草稿，不创建FormData/实例/任务/命令/通知/发布预览，不查询或执行外部文件/选项/连接器。前端disable/enable/setOptions不授字段写权；实际提交仍由原Owner权限与复算决定。普通FORM文件与所有旧caller分别留W285/W286，不在本窗迁移既有环境或关闭整卡。",
-        "full_task_completed": false
+        "full_task_completed": false,
+        "report": "docs/development/evidence/W284-01/DELIVERY.md",
+        "validation": "35项唯一纯校验/规则相关行为、6项唯一隔离PostgreSQL/HTTP行为及1条真实登录→Vue/Chrome→HTTP→PG路径通过；47项唯一相关Vue行为及vue-tsc --build（包含app/node两项目）通过。覆盖节点/边/字段/列/规则精确定位，重复字段/复杂子表/200行上限，循环/深度/未注册服务、原字段读权投影，准确顺序计算与大数、纯预览零业务写入、过期/拒权/迟到响应、首次校验失败保留可编辑输入和未知原保存不能被后续拒绝抹除。",
+        "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED；59局部3闭环/56余项，125/247正式状态保持。WP12-01整卡不关闭；普通FORM文件/外部选项Owner准入、FLOW双作者/下一草稿原竞争、全部legacy调用面与来源仍有余项。W285普通FORM文件及最终下载、W286原竞争/旧caller顺序继续。"
       }
     },
     {
@@ -201946,7 +201955,7 @@
       "path": "docs/development/dispatch/20261103-wave284/README.md",
       "baseline_sha": "32fcf2767435658b2f1aa362b9a84e640291f79b",
       "registered_at": "2026-11-03T07:47:28.233845+00:00",
-      "phase": "IMPLEMENTING",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -201972,17 +201981,17 @@
           "title": "设计器完整字段/图定位与纯计算规则预览",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "IMPLEMENTING",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w284-01",
           "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
@@ -201991,14 +202000,34 @@
             "Main:schema-validation",
             "Main:form-rule-evaluation",
             "Main:designer-ui"
-          ]
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W284-01/DELIVERY.md",
+          "validation": "35项唯一纯校验/规则相关行为、6项唯一隔离PostgreSQL/HTTP行为及1条真实登录→Vue/Chrome→HTTP→PG路径通过；47项唯一相关Vue行为及vue-tsc --build（包含app/node两项目）通过。覆盖节点/边/字段/列/规则精确定位，重复字段/复杂子表/200行上限，循环/深度/未注册服务、原字段读权投影，准确顺序计算与大数、纯预览零业务写入、过期/拒权/迟到响应、首次校验失败保留可编辑输入和未知原保存不能被后续拒绝抹除。",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave284-final-verification.json"
+          },
+          "business_acceptance": "LOCATED_DEFINITION_AND_PURE_RULE_POSTGRES_HTTP_BROWSER_PASS;FULL_CARD_REMAINS"
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "FLOW图/注册依赖及FORM字段/子表/规则的结构化定位贯通保存、发布诊断与既有设计器；准确FORM草稿的纯计算预览复用实际顺序规则，展示服务端结果与前端体验，当前授权、原数字精度及无业务副作用。"
+      "next_action": "W284正常远端采用/准确清理/finish后接W285普通FORM文件；24h目标持续。",
+      "lifecycle_snapshot": {
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_seat_released": false,
+        "main_branch_deleted": false,
+        "handoff_branch_deleted": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave284-final-verification.json"
+      },
+      "integration_baseline": "32fcf2767435658b2f1aa362b9a84e640291f79b"
     },
     "wave_history": [
       {
@@ -238739,7 +238768,7 @@
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 59693,
+      "effective_seconds_recorded": 61444,
       "next_reestimate_at_effective_seconds": 64800,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
@@ -239347,7 +239376,7 @@
             2
           ],
           "estimate_confidence": "LOW",
-          "state": "IN_PROGRESS",
+          "state": "VERIFYING",
           "admission": "Inspect exact current source/direct providers before START; single chat and fixed seats; no stub substitution",
           "reason": "W279原27AC核对确认D01-05/D02-02/03未闭环；已有保存验证/准确草稿预演复用，补当前可见路径和可执行纯规则说明。",
           "started_at": "2026-11-03T07:47:28.233845+00:00",
@@ -239355,7 +239384,17 @@
             1.5,
             3
           ],
-          "scope_refinement": "FLOW图/注册依赖及FORM字段/子表/规则的结构化定位贯通保存、发布诊断与既有设计器；准确FORM草稿的纯计算预览复用实际顺序规则，展示服务端结果与前端体验，当前授权、原数字精度及无业务副作用。"
+          "scope_refinement": "FLOW图/注册依赖及FORM字段/子表/规则的结构化定位贯通保存、发布诊断与既有设计器；准确FORM草稿的纯计算预览复用实际顺序规则，展示服务端结果与前端体验，当前授权、原数字精度及无业务副作用。",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W284-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave284-final-verification.json"
+          }
         },
         {
           "id": "W285-01",
@@ -239684,7 +239723,7 @@
           "unchanged": "24h effective active goal, original375 and56 partial cards and125/247 full acceptance states; single chat,PostgreSQL/local verification,no Actions,production deployment or existing-database migration."
         }
       ],
-      "timing_snapshot_at": "2026-11-03T07:47:28.233845+00:00",
+      "timing_snapshot_at": "2026-11-03T08:16:39.560064+00:00",
       "remaining_estimate_hours": [
         5,
         10.5

@@ -86,12 +86,12 @@ public sealed partial class FlowAuthoringOwnerV2
         return new("SERVICE", node.Id, node.ServiceActionName ?? node.ServiceConnectorName ?? "",
             type.AssemblyQualifiedName + ":" + type.Module.ModuleVersionId.ToString("D"), "CURRENT_HOST_REGISTRATION");
     }
-    private async Task<(string[] Diagnostics, FlowDependencyRefV2[] Dependencies)> PublicationInputs(Head head,
+    private async Task<(string[] Diagnostics, FlowDependencyRefV2[] Dependencies,DefinitionDiagnosticV2[] Details)> PublicationInputs(Head head,
         UserPermissionContext actor, CancellationToken ct, FlowDependencyRefV2[]? pins = null)
     {
-        var diagnostics = new List<string>();
+        var diagnostics = new List<DefinitionDiagnosticV2>();
         try { diagnostics.AddRange(ValidateSchema(head.Key, head.SchemaJson, ct)); }
-        catch (ScopeAuthorizationExceptionV1 e) when (e.Status == 422) { diagnostics.Add(e.Message); }
+        catch (ScopeAuthorizationExceptionV1 e) when (e.Status == 422) { diagnostics.AddRange(DefinitionDiagnosticsV2.From(e)); }
         var schema = Schema(head.SchemaJson); var dependencies = new List<FlowDependencyRefV2>();
         var reader = new DependencyReader(this, actor, "oa-designer", ct);
         async Task Resolve(string kind, string location, string key)
@@ -111,11 +111,12 @@ public sealed partial class FlowAuthoringOwnerV2
             }
             catch (ScopeAuthorizationExceptionV1 e) when (e.Status is 403 or 404 or 422)
             {
-                diagnostics.Add(e.Status == 404 ? "DEPENDENCY_NOT_AVAILABLE" : e.Status == 403 ? "DEPENDENCY_NOT_READABLE" : e.Message);
+                diagnostics.Add(Located(e.Status == 404 ? "DEPENDENCY_NOT_AVAILABLE" : e.Status == 403 ? "DEPENDENCY_NOT_READABLE" : e.Message));
                 dependencies.Add(new(kind, location, key, null, "UNAVAILABLE"));
             }
             catch (InvalidOperationException e) when (e.Message == "FORM_FLOW_INCOMPATIBLE")
-            { diagnostics.Add(e.Message); dependencies.Add(new(kind, location, key, null, "INCOMPATIBLE")); }
+            { diagnostics.Add(Located(e.Message)); dependencies.Add(new(kind, location, key, null, "INCOMPATIBLE")); }
+            DefinitionDiagnosticV2 Located(string code)=>kind=="FORM"?new("$.formKey",code):new($"$.nodes[{schema.Nodes.FindIndex(n=>n.Id==location)}].subFlowKey",code,NodeId:location);
         }
         if (!string.IsNullOrWhiteSpace(head.FormKey)) await Resolve("FORM", "formKey", head.FormKey);
         foreach (var node in schema.Nodes)
@@ -123,6 +124,6 @@ public sealed partial class FlowAuthoringOwnerV2
             if (string.Equals(node.Type?.Trim(), "subFlow", StringComparison.OrdinalIgnoreCase)) await Resolve("FLOW", node.Id, node.SubFlowKey ?? "");
             if (string.Equals(node.Type?.Trim(), "serviceTask", StringComparison.OrdinalIgnoreCase) && ServiceDependency(node) is { } service) dependencies.Add(service);
         }
-        return (diagnostics.Distinct().ToArray(), dependencies.ToArray());
+        return (diagnostics.Select(d=>d.Code).Distinct().ToArray(), dependencies.ToArray(),diagnostics.Distinct().ToArray());
     }
 }

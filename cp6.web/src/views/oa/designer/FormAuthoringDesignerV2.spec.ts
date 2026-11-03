@@ -9,7 +9,8 @@ const raw = '{"fields":[{"name":"a","type":"input","label":"原文"}],"layout":{
 const draft = (overrides: Partial<FormAuthoringView> = {}): FormAuthoringView => ({ definitionId: 'head', draftId: 'draft', key: 'leave', version: 'v1', enabled: false,
   fields: { Name: 'leave', SchemaJson: raw, Category: ' 原分类 ', SubCategory: null }, writableFields: ['Name', 'SchemaJson', 'Category', 'SubCategory'], ...overrides })
 const mounted: ReturnType<typeof mount>[] = [], state = (w: any): any => w.vm.$.setupState
-function setup() { const w = mount(Designer, { global: { stubs: { FormPublicationPanelV2: true, FormDesigner: { name: 'FormDesigner', props: ['managedSource', 'readOnly'], emits: ['schemaChange'], template: '<div data-test="editor" />' } } } }); mounted.push(w); return w }
+const locate = vi.fn()
+function setup() { const w = mount(Designer, { global: { stubs: { FormPublicationPanelV2: true, FormDesigner: { name: 'FormDesigner', props: ['managedSource', 'readOnly'], emits: ['schemaChange'], methods: { locate }, template: '<div data-test="editor" />' } } } }); mounted.push(w); return w }
 beforeEach(() => {
   vi.resetAllMocks(); localStorage.clear(); sessionStorage.clear()
   vi.mocked(api.list).mockResolvedValue([]); vi.mocked(api.entry).mockResolvedValue({ canCreate: true, state: 'READY', writableFields: draft().writableFields }); vi.mocked(api.read).mockResolvedValue(draft())
@@ -83,4 +84,28 @@ it('keeps unsaved work when navigation is canceled and opens published snapshots
   expect(state(w).canSave).toBe(false);state(w).schemaChanged('{"fields":[]}');expect(state(w).fields.SchemaJson).toBe(raw)
   state(w).create();state(w).key='unsaved-new';state(w).fields.Name='new';confirm.mockReturnValue(false);await state(w).load('leave')
   expect(state(w).fields.Name).toBe('new')
+})
+
+it('keeps a rejected schema editable and locates its offending field without discarding input', async () => {
+  const w = setup(); await flushPromises(); await state(w).load('leave'); state(w).schemaChanged(raw.replace('原文', '保留修改')); await flushPromises()
+  vi.mocked(api.save).mockRejectedValue({ response: { status: 422, data: { fieldErrors: [{ path: '$.fields[0].name', code: 'duplicate', severity: 'ERROR' }] } } })
+  await state(w).save(); expect(state(w).fields.SchemaJson).toContain('保留修改'); expect(state(w).canSave).toBe(true); expect(state(w).pending).toBeUndefined()
+  const button = w.findAll('button').find(b => b.text().includes('$.fields[0].name'))!; await button.trigger('click')
+  expect(locate).toHaveBeenCalledWith('$.fields[0].name')
+  state(w).schemaChanged(raw); await flushPromises(); expect(state(w).fieldErrors).toEqual([])
+})
+it('adopts full ordered-rule source without rounding, prevents saving unapplied text and refuses edits to read-only schemas', async () => {
+  const w = setup(); await flushPromises(); await state(w).load('leave')
+  const withRule = raw.replace('"layout":', '"rules":[{"then":[{"action":"compute","target":"a","expr":"9007199254740993 + 1"}]}],"layout":')
+  await w.get('textarea[aria-label="完整表单结构"]').setValue(withRule)
+  expect(state(w).canSave).toBe(false); expect(state(w).dirty).toBe(true); await state(w).save(); expect(api.save).not.toHaveBeenCalled()
+  state(w).applyRawSchema(); await flushPromises(); expect(state(w).fields.SchemaJson).toBe(withRule); expect(state(w).canSave).toBe(true)
+  vi.mocked(api.save).mockRejectedValue({ response: { status: 422 } }); await state(w).save(); expect(vi.mocked(api.save).mock.calls[0]![1].body.schemaJson).toBe(withRule)
+  await state(w).locate({ path: '$.rules[0].then[0].expr', code: 'invalid', severity: 'ERROR' })
+  const input = w.get('textarea[aria-label="完整表单结构"]').element as HTMLTextAreaElement
+  expect(input.value.slice(input.selectionStart, input.selectionEnd)).toBe('"9007199254740993 + 1"')
+  for (const invalid of ['{', '{"fields":[],"rules":[null]}', '{"fields":[{"name":"x","columns":[null]}]}']) {
+    state(w).rawSchema = invalid; state(w).applyRawSchema(); expect(state(w).fields.SchemaJson).toBe(withRule); expect(state(w).rawSchema).toBe(invalid)
+  }
+  state(w).apply(draft({ writableFields: ['Name'] })); state(w).rawSchema = withRule; state(w).applyRawSchema(); expect(state(w).fields.SchemaJson).toBe(raw)
 })
