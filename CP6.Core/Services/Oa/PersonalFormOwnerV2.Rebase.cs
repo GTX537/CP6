@@ -18,6 +18,8 @@ public sealed partial class PersonalFormOwnerV2
         var source=await Publication(row.Head,row.Version,ct);var target=await Publication(row.Head,targetId,ct);
         var sourceMask=await Mask(actor,row.Head,source,ct);var targetMask=await Mask(actor,row.Head,target,ct);
         var plan=PersonalFormRebaseV2.Build(source.Fields["SchemaJson"]!,target.Fields["SchemaJson"]!,row.Data,sourceMask,targetMask);
+        try{await CheckOptions(PersonalFormValuesV2.Schema(target.Fields["SchemaJson"]!),plan.Data,null,true,ct);}
+        catch(ScopeAuthorizationExceptionV1 e) when(e.Status==422){plan=plan with{Errors=[..plan.Errors,e.Message]};}
         var digest=MainOwnerOperationJournalV1.Digest(MainOwnerOperationJournalV1.Encode(new{row.Id,row.Token,Source=row.Version,Target=targetId,source.SchemaDigest,TargetDigest=target.SchemaDigest,Plan=plan,SourceMask=sourceMask,TargetMask=targetMask}));
         return(target,plan,digest,targetMask);
     }

@@ -1,5 +1,13 @@
 # AI 可读变更日志
 
+## 2026-11-03：24小时目标 / W287共享字典选项
+
+W287：版本化共享字典选项来源已被FORM设计、发布/激活、当前候选读取、草稿/直接提交/退回/重基及真实页面采用；最终服务端复核当前来源与准确字符串值，保留历史原值且不制造历史字典快照。 [交付](../development/evidence/W287-01/DELIVERY.md)。
+
+19项唯一PostgreSQL/HTTP行为、1条实际Chrome/Vue→Main→PostgreSQL完整链及7项schema合同用例通过，0跳过；23项相关Vue行为与vue-tsc --build通过。相同输入证据按实际来源复用。
+
+原375仍27DONE/2IN_PROGRESS/346PLANNED；59局部3闭环/56余项，125/247正式状态不改。下一步按原WP12-01整卡逐项核证，再读原OA-TASK/SFS编辑合同；实际业务Owner专用选项与服务节点仍需独立实际接入。 最终分支/工作区/席位状态按wave287-final-verification.json核销。
+
 ## 2026-11-03：直接提交附件权限修复 / BUG #725
 
 普通FORM附件准备接受当前已登记的新增草稿或直接提交权限；仅有query/submit的发起人可上传后直接提交，不创建草稿、不取得add权限。 [修复与证据](../development/evidence/BUG-725/DELIVERY.md)。

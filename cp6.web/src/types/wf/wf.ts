@@ -2,6 +2,7 @@
 
 /** 表单字段定义（schema.fields 元素） */
 export interface FormFieldDef {
+  optionSourceV1?: import('@/api/oa/formOptions').FormOptionSource
   name: string
   label?: string
   /** input/textarea/number/select/radio/checkbox/date/datetime/user/dept/upload/table */
@@ -23,6 +24,7 @@ export interface FormFieldDef {
 
 /** 子表列。P1 不允许附件、人员、部门或嵌套子表，保证行数据保持扁平。 */
 export interface FormTableColumnDef {
+  optionSourceV1?: import('@/api/oa/formOptions').FormOptionSource
   name: string
   label?: string
   /** input/textarea/number/select/date/datetime */

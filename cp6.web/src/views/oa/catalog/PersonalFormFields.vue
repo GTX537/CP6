@@ -3,11 +3,15 @@ import { computed, ref, watch } from 'vue'
 import type { FormMask } from '@/api/oa/personalForm'
 import PersonalReferenceInput from './PersonalReferenceInput.vue'
 import PersonalFileInput from './PersonalFileInput.vue'
+import PersonalOptionInput from './PersonalOptionInput.vue'
+import type { FormOptionContext } from '@/api/oa/formOptions'
 import type { FormFileReadContext } from '@/api/oa/formFiles'
 import { FormNumber, formObject, readFormJson, writeFormJson, schemaProperty, schemaText, schemaNumber, type FormValue, type FormObject } from './personalFormJson'
-const props = withDefaults(defineProps<{ fields: FormObject[]; modelValue: FormObject; mask?: FormMask; disabled?: boolean; hidden?: string[]; formKey?: string; draftId?: string; allowUnset?: boolean; fileContext?: FormFileReadContext }>(), { allowUnset: true })
+const props = withDefaults(defineProps<{ fields: FormObject[]; modelValue: FormObject; mask?: FormMask; disabled?: boolean; hidden?: string[]; formKey?: string; draftId?: string; allowUnset?: boolean; fileContext?: FormFileReadContext; fieldPath?: string[] }>(), { allowUnset: true })
 const emit = defineEmits<{ 'update:modelValue': [value: FormObject]; validity: [value: boolean]; forbidden: [] }>()
 const errors = ref<Record<string, string>>({}), edits = ref<Record<string, string>>({}), children = ref<Record<string, boolean>>({})
+const optionContext = computed<FormOptionContext | undefined>(() => { const scope = props.fileContext?.scope; return scope && scope.kind !== 'HISTORY' ? { kind: scope.kind, formVersionId: scope.formVersionId, key: scope.key, id: scope.id } : undefined })
+const path = (field: FormObject) => [...(props.fieldPath ?? []), name(field)]
 const name = (field: FormObject) => schemaText(field, 'name')
 const type = (field: FormObject) => schemaText(field, 'type', 'input').toLowerCase()
 const locked = (field: FormObject) => !!props.disabled || !!props.mask && props.mask[name(field)] !== 'edit'
@@ -72,7 +76,7 @@ defineExpose({ valid })
       <template v-if="type(field) === 'table'">
         <fieldset v-for="(row, index) in rows(field)" :key="index">
           <legend>第 {{ index + 1 }} 行</legend>
-          <PersonalFormFields :fields="columns(field)" :model-value="row" :disabled="locked(field)" :allow-unset="allowUnset"
+          <PersonalFormFields :fields="columns(field)" :model-value="row" :disabled="locked(field)" :allow-unset="allowUnset" :file-context="fileContext" :field-path="path(field)" @forbidden="emit('forbidden')"
             @update:model-value="changeRow(field, index, $event)" @validity="children[`${name(field)}:${index}`] = $event" />
           <el-button v-if="!locked(field)" size="small" @click="removeRow(field, index)">删除此行</el-button>
         </fieldset>
@@ -80,6 +84,7 @@ defineExpose({ valid })
         <span class="hint">{{ rows(field).length }} / {{ schemaNumber(field, 'maxRows', 100) }} 行</span>
         <p v-if="rows(field).length > schemaNumber(field, 'maxRows', 100)" role="alert">当前明细超过目标版本行数上限，已保留全部内容，请人工调整。</p>
       </template>
+      <PersonalOptionInput v-else-if="schemaProperty(field, 'optionSourceV1')" :context="optionContext" :field-path="path(field)" :model-value="modelValue[name(field)]" :multiple="type(field) === 'checkbox'" :disabled="locked(field)" @update:model-value="assign(field, $event)" @forbidden="emit('forbidden')" />
       <template v-else-if="['select', 'radio'].includes(type(field))">
         <select :value="selected(field)" :disabled="locked(field)" @change="choose(field, ($event.target as HTMLSelectElement).value)">
           <option value="">请选择</option>

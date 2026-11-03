@@ -126,6 +126,7 @@ public sealed partial class PersonalFormOwnerV2
             var schema=source.Form.Fields["SchemaJson"]!;
             var data=PersonalFormValuesV2.Merge(PersonalFormValuesV2.Schema(schema),command.Body.Data,PersonalFormValuesV2.Initial(schema),source.Mask);
             await References(PersonalFormValuesV2.Schema(schema),data,ct);
+            await CheckOptions(PersonalFormValuesV2.Schema(schema),data,null,true,ct);
             await CheckFiles(source.Head.Id,source.Form.VersionId,"FORM",null,actor.UserId,PersonalFormValuesV2.Schema(schema),data,null,true,source.Mask,ct);
             var id=Guid.NewGuid();var write=Guid.NewGuid();await BeginCommand(write,actor.UserId,Create,key,command,id,null,null,null,ct);
             await db.Database.ExecuteSqlInterpolatedAsync($"""
@@ -154,6 +155,7 @@ public sealed partial class PersonalFormOwnerV2
             if(!TitleReadable(actor) && title==null)title=row.Title;else TitleWritable(actor,row.Title,title);
             var data=PersonalFormValuesV2.Merge(PersonalFormValuesV2.Schema(source.Fields["SchemaJson"]!),command.Body.Data,row.Data,mask);
             await References(PersonalFormValuesV2.Schema(source.Fields["SchemaJson"]!),command.Body.Data.GetRawText(),ct);
+            await CheckOptions(PersonalFormValuesV2.Schema(source.Fields["SchemaJson"]!),data,row.Data,false,ct);
             await CheckFiles(row.Head,row.Version,"DRAFT",id,actor.UserId,PersonalFormValuesV2.Schema(source.Fields["SchemaJson"]!),data,row.Data,false,mask,ct);
             var write=Guid.NewGuid();await BeginCommand(write,actor.UserId,Save,resource,command,id,null,null,null,ct);
             await db.Database.ExecuteSqlInterpolatedAsync($"""

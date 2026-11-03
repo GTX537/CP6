@@ -77,6 +77,7 @@ public sealed partial class PersonalFormOwnerV2
         var schema=PersonalFormValuesV2.Schema(form.Fields["SchemaJson"]!);
         var merged=PersonalFormValuesV2.Merge(schema,input.Data,original,mask);
         var computed=PersonalFormValuesV2.Recompute(schema,merged);await References(schema,computed.Data,ct);
+        await CheckOptions(schema,computed.Data,original,true,ct);
         await CheckFiles(form.DefinitionId,form.VersionId,draft==null?"FORM":"DRAFT",draft,actor.UserId,schema,computed.Data,original,true,mask,ct);
         await Final(actor,lease,ct,false);
         return new(PersonalFormValuesV2.Project(computed.Data,mask),computed.Hidden.Where(x=>mask[x]!="hidden").ToArray(),

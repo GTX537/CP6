@@ -70,14 +70,33 @@ public sealed partial class FormAuthoringOwnerV2
         // Saved schemas already crossed the W268 boundary. Reuse that internal contract;
         // only external source qualification is a new publication concern here.
         var schema = JsonSerializer.Deserialize<FormSchema>(head.SchemaJson, new JsonSerializerOptions(JsonSerializerDefaults.Web))!;
-        var uploads = schema.Fields.Select((field,index)=>(Field:field,Index:index)).Where(f => f.Field.Type.Equals("upload",StringComparison.OrdinalIgnoreCase)).ToArray();
-        if(uploads.Length==0)return([],[],[]);
-        if(await db.Database.SqlQueryRaw<bool>("SELECT cp6_form_files_v2.ready() AS \"Value\"").SingleAsync(ct))
-            return([],uploads.Select(f=>new FlowDependencyRefV2("FILE",f.Field.Name,CP6.Core.Services.Pub.FormFileReferenceV2.Owner,"2","AVAILABLE")).ToArray(),[]);
-        return (uploads.Select(f => "FORM_FILE_SOURCE_REQUIRED:" + f.Field.Name).ToArray(),
-            uploads.Select(f => new FlowDependencyRefV2("FILE",f.Field.Name,"file-owner",null,"REQUIRED")).ToArray(),
-            uploads.Select(f => new DefinitionDiagnosticV2($"$.fields[{f.Index}]","FORM_FILE_SOURCE_REQUIRED",FieldName:f.Field.Name)).ToArray());
+        var diagnostics=new List<string>();var dependencies=new List<FlowDependencyRefV2>();var details=new List<DefinitionDiagnosticV2>();
+        var uploads=schema.Fields.Select((field,index)=>(Field:field,Index:index)).Where(f=>f.Field.Type.Equals("upload",StringComparison.OrdinalIgnoreCase)).ToArray();
+        if(uploads.Length>0)
+        {
+            var ready=await db.Database.SqlQueryRaw<bool>("SELECT cp6_form_files_v2.ready() AS \"Value\"").SingleAsync(ct);
+            foreach(var f in uploads)
+            {
+                dependencies.Add(new("FILE",f.Field.Name,ready?CP6.Core.Services.Pub.FormFileReferenceV2.Owner:"file-owner",ready?"2":null,ready?"AVAILABLE":"REQUIRED"));
+                if(!ready){diagnostics.Add("FORM_FILE_SOURCE_REQUIRED:"+f.Field.Name);details.Add(new($"$.fields[{f.Index}]","FORM_FILE_SOURCE_REQUIRED",FieldName:f.Field.Name));}
+            }
+        }
+        var options=new SharedDictionaryOptionsV1(db);
+        var optionFields=SharedDictionaryOptionsV1.Fields(schema).ToArray();
+        foreach(var field in optionFields)
+        {
+            string? error=null;
+            try{await options.Source(field.Source,ct);}
+            catch(ScopeAuthorizationExceptionV1 e) when(e.Status==422){error=e.Message;}
+            dependencies.Add(new("OPTION",field.Path,field.Source.Owner,"1/SHARED/"+field.Source.TypeId,error??"AVAILABLE"));
+            if(error!=null){diagnostics.Add(error+":"+field.Field);details.Add(new(field.Path+".optionSourceV1",error,FieldName:field.Field));}
+        }
+        if(diagnostics.Count==0&&optionFields.Length>0)
+            try{await options.CheckDefaults(schema,head.SchemaJson,ct);}
+            catch(ScopeAuthorizationExceptionV1 e) when(e.Status==422){diagnostics.Add(e.Message);details.Add(new("$.fields",e.Message));}
+        return(diagnostics.ToArray(),dependencies.ToArray(),details.ToArray());
     }
+
     private static string PreviewDigest(Head head, Guid policy, string[] diagnostics, FlowDependencyRefV2[] dependencies)
         => MainOwnerOperationJournalV1.Digest(JsonSerializer.SerializeToUtf8Bytes(new
         { Contract = "FORM-PUBLICATION-PREVIEW-1", head.Id, head.DraftId, head.Version, head.Number, head.SavedBy, Fields = Values(head), PolicyVersion = policy, diagnostics, dependencies }, Json));

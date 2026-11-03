@@ -22,6 +22,14 @@ beforeEach(() => {
 })
 afterEach(() => { mounted.forEach(w => w.unmount()); mounted.length = 0 })
 
+it('switches static options to an explicit shared source atomically and undo restores the original options', async () => {
+  const w = setup(); await w.setProps({ managedSource: { schemaJson: '{"fields":[{"name":"choice","type":"select","options":[{"label":"Original","value":9007199254740993.00}]}]}', version: 'source' } })
+  state(w).setOptionSource(state(w).schema.fields[0], { owner: 'Main.Sys.DictionaryOptions.v1', scope: 'SHARED', typeId: 12 })
+  expect(state(w).schema.fields[0].options).toBeUndefined(); expect(state(w).schema.fields[0].optionSourceV1.typeId).toBe(12)
+  state(w).undo(); expect(w.emitted('schemaChange')!.at(-1)![0]).toContain('9007199254740993.00'); expect(state(w).schema.fields[0].optionSourceV1).toBeUndefined()
+  state(w).redo(); expect(state(w).schema.fields[0].optionSourceV1.typeId).toBe(12)
+})
+
 it('loads, edits, reorders and saves complete form content without changing untouched numeric lexemes', async () => {
   const w = setup(); await flushPromises()
   state(w).schema.fields[0].label = '改名'
