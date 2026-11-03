@@ -202491,11 +202491,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261103-wave295",
-      "path": "docs/development/dispatch/20261103-wave295/README.md",
-      "baseline_sha": "cebf6702661eeba2596463e0534d6069dc447fb9",
-      "registered_at": "2026-11-03T14:37:08.544092+00:00",
-      "phase": "DELIVERY_MAIN_CLOSEOUT",
+      "id": "20261103-wave296",
+      "path": "docs/development/dispatch/20261103-wave296/README.md",
+      "baseline_sha": "6521575d4b2aab41fde64630006d684f4ec3b50a",
+      "registered_at": "2026-11-03T14:53:11.484717+00:00",
+      "phase": "IMPLEMENTING",
       "assigned_chats": [
         "COORD"
       ],
@@ -202513,52 +202513,38 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W295-01",
-          "workspace_task": "W295-01",
+          "id": "W296-01",
+          "workspace_task": "W296-01",
           "related_tasks": [
-            "WP12-02"
+            "WP12-06"
           ],
-          "title": "原WP12-02整卡范围核销",
+          "title": "原APP绑定提交卡与24h实际执行收口",
           "chat": "COORD",
           "mode": "SINGLE_CHAT",
-          "phase": "DELIVERY_MAIN_CLOSEOUT",
+          "phase": "IMPLEMENTING",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": true,
+          "worker_delivery_received": false,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w295-01",
+          "branch": "codex/w296-01",
           "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
-          "full_task_completed": true,
+          "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": true,
+          "candidate_review_completed": false,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
-            "Main:oa-definition"
-          ],
-          "worker_delivery_ref": "docs/development/evidence/W295-01/DELIVERY.md",
-          "validation": "Documentation/current-source/prior-execution audit; no new product test",
-          "lifecycle_snapshot": {
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave295-final-verification.json",
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false
-          }
+            "Main:oa-application"
+          ]
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "正常采用/清理/finish后核原WP12-06真实标识域与alias/legacy callback余项。",
-      "lifecycle_snapshot": {
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave295-final-verification.json",
-        "main_finish_required": true,
-        "main_seat_released": false,
-        "handoff_seat_released": false
-      }
+      "next_action": "核原WP12-06三项TxS/TxE提供者范围和正反验收，特别是合法Key、alias与旧回调隔离；只在完整满足时核销。汇总原59卡当前余项、28窗口与9个独立BUG真实交付和估时偏差，达到约24h有效投入并完成当前窗口正常交付后收妥目标。"
     },
     "wave_history": [
       {
@@ -239771,6 +239757,96 @@
             "workspace_clean": true
           }
         ]
+      },
+      {
+        "id": "20261103-wave295",
+        "path": "docs/development/dispatch/20261103-wave295/README.md",
+        "baseline_sha": "cebf6702661eeba2596463e0534d6069dc447fb9",
+        "registered_at": "2026-11-03T14:37:08.544092+00:00",
+        "phase": "DONE",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W295-01",
+            "workspace_task": "W295-01",
+            "related_tasks": [
+              "WP12-02"
+            ],
+            "title": "原WP12-02整卡范围核销",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "DONE",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w295-01",
+            "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
+            "full_task_completed": true,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:oa-definition"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W295-01/DELIVERY.md",
+            "validation": "Documentation/current-source/prior-execution audit; no new product test",
+            "lifecycle_snapshot": {
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave295-final-verification.json",
+              "all_slots_released": true
+            }
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "正常采用/清理/finish后核原WP12-06真实标识域与alias/legacy callback余项。",
+        "lifecycle_snapshot": {
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave295-final-verification.json",
+          "all_slots_released": true
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W295-01",
+            "source": "90dc0cc40502a14fc6b016f4edab3a49173a7d85",
+            "remote_target": "a701259004bb1137db073cbe7a0a6e05277d77e4",
+            "pr": "https://github.com/GTX537/CP6/pull/739",
+            "branch": "codex/w295-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W295-HANDOFF",
+            "source": "a3e4d7434435cd1f936a265f9c4c8d365547c925",
+            "remote_target": "3625c58e9e1d7835168e30c9df705b6de57a66d2",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/272",
+            "branch": "codex/w295-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -240351,7 +240427,7 @@
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 84360,
+      "effective_seconds_recorded": 85236,
       "next_reestimate_at_effective_seconds": 86400,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
@@ -241541,7 +241617,7 @@
             0.3
           ],
           "estimate_confidence": "LOW",
-          "state": "VERIFYING",
+          "state": "DONE",
           "started_at": "2026-11-03T14:37:08.544092+00:00",
           "scope_refinement": "按原WP12-02逐项核销定义发布预览、准确依赖pin与独立启停；复用当前适用真实PG/HTTP/页面证据和BUG736修复，不新增或重复产品测试；限定TASK_DELIVERY前置准确采用，其他卡和125/247状态独立。",
           "reason": "W294实际590秒，独立BUG736实际576秒；本窗仅核证和账实同步，不按原L卡名估大工时。",
@@ -241549,10 +241625,52 @@
           "report": "docs/development/evidence/W295-01/DELIVERY.md",
           "lifecycle_snapshot": {
             "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave295-final-verification.json",
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false
-          }
+            "all_slots_released": true
+          },
+          "actual_effective_seconds": 377,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W295-01",
+              "source": "90dc0cc40502a14fc6b016f4edab3a49173a7d85",
+              "remote_target": "a701259004bb1137db073cbe7a0a6e05277d77e4",
+              "pr": "https://github.com/GTX537/CP6/pull/739",
+              "branch": "codex/w295-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W295-HANDOFF",
+              "source": "a3e4d7434435cd1f936a265f9c4c8d365547c925",
+              "remote_target": "3625c58e9e1d7835168e30c9df705b6de57a66d2",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/272",
+              "branch": "codex/w295-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W296-01",
+          "day": "D3_CLOSEOUT",
+          "related_tasks": [
+            "WP12-06"
+          ],
+          "title": "原APP绑定提交卡与24h实际执行收口",
+          "estimate_hours": [
+            0.25,
+            0.5
+          ],
+          "estimate_confidence": "LOW",
+          "state": "IN_PROGRESS",
+          "started_at": "2026-11-03T14:53:11.484717+00:00",
+          "scope_refinement": "核原WP12-06三项TxS/TxE提供者范围和正反验收，特别是合法Key、alias与旧回调隔离；只在完整满足时核销。汇总原59卡当前余项、28窗口与9个独立BUG真实交付和估时偏差，达到约24h有效投入并完成当前窗口正常交付后收妥目标。",
+          "reason": "文档/原证据核销及54余项检查；不新增产品验证，不空等、不延时凑满预算。若必要收尾超24h如实记录。"
         }
       ],
       "reestimates": [
@@ -241985,7 +242103,7 @@
           "unchanged": "Single chat;PostgreSQL;simulated business data;affected local checks and one task review;no Actions,production,existing database migration. Original37528DONE/2IN_PROGRESS/345PLANNED;59partial4closed/55remaining;125/247 unchanged."
         }
       ],
-      "timing_snapshot_at": "2026-11-03T14:38:35.234940+00:00",
+      "timing_snapshot_at": "2026-11-03T14:53:11.484717+00:00",
       "remaining_estimate_hours": [
         1.5,
         3
@@ -242055,6 +242173,20 @@
           "proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug730-final-verification.json",
           "actual_effective_seconds": 989,
           "pr": "https://github.com/GTX537/CP6/pull/732",
+          "counted_once": true
+        },
+        {
+          "issue": 736,
+          "proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug736-final-verification.json",
+          "actual_effective_seconds": 576,
+          "pr": "https://github.com/GTX537/CP6/pull/738",
+          "counted_once": true
+        },
+        {
+          "issue": 740,
+          "proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug740-final-verification.json",
+          "actual_effective_seconds": 435,
+          "pr": "https://github.com/GTX537/CP6/pull/741",
           "counted_once": true
         }
       ],
