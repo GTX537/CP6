@@ -17,6 +17,11 @@ public sealed partial class NativeInboxOwnerV2
     {
         forms.Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var(actor,lease)=await Begin(behalf,ct);
         var(member,content)=await Visible(instance,actor,ct);
+        var result=await Detail(instance,member,content,actor,lease,ct);
+        await FinalRead(actor,lease,ct);return result;
+    }
+    private async Task<NativeInstanceReadV2> Detail(Guid instance,Member member,Content content,ReadIdentity actor,ScopeAuthorizationLeaseV1 lease,CancellationToken ct)
+    {
         var members=(await Members().Where(m=>m.Root==member.Root).ToArrayAsync(ct)).Where(actor.CanRead).ToArray();
         foreach(var m in members)actor.Use(m);var ids=members.Select(m=>m.InstanceId).ToArray();
         var instances=await db.Wf_FlowInstances.AsNoTracking().Where(i=>ids.Contains(i.Id)).ToArrayAsync(ct);
@@ -40,6 +45,6 @@ public sealed partial class NativeInboxOwnerV2
                     &&(!actor.Delegated||actor.Grant(members.Single(m=>m.InstanceId==t.InstanceId),"TASK_APPROVE")!=null||actor.Grant(members.Single(m=>m.InstanceId==t.InstanceId),"TASK_REJECT")!=null))).ToArray(),
             cc.Select(c=>new NativeCcReadV2(c.Id,c.InstanceId,c.RecipientId,c.AtNodeId,reads.SingleOrDefault(r=>r.Kind=="CC"&&r.TargetId==c.Id))).ToArray(),
             history,await Votes(ids,ct),content.Form,content.Business);
-        await FinalRead(actor,lease,ct);return result;
+        return result;
     }
 }

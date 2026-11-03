@@ -23,6 +23,7 @@ export function clearTabIdentity(): void {
   sessionStorage.removeItem('cp6-workflow-activation-pending')
   sessionStorage.removeItem('cp6-approval-binding-pending')
   sessionStorage.removeItem('cp6-personal-form-pending')
+  sessionStorage.removeItem('cp6-personal-form-favorite-pending')
   sessionStorage.removeItem('cp6-personal-task-pending')
   sessionStorage.removeItem('cp6-native-inbox-read-pending')
   sessionStorage.removeItem('cp6-task-delegation-pending')

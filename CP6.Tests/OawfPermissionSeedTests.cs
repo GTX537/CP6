@@ -43,6 +43,7 @@ public class OawfPermissionSeedTests
         (734, "enable"),
         // 735 oa-form-catalog（填單：收藏 + 草稿 CRUD + 起流程/提交）
         (735, "add"), (735, "edit"), (735, "submit"), (735, "del"), (735, "favorite"),
+        (736, "query"), // Native history has its own current read authority.
         // 737 oa-settings（设定：偏好 + 委派合一）
         (737, "edit"), (737, "delegate"),
         // 738 oa-designer（设计器：新栈 save/clone + 旧栈 flow/form def）
@@ -64,7 +65,7 @@ public class OawfPermissionSeedTests
     }
 
     [Fact]
-    public void EnsureSeeded_SeedsExactly20TuplesPerTenant_ForBothMenuAndRoleAction()
+    public void EnsureSeeded_SeedsLegacyWritesAndNativeHistoryReadPerTenant_ForBothMenuAndRoleAction()
     {
         using var db = NewDb();
         SeedTenantsAndMenus(db);
@@ -78,9 +79,9 @@ public class OawfPermissionSeedTests
             var roleActions = db.Sys_RoleActions.IgnoreQueryFilters()
                 .Where(x => x.TenantId == tid && x.RoleId == 1).ToList();
 
-            // 元组闭环计数：每租户各得全套 20。
-            Assert.Equal(20, menuActions.Count);
-            Assert.Equal(20, roleActions.Count);
+            // 20 legacy writes + current native history query.
+            Assert.Equal(21, menuActions.Count);
+            Assert.Equal(21, roleActions.Count);
 
             // 逐元组精确匹配（漏种 0 / 多种 0）。
             var maSet = menuActions.Select(x => (x.MenuId, x.ActionCode)).ToHashSet();
@@ -105,9 +106,9 @@ public class OawfPermissionSeedTests
         Assert.Equal(ma1, db.Sys_MenuActions.IgnoreQueryFilters().Count());
         Assert.Equal(ra1, db.Sys_RoleActions.IgnoreQueryFilters().Count());
 
-        // 2 租户 × 20 元组 = 40。
-        Assert.Equal(40, ma1);
-        Assert.Equal(40, ra1);
+        // 2 tenants × 21 grants; restarting never duplicates a grant.
+        Assert.Equal(42, ma1);
+        Assert.Equal(42, ra1);
     }
 
     [Fact]

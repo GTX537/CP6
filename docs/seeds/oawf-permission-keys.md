@@ -1,5 +1,7 @@
 # OA/WF 写端点 × 権限键清单（M-OA/WF Task 1 真相源）
 
+> 2026-11-03 W281补充：原生提交/流程历史采用 `oa-form-search:query`（菜单736），由 [OawfPermissionSeed.cs](../../CP6.WebApi/Seed/OawfPermissionSeed.cs) 注册并只默认授管理员；实际读取还须当前资源/字段及TASK代理范围。当前C#种子为原20个写权限加此读权限，共21项。下面清单和SQL Server脚本保留Task3b历史范围，不是新增PostgreSQL验收入口。
+
 > 生成于 2026-07-12。本表是 **M-OA/WF 横切接线波的唯一真相源**：T2（`Sys_MenuAction`/`Sys_RoleAction` 逐租户种子 + 菜单 MenuKey 回填/显式赋值）、T3（逐端点贴 `[RequirePermission("menu-key","action")]`）、T4（反射 fail-closed 测试）均以本表为准。
 > 依据：`docs/architecture/00-横切接线规范.md` 第一章（功能级四粒度）+ 同型先例 `docs/seeds/mes-permission-keys.md` / `docs/seeds/erp-permission-keys.md`（格式与结构基准，§一~§七 照抄）+ 现有 OA 菜单种子 `CP6.WebApi/Program.cs` MenuId 733–740 + 逐 Service 实现读证的只读 POST 豁免判定。
 > 扫描范围：`CP6.WebApi/Controllers/Oa/`（11 控制器）+ `CP6.WebApi/Controllers/Wf/`（5 控制器），**共 16 个控制器全量**。

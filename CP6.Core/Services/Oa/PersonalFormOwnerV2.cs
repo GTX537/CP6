@@ -137,7 +137,7 @@ public sealed partial class PersonalFormOwnerV2(CP6Context db, IHttpContextAcces
         INSERT INTO cp6_personal_form_v2.commands(id,tenant_id,environment_id,actor_id,operation,resource_key,command_id,digest,raw_body,expected_version,correlation,draft_id,form_data_id,root_id,task_id)
         VALUES({id},{db.CurrentTenantId},{fence.EnvironmentId},{actor},{operation},{resource},{command.Id},{command.Digest},{command.Raw},{command.Expected},{command.Correlation},{draft},{data},{root},{task})
         """,ct);
-    private async Task<PersonalFormResultV2> Complete<T>(Guid id, Command<T> command, Guid resource, string? version, object value, object audit, CancellationToken ct)
+    private async Task<PersonalFormResultV2> Complete<T>(Guid id, Command<T> command, Guid? resource, string? version, object value, object audit, CancellationToken ct)
     {
         var result = new PersonalFormResultV2(command.Id,"SUCCEEDED",resource,version,JsonSerializer.SerializeToElement(value,Json),Clock(),command.Correlation);
         await db.Database.ExecuteSqlInterpolatedAsync($"""

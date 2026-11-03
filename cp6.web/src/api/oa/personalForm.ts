@@ -1,6 +1,8 @@
 import http from '../http'
 export type FormMask = Record<string, 'edit' | 'readonly' | 'hidden'>
-export interface PersonalCatalogItem { formKey: string; name: string; category: string | null; subCategory: string | null; formVersionId: string; formVersion: number }
+export interface PersonalCatalogItem { formKey: string; name: string; category: string | null; subCategory: string | null; formVersionId: string; formVersion: number; favorite: boolean }
+export interface PersonalFavoriteItem { formKey: string; available: boolean; publication: PersonalCatalogItem | null }
+export interface PersonalFavorite { formKey: string; favorite: boolean; updatedAtUtc: string }
 export interface PersonalContext {
   formKey: string; formVersionId: string; formVersion: number; name: string; schemaJson: string
   activationRevision: string; bindingRevision: string | null; flowVersionId: string | null
@@ -14,7 +16,7 @@ export interface PersonalDraft {
 }
 export type PersonalDraftItem = Pick<PersonalDraft, 'draftId' | 'formKey' | 'name' | 'formVersion' | 'latestPublishedVersion' | 'title' | 'rowVersion' | 'updatedAtUtc' | 'stale'>
 export interface FormSubmission { formDataId: string; formDefVersionId: string; formVersion: number; flowInstanceId: string | null; flowDefVersionId: string | null; flowVersion: number | null; receiptRef: string; commandId: string; bindingRevision: string | null; submissionState: string }
-export interface PersonalResult { commandId: string; outcome: string; resourceId: string | null; resourceVersion: string | null; result: PersonalDraft | FormSubmission | null }
+export interface PersonalResult { commandId: string; outcome: string; resourceId: string | null; resourceVersion: string | null; result: PersonalDraft | FormSubmission | PersonalFavorite | null }
 export interface RebasePreview { previewId: string; digest: string; sourceVersionId: string; targetVersionId: string; expectedVersion: string; expiresAtUtc: string; changes: { path: string; kind: string; hasValue: boolean }[]; validationErrors: string[]; requiresConfirmation: boolean }
 export interface ValuePreview { dataJson: string; hiddenFields: string[]; valid: boolean; errors: string[] }
 export interface TaskVersion { taskId: string; instanceId: string; taskStatus: number; instanceStatus: number; taskRowVersion: string; instanceRowVersion: string }
@@ -24,6 +26,7 @@ const unwrap = <T>(v: any): T => v?.data ?? v
 const key = encodeURIComponent
 const root = '/oa/v2'
 export const personalFormApi = {
+  favorites: async (page: number, search: string, signal?: AbortSignal) => unwrap<{ items: PersonalFavoriteItem[]; total: number; page: number; pageSize: number }>(await http.get(`${root}/catalog/favorites`, { params: { page, search }, signal })),
   catalog: async (page: number, search: string, signal?: AbortSignal) => unwrap<{ items: PersonalCatalogItem[]; total: number; page: number; pageSize: number }>(await http.get(`${root}/forms/catalog`, { params: { page, search }, signal })),
   context: async (form: string, signal?: AbortSignal) => unwrap<PersonalContext>(await http.get(`${root}/forms/${key(form)}/initiation-context`, { signal })),
   references: async (form: string, field: string, search: string, draft?: string, signal?: AbortSignal) => unwrap<{ id: string; name: string }[]>(await http.get(`${root}/forms/${key(form)}/references/${key(field)}`, { params: { search, draft }, signal })),
