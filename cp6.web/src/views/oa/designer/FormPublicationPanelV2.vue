@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import DefinitionComparisonPanelV2 from './DefinitionComparisonPanelV2.vue'
 import DefinitionImpact from '../admin/DefinitionImpact.vue'
 import DefinitionClonePanelV2 from './DefinitionClonePanelV2.vue'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
@@ -144,6 +145,7 @@ onBeforeUnmount(() => { live = false; generation++; controller?.abort(); window.
     <div v-if="versions.length || page > 1"><button :disabled="unavailable || page === 1" @click="page--; history()">上一页版本</button><span>{{ page }}</span><button :disabled="unavailable || versions.length < 100" @click="page++; history()">下一页版本</button></div>
     <div v-if="selected"><h4>版本 {{ selected.version }}（只读）</h4><pre v-if="selected.fields.SchemaJson">{{ selected.fields.SchemaJson }}</pre><p v-else>当前无权读取表单结构。</p></div>
     <DefinitionClonePanelV2 kind="FORM" :source="selected ? { key: selected.key, versionId: selected.versionId, version: selected.version } : undefined" :disabled="busy || !!pending || disabled || dirty" @locked="cloneLocked = $event; emit('locked', $event || busy || !!pending)" @reload="emit('reload', $event)" @private-clear="preview = undefined; versions = []; selected = undefined; emit('privateClear')" />
+    <DefinitionComparisonPanelV2 kind="FORM" :current="current" :versions="versions" :disabled="unavailable" @private-clear="preview = undefined; versions = []; selected = undefined; emit('privateClear')" />
   </section>
 </template>
 <style scoped>

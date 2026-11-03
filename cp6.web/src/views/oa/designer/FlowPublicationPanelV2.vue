@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import DefinitionComparisonPanelV2 from './DefinitionComparisonPanelV2.vue'
 import DefinitionClonePanelV2 from './DefinitionClonePanelV2.vue'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
@@ -124,6 +125,7 @@ onBeforeUnmount(() => { live = false; generation++; controller?.abort(); window.
     <div v-if="versions.length || page > 1"><button :disabled="unavailable || page === 1" @click="page--; history()">上一页版本</button><span>{{ page }}</span><button :disabled="unavailable || versions.length < 100" @click="page++; history()">下一页版本</button></div>
     <div v-if="selected"><h4>版本 {{ selected.version }}（只读）</h4><pre v-if="selected.fields.SchemaJson">{{ selected.fields.SchemaJson }}</pre><p v-else>当前无权读取流程结构。</p><ul v-if="selected.dependencyRefs.length"><li v-for="d in selected.dependencyRefs" :key="d.kind + d.location">发布时固定：{{ d.kind }} · {{ d.reference }} · {{ d.location }} · {{ d.version }}</li></ul></div>
     <DefinitionClonePanelV2 kind="FLOW" :source="selected ? { key: selected.key, versionId: selected.versionId, version: selected.version } : undefined" :disabled="busy || !!pending || disabled || dirty" @locked="cloneLocked = $event; emit('locked', $event || busy || !!pending)" @reload="emit('reload', $event)" @private-clear="preview = undefined; versions = []; selected = undefined; emit('privateClear')" />
+    <DefinitionComparisonPanelV2 kind="FLOW" :current="current" :versions="versions" :disabled="unavailable" @private-clear="preview = undefined; versions = []; selected = undefined; emit('privateClear')" />
   </section>
 </template>
 <style scoped>

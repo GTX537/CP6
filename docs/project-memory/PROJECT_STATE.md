@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## 2026-11-03：24小时持续目标 / W280准确发布版本比较
+
+W280：FLOW/FORM准确Published GUID版本比较已实现，按稳定字段/节点/连线身份分类差异，保留顺序和精确数字词元；当前资源与字段权限裁剪后比较，实际Chrome/Vue→Main→PostgreSQL采用。 [交付](../development/evidence/W280-01/DELIVERY.md)。
+
+本地后端7个唯一行为通过：4个纯比较测试、2个真实PostgreSQL/HTTP权限与分页、1个真实Chrome→Vue→Main→PostgreSQL双工作区比较；0跳过。前端19个相关组件行为通过（原发布面板15项+新比较面板4项，最终新面板4项定向复验），应用vue-tsc --noEmit -p tsconfig.app.json通过。真实失败保留；最终源码6个后端成功行为复用004504Z记录，浏览器定位修正后只重跑对应1项。无Actions、生产部署或既有环境迁移。
+
+原375仍27DONE/2IN_PROGRESS/346PLANNED；59局部3闭环/56余项，125/247正式状态不改。W281目录/收藏/历史下载、W282退回等任务操作、W283期限/Worker接续；完整字段/图诊断、FLOW双作者与下一稿竞争原场景、legacy重建来源与全部旧caller、文件/选项Owner、SFS三版本及其他业务Owner采用仍保留。 总目标IN_PROGRESS；分支/工作区/席位最终状态见wave280-final-verification.json。
+
 ## 2026-11-03：24小时持续目标 / W279原验收与准确草稿预演
 
 W279：原OA-DEF27项验收逐项核对，并补准确草稿/当前授权/无业务写入的EXPLANATION_ONLY预演，实际页面到PostgreSQL已验证。 [交付](../development/evidence/W279-01/DELIVERY.md)。
