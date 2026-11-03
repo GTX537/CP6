@@ -70,5 +70,18 @@ internal static class CorePostgreSqlModelConfiguration
         modelBuilder.Entity<InboundReceipt>().Property(x => x.OperatorCd).HasMaxLength(100);
         modelBuilder.Entity<StockTransaction>().Property(x => x.OperatorCd).HasMaxLength(100);
         PostgreSqlModelConfiguration.Apply(modelBuilder, UtcDateTimes, PostgreSqlFixedTextDomainsV1.Core);
+        // OA-TASK v2 admits 1000 Unicode code points. Keep the three runtime
+        // projections lossless; all previously admitted UTF-16 strings still fit.
+        foreach (var type in new[] { typeof(Wf_FlowTask), typeof(Wf_FlowHistory), typeof(Wf_FlowFormTo) })
+        {
+            var entity = modelBuilder.Entity(type).Metadata;
+            var table = entity.GetTableName()!;
+            entity.RemoveCheckConstraint($"CK_{table}_Comment_Utf16Capacity");
+            var name = $"CK_{table}_Comment_UnicodeScalarCapacity";
+            var check = entity.AddCheckConstraint(name,
+                $"char_length({PostgreSqlModelExpressions.RawText("\"Comment\"")}) <= 1000");
+            check.SetAnnotation("CP6:GeneratedCapacity", true);
+            check.SetAnnotation(PostgreSqlModelConfiguration.OriginalNameAnnotation, name);
+        }
     }
 }

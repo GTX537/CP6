@@ -1,5 +1,13 @@
 # 当前待办与优先级
 
+## 2026-11-03：SFS意见完整保存 / BUG #730
+
+SFS意见按Unicode字符计数，1000个补充字符不截断，1001保留全文并禁提交；三张工作流运行记录的PostgreSQL容量同步为1000个字符，保留尾空格。 [修复与证据](../development/evidence/BUG-730/DELIVERY.md)。
+
+真实Chrome先复现1000个🙂被截为500；UI修复后真实POST进一步发现旧PG UTF16约束503。最终Chrome/登录HTTP/PG完整1000字符保存通过；定向PG行为验证1001拒绝且无票、三张运行表精确1000含尾空格保存与1001数据库约束拒绝、原命令回放；原APP500字符/命令兼容回归通过。9项相关Vue行为、显式应用vue-tsc通过。
+
+原375/局部卡/125/247状态不变，24h目标继续；最终远端采用、Issue关闭、分支清理及席位释放按bug730-final-verification.json核销。
+
 ## 2026-11-03：24小时目标 / W290统一动作与APP原命令
 
 W290：统一任务动作上下文与服务端SFS/APP分型、APP accepted原命令五字段与同事务WFC alias、真实APP办理页及未知结果恢复已闭环。 [交付](../development/evidence/W290-01/DELIVERY.md)。

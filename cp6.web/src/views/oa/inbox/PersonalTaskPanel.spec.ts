@@ -72,3 +72,11 @@ it('switches tasks during an in-flight read without displaying the old task or l
   await w.setProps({ taskId: 'two' }); first(context); await flushPromises(); expect(state(w).context).toBeUndefined(); expect(state(w).busy).toBe(true)
   second({ ...context, task: { ...context.task, taskId: 'two' } }); await flushPromises(); expect(state(w).context.task.taskId).toBe('two'); expect(state(w).busy).toBe(false)
 })
+it('keeps all 1000 Unicode code points and blocks a longer comment before saving or sending a command', async () => {
+  vi.mocked(api.decideSfs).mockRejectedValue({ response: { status: 503 } }); const w = await setup()
+  state(w).comment = '🙂'.repeat(1001); await state(w).decide('approve')
+  expect(api.decideSfs).not.toHaveBeenCalled(); expect(sessionStorage.getItem('cp6-personal-task-pending')).toBeNull()
+  expect(state(w).comment).toBe('🙂'.repeat(1001))
+  state(w).comment = '🙂'.repeat(1000); await state(w).decide('approve')
+  expect(JSON.parse(vi.mocked(api.decideSfs).mock.calls[0]![1]).body.comment).toBe('🙂'.repeat(1000))
+})
