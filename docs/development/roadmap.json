@@ -161867,6 +161867,11 @@
       "date": "2026-11-03",
       "change": "W286：FLOW两真实作者同token/下一草稿竞争、旧定义写入与页面调用面处置、当前权限下的明确未核实历史来源已完成限定验收；缺版本绑定不再推导历史pin，办理在修改票据前快速失败。",
       "evidence": "docs/development/evidence/W286-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-03",
+      "change": "24h目标累计20h校准：W285/W286实际约66/63分钟，BUG725约17分钟；W287仍执行，余1.5–4h低置信度。继续真实原卡完整验收核对与原OA-TASK/SFS未完范围，不提前宣称完成。",
+      "evidence": "docs/development/planning/20261102-codex-24h-oa.md"
     }
   ],
   "implementation_assessment": {
@@ -239145,8 +239150,8 @@
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 70809,
-      "next_reestimate_at_effective_seconds": 72000,
+      "effective_seconds_recorded": 72025,
+      "next_reestimate_at_effective_seconds": 79200,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
         {
@@ -239928,12 +239933,17 @@
             0.75,
             1.75
           ],
-          "estimate_confidence": "LOW_CALIBRATED_FROM_RECENT_ACTUAL_WINDOWS",
+          "estimate_confidence": "LOW",
           "state": "IN_PROGRESS",
           "admission": "Single chat; actual existing shared source and current FORM/IAM contracts audited; fixed seats",
           "reason": "原UC-D04/D05未完成的外部选项来源和提交复核；不重复已完成的静态规则预览、目录历史或文件",
           "started_at": "2026-11-03T10:52:44.803348+00:00",
-          "scope_refinement": "原OA-DEF UC-D04/D05与OA-FORM提交：外部选项来源的明确版本合同、实际共享字典Owner适配、当前字段授权候选读取及最终服务端值准入；设计器和普通表单页面采用。"
+          "scope_refinement": "原OA-DEF UC-D04/D05与OA-FORM提交：外部选项来源的明确版本合同、实际共享字典Owner适配、当前字段授权候选读取及最终服务端值准入；设计器和普通表单页面采用。",
+          "remaining_estimate_hours": [
+            0.5,
+            1.25
+          ],
+          "actual_effective_seconds_so_far": 1216
         }
       ],
       "reestimates": [
@@ -240266,12 +240276,61 @@
           "remaining": "Save W285 exact branch and official deferred release; independent BUG721 latest-main fix, original-step regression, remote adoption/cleanup; resume original W285 and merge latestmain, affected UI and merge-diff review, normal Main/Handoff delivery; then W286 current original competitions/legacy callers. If these finish before capacity, inspect and implement still-unfinished original WP12-05 history/comparison scope after checking direct sources; no padding or repeated gates.",
           "basis": "Measured Codex active windows, not person-hours. Predicted durations remain low-confidence ranges; audit/lifecycle and independent baseline defect handling included. Only closed windows count as final durations.",
           "unchanged": "Single chat, 24h active goal, original375 27DONE/2IN_PROGRESS/346PLANNED, 59partial3closed/56remaining,125/247 full acceptance unchanged; PostgreSQL/local validation,no Actions/production/existing-environment migration."
+        },
+        {
+          "at": "2026-11-03T11:13:00.539275+00:00",
+          "checkpoint": "20h",
+          "effective_seconds": 72025,
+          "excluded_wall_seconds": 7558,
+          "remaining_capacity_hours": 3.99,
+          "observed_windows": [
+            {
+              "window": "W285-01",
+              "actual_seconds": 3937
+            },
+            {
+              "window": "W286-01",
+              "actual_seconds": 3768
+            },
+            {
+              "window": "BUG725",
+              "actual_seconds": 1013
+            },
+            {
+              "window": "W287-01",
+              "actual_seconds_so_far": 1216,
+              "state": "IN_PROGRESS"
+            }
+          ],
+          "remaining_estimate_hours": [
+            1.5,
+            4
+          ],
+          "confidence": "LOW",
+          "remaining_windows": {
+            "W287-01": [
+              0.5,
+              1.25
+            ],
+            "original-WP12-01-full-card-audit": [
+              0.25,
+              0.75
+            ],
+            "original-OA-TASK-editable-SFS-scope-investigation-and-adoption": [
+              0.75,
+              2
+            ]
+          },
+          "observed": "W285 closed about66min, W2863768s/63min and independent BUG7251013s/17min. W287 first true PG red/green and current source/case/nested/retention/two-connection behaviors passed; publication activation test reused command ID and was corrected, HTTP/browser test compile and one Vue template type issue corrected. W287 not yet complete. UI affected behavior tests passed; full typed check passed before small subsequent preview notice edit.",
+          "remaining": "Finish W287 actual HTTP/Chrome and new same-cell retention coverage, related regression, concentrated review and normal Main/Handoff delivery. Then reconcile original WP12-01 whole-card evidence and read exact original OA-TASK/SFS task-edit contract before registering a new implementation window. Current native ApprovalTaskDecisionInputV2 has no data patch; returned editing is already complete and must not be repeated. An investigation is not advance proof of scope approval or task completion.",
+          "basis": "Real active Codex time includes implementation, analysis, appropriate tests, review and lifecycle. Scheduling gap7558s excluded; no idle padding, repeated gates or arbitrary person-hour estimates.",
+          "unchanged": "Single chat, goal active until24h budget inventory and current full delivery closure. No Actions/production/existing-environment migration; original counts change only on proven full-card acceptance."
         }
       ],
-      "timing_snapshot_at": "2026-11-03T10:52:44.803348+00:00",
+      "timing_snapshot_at": "2026-11-03T11:13:00.539275+00:00",
       "remaining_estimate_hours": [
-        2,
-        5
+        1.5,
+        4
       ],
       "runtime_timing_anchor": {
         "at": "2026-11-03T03:44:56+00:00",
