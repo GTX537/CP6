@@ -202020,7 +202020,7 @@
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
@@ -202030,14 +202030,17 @@
             "Main:form-publication",
             "Main:PostgreSQL-migration",
             "Main:personal-form-ui"
-          ]
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W285-01/DELIVERY.md",
+          "local_validation": "RELATED_PG_HTTP_BROWSER_PASS_UI_BASELINE_BUG721_PENDING",
+          "suspension_reason": "Adopt independently tracked baseline BUG721 before required affected UI gate is green"
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "普通FORM真实文件Owner：当前表单/字段授权先于上传字节；明确FORM暂存与不可变内容身份，扫描和完整性状态；草稿/直接提交/退回修改的引用准入与同事务绑定；当前业务对象和字段权限下的精确内容下载及实际页面采用。"
+      "next_action": "先保存W285并官方暂缓，独立BUG721修复远端采用后官方resume原W285分支；当前产品验收不冒充整包UI全绿。"
     },
     "wave_history": [
       {
@@ -239551,7 +239554,9 @@
             0.75,
             1.75
           ],
-          "actual_effective_seconds_so_far": 2739
+          "actual_effective_seconds_so_far": 2739,
+          "report": "docs/development/evidence/W285-01/DELIVERY.md",
+          "dependency_issue": "https://github.com/GTX537/CP6/issues/721"
         },
         {
           "id": "W286-01",

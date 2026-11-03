@@ -91,7 +91,7 @@ internal static class PersonalFormValuesV2
                 "select" or "radio" => value.ValueKind is JsonValueKind.String or JsonValueKind.Number,
                 "user" or "dept" => value.ValueKind == JsonValueKind.String
                     || value.ValueKind == JsonValueKind.Array && value.EnumerateArray().All(x => x.ValueKind == JsonValueKind.String),
-                "upload" => throw Error("FORM_FILE_SOURCE_REQUIRED"),
+                "upload" => CP6.Core.Services.Pub.FormFileReferenceV2.Valid(value),
                 "table" => FormDataValidator.IsValidDraftValue(field, value),
                 _ => value.ValueKind == JsonValueKind.String
             };

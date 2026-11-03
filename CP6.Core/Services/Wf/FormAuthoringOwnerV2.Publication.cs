@@ -64,13 +64,16 @@ public sealed partial class FormAuthoringOwnerV2
         catch (Exception e) when (e is JsonException or InvalidOperationException or KeyNotFoundException) { throw Error("COMMAND_SHAPE_INVALID", 400); }
     }
     private static string SchemaDigest(string schema) => MainOwnerOperationJournalV1.Digest(Encoding.UTF8.GetBytes(schema));
-    private static (string[] Diagnostics, FlowDependencyRefV2[] Dependencies, DefinitionDiagnosticV2[] Details) PublicationInputs(Head head, CancellationToken ct)
+    private async Task<(string[] Diagnostics, FlowDependencyRefV2[] Dependencies, DefinitionDiagnosticV2[] Details)> PublicationInputs(Head head, CancellationToken ct)
     {
         ct.ThrowIfCancellationRequested();
         // Saved schemas already crossed the W268 boundary. Reuse that internal contract;
         // only external source qualification is a new publication concern here.
         var schema = JsonSerializer.Deserialize<FormSchema>(head.SchemaJson, new JsonSerializerOptions(JsonSerializerDefaults.Web))!;
         var uploads = schema.Fields.Select((field,index)=>(Field:field,Index:index)).Where(f => f.Field.Type.Equals("upload",StringComparison.OrdinalIgnoreCase)).ToArray();
+        if(uploads.Length==0)return([],[],[]);
+        if(await db.Database.SqlQueryRaw<bool>("SELECT cp6_form_files_v2.ready() AS \"Value\"").SingleAsync(ct))
+            return([],uploads.Select(f=>new FlowDependencyRefV2("FILE",f.Field.Name,CP6.Core.Services.Pub.FormFileReferenceV2.Owner,"2","AVAILABLE")).ToArray(),[]);
         return (uploads.Select(f => "FORM_FILE_SOURCE_REQUIRED:" + f.Field.Name).ToArray(),
             uploads.Select(f => new FlowDependencyRefV2("FILE",f.Field.Name,"file-owner",null,"REQUIRED")).ToArray(),
             uploads.Select(f => new DefinitionDiagnosticV2($"$.fields[{f.Index}]","FORM_FILE_SOURCE_REQUIRED",FieldName:f.Field.Name)).ToArray());
@@ -86,7 +89,7 @@ public sealed partial class FormAuthoringOwnerV2
         var head = await Heads().SingleOrDefaultAsync(x => x.Key == key, ct) ?? throw Error("DEFINITION_NOT_FOUND", 404);
         var permission = await PublishingPermission(actor, head, ct);
         if (head.Status != 0 || head.DraftId != input.DraftVersionId || head.Version != expected) throw Error("DEFINITION_CHANGED", 409);
-        var inputs = PublicationInputs(head, ct); var digest = PreviewDigest(head, permission.Policy.Version, inputs.Diagnostics, inputs.Dependencies);
+        var inputs = await PublicationInputs(head, ct); var digest = PreviewDigest(head, permission.Policy.Version, inputs.Diagnostics, inputs.Dependencies);
         var impact=await DefinitionRuntimeImpactReaderV2.Read(db,fence.EnvironmentId,head.Id,true,ct);
         var result = new FormPublicationPreviewV2(Guid.NewGuid(), digest, head.DraftId, input.ExpectedVersion, SchemaDigest(head.SchemaJson),
             PublicationClock().AddMinutes(10), inputs.Diagnostics, inputs.Dependencies, inputs.Diagnostics.Length == 0,impact.ActiveDrafts,Impact:impact,DiagnosticDetails:inputs.Details);
@@ -96,7 +99,7 @@ public sealed partial class FormAuthoringOwnerV2
             VALUES({db.CurrentTenantId},{fence.EnvironmentId},{result.Id},{actor.UserId},{head.Id},{head.DraftId},{head.Version},{digest},{result.ExpiresAtUtc},{snapshot})
             """, ct);
         var finalActor = await Actor(ct); if (finalActor.UserId != actor.UserId) throw Error("REAUTH_REQUIRED", 401);
-        var final = await PublishingPermission(finalActor, head, ct); var finalInputs = PublicationInputs(head, ct);
+        var final = await PublishingPermission(finalActor, head, ct); var finalInputs = await PublicationInputs(head, ct);
         if (await Heads().SingleAsync(x => x.Key == key, ct) != head || PreviewDigest(head, final.Policy.Version, finalInputs.Diagnostics, finalInputs.Dependencies) != digest) throw Error("PREVIEW_STALE", 409);
         await PublicationReady(ct); await fence.ValidateAsync(lease, ct); CompletionClock(); await tx.CommitAsync(ct); return result;
     }
@@ -179,7 +182,7 @@ public sealed partial class FormAuthoringOwnerV2
                 if (preview == null || preview.Actor != actor.UserId || preview.HeadId != head.Id || preview.DraftId != head.DraftId || preview.Token != head.Version
                     || preview.Digest != body.PreviewDigest || preview.Expires <= PublicationClock()) throw Error("PREVIEW_STALE", 409);
                 previewDeadline = preview.Expires;
-                var policy = await ReadPublicationPolicy(ct) ?? throw Error("PUBLICATION_POLICY_REQUIRED"); var inputs = PublicationInputs(head, ct);
+                var policy = await ReadPublicationPolicy(ct) ?? throw Error("PUBLICATION_POLICY_REQUIRED"); var inputs = await PublicationInputs(head, ct);
                 if (PreviewDigest(head, policy.Version, inputs.Diagnostics, inputs.Dependencies) != preview.Digest) throw Error("PREVIEW_STALE", 409);
                 if (inputs.Diagnostics.Length > 0) throw Error("PUBLICATION_VALIDATION_FAILED", 422);
                 var publication = new FormPublicationV2(head.Id, head.DraftId, head.Number, key, Values(head), SchemaDigest(head.SchemaJson), at, actor.UserId, inputs.Dependencies, command.Expected);

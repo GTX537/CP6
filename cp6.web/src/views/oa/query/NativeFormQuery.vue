@@ -117,7 +117,7 @@ onBeforeUnmount(() => { live = false; clear(); contextGeneration++; principalGen
     <article v-if="detail" aria-label="提交记录详情">
       <h3>{{ detail.item.formName || detail.item.flowName || '提交记录' }}</h3><p>{{ status(detail.item) }}。此处仅供查看。</p>
       <p v-if="detail.form">表单版本 {{ detail.item.formVersion }}；内容来自此次提交的固定版本。</p>
-      <PersonalFormFields v-if="detail.form" :fields="fields" :model-value="values" :mask="detail.form.fieldMask" disabled />
+      <PersonalFormFields v-if="detail.form" :fields="fields" :model-value="values" :mask="detail.form.fieldMask" :file-context="{ queryDataId: detail.form.formDataId }" disabled @forbidden="clear" />
       <section v-if="detail.item.applicationSummary"><h4>业务应用</h4><p>{{ application(detail.item) }}</p><p v-if="detail.item.applicationSummary.pendingReceiptGap">回执链仍有缺口，当前显示已连续确认的结果。</p>
         <p v-if="detail.item.applicationSummary.businessResultRef">业务结果：{{ detail.item.applicationSummary.businessResultRef.id }} · {{ detail.item.applicationSummary.businessResultRef.version }}</p>
         <router-link v-if="detail.item.applicationSummary.detailRoute" :to="detail.item.applicationSummary.detailRoute">查看业务对象</router-link>

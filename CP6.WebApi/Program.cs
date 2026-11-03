@@ -342,7 +342,7 @@ builder.Services.AddScoped(sp => new CP6.Core.Services.Oa.PersonalFormOwnerV2(
         try { return await CP6.WebApi.Services.IamAdministrationHttpV1.CurrentActor(sp.GetRequiredService<IHttpContextAccessor>().HttpContext!, ct); }
         catch (CP6.Core.Services.Sys.IamAdministrationExceptionV1 e)
         { throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1(e.Message, e.Status, e); }
-    }, sp.GetRequiredService<CP6.Core.Services.Wf.FlowAuthoringOwnerV2>()));
+    }, sp.GetRequiredService<CP6.Core.Services.Wf.FlowAuthoringOwnerV2>(),sp.GetRequiredService<CP6.Core.Services.Pub.FormFileContentV2>()));
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfNotificationDispatchWorker>();
 builder.Services.AddScoped<CP6.Core.Services.Wf.ITaskCenterService, CP6.Core.Services.Wf.TaskCenterService>(); // 章04 待办中心（待办/我的申请/撤回）
 
@@ -974,6 +974,7 @@ builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringOutputRelationsOwner
 builder.Services.AddScoped<CP6.Core.Services.Plm.EngineeringBaselineOwnerV1>();
 builder.Services.AddSingleton<CP6.Core.Services.Pub.IFileContentInspectorV1, CP6.Core.Services.Pub.DefenderFileContentInspectorV1>();
 builder.Services.AddScoped<CP6.Core.Services.Pub.FileContentOwnerV1>();
+builder.Services.AddScoped<CP6.Core.Services.Pub.FormFileContentV2>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.ControlledDocumentOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.ControlledDocumentReviewOwnerV1>();
 builder.Services.AddSingleton(new CP6.Core.Services.Mes.QualitySpecificationRuntimeV1(builder.Configuration["QualitySpecification:EvidenceMode"] ?? ""));

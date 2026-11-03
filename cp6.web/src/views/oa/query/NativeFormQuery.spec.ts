@@ -10,6 +10,7 @@ vi.mock('@/api/oa/nativeQuery', () => ({ nativeQueryApi: { context: vi.fn(), sea
 vi.mock('@/api/oa/taskDelegation', () => ({ taskDelegationApi: { received: vi.fn() } }))
 vi.mock('@/api/sys/user', () => ({ userApi: { getList: vi.fn() } }))
 vi.mock('@/api/oa/personalForm', () => ({ personalFormApi: { references: vi.fn() } }))
+vi.mock('@/api/oa/formFiles', () => ({ formFileApi: { read: vi.fn(), download: vi.fn(), upload: vi.fn(), original: vi.fn(), close: vi.fn(), command: vi.fn() } }))
 const row: QueryItem = { id: 'data-one', formDataId: 'data-one', instanceId: null, formKey: 'historic', formVersion: 1, formVersionId: 'exact-one', formName: 'Original publication', flowKey: null, flowVersion: null, flowVersionId: null, flowName: null, title: 'Readable title', starterRef: 'actor', submittedAtUtc: '2026-11-01T04:00:00Z', instanceStatus: null, submissionState: 'SubmittedUnbound', applicationSummary: null, evidenceState: 'PINNED_PUBLICATION', timeSource: 'FORM_SUBMISSION', detailRef: '/api/oa/v2/form-data/data-one' }
 const page: QueryPage = { items: [row], total: 21, page: 1, pageSize: 20, snapshotAsOf: '2026-11-03T00:00:00Z', timeZoneId: null, actualUserId: 'actor', effectiveUserId: 'actor' }
 const wrappers: ReturnType<typeof mount>[] = []

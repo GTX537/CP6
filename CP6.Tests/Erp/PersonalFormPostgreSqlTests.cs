@@ -10,12 +10,12 @@ using Microsoft.EntityFrameworkCore;
 namespace CP6.Tests.Erp;
 public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
-    private PersonalFormOwnerV2 PersonalForm(Harness h,Func<CancellationToken,Task<Guid>>? actor=null)
+    private PersonalFormOwnerV2 PersonalForm(Harness h,Func<CancellationToken,Task<Guid>>? actor=null,CP6.Core.Services.Pub.FormFileContentV2? files=null)
     {
         var catalog=new AuthorizationCatalogStoreV1();
         catalog.RegisterScope(PersonalFormOwnerV2.Resource,"personal form",[1],1);
         catalog.RegisterFields(PersonalFormOwnerV2.Resource,PersonalFormOwnerV2.Fields.Select(f=>new FieldRegistry.Field(f,f)));catalog.Seal();
-        return new(h.Db,new AuthoringHttpAccessor{HttpContext=h.Http},ScopeFence(h),actor??(_=>Task.FromResult(h.User)),Authoring(h)){Catalog=catalog.Capture};
+        return new(h.Db,new AuthoringHttpAccessor{HttpContext=h.Http},ScopeFence(h),actor??(_=>Task.FromResult(h.User)),Authoring(h),files){Catalog=catalog.Capture};
     }
     private async Task<(PersonalFormOwnerV2 Owner,FormAuthoringOwnerV2 Form,FlowAuthoringOwnerV2 Flow)> PreparePersonal(Harness h,string schema=FormAuthoringSchema)
     {

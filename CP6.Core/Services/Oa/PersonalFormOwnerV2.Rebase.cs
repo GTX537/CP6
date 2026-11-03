@@ -8,7 +8,7 @@ namespace CP6.Core.Services.Oa;
 public sealed partial class PersonalFormOwnerV2
 {
     private sealed record PreviewRow(Guid Actor,Guid Draft,Guid Token,Guid Source,Guid Target,string Digest,string Result,DateTimeOffset Expires);
-    private async Task<(FormPublicationV2 Target,PersonalFormRebasePlanV2 Plan,string Digest)> RebasePlan(DraftRow row,Guid targetId,UserPermissionContext actor,CancellationToken ct)
+    private async Task<(FormPublicationV2 Target,PersonalFormRebasePlanV2 Plan,string Digest,Dictionary<string,string> Mask)> RebasePlan(DraftRow row,Guid targetId,UserPermissionContext actor,CancellationToken ct)
     {
         var latest=await db.Database.SqlQuery<Guid>($"""
             SELECT id AS "Value" FROM cp6_form_authoring_v2.versions WHERE tenant_id={db.CurrentTenantId} AND environment_id={fence.EnvironmentId} AND head_id={row.Head}
@@ -19,7 +19,7 @@ public sealed partial class PersonalFormOwnerV2
         var sourceMask=await Mask(actor,row.Head,source,ct);var targetMask=await Mask(actor,row.Head,target,ct);
         var plan=PersonalFormRebaseV2.Build(source.Fields["SchemaJson"]!,target.Fields["SchemaJson"]!,row.Data,sourceMask,targetMask);
         var digest=MainOwnerOperationJournalV1.Digest(MainOwnerOperationJournalV1.Encode(new{row.Id,row.Token,Source=row.Version,Target=targetId,source.SchemaDigest,TargetDigest=target.SchemaDigest,Plan=plan,SourceMask=sourceMask,TargetMask=targetMask}));
-        return(target,plan,digest);
+        return(target,plan,digest,targetMask);
     }
     public async Task<PersonalFormRebasePreviewV2> RebasePreviewAsync(Guid draft,PersonalFormRebasePreviewInputV2 input,CancellationToken ct=default)
     {
@@ -58,6 +58,7 @@ public sealed partial class PersonalFormOwnerV2
             var next=await RebasePlan(row,body.TargetVersionId,actor,ct);
             if(next.Digest!=preview.Digest)throw Error("REBASE_PREVIEW_CHANGED",409);
             if(next.Plan.Loss && !body.ConfirmRemovedValues)throw Error("REBASE_CONFIRMATION_REQUIRED",422);
+            await CheckFiles(row.Head,body.TargetVersionId,"DRAFT",draft,actor.UserId,PersonalFormValuesV2.Schema(next.Target.Fields["SchemaJson"]!),next.Plan.Data,row.Data,false,next.Mask,ct);
             var write=Guid.NewGuid();await BeginCommand(write,actor.UserId,Rebase,resource,command,draft,null,null,null,ct);
             // Preserve every source row even if target MaxRows shrank. Diagnostics block submission;
             // only a later authorized user edit may remove chosen rows.
@@ -65,6 +66,7 @@ public sealed partial class PersonalFormOwnerV2
                 UPDATE cp6_personal_form_v2.drafts SET form_version={body.TargetVersionId},rebased_from={row.Version},data_json={next.Plan.Data} WHERE id={draft}
                 """,ct);
             await History(write,draft,row.Snapshot,ct);var view=await DraftView(await Owned(draft,actor.UserId,ct),actor,ct);
+            await BindFiles(write,body.TargetVersionId,"DRAFT",draft,view.RowVersion,PersonalFormValuesV2.Schema(next.Target.Fields["SchemaJson"]!),next.Plan.Data,ct);
             var result=await Complete(write,command,draft,view.RowVersion,view,new{Scope=lease.Snapshot,actor.UserId,Preview=body.PreviewId,body.ConfirmRemovedValues,Plan=next.Plan},ct);
             await Final(actor,lease,ct);
             if(preview.Expires<=Clock())throw Error("REBASE_PREVIEW_CHANGED",409);

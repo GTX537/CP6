@@ -126,12 +126,14 @@ public sealed partial class PersonalFormOwnerV2
             var schema=source.Form.Fields["SchemaJson"]!;
             var data=PersonalFormValuesV2.Merge(PersonalFormValuesV2.Schema(schema),command.Body.Data,PersonalFormValuesV2.Initial(schema),source.Mask);
             await References(PersonalFormValuesV2.Schema(schema),data,ct);
+            await CheckFiles(source.Head.Id,source.Form.VersionId,"FORM",null,actor.UserId,PersonalFormValuesV2.Schema(schema),data,null,true,source.Mask,ct);
             var id=Guid.NewGuid();var write=Guid.NewGuid();await BeginCommand(write,actor.UserId,Create,key,command,id,null,null,null,ct);
             await db.Database.ExecuteSqlInterpolatedAsync($"""
                 INSERT INTO cp6_personal_form_v2.drafts(id,tenant_id,environment_id,owner_id,head_id,form_version,data_json,title)
                 VALUES({id},{db.CurrentTenantId},{fence.EnvironmentId},{actor.UserId},{source.Head.Id},{source.Form.VersionId},{data},{title})
                 """,ct);
             await History(write,id,null,ct);var view=await DraftView(await Owned(id,actor.UserId,ct),actor,ct);
+            await BindFiles(write,source.Form.VersionId,"DRAFT",id,view.RowVersion,PersonalFormValuesV2.Schema(schema),data,ct);
             var result=await Complete(write,command,id,view.RowVersion,view,new{Scope=lease.Snapshot,Policy=source.Policy.Version,actor.UserId,source.Mask},ct);
             await Final(actor,lease,ct);committing=true;await tx.CommitAsync(ct);return result;
         }
@@ -152,11 +154,13 @@ public sealed partial class PersonalFormOwnerV2
             if(!TitleReadable(actor) && title==null)title=row.Title;else TitleWritable(actor,row.Title,title);
             var data=PersonalFormValuesV2.Merge(PersonalFormValuesV2.Schema(source.Fields["SchemaJson"]!),command.Body.Data,row.Data,mask);
             await References(PersonalFormValuesV2.Schema(source.Fields["SchemaJson"]!),command.Body.Data.GetRawText(),ct);
+            await CheckFiles(row.Head,row.Version,"DRAFT",id,actor.UserId,PersonalFormValuesV2.Schema(source.Fields["SchemaJson"]!),data,row.Data,false,mask,ct);
             var write=Guid.NewGuid();await BeginCommand(write,actor.UserId,Save,resource,command,id,null,null,null,ct);
             await db.Database.ExecuteSqlInterpolatedAsync($"""
                 UPDATE cp6_personal_form_v2.drafts SET data_json={data},title={title} WHERE id={id}
                 """,ct);
             await History(write,id,row.Snapshot,ct);var view=await DraftView(await Owned(id,actor.UserId,ct),actor,ct);
+            await BindFiles(write,row.Version,"DRAFT",id,view.RowVersion,PersonalFormValuesV2.Schema(source.Fields["SchemaJson"]!),data,ct);
             var result=await Complete(write,command,id,view.RowVersion,view,new{Scope=lease.Snapshot,actor.UserId,Mask=mask,FormVersion=row.Version},ct);
             await Final(actor,lease,ct);committing=true;await tx.CommitAsync(ct);return result;
         }

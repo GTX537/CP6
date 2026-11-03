@@ -81,7 +81,7 @@ onBeforeUnmount(() => { live = false; generation++; window.removeEventListener(A
     <el-button v-if="!result" :disabled="locked" @click="load">重新读取待办</el-button>
     <template v-if="context">
       <h4>{{ context.name }}</h4><p>表单编号：{{ context.formDataId }}</p>
-      <PersonalFormFields :fields="fields" :model-value="data" :mask="context.fieldMask" disabled />
+      <PersonalFormFields :fields="fields" :model-value="data" :mask="context.fieldMask" :file-context="{ instanceId: context.task.instanceId }" disabled @forbidden="clearPrivate(); emit('privateClear')" />
       <el-input v-model="comment" type="textarea" maxlength="500" placeholder="办理意见" :disabled="locked" />
       <div class="actions"><el-button type="primary" :disabled="locked || !context.allowedDecisions?.includes('approve')" @click="decide('approve')">同意</el-button><el-button type="danger" :disabled="locked || !context.allowedDecisions?.includes('reject')" @click="decide('reject')">拒绝</el-button></div>
     </template>

@@ -29,7 +29,7 @@ async function save() {
   await op.begin('SFS_RETURNED_EDIT', props.instanceId, c.instanceVersion, body)
 }
 async function resubmit() {
-  const c = context.value; if (!c?.canResubmit || locked.value || loading.value || dirty.value) return
+  const c = context.value; if (!c?.canResubmit || locked.value || loading.value || dirty.value || !valid.value) return
   await op.begin('SFS_RETURNED_RESUBMIT', props.instanceId, c.instanceVersion, JSON.stringify({ returnRevision: c.returnRevision, expectedFormDataVersion: c.formDataVersion, comment: reason.value }))
 }
 watch(() => props.instanceId, clear)
@@ -41,11 +41,11 @@ watch(() => props.instanceId, clear)
     <el-button v-if="instanceId" :disabled="locked || loading" @click="load">读取退回表单</el-button>
     <template v-if="context">
       <h4>{{ context.name }}</h4><p>第 {{ context.returnRevision }} 次退回。流程与表单保持原固定版本。</p>
-      <PersonalFormFields v-model="data" :fields="fields" :mask="context.fieldMask" :allow-unset="false" :disabled="locked || loading || !context.canEdit" @validity="valid = $event" @forbidden="clear(); emit('privateClear')" />
+      <PersonalFormFields v-model="data" :fields="fields" :mask="context.fieldMask" :file-context="{ scope: { kind: 'RETURNED', key: null, id: instanceId, formVersionId: context.formDefVersionId, expectedVersion: context.instanceVersion, expectedDataVersion: context.formDataVersion } }" :allow-unset="false" :disabled="locked || loading || !context.canEdit" @validity="valid = $event" @forbidden="clear(); emit('privateClear')" />
       <label>说明 <textarea v-model="reason" :disabled="locked || loading" maxlength="1000" /></label>
       <p v-if="dirty">有未保存的修改，保存后才能重送。</p>
       <el-button :disabled="locked || loading || !context.canEdit || !valid" @click="save">保存退回修改</el-button>
-      <el-button :disabled="locked || loading || !context.canResubmit || dirty" @click="resubmit">重送同一表单</el-button>
+      <el-button :disabled="locked || loading || !context.canResubmit || dirty || !valid" @click="resubmit">重送同一表单</el-button>
       <p v-if="context.reasons.length">当前限制：{{ context.reasons.join('、') }}</p>
     </template>
   </section>

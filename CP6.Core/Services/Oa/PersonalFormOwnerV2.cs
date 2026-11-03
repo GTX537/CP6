@@ -3,6 +3,7 @@ using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Integration;
+using CP6.Core.Services.Pub;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wf;
 using CP6.Entity.Contracts.Wire;
@@ -12,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 namespace CP6.Core.Services.Oa;
 
 public sealed partial class PersonalFormOwnerV2(CP6Context db, IHttpContextAccessor http, ScopeAuthorizationFenceV1 fence,
-    Func<CancellationToken,Task<Guid>> currentActor, FlowAuthoringOwnerV2 flows)
+    Func<CancellationToken,Task<Guid>> currentActor, FlowAuthoringOwnerV2 flows,FormFileContentV2? fileContent=null)
 {
     public const string Resource = "workflow-personal-form";
     public static readonly string[] Fields = ["Title", "DataJson"];
