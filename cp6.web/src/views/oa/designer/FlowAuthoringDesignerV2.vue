@@ -4,6 +4,7 @@ import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { flowAuthoringApi as api, type AuthoringCommand, type AuthoringEntry, type AuthoringField, type AuthoringResult, type AuthoringView } from '@/api/oa/flowAuthoring'
 import DesignerCanvas from './DesignerCanvas.vue'
 import FlowPublicationPanelV2 from './FlowPublicationPanelV2.vue'
+import FlowSimulationPanelV2 from './FlowSimulationPanelV2.vue'
 import NodePropertyPanel from './NodePropertyPanel.vue'
 import EdgePropertyPanel from './EdgePropertyPanel.vue'
 import { type FlowSchemaDto, type SchemaNode, type SchemaEdge } from './designerModel'
@@ -139,6 +140,7 @@ onBeforeUnmount(() => { live = false; generation++; controller?.abort(); window.
     <p v-if="error" role="alert">{{ error }}</p><p v-if="message" role="status">{{ message }}</p>
     <p v-if="!entry?.canCreate && !pending">当前不能新建草稿。请确认流程设计权限及本租户的草稿登记策略。</p>
     <FlowPublicationPanelV2 :current="current" :dirty="dirty" :disabled="busy || !!pending" @locked="publicationLocked = $event" @reload="load" @private-clear="clearPrivate" />
+    <FlowSimulationPanelV2 :current="current" :dirty="dirty" :disabled="busy || publicationLocked || !!pending || stale" @private-clear="clearPrivate" />
     <div class="workbench">
       <aside><h3>流程定义</h3><button v-for="item in items" :key="item.definitionId" :disabled="busy || publicationLocked || !!pending" @click="load(item.key)">{{ item.fields.Name ?? item.key }}{{ item.published ? '（已发布）' : '' }}</button>
         <p v-if="!items.length">暂无可读取的草稿</p><div class="pages"><button :disabled="busy || publicationLocked || !!pending || page === 1" @click="page--; reload()">上一页</button><span>{{ page }}</span><button :disabled="busy || publicationLocked || !!pending || items.length < 100" @click="page++; reload()">下一页</button></div></aside>

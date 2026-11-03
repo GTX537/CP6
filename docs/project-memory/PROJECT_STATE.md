@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## 2026-11-03：24小时持续目标 / W279原验收与准确草稿预演
+
+W279：原OA-DEF27项验收逐项核对，并补准确草稿/当前授权/无业务写入的EXPLANATION_ONLY预演，实际页面到PostgreSQL已验证。 [交付](../development/evidence/W279-01/DELIVERY.md)。
+
+12项唯一后端行为通过（4项隔离PostgreSQL18，其中1条实际Chrome/Vue→Main→PG链；8项纯预测规则），后端0跳过；12项唯一相关Vue行为和显式应用vue-tsc通过。模拟变量/IAM/业务数据，真实内部Owner、数据库、登录会话和HTTP，无Actions、既有环境迁移或生产部署。
+
+原375仍27DONE/2IN_PROGRESS/346PLANNED；59局部3闭环/56余项，125/247正式状态不改。W280准确版本比较接续；完整字段/图诊断、FLOW双作者与下一稿竞争原场景、旧重建来源标识/全部旧caller、文件/选项Owner、正式下载、SFS patch/三版本、退回等任务操作、日历Worker及其他业务Owner采用仍保留。 总目标IN_PROGRESS；分支/工作区/席位最终状态见wave279-final-verification.json。
+
 ## 2026-11-02：24小时持续目标 / W278实际页面业务链
 
 W278：当前发布表单目录，以及实际Vue/Chrome经Main Program到PostgreSQL的定义发布、填单恢复、代理办理、迭代BLOCKED应用与撤回显式新授权链已验证。 [交付](../development/evidence/W278-01/DELIVERY.md)。

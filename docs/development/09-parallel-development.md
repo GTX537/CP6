@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[24小时持续计划](planning/20261102-codex-24h-oa.md)，COORD单人；[W278](evidence/W278-01/DELIVERY.md)实际页面到PG业务链已验证，待采用/finish；继续W279原AC及余项核对。
+> 当前：[24小时持续计划](planning/20261102-codex-24h-oa.md)，COORD单人；[W279](evidence/W279-01/DELIVERY.md)原27AC逐项核对及准确草稿预演已验证，待采用/finish；接续W280。
+
+> 历史快照：[24小时持续计划](planning/20261102-codex-24h-oa.md)，COORD单人；[W278](evidence/W278-01/DELIVERY.md)实际页面到PG业务链已验证，待采用/finish；继续W279原AC及余项核对。
 
 > 历史快照：[24小时持续计划](planning/20261102-codex-24h-oa.md)，COORD单人；[W277](evidence/W277-01/DELIVERY.md)封闭任务委派与迭代显式重新授权已验证，待采用/finish；继续W278实际浏览器业务链。
 
