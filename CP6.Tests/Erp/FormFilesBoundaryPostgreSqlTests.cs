@@ -25,7 +25,9 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     public async Task FormFiles_actual_HTTP_scans_binds_downloads_exact_bytes_and_denies_current_hidden_or_forged_scope()
     {
         await using var h=await Seed();var(owner,_,_)=await PreparePersonal(h,FileFormSchema);await QueryPermission(h);
+        await RemoveFormActions(h,"add","edit","del");
         var context=await owner.ContextAsync("personal");var bytes=Encoding.UTF8.GetBytes("CP6 simulated ordinary FORM original\n原件字节\n");var input=FormUpload(context,bytes);
+        Assert.Contains("SUBMIT",context.Capabilities);Assert.DoesNotContain("CREATE_DRAFT",context.Capabilities);
         await using var host=await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!,FormFileHostSettings());var cookies=await Login(host,h);
         var request=OperationsRequest(cookies,HttpMethod.Post,"/api/oa/v2/personal-forms/files/uploads");
         request.Headers.Add("X-File-Command",Convert.ToBase64String(JsonSerializer.SerializeToUtf8Bytes(input,PersonalFormOwnerV2.Json)));request.Content=new ByteArrayContent(bytes);
@@ -34,6 +36,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.DoesNotContain("storePath",await uploaded.Content.ReadAsStringAsync(),StringComparison.OrdinalIgnoreCase);Assert.True(uploaded.Headers.CacheControl?.NoStore);
         using var direct=await host.Send(PersonalHttp(cookies,"/api/oa/v2/forms/personal/submissions",PersonalCommand(PersonalDirect(context,FileData(file.Reference)),"http-file-submit")));
         var submission=PersonalResult<PersonalFormSubmissionV2>(await PersonalHttpResult<PersonalFormResultV2>(direct));
+        Assert.Equal(0,await h.Db.Database.SqlQuery<int>($"SELECT count(*)::int AS \"Value\" FROM cp6_personal_form_v2.drafts WHERE tenant_id={h.Tenant}").SingleAsync());
         var url=$"/api/oa/v2/form-data/{submission.FormDataId}/files/download";var body=new FormBoundFileReadV2("files",file.Reference);
         using var downloaded=await host.Send(BoundRequest(cookies,url,body));Assert.Equal(HttpStatusCode.OK,downloaded.StatusCode);Assert.Equal(bytes,await downloaded.Content.ReadAsByteArrayAsync());
         Assert.Equal("attachment",downloaded.Content.Headers.ContentDisposition?.DispositionType);Assert.Equal("nosniff",Assert.Single(downloaded.Headers.GetValues("X-Content-Type-Options")));

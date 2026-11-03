@@ -19,10 +19,13 @@ public sealed partial class PersonalFormOwnerV2
         FileContext context;
         if(scope.Kind=="FORM"&&scope.Id==null&&!string.IsNullOrEmpty(scope.Key))
         {
-            await Action(actor,write?"add":"query",ct);
+            await Action(actor,"query",ct);
             if(write)
             {
-                var source=await Resolve(actor,scope.Key,false,ct);
+                // Unclaimed content prepares either legitimate create path. Each final command
+                // still owns its action; a submit-only author must satisfy submit admission here.
+                var action=await AnyAction(actor,["add","submit"],ct);
+                var source=await Resolve(actor,scope.Key,action=="submit",ct);
                 context=new(source.Head.Id,source.Form.VersionId,"FORM",null,"{}",PersonalFormValuesV2.Schema(source.Form.Fields["SchemaJson"]!),source.Mask);
             }
             else
