@@ -18,7 +18,12 @@ export interface PersonalDraft {
 export type PersonalDraftItem = Pick<PersonalDraft, 'draftId' | 'formKey' | 'name' | 'formVersion' | 'latestPublishedVersion' | 'title' | 'rowVersion' | 'updatedAtUtc' | 'stale'>
 export interface FormSubmission { formDataId: string; formDefVersionId: string; formVersion: number; flowInstanceId: string | null; flowDefVersionId: string | null; flowVersion: number | null; receiptRef: string; commandId: string; bindingRevision: string | null; submissionState: string }
 export interface PersonalResult { commandId: string; outcome: string; resourceId: string | null; resourceVersion: string | null; result: PersonalDraft | FormSubmission | PersonalFavorite | null }
-export interface RebasePreview { previewId: string; digest: string; sourceVersionId: string; targetVersionId: string; expectedVersion: string; expiresAtUtc: string; changes: { path: string; kind: string; hasValue: boolean }[]; validationErrors: string[]; requiresConfirmation: boolean }
+export interface RebasePreview {
+  previewId: string; digest: string; sourceVersionId: string; targetVersionId: string; expectedVersion: string; expiresAtUtc: string
+  changes: { path: string; kind: string; hasValue: boolean }[]; validationErrors: string[]; requiresConfirmation: boolean
+  sourceDraftVersion: string; targetSchemaDigest: string; retainedPaths: string[]; removedPaths: string[]; addedPaths: string[]
+  typeChangedPaths: string[]; defaultedPaths: string[]; requiredAfterRebase: string[]; diagnostics: { path: string; code: string }[]
+}
 export interface ValuePreview { dataJson: string; hiddenFields: string[]; valid: boolean; errors: string[] }
 export interface TaskVersion { taskId: string; instanceId: string; taskStatus: number; instanceStatus: number; taskRowVersion: string; instanceRowVersion: string }
 export interface PersonalTask { task: TaskVersion; formDataId: string; rootInstanceId: string; formVersionId: string; name: string; schemaJson: string; dataJson: string; fieldMask: FormMask; allowedDecisions: string[]; kind: 'SFS'; formDataVersion: string; formKey: string; flowVersionId: string; nodeId: string; tokenId: string; stageIndex: number; stageRound: number }

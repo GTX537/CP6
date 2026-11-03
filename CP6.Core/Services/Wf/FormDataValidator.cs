@@ -77,7 +77,8 @@ internal static class FormDataValidator
         FormSchema schema,
         JsonElement data,
         IReadOnlyDictionary<string, bool>? requiredOverride,
-        IReadOnlySet<string>? hidden)
+        IReadOnlySet<string>? hidden,
+        Action<string,string,bool>? observeRequired = null)
     {
         var errors = new List<string>();
         foreach (var field in schema.Fields)
@@ -92,6 +93,7 @@ internal static class FormDataValidator
                 ? overridden
                 : field.Required;
             var label = LabelOf(field.Label, field.Name);
+            if (required) observeRequired?.Invoke(field.Name, field.Name, empty);
 
             if (required && empty)
             {
@@ -100,7 +102,7 @@ internal static class FormDataValidator
             }
             if (empty) continue;
 
-            ValidateValue(field, value, label, enforceTableRequired: true, errors);
+            ValidateValue(field, value, label, enforceTableRequired: true, errors, observeRequired);
         }
         return errors;
     }
@@ -131,7 +133,8 @@ internal static class FormDataValidator
         JsonElement value,
         string label,
         bool enforceTableRequired,
-        List<string> errors)
+        List<string> errors,
+        Action<string,string,bool>? observeRequired = null)
     {
         switch (field.Type?.ToLowerInvariant())
         {
@@ -141,7 +144,7 @@ internal static class FormDataValidator
             case "checkbox":
                 break; // 兼容现有 bool / 数组数据；选项值合法性后续单独治理。
             case "table":
-                ValidateTable(field, value, label, enforceTableRequired, enforceMinRows: true, errors);
+                ValidateTable(field, value, label, enforceTableRequired, enforceMinRows: true, errors, observeRequired);
                 break;
             default:
                 ValidateText(value, label, field.MaxLength, field.Pattern, strictString: false, errors);
@@ -155,7 +158,8 @@ internal static class FormDataValidator
         string label,
         bool enforceRequired,
         bool enforceMinRows,
-        List<string> errors)
+        List<string> errors,
+        Action<string,string,bool>? observeRequired = null)
     {
         if (value.ValueKind != JsonValueKind.Array)
         {
@@ -171,7 +175,9 @@ internal static class FormDataValidator
         if (rows > maxRows)
         {
             errors.Add($"{label} 最多允许 {maxRows} 行");
-            return;
+            // Rebase retains source rows. Its preview still needs required-cell diagnostics
+            // for those rows; ordinary submission/draft validation keeps the early failure.
+            if (observeRequired is null) return;
         }
 
         var definitions = field.Columns ?? new();
@@ -198,6 +204,8 @@ internal static class FormDataValidator
                 var cellLabel = $"{label} 第 {rowIndex} 行 {LabelOf(column.Label, column.Name)}";
                 var has = row.TryGetProperty(column.Name, out var cell);
                 var empty = !has || IsEmpty(cell, column.Type);
+                if (enforceRequired && column.Required)
+                    observeRequired?.Invoke(field.Name, $"{field.Name}[{rowIndex-1}].{column.Name}", empty);
                 if (enforceRequired && column.Required && empty)
                 {
                     errors.Add($"{cellLabel} 必填");

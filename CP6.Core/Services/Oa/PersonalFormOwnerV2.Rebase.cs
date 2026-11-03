@@ -36,7 +36,10 @@ public sealed partial class PersonalFormOwnerV2
                 VALUES({id},{db.CurrentTenantId},{fence.EnvironmentId},{actor.UserId},{draft},{row.Token},{row.Version},{input.TargetVersionId},{next.Digest},{Encode(next.Plan)},{expires})
                 """,ct);
             await Final(actor,lease,ct);committing=true;await tx.CommitAsync(ct);
-            return new(id,next.Digest,row.Version,input.TargetVersionId,row.Token.ToString("D"),expires,next.Plan.Changes,next.Plan.Errors,next.Plan.Loss);
+            var plan=next.Plan;
+            return new(id,next.Digest,row.Version,input.TargetVersionId,row.Token.ToString("D"),expires,plan.Changes,plan.Errors,plan.Loss,
+                row.Token.ToString("D"),next.Target.SchemaDigest,plan.RetainedPaths,plan.RemovedPaths,plan.AddedPaths,
+                plan.TypeChangedPaths,plan.DefaultedPaths,plan.RequiredAfterRebase,plan.Diagnostics);
         }
         catch(Exception ex){await Rollback(tx,committing,ex);throw;}
     }

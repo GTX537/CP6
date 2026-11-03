@@ -17,6 +17,19 @@ const draft: PersonalDraft = { ...context, draftId: 'draft-one', latestPublished
 beforeEach(() => { vi.resetAllMocks(); localStorage.clear(); sessionStorage.clear(); vi.mocked(api.context).mockResolvedValue(context); vi.mocked(api.draft).mockResolvedValue(draft) })
 afterEach(() => { wrappers.splice(0).forEach(w => w.unmount()); vi.restoreAllMocks() })
 async function editor(props = { formKey: 'personal' } as { formKey?: string; draftId?: string }) { const w = mount(Editor, { props }); wrappers.push(w); await flushPromises(); return w }
+it('shows classified rebase losses and required rows, requires confirmation and invalidates the preview after edits', async () => {
+  vi.mocked(api.rebasePreview).mockResolvedValue({ previewId: 'preview', digest: 'digest', sourceVersionId: 'form-one', targetVersionId: 'form-two', expectedVersion: 'draft-token', sourceDraftVersion: 'draft-token', targetSchemaDigest: 'schema', expiresAtUtc: 'later', changes: [{ path: 'removed', kind: 'REMOVED', hasValue: true }], validationErrors: ['FORM_VALIDATION_FAILED'], requiresConfirmation: true, retainedPaths: ['amount'], removedPaths: ['removed'], addedPaths: ['required'], typeChangedPaths: [], defaultedPaths: [], requiredAfterRebase: ['required'], diagnostics: [{ path: 'required', code: 'REQUIRED' }, { path: 'rows[1]', code: 'ROW_COUNT_EXCEEDS_TARGET' }] })
+  const w = await editor({ draftId: 'draft-one' }); await state(w).previewRebase(); await flushPromises()
+  expect(w.text()).toContain('保留'); expect(w.text()).toContain('移除'); expect(w.text()).toContain('待补填'); expect(w.text()).toContain('行数超过新版限制')
+  await state(w).applyRebase(); expect(api.send).not.toHaveBeenCalled()
+  state(w).confirmedLoss = true; state(w).title = 'changed'; await flushPromises(); expect(state(w).rebase).toBeUndefined(); expect(state(w).confirmedLoss).toBe(false)
+  await state(w).applyRebase(); expect(api.send).not.toHaveBeenCalled()
+  state(w).title = draft.title; await flushPromises(); await state(w).previewRebase(); state(w).model = formObject(readFormJson('{"amount":2}')); await flushPromises(); expect(state(w).rebase).toBeUndefined()
+  state(w).model = formObject(readFormJson(draft.dataJson)); await flushPromises(); await state(w).previewRebase(); state(w).confirmedLoss = true
+  vi.mocked(api.send).mockRejectedValue({ response: { status: 503 } }); await state(w).applyRebase()
+  const raw = JSON.parse(vi.mocked(api.send).mock.calls[0]![2]); expect(raw.expectedVersion).toBe('draft-token')
+  expect(raw.body).toEqual({ previewId: 'preview', previewDigest: 'digest', targetVersionId: 'form-two', confirmRemovedValues: true })
+})
 it('sends DIRECT once with the displayed five-context snapshot and exact number lexemes', async () => {
   vi.mocked(api.send).mockRejectedValue({ response: { status: 503 } })
   const w = await editor(); await state(w).submit(); await state(w).submit()
