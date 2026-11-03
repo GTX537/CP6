@@ -16,6 +16,7 @@ export interface PublishedFlow {
 }
 export type LifecycleOperation = 'FLOW_PUBLISH' | 'FLOW_CREATE_DRAFT'
 export interface LifecycleIntent {
+  unknown?: boolean
   key: string; definitionId: string; operation: LifecycleOperation
   command: { commandId: string; expectedVersion: string; body: Record<string, string> }
 }

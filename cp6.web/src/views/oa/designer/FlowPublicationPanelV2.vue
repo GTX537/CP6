@@ -5,24 +5,29 @@ import DefinitionClonePanelV2 from './DefinitionClonePanelV2.vue'
 import DefinitionDiagnosticsPanelV2 from './DefinitionDiagnosticsPanelV2.vue'
 import type { DefinitionDiagnostic } from '@/api/oa/definitionDiagnostics'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
+import { AUTH_EPOCH, AUTH_RECORD, IMPERSONATION, AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import type { AuthoringView } from '@/api/oa/flowAuthoring'
 import { flowPublicationApi as api, type LifecycleIntent, type LifecycleResult, type PublicationPreview, type PublishedFlow } from '@/api/oa/flowPublication'
 const props = defineProps<{ current?: AuthoringView; dirty: boolean; disabled: boolean }>()
 const emit = defineEmits<{ reload: [key: string]; locked: [value: boolean]; privateClear: []; locate: [item: DefinitionDiagnostic] }>()
 const preview = ref<PublicationPreview>(), versions = ref<PublishedFlow[]>([]), selected = ref<PublishedFlow>()
 const pending = ref<LifecycleIntent>(), busy = ref(false), error = ref(''), message = ref(''), comment = ref(''), page = ref(1)
+const cacheUnavailable = ref(false)
 const cache = 'cp6-workflow-publication-pending'
 let generation = 0, live = true, controller: AbortController | undefined
 const cloneLocked = ref(false)
-const unavailable = computed(() => cloneLocked.value || busy.value || !!pending.value || props.disabled || props.dirty || !props.current)
+const unavailable = computed(() => cloneLocked.value || cacheUnavailable.value || busy.value || !!pending.value || props.disabled || props.dirty || !props.current)
 const matchingPreview = computed(() => preview.value?.expectedVersion === props.current?.version && preview.value?.draftVersionId === props.current?.draftId)
+class CommandStorageError extends Error {}
+function storageChanged(event: StorageEvent) {
+  if (event.key === null || [AUTH_EPOCH, AUTH_RECORD, IMPERSONATION, 'cp6_authed', 'userName'].includes(event.key)) identityChanged()
+}
 function remember() {
   if (pending.value) sessionStorage.setItem(cache, JSON.stringify({ identity: identityStamp(), pending: pending.value }))
   else sessionStorage.removeItem(cache)
 }
 function clear() {
-  generation++; controller?.abort(); preview.value = undefined; versions.value = []; selected.value = undefined
+  cacheUnavailable.value = false; generation++; controller?.abort(); preview.value = undefined; versions.value = []; selected.value = undefined
   pending.value = undefined; busy.value = false; comment.value = ''; error.value = ''; message.value = ''; remember(); emit('locked', cloneLocked.value)
 }
 watch(() => [props.current?.key, props.current?.version], () => {
@@ -30,16 +35,17 @@ watch(() => [props.current?.key, props.current?.version], () => {
 })
 watch(() => props.dirty, dirty => { if (dirty) preview.value = undefined })
 async function run(action: (check: () => void, signal: AbortSignal) => Promise<void>) {
-  if (busy.value) return
+  if (cacheUnavailable.value || busy.value) return
   const identity = identityStamp(), request = generation; controller = new AbortController(); busy.value = true; error.value = ''; emit('locked', true)
   const check = () => { requireIdentity(identity); if (!live || generation !== request) throw new Error('STALE') }
   try { await action(check, controller.signal); check() }
   catch (e: any) {
     try {
       check(); const status = e?.response?.status
-      if (status === 401 || status === 403) { clear(); emit('privateClear'); error.value = '当前权限不允许此操作，已清除页面内容。' }
-      else if ([400, 404, 409, 412, 422].includes(status)) {
-        pending.value = undefined; preview.value = undefined; remember(); error.value = '操作未被接受。请重新读取当前版本并重新预览。'
+      if (e instanceof CommandStorageError) error.value = e.message
+      else if (status === 401 || status === 403) { preview.value = undefined; versions.value = []; selected.value = undefined; emit('privateClear'); error.value = '当前权限无法操作，已清除可见内容；待确认的原命令仍可查询。' }
+      else if (!pending.value && [400, 404, 409, 412, 422].includes(status)) {
+        preview.value = undefined; error.value = '操作未被接受。请重新读取当前版本并重新预览。'
       } else error.value = pending.value ? '结果尚未确认，请查询原结果或以原意图重试。' : '当前无法读取发布信息，请稍后重试。'
     } catch { /* Ignore responses belonging to another identity. */ }
   } finally { if (live && generation === request) { busy.value = false; emit('locked', !!pending.value || cloneLocked.value) } }
@@ -66,19 +72,31 @@ async function accept(result: LifecycleResult, check: () => void) {
 }
 function retry() {
   if (!pending.value) return
-  return run(async (check, signal) => { const result = await api.execute(JSON.parse(JSON.stringify(pending.value)), signal); check(); await accept(result, check) })
+  return run(async (check, signal) => {
+    const intent = pending.value!, wasUnknown = !!intent.unknown
+    try { intent.unknown = true; remember() }
+    catch { intent.unknown = wasUnknown; throw new CommandStorageError('浏览器无法保存恢复记录，本次请求尚未发送。') }
+    let result
+    try { result = await api.execute(JSON.parse(JSON.stringify(intent)), signal) }
+    catch (e: any) {
+      check()
+      if (!wasUnknown && [400, 401, 403, 404, 409, 412, 422].includes(e?.response?.status)) { pending.value = undefined; remember() }
+      throw e
+    }
+    check(); await accept(result, check)
+  })
 }
 function publish() {
   if (unavailable.value || !matchingPreview.value || !preview.value?.canPublish || Date.parse(preview.value.expiresAtUtc) <= Date.now()) return
   const current = props.current!, p = preview.value
   pending.value = { key: current.key, definitionId: current.definitionId, operation: 'FLOW_PUBLISH', command: { commandId: crypto.randomUUID(), expectedVersion: current.version,
-    body: { draftVersionId: current.draftId, previewId: p.id, previewDigest: p.digest, expectedVersion: current.version, comment: comment.value } } }; remember(); return retry()
+    body: { draftVersionId: current.draftId, previewId: p.id, previewDigest: p.digest, expectedVersion: current.version, comment: comment.value } } }; return retry()
 }
 function next(version: PublishedFlow) {
   if (unavailable.value || !props.current?.published || version.definitionId !== props.current.definitionId) return
   const current = props.current
   pending.value = { key: current.key, definitionId: current.definitionId, operation: 'FLOW_CREATE_DRAFT', command: { commandId: crypto.randomUUID(), expectedVersion: current.version, body: { sourceVersionId: version.versionId } } }
-  remember(); return retry()
+  return retry()
 }
 function recover() {
   if (!pending.value) return
@@ -88,19 +106,20 @@ function recover() {
     else message.value = '尚未观察到原结果，不能据此判断操作未提交。请继续查询或以原意图重试。'
   })
 }
-function identityChanged() { clear(); error.value = '登录身份已变化，请重新读取。' }
+function identityChanged() { try { clear() } catch { cacheUnavailable.value = true }; error.value = '登录身份已变化，请重新读取。' }
 onMounted(() => {
   try {
     const saved = JSON.parse(sessionStorage.getItem(cache) ?? 'null')
     if (saved?.identity === identityStamp() && ['FLOW_PUBLISH', 'FLOW_CREATE_DRAFT'].includes(saved.pending?.operation)
       && typeof saved.pending?.key === 'string' && typeof saved.pending?.definitionId === 'string' && saved.pending.command?.commandId) {
-      pending.value = saved.pending; emit('locked', true); message.value = '有一次发布或创建草稿尚待确认，请先查询原结果。'; return
+      pending.value = { ...saved.pending, unknown: true }; emit('locked', true); message.value = '有一次发布或创建草稿尚待确认，请先查询原结果。'; return
     }
-  } catch { /* Invalid cached intent cannot be submitted. */ }
-  sessionStorage.removeItem(cache)
+    if (saved?.identity === identityStamp() && saved.pending) throw new Error('INVALID_PENDING')
+    sessionStorage.removeItem(cache)
+  } catch { cacheUnavailable.value = true; emit('locked', true); error.value = '无法读取保存记录，请恢复浏览器存储后重新打开；原缓存已保留。' }
 })
-window.addEventListener(AUTH_EVENT, identityChanged); window.addEventListener('storage', identityChanged)
-onBeforeUnmount(() => { live = false; generation++; controller?.abort(); window.removeEventListener(AUTH_EVENT, identityChanged); window.removeEventListener('storage', identityChanged) })
+window.addEventListener(AUTH_EVENT, identityChanged); window.addEventListener('storage', storageChanged)
+onBeforeUnmount(() => { live = false; generation++; controller?.abort(); window.removeEventListener(AUTH_EVENT, identityChanged); window.removeEventListener('storage', storageChanged) })
 </script>
 <template>
   <section aria-label="发布与版本" class="publication">
