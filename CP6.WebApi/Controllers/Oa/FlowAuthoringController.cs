@@ -72,7 +72,7 @@ public sealed class FlowAuthoringController(FlowAuthoringOwnerV2 owner, FormAuth
         try { return Ok(new { code = 0, data = await action() }); }
         catch (ScopeAuthorizationExceptionV1 e)
         {
-            return StatusCode(e.Status, new { code = e.Message, messageKey = e.Message, fieldErrors = Array.Empty<object>(),
+            return StatusCode(e.Status, new { code = e.Message, messageKey = e.Message, fieldErrors = DefinitionDiagnosticsV2.From(e),
                 retryMode = e.Status == 503 ? "READ_ORIGINAL" : e.Status == 409 ? "REFRESH_AND_NEW_INTENT" : "NONE" });
         }
         catch (Exception e) when (e is Npgsql.NpgsqlException or CurrentPermissionUnavailableException)

@@ -255,7 +255,7 @@ public sealed partial class FormAuthoringOwnerV2
             var b=source?.Body??command.Body;var next=head with {Name=b.Name,SchemaJson=b.SchemaJson,Category=b.Category,SubCategory=b.SubCategory,SavedBy=actor.UserId,ClonedFromRef=clone?.Body.SourceVersionId??head.ClonedFromRef};
             CheckWrites(old,next,permission);
             try{if(clone==null)_ = FormSchemaValidationV1.Parse(b.SchemaJson);}
-            catch(InvalidOperationException e){throw Error(e.Message,422);}
+            catch(InvalidOperationException e){throw new ScopeAuthorizationExceptionV1(e.Message,422,e);}
             if(old==null)
             {
                 await db.Database.ExecuteSqlInterpolatedAsync($"""

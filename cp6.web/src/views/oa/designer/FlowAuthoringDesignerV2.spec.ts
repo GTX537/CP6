@@ -10,8 +10,9 @@ const raw = '{"start":"s","nodes":[{"id":"s","type":"start","name":"原名","ext
 const draft = (overrides: Partial<AuthoringView> = {}): AuthoringView => ({ definitionId: 'head', draftId: 'draft', key: 'leave', version: 'version', enabled: false,
   fields: { Name: 'leave', SchemaJson: raw, FormKey: null, FunctionId: null, FlowCode: null }, writableFields: ['Name', 'SchemaJson', 'FormKey', 'FunctionId', 'FlowCode'], diagnostics: [], ...overrides })
 const mounted: ReturnType<typeof mount>[] = []
+const focusNode = vi.fn(), focusEdge = vi.fn()
 function setup() {
-  const w = mount(Designer, { global: { stubs: { FlowPublicationPanelV2: true, DesignerCanvas: true, NodePropertyPanel: true, EdgePropertyPanel: true } } }); mounted.push(w); return w
+  const w = mount(Designer, { global: { stubs: { FlowPublicationPanelV2: true, DesignerCanvas: { name: 'DesignerCanvas', methods: { focusNode, focusEdge }, template: '<div data-test="canvas" />' }, NodePropertyPanel: true, EdgePropertyPanel: true } } }); mounted.push(w); return w
 }
 const state = (w: any): any => w.vm.$.setupState
 beforeEach(() => {
@@ -41,6 +42,18 @@ it('keeps the original command and body through unknown result and NOT_OBSERVED'
   await state(w).save(); expect(vi.mocked(api.save).mock.calls[1]![1]).toEqual(first)
   expect(w.text()).toContain('查询原保存结果')
 })
+
+it('does not turn a later validation rejection or denied original query into failure of an unknown save', async () => {
+  const w = setup(); await flushPromises(); await state(w).load('leave')
+  vi.mocked(api.save).mockRejectedValue({ response: { status: 503 } }); await state(w).save()
+  const original = vi.mocked(api.save).mock.calls[0]![1]
+  vi.mocked(api.save).mockRejectedValue({ response: { status: 422, data: { fieldErrors: [{ path: '$.nodes[0]', code: 'E-WF-010' }] } } }); await state(w).save()
+  expect(state(w).pending.command).toEqual(original); expect(state(w).fieldErrors).toEqual([])
+  vi.mocked(api.original).mockRejectedValue({ response: { status: 403 } }); await state(w).recover()
+  expect(state(w).fields).toEqual({}); expect(state(w).pending.command).toEqual(original)
+  vi.mocked(api.save).mockRejectedValue({ response: { status: 409 } }); await state(w).save()
+  expect(vi.mocked(api.save).mock.calls[2]![1]).toEqual(original); expect(state(w).pending.command).toEqual(original)
+})
 it('only accepts the matching original result then reads the current draft', async () => {
   const w = setup(); await flushPromises(); state(w).create(); state(w).key = 'leave'; state(w).fields.Name = 'leave'
   vi.mocked(api.save).mockImplementation(async (_key, command) => ({ commandId: command.commandId, outcome: 'SUCCEEDED', resourceId: 'head', resourceVersion: 'version', result: draft(), recordedAtUtc: '2026-10-27T00:00:00Z', correlationId: null }))
@@ -68,6 +81,21 @@ it('discards a late response after the authenticated identity changes', async ()
 it('hidden schema is absent from the canvas and cannot become an empty overwrite', async () => {
   vi.mocked(api.read).mockResolvedValue(draft({ fields: { Name: 'safe' }, writableFields: ['Name'] }))
   const w = setup(); await flushPromises(); await state(w).load('leave')
-  expect(w.find('designer-canvas-stub').exists()).toBe(false); expect(state(w).canSave).toBe(false)
+  expect(w.find('[data-test="canvas"]').exists()).toBe(false); expect(state(w).canSave).toBe(false)
   await state(w).save(); expect(api.save).not.toHaveBeenCalled()
+})
+
+it('locates current saved diagnostics and retains correctable local changes after a rejected save', async () => {
+  const diagnostic = { path: '$.nodes[0].name', code: 'E-WF-010', severity: 'ERROR', nodeId: 's' }
+  vi.mocked(api.read).mockResolvedValue(draft({ diagnosticDetails: [diagnostic] }))
+  const w = setup(); await flushPromises(); await state(w).load('leave'); await flushPromises()
+  await w.findAll('button').find(b => b.text() === '定位 s')!.trigger('click')
+  expect(focusNode).toHaveBeenCalledWith('s'); expect(state(w).selectedNode.id).toBe('s')
+  state(w).schema.nodes[0].name = '需要保留'; await flushPromises(); expect(state(w).diagnostics).toEqual([])
+  vi.mocked(api.save).mockRejectedValue({ response: { status: 422, data: { fieldErrors: [diagnostic] } } }); await state(w).save()
+  expect(state(w).schema.nodes[0].name).toBe('需要保留'); expect(state(w).canSave).toBe(true); expect(state(w).pending).toBeUndefined()
+  await w.findAll('button').find(b => b.text() === '定位 s')!.trigger('click'); expect(focusNode).toHaveBeenCalledTimes(2)
+  state(w).schema.edges = [{ from: 's', to: 'e' }]; await flushPromises(); state(w).locate({ path: '$.edges[0].conditionExpr' })
+  expect(focusEdge).toHaveBeenCalledWith(0); expect(state(w).edgeIndex).toBe(0)
+  state(w).clearPrivate(); expect(state(w).fieldErrors).toEqual([])
 })

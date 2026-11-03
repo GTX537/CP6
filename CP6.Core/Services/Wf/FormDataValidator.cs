@@ -18,51 +18,57 @@ internal static class FormDataValidator
     };
 
     internal static IReadOnlyList<string> ValidateSchema(FormSchema schema)
+        =>SchemaDiagnostics(schema).Select(e=>e.Message!).ToArray();
+
+    internal static IReadOnlyList<DefinitionDiagnosticV2> SchemaDiagnostics(FormSchema schema)
     {
-        var errors = new List<string>();
+        var errors = new List<DefinitionDiagnosticV2>();
         var fieldNames = new HashSet<string>(StringComparer.Ordinal);
-        foreach (var field in schema.Fields)
+        for(var fieldIndex=0;fieldIndex<schema.Fields.Count;fieldIndex++)
         {
+            var field=schema.Fields[fieldIndex];var path=$"$.fields[{fieldIndex}]";
+            void Add(string suffix,string code,string message)=>errors.Add(new(path+suffix,code,FieldName:field.Name,Message:message));
             if (string.IsNullOrWhiteSpace(field.Name) || !fieldNames.Add(field.Name))
             {
-                errors.Add("字段标识为空或重复");
+                Add(".name","EMPTY_OR_DUPLICATE","字段标识为空或重复");
                 continue;
             }
 
             var fieldLabel = LabelOf(field.Label, field.Name);
             if (string.IsNullOrWhiteSpace(field.Type))
             {
-                errors.Add($"{fieldLabel} 的字段类型不能为空");
+                Add(".type","TYPE_REQUIRED",$"{fieldLabel} 的字段类型不能为空");
                 continue;
             }
             if (field.MaxLength is <= 0 or > 10_000)
-                errors.Add($"{fieldLabel} 的最大长度必须为 1-10000");
+                Add(".maxLength","LENGTH_RANGE",$"{fieldLabel} 的最大长度必须为 1-10000");
             if (!IsValidPattern(field.Pattern))
-                errors.Add($"{fieldLabel} 的校验正则无效");
+                Add(".pattern","PATTERN_INVALID",$"{fieldLabel} 的校验正则无效");
 
             if (!string.Equals(field.Type, "table", StringComparison.OrdinalIgnoreCase)) continue;
             var label = fieldLabel;
             var columns = field.Columns ?? new();
             if (columns.Count is 0 or > HardMaxTableColumns)
-                errors.Add($"{label} 的子表列数必须为 1-{HardMaxTableColumns}");
+                Add(".columns","COLUMN_COUNT_INVALID",$"{label} 的子表列数必须为 1-{HardMaxTableColumns}");
 
             var columnNames = new HashSet<string>(StringComparer.Ordinal);
-            foreach (var column in columns)
+            for(var columnIndex=0;columnIndex<columns.Count;columnIndex++)
             {
+                var column=columns[columnIndex];var columnPath=$".columns[{columnIndex}]";
                 if (string.IsNullOrWhiteSpace(column.Name) || !columnNames.Add(column.Name))
-                    errors.Add($"{label} 存在空或重复的列标识");
+                    Add(columnPath+".name","EMPTY_OR_DUPLICATE",$"{label} 存在空或重复的列标识");
                 if (!TableColumnTypes.Contains(column.Type))
-                    errors.Add($"{label}.{LabelOf(column.Label, column.Name)} 的列类型不受支持");
+                    Add(columnPath+".type","UNSUPPORTED_TABLE_CONTROL",$"{label}.{LabelOf(column.Label, column.Name)} 的列类型不受支持");
                 if (column.MaxLength is <= 0 or > 10_000)
-                    errors.Add($"{label}.{LabelOf(column.Label, column.Name)} 的最大长度必须为 1-10000");
+                    Add(columnPath+".maxLength","LENGTH_RANGE",$"{label}.{LabelOf(column.Label, column.Name)} 的最大长度必须为 1-10000");
                 if (!IsValidPattern(column.Pattern))
-                    errors.Add($"{label}.{LabelOf(column.Label, column.Name)} 的校验正则无效");
+                    Add(columnPath+".pattern","PATTERN_INVALID",$"{label}.{LabelOf(column.Label, column.Name)} 的校验正则无效");
             }
 
             var minRows = field.MinRows ?? 0;
             var maxRows = field.MaxRows ?? DefaultMaxTableRows;
             if (minRows < 0 || maxRows < 1 || maxRows > HardMaxTableRows || minRows > maxRows)
-                errors.Add($"{label} 的行数范围无效");
+                Add(minRows<0?".minRows":".maxRows","TABLE_ROW_RANGE",$"{label} 的行数范围无效");
         }
         return errors;
     }

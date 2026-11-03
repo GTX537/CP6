@@ -18,6 +18,8 @@ public sealed class FormAuthoringController(FormAuthoringOwnerV2 owner) : Contro
     public Task<IActionResult> List([FromQuery] int page = 1, CancellationToken ct = default) => Run(async () => await owner.ListAsync(page, ct));
     [HttpGet("{key}/draft")]
     public Task<IActionResult> Read(string key, CancellationToken ct) => Run(async () => await owner.ReadAsync(key, ct));
+    [HttpPost("{key}/rule-preview"), RequestSizeLimit(1024 * 1024)]
+    public Task<IActionResult> Rules(string key,CancellationToken ct)=>Run(async()=>await owner.PreviewRulesAsync(key,await Raw(ct),ct));
     [HttpPut("{key}/draft"), RequestSizeLimit(1024 * 1024)]
     public Task<IActionResult> Save(string key, CancellationToken ct) => Run(async () => await owner.SaveAsync(key, await Raw(ct), ct));
     [HttpGet("{key}")]
@@ -57,7 +59,7 @@ public sealed class FormAuthoringController(FormAuthoringOwnerV2 owner) : Contro
         try { return Ok(new { code = 0, data = await action() }); }
         catch (ScopeAuthorizationExceptionV1 e)
         {
-            return StatusCode(e.Status, new { code = e.Message, messageKey = e.Message, fieldErrors = Array.Empty<object>(),
+            return StatusCode(e.Status, new { code = e.Message, messageKey = e.Message, fieldErrors = DefinitionDiagnosticsV2.From(e),
                 retryMode = e.Status == 503 ? "READ_ORIGINAL" : e.Status == 409 ? "REFRESH_AND_NEW_INTENT" : "NONE" });
         }
         catch (Exception e) when (e is Npgsql.NpgsqlException or CurrentPermissionUnavailableException)

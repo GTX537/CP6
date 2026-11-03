@@ -100,18 +100,26 @@ internal static class PersonalFormValuesV2
         }
         if (!partial && FormDataValidator.ValidateFields(schema, data, null, null).Count != 0) throw Error("FORM_VALIDATION_FAILED");
     }
-    internal static (string Data, string[] Errors, HashSet<string> Hidden) Recompute(FormSchema schema, string original, bool validateShape = true)
+    internal static (string Data, string[] Errors, HashSet<string> Hidden) Recompute(FormSchema schema, string original, bool validateShape = true,
+        Action<int,int,RuleEffect,JsonObject>? observedEffect=null)
     {
         var data = JsonNode.Parse(original)!.AsObject();
         var names = schema.Fields.Select(f => f.Name).ToArray();
         var hidden = new HashSet<string>(StringComparer.Ordinal);
         var required = new Dictionary<string, bool>(StringComparer.Ordinal);
-        foreach (var rule in schema.Rules)
+        static ScopeAuthorizationExceptionV1 Located(ScopeAuthorizationExceptionV1 error,string path,string? target=null)
+            =>new(error.Message,error.Status,new DefinitionDiagnosticExceptionV2(error.Message,[new(path,error.Message,FieldName:target)],error));
+        for(var ruleIndex=0;ruleIndex<schema.Rules.Count;ruleIndex++)
         {
+            var rule=schema.Rules[ruleIndex];
             var snapshot = JsonSerializer.SerializeToElement(data);
-            if (!ApprovalExpressionV2.FormCondition(rule.When, snapshot, names)) continue;
-            foreach (var effect in rule.Then)
+            bool matches;
+            try { matches=ApprovalExpressionV2.FormCondition(rule.When, snapshot, names); }
+            catch(ScopeAuthorizationExceptionV1 error){throw Located(error,$"$.rules[{ruleIndex}].when");}
+            if (!matches) continue;
+            for(var effectIndex=0;effectIndex<rule.Then.Count;effectIndex++)
             {
+                var effect=rule.Then[effectIndex];
                 switch (effect.Action)
                 {
                     case "hide": hidden.Add(effect.Target); break;
@@ -119,9 +127,11 @@ internal static class PersonalFormValuesV2
                     case "require": required[effect.Target] = true; break;
                     case "optional": required[effect.Target] = false; break;
                     case "compute":
-                        data[effect.Target] = JsonNode.Parse(ApprovalExpressionV2.FormValue(effect.Expr!, JsonSerializer.SerializeToElement(data), names).GetRawText());
+                        try { data[effect.Target] = JsonNode.Parse(ApprovalExpressionV2.FormValue(effect.Expr!, JsonSerializer.SerializeToElement(data), names).GetRawText()); }
+                        catch(ScopeAuthorizationExceptionV1 error){throw Located(error,$"$.rules[{ruleIndex}].then[{effectIndex}].expr",effect.Target);}
                         break;
                 }
+                observedEffect?.Invoke(ruleIndex,effectIndex,effect,data);
             }
         }
         var output = data.ToJsonString(); using var doc = JsonDocument.Parse(output);

@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import DefinitionComparisonPanelV2 from './DefinitionComparisonPanelV2.vue'
 import DefinitionClonePanelV2 from './DefinitionClonePanelV2.vue'
+import DefinitionDiagnosticsPanelV2 from './DefinitionDiagnosticsPanelV2.vue'
+import type { DefinitionDiagnostic } from '@/api/oa/definitionDiagnostics'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import type { AuthoringView } from '@/api/oa/flowAuthoring'
 import { flowPublicationApi as api, type LifecycleIntent, type LifecycleResult, type PublicationPreview, type PublishedFlow } from '@/api/oa/flowPublication'
 const props = defineProps<{ current?: AuthoringView; dirty: boolean; disabled: boolean }>()
-const emit = defineEmits<{ reload: [key: string]; locked: [value: boolean]; privateClear: [] }>()
+const emit = defineEmits<{ reload: [key: string]; locked: [value: boolean]; privateClear: []; locate: [item: DefinitionDiagnostic] }>()
 const preview = ref<PublicationPreview>(), versions = ref<PublishedFlow[]>([]), selected = ref<PublishedFlow>()
 const pending = ref<LifecycleIntent>(), busy = ref(false), error = ref(''), message = ref(''), comment = ref(''), page = ref(1)
 const cache = 'cp6-workflow-publication-pending'
@@ -111,7 +113,8 @@ onBeforeUnmount(() => { live = false; generation++; controller?.abort(); window.
     </div>
     <div v-if="preview && matchingPreview">
       <p>预览有效至 {{ new Date(preview.expiresAtUtc).toLocaleString() }}。确认发布将冻结当前已保存版本，当前启停配置保持不变。</p>
-      <p v-if="!preview.canPublish">当前草稿或依赖尚不满足发布条件：{{ preview.diagnostics.join('、') }}</p>
+      <p v-if="!preview.canPublish && !preview.diagnosticDetails?.length">当前草稿或依赖尚不满足发布条件：{{ preview.diagnostics.join('、') }}</p>
+      <DefinitionDiagnosticsPanelV2 :items="preview.diagnosticDetails ?? []" :disabled="busy || !!pending" @locate="emit('locate', $event)" />
       <p v-if="preview.dependencies.length">以下依赖版本固定在本次预览；确认发布不会改用更新版本。</p>
       <ul v-if="preview.dependencies.length"><li v-for="d in preview.dependencies" :key="d.location + d.kind">{{ d.kind }} · {{ d.reference }} · {{ d.location }} · 版本 {{ d.version ?? '未解析' }} · {{ d.evidenceState === 'PUBLISHED_ENABLED' ? '已发布且启用' : d.evidenceState === 'CURRENT_HOST_REGISTRATION' ? '当前服务注册' : '当前不可采用' }}</li></ul>
       <label>发布说明<textarea v-model="comment" maxlength="1000" :disabled="busy || !!pending" /></label>

@@ -17,7 +17,7 @@ public sealed record FlowNextDraftBodyV2(Guid SourceVersionId);
 public sealed record FlowDependencyRefV2(string Kind, string Location, string Reference, string? Version, string EvidenceState);
 public sealed record FlowPublicationPreviewV2(Guid Id, string Digest, Guid DraftVersionId, string ExpectedVersion,
     string SchemaDigest, DateTimeOffset ExpiresAtUtc, string[] Diagnostics, FlowDependencyRefV2[] Dependencies,
-    bool CanPublish, int? AffectedDraftCount = null, string ConsumerState = "NOT_ADOPTED");
+    bool CanPublish, int? AffectedDraftCount = null, string ConsumerState = "NOT_ADOPTED",DefinitionDiagnosticV2[]? DiagnosticDetails=null);
 public sealed record FlowPublicationV2(Guid DefinitionId, Guid VersionId, int Version, string Key,
     Dictionary<string, string?> Fields, string? SchemaDigest, DateTimeOffset PublishedAtUtc, Guid PublisherRef,
     FlowDependencyRefV2[] DependencyRefs, string SourceDraftToken, bool ActivationChanged = false, string EvidenceState = "ORIGINAL_PUBLICATION");
@@ -79,7 +79,7 @@ public sealed partial class FlowAuthoringOwnerV2
         if (head.Status != 0 || head.DraftId != input.DraftVersionId || head.Version != expected) throw Error("DEFINITION_CHANGED", 409);
         var inputs = await PublicationInputs(head, actor, ct); var digest = PreviewDigest(head, permission.Policy.Version, inputs.Diagnostics, inputs.Dependencies);
         var result = new FlowPublicationPreviewV2(Guid.NewGuid(), digest, head.DraftId, input.ExpectedVersion, SchemaDigest(head.SchemaJson),
-            PublicationClock().AddMinutes(10), inputs.Diagnostics, inputs.Dependencies, inputs.Diagnostics.Length == 0);
+            PublicationClock().AddMinutes(10), inputs.Diagnostics, inputs.Dependencies, inputs.Diagnostics.Length == 0,DiagnosticDetails:inputs.Details);
         var snapshot = JsonSerializer.Serialize(result, Json);
         await db.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO cp6_workflow_authoring_v2.publication_previews(tenant_id,environment_id,id,actor_id,head_id,draft_id,draft_token,digest,expires_at,snapshot_json)
@@ -103,7 +103,7 @@ public sealed partial class FlowAuthoringOwnerV2
     };
     private static WorkflowLifecycleResultV2 ProjectLifecycle(WorkflowLifecycleResultV2 value, FieldPermissionDecisionV1 fields)
         => value with { Result = value.Result == null ? null : new(value.Result.Publication == null ? null : ProjectPublication(value.Result.Publication, fields),
-            value.Result.Draft == null ? null : value.Result.Draft with { Fields = value.Result.Draft.Fields.Where(x => fields.Fields[x.Key].CanRead).ToDictionary(), WritableFields = [], Diagnostics = [] }) };
+            value.Result.Draft == null ? null : value.Result.Draft with { Fields = value.Result.Draft.Fields.Where(x => fields.Fields[x.Key].CanRead).ToDictionary(), WritableFields = [], Diagnostics = [],DiagnosticDetails=[] }) };
     public async Task<WorkflowLifecycleResultV2> LifecycleOriginalAsync(string key, string operation, string command, CancellationToken ct = default)
     {
         if (operation is not (PublishOperation or NextDraftOperation) || !Regex.IsMatch(command, "\\A[A-Za-z0-9_.-]{1,100}\\z")) throw Error("COMMAND_SCOPE_INVALID", 400);
@@ -123,7 +123,9 @@ public sealed partial class FlowAuthoringOwnerV2
         Entry(); await using var tx = await db.Database.BeginTransactionAsync(ct); await Root(ct); var actor = await Actor(ct);
         var head = await Heads().SingleOrDefaultAsync(x => x.Key == key, ct) ?? throw Error("DEFINITION_NOT_FOUND", 404);
         var fields = await Permission(actor, head, head.Status == 0 && await CanEdit(actor, ct), false, ct);
-        if ((await Actor(ct)).UserId != actor.UserId) throw Error("REAUTH_REQUIRED", 401); return View(head, fields, []);
+        if ((await Actor(ct)).UserId != actor.UserId) throw Error("REAUTH_REQUIRED", 401);
+        var details=head.Status==0&&fields.Fields["SchemaJson"].CanRead?FlowSchemaValidator.ValidateKnownStructureDetailed(Schema(head.SchemaJson)).ToArray():[];
+        return View(head, fields, details.Select(d=>d.Code).Distinct().ToArray(),details);
     }
     public async Task<FlowPublicationV2[]> VersionsAsync(string key, int page = 1, Guid? version = null, CancellationToken ct = default)
     {

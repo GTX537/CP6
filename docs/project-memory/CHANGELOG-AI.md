@@ -1,5 +1,13 @@
 # AI 可读变更日志
 
+## 2026-11-03：24小时目标 / W284定义定位与规则预览
+
+W284：FLOW/FORM保存、发布、读取和规则求值的准确结构诊断已贯通现有设计器；FORM准确草稿的纯顺序规则预览、服务端精确结果与浏览器体验对照完成真实PG/HTTP/Chrome限定验收。 [交付](../development/evidence/W284-01/DELIVERY.md)。
+
+35项唯一纯校验/规则相关行为、6项唯一隔离PostgreSQL/HTTP行为及1条真实登录→Vue/Chrome→HTTP→PG路径通过；47项唯一相关Vue行为及vue-tsc --build（包含app/node两项目）通过。覆盖节点/边/字段/列/规则精确定位，重复字段/复杂子表/200行上限，循环/深度/未注册服务、原字段读权投影，准确顺序计算与大数、纯预览零业务写入、过期/拒权/迟到响应、首次校验失败保留可编辑输入和未知原保存不能被后续拒绝抹除。
+
+原375仍27DONE/2IN_PROGRESS/346PLANNED；59局部3闭环/56余项，125/247正式状态保持。WP12-01整卡不关闭；普通FORM文件/外部选项Owner准入、FLOW双作者/下一草稿原竞争、全部legacy调用面与来源仍有余项。W285普通FORM文件及最终下载、W286原竞争/旧caller顺序继续。 分支/工作区/席位最终状态见wave284-final-verification.json。
+
 ## 2026-11-03：24小时目标 / W283原生截止与执行器
 
 W283：原生APP/SFS固定UTC截止事实、Owner内租约/epoch、实际服务授权、提醒/升级/错误边与明确系统决定、原结果及只读运行诊断已实现；真实Host、PG、HTTP与Chrome完成限定验收。 [交付](../development/evidence/W283-01/DELIVERY.md)。

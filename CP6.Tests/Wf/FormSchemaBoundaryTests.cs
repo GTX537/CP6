@@ -23,7 +23,7 @@ public sealed class FormSchemaBoundaryTests
     [InlineData("{\"fields\":[{\"name\":\"a\"}],\"rules\":[{\"when\":\"run()\",\"then\":[]}]}", "EXPRESSION_INVALID")]
     [InlineData("{\"fields\":[{\"name\":\"a\"}],\"rules\":[{\"then\":[{\"action\":\"compute\",\"target\":\"a\",\"expr\":\"missing + 1\"}]}]}", "EXPRESSION_INVALID")]
     public void Malformed_or_unknown_executable_schema_has_an_explicit_path(string raw, string expected)
-        => Assert.Contains(expected, Assert.Throws<InvalidOperationException>(() => FormSchemaValidationV1.Parse(raw)).Message);
+        => Assert.Contains(expected, Assert.ThrowsAny<InvalidOperationException>(() => FormSchemaValidationV1.Parse(raw)).Message);
 
     [Fact]
     public void Passive_layout_depth_numeric_precision_and_controlled_rules_remain_legal()

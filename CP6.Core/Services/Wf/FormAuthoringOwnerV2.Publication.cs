@@ -16,7 +16,8 @@ public sealed record FormPublicationBodyV2(Guid DraftVersionId, Guid PreviewId, 
 public sealed record FormNextDraftBodyV2(Guid SourceVersionId);
 public sealed record FormPublicationPreviewV2(Guid Id, string Digest, Guid DraftVersionId, string ExpectedVersion,
     string SchemaDigest, DateTimeOffset ExpiresAtUtc, string[] Diagnostics, FlowDependencyRefV2[] Dependencies,
-    bool CanPublish, int? AffectedDraftCount = null, string ConsumerState = "PERSONAL_FORM_PINNED_RUNTIME_ADOPTED",DefinitionRuntimeImpactV2? Impact = null);
+    bool CanPublish, int? AffectedDraftCount = null, string ConsumerState = "PERSONAL_FORM_PINNED_RUNTIME_ADOPTED",DefinitionRuntimeImpactV2? Impact = null,
+    DefinitionDiagnosticV2[]? DiagnosticDetails = null);
 public sealed record FormPublicationV2(Guid DefinitionId, Guid VersionId, int Version, string Key,
     Dictionary<string, string?> Fields, string? SchemaDigest, DateTimeOffset PublishedAtUtc, Guid PublisherRef,
     FlowDependencyRefV2[] DependencyRefs, string SourceDraftToken, bool ActivationChanged = false, string EvidenceState = "ORIGINAL_PUBLICATION");
@@ -63,15 +64,16 @@ public sealed partial class FormAuthoringOwnerV2
         catch (Exception e) when (e is JsonException or InvalidOperationException or KeyNotFoundException) { throw Error("COMMAND_SHAPE_INVALID", 400); }
     }
     private static string SchemaDigest(string schema) => MainOwnerOperationJournalV1.Digest(Encoding.UTF8.GetBytes(schema));
-    private static (string[] Diagnostics, FlowDependencyRefV2[] Dependencies) PublicationInputs(Head head, CancellationToken ct)
+    private static (string[] Diagnostics, FlowDependencyRefV2[] Dependencies, DefinitionDiagnosticV2[] Details) PublicationInputs(Head head, CancellationToken ct)
     {
         ct.ThrowIfCancellationRequested();
         // Saved schemas already crossed the W268 boundary. Reuse that internal contract;
         // only external source qualification is a new publication concern here.
         var schema = JsonSerializer.Deserialize<FormSchema>(head.SchemaJson, new JsonSerializerOptions(JsonSerializerDefaults.Web))!;
-        var uploads = schema.Fields.Where(f => f.Type.Equals("upload",StringComparison.OrdinalIgnoreCase)).ToArray();
-        return (uploads.Select(f => "FORM_FILE_SOURCE_REQUIRED:" + f.Name).ToArray(),
-            uploads.Select(f => new FlowDependencyRefV2("FILE",f.Name,"file-owner",null,"REQUIRED")).ToArray());
+        var uploads = schema.Fields.Select((field,index)=>(Field:field,Index:index)).Where(f => f.Field.Type.Equals("upload",StringComparison.OrdinalIgnoreCase)).ToArray();
+        return (uploads.Select(f => "FORM_FILE_SOURCE_REQUIRED:" + f.Field.Name).ToArray(),
+            uploads.Select(f => new FlowDependencyRefV2("FILE",f.Field.Name,"file-owner",null,"REQUIRED")).ToArray(),
+            uploads.Select(f => new DefinitionDiagnosticV2($"$.fields[{f.Index}]","FORM_FILE_SOURCE_REQUIRED",FieldName:f.Field.Name)).ToArray());
     }
     private static string PreviewDigest(Head head, Guid policy, string[] diagnostics, FlowDependencyRefV2[] dependencies)
         => MainOwnerOperationJournalV1.Digest(JsonSerializer.SerializeToUtf8Bytes(new
@@ -87,7 +89,7 @@ public sealed partial class FormAuthoringOwnerV2
         var inputs = PublicationInputs(head, ct); var digest = PreviewDigest(head, permission.Policy.Version, inputs.Diagnostics, inputs.Dependencies);
         var impact=await DefinitionRuntimeImpactReaderV2.Read(db,fence.EnvironmentId,head.Id,true,ct);
         var result = new FormPublicationPreviewV2(Guid.NewGuid(), digest, head.DraftId, input.ExpectedVersion, SchemaDigest(head.SchemaJson),
-            PublicationClock().AddMinutes(10), inputs.Diagnostics, inputs.Dependencies, inputs.Diagnostics.Length == 0,impact.ActiveDrafts,Impact:impact);
+            PublicationClock().AddMinutes(10), inputs.Diagnostics, inputs.Dependencies, inputs.Diagnostics.Length == 0,impact.ActiveDrafts,Impact:impact,DiagnosticDetails:inputs.Details);
         var snapshot = JsonSerializer.Serialize(result, Json);
         await db.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO cp6_form_authoring_v2.publication_previews(tenant_id,environment_id,id,actor_id,head_id,draft_id,draft_token,digest,expires_at,snapshot_json)

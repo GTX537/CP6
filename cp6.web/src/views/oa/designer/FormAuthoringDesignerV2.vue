@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { AUTH_EPOCH, AUTH_EVENT, AUTH_RECORD, IMPERSONATION, identityStamp, requireIdentity } from '@/auth/identity'
 import { formAuthoringApi as api, type FormAuthoringCommand, type FormAuthoringEntry, type FormAuthoringField, type FormAuthoringResult, type FormAuthoringView } from '@/api/oa/formAuthoring'
 import FormPublicationPanelV2 from './FormPublicationPanelV2.vue'
 import FormDesigner from '@/views/wf/designer/FormDesigner.vue'
+import FormRulePreviewPanelV2 from './FormRulePreviewPanelV2.vue'
+import DefinitionDiagnosticsPanelV2 from './DefinitionDiagnosticsPanelV2.vue'
+import type { DefinitionDiagnostic } from '@/api/oa/definitionDiagnostics'
+import { parseStrictJson } from '@/contracts/quality/strictJson'
+import { diagnosticSourceSpan } from './diagnosticSourceSpan'
 
 const emit = defineEmits<{ close: [] }>()
 const cache = 'cp6-form-authoring-pending', initial = '{"fields":[],"rules":[]}'
@@ -12,6 +17,33 @@ const labels = { Name: '表单名称', SchemaJson: '表单结构', Category: '�
 const entry = ref<FormAuthoringEntry>(), items = ref<FormAuthoringView[]>([]), current = ref<FormAuthoringView>()
 const key = ref(''), fields = ref<Partial<Record<FormAuthoringField, string | null>>>({})
 const editorSource = ref<{ schemaJson: string; version: string }>()
+const editor = ref<InstanceType<typeof FormDesigner>>(), fieldErrors = ref<DefinitionDiagnostic[]>([]), rawSchema = ref(''), rawOpen = ref(false)
+const rawEditor = ref<HTMLTextAreaElement>()
+watch(() => fields.value.SchemaJson, () => { fieldErrors.value = []; rawSchema.value = fields.value.SchemaJson ?? '' }, { flush: 'sync' })
+watch(rawSchema, () => { fieldErrors.value = [] })
+const rawDirty = computed(() => !!editorSource.value && rawSchema.value !== fields.value.SchemaJson)
+async function locate(item: DefinitionDiagnostic) {
+  if (/^\$\.fields\[/.test(item.path)) editor.value?.locate(item.path)
+  else { rawOpen.value = true; await nextTick(); const span = diagnosticSourceSpan(rawSchema.value, item.path); rawEditor.value?.focus(); if (span) rawEditor.value?.setSelectionRange(...span) }
+  message.value = `请检查 ${item.path}：${item.message || item.code}`
+}
+function applyRawSchema() {
+  if (busy.value || pending.value || publicationLocked.value || current.value?.published || !writable.value.includes('SchemaJson')) return
+  try {
+    const parsed: any = parseStrictJson(rawSchema.value)
+    // Raw author input has not crossed the server boundary. Check only the types
+    // the visual editor consumes; the server owns field/rule legality on save.
+    const object = (v: any) => !!v && typeof v === 'object' && !Array.isArray(v)
+    const list = (v: any, item: (v: any) => boolean) => v === undefined || Array.isArray(v) && v.every(item)
+    const text = (v: any) => v === undefined || v === null || typeof v === 'string'
+    const options = (v: any) => list(v, o => object(o) && typeof o.label === 'string' && ['string', 'number'].includes(typeof o.value))
+    const field = (f: any) => object(f) && typeof f.name === 'string' && text(f.type) && text(f.label) && text(f.pattern) && options(f.options)
+    if (!object(parsed) || !Array.isArray(parsed.fields) || !parsed.fields.every((f: any) => field(f) && list(f.columns, field))
+      || !list(parsed.rules, r => object(r) && text(r.when) && Array.isArray(r.then) && r.then.every((e: any) => object(e) && typeof e.action === 'string' && typeof e.target === 'string' && text(e.expr) && options(e.options))))
+      throw new Error('结构类型无法用于可视编辑，请检查字段、子表列、选项及规则数组；原输入已保留。')
+    fields.value.SchemaJson = rawSchema.value; editorSource.value = { schemaJson: rawSchema.value, version: crypto.randomUUID() }; error.value = ''; message.value = '结构已采用到本地草稿，请保存以执行后端校验。'
+  } catch (e) { error.value = e instanceof Error ? e.message : '结构输入无效，当前草稿已保留。' }
+}
 const cacheUnavailable = ref(false)
 const publicationLocked = ref(false)
 const busy = ref(false), error = ref(''), message = ref(''), stale = ref(false), page = ref(1)
@@ -19,9 +51,9 @@ type Pending = { key: string; command: FormAuthoringCommand; unknown: boolean }
 const pending = ref<Pending>()
 const writable = computed(() => current.value?.writableFields ?? entry.value?.writableFields ?? [])
 const readable = computed(() => allFields.every(f => Object.hasOwn(fields.value, f)))
-const canSave = computed(() => !cacheUnavailable.value && !publicationLocked.value && !current.value?.published && !stale.value && readable.value && writable.value.length > 0 && (!!current.value || !!entry.value?.canCreate))
-const dirty = computed(() => current.value ? allFields.some(f => fields.value[f] !== current.value?.fields[f])
-  : Object.keys(fields.value).length > 0 && !!(key.value || fields.value.Name || fields.value.SchemaJson !== initial || fields.value.Category != null || fields.value.SubCategory != null))
+const canSave = computed(() => !rawDirty.value && !cacheUnavailable.value && !publicationLocked.value && !current.value?.published && !stale.value && readable.value && writable.value.length > 0 && (!!current.value || !!entry.value?.canCreate))
+const dirty = computed(() => rawDirty.value || (current.value ? allFields.some(f => fields.value[f] !== current.value?.fields[f])
+  : Object.keys(fields.value).length > 0 && !!(key.value || fields.value.Name || fields.value.SchemaJson !== initial || fields.value.Category != null || fields.value.SubCategory != null)))
 let generation = 0, live = true, controller: AbortController | undefined
 class CommandStorageError extends Error {}
 function storageChanged(event: StorageEvent) {
@@ -33,6 +65,7 @@ function remember() {
 }
 function clearFields() {
   entry.value = undefined; items.value = []; current.value = undefined; fields.value = {}; editorSource.value = undefined
+  fieldErrors.value = []; rawSchema.value = ''; rawOpen.value = false
 }
 function identityChanged() {
   cacheUnavailable.value=false; generation++; controller?.abort(); clearFields(); key.value = ''; pending.value = undefined
@@ -50,7 +83,7 @@ async function run(action: (check: () => void, signal: AbortSignal) => Promise<v
       const status = e?.response?.status
       if (e instanceof CommandStorageError) error.value = e.message
       else if ([401, 403].includes(status)) { clearFields(); error.value = '当前权限无法读取或保存，请重新核对权限。' }
-      else error.value = pending.value ? '保存结果尚未确认，请查询原结果或以原意图重试。' : e instanceof Error ? e.message : '请求未被接受，当前草稿已保留。'
+      else { fieldErrors.value = e?.response?.data?.fieldErrors ?? []; error.value = pending.value ? '保存结果尚未确认，请查询原结果或以原意图重试。' : fieldErrors.value.length ? '结构未通过校验，修改已保留，请定位并修正。' : e instanceof Error ? e.message : '请求未被接受，当前草稿已保留。' }
     } catch { /* Obsolete identity/generation responses cannot update this page. */ }
   } finally { if (live && generation === request) busy.value = false }
 }
@@ -159,10 +192,15 @@ onBeforeUnmount(() => { live = false; controller?.abort(); window.removeEventLis
       <span v-if="dirty">有未保存修改</span>
       <button :disabled="busy || !!pending || publicationLocked || !canSave" @click="save">保存草稿</button>
       <button v-if="current" :disabled="busy || !!pending || publicationLocked" @click="load(current.key)">重新读取当前草稿（放弃本地修改）</button>
-      <FormDesigner v-if="editorSource" :managed-source="editorSource" :read-only="busy || !!pending || publicationLocked || !!current?.published || !writable.includes('SchemaJson')" @schema-change="schemaChanged" />
+      <DefinitionDiagnosticsPanelV2 :items="fieldErrors" :disabled="busy || !!pending" @locate="locate" />
+      <details v-if="editorSource" :open="rawOpen" @toggle="rawOpen = ($event.target as HTMLDetailsElement).open"><summary>完整结构与顺序规则（JSON）</summary>
+        <p>保留字段、布局及规则原文；采用到本地草稿后再保存。</p><textarea ref="rawEditor" v-model="rawSchema" aria-label="完整表单结构" rows="8" spellcheck="false" :disabled="busy || !!pending || publicationLocked || !!current?.published || !writable.includes('SchemaJson')" />
+        <button :disabled="busy || !!pending || publicationLocked || !!current?.published || !writable.includes('SchemaJson')" @click="applyRawSchema">采用结构输入</button></details>
+      <FormDesigner v-if="editorSource" ref="editor" :managed-source="editorSource" :preview-enabled="!dirty" :read-only="rawDirty || busy || !!pending || publicationLocked || !!current?.published || !writable.includes('SchemaJson')" @schema-change="schemaChanged" />
       <p v-else>表单结构当前不可见，不能保存整份草稿。</p>
     </div>
-    <FormPublicationPanelV2 :current="current" :dirty="!!dirty" :disabled="busy || !!pending" @reload="load" @locked="publicationLocked = $event" @private-clear="clearFields" />
+    <FormPublicationPanelV2 :current="current" :dirty="!!dirty" :disabled="busy || !!pending" @reload="load" @locked="publicationLocked = $event" @private-clear="clearFields" @locate="locate" />
+    <FormRulePreviewPanelV2 :current="current" :dirty="!!dirty" :disabled="busy || !!pending || publicationLocked || stale" @private-clear="clearFields" @locate="locate" />
   </section>
 </template>
 
