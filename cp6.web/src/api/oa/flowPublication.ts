@@ -1,11 +1,13 @@
 import http from '../http'
 import type { AuthoringView } from './flowAuthoring'
 import type { DefinitionDiagnostic } from './definitionDiagnostics'
+import type { DefinitionImpact } from './definitionImpact'
 export interface DependencyReference { kind: string; location: string; reference: string; version: string | null; evidenceState: string }
 export interface PublicationPreview {
   id: string; digest: string; draftVersionId: string; expectedVersion: string; schemaDigest: string
   expiresAtUtc: string; diagnostics: string[]; canPublish: boolean; diagnosticDetails?: DefinitionDiagnostic[] | null
   dependencies: DependencyReference[]
+  impact?: DefinitionImpact | null
 }
 export interface PublishedFlow {
   definitionId: string; versionId: string; version: number; key: string; fields: AuthoringView['fields']

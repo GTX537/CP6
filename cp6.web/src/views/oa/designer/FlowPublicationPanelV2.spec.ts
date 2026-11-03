@@ -17,6 +17,13 @@ function setup(props: Partial<{ current: AuthoringView; dirty: boolean; disabled
 }
 beforeEach(() => { vi.resetAllMocks(); localStorage.clear(); sessionStorage.clear(); vi.mocked(api.preview).mockResolvedValue(preview); vi.mocked(api.versions).mockResolvedValue([version]) })
 afterEach(() => { mounted.forEach(w => w.unmount()); mounted.length = 0 })
+it('shows actual publication impact and clears those counts with an obsolete preview', async () => {
+  vi.mocked(api.preview).mockResolvedValue({ ...preview, impact: { runningInstances: 2, suspendedInstances: 1, rootInstances: 2, childInstances: 1, activeDrafts: 0, personalEntryBindings: 1, relatedAppBindings: 3, publishedParentVersions: 4, observedAtUtc: '2026-11-03T14:00:00Z' } })
+  const w = setup(); await state(w).prepare(); await flushPromises()
+  expect(w.get('[aria-label="当前定义引用统计"]').text()).toContain('运行中 2，挂起 1')
+  expect(w.text()).toContain('不表示全部入口会立即切换版本'); expect(w.text()).not.toContain('份未提交草稿')
+  await w.setProps({ dirty: true }); expect(w.find('[aria-label="当前定义引用统计"]').exists()).toBe(false)
+})
 it('does not publish unsaved edits or a preview for a different saved token', async () => {
   const w = setup({ dirty: true }); await state(w).prepare(); expect(api.preview).not.toHaveBeenCalled()
   await w.setProps({ dirty: false }); await state(w).prepare(); expect(state(w).preview.id).toBe('preview')

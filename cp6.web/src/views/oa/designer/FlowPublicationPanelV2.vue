@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import DefinitionComparisonPanelV2 from './DefinitionComparisonPanelV2.vue'
+import DefinitionImpact from '../admin/DefinitionImpact.vue'
 import DefinitionClonePanelV2 from './DefinitionClonePanelV2.vue'
 import DefinitionDiagnosticsPanelV2 from './DefinitionDiagnosticsPanelV2.vue'
 import type { DefinitionDiagnostic } from '@/api/oa/definitionDiagnostics'
@@ -113,6 +114,7 @@ onBeforeUnmount(() => { live = false; generation++; controller?.abort(); window.
     </div>
     <div v-if="preview && matchingPreview">
       <p>预览有效至 {{ new Date(preview.expiresAtUtc).toLocaleString() }}。确认发布将冻结当前已保存版本，当前启停配置保持不变。</p>
+      <DefinitionImpact :impact="preview.impact" />
       <p v-if="!preview.canPublish && !preview.diagnosticDetails?.length">当前草稿或依赖尚不满足发布条件：{{ preview.diagnostics.join('、') }}</p>
       <DefinitionDiagnosticsPanelV2 :items="preview.diagnosticDetails ?? []" :disabled="busy || !!pending" @locate="emit('locate', $event)" />
       <p v-if="preview.dependencies.length">以下依赖版本固定在本次预览；确认发布不会改用更新版本。</p>

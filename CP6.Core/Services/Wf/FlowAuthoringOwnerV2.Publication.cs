@@ -17,7 +17,8 @@ public sealed record FlowNextDraftBodyV2(Guid SourceVersionId);
 public sealed record FlowDependencyRefV2(string Kind, string Location, string Reference, string? Version, string EvidenceState);
 public sealed record FlowPublicationPreviewV2(Guid Id, string Digest, Guid DraftVersionId, string ExpectedVersion,
     string SchemaDigest, DateTimeOffset ExpiresAtUtc, string[] Diagnostics, FlowDependencyRefV2[] Dependencies,
-    bool CanPublish, int? AffectedDraftCount = null, string ConsumerState = "NOT_ADOPTED",DefinitionDiagnosticV2[]? DiagnosticDetails=null);
+    bool CanPublish, int? AffectedDraftCount = null, string ConsumerState = "PINNED_RUNTIME_ADOPTED",DefinitionDiagnosticV2[]? DiagnosticDetails=null,
+    DefinitionRuntimeImpactV2? Impact=null);
 public sealed record FlowPublicationV2(Guid DefinitionId, Guid VersionId, int Version, string Key,
     Dictionary<string, string?> Fields, string? SchemaDigest, DateTimeOffset PublishedAtUtc, Guid PublisherRef,
     FlowDependencyRefV2[] DependencyRefs, string SourceDraftToken, bool ActivationChanged = false, string EvidenceState = "ORIGINAL_PUBLICATION");
@@ -78,8 +79,9 @@ public sealed partial class FlowAuthoringOwnerV2
         var permission = await PublishingPermission(actor, head, ct);
         if (head.Status != 0 || head.DraftId != input.DraftVersionId || head.Version != expected) throw Error("DEFINITION_CHANGED", 409);
         var inputs = await PublicationInputs(head, actor, ct); var digest = PreviewDigest(head, permission.Policy.Version, inputs.Diagnostics, inputs.Dependencies);
+        var impact=await DefinitionRuntimeImpactReaderV2.Read(db,fence.EnvironmentId,head.Id,false,ct);
         var result = new FlowPublicationPreviewV2(Guid.NewGuid(), digest, head.DraftId, input.ExpectedVersion, SchemaDigest(head.SchemaJson),
-            PublicationClock().AddMinutes(10), inputs.Diagnostics, inputs.Dependencies, inputs.Diagnostics.Length == 0,DiagnosticDetails:inputs.Details);
+            PublicationClock().AddMinutes(10), inputs.Diagnostics, inputs.Dependencies, inputs.Diagnostics.Length == 0,DiagnosticDetails:inputs.Details,Impact:impact);
         var snapshot = JsonSerializer.Serialize(result, Json);
         await db.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO cp6_workflow_authoring_v2.publication_previews(tenant_id,environment_id,id,actor_id,head_id,draft_id,draft_token,digest,expires_at,snapshot_json)
