@@ -172,7 +172,7 @@ onBeforeUnmount(() => { live = false; epoch++; listController?.abort(); detailCo
     <article v-if="detail" aria-label="当前授权详情">
       <h3>{{ detail.form?.title || detail.business?.businessType || '流程详情' }}</h3>
       <p>当前查看：{{ detail.instanceId }}；根实例：{{ detail.rootInstanceId }}</p>
-      <section v-if="detail.form"><p>{{ detail.form.dataSource === 'RETURNED_CURRENT_CYCLE' ? '内容为退回后当前审批周期的表单' : '内容来自原始提交表单' }}，版本 {{ detail.form.formVersionId }}。</p><PersonalFormFields :fields="fields" :model-value="data" :mask="detail.form.fieldMask" disabled /></section>
+      <section v-if="detail.form"><p>{{ detail.form.dataSource === 'RETURNED_CURRENT_CYCLE' ? '内容为退回后当前审批周期的表单' : '内容来自原始提交表单' }}，版本 {{ detail.form.formVersionId }}。</p><PersonalFormFields :fields="fields" :model-value="data" :mask="detail.form.fieldMask" :file-context="{ instanceId: detail.instanceId }" disabled @forbidden="detail = undefined" /></section>
       <section v-if="detail.business">
         <p>业务对象：{{ detail.business.subjectId }}，提交时版本 {{ detail.business.businessRevision }}。</p>
         <p>流程审批状态与业务应用状态分别记录，请在业务页面查询应用结果。</p>

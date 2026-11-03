@@ -67,6 +67,8 @@ public sealed partial class PersonalFormOwnerV2
             // Error details can contain currently hidden field names. They remain a server concern.
             if(computed.Errors.Length!=0)throw Error("FORM_VALIDATION_FAILED",422);
             await References(PersonalFormValuesV2.Schema(source.Form.Fields["SchemaJson"]!),computed.Data,ct);
+            await CheckFiles(source.Head.Id,source.Form.VersionId,row==null?"FORM":"DRAFT",row?.Id,actor.UserId,
+                PersonalFormValuesV2.Schema(source.Form.Fields["SchemaJson"]!),computed.Data,row?.Data,true,source.Mask,ct);
             var write=Guid.NewGuid();var dataId=Guid.NewGuid();Guid? root=source.Flow==null?null:Guid.NewGuid();var at=Clock();
             await BeginCommand(write,actor.UserId,operation,resource,command,draft,dataId,root,null,ct);
             await db.Database.ExecuteSqlInterpolatedAsync($"""
@@ -98,6 +100,8 @@ public sealed partial class PersonalFormOwnerV2
             await Notification(write,"FORM_SUBMITTED",actor.UserId,WfNotificationType.FormSubmitted,"表单已提交",root,null,source.Flow?.Key,ct);
             if(runtime?.Status is FlowInstanceStatus.Approved or FlowInstanceStatus.Rejected)await TerminalNotification(write,runtime,ct);
             await db.SaveChangesAsync(ct);
+            var formData=db.Wf_FormDatas.Local.Single(f=>f.Id==dataId);
+            await BindFiles(write,source.Form.VersionId,"SUBMISSION",dataId,Convert.ToBase64String(formData.RowVersion!),PersonalFormValuesV2.Schema(source.Form.Fields["SchemaJson"]!),computed.Data,ct);
             var value=new PersonalFormSubmissionV2(dataId,source.Form.VersionId,source.Form.Version,root,source.Flow?.VersionId,
                 source.Flow?.Version,"/api/oa/v2/personal-forms/commands/"+operation+"/"+Uri.EscapeDataString(resource)+"/"+command.Id,
                 command.Id,source.Binding?.Revision.ToString("D"),root==null?"SUBMITTED_UNBOUND":"SUBMITTED");

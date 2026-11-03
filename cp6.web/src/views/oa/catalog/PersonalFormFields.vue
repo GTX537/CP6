@@ -2,8 +2,10 @@
 import { computed, ref, watch } from 'vue'
 import type { FormMask } from '@/api/oa/personalForm'
 import PersonalReferenceInput from './PersonalReferenceInput.vue'
+import PersonalFileInput from './PersonalFileInput.vue'
+import type { FormFileReadContext } from '@/api/oa/formFiles'
 import { FormNumber, formObject, readFormJson, writeFormJson, schemaProperty, schemaText, schemaNumber, type FormValue, type FormObject } from './personalFormJson'
-const props = withDefaults(defineProps<{ fields: FormObject[]; modelValue: FormObject; mask?: FormMask; disabled?: boolean; hidden?: string[]; formKey?: string; draftId?: string; allowUnset?: boolean }>(), { allowUnset: true })
+const props = withDefaults(defineProps<{ fields: FormObject[]; modelValue: FormObject; mask?: FormMask; disabled?: boolean; hidden?: string[]; formKey?: string; draftId?: string; allowUnset?: boolean; fileContext?: FormFileReadContext }>(), { allowUnset: true })
 const emit = defineEmits<{ 'update:modelValue': [value: FormObject]; validity: [value: boolean]; forbidden: [] }>()
 const errors = ref<Record<string, string>>({}), edits = ref<Record<string, string>>({}), children = ref<Record<string, boolean>>({})
 const name = (field: FormObject) => schemaText(field, 'name')
@@ -92,12 +94,13 @@ defineExpose({ valid })
       <input v-else-if="type(field) === 'checkbox'" type="checkbox" :checked="modelValue[name(field)] === true" :disabled="locked(field)" @change="assign(field, ($event.target as HTMLInputElement).checked)">
       <textarea v-else-if="type(field) === 'textarea'" :value="text(field)" :disabled="locked(field)" :maxlength="schemaNumber(field, 'maxLength', 10000)" @input="input(field, ($event.target as HTMLTextAreaElement).value)" />
       <PersonalReferenceInput v-else-if="['user', 'dept'].includes(type(field)) && formKey" :form-key="formKey" :draft-id="draftId" :field="name(field)" :model-value="modelValue[name(field)]" :multiple="schemaProperty(field, 'multiple') === true" :disabled="locked(field)" @update:model-value="assign(field, $event)" @forbidden="emit('forbidden')" />
+      <PersonalFileInput v-else-if="type(field) === 'upload'" :context="fileContext" :field="name(field)" :model-value="modelValue[name(field)]" :disabled="locked(field)" @update:model-value="assign(field, $event)" @validity="children[`file:${name(field)}`] = $event" @forbidden="emit('forbidden')" />
       <input v-else :value="text(field)" :disabled="locked(field)" :inputmode="type(field) === 'number' ? 'decimal' : undefined" :placeholder="schemaText(field, 'placeholder')" @input="input(field, ($event.target as HTMLInputElement).value)">
       <small v-if="errors[name(field)]" role="alert">{{ errors[name(field)] }}</small>
       <div v-if="!locked(field)" class="value-state">
         <span>{{ modelValue[name(field)] === undefined ? '未填写' : modelValue[name(field)] === null ? '空值' : '' }}</span>
-        <button v-if="allowUnset !== false" type="button" @click="assign(field, undefined)">移除填写</button>
-        <button type="button" @click="assign(field, null)">设为空值</button>
+        <button v-if="allowUnset !== false" type="button" :disabled="type(field) === 'upload' && children[`file:${name(field)}`] === false" @click="assign(field, undefined)">移除填写</button>
+        <button type="button" :disabled="type(field) === 'upload' && children[`file:${name(field)}`] === false" @click="assign(field, null)">设为空值</button>
       </div>
     </div>
   </div>

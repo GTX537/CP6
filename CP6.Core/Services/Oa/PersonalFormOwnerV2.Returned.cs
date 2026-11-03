@@ -136,6 +136,7 @@ public sealed partial class PersonalFormOwnerV2
             var computed=PersonalFormValuesV2.Recompute(schema,merged);
             if(resubmit&&computed.Errors.Length>0)throw Error("FORM_VALIDATION_FAILED",422);
             await References(schema,computed.Data,ct);
+            await CheckFiles(source.Head,source.FormVersion,"SUBMISSION",data.Id,actor.UserId,schema,computed.Data,before,resubmit,mask,ct);
             var write=Guid.NewGuid();await BeginCommand(write,actor.UserId,operation,instance.ToString("D"),command,null,data.Id,instance,null,ct);
             Guid cycle=record.Cycle;
             if(resubmit)
@@ -164,6 +165,7 @@ public sealed partial class PersonalFormOwnerV2
                 INSERT INTO cp6_personal_form_v2.returned_history(command_id,instance_id,return_revision,before_json,after_json,form_data_version,instance_version)
                 VALUES({write},{instance},{revision},{before},{computed.Data},{data.RowVersion},{runtime.RowVersion})
                 """,ct);
+            await BindFiles(write,source.FormVersion,"SUBMISSION",data.Id,Convert.ToBase64String(data.RowVersion!),schema,computed.Data,ct);
             var tasks=await db.Wf_FlowTasks.AsNoTracking().Where(t=>t.InstanceId==instance&&t.Status==FlowTaskStatus.Pending).Select(t=>t.Id).ToArrayAsync(ct);
             // Field-specific validation is projected through the current context. Original results
             // contain no private field names or data that could outlive a field permission change.

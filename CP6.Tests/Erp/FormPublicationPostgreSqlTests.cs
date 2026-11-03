@@ -72,9 +72,15 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal("PREVIEW_STALE", (await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(() => owner.PublishAsync("stale", FormPublicationCommand(preview)))).Message);
         var changed = await owner.SaveAsync("stale", FormAuthoringCommand("edit", saved.ResourceVersion, schema: "{\"fields\":[{\"name\":\"file\",\"type\":\"upload\"}]}"));
         Assert.Equal("DEFINITION_CHANGED", (await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(() => owner.PublishAsync("stale", FormPublicationCommand(preview)))).Message);
-        var invalid = await FormPreview(owner, "stale", changed); Assert.False(invalid.CanPublish); Assert.NotEmpty(invalid.Diagnostics);
-        Assert.Equal("PUBLICATION_VALIDATION_FAILED", (await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(() => owner.PublishAsync("stale", FormPublicationCommand(invalid, "invalid")))).Message);
-        Assert.Empty(await owner.VersionsAsync("stale")); Assert.False((await owner.ReadAsync("stale")).Published);
+        // The FORM provider now exists. Missing its actual binding guard must still prevent publication.
+        await h.Db.Database.ExecuteSqlRawAsync("ALTER TABLE cp6_form_files_v2.bindings DISABLE TRIGGER form_file_binding");
+        try
+        {
+            var invalid = await FormPreview(owner, "stale", changed); Assert.False(invalid.CanPublish); Assert.NotEmpty(invalid.Diagnostics);
+            Assert.Equal("PUBLICATION_VALIDATION_FAILED", (await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(() => owner.PublishAsync("stale", FormPublicationCommand(invalid, "invalid")))).Message);
+            Assert.Empty(await owner.VersionsAsync("stale")); Assert.False((await owner.ReadAsync("stale")).Published);
+        }
+        finally { await h.Db.Database.ExecuteSqlRawAsync("ALTER TABLE cp6_form_files_v2.bindings ENABLE TRIGGER form_file_binding"); }
     }
     [CurrentPermissionPostgresFact]
     public async Task FormPublication_unknown_commit_replays_original_after_write_revoke_and_projects_current_fields()

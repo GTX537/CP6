@@ -86,12 +86,12 @@ public sealed partial class FormAuthoringOwnerV2
         var p = JsonSerializer.Deserialize<FormPublicationV2>(row.Snapshot, Json)!;
         return p;
     }
-    private void ActivationDependencies(Head head, FormPublicationV2 p, CancellationToken ct)
+    private async Task ActivationDependencies(Head head, FormPublicationV2 p, CancellationToken ct)
     {
         // Validate the chosen immutable version, never the current draft or latest publication.
         var source = head with { DraftId = p.VersionId, Name = p.Fields["Name"]!, SchemaJson = p.Fields["SchemaJson"]!,
             Category = p.Fields["Category"], SubCategory = p.Fields["SubCategory"], Number = p.Version };
-        var inputs = PublicationInputs(source, ct);
+        var inputs = await PublicationInputs(source, ct);
         if (inputs.Diagnostics.Length > 0 || !inputs.Dependencies.SequenceEqual(p.DependencyRefs)) throw Error("ACTIVATION_DEPENDENCY_CHANGED", 422);
     }
     public async Task<FormActivationResultV2> SetActivationAsync(string key, byte[] raw, CancellationToken ct = default)
@@ -120,7 +120,7 @@ public sealed partial class FormAuthoringOwnerV2
             if (body.Enabled)
             {
                 if (Fields.Any(f => !fields.Fields[f].CanRead)) throw Error("FIELD_READ_FORBIDDEN", 403);
-                ActivationDependencies(head, source, ct);
+                await ActivationDependencies(head, source, ct);
             }
             else if (current.PublishedVersionId != body.PublishedVersionId) throw Error("ACTIVATION_CHANGED", 409);
             var at = DateTimeOffset.UtcNow; var revision = Guid.NewGuid();
@@ -146,7 +146,7 @@ public sealed partial class FormAuthoringOwnerV2
             if (body.Enabled)
             {
                 if (Fields.Any(f => !finalFields.Fields[f].CanRead)) throw Error("FIELD_READ_FORBIDDEN", 403);
-                ActivationDependencies(head, source, ct);
+                await ActivationDependencies(head, source, ct);
             }
             var evidence = JsonSerializer.Serialize(new { ActualActor = actor.UserId, EffectiveActor = actor.UserId, CheckedAtUtc = DateTimeOffset.UtcNow, BeforeScope = beforeScope.Snapshot, Scope = scope.Snapshot, finalActor.RoleIds,
                 ResourceScope = finalActor.DataScopes.GetValueOrDefault(Resource, 1), finalActor.DeptId, finalActor.DeptPath, finalActor.CustomDeptIds,

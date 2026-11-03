@@ -37,9 +37,14 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     {
         await using var h=await Seed();var(flow,form)=await PrepareDependencies(h);
         var upload=await form.SaveAsync("attachment",FormAuthoringCommand(schema:"{\"fields\":[{\"name\":\"title\",\"type\":\"input\"},{\"name\":\"files\",\"type\":\"upload\"}]}"));
-        var files=await FormPreview(form,"attachment",upload);Assert.False(files.CanPublish);
-        Assert.Equal("$.fields[1]",Assert.Single(files.DiagnosticDetails!).Path);
-        Assert.Equal("files",Assert.Single(files.DiagnosticDetails!).FieldName);
+        await h.Db.Database.ExecuteSqlRawAsync("ALTER TABLE cp6_form_files_v2.bindings DISABLE TRIGGER form_file_binding");
+        try
+        {
+            var files=await FormPreview(form,"attachment",upload);Assert.False(files.CanPublish);
+            Assert.Equal("$.fields[1]",Assert.Single(files.DiagnosticDetails!).Path);
+            Assert.Equal("files",Assert.Single(files.DiagnosticDetails!).FieldName);
+        }
+        finally { await h.Db.Database.ExecuteSqlRawAsync("ALTER TABLE cp6_form_files_v2.bindings ENABLE TRIGGER form_file_binding"); }
         var missing=await flow.SaveAsync("missing",DependentCommand(form:"missing-form",child:"missing-flow"));
         var preview=await Preview(flow,"missing",missing);Assert.False(preview.CanPublish);
         Assert.Contains(preview.DiagnosticDetails!,d=>d.Code=="DEPENDENCY_NOT_AVAILABLE"&&d.Path=="$.formKey");

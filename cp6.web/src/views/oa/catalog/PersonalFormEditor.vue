@@ -124,7 +124,7 @@ onBeforeUnmount(() => { live = false; generation++ })
       <el-alert v-if="draft?.stale" title="已发布更新版本。草稿仍保留原版本；是否需要重基由当前提交上下文决定。" type="info" :closable="false" />
       <el-alert v-if="draft?.status === 2" title="草稿已删除；内容按留存政策保留。" type="warning" :closable="false" />
       <el-input v-if="current.titleAccess !== 'hidden'" v-model="title" placeholder="草稿标题（保存草稿时使用）" maxlength="200" :disabled="locked || !active || current.titleAccess !== 'edit'" />
-      <PersonalFormFields :fields="fields" v-model="model" :mask="current.fieldMask" :form-key="current.formKey" :draft-id="draft?.draftId" :disabled="locked || !active" @validity="valuesValid = $event" @forbidden="clearPrivate" />
+      <PersonalFormFields :fields="fields" v-model="model" :mask="current.fieldMask" :form-key="current.formKey" :draft-id="draft?.draftId" :file-context="{ scope: draft ? { kind: 'DRAFT', key: null, id: draft.draftId, formVersionId: draft.formVersionId, expectedVersion: draft.rowVersion } : { kind: 'FORM', key: current.formKey, id: null, formVersionId: current.formVersionId } }" :disabled="locked || !active" @validity="valuesValid = $event" @forbidden="clearPrivate" />
       <div class="actions">
         <el-button v-if="active" :disabled="locked || !valuesValid" @click="previewValues">预览计算与校验</el-button>
         <el-button v-if="can(draft ? 'SAVE' : 'CREATE_DRAFT')" :disabled="locked || !valuesValid" @click="save">保存草稿</el-button>
