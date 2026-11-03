@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[24小时持续计划](planning/20261102-codex-24h-oa.md)，COORD单人；[W280](evidence/W280-01/DELIVERY.md)准确发布比较已验证，待采用/finish；接续W281。
+> 当前：[24小时持续计划](planning/20261102-codex-24h-oa.md)，COORD单人；[W281](evidence/W281-01/DELIVERY.md)相关本地验收完成，待采用/finish；P1 #715后接W282。
+
+> 历史快照：[24小时持续计划](planning/20261102-codex-24h-oa.md)，COORD单人；[W280](evidence/W280-01/DELIVERY.md)准确发布比较已验证，待采用/finish；接续W281。
 
 > 历史快照：[24小时持续计划](planning/20261102-codex-24h-oa.md)，COORD单人；[W279](evidence/W279-01/DELIVERY.md)原27AC逐项核对及准确草稿预演已验证，待采用/finish；接续W280。
 

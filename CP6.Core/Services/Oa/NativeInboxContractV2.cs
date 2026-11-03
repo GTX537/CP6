@@ -17,7 +17,8 @@ public sealed record NativeWorkflowEventV2(Guid EventId,Guid InstanceId,string N
 public sealed record NativeVoteReadV2(Guid VoteId,Guid TaskId,Guid InstanceId,bool Approved,string Comment,Guid PrincipalId,
     Guid ActualUserId,Guid? OnBehalfOfId,DateTimeOffset OccurredAtUtc,string EvidenceKind="HUMAN");
 public sealed record NativeBusinessReadV2(string Owner,string BusinessType,string SubjectKind,string SubjectId,
-    string BusinessRevision,Guid SubmissionId,string? DetailRoute,string ApplicationState="UNPROVEN");
+    string BusinessRevision,Guid SubmissionId,string? DetailRoute,string ApplicationState="UNPROVEN",
+    Guid? ApplicationReceiptId=null,string? ReceiptRevision=null,ApprovalRefV2? BusinessResultRef=null,bool PendingReceiptGap=false);
 public sealed record NativeInstanceReadV2(Guid InstanceId,Guid RootInstanceId,string ContextKind,Guid ActualUserId,
     Guid EffectiveUserId,NativeInstancePinV2[] Graph,NativeTaskReadV2[] Tasks,NativeCcReadV2[] Cc,
     NativeWorkflowEventV2[] History,NativeVoteReadV2[] Votes,NativeFormContentV2? Form,NativeBusinessReadV2? Business);

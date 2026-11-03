@@ -14,7 +14,8 @@ namespace CP6.WebApi.Seed;
 /// 聚合当前用户 ActionKeys，故须为管理员角色 <c>RoleId=1</c> 在**每个租户**各授一份，
 /// 并登记对应 <c>Sys_MenuAction</c>（操作点目录，供 UI 授权配置枚举）。
 ///
-/// 三数闭环（本 C# 为正本，与真相源 docs/seeds/oawf-permission-keys.md §一/§七 1:1）：
+/// W281追加原生历史查询 oa-form-search:query；当前种子共21项，仅默认授管理员，其他角色由当前IAM显式授权。
+/// 以下三数保留原Task3b的20个旧写权限历史；SQL Server留档不作为新增PostgreSQL配置入口：
 ///  - 控制器真写端点：<b>31</b>（grep <c>Controllers/Oa/*.cs</c> 21 + <c>Controllers/Wf/*.cs</c> 10 的 [RequirePermission]，逐字核对）。
 ///  - 去重 (menu-key, action) 元组：<b>20</b>（多处跨控制器归并消解重复，真相源 §五）：
 ///    <c>oa-inbox:read</c> 覆 Inbox task/cc-read + Notification read/read-all（4→1）；
@@ -47,7 +48,7 @@ public static class OawfPermissionSeed
     /// (MenuId, ActionCode, ActionName) —— 与各 OA/WF 控制器 [RequirePermission(键, action)] 去重后 1:1。
     /// MenuId 依 <c>docs/seeds/oawf-key-menu-anchor.md</c> 锚定；ActionName 为中文显示名（照 MES/ERP/WMS 种子风格，
     /// 仅供 UI 显示，非权限判定依据——判定只看 ActionCode）。
-    /// 计 20 条，覆盖 6 个有写端点的 menu-key。
+    /// 原20条写权限，加736原生历史查询读权限；当前共21条。
     /// </summary>
     private static readonly (int MenuId, string Code, string Name)[] Actions =
     {
@@ -59,6 +60,7 @@ public static class OawfPermissionSeed
         // 735 oa-form-catalog — 填單（收藏 + 草稿 CRUD + 起流程/提交；submit 归并 4 起流程端点）
         (735, "add", "新建"), (735, "edit", "编辑"), (735, "submit", "提交"),
         (735, "del", "删除"), (735, "favorite", "收藏"),
+        (736, "query", "查询提交与流程记录"),
         // 737 oa-settings — 设定（偏好 edit + 委派合一 delegate，含 OA add/remove + AdvancedFlow delegate）
         (737, "edit", "编辑"), (737, "delegate", "委派"),
         // 738 oa-designer — 流程设计器（新栈 save/clone + 旧栈 flow/form def；edit 归并 Save+FlowDef）

@@ -43,12 +43,12 @@ public sealed partial class NativeInboxOwnerV2(CP6Context db,ScopeAuthorizationF
         internal bool CanRead(Member member)=>!Delegated||Grant(member)!=null;
         internal void Use(Member member){if(Delegated){var grant=Grant(member)!;Selected.TryAdd(grant.GrantId,grant);}}
     }
-    private async Task<(ReadIdentity Actor,ScopeAuthorizationLeaseV1 Lease)> Begin(Guid? behalf,CancellationToken ct)
+    private async Task<(ReadIdentity Actor,ScopeAuthorizationLeaseV1 Lease)> Begin(Guid? behalf,CancellationToken ct,string menu="oa-inbox")
     {
-        var lease=await forms.ReadLease(ct);var actor=await forms.Actor(ct);await forms.Action(actor,"query",ct,"oa-inbox");
+        var lease=await forms.ReadLease(ct);var actor=await forms.Actor(ct);await forms.Action(actor,"query",ct,menu);
         if(!behalf.HasValue||behalf==actor.UserId)return(new(actor,actor,[]),lease);
         if(!await db.Sys_Users.AsNoTracking().AnyAsync(u=>u.Id==behalf&&u.Enable&&(u.LockedUntil==null||u.LockedUntil<=DateTime.Now),ct))throw Error("GRANT_PRINCIPAL_UNAVAILABLE",403);
-        var principal=await PostgreSqlPermissionReader.ReadAsync(db,behalf.Value,ct);await forms.Action(principal,"query",ct,"oa-inbox");
+        var principal=await PostgreSqlPermissionReader.ReadAsync(db,behalf.Value,ct);await forms.Action(principal,"query",ct,menu);
         var reader=new TaskDelegationReaderV2(db,fence.EnvironmentId);await reader.Ready(ct);var now=await reader.Now(ct);
         var grants=(await reader.Current(ct)).Where(g=>g.GrantorId==principal.UserId&&g.DelegateId==actor.UserId&&g.Enabled&&g.FromUtc<=now&&now<g.ToUtc
             &&g.Scope.ActionKinds.Contains("TASK_READ",StringComparer.Ordinal)).OrderBy(g=>g.GrantId.ToString("D"),StringComparer.Ordinal).ToArray();

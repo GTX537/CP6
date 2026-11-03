@@ -3,9 +3,9 @@ import { onBeforeUnmount, ref } from 'vue'
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { personalFormApi as api, type PersonalResult } from '@/api/oa/personalForm'
 
-const cache = 'cp6-personal-form-pending'
 export interface PersonalIntent { identity: string; commandId: string; operation: string; resource: string }
 const routes: Record<string, { method: 'post' | 'put'; path: (resource: string) => string }> = {
+  FORM_FAVORITE_SET: { method: 'put', path: r => `catalog/${encodeURIComponent(r)}/favorite` },
   FORM_DRAFT_CREATE: { method: 'post', path: r => `forms/${encodeURIComponent(r)}/drafts` },
   FORM_DIRECT_SUBMIT: { method: 'post', path: r => `forms/${encodeURIComponent(r)}/submissions` },
   FORM_DRAFT_SAVE: { method: 'put', path: r => `drafts/${encodeURIComponent(r)}` },
@@ -16,7 +16,7 @@ const routes: Record<string, { method: 'post' | 'put'; path: (resource: string) 
 }
 // Sensitive request bodies survive SPA navigation only in memory, never browser storage.
 const bodies = new Map<string, string>()
-export function usePersonalCommand(clearPrivate: () => void, accepted: (result: PersonalResult, intent: PersonalIntent) => Promise<void> | void) {
+export function usePersonalCommand(clearPrivate: () => void, accepted: (result: PersonalResult, intent: PersonalIntent) => Promise<void> | void, cache = 'cp6-personal-form-pending') {
   const pending = ref<PersonalIntent>(), busy = ref(false), error = ref(''), message = ref(''), storageUnavailable = ref(false)
   let live = true, generation = 0, controller: AbortController | undefined, stamp = identityStamp()
   function restore() {

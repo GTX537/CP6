@@ -9,6 +9,10 @@ namespace CP6.WebApi.Controllers.Oa;
 [ResponseCache(NoStore=true,Location=ResponseCacheLocation.None)]
 public sealed class PersonalFormController(PersonalFormOwnerV2 owner):ControllerBase
 {
+    [HttpGet("catalog/favorites")]
+    public Task<IActionResult> Favorites([FromQuery]int page=1,[FromQuery]int pageSize=20,[FromQuery]string? search=null,CancellationToken ct=default)=>Run(async()=>await owner.FavoritesAsync(page,pageSize,search,ct));
+    [HttpPut("catalog/{key}/favorite"),RequestSizeLimit(1024*1024)]
+    public Task<IActionResult> Favorite(string key,CancellationToken ct)=>Run(async()=>await owner.SetFavoriteAsync(key,await Raw(ct),ct));
     [HttpGet("forms/catalog")]
     public Task<IActionResult> Catalog([FromQuery]int page=1,[FromQuery]int pageSize=20,[FromQuery]string? search=null,CancellationToken ct=default)=>Run(async()=>await owner.CatalogAsync(page,pageSize,search,ct));
     [HttpGet("forms/{key}/initiation-context")]

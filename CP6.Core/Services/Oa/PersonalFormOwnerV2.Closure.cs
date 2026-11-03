@@ -6,14 +6,14 @@ public sealed partial class PersonalFormOwnerV2
 {
     private static string CommandResource(string operation,string resource)
     {
-        if(operation is Create or Direct)return resource;
+        if(operation is Create or Direct or Favorite)return resource;
         return Guid.TryParseExact(resource,"D",out var id)&&id!=Guid.Empty?id.ToString("D"):throw Error("COMMAND_SCOPE_INVALID",400);
     }
     // Closing is an explicit terminal reservation of the original slot, under the same
     // authority lock as its writer. NOT_OBSERVED alone never permits a fresh command.
     public async Task<PersonalFormResultV2> CloseAsync(string operation,string resource,string command,CancellationToken ct=default)
     {
-        if(operation is not(Create or Save or Delete or Restore or Rebase or Direct or Submit or Decision)
+        if(operation is not(Create or Save or Delete or Restore or Rebase or Direct or Submit or Decision or Favorite)
             ||!System.Text.RegularExpressions.Regex.IsMatch(command,"\\A[A-Za-z0-9_.-]{1,100}\\z"))throw Error("COMMAND_SCOPE_INVALID",400);
         resource=CommandResource(operation,resource);
         if(operation==Decision)command=Guid.TryParseExact(command,"D",out var commandId)&&commandId!=Guid.Empty?commandId.ToString("D"):throw Error("COMMAND_SCOPE_INVALID",400);
@@ -32,7 +32,8 @@ public sealed partial class PersonalFormOwnerV2
                 var result=await Disclose(old,actor,ct);await Final(actor,lease,ct,false);return result;
             }
             // The slot belongs to this actual actor; resource permission is still current.
-            if(operation is Create or Direct)
+            if(operation==Favorite) { /* Only this actor's preference slot is reserved; no form content is disclosed. */ }
+            else if(operation is Create or Direct)
             {
                 var head=await Heads().SingleOrDefaultAsync(h=>h.Key==resource,ct)??throw Error("FORM_NOT_FOUND",404);
                 var id=await db.Database.SqlQuery<Guid>($"SELECT id AS \"Value\" FROM cp6_form_authoring_v2.versions WHERE tenant_id={db.CurrentTenantId} AND environment_id={fence.EnvironmentId} AND head_id={head.Id} ORDER BY version_number DESC LIMIT 1").SingleAsync(ct);
