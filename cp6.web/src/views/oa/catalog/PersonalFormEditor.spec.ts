@@ -87,3 +87,12 @@ it('edits actual scalar and table inputs without rounding, keeps invalid text bl
   const clear = w.findAll('[data-field="amount"] button'); await clear[0]!.trigger('click'); expect(model.value.amount).toBeUndefined()
   await clear[1]!.trigger('click'); expect(model.value.amount).toBeNull()
 })
+it('keeps explicit no-unset patch fields distinct from readonly fields', async () => {
+  const model = ref(formObject(readFormJson('{"value":"original"}')))
+  const Harness = defineComponent({ setup: () => () => h(Fields, { fields: schemaFields('{"fields":[{"name":"value","type":"input"}]}'), modelValue: model.value, allowUnset: false, 'onUpdate:modelValue': value => { model.value = value } }) })
+  const w = mount(Harness); wrappers.push(w)
+  expect(w.findAll('button').map(button => button.text())).toEqual(['设为空值'])
+  await w.get('button').trigger('click'); expect(Object.hasOwn(model.value, 'value')).toBe(true); expect(model.value.value).toBeNull()
+  const readonly = mount(Fields, { props: { fields: schemaFields('{"fields":[{"name":"value","type":"input"}]}'), modelValue: model.value, disabled: true } }); wrappers.push(readonly)
+  expect(readonly.findAll('button')).toHaveLength(0); expect(readonly.get('input').attributes('disabled')).toBeDefined()
+})

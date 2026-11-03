@@ -5,7 +5,7 @@ import PersonalReferenceInput from './PersonalReferenceInput.vue'
 import PersonalFileInput from './PersonalFileInput.vue'
 import type { FormFileReadContext } from '@/api/oa/formFiles'
 import { FormNumber, formObject, readFormJson, writeFormJson, schemaProperty, schemaText, schemaNumber, type FormValue, type FormObject } from './personalFormJson'
-const props = defineProps<{ fields: FormObject[]; modelValue: FormObject; mask?: FormMask; disabled?: boolean; hidden?: string[]; formKey?: string; draftId?: string; allowUnset?: boolean; fileContext?: FormFileReadContext }>()
+const props = withDefaults(defineProps<{ fields: FormObject[]; modelValue: FormObject; mask?: FormMask; disabled?: boolean; hidden?: string[]; formKey?: string; draftId?: string; allowUnset?: boolean; fileContext?: FormFileReadContext }>(), { allowUnset: true })
 const emit = defineEmits<{ 'update:modelValue': [value: FormObject]; validity: [value: boolean]; forbidden: [] }>()
 const errors = ref<Record<string, string>>({}), edits = ref<Record<string, string>>({}), children = ref<Record<string, boolean>>({})
 const name = (field: FormObject) => schemaText(field, 'name')

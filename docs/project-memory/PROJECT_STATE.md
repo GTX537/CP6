@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## 2026-11-03：字段默认行为修复 / BUG #721
+
+普通表单字段默认提供“移除填写”和“设为空值”两个明确动作；退回patch显式allowUnset=false仍仅提供设为空值。 [修复与证据](../development/evidence/BUG-721/DELIVERY.md)。
+
+实际Vue组件挂载的15项相关行为通过：既有精确数字/明细/缺省与null原回归恢复，新增明确false和只读无按钮检查；当前PersonalFormEditor与NativeTaskOperations相关行为同时通过。vue-tsc --build通过。
+
+本次不改变原375与局部卡状态；远端采用/Issue关闭/分支清理/席位释放以bug721-final-verification.json核销，随后恢复W285继续24h目标。
+
 ## 2026-11-03：W285实施中
 
 普通FORM附件的真实内容、同事务绑定和当前授权下载已有定向PG/HTTP/Chrome证据；[任务报告](../development/evidence/W285-01/DELIVERY.md)记录实际范围与尚待完成的依赖/合并门禁。本窗口未交付、整卡不关闭，24h目标继续。
