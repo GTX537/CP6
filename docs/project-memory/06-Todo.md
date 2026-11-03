@@ -1,5 +1,13 @@
 # 当前待办与优先级
 
+## 2026-11-03：BUG715权限目录修复
+
+补齐单价订正原操作query能力目录；纠正权限互锁漏读WMS/MES仅目录OwnerActions及MES313锚定，不增加角色授权。 [修复与证据](../development/evidence/BUG-715/DELIVERY.md)。
+
+本地20项相关行为通过、0跳过：ERP/MES实际种子跨租户登记/幂等/授权保持，六领域贴点与能力目录互锁，以及实际Program登录→HTTP→PG的未授权拒绝、显式query授权读取/关闭原意图、CSRF拒绝和撤权再拒绝。新增种子期望先红后绿；原W281的3项互锁失败在修复后通过，原日志保留。
+
+原整卡状态保持；下一W282，24h目标继续。分支/工作区/席位及Issue最终处置见bug715-final-verification.json。
+
 ## 2026-11-03：24小时目标 / W281收藏与历史
 
 W281：原生幂等收藏、本人失效收藏取消与安全占位、当前授权统一提交/流程历史已实现；准确FORM/FLOW版本、租户时区、分页截点、只读字段投影及实际连续业务回执，真实Chrome/Vue→Main→PostgreSQL采用。 [交付](../development/evidence/W281-01/DELIVERY.md)。
