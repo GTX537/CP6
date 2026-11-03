@@ -161852,6 +161852,11 @@
       "date": "2026-11-03",
       "change": "W284：FLOW/FORM保存、发布、读取和规则求值的准确结构诊断已贯通现有设计器；FORM准确草稿的纯顺序规则预览、服务端精确结果与浏览器体验对照完成真实PG/HTTP/Chrome限定验收。",
       "evidence": "docs/development/evidence/W284-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-03",
+      "change": "24h目标累计18h校准：W284实际41分钟，W285真实FORM附件链已局部通过，先独立BUG721再正常交付，W286继续；余2–5h低置信度，如提前完成继续原WP12-05真实余项。",
+      "evidence": "docs/development/planning/20261102-codex-24h-oa.md"
     }
   ],
   "implementation_assessment": {
@@ -238868,8 +238873,8 @@
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 62075,
-      "next_reestimate_at_effective_seconds": 64800,
+      "effective_seconds_recorded": 64814,
+      "next_reestimate_at_effective_seconds": 72000,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
         {
@@ -239541,7 +239546,12 @@
             2,
             4
           ],
-          "scope_refinement": "普通FORM真实文件Owner：当前表单/字段授权先于上传字节；明确FORM暂存与不可变内容身份，扫描和完整性状态；草稿/直接提交/退回修改的引用准入与同事务绑定；当前业务对象和字段权限下的精确内容下载及实际页面采用。"
+          "scope_refinement": "普通FORM真实文件Owner：当前表单/字段授权先于上传字节；明确FORM暂存与不可变内容身份，扫描和完整性状态；草稿/直接提交/退回修改的引用准入与同事务绑定；当前业务对象和字段权限下的精确内容下载及实际页面采用。",
+          "remaining_estimate_hours": [
+            0.75,
+            1.75
+          ],
+          "actual_effective_seconds_so_far": 2739
         },
         {
           "id": "W286-01",
@@ -239558,7 +239568,11 @@
           "estimate_confidence": "LOW",
           "state": "PLANNED",
           "admission": "Inspect exact current source/direct providers before START; single chat and fixed seats; no stub substitution",
-          "reason": "W279原AC-D01-03/D03-04/D04-03/04余项：精确原竞争场景尚缺独立证据，legacy重建/当前head来源不能冒充原发布，全部旧caller仍未闭环；先实际调用面核对，再按影响实现/验证，不迁移既有环境。"
+          "reason": "W279原AC-D01-03/D03-04/D04-03/04余项：精确原竞争场景尚缺独立证据，legacy重建/当前head来源不能冒充原发布，全部旧caller仍未闭环；先实际调用面核对，再按影响实现/验证，不迁移既有环境。",
+          "revised_estimate_hours": [
+            1,
+            2.5
+          ]
         }
       ],
       "reestimates": [
@@ -239850,12 +239864,53 @@
           "remaining": "W283 real Host/HTTP/Chrome, error-edge and current authorization/epoch race boundaries, pinned policy and deadline revision review, concentrated review and two-repository normal delivery. W284 field-graph/pure rules, W285 native FORM file admission/download authorization, W286 original competitions/legacy caller boundaries remain serial original-scope work.",
           "basis": "Estimates use measured Codex execution windows, not human-day conversions. Only closed windows supply full delivery duration. The original contracts require actual task/lease/notification/receipt atomicity; failures are retained and no repeated full-repository gates or idle time are added.",
           "unchanged": "24h effective active goal, original375 and56 partial cards and125/247 full acceptance states; single chat,PostgreSQL/local verification,no Actions,production deployment or existing-database migration."
+        },
+        {
+          "at": "2026-11-03T09:12:49.196375+00:00",
+          "checkpoint": "18h",
+          "effective_seconds": 64814,
+          "excluded_wall_seconds": 7558,
+          "remaining_capacity_hours": 6.0,
+          "observed_windows": [
+            {
+              "window": "W284-01",
+              "actual_seconds": 2456
+            },
+            {
+              "window": "W285-01",
+              "actual_seconds_so_far": 2739,
+              "state": "IN_PROGRESS"
+            }
+          ],
+          "remaining_estimate_hours": [
+            2,
+            5
+          ],
+          "confidence": "LOW",
+          "remaining_windows": {
+            "BUG721": [
+              0.25,
+              0.75
+            ],
+            "W285-01": [
+              0.75,
+              1.75
+            ],
+            "W286-01": [
+              1,
+              2.5
+            ]
+          },
+          "observed": "W284 closed in 2456s, below prior 1.5–3h estimate. W285 actual PG, current-scope HTTP and real Defender/Chrome upload-loss/recovery/draft/submission/download passed; one independent baseline Vue defect is confirmed as Issue721 and blocks the complete affected UI gate. W285 is not complete.",
+          "remaining": "Save W285 exact branch and official deferred release; independent BUG721 latest-main fix, original-step regression, remote adoption/cleanup; resume original W285 and merge latestmain, affected UI and merge-diff review, normal Main/Handoff delivery; then W286 current original competitions/legacy callers. If these finish before capacity, inspect and implement still-unfinished original WP12-05 history/comparison scope after checking direct sources; no padding or repeated gates.",
+          "basis": "Measured Codex active windows, not person-hours. Predicted durations remain low-confidence ranges; audit/lifecycle and independent baseline defect handling included. Only closed windows count as final durations.",
+          "unchanged": "Single chat, 24h active goal, original375 27DONE/2IN_PROGRESS/346PLANNED, 59partial3closed/56remaining,125/247 full acceptance unchanged; PostgreSQL/local validation,no Actions/production/existing-environment migration."
         }
       ],
-      "timing_snapshot_at": "2026-11-03T08:27:10.240064+00:00",
+      "timing_snapshot_at": "2026-11-03T09:12:49.196375+00:00",
       "remaining_estimate_hours": [
-        5,
-        10.5
+        2,
+        5
       ],
       "runtime_timing_anchor": {
         "at": "2026-11-03T03:44:56+00:00",
