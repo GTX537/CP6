@@ -2,17 +2,20 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { flowAuthoringApi as api, type AuthoringView } from '@/api/oa/flowAuthoring'
+import { flowPublicationApi as publicationApi } from '@/api/oa/flowPublication'
 import { AUTH_EVENT, clearTabIdentity, newEpoch } from '@/auth/identity'
 import Designer from './FlowAuthoringDesignerV2.vue'
+import Publication from './FlowPublicationPanelV2.vue'
 import { preserveSchema } from './preserveSchema'
 vi.mock('@/api/oa/flowAuthoring', () => ({ flowAuthoringApi: { entry: vi.fn(), list: vi.fn(), read: vi.fn(), save: vi.fn(), original: vi.fn() } }))
+vi.mock('@/api/oa/flowPublication', () => ({ flowPublicationApi: { preview: vi.fn(), versions: vi.fn(), execute: vi.fn(), original: vi.fn() } }))
 const raw = '{"start":"s","nodes":[{"id":"s","type":"start","name":"原名","extension":{"amount":9007199254740993.00}},{"id":"e","type":"end"}],"edges":[],"layout":{"n":1.0}}'
 const draft = (overrides: Partial<AuthoringView> = {}): AuthoringView => ({ definitionId: 'head', draftId: 'draft', key: 'leave', version: 'version', enabled: false,
   fields: { Name: 'leave', SchemaJson: raw, FormKey: null, FunctionId: null, FlowCode: null }, writableFields: ['Name', 'SchemaJson', 'FormKey', 'FunctionId', 'FlowCode'], diagnostics: [], ...overrides })
 const mounted: ReturnType<typeof mount>[] = []
 const focusNode = vi.fn(), focusEdge = vi.fn()
-function setup() {
-  const w = mount(Designer, { global: { stubs: { FlowPublicationPanelV2: true, DesignerCanvas: { name: 'DesignerCanvas', methods: { focusNode, focusEdge }, template: '<div data-test="canvas" />' }, NodePropertyPanel: true, EdgePropertyPanel: true } } }); mounted.push(w); return w
+function setup(realPublication = false) {
+  const w = mount(Designer, { global: { stubs: { FlowPublicationPanelV2: !realPublication, DesignerCanvas: { name: 'DesignerCanvas', methods: { focusNode, focusEdge }, template: '<div data-test="canvas" />' }, NodePropertyPanel: true, EdgePropertyPanel: true } } }); mounted.push(w); return w
 }
 const state = (w: any): any => w.vm.$.setupState
 beforeEach(() => {
@@ -21,6 +24,26 @@ beforeEach(() => {
   vi.mocked(api.read).mockResolvedValue(draft())
 })
 afterEach(() => { mounted.forEach(w => w.unmount()); mounted.length = 0 })
+it('retains publication recovery while its parent clears private data and reloads the confirmed original', async () => {
+  vi.mocked(publicationApi.preview).mockResolvedValue({ id: 'preview', digest: 'digest', draftVersionId: 'draft', expectedVersion: 'version', schemaDigest: 'hash', expiresAtUtc: '2099-01-01T00:00:00Z', diagnostics: [], dependencies: [], canPublish: true })
+  vi.mocked(publicationApi.execute).mockRejectedValue({ response: { status: 503 } })
+  const w = setup(true); await flushPromises(); await state(w).load('leave'); await flushPromises()
+  const panel = w.getComponent(Publication); await state(panel).prepare(); await state(panel).publish(); await flushPromises()
+  const intent = vi.mocked(publicationApi.execute).mock.calls[0]![0]
+  vi.mocked(publicationApi.original).mockRejectedValue({ response: { status: 403 } }); await state(panel).recover(); await flushPromises()
+  expect(state(w).current).toBeUndefined(); expect(state(w).fields).toEqual({}); expect(state(w).publicationLocked).toBe(true)
+  expect(state(panel).pending.command).toEqual(intent.command)
+  vi.mocked(api.read).mockResolvedValue(draft({ published: true, version: 'published-token' }))
+  vi.mocked(publicationApi.original).mockResolvedValue({ commandId: intent.command.commandId, outcome: 'SUCCEEDED', resourceId: 'head', resourceVersion: 'published-token', result: { publication: { definitionId: 'head', versionId: 'draft', version: 1, key: 'leave', fields: draft().fields, schemaDigest: 'hash', publishedAtUtc: 'now', publisherRef: 'actor', activationChanged: false, dependencyRefs: [] }, draft: null } })
+  await state(panel).recover(); await flushPromises(); expect(state(w).current.published).toBe(true); expect(state(w).publicationLocked).toBe(false)
+  expect(publicationApi.execute).toHaveBeenCalledTimes(1); expect(sessionStorage.getItem('cp6-workflow-publication-pending')).toBeNull()
+})
+it('preserves the outer publication workspace on unrelated storage and clears it on identity storage changes', async () => {
+  const w = setup(); await flushPromises(); await state(w).load('leave'); state(w).fields.Name = 'unsaved'
+  window.dispatchEvent(new StorageEvent('storage', { key: 'theme' })); await flushPromises()
+  expect(state(w).current.key).toBe('leave'); expect(state(w).fields.Name).toBe('unsaved')
+  window.dispatchEvent(new StorageEvent('storage', { key: 'userName' })); await flushPromises(); expect(state(w).current).toBeUndefined(); expect(state(w).fields).toEqual({})
+})
 it('offers explanation of the saved draft without requiring write permission', async () => {
   vi.mocked(api.read).mockResolvedValue(draft({ writableFields: [] }))
   const w = setup(); await flushPromises(); await state(w).load('leave')

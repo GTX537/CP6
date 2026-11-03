@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
+import { AUTH_EPOCH, AUTH_RECORD, IMPERSONATION, AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { flowAuthoringApi as api, type AuthoringCommand, type AuthoringEntry, type AuthoringField, type AuthoringResult, type AuthoringView } from '@/api/oa/flowAuthoring'
 import DesignerCanvas from './DesignerCanvas.vue'
 import FlowPublicationPanelV2 from './FlowPublicationPanelV2.vue'
@@ -132,6 +132,9 @@ function patchEdge(patch: Partial<SchemaEdge>) {
   schema.value = { ...schema.value, edges: schema.value.edges.map((e, i) => i === edgeIndex.value ? { ...e, ...patch, id: e.id, from: e.from, to: e.to } : e) }
 }
 function identityChanged() { clearPrivate(); error.value = '登录身份已变化，请重新读取。' }
+function storageChanged(event: StorageEvent) {
+  if (event.key === null || [AUTH_EPOCH, AUTH_RECORD, IMPERSONATION, 'cp6_authed', 'userName'].includes(event.key)) identityChanged()
+}
 function leave() { if (!pending.value && !busy.value && !publicationLocked.value) emit('close') }
 onMounted(() => {
   try {
@@ -143,8 +146,8 @@ onMounted(() => {
   } catch { sessionStorage.removeItem(cache) }
   void reload()
 })
-window.addEventListener(AUTH_EVENT, identityChanged); window.addEventListener('storage', identityChanged)
-onBeforeUnmount(() => { live = false; generation++; controller?.abort(); window.removeEventListener(AUTH_EVENT, identityChanged); window.removeEventListener('storage', identityChanged) })
+window.addEventListener(AUTH_EVENT, identityChanged); window.addEventListener('storage', storageChanged)
+onBeforeUnmount(() => { live = false; generation++; controller?.abort(); window.removeEventListener(AUTH_EVENT, identityChanged); window.removeEventListener('storage', storageChanged) })
 </script>
 
 <template>

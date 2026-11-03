@@ -16,7 +16,34 @@ function setup(props: Partial<{ current: AuthoringView; dirty: boolean; disabled
   const w = mount(Panel, { props: { current, dirty: false, disabled: false, ...props } }); mounted.push(w); return w
 }
 beforeEach(() => { vi.resetAllMocks(); localStorage.clear(); sessionStorage.clear(); vi.mocked(api.preview).mockResolvedValue(preview); vi.mocked(api.versions).mockResolvedValue([version]) })
-afterEach(() => { mounted.forEach(w => w.unmount()); mounted.length = 0 })
+afterEach(() => { mounted.forEach(w => w.unmount()); mounted.length = 0; vi.restoreAllMocks() })
+it('keeps an unknown command after denied recovery and rejected retry, then accepts only its original result', async () => {
+  vi.mocked(api.execute).mockRejectedValue({ response: { status: 503 } })
+  const w = setup(); await state(w).prepare(); await state(w).publish(); const intent = vi.mocked(api.execute).mock.calls[0]![0]
+  vi.mocked(api.original).mockRejectedValue({ response: { status: 403 } }); await state(w).recover()
+  expect(state(w).pending.command).toEqual(intent.command); expect(state(w).preview).toBeUndefined(); expect(w.emitted('privateClear')).toBeDefined()
+  vi.mocked(api.execute).mockRejectedValue({ response: { status: 409 } }); await state(w).retry(); expect(state(w).pending.command).toEqual(intent.command)
+  window.dispatchEvent(new StorageEvent('storage', { key: 'theme' })); expect(state(w).pending.command).toEqual(intent.command)
+  const restored = setup(); await flushPromises(); await state(restored).retry(); expect(state(restored).pending.command).toEqual(intent.command)
+  vi.mocked(api.original).mockResolvedValue({ commandId: intent.command.commandId, outcome: 'SUCCEEDED', resourceId: 'head', resourceVersion: 'new-token', result: { publication: { ...version, versionId: 'draft' }, draft: null } })
+  await state(restored).recover(); expect(state(restored).pending).toBeUndefined(); expect(restored.emitted('reload')?.[0]).toEqual(['leave'])
+  expect(api.preview).toHaveBeenCalledTimes(1); expect(vi.mocked(api.execute).mock.calls.every(call => call[0].command.commandId === intent.command.commandId)).toBe(true)
+})
+it('does not send until its recovery record is durable, and releases a first definitely rejected intent', async () => {
+  const w = setup(); await state(w).prepare()
+  const storage = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('quota') })
+  await state(w).publish(); await state(w).retry(); expect(api.execute).not.toHaveBeenCalled(); expect(state(w).error).toContain('尚未发送')
+  storage.mockRestore(); vi.mocked(api.execute).mockRejectedValue({ response: { status: 422 } }); await state(w).retry()
+  expect(state(w).pending).toBeUndefined(); expect(sessionStorage.getItem('cp6-workflow-publication-pending')).toBeNull()
+})
+it('preserves malformed recovery storage and blocks new publication, while unrelated storage keeps a valid preview', async () => {
+  sessionStorage.setItem('cp6-workflow-publication-pending', '{broken')
+  const broken = setup(); await state(broken).prepare(); expect(api.preview).not.toHaveBeenCalled(); expect(state(broken).unavailable).toBe(true)
+  expect(sessionStorage.getItem('cp6-workflow-publication-pending')).toBe('{broken'); broken.unmount()
+  sessionStorage.removeItem('cp6-workflow-publication-pending'); const w = setup(); await state(w).prepare()
+  window.dispatchEvent(new StorageEvent('storage', { key: 'theme' })); expect(state(w).preview.id).toBe('preview')
+  window.dispatchEvent(new StorageEvent('storage', { key: 'userName' })); expect(state(w).preview).toBeUndefined()
+})
 it('shows actual publication impact and clears those counts with an obsolete preview', async () => {
   vi.mocked(api.preview).mockResolvedValue({ ...preview, impact: { runningInstances: 2, suspendedInstances: 1, rootInstances: 2, childInstances: 1, activeDrafts: 0, personalEntryBindings: 1, relatedAppBindings: 3, publishedParentVersions: 4, observedAtUtc: '2026-11-03T14:00:00Z' } })
   const w = setup(); await state(w).prepare(); await flushPromises()
