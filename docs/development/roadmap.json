@@ -161812,6 +161812,11 @@
       "date": "2026-11-03",
       "change": "W280：FLOW/FORM准确Published GUID版本比较已实现，按稳定字段/节点/连线身份分类差异，保留顺序和精确数字词元；当前资源与字段权限裁剪后比较，实际Chrome/Vue→Main→PostgreSQL采用。",
       "evidence": "docs/development/evidence/W280-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-03",
+      "change": "24h目标12小时实耗校准：剩余约12h容量，按近期实际吞吐修订W281–283，新增原范围W284诊断/纯规则、W285普通FORM文件实际采用、W286原竞争与legacy调用面；完整状态不变。",
+      "evidence": "docs/development/planning/20261102-codex-24h-oa.md"
     }
   ],
   "implementation_assessment": {
@@ -238375,8 +238380,8 @@
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 42873,
-      "next_reestimate_at_effective_seconds": 43200,
+      "effective_seconds_recorded": 43208,
+      "next_reestimate_at_effective_seconds": 50400,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
         {
@@ -238853,7 +238858,12 @@
           ],
           "state": "PLANNED",
           "admission": "Inspect direct providers/current source before START; no stub substitution",
-          "reason": "First 2h throughput calibration: original authorized adjacent remaining scope"
+          "reason": "First 2h throughput calibration: original authorized adjacent remaining scope",
+          "revised_estimate_hours": [
+            1.5,
+            3
+          ],
+          "estimate_confidence": "LOW"
         },
         {
           "id": "W283-01",
@@ -238868,7 +238878,63 @@
           ],
           "state": "PLANNED",
           "admission": "Inspect direct providers/current source before START; no stub substitution",
-          "reason": "First 2h throughput calibration: original authorized adjacent remaining scope"
+          "reason": "First 2h throughput calibration: original authorized adjacent remaining scope",
+          "revised_estimate_hours": [
+            1,
+            2
+          ],
+          "estimate_confidence": "LOW"
+        },
+        {
+          "id": "W284-01",
+          "day": "ROLLING_EXTENSION",
+          "related_tasks": [
+            "WP12-01"
+          ],
+          "title": "设计器完整字段/图定位与纯计算规则预览",
+          "estimate_hours": [
+            1,
+            2
+          ],
+          "estimate_confidence": "LOW",
+          "state": "PLANNED",
+          "admission": "Inspect exact current source/direct providers before START; single chat and fixed seats; no stub substitution",
+          "reason": "W279原27AC核对确认D01-05/D02-02/03未闭环；已有保存验证/准确草稿预演复用，补当前可见路径和可执行纯规则说明。"
+        },
+        {
+          "id": "W285-01",
+          "day": "ROLLING_EXTENSION",
+          "related_tasks": [
+            "WP12-05",
+            "WP12-03",
+            "WP02-14"
+          ],
+          "title": "普通FORM实际FileRef准入与最终当前授权下载",
+          "estimate_hours": [
+            2,
+            4
+          ],
+          "estimate_confidence": "LOW",
+          "state": "PLANNED",
+          "admission": "Inspect exact current source/direct providers before START; single chat and fixed seats; no stub substitution",
+          "reason": "W281直接提供者核对：FileContentOwnerV1绑定EngineeringRevision，普通FORM仍FORM_FILE_SOURCE_REQUIRED。采用真实存储/扫描端口及草稿/提交/字段Owner边界，不能借工程父级、空结果或占位下载宣称采用；不新增原册未要求的批量导出。"
+        },
+        {
+          "id": "W286-01",
+          "day": "ROLLING_EXTENSION",
+          "related_tasks": [
+            "WP12-01",
+            "WP12-02"
+          ],
+          "title": "FLOW双作者/下一草稿竞争与legacy来源及调用面处置",
+          "estimate_hours": [
+            1,
+            2
+          ],
+          "estimate_confidence": "LOW",
+          "state": "PLANNED",
+          "admission": "Inspect exact current source/direct providers before START; single chat and fixed seats; no stub substitution",
+          "reason": "W279原AC-D01-03/D03-04/D04-03/04余项：精确原竞争场景尚缺独立证据，legacy重建/当前head来源不能冒充原发布，全部旧caller仍未闭环；先实际调用面核对，再按影响实现/验证，不迁移既有环境。"
         }
       ],
       "reestimates": [
@@ -239022,12 +239088,52 @@
           ],
           "basis": "W277 closed in5061s,total33972s. W278 ongoing: new authorized publication catalog2PG+3UI/typecheck passed; real login/FORM/FLOW publication+activation passed after independently tracked BUG708 candidate. BUG708 real canvas red/green,35 related UI andtypecheck passed; formal adoption pending. Directory-to-form rendering and delegated/business recovery still under execution, no full-chain pass claimed. No idle/paused intervals; dependency fix counted once inside W278.",
           "next_reestimate_at_effective_seconds": 43200
+        },
+        {
+          "at": "2026-11-03T01:06:45.115009+00:00",
+          "effective_seconds": 43208,
+          "checkpoint": "12h",
+          "observed_windows": [
+            {
+              "window": "W276-01",
+              "actual_seconds": 3283
+            },
+            {
+              "window": "W277-01",
+              "actual_seconds": 5061
+            },
+            {
+              "window": "W278-01",
+              "actual_seconds": 4985
+            },
+            {
+              "window": "W279-01",
+              "actual_seconds": 2132
+            },
+            {
+              "window": "W280-01",
+              "actual_seconds": 1608
+            }
+          ],
+          "remaining_capacity_hours": 12.0,
+          "remaining_estimate_hours": [
+            7.5,
+            15.5
+          ],
+          "confidence": "LOW",
+          "added_windows": [
+            "W284-01",
+            "W285-01",
+            "W286-01"
+          ],
+          "basis": "Recent actual complete windows are materially faster than prior estimates; W280 1608s versus0.5–1.25h. W281 favorites/history has new persistence, current-scope query and timezone work; FILE adoption has an actual missing ordinary-FORM parent authority, so not priced as a mechanical reuse. Preserve prediction range and measure every2h; no idle/redundant tests.",
+          "unchanged": "24h effective execution target, original375/full-card states, single chat and local validation."
         }
       ],
-      "timing_snapshot_at": "2026-11-03T01:01:10.201720+00:00",
+      "timing_snapshot_at": "2026-11-03T01:06:45.115009+00:00",
       "remaining_estimate_hours": [
-        5,
-        10.5
+        7.5,
+        15.5
       ]
     },
     "execution_plan_history": [
