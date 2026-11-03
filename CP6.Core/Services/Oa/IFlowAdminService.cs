@@ -8,5 +8,6 @@ public interface IFlowAdminService
 {
     Task<IReadOnlyList<FlowAdminItem>> ListFlowsAsync();
     Task<FlowAdminItem?> GetFlowAsync(string flowKey);
-    Task SetEnabledAsync(string flowKey, bool enabled);   // 启用时守 E-WF-008；流程不存在 E-WF-006
+    // Retired legacy writer; current activation commands require exact publication and configuration tokens.
+    Task SetEnabledAsync(string flowKey, bool enabled);
 }

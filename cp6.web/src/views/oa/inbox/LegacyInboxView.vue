@@ -108,30 +108,6 @@
       <FormDetail v-if="detail.id" :instance-id="detail.id" @open-instance="openDetail" />
     </el-drawer>
 
-    <!-- 新建/填单对话框（占位；起草功能后续实现） -->
-    <el-dialog
-      v-model="newDialogVisible"
-      :title="t('oa.inbox.newBtn')"
-      width="480px"
-    >
-      <div v-loading="flowsLoading">
-        <el-table :data="flows" size="small" stripe border>
-          <el-table-column prop="flowKey" label="流程编号" width="160" />
-          <el-table-column prop="flowName" label="流程名称" />
-          <el-table-column prop="enable" label="状态" width="80">
-            <template #default="{ row }">
-              <CpTag :tone="row.enable ? 'ok' : 'muted'">
-                {{ row.enable ? '启用' : '停用' }}
-              </CpTag>
-            </template>
-          </el-table-column>
-        </el-table>
-        <div class="new-dialog-note">起草功能后续版本实现</div>
-      </div>
-      <template #footer>
-        <el-button @click="newDialogVisible = false">{{ t('oa.inbox.close') }}</el-button>
-      </template>
-    </el-dialog>
   </el-container>
 </template>
 
@@ -141,12 +117,11 @@ import { useI18n } from 'vue-i18n'
 import { useRouter, useRoute } from 'vue-router'
 import { UserFilled, ArrowDown } from '@element-plus/icons-vue'
 import { inboxApi } from '@/api/oa/inbox'
-import { flowAdminApi } from '@/api/oa/flowAdmin'
 import { delegateApi } from '@/api/oa/delegate'
 import { getActingAs, setActingAs, clearActingAs } from '@/stores/oaActingAs'
 import type { ActingAs } from '@/stores/oaActingAs'
 import type { GrantUser } from '@/types/oa/advanced'
-import type { InboxStats, FlowAdminItem } from '@/types/oa/inbox'
+import type { InboxStats } from '@/types/oa/inbox'
 import ActingAsBanner from '@/components/oa/ActingAsBanner.vue'
 import InboxDashboard from './InboxDashboard.vue'
 import InboxPending from './InboxPending.vue'
@@ -155,7 +130,6 @@ import InboxDone from './InboxDone.vue'
 import InboxDraft from './InboxDraft.vue'
 import FormDetail from './FormDetail.vue'
 import PersonalTaskPanel from './PersonalTaskPanel.vue'
-import CpTag from '@/components/base/CpTag.vue'
 import { useBreakpoint } from '@/composables/useBreakpoint'
 
 const { t } = useI18n()
@@ -251,24 +225,8 @@ function openDetail(id: string) {
   drawerVisible.value = true
 }
 
-// ── 新建/填单对话框（占位） ─────────────────────────────────────
-const newDialogVisible = ref(false)
-const flowsLoading = ref(false)
-const flows = ref<FlowAdminItem[]>([])
-
-async function openNewDialog() {
-  newDialogVisible.value = true
-  if (flows.value.length) return
-  flowsLoading.value = true
-  try {
-    const res = await flowAdminApi.list()
-    flows.value = ((res as any).data as FlowAdminItem[]) || []
-  } catch {
-    // 忽略
-  } finally {
-    flowsLoading.value = false
-  }
-}
+// New forms use the current catalog's exact published definition selection.
+function openNewDialog() { void router.push('/oa/form-catalog') }
 </script>
 
 <style scoped>

@@ -51,6 +51,7 @@ public class SubFlowSendBackComboTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "sb", FlowName = "sb", FormKey = "f",
             SchemaJson = System.Text.Json.JsonSerializer.Serialize(SendBackParent(ua, ub, "child")), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         var eng = Engine(db);
         var pid = await eng.SubmitAsync("sb", Guid.NewGuid(), "{}");
 
@@ -96,6 +97,7 @@ public class SubFlowSendBackComboTests
             SchemaJson = System.Text.Json.JsonSerializer.Serialize(SendBackParent(ua, ub, "child", onBranchReject: "prune")),
             Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         var eng = Engine(db);
         var pid = await eng.SubmitAsync("combo", Guid.NewGuid(), "{}");
         var ta1 = await db.Wf_FlowTasks.SingleAsync(t => t.InstanceId == pid && t.AssigneeId == ua && t.Status == FlowTaskStatus.Pending);
@@ -166,6 +168,7 @@ public class SubFlowSendBackComboTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "sbnest", FlowName = "sbnest", FormKey = "f",
             SchemaJson = System.Text.Json.JsonSerializer.Serialize(NestedSameBranchParent(um, ux, ub, "child")), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         var eng = Engine(db);
         var pid = await eng.SubmitAsync("sbnest", Guid.NewGuid(), "{}");
 

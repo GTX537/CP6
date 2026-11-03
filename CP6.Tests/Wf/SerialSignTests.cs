@@ -59,6 +59,7 @@ public class SerialSignTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "serial3", FlowName = "三档串簽",
             FormKey = "t", SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
     }
 
     [Fact]
@@ -121,6 +122,7 @@ public class SerialSignTests
         db.Wf_FlowDefs.Add(new() { Id = Guid.NewGuid(), FlowKey = "csany", FlowName = "x", FormKey = "t",
             SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         var instId = await Eng(db).SubmitAsync("csany", Guid.NewGuid(), "{}");
         Assert.Equal(2, await db.Wf_FlowTasks.CountAsync(t => t.StageIndex == 0 && t.Status == FlowTaskStatus.Pending));
@@ -147,6 +149,7 @@ public class SerialSignTests
         db.Wf_FlowDefs.Add(new() { Id = Guid.NewGuid(), FlowKey = "mc", FlowName = "x", FormKey = "t",
             SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         var instId = await Eng(db).SubmitAsync("mc", u0, "{}");   // 进节点冻结:链 1 级 → plan 1 档
         var t0 = await db.Wf_FlowTasks.SingleAsync(t => t.StageIndex == 0 && t.Status == FlowTaskStatus.Pending);
@@ -180,6 +183,7 @@ public class SerialSignTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "noappr", FlowName = "x", FormKey = "t",
             SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         var instId = await Eng(db).SubmitAsync("noappr", Guid.NewGuid(), "{}");
         var inst = await db.Wf_FlowInstances.SingleAsync(i => i.Id == instId);
@@ -237,6 +241,7 @@ public class SerialSignTests
         db.Wf_FlowDefs.Add(new() { Id = Guid.NewGuid(), FlowKey = "mc0", FlowName = "x", FormKey = "t",
             SchemaJson = System.Text.Json.JsonSerializer.Serialize(schema), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         var instId = await Eng(db).SubmitAsync("mc0", starter, "{}");
         var inst = await db.Wf_FlowInstances.SingleAsync(i => i.Id == instId);
@@ -263,6 +268,7 @@ public class SerialSignTests
         db.Wf_FlowDefs.Add(new() { Id = Guid.NewGuid(), FlowKey = "mix", FlowName = "x", FormKey = "t",
             SchemaJson = System.Text.Json.JsonSerializer.Serialize(schema), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         var instId = await Eng(db).SubmitAsync("mix", Guid.NewGuid(), "{}");
 

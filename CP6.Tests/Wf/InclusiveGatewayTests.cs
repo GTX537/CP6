@@ -48,6 +48,7 @@ public class InclusiveGatewayTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "inc", FlowName = "inc", FormKey = "f",
             SchemaJson = JsonSerializer.Serialize(IncSchema(ua, ub, uc, ud)), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         return await Engine(db).SubmitAsync("inc", Guid.NewGuid(), vars);
     }
 
@@ -136,6 +137,7 @@ public class InclusiveGatewayTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "mix", FlowName = "mix", FormKey = "f",
             SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         await Engine(db).SubmitAsync("mix", Guid.NewGuid(), "{\"goA\":1}");
 
         // p2 先过 → 外层 pjoin 必须等 inclusive 子树（血缘感知）
@@ -185,6 +187,7 @@ public class InclusiveGatewayTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "pin", FlowName = "pin", FormKey = "f",
             SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         await Engine(db).SubmitAsync("pin", Guid.NewGuid(), "{\"goP\":1}");   // 真边=psplit 支，default 不走
 
         Assert.False(await db.Wf_FlowTasks.AnyAsync(t => t.AssigneeId == ud));

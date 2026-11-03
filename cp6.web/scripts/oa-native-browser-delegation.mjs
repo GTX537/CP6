@@ -16,8 +16,9 @@ export async function runNativeDelegation(page, browser, origin, output, runtime
   await grants.getByLabel('搜索同租户代理人').fill('browser-delegate')
   await grants.getByRole('button', { name: '搜索人员', exact: true }).click()
   await grants.getByRole('combobox', { name: /^代理人/ }).selectOption(process.env.CP6_OA_BROWSER_DELEGATE)
-  await grants.getByLabel('开始时间（UTC，含）').fill(new Date(Date.now() - 60000).toISOString().slice(0, -1))
-  await grants.getByLabel('结束时间（UTC，不含）').fill(new Date(Date.now() + 3600000).toISOString().slice(0, -1))
+  // Use minute-aligned fixture bounds: Chromium canonicalizes trailing fractional zeroes during fill.
+  await grants.getByLabel('开始时间（UTC，含）').fill(new Date(Date.now() - 60000).toISOString().slice(0, 16))
+  await grants.getByLabel('结束时间（UTC，不含）').fill(new Date(Date.now() + 3600000).toISOString().slice(0, 16))
   await grants.getByLabel('同意', { exact: true }).check()
   await grants.getByLabel('流程标识，逗号分隔').fill('native-inbox')
   await grants.getByLabel('说明', { exact: true }).fill('Actual browser authorizes exact task scope')

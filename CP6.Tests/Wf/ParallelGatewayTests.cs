@@ -41,6 +41,7 @@ public class ParallelGatewayTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "p", FlowName = "p", FormKey = "f",
             SchemaJson = JsonSerializer.Serialize(ForkSchema(ua, ub)), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
     }
 
     [Fact]
@@ -156,6 +157,7 @@ public class ParallelGatewayTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "p", FlowName = "p", FormKey = "f",
             SchemaJson = JsonSerializer.Serialize(NestedSchema(u1, u2, ub)), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         await Engine(db).SubmitAsync("p", Guid.NewGuid(), "{}");
         // 三个待办并存：a1/a2(内层分叉) + b(外层分支)

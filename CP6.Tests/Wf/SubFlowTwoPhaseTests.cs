@@ -23,6 +23,7 @@ public class SubFlowTwoPhaseTests
         SeedDef(db, "child", ChildSchema(ca));
         SeedDef(db, "parent", ParentSchema(pa, "child", collectionVar: "items"));
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
         var eng = Engine(db);
         var pid = await eng.SubmitAsync("parent", Guid.NewGuid(), "{\"items\":[1,2]}");
         var parked = await db.Wf_FlowTokens.SingleAsync(t => t.InstanceId == pid && t.NodeId == "sub");
@@ -50,6 +51,7 @@ public class SubFlowTwoPhaseTests
         SeedDef(db, "child", ChildSchema(ca));
         SeedDef(db, "parent", ParentSchema(pa, "child", collectionVar: "items"));
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
         var eng = Engine(db);
         var pid = await eng.SubmitAsync("parent", Guid.NewGuid(), "{\"items\":[1,2]}");
 
@@ -71,6 +73,7 @@ public class SubFlowTwoPhaseTests
         SeedDef(db, "instant", InstantChildSchema());
         SeedDef(db, "parent", ParentSchema(pa, "instant"));
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         var pid = await Engine(db).SubmitAsync("parent", Guid.NewGuid(), "{}");   // 子起即 Approved → SubmitAsync 尾 fast path
 
@@ -87,6 +90,7 @@ public class SubFlowTwoPhaseTests
         SeedDef(db, "child", ChildSchema(ca));
         SeedDef(db, "parent", ParentSchema(pa, "child"));
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
         var eng = Engine(db);
         var pid = await eng.SubmitAsync("parent", Guid.NewGuid(), "{}");
         var child = await db.Wf_FlowInstances.SingleAsync(i => i.ParentInstanceId == pid);
@@ -115,6 +119,7 @@ public class SubFlowTwoPhaseTests
         SeedDef(db, "mid", ParentSchema(pa, "leaf"));      // mid 的 pa 审批在 leaf 恢复后出现
         SeedDef(db, "top", ParentSchema(pa, "mid"));
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
         var eng = Engine(db);
         var topId = await eng.SubmitAsync("top", Guid.NewGuid(), "{}");
         var midInst = await db.Wf_FlowInstances.SingleAsync(i => i.ParentInstanceId == topId);

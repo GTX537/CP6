@@ -51,6 +51,7 @@ public class PendingRowModeTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = flowKey, FlowName = flowKey, FormKey = flowKey,
             SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         return await Engine(db).SubmitAsync(flowKey, starter, "{}");
     }
 

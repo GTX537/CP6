@@ -1,7 +1,6 @@
 using CP6.Core.EFDbContext;
 using CP6.Entity.DomainModels.Wf;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
 
 namespace CP6.Core.Services.Wf;
 
@@ -11,21 +10,9 @@ public class FlowDefService : IFlowDefService
     private readonly CP6Context _db;
     public FlowDefService(CP6Context db) => _db = db;
 
-    /// <summary>Legacy internal helper retained for existing service callers. Browser endpoints use SaveDraftAsync.</summary>
-    public async Task<Guid> SaveDefAsync(string flowKey, string flowName, string? formKey, string schemaJson, string? user = null)
-    {
-        // Compatibility helper is not the browser draft lifecycle or WFC-1 publication Owner.
-        var draft = await SaveDraftCoreAsync(flowKey, flowName, formKey, schemaJson, null, user, true);
-        var row = await _db.Wf_FlowDefVersions.SingleAsync(x => x.Id == draft.VersionId);
-        row.Status = WfDefinitionVersionStatus.Published;
-        row.PublishedAtUtc = DateTime.UtcNow;
-        var head = await _db.Wf_FlowDefs.SingleAsync(x => x.Id == draft.DefinitionId);
-        head.SchemaJson = row.SchemaJson;
-        head.FlowName = row.FlowNameSnapshot;
-        head.Version = row.Version;
-        await _db.SaveChangesAsync();
-        return draft.DefinitionId;
-    }
+    // Legacy definitions remain readable; publication requires the versioned Owner command.
+    public Task<Guid> SaveDefAsync(string flowKey, string flowName, string? formKey, string schemaJson, string? user = null)
+        => LegacyDefinitionWrites.Rejected<Guid>();
 
     public async Task<Wf_FlowDef?> GetDefAsync(string flowKey)
     {
@@ -53,121 +40,11 @@ public class FlowDefService : IFlowDefService
         return draft == null ? null : ToDraft(head.Id, draft);
     }
 
-    public Task<DefinitionDraftDto> SaveDraftAsync(
-        string flowKey, string flowName, string? formKey, string schemaJson, byte[]? rowVersion, string? user = null)
-        => SaveDraftCoreAsync(flowKey, flowName, formKey, schemaJson, rowVersion, user, false);
+    public Task<DefinitionDraftDto> SaveDraftAsync(string flowKey, string flowName, string? formKey,
+        string schemaJson, byte[]? rowVersion, string? user = null) => LegacyDefinitionWrites.Rejected<DefinitionDraftDto>();
 
-    private async Task<DefinitionDraftDto> SaveDraftCoreAsync(
-        string flowKey, string flowName, string? formKey, string schemaJson, byte[]? rowVersion, string? user, bool legacy)
-    {
-        if (string.IsNullOrWhiteSpace(flowKey)) throw new InvalidOperationException("FlowKey 不能为空");
-        var head = await _db.Wf_FlowDefs.FirstOrDefaultAsync(x => x.FlowKey == flowKey);
-        var draft = head == null ? null : await _db.Wf_FlowDefVersions
-            .SingleOrDefaultAsync(x => x.FlowDefId == head.Id && x.Status == WfDefinitionVersionStatus.Draft);
-        // Check before mutating the tracked head: a failed edit must not leave pending head changes.
-        if (!legacy)
-        {
-            if (head != null && draft == null) throw new InvalidOperationException("DRAFT_REQUIRED");
-            if (head == null && rowVersion != null) throw new InvalidOperationException("E-WF-045");
-            if (draft != null) EnsureRowVersion(draft.RowVersion, rowVersion);
-        }
-        if (head == null)
-        {
-            head = new Wf_FlowDef
-            {
-                Id = Guid.NewGuid(), FlowKey = flowKey, FlowName = flowName,
-                FormKey = string.IsNullOrWhiteSpace(formKey) ? null : formKey,
-                SchemaJson = schemaJson, Version = 1, Creator = user
-            };
-            _db.Wf_FlowDefs.Add(head);
-        }
-        else
-        {
-            head.FlowName = flowName;
-            head.FormKey = string.IsNullOrWhiteSpace(formKey) ? null : formKey;
-            head.Modifier = user;
-            head.ModifyDate = DateTime.UtcNow;
-        }
-
-        if (draft == null)
-        {
-            var maxVersion = await _db.Wf_FlowDefVersions
-                .Where(x => x.FlowDefId == head.Id).Select(x => (int?)x.Version).MaxAsync() ?? 0;
-            draft = new Wf_FlowDefVersion
-            {
-                Id = Guid.NewGuid(), FlowDefId = head.Id, Version = maxVersion + 1,
-                Status = WfDefinitionVersionStatus.Draft, FlowNameSnapshot = flowName,
-                SchemaJson = schemaJson, Creator = user
-            };
-            _db.Wf_FlowDefVersions.Add(draft);
-        }
-        else
-        {
-            if (!legacy) EnsureRowVersion(draft.RowVersion, rowVersion);
-            if (rowVersion != null)
-                _db.Entry(draft).Property(x => x.RowVersion).OriginalValue = rowVersion;
-            draft.FlowNameSnapshot = flowName;
-            draft.SchemaJson = schemaJson;
-            draft.Modifier = user;
-            draft.ModifyDate = DateTime.UtcNow;
-        }
-
-        try { await _db.SaveChangesAsync(); }
-        catch (DbUpdateConcurrencyException) { throw new InvalidOperationException("E-WF-045"); }
-        return ToDraft(head.Id, draft);
-    }
-
-    public async Task<DefinitionPublishResult> PublishAsync(
-        string flowKey, byte[]? rowVersion, Guid publishedBy, CancellationToken ct = default)
-    {
-        var head = await _db.Wf_FlowDefs.SingleOrDefaultAsync(x => x.FlowKey == flowKey, ct)
-                   ?? throw new InvalidOperationException("E-WF-030");
-        var draft = await _db.Wf_FlowDefVersions
-            .SingleOrDefaultAsync(x => x.FlowDefId == head.Id && x.Status == WfDefinitionVersionStatus.Draft, ct)
-                    ?? throw new InvalidOperationException("E-WF-030");
-        EnsureRowVersion(draft.RowVersion, rowVersion);
-        if (rowVersion != null) _db.Entry(draft).Property(x => x.RowVersion).OriginalValue = rowVersion;
-
-        FlowSchema schema;
-        try
-        {
-            schema = JsonSerializer.Deserialize<FlowSchema>(draft.SchemaJson,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new FlowSchema();
-        }
-        catch (JsonException) { throw new InvalidOperationException("E-WF-030"); }
-        if (FlowSchemaValidator.Validate(schema).Count > 0) throw new InvalidOperationException("E-WF-030");
-        await new FlowFormCompatibilityValidator(_db).ValidateFlowPublishAsync(head.Id, draft.SchemaJson, ct);
-
-        foreach (var node in schema.Nodes.Where(x =>
-                     string.Equals(x.Type, "subFlow", StringComparison.OrdinalIgnoreCase) &&
-                     !string.IsNullOrWhiteSpace(x.SubFlowKey)))
-        {
-            var targetHead = await _db.Wf_FlowDefs.SingleOrDefaultAsync(
-                x => x.FlowKey == node.SubFlowKey && x.Enable, ct)
-                ?? throw new InvalidOperationException("E-WF-030");
-            var targetVersion = await _db.Wf_FlowDefVersions
-                .Where(x => x.FlowDefId == targetHead.Id && x.Status == WfDefinitionVersionStatus.Published)
-                .OrderByDescending(x => x.Version).FirstOrDefaultAsync(ct)
-                ?? throw new InvalidOperationException("E-WF-030");
-            _db.Wf_FlowDefVersionDependencies.Add(new Wf_FlowDefVersionDependency
-            {
-                Id = Guid.NewGuid(), FlowDefVersionId = draft.Id, NodeId = node.Id,
-                DependencyType = "SubFlow", TargetFlowDefVersionId = targetVersion.Id,
-                Creator = publishedBy.ToString()
-            });
-        }
-
-        var publishedAt = DateTime.UtcNow;
-        draft.Status = WfDefinitionVersionStatus.Published;
-        draft.PublishedAtUtc = publishedAt;
-        draft.PublishedBy = publishedBy;
-        head.FlowName = draft.FlowNameSnapshot;
-        head.SchemaJson = draft.SchemaJson;
-        head.Version = draft.Version;
-        try { await _db.SaveChangesAsync(ct); }
-        catch (DbUpdateConcurrencyException) { throw new InvalidOperationException("E-WF-045"); }
-        return new(head.Id, draft.Id, draft.Version, publishedAt);
-    }
+    public Task<DefinitionPublishResult> PublishAsync(string flowKey, byte[]? rowVersion, Guid publishedBy,
+        CancellationToken ct = default) => LegacyDefinitionWrites.Rejected<DefinitionPublishResult>();
 
     public async Task<IReadOnlyList<DefinitionVersionItem>> ListVersionsAsync(string flowKey, CancellationToken ct = default)
     {
@@ -215,9 +92,5 @@ public class FlowDefService : IFlowDefService
     private static DefinitionDraftDto ToDraft(Guid defId, Wf_FlowDefVersion draft) =>
         new(defId, draft.Id, draft.Version, draft.FlowNameSnapshot, draft.SchemaJson, draft.RowVersion, draft.Status);
 
-    private static void EnsureRowVersion(byte[]? current, byte[]? expected)
-    {
-        if (current is { Length: > 0 } && (expected == null || !current.SequenceEqual(expected)))
-            throw new InvalidOperationException("E-WF-045");
-    }
+
 }

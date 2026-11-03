@@ -21,14 +21,14 @@ public class FlowDefinitionPinTests
         var a1 = Guid.NewGuid();
         var a2 = Guid.NewGuid();
         var definitions = new FlowDefService(db);
-        var v1Draft = await definitions.SaveDraftAsync("leave", "Leave", null, Schema(a1), null);
-        var v1 = await definitions.PublishAsync("leave", v1Draft.RowVersion, Guid.NewGuid());
+        var v1Draft = await CP6.Tests.Wf.LegacyDefinitionFixture.FlowDraft(db, "leave", "Leave", null, Schema(a1), null);
+        var v1 = await CP6.Tests.Wf.LegacyDefinitionFixture.FlowPublished(db, "leave", v1Draft.RowVersion, Guid.NewGuid());
         var engine = new FlowEngine(db, new ApproverResolver(db));
         var oldId = await engine.SubmitAsync("leave", Guid.NewGuid(), "{}");
 
         await DefinitionDraftFixture.FromPublished(db, v1.VersionId);
-        var v2Draft = await definitions.SaveDraftAsync("leave", "Leave v2", null, Schema(a2), null);
-        var v2 = await definitions.PublishAsync("leave", v2Draft.RowVersion, Guid.NewGuid());
+        var v2Draft = await CP6.Tests.Wf.LegacyDefinitionFixture.FlowDraft(db, "leave", "Leave v2", null, Schema(a2), null);
+        var v2 = await CP6.Tests.Wf.LegacyDefinitionFixture.FlowPublished(db, "leave", v2Draft.RowVersion, Guid.NewGuid());
         var newId = await engine.SubmitAsync("leave", Guid.NewGuid(), "{}");
 
         var oldInstance = await db.Wf_FlowInstances.SingleAsync(x => x.Id == oldId);
@@ -45,8 +45,8 @@ public class FlowDefinitionPinTests
         await using var db = NewDb();
         var approver = Guid.NewGuid();
         var definitions = new FlowDefService(db);
-        var draft = await definitions.SaveDraftAsync("leave", "Leave", null, Schema(approver), null);
-        await definitions.PublishAsync("leave", draft.RowVersion, Guid.NewGuid());
+        var draft = await CP6.Tests.Wf.LegacyDefinitionFixture.FlowDraft(db, "leave", "Leave", null, Schema(approver), null);
+        await CP6.Tests.Wf.LegacyDefinitionFixture.FlowPublished(db, "leave", draft.RowVersion, Guid.NewGuid());
         var engine = new FlowEngine(db, new ApproverResolver(db));
         var instanceId = await engine.SubmitAsync("leave", Guid.NewGuid(), "{}");
 
@@ -69,9 +69,9 @@ public class FlowDefinitionPinTests
         await using var db = NewDb();
         var approver = Guid.NewGuid();
         var definitions = new FlowDefService(db);
-        var draft = await definitions.SaveDraftAsync("business", "Business", null,
+        var draft = await CP6.Tests.Wf.LegacyDefinitionFixture.FlowDraft(db, "business", "Business", null,
             Schema(approver), null);
-        await definitions.PublishAsync("business", draft.RowVersion, Guid.NewGuid());
+        await CP6.Tests.Wf.LegacyDefinitionFixture.FlowPublished(db, "business", draft.RowVersion, Guid.NewGuid());
 
         var id = await new FlowEngine(db, new ApproverResolver(db))
             .SubmitAsync("business", Guid.NewGuid(), "{}", "PUR_PR", "PR1");

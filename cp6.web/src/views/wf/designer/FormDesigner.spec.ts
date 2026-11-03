@@ -12,8 +12,8 @@ const raw = '{"fields":[{"name":"a","type":"input","label":"原文","default":"A
 const mounted: ReturnType<typeof mount>[] = []
 const state = (w: any): any => w.vm.$.setupState
 function setup() {
-  const w = mount(FormDesigner, { global: { stubs: { DynamicForm: { props: ['schema', 'modelValue'], template: '<div />' } }, directives: { permission: {} } } })
-  mounted.push(w); state(w).formKey = 'first'; return w
+  const w = mount(FormDesigner, { props: { managedSource: { schemaJson: raw, version: 'v1' } }, global: { stubs: { DynamicForm: { props: ['schema', 'modelValue'], template: '<div />' } }, directives: { permission: {} } } })
+  mounted.push(w); return w
 }
 beforeEach(() => {
   vi.resetAllMocks()
@@ -23,41 +23,35 @@ beforeEach(() => {
 afterEach(() => { mounted.forEach(w => w.unmount()); mounted.length = 0 })
 
 it('loads, edits, reorders and saves complete form content without changing untouched numeric lexemes', async () => {
-  const w = setup(); await state(w).load(); await flushPromises()
+  const w = setup(); await flushPromises()
   state(w).schema.fields[0].label = '改名'
   state(w).move(0, 1)
   state(w).undo(); expect(state(w).schema.fields.map((f: any) => f.name)).toEqual(['a', 'b'])
   state(w).redo(); state(w).schema.fields[1].name = 'renamed'
-  state(w).undo(); state(w).redo(); await state(w).save()
-  const saved = vi.mocked(formApi.saveDraft).mock.calls[0]![1]
-  expect(saved.rowVersion).toBe('v1')
+  state(w).undo(); state(w).redo(); await flushPromises()
+  const saved = { schemaJson: w.emitted('schemaChange')!.at(-1)![0] as string }
   expect(saved.schemaJson).toContain('9007199254740993.00')
   expect(saved.schemaJson).toContain('9007199254740995.00')
   expect(saved.schemaJson).toContain('"width":1.0')
   expect(JSON.parse(saved.schemaJson)).toMatchObject({ fields: [{ name: 'b' }, { name: 'renamed', label: '改名', default: 'A' }], 'x-extension': { keep: true } })
 })
 it('undo and redo retain complete layout and extensions, and loading a different form removes old properties', async () => {
-  const w = setup(); await state(w).load()
+  const w = setup(); await flushPromises()
   state(w).schema.layout.width = 2
   expect(state(w).canUndo).toBe(true)
   state(w).undo(); expect(state(w).schema.layout.width).toBe(1); expect(state(w).canRedo).toBe(true)
   state(w).redo(); expect(state(w).schema.layout.width).toBe(2)
   expect(state(w).schema['x-extension']).toEqual({ keep: true })
-  vi.mocked(formApi.getDraft).mockResolvedValue({ data: { name: '第二表单', rowVersion: 'v3', schemaJson: '{"fields":[]}' } } as any)
-  state(w).formKey = 'second'; await state(w).load(); await state(w).save()
+  await w.setProps({ managedSource: { schemaJson: '{"fields":[]}', version: 'v3' } }); await flushPromises()
   expect(state(w).schema.layout).toBeUndefined(); expect(state(w).schema['x-extension']).toBeUndefined()
-  expect(vi.mocked(formApi.saveDraft).mock.calls[0]![1].schemaJson).toBe('{"fields":[]}')
+  expect(state(w).snapshot()).toEqual({ fields: [] })
   expect(state(w).canUndo).toBe(false)
 })
-it('failed save or malformed load leaves the current editable content and CAS unchanged', async () => {
-  const w = setup(); await state(w).load(); state(w).schema.fields[0].label = '未保存'
-  vi.mocked(formApi.saveDraft).mockRejectedValue({ response: { status: 409 } })
-  await state(w).save(); expect(state(w).draftRowVersion).toBe('v1')
-  vi.mocked(formApi.getDraft).mockResolvedValue({ data: { name: '坏数据', rowVersion: 'bad', schemaJson: '{"fields":[null]}' } } as any)
-  await state(w).load(); expect(state(w).schema.fields[0].label).toBe('未保存'); expect(state(w).draftRowVersion).toBe('v1')
-  expect(state(w).formName).toBe('表单')
-  state(w).formKey = 'other'; await state(w).load(); await state(w).save()
-  expect(formApi.saveDraft).toHaveBeenCalledTimes(1)
+it('read-only transition preserves unsaved content and blocks edit/undo without a legacy request', async () => {
+  const w = setup(); state(w).schema.fields[0].label = '未保存'; await flushPromises()
+  await w.setProps({ readOnly: true }); state(w).addField('input'); state(w).undo(); state(w).redo()
+  expect(state(w).schema.fields[0].label).toBe('未保存'); expect(state(w).schema.fields).toHaveLength(2)
+  expect(formApi.saveDraft).not.toHaveBeenCalled(); expect(formApi.getDraft).not.toHaveBeenCalled()
 })
 it('nested table columns use stable names while array order and original precision are preserved', () => {
   const source = '{"fields":[{"name":"table","type":"table","columns":[{"name":"a","default":9007199254740993.00},{"name":"b","default":9007199254740995.00}]}]}'
@@ -71,7 +65,7 @@ it('managed editor emits full precision through edit/undo/redo and never calls l
   state(w).schema.fields[0].label = 'managed'; state(w).undo(); state(w).redo()
   expect(w.emitted('schemaChange')!.at(-1)![0]).toContain('9007199254740993.00')
   expect(w.emitted('schemaChange')!.at(-1)![0]).toContain('managed')
-  await state(w).save(); await state(w).publish(); await state(w).load(); expect(formApi.saveDraft).not.toHaveBeenCalled(); expect(formApi.publish).not.toHaveBeenCalled(); expect(formApi.getDraft).not.toHaveBeenCalled()
+  await flushPromises();  await flushPromises(); expect(formApi.saveDraft).not.toHaveBeenCalled(); expect(formApi.publish).not.toHaveBeenCalled(); expect(formApi.getDraft).not.toHaveBeenCalled()
   await w.setProps({ readOnly: true }); state(w).addField('input'); state(w).undo(); expect(state(w).schema.fields).toHaveLength(2)
   await w.setProps({ managedSource: { schemaJson: '{"fields":[]}', version: 'v2' } }); expect(state(w).schema.layout).toBeUndefined(); expect(state(w).canUndo).toBe(false)
 })

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Oa;
 using CP6.Core.Services.Wf;
+using CP6.Core.Services.Sys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Xunit;
@@ -196,10 +197,10 @@ public class ServiceTaskValidatorTests
         public Task<ServiceTaskResult> CallAsync(string p, string? j, ServiceTaskContext ctx) => Task.FromResult(ServiceTaskResult.Ok());
     }
 
-    private static DesignerService SvcWith(CP6Context db, string actionKey, string connName) =>
-        new(db, new FlowDefService(db),
-            new IServiceTaskExecutor[] { new FakeExec { Key = actionKey, Kind = ServiceKind.DataWriteback, DisplayName = actionKey } },
-            new IWfConnector[] { new FakeConnector { Name = connName, DisplayName = connName } });
+    private static DefinitionDiagnosticV2[] Validate(string json, string actionKey, string connName) =>
+        FlowAuthoringOwnerV2.ValidateDraftSchema(json,
+            [new FakeExec { Key = actionKey, Kind = ServiceKind.DataWriteback, DisplayName = actionKey }],
+            [new FakeConnector { Name = connName, DisplayName = connName }]);
 
     private static string Json(FlowSchema s) => JsonSerializer.Serialize(s);
 
@@ -217,43 +218,43 @@ public class ServiceTaskValidatorTests
     public async Task Save_DataWriteback_UnregisteredAction_ThrowsE_WF_018()
     {
         using var db = NewDb();
-        var svc = SvcWith(db, actionKey: "realWb", connName: "erpEcho");
+        const string actionKey = "realWb", connName = "erpEcho";
         var req = new SaveFlowRequest("dw", "回写流程", "leave", null, null, Json(DataWritebackSchema("ghostAction")));
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveAsync(req, null));
-        Assert.Equal("E-WF-018", ex.Message);
+        var ex = Assert.Throws<ScopeAuthorizationExceptionV1>(() => Validate(req.SchemaJson, actionKey, connName));
+        Assert.Equal("SERVICE_REFERENCE_INVALID", ex.Message);
     }
 
     [Fact]
     public async Task Save_WebApi_UnregisteredConnector_ThrowsE_WF_018()
     {
         using var db = NewDb();
-        var svc = SvcWith(db, actionKey: "realWb", connName: "realConn");
+        const string actionKey = "realWb", connName = "realConn";
         var s = Base(); Svc(s).ServiceConnectorName = "ghostConn";   // webApi 引用未注册连接器
         var req = new SaveFlowRequest("wa", "webApi流程", "leave", null, null, Json(s));
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveAsync(req, null));
-        Assert.Equal("E-WF-018", ex.Message);
+        var ex = Assert.Throws<ScopeAuthorizationExceptionV1>(() => Validate(req.SchemaJson, actionKey, connName));
+        Assert.Equal("SERVICE_REFERENCE_INVALID", ex.Message);
     }
 
     [Fact]
-    public async Task Save_RegisteredNames_Persists()
+    public async Task Current_draft_validator_accepts_registered_names_without_writes()
     {
         using var db = NewDb();
-        var svc = SvcWith(db, actionKey: "realWb", connName: "erpEcho");
+        const string actionKey = "realWb", connName = "erpEcho";
         var req = new SaveFlowRequest("ok", "合法流程", "leave", null, null, Json(DataWritebackSchema("realWb")));
-        await svc.SaveAsync(req, "tester");                          // action 已注册 → 不抛
-        Assert.NotNull(await db.Wf_FlowDefs.SingleOrDefaultAsync(d => d.FlowKey == "ok"));
+        Assert.Empty(Validate(req.SchemaJson, actionKey, connName));
+        Assert.Empty(await db.Wf_FlowDefs.ToArrayAsync());
     }
 
     [Fact]
-    public async Task Save_ConnectorName_CaseInsensitive_Persists()
+    public async Task Current_draft_validator_preserves_case_insensitive_connector_names()
     {
         // E-WF-018 注册名比较须镜像运行时字典(OrdinalIgnoreCase)：
         // 注册名 "erpEcho" vs schema 引用 "ErpEcho" 仅大小写不同 → 运行时找得到 → save 也须放行。
         using var db = NewDb();
-        var svc = SvcWith(db, actionKey: "realWb", connName: "erpEcho");
+        const string actionKey = "realWb", connName = "erpEcho";
         var s = Base(); Svc(s).ServiceConnectorName = "ErpEcho";      // 大小写不符的已注册连接器
         var req = new SaveFlowRequest("ci", "大小写流程", "leave", null, null, Json(s));
-        await svc.SaveAsync(req, "tester");                          // 不应抛 E-WF-018
-        Assert.NotNull(await db.Wf_FlowDefs.SingleOrDefaultAsync(d => d.FlowKey == "ci"));
+        Assert.Empty(Validate(req.SchemaJson, actionKey, connName));
+        Assert.Empty(await db.Wf_FlowDefs.ToArrayAsync());
     }
 }

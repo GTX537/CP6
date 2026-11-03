@@ -22,18 +22,18 @@ public sealed class SubFlowDefinitionPinTests
         var childV2Approver = Guid.NewGuid();
         var parentApprover = Guid.NewGuid();
 
-        var childDraft1 = await definitions.SaveDraftAsync(
+        var childDraft1 = await CP6.Tests.Wf.LegacyDefinitionFixture.FlowDraft(db,
             "child", "Child", null, JsonSerializer.Serialize(ChildSchema(childV1Approver)), null);
-        var childV1 = await definitions.PublishAsync("child", childDraft1.RowVersion, Guid.NewGuid());
+        var childV1 = await CP6.Tests.Wf.LegacyDefinitionFixture.FlowPublished(db, "child", childDraft1.RowVersion, Guid.NewGuid());
 
-        var parentDraft1 = await definitions.SaveDraftAsync(
+        var parentDraft1 = await CP6.Tests.Wf.LegacyDefinitionFixture.FlowDraft(db,
             "parent", "Parent", null, JsonSerializer.Serialize(ParentSchema(parentApprover, "child")), null);
-        var parentV1 = await definitions.PublishAsync("parent", parentDraft1.RowVersion, Guid.NewGuid());
+        var parentV1 = await CP6.Tests.Wf.LegacyDefinitionFixture.FlowPublished(db, "parent", parentDraft1.RowVersion, Guid.NewGuid());
 
         await DefinitionDraftFixture.FromPublished(db, childV1.VersionId);
-        var childDraft2 = await definitions.SaveDraftAsync(
+        var childDraft2 = await CP6.Tests.Wf.LegacyDefinitionFixture.FlowDraft(db,
             "child", "Child v2", null, JsonSerializer.Serialize(ChildSchema(childV2Approver)), null);
-        var childV2 = await definitions.PublishAsync("child", childDraft2.RowVersion, Guid.NewGuid());
+        var childV2 = await CP6.Tests.Wf.LegacyDefinitionFixture.FlowPublished(db, "child", childDraft2.RowVersion, Guid.NewGuid());
 
         var engine = new FlowEngine(db, new ApproverResolver(db));
         var oldParentId = await engine.SubmitAsync("parent", Guid.NewGuid(), "{}");
@@ -45,9 +45,9 @@ public sealed class SubFlowDefinitionPinTests
             (await db.Wf_FlowTasks.SingleAsync(x => x.InstanceId == oldChild.Id)).AssigneeId);
 
         await DefinitionDraftFixture.FromPublished(db, parentV1.VersionId);
-        var parentDraft2 = await definitions.SaveDraftAsync(
+        var parentDraft2 = await CP6.Tests.Wf.LegacyDefinitionFixture.FlowDraft(db,
             "parent", "Parent v2", null, JsonSerializer.Serialize(ParentSchema(parentApprover, "child")), null);
-        await definitions.PublishAsync("parent", parentDraft2.RowVersion, Guid.NewGuid());
+        await CP6.Tests.Wf.LegacyDefinitionFixture.FlowPublished(db, "parent", parentDraft2.RowVersion, Guid.NewGuid());
         var newParentId = await engine.SubmitAsync("parent", Guid.NewGuid(), "{}");
         var newChild = await db.Wf_FlowInstances.SingleAsync(x => x.ParentInstanceId == newParentId);
         Assert.Equal(childV2.VersionId, newChild.FlowDefVersionId);

@@ -75,6 +75,7 @@ public class NotificationEngineHookTests
             SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true,
         });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
     }
 
     // ── tests ────────────────────────────────────────────────────────────────
@@ -169,6 +170,7 @@ public class NotificationEngineHookTests
             SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true,
         });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         var notifier = new CountingNotifier();
         var engine = new FlowEngine(db, new ApproverResolver(db), notifier: notifier);

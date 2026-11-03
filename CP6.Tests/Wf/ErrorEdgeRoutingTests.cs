@@ -79,6 +79,7 @@ public class ErrorEdgeRoutingTests
         var schema = SvcSchema(Guid.NewGuid());
         var (inst, tok) = ParkAtSvc(db, eng, schema);
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         await eng.AdvanceToken(inst, schema, tok);   // 成功路径
         await db.SaveChangesAsync();
@@ -149,6 +150,7 @@ public class ErrorEdgeRoutingTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "lin", FlowName = "lin", FormKey = "f",
             SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         await Engine(db).SubmitAsync("lin", Guid.NewGuid(), "{}");
         var task = await db.Wf_FlowTasks.SingleAsync(t => t.Status == FlowTaskStatus.Pending);
@@ -170,6 +172,7 @@ public class ErrorEdgeRoutingTests
         SeedDef(db, schema);
         var (inst, tok) = ParkAtSvc(db, eng, schema);
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         await eng.FailServiceTokenAsync(inst.Id, tok.Id, "svc", "boom");
 
@@ -190,6 +193,7 @@ public class ErrorEdgeRoutingTests
         SeedDef(db, schema);
         var (inst, tok) = ParkAtSvc(db, eng, schema);
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         await eng.FailServiceTokenAsync(inst.Id, tok.Id, "svc", "kaboom");
 
@@ -210,6 +214,7 @@ public class ErrorEdgeRoutingTests
         var (inst, tok) = ParkAtSvc(db, eng, schema);
         tok.NodeId = "end";   // token 已离开服务节点
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         await eng.FailServiceTokenAsync(inst.Id, tok.Id, "svc", "late");   // 幂等:不应改任何东西
 

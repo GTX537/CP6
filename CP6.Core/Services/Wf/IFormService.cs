@@ -5,10 +5,10 @@ namespace CP6.Core.Services.Wf;
 /// <summary>表单引擎服务（OA 章02）。表单定义 CRUD + 数据提交（服务端按 schema 复核）。</summary>
 public interface IFormService
 {
-    /// <summary>建/改表单定义（按 FormKey upsert，schema 变更自增 Version）。返回 FormDef.Id。</summary>
+    /// <summary>已退役的写入入口；明确拒绝，使用 FormAuthoringOwnerV2。</summary>
     Task<Guid> SaveDefAsync(string formKey, string formName, string schemaJson, string? user = null);
 
-    Task<DefinitionDraftDto?> GetDraftAsync(string formKey, bool createIfMissing = true, string? user = null);
+    Task<DefinitionDraftDto?> GetDraftAsync(string formKey, bool createIfMissing = false, string? user = null);
     Task<DefinitionDraftDto> SaveDraftAsync(string formKey, string formName, string schemaJson, byte[]? rowVersion, string? user = null);
     Task<DefinitionPublishResult> PublishAsync(string formKey, byte[]? rowVersion, Guid publishedBy, CancellationToken ct = default);
     Task<IReadOnlyList<DefinitionVersionItem>> ListVersionsAsync(string formKey, CancellationToken ct = default);

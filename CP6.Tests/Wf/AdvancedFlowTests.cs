@@ -43,6 +43,7 @@ public class AdvancedFlowTests
             SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true,
         });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
     }
 
     [Fact]
@@ -225,6 +226,7 @@ public class AdvancedFlowTests
             SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true,
         });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
     }
 
     [Fact]

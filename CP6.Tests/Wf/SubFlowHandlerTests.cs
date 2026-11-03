@@ -25,6 +25,7 @@ public class SubFlowHandlerTests
         SeedDef(db, "child", ChildSchema(ca));
         SeedDef(db, "parent", ParentSchema(pa, "child", varsIn: "{\"result\":\"$.seed\"}"));
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         var pid = await Engine(db).SubmitAsync("parent", starter, "{\"seed\":\"OK\"}");
 
@@ -51,6 +52,7 @@ public class SubFlowHandlerTests
         SeedDef(db, "child", ChildSchema(ca));
         SeedDef(db, "parent", ParentSchema(pa, "child", collectionVar: "items"));
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         var pid = await Engine(db).SubmitAsync("parent", Guid.NewGuid(), "{\"items\":[\"a\",\"b\",\"c\"]}");
 
@@ -73,6 +75,7 @@ public class SubFlowHandlerTests
         SeedDef(db, "child", ChildSchema(ca));
         SeedDef(db, "parent", ParentSchema(pa, "child", collectionVar: "items", varsOut: "{\"r\":\"$.v\"}"));
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         var pid = await Engine(db).SubmitAsync("parent", Guid.NewGuid(), "{\"items\":[]}");
 
@@ -91,6 +94,7 @@ public class SubFlowHandlerTests
         SeedDef(db, "child", ChildSchema(ca));
         SeedDef(db, "parent", ParentSchema(pa, "child", collectionVar: "items", errorEdge: true, errApprover: errU));
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         // 上限 2 的 handler（DI 读 Wfs:SubFlowMaxInstances 的等价注入面），集合给 3 → E-WF-025 错误处置走错边
         var handlers = new INodeHandler[]
@@ -118,6 +122,7 @@ public class SubFlowHandlerTests
         SeedDef(db, "child", ChildSchema(ca));
         SeedDef(db, "parent", ParentSchema(pa, "child", collectionVar: "items"));   // 无错边 → 传播父驳回
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         var pid = await Engine(db).SubmitAsync("parent", Guid.NewGuid(), "{\"items\":\"not-an-array\"}");
 
@@ -138,6 +143,7 @@ public class SubFlowHandlerTests
         for (int i = 8; i >= 0; i--)
             SeedDef(db, $"d{i}", ParentSchema(u, $"d{i + 1}"));
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(
             () => Engine(db).SubmitAsync("d0", Guid.NewGuid(), "{}"));

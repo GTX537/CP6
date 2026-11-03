@@ -26,13 +26,12 @@ public class DesignerServiceTests
     });
 
     [Fact]
-    public async Task Save_Valid_PersistsWithIdentity()
+    public async Task Retired_save_rejects_valid_body_without_creating_identity()
     {
         using var db = NewDb();
-        await Svc(db).SaveAsync(new SaveFlowRequest("leave", "请假流程", "leave", "MSBBPA010", "2887", ValidSchema()), "tester");
-        var def = await db.Wf_FlowDefs.SingleAsync(d => d.FlowKey == "leave");
-        Assert.Equal("MSBBPA010", def.FunctionId);
-        Assert.Equal("2887", def.FlowCode);
+        var error = await Assert.ThrowsAsync<InvalidOperationException>(() => Svc(db).SaveAsync(new SaveFlowRequest("leave", "请假流程", "leave", "MSBBPA010", "2887", ValidSchema()), "tester"));
+        Assert.Equal(LegacyDefinitionWrites.Code, error.Message);
+        Assert.Empty(await db.Wf_FlowDefs.ToArrayAsync());
     }
 
     [Fact]
@@ -40,19 +39,19 @@ public class DesignerServiceTests
     {
         using var db = NewDb();
         var bad = JsonSerializer.Serialize(new FlowSchema { Nodes = { new FlowNode { Id = "a", Type = "approval" } } }); // 无 start/end/策略
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-            () => Svc(db).SaveAsync(new SaveFlowRequest("x", "x", "x", null, null, bad), null));
-        Assert.Equal("E-WF-010", ex.Message);
+        Assert.Contains("E-WF-010", FlowSchemaValidator.Validate(JsonSerializer.Deserialize<FlowSchema>(bad)!));
     }
 
     [Fact]
     public async Task Save_DuplicateFunctionId_ThrowsE009()
     {
         using var db = NewDb();
-        await Svc(db).SaveAsync(new SaveFlowRequest("leave", "请假", "leave", "MSBBPA010", "2887", ValidSchema()), null);
+        await CP6.Tests.Wf.LegacyDefinitionFixture.Flow(db, "leave", "请假", "leave", ValidSchema());
+        var original = await db.Wf_FlowDefs.SingleAsync(); original.FunctionId = "MSBBPA010"; await db.SaveChangesAsync();
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(
             () => Svc(db).SaveAsync(new SaveFlowRequest("expense", "报销", "expense", "MSBBPA010", "2889", ValidSchema()), null));
-        Assert.Equal("E-WF-009", ex.Message);     // FunctionId 撞
+        Assert.Equal(LegacyDefinitionWrites.Code, ex.Message);
+        Assert.Single(await db.Wf_FlowDefs.ToArrayAsync());
     }
 
     [Fact]
@@ -71,23 +70,16 @@ public class DesignerServiceTests
                       new FlowNode { Id = "e", Type = "end" } },
             Edges = { new FlowEdge { From = "s", To = "a" }, new FlowEdge { From = "a", To = "e" } },
         });
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-            () => Svc(db).SaveAsync(new SaveFlowRequest("bad", "x", "x", null, null, badSchema), null));
-        Assert.Equal("E-WF-011", ex.Message);   // 具体码,不是通用 E-WF-010
+        Assert.Contains("E-WF-011", FlowSchemaValidator.Validate(JsonSerializer.Deserialize<FlowSchema>(badSchema)!));
     }
 
     [Fact]
-    public async Task Clone_ProducesIndependentCopy()
+    public async Task Retired_clone_cannot_create_copy_from_current_head()
     {
         using var db = NewDb();
-        await Svc(db).SaveAsync(new SaveFlowRequest("leave", "请假", "leave", "MSBBPA010", "2887", ValidSchema()), null);
-        await Svc(db).CloneAsync(new CloneRequest("leave", "leave_v2", "请假副本"), null);
-
-        var copy = await db.Wf_FlowDefs.SingleAsync(d => d.FlowKey == "leave_v2");
-        Assert.Equal("leave", copy.FormKey);          // 同表单
-        Assert.Null(copy.FunctionId);                 // 身份码清空（避免撞唯一）
-        Assert.Null(copy.FlowCode);
-        Assert.False(copy.Enable);                    // 副本默认停用
-        Assert.Equal(2, await db.Wf_FlowDefs.CountAsync()); // 两条独立定义
+        await CP6.Tests.Wf.LegacyDefinitionFixture.Flow(db, "leave", "请假", "leave", ValidSchema());
+        var error = await Assert.ThrowsAsync<InvalidOperationException>(() => Svc(db).CloneAsync(new CloneRequest("leave", "leave_v2", "请假副本"), null));
+        Assert.Equal(LegacyDefinitionWrites.Code, error.Message);
+        Assert.Equal("leave", (await db.Wf_FlowDefs.SingleAsync()).FlowKey);
     }
 }

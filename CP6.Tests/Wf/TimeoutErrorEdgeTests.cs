@@ -44,6 +44,7 @@ public class TimeoutErrorEdgeTests
             db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "fk", FlowName = "fk", FormKey = "f",
                 SchemaJson = SchemaWithApprovalTimeoutErrorEdge(approver), Version = 1, Enable = true });
             await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
             var eng = WfTestDb.Engine(db);
             instId = await eng.SubmitAsync("fk", approver, "{}");   // 停在 approval "a"，生成 pending 待办
         }
@@ -106,6 +107,7 @@ public class TimeoutErrorEdgeTests
             db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "fk2", FlowName = "fk2", FormKey = "f",
                 SchemaJson = schema, Version = 1, Enable = true });
             await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
             instId = await WfTestDb.Engine(db).SubmitAsync("fk2", approver, "{}");
 
             // 两枚同节点 Pending 待办（各属一 token）；把其一 DueAt 推远 → 本轮扫描只处理另一枚（错峰到期）
@@ -171,6 +173,7 @@ public class TimeoutErrorEdgeTests
             db.Sys_Users.Add(new CP6.Entity.DomainModels.Sys.Sys_User { Id = approver, UserName = "ap", Password = "x", RoleId = 1, Enable = true });
             db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "fk", FlowName = "fk", FormKey = "f", SchemaJson = schema, Version = 1, Enable = true });
             await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
             instId = await WfTestDb.Engine(db).SubmitAsync("fk", approver, "{}");
         }
         using (var db = WfTestDb.Ctx(conn))

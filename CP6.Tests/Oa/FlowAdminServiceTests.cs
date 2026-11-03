@@ -33,19 +33,20 @@ public class FlowAdminServiceTests
         await db.SaveChangesAsync();
 
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => Admin(db).SetEnabledAsync("b", true));
-        Assert.Equal("E-WF-008", ex.Message);   // leave 已有启用流程 a
+        Assert.Equal(CP6.Core.Services.Wf.LegacyDefinitionWrites.Code, ex.Message);
     }
 
     [Fact]
-    public async Task Disable_ThenEnableOther_Ok()
+    public async Task Retired_activation_cannot_disable_or_enable_legacy_head()
     {
         using var db = NewDb();
         db.Wf_FlowDefs.AddRange(Def("a", "leave", true), Def("b", "leave", false));
         await db.SaveChangesAsync();
 
-        await Admin(db).SetEnabledAsync("a", false);   // 先停 a
-        await Admin(db).SetEnabledAsync("b", true);    // 再启 b → 不冲突
-        Assert.True((await db.Wf_FlowDefs.SingleAsync(d => d.FlowKey == "b")).Enable);
+        await Assert.ThrowsAsync<InvalidOperationException>(() => Admin(db).SetEnabledAsync("a", false));
+        await Assert.ThrowsAsync<InvalidOperationException>(() => Admin(db).SetEnabledAsync("b", true));
+        Assert.True((await db.Wf_FlowDefs.SingleAsync(d => d.FlowKey == "a")).Enable);
+        Assert.False((await db.Wf_FlowDefs.SingleAsync(d => d.FlowKey == "b")).Enable);
     }
 
     [Fact]
@@ -53,6 +54,6 @@ public class FlowAdminServiceTests
     {
         using var db = NewDb();
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => Admin(db).SetEnabledAsync("zzz", true));
-        Assert.Equal("E-WF-006", ex.Message);
+        Assert.Equal(CP6.Core.Services.Wf.LegacyDefinitionWrites.Code, ex.Message);
     }
 }

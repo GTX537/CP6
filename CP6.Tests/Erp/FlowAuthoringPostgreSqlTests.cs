@@ -166,8 +166,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         using (var legacy = await host.Send(BoundRequest(cookies, "/api/oa/designer/save", new
         { flowKey = "http-draft", flowName = "bypass", formKey = "", schemaJson = AuthoringSchema })))
         {
-            Assert.Equal(HttpStatusCode.ServiceUnavailable, legacy.StatusCode);
-            Assert.Contains("AUTHORITY_FENCE_UNAVAILABLE", await legacy.Content.ReadAsStringAsync());
+            Assert.Equal(HttpStatusCode.Gone, legacy.StatusCode);
+            Assert.Contains(LegacyDefinitionWrites.Code, await legacy.Content.ReadAsStringAsync());
         }
     }
 

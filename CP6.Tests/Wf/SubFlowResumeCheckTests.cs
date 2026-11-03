@@ -25,6 +25,7 @@ public class SubFlowResumeCheckTests
         SeedDef(db, "child", ChildSchema(ca));
         SeedDef(db, "parent", ParentSchema(pa, "child", collectionVar, policy, varsIn, varsOut, errorEdge));
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
         var eng = Engine(db);
         var pid = await eng.SubmitAsync("parent", Guid.NewGuid(), parentVars);
         var parked = await db.Wf_FlowTokens.SingleAsync(t => t.InstanceId == pid && t.NodeId == "sub" && t.Status == FlowTokenStatus.Active);

@@ -45,6 +45,7 @@ public class ResumeServiceTokenTests
         db.Wf_FlowInstances.Add(inst);
         var tok = eng.SpawnToken(inst, schema.Nodes.First(n => n.Id == "svc"));
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         return (inst, tok);
     }
 

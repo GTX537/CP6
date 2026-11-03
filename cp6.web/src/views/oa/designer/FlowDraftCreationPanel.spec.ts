@@ -47,6 +47,15 @@ it('NOT_OBSERVED does not declare cancellation or generate another intent', asyn
   expect(w.text()).toContain('不能证明未创建'); expect(w.emitted('created')).toBeUndefined()
   expect(button(w, '以原意图重试创建')).toBeDefined()
 })
+it('retired entry stops new writes while keeping the original intent recoverable', async () => {
+  vi.mocked(flowDraftApi.create).mockRejectedValue({ response: { status: 410 } })
+  const w = await setup(); await button(w, '从所选版本创建草稿').trigger('click'); await flushPromises()
+  expect(w.text()).toContain('旧版创建入口已停用'); expect(button(w, '以原意图重试创建')).toBeUndefined()
+  const cmd = vi.mocked(flowDraftApi.create).mock.calls[0]![1]
+  vi.mocked(flowDraftApi.operation).mockResolvedValue({ state: 'SUCCEEDED', result: result(cmd) })
+  await button(w, '查询原创建结果').trigger('click'); await flushPromises()
+  expect(w.emitted('created')).toHaveLength(1); expect(flowDraftApi.create).toHaveBeenCalledTimes(1)
+})
 it('stale head requires an explicit refresh and never silently recreates', async () => {
   vi.mocked(flowDraftApi.create).mockRejectedValue({ response: { status: 412 } })
   const w = await setup(); await button(w, '从所选版本创建草稿').trigger('click'); await flushPromises()

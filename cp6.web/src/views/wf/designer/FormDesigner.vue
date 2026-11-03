@@ -1,17 +1,11 @@
 <template>
-  <FormAuthoringDesignerV2 v-if="authoringOpen && !managedSource" @close="authoringOpen = false" />
+  <DefinitionDesignerEntryV2 v-if="!managedSource" kind="FORM" />
   <div v-else ref="designerRoot" class="form-designer">
     <!-- 工具栏 -->
     <el-card shadow="never" class="toolbar">
       <el-space wrap>
-        <el-button v-if="!managedSource" size="small" data-test="form-authoring" @click="authoringOpen = true">{{ t('表单草稿工作区') }}</el-button>
-        <el-input v-if="!managedSource" v-model="formKey" :placeholder="t('表单标识')" style="width: 160px" size="small" />
-        <el-input v-if="!managedSource" v-model="formName" :placeholder="t('表单名称')" style="width: 160px" size="small" />
-        <el-button v-if="!managedSource" size="small" @click="load">{{ t('加载') }}</el-button>
         <el-button size="small" :disabled="readOnly || !canUndo" @click="undo">{{ t('撤销') }}</el-button>
         <el-button size="small" :disabled="readOnly || !canRedo" @click="redo">{{ t('重做') }}</el-button>
-        <el-button v-if="!managedSource" v-permission="'oa-designer:form-save'" size="small" @click="save">{{ t('保存草稿') }}</el-button>
-        <el-button v-if="!managedSource" v-permission="'oa-designer:form-publish'" type="primary" size="small" @click="publish">{{ t('发布') }}</el-button>
       </el-space>
     </el-card>
 
@@ -174,28 +168,20 @@ import {
   isOptionType,
 } from './controlLibrary'
 import { SchemaHistory } from './schemaHistory'
-import { validateFormSchema } from './designValidate'
-import { formApi } from '@/api/wf/form'
 import { preserveSchema } from '@/views/oa/designer/preserveSchema'
-import { parseStrictJson } from '@/contracts/quality/strictJson'
 import type { FormSchema, FormFieldDef, FormTableColumnDef } from '@/types/wf/wf'
 
 const props = defineProps<{ managedSource?: { schemaJson: string; version: string }; readOnly?: boolean; previewEnabled?: boolean }>()
 const emit = defineEmits<{ schemaChange: [raw: string] }>()
-const FormAuthoringDesignerV2 = defineAsyncComponent(() => import('@/views/oa/designer/FormAuthoringDesignerV2.vue'))
-const authoringOpen = ref(false)
+const DefinitionDesignerEntryV2 = defineAsyncComponent(() => import('@/views/oa/designer/DefinitionDesignerEntryV2.vue'))
 const { t } = useI18n()
 
 /**
  * 表单设计器（OA 章09 §2/§5）。三栏：控件库 / 画布(复用 DynamicForm 预览) / 属性面板。
- * 受控模式由 FORM Owner 工作区加载和保存完整 schema；旧入口保留原 FormService 合同。
+ * 受控模式由 FORM Owner 工作区加载和保存完整 schema；独立入口也采用同一工作区。
  */
-const formKey = ref('')
-const formName = ref('')
 const schema = reactive<FormSchema>(Object.assign(Object.create(null), { fields: [], rules: [] }))
 let originalSchema = '{"fields":[],"rules":[]}'
-const busy = ref(false)
-let loadedKey: string | undefined
 const selectedIdx = ref(-1)
 const previewModel = ref<Record<string, any>>({})
 const designerRoot = ref<HTMLElement>()
@@ -353,86 +339,6 @@ watch(() => props.managedSource, value => {
   history.reset(value.schemaJson); syncHistoryFlags(); selectedIdx.value = -1
 }, { immediate: true })
 
-// ── 加载 / 保存（接运行时 FormDef，章09 §5）──
-const draftRowVersion = ref<string>()
-async function load() {
-  if (props.managedSource || busy.value) return
-  if (!formKey.value.trim()) {
-    ElMessage.warning(t('请输入表单标识'))
-    return
-  }
-  busy.value = true
-  const key = formKey.value.trim()
-  try {
-  const res = await formApi.getDraft(key)
-  if (formKey.value.trim() !== key) return
-  if (!res.data) {
-    ElMessage.info(t('该表单尚未定义'))
-    return
-  }
-  const raw: string = res.data.schemaJson
-  parseStrictJson(raw)
-  const parsed = JSON.parse(raw) as FormSchema
-  if (!parsed || !Array.isArray(parsed.fields) ||
-      parsed.fields.some(f => !f || typeof f !== 'object') ||
-      (parsed.rules !== undefined && !Array.isArray(parsed.rules))) throw new Error('表单结构无效')
-  formName.value = res.data.name || ''
-  draftRowVersion.value = res.data.rowVersion
-  loadedKey = key
-  applySnapshot(parsed, raw)
-  history.reset(raw)
-  syncHistoryFlags()
-  } catch (error) {
-    ElMessage.error(error instanceof Error ? error.message : t('加载失败，已保留当前草稿'))
-  } finally { busy.value = false }
-}
-
-async function save() {
-  if (props.managedSource || busy.value) return
-  const key = formKey.value.trim()
-  if (loadedKey !== undefined && loadedKey !== key) {
-    ElMessage.warning(t('表单标识已改变，请加载目标表单或恢复原标识'))
-    return
-  }
-  if (!formKey.value.trim() || !formName.value.trim()) {
-    ElMessage.warning(t('请填写表单标识与名称'))
-    return
-  }
-  const errors = validateFormSchema(schema)
-  if (errors.length) {
-    ElMessage.error(errors[0])
-    return
-  }
-  busy.value = true
-  try {
-  const schemaJson = preserveSchema(originalSchema, snapshot(), 'name')
-  const res = await formApi.saveDraft(key, {
-    name: formName.value.trim(),
-    schemaJson,
-    rowVersion: draftRowVersion.value,
-  })
-  draftRowVersion.value = res.data.rowVersion
-  loadedKey = key
-  ElMessage.success(t('保存成功'))
-  } catch (error) {
-    ElMessage.error(error instanceof Error ? error.message : t('保存失败，已保留当前草稿'))
-  } finally { busy.value = false }
-}
-async function publish() {
-  if (props.managedSource || busy.value) return
-  if (loadedKey !== formKey.value.trim()) { ElMessage.warning(t('请先加载或保存当前表单')); return }
-  if (!draftRowVersion.value) { ElMessage.warning(t('请先保存草稿')); return }
-  busy.value = true
-  try {
-    await formApi.publish(formKey.value.trim(), draftRowVersion.value)
-    ElMessage.success(t('发布成功'))
-    // Publication is complete even if the following read fails; do not publish twice on read failure.
-    busy.value = false
-    await load()
-  } catch (error) {
-    ElMessage.error(error instanceof Error ? error.message : t('未能确认发布结果，请核对发布版本；当前草稿已保留'))
-  } finally { busy.value = false }
-}
 </script>
 
 <style scoped>

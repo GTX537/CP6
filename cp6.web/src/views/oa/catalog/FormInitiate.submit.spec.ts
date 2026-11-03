@@ -1,103 +1,23 @@
 // @vitest-environment jsdom
 import { flushPromises, mount } from '@vue/test-utils'
-import ElementPlus from 'element-plus'
-import { createI18n } from 'vue-i18n'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, expect, it, vi } from 'vitest'
 import FormInitiate from './FormInitiate.vue'
-
-const mocks = vi.hoisted(() => ({
-  formSubmit: vi.fn(),
-  draftSave: vi.fn(),
-  push: vi.fn(),
-}))
-
-vi.mock('vue-router', async importOriginal => {
-  const actual = await importOriginal<typeof import('vue-router')>()
-  return {
-    ...actual,
-    useRoute: () => ({ query: { formKey: 'expense-form' } }),
-    useRouter: () => ({ push: mocks.push }),
-  }
+const mocks = vi.hoisted(() => ({ query: {} as Record<string, string>, submit: vi.fn(), draft: vi.fn(), definition: vi.fn() }))
+vi.mock('vue-router', () => ({ useRoute: () => ({ query: mocks.query }) }))
+vi.mock('@/api/wf/form', () => ({ formApi: { getDef: mocks.definition, submit: mocks.submit } }))
+vi.mock('@/api/oa/draft', () => ({ draftApi: { create: mocks.draft } }))
+vi.mock('./PersonalFormEditor.vue', () => ({ default: { name: 'PersonalFormEditor', props: ['formKey'], template: '<div class="current-editor">{{ formKey }}</div>' } }))
+beforeEach(() => { vi.clearAllMocks(); mocks.query = { formKey: 'expense-form' } })
+it('an old unpinned link cannot read current head or issue a legacy submit/draft', async () => {
+  const w = mount(FormInitiate, { global: { stubs: { RouterLink: { props: ['to'], template: '<a :href="to"><slot /></a>' } } } })
+  await flushPromises()
+  expect(w.text()).toContain('旧版填单入口已停用'); expect(w.get('a').attributes('href')).toBe('/oa/form-catalog')
+  expect(w.findAll('button')).toHaveLength(0); expect(mocks.definition).not.toHaveBeenCalled()
+  expect(mocks.submit).not.toHaveBeenCalled(); expect(mocks.draft).not.toHaveBeenCalled(); w.unmount()
 })
-
-vi.mock('@/api/oa/flowAdmin', () => ({
-  flowAdminApi: {
-    list: vi.fn().mockResolvedValue({
-      data: [{ formKey: 'expense-form', flowKey: 'expense-approve', enable: true }],
-    }),
-  },
-}))
-
-vi.mock('@/api/wf/form', () => ({
-  formApi: {
-    getDef: vi.fn().mockResolvedValue({ data: { schemaJson: '{"fields":[]}' } }),
-    submit: mocks.formSubmit,
-  },
-}))
-
-vi.mock('@/api/oa/draft', () => ({
-  draftApi: { create: mocks.draftSave },
-}))
-
-vi.mock('@/api/oa/forecast', () => ({
-  forecastApi: { preview: vi.fn() },
-}))
-
-describe('FormInitiate submit permissions', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-    mocks.formSubmit.mockResolvedValue({ data: { instanceId: 'instance-1' } })
-    mocks.draftSave.mockResolvedValue({ data: { id: 'draft-1' } })
-  })
-
-  it('submits directly with the submit permission instead of requiring draft add', async () => {
-    const wrapper = mount(FormInitiate, {
-      global: {
-        plugins: [
-          ElementPlus,
-          createI18n({ legacy: false, locale: 'zh-CN', missingWarn: false, fallbackWarn: false }),
-        ],
-        directives: { permission: {} },
-        stubs: {
-          DynamicForm: true,
-          FlowTimeline: true,
-          CpEmpty: true,
-        },
-      },
-    })
-    await flushPromises()
-
-    const submit = wrapper.findAll('button').find(button => button.text().includes('oa.initiate.submit'))
-    expect(submit).toBeDefined()
-    await submit!.trigger('click')
-    await flushPromises()
-
-    expect(mocks.formSubmit).toHaveBeenCalledTimes(1)
-    const call = mocks.formSubmit.mock.calls[0]!
-    expect(call[0]).toBe('expense-form')
-    expect(call[1]).toEqual({})
-    expect(call[2]).toEqual(expect.any(String))
-    expect(mocks.draftSave).not.toHaveBeenCalled()
-    expect(mocks.push).toHaveBeenCalledWith('/oa/inbox')
-  })
-
-  it('saves a standalone SFS draft by formKey without a flowKey', async () => {
-    const wrapper = mount(FormInitiate, {
-      global: {
-        plugins: [
-          ElementPlus,
-          createI18n({ legacy: false, locale: 'zh-CN', missingWarn: false, fallbackWarn: false }),
-        ],
-        directives: { permission: {} },
-        stubs: { DynamicForm: true, FlowTimeline: true, CpEmpty: true },
-      },
-    })
-    await flushPromises()
-
-    const save = wrapper.findAll('button').find(button => button.text().includes('oa.initiate.saveDraft'))
-    await save!.trigger('click')
-    await flushPromises()
-
-    expect(mocks.draftSave).toHaveBeenCalledWith('expense-form', {})
-  })
+it('explicit current catalog navigation retains the native editor and exact selected key', async () => {
+  mocks.query.definition = 'published'
+  const w = mount(FormInitiate); await flushPromises()
+  expect(w.get('.current-editor').text()).toBe('expense-form'); expect(w.find('.legacy-form-retired').exists()).toBe(false)
+  expect(mocks.definition).not.toHaveBeenCalled(); expect(mocks.submit).not.toHaveBeenCalled(); expect(mocks.draft).not.toHaveBeenCalled(); w.unmount()
 })

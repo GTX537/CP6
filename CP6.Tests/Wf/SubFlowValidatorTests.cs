@@ -149,7 +149,7 @@ public class SubFlowValidatorTests
     // ── DesignerService 接线 ──
 
     [Fact]
-    public async Task DesignerSave_SubFlowGhostTarget_Throws_E_WF_025()
+    public async Task Retired_designer_cannot_save_an_unresolved_subflow()
     {
         using var db = NewDb();
         await db.SaveChangesAsync();
@@ -157,6 +157,6 @@ public class SubFlowValidatorTests
             Array.Empty<IServiceTaskExecutor>(), Array.Empty<IWfConnector>());
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => svc.SaveAsync(
             new SaveFlowRequest("me", "me", "f", null, null, JsonSerializer.Serialize(RefSchema("ghost"))), "u"));
-        Assert.Contains("E-WF-025", ex.Message);
+        Assert.Equal(LegacyDefinitionWrites.Code, ex.Message);
     }
 }

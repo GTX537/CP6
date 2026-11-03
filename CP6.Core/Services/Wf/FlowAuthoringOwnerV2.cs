@@ -130,6 +130,10 @@ public sealed partial class FlowAuthoringOwnerV2
             if (!policy.Enabled || policy.Profile != "DIRECT_AUTHORING_V1") throw Error("AUTHORING_POLICY_DISABLED", 403);
             if (policy.ForbiddenRoles.Intersect(actor.RoleIds).Any()) throw Error("AUTHORING_SOD_FORBIDDEN", 403);
         }
+        return await FieldAccess(write, ct);
+    }
+    private async Task<FieldPermissionDecisionV1> FieldAccess(bool write, CancellationToken ct)
+    {
         var source = await new CurrentFieldPermissionSourceReaderV1(db, http, catalog).ReadAsync(Resource, ct);
         if (!source.Fields.Order().SequenceEqual(Fields.Order())) throw Error("FIELD_CATALOG_UNAVAILABLE");
         var uses = new[] { FieldPermissionUseV1.Read, FieldPermissionUseV1.Write };
@@ -215,6 +219,10 @@ public sealed partial class FlowAuthoringOwnerV2
         { throw Error("COMMAND_SHAPE_INVALID", 400); }
     }
     private DefinitionDiagnosticV2[] ValidateSchema(string key, string schemaJson, CancellationToken ct)
+        => ValidateDraftSchema(schemaJson, executors, connectors, ct);
+
+    internal static DefinitionDiagnosticV2[] ValidateDraftSchema(string schemaJson,
+        IEnumerable<IServiceTaskExecutor> executors, IEnumerable<IWfConnector> connectors, CancellationToken ct = default)
     {
         ct.ThrowIfCancellationRequested();
         try

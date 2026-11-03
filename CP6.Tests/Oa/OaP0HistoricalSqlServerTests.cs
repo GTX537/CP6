@@ -43,15 +43,15 @@ public sealed class OaP0HistoricalSqlServerTests
         var v2Approver = Guid.NewGuid();
         var definitions = new FlowDefService(db);
 
-        var v1Draft = await definitions.SaveDraftAsync(
+        var v1Draft = await CP6.Tests.Wf.LegacyDefinitionFixture.FlowDraft(db,
             flowKey, "OA P0 pin v1", null, Schema(v1Approver), null, "oa-p0-pin-drill");
-        var v1 = await definitions.PublishAsync(flowKey, v1Draft.RowVersion, Guid.NewGuid());
+        var v1 = await CP6.Tests.Wf.LegacyDefinitionFixture.FlowPublished(db, flowKey, v1Draft.RowVersion, Guid.NewGuid());
         var engine = new FlowEngine(db, new ApproverResolver(db));
         var v1InstanceId = await engine.SubmitAsync(flowKey, Guid.NewGuid(), "{}");
 
-        var v2Draft = await definitions.SaveDraftAsync(
+        var v2Draft = await CP6.Tests.Wf.LegacyDefinitionFixture.FlowDraft(db,
             flowKey, "OA P0 pin v2", null, Schema(v2Approver), null, "oa-p0-pin-drill");
-        var v2 = await definitions.PublishAsync(flowKey, v2Draft.RowVersion, Guid.NewGuid());
+        var v2 = await CP6.Tests.Wf.LegacyDefinitionFixture.FlowPublished(db, flowKey, v2Draft.RowVersion, Guid.NewGuid());
         var v2InstanceId = await engine.SubmitAsync(flowKey, Guid.NewGuid(), "{}");
 
         var v1Instance = await db.Wf_FlowInstances.SingleAsync(x => x.Id == v1InstanceId);

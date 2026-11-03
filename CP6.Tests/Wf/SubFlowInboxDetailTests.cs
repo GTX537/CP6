@@ -25,6 +25,7 @@ public class SubFlowInboxDetailTests
         SeedDef(db, "child", ChildSchema(ca));
         SeedDef(db, "parent", ParentSchema(pa, "child", collectionVar: "items"));
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
         var starter = Guid.NewGuid();
         var pid = await Engine(db).SubmitAsync("parent", starter, "{\"items\":[1,2]}");
         var kids = await db.Wf_FlowInstances.Where(i => i.ParentInstanceId == pid).OrderBy(i => i.SubIndex).ToListAsync();
@@ -53,6 +54,7 @@ public class SubFlowInboxDetailTests
         Guid ca = Guid.NewGuid();
         SeedDef(db, "plain", ChildSchema(ca));
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
         var starter = Guid.NewGuid();
         var id = await Engine(db).SubmitAsync("plain", starter, "{}");
         var svc = Inbox(db);
@@ -70,6 +72,7 @@ public class SubFlowInboxDetailTests
         SeedDef(db, "child", ChildSchema(childApprover));
         SeedDef(db, "parent", ParentSchema(parentApprover, "child"));
         await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
         var parentId = await Engine(db).SubmitAsync("parent", Guid.NewGuid(), "{}");
         var child = await db.Wf_FlowInstances.SingleAsync(x => x.ParentInstanceId == parentId);
         child.StarterId = Guid.NewGuid();

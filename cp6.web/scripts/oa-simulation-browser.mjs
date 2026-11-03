@@ -24,7 +24,7 @@ try {
   await page.locator('input[autocomplete="current-password"]').fill('Price1!Password')
   await page.locator('.login-button').click(); await page.waitForURL(url => !url.pathname.startsWith('/login'))
   steps.push('actual cookie login')
-  await page.goto(origin + '/oa/designer/window'); await page.getByRole('button', { name: '新草稿工作区', exact: true }).click()
+  await page.goto(origin + '/oa/designer/window')
   const designer = page.getByRole('region', { name: '流程草稿工作区' })
   await designer.locator('.workbench > aside').getByRole('button', { name: 'Browser simulation', exact: true }).click()
   const panel = designer.getByRole('region', { name: '流程预演' })

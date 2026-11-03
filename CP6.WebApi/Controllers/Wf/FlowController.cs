@@ -39,24 +39,8 @@ public class FlowController : LocalizedControllerBase
 
     // ── 流程定义 ──
 
-    [HttpPost("flow/def")]
-    [RequirePermission("oa-designer", "edit")]
-    public async Task<IActionResult> SaveDef([FromBody] FlowDefReq r)
-    {
-        try
-        {
-            var draft = await _defSvc.SaveDraftAsync(r.FlowKey, r.FlowName, r.FormKey, r.SchemaJson, r.RowVersion, CurrentUser);
-            return Ok2(new { id = draft.DefinitionId, versionId = draft.VersionId, status = "draft", draft.RowVersion });
-        }
-        catch (InvalidOperationException e) { return e.Message is "DRAFT_REQUIRED" or "E-WF-045" ? Conflict(new { code = e.Message, message = e.Message }) : Err(e); }
-    }
-
-    [HttpGet("flow/def/{flowKey}")]
-    public async Task<IActionResult> GetDef(string flowKey)
-    {
-        var def = await _defSvc.GetDefAsync(flowKey);
-        return def is null ? NotFound(new { code = 404, message = Localizer["流程定义不存在"] }) : Ok2(def);
-    }
+    [HttpPost("flow/def"), HttpGet("flow/def/{key}")]
+    public IActionResult DefinitionRetired() => CP6.WebApi.Controllers.Oa.LegacyDefinitionResult.Gone();
 
     // ── 起流程 / 办理 ──
 

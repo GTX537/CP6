@@ -55,6 +55,7 @@ public class BranchPruneTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "pr", FlowName = "pr", FormKey = "f",
             SchemaJson = JsonSerializer.Serialize(ForkSchema(ua, ub, obr)), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
     }
 
     [Fact]
@@ -178,6 +179,7 @@ public class BranchPruneTests
         db.Wf_FlowDefs.Add(new Wf_FlowDef { Id = Guid.NewGuid(), FlowKey = "lin", FlowName = "lin", FormKey = "f",
             SchemaJson = JsonSerializer.Serialize(schema), Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         await Engine(db).SubmitAsync("lin", Guid.NewGuid(), "{}");
 
         var ta = await db.Wf_FlowTasks.SingleAsync(t => t.Status == FlowTaskStatus.Pending);

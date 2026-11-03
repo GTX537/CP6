@@ -32,6 +32,7 @@ public class ReadModelHookTests
             Version = 1, Enable = true,
         });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
     }
 
     [Fact]
@@ -85,6 +86,7 @@ public class ReadModelHookTests
             Version = 1, Enable = true,
         });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
     }
 
     [Fact]
@@ -132,6 +134,7 @@ public class ReadModelHookTests
             Version = 1, Enable = true,
         });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
     }
 
     [Fact]
@@ -225,6 +228,7 @@ public class ReadModelHookTests
                 Edges = { new FlowEdge { From = "n1", To = "end" } } }),
             Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         await Engine(db).SubmitAsync("leave", Guid.NewGuid(), "{}");
 
@@ -246,6 +250,7 @@ public class ReadModelHookTests
                 Edges = { new FlowEdge { From = "n1", To = "end", CcUsers = new() { pathCc } } } }),
             Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
 
         await Engine(db).SubmitAsync("pathcc", Guid.NewGuid(), "{}");
 

@@ -27,6 +27,7 @@ public class ActAsServiceTests
                 Edges = { new FlowEdge { From = "n1", To = "end" } } }),
             Version = 1, Enable = true });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         await Engine(db).SubmitAsync("leave", starter, "{}");
         return (await db.Wf_FlowTasks.Where(t => t.Status == FlowTaskStatus.Pending).Select(t => t.Id).SingleAsync());
     }

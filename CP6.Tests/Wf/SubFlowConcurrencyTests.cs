@@ -22,6 +22,7 @@ public class SubFlowConcurrencyTests
             SeedDef(db, "parent", ParentSchema(pa, "child", collectionVar: "items", policy: policy,
                 varsIn: varsIn, varsOut: varsOut));
             await db.SaveChangesAsync();
+        await LegacyDefinitionFixture.ArrangePublishedHistory(db);
         }
         using (var db = Ctx(conn))
         {

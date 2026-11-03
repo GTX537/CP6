@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 // E-T2：属性面板「子流程配置」段（subFlow 专属）。
-// 契约：目标流程下拉懒加载 designerApi.list() 过滤 enable && flowKey!==当前；父→子/子→父映射编辑；
+// 契约：目标流程下拉读取当前 Owner 列表，过滤 enabled 且非当前流程；父→子/子→父映射编辑；
 //       多实例开关 subMulti = backing ref（防「纯 computed 版鸡生蛋」——开启即 collectionVar='' → getter 弹回 false，
 //       同波⑤ timerActionKind 终审教训 631f0e2）；关闭多实例须清 collectionVar+policy（防静默残留配置）。
 import { describe, it, expect, vi, beforeEach } from 'vitest'
@@ -10,18 +10,13 @@ import ElementPlus from 'element-plus'
 import { nextTick } from 'vue'
 import type { SchemaNode } from './designerModel'
 
-vi.mock('@/api/oa/designer', () => ({
-  designerApi: {
-    getServiceCatalog: vi.fn().mockResolvedValue({ actions: [], connectors: [] }),
-    // 已发布流程目录：含自身(self)、停用(disabled)、合法(childA/childB)
-    list: vi.fn().mockResolvedValue([
-      { flowKey: 'self',   flowName: '当前流程', formKey: 'f', version: 1, enable: true },
-      { flowKey: 'disabled', flowName: '停用流程', formKey: 'f', version: 1, enable: false },
-      { flowKey: 'childA', flowName: '子流程A', formKey: 'f', version: 1, enable: true },
-      { flowKey: 'childB', flowName: '子流程B', formKey: 'f', version: 1, enable: true },
-    ]),
-  },
-}))
+vi.mock('@/api/oa/designer', () => ({ designerApi: { getServiceCatalog: vi.fn().mockResolvedValue({ actions: [], connectors: [] }) } }))
+vi.mock('@/api/oa/flowAuthoring', () => ({ flowAuthoringApi: { list: vi.fn().mockResolvedValue([
+  { key: 'self', fields: { Name: '当前流程' }, enabled: true },
+  { key: 'disabled', fields: { Name: '停用流程' }, enabled: false },
+  { key: 'childA', fields: { Name: '子流程A' }, enabled: true },
+  { key: 'childB', fields: { Name: '子流程B' }, enabled: true },
+]) } }))
 
 import NodePropertyPanel from './NodePropertyPanel.vue'
 

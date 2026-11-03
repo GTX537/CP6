@@ -107,6 +107,7 @@ public class FlowConcurrencyTests
             SchemaJson = JsonSerializer.Serialize(ForkSchema(ua, ub)), Version = 1, Enable = true,
         });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         await Engine(db).SubmitAsync("p", Guid.NewGuid(), "{}");
         return (ua, ub);
     }
@@ -193,6 +194,7 @@ public class FlowConcurrencyTests
             SchemaJson = JsonSerializer.Serialize(AllSignSchema(roleId)), Version = 1, Enable = true,
         });
         await db.SaveChangesAsync();
+        await CP6.Tests.Wf.LegacyDefinitionFixture.ArrangePublishedHistory(db);
         await Engine(db).SubmitAsync("cs", Guid.NewGuid(), "{}");
         return (u1, u2);
     }
