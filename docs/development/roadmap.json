@@ -161892,6 +161892,11 @@
       "date": "2026-11-03",
       "change": "W290：统一任务动作上下文与服务端SFS/APP分型、APP accepted原命令五字段与同事务WFC alias、真实APP办理页及未知结果恢复已闭环。",
       "evidence": "docs/development/evidence/W290-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-03",
+      "change": "W291按原卡逐项核销WP12-08任务办理：SFS三版本/APP双版本、服务器实际分型、当前双身份与SOD、轮次计票、原命令/TxD、稳定TaskId及CC拒绝审批均有实际证据；正式整卡前置WP12-04/10尚未核销，保持PLANNED。 原375仍28DONE/2IN_PROGRESS/345PLANNED；原59局部4闭环/55余项。125完整业务目标0关闭、247正式运行验收NOT_RUN保持；其他OA卡与部署状态不连带完成。",
+      "evidence": "docs/development/evidence/W291-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -174506,6 +174511,18 @@
           "source": "5cde29b1653f84e344211c03a258e00f2fd9ca2a",
           "remote_target": "782ec746f78031059ec50b4987a48e325427f202",
           "pr": "https://github.com/GTX537/CP6/pull/697"
+        }
+      },
+      "wave290_task_audit_adoption": {
+        "status": "CLOSED",
+        "report": "docs/development/evidence/W290-01/DELIVERY.md",
+        "scope": "Actual SFS/APP original result, actor/grant evidence, vote/terminal and audit/outbox in owning transaction. WP12-08 direct foundation only; not global audit retention.",
+        "full_task_complete": false,
+        "main_delivery": {
+          "repository": "CP6",
+          "source": "9111bbd99f678d09f5ef7860d50bd16e5592ed1d",
+          "remote_target": "5b5c900251a5065e0ce174c0e33cecfa7fdba9a1",
+          "pr": "https://github.com/GTX537/CP6/pull/731"
         }
       }
     },
@@ -198128,18 +198145,19 @@
         }
       },
       "scope_reconciliation": {
-        "classification": "明确实现余项",
+        "classification": "FORMAL_PREREQUISITES_REMAIN",
         "delivered": " W289：SFS待办已采用字段补丁与任务/实例/表单数据三版本，固定节点与当前IAM/委派权限相交，表单/运行变量/决定/历史/文件绑定/原结果同事务；真实编辑页面、选项与附件及未知结果恢复闭环。 W290：统一任务动作上下文与服务端SFS/APP分型、APP accepted原命令五字段与同事务WFC alias、真实APP办理页及未知结果恢复已闭环。",
         "evidence_refs": [
           "docs/development/evidence/W289-01/DELIVERY.md",
-          "docs/development/evidence/W290-01/DELIVERY.md"
+          "docs/development/evidence/W290-01/DELIVERY.md",
+          "docs/development/evidence/W291-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
-        "window": "W290-01",
+        "window": "W291-01",
         "as_of": "2026-11-03",
-        "report": "docs/development/evidence/W290-01/DELIVERY.md",
+        "report": "docs/development/evidence/W291-01/DELIVERY.md",
         "new_product_validation": true,
-        "remaining": "原375仍28DONE/2IN_PROGRESS/345PLANNED；原59局部4闭环/55余项，125完整目标与247正式验收状态不变。WP12-08仍需原卡逐项核证，不由本项自动关整卡；独立BUG730待修复并实际复现回归。"
+        "remaining": "原定义WP12-04与WP12-10为整卡前置，仍PLANNED；先分别核销提供者原卡，不能以未定义局部采用绕过台账。"
       },
       "wave290_unified_action": {
         "status": "IMPLEMENTED_VALIDATED_REMOTE_ADOPTED",
@@ -198148,6 +198166,13 @@
         "remaining": "原375仍28DONE/2IN_PROGRESS/345PLANNED；原59局部4闭环/55余项，125完整目标与247正式验收状态不变。WP12-08仍需原卡逐项核证，不由本项自动关整卡；独立BUG730待修复并实际复现回归。",
         "full_task_completed": false,
         "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave290-final-verification.json"
+      },
+      "wave291_card_evidence_audit": {
+        "status": "PRODUCT_SCOPE_EVIDENCED_FORMAL_DEPENDENCIES_OPEN",
+        "report": "docs/development/evidence/W291-01/DELIVERY.md",
+        "full_task_completed": false,
+        "validation": "本轮新执行2项实际Main HTTP/隔离PostgreSQL18 CC拒绝审批：SFS和APP仅抄送用户具有菜单approve仍不可获取办理上下文或借他人任务提交；任务与投票/命令无变化。其他卡内行为复用W274–W290已采用的准确有效证据，BUG730评论容量修复证据另引用；未重跑产品全套。",
+        "remaining": "原定义WP12-04与WP12-10为整卡前置，仍PLANNED；先分别核销提供者原卡，不能以未定义局部采用绕过台账。"
       }
     },
     {
@@ -202251,7 +202276,7 @@
       "path": "docs/development/dispatch/20261103-wave291/README.md",
       "baseline_sha": "27ec7cbeebd639486e8f647ffbfd45640816c62a",
       "registered_at": "2026-11-03T13:26:27.659262+00:00",
-      "phase": "IMPLEMENTING",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -202277,30 +202302,44 @@
           "title": "原任务办理卡逐项证据核销",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_RECONCILIATION",
-          "phase": "IMPLEMENTING",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w291-01",
           "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
             "Main:oa-task"
-          ]
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W291-01/DELIVERY.md",
+          "validation": "本轮新执行2项实际Main HTTP/隔离PostgreSQL18 CC拒绝审批：SFS和APP仅抄送用户具有菜单approve仍不可获取办理上下文或借他人任务提交；任务与投票/命令无变化。其他卡内行为复用W274–W290已采用的准确有效证据，BUG730评论容量修复证据另引用；未重跑产品全套。",
+          "lifecycle_snapshot": {
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave291-final-verification.json",
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false
+          }
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "原WP12-08逐项核对统一动作上下文/真实版本、服务端SFS与APP封闭输入、原职责和实际Actor/委派/SOD、token/node/stage/round计票、并发单一决定/原命令回放、新轮不复用旧票、稳定TaskId和CC拒绝审批；核直接前置实际采用与当前适用证据。仅缺失的实际边界补定向验证；充分才关整卡，不复跑已有效证据。"
+      "next_action": "正常远端采用/准确清理/finish后，继续原卡真实余项，24h目标持续。",
+      "lifecycle_snapshot": {
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave291-final-verification.json",
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_seat_released": false
+      }
     },
     "wave_history": [
       {
@@ -239724,7 +239763,7 @@
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 80032,
+      "effective_seconds_recorded": 80533,
       "next_reestimate_at_effective_seconds": 86400,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
@@ -240714,10 +240753,18 @@
             0.75
           ],
           "estimate_confidence": "LOW",
-          "state": "IN_PROGRESS",
+          "state": "VERIFYING",
           "started_at": "2026-11-03T13:26:27.659262+00:00",
           "scope_refinement": "原WP12-08逐项核对统一动作上下文/真实版本、服务端SFS与APP封闭输入、原职责和实际Actor/委派/SOD、token/node/stage/round计票、并发单一决定/原命令回放、新轮不复用旧票、稳定TaskId和CC拒绝审批；核直接前置实际采用与当前适用证据。仅缺失的实际边界补定向验证；充分才关整卡，不复跑已有效证据。",
-          "reason": "统一入口与三版本已交付，核清原卡真实剩余；先补实际缺口，不以窗口数量当原卡完成"
+          "reason": "统一入口与三版本已交付，核清原卡真实剩余；先补实际缺口，不以窗口数量当原卡完成",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W291-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave291-final-verification.json",
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false
+          }
         }
       ],
       "reestimates": [
@@ -241150,7 +241197,7 @@
           "unchanged": "Single chat;PostgreSQL;simulated business data;affected local checks and one task review;no Actions,production,existing database migration. Original37528DONE/2IN_PROGRESS/345PLANNED;59partial4closed/55remaining;125/247 unchanged."
         }
       ],
-      "timing_snapshot_at": "2026-11-03T13:26:27.659262+00:00",
+      "timing_snapshot_at": "2026-11-03T13:34:48.539110+00:00",
       "remaining_estimate_hours": [
         1.5,
         3

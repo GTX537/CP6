@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 2026-11-03：WP12-08范围核对，正式前置继续
+
+W291按原卡逐项核销WP12-08任务办理：SFS三版本/APP双版本、服务器实际分型、当前双身份与SOD、轮次计票、原命令/TxD、稳定TaskId及CC拒绝审批均有实际证据；正式整卡前置WP12-04/10尚未核销，保持PLANNED。 [报告](../development/evidence/W291-01/DELIVERY.md)。
+
+原375仍28DONE/2IN_PROGRESS/345PLANNED；原59局部4闭环/55余项。125完整业务目标0关闭、247正式运行验收NOT_RUN保持；其他OA卡与部署状态不连带完成。 本轮补2项真实CC HTTP权限边界，其他证据复用原执行；分支/工作区/席位按wave291-final-verification.json最终核销。
+
 ## 2026-11-03：SFS意见完整保存 / BUG #730
 
 SFS意见按Unicode字符计数，1000个补充字符不截断，1001保留全文并禁提交；三张工作流运行记录的PostgreSQL容量同步为1000个字符，保留尾空格。 [修复与证据](../development/evidence/BUG-730/DELIVERY.md)。
