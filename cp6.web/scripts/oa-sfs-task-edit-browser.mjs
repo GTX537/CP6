@@ -47,7 +47,7 @@ try {
   const download = page.waitForEvent('download'); await attachment.getByRole('button', { name: '下载原件', exact: true }).click(); expect((await download).suggestedFilename()).toBe('approval-original.txt')
   await task.locator('textarea').fill('Actual edited SFS decision with original recovery')
   let lostCommand
-  await page.route('**/api/oa/v2/personal-forms/tasks/' + taskId + '/decisions', async route => {
+  await page.route('**/api/oa/v2/tasks/' + taskId + '/decisions', async route => {
     if (lostCommand || route.request().method() !== 'POST') return route.continue()
     const raw = route.request().postData(); expect(raw).toContain('12345678901234567890.0001'); expect(raw).toContain('9007199254740993.01')
     const command = route.request().postDataJSON(); lostCommand = command.commandId

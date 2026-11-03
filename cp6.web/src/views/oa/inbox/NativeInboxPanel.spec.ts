@@ -8,6 +8,7 @@ import { getActingAs } from '@/stores/oaActingAs'
 import Panel from './NativeInboxPanel.vue'
 vi.mock('vue-router', () => ({ useRoute: () => ({ query: {} }) }))
 vi.mock('./PersonalTaskPanel.vue', () => ({ default: { template: '<div />' } }))
+vi.mock('./AppTaskPanel.vue', () => ({ default: { template: '<div class="app-review" />' } }))
 vi.mock('../catalog/PersonalFormFields.vue', () => ({ default: { props: ['fields', 'modelValue', 'mask', 'disabled'], template: '<div />' } }))
 vi.mock('@/api/oa/nativeInbox', () => ({ nativeInboxApi: { list: vi.fn(), detail: vi.fn(), read: vi.fn(), original: vi.fn(), close: vi.fn() } }))
 vi.mock('@/api/oa/taskDelegation', () => ({ taskDelegationApi: { received: vi.fn() } }))
@@ -65,4 +66,9 @@ it('clears parent read data when the decision component reports current denial w
   const w = await setup(); await state(w).open('one'); state(w).selectedTask = 'task'; await flushPromises()
   state(w).taskPrivateClear(); await flushPromises()
   expect(state(w).detail).toBeUndefined(); expect(state(w).rows).toBeUndefined(); expect(state(w).selectedTask).toBe('task')
+})
+it('opens the APP decision panel from the server context kind and retains the correct recovery panel on denial', async () => {
+  const w = await setup(); await state(w).open('one'); state(w).selectedTaskKind = 'APP'; state(w).selectedTask = 'app-task'; await flushPromises()
+  expect(w.find('.app-review').exists()).toBe(true); state(w).taskPrivateClear(); await flushPromises()
+  expect(w.find('.app-review').exists()).toBe(true); expect(state(w).selectedTask).toBe('app-task'); expect(state(w).detail).toBeUndefined()
 })

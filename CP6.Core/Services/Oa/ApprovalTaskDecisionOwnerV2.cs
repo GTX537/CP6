@@ -30,7 +30,7 @@ public sealed partial class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuth
     private ApprovalBusinessEvidenceV2 Business=>businesses??new(tool);
     private static ScopeAuthorizationExceptionV1 Error(string code, int status = 503) => new(code, status);
     private sealed record Source(byte[] Payload, string Ack, string Publication, Guid Root);
-    private sealed record Command(Guid Actor, Guid Task, string Digest, string Result);
+    private sealed record Command(Guid Actor, Guid Task, string Digest, string Result,string? WfcDigest);
     private sealed record StoredVote(string Body);
     private static T Parse<T>(string text) => JsonSerializer.Deserialize<T>(text, ApprovalBindingOwnerV2.Json)!;
     private static string Json(object value) => Encoding.UTF8.GetString(ApprovalCanonicalV2.Bytes(value));
@@ -67,7 +67,7 @@ public sealed partial class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuth
     }
     private Task<Command?> Original(Guid id, CancellationToken ct)
         => db.Database.SqlQuery<Command>($"""
-            SELECT actor_id AS "Actor",task_id AS "Task",request_digest AS "Digest",result_json AS "Result"
+            SELECT actor_id AS "Actor",task_id AS "Task",request_digest AS "Digest",result_json AS "Result",wfc_digest AS "WfcDigest"
             FROM cp6_approval_decision_v2.commands WHERE tenant_id={db.CurrentTenantId} AND environment_id={scope.EnvironmentId} AND id={id} AND completed
             """).SingleOrDefaultAsync(ct);
     private async Task<ApprovalTaskDecisionResultV2> Disclose(Command command, Guid actor, CancellationToken ct)
@@ -107,8 +107,11 @@ public sealed partial class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuth
         catch (Exception e) when (e is FormatException or ArgumentNullException or EncoderFallbackException)
         { throw Error("DECISION_INPUT_INVALID", 422); }
     }
-    public async Task<ApprovalTaskDecisionResultV2> DecideAsync(Guid task, ApprovalTaskDecisionInputV2 input,
+    public Task<ApprovalTaskDecisionResultV2> DecideAsync(Guid task, ApprovalTaskDecisionInputV2 input,
         Guid? behalf = null, string? ifMatch = null, CancellationToken ct = default)
+        =>DecideCore(task,input,behalf,ifMatch,null,ct);
+    private async Task<ApprovalTaskDecisionResultV2> DecideCore(Guid task,ApprovalTaskDecisionInputV2 input,
+        Guid? behalf,string? ifMatch,WfcAlias? alias,CancellationToken ct)
     {
         Entry(); Input(input);
         var request = Json(new { profile = "oa.app.task-command/2.0", taskId = task, onBehalfOf = behalf, input });
@@ -123,12 +126,13 @@ public sealed partial class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuth
             {
                 var originalResult = await Disclose(originalCommand, actor, ct);
                 if (originalCommand.Digest != digest) throw Error("COMMAND_PAYLOAD_CONFLICT", 409);
+                if(alias!=null&&originalCommand.WfcDigest is {} wfc&&wfc!=alias.Digest)throw Error("COMMAND_BODY_CONFLICT",409);
                 await scope.ValidateAsync(fence, ct); await tx.CommitAsync(ct); return originalResult;
             }
             if (string.IsNullOrEmpty(ifMatch)) throw Error("PRECONDITION_REQUIRED", 428);
             if (ifMatch != "\"" + input.TaskRowVersion + "\"") throw Error("PRECONDITION_FAILED", 412);
             var source = await ReadSource(task, ct); var original = ApprovalSubmissionWireV2.Parse(source.Payload).Value;
-            if(original.Subject.BusinessOwner is "Main.Plm.ControlledDocument.v1" or "Main.Plm.RequirementSet.v1" or "Main.Plm.EngineeringIteration.v1" or "Main.Wms.LocationRuleProposal.v1" && string.IsNullOrWhiteSpace(input.Comment))
+            if(RequiredReviewComment(original) && string.IsNullOrWhiteSpace(input.Comment))
                 throw Error("DOCUMENT_REVIEW_COMMENT_REQUIRED",422);
             var publication = Parse<FlowPublicationV2>(source.Publication); var ack = Parse<ApprovalSubmissionAckV2>(source.Ack);
             var lease = await authority.AcquireAsync(task, behalf, ct,input.Decision=="approve"?"TASK_APPROVE":"TASK_REJECT");
@@ -136,8 +140,8 @@ public sealed partial class ApprovalTaskDecisionOwnerV2(CP6Context db, ScopeAuth
             if (view.TaskRowVersion != input.TaskRowVersion || view.InstanceRowVersion != input.InstanceRowVersion)
                 throw Error("PRECONDITION_FAILED", 412);
             await db.Database.ExecuteSqlInterpolatedAsync($"""
-                INSERT INTO cp6_approval_decision_v2.commands(tenant_id,environment_id,id,instance_id,task_id,actor_id,request_body,request_digest)
-                VALUES({db.CurrentTenantId},{scope.EnvironmentId},{input.CommandId},{view.InstanceId},{task},{actor},{request},{digest})
+                INSERT INTO cp6_approval_decision_v2.commands(tenant_id,environment_id,id,instance_id,task_id,actor_id,request_body,request_digest,wfc_raw_body,wfc_digest)
+                VALUES({db.CurrentTenantId},{scope.EnvironmentId},{input.CommandId},{view.InstanceId},{task},{actor},{request},{digest},{(alias==null?null:alias.Raw)},{(alias==null?null:alias.Digest)})
                 """, ct);
             await db.Database.ExecuteSqlInterpolatedAsync($"""
                 SELECT 1 FROM public."Wf_FlowInstance" WHERE "Id" IN(SELECT instance_id FROM cp6_approval_runtime_v2.instances WHERE root_instance_id={source.Root}) AND "TenantId"={db.CurrentTenantId} ORDER BY "Id" FOR UPDATE;

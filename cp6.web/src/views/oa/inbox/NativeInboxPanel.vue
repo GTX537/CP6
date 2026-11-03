@@ -8,6 +8,7 @@ import { nativeInboxApi as api, type InboxKind, type NativeDetail, type NativeIn
 import { formObject, readFormJson, schemaFields } from '../catalog/personalFormJson'
 import PersonalFormFields from '../catalog/PersonalFormFields.vue'
 import PersonalTaskPanel from './PersonalTaskPanel.vue'
+import AppTaskPanel from './AppTaskPanel.vue'
 import NativeTaskOperations from './NativeTaskOperations.vue'
 import ReturnedFormPanel from './ReturnedFormPanel.vue'
 import PendingResolutionPanel from './PendingResolutionPanel.vue'
@@ -16,7 +17,8 @@ import NativeTimeoutStatus from './NativeTimeoutStatus.vue'
 
 const route = useRoute(), kind = ref<InboxKind>('pending'), mode = ref<'expanded' | 'merged'>('expanded'), search = ref(''), page = ref(1)
 const rows = ref<NativeInboxPage>(), detail = ref<NativeDetail>(), busy = ref(false), detailBusy = ref(false), commandBusy = ref(false)
-const error = ref(''), message = ref(''), selected = ref(''), selectedTask = ref(typeof route.query.personalTask === 'string' ? route.query.personalTask : '')
+const error = ref(''), message = ref(''), selected = ref(''), selectedTask = ref(typeof route.query.appTask === 'string' ? route.query.appTask : typeof route.query.personalTask === 'string' ? route.query.personalTask : '')
+const selectedTaskKind = ref<'SFS' | 'APP'>(typeof route.query.appTask === 'string' ? 'APP' : 'SFS')
 const pending = ref<NativeReadIntent>(), storageBlocked = ref(false), actingAs = ref(getActingAs())
 const principals = ref<TaskGrantPrincipal[]>([]), grantError = ref(''), chosenPrincipal = ref(getActingAs()?.userId ?? '')
 const selectedOperation = ref(''), selectedResolution = ref('')
@@ -188,7 +190,7 @@ onBeforeUnmount(() => { live = false; epoch++; listController?.abort(); detailCo
         <details><summary>核对版本与流转位置</summary><p>任务版本 {{ task.taskRowVersion }}；流转位置 {{ task.tokenId || '无' }}；所属实例 {{ task.instanceId }}。</p></details>
         <p>{{ task.read ? `首次已读 ${task.read.firstReadAtUtc}，实际阅读人 ${task.read.actualUserId}` : '尚无阅读记录' }}</p>
         <el-button v-if="task.principalId === detail.effectiveUserId && !task.read" :disabled="!!pending || commandBusy || storageBlocked" @click="mark('TASK', task.taskId)">标记已读</el-button>
-        <el-button v-if="detail.contextKind === 'SFS' && task.canRequestDecisionContext" @click="selectedTask = task.taskId">读取当前办理条件</el-button>
+        <el-button v-if="task.canRequestDecisionContext" @click="selectedTask = task.taskId; selectedTaskKind = detail.contextKind">读取当前办理条件</el-button>
         <el-button v-if="task.canRequestDecisionContext" @click="selectedOperation = task.taskId">退回、转交或加签</el-button>
       </li></ul>
       <h4 v-if="detail.cc.length">我的抄送</h4>
@@ -198,7 +200,8 @@ onBeforeUnmount(() => { live = false; epoch++; listController?.abort(); detailCo
       <h4>流程历史</h4>
       <ul><li v-for="event in detail.history" :key="event.eventId">{{ event.recordedAt }} · {{ event.action }} · {{ event.actorKind === 'SYSTEM' ? '系统事件' : event.actorId }} · {{ event.comment }}</li></ul>
     </article>
-    <PersonalTaskPanel v-if="selectedTask" :key="selectedTask" :task-id="selectedTask" @completed="selected ? open(selected) : load()" @private-clear="taskPrivateClear" />
+    <PersonalTaskPanel v-if="selectedTask && selectedTaskKind === 'SFS'" :key="selectedTask" :task-id="selectedTask" @completed="selected ? open(selected) : load()" @private-clear="taskPrivateClear" />
+    <AppTaskPanel v-if="selectedTask && selectedTaskKind === 'APP'" :key="selectedTask" :task-id="selectedTask" @completed="selected ? open(selected) : load()" @private-clear="taskPrivateClear" />
     <NativeTaskOperations :task-id="selectedOperation" :context-kind="detail?.contextKind ?? 'APP'" @completed="selected ? open(selected) : load()" @private-clear="clearView" />
     <ReturnedFormPanel :instance-id="returnedInstance" @completed="selected ? open(selected) : load()" @private-clear="clearView" />
     <PendingResolutionPanel :instance-id="selectedResolution" @completed="selected ? open(selected) : load()" @private-clear="clearView" />
