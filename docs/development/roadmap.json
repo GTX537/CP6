@@ -175673,18 +175673,20 @@
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "wave283_deadline_execution": {
-        "status": "IN_PROGRESS",
+        "status": "IMPLEMENTED_VALIDATED_REMOTE_ADOPTED",
         "scope": "原生APP/SFS准确时限事实、固定FLOW/node政策、实际注册worker身份、Owner内durable claim/epoch与最终状态CAS、提醒/升级/错误边和系统决定资格、原命令恢复及只读运行诊断；不冒充人工票。",
         "direct_dependencies": "TASK R2全文与SYS-JOB原文87行已读。现WfTimeoutService明确排除oa.app/2.0和oa.form/2.0；NodeDueAt用服务器local、timeout扫描读可变head，不能采用为原生事实。WfServiceJobService仅服务任务、现有delivery lease仅运输原结果，不是原生审批超时Owner。SYS-JOB原合同明确各Owner保有任务，不建全局调度主账：本窗在Workflow Owner内真实实现所需claim/epoch/原结果，作为WP02-21限定采用，不用stub或宣称整卡已交付。S02共同WF_AUTH、当前IAM、WFC/APP/SFS原结果与审计直接复用已交付实现；W282精确任务身份/职责/退回cycle与当前授权是直接基线。",
         "limits": "现FLOW审批节点限时合法输入是TimeoutHours瞬时duration，不是工作日；本窗按UTC小时固定、同时冻结可信租户timezone/offset，calendar标明不适用，不编造revision或调用legacy回落。版本化工作日维护/重算等独立日历余项保留。现已采用APP业务政策要求人工审批，超时不能降低门槛；缺少自动决定授权必须明确BLOCKED_POLICY并保原任务，允许的原生表单系统动作须真实SYSTEM_EXECUTION。完整其他Owner的系统决定采用不由wire枚举存在推断完成。",
-        "full_task_completed": false
+        "full_task_completed": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave283-final-verification.json"
       },
       "wave283_native_timeout": {
-        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "status": "IMPLEMENTED_VALIDATED_REMOTE_ADOPTED",
         "report": "docs/development/evidence/W283-01/DELIVERY.md",
         "full_task_completed": false,
         "validation": "17项唯一相关PostgreSQL后端行为及1条真实Host→PostgreSQL→HTTP→Vue→Chrome路径通过；7项既有Inbox组件行为与最新vue-tsc通过。覆盖固定UTC小时政策、旧版本与时区变化、实际服务授权、两Worker领取竞争、租约过期、人工与系统两连接竞争、挂起恢复原槽、系统决定零人工票、APP人工政策阻断、升级目标撤权、原结果未知恢复、错误边兄弟分支隔离及缺原结果整事务回滚。执行前任务/实例版本与epoch补充有定向回归。浏览器复用其已运行的扫描/提醒/次数推进/刷新原结果证据，最后新增版本文本只做类型检查与后台真实版本断言，不称截图覆盖了新增文本。",
-        "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED；59局部3闭环/56余项，125/247正式状态不变。WP12-11、WP02-21整卡不关闭；版本化工作日日历/管理重算、全业务Owner系统决定采用、完整legacy调用面仍有余项。W284字段图定位/纯规则预览、W285普通FORM文件准入/最终下载、W286原竞争及旧caller处置顺序继续。"
+        "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED；59局部3闭环/56余项，125/247正式状态不变。WP12-11、WP02-21整卡不关闭；版本化工作日日历/管理重算、全业务Owner系统决定采用、完整legacy调用面仍有余项。W284字段图定位/纯规则预览、W285普通FORM文件准入/最终下载、W286原竞争及旧caller处置顺序继续。",
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave283-final-verification.json"
       }
     },
     {
@@ -196648,6 +196650,13 @@
           "handoff_branch_deleted": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave280-final-verification.json"
         }
+      },
+      "wave284_diagnostics_rules": {
+        "status": "IN_PROGRESS",
+        "scope": "FLOW图/注册依赖及FORM字段/子表/规则的结构化定位贯通保存、发布诊断与既有设计器；准确FORM草稿的纯计算预览复用实际顺序规则，展示服务端结果与前端体验，当前授权、原数字精度及无业务副作用。",
+        "direct_dependencies": "原OA-DEF R1全文及W279原27AC核对已读，直接缺口AC-D01-05/D02-02/D02-03。FlowSchemaValidator当前返回去重码，FormSchemaValidationV1大部分有字符串路径而table聚合丢位置，两个Controller的fieldErrors均空；页面未提供完整定位。PersonalFormValuesV2已采用精确顺序复算，DynamicForm/ruleEngine拥有前端体验；本窗由同一权威规则复用输出，不另写近似计算器。当前FORM/FLOW Owner的只读授权与准确draft/token、WFC错误/原结果和W279只读预演边界直接复用。",
+        "limits": "预览只使用用户明确模拟输入与当前可读准确草稿，不创建FormData/实例/任务/命令/通知/发布预览，不查询或执行外部文件/选项/连接器。前端disable/enable/setOptions不授字段写权；实际提交仍由原Owner权限与复算决定。普通FORM文件与所有旧caller分别留W285/W286，不在本窗迁移既有环境或关闭整卡。",
+        "full_task_completed": false
       }
     },
     {
@@ -197997,18 +198006,20 @@
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "wave283_deadline_execution": {
-        "status": "IN_PROGRESS",
+        "status": "IMPLEMENTED_VALIDATED_REMOTE_ADOPTED",
         "scope": "原生APP/SFS准确时限事实、固定FLOW/node政策、实际注册worker身份、Owner内durable claim/epoch与最终状态CAS、提醒/升级/错误边和系统决定资格、原命令恢复及只读运行诊断；不冒充人工票。",
         "direct_dependencies": "TASK R2全文与SYS-JOB原文87行已读。现WfTimeoutService明确排除oa.app/2.0和oa.form/2.0；NodeDueAt用服务器local、timeout扫描读可变head，不能采用为原生事实。WfServiceJobService仅服务任务、现有delivery lease仅运输原结果，不是原生审批超时Owner。SYS-JOB原合同明确各Owner保有任务，不建全局调度主账：本窗在Workflow Owner内真实实现所需claim/epoch/原结果，作为WP02-21限定采用，不用stub或宣称整卡已交付。S02共同WF_AUTH、当前IAM、WFC/APP/SFS原结果与审计直接复用已交付实现；W282精确任务身份/职责/退回cycle与当前授权是直接基线。",
         "limits": "现FLOW审批节点限时合法输入是TimeoutHours瞬时duration，不是工作日；本窗按UTC小时固定、同时冻结可信租户timezone/offset，calendar标明不适用，不编造revision或调用legacy回落。版本化工作日维护/重算等独立日历余项保留。现已采用APP业务政策要求人工审批，超时不能降低门槛；缺少自动决定授权必须明确BLOCKED_POLICY并保原任务，允许的原生表单系统动作须真实SYSTEM_EXECUTION。完整其他Owner的系统决定采用不由wire枚举存在推断完成。",
-        "full_task_completed": false
+        "full_task_completed": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave283-final-verification.json"
       },
       "wave283_native_timeout": {
-        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "status": "IMPLEMENTED_VALIDATED_REMOTE_ADOPTED",
         "report": "docs/development/evidence/W283-01/DELIVERY.md",
         "full_task_completed": false,
         "validation": "17项唯一相关PostgreSQL后端行为及1条真实Host→PostgreSQL→HTTP→Vue→Chrome路径通过；7项既有Inbox组件行为与最新vue-tsc通过。覆盖固定UTC小时政策、旧版本与时区变化、实际服务授权、两Worker领取竞争、租约过期、人工与系统两连接竞争、挂起恢复原槽、系统决定零人工票、APP人工政策阻断、升级目标撤权、原结果未知恢复、错误边兄弟分支隔离及缺原结果整事务回滚。执行前任务/实例版本与epoch补充有定向回归。浏览器复用其已运行的扫描/提醒/次数推进/刷新原结果证据，最后新增版本文本只做类型检查与后台真实版本断言，不称截图覆盖了新增文本。",
-        "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED；59局部3闭环/56余项，125/247正式状态不变。WP12-11、WP02-21整卡不关闭；版本化工作日日历/管理重算、全业务Owner系统决定采用、完整legacy调用面仍有余项。W284字段图定位/纯规则预览、W285普通FORM文件准入/最终下载、W286原竞争及旧caller处置顺序继续。"
+        "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED；59局部3闭环/56余项，125/247正式状态不变。WP12-11、WP02-21整卡不关闭；版本化工作日日历/管理重算、全业务Owner系统决定采用、完整legacy调用面仍有余项。W284字段图定位/纯规则预览、W285普通FORM文件准入/最终下载、W286原竞争及旧caller处置顺序继续。",
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave283-final-verification.json"
       }
     },
     {
@@ -201931,11 +201942,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261103-wave283",
-      "path": "docs/development/dispatch/20261103-wave283/README.md",
-      "baseline_sha": "37a88248ca9f25f3818ba5a6e31fd50ddca891b7",
-      "registered_at": "2026-11-03T05:56:52.105635+00:00",
-      "phase": "DELIVERY_MAIN_CLOSEOUT",
+      "id": "20261103-wave284",
+      "path": "docs/development/dispatch/20261103-wave284/README.md",
+      "baseline_sha": "32fcf2767435658b2f1aa362b9a84e640291f79b",
+      "registered_at": "2026-11-03T07:47:28.233845+00:00",
+      "phase": "IMPLEMENTING",
       "assigned_chats": [
         "COORD"
       ],
@@ -201953,62 +201964,41 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W283-01",
-          "workspace_task": "W283-01",
+          "id": "W284-01",
+          "workspace_task": "W284-01",
           "related_tasks": [
-            "WP12-11",
-            "WP02-21"
+            "WP12-01"
           ],
-          "title": "准确截止政策与超时worker竞争",
+          "title": "设计器完整字段/图定位与纯计算规则预览",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "DELIVERY_MAIN_CLOSEOUT",
+          "phase": "IMPLEMENTING",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": true,
+          "worker_delivery_received": false,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w283-01",
+          "branch": "codex/w284-01",
           "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": true,
+          "candidate_review_completed": false,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
-            "Main:oa-task",
-            "Main:workflow-engine",
-            "Main:job-runtime",
-            "Main:EF-migration-history"
-          ],
-          "worker_delivery_ref": "docs/development/evidence/W283-01/DELIVERY.md",
-          "validation": "17项唯一相关PostgreSQL后端行为及1条真实Host→PostgreSQL→HTTP→Vue→Chrome路径通过；7项既有Inbox组件行为与最新vue-tsc通过。覆盖固定UTC小时政策、旧版本与时区变化、实际服务授权、两Worker领取竞争、租约过期、人工与系统两连接竞争、挂起恢复原槽、系统决定零人工票、APP人工政策阻断、升级目标撤权、原结果未知恢复、错误边兄弟分支隔离及缺原结果整事务回滚。执行前任务/实例版本与epoch补充有定向回归。浏览器复用其已运行的扫描/提醒/次数推进/刷新原结果证据，最后新增版本文本只做类型检查与后台真实版本断言，不称截图覆盖了新增文本。",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave283-final-verification.json"
-          },
-          "business_acceptance": "NATIVE_TIMEOUT_REAL_HOST_POSTGRES_HTTP_BROWSER_PASS;FULL_CARDS_REMAIN"
+            "Main:definition-authoring",
+            "Main:schema-validation",
+            "Main:form-rule-evaluation",
+            "Main:designer-ui"
+          ]
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W283正常远端采用/准确清理/finish后接W284字段图定位与纯规则预览；24h目标持续。",
-      "lifecycle_snapshot": {
-        "main_finish_required": true,
-        "main_seat_released": false,
-        "handoff_seat_released": false,
-        "main_branch_deleted": false,
-        "handoff_branch_deleted": false,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave283-final-verification.json"
-      },
-      "integration_baseline": "37a88248ca9f25f3818ba5a6e31fd50ddca891b7"
+      "next_action": "FLOW图/注册依赖及FORM字段/子表/规则的结构化定位贯通保存、发布诊断与既有设计器；准确FORM草稿的纯计算预览复用实际顺序规则，展示服务端结果与前端体验，当前授权、原数字精度及无业务副作用。"
     },
     "wave_history": [
       {
@@ -238075,6 +238065,102 @@
             "workspace_clean": true
           }
         ]
+      },
+      {
+        "id": "20261103-wave283",
+        "path": "docs/development/dispatch/20261103-wave283/README.md",
+        "baseline_sha": "37a88248ca9f25f3818ba5a6e31fd50ddca891b7",
+        "registered_at": "2026-11-03T05:56:52.105635+00:00",
+        "phase": "DONE",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W283-01",
+            "workspace_task": "W283-01",
+            "related_tasks": [
+              "WP12-11",
+              "WP02-21"
+            ],
+            "title": "准确截止政策与超时worker竞争",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "DONE",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w283-01",
+            "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:oa-task",
+              "Main:workflow-engine",
+              "Main:job-runtime",
+              "Main:EF-migration-history"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W283-01/DELIVERY.md",
+            "validation": "17项唯一相关PostgreSQL后端行为及1条真实Host→PostgreSQL→HTTP→Vue→Chrome路径通过；7项既有Inbox组件行为与最新vue-tsc通过。覆盖固定UTC小时政策、旧版本与时区变化、实际服务授权、两Worker领取竞争、租约过期、人工与系统两连接竞争、挂起恢复原槽、系统决定零人工票、APP人工政策阻断、升级目标撤权、原结果未知恢复、错误边兄弟分支隔离及缺原结果整事务回滚。执行前任务/实例版本与epoch补充有定向回归。浏览器复用其已运行的扫描/提醒/次数推进/刷新原结果证据，最后新增版本文本只做类型检查与后台真实版本断言，不称截图覆盖了新增文本。",
+            "lifecycle_snapshot": {
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave283-final-verification.json",
+              "all_slots_released": true
+            },
+            "business_acceptance": "NATIVE_TIMEOUT_REAL_HOST_POSTGRES_HTTP_BROWSER_PASS;FULL_CARDS_REMAIN"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W283正常远端采用/准确清理/finish后接W284字段图定位与纯规则预览；24h目标持续。",
+        "lifecycle_snapshot": {
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave283-final-verification.json",
+          "all_slots_released": true
+        },
+        "integration_baseline": "37a88248ca9f25f3818ba5a6e31fd50ddca891b7",
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W283-01",
+            "source": "b04676667446c42c943eb2e76e88f554deb0743c",
+            "remote_target": "32fcf2767435658b2f1aa362b9a84e640291f79b",
+            "pr": "https://github.com/GTX537/CP6/pull/719",
+            "branch": "codex/w283-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W283-HANDOFF",
+            "source": "df38ede0a51c8255ca530bb5e47ec56c84e881ef",
+            "remote_target": "569fe427310af06e13218b3b4822724b09341cff",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/260",
+            "branch": "codex/w283-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -238653,7 +238739,7 @@
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 59227,
+      "effective_seconds_recorded": 59693,
       "next_reestimate_at_effective_seconds": 64800,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
@@ -239200,7 +239286,7 @@
             1.5,
             3
           ],
-          "state": "VERIFYING",
+          "state": "DONE",
           "admission": "Inspect direct providers/current source before START; no stub substitution",
           "reason": "First 2h throughput calibration: original authorized adjacent remaining scope",
           "revised_estimate_hours": [
@@ -239218,13 +239304,36 @@
           "implementation_complete": true,
           "report": "docs/development/evidence/W283-01/DELIVERY.md",
           "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave283-final-verification.json"
-          }
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave283-final-verification.json",
+            "all_slots_released": true
+          },
+          "actual_effective_seconds": 6635,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W283-01",
+              "source": "b04676667446c42c943eb2e76e88f554deb0743c",
+              "remote_target": "32fcf2767435658b2f1aa362b9a84e640291f79b",
+              "pr": "https://github.com/GTX537/CP6/pull/719",
+              "branch": "codex/w283-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W283-HANDOFF",
+              "source": "df38ede0a51c8255ca530bb5e47ec56c84e881ef",
+              "remote_target": "569fe427310af06e13218b3b4822724b09341cff",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/260",
+              "branch": "codex/w283-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
         },
         {
           "id": "W284-01",
@@ -239238,9 +239347,15 @@
             2
           ],
           "estimate_confidence": "LOW",
-          "state": "PLANNED",
+          "state": "IN_PROGRESS",
           "admission": "Inspect exact current source/direct providers before START; single chat and fixed seats; no stub substitution",
-          "reason": "W279原27AC核对确认D01-05/D02-02/03未闭环；已有保存验证/准确草稿预演复用，补当前可见路径和可执行纯规则说明。"
+          "reason": "W279原27AC核对确认D01-05/D02-02/03未闭环；已有保存验证/准确草稿预演复用，补当前可见路径和可执行纯规则说明。",
+          "started_at": "2026-11-03T07:47:28.233845+00:00",
+          "revised_estimate_hours": [
+            1.5,
+            3
+          ],
+          "scope_refinement": "FLOW图/注册依赖及FORM字段/子表/规则的结构化定位贯通保存、发布诊断与既有设计器；准确FORM草稿的纯计算预览复用实际顺序规则，展示服务端结果与前端体验，当前授权、原数字精度及无业务副作用。"
         },
         {
           "id": "W285-01",
@@ -239569,7 +239684,7 @@
           "unchanged": "24h effective active goal, original375 and56 partial cards and125/247 full acceptance states; single chat,PostgreSQL/local verification,no Actions,production deployment or existing-database migration."
         }
       ],
-      "timing_snapshot_at": "2026-11-03T07:39:42.090865+00:00",
+      "timing_snapshot_at": "2026-11-03T07:47:28.233845+00:00",
       "remaining_estimate_hours": [
         5,
         10.5
