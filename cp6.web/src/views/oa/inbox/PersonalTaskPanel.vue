@@ -16,6 +16,8 @@ const data = ref<FormObject>({}), busy = ref(false), error = ref(''), message = 
 let body: string | undefined, live = true, generation = 0, stamp = identityStamp(), behalf = getActingAs()?.userId ?? null
 const fields = computed(() => context.value ? schemaFields(context.value.schemaJson) : [])
 const locked = computed(() => busy.value || !!pending.value || !!result.value || storageBlocked.value)
+const commentLength = computed(() => [...comment.value].length)
+const commentTooLong = computed(() => commentLength.value > 1000)
 const fileContext = computed<FormFileReadContext | undefined>(() => context.value ? { scope: { kind: 'TASK', key: null, id: context.value.task.taskId,
   formVersionId: context.value.formVersionId, expectedVersion: context.value.task.taskRowVersion, expectedDataVersion: context.value.formDataVersion } } : undefined)
 try {
@@ -78,7 +80,7 @@ async function run(read: boolean, wasUnknown: boolean, close = false) {
 }
 async function decide(decision: string) {
   const c = context.value
-  if (!c || locked.value || conflict.value || !valid.value || !c.allowedDecisions.includes(decision)) return
+  if (!c || locked.value || conflict.value || !valid.value || commentTooLong.value || !c.allowedDecisions.includes(decision)) return
   const patch: FormObject = {}, before = formObject(readFormJson(c.dataJson))
   for (const [name, value] of Object.entries(data.value))
     if (value !== undefined && c.fieldMask[name] === 'edit' && (!Object.hasOwn(before, name) || writeFormJson(value) !== writeFormJson(before[name]!))) patch[name] = value
@@ -104,8 +106,9 @@ onBeforeUnmount(() => { live = false; generation++; window.removeEventListener(A
       <h4>{{ context.name }}</h4><p>表单编号：{{ context.formDataId }}</p>
       <PersonalFormFields :key="context.task.taskId + ':' + context.formDataVersion" v-model="data" :fields="fields" :mask="context.fieldMask"
         :file-context="fileContext" :disabled="locked || conflict || !context.allowedDecisions.length" :allow-unset="false" @validity="valid = $event" @forbidden="clearPrivate(); emit('privateClear')" />
-      <el-input v-model="comment" type="textarea" maxlength="1000" placeholder="办理意见" :disabled="locked || conflict" />
-      <div class="actions"><el-button type="primary" :disabled="locked || conflict || !valid || !context.allowedDecisions.includes('approve')" @click="decide('approve')">同意</el-button><el-button type="danger" :disabled="locked || conflict || !valid || !context.allowedDecisions.includes('reject')" @click="decide('reject')">拒绝</el-button></div>
+      <el-input v-model="comment" type="textarea" placeholder="办理意见" :disabled="locked || conflict" />
+      <p>{{ commentLength }} / 1000 字符</p><p v-if="commentTooLong" role="alert">办理意见最多 1000 个字符，请修改后再提交；已保留全部填写内容。</p>
+      <div class="actions"><el-button type="primary" :disabled="locked || conflict || !valid || commentTooLong || !context.allowedDecisions.includes('approve')" @click="decide('approve')">同意</el-button><el-button type="danger" :disabled="locked || conflict || !valid || commentTooLong || !context.allowedDecisions.includes('reject')" @click="decide('reject')">拒绝</el-button></div>
     </template>
     <p v-if="result" role="status">{{ result.state === 'CLOSED' ? '原命令已关闭，没有产生办理效果。' : '已办理。' }}原命令：{{ result.commandId }}</p>
     <el-button v-if="result?.state === 'CLOSED'" @click="load">重新读取待办</el-button>

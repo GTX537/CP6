@@ -23077,9 +23077,9 @@ namespace CP6.Persistence.PostgreSql.Migrations.Core
 
                     b.ToTable("Wf_FlowFormTo", t =>
                         {
-                            t.HasCheckConstraint("CK_Wf_FlowFormTo_Comment_Utf16Capacity", "char_length(regexp_replace((convert_from(pg_catalog.bpcharsend(\"Comment\"), 'UTF8'))::text COLLATE \"C\", U&'[\\+010000-\\+10FFFF]', 'aa', 'g')) <= 1000")
+                            t.HasCheckConstraint("CK_Wf_FlowFormTo_Comment_UnicodeScalarCapacity", "char_length(convert_from(pg_catalog.bpcharsend(\"Comment\"), 'UTF8')) <= 1000")
                                 .HasAnnotation("CP6:GeneratedCapacity", true)
-                                .HasAnnotation("CP6:OriginalName", "CK_Wf_FlowFormTo_Comment_Utf16Capacity");
+                                .HasAnnotation("CP6:OriginalName", "CK_Wf_FlowFormTo_Comment_UnicodeScalarCapacity");
 
                             t.HasCheckConstraint("CK_Wf_FlowFormTo_Creator_Utf16Capacity", "char_length(regexp_replace((convert_from(pg_catalog.bpcharsend(\"Creator\"), 'UTF8'))::text COLLATE \"C\", U&'[\\+010000-\\+10FFFF]', 'aa', 'g')) <= 100")
                                 .HasAnnotation("CP6:GeneratedCapacity", true)
@@ -23173,9 +23173,9 @@ namespace CP6.Persistence.PostgreSql.Migrations.Core
                                 .HasAnnotation("CP6:GeneratedCapacity", true)
                                 .HasAnnotation("CP6:OriginalName", "CK_Wf_FlowHistory_Action_Utf16Capacity");
 
-                            t.HasCheckConstraint("CK_Wf_FlowHistory_Comment_Utf16Capacity", "char_length(regexp_replace((convert_from(pg_catalog.bpcharsend(\"Comment\"), 'UTF8'))::text COLLATE \"C\", U&'[\\+010000-\\+10FFFF]', 'aa', 'g')) <= 1000")
+                            t.HasCheckConstraint("CK_Wf_FlowHistory_Comment_UnicodeScalarCapacity", "char_length(convert_from(pg_catalog.bpcharsend(\"Comment\"), 'UTF8')) <= 1000")
                                 .HasAnnotation("CP6:GeneratedCapacity", true)
-                                .HasAnnotation("CP6:OriginalName", "CK_Wf_FlowHistory_Comment_Utf16Capacity");
+                                .HasAnnotation("CP6:OriginalName", "CK_Wf_FlowHistory_Comment_UnicodeScalarCapacity");
 
                             t.HasCheckConstraint("CK_Wf_FlowHistory_Creator_Utf16Capacity", "char_length(regexp_replace((convert_from(pg_catalog.bpcharsend(\"Creator\"), 'UTF8'))::text COLLATE \"C\", U&'[\\+010000-\\+10FFFF]', 'aa', 'g')) <= 100")
                                 .HasAnnotation("CP6:GeneratedCapacity", true)
@@ -23457,9 +23457,9 @@ namespace CP6.Persistence.PostgreSql.Migrations.Core
                                 .HasAnnotation("CP6:GeneratedCapacity", true)
                                 .HasAnnotation("CP6:OriginalName", "CK_Wf_FlowTask_AddSignSource_Utf16Capacity");
 
-                            t.HasCheckConstraint("CK_Wf_FlowTask_Comment_Utf16Capacity", "char_length(regexp_replace((convert_from(pg_catalog.bpcharsend(\"Comment\"), 'UTF8'))::text COLLATE \"C\", U&'[\\+010000-\\+10FFFF]', 'aa', 'g')) <= 1000")
+                            t.HasCheckConstraint("CK_Wf_FlowTask_Comment_UnicodeScalarCapacity", "char_length(convert_from(pg_catalog.bpcharsend(\"Comment\"), 'UTF8')) <= 1000")
                                 .HasAnnotation("CP6:GeneratedCapacity", true)
-                                .HasAnnotation("CP6:OriginalName", "CK_Wf_FlowTask_Comment_Utf16Capacity");
+                                .HasAnnotation("CP6:OriginalName", "CK_Wf_FlowTask_Comment_UnicodeScalarCapacity");
 
                             t.HasCheckConstraint("CK_Wf_FlowTask_Countersign_Utf16Capacity", "char_length(regexp_replace((convert_from(pg_catalog.bpcharsend(\"Countersign\"), 'UTF8'))::text COLLATE \"C\", U&'[\\+010000-\\+10FFFF]', 'aa', 'g')) <= 20")
                                 .HasAnnotation("CP6:GeneratedCapacity", true)
