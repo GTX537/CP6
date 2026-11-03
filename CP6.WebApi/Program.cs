@@ -758,6 +758,9 @@ builder.Services.AddScoped(sp => new CP6.Core.Services.Oa.ApprovalTaskAuthorityV
     }));
 builder.Services.AddScoped<CP6.Core.Services.Oa.ApprovalTaskDecisionOwnerV2>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.NativeTaskBatchOwnerV2>();
+builder.Services.AddSingleton(builder.Configuration.GetSection("NativeTimeout").Get<CP6.Core.Services.Oa.NativeTimeoutOptionsV2>()??new());
+builder.Services.AddScoped<CP6.Core.Services.Oa.NativeTimeoutOwnerV2>();
+builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.NativeTimeoutWorkerV2>();
 builder.Services.AddSingleton(new CP6.WebApi.Services.ApprovalFactReceiverRegistryV2(
     builder.Configuration.GetSection("ApprovalFactReceiver").Get<CP6.WebApi.Services.ApprovalFactReceiverOptionsV2>() ?? new(), crmOidc, builder.Environment.IsDevelopment()));
 builder.Services.AddScoped<CP6.WebApi.Services.ApprovalFactReceiverServiceAuthorityV2>();

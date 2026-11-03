@@ -10,10 +10,11 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
     private NativeInboxOwnerV2 NativeInbox(Harness h,PersonalFormOwnerV2? form=null,ApprovalBusinessEvidenceV2? business=null)
         =>new(h.Db,ScopeFence(h),form??PersonalForm(h),business??new(ToolApproval(h)));
-    private async Task<(PersonalFormOwnerV2 Owner,FlowAuthoringOwnerV2 Flow,Guid Instance,Guid Task)> NativeFormSetup(Harness h,bool parallel=false,string? title=null)
+    private async Task<(PersonalFormOwnerV2 Owner,FlowAuthoringOwnerV2 Flow,Guid Instance,Guid Task)> NativeFormSetup(Harness h,bool parallel=false,string? title=null,Action<FlowSchema>? configure=null,Func<Task>? beforePublish=null)
     {
         var(owner,_,flow)=await PreparePersonal(h);
         await EngineeringAction(h,"oa-inbox","read");
+        if(beforePublish!=null)await beforePublish();
         var graph=new FlowSchema{Start="s",Nodes=[new(){Id="s",Type="start"},new(){Id="a",Type="approval",ApproverStrategy="Specified",ApproverUserId=h.User,CcUsers=[h.User]},new(){Id="e",Type="end"}],
             Edges=[new(){From="s",To="a"},new(){From="a",To="e"}]};
         if(parallel)
@@ -21,6 +22,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             graph.Nodes.AddRange([new(){Id="split",Type="parallelSplit"},new(){Id="join",Type="parallelJoin"},new(){Id="b",Type="approval",ApproverStrategy="Specified",ApproverUserId=h.User,CcUsers=[h.User]}]);
             graph.Edges=[new(){From="s",To="split"},new(){From="split",To="a"},new(){From="split",To="b"},new(){From="a",To="join"},new(){From="b",To="join"},new(){From="join",To="e"}];
         }
+        configure?.Invoke(graph);
         var schema=JsonSerializer.Serialize(graph,PersonalFormOwnerV2.Json);
         var saved=await flow.SaveAsync("native-inbox",DependentCommand("personal",schema:schema));
         var published=(await flow.PublishAsync("native-inbox",PublicationCommand(await Preview(flow,"native-inbox",saved)))).Result!.Publication!;

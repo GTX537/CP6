@@ -73,6 +73,7 @@ public partial class FlowEngine
                   {child.ParentTokenId},{node},{child.SubIndex},{publication.DefinitionId},{publication.VersionId})
                 """, ct);
         _approvalChildren.Clear();
+        await SaveNativeDeadlines(ct);
     }
 
     // No legacy resume job or second transaction. The native Scope fence serializes decisions;

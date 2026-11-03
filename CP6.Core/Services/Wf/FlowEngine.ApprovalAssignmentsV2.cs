@@ -13,6 +13,7 @@ public partial class FlowEngine
     internal void RecordApprovalAssignment(Wf_FlowInstance instance, Wf_FlowTask task,
         ApproverRule rule, IEnumerable<Guid> candidates, string? stageCode = null)
     {
+        if (ManagedRuntime) _deadlineTasks.Add((instance, task));
         if (_personalFormRuntime)
         {
             _personalAssignments.Add(new(task.Id, instance.Id, task.TokenId!.Value, instance.FlowDefVersionId!.Value,

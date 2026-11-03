@@ -1,0 +1,35 @@
+# W283-01 原生截止与实际超时执行
+
+W283：原生APP/SFS固定UTC截止事实、Owner内租约/epoch、实际服务授权、提醒/升级/错误边与明确系统决定、原结果及只读运行诊断已实现；真实Host、PG、HTTP与Chrome完成限定验收。
+
+## 范围与真实行为
+
+直接采用原OA-TASK-01-DEVELOPER-SPEC-R2全文294行（SHA-256 9f9920ffe400ba982834f2d02276535e5a5654ae6b64236fd366247418084b8d）及SYS-JOB原文87行（4950396682dc9120f89b79da2c463c7bb4f5cc5225b4bc91628fdcc26c7aa6f8）。现有WfTimeoutService排除原生APP/SFS，服务任务job及投递lease不拥有本次审批效果；按SYS-JOB各Owner自有任务合同，在Workflow Owner内实现限定租约采用，不建立另一全局业务主账。
+
+新原生任务在原创建事务固定准确FLOW版本/node、TimeoutHours/Action/EscalateTo、UTC时钟、租户timezone/offset及deadline revision。当前合法配置为UTC小时duration，calendar明确NOT_APPLICABLE；无配置不限时，非法/溢出政策显式INVALID_POLICY。旧无事实DueAt标MISSING_EVIDENCE，不猜补、不按新head或当前时区改写。原timestamp列仅新原生行的兼容投影，timestamptz事实为调度权威。
+
+实际NativeTimeoutWorkerV2默认关闭，可信宿主配置及租户当前有效registration是执行边界；不开放任意系统actor写入API。启用后按实际tenant scope扫描有界100项，20秒周期，60秒租约；原槽(task,deadline revision,occurrence)和execution ID稳定，回收epoch递增。执行前续租，最终Owner事务再次核租约、当前服务revision和WF_AUTH；人工/超时竞争只有合法当前状态的一方决定。领取不授业务审批权，服务撤销后旧claim不能提交。挂起是可恢复状态，保原槽与截止等待恢复，不写成已处理。
+
+remind每occurrence一次真实通知，nextDue以可信now+固定间隔计算，不造人工票。SFS冻结政策允许的approve/reject使用实际SYSTEM_EXECUTION；已采用APP业务要求人工证据时BLOCKED_POLICY并提醒starter，原待办保持。escalate核当前目标资格/SOD，实际系统主体与新principal分开，职责历史/准确FormTo/通知同事务；冻结NONE策略形成新deadline revision且无下次截止。errorEdge复用准确token引擎，取消本token在途任务，不伤兄弟；APP若会排空至业务终态则回滚阶段效果并明确阻断，不能借错误边绕人工业务合同。
+
+不可变原结果与业务命令/通知同事务；包含执行前真实任务/实例版本、截止revision/occurrence、claim epoch及系统身份。提交响应未知按原execution恢复，不生成第二次提醒或人工票。前向PG迁移中的延迟约束要求timeout命令与原结果同事务，缺结果会回滚实际效果；最终数据库约束也核当前epoch/服务/lease，租约过期不能提交。内部既有类型、租户关系及Owner合同直接复用，不加重复资格包装。
+
+现OA详情只读展示实际lastScan、可见backlog/oldestDue、当前领取、blocked原因、固定政策与原结果/版本。无扫描事实UNPROVEN；观察到扫描也不宣称所有动作成功。诊断在当前资源授权之后读取可见图。没有worker配置/暂停UI，不将本机验收变成生产服务启用。
+
+## 实际验收与集中审查
+
+17项唯一相关PostgreSQL后端行为及1条真实Host→PostgreSQL→HTTP→Vue→Chrome路径通过；7项既有Inbox组件行为与最新vue-tsc通过。覆盖固定UTC小时政策、旧版本与时区变化、实际服务授权、两Worker领取竞争、租约过期、人工与系统两连接竞争、挂起恢复原槽、系统决定零人工票、APP人工政策阻断、升级目标撤权、原结果未知恢复、错误边兄弟分支隔离及缺原结果整事务回滚。执行前任务/实例版本与epoch补充有定向回归。浏览器复用其已运行的扫描/提醒/次数推进/刷新原结果证据，最后新增版本文本只做类型检查与后台真实版本断言，不称截图覆盖了新增文本。
+
+逐项通过来源、失败保留及复用限制见D:/CP6-local-test/wave283/foundation/final-validation.json。使用隔离新PostgreSQL18.6数据库、真实Owner和实际通知/原命令，模拟用户/业务/政策/服务登记。行为测试使用明确future clock；浏览器场景只将任务创建时钟回拨两小时，随后专用真实GenericHost、TenantEnumerator及Worker使用数据库当前时钟执行，独立WebApi提供真实HTTP读，未mock内部API。截图已检查。
+
+早期失败原样保留：缺using编译、APP可选JSON缺键与null比较、升级通知kind未沿原转交合同、测试跨租户裸count、复用publish键导致正确的body冲突。首次浏览器包因HTTP fixture按惯例关闭后台服务而UNPROVEN，改为真实专用Host后通过。最后混合kernel运行中，旧SQLite fixture因既有Latin1_General_100_BIN2排序规则无法建库，三项旧SQLite测试不声称通过；本轮不恢复双库范围。该轮PG进程还被本机暂时拒绝bind127.0.0.1:55435：检查无listener、无排除范围且独占端口探测成功，之后仅三项受影响PGkernel场景重跑通过，拒绝原因未能复现，不伪称已定位系统根因。
+
+作者一次任务级SPEC/QUALITY集中审查覆盖完整差异、当前服务/WF_AUTH、准确pin/UTC时限、原槽/epoch与人工竞争、SFS/APP政策区分、实际Actor、挂起/错误边清理、原结果原子性、只读权限与UI证据。审查补齐执行前版本并将epoch在业务原结果完成前固定；对应3项PG回归及最新类型检查通过。未受影响的既有有效来源按用户精简规则复用，无全仓重跑、额外审查代理或远端Actions。
+
+## 余项与生命周期
+
+原375仍27DONE/2IN_PROGRESS/346PLANNED；59局部3闭环/56余项，125/247正式状态不变。WP12-11、WP02-21整卡不关闭；版本化工作日日历/管理重算、全业务Owner系统决定采用、完整legacy调用面仍有余项。W284字段图定位/纯规则预览、W285普通FORM文件准入/最终下载、W286原竞争及旧caller处置顺序继续。
+
+24小时有效执行目标仍IN_PROGRESS；沿45141秒@2026-11-03T03:44:56Z运行时锚点累计实际连续活动，7558秒调度间隔排除，下一18h校准。当前是合并前快照，Main/Handoff正常远端采用、准确任务分支删除、固定目录干净及官方finish/席位释放由C:/Users/tt/CP6-planning-reports/20261017-foundation/wave283-final-verification.json核销；随后W284继续。
+
+无Actions触发/取消、工作流修改、生产部署或既有环境数据库迁移；仅隔离新PG应用前向迁移。根目录用户资料保留。

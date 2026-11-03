@@ -79,6 +79,7 @@ public partial class FlowEngine
                 VALUES({assignment.TaskId},{assignment.InstanceId},{command},{JsonSerializer.Serialize(assignment,PersonalFormOwnerV2.Json)})
                 """, ct);
         _approvalChildren.Clear();
+        await SaveNativeDeadlines(ct);
         await _db.SaveChangesAsync(ct);
         await SavePendingApproversV2(command,"SFS_COMMAND",ct);
         return _personalAssignments;
