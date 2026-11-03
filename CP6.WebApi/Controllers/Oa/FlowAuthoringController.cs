@@ -19,6 +19,9 @@ public sealed class FlowAuthoringController(FlowAuthoringOwnerV2 owner, FormAuth
     public Task<IActionResult> Versions(string key, [FromQuery] int page = 1, CancellationToken ct = default) => Run(async () => await owner.VersionsAsync(key, page, ct: ct));
     [HttpGet("definitions/FLOW/{key}/versions/{version:guid}")]
     public Task<IActionResult> Version(string key, Guid version, CancellationToken ct) => Run(async () => (await owner.VersionsAsync(key, version: version, ct: ct)).Single());
+    [HttpGet("definitions/FLOW/{key}/compare")]
+    public Task<IActionResult> Compare(string key, [FromQuery] Guid leftVersionId, [FromQuery] Guid rightVersionId, [FromQuery] int page = 1, CancellationToken ct = default)
+        => Run(async () => await owner.CompareAsync(key, leftVersionId, rightVersionId, page, ct));
     [HttpPost("definitions/FLOW/{key}/publish-preview")]
     public Task<IActionResult> Preview(string key, FlowPublicationPreviewInputV2 input, CancellationToken ct) => Run(async () => await owner.PreviewPublicationAsync(key, input, ct));
     [HttpPost("definitions/FLOW/{key}/simulate"), RequestSizeLimit(1024 * 1024)]

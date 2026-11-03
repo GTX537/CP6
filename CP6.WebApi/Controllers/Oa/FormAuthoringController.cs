@@ -9,6 +9,9 @@ namespace CP6.WebApi.Controllers.Oa;
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public sealed class FormAuthoringController(FormAuthoringOwnerV2 owner) : ControllerBase
 {
+    [HttpGet("{key}/compare")]
+    public Task<IActionResult> Compare(string key, [FromQuery] Guid leftVersionId, [FromQuery] Guid rightVersionId, [FromQuery] int page = 1, CancellationToken ct = default)
+        => Run(async () => await owner.CompareAsync(key, leftVersionId, rightVersionId, page, ct));
     [HttpGet("entry")]
     public Task<IActionResult> Entry(CancellationToken ct) => Run(async () => await owner.EntryAsync(ct));
     [HttpGet]
