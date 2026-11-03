@@ -3,7 +3,7 @@ import { computed, ref, watch } from 'vue'
 import type { FormMask } from '@/api/oa/personalForm'
 import PersonalReferenceInput from './PersonalReferenceInput.vue'
 import { FormNumber, formObject, readFormJson, writeFormJson, schemaProperty, schemaText, schemaNumber, type FormValue, type FormObject } from './personalFormJson'
-const props = defineProps<{ fields: FormObject[]; modelValue: FormObject; mask?: FormMask; disabled?: boolean; hidden?: string[]; formKey?: string; draftId?: string; allowUnset?: boolean }>()
+const props = withDefaults(defineProps<{ fields: FormObject[]; modelValue: FormObject; mask?: FormMask; disabled?: boolean; hidden?: string[]; formKey?: string; draftId?: string; allowUnset?: boolean }>(), { allowUnset: true })
 const emit = defineEmits<{ 'update:modelValue': [value: FormObject]; validity: [value: boolean]; forbidden: [] }>()
 const errors = ref<Record<string, string>>({}), edits = ref<Record<string, string>>({}), children = ref<Record<string, boolean>>({})
 const name = (field: FormObject) => schemaText(field, 'name')
