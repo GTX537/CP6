@@ -161837,6 +161837,11 @@
       "date": "2026-11-03",
       "change": "W282：APP/SFS原生退回预览与确认、准确转交/前后加签、SFS同实例退回编辑重送、显式政策无人审批恢复及管理批量转交已实现；真实Chrome、HTTP、PostgreSQL和故障恢复通过。",
       "evidence": "docs/development/evidence/W282-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-03",
+      "change": "24h目标累计16h实耗校准：余约8h容量；W282实际93分钟低于3–5h预估。W283尚在验证，余1–2.5h；W283–286总余5–10.5h低置信度，优先闭环已开工完整任务。",
+      "evidence": "docs/development/planning/20261102-codex-24h-oa.md"
     }
   ],
   "implementation_assessment": {
@@ -238609,8 +238614,8 @@
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 53057,
-      "next_reestimate_at_effective_seconds": 57600,
+      "effective_seconds_recorded": 57619,
+      "next_reestimate_at_effective_seconds": 64800,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
         {
@@ -239165,7 +239170,12 @@
           ],
           "estimate_confidence": "LOW",
           "started_at": "2026-11-03T05:56:52.105635+00:00",
-          "scope_refinement": "原生APP/SFS准确时限事实、固定FLOW/node政策、实际注册worker身份、Owner内durable claim/epoch与最终状态CAS、提醒/升级/错误边和系统决定资格、原命令恢复及只读运行诊断；不冒充人工票。"
+          "scope_refinement": "原生APP/SFS准确时限事实、固定FLOW/node政策、实际注册worker身份、Owner内durable claim/epoch与最终状态CAS、提醒/升级/错误边和系统决定资格、原命令恢复及只读运行诊断；不冒充人工票。",
+          "remaining_estimate_hours": [
+            1,
+            2.5
+          ],
+          "actual_effective_seconds_so_far": 4562
         },
         {
           "id": "W284-01",
@@ -239463,12 +239473,57 @@
           "remaining": "W282 management batch transfer max500 with frozen candidate snapshot; exact scope/authority boundary regressions, real HTTP/Chrome use, concentrated review and delivery. Reuse prior delegation/withdrawal and valid evidence; no artificial waits or repeated whole-repository gates.",
           "basis": "Measured window remains open, so partial implementation is not extrapolated to a finished delivery. Source review found returned-form patch/start-field-mask/exact resubmit permission requirements and exact task/FormTo identity for overlapping approvers. These are actual accepted contract work, not extra proof layers.",
           "unchanged": "Original375/56 partial cards and125/247 full acceptance states; single chat,24h effective target,PostgreSQL/local gates,no Actions or production deployment."
+        },
+        {
+          "at": "2026-11-03T07:12:54.051512+00:00",
+          "checkpoint": "16h",
+          "effective_seconds": 57619,
+          "excluded_wall_seconds": 7558,
+          "observed_windows": [
+            {
+              "window": "W282-01",
+              "actual_seconds": 5593
+            },
+            {
+              "window": "W283-01",
+              "actual_seconds_so_far": 4562,
+              "state": "IN_PROGRESS"
+            }
+          ],
+          "remaining_capacity_hours": 7.99,
+          "remaining_estimate_hours": [
+            5,
+            10.5
+          ],
+          "confidence": "LOW",
+          "remaining_windows": {
+            "W283-01": [
+              1,
+              2.5
+            ],
+            "W284-01": [
+              1,
+              2
+            ],
+            "W285-01": [
+              2,
+              4
+            ],
+            "W286-01": [
+              1,
+              2
+            ]
+          },
+          "observed": "W282 actual closure 5593s was below 3–5h estimate, preserved honestly. W283 six affected PostgreSQL behavior tests passed at 07:10:25Z; subsequent revision/identity/diagnostic changes and error-edge/actual Host/Chrome package are still being verified. No browser result is claimed yet.",
+          "remaining": "W283 real Host/HTTP/Chrome, error-edge and current authorization/epoch race boundaries, pinned policy and deadline revision review, concentrated review and two-repository normal delivery. W284 field-graph/pure rules, W285 native FORM file admission/download authorization, W286 original competitions/legacy caller boundaries remain serial original-scope work.",
+          "basis": "Estimates use measured Codex execution windows, not human-day conversions. Only closed windows supply full delivery duration. The original contracts require actual task/lease/notification/receipt atomicity; failures are retained and no repeated full-repository gates or idle time are added.",
+          "unchanged": "24h effective active goal, original375 and56 partial cards and125/247 full acceptance states; single chat,PostgreSQL/local verification,no Actions,production deployment or existing-database migration."
         }
       ],
-      "timing_snapshot_at": "2026-11-03T05:56:52.105635+00:00",
+      "timing_snapshot_at": "2026-11-03T07:12:54.051512+00:00",
       "remaining_estimate_hours": [
-        7,
-        14
+        5,
+        10.5
       ],
       "runtime_timing_anchor": {
         "at": "2026-11-03T03:44:56+00:00",
