@@ -20,6 +20,11 @@ beforeEach(() => {
   vi.mocked(api.read).mockResolvedValue(draft())
 })
 afterEach(() => { mounted.forEach(w => w.unmount()); mounted.length = 0 })
+it('offers explanation of the saved draft without requiring write permission', async () => {
+  vi.mocked(api.read).mockResolvedValue(draft({ writableFields: [] }))
+  const w = setup(); await flushPromises(); await state(w).load('leave')
+  expect(w.findAll('button').some(button => button.text() === '预演流程' && button.attributes('disabled') === undefined)).toBe(true)
+})
 it('preserves unknown precision and original number spelling while a visual node changes', () => {
   const value = JSON.parse(raw); value.nodes[0].name = '新名'
   const saved = preserveSchema(raw, value)
