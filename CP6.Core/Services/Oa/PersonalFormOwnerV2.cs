@@ -56,10 +56,14 @@ public sealed partial class PersonalFormOwnerV2(CP6Context db, IHttpContextAcces
         return await PostgreSqlPermissionReader.ReadAsync(db, id, ct);
     }
     internal async Task Action(UserPermissionContext actor, string action, CancellationToken ct, string menu = "oa-form-catalog")
+        => _ = await AnyAction(actor,[action],ct,menu);
+    private async Task<string> AnyAction(UserPermissionContext actor,string[] actions,CancellationToken ct,string menu="oa-form-catalog")
     {
-        if (!actor.MenuKeys.Contains(menu) || !actor.ActionKeys.Contains(menu + ":" + action)
-            || !await (from a in db.Sys_MenuActions join m in db.Sys_Menus on a.MenuId equals m.MenuId
-                where m.Enable && m.MenuKey == menu && a.ActionCode == action select a).AnyAsync(ct)) throw Error("ACTION_FORBIDDEN", 403);
+        var granted=actions.Where(action=>actor.ActionKeys.Contains(menu+":"+action)).ToArray();
+        if(!actor.MenuKeys.Contains(menu)||granted.Length==0)throw Error("ACTION_FORBIDDEN",403);
+        var registered=await (from a in db.Sys_MenuActions join m in db.Sys_Menus on a.MenuId equals m.MenuId
+            where m.Enable&&m.MenuKey==menu&&granted.Contains(a.ActionCode) select a.ActionCode).ToArrayAsync(ct);
+        return granted.FirstOrDefault(registered.Contains)??throw Error("ACTION_FORBIDDEN",403);
     }
     private sealed record Head(Guid Id, string Key);
     private IQueryable<Head> Heads() => db.Database.SqlQuery<Head>($"""

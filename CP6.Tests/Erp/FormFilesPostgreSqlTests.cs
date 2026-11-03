@@ -35,7 +35,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var owner=PersonalForm(h,files:new(h.Db,store,scanner));var context=await owner.ContextAsync("personal");var bytes=Encoding.UTF8.GetBytes("unknown commit original");var input=FormUpload(context,bytes);
         fault.Armed=true;Assert.Equal("COMMAND_OUTCOME_UNKNOWN",(await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(()=>owner.UploadFileAsync(input,new MemoryStream(bytes)))).Message);
         var menu=await h.Db.Sys_Menus.SingleAsync(m=>m.MenuKey=="oa-form-catalog");
-        await h.Db.Sys_RoleActions.Where(a=>a.MenuId==menu.MenuId&&a.ActionCode=="add").ExecuteDeleteAsync();
+        await h.Db.Sys_RoleActions.Where(a=>a.MenuId==menu.MenuId&&(a.ActionCode=="add"||a.ActionCode=="submit")).ExecuteDeleteAsync();
         Assert.Equal("COMMITTED",(await owner.FileOperationAsync(input.OperationId,true)).State);
         Assert.Equal("COMMITTED",(await owner.UploadFileAsync(input,Stream.Null)).State);Assert.Single(store.Bytes);Assert.Equal(1,scanner.Calls);
         using var unread=new MemoryStream(bytes);Assert.Equal("ACTION_FORBIDDEN",(await Assert.ThrowsAsync<ScopeAuthorizationExceptionV1>(()=>owner.UploadFileAsync(input with{OperationId=Guid.NewGuid(),FileId=Guid.NewGuid()},unread))).Message);Assert.Equal(0,unread.Position);
