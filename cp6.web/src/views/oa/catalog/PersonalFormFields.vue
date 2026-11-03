@@ -3,7 +3,7 @@ import { computed, ref, watch } from 'vue'
 import type { FormMask } from '@/api/oa/personalForm'
 import PersonalReferenceInput from './PersonalReferenceInput.vue'
 import { FormNumber, formObject, readFormJson, writeFormJson, schemaProperty, schemaText, schemaNumber, type FormValue, type FormObject } from './personalFormJson'
-const props = defineProps<{ fields: FormObject[]; modelValue: FormObject; mask?: FormMask; disabled?: boolean; hidden?: string[]; formKey?: string; draftId?: string }>()
+const props = defineProps<{ fields: FormObject[]; modelValue: FormObject; mask?: FormMask; disabled?: boolean; hidden?: string[]; formKey?: string; draftId?: string; allowUnset?: boolean }>()
 const emit = defineEmits<{ 'update:modelValue': [value: FormObject]; validity: [value: boolean]; forbidden: [] }>()
 const errors = ref<Record<string, string>>({}), edits = ref<Record<string, string>>({}), children = ref<Record<string, boolean>>({})
 const name = (field: FormObject) => schemaText(field, 'name')
@@ -70,7 +70,7 @@ defineExpose({ valid })
       <template v-if="type(field) === 'table'">
         <fieldset v-for="(row, index) in rows(field)" :key="index">
           <legend>第 {{ index + 1 }} 行</legend>
-          <PersonalFormFields :fields="columns(field)" :model-value="row" :disabled="locked(field)"
+          <PersonalFormFields :fields="columns(field)" :model-value="row" :disabled="locked(field)" :allow-unset="allowUnset"
             @update:model-value="changeRow(field, index, $event)" @validity="children[`${name(field)}:${index}`] = $event" />
           <el-button v-if="!locked(field)" size="small" @click="removeRow(field, index)">删除此行</el-button>
         </fieldset>
@@ -96,7 +96,7 @@ defineExpose({ valid })
       <small v-if="errors[name(field)]" role="alert">{{ errors[name(field)] }}</small>
       <div v-if="!locked(field)" class="value-state">
         <span>{{ modelValue[name(field)] === undefined ? '未填写' : modelValue[name(field)] === null ? '空值' : '' }}</span>
-        <button type="button" @click="assign(field, undefined)">移除填写</button>
+        <button v-if="allowUnset !== false" type="button" @click="assign(field, undefined)">移除填写</button>
         <button type="button" @click="assign(field, null)">设为空值</button>
       </div>
     </div>

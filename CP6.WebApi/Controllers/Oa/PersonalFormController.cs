@@ -7,7 +7,7 @@ namespace CP6.WebApi.Controllers.Oa;
 
 [ApiController, Authorize, Route("api/oa/v2")]
 [ResponseCache(NoStore=true,Location=ResponseCacheLocation.None)]
-public sealed class PersonalFormController(PersonalFormOwnerV2 owner):ControllerBase
+public sealed class PersonalFormController(PersonalFormOwnerV2 owner,ApprovalTaskDecisionOwnerV2 app):ControllerBase
 {
     [HttpGet("catalog/favorites")]
     public Task<IActionResult> Favorites([FromQuery]int page=1,[FromQuery]int pageSize=20,[FromQuery]string? search=null,CancellationToken ct=default)=>Run(async()=>await owner.FavoritesAsync(page,pageSize,search,ct));
@@ -52,6 +52,27 @@ public sealed class PersonalFormController(PersonalFormOwnerV2 owner):Controller
     {
         var value=await owner.TaskContextAsync(task,ActingAs(),ct);Response.Headers.ETag="\""+value.Task.TaskRowVersion+"\"";return value;
     });
+    [HttpPost("personal-forms/tasks/{task:guid}/sendback-preview")]
+    public Task<IActionResult> SendBackPreview(Guid task,NativeSendBackTargetV2 input,CancellationToken ct)=>Run(async()=>await owner.SendBackPreviewAsync(task,input,ActingAs(),ct));
+    [HttpPost("personal-forms/tasks/{task:guid}/sendback"),RequestSizeLimit(1024*1024)]
+    public Task<IActionResult> SendBack(Guid task,CancellationToken ct)=>Run(async()=>await owner.SendBackAsync(task,await Raw(ct),ActingAs(),ct));
+    [HttpPost("personal-forms/tasks/{task:guid}/transfer"),RequestSizeLimit(1024*1024)]
+    public Task<IActionResult> Transfer(Guid task,CancellationToken ct)=>Run(async()=>await owner.TransferTaskAsync(task,await Raw(ct),ActingAs(),ct));
+    [HttpPost("personal-forms/tasks/{task:guid}/addsign"),RequestSizeLimit(1024*1024)]
+    public Task<IActionResult> AddSign(Guid task,CancellationToken ct)=>Run(async()=>await owner.AddSignTaskAsync(task,await Raw(ct),ActingAs(),ct));
+    [HttpGet("instances/{instance:guid}/returned-form")]
+    public Task<IActionResult> ReturnedForm(Guid instance,CancellationToken ct)=>Run(async()=>{RequireActual();return await owner.ReturnedFormAsync(instance,ct);});
+    [HttpPut("instances/{instance:guid}/returned-form"),RequestSizeLimit(1024*1024)]
+    public Task<IActionResult> EditReturned(Guid instance,CancellationToken ct)=>Run(async()=>{RequireActual();return await owner.EditReturnedAsync(instance,await Raw(ct),ct);});
+    [HttpPost("instances/{instance:guid}/resubmit"),RequestSizeLimit(1024*1024)]
+    public Task<IActionResult> ResubmitReturned(Guid instance,CancellationToken ct)=>Run(async()=>{RequireActual();return await owner.ResubmitReturnedAsync(instance,await Raw(ct),ct);});
+    private void RequireActual(){if(ActingAs()!=null)throw new ScopeAuthorizationExceptionV1("RETURNED_STARTER_ONLY",403);}
+    [HttpGet("instances/{instance:guid}/pending-resolutions")]
+    public Task<IActionResult> PendingResolutions(Guid instance,CancellationToken ct)=>Run(async()=>{RequireActual();return await app.IsAppInstanceAsync(instance,ct)?await app.PendingResolutionsAsync(instance,ct):await owner.PendingResolutionsAsync(instance,ct);});
+    [HttpGet("pending-resolutions/{id:guid}/context")]
+    public Task<IActionResult> ResolutionContext(Guid id,CancellationToken ct)=>Run(async()=>{RequireActual();return await app.IsAppResolutionAsync(id,ct)?await app.ResolutionContextAsync(id,ct):await owner.ResolutionContextAsync(id,ct);});
+    [HttpPost("pending-resolutions/{id:guid}/assign"),RequestSizeLimit(1024*1024)]
+    public Task<IActionResult> ResolveApprover(Guid id,CancellationToken ct)=>Run(async()=>{RequireActual();return await app.IsAppResolutionAsync(id,ct)?await app.ResolveApproverAsync(id,await Raw(ct),ct):await owner.ResolveApproverAsync(id,await Raw(ct),ct);});
     [HttpPost("personal-forms/tasks/{task:guid}/decision")]
     public Task<IActionResult> Decide(Guid task,ApprovalTaskDecisionInputV2 input,CancellationToken ct)=>Run(async()=>await owner.DecideTaskAsync(task,input,ActingAs(),Request.Headers.IfMatch.FirstOrDefault(),ct));
     [HttpGet("personal-forms/tasks/{task:guid}/commands/{command:guid}")]

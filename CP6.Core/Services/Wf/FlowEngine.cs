@@ -174,13 +174,13 @@ public partial class FlowEngine : IFlowEngine
         task.Modifier = actorId.ToString();
         task.ModifyDate = DateTime.Now;
         AddHistory(inst.Id, task.NodeId, actorId, approve ? "approve" : "reject", comment);
-        await UpdateFormToOnHandleAsync(task, actorId, approve, comment, onBehalfOf);   // ★ T9：更新传签履历办结状态；act-as 时 actorId=实办人，onBehalfOf=被代理人
+        var handledStep=await UpdateFormToOnHandleAsync(task, actorId, approve, comment, onBehalfOf);
 
         // ★ T10：办结时存一份该关卡表单快照（与送签快照同 StepSeq，形成"入→出"两条留痕）
         var doneTok = await _db.Wf_FlowTokens.FirstOrDefaultAsync(t => t.Id == task.TokenId);
         if (doneTok is not null)
         {
-            var seq = await _db.Wf_FlowFormTos
+            var seq = handledStep ?? await _db.Wf_FlowFormTos
                 .Where(f => f.InstanceId == inst.Id && f.NodeId == task.NodeId && f.TokenId == task.TokenId)
                 .Select(f => (int?)f.StepSeq).MaxAsync() ?? NextStepSeq(inst.Id);
             var snapNode = FindNode(await LoadSchemaAsync(inst), task.NodeId);
@@ -188,6 +188,15 @@ public partial class FlowEngine : IFlowEngine
         }
 
         // 前加签人审完 → 激活被挂起的原审批人任务（章07 §3），使其重新可办
+        if (approve && task.AddSignSource == "before" && ManagedDecision)
+        {
+            var parent=_personalFormRuntime
+                ?await _db.Database.SqlQuery<Guid>($"SELECT parent_task_id AS \"Value\" FROM cp6_personal_form_v2.add_sign_links WHERE task_id={task.Id}").SingleAsync()
+                :await _db.Database.SqlQuery<Guid>($"SELECT parent_task_id AS \"Value\" FROM cp6_native_tasks_v2.app_add_sign_links WHERE task_id={task.Id}").SingleAsync();
+            var original=await _db.Wf_FlowTasks.SingleAsync(t=>t.Id==parent);
+            original.Status=FlowTaskStatus.Pending;inst.ModifyDate=DateTime.Now;
+            return; // A before-sign vote cannot complete an `any` node before its parent has acted.
+        }
         if (approve && task.AddSignSource == "before")
             await ReactivateSuspendedAsync(inst.Id, task.NodeId);
 

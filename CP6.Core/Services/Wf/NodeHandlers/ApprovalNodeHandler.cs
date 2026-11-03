@@ -19,13 +19,15 @@ internal sealed class ApprovalNodeHandler : INodeHandler
             ctx.Token.StagePlanJson = null;   // 清陈旧串簽计划:多档节点→单档节点同 token 流转时,token 上一节点的冻结计划须清,否则 ActOnceAsync 误判本单档节点为多档
             await eng.WriteCcAsync(inst, node.Id, node.CcUsers, node.CcRoleId);
             var rule = FlowEngine.BuildRule(node);
-            if (rule is null) { eng.Suspend(inst, node, "节点未配置审批人"); return; }
+            if (rule is null) { eng.SuspendApproverV2(inst,node,ctx.Token,0,0,null,node.Countersign,node.ApproverRecoveryPolicy,"节点未配置审批人"); return; }
 
             var res = await eng.Approver.ResolveAsync(rule, new ApproverResolveContext { StarterUserId = inst.StarterId, VarsJson = inst.VarsJson });
-            if (!res.Resolved) { eng.Suspend(inst, node, res.UnresolvedReason ?? "审批人无法解析"); return; }
+            if (!res.Resolved) { eng.SuspendApproverV2(inst,node,ctx.Token,0,0,null,node.Countersign,node.ApproverRecoveryPolicy,res.UnresolvedReason ?? "审批人无法解析"); return; }
 
             // 重入节点（退回/循环）：先作废上一轮遗留任务，避免会签计票串台
-            var stale = await eng.Db.Wf_FlowTasks
+            // Native rounds have distinct token/round identities. Preserve completed tasks as
+            // historical facts; cancelling every task at this node would rewrite old votes.
+            var stale = eng.ManagedRuntime ? [] : await eng.Db.Wf_FlowTasks
                 .Where(t => t.InstanceId == inst.Id && t.NodeId == node.Id && t.Status != FlowTaskStatus.Cancelled)
                 .ToListAsync();
             foreach (var t in stale) t.Status = FlowTaskStatus.Cancelled;
@@ -50,7 +52,7 @@ internal sealed class ApprovalNodeHandler : INodeHandler
                 eng.Db.Wf_FlowTasks.Add(task);
                 eng.RecordApprovalAssignment(inst, task, rule, res.ApproverIds);
                 eng.WriteFormToOnSend(inst, node, ctx.Token,   // ★ T9：送签建传签履历行
-                    expectedHandler: assignee, onBehalfOf: delegatedFrom, stepSeq: step);
+                    expectedHandler: assignee, onBehalfOf: delegatedFrom, stepSeq: step,nativeTaskId:task.Id);
                 if (delegatedFrom is Guid g)
                     eng.AddHistory(inst.Id, node.Id, assignee, "delegate", $"代 {g} 审批");   // 双痕：代理人 + 被代理人
                 if (!eng.ManagedRuntime) await eng.Notifier.TodoCreatedAsync(assignee, inst.Id, task.Id, inst.FlowKey);

@@ -59,6 +59,8 @@ public class FlowNode
 
     /// <summary>串簽档位序列(有序)。空/缺省=单档,用本节点 ApproverStrategy/Countersign(向后兼容)。</summary>
     public List<ApprovalStage>? Stages { get; set; }
+    /// <summary>Explicit recovery policy, frozen in the publication. Null never grants manual assignment.</summary>
+    public ApproverRecoveryPolicyV2? ApproverRecoveryPolicy { get; set; }
 
     // ── 高级审批人策略(②③①)。缺省 null=不启用,走原扁平 4 字段路径(向后兼容) ──
     public string? ApproverFieldName { get; set; }   // FormField/DataMap:字段名
@@ -159,7 +161,10 @@ public class ApprovalStage
     public string? ApproverWhen { get; set; }        // ②a 门控
     public string? ApproverFilter { get; set; }      // ②a 候选过滤
     public List<ApproverSpec>? ApproverMembers { get; set; }   // Group 成员
+    public ApproverRecoveryPolicyV2? ApproverRecoveryPolicy { get; set; }
 }
+
+public sealed record ApproverRecoveryPolicyV2(string Mode,int[] EligibleRoleIds,bool ExcludeStarter=true,bool ExcludePublisher=true);
 
 /// <summary>审批人设计期叶规则(Group 成员用)。对齐 ApproverRule 叶子部分,无 Members(扁平合并)。</summary>
 public class ApproverSpec

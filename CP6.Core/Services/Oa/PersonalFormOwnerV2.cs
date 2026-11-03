@@ -32,7 +32,7 @@ public sealed partial class PersonalFormOwnerV2(CP6Context db, IHttpContextAcces
     }
     private async Task Ready(CancellationToken ct)
     {
-        if (!await db.Database.SqlQueryRaw<bool>("SELECT cp6_personal_form_v2.ready() AS \"Value\"").SingleAsync(ct)) throw Error("FORM_WRITER_COVERAGE_UNAVAILABLE");
+        if (!await db.Database.SqlQueryRaw<bool>("SELECT cp6_personal_form_v2.returned_ready() AND cp6_native_tasks_v2.ready() AS \"Value\"").SingleAsync(ct)) throw Error("FORM_WRITER_COVERAGE_UNAVAILABLE");
     }
     internal async Task<ScopeAuthorizationLeaseV1> ReadLease(CancellationToken ct)
     {
@@ -104,7 +104,7 @@ public sealed partial class PersonalFormOwnerV2(CP6Context db, IHttpContextAcces
         if (access == 3 && after != null || access != 1 && after != before) throw Error("FIELD_WRITE_FORBIDDEN",403);
     }
     internal sealed record Command<T>(string Id,string? Expected,T Body,string Digest,byte[] Raw,string? Correlation);
-    internal static Command<T> CommandInput<T>(byte[] raw, bool versionRequired)
+    internal static Command<T> CommandInput<T>(byte[] raw, bool versionRequired, bool runtimeVersion = false)
     {
         try
         {
@@ -112,13 +112,19 @@ public sealed partial class PersonalFormOwnerV2(CP6Context db, IHttpContextAcces
             if (root.ValueKind != JsonValueKind.Object || root.EnumerateObject().Any(p => p.Name is not ("commandId" or "expectedVersion" or "body" or "clientCorrelationId"))) throw new JsonException();
             var id = root.GetProperty("commandId").GetString(); var expected = root.GetProperty("expectedVersion").GetString();
             if (id == null || !Regex.IsMatch(id,"\\A[A-Za-z0-9_.-]{1,100}\\z")
-                || versionRequired && (!Guid.TryParseExact(expected,"D",out var token) || token == Guid.Empty) || !versionRequired && expected != null) throw new JsonException();
+                || versionRequired && (runtimeVersion ? !RuntimeVersion(expected) : !Guid.TryParseExact(expected,"D",out var token) || token == Guid.Empty) || !versionRequired && expected != null) throw new JsonException();
             var body = root.GetProperty("body"); var value = body.Deserialize<T>(Json) ?? throw new JsonException();
             var correlation = root.TryGetProperty("clientCorrelationId",out var c) ? c.GetString() : null;
             if (correlation?.Length > 100) throw new JsonException();
             return new(id,expected,value,WorkflowCommandJsonV1.Digest(body,expected),raw.ToArray(),correlation);
         }
         catch (Exception ex) when (ex is JsonException or InvalidOperationException or KeyNotFoundException) { throw Error("COMMAND_SHAPE_INVALID",400); }
+    }
+    internal static bool RuntimeVersion(string? value)
+    {
+        if(value==null)return false;
+        try { var bytes=Convert.FromBase64String(value);return bytes.Length==8&&Convert.ToBase64String(bytes)==value; }
+        catch(FormatException){return false;}
     }
     private sealed record StoredCommand(Guid Id, Guid Actor, string Operation, string Resource, string Key, string Digest, string Result,
         Guid? Draft, Guid? Data, Guid? Root, bool Closed);

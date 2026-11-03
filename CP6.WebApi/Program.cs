@@ -757,6 +757,7 @@ builder.Services.AddScoped(sp => new CP6.Core.Services.Oa.ApprovalTaskAuthorityV
         { throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1(e.Message, e.Status, e); }
     }));
 builder.Services.AddScoped<CP6.Core.Services.Oa.ApprovalTaskDecisionOwnerV2>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.NativeTaskBatchOwnerV2>();
 builder.Services.AddSingleton(new CP6.WebApi.Services.ApprovalFactReceiverRegistryV2(
     builder.Configuration.GetSection("ApprovalFactReceiver").Get<CP6.WebApi.Services.ApprovalFactReceiverOptionsV2>() ?? new(), crmOidc, builder.Environment.IsDevelopment()));
 builder.Services.AddScoped<CP6.WebApi.Services.ApprovalFactReceiverServiceAuthorityV2>();

@@ -161832,6 +161832,11 @@
       "date": "2026-11-03",
       "change": "24h目标累计14h实际校准：余约10h容量；W282尚未交付，余管理批量/定向边界/真实浏览器及闭环。W282–286合计剩余7–14h低置信区间，优先闭环已开工完整任务，原大卡状态不变。",
       "evidence": "docs/development/planning/20261102-codex-24h-oa.md"
+    },
+    {
+      "date": "2026-11-03",
+      "change": "W282：APP/SFS原生退回预览与确认、准确转交/前后加签、SFS同实例退回编辑重送、显式政策无人审批恢复及管理批量转交已实现；真实Chrome、HTTP、PostgreSQL和故障恢复通过。",
+      "evidence": "docs/development/evidence/W282-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -197849,6 +197854,13 @@
         "status": "IN_PROGRESS",
         "scope": "原TASK R2退回预览/确认、原SFS实例编辑重送与新轮、转交/加签当前职责、显式精准pin政策下无人审批恢复；沿当前WFC/权限fence/同事务结果，不借旧入口或创建新实例替代。3–5h低置信度，单人连续实现，下一累计14h校准。",
         "full_task_completed": false
+      },
+      "wave282_task_recovery": {
+        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W282-01/DELIVERY.md",
+        "full_task_completed": false,
+        "validation": "本地31项唯一相关后端行为通过，来源逐项列明，包含隔离PostgreSQL18实际迁移/Owner/HTTP、APP/SFS任务办理、准确FormTo与旧票隔离、返回编辑与双连接重送、当前授权/SOD、显式政策无人审批恢复、管理批量固定名单/部分结果/同实例版本链/断响应恢复及授权后500项上限。含2条真实Chrome→Vue→Main→PostgreSQL路径：退回编辑重送至通过、管理批量转交丢响应刷新恢复。18项前端组件行为与应用vue-tsc通过，四张截图已查看。复用未受后续改动影响的成功来源；失败日志保留，不把混合运行改称全绿。模拟用户、业务、政策和服务登记，产品Owner/HTTP/数据库/浏览器实际运行。无Actions、生产部署或既有数据库迁移。",
+        "remaining": "原375仍27DONE/2IN_PROGRESS/346PLANNED；59局部3闭环/56余项，125/247正式状态不变。WP12-09整卡保持原状态；期限/Worker原生采用留W283，完整字段/图诊断及纯FORM规则预览留W284，普通FORM实际文件准入与最终下载留W285，FLOW原竞争及legacy来源/旧caller处置留W286。"
       }
     },
     {
@@ -201883,7 +201895,7 @@
       "path": "docs/development/dispatch/20261103-wave282/README.md",
       "baseline_sha": "854f52721a06f22c22f82c8aa4d714a82acfb698",
       "registered_at": "2026-11-03T04:24:30.268958+00:00",
-      "phase": "IMPLEMENTING",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -201909,17 +201921,17 @@
           "title": "退回重送、转交加签与无人审批恢复",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "IMPLEMENTING",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w282-01",
           "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
@@ -201927,14 +201939,34 @@
             "Main:oa-task",
             "Main:workflow-engine",
             "Main:EF-migration-history"
-          ]
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W282-01/DELIVERY.md",
+          "validation": "本地31项唯一相关后端行为通过，来源逐项列明，包含隔离PostgreSQL18实际迁移/Owner/HTTP、APP/SFS任务办理、准确FormTo与旧票隔离、返回编辑与双连接重送、当前授权/SOD、显式政策无人审批恢复、管理批量固定名单/部分结果/同实例版本链/断响应恢复及授权后500项上限。含2条真实Chrome→Vue→Main→PostgreSQL路径：退回编辑重送至通过、管理批量转交丢响应刷新恢复。18项前端组件行为与应用vue-tsc通过，四张截图已查看。复用未受后续改动影响的成功来源；失败日志保留，不把混合运行改称全绿。模拟用户、业务、政策和服务登记，产品Owner/HTTP/数据库/浏览器实际运行。无Actions、生产部署或既有数据库迁移。",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave282-final-verification.json"
+          },
+          "business_acceptance": "NATIVE_TASK_RECOVERY_AND_MANAGEMENT_BATCH_ACTUAL_BROWSER_POSTGRES_PASS;FULL_CARD_REMAINS"
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "原TASK R2退回预览/确认、原SFS实例编辑重送与新轮、转交/加签当前职责、显式精准pin政策下无人审批恢复；沿当前WFC/权限fence/同事务结果，不借旧入口或创建新实例替代。3–5h低置信度，单人连续实现，下一累计14h校准。"
+      "next_action": "W282正常远端采用/准确清理/finish后接W283期限与Worker；24h目标持续。",
+      "lifecycle_snapshot": {
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_seat_released": false,
+        "main_branch_deleted": false,
+        "handoff_branch_deleted": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave282-final-verification.json"
+      },
+      "integration_baseline": "854f52721a06f22c22f82c8aa4d714a82acfb698"
     },
     "wave_history": [
       {
@@ -238485,7 +238517,7 @@
       "estimate_is_guarantee": false,
       "original_task_count": 375,
       "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 50423,
+      "effective_seconds_recorded": 52619,
       "next_reestimate_at_effective_seconds": 57600,
       "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
       "windows": [
@@ -238972,7 +239004,7 @@
             2,
             4
           ],
-          "state": "IN_PROGRESS",
+          "state": "VERIFYING",
           "admission": "Inspect direct providers/current source before START; no stub substitution",
           "reason": "First 2h throughput calibration: original authorized adjacent remaining scope",
           "revised_estimate_hours": [
@@ -238981,12 +239013,22 @@
           ],
           "estimate_confidence": "LOW",
           "started_at": "2026-11-03T04:24:30.268958+00:00",
-          "scope_refinement": "Original TASK R2 returned SFS dual CAS/execution cycles, native sendback preview and confirmed branch/stage scope, transfer/addsign current versus created principal, explicit pinned-policy PendingResolution. Reuse completed delegation/withdrawal. Full card remains open until all original acceptance proved.",
+          "scope_refinement": "Native task recovery and management batch adopted; deadline/Worker and legacy caller disposition remain separate. Full card not closed.",
           "remaining_estimate_hours": [
             2,
             4
           ],
-          "actual_effective_seconds_so_far": 2908
+          "actual_effective_seconds_so_far": 2908,
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W282-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave282-final-verification.json"
+          }
         },
         {
           "id": "W283-01",
@@ -239306,7 +239348,7 @@
           "unchanged": "Original375/56 partial cards and125/247 full acceptance states; single chat,24h effective target,PostgreSQL/local gates,no Actions or production deployment."
         }
       ],
-      "timing_snapshot_at": "2026-11-03T05:12:58.736229+00:00",
+      "timing_snapshot_at": "2026-11-03T05:49:34.935533+00:00",
       "remaining_estimate_hours": [
         7,
         14

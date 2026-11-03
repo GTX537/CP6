@@ -8,6 +8,7 @@ public partial class FlowEngine
 {
     private ApprovalSubmitCommandV2? _approvalOriginal;
     private readonly List<ApprovalTaskAssignmentV2> _approvalAssignments = [];
+    internal IReadOnlyList<ApprovalTaskAssignmentV2> CreatedApprovalAssignments=>_approvalAssignments;
 
     internal void RecordApprovalAssignment(Wf_FlowInstance instance, Wf_FlowTask task,
         ApproverRule rule, IEnumerable<Guid> candidates, string? stageCode = null)
@@ -29,8 +30,7 @@ public partial class FlowEngine
             instance.FlowDefVersionId.Value, task.NodeId, task.StageIndex, task.StageRound, stageCode,
             task.Countersign, task.AssigneeId, candidates.Distinct().ToArray(), rule,
             DateTimeOffset.FromUnixTimeMilliseconds(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()));
-        _approvalAssignments.Add(System.Text.Json.JsonSerializer.Deserialize<ApprovalTaskAssignmentV2>(
-            ApprovalCanonicalV2.Bytes(fact), ApprovalBindingOwnerV2.Json)!);
+        _approvalAssignments.Add(fact);
     }
 
     internal Task SaveApprovalAssignments(CancellationToken ct)

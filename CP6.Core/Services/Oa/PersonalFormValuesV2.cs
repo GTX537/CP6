@@ -52,6 +52,18 @@ internal static class PersonalFormValuesV2
         Validate(schema, merged.RootElement, partial: true);
         return result.ToJsonString();
     }
+    internal static string Patch(FormSchema schema,JsonElement input,string original,IReadOnlyDictionary<string,string> mask)
+    {
+        Shape(input);var fields=schema.Fields.ToDictionary(f=>f.Name,StringComparer.Ordinal);var result=JsonNode.Parse(original)!.AsObject();
+        foreach(var field in input.EnumerateObject())
+        {
+            if(!fields.ContainsKey(field.Name))throw Error("FORM_FIELD_UNKNOWN");
+            if(mask[field.Name]!="edit")throw new ScopeAuthorizationExceptionV1("FIELD_WRITE_FORBIDDEN",403);
+            result[field.Name]=JsonNode.Parse(field.Value.GetRawText());
+        }
+        // Omitted keys stay unchanged; an explicit JSON null stays null. No whole-object replacement.
+        using var merged=JsonDocument.Parse(result.ToJsonString());Validate(schema,merged.RootElement,partial:true);return result.ToJsonString();
+    }
     internal static void Shape(JsonElement data)
     {
         if (data.ValueKind != JsonValueKind.Object || data.EnumerateObject().Count() > 500

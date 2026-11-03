@@ -22,7 +22,8 @@ public sealed partial class PersonalFormOwnerV2
             """).SingleOrDefaultAsync(ct)??throw Error("RESOURCE_NOT_FOUND",404);
         var form=await Publication(source.Head,source.Version,ct);var mask=await Mask(actor,source.Head,form,ct);
         if(principal!=null)mask=IntersectMasks(mask,await Mask(principal,source.Head,form,ct));
+        var returned=await db.Database.SqlQuery<bool>($"SELECT EXISTS(SELECT FROM cp6_personal_form_v2.returns WHERE instance_id={root}) AS \"Value\"").SingleAsync(ct);
         return new(source.Data,source.Version,TitleReadable(actor)&&(principal==null||TitleReadable(principal))?source.Title:null,
-            ProjectSchema(form.Fields["SchemaJson"]!,mask),PersonalFormValuesV2.Project(source.DataJson,mask),mask);
+            ProjectSchema(form.Fields["SchemaJson"]!,mask),PersonalFormValuesV2.Project(source.DataJson,mask),mask,returned?"RETURNED_CURRENT_CYCLE":"ROOT_SUBMISSION");
     }
 }

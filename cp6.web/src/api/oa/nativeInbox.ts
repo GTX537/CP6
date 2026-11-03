@@ -4,7 +4,7 @@ export type InboxKind = 'pending' | 'cc' | 'running' | 'done'
 export interface NativeInboxItem { instanceId: string; rootInstanceId: string; contextKind: 'SFS' | 'APP'; flowKey: string; instanceStatus: number; title: string | null; businessType: string | null; taskIds: string[]; ccIds: string[]; unreadCount: number; createdAt: string }
 export interface NativeInboxPage { items: NativeInboxItem[]; totalItems: number; totalGroups: number; page: number; pageSize: number; rowMode: 'expanded' | 'merged'; actualUserId: string; effectiveUserId: string }
 export interface NativeReadFact { kind: 'TASK' | 'CC'; targetId: string; principalId: string; actualUserId: string; firstReadAtUtc: string; firstCommandId: string }
-export interface NativeTask { taskId: string; instanceId: string; nodeId: string; tokenId: string | null; stageIndex: number; stageRound: number; principalId: string; status: number; taskRowVersion: string; read: NativeReadFact | null; canRequestDecisionContext: boolean }
+export interface NativeTask { taskId: string; instanceId: string; nodeId: string; tokenId: string | null; stageIndex: number; stageRound: number; principalId: string; createdPrincipalId?: string; status: number; taskRowVersion: string; read: NativeReadFact | null; canRequestDecisionContext: boolean }
 export interface NativeDetail {
   instanceId: string; rootInstanceId: string; contextKind: 'SFS' | 'APP'; actualUserId: string; effectiveUserId: string
   graph: { instanceId: string; parentInstanceId: string | null; flowVersionId: string; formVersionId: string | null; flowKey: string; status: number; instanceRowVersion: string }[]

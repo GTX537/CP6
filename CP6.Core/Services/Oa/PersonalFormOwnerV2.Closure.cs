@@ -13,14 +13,14 @@ public sealed partial class PersonalFormOwnerV2
     // authority lock as its writer. NOT_OBSERVED alone never permits a fresh command.
     public async Task<PersonalFormResultV2> CloseAsync(string operation,string resource,string command,CancellationToken ct=default)
     {
-        if(operation is not(Create or Save or Delete or Restore or Rebase or Direct or Submit or Decision or Favorite)
+        if(operation is not(Create or Save or Delete or Restore or Rebase or Direct or Submit or Decision or Favorite or SendBack or Transfer or AddSign or ReturnedEdit or ReturnedResubmit or ResolveApprover)
             ||!System.Text.RegularExpressions.Regex.IsMatch(command,"\\A[A-Za-z0-9_.-]{1,100}\\z"))throw Error("COMMAND_SCOPE_INVALID",400);
         resource=CommandResource(operation,resource);
         if(operation==Decision)command=Guid.TryParseExact(command,"D",out var commandId)&&commandId!=Guid.Empty?commandId.ToString("D"):throw Error("COMMAND_SCOPE_INVALID",400);
         Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var committing=false;
         try
         {
-            var lease=await ReadLease(ct);var actor=await Actor(ct);await Action(actor,"query",ct,operation==Decision?"oa-inbox":"oa-form-catalog");
+            var lease=await ReadLease(ct);var actor=await Actor(ct);await Action(actor,"query",ct,operation is Decision or SendBack or Transfer or AddSign or ReturnedEdit or ReturnedResubmit or ResolveApprover?"oa-inbox":"oa-form-catalog");
             var old=await Original(actor.UserId,operation,resource,command,ct);
             if(old!=null)
             {
@@ -42,7 +42,9 @@ public sealed partial class PersonalFormOwnerV2
             else
             {
                 if(!Guid.TryParseExact(resource,"D",out var id))throw Error("COMMAND_SCOPE_INVALID",400);
-                if(operation==Decision){var source=await TaskSourceAsync(id,ct);await Mask(actor,source.FormHead,await Publication(source.FormHead,source.FormVersion,ct),ct);}
+                if(operation is Decision or SendBack or Transfer or AddSign){var source=await TaskSourceAsync(id,ct);await Mask(actor,source.FormHead,await Publication(source.FormHead,source.FormVersion,ct),ct);}
+                else if(operation==ResolveApprover){var resolution=await Resolution(id,ct);await ResolutionAccess(await PersonalInstanceSource(resolution.Instance,ct),actor,ct);}
+                else if(operation is ReturnedEdit or ReturnedResubmit)await ReturnedAccess(await ReturnedSourceAsync(id,ct),actor,ct);
                 else{var row=await Owned(id,actor.UserId,ct);await Mask(actor,row.Head,await Publication(row.Head,row.Version,ct),ct);}
             }
             await Ready(ct);var closed=new PersonalFormResultV2(command,"CLOSED",null,null,null,Clock(),null);

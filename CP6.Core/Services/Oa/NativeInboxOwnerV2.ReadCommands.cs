@@ -32,6 +32,12 @@ public sealed partial class NativeInboxOwnerV2
         if(!lease.Snapshot.Enabled||lease.Snapshot.WriterProfile!=ScopeAuthorizationFenceV1.NativeWriterProfile)throw Error("SCOPE_MAPPING_DISABLED");
         if(!await db.Database.SqlQueryRaw<bool>("SELECT cp6_workflow_read_v2.ready() AS \"Value\"").SingleAsync(ct))throw Error("INBOX_READ_WRITER_UNAVAILABLE");
     }
+    private async Task OriginalTargetVisible(string kind,Guid target,ReadIdentity actor,CancellationToken ct)
+    {
+        var instance=kind=="TASK"?await db.Wf_FlowTasks.Where(t=>t.Id==target).Select(t=>t.InstanceId).SingleAsync(ct)
+            :await db.Wf_FlowCcs.Where(c=>c.Id==target).Select(c=>c.InstanceId).SingleAsync(ct);
+        await Visible(instance,actor,ct);
+    }
     public async Task<NativeReadCommandResultV2> MarkReadAsync(string kind,Guid target,byte[] raw,Guid? behalf=null,CancellationToken ct=default)
     {
         var command=PersonalFormOwnerV2.CommandInput<JsonElement>(raw,false);Key(kind,target,command.Id);
@@ -39,15 +45,17 @@ public sealed partial class NativeInboxOwnerV2
         forms.Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var committing=false;
         try
         {
-            var(actor,lease)=await Begin(behalf,ct);var row=await Target(kind,target,actor,ct);var old=await Original(kind,target,actor.UserId,command.Id,ct);
+            var(actor,lease)=await Begin(behalf,ct);var old=await Original(kind,target,actor.UserId,command.Id,ct);
             if(old!=null)
             {
                 if(old.Closed)throw Error("COMMAND_CLOSED",409);
                 if(old.Digest!=command.Digest)throw Error("COMMAND_BODY_CONFLICT",409);
+                await OriginalTargetVisible(kind,target,actor,ct);
                 await FinalRead(actor,lease,ct);return Parse<NativeReadCommandResultV2>(old.Result);
             }
+            var row=await Target(kind,target,actor,ct);
             await forms.Action(actor.Actual,"read",ct,"oa-inbox");if(actor.Delegated)await forms.Action(actor.Effective,"read",ct,"oa-inbox");await ReadWriter(lease,ct);
-            var fact=(await Reads([row.InstanceId],ct)).SingleOrDefault(r=>r.Kind==kind&&r.TargetId==target);
+            var fact=(await Reads([row.InstanceId],ct)).SingleOrDefault(r=>r.Kind==kind&&r.TargetId==target&&r.PrincipalId==row.PrincipalId);
             var first=fact==null;var id=Guid.NewGuid();
             var readGrant=actor.Delegated?actor.Selected.Values.Single():null;
             fact??=new(kind,target,row.PrincipalId,actor.UserId,
@@ -68,7 +76,8 @@ public sealed partial class NativeInboxOwnerV2
     public async Task<NativeReadCommandResultV2> ReadOriginalAsync(string kind,Guid target,string command,Guid? behalf=null,CancellationToken ct=default)
     {
         Key(kind,target,command);forms.Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var(actor,lease)=await Begin(behalf,ct);
-        await Target(kind,target,actor,ct);var old=await Original(kind,target,actor.UserId,command,ct);
+        var old=await Original(kind,target,actor.UserId,command,ct);
+        if(old==null)await Target(kind,target,actor,ct);else await OriginalTargetVisible(kind,target,actor,ct);
         var result=old==null?new(command,"NOT_OBSERVED",null,Query(kind,target,command)):Parse<NativeReadCommandResultV2>(old.Result);
         await FinalRead(actor,lease,ct);return result;
     }
@@ -77,8 +86,9 @@ public sealed partial class NativeInboxOwnerV2
         Key(kind,target,command);forms.Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var committing=false;
         try
         {
-            var(actor,lease)=await Begin(behalf,ct);await Target(kind,target,actor,ct);var old=await Original(kind,target,actor.UserId,command,ct);
-            if(old!=null){await FinalRead(actor,lease,ct);return Parse<NativeReadCommandResultV2>(old.Result);}
+            var(actor,lease)=await Begin(behalf,ct);var old=await Original(kind,target,actor.UserId,command,ct);
+            if(old!=null){await OriginalTargetVisible(kind,target,actor,ct);await FinalRead(actor,lease,ct);return Parse<NativeReadCommandResultV2>(old.Result);}
+            await Target(kind,target,actor,ct);
             await ReadWriter(lease,ct);var result=new NativeReadCommandResultV2(command,"CLOSED",null,Query(kind,target,command));
             await db.Database.ExecuteSqlInterpolatedAsync($"""
                 INSERT INTO cp6_workflow_read_v2.commands(id,tenant_id,environment_id,actor_id,kind,target_id,command_key,digest,raw_body,result_json,closed)

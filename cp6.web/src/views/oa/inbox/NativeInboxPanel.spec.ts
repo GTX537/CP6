@@ -11,6 +11,8 @@ vi.mock('./PersonalTaskPanel.vue', () => ({ default: { template: '<div />' } }))
 vi.mock('../catalog/PersonalFormFields.vue', () => ({ default: { props: ['fields', 'modelValue', 'mask', 'disabled'], template: '<div />' } }))
 vi.mock('@/api/oa/nativeInbox', () => ({ nativeInboxApi: { list: vi.fn(), detail: vi.fn(), read: vi.fn(), original: vi.fn(), close: vi.fn() } }))
 vi.mock('@/api/oa/taskDelegation', () => ({ taskDelegationApi: { received: vi.fn() } }))
+vi.mock('@/api/oa/nativeTaskOperations', () => ({ nativeTaskOperationsApi: {} }))
+vi.mock('./NativeTransferBatchPanel.vue', () => ({ default: { template: '<div />' } }))
 const page: NativeInboxPage = { items: [], totalItems: 0, totalGroups: 0, page: 1, pageSize: 20, rowMode: 'expanded', actualUserId: 'me', effectiveUserId: 'me' }
 const detail: NativeDetail = { instanceId: 'one', rootInstanceId: 'root', contextKind: 'SFS', actualUserId: 'me', effectiveUserId: 'me', graph: [], tasks: [], cc: [], history: [], votes: [], form: { formDataId: 'data', formVersionId: 'original-form', title: 'private title', schemaJson: '{"fields":[]}', dataJson: '{}', fieldMask: {}, dataSource: 'ROOT_SUBMISSION' }, business: null }
 const wrappers: ReturnType<typeof mount>[] = [], state = (w: any): any => w.vm.$.setupState

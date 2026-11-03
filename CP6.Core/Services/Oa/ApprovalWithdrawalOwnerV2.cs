@@ -83,8 +83,8 @@ public sealed class ApprovalWithdrawalOwnerV2(CP6Context db,ScopeAuthorizationFe
     {
         Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var lease=await scope.AcquireAsync(ct);await Ready(ct);
         var auth=await Service(ct);var grant=await Subject(auth,id,false,ct);var source=await Original(auth.Registration.Owner,id,ct);
-        var e=ApprovalSubmissionWireV2.Parse(source.Payload).Value;var state=source.Status switch{0=>"RUNNING",1=>"APPROVED",2=>"REJECTED",3=>"WITHDRAWN",4=>"SUSPENDED",null=>"NOT_STARTED",_=>throw Error("WITHDRAW_ENGINE_STATE_UNAVAILABLE")};
-        var can=grant.Relay && auth.Registration.Relay && auth.Service.CanSubmit && state is "RUNNING" or "SUSPENDED";
+        var e=ApprovalSubmissionWireV2.Parse(source.Payload).Value;var state=source.Status switch{0=>"RUNNING",1=>"APPROVED",2=>"REJECTED",3=>"WITHDRAWN",4=>"SUSPENDED",5=>"RETURNED",null=>"NOT_STARTED",_=>throw Error("WITHDRAW_ENGINE_STATE_UNAVAILABLE")};
+        var can=grant.Relay && auth.Registration.Relay && auth.Service.CanSubmit && state is "RUNNING" or "SUSPENDED" or "RETURNED";
         var result=new ApprovalWithdrawContextV2(id,e.Subject,e.Policy.Ref,source.Instance,state,Convert.ToBase64String(source.Version),can,can?[]:["WITHDRAW_CURRENT_STATE_OR_AUTHORITY_REQUIRED"]);
         await Final(lease,auth,id,grant,false,ct);await tx.CommitAsync(ct);return result;
     }
@@ -153,7 +153,7 @@ public sealed class ApprovalWithdrawalOwnerV2(CP6Context db,ScopeAuthorizationFe
                 ack=new(e.CommandId,f.OwnerCommandId,id,f.OwnerWithdrawalRef,e.FactDigest,"BLOCKED",null,null,blocked??"WORKFLOW_NOT_STARTED",QueryRoute+e.CommandId);
             else
             {
-                if(source.Status is not(FlowInstanceStatus.Running or FlowInstanceStatus.Suspended))throw Error("WITHDRAW_ENGINE_STATE_UNAVAILABLE");
+                if(source.Status is not(FlowInstanceStatus.Running or FlowInstanceStatus.Suspended or FlowInstanceStatus.Draft))throw Error("WITHDRAW_ENGINE_STATE_UNAVAILABLE");
                 await db.Database.ExecuteSqlInterpolatedAsync($"""
                     SELECT 1 FROM public."Wf_FlowInstance" WHERE "TenantId"={db.CurrentTenantId} AND "Id"={source.Instance} FOR UPDATE;
                     SELECT 1 FROM public."Wf_FlowTask" WHERE "TenantId"={db.CurrentTenantId} AND "InstanceId"={source.Instance} ORDER BY "Id" FOR UPDATE
@@ -187,7 +187,7 @@ public sealed class ApprovalWithdrawalOwnerV2(CP6Context db,ScopeAuthorizationFe
             """).ToArrayAsync(ct);
         if(await db.Wf_ServiceJobs.AnyAsync(x=>members.Contains(x.InstanceId) && (x.Status==ServiceJobStatus.Pending || x.Status==ServiceJobStatus.Running),ct))
             throw Error("WITHDRAW_ENGINE_CAPABILITY_UNAVAILABLE",422);
-        foreach(var i in await db.Wf_FlowInstances.Where(x=>members.Contains(x.Id) && (x.Status==FlowInstanceStatus.Running || x.Status==FlowInstanceStatus.Suspended)).ToArrayAsync(ct))
+        foreach(var i in await db.Wf_FlowInstances.Where(x=>members.Contains(x.Id) && (x.Status==FlowInstanceStatus.Running || x.Status==FlowInstanceStatus.Suspended || x.Status==FlowInstanceStatus.Draft)).ToArrayAsync(ct))
         {
             i.Status=FlowInstanceStatus.Withdrawn;i.Modifier=actor.ToString();i.ModifyDate=DateTime.Now;
             db.Wf_FlowHistories.Add(new(){Id=Guid.NewGuid(),InstanceId=i.Id,NodeId=i.CurrentNode,ActorId=actor,Action="withdraw",Comment=reason});

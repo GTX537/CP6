@@ -10,7 +10,7 @@ public partial class FlowEngine
     {
         var stage = plan[k];
         var res = await _approver.ResolveAsync(stage.Rule, new ApproverResolveContext { StarterUserId = inst.StarterId, VarsJson = inst.VarsJson });
-        if (!res.Resolved) { Suspend(inst, node, "E-WF-013"); return; }
+        if (!res.Resolved) { SuspendApproverV2(inst,node,token,k,NextStageRound(inst.Id,node.Id,token.Id,k),stage.StageCode,stage.Countersign,stage.ApproverRecoveryPolicy,res.UnresolvedReason??"E-WF-013"); return; }
 
         int round = NextStageRound(inst.Id, node.Id, token.Id, k);
         var dueAt = NodeDueAt(node);
@@ -27,7 +27,7 @@ public partial class FlowEngine
             };
             _db.Wf_FlowTasks.Add(task);
             RecordApprovalAssignment(inst, task, stage.Rule, res.ApproverIds, stage.StageCode);
-            WriteFormToOnSend(inst, node, token, assignee, delegatedFrom, step, stageIndex: k, stageRound: round);
+            WriteFormToOnSend(inst, node, token, assignee, delegatedFrom, step, stageIndex: k, stageRound: round,nativeTaskId:task.Id);
             if (delegatedFrom is Guid g) AddHistory(inst.Id, node.Id, assignee, "delegate", $"代 {g} 审批");
             if (!ManagedRuntime) await _notifier.TodoCreatedAsync(assignee, inst.Id, task.Id, inst.FlowKey);
         }

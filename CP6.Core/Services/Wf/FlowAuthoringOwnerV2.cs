@@ -237,7 +237,7 @@ public sealed partial class FlowAuthoringOwnerV2
                 if (node.ServiceTimeoutSec is int seconds && seconds >= WfServiceJobService.LeaseDuration.TotalSeconds) throw Error("SERVICE_TIMEOUT_INVALID", 422);
             }
             // Graph incompleteness remains explicit diagnostics, not an executable published artifact.
-            var fatal = errors.FirstOrDefault(e => e is "E-WF-028");
+            var fatal = errors.FirstOrDefault(e => e is "E-WF-028" or "APPROVER_RECOVERY_POLICY_INVALID");
             if (fatal != null) throw Error(fatal, 422);
             // Managed v2 references are resolved to exact published pins by publication; legacy mutable heads are not a source.
             return errors.Distinct().ToArray();

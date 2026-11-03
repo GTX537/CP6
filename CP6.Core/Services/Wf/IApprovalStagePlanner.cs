@@ -11,6 +11,7 @@ public sealed class RuntimeApprovalStage
     public string? StageCode { get; set; }
     public ApproverRule Rule { get; set; } = default!;
     public string Countersign { get; set; } = CountersignModes.All;
+    public ApproverRecoveryPolicyV2? ApproverRecoveryPolicy { get; set; }
 }
 
 /// <summary>串簽档展平服务。把 node.Stages 展成稳定运行档序列。无 Stages → 单档(节点既有字段),保旧行为等价。

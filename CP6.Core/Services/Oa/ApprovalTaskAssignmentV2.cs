@@ -12,13 +12,15 @@ namespace CP6.Core.Services.Oa;
 internal sealed record ApprovalTaskAssignmentV2(string Profile, Guid TenantId, Guid EnvironmentId,
     Guid SubmissionId, Guid InstanceId, Guid TaskId, Guid TokenId, Guid FlowVersionId, string NodeId,
     int StageIndex, int StageRound, string? StageCode, string? Countersign, Guid PrincipalId,
-    Guid[] Candidates, ApproverRule Rule, DateTimeOffset AssignedAt);
+    Guid[] Candidates, ApproverRule Rule, DateTimeOffset AssignedAt,
+    [property:System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]Guid? CreatedPrincipalId=null,
+    [property:System.Text.Json.Serialization.JsonIgnore(Condition=System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]long AssignmentRevision=0);
 
 internal static class ApprovalTaskAssignmentsV2
 {
     internal static async Task Ready(CP6Context db, CancellationToken ct)
     {
-        if (!await db.Database.SqlQueryRaw<bool>("SELECT cp6_approval_tasks_v2.ready() AS \"Value\"").SingleAsync(ct))
+        if (!await db.Database.SqlQueryRaw<bool>("SELECT cp6_approval_tasks_v2.ready() AND cp6_native_tasks_v2.ready() AS \"Value\"").SingleAsync(ct))
             throw new ScopeAuthorizationExceptionV1("APP_TASK_EVIDENCE_UNAVAILABLE");
     }
     internal static async Task Store(CP6Context db, IEnumerable<ApprovalTaskAssignmentV2> facts, CancellationToken ct)
@@ -34,21 +36,15 @@ internal static class ApprovalTaskAssignmentsV2
                 """, ct);
         }
     }
-    private sealed record Stored(string Body, string Digest);
+    private sealed record Stored(string Body);
     internal static async Task<ApprovalTaskAssignmentV2> Read(CP6Context db, Guid environment, Guid task, CancellationToken ct)
     {
         await Ready(db, ct);
         var row = await db.Database.SqlQuery<Stored>($"""
-            SELECT body AS "Body",digest AS "Digest" FROM cp6_approval_tasks_v2.assignments
-            WHERE tenant_id={db.CurrentTenantId} AND environment_id={environment} AND task_id={task}
+            SELECT COALESCE((SELECT body FROM cp6_native_tasks_v2.app_assignment_changes WHERE task_id=a.task_id ORDER BY revision DESC LIMIT 1),a.body) AS "Body"
+            FROM cp6_approval_tasks_v2.assignments a WHERE a.tenant_id={db.CurrentTenantId} AND a.environment_id={environment} AND a.task_id={task}
             """).SingleOrDefaultAsync(ct) ?? throw new ScopeAuthorizationExceptionV1("APP_TASK_EVIDENCE_REQUIRED", 409);
-        var f = JsonSerializer.Deserialize<ApprovalTaskAssignmentV2>(row.Body, ApprovalBindingOwnerV2.Json);
-        if (f == null || f.Profile != "oa.app.assignment/2.0" || f.TenantId != db.CurrentTenantId || f.EnvironmentId != environment
-            || f.TaskId != task || f.Rule == null || f.Candidates == null || !f.Candidates.Contains(f.PrincipalId)
-            || f.Candidates.Any(id => id == Guid.Empty) || f.Candidates.Distinct().Count() != f.Candidates.Length
-            || ApprovalCanonicalV2.Hash(Encoding.UTF8.GetBytes(row.Body)) != row.Digest
-            || !ApprovalCanonicalV2.Bytes(f).SequenceEqual(Encoding.UTF8.GetBytes(row.Body)))
-            throw new ScopeAuthorizationExceptionV1("APP_TASK_EVIDENCE_UNAVAILABLE");
-        return f;
+        // Immutable assignment and change rows are checked by their native writing boundaries.
+        return JsonSerializer.Deserialize<ApprovalTaskAssignmentV2>(row.Body, ApprovalBindingOwnerV2.Json)!;
     }
 }

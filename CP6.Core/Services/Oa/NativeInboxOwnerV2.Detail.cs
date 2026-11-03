@@ -13,6 +13,7 @@ public sealed partial class NativeInboxOwnerV2
         var content=await Authorize(member,actor,ct);actor.Use(member);return(member,content);
     }
     private sealed record TaskVersion(Guid Id,byte[] Version);
+    private sealed record CreatedDuty(Guid Task,Guid Principal);
     public async Task<NativeInstanceReadV2> DetailAsync(Guid instance,Guid? behalf=null,CancellationToken ct=default)
     {
         forms.Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var(actor,lease)=await Begin(behalf,ct);
@@ -32,6 +33,13 @@ public sealed partial class NativeInboxOwnerV2
             WHERE "TenantId"={db.CurrentTenantId} AND "InstanceId"=ANY({ids})
             """).ToDictionaryAsync(t=>t.Id,t=>t.Version,ct);
         var reads=await Reads(ids,ct);
+        var created=await db.Database.SqlQuery<CreatedDuty>($"""
+            SELECT a.task_id AS "Task",(a.body::jsonb->>'principalId')::uuid AS "Principal"
+            FROM cp6_personal_form_v2.assignments a JOIN cp6_personal_form_v2.instances x ON x.instance_id=a.instance_id
+            WHERE x.tenant_id={db.CurrentTenantId} AND x.environment_id={fence.EnvironmentId} AND x.instance_id=ANY({ids})
+            UNION ALL SELECT task_id AS "Task",principal_id AS "Principal" FROM cp6_approval_tasks_v2.assignments
+            WHERE tenant_id={db.CurrentTenantId} AND environment_id={fence.EnvironmentId} AND instance_id=ANY({ids})
+            """).ToDictionaryAsync(x=>x.Task,x=>x.Principal,ct);
         var history=await db.Wf_FlowHistories.AsNoTracking().Where(h=>ids.Contains(h.InstanceId)).OrderBy(h=>h.CreateDate).ThenBy(h=>h.Id)
             .Select(h=>new NativeWorkflowEventV2(h.Id,h.InstanceId,h.NodeId,h.Action,h.ActorId,
                 h.ActorId==Guid.Empty?"SYSTEM":"RECORDED_ACTOR",h.Comment,h.CreateDate)).ToArrayAsync(ct);
@@ -40,9 +48,9 @@ public sealed partial class NativeInboxOwnerV2
             instances.OrderBy(i=>i.Id==member.Root?0:1).ThenBy(i=>i.Id).Select(i=>new NativeInstancePinV2(i.Id,i.ParentInstanceId,
                 members.Single(m=>m.InstanceId==i.Id).FlowVersion,i.FormDefVersionId,i.FlowKey,i.Status,Convert.ToBase64String(i.RowVersion!))).ToArray(),
             tasks.Select(t=>new NativeTaskReadV2(t.Id,t.InstanceId,t.NodeId,t.TokenId,t.StageIndex,t.StageRound,t.AssigneeId,t.Status,
-                Convert.ToBase64String(versions[t.Id]),reads.SingleOrDefault(r=>r.Kind=="TASK"&&r.TargetId==t.Id),
+                Convert.ToBase64String(versions[t.Id]),reads.SingleOrDefault(r=>r.Kind=="TASK"&&r.TargetId==t.Id&&r.PrincipalId==t.AssigneeId),
                 mayRequest&&t.AssigneeId==actor.EffectiveId&&t.Status==0&&instances.Single(i=>i.Id==t.InstanceId).Status==0
-                    &&(!actor.Delegated||actor.Grant(members.Single(m=>m.InstanceId==t.InstanceId),"TASK_APPROVE")!=null||actor.Grant(members.Single(m=>m.InstanceId==t.InstanceId),"TASK_REJECT")!=null))).ToArray(),
+                    &&(!actor.Delegated||actor.Grant(members.Single(m=>m.InstanceId==t.InstanceId),"TASK_APPROVE")!=null||actor.Grant(members.Single(m=>m.InstanceId==t.InstanceId),"TASK_REJECT")!=null),created[t.Id])).ToArray(),
             cc.Select(c=>new NativeCcReadV2(c.Id,c.InstanceId,c.RecipientId,c.AtNodeId,reads.SingleOrDefault(r=>r.Kind=="CC"&&r.TargetId==c.Id))).ToArray(),
             history,await Votes(ids,ct),content.Form,content.Business);
         return result;

@@ -116,6 +116,16 @@ public sealed partial class NativeInboxOwnerV2(CP6Context db,ScopeAuthorizationF
         var actual=await db.Database.SqlQuery<Guid>($"""
             SELECT instance_id AS "Value" FROM cp6_approval_decision_v2.votes
             WHERE tenant_id={db.CurrentTenantId} AND environment_id={fence.EnvironmentId} AND actual_id={actor}
+            UNION SELECT instance_id FROM cp6_approval_tasks_v2.assignments
+            WHERE tenant_id={db.CurrentTenantId} AND environment_id={fence.EnvironmentId} AND principal_id={actor}
+            UNION SELECT a.instance_id FROM cp6_personal_form_v2.assignments a JOIN cp6_personal_form_v2.instances x ON x.instance_id=a.instance_id
+            WHERE x.tenant_id={db.CurrentTenantId} AND x.environment_id={fence.EnvironmentId} AND (a.body::jsonb->>'principalId')::uuid={actor}
+            UNION SELECT a.instance_id FROM cp6_personal_form_v2.assignment_changes ch JOIN cp6_personal_form_v2.assignments a ON a.task_id=ch.task_id
+            JOIN cp6_personal_form_v2.commands c ON c.id=ch.command_id
+            WHERE c.tenant_id={db.CurrentTenantId} AND c.environment_id={fence.EnvironmentId} AND (c.actor_id={actor} OR (ch.body::jsonb->>'principalId')::uuid={actor})
+            UNION SELECT a.instance_id FROM cp6_native_tasks_v2.app_assignment_changes ch JOIN cp6_approval_tasks_v2.assignments a ON a.task_id=ch.task_id
+            JOIN cp6_native_tasks_v2.commands c ON c.id=ch.command_id
+            WHERE c.tenant_id={db.CurrentTenantId} AND c.environment_id={fence.EnvironmentId} AND (c.actor_id={actor} OR (ch.body::jsonb->>'principalId')::uuid={actor})
             UNION
             SELECT a.instance_id FROM cp6_personal_form_v2.votes v JOIN cp6_personal_form_v2.assignments a ON a.task_id=v.task_id
             JOIN cp6_personal_form_v2.instances x ON x.instance_id=a.instance_id
@@ -153,10 +163,10 @@ public sealed partial class NativeInboxOwnerV2(CP6Context db,ScopeAuthorizationF
         {
             var m=data.Members.Single(m=>m.InstanceId==i.Id);var source=data.Content[m.Root];
             NativeInboxItemV2 Row(Guid[] tasks,Guid[] cc)=>new(i.Id,m.Root,m.Kind,i.FlowKey,i.Status,source.Form?.Title,
-                source.Business?.BusinessType,tasks,cc,tasks.Count(t=>!data.Reads.Any(r=>r.Kind=="TASK"&&r.TargetId==t))
+                source.Business?.BusinessType,tasks,cc,tasks.Count(t=>!data.Reads.Any(r=>r.Kind=="TASK"&&r.TargetId==t&&r.PrincipalId==actor))
                     +cc.Count(c=>!data.Reads.Any(r=>r.Kind=="CC"&&r.TargetId==c)),i.CreateDate);
             if(kind=="running")
-            {if(i.Status is 0 or 4)result.Add(Row([],[]));continue;}
+            {if(i.Status is 0 or 4 or 5)result.Add(Row([],[]));continue;}
             if(kind=="cc")
             {result.AddRange(data.Cc.Where(c=>c.InstanceId==i.Id&&c.RecipientId==actor).Select(c=>Row([],[c.Id])));continue;}
             foreach(var t in data.Tasks.Where(t=>t.InstanceId==i.Id))

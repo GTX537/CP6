@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## 2026-11-03：24小时目标 / W282原生任务恢复
+
+W282：APP/SFS原生退回预览与确认、准确转交/前后加签、SFS同实例退回编辑重送、显式政策无人审批恢复及管理批量转交已实现；真实Chrome、HTTP、PostgreSQL和故障恢复通过。 [交付](../development/evidence/W282-01/DELIVERY.md)。
+
+本地31项唯一相关后端行为通过，来源逐项列明，包含隔离PostgreSQL18实际迁移/Owner/HTTP、APP/SFS任务办理、准确FormTo与旧票隔离、返回编辑与双连接重送、当前授权/SOD、显式政策无人审批恢复、管理批量固定名单/部分结果/同实例版本链/断响应恢复及授权后500项上限。含2条真实Chrome→Vue→Main→PostgreSQL路径：退回编辑重送至通过、管理批量转交丢响应刷新恢复。18项前端组件行为与应用vue-tsc通过，四张截图已查看。复用未受后续改动影响的成功来源；失败日志保留，不把混合运行改称全绿。模拟用户、业务、政策和服务登记，产品Owner/HTTP/数据库/浏览器实际运行。无Actions、生产部署或既有数据库迁移。
+
+原375仍27DONE/2IN_PROGRESS/346PLANNED；59局部3闭环/56余项，125/247正式状态不变。WP12-09整卡保持原状态；期限/Worker原生采用留W283，完整字段/图诊断及纯FORM规则预览留W284，普通FORM实际文件准入与最终下载留W285，FLOW原竞争及legacy来源/旧caller处置留W286。 分支/工作区/席位最终状态见wave282-final-verification.json。
+
 ## 2026-11-03：BUG715权限目录修复
 
 补齐单价订正原操作query能力目录；纠正权限互锁漏读WMS/MES仅目录OwnerActions及MES313锚定，不增加角色授权。 [修复与证据](../development/evidence/BUG-715/DELIVERY.md)。
