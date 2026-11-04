@@ -842,6 +842,10 @@ builder.Services.AddSingleton<CP6.Core.Services.Plm.IRequirementSetReceiptChainT
     builder.Configuration.GetSection("RequirementSetReviewReceiptRecovery").Get<CP6.WebApi.Services.ApprovalDecisionDeliveryOptionsV2>()??new(),crmOidc,
     sp.GetRequiredService<CP6.WebApi.Services.ApprovalFactReceiverRegistryV2>(),builder.Environment.IsDevelopment()));
 builder.Services.AddScoped<CP6.Core.Services.Plm.RequirementSetDecisionDeliveryV1>();
+builder.Services.AddSingleton<CP6.Core.Services.Plm.IRequirementSetWithdrawalTransportV1>(sp=>new CP6.WebApi.Services.RequirementSetWithdrawalTransportV1(
+    builder.Configuration.GetSection("RequirementSetReviewWithdrawalDelivery").Get<CP6.WebApi.Services.ToolApprovalDeliveryOptionsV1>()??new(),crmOidc,
+    sp.GetRequiredService<CP6.WebApi.Services.ApprovalIntakeRegistryV2>(),builder.Environment.IsDevelopment()));
+builder.Services.AddScoped<CP6.Core.Services.Plm.RequirementSetWithdrawalDeliveryV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.RequirementSetApplicationDeliveryV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.RequirementSetReceiptRecoveryV1>();
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.RequirementSetReviewPipelineWorkerV1>();

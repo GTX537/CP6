@@ -37,7 +37,7 @@
         <h3>提交准确版本</h3><p>批准将绑定本次送审版本。后续修订需要重新评审。</p>
         <label>评审依据<textarea v-model="reviewBasis" aria-label="需求集评审依据" maxlength="4000" required /></label>
         <label>相关变更说明（每行一项）<textarea v-model="changeRelations" aria-label="需求集相关变更说明" /></label>
-        <label>替代的被拒绝评审<select v-model="replaces" aria-label="替代被拒绝评审"><option :value="null">首次送审</option><option v-for="item in rejected" :key="item.submissionId" :value="item.submissionId">工作版本 {{ item.requirementSet.version }} · {{ item.frozenAt }}</option></select></label>
+        <label>替代的被拒绝或已撤回评审<select v-model="replaces" aria-label="替代被拒绝或已撤回评审"><option :value="null">首次送审</option><option v-for="item in rejected" :key="item.submissionId" :value="item.submissionId">工作版本 {{ item.requirementSet.version }} · {{ item.frozenAt }}</option></select></label>
         <label>送审原因<textarea v-model="submitReason" aria-label="需求集送审原因" maxlength="4000" required /></label><button>提交需求集评审</button>
       </fieldset></form>
       <h3>送审历史</h3><p v-if="!context.submissions.length">尚未送审。</p>
@@ -78,13 +78,13 @@ const policyState = ref<'ENABLED' | 'REVOKED'>('ENABLED'), reviewBasis = ref('')
 const locked = computed(() => busy.value || props.disabled || !!pending.value)
 const sameVersion = computed(() => context.value?.requirementSet.reference.digest === props.requirementSet.reference.digest)
 const activePolicy = computed(() => { const p = context.value?.policies.at(-1); return p?.fact.body.state === 'ENABLED' ? p : null })
-const rejected = computed(() => context.value?.submissions.filter(x => x.state === 'REJECTED' && x.requirementSet.digest === props.requirementSet.reference.digest) ?? [])
+const rejected = computed(() => context.value?.submissions.filter(x => ['REJECTED', 'WITHDRAWN'].includes(x.state) && x.requirementSet.digest === props.requirementSet.reference.digest) ?? [])
 let generation = 0, live = true
 const lines = (text: string) => text.split(/\r?\n/).map(x => x.trim()).filter(Boolean)
 const copy = <T,>(value: T): T => JSON.parse(JSON.stringify(value))
 function addRequirement() { requirements.value.push({ code: '', description: '', roleId: null, minimumApprovals: 1 }) }
 function roleName(id: number) { return roles.value.find(x => x.roleId === id)?.roleName ?? String(id) }
-function reviewState(value: string) { return ({ SUBMITTED: '已送审，待专业评审', APPROVED: '受控版本已批准', REJECTED: '评审已拒绝', DECIDED: '审批已决定，待需求集应用', BLOCKED: '需求集应用待处理' } as Record<string, string>)[value] ?? value }
+function reviewState(value: string) { return ({ SUBMITTED: '已送审，待专业评审', APPROVED: '受控版本已批准', REJECTED: '评审已拒绝', WITHDRAWN: '本轮业务已撤回', DECIDED: '审批已决定，待需求集应用', BLOCKED: '需求集应用待处理' } as Record<string, string>)[value] ?? value }
 function transportState(value: string) { return ({ PENDING: '待投递', ACCEPTED: '已受理', DELIVERED: '已受理', OUTCOME_UNKNOWN: '结果待确认', BLOCKED: '待处理' } as Record<string, string>)[value] ?? value }
 function syncPending() { pending.value = pendingRequirementSetReview(props.scope) }
 function reset() {

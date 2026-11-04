@@ -6,6 +6,7 @@ vi.mock('@/api/plm/requirementSetReview', () => ({ requirementSetReviewApi: api 
 vi.mock('@/api/plm/requirementSet', () => ({ requirementSetApi: { scope: api.scope }, requirementSetMissingText: (x: string) => x }))
 vi.mock('@/stores/permission', () => ({ usePermissionStore: () => ({ loaded: true, has: (key: string) => !api.denied.includes(key) }) }))
 vi.mock('@/auth/browserAuthentication', () => ({ authenticationCanRead: () => api.authenticated }))
+vi.mock('./RequirementSetReviewWithdrawalPanel.vue', () => ({ default: { template: '<div />' } }))
 import Review from './RequirementSetProfessionalReview.vue'
 import { pendingRequirementSetApproval } from '@/auth/requirementSetApprovalRecovery'
 import { AUTH_EPOCH, AUTH_EVENT } from '@/auth/identity'

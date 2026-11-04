@@ -24,19 +24,21 @@ public sealed record RequirementSetReviewDetailV1(RequirementSetReviewSubmission
 public sealed partial class RequirementSetReviewOwnerV1
 {
     private sealed record ApplicationContext(Context Context,RequirementSetReviewStoreV1.SubmissionRow Submission,
-        RequirementSetReviewApplicationStoreV1 Store,RequirementSetReviewApplicationStoreV1.Source? Source,ApprovalApplicationReceiptV2? Receipt)
+        RequirementSetReviewApplicationStoreV1 Store,RequirementSetReviewApplicationStoreV1.Source? Source,ApprovalApplicationReceiptV2? Receipt,RequirementSetReviewControlStoreV1.Head Control)
     {
         internal string Etag=>"\"da1-"+ApprovalCanonicalV2.Hash(ApprovalCanonicalV2.Bytes(new{Context.Etag,Submission.Id,
-            Source?.OriginalHash,Receipt?.ReceiptId}))+"\"";
+            Source?.OriginalHash,Receipt?.ReceiptId,Control.RowVersion}))+"\"";
     }
     private async Task<ApplicationContext> ApplicationContextAsync(OperationsAccessV1 a,Guid requirementSet,Guid submission,bool write,CancellationToken ct)
     {
         var c=await Prepare(a,requirementSet,write,ct);
         var row=c.Submissions.SingleOrDefault(x=>x.Id==submission)??throw Error("RESOURCE_NOT_FOUND",404);
-        await requirementSets.ReviewSource(a,c.Store.View(row).RequirementSet,false,ct);
+        var exact=c.Store.View(row).RequirementSet;
+        if(exact!=c.RequirementSet.Reference)await requirementSets.ReviewSource(a,exact,false,ct);
+        var head=await new RequirementSetReviewControlStoreV1(db,Environment).Read(submission,ct);
         var store=new RequirementSetReviewApplicationStoreV1(db,scope);await store.Ready(ct);
         var source=await store.ForSubmission(submission,ct);
-        return new(c,row,store,source,source==null?null:await store.Latest(source.Stream,ct));
+        return new(c,row,store,source,source==null?null:await store.Latest(source.Stream,ct),head);
     }
     private async Task<RequirementSetApplicationContextV1> ApplicationView(ApplicationContext c,CancellationToken ct)
         =>new(c.Submission.RequirementSet,c.Submission.Id,c.Etag,c.Source==null?"NOT_RECEIVED":"RECEIVED",c.Source?.Stream,
@@ -60,7 +62,7 @@ public sealed partial class RequirementSetReviewOwnerV1
         var applicationStore=new RequirementSetReviewApplicationStoreV1(db,scope);await applicationStore.Ready(ct);
         var application=await applicationStore.Application(row.Id,ct);
         return store.View(row) with {TransportState=transport?.State??"PENDING",IsApproved=application?.Approved==true,
-            State=application==null?"SUBMITTED":application.Approved?"APPROVED":"REJECTED"};
+            State=application==null?(await new RequirementSetReviewControlStoreV1(db,Environment).Read(row.Id,ct)).State=="WITHDRAWN"?"WITHDRAWN":"SUBMITTED":application.Approved?"APPROVED":"REJECTED"};
     }
     private async Task QualifyApplication(ApplicationContext c,CancellationToken ct)
     {
@@ -98,10 +100,14 @@ public sealed partial class RequirementSetReviewOwnerV1
             if(etag!=c.Etag || c.Receipt?.ReceiptId!=command.ExpectedReceiptId)throw Error("REQUIREMENT_SET_APPLICATION_CONTEXT_CHANGED",412);
             var source=c.Source??throw Error("REQUIREMENT_SET_DECISION_NOT_RECEIVED",422);
             ApprovalApplicationReceiptV2 receipt;
-            if(c.Receipt is {Application:"APPLIED"})receipt=c.Receipt;
+            if(c.Receipt?.Application is "APPLIED" or "STALE" or "CONFLICT")receipt=c.Receipt;
+            else if(c.Control.State=="WITHDRAWN")
+                receipt=await c.Store.Append(source,a.ActorId,command.OperationId,c.Receipt,"STALE","STALE_RECEIPT",c.Context.RequirementSet.Reference.Version,
+                    new{profile="Main.Plm.RequirementSetApplication/1",command,control=c.Control.RowVersion,authorities=Witnesses(a)},null,t);
             else
             {
                 await QualifyApplication(c,t);
+                await new RequirementSetReviewControlStoreV1(db,Environment).Transition(c.Control,"APPLIED",t);
                 var view=c.Context.Store.View(c.Submission);
                 var applied=new RequirementSetApprovalV1(Guid.NewGuid(),view.RequirementSet,view.Policy,source.Decision.SubmissionId,
                     source.Decision.DecisionId,source.Decision.Decision=="APPROVED",a.ActorId,Now());
