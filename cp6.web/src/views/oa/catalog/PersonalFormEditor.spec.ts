@@ -3,6 +3,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { defineComponent, h, ref } from 'vue'
 import { mount, flushPromises } from '@vue/test-utils'
 import { personalFormApi as api, type PersonalContext, type PersonalDraft } from '@/api/oa/personalForm'
+import { formDispositionApi } from '@/api/oa/formDisposition'
 import { newEpoch } from '@/auth/identity'
 import Editor from './PersonalFormEditor.vue'
 import Fields from './PersonalFormFields.vue'
@@ -10,6 +11,7 @@ import { usePersonalCommand } from './usePersonalCommand'
 import { formObject, readFormJson, schemaFields, writeFormJson } from './personalFormJson'
 vi.mock('@/api/oa/personalForm', async importOriginal => ({ ...await importOriginal<object>(), personalFormApi: { context: vi.fn(), draft: vi.fn(), list: vi.fn(), send: vi.fn(), original: vi.fn(), close: vi.fn(), preview: vi.fn(), rebasePreview: vi.fn() } }))
 vi.mock('element-plus', () => ({ ElMessageBox: { confirm: vi.fn().mockResolvedValue(true) } }))
+vi.mock('@/api/oa/formDisposition', () => ({ formDispositionApi: { read: vi.fn() } }))
 const wrappers: ReturnType<typeof mount>[] = []
 const state = (w: any): any => w.vm.$.setupState
 const context: PersonalContext = { formKey: 'personal', formVersionId: 'form-one', formVersion: 1, name: '金额表单', schemaJson: '{"fields":[{"name":"amount","type":"number","default":9007199254740993.0001}]}', activationRevision: 'form-active', bindingRevision: null, flowVersionId: null, flowVersion: null, flowActivationRevision: null, allowsUnbound: true, capabilities: ['CREATE_DRAFT', 'SUBMIT'], contextVersion: 'current', fieldMask: { amount: 'edit' }, titleAccess: 'edit' }
@@ -17,6 +19,33 @@ const draft: PersonalDraft = { ...context, draftId: 'draft-one', latestPublished
 beforeEach(() => { vi.resetAllMocks(); localStorage.clear(); sessionStorage.clear(); vi.mocked(api.context).mockResolvedValue(context); vi.mocked(api.draft).mockResolvedValue(draft) })
 afterEach(() => { wrappers.splice(0).forEach(w => w.unmount()); vi.restoreAllMocks() })
 async function editor(props = { formKey: 'personal' } as { formKey?: string; draftId?: string }) { const w = mount(Editor, { props }); wrappers.push(w); await flushPromises(); return w }
+const controlled = { requestId: 'exact-request', receiptVersion: 'retained-receipt' }
+const controlledPreview = { previewId: 'qualified-preview', digest: 'digest', sourceVersionId: 'form-one', targetVersionId: 'form-two', expectedVersion: 'draft-token', sourceDraftVersion: 'draft-token', targetSchemaDigest: 'schema', expiresAtUtc: 'later', changes: [], validationErrors: [], requiresConfirmation: false, retainedPaths: ['amount'], removedPaths: [], addedPaths: [], typeChangedPaths: [], defaultedPaths: [], requiredAfterRebase: [], diagnostics: [], dispositionRef: controlled }
+it('keeps a real controlled request after hidden-loss denial and sends only the exact adopted receipt', async () => {
+  vi.mocked(api.rebasePreview).mockRejectedValueOnce({ response: { status: 403, data: { code: 'REBASE_HIDDEN_LOSS_BLOCKED', dispositionRequestId: controlled.requestId } } }).mockResolvedValue(controlledPreview)
+  vi.mocked(formDispositionApi.read).mockResolvedValue({ request: { requestId: controlled.requestId, state: 'RETAINED', dispositionRef: controlled, hold: null } } as any)
+  const w = await editor({ draftId: 'draft-one' }); await state(w).previewRebase(); await flushPromises()
+  expect(w.text()).toContain('exact-request'); expect(state(w).draft.draftId).toBe('draft-one'); expect(state(w).rebase).toBeUndefined()
+  await state(w).applyRebase(); expect(api.send).not.toHaveBeenCalled()
+  await state(w).refreshDisposition(); expect(api.rebasePreview).toHaveBeenLastCalledWith('draft-one', 'form-two', 'draft-token', controlled)
+  vi.mocked(api.send).mockRejectedValue({ response: { status: 503 } }); await state(w).applyRebase()
+  expect(JSON.parse(vi.mocked(api.send).mock.calls[0]![2]).body).toMatchObject({ dispositionRef: controlled, confirmRemovedValues: false })
+  expect(state(w).locked).toBe(true); await state(w).refreshDisposition(); expect(formDispositionApi.read).toHaveBeenCalledTimes(1)
+  expect(sessionStorage.getItem('cp6-personal-form-pending')).not.toContain('retained-receipt')
+})
+it('does not preview while the actual disposition is held or no longer retained', async () => {
+  const w = await editor({ draftId: 'draft-one' }); state(w).dispositionRequest = controlled.requestId
+  vi.mocked(formDispositionApi.read).mockResolvedValue({ request: { dispositionRef: controlled, hold: { active: true } } } as any)
+  await state(w).refreshDisposition(); expect(api.rebasePreview).not.toHaveBeenCalled(); expect(state(w).dispositionNotice).toContain('保留限制')
+  vi.mocked(formDispositionApi.read).mockResolvedValue({ request: { dispositionRef: null, hold: null, state: 'REVOKED' } } as any)
+  await state(w).refreshDisposition(); expect(api.rebasePreview).not.toHaveBeenCalled(); expect(state(w).rebase).toBeUndefined()
+})
+it('discards a late qualified disposition read after authentication changes', async () => {
+  const w = await editor({ draftId: 'draft-one' }); state(w).dispositionRequest = controlled.requestId
+  let resolve!: (value: any) => void; vi.mocked(formDispositionApi.read).mockImplementation(() => new Promise(r => { resolve = r }))
+  const loading = state(w).refreshDisposition(); newEpoch(); resolve({ request: { dispositionRef: controlled } }); await loading; await flushPromises()
+  expect(api.rebasePreview).not.toHaveBeenCalled(); expect(state(w).dispositionRequest).toBe(''); expect(state(w).draft).toBeUndefined()
+})
 it('shows classified rebase losses and required rows, requires confirmation and invalidates the preview after edits', async () => {
   vi.mocked(api.rebasePreview).mockResolvedValue({ previewId: 'preview', digest: 'digest', sourceVersionId: 'form-one', targetVersionId: 'form-two', expectedVersion: 'draft-token', sourceDraftVersion: 'draft-token', targetSchemaDigest: 'schema', expiresAtUtc: 'later', changes: [{ path: 'removed', kind: 'REMOVED', hasValue: true }], validationErrors: ['FORM_VALIDATION_FAILED'], requiresConfirmation: true, retainedPaths: ['amount'], removedPaths: ['removed'], addedPaths: ['required'], typeChangedPaths: [], defaultedPaths: [], requiredAfterRebase: ['required'], diagnostics: [{ path: 'required', code: 'REQUIRED' }, { path: 'rows[1]', code: 'ROW_COUNT_EXCEEDS_TARGET' }] })
   const w = await editor({ draftId: 'draft-one' }); await state(w).previewRebase(); await flushPromises()

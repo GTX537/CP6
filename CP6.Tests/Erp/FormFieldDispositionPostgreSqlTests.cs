@@ -13,14 +13,14 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     private FormFieldDispositionOwnerV1 Dispositions(Harness h)=>new(h.Db,PersonalForm(h),ScopeFence(h));
     private sealed record DispositionFixture(PersonalFormOwnerV2 Forms,FormAuthoringOwnerV2 Definitions,PersonalFormDraftV2 Draft,
         Guid Target,Guid Processor,FormDispositionRequestV1 Input,FormDispositionOperationV1 Requested);
-    private async Task<DispositionFixture> PrepareDisposition(Harness h)
+    private async Task<DispositionFixture> PrepareDisposition(Harness h,string? targetSchema=null)
     {
         const string source="""{"fields":[{"name":"visible","type":"input"},{"name":"secret","type":"number"},{"name":"rows","type":"table","columns":[{"name":"keep","type":"input"},{"name":"private","type":"input"}]}]}""";
         var(forms,definitions,_)=await PreparePersonal(h,source);var context=await forms.ContextAsync("personal");
         var draft=PersonalResult<PersonalFormDraftV2>(await forms.CreateDraftAsync("personal",PersonalCommand(new PersonalFormCreateV2(context.FormVersionId,
             PersonalData("""{"visible":"current","secret":9007199254740993.0001,"rows":[{"keep":"one","private":"first secret"},{"keep":"two","private":"second secret"}]}"""),null))));
         var next=await definitions.CreateNextDraftAsync("personal",FormNextDraftCommand((await definitions.ReadHeadAsync("personal")).Version,context.FormVersionId));
-        var saved=await definitions.SaveAsync("personal",FormAuthoringCommand(schema:"""{"fields":[{"name":"visible","type":"input"},{"name":"rows","type":"table","columns":[{"name":"keep","type":"input"}]}]}""",version:next.ResourceVersion,id:"next"));
+        var saved=await definitions.SaveAsync("personal",FormAuthoringCommand(schema:targetSchema??"""{"fields":[{"name":"visible","type":"input"},{"name":"rows","type":"table","columns":[{"name":"keep","type":"input"}]}]}""",version:next.ResourceVersion,id:"next"));
         var target=(await definitions.PublishAsync("personal",FormPublicationCommand(await FormPreview(definitions,"personal",saved),id:"publish-next"))).Result!.Publication!;
         CP6.WebApi.Seed.FormDispositionPermissionSeed.EnsureSeeded(h.Db);h.Db.ChangeTracker.Clear();
         Assert.False(await h.Db.Sys_RoleActions.AnyAsync(x=>x.MenuId==744));

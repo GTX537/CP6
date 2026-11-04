@@ -8,11 +8,13 @@ public sealed record FormDispositionRequestV1(Guid OperationId,Guid DraftId,Guid
 public sealed record FormDispositionCommandV1(Guid OperationId,Guid ExpectedVersion,string Reason);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record FormDispositionHoldCommandV1(Guid OperationId,[property:JsonRequired] Guid? ExpectedVersion,[property:JsonRequired] bool Active,string Basis,string Reason);
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record FormDispositionRefV1(Guid RequestId,Guid ReceiptVersion);
 public sealed record FormDispositionHoldV1(Guid Version,bool Active);
 public sealed record FormDispositionViewV1(Guid RequestId,Guid DraftId,Guid SourceVersionId,Guid TargetVersionId,
     Guid Version,string State,DateTimeOffset RecordedAtUtc,FormDispositionHoldV1? Hold,
-    FormDispositionRefV1? DispositionRef,DateTimeOffset? RetainUntilUtc);
+    FormDispositionRefV1? DispositionRef,DateTimeOffset? RetainUntilUtc,FormDispositionConsumptionV1? Consumption = null);
+public sealed record FormDispositionConsumptionV1(Guid CommandRef,string CommandId,Guid ActualActorId,Guid ProcessorId,Guid DraftVersion,DateTimeOffset RecordedAtUtc);
 public sealed record FormDispositionOperationV1(Guid OperationId,string State,FormDispositionViewV1? Request);
 public sealed record FormDispositionLossV1(string Field,string Path,string Kind,string ValueJson);
 public sealed record FormDispositionEventV1(Guid Version,Guid? PreviousVersion,string State,Guid ActorId,string Reason,

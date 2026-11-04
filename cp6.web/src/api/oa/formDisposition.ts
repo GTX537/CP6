@@ -3,6 +3,7 @@ export interface DispositionView {
   requestId: string; draftId: string; sourceVersionId: string; targetVersionId: string; version: string
   state: string; recordedAtUtc: string; hold: { version: string; active: boolean } | null
   dispositionRef: { requestId: string; receiptVersion: string } | null; retainUntilUtc: string | null
+  consumption?: { commandRef: string; commandId: string; actualActorId: string; processorId: string; draftVersion: string; recordedAtUtc: string } | null
 }
 export interface DispositionDetail {
   request: DispositionView; historyId: string | null; retentionPolicyRef: string | null

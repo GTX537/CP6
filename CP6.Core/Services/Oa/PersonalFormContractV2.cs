@@ -28,9 +28,9 @@ public sealed record PersonalFormDraftSubmitV2(string Kind, Guid ExpectedFormVer
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record PersonalFormReasonV2(string Reason);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
-public sealed record PersonalFormRebasePreviewInputV2(Guid TargetVersionId, string ExpectedVersion);
+public sealed record PersonalFormRebasePreviewInputV2(Guid TargetVersionId, string ExpectedVersion, FormDispositionRefV1? DispositionRef = null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
-public sealed record PersonalFormRebaseInputV2(Guid PreviewId, string PreviewDigest, Guid TargetVersionId, bool ConfirmRemovedValues);
+public sealed record PersonalFormRebaseInputV2(Guid PreviewId, string PreviewDigest, Guid TargetVersionId, bool ConfirmRemovedValues, FormDispositionRefV1? DispositionRef = null);
 public sealed record PersonalFormDraftV2(Guid DraftId, string FormKey, Guid FormVersionId, int FormVersion, int LatestPublishedVersion,
     string Name, string SchemaJson, string DataJson, string? Title, string RowVersion, int Status, bool Stale,
     DateTimeOffset UpdatedAtUtc, Dictionary<string,string> FieldMask, string[] Capabilities, Guid LatestPublishedVersionId, string TitleAccess);
@@ -47,7 +47,7 @@ public sealed record PersonalFormRebaseDiagnosticV2(string Path, string Code);
 public sealed record PersonalFormRebasePreviewV2(Guid PreviewId, string Digest, Guid SourceVersionId, Guid TargetVersionId,
     string ExpectedVersion, DateTimeOffset ExpiresAtUtc, PersonalFormRebaseChangeV2[] Changes, string[] ValidationErrors, bool RequiresConfirmation,
     string SourceDraftVersion, string TargetSchemaDigest, string[] RetainedPaths, string[] RemovedPaths, string[] AddedPaths,
-    string[] TypeChangedPaths, string[] DefaultedPaths, string[] RequiredAfterRebase, PersonalFormRebaseDiagnosticV2[] Diagnostics);
+    string[] TypeChangedPaths, string[] DefaultedPaths, string[] RequiredAfterRebase, PersonalFormRebaseDiagnosticV2[] Diagnostics, FormDispositionRefV1? DispositionRef = null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record PersonalFormPreviewInputV2(Guid FormVersionId, JsonElement Data);
 public sealed record PersonalFormPreviewV2(string DataJson, string[] HiddenFields, bool Valid, string[] Errors);

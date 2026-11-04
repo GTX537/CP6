@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { personalFormError } from './personalFormError'
+import { formDispositionApi } from '@/api/oa/formDisposition'
 import { computed, ref, watch, onBeforeUnmount } from 'vue'
 import { ElMessageBox } from 'element-plus'
 import { identityStamp, requireIdentity } from '@/auth/identity'
@@ -13,6 +14,7 @@ const emit = defineEmits<{ changed: []; locked: [value: boolean] }>()
 const context = ref<PersonalContext>(), draft = ref<PersonalDraft>(), submission = ref<FormSubmission>()
 const model = ref<FormObject>({}), title = ref(''), loading = ref(false), readError = ref(''), valuesValid = ref(true)
 const preview = ref<ValuePreview>(), rebase = ref<RebasePreview>(), confirmedLoss = ref(false)
+const dispositionRequest = ref(''), dispositionNotice = ref('')
 const rebaseGroups = computed(() => {
   const value = rebase.value
   return value ? [
@@ -22,7 +24,7 @@ const rebaseGroups = computed(() => {
   ].filter(group => group.paths.length) : []
 })
 let generation = 0, readGeneration = 0, live = true
-function clearPrivate() { generation++; readGeneration++; loading.value = false; context.value = undefined; draft.value = undefined; model.value = {}; title.value = ''; submission.value = undefined; preview.value = undefined; rebase.value = undefined }
+function clearPrivate() { generation++; readGeneration++; loading.value = false; context.value = undefined; draft.value = undefined; model.value = {}; title.value = ''; submission.value = undefined; preview.value = undefined; rebase.value = undefined; dispositionRequest.value = ''; dispositionNotice.value = '' }
 const commands = usePersonalCommand(clearPrivate, async result => {
   if (result.result && 'draftId' in result.result) {
     // Original receipts are immutable snapshots. Re-read current state for fresh CAS/capabilities.
@@ -50,14 +52,20 @@ const current = computed(() => draft.value ?? context.value)
 const fields = computed(() => current.value ? schemaFields(current.value.schemaJson) : [])
 const active = computed(() => !draft.value || draft.value.status === 0)
 const can = (capability: string) => current.value?.capabilities.includes(capability) === true
-function applyDraft(value: PersonalDraft) { draft.value = value; context.value = undefined; model.value = formObject(readFormJson(value.dataJson)); title.value = value.title ?? ''; preview.value = undefined; rebase.value = undefined }
+function applyDraft(value: PersonalDraft) { draft.value = value; context.value = undefined; model.value = formObject(readFormJson(value.dataJson)); title.value = value.title ?? ''; preview.value = undefined; rebase.value = undefined; dispositionRequest.value = ''; dispositionNotice.value = '' }
 async function read(action: (check: () => void) => Promise<void>) {
   if (loading.value) return
   const identity = identityStamp(), current = generation, request = ++readGeneration; loading.value = true; readError.value = ''
   const check = () => { requireIdentity(identity); if (!live || current !== generation) throw new Error('STALE') }
   try { await action(check) }
   catch (e: any) {
-    try { check(); if ([401, 403, 404].includes(e?.response?.status)) clearPrivate(); readError.value = personalFormError(e) } catch { /* obsolete response */ }
+    try {
+      check()
+      if (e?.response?.status === 403 && e.response.data?.code === 'REBASE_HIDDEN_LOSS_BLOCKED' && e.response.data.dispositionRequestId) {
+        rebase.value = undefined; dispositionRequest.value = e.response.data.dispositionRequestId
+        dispositionNotice.value = '已登记受控处置请求。请具备相应字段读取及处置权限的人审批并留存原件，再读取处理结果。'
+      } else { if ([401, 403, 404].includes(e?.response?.status)) clearPrivate(); readError.value = personalFormError(e) }
+    } catch { /* obsolete response */ }
   } finally { if (live && request === readGeneration) loading.value = false }
 }
 async function load() {
@@ -111,10 +119,22 @@ async function previewRebase() {
   if (writeFormJson(model.value) !== writeFormJson(formObject(readFormJson(draft.value.dataJson))) || title.value !== (draft.value.title ?? '')) { readError.value = '请先保存当前修改，再预览重基。'; return }
   await read(async check => { const value = await api.rebasePreview(draft.value!.draftId, draft.value!.latestPublishedVersionId, draft.value!.rowVersion); check(); rebase.value = value; confirmedLoss.value = false })
 }
+async function refreshDisposition() {
+  if (!draft.value || locked.value || !dispositionRequest.value) return
+  if (writeFormJson(model.value) !== writeFormJson(formObject(readFormJson(draft.value.dataJson))) || title.value !== (draft.value.title ?? '')) { readError.value = '请先保存当前修改，再重新预览。'; return }
+  rebase.value = undefined
+  await read(async check => {
+    const value = await formDispositionApi.read(dispositionRequest.value); check()
+    if (value.request.hold?.active) { dispositionNotice.value = '存在保留限制，当前不能采用处置结果。'; return }
+    if (!value.request.dispositionRef) { dispositionNotice.value = '当前处置尚不可采用，请核对是否已批准、留存或已被撤销。'; return }
+    const next = await api.rebasePreview(draft.value!.draftId, draft.value!.latestPublishedVersionId, draft.value!.rowVersion, value.request.dispositionRef); check()
+    rebase.value = next; confirmedLoss.value = false; dispositionNotice.value = '已取得准确处置结果。请核对可见变化后确认重基；提交时仍会核对当前资格与保留限制。'
+  })
+}
 async function applyRebase() {
   if (!draft.value || !rebase.value || locked.value || !valuesValid.value || rebase.value.requiresConfirmation && !confirmedLoss.value) return
   if (writeFormJson(model.value) !== writeFormJson(formObject(readFormJson(draft.value.dataJson))) || title.value !== (draft.value.title ?? '')) { readError.value = '请先保存当前修改，并重新预览重基。'; return }
-  await commands.execute('FORM_DRAFT_REBASE', draft.value.draftId, rebase.value.expectedVersion, JSON.stringify({ previewId: rebase.value.previewId, previewDigest: rebase.value.digest, targetVersionId: rebase.value.targetVersionId, confirmRemovedValues: confirmedLoss.value }))
+  await commands.execute('FORM_DRAFT_REBASE', draft.value.draftId, rebase.value.expectedVersion, JSON.stringify({ previewId: rebase.value.previewId, previewDigest: rebase.value.digest, targetVersionId: rebase.value.targetVersionId, confirmRemovedValues: confirmedLoss.value, dispositionRef: rebase.value.dispositionRef ?? undefined }))
 }
 watch(() => [props.formKey, props.draftId], () => { clearPrivate(); void load() }, { immediate: true })
 watch([model, title], () => { preview.value = undefined; rebase.value = undefined; confirmedLoss.value = false }, { deep: true })
@@ -144,6 +164,10 @@ onBeforeUnmount(() => { live = false; generation++ })
       <section v-if="preview">
         <h4>计算结果预览</h4><p>{{ preview.valid ? '当前填写通过校验；提交时仍会核对当前资格。' : '仍有必填或格式问题，请检查填写。' }}</p>
         <PersonalFormFields :fields="fields" :model-value="formObject(readFormJson(preview.dataJson))" :mask="current.fieldMask" :hidden="preview.hiddenFields" disabled />
+      </section>
+      <section v-if="dispositionRequest" aria-label="字段受控处置">
+        <h4>字段受控处置</h4><p>{{ dispositionNotice }}</p><p>处置请求引用：<code>{{ dispositionRequest }}</code></p>
+        <el-button :disabled="locked" @click="refreshDisposition">读取处置结果并重新预览</el-button>
       </section>
       <section v-if="rebase">
         <h4>重基预览</h4><p>有效期至 {{ rebase.expiresAtUtc }}。重基使用已保存内容。</p>

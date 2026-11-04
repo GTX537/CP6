@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W302](evidence/W302-01/DELIVERY.md)实际字段处置Owner本地验收完成；24h单人目标继续，两仓采用/finish后W303真实重基消费。
+> 当前：[W303](evidence/W303-01/DELIVERY.md)准确处置到本人重基本地验收完成；24h单人目标继续，两仓采用/finish后W304原卡核销。
+
+> 历史快照：[W302](evidence/W302-01/DELIVERY.md)实际字段处置Owner本地验收完成；24h单人目标继续，两仓采用/finish后W303真实重基消费。
 
 > 历史快照：[W301审计](evidence/W301-01/DELIVERY.md)发现BUG751，原WP12-19未关闭；下一独立修复，24h目标继续。
 
