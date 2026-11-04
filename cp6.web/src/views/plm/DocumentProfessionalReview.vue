@@ -33,10 +33,12 @@
       <p v-else-if="canDecide">当前没有属于我的本次评审待办。</p>
       <h4>文档 Owner 应用结果</h4>
       <p v-if="detail.application.application">{{ detail.application.application.approved ? '该准确版本已批准' : '该次评审已驳回' }} · {{ detail.application.application.appliedAt }}</p>
+      <p v-else-if="detail.application.receipt?.application === 'STALE'">本轮已撤回，迟到的审批决定已记为过期，未批准文档。</p>
       <p v-else>{{ detail.application.decision ? `FLOW 最终决定：${detail.application.decision}；待文档 Owner 应用。` : '尚未收到 FLOW 最终决定。' }}</p>
-      <form v-if="canApply && detail.application.decision && !detail.application.application" @submit.prevent="apply"><fieldset :disabled="locked">
+      <form v-if="canApply && detail.application.decision && !['APPLIED', 'STALE', 'CONFLICT'].includes(detail.application.receipt?.application ?? '')" @submit.prevent="apply"><fieldset :disabled="locked">
         <label>应用原因<textarea v-model="reason" aria-label="文档批准应用原因" maxlength="4000" required /></label><button>应用文档最终决定</button>
       </fieldset></form>
+      <DocumentReviewWithdrawalPanel :document-id="documentId" :submission-id="submissionId" :scope="scope" :disabled="busy || disabled" @changed="reload" />
     </template>
   </section>
 </template>
@@ -51,6 +53,7 @@ import { pendingDocumentApproval, resolveDocumentApproval, writeDocumentApplicat
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
 import { usePermissionStore } from '@/stores/permission'
+import DocumentReviewWithdrawalPanel from './DocumentReviewWithdrawalPanel.vue'
 
 const props = defineProps<{ documentId: string; submissionId: string; scope: EngineeringScope; disabled?: boolean }>()
 const emit = defineEmits<{ changed: [] }>(), permissions = usePermissionStore()
@@ -114,7 +117,7 @@ async function apply() {
   await run(async check => {
     await writeDocumentApplication(props.scope, props.documentId, props.submissionId, () => { check(); if (!canApply.value) throw new Error('当前无批准应用权限。') },
       operationId => documentReviewApi.apply(props.documentId, value.application.etag, { operationId, submissionId: props.submissionId, expectedReceiptId: value.application.receipt?.receiptId ?? null, reason: message }))
-    check(); await load(check); reason.value = ''; notice.value = '文档最终决定已应用。'; emit('changed')
+    check(); await load(check); reason.value = ''; notice.value = detail.value?.application.receipt?.application === 'APPLIED' ? '文档最终决定已应用。' : '文档应用结果已记录，请查看本轮状态。'; emit('changed')
   })
 }
 async function recover(close: boolean) { await run(async check => { const state = await resolveDocumentApproval(props.scope, close, check); check(); await load(check); notice.value = state === 'UNKNOWN' ? '原结果仍未知，请继续查询。' : state === 'CLOSED' ? '未提交原操作已结束。' : '原签署或应用结果已恢复。'; emit('changed') }) }

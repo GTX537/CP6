@@ -6,6 +6,7 @@ vi.mock('@/api/plm/documentReview', () => ({ documentReviewApi: api }))
 vi.mock('@/api/plm/controlledDocument', () => ({ documentApi: { scope: api.scope, diff: api.diff, download: api.download } }))
 vi.mock('@/stores/permission', () => ({ usePermissionStore: () => ({ loaded: true, has: (key: string) => !api.denied.includes(key) }) }))
 vi.mock('@/auth/browserAuthentication', () => ({ authenticationCanRead: () => api.authenticated }))
+vi.mock('./DocumentReviewWithdrawalPanel.vue', () => ({ default: { template: '<div />' } }))
 import Review from './DocumentProfessionalReview.vue'
 import { pendingDocumentApproval } from '@/auth/documentApprovalRecovery'
 import { AUTH_EPOCH, AUTH_EVENT } from '@/auth/identity'

@@ -39,13 +39,13 @@
 
 当前`ApprovalBusinessEvidenceV2.Withdrawal`仅ITER实际采用。DOC已有准确原件、当前权限、提交/决定/应用，但没有业务撤回控制头；`ApplyAsync`使用当前应用ETag与回执，不能把它或Workflow版本伪称业务撤回CAS。ITER业务阶段/责任规则不能照抄到DOC。
 
-- [ ] 在`CP6.Core/Services/Plm/DocumentReviewControlStoreV1.cs`及前向PG迁移建立准确Scope/DOC/Submission控制、不可变撤回事实/Outbox和真实opaque版本。新提交同事务登记；已接受旧提交明确采用来源，不能GET造历史或把未知当IN_REVIEW。原审批版本和内容hash保留。
-- [ ] `ControlledDocumentReviewOwnerV1.Withdrawal.cs`提供`WithdrawAsync(document,submission,ifMatch,ApprovalUserWithdrawV2,ct,behalf)`和`ReauthorizeWithdrawalAsync(...,previous,...)`。用户正文沿原`{commandId,reason}`封闭合同，认证实际人/业务责任/当前原Grant在Owner决定；`ApprovalUserWithdrawV2`和服务事实类型已在`ApprovalWithdrawalV2.cs`定义，禁止浏览器提供事实/Actor。500 Unicode字符原因完整保留，原命令元数据另记If-Match/代理上下文。
-- [ ] `ControlledDocumentReviewOwnerV1.Application.cs`及`ControlledDocumentReviewOwnerV1.cs`令apply与withdraw参与同control：应用先赢保原APPLIED且不产生撤回事实；撤回先赢后迟到批准只能STALE。新明确授权只接已BLOCKED/未终态且准确业务control，追加事实/命令和连续receipt，保原终态与来源。
-- [ ] DOC当前授权入口`OperationsAccessV1.ControlledDocument.cs`、资源动作目录/权限种子及`ControlledDocumentReviewController.cs`显式注册独立撤回/重新授权及必要业务授权管理；query、callback.replay或任务代理不授业务撤回。当前角色、对象、字段及SOD在负责入口和最终决定点核对，内部保证不逐层重验。
-- [ ] `ApprovalBusinessEvidenceV2.cs`增加明确DOC分派；`DocumentWithdrawalDeliveryV1.cs`及实际DI/worker按现可信路由采用。网络操作在数据库锁外，原bytes、真实Owner/身份和原键保持；未知先查询原结果，412只刷新Workflow header，不能换body/Actor。
-- [ ] `cp6.web/src/views/plm/ControlledDocumentReviewPanel.vue`及实际API模块采用业务上下文/当前token，展示业务已撤回与Workflow仍待确认；显式再授权、原结果查询及身份改变清理。恢复缓存只存原意图标识，不存文档明文；存储失败不先发送。
-- [ ] `CP6.Tests/Erp/ControlledDocumentWithdrawalPostgreSqlTests.cs`使用现DocumentDecision/Application夹具，验证真实PG两连接apply/withdraw互斥、原事实/Outbox/审计一起回滚、先撤回迟到批准STALE、原grant撤销BLOCKED、明确新grant续作、提交丢答原键查询/重试、跨租户/伪Actor拒绝及旧提交来源边界；复用已有完整提交/引擎证据，不重跑全仓。
+- [x] 在`CP6.Core/Services/Plm/DocumentReviewControlStoreV1.cs`及前向PG迁移建立准确Scope/DOC/Submission控制、不可变撤回事实/Outbox和真实opaque版本。新提交同事务登记；已接受旧提交明确采用来源，不能GET造历史或把未知当IN_REVIEW。原审批版本和内容hash保留。
+- [x] `ControlledDocumentReviewOwnerV1.Withdrawal.cs`提供`WithdrawAsync(document,submission,ifMatch,ApprovalUserWithdrawV2,ct,behalf)`和`ReauthorizeWithdrawalAsync(...,previous,...)`。用户正文沿原`{commandId,reason}`封闭合同，认证实际人/业务责任/当前原Grant在Owner决定；`ApprovalUserWithdrawV2`和服务事实类型已在`ApprovalWithdrawalV2.cs`定义，禁止浏览器提供事实/Actor。500 Unicode字符原因完整保留，原命令元数据另记If-Match/代理上下文。
+- [x] `ControlledDocumentReviewOwnerV1.Application.cs`及`ControlledDocumentReviewOwnerV1.cs`令apply与withdraw参与同control：应用先赢保原APPLIED且不产生撤回事实；撤回先赢后迟到批准只能STALE。新明确授权只接已BLOCKED/未终态且准确业务control，追加事实/命令和连续receipt，保原终态与来源。
+- [x] DOC当前授权入口`OperationsAccessV1.ControlledDocument.cs`、资源动作目录/权限种子及`ControlledDocumentReviewController.cs`显式注册独立撤回/重新授权及必要业务授权管理；query、callback.replay或任务代理不授业务撤回。当前角色、对象、字段及SOD在负责入口和最终决定点核对，内部保证不逐层重验。
+- [x] `ApprovalBusinessEvidenceV2.cs`增加明确DOC分派；`DocumentWithdrawalDeliveryV1.cs`及实际DI/worker按现可信路由采用。网络操作在数据库锁外，原bytes、真实Owner/身份和原键保持；未知先查询原结果，412只刷新Workflow header，不能换body/Actor。
+- [x] `cp6.web/src/views/plm/ControlledDocumentReviewPanel.vue`及实际API模块采用业务上下文/当前token，展示业务已撤回与Workflow仍待确认；显式再授权、原结果查询及身份改变清理。恢复缓存只存原意图标识，不存文档明文；存储失败不先发送。
+- [x] `CP6.Tests/Erp/ControlledDocumentWithdrawalPostgreSqlTests.cs`使用现DocumentDecision/Application夹具，验证真实PG两连接apply/withdraw互斥、原事实/Outbox/审计一起回滚、先撤回迟到批准STALE、原grant撤销BLOCKED、明确新grant续作、提交丢答原键查询/重试、跨租户/伪Actor拒绝及旧提交来源边界；复用已有完整提交/引擎证据，不重跑全仓。
 - [ ] 实际Main登录HTTP及页面接同一DOC Owner：可信撤回、角色/委派撤权、丢响应刷新恢复，最终PG检查一个事实/原命令结果。受影响组件行为和vue-tsc；一次完整任务审查。单一报告、四项目状态、roadmap/生成页同步；正常Main/Handoff采用、准确分支删除和官方finish。
 
 ## 后续窗口的文件与实际验收边界
@@ -67,3 +67,5 @@
 从已核最新Main基线创建每个独立任务分支，DEV1 Main与DEV2 Handoff固定复用，集成空闲。相关测试沿既有`run_waveNNN_main.py`的隔离PG环境/共享构建缓存执行，首次实际行为失败保原日志，修改后只做对应回归。计划和普通文档不启动产品测试。普通GitHub工作流内容/事件和受保护主线引用在push/PR前核对，未变化复用结论；不触发Actions，不部署、不迁移既有数据库。
 
 本轮基线30DONE/2IN_PROGRESS/343PLANNED，原59卡余53；七天/W249/W267和上一周期已完成范围不重复。只读跨仓核对不修改CRM或Platform主目录，用户所有原始/未跟踪资料保留。每窗交付同时报告分支处置、工作区状态、席位释放。
+
+W297产品实现、相关验证与集中审查完成，有效累计采样3259秒。最后一项中的HTTP/页面/组件验证已通过，交付流程最终完成以wave297-final-verification.json为准，尚不宣称席位已释放。本项初估2–3.5h低置信，最终finish后按实际耗时校准；下一W298，约24h目标继续。

@@ -24,19 +24,20 @@ public sealed record DocumentReviewDetailV1(DocumentReviewSubmissionV1 Submissio
 public sealed partial class ControlledDocumentReviewOwnerV1
 {
     private sealed record ApplicationContext(Context Context,ControlledDocumentReviewStoreV1.SubmissionRow Submission,
-        DocumentReviewApplicationStoreV1 Store,DocumentReviewApplicationStoreV1.Source? Source,ApprovalApplicationReceiptV2? Receipt)
+        DocumentReviewApplicationStoreV1 Store,DocumentReviewApplicationStoreV1.Source? Source,ApprovalApplicationReceiptV2? Receipt,DocumentReviewControlStoreV1.Head Control)
     {
         internal string Etag=>"\"da1-"+ApprovalCanonicalV2.Hash(ApprovalCanonicalV2.Bytes(new{Context.Etag,Submission.Id,
-            Source?.OriginalHash,Receipt?.ReceiptId}))+"\"";
+            Source?.OriginalHash,Receipt?.ReceiptId,Control.RowVersion}))+"\"";
     }
     private async Task<ApplicationContext> ApplicationContextAsync(OperationsAccessV1 a,Guid document,Guid submission,bool write,CancellationToken ct)
     {
         var c=await Prepare(a,document,write,ct);
         var row=c.Submissions.SingleOrDefault(x=>x.Id==submission)??throw Error("RESOURCE_NOT_FOUND",404);
         await documents.ReviewSource(a,c.Store.View(row).Document,false,ct);
+        var head=await new DocumentReviewControlStoreV1(db,Environment).Read(submission,ct);
         var store=new DocumentReviewApplicationStoreV1(db,scope);await store.Ready(ct);
         var source=await store.ForSubmission(submission,ct);
-        return new(c,row,store,source,source==null?null:await store.Latest(source.Stream,ct));
+        return new(c,row,store,source,source==null?null:await store.Latest(source.Stream,ct),head);
     }
     private async Task<DocumentApplicationContextV1> ApplicationView(ApplicationContext c,CancellationToken ct)
         =>new(c.Submission.Document,c.Submission.Id,c.Etag,c.Source==null?"NOT_RECEIVED":"RECEIVED",c.Source?.Stream,
@@ -60,7 +61,7 @@ public sealed partial class ControlledDocumentReviewOwnerV1
         var applicationStore=new DocumentReviewApplicationStoreV1(db,scope);await applicationStore.Ready(ct);
         var application=await applicationStore.Application(row.Id,ct);
         return store.View(row) with {TransportState=transport?.State??"PENDING",IsApproved=application?.Approved==true,
-            State=application==null?"SUBMITTED":application.Approved?"APPROVED":"REJECTED"};
+            State=application==null?(await new DocumentReviewControlStoreV1(db,Environment).Read(row.Id,ct)).State=="WITHDRAWN"?"WITHDRAWN":"SUBMITTED":application.Approved?"APPROVED":"REJECTED"};
     }
     private async Task QualifyApplication(ApplicationContext c,CancellationToken ct)
     {
@@ -98,10 +99,14 @@ public sealed partial class ControlledDocumentReviewOwnerV1
             if(etag!=c.Etag || c.Receipt?.ReceiptId!=command.ExpectedReceiptId)throw Error("DOCUMENT_APPLICATION_CONTEXT_CHANGED",412);
             var source=c.Source??throw Error("DOCUMENT_DECISION_NOT_RECEIVED",422);
             ApprovalApplicationReceiptV2 receipt;
-            if(c.Receipt is {Application:"APPLIED"})receipt=c.Receipt;
+            if(c.Receipt?.Application is "APPLIED" or "STALE" or "CONFLICT")receipt=c.Receipt;
+            else if(c.Control.State=="WITHDRAWN")
+                receipt=await c.Store.Append(source,a.ActorId,command.OperationId,c.Receipt,"STALE","STALE_RECEIPT",c.Context.Document.Reference.Version,
+                    new{profile="Main.Plm.DocumentApplication/1",command,control=c.Control.RowVersion,authorities=Witnesses(a)},null,t);
             else
             {
                 await QualifyApplication(c,t);
+                await new DocumentReviewControlStoreV1(db,Environment).Transition(c.Control,"APPLIED",t);
                 var view=c.Context.Store.View(c.Submission);
                 var applied=new DocumentApprovalV1(Guid.NewGuid(),view.Document,view.Policy,source.Decision.SubmissionId,
                     source.Decision.DecisionId,source.Decision.Decision=="APPROVED",a.ActorId,Now());

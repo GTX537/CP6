@@ -15,6 +15,8 @@ public sealed class ApprovalBusinessEvidenceV2(ToolDispositionApprovalOwnerV1 to
     internal Task<string> Withdrawal(ApprovalSubmitCommandV2 original,ApprovalWithdrawCommandV2 command,bool current,CancellationToken ct)
         =>original.Subject.BusinessOwner==IterationReviewStoreV1.Owner && iterations!=null
             ?iterations.WithdrawalEvidence(original,command,current,ct)
+            :original.Subject.BusinessOwner==ControlledDocumentReviewStoreV1.Owner && documents!=null
+            ?documents.WithdrawalEvidence(original,command,current,ct)
             :throw new ScopeAuthorizationExceptionV1("WITHDRAW_OWNER_NOT_ADOPTED",422);
     internal async Task<ApprovalBusinessIntakeProofV2> Intake(ApprovalSubmissionWireV2.Parsed incoming,CancellationToken ct)
     {

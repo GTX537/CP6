@@ -812,6 +812,10 @@ builder.Services.AddSingleton<CP6.Core.Services.Plm.IDocumentReceiptChainTranspo
     builder.Configuration.GetSection("DocumentReviewReceiptRecovery").Get<CP6.WebApi.Services.ApprovalDecisionDeliveryOptionsV2>()??new(),crmOidc,
     sp.GetRequiredService<CP6.WebApi.Services.ApprovalFactReceiverRegistryV2>(),builder.Environment.IsDevelopment()));
 builder.Services.AddScoped<CP6.Core.Services.Plm.DocumentDecisionDeliveryV1>();
+builder.Services.AddSingleton<CP6.Core.Services.Plm.IDocumentWithdrawalTransportV1>(sp=>new CP6.WebApi.Services.DocumentWithdrawalTransportV1(
+    builder.Configuration.GetSection("DocumentReviewWithdrawalDelivery").Get<CP6.WebApi.Services.ToolApprovalDeliveryOptionsV1>()??new(),crmOidc,
+    sp.GetRequiredService<CP6.WebApi.Services.ApprovalIntakeRegistryV2>(),builder.Environment.IsDevelopment()));
+builder.Services.AddScoped<CP6.Core.Services.Plm.DocumentWithdrawalDeliveryV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.DocumentApplicationDeliveryV1>();
 builder.Services.AddScoped<CP6.Core.Services.Plm.DocumentReceiptRecoveryV1>();
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.DocumentReviewPipelineWorkerV1>();
