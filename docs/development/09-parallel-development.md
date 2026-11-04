@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W300](evidence/W300-01/DELIVERY.md)库位规则真实审批撤回本地验收完成；约24h目标继续，远端采用/finish后W301整卡核销。
+> 当前：[W301审计](evidence/W301-01/DELIVERY.md)发现BUG751，原WP12-19未关闭；下一独立修复，24h目标继续。
+
+> 历史快照：[W300](evidence/W300-01/DELIVERY.md)库位规则真实审批撤回本地验收完成；约24h目标继续，远端采用/finish后W301整卡核销。
 
 > 历史快照：[W299](evidence/W299-01/DELIVERY.md)版模真实审批撤回本地验收完成；24h目标继续，远端采用/finish后独立修BUG747，再W300。
 
