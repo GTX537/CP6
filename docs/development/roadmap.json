@@ -199208,11 +199208,31 @@
         }
       },
       "wave297_document_withdrawal": {
-        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "status": "DELIVERED_REMOTE_VERIFIED",
         "report": "docs/development/evidence/W297-01/DELIVERY.md",
         "validation": "15个不同的实际PostgreSQL18测试场景有对应成功执行，含真实认证HTTP、两连接竞争、旧提交前向采用、真实Chrome明确再授权/丢响应刷新恢复；21项相关Vue行为及最终vue-tsc通过。复用逐方法有效来源，不把早期失败/未执行改称通过。",
         "remaining": "原375保持30DONE/2IN_PROGRESS/343PLANNED；原59局部6闭环/53余项，125完整目标与247正式验收状态不变。WP12-19仍待需求集、版模处置、库位规则等实际Owner采用及整卡核销；本项不关闭原卡。",
-        "full_task_completed": false
+        "full_task_completed": false,
+        "remote_adoption": {
+          "repository": "CP6",
+          "task": "W297-01",
+          "source": "de7d5d7126b240016005e4c4bc58fd650cab7d9f",
+          "remote_target": "afc3cc08a081f2affc3f7033b758e312838169d6",
+          "pr": "https://github.com/GTX537/CP6/pull/743",
+          "branch": "codex/w297-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "workspace_clean": true
+        },
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave297-final-verification.json"
+        }
       }
     },
     {
@@ -202678,11 +202698,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261104-wave297",
-      "path": "docs/development/dispatch/20261104-wave297/README.md",
-      "baseline_sha": "6223e3d7be8f7e20d0fc60941e0f4010865efe55",
-      "registered_at": "2026-11-04T00:26:57.175178+00:00",
-      "phase": "DELIVERY_MAIN_CLOSEOUT",
+      "id": "20261104-wave298",
+      "path": "docs/development/dispatch/20261104-wave298/README.md",
+      "baseline_sha": "afc3cc08a081f2affc3f7033b758e312838169d6",
+      "registered_at": "2026-11-04T01:25:00.118196+00:00",
+      "phase": "IMPLEMENTING",
       "assigned_chats": [
         "COORD"
       ],
@@ -202700,61 +202720,41 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W297-01",
-          "workspace_task": "W297-01",
+          "id": "W298-01",
+          "workspace_task": "W298-01",
           "related_tasks": [
             "WP12-19"
           ],
-          "title": "DOC完整可信撤回与原应用互斥",
+          "title": "需求集实际撤回及显式重新授权",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "DELIVERY_MAIN_CLOSEOUT",
+          "phase": "IMPLEMENTING",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": true,
+          "worker_delivery_received": false,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w297-01",
+          "branch": "codex/w298-01",
           "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": true,
+          "candidate_review_completed": false,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
             "Main:oa-application",
-            "Main:document-review",
+            "Main:requirement-set-review",
             "Main:authorization-catalog",
             "Main:EF-migrations"
-          ],
-          "worker_delivery_ref": "docs/development/evidence/W297-01/DELIVERY.md",
-          "validation": "15个不同的实际PostgreSQL18测试场景有对应成功执行，含真实认证HTTP、两连接竞争、旧提交前向采用、真实Chrome明确再授权/丢响应刷新恢复；21项相关Vue行为及最终vue-tsc通过。复用逐方法有效来源，不把早期失败/未执行改称通过。",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave297-final-verification.json"
-          },
-          "business_acceptance": "DOC_WITHDRAWAL_PG_HTTP_BROWSER_PASS;OTHER_OWNERS_REMAIN",
-          "local_validation": "PASS_AFFECTED_SCOPE"
+          ]
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W297两仓远端采用/准确清理/finish后进入W298需求集实际Owner；新24h单人目标继续。",
-      "lifecycle_snapshot": {
-        "main_finish_required": true,
-        "main_seat_released": false,
-        "handoff_seat_released": false,
-        "main_branch_deleted": false,
-        "handoff_branch_deleted": false,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave297-final-verification.json"
-      }
+      "next_action": "需求集实际Owner可信撤回、同control应用互斥、精确业务授权/BLOCKED显式接续和原结果恢复；准确需求集/成员源与EvidenceMode保留。"
     },
     "wave_history": [
       {
@@ -240151,6 +240151,109 @@
             "workspace_clean": true
           }
         ]
+      },
+      {
+        "id": "20261104-wave297",
+        "path": "docs/development/dispatch/20261104-wave297/README.md",
+        "baseline_sha": "6223e3d7be8f7e20d0fc60941e0f4010865efe55",
+        "registered_at": "2026-11-04T00:26:57.175178+00:00",
+        "phase": "DONE",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W297-01",
+            "workspace_task": "W297-01",
+            "related_tasks": [
+              "WP12-19"
+            ],
+            "title": "DOC完整可信撤回与原应用互斥",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "DONE",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w297-01",
+            "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:oa-application",
+              "Main:document-review",
+              "Main:authorization-catalog",
+              "Main:EF-migrations"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W297-01/DELIVERY.md",
+            "validation": "15个不同的实际PostgreSQL18测试场景有对应成功执行，含真实认证HTTP、两连接竞争、旧提交前向采用、真实Chrome明确再授权/丢响应刷新恢复；21项相关Vue行为及最终vue-tsc通过。复用逐方法有效来源，不把早期失败/未执行改称通过。",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave297-final-verification.json"
+            },
+            "business_acceptance": "DOC_WITHDRAWAL_PG_HTTP_BROWSER_PASS;OTHER_OWNERS_REMAIN",
+            "local_validation": "PASS_AFFECTED_SCOPE"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W297两仓远端采用/准确清理/finish后进入W298需求集实际Owner；新24h单人目标继续。",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave297-final-verification.json"
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W297-01",
+            "source": "de7d5d7126b240016005e4c4bc58fd650cab7d9f",
+            "remote_target": "afc3cc08a081f2affc3f7033b758e312838169d6",
+            "pr": "https://github.com/GTX537/CP6/pull/743",
+            "branch": "codex/w297-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W297-HANDOFF",
+            "source": "67342517c973c0ba8276a14220711ba0ca6f58b0",
+            "remote_target": "eef6ab08facda49f6b0e89fce6acfa72df79b205",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/274",
+            "branch": "codex/w297-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -240725,8 +240828,8 @@
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
       "started_at": "2026-11-04T00:22:36+00:00",
-      "effective_seconds_recorded": 3259,
-      "timing_snapshot_at": "2026-11-04T01:17:12.514036+00:00",
+      "effective_seconds_recorded": 3730,
+      "timing_snapshot_at": "2026-11-04T01:25:00.118196+00:00",
       "timing_source": "Fresh goal.timeUsedSeconds snapshots; cross-check actual active segments and exclude interruptions. Previous-cycle time and inter-cycle gap never carried forward.",
       "next_reestimate_at_effective_seconds": 7200,
       "estimate_hours": [
@@ -240756,19 +240859,46 @@
           ],
           "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
           "estimate_confidence": "LOW",
-          "state": "VERIFYING",
+          "state": "DONE",
           "started_at": "2026-11-04T00:26:57.175178+00:00",
           "scope_refinement": "Actual DOC Owner: current explicit withdraw authority and optional bounded business delegation, immutable fact/outbox, apply/withdraw same control CAS, real receipt recovery and old submission compatibility. Existing ITER not repeated.",
           "implementation_complete": true,
           "report": "docs/development/evidence/W297-01/DELIVERY.md",
           "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
             "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave297-final-verification.json"
-          }
+          },
+          "actual_effective_seconds": 3412,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W297-01",
+              "source": "de7d5d7126b240016005e4c4bc58fd650cab7d9f",
+              "remote_target": "afc3cc08a081f2affc3f7033b758e312838169d6",
+              "pr": "https://github.com/GTX537/CP6/pull/743",
+              "branch": "codex/w297-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W297-HANDOFF",
+              "source": "67342517c973c0ba8276a14220711ba0ca6f58b0",
+              "remote_target": "eef6ab08facda49f6b0e89fce6acfa72df79b205",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/274",
+              "branch": "codex/w297-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
         },
         {
           "id": "W298-01",
@@ -240783,7 +240913,10 @@
           ],
           "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
           "estimate_confidence": "LOW",
-          "state": "PLANNED"
+          "state": "IN_PROGRESS",
+          "started_at": "2026-11-04T01:25:00.118196+00:00",
+          "effective_start": 3730,
+          "scope_refinement": "Actual RequirementSet Owner withdrawal, exact revision/read source and evidence mode, independent business delegation, shared apply/control CAS, explicit BLOCKED successor and native transport/UI recovery. Reuse unchanged wire and DOC transport protocol evidence; validate this actual Owner, not copied labels."
         },
         {
           "id": "W299-01",

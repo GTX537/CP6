@@ -46,7 +46,7 @@
 - [x] `ApprovalBusinessEvidenceV2.cs`增加明确DOC分派；`DocumentWithdrawalDeliveryV1.cs`及实际DI/worker按现可信路由采用。网络操作在数据库锁外，原bytes、真实Owner/身份和原键保持；未知先查询原结果，412只刷新Workflow header，不能换body/Actor。
 - [x] `cp6.web/src/views/plm/ControlledDocumentReviewPanel.vue`及实际API模块采用业务上下文/当前token，展示业务已撤回与Workflow仍待确认；显式再授权、原结果查询及身份改变清理。恢复缓存只存原意图标识，不存文档明文；存储失败不先发送。
 - [x] `CP6.Tests/Erp/ControlledDocumentWithdrawalPostgreSqlTests.cs`使用现DocumentDecision/Application夹具，验证真实PG两连接apply/withdraw互斥、原事实/Outbox/审计一起回滚、先撤回迟到批准STALE、原grant撤销BLOCKED、明确新grant续作、提交丢答原键查询/重试、跨租户/伪Actor拒绝及旧提交来源边界；复用已有完整提交/引擎证据，不重跑全仓。
-- [ ] 实际Main登录HTTP及页面接同一DOC Owner：可信撤回、角色/委派撤权、丢响应刷新恢复，最终PG检查一个事实/原命令结果。受影响组件行为和vue-tsc；一次完整任务审查。单一报告、四项目状态、roadmap/生成页同步；正常Main/Handoff采用、准确分支删除和官方finish。
+- [x] 实际Main登录HTTP及页面接同一DOC Owner：可信撤回、角色/委派撤权、丢响应刷新恢复，最终PG检查一个事实/原命令结果。受影响组件行为和vue-tsc；一次完整任务审查。单一报告、四项目状态、roadmap/生成页同步；正常Main/Handoff采用、准确分支删除和官方finish。
 
 ## 后续窗口的文件与实际验收边界
 
@@ -69,3 +69,9 @@
 本轮基线30DONE/2IN_PROGRESS/343PLANNED，原59卡余53；七天/W249/W267和上一周期已完成范围不重复。只读跨仓核对不修改CRM或Platform主目录，用户所有原始/未跟踪资料保留。每窗交付同时报告分支处置、工作区状态、席位释放。
 
 W297产品实现、相关验证与集中审查完成，有效累计采样3259秒。最后一项中的HTTP/页面/组件验证已通过，交付流程最终完成以wave297-final-verification.json为准，尚不宣称席位已释放。本项初估2–3.5h低置信，最终finish后按实际耗时校准；下一W298，约24h目标继续。
+
+## W298实际开工与首窗工时观察
+
+W297两仓远端采用/正常finish已核对，来源`wave297-final-verification.json`。Main PR743、Handoff PR274；原分支删除、固定席位干净释放。W297有效3412秒，低于初估2–3.5h；本轮累计3553秒。首个样本不代表总体估计，累计7200秒时结合W298再校准，较快即继续原375真实余项，不能结束24h目标。
+
+W298从`afc3cc08a081f2affc3f7033b758e312838169d6`开工，只有本对话写入。沿已核直接前置的当前授权/Scope最终fence、原命令/审计、oa.app冻结提交/可信撤回和已真实采用的RequirementSet Review。任务专属执行清单见[W298](../dispatch/20261104-wave298/README.md)；本轮原125/247和原卡状态不因此改变。
