@@ -112,7 +112,7 @@ public sealed partial class PersonalFormOwnerV2(CP6Context db, IHttpContextAcces
         var access = actor.FieldPerms.GetValueOrDefault(Resource)?.GetValueOrDefault("Title",1) ?? 1;
         if (access == 3 && after != null || access != 1 && after != before) throw Error("FIELD_WRITE_FORBIDDEN",403);
     }
-    internal sealed record Command<T>(string Id,string? Expected,T Body,string Digest,byte[] Raw,string? Correlation);
+    internal sealed record Command<T>(string Id,string? Expected,T Body,string Digest,byte[] Raw,string? Correlation,LegacyCommandInfo? Legacy=null);
     internal static Command<T> CommandInput<T>(byte[] raw, bool versionRequired, bool runtimeVersion = false, int maxBytes = 1024 * 1024)
     {
         try
@@ -147,11 +147,15 @@ public sealed partial class PersonalFormOwnerV2(CP6Context db, IHttpContextAcces
           draft_id AS "Draft",form_data_id AS "Data",root_id AS "Root",closed AS "Closed" FROM cp6_personal_form_v2.commands
         WHERE tenant_id={db.CurrentTenantId} AND environment_id={fence.EnvironmentId} AND actor_id={actor} AND operation={operation} AND resource_key={resource} AND command_id={command} AND completed
         """).SingleOrDefaultAsync(ct);
-    private Task BeginCommand<T>(Guid id, Guid actor, string operation, string resource, Command<T> command,
-        Guid? draft, Guid? data, Guid? root, Guid? task, CancellationToken ct) => db.Database.ExecuteSqlInterpolatedAsync($"""
+    private async Task BeginCommand<T>(Guid id, Guid actor, string operation, string resource, Command<T> command,
+        Guid? draft, Guid? data, Guid? root, Guid? task, CancellationToken ct)
+    {
+        await db.Database.ExecuteSqlInterpolatedAsync($"""
         INSERT INTO cp6_personal_form_v2.commands(id,tenant_id,environment_id,actor_id,operation,resource_key,command_id,digest,raw_body,expected_version,correlation,draft_id,form_data_id,root_id,task_id)
         VALUES({id},{db.CurrentTenantId},{fence.EnvironmentId},{actor},{operation},{resource},{command.Id},{command.Digest},{command.Raw},{command.Expected},{command.Correlation},{draft},{data},{root},{task})
         """,ct);
+        if(command.Legacy is {} legacy)await SaveLegacyCommand(id,actor,operation,resource,legacy,ct);
+    }
     private async Task<PersonalFormResultV2> Complete<T>(Guid id, Command<T> command, Guid? resource, string? version, object value, object audit, CancellationToken ct)
     {
         var result = new PersonalFormResultV2(command.Id,"SUCCEEDED",resource,version,JsonSerializer.SerializeToElement(value,Json),Clock(),command.Correlation);

@@ -11,13 +11,14 @@ public static class WorkflowCommandJsonV1
     public static StrictJsonDocument Parse(byte[] bytes) => Parse(bytes, 1024 * 1024);
     // A business Owner may budget bounded envelope overhead separately from its data limit.
     // The existing entry point, canonical identity and every other JSON rule stay unchanged.
-    public static StrictJsonDocument Parse(byte[] bytes, int maxBytes)
+    public static StrictJsonDocument Parse(byte[] bytes, int maxBytes) => Parse(bytes,maxBytes,8);
+    public static StrictJsonDocument Parse(byte[] bytes, int maxBytes, int maxDepth)
     {
         if (bytes.Length > maxBytes) throw new JsonException("JSON_SIZE_LIMIT");
         var document = StrictJson.Parse(bytes);
         try
         {
-            var reader = new Utf8JsonReader(bytes, new JsonReaderOptions { MaxDepth = 8 });
+            var reader = new Utf8JsonReader(bytes, new JsonReaderOptions { MaxDepth = maxDepth });
             while (reader.Read())
                 if (reader.TokenType is JsonTokenType.String or JsonTokenType.PropertyName)
                 {

@@ -37,10 +37,14 @@ public sealed partial class PersonalFormOwnerV2
             var old=await Original(actor.UserId,operation,resource,command.Id,ct);
             if(old!=null)
             {
-                Match(old,command.Digest);
+                await MatchLegacy(old,command,ct);
                 var replay=await Disclose(old,actor,ct);await Final(actor,lease,ct,false);return replay;
             }
             await WriteReady(lease,ct);await Action(actor,"submit",ct);
+            // An old key without this adapter's fixed mapping is historical evidence,
+            // not permission to replay it as a new native submission or disclose its result.
+            if(command.Legacy is {} legacy && await db.Wf_FormDatas.AsNoTracking().AnyAsync(x=>x.SubmissionKey==legacy.Key,ct))
+                throw Error("LEGACY_SUBMISSION_MAPPING_REQUIRED",409);
             DraftRow? row=null;
             if(draft is Guid id)
             {

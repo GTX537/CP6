@@ -293,7 +293,6 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.IApproverMapService, CP6.Core.Se
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFormService, CP6.Core.Services.Wf.FormService>();           // 章02 表单引擎（JSON 列 + 服务端 schema 复核）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IDefinitionVersionResolver, CP6.Core.Services.Wf.DefinitionVersionResolver>();
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowFormCompatibilityValidator, CP6.Core.Services.Wf.FlowFormCompatibilityValidator>();
-builder.Services.AddScoped<CP6.Core.Services.Wf.IFormSubmissionService, CP6.Core.Services.Wf.FormSubmissionService>();
 builder.Services.AddScoped<CP6.Core.Services.Wf.FlowEngine>();                                                // 章03 流程引擎状态机（会签/条件/幂等）；WfServiceJobService ctor 注入具体类型（internal Resume/FailServiceTokenAsync 不在接口上）
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowEngine>(sp => sp.GetRequiredService<CP6.Core.Services.Wf.FlowEngine>()); // 接口与具体类共享同一 scoped 实例
 builder.Services.AddScoped<CP6.Core.Services.Wf.IFlowTriggerService, CP6.Core.Services.Wf.FlowTriggerService>(); // 事件触发 start：三入口单一出口（D2）
@@ -400,7 +399,6 @@ builder.Services.AddScoped<CP6.Core.Services.Wf.IWorkCalendarService, CP6.Core.S
 // 4.0d OA 电子表单信箱（Phase B，消费 Wf 引擎）
 builder.Services.AddScoped<CP6.Core.Services.Oa.IForecastService, CP6.Core.Services.Oa.ForecastService>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.IInboxService, CP6.Core.Services.Oa.InboxService>();
-builder.Services.AddScoped<CP6.Core.Services.Oa.IDraftService, CP6.Core.Services.Oa.DraftService>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.IOaInstanceAccessService, CP6.Core.Services.Oa.OaInstanceAccessService>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.IFormFieldProjectionService, CP6.Core.Services.Oa.FormFieldProjectionService>();
 builder.Services.AddScoped<CP6.Core.Services.Oa.ITaskDecisionService, CP6.Core.Services.Oa.TaskDecisionService>();

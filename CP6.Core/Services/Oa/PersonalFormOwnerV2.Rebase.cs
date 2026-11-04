@@ -66,16 +66,18 @@ public sealed partial class PersonalFormOwnerV2
         if(requiredRequest is {} requestId)throw new PersonalFormDispositionRequiredV2(requestId);
         return result!;
     }
-    public async Task<PersonalFormResultV2> RebaseDraftAsync(Guid draft,byte[] raw,CancellationToken ct=default)
+    public Task<PersonalFormResultV2> RebaseDraftAsync(Guid draft,byte[] raw,CancellationToken ct=default)
+        =>RebaseDraft(draft,CommandInput<PersonalFormRebaseInputV2>(raw,true),ct);
+    private async Task<PersonalFormResultV2> RebaseDraft(Guid draft,Command<PersonalFormRebaseInputV2> command,CancellationToken ct)
     {
-        var command=CommandInput<PersonalFormRebaseInputV2>(raw,true);var body=command.Body;var resource=draft.ToString("D");
+        var body=command.Body;var resource=draft.ToString("D");
         if(body.PreviewId==Guid.Empty || body.TargetVersionId==Guid.Empty || body.PreviewDigest?.Length!=64)throw Error("REBASE_INPUT_INVALID",400);
         Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var committing=false;
         try
         {
             var lease=await ReadLease(ct);var actor=await Actor(ct);await Action(actor,"query",ct);
             var old=await Original(actor.UserId,Rebase,resource,command.Id,ct);
-            if(old!=null){Match(old,command.Digest);var saved=await Disclose(old,actor,ct);await Final(actor,lease,ct,false);return saved;}
+            if(old!=null){await MatchLegacy(old,command,ct);var saved=await Disclose(old,actor,ct);await Final(actor,lease,ct,false);return saved;}
             await WriteReady(lease,ct);await Action(actor,"edit",ct);var row=await Owned(draft,actor.UserId,ct);Active(row);Expected(row,command.Expected);
             var preview=await db.Database.SqlQuery<PreviewRow>($"""
                 SELECT actor_id AS "Actor",draft_id AS "Draft",draft_version AS "Token",source_version AS "Source",target_version AS "Target",digest AS "Digest",result_json AS "Result",expires_at AS "Expires"
@@ -84,6 +86,7 @@ public sealed partial class PersonalFormOwnerV2
             if(preview.Actor!=actor.UserId || preview.Draft!=draft)throw Error("REBASE_PREVIEW_NOT_FOUND",404);
             if(preview.Expires<=Clock() || preview.Source!=row.Version || preview.Target!=body.TargetVersionId || preview.Token!=row.Token || preview.Digest!=body.PreviewDigest)throw Error("REBASE_PREVIEW_CHANGED",409);
             var next=await RebasePlan(row,body.TargetVersionId,body.DispositionRef,actor,lease,false,ct);
+            if(command.Legacy?.TargetVersion is int targetVersion && targetVersion!=next.Target.Version)throw Error("REBASE_TARGET_CHANGED",409);
             if(next.Digest!=preview.Digest)throw Error("REBASE_PREVIEW_CHANGED",409);
             var plan=next.Plan!;
             if(plan.Loss && !body.ConfirmRemovedValues)throw Error("REBASE_CONFIRMATION_REQUIRED",422);
