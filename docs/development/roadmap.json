@@ -199274,11 +199274,31 @@
         }
       },
       "wave299_tool_withdrawal": {
-        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "status": "DELIVERED_REMOTE_VERIFIED",
         "report": "docs/development/evidence/W299-01/DELIVERY.md",
         "validation": "11项独立实际PostgreSQL18场景通过（含Main认证HTTP、Chrome与三项原版模应用回归）；11项Vue行为单测、vue-tsc通过。相同未变输入复用已通过结果；审查修改的当前读取上下文复用与合法RETURNED输入追加3项相关回归通过。",
         "remaining": "原375保持30DONE/2IN_PROGRESS/343PLANNED；原59局部6闭环/53余项，125完整目标与247正式验收不变。WP12-19仍待库位规则等实际采用与整卡核销。版模现应用仅BLOCKED/STALE/CONFLICT，缺少真实终结参与方；本窗没有APPLIED或实际报废/库存/财务效果。",
-        "full_task_completed": false
+        "full_task_completed": false,
+        "remote_adoption": {
+          "repository": "CP6",
+          "task": "W299-01",
+          "source": "0fc9157e09bef6ceb1eac4fa5b65219a59443e77",
+          "remote_target": "58dd37ebbd3f1244ff41ec31dd8765c04ba6a1cc",
+          "pr": "https://github.com/GTX537/CP6/pull/748",
+          "branch": "codex/w299-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "workspace_clean": true
+        },
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave299-final-verification.json"
+        }
       }
     },
     {
@@ -202744,11 +202764,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261104-wave299",
-      "path": "docs/development/dispatch/20261104-wave299/README.md",
-      "baseline_sha": "1a4e6edac635000951eb7b4ec5d12edecd850691",
-      "registered_at": "2026-11-04T02:00:06.727104+00:00",
-      "phase": "DELIVERY_MAIN_CLOSEOUT",
+      "id": "20261104-wave300",
+      "path": "docs/development/dispatch/20261104-wave300/README.md",
+      "baseline_sha": "324f722644e6e79df0ac75dfc3396d0f1858306d",
+      "registered_at": "2026-11-04T02:49:40.816451+00:00",
+      "phase": "IMPLEMENTING",
       "assigned_chats": [
         "COORD"
       ],
@@ -202766,61 +202786,41 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W299-01",
-          "workspace_task": "W299-01",
+          "id": "W300-01",
+          "workspace_task": "W300-01",
           "related_tasks": [
             "WP12-19"
           ],
-          "title": "版模处置Owner撤回与当前资格竞争",
+          "title": "库位规则Owner撤回与当前控制头",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "DELIVERY_MAIN_CLOSEOUT",
+          "phase": "IMPLEMENTING",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": true,
+          "worker_delivery_received": false,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w299-01",
+          "branch": "codex/w300-01",
           "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": true,
+          "candidate_review_completed": false,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
             "Main:oa-application",
-            "Main:tool-disposition",
+            "Main:location-rule",
             "Main:authorization-catalog",
             "Main:EF-migrations"
-          ],
-          "worker_delivery_ref": "docs/development/evidence/W299-01/DELIVERY.md",
-          "validation": "11项独立实际PostgreSQL18场景通过（含Main认证HTTP、Chrome与三项原版模应用回归）；11项Vue行为单测、vue-tsc通过。相同未变输入复用已通过结果；审查修改的当前读取上下文复用与合法RETURNED输入追加3项相关回归通过。",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave299-final-verification.json"
-          },
-          "business_acceptance": "TOOL_WITHDRAWAL_PG_HTTP_BROWSER_PASS;PHYSICAL_DISPOSAL_REMAINS",
-          "local_validation": "PASS_AFFECTED_SCOPE"
+          ]
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W299两仓远端采用/清理/finish后独立修复BUG747，再W300；24h单人目标继续。",
-      "lifecycle_snapshot": {
-        "main_finish_required": true,
-        "main_seat_released": false,
-        "handoff_seat_released": false,
-        "main_branch_deleted": false,
-        "handoff_branch_deleted": false,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave299-final-verification.json"
-      }
+      "next_action": "库位规则实际Owner可信审批撤回、真实提案控制版本与原审批应用竞争、独立业务授权/BLOCKED显式接续、原命令及页面恢复；保持旧提案入口和未生效规则边界。"
     },
     "wave_history": [
       {
@@ -240423,6 +240423,109 @@
             "workspace_clean": true
           }
         ]
+      },
+      {
+        "id": "20261104-wave299",
+        "path": "docs/development/dispatch/20261104-wave299/README.md",
+        "baseline_sha": "1a4e6edac635000951eb7b4ec5d12edecd850691",
+        "registered_at": "2026-11-04T02:00:06.727104+00:00",
+        "phase": "DONE",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W299-01",
+            "workspace_task": "W299-01",
+            "related_tasks": [
+              "WP12-19"
+            ],
+            "title": "版模处置Owner撤回与当前资格竞争",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "DONE",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w299-01",
+            "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:oa-application",
+              "Main:tool-disposition",
+              "Main:authorization-catalog",
+              "Main:EF-migrations"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W299-01/DELIVERY.md",
+            "validation": "11项独立实际PostgreSQL18场景通过（含Main认证HTTP、Chrome与三项原版模应用回归）；11项Vue行为单测、vue-tsc通过。相同未变输入复用已通过结果；审查修改的当前读取上下文复用与合法RETURNED输入追加3项相关回归通过。",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave299-final-verification.json"
+            },
+            "business_acceptance": "TOOL_WITHDRAWAL_PG_HTTP_BROWSER_PASS;PHYSICAL_DISPOSAL_REMAINS",
+            "local_validation": "PASS_AFFECTED_SCOPE"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W299两仓远端采用/清理/finish后独立修复BUG747，再W300；24h单人目标继续。",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave299-final-verification.json"
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W299-01",
+            "source": "0fc9157e09bef6ceb1eac4fa5b65219a59443e77",
+            "remote_target": "58dd37ebbd3f1244ff41ec31dd8765c04ba6a1cc",
+            "pr": "https://github.com/GTX537/CP6/pull/748",
+            "branch": "codex/w299-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W299-HANDOFF",
+            "source": "24585fbc9a5ea8de62efa8fc8aa5c4095f3917fa",
+            "remote_target": "05992786234fb4d3425b5b160020632d1ee01775",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/276",
+            "branch": "codex/w299-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -240997,8 +241100,8 @@
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
       "started_at": "2026-11-04T00:22:36+00:00",
-      "effective_seconds_recorded": 7468,
-      "timing_snapshot_at": "2026-11-04T02:27:31.572117+00:00",
+      "effective_seconds_recorded": 8818,
+      "timing_snapshot_at": "2026-11-04T02:49:40.816451+00:00",
       "timing_source": "Fresh goal.timeUsedSeconds snapshots; cross-check actual active segments and exclude interruptions. Previous-cycle time and inter-cycle gap never carried forward.",
       "next_reestimate_at_effective_seconds": 14400,
       "estimate_hours": [
@@ -241137,20 +241240,47 @@
           ],
           "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
           "estimate_confidence": "LOW",
-          "state": "VERIFYING",
+          "state": "DONE",
           "started_at": "2026-11-04T02:00:06.727104+00:00",
           "effective_start": 5776,
           "scope_refinement": "Actual ToolDisposition approval withdrawal, independent dispose-withdraw/delegate authority, immutable exact original, BLOCKED successor and native UI/transport. ToolApplication currently only emits BLOCKED/STALE/CONFLICT; share real control and preserve that legal domain, never fabricate APPLIED or physical finalization. Existing disposition block/open obligations remain. Exact pending submission adoption and terminal receipt preservation.",
           "implementation_complete": true,
           "report": "docs/development/evidence/W299-01/DELIVERY.md",
           "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
             "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave299-final-verification.json"
-          }
+          },
+          "actual_effective_seconds": 2123,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W299-01",
+              "source": "0fc9157e09bef6ceb1eac4fa5b65219a59443e77",
+              "remote_target": "58dd37ebbd3f1244ff41ec31dd8765c04ba6a1cc",
+              "pr": "https://github.com/GTX537/CP6/pull/748",
+              "branch": "codex/w299-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W299-HANDOFF",
+              "source": "24585fbc9a5ea8de62efa8fc8aa5c4095f3917fa",
+              "remote_target": "05992786234fb4d3425b5b160020632d1ee01775",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/276",
+              "branch": "codex/w299-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
         },
         {
           "id": "W300-01",
@@ -241165,11 +241295,14 @@
           ],
           "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
           "estimate_confidence": "LOW_RECALIBRATED_AT_2H",
-          "state": "PLANNED",
+          "state": "IN_PROGRESS",
           "initial_estimate_hours": [
             1.5,
             3
-          ]
+          ],
+          "started_at": "2026-11-04T02:49:40.816451+00:00",
+          "effective_start": 8818,
+          "scope_refinement": "Use actual LocationRule proposal revision/token as shared control with existing proposal withdrawal and review application; preserve native proposal/approval journals and all legacy legal inputs. Native review withdrawal freezes current human authority, exact submission and before/after real proposal revision. Explicit business grant and BLOCKED successor; no rule activation or stock/financial effect."
         },
         {
           "id": "W301-01",
@@ -241507,7 +241640,13 @@
             0.9
           ],
           "estimate_confidence": "LOW",
-          "state": "PLANNED"
+          "state": "DONE",
+          "actual_effective_seconds": 707,
+          "report": "docs/development/evidence/BUG-747/DELIVERY.md",
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug747-final-verification.json",
+          "remote_main": "324f722644e6e79df0ac75dfc3396d0f1858306d",
+          "pr": "https://github.com/GTX537/CP6/pull/749",
+          "historical_conflicts": "Preserved immutable; existing environments not inspected or migrated. Separate controlled forward recovery required for affected existing records."
         }
       ]
     },
