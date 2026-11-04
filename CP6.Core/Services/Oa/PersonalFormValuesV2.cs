@@ -11,6 +11,42 @@ namespace CP6.Core.Services.Oa;
 internal static class PersonalFormValuesV2
 {
     internal static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
+    // Stored JSON is not HTML. Even UnsafeRelaxedJsonEscaping expands supplementary
+    // Unicode. Emit only required JSON escapes, preserving order and numeric lexemes.
+    // Nodes have already passed their owning input boundary; do not revalidate them here.
+    private static string DataText(JsonNode value)
+    {
+        var output=new StringBuilder();
+        void Text(string text)
+        {
+            output.Append('"');
+            foreach(var c in text)switch(c)
+            {
+                case '"':output.Append("\\\"");break;case '\\':output.Append("\\\\");break;
+                case '\b':output.Append("\\b");break;case '\f':output.Append("\\f");break;
+                case '\n':output.Append("\\n");break;case '\r':output.Append("\\r");break;case '\t':output.Append("\\t");break;
+                default:if(c<32)output.Append("\\u").Append(((int)c).ToString("x4"));else output.Append(c);break;
+            }
+            output.Append('"');
+        }
+        void Write(JsonNode? node)
+        {
+            if(node is JsonObject obj)
+            {
+                output.Append('{');var first=true;
+                foreach(var property in obj){if(!first)output.Append(',');first=false;Text(property.Key);output.Append(':');Write(property.Value);}
+                output.Append('}');
+            }
+            else if(node is JsonArray array)
+            {
+                output.Append('[');var first=true;
+                foreach(var item in array){if(!first)output.Append(',');first=false;Write(item);}output.Append(']');
+            }
+            else if(node?.GetValueKind()==JsonValueKind.String)Text(node.GetValue<string>());
+            else output.Append(node?.ToJsonString()??"null");
+        }
+        Write(value);return output.ToString();
+    }
     private static ScopeAuthorizationExceptionV1 Error(string code) => new(code, 422);
     internal static string? Title(string? title)
     {
@@ -29,7 +65,7 @@ internal static class PersonalFormValuesV2
             var value=field!.AsObject();var property=value.FirstOrDefault(x=>string.Equals(x.Key,"default",StringComparison.OrdinalIgnoreCase));
             if(property.Key!=null)output[SchemaProperty(value,"name")!.GetValue<string>()]=property.Value?.DeepClone();
         }
-        return output.ToJsonString();
+        return DataText(output);
     }
     internal static string Merge(FormSchema schema, JsonElement input, string? original, IReadOnlyDictionary<string, string> mask)
     {
@@ -48,9 +84,9 @@ internal static class PersonalFormValuesV2
         // Payload is the visible editable snapshot. Omission removes only editable fields;
         // hidden/readonly persisted values cannot be erased by a projected client response.
         foreach (var name in fields.Keys.Where(n => mask[n] == "edit" && !input.TryGetProperty(n, out _))) result.Remove(name);
-        using var merged = JsonDocument.Parse(result.ToJsonString());
+        var text=DataText(result);using var merged = JsonDocument.Parse(text);
         Validate(schema, merged.RootElement, partial: true);
-        return result.ToJsonString();
+        return text;
     }
     internal static string Patch(FormSchema schema,JsonElement input,string original,IReadOnlyDictionary<string,string> mask)
     {
@@ -62,7 +98,7 @@ internal static class PersonalFormValuesV2
             result[field.Name]=JsonNode.Parse(field.Value.GetRawText());
         }
         // Omitted keys stay unchanged; an explicit JSON null stays null. No whole-object replacement.
-        using var merged=JsonDocument.Parse(result.ToJsonString());Validate(schema,merged.RootElement,partial:true);return result.ToJsonString();
+        var text=DataText(result);using var merged=JsonDocument.Parse(text);Validate(schema,merged.RootElement,partial:true);return text;
     }
     internal static void Shape(JsonElement data)
     {
@@ -134,7 +170,7 @@ internal static class PersonalFormValuesV2
                 observedEffect?.Invoke(ruleIndex,effectIndex,effect,data);
             }
         }
-        var output = data.ToJsonString(); using var doc = JsonDocument.Parse(output);
+        var output = DataText(data); using var doc = JsonDocument.Parse(output);
         if(validateShape) Validate(schema, doc.RootElement, partial: true);
         return (output, FormDataValidator.ValidateFields(schema, doc.RootElement, required, hidden, observeRequired).ToArray(), hidden);
     }
@@ -142,6 +178,6 @@ internal static class PersonalFormValuesV2
     {
         var value = JsonNode.Parse(data)!.AsObject();
         foreach (var key in value.Select(x => x.Key).Where(x => mask.GetValueOrDefault(x, "hidden") == "hidden").ToArray()) value.Remove(key);
-        return value.ToJsonString();
+        return DataText(value);
     }
 }

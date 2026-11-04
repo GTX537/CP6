@@ -17,24 +17,24 @@ public sealed class PersonalFormController(PersonalFormOwnerV2 owner,ApprovalTas
     public Task<IActionResult> Catalog([FromQuery]int page=1,[FromQuery]int pageSize=20,[FromQuery]string? search=null,CancellationToken ct=default)=>Run(async()=>await owner.CatalogAsync(page,pageSize,search,ct));
     [HttpGet("forms/{key}/initiation-context")]
     public Task<IActionResult> Context(string key,CancellationToken ct)=>Run(async()=>await owner.ContextAsync(key,ct));
-    [HttpPost("forms/{key}/preview"),RequestSizeLimit(1024*1024)]
+    [HttpPost("forms/{key}/preview"),RequestSizeLimit(PersonalFormOwnerV2.DataRequestMaxBytes)]
     public Task<IActionResult> FormPreview(string key,PersonalFormPreviewInputV2 input,CancellationToken ct)=>Run(async()=>await owner.PreviewAsync(key,input,ct));
     [HttpPost("form-options/query"),RequestSizeLimit(2*1024*1024)]
     public Task<IActionResult> Options(FormOptionQueryV1 input,CancellationToken ct)=>Run(async()=>await owner.OptionsAsync(input,ct,ActingAs()));
     [HttpGet("forms/{key}/references/{field}")]
     public Task<IActionResult> References(string key,string field,[FromQuery]string? search=null,[FromQuery]Guid? draft=null,CancellationToken ct=default)=>Run(async()=>await owner.ReferencesAsync(key,field,search??"",draft,ct));
-    [HttpPost("forms/{key}/drafts"),RequestSizeLimit(1024*1024)]
-    public Task<IActionResult> Create(string key,CancellationToken ct)=>Run(async()=>await owner.CreateDraftAsync(key,await Raw(ct),ct));
-    [HttpPost("forms/{key}/submissions"),RequestSizeLimit(1024*1024)]
-    public Task<IActionResult> Submit(string key,CancellationToken ct)=>Run(async()=>await owner.SubmitDirectAsync(key,await Raw(ct),ct));
+    [HttpPost("forms/{key}/drafts"),RequestSizeLimit(PersonalFormOwnerV2.DataRequestMaxBytes)]
+    public Task<IActionResult> Create(string key,CancellationToken ct)=>Run(async()=>await owner.CreateDraftAsync(key,await Raw(ct,PersonalFormOwnerV2.DataRequestMaxBytes),ct));
+    [HttpPost("forms/{key}/submissions"),RequestSizeLimit(PersonalFormOwnerV2.DataRequestMaxBytes)]
+    public Task<IActionResult> Submit(string key,CancellationToken ct)=>Run(async()=>await owner.SubmitDirectAsync(key,await Raw(ct,PersonalFormOwnerV2.DataRequestMaxBytes),ct));
     [HttpGet("drafts")]
     public Task<IActionResult> List([FromQuery]int page=1,[FromQuery]int pageSize=20,CancellationToken ct=default)=>Run(async()=>await owner.DraftsAsync(page,pageSize,ct));
     [HttpGet("drafts/{id:guid}")]
     public Task<IActionResult> Draft(Guid id,CancellationToken ct)=>Run(async()=>await owner.DraftAsync(id,ct));
-    [HttpPost("drafts/{id:guid}/preview"),RequestSizeLimit(1024*1024)]
+    [HttpPost("drafts/{id:guid}/preview"),RequestSizeLimit(PersonalFormOwnerV2.DataRequestMaxBytes)]
     public Task<IActionResult> DraftPreview(Guid id,PersonalFormPreviewInputV2 input,CancellationToken ct)=>Run(async()=>await owner.DraftPreviewAsync(id,input,ct));
-    [HttpPut("drafts/{id:guid}"),RequestSizeLimit(1024*1024)]
-    public Task<IActionResult> Save(Guid id,CancellationToken ct)=>Run(async()=>await owner.SaveDraftAsync(id,await Raw(ct),ct));
+    [HttpPut("drafts/{id:guid}"),RequestSizeLimit(PersonalFormOwnerV2.DataRequestMaxBytes)]
+    public Task<IActionResult> Save(Guid id,CancellationToken ct)=>Run(async()=>await owner.SaveDraftAsync(id,await Raw(ct,PersonalFormOwnerV2.DataRequestMaxBytes),ct));
     [HttpPost("drafts/{id:guid}/delete"),RequestSizeLimit(1024*1024)]
     public Task<IActionResult> Delete(Guid id,CancellationToken ct)=>Run(async()=>await owner.DeleteDraftAsync(id,await Raw(ct),ct));
     [HttpPost("drafts/{id:guid}/restore"),RequestSizeLimit(1024*1024)]
@@ -64,8 +64,8 @@ public sealed class PersonalFormController(PersonalFormOwnerV2 owner,ApprovalTas
     public Task<IActionResult> AddSign(Guid task,CancellationToken ct)=>Run(async()=>await owner.AddSignTaskAsync(task,await Raw(ct),ActingAs(),ct));
     [HttpGet("instances/{instance:guid}/returned-form")]
     public Task<IActionResult> ReturnedForm(Guid instance,CancellationToken ct)=>Run(async()=>{RequireActual();return await owner.ReturnedFormAsync(instance,ct);});
-    [HttpPut("instances/{instance:guid}/returned-form"),RequestSizeLimit(1024*1024)]
-    public Task<IActionResult> EditReturned(Guid instance,CancellationToken ct)=>Run(async()=>{RequireActual();return await owner.EditReturnedAsync(instance,await Raw(ct),ct);});
+    [HttpPut("instances/{instance:guid}/returned-form"),RequestSizeLimit(PersonalFormOwnerV2.DataRequestMaxBytes)]
+    public Task<IActionResult> EditReturned(Guid instance,CancellationToken ct)=>Run(async()=>{RequireActual();return await owner.EditReturnedAsync(instance,await Raw(ct,PersonalFormOwnerV2.DataRequestMaxBytes),ct);});
     [HttpPost("instances/{instance:guid}/resubmit"),RequestSizeLimit(1024*1024)]
     public Task<IActionResult> ResubmitReturned(Guid instance,CancellationToken ct)=>Run(async()=>{RequireActual();return await owner.ResubmitReturnedAsync(instance,await Raw(ct),ct);});
     private void RequireActual(){if(ActingAs()!=null)throw new ScopeAuthorizationExceptionV1("RETURNED_STARTER_ONLY",403);}
@@ -77,8 +77,8 @@ public sealed class PersonalFormController(PersonalFormOwnerV2 owner,ApprovalTas
     public Task<IActionResult> ResolveApprover(Guid id,CancellationToken ct)=>Run(async()=>{RequireActual();return await app.IsAppResolutionAsync(id,ct)?await app.ResolveApproverAsync(id,await Raw(ct),ct):await owner.ResolveApproverAsync(id,await Raw(ct),ct);});
     [HttpPost("personal-forms/tasks/{task:guid}/decision")]
     public Task<IActionResult> Decide(Guid task,ApprovalTaskDecisionInputV2 input,CancellationToken ct)=>Run(async()=>await owner.DecideTaskAsync(task,input,ActingAs(),Request.Headers.IfMatch.FirstOrDefault(),ct));
-    [HttpPost("personal-forms/tasks/{task:guid}/decisions"),RequestSizeLimit(1024*1024)]
-    public Task<IActionResult> DecideSfs(Guid task,CancellationToken ct)=>Run(async()=>await owner.DecideSfsTaskAsync(task,await Raw(ct),ActingAs(),ct));
+    [HttpPost("personal-forms/tasks/{task:guid}/decisions"),RequestSizeLimit(PersonalFormOwnerV2.DataRequestMaxBytes)]
+    public Task<IActionResult> DecideSfs(Guid task,CancellationToken ct)=>Run(async()=>await owner.DecideSfsTaskAsync(task,await Raw(ct,PersonalFormOwnerV2.DataRequestMaxBytes),ActingAs(),ct));
     [HttpGet("personal-forms/tasks/{task:guid}/commands/{command:guid}")]
     public Task<IActionResult> TaskOriginal(Guid task,Guid command,CancellationToken ct)=>Run(async()=>await owner.TaskOriginalAsync(task,command,ct));
     [HttpGet("/api/iam/personal-form-policies/{key}")]
@@ -90,12 +90,12 @@ public sealed class PersonalFormController(PersonalFormOwnerV2 owner,ApprovalTas
         var text=Request.Headers["X-Acting-As"].ToString();if(text.Length==0)return null;
         return Guid.TryParseExact(text,"D",out var id)&&id!=Guid.Empty?id:throw new ScopeAuthorizationExceptionV1("ACT_AS_INVALID",422);
     }
-    private async Task<byte[]> Raw(CancellationToken ct)
+    private async Task<byte[]> Raw(CancellationToken ct,int maxBytes=1024*1024)
     {
         using var bytes=new MemoryStream();var buffer=new byte[8192];int count;
         while((count=await Request.Body.ReadAsync(buffer,ct))!=0)
         {
-            if(bytes.Length+count>1024*1024)throw new ScopeAuthorizationExceptionV1("JSON_SIZE_LIMIT",400);
+            if(bytes.Length+count>maxBytes)throw new ScopeAuthorizationExceptionV1("JSON_SIZE_LIMIT",400);
             await bytes.WriteAsync(buffer.AsMemory(0,count),ct);
         }
         return bytes.ToArray();

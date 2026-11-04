@@ -16,6 +16,9 @@ public sealed partial class PersonalFormOwnerV2(CP6Context db, IHttpContextAcces
     Func<CancellationToken,Task<Guid>> currentActor, FlowAuthoringOwnerV2 flows,FormFileContentV2? fileContent=null)
 {
     public const string Resource = "workflow-personal-form";
+    // OA-FORM's 1 MiB budget belongs to data/dataPatch, which PersonalFormValuesV2 validates.
+    // Reserve bounded wire space for command identity, context revisions and escaped metadata.
+    public const int DataRequestMaxBytes = 1024 * 1024 + 64 * 1024;
     public static readonly string[] Fields = ["Title", "DataJson"];
     internal const string Create = "FORM_DRAFT_CREATE", Save = "FORM_DRAFT_SAVE", Delete = "FORM_DRAFT_DELETE",
         Restore = "FORM_DRAFT_RESTORE", Rebase = "FORM_DRAFT_REBASE", Direct = "FORM_DIRECT_SUBMIT", Submit = "FORM_DRAFT_SUBMIT";
@@ -110,11 +113,11 @@ public sealed partial class PersonalFormOwnerV2(CP6Context db, IHttpContextAcces
         if (access == 3 && after != null || access != 1 && after != before) throw Error("FIELD_WRITE_FORBIDDEN",403);
     }
     internal sealed record Command<T>(string Id,string? Expected,T Body,string Digest,byte[] Raw,string? Correlation);
-    internal static Command<T> CommandInput<T>(byte[] raw, bool versionRequired, bool runtimeVersion = false)
+    internal static Command<T> CommandInput<T>(byte[] raw, bool versionRequired, bool runtimeVersion = false, int maxBytes = 1024 * 1024)
     {
         try
         {
-            using var doc = WorkflowCommandJsonV1.Parse(raw); var root = doc.RootElement;
+            using var doc = WorkflowCommandJsonV1.Parse(raw,maxBytes); var root = doc.RootElement;
             if (root.ValueKind != JsonValueKind.Object || root.EnumerateObject().Any(p => p.Name is not ("commandId" or "expectedVersion" or "body" or "clientCorrelationId"))) throw new JsonException();
             var id = root.GetProperty("commandId").GetString(); var expected = root.GetProperty("expectedVersion").GetString();
             if (id == null || !Regex.IsMatch(id,"\\A[A-Za-z0-9_.-]{1,100}\\z")

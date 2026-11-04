@@ -18,7 +18,7 @@ public sealed partial class PersonalFormOwnerV2
     internal const string SfsDecision="SFS_TASK_DECISION";
     public async Task<PersonalFormResultV2> DecideSfsTaskAsync(Guid task,byte[] raw,Guid? behalf=null,CancellationToken ct=default)
     {
-        var command=CommandInput<SfsTaskDecisionInputV2>(raw,true,true);var input=command.Body;
+        var command=CommandInput<SfsTaskDecisionInputV2>(raw,true,true,maxBytes:DataRequestMaxBytes);var input=command.Body;
         if(input.Kind!="SFS"||input.TaskId!=task||task==Guid.Empty||input.Decision is not("APPROVE" or "REJECT")
             ||!RuntimeVersion(input.ExpectedTaskVersion)||!RuntimeVersion(input.ExpectedInstanceVersion)||!RuntimeVersion(input.ExpectedFormDataVersion)
             ||input.DataPatch.ValueKind!=JsonValueKind.Object)throw Error("COMMAND_SHAPE_INVALID",400);
