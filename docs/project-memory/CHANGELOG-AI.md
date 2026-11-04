@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-04：W304已远端交付 / W316执行中
+
+W304原卡核对及BUG756容量修复已完整采用、准确清理分支及释放席位；[W316](../development/evidence/W316-01/DELIVERY.md)从最新main采用旧个人表单入口，尚未验证或交付。原37531DONE/2IN_PROGRESS/342PLANNED、原59余52，24h单人目标继续。
+
 ## 2026-11-04：BUG756个人FORM数据预算修复
 
 个人FORM的1 MiB业务数据预算与命令外层开销分离；内部存储JSON仅作必要转义，中文、补充平面和私用区Unicode不再被二次转义挤出合法范围。 [修复与验证](../development/evidence/BUG-756/DELIVERY.md)。

@@ -161977,6 +161977,11 @@
       "date": "2026-11-04",
       "change": "W304核清WP12-03/04原25条直接AC和前置，补3项真实提交原子性/五上下文验证；确认#756合法data限额缺陷、旧入口adapter和准确重基前快照恢复仍未完，两原卡保持未关闭。",
       "evidence": "docs/development/evidence/W304-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-04",
+      "change": "W304远端交付与生命周期闭环，W316旧个人表单入口受控适配开工。",
+      "evidence": "docs/development/evidence/W316-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -197660,7 +197665,7 @@
         }
       },
       "wave304_form_scope_reconciliation": {
-        "status": "AUDITED_VALIDATED_PENDING_REMOTE",
+        "status": "DELIVERED_REMOTE_VERIFIED",
         "report": "docs/development/evidence/W304-01/DELIVERY.md",
         "validation": "3项新增实际PostgreSQL18场景通过：真实首人工任务写失败全事务回滚/同意图恢复；两连接不同提交命令只一原生提交和原回执；五expected上下文逐项不匹配在DIRECT/DRAFT均拒绝且保原草稿。原生业务行为未修改，其他有效PG/HTTP/Chrome证据按原窗口复用，本窗未新跑HTTP/浏览器/UI或全仓。",
         "full_task_completed": false,
@@ -197668,7 +197673,27 @@
           "BUG756",
           "W316-01",
           "W317-01"
-        ]
+        ],
+        "remote_adoption": {
+          "repository": "CP6",
+          "task": "W304-01",
+          "source": "6926f205f0ef3ae8ca5838c07fc04cba2d744d25",
+          "remote_target": "eb8ecfbf97f00151e58ae1da2234e782d080c2b0",
+          "pr": "https://github.com/GTX537/CP6/pull/757",
+          "branch": "codex/w304-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "workspace_clean": true
+        },
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave304-final-verification.json"
+        }
       }
     },
     {
@@ -197765,14 +197790,34 @@
         }
       },
       "wave304_form_scope_reconciliation": {
-        "status": "AUDITED_VALIDATED_PENDING_REMOTE",
+        "status": "DELIVERED_REMOTE_VERIFIED",
         "report": "docs/development/evidence/W304-01/DELIVERY.md",
         "validation": "3项新增实际PostgreSQL18场景通过：真实首人工任务写失败全事务回滚/同意图恢复；两连接不同提交命令只一原生提交和原回执；五expected上下文逐项不匹配在DIRECT/DRAFT均拒绝且保原草稿。原生业务行为未修改，其他有效PG/HTTP/Chrome证据按原窗口复用，本窗未新跑HTTP/浏览器/UI或全仓。",
         "full_task_completed": false,
         "remaining_windows": [
           "BUG756",
           "W316-01"
-        ]
+        ],
+        "remote_adoption": {
+          "repository": "CP6",
+          "task": "W304-01",
+          "source": "6926f205f0ef3ae8ca5838c07fc04cba2d744d25",
+          "remote_target": "eb8ecfbf97f00151e58ae1da2234e782d080c2b0",
+          "pr": "https://github.com/GTX537/CP6/pull/757",
+          "branch": "codex/w304-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "workspace_clean": true
+        },
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave304-final-verification.json"
+        }
       },
       "scope_reconciliation": {
         "classification": "明确实现余项",
@@ -203027,11 +203072,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261104-wave304",
-      "path": "docs/development/dispatch/20261104-wave304/README.md",
-      "baseline_sha": "b4d7315d2bbd512b5515c3f2cde3ab6cd5a19d69",
-      "registered_at": "2026-11-04T05:39:23.808571+00:00",
-      "phase": "DELIVERY_MAIN_CLOSEOUT",
+      "id": "20261104-wave316",
+      "path": "docs/development/dispatch/20261104-wave316/README.md",
+      "baseline_sha": "1d4981dd5f44d0ca38882d842e0146876ec8bcad",
+      "registered_at": "2026-11-04T06:18:41.857315+00:00",
+      "phase": "IMPLEMENTING",
       "assigned_chats": [
         "COORD"
       ],
@@ -203049,26 +203094,26 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W304-01",
-          "workspace_task": "W304-01",
+          "id": "W316-01",
+          "workspace_task": "W316-01",
           "related_tasks": [
             "WP12-03",
             "WP12-04"
           ],
-          "title": "原表单卡合法域和原子性核销",
+          "title": "旧个人表单入口受控适配",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "DELIVERY_MAIN_CLOSEOUT",
+          "phase": "IMPLEMENTING",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": true,
+          "worker_delivery_received": false,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w304-01",
+          "branch": "codex/w316-01",
           "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": true,
+          "candidate_review_completed": false,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
@@ -203076,34 +203121,14 @@
             "Main:oa-form",
             "Main:privacy-orchestration",
             "Main:EF-migrations"
-          ],
-          "worker_delivery_ref": "docs/development/evidence/W304-01/DELIVERY.md",
-          "validation": "3项新增实际PostgreSQL18场景通过：真实首人工任务写失败全事务回滚/同意图恢复；两连接不同提交命令只一原生提交和原回执；五expected上下文逐项不匹配在DIRECT/DRAFT均拒绝且保原草稿。原生业务行为未修改，其他有效PG/HTTP/Chrome证据按原窗口复用，本窗未新跑HTTP/浏览器/UI或全仓。",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave304-final-verification.json"
-          },
-          "business_acceptance": "NATIVE_FORM_ADMISSION_AFFECTED_SCENARIOS_PASS_CARDS_REMAIN_PARTIAL",
-          "local_validation": "PASS_AFFECTED_SCOPE"
+          ]
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W304两仓采用/finish后独立BUG756，再W316/W317真实余项；24h继续。",
-      "lifecycle_snapshot": {
-        "main_finish_required": true,
-        "main_seat_released": false,
-        "handoff_seat_released": false,
-        "main_branch_deleted": false,
-        "handoff_branch_deleted": false,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave304-final-verification.json"
-      }
+      "next_action": "原WP12-03/04旧草稿/提交HTTP入口采用同一PersonalFormOwnerV2：准确版本/五上下文/原命令映射、同草稿tombstone及当前实际人权限；保旧成功envelope，缺前驱明确要求客户端获取上下文，不能服务器伪填期望。历史旧库来源明确隔离，不冒充原生发布、不自动迁移。补实际新旧入口及删除取消/失败保行/刷新不复活页面证据。"
     },
     "wave_history": [
       {
@@ -241219,6 +241244,109 @@
             "workspace_clean": true
           }
         ]
+      },
+      {
+        "id": "20261104-wave304",
+        "path": "docs/development/dispatch/20261104-wave304/README.md",
+        "baseline_sha": "b4d7315d2bbd512b5515c3f2cde3ab6cd5a19d69",
+        "registered_at": "2026-11-04T05:39:23.808571+00:00",
+        "phase": "DONE",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W304-01",
+            "workspace_task": "W304-01",
+            "related_tasks": [
+              "WP12-03",
+              "WP12-04"
+            ],
+            "title": "原表单卡合法域和原子性核销",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "DONE",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w304-01",
+            "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:oa-form",
+              "Main:privacy-orchestration",
+              "Main:EF-migrations"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W304-01/DELIVERY.md",
+            "validation": "3项新增实际PostgreSQL18场景通过：真实首人工任务写失败全事务回滚/同意图恢复；两连接不同提交命令只一原生提交和原回执；五expected上下文逐项不匹配在DIRECT/DRAFT均拒绝且保原草稿。原生业务行为未修改，其他有效PG/HTTP/Chrome证据按原窗口复用，本窗未新跑HTTP/浏览器/UI或全仓。",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave304-final-verification.json"
+            },
+            "business_acceptance": "NATIVE_FORM_ADMISSION_AFFECTED_SCENARIOS_PASS_CARDS_REMAIN_PARTIAL",
+            "local_validation": "PASS_AFFECTED_SCOPE"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W304两仓采用/finish后独立BUG756，再W316/W317真实余项；24h继续。",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave304-final-verification.json"
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W304-01",
+            "source": "6926f205f0ef3ae8ca5838c07fc04cba2d744d25",
+            "remote_target": "eb8ecfbf97f00151e58ae1da2234e782d080c2b0",
+            "pr": "https://github.com/GTX537/CP6/pull/757",
+            "branch": "codex/w304-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W304-HANDOFF",
+            "source": "44481e34796c77bab93cb17c783e04dbcc2233e5",
+            "remote_target": "f6ce982851e13241da6871c7510a8f635a76ff83",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/281",
+            "branch": "codex/w304-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -241794,8 +241922,8 @@
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
       "started_at": "2026-11-04T00:22:36+00:00",
-      "effective_seconds_recorded": 18381,
-      "timing_snapshot_at": "2026-11-04T05:49:40.063338+00:00",
+      "effective_seconds_recorded": 20123,
+      "timing_snapshot_at": "2026-11-04T06:18:41.857315+00:00",
       "timing_source": "Fresh goal.timeUsedSeconds snapshots; cross-check actual active segments and exclude interruptions. Previous-cycle time and inter-cycle gap never carried forward.",
       "next_reestimate_at_effective_seconds": 21600,
       "estimate_hours": [
@@ -242226,7 +242354,7 @@
           ],
           "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
           "estimate_confidence": "LOW_RECALIBRATED_AT_4H",
-          "state": "VERIFYING",
+          "state": "DONE",
           "initial_estimate_hours": [
             1.5,
             3
@@ -242236,13 +242364,40 @@
           "implementation_complete": true,
           "report": "docs/development/evidence/W304-01/DELIVERY.md",
           "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
             "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave304-final-verification.json"
-          }
+          },
+          "actual_effective_seconds": 898,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W304-01",
+              "source": "6926f205f0ef3ae8ca5838c07fc04cba2d744d25",
+              "remote_target": "eb8ecfbf97f00151e58ae1da2234e782d080c2b0",
+              "pr": "https://github.com/GTX537/CP6/pull/757",
+              "branch": "codex/w304-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W304-HANDOFF",
+              "source": "44481e34796c77bab93cb17c783e04dbcc2233e5",
+              "remote_target": "f6ce982851e13241da6871c7510a8f635a76ff83",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/281",
+              "branch": "codex/w304-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
         },
         {
           "id": "BUG756",
@@ -242257,10 +242412,33 @@
             1.3
           ],
           "issue": "https://github.com/GTX537/CP6/issues/756",
-          "state": "PLANNED",
+          "state": "DONE",
           "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
           "estimate_confidence": "LOW_SOURCE_AUDIT_W304",
-          "scope_ref": "docs/development/evidence/W304-01/DELIVERY.md"
+          "scope_ref": "docs/development/evidence/W304-01/DELIVERY.md",
+          "actual_effective_seconds": 1310,
+          "remote_adoption": {
+            "result": "PASS",
+            "at": "2026-11-04T06:16:49.618267+00:00",
+            "source": "89091220dbf5aa973927481348296b7666965494",
+            "main": "1d4981dd5f44d0ca38882d842e0146876ec8bcad",
+            "pr": "https://github.com/GTX537/CP6/pull/758",
+            "issue_closed": true,
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_clean": true,
+            "seat_released": true,
+            "all_slots_released": true,
+            "slot": "DEV-1",
+            "actions_runs": 0,
+            "root_untracked_preserved": true,
+            "validation": "本地PostgreSQL18和实际Main Program认证HTTP通过：原生/HTTP满额提交、双预览、草稿创建/保存/提交、退回编辑和SFS决策；超出1字节明确拒绝且无额外效果，原意图回放、原摘要、精确数值及退回前快照保留。另验证中文满额HTTP、补充平面/私用字符经merge/patch/rules/projection、合并后真实超限拒绝、嵌套数组/控制字符/空值/布尔和精确数字。当前隐藏/只读mask、重基规则及原结果、五上下文closed DTO和canonical回归均通过。",
+            "execution_plan_completed": false,
+            "effective_seconds_total": 19995,
+            "window_effective_seconds": 1310,
+            "next_window": "W316 controlled legacy personal FORM/draft adapters, then W317 before-rebase snapshot recovery",
+            "checkpoint": "C:\\Users\\tt\\.gstack\\projects\\GTX537-CP6\\checkpoints\\20261104-061649Z-bug756-24h-program-continue.md"
+          },
+          "report": "docs/development/evidence/BUG-756/DELIVERY.md"
         },
         {
           "id": "W316-01",
@@ -242274,10 +242452,12 @@
             1.5,
             3
           ],
-          "state": "PLANNED",
+          "state": "IN_PROGRESS",
           "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
           "estimate_confidence": "LOW_SOURCE_AUDIT_W304",
-          "scope_ref": "docs/development/evidence/W304-01/DELIVERY.md"
+          "scope_ref": "docs/development/evidence/W304-01/DELIVERY.md",
+          "started_at": "2026-11-04T06:18:41.857315+00:00",
+          "effective_start": 20123
         },
         {
           "id": "W317-01",
@@ -242628,7 +242808,7 @@
           "historical_conflicts": "Preserved immutable; existing environments not inspected or migrated. Separate controlled forward recovery required for affected existing records."
         }
       ],
-      "next_priority": "BUG756 legal data boundary; W316 legacy form adapters; W317 exact before-snapshot recovery; W305 onward",
+      "next_priority": "W316 controlled legacy form/draft adapters, then W317 before-rebase snapshot recovery",
       "extra_bug_deliveries": [
         {
           "id": "BUG751",
