@@ -162047,6 +162047,11 @@
       "date": "2026-11-04",
       "change": "W311在实际主体导出中采用用户、安全事件及稳定角色关联的显式字段投影、逐来源Manifest、未知覆盖与排除说明；页面展示真实部分覆盖，缺源直接失败。 原375保持33DONE/2IN_PROGRESS/340PLANNED；原59保持9闭环/50剩余，125目标与247正式验收不变。WP02-15仍有持久导出/当前下载、用途/接收方/批准、逐Owner处置/hold/UNKNOWN/墓碑恢复及各域实际适配。",
       "evidence": "docs/development/evidence/W311-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-04",
+      "change": "W311完整核销；W312持久导出/当前下载开工。",
+      "evidence": "docs/development/evidence/W312-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -175160,11 +175165,32 @@
         }
       },
       "wave311_subject_manifest": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W311-01/DELIVERY.md",
         "scope": "W311在实际主体导出中采用用户、安全事件及稳定角色关联的显式字段投影、逐来源Manifest、未知覆盖与排除说明；页面展示真实部分覆盖，缺源直接失败。",
         "validation": "5项独立PostgreSQL18场景（含真实认证HTTP及Chrome下载）、2项既有主体导出单测、4项Vue行为及vue-tsc通过。",
-        "full_task_complete": false
+        "full_task_complete": false,
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W311-01",
+          "source": "832a09aeacc793fee95f4d57080ab6afa31065bc",
+          "remote_target": "3a7109b9e59fa5bd2d11f986a404b9608cbeee14",
+          "pr": "https://github.com/GTX537/CP6/pull/767",
+          "branch": "codex/w311-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "workspace_clean": true
+        },
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave311-final-verification.json"
+        }
       }
     },
     {
@@ -203594,11 +203620,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261104-wave311",
-      "path": "docs/development/dispatch/20261104-wave311/README.md",
-      "baseline_sha": "447fec29a58971c4fc751714683bd66bb1b57cf6",
-      "registered_at": "2026-11-04T10:42:23.723475+00:00",
-      "phase": "DELIVERY_MAIN_CLOSEOUT",
+      "id": "20261104-wave312",
+      "path": "docs/development/dispatch/20261104-wave312/README.md",
+      "baseline_sha": "3a7109b9e59fa5bd2d11f986a404b9608cbeee14",
+      "registered_at": "2026-11-04T11:20:17.276563+00:00",
+      "phase": "IMPLEMENTING",
       "assigned_chats": [
         "COORD"
       ],
@@ -203616,58 +203642,40 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W311-01",
-          "workspace_task": "W311-01",
+          "id": "W312-01",
+          "workspace_task": "W312-01",
           "related_tasks": [
             "WP02-15"
           ],
-          "title": "隐私主体逐Owner导出清单及分类",
+          "title": "持久主体导出与当前受控下载",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "DELIVERY_MAIN_CLOSEOUT",
+          "phase": "IMPLEMENTING",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": true,
+          "worker_delivery_received": false,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w311-01",
+          "branch": "codex/w312-01",
           "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": true,
+          "candidate_review_completed": false,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
+            "Main:privacy-export-schema",
             "Main:privacy-subject-export",
             "Main:platform-gdpr-view"
-          ],
-          "worker_delivery_ref": "docs/development/evidence/W311-01/DELIVERY.md",
-          "validation": "5项独立PostgreSQL18场景（含真实认证HTTP及Chrome下载）、2项既有主体导出单测、4项Vue行为及vue-tsc通过。",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave311-final-verification.json"
-          },
-          "local_validation": "PASS_AFFECTED_SCOPE"
+          ]
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W311正常采用/finish后进入W312持久导出与当前下载；24h继续。",
-      "lifecycle_snapshot": {
-        "main_finish_required": true,
-        "main_seat_released": false,
-        "handoff_seat_released": false,
-        "main_branch_deleted": false,
-        "handoff_branch_deleted": false,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave311-final-verification.json"
-      }
+      "next_action": "WP02-15/SYS-PRIV-01：用途/精确来源/内部收件人显式绑定，独立隐私导出Owner在PostgreSQL同事务保存原操作、最小回执、独立可处置载荷和必要审计；当前read与新export/download/revoke分权，权限共同门、过期/撤销和真实下载完整性，UNKNOWN只查原操作并可关闭未到达操作。实际页面先建制品后按当前权下载，身份分区仅保存操作键，旧主体直接导出入口明确退役。保持W311三个实际来源与未知Owner真实PARTIAL。无工程FILE假父引用；无跨CRM/备份完整性声明。"
     },
     "wave_history": [
       {
@@ -242495,6 +242503,106 @@
             "workspace_clean": true
           }
         ]
+      },
+      {
+        "id": "20261104-wave311",
+        "path": "docs/development/dispatch/20261104-wave311/README.md",
+        "baseline_sha": "447fec29a58971c4fc751714683bd66bb1b57cf6",
+        "registered_at": "2026-11-04T10:42:23.723475+00:00",
+        "phase": "DONE",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W311-01",
+            "workspace_task": "W311-01",
+            "related_tasks": [
+              "WP02-15"
+            ],
+            "title": "隐私主体逐Owner导出清单及分类",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "DONE",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w311-01",
+            "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:privacy-subject-export",
+              "Main:platform-gdpr-view"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W311-01/DELIVERY.md",
+            "validation": "5项独立PostgreSQL18场景（含真实认证HTTP及Chrome下载）、2项既有主体导出单测、4项Vue行为及vue-tsc通过。",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave311-final-verification.json"
+            },
+            "local_validation": "PASS_AFFECTED_SCOPE"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W311正常采用/finish后进入W312持久导出与当前下载；24h继续。",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave311-final-verification.json"
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W311-01",
+            "source": "832a09aeacc793fee95f4d57080ab6afa31065bc",
+            "remote_target": "3a7109b9e59fa5bd2d11f986a404b9608cbeee14",
+            "pr": "https://github.com/GTX537/CP6/pull/767",
+            "branch": "codex/w311-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W311-HANDOFF",
+            "source": "1c7ee130d629835a69fd171072bf4438637279ce",
+            "remote_target": "9308d2bce5df1e172d0e73ea9dbd7ae9f421a643",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/288",
+            "branch": "codex/w311-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -243072,8 +243180,8 @@
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
       "started_at": "2026-11-04T00:22:36+00:00",
-      "effective_seconds_recorded": 37012,
-      "timing_snapshot_at": "2026-11-04T11:01:35.133981+00:00",
+      "effective_seconds_recorded": 38169,
+      "timing_snapshot_at": "2026-11-04T11:20:17.276563+00:00",
       "timing_source": "Fresh goal.timeUsedSeconds snapshots; cross-check actual active segments and exclude interruptions. Previous-cycle time and inter-cycle gap never carried forward.",
       "next_reestimate_at_effective_seconds": 43200,
       "estimate_hours": [
@@ -244020,20 +244128,47 @@
           ],
           "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_AFTER_SOURCE_READ",
           "estimate_confidence": "LOW_ADMISSION_SOURCE_AUDIT_REQUIRED",
-          "state": "VERIFYING",
+          "state": "DONE",
           "scope_refinement": "Original WP02-15 remaining scope, following W302 actual disposition contract; re-read exact Owner sources/contracts/dependencies at admission and skip any then-completed behavior. Isolated PostgreSQL/simulated business data only; no existing-environment erasure, migration or deployment.",
           "started_at": "2026-11-04T10:42:23.723475+00:00",
           "effective_start": 35868,
           "implementation_complete": true,
           "report": "docs/development/evidence/W311-01/DELIVERY.md",
           "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
             "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave311-final-verification.json"
-          }
+          },
+          "actual_effective_seconds": 2160,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W311-01",
+              "source": "832a09aeacc793fee95f4d57080ab6afa31065bc",
+              "remote_target": "3a7109b9e59fa5bd2d11f986a404b9608cbeee14",
+              "pr": "https://github.com/GTX537/CP6/pull/767",
+              "branch": "codex/w311-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W311-HANDOFF",
+              "source": "1c7ee130d629835a69fd171072bf4438637279ce",
+              "remote_target": "9308d2bce5df1e172d0e73ea9dbd7ae9f421a643",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/288",
+              "branch": "codex/w311-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
         },
         {
           "id": "W312-01",
@@ -244044,12 +244179,14 @@
           "title": "导出结果受控下载和当前身份/准确版本恢复",
           "estimate_hours": [
             1.5,
-            3
+            2.5
           ],
-          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_AFTER_SOURCE_READ",
           "estimate_confidence": "LOW_ADMISSION_SOURCE_AUDIT_REQUIRED",
-          "state": "PLANNED",
-          "scope_refinement": "Original WP02-15 remaining scope, following W302 actual disposition contract; re-read exact Owner sources/contracts/dependencies at admission and skip any then-completed behavior. Isolated PostgreSQL/simulated business data only; no existing-environment erasure, migration or deployment."
+          "state": "IN_PROGRESS",
+          "scope_refinement": "Original WP02-15 remaining scope, following W302 actual disposition contract; re-read exact Owner sources/contracts/dependencies at admission and skip any then-completed behavior. Isolated PostgreSQL/simulated business data only; no existing-environment erasure, migration or deployment.",
+          "started_at": "2026-11-04T11:20:17.276563+00:00",
+          "effective_start": 38169
         },
         {
           "id": "W313-01",
@@ -244316,7 +244453,7 @@
           "historical_conflicts": "Preserved immutable; existing environments not inspected or migrated. Separate controlled forward recovery required for affected existing records."
         }
       ],
-      "next_priority": "W312 actual durable export and current download; W310 budget-end only.",
+      "next_priority": "W312 durable subject export/current download; W313–315 disposition/hold/tombstone; W310 at budget end",
       "extra_bug_deliveries": [
         {
           "id": "BUG751",
