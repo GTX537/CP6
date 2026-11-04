@@ -48,7 +48,10 @@ public sealed class CurrentPermissionPostgresCollection : ICollectionFixture<Cur
 
 public sealed class CurrentPermissionPostgresFixture : IAsyncLifetime
 {
-    internal const int Port = 55435;
+    // The default may be occupied by an unrelated outbound connection on Windows.
+    // An explicit task-local port avoids stopping that process or changing host networking.
+    internal static int Port { get; } = int.Parse(Environment.GetEnvironmentVariable("CP6_PERMISSION_PG_PORT") ?? "55435",
+        System.Globalization.CultureInfo.InvariantCulture);
     internal const string Database = "permission_component";
     private readonly string _ownerPassword = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
     private string _root = "", _bin = "", _data = "";
