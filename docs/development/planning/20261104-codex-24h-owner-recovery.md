@@ -315,3 +315,11 @@ Main 3a7109b9e59fa5bd2d11f986a404b9608cbeee14; Handoff 9308d2bce5df1e172d0e73ea9
 W312完成Main主体持久导出：精确用途/来源/内部收件人、同事务原操作与独立载荷、当前分权下载及撤销、UNKNOWN原结果查询和迟到关闭；真实页面分开生成与下载。 14项独立PostgreSQL18场景（含实际认证HTTP、Chrome完整生成/恢复/下载/撤销及W311归属回归）、11项Vue/API行为、vue-tsc通过。 [报告](../evidence/W312-01/DELIVERY.md)。
 
 原375=33DONE/2IN_PROGRESS/340PLANNED，原59=9闭环/50剩余，125目标/247正式验收不变。WP02-15仍余精确处置计划/独立批准/hold、逐Owner实际处置及UNKNOWN、tombstone与恢复、外部收件和通用FILE/CRM/备份适配、旧整租户导出及擦除入口采用。 累计39425秒，43200秒校准，下一W313。
+
+## W313 开工
+
+WP02-15/SYS-PRIV-01：实际Main身份资料处置的版本化政策、精确主体预览/计划、独立批准与带依据/复核期限的hold。复用现有identity_admission_revisions真实用户版本与IAM共同门，冻结目标/来源/作用字段/政策/hold版本和scopeDigest；旧计划遇目标/政策/hold变更不可再批准。申请人不能自行批准，仍有平台权的目标先独立受控撤权；不由处置暗中撤权。当前read恢复原操作与新prepare/approve/hold/policy能力分离，UNKNOWN查询/关闭迟到；真实页面展示精确范围、不可逆影响、未采用Owner和逾期复核风险。W314消费批准计划实施实际Owner效果，W315墓碑/恢复；本窗不执行擦除、不把批准状态当业务处置完成。
+
+Main 45db7764a6b9f3d5137c699508021198c18b60fc; Handoff a9759c5c8c3006825442262db9ba69c2c5a775ec; COORD单人DEV1/DEV2。预计0.6–1.2小时实际执行，低置信；W312实际1829秒证明此前1.5–2.5h估计偏高，本窗按当前真实范围下调；W312实测1829秒，累计40105秒；43200秒校准。原375=33DONE/2IN_PROGRESS/340PLANNED，原59余50。
+
+验证：实际PG政策/目标/hold精确CAS、独立批准/撤权/回滚、原键恢复/关闭迟到、跨租户与共同门；真实认证HTTP、Chrome预览/批准/hold流程及相关Vue。一次集中审查；本地新建隔离PG迁移，不迁移既有数据库，不运行Actions、不部署。政策与hold使用明确Owner依据引用及版本；模拟依据不冒充现实法律签认，不引入默认法律保留年限。实际Owner执行/跨Owner处置/恢复tombstone留W314–315。
