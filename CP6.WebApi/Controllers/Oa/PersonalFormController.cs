@@ -45,6 +45,12 @@ public sealed class PersonalFormController(PersonalFormOwnerV2 owner,ApprovalTas
     public Task<IActionResult> Preview(Guid id,PersonalFormRebasePreviewInputV2 input,CancellationToken ct)=>Run(async()=>await owner.RebasePreviewAsync(id,input,ct));
     [HttpPost("drafts/{id:guid}/rebase"),RequestSizeLimit(1024*1024)]
     public Task<IActionResult> Rebase(Guid id,CancellationToken ct)=>Run(async()=>await owner.RebaseDraftAsync(id,await Raw(ct),ct));
+    [HttpGet("drafts/{id:guid}/rebase-history")]
+    public Task<IActionResult> RebaseHistory(Guid id,[FromQuery]int page=1,[FromQuery]int pageSize=20,CancellationToken ct=default)=>Run(async()=>await owner.RebaseHistoryAsync(id,page,pageSize,ct));
+    [HttpGet("drafts/{id:guid}/rebase-history/{history:guid}")]
+    public Task<IActionResult> RecoveryPreview(Guid id,Guid history,CancellationToken ct)=>Run(async()=>await owner.RecoveryPreviewAsync(id,history,ct));
+    [HttpPost("drafts/{id:guid}/recover-before-rebase"),RequestSizeLimit(1024*1024)]
+    public Task<IActionResult> RecoverSnapshot(Guid id,CancellationToken ct)=>Run(async()=>await owner.RecoverSnapshotAsync(id,await Raw(ct),ct));
     [HttpGet("personal-forms/commands/{operation}/{resource}/{command}")]
     public Task<IActionResult> Original(string operation,string resource,string command,CancellationToken ct)=>Run(async()=>await owner.OriginalAsync(operation,resource,command,ct));
     [HttpPost("personal-forms/commands/{operation}/{resource}/{command}/close")]

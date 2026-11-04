@@ -21,6 +21,16 @@ afterEach(() => { wrappers.splice(0).forEach(w => w.unmount()); vi.restoreAllMoc
 async function editor(props = { formKey: 'personal' } as { formKey?: string; draftId?: string }) { const w = mount(Editor, { props }); wrappers.push(w); await flushPromises(); return w }
 const controlled = { requestId: 'exact-request', receiptVersion: 'retained-receipt' }
 const controlledPreview = { previewId: 'qualified-preview', digest: 'digest', sourceVersionId: 'form-one', targetVersionId: 'form-two', expectedVersion: 'draft-token', sourceDraftVersion: 'draft-token', targetSchemaDigest: 'schema', expiresAtUtc: 'later', changes: [], validationErrors: [], requiresConfirmation: false, retainedPaths: ['amount'], removedPaths: [], addedPaths: [], typeChangedPaths: [], defaultedPaths: [], requiredAfterRebase: [], diagnostics: [], dispositionRef: controlled }
+it('focuses the newly recovered draft without a duplicate read and can return to the source draft', async () => {
+  const w = await editor({ draftId: draft.draftId }); const recovered = { ...draft, draftId: 'new-draft', rowVersion: 'new-token' }
+  vi.mocked(api.send).mockResolvedValue({ commandId: 'recover', outcome: 'SUCCEEDED', resourceId: recovered.draftId, resourceVersion: recovered.rowVersion, result: recovered }); vi.mocked(api.draft).mockResolvedValue(recovered)
+  await state(w).recoverSnapshot('exact-history', 'source-current-token', 'restore original'); await flushPromises()
+  expect(vi.mocked(api.send).mock.calls[0]![0]).toBe('/oa/v2/drafts/draft-one/recover-before-rebase')
+  expect(JSON.parse(vi.mocked(api.send).mock.calls[0]![2])).toMatchObject({ expectedVersion: 'source-current-token', body: { historyId: 'exact-history', reason: 'restore original' } })
+  expect(w.emitted('changed')?.at(-1)).toEqual(['new-draft']); expect(api.draft).toHaveBeenCalledTimes(2)
+  await w.setProps({ draftId: recovered.draftId }); await flushPromises(); expect(api.draft).toHaveBeenCalledTimes(2)
+  vi.mocked(api.draft).mockResolvedValue(draft); await w.setProps({ draftId: draft.draftId }); await flushPromises(); expect(state(w).draft.draftId).toBe(draft.draftId); expect(api.draft).toHaveBeenCalledTimes(3)
+})
 it('stays idle without a selected row and reads only when the user selects a draft', async () => {
   const w = await editor({})
   expect(api.draft).not.toHaveBeenCalled(); expect(api.context).not.toHaveBeenCalled(); expect(state(w).readError).toBe('')

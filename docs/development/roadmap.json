@@ -161992,6 +161992,11 @@
       "date": "2026-11-04",
       "change": "W316远端交付与生命周期闭环，W317准确重基前快照恢复新草稿开工。",
       "evidence": "docs/development/evidence/W317-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-04",
+      "change": "W317重基前准确快照显式恢复为新本人草稿，保旧发布版本、精确值、源草稿及完整动作链；当前字段投影、留存、FILE可用性和同事务来源/回执约束，页面可确认与恢复未知原命令。",
+      "evidence": "docs/development/evidence/W317-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -197595,7 +197600,7 @@
       },
       "scope_reconciliation": {
         "classification": "明确实现余项",
-        "delivered": "W275个人草稿、准确提交和显式重基；W285普通FORM文件已有交付。 W287：版本化共享字典选项来源已被FORM设计、发布/激活、当前候选读取、草稿/直接提交/退回/重基及真实页面采用；最终服务端复核当前来源与准确字符串值，保留历史原值且不制造历史字典快照。 W293：重基预览准确版本/摘要、可见路径分类和权威动态必填/逐行超限诊断，页面明确损失确认及编辑失效已实现；全部原行/精度/原事务和原命令保留。 W302：实际FORM字段受控处置Owner、准确历史原件、独立当前读取/批准/留存/撤销/hold资格、原操作恢复和处理工作台完成本地业务验收。W303重基消费已远端采用。 W303：真实隐藏损失请求、合格处置事实到本人原生重基的准确一次消费，以及当前资格/政策/hold校验、原件留存和原命令恢复完成本地业务验收。 W304核清WP12-03/04原25条直接AC和前置，补3项真实提交原子性/五上下文验证；确认#756合法data限额缺陷、旧入口adapter和准确重基前快照恢复仍未完，两原卡保持未关闭。 BUG756已远端修复。W316旧创建/保存/重基/提交/删除HTTP入口共用实际PersonalFormOwnerV2，保旧DTO成功形状、准确前驱与固定命令映射；历史目录只读且来源明确，补取消/冲突保行/删除刷新实际页面。",
+        "delivered": "W275个人草稿、准确提交和显式重基；W285普通FORM文件已有交付。 W287：版本化共享字典选项来源已被FORM设计、发布/激活、当前候选读取、草稿/直接提交/退回/重基及真实页面采用；最终服务端复核当前来源与准确字符串值，保留历史原值且不制造历史字典快照。 W293：重基预览准确版本/摘要、可见路径分类和权威动态必填/逐行超限诊断，页面明确损失确认及编辑失效已实现；全部原行/精度/原事务和原命令保留。 W302：实际FORM字段受控处置Owner、准确历史原件、独立当前读取/批准/留存/撤销/hold资格、原操作恢复和处理工作台完成本地业务验收。W303重基消费已远端采用。 W303：真实隐藏损失请求、合格处置事实到本人原生重基的准确一次消费，以及当前资格/政策/hold校验、原件留存和原命令恢复完成本地业务验收。 W304核清WP12-03/04原25条直接AC和前置，补3项真实提交原子性/五上下文验证；确认#756合法data限额缺陷、旧入口adapter和准确重基前快照恢复仍未完，两原卡保持未关闭。 BUG756已远端修复。W316旧创建/保存/重基/提交/删除HTTP入口共用实际PersonalFormOwnerV2，保旧DTO成功形状、准确前驱与固定命令映射；历史目录只读且来源明确，补取消/冲突保行/删除刷新实际页面。 W317重基前准确快照显式恢复为新本人草稿，保旧发布版本、精确值、源草稿及完整动作链；当前字段投影、留存、FILE可用性和同事务来源/回执约束，页面可确认与恢复未知原命令。",
         "evidence_refs": [
           "docs/development/evidence/W275-01/DELIVERY.md",
           "docs/development/evidence/W285-01/DELIVERY.md",
@@ -197604,14 +197609,15 @@
           "docs/development/evidence/W302-01/DELIVERY.md",
           "docs/development/evidence/W303-01/DELIVERY.md",
           "docs/development/evidence/W304-01/DELIVERY.md",
-          "docs/development/evidence/W316-01/DELIVERY.md"
+          "docs/development/evidence/W316-01/DELIVERY.md",
+          "docs/development/evidence/W317-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
-        "window": "W316-01",
+        "window": "W317-01",
         "as_of": "2026-11-04",
-        "report": "docs/development/evidence/W316-01/DELIVERY.md",
+        "report": "docs/development/evidence/W317-01/DELIVERY.md",
         "new_product_validation": true,
-        "remaining": "准确重基前快照到新草稿显式恢复；历史旧行内容披露/采用的准确来源映射；#759未知结果刷新恢复入口待复现修复。原生服务节点实际Owner采用仍按各业务卡范围记录。",
+        "remaining": "历史旧行内容披露/采用的准确来源映射；W305历史身份链核对尚未完成。原生服务节点实际Owner采用仍按各业务卡范围记录。",
         "new_behavioral_evidence": true
       },
       "wave293_rebase_preview": {
@@ -197681,8 +197687,6 @@
         "validation": "3项新增实际PostgreSQL18场景通过：真实首人工任务写失败全事务回滚/同意图恢复；两连接不同提交命令只一原生提交和原回执；五expected上下文逐项不匹配在DIRECT/DRAFT均拒绝且保原草稿。原生业务行为未修改，其他有效PG/HTTP/Chrome证据按原窗口复用，本窗未新跑HTTP/浏览器/UI或全仓。",
         "full_task_completed": false,
         "remaining_windows": [
-          "BUG759",
-          "W317-01",
           "W305-01"
         ],
         "remote_adoption": {
@@ -197736,6 +197740,15 @@
           "handoff_branch_deleted": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave316-final-verification.json"
         }
+      },
+      "wave317_snapshot_recovery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W317-01/DELIVERY.md",
+        "validation": "9项独立实际PostgreSQL18场景通过：准确认证HTTP恢复、权限/字段投影/CAS、留存与回执回滚、未知提交与缺guard、缺来源提交约束、FILE两代恢复/原件绑定/提交，以及原FILE回归、实际Chrome新恢复场景及BUG759刷新恢复回归。22项有效Vue行为结果与vue-tsc通过；每项采用最近有效结果，未受影响的成功证据准确复用。",
+        "full_task_completed": false,
+        "remaining_windows": [
+          "W305-01"
+        ]
       }
     },
     {
@@ -197837,8 +197850,6 @@
         "validation": "3项新增实际PostgreSQL18场景通过：真实首人工任务写失败全事务回滚/同意图恢复；两连接不同提交命令只一原生提交和原回执；五expected上下文逐项不匹配在DIRECT/DRAFT均拒绝且保原草稿。原生业务行为未修改，其他有效PG/HTTP/Chrome证据按原窗口复用，本窗未新跑HTTP/浏览器/UI或全仓。",
         "full_task_completed": false,
         "remaining_windows": [
-          "BUG759",
-          "W317-01",
           "W305-01"
         ],
         "remote_adoption": {
@@ -197864,18 +197875,19 @@
       },
       "scope_reconciliation": {
         "classification": "明确实现余项",
-        "window": "W316-01",
+        "window": "W317-01",
         "as_of": "2026-11-04",
-        "report": "docs/development/evidence/W316-01/DELIVERY.md",
+        "report": "docs/development/evidence/W317-01/DELIVERY.md",
         "new_product_validation": true,
         "new_behavioral_evidence": true,
         "formal_state_changed": false,
-        "delivered": "原生v2 DIRECT/DRAFT五上下文、真实同事务提交、当前授权及原命令恢复已有W275及后续实际采用。 W304核清WP12-03/04原25条直接AC和前置，补3项真实提交原子性/五上下文验证；确认#756合法data限额缺陷、旧入口adapter和准确重基前快照恢复仍未完，两原卡保持未关闭。 BUG756已远端修复。W316旧创建/保存/重基/提交/删除HTTP入口共用实际PersonalFormOwnerV2，保旧DTO成功形状、准确前驱与固定命令映射；历史目录只读且来源明确，补取消/冲突保行/删除刷新实际页面。",
+        "delivered": "原生v2 DIRECT/DRAFT五上下文、真实同事务提交、当前授权及原命令恢复已有W275及后续实际采用。 W304核清WP12-03/04原25条直接AC和前置，补3项真实提交原子性/五上下文验证；确认#756合法data限额缺陷、旧入口adapter和准确重基前快照恢复仍未完，两原卡保持未关闭。 BUG756已远端修复。W316旧创建/保存/重基/提交/删除HTTP入口共用实际PersonalFormOwnerV2，保旧DTO成功形状、准确前驱与固定命令映射；历史目录只读且来源明确，补取消/冲突保行/删除刷新实际页面。 W317重基前准确快照显式恢复为新本人草稿，保旧发布版本、精确值、源草稿及完整动作链；当前字段投影、留存、FILE可用性和同事务来源/回执约束，页面可确认与恢复未知原命令。",
         "evidence_refs": [
           "docs/development/evidence/W304-01/DELIVERY.md",
-          "docs/development/evidence/W316-01/DELIVERY.md"
+          "docs/development/evidence/W316-01/DELIVERY.md",
+          "docs/development/evidence/W317-01/DELIVERY.md"
         ],
-        "remaining": "准确重基前快照到新草稿显式恢复；历史旧行内容披露/采用的准确来源映射；#759未知结果刷新恢复入口待复现修复。原生服务节点实际Owner采用仍按各业务卡范围记录。"
+        "remaining": "历史旧行内容披露/采用的准确来源映射；W305历史身份链核对尚未完成。原生服务节点实际Owner采用仍按各业务卡范围记录。"
       },
       "wave316_legacy_adoption": {
         "status": "DELIVERED_REMOTE_VERIFIED",
@@ -197907,6 +197919,15 @@
           "handoff_branch_deleted": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave316-final-verification.json"
         }
+      },
+      "wave317_snapshot_recovery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W317-01/DELIVERY.md",
+        "validation": "9项独立实际PostgreSQL18场景通过：准确认证HTTP恢复、权限/字段投影/CAS、留存与回执回滚、未知提交与缺guard、缺来源提交约束、FILE两代恢复/原件绑定/提交，以及原FILE回归、实际Chrome新恢复场景及BUG759刷新恢复回归。22项有效Vue行为结果与vue-tsc通过；每项采用最近有效结果，未受影响的成功证据准确复用。",
+        "full_task_completed": false,
+        "remaining_windows": [
+          "W305-01"
+        ]
       }
     },
     {
@@ -203151,7 +203172,7 @@
       "path": "docs/development/dispatch/20261104-wave317/README.md",
       "baseline_sha": "253f937ff14ac12519056c950930c7ca692e1291",
       "registered_at": "2026-11-04T07:28:43.137840+00:00",
-      "phase": "IMPLEMENTING",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -203178,17 +203199,17 @@
           "title": "准确重基前快照恢复新草稿",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "IMPLEMENTING",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w317-01",
           "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
@@ -203196,14 +203217,34 @@
             "Main:oa-form",
             "Main:privacy-orchestration",
             "Main:EF-migrations"
-          ]
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W317-01/DELIVERY.md",
+          "validation": "9项独立实际PostgreSQL18场景通过：准确认证HTTP恢复、权限/字段投影/CAS、留存与回执回滚、未知提交与缺guard、缺来源提交约束、FILE两代恢复/原件绑定/提交，以及原FILE回归、实际Chrome新恢复场景及BUG759刷新恢复回归。22项有效Vue行为结果与vue-tsc通过；每项采用最近有效结果，未受影响的成功证据准确复用。",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave317-final-verification.json"
+          },
+          "business_acceptance": "EXACT_REBASE_SNAPSHOT_RECOVERY_PASS_CARDS_PARTIAL",
+          "local_validation": "PASS_AFFECTED_SCOPE"
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "按原OA-FORM §6失败恢复，从准确原生重基前快照显式创建新的本人草稿；保源发布版本、值、原草稿与两次动作链。当前真实权限/留存/字段与FILE引用依实际Owner合同裁决，缺完整原件明确拒绝；准确原命令恢复、同事务新草稿/源关联/历史/附件绑定，页面可选择准确前快照并确认恢复。不回写旧schema，不把旧历史未验证来源升级为已发布。"
+      "next_action": "W317两仓采用/finish后W305准确历史身份及原历史内容余项；24h继续。",
+      "lifecycle_snapshot": {
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_seat_released": false,
+        "main_branch_deleted": false,
+        "handoff_branch_deleted": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave317-final-verification.json"
+      }
     },
     "wave_history": [
       {
@@ -242100,8 +242141,8 @@
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
       "started_at": "2026-11-04T00:22:36+00:00",
-      "effective_seconds_recorded": 24215,
-      "timing_snapshot_at": "2026-11-04T07:28:43.137840+00:00",
+      "effective_seconds_recorded": 26295,
+      "timing_snapshot_at": "2026-11-04T08:01:46.224775+00:00",
       "timing_source": "Fresh goal.timeUsedSeconds snapshots; cross-check actual active segments and exclude interruptions. Previous-cycle time and inter-cycle gap never carried forward.",
       "next_reestimate_at_effective_seconds": 28800,
       "estimate_hours": [
@@ -242723,19 +242764,30 @@
           "id": "W317-01",
           "day": "ROLLING",
           "related_tasks": [
-            "WP12-03"
+            "WP12-03",
+            "WP12-04"
           ],
           "title": "重基准确前快照到新个人草稿的显式恢复",
           "estimate_hours": [
             1,
             2.5
           ],
-          "state": "IN_PROGRESS",
+          "state": "VERIFYING",
           "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
           "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
           "scope_ref": "docs/development/evidence/W304-01/DELIVERY.md",
           "started_at": "2026-11-04T07:28:43.137840+00:00",
-          "effective_start": 24215
+          "effective_start": 24215,
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W317-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave317-final-verification.json"
+          }
         },
         {
           "id": "W305-01",
@@ -243131,7 +243183,7 @@
           "historical_conflicts": "Preserved immutable; existing environments not inspected or migrated. Separate controlled forward recovery required for affected existing records."
         }
       ],
-      "next_priority": "W317 exact before-rebase snapshot recovery, then W305 historical query adoption",
+      "next_priority": "W305 actual historical identity/source adoption; remaining24h queue",
       "extra_bug_deliveries": [
         {
           "id": "BUG751",

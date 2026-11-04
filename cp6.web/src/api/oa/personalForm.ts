@@ -26,6 +26,9 @@ export interface RebasePreview {
   dispositionRef?: { requestId: string; receiptVersion: string } | null
 }
 export interface ValuePreview { dataJson: string; hiddenFields: string[]; valid: boolean; errors: string[] }
+export interface RecoverySource { historyId: string; rebaseCommandId: string; sourceVersionId: string; sourceVersion: number; targetVersionId: string; targetVersion: number; rebasedAtUtc: string; canRecover: boolean; blockedReason: string | null }
+export interface RecoverySources { expectedVersion: string; items: RecoverySource[]; total: number; page: number; pageSize: number }
+export interface RecoveryPreview { expectedVersion: string; source: RecoverySource; snapshot: PersonalDraft }
 export interface TaskVersion { taskId: string; instanceId: string; taskStatus: number; instanceStatus: number; taskRowVersion: string; instanceRowVersion: string }
 export interface PersonalTask { task: TaskVersion; formDataId: string; rootInstanceId: string; formVersionId: string; name: string; schemaJson: string; dataJson: string; fieldMask: FormMask; allowedDecisions: string[]; kind: 'SFS'; formDataVersion: string; formKey: string; flowVersionId: string; nodeId: string; tokenId: string; stageIndex: number; stageRound: number }
 export interface PersonalTaskResult { commandId: string; state: string; voteId: string | null; task: TaskVersion | null; queryRef: string }
@@ -38,6 +41,8 @@ export const personalFormApi = {
   context: async (form: string, signal?: AbortSignal) => unwrap<PersonalContext>(await http.get(`${root}/forms/${key(form)}/initiation-context`, { signal })),
   references: async (form: string, field: string, search: string, draft?: string, signal?: AbortSignal) => unwrap<{ id: string; name: string }[]>(await http.get(`${root}/forms/${key(form)}/references/${key(field)}`, { params: { search, draft }, signal })),
   draft: async (id: string, signal?: AbortSignal) => unwrap<PersonalDraft>(await http.get(`${root}/drafts/${id}`, { signal })),
+  rebaseHistory: async (id: string, page: number, signal?: AbortSignal) => unwrap<RecoverySources>(await http.get(`${root}/drafts/${id}/rebase-history`, { params: { page }, signal })),
+  recoveryPreview: async (id: string, history: string, signal?: AbortSignal) => unwrap<RecoveryPreview>(await http.get(`${root}/drafts/${id}/rebase-history/${history}`, { signal })),
   list: async (page: number, signal?: AbortSignal) => unwrap<{ items: PersonalDraftItem[]; total: number; page: number; pageSize: number }>(await http.get(`${root}/drafts`, { params: { page }, signal })),
   send: async (url: string, method: 'post' | 'put', raw: string, signal?: AbortSignal) => unwrap<PersonalResult>(await http.request({ url, method, data: raw, headers: { 'Content-Type': 'application/json' }, signal })),
   original: async (operation: string, resource: string, command: string, signal?: AbortSignal) => unwrap<PersonalResult>(await http.get(`${root}/personal-forms/commands/${key(operation)}/${key(resource)}/${key(command)}`, { signal })),
