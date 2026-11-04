@@ -69,14 +69,17 @@ async function read(action: (check: () => void) => Promise<void>) {
   } finally { if (live && request === readGeneration) loading.value = false }
 }
 async function load() {
+  // Recovery can outlive its active list row. Keep the accepted identity for a later current read.
+  const id = props.draftId || draft.value?.draftId
+  if (!id && !props.formKey) return
   await read(async check => {
-    if (props.draftId) { const value = await api.draft(props.draftId); check(); applyDraft(value) }
+    if (id) { const value = await api.draft(id); check(); applyDraft(value) }
     else if (props.formKey) {
       const value = await api.context(props.formKey); check(); context.value = value; draft.value = undefined
       const initial = formObject(readFormJson(initialFormData(value.schemaJson)))
       for (const name of Object.keys(initial)) if (value.fieldMask[name] === 'hidden') delete initial[name]
       model.value = initial; title.value = ''; preview.value = undefined
-    } else throw new Error('请选择表单或草稿')
+    }
   })
 }
 async function reload() {
@@ -144,7 +147,7 @@ onBeforeUnmount(() => { live = false; generation++ })
   <div class="personal-editor">
     <PersonalCommandStatus :pending="pending" :busy="busy" :error="error" :message="message" :can-retry="commands.canRetry()" @recover="commands.recover" @retry="commands.retry" @close="commands.close" />
     <el-alert v-if="readError" :title="readError" type="error" :closable="false" />
-    <el-button v-if="!current && !submission" :loading="loading" @click="load">重新读取</el-button>
+    <el-button v-if="!current && !submission && (draftId || formKey)" :loading="loading" @click="load">重新读取</el-button>
     <el-button v-if="current" :disabled="locked" @click="reload">重新读取</el-button>
     <template v-if="current">
       <h3>{{ current.name }} · v{{ current.formVersion }}</h3>

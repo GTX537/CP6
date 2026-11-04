@@ -52,7 +52,7 @@ try {
   await editor.getByRole('button', { name: '按此预览重基', exact: true }).click()
   await expect.poll(async () => page.evaluate(() => sessionStorage.getItem('cp6-personal-form-pending'))).not.toBeNull()
   await expect(editor.getByRole('button', { name: '查询原结果', exact: true })).toBeEnabled()
-  await page.reload(); await page.getByRole('button', { name: '查看 / 编辑', exact: true }).click()
+  await page.reload()
   await editor.getByRole('button', { name: '查询原结果', exact: true }).click()
   await expect(editor).toContainText('原操作已完成'); await expect(editor.locator('h3')).toContainText('v2')
   expect(await page.evaluate(() => sessionStorage.getItem('cp6-personal-form-pending'))).toBeNull()

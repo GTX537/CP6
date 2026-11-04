@@ -4,7 +4,7 @@ import { defineComponent, h, ref } from 'vue'
 import { mount, flushPromises } from '@vue/test-utils'
 import { personalFormApi as api, type PersonalContext, type PersonalDraft } from '@/api/oa/personalForm'
 import { formDispositionApi } from '@/api/oa/formDisposition'
-import { newEpoch } from '@/auth/identity'
+import { identityStamp, newEpoch } from '@/auth/identity'
 import Editor from './PersonalFormEditor.vue'
 import Fields from './PersonalFormFields.vue'
 import { usePersonalCommand } from './usePersonalCommand'
@@ -21,6 +21,33 @@ afterEach(() => { wrappers.splice(0).forEach(w => w.unmount()); vi.restoreAllMoc
 async function editor(props = { formKey: 'personal' } as { formKey?: string; draftId?: string }) { const w = mount(Editor, { props }); wrappers.push(w); await flushPromises(); return w }
 const controlled = { requestId: 'exact-request', receiptVersion: 'retained-receipt' }
 const controlledPreview = { previewId: 'qualified-preview', digest: 'digest', sourceVersionId: 'form-one', targetVersionId: 'form-two', expectedVersion: 'draft-token', sourceDraftVersion: 'draft-token', targetSchemaDigest: 'schema', expiresAtUtc: 'later', changes: [], validationErrors: [], requiresConfirmation: false, retainedPaths: ['amount'], removedPaths: [], addedPaths: [], typeChangedPaths: [], defaultedPaths: [], requiredAfterRebase: [], diagnostics: [], dispositionRef: controlled }
+it('stays idle without a selected row and reads only when the user selects a draft', async () => {
+  const w = await editor({})
+  expect(api.draft).not.toHaveBeenCalled(); expect(api.context).not.toHaveBeenCalled(); expect(state(w).readError).toBe('')
+  expect(w.text()).not.toContain('重新读取')
+  await w.setProps({ draftId: draft.draftId }); await flushPromises()
+  expect(api.draft).toHaveBeenCalledExactlyOnceWith(draft.draftId); expect(state(w).draft.draftId).toBe(draft.draftId)
+})
+it('recovers a missing row through the original command and retains its identity if the current read fails', async () => {
+  const intent = { identity: identityStamp(), commandId: 'delete-original', operation: 'FORM_DRAFT_DELETE', resource: draft.draftId }
+  sessionStorage.setItem('cp6-personal-form-pending', JSON.stringify(intent))
+  const w = await editor({}); expect(state(w).locked).toBe(true); expect(api.draft).not.toHaveBeenCalled()
+  vi.mocked(api.original).mockResolvedValue({ commandId: intent.commandId, outcome: 'SUCCEEDED', resourceId: draft.draftId, resourceVersion: 'deleted-version', result: { ...draft, status: 2, rowVersion: 'deleted-version' } })
+  vi.mocked(api.draft).mockRejectedValueOnce({ response: { status: 503 } })
+  await state(w).commands.recover(); await flushPromises()
+  expect(api.original).toHaveBeenCalledWith(intent.operation, intent.resource, intent.commandId, expect.any(AbortSignal))
+  expect(state(w).draft.status).toBe(2); expect(state(w).draft.capabilities).toEqual([]); expect(state(w).readError).toContain('当前草稿读取失败')
+  vi.mocked(api.draft).mockResolvedValue({ ...draft, status: 2, capabilities: ['RESTORE'] })
+  await state(w).reload(); await flushPromises()
+  expect(api.draft).toHaveBeenLastCalledWith(draft.draftId); expect(state(w).draft.capabilities).toEqual(['RESTORE'])
+  expect(state(w).readError).toBe(''); expect(api.send).not.toHaveBeenCalled(); expect(sessionStorage.getItem('cp6-personal-form-pending')).toBeNull()
+})
+it('keeps corrupt recovery storage visibly locked even before a row is selected', async () => {
+  sessionStorage.setItem('cp6-personal-form-pending', '{broken')
+  const w = await editor({}); expect(state(w).storageUnavailable).toBe(true); expect(state(w).locked).toBe(true)
+  expect(state(w).error).toContain('停止发送新操作'); await state(w).save(); await state(w).submit()
+  expect(api.send).not.toHaveBeenCalled(); expect(api.draft).not.toHaveBeenCalled(); expect(api.context).not.toHaveBeenCalled()
+})
 it('keeps a real controlled request after hidden-loss denial and sends only the exact adopted receipt', async () => {
   vi.mocked(api.rebasePreview).mockRejectedValueOnce({ response: { status: 403, data: { code: 'REBASE_HIDDEN_LOSS_BLOCKED', dispositionRequestId: controlled.requestId } } }).mockResolvedValue(controlledPreview)
   vi.mocked(formDispositionApi.read).mockResolvedValue({ request: { requestId: controlled.requestId, state: 'RETAINED', dispositionRef: controlled, hold: null } } as any)

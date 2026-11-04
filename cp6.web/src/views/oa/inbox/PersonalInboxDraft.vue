@@ -28,7 +28,7 @@ onBeforeUnmount(() => { live = false; generation++; window.removeEventListener(A
       <el-table-column label="操作"><template #default="{ row }"><el-button :disabled="editorLocked" @click="selected = row.draftId">查看 / 编辑</el-button></template></el-table-column>
     </el-table>
     <el-pagination v-model:current-page="page" :total="total" :page-size="20" layout="prev, pager, next" @current-change="load" />
-    <section v-if="selected"><PersonalFormEditor :draft-id="selected" @changed="load" @locked="editorLocked = $event" /></section>
+    <section><PersonalFormEditor :draft-id="selected || undefined" @changed="load" @locked="editorLocked = $event" /></section>
   </div>
 </template>
 <style scoped>.toolbar { display: flex; gap: 16px; align-items: center; margin-bottom: 12px; } section { margin-top: 24px; }</style>
