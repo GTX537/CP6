@@ -1,5 +1,13 @@
 # 当前待办与优先级
 
+## 2026-11-04：需求集审批详情直达 / BUG #744
+
+需求集审批详情URL已注册并独立加载准确对象，submission传给既有评审面板；页面直接刷新保持轮次，切换对象丢弃旧响应，当前权限拒绝清理私有内容。UUID大小写保持同一身份。 [修复与证据](../development/evidence/BUG-744/DELIVERY.md)。
+
+33项相关Vue组件及实际应用路由启动行为通过，vue-tsc通过；真实Chrome直接打开需求集/准确送审URL，创建本轮授权、实际提交后丢响应、直接刷新URL并恢复原结果，实际Main API/PostgreSQL18核对原事实未改写。
+
+原375/局部卡/125/247不变，24h目标继续；远端采用、Issue关闭、分支清理及席位释放以bug744-final-verification.json为准。
+
 ## 2026-11-04：24小时目标 / W298需求集可信撤回
 
 W298：需求集实际Owner可信撤回、原审批应用共control、准确本轮业务委派/BLOCKED显式接续、不可变原结果及实际页面恢复完成本地验收。 [交付](../development/evidence/W298-01/DELIVERY.md)。

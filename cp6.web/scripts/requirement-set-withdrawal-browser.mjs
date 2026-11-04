@@ -14,11 +14,10 @@ try {
   server = await createServer({ root: process.cwd(), server: { host: '127.0.0.1', port: 0, strictPort: true, fs: { allow: [process.cwd(), await realpath('node_modules')] } }, logLevel: 'error' })
   await server.listen(); const origin = `http://127.0.0.1:${server.httpServer.address().port}`
   browser = await chromium.launch({ channel: 'chrome', headless: true })
-  async function openReview() {
-    const row = page.getByRole('row').filter({ hasText: process.env.CP6_OA_BROWSER_SET_NAME })
-    await row.getByRole('button', { name: '打开', exact: true }).click()
+  async function openReview(reload = false) {
     const detail = page.waitForResponse(r => new URL(r.url()).pathname.endsWith('/review-submissions/' + submission) && r.request().method() === 'GET')
-    await page.locator('.requirement-set-review').getByRole('button', { name: '查看此版本并评审', exact: true }).click()
+    if (reload) await page.reload()
+    else await page.goto(origin + '/plm/requirement-set/' + requirementSetId + '?submission=' + submission)
     const result = await detail; expect(result.status()).toBe(200)
     const value = (await result.json()).data
     expect(value.submission.submissionId).toBe(submission); expect(value.requirementSet.reference.id).toBe(requirementSetId)
@@ -33,8 +32,7 @@ try {
     await page.locator('.tenant-change').click(); await page.locator('input[autocomplete="organization"]').fill(process.env.CP6_OA_BROWSER_TENANT)
     await page.locator('input[autocomplete="username"]').fill(name); await page.locator('input[autocomplete="current-password"]').fill('Price1!Password')
     await page.locator('.login-button').click(); await page.waitForURL(url => !url.pathname.startsWith('/login'))
-    // Existing native workbench path. Missing direct-review route is tracked independently in BUG744.
-    await page.goto(origin + '/plm/requirement-set')
+    // The business detail URL used by approval bindings must survive direct navigation and refresh.
     return openReview()
   }
   let panel = await login('price-owner')
@@ -64,7 +62,7 @@ try {
   const pending = JSON.parse(await page.evaluate(key => localStorage.getItem(key), pendingKey))
   expect(pending.operationId).toBe(accepted.operationId); expect(JSON.stringify(pending)).not.toContain('Explicit new authorization')
   step('real Owner commits one new linked fact; lost response preserves only the original operation identity')
-  await page.unroute(target); await page.reload(); panel = await openReview()
+  await page.unroute(target); panel = await openReview(true)
   await expect(panel).toContainText('需求集原操作待确认')
   const restored = page.waitForResponse(r => new URL(r.url()).pathname.endsWith('/review-withdrawal-operations/' + accepted.operationId) && r.request().method() === 'GET')
   await panel.getByRole('button', { name: '查询原需求集操作', exact: true }).click(); expect((await restored).status()).toBe(200)

@@ -33,6 +33,7 @@ vi.mock('@/views/pms/TwoFactorEnrollView.vue', () => ({ default: { template: '<s
 vi.mock('@/views/erp/PlateMoldSourcesView.vue', () => ({ default: { template: '<section data-testid="plate-sources">Tool sources</section>' } }))
 vi.mock('@/views/plm/ToolSpecificationsView.vue', () => ({ default: { template: '<section data-testid="tool-specifications">Tool specification drafts</section>' } }))
 vi.mock('@/views/erp/ProductMasterView.vue', () => ({ default: { template: '<section data-testid="product-window">Product window</section>' } }))
+vi.mock('@/views/plm/RequirementSetsView.vue', () => ({ default: { props: ['requirementSetId', 'reviewSubmission'], template: '<section data-testid="requirement-set-detail" :data-object="requirementSetId" :data-submission="reviewSubmission">Requirement set</section>' } }))
 
 let router: Router | undefined
 function signedIn(restricted = false) {
@@ -66,6 +67,20 @@ afterEach(() => {
 })
 
 describe('actual authenticated application startup', () => {
+  it('opens a requirement-set review deep link without a menu entry and preserves its exact query on cold startup', async () => {
+    signedIn(); localStorage.setItem('menus', '[]'); authFixture.actions.mockResolvedValue(['plm-requirement-set:query'])
+    const path = '/plm/requirement-set/00000000-0000-4000-8000-000000000010?submission=00000000-0000-4000-8000-000000000020#review'
+    const active = await boot(path)
+    expect(active.currentRoute.value.fullPath).toBe(path)
+    const page = document.querySelector('[data-testid="requirement-set-detail"]')
+    expect(page?.getAttribute('data-object')).toBe('00000000-0000-4000-8000-000000000010')
+    expect(page?.getAttribute('data-submission')).toBe('00000000-0000-4000-8000-000000000020')
+  }, 15_000)
+  it('keeps the requirement-set detail route behind its current query permission', async () => {
+    signedIn(); const active = await boot('/plm/requirement-set/00000000-0000-4000-8000-000000000010')
+    expect(active.currentRoute.value.path).toBe('/dashboard')
+    expect(document.querySelector('[data-testid="requirement-set-detail"]')).toBeNull()
+  })
   it.each([false, true])('renders an authenticated deep link with query/hash when routes were already installed: %s', async preinstalled => {
     signedIn(); const active = await boot('/product-list?source=refresh#records', preinstalled)
     expect(active.currentRoute.value.fullPath).toBe('/product-list?source=refresh#records')
