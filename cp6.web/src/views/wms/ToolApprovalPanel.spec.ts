@@ -3,6 +3,8 @@ import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
 import type { ToolInstanceView } from '@/api/wms/toolInstances'
 const api = vi.hoisted(() => ({ scope: vi.fn(), context: vi.fn(), write: vi.fn(), operation: vi.fn(), allowed: true }))
 vi.mock('@/api/wms/toolApproval', () => ({ toolApprovalApi: api }))
+vi.mock('@/api/wms/toolWithdrawal', () => ({ toolWithdrawalApi: { scope: api.scope } }))
+vi.mock('./ToolApprovalWithdrawalPanel.vue', () => ({ default: { props: ['toolId', 'submissionId', 'scope'], template: '<div data-withdrawal-panel />' } }))
 vi.mock('@/stores/permission', () => ({ usePermissionStore: () => ({ has: () => api.allowed }) }))
 import View from './ToolApprovalPanel.vue'
 import { pendingToolApproval } from '@/auth/toolApprovalRecovery'

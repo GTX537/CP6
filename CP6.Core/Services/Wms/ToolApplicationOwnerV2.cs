@@ -27,10 +27,10 @@ public sealed class ToolApplicationOwnerV2(CP6Context db, OperationsOwnerV1 owne
     private static async Task<T> Guard<T>(Func<Task<T>> action)
     { try { return await action(); } catch (ScopeAuthorizationExceptionV1 e) { throw Error(e.Message, e.Status); } }
     private sealed record Context(OperationsAccessV1 Access, ToolDispositionContextV1 Disposition, Source? Source,
-        ApprovalApplicationReceiptV2? Receipt, ToolApplicationReceiptStoreV2 Store, ScopeAuthorizationLeaseV1 Lease)
+        ApprovalApplicationReceiptV2? Receipt, ToolApplicationReceiptStoreV2 Store, ScopeAuthorizationLeaseV1 Lease, ToolApprovalControlStoreV1.Head? Control)
     {
         internal string Etag => "\"tap2-" + ApprovalCanonicalV2.Hash(ApprovalCanonicalV2.Bytes(new { Disposition.Etag,
-            Source?.OriginalHash, Source?.Stream, Receipt?.ReceiptId })) + "\"";
+            Source?.OriginalHash, Source?.Stream, Receipt?.ReceiptId, Control?.RowVersion })) + "\"";
     }
     private async Task<Context> Prepare(OperationsAccessV1 a, Guid tool, bool write, CancellationToken ct)
     {
@@ -40,7 +40,9 @@ public sealed class ToolApplicationOwnerV2(CP6Context db, OperationsOwnerV1 owne
         a.RequireToolFieldRead("Remarks");
         var store = new ToolApplicationReceiptStoreV2(db, scope); await store.Ready(ct);
         var source = await store.ForTool(tool, ct); var receipt = source == null ? null : await store.Latest(source.Stream, ct);
-        return new(a, disposition, source, receipt, store, lease);
+        var controls=new ToolApprovalControlStoreV1(db,scope.EnvironmentId);await controls.Ready(ct);
+        var control=source==null?null:await controls.Read(source.Submission.SubmissionId,ct);
+        return new(a, disposition, source, receipt, store, lease,control);
     }
     public Task<ToolApplicationContextV2> ContextAsync(Guid tool, CancellationToken ct = default)
         => Guard(() => Authority.ExecuteAsync(OperationsOwnerV1.ToolInstance, "query", false, async (a, t) => {
@@ -51,6 +53,7 @@ public sealed class ToolApplicationOwnerV2(CP6Context db, OperationsOwnerV1 owne
     private async Task<(string State, string Code)> Qualify(Context c, CancellationToken ct)
     {
         var s = c.Source!; var d = s.Decision; var request = c.Disposition.Request;
+        if(c.Control?.State=="WITHDRAWN")return ("STALE","STALE_RECEIPT");
         if (request == null || request.Reference.Id.ToString() != d.Subject.SubjectId || request.Reference.Version != d.Subject.BusinessRevision
             || request.Reference.Digest != d.Subject.ContentDigest.Value || c.Disposition.IsDiscarded) return ("STALE", "SUBJECT_NO_LONGER_CURRENT");
         if (d.Decision != "APPROVED") return ("BLOCKED", d.Decision == "REJECTED" ? "APPROVAL_REJECTED" : "APPROVAL_WITHDRAWN");
@@ -100,6 +103,8 @@ public sealed class ToolApplicationOwnerV2(CP6Context db, OperationsOwnerV1 owne
             await new ToolInstanceStoreV1(db).HoldExactAsync(q, c.Disposition.Native, t);
             a.AtCommit(async token => {
                 await c.Store.Ready(token);
+                if((await new ToolApprovalControlStoreV1(db,scope.EnvironmentId).Read(s.Submission.SubmissionId,token)).RowVersion!=c.Control?.RowVersion)
+                    throw Error("APPLICATION_CONTEXT_CHANGED",412);
                 if (evaluated is {} initial && await Qualify(c, token) != initial) throw Error("APPLICATION_CONTEXT_CHANGED", 412);
                 if ((await c.Store.ForTool(tool, token))?.OriginalHash != s.OriginalHash
                     || (await c.Store.Latest(s.Stream, token))?.ReceiptId != receipt.ReceiptId

@@ -17,10 +17,10 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     }
     private sealed record IntakeFixture(ApprovalIntakeOwnerV2 Owner,IntakeAuthority Authority,byte[] Payload,
         ApprovalBindingOwnerV2 Binding,ApprovalBindingResultV2 Bound,FlowAuthoringOwnerV2 Flows,Guid Version,DateTimeOffset ReceiveAt);
-    private async Task<IntakeFixture> IntakeSetup(Harness h,ApprovalBindingRuleV2[]? rules=null)
+    private async Task<IntakeFixture> IntakeSetup(Harness h,ApprovalBindingRuleV2[]? rules=null,string[]? extraActions=null)
     {
         var id=await MaintenanceSetup(h);
-        foreach(var action in new[]{"dispose","dispose-policy","dispose-submit"})await EngineeringAction(h,"wms-plate-mold",action);
+        foreach(var action in new[]{"dispose","dispose-policy","dispose-submit"}.Concat(extraActions??[]))await EngineeringAction(h,"wms-plate-mold",action);
         await DispositionRequest(Disposition(h),id);await DispositionBlock(Disposition(h),id);
         var(binding,flows,version)=await PrepareBinding(h);var principal=Guid.NewGuid();
         await h.Db.Database.ExecuteSqlInterpolatedAsync($"""

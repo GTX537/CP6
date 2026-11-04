@@ -13,7 +13,9 @@ internal sealed record ApprovalBusinessDecisionProofV2(object FrozenPolicy,int R
 public sealed class ApprovalBusinessEvidenceV2(ToolDispositionApprovalOwnerV1 tools,ControlledDocumentReviewOwnerV1? documents=null,RequirementSetReviewOwnerV1? sets=null,IterationReviewOwnerV1? iterations=null,LocationRuleReviewOwnerV1? rules=null)
 {
     internal Task<string> Withdrawal(ApprovalSubmitCommandV2 original,ApprovalWithdrawCommandV2 command,bool current,CancellationToken ct)
-        =>original.Subject.BusinessOwner==IterationReviewStoreV1.Owner && iterations!=null
+        =>original.Subject.BusinessOwner==ToolDispositionStoreV1.DispositionOwner
+            ?tools.WithdrawalEvidence(original,command,current,ct)
+            :original.Subject.BusinessOwner==IterationReviewStoreV1.Owner && iterations!=null
             ?iterations.WithdrawalEvidence(original,command,current,ct)
             :original.Subject.BusinessOwner==ControlledDocumentReviewStoreV1.Owner && documents!=null
             ?documents.WithdrawalEvidence(original,command,current,ct)

@@ -78,6 +78,9 @@ public sealed partial class OperationsOwnerV1
     internal Task<Authority> ToolApprovalIntakeAuthorityAsync(string resource,string action,Guid actor,CancellationToken ct)
         => action=="query" || resource==ToolInstance && action=="dispose-submit"
             ? AuthorityCoreAsync(resource,action,actor,true,ct) : throw new OrderPriceCorrectionException("ACTION_FORBIDDEN",403);
+    internal Task<Authority> ToolWithdrawalAuthorityAsync(string resource,string action,Guid actor,CancellationToken ct)
+        => action=="query" || resource==ToolInstance && action=="dispose-withdraw"
+            ? AuthorityCoreAsync(resource,action,actor,true,ct) : throw new OrderPriceCorrectionException("ACTION_FORBIDDEN",403);
     // Actor is read from an immutable document policy/submission or a native task assignment.
     internal Task<Authority> DocumentReviewAuthorityAsync(string resource,string action,Guid actor,CancellationToken ct)
         => action=="query" || resource==ControlledDocument && action is "review-policy" or "review-submit" or "review-decide" or "review-withdraw" or "review-apply"

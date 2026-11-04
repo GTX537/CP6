@@ -22,10 +22,13 @@
         <p>冻结原申请、当前义务及适用政策。未知义务会如实保留，审批提交不会自动关闭它们。</p>
         <label>送审说明 <textarea v-model="reason" aria-label="报废送审说明" maxlength="1000" required /></label><button :disabled="!reason.trim()">冻结并提交审批</button>
       </fieldset></form>
+      <ToolApprovalWithdrawalPanel v-if="context.submission && withdrawalScope" :tool-id="context.toolId" :submission-id="context.submission.submissionId" :scope="withdrawalScope" :disabled="busy || !!pending" />
     </template>
   </section>
 </template>
 <script setup lang="ts">
+import ToolApprovalWithdrawalPanel from './ToolApprovalWithdrawalPanel.vue'
+import { toolWithdrawalApi, type ToolWithdrawalScope } from '@/api/wms/toolWithdrawal'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { EngineeringScope } from '@/api/plm/engineeringProducts'
 import type { ToolInstanceView } from '@/api/wms/toolInstances'
@@ -35,6 +38,7 @@ import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { usePermissionStore } from '@/stores/permission'
 const props = defineProps<{ scope: EngineeringScope | null; selected: ToolInstanceView | null }>(), emit = defineEmits<{ 'authority-denied': [] }>()
 const permission = usePermissionStore(), canPolicy = computed(() => permission.has('wms-plate-mold:dispose-policy')), canSubmit = computed(() => permission.has('wms-plate-mold:dispose-submit'))
+const withdrawalScope = ref<ToolWithdrawalScope | null>(null)
 const context = ref<ToolApprovalContext | null>(null), busy = ref(false), completed = ref(false), pending = ref<PendingToolApproval | null>(null), error = ref(''), notice = ref('')
 const reason = ref(''), policyReason = ref(''), reasonCode = ref('DAMAGE'), approvals = ref(1), separate = ref(true), from = ref(''), until = ref('')
 const locked = computed(() => busy.value || !!pending.value || completed.value)
@@ -56,7 +60,7 @@ function deliveryValid(c: ToolApprovalContext) {
   return !!r && r.state === 'DISPATCH_PENDING' && r.instanceId === null && (d.state === 'RECEIVED' ? r.submissionId === d.submissionId && r.alias === null : r.alias?.requestedSubmissionId === d.submissionId && r.alias.canonicalSubmissionId === r.submissionId && r.submissionId !== d.submissionId)
 }
 let live = true, generation = 0
-function clear() { context.value = null; pending.value = null; completed.value = false; reason.value = ''; policyReason.value = ''; from.value = ''; until.value = ''; notice.value = '' }
+function clear() { context.value = null; withdrawalScope.value = null; pending.value = null; completed.value = false; reason.value = ''; policyReason.value = ''; from.value = ''; until.value = ''; notice.value = '' }
 async function run(action: (check: () => void) => Promise<void>) {
   if (busy.value || !props.scope || !props.selected) return
   const stamp = identityStamp(), g = generation, check = () => { requireIdentity(stamp); if (!live || generation !== g) throw new Error('对象或身份已变化。') }
@@ -66,7 +70,7 @@ async function run(action: (check: () => void) => Promise<void>) {
 }
 async function load() {
   if (pending.value || !props.selected) return; const id = props.selected.reference.id
-  await run(async check => { const c = result(await api.context(id)); check(); if (c.toolId !== id || c.tenantId !== props.scope?.tenantId || c.disposition?.toolId !== id || c.disposition.isUsePermit !== false || c.disposition.obligations.canFinalize !== false || !deliveryValid(c) || c.submission && (c.submission.toolId !== id || c.submission.state !== 'DISPATCH_PENDING' || c.submission.isApproved !== false || c.submission.isDiscarded !== false)) throw new Error('审批来源与当前对象不一致。'); context.value = c; completed.value = false; notice.value = '' })
+  await run(async check => { const c = result(await api.context(id)); check(); if (c.toolId !== id || c.tenantId !== props.scope?.tenantId || c.disposition?.toolId !== id || c.disposition.isUsePermit !== false || c.disposition.obligations.canFinalize !== false || !deliveryValid(c) || c.submission && (c.submission.toolId !== id || c.submission.state !== 'DISPATCH_PENDING' || c.submission.isApproved !== false || c.submission.isDiscarded !== false)) throw new Error('审批来源与当前对象不一致。'); const current = result(await toolWithdrawalApi.scope()); check(); if (current.tenantId !== props.scope?.tenantId || current.actorId !== props.scope?.actorId) throw new Error('当前版模审批身份已变化。'); withdrawalScope.value = current; context.value = c; completed.value = false; notice.value = '' })
 }
 async function write(kind: ToolApprovalKind, body: Record<string, unknown>) {
   const c = context.value, scope = props.scope; if (!c || !scope || locked.value || (kind === 'POLICY' ? !canPolicy.value : !canSubmit.value)) return

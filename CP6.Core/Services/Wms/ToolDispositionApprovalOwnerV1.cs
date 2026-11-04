@@ -179,7 +179,7 @@ public sealed partial class ToolDispositionApprovalOwnerV1(CP6Context db, Operat
                     new(cmd.Request.Owner,cmd.Request.Id.ToString(),cmd.Request.Version),selectedPolicy.Ref]),null,cmd.Reason,outbox,Now());
             var payload=ApprovalCanonicalV2.Bytes(e);
             var row=new SubmissionRow(submission,id,request.Reference.Id,cmd.Policy.Id,c.Access.ActorId,cmd.OperationId,intent,payload,ApprovalCanonicalV2.Hash(payload),authorization);
-            await c.Store.Add(row,t);await Hold(c,t,cmd.Policy);
+            await c.Store.Add(row,t);var controls=new ToolApprovalControlStoreV1(db,Environment);await controls.Ready(t);await controls.Begin(row,t);await Hold(c,t,cmd.Policy);
             return new(cmd.OperationId,id,"SUBMIT",new("Main.Wms.ToolDispositionSubmission.v1",submission,"1",row.Digest),c.Store.View(row));
         },ct);
     }
