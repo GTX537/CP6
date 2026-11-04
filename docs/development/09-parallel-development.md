@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W303](evidence/W303-01/DELIVERY.md)准确处置到本人重基本地验收完成；24h单人目标继续，两仓采用/finish后W304原卡核销。
+> 当前：[W304](evidence/W304-01/DELIVERY.md)原卡审计与提交原子性补证；两仓采用/finish后BUG756，随后W316/W317，24h单人目标继续。
+
+> 历史快照：[W303](evidence/W303-01/DELIVERY.md)准确处置到本人重基本地验收完成；24h单人目标继续，两仓采用/finish后W304原卡核销。
 
 > 历史快照：[W302](evidence/W302-01/DELIVERY.md)实际字段处置Owner本地验收完成；24h单人目标继续，两仓采用/finish后W303真实重基消费。
 
