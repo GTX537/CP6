@@ -22,7 +22,7 @@ public sealed record DocumentContentObservationV1(Guid OccurrenceId, string Avai
 public sealed record ControlledDocumentSnapshotV1(Guid TenantId, EngineeringSourceRefV1 Reference, Guid Etag,
     bool IsCurrent, ControlledDocumentBodyV1 Body, string Action, string Reason, string? ParentVersion,
     Guid ActorId, DateTimeOffset RecordedAt, string OriginalJson, string[]? Missing = null,
-    DocumentContentObservationV1[]? ContentStatus = null, string State = "DRAFT", string Readiness = "REVIEW_REQUIRED");
-public sealed record ControlledDocumentResultV1(Guid OperationId, string Kind, Guid ObjectId, string Version, string Digest);
+    DocumentContentObservationV1[]? ContentStatus = null, string State = "DRAFT", string Readiness = "REVIEW_REQUIRED", DocumentAvailabilityV1? Availability = null);
+public sealed record ControlledDocumentResultV1(Guid OperationId, string Kind, Guid ObjectId, string Version, string Digest, DocumentAvailabilityV1? Availability = null);
 public sealed record ControlledDocumentOperationV1(Guid OperationId, string State, ControlledDocumentResultV1? Result = null);
 public sealed record ControlledDocumentDiffV1(EngineeringSourceRefV1 Before, EngineeringSourceRefV1 After, EngineeringWorkingChangeV1[] Changes);

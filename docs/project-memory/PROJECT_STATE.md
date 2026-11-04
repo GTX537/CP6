@@ -1,5 +1,15 @@
 # 项目当前状态
 
+## 2026-11-04：W307准确修订独立可用性 / 24h继续
+
+W307补齐受控文档准确修订的独立暂停/恢复/撤回、当前消费阻断与原操作恢复；内容、批准事实和历史引用不改写。 [交付](../development/evidence/W307-01/DELIVERY.md)。
+
+11项独立PostgreSQL18场景通过（9项新增含真实Chrome，2项既有原件/完整性回归），22项Vue行为及vue-tsc通过；原FILE和专业评审证据按准确适用范围复用，不称本轮重跑。 原375暂32DONE/2IN_PROGRESS/341PLANNED，原59余51；WP05-16原范围逐项已具备核销证据，但等待本窗远端采用和finish后再正式改DONE。完整PLM-DOC目标、隐私全域编排、现场副本召回、LCM和环境推广不连带完成；125/247不变。 分支/工作区/席位见wave307-final-verification.json。
+
+## 2026-11-04：W305已交付 / W307核销中
+
+W305 Main763/Handoff284完整采用、分支准确删除、固定工作区干净、两席位释放；[W307](../development/evidence/W307-01/DELIVERY.md)沿原PLM-DOC合同实现独立可用性，尚未关闭原卡。原37532DONE/2IN_PROGRESS/341PLANNED、59余51，24h继续。
+
 ## 2026-11-04：WP12-10原卡核销，24h继续
 
 W305按原WP12-10三项范围及正反验收核销委派修订、准确实际身份和历史缺证边界，原卡正式DONE；历史转换按原TASK R2 §5.1仍为独立迁移设计，不新增执行入口。 [报告](../development/evidence/W305-01/DELIVERY.md)。

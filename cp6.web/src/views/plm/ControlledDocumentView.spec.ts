@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
 import type { DocumentCommand, DocumentSnapshot } from '@/api/plm/controlledDocument'
-const api = vi.hoisted(() => ({ scope: vi.fn(), list: vi.fn(), read: vi.fn(), diff: vi.fn(), save: vi.fn(), download: vi.fn(), operation: vi.fn(), parents: vi.fn(), parentRead: vi.fn(), files: vi.fn(), denied: [] as string[], authenticated: true }))
+const api = vi.hoisted(() => ({ scope: vi.fn(), list: vi.fn(), read: vi.fn(), diff: vi.fn(), save: vi.fn(), download: vi.fn(), operation: vi.fn(), availability: vi.fn(), availabilityHistory: vi.fn(), parents: vi.fn(), parentRead: vi.fn(), files: vi.fn(), denied: [] as string[], authenticated: true }))
 vi.mock('@/api/plm/controlledDocument', () => ({ documentApi: api }))
 vi.mock('@/api/pub/fileContent', () => ({ fileContentApi: { list: api.files } }))
 vi.mock('@/api/plm/engineeringRevisions', () => ({ revisionApi: { list: api.parents, read: api.parentRead } }))
@@ -14,7 +14,7 @@ const guid = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, '0
 const scope = { tenantId: guid(1), actorId: guid(2) }
 const parent = { reference: { owner: 'Main.Plm.EngineeringRevision.v1', id: guid(3), version: '5', digest: 'b'.repeat(64) }, isCurrent: true, revisionCode: 'ENG-1', draft: { goal: 'Engineering revision', productRef: { owner: 'Main.Plm.EngineeringProduct.v1', id: guid(8), version: '2', digest: 'd'.repeat(64) } } }
 const file = { tenantId: scope.tenantId, contentRef: { owner: 'Main.File.Content.v1' as const, id: guid(4), version: '1', hashAlgorithm: 'SHA256' as const, digest: 'a'.repeat(64), byteLength: 3, mediaType: 'text/plain' }, parent: parent.reference, fileName: 'Private source.txt', stateVersion: '3', availability: 'AVAILABLE' }
-const row: DocumentSnapshot = { tenantId: scope.tenantId, reference: { owner: 'Main.Plm.ControlledDocument.v1', id: guid(6), version: '2', digest: 'c'.repeat(64) }, etag: guid(7), isCurrent: true, body: { name: 'Original document', revisionLabel: 'A', revisionOrigin: parent.reference, productRef: parent.draft.productRef, source: { kind: 'EXTERNAL', ownerName: 'Actual supplier', organization: 'Origin unit', sourceVersion: 'v2', sourceDate: '2026-10-27', acquisitionBasis: 'Supplied original', authorityLanguage: 'zh-CN', authorityBasis: 'Review required' }, contents: [{ occurrenceId: guid(9), role: 'SOURCE', file: file.contentRef, derivedFromOccurrenceId: null, language: 'zh-CN', derivationBasis: '' }] }, action: 'REVISE', reason: 'Actual correction', parentVersion: '1', actorId: scope.actorId, recordedAt: '2026-10-27T00:00:00Z', originalJson: '{}', missing: ['DOCUMENT_PROFESSIONAL_REVIEW_REQUIRED'], contentStatus: [{ occurrenceId: guid(9), fileName: file.fileName, availability: 'AVAILABLE', stateVersion: '3' }], state: 'DRAFT', readiness: 'REVIEW_REQUIRED' }
+const row: DocumentSnapshot = { tenantId: scope.tenantId, reference: { owner: 'Main.Plm.ControlledDocument.v1', id: guid(6), version: '2', digest: 'c'.repeat(64) }, etag: guid(7), isCurrent: true, body: { name: 'Original document', revisionLabel: 'A', revisionOrigin: parent.reference, productRef: parent.draft.productRef, source: { kind: 'EXTERNAL', ownerName: 'Actual supplier', organization: 'Origin unit', sourceVersion: 'v2', sourceDate: '2026-10-27', acquisitionBasis: 'Supplied original', authorityLanguage: 'zh-CN', authorityBasis: 'Review required' }, contents: [{ occurrenceId: guid(9), role: 'SOURCE', file: file.contentRef, derivedFromOccurrenceId: null, language: 'zh-CN', derivationBasis: '' }] }, action: 'REVISE', reason: 'Actual correction', parentVersion: '1', actorId: scope.actorId, recordedAt: '2026-10-27T00:00:00Z', availability: { stateVersion: '1', etag: '00000000-0000-4000-8000-000000000099', state: 'AVAILABLE' as const, action: 'REGISTER', reason: 'Initial control', actorId: scope.actorId, recordedAt: '2026-10-27T00:00:00Z', operationId: null }, originalJson: '{}', missing: ['DOCUMENT_PROFESSIONAL_REVIEW_REQUIRED'], contentStatus: [{ occurrenceId: guid(9), fileName: file.fileName, availability: 'AVAILABLE', stateVersion: '3' }], state: 'DRAFT', readiness: 'REVIEW_REQUIRED' }
 const ok = <T,>(data: T) => ({ code: 0, data })
 let view: VueWrapper | undefined, persisted: DocumentSnapshot
 const button = (text: string) => view!.findAll('button').find(x => x.text() === text)!
@@ -72,3 +72,23 @@ it('does not allow write actions or unsafe browser coordination', async () => { 
 it('requires browser coordination before storing or sending a new operation', async () => { await opened(); Object.defineProperty(navigator, 'locks', { configurable: true, value: undefined }); await submit('修订原因'); expect(api.save).not.toHaveBeenCalled(); expect(pendingDocument(scope)).toBeNull() })
 it('verifies exact document version and downloaded bytes before exposing a URL', async () => { await opened(); api.download.mockResolvedValue({ arrayBuffer: async () => new Uint8Array([1]).buffer }); await click('下载准确内容'); expect(api.download).toHaveBeenCalledWith(row.reference.id, '2', guid(9)); expect(view!.text()).toContain('下载内容与文档原版本不一致') })
 it('rejects foreign tenant or parent file choices', async () => { await opened(); api.files.mockResolvedValue(ok([{ ...file, tenantId: guid(88) }])); await click('读取可选文件'); expect(view!.text()).toContain('文件上下文不一致'); expect(field('文件版本').findAll('option')).toHaveLength(1) })
+
+it('holds the selected historic revision and disables its download without replacing the current editor', async () => {
+  await opened(); const historic = structuredClone(row); historic.reference.version = '1'; historic.availability.etag = guid(77)
+  api.read.mockResolvedValue(ok(historic)); await submit('历史工作版本')
+  const section = view!.get('[aria-label="修订 1 可用性"]')
+  await section.get('select').setValue('HOLD'); await section.get('textarea').setValue('Exact old revision review'); await section.get('form').trigger('submit')
+  api.availability.mockImplementation(async input => { historic.availability = { ...historic.availability, state: 'HELD', stateVersion: '2', etag: guid(78) }; return ok({ operationId: input.operationId, kind: 'CONTROLLED_DOCUMENT', objectId: input.document.id, version: '1', digest: row.reference.digest }) })
+  await section.findAll('button').find(x => x.text() === '确认处理此修订')!.trigger('click'); await flushPromises()
+  expect(api.availability).toHaveBeenCalledWith(expect.objectContaining({ document: { ...row.reference, version: '1' }, expectedEtag: guid(77), action: 'HOLD' }))
+  expect(button('下载历史内容').attributes('disabled')).toBeDefined(); expect(button('下载准确内容').attributes('disabled')).toBeUndefined()
+  expect(view!.get('[aria-label="文档名称"]').element).toHaveProperty('value', row.body.name); expect(pendingDocument(scope)).toBeNull()
+})
+it('retains one availability operation after lost confirmation and recovers after remount without another write', async () => {
+  await opened(); await field('可用性处理方式').setValue('WITHDRAW'); await field('可用性处理原因').setValue('Explicit original withdrawal'); await submit('可用性处理原因')
+  api.availability.mockRejectedValue(new Error('Lost response')); await click('确认处理此修订'); const pending = pendingDocument(scope)!
+  expect(pending.objectId).toBe(row.reference.id); expect(Object.values(localStorage).join('')).not.toContain('Explicit original withdrawal')
+  view!.unmount(); view = mount(View, { global: { stubs: { ControlledDocumentReviewPanel: true } } }); await flushPromises()
+  api.operation.mockResolvedValue(ok({ operationId: pending.operationId, state: 'COMMITTED', result: { operationId: pending.operationId, kind: 'CONTROLLED_DOCUMENT', objectId: pending.objectId, version: row.reference.version, digest: row.reference.digest } }))
+  await click('查询原操作'); expect(api.availability).toHaveBeenCalledTimes(1); expect(api.save).not.toHaveBeenCalled(); expect(pendingDocument(scope)).toBeNull()
+})
