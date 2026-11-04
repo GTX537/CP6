@@ -111,7 +111,7 @@ public sealed partial class PersonalFormOwnerV2
         catch(Exception ex){await Rollback(tx,committing,ex);throw;}
     }
     public Task<PersonalFormResultV2> EditReturnedAsync(Guid instance,byte[] raw,CancellationToken ct=default)
-        =>ChangeReturned(instance,CommandInput<ReturnedFormEditV2>(raw,true,true),false,ct);
+        =>ChangeReturned(instance,CommandInput<ReturnedFormEditV2>(raw,true,true,maxBytes:DataRequestMaxBytes),false,ct);
     public Task<PersonalFormResultV2> ResubmitReturnedAsync(Guid instance,byte[] raw,CancellationToken ct=default)
         =>ChangeReturned(instance,CommandInput<ReturnedFormResubmitV2>(raw,true,true),true,ct);
     private async Task<PersonalFormResultV2> ChangeReturned<T>(Guid instance,Command<T> command,bool resubmit,CancellationToken ct)

@@ -1,5 +1,13 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-04：BUG756个人FORM数据预算修复
+
+个人FORM的1 MiB业务数据预算与命令外层开销分离；内部存储JSON仅作必要转义，中文、补充平面和私用区Unicode不再被二次转义挤出合法范围。 [修复与验证](../development/evidence/BUG-756/DELIVERY.md)。
+
+本地PostgreSQL18和实际Main Program认证HTTP通过：原生/HTTP满额提交、双预览、草稿创建/保存/提交、退回编辑和SFS决策；超出1字节明确拒绝且无额外效果，原意图回放、原摘要、精确数值及退回前快照保留。另验证中文满额HTTP、补充平面/私用字符经merge/patch/rules/projection、合并后真实超限拒绝、嵌套数组/控制字符/空值/布尔和精确数字。当前隐藏/只读mask、重基规则及原结果、五上下文closed DTO和canonical回归均通过。
+
+原卡余项继续W316/W317，24h目标继续。分支清理、工作区和席位以bug756-final-verification.json核对。
+
 ## 2026-11-04：W304原表单卡核对 / 24h继续
 
 W304核清WP12-03/04原25条直接AC和前置，补3项真实提交原子性/五上下文验证；确认#756合法data限额缺陷、旧入口adapter和准确重基前快照恢复仍未完，两原卡保持未关闭。 [交付](../development/evidence/W304-01/DELIVERY.md)。

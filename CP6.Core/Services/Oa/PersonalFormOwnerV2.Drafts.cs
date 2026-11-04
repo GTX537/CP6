@@ -113,7 +113,7 @@ public sealed partial class PersonalFormOwnerV2
     }
     public async Task<PersonalFormResultV2> CreateDraftAsync(string key,byte[] raw,CancellationToken ct=default)
     {
-        var command=CommandInput<PersonalFormCreateV2>(raw,false);if(command.Body.FormVersionId==Guid.Empty)throw Error("FORM_VERSION_REQUIRED",400);
+        var command=CommandInput<PersonalFormCreateV2>(raw,false,maxBytes:DataRequestMaxBytes);if(command.Body.FormVersionId==Guid.Empty)throw Error("FORM_VERSION_REQUIRED",400);
         Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var committing=false;
         try
         {
@@ -142,7 +142,7 @@ public sealed partial class PersonalFormOwnerV2
     }
     public async Task<PersonalFormResultV2> SaveDraftAsync(Guid id,byte[] raw,CancellationToken ct=default)
     {
-        var command=CommandInput<PersonalFormSaveV2>(raw,true);var resource=id.ToString("D");
+        var command=CommandInput<PersonalFormSaveV2>(raw,true,maxBytes:DataRequestMaxBytes);var resource=id.ToString("D");
         Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var committing=false;
         try
         {

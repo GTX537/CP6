@@ -17,7 +17,7 @@ public sealed partial class PersonalFormOwnerV2
     }
     public Task<PersonalFormResultV2> SubmitDirectAsync(string key, byte[] raw, CancellationToken ct=default)
     {
-        var command=CommandInput<PersonalFormDirectV2>(raw,false);
+        var command=CommandInput<PersonalFormDirectV2>(raw,false,maxBytes:DataRequestMaxBytes);
         if(command.Body.Kind!="DIRECT")throw Error("COMMAND_SHAPE_INVALID",400);
         return SubmitForm(key,null,command,ct);
     }
