@@ -6,7 +6,14 @@ public sealed record RequirementSetMemberV1(EngineeringSourceRefV1 Requirement,
     string Disposition, string Basis);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record RequirementSetConflictV1(string Id,EngineeringSourceRefV1 Left,EngineeringSourceRefV1 Right,
-    string Intersection,string Proposal,string Basis);
+    string Intersection,string Proposal,string Basis,
+    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] RequirementConflictDecisionV1? Decision=null);
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+public sealed record RequirementConflictDecisionV1(string Schema,string Kind,string Basis,
+    [property:JsonRequired] bool PreservesRequirements);
+public sealed record RequirementConflictObservationV1(string Id,string Intersection,string State,
+    EngineeringSourceRefV1 LeftSource,EngineeringSourceRefV1 RightSource,int ClausePairCount,RequirementScopeIntersectionV1[] ClauseExamples,
+    EngineeringSourceRefV1? DecisionVersion=null,Guid? DecisionActor=null,DateTimeOffset? DecidedAt=null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record RequirementSetBodyV1(string Kind,string Name,string Scope,string CompletenessBasis,
     RequirementSetMemberV1[] Members,RequirementSetConflictV1[] Conflicts);
@@ -26,7 +33,7 @@ public sealed record RequirementSetCommandV1
 public sealed record RequirementSetSnapshotV1(Guid TenantId,EngineeringSourceRefV1 Reference,Guid Etag,
     bool IsCurrent,RequirementSetBodyV1 Body,Guid AuthorId,Guid ActorId,string? ParentVersion,string Reason,
     DateTimeOffset RecordedAt,string OriginalJson,string[] Missing,string State="DRAFT",
-    RequirementSetMemberObservationV1[]? MemberStatus=null,RequirementSetDifferenceV1[]? Differences=null);
+    RequirementSetMemberObservationV1[]? MemberStatus=null,RequirementSetDifferenceV1[]? Differences=null,RequirementConflictObservationV1[]? ConflictStatus=null);
 public sealed record RequirementSetScopeV1(Guid EnvironmentId,Guid TenantId,Guid ActorId,string EvidenceMode);
 public sealed record RequirementSetMemberObservationV1(EngineeringRequirementSnapshotV1 Requirement,
     RequirementEvaluationSourceProofV1 Evaluation,EngineeringRequirementSnapshotV1 Source);

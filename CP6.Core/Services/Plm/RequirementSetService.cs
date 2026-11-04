@@ -55,8 +55,6 @@ public sealed partial class RequirementSetService(CP6Context db,OperationsOwnerV
             // Exclusions are proposals until an authoritative source-scope decision is available.
             // A priority or arbitrary free-text necessity can never grant permission to omit a requirement.
             if(member.Disposition!="INCLUDED")missing.Add("EXCLUSION_SOURCE_DECISION_REQUIRED:"+member.Requirement.Id);
-            foreach(var conflict in original.Body.Requirement.Relations.Where(x=>x.Kind=="CONFLICT"))
-                missing.Add("SOURCE_CONFLICT_UNRESOLVED:"+member.Requirement.Id+":"+conflict.Target.Id);
             var sourceRef=original.Body.Requirement.Source;
             await requirementAccess.RequireEngineeringRequirement(sourceRef.Id,ct);
             requirementAccess.AtCommit(t=>requirementAccess.RequireEngineeringRequirement(sourceRef.Id,t));
@@ -64,7 +62,16 @@ public sealed partial class RequirementSetService(CP6Context db,OperationsOwnerV
             if(source.Reference!=sourceRef || source.Body.Source==null)throw Error("REQUIREMENT_SET_MEMBER_SOURCE_UNAVAILABLE",503);
             members.Add(new(original,proof,source));
         }
-        if(value.Body.Conflicts.Length>0)missing.Add("CONFLICT_SOURCE_DECISION_REQUIRED");
+        var conflicts=ObserveConflicts(value.Body,members.ToArray()).Select(c=>value.Body.Conflicts.Single(x=>x.Id==c.Id).Decision==null?c:
+            c with{DecisionVersion=value.Reference,DecisionActor=value.ActorId,DecidedAt=value.RecordedAt}).ToArray();
+        if(conflicts.Any(x=>x.State!="RESOLVED"))missing.Add("CONFLICT_SOURCE_DECISION_REQUIRED");
+        foreach(var member in members)foreach(var link in member.Requirement.Body.Requirement!.Relations.Where(x=>x.Kind=="CONFLICT"))
+        {
+            var matched=value.Body.Conflicts.Where(c=>c.Left==member.Requirement.Reference && c.Right==link.Target
+                || c.Right==member.Requirement.Reference && c.Left==link.Target).ToArray();
+            if(matched.Length==0 || matched.Any(c=>conflicts.Single(o=>o.Id==c.Id).State!="RESOLVED"))
+                missing.Add("SOURCE_CONFLICT_UNRESOLVED:"+member.Requirement.Reference.Id+":"+link.Target.Id);
+        }
         var changes=new List<RequirementSetDifferenceV1>();
         if(value.ParentVersion!=null)
         {
@@ -82,22 +89,35 @@ public sealed partial class RequirementSetService(CP6Context db,OperationsOwnerV
         else changes.AddRange(value.Body.Members.Select(m=>new RequirementSetDifferenceV1(m.Requirement.Id,"ADDED",null,m)));
         // Carry obligations across the entire predecessor chain; an intermediate draft cannot erase one.
         var ancestor=value.ParentVersion;var visited=new HashSet<EngineeringSourceRefV1>();var depth=0;
+        var inheritedDecisions=value.Body.Conflicts.Where(c=>c.Decision!=null).ToDictionary(c=>c.Id,StringComparer.Ordinal);
         while(ancestor!=null)
         {
             if(++depth>4096)throw Error("REQUIREMENT_SET_HISTORY_LIMIT",422);
             var prior=await s.Read(value.Reference.Id,Revision(ancestor),ct);
+            // Carrying an exact decision preserves the actor/version that actually attested it.
+            foreach(var pair in inheritedDecisions.ToArray())
+            {
+                if(!prior.Body.Conflicts.Any(c=>c==pair.Value)){inheritedDecisions.Remove(pair.Key);continue;}
+                var index=Array.FindIndex(conflicts,c=>c.Id==pair.Key);
+                conflicts[index]=conflicts[index] with{DecisionVersion=prior.Reference,DecisionActor=prior.ActorId,DecidedAt=prior.RecordedAt};
+            }
             foreach(var old in prior.Body.Members)
             {
                 if(visited.Add(old.Requirement))await evaluations.Source(a,old.Requirement,false,ct,tolerateInputChange:true);
                 if(!value.Body.Members.Any(m=>m.Requirement.Id==old.Requirement.Id))missing.Add("PREVIOUS_MEMBER_OMITTED:"+old.Requirement.Id);
             }
+            // A draft cannot erase an outstanding conflict by removing or repurposing its identifier.
+            foreach(var old in prior.Body.Conflicts)
+                if(!value.Body.Conflicts.Any(c=>c.Id==old.Id &&
+                    (c.Left.Id==old.Left.Id && c.Right.Id==old.Right.Id || c.Left.Id==old.Right.Id && c.Right.Id==old.Left.Id)))
+                    missing.Add("PREVIOUS_CONFLICT_OMITTED:"+old.Id);
             ancestor=prior.ParentVersion;
         }
         if(hold && missing.Count>0)throw Error("REQUIREMENT_SET_SOURCE_INCOMPLETE",422);
         var applications=new RequirementSetReviewApplicationStoreV1(db,scope);await applications.Ready(ct);
         var approved=await applications.Approved(value.Reference,ct);
         if(approved==null)missing.Add("REQUIREMENT_SET_REVIEW_REQUIRED");
-        return value with {MemberStatus=members.ToArray(),Differences=changes.ToArray(),Missing=missing.Distinct().ToArray(),State=approved==null?"DRAFT":"APPROVED"};
+        return value with {MemberStatus=members.ToArray(),Differences=changes.ToArray(),ConflictStatus=conflicts,Missing=missing.Distinct().ToArray(),State=approved==null?"DRAFT":"APPROVED"};
     }
     internal async Task<RequirementSetSnapshotV1> ReviewSource(OperationsAccessV1 a,EngineeringSourceRefV1 reference,bool requireAvailable,CancellationToken ct)
     {
@@ -119,7 +139,7 @@ public sealed partial class RequirementSetService(CP6Context db,OperationsOwnerV
             var lease=await scope.AcquireAsync(t);a.AtCommit(token=>scope.ValidateAsync(lease,token));
             var s=new RequirementSetStoreV1(db);await s.Fence(true,t);
             if(original!=null)return await Disclose(a,s,original,c.OperationId,bytes,t);
-            a.RequireRequirementSetFields(true);OperationsAccessV1.NewRequirementSetBinding? ticket=null;
+            a.RequireRequirementSetFields(true);OperationsAccessV1.NewRequirementSetBinding? ticket=null;RequirementSetSnapshotV1? previous=null;
             if(c.Action=="CREATE")ticket=await a.BeginRequirementSetCreation(c.ObjectId,c.ExpectedAuthorityVersion,c.DepartmentId,t);
             else
             {
@@ -127,11 +147,12 @@ public sealed partial class RequirementSetService(CP6Context db,OperationsOwnerV
                 if(old.Reference.Version!=c.ExpectedVersion || old.Etag!=c.ExpectedEtag)throw Error("REQUIREMENT_SET_VERSION_CHANGED",412);
 
                 // Editing cannot remove a revoked dependency to disclose or launder its former original.
-                await Observe(a,s,old,t);
+                previous=await Observe(a,s,old,t);
             }
             var saved=await s.Append(c,a.ActorId,t);
             if(ticket!=null)await a.CompleteRequirementSetCreation(ticket,t);
-            await Observe(a,s,saved,t);
+            var observed=await Observe(a,s,saved,t);
+            await QualifyConflictDecisions(a,previous,observed,t);
             var result=new RequirementSetResultV1(c.OperationId,saved.Body.Kind,c.ObjectId,saved.Reference.Version,saved.Reference.Digest);
             await journal.Store(RequirementSetValuesV1.Owner,RequirementSetValuesV1.Contract,c.OperationId,a.ActorId,bytes,result,[c.ObjectId],
                 new{c.Action,c.Reason,actor=a.ActorId,result},t);return result;

@@ -2,7 +2,7 @@
 
 台账日期：2026-11-02。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
 
-全部已登记任务 375 项，已交付 32 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
+全部已登记任务 375 项，已交付 33 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
 
 任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)，分配步骤见[多对话协作](09-parallel-development.md)。所有状态/领取/证据只在JSON登记；未领取的候选不自动READY。
 
@@ -153,7 +153,7 @@
 | [WP05-13 工程需求来源、分解与可评价判据](../../docs/development/task-plans/WP05.md#wp05-13) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP02-14, WP03-17, WP03-21, WP04-32, WP05-02 | CODE / M | 未领取 |
 | [WP05-14 需求集批准、冲突裁决与后继影响](../../docs/development/task-plans/WP05.md#wp05-14) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP05-13, WP12-06, WP12-07 | CODE / M | 未领取 |
 | [WP05-15 需求分配覆盖与满足性签署](../../docs/development/task-plans/WP05.md#wp05-15) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP05-14, WP05-22, WP05-24 | CODE / M | 未领取 |
-| [WP05-16 受控技术文档版本与原件派生](../../docs/development/task-plans/WP05.md#wp05-16) | Main | 待安排 | S01-02, S01-07, S02-00, WP02-10, WP02-13, WP02-14, WP02-15, WP12-06, WP12-07 | CODE / M | 未领取 |
+| [WP05-16 受控技术文档版本与原件派生](../../docs/development/task-plans/WP05.md#wp05-16) | Main | 已交付 | S01-02, S01-07, S02-00, WP02-10, WP02-13, WP02-14, WP02-15, WP12-06, WP12-07 | CODE / M | COORD / W307-01 |
 | [WP05-17 技术包发放、副本替换与影响义务](../../docs/development/task-plans/WP05.md#wp05-17) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP05-12, WP05-16, WP08-04, WP10-09, WP10-12 | CODE / M | 未领取 |
 | [WP05-18 工程项目、迭代输入与任务确认](../../docs/development/task-plans/WP05.md#wp05-18) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP02-16, WP05-01, WP05-03, WP05-14 | CODE / L | 未领取 |
 | [WP05-19 迭代方案全集、评审包与OA持久提交](../../docs/development/task-plans/WP05.md#wp05-19) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP05-03, WP05-18, WP12-06 | CODE / L | 未领取 |

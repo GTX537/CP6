@@ -18,7 +18,7 @@
         <template v-if="draft.source">
           <div class="grid"><label>来源类别<select v-model="draft.source.kind" aria-label="来源类别"><option value="INTERNAL_PROPOSAL">内部提案</option><option value="UNRESOLVED">来源待澄清</option></select></label><label>来源描述<textarea v-model="draft.source.originDescription" aria-label="来源描述" required maxlength="8000" /></label><label>来源版本标记<input v-model="draft.source.sourceLabel" aria-label="来源版本标记" maxlength="8000" /></label><label>取得依据<textarea v-model="draft.source.acquisitionBasis" aria-label="取得依据" maxlength="8000" /></label></div>
           <p>内部提案由当前用户登记。客户或销售原单据需后续接入其真实来源，不在此确认客户意见。</p>
-          <article v-for="(c, i) in draft.source.clauses" :key="i"><h3>原条款 {{ i + 1 }}</h3><div class="grid"><label>条款标识<input v-model="c.id" :aria-label="`条款标识 ${i + 1}`" required maxlength="128" /></label><label>原文位置<input v-model="c.locator" :aria-label="`原文位置 ${i + 1}`" maxlength="8000" /></label><label>来源原文<textarea v-model="c.originalText" :aria-label="`来源原文 ${i + 1}`" required maxlength="8000" /></label></div><button type="button" :disabled="draft.source.clauses.length === 1" @click="draft.source.clauses.splice(i, 1)">移除此版条款</button></article>
+          <article v-for="(c, i) in draft.source.clauses" :key="i"><h3>原条款 {{ i + 1 }}</h3><div class="grid"><label>条款标识<input v-model="c.id" :aria-label="`条款标识 ${i + 1}`" required maxlength="128" /></label><label>原文位置<input v-model="c.locator" :aria-label="`原文位置 ${i + 1}`" maxlength="8000" /></label><label>来源原文<textarea v-model="c.originalText" :aria-label="`来源原文 ${i + 1}`" required maxlength="8000" /></label></div><RequirementClauseTermsPanel v-model="c.terms" :index="i + 1" :disabled="locked" :can-confirm="draft.source.kind === 'INTERNAL_PROPOSAL' && permission.has('plm-engineering-requirement:source-confirm')" /><button type="button" :disabled="draft.source.clauses.length === 1" @click="draft.source.clauses.splice(i, 1)">移除此版条款</button></article>
           <button type="button" @click="draft.source.clauses.push({ id: '', locator: '', originalText: '' })">添加原条款</button>
         </template>
         <template v-else>
@@ -48,6 +48,7 @@
 <script setup lang="ts">
 import RequirementEvaluationPanel from './RequirementEvaluationPanel.vue'
 import RequirementCriterionEvaluation from './RequirementCriterionEvaluation.vue'
+import RequirementClauseTermsPanel from './RequirementClauseTermsPanel.vue'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { requirementApi, type RequirementBody, type RequirementCommand, type RequirementCreation, type RequirementCriterion, type RequirementOperationKind, type RequirementScope, type RequirementSnapshot } from '@/api/plm/engineeringRequirements'
 import type { EngineeringReference } from '@/api/plm/engineeringProducts'

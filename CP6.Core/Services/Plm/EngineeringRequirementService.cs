@@ -99,6 +99,7 @@ public sealed partial class EngineeringRequirementService(CP6Context db,Operatio
             var s=new EngineeringRequirementStoreV1(db);await s.Fence(true,t);
             if(original!=null)return await Disclose(a,s,original,c.OperationId,bytes,t);
             a.RequireRequirementFields(true);OperationsAccessV1.NewEngineeringRequirementBinding? ticket=null;
+            var confirmsSource=c.Body.Source?.Clauses.Any(x=>x.Terms!=null)==true;
             if(c.Action=="CREATE")ticket=await a.BeginEngineeringRequirementCreation(c.ObjectId,c.ExpectedAuthorityVersion,c.DepartmentId,t);
             else
             {
@@ -107,9 +108,16 @@ public sealed partial class EngineeringRequirementService(CP6Context db,Operatio
                 await RequirementEvaluationStoreV1.GuardRevision(db,c.ObjectId,t);
                 // Editing cannot remove a revoked dependency to disclose or launder its former original.
                 await Observe(a,s,old,t);
+                confirmsSource|=old.Body.Source?.Clauses.Any(x=>x.Terms!=null)==true;
             }
             await ValidateSources(a,s,c,t);var saved=await s.Append(c,a.ActorId,t);
             if(ticket!=null)await a.CompleteEngineeringRequirementCreation(ticket,t);
+            if(confirmsSource)
+            {
+                var sourceAuthority=await a.ActionAsync(OperationsOwnerV1.EngineeringRequirement,"source-confirm",t);
+                sourceAuthority.RequireRequirementFields(true);await sourceAuthority.RequireEngineeringRequirement(c.ObjectId,t);
+                sourceAuthority.AtCommit(token=>sourceAuthority.RequireEngineeringRequirement(c.ObjectId,token));
+            }
             await Observe(a,s,saved,t);
             var result=new EngineeringRequirementResultV1(c.OperationId,saved.Body.Kind,c.ObjectId,saved.Reference.Version,saved.Reference.Digest);
             await journal.Store(EngineeringRequirementValuesV1.Owner,EngineeringRequirementValuesV1.Contract,c.OperationId,a.ActorId,bytes,result,[c.ObjectId],

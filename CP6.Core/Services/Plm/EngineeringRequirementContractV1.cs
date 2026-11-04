@@ -4,7 +4,8 @@ using CP6.Core.Services.Erp;
 namespace CP6.Core.Services.Plm;
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
-public sealed record RequirementClauseV1(string Id, string OriginalText, string Locator);
+public sealed record RequirementClauseV1(string Id, string OriginalText, string Locator,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] RequirementClauseTermsV1? Terms = null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record RequirementSourceV1(string Kind, string OriginDescription, string SourceLabel,
     string AcquisitionBasis, RequirementClauseV1[] Clauses);
