@@ -25,7 +25,7 @@
         <button type="button" :disabled="draft.members.length < 2" @click="addConflict">登记冲突</button>
         <label>保存原因<textarea v-model="reason" aria-label="保存原因" required maxlength="8000" /></label><button>{{ current ? '保存后继版本' : '保存草稿' }}</button>
       </fieldset></form>
-      <RequirementSetReviewPanel v-if="current && scope" :requirement-set="current" :scope="scope" :disabled="locked" />
+      <RequirementSetReviewPanel v-if="current && scope" :requirement-set="current" :scope="scope" :disabled="locked" :initial-submission="current.reference.id.toLowerCase() === requirementSetId?.toLowerCase() ? reviewSubmission : undefined" />
       <details v-if="current"><summary>历史版本（只读）</summary><label>版本<input v-model="historyVersion" aria-label="历史版本" /></label><button :disabled="busy" @click="readHistory">读取历史</button><article v-if="history"><p>{{ history.body.name }} · {{ history.reference.version }} · {{ history.body.scope }}</p><p v-for="m in history.body.members" :key="m.requirement.id">{{ m.requirement.id }} · 版本 {{ m.requirement.version }} · {{ m.disposition }}</p><p>保存原因：{{ history.reason }} · {{ history.recordedAt }}</p></article></details>
     </section>
   </main>
@@ -40,6 +40,7 @@ import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
 import { usePermissionStore } from '@/stores/permission'
 import RequirementSetReviewPanel from './RequirementSetReviewPanel.vue'
+const props = defineProps<{ requirementSetId?: string; reviewSubmission?: string }>()
 const permission = usePermissionStore(), canRead = computed(() => permission.loaded && permission.has('plm-requirement-set:query')), canAdd = computed(() => canRead.value && permission.has('plm-requirement-set:add')), canEdit = computed(() => canRead.value && permission.has('plm-requirement-set:edit'))
 const busy = ref(false), error = ref(''), notice = ref(''), scope = ref<RequirementSetScope | null>(null), pending = ref<PendingRequirementSet | null>(null), locked = computed(() => busy.value || !!pending.value)
 const search = ref(''), page = ref(1), rows = ref<RequirementSetSnapshot[]>([]), current = ref<RequirementSetSnapshot | null>(null), creation = ref<RequirementSetCreation | null>(null), draft = ref<RequirementSetBody | null>(null), objectId = ref(''), department = ref(''), reason = ref('')
@@ -58,7 +59,15 @@ async function run(action: (check: () => void) => Promise<void>) {
   catch (e: any) { try { check(); if (e?.response?.status === 403) clearPrivate(); const message = e?.response?.data?.message || e?.message || ''; error.value = /^[A-Z][A-Z0-9_]+$/.test(message) ? '无法完成，请核对准确版本、来源资格和当前权限。' : message || '暂时无法完成。' } catch { /* Obsolete identity response. */ } }
   finally { try { check(); syncPending(); busy.value = false } catch { if (live && epoch === generation) busy.value = false } }
 }
-async function reload() { await run(async check => { clearPrivate(); if (!permission.loaded) await permission.loadMyActions(); check(); if (!canRead.value) throw new Error('当前无权读取需求集。'); const s = requirementSetResponse(await requirementSetApi.scope()); check(); scope.value = s; const values = requirementSetResponse(await requirementSetApi.list(search.value, page.value)); check(); rows.value = values }) }
+async function reload() { await run(async check => {
+  clearPrivate(); if (!permission.loaded) await permission.loadMyActions(); check(); if (!canRead.value) throw new Error('当前无权读取需求集。')
+  const s = requirementSetResponse(await requirementSetApi.scope()); check(); scope.value = s
+  if (props.requirementSetId) {
+    const value = requirementSetResponse(await requirementSetApi.read(props.requirementSetId)); check(); rows.value = [value]; loadEditor(value)
+  } else {
+    const values = requirementSetResponse(await requirementSetApi.list(search.value, page.value)); check(); rows.value = values
+  }
+}) }
 async function list(p: number) { await run(async check => { rows.value = []; const values = requirementSetResponse(await requirementSetApi.list(search.value, p)); check(); rows.value = values; page.value = p }) }
 function loadEditor(value: RequirementSetSnapshot) { resetEditor(); current.value = value; objectId.value = value.reference.id; draft.value = copy(value.body); originals.value = (value.memberStatus || []).map(x => x.requirement) }
 async function open(value: RequirementSetSnapshot) { await run(async check => { resetEditor(); const v = requirementSetResponse(await requirementSetApi.read(value.reference.id)); check(); loadEditor(v) }) }
@@ -83,6 +92,7 @@ async function save() { await run(async check => { if (!draft.value || !scope.va
 async function recover(close: boolean) { await run(async check => { if (!scope.value) return; const result = await resolveRequirementSet(scope.value, close, check); check(); if (result.result) { const v = requirementSetResponse(await requirementSetApi.read(result.result.objectId)); check(); loadEditor(v) } notice.value = result.state === 'UNKNOWN' ? '原结果仍未确认，请保留记录。' : '原操作已确认。' }) }
 async function readHistory() { await run(async check => { if (!current.value) return; history.value = null; const v = requirementSetResponse(await requirementSetApi.read(current.value.reference.id, historyVersion.value)); check(); history.value = v }) }
 function invalidate() { generation++; busy.value = false; error.value = ''; clearPrivate() }
+watch(() => props.requirementSetId, () => { invalidate(); if (authenticationCanRead()) void reload() })
 watch(() => [permission.loaded, canRead.value], () => { if (!canRead.value) invalidate() })
 onMounted(() => { window.addEventListener(AUTH_EVENT, invalidate); void reload() })
 onBeforeUnmount(() => { live = false; generation++; window.removeEventListener(AUTH_EVENT, invalidate) })

@@ -50,3 +50,38 @@ it('does not offer create when only query permission is present', async () => {
   f.denied = ['plm-requirement-set:add', 'plm-requirement-set:edit']; view = mount(Page); await flushPromises()
   expect(view.text()).not.toContain('新建需求集'); expect(f.creationContext).not.toHaveBeenCalled()
 })
+
+const set = (n: number) => ({ tenantId: scope.tenantId, reference: { owner: 'Main.Plm.RequirementSet.v1', id: id(n), version: '1', digest: 'b'.repeat(64) }, body: { kind: 'SET', name: `Set ${n}`, scope: 'Scope', completenessBasis: 'Complete', members: [], conflicts: [] }, missing: [], memberStatus: [] })
+const reviewStub = { props: ['requirementSet', 'scope', 'disabled', 'initialSubmission'], template: '<div data-testid="review" :data-submission="initialSubmission" :data-object="requirementSet.reference.id" />' }
+async function detail(n: number, submission: number) {
+  view = mount(Page, { props: { requirementSetId: id(n), reviewSubmission: id(submission) }, global: { stubs: { RequirementSetReviewPanel: reviewStub } } }); await flushPromises()
+}
+it('opens the linked requirement set without depending on its catalog page and retains the exact review on refresh', async () => {
+  f.read.mockResolvedValue(ok(set(10))); await detail(10, 20)
+  expect(f.read).toHaveBeenCalledWith(id(10)); expect(f.list).not.toHaveBeenCalled()
+  expect(view!.get('[aria-label="需求集名称"]').element).toHaveProperty('value', 'Set 10')
+  expect(view!.get('[data-testid="review"]').attributes('data-submission')).toBe(id(20))
+  await click('刷新'); expect(f.read).toHaveBeenCalledTimes(2)
+  expect(view!.get('[data-testid="review"]').attributes('data-object')).toBe(id(10))
+})
+it('drops an old deep-link response when a different requirement set replaces the route', async () => {
+  let finish!: (value: ReturnType<typeof ok>) => void
+  f.read.mockReturnValueOnce(new Promise(resolve => { finish = resolve })).mockResolvedValueOnce(ok(set(11)))
+  await detail(10, 20); await view!.setProps({ requirementSetId: id(11), reviewSubmission: id(21) }); await flushPromises()
+  expect(f.read).toHaveBeenNthCalledWith(2, id(11))
+  finish(ok(set(10))); await flushPromises()
+  expect(view!.get('[aria-label="需求集名称"]').element).toHaveProperty('value', 'Set 11')
+  expect(view!.get('[data-testid="review"]').attributes('data-submission')).toBe(id(21))
+})
+it('clears the previous linked requirement set when current read access is denied', async () => {
+  f.read.mockResolvedValueOnce(ok(set(10))).mockRejectedValueOnce({ response: { status: 403, data: { message: 'RESOURCE_FORBIDDEN' } } })
+  await detail(10, 20); expect(view!.find('[data-testid="review"]').exists()).toBe(true)
+  await view!.setProps({ requirementSetId: id(11), reviewSubmission: id(21) }); await flushPromises()
+  expect(view!.find('[data-testid="review"]').exists()).toBe(false); expect(view!.find('[aria-label="需求集名称"]').exists()).toBe(false)
+  expect(view!.get('[role="alert"]').text()).toContain('无法完成')
+})
+it('retains the exact review when the detail URL uses uppercase UUID spelling', async () => {
+  const value = set(10); value.reference.id = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'; f.read.mockResolvedValue(ok(value))
+  view = mount(Page, { props: { requirementSetId: value.reference.id.toUpperCase(), reviewSubmission: id(20) }, global: { stubs: { RequirementSetReviewPanel: reviewStub } } }); await flushPromises()
+  expect(view.get('[data-testid="review"]').attributes('data-submission')).toBe(id(20))
+})
