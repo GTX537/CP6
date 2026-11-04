@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 2026-11-04：W301审计与BUG751优先
+
+W301原WP12-19审计发现BUG751：ITER普通BLOCKED重试只锁实际人，未锁原业务grant/授权方式；原卡暂不关闭，下一独立BUG修复后重新核销。 [审计报告](../development/evidence/W301-01/DELIVERY.md)。
+
+原375仍30DONE/2IN_PROGRESS/343PLANNED；原59局部6闭环/53余项，125完整目标及247正式验收不变。五Owner撤回已采用，当前明确原卡缺口为BUG751；版模实物终结、规则激活属于后续业务卡。 24h目标继续；原卡仍未完成，BUG独立分支先复现修复后再核销。分支/工作区/席位以wave301-final-verification.json核对。
+
 ## 2026-11-04：24小时目标 / W300库位规则审批撤回
 
 W300：库位规则实际Owner可信审批撤回、原提案共同控制版本/应用竞争、独立业务委派与BLOCKED明确接续、原命令和真实页面恢复完成本地验收；旧提案入口、原件和APPROVED_PENDING未激活边界保留。 [交付](../development/evidence/W300-01/DELIVERY.md)。
