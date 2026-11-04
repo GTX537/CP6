@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W298](evidence/W298-01/DELIVERY.md)需求集真实Owner撤回本地验收完成；24h目标继续，远端采用/finish后独立修BUG744，再W299。
+> 当前：[W299](evidence/W299-01/DELIVERY.md)版模真实审批撤回本地验收完成；24h目标继续，远端采用/finish后独立修BUG747，再W300。
+
+> 历史快照：[W298](evidence/W298-01/DELIVERY.md)需求集真实Owner撤回本地验收完成；24h目标继续，远端采用/finish后独立修BUG744，再W299。
 
 > 历史快照：[W297](evidence/W297-01/DELIVERY.md)DOC实际Owner可信撤回本地验收完成；新24h单人目标继续，远端采用/finish后进入W298。
 
