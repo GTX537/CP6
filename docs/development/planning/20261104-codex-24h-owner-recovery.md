@@ -79,3 +79,11 @@ W298从`afc3cc08a081f2affc3f7033b758e312838169d6`开工，只有本对话写入�
 ## W298交付与实测插入项
 
 需求集实际撤回/精确grant/共同CAS、前向采用和真实工作台恢复通过，累计有效采样4849秒。最终生命周期/本窗耗时见wave298-final-verification.json。浏览器发现既有直达链接缺陷[BUG744](https://github.com/GTX537/CP6/issues/744)，在W298后、W299前独立修复，初估0.5–1.25h低置信；活动BUG状态仅以Issue为准。余下队列继续，非三天完成。
+
+## W299开工：按实际版模Owner收敛范围
+
+W298 Main745/Handoff275已核远端、分支清理及官方finish，实测1377秒；BUG744 Main746闭环，实测473秒，所有席位先释放后复用。本轮累计有效采样5776秒，7200秒统一校准尚未到点。W298低于1.25–2.5h原估计，BUG744低于0.5–1.25h，后续以实际调用链继续修正，不把短任务冒称三天。
+
+当前ToolApplicationOwnerV2/ReceiptStoreV2只允许BLOCKED/STALE/CONFLICT，真实跨Owner义务关闭参加者未实现，不能终结报废。W299令实际申请/送审control被withdraw与现应用读取/最终核对共同采用，撤回后迟到批准变STALE，BLOCKED接续保原receipt链。没有实际APPLIED正例可借用，本窗不得伪造库存/财务效果或把其他Owner的APPLIED证据推广到版模。原请求、停用、现作业和未知义务保持；该剩余继续留在原业务卡，WP12-19整卡待后续逐项核销。
+
+W299任务清单见[执行窗口](../dispatch/20261104-wave299/README.md)。基线`1a4e6edac635000951eb7b4ec5d12edecd850691`，Handoff`f35bcb1e73ceb60f19e5057a459ca80e9e666a3e`。本对话单人，固定DEV1/DEV2，无新物理目录。
