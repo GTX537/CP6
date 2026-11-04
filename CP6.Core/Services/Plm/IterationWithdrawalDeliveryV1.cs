@@ -157,7 +157,7 @@ public sealed class IterationWithdrawalDeliveryV1(CP6Context db, ScopeAuthorizat
             var subject=root.GetProperty("subject");Shape(subject,"businessOwner","bizType","subjectKind","subjectId","businessRevision","contentDigest");Digest(subject.GetProperty("contentDigest"));
             var value=root.Deserialize<ApprovalWithdrawContextV2>(ApprovalBindingOwnerV2.Json)!;
             if(value.SubmissionId!=e.SubmissionId || value.Subject!=e.Fact.Subject || value.PolicyRef!=e.Fact.PolicyRef
-                || value.WorkflowState is not("RUNNING" or "SUSPENDED" or "APPROVED" or "REJECTED" or "WITHDRAWN" or "NOT_STARTED")
+                || value.WorkflowState is not("RUNNING" or "SUSPENDED" or "RETURNED" or "APPROVED" or "REJECTED" or "WITHDRAWN" or "NOT_STARTED")
                 || value.DisabledReasons==null || value.DisabledReasons.Any(string.IsNullOrWhiteSpace)
                 || value.CanRelayWithdraw && value.DisabledReasons.Length!=0)throw new JsonException();
             ApprovalWithdrawalWireV2.RowVersion(value.SubmissionRowVersion);return value.SubmissionRowVersion;
