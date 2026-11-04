@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W299](evidence/W299-01/DELIVERY.md)版模真实审批撤回本地验收完成；24h目标继续，远端采用/finish后独立修BUG747，再W300。
+> 当前：[W300](evidence/W300-01/DELIVERY.md)库位规则真实审批撤回本地验收完成；约24h目标继续，远端采用/finish后W301整卡核销。
+
+> 历史快照：[W299](evidence/W299-01/DELIVERY.md)版模真实审批撤回本地验收完成；24h目标继续，远端采用/finish后独立修BUG747，再W300。
 
 > 历史快照：[W298](evidence/W298-01/DELIVERY.md)需求集真实Owner撤回本地验收完成；24h目标继续，远端采用/finish后独立修BUG744，再W299。
 

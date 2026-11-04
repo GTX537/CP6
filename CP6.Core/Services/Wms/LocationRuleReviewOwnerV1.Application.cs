@@ -26,10 +26,10 @@ public sealed record LocationRuleReviewDetailV1(LocationRuleReviewSubmissionV1 S
 public sealed partial class LocationRuleReviewOwnerV1
 {
     private sealed record ApplicationContext(Context Context,LocationRuleReviewStoreV1.SubmissionRow Submission,
-        LocationRuleReviewApplicationStoreV1 Store,LocationRuleReviewApplicationStoreV1.Source? Source,ApprovalApplicationReceiptV2? Receipt)
+        LocationRuleReviewApplicationStoreV1 Store,LocationRuleReviewApplicationStoreV1.Source? Source,ApprovalApplicationReceiptV2? Receipt,LocationRuleReviewControlStoreV1.Head Control)
     {
         internal string Etag=>"\"da1-"+ApprovalCanonicalV2.Hash(ApprovalCanonicalV2.Bytes(new{Context.Etag,Submission.Id,
-            Source?.OriginalHash,Receipt?.ReceiptId}))+"\"";
+            Source?.OriginalHash,Receipt?.ReceiptId,Control.RowVersion}))+"\"";
     }
     private async Task<ApplicationContext> ApplicationContextAsync(OperationsAccessV1 a,Guid locationRule,Guid submission,bool write,CancellationToken ct)
     {
@@ -38,7 +38,8 @@ public sealed partial class LocationRuleReviewOwnerV1
         await locationRules.ReviewSource(a,c.Store.View(row).LocationRule,false,ct);
         var store=new LocationRuleReviewApplicationStoreV1(db,scope);await store.Ready(ct);
         var source=await store.ForSubmission(submission,ct);
-        return new(c,row,store,source,source==null?null:await store.Latest(source.Stream,ct));
+        var control=new LocationRuleReviewControlStoreV1(db,Environment);await control.Ready(ct);
+        return new(c,row,store,source,source==null?null:await store.Latest(source.Stream,ct),await control.Read(submission,ct));
     }
     private async Task<LocationRuleApplicationContextV1> ApplicationView(ApplicationContext c,CancellationToken ct)
         =>new(c.Submission.LocationRule,c.Submission.Id,c.Etag,c.Source==null?"NOT_RECEIVED":"RECEIVED",c.Source?.Stream,
@@ -103,7 +104,7 @@ public sealed partial class LocationRuleReviewOwnerV1
             var source=c.Source??throw Error("LOCATION_RULE_DECISION_NOT_RECEIVED",422);
             ApprovalApplicationReceiptV2 receipt;
             if(c.Receipt is {Application:"APPLIED" or "STALE"})receipt=c.Receipt;
-            else if(c.Context.LocationRule.State!="SUBMITTED" || c.Context.LocationRule.ActiveSubmissionId!=c.Submission.Id || c.Context.LocationRule.Reference!=c.Context.Store.View(c.Submission).LocationRule)
+            else if(c.Control.State!="IN_REVIEW" || c.Context.LocationRule.State!="SUBMITTED" || c.Context.LocationRule.ActiveSubmissionId!=c.Submission.Id || c.Context.LocationRule.Reference!=c.Context.Store.View(c.Submission).LocationRule)
                 receipt=await c.Store.Append(source,a.ActorId,command.OperationId,c.Receipt,"STALE","RULE_REVIEW_ROUND_NOT_CURRENT",
                     c.Context.LocationRule.Reference.Version,new{command,state=c.Context.LocationRule.State,source.OriginalHash},null,t);
             else

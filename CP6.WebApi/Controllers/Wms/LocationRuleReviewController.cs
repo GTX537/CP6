@@ -1,3 +1,4 @@
+using CP6.Core.Services.Oa;
 using CP6.Core.Services.Wms;
 using CP6.WebApi.Controllers.Erp;
 using Microsoft.AspNetCore.Authorization;
@@ -29,6 +30,41 @@ public sealed class LocationRuleReviewController(LocationRuleReviewOwnerV1 owner
     public async Task<IActionResult> Close(Guid id,CancellationToken ct)=>Result(await owner.OperationAsync(id,true,ct));
     [HttpGet("{id:guid}/review-submissions/{submission:guid}")]
     public async Task<IActionResult> Submission(Guid id,Guid submission,CancellationToken ct)=>Result(await owner.SubmissionAsync(id,submission,ct));
+    [HttpGet("{id:guid}/review-submissions/{submission:guid}/withdraw-context")]
+    public async Task<IActionResult> WithdrawContext(Guid id,Guid submission,CancellationToken ct)=>Result(await owner.WithdrawalContextAsync(id,submission,ct));
+    [HttpPost("{id:guid}/review-submissions/{submission:guid}/withdraw")]
+    public async Task<IActionResult> Withdraw(Guid id,Guid submission,[FromBody]ApprovalUserWithdrawV2 input,CancellationToken ct)
+    {
+        var value=await owner.WithdrawAsync(id,submission,Request.Headers.IfMatch.ToString(),input,ct,ActingAs());
+        return value.State=="CONFLICT"?Conflict(new{code=0,data=value}):Result(value);
+    }
+    [HttpPost("{id:guid}/review-submissions/{submission:guid}/withdrawals/{previous:guid}/reauthorize")]
+    public async Task<IActionResult> ReauthorizeWithdrawal(Guid id,Guid submission,Guid previous,[FromBody]ApprovalUserWithdrawV2 input,CancellationToken ct)
+    {
+        var value=await owner.ReauthorizeWithdrawalAsync(id,submission,previous,Request.Headers.IfMatch.ToString(),input,ct,ActingAs());
+        return value.State=="CONFLICT"?Conflict(new{code=0,data=value}):Result(value);
+    }
+    [HttpGet("{id:guid}/review-submissions/{submission:guid}/business-grants")]
+    public async Task<IActionResult> BusinessGrants(Guid id,Guid submission,CancellationToken ct)=>Result(await owner.BusinessGrantsAsync(id,submission,ct));
+    [HttpGet("{id:guid}/review-business-delegates")]
+    public async Task<IActionResult> BusinessDelegates(Guid id,CancellationToken ct)=>Result(await owner.BusinessDelegatesAsync(id,ct));
+    [HttpPost("{id:guid}/review-business-grants")]
+    public async Task<IActionResult> BusinessGrant(Guid id,[FromBody]LocationRuleBusinessGrantCommandV1 input,CancellationToken ct)
+        =>Result(await owner.GrantBusinessAsync(id,input,ActingAs(),ct));
+    [HttpGet("review-business-grant-operations/{id:guid}")]
+    public async Task<IActionResult> BusinessGrantOperation(Guid id,CancellationToken ct)=>Result(await owner.BusinessGrantOperationAsync(id,false,ct));
+    [HttpPost("review-business-grant-operations/{id:guid}/close")]
+    public async Task<IActionResult> CloseBusinessGrant(Guid id,CancellationToken ct)=>Result(await owner.BusinessGrantOperationAsync(id,true,ct));
+    private Guid? ActingAs()
+    {
+        var raw=Request.Headers["X-Acting-As"].ToString();if(raw.Length==0)return null;
+        if(Guid.TryParseExact(raw,"D",out var id)&&id!=Guid.Empty)return id;
+        throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1("ACT_AS_INVALID",422);
+    }
+    [HttpGet("review-withdrawal-operations/{id:guid}")]
+    public async Task<IActionResult> WithdrawalOperation(Guid id,CancellationToken ct)=>Result(await owner.WithdrawalOperationAsync(id,false,ct));
+    [HttpPost("review-withdrawal-operations/{id:guid}/close")]
+    public async Task<IActionResult> CloseWithdrawal(Guid id,CancellationToken ct)=>Result(await owner.WithdrawalOperationAsync(id,true,ct));
     [HttpPost("{id:guid}/review-binding")]
     public async Task<IActionResult> Apply(Guid id,[FromBody]LocationRuleApplicationCommandV1 input,CancellationToken ct)
         =>Result(await owner.ApplyAsync(id,Request.Headers.IfMatch.ToString(),input,ct));

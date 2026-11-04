@@ -61,7 +61,19 @@ public sealed partial class LocationRuleReviewOwnerV1
         var access=new OperationsAccessV1(db,owner,authority,storedSubjectSource:Current);
         var c=await Prepare(access,row.LocationRule,false,ct);
         var view=store.View(row);await locationRules.ReviewSource(access,view.LocationRule,true,ct);
-        RequireActive(c.LocationRule,row.Id);await RequirePolicy(c,view.Policy,ct);await ValidateParticipant(access,row.Actor,ct);
+        // A trusted withdrawal may precede intake. Preserve the original submitted identity;
+        // its current Owner fact is required before admitting a withdrawn proposal for Tx W.
+        if(c.LocationRule.State=="WITHDRAWN"&&c.LocationRule.ActiveSubmissionId==row.Id)
+        {
+            if(!await db.Database.SqlQuery<bool>($"""
+                SELECT EXISTS(SELECT FROM cp6_location_rule_review_control_v1.withdrawals w JOIN cp6_location_rule_v1.proposals p
+                  ON p.tenant_id=w.tenant_id AND p.id=w.location_rule_id
+                  WHERE w.environment_id={Environment} AND w.tenant_id={db.CurrentTenantId} AND w.submission_id={row.Id}
+                    AND w.after_version=int8send(p.revision)) AS "Value"
+                """).SingleAsync(ct))throw Error("RULE_REVIEW_ROUND_NOT_CURRENT",409);
+        }
+        else RequireActive(c.LocationRule,row.Id);
+        await RequirePolicy(c,view.Policy,ct);await ValidateParticipant(access,row.Actor,ct);
         return new(row.Id,Json(new{provider=SubmissionOwner,row.Id,row.LocationRule,row.Actor,row.Digest,
             originalAuthorization=row.Authorization,currentAuthorities=Witnesses(access),policy=view.Policy,original.Subject}));
     }

@@ -872,6 +872,10 @@ builder.Services.AddSingleton<CP6.Core.Services.Wms.ILocationRuleReceiptChainTra
     builder.Configuration.GetSection("LocationRuleReviewReceiptRecovery").Get<CP6.WebApi.Services.ApprovalDecisionDeliveryOptionsV2>()??new(),crmOidc,
     sp.GetRequiredService<CP6.WebApi.Services.ApprovalFactReceiverRegistryV2>(),builder.Environment.IsDevelopment()));
 builder.Services.AddScoped<CP6.Core.Services.Wms.LocationRuleDecisionDeliveryV1>();
+builder.Services.AddSingleton<CP6.Core.Services.Wms.ILocationRuleWithdrawalTransportV1>(sp=>new CP6.WebApi.Services.LocationRuleWithdrawalTransportV1(
+    builder.Configuration.GetSection("LocationRuleReviewWithdrawalDelivery").Get<CP6.WebApi.Services.ToolApprovalDeliveryOptionsV1>()??new(),crmOidc,
+    sp.GetRequiredService<CP6.WebApi.Services.ApprovalIntakeRegistryV2>(),builder.Environment.IsDevelopment()));
+builder.Services.AddScoped<CP6.Core.Services.Wms.LocationRuleWithdrawalDeliveryV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.LocationRuleApplicationDeliveryV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.LocationRuleReceiptRecoveryV1>();
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.LocationRuleReviewPipelineWorkerV1>();
