@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W311](evidence/W311-01/DELIVERY.md)主体逐来源清单/分类；正常采用与finish后进入W312，24h单人目标继续。
+> 当前：[W312](evidence/W312-01/DELIVERY.md)主体持久导出/当前下载；正常采用与finish后W313，24h单人目标继续。
+
+> 历史快照：[W311](evidence/W311-01/DELIVERY.md)主体逐来源清单/分类；正常采用与finish后进入W312，24h单人目标继续。
 
 > 历史快照：[W309](evidence/W309-01/DELIVERY.md)准确后继/实际ITER影响；两仓采用/finish后核准W311，24h单人目标继续。
 

@@ -13,6 +13,7 @@
         </tr>
       </tbody>
     </table>
+    <p v-if="notRequested.length">本次未申请的来源：{{ notRequested.map(x => sourceName(x.source)).join('、') }}。未读取这些来源的资料。</p>
     <p>仍有 {{ unknown.length }} 个来源尚未确认主体归属或尚未接入导出，包括{{ missingNames.join('、') }}。</p>
     <p>密码、令牌与认证材料不导出；未分类的嵌套内容和其他字段已排除。完整来源及字段说明随文件提供。</p>
     <details>
@@ -28,6 +29,7 @@ import type { SubjectExportManifest } from '@/api/platform/gdpr'
 const props = defineProps<{ manifest: SubjectExportManifest }>()
 const included = computed(() => props.manifest.sources.filter(x => x.status === 'INCLUDED'))
 const unknown = computed(() => props.manifest.sources.filter(x => x.status === 'UNKNOWN_SCOPE'))
+const notRequested = computed(() => props.manifest.sources.filter(x => x.reason === 'OUTSIDE_REQUESTED_SCOPE'))
 const ownerNames: Record<string, string> = {
   'MAIN.AUDIT': '旧操作日志', 'MAIN.UNCLASSIFIED_OWNER': '其他业务资料', 'MAIN.OA': '表单与审批历史',
   'MAIN.PLM': '工程资料', 'MAIN.OPERATIONS': '业务操作原件', CRM: '客户关系资料',

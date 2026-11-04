@@ -36,20 +36,12 @@ public class GdprController : ControllerBase
         }
     }
 
-    /// <summary>导出单数据主体（剔密钥）。用户不存在 → E-SEC-032。</summary>
+    /// <summary>Retired direct subject export; purpose, recipient and current artifact download are required.</summary>
     [HttpGet("export/subject/{userId:guid}")]
-    public async Task<IActionResult> ExportSubject(Guid userId)
+    public IActionResult ExportSubject(Guid userId)
     {
         Response.Headers.CacheControl = "no-store";
-        try
-        {
-            var stream = await _svc.ExportSubjectAsync(userId);
-            return File(stream, "application/json", $"subject-{userId}-{DateTime.Now:yyyyMMdd}.json");
-        }
-        catch (InvalidOperationException ex) when (ex.Message == "E-SEC-032")
-        {
-            throw new BizException(ex.Message);   // E-SEC-032
-        }
+        return StatusCode(410,new {code="PRIVACY_USE_DURABLE_EXPORT"});
     }
 
     /// <summary>擦除单数据主体（匿名化）。confirm!=true → E-SEC-038；平台超管/最后超管 → E-SEC-036/037。</summary>

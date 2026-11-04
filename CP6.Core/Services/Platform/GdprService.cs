@@ -93,54 +93,9 @@ public class GdprService : IGdprService
 
     public async Task<Stream> ExportSubjectAsync(Guid userId)
     {
-        var readStartedAtUtc = DateTime.UtcNow;
-        var user = await _db.Sys_Users.IgnoreQueryFilters().AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId)
-            ?? throw new InvalidOperationException("E-SEC-032");
-
-        var userReadCompletedAtUtc = DateTime.UtcNow;
-        // The selected subject determines scope; the platform operator may belong to another tenant.
-        var securityStarted = DateTime.UtcNow;
-        var securityLogs = await _db.Sys_SecurityLogs.IgnoreQueryFilters().AsNoTracking()
-            .Where(l => l.TenantId == user.TenantId && l.UserId == user.Id).OrderBy(l => l.CreatedAt).ThenBy(l => l.Id).ToListAsync();
-        var securityCompleted = DateTime.UtcNow;
-        var rolesStarted = DateTime.UtcNow;
-        var roleAssignments = await _db.Sys_UserRoles.IgnoreQueryFilters().AsNoTracking()
-            .Where(r => r.TenantId == user.TenantId && r.UserId == user.Id).OrderBy(r => r.RoleId).ThenBy(r => r.Id).ToListAsync();
-        var readCompletedAtUtc = DateTime.UtcNow;
-        var manifest = SubjectExportCatalogV1.Build(_db, user.TenantId, user.Id,
-            SubjectExportCatalogV1.Included<Sys_User>("MAIN.IDENTITY", 1, readStartedAtUtc, userReadCompletedAtUtc, SubjectExportCatalogV1.UserFields, "STABLE_USER_ID"),
-            SubjectExportCatalogV1.Included<Sys_SecurityLog>("MAIN.SECURITY", securityLogs.Count, securityStarted, securityCompleted, SubjectExportCatalogV1.SecurityFields),
-            SubjectExportCatalogV1.Included<Sys_UserRole>("MAIN.AUTHORIZATION", roleAssignments.Count, rolesStarted, readCompletedAtUtc, SubjectExportCatalogV1.RoleFields));
-        var package = new
-        {
-            user = SubjectExportCatalogV1.Project(user, SubjectExportCatalogV1.UserFields),
-            securityLogs = securityLogs.Select(row => SubjectExportCatalogV1.Project(row, SubjectExportCatalogV1.SecurityFields)).ToArray(),
-            roleAssignments = roleAssignments.Select(row => SubjectExportCatalogV1.Project(row, SubjectExportCatalogV1.RoleFields)).ToArray(),
-            // Historical array retained; a missing stable subject key must never be represented as proven absence.
-            operLogs = Array.Empty<Dictionary<string, object?>>(),
-            exportedAt = readCompletedAtUtc,
-            manifest = JsonSerializer.SerializeToElement(manifest, SubjectExportCatalogV1.JsonOptions),
-            scope = new
-            {
-                version = "cp6.subject-export-scope.v2",
-                tenantId = user.TenantId,
-                subjectId = user.Id,
-                complete = false,
-                consistency = "SEPARATE_READS",
-                readStartedAtUtc,
-                readCompletedAtUtc,
-                user = new { status = "INCLUDED", selector = "STABLE_USER_ID" },
-                securityLogs = new { status = "INCLUDED", selector = "TARGET_TENANT_AND_STABLE_USER_ID" },
-                roleAssignments = new { status = "INCLUDED", selector = "TARGET_TENANT_AND_STABLE_USER_ID" },
-                operLogs = new { status = "UNKNOWN_SCOPE", reason = "STABLE_SUBJECT_ID_UNAVAILABLE" },
-                otherOwners = new { status = "UNKNOWN_SCOPE", reason = "SEE_PER_SOURCE_MANIFEST" },
-                fieldFiltering = "OWNER_EXPLICIT_PROJECTION; UNCLASSIFIED_CONTENT_EXCLUDED"
-            }
-        };
-
-        var stream = Serialize(package);
-        await AuditAsync(SecurityEventType.GdprSubjectExported, null, $"user={user.UserName}");
-        return stream;
+        var capture = await SubjectExportReaderV1.CaptureAsync(_db,userId,null,PrivacyExportOwnerV1.SourceCodes,CancellationToken.None);
+        await AuditAsync(SecurityEventType.GdprSubjectExported,null,$"user-id={userId:N}");
+        return new MemoryStream(capture.Bytes,false);
     }
 
     // ─────────────────────────── 擦除（单主体）───────────────────────────

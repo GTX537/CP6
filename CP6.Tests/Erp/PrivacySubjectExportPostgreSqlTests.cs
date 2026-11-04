@@ -84,7 +84,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     }
 
     [CurrentPermissionPostgresFact]
-    public async Task PrivacySubject_actual_HTTP_requires_current_platform_authority_and_delivers_manifest_without_cache()
+    public async Task PrivacySubject_retired_HTTP_preserves_current_platform_authority_and_never_returns_legacy_bytes()
     {
         await using var h=await Seed();
         h.Db.Sys_Users.Add(new(){UserName="privacy-backup-platform-admin",Password="simulated-unused-credential",IsPlatformAdmin=true,Enable=true});
@@ -93,10 +93,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await using var host=await AuthenticationApiProcess.Start(h.Db.Database.GetConnectionString()!,SetHostSettings());var cookies=await Login(host,h);
         using(var response=await host.Send(OperationsRequest(cookies,HttpMethod.Get,$"/api/platform/gdpr/export/subject/{h.User}")))
         {
-            Assert.Equal(HttpStatusCode.OK,response.StatusCode);Assert.True(response.Headers.CacheControl!.NoStore);
-            using var doc=JsonDocument.Parse(await response.Content.ReadAsStringAsync());
-            Assert.Equal(h.User,doc.RootElement.GetProperty("manifest").GetProperty("subjectId").GetGuid());
-            Assert.Equal("PARTIAL",doc.RootElement.GetProperty("manifest").GetProperty("state").GetString());
+            Assert.Equal(HttpStatusCode.Gone,response.StatusCode);Assert.True(response.Headers.CacheControl!.NoStore);
+            Assert.Contains("PRIVACY_USE_DURABLE_EXPORT",await response.Content.ReadAsStringAsync());
         }
         await h.Db.Sys_Users.Where(x=>x.Id==h.User).ExecuteUpdateAsync(s=>s.SetProperty(x=>x.IsPlatformAdmin,false));
         using var denied=await host.Send(OperationsRequest(cookies,HttpMethod.Get,$"/api/platform/gdpr/export/subject/{h.User}"));

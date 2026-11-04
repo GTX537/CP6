@@ -162052,6 +162052,11 @@
       "date": "2026-11-04",
       "change": "W311完整核销；W312持久导出/当前下载开工。",
       "evidence": "docs/development/evidence/W312-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-04",
+      "change": "W312完成Main主体持久导出：精确用途/来源/内部收件人、同事务原操作与独立载荷、当前分权下载及撤销、UNKNOWN原结果查询和迟到关闭；真实页面分开生成与下载。 原375=33DONE/2IN_PROGRESS/340PLANNED，原59=9闭环/50剩余，125目标/247正式验收不变。WP02-15仍余精确处置计划/独立批准/hold、逐Owner实际处置及UNKNOWN、tombstone与恢复、外部收件和通用FILE/CRM/备份适配、旧整租户导出及擦除入口采用。",
+      "evidence": "docs/development/evidence/W312-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -175095,12 +175100,12 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W311-01",
+        "window": "W312-01",
         "as_of": "2026-11-04",
         "classification": "IMPLEMENTED_PARTIAL_PENDING_REMOTE",
-        "report": "docs/development/evidence/W311-01/DELIVERY.md",
-        "delivered": "稳定subject目录身份修复已交付；CRM同意撤回和保留已有独立原生行为。 W302：实际FORM字段受控处置Owner、准确历史原件、独立当前读取/批准/留存/撤销/hold资格、原操作恢复和处理工作台完成本地业务验收。 W303：真实隐藏损失请求、合格处置事实到本人原生重基的准确一次消费，以及当前资格/政策/hold校验、原件留存和原命令恢复完成本地业务验收。 W311在实际主体导出中采用用户、安全事件及稳定角色关联的显式字段投影、逐来源Manifest、未知覆盖与排除说明；页面展示真实部分覆盖，缺源直接失败。",
-        "remaining": "持久导出/当前下载、用途/接收方/批准、逐Owner处置/hold/UNKNOWN/墓碑恢复与各域真实主体适配仍未完成。",
+        "report": "docs/development/evidence/W312-01/DELIVERY.md",
+        "delivered": "稳定subject目录身份修复已交付；CRM同意撤回和保留已有独立原生行为。 W302：实际FORM字段受控处置Owner、准确历史原件、独立当前读取/批准/留存/撤销/hold资格、原操作恢复和处理工作台完成本地业务验收。 W303：真实隐藏损失请求、合格处置事实到本人原生重基的准确一次消费，以及当前资格/政策/hold校验、原件留存和原命令恢复完成本地业务验收。 W311在实际主体导出中采用用户、安全事件及稳定角色关联的显式字段投影、逐来源Manifest、未知覆盖与排除说明；页面展示真实部分覆盖，缺源直接失败。 W312完成Main主体持久导出：精确用途/来源/内部收件人、同事务原操作与独立载荷、当前分权下载及撤销、UNKNOWN原结果查询和迟到关闭；真实页面分开生成与下载。",
+        "remaining": "原375=33DONE/2IN_PROGRESS/340PLANNED，原59=9闭环/50剩余，125目标/247正式验收不变。WP02-15仍余精确处置计划/独立批准/hold、逐Owner实际处置及UNKNOWN、tombstone与恢复、外部收件和通用FILE/CRM/备份适配、旧整租户导出及擦除入口采用。",
         "evidence_refs": [
           "docs/development/evidence/W125-01/DELIVERY.md",
           "docs/development/evidence/W135-01/DELIVERY.md",
@@ -175108,7 +175113,8 @@
           "docs/development/evidence/W128-01/DELIVERY.md",
           "docs/development/evidence/W302-01/DELIVERY.md",
           "docs/development/evidence/W303-01/DELIVERY.md",
-          "docs/development/evidence/W311-01/DELIVERY.md"
+          "docs/development/evidence/W311-01/DELIVERY.md",
+          "docs/development/evidence/W312-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true
@@ -175191,6 +175197,13 @@
           "handoff_branch_deleted": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave311-final-verification.json"
         }
+      },
+      "wave312_durable_export": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W312-01/DELIVERY.md",
+        "scope": "W312完成Main主体持久导出：精确用途/来源/内部收件人、同事务原操作与独立载荷、当前分权下载及撤销、UNKNOWN原结果查询和迟到关闭；真实页面分开生成与下载。",
+        "validation": "14项独立PostgreSQL18场景（含实际认证HTTP、Chrome完整生成/恢复/下载/撤销及W311归属回归）、11项Vue/API行为、vue-tsc通过。",
+        "full_task_complete": false
       }
     },
     {
@@ -203624,7 +203637,7 @@
       "path": "docs/development/dispatch/20261104-wave312/README.md",
       "baseline_sha": "3a7109b9e59fa5bd2d11f986a404b9608cbeee14",
       "registered_at": "2026-11-04T11:20:17.276563+00:00",
-      "phase": "IMPLEMENTING",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -203650,17 +203663,17 @@
           "title": "持久主体导出与当前受控下载",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "IMPLEMENTING",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w312-01",
           "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
@@ -203668,14 +203681,33 @@
             "Main:privacy-export-schema",
             "Main:privacy-subject-export",
             "Main:platform-gdpr-view"
-          ]
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W312-01/DELIVERY.md",
+          "validation": "14项独立PostgreSQL18场景（含实际认证HTTP、Chrome完整生成/恢复/下载/撤销及W311归属回归）、11项Vue/API行为、vue-tsc通过。",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave312-final-verification.json"
+          },
+          "local_validation": "PASS_AFFECTED_SCOPE"
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "WP02-15/SYS-PRIV-01：用途/精确来源/内部收件人显式绑定，独立隐私导出Owner在PostgreSQL同事务保存原操作、最小回执、独立可处置载荷和必要审计；当前read与新export/download/revoke分权，权限共同门、过期/撤销和真实下载完整性，UNKNOWN只查原操作并可关闭未到达操作。实际页面先建制品后按当前权下载，身份分区仅保存操作键，旧主体直接导出入口明确退役。保持W311三个实际来源与未知Owner真实PARTIAL。无工程FILE假父引用；无跨CRM/备份完整性声明。"
+      "next_action": "W312正常采用/finish后W313精确处置计划/hold；24h继续。",
+      "lifecycle_snapshot": {
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_seat_released": false,
+        "main_branch_deleted": false,
+        "handoff_branch_deleted": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave312-final-verification.json"
+      }
     },
     "wave_history": [
       {
@@ -243180,8 +243212,8 @@
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
       "started_at": "2026-11-04T00:22:36+00:00",
-      "effective_seconds_recorded": 38169,
-      "timing_snapshot_at": "2026-11-04T11:20:17.276563+00:00",
+      "effective_seconds_recorded": 39425,
+      "timing_snapshot_at": "2026-11-04T11:41:53.538110+00:00",
       "timing_source": "Fresh goal.timeUsedSeconds snapshots; cross-check actual active segments and exclude interruptions. Previous-cycle time and inter-cycle gap never carried forward.",
       "next_reestimate_at_effective_seconds": 43200,
       "estimate_hours": [
@@ -244183,10 +244215,20 @@
           ],
           "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_AFTER_SOURCE_READ",
           "estimate_confidence": "LOW_ADMISSION_SOURCE_AUDIT_REQUIRED",
-          "state": "IN_PROGRESS",
+          "state": "VERIFYING",
           "scope_refinement": "Original WP02-15 remaining scope, following W302 actual disposition contract; re-read exact Owner sources/contracts/dependencies at admission and skip any then-completed behavior. Isolated PostgreSQL/simulated business data only; no existing-environment erasure, migration or deployment.",
           "started_at": "2026-11-04T11:20:17.276563+00:00",
-          "effective_start": 38169
+          "effective_start": 38169,
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W312-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave312-final-verification.json"
+          }
         },
         {
           "id": "W313-01",
@@ -244453,7 +244495,7 @@
           "historical_conflicts": "Preserved immutable; existing environments not inspected or migrated. Separate controlled forward recovery required for affected existing records."
         }
       ],
-      "next_priority": "W312 durable subject export/current download; W313–315 disposition/hold/tombstone; W310 at budget end",
+      "next_priority": "W313 exact disposition plan/approval/hold; W310 budget-end only.",
       "extra_bug_deliveries": [
         {
           "id": "BUG751",
