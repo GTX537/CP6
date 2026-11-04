@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## 2026-11-04：BUG751原授权连续性修复
+
+ITER普通BLOCKED应用重试采用原回执的实际人、委托人及准确业务grant版本；替换/修订grant或改变本人/受托方式必须显式再授权。 [修复与验证](../development/evidence/BUG-751/DELIVERY.md)。
+
+四项PG18原步骤修复前均失败（旧代码未拒绝换授权），修复后通过；覆盖grant撤销后替换、同grant版本修订、受托转本人、本人转受托，每项验证新明确授权连续回执、相同新授权后续真正APPLIED及旧回执/原结果不变。替换grant场景通过实际Main Program认证HTTP验证普通403与显式再授权成功。既有不同实际人必须显式再授权的PG回归通过。
+
+原卡待远端采用后的总控核销，24h目标继续W302。分支清理、工作区和席位以bug751-final-verification.json核对。
+
 ## 2026-11-04：W301审计与BUG751优先
 
 W301原WP12-19审计发现BUG751：ITER普通BLOCKED重试只锁实际人，未锁原业务grant/授权方式；原卡暂不关闭，下一独立BUG修复后重新核销。 [审计报告](../development/evidence/W301-01/DELIVERY.md)。

@@ -66,6 +66,19 @@ internal sealed class IterationReviewApplicationStoreV1(CP6Context db, ScopeAuth
             """).SingleOrDefaultAsync(ct);
         return row == null ? null : Parse(row);
     }
+    private sealed record ApplicationAuthority(Guid? Behalf,string? GrantBody);
+    internal async Task<(Guid Principal,IterationBusinessGrantV1? Grant)> OriginalAuthority(ApprovalApplicationReceiptV2 receipt,CancellationToken ct)
+    {
+        var audit=await db.Database.SqlQuery<string>($"""
+            SELECT audit_json AS "Value" FROM cp6_iteration_review_application_v1.receipts
+            WHERE environment_id={scope.EnvironmentId} AND tenant_id={db.CurrentTenantId} AND id={receipt.ReceiptId}
+            """).SingleAsync(ct);
+        // The immutable Owner audit is authoritative. Pre-delegation receipts have neither
+        // field and represent the original actual actor's own request.
+        var original=JsonSerializer.Deserialize<ApplicationAuthority>(audit,PersonalFormOwnerV2.Json)!;
+        return (original.Behalf??receipt.ActionActorId!.Value,original.GrantBody==null?null:
+            JsonSerializer.Deserialize<IterationBusinessGrantV1>(original.GrantBody,PersonalFormOwnerV2.Json)!);
+    }
     private static ApprovalApplicationReceiptV2 Parse(ReceiptRow row)
     {
         if (ApprovalCanonicalV2.Hash(row.Payload) != row.Hash) throw new ScopeAuthorizationExceptionV1("APPLICATION_RECEIPT_UNAVAILABLE");

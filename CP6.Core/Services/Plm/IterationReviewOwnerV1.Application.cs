@@ -72,13 +72,20 @@ public sealed partial class IterationReviewOwnerV1
             if(string.IsNullOrEmpty(etag))throw Error("IF_MATCH_REQUIRED",428);
             if(etag!=c.Etag || c.Receipt?.ReceiptId!=command.ExpectedReceiptId)throw Error("ITERATION_REVIEW_APPLICATION_CONTEXT_CHANGED",412);
             if(reauthorize&&(c.Receipt?.Application!="BLOCKED"||command.ExpectedReceiptId==null))throw Error("ITERATION_REVIEW_BLOCKED_RECEIPT_REQUIRED",409);
-            var grant=await BusinessAct(a,c.Context,c.Submission,"review-apply",behalf,t);
+            IterationBusinessGrantV1? originalGrant=null;
+            if(!reauthorize&&c.Receipt is {Application:"BLOCKED"} blockedReceipt)
+            {
+                if(blockedReceipt.ActionActorId!=a.ActorId)throw Error("ITERATION_REVIEW_ORIGINAL_APPLIER_REQUIRED",403);
+                var originalAuthority=await c.Store.OriginalAuthority(blockedReceipt,t);
+                if(originalAuthority.Principal!=(behalf??a.ActorId))throw Error("ITERATION_REVIEW_ORIGINAL_AUTHORITY_REQUIRED",403);
+                originalGrant=originalAuthority.Grant;
+            }
+            var grant=await BusinessAct(a,c.Context,c.Submission,"review-apply",behalf,t,originalGrant);
             a.RequireEngineeringIterationFields(true);
             var source=c.Source??throw Error("ITERATION_REVIEW_DECISION_NOT_RECEIVED",422);
             var receipt=c.Receipt;
             if(receipt?.Application is not("APPLIED" or "STALE" or "CONFLICT"))
             {
-                if(!reauthorize&&receipt is {Application:"BLOCKED"} && receipt.ActionActorId!=a.ActorId)throw Error("ITERATION_REVIEW_ORIGINAL_APPLIER_REQUIRED",403);
                 var current=c.Context.Iteration;var work=current.Body.Iteration!;var package=IterationReviewStoreV1.ReadPackage(c.Submission);
                 string state,outcome;IterationApprovalV1? applied=null;
                 if(c.Control?.Submission!=c.Submission.Id || c.Control.State!="IN_REVIEW" || work.CurrentReview?.SubmissionId!=c.Submission.Id
