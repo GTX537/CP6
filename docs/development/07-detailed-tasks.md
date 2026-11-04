@@ -2,7 +2,7 @@
 
 台账日期：2026-11-02。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
 
-全部已登记任务 375 项，已交付 30 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
+全部已登记任务 375 项，已交付 31 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
 
 任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)，分配步骤见[多对话协作](09-parallel-development.md)。所有状态/领取/证据只在JSON登记；未领取的候选不自动READY。
 
@@ -411,7 +411,7 @@
 | [WP12-16 连接器外呼的本地准入与稳定effectKey](../../docs/development/task-plans/WP12.md#wp12-16) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP12-07, WP12-13 | CODE / L | 未领取 |
 | [WP12-17 外部结果持久接收与本地流程/Owner应用](../../docs/development/task-plans/WP12.md#wp12-17) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP12-07, WP12-16 | CODE / L | 未领取 |
 | [WP12-18 连接器终态失败、错误边与原键恢复](../../docs/development/task-plans/WP12.md#wp12-18) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP12-17 | CODE / L | 未领取 |
-| [WP12-19 可信业务撤回与阻塞回执恢复](../../docs/development/task-plans/WP12.md#wp12-19) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP12-07 | CODE / L | 未领取 |
+| [WP12-19 可信业务撤回与阻塞回执恢复](../../docs/development/task-plans/WP12.md#wp12-19) | Main | 已交付 | S01-02, S02-00, WP02-10, WP02-13, WP12-07 | CODE / L | COORD |
 | [WP12-20 通知偏好、投递和已读水位](../../docs/development/task-plans/WP12.md#wp12-20) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-12, WP02-13, WP12-08, WP12-11 | CODE / M | 未领取 |
 
 ## WP13 空间设计与运营

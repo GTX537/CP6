@@ -72,6 +72,7 @@ const viewModules: Record<string, () => Promise<any>> = {
   '/oa/flow-admin':      () => import('@/views/oa/admin/FlowAdmin.vue'),          // OA Phase B 流程管理（菜单734）
   // ───── OA Phase C：表单目录 + 查询 + 设定（菜单 735/736/737）─────
   '/oa/form-catalog':    () => import('@/views/oa/catalog/FormCatalog.vue'),      // OA Phase C T16 填單目录（菜单735）
+  '/oa/form-dispositions': () => import('@/views/oa/dispositions/FormFieldDispositions.vue'),
   '/oa/form-search':     () => import('@/views/oa/query/FormQuery.vue'),          // OA Phase C T16 表單查詢（菜单736）
   '/oa/settings':        () => import('@/views/oa/settings/InboxSettings.vue'),  // OA Phase C T16 設定（菜单737）
   // ───── OA Phase C′：流程设计器（菜单 738）─────
