@@ -35,15 +35,18 @@
       <p v-else-if="canDecide">当前没有属于我的本次评审待办。</p>
       <h4>需求集 Owner 应用结果</h4>
       <p v-if="detail.application.application">{{ detail.application.application.approved ? '该准确版本已批准' : '该次评审已驳回' }} · {{ detail.application.application.appliedAt }}</p>
+      <p v-else-if="detail.application.receipt?.application === 'STALE'">本轮已撤回，迟到的审批决定已记为过期，未批准需求集。</p>
       <p v-else>{{ detail.application.decision ? `FLOW 最终决定：${detail.application.decision}；待需求集 Owner 应用。` : '尚未收到 FLOW 最终决定。' }}</p>
-      <form v-if="canApply && detail.application.decision && !detail.application.application" @submit.prevent="apply"><fieldset :disabled="locked">
+      <form v-if="canApply && detail.application.decision && !['APPLIED', 'STALE', 'CONFLICT'].includes(detail.application.receipt?.application ?? '')" @submit.prevent="apply"><fieldset :disabled="locked">
         <label>应用原因<textarea v-model="reason" aria-label="需求集批准应用原因" maxlength="4000" required /></label><button>应用需求集最终决定</button>
       </fieldset></form>
+      <RequirementSetReviewWithdrawalPanel :requirement-set-id="requirementSetId" :submission-id="submissionId" :scope="scope" :disabled="busy || disabled" @changed="reload" />
     </template>
   </section>
 </template>
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import RequirementSetReviewWithdrawalPanel from './RequirementSetReviewWithdrawalPanel.vue'
 import { requirementSetMissingText as missingText } from '@/api/plm/requirementSet'
 import { requirementSetReviewApi, type RequirementSetReviewTask, type ReviewDetail } from '@/api/plm/requirementSetReview'
 import type { RequirementSetScope } from '@/api/plm/requirementSet'
@@ -110,7 +113,7 @@ async function apply() {
   await run(async check => {
     await writeRequirementSetApplication(props.scope, props.requirementSetId, props.submissionId, () => { check(); if (!canApply.value) throw new Error('当前无批准应用权限。') },
       operationId => requirementSetReviewApi.apply(props.requirementSetId, value.application.etag, { operationId, submissionId: props.submissionId, expectedReceiptId: value.application.receipt?.receiptId ?? null, reason: message }))
-    check(); await load(check); reason.value = ''; notice.value = '需求集最终决定已应用。'; emit('changed')
+    check(); await load(check); reason.value = ''; notice.value = detail.value?.application.receipt?.application === 'APPLIED' ? '需求集最终决定已应用。' : '需求集应用结果已记录，请查看本轮状态。'; emit('changed')
   })
 }
 async function recover(close: boolean) { await run(async check => { const state = await resolveRequirementSetApproval(props.scope, close, check); check(); await load(check); notice.value = state === 'UNKNOWN' ? '原结果仍未知，请继续查询。' : state === 'CLOSED' ? '未提交原操作已结束。' : '原签署或应用结果已恢复。'; emit('changed') }) }

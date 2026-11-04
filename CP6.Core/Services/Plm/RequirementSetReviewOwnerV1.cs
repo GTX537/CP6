@@ -35,6 +35,7 @@ public sealed partial class RequirementSetReviewOwnerV1(CP6Context db, Operation
         var current=await originals.Read(id,null,ct);
         var observed=await requirementSets.ReviewSource(a,current.Reference,false,ct);
         var store=new RequirementSetReviewStoreV1(db,Environment);await store.Fence(write,ct);
+        await new RequirementSetReviewControlStoreV1(db,Environment).Ready(ct);
         return new(a,store,observed,await store.Policies(id,ct),await store.Submissions(id,ct));
     }
     public Task<RequirementSetReviewContextV1> ContextAsync(Guid id,CancellationToken ct=default)=>Authority.ExecuteAsync(
@@ -172,6 +173,7 @@ public sealed partial class RequirementSetReviewOwnerV1(CP6Context db, Operation
             var payload=ApprovalCanonicalV2.Bytes(e);var row=new SubmissionRow(submission,id,Revision(command.RequirementSet.Version),command.Policy.Id,c.Access.ActorId,
                 command.OperationId,intent,payload,ApprovalCanonicalV2.Hash(payload),authorization,packageBytes,packageDigest);
             await c.Store.Add(row,t);
+            await new RequirementSetReviewControlStoreV1(db,Environment).Begin(row,t);
             c.Access.AtCommit(async token=>{
                 var originals=new RequirementSetStoreV1(db);await originals.Fence(false,token);
                 var requirementSet=await originals.Read(id,null,token);
@@ -194,7 +196,8 @@ public sealed partial class RequirementSetReviewOwnerV1(CP6Context db, Operation
         foreach(var row in same)
         {
             var actual=await applications.Application(row.Id,ct);
-            if(actual==null || actual.Approved)throw Error("REQUIREMENT_SET_REVIEW_REJECTION_REQUIRED",409);
+            if(actual?.Approved==true || actual==null&&(await new RequirementSetReviewControlStoreV1(db,Environment).Read(row.Id,ct)).State!="WITHDRAWN")
+                throw Error("REQUIREMENT_SET_REVIEW_REJECTION_REQUIRED",409);
         }
     }
     private async Task<RequirementSetReviewResultV1> Disclose(Context c,Guid operation,MainOwnerOperationJournalV1.Original original,byte[]? input,CancellationToken ct)

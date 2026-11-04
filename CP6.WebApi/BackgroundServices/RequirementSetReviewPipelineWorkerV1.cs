@@ -18,6 +18,7 @@ internal sealed class RequirementSetReviewPipelineWorkerV1(IServiceScopeFactory 
             try
             {
                 await Task.Delay(TimeSpan.FromSeconds(5),ct);
+                await Run("withdrawal",async(sp,t,c)=>{var r=await sp.GetRequiredService<RequirementSetWithdrawalDeliveryV1>().RunAsync(t,c);return(r.State,r.EventId);},ct);
                 await Run("decision",async(sp,t,c)=>{var r=await sp.GetRequiredService<RequirementSetDecisionDeliveryV1>().RunAsync(t,c);return(r.State,r.EventId);},ct);
                 await Run("application-receipt",async(sp,t,c)=>{var r=await sp.GetRequiredService<RequirementSetApplicationDeliveryV1>().RunAsync(t,c);return(r.State,r.EventId);},ct);
                 await Run("receipt-recovery",async(sp,t,c)=>{var r=await sp.GetRequiredService<RequirementSetReceiptRecoveryV1>().RunAsync(t,c);return(r.State,r.ReceiptStreamId);},ct);

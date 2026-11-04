@@ -1,5 +1,13 @@
 # 当前待办与优先级
 
+## 2026-11-04：24小时目标 / W298需求集可信撤回
+
+W298：需求集实际Owner可信撤回、原审批应用共control、准确本轮业务委派/BLOCKED显式接续、不可变原结果及实际页面恢复完成本地验收。 [交付](../development/evidence/W298-01/DELIVERY.md)。
+
+11个不同的实际PostgreSQL18场景有成功执行，含认证HTTP、两个连接竞争/回滚、准确授权、前向采用和真实Chrome原结果恢复；22项受影响Vue行为及vue-tsc通过。逐方法复用有效来源，早期失败记录保留。
+
+原375保持30DONE/2IN_PROGRESS/343PLANNED；原59局部6闭环/53余项，125完整目标与247正式验收不变。WP12-19仍待版模处置、库位规则等实际Owner采用及整卡核销，本窗不关闭原卡。 正常远端采用/finish后先修[BUG744](https://github.com/GTX537/CP6/issues/744)，再W299。分支/工作区/席位以wave298-final-verification.json核销。
+
 ## 2026-11-04：新24小时目标 / W297 DOC可信撤回
 
 W297：DOC实际Owner可信撤回、同控制头应用互斥、独立本轮业务委派/BLOCKED明确接续、原结果恢复与运输已完成相关本地验收。 [交付](../development/evidence/W297-01/DELIVERY.md)。

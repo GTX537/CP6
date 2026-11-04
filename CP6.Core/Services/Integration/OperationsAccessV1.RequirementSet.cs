@@ -30,7 +30,7 @@ internal sealed partial class OperationsAccessV1
     internal IQueryable<RequirementSetHeadV1> RequirementSets()
     {
         if (authority.Source.TenantId != db.CurrentTenantId) throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503);
-        if (authority.Resource != OperationsOwnerV1.RequirementSet || authority.Action is not ("query" or "add" or "edit" or "review-policy" or "review-submit" or "review-decide" or "review-apply"))
+        if (authority.Resource != OperationsOwnerV1.RequirementSet || authority.Action is not ("query" or "add" or "edit" or "review-policy" or "review-submit" or "review-decide" or "review-apply" or "review-withdraw" or "review-delegate"))
             throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
         RequireRequirementSetFields(false); var rows = RequirementSetStoreV1.Heads(db);
         if (authority.Scope == 1) return rows.Where(row => row.CreatorId == ActorId);
