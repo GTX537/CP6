@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W312](evidence/W312-01/DELIVERY.md)主体持久导出/当前下载；正常采用与finish后W313，24h单人目标继续。
+> 当前：[W313](evidence/W313-01/DELIVERY.md)精确计划/独立审批/hold；按用户要求正常采用与finish后暂停，等待明确恢复，不启动W314。
+
+> 历史快照：[W312](evidence/W312-01/DELIVERY.md)主体持久导出/当前下载；正常采用与finish后W313，24h单人目标继续。
 
 > 历史快照：[W311](evidence/W311-01/DELIVERY.md)主体逐来源清单/分类；正常采用与finish后进入W312，24h单人目标继续。
 
