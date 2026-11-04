@@ -51,6 +51,7 @@
         <button :disabled="locked" @click="selectedSubmission = item.submissionId">查看此版本并评审</button>
       </article>
       <LocationRuleProfessionalReview v-if="selectedSubmission" :location-rule-id="locationRule.reference.id" :submission-id="selectedSubmission" :scope="scope" :disabled="locked" @changed="reload" />
+      <LocationRuleReviewWithdrawalPanel v-if="selectedSubmission" :location-rule-id="locationRule.reference.id" :submission-id="selectedSubmission" :scope="scope" :disabled="locked" @changed="reload" />
     </template>
   </section>
 </template>
@@ -65,6 +66,7 @@ import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { authenticationCanRead } from '@/auth/browserAuthentication'
 import { usePermissionStore } from '@/stores/permission'
 import LocationRuleProfessionalReview from './LocationRuleProfessionalReview.vue'
+import LocationRuleReviewWithdrawalPanel from './LocationRuleReviewWithdrawalPanel.vue'
 
 const props = defineProps<{ locationRule: LocationRuleReviewSource; scope: LocationRuleReviewScope; disabled?: boolean; initialSubmission?: string }>()
 const selectedSubmission = ref(props.initialSubmission ?? '')

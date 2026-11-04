@@ -1,5 +1,13 @@
 # 当前待办与优先级
 
+## 2026-11-04：24小时目标 / W300库位规则审批撤回
+
+W300：库位规则实际Owner可信审批撤回、原提案共同控制版本/应用竞争、独立业务委派与BLOCKED明确接续、原命令和真实页面恢复完成本地验收；旧提案入口、原件和APPROVED_PENDING未激活边界保留。 [交付](../development/evidence/W300-01/DELIVERY.md)。
+
+14项独立PostgreSQL18场景通过，含Main认证HTTP、真实Chrome和3项旧库位审批/提案竞争回归；18项受影响Vue/API行为测试、vue-tsc通过。相同未变输入直接复用，最终回归覆盖存储回执读取的内部契约精简。
+
+原375保持30DONE/2IN_PROGRESS/343PLANNED；原59局部6闭环/53余项，125完整目标0闭环及247正式NOT_RUN保持真实范围。WP12-19待W301逐项整卡核销，本窗不提前关闭原卡；规则激活/库存效果继续属于原业务任务。 正常远端采用/finish后W301逐项核销。分支/工作区/席位以wave300-final-verification.json核销。
+
 ## 2026-11-04：退回审批合法撤回 / BUG #747
 
 DOC、需求集和迭代的撤回运输接收合法RETURNED状态，仍在外部响应边界拒绝未知状态；原body、原命令、原人员和当前工作流版本保持不变。 [修复与证据](../development/evidence/BUG-747/DELIVERY.md)。

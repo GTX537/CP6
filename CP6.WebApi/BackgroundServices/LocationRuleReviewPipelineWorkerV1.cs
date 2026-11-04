@@ -18,6 +18,7 @@ internal sealed class LocationRuleReviewPipelineWorkerV1(IServiceScopeFactory sc
             try
             {
                 await Task.Delay(TimeSpan.FromSeconds(5),ct);
+                await Run("withdrawal",async(sp,t,c)=>{var r=await sp.GetRequiredService<LocationRuleWithdrawalDeliveryV1>().RunAsync(t,c);return(r.State,r.EventId);},ct);
                 await Run("decision",async(sp,t,c)=>{var r=await sp.GetRequiredService<LocationRuleDecisionDeliveryV1>().RunAsync(t,c);return(r.State,r.EventId);},ct);
                 await Run("application-receipt",async(sp,t,c)=>{var r=await sp.GetRequiredService<LocationRuleApplicationDeliveryV1>().RunAsync(t,c);return(r.State,r.EventId);},ct);
                 await Run("receipt-recovery",async(sp,t,c)=>{var r=await sp.GetRequiredService<LocationRuleReceiptRecoveryV1>().RunAsync(t,c);return(r.State,r.ReceiptStreamId);},ct);
