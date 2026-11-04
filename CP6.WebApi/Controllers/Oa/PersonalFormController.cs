@@ -103,6 +103,8 @@ public sealed class PersonalFormController(PersonalFormOwnerV2 owner,ApprovalTas
     private async Task<IActionResult> Run(Func<Task<object?>> action)
     {
         try{return Ok(new{code=0,data=await action()});}
+        catch(PersonalFormDispositionRequiredV2 e)
+        {return StatusCode(403,new{code=e.Message,messageKey=e.Message,dispositionRequestId=e.RequestId,retryMode="QUALIFIED_DISPOSITION_REQUIRED"});}
         catch(ScopeAuthorizationExceptionV1 e)
         {return StatusCode(e.Status,new{code=e.Message,messageKey=e.Message,retryMode=e.Status is 503 or 504?"READ_ORIGINAL":e.Status==409?"REFRESH_AND_NEW_INTENT":"NONE"});}
         catch(Exception e)when(e is Npgsql.NpgsqlException or Microsoft.EntityFrameworkCore.DbUpdateException or CurrentPermissionUnavailableException)

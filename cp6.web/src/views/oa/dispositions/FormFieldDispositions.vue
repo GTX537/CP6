@@ -76,7 +76,7 @@ async function recover(close: boolean) {
 <template>
   <main class="dispositions" aria-label="表单字段处置" :aria-busy="busy">
     <h1>表单字段处置</h1>
-    <p>读取准确请求后，由具备字段读取和处置权限的人批准并登记原件留存。草稿的后续办理请回到原表单核对。</p>
+    <p>批准及登记留存表示同意下列准确原版本到目标版本的字段移除或类型改变。原件按政策保留，草稿本人随后可采用此处置结果重基；提交时仍核对当前资格与保留限制。</p>
     <form @submit.prevent="load"><label>处置请求引用 <input v-model="reference" aria-label="处置请求引用" :disabled="locked" required /></label><button :disabled="locked">读取请求</button></form>
     <p v-if="error" role="alert">{{ error }}</p><p v-if="notice" role="status">{{ notice }}</p>
     <section v-if="pending" aria-label="原操作恢复"><p>上次操作尚待确认，恢复前不能发起新处理。</p><button :disabled="busy" @click="recover(false)">查询原结果</button><button :disabled="busy" @click="recover(true)">结束未提交原键</button></section>
@@ -85,6 +85,7 @@ async function recover(close: boolean) {
       <dl><dt>草稿</dt><dd>{{ detail.request.draftId }}</dd><dt>原版本</dt><dd>{{ detail.request.sourceVersionId }}</dd><dt>目标版本</dt><dd>{{ detail.request.targetVersionId }}</dd></dl>
       <p v-if="detail.request.hold?.active" role="status">存在保留限制，不能批准、执行或消费留存事实。</p>
       <p v-if="detail.request.dispositionRef">留存引用：{{ detail.request.dispositionRef.requestId }} / {{ detail.request.dispositionRef.receiptVersion }}。留存至 {{ detail.request.retainUntilUtc }}。</p>
+      <p v-if="detail.request.consumption">已由 {{ detail.request.consumption.actualActorId }} 在 {{ detail.request.consumption.recordedAtUtc }} 采用处置人 {{ detail.request.consumption.processorId }} 的留存结果完成重基。原命令：{{ detail.request.consumption.commandId }}。</p>
       <template v-if="detail.losses">
         <h3>本次损失明细</h3><p>保留依据：{{ detail.retentionPolicyRef }}</p>
         <table><thead><tr><th>字段位置</th><th>变化</th><th>原内容</th></tr></thead><tbody><tr v-for="loss in detail.losses" :key="loss.path"><td>{{ loss.path }}</td><td>{{ loss.kind === 'TYPE_CHANGED' ? '类型改变' : '移除' }}</td><td><pre>{{ loss.valueJson }}</pre></td></tr></tbody></table>

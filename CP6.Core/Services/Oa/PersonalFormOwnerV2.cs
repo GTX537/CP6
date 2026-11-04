@@ -88,8 +88,9 @@ public sealed partial class PersonalFormOwnerV2(CP6Context db, IHttpContextAcces
         return Parse<FormPublicationV2>(json);
     }
     private async Task<Dictionary<string,string>> Mask(UserPermissionContext actor, Guid head, FormPublicationV2 publication, CancellationToken ct)
+        =>Mask(actor,publication,await Policy(head,ct)??throw Error("FORM_USE_POLICY_REQUIRED",403));
+    private Dictionary<string,string> Mask(UserPermissionContext actor,FormPublicationV2 publication,PersonalFormPolicyV2 policy)
     {
-        var policy = await Policy(head,ct) ?? throw Error("FORM_USE_POLICY_REQUIRED", 403);
         var grants = policy.Roles.Where(x => actor.RoleIds.Contains(x.RoleId)).ToArray();
         if (grants.Length == 0) throw Error("FORM_NOT_FOUND", 404);
         var catalog = Catalog();

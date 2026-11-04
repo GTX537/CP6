@@ -23,6 +23,7 @@ export interface RebasePreview {
   changes: { path: string; kind: string; hasValue: boolean }[]; validationErrors: string[]; requiresConfirmation: boolean
   sourceDraftVersion: string; targetSchemaDigest: string; retainedPaths: string[]; removedPaths: string[]; addedPaths: string[]
   typeChangedPaths: string[]; defaultedPaths: string[]; requiredAfterRebase: string[]; diagnostics: { path: string; code: string }[]
+  dispositionRef?: { requestId: string; receiptVersion: string } | null
 }
 export interface ValuePreview { dataJson: string; hiddenFields: string[]; valid: boolean; errors: string[] }
 export interface TaskVersion { taskId: string; instanceId: string; taskStatus: number; instanceStatus: number; taskRowVersion: string; instanceRowVersion: string }
@@ -42,7 +43,7 @@ export const personalFormApi = {
   original: async (operation: string, resource: string, command: string, signal?: AbortSignal) => unwrap<PersonalResult>(await http.get(`${root}/personal-forms/commands/${key(operation)}/${key(resource)}/${key(command)}`, { signal })),
   close: async (operation: string, resource: string, command: string, signal?: AbortSignal) => unwrap<PersonalResult>(await http.post(`${root}/personal-forms/commands/${key(operation)}/${key(resource)}/${key(command)}/close`, undefined, { signal })),
   preview: async (url: string, raw: string, signal?: AbortSignal) => unwrap<ValuePreview>(await http.post(url, raw, { headers: { 'Content-Type': 'application/json' }, signal })),
-  rebasePreview: async (id: string, targetVersionId: string, expectedVersion: string, signal?: AbortSignal) => unwrap<RebasePreview>(await http.post(`${root}/drafts/${id}/rebase-preview`, { targetVersionId, expectedVersion }, { signal })),
+  rebasePreview: async (id: string, targetVersionId: string, expectedVersion: string, dispositionRef?: RebasePreview['dispositionRef'], signal?: AbortSignal) => unwrap<RebasePreview>(await http.post(`${root}/drafts/${id}/rebase-preview`, { targetVersionId, expectedVersion, dispositionRef }, { signal })),
   task: async (id: string, signal?: AbortSignal) => { const value = await taskActionApi.context(id, signal); if (value.contextKind !== 'SFS') throw new Error('当前任务不是表单审批，请从任务详情重新进入。'); return value.form! },
   decide: async (id: string, body: unknown, token: string, signal?: AbortSignal) => unwrap<PersonalTaskResult>(await http.post(`${root}/personal-forms/tasks/${id}/decision`, body, { headers: { 'If-Match': `"${token}"` }, signal })),
   decideSfs: async (id: string, raw: string, signal?: AbortSignal) => unwrap<PersonalResult>(await http.post(`${root}/tasks/${id}/decisions`, raw, { headers: { 'Content-Type': 'application/json' }, signal })),

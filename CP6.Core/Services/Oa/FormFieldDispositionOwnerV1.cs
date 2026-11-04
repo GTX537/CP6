@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Oa;
 
-public sealed class FormFieldDispositionOwnerV1(CP6Context db,PersonalFormOwnerV2 forms,ScopeAuthorizationFenceV1 fence)
+public sealed partial class FormFieldDispositionOwnerV1(CP6Context db,PersonalFormOwnerV2 forms,ScopeAuthorizationFenceV1 fence)
 {
     internal const string Menu="oa-form-dispositions";
     private const string Contract="Main.Oa.FormFieldDisposition.commands.v1";
@@ -40,8 +40,10 @@ public sealed class FormFieldDispositionOwnerV1(CP6Context db,PersonalFormOwnerV
     private async Task<FormDispositionViewV1> View(Guid id,FormDispositionScopeV1 scope,EventRow latest,CancellationToken ct)
     {
         var hold=await Hold(scope.DraftId,ct);
-        return new(id,scope.DraftId,scope.SourceVersionId,scope.TargetVersionId,latest.Version,latest.State,latest.RecordedAtUtc,
-            hold==null?null:new(hold.Version,hold.Active),latest.State=="RETAINED"?new(id,latest.Version):null,latest.RetainUntilUtc);
+        var consumed=await Consumption(id,ct);
+        return new(id,scope.DraftId,scope.SourceVersionId,scope.TargetVersionId,consumed?.CommandRef??latest.Version,
+            consumed==null?latest.State:"CONSUMED",consumed?.RecordedAtUtc??latest.RecordedAtUtc,
+            hold==null?null:new(hold.Version,hold.Active),consumed==null&&latest.State=="RETAINED"?new(id,latest.Version):null,latest.RetainUntilUtc,consumed);
     }
     private async Task SafeRead(FormDispositionScopeV1 scope,UserPermissionContext actor,CancellationToken ct)
     {
@@ -51,6 +53,10 @@ public sealed class FormFieldDispositionOwnerV1(CP6Context db,PersonalFormOwnerV
     private async Task Ready(ScopeAuthorizationLeaseV1 lease,CancellationToken ct)
     {
         await forms.DispositionWriter(lease,ct);
+        await StorageReady(ct);
+    }
+    private async Task StorageReady(CancellationToken ct)
+    {
         if(!await db.Database.SqlQueryRaw<bool>("SELECT cp6_form_disposition_v1.ready() AS \"Value\"").SingleAsync(ct))
             throw Error("FORM_DISPOSITION_WRITER_UNAVAILABLE",503);
     }
@@ -105,14 +111,8 @@ public sealed class FormFieldDispositionOwnerV1(CP6Context db,PersonalFormOwnerV
         return Execute(async(actor,lease,t)=>
         {
             var old=await Original(input.OperationId,actor,bytes,t);if(old!=null)return old;
-            await Ready(lease,t);var scope=await forms.DispositionSource(input,actor,t);var id=Guid.NewGuid();
-            await db.Database.ExecuteSqlInterpolatedAsync($"""
-                INSERT INTO cp6_form_disposition_v1.requests(tenant_id,environment_id,id,draft_id,history_id,scope)
-                VALUES({db.CurrentTenantId},{fence.EnvironmentId},{id},{scope.DraftId},{scope.HistoryId},{Encode(scope)})
-                """,t);
-            var first=new EventRow(id,null,"REQUESTED",actor.UserId,input.Reason,forms.Clock(),null);
-            await Append(id,first,input.OperationId,t);var result=new FormDispositionOperationV1(input.OperationId,"COMMITTED",await View(id,scope,first,t));
-            await Store(input.OperationId,actor.UserId,bytes,result,new{kind="REQUEST",scope.HistoryId,scope.PolicyVersion,lease.Snapshot},t);return result;
+            await Ready(lease,t);var scope=await forms.DispositionSource(input,actor,t);
+            return await CreateRequest(input,bytes,scope,actor,lease,t);
         },ct);
     }
     public Task<FormDispositionDetailV1> ReadAsync(Guid request,CancellationToken ct=default)=>Execute(async(actor,_,t)=>
@@ -134,6 +134,7 @@ public sealed class FormFieldDispositionOwnerV1(CP6Context db,PersonalFormOwnerV
             var old=await Original(input.OperationId,actor,bytes,t);if(old!=null)return old;
             await Ready(lease,t);await forms.Action(actor,action=="reject"?"approve":action,t,Menu);
             var (_,scope)=await Required(request,t);await forms.DispositionRead(scope,actor,t);
+            if(await Consumption(request,t)!=null)throw Error("FORM_DISPOSITION_ALREADY_CONSUMED");
             var previous=(await Events(request,t))[^1];
             if(previous.Version!=input.ExpectedVersion)throw Error("FORM_DISPOSITION_VERSION_CONFLICT");
             var state=action switch

@@ -10,7 +10,7 @@ internal static class PersonalFormRebaseV2
 {
     internal static PersonalFormRebasePlanV2 Build(string sourceSchema,string targetSchema,string data,
         IReadOnlyDictionary<string,string> sourceMask,IReadOnlyDictionary<string,string> targetMask,
-        Action<string,string,string,JsonNode>? observeLoss=null)
+        Action<string,string,string,JsonNode>? observeLoss=null,FormDispositionRebaseV1? disposition=null)
     {
         static JsonNode? P(JsonObject value,string key)=>PersonalFormValuesV2.SchemaProperty(value,key);
         static Dictionary<string,JsonObject> Fields(JsonArray array)=>array.ToDictionary(x=>P(x!.AsObject(),"name")!.GetValue<string>(),x=>x!.AsObject(),StringComparer.Ordinal);
@@ -29,10 +29,11 @@ internal static class PersonalFormRebaseV2
         void Changed(string field,string path,string kind,JsonNode? old)
         {
             var valued=HasValue(old);
-            if(valued && (sourceMask.GetValueOrDefault(field,"hidden")=="hidden" || targetMask.GetValueOrDefault(field,sourceMask.GetValueOrDefault(field,"hidden"))=="hidden"))
+            var hidden=sourceMask.GetValueOrDefault(field,"hidden")=="hidden" || targetMask.GetValueOrDefault(field,sourceMask.GetValueOrDefault(field,"hidden"))=="hidden";
+            if(valued && hidden && disposition?.Allows(field,path,kind)!=true)
                 throw new ScopeAuthorizationExceptionV1("REBASE_HIDDEN_LOSS_BLOCKED",403);
             if(valued)observeLoss?.Invoke(field,path,kind,old!);
-            loss|=valued;
+            loss|=valued&&!hidden; // The owner confirms visible loss; qualified processing already decided the hidden scope.
             Path(field,path,kind);
             if(kind=="TYPE_CHANGED")Path(field,path,"REMOVED");
             if(sourceMask.GetValueOrDefault(field,"readonly")!="hidden" && targetMask.GetValueOrDefault(field,"readonly")!="hidden")changes.Add(new(path,kind,valued));

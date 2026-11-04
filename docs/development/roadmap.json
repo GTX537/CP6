@@ -161962,6 +161962,11 @@
       "date": "2026-11-04",
       "change": "W302远端交付与生命周期闭环，W303实际受控重基消费开工。",
       "evidence": "docs/development/evidence/W303-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-04",
+      "change": "W303：真实隐藏损失请求、合格处置事实到本人原生重基的准确一次消费，以及当前资格/政策/hold校验、原件留存和原命令恢复完成本地业务验收。",
+      "evidence": "docs/development/evidence/W303-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -174975,18 +174980,19 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W302-01",
+        "window": "W303-01",
         "as_of": "2026-11-04",
         "classification": "明确实现余项",
-        "report": "docs/development/evidence/W302-01/DELIVERY.md",
-        "delivered": "稳定subject目录身份修复已交付；CRM同意撤回和保留已有独立原生行为。 W302：实际FORM字段受控处置Owner、准确历史原件、独立当前读取/批准/留存/撤销/hold资格、原操作恢复和处理工作台完成本地业务验收。W303重基消费尚未完成。",
+        "report": "docs/development/evidence/W303-01/DELIVERY.md",
+        "delivered": "稳定subject目录身份修复已交付；CRM同意撤回和保留已有独立原生行为。 W302：实际FORM字段受控处置Owner、准确历史原件、独立当前读取/批准/留存/撤销/hold资格、原操作恢复和处理工作台完成本地业务验收。W303重基消费尚未完成。 W303：真实隐藏损失请求、合格处置事实到本人原生重基的准确一次消费，以及当前资格/政策/hold校验、原件留存和原命令恢复完成本地业务验收。",
         "remaining": "逐Owner导出清单及遗漏/不可用、擦除预览/批准/hold、UNKNOWN责任与墓碑恢复/下载编排尚未完整实现；真实各域适配仍各自接入。",
         "evidence_refs": [
           "docs/development/evidence/W125-01/DELIVERY.md",
           "docs/development/evidence/W135-01/DELIVERY.md",
           "docs/development/evidence/W127-01/DELIVERY.md",
           "docs/development/evidence/W128-01/DELIVERY.md",
-          "docs/development/evidence/W302-01/DELIVERY.md"
+          "docs/development/evidence/W302-01/DELIVERY.md",
+          "docs/development/evidence/W303-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true
@@ -175017,6 +175023,12 @@
           "handoff_branch_deleted": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave302-final-verification.json"
         }
+      },
+      "wave303_field_disposition_rebase": {
+        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W303-01/DELIVERY.md",
+        "validation": "10项独立PostgreSQL18场景通过，含真实Main认证HTTP/Chrome、留存到实际重基消费、双连接hold竞争、原回执失败全回滚、提交丢答原命令恢复、混合损失及政策/源/目标/资格变化；3项既有映射单测、13项Vue行为测试及vue-tsc通过。",
+        "full_task_completed": false
       }
     },
     {
@@ -197558,20 +197570,21 @@
       },
       "scope_reconciliation": {
         "classification": "明确实现余项",
-        "delivered": "W275个人草稿、准确提交和显式重基；W285普通FORM文件已有交付。 W287：版本化共享字典选项来源已被FORM设计、发布/激活、当前候选读取、草稿/直接提交/退回/重基及真实页面采用；最终服务端复核当前来源与准确字符串值，保留历史原值且不制造历史字典快照。 W293：重基预览准确版本/摘要、可见路径分类和权威动态必填/逐行超限诊断，页面明确损失确认及编辑失效已实现；全部原行/精度/原事务和原命令保留。 W302：实际FORM字段受控处置Owner、准确历史原件、独立当前读取/批准/留存/撤销/hold资格、原操作恢复和处理工作台完成本地业务验收。W303重基消费尚未完成。",
+        "delivered": "W275个人草稿、准确提交和显式重基；W285普通FORM文件已有交付。 W287：版本化共享字典选项来源已被FORM设计、发布/激活、当前候选读取、草稿/直接提交/退回/重基及真实页面采用；最终服务端复核当前来源与准确字符串值，保留历史原值且不制造历史字典快照。 W293：重基预览准确版本/摘要、可见路径分类和权威动态必填/逐行超限诊断，页面明确损失确认及编辑失效已实现；全部原行/精度/原事务和原命令保留。 W302：实际FORM字段受控处置Owner、准确历史原件、独立当前读取/批准/留存/撤销/hold资格、原操作恢复和处理工作台完成本地业务验收。W303重基消费尚未完成。 W303：真实隐藏损失请求、合格处置事实到本人原生重基的准确一次消费，以及当前资格/政策/hold校验、原件留存和原命令恢复完成本地业务验收。",
         "evidence_refs": [
           "docs/development/evidence/W275-01/DELIVERY.md",
           "docs/development/evidence/W285-01/DELIVERY.md",
           "docs/development/evidence/W287-01/DELIVERY.md",
           "docs/development/evidence/W293-01/DELIVERY.md",
-          "docs/development/evidence/W302-01/DELIVERY.md"
+          "docs/development/evidence/W302-01/DELIVERY.md",
+          "docs/development/evidence/W303-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
-        "window": "W302-01",
+        "window": "W303-01",
         "as_of": "2026-11-04",
-        "report": "docs/development/evidence/W302-01/DELIVERY.md",
+        "report": "docs/development/evidence/W303-01/DELIVERY.md",
         "new_product_validation": true,
-        "remaining": "真实处置引用到重基的同事务消费、原卡与直接前置全范围核销尚待W303/W304；W302不提前关闭原卡。"
+        "remaining": "W303准确处置重基消费完成相关本地验证；两仓采用/finish后由W304核对原卡全部场景与直接前置，不提前关闭原卡。"
       },
       "wave293_rebase_preview": {
         "status": "IMPLEMENTED_VALIDATED_REMOTE_ADOPTED",
@@ -197607,6 +197620,12 @@
           "handoff_branch_deleted": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave302-final-verification.json"
         }
+      },
+      "wave303_field_disposition_rebase": {
+        "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W303-01/DELIVERY.md",
+        "validation": "10项独立PostgreSQL18场景通过，含真实Main认证HTTP/Chrome、留存到实际重基消费、双连接hold竞争、原回执失败全回滚、提交丢答原命令恢复、混合损失及政策/源/目标/资格变化；3项既有映射单测、13项Vue行为测试及vue-tsc通过。",
+        "full_task_completed": false
       }
     },
     {
@@ -202945,7 +202964,7 @@
       "path": "docs/development/dispatch/20261104-wave303/README.md",
       "baseline_sha": "98005e6b56ab2f880a12e66288c8e2fba92c1272",
       "registered_at": "2026-11-04T04:48:32.183323+00:00",
-      "phase": "IMPLEMENTING",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -202972,17 +202991,17 @@
           "title": "个人表单重基采用真实受控处置引用",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "IMPLEMENTING",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w303-01",
           "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
@@ -202990,14 +203009,34 @@
             "Main:oa-form",
             "Main:privacy-orchestration",
             "Main:EF-migrations"
-          ]
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W303-01/DELIVERY.md",
+          "validation": "10项独立PostgreSQL18场景通过，含真实Main认证HTTP/Chrome、留存到实际重基消费、双连接hold竞争、原回执失败全回滚、提交丢答原命令恢复、混合损失及政策/源/目标/资格变化；3项既有映射单测、13项Vue行为测试及vue-tsc通过。",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave303-final-verification.json"
+          },
+          "business_acceptance": "EXACT_FORM_DISPOSITION_REBASE_PG_HTTP_BROWSER_PASS",
+          "local_validation": "PASS_AFFECTED_SCOPE"
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "把W302真实处置引用用于原个人草稿重基：隐藏损失403返回真实请求引用且不泄露path/value；仅准确有权处理范围可被消费，当前资格/原件/目标/政策/hold/撤销重新裁决；消费、前快照、新草稿版本及原命令同事务，保原拥有者与真实实际人，普通confirm不替代隐藏处置资格。"
+      "next_action": "W303两仓采用/准确清理/finish后，W304原个人表单卡与直接前置核销；约24h目标继续。",
+      "lifecycle_snapshot": {
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_seat_released": false,
+        "main_branch_deleted": false,
+        "handoff_branch_deleted": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave303-final-verification.json"
+      }
     },
     "wave_history": [
       {
@@ -241585,8 +241624,8 @@
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
       "started_at": "2026-11-04T00:22:36+00:00",
-      "effective_seconds_recorded": 15670,
-      "timing_snapshot_at": "2026-11-04T04:48:32.183323+00:00",
+      "effective_seconds_recorded": 17215,
+      "timing_snapshot_at": "2026-11-04T05:30:20.481131+00:00",
       "timing_source": "Fresh goal.timeUsedSeconds snapshots; cross-check actual active segments and exclude interruptions. Previous-cycle time and inter-cycle gap never carried forward.",
       "next_reestimate_at_effective_seconds": 21600,
       "estimate_hours": [
@@ -241958,13 +241997,23 @@
           ],
           "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
           "estimate_confidence": "LOW_RECALIBRATED_AT_4H",
-          "state": "IN_PROGRESS",
+          "state": "VERIFYING",
           "initial_estimate_hours": [
             2,
             3.5
           ],
           "started_at": "2026-11-04T04:48:32.183323+00:00",
-          "effective_start": 15670
+          "effective_start": 15670,
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W303-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave303-final-verification.json"
+          }
         },
         {
           "id": "W304-01",
@@ -242318,7 +242367,7 @@
           "historical_conflicts": "Preserved immutable; existing environments not inspected or migrated. Separate controlled forward recovery required for affected existing records."
         }
       ],
-      "next_priority": "W303 exact controlled disposition consumption, then W304 full original form-card reconciliation",
+      "next_priority": "W304 full original personal-form card and direct prerequisites audit",
       "extra_bug_deliveries": [
         {
           "id": "BUG751",
