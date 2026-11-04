@@ -161947,6 +161947,11 @@
       "date": "2026-11-04",
       "change": "W301原WP12-19审计发现BUG751：ITER普通BLOCKED重试只锁实际人，未锁原业务grant/授权方式；原卡暂不关闭，下一独立BUG修复后重新核销。",
       "evidence": "docs/development/evidence/W301-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-04",
+      "change": "WP12-19按原范围核销DONE：W301逐项审计识别的BUG751已在远端main修复并关闭，当前五Owner撤回/共同控制、原授权连续性、回执链和终态边界均有准确证据。原375变31DONE/2IN_PROGRESS/342PLANNED，原59局部7闭环/52余项；125/247保持原状态。 W302受控字段处置Owner开工。",
+      "evidence": "docs/development/evidence/W302-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -199077,14 +199082,35 @@
         "file:Main:CP6.Core/Services/Oa/TaskDecisionService.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP12.md",
       "card_anchor": "wp12-19",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "COORD",
+        "branch": "codex/w302-01",
+        "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+        "claimed_at": "2026-11-04T04:04:03.060841+00:00"
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/BUG-751/DELIVERY.md",
+          "source_sha": "43b8afc76da3e3323233e79fdd4953db2c7c14d8",
+          "scope": "WP12-19原卡全范围：W301逐项审计与W200/W185/W277/W278/W297-300原证据，BUG751补齐普通BLOCKED原grant连续性；详见docs/development/evidence/W302-01/DELIVERY.md",
+          "command": "Scoped PostgreSQL18/HTTP tests: BUG751 authority-green-20261104T034914Z; other behavior reused from original report commands",
+          "environment": "Local Windows/.NET8/PostgreSQL18, actual Main Program HTTP and prior Chrome; simulated business input; old evidence REUSED, not newly executed",
+          "observed_at": "2026-11-04T03:58:47.542861+00:00",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/BUG-751/DELIVERY.md",
+        "source_sha": "43b8afc76da3e3323233e79fdd4953db2c7c14d8",
+        "remote_main_sha": "b41bc799fca2a86c8ac293be8dc4394e64fde2cd",
+        "pr_url": "https://github.com/GTX537/CP6/pull/753",
+        "scope": "原可信业务撤回/恢复协议与当前五Owner采用，W301完整逐项审计+BUG751实际修复；未包含各域实体业务终结或部署"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：按S02-00采用的PostgreSQL布局、可信上下文/当前授权和全部写者共同最终fence、Main Owner事务及原键结果/审计。",
@@ -199129,12 +199155,12 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W301-01",
+        "window": "W302-01",
         "as_of": "2026-11-04",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W301-01/DELIVERY.md",
+        "classification": "FULL_CARD_RECONCILED",
+        "report": "docs/development/evidence/W302-01/DELIVERY.md",
         "delivered": "W200真实非委派撤回、Owner apply同控制CAS及两种竞争顺序已交付，终态不可改写。 W277：TASK-R2封闭范围委派、当前双身份任务读写，以及迭代Owner独立业务委派、BLOCKED显式重新授权和连续原事实已实现。 W278：当前发布表单目录，以及实际Vue/Chrome经Main Program到PostgreSQL的定义发布、填单恢复、代理办理、迭代BLOCKED应用与撤回显式新授权链已验证。 W279按原卡核实上述已交付范围，本窗没有新增其他业务Owner采用。 W297：DOC实际Owner可信撤回、同控制头应用互斥、独立本轮业务委派/BLOCKED明确接续、原结果恢复与运输已完成相关本地验收。 W298：需求集实际Owner可信撤回、原审批应用共control、准确本轮业务委派/BLOCKED显式接续、不可变原结果及实际页面恢复完成本地验收。 W299：版模处置实际Owner审批撤回、独立业务委派/BLOCKED显式接续、共同控制版本、原操作与运输恢复及真实页面完成本地验收；保原处置请求、物理停用和全部未清义务。 W300：库位规则实际Owner可信审批撤回、原提案共同控制版本/应用竞争、独立业务委派与BLOCKED明确接续、原命令和真实页面恢复完成本地验收；旧提案入口、原件和APPROVED_PENDING未激活边界保留。",
-        "remaining": "原375仍30DONE/2IN_PROGRESS/343PLANNED；原59局部6闭环/53余项，125完整目标及247正式验收不变。五Owner撤回已采用，当前明确原卡缺口为BUG751；版模实物终结、规则激活属于后续业务卡。",
+        "remaining": "原WP12-19可信撤回与恢复协议范围无剩余。版模实物终结、库位激活及未来域效果仍属于对应消费卡；125目标/247正式验收不自动完成。",
         "evidence_refs": [
           "docs/development/evidence/W200-01/DELIVERY.md",
           "docs/development/evidence/W277-01/DELIVERY.md",
@@ -199144,9 +199170,11 @@
           "docs/development/evidence/W298-01/DELIVERY.md",
           "docs/development/evidence/W299-01/DELIVERY.md",
           "docs/development/evidence/W300-01/DELIVERY.md",
-          "docs/development/evidence/W301-01/DELIVERY.md"
+          "docs/development/evidence/W301-01/DELIVERY.md",
+          "docs/development/evidence/BUG-751/DELIVERY.md",
+          "docs/development/evidence/W302-01/DELIVERY.md"
         ],
-        "formal_state_changed": false,
+        "formal_state_changed": true,
         "new_product_validation": false
       },
       "wave277_delegation_reauthorization": {
@@ -199340,11 +199368,48 @@
         }
       },
       "wave301_full_card_audit": {
-        "status": "AUDITED_GAP_IDENTIFIED",
+        "status": "AUDITED_GAP_RESOLVED_REMOTE",
         "report": "docs/development/evidence/W301-01/DELIVERY.md",
         "validation": "原卡/当前五Owner源码与既有报告逐项审计；原验证的远端采用祖先关系、准确前置交付、台账生成和文档链接已核对。本窗纯审计，无新增产品运行；旧PG/HTTP/Chrome证据按原范围复用。",
         "issue": "https://github.com/GTX537/CP6/issues/751",
-        "full_task_completed": false
+        "full_task_completed": false,
+        "resolved_by": "docs/development/evidence/BUG-751/DELIVERY.md",
+        "remote_fix": "b41bc799fca2a86c8ac293be8dc4394e64fde2cd",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave301-final-verification.json"
+        }
+      },
+      "prerequisite_adoptions": [
+        {
+          "task_id": "WP02-10",
+          "requirement": "所属仓库的可信租户、当前授权、同事务原结果及审计基础",
+          "deliveries": [
+            "wave43_delivery",
+            "wave44_delivery"
+          ],
+          "scope": "Main当前CP6Context同一PG连接/事务、固定原输入/结果和共同最终权限门；不要求其他Owner全部迁入。"
+        },
+        {
+          "task_id": "WP02-13",
+          "requirement": "所属仓库的可信租户、当前授权、同事务原结果及审计基础",
+          "deliveries": [
+            "wave153_nested_source_fence"
+          ],
+          "scope": "原命令审计与业务共同提交，根/嵌套来源的当前字段/对象权限在同事务最终核对；不采用全域审计/隐私余项。"
+        }
+      ],
+      "full_card_reconciliation": {
+        "state": "DONE",
+        "report": "docs/development/evidence/W302-01/DELIVERY.md",
+        "window": "W302-01",
+        "acceptance": "PASS_SIMULATED_REUSED_WITH_BUG751",
+        "scope_preserved": true,
+        "consumer_completion_not_inferred": true
       }
     },
     {
@@ -202810,11 +202875,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261104-wave301",
-      "path": "docs/development/dispatch/20261104-wave301/README.md",
-      "baseline_sha": "cff40fb720d8d15e8969d794ae97a0fd33346ad9",
-      "registered_at": "2026-11-04T03:27:35.817434+00:00",
-      "phase": "DELIVERY_MAIN_CLOSEOUT",
+      "id": "20261104-wave302",
+      "path": "docs/development/dispatch/20261104-wave302/README.md",
+      "baseline_sha": "b41bc799fca2a86c8ac293be8dc4394e64fde2cd",
+      "registered_at": "2026-11-04T04:04:03.060841+00:00",
+      "phase": "IMPLEMENTING",
       "assigned_chats": [
         "COORD"
       ],
@@ -202832,58 +202897,42 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W301-01",
-          "workspace_task": "W301-01",
+          "id": "W302-01",
+          "workspace_task": "W302-01",
           "related_tasks": [
-            "WP12-19"
+            "WP02-15",
+            "WP12-03"
           ],
-          "title": "原可信撤回卡逐项核销与真实缺口修正",
+          "title": "受控字段处置权威Owner与实际生命周期",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "DELIVERY_MAIN_CLOSEOUT",
+          "phase": "IMPLEMENTING",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": true,
+          "worker_delivery_received": false,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w301-01",
+          "branch": "codex/w302-01",
           "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": true,
+          "candidate_review_completed": false,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
-            "Main:oa-application"
-          ],
-          "worker_delivery_ref": "docs/development/evidence/W301-01/DELIVERY.md",
-          "validation": "原卡/当前五Owner源码与既有报告逐项审计；原验证的远端采用祖先关系、准确前置交付、台账生成和文档链接已核对。本窗纯审计，无新增产品运行；旧PG/HTTP/Chrome证据按原范围复用。",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave301-final-verification.json"
-          },
-          "business_acceptance": "AUDIT_COMPLETE;ORIGINAL_CARD_OPEN_BUG751",
-          "local_validation": "PASS_DOCUMENT_AUDIT"
+            "Main:privacy-orchestration",
+            "Main:oa-form",
+            "Main:authorization-catalog",
+            "Main:EF-migrations"
+          ]
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "两仓保存审计/finish后立即独立BUG751，修复验证后核销原卡，再W302。",
-      "lifecycle_snapshot": {
-        "main_finish_required": true,
-        "main_seat_released": false,
-        "handoff_seat_released": false,
-        "main_branch_deleted": false,
-        "handoff_branch_deleted": false,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave301-final-verification.json"
-      }
+      "next_action": "实现实际FORM隐藏字段处置的权威Owner：准确源/目标/字段范围、现有不可变历史留存、当前数据读取与独立处置资格、审批/hold/撤销、原命令结果及当前引用查询；W303单独采用到重基。"
     },
     "wave_history": [
       {
@@ -240692,6 +240741,106 @@
             "workspace_clean": true
           }
         ]
+      },
+      {
+        "id": "20261104-wave301",
+        "path": "docs/development/dispatch/20261104-wave301/README.md",
+        "baseline_sha": "cff40fb720d8d15e8969d794ae97a0fd33346ad9",
+        "registered_at": "2026-11-04T03:27:35.817434+00:00",
+        "phase": "DONE",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W301-01",
+            "workspace_task": "W301-01",
+            "related_tasks": [
+              "WP12-19"
+            ],
+            "title": "原可信撤回卡逐项核销与真实缺口修正",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "DONE",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w301-01",
+            "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:oa-application"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W301-01/DELIVERY.md",
+            "validation": "原卡/当前五Owner源码与既有报告逐项审计；原验证的远端采用祖先关系、准确前置交付、台账生成和文档链接已核对。本窗纯审计，无新增产品运行；旧PG/HTTP/Chrome证据按原范围复用。",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave301-final-verification.json"
+            },
+            "business_acceptance": "AUDIT_COMPLETE;ORIGINAL_CARD_OPEN_BUG751",
+            "local_validation": "PASS_DOCUMENT_AUDIT"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "两仓保存审计/finish后立即独立BUG751，修复验证后核销原卡，再W302。",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave301-final-verification.json"
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W301-01",
+            "source": "26ed24ecf31468edd491ac1a7e6f3b56010a04d7",
+            "remote_target": "6789d33ae78da74781ea6cda3441f81e29a21cfc",
+            "pr": "https://github.com/GTX537/CP6/pull/752",
+            "branch": "codex/w301-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W301-HANDOFF",
+            "source": "6209c5e447b78954d5d985a1ab6ad9605eff4206",
+            "remote_target": "5d0bf0fb5dca8cd40ad8e1ebca511d242f2a52bc",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/278",
+            "branch": "codex/w301-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -241244,17 +241393,18 @@
       "new_product_validation": false,
       "formal_states_unchanged": true,
       "followup": {
-        "window": "W296-01",
-        "report": "docs/development/evidence/W296-01/DELIVERY.md",
+        "window": "W302-01",
+        "report": "docs/development/evidence/W302-01/DELIVERY.md",
         "full_cards_reconciled": [
           "WP09-11",
           "WP12-07",
           "WP03-01",
           "WP12-01",
           "WP12-02",
-          "WP12-06"
+          "WP12-06",
+          "WP12-19"
         ],
-        "remaining_original_partial_cards": 53
+        "remaining_original_partial_cards": 52
       }
     },
     "next_execution_plan": {
@@ -241266,8 +241416,8 @@
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
       "started_at": "2026-11-04T00:22:36+00:00",
-      "effective_seconds_recorded": 11042,
-      "timing_snapshot_at": "2026-11-04T03:27:35.817434+00:00",
+      "effective_seconds_recorded": 13182,
+      "timing_snapshot_at": "2026-11-04T04:04:03.060841+00:00",
       "timing_source": "Fresh goal.timeUsedSeconds snapshots; cross-check actual active segments and exclude interruptions. Previous-cycle time and inter-cycle gap never carried forward.",
       "next_reestimate_at_effective_seconds": 14400,
       "estimate_hours": [
@@ -241520,7 +241670,7 @@
           ],
           "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
           "estimate_confidence": "LOW_RECALIBRATED_AT_2H",
-          "state": "VERIFYING",
+          "state": "DONE",
           "initial_estimate_hours": [
             0.5,
             1.25
@@ -241530,15 +241680,42 @@
           "implementation_complete": true,
           "report": "docs/development/evidence/W301-01/DELIVERY.md",
           "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
             "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave301-final-verification.json"
           },
           "original_card_completed": false,
-          "followup_issue": "https://github.com/GTX537/CP6/issues/751"
+          "followup_issue": "https://github.com/GTX537/CP6/issues/751",
+          "actual_effective_seconds": 791,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W301-01",
+              "source": "26ed24ecf31468edd491ac1a7e6f3b56010a04d7",
+              "remote_target": "6789d33ae78da74781ea6cda3441f81e29a21cfc",
+              "pr": "https://github.com/GTX537/CP6/pull/752",
+              "branch": "codex/w301-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W301-HANDOFF",
+              "source": "6209c5e447b78954d5d985a1ab6ad9605eff4206",
+              "remote_target": "5d0bf0fb5dca8cd40ad8e1ebca511d242f2a52bc",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/278",
+              "branch": "codex/w301-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
         },
         {
           "id": "W302-01",
@@ -241554,11 +241731,13 @@
           ],
           "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
           "estimate_confidence": "LOW_RECALIBRATED_AT_2H",
-          "state": "PLANNED",
+          "state": "IN_PROGRESS",
           "initial_estimate_hours": [
             3,
             5.5
-          ]
+          ],
+          "started_at": "2026-11-04T04:04:03.060841+00:00",
+          "effective_start": 13182
         },
         {
           "id": "W303-01",
@@ -241866,7 +242045,20 @@
           "historical_conflicts": "Preserved immutable; existing environments not inspected or migrated. Separate controlled forward recovery required for affected existing records."
         }
       ],
-      "next_priority": "BUG751 then original WP12-19 reconciliation then W302"
+      "next_priority": "W302 controlled field disposition then W303 actual rebase adoption",
+      "extra_bug_deliveries": [
+        {
+          "id": "BUG751",
+          "issue": 751,
+          "state": "DONE",
+          "actual_effective_seconds": 1232,
+          "report": "docs/development/evidence/BUG-751/DELIVERY.md",
+          "source": "43b8afc76da3e3323233e79fdd4953db2c7c14d8",
+          "remote_main": "b41bc799fca2a86c8ac293be8dc4394e64fde2cd",
+          "pr": "https://github.com/GTX537/CP6/pull/753",
+          "lifecycle_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug751-final-verification.json"
+        }
+      ]
     },
     "execution_plan_history": [
       {
