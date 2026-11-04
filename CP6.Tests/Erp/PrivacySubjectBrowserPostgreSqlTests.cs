@@ -3,9 +3,9 @@ namespace CP6.Tests.Erp;
 public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
     [OaNativeBrowserPostgresFact]
-    public async Task NativeBrowser_actual_privacy_subject_file_and_manifest_show_partial_coverage_without_raw_nested_content()
+    public async Task NativeBrowser_actual_privacy_durable_generation_recovery_download_and_revocation_show_partial_scope()
     {
-        await using var h=await Seed();
+        await using var h=await Seed();await PrivacyAuthority(h);
         var home=await h.Db.Sys_Menus.SingleAsync(x=>x.MenuKey=="erp-order-price-correction");
         home.RoutePath="/order-price-correction";h.Db.Sys_RoleMenus.Add(new(){RoleId=72,MenuId=home.MenuId});
         await h.Db.SaveChangesAsync();h.Db.ChangeTracker.Clear();

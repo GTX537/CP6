@@ -22,16 +22,7 @@
       <!-- 按主体导出 -->
       <el-tab-pane :label="t('platform.gdpr.exportSubject')" name="exportSubject">
         <el-alert :title="scopeT('subjectExportScopeHint')" type="info" :closable="false" show-icon class="scope-notice" />
-        <el-form label-width="140px" style="max-width: 560px">
-          <el-form-item :label="t('platform.tenant.adminUser')">
-            <el-input v-model="exportSubjectId" :placeholder="'userId'" :disabled="busy" clearable />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" :disabled="!exportSubjectId.trim()" :loading="busy" @click="doExportSubject">
-              {{ t('platform.gdpr.exportSubject') }}
-            </el-button>
-          </el-form-item>
-        </el-form>
+        <PrivacyExportPanel />
       </el-tab-pane>
 
       <!-- 按主体擦除 -->
@@ -68,17 +59,15 @@
         </el-form>
       </el-tab-pane>
     </el-tabs>
-    <SubjectExportManifestView v-if="manifest && activeTab === 'exportSubject'" :manifest="manifest" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { gdprApi } from '@/api/platform/gdpr'
-import type { SubjectExportManifest } from '@/api/platform/gdpr'
-import SubjectExportManifestView from '@/components/platform/SubjectExportManifest.vue'
+import PrivacyExportPanel from '@/components/platform/PrivacyExportPanel.vue'
 
 const { t } = useI18n({ useScope: 'global' })
 // The local scope notice remains available before server-managed language packs load.
@@ -97,9 +86,6 @@ const activeTab = ref('exportTenant')
 const busy = ref(false)
 
 const exportTenantId = ref('')
-const exportSubjectId = ref('')
-const manifest = ref<SubjectExportManifest | null>(null)
-watch(exportSubjectId, () => { manifest.value = null })
 const eraseSubjectId = ref('')
 const eraseTenantId = ref('')
 const eraseMode = ref<'anonymize' | 'purge'>('anonymize')
@@ -124,18 +110,6 @@ async function doExportTenant() {
     await gdprApi.exportTenant(exportTenantId.value.trim())
   } catch {
     // E-SEC-032 由拦截器提示（注：blob 错误响应拦截器需能解析，见 http.ts）
-  } finally {
-    busy.value = false
-  }
-}
-
-async function doExportSubject() {
-  manifest.value = null
-  busy.value = true
-  try {
-    manifest.value = await gdprApi.exportSubject(exportSubjectId.value.trim())
-  } catch {
-    // E-SEC-032
   } finally {
     busy.value = false
   }

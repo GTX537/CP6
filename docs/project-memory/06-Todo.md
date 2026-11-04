@@ -1,5 +1,15 @@
 # 当前待办与优先级
 
+## 2026-11-04：W312主体持久导出 / 24h继续
+
+W312完成Main主体持久导出：精确用途/来源/内部收件人、同事务原操作与独立载荷、当前分权下载及撤销、UNKNOWN原结果查询和迟到关闭；真实页面分开生成与下载。 [交付](../development/evidence/W312-01/DELIVERY.md)。
+
+14项独立PostgreSQL18场景（含实际认证HTTP、Chrome完整生成/恢复/下载/撤销及W311归属回归）、11项Vue/API行为、vue-tsc通过。 原375=33DONE/2IN_PROGRESS/340PLANNED，原59=9闭环/50剩余，125目标/247正式验收不变。WP02-15仍余精确处置计划/独立批准/hold、逐Owner实际处置及UNKNOWN、tombstone与恢复、外部收件和通用FILE/CRM/备份适配、旧整租户导出及擦除入口采用。 分支/工作区/席位最终见wave312-final-verification.json。
+
+## 2026-11-04：W311已收尾 / W312开工
+
+W311 Main767/Handoff288真实远端采用、分支删除、固定席位释放。Handoff502后PR元数据CLOSED，真实正常合并9308d2已通过官方完整补丁证明核销。[W312](../development/evidence/W312-01/DELIVERY.md)推进持久导出与当前下载。24h目标ACTIVE，原375/59计数不变。
+
 ## 2026-11-04：W311主体逐Owner清单 / 24h继续
 
 W311在实际主体导出中采用用户、安全事件及稳定角色关联的显式字段投影、逐来源Manifest、未知覆盖与排除说明；页面展示真实部分覆盖，缺源直接失败。 [交付](../development/evidence/W311-01/DELIVERY.md)。
