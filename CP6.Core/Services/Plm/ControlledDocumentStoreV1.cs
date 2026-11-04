@@ -17,7 +17,7 @@ internal sealed class ControlledDocumentHeadV1
     public long Revision { get; init; }
     public string Name { get; init; } = "";
 }
-internal sealed class ControlledDocumentStoreV1(CP6Context db)
+internal sealed partial class ControlledDocumentStoreV1(CP6Context db)
 {
     private IDbContextTransaction? fenced;
     private void Transaction(bool requireFence = true)
@@ -30,9 +30,9 @@ internal sealed class ControlledDocumentStoreV1(CP6Context db)
         Transaction(false);
         // Parent is first in both root authoring and engineering composition consumption.
         await new EngineeringRevisionStoreV1(db).Fence(false, ct);
-        await db.Database.ExecuteSqlRawAsync(write ? "LOCK TABLE cp6_controlled_document_v1.heads,cp6_controlled_document_v1.versions IN SHARE ROW EXCLUSIVE MODE"
-            : "LOCK TABLE cp6_controlled_document_v1.heads,cp6_controlled_document_v1.versions IN SHARE MODE", ct);
-        if (!await db.Database.SqlQueryRaw<bool>("SELECT cp6_controlled_document_v1.ready() AS \"Value\"").SingleAsync(ct)) throw Error("DOCUMENT_STORE_UNAVAILABLE", 503);
+        await db.Database.ExecuteSqlRawAsync(write ? "LOCK TABLE cp6_controlled_document_v1.heads,cp6_controlled_document_v1.versions,cp6_controlled_document_v1.availability IN SHARE ROW EXCLUSIVE MODE"
+            : "LOCK TABLE cp6_controlled_document_v1.heads,cp6_controlled_document_v1.versions,cp6_controlled_document_v1.availability IN SHARE MODE", ct);
+        if (!await db.Database.SqlQueryRaw<bool>("SELECT (cp6_controlled_document_v1.ready() AND cp6_controlled_document_v1.availability_ready()) AS \"Value\"").SingleAsync(ct)) throw Error("DOCUMENT_STORE_UNAVAILABLE", 503);
         fenced = db.Database.CurrentTransaction;
     }
     internal static IQueryable<ControlledDocumentHeadV1> Heads(CP6Context context) => context.Database.SqlQuery<ControlledDocumentHeadV1>($"""
@@ -56,7 +56,7 @@ internal sealed class ControlledDocumentStoreV1(CP6Context db)
             || v.Version != selected.ToString(CultureInfo.InvariantCulture) || EngineeringProductStoreV1.Digest(raw.Body) != raw.Digest)
             throw Error("DOCUMENT_ORIGINAL_UNAVAILABLE", 503);
         return new(db.CurrentTenantId, new(ControlledDocumentValuesV1.Owner, id, v.Version, raw.Digest), v.Etag, selected == head.Revision,
-            v.Body, v.Action, v.Reason, v.ParentVersion, v.ActorId, v.RecordedAt, Encoding.UTF8.GetString(raw.Body));
+            v.Body, v.Action, v.Reason, v.ParentVersion, v.ActorId, v.RecordedAt, Encoding.UTF8.GetString(raw.Body),Availability:await Availability(id,selected,null,ct));
     }
     internal async Task<ControlledDocumentSnapshotV1> Append(ControlledDocumentCommandV1 command, Guid actor,
         CancellationToken ct)

@@ -162012,6 +162012,11 @@
       "date": "2026-11-04",
       "change": "W305远端采用与生命周期核销，W307按原PLM-DOC准确修订可用性开工。",
       "evidence": "docs/development/evidence/W307-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-04",
+      "change": "W307补齐受控文档准确修订的独立暂停/恢复/撤回、当前消费阻断与原操作恢复；内容、批准事实和历史引用不改写。",
+      "evidence": "docs/development/evidence/W307-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -184287,19 +184292,30 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "合同/验收待核",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-16",
-        "delivered": "W190准确原件/派生/语言/永久绑定/历史下载与W191冻结专业评审/批准、真实FLOW/回执均已交付。",
-        "remaining": "独立旧版hold/撤回/可用性与失权旧URL拒绝逐原验收核销；不能由FILE hold推定DOC独立撤回已有。源中未定位完整DOC撤回动作，需确认职责后只补真实缺项。",
+        "window": "W307-01",
+        "as_of": "2026-11-04",
+        "classification": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W307-01/DELIVERY.md",
+        "delivered": "W190准确原件/派生/语言/永久绑定/历史下载与W191冻结专业评审/批准、真实FLOW/回执均已交付。 W307补齐受控文档准确修订的独立暂停/恢复/撤回、当前消费阻断与原操作恢复；内容、批准事实和历史引用不改写。",
+        "remaining": "待本窗远端采用及finish后按已核原scope正式核销；PRIV全域、分发/现场副本、LCM/REL及完整PLM-DOC另按原卡。",
         "evidence_refs": [
           "docs/development/evidence/W190-01/DELIVERY.md",
           "docs/development/evidence/W191-01/DELIVERY.md",
-          "docs/development/evidence/W189-01/DELIVERY.md"
+          "docs/development/evidence/W189-01/DELIVERY.md",
+          "docs/development/evidence/W307-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
-        "new_product_validation": false
+        "new_product_validation": true
+      },
+      "wave307_availability": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "full_task_complete": false,
+        "report": "docs/development/evidence/W307-01/DELIVERY.md",
+        "scope": "Accurate DOC revision availability, separate from immutable content, FILE security and professional approval; historical actions under current authority, original recovery, consumer gates and UI.",
+        "validation": "11项独立PostgreSQL18场景通过（9项新增含真实Chrome，2项既有原件/完整性回归），22项Vue行为及vue-tsc通过；原FILE和专业评审证据按准确适用范围复用，不称本轮重跑。",
+        "full_card_ready_after_remote_adoption": true,
+        "prerequisite_scope": "WP02-10 W171; WP02-13 actual document original/audit; WP02-14 W189; WP02-15 non-destructive exact retention/current FILE hold only; WP12-06/07 DONE",
+        "remaining": "Await remote adoption and lifecycle proof before original-card DONE; no new unimplemented original WP05-16 behavior identified."
       }
     },
     {
@@ -203317,7 +203333,7 @@
       "path": "docs/development/dispatch/20261104-wave307/README.md",
       "baseline_sha": "b687ef2230b2ad3fba3673eca2433f44314da58a",
       "registered_at": "2026-11-04T08:28:30.485352+00:00",
-      "phase": "IMPLEMENTING",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -203343,17 +203359,17 @@
           "title": "受控文档准确修订的独立可用性",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "IMPLEMENTING",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w307-01",
           "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
@@ -203361,14 +203377,34 @@
             "Main:engineering-document",
             "Main:file-content-consumption",
             "Main:document-review-consumption"
-          ]
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W307-01/DELIVERY.md",
+          "validation": "11项独立PostgreSQL18场景通过（9项新增含真实Chrome，2项既有原件/完整性回归），22项Vue行为及vue-tsc通过；原FILE和专业评审证据按准确适用范围复用，不称本轮重跑。",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave307-final-verification.json"
+          },
+          "local_validation": "PASS_AFFECTED_SCOPE",
+          "full_card_ready_after_remote_adoption": true
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "按原WP05-16与SUP-REQ-002/003补充准确文档修订独立可用性：暂停/恢复/撤回使用当前权限、原版本引用、独立状态CAS及原操作恢复；不改原内容、摘要、审批或历史工程引用。下载、送审/决定/采用和工程新绑定共用当前状态；保留历史可读记录。PostgreSQL实际并发/权限/回滚、认证HTTP、页面与局部测试，单次集中审查。FORM旧历史内容采用尚未证明，WP12-03/04及W306保持未完，不能用TASK迁移边界核销。"
+      "next_action": "W307两仓采用/finish后核销WP05-16，再W308真实需求交集冲突；24h继续。",
+      "lifecycle_snapshot": {
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_seat_released": false,
+        "main_branch_deleted": false,
+        "handoff_branch_deleted": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave307-final-verification.json"
+      }
     },
     "wave_history": [
       {
@@ -242467,10 +242503,10 @@
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
       "started_at": "2026-11-04T00:22:36+00:00",
-      "effective_seconds_recorded": 27871,
-      "timing_snapshot_at": "2026-11-04T08:28:30.485352+00:00",
+      "effective_seconds_recorded": 29496,
+      "timing_snapshot_at": "2026-11-04T08:55:02.416414+00:00",
       "timing_source": "Fresh goal.timeUsedSeconds snapshots; cross-check actual active segments and exclude interruptions. Previous-cycle time and inter-cycle gap never carried forward.",
-      "next_reestimate_at_effective_seconds": 28800,
+      "next_reestimate_at_effective_seconds": 36000,
       "estimate_hours": [
         23.75,
         45.75
@@ -243220,7 +243256,9 @@
           "initial_estimate_hours": [
             1,
             2
-          ]
+          ],
+          "dependency_status": "WAITING_FOR_FORM_HISTORY_ADOPTION",
+          "remaining": "WP12-03/04历史准确内容披露/显式采用未证明；W305完成WP12-10不连带解决。"
         },
         {
           "id": "W307-01",
@@ -243230,18 +243268,32 @@
           ],
           "title": "受控文档准确修订的独立可用性",
           "estimate_hours": [
-            1.5,
-            3
+            0.65,
+            1.2
           ],
-          "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_REVISED_AFTER_SOURCE_READ",
+          "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_REVISED_AT_8H",
           "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
-          "state": "IN_PROGRESS",
+          "state": "VERIFYING",
           "initial_estimate_hours": [
             2,
             4
           ],
           "started_at": "2026-11-04T08:28:30.485352+00:00",
-          "effective_start": 27871
+          "effective_start": 27871,
+          "forecast_remaining_hours": [
+            0.35,
+            0.9
+          ],
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W307-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave307-final-verification.json"
+          }
         },
         {
           "id": "W308-01",
@@ -243251,10 +243303,10 @@
           ],
           "title": "需求集真实适用交集冲突及裁决",
           "estimate_hours": [
-            1.5,
-            3
+            0.8,
+            1.8
           ],
-          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_kind": "LOW_CONFIDENCE_PENDING_SOURCE_READ",
           "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
           "state": "PLANNED",
           "initial_estimate_hours": [
@@ -243270,10 +243322,10 @@
           ],
           "title": "需求集后继差分和实际消费者影响意图",
           "estimate_hours": [
-            1,
-            2
+            0.75,
+            1.6
           ],
-          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_kind": "LOW_CONFIDENCE_PENDING_SOURCE_READ",
           "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
           "state": "PLANNED",
           "initial_estimate_hours": [
@@ -243578,7 +243630,7 @@
           "historical_conflicts": "Preserved immutable; existing environments not inspected or migrated. Separate controlled forward recovery required for affected existing records."
         }
       ],
-      "next_priority": "W307 exact document availability; W306 deferred until historical FORM content adoption is resolved",
+      "next_priority": "Finish W307, reconcile original WP05-16 after remote adoption, then W308/W309. W306 FORM legacy content precondition remains.",
       "extra_bug_deliveries": [
         {
           "id": "BUG751",
@@ -243591,7 +243643,23 @@
           "pr": "https://github.com/GTX537/CP6/pull/753",
           "lifecycle_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug751-final-verification.json"
         }
-      ]
+      ],
+      "actual_execution_calibrations": [
+        {
+          "at": "2026-11-04T08:45:11.034616+00:00",
+          "effective_seconds": 28842,
+          "remaining_budget_seconds": 57558,
+          "completed_windows": 13,
+          "completed_window_seconds": 23658,
+          "median_window_seconds": 1934,
+          "min_window_seconds": 781,
+          "max_window_seconds": 3412,
+          "basis": "Observed actual execution; completed windows only. Integration/planning gaps remain in effective total. No artificial waiting or inferred completed product scope.",
+          "forecast_confidence": "LOW",
+          "next_calibration_seconds": 36000
+        }
+      ],
+      "next_calibration_seconds": 36000
     },
     "execution_plan_history": [
       {

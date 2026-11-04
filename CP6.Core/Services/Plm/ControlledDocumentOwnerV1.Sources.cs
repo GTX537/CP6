@@ -13,14 +13,19 @@ public sealed partial class ControlledDocumentOwnerV1
         var value=await Observe(access,await store.Read(reference.Id,Revision(reference.Version),ct),ct);
         if(value.Reference!=reference)throw Error("DOCUMENT_REFERENCE_CHANGED",412);
         if(requireAvailable)
+        {
+            RequireAvailable(value);
             foreach(var content in value.Body.Contents)
                 await files.BoundSource(access,content.File,value.Body.RevisionOrigin.Id,true,ct);
+        }
         return value;
     }
     private async Task<ControlledDocumentSnapshotV1> Observe(OperationsAccessV1 a,ControlledDocumentSnapshotV1 value,CancellationToken ct)
     {
         await a.RequireControlledDocument(value.Reference.Id,ct); a.AtCommit(t => a.RequireControlledDocument(value.Reference.Id,t));
-        var findings = (await Sources(a,value.Body,false,ct)).ToList(); var observations = new List<DocumentContentObservationV1>();
+        var findings = (await Sources(a,value.Body,false,ct)).ToList();
+        if(value.Availability!.State!="AVAILABLE")findings.Add("DOCUMENT_AVAILABILITY:"+value.Availability.State);
+        var observations = new List<DocumentContentObservationV1>();
         foreach (var content in value.Body.Contents)
         {
             var file = await files.BoundSource(a,content.File,value.Body.RevisionOrigin.Id,false,ct);
@@ -73,6 +78,7 @@ public sealed partial class ControlledDocumentOwnerV1
         {
             var store=new ControlledDocumentStoreV1(db);await store.Fence(false,t);
             var saved=await Observe(a,await store.Read(id,selected,t),t);
+            RequireAvailable(saved);
             var member=saved.Body.Contents.SingleOrDefault(x=>x.OccurrenceId==occurrence)??throw Error("DOCUMENT_CONTENT_NOT_FOUND",404);
             return await files.BoundDownload(a,member.File,saved.Body.RevisionOrigin.Id,t);
         },ct);

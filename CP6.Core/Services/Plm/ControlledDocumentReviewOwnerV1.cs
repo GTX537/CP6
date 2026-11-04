@@ -20,7 +20,7 @@ public sealed partial class ControlledDocumentReviewOwnerV1(CP6Context db, Opera
     private sealed record Context(OperationsAccessV1 Access,ControlledDocumentReviewStoreV1 Store,
         ControlledDocumentSnapshotV1 Document,DocumentReviewPolicyViewV1[] Policies,SubmissionRow[] Submissions)
     {
-        internal string Etag=>"\"dr1-"+ApprovalCanonicalV2.Hash(ApprovalCanonicalV2.Bytes(new {Document.Reference,
+        internal string Etag=>"\"dr1-"+ApprovalCanonicalV2.Hash(ApprovalCanonicalV2.Bytes(new {Document.Reference,Document.Availability,
             Policies=Policies.Select(p=>p.Reference),Submissions=Submissions.Select(s=>s.Digest)}))+"\"";
     }
     private static DocumentReviewAuthorityV1[] Witnesses(OperationsAccessV1 a)=>a.Authorities

@@ -16,9 +16,10 @@
         <label>修订原因<textarea v-model="reason" aria-label="修订原因" maxlength="4000" required /></label><button :disabled="!body.contents.length">保存文档修订</button>
       </fieldset></form>
     </section>
-    <section v-if="current"><h2>已保存版本</h2><p>{{ current.body.name }} · v{{ current.reference.version }} · {{ current.reason }}</p><ul><li v-for="item in current.contentStatus" :key="item.occurrenceId">{{ item.fileName }}：{{ availability(item.availability) }} <button :disabled="busy || item.availability !== 'AVAILABLE'" @click="download(current, item.occurrenceId)">下载准确内容</button></li></ul><p v-if="current.missing.length">{{ current.missing.map(finding).join('；') }}</p>
+    <section v-if="current"><h2>已保存版本</h2><p>{{ current.body.name }} · v{{ current.reference.version }} · {{ current.reason }}</p><ul><li v-for="item in current.contentStatus" :key="item.occurrenceId">{{ item.fileName }}：{{ availability(item.availability) }} <button :disabled="busy || current.availability.state !== 'AVAILABLE' || item.availability !== 'AVAILABLE'" @click="download(current, item.occurrenceId)">下载准确内容</button></li></ul><p v-if="current.missing.length">{{ current.missing.map(finding).join('；') }}</p>
+      <DocumentAvailabilityPanel :document="current" :disabled="locked" :can-manage="permissions.has('plm-controlled-document:availability')" :history="availabilityHistory[key(current.reference)]" @change="changeAvailability" @history="loadAvailabilityHistory(current, $event)" />
       <form @submit.prevent="readHistory"><label>历史工作版本<input v-model="historyVersion" aria-label="历史工作版本" pattern="[1-9][0-9]*" required /></label><button :disabled="busy">读取历史</button></form>
-      <article v-if="history"><h3>历史 v{{ history.reference.version }} · {{ history.body.name }}</h3><p>历史引用保持原版本。下载仍核对当前权限与安全状态。</p><ul><li v-for="item in history.contentStatus" :key="item.occurrenceId">{{ item.fileName }}：{{ availability(item.availability) }} <button :disabled="busy || item.availability !== 'AVAILABLE'" @click="download(history, item.occurrenceId)">下载历史内容</button></li></ul></article>
+      <article v-if="history"><h3>历史 v{{ history.reference.version }} · {{ history.body.name }}</h3><p>历史引用保持原版本。下载仍核对当前权限与安全状态。</p><DocumentAvailabilityPanel :document="history" :disabled="locked" :can-manage="permissions.has('plm-controlled-document:availability')" :history="availabilityHistory[key(history.reference)]" @change="changeAvailability" @history="loadAvailabilityHistory(history, $event)" /><ul><li v-for="item in history.contentStatus" :key="item.occurrenceId">{{ item.fileName }}：{{ availability(item.availability) }} <button :disabled="busy || history.availability.state !== 'AVAILABLE' || item.availability !== 'AVAILABLE'" @click="download(history, item.occurrenceId)">下载历史内容</button></li></ul></article>
       <form @submit.prevent="readDiff"><label>比较起始版本<input v-model="before" aria-label="比较起始版本" pattern="[1-9][0-9]*" /></label><label>比较结束版本<input v-model="after" aria-label="比较结束版本" pattern="[1-9][0-9]*" /></label><button :disabled="busy">比较版本</button></form><ul v-if="diff"><li v-for="change in diff.changes" :key="change.path">{{ change.path.startsWith('contents/') ? '内容或派生关系' : ({ name: '名称', source: '来源资料', revisionLabel: '修订标记', revisionOrigin: '工程来源', productRef: '产品来源' }[change.path] ?? '文档资料') }}：{{ display(change.before) }} → {{ display(change.after) }}</li></ul>
     </section>
     <ControlledDocumentReviewPanel v-if="current && scope" :document="current" :scope="scope" :disabled="busy || !!pending" :initial-submission="reviewSubmission" />
@@ -27,7 +28,8 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import ControlledDocumentReviewPanel from './ControlledDocumentReviewPanel.vue'
-import { documentApi, type DocumentBody, type DocumentContent, type DocumentSnapshot } from '@/api/plm/controlledDocument'
+import DocumentAvailabilityPanel from './DocumentAvailabilityPanel.vue'
+import { documentApi, type DocumentBody, type DocumentContent, type DocumentSnapshot, type DocumentAvailability, type DocumentAvailabilityCommand } from '@/api/plm/controlledDocument'
 import { revisionApi, type RevisionDiff, type RevisionSnapshot } from '@/api/plm/engineeringRevisions'
 import { fileContentApi, type FileSnapshot } from '@/api/pub/fileContent'
 import type { EngineeringReference, EngineeringScope } from '@/api/plm/engineeringProducts'
@@ -42,13 +44,14 @@ const parents = ref<RevisionSnapshot[]>([]), choice = ref(''), search = ref(''),
 const rows = ref<DocumentSnapshot[]>([]), page = ref(1), current = ref<DocumentSnapshot | null>(null), history = ref<DocumentSnapshot | null>(null), body = ref<DocumentBody | null>(null), draftId = ref(''), reason = ref('')
 const available = ref<FileSnapshot[]>([]), fileChoice = ref(''), filePage = ref(1), moreFiles = ref(false), historyVersion = ref('1'), before = ref('1'), after = ref('1'), diff = ref<RevisionDiff | null>(null)
 const canWrite = computed(() => canRead.value && permissions.has(current.value ? 'plm-controlled-document:edit' : 'plm-controlled-document:add'))
+const availabilityHistory = ref<Record<string, DocumentAvailability[]>>({})
 let generation = 0, live = true; const urls = new Set<string>(), copy = <T,>(v: T): T => JSON.parse(JSON.stringify(v)), key = (r: EngineeringReference) => `${r.owner}:${r.id}:${r.version}:${r.digest}`
 const derived = (v: DocumentContent) => v.role === 'PREVIEW' || v.role === 'TRANSLATION'
-const availability = (v: string) => ({ AVAILABLE: '可申请下载', HELD: '保留中', QUARANTINED: '隔离中', PENDING_INSPECTION: '等待安全检查' }[v] ?? '内容暂不可用')
-const finding = (v: string) => v.startsWith('CONTENT_UNAVAILABLE:') ? '存在当前不可用内容' : ({ DOCUMENT_PROFESSIONAL_REVIEW_REQUIRED: '待专业评审', SOURCE_EVIDENCE_INCOMPLETE: '来源资料待补充', LANGUAGE_AUTHORITY_UNRESOLVED: '权威语言待确认', LANGUAGE_AUTHORITY_REVIEW_REQUIRED: '语言权威依据待评审', CONTENT_LANGUAGE_UNRESOLVED: '内容语言待补充', PRODUCT_SOURCE_CHANGED: '产品来源已变化' }[v] ?? '尚有待确认事项')
+const availability = (v: string) => ({ AVAILABLE: '文件可用', HELD: '保留中', QUARANTINED: '隔离中', PENDING_INSPECTION: '等待安全检查' }[v] ?? '内容暂不可用')
+const finding = (v: string) => v.startsWith('DOCUMENT_AVAILABILITY:') ? '此修订当前不可取用' : v.startsWith('CONTENT_UNAVAILABLE:') ? '存在当前不可用内容' : ({ DOCUMENT_PROFESSIONAL_REVIEW_REQUIRED: '待专业评审', SOURCE_EVIDENCE_INCOMPLETE: '来源资料待补充', LANGUAGE_AUTHORITY_UNRESOLVED: '权威语言待确认', LANGUAGE_AUTHORITY_REVIEW_REQUIRED: '语言权威依据待评审', CONTENT_LANGUAGE_UNRESOLVED: '内容语言待补充', PRODUCT_SOURCE_CHANGED: '产品来源已变化' }[v] ?? '尚有待确认事项')
 const fileName = (v: DocumentContent) => available.value.find(x => x.contentRef.id === v.file.id)?.fileName ?? current.value?.contentStatus.find(x => x.occurrenceId === v.occurrenceId)?.fileName ?? '已固定内容'
 const display = (value: unknown) => typeof value === 'string' ? value : value == null ? '未设置' : '结构化资料已变更'
-function clearEditor() { current.value = history.value = null; body.value = null; diff.value = null; available.value = []; fileChoice.value = ''; draftId.value = reason.value = ''; moreFiles.value = false; for (const url of urls) URL.revokeObjectURL(url); urls.clear() }
+function clearEditor() { availabilityHistory.value = {}; current.value = history.value = null; body.value = null; diff.value = null; available.value = []; fileChoice.value = ''; draftId.value = reason.value = ''; moreFiles.value = false; for (const url of urls) URL.revokeObjectURL(url); urls.clear() }
 function clearPrivate() { clearEditor(); rows.value = []; parents.value = []; choice.value = search.value = '' }
 function syncPending() { pending.value = scope.value ? pendingDocument(scope.value) : null }
 async function run(action: (check: () => void) => Promise<void>) {
@@ -86,6 +89,21 @@ async function save() {
   const s = scope.value, p = parent.value, draft = body.value; if (!s || !p?.draft.productRef || !draft || locked.value || !canWrite.value) return
   const saved = current.value, id = draftId.value, input = copy(draft); input.revisionOrigin = copy(p.reference); input.productRef = copy(p.draft.productRef); if (!input.source.sourceDate) input.source.sourceDate = null
   await run(async check => { await saveDocument(s, id, () => { check(); if (!canWrite.value) throw new Error('当前无文档写入权限。') }, operationId => documentApi.save({ operationId, documentId: id, action: saved ? 'REVISE' : 'CREATE', expectedVersion: saved?.reference.version ?? null, expectedEtag: saved?.etag ?? null, body: input, reason: reason.value })); check(); clearEditor(); await loadRows(1, check); notice.value = '文档工作版本已保存，仍待专业评审。' })
+}
+async function changeAvailability(input: Omit<DocumentAvailabilityCommand, 'operationId'>) {
+  const s = scope.value; if (!s || locked.value || !permissions.has('plm-controlled-document:availability')) return
+  await run(async check => {
+    await saveDocument(s, input.document.id, check, operationId => documentApi.availability({ ...input, operationId })); check()
+    const observed = result(await documentApi.read(input.document.id, input.document.version)); check()
+    if (current.value && key(current.value.reference) === key(observed.reference)) current.value = observed
+    if (history.value && key(history.value.reference) === key(observed.reference)) history.value = observed
+    delete availabilityHistory.value[key(input.document)]
+    notice.value = '此修订的可用性已更新，原内容和历史引用保留。'
+  })
+}
+async function loadAvailabilityHistory(document: DocumentSnapshot, more = false) {
+  const identity = key(document.reference), previous = more ? availabilityHistory.value[identity] ?? [] : []
+  await run(async check => { const values = result(await documentApi.availabilityHistory(document.reference.id, document.reference.version, previous[previous.length - 1]?.stateVersion)); check(); availabilityHistory.value[identity] = [...previous, ...values] })
 }
 async function readHistory() { const v = current.value; if (!v) return; await run(async check => { history.value = null; const h = result(await documentApi.read(v.reference.id, historyVersion.value)); check(); history.value = h }) }
 async function readDiff() { const v = current.value; if (!v) return; await run(async check => { diff.value = null; const d = result(await documentApi.diff(v.reference.id, before.value, after.value)); check(); diff.value = d }) }

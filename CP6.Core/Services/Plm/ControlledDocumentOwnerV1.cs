@@ -72,7 +72,7 @@ public sealed partial class ControlledDocumentOwnerV1(CP6Context db, OperationsO
         if (value.Reference != reference) throw Error("DOCUMENT_REFERENCE_CHANGED", 412);
         if (value.Body.RevisionOrigin.Id != parent) throw Error("DOCUMENT_REVISION_MISMATCH", 422);
         if (current && (!value.IsCurrent || value.Body.ProductRef != product)) throw Error("DOCUMENT_SOURCE_CHANGED", 412);
-        if (current) await Sources(a, value.Body, true, ct, requireCurrentParent: false);
+        if (current) { RequireAvailable(value); await Sources(a, value.Body, true, ct, requireCurrentParent: false); }
         return value.Body.ProductRef == product ? value : value with { Missing = [..value.Missing!, "PRODUCT_SOURCE_CHANGED"] };
     }
     public Task<ControlledDocumentResultV1> CommandAsync(ControlledDocumentCommandV1 input, CancellationToken ct = default)
@@ -124,6 +124,8 @@ public sealed partial class ControlledDocumentOwnerV1(CP6Context db, OperationsO
         if (result == null || result.OperationId != id || result.Kind != "CONTROLLED_DOCUMENT" || !original.Objects.SequenceEqual(new[] { result.ObjectId })) throw Error("ORIGINAL_OPERATION_UNAVAILABLE", 503);
         var saved = await Observe(a, await store.Read(result.ObjectId, Revision(result.Version), ct), ct);
         if (saved.Reference.Digest != result.Digest) throw Error("ORIGINAL_OPERATION_UNAVAILABLE", 503);
+        if(result.Availability is {} availability && await store.Availability(result.ObjectId,Revision(result.Version),Revision(availability.StateVersion),ct)!=availability)
+            throw Error("ORIGINAL_OPERATION_UNAVAILABLE",503);
         return result;
     }
     public Task<ControlledDocumentOperationV1> OperationAsync(Guid id, bool close, CancellationToken ct = default)

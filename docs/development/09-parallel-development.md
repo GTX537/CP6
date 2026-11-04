@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W305原卡核销](evidence/W305-01/DELIVERY.md)，WP12-10 DONE，原59余51；24h继续，下一FORM历史边界与W306前置。
+> 当前：[W307](evidence/W307-01/DELIVERY.md)文档修订独立可用性；两仓采用/finish后核销WP05-16并接W308，24h单人目标继续。
+
+> 历史快照：[W305原卡核销](evidence/W305-01/DELIVERY.md)，WP12-10 DONE，原59余51；24h继续，下一FORM历史边界与W306前置。
 
 > 历史快照：[W317](evidence/W317-01/DELIVERY.md)准确前快照恢复；两仓采用/finish后W305，24h单人目标继续。
 

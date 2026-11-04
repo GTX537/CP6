@@ -27,6 +27,12 @@ public sealed class ControlledDocumentController(ControlledDocumentOwnerV1 owner
         Response.Headers["X-Content-SHA256"]=value.ContentRef.Digest;
         return File(value.Bytes,"application/octet-stream",value.FileName,enableRangeProcessing:false);
     }
+    [HttpGet("{id:guid}/availability-history")]
+    public async Task<IActionResult> AvailabilityHistory(Guid id,[FromQuery] string version,[FromQuery] string? before,CancellationToken ct)
+        => Result(await owner.AvailabilityHistoryAsync(id,version,ct,before));
+    [HttpPost("availability-commands"), RequestSizeLimit(32768)]
+    public async Task<IActionResult> Availability([FromBody] DocumentAvailabilityCommandV1 command,CancellationToken ct)
+        => Result(await owner.AvailabilityAsync(command,ct));
     [HttpPost("commands"), RequestSizeLimit(8388608)]
     public async Task<IActionResult> Command([FromBody] ControlledDocumentCommandV1 command, CancellationToken ct) => Result(await owner.CommandAsync(command, ct));
     [HttpGet("operations/{id:guid}")]
