@@ -162002,6 +162002,11 @@
       "date": "2026-11-04",
       "change": "W317远端采用与生命周期核销，W305按原TASK历史缺证/迁移设计范围开工。",
       "evidence": "docs/development/evidence/W305-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-04",
+      "change": "W305按原WP12-10三项范围及正反验收核销委派修订、准确实际身份和历史缺证边界，原卡正式DONE；历史转换按原TASK R2 §5.1仍为独立迁移设计，不新增执行入口。 原375现32DONE/2IN_PROGRESS/341PLANNED；原59局部8闭环/51剩余。125完整目标0关闭、247正式验收NOT_RUN保持，其他卡不连带关闭。",
+      "evidence": "docs/development/evidence/W305-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -174652,6 +174657,18 @@
           "source": "0db99a523bbce74e9bc37816a1be1204eda950c6",
           "remote_target": "bcfb6504aeb41dde5f0d563d392679e79353f4c6",
           "pr": "https://github.com/GTX537/CP6/pull/599"
+        }
+      },
+      "wave277_task_authority_audit_adoption": {
+        "status": "CLOSED",
+        "report": "docs/development/evidence/W277-01/DELIVERY.md",
+        "scope": "Actual Main TASK delegation revisions, original commands and audit in the same PostgreSQL authority transaction; only WP12-10 foundation condition, not full audit retention.",
+        "full_task_complete": false,
+        "main_delivery": {
+          "repository": "CP6",
+          "source": "da4f438cdac0708cc4329694a8f19856fcf7c38d",
+          "remote_target": "c055d2b083a8ce0777255548777f24fe81180c61",
+          "pr": "https://github.com/GTX537/CP6/pull/707"
         }
       }
     },
@@ -198992,14 +199009,64 @@
         "file:Main:CP6.Core/Services/Wf/ApprovalDispatcher.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP12.md",
       "card_anchor": "wp12-10",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "COORD / W305-01",
+        "branch": "codex/w305-01",
+        "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+        "claimed_at": "2026-11-04T08:10:59.563085+00:00",
+        "baseline_sha": "591ab07d6bd44f68219c69cd40a0bcb06f6be56c",
+        "scope": "Original WP12-10 only; actual adopted delegation and historical incomplete-evidence behavior; migration remains design-only"
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/W277-01/DELIVERY.md",
+          "source_sha": "da4f438cdac0708cc4329694a8f19856fcf7c38d",
+          "command": "Reuse original execution; current applicability and original-card audit only in W305",
+          "environment": "Original isolated PostgreSQL18/Main HTTP/Vue/Chrome as individually labeled; simulated business input",
+          "observed_at": "2026-11-04T08:16:19.925339+00:00",
+          "scope": "Only corresponding original WP12-10 behavior; historical migration not executed; original evidence timestamps retained",
+          "result": "PASS"
+        },
+        {
+          "path": "docs/development/evidence/W278-01/DELIVERY.md",
+          "source_sha": "b445a2c672253ff11025106aca97fb30645ea520",
+          "command": "Reuse original execution; current applicability and original-card audit only in W305",
+          "environment": "Original isolated PostgreSQL18/Main HTTP/Vue/Chrome as individually labeled; simulated business input",
+          "observed_at": "2026-11-04T08:16:19.925339+00:00",
+          "scope": "Only corresponding original WP12-10 behavior; historical migration not executed; original evidence timestamps retained",
+          "result": "PASS"
+        },
+        {
+          "path": "docs/development/evidence/W292-01/DELIVERY.md",
+          "source_sha": "ef8e942f1e3fab061e4f8b997dea677a8355fed9",
+          "command": "Reuse original execution; current applicability and original-card audit only in W305",
+          "environment": "Original isolated PostgreSQL18/Main HTTP/Vue/Chrome as individually labeled; simulated business input",
+          "observed_at": "2026-11-04T08:16:19.925339+00:00",
+          "scope": "Only corresponding original WP12-10 behavior; historical migration not executed; original evidence timestamps retained",
+          "result": "PASS"
+        },
+        {
+          "path": "docs/development/evidence/W295-01/DELIVERY.md",
+          "source_sha": "90dc0cc40502a14fc6b016f4edab3a49173a7d85",
+          "command": "Reuse original execution; current applicability and original-card audit only in W305",
+          "environment": "Original isolated PostgreSQL18/Main HTTP/Vue/Chrome as individually labeled; simulated business input",
+          "observed_at": "2026-11-04T08:16:19.925339+00:00",
+          "scope": "Only corresponding original WP12-10 behavior; historical migration not executed; original evidence timestamps retained",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/W292-01/DELIVERY.md",
+        "source_sha": "ef8e942f1e3fab061e4f8b997dea677a8355fed9",
+        "remote_main_sha": "591ab07d6bd44f68219c69cd40a0bcb06f6be56c",
+        "pr_url": "https://github.com/GTX537/CP6/pull/734",
+        "scope": "Current Main contains all original WP12-10 adopted sources; W305 full-card mapping, W292 alone not claimed as entire implementation."
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：按S02-00采用的PostgreSQL布局、可信上下文/当前授权和全部写者共同最终fence、Main Owner事务及原键结果/审计。",
@@ -199042,17 +199109,45 @@
         "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave292-final-verification.json"
       },
       "scope_reconciliation": {
-        "classification": "明确实现余项",
-        "delivered": " W292：历史任务读面明确身份缺证与准确原FormTo引用，保留原字段/旧链并区分未核实身份；受控LegacyPrincipalMapping迁移设计边界已记录，本轮不执行转换。",
+        "classification": "FULL_CARD_RECONCILED",
+        "delivered": " W292：历史任务读面明确身份缺证与准确原FormTo引用，保留原字段/旧链并区分未核实身份；受控LegacyPrincipalMapping迁移设计边界已记录，本轮不执行转换。 W305按原WP12-10三项范围及正反验收核销委派修订、准确实际身份和历史缺证边界，原卡正式DONE；历史转换按原TASK R2 §5.1仍为独立迁移设计，不新增执行入口。",
         "evidence_refs": [
-          "docs/development/evidence/W292-01/DELIVERY.md"
+          "docs/development/evidence/W292-01/DELIVERY.md",
+          "docs/development/evidence/W277-01/DELIVERY.md",
+          "docs/development/evidence/W278-01/DELIVERY.md",
+          "docs/development/evidence/W295-01/DELIVERY.md",
+          "docs/development/evidence/W305-01/DELIVERY.md"
         ],
-        "formal_state_changed": false,
-        "window": "W292-01",
-        "as_of": "2026-11-03",
-        "report": "docs/development/evidence/W292-01/DELIVERY.md",
-        "new_product_validation": true,
-        "remaining": "原375仍28DONE/2IN_PROGRESS/345PLANNED；原59局部4闭环/55余项，125完整目标与247正式验收状态不变。WP12-10及其定义发布前置尚待整卡核销；WP12-04/08原依赖保留。"
+        "formal_state_changed": true,
+        "window": "W305-01",
+        "as_of": "2026-11-04",
+        "report": "docs/development/evidence/W305-01/DELIVERY.md",
+        "new_product_validation": false,
+        "remaining": "原卡当前委派/身份/历史缺证及迁移设计范围无剩余；历史转换执行按原TASK R2独立，不声称已实现。"
+      },
+      "prerequisite_adoptions": [
+        {
+          "task_id": "WP02-10",
+          "requirement": "所属仓库的可信租户、当前授权、同事务原结果及审计基础",
+          "deliveries": [
+            "wave171_scope_authorization"
+          ],
+          "scope": "Actual Main trusted context/WF_AUTH current delegation and task writers."
+        },
+        {
+          "task_id": "WP02-13",
+          "requirement": "所属仓库的可信租户、当前授权、同事务原结果及审计基础",
+          "deliveries": [
+            "wave277_task_authority_audit_adoption"
+          ],
+          "scope": "Actual delegation original/revision/audit and current result recovery in same transaction."
+        }
+      ],
+      "wave305_full_card_reconciliation": {
+        "status": "FULL_CARD_RECONCILED",
+        "report": "docs/development/evidence/W305-01/DELIVERY.md",
+        "full_task_completed": true,
+        "validation": "原WP12-10范围、当前源码适用性、既有真实执行及远端采用祖先、限定前置、文档diff/链接/台账/生成页核对通过；无新增产品测试。"
       }
     },
     {
@@ -203217,7 +203312,7 @@
       "path": "docs/development/dispatch/20261104-wave305/README.md",
       "baseline_sha": "591ab07d6bd44f68219c69cd40a0bcb06f6be56c",
       "registered_at": "2026-11-04T08:10:59.563085+00:00",
-      "phase": "IMPLEMENTING",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -203243,30 +203338,44 @@
           "title": "原委派授权与历史缺证范围核销",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "IMPLEMENTING",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w305-01",
           "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
-          "full_task_completed": false,
+          "full_task_completed": true,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
             "Main:oa-delegation"
-          ]
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W305-01/DELIVERY.md",
+          "validation": "原WP12-10范围、当前源码适用性、既有真实执行及远端采用祖先、限定前置、文档diff/链接/台账/生成页核对通过；无新增产品测试。",
+          "lifecycle_snapshot": {
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave305-final-verification.json",
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false
+          }
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "核原WP12-10 grant/revision、当前半开UTC范围/撤权、本人/显式代理准确身份、旧自动替换缺证与直接前置。按TASK R2 §5.1明确本轮不执行历史迁移，复用W277/W278/W292及W295准确证据与现源码，只补明确实际缺口；不凭旧范围标题新增转换Owner。FORM旧历史内容问题单独核真实原AC，不与TASK职责映射混同。"
+      "next_action": "核原FORM历史兼容真实余项，处理W306原前置；24h继续。",
+      "lifecycle_snapshot": {
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave305-final-verification.json",
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_seat_released": false
+      }
     },
     "wave_history": [
       {
@@ -242243,8 +242352,8 @@
       "new_product_validation": false,
       "formal_states_unchanged": true,
       "followup": {
-        "window": "W302-01",
-        "report": "docs/development/evidence/W302-01/DELIVERY.md",
+        "window": "W305-01",
+        "report": "docs/development/evidence/W305-01/DELIVERY.md",
         "full_cards_reconciled": [
           "WP09-11",
           "WP12-07",
@@ -242252,9 +242361,10 @@
           "WP12-01",
           "WP12-02",
           "WP12-06",
-          "WP12-19"
+          "WP12-19",
+          "WP12-10"
         ],
-        "remaining_original_partial_cards": 52
+        "remaining_original_partial_cards": 51
       }
     },
     "next_execution_plan": {
@@ -242266,8 +242376,8 @@
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
       "started_at": "2026-11-04T00:22:36+00:00",
-      "effective_seconds_recorded": 26793,
-      "timing_snapshot_at": "2026-11-04T08:10:59.563085+00:00",
+      "effective_seconds_recorded": 27162,
+      "timing_snapshot_at": "2026-11-04T08:16:19.925339+00:00",
       "timing_source": "Fresh goal.timeUsedSeconds snapshots; cross-check actual active segments and exclude interruptions. Previous-cycle time and inter-cycle gap never carried forward.",
       "next_reestimate_at_effective_seconds": 28800,
       "estimate_hours": [
@@ -242954,13 +243064,22 @@
           ],
           "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_REVISED_AFTER_SOURCE_READ",
           "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
-          "state": "IN_PROGRESS",
+          "state": "VERIFYING",
           "initial_estimate_hours": [
             2,
             4
           ],
           "started_at": "2026-11-04T08:10:59.563085+00:00",
-          "effective_start": 26793
+          "effective_start": 26793,
+          "implementation_complete": true,
+          "full_task_completed": true,
+          "report": "docs/development/evidence/W305-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave305-final-verification.json",
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false
+          }
         },
         {
           "id": "W306-01",
