@@ -32,7 +32,7 @@ internal static class EngineeringRequirementValuesV1
             Text(s.OriginDescription,true); Text(s.SourceLabel); Text(s.AcquisitionBasis);
             var ids=new HashSet<string>(StringComparer.Ordinal);
             foreach(var c in s.Clauses)
-            { if(c==null || !ids.Add(c.Id)) throw Error("REQUIREMENT_CLAUSE_INVALID",400); Text(c.Id,true,128);Text(c.OriginalText,true);Text(c.Locator); }
+            { if(c==null || !ids.Add(c.Id)) throw Error("REQUIREMENT_CLAUSE_INVALID",400); Text(c.Id,true,128);Text(c.OriginalText,true);Text(c.Locator); if(c.Terms is {} terms){if(s.Kind!="INTERNAL_PROPOSAL")throw Error("REQUIREMENT_SOURCE_AUTHORITY_UNRESOLVED",400);RequirementApplicabilityV1.Validate(terms);} }
         }
         else if (b.Kind=="REQUIREMENT")
         {

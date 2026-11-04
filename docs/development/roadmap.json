@@ -162022,6 +162022,11 @@
       "date": "2026-11-04",
       "change": "W307远端采用与生命周期核销，W308按原需求来源范围与冲突裁决开工。",
       "evidence": "docs/development/evidence/W308-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-04",
+      "change": "W308实现内部来源准确条款的有权范围/必须属性确认、需求集真实交集与澄清/范围分离裁决，保ECM/DEV待专业评估与不利冲突历史；原键和真实页面恢复闭环。 原37533DONE/2IN_PROGRESS/340PLANNED；原59局部9闭环/50剩余。WP05-16依据W307最终远端及finish证明正式核销；WP05-14保持PLANNED，W309后继逐条差异/实际消费者影响仍未完成，成员排除、商业原Owner及ECM/DEV实际完成结果独立；125/247保持。",
+      "evidence": "docs/development/evidence/W308-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -184087,6 +184092,12 @@
         ],
         "formal_state_changed": false,
         "new_product_validation": false
+      },
+      "wave308_source_terms": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W308-01/DELIVERY.md",
+        "scope": "Internal source-authority-qualified exact clause applicability and necessity/waivability; no commercial source adapter.",
+        "full_task_complete": false
       }
     },
     {
@@ -184165,18 +184176,27 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-14",
-        "delivered": "W196完整ReqSet受控评审/批准与真实FLOW已实现，W197迭代已消费。",
-        "remaining": "真实适用交集冲突裁决、澄清/范围分离/ECM/DEV去向以及后继差分/已采用消费者影响意图仍需完整闭合，不把普通批准当冲突裁决。",
+        "window": "W308-01",
+        "as_of": "2026-11-04",
+        "classification": "IMPLEMENTED_PARTIAL_PENDING_REMOTE",
+        "report": "docs/development/evidence/W308-01/DELIVERY.md",
+        "delivered": "W196完整ReqSet受控评审/批准与真实FLOW已实现，W197迭代已消费。 W308实现内部来源准确条款的有权范围/必须属性确认、需求集真实交集与澄清/范围分离裁决，保ECM/DEV待专业评估与不利冲突历史；原键和真实页面恢复闭环。",
+        "remaining": "后继逐条差异/采用链与准确影响意图仍未交付；成员排除、商业原Owner及ECM/DEV实际完成结果独立。",
         "evidence_refs": [
           "docs/development/evidence/W196-01/DELIVERY.md",
-          "docs/development/evidence/W197-01/DELIVERY.md"
+          "docs/development/evidence/W197-01/DELIVERY.md",
+          "docs/development/evidence/W308-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
-        "new_product_validation": false
+        "new_product_validation": true
+      },
+      "wave308_conflicts": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W308-01/DELIVERY.md",
+        "scope": "W308实现内部来源准确条款的有权范围/必须属性确认、需求集真实交集与澄清/范围分离裁决，保ECM/DEV待专业评估与不利冲突历史；原键和真实页面恢复闭环。",
+        "validation": "12项独立PostgreSQL18场景（含真实Chrome及4项既有需求/评价/集合回归）、1项准确时间/条款并集行为测试、20项Vue行为与vue-tsc通过。",
+        "full_task_complete": false,
+        "remaining": "Exact successor differences/adoption/consumer impact W309; commercial source adapters, member exclusion and actual ECM/DEV completion independent."
       }
     },
     {
@@ -203452,7 +203472,7 @@
       "path": "docs/development/dispatch/20261104-wave308/README.md",
       "baseline_sha": "62712a6faf4402bf34f6096bd0e241b9d9397077",
       "registered_at": "2026-11-04T09:08:54.332105+00:00",
-      "phase": "IMPLEMENTING",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -203479,31 +203499,50 @@
           "title": "需求来源范围与冲突有权裁决",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "IMPLEMENTING",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w308-01",
           "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
             "Main:engineering-requirements",
             "Main:requirement-set-review"
-          ]
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W308-01/DELIVERY.md",
+          "validation": "12项独立PostgreSQL18场景（含真实Chrome及4项既有需求/评价/集合回归）、1项准确时间/条款并集行为测试、20项Vue行为与vue-tsc通过。",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave308-final-verification.json"
+          },
+          "local_validation": "PASS_AFFECTED_SCOPE"
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "原WP05-14真实冲突交集与有权裁决：在原SOURCE准确条款中增加由当前来源有权人确认的适用范围/必须属性，保留旧缺证；需求集计算真实交集并保双方来源，CLARIFY/SCOPE_SEPARATION由当前有权来源确认，ECM/DEV只记录待专业评估去向，不伪造缺失Owner结果。精确版本、当前权限、原操作恢复和专业送审消费保持；后继影响留W309。"
+      "next_action": "W308两仓采用/finish，接W309真实消费者影响链；24h继续。",
+      "lifecycle_snapshot": {
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_seat_released": false,
+        "main_branch_deleted": false,
+        "handoff_branch_deleted": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave308-final-verification.json"
+      }
     },
     "wave_history": [
       {
@@ -242705,8 +242744,8 @@
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
       "started_at": "2026-11-04T00:22:36+00:00",
-      "effective_seconds_recorded": 30274,
-      "timing_snapshot_at": "2026-11-04T09:08:54.332105+00:00",
+      "effective_seconds_recorded": 31734,
+      "timing_snapshot_at": "2026-11-04T09:32:30.182528+00:00",
       "timing_source": "Fresh goal.timeUsedSeconds snapshots; cross-check actual active segments and exclude interruptions. Previous-cycle time and inter-cycle gap never carried forward.",
       "next_reestimate_at_effective_seconds": 36000,
       "estimate_hours": [
@@ -243537,13 +243576,23 @@
           ],
           "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_REVISED_AFTER_SOURCE_READ",
           "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
-          "state": "IN_PROGRESS",
+          "state": "VERIFYING",
           "initial_estimate_hours": [
             2.5,
             4.5
           ],
           "started_at": "2026-11-04T09:08:54.332105+00:00",
-          "effective_start": 30274
+          "effective_start": 30274,
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W308-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave308-final-verification.json"
+          }
         },
         {
           "id": "W309-01",
@@ -243861,7 +243910,7 @@
           "historical_conflicts": "Preserved immutable; existing environments not inspected or migrated. Separate controlled forward recovery required for affected existing records."
         }
       ],
-      "next_priority": "W308 actual source-qualified applicability and conflict decisions; W309 successor impact remains; W306 deferred",
+      "next_priority": "W309 exact successor difference and actual consumer impact; W306 FORM legacy content remains.",
       "extra_bug_deliveries": [
         {
           "id": "BUG751",

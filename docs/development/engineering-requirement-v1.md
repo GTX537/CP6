@@ -18,6 +18,8 @@ W194，WP05-13 的内部来源/定义前置，供后续需求集批准与 ITER �
 
 ## 事务、接口和恢复
 
+W308 增加原条款可选 `Terms`（`requirement-clause-terms/1`），承载来源确认的客户/产品/配置范围、UTC半开时间、必须属性、可放宽性和依据。仅 INTERNAL_PROPOSAL 可确认；保存携带或删除这类条款的新来源版本，还需独立 `source-confirm` 当前对象/字段权限。范围键是来源有权人提供的命名空间内准确身份，不是名称，也不冒充 CRM 原单据或外部客户确认。旧原件字段缺失即未知，null 不进入原序列化，保旧摘要；引用旧版的需求不会自动采用新范围。详细交集与裁决规则见 [需求集](requirement-set-approval-v1.md#来源范围与冲突裁决w308)。
+
 - `GET /api/engineering-requirements/owner-v1/{scope|creation-context}`：可信身份和创建范围。
 - `GET /api/engineering-requirements/owner-v1?kind=SOURCE|REQUIREMENT&search=...&page=...`：当前范围分页目录；单对象支持 `?version=` 精确历史读取。
 - `POST .../commands`：严格输入合同、CREATE/REVISE、准确 ExpectedVersion/ETag；独立 OperationId 与输入原文匹配。

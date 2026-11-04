@@ -24,6 +24,13 @@ internal static class RequirementSetValuesV1
         foreach(var c in b.Conflicts)
         {
             if(c==null || c.Left==null || c.Right==null || !conflicts.Add(c.Id) || c.Left.Id==c.Right.Id || c.Proposal is not("UNRESOLVED" or "CLARIFY" or "SCOPE_SEPARATION" or "ECM" or "DEV"))throw Error("REQUIREMENT_SET_CONFLICT_INVALID",400);
+            if(c.Decision is {} decision)
+            {
+                if(decision.Schema!="requirement-conflict-decision/1" || decision.Kind!=c.Proposal
+                    || decision.Kind is not("CLARIFY" or "SCOPE_SEPARATION" or "ECM" or "DEV") || !decision.PreservesRequirements)
+                    throw Error("REQUIREMENT_CONFLICT_DECISION_INVALID",400);
+                Text(decision.Basis,true);
+            }
             Text(c.Id,true,128);Text(c.Intersection);Text(c.Basis);EngineeringRequirementValuesV1.Ref(c.Left);EngineeringRequirementValuesV1.Ref(c.Right);
             if(!b.Members.Any(m=>m.Requirement==c.Left)||!b.Members.Any(m=>m.Requirement==c.Right))throw Error("REQUIREMENT_SET_CONFLICT_MEMBER_REQUIRED",400);
         }
