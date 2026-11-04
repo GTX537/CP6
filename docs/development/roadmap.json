@@ -202665,11 +202665,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261103-wave296",
-      "path": "docs/development/dispatch/20261103-wave296/README.md",
-      "baseline_sha": "6521575d4b2aab41fde64630006d684f4ec3b50a",
-      "registered_at": "2026-11-03T14:53:11.484717+00:00",
-      "phase": "DELIVERY_MAIN_CLOSEOUT",
+      "id": "20261104-wave297",
+      "path": "docs/development/dispatch/20261104-wave297/README.md",
+      "baseline_sha": "6223e3d7be8f7e20d0fc60941e0f4010865efe55",
+      "registered_at": "2026-11-04T00:26:57.175178+00:00",
+      "phase": "IMPLEMENTING",
       "assigned_chats": [
         "COORD"
       ],
@@ -202687,52 +202687,41 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W296-01",
-          "workspace_task": "W296-01",
+          "id": "W297-01",
+          "workspace_task": "W297-01",
           "related_tasks": [
-            "WP12-06"
+            "WP12-19"
           ],
-          "title": "原APP绑定提交卡与24h实际执行收口",
+          "title": "DOC完整可信撤回与原应用互斥",
           "chat": "COORD",
-          "mode": "SINGLE_CHAT",
-          "phase": "DELIVERY_MAIN_CLOSEOUT",
+          "mode": "SINGLE_CHAT_IMPLEMENTATION",
+          "phase": "IMPLEMENTING",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": true,
+          "worker_delivery_received": false,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w296-01",
-          "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
-          "full_task_completed": true,
+          "branch": "codex/w297-01",
+          "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
+          "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": true,
+          "candidate_review_completed": false,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
-            "Main:oa-application"
-          ],
-          "worker_delivery_ref": "docs/development/evidence/W296-01/DELIVERY.md",
-          "validation": "Prior actual evidence/current-source/card audit; no new product test",
-          "lifecycle_snapshot": {
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave296-final-verification.json",
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false
-          }
+            "Main:oa-application",
+            "Main:document-review",
+            "Main:authorization-catalog",
+            "Main:EF-migrations"
+          ]
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "本周期有效24h与任务范围完成；执行当前Main/Handoff正常采用、准确清理和finish，最终证明PASS后整个目标完成；不自动开新周期。",
-      "lifecycle_snapshot": {
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave296-final-verification.json",
-        "main_finish_required": true,
-        "main_seat_released": false,
-        "handoff_seat_released": false
-      }
+      "next_action": "W297先完成DOC真实Owner可信撤回/同控制头应用互斥/明确重新授权与页面恢复；本轮约24h单人持续，初始14窗滚动储备，每累计2h按实际耗时校准。"
     },
     "wave_history": [
       {
@@ -240035,6 +240024,100 @@
             "workspace_clean": true
           }
         ]
+      },
+      {
+        "id": "20261103-wave296",
+        "path": "docs/development/dispatch/20261103-wave296/README.md",
+        "baseline_sha": "6521575d4b2aab41fde64630006d684f4ec3b50a",
+        "registered_at": "2026-11-03T14:53:11.484717+00:00",
+        "phase": "DONE",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W296-01",
+            "workspace_task": "W296-01",
+            "related_tasks": [
+              "WP12-06"
+            ],
+            "title": "原APP绑定提交卡与24h实际执行收口",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT",
+            "phase": "DONE",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w296-01",
+            "planned_scope_ref": "docs/development/planning/20261102-codex-24h-oa.md",
+            "full_task_completed": true,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:oa-application"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W296-01/DELIVERY.md",
+            "validation": "Prior actual evidence/current-source/card audit; no new product test",
+            "lifecycle_snapshot": {
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave296-final-verification.json",
+              "all_slots_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true
+            }
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "本周期有效24h与任务范围完成；执行当前Main/Handoff正常采用、准确清理和finish，最终证明PASS后整个目标完成；不自动开新周期。",
+        "lifecycle_snapshot": {
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave296-final-verification.json",
+          "all_slots_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W296-01",
+            "source": "e178db1582e510100e0361d9015ff34f519fc036",
+            "remote_target": "6223e3d7be8f7e20d0fc60941e0f4010865efe55",
+            "pr": "https://github.com/GTX537/CP6/pull/742",
+            "branch": "codex/w296-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W296-HANDOFF",
+            "source": "25024687faca70f26b5fd72304c6a04a18d0c080",
+            "remote_target": "5698b088459fa6fb9acbbffcab54aa918b578f6b",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/273",
+            "branch": "codex/w296-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -240601,1835 +240684,253 @@
       }
     },
     "next_execution_plan": {
-      "id": "CP6-24H-20261102",
-      "path": "docs/development/planning/20261102-codex-24h-oa.md",
-      "state": "COMPLETED",
+      "id": "CP6-24H-20261104",
+      "path": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
+      "state": "IN_PROGRESS",
       "execution_owner": "COORD_SINGLE_CHAT",
       "execution_started": true,
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
+      "started_at": "2026-11-04T00:22:36+00:00",
+      "effective_seconds_recorded": 141,
+      "timing_snapshot_at": "2026-11-04T00:26:57.175178+00:00",
+      "timing_source": "Fresh goal.timeUsedSeconds snapshots; cross-check actual active segments and exclude interruptions. Previous-cycle time and inter-cycle gap never carried forward.",
+      "next_reestimate_at_effective_seconds": 7200,
       "estimate_hours": [
-        15.75,
-        29.75
+        23.75,
+        45.75
       ],
       "estimate_confidence": "LOW_ROLLING_AT_2H",
       "estimate_is_guarantee": false,
       "original_task_count": 375,
-      "started_at": "2026-11-02T13:06:37Z",
-      "effective_seconds_recorded": 86041,
-      "next_reestimate_at_effective_seconds": null,
-      "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
+      "baseline_counts": {
+        "DONE": 30,
+        "IN_PROGRESS": 2,
+        "PLANNED": 343
+      },
+      "baseline_partial59_remaining": 53,
       "windows": [
         {
-          "id": "W268-01",
+          "id": "W297-01",
           "day": "D1",
           "related_tasks": [
-            "WP12-01"
-          ],
-          "title": "完整schema往返与致命结构边界",
-          "estimate_hours": [
-            0.75,
-            1.5
-          ],
-          "state": "DONE",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W268-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "main_finish_required": false,
-            "main_seat_released": true,
-            "handoff_seat_released": true,
-            "main_branch_deleted": true,
-            "handoff_branch_deleted": true,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave268-final-verification.json"
-          },
-          "actual_effective_seconds": 1841,
-          "estimate_variance": "30m41s actual versus initial 45–90min. First small sample; full re-estimate at cumulative 2h, continue authorized backlog."
-        },
-        {
-          "id": "W269-01",
-          "day": "D1",
-          "related_tasks": [
-            "WP12-01"
-          ],
-          "title": "FORM草稿Owner、当前授权与原命令",
-          "estimate_hours": [
-            0.75,
-            1.75
-          ],
-          "state": "DONE",
-          "started_at": "2026-11-02T13:43:46.434889+00:00",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W269-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "main_finish_required": false,
-            "main_seat_released": true,
-            "handoff_seat_released": true,
-            "main_branch_deleted": true,
-            "handoff_branch_deleted": true,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave269-final-verification.json"
-          },
-          "actual_effective_seconds": 2297,
-          "estimate_variance": "38m17s actual versus 45–105min initial. Two small windows faster; re-estimate at cumulative 2h, continue authorized original scope."
-        },
-        {
-          "id": "W270-01",
-          "day": "D1",
-          "related_tasks": [
-            "WP12-01",
-            "WP12-02"
-          ],
-          "title": "FORM准确发布预览、不可变版本与独立激活",
-          "estimate_hours": [
-            1,
-            2
-          ],
-          "state": "DONE",
-          "started_at": "2026-11-02T14:19:59.057423+00:00",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W270-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "main_finish_required": false,
-            "main_seat_released": true,
-            "handoff_seat_released": true,
-            "main_branch_deleted": true,
-            "handoff_branch_deleted": true,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave270-final-verification.json"
-          },
-          "actual_effective_seconds": 2605,
-          "estimate_variance": "43m25s actual versus 60–120min initial; cumulative 112m23s. Re-estimate at cumulative 2h and continue actual original remaining scope."
-        },
-        {
-          "id": "W271-01",
-          "day": "D1",
-          "related_tasks": [
-            "WP12-01"
-          ],
-          "title": "FLOW/FORM按固定sourceVersion克隆并清身份",
-          "estimate_hours": [
-            0.5,
-            1
-          ],
-          "state": "DONE",
-          "started_at": "2026-11-02T15:01:10.484328+00:00",
-          "initial_estimate_hours": [
-            0.5,
-            1
-          ],
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W271-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "main_finish_required": false,
-            "main_seat_released": true,
-            "handoff_seat_released": true,
-            "main_branch_deleted": true,
-            "handoff_branch_deleted": true,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave271-final-verification.json"
-          },
-          "actual_effective_seconds": 1969,
-          "estimate_variance": "See measured final proof; original 30–60min. Same 24h goal continues; next recalibration at cumulative 4h."
-        },
-        {
-          "id": "W272-01",
-          "day": "D1",
-          "related_tasks": [
-            "WP12-02"
-          ],
-          "title": "FORM与子流程完整依赖pin及递归资格",
-          "estimate_hours": [
-            1,
-            2
-          ],
-          "state": "DONE",
-          "initial_estimate_hours": [
-            1.5,
-            3
-          ],
-          "started_at": "2026-11-02T15:32:43.891336+00:00",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W272-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "main_finish_required": false,
-            "main_seat_released": true,
-            "handoff_seat_released": true,
-            "main_branch_deleted": true,
-            "handoff_branch_deleted": true,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave272-final-verification.json"
-          },
-          "actual_effective_seconds": 2330,
-          "estimate_variance": "See measured final proof; revised 60–120min. Same 24h goal continues; next calibration at cumulative 4h."
-        },
-        {
-          "id": "W273-01",
-          "day": "D2",
-          "related_tasks": [
-            "WP12-02"
-          ],
-          "title": "唯一form-flow绑定、激活CAS与并发裁决",
-          "estimate_hours": [
-            0.5,
-            1
-          ],
-          "state": "DONE",
-          "initial_estimate_hours": [
-            0.75,
-            1.5
-          ],
-          "started_at": "2026-11-02T16:12:46.124498+00:00",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W273-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "main_finish_required": false,
-            "main_seat_released": true,
-            "handoff_seat_released": true,
-            "main_branch_deleted": true,
-            "handoff_branch_deleted": true,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave273-final-verification.json"
-          },
-          "actual_effective_seconds": 2031,
-          "estimate_variance": "See measured final proof; revised 30–60min. Same 24h goal continues; next calibration at cumulative 4h."
-        },
-        {
-          "id": "W274-01",
-          "day": "D2",
-          "related_tasks": [
-            "WP12-02",
-            "WP12-06",
-            "WP12-08"
-          ],
-          "title": "精确版本APP子流程运行与整树原子收口",
-          "estimate_hours": [
-            1.5,
-            3
-          ],
-          "state": "DONE",
-          "initial_estimate_hours": [
-            2,
-            4
-          ],
-          "started_at": "2026-11-02T16:47:47.629014+00:00",
-          "revised_estimate_hours": [
-            2,
-            4
-          ],
-          "scope_refinement": "Actual root TxE already adopted; child graph, same-transaction parent continuation, child tasks and one root decision must close together.",
-          "discovered_dependency": {
-            "issue": 702,
-            "pr": 703,
-            "status": "CLOSED_REMOTE_MAIN",
-            "main": "8cb4a5b8ae18a7d541a84b1cc4e4419bfe3cc01a",
-            "evidence": "docs/development/evidence/BUG-702/DELIVERY.md",
-            "time_included_in_program": true
-          },
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W274-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "main_finish_required": false,
-            "main_seat_released": true,
-            "handoff_seat_released": true,
-            "main_branch_deleted": true,
-            "handoff_branch_deleted": true,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave274-final-verification.json"
-          },
-          "actual_effective_seconds": 5371,
-          "estimate_variance": "5371s/89m31s including BUG702 dependency, below initial 2–4h. Root protocols were reusable; ordinary FORM has a distinct same-transaction contract and needs independent estimation."
-        },
-        {
-          "id": "W275-01",
-          "day": "D2",
-          "related_tasks": [
-            "WP12-03",
-            "WP12-04",
-            "WP12-08"
-          ],
-          "title": "表单草稿/提交采用版本和字段规则授权",
-          "estimate_hours": [
-            1.5,
-            3
-          ],
-          "state": "DONE",
-          "initial_estimate_hours": [
-            2,
-            4
-          ],
-          "started_at": "2026-11-02T18:16:50.833640+00:00",
-          "revised_estimate_hours": [
-            3,
-            6
-          ],
-          "estimate_confidence": "LOW",
-          "scope_refinement": "Current legacy drafts/submissions lack v2 definition adoption, five-context/WFC admission, tombstone and exact field/rule boundaries. Include ordinary FORM same-transaction runtime/task direct dependencies; reuse APP-independent native kernel, never impersonate an APP business Owner.",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W275-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "main_finish_required": false,
-            "main_seat_released": true,
-            "handoff_seat_released": true,
-            "main_branch_deleted": true,
-            "handoff_branch_deleted": true,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave275-final-verification.json"
-          },
-          "actual_effective_seconds": 7184,
-          "estimate_variance": "7184s/1h59m44s, below revised 3–6h. Existing native kernel and shared authorization were directly reusable. Product review found and fixed concrete boundaries; no browser-to-PG proof or full TASK contract was counted."
-        },
-        {
-          "id": "W276-01",
-          "day": "D2",
-          "related_tasks": [
-            "WP12-02",
-            "WP12-06",
-            "WP12-08"
-          ],
-          "title": "实际任务使用冻结版本、停新不伤在途",
-          "estimate_hours": [
-            0.75,
-            1.5
-          ],
-          "state": "DONE",
-          "initial_estimate_hours": [
-            1,
-            2
-          ],
-          "scope_reuse": "W274 APP and W275 ordinary FORM task write Owners already real. Add current actual/effective authorized read surfaces, counts, pinned details, current act-as and in-flight activation impact; legacy participation-only lists intentionally exclude new ordinary records.",
-          "started_at": "2026-11-02T20:19:48.492844+00:00",
-          "revised_estimate_hours": [
-            2,
-            4
-          ],
-          "estimate_confidence": "LOW",
-          "scope_refinement": "Direct current native read and real impact delivered; full closed delegation current read explicitly transferred as W277 direct prerequisite, no full card completion.",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W276-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "main_finish_required": false,
-            "main_seat_released": true,
-            "handoff_seat_released": true,
-            "main_branch_deleted": true,
-            "handoff_branch_deleted": true,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave276-final-verification.json"
-          },
-          "actual_effective_seconds": 3283,
-          "estimate_variance": "3283s/54m43s, below2–4h. Existing business/form authority and native pins were reusable; full closed delegated reads were explicitly transferred to W277, not claimed complete."
-        },
-        {
-          "id": "W277-01",
-          "day": "D3",
-          "related_tasks": [
-            "WP12-08",
-            "WP12-10",
             "WP12-19"
           ],
-          "title": "委派撤回与BLOCKED显式新授权恢复",
+          "title": "DOC完整可信撤回与原应用互斥",
+          "estimate_hours": [
+            2,
+            3.5
+          ],
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_confidence": "LOW",
+          "state": "IN_PROGRESS",
+          "started_at": "2026-11-04T00:26:57.175178+00:00",
+          "scope_refinement": "Actual DOC Owner: current explicit withdraw authority and optional bounded business delegation, immutable fact/outbox, apply/withdraw same control CAS, real receipt recovery and old submission compatibility. Existing ITER not repeated."
+        },
+        {
+          "id": "W298-01",
+          "day": "D1",
+          "related_tasks": [
+            "WP12-19"
+          ],
+          "title": "需求集实际撤回及显式重新授权",
           "estimate_hours": [
             1.25,
             2.5
           ],
-          "state": "DONE",
-          "initial_estimate_hours": [
-            2,
-            3
-          ],
-          "revised_estimate_hours": [
-            3,
-            5
-          ],
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
           "estimate_confidence": "LOW",
-          "scope_refinement": "TASK closed grants/current dual-actor read/actions; separate real Iteration Owner business grant and explicit blocked withdrawal/application authorization. No WP12-09 sendback/transfer adoption; no other business Owner withdrawal adoption.",
-          "started_at": "2026-11-02T21:10:32.641506+00:00",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W277-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "main_finish_required": false,
-            "main_seat_released": true,
-            "handoff_seat_released": true,
-            "main_branch_deleted": true,
-            "handoff_branch_deleted": true,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave277-final-verification.json"
-          },
-          "actual_effective_seconds": 5061,
-          "estimate_variance": "5061s/1h24m21s, below3–5h. Existing real business Owner transaction/current authority/original recovery and native read framework reused; PostgreSQL authorization and explicit new fact paths implemented, browser-to-PG remains W278."
+          "state": "PLANNED"
         },
         {
-          "id": "W278-01",
-          "day": "D3",
+          "id": "W299-01",
+          "day": "D1",
           "related_tasks": [
-            "WP12-01",
-            "WP12-02",
-            "WP12-04",
             "WP12-19"
           ],
-          "title": "设计器/管理/办理页面连真实PG与HTTP",
+          "title": "版模处置Owner撤回与当前资格竞争",
           "estimate_hours": [
-            1,
-            2
-          ],
-          "state": "DONE",
-          "initial_estimate_hours": [
             1.5,
             3
           ],
-          "started_at": "2026-11-02T22:35:16.200231+00:00",
-          "revised_estimate_hours": [
-            1.5,
-            3
-          ],
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
           "estimate_confidence": "LOW",
-          "scope_refinement": "Current published catalog plus real browser authoring/submission/delegation and explicit Iteration recovery; BUG708/710 separately adopted. Original AC and full-card reconciliation remains W279.",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W278-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "main_finish_required": false,
-            "main_seat_released": true,
-            "handoff_seat_released": true,
-            "main_branch_deleted": true,
-            "handoff_branch_deleted": true,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave278-final-verification.json"
-          },
-          "actual_effective_seconds": 4985,
-          "estimate_variance": "4985s/1h23m05s, slightly below1.5–3h. Existing real Owner/HTTP fixtures reused; actual browser uncovered BUG708 and BUG710, both independently fixed/adopted. No full-card closure inferred."
+          "state": "PLANNED"
         },
         {
-          "id": "W279-01",
-          "day": "D3",
+          "id": "W300-01",
+          "day": "D1",
           "related_tasks": [
-            "WP12-01",
-            "WP12-02",
             "WP12-19"
           ],
-          "title": "原AC业务验收、实际缺口修复与整卡盘点",
+          "title": "库位规则Owner撤回与当前控制头",
           "estimate_hours": [
             1.5,
             3
           ],
-          "state": "DONE",
-          "initial_estimate_hours": [
-            2,
-            3
-          ],
-          "started_at": "2026-11-02T23:59:36.700974+00:00",
-          "revised_estimate_hours": [
-            2,
-            3
-          ],
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
           "estimate_confidence": "LOW",
-          "scope_refinement": "Original DEF27AC individually reconciled; missing exact-draft explanation implemented and actual browser verified; complete card remains open.",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W279-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "main_finish_required": false,
-            "main_seat_released": true,
-            "handoff_seat_released": true,
-            "main_branch_deleted": true,
-            "handoff_branch_deleted": true,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave279-final-verification.json"
-          },
-          "actual_effective_seconds": 2132,
-          "estimate_variance": "2132s/35m32s versus2–3h estimate: pure read reused current permissions, exact expressions and stage resolver; selective real browser/PG verification. Estimate was too high; no idle added."
+          "state": "PLANNED"
         },
         {
-          "id": "W280-01",
-          "day": "ROLLING_EXTENSION",
+          "id": "W301-01",
+          "day": "D1",
           "related_tasks": [
-            "WP12-01"
+            "WP12-19"
           ],
-          "title": "定义历史精确版本比较与当前披露",
+          "title": "原可信撤回卡逐项核销与真实缺口修正",
           "estimate_hours": [
-            0.75,
-            1.5
-          ],
-          "state": "DONE",
-          "admission": "Inspect direct providers/current source before START; no stub substitution",
-          "reason": "First 2h throughput calibration: original authorized adjacent remaining scope",
-          "started_at": "2026-11-03T00:36:53.900160+00:00",
-          "revised_estimate_hours": [
             0.5,
             1.25
           ],
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
           "estimate_confidence": "LOW",
-          "scope_refinement": "Original UC-D08 exact published comparison adopted; remaining complete-card acceptance stays open.",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W280-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "main_finish_required": false,
-            "main_seat_released": true,
-            "handoff_seat_released": true,
-            "main_branch_deleted": true,
-            "handoff_branch_deleted": true,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave280-final-verification.json"
-          },
-          "actual_effective_seconds": 1608,
-          "estimate_variance": "1608s/26m48s versus0.5–1.25h estimate; immutable publication and authority contracts reused, final actual browser caught route/accessibility errors. Estimate still slightly high; no idle added."
+          "state": "PLANNED"
         },
         {
-          "id": "W281-01",
-          "day": "ROLLING_EXTENSION",
+          "id": "W302-01",
+          "day": "D2",
           "related_tasks": [
-            "WP12-05"
-          ],
-          "title": "表单目录收藏、历史查询及最终下载披露真实缺口",
-          "estimate_hours": [
-            1.5,
-            3
-          ],
-          "state": "DONE",
-          "admission": "Inspect direct providers/current source before START; no stub substitution",
-          "reason": "First 2h throughput calibration: original authorized adjacent remaining scope",
-          "started_at": "2026-11-03T01:01:10.201720+00:00",
-          "revised_estimate_hours": [
-            1,
-            2.5
-          ],
-          "estimate_confidence": "LOW",
-          "scope_refinement": "Native favorites and authorized unified history adopted; actual ordinary FORM files remain W285. No full-card closure.",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W281-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "main_finish_required": false,
-            "main_seat_released": true,
-            "handoff_seat_released": true,
-            "main_branch_deleted": true,
-            "handoff_branch_deleted": true,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave281-final-verification.json"
-          },
-          "actual_effective_seconds": 3687
-        },
-        {
-          "id": "W282-01",
-          "day": "ROLLING_EXTENSION",
-          "related_tasks": [
-            "WP12-09"
-          ],
-          "title": "实际退回重送、转交加签与无人审批恢复",
-          "estimate_hours": [
-            2,
-            4
-          ],
-          "state": "DONE",
-          "admission": "Inspect direct providers/current source before START; no stub substitution",
-          "reason": "First 2h throughput calibration: original authorized adjacent remaining scope",
-          "revised_estimate_hours": [
-            3,
-            5
-          ],
-          "estimate_confidence": "LOW",
-          "started_at": "2026-11-03T04:24:30.268958+00:00",
-          "scope_refinement": "Native task recovery and management batch adopted; deadline/Worker and legacy caller disposition remain separate. Full card not closed.",
-          "remaining_estimate_hours": [
-            2,
-            4
-          ],
-          "actual_effective_seconds_so_far": 2908,
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W282-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave282-final-verification.json",
-            "all_slots_released": true
-          },
-          "actual_effective_seconds": 5593,
-          "remote_adoption": [
-            {
-              "repository": "CP6",
-              "task": "W282-01",
-              "source": "759d89c723482f392c4eccfa5a7953959167979c",
-              "remote_target": "37a88248ca9f25f3818ba5a6e31fd50ddca891b7",
-              "pr": "https://github.com/GTX537/CP6/pull/718",
-              "branch": "codex/w282-01",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-              "workspace_clean": true
-            },
-            {
-              "repository": "CP6.AI-Handoff",
-              "task": "W282-HANDOFF",
-              "source": "3ba6ecd913d3096d4236b6f5c9b3ad7fc4bb3bc8",
-              "remote_target": "5ee1e2ecb2ae64d378510edb153840f9b2d80f0e",
-              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/259",
-              "branch": "codex/w282-handoff",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\dev-2",
-              "workspace_clean": true
-            }
-          ]
-        },
-        {
-          "id": "W283-01",
-          "day": "ROLLING_EXTENSION",
-          "related_tasks": [
-            "WP12-11"
-          ],
-          "title": "准确截止政策与超时worker竞争",
-          "estimate_hours": [
-            1.5,
-            3
-          ],
-          "state": "DONE",
-          "admission": "Inspect direct providers/current source before START; no stub substitution",
-          "reason": "First 2h throughput calibration: original authorized adjacent remaining scope",
-          "revised_estimate_hours": [
-            1.5,
-            3
-          ],
-          "estimate_confidence": "LOW",
-          "started_at": "2026-11-03T05:56:52.105635+00:00",
-          "scope_refinement": "Native UTC-duration deadlines and real Owner timeout execution adopted; versioned workday calendar, all business automatic decisions and legacy caller disposition remain. Full cards not closed.",
-          "remaining_estimate_hours": [
-            1,
-            2.5
-          ],
-          "actual_effective_seconds_so_far": 4562,
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W283-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave283-final-verification.json",
-            "all_slots_released": true
-          },
-          "actual_effective_seconds": 6635,
-          "remote_adoption": [
-            {
-              "repository": "CP6",
-              "task": "W283-01",
-              "source": "b04676667446c42c943eb2e76e88f554deb0743c",
-              "remote_target": "32fcf2767435658b2f1aa362b9a84e640291f79b",
-              "pr": "https://github.com/GTX537/CP6/pull/719",
-              "branch": "codex/w283-01",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-              "workspace_clean": true
-            },
-            {
-              "repository": "CP6.AI-Handoff",
-              "task": "W283-HANDOFF",
-              "source": "df38ede0a51c8255ca530bb5e47ec56c84e881ef",
-              "remote_target": "569fe427310af06e13218b3b4822724b09341cff",
-              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/260",
-              "branch": "codex/w283-handoff",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\dev-2",
-              "workspace_clean": true
-            }
-          ]
-        },
-        {
-          "id": "W284-01",
-          "day": "ROLLING_EXTENSION",
-          "related_tasks": [
-            "WP12-01"
-          ],
-          "title": "设计器完整字段/图定位与纯计算规则预览",
-          "estimate_hours": [
-            1,
-            2
-          ],
-          "estimate_confidence": "LOW",
-          "state": "DONE",
-          "admission": "Inspect exact current source/direct providers before START; single chat and fixed seats; no stub substitution",
-          "reason": "W279原27AC核对确认D01-05/D02-02/03未闭环；已有保存验证/准确草稿预演复用，补当前可见路径和可执行纯规则说明。",
-          "started_at": "2026-11-03T07:47:28.233845+00:00",
-          "revised_estimate_hours": [
-            1.5,
-            3
-          ],
-          "scope_refinement": "FLOW图/注册依赖及FORM字段/子表/规则的结构化定位贯通保存、发布诊断与既有设计器；准确FORM草稿的纯计算预览复用实际顺序规则，展示服务端结果与前端体验，当前授权、原数字精度及无业务副作用。",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W284-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave284-final-verification.json",
-            "all_slots_released": true
-          },
-          "actual_effective_seconds": 2456,
-          "remote_adoption": [
-            {
-              "repository": "CP6",
-              "task": "W284-01",
-              "source": "06b1b458889213f939025f783b48bf461e7b385a",
-              "remote_target": "094627927cb50e60f896a76d1d9a35216119020f",
-              "pr": "https://github.com/GTX537/CP6/pull/720",
-              "branch": "codex/w284-01",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-              "workspace_clean": true
-            },
-            {
-              "repository": "CP6.AI-Handoff",
-              "task": "W284-HANDOFF",
-              "source": "d022cef4a63f69d5b3b37c6f8d95d1540a973f08",
-              "remote_target": "ccef7c81971e6418e0ceb210bcb21b43e23e8683",
-              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/261",
-              "branch": "codex/w284-handoff",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\dev-2",
-              "workspace_clean": true
-            }
-          ]
-        },
-        {
-          "id": "W285-01",
-          "day": "ROLLING_EXTENSION",
-          "related_tasks": [
-            "WP12-05",
-            "WP12-03",
-            "WP02-14"
-          ],
-          "title": "普通FORM实际FileRef准入与最终当前授权下载",
-          "estimate_hours": [
-            2,
-            4
-          ],
-          "estimate_confidence": "LOW",
-          "state": "DONE",
-          "admission": "Inspect exact current source/direct providers before START; single chat and fixed seats; no stub substitution",
-          "reason": "W281直接提供者核对：FileContentOwnerV1绑定EngineeringRevision，普通FORM仍FORM_FILE_SOURCE_REQUIRED。采用真实存储/扫描端口及草稿/提交/字段Owner边界，不能借工程父级、空结果或占位下载宣称采用；不新增原册未要求的批量导出。",
-          "started_at": "2026-11-03T08:27:10.240064+00:00",
-          "revised_estimate_hours": [
-            2,
-            4
-          ],
-          "scope_refinement": "普通FORM真实文件Owner：当前表单/字段授权先于上传字节；明确FORM暂存与不可变内容身份，扫描和完整性状态；草稿/直接提交/退回修改的引用准入与同事务绑定；当前业务对象和字段权限下的精确内容下载及实际页面采用。",
-          "remaining_estimate_hours": [
-            0.75,
-            1.75
-          ],
-          "actual_effective_seconds_so_far": 2739,
-          "report": "docs/development/evidence/W285-01/DELIVERY.md",
-          "dependency_issue": "https://github.com/GTX537/CP6/issues/721",
-          "implementation_complete": true,
-          "lifecycle_snapshot": {
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave285-final-verification.json",
-            "all_slots_released": true
-          },
-          "dependency_issue_closed": true,
-          "actual_effective_seconds": 3937,
-          "remote_adoption": [
-            {
-              "repository": "CP6",
-              "task": "W285-01",
-              "source": "cd2a12364c7837ff0f916ab2fbc1bea5be636ac3",
-              "remote_target": "53a805b15f04408547188247e730fd8896b20cb9",
-              "pr": "https://github.com/GTX537/CP6/pull/723",
-              "branch": "codex/w285-01",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-              "workspace_clean": true
-            },
-            {
-              "repository": "CP6.AI-Handoff",
-              "task": "W285-HANDOFF",
-              "source": "709193f865b946f087bd947353eb1005dd3e26de",
-              "remote_target": "17f483872462bcf1a3e26ba350254d74172eb0d2",
-              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/262",
-              "branch": "codex/w285-handoff",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\dev-2",
-              "workspace_clean": true
-            }
-          ]
-        },
-        {
-          "id": "W286-01",
-          "day": "ROLLING_EXTENSION",
-          "related_tasks": [
-            "WP12-01",
-            "WP12-02"
-          ],
-          "title": "FLOW双作者/下一草稿竞争与legacy来源及调用面处置",
-          "estimate_hours": [
-            1,
-            2
-          ],
-          "estimate_confidence": "LOW",
-          "state": "DONE",
-          "admission": "Inspect exact current source/direct providers before START; single chat and fixed seats; no stub substitution",
-          "reason": "W279原AC-D01-03/D03-04/D04-03/04余项：精确原竞争场景尚缺独立证据，legacy重建/当前head来源不能冒充原发布，全部旧caller仍未闭环；先实际调用面核对，再按影响实现/验证，不迁移既有环境。",
-          "revised_estimate_hours": [
-            2,
-            4
-          ],
-          "started_at": "2026-11-03T09:38:00.184473+00:00",
-          "scope_refinement": "OA-DEF原AC-D01-03/D03-04/D04-03/D04-04：真实FLOW双作者同token与下一草稿竞争；全部旧定义writer/helper/设计器入口适配或明确拒绝；旧只读数据明确来源可信度，无版本/当前head重建不得冒充历史发布。",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W286-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave286-final-verification.json",
-            "all_slots_released": true
-          },
-          "actual_effective_seconds": 3768,
-          "remote_adoption": [
-            {
-              "repository": "CP6",
-              "task": "W286-01",
-              "source": "53e0c31522161738b70fab53ad703ff18bb39773",
-              "remote_target": "26a590985fb562fb6ee489aba2cc91eb67a7be21",
-              "pr": "https://github.com/GTX537/CP6/pull/724",
-              "branch": "codex/w286-01",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-              "workspace_clean": true
-            },
-            {
-              "repository": "CP6.AI-Handoff",
-              "task": "W286-HANDOFF",
-              "source": "b4ec1635d4a167a808165bdfb88c155c5812d373",
-              "remote_target": "90ed8fa2530ded732fbc0b972e85ef52489b8867",
-              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/263",
-              "branch": "codex/w286-handoff",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\dev-2",
-              "workspace_clean": true
-            }
-          ]
-        },
-        {
-          "id": "W287-01",
-          "day": "ROLLING_EXTENSION",
-          "related_tasks": [
-            "WP12-01",
+            "WP02-15",
             "WP12-03"
           ],
-          "title": "外部字典选项Owner与表单最终值准入",
+          "title": "受控字段处置的权威Owner与最小实际闭环",
           "estimate_hours": [
-            0.75,
-            1.75
+            3,
+            5.5
           ],
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
           "estimate_confidence": "LOW",
-          "state": "DONE",
-          "admission": "Single chat; actual existing shared source and current FORM/IAM contracts audited; fixed seats",
-          "reason": "原UC-D04/D05未完成的外部选项来源和提交复核；不重复已完成的静态规则预览、目录历史或文件",
-          "started_at": "2026-11-03T10:52:44.803348+00:00",
-          "scope_refinement": "原OA-DEF UC-D04/D05与OA-FORM提交：外部选项来源的明确版本合同、实际共享字典Owner适配、当前字段授权候选读取及最终服务端值准入；设计器和普通表单页面采用。",
-          "remaining_estimate_hours": [
-            0.5,
-            1.25
-          ],
-          "actual_effective_seconds_so_far": 1216,
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W287-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave287-final-verification.json",
-            "all_slots_released": true
-          },
-          "actual_effective_seconds": 2854,
-          "remote_adoption": [
-            {
-              "repository": "CP6",
-              "task": "W287-01",
-              "source": "048c5d7b82bceaf0b85c039ad3c7b7838b73850f",
-              "remote_target": "2bd215d145f9ccfd45da0b30aae6ea14ac1e8012",
-              "pr": "https://github.com/GTX537/CP6/pull/727",
-              "branch": "codex/w287-01",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-              "workspace_clean": true
-            },
-            {
-              "repository": "CP6.AI-Handoff",
-              "task": "W287-HANDOFF",
-              "source": "dfb3c380a3736341bfc7e28350fa20637ace8fc4",
-              "remote_target": "037f7e70d565ec5584d45a8a7b77e7914fc97f08",
-              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/264",
-              "branch": "codex/w287-handoff",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\dev-2",
-              "workspace_clean": true
-            }
-          ]
+          "state": "PLANNED"
         },
         {
-          "id": "W288-01",
-          "day": "ROLLING_EXTENSION",
+          "id": "W303-01",
+          "day": "D2",
           "related_tasks": [
-            "WP12-01"
+            "WP12-03"
           ],
-          "title": "WP12-01原整卡证据核销",
+          "title": "个人表单隐藏字段重基采用处置Ref",
           "estimate_hours": [
-            0.25,
-            0.75
+            2,
+            3.5
           ],
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
           "estimate_confidence": "LOW",
-          "state": "DONE",
-          "started_at": "2026-11-03T11:42:32.413249+00:00",
-          "scope_refinement": "按原WP12-01完整卡的三项范围、交付输出和正反验收，核对既有已远端采用的代码/PG/HTTP/UI证据；充分则正式关闭该原卡。仅资料核销，其他卡/目标/正式AC与生产部署分别记账，不重复产品测试。",
-          "reason": "原余项已逐窗补足，必须按实际卡片边界核销，不能持续停留在局部完成",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W288-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave288-final-verification.json",
-            "all_slots_released": true
-          },
-          "actual_effective_seconds": 856,
-          "remote_adoption": [
-            {
-              "repository": "CP6",
-              "task": "W288-01",
-              "source": "eb548d3ba1f9f9507183231e6fcf9f4477855494",
-              "remote_target": "72a459e9718ce523276a2589db0a91415d213cd8",
-              "pr": "https://github.com/GTX537/CP6/pull/728",
-              "branch": "codex/w288-01",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-              "workspace_clean": true
-            },
-            {
-              "repository": "CP6.AI-Handoff",
-              "task": "W288-HANDOFF",
-              "source": "57d10bc54b0b84bda385b9dac2ec9ca4cd38e309",
-              "remote_target": "75805ed48e8b5b9450929c0928b673943702a6cf",
-              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/265",
-              "branch": "codex/w288-handoff",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\dev-2",
-              "workspace_clean": true
-            }
-          ]
+          "state": "PLANNED"
         },
         {
-          "id": "W289-01",
-          "day": "ROLLING_EXTENSION",
+          "id": "W304-01",
+          "day": "D2",
           "related_tasks": [
-            "WP12-08"
+            "WP12-04"
           ],
-          "title": "SFS审批字段补丁与三版本原子办理",
+          "title": "原表单提交卡合法域和原子性剩余核销",
           "estimate_hours": [
             1.5,
-            2.75
+            3
           ],
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
           "estimate_confidence": "LOW",
-          "state": "DONE",
-          "started_at": "2026-11-03T11:56:14.461846+00:00",
-          "scope_refinement": "原OA-TASK R2第3节SFS审批编辑：独立WFC命令、task/instance/formData三版本、固定节点字段权限与当前IAM/委派交集、精确数字补丁和重算、表单/Vars/决定/快照/原结果同事务；页面编辑与未知结果恢复，实际PostgreSQL/HTTP/Chrome验证。接入实际字典选项及文件Owner所需TASK边界；APP五字段合同不变，旧SFS命令仅保留原结果恢复。不据此宣布整个WP12-08或OA-TASK目标完成。",
-          "reason": "实际源码确认native审批只有APP式两版本意见输入，原SFS编辑合同未采用；原卡余项连续推进",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W289-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave289-final-verification.json",
-            "all_slots_released": true
-          },
-          "actual_effective_seconds": 2473,
-          "remote_adoption": [
-            {
-              "repository": "CP6",
-              "task": "W289-01",
-              "source": "15c50ce7afdacfa1354a13877e0b130fd38cc45a",
-              "remote_target": "c0fa67eb371e0fcb49f861f7a42ebe71b222213a",
-              "pr": "https://github.com/GTX537/CP6/pull/729",
-              "branch": "codex/w289-01",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-              "workspace_clean": true
-            },
-            {
-              "repository": "CP6.AI-Handoff",
-              "task": "W289-HANDOFF",
-              "source": "bfc3bb365580ec545530b5af9211c69720627c56",
-              "remote_target": "44a166608f99c8583d2ad55c9f04d6e99b784512",
-              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/266",
-              "branch": "codex/w289-handoff",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\dev-2",
-              "workspace_clean": true
-            }
-          ]
+          "state": "PLANNED"
         },
         {
-          "id": "W290-01",
-          "day": "ROLLING_EXTENSION",
-          "related_tasks": [
-            "WP12-08"
-          ],
-          "title": "统一任务动作上下文与APP原命令适配",
-          "estimate_hours": [
-            0.8,
-            1.6
-          ],
-          "estimate_confidence": "LOW",
-          "state": "DONE",
-          "started_at": "2026-11-03T12:40:51.658627+00:00",
-          "scope_refinement": "原WP12-08：统一准确TaskActionContext（服务器判定SFS/APP、原pin、真实三/双版本、实际/当前/原职责主体、当前动作/委派/字段、APP准确Subject）；统一decisions分型并适配accepted APP五字段，仍在原AppCommand/Recorder事务保存原WFC alias元数据，不另造成功槽、不替换accepted canonical/wire；收件箱APP实际办理及未知原命令恢复、SFS已有页采用。实际PG/HTTP/Chrome正反验收，原卡完整状态另核。",
-          "reason": "W289真实41分钟，采用已有Owner使预估偏高；剩余实际任务上下文及APP收件箱不能办理缺口继续",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W290-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave290-final-verification.json",
-            "all_slots_released": true
-          },
-          "actual_effective_seconds": 1605,
-          "remote_adoption": [
-            {
-              "repository": "CP6",
-              "task": "W290-01",
-              "source": "9111bbd99f678d09f5ef7860d50bd16e5592ed1d",
-              "remote_target": "5b5c900251a5065e0ce174c0e33cecfa7fdba9a1",
-              "pr": "https://github.com/GTX537/CP6/pull/731",
-              "branch": "codex/w290-01",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-              "workspace_clean": true
-            },
-            {
-              "repository": "CP6.AI-Handoff",
-              "task": "W290-HANDOFF",
-              "source": "9595cff9ea11abe0eae27d741cb848b4dcf6996a",
-              "remote_target": "9366a9b9882a3885ad63fc853a536cd6e22ba06e",
-              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/267",
-              "branch": "codex/w290-handoff",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\dev-2",
-              "workspace_clean": true
-            }
-          ]
-        },
-        {
-          "id": "W291-01",
-          "day": "ROLLING_EXTENSION",
-          "related_tasks": [
-            "WP12-08"
-          ],
-          "title": "原任务办理卡逐项证据核销",
-          "estimate_hours": [
-            0.3,
-            0.75
-          ],
-          "estimate_confidence": "LOW",
-          "state": "DONE",
-          "started_at": "2026-11-03T13:26:27.659262+00:00",
-          "scope_refinement": "原WP12-08逐项核对统一动作上下文/真实版本、服务端SFS与APP封闭输入、原职责和实际Actor/委派/SOD、token/node/stage/round计票、并发单一决定/原命令回放、新轮不复用旧票、稳定TaskId和CC拒绝审批；核直接前置实际采用与当前适用证据。仅缺失的实际边界补定向验证；充分才关整卡，不复跑已有效证据。",
-          "reason": "统一入口与三版本已交付，核清原卡真实剩余；先补实际缺口，不以窗口数量当原卡完成",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W291-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave291-final-verification.json",
-            "all_slots_released": true
-          },
-          "actual_effective_seconds": 801,
-          "remote_adoption": [
-            {
-              "repository": "CP6",
-              "task": "W291-01",
-              "source": "d65531c81c0010214cc3a691d1288c42c46de50e",
-              "remote_target": "22978c916a9e656d2bde3a46024da5fddff2b89d",
-              "pr": "https://github.com/GTX537/CP6/pull/733",
-              "branch": "codex/w291-01",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-              "workspace_clean": true
-            },
-            {
-              "repository": "CP6.AI-Handoff",
-              "task": "W291-HANDOFF",
-              "source": "55e8006b41285f6a4466e4ebd37c1f11a337b391",
-              "remote_target": "5d1991c95049c45b795b7a85cd5f28a5051c4400",
-              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/268",
-              "branch": "codex/w291-handoff",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\dev-2",
-              "workspace_clean": true
-            }
-          ]
-        },
-        {
-          "id": "W292-01",
-          "day": "ROLLING_EXTENSION",
+          "id": "W305-01",
+          "day": "D3",
           "related_tasks": [
             "WP12-10"
           ],
-          "title": "历史任务身份缺证披露与受控映射边界",
+          "title": "历史身份准确映射的显式采用与缺证边界",
           "estimate_hours": [
-            0.6,
-            1.2
-          ],
-          "estimate_confidence": "LOW",
-          "state": "DONE",
-          "started_at": "2026-11-03T13:41:51.909973+00:00",
-          "scope_refinement": "原WP12-10/原TASK R2 §5.1存量身份缺证：历史信箱明确LEGACY_ACTOR_INCOMPLETE及准确FormTo Ref，页面将观察到的旧字段与已核实职责/代理证据区分；真实旧引擎自动替换与办理覆盖场景PG/HTTP验证，不用当前grant猜历史。受控LegacyPrincipalMapping设计写清原pin/token/stage/round、原路由/FormTo/grant revision/hash、原子切换fence与缺证拒绝；按原规范本轮不执行迁移、不补写历史、不升级旧票。",
-          "reason": "W291核对发现原历史缺证标记/映射设计尚未实现；开发实际读面缺口，保留原迁移授权边界",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W292-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave292-final-verification.json",
-            "all_slots_released": true
-          },
-          "actual_effective_seconds": 830,
-          "remote_adoption": [
-            {
-              "repository": "CP6",
-              "task": "W292-01",
-              "source": "ef8e942f1e3fab061e4f8b997dea677a8355fed9",
-              "remote_target": "253d31f056a8dae779c72520041dd68761a8111b",
-              "pr": "https://github.com/GTX537/CP6/pull/734",
-              "branch": "codex/w292-01",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-              "workspace_clean": true
-            },
-            {
-              "repository": "CP6.AI-Handoff",
-              "task": "W292-HANDOFF",
-              "source": "b853744d19ae0f2f75d5d1bae27b2fb800a16be3",
-              "remote_target": "d48be124a3273f330da0215c5714c26f4f6bb538",
-              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/269",
-              "branch": "codex/w292-handoff",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\dev-2",
-              "workspace_clean": true
-            }
-          ]
-        },
-        {
-          "id": "W293-01",
-          "day": "ROLLING_EXTENSION",
-          "related_tasks": [
-            "WP12-03"
-          ],
-          "title": "个人草稿重基预览分类与准确诊断",
-          "estimate_hours": [
-            0.4,
-            0.8
-          ],
-          "estimate_confidence": "LOW",
-          "state": "DONE",
-          "started_at": "2026-11-03T13:58:07.480509+00:00",
-          "scope_refinement": "原WP12-03/OA-FORM R1 UC-F09/F10重基预览：准确sourceDraftVersion/targetSchemaDigest、可见保留/移除/新增/类型变更/默认值路径、目标规则后的必填和缺失诊断、行限制收紧逐行提示；沿现权威规则/校验复用，不复制解释器。服务端保持精确数字/unset/null/empty、原行不截断、隐藏损失拒绝、同事务原结果。页面分类确认、编辑后失效；PG/HTTP/相关Vue验证。隐藏损失受控处置Ref等未完成跨Owner范围仍真实保留，不提前关整卡。",
-          "reason": "原卡核查发现真实缺口；W292实测830秒短于估计，复用已有Owner/夹具，继续缩小下一窗口估计",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W293-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave293-final-verification.json",
-            "all_slots_released": true
-          },
-          "actual_effective_seconds": 872,
-          "remote_adoption": [
-            {
-              "repository": "CP6",
-              "task": "W293-01",
-              "source": "ab7c0735097d54c977481d17c276b8352c9444c2",
-              "remote_target": "16da9575339494871e18f7641410d537293ec44f",
-              "pr": "https://github.com/GTX537/CP6/pull/735",
-              "branch": "codex/w293-01",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-              "workspace_clean": true
-            },
-            {
-              "repository": "CP6.AI-Handoff",
-              "task": "W293-HANDOFF",
-              "source": "8344f4a7e5d2443781464ba73717796c2c689c90",
-              "remote_target": "6f7493007ce762ff9f7b7e2621b6010b3bf61ce4",
-              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/270",
-              "branch": "codex/w293-handoff",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\dev-2",
-              "workspace_clean": true
-            }
-          ]
-        },
-        {
-          "id": "W294-01",
-          "day": "ROLLING_EXTENSION",
-          "related_tasks": [
-            "WP12-02"
-          ],
-          "title": "FLOW发布预览实际引用统计与原卡余项核对",
-          "estimate_hours": [
-            0.25,
-            0.5
-          ],
-          "estimate_confidence": "LOW",
-          "state": "DONE",
-          "started_at": "2026-11-03T14:15:55.956764+00:00",
-          "scope_refinement": "原WP12-02发布预览的实际引用影响采用：FLOW预览复用现有DefinitionRuntimeImpactReader与当前授权，不再返回旧NOT_ADOPTED；真实PG/HTTP数据及既有页面展示统计，发布保持原pin/启停独立。原卡全范围核对发现独立BUG736原意图恢复缺陷，按BUG规则另开准确分支修复，本窗口不混入；原卡先保持未完。",
-          "reason": "W293实测872秒；本窗口复用已存在统计Owner，后续独立BUG736修复，不用全卡名放大工时。",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W294-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave294-final-verification.json",
-            "all_slots_released": true
-          },
-          "actual_effective_seconds": 590,
-          "remote_adoption": [
-            {
-              "repository": "CP6",
-              "task": "W294-01",
-              "source": "d6176ab865dbdad46a77c4100013e93f41f63009",
-              "remote_target": "50f4ede693c0619ec88364a89131325d359951f1",
-              "pr": "https://github.com/GTX537/CP6/pull/737",
-              "branch": "codex/w294-01",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-              "workspace_clean": true
-            },
-            {
-              "repository": "CP6.AI-Handoff",
-              "task": "W294-HANDOFF",
-              "source": "a82bded287f5caa6b4d7e25f9b4208e8faa607e7",
-              "remote_target": "4759ee2a95391bff189e7993f526a0908b9e0edf",
-              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/271",
-              "branch": "codex/w294-handoff",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\dev-2",
-              "workspace_clean": true
-            }
-          ]
-        },
-        {
-          "id": "W295-01",
-          "day": "ROLLING_EXTENSION",
-          "related_tasks": [
-            "WP12-02"
-          ],
-          "title": "原WP12-02整卡范围核销",
-          "estimate_hours": [
-            0.15,
-            0.3
-          ],
-          "estimate_confidence": "LOW",
-          "state": "DONE",
-          "started_at": "2026-11-03T14:37:08.544092+00:00",
-          "scope_refinement": "按原WP12-02逐项核销定义发布预览、准确依赖pin与独立启停；复用当前适用真实PG/HTTP/页面证据和BUG736修复，不新增或重复产品测试；限定TASK_DELIVERY前置准确采用，其他卡和125/247状态独立。",
-          "reason": "W294实际590秒，独立BUG736实际576秒；本窗仅核证和账实同步，不按原L卡名估大工时。",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W295-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave295-final-verification.json",
-            "all_slots_released": true
-          },
-          "actual_effective_seconds": 377,
-          "remote_adoption": [
-            {
-              "repository": "CP6",
-              "task": "W295-01",
-              "source": "90dc0cc40502a14fc6b016f4edab3a49173a7d85",
-              "remote_target": "a701259004bb1137db073cbe7a0a6e05277d77e4",
-              "pr": "https://github.com/GTX537/CP6/pull/739",
-              "branch": "codex/w295-01",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-              "workspace_clean": true
-            },
-            {
-              "repository": "CP6.AI-Handoff",
-              "task": "W295-HANDOFF",
-              "source": "a3e4d7434435cd1f936a265f9c4c8d365547c925",
-              "remote_target": "3625c58e9e1d7835168e30c9df705b6de57a66d2",
-              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/272",
-              "branch": "codex/w295-handoff",
-              "branch_absent": true,
-              "seat_released": true,
-              "workspace": "D:\\CP6-worktrees\\dev-2",
-              "workspace_clean": true
-            }
-          ]
-        },
-        {
-          "id": "W296-01",
-          "day": "D3_CLOSEOUT",
-          "related_tasks": [
-            "WP12-06"
-          ],
-          "title": "原APP绑定提交卡与24h实际执行收口",
-          "estimate_hours": [
-            0.25,
-            0.5
-          ],
-          "estimate_confidence": "LOW",
-          "state": "DONE",
-          "started_at": "2026-11-03T14:53:11.484717+00:00",
-          "scope_refinement": "核原WP12-06三项TxS/TxE提供者范围和正反验收，特别是合法Key、alias与旧回调隔离；只在完整满足时核销。汇总原59卡当前余项、28窗口与9个独立BUG真实交付和估时偏差，达到约24h有效投入并完成当前窗口正常交付后收妥目标。",
-          "reason": "文档/原证据核销及54余项检查；不新增产品验证，不空等、不延时凑满预算。若必要收尾超24h如实记录。",
-          "implementation_complete": true,
-          "report": "docs/development/evidence/W296-01/DELIVERY.md",
-          "lifecycle_snapshot": {
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave296-final-verification.json",
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false
-          },
-          "actual_effective_seconds": 805,
-          "actual_effective_seconds_scope": "Pre-merge snapshot; final verification includes normal closeout once.",
-          "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave296-final-verification.json"
-        }
-      ],
-      "reestimates": [
-        {
-          "at": "2026-11-02T15:07:51.133488+00:00",
-          "effective_seconds": 7274,
-          "completed_windows": [
-            "W268-01",
-            "W269-01",
-            "W270-01"
-          ],
-          "actual_completed_seconds": 6743,
-          "initial_completed_estimate_hours": [
-            2.5,
-            5.25
-          ],
-          "remaining_estimate_hours": [
-            15.25,
-            30.5
-          ],
-          "confidence": "LOW: three highly reusable definition windows; runtime and cross-boundary complexity not yet measured",
-          "added_windows": [
-            "W280-01",
-            "W281-01",
-            "W282-01",
-            "W283-01"
-          ],
-          "basis": "Evidence wave268/269/270-final-verification.json; code gap: no definition comparison route, FORM history/download remaining WP12-05; WfTimeoutService still native SystemActor/relative hours; review exact WP12-09 and provider contracts before implementation. No intentional idle or paused intervals."
-        },
-        {
-          "at": "2026-11-02T17:07:12.096081+00:00",
-          "effective_seconds": 14435,
-          "completed_windows": [
-            "W268-01",
-            "W269-01",
-            "W270-01",
-            "W271-01",
-            "W272-01",
-            "W273-01"
-          ],
-          "actual_completed_seconds": 13073,
-          "remaining_estimate_hours": [
-            13.25,
-            27
-          ],
-          "confidence": "LOW: definition reuse measured; runtime validation and personal FORM admission remain materially broader",
-          "added_windows": [],
-          "current_window": "W274-01",
-          "current_window_estimate_hours": [
             2,
             4
           ],
-          "current_window_remaining_hours": [
-            1.5,
-            3.5
-          ],
-          "basis": "First six exact remote deliveries: 13073 seconds (3h37m53s). W271–273 6330 seconds (1h45m30s), revised combined 2–4h. W274 root pipeline already existed; actual gap is child membership, pinned runtime, child decisions, root-only terminal outbox and tree withdrawal. Three new PG scenarios passed after correcting fixture policy/IAM order; broader boundaries still running, not delivery proof. W275–283 estimates unchanged; do not infer runtime completion or original-card closure from code written. No paused/idle intervals."
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_confidence": "LOW",
+          "state": "PLANNED"
         },
         {
-          "at": "2026-11-02T19:13:00.583517+00:00",
-          "effective_seconds": 21983,
-          "completed_windows": [
-            "W268-01",
-            "W269-01",
-            "W270-01",
-            "W271-01",
-            "W272-01",
-            "W273-01",
-            "W274-01"
+          "id": "W306-01",
+          "day": "D3",
+          "related_tasks": [
+            "WP12-08",
+            "WP12-04",
+            "WP12-10"
           ],
-          "actual_completed_seconds": 18444,
-          "remaining_estimate_hours": [
-            12.75,
-            25.5
-          ],
-          "confidence": "LOW: ordinary FORM Owner and kernel landed locally; UI adoption, HTTP and concurrent boundaries not complete",
-          "added_windows": [],
-          "current_window": "W275-01",
-          "current_window_estimate_hours": [
-            3,
-            6
-          ],
-          "current_window_remaining_hours": [
-            2.5,
-            5
-          ],
-          "basis": "W274 completed 5371s including BUG702; cumulative completed 18444s. W275 10 distinct backend checks (8 isolated PostgreSQL, 2 pure) and 3 lossless JSON checks passed; native notification rollback fault injection was corrected and rerun. No UI adoption/typecheck, HTTP or dual-connection proof yet. Other windows retain actual remaining scope; W276 will reuse ordinary task adoption. No idle/paused intervals; context restoration and code reading are effective work."
-        },
-        {
-          "at": "2026-11-02T21:07:01.143639+00:00",
-          "effective_seconds": 28824,
-          "completed_windows": [
-            "W268-01",
-            "W269-01",
-            "W270-01",
-            "W271-01",
-            "W272-01",
-            "W273-01",
-            "W274-01",
-            "W275-01"
-          ],
-          "actual_completed_seconds": 25628,
-          "remaining_estimate_hours": [
-            11.25,
-            21.5
-          ],
-          "confidence": "LOW: recent reusable providers completed faster than estimates; closed delegation and withdrawal recovery require actual new authority adoption",
-          "added_windows": [],
-          "current_window": "W276-01",
-          "current_window_estimate_hours": [
-            2,
-            4
-          ],
-          "current_window_remaining_hours": [
-            0,
-            0.15
-          ],
-          "basis": "W275 actual7184s, cumulative25628s. W276 implemented/reviewed with31 backend(11PG/20legacy) and25Vue, typecheck; MainPR706 remote adopted andDEV1 released, Handoff closing. Direct reader delivered; full TASK-R2 closed delegation moved explicitly into W277 prerequisite, estimate3–5h. Remaining windows retain original scope. No idle/paused intervals. Record external while Main seat released; adopt calibration into roadmap at W277 START.",
-          "next_reestimate_at_effective_seconds": 36000
-        },
-        {
-          "at": "2026-11-02T23:07:16.445696+00:00",
-          "effective_seconds": 36039,
-          "completed_windows": [
-            "W268-01",
-            "W269-01",
-            "W270-01",
-            "W271-01",
-            "W272-01",
-            "W273-01",
-            "W274-01",
-            "W275-01",
-            "W276-01",
-            "W277-01"
-          ],
-          "actual_completed_seconds": 33972,
-          "remaining_estimate_hours": [
-            8.25,
-            17
-          ],
-          "confidence": "LOW: actual browser exposes adoption gaps and source-preservation defects not visible in prior Owner/component evidence",
-          "added_windows": [],
-          "current_window": "W278-01",
-          "current_window_estimate_hours": [
-            1.5,
-            3
-          ],
-          "current_window_remaining_hours": [
+          "title": "原任务信箱前置与剩余实际行为闭环",
+          "estimate_hours": [
             1,
-            2.5
+            2
           ],
-          "basis": "W277 closed in5061s,total33972s. W278 ongoing: new authorized publication catalog2PG+3UI/typecheck passed; real login/FORM/FLOW publication+activation passed after independently tracked BUG708 candidate. BUG708 real canvas red/green,35 related UI andtypecheck passed; formal adoption pending. Directory-to-form rendering and delegated/business recovery still under execution, no full-chain pass claimed. No idle/paused intervals; dependency fix counted once inside W278.",
-          "next_reestimate_at_effective_seconds": 43200
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_confidence": "LOW",
+          "state": "PLANNED"
         },
         {
-          "at": "2026-11-03T01:06:45.115009+00:00",
-          "effective_seconds": 43208,
-          "checkpoint": "12h",
-          "observed_windows": [
-            {
-              "window": "W276-01",
-              "actual_seconds": 3283
-            },
-            {
-              "window": "W277-01",
-              "actual_seconds": 5061
-            },
-            {
-              "window": "W278-01",
-              "actual_seconds": 4985
-            },
-            {
-              "window": "W279-01",
-              "actual_seconds": 2132
-            },
-            {
-              "window": "W280-01",
-              "actual_seconds": 1608
-            }
+          "id": "W307-01",
+          "day": "D3",
+          "related_tasks": [
+            "WP05-16"
           ],
-          "remaining_capacity_hours": 12.0,
-          "remaining_estimate_hours": [
-            7.5,
-            15.5
-          ],
-          "confidence": "LOW",
-          "added_windows": [
-            "W284-01",
-            "W285-01",
-            "W286-01"
-          ],
-          "basis": "Recent actual complete windows are materially faster than prior estimates; W280 1608s versus0.5–1.25h. W281 favorites/history has new persistence, current-scope query and timezone work; FILE adoption has an actual missing ordinary-FORM parent authority, so not priced as a mechanical reuse. Preserve prediction range and measure every2h; no idle/redundant tests.",
-          "unchanged": "24h effective execution target, original375/full-card states, single chat and local validation."
-        },
-        {
-          "at": "2026-11-03T05:12:58.736229+00:00",
-          "checkpoint": "14h",
-          "effective_seconds": 50423,
-          "excluded_wall_seconds": 7558,
-          "observed_windows": [
-            {
-              "window": "W281-01",
-              "actual_seconds": 3687
-            },
-            {
-              "window": "BUG715",
-              "actual_seconds": 870
-            },
-            {
-              "window": "W282-01",
-              "actual_seconds_so_far": 2908,
-              "state": "IN_PROGRESS"
-            }
-          ],
-          "remaining_capacity_hours": 9.99,
-          "remaining_estimate_hours": [
-            7,
-            14
-          ],
-          "confidence": "LOW",
-          "remaining_windows": {
-            "W282-01": [
-              2,
-              4
-            ],
-            "W283-01": [
-              1,
-              2
-            ],
-            "W284-01": [
-              1,
-              2
-            ],
-            "W285-01": [
-              2,
-              4
-            ],
-            "W286-01": [
-              1,
-              2
-            ]
-          },
-          "observed": "Native SFS/APP sendback/transfer/addsign/explicit pending recovery implemented; 14 distinct PostgreSQL behavior tests and 5 seed tests passed across recorded runs. Three races/original-command tests passed; 13 UI behavior tests passed; browser acceptance not yet executed. Latest subsequent changes are not represented as already retested.",
-          "remaining": "W282 management batch transfer max500 with frozen candidate snapshot; exact scope/authority boundary regressions, real HTTP/Chrome use, concentrated review and delivery. Reuse prior delegation/withdrawal and valid evidence; no artificial waits or repeated whole-repository gates.",
-          "basis": "Measured window remains open, so partial implementation is not extrapolated to a finished delivery. Source review found returned-form patch/start-field-mask/exact resubmit permission requirements and exact task/FormTo identity for overlapping approvers. These are actual accepted contract work, not extra proof layers.",
-          "unchanged": "Original375/56 partial cards and125/247 full acceptance states; single chat,24h effective target,PostgreSQL/local gates,no Actions or production deployment."
-        },
-        {
-          "at": "2026-11-03T07:12:54.051512+00:00",
-          "checkpoint": "16h",
-          "effective_seconds": 57619,
-          "excluded_wall_seconds": 7558,
-          "observed_windows": [
-            {
-              "window": "W282-01",
-              "actual_seconds": 5593
-            },
-            {
-              "window": "W283-01",
-              "actual_seconds_so_far": 4562,
-              "state": "IN_PROGRESS"
-            }
-          ],
-          "remaining_capacity_hours": 7.99,
-          "remaining_estimate_hours": [
-            5,
-            10.5
-          ],
-          "confidence": "LOW",
-          "remaining_windows": {
-            "W283-01": [
-              1,
-              2.5
-            ],
-            "W284-01": [
-              1,
-              2
-            ],
-            "W285-01": [
-              2,
-              4
-            ],
-            "W286-01": [
-              1,
-              2
-            ]
-          },
-          "observed": "W282 actual closure 5593s was below 3–5h estimate, preserved honestly. W283 six affected PostgreSQL behavior tests passed at 07:10:25Z; subsequent revision/identity/diagnostic changes and error-edge/actual Host/Chrome package are still being verified. No browser result is claimed yet.",
-          "remaining": "W283 real Host/HTTP/Chrome, error-edge and current authorization/epoch race boundaries, pinned policy and deadline revision review, concentrated review and two-repository normal delivery. W284 field-graph/pure rules, W285 native FORM file admission/download authorization, W286 original competitions/legacy caller boundaries remain serial original-scope work.",
-          "basis": "Estimates use measured Codex execution windows, not human-day conversions. Only closed windows supply full delivery duration. The original contracts require actual task/lease/notification/receipt atomicity; failures are retained and no repeated full-repository gates or idle time are added.",
-          "unchanged": "24h effective active goal, original375 and56 partial cards and125/247 full acceptance states; single chat,PostgreSQL/local verification,no Actions,production deployment or existing-database migration."
-        },
-        {
-          "at": "2026-11-03T09:12:49.196375+00:00",
-          "checkpoint": "18h",
-          "effective_seconds": 64814,
-          "excluded_wall_seconds": 7558,
-          "remaining_capacity_hours": 6.0,
-          "observed_windows": [
-            {
-              "window": "W284-01",
-              "actual_seconds": 2456
-            },
-            {
-              "window": "W285-01",
-              "actual_seconds_so_far": 2739,
-              "state": "IN_PROGRESS"
-            }
-          ],
-          "remaining_estimate_hours": [
+          "title": "受控技术文档独立可用性和原版本撤回",
+          "estimate_hours": [
             2,
-            5
-          ],
-          "confidence": "LOW",
-          "remaining_windows": {
-            "BUG721": [
-              0.25,
-              0.75
-            ],
-            "W285-01": [
-              0.75,
-              1.75
-            ],
-            "W286-01": [
-              1,
-              2.5
-            ]
-          },
-          "observed": "W284 closed in 2456s, below prior 1.5–3h estimate. W285 actual PG, current-scope HTTP and real Defender/Chrome upload-loss/recovery/draft/submission/download passed; one independent baseline Vue defect is confirmed as Issue721 and blocks the complete affected UI gate. W285 is not complete.",
-          "remaining": "Save W285 exact branch and official deferred release; independent BUG721 latest-main fix, original-step regression, remote adoption/cleanup; resume original W285 and merge latestmain, affected UI and merge-diff review, normal Main/Handoff delivery; then W286 current original competitions/legacy callers. If these finish before capacity, inspect and implement still-unfinished original WP12-05 history/comparison scope after checking direct sources; no padding or repeated gates.",
-          "basis": "Measured Codex active windows, not person-hours. Predicted durations remain low-confidence ranges; audit/lifecycle and independent baseline defect handling included. Only closed windows count as final durations.",
-          "unchanged": "Single chat, 24h active goal, original375 27DONE/2IN_PROGRESS/346PLANNED, 59partial3closed/56remaining,125/247 full acceptance unchanged; PostgreSQL/local validation,no Actions/production/existing-environment migration."
-        },
-        {
-          "at": "2026-11-03T11:13:00.539275+00:00",
-          "checkpoint": "20h",
-          "effective_seconds": 72025,
-          "excluded_wall_seconds": 7558,
-          "remaining_capacity_hours": 3.99,
-          "observed_windows": [
-            {
-              "window": "W285-01",
-              "actual_seconds": 3937
-            },
-            {
-              "window": "W286-01",
-              "actual_seconds": 3768
-            },
-            {
-              "window": "BUG725",
-              "actual_seconds": 1013
-            },
-            {
-              "window": "W287-01",
-              "actual_seconds_so_far": 1216,
-              "state": "IN_PROGRESS"
-            }
-          ],
-          "remaining_estimate_hours": [
-            1.5,
             4
           ],
-          "confidence": "LOW",
-          "remaining_windows": {
-            "W287-01": [
-              0.5,
-              1.25
-            ],
-            "original-WP12-01-full-card-audit": [
-              0.25,
-              0.75
-            ],
-            "original-OA-TASK-editable-SFS-scope-investigation-and-adoption": [
-              0.75,
-              2
-            ]
-          },
-          "observed": "W285 closed about66min, W2863768s/63min and independent BUG7251013s/17min. W287 first true PG red/green and current source/case/nested/retention/two-connection behaviors passed; publication activation test reused command ID and was corrected, HTTP/browser test compile and one Vue template type issue corrected. W287 not yet complete. UI affected behavior tests passed; full typed check passed before small subsequent preview notice edit.",
-          "remaining": "Finish W287 actual HTTP/Chrome and new same-cell retention coverage, related regression, concentrated review and normal Main/Handoff delivery. Then reconcile original WP12-01 whole-card evidence and read exact original OA-TASK/SFS task-edit contract before registering a new implementation window. Current native ApprovalTaskDecisionInputV2 has no data patch; returned editing is already complete and must not be repeated. An investigation is not advance proof of scope approval or task completion.",
-          "basis": "Real active Codex time includes implementation, analysis, appropriate tests, review and lifecycle. Scheduling gap7558s excluded; no idle padding, repeated gates or arbitrary person-hour estimates.",
-          "unchanged": "Single chat, goal active until24h budget inventory and current full delivery closure. No Actions/production/existing-environment migration; original counts change only on proven full-card acceptance."
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_confidence": "LOW",
+          "state": "PLANNED"
         },
         {
-          "at": "2026-11-03T13:13:30.834734+00:00",
-          "checkpoint": "22h",
-          "effective_seconds": 79255,
-          "excluded_wall_seconds": 7558,
-          "remaining_capacity_hours": 1.98,
-          "observed_windows": [
-            {
-              "window": "W288",
-              "actual_seconds": 856
-            },
-            {
-              "window": "W289",
-              "actual_seconds": 2473
-            },
-            {
-              "window": "W290",
-              "actual_seconds": 1605
-            }
+          "id": "W308-01",
+          "day": "D3",
+          "related_tasks": [
+            "WP05-14"
           ],
-          "bug730": {
-            "state": "IMPLEMENTING",
-            "branch": "codex/bug-730-sfs-comment",
-            "baseline": "5b5c900251a5065e0ce174c0e33cecfa7fdba9a1",
-            "observed": "Actual Chrome baseline truncates 1000 supplementary code points; Vue baseline sends over-limit input. Minimal codepoint limit implemented; 9 affected Vue cases green, actual Chrome/PG and types in progress."
-          },
-          "remaining_estimate_hours": [
-            1.5,
-            3
+          "title": "需求集真实适用交集冲突及裁决",
+          "estimate_hours": [
+            2.5,
+            4.5
           ],
-          "confidence": "LOW",
-          "remaining_windows": {
-            "BUG730-closeout": [
-              0.15,
-              0.4
-            ],
-            "WP12-08-original-card-evidence-reconciliation-and-gaps": [
-              0.3,
-              0.75
-            ],
-            "next-original-OA-FORM-admission-query-cards-real-remaining": [
-              0.75,
-              2
-            ]
-          },
-          "observed": "W2892473s/41min and W2901605s/27min remain below earlier predictions because existing owners and browser fixtures cover much of the work. These are subwindows, never renamed three-day completion. Preserve actual timing and use remaining 24h capacity on original card evidence and real gaps.",
-          "basis": "45141s at03:44:56Z plus continuous useful work;7558s scheduling gap excluded. No idle padding, repeated gates or synthetic person-day estimates.",
-          "unchanged": "Single chat;PostgreSQL;simulated business data;affected local checks and one task review;no Actions,production,existing database migration. Original37528DONE/2IN_PROGRESS/345PLANNED;59partial4closed/55remaining;125/247 unchanged."
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_confidence": "LOW",
+          "state": "PLANNED"
         },
         {
-          "at": "2026-11-03T15:06:36.020008+00:00",
-          "checkpoint": "24h-budget-end",
-          "effective_seconds": 86041,
-          "excluded_wall_seconds": 7558,
-          "remaining_capacity_hours": 0,
-          "remaining_estimate_hours": [
-            0,
-            0
+          "id": "W309-01",
+          "day": "ROLLING",
+          "related_tasks": [
+            "WP05-14"
           ],
-          "observed": "29 windows including final reconciliation;9 closed bugs. Initial12 windows41089s versus15.75–29.75h estimate. Scope expanded continuously using original remaining work; no padded execution.",
-          "remaining": "Only current normal Main/Handoff delivery and official finish.53 original partial cards and other original375 tasks remain recorded; no next cycle started.",
-          "basis": "Actual final seconds in final lifecycle proof; approximately24h per user, no waiting for an exact second."
+          "title": "需求集后继差分和实际消费者影响意图",
+          "estimate_hours": [
+            2,
+            4
+          ],
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_confidence": "LOW",
+          "state": "PLANNED"
+        },
+        {
+          "id": "W310-01",
+          "day": "CLOSEOUT",
+          "related_tasks": [
+            "WP12-19",
+            "WP12-03",
+            "WP05-14"
+          ],
+          "title": "预算末尾真实余项核对及当前任务收妥",
+          "estimate_hours": [
+            1,
+            2
+          ],
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_confidence": "LOW",
+          "state": "PLANNED"
         }
       ],
-      "timing_snapshot_at": "2026-11-03T15:06:36.020008+00:00",
-      "remaining_estimate_hours": [
-        0,
-        0
-      ],
-      "runtime_timing_anchor": {
-        "at": "2026-11-03T03:44:56+00:00",
-        "effective_seconds": 45141,
-        "excluded_wall_seconds": 7558,
-        "source": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave281-runtime-timing.json",
-        "basis": "Conservative runtime effective-time anchor after an uncounted scheduling interval; add only verified continuous active execution after this timestamp. Do not infer effective time from goal creation wall time. No intentional padding."
-      },
-      "priority_issue_execution": {
-        "issue": "https://github.com/GTX537/CP6/issues/715",
-        "task": "BUG-715",
-        "branch": "codex/bug-715",
-        "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "base": "ee2c777335bfc7b444cc6f8c6601ea5c2d998e1a",
-        "started_at": "2026-11-03T04:08:55.047236+00:00",
-        "next": "W282-01",
-        "estimate_hours": [
-          0.5,
-          1.5
-        ],
-        "report": "docs/development/evidence/BUG-715/DELIVERY.md",
-        "validation": "本地20项相关行为通过、0跳过：ERP/MES实际种子跨租户登记/幂等/授权保持，六领域贴点与能力目录互锁，以及实际Program登录→HTTP→PG的未授权拒绝、显式query授权读取/关闭原意图、CSRF拒绝和撤权再拒绝。新增种子期望先红后绿；原W281的3项互锁失败在修复后通过，原日志保留。",
-        "remote_adoption_pending": false,
-        "state": "CLOSED",
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug715-final-verification.json",
-        "actual_effective_seconds": 870,
-        "remote_adoption": [
-          {
-            "repository": "CP6",
-            "task": "BUG-715",
-            "source": "181773e903d4a5425515cca2bf866a66fa38159f",
-            "remote_target": "854f52721a06f22c22f82c8aa4d714a82acfb698",
-            "pr": "https://github.com/GTX537/CP6/pull/717",
-            "branch": "codex/bug-715",
-            "branch_absent": true,
-            "seat_released": true,
-            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-            "workspace_clean": true
-          },
-          {
-            "repository": "CP6.AI-Handoff",
-            "task": "BUG-715-HANDOFF",
-            "source": "efd88af907f1bd7e62efe41c5bd597c5f765c8cb",
-            "remote_target": "bd8034427eed9a4d79f1316ca5c84df899294f67",
-            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/258",
-            "branch": "codex/bug-715-handoff",
-            "branch_absent": true,
-            "seat_released": true,
-            "workspace": "D:\\CP6-worktrees\\dev-2",
-            "workspace_clean": true
-          }
-        ]
-      },
-      "independent_bug_deliveries": [
-        {
-          "issue": 725,
-          "proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug725-final-verification.json",
-          "actual_effective_seconds": 1013,
-          "pr": "https://github.com/GTX537/CP6/pull/726",
-          "counted_once": true
-        },
-        {
-          "issue": 730,
-          "proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug730-final-verification.json",
-          "actual_effective_seconds": 989,
-          "pr": "https://github.com/GTX537/CP6/pull/732",
-          "counted_once": true
-        },
-        {
-          "issue": 736,
-          "proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug736-final-verification.json",
-          "actual_effective_seconds": 576,
-          "pr": "https://github.com/GTX537/CP6/pull/738",
-          "counted_once": true
-        },
-        {
-          "issue": 740,
-          "proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug740-final-verification.json",
-          "actual_effective_seconds": 435,
-          "pr": "https://github.com/GTX537/CP6/pull/741",
-          "counted_once": true
-        }
-      ],
-      "latest_independent_bug": {
-        "issue": 740,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug740-final-verification.json",
-        "actual_effective_seconds": 435,
-        "source": "2c1ede517e9596aac128e51863384771fd56b6da",
-        "main": "6521575d4b2aab41fde64630006d684f4ec3b50a",
-        "closed": true
-      },
-      "capacity_closeout": {
-        "report": "docs/development/evidence/W296-01/DELIVERY.md",
-        "scope": "28 completed windows,9 closed BUGs plus W296 final audit; no new automatic cycle",
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave296-final-verification.json",
-        "completion_requires_all_seats_released": true,
-        "target_effective_seconds": 86400,
-        "target_is_approximate": true,
-        "budget_end_review_completed": true,
-        "effective_seconds_at_commit": 86041,
-        "recorded_at": "2026-11-03T15:06:36.020008+00:00",
-        "scope_completed": true,
-        "lifecycle_completed": false,
-        "lifecycle_state": "PENDING_NORMAL_DELIVERY",
-        "next_cycle_started": false
-      },
-      "completed_scope_at": "2026-11-03T15:06:36.020008+00:00",
-      "completion_semantics": "User authorized approximately24h, not mandatory idle until an exact second. Budget-end inventory and implementation scope complete; remote delivery/cleanup remains a separate pending snapshot. Actual final seconds are reported without rounding up; whole-goal completion requires PASS final proof after both official finishes.",
-      "final_lifecycle_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave296-final-verification.json"
+      "reestimates": [],
+      "exclusions": [],
+      "budget_policy": "Approximately24h effective authorized execution, finish current complete task at budget end; queue is a reserve, not a promise all14 close. No padding, duplicate tests, new scopes outside375, or automatic next cycle."
     },
     "execution_plan_history": [
       {
@@ -243200,6 +241701,1864 @@
         "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave267-final-verification.json",
         "completed_at": "2026-11-02T12:19:44.714297+00:00",
         "estimate_reconciliation": "Prior 24h estimate was inaccurate; actual goal execution about 19 minutes. Superseded estimation basis by user 24h effective execution decision."
+      },
+      {
+        "id": "CP6-24H-20261102",
+        "path": "docs/development/planning/20261102-codex-24h-oa.md",
+        "state": "COMPLETED",
+        "execution_owner": "COORD_SINGLE_CHAT",
+        "execution_started": true,
+        "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
+        "capacity_hours": 24,
+        "estimate_hours": [
+          15.75,
+          29.75
+        ],
+        "estimate_confidence": "LOW_ROLLING_AT_2H",
+        "estimate_is_guarantee": false,
+        "original_task_count": 375,
+        "started_at": "2026-11-02T13:06:37Z",
+        "effective_seconds_recorded": 86326,
+        "next_reestimate_at_effective_seconds": null,
+        "excluded_time": "Paused/user-offline/queue/intentional idle; no padding",
+        "windows": [
+          {
+            "id": "W268-01",
+            "day": "D1",
+            "related_tasks": [
+              "WP12-01"
+            ],
+            "title": "完整schema往返与致命结构边界",
+            "estimate_hours": [
+              0.75,
+              1.5
+            ],
+            "state": "DONE",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W268-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave268-final-verification.json"
+            },
+            "actual_effective_seconds": 1841,
+            "estimate_variance": "30m41s actual versus initial 45–90min. First small sample; full re-estimate at cumulative 2h, continue authorized backlog."
+          },
+          {
+            "id": "W269-01",
+            "day": "D1",
+            "related_tasks": [
+              "WP12-01"
+            ],
+            "title": "FORM草稿Owner、当前授权与原命令",
+            "estimate_hours": [
+              0.75,
+              1.75
+            ],
+            "state": "DONE",
+            "started_at": "2026-11-02T13:43:46.434889+00:00",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W269-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave269-final-verification.json"
+            },
+            "actual_effective_seconds": 2297,
+            "estimate_variance": "38m17s actual versus 45–105min initial. Two small windows faster; re-estimate at cumulative 2h, continue authorized original scope."
+          },
+          {
+            "id": "W270-01",
+            "day": "D1",
+            "related_tasks": [
+              "WP12-01",
+              "WP12-02"
+            ],
+            "title": "FORM准确发布预览、不可变版本与独立激活",
+            "estimate_hours": [
+              1,
+              2
+            ],
+            "state": "DONE",
+            "started_at": "2026-11-02T14:19:59.057423+00:00",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W270-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave270-final-verification.json"
+            },
+            "actual_effective_seconds": 2605,
+            "estimate_variance": "43m25s actual versus 60–120min initial; cumulative 112m23s. Re-estimate at cumulative 2h and continue actual original remaining scope."
+          },
+          {
+            "id": "W271-01",
+            "day": "D1",
+            "related_tasks": [
+              "WP12-01"
+            ],
+            "title": "FLOW/FORM按固定sourceVersion克隆并清身份",
+            "estimate_hours": [
+              0.5,
+              1
+            ],
+            "state": "DONE",
+            "started_at": "2026-11-02T15:01:10.484328+00:00",
+            "initial_estimate_hours": [
+              0.5,
+              1
+            ],
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W271-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave271-final-verification.json"
+            },
+            "actual_effective_seconds": 1969,
+            "estimate_variance": "See measured final proof; original 30–60min. Same 24h goal continues; next recalibration at cumulative 4h."
+          },
+          {
+            "id": "W272-01",
+            "day": "D1",
+            "related_tasks": [
+              "WP12-02"
+            ],
+            "title": "FORM与子流程完整依赖pin及递归资格",
+            "estimate_hours": [
+              1,
+              2
+            ],
+            "state": "DONE",
+            "initial_estimate_hours": [
+              1.5,
+              3
+            ],
+            "started_at": "2026-11-02T15:32:43.891336+00:00",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W272-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave272-final-verification.json"
+            },
+            "actual_effective_seconds": 2330,
+            "estimate_variance": "See measured final proof; revised 60–120min. Same 24h goal continues; next calibration at cumulative 4h."
+          },
+          {
+            "id": "W273-01",
+            "day": "D2",
+            "related_tasks": [
+              "WP12-02"
+            ],
+            "title": "唯一form-flow绑定、激活CAS与并发裁决",
+            "estimate_hours": [
+              0.5,
+              1
+            ],
+            "state": "DONE",
+            "initial_estimate_hours": [
+              0.75,
+              1.5
+            ],
+            "started_at": "2026-11-02T16:12:46.124498+00:00",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W273-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave273-final-verification.json"
+            },
+            "actual_effective_seconds": 2031,
+            "estimate_variance": "See measured final proof; revised 30–60min. Same 24h goal continues; next calibration at cumulative 4h."
+          },
+          {
+            "id": "W274-01",
+            "day": "D2",
+            "related_tasks": [
+              "WP12-02",
+              "WP12-06",
+              "WP12-08"
+            ],
+            "title": "精确版本APP子流程运行与整树原子收口",
+            "estimate_hours": [
+              1.5,
+              3
+            ],
+            "state": "DONE",
+            "initial_estimate_hours": [
+              2,
+              4
+            ],
+            "started_at": "2026-11-02T16:47:47.629014+00:00",
+            "revised_estimate_hours": [
+              2,
+              4
+            ],
+            "scope_refinement": "Actual root TxE already adopted; child graph, same-transaction parent continuation, child tasks and one root decision must close together.",
+            "discovered_dependency": {
+              "issue": 702,
+              "pr": 703,
+              "status": "CLOSED_REMOTE_MAIN",
+              "main": "8cb4a5b8ae18a7d541a84b1cc4e4419bfe3cc01a",
+              "evidence": "docs/development/evidence/BUG-702/DELIVERY.md",
+              "time_included_in_program": true
+            },
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W274-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave274-final-verification.json"
+            },
+            "actual_effective_seconds": 5371,
+            "estimate_variance": "5371s/89m31s including BUG702 dependency, below initial 2–4h. Root protocols were reusable; ordinary FORM has a distinct same-transaction contract and needs independent estimation."
+          },
+          {
+            "id": "W275-01",
+            "day": "D2",
+            "related_tasks": [
+              "WP12-03",
+              "WP12-04",
+              "WP12-08"
+            ],
+            "title": "表单草稿/提交采用版本和字段规则授权",
+            "estimate_hours": [
+              1.5,
+              3
+            ],
+            "state": "DONE",
+            "initial_estimate_hours": [
+              2,
+              4
+            ],
+            "started_at": "2026-11-02T18:16:50.833640+00:00",
+            "revised_estimate_hours": [
+              3,
+              6
+            ],
+            "estimate_confidence": "LOW",
+            "scope_refinement": "Current legacy drafts/submissions lack v2 definition adoption, five-context/WFC admission, tombstone and exact field/rule boundaries. Include ordinary FORM same-transaction runtime/task direct dependencies; reuse APP-independent native kernel, never impersonate an APP business Owner.",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W275-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave275-final-verification.json"
+            },
+            "actual_effective_seconds": 7184,
+            "estimate_variance": "7184s/1h59m44s, below revised 3–6h. Existing native kernel and shared authorization were directly reusable. Product review found and fixed concrete boundaries; no browser-to-PG proof or full TASK contract was counted."
+          },
+          {
+            "id": "W276-01",
+            "day": "D2",
+            "related_tasks": [
+              "WP12-02",
+              "WP12-06",
+              "WP12-08"
+            ],
+            "title": "实际任务使用冻结版本、停新不伤在途",
+            "estimate_hours": [
+              0.75,
+              1.5
+            ],
+            "state": "DONE",
+            "initial_estimate_hours": [
+              1,
+              2
+            ],
+            "scope_reuse": "W274 APP and W275 ordinary FORM task write Owners already real. Add current actual/effective authorized read surfaces, counts, pinned details, current act-as and in-flight activation impact; legacy participation-only lists intentionally exclude new ordinary records.",
+            "started_at": "2026-11-02T20:19:48.492844+00:00",
+            "revised_estimate_hours": [
+              2,
+              4
+            ],
+            "estimate_confidence": "LOW",
+            "scope_refinement": "Direct current native read and real impact delivered; full closed delegation current read explicitly transferred as W277 direct prerequisite, no full card completion.",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W276-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave276-final-verification.json"
+            },
+            "actual_effective_seconds": 3283,
+            "estimate_variance": "3283s/54m43s, below2–4h. Existing business/form authority and native pins were reusable; full closed delegated reads were explicitly transferred to W277, not claimed complete."
+          },
+          {
+            "id": "W277-01",
+            "day": "D3",
+            "related_tasks": [
+              "WP12-08",
+              "WP12-10",
+              "WP12-19"
+            ],
+            "title": "委派撤回与BLOCKED显式新授权恢复",
+            "estimate_hours": [
+              1.25,
+              2.5
+            ],
+            "state": "DONE",
+            "initial_estimate_hours": [
+              2,
+              3
+            ],
+            "revised_estimate_hours": [
+              3,
+              5
+            ],
+            "estimate_confidence": "LOW",
+            "scope_refinement": "TASK closed grants/current dual-actor read/actions; separate real Iteration Owner business grant and explicit blocked withdrawal/application authorization. No WP12-09 sendback/transfer adoption; no other business Owner withdrawal adoption.",
+            "started_at": "2026-11-02T21:10:32.641506+00:00",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W277-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave277-final-verification.json"
+            },
+            "actual_effective_seconds": 5061,
+            "estimate_variance": "5061s/1h24m21s, below3–5h. Existing real business Owner transaction/current authority/original recovery and native read framework reused; PostgreSQL authorization and explicit new fact paths implemented, browser-to-PG remains W278."
+          },
+          {
+            "id": "W278-01",
+            "day": "D3",
+            "related_tasks": [
+              "WP12-01",
+              "WP12-02",
+              "WP12-04",
+              "WP12-19"
+            ],
+            "title": "设计器/管理/办理页面连真实PG与HTTP",
+            "estimate_hours": [
+              1,
+              2
+            ],
+            "state": "DONE",
+            "initial_estimate_hours": [
+              1.5,
+              3
+            ],
+            "started_at": "2026-11-02T22:35:16.200231+00:00",
+            "revised_estimate_hours": [
+              1.5,
+              3
+            ],
+            "estimate_confidence": "LOW",
+            "scope_refinement": "Current published catalog plus real browser authoring/submission/delegation and explicit Iteration recovery; BUG708/710 separately adopted. Original AC and full-card reconciliation remains W279.",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W278-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave278-final-verification.json"
+            },
+            "actual_effective_seconds": 4985,
+            "estimate_variance": "4985s/1h23m05s, slightly below1.5–3h. Existing real Owner/HTTP fixtures reused; actual browser uncovered BUG708 and BUG710, both independently fixed/adopted. No full-card closure inferred."
+          },
+          {
+            "id": "W279-01",
+            "day": "D3",
+            "related_tasks": [
+              "WP12-01",
+              "WP12-02",
+              "WP12-19"
+            ],
+            "title": "原AC业务验收、实际缺口修复与整卡盘点",
+            "estimate_hours": [
+              1.5,
+              3
+            ],
+            "state": "DONE",
+            "initial_estimate_hours": [
+              2,
+              3
+            ],
+            "started_at": "2026-11-02T23:59:36.700974+00:00",
+            "revised_estimate_hours": [
+              2,
+              3
+            ],
+            "estimate_confidence": "LOW",
+            "scope_refinement": "Original DEF27AC individually reconciled; missing exact-draft explanation implemented and actual browser verified; complete card remains open.",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W279-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave279-final-verification.json"
+            },
+            "actual_effective_seconds": 2132,
+            "estimate_variance": "2132s/35m32s versus2–3h estimate: pure read reused current permissions, exact expressions and stage resolver; selective real browser/PG verification. Estimate was too high; no idle added."
+          },
+          {
+            "id": "W280-01",
+            "day": "ROLLING_EXTENSION",
+            "related_tasks": [
+              "WP12-01"
+            ],
+            "title": "定义历史精确版本比较与当前披露",
+            "estimate_hours": [
+              0.75,
+              1.5
+            ],
+            "state": "DONE",
+            "admission": "Inspect direct providers/current source before START; no stub substitution",
+            "reason": "First 2h throughput calibration: original authorized adjacent remaining scope",
+            "started_at": "2026-11-03T00:36:53.900160+00:00",
+            "revised_estimate_hours": [
+              0.5,
+              1.25
+            ],
+            "estimate_confidence": "LOW",
+            "scope_refinement": "Original UC-D08 exact published comparison adopted; remaining complete-card acceptance stays open.",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W280-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave280-final-verification.json"
+            },
+            "actual_effective_seconds": 1608,
+            "estimate_variance": "1608s/26m48s versus0.5–1.25h estimate; immutable publication and authority contracts reused, final actual browser caught route/accessibility errors. Estimate still slightly high; no idle added."
+          },
+          {
+            "id": "W281-01",
+            "day": "ROLLING_EXTENSION",
+            "related_tasks": [
+              "WP12-05"
+            ],
+            "title": "表单目录收藏、历史查询及最终下载披露真实缺口",
+            "estimate_hours": [
+              1.5,
+              3
+            ],
+            "state": "DONE",
+            "admission": "Inspect direct providers/current source before START; no stub substitution",
+            "reason": "First 2h throughput calibration: original authorized adjacent remaining scope",
+            "started_at": "2026-11-03T01:01:10.201720+00:00",
+            "revised_estimate_hours": [
+              1,
+              2.5
+            ],
+            "estimate_confidence": "LOW",
+            "scope_refinement": "Native favorites and authorized unified history adopted; actual ordinary FORM files remain W285. No full-card closure.",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W281-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave281-final-verification.json"
+            },
+            "actual_effective_seconds": 3687
+          },
+          {
+            "id": "W282-01",
+            "day": "ROLLING_EXTENSION",
+            "related_tasks": [
+              "WP12-09"
+            ],
+            "title": "实际退回重送、转交加签与无人审批恢复",
+            "estimate_hours": [
+              2,
+              4
+            ],
+            "state": "DONE",
+            "admission": "Inspect direct providers/current source before START; no stub substitution",
+            "reason": "First 2h throughput calibration: original authorized adjacent remaining scope",
+            "revised_estimate_hours": [
+              3,
+              5
+            ],
+            "estimate_confidence": "LOW",
+            "started_at": "2026-11-03T04:24:30.268958+00:00",
+            "scope_refinement": "Native task recovery and management batch adopted; deadline/Worker and legacy caller disposition remain separate. Full card not closed.",
+            "remaining_estimate_hours": [
+              2,
+              4
+            ],
+            "actual_effective_seconds_so_far": 2908,
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W282-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave282-final-verification.json",
+              "all_slots_released": true
+            },
+            "actual_effective_seconds": 5593,
+            "remote_adoption": [
+              {
+                "repository": "CP6",
+                "task": "W282-01",
+                "source": "759d89c723482f392c4eccfa5a7953959167979c",
+                "remote_target": "37a88248ca9f25f3818ba5a6e31fd50ddca891b7",
+                "pr": "https://github.com/GTX537/CP6/pull/718",
+                "branch": "codex/w282-01",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+                "workspace_clean": true
+              },
+              {
+                "repository": "CP6.AI-Handoff",
+                "task": "W282-HANDOFF",
+                "source": "3ba6ecd913d3096d4236b6f5c9b3ad7fc4bb3bc8",
+                "remote_target": "5ee1e2ecb2ae64d378510edb153840f9b2d80f0e",
+                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/259",
+                "branch": "codex/w282-handoff",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\dev-2",
+                "workspace_clean": true
+              }
+            ]
+          },
+          {
+            "id": "W283-01",
+            "day": "ROLLING_EXTENSION",
+            "related_tasks": [
+              "WP12-11"
+            ],
+            "title": "准确截止政策与超时worker竞争",
+            "estimate_hours": [
+              1.5,
+              3
+            ],
+            "state": "DONE",
+            "admission": "Inspect direct providers/current source before START; no stub substitution",
+            "reason": "First 2h throughput calibration: original authorized adjacent remaining scope",
+            "revised_estimate_hours": [
+              1.5,
+              3
+            ],
+            "estimate_confidence": "LOW",
+            "started_at": "2026-11-03T05:56:52.105635+00:00",
+            "scope_refinement": "Native UTC-duration deadlines and real Owner timeout execution adopted; versioned workday calendar, all business automatic decisions and legacy caller disposition remain. Full cards not closed.",
+            "remaining_estimate_hours": [
+              1,
+              2.5
+            ],
+            "actual_effective_seconds_so_far": 4562,
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W283-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave283-final-verification.json",
+              "all_slots_released": true
+            },
+            "actual_effective_seconds": 6635,
+            "remote_adoption": [
+              {
+                "repository": "CP6",
+                "task": "W283-01",
+                "source": "b04676667446c42c943eb2e76e88f554deb0743c",
+                "remote_target": "32fcf2767435658b2f1aa362b9a84e640291f79b",
+                "pr": "https://github.com/GTX537/CP6/pull/719",
+                "branch": "codex/w283-01",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+                "workspace_clean": true
+              },
+              {
+                "repository": "CP6.AI-Handoff",
+                "task": "W283-HANDOFF",
+                "source": "df38ede0a51c8255ca530bb5e47ec56c84e881ef",
+                "remote_target": "569fe427310af06e13218b3b4822724b09341cff",
+                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/260",
+                "branch": "codex/w283-handoff",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\dev-2",
+                "workspace_clean": true
+              }
+            ]
+          },
+          {
+            "id": "W284-01",
+            "day": "ROLLING_EXTENSION",
+            "related_tasks": [
+              "WP12-01"
+            ],
+            "title": "设计器完整字段/图定位与纯计算规则预览",
+            "estimate_hours": [
+              1,
+              2
+            ],
+            "estimate_confidence": "LOW",
+            "state": "DONE",
+            "admission": "Inspect exact current source/direct providers before START; single chat and fixed seats; no stub substitution",
+            "reason": "W279原27AC核对确认D01-05/D02-02/03未闭环；已有保存验证/准确草稿预演复用，补当前可见路径和可执行纯规则说明。",
+            "started_at": "2026-11-03T07:47:28.233845+00:00",
+            "revised_estimate_hours": [
+              1.5,
+              3
+            ],
+            "scope_refinement": "FLOW图/注册依赖及FORM字段/子表/规则的结构化定位贯通保存、发布诊断与既有设计器；准确FORM草稿的纯计算预览复用实际顺序规则，展示服务端结果与前端体验，当前授权、原数字精度及无业务副作用。",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W284-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave284-final-verification.json",
+              "all_slots_released": true
+            },
+            "actual_effective_seconds": 2456,
+            "remote_adoption": [
+              {
+                "repository": "CP6",
+                "task": "W284-01",
+                "source": "06b1b458889213f939025f783b48bf461e7b385a",
+                "remote_target": "094627927cb50e60f896a76d1d9a35216119020f",
+                "pr": "https://github.com/GTX537/CP6/pull/720",
+                "branch": "codex/w284-01",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+                "workspace_clean": true
+              },
+              {
+                "repository": "CP6.AI-Handoff",
+                "task": "W284-HANDOFF",
+                "source": "d022cef4a63f69d5b3b37c6f8d95d1540a973f08",
+                "remote_target": "ccef7c81971e6418e0ceb210bcb21b43e23e8683",
+                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/261",
+                "branch": "codex/w284-handoff",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\dev-2",
+                "workspace_clean": true
+              }
+            ]
+          },
+          {
+            "id": "W285-01",
+            "day": "ROLLING_EXTENSION",
+            "related_tasks": [
+              "WP12-05",
+              "WP12-03",
+              "WP02-14"
+            ],
+            "title": "普通FORM实际FileRef准入与最终当前授权下载",
+            "estimate_hours": [
+              2,
+              4
+            ],
+            "estimate_confidence": "LOW",
+            "state": "DONE",
+            "admission": "Inspect exact current source/direct providers before START; single chat and fixed seats; no stub substitution",
+            "reason": "W281直接提供者核对：FileContentOwnerV1绑定EngineeringRevision，普通FORM仍FORM_FILE_SOURCE_REQUIRED。采用真实存储/扫描端口及草稿/提交/字段Owner边界，不能借工程父级、空结果或占位下载宣称采用；不新增原册未要求的批量导出。",
+            "started_at": "2026-11-03T08:27:10.240064+00:00",
+            "revised_estimate_hours": [
+              2,
+              4
+            ],
+            "scope_refinement": "普通FORM真实文件Owner：当前表单/字段授权先于上传字节；明确FORM暂存与不可变内容身份，扫描和完整性状态；草稿/直接提交/退回修改的引用准入与同事务绑定；当前业务对象和字段权限下的精确内容下载及实际页面采用。",
+            "remaining_estimate_hours": [
+              0.75,
+              1.75
+            ],
+            "actual_effective_seconds_so_far": 2739,
+            "report": "docs/development/evidence/W285-01/DELIVERY.md",
+            "dependency_issue": "https://github.com/GTX537/CP6/issues/721",
+            "implementation_complete": true,
+            "lifecycle_snapshot": {
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave285-final-verification.json",
+              "all_slots_released": true
+            },
+            "dependency_issue_closed": true,
+            "actual_effective_seconds": 3937,
+            "remote_adoption": [
+              {
+                "repository": "CP6",
+                "task": "W285-01",
+                "source": "cd2a12364c7837ff0f916ab2fbc1bea5be636ac3",
+                "remote_target": "53a805b15f04408547188247e730fd8896b20cb9",
+                "pr": "https://github.com/GTX537/CP6/pull/723",
+                "branch": "codex/w285-01",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+                "workspace_clean": true
+              },
+              {
+                "repository": "CP6.AI-Handoff",
+                "task": "W285-HANDOFF",
+                "source": "709193f865b946f087bd947353eb1005dd3e26de",
+                "remote_target": "17f483872462bcf1a3e26ba350254d74172eb0d2",
+                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/262",
+                "branch": "codex/w285-handoff",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\dev-2",
+                "workspace_clean": true
+              }
+            ]
+          },
+          {
+            "id": "W286-01",
+            "day": "ROLLING_EXTENSION",
+            "related_tasks": [
+              "WP12-01",
+              "WP12-02"
+            ],
+            "title": "FLOW双作者/下一草稿竞争与legacy来源及调用面处置",
+            "estimate_hours": [
+              1,
+              2
+            ],
+            "estimate_confidence": "LOW",
+            "state": "DONE",
+            "admission": "Inspect exact current source/direct providers before START; single chat and fixed seats; no stub substitution",
+            "reason": "W279原AC-D01-03/D03-04/D04-03/04余项：精确原竞争场景尚缺独立证据，legacy重建/当前head来源不能冒充原发布，全部旧caller仍未闭环；先实际调用面核对，再按影响实现/验证，不迁移既有环境。",
+            "revised_estimate_hours": [
+              2,
+              4
+            ],
+            "started_at": "2026-11-03T09:38:00.184473+00:00",
+            "scope_refinement": "OA-DEF原AC-D01-03/D03-04/D04-03/D04-04：真实FLOW双作者同token与下一草稿竞争；全部旧定义writer/helper/设计器入口适配或明确拒绝；旧只读数据明确来源可信度，无版本/当前head重建不得冒充历史发布。",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W286-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave286-final-verification.json",
+              "all_slots_released": true
+            },
+            "actual_effective_seconds": 3768,
+            "remote_adoption": [
+              {
+                "repository": "CP6",
+                "task": "W286-01",
+                "source": "53e0c31522161738b70fab53ad703ff18bb39773",
+                "remote_target": "26a590985fb562fb6ee489aba2cc91eb67a7be21",
+                "pr": "https://github.com/GTX537/CP6/pull/724",
+                "branch": "codex/w286-01",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+                "workspace_clean": true
+              },
+              {
+                "repository": "CP6.AI-Handoff",
+                "task": "W286-HANDOFF",
+                "source": "b4ec1635d4a167a808165bdfb88c155c5812d373",
+                "remote_target": "90ed8fa2530ded732fbc0b972e85ef52489b8867",
+                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/263",
+                "branch": "codex/w286-handoff",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\dev-2",
+                "workspace_clean": true
+              }
+            ]
+          },
+          {
+            "id": "W287-01",
+            "day": "ROLLING_EXTENSION",
+            "related_tasks": [
+              "WP12-01",
+              "WP12-03"
+            ],
+            "title": "外部字典选项Owner与表单最终值准入",
+            "estimate_hours": [
+              0.75,
+              1.75
+            ],
+            "estimate_confidence": "LOW",
+            "state": "DONE",
+            "admission": "Single chat; actual existing shared source and current FORM/IAM contracts audited; fixed seats",
+            "reason": "原UC-D04/D05未完成的外部选项来源和提交复核；不重复已完成的静态规则预览、目录历史或文件",
+            "started_at": "2026-11-03T10:52:44.803348+00:00",
+            "scope_refinement": "原OA-DEF UC-D04/D05与OA-FORM提交：外部选项来源的明确版本合同、实际共享字典Owner适配、当前字段授权候选读取及最终服务端值准入；设计器和普通表单页面采用。",
+            "remaining_estimate_hours": [
+              0.5,
+              1.25
+            ],
+            "actual_effective_seconds_so_far": 1216,
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W287-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave287-final-verification.json",
+              "all_slots_released": true
+            },
+            "actual_effective_seconds": 2854,
+            "remote_adoption": [
+              {
+                "repository": "CP6",
+                "task": "W287-01",
+                "source": "048c5d7b82bceaf0b85c039ad3c7b7838b73850f",
+                "remote_target": "2bd215d145f9ccfd45da0b30aae6ea14ac1e8012",
+                "pr": "https://github.com/GTX537/CP6/pull/727",
+                "branch": "codex/w287-01",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+                "workspace_clean": true
+              },
+              {
+                "repository": "CP6.AI-Handoff",
+                "task": "W287-HANDOFF",
+                "source": "dfb3c380a3736341bfc7e28350fa20637ace8fc4",
+                "remote_target": "037f7e70d565ec5584d45a8a7b77e7914fc97f08",
+                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/264",
+                "branch": "codex/w287-handoff",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\dev-2",
+                "workspace_clean": true
+              }
+            ]
+          },
+          {
+            "id": "W288-01",
+            "day": "ROLLING_EXTENSION",
+            "related_tasks": [
+              "WP12-01"
+            ],
+            "title": "WP12-01原整卡证据核销",
+            "estimate_hours": [
+              0.25,
+              0.75
+            ],
+            "estimate_confidence": "LOW",
+            "state": "DONE",
+            "started_at": "2026-11-03T11:42:32.413249+00:00",
+            "scope_refinement": "按原WP12-01完整卡的三项范围、交付输出和正反验收，核对既有已远端采用的代码/PG/HTTP/UI证据；充分则正式关闭该原卡。仅资料核销，其他卡/目标/正式AC与生产部署分别记账，不重复产品测试。",
+            "reason": "原余项已逐窗补足，必须按实际卡片边界核销，不能持续停留在局部完成",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W288-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave288-final-verification.json",
+              "all_slots_released": true
+            },
+            "actual_effective_seconds": 856,
+            "remote_adoption": [
+              {
+                "repository": "CP6",
+                "task": "W288-01",
+                "source": "eb548d3ba1f9f9507183231e6fcf9f4477855494",
+                "remote_target": "72a459e9718ce523276a2589db0a91415d213cd8",
+                "pr": "https://github.com/GTX537/CP6/pull/728",
+                "branch": "codex/w288-01",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+                "workspace_clean": true
+              },
+              {
+                "repository": "CP6.AI-Handoff",
+                "task": "W288-HANDOFF",
+                "source": "57d10bc54b0b84bda385b9dac2ec9ca4cd38e309",
+                "remote_target": "75805ed48e8b5b9450929c0928b673943702a6cf",
+                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/265",
+                "branch": "codex/w288-handoff",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\dev-2",
+                "workspace_clean": true
+              }
+            ]
+          },
+          {
+            "id": "W289-01",
+            "day": "ROLLING_EXTENSION",
+            "related_tasks": [
+              "WP12-08"
+            ],
+            "title": "SFS审批字段补丁与三版本原子办理",
+            "estimate_hours": [
+              1.5,
+              2.75
+            ],
+            "estimate_confidence": "LOW",
+            "state": "DONE",
+            "started_at": "2026-11-03T11:56:14.461846+00:00",
+            "scope_refinement": "原OA-TASK R2第3节SFS审批编辑：独立WFC命令、task/instance/formData三版本、固定节点字段权限与当前IAM/委派交集、精确数字补丁和重算、表单/Vars/决定/快照/原结果同事务；页面编辑与未知结果恢复，实际PostgreSQL/HTTP/Chrome验证。接入实际字典选项及文件Owner所需TASK边界；APP五字段合同不变，旧SFS命令仅保留原结果恢复。不据此宣布整个WP12-08或OA-TASK目标完成。",
+            "reason": "实际源码确认native审批只有APP式两版本意见输入，原SFS编辑合同未采用；原卡余项连续推进",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W289-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave289-final-verification.json",
+              "all_slots_released": true
+            },
+            "actual_effective_seconds": 2473,
+            "remote_adoption": [
+              {
+                "repository": "CP6",
+                "task": "W289-01",
+                "source": "15c50ce7afdacfa1354a13877e0b130fd38cc45a",
+                "remote_target": "c0fa67eb371e0fcb49f861f7a42ebe71b222213a",
+                "pr": "https://github.com/GTX537/CP6/pull/729",
+                "branch": "codex/w289-01",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+                "workspace_clean": true
+              },
+              {
+                "repository": "CP6.AI-Handoff",
+                "task": "W289-HANDOFF",
+                "source": "bfc3bb365580ec545530b5af9211c69720627c56",
+                "remote_target": "44a166608f99c8583d2ad55c9f04d6e99b784512",
+                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/266",
+                "branch": "codex/w289-handoff",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\dev-2",
+                "workspace_clean": true
+              }
+            ]
+          },
+          {
+            "id": "W290-01",
+            "day": "ROLLING_EXTENSION",
+            "related_tasks": [
+              "WP12-08"
+            ],
+            "title": "统一任务动作上下文与APP原命令适配",
+            "estimate_hours": [
+              0.8,
+              1.6
+            ],
+            "estimate_confidence": "LOW",
+            "state": "DONE",
+            "started_at": "2026-11-03T12:40:51.658627+00:00",
+            "scope_refinement": "原WP12-08：统一准确TaskActionContext（服务器判定SFS/APP、原pin、真实三/双版本、实际/当前/原职责主体、当前动作/委派/字段、APP准确Subject）；统一decisions分型并适配accepted APP五字段，仍在原AppCommand/Recorder事务保存原WFC alias元数据，不另造成功槽、不替换accepted canonical/wire；收件箱APP实际办理及未知原命令恢复、SFS已有页采用。实际PG/HTTP/Chrome正反验收，原卡完整状态另核。",
+            "reason": "W289真实41分钟，采用已有Owner使预估偏高；剩余实际任务上下文及APP收件箱不能办理缺口继续",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W290-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave290-final-verification.json",
+              "all_slots_released": true
+            },
+            "actual_effective_seconds": 1605,
+            "remote_adoption": [
+              {
+                "repository": "CP6",
+                "task": "W290-01",
+                "source": "9111bbd99f678d09f5ef7860d50bd16e5592ed1d",
+                "remote_target": "5b5c900251a5065e0ce174c0e33cecfa7fdba9a1",
+                "pr": "https://github.com/GTX537/CP6/pull/731",
+                "branch": "codex/w290-01",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+                "workspace_clean": true
+              },
+              {
+                "repository": "CP6.AI-Handoff",
+                "task": "W290-HANDOFF",
+                "source": "9595cff9ea11abe0eae27d741cb848b4dcf6996a",
+                "remote_target": "9366a9b9882a3885ad63fc853a536cd6e22ba06e",
+                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/267",
+                "branch": "codex/w290-handoff",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\dev-2",
+                "workspace_clean": true
+              }
+            ]
+          },
+          {
+            "id": "W291-01",
+            "day": "ROLLING_EXTENSION",
+            "related_tasks": [
+              "WP12-08"
+            ],
+            "title": "原任务办理卡逐项证据核销",
+            "estimate_hours": [
+              0.3,
+              0.75
+            ],
+            "estimate_confidence": "LOW",
+            "state": "DONE",
+            "started_at": "2026-11-03T13:26:27.659262+00:00",
+            "scope_refinement": "原WP12-08逐项核对统一动作上下文/真实版本、服务端SFS与APP封闭输入、原职责和实际Actor/委派/SOD、token/node/stage/round计票、并发单一决定/原命令回放、新轮不复用旧票、稳定TaskId和CC拒绝审批；核直接前置实际采用与当前适用证据。仅缺失的实际边界补定向验证；充分才关整卡，不复跑已有效证据。",
+            "reason": "统一入口与三版本已交付，核清原卡真实剩余；先补实际缺口，不以窗口数量当原卡完成",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W291-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave291-final-verification.json",
+              "all_slots_released": true
+            },
+            "actual_effective_seconds": 801,
+            "remote_adoption": [
+              {
+                "repository": "CP6",
+                "task": "W291-01",
+                "source": "d65531c81c0010214cc3a691d1288c42c46de50e",
+                "remote_target": "22978c916a9e656d2bde3a46024da5fddff2b89d",
+                "pr": "https://github.com/GTX537/CP6/pull/733",
+                "branch": "codex/w291-01",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+                "workspace_clean": true
+              },
+              {
+                "repository": "CP6.AI-Handoff",
+                "task": "W291-HANDOFF",
+                "source": "55e8006b41285f6a4466e4ebd37c1f11a337b391",
+                "remote_target": "5d1991c95049c45b795b7a85cd5f28a5051c4400",
+                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/268",
+                "branch": "codex/w291-handoff",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\dev-2",
+                "workspace_clean": true
+              }
+            ]
+          },
+          {
+            "id": "W292-01",
+            "day": "ROLLING_EXTENSION",
+            "related_tasks": [
+              "WP12-10"
+            ],
+            "title": "历史任务身份缺证披露与受控映射边界",
+            "estimate_hours": [
+              0.6,
+              1.2
+            ],
+            "estimate_confidence": "LOW",
+            "state": "DONE",
+            "started_at": "2026-11-03T13:41:51.909973+00:00",
+            "scope_refinement": "原WP12-10/原TASK R2 §5.1存量身份缺证：历史信箱明确LEGACY_ACTOR_INCOMPLETE及准确FormTo Ref，页面将观察到的旧字段与已核实职责/代理证据区分；真实旧引擎自动替换与办理覆盖场景PG/HTTP验证，不用当前grant猜历史。受控LegacyPrincipalMapping设计写清原pin/token/stage/round、原路由/FormTo/grant revision/hash、原子切换fence与缺证拒绝；按原规范本轮不执行迁移、不补写历史、不升级旧票。",
+            "reason": "W291核对发现原历史缺证标记/映射设计尚未实现；开发实际读面缺口，保留原迁移授权边界",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W292-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave292-final-verification.json",
+              "all_slots_released": true
+            },
+            "actual_effective_seconds": 830,
+            "remote_adoption": [
+              {
+                "repository": "CP6",
+                "task": "W292-01",
+                "source": "ef8e942f1e3fab061e4f8b997dea677a8355fed9",
+                "remote_target": "253d31f056a8dae779c72520041dd68761a8111b",
+                "pr": "https://github.com/GTX537/CP6/pull/734",
+                "branch": "codex/w292-01",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+                "workspace_clean": true
+              },
+              {
+                "repository": "CP6.AI-Handoff",
+                "task": "W292-HANDOFF",
+                "source": "b853744d19ae0f2f75d5d1bae27b2fb800a16be3",
+                "remote_target": "d48be124a3273f330da0215c5714c26f4f6bb538",
+                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/269",
+                "branch": "codex/w292-handoff",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\dev-2",
+                "workspace_clean": true
+              }
+            ]
+          },
+          {
+            "id": "W293-01",
+            "day": "ROLLING_EXTENSION",
+            "related_tasks": [
+              "WP12-03"
+            ],
+            "title": "个人草稿重基预览分类与准确诊断",
+            "estimate_hours": [
+              0.4,
+              0.8
+            ],
+            "estimate_confidence": "LOW",
+            "state": "DONE",
+            "started_at": "2026-11-03T13:58:07.480509+00:00",
+            "scope_refinement": "原WP12-03/OA-FORM R1 UC-F09/F10重基预览：准确sourceDraftVersion/targetSchemaDigest、可见保留/移除/新增/类型变更/默认值路径、目标规则后的必填和缺失诊断、行限制收紧逐行提示；沿现权威规则/校验复用，不复制解释器。服务端保持精确数字/unset/null/empty、原行不截断、隐藏损失拒绝、同事务原结果。页面分类确认、编辑后失效；PG/HTTP/相关Vue验证。隐藏损失受控处置Ref等未完成跨Owner范围仍真实保留，不提前关整卡。",
+            "reason": "原卡核查发现真实缺口；W292实测830秒短于估计，复用已有Owner/夹具，继续缩小下一窗口估计",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W293-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave293-final-verification.json",
+              "all_slots_released": true
+            },
+            "actual_effective_seconds": 872,
+            "remote_adoption": [
+              {
+                "repository": "CP6",
+                "task": "W293-01",
+                "source": "ab7c0735097d54c977481d17c276b8352c9444c2",
+                "remote_target": "16da9575339494871e18f7641410d537293ec44f",
+                "pr": "https://github.com/GTX537/CP6/pull/735",
+                "branch": "codex/w293-01",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+                "workspace_clean": true
+              },
+              {
+                "repository": "CP6.AI-Handoff",
+                "task": "W293-HANDOFF",
+                "source": "8344f4a7e5d2443781464ba73717796c2c689c90",
+                "remote_target": "6f7493007ce762ff9f7b7e2621b6010b3bf61ce4",
+                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/270",
+                "branch": "codex/w293-handoff",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\dev-2",
+                "workspace_clean": true
+              }
+            ]
+          },
+          {
+            "id": "W294-01",
+            "day": "ROLLING_EXTENSION",
+            "related_tasks": [
+              "WP12-02"
+            ],
+            "title": "FLOW发布预览实际引用统计与原卡余项核对",
+            "estimate_hours": [
+              0.25,
+              0.5
+            ],
+            "estimate_confidence": "LOW",
+            "state": "DONE",
+            "started_at": "2026-11-03T14:15:55.956764+00:00",
+            "scope_refinement": "原WP12-02发布预览的实际引用影响采用：FLOW预览复用现有DefinitionRuntimeImpactReader与当前授权，不再返回旧NOT_ADOPTED；真实PG/HTTP数据及既有页面展示统计，发布保持原pin/启停独立。原卡全范围核对发现独立BUG736原意图恢复缺陷，按BUG规则另开准确分支修复，本窗口不混入；原卡先保持未完。",
+            "reason": "W293实测872秒；本窗口复用已存在统计Owner，后续独立BUG736修复，不用全卡名放大工时。",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W294-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave294-final-verification.json",
+              "all_slots_released": true
+            },
+            "actual_effective_seconds": 590,
+            "remote_adoption": [
+              {
+                "repository": "CP6",
+                "task": "W294-01",
+                "source": "d6176ab865dbdad46a77c4100013e93f41f63009",
+                "remote_target": "50f4ede693c0619ec88364a89131325d359951f1",
+                "pr": "https://github.com/GTX537/CP6/pull/737",
+                "branch": "codex/w294-01",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+                "workspace_clean": true
+              },
+              {
+                "repository": "CP6.AI-Handoff",
+                "task": "W294-HANDOFF",
+                "source": "a82bded287f5caa6b4d7e25f9b4208e8faa607e7",
+                "remote_target": "4759ee2a95391bff189e7993f526a0908b9e0edf",
+                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/271",
+                "branch": "codex/w294-handoff",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\dev-2",
+                "workspace_clean": true
+              }
+            ]
+          },
+          {
+            "id": "W295-01",
+            "day": "ROLLING_EXTENSION",
+            "related_tasks": [
+              "WP12-02"
+            ],
+            "title": "原WP12-02整卡范围核销",
+            "estimate_hours": [
+              0.15,
+              0.3
+            ],
+            "estimate_confidence": "LOW",
+            "state": "DONE",
+            "started_at": "2026-11-03T14:37:08.544092+00:00",
+            "scope_refinement": "按原WP12-02逐项核销定义发布预览、准确依赖pin与独立启停；复用当前适用真实PG/HTTP/页面证据和BUG736修复，不新增或重复产品测试；限定TASK_DELIVERY前置准确采用，其他卡和125/247状态独立。",
+            "reason": "W294实际590秒，独立BUG736实际576秒；本窗仅核证和账实同步，不按原L卡名估大工时。",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W295-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave295-final-verification.json",
+              "all_slots_released": true
+            },
+            "actual_effective_seconds": 377,
+            "remote_adoption": [
+              {
+                "repository": "CP6",
+                "task": "W295-01",
+                "source": "90dc0cc40502a14fc6b016f4edab3a49173a7d85",
+                "remote_target": "a701259004bb1137db073cbe7a0a6e05277d77e4",
+                "pr": "https://github.com/GTX537/CP6/pull/739",
+                "branch": "codex/w295-01",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+                "workspace_clean": true
+              },
+              {
+                "repository": "CP6.AI-Handoff",
+                "task": "W295-HANDOFF",
+                "source": "a3e4d7434435cd1f936a265f9c4c8d365547c925",
+                "remote_target": "3625c58e9e1d7835168e30c9df705b6de57a66d2",
+                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/272",
+                "branch": "codex/w295-handoff",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\dev-2",
+                "workspace_clean": true
+              }
+            ]
+          },
+          {
+            "id": "W296-01",
+            "day": "D3_CLOSEOUT",
+            "related_tasks": [
+              "WP12-06"
+            ],
+            "title": "原APP绑定提交卡与24h实际执行收口",
+            "estimate_hours": [
+              0.25,
+              0.5
+            ],
+            "estimate_confidence": "LOW",
+            "state": "DONE",
+            "started_at": "2026-11-03T14:53:11.484717+00:00",
+            "scope_refinement": "核原WP12-06三项TxS/TxE提供者范围和正反验收，特别是合法Key、alias与旧回调隔离；只在完整满足时核销。汇总原59卡当前余项、28窗口与9个独立BUG真实交付和估时偏差，达到约24h有效投入并完成当前窗口正常交付后收妥目标。",
+            "reason": "文档/原证据核销及54余项检查；不新增产品验证，不空等、不延时凑满预算。若必要收尾超24h如实记录。",
+            "implementation_complete": true,
+            "report": "docs/development/evidence/W296-01/DELIVERY.md",
+            "lifecycle_snapshot": {
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave296-final-verification.json",
+              "all_slots_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true
+            },
+            "actual_effective_seconds": 1090,
+            "actual_effective_seconds_scope": "Pre-merge snapshot; final verification includes normal closeout once.",
+            "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave296-final-verification.json",
+            "remote_adoption": [
+              {
+                "repository": "CP6",
+                "task": "W296-01",
+                "source": "e178db1582e510100e0361d9015ff34f519fc036",
+                "remote_target": "6223e3d7be8f7e20d0fc60941e0f4010865efe55",
+                "pr": "https://github.com/GTX537/CP6/pull/742",
+                "branch": "codex/w296-01",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+                "workspace_clean": true
+              },
+              {
+                "repository": "CP6.AI-Handoff",
+                "task": "W296-HANDOFF",
+                "source": "25024687faca70f26b5fd72304c6a04a18d0c080",
+                "remote_target": "5698b088459fa6fb9acbbffcab54aa918b578f6b",
+                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/273",
+                "branch": "codex/w296-handoff",
+                "branch_absent": true,
+                "seat_released": true,
+                "workspace": "D:\\CP6-worktrees\\dev-2",
+                "workspace_clean": true
+              }
+            ]
+          }
+        ],
+        "reestimates": [
+          {
+            "at": "2026-11-02T15:07:51.133488+00:00",
+            "effective_seconds": 7274,
+            "completed_windows": [
+              "W268-01",
+              "W269-01",
+              "W270-01"
+            ],
+            "actual_completed_seconds": 6743,
+            "initial_completed_estimate_hours": [
+              2.5,
+              5.25
+            ],
+            "remaining_estimate_hours": [
+              15.25,
+              30.5
+            ],
+            "confidence": "LOW: three highly reusable definition windows; runtime and cross-boundary complexity not yet measured",
+            "added_windows": [
+              "W280-01",
+              "W281-01",
+              "W282-01",
+              "W283-01"
+            ],
+            "basis": "Evidence wave268/269/270-final-verification.json; code gap: no definition comparison route, FORM history/download remaining WP12-05; WfTimeoutService still native SystemActor/relative hours; review exact WP12-09 and provider contracts before implementation. No intentional idle or paused intervals."
+          },
+          {
+            "at": "2026-11-02T17:07:12.096081+00:00",
+            "effective_seconds": 14435,
+            "completed_windows": [
+              "W268-01",
+              "W269-01",
+              "W270-01",
+              "W271-01",
+              "W272-01",
+              "W273-01"
+            ],
+            "actual_completed_seconds": 13073,
+            "remaining_estimate_hours": [
+              13.25,
+              27
+            ],
+            "confidence": "LOW: definition reuse measured; runtime validation and personal FORM admission remain materially broader",
+            "added_windows": [],
+            "current_window": "W274-01",
+            "current_window_estimate_hours": [
+              2,
+              4
+            ],
+            "current_window_remaining_hours": [
+              1.5,
+              3.5
+            ],
+            "basis": "First six exact remote deliveries: 13073 seconds (3h37m53s). W271–273 6330 seconds (1h45m30s), revised combined 2–4h. W274 root pipeline already existed; actual gap is child membership, pinned runtime, child decisions, root-only terminal outbox and tree withdrawal. Three new PG scenarios passed after correcting fixture policy/IAM order; broader boundaries still running, not delivery proof. W275–283 estimates unchanged; do not infer runtime completion or original-card closure from code written. No paused/idle intervals."
+          },
+          {
+            "at": "2026-11-02T19:13:00.583517+00:00",
+            "effective_seconds": 21983,
+            "completed_windows": [
+              "W268-01",
+              "W269-01",
+              "W270-01",
+              "W271-01",
+              "W272-01",
+              "W273-01",
+              "W274-01"
+            ],
+            "actual_completed_seconds": 18444,
+            "remaining_estimate_hours": [
+              12.75,
+              25.5
+            ],
+            "confidence": "LOW: ordinary FORM Owner and kernel landed locally; UI adoption, HTTP and concurrent boundaries not complete",
+            "added_windows": [],
+            "current_window": "W275-01",
+            "current_window_estimate_hours": [
+              3,
+              6
+            ],
+            "current_window_remaining_hours": [
+              2.5,
+              5
+            ],
+            "basis": "W274 completed 5371s including BUG702; cumulative completed 18444s. W275 10 distinct backend checks (8 isolated PostgreSQL, 2 pure) and 3 lossless JSON checks passed; native notification rollback fault injection was corrected and rerun. No UI adoption/typecheck, HTTP or dual-connection proof yet. Other windows retain actual remaining scope; W276 will reuse ordinary task adoption. No idle/paused intervals; context restoration and code reading are effective work."
+          },
+          {
+            "at": "2026-11-02T21:07:01.143639+00:00",
+            "effective_seconds": 28824,
+            "completed_windows": [
+              "W268-01",
+              "W269-01",
+              "W270-01",
+              "W271-01",
+              "W272-01",
+              "W273-01",
+              "W274-01",
+              "W275-01"
+            ],
+            "actual_completed_seconds": 25628,
+            "remaining_estimate_hours": [
+              11.25,
+              21.5
+            ],
+            "confidence": "LOW: recent reusable providers completed faster than estimates; closed delegation and withdrawal recovery require actual new authority adoption",
+            "added_windows": [],
+            "current_window": "W276-01",
+            "current_window_estimate_hours": [
+              2,
+              4
+            ],
+            "current_window_remaining_hours": [
+              0,
+              0.15
+            ],
+            "basis": "W275 actual7184s, cumulative25628s. W276 implemented/reviewed with31 backend(11PG/20legacy) and25Vue, typecheck; MainPR706 remote adopted andDEV1 released, Handoff closing. Direct reader delivered; full TASK-R2 closed delegation moved explicitly into W277 prerequisite, estimate3–5h. Remaining windows retain original scope. No idle/paused intervals. Record external while Main seat released; adopt calibration into roadmap at W277 START.",
+            "next_reestimate_at_effective_seconds": 36000
+          },
+          {
+            "at": "2026-11-02T23:07:16.445696+00:00",
+            "effective_seconds": 36039,
+            "completed_windows": [
+              "W268-01",
+              "W269-01",
+              "W270-01",
+              "W271-01",
+              "W272-01",
+              "W273-01",
+              "W274-01",
+              "W275-01",
+              "W276-01",
+              "W277-01"
+            ],
+            "actual_completed_seconds": 33972,
+            "remaining_estimate_hours": [
+              8.25,
+              17
+            ],
+            "confidence": "LOW: actual browser exposes adoption gaps and source-preservation defects not visible in prior Owner/component evidence",
+            "added_windows": [],
+            "current_window": "W278-01",
+            "current_window_estimate_hours": [
+              1.5,
+              3
+            ],
+            "current_window_remaining_hours": [
+              1,
+              2.5
+            ],
+            "basis": "W277 closed in5061s,total33972s. W278 ongoing: new authorized publication catalog2PG+3UI/typecheck passed; real login/FORM/FLOW publication+activation passed after independently tracked BUG708 candidate. BUG708 real canvas red/green,35 related UI andtypecheck passed; formal adoption pending. Directory-to-form rendering and delegated/business recovery still under execution, no full-chain pass claimed. No idle/paused intervals; dependency fix counted once inside W278.",
+            "next_reestimate_at_effective_seconds": 43200
+          },
+          {
+            "at": "2026-11-03T01:06:45.115009+00:00",
+            "effective_seconds": 43208,
+            "checkpoint": "12h",
+            "observed_windows": [
+              {
+                "window": "W276-01",
+                "actual_seconds": 3283
+              },
+              {
+                "window": "W277-01",
+                "actual_seconds": 5061
+              },
+              {
+                "window": "W278-01",
+                "actual_seconds": 4985
+              },
+              {
+                "window": "W279-01",
+                "actual_seconds": 2132
+              },
+              {
+                "window": "W280-01",
+                "actual_seconds": 1608
+              }
+            ],
+            "remaining_capacity_hours": 12.0,
+            "remaining_estimate_hours": [
+              7.5,
+              15.5
+            ],
+            "confidence": "LOW",
+            "added_windows": [
+              "W284-01",
+              "W285-01",
+              "W286-01"
+            ],
+            "basis": "Recent actual complete windows are materially faster than prior estimates; W280 1608s versus0.5–1.25h. W281 favorites/history has new persistence, current-scope query and timezone work; FILE adoption has an actual missing ordinary-FORM parent authority, so not priced as a mechanical reuse. Preserve prediction range and measure every2h; no idle/redundant tests.",
+            "unchanged": "24h effective execution target, original375/full-card states, single chat and local validation."
+          },
+          {
+            "at": "2026-11-03T05:12:58.736229+00:00",
+            "checkpoint": "14h",
+            "effective_seconds": 50423,
+            "excluded_wall_seconds": 7558,
+            "observed_windows": [
+              {
+                "window": "W281-01",
+                "actual_seconds": 3687
+              },
+              {
+                "window": "BUG715",
+                "actual_seconds": 870
+              },
+              {
+                "window": "W282-01",
+                "actual_seconds_so_far": 2908,
+                "state": "IN_PROGRESS"
+              }
+            ],
+            "remaining_capacity_hours": 9.99,
+            "remaining_estimate_hours": [
+              7,
+              14
+            ],
+            "confidence": "LOW",
+            "remaining_windows": {
+              "W282-01": [
+                2,
+                4
+              ],
+              "W283-01": [
+                1,
+                2
+              ],
+              "W284-01": [
+                1,
+                2
+              ],
+              "W285-01": [
+                2,
+                4
+              ],
+              "W286-01": [
+                1,
+                2
+              ]
+            },
+            "observed": "Native SFS/APP sendback/transfer/addsign/explicit pending recovery implemented; 14 distinct PostgreSQL behavior tests and 5 seed tests passed across recorded runs. Three races/original-command tests passed; 13 UI behavior tests passed; browser acceptance not yet executed. Latest subsequent changes are not represented as already retested.",
+            "remaining": "W282 management batch transfer max500 with frozen candidate snapshot; exact scope/authority boundary regressions, real HTTP/Chrome use, concentrated review and delivery. Reuse prior delegation/withdrawal and valid evidence; no artificial waits or repeated whole-repository gates.",
+            "basis": "Measured window remains open, so partial implementation is not extrapolated to a finished delivery. Source review found returned-form patch/start-field-mask/exact resubmit permission requirements and exact task/FormTo identity for overlapping approvers. These are actual accepted contract work, not extra proof layers.",
+            "unchanged": "Original375/56 partial cards and125/247 full acceptance states; single chat,24h effective target,PostgreSQL/local gates,no Actions or production deployment."
+          },
+          {
+            "at": "2026-11-03T07:12:54.051512+00:00",
+            "checkpoint": "16h",
+            "effective_seconds": 57619,
+            "excluded_wall_seconds": 7558,
+            "observed_windows": [
+              {
+                "window": "W282-01",
+                "actual_seconds": 5593
+              },
+              {
+                "window": "W283-01",
+                "actual_seconds_so_far": 4562,
+                "state": "IN_PROGRESS"
+              }
+            ],
+            "remaining_capacity_hours": 7.99,
+            "remaining_estimate_hours": [
+              5,
+              10.5
+            ],
+            "confidence": "LOW",
+            "remaining_windows": {
+              "W283-01": [
+                1,
+                2.5
+              ],
+              "W284-01": [
+                1,
+                2
+              ],
+              "W285-01": [
+                2,
+                4
+              ],
+              "W286-01": [
+                1,
+                2
+              ]
+            },
+            "observed": "W282 actual closure 5593s was below 3–5h estimate, preserved honestly. W283 six affected PostgreSQL behavior tests passed at 07:10:25Z; subsequent revision/identity/diagnostic changes and error-edge/actual Host/Chrome package are still being verified. No browser result is claimed yet.",
+            "remaining": "W283 real Host/HTTP/Chrome, error-edge and current authorization/epoch race boundaries, pinned policy and deadline revision review, concentrated review and two-repository normal delivery. W284 field-graph/pure rules, W285 native FORM file admission/download authorization, W286 original competitions/legacy caller boundaries remain serial original-scope work.",
+            "basis": "Estimates use measured Codex execution windows, not human-day conversions. Only closed windows supply full delivery duration. The original contracts require actual task/lease/notification/receipt atomicity; failures are retained and no repeated full-repository gates or idle time are added.",
+            "unchanged": "24h effective active goal, original375 and56 partial cards and125/247 full acceptance states; single chat,PostgreSQL/local verification,no Actions,production deployment or existing-database migration."
+          },
+          {
+            "at": "2026-11-03T09:12:49.196375+00:00",
+            "checkpoint": "18h",
+            "effective_seconds": 64814,
+            "excluded_wall_seconds": 7558,
+            "remaining_capacity_hours": 6.0,
+            "observed_windows": [
+              {
+                "window": "W284-01",
+                "actual_seconds": 2456
+              },
+              {
+                "window": "W285-01",
+                "actual_seconds_so_far": 2739,
+                "state": "IN_PROGRESS"
+              }
+            ],
+            "remaining_estimate_hours": [
+              2,
+              5
+            ],
+            "confidence": "LOW",
+            "remaining_windows": {
+              "BUG721": [
+                0.25,
+                0.75
+              ],
+              "W285-01": [
+                0.75,
+                1.75
+              ],
+              "W286-01": [
+                1,
+                2.5
+              ]
+            },
+            "observed": "W284 closed in 2456s, below prior 1.5–3h estimate. W285 actual PG, current-scope HTTP and real Defender/Chrome upload-loss/recovery/draft/submission/download passed; one independent baseline Vue defect is confirmed as Issue721 and blocks the complete affected UI gate. W285 is not complete.",
+            "remaining": "Save W285 exact branch and official deferred release; independent BUG721 latest-main fix, original-step regression, remote adoption/cleanup; resume original W285 and merge latestmain, affected UI and merge-diff review, normal Main/Handoff delivery; then W286 current original competitions/legacy callers. If these finish before capacity, inspect and implement still-unfinished original WP12-05 history/comparison scope after checking direct sources; no padding or repeated gates.",
+            "basis": "Measured Codex active windows, not person-hours. Predicted durations remain low-confidence ranges; audit/lifecycle and independent baseline defect handling included. Only closed windows count as final durations.",
+            "unchanged": "Single chat, 24h active goal, original375 27DONE/2IN_PROGRESS/346PLANNED, 59partial3closed/56remaining,125/247 full acceptance unchanged; PostgreSQL/local validation,no Actions/production/existing-environment migration."
+          },
+          {
+            "at": "2026-11-03T11:13:00.539275+00:00",
+            "checkpoint": "20h",
+            "effective_seconds": 72025,
+            "excluded_wall_seconds": 7558,
+            "remaining_capacity_hours": 3.99,
+            "observed_windows": [
+              {
+                "window": "W285-01",
+                "actual_seconds": 3937
+              },
+              {
+                "window": "W286-01",
+                "actual_seconds": 3768
+              },
+              {
+                "window": "BUG725",
+                "actual_seconds": 1013
+              },
+              {
+                "window": "W287-01",
+                "actual_seconds_so_far": 1216,
+                "state": "IN_PROGRESS"
+              }
+            ],
+            "remaining_estimate_hours": [
+              1.5,
+              4
+            ],
+            "confidence": "LOW",
+            "remaining_windows": {
+              "W287-01": [
+                0.5,
+                1.25
+              ],
+              "original-WP12-01-full-card-audit": [
+                0.25,
+                0.75
+              ],
+              "original-OA-TASK-editable-SFS-scope-investigation-and-adoption": [
+                0.75,
+                2
+              ]
+            },
+            "observed": "W285 closed about66min, W2863768s/63min and independent BUG7251013s/17min. W287 first true PG red/green and current source/case/nested/retention/two-connection behaviors passed; publication activation test reused command ID and was corrected, HTTP/browser test compile and one Vue template type issue corrected. W287 not yet complete. UI affected behavior tests passed; full typed check passed before small subsequent preview notice edit.",
+            "remaining": "Finish W287 actual HTTP/Chrome and new same-cell retention coverage, related regression, concentrated review and normal Main/Handoff delivery. Then reconcile original WP12-01 whole-card evidence and read exact original OA-TASK/SFS task-edit contract before registering a new implementation window. Current native ApprovalTaskDecisionInputV2 has no data patch; returned editing is already complete and must not be repeated. An investigation is not advance proof of scope approval or task completion.",
+            "basis": "Real active Codex time includes implementation, analysis, appropriate tests, review and lifecycle. Scheduling gap7558s excluded; no idle padding, repeated gates or arbitrary person-hour estimates.",
+            "unchanged": "Single chat, goal active until24h budget inventory and current full delivery closure. No Actions/production/existing-environment migration; original counts change only on proven full-card acceptance."
+          },
+          {
+            "at": "2026-11-03T13:13:30.834734+00:00",
+            "checkpoint": "22h",
+            "effective_seconds": 79255,
+            "excluded_wall_seconds": 7558,
+            "remaining_capacity_hours": 1.98,
+            "observed_windows": [
+              {
+                "window": "W288",
+                "actual_seconds": 856
+              },
+              {
+                "window": "W289",
+                "actual_seconds": 2473
+              },
+              {
+                "window": "W290",
+                "actual_seconds": 1605
+              }
+            ],
+            "bug730": {
+              "state": "IMPLEMENTING",
+              "branch": "codex/bug-730-sfs-comment",
+              "baseline": "5b5c900251a5065e0ce174c0e33cecfa7fdba9a1",
+              "observed": "Actual Chrome baseline truncates 1000 supplementary code points; Vue baseline sends over-limit input. Minimal codepoint limit implemented; 9 affected Vue cases green, actual Chrome/PG and types in progress."
+            },
+            "remaining_estimate_hours": [
+              1.5,
+              3
+            ],
+            "confidence": "LOW",
+            "remaining_windows": {
+              "BUG730-closeout": [
+                0.15,
+                0.4
+              ],
+              "WP12-08-original-card-evidence-reconciliation-and-gaps": [
+                0.3,
+                0.75
+              ],
+              "next-original-OA-FORM-admission-query-cards-real-remaining": [
+                0.75,
+                2
+              ]
+            },
+            "observed": "W2892473s/41min and W2901605s/27min remain below earlier predictions because existing owners and browser fixtures cover much of the work. These are subwindows, never renamed three-day completion. Preserve actual timing and use remaining 24h capacity on original card evidence and real gaps.",
+            "basis": "45141s at03:44:56Z plus continuous useful work;7558s scheduling gap excluded. No idle padding, repeated gates or synthetic person-day estimates.",
+            "unchanged": "Single chat;PostgreSQL;simulated business data;affected local checks and one task review;no Actions,production,existing database migration. Original37528DONE/2IN_PROGRESS/345PLANNED;59partial4closed/55remaining;125/247 unchanged."
+          },
+          {
+            "at": "2026-11-03T15:06:36.020008+00:00",
+            "checkpoint": "24h-budget-end",
+            "effective_seconds": 86041,
+            "excluded_wall_seconds": 7558,
+            "remaining_capacity_hours": 0,
+            "remaining_estimate_hours": [
+              0,
+              0
+            ],
+            "observed": "29 windows including final reconciliation;9 closed bugs. Initial12 windows41089s versus15.75–29.75h estimate. Scope expanded continuously using original remaining work; no padded execution.",
+            "remaining": "Only current normal Main/Handoff delivery and official finish.53 original partial cards and other original375 tasks remain recorded; no next cycle started.",
+            "basis": "Actual final seconds in final lifecycle proof; approximately24h per user, no waiting for an exact second."
+          }
+        ],
+        "timing_snapshot_at": "2026-11-03T15:11:21.168277+00:00",
+        "remaining_estimate_hours": [
+          0,
+          0
+        ],
+        "runtime_timing_anchor": {
+          "at": "2026-11-03T03:44:56+00:00",
+          "effective_seconds": 45141,
+          "excluded_wall_seconds": 7558,
+          "source": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave281-runtime-timing.json",
+          "basis": "Conservative runtime effective-time anchor after an uncounted scheduling interval; add only verified continuous active execution after this timestamp. Do not infer effective time from goal creation wall time. No intentional padding."
+        },
+        "priority_issue_execution": {
+          "issue": "https://github.com/GTX537/CP6/issues/715",
+          "task": "BUG-715",
+          "branch": "codex/bug-715",
+          "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "base": "ee2c777335bfc7b444cc6f8c6601ea5c2d998e1a",
+          "started_at": "2026-11-03T04:08:55.047236+00:00",
+          "next": "W282-01",
+          "estimate_hours": [
+            0.5,
+            1.5
+          ],
+          "report": "docs/development/evidence/BUG-715/DELIVERY.md",
+          "validation": "本地20项相关行为通过、0跳过：ERP/MES实际种子跨租户登记/幂等/授权保持，六领域贴点与能力目录互锁，以及实际Program登录→HTTP→PG的未授权拒绝、显式query授权读取/关闭原意图、CSRF拒绝和撤权再拒绝。新增种子期望先红后绿；原W281的3项互锁失败在修复后通过，原日志保留。",
+          "remote_adoption_pending": false,
+          "state": "CLOSED",
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug715-final-verification.json",
+          "actual_effective_seconds": 870,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "BUG-715",
+              "source": "181773e903d4a5425515cca2bf866a66fa38159f",
+              "remote_target": "854f52721a06f22c22f82c8aa4d714a82acfb698",
+              "pr": "https://github.com/GTX537/CP6/pull/717",
+              "branch": "codex/bug-715",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "BUG-715-HANDOFF",
+              "source": "efd88af907f1bd7e62efe41c5bd597c5f765c8cb",
+              "remote_target": "bd8034427eed9a4d79f1316ca5c84df899294f67",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/258",
+              "branch": "codex/bug-715-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        "independent_bug_deliveries": [
+          {
+            "issue": 725,
+            "proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug725-final-verification.json",
+            "actual_effective_seconds": 1013,
+            "pr": "https://github.com/GTX537/CP6/pull/726",
+            "counted_once": true
+          },
+          {
+            "issue": 730,
+            "proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug730-final-verification.json",
+            "actual_effective_seconds": 989,
+            "pr": "https://github.com/GTX537/CP6/pull/732",
+            "counted_once": true
+          },
+          {
+            "issue": 736,
+            "proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug736-final-verification.json",
+            "actual_effective_seconds": 576,
+            "pr": "https://github.com/GTX537/CP6/pull/738",
+            "counted_once": true
+          },
+          {
+            "issue": 740,
+            "proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug740-final-verification.json",
+            "actual_effective_seconds": 435,
+            "pr": "https://github.com/GTX537/CP6/pull/741",
+            "counted_once": true
+          }
+        ],
+        "latest_independent_bug": {
+          "issue": 740,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug740-final-verification.json",
+          "actual_effective_seconds": 435,
+          "source": "2c1ede517e9596aac128e51863384771fd56b6da",
+          "main": "6521575d4b2aab41fde64630006d684f4ec3b50a",
+          "closed": true
+        },
+        "capacity_closeout": {
+          "report": "docs/development/evidence/W296-01/DELIVERY.md",
+          "scope": "28 completed windows,9 closed BUGs plus W296 final audit; no new automatic cycle",
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave296-final-verification.json",
+          "completion_requires_all_seats_released": true,
+          "target_effective_seconds": 86400,
+          "target_is_approximate": true,
+          "budget_end_review_completed": true,
+          "effective_seconds_at_commit": 86041,
+          "recorded_at": "2026-11-03T15:06:36.020008+00:00",
+          "scope_completed": true,
+          "lifecycle_completed": true,
+          "lifecycle_state": "COMPLETE",
+          "next_cycle_started": false,
+          "effective_seconds_final": 86326
+        },
+        "completed_scope_at": "2026-11-03T15:06:36.020008+00:00",
+        "completion_semantics": "User authorized approximately24h, not mandatory idle until an exact second. Budget-end inventory and implementation scope complete; remote delivery/cleanup remains a separate pending snapshot. Actual final seconds are reported without rounding up; whole-goal completion requires PASS final proof after both official finishes.",
+        "final_lifecycle_proof": "C:\\Users\\tt\\.gstack\\projects\\GTX537-CP6\\checkpoints\\20261103-151121Z-cp6-24h-program-complete.md"
       }
     ]
   },
