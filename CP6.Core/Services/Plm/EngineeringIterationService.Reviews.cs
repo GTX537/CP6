@@ -10,6 +10,7 @@ public sealed partial class EngineeringIterationService
         var v=await Observe(a,s,await s.Read(id,null,ct),ct);var work=v.Body.Iteration??throw Error("ITERATION_REQUIRED",422);
         if(hold)
         {
+            await RequireImpactClear(v,ct);
             var project=await Project(a,s,work.ProjectId,ct);
             if(project.State!="ACTIVE" || work.Stage is not("IN_DESIGN" or "IN_REVIEW" or "REVIEW_APPROVED") || work.HoldState!="NORMAL")throw Error("ITERATION_REVIEW_STAGE_CHANGED",409);
             await ProjectSources(a,project.Definition,true,ct);await Inputs(a,work.Input,true,ct);

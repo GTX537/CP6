@@ -38,7 +38,8 @@ public sealed record RequirementSetScopeV1(Guid EnvironmentId,Guid TenantId,Guid
 public sealed record RequirementSetMemberObservationV1(EngineeringRequirementSnapshotV1 Requirement,
     RequirementEvaluationSourceProofV1 Evaluation,EngineeringRequirementSnapshotV1 Source);
 public sealed record RequirementSetDifferenceV1(Guid RequirementId,string Change,RequirementSetMemberV1? Previous,RequirementSetMemberV1? Current);
-public sealed record RequirementSetResultV1(Guid OperationId,string Kind,Guid ObjectId,string Version,string Digest);
+public sealed record RequirementSetResultV1(Guid OperationId,string Kind,Guid ObjectId,string Version,string Digest,
+    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] RequirementImpactReceiptV1? Impact=null);
 public sealed record RequirementSetOperationV1(Guid OperationId,string State,RequirementSetResultV1? Result=null);
 internal sealed record RequirementSetStoredV1(Guid TenantId,Guid Id,string Version,Guid CreatorId,Guid Etag,
     RequirementSetBodyV1 Body,Guid OperationId,string Action,Guid ActorId,string? ParentVersion,string Reason,DateTimeOffset RecordedAt);

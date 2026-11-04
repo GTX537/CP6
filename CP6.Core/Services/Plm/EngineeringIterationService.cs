@@ -164,7 +164,8 @@ public sealed partial class EngineeringIterationService(CP6Context db,Operations
             var saved=await s.Append(new(c.OperationId,c.ObjectId,create?"CREATE":"REVISE",c.ExpectedVersion,c.ExpectedEtag,c.Reason,body),a.ActorId,t);
             if(ticket!=null)await a.CompleteEngineeringIterationCreation(ticket,t);
             await Observe(a,s,saved,t);
-            var result=new EngineeringIterationResultV1(c.OperationId,saved.Body.Kind,c.ObjectId,saved.Reference.Version,saved.Reference.Digest);
+            var impactCases=c.Action is "CREATE_ITERATION" or "REPLACE_INPUTS"?await CaptureLateImpacts(saved,c.OperationId,a.ActorId,t):null;
+            var result=new EngineeringIterationResultV1(c.OperationId,saved.Body.Kind,c.ObjectId,saved.Reference.Version,saved.Reference.Digest,ImpactCases:impactCases);
             await journal.Store(EngineeringIterationValuesV1.Owner,EngineeringIterationValuesV1.Contract,c.OperationId,a.ActorId,bytes,result,[c.ObjectId],new{c.Action,c.Reason,actor=a.ActorId,result},t);return result;
         },ct,actionAtFence:async t=>{original=await journal.Read(EngineeringIterationValuesV1.Owner,c.OperationId,t);return original==null?action:"query";});
     }
@@ -176,7 +177,13 @@ public sealed partial class EngineeringIterationService(CP6Context db,Operations
         var result=JsonSerializer.Deserialize<EngineeringIterationResultV1>(o.Result);
         if(o.State!="COMMITTED" || result==null || result.OperationId!=id || !o.Objects.SequenceEqual(new[]{result.ObjectId}))throw Error("ORIGINAL_OPERATION_UNAVAILABLE",503);
         var value=await Observe(a,s,await s.Read(result.ObjectId,Revision(result.Version),ct),ct);
-        if(value.Reference.Digest!=result.Digest || value.Body.Kind!=result.Kind)throw Error("ORIGINAL_OPERATION_UNAVAILABLE",503);return result;
+        if(value.Reference.Digest!=result.Digest || value.Body.Kind!=result.Kind)throw Error("ORIGINAL_OPERATION_UNAVAILABLE",503);
+        if(result.ImpactAssessmentId!=null)
+        {
+            var item=(await new RequirementImpactStoreV1(db).Cases(ct)).Single(c=>c.AssessmentHistory!.Any(x=>x.Id==result.ImpactAssessmentId));
+            await sets.ReviewSource(await a.SourceAsync(OperationsOwnerV1.RequirementSet,ct),item.Candidate,false,ct);
+        }
+        return result;
     }
     public Task<EngineeringIterationOperationV1> OperationAsync(Guid id,bool close,CancellationToken ct=default)
     {

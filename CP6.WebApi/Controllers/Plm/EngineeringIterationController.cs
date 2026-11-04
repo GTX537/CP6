@@ -21,6 +21,10 @@ public sealed class EngineeringIterationController(EngineeringIterationService o
     public async Task<IActionResult> Read(Guid id, [FromQuery] string? version, CancellationToken ct) => Result(await owner.ReadAsync(id, version, ct));
     [HttpGet("members")]
     public async Task<IActionResult> Members([FromQuery] string? search,CancellationToken ct)=>Result(await owner.MembersAsync(search,ct));
+    [HttpGet("{id:guid}/impact")]
+    public async Task<IActionResult> Impact(Guid id,CancellationToken ct)=>Result(await owner.ImpactAsync(id,ct));
+    [HttpPost("impact-assessments"),RequestSizeLimit(32768)]
+    public async Task<IActionResult> AssessImpact([FromBody] IterationImpactAssessmentCommandV1 command,CancellationToken ct)=>Result(await owner.AssessImpactAsync(command,ct));
     [HttpGet("sites")]
     public async Task<IActionResult> Sites([FromQuery] string search="",CancellationToken ct=default)=>Result(await owner.SitesAsync(search,ct));
     [HttpPost("commands"), RequestSizeLimit(2097152)]

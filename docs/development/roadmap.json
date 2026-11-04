@@ -162027,6 +162027,16 @@
       "date": "2026-11-04",
       "change": "W308实现内部来源准确条款的有权范围/必须属性确认、需求集真实交集与澄清/范围分离裁决，保ECM/DEV待专业评估与不利冲突历史；原键和真实页面恢复闭环。 原37533DONE/2IN_PROGRESS/340PLANNED；原59局部9闭环/50剩余。WP05-16依据W307最终远端及finish证明正式核销；WP05-14保持PLANNED，W309后继逐条差异/实际消费者影响仍未完成，成员排除、商业原Owner及ECM/DEV实际完成结果独立；125/247保持。",
       "evidence": "docs/development/evidence/W308-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-04",
+      "change": "W308远端/生命周期核销；W309真实后继差异与已有迭代消费者影响开工。",
+      "evidence": "docs/development/evidence/W309-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-04",
+      "change": "W309实现需求集准确后继差异、实际Main ITER采用影响请求、负责人评估、晚到采用原子登记及批准/迭代推进门禁；旧输入与历史保留。 原375保持33DONE/2IN_PROGRESS/340PLANNED；原59保持9闭环/50剩余；125目标/247正式验收不变。WP05-14仍有成员排除、商业原Owner和ECM/DEV完成及其他消费者适配；WP05-18其他原卡余项保留。",
+      "evidence": "docs/development/evidence/W309-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -184094,10 +184104,31 @@
         "new_product_validation": false
       },
       "wave308_source_terms": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W308-01/DELIVERY.md",
         "scope": "Internal source-authority-qualified exact clause applicability and necessity/waivability; no commercial source adapter.",
-        "full_task_complete": false
+        "full_task_complete": false,
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W308-01",
+          "source": "f2b88e61f5432389085b6b4495fd36957befd7a8",
+          "remote_target": "84abab3430dd9637be196255ce8d83f33016a92f",
+          "pr": "https://github.com/GTX537/CP6/pull/765",
+          "branch": "codex/w308-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "workspace_clean": true
+        },
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave308-final-verification.json"
+        }
       }
     },
     {
@@ -184176,27 +184207,56 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W308-01",
+        "window": "W309-01",
         "as_of": "2026-11-04",
         "classification": "IMPLEMENTED_PARTIAL_PENDING_REMOTE",
-        "report": "docs/development/evidence/W308-01/DELIVERY.md",
-        "delivered": "W196完整ReqSet受控评审/批准与真实FLOW已实现，W197迭代已消费。 W308实现内部来源准确条款的有权范围/必须属性确认、需求集真实交集与澄清/范围分离裁决，保ECM/DEV待专业评估与不利冲突历史；原键和真实页面恢复闭环。",
-        "remaining": "后继逐条差异/采用链与准确影响意图仍未交付；成员排除、商业原Owner及ECM/DEV实际完成结果独立。",
+        "report": "docs/development/evidence/W309-01/DELIVERY.md",
+        "delivered": "W196完整ReqSet受控评审/批准与真实FLOW已实现，W197迭代已消费。 W308实现内部来源准确条款的有权范围/必须属性确认、需求集真实交集与澄清/范围分离裁决，保ECM/DEV待专业评估与不利冲突历史；原键和真实页面恢复闭环。 W309实现需求集准确后继差异、实际Main ITER采用影响请求、负责人评估、晚到采用原子登记及批准/迭代推进门禁；旧输入与历史保留。",
+        "remaining": "成员排除、商业原Owner、实际ECM/DEV完成及其他消费者适配独立；当前Main ITER准确采用链/后继差异/影响评估已实现。",
         "evidence_refs": [
           "docs/development/evidence/W196-01/DELIVERY.md",
           "docs/development/evidence/W197-01/DELIVERY.md",
-          "docs/development/evidence/W308-01/DELIVERY.md"
+          "docs/development/evidence/W308-01/DELIVERY.md",
+          "docs/development/evidence/W309-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true
       },
       "wave308_conflicts": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W308-01/DELIVERY.md",
         "scope": "W308实现内部来源准确条款的有权范围/必须属性确认、需求集真实交集与澄清/范围分离裁决，保ECM/DEV待专业评估与不利冲突历史；原键和真实页面恢复闭环。",
         "validation": "12项独立PostgreSQL18场景（含真实Chrome及4项既有需求/评价/集合回归）、1项准确时间/条款并集行为测试、20项Vue行为与vue-tsc通过。",
         "full_task_complete": false,
-        "remaining": "Exact successor differences/adoption/consumer impact W309; commercial source adapters, member exclusion and actual ECM/DEV completion independent."
+        "remaining": "Exact successor differences/adoption/consumer impact W309; commercial source adapters, member exclusion and actual ECM/DEV completion independent.",
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W308-01",
+          "source": "f2b88e61f5432389085b6b4495fd36957befd7a8",
+          "remote_target": "84abab3430dd9637be196255ce8d83f33016a92f",
+          "pr": "https://github.com/GTX537/CP6/pull/765",
+          "branch": "codex/w308-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "workspace_clean": true
+        },
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave308-final-verification.json"
+        }
+      },
+      "wave309_impact": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W309-01/DELIVERY.md",
+        "scope": "W309实现需求集准确后继差异、实际Main ITER采用影响请求、负责人评估、晚到采用原子登记及批准/迭代推进门禁；旧输入与历史保留。",
+        "validation": "12项独立PostgreSQL18场景（含实际FLOW、真实Chrome和2项既有迭代/应用回归）、26项Vue行为及vue-tsc通过。",
+        "full_task_complete": false
       }
     },
     {
@@ -184590,6 +184650,12 @@
         ],
         "formal_state_changed": false,
         "new_product_validation": false
+      },
+      "wave309_impact": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W309-01/DELIVERY.md",
+        "scope": "Current actual requirement successor impact gates iteration work/resume/review, late adoption and explicit replacement; other original scope remains.",
+        "full_task_complete": false
       }
     },
     {
@@ -203468,10 +203534,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261104-wave308",
-      "path": "docs/development/dispatch/20261104-wave308/README.md",
-      "baseline_sha": "62712a6faf4402bf34f6096bd0e241b9d9397077",
-      "registered_at": "2026-11-04T09:08:54.332105+00:00",
+      "id": "20261104-wave309",
+      "path": "docs/development/dispatch/20261104-wave309/README.md",
+      "baseline_sha": "84abab3430dd9637be196255ce8d83f33016a92f",
+      "registered_at": "2026-11-04T09:47:51.965310+00:00",
       "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
@@ -203490,13 +203556,13 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W308-01",
-          "workspace_task": "W308-01",
+          "id": "W309-01",
+          "workspace_task": "W309-01",
           "related_tasks": [
             "WP05-14",
-            "WP05-13"
+            "WP05-18"
           ],
-          "title": "需求来源范围与冲突有权裁决",
+          "title": "需求集后继差异与实际迭代消费者影响",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "DELIVERY_MAIN_CLOSEOUT",
@@ -203504,7 +203570,7 @@
           "worker_start_received": true,
           "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w308-01",
+          "branch": "codex/w309-01",
           "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
           "full_task_completed": false,
           "actions_authorized": false,
@@ -203515,17 +203581,18 @@
           "exclusive_resources": [
             "Main:coordination-ledger",
             "Main:engineering-requirements",
+            "Main:engineering-iteration",
             "Main:requirement-set-review"
           ],
-          "worker_delivery_ref": "docs/development/evidence/W308-01/DELIVERY.md",
-          "validation": "12项独立PostgreSQL18场景（含真实Chrome及4项既有需求/评价/集合回归）、1项准确时间/条款并集行为测试、20项Vue行为与vue-tsc通过。",
+          "worker_delivery_ref": "docs/development/evidence/W309-01/DELIVERY.md",
+          "validation": "12项独立PostgreSQL18场景（含实际FLOW、真实Chrome和2项既有迭代/应用回归）、26项Vue行为及vue-tsc通过。",
           "lifecycle_snapshot": {
             "main_finish_required": true,
             "main_seat_released": false,
             "handoff_seat_released": false,
             "main_branch_deleted": false,
             "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave308-final-verification.json"
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave309-final-verification.json"
           },
           "local_validation": "PASS_AFFECTED_SCOPE"
         }
@@ -203534,14 +203601,14 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W308两仓采用/finish，接W309真实消费者影响链；24h继续。",
+      "next_action": "W309两仓采用/finish，核准W311实际逐Owner隐私导出；24h继续，W310仅预算末尾收妥。",
       "lifecycle_snapshot": {
         "main_finish_required": true,
         "main_seat_released": false,
         "handoff_seat_released": false,
         "main_branch_deleted": false,
         "handoff_branch_deleted": false,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave308-final-verification.json"
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave309-final-verification.json"
       }
     },
     "wave_history": [
@@ -242167,6 +242234,107 @@
             "workspace_clean": true
           }
         ]
+      },
+      {
+        "id": "20261104-wave308",
+        "path": "docs/development/dispatch/20261104-wave308/README.md",
+        "baseline_sha": "62712a6faf4402bf34f6096bd0e241b9d9397077",
+        "registered_at": "2026-11-04T09:08:54.332105+00:00",
+        "phase": "DONE",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W308-01",
+            "workspace_task": "W308-01",
+            "related_tasks": [
+              "WP05-14",
+              "WP05-13"
+            ],
+            "title": "需求来源范围与冲突有权裁决",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "DONE",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w308-01",
+            "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:engineering-requirements",
+              "Main:requirement-set-review"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W308-01/DELIVERY.md",
+            "validation": "12项独立PostgreSQL18场景（含真实Chrome及4项既有需求/评价/集合回归）、1项准确时间/条款并集行为测试、20项Vue行为与vue-tsc通过。",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave308-final-verification.json"
+            },
+            "local_validation": "PASS_AFFECTED_SCOPE"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W308两仓采用/finish，接W309真实消费者影响链；24h继续。",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave308-final-verification.json"
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W308-01",
+            "source": "f2b88e61f5432389085b6b4495fd36957befd7a8",
+            "remote_target": "84abab3430dd9637be196255ce8d83f33016a92f",
+            "pr": "https://github.com/GTX537/CP6/pull/765",
+            "branch": "codex/w308-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W308-HANDOFF",
+            "source": "f9346dceb129b6e040ce42deedbf23bd5cdfa464",
+            "remote_target": "41904cbc929bfeba0d57fa1630b40cd9b43634d0",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/286",
+            "branch": "codex/w308-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -242744,8 +242912,8 @@
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
       "started_at": "2026-11-04T00:22:36+00:00",
-      "effective_seconds_recorded": 31734,
-      "timing_snapshot_at": "2026-11-04T09:32:30.182528+00:00",
+      "effective_seconds_recorded": 34856,
+      "timing_snapshot_at": "2026-11-04T10:28:03.956981+00:00",
       "timing_source": "Fresh goal.timeUsedSeconds snapshots; cross-check actual active segments and exclude interruptions. Previous-cycle time and inter-cycle gap never carried forward.",
       "next_reestimate_at_effective_seconds": 36000,
       "estimate_hours": [
@@ -243576,7 +243744,7 @@
           ],
           "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_REVISED_AFTER_SOURCE_READ",
           "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
-          "state": "VERIFYING",
+          "state": "DONE",
           "initial_estimate_hours": [
             2.5,
             4.5
@@ -243586,13 +243754,40 @@
           "implementation_complete": true,
           "report": "docs/development/evidence/W308-01/DELIVERY.md",
           "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
             "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave308-final-verification.json"
-          }
+          },
+          "actual_effective_seconds": 2012,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W308-01",
+              "source": "f2b88e61f5432389085b6b4495fd36957befd7a8",
+              "remote_target": "84abab3430dd9637be196255ce8d83f33016a92f",
+              "pr": "https://github.com/GTX537/CP6/pull/765",
+              "branch": "codex/w308-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W308-HANDOFF",
+              "source": "f9346dceb129b6e040ce42deedbf23bd5cdfa464",
+              "remote_target": "41904cbc929bfeba0d57fa1630b40cd9b43634d0",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/286",
+              "branch": "codex/w308-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
         },
         {
           "id": "W309-01",
@@ -243600,18 +243795,30 @@
           "related_tasks": [
             "WP05-14"
           ],
-          "title": "需求集后继差分和实际消费者影响意图",
+          "title": "需求集后继差异与实际迭代消费者影响",
           "estimate_hours": [
-            0.75,
-            1.6
+            1,
+            2
           ],
-          "estimate_kind": "LOW_CONFIDENCE_PENDING_SOURCE_READ",
+          "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_AFTER_SOURCE_READ",
           "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
-          "state": "PLANNED",
+          "state": "VERIFYING",
           "initial_estimate_hours": [
             2,
             4
-          ]
+          ],
+          "started_at": "2026-11-04T09:47:51.965310+00:00",
+          "effective_start": 32511,
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W309-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave309-final-verification.json"
+          }
         },
         {
           "id": "W311-01",
@@ -243910,7 +244117,7 @@
           "historical_conflicts": "Preserved immutable; existing environments not inspected or migrated. Separate controlled forward recovery required for affected existing records."
         }
       ],
-      "next_priority": "W309 exact successor difference and actual consumer impact; W306 FORM legacy content remains.",
+      "next_priority": "W311 original privacy subject export scope; W306 FORM legacy remains; W310 reserved for budget closeout.",
       "extra_bug_deliveries": [
         {
           "id": "BUG751",

@@ -116,6 +116,7 @@ public sealed partial class RequirementSetService(CP6Context db,OperationsOwnerV
         if(hold && missing.Count>0)throw Error("REQUIREMENT_SET_SOURCE_INCOMPLETE",422);
         var applications=new RequirementSetReviewApplicationStoreV1(db,scope);await applications.Ready(ct);
         var approved=await applications.Approved(value.Reference,ct);
+        if(hold && approved==null)await RequireImpactAssessed(a,value.Reference,ct);
         if(approved==null)missing.Add("REQUIREMENT_SET_REVIEW_REQUIRED");
         return value with {MemberStatus=members.ToArray(),Differences=changes.ToArray(),ConflictStatus=conflicts,Missing=missing.Distinct().ToArray(),State=approved==null?"DRAFT":"APPROVED"};
     }
@@ -166,7 +167,8 @@ public sealed partial class RequirementSetService(CP6Context db,OperationsOwnerV
         var result=JsonSerializer.Deserialize<RequirementSetResultV1>(original.Result);
         if(original.State!="COMMITTED" || result==null || result.OperationId!=id || !original.Objects.SequenceEqual(new[]{result.ObjectId}))throw Error("ORIGINAL_OPERATION_UNAVAILABLE",503);
         var v=await Observe(a,s,await s.Read(result.ObjectId,Revision(result.Version),ct),ct);
-        if(v.Reference.Digest!=result.Digest || v.Body.Kind!=result.Kind)throw Error("ORIGINAL_OPERATION_UNAVAILABLE",503);return result;
+        if(v.Reference.Digest!=result.Digest || v.Body.Kind!=result.Kind)throw Error("ORIGINAL_OPERATION_UNAVAILABLE",503);
+        if(result.Impact!=null)await DiscloseImpact(a,result.Impact,ct);return result;
     }
     public Task<RequirementSetOperationV1> OperationAsync(Guid id,bool close,CancellationToken ct=default)
     {
