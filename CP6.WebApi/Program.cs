@@ -344,6 +344,7 @@ builder.Services.AddScoped(sp => new CP6.Core.Services.Oa.PersonalFormOwnerV2(
         { throw new CP6.Core.Services.Sys.ScopeAuthorizationExceptionV1(e.Message, e.Status, e); }
     }, sp.GetRequiredService<CP6.Core.Services.Wf.FlowAuthoringOwnerV2>(),sp.GetRequiredService<CP6.Core.Services.Pub.FormFileContentV2>()));
 builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.WfNotificationDispatchWorker>();
+builder.Services.AddScoped<CP6.Core.Services.Oa.FormFieldDispositionOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wf.ITaskCenterService, CP6.Core.Services.Wf.TaskCenterService>(); // 章04 待办中心（待办/我的申请/撤回）
 
 // 4.0b OA(Wf) 阶段2 集成（章05 ★）：业务接入 OA 的同步回调
@@ -1783,6 +1784,7 @@ using (var scope = app.Services.CreateScope())
     // Calendar.View/Edit（743）+ Connector.View/Edit（挂既有 734 oa-flow-admin）权限点幂等种子。
     // 须置于 OawfPermissionSeed（及 OawfMenuSeed 的 734 锚定）之后、:1005 回填块之前。「贴点⊆种子」互锁。
     CP6.WebApi.Seed.WorkCalendarConnectorPermissionSeed.EnsureSeeded(db);
+    CP6.WebApi.Seed.FormDispositionPermissionSeed.EnsureSeeded(db);
 
     // CRM foundation：先播种禁用菜单目录和逐租户管理员权限；页面交付后再显式启用，避免出现死链接。
     CP6.WebApi.Seed.CrmMenuPermissionSeed.EnsureSeeded(db);

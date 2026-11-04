@@ -9,7 +9,8 @@ internal sealed record PersonalFormRebasePlanV2(string Data, PersonalFormRebaseC
 internal static class PersonalFormRebaseV2
 {
     internal static PersonalFormRebasePlanV2 Build(string sourceSchema,string targetSchema,string data,
-        IReadOnlyDictionary<string,string> sourceMask,IReadOnlyDictionary<string,string> targetMask)
+        IReadOnlyDictionary<string,string> sourceMask,IReadOnlyDictionary<string,string> targetMask,
+        Action<string,string,string,JsonNode>? observeLoss=null)
     {
         static JsonNode? P(JsonObject value,string key)=>PersonalFormValuesV2.SchemaProperty(value,key);
         static Dictionary<string,JsonObject> Fields(JsonArray array)=>array.ToDictionary(x=>P(x!.AsObject(),"name")!.GetValue<string>(),x=>x!.AsObject(),StringComparer.Ordinal);
@@ -25,10 +26,12 @@ internal static class PersonalFormRebaseV2
         }
         static string Type(JsonObject field)=>P(field,"type")?.GetValue<string>().ToLowerInvariant()??"input";
         static bool HasValue(JsonNode? node)=>node switch{null=>false,JsonArray a=>a.Count!=0,JsonObject o=>o.Count!=0,_=>node.ToJsonString()!="\"\""};
-        void Changed(string field,string path,string kind,bool valued)
+        void Changed(string field,string path,string kind,JsonNode? old)
         {
+            var valued=HasValue(old);
             if(valued && (sourceMask.GetValueOrDefault(field,"hidden")=="hidden" || targetMask.GetValueOrDefault(field,sourceMask.GetValueOrDefault(field,"hidden"))=="hidden"))
                 throw new ScopeAuthorizationExceptionV1("REBASE_HIDDEN_LOSS_BLOCKED",403);
+            if(valued)observeLoss?.Invoke(field,path,kind,old!);
             loss|=valued;
             Path(field,path,kind);
             if(kind=="TYPE_CHANGED")Path(field,path,"REMOVED");
@@ -38,8 +41,8 @@ internal static class PersonalFormRebaseV2
         {
             if(!source.TryGetValue(name,out var previous) || Type(previous)!=Type(field))
             {
-                var valued=original.TryGetPropertyValue(name,out var old)&&HasValue(old);
-                Changed(name,name,previous==null?"ADDED":"TYPE_CHANGED",valued);result[name]=Default(name,name,field);continue;
+                original.TryGetPropertyValue(name,out var old);
+                Changed(name,name,previous==null?"ADDED":"TYPE_CHANGED",old);result[name]=Default(name,name,field);continue;
             }
             if(!original.TryGetPropertyValue(name,out var value)){Path(name,name,"RETAINED");continue;} // Preserve unset, distinct from null.
             if(Type(field)!="table" || value==null){Path(name,name,"RETAINED");result[name]=value?.DeepClone();continue;}
@@ -55,12 +58,13 @@ internal static class PersonalFormRebaseV2
                     {Path(name,$"{name}[{index}].{column}","RETAINED");if(current.TryGetPropertyValue(column,out var cell))next[column]=cell?.DeepClone();}
                     else
                     {
-                        Changed(name,$"{name}[{index}].{column}",oldColumn==null?"ADDED":"TYPE_CHANGED",current.TryGetPropertyValue(column,out var cell)&&HasValue(cell));
+                        current.TryGetPropertyValue(column,out var cell);
+                        Changed(name,$"{name}[{index}].{column}",oldColumn==null?"ADDED":"TYPE_CHANGED",cell);
                         next[column]=Default(name,$"{name}[{index}].{column}",definition);
                     }
                 }
                 foreach(var column in oldColumns.Keys.Where(c=>!columns.ContainsKey(c)))
-                    Changed(name,$"{name}[{index}].{column}","REMOVED",current.TryGetPropertyValue(column,out var cell)&&HasValue(cell));
+                {current.TryGetPropertyValue(column,out var cell);Changed(name,$"{name}[{index}].{column}","REMOVED",cell);}
                 rows.Add(next);index++;
             }
             result[name]=rows;
@@ -72,7 +76,8 @@ internal static class PersonalFormRebaseV2
                 for(var row=maxRows;row<rows.Count;row++)diagnostics.Add((name,$"{name}[{row}]","ROW_COUNT_EXCEEDS_TARGET"));
             }
         }
-        foreach(var name in source.Keys.Where(n=>!target.ContainsKey(n))) Changed(name,name,"REMOVED",original.TryGetPropertyValue(name,out var value)&&HasValue(value));
+        foreach(var name in source.Keys.Where(n=>!target.ContainsKey(n)))
+        {original.TryGetPropertyValue(name,out var value);Changed(name,name,"REMOVED",value);}
         var computed=PersonalFormValuesV2.Recompute(PersonalFormValuesV2.Schema(targetSchema),result.ToJsonString(),validateShape:false,
             observeRequired:(field,path,missing)=>{Path(field,path,"REQUIRED");if(missing)diagnostics.Add((field,path,"REQUIRED"));});
         if(computed.Errors.Length!=0)errors.Add("FORM_VALIDATION_FAILED");
