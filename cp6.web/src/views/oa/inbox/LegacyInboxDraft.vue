@@ -1,168 +1,44 @@
-<template>
-  <div class="inbox-draft">
-    <div class="table-toolbar">
-      <CpTag>{{ t('共 {n} 条', { n: total }) }}</CpTag>
-      <el-button :icon="Refresh" circle size="small" :loading="loading" @click="load" />
-    </div>
-
-    <el-table :data="rows" border stripe size="small" max-height="560" v-loading="loading">
-      <el-table-column prop="title" :label="t('标题')" min-width="150" />
-      <el-table-column prop="formName" :label="t('表单')" min-width="150" />
-      <el-table-column :label="t('版本')" width="90">
-        <template #default="{ row }">v{{ row.formVersion }}</template>
-      </el-table-column>
-      <el-table-column :label="t('状态')" width="100">
-        <template #default="{ row }">
-          <CpTag :tone="row.stale ? 'warn' : 'info'">{{ row.stale ? t('需升级') : t('可提交') }}</CpTag>
-        </template>
-      </el-table-column>
-      <el-table-column :label="t('更新时间')" width="170">
-        <template #default="{ row }">{{ formatTime(row.updatedAtUtc) }}</template>
-      </el-table-column>
-      <el-table-column :label="t('oa.col.actions')" width="220" fixed="right">
-        <template #default="{ row }">
-          <el-button v-permission="'oa-form-catalog:edit'" type="primary" link size="small" @click.stop="openEdit(row)">
-            {{ t('oa.draft.edit') }}
-          </el-button>
-          <el-button v-permission="'oa-form-catalog:submit'" type="success" link size="small"
-            :disabled="row.stale" :loading="row._submitting" @click.stop="submitDraft(row)">
-            {{ t('oa.draft.submit') }}
-          </el-button>
-          <el-button v-permission="'oa-form-catalog:del'" type="danger" link size="small" @click.stop="removeDraft(row)">
-            {{ t('oa.draft.delete') }}
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <CpEmpty v-if="!loading && !rows.length" :text="t('oa.draft.empty')" />
-
-    <el-dialog v-model="editor.visible" :title="editor.title || t('oa.draft.editTitle')" width="680px">
-      <el-alert v-if="editor.stale" type="warning" :closable="false" show-icon
-        :title="t('表单已有新版本，请升级后提交')" class="stale-alert" />
-      <el-input v-model="editor.title" :placeholder="t('标题')" maxlength="200" class="title-input" />
-      <DynamicForm v-if="editor.schema.fields.length" :schema="editor.schema" v-model="editor.data" />
-      <CpEmpty v-else :text="t('oa.initiate.noFields')" />
-      <template #footer>
-        <el-button v-if="editor.stale" :loading="editor.rebasing" @click="rebaseDraft(false)">
-          {{ t('升级草稿') }}
-        </el-button>
-        <el-button @click="editor.visible = false">{{ t('oa.draft.cancel') }}</el-button>
-        <el-button type="primary" :loading="editor.saving" @click="saveEdit">{{ t('oa.draft.save') }}</el-button>
-      </template>
-    </el-dialog>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { reactive, ref, onMounted } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { Refresh } from '@element-plus/icons-vue'
-import { draftApi, type DraftDetail, type DraftListItem } from '@/api/oa/draft'
-import type { FormSchema } from '@/types/wf/wf'
-import DynamicForm from '@/views/wf/DynamicForm.vue'
-import CpTag from '@/components/base/CpTag.vue'
-import CpEmpty from '@/components/base/CpEmpty.vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { legacyPersonalDrafts, type LegacyPersonalDraft } from '@/api/oa/legacyPersonalDrafts'
 
-type Row = DraftListItem & { _submitting?: boolean }
-const { t } = useI18n()
-const rows = ref<Row[]>([])
-const total = ref(0)
-const loading = ref(false)
-const editor = reactive({
-  visible: false, id: '', title: '', stale: false, rowVersion: undefined as string | undefined,
-  latestVersion: 0,
-  schema: { fields: [] } as FormSchema, data: {} as Record<string, unknown>,
-  saving: false, rebasing: false,
-})
-
-function payload<T>(response: any): T {
-  return (response?.data ?? response) as T
-}
-
+const rows = ref<LegacyPersonalDraft[]>([]), total = ref(0), page = ref(1), loading = ref(false), error = ref('')
+let generation = 0, disposed = false, request: AbortController | undefined
 async function load() {
-  loading.value = true
+  request?.abort(); const controller = new AbortController(); request = controller; const current = ++generation
+  loading.value = true; error.value = ''; rows.value = []; total.value = 0
   try {
-    const page = payload<{ items: DraftListItem[]; total: number }>(await draftApi.list())
-    rows.value = page.items ?? []
-    total.value = page.total ?? rows.value.length
-  } finally { loading.value = false }
+    const value = await legacyPersonalDrafts(page.value, controller.signal)
+    if (disposed || current !== generation) return
+    rows.value = value.items; total.value = value.total
+  } catch {
+    if (disposed || current !== generation) return
+    error.value = '历史草稿读取失败，请重试。'
+  } finally { if (!disposed && current === generation) loading.value = false }
 }
-
-async function openEdit(row: Row) {
-  const detail = payload<DraftDetail>(await draftApi.get(row.id))
-  editor.id = detail.id
-  editor.title = detail.title ?? ''
-  editor.stale = detail.stale
-  editor.rowVersion = detail.rowVersion
-  editor.latestVersion = detail.latestPublishedVersion
-  editor.schema = JSON.parse(detail.schemaJson) as FormSchema
-  editor.data = JSON.parse(detail.dataJson) as Record<string, unknown>
-  editor.visible = true
-}
-
-async function saveEdit() {
-  editor.saving = true
-  try {
-    const detail = payload<DraftDetail>(await draftApi.update(
-      editor.id, editor.data, editor.title || undefined, editor.rowVersion))
-    editor.rowVersion = detail.rowVersion
-    editor.stale = detail.stale
-    ElMessage.success(t('已保存'))
-    await load()
-  } catch (error: any) {
-    if (error?.response?.data?.code === 'E-WF-041') ElMessage.error(t('草稿已被更新'))
-  } finally { editor.saving = false }
-}
-
-async function rebaseDraft(confirmRemovedValues: boolean) {
-  editor.rebasing = true
-  try {
-    const result = payload<{ dataJson: string; rowVersion?: string }>(
-      await draftApi.rebase(editor.id, editor.latestVersion, confirmRemovedValues, editor.rowVersion))
-    editor.data = JSON.parse(result.dataJson)
-    editor.rowVersion = result.rowVersion
-    editor.stale = false
-    await openEdit(rows.value.find(x => x.id === editor.id)!)
-    await load()
-  } catch (error: any) {
-    if (error?.response?.data?.code === 'E-WF-048' && !confirmRemovedValues) {
-      const fields = error.response.data.removedFields?.join(', ') ?? ''
-      await ElMessageBox.confirm(t('升级将删除已有字段值：{fields}。是否继续？', { fields }), t('升级草稿'), { type: 'warning' })
-      await rebaseDraft(true)
-    } else if (error?.response?.data?.code === 'E-WF-041') {
-      ElMessage.error(t('草稿已被更新'))
-    }
-  } finally { editor.rebasing = false }
-}
-
-async function submitDraft(row: Row) {
-  row._submitting = true
-  try {
-    const key = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`
-    await draftApi.submit(row.id, row.rowVersion, key)
-    ElMessage.success(t('已提交'))
-    await load()
-  } finally { row._submitting = false }
-}
-
-async function removeDraft(row: Row) {
-  try { await ElMessageBox.confirm(t('确认删除该暂存草稿？'), t('删除'), { type: 'warning' }) }
-  catch { return }
-  await draftApi.remove(row.id)
-  ElMessage.success(t('已删除'))
-  await load()
-}
-
-function formatTime(value: string) {
-  return value ? value.replace('T', ' ').slice(0, 19) : ''
-}
-
+function state(value: number) { return value === 0 ? '未提交（历史）' : value === 1 ? '已提交（历史）' : `历史状态 ${value}` }
 onMounted(load)
+onBeforeUnmount(() => { disposed = true; generation++; request?.abort(); rows.value = [] })
 </script>
 
+<template>
+  <section class="legacy-drafts" data-test="legacy-drafts">
+    <p>以下为保留的历史草稿记录，不能从此处修改、提交或删除。历史内容的读取授权尚待确认，原内容仍保留。</p>
+    <router-link to="/oa/form-catalog">从当前表单目录发起</router-link>
+    <el-button :loading="loading" @click="load">刷新</el-button>
+    <el-alert v-if="error" :title="error" type="error" :closable="false" />
+    <el-table v-else :data="rows" v-loading="loading" row-key="id">
+      <el-table-column prop="title" label="标题" min-width="160" />
+      <el-table-column prop="formKey" label="原表单" min-width="120" />
+      <el-table-column label="记录版本" width="110"><template #default="{ row }">{{ row.recordedVersion ?? '无完整快照' }}</template></el-table-column>
+      <el-table-column label="状态" width="150"><template #default="{ row }">{{ state(row.status) }}</template></el-table-column>
+      <el-table-column label="来源" min-width="160"><template #default="{ row }">{{ row.source === 'LEGACY_VERSION_SNAPSHOT' ? '历史版本快照' : row.source === 'LEGACY_HEAD_BACKFILL' ? '历史补录，发布未核实' : '缺少版本快照' }}</template></el-table-column>
+      <el-table-column prop="recordedUpdatedAt" label="原记录时间" min-width="190" />
+    </el-table>
+    <el-pagination v-if="!error && total > 20" v-model:current-page="page" :total="total" :page-size="20" layout="prev, pager, next" @current-change="load" />
+  </section>
+</template>
+
 <style scoped>
-.table-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-.stale-alert { margin-bottom: 12px; }
-.title-input { margin-bottom: 12px; }
+.legacy-drafts { padding: 12px 0; } p { max-width: 850px; line-height: 1.7; } a { margin-right: 16px; }
 </style>

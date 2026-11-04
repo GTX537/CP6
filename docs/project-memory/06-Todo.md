@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 2026-11-04：W316旧表单入口采用 / 24h继续
+
+W316旧创建/保存/重基/提交/删除HTTP入口共用实际PersonalFormOwnerV2，保旧DTO成功形状、准确前驱与固定命令映射；历史目录只读且来源明确，补取消/冲突保行/删除刷新实际页面。 [交付](../development/evidence/W316-01/DELIVERY.md)。
+
+9项独立实际PostgreSQL18场景通过：6项旧接口/映射/数据边界场景、1项实际登录Chrome全链路、2项受影响原生提交原子性/并发回归。历史目录3项Vue行为通过（按各场景最近有效结果复用），主入口更新后的vue-tsc通过。模拟业务输入、实际内部Owner/HTTP/PG/Chrome，无内部API替身。 原37531DONE/2IN_PROGRESS/342PLANNED，原59余52；125/247状态不改。下一独立BUG759待复现/修复，再W317准确前快照新草稿恢复及W305后续；24h目标持续ACTIVE。 分支/工作区/席位见wave316-final-verification.json。
+
 ## 2026-11-04：W304已远端交付 / W316执行中
 
 W304原卡核对及BUG756容量修复已完整采用、准确清理分支及释放席位；[W316](../development/evidence/W316-01/DELIVERY.md)从最新main采用旧个人表单入口，尚未验证或交付。原37531DONE/2IN_PROGRESS/342PLANNED、原59余52，24h单人目标继续。

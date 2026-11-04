@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W304](evidence/W304-01/DELIVERY.md)原卡审计与提交原子性补证；两仓采用/finish后BUG756，随后W316/W317，24h单人目标继续。
+> 当前：[W316](evidence/W316-01/DELIVERY.md)旧表单入口采用；两仓采用/finish后BUG759，随后W317/W305，24h单人目标继续。
+
+> 历史快照：[W304](evidence/W304-01/DELIVERY.md)原卡审计与提交原子性补证；两仓采用/finish后BUG756，随后W316/W317，24h单人目标继续。
 
 > 历史快照：[W303](evidence/W303-01/DELIVERY.md)准确处置到本人重基本地验收完成；24h单人目标继续，两仓采用/finish后W304原卡核销。
 

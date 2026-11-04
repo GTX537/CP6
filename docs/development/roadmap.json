@@ -161982,6 +161982,11 @@
       "date": "2026-11-04",
       "change": "W304远端交付与生命周期闭环，W316旧个人表单入口受控适配开工。",
       "evidence": "docs/development/evidence/W316-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-04",
+      "change": "W316旧创建/保存/重基/提交/删除HTTP入口共用实际PersonalFormOwnerV2，保旧DTO成功形状、准确前驱与固定命令映射；历史目录只读且来源明确，补取消/冲突保行/删除刷新实际页面。",
+      "evidence": "docs/development/evidence/W316-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -197585,7 +197590,7 @@
       },
       "scope_reconciliation": {
         "classification": "明确实现余项",
-        "delivered": "W275个人草稿、准确提交和显式重基；W285普通FORM文件已有交付。 W287：版本化共享字典选项来源已被FORM设计、发布/激活、当前候选读取、草稿/直接提交/退回/重基及真实页面采用；最终服务端复核当前来源与准确字符串值，保留历史原值且不制造历史字典快照。 W293：重基预览准确版本/摘要、可见路径分类和权威动态必填/逐行超限诊断，页面明确损失确认及编辑失效已实现；全部原行/精度/原事务和原命令保留。 W302：实际FORM字段受控处置Owner、准确历史原件、独立当前读取/批准/留存/撤销/hold资格、原操作恢复和处理工作台完成本地业务验收。W303重基消费已远端采用。 W303：真实隐藏损失请求、合格处置事实到本人原生重基的准确一次消费，以及当前资格/政策/hold校验、原件留存和原命令恢复完成本地业务验收。 W304核清WP12-03/04原25条直接AC和前置，补3项真实提交原子性/五上下文验证；确认#756合法data限额缺陷、旧入口adapter和准确重基前快照恢复仍未完，两原卡保持未关闭。",
+        "delivered": "W275个人草稿、准确提交和显式重基；W285普通FORM文件已有交付。 W287：版本化共享字典选项来源已被FORM设计、发布/激活、当前候选读取、草稿/直接提交/退回/重基及真实页面采用；最终服务端复核当前来源与准确字符串值，保留历史原值且不制造历史字典快照。 W293：重基预览准确版本/摘要、可见路径分类和权威动态必填/逐行超限诊断，页面明确损失确认及编辑失效已实现；全部原行/精度/原事务和原命令保留。 W302：实际FORM字段受控处置Owner、准确历史原件、独立当前读取/批准/留存/撤销/hold资格、原操作恢复和处理工作台完成本地业务验收。W303重基消费已远端采用。 W303：真实隐藏损失请求、合格处置事实到本人原生重基的准确一次消费，以及当前资格/政策/hold校验、原件留存和原命令恢复完成本地业务验收。 W304核清WP12-03/04原25条直接AC和前置，补3项真实提交原子性/五上下文验证；确认#756合法data限额缺陷、旧入口adapter和准确重基前快照恢复仍未完，两原卡保持未关闭。 BUG756已远端修复。W316旧创建/保存/重基/提交/删除HTTP入口共用实际PersonalFormOwnerV2，保旧DTO成功形状、准确前驱与固定命令映射；历史目录只读且来源明确，补取消/冲突保行/删除刷新实际页面。",
         "evidence_refs": [
           "docs/development/evidence/W275-01/DELIVERY.md",
           "docs/development/evidence/W285-01/DELIVERY.md",
@@ -197593,14 +197598,15 @@
           "docs/development/evidence/W293-01/DELIVERY.md",
           "docs/development/evidence/W302-01/DELIVERY.md",
           "docs/development/evidence/W303-01/DELIVERY.md",
-          "docs/development/evidence/W304-01/DELIVERY.md"
+          "docs/development/evidence/W304-01/DELIVERY.md",
+          "docs/development/evidence/W316-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
-        "window": "W304-01",
+        "window": "W316-01",
         "as_of": "2026-11-04",
-        "report": "docs/development/evidence/W304-01/DELIVERY.md",
-        "new_product_validation": false,
-        "remaining": "旧Draft/Create/Save/Rebase/Delete端点适配同原生Owner/tombstone、准确前快照到新草稿显式恢复及其实际页面/取消失败场景；合法data信封限额BUG756。",
+        "report": "docs/development/evidence/W316-01/DELIVERY.md",
+        "new_product_validation": true,
+        "remaining": "准确重基前快照到新草稿显式恢复；历史旧行内容披露/采用的准确来源映射；#759未知结果刷新恢复入口待复现修复。原生服务节点实际Owner采用仍按各业务卡范围记录。",
         "new_behavioral_evidence": true
       },
       "wave293_rebase_preview": {
@@ -197670,9 +197676,9 @@
         "validation": "3项新增实际PostgreSQL18场景通过：真实首人工任务写失败全事务回滚/同意图恢复；两连接不同提交命令只一原生提交和原回执；五expected上下文逐项不匹配在DIRECT/DRAFT均拒绝且保原草稿。原生业务行为未修改，其他有效PG/HTTP/Chrome证据按原窗口复用，本窗未新跑HTTP/浏览器/UI或全仓。",
         "full_task_completed": false,
         "remaining_windows": [
-          "BUG756",
-          "W316-01",
-          "W317-01"
+          "BUG759",
+          "W317-01",
+          "W305-01"
         ],
         "remote_adoption": {
           "repository": "CP6",
@@ -197694,6 +197700,17 @@
           "handoff_branch_deleted": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave304-final-verification.json"
         }
+      },
+      "wave316_legacy_adoption": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W316-01/DELIVERY.md",
+        "validation": "9项独立实际PostgreSQL18场景通过：6项旧接口/映射/数据边界场景、1项实际登录Chrome全链路、2项受影响原生提交原子性/并发回归。历史目录3项Vue行为通过（按各场景最近有效结果复用），主入口更新后的vue-tsc通过。模拟业务输入、实际内部Owner/HTTP/PG/Chrome，无内部API替身。",
+        "full_task_completed": false,
+        "remaining_windows": [
+          "BUG759",
+          "W317-01",
+          "W305-01"
+        ]
       }
     },
     {
@@ -197795,8 +197812,9 @@
         "validation": "3项新增实际PostgreSQL18场景通过：真实首人工任务写失败全事务回滚/同意图恢复；两连接不同提交命令只一原生提交和原回执；五expected上下文逐项不匹配在DIRECT/DRAFT均拒绝且保原草稿。原生业务行为未修改，其他有效PG/HTTP/Chrome证据按原窗口复用，本窗未新跑HTTP/浏览器/UI或全仓。",
         "full_task_completed": false,
         "remaining_windows": [
-          "BUG756",
-          "W316-01"
+          "BUG759",
+          "W317-01",
+          "W305-01"
         ],
         "remote_adoption": {
           "repository": "CP6",
@@ -197821,17 +197839,29 @@
       },
       "scope_reconciliation": {
         "classification": "明确实现余项",
-        "window": "W304-01",
+        "window": "W316-01",
         "as_of": "2026-11-04",
-        "report": "docs/development/evidence/W304-01/DELIVERY.md",
-        "new_product_validation": false,
+        "report": "docs/development/evidence/W316-01/DELIVERY.md",
+        "new_product_validation": true,
         "new_behavioral_evidence": true,
         "formal_state_changed": false,
-        "delivered": "原生v2 DIRECT/DRAFT五上下文、真实同事务提交、当前授权及原命令恢复已有W275及后续实际采用。 W304核清WP12-03/04原25条直接AC和前置，补3项真实提交原子性/五上下文验证；确认#756合法data限额缺陷、旧入口adapter和准确重基前快照恢复仍未完，两原卡保持未关闭。",
+        "delivered": "原生v2 DIRECT/DRAFT五上下文、真实同事务提交、当前授权及原命令恢复已有W275及后续实际采用。 W304核清WP12-03/04原25条直接AC和前置，补3项真实提交原子性/五上下文验证；确认#756合法data限额缺陷、旧入口adapter和准确重基前快照恢复仍未完，两原卡保持未关闭。 BUG756已远端修复。W316旧创建/保存/重基/提交/删除HTTP入口共用实际PersonalFormOwnerV2，保旧DTO成功形状、准确前驱与固定命令映射；历史目录只读且来源明确，补取消/冲突保行/删除刷新实际页面。",
         "evidence_refs": [
-          "docs/development/evidence/W304-01/DELIVERY.md"
+          "docs/development/evidence/W304-01/DELIVERY.md",
+          "docs/development/evidence/W316-01/DELIVERY.md"
         ],
-        "remaining": "旧SubmissionKey/RequestHash到WFC槽固定适配、保旧DTO/envelope/实际人及精确前驱；合法data限额BUG756与直接草稿前置剩余。原生服务节点实际Owner能力另保明确未采用。"
+        "remaining": "准确重基前快照到新草稿显式恢复；历史旧行内容披露/采用的准确来源映射；#759未知结果刷新恢复入口待复现修复。原生服务节点实际Owner采用仍按各业务卡范围记录。"
+      },
+      "wave316_legacy_adoption": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W316-01/DELIVERY.md",
+        "validation": "9项独立实际PostgreSQL18场景通过：6项旧接口/映射/数据边界场景、1项实际登录Chrome全链路、2项受影响原生提交原子性/并发回归。历史目录3项Vue行为通过（按各场景最近有效结果复用），主入口更新后的vue-tsc通过。模拟业务输入、实际内部Owner/HTTP/PG/Chrome，无内部API替身。",
+        "full_task_completed": false,
+        "remaining_windows": [
+          "BUG759",
+          "W317-01",
+          "W305-01"
+        ]
       }
     },
     {
@@ -203076,7 +203106,7 @@
       "path": "docs/development/dispatch/20261104-wave316/README.md",
       "baseline_sha": "1d4981dd5f44d0ca38882d842e0146876ec8bcad",
       "registered_at": "2026-11-04T06:18:41.857315+00:00",
-      "phase": "IMPLEMENTING",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -203103,17 +203133,17 @@
           "title": "旧个人表单入口受控适配",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "IMPLEMENTING",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w316-01",
           "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
@@ -203121,14 +203151,34 @@
             "Main:oa-form",
             "Main:privacy-orchestration",
             "Main:EF-migrations"
-          ]
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W316-01/DELIVERY.md",
+          "validation": "9项独立实际PostgreSQL18场景通过：6项旧接口/映射/数据边界场景、1项实际登录Chrome全链路、2项受影响原生提交原子性/并发回归。历史目录3项Vue行为通过（按各场景最近有效结果复用），主入口更新后的vue-tsc通过。模拟业务输入、实际内部Owner/HTTP/PG/Chrome，无内部API替身。",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave316-final-verification.json"
+          },
+          "business_acceptance": "LEGACY_FORM_ADAPTER_AFFECTED_SCENARIOS_PASS_CARDS_PARTIAL",
+          "local_validation": "PASS_AFFECTED_SCOPE"
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "原WP12-03/04旧草稿/提交HTTP入口采用同一PersonalFormOwnerV2：准确版本/五上下文/原命令映射、同草稿tombstone及当前实际人权限；保旧成功envelope，缺前驱明确要求客户端获取上下文，不能服务器伪填期望。历史旧库来源明确隔离，不冒充原生发布、不自动迁移。补实际新旧入口及删除取消/失败保行/刷新不复活页面证据。"
+      "next_action": "W316两仓采用/finish后独立BUG759，再W317/W305；24h继续。",
+      "lifecycle_snapshot": {
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_seat_released": false,
+        "main_branch_deleted": false,
+        "handoff_branch_deleted": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave316-final-verification.json"
+      }
     },
     "wave_history": [
       {
@@ -241922,10 +241972,10 @@
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
       "started_at": "2026-11-04T00:22:36+00:00",
-      "effective_seconds_recorded": 20123,
-      "timing_snapshot_at": "2026-11-04T06:18:41.857315+00:00",
+      "effective_seconds_recorded": 22841,
+      "timing_snapshot_at": "2026-11-04T07:06:30.988252+00:00",
       "timing_source": "Fresh goal.timeUsedSeconds snapshots; cross-check actual active segments and exclude interruptions. Previous-cycle time and inter-cycle gap never carried forward.",
-      "next_reestimate_at_effective_seconds": 21600,
+      "next_reestimate_at_effective_seconds": 28800,
       "estimate_hours": [
         23.75,
         45.75
@@ -242452,12 +242502,44 @@
             1.5,
             3
           ],
-          "state": "IN_PROGRESS",
+          "state": "VERIFYING",
           "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
-          "estimate_confidence": "LOW_SOURCE_AUDIT_W304",
+          "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
           "scope_ref": "docs/development/evidence/W304-01/DELIVERY.md",
           "started_at": "2026-11-04T06:18:41.857315+00:00",
-          "effective_start": 20123
+          "effective_start": 20123,
+          "estimate_remaining_hours": [
+            0.75,
+            1.75
+          ],
+          "elapsed_effective_seconds_at_reestimate": 1610,
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W316-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave316-final-verification.json"
+          }
+        },
+        {
+          "id": "BUG759",
+          "day": "ROLLING",
+          "related_tasks": [
+            "WP12-03",
+            "WP12-04"
+          ],
+          "title": "草稿未知结果刷新后原命令恢复入口",
+          "estimate_hours": [
+            0.5,
+            1.2
+          ],
+          "issue": "https://github.com/GTX537/CP6/issues/759",
+          "state": "PLANNED",
+          "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION",
+          "scope_ref": "docs/development/evidence/W316-01/DELIVERY.md"
         },
         {
           "id": "W317-01",
@@ -242472,7 +242554,7 @@
           ],
           "state": "PLANNED",
           "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
-          "estimate_confidence": "LOW_SOURCE_AUDIT_W304",
+          "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
           "scope_ref": "docs/development/evidence/W304-01/DELIVERY.md"
         },
         {
@@ -242487,7 +242569,7 @@
             2.5
           ],
           "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
-          "estimate_confidence": "LOW_RECALIBRATED_AT_4H",
+          "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
           "state": "PLANNED",
           "initial_estimate_hours": [
             2,
@@ -242508,7 +242590,7 @@
             1.5
           ],
           "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
-          "estimate_confidence": "LOW_RECALIBRATED_AT_4H",
+          "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
           "state": "PLANNED",
           "initial_estimate_hours": [
             1,
@@ -242527,7 +242609,7 @@
             2
           ],
           "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
-          "estimate_confidence": "LOW_RECALIBRATED_AT_4H",
+          "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
           "state": "PLANNED",
           "initial_estimate_hours": [
             2,
@@ -242546,7 +242628,7 @@
             3
           ],
           "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
-          "estimate_confidence": "LOW_RECALIBRATED_AT_4H",
+          "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
           "state": "PLANNED",
           "initial_estimate_hours": [
             2.5,
@@ -242565,7 +242647,7 @@
             2
           ],
           "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
-          "estimate_confidence": "LOW_RECALIBRATED_AT_4H",
+          "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
           "state": "PLANNED",
           "initial_estimate_hours": [
             2,
@@ -242666,7 +242748,7 @@
             1
           ],
           "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
-          "estimate_confidence": "LOW_RECALIBRATED_AT_4H",
+          "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
           "state": "PLANNED",
           "initial_estimate_hours": [
             1,
@@ -242765,6 +242847,67 @@
           "capacity_remaining_hours": 19.9925,
           "reason": "W301 was a reused-evidence audit (13.2min); BUG751 actual fix took20.5min, not a workday. W302 introduces real sensitive-field source, independent processing, state/hold/journal transactions and UI, currently unverified. Same-family follow-ups may run faster, so reduce primary estimates and retain original WP02-15 reserve. Low confidence; intervals are not an additive probability guarantee. No repeated green tests or waiting to fill time.",
           "next_effective_seconds": 21600
+        },
+        {
+          "at": "2026-11-04T06:46:58.677778+00:00",
+          "effective_seconds": 21733,
+          "remaining_seconds": 64667,
+          "completed_window_actuals": {
+            "wave302": {
+              "seconds": 2447,
+              "minutes": 40.8
+            },
+            "wave303": {
+              "seconds": 1934,
+              "minutes": 32.2
+            },
+            "wave304": {
+              "seconds": 898,
+              "minutes": 15.0
+            },
+            "bug756": {
+              "seconds": 1310,
+              "minutes": 21.8
+            }
+          },
+          "current_window": "W316-01",
+          "current_elapsed_seconds": 1610,
+          "remaining_estimates": {
+            "W316-01": [
+              0.75,
+              1.75
+            ],
+            "W317-01": [
+              1,
+              2.5
+            ],
+            "W305-01": [
+              1.25,
+              2.5
+            ],
+            "W306-01": [
+              0.75,
+              1.5
+            ],
+            "W307-01": [
+              1,
+              2
+            ],
+            "W308-01": [
+              1.5,
+              3
+            ],
+            "W309-01": [
+              1,
+              2
+            ],
+            "W310-01": [
+              0.5,
+              1
+            ]
+          },
+          "estimate_basis": "Low-confidence engineering ranges; not calibrated probabilities; W316 is remaining time, other windows are full time. Completed-window samples may span the prior calibration boundary. No duplicated Main/Handoff or inactive gaps.",
+          "next_reestimate": 28800
         }
       ],
       "exclusions": [],
@@ -242808,7 +242951,7 @@
           "historical_conflicts": "Preserved immutable; existing environments not inspected or migrated. Separate controlled forward recovery required for affected existing records."
         }
       ],
-      "next_priority": "W316 controlled legacy form/draft adapters, then W317 before-rebase snapshot recovery",
+      "next_priority": "BUG759 unknown draft outcome after refresh; W317 exact before-snapshot recovery; W305 onward",
       "extra_bug_deliveries": [
         {
           "id": "BUG751",

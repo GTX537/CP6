@@ -111,15 +111,17 @@ public sealed partial class PersonalFormOwnerV2
         }
         await Final(actor,lease,ct,false);return new(items.ToArray(),total,page,pageSize);
     }
-    public async Task<PersonalFormResultV2> CreateDraftAsync(string key,byte[] raw,CancellationToken ct=default)
+    public Task<PersonalFormResultV2> CreateDraftAsync(string key,byte[] raw,CancellationToken ct=default)
+        =>CreateDraft(key,CommandInput<PersonalFormCreateV2>(raw,false,maxBytes:DataRequestMaxBytes),ct);
+    private async Task<PersonalFormResultV2> CreateDraft(string key,Command<PersonalFormCreateV2> command,CancellationToken ct)
     {
-        var command=CommandInput<PersonalFormCreateV2>(raw,false,maxBytes:DataRequestMaxBytes);if(command.Body.FormVersionId==Guid.Empty)throw Error("FORM_VERSION_REQUIRED",400);
+        if(command.Body.FormVersionId==Guid.Empty)throw Error("FORM_VERSION_REQUIRED",400);
         Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var committing=false;
         try
         {
             var lease=await ReadLease(ct);var actor=await Actor(ct);await Action(actor,"query",ct);
             var old=await Original(actor.UserId,Create,key,command.Id,ct);
-            if(old!=null){Match(old,command.Digest);var saved=await Disclose(old,actor,ct);await Final(actor,lease,ct,false);return saved;}
+            if(old!=null){await MatchLegacy(old,command,ct);var saved=await Disclose(old,actor,ct);await Final(actor,lease,ct,false);return saved;}
             await WriteReady(lease,ct);await Action(actor,"add",ct);var source=await Resolve(actor,key,false,ct);
             if(command.Body.FormVersionId!=source.Form.VersionId)throw Error("FORM_CONTEXT_CHANGED",409);
             var title=PersonalFormValuesV2.Title(command.Body.Title);TitleWritable(actor,null,title);
@@ -140,15 +142,17 @@ public sealed partial class PersonalFormOwnerV2
         }
         catch(Exception ex){await Rollback(tx,committing,ex);throw;}
     }
-    public async Task<PersonalFormResultV2> SaveDraftAsync(Guid id,byte[] raw,CancellationToken ct=default)
+    public Task<PersonalFormResultV2> SaveDraftAsync(Guid id,byte[] raw,CancellationToken ct=default)
+        =>SaveDraft(id,CommandInput<PersonalFormSaveV2>(raw,true,maxBytes:DataRequestMaxBytes),ct);
+    private async Task<PersonalFormResultV2> SaveDraft(Guid id,Command<PersonalFormSaveV2> command,CancellationToken ct)
     {
-        var command=CommandInput<PersonalFormSaveV2>(raw,true,maxBytes:DataRequestMaxBytes);var resource=id.ToString("D");
+        var resource=id.ToString("D");
         Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var committing=false;
         try
         {
             var lease=await ReadLease(ct);var actor=await Actor(ct);await Action(actor,"query",ct);
             var old=await Original(actor.UserId,Save,resource,command.Id,ct);
-            if(old!=null){Match(old,command.Digest);var saved=await Disclose(old,actor,ct);await Final(actor,lease,ct,false);return saved;}
+            if(old!=null){await MatchLegacy(old,command,ct);var saved=await Disclose(old,actor,ct);await Final(actor,lease,ct,false);return saved;}
             await WriteReady(lease,ct);await Action(actor,"edit",ct);var row=await Owned(id,actor.UserId,ct);Active(row);Expected(row,command.Expected);
             var source=await Publication(row.Head,row.Version,ct);var mask=await Mask(actor,row.Head,source,ct);
             var title=PersonalFormValuesV2.Title(command.Body.Title);
@@ -168,18 +172,18 @@ public sealed partial class PersonalFormOwnerV2
         }
         catch(Exception ex){await Rollback(tx,committing,ex);throw;}
     }
-    public Task<PersonalFormResultV2> DeleteDraftAsync(Guid id,byte[] raw,CancellationToken ct=default)=>ChangeDeleted(id,raw,false,ct);
-    public Task<PersonalFormResultV2> RestoreDraftAsync(Guid id,byte[] raw,CancellationToken ct=default)=>ChangeDeleted(id,raw,true,ct);
-    private async Task<PersonalFormResultV2> ChangeDeleted(Guid id,byte[] raw,bool restore,CancellationToken ct)
+    public Task<PersonalFormResultV2> DeleteDraftAsync(Guid id,byte[] raw,CancellationToken ct=default)=>ChangeDeleted(id,CommandInput<PersonalFormReasonV2>(raw,true),false,ct);
+    public Task<PersonalFormResultV2> RestoreDraftAsync(Guid id,byte[] raw,CancellationToken ct=default)=>ChangeDeleted(id,CommandInput<PersonalFormReasonV2>(raw,true),true,ct);
+    private async Task<PersonalFormResultV2> ChangeDeleted(Guid id,Command<PersonalFormReasonV2> command,bool restore,CancellationToken ct)
     {
-        var command=CommandInput<PersonalFormReasonV2>(raw,true);var operation=restore?Restore:Delete;var resource=id.ToString("D");
+        var operation=restore?Restore:Delete;var resource=id.ToString("D");
         if(string.IsNullOrWhiteSpace(command.Body.Reason)||command.Body.Reason.Length>500)throw Error("REASON_REQUIRED",400);
         Entry();await using var tx=await db.Database.BeginTransactionAsync(ct);var committing=false;
         try
         {
             var lease=await ReadLease(ct);var actor=await Actor(ct);await Action(actor,"query",ct);
             var old=await Original(actor.UserId,operation,resource,command.Id,ct);
-            if(old!=null){Match(old,command.Digest);var saved=await Disclose(old,actor,ct);await Final(actor,lease,ct,false);return saved;}
+            if(old!=null){await MatchLegacy(old,command,ct);var saved=await Disclose(old,actor,ct);await Final(actor,lease,ct,false);return saved;}
             await WriteReady(lease,ct);await Action(actor,restore?"edit":"del",ct);var row=await Owned(id,actor.UserId,ct);Expected(row,command.Expected);
             await Mask(actor,row.Head,await Publication(row.Head,row.Version,ct),ct);var policy=(await Policy(row.Head,ct))!;
             if(restore)
