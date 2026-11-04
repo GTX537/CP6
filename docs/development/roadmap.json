@@ -162062,6 +162062,11 @@
       "date": "2026-11-04",
       "change": "W312完整核销；W313精确处置预览/批准/hold开工。",
       "evidence": "docs/development/evidence/W313-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-04",
+      "change": "W313完成Main主体资料的版本化政策、精确预览/冻结计划、独立批准/拒绝/撤销与全目标hold；原操作同事务恢复及关闭迟到，真实页面采用。旧主体/租户直接擦除入口410，批准本身不修改资料。 用户明确要求当前小任务完成后暂停，额度重置后再开工。W313正常合并、准确分支处置和官方finish后将24h目标设为PAUSED；本轮不登记或启动W314，不把暂停记为24h完成。 原375=33DONE/2IN_PROGRESS/340PLANNED，原59=9闭环/50剩余，125目标/247正式验收不变。WP02-15仍余W314逐Owner实际执行/UNKNOWN、W315墓碑与恢复、外部收件和通用FILE/CRM/备份适配、旧整租户导出及整租户受控处置采用。",
+      "evidence": "docs/development/evidence/W313-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -175105,12 +175110,12 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W312-01",
+        "window": "W313-01",
         "as_of": "2026-11-04",
         "classification": "IMPLEMENTED_PARTIAL_PENDING_REMOTE",
-        "report": "docs/development/evidence/W312-01/DELIVERY.md",
-        "delivered": "稳定subject目录身份修复已交付；CRM同意撤回和保留已有独立原生行为。 W302：实际FORM字段受控处置Owner、准确历史原件、独立当前读取/批准/留存/撤销/hold资格、原操作恢复和处理工作台完成本地业务验收。 W303：真实隐藏损失请求、合格处置事实到本人原生重基的准确一次消费，以及当前资格/政策/hold校验、原件留存和原命令恢复完成本地业务验收。 W311在实际主体导出中采用用户、安全事件及稳定角色关联的显式字段投影、逐来源Manifest、未知覆盖与排除说明；页面展示真实部分覆盖，缺源直接失败。 W312完成Main主体持久导出：精确用途/来源/内部收件人、同事务原操作与独立载荷、当前分权下载及撤销、UNKNOWN原结果查询和迟到关闭；真实页面分开生成与下载。",
-        "remaining": "原375=33DONE/2IN_PROGRESS/340PLANNED，原59=9闭环/50剩余，125目标/247正式验收不变。WP02-15仍余精确处置计划/独立批准/hold、逐Owner实际处置及UNKNOWN、tombstone与恢复、外部收件和通用FILE/CRM/备份适配、旧整租户导出及擦除入口采用。",
+        "report": "docs/development/evidence/W313-01/DELIVERY.md",
+        "delivered": "稳定subject目录身份修复已交付；CRM同意撤回和保留已有独立原生行为。 W302：实际FORM字段受控处置Owner、准确历史原件、独立当前读取/批准/留存/撤销/hold资格、原操作恢复和处理工作台完成本地业务验收。 W303：真实隐藏损失请求、合格处置事实到本人原生重基的准确一次消费，以及当前资格/政策/hold校验、原件留存和原命令恢复完成本地业务验收。 W311在实际主体导出中采用用户、安全事件及稳定角色关联的显式字段投影、逐来源Manifest、未知覆盖与排除说明；页面展示真实部分覆盖，缺源直接失败。 W312完成Main主体持久导出：精确用途/来源/内部收件人、同事务原操作与独立载荷、当前分权下载及撤销、UNKNOWN原结果查询和迟到关闭；真实页面分开生成与下载。 W313完成Main主体资料的版本化政策、精确预览/冻结计划、独立批准/拒绝/撤销与全目标hold；原操作同事务恢复及关闭迟到，真实页面采用。旧主体/租户直接擦除入口410，批准本身不修改资料。",
+        "remaining": "原375=33DONE/2IN_PROGRESS/340PLANNED，原59=9闭环/50剩余，125目标/247正式验收不变。WP02-15仍余W314逐Owner实际执行/UNKNOWN、W315墓碑与恢复、外部收件和通用FILE/CRM/备份适配、旧整租户导出及整租户受控处置采用。",
         "evidence_refs": [
           "docs/development/evidence/W125-01/DELIVERY.md",
           "docs/development/evidence/W135-01/DELIVERY.md",
@@ -175119,7 +175124,8 @@
           "docs/development/evidence/W302-01/DELIVERY.md",
           "docs/development/evidence/W303-01/DELIVERY.md",
           "docs/development/evidence/W311-01/DELIVERY.md",
-          "docs/development/evidence/W312-01/DELIVERY.md"
+          "docs/development/evidence/W312-01/DELIVERY.md",
+          "docs/development/evidence/W313-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true
@@ -175230,6 +175236,13 @@
           "handoff_branch_deleted": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave312-final-verification.json"
         }
+      },
+      "wave313_disposition_plan": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W313-01/DELIVERY.md",
+        "scope": "W313完成Main主体资料的版本化政策、精确预览/冻结计划、独立批准/拒绝/撤销与全目标hold；原操作同事务恢复及关闭迟到，真实页面采用。旧主体/租户直接擦除入口410，批准本身不修改资料。",
+        "validation": "10项独立PostgreSQL18场景（含真实认证HTTP、Chrome双身份申请/审批/hold及原结果恢复）、7项Vue交互、vue-tsc通过。",
+        "full_task_complete": false
       }
     },
     {
@@ -203663,7 +203676,7 @@
       "path": "docs/development/dispatch/20261104-wave313/README.md",
       "baseline_sha": "45db7764a6b9f3d5137c699508021198c18b60fc",
       "registered_at": "2026-11-04T11:52:59.483763+00:00",
-      "phase": "IMPLEMENTING",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -203689,17 +203702,17 @@
           "title": "精确主体处置预览批准与hold",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "IMPLEMENTING",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w313-01",
           "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
@@ -203707,14 +203720,33 @@
             "Main:privacy-disposition-schema",
             "Main:privacy-subject-disposition",
             "Main:platform-gdpr-view"
-          ]
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W313-01/DELIVERY.md",
+          "validation": "10项独立PostgreSQL18场景（含真实认证HTTP、Chrome双身份申请/审批/hold及原结果恢复）、7项Vue交互、vue-tsc通过。",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave313-final-verification.json"
+          },
+          "local_validation": "PASS_AFFECTED_SCOPE"
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "WP02-15/SYS-PRIV-01：实际Main身份资料处置的版本化政策、精确主体预览/计划、独立批准与带依据/复核期限的hold。复用现有identity_admission_revisions真实用户版本与IAM共同门，冻结目标/来源/作用字段/政策/hold版本和scopeDigest；旧计划遇目标/政策/hold变更不可再批准。申请人不能自行批准，仍有平台权的目标先独立受控撤权；不由处置暗中撤权。当前read恢复原操作与新prepare/approve/hold/policy能力分离，UNKNOWN查询/关闭迟到；真实页面展示精确范围、不可逆影响、未采用Owner和逾期复核风险。W314消费批准计划实施实际Owner效果，W315墓碑/恢复；本窗不执行擦除、不把批准状态当业务处置完成。"
+      "next_action": "用户明确要求当前小任务完成后暂停，额度重置后再开工。W313正常合并、准确分支处置和官方finish后将24h目标设为PAUSED；本轮不登记或启动W314，不把暂停记为24h完成。",
+      "lifecycle_snapshot": {
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_seat_released": false,
+        "main_branch_deleted": false,
+        "handoff_branch_deleted": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave313-final-verification.json"
+      }
     },
     "wave_history": [
       {
@@ -243320,8 +243352,8 @@
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
       "started_at": "2026-11-04T00:22:36+00:00",
-      "effective_seconds_recorded": 40105,
-      "timing_snapshot_at": "2026-11-04T11:52:59.483763+00:00",
+      "effective_seconds_recorded": 41494,
+      "timing_snapshot_at": "2026-11-04T12:16:42.875836+00:00",
       "timing_source": "Fresh goal.timeUsedSeconds snapshots; cross-check actual active segments and exclude interruptions. Previous-cycle time and inter-cycle gap never carried forward.",
       "next_reestimate_at_effective_seconds": 43200,
       "estimate_hours": [
@@ -244378,10 +244410,20 @@
           ],
           "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_AFTER_SOURCE_READ",
           "estimate_confidence": "LOW_ADMISSION_SOURCE_AUDIT_REQUIRED",
-          "state": "IN_PROGRESS",
+          "state": "VERIFYING",
           "scope_refinement": "Original WP02-15 remaining scope, following W302 actual disposition contract; re-read exact Owner sources/contracts/dependencies at admission and skip any then-completed behavior. Isolated PostgreSQL/simulated business data only; no existing-environment erasure, migration or deployment.",
           "started_at": "2026-11-04T11:52:59.483763+00:00",
-          "effective_start": 40105
+          "effective_start": 40105,
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W313-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave313-final-verification.json"
+          }
         },
         {
           "id": "W314-01",
@@ -244632,7 +244674,7 @@
           "historical_conflicts": "Preserved immutable; existing environments not inspected or migrated. Separate controlled forward recovery required for affected existing records."
         }
       ],
-      "next_priority": "W313 exact disposition preview/independent approval/hold; then W314 actual Owner effects and W315 restore; W310 at budget end",
+      "next_priority": "PAUSE after W313 lifecycle closeout; W314 is NOT STARTED until user resumes.",
       "extra_bug_deliveries": [
         {
           "id": "BUG751",
@@ -244662,7 +244704,12 @@
         }
       ],
       "next_calibration_seconds": 36000,
-      "next_calibration_effective_seconds": 43200
+      "next_calibration_effective_seconds": 43200,
+      "pause_requested": true,
+      "pause_after": "W313-01",
+      "pause_reason": "User requests quota-reset pause after current small task",
+      "resume_requires_user": true,
+      "pause_final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave313-final-verification.json"
     },
     "execution_plan_history": [
       {

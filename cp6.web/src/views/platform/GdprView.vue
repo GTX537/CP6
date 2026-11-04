@@ -27,36 +27,12 @@
 
       <!-- 按主体擦除 -->
       <el-tab-pane :label="t('platform.gdpr.eraseSubject')" name="eraseSubject">
-        <el-form label-width="140px" style="max-width: 560px">
-          <el-form-item :label="t('platform.tenant.adminUser')">
-            <el-input v-model="eraseSubjectId" :placeholder="'userId'" clearable />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="danger" :disabled="!eraseSubjectId.trim()" :loading="busy" @click="doEraseSubject">
-              {{ t('platform.gdpr.eraseSubject') }}
-            </el-button>
-          </el-form-item>
-        </el-form>
+        <PrivacyDispositionPanel />
       </el-tab-pane>
 
       <!-- 按租户擦除 -->
       <el-tab-pane :label="t('platform.gdpr.eraseTenant')" name="eraseTenant">
-        <el-form label-width="140px" style="max-width: 560px">
-          <el-form-item :label="t('platform.audit.tenantCode')">
-            <el-input v-model="eraseTenantId" :placeholder="'tenantId'" clearable />
-          </el-form-item>
-          <el-form-item :label="t('platform.gdpr.confirm')">
-            <el-radio-group v-model="eraseMode">
-              <el-radio label="anonymize">{{ t('platform.gdpr.modeAnonymize') }}</el-radio>
-              <el-radio label="purge">{{ t('platform.gdpr.modePurge') }}</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="danger" :disabled="!eraseTenantId.trim()" :loading="busy" @click="doEraseTenant">
-              {{ t('platform.gdpr.eraseTenant') }}
-            </el-button>
-          </el-form-item>
-        </el-form>
+        <el-alert title="旧的租户直接擦除入口已关闭。须先完成精确范围、独立审批和保留限制核对；当前尚未提供整租户处置执行。" type="warning" :closable="false" />
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -65,9 +41,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import { gdprApi } from '@/api/platform/gdpr'
 import PrivacyExportPanel from '@/components/platform/PrivacyExportPanel.vue'
+import PrivacyDispositionPanel from '@/components/platform/PrivacyDispositionPanel.vue'
 
 const { t } = useI18n({ useScope: 'global' })
 // The local scope notice remains available before server-managed language packs load.
@@ -86,24 +62,6 @@ const activeTab = ref('exportTenant')
 const busy = ref(false)
 
 const exportTenantId = ref('')
-const eraseSubjectId = ref('')
-const eraseTenantId = ref('')
-const eraseMode = ref<'anonymize' | 'purge'>('anonymize')
-
-/** 破坏性操作二次确认：要求输入 CONFIRM。返回 true=确认通过。 */
-async function confirmDestructive(): Promise<boolean> {
-  try {
-    const { value } = await ElMessageBox.prompt(t('platform.gdpr.confirmHint'), t('platform.gdpr.confirm'), {
-      type: 'warning',
-      inputPattern: /^CONFIRM$/,
-      inputErrorMessage: t('platform.gdpr.confirmHint')
-    })
-    return value === 'CONFIRM'
-  } catch {
-    return false // 取消
-  }
-}
-
 async function doExportTenant() {
   busy.value = true
   try {
@@ -115,31 +73,6 @@ async function doExportTenant() {
   }
 }
 
-async function doEraseSubject() {
-  if (!(await confirmDestructive())) return
-  busy.value = true
-  try {
-    await gdprApi.eraseSubject(eraseSubjectId.value.trim())
-    ElMessage.success(t('platform.saved'))
-  } catch {
-    // E-SEC-032 / 036 / 037 由拦截器提示
-  } finally {
-    busy.value = false
-  }
-}
-
-async function doEraseTenant() {
-  if (!(await confirmDestructive())) return
-  busy.value = true
-  try {
-    await gdprApi.eraseTenant(eraseTenantId.value.trim(), eraseMode.value)
-    ElMessage.success(t('platform.saved'))
-  } catch {
-    // E-SEC-032 / 036 / 038 / NotSupported(purge on non-relational) 由拦截器提示
-  } finally {
-    busy.value = false
-  }
-}
 </script>
 
 <style scoped>
