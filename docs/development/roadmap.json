@@ -162007,6 +162007,11 @@
       "date": "2026-11-04",
       "change": "W305按原WP12-10三项范围及正反验收核销委派修订、准确实际身份和历史缺证边界，原卡正式DONE；历史转换按原TASK R2 §5.1仍为独立迁移设计，不新增执行入口。 原375现32DONE/2IN_PROGRESS/341PLANNED；原59局部8闭环/51剩余。125完整目标0关闭、247正式验收NOT_RUN保持，其他卡不连带关闭。",
       "evidence": "docs/development/evidence/W305-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-04",
+      "change": "W305远端采用与生命周期核销，W307按原PLM-DOC准确修订可用性开工。",
+      "evidence": "docs/development/evidence/W307-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -203308,11 +203313,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261104-wave305",
-      "path": "docs/development/dispatch/20261104-wave305/README.md",
-      "baseline_sha": "591ab07d6bd44f68219c69cd40a0bcb06f6be56c",
-      "registered_at": "2026-11-04T08:10:59.563085+00:00",
-      "phase": "DELIVERY_MAIN_CLOSEOUT",
+      "id": "20261104-wave307",
+      "path": "docs/development/dispatch/20261104-wave307/README.md",
+      "baseline_sha": "b687ef2230b2ad3fba3673eca2433f44314da58a",
+      "registered_at": "2026-11-04T08:28:30.485352+00:00",
+      "phase": "IMPLEMENTING",
       "assigned_chats": [
         "COORD"
       ],
@@ -203330,52 +203335,40 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W305-01",
-          "workspace_task": "W305-01",
+          "id": "W307-01",
+          "workspace_task": "W307-01",
           "related_tasks": [
-            "WP12-10"
+            "WP05-16"
           ],
-          "title": "原委派授权与历史缺证范围核销",
+          "title": "受控文档准确修订的独立可用性",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "DELIVERY_MAIN_CLOSEOUT",
+          "phase": "IMPLEMENTING",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": true,
+          "worker_delivery_received": false,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w305-01",
+          "branch": "codex/w307-01",
           "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
-          "full_task_completed": true,
+          "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": true,
+          "candidate_review_completed": false,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
-            "Main:oa-delegation"
-          ],
-          "worker_delivery_ref": "docs/development/evidence/W305-01/DELIVERY.md",
-          "validation": "原WP12-10范围、当前源码适用性、既有真实执行及远端采用祖先、限定前置、文档diff/链接/台账/生成页核对通过；无新增产品测试。",
-          "lifecycle_snapshot": {
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave305-final-verification.json",
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false
-          }
+            "Main:engineering-document",
+            "Main:file-content-consumption",
+            "Main:document-review-consumption"
+          ]
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "核原FORM历史兼容真实余项，处理W306原前置；24h继续。",
-      "lifecycle_snapshot": {
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave305-final-verification.json",
-        "main_finish_required": true,
-        "main_seat_released": false,
-        "handoff_seat_released": false
-      }
+      "next_action": "按原WP05-16与SUP-REQ-002/003补充准确文档修订独立可用性：暂停/恢复/撤回使用当前权限、原版本引用、独立状态CAS及原操作恢复；不改原内容、摘要、审批或历史工程引用。下载、送审/决定/采用和工程新绑定共用当前状态；保留历史可读记录。PostgreSQL实际并发/权限/回滚、认证HTTP、页面与局部测试，单次集中审查。FORM旧历史内容采用尚未证明，WP12-03/04及W306保持未完，不能用TASK迁移边界核销。"
     },
     "wave_history": [
       {
@@ -241800,6 +241793,104 @@
             "workspace_clean": true
           }
         ]
+      },
+      {
+        "id": "20261104-wave305",
+        "path": "docs/development/dispatch/20261104-wave305/README.md",
+        "baseline_sha": "591ab07d6bd44f68219c69cd40a0bcb06f6be56c",
+        "registered_at": "2026-11-04T08:10:59.563085+00:00",
+        "phase": "DONE",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W305-01",
+            "workspace_task": "W305-01",
+            "related_tasks": [
+              "WP12-10"
+            ],
+            "title": "原委派授权与历史缺证范围核销",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "DONE",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w305-01",
+            "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
+            "full_task_completed": true,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:oa-delegation"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W305-01/DELIVERY.md",
+            "validation": "原WP12-10范围、当前源码适用性、既有真实执行及远端采用祖先、限定前置、文档diff/链接/台账/生成页核对通过；无新增产品测试。",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave305-final-verification.json"
+            }
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "核原FORM历史兼容真实余项，处理W306原前置；24h继续。",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave305-final-verification.json"
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W305-01",
+            "source": "4cadc22204fb435ad89b263857e56a87143b7def",
+            "remote_target": "b687ef2230b2ad3fba3673eca2433f44314da58a",
+            "pr": "https://github.com/GTX537/CP6/pull/763",
+            "branch": "codex/w305-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W305-HANDOFF",
+            "source": "bdcd3dbfab4911b9b51e9c2edcb87ae1564543ad",
+            "remote_target": "695127cbfeaca54ee45166eaf426af81afe7b17e",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/284",
+            "branch": "codex/w305-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -242376,8 +242467,8 @@
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
       "started_at": "2026-11-04T00:22:36+00:00",
-      "effective_seconds_recorded": 27162,
-      "timing_snapshot_at": "2026-11-04T08:16:19.925339+00:00",
+      "effective_seconds_recorded": 27871,
+      "timing_snapshot_at": "2026-11-04T08:28:30.485352+00:00",
       "timing_source": "Fresh goal.timeUsedSeconds snapshots; cross-check actual active segments and exclude interruptions. Previous-cycle time and inter-cycle gap never carried forward.",
       "next_reestimate_at_effective_seconds": 28800,
       "estimate_hours": [
@@ -243064,7 +243155,7 @@
           ],
           "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_REVISED_AFTER_SOURCE_READ",
           "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
-          "state": "VERIFYING",
+          "state": "DONE",
           "initial_estimate_hours": [
             2,
             4
@@ -243075,11 +243166,40 @@
           "full_task_completed": true,
           "report": "docs/development/evidence/W305-01/DELIVERY.md",
           "lifecycle_snapshot": {
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave305-final-verification.json",
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false
-          }
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave305-final-verification.json"
+          },
+          "actual_effective_seconds": 781,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W305-01",
+              "source": "4cadc22204fb435ad89b263857e56a87143b7def",
+              "remote_target": "b687ef2230b2ad3fba3673eca2433f44314da58a",
+              "pr": "https://github.com/GTX537/CP6/pull/763",
+              "branch": "codex/w305-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W305-HANDOFF",
+              "source": "bdcd3dbfab4911b9b51e9c2edcb87ae1564543ad",
+              "remote_target": "695127cbfeaca54ee45166eaf426af81afe7b17e",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/284",
+              "branch": "codex/w305-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
         },
         {
           "id": "W306-01",
@@ -243108,18 +243228,20 @@
           "related_tasks": [
             "WP05-16"
           ],
-          "title": "受控技术文档独立可用性和原版本撤回",
+          "title": "受控文档准确修订的独立可用性",
           "estimate_hours": [
-            1,
-            2
+            1.5,
+            3
           ],
-          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_REVISED_AFTER_SOURCE_READ",
           "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
-          "state": "PLANNED",
+          "state": "IN_PROGRESS",
           "initial_estimate_hours": [
             2,
             4
-          ]
+          ],
+          "started_at": "2026-11-04T08:28:30.485352+00:00",
+          "effective_start": 27871
         },
         {
           "id": "W308-01",
@@ -243456,7 +243578,7 @@
           "historical_conflicts": "Preserved immutable; existing environments not inspected or migrated. Separate controlled forward recovery required for affected existing records."
         }
       ],
-      "next_priority": "W305 exact original task/delegation scope reconciliation; separate remaining FORM historical-content question from TASK migration design",
+      "next_priority": "W307 exact document availability; W306 deferred until historical FORM content adoption is resolved",
       "extra_bug_deliveries": [
         {
           "id": "BUG751",

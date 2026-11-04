@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-04：W305已交付 / W307核销中
+
+W305 Main763/Handoff284完整采用、分支准确删除、固定工作区干净、两席位释放；[W307](../development/evidence/W307-01/DELIVERY.md)沿原PLM-DOC合同实现独立可用性，尚未关闭原卡。原37532DONE/2IN_PROGRESS/341PLANNED、59余51，24h继续。
+
 ## 2026-11-04：WP12-10原卡核销，24h继续
 
 W305按原WP12-10三项范围及正反验收核销委派修订、准确实际身份和历史缺证边界，原卡正式DONE；历史转换按原TASK R2 §5.1仍为独立迁移设计，不新增执行入口。 [报告](../development/evidence/W305-01/DELIVERY.md)。
