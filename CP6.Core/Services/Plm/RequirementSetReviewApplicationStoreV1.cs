@@ -40,6 +40,11 @@ internal sealed class RequirementSetReviewApplicationStoreV1(CP6Context db, Scop
         return application;
     }
     internal const string Action = "PLM_REQUIREMENT_SET_REVIEW";
+    internal Task<bool> HasApprovedPredecessor(EngineeringSourceRefV1 candidate,CancellationToken ct)=>db.Database.SqlQuery<bool>($"""
+        SELECT EXISTS(SELECT FROM cp6_requirement_set_review_application_v1.applications
+          WHERE environment_id={scope.EnvironmentId} AND tenant_id={db.CurrentTenantId} AND requirement_set_id={candidate.Id}
+            AND requirement_set_revision<{long.Parse(candidate.Version,CultureInfo.InvariantCulture)} AND approved) AS "Value"
+        """).SingleAsync(ct);
     internal const string Journal = "Main.Plm.RequirementSetApplication.operations.v1", Contract = "Main.Plm.RequirementSetApplication.commands.v1";
     internal sealed record Source(Guid Stream, Guid RequirementSet, string Unit, ApprovalDecisionEnvelopeV2 Decision,
         ApprovalSubmitCommandV2 Submission, string EvidenceMode, string OriginalHash);

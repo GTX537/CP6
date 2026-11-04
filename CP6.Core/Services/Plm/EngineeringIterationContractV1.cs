@@ -44,7 +44,9 @@ public sealed record IterationProgressV1(string ConfirmedWeight,string PlannedWe
 public sealed record EngineeringIterationSnapshotV1(Guid TenantId,EngineeringSourceRefV1 Reference,Guid Etag,bool IsCurrent,
     EngineeringIterationBodyV1 Body,Guid AuthorId,Guid ActorId,string? ParentVersion,string Reason,DateTimeOffset RecordedAt,
     string OriginalJson,string[] Missing,string SourceDrift="NOT_APPLICABLE",IterationProgressV1? Progress=null);
-public sealed record EngineeringIterationResultV1(Guid OperationId,string Kind,Guid ObjectId,string Version,string Digest);
+public sealed record EngineeringIterationResultV1(Guid OperationId,string Kind,Guid ObjectId,string Version,string Digest,
+    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] Guid? ImpactAssessmentId=null,
+    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] Guid[]? ImpactCases=null);
 public sealed record EngineeringIterationOperationV1(Guid OperationId,string State,EngineeringIterationResultV1? Result=null);
 public sealed record IterationMemberChoiceV1(Guid Id,string Name);
 internal sealed record EngineeringIterationStoredV1(Guid TenantId,Guid Id,string Version,Guid CreatorId,Guid Etag,

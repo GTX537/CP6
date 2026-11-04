@@ -67,12 +67,20 @@
           <button :disabled="locked || !deliverables.length || work.holdState === 'HELD'" @click="submitTask">提交任务交付</button><p>没有交付物时需另有批准豁免；当前入口不签发该豁免。</p>
         </section>
       </section>
+      <RequirementImpactPanel v-if="current?.body.iteration && scope" :key="current.reference.id + ':' + current.reference.version" :iteration="impact" :difference="impactDifference" :disabled="busy || !!pending" :can-write="can('impact-assess')" @load="loadImpact" @difference="showImpactDifference" @assess="assessImpact" />
       <details v-if="current"><summary>历史原件</summary><label>版本<input v-model="historyVersion" aria-label="历史版本" pattern="[1-9][0-9]*" /></label><button :disabled="busy" @click="readHistory">读取历史原件</button><pre v-if="history">{{ history.originalJson }}</pre></details>
     </section>
   </main>
 </template>
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import RequirementImpactPanel from './RequirementImpactPanel.vue'
+import { requirementImpactApi, type IterationImpactContext, type ImpactConsumer, type ImpactDecision, type SuccessorDifference } from '@/api/plm/requirementImpact'
+const impact = ref<IterationImpactContext | null>(null), impactDifference = ref<SuccessorDifference | null>(null)
+async function loadImpact() { await run(async check => { if (!current.value) return; impact.value = null; impactDifference.value = null; const value = response(await requirementImpactApi.iteration(current.value.reference.id)); check(); impact.value = value }) }
+async function showImpactDifference(row: ImpactConsumer) { await run(async check => { if (!row.case) return; impactDifference.value = null; const value = response(await requirementImpactApi.difference(row.case.candidate.id, row.case.adopted.version, row.case.candidate.version)); check(); impactDifference.value = value }) }
+async function assessImpact(row: ImpactConsumer, decision: ImpactDecision, reason: string) { await run(async check => { if (!scope.value || !impact.value || !row.case || pending.value) return; const context = impact.value, selected = row.case; const result = await saveEngineeringIteration(scope.value, context.iteration.id, check, operationId => requirementImpactApi.assess({ operationId, caseId: selected.id, iteration: context.iteration, expectedAssessmentId: selected.assessment?.id ?? null, decision, reason })); check(); if (result.result) { const value = response(await requirementImpactApi.iteration(context.iteration.id)); check(); impact.value = value; notice.value = '已登记影响评估；当前需求输入保持原准确版本。' } }) }
+
 import IterationReviewPanel from './IterationReviewPanel.vue'
 import { usePermissionStore } from '@/stores/permission'
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
@@ -96,7 +104,7 @@ let generation = 0, live = true
 function memberName(id: string) { return members.value.find(m => m.id === id)?.name || (id === scope.value?.actorId ? '当前用户' : id) }
 const reviewOpen = ref(false)
 async function refreshReviewIteration() { await run(async check => { const id = current.value?.reference.id; if (!id) return; const value = response(await api.read(id)); check(); current.value = value; plan.value = value.body.iteration ? copy(value.body.iteration.plan) : null }) }
-function resetEditor() { reviewOpen.value = false; current.value = null; creation.value = null; projectDraft.value = null; plan.value = null; taskDraft.value = null; objectId.value = ''; reason.value = department.value = ''; selectedSet.value = null; setChoices.value = []; setId.value = setVersion.value = ''; submitTaskId.value = ''; deliverables.value = []; documentChoices.value = []; reviewDocuments.value = []; documentId.value = ''; history.value = null; siteOptions.value = []; productOptions.value = [] }
+function resetEditor() { impact.value = null; impactDifference.value = null; reviewOpen.value = false; current.value = null; creation.value = null; projectDraft.value = null; plan.value = null; taskDraft.value = null; objectId.value = ''; reason.value = department.value = ''; selectedSet.value = null; setChoices.value = []; setId.value = setVersion.value = ''; submitTaskId.value = ''; deliverables.value = []; documentChoices.value = []; reviewDocuments.value = []; documentId.value = ''; history.value = null; siteOptions.value = []; productOptions.value = [] }
 function clearPrivate() { resetEditor(); project.value = null; iterations.value = []; rows.value = []; members.value = []; scope.value = null; pending.value = null; notice.value = '' }
 async function run(action: (check: () => void) => Promise<void>) {
   if (busy.value) return

@@ -26,6 +26,7 @@
         <button type="button" :disabled="draft.members.length < 2" @click="addConflict">登记冲突</button>
         <label>保存原因<textarea v-model="reason" aria-label="保存原因" required maxlength="8000" /></label><button>{{ current ? '保存后继版本' : '保存草稿' }}</button>
       </fieldset></form>
+      <RequirementImpactPanel v-if="current && scope" :key="current.reference.id + ':' + current.reference.version" :source="impact" :difference="impactDifference" :disabled="locked" :can-write="permission.has('plm-requirement-set:impact-request')" :candidate-version="current.reference.version" @load="loadImpact" @difference="showImpactDifference" @request="requestImpact" />
       <RequirementSetReviewPanel v-if="current && scope" :requirement-set="current" :scope="scope" :disabled="locked" :initial-submission="current.reference.id.toLowerCase() === requirementSetId?.toLowerCase() ? reviewSubmission : undefined" />
       <details v-if="current"><summary>历史版本（只读）</summary><label>版本<input v-model="historyVersion" aria-label="历史版本" /></label><button :disabled="busy" @click="readHistory">读取历史</button><article v-if="history"><p>{{ history.body.name }} · {{ history.reference.version }} · {{ history.body.scope }}</p><p v-for="m in history.body.members" :key="m.requirement.id">{{ m.requirement.id }} · 版本 {{ m.requirement.version }} · {{ m.disposition }}</p><p>保存原因：{{ history.reason }} · {{ history.recordedAt }}</p></article></details>
     </section>
@@ -33,6 +34,13 @@
 </template>
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import RequirementImpactPanel from './RequirementImpactPanel.vue'
+import { requirementImpactApi, type ImpactContext, type ImpactConsumer, type SuccessorDifference } from '@/api/plm/requirementImpact'
+const impact = ref<ImpactContext | null>(null), impactDifference = ref<SuccessorDifference | null>(null)
+async function loadImpact(version?: string) { await run(async check => { if (!current.value) return; impact.value = null; impactDifference.value = null; const value = requirementSetResponse(await requirementImpactApi.source(current.value.reference.id, version || current.value.reference.version)); check(); impact.value = value }) }
+async function showImpactDifference(row: ImpactConsumer) { await run(async check => { if (!impact.value) return; impactDifference.value = null; const value = requirementSetResponse(await requirementImpactApi.difference(impact.value.candidate.id, row.adopted.version, impact.value.candidate.version)); check(); impactDifference.value = value }) }
+async function requestImpact(action: 'REQUEST' | 'WITHDRAW', reason: string) { await run(async check => { if (!scope.value || !impact.value || pending.value) return; const selected = impact.value; const result = await saveRequirementSet(scope.value, selected.candidate.id, check, operationId => requirementImpactApi.request({ operationId, candidate: selected.candidate, action, expectedEtag: selected.etag, reason })); check(); if (result.result) { const value = requirementSetResponse(await requirementImpactApi.source(selected.candidate.id, selected.candidate.version)); check(); impact.value = value; notice.value = action === 'REQUEST' ? '已登记实际迭代影响请求，等待负责人评估。' : '已撤回请求并保留历史；原需求问题仍需后续处置。' } }) }
+
 import { requirementSetApi, requirementSetMissingText as missingText, type RequirementSetBody, type RequirementSetSnapshot, type RequirementSetCreation, type RequirementSetScope, type RequirementSetCommand } from '@/api/plm/requirementSet'
 import { requirementApi, type RequirementSnapshot } from '@/api/plm/engineeringRequirements'
 import { evaluationApi } from '@/api/plm/requirementEvaluation'
@@ -49,7 +57,7 @@ const search = ref(''), page = ref(1), rows = ref<RequirementSetSnapshot[]>([]),
 const choices = ref<RequirementSnapshot[]>([]), originals = ref<RequirementSnapshot[]>([]), memberSearch = ref(''), memberPage = ref(1), choice = ref(''), historyVersion = ref('1'), history = ref<RequirementSetSnapshot | null>(null)
 const copy = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T
 let generation = 0, live = true
-function resetEditor() { current.value = null; creation.value = null; draft.value = null; objectId.value = ''; department.value = reason.value = ''; choices.value = originals.value = []; choice.value = memberSearch.value = ''; memberPage.value = 1; history.value = null }
+function resetEditor() { impact.value = null; impactDifference.value = null; current.value = null; creation.value = null; draft.value = null; objectId.value = ''; department.value = reason.value = ''; choices.value = originals.value = []; choice.value = memberSearch.value = ''; memberPage.value = 1; history.value = null }
 function clearPrivate() { resetEditor(); rows.value = []; scope.value = null; pending.value = null; notice.value = '' }
 function syncPending() { pending.value = scope.value ? pendingRequirementSet(scope.value) : null }
 async function run(action: (check: () => void) => Promise<void>) {

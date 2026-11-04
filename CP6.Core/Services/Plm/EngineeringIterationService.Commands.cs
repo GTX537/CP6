@@ -87,8 +87,9 @@ public sealed partial class EngineeringIterationService
         }
         // This native pre-review stage has no external submissions. Future OA/VER adapters must
         // add their authoritative pending-request checks before they may advance this Owner's stage.
-        if(c.Action is "START" or "RESUME" or "SUBMIT_TASK" or "CONFIRM_TASK")
+        if(c.Action is "START" or "START_TASK" or "RESUME" or "SUBMIT_TASK" or "CONFIRM_TASK")
         {
+            await RequireImpactClear(old!,ct);
             await ProjectSources(a,project.Definition,true,ct);await Inputs(a,work.Input,true,ct);
             if(await ProjectDrift(s,work,project,ct))throw Error("ITERATION_PROJECT_INPUT_CHANGED",412);
             PlanMembers(project.Definition,work.Plan);await Staff([work.Plan.OwnerId],ct);

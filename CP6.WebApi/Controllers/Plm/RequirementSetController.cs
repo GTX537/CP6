@@ -21,6 +21,12 @@ public sealed class RequirementSetController(RequirementSetService owner) : Cont
     public async Task<IActionResult> Read(Guid id, [FromQuery] string? version, CancellationToken ct) => Result(await owner.ReadAsync(id, version, ct));
     [HttpPost("source")]
     public async Task<IActionResult> Source([FromBody] EngineeringSourceRefV1 reference,CancellationToken ct) => Result(await owner.SourceAsync(reference,ct));
+    [HttpGet("{id:guid}/impact")]
+    public async Task<IActionResult> Impact(Guid id,[FromQuery] string version,CancellationToken ct)=>Result(await owner.ImpactAsync(id,version,ct));
+    [HttpGet("{id:guid}/successor-difference")]
+    public async Task<IActionResult> Difference(Guid id,[FromQuery] string before,[FromQuery] string after,CancellationToken ct)=>Result(await owner.SuccessorDifferenceAsync(id,before,after,ct));
+    [HttpPost("impact-requests"),RequestSizeLimit(32768)]
+    public async Task<IActionResult> ImpactRequest([FromBody] RequirementImpactRequestCommandV1 command,CancellationToken ct)=>Result(await owner.RequestImpactAsync(command,ct));
     [HttpPost("commands"), RequestSizeLimit(2097152)]
     public async Task<IActionResult> Command([FromBody] RequirementSetCommandV1 command, CancellationToken ct) => Result(await owner.CommandAsync(command, ct));
     [HttpGet("operations/{id:guid}")]
