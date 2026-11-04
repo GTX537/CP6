@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W296实际24h收口](evidence/W296-01/DELIVERY.md)，WP12-06整卡DONE，原59余53；最终两仓finish后本周期结束。
+> 当前：[W297](evidence/W297-01/DELIVERY.md)DOC实际Owner可信撤回本地验收完成；新24h单人目标继续，远端采用/finish后进入W298。
+
+> 历史快照：[W296实际24h收口](evidence/W296-01/DELIVERY.md)，WP12-06整卡DONE，原59余53；最终两仓finish后本周期结束。
 
 > 历史快照：[W295整卡核销](evidence/W295-01/DELIVERY.md)，WP12-02 DONE，原59局部余54；24h目标单人继续，下一WP12-06。
 

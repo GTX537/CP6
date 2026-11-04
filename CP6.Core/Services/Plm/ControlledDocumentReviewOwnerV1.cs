@@ -35,6 +35,7 @@ public sealed partial class ControlledDocumentReviewOwnerV1(CP6Context db, Opera
         var current=await originals.Read(id,null,ct);
         var observed=await documents.ReviewSource(a,current.Reference,false,ct);
         var store=new ControlledDocumentReviewStoreV1(db,Environment);await store.Fence(write,ct);
+        await new DocumentReviewControlStoreV1(db,Environment).Ready(ct);
         return new(a,store,observed,await store.Policies(id,ct),await store.Submissions(id,ct));
     }
     public Task<DocumentReviewContextV1> ContextAsync(Guid id,CancellationToken ct=default)=>Authority.ExecuteAsync(
@@ -172,6 +173,7 @@ public sealed partial class ControlledDocumentReviewOwnerV1(CP6Context db, Opera
             var payload=ApprovalCanonicalV2.Bytes(e);var row=new SubmissionRow(submission,id,Revision(command.Document.Version),command.Policy.Id,c.Access.ActorId,
                 command.OperationId,intent,payload,ApprovalCanonicalV2.Hash(payload),authorization,packageBytes,packageDigest);
             await c.Store.Add(row,t);
+            await new DocumentReviewControlStoreV1(db,Environment).Begin(row,t);
             c.Access.AtCommit(async token=>{
                 var originals=new ControlledDocumentStoreV1(db);await originals.Fence(false,token);
                 var document=await originals.Read(id,null,token);
@@ -194,7 +196,8 @@ public sealed partial class ControlledDocumentReviewOwnerV1(CP6Context db, Opera
         foreach(var row in same)
         {
             var actual=await applications.Application(row.Id,ct);
-            if(actual==null || actual.Approved)throw Error("DOCUMENT_REVIEW_REJECTION_REQUIRED",409);
+            if(actual?.Approved==true || actual==null&&(await new DocumentReviewControlStoreV1(db,Environment).Read(row.Id,ct)).State!="WITHDRAWN")
+                throw Error("DOCUMENT_REVIEW_REJECTION_REQUIRED",409);
         }
     }
     private async Task<DocumentReviewResultV1> Disclose(Context c,Guid operation,MainOwnerOperationJournalV1.Original original,byte[]? input,CancellationToken ct)
