@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 2026-11-04：W311主体逐Owner清单 / 24h继续
+
+W311在实际主体导出中采用用户、安全事件及稳定角色关联的显式字段投影、逐来源Manifest、未知覆盖与排除说明；页面展示真实部分覆盖，缺源直接失败。 [交付](../development/evidence/W311-01/DELIVERY.md)。
+
+5项独立PostgreSQL18场景（含真实认证HTTP及Chrome下载）、2项既有主体导出单测、4项Vue行为及vue-tsc通过。 原375保持33DONE/2IN_PROGRESS/340PLANNED；原59保持9闭环/50剩余，125目标与247正式验收不变。WP02-15仍有持久导出/当前下载、用途/接收方/批准、逐Owner处置/hold/UNKNOWN/墓碑恢复及各域实际适配。 分支/工作区/席位最终见wave311-final-verification.json。
+
 ## 2026-11-04：W309已交付 / W311开工
 
 W309 Main766/Handoff287已采用；两分支删除、固定工作区干净、席位释放。Handoff删除曾遇GitHub500，官方finish准确重试已恢复。[W311](../development/evidence/W311-01/DELIVERY.md)补主体逐Owner清单及分类；原37533DONE/2IN_PROGRESS/340PLANNED、59余50；24h继续。

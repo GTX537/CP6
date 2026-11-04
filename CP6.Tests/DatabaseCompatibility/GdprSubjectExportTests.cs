@@ -56,7 +56,7 @@ public sealed partial class GdprRelationalTests
         Assert.Equal(targetTenant, root.GetProperty("user").GetProperty("TenantId").GetGuid());
         Assert.False(root.GetProperty("user").TryGetProperty("Password", out _));
         var scope = root.GetProperty("scope");
-        Assert.Equal("cp6.subject-export-scope.v1", scope.GetProperty("version").GetString());
+        Assert.Equal("cp6.subject-export-scope.v2", scope.GetProperty("version").GetString());
         Assert.Equal(targetTenant, scope.GetProperty("tenantId").GetGuid());
         Assert.Equal(targetId, scope.GetProperty("subjectId").GetGuid());
         Assert.False(scope.GetProperty("complete").GetBoolean());

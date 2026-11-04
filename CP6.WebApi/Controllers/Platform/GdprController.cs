@@ -40,12 +40,13 @@ public class GdprController : ControllerBase
     [HttpGet("export/subject/{userId:guid}")]
     public async Task<IActionResult> ExportSubject(Guid userId)
     {
+        Response.Headers.CacheControl = "no-store";
         try
         {
             var stream = await _svc.ExportSubjectAsync(userId);
             return File(stream, "application/json", $"subject-{userId}-{DateTime.Now:yyyyMMdd}.json");
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex.Message == "E-SEC-032")
         {
             throw new BizException(ex.Message);   // E-SEC-032
         }
