@@ -13,6 +13,7 @@ async function load() {
   finally { if (live && current === generation) loading.value = false }
 }
 function changed() { if (stamp === identityStamp()) return; stamp = identityStamp(); generation++; rows.value = []; total.value = 0; selected.value = ''; loading.value = false; error.value = '身份已改变，请重新读取。' }
+function completed(draftId?: string) { if (draftId) selected.value = draftId; void load() }
 window.addEventListener(AUTH_EVENT, changed); window.addEventListener('storage', changed)
 onMounted(load)
 onBeforeUnmount(() => { live = false; generation++; window.removeEventListener(AUTH_EVENT, changed); window.removeEventListener('storage', changed) })
@@ -28,7 +29,7 @@ onBeforeUnmount(() => { live = false; generation++; window.removeEventListener(A
       <el-table-column label="操作"><template #default="{ row }"><el-button :disabled="editorLocked" @click="selected = row.draftId">查看 / 编辑</el-button></template></el-table-column>
     </el-table>
     <el-pagination v-model:current-page="page" :total="total" :page-size="20" layout="prev, pager, next" @current-change="load" />
-    <section><PersonalFormEditor :draft-id="selected || undefined" @changed="load" @locked="editorLocked = $event" /></section>
+    <section><PersonalFormEditor :draft-id="selected || undefined" @changed="completed" @locked="editorLocked = $event" /></section>
   </div>
 </template>
 <style scoped>.toolbar { display: flex; gap: 16px; align-items: center; margin-bottom: 12px; } section { margin-top: 24px; }</style>

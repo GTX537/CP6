@@ -93,9 +93,10 @@ public sealed partial class PersonalFormOwnerV2
     private async Task<bool> FileLineage(FormFileContentV2.Claim claim,string kind,Guid? id,CancellationToken ct)
     {
         if(claim.Kind==kind&&claim.Id==id)return true;
+        if(claim.Kind=="DRAFT"&&kind=="DRAFT")return await db.Database.SqlQuery<bool>($"SELECT cp6_personal_form_v2.draft_lineage({db.CurrentTenantId},{fence.EnvironmentId},{id},{claim.Id}) AS \"Value\"").SingleAsync(ct);
         return claim.Kind=="DRAFT"&&kind=="SUBMISSION"&&await db.Database.SqlQuery<bool>($"""
             SELECT EXISTS(SELECT FROM cp6_personal_form_v2.submissions WHERE tenant_id={db.CurrentTenantId} AND environment_id={fence.EnvironmentId}
-              AND form_data_id={id} AND draft_id={claim.Id}) AS "Value"
+              AND form_data_id={id} AND (draft_id={claim.Id} OR cp6_personal_form_v2.draft_lineage({db.CurrentTenantId},{fence.EnvironmentId},draft_id,{claim.Id}))) AS "Value"
             """).SingleAsync(ct);
     }
     private async Task<FormFileContentV2.Row> FileReference(FileContext context,string field,string reference,Guid actor,bool reading,bool available,CancellationToken ct)

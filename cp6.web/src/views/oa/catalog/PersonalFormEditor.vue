@@ -9,8 +9,9 @@ import { formObject, readFormJson, writeFormJson, schemaFields, initialFormData,
 import { usePersonalCommand } from './usePersonalCommand'
 import PersonalCommandStatus from './PersonalCommandStatus.vue'
 import PersonalFormFields from './PersonalFormFields.vue'
+import PersonalDraftRecovery from './PersonalDraftRecovery.vue'
 const props = defineProps<{ formKey?: string; draftId?: string }>()
-const emit = defineEmits<{ changed: []; locked: [value: boolean] }>()
+const emit = defineEmits<{ changed: [draftId?: string]; locked: [value: boolean] }>()
 const context = ref<PersonalContext>(), draft = ref<PersonalDraft>(), submission = ref<FormSubmission>()
 const model = ref<FormObject>({}), title = ref(''), loading = ref(false), readError = ref(''), valuesValid = ref(true)
 const preview = ref<ValuePreview>(), rebase = ref<RebasePreview>(), confirmedLoss = ref(false)
@@ -43,7 +44,7 @@ const commands = usePersonalCommand(clearPrivate, async result => {
   } else if (result.result && 'formDataId' in result.result) {
     submission.value = result.result; model.value = {}; draft.value = undefined; context.value = undefined; title.value = ''; preview.value = undefined; rebase.value = undefined
   }
-  emit('changed')
+  emit('changed', draft.value?.draftId)
 })
 const { pending, busy, error, message, storageUnavailable } = commands
 const locked = computed(() => busy.value || loading.value || !!pending.value || storageUnavailable.value || !!submission.value)
@@ -117,6 +118,10 @@ async function remove() {
   await commands.execute('FORM_DRAFT_DELETE', draft.value.draftId, draft.value.rowVersion, JSON.stringify({ reason: '本人删除未提交草稿' }))
 }
 async function restore() { if (draft.value && !locked.value) await commands.execute('FORM_DRAFT_RESTORE', draft.value.draftId, draft.value.rowVersion, JSON.stringify({ reason: '本人恢复留存草稿' })) }
+async function recoverSnapshot(historyId: string, expectedVersion: string, reason: string) {
+  if (!draft.value || locked.value) return
+  await commands.execute('FORM_DRAFT_RECOVER_SNAPSHOT', draft.value.draftId, expectedVersion, JSON.stringify({ historyId, reason }))
+}
 async function previewRebase() {
   if (!draft.value || locked.value) return
   if (writeFormJson(model.value) !== writeFormJson(formObject(readFormJson(draft.value.dataJson))) || title.value !== (draft.value.title ?? '')) { readError.value = '请先保存当前修改，再预览重基。'; return }
@@ -139,7 +144,10 @@ async function applyRebase() {
   if (writeFormJson(model.value) !== writeFormJson(formObject(readFormJson(draft.value.dataJson))) || title.value !== (draft.value.title ?? '')) { readError.value = '请先保存当前修改，并重新预览重基。'; return }
   await commands.execute('FORM_DRAFT_REBASE', draft.value.draftId, rebase.value.expectedVersion, JSON.stringify({ previewId: rebase.value.previewId, previewDigest: rebase.value.digest, targetVersionId: rebase.value.targetVersionId, confirmRemovedValues: confirmedLoss.value, dispositionRef: rebase.value.dispositionRef ?? undefined }))
 }
-watch(() => [props.formKey, props.draftId], () => { clearPrivate(); void load() }, { immediate: true })
+watch(() => [props.formKey, props.draftId], () => {
+  if (props.draftId && props.draftId === draft.value?.draftId && !props.formKey) return
+  clearPrivate(); void load()
+}, { immediate: true })
 watch([model, title], () => { preview.value = undefined; rebase.value = undefined; confirmedLoss.value = false }, { deep: true })
 onBeforeUnmount(() => { live = false; generation++ })
 </script>
@@ -164,6 +172,7 @@ onBeforeUnmount(() => { live = false; generation++ })
         <el-button v-if="can('RESTORE')" :disabled="locked" @click="restore">恢复草稿</el-button>
         <el-button v-if="draft?.stale && can('REBASE')" :disabled="locked" @click="previewRebase">预览重基到 v{{ draft.latestPublishedVersion }}</el-button>
       </div>
+      <PersonalDraftRecovery v-if="draft" :draft="draft" :locked="locked" @recover="recoverSnapshot" />
       <section v-if="preview">
         <h4>计算结果预览</h4><p>{{ preview.valid ? '当前填写通过校验；提交时仍会核对当前资格。' : '仍有必填或格式问题，请检查填写。' }}</p>
         <PersonalFormFields :fields="fields" :model-value="formObject(readFormJson(preview.dataJson))" :mask="current.fieldMask" :hidden="preview.hiddenFields" disabled />
