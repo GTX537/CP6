@@ -162127,6 +162127,11 @@
       "date": "2026-11-08",
       "change": "W320完成Main.Privacy.ExportPayload.v1：准确原生导出载荷的显式UTC保留政策、独立申请/批准/实际删除、全主体hold、最小不可变原回执/墓碑与原生防复活；已接恢复候选实际删除旧载荷或据实记录缺失并安装屏障，两库UNKNOWN责任与原键恢复继续复用。仅此Owner，整体PARTIAL。 原375=36DONE/2IN_PROGRESS/337PLANNED，原59=12闭环/47剩余，125目标/247正式验收不变。WP02-15仍余安全日志内容、授权/组织引用、OA/PLM与CRM业务历史、FILE及其他来源副本处置、整租户导出/受控处置、WAL/备份/外部副本及完整环境恢复。原生载荷缺失而无处置事实时仍明确阻断，不冒删除成功。W306及WP12-03/04已闭环，不再当作阻塞；继续核对其他真实Owner，W310仅预算末尾。",
       "evidence": "docs/development/evidence/W320-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-08",
+      "change": "W320已实际两仓闭环；W321登记。原WP02-15真实余项：Main.SecurityLog.Fields.v1按准确事件原件及已接受的UserName/ClientIp字段分类实施独立政策/预览/申请/批准/实际清理、全主体hold、原结果/墓碑和恢复采用。保留事件/stable subject/租户身份及其余未核字段，不宣称整个安全事件或整个隐私任务已匿名化。旧CreatedAt无时区，资格只按明确UTC NotBefore政策，不推算法定期限；单事件准确边界，不暗含批量或按同名归属。",
+      "evidence": "docs/development/dispatch/20261108-wave321/README.md"
     }
   ],
   "implementation_assessment": {
@@ -175415,19 +175420,38 @@
         }
       },
       "wave320_export_payload_disposition": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W320-01/DELIVERY.md",
         "scope": "W320完成Main.Privacy.ExportPayload.v1：准确原生导出载荷的显式UTC保留政策、独立申请/批准/实际删除、全主体hold、最小不可变原回执/墓碑与原生防复活；已接恢复候选实际删除旧载荷或据实记录缺失并安装屏障，两库UNKNOWN责任与原键恢复继续复用。仅此Owner，整体PARTIAL。",
         "full_task_complete": false,
         "validation": "20项新增实际PostgreSQL18场景、17项受影响旧导出/hold/身份恢复回归（含真实认证HTTP、两条新增和一条既有Chrome）、22项Vue/API行为及vue-tsc通过。",
         "lifecycle_snapshot": {
-          "main_finish_required": true,
-          "main_seat_released": false,
-          "handoff_seat_released": false,
-          "main_branch_deleted": false,
-          "handoff_branch_deleted": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave320-final-verification.json"
-        }
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W320-01",
+          "source": "c1809564087f8a8264511637b3f2a3500f49c080",
+          "remote_target": "90bf9e9f23cab088e9e5dd7c82cc2de58190a7c6",
+          "pr": "https://github.com/GTX537/CP6/pull/775",
+          "branch": "codex/w320-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "workspace_clean": true
+        },
+        "lifecycle_complete": true
+      },
+      "wave321_security_fields_disposition": {
+        "status": "IMPLEMENTING",
+        "report": "docs/development/evidence/W321-01/DELIVERY.md",
+        "scope": "原WP02-15真实余项：Main.SecurityLog.Fields.v1按准确事件原件及已接受的UserName/ClientIp字段分类实施独立政策/预览/申请/批准/实际清理、全主体hold、原结果/墓碑和恢复采用。保留事件/stable subject/租户身份及其余未核字段，不宣称整个安全事件或整个隐私任务已匿名化。旧CreatedAt无时区，资格只按明确UTC NotBefore政策，不推算法定期限；单事件准确边界，不暗含批量或按同名归属。",
+        "full_task_complete": false
       }
     },
     {
@@ -204248,11 +204272,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261108-wave320",
-      "path": "docs/development/dispatch/20261108-wave320/README.md",
-      "baseline_sha": "b69c9d8cc9b2bc2ab50cb491b40aeb1ba9e55b60",
-      "registered_at": "2026-11-08T14:00:20.471262+00:00",
-      "phase": "DELIVERY_MAIN_CLOSEOUT",
+      "id": "20261108-wave321",
+      "path": "docs/development/dispatch/20261108-wave321/README.md",
+      "baseline_sha": "90bf9e9f23cab088e9e5dd7c82cc2de58190a7c6",
+      "registered_at": "2026-11-08T16:03:32.416071+00:00",
+      "phase": "IMPLEMENTING",
       "assigned_chats": [
         "COORD"
       ],
@@ -204270,60 +204294,41 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W320-01",
-          "workspace_task": "W320-01",
+          "id": "W321-01",
+          "workspace_task": "W321-01",
           "related_tasks": [
             "WP02-15"
           ],
-          "title": "原生导出载荷处置与恢复采用",
+          "title": "准确安全事件已分类字段处置与恢复采用",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "DELIVERY_MAIN_CLOSEOUT",
+          "phase": "IMPLEMENTING",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": true,
+          "worker_delivery_received": false,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w320-01",
-          "planned_scope_ref": "docs/development/contracts/privacy-export-disposition-v1.md",
+          "branch": "codex/w321-01",
+          "planned_scope_ref": "docs/development/contracts/security-log-field-disposition-v1.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": true,
+          "candidate_review_completed": false,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
-            "Main:privacy-export",
-            "Main:privacy-disposition",
+            "Main:privacy-security-fields",
+            "Main:Sys_SecurityLogs-native-writers",
             "Main:privacy-native-restore",
             "Main:migration-history"
-          ],
-          "worker_delivery_ref": "docs/development/evidence/W320-01/DELIVERY.md",
-          "validation": "20项新增实际PostgreSQL18场景、17项受影响旧导出/hold/身份恢复回归（含真实认证HTTP、两条新增和一条既有Chrome）、22项Vue/API行为及vue-tsc通过。",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave320-final-verification.json"
-          },
-          "local_validation": "PASS_AFFECTED_SCOPE"
+          ]
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W320正常收妥后继续核对隐私其他真实Owner；24h目标未完成，W310预算末尾。",
-      "lifecycle_snapshot": {
-        "main_finish_required": true,
-        "main_seat_released": false,
-        "handoff_seat_released": false,
-        "main_branch_deleted": false,
-        "handoff_branch_deleted": false,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave320-final-verification.json"
-      }
+      "next_action": "原WP02-15真实余项：Main.SecurityLog.Fields.v1按准确事件原件及已接受的UserName/ClientIp字段分类实施独立政策/预览/申请/批准/实际清理、全主体hold、原结果/墓碑和恢复采用。保留事件/stable subject/租户身份及其余未核字段，不宣称整个安全事件或整个隐私任务已匿名化。旧CreatedAt无时区，资格只按明确UTC NotBefore政策，不推算法定期限；单事件准确边界，不暗含批量或按同名归属。"
     },
     "wave_history": [
       {
@@ -244540,8 +244545,8 @@
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
       "started_at": "2026-11-04T00:22:36+00:00",
-      "effective_seconds_recorded": 63676,
-      "timing_snapshot_at": "2026-11-08T15:27:26.171787+00:00",
+      "effective_seconds_recorded": 65842,
+      "timing_snapshot_at": "2026-11-08T16:03:32.416071+00:00",
       "timing_source": "41997 prior effective seconds plus continuous OS monotonic time from 2026-11-08T09:26:06Z; pause/pre-sample preparation excluded. Native panel is active after reactivation but omits the earlier authorized resumed segment; never sum the clocks.",
       "next_reestimate_at_effective_seconds": 64800,
       "estimate_hours": [
@@ -245912,7 +245917,7 @@
             "WP02-15"
           ],
           "title": "原生隐私导出载荷处置及恢复副本采用",
-          "state": "VERIFYING",
+          "state": "DONE",
           "started_at": "2026-11-08T14:00:20.471262+00:00",
           "effective_start": 58450,
           "estimate_hours": [
@@ -245924,13 +245929,57 @@
           "implementation_complete": true,
           "report": "docs/development/evidence/W320-01/DELIVERY.md",
           "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
             "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave320-final-verification.json"
-          }
+          },
+          "actual_effective_seconds": 6204,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W320-01",
+              "source": "c1809564087f8a8264511637b3f2a3500f49c080",
+              "remote_target": "90bf9e9f23cab088e9e5dd7c82cc2de58190a7c6",
+              "pr": "https://github.com/GTX537/CP6/pull/775",
+              "branch": "codex/w320-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W320-HANDOFF",
+              "source": "2851ce92e481742d66d10b30b6ca66eb13aad3ec",
+              "remote_target": "f2c29f43e8e46425255f79bf0aafc17773150613",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/296",
+              "branch": "codex/w320-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W321-01",
+          "day": "D3",
+          "related_tasks": [
+            "WP02-15"
+          ],
+          "title": "准确安全事件已分类字段处置与恢复采用",
+          "state": "IN_PROGRESS",
+          "started_at": "2026-11-08T16:03:32.416071+00:00",
+          "effective_start": 65842,
+          "estimate_hours": [
+            2.5,
+            4
+          ],
+          "estimate_confidence": "LOW_NEW_NATIVE_AUDIT_WRITERS_AND_CURRENT_UTC_POLICY_BOUNDARY",
+          "scope_refinement": "原WP02-15真实余项：Main.SecurityLog.Fields.v1按准确事件原件及已接受的UserName/ClientIp字段分类实施独立政策/预览/申请/批准/实际清理、全主体hold、原结果/墓碑和恢复采用。保留事件/stable subject/租户身份及其余未核字段，不宣称整个安全事件或整个隐私任务已匿名化。旧CreatedAt无时区，资格只按明确UTC NotBefore政策，不推算法定期限；单事件准确边界，不暗含批量或按同名归属。"
         },
         {
           "id": "W310-01",
@@ -246149,7 +246198,7 @@
           "historical_conflicts": "Preserved immutable; existing environments not inspected or migrated. Separate controlled forward recovery required for affected existing records."
         }
       ],
-      "next_priority": "Privacy remaining actual Owners after current source audit; W310 budget-end only",
+      "next_priority": "原WP02-15真实余项：Main.SecurityLog.Fields.v1按准确事件原件及已接受的UserName/ClientIp字段分类实施独立政策/预览/申请/批准/实际清理、全主体hold、原结果/墓碑和恢复采用。保留事件/stable subject/租户身份及其余未核字段，不宣称整个安全事件或整个隐私任务已匿名化。旧CreatedAt无时区，资格只按明确UTC NotBefore政策，不推算法定期限；单事件准确边界，不暗含批量或按同名归属。",
       "extra_bug_deliveries": [
         {
           "id": "BUG751",
