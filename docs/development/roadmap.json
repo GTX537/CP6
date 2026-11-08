@@ -162077,6 +162077,11 @@
       "date": "2026-11-08",
       "change": "W314完成Main身份Owner实际匿名化：准确已批准计划与当前execute/hold/政策/目标/审批人共同核对，原用户字段及认证材料处置、身份快照/优先Outbox和CRM授权撤销同事务，最小安全原回执、UNKNOWN查询/关闭迟到与真实页面执行。仅此Owner APPLIED，整体保持PARTIAL。 原375=33DONE/2IN_PROGRESS/340PLANNED、原59=9闭环/50剩余，125目标/247正式验收不变。WP02-15仍余W315墓碑/恢复及后续写入屏障、导出载荷/审计/业务历史/FILE/CRM/备份等Owner受控处置、整租户导出与受控处置和外部副本边界；W306原FORM历史前置仍单列。",
       "evidence": "docs/development/evidence/W314-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-08",
+      "change": "用户恢复24h目标，核销W314收尾并开工W315实际身份处置。",
+      "evidence": "docs/development/evidence/W315-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -175277,11 +175282,32 @@
         }
       },
       "wave314_identity_execution": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W314-01/DELIVERY.md",
         "scope": "W314完成Main身份Owner实际匿名化：准确已批准计划与当前execute/hold/政策/目标/审批人共同核对，原用户字段及认证材料处置、身份快照/优先Outbox和CRM授权撤销同事务，最小安全原回执、UNKNOWN查询/关闭迟到与真实页面执行。仅此Owner APPLIED，整体保持PARTIAL。",
         "validation": "17项当前独立PostgreSQL18场景（8项执行含真实认证HTTP/Chrome、9项受影响W313回归）、9项Vue交互及vue-tsc通过。",
-        "full_task_complete": false
+        "full_task_complete": false,
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W314-01",
+          "source": "27cb769fa91699957811ebf950035afa2876a3a0",
+          "remote_target": "9990466a51cb6b0d5c965f6ea93cadb58f188e53",
+          "pr": "https://github.com/GTX537/CP6/pull/770",
+          "branch": "codex/w314-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "workspace_clean": true
+        },
+        "lifecycle_complete": true,
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave314-final-verification.json"
+        }
       }
     },
     {
@@ -203711,11 +203737,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261108-wave314",
-      "path": "docs/development/dispatch/20261108-wave314/README.md",
-      "baseline_sha": "cfb4858659cc65f05ab3df2768d21c8e3ea036e1",
-      "registered_at": "2026-11-08T09:28:31.604176+00:00",
-      "phase": "DELIVERY_MAIN_CLOSEOUT",
+      "id": "20261108-wave315",
+      "path": "docs/development/dispatch/20261108-wave315/README.md",
+      "baseline_sha": "9990466a51cb6b0d5c965f6ea93cadb58f188e53",
+      "registered_at": "2026-11-08T10:06:39.059558+00:00",
+      "phase": "IMPLEMENTING",
       "assigned_chats": [
         "COORD"
       ],
@@ -203733,60 +203759,42 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W314-01",
-          "workspace_task": "W314-01",
+          "id": "W315-01",
+          "workspace_task": "W315-01",
           "related_tasks": [
             "WP02-15"
           ],
-          "title": "Main身份Owner实际处置及UNKNOWN原结果恢复",
+          "title": "准确墓碑及受控恢复候选实际Owner采用",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "DELIVERY_MAIN_CLOSEOUT",
+          "phase": "IMPLEMENTING",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": true,
+          "worker_delivery_received": false,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w314-01",
+          "branch": "codex/w315-01",
           "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": true,
+          "candidate_review_completed": false,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
             "Main:privacy-orchestration",
             "Main:privacy-disposition-schema",
-            "Main:platform-gdpr-view",
-            "Main:identity-outbox-writer"
-          ],
-          "worker_delivery_ref": "docs/development/evidence/W314-01/DELIVERY.md",
-          "validation": "17项当前独立PostgreSQL18场景（8项执行含真实认证HTTP/Chrome、9项受影响W313回归）、9项Vue交互及vue-tsc通过。",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave314-final-verification.json"
-          },
-          "local_validation": "PASS_AFFECTED_SCOPE"
+            "Main:identity-outbox-writer",
+            "Main:privacy-restore-candidate-gate",
+            "Main:program-middleware"
+          ]
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W314正常采用/官方finish后W315；用户已恢复24h目标，持续单人执行。",
-      "lifecycle_snapshot": {
-        "main_finish_required": true,
-        "main_seat_released": false,
-        "handoff_seat_released": false,
-        "main_branch_deleted": false,
-        "handoff_branch_deleted": false,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave314-final-verification.json"
-      }
+      "next_action": "W315为W314已完成的Main身份处置建立准确不可变墓碑及原生用户写入屏障，实际新库恢复候选沿独立源库权威回执重新应用。恢复目标不得覆盖源库，绑定真实候选库身份/备份引用及当前来源版本，独立审批和当前restore能力；重施处置、认证撤销、身份投影与候选开放门同事务。源/候选双库提交UNKNOWN必须保存责任意图、查询原候选回执并显式恢复/关闭，不能盲重做。候选API在处置和源结果未证明前失败关闭，来源政策/hold/新处置变化使旧开放资格失效。只证明已接Main身份Owner，其他业务/副本/全域身份和生产切换仍单列，不执行既有环境恢复/迁移/部署。"
     },
     "wave_history": [
       {
@@ -242916,6 +242924,108 @@
             "workspace_clean": true
           }
         ]
+      },
+      {
+        "id": "20261108-wave314",
+        "path": "docs/development/dispatch/20261108-wave314/README.md",
+        "baseline_sha": "cfb4858659cc65f05ab3df2768d21c8e3ea036e1",
+        "registered_at": "2026-11-08T09:28:31.604176+00:00",
+        "phase": "DONE",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W314-01",
+            "workspace_task": "W314-01",
+            "related_tasks": [
+              "WP02-15"
+            ],
+            "title": "Main身份Owner实际处置及UNKNOWN原结果恢复",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "DONE",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w314-01",
+            "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:privacy-orchestration",
+              "Main:privacy-disposition-schema",
+              "Main:platform-gdpr-view",
+              "Main:identity-outbox-writer"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W314-01/DELIVERY.md",
+            "validation": "17项当前独立PostgreSQL18场景（8项执行含真实认证HTTP/Chrome、9项受影响W313回归）、9项Vue交互及vue-tsc通过。",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave314-final-verification.json"
+            },
+            "local_validation": "PASS_AFFECTED_SCOPE"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W314正常采用/官方finish后W315；用户已恢复24h目标，持续单人执行。",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave314-final-verification.json"
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W314-01",
+            "source": "27cb769fa91699957811ebf950035afa2876a3a0",
+            "remote_target": "9990466a51cb6b0d5c965f6ea93cadb58f188e53",
+            "pr": "https://github.com/GTX537/CP6/pull/770",
+            "branch": "codex/w314-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W314-HANDOFF",
+            "source": "7604fd310e09a71b617277728180ec504e45c0c0",
+            "remote_target": "fa46ae4771689a298d896e972cd2ea7406414e79",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/291",
+            "branch": "codex/w314-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -243493,8 +243603,8 @@
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
       "started_at": "2026-11-04T00:22:36+00:00",
-      "effective_seconds_recorded": 43224,
-      "timing_snapshot_at": "2026-11-08T09:46:34.021310+00:00",
+      "effective_seconds_recorded": 44429,
+      "timing_snapshot_at": "2026-11-08T10:06:39.059558+00:00",
       "timing_source": "Fresh goal.timeUsedSeconds snapshots; cross-check actual active segments and exclude interruptions. Previous-cycle time and inter-cycle gap never carried forward.",
       "next_reestimate_at_effective_seconds": 50400,
       "estimate_hours": [
@@ -244606,20 +244716,47 @@
           ],
           "estimate_kind": "LOW_CONFIDENCE_ACTUAL_CODING_AFTER_OWNER_SOURCE_READ",
           "estimate_confidence": "LOW_ADMISSION_SOURCE_AUDIT_REQUIRED",
-          "state": "VERIFYING",
+          "state": "DONE",
           "scope_refinement": "Original WP02-15 remaining scope, following W302 actual disposition contract; re-read exact Owner sources/contracts/dependencies at admission and skip any then-completed behavior. Isolated PostgreSQL/simulated business data only; no existing-environment erasure, migration or deployment.",
           "started_at": "2026-11-08T09:28:31.604176+00:00",
           "effective_start": 42141,
           "implementation_complete": true,
           "report": "docs/development/evidence/W314-01/DELIVERY.md",
           "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
             "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave314-final-verification.json"
-          }
+          },
+          "actual_effective_seconds": 1447,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W314-01",
+              "source": "27cb769fa91699957811ebf950035afa2876a3a0",
+              "remote_target": "9990466a51cb6b0d5c965f6ea93cadb58f188e53",
+              "pr": "https://github.com/GTX537/CP6/pull/770",
+              "branch": "codex/w314-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W314-HANDOFF",
+              "source": "7604fd310e09a71b617277728180ec504e45c0c0",
+              "remote_target": "fa46ae4771689a298d896e972cd2ea7406414e79",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/291",
+              "branch": "codex/w314-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
         },
         {
           "id": "W315-01",
@@ -244632,10 +244769,12 @@
             1,
             2.5
           ],
-          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_kind": "LOW_CONFIDENCE_ACTUAL_CODING_AFTER_OWNER_SOURCE_READ",
           "estimate_confidence": "LOW_ACTUAL_EXECUTION_AFTER_W314_CURRENT_SCOPE",
-          "state": "PLANNED",
-          "scope_refinement": "Original WP02-15 remaining scope, following W302 actual disposition contract; re-read exact Owner sources/contracts/dependencies at admission and skip any then-completed behavior. Isolated PostgreSQL/simulated business data only; no existing-environment erasure, migration or deployment."
+          "state": "IN_PROGRESS",
+          "scope_refinement": "Original WP02-15 remaining scope, following W302 actual disposition contract; re-read exact Owner sources/contracts/dependencies at admission and skip any then-completed behavior. Isolated PostgreSQL/simulated business data only; no existing-environment erasure, migration or deployment.",
+          "started_at": "2026-11-08T10:06:39.059558+00:00",
+          "effective_start": 44429
         },
         {
           "id": "W310-01",
@@ -244854,7 +244993,7 @@
           "historical_conflicts": "Preserved immutable; existing environments not inspected or migrated. Separate controlled forward recovery required for affected existing records."
         }
       ],
-      "next_priority": "W315 actual tombstone and restore Owner adoption; continue measured24h target",
+      "next_priority": "W315 native tombstones and managed restore candidates; continue original partial cards; W310 budget-end only.",
       "extra_bug_deliveries": [
         {
           "id": "BUG751",
@@ -244916,7 +245055,7 @@
       "pause_reason": "User requests quota-reset pause after current small task",
       "resume_requires_user": false,
       "pause_final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave313-final-verification.json",
-      "resumed_at": "2026-11-08T09:28:31.604176+00:00",
+      "resumed_at": "2026-11-08T10:06:39.059558+00:00",
       "resume_instruction": "继续目标",
       "timing_basis": "User resumed explicitly; native goal panel remains paused. Active local execution measured by OS monotonic clock, excluding 4-day pause.",
       "native_goal_panel_status": "paused_while_user_resumed_execution"

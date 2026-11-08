@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-08：W314已收尾 / W315开工
+
+W314两仓远端采用、准确分支删除和官方finish已核销。用户明确继续目标；暂停间隔不计。[W315](../development/evidence/W315-01/DELIVERY.md)推进准确墓碑/写入屏障和受控新库恢复，原375/59计数不变。
+
 ## 2026-11-08：W314身份实际处置 / 24h继续
 
 W314完成Main身份Owner实际匿名化：准确已批准计划与当前execute/hold/政策/目标/审批人共同核对，原用户字段及认证材料处置、身份快照/优先Outbox和CRM授权撤销同事务，最小安全原回执、UNKNOWN查询/关闭迟到与真实页面执行。仅此Owner APPLIED，整体保持PARTIAL。 [交付](../development/evidence/W314-01/DELIVERY.md)。
