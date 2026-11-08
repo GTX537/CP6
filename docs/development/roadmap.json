@@ -162172,6 +162172,11 @@
       "date": "2026-11-08",
       "change": "统计校正：原始20261102-001406Z库存CSV的“已局部交付，整卡未关闭”59项与W250逐卡ID完全一致。当前仅其中8项DONE，剩51；WP12-03/04/08/10虽已完整DONE，却不在原59集合。旧followup把这4项一并从59扣减，造成47，现纠正51。375的36DONE/2IN_PROGRESS/337PLANNED和这4项合法完成均不回退，125/247不变；后续原卡逐项核销继续按原合同，不用新窗口数代替原59。此前47数字为旧计数错误，历史报告保留并由本校正说明取代当前统计。",
       "evidence": "docs/development/evidence/W324-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-08",
+      "change": "W324两仓闭环；W310登记。W310预算末尾核销：以原CSV及W250相同59个ID逐卡对照原定义、当前源码/采用和既有有效执行；保留8已闭环、51真实余项，结算本轮全部窗口实测与24h口径。只更新文档/台账，不重跑未变产品，不提前宣布预算或全项目完成。",
+      "evidence": "docs/development/dispatch/20261108-wave310/README.md"
     }
   ],
   "implementation_assessment": {
@@ -175576,19 +175581,32 @@
         "lifecycle_complete": true
       },
       "wave324_tenant_payload_restore": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W324-01/DELIVERY.md",
         "scope": "W324完成Main.Privacy.TenantExportPayload.v1真实恢复采用：独立无subject的tenant Unit，准确原制品元数据/revision/实际SHA一次外部核对，真实删除与载荷缺失/整制品缺失0分别记录；当前源政策/全目标hold和独立恢复批准，父回执/实际效果/墓碑/fence/开放标记同候选commit，保持两次commit与原结果责任。其他Owner/WAL/外部副本及完整环境恢复仍PARTIAL。",
         "full_task_complete": false,
         "validation": "14项新增实际PostgreSQL18场景、8项受影响live处置与既有身份/主体载荷/安全字段恢复回归（含新增恢复与既有处置Chrome）、25项Vue行为及vue-tsc通过。",
         "lifecycle_snapshot": {
-          "main_finish_required": true,
-          "main_seat_released": false,
-          "handoff_seat_released": false,
-          "main_branch_deleted": false,
-          "handoff_branch_deleted": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave324-final-verification.json"
-        }
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W324-01",
+          "source": "16823b875a818608e4d7110864dfd85003b334de",
+          "remote_target": "fe4e66aaa124f43630dbc5c97b8a9f049742ea24",
+          "pr": "https://github.com/GTX537/CP6/pull/779",
+          "branch": "codex/w324-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "workspace_clean": true
+        },
+        "lifecycle_complete": true
       }
     },
     {
@@ -204409,11 +204427,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261108-wave324",
-      "path": "docs/development/dispatch/20261108-wave324/README.md",
-      "baseline_sha": "be6ec3bea15d3e0a6d54f1960f9f7eaabb13f641",
-      "registered_at": "2026-11-08T19:25:15.698679+00:00",
-      "phase": "DELIVERY_MAIN_CLOSEOUT",
+      "id": "20261108-wave310",
+      "path": "docs/development/dispatch/20261108-wave310/README.md",
+      "baseline_sha": "fe4e66aaa124f43630dbc5c97b8a9f049742ea24",
+      "registered_at": "2026-11-08T20:26:46.693187+00:00",
+      "phase": "IMPLEMENTING",
       "assigned_chats": [
         "COORD"
       ],
@@ -204431,61 +204449,40 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W324-01",
-          "workspace_task": "W324-01",
+          "id": "W310-01",
+          "workspace_task": "W310-01",
           "related_tasks": [
-            "WP02-15"
+            "WP12-19",
+            "WP12-03",
+            "WP05-14"
           ],
-          "title": "租户载荷真实备份恢复与准确结果",
+          "title": "预算末尾真实余项核对及当前任务收妥",
           "chat": "COORD",
-          "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "DELIVERY_MAIN_CLOSEOUT",
+          "mode": "SINGLE_CHAT_RECONCILIATION",
+          "phase": "IMPLEMENTING",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": true,
+          "worker_delivery_received": false,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w324-01",
-          "planned_scope_ref": "docs/development/contracts/tenant-export-payload-restore-v1.md",
+          "branch": "codex/w310-01",
+          "planned_scope_ref": "docs/development/dispatch/20261108-wave310/README.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": true,
+          "candidate_review_completed": false,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
-            "Main:tenant-export-payload-restored-Owner",
-            "Main:privacy-disposition-Owner",
-            "Main:restore-source-gate",
-            "Main:privacy-restore-wire",
-            "Main:migration-history"
-          ],
-          "worker_delivery_ref": "docs/development/evidence/W324-01/DELIVERY.md",
-          "validation": "14项新增实际PostgreSQL18场景、8项受影响live处置与既有身份/主体载荷/安全字段恢复回归（含新增恢复与既有处置Chrome）、25项Vue行为及vue-tsc通过。",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave324-final-verification.json"
-          },
-          "local_validation": "PASS_AFFECTED_SCOPE"
+            "Main:project-state-documents"
+          ]
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W324正常收妥后W310预算末尾原375/59和实际工时核销；原24h尚未完成。",
-      "lifecycle_snapshot": {
-        "main_finish_required": true,
-        "main_seat_released": false,
-        "handoff_seat_released": false,
-        "main_branch_deleted": false,
-        "handoff_branch_deleted": false,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave324-final-verification.json"
-      }
+      "next_action": "W310预算末尾核销：以原CSV及W250相同59个ID逐卡对照原定义、当前源码/采用和既有有效执行；保留8已闭环、51真实余项，结算本轮全部窗口实测与24h口径。只更新文档/台账，不重跑未变产品，不提前宣布预算或全项目完成。"
     },
     "wave_history": [
       {
@@ -244722,8 +244719,8 @@
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
       "started_at": "2026-11-04T00:22:36+00:00",
-      "effective_seconds_recorded": 80342,
-      "timing_snapshot_at": "2026-11-08T20:05:12.675278+00:00",
+      "effective_seconds_recorded": 81636,
+      "timing_snapshot_at": "2026-11-08T20:26:46.693187+00:00",
       "timing_source": "41997 prior effective seconds plus continuous OS monotonic time from 2026-11-08T09:26:06Z; pause/pre-sample preparation excluded. Native panel is active after reactivation but omits the earlier authorized resumed segment; never sum the clocks.",
       "next_reestimate_at_effective_seconds": 64800,
       "estimate_hours": [
@@ -246310,7 +246307,7 @@
             "WP02-15"
           ],
           "title": "租户载荷真实备份恢复与准确结果",
-          "state": "VERIFYING",
+          "state": "DONE",
           "started_at": "2026-11-08T19:25:15.698679+00:00",
           "effective_start": 77945,
           "estimate_hours": [
@@ -246322,13 +246319,40 @@
           "implementation_complete": true,
           "report": "docs/development/evidence/W324-01/DELIVERY.md",
           "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
             "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave324-final-verification.json"
-          }
+          },
+          "actual_effective_seconds": 3520,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W324-01",
+              "source": "16823b875a818608e4d7110864dfd85003b334de",
+              "remote_target": "fe4e66aaa124f43630dbc5c97b8a9f049742ea24",
+              "pr": "https://github.com/GTX537/CP6/pull/779",
+              "branch": "codex/w324-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W324-HANDOFF",
+              "source": "2abda2298329057bf178dd9abd4c1b50084401b8",
+              "remote_target": "4a2e0975a29a1e187f465f3e2a35c621c3acbf90",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/300",
+              "branch": "codex/w324-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
         },
         {
           "id": "W310-01",
@@ -246340,16 +246364,19 @@
           ],
           "title": "预算末尾真实余项核对及当前任务收妥",
           "estimate_hours": [
-            0.5,
-            1
+            0.75,
+            1.25
           ],
           "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
-          "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
-          "state": "PLANNED",
+          "estimate_confidence": "LOW_DOCUMENT_ONLY_ALL_59_SOURCE_EVIDENCE_RECONCILIATION_PLUS_NORMAL_LIFECYCLE",
+          "state": "IN_PROGRESS",
           "initial_estimate_hours": [
             1,
             2
-          ]
+          ],
+          "started_at": "2026-11-08T20:26:46.693187+00:00",
+          "effective_start": 81636,
+          "scope_refinement": "W310预算末尾核销：以原CSV及W250相同59个ID逐卡对照原定义、当前源码/采用和既有有效执行；保留8已闭环、51真实余项，结算本轮全部窗口实测与24h口径。只更新文档/台账，不重跑未变产品，不提前宣布预算或全项目完成。"
         }
       ],
       "reestimates": [
@@ -246547,7 +246574,7 @@
           "historical_conflicts": "Preserved immutable; existing environments not inspected or migrated. Separate controlled forward recovery required for affected existing records."
         }
       ],
-      "next_priority": "Budget-end W310 actual375/59 remainder and measured-program closeout",
+      "next_priority": "W310预算末尾核销：以原CSV及W250相同59个ID逐卡对照原定义、当前源码/采用和既有有效执行；保留8已闭环、51真实余项，结算本轮全部窗口实测与24h口径。只更新文档/台账，不重跑未变产品，不提前宣布预算或全项目完成。",
       "extra_bug_deliveries": [
         {
           "id": "BUG751",
