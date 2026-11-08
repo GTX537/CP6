@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-08：原59卡计数纠正为8闭环/51剩余
+
+统计校正：原始20261102-001406Z库存CSV的“已局部交付，整卡未关闭”59项与W250逐卡ID完全一致。当前仅其中8项DONE，剩51；WP12-03/04/08/10虽已完整DONE，却不在原59集合。旧followup把这4项一并从59扣减，造成47，现纠正51。375的36DONE/2IN_PROGRESS/337PLANNED和这4项合法完成均不回退，125/247不变；后续原卡逐项核销继续按原合同，不用新窗口数代替原59。此前47数字为旧计数错误，历史报告保留并由本校正说明取代当前统计。 [依据](../development/evidence/W324-01/DELIVERY.md)。
+
 ## 2026-11-08：W324租户载荷实际处置 / 24h继续
 
 W324完成Main.Privacy.TenantExportPayload.v1真实恢复采用：独立无subject的tenant Unit，准确原制品元数据/revision/实际SHA一次外部核对，真实删除与载荷缺失/整制品缺失0分别记录；当前源政策/全目标hold和独立恢复批准，父回执/实际效果/墓碑/fence/开放标记同候选commit，保持两次commit与原结果责任。其他Owner/WAL/外部副本及完整环境恢复仍PARTIAL。 [交付](../development/evidence/W324-01/DELIVERY.md)。
