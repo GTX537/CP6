@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-08：W306已收尾 / W320载荷处置开工
+
+W306 Main774/Handoff295正常采用、准确清理/官方finish核销，实测1577秒；原37536DONE/2IN_PROGRESS/337PLANNED、59余47。16h实测校准后[W320](../development/evidence/W320-01/DELIVERY.md)推进原生导出载荷实际处置/准确恢复副本，WP02-15整体仍PARTIAL。24h继续。
+
 ## 2026-11-08：WP12-08原卡核销 / 24h继续
 
 W306在原WP12-04/07/10整卡前置满足后，按WP12-08三项范围及正反例核销当前动作上下文、真实双身份/原grant、双/三CAS、SFS复算/APP冻结TxD与轮次；补真实两人all/any重入新轮和旧原命令回放的业务验证，原WP12-08正式DONE。 [报告](../development/evidence/W306-01/DELIVERY.md)。
