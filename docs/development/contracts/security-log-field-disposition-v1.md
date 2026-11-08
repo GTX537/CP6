@@ -14,7 +14,7 @@
 
 所有原生日志写者加入已有IAM共同根，私有行修订按实际INSERT/UPDATE推进，ABA失效；不另改EF模型/旧SQL Server实现。新行为仅将UserName/ClientIp真正置NULL，保留Id/TenantId/UserId/EventType/CreatedAt以及其余字段。最小执行/原命令/不可变墓碑同commit，源值只在已有边界投影/摘要计算，不复制旧PII到处置历史。没有字段值时不能冒新清理成功。
 
-原生无所属来源的字段清理被拒绝；已处置准确事件不能通过UPDATE/INSERT改身份或恢复所清字段。原生DELETE/TRUNCATE仍受共同根及现全主体hold；没有声称新增完整审计保留/整行purge Owner或改变旧未处理字段合同。原生日志创建允许匿名事件/可空字段，正常认证/IAM审计仍能真实持久化。只有相关源写入被修改，才做相应定向认证/审计回归，不全仓回归。
+原生无所属来源的字段清理被拒绝；已处置准确事件不能通过UPDATE/INSERT改身份或恢复所清字段。原生DELETE/TRUNCATE仍受共同根及现全主体hold；原生UPDATE也在同一边界核对旧、新主体hold，阻止先改归属再删除或覆盖保留内容的绕路。已获当前源批准的恢复父操作采用当前决定，不由候选旧hold覆盖。没有声称新增完整审计保留/整行purge Owner或对未分类内容新增处置能力。原生日志创建允许匿名事件/可空字段，正常认证/IAM审计仍能真实持久化。只有相关源写入被修改，才做相应定向认证/审计回归，不全仓回归。
 
 复用PrivacyDispositionOwnerV1可信独立事务/当前实际人/最终会话、Can、Clock、Hold/AppendHold，独立Owner原命令命名空间。已知原结果在执行撤权后仍可读；scope/当前批准/政策/hold/版本在最终根内核对。真正COMMIT传输未知保原UUID，NOT_FOUND不等无效果，关闭阻止迟到；明确Owner23514拒绝证明回滚，按具体错误返回。当前原用户行不存在也能由准确日志管理同一主体hold，旧身份入口不改变资格。
 

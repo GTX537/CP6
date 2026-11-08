@@ -19,6 +19,16 @@ beforeEach(() => {
   Object.defineProperty(navigator, 'locks', { configurable: true, value: { request: vi.fn(async (_: string, fn: () => Promise<void>) => fn()) } })
 })
 afterEach(() => { wrapper?.unmount(); wrapper = undefined; vi.restoreAllMocks() })
+it('distinguishes a restored field clear from already empty and absent events without presenting either as removed bytes', async () => {
+  localStorage.setItem(key, `E:${op}`); mock.operation.mockResolvedValue({ operationId: op, state: 'APPLIED', planId, units: [
+    { sourcePlanId: 'one', logId: actor, outcome: 'REAPPLIED', clearedValueCount: 2 },
+    { sourcePlanId: 'two', logId: tenant, outcome: 'ALREADY_CLEARED_FENCED', clearedValueCount: 0 },
+    { sourcePlanId: 'three', logId: env, outcome: 'ABSENT_FENCED', clearedValueCount: 0 },
+  ], aggregateState: 'PARTIAL' })
+  await open(); expect(wrapper!.text()).toContain(`安全事件 ${actor}：原处置已重施`); expect(wrapper!.text()).toContain('实际置空 2 项，其他内容保留')
+  expect(wrapper!.text()).toContain(`安全事件 ${tenant}：已分类字段原本为空`); expect(wrapper!.text()).toContain(`安全事件 ${env}：原备份中不存在`)
+  expect(wrapper!.text()).not.toContain('实际删除'); expect(mock.execute).not.toHaveBeenCalled()
+})
 async function open() { wrapper = mount(Panel, { global: { plugins: [ElementPlus] } }); await flushPromises() }
 async function input(name: string, value: string) { await wrapper!.get(`input[aria-label="${name}"]`).setValue(value) }
 async function click(name: string) { await wrapper!.findAll('button').find(b => b.text() === name)!.trigger('click'); await flushPromises() }

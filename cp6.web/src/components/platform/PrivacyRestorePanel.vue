@@ -19,7 +19,7 @@
       <div v-if="previewResult" class="restore-preview">
         <p>目标库：{{ previewResult.scope.target.name }} · 数据库身份：{{ previewResult.scope.target.oid }}</p>
         <p>备份 SHA-256：{{ previewResult.scope.backupSha256 }}</p>
-        <p>已接身份墓碑：{{ previewResult.scope.tombstoneCount }} · 导出载荷墓碑：{{ previewResult.scope.exportPayloadTombstoneCount || 0 }}；当前来源版本：{{ previewResult.scope.sourceVersion }}</p>
+        <p>已接身份墓碑：{{ previewResult.scope.tombstoneCount }} · 导出载荷墓碑：{{ previewResult.scope.exportPayloadTombstoneCount || 0 }} · 安全字段墓碑：{{ previewResult.scope.securityFieldTombstoneCount || 0 }}；当前来源版本：{{ previewResult.scope.sourceVersion }}</p>
         <p>未覆盖：{{ previewResult.scope.uncoveredOwners.map(ownerName).join('；') }}</p>
         <p v-if="previewResult.blockers.length">当前限制：{{ previewResult.blockers.join('；') }}</p>
         <el-form-item label="申请依据引用"><el-input v-model="requestRef" aria-label="恢复申请依据引用" /></el-form-item>
@@ -35,7 +35,7 @@
       <p>计划 ID：{{ plan.planId }} · 申请人：{{ plan.requesterId }}</p>
       <p>准确目标库：{{ plan.scope.target.name }} · 身份：{{ plan.scope.target.oid }}</p>
       <p>备份：{{ plan.scope.backupSha256 }} · 冻结来源版本：{{ plan.scope.sourceVersion }}</p>
-      <p>已接身份墓碑：{{ plan.scope.tombstoneCount }} · 导出载荷墓碑：{{ plan.scope.exportPayloadTombstoneCount || 0 }}；未覆盖：{{ plan.scope.uncoveredOwners.map(ownerName).join('；') }}</p>
+      <p>已接身份墓碑：{{ plan.scope.tombstoneCount }} · 导出载荷墓碑：{{ plan.scope.exportPayloadTombstoneCount || 0 }} · 安全字段墓碑：{{ plan.scope.securityFieldTombstoneCount || 0 }}；未覆盖：{{ plan.scope.uncoveredOwners.map(ownerName).join('；') }}</p>
       <p>当前批准有效：{{ plan.approvalCurrent ? '是' : '否' }}。批准不会自动重施资料。</p>
       <p v-if="plan.currentBlockers.length">当前限制：{{ plan.currentBlockers.join('；') }}</p>
       <p v-if="plan.requesterId === context?.actorId">申请人不能批准自己的恢复计划。</p>
@@ -55,7 +55,7 @@
       <p v-else-if="['PENDING','NOT_FOUND'].includes(result.state)">尚无已核实的候选结果。请查询、核对或关闭原操作，不要重新执行。</p>
       <p v-else-if="result.state === 'CLOSED'">原操作已关闭，迟到执行被阻止。</p>
       <p>原操作：{{ result.operationId }}</p>
-      <p v-for="unit in result.units || []" :key="unit.sourcePlanId">{{ unit.artifactId ? `原生导出制品 ${unit.artifactId}` : `主体 ${unit.targetTenantId} / ${unit.subjectId}` }}：{{ unit.outcome === 'ABSENT_FENCED' ? '原备份中不存在，墓碑已施加' : '原处置已重施' }}<span v-if="unit.artifactId"> · 实际删除 {{ unit.removedBytes }} 字节</span></p>
+      <p v-for="unit in result.units || []" :key="unit.sourcePlanId">{{ unit.logId ? `安全事件 ${unit.logId}` : unit.artifactId ? `原生导出制品 ${unit.artifactId}` : `主体 ${unit.targetTenantId} / ${unit.subjectId}` }}：{{ unit.outcome === 'ABSENT_FENCED' ? '原备份中不存在，墓碑已施加' : unit.outcome === 'ALREADY_CLEARED_FENCED' ? '已分类字段原本为空，已施加防回填屏障' : '原处置已重施' }}<span v-if="unit.artifactId"> · 实际删除 {{ unit.removedBytes }} 字节</span><span v-if="unit.logId"> · 实际置空 {{ unit.clearedValueCount }} 项，其他内容保留</span></p>
       <p>此处仅证明上列来源的实际结果。其他历史、文件、WAL、备份和完整生产恢复仍有未覆盖范围。</p>
     </div>
     <el-alert v-if="storageError" :title="storageError" type="error" :closable="false" />
@@ -74,7 +74,7 @@ const active = (start: string) => !disposed && start === stamp && start === iden
 const uuid = (v: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v) && v !== '00000000-0000-0000-0000-000000000000'
 const can = (action: string) => !!context.value?.actions.includes(action)
 const locked = computed(() => busy.value || !!pending.value || !!storageError.value)
-const ownerName = (v: string) => ({ 'MAIN.SECURITY_LOG_CONTENT': '安全日志内容', 'MAIN.AUTHORIZATION_AND_ORGANIZATION_REFERENCES': '授权与组织引用', 'MAIN.OA_AND_PLM_HISTORY': 'OA 与 PLM 历史', CRM_BUSINESS_AND_HISTORY: 'CRM 业务及历史', FILE_AND_PRIOR_EXPORT_COPIES: '文件与旧导出副本', FILE_AND_OTHER_OWNER_COPIES: 'FILE 与其他来源副本', BACKUPS_AND_EXTERNAL_COPIES: '备份与外部副本', UNREGISTERED_OWNERS: '其他未接入来源' }[v] || v)
+const ownerName = (v: string) => ({ 'MAIN.SECURITY_LOG_CONTENT': '安全日志内容', 'MAIN.SECURITY_LOG_UNCLASSIFIED_CONTENT': '安全日志未分类内容', 'MAIN.AUTHORIZATION_AND_ORGANIZATION_REFERENCES': '授权与组织引用', 'MAIN.OA_AND_PLM_HISTORY': 'OA 与 PLM 历史', CRM_BUSINESS_AND_HISTORY: 'CRM 业务及历史', FILE_AND_PRIOR_EXPORT_COPIES: '文件与旧导出副本', FILE_AND_OTHER_OWNER_COPIES: 'FILE 与其他来源副本', BACKUPS_AND_EXTERNAL_COPIES: '备份与外部副本', UNREGISTERED_OWNERS: '其他未接入来源' }[v] || v)
 const stateName = (v: string) => ({ REQUESTED: '待独立审批', APPROVED: '已批准', REJECTED: '已拒绝', REVOKED: '已撤销' }[v] || v)
 function key() { const c = context.value!; return `cp6-privacy-restore-v1:${c.environmentId}:${c.actorTenantId}:${c.actorId}` }
 function stored() { const value = localStorage.getItem(key()) || ''; if (value && (!/^[ME]:/.test(value) || !uuid(value.slice(2)))) throw new Error('恢复原操作记录无效，请保留记录并修复浏览器存储。'); return value }
@@ -130,7 +130,7 @@ async function preview() { const id = candidateId.value; await run(async start =
 async function prepare() {
   const p = previewResult.value; if (!p || p.scope.candidateId !== candidateId.value || p.blockers.length || !uuid(requestRef.value) || !can('restore-prepare')) return
   const command = { candidateId: p.scope.candidateId, expectedScopeDigest: p.scopeDigest, requestRef: requestRef.value }
-  await mutate('M', `申请恢复目标 ${p.scope.target.name}（身份 ${p.scope.target.oid}），备份 ${p.scope.backupSha256}；冻结当前来源与 ${p.scope.tombstoneCount} 个已接墓碑，不覆盖源库。`, operationId => api.request({ operationId, ...command }))
+  await mutate('M', `申请恢复目标 ${p.scope.target.name}（身份 ${p.scope.target.oid}），备份 ${p.scope.backupSha256}；冻结当前来源与 ${p.scope.tombstoneCount} 个身份、${p.scope.exportPayloadTombstoneCount || 0} 个载荷、${p.scope.securityFieldTombstoneCount || 0} 个安全字段墓碑，不覆盖源库。`, operationId => api.request({ operationId, ...command }))
 }
 async function readPlan() { const id = planRef.value; await run(async start => { plan.value = null; const value = await api.plan(id); if (active(start)) plan.value = value }) }
 async function decide(decision: string) {
@@ -141,7 +141,7 @@ async function decide(decision: string) {
 async function execute() {
   const p = plan.value; if (!p?.approvalCurrent || p.outcome || !can('restore-execute') || !uuid(confirmationRef.value)) return
   const command = { expectedVersion: p.version, expectedScopeDigest: p.scopeDigest, confirmationRef: confirmationRef.value }
-  await mutate('E', `对目标 ${p.scope.target.name}（身份 ${p.scope.target.oid}）重施已批准范围的 ${p.scope.tombstoneCount} 个墓碑，停用相应身份认证。备份 ${p.scope.backupSha256}；来源版本 ${p.scope.sourceVersion}。整体仍有未覆盖Owner，不执行生产切换。`, operationId => api.execute(p.planId, { operationId, ...command }))
+  await mutate('E', `对目标 ${p.scope.target.name}（身份 ${p.scope.target.oid}）重施已批准范围的 身份、载荷及安全字段墓碑，停用相应身份认证并保持其他内容。备份 ${p.scope.backupSha256}；来源版本 ${p.scope.sourceVersion}。整体仍有未覆盖Owner，不执行生产切换。`, operationId => api.execute(p.planId, { operationId, ...command }))
 }
 function identityChanged() {
   const next = identityStamp(); if (next === stamp) return

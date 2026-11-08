@@ -10,6 +10,30 @@ namespace CP6.WebApi.Controllers.Platform;
 [ResponseCache(NoStore=true,Location=ResponseCacheLocation.None)]
 public sealed class PrivacyDispositionControllerV1(IServiceScopeFactory scopes,ITenantContext tenant):ControllerBase
 {
+    [HttpGet("security-fields/context")]
+    public Task<IActionResult> SecurityContext(CancellationToken ct)=>Run((o,s)=>o.SecurityContextAsync(s,ct));
+    [HttpGet("security-fields/policies/{id:guid}")]
+    public Task<IActionResult> SecurityPolicy(Guid id,CancellationToken ct)=>Run((o,s)=>o.SecurityPolicyAsync(id,s,ct));
+    [HttpPost("security-fields/policies"),RequestSizeLimit(65536)]
+    public Task<IActionResult> SecurityPolicy(SecurityFieldPolicyCommandV1 input,CancellationToken ct)=>Run((o,s)=>o.ConfigureSecurityPolicyAsync(input,s,ct));
+    [HttpPost("security-fields/preview"),RequestSizeLimit(65536)]
+    public Task<IActionResult> SecurityPreview(SecurityFieldTargetV1 input,CancellationToken ct)=>Run((o,s)=>o.SecurityPreviewAsync(input,s,ct));
+    [HttpGet("security-fields/logs/{id:guid}/hold")]
+    public Task<IActionResult> SecurityHold(Guid id,CancellationToken ct)=>Run((o,s)=>o.SecurityHoldAsync(id,s,ct));
+    [HttpPost("security-fields/logs/{id:guid}/hold"),RequestSizeLimit(65536)]
+    public Task<IActionResult> SecurityHold(Guid id,SecurityFieldHoldV1 input,CancellationToken ct)=>Run((o,s)=>o.SetSecurityHoldAsync(id,input,s,ct));
+    [HttpPost("security-fields/plans"),RequestSizeLimit(65536)]
+    public Task<IActionResult> SecurityPlan(SecurityFieldRequestV1 input,CancellationToken ct)=>Run((o,s)=>o.RequestSecurityDispositionAsync(input,s,ct));
+    [HttpGet("security-fields/plans/{id:guid}")]
+    public Task<IActionResult> SecurityPlan(Guid id,CancellationToken ct)=>Run((o,s)=>o.SecurityPlanAsync(id,s,ct));
+    [HttpPost("security-fields/plans/{id:guid}/decisions"),RequestSizeLimit(65536)]
+    public Task<IActionResult> SecurityDecision(Guid id,SecurityFieldDecisionV1 input,CancellationToken ct)=>Run((o,s)=>o.DecideSecurityDispositionAsync(id,input,s,ct));
+    [HttpPost("security-fields/plans/{id:guid}/execute"),RequestSizeLimit(65536)]
+    public Task<IActionResult> SecurityExecute(Guid id,SecurityFieldExecuteV1 input,CancellationToken ct)=>Run((o,s)=>o.ExecuteSecurityDispositionAsync(id,input,s,ct));
+    [HttpGet("security-fields/operations/{id:guid}")]
+    public Task<IActionResult> SecurityOperation(Guid id,CancellationToken ct)=>Run((o,s)=>o.SecurityOperationAsync(id,false,s,ct));
+    [HttpPost("security-fields/operations/{id:guid}/close")]
+    public Task<IActionResult> SecurityClose(Guid id,CancellationToken ct)=>Run((o,s)=>o.SecurityOperationAsync(id,true,s,ct));
     [HttpGet("export-payloads/context")]
     public Task<IActionResult> PayloadContext(CancellationToken ct)=>Run((o,s)=>o.PayloadContextAsync(s,ct));
     [HttpGet("export-payloads/policies/{id:guid}")]

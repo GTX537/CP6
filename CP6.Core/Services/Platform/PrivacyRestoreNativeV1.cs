@@ -52,7 +52,7 @@ internal static class PrivacyRestoreNativeV1
         return json==null?null:JsonSerializer.Deserialize<PrivacyRestoreResultV1>(json)!;
     }
     internal static async Task<PrivacyRestoreResultV1> Apply(CP6Context candidate,IPasswordHasher hasher,PrivacyRestoreScopeV1 scope,
-        Guid actorTenant,Guid actor,Guid operation,Guid plan,string digest,PrivacyRestoreTombstoneV1[] tombstones,PrivacyExportPayloadTombstoneV1[] payloads,CancellationToken ct)
+        Guid actorTenant,Guid actor,Guid operation,Guid plan,string digest,PrivacyRestoreTombstoneV1[] tombstones,PrivacyExportPayloadTombstoneV1[] payloads,PrivacySecurityFieldTombstoneV1[] security,CancellationToken ct)
     {
         var units=new List<PrivacyRestoreUnitV1>();
         foreach(var tomb in tombstones)
@@ -76,6 +76,12 @@ internal static class PrivacyRestoreNativeV1
         }
         if(payloads.Length>0)await PrivacyExportPayloadEffectV1.Ready(candidate,ct);
         foreach(var tomb in payloads)units.Add(await PrivacyExportPayloadEffectV1.Qualify(candidate,tomb,scope.EnvironmentId,ct));
+        var securityEffects=new List<(PrivacySecurityFieldTombstoneV1 Tomb,PrivacyRestoreUnitV1 Unit)>();
+        if(security.Length>0)await PrivacySecurityFieldEffectV1.Ready(candidate,ct);
+        foreach(var tomb in security)
+        {
+            var unit=await PrivacySecurityFieldEffectV1.Qualify(candidate,tomb,ct);units.Add(unit);securityEffects.Add((tomb,unit));
+        }
         var at=await candidate.Database.SqlQueryRaw<DateTimeOffset>("SELECT clock_timestamp() AS \"Value\"").SingleAsync(ct);
         var result=new PrivacyRestoreResultV1(operation,"APPLIED",plan,scope.CandidateId,scope.SourceVersion,digest,units.ToArray(),scope.UncoveredOwners,at);
         await candidate.Database.ExecuteSqlInterpolatedAsync($"""
@@ -85,6 +91,7 @@ internal static class PrivacyRestoreNativeV1
         // Parent receipt, actual export effects and admission remain invisible until the same candidate commit.
         // Deferred SQL constraints reject a parent receipt whose listed effects have not happened.
         foreach(var tomb in payloads)await PrivacyExportPayloadEffectV1.Apply(candidate,tomb,scope.EnvironmentId,ct);
+        foreach(var (tomb,unit) in securityEffects)await PrivacySecurityFieldEffectV1.Apply(candidate,tomb,scope.EnvironmentId,unit.AfterVersion,ct);
         await candidate.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO cp6_privacy_disposition_v1.restore_admission(singleton,candidate_id,source_identity,target_identity,environment_id,source_version,actor_tenant,actor_id,operation_id,plan_id)
             VALUES(true,{scope.CandidateId},{IdentityJson(scope.Source)},{IdentityJson(scope.Target)},{scope.EnvironmentId},{scope.SourceVersion},{actorTenant},{actor},{operation},{plan})

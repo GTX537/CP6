@@ -22,6 +22,11 @@ public sealed partial class PrivacyDispositionOwnerV1
           policy_id AS "PolicyId",scope_json AS "Scope",receipt_json AS "Receipt" FROM cp6_privacy_export_disposition_v1.tombstones WHERE environment_id={a.Environment} ORDER BY artifact_id
         """).ToArrayAsync(ct);
     private sealed record RestorePayloadPolicy(bool Enabled,Guid TargetTenant,int MinimumDays);
+    private Task<PrivacySecurityFieldTombstoneV1[]> RestoreSecurityTombstones(Authority a,CancellationToken ct)=>db.Database.SqlQuery<PrivacySecurityFieldTombstoneV1>($"""
+        SELECT log_id AS "LogId",source_plan_id AS "SourcePlanId",operator_tenant AS "OperatorTenantId",target_tenant AS "TargetTenantId",subject_id AS "SubjectId",
+          policy_id AS "PolicyId",scope_json AS "Scope",receipt_json AS "Receipt" FROM cp6_privacy_security_fields_v1.tombstones WHERE environment_id={a.Environment} ORDER BY log_id
+        """).ToArrayAsync(ct);
+    private sealed record RestoreSecurityPolicy(bool Enabled,Guid TargetTenant,DateTimeOffset NotBeforeUtc);
     private async Task<PrivacyRestorePreviewV1> RestorePreview(Authority a,Guid candidateId,CancellationToken ct)
     {
         var registration=RestoreCandidate(candidateId);var source=await PrivacyRestoreNativeV1.Database(db,ct);var version=await PrivacyRestoreNativeV1.Epoch(db,ct);
@@ -49,11 +54,25 @@ public sealed partial class PrivacyDispositionOwnerV1
             if(at<payloadScope.CapturedAt.AddSeconds((long)policy.MinimumDays*86400))blockers.Add("CURRENT_PAYLOAD_MINIMUM_RETENTION_NOT_REACHED:"+tomb.SourcePlanId.ToString("D"));
             if((await Hold(a,tomb.TargetTenantId,tomb.SubjectId,ct))?.Active==true)blockers.Add("CURRENT_PAYLOAD_HOLD_REQUIRES_RESTORE_DECISION:"+tomb.SourcePlanId.ToString("D"));
         }
+        var security=await RestoreSecurityTombstones(a,ct);
+        if(security.Length>0)await SecurityReady(ct);
+        foreach(var tomb in security)
+        {
+            var policy=await db.Database.SqlQuery<RestoreSecurityPolicy>($"""
+                SELECT enabled AS "Enabled",target_tenant AS "TargetTenant",not_before AS "NotBeforeUtc" FROM cp6_privacy_security_fields_v1.policies
+                WHERE environment_id={a.Environment} AND actor_tenant={tomb.OperatorTenantId} AND policy_id={tomb.PolicyId} ORDER BY sequence DESC LIMIT 1
+                """).SingleAsync(ct);
+            if(!policy.Enabled)blockers.Add("CURRENT_SECURITY_POLICY_DISABLED:"+tomb.SourcePlanId.ToString("D"));
+            if(policy.TargetTenant!=tomb.TargetTenantId)blockers.Add("CURRENT_SECURITY_POLICY_TARGET_CHANGED:"+tomb.SourcePlanId.ToString("D"));
+            if(at<policy.NotBeforeUtc)blockers.Add("CURRENT_SECURITY_NOT_BEFORE_NOT_REACHED:"+tomb.SourcePlanId.ToString("D"));
+            if((await Hold(a,tomb.TargetTenantId,tomb.SubjectId,ct))?.Active==true)blockers.Add("CURRENT_SECURITY_HOLD_REQUIRES_RESTORE_DECISION:"+tomb.SourcePlanId.ToString("D"));
+        }
         await using var candidate=PrivacyRestoreNativeV1.Context(registration.ConnectionString,a.Actor.TenantId,identity);
         await candidate.Database.OpenConnectionAsync(ct);var target=await PrivacyRestoreNativeV1.Database(candidate,ct);
         if(PrivacyRestoreNativeV1.SameDatabase(target,source))throw new PrivacyDispositionExceptionV1("PRIVACY_RESTORE_SOURCE_CANNOT_BE_TARGET",412);
         var uncovered=payloads.Length==0?Uncovered:Uncovered.Select(x=>x=="FILE_AND_PRIOR_EXPORT_COPIES"?"FILE_AND_OTHER_OWNER_COPIES":x).ToArray();
-        var scope=new PrivacyRestoreScopeV1(a.Environment,candidateId,registration.RegistrationVersion,registration.BackupSha256,version,source,target,tombstones.Length,uncovered,payloads.Length);
+        if(security.Length>0)uncovered=uncovered.Select(x=>x=="MAIN.SECURITY_LOG_CONTENT"?"MAIN.SECURITY_LOG_UNCLASSIFIED_CONTENT":x).ToArray();
+        var scope=new PrivacyRestoreScopeV1(a.Environment,candidateId,registration.RegistrationVersion,registration.BackupSha256,version,source,target,tombstones.Length,uncovered,payloads.Length,security.Length);
         await using var gate=await PrivacyRestoreNativeV1.CandidateGate(candidate,scope,ct);
         return new(scope,MainOwnerOperationJournalV1.Digest(MainOwnerOperationJournalV1.Encode(scope)),blockers.ToArray());
     }
