@@ -24,7 +24,7 @@ public sealed partial class PrivacyDispositionOwnerV1(CP6Context db,IHttpContext
     private string Journal(Authority a)=>"Main.Privacy.Disposition.v1/"+a.Environment.ToString("D")+"/"+a.Actor.Id.ToString("D");
     private Task<DateTimeOffset> Clock(CancellationToken ct)=>db.Database.SqlQueryRaw<DateTimeOffset>("SELECT clock_timestamp() AS \"Value\"").SingleAsync(ct);
     private static string? DispositionConstraintCode(Exception error)=>error is Npgsql.PostgresException{SqlState:"23514"} pg
-        &&(pg.MessageText.StartsWith("PRIVACY_EXPORT_PAYLOAD_",StringComparison.Ordinal)||pg.MessageText.StartsWith("PRIVACY_SECURITY_FIELDS_",StringComparison.Ordinal))?pg.MessageText:null;
+        &&(pg.MessageText.StartsWith("PRIVACY_TENANT_PAYLOAD_",StringComparison.Ordinal)||pg.MessageText.StartsWith("PRIVACY_EXPORT_PAYLOAD_",StringComparison.Ordinal)||pg.MessageText.StartsWith("PRIVACY_SECURITY_FIELDS_",StringComparison.Ordinal))?pg.MessageText:null;
     private async Task<T> Transaction<T>(bool write,TenantManagementSessionV1 session,Func<Authority,CancellationToken,Task<T>> body,CancellationToken ct,
         Func<CancellationToken,Task>? beforeCommit=null)
     {

@@ -37,6 +37,7 @@ public sealed partial class PrivacyDispositionOwnerV1
         =>new(operation,state,row.Id,scope.CandidateId,scope.SourceVersion,row.Digest,null,scope.UncoveredOwners,null);
     private async Task RequireRestoreApproval(Authority a,PlanRow row,PrivacyRestoreExecuteV1 input,CancellationToken ct)
     {
+        await RequireTenantPayloadRestoreSupport(a,ct);
         var current=await RestoreView(a,row,ct);
         if(current.Version!=input.ExpectedVersion||current.ScopeDigest!=input.ExpectedScopeDigest)throw new PrivacyDispositionExceptionV1("PRIVACY_RESTORE_APPROVAL_CHANGED",412);
         if(!current.ApprovalCurrent)throw new PrivacyDispositionExceptionV1("PRIVACY_RESTORE_EXECUTION_BLOCKED");

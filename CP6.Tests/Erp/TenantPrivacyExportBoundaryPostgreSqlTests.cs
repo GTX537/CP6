@@ -30,13 +30,12 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await o.RevokeTenantAsync(id,s);await o.RevokeTenantAsync(id,s);Assert.Equal(410,(await Assert.ThrowsAsync<PrivacyExportExceptionV1>(()=>ro.DownloadTenantAsync(id,rs))).Status);Assert.Equal("REVOKED",(await o.TenantArtifactAsync(id,s)).Availability);
         Assert.Equal(1,await TenantPrivacyCount(h,"payloads p JOIN cp6_privacy_tenant_export_v1.artifacts a ON a.id=p.artifact_id"));Assert.Equal(1,await h.Db.Database.SqlQuery<int>($"SELECT count(*)::integer AS \"Value\" FROM cp6_privacy_tenant_export_v1.audit WHERE artifact_id={id} AND kind='REVOKED'").SingleAsync());
     }
-    private static async Task<Guid> HistoricalTenantPrivacyArtifact(Harness h,TenantPrivacyExportReceiptV1 receipt,byte[] bytes,DateTimeOffset expiry)
+    private static async Task<Guid> HistoricalTenantPrivacyArtifact(Harness h,TenantPrivacyExportReceiptV1 receipt,byte[] bytes,DateTimeOffset expiry,bool includePayload=true)
     {
         var id=Guid.NewGuid();var copy=receipt with{ArtifactId=id,ExpiresAt=expiry};await h.Db.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO cp6_privacy_tenant_export_v1.artifacts(id,environment_id,actor_tenant,actor_id,recipient_id,target_tenant,policy,expires_at,receipt_bytes)
-            VALUES({id},{ScopeEnvironment},{h.Tenant},{h.User},{h.User},{receipt.TargetTenantId},{PrivacyExportOwnerV1.TenantPolicy},{expiry},{JsonSerializer.SerializeToUtf8Bytes(copy)});
-            INSERT INTO cp6_privacy_tenant_export_v1.payloads(artifact_id,bytes) VALUES({id},{bytes})
-            """);return id;
+            VALUES({id},{ScopeEnvironment},{h.Tenant},{h.User},{h.User},{receipt.TargetTenantId},{PrivacyExportOwnerV1.TenantPolicy},{expiry},{JsonSerializer.SerializeToUtf8Bytes(copy)})
+            """);if(includePayload)await h.Db.Database.ExecuteSqlInterpolatedAsync($"INSERT INTO cp6_privacy_tenant_export_v1.payloads(artifact_id,bytes) VALUES({id},{bytes})");return id;
     }
     [CurrentPermissionPostgresFact]
     public async Task TenantPrivacyExport_expiry_at_entry_or_final_session_and_missing_bytes_fail_before_any_disclosure_and_native_rewrite_is_rejected()
@@ -47,7 +46,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(0,await h.Db.Database.SqlQuery<int>($"SELECT count(*)::integer AS \"Value\" FROM cp6_privacy_tenant_export_v1.audit WHERE artifact_id={shortly} AND kind='DOWNLOAD_AUTHORIZED'").SingleAsync());
         Assert.Equal("23514",(await Assert.ThrowsAsync<Npgsql.PostgresException>(()=>h.Db.Database.ExecuteSqlInterpolatedAsync($"UPDATE cp6_privacy_tenant_export_v1.payloads SET bytes={new byte[]{1}} WHERE artifact_id={receipt.ArtifactId}"))).SqlState);
         Assert.Equal("23514",(await Assert.ThrowsAsync<Npgsql.PostgresException>(()=>h.Db.Database.ExecuteSqlInterpolatedAsync($"UPDATE cp6_privacy_tenant_export_v1.artifacts SET recipient_id={Guid.NewGuid()} WHERE id={receipt.ArtifactId}"))).SqlState);
-        await h.Db.Database.ExecuteSqlInterpolatedAsync($"DELETE FROM cp6_privacy_tenant_export_v1.payloads WHERE artifact_id={receipt.ArtifactId}");Assert.Equal("PRIVACY_TENANT_PAYLOAD_UNAVAILABLE",(await Assert.ThrowsAsync<PrivacyExportExceptionV1>(()=>o.DownloadTenantAsync(receipt.ArtifactId,s))).Message);
+        var missing=await HistoricalTenantPrivacyArtifact(h,receipt,bytes,PrivacyReviewTime(60),false);Assert.Equal("PRIVACY_TENANT_PAYLOAD_UNAVAILABLE",(await Assert.ThrowsAsync<PrivacyExportExceptionV1>(()=>o.DownloadTenantAsync(missing,s))).Message);
     }
     [CurrentPermissionPostgresFact]
     public async Task TenantPrivacyExport_final_session_audit_and_requested_source_failures_roll_back_artifact_original_and_minimal_audit()

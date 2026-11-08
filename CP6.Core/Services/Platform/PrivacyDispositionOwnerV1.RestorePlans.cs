@@ -29,6 +29,7 @@ public sealed partial class PrivacyDispositionOwnerV1
     private sealed record RestoreSecurityPolicy(bool Enabled,Guid TargetTenant,DateTimeOffset NotBeforeUtc);
     private async Task<PrivacyRestorePreviewV1> RestorePreview(Authority a,Guid candidateId,CancellationToken ct)
     {
+        await RequireTenantPayloadRestoreSupport(a,ct);
         var registration=RestoreCandidate(candidateId);var source=await PrivacyRestoreNativeV1.Database(db,ct);var version=await PrivacyRestoreNativeV1.Epoch(db,ct);
         var tombstones=await RestoreTombstones(a,ct);var blockers=new List<string>();
         foreach(var tomb in tombstones)

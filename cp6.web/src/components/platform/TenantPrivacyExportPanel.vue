@@ -33,7 +33,7 @@
       <div v-if="artifact">
         <p>当前访问：{{ availabilityName(artifact.availability) }}</p>
         <el-button :disabled="busy || artifact.availability !== 'AVAILABLE' || !can('tenant-download') || receipt.recipientId !== context?.actorId" @click="download">按当前权限下载租户制品</el-button>
-        <el-button type="warning" :disabled="busy || artifact.availability === 'REVOKED' || !can('tenant-revoke') || receipt.requesterId !== context?.actorId" @click="revoke">撤销租户制品下载</el-button>
+        <el-button type="warning" :disabled="busy || ['REVOKED','DISPOSED'].includes(artifact.availability) || !can('tenant-revoke') || receipt.requesterId !== context?.actorId" @click="revoke">撤销租户制品下载</el-button>
       </div>
       <SubjectExportManifestView :manifest="receipt.manifest" />
       <p>下载到期或撤销只关闭访问。租户制品的物理保留/处置、其他Owner及外部副本仍有独立剩余范围。</p>
@@ -58,7 +58,7 @@ const can = (action: string) => !!context.value?.actions.includes(action)
 const ready = computed(() => !busy.value && !pending.value && !storageError.value && [draft.targetTenantId, draft.requestRef, draft.recipientId].every(uuid) && draft.sources.length > 0)
 const sourceName = (value: string) => ({ identity: '身份资料', security: '安全事件', roles: '角色关联' }[value] || value)
 const purposeName = (value: string) => ({ TENANT_ACCESS_REQUEST: '租户资料访问申请', TENANT_SECURITY_REVIEW: '租户安全审查' }[value] || value)
-const availabilityName = (value: string) => ({ AVAILABLE: '可申请下载', EXPIRED: '访问已过期，载荷未因此删除', REVOKED: '访问已撤销，载荷未因此删除', POLICY_CHANGED: '政策已改变' }[value] || value)
+const availabilityName = (value: string) => ({ AVAILABLE: '可申请下载', EXPIRED: '访问已过期，载荷未因此删除', REVOKED: '访问已撤销，载荷未因此删除', POLICY_CHANGED: '政策已改变', DISPOSED: '本库租户载荷已删除' }[value] || value)
 function key() { const c = context.value!; return `cp6-tenant-privacy-export-v1:${c.environmentId}:${c.actorTenantId}:${c.actorId}` }
 function stored() {
   const value = localStorage.getItem(key()) || ''

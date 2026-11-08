@@ -24,6 +24,7 @@
       </el-tab-pane>
       <el-tab-pane label="恢复候选" name="restoreCandidate"><PrivacyRestorePanel /></el-tab-pane>
       <el-tab-pane label="导出载荷处置" name="exportPayload"><ExportPayloadDispositionPanel /></el-tab-pane>
+      <el-tab-pane label="租户载荷处置" name="tenantExportPayload"><TenantExportPayloadDispositionPanel /></el-tab-pane>
       <el-tab-pane label="安全日志字段处置" name="securityFields"><SecurityFieldDispositionPanel /></el-tab-pane>
     </el-tabs>
   </div>
@@ -37,6 +38,7 @@ import PrivacyExportPanel from '@/components/platform/PrivacyExportPanel.vue'
 import PrivacyDispositionPanel from '@/components/platform/PrivacyDispositionPanel.vue'
 import PrivacyRestorePanel from '@/components/platform/PrivacyRestorePanel.vue'
 import ExportPayloadDispositionPanel from '@/components/platform/ExportPayloadDispositionPanel.vue'
+import TenantExportPayloadDispositionPanel from '@/components/platform/TenantExportPayloadDispositionPanel.vue'
 import SecurityFieldDispositionPanel from '@/components/platform/SecurityFieldDispositionPanel.vue'
 
 const { t } = useI18n({ useScope: 'global' })
