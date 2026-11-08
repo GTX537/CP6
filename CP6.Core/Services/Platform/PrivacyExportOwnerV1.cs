@@ -12,7 +12,7 @@ namespace CP6.Core.Services.Platform;
 
 /// <summary>Main privacy artifact Owner. Immutable command metadata is separate from deletable PII bytes.
 /// No engineering FILE parent or cross-application coverage is inferred.</summary>
-public sealed class PrivacyExportOwnerV1(CP6Context db, IHttpContextAccessor http,
+public sealed partial class PrivacyExportOwnerV1(CP6Context db, IHttpContextAccessor http,
     ICurrentPermissionContext permissions, IOptions<ScopeAuthorizationOptionsV1> environment)
 {
     public const string Policy="MAIN.SUBJECT_EXPORT.ACCESS.v1", Menu="privacy-export";

@@ -5,19 +5,7 @@
     </div>
 
     <el-tabs v-model="activeTab" class="gdpr-tabs">
-      <!-- 按租户导出 -->
-      <el-tab-pane :label="t('platform.gdpr.exportTenant')" name="exportTenant">
-        <el-form label-width="140px" style="max-width: 560px">
-          <el-form-item :label="t('platform.audit.tenantCode')">
-            <el-input v-model="exportTenantId" :placeholder="'tenantId'" clearable />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" :disabled="!exportTenantId.trim()" :loading="busy" @click="doExportTenant">
-              {{ t('platform.gdpr.exportTenant') }}
-            </el-button>
-          </el-form-item>
-        </el-form>
-      </el-tab-pane>
+      <el-tab-pane label="租户受控导出" name="exportTenant"><TenantPrivacyExportPanel /></el-tab-pane>
 
       <!-- 按主体导出 -->
       <el-tab-pane :label="t('platform.gdpr.exportSubject')" name="exportSubject">
@@ -44,7 +32,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { gdprApi } from '@/api/platform/gdpr'
+import TenantPrivacyExportPanel from '@/components/platform/TenantPrivacyExportPanel.vue'
 import PrivacyExportPanel from '@/components/platform/PrivacyExportPanel.vue'
 import PrivacyDispositionPanel from '@/components/platform/PrivacyDispositionPanel.vue'
 import PrivacyRestorePanel from '@/components/platform/PrivacyRestorePanel.vue'
@@ -65,20 +53,6 @@ const { t: scopeT } = useI18n({
 })
 
 const activeTab = ref('exportTenant')
-const busy = ref(false)
-
-const exportTenantId = ref('')
-async function doExportTenant() {
-  busy.value = true
-  try {
-    await gdprApi.exportTenant(exportTenantId.value.trim())
-  } catch {
-    // E-SEC-032 由拦截器提示（注：blob 错误响应拦截器需能解析，见 http.ts）
-  } finally {
-    busy.value = false
-  }
-}
-
 </script>
 
 <style scoped>
