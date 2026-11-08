@@ -1796,6 +1796,14 @@
           ],
           "mode": "TASK_DELIVERY",
           "condition": "该仓真实Owner写入前交付；不能以接口存在代替采用。"
+        },
+        {
+          "requirement": "冻结公开提交原件及H01同事务受理合同",
+          "task_ids": [
+            "WP03-02"
+          ],
+          "mode": "TASK_DELIVERY",
+          "condition": "审核实际消费已交付的原生Submission/Attempt/Consent/Receipt/H01图、原键结果与冻结原件；不借此核销该提供卡尚未适用的共同服务消费或其他范围。"
         }
       ],
       "source_refs": [

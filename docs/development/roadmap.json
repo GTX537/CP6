@@ -162177,6 +162177,11 @@
       "date": "2026-11-08",
       "change": "W324两仓闭环；W310登记。W310预算末尾核销：以原CSV及W250相同59个ID逐卡对照原定义、当前源码/采用和既有有效执行；保留8已闭环、51真实余项，结算本轮全部窗口实测与24h口径。只更新文档/台账，不重跑未变产品，不提前宣布预算或全项目完成。",
       "evidence": "docs/development/dispatch/20261108-wave310/README.md"
+    },
+    {
+      "date": "2026-11-08",
+      "change": "W310逐卡核销原59：9已闭环/35明确实现余项/15证据适用待核；WP03-03复用有效执行核销，原37537DONE/2IN_PROGRESS/336PLANNED；当前24h继续至真实预算末尾。",
+      "evidence": "docs/development/evidence/W310-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -162474,14 +162479,16 @@
         "remote_verified_at": "2026-10-16T12:17:14.768909+00:00"
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "合同/验收待核",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp01-01",
-        "delivered": "有版本替代资产、信任阶段和579项义务的ITER/REL划分已经交付。",
-        "remaining": "逐125目标采用判断仍需对照旧缺件覆盖/不能覆盖；不可恢复的历史原件保持缺失。模拟业务输入不伪造历史原件或签名；不重做已接受替代方案。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "CONTRACT_OR_EVIDENCE_PENDING",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp01-01",
+        "delivered": "有版本替代资产、信任阶段及579项义务ITER/REL划分已采用。",
+        "remaining": "逐125目标核对替代覆盖与不能覆盖范围；不可恢复历史原件仍缺失，不能用模拟数据或新签名冒充。",
+        "next_action": "按原目标逐项核准已有采用和缺件，不重做替代方案。",
         "evidence_refs": [
-          "docs/development/evidence/WP01-01/trust-stages/DELIVERY.md"
+          "docs/development/evidence/WP01-01/trust-stages/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -164735,12 +164742,13 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-02",
-        "delivered": "S02-00混合布局已定；租户连接组件、ERP八表隔离及目录普通LOGIN/安装/HTTP均有交付。",
-        "remaining": "连接组件报告明确未全宿主接线：落实当前Main运行模型缓存、可信映射/池上下文及逐租户初始化版本和普通写入权限；历史数据切换另立任务，不全库自动转schema。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-02",
+        "delivered": "租户连接、ERP八表及Identity目录普通LOGIN/RLS、安装和HTTP限定交付。",
+        "remaining": "Main主业务EF/Stock未采用该可信存储profile；宿主模型/池上下文、普通写者权限与逐租户版本初始化仍需实际接线。",
+        "next_action": "先界定现Main业务表与共享/租户边界，再做单一实际Owner接线；不执行历史迁移或全库schema改造。",
         "evidence_refs": [
           "docs/development/evidence/WP02-02/directory-installation/DELIVERY.md",
           "docs/development/evidence/WP02-02/tenant-connections/DELIVERY.md",
@@ -164751,7 +164759,8 @@
           "docs/development/evidence/WP02-02/service-issuance/DELIVERY.md",
           "docs/development/evidence/WP02-02/tenant-eligibility-control/DELIVERY.md",
           "docs/development/evidence/WP02-02/identity-directory-isolation/DELIVERY.md",
-          "docs/development/evidence/WP02-02/directory-authorization/DELIVERY.md"
+          "docs/development/evidence/WP02-02/directory-authorization/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -170731,12 +170740,13 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-03",
-        "delivered": "IAM CAS、当前权限、撤权共同门、字段和动作权限已有多轮实际Owner采用；浏览器bootstrap也已交付。",
-        "remaining": "按全字段注册表与现存写者清单补query/write/export/download未纳管入口；逐入口复用当前权限，不重新实现公共fence。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-03",
+        "delivered": "当前IAM/CAS、撤权共同门、对象/字段和多类Owner动作，以及本轮隐私/FORM最终授权已采用。",
+        "remaining": "全字段注册表与全部现存query/write/export/download写者尚未完成覆盖核销。",
+        "next_action": "按实际入口补采用和当前披露；复用公共fence，不能逐层增加重复校验。",
         "evidence_refs": [
           "docs/development/evidence/WP02-03/field-decisions/DELIVERY.md",
           "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md",
@@ -170780,7 +170790,8 @@
           "docs/development/evidence/W139-01/DELIVERY.md",
           "docs/development/evidence/W140-01/DELIVERY.md",
           "docs/development/evidence/W141-01/DELIVERY.md",
-          "docs/development/evidence/W148-01/DELIVERY.md"
+          "docs/development/evidence/W148-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -170970,20 +170981,22 @@
         }
       ],
       "scope_reconciliation": {
-        "window": "W265-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W265-01/DELIVERY.md",
-        "delivered": "第七期三天W265租户创建V1：固定现有IAM模板修订，原命令恢复与Tenant/角色/菜单/首用户/强审计同事务；当前平台会话HTTP和创建页面，密码仅首次成功响应，未知原请求可恢复。",
-        "remaining": "W264配置/启停与W265创建V1已交付。WP02-04仍有其他配置Owner、旧兼容入口全面版本/原命令采用、全部业务writer共同fence、跨系统映射/传播、worker恢复及整卡验收；命令历史保留/擦除归相应治理任务。旧CreateAsync不具备原命令恢复，未知不得自动重放；现有默认模板Owner管理不在本期新增审批流程。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-04",
+        "delivered": "W264启停/配置CAS及W265固定模板创建V1、同事务强审计/原结果、真实HTTP和页面已交付。",
+        "remaining": "其他配置Owner、旧兼容入口的版本/原命令、全业务共同fence、跨系统传播和worker恢复尚非全覆盖。",
+        "next_action": "先盘旧入口真实调用再逐个采用；旧CreateAsync未知不能自动重放，不重复V1创建。",
         "evidence_refs": [
           "docs/development/evidence/WP02-04/current-actor-final-gate/DELIVERY.md",
           "docs/development/evidence/WP02-04/tenant-management-audit/DELIVERY.md",
           "docs/development/evidence/W264-01/DELIVERY.md",
-          "docs/development/evidence/W265-01/DELIVERY.md"
+          "docs/development/evidence/W265-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
-        "new_product_validation": true
+        "new_product_validation": false
       },
       "remaining_scope": "W264配置/启停与W265创建V1已交付。WP02-04仍有其他配置Owner、旧兼容入口全面版本/原命令采用、全部业务writer共同fence、跨系统映射/传播、worker恢复及整卡验收；命令历史保留/擦除归相应治理任务。旧CreateAsync不具备原命令恢复，未知不得自动重放；现有默认模板Owner管理不在本期新增审批流程。",
       "wave264_tenant_management": {
@@ -171894,12 +171907,13 @@
         "seat_released": true
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "合同/验收待核",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-05",
-        "delivered": "完整身份快照、目录/基线/水位、原字节与撤权链已交付，后续BUG419/543修复已采用。",
-        "remaining": "以当前全部权威写者核完tenant/org/user/permission/issuer向量及原字节；旧维护写者与issuer变更是否全部纳管尚需逐入口映射，不能从旧报告推断CRM未实现。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "CONTRACT_OR_EVIDENCE_PENDING",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-05",
+        "delivered": "完整快照/目录/基线/水位/原字节及BUG419/543修复有效；本轮身份处置亦实际发布撤权快照。",
+        "remaining": "tenant/org/user/permission/issuer全部权威及旧维护写者到向量的覆盖仍待逐入口核准。",
+        "next_action": "补写者到权威版本和原字节的映射；只对无有效证据路径追加执行。",
         "evidence_refs": [
           "docs/development/evidence/WP02-05/identity-writer-coverage/DELIVERY.md",
           "docs/development/evidence/WP02-05/identity-consistency/DELIVERY.md",
@@ -171914,7 +171928,8 @@
           "docs/development/evidence/WP02-05/baseline-integration/DELIVERY.md",
           "docs/development/evidence/BUG-419/DELIVERY.md",
           "docs/development/evidence/BUG-543/DELIVERY.md",
-          "docs/development/evidence/W130-01/DELIVERY.md"
+          "docs/development/evidence/W130-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -172462,18 +172477,20 @@
         ]
       },
       "scope_reconciliation": {
-        "window": "W264-01",
-        "as_of": "2026-11-02",
-        "classification": "合同/验收待核",
-        "report": "docs/development/evidence/W264-01/DELIVERY.md",
-        "delivered": "原生IdentityIngress precheckpoint在重复/旧/同版早返前执行，身份与业务撤权共享本地门；W246两种竞争顺序通过。切组织端点注销持久旧会话，callback也轮换旧会话。",
-        "remaining": "W253已执行真实双组织切换、旧会话失效和隔离场景并远端采用，此路径不再待执行。继续对照原卡其余正反验收与全部身份写者适用范围；只补没有有效证据的真实缺项，不重复整条身份链。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "CONTRACT_OR_EVIDENCE_PENDING",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-06",
+        "delivered": "W246本地撤权共同门及W253真实双组织切换、旧会话失效/隔离已执行。",
+        "remaining": "其余原卡正反合同、全部身份写者和CRM PG采用范围的整卡证据映射待核。",
+        "next_action": "复用已执行切组织与重建证据，不重复整条身份链，不虚报缺代码。",
         "evidence_refs": [
           "docs/development/evidence/W130-01/DELIVERY.md",
           "docs/development/evidence/W131-01/DELIVERY.md",
           "docs/development/evidence/W246-01/DELIVERY.md",
           "docs/development/evidence/W253-01/DELIVERY.md",
-          "docs/development/evidence/W264-01/DELIVERY.md"
+          "docs/development/evidence/W264-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -173497,18 +173514,20 @@
         ]
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-09",
-        "delivered": "Config/H01实际业务全图、回执/审计/Outbox与原结果在本仓PG事务；未知提交恢复和撤权竞争已执行。",
-        "remaining": "Inquiry模型明确Ignore平台Inbox；身份入站的Inbox不能证明业务入站Inbox。确认原卡适用的真实入站Owner并接完整收件/业务/原结果同事务，不能为公开HTTP凭空造消息或声称所有CRM已具备。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-09",
+        "delivered": "CRM Config/H01业务全图、原结果/审计/Outbox及撤权/未知恢复已交付。",
+        "remaining": "实际业务消息入站Owner的Inbox与业务/原回执同一PG事务仍未由身份Inbox或公开HTTP证明。",
+        "next_action": "确认真正业务入站路由再接事务；不为无消息公开流程凭空增加Inbox。",
         "evidence_refs": [
           "docs/development/evidence/W130-01/DELIVERY.md",
           "docs/development/evidence/W131-01/DELIVERY.md",
           "docs/development/evidence/W246-01/DELIVERY.md",
           "docs/development/evidence/W117-01/DELIVERY.md",
-          "docs/development/evidence/W118-01/DELIVERY.md"
+          "docs/development/evidence/W118-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -174381,9 +174400,18 @@
         }
       },
       "scope_reconciliation": {
-        "report": "docs/development/evidence/W255-01/DELIVERY.md#wp02-10",
-        "classification": "KNOWN_MAIN_STORAGE_ADOPTION_GAP",
-        "remaining": "实际Program对CP6Context使用宿主统一databaseConnection；TenantMiddleware和EF过滤/盖章传递TenantId，OperationsOwner持同Context/事务。WP02-02 TenantConnectionManager及ERP/Identity profile未覆盖Stock/主业务表，无Main业务EF适配。已从待核关系明确为未采用的新连接profile范围，完整卡保留；不判为已证泄露，不要求全库schema切换。"
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-10",
+        "delivered": "Main PG journal、实际Stock/PA090代表事务、当前授权/故障回滚及W249有效。",
+        "remaining": "Program仍为CP6Context统一databaseConnection，ERP/Identity租户profile未覆盖Main业务EF；这是已定位采用缺口。",
+        "next_action": "与WP02-02同一串行接线窗口处理准确profile；各消费者逐项采用仍归各域，不能据此重做事务提供者。",
+        "evidence_refs": [
+          "docs/development/evidence/W310-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -174767,16 +174795,18 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-13",
-        "delivered": "字段历史、操作审计及嵌套来源最终事务已有交付，多类原生Owner复用。",
-        "remaining": "全域actor/effectiveActor/UTC与脱敏、总数/明细/导出同授权及policy/hold/unknown清理收据仍需落到各权威出口；不能把Machine字段历史视为整个AUD。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-13",
+        "delivered": "多类实际Owner业务/原结果/审计同事务；FORM、TASK、DOC和隐私最小回执本轮已采用。",
+        "remaining": "全域actor/effectiveActor/UTC/脱敏、计数/明细/导出同授权及policy/hold/unknown清理收据仍未完整纳管。",
+        "next_action": "从实际审计查询/清理Owner补出口和政策；现OperLogCleanupService按时间批删不能当完整保留治理。",
         "evidence_refs": [
           "docs/development/evidence/W135-01/DELIVERY.md",
           "docs/development/evidence/W153-01/DELIVERY.md",
-          "docs/development/evidence/W64-01/DELIVERY.md"
+          "docs/development/evidence/W64-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -175069,16 +175099,18 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-14",
-        "delivered": "W189大小/扫描/隔离/不可变内容/当前下载和hold已实现，W190真实DOC绑定已采用。",
-        "remaining": "补全Owner引用图与清理决定、通用草稿转正式原操作及ACT-FILE LOCAL_AUTHORITATIVE_GUARD实际适配；不要重复DOC绑定或以未做生产部署否定本地实际扫描。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-14",
+        "delivered": "W189扫描/不可变内容/当前下载/hold、W190 DOC及W285实际FORM同事务绑定已采用。",
+        "remaining": "全Owner引用图/物理清理、通用草稿正式化与ACT-FILE LOCAL_AUTHORITATIVE_GUARD完整适配仍余。",
+        "next_action": "沿实际引用Owner接正式化/清理决定，不重复DOC或普通FORM绑定。",
         "evidence_refs": [
           "docs/development/evidence/W135-01/DELIVERY.md",
           "docs/development/evidence/W189-01/DELIVERY.md",
-          "docs/development/evidence/W190-01/DELIVERY.md"
+          "docs/development/evidence/W190-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -175238,12 +175270,13 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W324-01",
+        "window": "W310-01",
         "as_of": "2026-11-08",
-        "classification": "IMPLEMENTED_PARTIAL_PENDING_REMOTE",
-        "report": "docs/development/evidence/W324-01/DELIVERY.md",
-        "delivered": "稳定subject目录身份修复已交付；CRM同意撤回和保留已有独立原生行为。 W302：实际FORM字段受控处置Owner、准确历史原件、独立当前读取/批准/留存/撤销/hold资格、原操作恢复和处理工作台完成本地业务验收。 W303：真实隐藏损失请求、合格处置事实到本人原生重基的准确一次消费，以及当前资格/政策/hold校验、原件留存和原命令恢复完成本地业务验收。 W311在实际主体导出中采用用户、安全事件及稳定角色关联的显式字段投影、逐来源Manifest、未知覆盖与排除说明；页面展示真实部分覆盖，缺源直接失败。 W312完成Main主体持久导出：精确用途/来源/内部收件人、同事务原操作与独立载荷、当前分权下载及撤销、UNKNOWN原结果查询和迟到关闭；真实页面分开生成与下载。 W313完成Main主体资料的版本化政策、精确预览/冻结计划、独立批准/拒绝/撤销与全目标hold；原操作同事务恢复及关闭迟到，真实页面采用。旧主体/租户直接擦除入口410，批准本身不修改资料。 W314完成Main身份Owner实际匿名化：准确已批准计划与当前execute/hold/政策/目标/审批人共同核对，原用户字段及认证材料处置、身份快照/优先Outbox和CRM授权撤销同事务，最小安全原回执、UNKNOWN查询/关闭迟到与真实页面执行。仅此Owner APPLIED，整体保持PARTIAL。 W315完成已接Main身份处置的不可变墓碑与原生写入屏障，真实新库备份恢复候选经独立源权威、冻结范围/版本、独立审批和当前能力重施准确处置；双库提交未知保留责任并显式接回原回执，候选隐私门在源结果及当前来源未核实前失败关闭。只覆盖Main.Identity.Profile.v1，整体PARTIAL。 W320完成Main.Privacy.ExportPayload.v1：准确原生导出载荷的显式UTC保留政策、独立申请/批准/实际删除、全主体hold、最小不可变原回执/墓碑与原生防复活；已接恢复候选实际删除旧载荷或据实记录缺失并安装屏障，两库UNKNOWN责任与原键恢复继续复用。仅此Owner，整体PARTIAL。 W321完成Main.SecurityLog.Fields.v1：准确安全事件已分类UserName/ClientIp的显式UTC政策、独立申请/批准/实际置空、全主体hold、最小原回执/墓碑与原生防回填；恢复候选重施准确字段处置，已空及事件缺失分别据实记录，两库UNKNOWN责任和原键恢复直接复用。事件身份、原时间及未知内容保留，仅此Owner，整体PARTIAL。 W322完成Main.Privacy.TenantExport.v1：准确target tenant下已分类identity/security/roles及白名单租户元数据，明确用途/接收人、独立tenant能力、不可变制品/原操作/TTL；当前披露重查收件人/来源权限/绑定/期限/撤销和最终会话，逐源真实Manifest。没有伪subject，旧直接租户HTTP散流退役410；其他Owner全量导出和新租户载荷物理保留/处置及恢复仍为真实余项，整体PARTIAL。 W323完成Main.Privacy.TenantExportPayload.v1当前库准确租户载荷处置：明确保留政策/独立申请批准/当前最终执行、全目标租户所有主体hold与ABA、真实字节删除/撤访问/最小原回执/墓碑同commit及原生防回填。无伪subject。新墓碑推进restore_epoch，未采用的新Owner恢复明确503并保持候选隔离，历史已提交原结果仍可恢复；不冒充备份或外部副本已清。 W324完成Main.Privacy.TenantExportPayload.v1真实恢复采用：独立无subject的tenant Unit，准确原制品元数据/revision/实际SHA一次外部核对，真实删除与载荷缺失/整制品缺失0分别记录；当前源政策/全目标hold和独立恢复批准，父回执/实际效果/墓碑/fence/开放标记同候选commit，保持两次commit与原结果责任。其他Owner/WAL/外部副本及完整环境恢复仍PARTIAL。",
-        "remaining": "原375=36DONE/2IN_PROGRESS/337PLANNED，原59=8闭环/51剩余（统计校正），125目标/247正式验收不变。WP02-15仍余未分类安全内容/不可归属事件、授权/组织引用、OA/PLM/CRM历史、FILE及其他来源副本、整租户全部Owner导出/处置、WAL/备份/外部副本与完整环境恢复。当前新租户载荷此Owner的真实恢复已采用，不再列为未实现。W306/W249/七天及已闭环FORM不重复；下一W310预算末尾实际原375/59及工时核销，不另起周期。",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-15",
+        "delivered": "主体/租户部分导出、当前分权下载；身份/主体载荷/安全分类字段/租户载荷真实处置与对应恢复候选均已采用。",
+        "remaining": "未分类安全内容/不可归属事件、授权/组织引用、OA/PLM/CRM/FILE及其他Owner、整租户全量、WAL/备份/外部副本与完整环境恢复仍余。",
+        "next_action": "先选有准确分类和权威Owner的直接来源；新租户载荷恢复已完成，不再列缺口，不宣称全部副本已清。",
         "evidence_refs": [
           "docs/development/evidence/W125-01/DELIVERY.md",
           "docs/development/evidence/W135-01/DELIVERY.md",
@@ -175260,10 +175293,11 @@
           "docs/development/evidence/W321-01/DELIVERY.md",
           "docs/development/evidence/W322-01/DELIVERY.md",
           "docs/development/evidence/W323-01/DELIVERY.md",
-          "docs/development/evidence/W324-01/DELIVERY.md"
+          "docs/development/evidence/W324-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
-        "new_product_validation": true
+        "new_product_validation": false
       },
       "wave302_field_disposition_owner": {
         "status": "CLOSED",
@@ -175829,22 +175863,24 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W263-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W263-01/DELIVERY.md",
-        "delivered": "W262版本元数据已采用；W263新增保留旧ID/表列原件的显式接入、原件CAS和旧写冻结、真实会话HTTP及页面原操作恢复；未批量迁移或应用文件。",
-        "remaining": "新编号提供者/规则CAS/管理HTTP及CodeGen固定模板/差异预览/PG版本元数据和旧原件显式接入已实现。存量逐对象采用尚非全量迁移；实际文件应用/路径和并发保护、编号实际业务消费者/旧域切换及完整规则生命周期、整卡联合验收仍需核销。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-16",
+        "delivered": "W254/257/260准确scope编号原命令/规则CAS/HTTP，W261–263固定模板差异与元数据旧原件显式采用已交付。",
+        "remaining": "实际文件应用的路径/覆盖/并发保护、编号真实业务消费者及旧域切换、完整规则生命周期/整卡验收仍余。",
+        "next_action": "使用现编号提供者接一个实际业务Owner；生成预览只比较调用者快照，不等已写文件。",
         "evidence_refs": [
           "docs/development/evidence/W254-01/DELIVERY.md",
           "docs/development/evidence/W257-01/DELIVERY.md",
           "docs/development/evidence/W260-01/DELIVERY.md",
           "docs/development/evidence/W261-01/DELIVERY.md",
           "docs/development/evidence/W262-01/DELIVERY.md",
-          "docs/development/evidence/W263-01/DELIVERY.md"
+          "docs/development/evidence/W263-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
-        "new_product_validation": true
+        "new_product_validation": false
       },
       "wave254_number_allocation": {
         "status": "IMPLEMENTED_VALIDATED_PENDING_REMOTE",
@@ -176285,22 +176321,24 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W267-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W267-01/DELIVERY.md",
-        "delivered": "第九期三天W267菜单展示配置V1：名称/图标/Enable共享树CAS、全tenant引用预览、强审计/原件同事务、当前平台及menu:edit实际HTTP、集成页面冲突与未知原请求恢复。",
-        "remaining": "W266排序层级和W267名称/图标/Enable展示配置已限定交付。WP02-18仍余RoutePath/MenuKey及路由/权限命名空间治理、个性配置、KPI Owner与scoped授权缓存、全部用户导航传播、旧接口/旧节点编辑全面CAS与原命令采用及原20AC整体；隐藏菜单不是动作撤权。命令历史保留/擦除归治理任务，原WP02-03整卡前置地位不变。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-18",
+        "delivered": "W266树顺序/层级及W267名称/图标/Enable共享CAS、原操作/审计/页面已交付。",
+        "remaining": "RoutePath/MenuKey与权限命名空间、个性配置、各Owner KPI/授权缓存、旧节点/入口全面CAS和导航传播仍余。",
+        "next_action": "先挑明确配置Owner或KPI定义；隐藏菜单不等动作撤权，不重复W267。",
         "evidence_refs": [
           "docs/development/evidence/WP02-18/menu-refresh-recovery/DELIVERY.md",
           "docs/development/evidence/WP02-18/dashboard-states/DELIVERY.md",
           "docs/development/evidence/W146-01/DELIVERY.md",
           "docs/development/evidence/W148-01/DELIVERY.md",
           "docs/development/evidence/W266-01/DELIVERY.md",
-          "docs/development/evidence/W267-01/DELIVERY.md"
+          "docs/development/evidence/W267-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
-        "new_product_validation": true
+        "new_product_validation": false
       },
       "wave266_menu_tree": {
         "status": "MERGED",
@@ -177107,15 +177145,17 @@
         }
       ],
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-28",
-        "delivered": "Main固定包/实际加载观察和回退拒绝路径已有交付，相关本地证据可复用。",
-        "remaining": "尚无两份兼容实际制品的正向更新/回退采用证明；需隔离PG schema/驱动兼容验证及准确采用清单。正式R2/GHCR候选和推广另行办理，不能拿本地文件替代。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-28",
+        "delivered": "固定平台包实际加载观察、一次真实publish、实际宿主授权/负向回退证据保留。",
+        "remaining": "两份实际兼容版本在准确PG schema/驱动上的正向更新/回退与采用清单仍未证明。",
+        "next_action": "在隔离本地环境补两实际制品兼容；生产候选/信任/环境推广另轴，不触发Actions。",
         "evidence_refs": [
           "docs/development/evidence/WP02-28/published-host/DELIVERY.md",
-          "docs/development/evidence/WP02-28/DELIVERY.md"
+          "docs/development/evidence/WP02-28/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -177468,18 +177508,20 @@
         ]
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "合同/验收待核",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp02-29",
-        "delivered": "CRM平台0.10.3、原生HTTP/消息/操作观测及managed payload启动核验已交付；W246限定D5完成。",
-        "remaining": "对原卡“实际加载版本/配置及Owner边界”逐项核销剩余身份观察项，区分已证实托管payload与未证实进程/native身份；正式发布与环境推广不是此卡额外开工门。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "CONTRACT_OR_EVIDENCE_PENDING",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-29",
+        "delivered": "CRM平台0.10.3及原生HTTP/消息/操作观测、托管payload启动核验已采用。",
+        "remaining": "原卡实际加载/配置与Owner边界的剩余进程/native身份观察仍待核；托管payload不等内存或native全身份。",
+        "next_action": "逐原正反验收复用W130–143/246，缺哪项只查/运行哪项，正式发布不作此卡新门。",
         "evidence_refs": [
           "docs/development/evidence/W130-01/DELIVERY.md",
           "docs/development/evidence/W131-01/DELIVERY.md",
           "docs/development/evidence/W132-01/DELIVERY.md",
           "docs/development/evidence/W143-01/DELIVERY.md",
-          "docs/development/evidence/W246-01/DELIVERY.md"
+          "docs/development/evidence/W246-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -178499,9 +178541,18 @@
         ]
       },
       "scope_reconciliation": {
-        "report": "docs/development/evidence/W255-01/DELIVERY.md#wp03-01",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
         "classification": "FULL_CARD_RECONCILED",
-        "remaining": "本原卡配置范围无剩余；任意时区H01新合同、正式发布与其他消费卡独立。"
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp03-01",
+        "delivered": "不可变Bundle/政策/日历、DB时钟、完整effectivity及同day/holiday按原合同核销完成。",
+        "remaining": "本卡配置范围无剩余。",
+        "next_action": "保DONE；任意时区H01新合同和正式发布独立，不重做。",
+        "evidence_refs": [
+          "docs/development/evidence/W310-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       },
       "prerequisite_adoptions": [
         {
@@ -179396,9 +179447,18 @@
         ]
       },
       "scope_reconciliation": {
-        "report": "docs/development/evidence/W255-01/DELIVERY.md#wp03-02",
-        "classification": "FROZEN_PUBLIC_FLOW_APPLICABILITY_RECONCILED",
-        "remaining": "冻结公开/H01路径已按W135/247准确适用，LeadNo可未分配且没有附件输入；完整卡共同NUM/FILE未来实际消费前置未核销，不能借W254未接线组件关闭。公共服务消费须另有正式版本入口和准确原键恢复，不伪造调用。"
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "CONTRACT_OR_EVIDENCE_PENDING",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp03-02",
+        "delivered": "冻结公开/H01真实Attempt、CSRF、同意/Submission/Lead全图、原字节恢复与日历已交付。",
+        "remaining": "公开流程完整状态及共同NUM/FILE/PRIV适用/真实版本消费的整卡核销仍待确认。",
+        "next_action": "原H01 LeadNo可未分配且无附件，不制造调用；未来真实消费需准确入口/原键/当前输出合同，不能用提供者组件冒采用。",
+        "evidence_refs": [
+          "docs/development/evidence/W310-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       }
     },
     {
@@ -179422,10 +179482,10 @@
         "file:CRM:apps/web/src/leads/PublicInquiry.tsx"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP03.md",
       "card_anchor": "wp03-03",
-      "entry_gate": "NOT_CHECKED",
+      "entry_gate": "CONFIRMED",
       "assignment": {
         "chat_label": "COORD / W123-01/02",
         "repository": "Main/CRM",
@@ -179494,8 +179554,60 @@
         }
       },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/W310-01/DELIVERY.md",
+          "source_sha": "5c8c7b2d96bbd0c642f5777aab9c40d539b92c48",
+          "scope": "实际放行/拒绝H01图、两请求竞争唯一赢家、原key/ETag/撤权/PII/事务故障与丢答恢复",
+          "command": "REUSED original scoped PostgreSQL/HTTP/Node/React commands and raw logs from W121; no product rerun in W310",
+          "environment": "Isolated PostgreSQL18/native CRM Owner+HTTP, Node/React where recorded; explicit mock business/IAM, controlled review clock only where recorded",
+          "observed_at": "2026-10-24T21:35:05.956184+00:00",
+          "result": "PASS"
+        },
+        {
+          "path": "docs/development/evidence/W310-01/DELIVERY.md",
+          "source_sha": "f885ec55c7b57fe15a5ef8da41c73ad7d1c64675",
+          "scope": "实际React→Node BFF→PG审核页面/当前动作/字段裁剪/原操作/冲突与失权清空",
+          "command": "REUSED original scoped PostgreSQL/HTTP/Node/React commands and raw logs from W122; no product rerun in W310",
+          "environment": "Isolated PostgreSQL18/native CRM Owner+HTTP, Node/React where recorded; explicit mock business/IAM, controlled review clock only where recorded",
+          "observed_at": "2026-10-24T21:59:50.129674+00:00",
+          "result": "PASS"
+        },
+        {
+          "path": "docs/development/evidence/W310-01/DELIVERY.md",
+          "source_sha": "8bd54612d85d2bb684b810e9c347b00247051cd0",
+          "scope": "七天原审核期限前/整点/后与最终提交越界全回滚",
+          "command": "REUSED original scoped PostgreSQL/HTTP/Node/React commands and raw logs from W253; no product rerun in W310",
+          "environment": "Isolated PostgreSQL18/native CRM Owner+HTTP, Node/React where recorded; explicit mock business/IAM, controlled review clock only where recorded",
+          "observed_at": "2026-11-02T01:54:58.611048+00:00",
+          "result": "PASS"
+        },
+        {
+          "path": "docs/development/evidence/W310-01/DELIVERY.md",
+          "source_sha": "995490872e68e4cb88271c16d8019065235a23d4",
+          "scope": "真实持久Expired/独立期限/当前编辑权限/worker/放行竞争/原结果恢复和显式存储采用",
+          "command": "REUSED original scoped PostgreSQL/HTTP/Node/React commands and raw logs from W256; no product rerun in W310",
+          "environment": "Isolated PostgreSQL18/native CRM Owner+HTTP, Node/React where recorded; explicit mock business/IAM, controlled review clock only where recorded",
+          "observed_at": "2026-11-02T03:55:37.048679+00:00",
+          "result": "PASS"
+        },
+        {
+          "path": "docs/development/evidence/W310-01/DELIVERY.md",
+          "source_sha": "0e2823891af775859e1bfc5f8e2c76ba7bb92707",
+          "scope": "同一实际原件真实60分钟匿名化后进入Expired，HTTP无动作，五类原件保持/丢答恢复/回滚；审核业务时间单独模拟",
+          "command": "REUSED original scoped PostgreSQL/HTTP/Node/React commands and raw logs from W259; no product rerun in W310",
+          "environment": "Isolated PostgreSQL18/native CRM Owner+HTTP, Node/React where recorded; explicit mock business/IAM, controlled review clock only where recorded",
+          "observed_at": "2026-11-02T06:48:05.5037008+00:00",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/W310-01/DELIVERY.md",
+        "source_sha": "0e2823891af775859e1bfc5f8e2c76ba7bb92707",
+        "remote_main_sha": "0cd83eb09826552fc1dc8d631a7c82484ec40363",
+        "pr_url": "https://github.com/GTX537/CP6.CRM/pull/167",
+        "scope": "W120/121/122审核读取/决定/UI + W253原期限最终门 + W256持久到期 + W259实际匿名化后到期；当前CRM Main全部采用，W310仅核销，不声称新CRM产品执行或部署。"
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：CRM PostgreSQL可信租户路由、当前权限、原生外层事务/共同锁、原结果账与可靠消息实际采用",
@@ -180001,18 +180113,20 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W259-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现/整卡验收余项",
-        "report": "docs/development/evidence/W259-01/DELIVERY.md",
-        "delivered": "沿用W120–124队列/放行拒绝/保留匿名化；W256持久过期、权限/竞争/恢复及W259同一合法已匿名化PG原件到Expired均已实际验收。",
-        "remaining": "W256持久Expired与W259真实60分钟匿名化后Expired已验收；本链路不再列为未执行。新过期事件消费者/投递及原卡整体验收尚未核销；部署/PrimaryWriter切换属WP14独立范围，不阻塞本局部验收。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "FULL_CARD_RECONCILED",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp03-03",
+        "delivered": "W120/121/122实际队列/放行拒绝/UI与当前裁剪，W253原期限最终门、W256持久Expired和W259真实匿名化后到期已逐原scope/正反核销。",
+        "remaining": "本卡审核范围无剩余；新过期事件消费者/运输、全隐私及正式部署独立。",
+        "next_action": "保DONE；复用当前原件与原结果，不重跑已完成到期链。",
         "evidence_refs": [
           "docs/development/evidence/W256-01/DELIVERY.md",
-          "docs/development/evidence/W259-01/DELIVERY.md"
+          "docs/development/evidence/W259-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
-        "formal_state_changed": false,
-        "new_product_validation": true
+        "formal_state_changed": true,
+        "new_product_validation": false
       },
       "wave253_acceptance": {
         "status": "MERGED",
@@ -180062,7 +180176,39 @@
         "full_task_completed": false,
         "scope": "Actual elapsed anonymized original through durable review expiry;new event consumer and original full card remain."
       },
-      "remaining_scope": "W256持久Expired与W259真实60分钟匿名化后Expired已验收；本链路不再列为未执行。新过期事件消费者/投递及原卡整体验收尚未核销；部署/PrimaryWriter切换属WP14独立范围，不阻塞本局部验收。"
+      "remaining_scope": "W256持久Expired与W259真实60分钟匿名化后Expired已验收；本链路不再列为未执行。新过期事件消费者/投递及原卡整体验收尚未核销；部署/PrimaryWriter切换属WP14独立范围，不阻塞本局部验收。",
+      "prerequisite_adoptions": [
+        {
+          "task_id": "WP02-09",
+          "requirement": "所属仓库的可信租户、当前授权、同事务原结果及审计基础",
+          "deliveries": [
+            "wave102_delivery",
+            "wave130_delivery",
+            "wave131_delivery",
+            "wave246_exit"
+          ],
+          "scope": "实际原生审核Owner的PG租户/会话/当前用途、最终撤权fence、业务图/原结果/审计/Outbox共同事务已采用；W120/121/122/253/256为实际审核路径证据，不代表所有业务消息Inbox完成。"
+        },
+        {
+          "task_id": "WP03-02",
+          "requirement": "冻结公开提交原件及H01同事务受理合同",
+          "deliveries": [
+            "wave117_delivery",
+            "wave118_delivery",
+            "wave234_simulated_acceptance",
+            "wave247_exit"
+          ],
+          "scope": "原生公开提交冻结原件和H01完整图被实际放行/拒绝/到期Owner使用；冻结H01无附件、LeadNo可未分配，不虚构NUM/FILE调用；本次不关闭WP03-02。"
+        }
+      ],
+      "wave310_full_card_reconciliation": {
+        "status": "RECONCILED_PENDING_MAIN_DOCUMENT_ADOPTION",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md",
+        "crm_remote_main": "0cd83eb09826552fc1dc8d631a7c82484ec40363",
+        "full_task_complete": true,
+        "new_product_validation": false,
+        "scope": "原审核队列、放行拒绝、独立到期、当前字段/权限与React恢复范围核销；新过期事件消费者、全PRIV/NUM/FILE及PrimaryWriter/发布部署独立。"
+      }
     },
     {
       "id": "WP03-04",
@@ -180547,18 +180693,20 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp03-04",
-        "delivered": "Consent撤回当前权限、60分钟保留/Attempt墓碑和hold worker已经实际验证；导出下载权限来源已提供。",
-        "remaining": "原生导出制品20/30/90/99、单次下载及FILE/PRIV/NUM适用编排未完成；Lead月度保留真实边界仅有投影证据的部分需按合同执行，不偷改期限换通过。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp03-04",
+        "delivered": "同意撤回、60分钟匿名化/Attempt墓碑/hold与恢复有效。",
+        "remaining": "CRM原生导出20/30/90/99、单次下载及相应共同服务适用、Lead月度保留实际边界仍余。",
+        "next_action": "接CRM真实导出Owner；Main主体/租户导出不是CRM历史采用证明，期限不缩短换通过。",
         "evidence_refs": [
           "docs/development/evidence/W126-01/DELIVERY.md",
           "docs/development/evidence/W127-01/DELIVERY.md",
           "docs/development/evidence/W128-01/DELIVERY.md",
           "docs/development/evidence/W133-01/DELIVERY.md",
-          "docs/development/evidence/W124-01/DELIVERY.md"
+          "docs/development/evidence/W124-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -182938,19 +183086,21 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp04-33",
-        "delivered": "现有ERP产品主账准确商业身份/单位及工程双Owner映射已有交付，库存身份W204已补。",
-        "remaining": "当前映射明确IDENTITY_SITE_ONLY；法人/制造等完整scope版本适用及所有legacy资格变更frontier继续补，币种/有效状态按原主账读取，禁止另建ERP表。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp04-33",
+        "delivered": "原ERP经营产品/单位及工程双Owner IDENTITY_SITE_ONLY映射和库存身份已采用。",
+        "remaining": "法人/制造等完整scope、币种/有效状态和所有legacy资格frontier覆盖仍余。",
+        "next_action": "在原Product主账补准确范围与当前门；不建平行产品表或重键旧订单。",
         "evidence_refs": [
           "docs/development/evidence/W144-01/DELIVERY.md",
           "docs/development/evidence/W145-01/DELIVERY.md",
           "docs/development/evidence/W147-01/DELIVERY.md",
           "docs/development/evidence/W149-01/DELIVERY.md",
           "docs/development/evidence/W150-01/DELIVERY.md",
-          "docs/development/evidence/W204-01/DELIVERY.md"
+          "docs/development/evidence/W204-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -183022,12 +183172,13 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "合同/验收待核",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp04-34",
-        "delivered": "原商业行快照W226、Shipment份额W222/223、政策/Delivery/退货授权W227–229均已采用，W248商业桥接受明确模拟外部输入。",
-        "remaining": "核完整旧发运/已退份额和撤销/current来源覆盖，落实原商业Owner允许退货依据的准确适配；模拟外部服务可验收边界，不能被说成内部ERP所有来源均已实现。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "CONTRACT_OR_EVIDENCE_PENDING",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp04-34",
+        "delivered": "原商业行/Shipment份额、政策/Delivery/退货授权及W248模拟外部商业桥已采用。",
+        "remaining": "完整旧发运/已退份额与撤销/current来源适用、原商业Owner允许退货依据尚待核销。",
+        "next_action": "核原Owner读取范围；可退、可贷、退款分别记账，外部模拟桥不代表内部ERP全来源完成。",
         "evidence_refs": [
           "docs/development/evidence/W226-01/DELIVERY.md",
           "docs/development/evidence/W222-01/DELIVERY.md",
@@ -183035,7 +183186,8 @@
           "docs/development/evidence/W227-01/DELIVERY.md",
           "docs/development/evidence/W228-01/DELIVERY.md",
           "docs/development/evidence/W229-01/DELIVERY.md",
-          "docs/development/evidence/W248-01/DELIVERY.md"
+          "docs/development/evidence/W248-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -183286,14 +183438,16 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-02",
-        "delivered": "稳定工程产品、原商业身份/Site与双Owner确认及映射历史已交付。",
-        "remaining": "当前只证IDENTITY_SITE_ONLY；类别/来源、法人适用及技术修订/配置范围要按原scope补，停用改型保原身份与历史，不重建产品号。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp05-02",
+        "delivered": "稳定工程产品、原经营身份/Site、双Owner确认和映射历史有效。",
+        "remaining": "类别/来源、法人/技术修订/配置等完整适用域仍余。",
+        "next_action": "沿原身份增加准确范围；保停用改型和旧引用，不重建产品号。",
         "evidence_refs": [
-          "docs/development/evidence/W150-01/DELIVERY.md"
+          "docs/development/evidence/W150-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -183406,12 +183560,13 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-03",
-        "delivered": "EngineeringRevision/WorkingSnapshot/Candidate成员原Ref及快照/选项已实现；后续ROU/BOM/DOC/QUALITY/关系/基线已有真实采用。",
-        "remaining": "完整三方rebase逐项KEEP/ACCEPT/MANUAL与旧CheckRun失效、父基线/变更和legacy入口覆盖仍需实施/验收，不能把已交付成员类型继续列空缺。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp05-03",
+        "delivered": "工程修订/工作快照/成员Ref/occurrence及ROU/BOM/DOC/QUALITY/关系/基线采用有效。",
+        "remaining": "三方KEEP/ACCEPT/MANUAL逐项rebase、旧CheckRun失效、父基线/变更及legacy覆盖仍余。",
+        "next_action": "以实际已存候选做显式重基，保原快照/理由和准确原键；不把制造许可加成本卡范围。",
         "evidence_refs": [
           "docs/development/evidence/W151-01/DELIVERY.md",
           "docs/development/evidence/W152-01/DELIVERY.md",
@@ -183420,7 +183575,8 @@
           "docs/development/evidence/W190-01/DELIVERY.md",
           "docs/development/evidence/W192-01/DELIVERY.md",
           "docs/development/evidence/W201-01/DELIVERY.md",
-          "docs/development/evidence/W202-01/DELIVERY.md"
+          "docs/development/evidence/W202-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -183576,17 +183732,19 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "合同/验收待核",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-04",
-        "delivered": "旧版模创建/改版/纠正及版本化原结果、两旧页与Order意图已交付，BaseCd/WdPtnNo/WdRev保留。",
-        "remaining": "按全部旧写者核expectedNativeRowVersion+expectedTechnicalControl、有效区间/删除/导入与Unknown恢复覆盖；技术规格当前DRAFT不等正式控制批准，但不得将后续制造许可扩大成本卡。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "CONTRACT_OR_EVIDENCE_PENDING",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp05-04",
+        "delivered": "旧版模创建/改版/纠正原结果、两旧页及完整BaseCd/WdPtnNo/WdRev已交付。",
+        "remaining": "全部旧写者的双版本、有效区间、删除/导入及Unknown恢复覆盖仍待核。",
+        "next_action": "核真实旧路由和调用；缺版本不补latest，技术退役不等实物报废。",
         "evidence_refs": [
           "docs/development/evidence/W156-01/DELIVERY.md",
           "docs/development/evidence/W158-01/DELIVERY.md",
           "docs/development/evidence/W159-01/DELIVERY.md",
-          "docs/development/evidence/W157-01/DELIVERY.md"
+          "docs/development/evidence/W157-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -183706,15 +183864,17 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-05",
-        "delivered": "CREATE_OR_LINK真实订单采用、完整订单身份及CHANGE/CANCEL请求原结果已交付。",
-        "remaining": "CHANGE_REQUEST/CANCEL_REQUEST仍仅REQUESTED；接真实ERP/PE决定/应用/回执和恢复，替换旧直接联动/重建关联路径，不能以请求或NoOp算OWNER_APPLIED。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp05-05",
+        "delivered": "CREATE_OR_LINK已真实接订单；CHANGE/CANCEL原请求和完整订单身份可恢复。",
+        "remaining": "CHANGE_REQUEST/CANCEL_REQUEST仍REQUESTED，真实ERP/PE决定/应用/回执和旧直写/重建关联路径仍余。",
+        "next_action": "接真实原订单Owner结果；请求/NoOp不得显示OWNER_APPLIED。",
         "evidence_refs": [
           "docs/development/evidence/W157-01/DELIVERY.md",
-          "docs/development/evidence/W158-01/DELIVERY.md"
+          "docs/development/evidence/W158-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -183801,18 +183961,20 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "合同/验收待核",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-06",
-        "delivered": "W165已实现实际双Role当前轮关联和技术/实物HoldExact共同提交；W166–168后续维护/使用也存在，W159不是当前全部范围。",
-        "remaining": "逐原协议核不可变证据Inbox、迟到/冲突/observationGeneration及各Owner准确控制适用；当前技术DRAFT路径不自动获得批准资格。需要外部Owner原件的路径按真实调用补，不重做双Role关联。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "CONTRACT_OR_EVIDENCE_PENDING",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp05-06",
+        "delivered": "W165双Role当前轮关联、真实HoldExact；维护/使用事实及计量周期后续已采用。",
+        "remaining": "完整原协议Inbox/迟到/冲突/observationGeneration与各Owner准确控制合法域仍待核。",
+        "next_action": "映射现测试/来源，缺实际参与者保持UNKNOWN/FENCED，不重做双Role关联。",
         "evidence_refs": [
           "docs/development/evidence/W159-01/DELIVERY.md",
           "docs/development/evidence/W165-01/DELIVERY.md",
           "docs/development/evidence/W166-01/DELIVERY.md",
           "docs/development/evidence/W167-01/DELIVERY.md",
-          "docs/development/evidence/W168-01/DELIVERY.md"
+          "docs/development/evidence/W168-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -183980,15 +184142,17 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-08",
-        "delivered": "W186路线稳定operation occurrence/依赖及ProductProcess原源已实现，W203资源能力引用已接入。",
-        "remaining": "正式资源/工具规格与替代工艺的适用及参数来源继续补；当前DRAFT_ONLY和声明能力不能声称完整受控路线资格。生产Claim/Start属资源/执行卡，勿扩大本卡。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp05-08",
+        "delivered": "稳定operation occurrence/顺序依赖/原ProductProcess及资源能力引用有效。",
+        "remaining": "正式资源/工具规格、替代工艺、完整参数来源和适用资格仍余，当前DRAFT_ONLY不等合格受控路线。",
+        "next_action": "先接准确有权来源与单位参数；Claim/Start归执行卡。",
         "evidence_refs": [
           "docs/development/evidence/W186-01/DELIVERY.md",
-          "docs/development/evidence/W203-01/DELIVERY.md"
+          "docs/development/evidence/W203-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -184072,14 +184236,16 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-09",
-        "delivered": "W187 BOM occurrence、超常精度数量、原ProductMaterial来源、CAS/差异/where-used已交付。",
-        "remaining": "补批准单位转换、替代/配置条件与完整适用域；不得以隐含倍率1或缩小合法精度代替，旧行历史继续保持。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp05-09",
+        "delivered": "稳定BOM occurrence、原ProductMaterial、超常精度、CAS/比较/where-used有效。",
+        "remaining": "批准单位转换、替代/配置条件与完整适用域仍余。",
+        "next_action": "复用原Owner批准换算，未知不补1，不截断合法数量精度。",
         "evidence_refs": [
-          "docs/development/evidence/W187-01/DELIVERY.md"
+          "docs/development/evidence/W187-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -184203,16 +184369,18 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "合同/验收待核",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-10",
-        "delivered": "W188制造模型后，W201 ENG-OUTPUT-RELATIONS/1闭包/主产品/多输出原关系已实际采用，W202冻结也已消费。",
-        "remaining": "核外部Item/Spec准确来源适用、完整合法配置/关系输入及大合法包验收证据；缺的是原卡完整覆盖映射，不能把REL/WO全部实现列为此卡前置。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "CONTRACT_OR_EVIDENCE_PENDING",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp05-10",
+        "delivered": "ENG-OUTPUT-RELATIONS/1闭包/主产品/多输出原关系及冻结消费已采用。",
+        "remaining": "外部Item/Spec来源、全部合法配置/关系及大合法包的原正反证据映射待核。",
+        "next_action": "按原协议补缺证路径；不扩大成REL/WO全部完成，不改黄金manifest。",
         "evidence_refs": [
           "docs/development/evidence/W188-01/DELIVERY.md",
           "docs/development/evidence/W201-01/DELIVERY.md",
-          "docs/development/evidence/W202-01/DELIVERY.md"
+          "docs/development/evidence/W202-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -184332,16 +184500,18 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-11",
-        "delivered": "W193完整输入/水位/策略CheckRun、真实QUALITY/DOC等pin/current/HoldExact已交付；W201输出关系已纳管。",
-        "remaining": "资源/工具等尚未具备资格的来源参与者必须保持UNKNOWN/BLOCK；补其实际原生资格/current参加和完整内部制造正例，签名或GET不替代共同最终检查。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp05-11",
+        "delivered": "完整CheckRun输入/水位/策略、QUALITY/DOC等真实pin/current/HoldExact有效。",
+        "remaining": "资源/工具等原生资格参与者未完整具备，INTERNAL完整制造正例仍余。",
+        "next_action": "先补真实提供者；来源缺失保UNKNOWN/BLOCK，签名/顺序GET不代最终参加。",
         "evidence_refs": [
           "docs/development/evidence/W193-01/DELIVERY.md",
           "docs/development/evidence/W201-01/DELIVERY.md",
-          "docs/development/evidence/W203-01/DELIVERY.md"
+          "docs/development/evidence/W203-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -184420,15 +184590,17 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-12",
-        "delivered": "W202同PG冻结完整成员/原manifest/关系/输出绑定/回执与恢复已通过；实际正例为PURCHASED_FINISHED。",
-        "remaining": "INTERNAL技术冻结仍受实际资源/工具资格来源缺项限制；补全所需参与者与合法大包/后继覆盖，REL只保真实Owner关联，不以委托字符串授制造许可。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp05-12",
+        "delivered": "PURCHASED_FINISHED实际同PG冻结/原manifest/关系/输出绑定/回执与恢复已执行。",
+        "remaining": "INTERNAL所需资源/工具资格、合法大包/后继及真实下游引用覆盖仍余。",
+        "next_action": "沿实际来源补内部冻结；VER PASS、REL许可与WO资格各自独立。",
         "evidence_refs": [
           "docs/development/evidence/W202-01/DELIVERY.md",
-          "docs/development/evidence/W203-01/DELIVERY.md"
+          "docs/development/evidence/W203-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -184550,15 +184722,17 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-13",
-        "delivered": "W194不可变来源/需求分解/依赖防环/精确判据与W195专业评估已实现。",
-        "remaining": "接CRM/销售实际原件读取和DOC/FILE澄清来源，补准确方法需求/必要性与可见域覆盖；不预造ITER/VER正式ID，已做UOM判据不重复。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp05-13",
+        "delivered": "原需求分解/判据/专业评价及W308 INTERNAL_PROPOSAL准确来源条款和可见域已采用。",
+        "remaining": "CRM/销售商业原件、DOC/FILE澄清和完整方法/必要性/适用覆盖仍余。",
+        "next_action": "接真实商业/文档来源读取，内部人工条款不冒客户确认。",
         "evidence_refs": [
           "docs/development/evidence/W194-01/DELIVERY.md",
-          "docs/development/evidence/W195-01/DELIVERY.md"
+          "docs/development/evidence/W195-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -184667,20 +184841,22 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W309-01",
-        "as_of": "2026-11-04",
-        "classification": "IMPLEMENTED_PARTIAL_PENDING_REMOTE",
-        "report": "docs/development/evidence/W309-01/DELIVERY.md",
-        "delivered": "W196完整ReqSet受控评审/批准与真实FLOW已实现，W197迭代已消费。 W308实现内部来源准确条款的有权范围/必须属性确认、需求集真实交集与澄清/范围分离裁决，保ECM/DEV待专业评估与不利冲突历史；原键和真实页面恢复闭环。 W309实现需求集准确后继差异、实际Main ITER采用影响请求、负责人评估、晚到采用原子登记及批准/迭代推进门禁；旧输入与历史保留。",
-        "remaining": "成员排除、商业原Owner、实际ECM/DEV完成及其他消费者适配独立；当前Main ITER准确采用链/后继差异/影响评估已实现。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp05-14",
+        "delivered": "W308真实交集/有权澄清及范围分离，W309准确后继差分/Main ITER影响请求/评估/晚到采用和推进门已交付。",
+        "remaining": "成员排除和商业原Owner范围未完整；ECM/DEV仅待专业评估，其他实际消费者尚无采用。",
+        "next_action": "先界定合法成员排除及专业Owner真实返回；不能拿普通批准或待评估引用解除冲突，也不重做Main ITER影响。",
         "evidence_refs": [
           "docs/development/evidence/W196-01/DELIVERY.md",
           "docs/development/evidence/W197-01/DELIVERY.md",
           "docs/development/evidence/W308-01/DELIVERY.md",
-          "docs/development/evidence/W309-01/DELIVERY.md"
+          "docs/development/evidence/W309-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
-        "new_product_validation": true
+        "new_product_validation": false
       },
       "wave308_conflicts": {
         "status": "CLOSED",
@@ -184917,20 +185093,22 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W307-01",
-        "as_of": "2026-11-04",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
         "classification": "FULL_CARD_RECONCILED",
-        "report": "docs/development/evidence/W307-01/DELIVERY.md",
-        "delivered": "W190准确原件/派生/语言/永久绑定/历史下载与W191冻结专业评审/批准、真实FLOW/回执均已交付。 W307补齐受控文档准确修订的独立暂停/恢复/撤回、当前消费阻断与原操作恢复；内容、批准事实和历史引用不改写。",
-        "remaining": "原WP05-16当前范围无剩余；分发/现场副本、PRIV全域、LCM/REL及完整目标独立。",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp05-16",
+        "delivered": "W190/191原件/派生/语言/专业批准，W307独立暂停/恢复/撤回、当前消费阻断和历史下载已核销。",
+        "remaining": "本卡准确受控文档范围无剩余。",
+        "next_action": "保DONE；分发/现场副本、全域PRIV及REL/LCM分别记账。",
         "evidence_refs": [
           "docs/development/evidence/W190-01/DELIVERY.md",
           "docs/development/evidence/W191-01/DELIVERY.md",
           "docs/development/evidence/W189-01/DELIVERY.md",
-          "docs/development/evidence/W307-01/DELIVERY.md"
+          "docs/development/evidence/W307-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
-        "formal_state_changed": true,
-        "new_product_validation": true
+        "formal_state_changed": false,
+        "new_product_validation": false
       },
       "wave307_availability": {
         "status": "CLOSED",
@@ -185117,17 +185295,19 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "合同/验收待核",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-18",
-        "delivered": "项目/里程碑/任务/固定权重与确认角色W197已交付，候选/评审/应用W198–200已后续采用。",
-        "remaining": "按原卡核暂停恢复对未决外部请求和输入变化的当前重核、来源/变更/父基线适用及0分母；CHANGE/LEGACY路径待确认，不能用后续OA未实现的旧说法阻塞。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "CONTRACT_OR_EVIDENCE_PENDING",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp05-18",
+        "delivered": "项目/里程碑/输入/计划/固定权重/确认及W309实际需求后继影响门已交付。",
+        "remaining": "暂停恢复其余未决外部请求、CHANGE/LEGACY来源/父基线和0分母原验收映射待核。",
+        "next_action": "先核原Owner当前入口，复用已完成需求影响；不以旧OA缺失描述阻塞。",
         "evidence_refs": [
           "docs/development/evidence/W197-01/DELIVERY.md",
           "docs/development/evidence/W198-01/DELIVERY.md",
           "docs/development/evidence/W199-01/DELIVERY.md",
-          "docs/development/evidence/W200-01/DELIVERY.md"
+          "docs/development/evidence/W200-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -185274,16 +185454,18 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "合同/验收待核",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-19",
-        "delivered": "完整候选/ReviewIssue W198、冻结包与原生OA同事务提交W199已交付，W200决定应用也已接。",
-        "remaining": "核ITER-OA-APPLICATION/1原身份与UUID别名完整合法域，当前native UUID正例不能代替全部外部身份映射；只补真实未覆盖路径，不另造第二种权威摘要。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "CONTRACT_OR_EVIDENCE_PENDING",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp05-19",
+        "delivered": "完整候选/ReviewIssue、冻结包和实际OA同事务提交/启动恢复有效。",
+        "remaining": "ITER-OA-APPLICATION/1全身份/UUID alias合法域与传输边界仍待核。",
+        "next_action": "按冻结原身份核已有证据；不另造摘要、截断大合法包或复用同步callback旁路。",
         "evidence_refs": [
           "docs/development/evidence/W198-01/DELIVERY.md",
           "docs/development/evidence/W199-01/DELIVERY.md",
-          "docs/development/evidence/W200-01/DELIVERY.md"
+          "docs/development/evidence/W200-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -185366,14 +185548,16 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "合同/验收待核",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-20",
-        "delivered": "W200真实Inbox/决定、Blocking独立VerifiedClosed、当前控制与撤回竞争及Owner应用回执已交付。",
-        "remaining": "核完整外部身份/alias及GAP/迟到/退回拒绝映射的原正反验收范围；模拟业务角色可执行，不能因没有真实企业数据扣留整卡。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "CONTRACT_OR_EVIDENCE_PENDING",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp05-20",
+        "delivered": "真实Inbox/决定、Blocking独立核销、控制头/撤回竞争及Owner回执已交付。",
+        "remaining": "全外部身份/alias、GAP/迟到、退回拒绝映射的原正反覆盖待核。",
+        "next_action": "复用实际Owner协议和本轮撤回修复；仅补缺证合法域，Approved不冒Applied。",
         "evidence_refs": [
-          "docs/development/evidence/W200-01/DELIVERY.md"
+          "docs/development/evidence/W200-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -186203,14 +186387,16 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp05-39",
-        "delivered": "W152已有工程配置选项维护/快照。",
-        "remaining": "当前ENGINEERING_OPTIONS_ONLY；完整Required/Provided occurrence组合、方向/比例/工程依据、客户Site活动窗口/取整损耗、MATCH等解析与显式备选选择仍需实现。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp05-39",
+        "delivered": "ENGINEERING_OPTIONS_ONLY选项维护/快照已交付。",
+        "remaining": "完整Required/Provided occurrence组合、方向/比例/工程依据、客户/Site/窗口/损耗及MATCH等解析仍余。",
+        "next_action": "先实现有界方向性规则与明确选择；不默认1:1，不授REL或商务许可。",
         "evidence_refs": [
-          "docs/development/evidence/W152-01/DELIVERY.md"
+          "docs/development/evidence/W152-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -187682,17 +187868,19 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp08-01",
-        "delivered": "普通设备归属、资源原件/时间UOM/声明能力W136/154/155/203已交付。",
-        "remaining": "路线适用性、完整效力段、RES-WRITE-1 token最终写门、未来切段失效及SCHED/EXEC真实Claim准入仍需实现；身份读取不等资格。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp08-01",
+        "delivered": "设备/资源原件、时间UOM和声明能力有效。",
+        "remaining": "路线相关适用性、完整效力段、RES-WRITE-1最终门/未来切段及SCHED/EXEC Claim仍余。",
+        "next_action": "在真实资源权威上补token与当前写者；身份/绿灯不等执行资格。",
         "evidence_refs": [
           "docs/development/evidence/W136-01/DELIVERY.md",
           "docs/development/evidence/W154-01/DELIVERY.md",
           "docs/development/evidence/W155-01/DELIVERY.md",
-          "docs/development/evidence/W203-01/DELIVERY.md"
+          "docs/development/evidence/W203-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -188322,19 +188510,21 @@
         ]
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "合同/验收待核",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp08-10",
-        "delivered": "W240 Root TIME、W241自动排列、W242队列及W244/245统一Board与页面实际通过，原D3已经完成。",
-        "remaining": "按完整RootWO/快照/operation源核原卡支持域和冲突/冻结计划的未覆盖情况；部分源由SIM profile登记，需区分允许的模拟外部输入与尚未接入的产品内部来源，不能因模拟本身判失败。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "CONTRACT_OR_EVIDENCE_PENDING",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp08-10",
+        "delivered": "W240–245完整Root TIME候选、自动排列、队列/Board和实际页面已完成。",
+        "remaining": "原完整Root/快照/operation支持域及冲突/冻结计划全合同覆盖仍待核，现mode TIME_ONLY/SIMULATED_UPSTREAM明确。",
+        "next_action": "区分允许的模拟外部输入和未接内部Owner；不因模拟本身否定执行，不重做D3。",
         "evidence_refs": [
           "docs/development/evidence/W240-01/DELIVERY.md",
           "docs/development/evidence/W241-01/DELIVERY.md",
           "docs/development/evidence/W242-01/DELIVERY.md",
           "docs/development/evidence/W243-01/DELIVERY.md",
           "docs/development/evidence/W244-01/DELIVERY.md",
-          "docs/development/evidence/W245-01/DELIVERY.md"
+          "docs/development/evidence/W245-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -188605,19 +188795,21 @@
         ]
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "合同/验收待核",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp08-11",
-        "delivered": "W243六阶段和W245恢复页面、未知结果/唯一队列/WO共同事务已实际执行，不能重做六阶段。",
-        "remaining": "核原协议全部WO/RES/EXEC当前参与者及已开始竞争在当前SIM profile以外的适用边界；仅原卡未覆盖路径追加验证，模拟输入本身不是缺口。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "CONTRACT_OR_EVIDENCE_PENDING",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp08-11",
+        "delivered": "六阶段换机、未知/唯一队列/WO共同事务与恢复页面已执行。",
+        "remaining": "原WO/RES/EXEC全部当前参与者和已开始竞争在当前profile外的适用仍待核。",
+        "next_action": "只查/补原未覆盖路径，保持Root完整组和WO白名单；不重做六阶段。",
         "evidence_refs": [
           "docs/development/evidence/W240-01/DELIVERY.md",
           "docs/development/evidence/W241-01/DELIVERY.md",
           "docs/development/evidence/W242-01/DELIVERY.md",
           "docs/development/evidence/W243-01/DELIVERY.md",
           "docs/development/evidence/W244-01/DELIVERY.md",
-          "docs/development/evidence/W245-01/DELIVERY.md"
+          "docs/development/evidence/W245-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -188950,16 +189142,18 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp08-16",
-        "delivered": "W154资源原件/工作中心同事务、W155时间UOM和W203基础声明能力已交付。",
-        "remaining": "稳定Assignment原件、准确受控能力/批准来源与当前版本尚需补全；DECLARED_NOT_QUALIFIED不视为专业资格。路线相关RES token及执行许可交WP08-01，不扩大此提供者。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp08-16",
+        "delivered": "资源/工作中心原件、时间UOM及DECLARED基础能力已交付。",
+        "remaining": "稳定Assignment、准确受控能力/批准来源与当前版本仍余。",
+        "next_action": "补原资源目录Owner；声明能力不冒专业资格，route token/生产许可交WP08-01。",
         "evidence_refs": [
           "docs/development/evidence/W154-01/DELIVERY.md",
           "docs/development/evidence/W155-01/DELIVERY.md",
-          "docs/development/evidence/W203-01/DELIVERY.md"
+          "docs/development/evidence/W203-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -189605,9 +189799,18 @@
         }
       },
       "scope_reconciliation": {
-        "report": "docs/development/evidence/W252-01/DELIVERY.md#wp09-11",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
         "classification": "FULL_CARD_RECONCILED",
-        "remaining": "本原卡提供者范围无剩余；后续消费者、完整Target和发布分别记账。"
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp09-11",
+        "delivered": "独立专业质量规格/Requirements/NA/waivable、原文批准/current/撤回及工程冻结前HoldExact已核销。",
+        "remaining": "本卡提供者范围无剩余。",
+        "next_action": "保DONE；生产source解析/任务族/Use归WP09-01/02，不重开。",
+        "evidence_refs": [
+          "docs/development/evidence/W310-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       },
       "prerequisite_adoptions": [
         {
@@ -190231,12 +190434,13 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp10-01",
-        "delivered": "W206–218位置DRAFT/QUARANTINED、类型化容量/审批/时钟/库存独立控制及出库采用已交付。",
-        "remaining": "SPACE CREATE与手工共享初始化器、REUSE_EXISTING保旧量/控制和所有旧写者初始化Fence尚需完整接入；不能因新位置审批完成声称SPACE路径完成。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp10-01",
+        "delivered": "位置DRAFT/QUARANTINED、typed capacity/审批/时钟/独立控制及出库采用有效。",
+        "remaining": "SPACE CREATE与手工共享初始化器、REUSE_EXISTING及全部旧写者初始化fence仍余。",
+        "next_action": "先接真实SPACE创建入口，保旧量/预占/控制；容量UNKNOWN不当无限。",
         "evidence_refs": [
           "docs/development/evidence/W206-01/DELIVERY.md",
           "docs/development/evidence/W207-01/DELIVERY.md",
@@ -190250,7 +190454,8 @@
           "docs/development/evidence/W215-01/DELIVERY.md",
           "docs/development/evidence/W216-01/DELIVERY.md",
           "docs/development/evidence/W217-01/DELIVERY.md",
-          "docs/development/evidence/W218-01/DELIVERY.md"
+          "docs/development/evidence/W218-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -190455,12 +190660,13 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp10-03",
-        "delivered": "ADJ/MOVE原操作、未知恢复及实际Stock/IN/调拨/退货入口已有多轮共同事务与当前权限验证。",
-        "remaining": "完整WriteKind合法来源、RSV预算/容量/质量/用途同QuantityUoW及manual/import/job/legacy所有写者继续补；不重跑已稳定Stock恢复链或缩小数量合法域。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp10-03",
+        "delivered": "实际Stock ADJ/MOVE/IN/Transfer/RMA若干来源、同事务及未知恢复有效。",
+        "remaining": "完整WriteKind合法来源、RSV/容量/质量/用途同QuantityUoW和manual/import/job/legacy全写者仍余。",
+        "next_action": "按一种真实来源串行接原过账门；不复制数量入口、不混Owner/技术/UOM。",
         "evidence_refs": [
           "docs/development/evidence/W204-01/DELIVERY.md",
           "docs/development/evidence/W205-01/DELIVERY.md",
@@ -190471,7 +190677,8 @@
           "docs/development/evidence/W230-01/DELIVERY.md",
           "docs/development/evidence/W236-01/DELIVERY.md",
           "docs/development/evidence/W239-01/DELIVERY.md",
-          "docs/development/evidence/W249-01/DELIVERY.md"
+          "docs/development/evidence/W249-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -191482,12 +191689,13 @@
         ]
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp10-10",
-        "delivered": "可信SourceDemand/Request及直接MOVE阶段W142/205/235/236已实现，REP执行W239已消费。",
-        "remaining": "在途TRANSIT坐标、完整Selection/全部RSV Use与StockPrepareCall、现场指令/实际事实及所有来源类型继续接入；现MOVE正例不等全Transfer。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp10-10",
+        "delivered": "SourceDemand/Request及直接MOVE阶段、REP真实消费有效。",
+        "remaining": "TRANSIT坐标、完整Selection/全部RSV Use/StockPrepareCall及现场指令/全部来源类型仍余。",
+        "next_action": "补真实在途与完整Stage合同；未知首Stage不复制，MAT已有数量路线不再走Transfer。",
         "evidence_refs": [
           "docs/development/evidence/W142-01/DELIVERY.md",
           "docs/development/evidence/W204-01/DELIVERY.md",
@@ -191507,7 +191715,8 @@
           "docs/development/evidence/W236-01/DELIVERY.md",
           "docs/development/evidence/W237-01/DELIVERY.md",
           "docs/development/evidence/W238-01/DELIVERY.md",
-          "docs/development/evidence/W239-01/DELIVERY.md"
+          "docs/development/evidence/W239-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -191946,16 +192155,18 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp10-19",
-        "delivered": "位置分配守卫W218，准确订单行/Shipment原件W222/223已交付。",
-        "remaining": "完整RSV Allocation→Pick→Stage→Package→Shipment、scan/封箱/称重与Stock同最终门，以及采购退运Part具名来源仍需实施。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp10-19",
+        "delivered": "位置分配守卫、准确订单行/Shipment原件已交付。",
+        "remaining": "RSV→Pick→Stage→Package→Shipment全链、scan/封箱/称重与Stock最终门及采购退运Part具名来源仍余。",
+        "next_action": "按准确原源份额实现实际发运；拣配/授权不等已发或商业批准。",
         "evidence_refs": [
           "docs/development/evidence/W218-01/DELIVERY.md",
           "docs/development/evidence/W222-01/DELIVERY.md",
-          "docs/development/evidence/W223-01/DELIVERY.md"
+          "docs/development/evidence/W223-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -192493,12 +192704,13 @@
         ]
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp10-22",
-        "delivered": "W220–233 RMA来源/申请/entitlement/授权/实收IN/质量/处置/更正和W248独立商业/财务观察已交付。",
-        "remaining": "非空例外批准路径、完整H30原source/claim共同资源计划及NCR/FININV实际消费者尚需闭合；财务全部关闭归WP10-23，不能以观察POSTED冒充内部Finance已实现。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp10-22",
+        "delivered": "RMA来源/预算/独立授权/实收IN/质量/处置/更正与商业观察已采用。",
+        "remaining": "非空例外批准、完整H30 source/claim共同计划及NCR/FININV真实消费仍余。",
+        "next_action": "沿原发运行预算接实际消费者；全财务关闭归WP10-23，模拟POSTED不冒内部Finance。",
         "evidence_refs": [
           "docs/development/evidence/W220-01/DELIVERY.md",
           "docs/development/evidence/W221-01/DELIVERY.md",
@@ -192514,7 +192726,8 @@
           "docs/development/evidence/W231-01/DELIVERY.md",
           "docs/development/evidence/W232-01/DELIVERY.md",
           "docs/development/evidence/W233-01/DELIVERY.md",
-          "docs/development/evidence/W248-01/DELIVERY.md"
+          "docs/development/evidence/W248-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -193086,18 +193299,20 @@
         ]
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp10-31",
-        "delivered": "W237/238规划和W239原Transfer/Stock直接MOVE执行/完成/停止及原键恢复已交付。",
-        "remaining": "多阶段/在途、部分covered/remaining与已发生后的取消、旧任务族显式迁移及source-task一致性仍需完善；不等待真实补货数据。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp10-31",
+        "delivered": "补货规划及原Transfer/Stock直接MOVE执行/停止/原键恢复有效。",
+        "remaining": "多Stage/TRANSIT、部分covered/remaining、已发生后取消及旧任务族/source-task显式迁移仍余。",
+        "next_action": "复用唯一数量路线覆盖全Stage；派发不冒到货，未知不换键补派。",
         "evidence_refs": [
           "docs/development/evidence/W235-01/DELIVERY.md",
           "docs/development/evidence/W236-01/DELIVERY.md",
           "docs/development/evidence/W237-01/DELIVERY.md",
           "docs/development/evidence/W238-01/DELIVERY.md",
-          "docs/development/evidence/W239-01/DELIVERY.md"
+          "docs/development/evidence/W239-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -193321,12 +193536,13 @@
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp10-36",
-        "delivered": "W165双角色关联、W166–168使用维护追加事实/周期、W169意图及W176/184审批回执已交付。",
-        "remaining": "真实搬位/报废仍需Transfer/Stock/Finance原Owner应用和迟到恢复，准确技术当前用途与外部使用原件继续补；不得把APPLIED工作流回执当库存/财务业务效果。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp10-36",
+        "delivered": "双Role、使用/维护事实和周期、处置意图及本轮审批撤回/恢复已交付。",
+        "remaining": "实际搬位/实物报废的Transfer/Stock/Finance应用、迟到恢复及完整技术当前用途仍余。",
+        "next_action": "接原实物和数量/财务Owner；工作流Applied不能冒实物终结，维护不清累计事实。",
         "evidence_refs": [
           "docs/development/evidence/W176-01/DELIVERY.md",
           "docs/development/evidence/W165-01/DELIVERY.md",
@@ -193334,7 +193550,8 @@
           "docs/development/evidence/W167-01/DELIVERY.md",
           "docs/development/evidence/W168-01/DELIVERY.md",
           "docs/development/evidence/W169-01/DELIVERY.md",
-          "docs/development/evidence/W184-01/DELIVERY.md"
+          "docs/development/evidence/W184-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -193852,16 +194069,18 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp10-47",
-        "delivered": "时间UOM、BOM材料及库存身份/单位来源W155/187/204已有交付。",
-        "remaining": "原Owner批准的完整单位转换/量纲/容量metric及当前控制尚需提供；准确物料/Site/位置身份按原主账读取，歧义UNKNOWN，不建第二套可写WMS字典。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp10-47",
+        "delivered": "原物料/时间UOM/BOM/库存稳定身份适配有效。",
+        "remaining": "原Owner批准的完整单位转换/量纲/capacity metric及当前控制仍余。",
+        "next_action": "先交付准确单位/容量提供者；歧义UNKNOWN，不另建可写主账、不补默认系数。",
         "evidence_refs": [
           "docs/development/evidence/W155-01/DELIVERY.md",
           "docs/development/evidence/W187-01/DELIVERY.md",
-          "docs/development/evidence/W204-01/DELIVERY.md"
+          "docs/development/evidence/W204-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -194387,12 +194606,13 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "合同/验收待核",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp10-48",
-        "delivered": "W160–164实物实例/合作方/来源原件，W165真实HoldExact/current，W167/168计量周期均已采用。",
-        "remaining": "核完整旧ENG技术号候选读取与provenance适用域、外部来源原件及current版本覆盖；未知历史不能假造。正式关联/生产使用/退役归WP05-06/WP10-36，不能据此扣留本提供者。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "CONTRACT_OR_EVIDENCE_PENDING",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp10-48",
+        "delivered": "实物实例/provenance、真实current/HoldExact和计量周期有效。",
+        "remaining": "完整旧ENG技术号候选读取、外部原件与current覆盖仍待核。",
+        "next_action": "按旧号原义核提供者范围；生产使用/退役归消费卡，不自签技术发布或造Stock余额。",
         "evidence_refs": [
           "docs/development/evidence/W160-01/DELIVERY.md",
           "docs/development/evidence/W161-01/DELIVERY.md",
@@ -194406,7 +194626,8 @@
           "docs/development/evidence/W169-01/DELIVERY.md",
           "docs/development/evidence/W176-01/DELIVERY.md",
           "docs/development/evidence/W182-01/DELIVERY.md",
-          "docs/development/evidence/W184-01/DELIVERY.md"
+          "docs/development/evidence/W184-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -195877,14 +196098,16 @@
         ]
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp11-32",
-        "delivered": "W248已实现RMA商业请求/不可变财务观察与当前授权，实际PG/HTTP采用持久模拟外部ERP/Finance。",
-        "remaining": "内部AR CreditFact/余额/预算与source/frontier共同最终事务、原票逐行精确额度及INV唯一COGS/Inventory来源仍未由观察桥替代；partial claims与撤销全链继续实现。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp11-32",
+        "delivered": "W248真实商业请求与不可变财务观察桥、当前授权已交付。",
+        "remaining": "内部CreditFact/AR余额/额度及source/frontier同最终事务、原票逐行精确额度和INV唯一价值来源仍余。",
+        "next_action": "接内部AR/INV原账，不用外部模拟观察替代产品资金事实；partial claims保留。",
         "evidence_refs": [
-          "docs/development/evidence/W248-01/DELIVERY.md"
+          "docs/development/evidence/W248-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -195968,14 +196191,16 @@
         ]
       },
       "scope_reconciliation": {
-        "window": "W250-01",
-        "as_of": "2026-11-02",
-        "classification": "明确实现余项",
-        "report": "docs/development/evidence/W250-01/DELIVERY.md#wp11-33",
-        "delivered": "W248区分退款授权、现金POSTED观察和商业批准，并保原键/来源。",
-        "remaining": "真实Funds退款执行记录/会计/AR分轴、执行key完整别名预算/原claim与撤销和未知恢复仍需实现；外部模拟结果不是本产品资金账。",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
+        "classification": "IMPLEMENTATION_REMAINS",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp11-33",
+        "delivered": "退款授权、现金观察与商业批准分轴及原键有效。",
+        "remaining": "真实Funds退款记录/会计/AR分轴、执行key完整别名预算/claim、撤销与未知恢复仍余。",
+        "next_action": "实现实际资金Owner原执行与恢复；未观察到不能重付或释放额度。",
         "evidence_refs": [
-          "docs/development/evidence/W248-01/DELIVERY.md"
+          "docs/development/evidence/W248-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false
@@ -197487,12 +197712,13 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W288-01",
-        "as_of": "2026-11-03",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
         "classification": "FULL_CARD_RECONCILED",
-        "report": "docs/development/evidence/W288-01/DELIVERY.md",
-        "delivered": "W170/172不可变FLOW草稿和W173/174发布/激活已经实现，GET不隐式写草稿。 W268完整FORM往返/schema与FLOW致命结构。 W269独立FORM草稿Owner/当前权限/CAS/原件及设计器工作区。 W270准确FORM发布/不可变版本、显式下一草稿及独立激活和页面。 W271准确发布源FLOW/FORM克隆及原件/页面采用。 W278：当前发布表单目录，以及实际Vue/Chrome经Main Program到PostgreSQL的定义发布、填单恢复、代理办理、迭代BLOCKED应用与撤回显式新授权链已验证。 W279：原OA-DEF27项验收逐项核对，并补准确草稿/当前授权/无业务写入的EXPLANATION_ONLY预演，实际页面到PostgreSQL已验证。 W280：FLOW/FORM准确Published GUID版本比较已实现，按稳定字段/节点/连线身份分类差异，保留顺序和精确数字词元；当前资源与字段权限裁剪后比较，实际Chrome/Vue→Main→PostgreSQL采用。 W284：FLOW/FORM保存、发布、读取和规则求值的准确结构诊断已贯通现有设计器；FORM准确草稿的纯顺序规则预览、服务端精确结果与浏览器体验对照完成真实PG/HTTP/Chrome限定验收。 W285：普通FORM不可变内容/扫描/原操作、草稿与提交及退回的同事务引用绑定、当前业务对象和字段权限下载已贯通实际页面；真实PG/HTTP/Chrome/Defender完成限定验收。 W286：FLOW两真实作者同token/下一草稿竞争、旧定义写入与页面调用面处置、当前权限下的明确未核实历史来源已完成限定验收；缺版本绑定不再推导历史pin，办理在修改票据前快速失败。 W287：版本化共享字典选项来源已被FORM设计、发布/激活、当前候选读取、草稿/直接提交/退回/重基及真实页面采用；最终服务端复核当前来源与准确字符串值，保留历史原值且不制造历史字典快照。",
-        "remaining": "本原卡草稿/设计器范围无剩余；发布运行/其他业务Owner及整Target/正式验收分别按其卡记账。",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp12-01",
+        "delivered": "准确不可变FLOW/FORM草稿、schema/layout、克隆/CAS/诊断/规则和真实设计器原验收已核销。",
+        "remaining": "本卡草稿/设计器范围无剩余。",
+        "next_action": "保DONE；运行和其他业务Owner按各卡，不重复设计器。",
         "evidence_refs": [
           "docs/development/evidence/W170-01/DELIVERY.md",
           "docs/development/evidence/W172-01/DELIVERY.md",
@@ -197509,9 +197735,10 @@
           "docs/development/evidence/W285-01/DELIVERY.md",
           "docs/development/evidence/W286-01/DELIVERY.md",
           "docs/development/evidence/W287-01/DELIVERY.md",
-          "docs/development/evidence/W288-01/DELIVERY.md"
+          "docs/development/evidence/W288-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
-        "formal_state_changed": true,
+        "formal_state_changed": false,
         "new_product_validation": false
       },
       "wave268_schema_boundary": {
@@ -197985,12 +198212,13 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W295-01",
-        "as_of": "2026-11-03",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
         "classification": "FULL_CARD_RECONCILED",
-        "report": "docs/development/evidence/W295-01/DELIVERY.md",
-        "delivered": "准确草稿发布预览、当前权限/原结果与激活CAS已有交付。 W272 FORM/子流程准确依赖pin、递归资格、现APP消费者及页面采用。 W273唯一FORM-FLOW启用绑定、PG约束/竞争/迁移和管理页采用。 W274 APP真实根/子流程采用精确FORM/FLOW版本，子任务当前权限、有效分支职责、根决定及整树撤回原子性已验证。 W276：原生APP/普通FORM本人当前授权信箱、准确根子pin、独立已读原事实及实际定义在途影响已实现。 W278：当前发布表单目录，以及实际Vue/Chrome经Main Program到PostgreSQL的定义发布、填单恢复、代理办理、迭代BLOCKED应用与撤回显式新授权链已验证。 W279：原OA-DEF27项验收逐项核对，并补准确草稿/当前授权/无业务写入的EXPLANATION_ONLY预演，实际页面到PostgreSQL已验证。 W280：FLOW/FORM准确Published GUID版本比较已实现，按稳定字段/节点/连线身份分类差异，保留顺序和精确数字词元；当前资源与字段权限裁剪后比较，实际Chrome/Vue→Main→PostgreSQL采用。 W286：FLOW两真实作者同token/下一草稿竞争、旧定义写入与页面调用面处置、当前权限下的明确未核实历史来源已完成限定验收；缺版本绑定不再推导历史pin，办理在修改票据前快速失败。 W294：FLOW发布预览复用真实当前引用影响统计，纠正旧未采用标记并在既有页面展示；当前租户/权限、原pin/启停和发布原事务保持。",
-        "remaining": "本原卡发布预览/准确依赖pin/独立启停范围无剩余；其他卡与整Target独立。",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp12-02",
+        "delivered": "完整FORM/子流程pin、唯一FORM-FLOW binding、独立启停/影响预览/旧入口和在途原pin已核销。",
+        "remaining": "本卡定义发布/启停范围无剩余。",
+        "next_action": "保DONE；不以停用改写在途，不重做W267/W296等已完工作。",
         "evidence_refs": [
           "docs/development/evidence/W174-01/DELIVERY.md",
           "docs/development/evidence/W173-01/DELIVERY.md",
@@ -198004,9 +198232,10 @@
           "docs/development/evidence/W286-01/DELIVERY.md",
           "docs/development/evidence/W294-01/DELIVERY.md",
           "docs/development/evidence/BUG-736/DELIVERY.md",
-          "docs/development/evidence/W295-01/DELIVERY.md"
+          "docs/development/evidence/W295-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
-        "formal_state_changed": true,
+        "formal_state_changed": false,
         "new_product_validation": false
       },
       "wave270_form_activation": {
@@ -199469,12 +199698,13 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W296-01",
-        "as_of": "2026-11-03",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
         "classification": "FULL_CARD_RECONCILED",
-        "report": "docs/development/evidence/W296-01/DELIVERY.md",
-        "delivered": "W175–181可信binding/路由、TxS/TxE原生启动恢复已交付，后续DOC/ReqSet/ITER真实业务也已消费。 W274 APP真实根/子流程采用精确FORM/FLOW版本，子任务当前权限、有效分支职责、根决定及整树撤回原子性已验证。 W276：原生APP/普通FORM本人当前授权信箱、准确根子pin、独立已读原事实及实际定义在途影响已实现。",
-        "remaining": "本原卡可信绑定/冻结提交TxS/TxE提供者范围无剩余；各业务Owner的后续应用/撤回和完整OA-APP目标分别记账。",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp12-06",
+        "delivered": "可信Owner/binding、准确冻结提交、TxS/TxE原键启动/alias/legacy冲突处理已核销。",
+        "remaining": "本卡协议提供者范围无剩余。",
+        "next_action": "保DONE；各业务应用和完整OA目标独立，不重开。",
         "evidence_refs": [
           "docs/development/evidence/W175-01/DELIVERY.md",
           "docs/development/evidence/W177-01/DELIVERY.md",
@@ -199488,9 +199718,10 @@
           "docs/development/evidence/W274-01/DELIVERY.md",
           "docs/development/evidence/W276-01/DELIVERY.md",
           "docs/development/evidence/BUG-740/DELIVERY.md",
-          "docs/development/evidence/W296-01/DELIVERY.md"
+          "docs/development/evidence/W296-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
-        "formal_state_changed": true,
+        "formal_state_changed": false,
         "new_product_validation": false
       },
       "wave274_pinned_runtime": {
@@ -199706,9 +199937,18 @@
         }
       },
       "scope_reconciliation": {
-        "report": "docs/development/evidence/W252-01/DELIVERY.md#wp12-07",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
         "classification": "FULL_CARD_RECONCILED",
-        "remaining": "本原卡提供者范围无剩余；后续消费者、完整Target和发布分别记账。"
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp12-07",
+        "delivered": "不可变TxD/Outbox、可信原body投递、实际Owner同提交回执及连续链/GAP恢复已核销。",
+        "remaining": "本卡协议提供者范围无剩余。",
+        "next_action": "保DONE；运输ACK/Approved不等业务Applied，未完实物任务不扣回提供者。",
+        "evidence_refs": [
+          "docs/development/evidence/W310-01/DELIVERY.md"
+        ],
+        "formal_state_changed": false,
+        "new_product_validation": false
       },
       "prerequisite_adoptions": [
         {
@@ -200707,12 +200947,13 @@
         }
       },
       "scope_reconciliation": {
-        "window": "W302-01",
-        "as_of": "2026-11-04",
+        "window": "W310-01",
+        "as_of": "2026-11-08",
         "classification": "FULL_CARD_RECONCILED",
-        "report": "docs/development/evidence/W302-01/DELIVERY.md",
-        "delivered": "W200真实非委派撤回、Owner apply同控制CAS及两种竞争顺序已交付，终态不可改写。 W277：TASK-R2封闭范围委派、当前双身份任务读写，以及迭代Owner独立业务委派、BLOCKED显式重新授权和连续原事实已实现。 W278：当前发布表单目录，以及实际Vue/Chrome经Main Program到PostgreSQL的定义发布、填单恢复、代理办理、迭代BLOCKED应用与撤回显式新授权链已验证。 W279按原卡核实上述已交付范围，本窗没有新增其他业务Owner采用。 W297：DOC实际Owner可信撤回、同控制头应用互斥、独立本轮业务委派/BLOCKED明确接续、原结果恢复与运输已完成相关本地验收。 W298：需求集实际Owner可信撤回、原审批应用共control、准确本轮业务委派/BLOCKED显式接续、不可变原结果及实际页面恢复完成本地验收。 W299：版模处置实际Owner审批撤回、独立业务委派/BLOCKED显式接续、共同控制版本、原操作与运输恢复及真实页面完成本地验收；保原处置请求、物理停用和全部未清义务。 W300：库位规则实际Owner可信审批撤回、原提案共同控制版本/应用竞争、独立业务委派与BLOCKED明确接续、原命令和真实页面恢复完成本地验收；旧提案入口、原件和APPROVED_PENDING未激活边界保留。",
-        "remaining": "原WP12-19可信撤回与恢复协议范围无剩余。版模实物终结、库位激活及未来域效果仍属于对应消费卡；125目标/247正式验收不自动完成。",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md#wp12-19",
+        "delivered": "DOC/需求集/版模审批/库位规则及ITER可信撤回、独立委派/显式再授权、同控制头竞争与连续原回执已核销。",
+        "remaining": "本卡撤回/恢复协议范围无剩余。",
+        "next_action": "保DONE；版模实物终结、库位激活及未来域效果归消费卡，不重复。",
         "evidence_refs": [
           "docs/development/evidence/W200-01/DELIVERY.md",
           "docs/development/evidence/W277-01/DELIVERY.md",
@@ -200724,9 +200965,10 @@
           "docs/development/evidence/W300-01/DELIVERY.md",
           "docs/development/evidence/W301-01/DELIVERY.md",
           "docs/development/evidence/BUG-751/DELIVERY.md",
-          "docs/development/evidence/W302-01/DELIVERY.md"
+          "docs/development/evidence/W302-01/DELIVERY.md",
+          "docs/development/evidence/W310-01/DELIVERY.md"
         ],
-        "formal_state_changed": true,
+        "formal_state_changed": false,
         "new_product_validation": false
       },
       "wave277_delegation_reauthorization": {
@@ -204431,7 +204673,7 @@
       "path": "docs/development/dispatch/20261108-wave310/README.md",
       "baseline_sha": "fe4e66aaa124f43630dbc5c97b8a9f049742ea24",
       "registered_at": "2026-11-08T20:26:46.693187+00:00",
-      "phase": "IMPLEMENTING",
+      "phase": "VALIDATED_PENDING_REMOTE",
       "assigned_chats": [
         "COORD"
       ],
@@ -204441,9 +204683,7 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [
-        "COORD"
-      ],
+      "active_implementation_chats": [],
       "workers_started": true,
       "windows_closed": false,
       "product_integrated": false,
@@ -204454,22 +204694,23 @@
           "related_tasks": [
             "WP12-19",
             "WP12-03",
-            "WP05-14"
+            "WP05-14",
+            "WP03-03"
           ],
           "title": "预算末尾真实余项核对及当前任务收妥",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_RECONCILIATION",
-          "phase": "IMPLEMENTING",
+          "phase": "VALIDATED_PENDING_REMOTE",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w310-01",
           "planned_scope_ref": "docs/development/dispatch/20261108-wave310/README.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
@@ -204482,7 +204723,7 @@
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W310预算末尾核销：以原CSV及W250相同59个ID逐卡对照原定义、当前源码/采用和既有有效执行；保留8已闭环、51真实余项，结算本轮全部窗口实测与24h口径。只更新文档/台账，不重跑未变产品，不提前宣布预算或全项目完成。"
+      "next_action": "W310文档收妥后继续原24h真实余项：W325准确成员排除，0.75–1.5h低置信，最终已开工完整任务收妥时结算；不另起周期。"
     },
     "wave_history": [
       {
@@ -244671,10 +244912,11 @@
       "new_product_validation": false,
       "formal_states_unchanged": true,
       "followup": {
-        "window": "W324-01",
-        "report": "docs/development/evidence/W324-01/DELIVERY.md",
+        "window": "W310-01",
+        "report": "docs/development/evidence/W310-01/DELIVERY.md",
         "full_cards_reconciled": [
           "WP03-01",
+          "WP03-03",
           "WP05-16",
           "WP09-11",
           "WP12-01",
@@ -244683,7 +244925,7 @@
           "WP12-07",
           "WP12-19"
         ],
-        "remaining_original_partial_cards": 51,
+        "remaining_original_partial_cards": 50,
         "source_report": "docs/development/evidence/W250-01/DELIVERY.md",
         "source_inventory": "C:/Users/tt/CP6-planning-reports/20261017-foundation/20261102-001406Z-cp6-overall-task-inventory.csv",
         "all_cards_reconciled": [
@@ -244698,7 +244940,8 @@
           "WP05-16",
           "WP12-03",
           "WP12-04",
-          "WP12-08"
+          "WP12-08",
+          "WP03-03"
         ],
         "additional_completed_outside_original_partial_set": [
           "WP12-03",
@@ -244707,7 +244950,12 @@
           "WP12-10"
         ],
         "previous_incorrect_remaining": 47,
-        "correction_basis": "统计校正：原始20261102-001406Z库存CSV的“已局部交付，整卡未关闭”59项与W250逐卡ID完全一致。当前仅其中8项DONE，剩51；WP12-03/04/08/10虽已完整DONE，却不在原59集合。旧followup把这4项一并从59扣减，造成47，现纠正51。375的36DONE/2IN_PROGRESS/337PLANNED和这4项合法完成均不回退，125/247不变；后续原卡逐项核销继续按原合同，不用新窗口数代替原59。此前47数字为旧计数错误，历史报告保留并由本校正说明取代当前统计。"
+        "correction_basis": "统计校正：原始20261102-001406Z库存CSV的“已局部交付，整卡未关闭”59项与W250逐卡ID完全一致。当前仅其中8项DONE，剩51；WP12-03/04/08/10虽已完整DONE，却不在原59集合。旧followup把这4项一并从59扣减，造成47，现纠正51。375的36DONE/2IN_PROGRESS/337PLANNED和这4项合法完成均不回退，125/247不变；后续原卡逐项核销继续按原合同，不用新窗口数代替原59。此前47数字为旧计数错误，历史报告保留并由本校正说明取代当前统计。",
+        "closed_original_partial_cards": 9,
+        "implementation_remaining_original_partial_cards": 35,
+        "contract_or_evidence_pending_original_partial_cards": 15,
+        "previous_verified_remaining": 51,
+        "counter_correction": "W324校正旧47为51；W310独立按原条款核销WP03-03后真实余50，不回写旧报告。"
       }
     },
     "next_execution_plan": {
@@ -244719,8 +244967,8 @@
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
       "started_at": "2026-11-04T00:22:36+00:00",
-      "effective_seconds_recorded": 81636,
-      "timing_snapshot_at": "2026-11-08T20:26:46.693187+00:00",
+      "effective_seconds_recorded": 82534,
+      "timing_snapshot_at": "2026-11-08T20:41:44.096130+00:00",
       "timing_source": "41997 prior effective seconds plus continuous OS monotonic time from 2026-11-08T09:26:06Z; pause/pre-sample preparation excluded. Native panel is active after reactivation but omits the earlier authorized resumed segment; never sum the clocks.",
       "next_reestimate_at_effective_seconds": 64800,
       "estimate_hours": [
@@ -246360,7 +246608,8 @@
           "related_tasks": [
             "WP12-19",
             "WP12-03",
-            "WP05-14"
+            "WP05-14",
+            "WP03-03"
           ],
           "title": "预算末尾真实余项核对及当前任务收妥",
           "estimate_hours": [
@@ -246369,14 +246618,27 @@
           ],
           "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
           "estimate_confidence": "LOW_DOCUMENT_ONLY_ALL_59_SOURCE_EVIDENCE_RECONCILIATION_PLUS_NORMAL_LIFECYCLE",
-          "state": "IN_PROGRESS",
+          "state": "VERIFYING",
           "initial_estimate_hours": [
             1,
             2
           ],
           "started_at": "2026-11-08T20:26:46.693187+00:00",
           "effective_start": 81636,
-          "scope_refinement": "W310预算末尾核销：以原CSV及W250相同59个ID逐卡对照原定义、当前源码/采用和既有有效执行；保留8已闭环、51真实余项，结算本轮全部窗口实测与24h口径。只更新文档/台账，不重跑未变产品，不提前宣布预算或全项目完成。"
+          "scope_refinement": "W310预算末尾核销：以原CSV及W250相同59个ID逐卡对照原定义、当前源码/采用和既有有效执行；保留8已闭环、51真实余项，结算本轮全部窗口实测与24h口径。只更新文档/台账，不重跑未变产品，不提前宣布预算或全项目完成。",
+          "report": "docs/development/evidence/W310-01/DELIVERY.md",
+          "full_task_reconciled": "WP03-03",
+          "scope_audit_complete": true,
+          "whole_program_closeout_complete": false,
+          "implementation_complete": true,
+          "full_task_completed": false,
+          "original_card_completed": "WP03-03",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave310-final-verification.json"
+          }
         }
       ],
       "reestimates": [
@@ -246574,7 +246836,7 @@
           "historical_conflicts": "Preserved immutable; existing environments not inspected or migrated. Separate controlled forward recovery required for affected existing records."
         }
       ],
-      "next_priority": "W310预算末尾核销：以原CSV及W250相同59个ID逐卡对照原定义、当前源码/采用和既有有效执行；保留8已闭环、51真实余项，结算本轮全部窗口实测与24h口径。只更新文档/台账，不重跑未变产品，不提前宣布预算或全项目完成。",
+      "next_priority": "W310文档收妥后继续原24h真实余项：W325准确成员排除，0.75–1.5h低置信，最终已开工完整任务收妥时结算；不另起周期。",
       "extra_bug_deliveries": [
         {
           "id": "BUG751",
