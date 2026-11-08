@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 2026-11-08：WP12-03/04原卡核销，24h继续
+
+W319按原WP12-03/04实施范围及FORM R1直接25条AC完成整卡核销；旧端点统一适配、合法数据限额、准确重基前恢复与历史内容当前授权采用均已有真实交付，两张原卡正式DONE。 [报告](../development/evidence/W319-01/DELIVERY.md)。
+
+原375现35DONE/2IN_PROGRESS/338PLANNED；原59局部11闭环/48剩余。125完整目标0关闭、247正式验收NOT_RUN保持。W306所需WP12-04/10整卡前置已满足，原WP12-08仍待本卡范围核对；历史批量转换、物理purge、普通FORM服务节点业务Owner及正式部署保持各自范围。 本窗只做原范围/当前适用性/证据核销，无新产品运行。分支/工作区/席位以wave319-final-verification.json最终PASS为准。
+
 ## 2026-11-08：W318已收尾，W319原FORM核销中
 
 W318 Main772/Handoff293正常采用、准确分支清理及官方finish已核销，实测4353秒。[按原WP12-03/04实施范围、](../development/evidence/W319-01/DELIVERY.md)逐原AC核实，当前尚未关闭原卡。原37533DONE/2IN_PROGRESS/340PLANNED、原59余50；24h继续。

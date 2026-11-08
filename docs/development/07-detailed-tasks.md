@@ -2,7 +2,7 @@
 
 台账日期：2026-11-02。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
 
-全部已登记任务 375 项，已交付 33 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
+全部已登记任务 375 项，已交付 35 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
 
 任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)，分配步骤见[多对话协作](09-parallel-development.md)。所有状态/领取/证据只在JSON登记；未领取的候选不自动READY。
 
@@ -395,8 +395,8 @@
 |---|---|---|---|---|---|
 | [WP12-01 不可变流程表单草稿与设计器版本](../../docs/development/task-plans/WP12.md#wp12-01) | Main | 已交付 | S01-02, S02-00, WP02-10, WP02-13 | CODE / M | COORD / W288-01 |
 | [WP12-02 定义发布预览、准确依赖pin与独立启停](../../docs/development/task-plans/WP12.md#wp12-02) | Main | 已交付 | S01-02, S02-00, WP02-10, WP02-13, WP12-01 | CODE / L | COORD / W295-01 |
-| [WP12-03 个人草稿生命周期与显式无损重基](../../docs/development/task-plans/WP12.md#wp12-03) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP02-14, WP02-15, WP12-01 | CODE / M | 未领取 |
-| [WP12-04 DIRECT/DRAFT提交的五上下文原子准入](../../docs/development/task-plans/WP12.md#wp12-04) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP12-02, WP12-03 | CODE / L | 未领取 |
+| [WP12-03 个人草稿生命周期与显式无损重基](../../docs/development/task-plans/WP12.md#wp12-03) | Main | 已交付 | S01-02, S02-00, WP02-10, WP02-13, WP02-14, WP02-15, WP12-01 | CODE / M | COORD / W319-01 |
+| [WP12-04 DIRECT/DRAFT提交的五上下文原子准入](../../docs/development/task-plans/WP12.md#wp12-04) | Main | 已交付 | S01-02, S02-00, WP02-10, WP02-13, WP12-02, WP12-03 | CODE / L | COORD / W319-01 |
 | [WP12-05 表单目录收藏、历史查询和最终下载披露](../../docs/development/task-plans/WP12.md#wp12-05) | Main | 待安排 | S01-02, S02-00, WP02-10, WP02-13, WP02-14, WP02-15, WP12-04, WP12-07 | CODE / M | 未领取 |
 | [WP12-06 审批业务绑定与冻结提交TxS/TxE](../../docs/development/task-plans/WP12.md#wp12-06) | Main | 已交付 | S01-02, S01-07, S02-00, WP02-10, WP02-13, WP12-02 | CODE / L | COORD / W296-01 |
 | [WP12-07 审批决定TxD、Owner交付与回执连续链](../../docs/development/task-plans/WP12.md#wp12-07) | Main | 已交付 | S01-02, S02-00, WP02-10, WP02-13, WP12-06 | CODE / L | COORD |
