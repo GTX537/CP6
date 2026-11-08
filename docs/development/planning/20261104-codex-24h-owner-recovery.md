@@ -427,3 +427,11 @@ W320实际6204秒完成，所有席位已释放再复用；新窗2.5–4h低置�
 W321完成Main.SecurityLog.Fields.v1：准确安全事件已分类UserName/ClientIp的显式UTC政策、独立申请/批准/实际置空、全主体hold、最小原回执/墓碑与原生防回填；恢复候选重施准确字段处置，已空及事件缺失分别据实记录，两库UNKNOWN责任和原键恢复直接复用。事件身份、原时间及未知内容保留，仅此Owner，整体PARTIAL。 20项新增实际PostgreSQL18场景、14项受影响认证/身份/载荷恢复回归（含真实认证HTTP、两条新增和一条既有Chrome）、24项Vue/API行为及vue-tsc通过。 [报告](../evidence/W321-01/DELIVERY.md)。
 
 原375=36DONE/2IN_PROGRESS/337PLANNED，原59=12闭环/47剩余，125目标/247正式验收不变。WP02-15仍余安全日志未分类上下文/原因/设备与操作者信息、不可归属事件、授权/组织引用、OA/PLM与CRM业务历史、FILE及其他来源副本、整租户导出与受控处置、WAL/备份/外部副本及完整环境恢复。W306和WP12-03/04已闭环，不重复；24h继续相邻真实余项，W310仅预算末尾。 当前采样70055秒；下一72000秒校准。最终分支/工作区/席位见wave321-final-verification.json。
+
+## W322 / 沿原24h继续租户受控导出
+
+原WP02-15租户受控导出采用：准确target tenant的已分类identity/security/roles来源，显式用途、接收人、独立tenant能力、TTL和不可变制品/原操作；当前下载重判身份/范围/撤销/期限，真实Manifest含数量/读取窗/字段排除/未接Owner。独立租户模型无伪subject，整体仍PARTIAL，旧直接租户HTTP散流退役410；其他Owner全量导出与新租户制品物理保留/处置仍列真实余项。
+
+Main `48420d71829daeb955198351696cc29aec33545a`，Handoff `bfaaf8edfc15f3085680fd7451d8a2ce9c616ca6`，COORD单人固定DEV1/DEV2；W321 Main776/Handoff297已核两仓采用、准确清理和官方释放，实测5775秒。本窗累计72040秒，剩余约3.99h；估1.75–3h低置信实际执行。原375/59及125/247不变。
+
+下一72000秒校准；W321实测1.60h低于2.5–4h，W322估1.75–3h低置信。W310只在预算末尾。[设计](../contracts/privacy-tenant-export-v1.md)。
