@@ -18,7 +18,8 @@ public sealed record PrivacyRestoreContextV1(Guid EnvironmentId,Guid ActorTenant
 public sealed record PrivacyRestoreScopeV1(Guid EnvironmentId,Guid CandidateId,Guid RegistrationVersion,string BackupSha256,Guid SourceVersion,
     PrivacyRestoreDatabaseV1 Source,PrivacyRestoreDatabaseV1 Target,int TombstoneCount,string[] UncoveredOwners,
     [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingDefault)] int ExportPayloadTombstoneCount=0,
-    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingDefault)] int SecurityFieldTombstoneCount=0);
+    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingDefault)] int SecurityFieldTombstoneCount=0,
+    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingDefault)] int TenantPayloadTombstoneCount=0);
 public sealed record PrivacyRestorePreviewV1(PrivacyRestoreScopeV1 Scope,string ScopeDigest,string[] Blockers);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record PrivacyRestorePlanRequestV1(Guid OperationId,Guid CandidateId,Guid RequestRef,string ExpectedScopeDigest);
@@ -32,6 +33,9 @@ public sealed record PrivacyRestoreUnitV1(Guid SourcePlanId,Guid TargetTenantId,
     [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] Guid? LogId=null,
     [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] int? ClearedValueCount=null);
 public sealed record PrivacyRestoreResultV1(Guid OperationId,string State,Guid? PlanId,Guid? CandidateId,Guid? SourceVersion,string? ScopeDigest,
-    PrivacyRestoreUnitV1[]? Units,string[]? UncoveredOwners,DateTimeOffset? At,string AggregateState="PARTIAL");
+    PrivacyRestoreUnitV1[]? Units,string[]? UncoveredOwners,DateTimeOffset? At,string AggregateState="PARTIAL",
+    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] PrivacyRestoreTenantPayloadUnitV1[]? TenantPayloadUnits=null);
 public sealed record PrivacyRestorePlanV1(Guid PlanId,Guid RequestRef,Guid RequesterId,Guid Version,string State,Guid? ApproverId,
     PrivacyRestoreScopeV1 Scope,string ScopeDigest,bool ApprovalCurrent,string[] CurrentBlockers,PrivacyRestoreResultV1? Outcome);
+
+public sealed record PrivacyRestoreTenantPayloadUnitV1(Guid SourcePlanId,Guid TargetTenantId,Guid ArtifactId,string Owner,string Outcome,string BeforeState,Guid? BeforeVersion,long RemovedBytes);

@@ -37,7 +37,6 @@ public sealed partial class PrivacyDispositionOwnerV1
         =>new(operation,state,row.Id,scope.CandidateId,scope.SourceVersion,row.Digest,null,scope.UncoveredOwners,null);
     private async Task RequireRestoreApproval(Authority a,PlanRow row,PrivacyRestoreExecuteV1 input,CancellationToken ct)
     {
-        await RequireTenantPayloadRestoreSupport(a,ct);
         var current=await RestoreView(a,row,ct);
         if(current.Version!=input.ExpectedVersion||current.ScopeDigest!=input.ExpectedScopeDigest)throw new PrivacyDispositionExceptionV1("PRIVACY_RESTORE_APPROVAL_CHANGED",412);
         if(!current.ApprovalCurrent)throw new PrivacyDispositionExceptionV1("PRIVACY_RESTORE_EXECUTION_BLOCKED");
@@ -94,7 +93,7 @@ public sealed partial class PrivacyDispositionOwnerV1
                     await SaveRestoreOutcome(a,known,scope,t);return known;
                 }
                 Can(a,"restore-execute");await RequireRestoreApproval(a,row,input,t);await RequireNoOtherRestoreIntent(a,scope,input.OperationId,t);
-                var result=await PrivacyRestoreNativeV1.Apply(candidate,hasher,scope,a.Actor.TenantId,a.Actor.Id,input.OperationId,id,row.Digest,await RestoreTombstones(a,t),await RestorePayloadTombstones(a,t),await RestoreSecurityTombstones(a,t),t);
+                var result=await PrivacyRestoreNativeV1.Apply(candidate,hasher,scope,a.Actor.TenantId,a.Actor.Id,input.OperationId,id,row.Digest,await RestoreTombstones(a,t),await RestorePayloadTombstones(a,t),await RestoreSecurityTombstones(a,t),await RestoreTenantPayloadTombstones(a,t),t);
                 await SaveRestoreOutcome(a,result,scope,t);return result;
             },ct,async t=>
             {

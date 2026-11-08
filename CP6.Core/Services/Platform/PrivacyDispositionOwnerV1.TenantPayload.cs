@@ -6,7 +6,7 @@ namespace CP6.Core.Services.Platform;
 public sealed partial class PrivacyDispositionOwnerV1
 {
     internal const string TenantPayloadOwner="Main.Privacy.TenantExportPayload.v1",TenantPayloadAction="DELETE_NATIVE_TENANT_EXPORT_PAYLOAD";
-    private static readonly string[] TenantPayloadUncovered=["MAIN.IDENTITY_PROFILE_AND_SECURITY_OR_BUSINESS_HISTORY","FILE_AND_OTHER_OWNER_COPIES","WAL_AND_BACKUPS","EXTERNAL_DOWNLOADED_COPIES","TENANT_EXPORT_RESTORE_ADAPTER_NOT_ADOPTED","UNREGISTERED_OWNERS"];
+    private static readonly string[] TenantPayloadUncovered=["MAIN.IDENTITY_PROFILE_AND_SECURITY_OR_BUSINESS_HISTORY","FILE_AND_OTHER_OWNER_COPIES","WAL_AND_BACKUPS","EXTERNAL_DOWNLOADED_COPIES","UNREGISTERED_OWNERS"];
     public Task<TenantPayloadDispositionContextV1> TenantPayloadContextAsync(TenantManagementSessionV1 session,CancellationToken ct=default)
         =>Transaction(false,session,(a,_)=>{Can(a,"tenant-payload-read");return Task.FromResult(new TenantPayloadDispositionContextV1(a.Environment,a.Actor.TenantId,a.Actor.Id,TenantPayloadOwner,TenantPayloadAction,
             a.Permissions.ActionKeys.Where(x=>x.StartsWith(Menu+":tenant-payload-",StringComparison.Ordinal)).Select(x=>x[(Menu.Length+1)..]).Order().ToArray(),36500,TenantPayloadUncovered));},ct);
@@ -115,10 +115,5 @@ public sealed partial class PrivacyDispositionOwnerV1
             Can(a,"tenant-payload-read");var old=await TenantPayloadOriginal(a,operation,null,t);if(old!=null)return old;
             var result=new TenantPayloadDispositionOperationV1(operation,close?"CLOSED":"NOT_FOUND","CLOSE");if(close)await TenantPayloadStore(a,operation,null,result,t);return result;
         },ct);
-    }
-    private async Task RequireTenantPayloadRestoreSupport(Authority a,CancellationToken ct)
-    {
-        if(await db.Database.SqlQuery<bool>($"SELECT EXISTS(SELECT FROM cp6_privacy_tenant_payload_disposition_v1.tombstones WHERE environment_id={a.Environment}) AS \"Value\"").SingleAsync(ct))
-            throw new PrivacyDispositionExceptionV1("PRIVACY_RESTORE_TENANT_PAYLOAD_OWNER_UNSUPPORTED",503);
     }
 }
