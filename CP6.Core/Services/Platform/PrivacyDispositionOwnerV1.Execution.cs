@@ -27,27 +27,7 @@ public sealed partial class PrivacyDispositionOwnerV1
             if(current.Version!=input.ExpectedVersion||current.ScopeDigest!=input.ExpectedScopeDigest)throw new PrivacyDispositionExceptionV1("PRIVACY_DISPOSITION_APPROVAL_CHANGED",412);
             if(!current.ApprovalCurrent)throw new PrivacyDispositionExceptionV1("PRIVACY_DISPOSITION_EXECUTION_BLOCKED");
             var scope=current.Scope;
-            try{db.RequireIdentityCapture(scope.TargetTenantId);}
-            catch(InvalidOperationException e)when(e.Message=="SSO_IDENTITY_WRITER_UNAVAILABLE")
-            {throw new PrivacyDispositionExceptionV1("PRIVACY_DISPOSITION_IDENTITY_WRITER_UNAVAILABLE",503,e);}
-            // Do not materialize old profile values or produce an audit containing before-images.
-            var name="anon_"+scope.SubjectId.ToString("N");
-            var unusable=hasher.Hash(Convert.ToHexString(System.Security.Cryptography.RandomNumberGenerator.GetBytes(32)));var epoch=Guid.NewGuid();
-            await db.Database.ExecuteSqlInterpolatedAsync($"""
-                UPDATE public."Sys_Users" SET "UserName"={name},"NickName"=NULL,"Email"=NULL,"LastLoginIp"=NULL,
-                  "BadgeNo"=NULL,"ExternalSubject"=NULL,"ExternalProvider"=NULL,"Enable"=false,"Password"={unusable},
-                  "TwoFactorSecret"=NULL,"TwoFactorEnabled"=false,"TwoFactorEnrolledAt"=NULL,"QuickPinHash"=NULL,
-                  "AllowPasswordFallback"=false,"AuthenticationEpoch"={epoch},"MustChangePassword"=true,
-                  "PasswordChangedAt"=LOCALTIMESTAMP,"Modifier"={a.Actor.Id.ToString("D")},"ModifyDate"=LOCALTIMESTAMP
-                WHERE "TenantId"={scope.TargetTenantId} AND "Id"={scope.SubjectId};
-                UPDATE public."Sys_RefreshTokens" SET "RevokedAt"=LOCALTIMESTAMP
-                WHERE "TenantId"={scope.TargetTenantId} AND "UserId"={scope.SubjectId} AND "RevokedAt" IS NULL;
-                UPDATE public."Sys_BrowserSessions" SET "LoggedOutAtUtc"=timezone('UTC',clock_timestamp())
-                WHERE "TenantId"={scope.TargetTenantId} AND "UserId"={scope.SubjectId} AND "LoggedOutAtUtc" IS NULL;
-                """,t);
-            await db.CapturePrivacyIdentityInvalidationAsync(scope.TargetTenantId,scope.SubjectId,t);
-            await db.SaveChangesAsync(t);
-            var version=await db.Database.SqlQuery<Guid>($"SELECT revision AS \"Value\" FROM cp6_authentication_v1.identity_admission_revisions WHERE tenant_id={scope.TargetTenantId} AND object_key={"user:"+scope.SubjectId.ToString("D")}").SingleAsync(t);
+            var version=await PrivacyIdentityEffectV1.ApplyAsync(db,hasher,scope.TargetTenantId,scope.SubjectId,a.Actor.Id,t);
             var receipt=new PrivacyDispositionExecutionV1(id,input.OperationId,a.Environment,a.Actor.TenantId,a.Actor.Id,row.Requester,current.ApproverId!.Value,
                 input.ConfirmationRef,scope.TargetTenantId,scope.SubjectId,"Main.Identity.Profile.v1",scope.Action,scope.PolicyVersion,scope.TargetVersion,version,
                 await Clock(t),"APPLIED","PARTIAL",scope.Fields,scope.UncoveredOwners);

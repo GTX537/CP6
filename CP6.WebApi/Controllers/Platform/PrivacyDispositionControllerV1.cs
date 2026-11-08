@@ -36,6 +36,28 @@ public sealed class PrivacyDispositionControllerV1(IServiceScopeFactory scopes,I
     public Task<IActionResult> Execute(Guid id,PrivacyDispositionExecuteV1 input,CancellationToken ct)=>Run((o,s)=>o.ExecuteAsync(id,input,s,ct));
     [HttpPost("operations/{id:guid}/close")]
     public Task<IActionResult> Close(Guid id,CancellationToken ct)=>Run((o,s)=>o.OperationAsync(id,true,s,ct));
+    [HttpGet("restore/context")]
+    public Task<IActionResult> RestoreContext(CancellationToken ct)=>Run((o,s)=>o.RestoreContextAsync(s,ct));
+    [HttpGet("restore/candidates/{id:guid}/preview")]
+    public Task<IActionResult> RestorePreview(Guid id,CancellationToken ct)=>Run((o,s)=>o.RestorePreviewAsync(id,s,ct));
+    [HttpPost("restore/plans"),RequestSizeLimit(65536)]
+    public Task<IActionResult> RestorePlan(PrivacyRestorePlanRequestV1 input,CancellationToken ct)=>Run((o,s)=>o.RequestRestoreAsync(input,s,ct));
+    [HttpGet("restore/plans/{id:guid}")]
+    public Task<IActionResult> RestorePlan(Guid id,CancellationToken ct)=>Run((o,s)=>o.RestorePlanAsync(id,s,ct));
+    [HttpPost("restore/plans/{id:guid}/decisions"),RequestSizeLimit(65536)]
+    public Task<IActionResult> RestoreDecision(Guid id,PrivacyDispositionDecisionV1 input,CancellationToken ct)=>Run((o,s)=>o.DecideRestoreAsync(id,input,s,ct));
+    [HttpPost("restore/plans/{id:guid}/execute"),RequestSizeLimit(65536)]
+    public Task<IActionResult> RestoreExecute(Guid id,PrivacyRestoreExecuteV1 input,CancellationToken ct)=>Run((o,s)=>o.ExecuteRestoreAsync(id,input,s,ct));
+    [HttpGet("restore/metadata-operations/{id:guid}")]
+    public Task<IActionResult> RestoreMetadataOperation(Guid id,CancellationToken ct)=>Run((o,s)=>o.RestoreMetadataOperationAsync(id,false,s,ct));
+    [HttpPost("restore/metadata-operations/{id:guid}/close")]
+    public Task<IActionResult> CloseRestoreMetadata(Guid id,CancellationToken ct)=>Run((o,s)=>o.RestoreMetadataOperationAsync(id,true,s,ct));
+    [HttpGet("restore/operations/{id:guid}")]
+    public Task<IActionResult> RestoreOperation(Guid id,CancellationToken ct)=>Run((o,s)=>o.RestoreOperationAsync(id,"READ",s,ct));
+    [HttpPost("restore/operations/{id:guid}/recover")]
+    public Task<IActionResult> RecoverRestoreOperation(Guid id,CancellationToken ct)=>Run((o,s)=>o.RestoreOperationAsync(id,"RECOVER",s,ct));
+    [HttpPost("restore/operations/{id:guid}/close")]
+    public Task<IActionResult> CloseRestoreOperation(Guid id,CancellationToken ct)=>Run((o,s)=>o.RestoreOperationAsync(id,"CLOSE",s,ct));
     private async Task<IActionResult> Run<T>(Func<PrivacyDispositionOwnerV1,TenantManagementSessionV1,Task<T>> action)
     {
         await using var scope=scopes.CreateAsyncScope();var services=scope.ServiceProvider;services.GetRequiredService<ITenantContext>().CurrentTenantId=tenant.CurrentTenantId;

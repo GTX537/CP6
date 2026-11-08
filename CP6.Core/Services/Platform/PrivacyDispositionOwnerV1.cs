@@ -4,12 +4,14 @@ using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Integration;
 using CP6.Core.Services.Sys;
+using CP6.Core.Services.CrmIdentity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 namespace CP6.Core.Services.Platform;
 public sealed partial class PrivacyDispositionOwnerV1(CP6Context db,IHttpContextAccessor http,
-    ICurrentPermissionContext permissions,IOptions<ScopeAuthorizationOptionsV1> environment,IPasswordHasher hasher)
+    ICurrentPermissionContext permissions,IOptions<ScopeAuthorizationOptionsV1> environment,IPasswordHasher hasher,
+    IOptions<PrivacyRestoreOptionsV1>? restoration=null,CrmIdentityRuntime? identity=null)
 {
     public const string Menu="privacy-disposition",Action="ANONYMIZE_IDENTITY_PROFILE";
     internal static readonly string[] Fields=["UserName","NickName","Email","LastLoginIp","BadgeNo","ExternalSubject","ExternalProvider"];
@@ -21,7 +23,8 @@ public sealed partial class PrivacyDispositionOwnerV1(CP6Context db,IHttpContext
     private static void Target(PrivacyDispositionTargetV1 target){Id(target.TargetTenantId);Id(target.SubjectId);Id(target.PolicyId);}
     private string Journal(Authority a)=>"Main.Privacy.Disposition.v1/"+a.Environment.ToString("D")+"/"+a.Actor.Id.ToString("D");
     private Task<DateTimeOffset> Clock(CancellationToken ct)=>db.Database.SqlQueryRaw<DateTimeOffset>("SELECT clock_timestamp() AS \"Value\"").SingleAsync(ct);
-    private async Task<T> Transaction<T>(bool write,TenantManagementSessionV1 session,Func<Authority,CancellationToken,Task<T>> body,CancellationToken ct)
+    private async Task<T> Transaction<T>(bool write,TenantManagementSessionV1 session,Func<Authority,CancellationToken,Task<T>> body,CancellationToken ct,
+        Func<CancellationToken,Task>? beforeCommit=null)
     {
         if(!db.Database.IsNpgsql()||db.Database.CurrentTransaction!=null||db.ChangeTracker.HasChanges()||System.Transactions.Transaction.Current!=null)
             throw new PrivacyDispositionExceptionV1("PRIVACY_DISPOSITION_INDEPENDENT_CONTEXT_REQUIRED",503);
@@ -40,6 +43,7 @@ public sealed partial class PrivacyDispositionOwnerV1(CP6Context db,IHttpContext
             var result=await body(new(actor,await permissions.GetAsync(),bound.Value),ct);
             await session.Complete(ct);
             if(until<=DateTime.Now)throw new PrivacyDispositionExceptionV1("REAUTH_REQUIRED",401);
+            ct.ThrowIfCancellationRequested();if(beforeCommit!=null)await beforeCommit(ct);
             ct.ThrowIfCancellationRequested();committing=true;await tx.CommitAsync(ct);return result;
         }
         catch(Exception error)
