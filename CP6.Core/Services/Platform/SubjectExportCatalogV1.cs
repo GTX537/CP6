@@ -28,23 +28,29 @@ internal static class SubjectExportCatalogV1
     internal static Dictionary<string, object?> Project<T>(T row, string[] fields) where T : class
         => fields.ToDictionary(name => name, name => typeof(T).GetProperty(name)!.GetValue(row));
 
-    private static SubjectExportFieldV1[] Fields(Type type, string[] included)
+    private static SubjectExportFieldV1[] Fields(Type type, string[] included,bool tenantScope)
         => type.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.CanRead && p.GetIndexParameters().Length == 0)
             .OrderBy(p => p.Name, StringComparer.Ordinal).Select(p => included.Contains(p.Name, StringComparer.Ordinal)
-                ? new SubjectExportFieldV1(p.Name, "INCLUDED", "OWNER_CLASSIFIED_SUBJECT_FIELD")
+                ? new SubjectExportFieldV1(p.Name, "INCLUDED", tenantScope?"OWNER_CLASSIFIED_TENANT_FIELD":"OWNER_CLASSIFIED_SUBJECT_FIELD")
                 : new SubjectExportFieldV1(p.Name, "EXCLUDED_WITH_REASON", SensitiveFieldPolicy.IsSensitive(p.Name)
                     || p.Name is "AuthenticationEpoch" or "CredentialRevision" ? "AUTHENTICATION_MATERIAL"
-                    : p.Name == "ContextJson" ? "UNCLASSIFIED_NESTED_CONTENT" : "OWNER_FIELD_NOT_CLASSIFIED_FOR_SUBJECT_EXPORT")).ToArray();
+                    : p.Name == "ContextJson" ? "UNCLASSIFIED_NESTED_CONTENT" : tenantScope?"OWNER_FIELD_NOT_CLASSIFIED_FOR_TENANT_EXPORT":"OWNER_FIELD_NOT_CLASSIFIED_FOR_SUBJECT_EXPORT")).ToArray();
 
     internal static SubjectExportSourceV1 Included<T>(string owner, int count, DateTime start, DateTime end, string[] fields,
-        string selector = "TARGET_TENANT_AND_STABLE_USER_ID")
+        string selector = "TARGET_TENANT_AND_STABLE_USER_ID",bool tenantScope=false)
         => new(owner, typeof(T).Name, "INCLUDED", "ACTUAL_OWNER_READ", selector, count,
-            start, end, "UNVERSIONED_LIVE_ROWS_READ_WINDOW", Fields(typeof(T), fields));
+            start, end, "UNVERSIONED_LIVE_ROWS_READ_WINDOW", Fields(typeof(T), fields,tenantScope));
 
     internal static SubjectExportManifestV1 Build(CP6Context db, Guid tenant, Guid subject, params SubjectExportSourceV1[] actual)
     {
         var sources = actual.ToList();
-        var adopted = new HashSet<Type> { typeof(Sys_User), typeof(Sys_SecurityLog), typeof(Sys_UserRole) };
+        AppendRemainder(db,sources);
+        return new("cp6.subject-export-manifest.v1", tenant, subject, "PARTIAL", false,
+            "CURRENT_EF_MODEL_AND_NAMED_NON_EF_OWNERS_WITH_EXPLICIT_REMAINDER", "SEPARATE_OWNER_READS", sources.ToArray());
+    }
+    internal static void AppendRemainder(CP6Context db,List<SubjectExportSourceV1> sources,bool tenantScope=false,params Type[] additionalAdopted)
+    {
+        var adopted = new HashSet<Type>(additionalAdopted) { typeof(Sys_User), typeof(Sys_SecurityLog), typeof(Sys_UserRole) };
         // Metadata enumerates omitted sources, never their rows. Creator/Modifier/actor identity does not establish subject ownership.
         foreach (var entity in db.Model.GetEntityTypes().Where(e => e.GetTableName() != null && !adopted.Contains(e.ClrType))
                      .OrderBy(e => e.ClrType.FullName, StringComparer.Ordinal))
@@ -52,7 +58,7 @@ internal static class SubjectExportCatalogV1
             var secret = entity.ClrType == typeof(Sys_RefreshToken);
             sources.Add(new(entity.ClrType == typeof(Sys_OperLog) ? "MAIN.AUDIT" : secret ? "MAIN.AUTHENTICATION" : "MAIN.UNCLASSIFIED_OWNER",
                 entity.ClrType.Name, secret ? "EXCLUDED_WITH_REASON" : "UNKNOWN_SCOPE",
-                secret ? "AUTHENTICATION_MATERIAL" : entity.ClrType == typeof(Sys_OperLog) ? "STABLE_SUBJECT_ID_UNAVAILABLE" : "OWNER_SUBJECT_RELATION_NOT_ADOPTED",
+                secret ? "AUTHENTICATION_MATERIAL" : tenantScope ? "OWNER_TENANT_EXPORT_FIELDS_NOT_CLASSIFIED" : entity.ClrType == typeof(Sys_OperLog) ? "STABLE_SUBJECT_ID_UNAVAILABLE" : "OWNER_SUBJECT_RELATION_NOT_ADOPTED",
                 "NOT_QUERIED", null, null, null, "NOT_CAPTURED", []));
         }
         // These actual non-EF/application owners are outside the EF model. No cross-application identity inference or raw table sweep.
@@ -64,9 +70,7 @@ internal static class SubjectExportCatalogV1
             ("FILE", "File content, derivatives and external copies"),
             ("BACKUP", "Backups and offline replicas"),
             ("UNREGISTERED_OWNERS", "Sources outside the registered directory") })
-            sources.Add(new(owner, source, "UNKNOWN_SCOPE", "SUBJECT_MAPPING_AND_EXPORT_ADAPTER_NOT_ADOPTED",
+            sources.Add(new(owner, source, "UNKNOWN_SCOPE", tenantScope ? "OWNER_TENANT_EXPORT_ADAPTER_NOT_ADOPTED" : "SUBJECT_MAPPING_AND_EXPORT_ADAPTER_NOT_ADOPTED",
                 "NOT_QUERIED", null, null, null, "NOT_CAPTURED", []));
-        return new("cp6.subject-export-manifest.v1", tenant, subject, "PARTIAL", false,
-            "CURRENT_EF_MODEL_AND_NAMED_NON_EF_OWNERS_WITH_EXPLICIT_REMAINDER", "SEPARATE_OWNER_READS", sources.ToArray());
     }
 }
