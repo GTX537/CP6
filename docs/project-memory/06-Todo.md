@@ -1,5 +1,11 @@
 # 当前待办与优先级
 
+## 2026-11-08：W314身份实际处置 / 24h继续
+
+W314完成Main身份Owner实际匿名化：准确已批准计划与当前execute/hold/政策/目标/审批人共同核对，原用户字段及认证材料处置、身份快照/优先Outbox和CRM授权撤销同事务，最小安全原回执、UNKNOWN查询/关闭迟到与真实页面执行。仅此Owner APPLIED，整体保持PARTIAL。 [交付](../development/evidence/W314-01/DELIVERY.md)。
+
+17项当前独立PostgreSQL18场景（8项执行含真实认证HTTP/Chrome、9项受影响W313回归）、9项Vue交互及vue-tsc通过。 原375=33DONE/2IN_PROGRESS/340PLANNED、原59=9闭环/50剩余，125目标/247正式验收不变。WP02-15仍余W315墓碑/恢复及后续写入屏障、导出载荷/审计/业务历史/FILE/CRM/备份等Owner受控处置、整租户导出与受控处置和外部副本边界；W306原FORM历史前置仍单列。 正常采用/finish后W315；最终分支、工作区及席位见wave314-final-verification.json。
+
 ## 2026-11-08：恢复24h目标 / W314开工
 
 W313两仓远端采用、准确分支删除和官方finish已核销。用户明确继续目标；暂停间隔不计。[W314](../development/evidence/W314-01/DELIVERY.md)推进已批准Main身份处置实际执行和原结果恢复，原375/59计数不变。

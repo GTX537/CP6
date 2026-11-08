@@ -34,6 +34,7 @@ public sealed partial class PrivacyDispositionOwnerV1
         if(user.IsPlatformAdmin)blockers.Add("PLATFORM_AUTHORITY_MUST_BE_REVOKED_SEPARATELY");
         if(target.TargetTenantId==TenantContext.DefaultTenant)blockers.Add("PLATFORM_TENANT_PROTECTED");
         if(hold?.Active==true)blockers.Add("ACTIVE_HOLD");
+        if(await db.Database.SqlQuery<bool>($"SELECT EXISTS(SELECT FROM cp6_privacy_disposition_v1.executions WHERE environment_id={a.Environment} AND target_tenant={target.TargetTenantId} AND subject_id={target.SubjectId}) AS \"Value\"").SingleAsync(ct))blockers.Add("SUBJECT_PROFILE_ALREADY_ANONYMIZED");
         var scope=new PrivacyDispositionScopeV1(a.Environment,target.TargetTenantId,target.SubjectId,revision,policy.PolicyId,policy.Version,policy.BasisRef,hold?.Version,Action,Fields,Effects,Uncovered);
         return new(scope,MainOwnerOperationJournalV1.Digest(MainOwnerOperationJournalV1.Encode(scope)),hold,hold?.Active==true&&hold.ReviewAt<=at,blockers.ToArray());
     }
@@ -65,7 +66,7 @@ public sealed partial class PrivacyDispositionOwnerV1
         if(last.State=="APPROVED"&&(!await db.Sys_Users.AsNoTracking().AnyAsync(x=>x.Id==last.Actor&&x.Enable&&x.IsPlatformAdmin,ct)
             ||!(await new PermissionAggregator(db).BuildAsync(last.Actor,ct)).ActionKeys.Contains(Menu+":approve")))blockers.Add("APPROVER_AUTHORITY_CHANGED");
         return new(row.Id,row.RequestRef,row.Requester,row.At,last.Version,last.State,last.State=="APPROVED"?last.Actor:null,last.DecisionRef,
-            scope,row.Digest,hold,overdue,blockers.ToArray(),last.State=="APPROVED"&&blockers.Count==0);
+            scope,row.Digest,hold,overdue,blockers.ToArray(),last.State=="APPROVED"&&blockers.Count==0,await Execution(a,row.Id,ct));
     }
     public Task<PrivacyDispositionPlanV1> PlanAsync(Guid id,TenantManagementSessionV1 session,CancellationToken ct=default)
     {Id(id);return Transaction(false,session,async(a,t)=>{Can(a,"read");return await View(a,await Plan(a,id,t)??throw new PrivacyDispositionExceptionV1("PRIVACY_DISPOSITION_PLAN_NOT_FOUND",404),t);},ct);}

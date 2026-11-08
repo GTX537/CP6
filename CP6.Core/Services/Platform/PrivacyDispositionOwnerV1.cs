@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 namespace CP6.Core.Services.Platform;
 public sealed partial class PrivacyDispositionOwnerV1(CP6Context db,IHttpContextAccessor http,
-    ICurrentPermissionContext permissions,IOptions<ScopeAuthorizationOptionsV1> environment)
+    ICurrentPermissionContext permissions,IOptions<ScopeAuthorizationOptionsV1> environment,IPasswordHasher hasher)
 {
     public const string Menu="privacy-disposition",Action="ANONYMIZE_IDENTITY_PROFILE";
     internal static readonly string[] Fields=["UserName","NickName","Email","LastLoginIp","BadgeNo","ExternalSubject","ExternalProvider"];

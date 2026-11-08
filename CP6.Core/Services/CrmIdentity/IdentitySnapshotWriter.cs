@@ -33,6 +33,13 @@ public sealed class IdentitySnapshotWriter(CP6Context db, CrmIdentityRuntime run
     public Task WriteCurrentAsync(Guid tenant, string aggregate, CancellationToken cancellationToken = default)
         => WriteCurrentCoreAsync(tenant, aggregate, false, cancellationToken);
 
+    // Native privacy writes avoid copying old profile values into EF field-audit rows.
+    internal async Task WriteInvalidatedUserAsync(Guid tenant,Guid user,CancellationToken ct)
+    {
+        await WriteCurrentCoreAsync(tenant,"user:"+user.ToString("D"),false,ct);
+        await RevokeBrowserGrantsAsync(tenant,user,null,ct);
+    }
+
     private async Task WriteCurrentCoreAsync(Guid tenant, string aggregate, bool forceRevision, CancellationToken cancellationToken)
     {
         RequireTransaction();

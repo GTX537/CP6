@@ -12,7 +12,7 @@ namespace CP6.Tests.Erp;
 public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
     private static PrivacyDispositionOwnerV1 PrivacyDispositionOwner(Harness h)=>new(h.Db,new OperationsHttp{HttpContext=h.Http},
-        new CurrentPermissionContext(new OperationsHttp{HttpContext=h.Http},CurrentPermissionContextTests.Cache(),h.Db,new PermissionAggregator(h.Db)),Options.Create(new ScopeAuthorizationOptionsV1{EnvironmentId=ScopeEnvironment}));
+        new CurrentPermissionContext(new OperationsHttp{HttpContext=h.Http},CurrentPermissionContextTests.Cache(),h.Db,new PermissionAggregator(h.Db)),Options.Create(new ScopeAuthorizationOptionsV1{EnvironmentId=ScopeEnvironment}),new BCryptPasswordHasher(4));
     private static async Task<(Guid Target,Guid Policy,Harness Approver)> PrivacyDispositionSetup(Harness h)
     {
         await PrivacyAuthority(h);

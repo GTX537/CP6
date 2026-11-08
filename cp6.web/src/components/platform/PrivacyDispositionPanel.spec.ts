@@ -2,7 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest'
 import ElementPlus from 'element-plus'
 import Panel from './PrivacyDispositionPanel.vue'
-const mock = vi.hoisted(() => ({ context: vi.fn(), policy: vi.fn(), configure: vi.fn(), hold: vi.fn(), setHold: vi.fn(), preview: vi.fn(), request: vi.fn(), plan: vi.fn(), decide: vi.fn(), operation: vi.fn(), close: vi.fn(), confirm: vi.fn(), stamp: 'one' }))
+const mock = vi.hoisted(() => ({ context: vi.fn(), policy: vi.fn(), configure: vi.fn(), hold: vi.fn(), setHold: vi.fn(), preview: vi.fn(), request: vi.fn(), plan: vi.fn(), decide: vi.fn(), execute: vi.fn(), operation: vi.fn(), close: vi.fn(), confirm: vi.fn(), stamp: 'one' }))
 vi.mock('@/api/platform/privacyDisposition', () => ({ privacyDispositionApi: mock }))
 vi.mock('@/auth/identity', () => ({ AUTH_EVENT: 'privacy-disposition-identity', identityStamp: () => mock.stamp }))
 vi.mock('element-plus', async original => ({ ...await original<typeof import('element-plus')>(), ElMessageBox: { confirm: mock.confirm } }))
@@ -15,7 +15,7 @@ const original = () => ({ operationId: op, state: 'COMMITTED', kind: 'PLAN', pla
 let wrapper: ReturnType<typeof mount> | undefined
 beforeEach(() => {
   vi.resetAllMocks(); localStorage.clear(); mock.stamp = 'one'
-  mock.context.mockResolvedValue({ environmentId: env, actorTenantId: tenant, actorId: actor, actions: ['read','policy','prepare','approve','revoke','hold'] })
+  mock.context.mockResolvedValue({ environmentId: env, actorTenantId: tenant, actorId: actor, actions: ['read','policy','prepare','approve','revoke','hold','execute'] })
   mock.preview.mockResolvedValue({ scope, scopeDigest: 'digest', hold: null, blockers: [] }); mock.plan.mockResolvedValue(currentPlan()); mock.confirm.mockResolvedValue('confirm'); mock.operation.mockResolvedValue(original()); mock.request.mockResolvedValue(original())
   Object.defineProperty(navigator, 'locks', { configurable: true, value: { request: vi.fn(async (_: string, fn: () => Promise<void>) => fn()) } })
 })
@@ -61,5 +61,20 @@ describe('privacy disposition interaction', () => {
     await open(); await prepare(); localStorage.setItem(key, op); mock.operation.mockRejectedValue(new Error('unavailable'))
     await click('确认范围并提交计划'); expect(mock.request).not.toHaveBeenCalled(); expect(wrapper!.text()).toContain('原操作结果待确认'); expect(localStorage.getItem(key)).toBe(op)
     await click('查询处置原操作'); expect(mock.request).not.toHaveBeenCalled(); expect(localStorage.getItem(key)).toBe(op)
+  })
+  it('execution requires separate confirmation and binds the approved version and scope; lost response stays pending', async () => {
+    mock.plan.mockResolvedValue({ ...currentPlan(), state: 'APPROVED', approvalCurrent: true, scopeDigest: 'approved-digest' })
+    await open(); await input('处置计划 ID', planId); await click('读取计划当前状态'); await input('执行确认引用', op)
+    mock.confirm.mockRejectedValueOnce('cancel'); await click('执行已批准的主体匿名化'); expect(mock.execute).not.toHaveBeenCalled()
+    mock.execute.mockRejectedValue(new Error('reply lost')); await click('执行已批准的主体匿名化')
+    expect(mock.execute.mock.calls[0]![0]).toBe(planId); expect(mock.execute.mock.calls[0]![1]).toMatchObject({ expectedVersion: op, expectedScopeDigest: 'approved-digest', confirmationRef: op })
+    expect(localStorage.getItem(key)).toBe(mock.execute.mock.calls[0]![1].operationId); expect(wrapper!.text()).toContain('原操作结果待确认')
+  })
+  it('an original applied receipt prevents reexecution and shows remaining Owners after reload', async () => {
+    const execution = { ownerOutcome: 'APPLIED', state: 'PARTIAL', operatorId: actor, occurredAt: '2026-11-08T00:00:00Z', uncoveredOwners: ['CRM_BUSINESS_AND_HISTORY'] }
+    localStorage.setItem(key, op); mock.operation.mockResolvedValue({ ...original(), kind: 'EXECUTE', execution })
+    mock.plan.mockResolvedValue({ ...currentPlan(), state: 'APPROVED', approvalCurrent: false, execution })
+    await open(); expect(wrapper!.text()).toContain('Main 身份资料已处置'); expect(wrapper!.text()).toContain('CRM 业务及历史'); expect(mock.execute).not.toHaveBeenCalled()
+    expect(wrapper!.findAll('button').find(b => b.text() === '执行已批准的主体匿名化')!.attributes('disabled')).toBeDefined()
   })
 })

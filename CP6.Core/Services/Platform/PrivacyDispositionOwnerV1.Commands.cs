@@ -56,6 +56,7 @@ public sealed partial class PrivacyDispositionOwnerV1
         return Change(input.OperationId,input.Decision,new{id,input},input.Decision=="REVOKE"?"revoke":"approve",session,async(a,t)=>
         {
             var row=await Plan(a,id,t)??throw new PrivacyDispositionExceptionV1("PRIVACY_DISPOSITION_PLAN_NOT_FOUND",404);var previous=await Event(id,t);
+            if(await Execution(a,id,t)!=null)throw new PrivacyDispositionExceptionV1("PRIVACY_DISPOSITION_ALREADY_APPLIED");
             if(previous.Version!=input.ExpectedVersion)throw new PrivacyDispositionExceptionV1("PRIVACY_DISPOSITION_PLAN_CHANGED",412);
             if(input.Decision!="REVOKE"&&row.Requester==a.Actor.Id)throw new PrivacyDispositionExceptionV1("PRIVACY_DISPOSITION_INDEPENDENT_APPROVER_REQUIRED",403);
             if(previous.State!="REQUESTED"&&!(input.Decision=="REVOKE"&&previous.State=="APPROVED"))throw new PrivacyDispositionExceptionV1("PRIVACY_DISPOSITION_STATE_CONFLICT");
