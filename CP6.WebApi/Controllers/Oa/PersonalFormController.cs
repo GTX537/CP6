@@ -9,6 +9,10 @@ namespace CP6.WebApi.Controllers.Oa;
 [ResponseCache(NoStore=true,Location=ResponseCacheLocation.None)]
 public sealed class PersonalFormController(PersonalFormOwnerV2 owner,ApprovalTaskDecisionOwnerV2 app):ControllerBase
 {
+    [HttpGet("legacy-drafts/{id:guid}/preview")]
+    public Task<IActionResult> LegacyPreview(Guid id,CancellationToken ct)=>Run(async()=>await owner.LegacyAdoptionPreviewAsync(id,ct));
+    [HttpPost("legacy-drafts/{id:guid}/adopt"),RequestSizeLimit(65536)]
+    public Task<IActionResult> AdoptLegacy(Guid id,CancellationToken ct)=>Run(async()=>await owner.AdoptLegacyDraftAsync(id,await Raw(ct),ct));
     [HttpGet("catalog/favorites")]
     public Task<IActionResult> Favorites([FromQuery]int page=1,[FromQuery]int pageSize=20,[FromQuery]string? search=null,CancellationToken ct=default)=>Run(async()=>await owner.FavoritesAsync(page,pageSize,search,ct));
     [HttpPut("catalog/{key}/favorite"),RequestSizeLimit(1024*1024)]

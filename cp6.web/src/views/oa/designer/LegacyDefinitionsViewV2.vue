@@ -2,16 +2,18 @@
 import { onBeforeUnmount, ref, watch } from 'vue'
 import { AUTH_EVENT, identityStamp, requireIdentity } from '@/auth/identity'
 import { legacyDefinitionsApi as api, type LegacyDefinition } from '@/api/oa/legacyDefinitions'
+import LegacyFormSourceMapping from './LegacyFormSourceMapping.vue'
 
 const props = defineProps<{ kind: 'FLOW' | 'FORM' }>()
 const emit = defineEmits<{ close: [] }>()
 const rows = ref<LegacyDefinition[]>([]), key = ref<string>(), page = ref(1), busy = ref(false), error = ref('')
+const mappingVersion = ref('')
 let generation = 0, live = true, controller: AbortController | undefined
-function clear() { generation++; controller?.abort(); rows.value = []; key.value = undefined; page.value = 1; busy.value = false; error.value = '' }
+function clear() { generation++; controller?.abort(); rows.value = []; key.value = undefined; page.value = 1; busy.value = false; error.value = ''; mappingVersion.value = '' }
 async function load(nextKey?: string, nextPage = 1) {
   controller?.abort(); controller = new AbortController()
   const request = ++generation, epoch = identityStamp(), kind = props.kind
-  rows.value = []; key.value = nextKey; page.value = nextPage; busy.value = true; error.value = ''
+  rows.value = []; mappingVersion.value = ''; key.value = nextKey; page.value = nextPage; busy.value = true; error.value = ''
   const check = () => { requireIdentity(epoch); if (!live || request !== generation || props.kind !== kind) throw new Error('STALE') }
   try { const value = await api.read(kind, nextKey, nextPage, controller.signal); check(); rows.value = value }
   catch (e: any) {
@@ -31,7 +33,7 @@ onBeforeUnmount(() => { live = false; controller?.abort(); window.removeEventLis
 <template>
   <section class="legacy-definitions">
     <header><h2>历史来源 · {{ kind }}</h2><button @click="emit('close')">返回</button></header>
-    <p>历史来源未核实（UNVERIFIED_LEGACY）。这里展示旧记录和当前定义重建内容，不能作为已核实的历史发布凭据；不会创建草稿或修改既有数据。</p>
+    <p>历史来源未核实（UNVERIFIED_LEGACY）。这里展示旧记录和当前定义重建内容，不能作为已核实的历史发布凭据；旧记录不能在此修改。当前内容映射是另行记录的现在授权，不确认原历史。</p>
     <p v-if="error" role="alert">{{ error }}</p>
     <nav><button :disabled="busy" @click="load()">定义列表</button><button :disabled="busy" @click="load(key, page)">重新读取</button></nav>
     <article v-for="item in rows" :key="item.versionId ?? item.definitionId">
@@ -40,7 +42,9 @@ onBeforeUnmount(() => { live = false; controller?.abort(); window.removeEventLis
       <p>旧记录版本号：{{ item.recordedVersion }}<span v-if="item.versionId"> · 版本 ID：{{ item.versionId }}</span></p>
       <p v-if="item.versionId">旧记录状态：{{ item.recordedStatus }}；记录的发布人：{{ item.recordedPublishedBy ?? '缺失' }}；记录的发布时间：{{ item.recordedPublishedAtUtc ?? '缺失' }}。这些值未被认定为已核实事实。</p>
       <pre v-if="Object.hasOwn(item.fields, 'SchemaJson')">{{ item.fields.SchemaJson }}</pre>
+      <button v-if="kind === 'FORM' && item.versionId && Object.hasOwn(item.fields, 'SchemaJson')" @click="mappingVersion = item.versionId">设置此版本的当前内容映射</button>
     </article>
+    <LegacyFormSourceMapping v-if="kind === 'FORM' && mappingVersion" :key="mappingVersion" :legacy-version-id="mappingVersion" />
     <p v-if="!busy && !error && !rows.length">没有可读的旧记录。</p>
     <nav><button :disabled="busy || page === 1" @click="load(key, page - 1)">上一页</button><span>第 {{ page }} 页</span><button :disabled="busy || rows.length < 100" @click="load(key, page + 1)">下一页</button></nav>
   </section>

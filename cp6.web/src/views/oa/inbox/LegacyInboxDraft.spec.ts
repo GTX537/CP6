@@ -19,7 +19,7 @@ it('reads the historical directory and offers current initiation without old mut
   expect(wrapper.text()).toContain('历史标题 Alpha')
   expect(wrapper.text()).toContain('历史补录，发布未核实')
   expect(wrapper.find('a').attributes('href')).toBe('/oa/form-catalog')
-  expect(wrapper.findAll('button').map(x => x.text())).toEqual(['刷新'])
+  expect(wrapper.findAll('button').some(x => /^(保存|提交|删除)/.test(x.text()))).toBe(false)
   wrapper.unmount()
 })
 

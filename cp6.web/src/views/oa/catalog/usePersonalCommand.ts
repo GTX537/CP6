@@ -13,6 +13,7 @@ const routes: Record<string, { method: 'post' | 'put'; path: (resource: string) 
   FORM_DRAFT_RESTORE: { method: 'post', path: r => `drafts/${encodeURIComponent(r)}/restore` },
   FORM_DRAFT_REBASE: { method: 'post', path: r => `drafts/${encodeURIComponent(r)}/rebase` },
   FORM_DRAFT_RECOVER_SNAPSHOT: { method: 'post', path: r => `drafts/${encodeURIComponent(r)}/recover-before-rebase` },
+  FORM_DRAFT_ADOPT_LEGACY: { method: 'post', path: r => `legacy-drafts/${encodeURIComponent(r)}/adopt` },
   FORM_DRAFT_SUBMIT: { method: 'post', path: r => `drafts/${encodeURIComponent(r)}/submit` },
 }
 // Sensitive request bodies survive SPA navigation only in memory, never browser storage.
