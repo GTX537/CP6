@@ -3,10 +3,10 @@ const root = '/platform/privacy-dispositions-v1/restore'
 export interface RestoreCandidate { id: string; registrationVersion: string; backupSha256: string; displayName: string }
 export interface RestoreContext { environmentId: string; actorTenantId: string; actorId: string; sourceVersion: string; actions: string[]; candidates: RestoreCandidate[] }
 export interface RestoreDatabase { name: string; address: string; port: number; oid: number }
-export interface RestoreScope { candidateId: string; registrationVersion: string; backupSha256: string; sourceVersion: string; source: RestoreDatabase; target: RestoreDatabase; tombstoneCount: number; exportPayloadTombstoneCount?: number; uncoveredOwners: string[] }
+export interface RestoreScope { candidateId: string; registrationVersion: string; backupSha256: string; sourceVersion: string; source: RestoreDatabase; target: RestoreDatabase; tombstoneCount: number; exportPayloadTombstoneCount?: number; securityFieldTombstoneCount?: number; uncoveredOwners: string[] }
 export interface RestorePreview { scope: RestoreScope; scopeDigest: string; blockers: string[] }
 export interface RestoreMetaOperation { operationId: string; planId: string | null; version: string | null; state: string }
-export interface RestoreUnit { sourcePlanId: string; targetTenantId: string; subjectId: string; outcome: string; beforeVersion: string | null; afterVersion: string | null; owner?: string; artifactId?: string; removedBytes?: number }
+export interface RestoreUnit { sourcePlanId: string; targetTenantId: string; subjectId: string; outcome: string; beforeVersion: string | null; afterVersion: string | null; owner?: string; artifactId?: string; removedBytes?: number; logId?: string; clearedValueCount?: number }
 export interface RestoreResult { operationId: string; state: string; planId: string | null; candidateId: string | null; sourceVersion: string | null; units: RestoreUnit[] | null; aggregateState: 'PARTIAL' }
 export interface RestorePlan { planId: string; requesterId: string; version: string; state: string; scope: RestoreScope; scopeDigest: string; approvalCurrent: boolean; currentBlockers: string[]; outcome: RestoreResult | null }
 export const privacyRestoreApi = {

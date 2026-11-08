@@ -32,6 +32,7 @@ try {
   await expect(form.locator('.restore-preview')).toContainText('cp6_privacy_restore_')
   await expect(form.locator('.restore-preview')).toContainText('未覆盖')
   if (process.env.CP6_PAYLOAD_RESTORE_ARTIFACT) await expect(form.locator('.restore-preview')).toContainText('导出载荷墓碑：')
+  if (process.env.CP6_SECURITY_RESTORE_LOG) await expect(form.locator('.restore-preview')).toContainText('安全字段墓碑：')
   await form.getByRole('textbox', { name: '恢复申请依据引用', exact: true }).fill(randomUUID())
   await form.getByRole('button', { name: '提交恢复计划', exact: true }).click(); await cancel(); expect(requests).toBe(0)
   await form.getByRole('button', { name: '提交恢复计划', exact: true }).click(); await confirm()
@@ -69,6 +70,12 @@ try {
   }
   await expect(form.getByRole('button', { name: '确认重施墓碑并核对开放门', exact: true })).toBeDisabled(); expect(executions).toBe(1)
   await form.locator('.restore-result').scrollIntoViewIfNeeded(); await page.screenshot({ path: path.join(output, 'restored-partial-original.png'), fullPage: true })
+  if (process.env.CP6_SECURITY_RESTORE_LOG) {
+    const log = process.env.CP6_SECURITY_RESTORE_LOG, unit = lostReply.units.find(x => x.logId === log)
+    expect(unit.owner).toBe('Main.SecurityLog.Fields.v1'); expect(unit.outcome).toBe('REAPPLIED'); expect(unit.clearedValueCount).toBe(2)
+    await expect(form.locator('.restore-result')).toContainText(`安全事件 ${log}`)
+    await expect(form.locator('.restore-result')).toContainText('实际置空 2 项，其他内容保留')
+  }
   expect(errors).toEqual([])
   await writeFile(path.join(output, 'result.json'), JSON.stringify({ result: 'PASS', planId, candidate, operationId: lostReply.operationId, internalApiMocked: false, actualExecuteResponseDeliberatelyDropped: true, planRequests: requests, executions, cancelCreatesNothing: true, originalRecoveredAfterReload: true, independentApprover: true, operationIdOnlyInStorage: true, pageErrors: errors, responseFailures: failures }, null, 2))
 } catch (error) {
