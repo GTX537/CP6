@@ -52,7 +52,7 @@ internal static class PrivacyRestoreNativeV1
         return json==null?null:JsonSerializer.Deserialize<PrivacyRestoreResultV1>(json)!;
     }
     internal static async Task<PrivacyRestoreResultV1> Apply(CP6Context candidate,IPasswordHasher hasher,PrivacyRestoreScopeV1 scope,
-        Guid actorTenant,Guid actor,Guid operation,Guid plan,string digest,PrivacyRestoreTombstoneV1[] tombstones,CancellationToken ct)
+        Guid actorTenant,Guid actor,Guid operation,Guid plan,string digest,PrivacyRestoreTombstoneV1[] tombstones,PrivacyExportPayloadTombstoneV1[] payloads,CancellationToken ct)
     {
         var units=new List<PrivacyRestoreUnitV1>();
         foreach(var tomb in tombstones)
@@ -74,11 +74,18 @@ internal static class PrivacyRestoreNativeV1
                 """,ct);
             units.Add(new(tomb.PlanId,tomb.TargetTenantId,tomb.SubjectId,user==null?"ABSENT_FENCED":"REAPPLIED",before,after));
         }
+        if(payloads.Length>0)await PrivacyExportPayloadEffectV1.Ready(candidate,ct);
+        foreach(var tomb in payloads)units.Add(await PrivacyExportPayloadEffectV1.Qualify(candidate,tomb,scope.EnvironmentId,ct));
         var at=await candidate.Database.SqlQueryRaw<DateTimeOffset>("SELECT clock_timestamp() AS \"Value\"").SingleAsync(ct);
         var result=new PrivacyRestoreResultV1(operation,"APPLIED",plan,scope.CandidateId,scope.SourceVersion,digest,units.ToArray(),scope.UncoveredOwners,at);
         await candidate.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO cp6_privacy_disposition_v1.restore_receipts(environment_id,actor_tenant,actor_id,operation_id,result_json)
             VALUES({scope.EnvironmentId},{actorTenant},{actor},{operation},{JsonSerializer.Serialize(result)});
+            """,ct);
+        // Parent receipt, actual export effects and admission remain invisible until the same candidate commit.
+        // Deferred SQL constraints reject a parent receipt whose listed effects have not happened.
+        foreach(var tomb in payloads)await PrivacyExportPayloadEffectV1.Apply(candidate,tomb,scope.EnvironmentId,ct);
+        await candidate.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO cp6_privacy_disposition_v1.restore_admission(singleton,candidate_id,source_identity,target_identity,environment_id,source_version,actor_tenant,actor_id,operation_id,plan_id)
             VALUES(true,{scope.CandidateId},{IdentityJson(scope.Source)},{IdentityJson(scope.Target)},{scope.EnvironmentId},{scope.SourceVersion},{actorTenant},{actor},{operation},{plan})
             ON CONFLICT(singleton) DO UPDATE SET candidate_id=EXCLUDED.candidate_id,source_identity=EXCLUDED.source_identity,target_identity=EXCLUDED.target_identity,

@@ -18,20 +18,27 @@ public sealed partial class PrivacyDispositionOwnerV1
     }
     public Task<PrivacyDispositionOperationV1> SetHoldAsync(PrivacyDispositionHoldCommandV1 input,TenantManagementSessionV1 session,CancellationToken ct=default)
     {
-        Id(input.TargetTenantId);Id(input.SubjectId);Id(input.BasisRef);
-        if(input.ExpectedVersion==Guid.Empty||input.Active&&input.ReviewAt==null||input.ReviewAt?.Ticks%10!=0&&input.ReviewAt!=null)
-            throw new PrivacyDispositionExceptionV1("PRIVACY_DISPOSITION_HOLD_INPUT_INVALID",400);
+        Id(input.TargetTenantId);Id(input.SubjectId);ValidateHold(input.ExpectedVersion,input.Active,input.BasisRef,input.ReviewAt);
         var command=input with{ReviewAt=input.ReviewAt?.ToUniversalTime()};
         return Change(command.OperationId,"HOLD",command,"hold",session,async(a,t)=>
         {
             if(!await db.Sys_Users.IgnoreQueryFilters().AnyAsync(x=>x.Id==command.SubjectId&&x.TenantId==command.TargetTenantId,t))throw new PrivacyDispositionExceptionV1("PRIVACY_DISPOSITION_TARGET_NOT_FOUND",404);
-            var previous=await Hold(a,command.TargetTenantId,command.SubjectId,t);if(previous?.Version!=command.ExpectedVersion)throw new PrivacyDispositionExceptionV1("PRIVACY_DISPOSITION_HOLD_CHANGED",412);
-            if(command.Active&&command.ReviewAt<=await Clock(t))throw new PrivacyDispositionExceptionV1("PRIVACY_DISPOSITION_FUTURE_REVIEW_REQUIRED",422);
-            var version=Guid.NewGuid();await db.Database.ExecuteSqlInterpolatedAsync($"""
-                INSERT INTO cp6_privacy_disposition_v1.holds(environment_id,actor_tenant,target_tenant,subject_id,version,previous_version,active,basis_ref,review_at,owner_id)
-                VALUES({a.Environment},{a.Actor.TenantId},{command.TargetTenantId},{command.SubjectId},{version},{command.ExpectedVersion},{command.Active},{command.BasisRef},{command.ReviewAt},{a.Actor.Id})
-                """,t);return(null,version);
+            return(null,await AppendHold(a,command.TargetTenantId,command.SubjectId,command.ExpectedVersion,command.Active,command.BasisRef,command.ReviewAt,t));
         },ct);
+    }
+    private static void ValidateHold(Guid? expected,bool active,Guid basis,DateTimeOffset? review)
+    {
+        Id(basis);if(expected==Guid.Empty||active&&review==null||review?.Ticks%10!=0&&review!=null)
+            throw new PrivacyDispositionExceptionV1("PRIVACY_DISPOSITION_HOLD_INPUT_INVALID",400);
+    }
+    private async Task<Guid> AppendHold(Authority a,Guid tenant,Guid subject,Guid? expected,bool active,Guid basis,DateTimeOffset? review,CancellationToken ct)
+    {
+        var previous=await Hold(a,tenant,subject,ct);if(previous?.Version!=expected)throw new PrivacyDispositionExceptionV1("PRIVACY_DISPOSITION_HOLD_CHANGED",412);
+        if(active&&review<=await Clock(ct))throw new PrivacyDispositionExceptionV1("PRIVACY_DISPOSITION_FUTURE_REVIEW_REQUIRED",422);
+        var version=Guid.NewGuid();await db.Database.ExecuteSqlInterpolatedAsync($"""
+            INSERT INTO cp6_privacy_disposition_v1.holds(environment_id,actor_tenant,target_tenant,subject_id,version,previous_version,active,basis_ref,review_at,owner_id)
+            VALUES({a.Environment},{a.Actor.TenantId},{tenant},{subject},{version},{expected},{active},{basis},{review},{a.Actor.Id})
+            """,ct);return version;
     }
     public Task<PrivacyDispositionOperationV1> RequestAsync(PrivacyDispositionPlanCommandV1 input,TenantManagementSessionV1 session,CancellationToken ct=default)
     {

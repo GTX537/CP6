@@ -33,12 +33,12 @@
 ## 文件与实施检查单
 
 - [x] 读取当前导出/处置/hold/恢复代码、W312/W315原约束，确认真实载荷保留缺口，登记本设计与方案选择。
-- [ ] CP6.Persistence.PostgreSql/Migrations/Core/20261108140000_ExportPayloadDispositionV1.cs：前向政策/计划/事件/执行/墓碑、载荷修订与实际原生写者/提交约束、原操作动作注册，无自动授权。
-- [ ] CP6.Core/Services/Platform/PrivacyExportDispositionV1.cs、PrivacyDispositionOwnerV1.ExportPayload*.cs、PrivacyExportPayloadEffectV1.cs：复用可信事务，独立真实Owner/当前政策/hold与原命令；先实际行为红测。
-- [ ] PrivacyExportOwnerV1.cs及PrivacyDispositionControllerV1：准确DISPOSED状态、封闭新API/主体hold入口和旧合同兼容。
-- [ ] PrivacyRestoreV1/NativeV1及现RestorePlans/Execution：已接载荷墓碑的计数/当前资格/实际候选效果/原结果，保0新墓碑时旧wire。
-- [ ] cp6.web/src/api/platform及GDPR现有面板：明确政策/准确原件/独立批准/执行确认/原结果和真实删除状态，不暗示全备份已清除。
-- [ ] 定向PG18/真实认证HTTP/两用户Chrome、相关Vue/类型及必要旧导出/身份恢复回归；一次集中审查，单一交付报告。
+- [x] CP6.Persistence.PostgreSql/Migrations/Core/20261108140000_ExportPayloadDispositionV1.cs：前向政策/计划/事件/执行/墓碑、载荷修订与实际原生写者/提交约束、原操作动作注册，无自动授权。
+- [x] CP6.Core/Services/Platform/PrivacyExportDispositionV1.cs、PrivacyDispositionOwnerV1.ExportPayload*.cs、PrivacyExportPayloadEffectV1.cs：复用可信事务，独立真实Owner/当前政策/hold与原命令；先实际行为红测。
+- [x] PrivacyExportOwnerV1.cs及PrivacyDispositionControllerV1：准确DISPOSED状态、封闭新API/主体hold入口和旧合同兼容。
+- [x] PrivacyRestoreV1/NativeV1及现RestorePlans/Execution：已接载荷墓碑的计数/当前资格/实际候选效果/原结果，保0新墓碑时旧wire。
+- [x] cp6.web/src/api/platform及GDPR现有面板：明确政策/准确原件/独立批准/执行确认/原结果和真实删除状态，不暗示全备份已清除。
+- [x] 定向PG18/真实认证HTTP/两用户Chrome、相关Vue/类型及必要旧导出/身份恢复回归；一次集中审查，单一交付报告。
 - [ ] 同步roadmap/生成页/四状态，正常两仓采用、准确分支清理、官方finish释放。
 
 ## 实际验证界限
@@ -48,3 +48,7 @@
 恢复实际pg_dump/pg_restore到唯一新候选，旧载荷真实存在/已经缺失/无原artifact/身份冲突、当前hold/政策、真实结果未知/开放门及原身份恢复回归。HTTP及Chrome确认取消零写、两身份批准、实际删除后丢回包/刷新不重做；旧有效证据只在输入未变的范围准确引用。仅所影响的测试，不用条数/静态断言/新证据数量当目标。
 
 设计自审：未留TBD或无效果端口；访问关闭和载荷删除分开，源/候选和原操作责任分开，数据缺失不冒删除成功；未来Owner/正式环境/外部副本仍独立。具体SQL及界面沿当前代码落地，若真实调用链要求实质范围变化，由COORD在本窗口精化而不默默扩大。
+
+## 实现核对
+
+候选实际字节SHA只在新的外部恢复边界核对一次，源内复用不可变载荷/原回执契约。明确本Owner PostgreSQL23514拒绝为已回滚具体409，真正传输未知仍保原UUID恢复。已处置结果不再误称缺失，政策改目标或计划读取故障不抹去已知原回执。最后的采用/席位步骤在本提交仍待执行，以wave320-final-verification.json实际核销；不提前勾成完成。

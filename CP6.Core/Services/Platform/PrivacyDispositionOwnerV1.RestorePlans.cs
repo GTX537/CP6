@@ -17,6 +17,11 @@ public sealed partial class PrivacyDispositionOwnerV1
         FROM cp6_privacy_disposition_v1.tombstones WHERE environment_id={a.Environment} ORDER BY plan_id
         """).ToArrayAsync(ct);
     private sealed record RestorePolicy(bool Enabled,Guid TargetTenant);
+    private Task<PrivacyExportPayloadTombstoneV1[]> RestorePayloadTombstones(Authority a,CancellationToken ct)=>db.Database.SqlQuery<PrivacyExportPayloadTombstoneV1>($"""
+        SELECT artifact_id AS "ArtifactId",source_plan_id AS "SourcePlanId",operator_tenant AS "OperatorTenantId",target_tenant AS "TargetTenantId",subject_id AS "SubjectId",
+          policy_id AS "PolicyId",scope_json AS "Scope",receipt_json AS "Receipt" FROM cp6_privacy_export_disposition_v1.tombstones WHERE environment_id={a.Environment} ORDER BY artifact_id
+        """).ToArrayAsync(ct);
+    private sealed record RestorePayloadPolicy(bool Enabled,Guid TargetTenant,int MinimumDays);
     private async Task<PrivacyRestorePreviewV1> RestorePreview(Authority a,Guid candidateId,CancellationToken ct)
     {
         var registration=RestoreCandidate(candidateId);var source=await PrivacyRestoreNativeV1.Database(db,ct);var version=await PrivacyRestoreNativeV1.Epoch(db,ct);
@@ -30,10 +35,25 @@ public sealed partial class PrivacyDispositionOwnerV1
             if(policy.TargetTenant!=tomb.TargetTenantId)blockers.Add("CURRENT_POLICY_TARGET_CHANGED:"+tomb.PlanId.ToString("D"));
             if((await Hold(a,tomb.TargetTenantId,tomb.SubjectId,ct))?.Active==true)blockers.Add("CURRENT_HOLD_REQUIRES_RESTORE_DECISION:"+tomb.PlanId.ToString("D"));
         }
+        var payloads=await RestorePayloadTombstones(a,ct);var at=await Clock(ct);
+        if(payloads.Length>0)await PayloadReady(ct);
+        foreach(var tomb in payloads)
+        {
+            var policy=await db.Database.SqlQuery<RestorePayloadPolicy>($"""
+                SELECT enabled AS "Enabled",target_tenant AS "TargetTenant",minimum_days AS "MinimumDays" FROM cp6_privacy_export_disposition_v1.policies
+                WHERE environment_id={a.Environment} AND actor_tenant={tomb.OperatorTenantId} AND policy_id={tomb.PolicyId} ORDER BY sequence DESC LIMIT 1
+                """).SingleAsync(ct);
+            if(!policy.Enabled)blockers.Add("CURRENT_PAYLOAD_POLICY_DISABLED:"+tomb.SourcePlanId.ToString("D"));
+            if(policy.TargetTenant!=tomb.TargetTenantId)blockers.Add("CURRENT_PAYLOAD_POLICY_TARGET_CHANGED:"+tomb.SourcePlanId.ToString("D"));
+            var payloadScope=JsonSerializer.Deserialize<PayloadDispositionScopeV1>(tomb.Scope)!;
+            if(at<payloadScope.CapturedAt.AddSeconds((long)policy.MinimumDays*86400))blockers.Add("CURRENT_PAYLOAD_MINIMUM_RETENTION_NOT_REACHED:"+tomb.SourcePlanId.ToString("D"));
+            if((await Hold(a,tomb.TargetTenantId,tomb.SubjectId,ct))?.Active==true)blockers.Add("CURRENT_PAYLOAD_HOLD_REQUIRES_RESTORE_DECISION:"+tomb.SourcePlanId.ToString("D"));
+        }
         await using var candidate=PrivacyRestoreNativeV1.Context(registration.ConnectionString,a.Actor.TenantId,identity);
         await candidate.Database.OpenConnectionAsync(ct);var target=await PrivacyRestoreNativeV1.Database(candidate,ct);
         if(PrivacyRestoreNativeV1.SameDatabase(target,source))throw new PrivacyDispositionExceptionV1("PRIVACY_RESTORE_SOURCE_CANNOT_BE_TARGET",412);
-        var scope=new PrivacyRestoreScopeV1(a.Environment,candidateId,registration.RegistrationVersion,registration.BackupSha256,version,source,target,tombstones.Length,Uncovered);
+        var uncovered=payloads.Length==0?Uncovered:Uncovered.Select(x=>x=="FILE_AND_PRIOR_EXPORT_COPIES"?"FILE_AND_OTHER_OWNER_COPIES":x).ToArray();
+        var scope=new PrivacyRestoreScopeV1(a.Environment,candidateId,registration.RegistrationVersion,registration.BackupSha256,version,source,target,tombstones.Length,uncovered,payloads.Length);
         await using var gate=await PrivacyRestoreNativeV1.CandidateGate(candidate,scope,ct);
         return new(scope,MainOwnerOperationJournalV1.Digest(MainOwnerOperationJournalV1.Encode(scope)),blockers.ToArray());
     }

@@ -119,16 +119,17 @@ public sealed class PrivacyExportOwnerV1(CP6Context db, IHttpContextAccessor htt
     private sealed class Artifact
     {
         public Guid Actor {get;set;} public Guid Recipient {get;set;} public Guid Target {get;set;} public Guid Subject {get;set;}
-        public string Policy {get;set;}="";public DateTimeOffset Expires {get;set;}public DateTimeOffset? Revoked {get;set;}public byte[] Receipt {get;set;}=[];
+        public string Policy {get;set;}="";public DateTimeOffset Expires {get;set;}public DateTimeOffset? Revoked {get;set;}public byte[] Receipt {get;set;}=[];public bool Disposed {get;set;}
     }
     private async Task<Artifact> ArtifactRow(Authority a,Guid artifact,CancellationToken ct)
         =>await db.Database.SqlQuery<Artifact>($"""
             SELECT actor_id AS "Actor",recipient_id AS "Recipient",target_tenant AS "Target",subject_id AS "Subject",policy AS "Policy",
-              expires_at AS "Expires",revoked_at AS "Revoked",receipt_bytes AS "Receipt" FROM cp6_privacy_export_v1.artifacts
+              expires_at AS "Expires",revoked_at AS "Revoked",receipt_bytes AS "Receipt",
+              EXISTS(SELECT FROM cp6_privacy_export_disposition_v1.tombstones t WHERE t.artifact_id=id) AS "Disposed" FROM cp6_privacy_export_v1.artifacts
             WHERE id={artifact} AND environment_id={a.Environment} AND actor_tenant={a.Actor.TenantId} AND (actor_id={a.Actor.Id} OR recipient_id={a.Actor.Id})
             """).SingleOrDefaultAsync(ct)??throw new PrivacyExportExceptionV1("PRIVACY_ARTIFACT_NOT_FOUND",404);
     private Task<DateTimeOffset> Clock(CancellationToken ct)=>db.Database.SqlQueryRaw<DateTimeOffset>("SELECT clock_timestamp() AS \"Value\"").SingleAsync(ct);
-    private static string Availability(Artifact row,DateTimeOffset at)=>row.Revoked!=null?"REVOKED":row.Expires<=at?"EXPIRED":row.Policy!=Policy?"POLICY_CHANGED":"AVAILABLE";
+    private static string Availability(Artifact row,DateTimeOffset at)=>row.Disposed?"DISPOSED":row.Revoked!=null?"REVOKED":row.Expires<=at?"EXPIRED":row.Policy!=Policy?"POLICY_CHANGED":"AVAILABLE";
     public Task<PrivacyExportArtifactV1> ReadArtifactAsync(Guid artifact,TenantManagementSessionV1 session,CancellationToken ct=default)
     {Id(artifact);return Transaction(false,session,async(a,t)=>{Can(a,"read");var row=await ArtifactRow(a,artifact,t);return new PrivacyExportArtifactV1(JsonSerializer.Deserialize<PrivacyExportReceiptV1>(row.Receipt)!,Availability(row,await Clock(t)));},ct);}
     public Task<PrivacyExportArtifactV1> RevokeAsync(Guid artifact,TenantManagementSessionV1 session,CancellationToken ct=default)
@@ -142,7 +143,7 @@ public sealed class PrivacyExportOwnerV1(CP6Context db, IHttpContextAccessor htt
                 await db.Database.ExecuteSqlInterpolatedAsync($"UPDATE cp6_privacy_export_v1.artifacts SET revoked_at=clock_timestamp() WHERE id={artifact}",t);
                 await Audit(a,null,artifact,"REVOKED",t);
             }
-            return new PrivacyExportArtifactV1(JsonSerializer.Deserialize<PrivacyExportReceiptV1>(row.Receipt)!,"REVOKED");
+            return new PrivacyExportArtifactV1(JsonSerializer.Deserialize<PrivacyExportReceiptV1>(row.Receipt)!,row.Disposed?"DISPOSED":"REVOKED");
         },ct);
     }
     public Task<PrivacyExportDownloadV1> DownloadAsync(Guid artifact,TenantManagementSessionV1 session,CancellationToken ct=default)

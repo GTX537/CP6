@@ -25,7 +25,14 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(410,(await Assert.ThrowsAsync<PrivacyExportExceptionV1>(()=>owner.DownloadAsync(expired,session))).Status);
         var corrupt=await HistoricalPrivacyArtifact(h,receipt,[1,2,3],DateTimeOffset.UtcNow.AddMinutes(5));
         Assert.Equal("PRIVACY_ARTIFACT_INTEGRITY_FAILED",(await Assert.ThrowsAsync<PrivacyExportExceptionV1>(()=>owner.DownloadAsync(corrupt,session))).Message);
-        await h.Db.Database.ExecuteSqlInterpolatedAsync($"DELETE FROM cp6_privacy_export_v1.payloads WHERE artifact_id={corrupt}");
+        // Owned fault injection: normal native DELETE now requires an actual disposition/restore parent.
+        await using(var fault=await h.Db.Database.BeginTransactionAsync())
+        {
+            await h.Db.Database.ExecuteSqlRawAsync("ALTER TABLE cp6_privacy_export_v1.payloads DISABLE TRIGGER payload_owned_delete");
+            await h.Db.Database.ExecuteSqlInterpolatedAsync($"DELETE FROM cp6_privacy_export_v1.payloads WHERE artifact_id={corrupt}");
+            await h.Db.Database.ExecuteSqlRawAsync("ALTER TABLE cp6_privacy_export_v1.payloads ENABLE TRIGGER payload_owned_delete");
+            await fault.CommitAsync();
+        }
         Assert.Equal("PRIVACY_PAYLOAD_UNAVAILABLE",(await Assert.ThrowsAsync<PrivacyExportExceptionV1>(()=>owner.DownloadAsync(corrupt,session))).Message);
         var shortly=await HistoricalPrivacyArtifact(h,receipt,bytes,DateTimeOffset.UtcNow.AddSeconds(2));
         var auditBefore=await PrivacyCount(h,"audit");
