@@ -387,3 +387,9 @@ Main a95fb085f906eda5840060d1ed2d002425ec26db，Handoff 1f63b4b97db90483b16088da
 ## W319原FORM两卡核销
 
 W319按原WP12-03/04实施范围及FORM R1直接25条AC完成整卡核销；旧端点统一适配、合法数据限额、准确重基前恢复与历史内容当前授权采用均已有真实交付，两张原卡正式DONE。 原375现35DONE/2IN_PROGRESS/338PLANNED；原59局部11闭环/48剩余。125完整目标0关闭、247正式验收NOT_RUN保持。W306所需WP12-04/10整卡前置已满足，原WP12-08仍待本卡范围核对；历史批量转换、物理purge、普通FORM服务节点业务Owner及正式部署保持各自范围。 [报告](../evidence/W319-01/DELIVERY.md)。
+
+## W306实际开工 / FORM前置已完整核销
+
+原WP12-08三项范围及正反例：当前action-context真实SFS/APP分型与双/三CAS、actual/principal/原grant/SOD、token/node/stage/round计票，SFS字段复算和APP冻结TxD。W289/290/291已有实际采用与CC边界直接复用；本窗重点补多人新轮后旧Approved不能凑足新阈值的实际运行证据、旧原命令回放不推进新轮及必要当前竞争。发现真实错误即定向修复；仅全原卡无剩余且当前整卡前置满足才DONE。全OA-TASK批量/时限/通知与服务节点Owner不冒称由本卡自动完成，不重复W291抄送。
+
+Main b5e8b9401ffb634059ec8dcda53e9cb0484ea7b4，Handoff 211c955f79e2b67ba4341c24b8cd4bd12a35039c，COORD单人DEV1/DEV2。W319 Main773/Handoff294正常采用/准确清理/官方释放已核销，实测713秒，约11.9分钟低于0.25–0.6h估计。累计有效56132秒，下一57600秒校准，24h继续。此窗预计0.6–1.25h低置信实际Codex执行，真实多角色轮次是否缺实现是主要不确定项。原37535DONE/2IN_PROGRESS/338PLANNED，原59余48，125/247不改。

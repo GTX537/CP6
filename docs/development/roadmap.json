@@ -162107,6 +162107,11 @@
       "date": "2026-11-08",
       "change": "W319按原WP12-03/04实施范围及FORM R1直接25条AC完成整卡核销；旧端点统一适配、合法数据限额、准确重基前恢复与历史内容当前授权采用均已有真实交付，两张原卡正式DONE。 原375现35DONE/2IN_PROGRESS/338PLANNED；原59局部11闭环/48剩余。125完整目标0关闭、247正式验收NOT_RUN保持。W306所需WP12-04/10整卡前置已满足，原WP12-08仍待本卡范围核对；历史批量转换、物理purge、普通FORM服务节点业务Owner及正式部署保持各自范围。",
       "evidence": "docs/development/evidence/W319-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-08",
+      "change": "W319完整收尾核销；W306在FORM整卡前置满足后核原任务办理/多人新轮真实剩余。",
+      "evidence": "docs/development/evidence/W306-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -198439,10 +198444,30 @@
         }
       ],
       "wave319_full_card_reconciliation": {
-        "status": "FULL_CARD_RECONCILED",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W319-01/DELIVERY.md",
         "full_task_completed": true,
-        "validation": "原FORM25条直接AC、当前调用链/精确源祖先/有效证据适用性及限定前置核对，文档diff/链接/台账和生成页通过；本窗未运行产品测试或重新生成旧运行证据。"
+        "validation": "原FORM25条直接AC、当前调用链/精确源祖先/有效证据适用性及限定前置核对，文档diff/链接/台账和生成页通过；本窗未运行产品测试或重新生成旧运行证据。",
+        "remote_adoption": {
+          "repository": "CP6",
+          "task": "W319-01",
+          "source": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+          "remote_target": "b5e8b9401ffb634059ec8dcda53e9cb0484ea7b4",
+          "pr": "https://github.com/GTX537/CP6/pull/773",
+          "branch": "codex/w319-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "workspace_clean": true
+        },
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave319-final-verification.json"
+        }
       }
     },
     {
@@ -198748,10 +198773,30 @@
         }
       ],
       "wave319_full_card_reconciliation": {
-        "status": "FULL_CARD_RECONCILED",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W319-01/DELIVERY.md",
         "full_task_completed": true,
-        "validation": "原FORM25条直接AC、当前调用链/精确源祖先/有效证据适用性及限定前置核对，文档diff/链接/台账和生成页通过；本窗未运行产品测试或重新生成旧运行证据。"
+        "validation": "原FORM25条直接AC、当前调用链/精确源祖先/有效证据适用性及限定前置核对，文档diff/链接/台账和生成页通过；本窗未运行产品测试或重新生成旧运行证据。",
+        "remote_adoption": {
+          "repository": "CP6",
+          "task": "W319-01",
+          "source": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+          "remote_target": "b5e8b9401ffb634059ec8dcda53e9cb0484ea7b4",
+          "pr": "https://github.com/GTX537/CP6/pull/773",
+          "branch": "codex/w319-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "workspace_clean": true
+        },
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave319-final-verification.json"
+        }
       }
     },
     {
@@ -199693,6 +199738,12 @@
         "validation": "本轮新执行2项实际Main HTTP/隔离PostgreSQL18 CC拒绝审批：SFS和APP仅抄送用户具有菜单approve仍不可获取办理上下文或借他人任务提交；任务与投票/命令无变化。其他卡内行为复用W274–W290已采用的准确有效证据，BUG730评论容量修复证据另引用；未重跑产品全套。",
         "remaining": "原定义WP12-04与WP12-10为整卡前置，仍PLANNED；先分别核销提供者原卡，不能以未定义局部采用绕过台账。",
         "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave291-final-verification.json"
+      },
+      "wave306_round_reconciliation": {
+        "status": "IMPLEMENTING",
+        "report": "docs/development/evidence/W306-01/DELIVERY.md",
+        "scope": "原WP12-08三项范围及正反例：当前action-context真实SFS/APP分型与双/三CAS、actual/principal/原grant/SOD、token/node/stage/round计票，SFS字段复算和APP冻结TxD。W289/290/291已有实际采用与CC边界直接复用；本窗重点补多人新轮后旧Approved不能凑足新阈值的实际运行证据、旧原命令回放不推进新轮及必要当前竞争。发现真实错误即定向修复；仅全原卡无剩余且当前整卡前置满足才DONE。全OA-TASK批量/时限/通知与服务节点Owner不冒称由本卡自动完成，不重复W291抄送。",
+        "full_task_completed": false
       }
     },
     {
@@ -204071,11 +204122,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261108-wave319",
-      "path": "docs/development/dispatch/20261108-wave319/README.md",
-      "baseline_sha": "a95fb085f906eda5840060d1ed2d002425ec26db",
-      "registered_at": "2026-11-08T13:05:19.149959+00:00",
-      "phase": "DELIVERY_MAIN_CLOSEOUT",
+      "id": "20261108-wave306",
+      "path": "docs/development/dispatch/20261108-wave306/README.md",
+      "baseline_sha": "b5e8b9401ffb634059ec8dcda53e9cb0484ea7b4",
+      "registered_at": "2026-11-08T13:21:42.080186+00:00",
+      "phase": "IMPLEMENTING",
       "assigned_chats": [
         "COORD"
       ],
@@ -204093,53 +204144,39 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W319-01",
-          "workspace_task": "W319-01",
+          "id": "W306-01",
+          "workspace_task": "W306-01",
           "related_tasks": [
-            "WP12-03",
-            "WP12-04"
+            "WP12-08"
           ],
-          "title": "原FORM两卡完整范围核销",
+          "title": "原待办办理与多人会签新轮完整核销",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "DELIVERY_MAIN_CLOSEOUT",
+          "phase": "IMPLEMENTING",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": true,
+          "worker_delivery_received": false,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w319-01",
+          "branch": "codex/w306-01",
           "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
-          "full_task_completed": true,
+          "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": true,
+          "candidate_review_completed": false,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
-            "Main:oa-form"
-          ],
-          "worker_delivery_ref": "docs/development/evidence/W319-01/DELIVERY.md",
-          "validation": "原FORM25条直接AC、当前调用链/精确源祖先/有效证据适用性及限定前置核对，文档diff/链接/台账和生成页通过；本窗未运行产品测试或重新生成旧运行证据。",
-          "lifecycle_snapshot": {
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave319-final-verification.json",
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false
-          }
+            "Main:oa-task",
+            "Main:workflow-engine"
+          ]
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W319正常收妥后推进W306原任务信箱剩余；24h继续。",
-      "lifecycle_snapshot": {
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave319-final-verification.json",
-        "main_finish_required": true,
-        "main_seat_released": false,
-        "handoff_seat_released": false
-      }
+      "next_action": "原WP12-08三项范围及正反例：当前action-context真实SFS/APP分型与双/三CAS、actual/principal/原grant/SOD、token/node/stage/round计票，SFS字段复算和APP冻结TxD。W289/290/291已有实际采用与CC边界直接复用；本窗重点补多人新轮后旧Approved不能凑足新阈值的实际运行证据、旧原命令回放不推进新轮及必要当前竞争。发现真实错误即定向修复；仅全原卡无剩余且当前整卡前置满足才DONE。全OA-TASK批量/时限/通知与服务节点Owner不冒称由本卡自动完成，不重复W291抄送。"
     },
     "wave_history": [
       {
@@ -243578,6 +243615,105 @@
             "workspace_clean": true
           }
         ]
+      },
+      {
+        "id": "20261108-wave319",
+        "path": "docs/development/dispatch/20261108-wave319/README.md",
+        "baseline_sha": "a95fb085f906eda5840060d1ed2d002425ec26db",
+        "registered_at": "2026-11-08T13:05:19.149959+00:00",
+        "phase": "DONE",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W319-01",
+            "workspace_task": "W319-01",
+            "related_tasks": [
+              "WP12-03",
+              "WP12-04"
+            ],
+            "title": "原FORM两卡完整范围核销",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "DONE",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w319-01",
+            "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
+            "full_task_completed": true,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:oa-form"
+            ],
+            "worker_delivery_ref": "docs/development/evidence/W319-01/DELIVERY.md",
+            "validation": "原FORM25条直接AC、当前调用链/精确源祖先/有效证据适用性及限定前置核对，文档diff/链接/台账和生成页通过；本窗未运行产品测试或重新生成旧运行证据。",
+            "lifecycle_snapshot": {
+              "main_finish_required": false,
+              "main_seat_released": true,
+              "handoff_seat_released": true,
+              "main_branch_deleted": true,
+              "handoff_branch_deleted": true,
+              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave319-final-verification.json"
+            }
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W319正常收妥后推进W306原任务信箱剩余；24h继续。",
+        "lifecycle_snapshot": {
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave319-final-verification.json"
+        },
+        "remote_adoption": [
+          {
+            "repository": "CP6",
+            "task": "W319-01",
+            "source": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+            "remote_target": "b5e8b9401ffb634059ec8dcda53e9cb0484ea7b4",
+            "pr": "https://github.com/GTX537/CP6/pull/773",
+            "branch": "codex/w319-01",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "workspace_clean": true
+          },
+          {
+            "repository": "CP6.AI-Handoff",
+            "task": "W319-HANDOFF",
+            "source": "c5d40ecd538e74a0007fdb9fdf6d19b4c1917a89",
+            "remote_target": "211c955f79e2b67ba4341c24b8cd4bd12a35039c",
+            "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/294",
+            "branch": "codex/w319-handoff",
+            "branch_absent": true,
+            "seat_released": true,
+            "workspace": "D:\\CP6-worktrees\\dev-2",
+            "workspace_clean": true
+          }
+        ]
       }
     ],
     "development_priority": {
@@ -244157,8 +244293,8 @@
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
       "started_at": "2026-11-04T00:22:36+00:00",
-      "effective_seconds_recorded": 55441,
-      "timing_snapshot_at": "2026-11-08T13:10:11.233734+00:00",
+      "effective_seconds_recorded": 56132,
+      "timing_snapshot_at": "2026-11-08T13:21:42.080186+00:00",
       "timing_source": "41997 prior effective seconds plus continuous OS monotonic time from 2026-11-08T09:26:06Z; pause/pre-sample preparation excluded. Native panel is active after reactivation but omits the earlier authorized resumed segment; never sum the clocks.",
       "next_reestimate_at_effective_seconds": 57600,
       "estimate_hours": [
@@ -244901,12 +245037,12 @@
           ],
           "title": "原任务信箱前置与剩余实际行为闭环",
           "estimate_hours": [
-            0.75,
-            1.5
+            0.6,
+            1.25
           ],
           "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
-          "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
-          "state": "PLANNED",
+          "estimate_confidence": "LOW_ACTUAL_MULTI_ACTOR_ROUND_RISK",
+          "state": "IN_PROGRESS",
           "initial_estimate_hours": [
             1,
             2
@@ -244914,7 +245050,10 @@
           "dependency_status": "WAITING_FOR_FORM_HISTORY_ADOPTION",
           "remaining": "WP12-03/04历史准确内容披露/显式采用未证明；W305完成WP12-10不连带解决。",
           "prerequisites_satisfied": true,
-          "prerequisite_report": "docs/development/evidence/W319-01/DELIVERY.md"
+          "prerequisite_report": "docs/development/evidence/W319-01/DELIVERY.md",
+          "started_at": "2026-11-08T13:21:42.080186+00:00",
+          "effective_start": 56132,
+          "scope_refinement": "原WP12-08三项范围及正反例：当前action-context真实SFS/APP分型与双/三CAS、actual/principal/原grant/SOD、token/node/stage/round计票，SFS字段复算和APP冻结TxD。W289/290/291已有实际采用与CC边界直接复用；本窗重点补多人新轮后旧Approved不能凑足新阈值的实际运行证据、旧原命令回放不推进新轮及必要当前竞争。发现真实错误即定向修复；仅全原卡无剩余且当前整卡前置满足才DONE。全OA-TASK批量/时限/通知与服务节点Owner不冒称由本卡自动完成，不重复W291抄送。"
         },
         {
           "id": "W307-01",
@@ -245433,7 +245572,7 @@
             "WP12-04"
           ],
           "title": "原个人FORM两卡完整范围核销与W306前置",
-          "state": "VERIFYING",
+          "state": "DONE",
           "started_at": "2026-11-08T13:05:19.149959+00:00",
           "effective_start": 55149,
           "estimate_hours": [
@@ -245446,11 +245585,40 @@
           "full_task_completed": true,
           "report": "docs/development/evidence/W319-01/DELIVERY.md",
           "lifecycle_snapshot": {
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave319-final-verification.json",
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false
-          }
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave319-final-verification.json"
+          },
+          "actual_effective_seconds": 713,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W319-01",
+              "source": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+              "remote_target": "b5e8b9401ffb634059ec8dcda53e9cb0484ea7b4",
+              "pr": "https://github.com/GTX537/CP6/pull/773",
+              "branch": "codex/w319-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W319-HANDOFF",
+              "source": "c5d40ecd538e74a0007fdb9fdf6d19b4c1917a89",
+              "remote_target": "211c955f79e2b67ba4341c24b8cd4bd12a35039c",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/294",
+              "branch": "codex/w319-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
         },
         {
           "id": "W310-01",
@@ -245669,7 +245837,7 @@
           "historical_conflicts": "Preserved immutable; existing environments not inspected or migrated. Separate controlled forward recovery required for affected existing records."
         }
       ],
-      "next_priority": "W306 original task inbox scope now that original FORM prerequisites are DONE; privacy remaining Owners; W310 budget end",
+      "next_priority": "W306 original task decision/round scope, then actual remaining privacy Owners; W310 budget end",
       "extra_bug_deliveries": [
         {
           "id": "BUG751",

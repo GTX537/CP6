@@ -1,0 +1,5 @@
+# W306 原任务办理与轮次核销（执行中）
+
+原WP12-08三项范围及正反例：当前action-context真实SFS/APP分型与双/三CAS、actual/principal/原grant/SOD、token/node/stage/round计票，SFS字段复算和APP冻结TxD。W289/290/291已有实际采用与CC边界直接复用；本窗重点补多人新轮后旧Approved不能凑足新阈值的实际运行证据、旧原命令回放不推进新轮及必要当前竞争。发现真实错误即定向修复；仅全原卡无剩余且当前整卡前置满足才DONE。全OA-TASK批量/时限/通知与服务节点Owner不冒称由本卡自动完成，不重复W291抄送。
+
+Main b5e8b9401ffb634059ec8dcda53e9cb0484ea7b4，Handoff 211c955f79e2b67ba4341c24b8cd4bd12a35039c，COORD单人DEV1/DEV2。W319 Main773/Handoff294正常采用/准确清理/官方释放已核销，实测713秒，约11.9分钟低于0.25–0.6h估计。累计有效56132秒，下一57600秒校准，24h继续。此窗预计0.6–1.25h低置信实际Codex执行，真实多角色轮次是否缺实现是主要不确定项。原37535DONE/2IN_PROGRESS/338PLANNED，原59余48，125/247不改。
