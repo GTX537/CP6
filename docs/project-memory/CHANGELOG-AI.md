@@ -1,5 +1,11 @@
 # AI 可读变更日志
 
+## 2026-11-08：W323闭环，W324连续实施
+
+W324采用Main.Privacy.TenantExportPayload.v1真实恢复副本：独立无subject的tenant恢复Unit、准确原制品元数据/revision/实际SHA、真实删除字节与缺失0分别记录，当前源保留政策/整租户hold和独立恢复批准，父回执/原生效果/墓碑/fence/候选开放同候选commit；继续SourceRoot→CandidateRoot与两次提交UNKNOWN责任，其他Owner及WAL/外部副本仍PARTIAL。
+
+Main `be6ec3bea15d3e0a6d54f1960f9f7eaabb13f641`，Handoff `7ffdab2f4f8a6b2ad36c99b20c00e87b66b987d9`，COORD单人固定DEV1/DEV2；W323 Main778/Handoff299已核两仓采用、准确清理和官方释放，实测2143秒。本窗累计77945秒，余约2.35h。 [本窗](../development/dispatch/20261108-wave324/README.md)。原24h仍active/incomplete。
+
 ## 2026-11-08：W323租户载荷实际处置 / 24h继续
 
 W323完成Main.Privacy.TenantExportPayload.v1当前库准确租户载荷处置：明确保留政策/独立申请批准/当前最终执行、全目标租户所有主体hold与ABA、真实字节删除/撤访问/最小原回执/墓碑同commit及原生防回填。无伪subject。新墓碑推进restore_epoch，未采用的新Owner恢复明确503并保持候选隔离，历史已提交原结果仍可恢复；不冒充备份或外部副本已清。 [交付](../development/evidence/W323-01/DELIVERY.md)。

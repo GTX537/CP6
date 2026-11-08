@@ -162157,6 +162157,11 @@
       "date": "2026-11-08",
       "change": "W323完成Main.Privacy.TenantExportPayload.v1当前库准确租户载荷处置：明确保留政策/独立申请批准/当前最终执行、全目标租户所有主体hold与ABA、真实字节删除/撤访问/最小原回执/墓碑同commit及原生防回填。无伪subject。新墓碑推进restore_epoch，未采用的新Owner恢复明确503并保持候选隔离，历史已提交原结果仍可恢复；不冒充备份或外部副本已清。 原375=36DONE/2IN_PROGRESS/337PLANNED，原59=12闭环/47剩余，125目标/247正式验收不变。WP02-15仍余租户载荷恢复实际适配、未分类安全内容/不可归属事件、授权/组织引用、OA/PLM/CRM历史、FILE及其他来源副本、整租户全部Owner导出/处置、WAL/备份/外部副本和完整环境恢复。W306/W249/七天及已闭环FORM不重复；24h继续相邻真实余项，W310预算末尾。",
       "evidence": "docs/development/evidence/W323-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-08",
+      "change": "W323两仓闭环；W324登记。W324采用Main.Privacy.TenantExportPayload.v1真实恢复副本：独立无subject的tenant恢复Unit、准确原制品元数据/revision/实际SHA、真实删除字节与缺失0分别记录，当前源保留政策/整租户hold和独立恢复批准，父回执/原生效果/墓碑/fence/候选开放同候选commit；继续SourceRoot→CandidateRoot与两次提交UNKNOWN责任，其他Owner及WAL/外部副本仍PARTIAL。",
+      "evidence": "docs/development/dispatch/20261108-wave324/README.md"
     }
   ],
   "implementation_assessment": {
@@ -175532,19 +175537,38 @@
         "lifecycle_complete": true
       },
       "wave323_tenant_payload_disposition": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W323-01/DELIVERY.md",
         "scope": "W323完成Main.Privacy.TenantExportPayload.v1当前库准确租户载荷处置：明确保留政策/独立申请批准/当前最终执行、全目标租户所有主体hold与ABA、真实字节删除/撤访问/最小原回执/墓碑同commit及原生防回填。无伪subject。新墓碑推进restore_epoch，未采用的新Owner恢复明确503并保持候选隔离，历史已提交原结果仍可恢复；不冒充备份或外部副本已清。",
         "full_task_complete": false,
         "validation": "14项新增实际PostgreSQL18场景、13项受影响租户导出及主体载荷/安全字段恢复回归（含新增处置与既有租户下载Chrome）、23项Vue行为及vue-tsc通过。",
         "lifecycle_snapshot": {
-          "main_finish_required": true,
-          "main_seat_released": false,
-          "handoff_seat_released": false,
-          "main_branch_deleted": false,
-          "handoff_branch_deleted": false,
+          "main_finish_required": false,
+          "main_seat_released": true,
+          "handoff_seat_released": true,
+          "main_branch_deleted": true,
+          "handoff_branch_deleted": true,
           "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave323-final-verification.json"
-        }
+        },
+        "main_delivery": {
+          "repository": "CP6",
+          "task": "W323-01",
+          "source": "b60a77fe800257078ded1cb4deadfcede7bac2f7",
+          "remote_target": "be6ec3bea15d3e0a6d54f1960f9f7eaabb13f641",
+          "pr": "https://github.com/GTX537/CP6/pull/778",
+          "branch": "codex/w323-01",
+          "branch_absent": true,
+          "seat_released": true,
+          "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "workspace_clean": true
+        },
+        "lifecycle_complete": true
+      },
+      "wave324_tenant_payload_restore": {
+        "status": "IMPLEMENTING",
+        "report": "docs/development/evidence/W324-01/DELIVERY.md",
+        "scope": "W324采用Main.Privacy.TenantExportPayload.v1真实恢复副本：独立无subject的tenant恢复Unit、准确原制品元数据/revision/实际SHA、真实删除字节与缺失0分别记录，当前源保留政策/整租户hold和独立恢复批准，父回执/原生效果/墓碑/fence/候选开放同候选commit；继续SourceRoot→CandidateRoot与两次提交UNKNOWN责任，其他Owner及WAL/外部副本仍PARTIAL。",
+        "full_task_complete": false
       }
     },
     {
@@ -204365,11 +204389,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261108-wave323",
-      "path": "docs/development/dispatch/20261108-wave323/README.md",
-      "baseline_sha": "2f4eaab416eac5eff12cda327cdb9f76262ac290",
-      "registered_at": "2026-11-08T18:44:32.751145+00:00",
-      "phase": "DELIVERY_MAIN_CLOSEOUT",
+      "id": "20261108-wave324",
+      "path": "docs/development/dispatch/20261108-wave324/README.md",
+      "baseline_sha": "be6ec3bea15d3e0a6d54f1960f9f7eaabb13f641",
+      "registered_at": "2026-11-08T19:25:15.698679+00:00",
+      "phase": "IMPLEMENTING",
       "assigned_chats": [
         "COORD"
       ],
@@ -204387,60 +204411,42 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W323-01",
-          "workspace_task": "W323-01",
+          "id": "W324-01",
+          "workspace_task": "W324-01",
           "related_tasks": [
             "WP02-15"
           ],
-          "title": "租户制品真实字节处置和整租户hold",
+          "title": "租户载荷真实备份恢复与准确结果",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "DELIVERY_MAIN_CLOSEOUT",
+          "phase": "IMPLEMENTING",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": true,
+          "worker_delivery_received": false,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w323-01",
-          "planned_scope_ref": "docs/development/contracts/tenant-export-payload-disposition-v1.md",
+          "branch": "codex/w324-01",
+          "planned_scope_ref": "docs/development/contracts/tenant-export-payload-restore-v1.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": true,
+          "candidate_review_completed": false,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
-            "Main:tenant-export-payload-Owner",
+            "Main:tenant-export-payload-restored-Owner",
             "Main:privacy-disposition-Owner",
             "Main:restore-source-gate",
+            "Main:privacy-restore-wire",
             "Main:migration-history"
-          ],
-          "worker_delivery_ref": "docs/development/evidence/W323-01/DELIVERY.md",
-          "validation": "14项新增实际PostgreSQL18场景、13项受影响租户导出及主体载荷/安全字段恢复回归（含新增处置与既有租户下载Chrome）、23项Vue行为及vue-tsc通过。",
-          "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave323-final-verification.json"
-          },
-          "local_validation": "PASS_AFFECTED_SCOPE"
+          ]
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W323正常收妥后继续租户载荷实际恢复适配等真实余项；原24h未完成，W310预算末尾。",
-      "lifecycle_snapshot": {
-        "main_finish_required": true,
-        "main_seat_released": false,
-        "handoff_seat_released": false,
-        "main_branch_deleted": false,
-        "handoff_branch_deleted": false,
-        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave323-final-verification.json"
-      }
+      "next_action": "W324采用Main.Privacy.TenantExportPayload.v1真实恢复副本：独立无subject的tenant恢复Unit、准确原制品元数据/revision/实际SHA、真实删除字节与缺失0分别记录，当前源保留政策/整租户hold和独立恢复批准，父回执/原生效果/墓碑/fence/候选开放同候选commit；继续SourceRoot→CandidateRoot与两次提交UNKNOWN责任，其他Owner及WAL/外部副本仍PARTIAL。"
     },
     "wave_history": [
       {
@@ -244657,8 +244663,8 @@
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
       "started_at": "2026-11-04T00:22:36+00:00",
-      "effective_seconds_recorded": 77196,
-      "timing_snapshot_at": "2026-11-08T19:12:46.673570+00:00",
+      "effective_seconds_recorded": 77945,
+      "timing_snapshot_at": "2026-11-08T19:25:15.698679+00:00",
       "timing_source": "41997 prior effective seconds plus continuous OS monotonic time from 2026-11-08T09:26:06Z; pause/pre-sample preparation excluded. Native panel is active after reactivation but omits the earlier authorized resumed segment; never sum the clocks.",
       "next_reestimate_at_effective_seconds": 64800,
       "estimate_hours": [
@@ -246191,7 +246197,7 @@
             "WP02-15"
           ],
           "title": "租户制品真实字节处置和整租户hold",
-          "state": "VERIFYING",
+          "state": "DONE",
           "started_at": "2026-11-08T18:44:32.751145+00:00",
           "effective_start": 75502,
           "estimate_hours": [
@@ -246203,13 +246209,57 @@
           "implementation_complete": true,
           "report": "docs/development/evidence/W323-01/DELIVERY.md",
           "lifecycle_snapshot": {
-            "main_finish_required": true,
-            "main_seat_released": false,
-            "handoff_seat_released": false,
-            "main_branch_deleted": false,
-            "handoff_branch_deleted": false,
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
             "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave323-final-verification.json"
-          }
+          },
+          "actual_effective_seconds": 2143,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W323-01",
+              "source": "b60a77fe800257078ded1cb4deadfcede7bac2f7",
+              "remote_target": "be6ec3bea15d3e0a6d54f1960f9f7eaabb13f641",
+              "pr": "https://github.com/GTX537/CP6/pull/778",
+              "branch": "codex/w323-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W323-HANDOFF",
+              "source": "d505ea162e8c84e8d4677106ec68fda339e191d7",
+              "remote_target": "7ffdab2f4f8a6b2ad36c99b20c00e87b66b987d9",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/299",
+              "branch": "codex/w323-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W324-01",
+          "day": "D3",
+          "related_tasks": [
+            "WP02-15"
+          ],
+          "title": "租户载荷真实备份恢复与准确结果",
+          "state": "IN_PROGRESS",
+          "started_at": "2026-11-08T19:25:15.698679+00:00",
+          "effective_start": 77945,
+          "estimate_hours": [
+            0.75,
+            1.5
+          ],
+          "estimate_confidence": "LOW_REUSES_RESTORE_PROTOCOL_NEW_TENANT_UNIT_AND_EXTERNAL_COPY_BOUNDARY",
+          "scope_refinement": "W324采用Main.Privacy.TenantExportPayload.v1真实恢复副本：独立无subject的tenant恢复Unit、准确原制品元数据/revision/实际SHA、真实删除字节与缺失0分别记录，当前源保留政策/整租户hold和独立恢复批准，父回执/原生效果/墓碑/fence/候选开放同候选commit；继续SourceRoot→CandidateRoot与两次提交UNKNOWN责任，其他Owner及WAL/外部副本仍PARTIAL。"
         },
         {
           "id": "W310-01",
@@ -246428,7 +246478,7 @@
           "historical_conflicts": "Preserved immutable; existing environments not inspected or migrated. Separate controlled forward recovery required for affected existing records."
         }
       ],
-      "next_priority": "Actual tenant payload restore adapter and remaining privacy Owners; W310 budget-end only",
+      "next_priority": "W324采用Main.Privacy.TenantExportPayload.v1真实恢复副本：独立无subject的tenant恢复Unit、准确原制品元数据/revision/实际SHA、真实删除字节与缺失0分别记录，当前源保留政策/整租户hold和独立恢复批准，父回执/原生效果/墓碑/fence/候选开放同候选commit；继续SourceRoot→CandidateRoot与两次提交UNKNOWN责任，其他Owner及WAL/外部副本仍PARTIAL。",
       "extra_bug_deliveries": [
         {
           "id": "BUG751",
