@@ -1,5 +1,15 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-08：W320原生载荷处置 / 24h继续
+
+W320完成Main.Privacy.ExportPayload.v1：准确原生导出载荷的显式UTC保留政策、独立申请/批准/实际删除、全主体hold、最小不可变原回执/墓碑与原生防复活；已接恢复候选实际删除旧载荷或据实记录缺失并安装屏障，两库UNKNOWN责任与原键恢复继续复用。仅此Owner，整体PARTIAL。 [交付](../development/evidence/W320-01/DELIVERY.md)。
+
+20项新增实际PostgreSQL18场景、17项受影响旧导出/hold/身份恢复回归（含真实认证HTTP、两条新增和一条既有Chrome）、22项Vue/API行为及vue-tsc通过。 原375=36DONE/2IN_PROGRESS/337PLANNED，原59=12闭环/47剩余，125目标/247正式验收不变。WP02-15仍余安全日志内容、授权/组织引用、OA/PLM与CRM业务历史、FILE及其他来源副本处置、整租户导出/受控处置、WAL/备份/外部副本及完整环境恢复。原生载荷缺失而无处置事实时仍明确阻断，不冒删除成功。W306及WP12-03/04已闭环，不再当作阻塞；继续核对其他真实Owner，W310仅预算末尾。 正常采用/finish后继续，最终分支/工作区/席位见wave320-final-verification.json。
+
+## 2026-11-08：W306已收尾 / W320载荷处置开工
+
+W306 Main774/Handoff295正常采用、准确清理/官方finish核销，实测1577秒；原37536DONE/2IN_PROGRESS/337PLANNED、59余47。16h实测校准后[W320](../development/evidence/W320-01/DELIVERY.md)推进原生导出载荷实际处置/准确恢复副本，WP02-15整体仍PARTIAL。24h继续。
+
 ## 2026-11-08：WP12-08原卡核销 / 24h继续
 
 W306在原WP12-04/07/10整卡前置满足后，按WP12-08三项范围及正反例核销当前动作上下文、真实双身份/原grant、双/三CAS、SFS复算/APP冻结TxD与轮次；补真实两人all/any重入新轮和旧原命令回放的业务验证，原WP12-08正式DONE。 [报告](../development/evidence/W306-01/DELIVERY.md)。

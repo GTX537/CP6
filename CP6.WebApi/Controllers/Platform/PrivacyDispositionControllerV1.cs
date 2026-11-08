@@ -10,6 +10,30 @@ namespace CP6.WebApi.Controllers.Platform;
 [ResponseCache(NoStore=true,Location=ResponseCacheLocation.None)]
 public sealed class PrivacyDispositionControllerV1(IServiceScopeFactory scopes,ITenantContext tenant):ControllerBase
 {
+    [HttpGet("export-payloads/context")]
+    public Task<IActionResult> PayloadContext(CancellationToken ct)=>Run((o,s)=>o.PayloadContextAsync(s,ct));
+    [HttpGet("export-payloads/policies/{id:guid}")]
+    public Task<IActionResult> PayloadPolicy(Guid id,CancellationToken ct)=>Run((o,s)=>o.PayloadPolicyAsync(id,s,ct));
+    [HttpPost("export-payloads/policies"),RequestSizeLimit(65536)]
+    public Task<IActionResult> PayloadPolicy(PayloadDispositionPolicyCommandV1 input,CancellationToken ct)=>Run((o,s)=>o.ConfigurePayloadPolicyAsync(input,s,ct));
+    [HttpPost("export-payloads/preview"),RequestSizeLimit(65536)]
+    public Task<IActionResult> PayloadPreview(PayloadDispositionTargetV1 input,CancellationToken ct)=>Run((o,s)=>o.PayloadPreviewAsync(input,s,ct));
+    [HttpPost("export-payloads/artifacts/{id:guid}/hold"),RequestSizeLimit(65536)]
+    public Task<IActionResult> PayloadHold(Guid id,PayloadDispositionHoldV1 input,CancellationToken ct)=>Run((o,s)=>o.SetPayloadHoldAsync(id,input,s,ct));
+    [HttpGet("export-payloads/artifacts/{id:guid}/hold")]
+    public Task<IActionResult> PayloadHold(Guid id,CancellationToken ct)=>Run((o,s)=>o.PayloadHoldAsync(id,s,ct));
+    [HttpPost("export-payloads/plans"),RequestSizeLimit(65536)]
+    public Task<IActionResult> PayloadPlan(PayloadDispositionRequestV1 input,CancellationToken ct)=>Run((o,s)=>o.RequestPayloadDispositionAsync(input,s,ct));
+    [HttpGet("export-payloads/plans/{id:guid}")]
+    public Task<IActionResult> PayloadPlan(Guid id,CancellationToken ct)=>Run((o,s)=>o.PayloadPlanAsync(id,s,ct));
+    [HttpPost("export-payloads/plans/{id:guid}/decisions"),RequestSizeLimit(65536)]
+    public Task<IActionResult> PayloadDecision(Guid id,PayloadDispositionDecisionV1 input,CancellationToken ct)=>Run((o,s)=>o.DecidePayloadDispositionAsync(id,input,s,ct));
+    [HttpPost("export-payloads/plans/{id:guid}/execute"),RequestSizeLimit(65536)]
+    public Task<IActionResult> PayloadExecute(Guid id,PayloadDispositionExecuteV1 input,CancellationToken ct)=>Run((o,s)=>o.ExecutePayloadDispositionAsync(id,input,s,ct));
+    [HttpGet("export-payloads/operations/{id:guid}")]
+    public Task<IActionResult> PayloadOperation(Guid id,CancellationToken ct)=>Run((o,s)=>o.PayloadOperationAsync(id,false,s,ct));
+    [HttpPost("export-payloads/operations/{id:guid}/close")]
+    public Task<IActionResult> PayloadClose(Guid id,CancellationToken ct)=>Run((o,s)=>o.PayloadOperationAsync(id,true,s,ct));
     [HttpGet("context")]
     public Task<IActionResult> Context(CancellationToken ct)=>Run((o,s)=>o.ContextAsync(s,ct));
     [HttpGet("policies/{id:guid}")]

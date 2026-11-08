@@ -60,3 +60,12 @@ it('a known applied original cannot expose the old execute action when refreshin
   expect(wrapper!.findAll('button').some(button => button.text() === '确认重施墓碑并核对开放门')).toBe(false)
   expect(mock.execute).toHaveBeenCalledTimes(1)
 })
+it('distinguishes actual export payload deletion from an absent copy that is only fenced', async () => {
+  localStorage.setItem(key, `E:${op}`)
+  mock.operation.mockResolvedValue({ operationId: op, state: 'APPLIED', units: [
+    { sourcePlanId: planId, artifactId: candidate, owner: 'Main.Privacy.ExportPayload.v1', outcome: 'REAPPLIED', removedBytes: 321 },
+    { sourcePlanId: actor, artifactId: tenant, owner: 'Main.Privacy.ExportPayload.v1', outcome: 'ABSENT_FENCED', removedBytes: 0 },
+  ], aggregateState: 'PARTIAL' })
+  await open(); expect(wrapper!.text()).toContain(`原生导出制品 ${candidate}：原处置已重施`); expect(wrapper!.text()).toContain('实际删除 321 字节')
+  expect(wrapper!.text()).toContain(`原生导出制品 ${tenant}：原备份中不存在，墓碑已施加`); expect(wrapper!.text()).toContain('实际删除 0 字节'); expect(mock.execute).not.toHaveBeenCalled()
+})

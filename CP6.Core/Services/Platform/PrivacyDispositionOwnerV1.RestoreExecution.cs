@@ -93,7 +93,7 @@ public sealed partial class PrivacyDispositionOwnerV1
                     await SaveRestoreOutcome(a,known,scope,t);return known;
                 }
                 Can(a,"restore-execute");await RequireRestoreApproval(a,row,input,t);await RequireNoOtherRestoreIntent(a,scope,input.OperationId,t);
-                var result=await PrivacyRestoreNativeV1.Apply(candidate,hasher,scope,a.Actor.TenantId,a.Actor.Id,input.OperationId,id,row.Digest,await RestoreTombstones(a,t),t);
+                var result=await PrivacyRestoreNativeV1.Apply(candidate,hasher,scope,a.Actor.TenantId,a.Actor.Id,input.OperationId,id,row.Digest,await RestoreTombstones(a,t),await RestorePayloadTombstones(a,t),t);
                 await SaveRestoreOutcome(a,result,scope,t);return result;
             },ct,async t=>
             {
@@ -101,6 +101,7 @@ public sealed partial class PrivacyDispositionOwnerV1
                 if(candidateTransaction!=null)
                 {
                     try{await candidateTransaction.CommitAsync(t);}
+                    catch(Exception e)when(PayloadConstraintCode(e)!=null){throw new PrivacyDispositionExceptionV1(PayloadConstraintCode(e)!,409,e);}
                     catch(Exception e){throw new PrivacyDispositionExceptionV1("PRIVACY_RESTORE_CANDIDATE_OUTCOME_UNKNOWN",503,e);}
                 }
             });

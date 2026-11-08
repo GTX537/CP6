@@ -31,6 +31,7 @@ try {
   await form.getByRole('button', { name: '预览恢复范围与当前限制', exact: true }).click()
   await expect(form.locator('.restore-preview')).toContainText('cp6_privacy_restore_')
   await expect(form.locator('.restore-preview')).toContainText('未覆盖')
+  if (process.env.CP6_PAYLOAD_RESTORE_ARTIFACT) await expect(form.locator('.restore-preview')).toContainText('导出载荷墓碑：')
   await form.getByRole('textbox', { name: '恢复申请依据引用', exact: true }).fill(randomUUID())
   await form.getByRole('button', { name: '提交恢复计划', exact: true }).click(); await cancel(); expect(requests).toBe(0)
   await form.getByRole('button', { name: '提交恢复计划', exact: true }).click(); await confirm()
@@ -60,6 +61,12 @@ try {
   await page.reload(); await page.locator('#tab-restoreCandidate').click()
   await expect(form.locator('.restore-result')).toContainText('已接墓碑已重施'); await expect(form.locator('.restore-result')).toContainText('整体仍为部分范围')
   await expect(form.locator('.restore-result')).toContainText(lostReply.operationId)
+  if (process.env.CP6_PAYLOAD_RESTORE_ARTIFACT) {
+    const artifact = process.env.CP6_PAYLOAD_RESTORE_ARTIFACT, unit = lostReply.units.find(x => x.artifactId === artifact)
+    expect(unit.owner).toBe('Main.Privacy.ExportPayload.v1'); expect(unit.outcome).toBe('REAPPLIED'); expect(unit.removedBytes).toBeGreaterThan(0)
+    await expect(form.locator('.restore-result')).toContainText(`原生导出制品 ${artifact}`)
+    await expect(form.locator('.restore-result')).toContainText(`实际删除 ${unit.removedBytes} 字节`)
+  }
   await expect(form.getByRole('button', { name: '确认重施墓碑并核对开放门', exact: true })).toBeDisabled(); expect(executions).toBe(1)
   await form.locator('.restore-result').scrollIntoViewIfNeeded(); await page.screenshot({ path: path.join(output, 'restored-partial-original.png'), fullPage: true })
   expect(errors).toEqual([])

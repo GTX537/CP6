@@ -19,7 +19,7 @@
       <div v-if="previewResult" class="restore-preview">
         <p>目标库：{{ previewResult.scope.target.name }} · 数据库身份：{{ previewResult.scope.target.oid }}</p>
         <p>备份 SHA-256：{{ previewResult.scope.backupSha256 }}</p>
-        <p>已接墓碑：{{ previewResult.scope.tombstoneCount }}；当前来源版本：{{ previewResult.scope.sourceVersion }}</p>
+        <p>已接身份墓碑：{{ previewResult.scope.tombstoneCount }} · 导出载荷墓碑：{{ previewResult.scope.exportPayloadTombstoneCount || 0 }}；当前来源版本：{{ previewResult.scope.sourceVersion }}</p>
         <p>未覆盖：{{ previewResult.scope.uncoveredOwners.map(ownerName).join('；') }}</p>
         <p v-if="previewResult.blockers.length">当前限制：{{ previewResult.blockers.join('；') }}</p>
         <el-form-item label="申请依据引用"><el-input v-model="requestRef" aria-label="恢复申请依据引用" /></el-form-item>
@@ -35,7 +35,7 @@
       <p>计划 ID：{{ plan.planId }} · 申请人：{{ plan.requesterId }}</p>
       <p>准确目标库：{{ plan.scope.target.name }} · 身份：{{ plan.scope.target.oid }}</p>
       <p>备份：{{ plan.scope.backupSha256 }} · 冻结来源版本：{{ plan.scope.sourceVersion }}</p>
-      <p>已接墓碑：{{ plan.scope.tombstoneCount }}；未覆盖：{{ plan.scope.uncoveredOwners.map(ownerName).join('；') }}</p>
+      <p>已接身份墓碑：{{ plan.scope.tombstoneCount }} · 导出载荷墓碑：{{ plan.scope.exportPayloadTombstoneCount || 0 }}；未覆盖：{{ plan.scope.uncoveredOwners.map(ownerName).join('；') }}</p>
       <p>当前批准有效：{{ plan.approvalCurrent ? '是' : '否' }}。批准不会自动重施资料。</p>
       <p v-if="plan.currentBlockers.length">当前限制：{{ plan.currentBlockers.join('；') }}</p>
       <p v-if="plan.requesterId === context?.actorId">申请人不能批准自己的恢复计划。</p>
@@ -55,8 +55,8 @@
       <p v-else-if="['PENDING','NOT_FOUND'].includes(result.state)">尚无已核实的候选结果。请查询、核对或关闭原操作，不要重新执行。</p>
       <p v-else-if="result.state === 'CLOSED'">原操作已关闭，迟到执行被阻止。</p>
       <p>原操作：{{ result.operationId }}</p>
-      <p v-for="unit in result.units || []" :key="unit.sourcePlanId">主体 {{ unit.targetTenantId }} / {{ unit.subjectId }}：{{ unit.outcome === 'ABSENT_FENCED' ? '原备份中不存在，墓碑已施加' : '原处置已重施' }}</p>
-      <p>此处仅证明已接 Main 身份 Owner，其他历史、副本和完整生产恢复仍有未覆盖范围。</p>
+      <p v-for="unit in result.units || []" :key="unit.sourcePlanId">{{ unit.artifactId ? `原生导出制品 ${unit.artifactId}` : `主体 ${unit.targetTenantId} / ${unit.subjectId}` }}：{{ unit.outcome === 'ABSENT_FENCED' ? '原备份中不存在，墓碑已施加' : '原处置已重施' }}<span v-if="unit.artifactId"> · 实际删除 {{ unit.removedBytes }} 字节</span></p>
+      <p>此处仅证明上列来源的实际结果。其他历史、文件、WAL、备份和完整生产恢复仍有未覆盖范围。</p>
     </div>
     <el-alert v-if="storageError" :title="storageError" type="error" :closable="false" />
   </section>
@@ -74,7 +74,7 @@ const active = (start: string) => !disposed && start === stamp && start === iden
 const uuid = (v: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v) && v !== '00000000-0000-0000-0000-000000000000'
 const can = (action: string) => !!context.value?.actions.includes(action)
 const locked = computed(() => busy.value || !!pending.value || !!storageError.value)
-const ownerName = (v: string) => ({ 'MAIN.SECURITY_LOG_CONTENT': '安全日志内容', 'MAIN.AUTHORIZATION_AND_ORGANIZATION_REFERENCES': '授权与组织引用', 'MAIN.OA_AND_PLM_HISTORY': 'OA 与 PLM 历史', CRM_BUSINESS_AND_HISTORY: 'CRM 业务及历史', FILE_AND_PRIOR_EXPORT_COPIES: '文件与旧导出副本', BACKUPS_AND_EXTERNAL_COPIES: '备份与外部副本', UNREGISTERED_OWNERS: '其他未接入来源' }[v] || v)
+const ownerName = (v: string) => ({ 'MAIN.SECURITY_LOG_CONTENT': '安全日志内容', 'MAIN.AUTHORIZATION_AND_ORGANIZATION_REFERENCES': '授权与组织引用', 'MAIN.OA_AND_PLM_HISTORY': 'OA 与 PLM 历史', CRM_BUSINESS_AND_HISTORY: 'CRM 业务及历史', FILE_AND_PRIOR_EXPORT_COPIES: '文件与旧导出副本', FILE_AND_OTHER_OWNER_COPIES: 'FILE 与其他来源副本', BACKUPS_AND_EXTERNAL_COPIES: '备份与外部副本', UNREGISTERED_OWNERS: '其他未接入来源' }[v] || v)
 const stateName = (v: string) => ({ REQUESTED: '待独立审批', APPROVED: '已批准', REJECTED: '已拒绝', REVOKED: '已撤销' }[v] || v)
 function key() { const c = context.value!; return `cp6-privacy-restore-v1:${c.environmentId}:${c.actorTenantId}:${c.actorId}` }
 function stored() { const value = localStorage.getItem(key()) || ''; if (value && (!/^[ME]:/.test(value) || !uuid(value.slice(2)))) throw new Error('恢复原操作记录无效，请保留记录并修复浏览器存储。'); return value }

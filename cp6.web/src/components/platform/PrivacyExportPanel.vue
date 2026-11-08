@@ -31,7 +31,7 @@
       <p>生成：{{ artifact.receipt.capturedAt }} · 下载截止：{{ artifact.receipt.expiresAt }}</p>
       <p>此处为历史生成回执；下载会重新检查当前权限、来源范围和可用性。撤销不能收回已经下载到外部的副本。</p>
       <el-button type="primary" :disabled="busy || artifact.availability !== 'AVAILABLE' || !can('download') || artifact.receipt.recipientId !== context?.actorId" @click="download">按当前权限下载</el-button>
-      <el-button type="warning" :disabled="busy || artifact.availability === 'REVOKED' || !can('revoke') || artifact.receipt.requesterId !== context?.actorId" @click="revoke">撤销制品下载</el-button>
+      <el-button type="warning" :disabled="busy || ['REVOKED','DISPOSED'].includes(artifact.availability) || !can('revoke') || artifact.receipt.requesterId !== context?.actorId" @click="revoke">撤销制品下载</el-button>
       <SubjectExportManifestView :manifest="artifact.receipt.manifest" />
     </div>
     <el-alert v-if="storageError" :title="storageError" type="error" :closable="false" />
@@ -53,7 +53,7 @@ const can = (action: string) => !!context.value?.actions.includes(action)
 const ready = computed(() => !busy.value && !pending.value && !storageError.value && [draft.targetTenantId, draft.subjectId, draft.requestRef, draft.recipientId].every(uuid) && draft.sources.length > 0)
 const sourceName = (value: string) => ({ identity: '身份资料', security: '安全事件', roles: '角色关联' }[value] || value)
 const purposeName = (value: string) => ({ SUBJECT_ACCESS_REQUEST: '主体资料访问申请', ACCOUNT_SECURITY_REVIEW: '账户安全审查' }[value] || value)
-const availabilityName = (value: string) => ({ AVAILABLE: '可申请下载', EXPIRED: '已过期', REVOKED: '已撤销', POLICY_CHANGED: '政策已改变' }[value] || value)
+const availabilityName = (value: string) => ({ AVAILABLE: '可申请下载', EXPIRED: '访问已过期，载荷未因此删除', REVOKED: '访问已撤销，载荷未因此删除', DISPOSED: '本库载荷已删除', POLICY_CHANGED: '政策已改变' }[value] || value)
 function key() { const c = context.value!; return `cp6-privacy-export-v1:${c.environmentId}:${c.actorTenantId}:${c.actorId}` }
 function stored() {
   const value = localStorage.getItem(key()) || ''
