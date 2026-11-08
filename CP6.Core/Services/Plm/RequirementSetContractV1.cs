@@ -3,7 +3,12 @@ namespace CP6.Core.Services.Plm;
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record RequirementSetMemberV1(EngineeringSourceRefV1 Requirement,
     EngineeringSourceRefV1? EvaluationControl, EngineeringSourceRefV1? Approval,
-    string Disposition, string Basis);
+    string Disposition, string Basis,
+    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] RequirementExclusionDecisionV1? Exclusion=null);
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+public sealed record RequirementExclusionDecisionV1(string Schema,EngineeringSourceRefV1 Source,string Basis);
+public sealed record RequirementExclusionObservationV1(Guid RequirementId,string State,EngineeringSourceRefV1 Source,
+    EngineeringSourceRefV1? DecisionVersion=null,Guid? DecisionActor=null,DateTimeOffset? DecidedAt=null);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record RequirementSetConflictV1(string Id,EngineeringSourceRefV1 Left,EngineeringSourceRefV1 Right,
     string Intersection,string Proposal,string Basis,
@@ -33,7 +38,8 @@ public sealed record RequirementSetCommandV1
 public sealed record RequirementSetSnapshotV1(Guid TenantId,EngineeringSourceRefV1 Reference,Guid Etag,
     bool IsCurrent,RequirementSetBodyV1 Body,Guid AuthorId,Guid ActorId,string? ParentVersion,string Reason,
     DateTimeOffset RecordedAt,string OriginalJson,string[] Missing,string State="DRAFT",
-    RequirementSetMemberObservationV1[]? MemberStatus=null,RequirementSetDifferenceV1[]? Differences=null,RequirementConflictObservationV1[]? ConflictStatus=null);
+    RequirementSetMemberObservationV1[]? MemberStatus=null,RequirementSetDifferenceV1[]? Differences=null,RequirementConflictObservationV1[]? ConflictStatus=null,
+    [property:JsonIgnore(Condition=JsonIgnoreCondition.WhenWritingNull)] RequirementExclusionObservationV1[]? ExclusionStatus=null);
 public sealed record RequirementSetScopeV1(Guid EnvironmentId,Guid TenantId,Guid ActorId,string EvidenceMode);
 public sealed record RequirementSetMemberObservationV1(EngineeringRequirementSnapshotV1 Requirement,
     RequirementEvaluationSourceProofV1 Evaluation,EngineeringRequirementSnapshotV1 Source);

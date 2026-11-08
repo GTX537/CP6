@@ -15,6 +15,11 @@ internal static class RequirementSetValuesV1
         {
             if(m==null || m.Requirement==null || !ids.Add(m.Requirement.Id) || m.Disposition is not("INCLUDED" or "EXCLUDED"))throw Error("REQUIREMENT_SET_MEMBER_INVALID",400);
             EngineeringRequirementValuesV1.Ref(m.Requirement);Text(m.Basis);
+            if(m.Exclusion is {} exclusion)
+            {
+                if(m.Disposition!="EXCLUDED" || exclusion.Schema!="requirement-member-exclusion/1")throw Error("REQUIREMENT_EXCLUSION_DECISION_INVALID",400);
+                EngineeringRequirementValuesV1.Ref(exclusion.Source);Text(exclusion.Basis,true);
+            }
             if((m.EvaluationControl==null)!=(m.Approval==null))throw Error("REQUIREMENT_SET_APPROVAL_INVALID",400);
             if(m.EvaluationControl is {} c && (c.Owner!="Main.Plm.RequirementEvaluationControl.v1" || c.Id!=m.Requirement.Id || !ValidDigest(c.Digest)))throw Error("REQUIREMENT_SET_APPROVAL_INVALID",400);
             if(m.EvaluationControl!=null)Revision(m.EvaluationControl.Version);

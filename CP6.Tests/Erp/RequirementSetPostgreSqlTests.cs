@@ -75,10 +75,11 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Empty((await reviews.ContextAsync(value.Reference.Id)).Submissions);
     }
     private sealed record SetDecisionFixture(SetFixture Source,Guid Submission);
-    private async Task<SetDecisionFixture> SetDecisionSetup(Harness h,bool receive=true,bool reuseBinding=false)
+    private async Task<SetDecisionFixture> SetDecisionSetup(Harness h,bool receive=true,bool reuseBinding=false,bool optionalExclusion=false)
     {
         var prepared=reuseBinding?await ExistingReviewBinding(h):await PrepareBinding(h);
-        var(binding,flows,initial)=prepared;var f=await SetSetup(h,false);
+        var(binding,flows,initial)=prepared;var f=optionalExclusion?await ExclusionSetup(h,registerScope:false):await SetSetup(h,false);
+        if(optionalExclusion){await Sets(h).CommandAsync(SetRevise(f.Set,ExcludedBody(f)));f=f with{Set=await Sets(h).ReadAsync(f.Set.Reference.Id)};}
         var assignmentRole=reuseBinding?75:73;
         if(!await h.Db.Sys_Roles.AnyAsync(x=>x.RoleId==assignmentRole))h.Db.Sys_Roles.Add(new(){RoleId=assignmentRole,RoleName="Set FLOW assignment"});await h.Db.SaveChangesAsync();
         foreach(var id in new[]{f.Member.First,f.Member.Second})
