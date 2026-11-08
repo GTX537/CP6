@@ -1,4 +1,12 @@
 const messages: Record<string, string> = {
+  LEGACY_SOURCE_MAPPING_REQUIRED: '此旧版本尚无当前读取映射，请由管理员核对准确来源。原内容仍保留。',
+  LEGACY_SOURCE_MAPPING_STALE: '旧版本来源已经变化，需要重新核对映射。原内容仍保留。',
+  LEGACY_SOURCE_CHANGED: '旧草稿或当前映射已变化，请重新读取预览。',
+  LEGACY_SCHEMA_MAPPING_REQUIRED: '旧快照与指定原生发布的表单结构不一致，不能直接采用。',
+  LEGACY_ADOPTION_WINDOW_EXPIRED: '当前映射的采用窗口已过，请核对当前授权。原记录仍保留。',
+  LEGACY_ADOPTION_DISABLED: '当前策略不允许从旧记录复制新草稿。',
+  LEGACY_SOURCE_WRITER_COVERAGE_UNAVAILABLE: '当前无法确认旧来源的一致性，已停止操作。',
+  LEGACY_SOURCE_DATA_INVALID: '旧内容不能按准确表单结构采用，原值仍保留。',
   FORM_CONTEXT_CHANGED: '表单或审批配置已更新，请重新读取后再提交。',
   FORM_BINDING_VERSION_CHANGED: '表单版本与审批绑定不一致，请联系管理员核对配置。',
   FORM_BINDING_REQUIRED: '此表单需要有效审批流程，当前尚未配置。',

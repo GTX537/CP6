@@ -162092,6 +162092,11 @@
       "date": "2026-11-08",
       "change": "核销W315远端及生命周期；14h实测校准后开工W318原FORM旧历史准确内容与向前采用，24h继续。",
       "evidence": "docs/development/evidence/W318-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-08",
+      "change": "W318完成旧FORM准确版本到真实原生发布的显式当前来源映射、本人旧内容按当前字段受控披露，以及明确确认后复制为新本人原生草稿；旧行、精确值和UNVERIFIED_LEGACY历史标记保留。源/映射CAS及ABA、FILE实际资格、当前窗口/权限、最终会话和不可变来源/历史/原回执同事务；未知提交只恢复原命令。 原375=33DONE/2IN_PROGRESS/340PLANNED，原59=9闭环/50剩余，125目标/247正式验收不变。W305历史身份卡已DONE，原FORM汇总中仍称W305未完是旧记录，下一窗口按原AC统一核销WP12-03/04及W306前置；不以本局部窗口直接关闭整卡。无法准确映射的旧值/文件继续明确阻断并保留，历史转换执行与服务节点业务Owner按各原卡范围处理。隐私其他Owner仍有真实余项，W310预算末尾。",
+      "evidence": "docs/development/evidence/W318-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -198089,8 +198094,8 @@
         "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave287-final-verification.json"
       },
       "scope_reconciliation": {
-        "classification": "明确实现余项",
-        "delivered": "W275个人草稿、准确提交和显式重基；W285普通FORM文件已有交付。 W287：版本化共享字典选项来源已被FORM设计、发布/激活、当前候选读取、草稿/直接提交/退回/重基及真实页面采用；最终服务端复核当前来源与准确字符串值，保留历史原值且不制造历史字典快照。 W293：重基预览准确版本/摘要、可见路径分类和权威动态必填/逐行超限诊断，页面明确损失确认及编辑失效已实现；全部原行/精度/原事务和原命令保留。 W302：实际FORM字段受控处置Owner、准确历史原件、独立当前读取/批准/留存/撤销/hold资格、原操作恢复和处理工作台完成本地业务验收。W303重基消费已远端采用。 W303：真实隐藏损失请求、合格处置事实到本人原生重基的准确一次消费，以及当前资格/政策/hold校验、原件留存和原命令恢复完成本地业务验收。 W304核清WP12-03/04原25条直接AC和前置，补3项真实提交原子性/五上下文验证；确认#756合法data限额缺陷、旧入口adapter和准确重基前快照恢复仍未完，两原卡保持未关闭。 BUG756已远端修复。W316旧创建/保存/重基/提交/删除HTTP入口共用实际PersonalFormOwnerV2，保旧DTO成功形状、准确前驱与固定命令映射；历史目录只读且来源明确，补取消/冲突保行/删除刷新实际页面。 W317重基前准确快照显式恢复为新本人草稿，保旧发布版本、精确值、源草稿及完整动作链；当前字段投影、留存、FILE可用性和同事务来源/回执约束，页面可确认与恢复未知原命令。",
+        "classification": "IMPLEMENTED_PARTIAL_PENDING_REMOTE",
+        "delivered": "W275个人草稿、准确提交和显式重基；W285普通FORM文件已有交付。 W287：版本化共享字典选项来源已被FORM设计、发布/激活、当前候选读取、草稿/直接提交/退回/重基及真实页面采用；最终服务端复核当前来源与准确字符串值，保留历史原值且不制造历史字典快照。 W293：重基预览准确版本/摘要、可见路径分类和权威动态必填/逐行超限诊断，页面明确损失确认及编辑失效已实现；全部原行/精度/原事务和原命令保留。 W302：实际FORM字段受控处置Owner、准确历史原件、独立当前读取/批准/留存/撤销/hold资格、原操作恢复和处理工作台完成本地业务验收。W303重基消费已远端采用。 W303：真实隐藏损失请求、合格处置事实到本人原生重基的准确一次消费，以及当前资格/政策/hold校验、原件留存和原命令恢复完成本地业务验收。 W304核清WP12-03/04原25条直接AC和前置，补3项真实提交原子性/五上下文验证；确认#756合法data限额缺陷、旧入口adapter和准确重基前快照恢复仍未完，两原卡保持未关闭。 BUG756已远端修复。W316旧创建/保存/重基/提交/删除HTTP入口共用实际PersonalFormOwnerV2，保旧DTO成功形状、准确前驱与固定命令映射；历史目录只读且来源明确，补取消/冲突保行/删除刷新实际页面。 W317重基前准确快照显式恢复为新本人草稿，保旧发布版本、精确值、源草稿及完整动作链；当前字段投影、留存、FILE可用性和同事务来源/回执约束，页面可确认与恢复未知原命令。 W318完成旧FORM准确版本到真实原生发布的显式当前来源映射、本人旧内容按当前字段受控披露，以及明确确认后复制为新本人原生草稿；旧行、精确值和UNVERIFIED_LEGACY历史标记保留。源/映射CAS及ABA、FILE实际资格、当前窗口/权限、最终会话和不可变来源/历史/原回执同事务；未知提交只恢复原命令。",
         "evidence_refs": [
           "docs/development/evidence/W275-01/DELIVERY.md",
           "docs/development/evidence/W285-01/DELIVERY.md",
@@ -198100,14 +198105,15 @@
           "docs/development/evidence/W303-01/DELIVERY.md",
           "docs/development/evidence/W304-01/DELIVERY.md",
           "docs/development/evidence/W316-01/DELIVERY.md",
-          "docs/development/evidence/W317-01/DELIVERY.md"
+          "docs/development/evidence/W317-01/DELIVERY.md",
+          "docs/development/evidence/W318-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
-        "window": "W317-01",
-        "as_of": "2026-11-04",
-        "report": "docs/development/evidence/W317-01/DELIVERY.md",
+        "window": "W318-01",
+        "as_of": "2026-11-08",
+        "report": "docs/development/evidence/W318-01/DELIVERY.md",
         "new_product_validation": true,
-        "remaining": "历史旧行内容披露/采用的准确来源映射；W305历史身份链核对尚未完成。原生服务节点实际Owner采用仍按各业务卡范围记录。",
+        "remaining": "原375=33DONE/2IN_PROGRESS/340PLANNED，原59=9闭环/50剩余，125目标/247正式验收不变。W305历史身份卡已DONE，原FORM汇总中仍称W305未完是旧记录，下一窗口按原AC统一核销WP12-03/04及W306前置；不以本局部窗口直接关闭整卡。无法准确映射的旧值/文件继续明确阻断并保留，历史转换执行与服务节点业务Owner按各原卡范围处理。隐私其他Owner仍有真实余项，W310预算末尾。",
         "new_behavioral_evidence": true
       },
       "wave293_rebase_preview": {
@@ -198261,9 +198267,10 @@
         }
       },
       "wave318_legacy_source_adoption": {
-        "status": "IMPLEMENTING",
+        "status": "VALIDATED_PENDING_REMOTE",
         "report": "docs/development/evidence/W318-01/DELIVERY.md",
-        "scope": "原WP12-03/04历史旧草稿的准确版本/来源/当前内容披露与显式向前采用。复用已交付原生PersonalFormOwnerV2、当前字段/FILE/留存政策、共同事务与原命令；准确旧源必须可核对，不以当前head补历史pin或伪造过去发布/实际人。对可核源明确预览和当前授权后复制为新本人原生草稿，保留旧行/旧来源及完整操作链；不可核源只给明确未核实目录/阻断，不返回未授权数据或盲目批迁。当前源变化/撤权与失败回滚、UNKNOWN原键恢复及真实页面采用均在本窗范围。W316旧HTTP适配和W317重基前恢复已完不重复；不执行既有环境迁移/转换/清理或生产部署。",
+        "scope": "W318完成旧FORM准确版本到真实原生发布的显式当前来源映射、本人旧内容按当前字段受控披露，以及明确确认后复制为新本人原生草稿；旧行、精确值和UNVERIFIED_LEGACY历史标记保留。源/映射CAS及ABA、FILE实际资格、当前窗口/权限、最终会话和不可变来源/历史/原回执同事务；未知提交只恢复原命令。",
+        "validation": "12项新增实际PostgreSQL18场景、13项受影响旧适配/快照恢复回归（含真实认证HTTP及两条Chrome流程）、16项Vue及vue-tsc通过。",
         "full_task_complete": false
       }
     },
@@ -198390,20 +198397,21 @@
         }
       },
       "scope_reconciliation": {
-        "classification": "明确实现余项",
-        "window": "W317-01",
-        "as_of": "2026-11-04",
-        "report": "docs/development/evidence/W317-01/DELIVERY.md",
+        "classification": "IMPLEMENTED_PARTIAL_PENDING_REMOTE",
+        "window": "W318-01",
+        "as_of": "2026-11-08",
+        "report": "docs/development/evidence/W318-01/DELIVERY.md",
         "new_product_validation": true,
         "new_behavioral_evidence": true,
         "formal_state_changed": false,
-        "delivered": "原生v2 DIRECT/DRAFT五上下文、真实同事务提交、当前授权及原命令恢复已有W275及后续实际采用。 W304核清WP12-03/04原25条直接AC和前置，补3项真实提交原子性/五上下文验证；确认#756合法data限额缺陷、旧入口adapter和准确重基前快照恢复仍未完，两原卡保持未关闭。 BUG756已远端修复。W316旧创建/保存/重基/提交/删除HTTP入口共用实际PersonalFormOwnerV2，保旧DTO成功形状、准确前驱与固定命令映射；历史目录只读且来源明确，补取消/冲突保行/删除刷新实际页面。 W317重基前准确快照显式恢复为新本人草稿，保旧发布版本、精确值、源草稿及完整动作链；当前字段投影、留存、FILE可用性和同事务来源/回执约束，页面可确认与恢复未知原命令。",
+        "delivered": "原生v2 DIRECT/DRAFT五上下文、真实同事务提交、当前授权及原命令恢复已有W275及后续实际采用。 W304核清WP12-03/04原25条直接AC和前置，补3项真实提交原子性/五上下文验证；确认#756合法data限额缺陷、旧入口adapter和准确重基前快照恢复仍未完，两原卡保持未关闭。 BUG756已远端修复。W316旧创建/保存/重基/提交/删除HTTP入口共用实际PersonalFormOwnerV2，保旧DTO成功形状、准确前驱与固定命令映射；历史目录只读且来源明确，补取消/冲突保行/删除刷新实际页面。 W317重基前准确快照显式恢复为新本人草稿，保旧发布版本、精确值、源草稿及完整动作链；当前字段投影、留存、FILE可用性和同事务来源/回执约束，页面可确认与恢复未知原命令。 W318完成旧FORM准确版本到真实原生发布的显式当前来源映射、本人旧内容按当前字段受控披露，以及明确确认后复制为新本人原生草稿；旧行、精确值和UNVERIFIED_LEGACY历史标记保留。源/映射CAS及ABA、FILE实际资格、当前窗口/权限、最终会话和不可变来源/历史/原回执同事务；未知提交只恢复原命令。",
         "evidence_refs": [
           "docs/development/evidence/W304-01/DELIVERY.md",
           "docs/development/evidence/W316-01/DELIVERY.md",
-          "docs/development/evidence/W317-01/DELIVERY.md"
+          "docs/development/evidence/W317-01/DELIVERY.md",
+          "docs/development/evidence/W318-01/DELIVERY.md"
         ],
-        "remaining": "历史旧行内容披露/采用的准确来源映射；W305历史身份链核对尚未完成。原生服务节点实际Owner采用仍按各业务卡范围记录。"
+        "remaining": "原375=33DONE/2IN_PROGRESS/340PLANNED，原59=9闭环/50剩余，125目标/247正式验收不变。W305历史身份卡已DONE，原FORM汇总中仍称W305未完是旧记录，下一窗口按原AC统一核销WP12-03/04及W306前置；不以本局部窗口直接关闭整卡。无法准确映射的旧值/文件继续明确阻断并保留，历史转换执行与服务节点业务Owner按各原卡范围处理。隐私其他Owner仍有真实余项，W310预算末尾。"
       },
       "wave316_legacy_adoption": {
         "status": "DELIVERED_REMOTE_VERIFIED",
@@ -198466,9 +198474,10 @@
         }
       },
       "wave318_legacy_source_adoption": {
-        "status": "IMPLEMENTING",
+        "status": "VALIDATED_PENDING_REMOTE",
         "report": "docs/development/evidence/W318-01/DELIVERY.md",
-        "scope": "原WP12-03/04历史旧草稿的准确版本/来源/当前内容披露与显式向前采用。复用已交付原生PersonalFormOwnerV2、当前字段/FILE/留存政策、共同事务与原命令；准确旧源必须可核对，不以当前head补历史pin或伪造过去发布/实际人。对可核源明确预览和当前授权后复制为新本人原生草稿，保留旧行/旧来源及完整操作链；不可核源只给明确未核实目录/阻断，不返回未授权数据或盲目批迁。当前源变化/撤权与失败回滚、UNKNOWN原键恢复及真实页面采用均在本窗范围。W316旧HTTP适配和W317重基前恢复已完不重复；不执行既有环境迁移/转换/清理或生产部署。",
+        "scope": "W318完成旧FORM准确版本到真实原生发布的显式当前来源映射、本人旧内容按当前字段受控披露，以及明确确认后复制为新本人原生草稿；旧行、精确值和UNVERIFIED_LEGACY历史标记保留。源/映射CAS及ABA、FILE实际资格、当前窗口/权限、最终会话和不可变来源/历史/原回执同事务；未知提交只恢复原命令。",
+        "validation": "12项新增实际PostgreSQL18场景、13项受影响旧适配/快照恢复回归（含真实认证HTTP及两条Chrome流程）、16项Vue及vue-tsc通过。",
         "full_task_complete": false
       }
     },
@@ -203792,7 +203801,7 @@
       "path": "docs/development/dispatch/20261108-wave318/README.md",
       "baseline_sha": "d72b00396bfa8845fbea135a181cc8dd20432dcc",
       "registered_at": "2026-11-08T11:49:05.752826+00:00",
-      "phase": "IMPLEMENTING",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -203819,17 +203828,17 @@
           "title": "旧草稿准确内容披露与显式向前采用",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "IMPLEMENTING",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w318-01",
           "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
@@ -203839,14 +203848,33 @@
             "Main:personal-form-original-journal",
             "Main:field-disclosure-policy",
             "Main:form-file-binding"
-          ]
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W318-01/DELIVERY.md",
+          "validation": "12项新增实际PostgreSQL18场景、13项受影响旧适配/快照恢复回归（含真实认证HTTP及两条Chrome流程）、16项Vue及vue-tsc通过。",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave318-final-verification.json"
+          },
+          "local_validation": "PASS_AFFECTED_SCOPE"
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "原WP12-03/04历史旧草稿的准确版本/来源/当前内容披露与显式向前采用。复用已交付原生PersonalFormOwnerV2、当前字段/FILE/留存政策、共同事务与原命令；准确旧源必须可核对，不以当前head补历史pin或伪造过去发布/实际人。对可核源明确预览和当前授权后复制为新本人原生草稿，保留旧行/旧来源及完整操作链；不可核源只给明确未核实目录/阻断，不返回未授权数据或盲目批迁。当前源变化/撤权与失败回滚、UNKNOWN原键恢复及真实页面采用均在本窗范围。W316旧HTTP适配和W317重基前恢复已完不重复；不执行既有环境迁移/转换/清理或生产部署。"
+      "next_action": "W318正常收尾后按原AC核销FORM两卡与W306前置，24h目标继续。",
+      "lifecycle_snapshot": {
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_seat_released": false,
+        "main_branch_deleted": false,
+        "handoff_branch_deleted": false,
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave318-final-verification.json"
+      }
     },
     "wave_history": [
       {
@@ -243758,8 +243786,8 @@
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
       "started_at": "2026-11-04T00:22:36+00:00",
-      "effective_seconds_recorded": 50575,
-      "timing_snapshot_at": "2026-11-08T11:49:05.752826+00:00",
+      "effective_seconds_recorded": 54545,
+      "timing_snapshot_at": "2026-11-08T12:55:14.897302+00:00",
       "timing_source": "41997 prior effective seconds plus continuous OS monotonic time from 2026-11-08T09:26:06Z; pause/pre-sample preparation excluded. Native panel is active after reactivation but omits the earlier authorized resumed segment; never sum the clocks.",
       "next_reestimate_at_effective_seconds": 57600,
       "estimate_hours": [
@@ -244982,10 +245010,20 @@
           ],
           "estimate_confidence": "LOW_CURRENT_LEGACY_SOURCE_MAPPING_RISK",
           "estimate_kind": "ACTUAL_CODEX_EXECUTION_ROLLING_14H_CALIBRATION",
-          "state": "IN_PROGRESS",
+          "state": "VERIFYING",
           "started_at": "2026-11-08T11:49:05.752826+00:00",
           "effective_start": 50575,
-          "scope_refinement": "原WP12-03/04历史旧草稿的准确版本/来源/当前内容披露与显式向前采用。复用已交付原生PersonalFormOwnerV2、当前字段/FILE/留存政策、共同事务与原命令；准确旧源必须可核对，不以当前head补历史pin或伪造过去发布/实际人。对可核源明确预览和当前授权后复制为新本人原生草稿，保留旧行/旧来源及完整操作链；不可核源只给明确未核实目录/阻断，不返回未授权数据或盲目批迁。当前源变化/撤权与失败回滚、UNKNOWN原键恢复及真实页面采用均在本窗范围。W316旧HTTP适配和W317重基前恢复已完不重复；不执行既有环境迁移/转换/清理或生产部署。"
+          "scope_refinement": "原WP12-03/04历史旧草稿的准确版本/来源/当前内容披露与显式向前采用。复用已交付原生PersonalFormOwnerV2、当前字段/FILE/留存政策、共同事务与原命令；准确旧源必须可核对，不以当前head补历史pin或伪造过去发布/实际人。对可核源明确预览和当前授权后复制为新本人原生草稿，保留旧行/旧来源及完整操作链；不可核源只给明确未核实目录/阻断，不返回未授权数据或盲目批迁。当前源变化/撤权与失败回滚、UNKNOWN原键恢复及真实页面采用均在本窗范围。W316旧HTTP适配和W317重基前恢复已完不重复；不执行既有环境迁移/转换/清理或生产部署。",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W318-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "main_branch_deleted": false,
+            "handoff_branch_deleted": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave318-final-verification.json"
+          }
         },
         {
           "id": "W310-01",
@@ -245204,7 +245242,7 @@
           "historical_conflicts": "Preserved immutable; existing environments not inspected or migrated. Separate controlled forward recovery required for affected existing records."
         }
       ],
-      "next_priority": "W318 exact legacy draft source/disclosure and explicit forward adoption, then W306 prerequisites; privacy remaining Owners and W310 budget end.",
+      "next_priority": "Reconcile original WP12-03/04 AC and W306 prerequisites; privacy real remaining Owners; W310 budget-end",
       "extra_bug_deliveries": [
         {
           "id": "BUG751",

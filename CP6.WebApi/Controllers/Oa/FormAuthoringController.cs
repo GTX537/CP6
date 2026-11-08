@@ -9,6 +9,15 @@ namespace CP6.WebApi.Controllers.Oa;
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public sealed class FormAuthoringController(FormAuthoringOwnerV2 owner) : ControllerBase
 {
+    [HttpGet("/api/oa/v2/legacy-form-sources/preview")]
+    public Task<IActionResult> LegacySourcePreview([FromQuery]Guid legacyVersionId,[FromQuery]string targetKey,[FromQuery]Guid targetVersionId,CancellationToken ct)
+        =>Run(async()=>await owner.LegacySourcePreviewAsync(legacyVersionId,targetKey,targetVersionId,ct));
+    [HttpPost("/api/oa/v2/legacy-form-sources"),RequestSizeLimit(65536)]
+    public Task<IActionResult> LegacySource(LegacyFormSourceCommandV1 input,CancellationToken ct)=>Run(async()=>await owner.ConfigureLegacySourceAsync(input,ct));
+    [HttpGet("/api/oa/v2/legacy-form-sources/operations/{id:guid}")]
+    public Task<IActionResult> LegacySourceOriginal(Guid id,CancellationToken ct)=>Run(async()=>await owner.LegacySourceOperationAsync(id,false,ct));
+    [HttpPost("/api/oa/v2/legacy-form-sources/operations/{id:guid}/close")]
+    public Task<IActionResult> LegacySourceClose(Guid id,CancellationToken ct)=>Run(async()=>await owner.LegacySourceOperationAsync(id,true,ct));
     [HttpGet("{key}/compare")]
     public Task<IActionResult> Compare(string key, [FromQuery] Guid leftVersionId, [FromQuery] Guid rightVersionId, [FromQuery] int page = 1, CancellationToken ct = default)
         => Run(async () => await owner.CompareAsync(key, leftVersionId, rightVersionId, page, ct));
