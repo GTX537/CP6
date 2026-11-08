@@ -5,3 +5,9 @@ W315为W314已完成的Main身份处置建立准确不可变墓碑及原生用�
 基线Main 9990466a51cb6b0d5c965f6ea93cadb58f188e53，Handoff fa46ae4771689a298d896e972cd2ea7406414e79；COORD单人DEV1/DEV2。W314已完整收尾：Main770/Handoff291正常合并、准确分支删除、固定工作区干净、官方finish释放；实测1447秒。用户已恢复原24h目标，当前累计采样44429秒，4日暂停和恢复计时前资料准备不计。独立monotonic依据保持，面板API仍paused不伪称已变更。
 
 预计1–2.5h实际Codex执行，低置信；恢复跨库UNKNOWN、真实pg_dump/pg_restore新库、墓碑写入屏障和API隔离为新增风险，先红测再实现。仅新建隔离PG18与模拟业务资料验收，一次任务集中审查。原37533DONE/2IN_PROGRESS/340PLANNED，原59余50；下一50400秒校准。W315后沿原卡剩余继续补入，W310预算末尾。
+
+## DELIVERY
+
+W315完成已接Main身份处置的不可变墓碑与原生写入屏障，真实新库备份恢复候选经独立源权威、冻结范围/版本、独立审批和当前能力重施准确处置；双库提交未知保留责任并显式接回原回执，候选隐私门在源结果及当前来源未核实前失败关闭。只覆盖Main.Identity.Profile.v1，整体PARTIAL。 13项当前隔离PostgreSQL18恢复/墓碑场景、17项受影响原处置/批准回归（含真实认证HTTP和Chrome）、15项Vue行为及vue-tsc通过。 [报告](../../evidence/W315-01/DELIVERY.md)。
+
+原375=33DONE/2IN_PROGRESS/340PLANNED，原59=9闭环/50剩余，125目标/247正式验收不变。WP02-15仍余导出载荷/安全审计/OA与PLM业务历史/FILE/CRM等其他Owner处置、整租户导出及受控处置、外部副本及完整环境恢复；W306仍待WP12-03/04历史准确内容披露/显式采用。 当前采样49750秒；下一原FORM历史内容采用及W306前置，W310预算末尾。最终分支/工作区/席位见wave315-final-verification.json。

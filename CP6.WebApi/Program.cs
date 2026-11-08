@@ -1369,6 +1369,8 @@ builder.Services.AddScoped<CP6.Core.Services.Platform.IImpersonationService, CP6
 builder.Services.AddScoped<CP6.Core.Services.Platform.IGdprService, CP6.Core.Services.Platform.GdprService>();
 builder.Services.AddScoped<CP6.Core.Services.Platform.PrivacyExportOwnerV1>();
 builder.Services.AddScoped<CP6.Core.Services.Platform.PrivacyDispositionOwnerV1>();
+var privacyRestore=CP6.WebApi.Configuration.PrivacyRestoreConfigurationV1.Bind(builder.Configuration);
+builder.Services.Configure<CP6.Core.Services.Platform.PrivacyRestoreOptionsV1>(o=>{o.ControlConnectionString=privacyRestore.ControlConnectionString;o.Candidates=privacyRestore.Candidates;});
 
 // S 类 #2 2FA（T3）：邮件发送器工厂。
 //   - 配 Email:Smtp:Host → 真发（SmtpEmailSender）。
@@ -3533,6 +3535,7 @@ app.UseCors("AllowAll");
 // UseRouting 後・エンドポイント前に挿入。
 app.UseHttpMetrics();
 
+app.UseMiddleware<CP6.WebApi.Middleware.PrivacyRestoreAdmissionMiddlewareV1>();
 app.UseAuthentication();
 
 // 章10 多租户：从 JWT tenant_id 解析当前租户写入 ITenantContext（须在 UseAuthentication 之后，User 已解析）。

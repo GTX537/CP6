@@ -34,6 +34,7 @@
       <el-tab-pane :label="t('platform.gdpr.eraseTenant')" name="eraseTenant">
         <el-alert title="旧的租户直接擦除入口已关闭。须先完成精确范围、独立审批和保留限制核对；当前尚未提供整租户处置执行。" type="warning" :closable="false" />
       </el-tab-pane>
+      <el-tab-pane label="恢复候选" name="restoreCandidate"><PrivacyRestorePanel /></el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -44,6 +45,7 @@ import { useI18n } from 'vue-i18n'
 import { gdprApi } from '@/api/platform/gdpr'
 import PrivacyExportPanel from '@/components/platform/PrivacyExportPanel.vue'
 import PrivacyDispositionPanel from '@/components/platform/PrivacyDispositionPanel.vue'
+import PrivacyRestorePanel from '@/components/platform/PrivacyRestorePanel.vue'
 
 const { t } = useI18n({ useScope: 'global' })
 // The local scope notice remains available before server-managed language packs load.
