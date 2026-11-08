@@ -30,6 +30,10 @@ public sealed class PrivacyDispositionControllerV1(IServiceScopeFactory scopes,I
     public Task<IActionResult> Decide(Guid id,PrivacyDispositionDecisionV1 input,CancellationToken ct)=>Run((o,s)=>o.DecideAsync(id,input,s,ct));
     [HttpGet("operations/{id:guid}")]
     public Task<IActionResult> Operation(Guid id,CancellationToken ct)=>Run((o,s)=>o.OperationAsync(id,false,s,ct));
+    [HttpGet("plans/{id:guid}/execution")]
+    public Task<IActionResult> Execution(Guid id,CancellationToken ct)=>Run((o,s)=>o.ExecutionAsync(id,s,ct));
+    [HttpPost("plans/{id:guid}/execute"),RequestSizeLimit(65536)]
+    public Task<IActionResult> Execute(Guid id,PrivacyDispositionExecuteV1 input,CancellationToken ct)=>Run((o,s)=>o.ExecuteAsync(id,input,s,ct));
     [HttpPost("operations/{id:guid}/close")]
     public Task<IActionResult> Close(Guid id,CancellationToken ct)=>Run((o,s)=>o.OperationAsync(id,true,s,ct));
     private async Task<IActionResult> Run<T>(Func<PrivacyDispositionOwnerV1,TenantManagementSessionV1,Task<T>> action)

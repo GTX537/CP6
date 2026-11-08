@@ -41,6 +41,10 @@ public class CP6Context : DbContext, IDataProtectionKeyContext
         return new IdentitySnapshotWriter(this, _identity!).WriteCurrentAsync(tenantId, aggregate, ct);
     }
 
+    // Caller has already required this context's configured writer before its native source mutation.
+    internal Task CapturePrivacyIdentityInvalidationAsync(Guid tenantId,Guid userId,CancellationToken ct)
+        =>new IdentitySnapshotWriter(this,_identity!).WriteInvalidatedUserAsync(tenantId,userId,ct);
+
     /// <summary>New federation writes require this exact context's atomic identity/outbox adoption.</summary>
     public void RequireIdentityCapture(Guid tenantId)
     {

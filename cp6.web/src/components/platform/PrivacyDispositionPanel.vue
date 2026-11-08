@@ -1,7 +1,7 @@
 <template>
   <section class="privacy-disposition-panel">
     <h3>主体资料处置计划</h3>
-    <p>先预览精确范围，再由独立审批人决定。批准不会自动更改资料；当前尚未提供擦除执行。范围外的业务记录、历史资料和副本仍然保留。</p>
+    <p>先预览精确范围，再由独立审批人决定。批准后须另行确认执行。执行会清理列出的 Main 身份资料、停用登录并撤销认证材料；范围外的业务记录、历史资料和副本仍然保留。</p>
     <el-button :disabled="busy" @click="load">读取处置权限与原操作</el-button>
     <el-alert v-if="message" :title="message" type="info" :closable="false" class="notice" />
     <div v-if="pending" class="notice">
@@ -56,14 +56,26 @@
       <p>字段：{{ plan.scope.fields.join('、') }}</p>
       <p>拟执行效果：{{ plan.scope.effects.map(effectName).join('；') }}</p>
       <p>未覆盖：{{ plan.scope.uncoveredOwners.map(ownerName).join('；') }}</p>
-      <p>当前批准有效：{{ plan.approvalCurrent ? '是' : '否' }}。尚未执行资料处置。</p>
+      <p>当前批准有效：{{ plan.approvalCurrent ? '是' : '否' }}。<span v-if="!plan.execution">尚未执行资料处置。</span></p>
       <p v-if="plan.currentBlockers.length">当前限制：{{ plan.currentBlockers.map(blockerName).join('；') }}</p>
       <p v-if="plan.holdReviewOverdue">保留限制已到复核期限，仍然生效。</p>
       <p v-if="plan.requesterId === context?.actorId">申请人不能审批自己的计划。</p>
       <el-input v-model="decisionRef" aria-label="审批依据引用" placeholder="审批或撤销依据引用 UUID" :disabled="locked" />
-      <el-button type="primary" :disabled="locked || !decisionReady || !independent || plan.state !== 'REQUESTED' || plan.currentBlockers.length > 0" @click="decide('APPROVE')">独立批准计划</el-button>
-      <el-button :disabled="locked || !decisionReady || !independent || plan.state !== 'REQUESTED'" @click="decide('REJECT')">拒绝计划</el-button>
-      <el-button type="warning" :disabled="locked || !uuid(decisionRef) || !can('revoke') || !['REQUESTED','APPROVED'].includes(plan.state)" @click="decide('REVOKE')">撤销计划</el-button>
+      <el-button type="primary" :disabled="locked || !!plan.execution || !decisionReady || !independent || plan.state !== 'REQUESTED' || plan.currentBlockers.length > 0" @click="decide('APPROVE')">独立批准计划</el-button>
+      <el-button :disabled="locked || !!plan.execution || !decisionReady || !independent || plan.state !== 'REQUESTED'" @click="decide('REJECT')">拒绝计划</el-button>
+      <el-button type="warning" :disabled="locked || !!plan.execution || !uuid(decisionRef) || !can('revoke') || !['REQUESTED','APPROVED'].includes(plan.state)" @click="decide('REVOKE')">撤销计划</el-button>
+      <div class="notice">
+        <el-input v-model="confirmationRef" aria-label="执行确认引用" placeholder="执行确认依据引用 UUID" :disabled="locked || !!plan.execution" />
+        <el-button type="danger" :disabled="locked || !uuid(confirmationRef) || !can('execute') || !plan.approvalCurrent || !!plan.execution" @click="execute">执行已批准的主体匿名化</el-button>
+        <p>确认执行不可逆地清理这些字段和认证材料。此页面不提供还原，已下载副本也不会因此收回。</p>
+      </div>
+      <div v-if="plan.execution" class="execution-result">
+        <h4>Main 身份资料已处置 · 整体仍为部分范围</h4>
+        <p>执行人：{{ plan.execution.operatorId }} · 时间：{{ plan.execution.occurredAt }} · 原操作：{{ plan.execution.operationId }}</p>
+        <p>原版本：{{ plan.execution.beforeVersion }} · 处置后版本：{{ plan.execution.afterVersion }}</p>
+        <p>尚未覆盖：{{ plan.execution.uncoveredOwners.map(ownerName).join('；') }}</p>
+        <p>这是原处置回执，查询不会再次匿名化。后续 hold 或批准失效不会撤回已提交的处置。</p>
+      </div>
     </div>
     <el-alert v-if="storageError" :title="storageError" type="error" :closable="false" />
   </section>
@@ -75,7 +87,7 @@ import { AUTH_EVENT, identityStamp } from '@/auth/identity'
 import { privacyDispositionApi as api, type DispositionContext, type DispositionHold, type DispositionPolicy, type DispositionPreview, type DispositionPlan, type DispositionOperation, type DispositionDecision } from '@/api/platform/privacyDisposition'
 const context = ref<DispositionContext | null>(null), hold = ref<DispositionHold | null>(null), policy = ref<DispositionPolicy | null>(null)
 const previewResult = ref<DispositionPreview | null>(null), plan = ref<DispositionPlan | null>(null)
-const busy = ref(false), pending = ref(''), message = ref(''), storageError = ref(''), planRef = ref(''), decisionRef = ref('')
+const busy = ref(false), pending = ref(''), message = ref(''), storageError = ref(''), planRef = ref(''), decisionRef = ref(''), confirmationRef = ref('')
 const policyFor = ref(''), holdFor = ref('')
 const draft = reactive({ targetTenantId: '', subjectId: '', policyId: '', policyBasis: '', policyEnabled: true, requestRef: '', holdBasis: '', reviewAt: '' })
 let stamp = identityStamp(), disposed = false, resolvedOperation = ''
@@ -94,8 +106,8 @@ const previewMatches = computed(() => { const s = previewResult.value?.scope; re
 const independent = computed(() => !!plan.value && plan.value.requesterId !== context.value?.actorId && can('approve'))
 const decisionReady = computed(() => uuid(decisionRef.value))
 const effectName = (v: string) => ({ PSEUDONYMIZE_LOGIN_NAME_PRESERVE_STABLE_ID: '登录名去标识化，保留稳定用户 ID', CLEAR_LISTED_PROFILE_FIELDS: '清理列出的资料字段', DISABLE_LOGIN_AND_REVOKE_AUTHENTICATION_MATERIAL: '停用登录并撤销认证材料' }[v] || v)
-const ownerName = (v: string) => ({ 'MAIN.SECURITY_LOG_CONTENT': '安全日志内容', 'MAIN.AUTHORIZATION_AND_ORGANIZATION_REFERENCES': '授权及组织关联', 'MAIN.OA_AND_PLM_HISTORY': 'OA 和 PLM 历史', CRM_BUSINESS_AND_HISTORY: 'CRM 业务及历史', FILE_AND_PRIOR_EXPORT_COPIES: '文件及既有导出副本', BACKUPS_AND_EXTERNAL_COPIES: '备份及外部副本', UNREGISTERED_OWNERS: '尚未接入的业务来源' }[v] || v)
-const blockerName = (v: string) => ({ ACTIVE_HOLD: '保留限制生效', POLICY_DISABLED: '政策停用', TARGET_VERSION_CHANGED: '主体版本已变化', POLICY_VERSION_CHANGED: '政策版本已变化', HOLD_VERSION_CHANGED: '保留限制版本已变化', APPROVER_AUTHORITY_CHANGED: '审批人权限已变化', PLATFORM_AUTHORITY_MUST_BE_REVOKED_SEPARATELY: '须先独立撤销主体的平台权限', PLATFORM_TENANT_PROTECTED: '平台租户受保护' }[v] || v)
+const ownerName = (v: string) => ({ 'MAIN.SECURITY_LOG_CONTENT': '安全日志内容', 'MAIN.AUTHORIZATION_AND_ORGANIZATION_REFERENCES': '授权及组织关联', 'MAIN.OA_AND_PLM_HISTORY': 'OA 和 PLM 历史', CRM_BUSINESS_AND_HISTORY: 'CRM 业务及历史', FILE_AND_PRIOR_EXPORT_COPIES: '文件及既有导出副本', BACKUPS_AND_EXTERNAL_COPIES: '备份及外部副本', UNREGISTERED_OWNERS: '尚未接入的业务来源（含字段和操作审计历史）' }[v] || v)
+const blockerName = (v: string) => ({ ACTIVE_HOLD: '保留限制生效', POLICY_DISABLED: '政策停用', TARGET_VERSION_CHANGED: '主体版本已变化', POLICY_VERSION_CHANGED: '政策版本已变化', HOLD_VERSION_CHANGED: '保留限制版本已变化', APPROVER_AUTHORITY_CHANGED: '审批人权限已变化', PLATFORM_AUTHORITY_MUST_BE_REVOKED_SEPARATELY: '须先独立撤销主体的平台权限', PLATFORM_TENANT_PROTECTED: '平台租户受保护', SUBJECT_PROFILE_ALREADY_ANONYMIZED: '该主体的身份资料已经匿名化' }[v] || v)
 const stateName = (v: string) => ({ REQUESTED: '待独立审批', APPROVED: '已批准', REJECTED: '已拒绝', REVOKED: '已撤销' }[v] || v)
 function key() { const c = context.value!; return `cp6-privacy-disposition-v1:${c.environmentId}:${c.actorTenantId}:${c.actorId}` }
 function stored() { const value = localStorage.getItem(key()) || ''; if (value && !uuid(value)) throw new Error('原操作记录无效，请保留记录并修复浏览器存储。'); return value }
@@ -105,7 +117,7 @@ async function apply(op: DispositionOperation, start: string) {
   if (!active(start)) return
   if (op.state === 'NOT_FOUND') { pending.value = op.operationId; message.value = '尚未查到原结果，可查询或关闭；不能另行重复提交。'; return }
   pending.value = ''; resolvedOperation = op.operationId; previewResult.value = null
-  message.value = op.state === 'CLOSED' ? '原操作已关闭，迟到请求不会改变计划。' : '已读取原操作结果；批准不会自动更改主体资料。'
+  message.value = op.state === 'CLOSED' ? '原操作已关闭，迟到请求不会改变计划。' : op.execution ? '已读取原处置回执，其他业务资料仍有未覆盖范围。' : '已读取原操作结果；批准不会自动更改主体资料。'
   if (op.state === 'CLOSED') return
   if (op.planId) { const value = await api.plan(op.planId); if (active(start)) { planRef.value = op.planId; plan.value = value } }
   if (op.kind === 'POLICY' && op.policyId) { const value = await api.policy(op.policyId); if (active(start)) { draft.policyId = op.policyId; policy.value = value; policyFor.value = op.policyId } }
@@ -161,10 +173,15 @@ async function decide(decision: DispositionDecision['decision']) {
   const id = plan.value.planId, command = { expectedVersion: plan.value.version, decision, decisionRef: decisionRef.value }
   await mutate(`${decision === 'APPROVE' ? '独立批准' : decision === 'REJECT' ? '拒绝' : '撤销'}计划 ${id}；依据 ${command.decisionRef}。批准不等于已经执行。`, operationId => api.decide(id, { operationId, ...command }))
 }
+async function execute() {
+  if (!plan.value?.approvalCurrent || plan.value.execution || !can('execute') || !uuid(confirmationRef.value)) return
+  const p = plan.value, command = { expectedVersion: p.version, expectedScopeDigest: p.scopeDigest, confirmationRef: confirmationRef.value }
+  await mutate(`执行主体 ${p.scope.subjectId}（租户 ${p.scope.targetTenantId}）的已批准匿名化。将清理 ${p.scope.fields.join('、')}，停用登录并撤销认证材料；不可在此还原。其他业务历史、文件和外部副本尚未覆盖。确认依据 ${command.confirmationRef}。`, operationId => api.execute(p.planId, { operationId, ...command }))
+}
 function identityChanged() {
   const next = identityStamp(); if (next === stamp) return
   stamp = next; resolvedOperation = ''; context.value = null; hold.value = null; policy.value = null; previewResult.value = null; plan.value = null
-  pending.value = ''; planRef.value = ''; decisionRef.value = ''; policyFor.value = ''; holdFor.value = ''; busy.value = false; message.value = ''; storageError.value = ''
+  pending.value = ''; planRef.value = ''; decisionRef.value = ''; confirmationRef.value = ''; policyFor.value = ''; holdFor.value = ''; busy.value = false; message.value = ''; storageError.value = ''
   Object.assign(draft, { targetTenantId: '', subjectId: '', policyId: '', policyBasis: '', policyEnabled: true, requestRef: '', holdBasis: '', reviewAt: '' })
 }
 window.addEventListener(AUTH_EVENT, identityChanged); window.addEventListener('storage', identityChanged)

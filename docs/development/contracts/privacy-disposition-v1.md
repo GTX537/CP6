@@ -28,4 +28,18 @@ W313 是 WP02-15 / SYS-PRIV-01 的局部交付：版本化政策、精确预览�
 
 参见 [W313 交付](../evidence/W313-01/DELIVERY.md)。仅在本地新建 PostgreSQL 18 隔离夹具应用迁移；模拟用户、政策依据、申请和审批资料用于实际业务流程验证。没有迁移既有数据库或生产部署。
 
-用户要求完成本小任务后暂停，额度重置后再开工。W313 正常采用、分支处置及官方 finish 后暂停 24 小时目标；W314 实际 Owner 执行、W315 恢复及其他原卡余项尚未开始。
+W313 正常采用、分支处置及官方 finish 后曾按用户要求暂停。用户于2026-11-08明确继续目标；W314下述执行属于本次新交付，W315恢复及其他原卡余项继续按台账登记。
+
+## W314：已批准 Main 身份资料的实际执行
+
+`POST /plans/{id}/execute` 接受 OperationId、ExpectedVersion（准确批准事件）、ExpectedScopeDigest 和 ConfirmationRef。当前 read 可恢复原操作；首次执行另核独立 execute 能力，不以平台身份或 approve 能力代替。精确计划必须仍为 APPROVED 且当前有效，目标、政策、hold、审批人启用/平台身份与 approve 权限在共同 IAM 门内核对，保持到效果提交。旧版本、旧范围或已撤销计划不能执行。
+
+真实 Owner 为 `Main.Identity.Profile.v1`，仅对冻结目标租户/主体执行该计划的 `ANONYMIZE_IDENTITY_PROFILE`。UserName 使用完整稳定用户 UUID 去标识化并保留原用户 ID；列出个人字段清空，账户停用，密码替换为随机不可取得材料的合法 BCrypt 哈希，清理 TOTP 和快速切换 PIN、关闭密码回退并推进 AuthenticationEpoch；同租户主体的刷新令牌和浏览器会话撤销。原角色/组织引用和原历史不删除。没有借其他 Owner 的 APPLIED 冒称全域成功。
+
+执行必须具备当前数据上下文针对目标租户的实际身份快照/Outbox配置。复用已有 IdentitySnapshotWriter 生成停用用户投影并撤销 CRM 浏览器授权及其令牌，必要事件参加同一 PostgreSQL 事务。未配置时在写入前明确503，不降级成功。源用户字段通过精确原生写入修改，避免 EF 字段审计复制旧姓名/邮箱等原值；只为身份快照/消息执行 SaveChanges。此限制不删除已存在的字段、操作、安全审计历史；这些仍位于明确未接入的历史 Owner 范围。
+
+同事务保存不可变 execution、安全回执和 Main Owner journal；回执只含稳定标识、计划/申请人/审批人/执行人、确认依据、政策与前后版本、字段分类和未覆盖清单。`OwnerOutcome=APPLIED` 表示此真实身份 Owner 已完成；整体 `State=PARTIAL`，其他业务/历史/文件/外副本仍未覆盖。相同原操作只回原结果，撤掉 execute 后仍可在当前 read 下恢复。提交应答丢失继续 UNKNOWN 原键协议；最终会话失败回滚用户、会话/授权、身份事件、execution 和 journal。
+
+`GET /plans/{id}/execution` 在当前 read 下读取准确原回执。不同 actor 的原操作隔离；另一 actor 可在相同操作者租户且具 read 时查看该计划的安全处置回执，不因此取得新执行权。另换操作键重复执行已完成计划返回409，不能把新操作伪装成第二次成功。已有 execution 的计划不能再批准、拒绝或撤销，后来 hold 或撤权不抹去已提交的事实。已处置主体阻止再申请同类身份匿名化；W315另行接入恢复及后续写入墓碑，不据本窗宣称备份恢复已安全。
+
+页面通过独立执行确认列明主体、字段、不可逆影响、停用认证和缺项。浏览器仍只保存分区后的操作 UUID；取消不发送，未知只查原键，刷新不自动重发，显示历史真实处置与整体PARTIAL。无既有数据库迁移或真实环境擦除。本次验证和剩余见 [W314交付](../evidence/W314-01/DELIVERY.md)。
