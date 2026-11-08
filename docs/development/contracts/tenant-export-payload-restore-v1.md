@@ -22,4 +22,4 @@ brainstorming采用独立PrivacyRestoreTenantPayloadUnitV1和父结果TenantPayl
 
 先红测当前unsupported503；随后前向DDL、独立Unit/Owner候选适配、源政策/hold及父结果/页面。实际隔离PG18/pg_dump/restore覆盖准确删除/后生制品缺失0、同revision损坏字节/孤立载荷拒绝、当前源政策/hold/ABA与候选过时hold、原生fence缺失、最终会话/静默DELETE actual commit拒绝、候选及源COMMIT答复丢失/原键恢复、认证HTTP与两人Chrome、相关Vue/类型及无新Owner旧wire/实际恢复回归。只按明确风险定向验证，一次COORD集中SPEC/QUALITY自审，单报告及roadmap/四状态同步，正常采用/准确分支清理/官方finish。无Actions/生产部署/既有数据库迁移或恢复。
 
-原37536DONE/2IN_PROGRESS/337PLANNED，原59余47，125/247不变。W323实测2143秒(35分43秒)，再次低于1.75–2.75h；原有事务、页面和原生协议复用是主要原因。W324仅新增恢复采用但含新独立结果形状/候选边界，估0.75–1.5h低置信实际Codex执行；原24h尚余约2.4h，下次79200秒校准，预算末尾W310核销。较快继续真实余项或实际盘点，不空等凑时、不重开周期。
+原37536DONE/2IN_PROGRESS/337PLANNED，原59按原始清单校正为8闭环/51剩余，125/247不变。W323实测2143秒(35分43秒)，再次低于1.75–2.75h；原有事务、页面和原生协议复用是主要原因。W324仅新增恢复采用但含新独立结果形状/候选边界，估0.75–1.5h低置信实际Codex执行；原24h尚余约2.4h，下次79200秒校准，预算末尾W310核销。较快继续真实余项或实际盘点，不空等凑时、不重开周期。
