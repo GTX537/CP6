@@ -79,3 +79,14 @@ it('distinguishes actual export payload deletion from an absent copy that is onl
   await open(); expect(wrapper!.text()).toContain(`原生导出制品 ${candidate}：原处置已重施`); expect(wrapper!.text()).toContain('实际删除 321 字节')
   expect(wrapper!.text()).toContain(`原生导出制品 ${tenant}：原备份中不存在，墓碑已施加`); expect(wrapper!.text()).toContain('实际删除 0 字节'); expect(mock.execute).not.toHaveBeenCalled()
 })
+
+it('renders tenant payload original results without a subject and distinguishes actual deletion from two zero-byte absence states', async () => {
+  localStorage.setItem(key, `E:${op}`); mock.operation.mockResolvedValue({ operationId: op, state: 'APPLIED', units: [], aggregateState: 'PARTIAL', tenantPayloadUnits: [
+    { sourcePlanId: op, targetTenantId: tenant, artifactId: candidate, outcome: 'REAPPLIED', beforeState: 'PRESENT', removedBytes: 321 },
+    { sourcePlanId: actor, targetTenantId: tenant, artifactId: actor, outcome: 'ABSENT_FENCED', beforeState: 'ARTIFACT_ABSENT', removedBytes: 0 },
+    { sourcePlanId: env, targetTenantId: tenant, artifactId: env, outcome: 'ABSENT_FENCED', beforeState: 'PAYLOAD_ABSENT', removedBytes: 0 },
+  ] })
+  await open(); expect(wrapper!.text()).toContain(`租户导出制品 ${candidate}`); expect(wrapper!.text()).toContain('实际删除 321 字节')
+  expect(wrapper!.text()).toContain('原备份中制品不存在，墓碑已施加'); expect(wrapper!.text()).toContain('原备份中载荷已缺失，墓碑已施加')
+  expect(wrapper!.text()).not.toContain('主体 undefined'); expect(mock.execute).not.toHaveBeenCalled()
+})

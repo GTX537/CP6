@@ -36,7 +36,7 @@
         <el-button type="warning" :disabled="busy || ['REVOKED','DISPOSED'].includes(artifact.availability) || !can('tenant-revoke') || receipt.requesterId !== context?.actorId" @click="revoke">撤销租户制品下载</el-button>
       </div>
       <SubjectExportManifestView :manifest="receipt.manifest" />
-      <p>下载到期或撤销只关闭访问。租户制品的物理保留/处置、其他Owner及外部副本仍有独立剩余范围。</p>
+      <p>下载到期或撤销只关闭访问。本库租户载荷须经独立批准处置，恢复候选须重施已接受处置；其他来源及外部副本仍有剩余范围。</p>
     </div>
     <el-alert v-if="storageError" :title="storageError" type="error" :closable="false" />
   </section>

@@ -459,3 +459,27 @@ W322实测54分14秒，低于估计；W323估1.75–2.75h低置信，下一79200
 W323完成Main.Privacy.TenantExportPayload.v1当前库准确租户载荷处置：明确保留政策/独立申请批准/当前最终执行、全目标租户所有主体hold与ABA、真实字节删除/撤访问/最小原回执/墓碑同commit及原生防回填。无伪subject。新墓碑推进restore_epoch，未采用的新Owner恢复明确503并保持候选隔离，历史已提交原结果仍可恢复；不冒充备份或外部副本已清。 14项新增实际PostgreSQL18场景、13项受影响租户导出及主体载荷/安全字段恢复回归（含新增处置与既有租户下载Chrome）、23项Vue行为及vue-tsc通过。 [报告](../evidence/W323-01/DELIVERY.md)。
 
 原375=36DONE/2IN_PROGRESS/337PLANNED，原59=12闭环/47剩余，125目标/247正式验收不变。WP02-15仍余租户载荷恢复实际适配、未分类安全内容/不可归属事件、授权/组织引用、OA/PLM/CRM历史、FILE及其他来源副本、整租户全部Owner导出/处置、WAL/备份/外部副本和完整环境恢复。W306/W249/七天及已闭环FORM不重复；24h继续相邻真实余项，W310预算末尾。 当前采样77196秒，下次79200秒校准；最终分支/工作区/席位见wave323-final-verification.json。
+
+## W324 / 原24h继续租户载荷恢复
+
+W324采用Main.Privacy.TenantExportPayload.v1真实恢复副本：独立无subject的tenant恢复Unit、准确原制品元数据/revision/实际SHA、真实删除字节与缺失0分别记录，当前源保留政策/整租户hold和独立恢复批准，父回执/原生效果/墓碑/fence/候选开放同候选commit；继续SourceRoot→CandidateRoot与两次提交UNKNOWN责任，其他Owner及WAL/外部副本仍PARTIAL。
+
+Main `be6ec3bea15d3e0a6d54f1960f9f7eaabb13f641`，Handoff `7ffdab2f4f8a6b2ad36c99b20c00e87b66b987d9`，COORD单人固定DEV1/DEV2；W323 Main778/Handoff299已核两仓采用、准确清理和官方释放，实测2143秒。本窗累计77945秒，余约2.35h。
+
+W323实测35分43秒，低于估计；W324估0.75–1.5h低置信，下一79200秒校准，W310预算末尾。[实施合同](../contracts/tenant-export-payload-restore-v1.md)。
+
+## 22h实测校准 / W324执行中
+
+累计有效79283秒，约定86400秒尚余7117秒。W322实测3254秒(54分14秒)、W3232143秒(35分43秒)，复用既有事务/原生协议/页面比例高于估计。W324尚未交付，当前剩余受影响兼容/实际页面、集中审查和正常两仓收尾估0.25–0.75h低置信；按实际结果继续校正。随后W310预算末尾核对原375/59的真实剩余和本轮结果，不换新周期、不空等凑时、不用短窗冒24h。原37536DONE/2IN_PROGRESS/337PLANNED、59余47、125/247未变。
+
+连续monotonic保留41997秒以前恢复段，四日暂停和采样前准备不计，不加原生面板计数；详细采样`C:/Users/tt/CP6-planning-reports/20261017-foundation/wave324-22h-calibration.json`。
+
+## W324本地交付；24h继续
+
+W324完成Main.Privacy.TenantExportPayload.v1真实恢复采用：独立无subject的tenant Unit，准确原制品元数据/revision/实际SHA一次外部核对，真实删除与载荷缺失/整制品缺失0分别记录；当前源政策/全目标hold和独立恢复批准，父回执/实际效果/墓碑/fence/开放标记同候选commit，保持两次commit与原结果责任。其他Owner/WAL/外部副本及完整环境恢复仍PARTIAL。 14项新增实际PostgreSQL18场景、8项受影响live处置与既有身份/主体载荷/安全字段恢复回归（含新增恢复与既有处置Chrome）、25项Vue行为及vue-tsc通过。 [报告](../evidence/W324-01/DELIVERY.md)。
+
+原375=36DONE/2IN_PROGRESS/337PLANNED，原59=12闭环/47剩余，125目标/247正式验收不变。WP02-15仍余未分类安全内容/不可归属事件、授权/组织引用、OA/PLM/CRM历史、FILE及其他来源副本、整租户全部Owner导出/处置、WAL/备份/外部副本与完整环境恢复。当前新租户载荷此Owner的真实恢复已采用，不再列为未实现。W306/W249/七天及已闭环FORM不重复；下一W310预算末尾实际原375/59及工时核销，不另起周期。 当前采样80342秒，下次79200秒校准；最终分支/工作区/席位见wave324-final-verification.json。
+
+## 原59统计校正 / W324收尾
+
+统计校正：原始20261102-001406Z库存CSV的“已局部交付，整卡未关闭”59项与W250逐卡ID完全一致。当前仅其中8项DONE，剩51；WP12-03/04/08/10虽已完整DONE，却不在原59集合。旧followup把这4项一并从59扣减，造成47，现纠正51。375的36DONE/2IN_PROGRESS/337PLANNED和这4项合法完成均不回退，125/247不变；后续原卡逐项核销继续按原合同，不用新窗口数代替原59。此前47数字为旧计数错误，历史报告保留并由本校正说明取代当前统计。 [当前交付](../evidence/W324-01/DELIVERY.md)。

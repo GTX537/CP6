@@ -8,7 +8,7 @@ if (!output || !candidate) throw new Error('PRIVACY_RESTORE_BROWSER_ENVIRONMENT_
 await mkdir(output, { recursive: true })
 let server, browser, page
 const errors = [], failures = []
-let requests = 0, executions = 0, lostReply
+let requests = 0, executions = 0, lostReply, executeReplyDropped = false
 try {
   server = await createServer({ root: process.cwd(), server: { host: '127.0.0.1', port: 0, strictPort: true, fs: { allow: [process.cwd(), await realpath('node_modules')] } }, logLevel: 'error' })
   await server.listen(); const origin = `http://127.0.0.1:${server.httpServer.address().port}`
@@ -53,10 +53,10 @@ try {
   await form.getByRole('button', { name: '确认重施墓碑并核对开放门', exact: true }).click(); await cancel(); expect(executions).toBe(0)
   // The real host commits; only the browser's reply is deliberately dropped.
   await page.route(`**/api/platform/privacy-dispositions-v1/restore/plans/${planId}/execute`, async route => {
-    const response = await route.fetch(); expect(response.status()).toBe(200); lostReply = await response.json(); await route.abort('failed')
+    const response = await route.fetch(); expect(response.status()).toBe(200); lostReply = await response.json(); await route.abort('failed'); executeReplyDropped = true
   })
   await form.getByRole('button', { name: '确认重施墓碑并核对开放门', exact: true }).click(); await confirm()
-  await expect(form).toContainText('恢复原操作待确认'); await expect.poll(() => lostReply?.state).toBe('APPLIED'); expect(executions).toBe(1)
+  await expect(form).toContainText('恢复原操作待确认'); await expect.poll(() => executeReplyDropped).toBe(true); await expect.poll(() => lostReply?.state).toBe('APPLIED'); expect(executions).toBe(1)
   const record = await page.evaluate(() => Object.entries(localStorage).filter(([key]) => key.startsWith('cp6-privacy-restore-v1:')))
   expect(record).toHaveLength(1); expect(record[0][1]).toMatch(/^E:[0-9a-f-]{36}$/); expect(record[0][1].slice(2)).toBe(lostReply.operationId)
   await page.reload(); await page.locator('#tab-restoreCandidate').click()
@@ -76,8 +76,13 @@ try {
     await expect(form.locator('.restore-result')).toContainText(`安全事件 ${log}`)
     await expect(form.locator('.restore-result')).toContainText('实际置空 2 项，其他内容保留')
   }
+  if (process.env.CP6_TENANT_PAYLOAD_RESTORE_ARTIFACT) {
+    const artifact = process.env.CP6_TENANT_PAYLOAD_RESTORE_ARTIFACT, unit = lostReply.tenantPayloadUnits.find(x => x.artifactId === artifact)
+    expect(unit.owner).toBe('Main.Privacy.TenantExportPayload.v1'); expect(unit.outcome).toBe('REAPPLIED'); expect(unit.beforeState).toBe('PRESENT'); expect(unit.removedBytes).toBeGreaterThan(0); expect(unit).not.toHaveProperty('subjectId')
+    await expect(form.locator('.restore-result')).toContainText(`租户导出制品 ${artifact}`); await expect(form.locator('.restore-result')).toContainText(`实际删除 ${unit.removedBytes} 字节`)
+  }
   expect(errors).toEqual([])
-  await writeFile(path.join(output, 'result.json'), JSON.stringify({ result: 'PASS', planId, candidate, operationId: lostReply.operationId, internalApiMocked: false, actualExecuteResponseDeliberatelyDropped: true, planRequests: requests, executions, cancelCreatesNothing: true, originalRecoveredAfterReload: true, independentApprover: true, operationIdOnlyInStorage: true, pageErrors: errors, responseFailures: failures }, null, 2))
+  await writeFile(path.join(output, 'result.json'), JSON.stringify({ result: 'PASS', planId, candidate, operationId: lostReply.operationId, internalApiMocked: false, actualExecuteResponseDeliberatelyDropped: executeReplyDropped, tenantPayloadUnits: lostReply.tenantPayloadUnits || null, planRequests: requests, executions, cancelCreatesNothing: true, originalRecoveredAfterReload: true, independentApprover: true, operationIdOnlyInStorage: true, pageErrors: errors, responseFailures: failures }, null, 2))
 } catch (error) {
   if (page) await page.screenshot({ path: path.join(output, 'failure.png'), fullPage: true }).catch(() => {})
   await writeFile(path.join(output, 'failure.json'), JSON.stringify({ message: String(error), pageErrors: errors, responseFailures: failures }, null, 2)); throw error

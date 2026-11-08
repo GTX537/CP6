@@ -19,7 +19,7 @@
       <div v-if="previewResult" class="restore-preview">
         <p>目标库：{{ previewResult.scope.target.name }} · 数据库身份：{{ previewResult.scope.target.oid }}</p>
         <p>备份 SHA-256：{{ previewResult.scope.backupSha256 }}</p>
-        <p>已接身份墓碑：{{ previewResult.scope.tombstoneCount }} · 导出载荷墓碑：{{ previewResult.scope.exportPayloadTombstoneCount || 0 }} · 安全字段墓碑：{{ previewResult.scope.securityFieldTombstoneCount || 0 }}；当前来源版本：{{ previewResult.scope.sourceVersion }}</p>
+        <p>已接身份墓碑：{{ previewResult.scope.tombstoneCount }} · 导出载荷墓碑：{{ previewResult.scope.exportPayloadTombstoneCount || 0 }} · 安全字段墓碑：{{ previewResult.scope.securityFieldTombstoneCount || 0 }} · 租户载荷墓碑：{{ previewResult.scope.tenantPayloadTombstoneCount || 0 }}；当前来源版本：{{ previewResult.scope.sourceVersion }}</p>
         <p>未覆盖：{{ previewResult.scope.uncoveredOwners.map(ownerName).join('；') }}</p>
         <p v-if="previewResult.blockers.length">当前限制：{{ previewResult.blockers.join('；') }}</p>
         <el-form-item label="申请依据引用"><el-input v-model="requestRef" aria-label="恢复申请依据引用" /></el-form-item>
@@ -35,7 +35,7 @@
       <p>计划 ID：{{ plan.planId }} · 申请人：{{ plan.requesterId }}</p>
       <p>准确目标库：{{ plan.scope.target.name }} · 身份：{{ plan.scope.target.oid }}</p>
       <p>备份：{{ plan.scope.backupSha256 }} · 冻结来源版本：{{ plan.scope.sourceVersion }}</p>
-      <p>已接身份墓碑：{{ plan.scope.tombstoneCount }} · 导出载荷墓碑：{{ plan.scope.exportPayloadTombstoneCount || 0 }} · 安全字段墓碑：{{ plan.scope.securityFieldTombstoneCount || 0 }}；未覆盖：{{ plan.scope.uncoveredOwners.map(ownerName).join('；') }}</p>
+      <p>已接身份墓碑：{{ plan.scope.tombstoneCount }} · 导出载荷墓碑：{{ plan.scope.exportPayloadTombstoneCount || 0 }} · 安全字段墓碑：{{ plan.scope.securityFieldTombstoneCount || 0 }} · 租户载荷墓碑：{{ plan.scope.tenantPayloadTombstoneCount || 0 }}；未覆盖：{{ plan.scope.uncoveredOwners.map(ownerName).join('；') }}</p>
       <p>当前批准有效：{{ plan.approvalCurrent ? '是' : '否' }}。批准不会自动重施资料。</p>
       <p v-if="plan.currentBlockers.length">当前限制：{{ plan.currentBlockers.join('；') }}</p>
       <p v-if="plan.requesterId === context?.actorId">申请人不能批准自己的恢复计划。</p>
@@ -56,6 +56,7 @@
       <p v-else-if="result.state === 'CLOSED'">原操作已关闭，迟到执行被阻止。</p>
       <p>原操作：{{ result.operationId }}</p>
       <p v-for="unit in result.units || []" :key="unit.sourcePlanId">{{ unit.logId ? `安全事件 ${unit.logId}` : unit.artifactId ? `原生导出制品 ${unit.artifactId}` : `主体 ${unit.targetTenantId} / ${unit.subjectId}` }}：{{ unit.outcome === 'ABSENT_FENCED' ? '原备份中不存在，墓碑已施加' : unit.outcome === 'ALREADY_CLEARED_FENCED' ? '已分类字段原本为空，已施加防回填屏障' : '原处置已重施' }}<span v-if="unit.artifactId"> · 实际删除 {{ unit.removedBytes }} 字节</span><span v-if="unit.logId"> · 实际置空 {{ unit.clearedValueCount }} 项，其他内容保留</span></p>
+      <p v-for="unit in result.tenantPayloadUnits || []" :key="'tenant-'+unit.sourcePlanId">租户导出制品 {{ unit.artifactId }} · 准确租户 {{ unit.targetTenantId }}：{{ unit.outcome === 'REAPPLIED' ? '原处置已重施' : unit.beforeState === 'ARTIFACT_ABSENT' ? '原备份中制品不存在，墓碑已施加' : '原备份中载荷已缺失，墓碑已施加' }} · 实际删除 {{ unit.removedBytes }} 字节</p>
       <p>此处仅证明上列来源的实际结果。其他历史、文件、WAL、备份和完整生产恢复仍有未覆盖范围。</p>
     </div>
     <el-alert v-if="storageError" :title="storageError" type="error" :closable="false" />
@@ -130,7 +131,7 @@ async function preview() { const id = candidateId.value; await run(async start =
 async function prepare() {
   const p = previewResult.value; if (!p || p.scope.candidateId !== candidateId.value || p.blockers.length || !uuid(requestRef.value) || !can('restore-prepare')) return
   const command = { candidateId: p.scope.candidateId, expectedScopeDigest: p.scopeDigest, requestRef: requestRef.value }
-  await mutate('M', `申请恢复目标 ${p.scope.target.name}（身份 ${p.scope.target.oid}），备份 ${p.scope.backupSha256}；冻结当前来源与 ${p.scope.tombstoneCount} 个身份、${p.scope.exportPayloadTombstoneCount || 0} 个载荷、${p.scope.securityFieldTombstoneCount || 0} 个安全字段墓碑，不覆盖源库。`, operationId => api.request({ operationId, ...command }))
+  await mutate('M', `申请恢复目标 ${p.scope.target.name}（身份 ${p.scope.target.oid}），备份 ${p.scope.backupSha256}；冻结当前来源与 ${p.scope.tombstoneCount} 个身份、${p.scope.exportPayloadTombstoneCount || 0} 个载荷、${p.scope.securityFieldTombstoneCount || 0} 个安全字段、${p.scope.tenantPayloadTombstoneCount || 0} 个租户载荷墓碑，不覆盖源库。`, operationId => api.request({ operationId, ...command }))
 }
 async function readPlan() { const id = planRef.value; await run(async start => { plan.value = null; const value = await api.plan(id); if (active(start)) plan.value = value }) }
 async function decide(decision: string) {

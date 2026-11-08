@@ -1,7 +1,7 @@
 <template>
   <section class="tenant-payload-disposition-panel">
     <h3>租户导出载荷处置</h3>
-    <p>撤销下载只关闭访问。此处按准确制品、明确保留政策和独立批准，删除本库租户载荷并保留最小回执；WAL、备份、已下载文件及其他业务来源仍未覆盖。</p>
+    <p>撤销下载只关闭访问。此处按准确制品、明确保留政策和独立批准，删除本库租户载荷并保留最小回执；WAL、备份、已下载文件及其他业务来源仍未覆盖。租户载荷恢复须按当前源政策、保留限制和独立恢复批准重施。</p>
     <el-button :disabled="busy" @click="load">读取租户载荷处置权限与原操作</el-button>
     <el-alert v-if="message" :title="message" type="info" :closable="false" class="notice" />
     <div v-if="pending" class="notice">
@@ -62,7 +62,7 @@
       <div class="notice">
         <el-input v-model="confirmationRef" aria-label="租户载荷删除确认引用" placeholder="实际删除确认依据 UUID" :disabled="locked || !!plan.execution" />
         <el-button type="danger" :disabled="locked || !!plan.execution || !plan.approvalCurrent || !can('tenant-payload-execute') || !uuid(confirmationRef)" @click="execute">确认删除本库租户载荷</el-button>
-        <p>实际删除本库租户载荷，同时关闭访问。原回执与墓碑保留；备份、外部副本及其他业务数据不会因此清除。租户载荷恢复适配尚未接入，受影响候选保持隔离。</p>
+        <p>实际删除本库租户载荷，同时关闭访问。原回执与墓碑保留；备份、外部副本及其他业务数据不会因此清除。</p>
       </div>
     </div>
     <div v-if="receipt" class="tenant-payload-execution-result notice">
@@ -99,7 +99,7 @@ const policyReady = computed(() => policyLoaded.value && uuid(draft.targetTenant
 const holdLoaded = computed(() => !!holdFor.value && holdFor.value === draft.artifactId)
 const previewMatches = computed(() => previewResult.value?.scope.artifactId === draft.artifactId && previewResult.value.scope.policyId === draft.policyId)
 const independent = computed(() => !!plan.value && plan.value.requesterId !== context.value?.actorId && can('tenant-payload-approve'))
-const ownerName = (v: string) => ({ MAIN_IDENTITY: '身份资料', 'MAIN.IDENTITY_PROFILE_AND_SECURITY_OR_BUSINESS_HISTORY': '身份资料、安全日志及业务历史', FILE_AND_OTHER_OWNER_COPIES: 'FILE 与其他来源副本', WAL_AND_BACKUPS: 'WAL 与备份', EXTERNAL_DOWNLOADED_COPIES: '外部已下载副本', UNREGISTERED_OWNERS: '未接入来源', TENANT_EXPORT_RESTORE_ADAPTER_NOT_ADOPTED: '租户载荷恢复适配尚未接入，受影响候选保持隔离' }[v] || v)
+const ownerName = (v: string) => ({ MAIN_IDENTITY: '身份资料', 'MAIN.IDENTITY_PROFILE_AND_SECURITY_OR_BUSINESS_HISTORY': '身份资料、安全日志及业务历史', FILE_AND_OTHER_OWNER_COPIES: 'FILE 与其他来源副本', WAL_AND_BACKUPS: 'WAL 与备份', EXTERNAL_DOWNLOADED_COPIES: '外部已下载副本', UNREGISTERED_OWNERS: '未接入来源', TENANT_EXPORT_RESTORE_ADAPTER_NOT_ADOPTED: '原回执记录时尚未接入租户载荷恢复适配' }[v] || v)
 const accessName = (v: string) => ({ AVAILABLE: '访问开放，租户载荷仍在', REVOKED: '访问已撤销，未表示租户载荷已删除', EXPIRED: '访问已到期，未表示租户载荷已删除', DISPOSED: '本库租户载荷已删除' }[v] || v)
 const stateName = (v: string) => ({ REQUESTED: '待独立审批', APPROVED: '已批准', REJECTED: '已拒绝', REVOKED: '已撤销' }[v] || v)
 const blockerName = (v: string) => ({ POLICY_DISABLED: '政策停用', POLICY_TARGET_CHANGED: '政策目标租户已变化', PAYLOAD_ALREADY_DISPOSED: '租户载荷已处置', PAYLOAD_MISSING: '租户载荷缺失，不能冒称已删除', PAYLOAD_LENGTH_MISMATCH: '租户载荷大小与原回执不符', MINIMUM_RETENTION_NOT_REACHED: '最短保留期限未到', ACCESS_MUST_BE_CLOSED: '须先关闭访问', ACTIVE_HOLD: '目标租户存在主体保留限制', PAYLOAD_VERSION_CHANGED: '租户载荷修订已变化', POLICY_VERSION_CHANGED: '政策版本已变化', HOLD_VERSION_CHANGED: '限制版本已变化', APPROVER_AUTHORITY_CHANGED: '批准者权限已变化' }[v] || v)

@@ -73,10 +73,10 @@ try {
   await expect(form.getByRole('button', { name: '确认删除本库租户载荷', exact: true })).toHaveCount(0); expect(executions).toBe(1)
   await form.locator('.tenant-payload-execution-result').scrollIntoViewIfNeeded(); await page.screenshot({ path: path.join(output, 'known-receipt-plan-read-unavailable.png'), fullPage: true })
   await form.getByRole('button', { name: '读取租户载荷处置计划', exact: true }).click(); await expect(form.locator('.tenant-payload-execution-result')).toContainText(lostReply.operationId); await expect(form.getByRole('button', { name: '确认删除本库租户载荷', exact: true })).toHaveCount(0)
-  await expect(form).toContainText('租户载荷恢复适配尚未接入');
+  await expect(form).toContainText('租户载荷恢复须按当前源政策');
   const downloadStatus = await page.evaluate(async id => (await fetch('/api/platform/privacy-tenant-exports-v1/artifacts/' + id + '/download', { credentials: 'include' })).status, artifact); expect(downloadStatus).toBe(410)
   expect(errors).toEqual([])
-  await writeFile(path.join(output, 'result.json'), JSON.stringify({ result: 'PASS', planId, artifact, operationId: lostReply.operationId, removedBytes: lostReply.execution.removedBytes, internalApiMocked: false, actualExecuteResponseDeliberatelyDropped: executeReplyDropped, disposedDownloadStatus: downloadStatus, restoreAdapterExplicitlyRemaining: true, knownReceiptSurvivesPlanReadReplyFailure: true, requests, executions, cancelCreatesNothing: true, originalRecoveredAfterReload: true, independentApprover: true, operationIdOnlyInStorage: true, pageErrors: errors, responseFailures: failures }, null, 2))
+  await writeFile(path.join(output, 'result.json'), JSON.stringify({ result: 'PASS', planId, artifact, operationId: lostReply.operationId, removedBytes: lostReply.execution.removedBytes, internalApiMocked: false, actualExecuteResponseDeliberatelyDropped: executeReplyDropped, disposedDownloadStatus: downloadStatus, otherCopiesExplicitlyRemaining: true, knownReceiptSurvivesPlanReadReplyFailure: true, requests, executions, cancelCreatesNothing: true, originalRecoveredAfterReload: true, independentApprover: true, operationIdOnlyInStorage: true, pageErrors: errors, responseFailures: failures }, null, 2))
 } catch (error) {
   if (page) await page.screenshot({ path: path.join(output, 'failure.png'), fullPage: true }).catch(() => {})
   await writeFile(path.join(output, 'failure.json'), JSON.stringify({ message: String(error), pageErrors: errors, responseFailures: failures }, null, 2)); throw error
