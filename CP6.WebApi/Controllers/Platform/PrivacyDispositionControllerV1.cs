@@ -58,6 +58,28 @@ public sealed class PrivacyDispositionControllerV1(IServiceScopeFactory scopes,I
     public Task<IActionResult> PayloadOperation(Guid id,CancellationToken ct)=>Run((o,s)=>o.PayloadOperationAsync(id,false,s,ct));
     [HttpPost("export-payloads/operations/{id:guid}/close")]
     public Task<IActionResult> PayloadClose(Guid id,CancellationToken ct)=>Run((o,s)=>o.PayloadOperationAsync(id,true,s,ct));
+    [HttpGet("tenant-export-payloads/context")]
+    public Task<IActionResult> TenantPayloadContext(CancellationToken ct)=>Run((o,s)=>o.TenantPayloadContextAsync(s,ct));
+    [HttpGet("tenant-export-payloads/policies/{id:guid}")]
+    public Task<IActionResult> TenantPayloadPolicy(Guid id,CancellationToken ct)=>Run((o,s)=>o.TenantPayloadPolicyAsync(id,s,ct));
+    [HttpPost("tenant-export-payloads/policies"),RequestSizeLimit(65536)]
+    public Task<IActionResult> TenantPayloadPolicy(TenantPayloadDispositionPolicyCommandV1 input,CancellationToken ct)=>Run((o,s)=>o.ConfigureTenantPayloadPolicyAsync(input,s,ct));
+    [HttpPost("tenant-export-payloads/preview"),RequestSizeLimit(65536)]
+    public Task<IActionResult> TenantPayloadPreview(TenantPayloadDispositionTargetV1 input,CancellationToken ct)=>Run((o,s)=>o.TenantPayloadPreviewAsync(input,s,ct));
+    [HttpGet("tenant-export-payloads/artifacts/{id:guid}/hold")]
+    public Task<IActionResult> TenantPayloadHold(Guid id,CancellationToken ct)=>Run((o,s)=>o.TenantPayloadHoldAsync(id,s,ct));
+    [HttpPost("tenant-export-payloads/plans"),RequestSizeLimit(65536)]
+    public Task<IActionResult> TenantPayloadPlan(TenantPayloadDispositionRequestV1 input,CancellationToken ct)=>Run((o,s)=>o.RequestTenantPayloadDispositionAsync(input,s,ct));
+    [HttpGet("tenant-export-payloads/plans/{id:guid}")]
+    public Task<IActionResult> TenantPayloadPlan(Guid id,CancellationToken ct)=>Run((o,s)=>o.TenantPayloadPlanAsync(id,s,ct));
+    [HttpPost("tenant-export-payloads/plans/{id:guid}/decisions"),RequestSizeLimit(65536)]
+    public Task<IActionResult> TenantPayloadDecision(Guid id,TenantPayloadDispositionDecisionV1 input,CancellationToken ct)=>Run((o,s)=>o.DecideTenantPayloadDispositionAsync(id,input,s,ct));
+    [HttpPost("tenant-export-payloads/plans/{id:guid}/execute"),RequestSizeLimit(65536)]
+    public Task<IActionResult> TenantPayloadExecute(Guid id,TenantPayloadDispositionExecuteV1 input,CancellationToken ct)=>Run((o,s)=>o.ExecuteTenantPayloadDispositionAsync(id,input,s,ct));
+    [HttpGet("tenant-export-payloads/operations/{id:guid}")]
+    public Task<IActionResult> TenantPayloadOperation(Guid id,CancellationToken ct)=>Run((o,s)=>o.TenantPayloadOperationAsync(id,false,s,ct));
+    [HttpPost("tenant-export-payloads/operations/{id:guid}/close")]
+    public Task<IActionResult> TenantPayloadClose(Guid id,CancellationToken ct)=>Run((o,s)=>o.TenantPayloadOperationAsync(id,true,s,ct));
     [HttpGet("context")]
     public Task<IActionResult> Context(CancellationToken ct)=>Run((o,s)=>o.ContextAsync(s,ct));
     [HttpGet("policies/{id:guid}")]
@@ -110,6 +132,7 @@ public sealed class PrivacyDispositionControllerV1(IServiceScopeFactory scopes,I
     {
         await using var scope=scopes.CreateAsyncScope();var services=scope.ServiceProvider;services.GetRequiredService<ITenantContext>().CurrentTenantId=tenant.CurrentTenantId;
         try{return Ok(await action(services.GetRequiredService<PrivacyDispositionOwnerV1>(),TenantAdministrationHttpV1.Session(HttpContext,services)));}
+        catch(Npgsql.PostgresException e)when(e.SqlState is "42P01" or "3F000"){return StatusCode(503,new{code="PRIVACY_DISPOSITION_STORAGE_UNAVAILABLE"});}
         catch(PrivacyDispositionExceptionV1 e){return StatusCode(e.Status,new{code=e.Message});}
         catch(PlatformAdminAuthorizationException e){return StatusCode(403,new{code=e.Message});}
         catch(IamAdministrationExceptionV1 e){return StatusCode(e.Status,new{code=e.Message});}

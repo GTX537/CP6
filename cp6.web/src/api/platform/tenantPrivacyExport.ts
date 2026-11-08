@@ -6,7 +6,7 @@ export interface TenantPrivacyExportContext { environmentId: string; actorTenant
 export interface TenantPrivacyExportCommand { operationId: string; requestRef: string; targetTenantId: string; purpose: string; sources: string[]; recipientId: string; policyVersion: string; accessMinutes: number }
 export interface TenantPrivacyExportReceipt { operationId: string; requestRef: string; artifactId: string; environmentId: string; requesterTenantId: string; requesterId: string; operatorId: string; recipientId: string; targetTenantId: string; purpose: string; sources: string[]; policyVersion: string; capturedAt: string; expiresAt: string; length: number; sha256: string; manifest: TenantPrivacyExportManifest }
 export interface TenantPrivacyExportOperation { operationId: string; state: 'COMMITTED' | 'NOT_FOUND' | 'CLOSED'; receipt: TenantPrivacyExportReceipt | null }
-export interface TenantPrivacyExportArtifact { receipt: TenantPrivacyExportReceipt; availability: 'AVAILABLE' | 'EXPIRED' | 'REVOKED' | 'POLICY_CHANGED' }
+export interface TenantPrivacyExportArtifact { receipt: TenantPrivacyExportReceipt; availability: 'AVAILABLE' | 'EXPIRED' | 'REVOKED' | 'POLICY_CHANGED' | 'DISPOSED' }
 export const tenantPrivacyExportApi = {
   context: () => http.get(`${root}/context`) as unknown as Promise<TenantPrivacyExportContext>,
   generate: (input: TenantPrivacyExportCommand) => http.post(`${root}/commands`, input) as unknown as Promise<TenantPrivacyExportOperation>,

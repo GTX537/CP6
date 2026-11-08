@@ -54,16 +54,16 @@ public sealed partial class PrivacyExportOwnerV1
             await TenantAudit(a,command.OperationId,artifact,"GENERATED",t);return new TenantPrivacyExportOperationV1(command.OperationId,"COMMITTED",receipt);
         },ct);
     }
-    private sealed record TenantArtifact(Guid Actor,Guid Recipient,Guid Target,string Policy,DateTimeOffset Expires,DateTimeOffset? Revoked,byte[] Receipt);
+    private sealed record TenantArtifact(Guid Actor,Guid Recipient,Guid Target,string Policy,DateTimeOffset Expires,DateTimeOffset? Revoked,byte[] Receipt,bool Disposed);
     private async Task<TenantArtifact> TenantArtifactRow(Authority a,Guid artifact,CancellationToken ct)
     {
         var row=await db.Database.SqlQuery<TenantArtifact>($"""
-            SELECT actor_id AS "Actor",recipient_id AS "Recipient",target_tenant AS "Target",policy AS "Policy",expires_at AS "Expires",revoked_at AS "Revoked",receipt_bytes AS "Receipt"
-            FROM cp6_privacy_tenant_export_v1.artifacts WHERE id={artifact} AND environment_id={a.Environment} AND actor_tenant={a.Actor.TenantId}
+            SELECT actor_id AS "Actor",recipient_id AS "Recipient",target_tenant AS "Target",policy AS "Policy",expires_at AS "Expires",revoked_at AS "Revoked",receipt_bytes AS "Receipt",EXISTS(SELECT FROM cp6_privacy_tenant_payload_disposition_v1.tombstones t WHERE t.artifact_id=a.id) AS "Disposed"
+            FROM cp6_privacy_tenant_export_v1.artifacts a WHERE id={artifact} AND environment_id={a.Environment} AND actor_tenant={a.Actor.TenantId}
             """).SingleOrDefaultAsync(ct)??throw new PrivacyExportExceptionV1("PRIVACY_TENANT_ARTIFACT_NOT_FOUND",404);
         if(row.Actor!=a.Actor.Id&&row.Recipient!=a.Actor.Id)throw new PrivacyExportExceptionV1("PRIVACY_TENANT_ARTIFACT_ACTOR_REQUIRED",403);return row;
     }
-    private static string TenantAvailability(TenantArtifact row,DateTimeOffset at)=>row.Revoked!=null?"REVOKED":row.Expires<=at?"EXPIRED":row.Policy!=TenantPolicy?"POLICY_CHANGED":"AVAILABLE";
+    private static string TenantAvailability(TenantArtifact row,DateTimeOffset at)=>row.Disposed?"DISPOSED":row.Revoked!=null?"REVOKED":row.Expires<=at?"EXPIRED":row.Policy!=TenantPolicy?"POLICY_CHANGED":"AVAILABLE";
     public Task<TenantPrivacyExportArtifactV1> TenantArtifactAsync(Guid artifact,TenantManagementSessionV1 session,CancellationToken ct=default)
     {Id(artifact);return Transaction(false,session,async(a,t)=>{Can(a,"tenant-read");var row=await TenantArtifactRow(a,artifact,t);return new TenantPrivacyExportArtifactV1(JsonSerializer.Deserialize<TenantPrivacyExportReceiptV1>(row.Receipt)!,TenantAvailability(row,await Clock(t)));},ct);}
     public Task<TenantPrivacyExportArtifactV1> RevokeTenantAsync(Guid artifact,TenantManagementSessionV1 session,CancellationToken ct=default)
@@ -72,7 +72,7 @@ public sealed partial class PrivacyExportOwnerV1
         {
             Can(a,"tenant-read");Can(a,"tenant-revoke");var row=await TenantArtifactRow(a,artifact,t);if(row.Actor!=a.Actor.Id)throw new PrivacyExportExceptionV1("PRIVACY_TENANT_REQUESTER_REQUIRED",403);
             if(row.Revoked==null){await db.Database.ExecuteSqlInterpolatedAsync($"UPDATE cp6_privacy_tenant_export_v1.artifacts SET revoked_at=clock_timestamp() WHERE id={artifact}",t);await TenantAudit(a,null,artifact,"REVOKED",t);}
-            return new TenantPrivacyExportArtifactV1(JsonSerializer.Deserialize<TenantPrivacyExportReceiptV1>(row.Receipt)!,"REVOKED");
+            return new TenantPrivacyExportArtifactV1(JsonSerializer.Deserialize<TenantPrivacyExportReceiptV1>(row.Receipt)!,row.Disposed?"DISPOSED":"REVOKED");
         },ct);
     }
     public Task<PrivacyExportDownloadV1> DownloadTenantAsync(Guid artifact,TenantManagementSessionV1 session,CancellationToken ct=default)
