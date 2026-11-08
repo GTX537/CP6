@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[W319原FORM核销](evidence/W319-01/DELIVERY.md)，WP12-03/04 DONE，原59余48；正常收尾后W306，24h继续。
+> 当前：[W306](evidence/W306-01/DELIVERY.md)核销WP12-08，原59余47；正常收尾后继续隐私实际Owner，24h目标继续。
+
+> 历史快照：[W319原FORM核销](evidence/W319-01/DELIVERY.md)，WP12-03/04 DONE，原59余48；正常收尾后W306，24h继续。
 
 > 历史快照：[W318](dispatch/20261108-wave318/README.md)单人继续实测24h目标，W315完整收尾已核销；推进原FORM历史准确内容/显式采用，不重复W316/317。
 

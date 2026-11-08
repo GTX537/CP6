@@ -162112,6 +162112,11 @@
       "date": "2026-11-08",
       "change": "W319完整收尾核销；W306在FORM整卡前置满足后核原任务办理/多人新轮真实剩余。",
       "evidence": "docs/development/evidence/W306-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-08",
+      "change": "W306在原WP12-04/07/10整卡前置满足后，按WP12-08三项范围及正反例核销当前动作上下文、真实双身份/原grant、双/三CAS、SFS复算/APP冻结TxD与轮次；补真实两人all/any重入新轮和旧原命令回放的业务验证，原WP12-08正式DONE。 原375现36DONE/2IN_PROGRESS/337PLANNED，原59局部12闭环/47剩余；125完整目标0关闭、247正式验收NOT_RUN不变。全OA-TASK批量办理/管理转单、时限通知和完整目标验收不由本卡连带完成。下一核WP02-15既有导出载荷的真实保留/处置Owner，当前撤销下载只撤访问而不删除载荷；W310预算末尾。",
+      "evidence": "docs/development/evidence/W306-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -199563,14 +199568,64 @@
         "file:Main:CP6.Core/Services/Wf/ApprovalDispatcher.cs"
       ],
       "coverage_role": "IMPLEMENTATION",
-      "state": "PLANNED",
+      "state": "DONE",
       "plan_path": "docs/development/task-plans/WP12.md",
       "card_anchor": "wp12-08",
-      "entry_gate": "NOT_CHECKED",
-      "assignment": null,
+      "entry_gate": "CONFIRMED",
+      "assignment": {
+        "chat_label": "COORD / W306-01",
+        "branch": "codex/w306-01",
+        "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+        "claimed_at": "2026-11-08T13:21:42.080186+00:00",
+        "baseline_sha": "b5e8b9401ffb634059ec8dcda53e9cb0484ea7b4",
+        "scope": "Original WP12-08 only; exact task decision/Actor/round/TxD and adopted full prerequisites."
+      },
       "blockers": [],
-      "validation_evidence": [],
-      "delivery_evidence": null,
+      "validation_evidence": [
+        {
+          "path": "docs/development/evidence/W277-01/DELIVERY.md",
+          "source_sha": "da4f438cdac0708cc4329694a8f19856fcf7c38d",
+          "command": "Reuse original actual execution; W306 original-card/current applicability reconciliation",
+          "environment": "Original isolated PostgreSQL18/Main authenticated HTTP/Vue/Chrome as individually labeled; simulated inputs",
+          "observed_at": "2026-11-08T13:34:22.686584+00:00",
+          "scope": "Only matching WP12-08 behavior; original execution timestamps and scope retained",
+          "result": "PASS"
+        },
+        {
+          "path": "docs/development/evidence/W289-01/DELIVERY.md",
+          "source_sha": "15c50ce7afdacfa1354a13877e0b130fd38cc45a",
+          "command": "Reuse original actual execution; W306 original-card/current applicability reconciliation",
+          "environment": "Original isolated PostgreSQL18/Main authenticated HTTP/Vue/Chrome as individually labeled; simulated inputs",
+          "observed_at": "2026-11-08T13:34:22.686584+00:00",
+          "scope": "Only matching WP12-08 behavior; original execution timestamps and scope retained",
+          "result": "PASS"
+        },
+        {
+          "path": "docs/development/evidence/W290-01/DELIVERY.md",
+          "source_sha": "9111bbd99f678d09f5ef7860d50bd16e5592ed1d",
+          "command": "Reuse original actual execution; W306 original-card/current applicability reconciliation",
+          "environment": "Original isolated PostgreSQL18/Main authenticated HTTP/Vue/Chrome as individually labeled; simulated inputs",
+          "observed_at": "2026-11-08T13:34:22.686584+00:00",
+          "scope": "Only matching WP12-08 behavior; original execution timestamps and scope retained",
+          "result": "PASS"
+        },
+        {
+          "path": "docs/development/evidence/W291-01/DELIVERY.md",
+          "source_sha": "d65531c81c0010214cc3a691d1288c42c46de50e",
+          "command": "Reuse original actual execution; W306 original-card/current applicability reconciliation",
+          "environment": "Original isolated PostgreSQL18/Main authenticated HTTP/Vue/Chrome as individually labeled; simulated inputs",
+          "observed_at": "2026-11-08T13:34:22.686584+00:00",
+          "scope": "Only matching WP12-08 behavior; original execution timestamps and scope retained",
+          "result": "PASS"
+        }
+      ],
+      "delivery_evidence": {
+        "path": "docs/development/evidence/W290-01/DELIVERY.md",
+        "source_sha": "9111bbd99f678d09f5ef7860d50bd16e5592ed1d",
+        "remote_main_sha": "b5e8b9401ffb634059ec8dcda53e9cb0484ea7b4",
+        "pr_url": "https://github.com/GTX537/CP6/pull/731",
+        "scope": "Current Main contains all adopted WP12-08 sources; W306 complete mapping and new current round validation, W290 alone not claimed as entire implementation."
+      },
       "entry_conditions": [
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "WP02：按S02-00采用的PostgreSQL布局、可信上下文/当前授权和全部写者共同最终fence、Main Owner事务及原键结果/审计。",
@@ -199708,20 +199763,27 @@
         }
       },
       "scope_reconciliation": {
-        "classification": "PREREQUISITES_SATISFIED_CARD_RECONCILIATION_PENDING",
-        "delivered": " W289：SFS待办已采用字段补丁与任务/实例/表单数据三版本，固定节点与当前IAM/委派权限相交，表单/运行变量/决定/历史/文件绑定/原结果同事务；真实编辑页面、选项与附件及未知结果恢复闭环。 W290：统一任务动作上下文与服务端SFS/APP分型、APP accepted原命令五字段与同事务WFC alias、真实APP办理页及未知结果恢复已闭环。",
+        "classification": "FULL_CARD_RECONCILED",
+        "delivered": " W289：SFS待办已采用字段补丁与任务/实例/表单数据三版本，固定节点与当前IAM/委派权限相交，表单/运行变量/决定/历史/文件绑定/原结果同事务；真实编辑页面、选项与附件及未知结果恢复闭环。 W290：统一任务动作上下文与服务端SFS/APP分型、APP accepted原命令五字段与同事务WFC alias、真实APP办理页及未知结果恢复已闭环。 W306在原WP12-04/07/10整卡前置满足后，按WP12-08三项范围及正反例核销当前动作上下文、真实双身份/原grant、双/三CAS、SFS复算/APP冻结TxD与轮次；补真实两人all/any重入新轮和旧原命令回放的业务验证，原WP12-08正式DONE。",
         "evidence_refs": [
           "docs/development/evidence/W289-01/DELIVERY.md",
           "docs/development/evidence/W290-01/DELIVERY.md",
           "docs/development/evidence/W291-01/DELIVERY.md",
-          "docs/development/evidence/W319-01/DELIVERY.md"
+          "docs/development/evidence/W319-01/DELIVERY.md",
+          "docs/development/evidence/W275-01/DELIVERY.md",
+          "docs/development/evidence/W276-01/DELIVERY.md",
+          "docs/development/evidence/W277-01/DELIVERY.md",
+          "docs/development/evidence/W278-01/DELIVERY.md",
+          "docs/development/evidence/W282-01/DELIVERY.md",
+          "docs/development/evidence/W305-01/DELIVERY.md",
+          "docs/development/evidence/W306-01/DELIVERY.md"
         ],
-        "formal_state_changed": false,
-        "window": "W291-01",
-        "as_of": "2026-11-03",
-        "report": "docs/development/evidence/W291-01/DELIVERY.md",
+        "formal_state_changed": true,
+        "window": "W306-01",
+        "as_of": "2026-11-08",
+        "report": "docs/development/evidence/W306-01/DELIVERY.md",
         "new_product_validation": true,
-        "remaining": "WP12-04及WP12-10已整卡DONE，原前置已满足；W306继续按WP12-08原范围核当前本人/代理、双CAS/真实Actor/会签轮次与当前撤权，不重复W291已完抄送读取。"
+        "remaining": "原WP12-08三项实施及正反验收/整卡前置无剩余；全OA-TASK批量/时限/通知/历史转换与正式目标分别核证。"
       },
       "wave290_unified_action": {
         "status": "IMPLEMENTED_VALIDATED_REMOTE_ADOPTED",
@@ -199740,11 +199802,29 @@
         "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave291-final-verification.json"
       },
       "wave306_round_reconciliation": {
-        "status": "IMPLEMENTING",
+        "status": "FULL_CARD_RECONCILED",
         "report": "docs/development/evidence/W306-01/DELIVERY.md",
-        "scope": "原WP12-08三项范围及正反例：当前action-context真实SFS/APP分型与双/三CAS、actual/principal/原grant/SOD、token/node/stage/round计票，SFS字段复算和APP冻结TxD。W289/290/291已有实际采用与CC边界直接复用；本窗重点补多人新轮后旧Approved不能凑足新阈值的实际运行证据、旧原命令回放不推进新轮及必要当前竞争。发现真实错误即定向修复；仅全原卡无剩余且当前整卡前置满足才DONE。全OA-TASK批量/时限/通知与服务节点Owner不冒称由本卡自动完成，不重复W291抄送。",
-        "full_task_completed": false
-      }
+        "full_task_completed": true,
+        "validation": "新增1项真实PostgreSQL18行为通过，包含all/any两组两人流程的完整旧轮→退回→新轮→终态及原命令重放；未改产品/页面，原HTTP/Chrome/Vue及并发/身份/CC/回滚证据按准确来源复用。当前源码、祖先、原卡/前置、文档diff/链接/台账/生成页核对通过。"
+      },
+      "prerequisite_adoptions": [
+        {
+          "task_id": "WP02-10",
+          "requirement": "所属仓库的可信租户、当前授权、同事务原结果及审计基础",
+          "deliveries": [
+            "wave171_scope_authorization"
+          ],
+          "scope": "Actual Main trusted context/actor and shared final authorization writers."
+        },
+        {
+          "task_id": "WP02-13",
+          "requirement": "所属仓库的可信租户、当前授权、同事务原结果及审计基础",
+          "deliveries": [
+            "wave290_task_audit_adoption"
+          ],
+          "scope": "Actual SFS/APP command/actor/vote/terminal/audit/outbox same transaction; not global audit retention."
+        }
+      ]
     },
     {
       "id": "WP12-09",
@@ -204126,7 +204206,7 @@
       "path": "docs/development/dispatch/20261108-wave306/README.md",
       "baseline_sha": "b5e8b9401ffb634059ec8dcda53e9cb0484ea7b4",
       "registered_at": "2026-11-08T13:21:42.080186+00:00",
-      "phase": "IMPLEMENTING",
+      "phase": "DELIVERY_MAIN_CLOSEOUT",
       "assigned_chats": [
         "COORD"
       ],
@@ -204152,31 +204232,45 @@
           "title": "原待办办理与多人会签新轮完整核销",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "IMPLEMENTING",
+          "phase": "DELIVERY_MAIN_CLOSEOUT",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": false,
+          "worker_delivery_received": true,
           "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
           "branch": "codex/w306-01",
           "planned_scope_ref": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
-          "full_task_completed": false,
+          "full_task_completed": true,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": false,
+          "candidate_review_completed": true,
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
             "Main:coordination-ledger",
             "Main:oa-task",
             "Main:workflow-engine"
-          ]
+          ],
+          "worker_delivery_ref": "docs/development/evidence/W306-01/DELIVERY.md",
+          "validation": "新增1项真实PostgreSQL18行为通过，包含all/any两组两人流程的完整旧轮→退回→新轮→终态及原命令重放；未改产品/页面，原HTTP/Chrome/Vue及并发/身份/CC/回滚证据按准确来源复用。当前源码、祖先、原卡/前置、文档diff/链接/台账/生成页核对通过。",
+          "lifecycle_snapshot": {
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave306-final-verification.json",
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false
+          }
         }
       ],
       "storage": {
         "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "原WP12-08三项范围及正反例：当前action-context真实SFS/APP分型与双/三CAS、actual/principal/原grant/SOD、token/node/stage/round计票，SFS字段复算和APP冻结TxD。W289/290/291已有实际采用与CC边界直接复用；本窗重点补多人新轮后旧Approved不能凑足新阈值的实际运行证据、旧原命令回放不推进新轮及必要当前竞争。发现真实错误即定向修复；仅全原卡无剩余且当前整卡前置满足才DONE。全OA-TASK批量/时限/通知与服务节点Owner不冒称由本卡自动完成，不重复W291抄送。"
+      "next_action": "W306正常收妥后推进WP02-15导出载荷实际保留/处置Owner，24h继续。",
+      "lifecycle_snapshot": {
+        "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave306-final-verification.json",
+        "main_finish_required": true,
+        "main_seat_released": false,
+        "handoff_seat_released": false
+      }
     },
     "wave_history": [
       {
@@ -244266,8 +244360,8 @@
       "new_product_validation": false,
       "formal_states_unchanged": true,
       "followup": {
-        "window": "W319-01",
-        "report": "docs/development/evidence/W319-01/DELIVERY.md",
+        "window": "W306-01",
+        "report": "docs/development/evidence/W306-01/DELIVERY.md",
         "full_cards_reconciled": [
           "WP09-11",
           "WP12-07",
@@ -244279,9 +244373,10 @@
           "WP12-10",
           "WP05-16",
           "WP12-03",
-          "WP12-04"
+          "WP12-04",
+          "WP12-08"
         ],
-        "remaining_original_partial_cards": 48
+        "remaining_original_partial_cards": 47
       }
     },
     "next_execution_plan": {
@@ -244293,8 +244388,8 @@
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
       "started_at": "2026-11-04T00:22:36+00:00",
-      "effective_seconds_recorded": 56132,
-      "timing_snapshot_at": "2026-11-08T13:21:42.080186+00:00",
+      "effective_seconds_recorded": 56892,
+      "timing_snapshot_at": "2026-11-08T13:34:22.686584+00:00",
       "timing_source": "41997 prior effective seconds plus continuous OS monotonic time from 2026-11-08T09:26:06Z; pause/pre-sample preparation excluded. Native panel is active after reactivation but omits the earlier authorized resumed segment; never sum the clocks.",
       "next_reestimate_at_effective_seconds": 57600,
       "estimate_hours": [
@@ -245042,7 +245137,7 @@
           ],
           "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
           "estimate_confidence": "LOW_ACTUAL_MULTI_ACTOR_ROUND_RISK",
-          "state": "IN_PROGRESS",
+          "state": "VERIFYING",
           "initial_estimate_hours": [
             1,
             2
@@ -245053,7 +245148,16 @@
           "prerequisite_report": "docs/development/evidence/W319-01/DELIVERY.md",
           "started_at": "2026-11-08T13:21:42.080186+00:00",
           "effective_start": 56132,
-          "scope_refinement": "原WP12-08三项范围及正反例：当前action-context真实SFS/APP分型与双/三CAS、actual/principal/原grant/SOD、token/node/stage/round计票，SFS字段复算和APP冻结TxD。W289/290/291已有实际采用与CC边界直接复用；本窗重点补多人新轮后旧Approved不能凑足新阈值的实际运行证据、旧原命令回放不推进新轮及必要当前竞争。发现真实错误即定向修复；仅全原卡无剩余且当前整卡前置满足才DONE。全OA-TASK批量/时限/通知与服务节点Owner不冒称由本卡自动完成，不重复W291抄送。"
+          "scope_refinement": "原WP12-08三项范围及正反例：当前action-context真实SFS/APP分型与双/三CAS、actual/principal/原grant/SOD、token/node/stage/round计票，SFS字段复算和APP冻结TxD。W289/290/291已有实际采用与CC边界直接复用；本窗重点补多人新轮后旧Approved不能凑足新阈值的实际运行证据、旧原命令回放不推进新轮及必要当前竞争。发现真实错误即定向修复；仅全原卡无剩余且当前整卡前置满足才DONE。全OA-TASK批量/时限/通知与服务节点Owner不冒称由本卡自动完成，不重复W291抄送。",
+          "implementation_complete": true,
+          "full_task_completed": true,
+          "report": "docs/development/evidence/W306-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave306-final-verification.json",
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false
+          }
         },
         {
           "id": "W307-01",
@@ -245837,7 +245941,7 @@
           "historical_conflicts": "Preserved immutable; existing environments not inspected or migrated. Separate controlled forward recovery required for affected existing records."
         }
       ],
-      "next_priority": "W306 original task decision/round scope, then actual remaining privacy Owners; W310 budget end",
+      "next_priority": "Actual remaining privacy export-payload disposition Owner; W310 budget-end only",
       "extra_bug_deliveries": [
         {
           "id": "BUG751",

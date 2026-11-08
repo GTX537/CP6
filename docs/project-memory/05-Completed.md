@@ -1,5 +1,11 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-08：WP12-08原卡核销 / 24h继续
+
+W306在原WP12-04/07/10整卡前置满足后，按WP12-08三项范围及正反例核销当前动作上下文、真实双身份/原grant、双/三CAS、SFS复算/APP冻结TxD与轮次；补真实两人all/any重入新轮和旧原命令回放的业务验证，原WP12-08正式DONE。 [报告](../development/evidence/W306-01/DELIVERY.md)。
+
+原375现36DONE/2IN_PROGRESS/337PLANNED，原59局部12闭环/47剩余；125完整目标0关闭、247正式验收NOT_RUN不变。全OA-TASK批量办理/管理转单、时限通知和完整目标验收不由本卡连带完成。下一核WP02-15既有导出载荷的真实保留/处置Owner，当前撤销下载只撤访问而不删除载荷；W310预算末尾。 正常采用/分支/工作区/席位以wave306-final-verification.json最终PASS为准。
+
 ## 2026-11-08：W319已收尾，W306任务轮次推进
 
 W319原FORM两卡正常采用及官方finish核销，原37535DONE/2IN_PROGRESS/338PLANNED、59余48；[W306](../development/evidence/W306-01/DELIVERY.md)在整卡前置满足后核待办办理/多人新轮，已有W291抄送不重复。24h继续。
