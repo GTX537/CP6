@@ -445,3 +445,11 @@ W315登记至收尾5837秒（1.62h）、W3206204秒（1.72h）、W3215775秒（1
 W322完成Main.Privacy.TenantExport.v1：准确target tenant下已分类identity/security/roles及白名单租户元数据，明确用途/接收人、独立tenant能力、不可变制品/原操作/TTL；当前披露重查收件人/来源权限/绑定/期限/撤销和最终会话，逐源真实Manifest。没有伪subject，旧直接租户HTTP散流退役410；其他Owner全量导出和新租户载荷物理保留/处置及恢复仍为真实余项，整体PARTIAL。 11项新增实际PostgreSQL18场景、5项受影响主体导出回归（含新增两人Chrome实际下载与既有主体Chrome）、18项Vue行为及vue-tsc通过。 [报告](../evidence/W322-01/DELIVERY.md)。
 
 原375=36DONE/2IN_PROGRESS/337PLANNED，原59=12闭环/47剩余，125目标/247正式验收不变。WP02-15仍余未分类安全内容/不可归属事件、授权/组织引用、OA/PLM/CRM业务历史、FILE及其他来源副本、整租户全部Owner导出、新租户制品受控物理保留/处置及恢复、WAL/备份/外部副本和完整环境恢复。W306、W249及已闭环FORM卡不重复；24h继续相邻真实余项，W310仅预算末尾。 当前采样74946秒，下一79200秒校准。最终分支/工作区/席位见wave322-final-verification.json。
+
+## W323 / 原24h继续租户载荷处置
+
+W323独立Main.Privacy.TenantExportPayload.v1实际处置：准确租户制品、明确保留政策、独立申请/批准/执行、目标租户所有主体有效hold屏障及ABA；真实删除字节、撤访问、最小原回执/墓碑同commit，原生无所属删除/回填拒绝。无伪subject；本窗不实现备份恢复适配，有该Owner墓碑时现恢复入口明确失败并保持隔离，旧批准随source epoch失效。
+
+Main `2f4eaab416eac5eff12cda327cdb9f76262ac290`，Handoff `34fcd5372b3280a1961f55f96fdf2945b20c3b57`，COORD单人固定DEV1/DEV2；W322 Main777/Handoff298已核两仓采用、准确清理和官方释放，实测3254秒。本窗累计75502秒，余约3.03h。
+
+W322实测54分14秒，低于估计；W323估1.75–2.75h低置信，下一79200秒校准，W310预算末尾。[实施合同](../contracts/tenant-export-payload-disposition-v1.md)。

@@ -1,5 +1,11 @@
 # 项目当前状态
 
+## 2026-11-08：W322闭环，W323连续实施
+
+W323独立Main.Privacy.TenantExportPayload.v1实际处置：准确租户制品、明确保留政策、独立申请/批准/执行、目标租户所有主体有效hold屏障及ABA；真实删除字节、撤访问、最小原回执/墓碑同commit，原生无所属删除/回填拒绝。无伪subject；本窗不实现备份恢复适配，有该Owner墓碑时现恢复入口明确失败并保持隔离，旧批准随source epoch失效。
+
+Main `2f4eaab416eac5eff12cda327cdb9f76262ac290`，Handoff `34fcd5372b3280a1961f55f96fdf2945b20c3b57`，COORD单人固定DEV1/DEV2；W322 Main777/Handoff298已核两仓采用、准确清理和官方释放，实测3254秒。本窗累计75502秒，余约3.03h。 [本窗](../development/dispatch/20261108-wave323/README.md)。原24h仍active/incomplete。
+
 ## 2026-11-08：W322租户已分类导出 / 24h继续
 
 W322完成Main.Privacy.TenantExport.v1：准确target tenant下已分类identity/security/roles及白名单租户元数据，明确用途/接收人、独立tenant能力、不可变制品/原操作/TTL；当前披露重查收件人/来源权限/绑定/期限/撤销和最终会话，逐源真实Manifest。没有伪subject，旧直接租户HTTP散流退役410；其他Owner全量导出和新租户载荷物理保留/处置及恢复仍为真实余项，整体PARTIAL。 [交付](../development/evidence/W322-01/DELIVERY.md)。
