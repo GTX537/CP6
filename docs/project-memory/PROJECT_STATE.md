@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC 现行 IAM 原图
+
+W393 v6/v7 原权威对账通过，W391 随 #833 采用并释放。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W393](../development/evidence/W393-01/DELIVERY.md) · [PR #833](https://github.com/GTX537/CP6/pull/833)
+
+
 ## 2026-11-09 UTC 历史 IAM 原子落表
 
 W391 原 v6 staging 真回滚与原回执恢复通过，W389 随 #832 采用并释放。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W391](../development/evidence/W391-01/DELIVERY.md) · [PR #832](https://github.com/GTX537/CP6/pull/832)

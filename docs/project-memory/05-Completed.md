@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC IAM 历史 staging 采用和现行对账
+
+W391 完整 762 秒，两端分支清理，DEV-2 干净释放。W393 A 三项漂移、B 12 条原值及实际 v7 文件校验通过。 [W393](../development/evidence/W393-01/DELIVERY.md) · [PR #833](https://github.com/GTX537/CP6/pull/833)
+
+
 ## 2026-11-09 UTC FileContent v7 采用和历史 IAM 落表
 
 W389 完整 1,018 秒，两端任务分支清理，DEV-1 干净释放。W391 原 17 条历史 IAM 引用、原子失败和原回执恢复实证。 [W391](../development/evidence/W391-01/DELIVERY.md) · [PR #832](https://github.com/GTX537/CP6/pull/832)

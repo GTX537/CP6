@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 资产落表与适用共享域
+
+继续 W394 资产中立落表、ERP 原共享域和隔离候选。 [W393](../development/evidence/W393-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 原现行 IAM 和外部资产落表
 
 W393 核现行 IAM 漂移与原未知，继续 v7 外部资产落表和完整候选。 [W391](../development/evidence/W391-01/DELIVERY.md)

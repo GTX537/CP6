@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC RMA 当前 IAM 只读对账
+
+原 v6/v7 对账保留原参与者、字段权限和版本漂移，不写业务或授权。 [W393](../development/evidence/W393-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 原 IAM staging
 
 历史参与者、版本和原引用按同一事务落表。真实晚段错误全部回滚，同 pin 恢复保存的原结果。 [W391](../development/evidence/W391-01/DELIVERY.md)
