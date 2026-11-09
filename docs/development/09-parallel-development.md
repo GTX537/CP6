@@ -1,5 +1,11 @@
 # 多对话任务分配与交付
 
+> W385 实际 v5 四表隔离落表、原键与原回执通过。W382 随 #828 采用并释放，W386 原路由证据已收尾，集成席位 W388 核原17验收。 [W385](./evidence/W385-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave385/README.md)
+
+
+> W382 v4 隔离落表与原回执实测。W380 随 #827 采用并释放，W383 外部原件验证后释放。DEV-1 W384 核当前原队列，集成席位 W386 核旧 route epoch。 [W382](./evidence/W382-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave382/README.md)
+
+
 > W380 四表同快照及原权限实证通过。W379 随 #826 采用并释放。DEV-2 W382 接 v4 落表，集成席位 W383 核外部原件。 [W380](./evidence/W380-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave380/README.md)
 
 

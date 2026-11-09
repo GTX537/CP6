@@ -163022,6 +163022,61 @@
       "at": "2026-11-09T11:23:44.284543Z",
       "change": "W382 在 DEV-2 开工，复用原 v4 切面和 v3 staging。",
       "evidence": "docs/development/dispatch/20261109-wave380/README.md"
+    },
+    {
+      "at": "2026-11-09T11:29:57.926755Z",
+      "change": "W380-01正常合并PR #827，准确远端树核对和分支删除及DEV-1释放完成，实际1376秒。",
+      "evidence": "docs/development/evidence/W380-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T11:23:44.284543Z",
+      "change": "W382-01从并行开发转入本次串行采用。继续 v5 原队列隔离落表、当前队列与路由对账、IAM 和实际候选。",
+      "evidence": "docs/development/dispatch/20261109-wave382/README.md"
+    },
+    {
+      "at": "2026-11-09T11:36:00.2856074Z",
+      "change": "W382 原 v4 图隔离落表、后段失败和原回执实测通过，等待正常远端采用。",
+      "evidence": "docs/development/evidence/W382-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T11:30:40.039250Z",
+      "change": "W384 在 DEV-1 开工，独立当前原队列键与原结果对账。",
+      "evidence": "docs/development/dispatch/20261109-wave382/README.md"
+    },
+    {
+      "at": "2026-11-09T11:33:26.599275Z",
+      "change": "W383-VERIFY 实库证据齐备并正式释放集成席位，实际 862 秒。",
+      "evidence": "D:/CP6-local-test/CP6-72H-20261109/W383-VERIFY/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T11:34:40.663242Z",
+      "change": "W386 领取集成席位核真实旧 route epoch 与原回执。",
+      "evidence": "docs/development/dispatch/20261109-wave382/README.md"
+    },
+    {
+      "at": "2026-11-09T11:38:15.690237Z",
+      "change": "W382-01正常合并PR #828，准确远端树核对和分支删除及DEV-2释放完成，实际870秒。",
+      "evidence": "docs/development/evidence/W382-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T11:38:59.021534Z",
+      "change": "W385-01从并行开发转入本次串行采用。原消息当前只读对账、IAM 原引用同快照和实际恢复候选。",
+      "evidence": "docs/development/dispatch/20261109-wave385/README.md"
+    },
+    {
+      "at": "2026-11-09T11:47:36.6772524Z",
+      "change": "W385 四表 v5 隔离落表、真23505/原回执及空成员已通过，等待正常远端采用。",
+      "evidence": "docs/development/evidence/W385-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T11:45:24.739619Z",
+      "change": "W386-VERIFY 实库证据齐备并正式释放集成席位，实际 643 秒。",
+      "evidence": "D:/CP6-local-test/CP6-72H-20261109/W386-VERIFY/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T11:45:58.114035Z",
+      "change": "W388 领取集成席位按原17验收逐项核现有真实证据。",
+      "evidence": "docs/development/dispatch/20261109-wave385/README.md"
     }
   ],
   "implementation_assessment": {
@@ -164469,24 +164524,24 @@
       "card_anchor": "wp02-02",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "IDENTITY-PRIORITY-ARCHIVE / W380-01",
+        "chat_label": "IDENTITY-PRIORITY-STAGE / W385-01",
         "repository": "Main",
-        "branch": "codex/w380-01",
-        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-        "claimed_at": "2026-11-09T11:07:01.362652Z",
-        "baseline_sha": "90645bc17618748e7fc86d30f270551d02168080",
-        "entry_evidence": "docs/development/dispatch/20261109-wave380/README.md",
+        "branch": "codex/w385-01",
+        "worktree": "D:/CP6-worktrees/dev-2",
+        "claimed_at": "2026-11-09T11:38:59.021534Z",
+        "baseline_sha": "9968ffccfacf11dfaa6fc895ad04aafdc206ede9",
+        "entry_evidence": "docs/development/dispatch/20261109-wave385/README.md",
         "phase": "VALIDATED_PENDING_REMOTE",
-        "dispatch_scope": "v5 同 PostgreSQL 快照读取实际 Identity Priority 四张共享表，保持原字节、状态、全局键和租约。",
+        "dispatch_scope": "实际 v5 四表按原生类型、原全局键与空成员同原 RMA 数据原子落隔离目标。",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "reserved_write_resources": [
-          "file:Main:eng/wp02-02/rma-tenant-archive/archive.py",
-          "file:Main:eng/wp02-02/rma-tenant-archive/identity_priority.py",
-          "file:Main:docs/development/evidence/W380-01/DELIVERY.md"
+          "file:Main:eng/wp02-02/rma-tenant-archive/stage.py",
+          "file:Main:eng/wp02-02/rma-tenant-archive/verify_identity_priority_stage.py",
+          "file:Main:docs/development/evidence/W385-01/DELIVERY.md"
         ],
         "worker_start_received": true,
-        "delivery_report": "docs/development/evidence/W380-01/DELIVERY.md"
+        "delivery_report": "docs/development/evidence/W385-01/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -165409,7 +165464,7 @@
         },
         "receipt": "docs/development/evidence/authorized-adoption-release-20261015/release-receipt.json"
       },
-      "remaining_scope": "v4/v5 隔离 staging、当前原队列全局键及现行 IAM 对账、资产和其他共享域、正式原验收。",
+      "remaining_scope": "当前队列、IAM 与路由和资产对账、完整实际候选及原验收。",
       "main_package_adoption": {
         "path": "docs/development/evidence/WP02-02/main-package-adoption/DELIVERY.md",
         "scope": "Main exact formal0.10.3 dependency adoption; not tenant storage or full WP02-02 delivery",
@@ -165625,9 +165680,9 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-02",
-        "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。 W327验证普通LOGIN在调用事务内取得原认证根。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。 W335 已在实际普通事务验证 V2 新库存的明确归属、合法无归属、旧行拒绝和原安全审计，包含前向 PostgreSQL 迁移。  W346 现有 Stock 首装提交后丢弃 stdout，从另一个真实进程在准确物理库取回原安装 ID，驱动原写栅栏及后续已交付安装。孤立回执、未绑定登录读策略及目录/权限漂移拒绝。 W348 实际验证共享消息 profile 的初始化中断、原键恢复及原结果重放。  W350 在 fresh-only PostgreSQL 真实把原 RMA heads/versions 迁入各自租户 schema，验证原子首版、实际进程竞争、中断与原结果、普通角色和原复合约束。 新隔离全 Core 物理 commissioning 以实际发布宿主和 PostgreSQL 验证，旧业务与旧 RMA journal 栅栏、其他 Owner 和原回执已证。 W355 实测 Stock 10/100 普通登录冷暖、缓存 churn、真实模型、原生后端及双进程有限峰值，原配置 129/1000 拒绝。 原 RMA 正常 HTTP 单条和历史读从真实登录经当前共享权威到新租户 EF，A/B 原件、ETag、授权和真实 SQL已验证。 W358 RMA 已 Ready 租户的真实非事务索引、原生无效对象中断及准确原键恢复已验证，B 和已采用普通读继续。 原 RMA 受权分页列表以真实 A/B Bearer 验证两页和当前权限，第二页实际跨128候选，版本按原键读取。 原生同快照 RMA tenant schema 和已引用的共享 Outbound 从真实 A/B 活动库准确导出并独立 staging，ACL/Owner、版本和原内容通过。 W361 对真实全 Core 的原 RMA 日志安装普通租户 RLS 和同事务最小追加，实测同键跨租、闭合回滚、原认证根、其他 Owner 及原回执。 W366 增加真实 RMA 原操作日志同快照 v2 切片，准确固定租户和原 Owner，原 bytes 与隔离 staging 已验，保留 v1。 W364 在真实宿主首次采用普通 RMA draft POST，原 head、version 和 W361 journal 同事务写回，现行授权、八位数量、原 ETag 及同键精确重放已证。 W370 将真实 RMA v1/v2 归档 staging 接可操作入口，验证同事务原 schema、共享片和回执，坏输入回滚及原结果恢复。 W372 实际采用普通 RMA 提交，原 If-Match、版本推进、原日志、权限、故障回滚与原结果实证。共享归档保持确切已采用 writer 权限。 W374 实际交付 v3 同切面来源归档及 v1/v2 兼容。 W375 真正接正常原操作查询与关闭，当前授权、迟到竞争及原结果实证。 W377 实际交付 v3 隔离 staging、来源精度和字符规则、后段回滚与同键恢复。 W379 实测原可见性 v4 同切面，保留直连和回退工单、软删、空键与原库位隔离。 W380 同快照实际身份优先四表、原 bytea、租约和全局消息键，旧格式兼容。",
-        "remaining": "v4/v5 隔离 staging、当前 IAM/队列、全局消息与资产、其他共享域和实际候选恢复，正式原验收。",
-        "next_action": "v4 来源落表，按当前原队列状态及全局键对账，验证外部原件。",
+        "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。 W327验证普通LOGIN在调用事务内取得原认证根。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。 W335 已在实际普通事务验证 V2 新库存的明确归属、合法无归属、旧行拒绝和原安全审计，包含前向 PostgreSQL 迁移。  W346 现有 Stock 首装提交后丢弃 stdout，从另一个真实进程在准确物理库取回原安装 ID，驱动原写栅栏及后续已交付安装。孤立回执、未绑定登录读策略及目录/权限漂移拒绝。 W348 实际验证共享消息 profile 的初始化中断、原键恢复及原结果重放。  W350 在 fresh-only PostgreSQL 真实把原 RMA heads/versions 迁入各自租户 schema，验证原子首版、实际进程竞争、中断与原结果、普通角色和原复合约束。 新隔离全 Core 物理 commissioning 以实际发布宿主和 PostgreSQL 验证，旧业务与旧 RMA journal 栅栏、其他 Owner 和原回执已证。 W355 实测 Stock 10/100 普通登录冷暖、缓存 churn、真实模型、原生后端及双进程有限峰值，原配置 129/1000 拒绝。 原 RMA 正常 HTTP 单条和历史读从真实登录经当前共享权威到新租户 EF，A/B 原件、ETag、授权和真实 SQL已验证。 W358 RMA 已 Ready 租户的真实非事务索引、原生无效对象中断及准确原键恢复已验证，B 和已采用普通读继续。 原 RMA 受权分页列表以真实 A/B Bearer 验证两页和当前权限，第二页实际跨128候选，版本按原键读取。 原生同快照 RMA tenant schema 和已引用的共享 Outbound 从真实 A/B 活动库准确导出并独立 staging，ACL/Owner、版本和原内容通过。 W361 对真实全 Core 的原 RMA 日志安装普通租户 RLS 和同事务最小追加，实测同键跨租、闭合回滚、原认证根、其他 Owner 及原回执。 W366 增加真实 RMA 原操作日志同快照 v2 切片，准确固定租户和原 Owner，原 bytes 与隔离 staging 已验，保留 v1。 W364 在真实宿主首次采用普通 RMA draft POST，原 head、version 和 W361 journal 同事务写回，现行授权、八位数量、原 ETag 及同键精确重放已证。 W370 将真实 RMA v1/v2 归档 staging 接可操作入口，验证同事务原 schema、共享片和回执，坏输入回滚及原结果恢复。 W372 实际采用普通 RMA 提交，原 If-Match、版本推进、原日志、权限、故障回滚与原结果实证。共享归档保持确切已采用 writer 权限。 W374 实际交付 v3 同切面来源归档及 v1/v2 兼容。 W375 真正接正常原操作查询与关闭，当前授权、迟到竞争及原结果实证。 W377 实际交付 v3 隔离 staging、来源精度和字符规则、后段回滚与同键恢复。 W379 实测原可见性 v4 同切面，保留直连和回退工单、软删、空键与原库位隔离。 W380 同快照实际身份优先四表、原 bytea、租约和全局消息键，旧格式兼容。 W382 实际 v4 原子落表、真实图失败回滚与原回执。 W385 实际 v5 四表中立 staging，原键、空成员、原回执及同 pin 回滚。",
+        "remaining": "当前 IAM/队列/路由、资产和实际候选恢复，原正式验收。",
+        "next_action": "原消息当前只读对账、IAM 原引用同快照和实际恢复候选。",
         "evidence_refs": [
           "docs/development/evidence/WP02-02/directory-installation/DELIVERY.md",
           "docs/development/evidence/WP02-02/tenant-connections/DELIVERY.md",
@@ -165667,11 +165722,13 @@
           "docs/development/evidence/W375-01/DELIVERY.md",
           "docs/development/evidence/W377-01/DELIVERY.md",
           "docs/development/evidence/W379-01/DELIVERY.md",
-          "docs/development/evidence/W380-01/DELIVERY.md"
+          "docs/development/evidence/W380-01/DELIVERY.md",
+          "docs/development/evidence/W382-01/DELIVERY.md",
+          "docs/development/evidence/W385-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true,
-        "latest_window": "W380-01"
+        "latest_window": "W385-01"
       },
       "wave326_delivery": {
         "status": "CLOSED",
@@ -166341,11 +166398,47 @@
         "workspace_status": "fixed-seat-detached-for-reuse"
       },
       "wave380_delivery": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W380-01/DELIVERY.md",
         "profile": "cp6-rma-source-archive-v5",
         "validation": "实际 PG18.6，一次 W351 初始化，十个消费者同切面。A 四个原生 CSV 精确，B 空成员和真实 v5 CLI，全局键23505，受限读者原生42501且无清单，v1–v4 验证通过。",
         "scope": "真实身份优先四表原生归档，保原字节及原全局键。后续 staging/当前对账/route/其他域独立。",
+        "full_task_complete": false,
+        "formal_acceptance": "NOT_RUN",
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/827",
+          "commit": "b21d364e2eec480847521be0a3a5e8ad61406f38",
+          "target_head": "b21d364e2eec480847521be0a3a5e8ad61406f38"
+        },
+        "seat_released": true,
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse"
+      },
+      "wave382_delivery": {
+        "status": "CLOSED",
+        "report": "docs/development/evidence/W382-01/DELIVERY.md",
+        "profile": "cp6-rma-source-archive-v4",
+        "validation": "实际 PG18.6，原 W379 pin。后段 active warehouse NULL→空串触发 P0001 整笔回滚。原目标/租户/pin retry 与 715 字节原回执、原 CSV、ACL和原日志。v1–v3 六份 stage/recover driver 原字节。",
+        "scope": "v4 原可见性事实按原精度和关系落隔离目标，不进行现行许可或开放。",
+        "full_task_complete": false,
+        "formal_acceptance": "NOT_RUN",
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/828",
+          "commit": "9968ffccfacf11dfaa6fc895ad04aafdc206ede9",
+          "target_head": "9968ffccfacf11dfaa6fc895ad04aafdc206ede9"
+        },
+        "seat_released": true,
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse"
+      },
+      "wave385_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W385-01/DELIVERY.md",
+        "profile": "cp6-rma-source-archive-v5",
+        "validation": "实际 PG18.6，原 v5 A/B。后段原 ICU 全局键23505 整笔回滚；同 pin 成功及原回执恢复，A 四原生 CSV 字节精确，B 死信带表头0行，原主键/全局键、bytea和RowVersion。原 v1–v4 八份 driver 精确。",
+        "scope": "中立隔离四表和原 RMA 同事务；现行权限、队列启用或完整候选继续。",
         "full_task_complete": false,
         "formal_acceptance": "NOT_RUN"
       }
@@ -206284,61 +206377,61 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W380",
-      "path": "docs/development/dispatch/20261109-wave380/README.md",
-      "baseline_sha": "90645bc17618748e7fc86d30f270551d02168080",
-      "registered_at": "2026-11-09T11:07:01.362652Z",
+      "id": "W385",
+      "path": "docs/development/dispatch/20261109-wave385/README.md",
+      "baseline_sha": "9968ffccfacf11dfaa6fc895ad04aafdc206ede9",
+      "registered_at": "2026-11-09T11:38:59.021534Z",
       "phase": "VALIDATED_PENDING_REMOTE",
       "assigned_chats": [
-        "IDENTITY-PRIORITY-ARCHIVE",
+        "IDENTITY-PRIORITY-STAGE",
         "COORD"
       ],
       "authorized_implementation_chats": [
-        "IDENTITY-PRIORITY-ARCHIVE"
+        "IDENTITY-PRIORITY-STAGE"
       ],
       "authorized_review_chats": [
         "COORD"
       ],
       "active_implementation_chats": [
-        "IDENTITY-PRIORITY-ARCHIVE"
+        "IDENTITY-PRIORITY-STAGE"
       ],
       "workers_started": true,
       "windows_closed": false,
       "product_integrated": false,
       "windows": [
         {
-          "id": "W380-01",
-          "workspace_task": "W380-01",
+          "id": "W385-01",
+          "workspace_task": "W385-01",
           "related_tasks": [
             "WP02-02"
           ],
-          "title": "身份优先队列四表原生同快照",
-          "chat": "IDENTITY-PRIORITY-ARCHIVE",
+          "title": "v5 身份优先四表隔离落表",
+          "chat": "IDENTITY-PRIORITY-STAGE",
           "mode": "DELEGATED_IMPLEMENTATION",
           "phase": "VALIDATED_PENDING_REMOTE",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w380-01",
-          "planned_scope_ref": "docs/development/dispatch/20261109-wave380/README.md",
+          "worktree": "D:/CP6-worktrees/dev-2",
+          "branch": "codex/w385-01",
+          "planned_scope_ref": "docs/development/dispatch/20261109-wave385/README.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "file:Main:eng/wp02-02/rma-tenant-archive/archive.py",
-            "file:Main:eng/wp02-02/rma-tenant-archive/identity_priority.py",
-            "file:Main:docs/development/evidence/W380-01/DELIVERY.md"
+            "file:Main:eng/wp02-02/rma-tenant-archive/stage.py",
+            "file:Main:eng/wp02-02/rma-tenant-archive/verify_identity_priority_stage.py",
+            "file:Main:docs/development/evidence/W385-01/DELIVERY.md"
           ],
           "worker_delivery_received": true,
           "candidate_review_completed": true,
-          "delivery_report": "docs/development/evidence/W380-01/DELIVERY.md"
+          "delivery_report": "docs/development/evidence/W385-01/DELIVERY.md"
         }
       ],
       "storage": {
-        "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "reuse_worktree": "D:/CP6-worktrees/dev-2",
         "new_worktrees": 0
       },
-      "next_action": "v4 来源落表，按当前原队列状态及全局键对账，验证外部原件。"
+      "next_action": "原消息当前只读对账、IAM 原引用同快照和实际恢复候选。"
     },
     "wave_history": [
       {
@@ -248232,6 +248325,128 @@
           "new_worktrees": 0
         },
         "next_action": "v4 来源落表，按当前原队列状态及全局键对账，验证外部原件。"
+      },
+      {
+        "id": "W380",
+        "path": "docs/development/dispatch/20261109-wave380/README.md",
+        "baseline_sha": "90645bc17618748e7fc86d30f270551d02168080",
+        "registered_at": "2026-11-09T11:07:01.362652Z",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "IDENTITY-PRIORITY-ARCHIVE",
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "IDENTITY-PRIORITY-ARCHIVE"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W380-01",
+            "workspace_task": "W380-01",
+            "related_tasks": [
+              "WP02-02"
+            ],
+            "title": "身份优先队列四表原生同快照",
+            "chat": "IDENTITY-PRIORITY-ARCHIVE",
+            "mode": "DELEGATED_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w380-01",
+            "planned_scope_ref": "docs/development/dispatch/20261109-wave380/README.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "file:Main:eng/wp02-02/rma-tenant-archive/archive.py",
+              "file:Main:eng/wp02-02/rma-tenant-archive/identity_priority.py",
+              "file:Main:docs/development/evidence/W380-01/DELIVERY.md"
+            ],
+            "worker_delivery_received": true,
+            "candidate_review_completed": true,
+            "delivery_report": "docs/development/evidence/W380-01/DELIVERY.md",
+            "candidate_integrated": true,
+            "resources_released": true,
+            "adopted_remote": "b21d364e2eec480847521be0a3a5e8ad61406f38",
+            "pr": "https://github.com/GTX537/CP6/pull/827",
+            "branch_disposition": "deleted-local-and-remote",
+            "finished_at": "2026-11-09T11:29:57.926755Z"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "继续 v5 原队列隔离落表、当前队列与路由对账、IAM 和实际候选。"
+      },
+      {
+        "id": "W382",
+        "path": "docs/development/dispatch/20261109-wave382/README.md",
+        "baseline_sha": "aaccdd610c2772efb273a1051a213f7702bcfa87",
+        "registered_at": "2026-11-09T11:23:44.284543Z",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "RMA-VISIBILITY-STAGE",
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "RMA-VISIBILITY-STAGE"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W382-01",
+            "workspace_task": "W382-01",
+            "related_tasks": [
+              "WP02-02"
+            ],
+            "title": "v4 可见性原子隔离落表",
+            "chat": "RMA-VISIBILITY-STAGE",
+            "mode": "DELEGATED_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w382-01",
+            "planned_scope_ref": "docs/development/dispatch/20261109-wave382/README.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "file:Main:eng/wp02-02/rma-tenant-archive/stage.py",
+              "file:Main:eng/wp02-02/rma-tenant-archive/verify_visibility_stage.py",
+              "file:Main:docs/development/evidence/W382-01/DELIVERY.md"
+            ],
+            "worker_delivery_received": true,
+            "candidate_review_completed": true,
+            "delivery_report": "docs/development/evidence/W382-01/DELIVERY.md",
+            "candidate_integrated": true,
+            "resources_released": true,
+            "adopted_remote": "9968ffccfacf11dfaa6fc895ad04aafdc206ede9",
+            "pr": "https://github.com/GTX537/CP6/pull/828",
+            "branch_disposition": "deleted-local-and-remote",
+            "finished_at": "2026-11-09T11:38:15.690237Z"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:/CP6-worktrees/dev-2",
+          "new_worktrees": 0
+        },
+        "next_action": "原消息当前只读对账、IAM 原引用同快照和实际恢复候选。"
       }
     ],
     "development_priority": {
@@ -250963,7 +251178,7 @@
         }
       },
       "timing_basis": "Native goal plus independently sampled monotonic segments for confirmed missing time, with exclusions and no overlap.",
-      "next_priority": "v4 来源落表，按当前原队列状态及全局键对账，验证外部原件。",
+      "next_priority": "原消息当前只读对账、IAM 原引用同快照和实际恢复候选。",
       "windows": [
         {
           "id": "W327-01",
@@ -252087,7 +252302,7 @@
         },
         {
           "id": "W380-01",
-          "state": "VALIDATED_PENDING_REMOTE",
+          "state": "CLOSED",
           "related_tasks": [
             "WP02-02"
           ],
@@ -252100,8 +252315,60 @@
           "dispatch": "docs/development/dispatch/20261109-wave380/README.md",
           "validation_ready_at": "2026-11-09T11:27:37.3498815Z",
           "validation_ready_seconds": 1235,
+          "timing_source": "主机连续单调取样，起始至官方finish回读。无暂停。",
+          "delivery": "docs/development/evidence/W380-01/DELIVERY.md",
+          "actual_seconds": 1376,
+          "finished_at": "2026-11-09T11:29:57.926755Z",
+          "actual_to_estimate_midpoint": 0.706,
+          "pr": "https://github.com/GTX537/CP6/pull/827",
+          "adopted_main": "b21d364e2eec480847521be0a3a5e8ad61406f38",
+          "branch_disposition": "deleted-local-and-remote",
+          "seat_released": true,
+          "variance": "原估 25–40 分钟，实际 22 分 56 秒。独立模块与实库预种并行，公共入口串行后使用同一实例。"
+        },
+        {
+          "id": "W382-01",
+          "state": "CLOSED",
+          "related_tasks": [
+            "WP02-02"
+          ],
+          "started_at": "2026-11-09T11:23:44.284543Z",
+          "estimate_minutes": [
+            13,
+            24
+          ],
+          "scope": "真实 v4 可见性图和原 v3 来源、日志、租户 schema 同一隔离事务落表，保原回执和精确原文本。",
+          "dispatch": "docs/development/dispatch/20261109-wave382/README.md",
+          "validation_ready_at": "2026-11-09T11:36:00.2856074Z",
+          "validation_ready_seconds": 735,
+          "timing_source": "主机连续单调取样，起始至官方finish回读。无暂停。",
+          "delivery": "docs/development/evidence/W382-01/DELIVERY.md",
+          "actual_seconds": 870,
+          "finished_at": "2026-11-09T11:38:15.690237Z",
+          "actual_to_estimate_midpoint": 0.784,
+          "pr": "https://github.com/GTX537/CP6/pull/828",
+          "adopted_main": "9968ffccfacf11dfaa6fc895ad04aafdc206ede9",
+          "branch_disposition": "deleted-local-and-remote",
+          "seat_released": true,
+          "variance": "原估 13–24 分钟，实际 14 分 30 秒。准确 v4 和一套纯 PG 复用，收尾按正常串行。"
+        },
+        {
+          "id": "W385-01",
+          "state": "VALIDATED_PENDING_REMOTE",
+          "related_tasks": [
+            "WP02-02"
+          ],
+          "started_at": "2026-11-09T11:38:59.021534Z",
+          "estimate_minutes": [
+            12,
+            22
+          ],
+          "scope": "实际 v5 四表按原生类型、原全局键与空成员同原 RMA 数据原子落隔离目标。",
+          "dispatch": "docs/development/dispatch/20261109-wave385/README.md",
+          "validation_ready_at": "2026-11-09T11:47:36.6772524Z",
+          "validation_ready_seconds": 516,
           "timing_source": "同次连续执行的主机单调取样。远端采用及席位收尾计时另记。",
-          "delivery": "docs/development/evidence/W380-01/DELIVERY.md"
+          "delivery": "docs/development/evidence/W385-01/DELIVERY.md"
         }
       ],
       "parallel_execution": {
@@ -252113,21 +252380,21 @@
         "overlap_counted_once": true,
         "active_windows": [
           {
-            "id": "W382-01",
+            "id": "W384-01",
             "state": "ACTIVE",
             "original_task": "WP02-02",
-            "owner": "RMA-VISIBILITY-STAGE",
-            "started_at": "2026-11-09T11:23:44.284543Z",
+            "owner": "IDENTITY-PRIORITY-RECONCILE",
+            "started_at": "2026-11-09T11:30:40.039250Z",
             "estimate_minutes": [
-              13,
-              24
+              24,
+              40
             ],
-            "base": "aaccdd610c2772efb273a1051a213f7702bcfa87",
-            "branch": "codex/w382-01",
-            "workspace": "D:/CP6-worktrees/dev-2",
-            "seat": "DEV-2",
-            "dispatch": "docs/development/dispatch/20261109-wave380/README.md",
-            "scope": "原 v4 可见性准确物理行、原来源和原日志在隔离目标原子落表，保留源细节、回滚与原回执。",
+            "base": "b21d364e2eec480847521be0a3a5e8ad61406f38",
+            "branch": "codex/w384-01",
+            "workspace": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "seat": "DEV-1",
+            "dispatch": "docs/development/dispatch/20261109-wave382/README.md",
+            "scope": "实际身份优先原消息键与当前状态只读对账。保留当前终态和租约，异租户冲突封闭，缺失保持 UNKNOWN。",
             "mode": "BOUNDED_IMPLEMENTATION"
           }
         ],
@@ -252509,7 +252776,7 @@
           },
           {
             "id": "W383-VERIFY",
-            "state": "ACTIVE",
+            "state": "VERIFIED",
             "original_task": "WP02-02",
             "owner": "RESTORE-EXTERNAL-ASSET-VERIFY",
             "source": "90645bc17618748e7fc86d30f270551d02168080",
@@ -252520,7 +252787,57 @@
               18,
               34
             ],
-            "scope": "真实原生备份恢复后的 FileContent 外部原件，独立 LocalFileStore、当前原 Owner、缺失和变更原件以及正向原字节。",
+            "scope": "实际 PostgreSQL 备份恢复候选、原 FileContent Owner 与 LocalFileStore，三份原字节、缺失和同长度损坏各 503 并局部隔离。源和候选对照原件相同，实际准入前后拒绝。",
+            "formal_acceptance": "NOT_RUN",
+            "result": "RESTORED_EXTERNAL_FILE_ASSET_VERIFIED",
+            "actual_seconds": 862,
+            "finished_at": "2026-11-09T11:33:26.599275Z",
+            "validation_ready_at": "2026-11-09T11:33:11.6929506Z",
+            "validation_ready_seconds": 847,
+            "report": "D:/CP6-local-test/CP6-72H-20261109/W383-VERIFY/DELIVERY.md",
+            "branch_disposition": "no-task-branch",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          },
+          {
+            "id": "W386-VERIFY",
+            "state": "VERIFIED",
+            "original_task": "WP02-02",
+            "owner": "RESTORE-ROUTE-EPOCH-VERIFY",
+            "source": "b21d364e2eec480847521be0a3a5e8ad61406f38",
+            "seat": "INTEGRATION-1",
+            "workspace": "D:/CP6-worktrees/s02-00-20261012",
+            "started_at": "2026-11-09T11:34:40.663242Z",
+            "estimate_minutes": [
+              15,
+              27
+            ],
+            "scope": "实际 Main 采用 Platform 0.10.3，原 epoch1 claim 与真实备份恢复，源原 drain/完成/epoch2，真实派送拒旧 ticket 和零发布，源/候选及原回执保持。",
+            "formal_acceptance": "NOT_RUN",
+            "result": "RESTORE_ROUTE_EPOCH_VERIFIED",
+            "actual_seconds": 643,
+            "finished_at": "2026-11-09T11:45:24.739619Z",
+            "validation_ready_at": "2026-11-09T11:45:08.4046547Z",
+            "validation_ready_seconds": 627,
+            "report": "D:/CP6-local-test/CP6-72H-20261109/W386-VERIFY/DELIVERY.md",
+            "branch_disposition": "no-task-branch",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          },
+          {
+            "id": "W388-VERIFY",
+            "state": "ACTIVE",
+            "original_task": "WP02-02",
+            "owner": "PGT-ACCEPTANCE-EVIDENCE-AUDIT",
+            "source": "9968ffccfacf11dfaa6fc895ad04aafdc206ede9",
+            "seat": "INTEGRATION-1",
+            "workspace": "D:/CP6-worktrees/s02-00-20261012",
+            "started_at": "2026-11-09T11:45:58.114035Z",
+            "estimate_minutes": [
+              9,
+              18
+            ],
+            "scope": "按原17 PGT 对照实际本地原件和适用前置，定位完整候选、混合版本和容量的具体缺口。",
             "formal_acceptance": "NOT_RUN"
           }
         ]

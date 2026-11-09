@@ -1,5 +1,15 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC v5 身份队列 staging
+
+原四表按原键、类型和空成员原子落隔离库，实测晚段冲突回滚和原回执。 [W385](../development/evidence/W385-01/DELIVERY.md)
+
+
+## 2026-11-09 UTC v4 原子隔离图
+
+原可见性事实与来源、journal 同事务落表，保原 NULL/空值和原回执。 [W382](../development/evidence/W382-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC Identity Priority v5
 
 按原生四表保存字节、状态、时间、原全局键与租约，支持零行成员。 [W380](../development/evidence/W380-01/DELIVERY.md)
