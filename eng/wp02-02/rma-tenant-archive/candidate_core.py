@@ -11,6 +11,7 @@ import sys
 
 sys.dont_write_bytecode = True
 import archive
+import candidate_journal
 import stage
 
 
@@ -90,7 +91,10 @@ def target_sql(plan, read_only):
     """
 
 
-def ready_sql(schema):
+def ready_sql(schema, *, expect_empty=True):
+    empty = f"""IF EXISTS (SELECT FROM {schema}.heads) OR EXISTS (SELECT FROM {schema}.versions) THEN
+            RAISE EXCEPTION 'rma-stage-candidate-not-empty';
+        END IF;""" if expect_empty else ""
     return f"""
     DO $candidate_ready$
     DECLARE
@@ -186,9 +190,7 @@ def ready_sql(schema):
                    OR (conrelid=versions AND conkey=ARRAY[1,2,3]::smallint[])))<>2 THEN
             RAISE EXCEPTION 'rma-stage-candidate-layout-rejected';
         END IF;
-        IF EXISTS (SELECT FROM {schema}.heads) OR EXISTS (SELECT FROM {schema}.versions) THEN
-            RAISE EXCEPTION 'rma-stage-candidate-not-empty';
-        END IF;
+        {empty}
     END
     $candidate_ready$;
     """
@@ -224,8 +226,8 @@ def import_sql(schema):
     """
 
 
-def receipt_sql():
-    return f"""
+def receipt_sql(*, table="receipt", profile=PROFILE, show_result=True):
+    sql = f"""
     DO $candidate_receipt$
     DECLARE
         k jsonb := current_setting('{PLAN}')::jsonb->'key';
@@ -233,15 +235,15 @@ def receipt_sql():
         original text;
     BEGIN
         IF NOT EXISTS (SELECT FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
-            WHERE c.oid=to_regclass('{RECEIPTS}.receipt') AND c.relkind='r' AND c.relowner=owner AND n.nspowner=owner
+            WHERE c.oid=to_regclass('{RECEIPTS}.{table}') AND c.relkind='r' AND c.relowner=owner AND n.nspowner=owner
               AND NOT c.relrowsecurity AND NOT EXISTS (SELECT FROM aclexplode(n.nspacl) a WHERE a.grantee<>owner)
               AND NOT EXISTS (SELECT FROM aclexplode(c.relacl) a WHERE a.grantee<>owner)
               AND NOT EXISTS (SELECT FROM pg_attribute t,LATERAL aclexplode(t.attacl) a
                   WHERE t.attrelid=c.oid AND a.grantee<>owner)) THEN
             RAISE EXCEPTION 'rma-stage-candidate-receipt-not-found';
         END IF;
-        SELECT result_json INTO original FROM {RECEIPTS}.receipt WHERE singleton AND input=k
-            AND result_json::jsonb->'binding'=k AND result_json::jsonb->>'profile'='{PROFILE}'
+        SELECT result_json INTO original FROM {RECEIPTS}.{table} WHERE singleton AND input=k
+            AND result_json::jsonb->'binding'=k AND result_json::jsonb->>'profile'='{profile}'
             AND result_json::jsonb->>'outcome'='IMPORTED' AND result_json::jsonb->'recoveryReady'='false'::jsonb;
         IF original IS NULL THEN
             RAISE EXCEPTION 'rma-stage-candidate-receipt-key-rejected';
@@ -249,7 +251,29 @@ def receipt_sql():
         PERFORM set_config('{PLAN}_receipt',original,true);
     END
     $candidate_receipt$;
-    SELECT current_setting('{PLAN}_receipt');
+    """
+    return sql + (f"SELECT current_setting('{PLAN}_receipt');\n    " if show_result else "")
+
+
+def journal_driver(args, output, target, tenant, digest, plan, recover):
+    journal_receipt = receipt_sql(table=candidate_journal.RECEIPT, profile=candidate_journal.PROFILE)
+    if recover:
+        return target_sql(plan, True) + receipt_sql(show_result=False) + journal_receipt
+
+    _, metadata = stage.checked_bundle(args.bundle, output, tenant, digest, target, args.file_content_root,
+                                       include_stock_outbox=True)
+    if metadata["journalCounts"] is None:
+        raise stage.StageError("rma-stage-candidate-journal-required")
+    schema = "t_" + tenant.hex
+    plan.update(format=metadata["format"], journalCounts=metadata["journalCounts"])
+    return target_sql(plan, False) + receipt_sql(show_result=False) + f"""
+    SELECT to_regclass('{RECEIPTS}.{candidate_journal.RECEIPT}') IS NOT NULL AS has_journal_receipt \\gset
+    \\if :has_journal_receipt
+    {journal_receipt}
+    \\else
+    {ready_sql(schema, expect_empty=False)}
+    {candidate_journal.import_sql(schema, PLAN, RECEIPTS)}
+    \\endif
     """
 
 
@@ -267,8 +291,10 @@ def execute(args):
     key = dict(target=target.mapping(), tenantId=str(tenant), manifestSha256=digest, candidateId=str(candidate),
                commissionReceiptSha256=commission_pin)
     plan = dict(key=key, installationId=installation)
-    recover = args.action == "recover"
-    if recover:
+    recover = args.action.startswith("recover")
+    if args.action.endswith("-journal"):
+        driver = journal_driver(args, output, target, tenant, digest, plan, recover)
+    elif recover:
         driver = target_sql(plan, True) + receipt_sql()
     else:
         checked, metadata = stage.checked_bundle(args.bundle, output, tenant, digest, target, args.file_content_root,
@@ -293,13 +319,13 @@ def execute(args):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     actions = parser.add_subparsers(dest="action", required=True)
-    for name in ("import", "recover"):
+    for name in ("import", "recover", "import-journal", "recover-journal"):
         command = actions.add_parser(name)
         for field in ("pg-bin", "target-file", "commission-receipt", "output"):
             command.add_argument("--" + field, type=Path, required=True)
         for field in ("username", "tenant", "candidate-id", "manifest-sha256"):
             command.add_argument("--" + field, required=True)
-        if name == "import":
+        if name.startswith("import"):
             command.add_argument("--bundle", type=Path, required=True)
             command.add_argument("--file-content-root", type=Path, help="original private asset root for applicable formats")
     try:

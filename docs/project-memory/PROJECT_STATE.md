@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC RMA 候选原流水
+
+W411 随 #850 采用并释放。W410 验证 v2 批准开放，W412 验证同源非空 v10 中立暂存。W413 完成关闭态原流水本地验证，正式 PGT-021/022 待执行。原台账为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W413](../development/evidence/W413-01/DELIVERY.md) · [W412](D:/CP6-local-test/CP6-72H-20261109/W412-VERIFY/DELIVERY.md)
+
+
 ## 2026-11-09 UTC v10 隔离 Core 导入
 
 W406 随 #849 采用并释放。W411 实测 v10 原两表导入、故障回滚和原回执恢复。Platform 0.10.4 正式版本登记已采用，签发及 Main 采用仍待执行。原台账为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W411](../development/evidence/W411-01/DELIVERY.md) · [Platform #81](https://github.com/GTX537/CP6.Platform/pull/81)
