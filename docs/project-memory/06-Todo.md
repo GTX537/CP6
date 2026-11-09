@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 其余领域对账和恢复候选
+
+W409 接续同源 v9/v10 的 IAM、Identity Priority 和 ERP 对账。W406 完整 Core 导入、W401 普通读回、批准开放和正式恢复验收按各自窗口执行。#844 待正式包、Main 采用及原步骤复验。 [W408](../development/evidence/W408-01/DELIVERY.md) · [Issue #844](https://github.com/GTX537/CP6/issues/844)
+
+
 ## 2026-11-09 UTC Core 候选和现行派送权威
 
 从已保存 W406 分支续验真 Core 候选导入和晚 FK，完成 W401 普通读回，接 Stock 当前对账和批准开放。 [W407](../development/evidence/W407-01/DELIVERY.md) · [W406 保存候选](https://github.com/GTX537/CP6/blob/fe52f94eaa8d93e7c560b518a229d2ccbd75abdb/docs/development/evidence/W406-01/DELIVERY.md)

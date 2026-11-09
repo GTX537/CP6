@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC v10 Stock 当前对账
+
+W407 随 #846 采用并释放。W408 核准同源 v10 的当前状态并验证真实历史 Pending 对当前 Published。Platform #80 已采用守卫源码，正式包与 Main 采用待验。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W408](../development/evidence/W408-01/DELIVERY.md) · [Platform #80](https://github.com/GTX537/CP6.Platform/pull/80)
+
+
 ## 2026-11-09 UTC v10 Stock 中立暂存
 
 W407 在隔离 PostgreSQL 实测原 v10 及 14 个 Stock 原成员的原子暂存和原回执。W405 随 #845 采用并释放。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W407](../development/evidence/W407-01/DELIVERY.md) · [PR #845](https://github.com/GTX537/CP6/pull/845)
