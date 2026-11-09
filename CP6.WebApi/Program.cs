@@ -1091,7 +1091,8 @@ else
 }
 
 // 4.11 MSBBWM090 + WM-DASH WMS Phase 4 棚卸・ダッシュボード
-builder.Services.AddScoped<CP6.Core.Services.Wms.StockOperationsService>();
+CP6.WebApi.Configuration.StockReadTenancyConfiguration.Add(
+    builder.Services, builder.Configuration, database, databaseConnection);
 builder.Services.AddScoped<CP6.Core.Services.Wms.IStockTakeService, CP6.Core.Services.Wms.StockTakeService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsDashboardService, CP6.Core.Services.Wms.WmsDashboardService>();
 

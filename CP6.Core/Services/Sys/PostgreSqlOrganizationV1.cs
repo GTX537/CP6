@@ -17,16 +17,20 @@ internal static class PostgreSqlOrganizationV1
     }
     // Legacy PostgreSQL strings use unbounded bpchar. Equality/casts trim trailing spaces;
     // compare its actual stored bytes so a malformed path cannot become an authority root.
-    internal static string HealthyCte(string table,string tenant) => $$"""
+    internal static string HealthyCte(string table,string tenant, bool keysOnly = false)
+    {
+        var projection = keysOnly ? "d.\"Id\", d.\"Path\"" : "d.*";
+        return $$"""
         healthy_departments AS (
-          SELECT d.* FROM {{table}} d WHERE d."TenantId"={{tenant}} AND d."ParentId" IS NULL AND d."Enable"
+          SELECT {{projection}} FROM {{table}} d WHERE d."TenantId"={{tenant}} AND d."ParentId" IS NULL AND d."Enable"
             AND pg_catalog.convert_from(pg_catalog.bpcharsend(d."Path"),'UTF8')='/'||d."Id"::text||'/'
           UNION ALL
-          SELECT d.* FROM {{table}} d JOIN healthy_departments p ON d."ParentId"=p."Id"
+          SELECT {{projection}} FROM {{table}} d JOIN healthy_departments p ON d."ParentId"=p."Id"
           WHERE d."TenantId"={{tenant}} AND d."Enable"
             AND pg_catalog.convert_from(pg_catalog.bpcharsend(d."Path"),'UTF8')=
                 pg_catalog.convert_from(pg_catalog.bpcharsend(p."Path"),'UTF8')||d."Id"::text||'/')
         """;
+    }
     internal static IQueryable<Sys_Dept> Healthy(CP6Context db) => db.Sys_Depts.FromSqlRaw(
         "WITH RECURSIVE "+HealthyCte(Table(db),"@organization_tenant")+" SELECT * FROM healthy_departments",
         new NpgsqlParameter("organization_tenant",db.CurrentTenantId)).AsNoTracking();

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "baseline_id": "CP6-DEV-ROADMAP-20261011/R1",
-  "as_of": "2026-11-08",
+  "as_of": "2026-11-09",
   "scope": "125已接受设计目标的全量大任务计划与进度登记。247仅为修订运行场景；原模块验收需继续盘点。不是125目标实现已完成的证明。",
   "main_baseline_sha": "90ea752e9029d171e6a0307fcda06c66c3e04a69",
   "sources": [
@@ -162192,6 +162192,16 @@
       "date": "2026-11-08",
       "change": "W325完成内部准确可选成员排除：当前SET排除决定与源确认权限、全部原条款OPTIONAL/允许来源决定、准确原Source/适用范围；保存原成员/原件/冲突，连续继承原决定人/版本/时间，变更适用范围重新决定。实际FLOW与Owner批准分开，原操作恢复、回滚/竞争及真实Chrome采用。 原37537DONE/2IN_PROGRESS/336PLANNED、原59为9闭环/50余项；125/247不变。原24h最终收妥中。",
       "evidence": "docs/development/evidence/W325-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-09",
+      "change": "单人总控按已核对原375余项续接。W326-01在DEV-1实际开工，采用库存查询Owner的可信PostgreSQL读取；S02-00与WP02-01已交付。",
+      "evidence": "docs/development/dispatch/20261109-wave326/README.md"
+    },
+    {
+      "date": "2026-11-09",
+      "change": "核实W325和原24h终态86,238秒；W326完成库存Owner的普通租户连接读取验证。原375仍37 DONE/2 IN_PROGRESS/336 PLANNED，原59仍9闭环/50余项，125/247未提升。",
+      "evidence": "docs/development/evidence/W326-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -163639,59 +163649,26 @@
       "card_anchor": "wp02-02",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD / W20-02 目录显式安装检查",
+        "chat_label": "COORD / W326-01",
         "repository": "Main",
-        "owning_task_repository": "Main",
-        "branch": "codex/wave20-directory-installation-20261018",
-        "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-        "claimed_at": "2026-10-19T03:09:42.688465+00:00",
-        "baseline_sha": "1b03afcb8ba9b86ea6a9ccc8d45ad5392ba71364",
-        "entry_evidence": "docs/development/dispatch/20261018-wave20/README.md",
-        "phase": "CLOSED",
-        "dispatch_scope": "IDENTITY_DIRECTORY_INSTALLATION_CONTROL",
+        "branch": "codex/w326-01",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-09T00:31:03.679942Z",
+        "baseline_sha": "802d1cf229936cc893770b2ddc0b6a7acd1b73ec",
+        "entry_evidence": "docs/development/dispatch/20261109-wave326/README.md",
+        "phase": "VALIDATED_PENDING_REMOTE",
+        "dispatch_scope": "STOCK_OWNER_TRUSTED_POSTGRESQL_READ",
         "bounded_window_gate": "CONFIRMED",
-        "full_task_gate_unchanged": true,
-        "worker_start_received": true,
-        "actual_start_ref": {
-          "commit": "65961b0f8bbf1685fbac07fc93817863d240ad44",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261019T030942Z-wave20-installation-start/MESSAGE.md",
-          "kind": "START",
-          "at": "2026-10-19T03:09:42.688465+00:00"
-        },
-        "allowed_write_paths": [
-          "CP6.Core/Persistence/Tenancy/IdentityDirectoryInstallationV2.cs",
-          "CP6.Core/Persistence/Tenancy/IdentityDirectoryDatabaseIdentity.cs",
-          "CP6.Core/Persistence/Tenancy/TenantIdentityDirectoryAuthorizationReader.cs",
-          "CP6.Core/Persistence/Tenancy/TenantIdentityDirectoryReader.cs",
-          "CP6.Core/Persistence/Tenancy/README.md",
-          "tools/CP6.TenantStorage/Program.cs",
-          "CP6.Tests/Persistence/Tenancy/IdentityDirectoryInstallationPostgresTests.cs",
-          "CP6.Tests/Persistence/Tenancy/IdentityDirectoryPostgresFixture.cs",
-          "docs/development/evidence/WP02-02/directory-installation/DELIVERY.md"
+        "reserved_write_resources": [
+          "Main:tenant-storage",
+          "Main:ef-model",
+          "Main:stock-owner-read"
         ],
-        "reserved_write_resources": [],
-        "reserved_postgresql_ports": [],
-        "handoff_branch": "codex/dev-coordination-20261012",
-        "actions_authorized": false,
-        "formal_publication_authorized": false,
-        "existing_database_migration_authorized": false,
-        "deployment_authorized": false,
-        "delivery_report": "docs/development/evidence/WP02-02/directory-installation/DELIVERY.md",
+        "full_task_gate_unchanged": true,
         "candidate_review_completed": true,
-        "candidate_integrated": true,
-        "review_mode": "Single combined SPEC/QUALITY author self-review; not independent",
-        "ports": {},
-        "integration": {
-          "source": "8a39779211b5347cd83669e09266a289832bd476",
-          "main": "73ddf0b9374e5f09140be4280895d150749f87c5",
-          "pr": "https://github.com/GTX537/CP6/pull/292"
-        },
-        "delivery_ref": {
-          "commit": "c155fa0a87ff9e139ebacf8504b33e4c5f427f20",
-          "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261019T033503Z-wave20-installation-delivery/MESSAGE.md",
-          "kind": "DELIVERY",
-          "at": "2026-10-19T03:35:03.633717+00:00"
-        }
+        "delivery_report": "docs/development/evidence/W326-01/DELIVERY.md",
+        "worker_start_received": true,
+        "worker_delivery_received": true
       },
       "blockers": [],
       "validation_evidence": [],
@@ -164463,6 +164440,61 @@
             "kind": "DELIVERY",
             "at": "2026-10-19T03:09:42.688465+00:00"
           }
+        },
+        {
+          "chat_label": "COORD / W20-02 目录显式安装检查",
+          "repository": "Main",
+          "owning_task_repository": "Main",
+          "branch": "codex/wave20-directory-installation-20261018",
+          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "claimed_at": "2026-10-19T03:09:42.688465+00:00",
+          "baseline_sha": "1b03afcb8ba9b86ea6a9ccc8d45ad5392ba71364",
+          "entry_evidence": "docs/development/dispatch/20261018-wave20/README.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "IDENTITY_DIRECTORY_INSTALLATION_CONTROL",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "worker_start_received": true,
+          "actual_start_ref": {
+            "commit": "65961b0f8bbf1685fbac07fc93817863d240ad44",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261019T030942Z-wave20-installation-start/MESSAGE.md",
+            "kind": "START",
+            "at": "2026-10-19T03:09:42.688465+00:00"
+          },
+          "allowed_write_paths": [
+            "CP6.Core/Persistence/Tenancy/IdentityDirectoryInstallationV2.cs",
+            "CP6.Core/Persistence/Tenancy/IdentityDirectoryDatabaseIdentity.cs",
+            "CP6.Core/Persistence/Tenancy/TenantIdentityDirectoryAuthorizationReader.cs",
+            "CP6.Core/Persistence/Tenancy/TenantIdentityDirectoryReader.cs",
+            "CP6.Core/Persistence/Tenancy/README.md",
+            "tools/CP6.TenantStorage/Program.cs",
+            "CP6.Tests/Persistence/Tenancy/IdentityDirectoryInstallationPostgresTests.cs",
+            "CP6.Tests/Persistence/Tenancy/IdentityDirectoryPostgresFixture.cs",
+            "docs/development/evidence/WP02-02/directory-installation/DELIVERY.md"
+          ],
+          "reserved_write_resources": [],
+          "reserved_postgresql_ports": [],
+          "handoff_branch": "codex/dev-coordination-20261012",
+          "actions_authorized": false,
+          "formal_publication_authorized": false,
+          "existing_database_migration_authorized": false,
+          "deployment_authorized": false,
+          "delivery_report": "docs/development/evidence/WP02-02/directory-installation/DELIVERY.md",
+          "candidate_review_completed": true,
+          "candidate_integrated": true,
+          "review_mode": "Single combined SPEC/QUALITY author self-review; not independent",
+          "ports": {},
+          "integration": {
+            "source": "8a39779211b5347cd83669e09266a289832bd476",
+            "main": "73ddf0b9374e5f09140be4280895d150749f87c5",
+            "pr": "https://github.com/GTX537/CP6/pull/292"
+          },
+          "delivery_ref": {
+            "commit": "c155fa0a87ff9e139ebacf8504b33e4c5f427f20",
+            "path": "handoffs/CP6-DEV-20261012/tasks/WP02-02/messages/20261019T033503Z-wave20-installation-delivery/MESSAGE.md",
+            "kind": "DELIVERY",
+            "at": "2026-10-19T03:35:03.633717+00:00"
+          }
         }
       ],
       "preparation_delivery_history": [
@@ -164540,7 +164572,7 @@
         },
         "receipt": "docs/development/evidence/authorized-adoption-release-20261015/release-receipt.json"
       },
-      "remaining_scope": "完整 WP02-02 仍 IN_PROGRESS/CONFIRMED；Full17PGT、全 Main、普通用户/部门登录与 snapshot、真实租户创建/维护、bootstrap/dispatcher、ERP/ordinary outbox、其他Owner/上下文及跨仓宿主、在线授权/配置/密钥/凭据更新、真实业务验收、既有库迁移、环境切换及 DEV/UAT/PROD 均 NOT_RUN。本轮仅完成 fresh-only 五表服务端点采用，不构成全 Main 启用或生产发布。",
+      "remaining_scope": "WP02-02保持IN_PROGRESS。W326已验证库存列表、历史和流水的可信读取。库存写入、其他Main Owner、逐租户初始化与恢复、其余原PGT、跨仓及既有环境采用仍按原范围验收。",
       "main_package_adoption": {
         "path": "docs/development/evidence/WP02-02/main-package-adoption/DELIVERY.md",
         "scope": "Main exact formal0.10.3 dependency adoption; not tenant storage or full WP02-02 delivery",
@@ -164756,9 +164788,9 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-02",
-        "delivered": "租户连接、ERP八表及Identity目录普通LOGIN/RLS、安装和HTTP限定交付。",
-        "remaining": "Main主业务EF/Stock未采用该可信存储profile；宿主模型/池上下文、普通写者权限与逐租户版本初始化仍需实际接线。",
-        "next_action": "先界定现Main业务表与共享/租户边界，再做单一实际Owner接线；不执行历史迁移或全库schema改造。",
+        "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。",
+        "remaining": "Stock及其他Main业务写入的可信存储接线、同事务原结果/审计/Outbox、普通写者最终授权和逐租户业务版本初始化与恢复仍余。",
+        "next_action": "沿Stock实际写Owner核对共享键、权限与同连接事务，保留原操作恢复和提交不确定语义。",
         "evidence_refs": [
           "docs/development/evidence/WP02-02/directory-installation/DELIVERY.md",
           "docs/development/evidence/WP02-02/tenant-connections/DELIVERY.md",
@@ -164770,10 +164802,21 @@
           "docs/development/evidence/WP02-02/tenant-eligibility-control/DELIVERY.md",
           "docs/development/evidence/WP02-02/identity-directory-isolation/DELIVERY.md",
           "docs/development/evidence/WP02-02/directory-authorization/DELIVERY.md",
-          "docs/development/evidence/W310-01/DELIVERY.md"
+          "docs/development/evidence/W310-01/DELIVERY.md",
+          "docs/development/evidence/W326-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
-        "new_product_validation": false
+        "new_product_validation": true,
+        "latest_window": "W326-01"
+      },
+      "wave326_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W326-01/DELIVERY.md",
+        "profile": "stock-read-v1 / stock-read-rls-v1",
+        "validation": "2项新PostgreSQL 18.6用例、4项有效同窗相关回归、CLI Release构建及独立安装/错目标/重复首装实测",
+        "adopted_scope": "Main实际库存查询、历史和流水的可信只读租户连接",
+        "full_task_complete": false,
+        "formal_acceptance": "NOT_RUN"
       }
     },
     {
@@ -174414,14 +174457,16 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-10",
-        "delivered": "Main PG journal、实际Stock/PA090代表事务、当前授权/故障回滚及W249有效。",
-        "remaining": "Program仍为CP6Context统一databaseConnection，ERP/Identity租户profile未覆盖Main业务EF；这是已定位采用缺口。",
-        "next_action": "与WP02-02同一串行接线窗口处理准确profile；各消费者逐项采用仍归各域，不能据此重做事务提供者。",
+        "delivered": "Main PG journal、Stock/PA090代表事务及W249有效。W326证明Stock只读路径采用可信租户登录。",
+        "remaining": "库存业务写入及原结果/审计/Outbox仍由既有事务和连接路径执行。实际同租户普通写者、当前授权fence及共享持久化接线仍余。",
+        "next_action": "接续WP02-02的Stock写入采用并保留原Owner事务；其他消费者逐项验收。",
         "evidence_refs": [
-          "docs/development/evidence/W310-01/DELIVERY.md"
+          "docs/development/evidence/W310-01/DELIVERY.md",
+          "docs/development/evidence/W326-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
-        "new_product_validation": false
+        "new_product_validation": false,
+        "latest_window": "W326-01"
       }
     },
     {
@@ -204709,10 +204754,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261108-wave325",
-      "path": "docs/development/dispatch/20261108-wave325/README.md",
-      "baseline_sha": "7dbc37aa00d1075a0dde22117c8d47a8550defdc",
-      "registered_at": "2026-11-08T20:54:12.138670+00:00",
+      "id": "20261109-wave326",
+      "path": "docs/development/dispatch/20261109-wave326/README.md",
+      "baseline_sha": "802d1cf229936cc893770b2ddc0b6a7acd1b73ec",
+      "registered_at": "2026-11-09T00:31:03.679942Z",
       "phase": "VALIDATED_PENDING_REMOTE",
       "assigned_chats": [
         "COORD"
@@ -204729,21 +204774,22 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W325-01",
-          "workspace_task": "W325-01",
+          "id": "W326-01",
+          "workspace_task": "W326-01",
           "related_tasks": [
-            "WP05-14"
+            "WP02-02",
+            "WP02-10"
           ],
-          "title": "准确可选成员排除与原决定追溯",
+          "title": "库存查询采用可信 PostgreSQL 读取",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "VALIDATED_PENDING_REMOTE",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worker_delivery_received": true,
-          "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-          "branch": "codex/w325-01",
-          "planned_scope_ref": "docs/development/contracts/requirement-member-exclusion-v1.md",
+          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "branch": "codex/w326-01",
+          "planned_scope_ref": "docs/development/dispatch/20261109-wave326/README.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
@@ -204751,18 +204797,17 @@
           "candidate_integrated": false,
           "resources_released": false,
           "exclusive_resources": [
-            "Main:coordination-ledger",
-            "Main:requirement-set-Owner",
-            "Main:requirement-set-editor",
-            "Main:migration-history"
+            "Main:tenant-storage",
+            "Main:ef-model",
+            "Main:stock-owner-read"
           ]
         }
       ],
       "storage": {
-        "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+        "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "最后完整W325已验证，按原24h完成正常Main/Handoff采用、准确分支清理/官方finish和最终计时核销；不新增周期。"
+      "next_action": "正常合并、核对远端采用、准确分支处置并释放DEV-1；按原WP02-02核库存写入。"
     },
     "wave_history": [
       {
@@ -244399,6 +244444,63 @@
             "workspace_clean": true
           }
         ]
+      },
+      {
+        "id": "20261108-wave325",
+        "path": "docs/development/dispatch/20261108-wave325/README.md",
+        "baseline_sha": "7dbc37aa00d1075a0dde22117c8d47a8550defdc",
+        "registered_at": "2026-11-08T20:54:12.138670+00:00",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W325-01",
+            "workspace_task": "W325-01",
+            "related_tasks": [
+              "WP05-14"
+            ],
+            "title": "准确可选成员排除与原决定追溯",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+            "branch": "codex/w325-01",
+            "planned_scope_ref": "docs/development/contracts/requirement-member-exclusion-v1.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:coordination-ledger",
+              "Main:requirement-set-Owner",
+              "Main:requirement-set-editor",
+              "Main:migration-history"
+            ]
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W325已正常采用，准确分支及席位处置已核实。",
+        "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave325-final-verification.json"
       }
     ],
     "development_priority": {
@@ -245008,8 +245110,8 @@
       "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
       "capacity_hours": 24,
       "started_at": "2026-11-04T00:22:36+00:00",
-      "effective_seconds_recorded": 85536,
-      "timing_snapshot_at": "2026-11-08T21:31:46.224819+00:00",
+      "effective_seconds_recorded": 86238,
+      "timing_snapshot_at": "2026-11-08T21:43:28.011391+00:00",
       "timing_source": "41997 prior effective seconds plus continuous OS monotonic time from 2026-11-08T09:26:06Z; pause/pre-sample preparation excluded. Native panel is active after reactivation but omits the earlier authorized resumed segment; never sum the clocks.",
       "next_reestimate_at_effective_seconds": null,
       "estimate_hours": [
@@ -246736,7 +246838,8 @@
             "handoff_seat_released": false,
             "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave325-final-verification.json"
           },
-          "completion_effective_condition": "Only effective after this final source is normally adopted in Main and Handoff, exact task branches disposed, official finish releases both seats, and wave325-final-verification.json is PASS. This source snapshot precedes those final receipts."
+          "completion_effective_condition": "Only effective after this final source is normally adopted in Main and Handoff, exact task branches disposed, official finish releases both seats, and wave325-final-verification.json is PASS. This source snapshot precedes those final receipts.",
+          "final_window_effective_seconds": 2956
         }
       ],
       "reestimates": [
@@ -246934,7 +247037,7 @@
           "historical_conflicts": "Preserved immutable; existing environments not inspected or migrated. Separate controlled forward recovery required for affected existing records."
         }
       ],
-      "next_priority": "按本窗正常采用/准确清理/official finish与最终计时证明完成本轮；原375真实余项保留，不自动创建下一24h周期。",
+      "next_priority": "原24h已收妥。按用户续接从原375真实余项执行，当前首窗W326-01。",
       "extra_bug_deliveries": [
         {
           "id": "BUG751",
@@ -246999,15 +247102,15 @@
       "resumed_at": "2026-11-08T10:06:39.059558+00:00",
       "resume_instruction": "继续目标",
       "timing_basis": "Native goal panel is active; its counter excludes the earlier user-authorized resumed segment, so the uninterrupted OS monotonic execution clock remains authoritative. Active local execution excludes the 4-day pause and pre-sample preparation.",
-      "native_goal_panel_status": "active",
+      "native_goal_panel_status": "complete",
       "budget_closeout_window": "W325-01",
       "implementation_scope_complete": true,
       "scope_reconciliation_complete": true,
       "whole_project_complete": false,
       "completion_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave325-final-verification.json",
-      "final_measured_seconds_pending_lifecycle": true,
+      "final_measured_seconds_pending_lifecycle": false,
       "implementation_completed_at": "2026-11-08T21:31:46.224819+00:00",
-      "completion_effective_condition": "Only effective after this final source is normally adopted in Main and Handoff, exact task branches disposed, official finish releases both seats, and wave325-final-verification.json is PASS. This source snapshot precedes those final receipts.",
+      "completion_effective_condition": "Main/Handoff实际正常采用、分支清理及两席位释放均已从同窗最终证明和远端读回。",
       "completion_scope": "Original approximately24h effective single-chat program only; not all375/125/247",
       "final_effective_seconds_source": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave325-final-verification.json",
       "final_accounting": {
@@ -247038,7 +247141,8 @@
         "scope_audit": "docs/development/evidence/W310-01/DELIVERY.md",
         "final_receipt": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave325-final-verification.json",
         "recorded_seconds_are_pre_delivery_sample": true
-      }
+      },
+      "native_goal_time_used_seconds": 80111
     },
     "execution_plan_history": [
       {

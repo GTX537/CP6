@@ -26,7 +26,7 @@ internal static class StandaloneDepartmentScopeV1
             _ => throw new OrderPriceCorrectionException("OWNER_SCOPE_MAPPING_UNAVAILABLE",503)
         };
         var sql = $$"""
-            WITH RECURSIVE {{PostgreSqlOrganizationV1.HealthyCte(PostgreSqlOrganizationV1.Table(db), "@object_tenant")}}
+            WITH RECURSIVE {{PostgreSqlOrganizationV1.HealthyCte(PostgreSqlOrganizationV1.Table(db), "@object_tenant", keysOnly: true)}}
             SELECT m.object_id AS "Value" FROM cp6_operations_owner_v1.department_mappings m
             JOIN healthy_departments target ON target."Id"=m.department_id
             WHERE m.tenant_id=@object_tenant AND m.enabled AND m.object_kind=@object_kind AND {{condition}}

@@ -96,7 +96,7 @@ public static class DatabaseContextOptions
             builder.MigrationsHistoryTable(migrationsHistoryTable, migrationsHistorySchema);
     }
 
-    private static DbContextOptionsBuilder ConfigurePostgreSql(DbContextOptionsBuilder builder) => builder
+    internal static DbContextOptionsBuilder ConfigurePostgreSql(DbContextOptionsBuilder builder) => builder
         .ReplaceService<IMigrationsSqlGenerator, PostgreSqlPrerequisiteMigrationsSqlGenerator>()
         .ReplaceService<IRelationalTypeMappingSource, PostgreSqlTextTypeMappingSource>()
         .ReplaceService<IQuerySqlGeneratorFactory, PostgreSqlTextQuerySqlGeneratorFactory>();

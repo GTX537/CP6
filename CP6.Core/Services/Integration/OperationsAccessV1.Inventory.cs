@@ -1,3 +1,4 @@
+using CP6.Core.EFDbContext;
 using CP6.Core.Services.Erp;
 using CP6.Entity.DomainModels.Wms;
 using CP6.Entity.DomainModels.Mes;
@@ -21,6 +22,8 @@ internal sealed partial class OperationsAccessV1
         AtCommit(access.ValidateFinalAsync);
         return sources[key]=access;
     }
+    internal OperationsAccessV1 ForStockRead(CP6Context storage) => new(storage, owner, authority, Authorities);
+
     internal bool CustomerNameReadable=>authority.Fields.Fields.TryGetValue("CustomerName",out var field) && field.CanRead;
     internal bool AmountReadable=>authority.Fields.Fields.TryGetValue("Amount",out var field) && field.CanRead;
     internal void RequireAmountRead()
