@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 历史 IAM 落表、外部资产与混合宿主
+
+继续 v6 中立落表、现行权威与实际候选。W389 核原文件字节，W390 验新旧宿主数据库写入边界。 [W387](../development/evidence/W387-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 原 IAM 和外部资产
 
 W387 补历史 IAM 原引用及修订。继续真实外部资产和完整候选恢复。 [W384](../development/evidence/W384-01/DELIVERY.md)
