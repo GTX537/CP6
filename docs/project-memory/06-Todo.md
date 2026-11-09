@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 同源恢复与其余正式场景
+
+W420 继续同源实际文件 Owner，ERP 采用、消息对账及 PGT-021/022 按完整原场景推进。 [W421](../development/evidence/W421-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC ERP 关闭候选与同源组合
 
 继续 ERP 原位采用和原序列，沿 W372 的实际 RMA 原件推进完整同源候选。正式 PGT-021/022 待执行。 [W419](../development/evidence/W419-01/DELIVERY.md)
