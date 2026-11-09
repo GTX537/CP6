@@ -16,10 +16,13 @@ import erp_integration
 import file_content_assets
 import iam_v6
 import identity_priority
+import privacy_evidence
 import source_v3
 import visibility_v4
 
 TARGET_PLAN = "cp6_rma_stage.plan"
+STAGE_FORMATS = (archive.FORMAT, archive.FORMAT_WITH_JOURNAL, source_v3.FORMAT, visibility_v4.FORMAT,
+                 identity_priority.FORMAT, iam_v6.FORMAT, file_content_assets.FORMAT, erp_integration.FORMAT)
 
 
 class StageError(RuntimeError):
@@ -51,19 +54,25 @@ def checked_bundle(bundle, output, tenant, digest, target, file_content_root=Non
     identity_names = visibility_names | set(identity_priority.MEMBERS)
     iam_names = identity_names | {iam_v6.MEMBER}
     asset_names = iam_names | {file_content_assets.MEMBER}
+    erp_names = asset_names | set(erp_integration.MEMBERS)
     if names not in (base_names, journal_names, source_names, visibility_names, identity_names, iam_names,
-                     asset_names, asset_names | set(erp_integration.MEMBERS)) \
+                     asset_names, erp_names, erp_names | set(privacy_evidence.MEMBERS)) \
             or any(entry.is_symlink() or not entry.is_file() for entry in files):
         raise StageError("rma-stage-bundle-member-rejected")
 
     # Restore the private bytes we verified, even if the caller's source directory changes.
     checked = output / "bundle"
     checked.mkdir(mode=0o700)
-    for entry in files:
-        shutil.copyfile(entry, checked / entry.name, follow_symlinks=False)
     manifest_file = checked / "manifest.json"
+    shutil.copyfile(bundle / "manifest.json", manifest_file, follow_symlinks=False)
     if manifest_file.is_symlink() or archive.file_digest(manifest_file)["sha256"] != digest:
         raise StageError("rma-stage-manifest-digest-mismatch")
+    header = json.loads(manifest_file.read_text(encoding="utf-8"))
+    if not isinstance(header, dict) or header.get("format") not in STAGE_FORMATS:
+        raise StageError("rma-stage-format-rejected")
+    for entry in files:
+        if entry.name != "manifest.json":
+            shutil.copyfile(entry, checked / entry.name, follow_symlinks=False)
     manifest = archive.verify_bundle(checked, str(tenant), file_content_root=file_content_root)
 
     source = archive.PhysicalTarget.from_mapping(manifest.get("source"))

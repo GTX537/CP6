@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC v9 中立落表和 Main Stock
+
+继续 v9 历史中立落表、当前来源及原发件箱域，与真实隔离候选的普通读取分别推进。 [W402](../development/evidence/W402-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 隔离读回和同切面审计
 
 继续 W401 的隔离候选普通角色读回，以及 W402 的安全审计与主体保留历史。 [W400](../development/evidence/W400-01/DELIVERY.md)
