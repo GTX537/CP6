@@ -117,14 +117,22 @@ public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner
         Guid id, int? version, CancellationToken ct)
     {
         var tenant = storage.Binding.TenantId;
-        var head = await storage.Heads.AsNoTracking().SingleOrDefaultAsync(row => row.TenantId == tenant && row.Id == id, ct)
-            ?? throw Error("RMA_APPLICATION_NOT_FOUND", 404);
-        await access.RequireRmaApplicationSource(head.OutboundId, head.ActorId, ct);
+        var head = await RequireTenantHead(storage, access, id, ct);
         var selected = SelectVersion(version, head.Version);
         var payload = await storage.Versions.AsNoTracking()
             .Where(row => row.TenantId == tenant && row.Id == id && row.Version == selected)
             .Select(row => row.Payload).SingleAsync(ct);
         return access.ProjectRmaApplication(JsonSerializer.Deserialize<RmaApplicationViewV1>(payload)!);
+    }
+
+    private static async Task<RmaTenantHead> RequireTenantHead(RmaTenantReadContext storage, OperationsAccessV1 access,
+        Guid id, CancellationToken ct)
+    {
+        var tenant = storage.Binding.TenantId;
+        var head = await storage.Heads.AsNoTracking().SingleOrDefaultAsync(row => row.TenantId == tenant && row.Id == id, ct)
+            ?? throw Error("RMA_APPLICATION_NOT_FOUND", 404);
+        await access.RequireRmaApplicationSource(head.OutboundId, head.ActorId, ct);
+        return head;
     }
 
     private static int SelectVersion(int? requested, int latest)
@@ -211,7 +219,7 @@ public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner
     }
     public Task<RmaApplicationResultV1> CreateAsync(RmaApplicationCreateV1 c, CancellationToken ct = default)
     {
-        RequireSharedEntry();
+        if (_tenantReads is { DraftEnabled: false }) RequireSharedEntry();
         if (c.OperationId == Guid.Empty || c.ApplicationId == Guid.Empty || c.OutboundId == Guid.Empty
             || string.IsNullOrWhiteSpace(c.SourceVersion) || string.IsNullOrWhiteSpace(c.Reason) || c.Reason.Length > 1000
             || c.Remarks?.Length > 1000 || c.RequestedOutcome is not ("CREDIT" or "REFUND" or "REPLACEMENT" or "SUPPLEMENTARY_SHIPMENT" or "RETURN_ONLY" or "TO_BE_DECIDED")
@@ -220,26 +228,17 @@ public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner
             throw Error("RMA_APPLICATION_INPUT_INVALID", 400);
         var quantities = c.Lines.Select(x => (x.OutboundLineId, Value: ParseQuantity(x.Quantity))).ToArray();
         var input = MainOwnerOperationJournalV1.Encode(c);
+        if (_tenantReads is { DraftEnabled: true } storage)
+            return CreateTenantDraft(storage, c, quantities, input, ct);
+
         var journal = new MainOwnerOperationJournalV1(db); MainOwnerOperationJournalV1.Original? original = null;
         return owner.ExecuteAsync(OperationsOwnerV1.Rma, "add", true, async (a, t) =>
         {
             if (original != null) return await Disclose(a, original, input, t);
-            a.RequireRmaApplicationFields(c.Remarks != null);
-            var source = await Source(a, c.OutboundId, t);
-            if (source.Version != c.SourceVersion) throw Error("RMA_SOURCE_CHANGED", 412);
-            if (await Heads().AnyAsync(x => x.Id == c.ApplicationId, t)) throw Error("RMA_APPLICATION_EXISTS", 409);
-            var lines = new List<RmaApplicationRequestedLineV1>();
-            foreach (var q in quantities)
-            {
-                var line = source.Lines.SingleOrDefault(x => x.Id == q.OutboundLineId) ?? throw Error("RMA_SOURCE_LINE_INVALID");
-                if (q.Value > decimal.Parse(line.ShippedQuantity, CultureInfo.InvariantCulture)) throw Error("RMA_QUANTITY_EXCEEDS_SHIPMENT");
-                lines.Add(new(line, Quantity(q.Value)));
-            }
-            var v = new RmaApplicationViewV1(c.ApplicationId, 1, "DRAFT", a.ActorId, DateTimeOffset.UtcNow,
-                source.Id, source.Number, source.CustomerCode, source.Version, c.Reason, c.RequestedOutcome, lines, c.Remarks, null);
+            var v = await PrepareDraft(a, c, quantities, null, t);
             await db.Database.ExecuteSqlInterpolatedAsync($"""
                 INSERT INTO cp6_rma_application_v1.heads(tenant_id,id,actor_id,outbound_id,version)
-                VALUES({db.CurrentTenantId},{v.Id},{a.ActorId},{source.Id},1)
+                VALUES({db.CurrentTenantId},{v.Id},{a.ActorId},{v.OutboundId},1)
                 """, t);
             await Append(v, t);
             var result = new RmaApplicationResultV1(c.OperationId, v.Id, v.Version, v.State, v.Etag);
@@ -247,6 +246,50 @@ public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner
             return result;
         }, ct, actionAtFence: async t => { original = await journal.Read(JournalOwner, c.OperationId, t); return original == null ? "add" : "query"; });
     }
+    private Task<RmaApplicationResultV1> CreateTenantDraft(TenantRmaReadStore storage, RmaApplicationCreateV1 command,
+        (Guid OutboundLineId, decimal Value)[] quantities, byte[] input, CancellationToken ct) =>
+        owner.ExecuteRmaDraftAsync(storage, command.OperationId, async (access, tenantDb, original, token) =>
+        {
+            if (original is not null)
+                return await Disclose(access, original, input, token, tenantDb);
+
+            var view = await PrepareDraft(access, command, quantities, tenantDb, token);
+            var result = new RmaApplicationResultV1(command.OperationId, view.Id, view.Version, view.State, view.Etag);
+            var audit = JsonSerializer.Serialize(new { action = "create-application", result });
+            await tenantDb.Database.ExecuteSqlInterpolatedAsync($"""
+                SELECT cp6_rma_draft_writer_v1.create_draft({tenantDb.Binding.TenantId},{command.OperationId},{view.Id},
+                    {access.ActorId},{view.OutboundId},CAST({JsonSerializer.Serialize(view)} AS jsonb),{input},
+                    {MainOwnerOperationJournalV1.Digest(input)},{MainOwnerOperationJournalV1.Encode(result)},CAST({audit} AS jsonb))
+                """, token);
+            return result;
+        }, ct);
+
+    private async Task<RmaApplicationViewV1> PrepareDraft(OperationsAccessV1 access, RmaApplicationCreateV1 command,
+        (Guid OutboundLineId, decimal Value)[] quantities, RmaTenantReadContext? storage, CancellationToken ct)
+    {
+        access.RequireRmaApplicationFields(command.Remarks != null);
+        var source = await Source(access, command.OutboundId, ct);
+        if (source.Version != command.SourceVersion) throw Error("RMA_SOURCE_CHANGED", 412);
+        var exists = storage is null
+            ? await Heads().AnyAsync(x => x.Id == command.ApplicationId, ct)
+            : await storage.Heads.AsNoTracking().AnyAsync(row => row.TenantId == storage.Binding.TenantId
+                && row.Id == command.ApplicationId, ct);
+        if (exists) throw Error("RMA_APPLICATION_EXISTS", 409);
+
+        var lines = new List<RmaApplicationRequestedLineV1>();
+        foreach (var quantity in quantities)
+        {
+            var line = source.Lines.SingleOrDefault(x => x.Id == quantity.OutboundLineId) ?? throw Error("RMA_SOURCE_LINE_INVALID");
+            if (quantity.Value > decimal.Parse(line.ShippedQuantity, CultureInfo.InvariantCulture))
+                throw Error("RMA_QUANTITY_EXCEEDS_SHIPMENT");
+            lines.Add(new(line, Quantity(quantity.Value)));
+        }
+
+        return new(command.ApplicationId, 1, "DRAFT", access.ActorId, DateTimeOffset.UtcNow,
+            source.Id, source.Number, source.CustomerCode, source.Version, command.Reason, command.RequestedOutcome, lines,
+            command.Remarks, null);
+    }
+
     public Task<RmaApplicationResultV1> SubmitAsync(Guid id, RmaApplicationSubmitV1 c, string? ifMatch, CancellationToken ct = default)
     {
         RequireSharedEntry();
@@ -275,13 +318,17 @@ public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner
             return result;
         }, ct, actionAtFence: async t => { original = await journal.Read(JournalOwner, c.OperationId, t); return original == null ? "add" : "query"; });
     }
-    private async Task<RmaApplicationResultV1> Disclose(OperationsAccessV1 a, MainOwnerOperationJournalV1.Original original, byte[]? input, CancellationToken ct)
+    private async Task<RmaApplicationResultV1> Disclose(OperationsAccessV1 a, MainOwnerOperationJournalV1.Original original,
+        byte[]? input, CancellationToken ct, RmaTenantReadContext? storage = null)
     {
+        if (storage is not null && original.Contract != Contract)
+            throw Error("RMA_TENANT_BINDING_UNAVAILABLE", 503);
         if (original.Actor != a.ActorId) throw Error("ORIGINAL_OPERATION_FORBIDDEN", 403);
         if (original.State == "CLOSED") throw Error("ORIGINAL_OPERATION_CLOSED", 409);
         if (input != null && !MainOwnerOperationJournalV1.Matches(original, input)) throw Error("ORIGINAL_OPERATION_INPUT_CONFLICT", 409);
         var result = JsonSerializer.Deserialize<RmaApplicationResultV1>(original.Result)!;
-        await RequireHead(a, result.ApplicationId, ct);
+        if (storage is null) await RequireHead(a, result.ApplicationId, ct);
+        else await RequireTenantHead(storage, a, result.ApplicationId, ct);
         return result;
     }
     public Task<RmaApplicationOperationV1> OperationAsync(Guid id, bool close = false, CancellationToken ct = default)
