@@ -79,10 +79,18 @@ def check_layout(query, owner_oid):
             raise ValueError("erp-integration-layout-rejected: " + table.name)
 
     wanted = ", ".join("('{}','{}',{})".format(table, column, slot) for table, column, slot, *_ in KEY_COLLATIONS)
+    # Match the exact ICU definition in PostgreSqlMigrationPrerequisitesV1 for the Outbox key.
     collations = query("""
         WITH wanted(table_name,column_name,slot) AS (VALUES {wanted})
-        SELECT coalesce(jsonb_object_agg(w.table_name,jsonb_build_array(n.nspname,c.collname,c.collisdeterministic,
-            i.indcollation[w.slot]=a.attcollation)), '{{}}'::jsonb)
+        SELECT coalesce(jsonb_object_agg(w.table_name,jsonb_build_array(
+            n.nspname,c.collname,c.collisdeterministic,i.indcollation[w.slot]=a.attcollation AND (
+                w.table_name<>'Cp6_OutboxMessage' OR (
+                    c.collprovider='i' AND NOT c.collisdeterministic AND c.collencoding=-1
+                    AND COALESCE(to_jsonb(c)->>'colllocale',to_jsonb(c)->>'colliculocale') COLLATE "C" = 'und-u-ks-level2'
+                    AND COALESCE(to_jsonb(c)->>'collicurules','') = ''
+                )
+            )
+        )), '{{}}'::jsonb)
         FROM wanted w
         JOIN pg_class t ON t.relname=w.table_name AND t.relnamespace='{schema}'::regnamespace
         JOIN pg_attribute a ON a.attrelid=t.oid AND a.attname=w.column_name AND NOT a.attisdropped

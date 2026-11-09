@@ -27,5 +27,6 @@ DEV-1 于 2026-11-09 12:32:06 UTC 开工，基线 #834 `c979747d45aeaf9e445d4337
 - 副本内仅在原 `CommandInbox` 启用局部 FORCE RLS。低权读取原生计数为 0，v8 正常导出在 ERP 读处收到原生 42501，无完成清单。该故障属于合成夹具的原生 RLS 边界。`test-red.log` 记录实现前缺模块。
 - `v5-compatibility.log` 按 #834 源逐项比对 v5 目录、计数、COPY SQL/设置及清单投影完全相同。`final-cli-verify.log` 记录最终 CLI 核原 v5 与本窗 v8。实库完成后将 v8 的排除项文字细化为其他审计，已实测成员、校验和读路径相同。
 - 专属 postmaster 50780 已停止，55567 无监听，临时环回 HBA 副本已移除。原源和验证副本原 HBA 摘要保持，原件在 `native-v8/stopped.json`。`source-clone/data` 是专属可丢弃 PGDATA，留待 COORD 核查。
+- 集中复查后，Outbox 全局键在目录检查中同时匹配原迁移的 ICU provider、编码、`und-u-ks-level2` 和空自定义规则。专属副本在 55564 定向复测，原定义通过。将实际 Outbox 列和索引改绑同名 `und-u-ks-level3` 后，原校验仍通过，大小写比较已从相等变为不等，修订校验明确拒绝 `erp-integration-key-collation-rejected`。`test-native-icu-review.log` 退出 0，拒绝原件 `native-icu-review/altered-after-review.json` SHA-256 `80547325ac1359d597917c01a09e430b33ec030d932fdc1558d08d42c312a187`。postmaster 45224 已停止，55564 无监听，临时 HBA 已移除。专属副本保留本次故障定义。[原 ICU 定义](../../../../CP6.Core/Persistence/PostgreSqlMigrationPrerequisitesV1.cs)
 
 本窗覆盖 ERP 八表只读切面。其他队列域、序列水位、外部业务效果、当前对账、staging、重放和生产采用仍由独立流程处理。v8 为 `recoveryReady=false`，PGT-021/022 保持 `NOT_RUN`。本地分支 `codex/w395-01`，集中审查、合并及 DEV-1 官方 finish 交 COORD。[正式验收卡](../../acceptance/postgresql-tenancy.json)
