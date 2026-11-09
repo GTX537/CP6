@@ -1065,7 +1065,11 @@ builder.Services.AddScoped<CP6.Core.Services.Mes.IPlanAchievementService, CP6.Co
 
 // 4.8 MSBBWM010〜090 WMS 倉庫管理 Phase 1 コア
 builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsSequenceService, CP6.Core.Services.Wms.WmsSequenceService>();
-builder.Services.AddScoped<CP6.Core.Services.Wms.IStockMovementService, CP6.Core.Services.Wms.StockMovementService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IStockMovementService>(sp => new CP6.Core.Services.Wms.StockMovementService(
+    sp.GetRequiredService<CP6Context>(), sp.GetRequiredService<CP6.Core.Services.Wms.IWmsSequenceService>(),
+    sp.GetService<CP6.Core.Services.Wms.IWmsNotifier>(), sp.GetService<CP6.Core.Services.Integration.IStockFinBridge>(),
+    sp.GetRequiredService<CP6.Core.Services.Integration.OperationsOwnerV1>(),
+    sp.GetService<CP6.Core.Persistence.Tenancy.TenantStockReadStore>()));
 builder.Services.AddScoped<CP6.Core.Services.Wms.IStockQcService, CP6.Core.Services.Wms.StockQcService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IStockDwellService, CP6.Core.Services.Wms.StockDwellService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IMaterialShortageService, CP6.Core.Services.Wms.MaterialShortageService>();

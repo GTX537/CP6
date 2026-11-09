@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence.Tenancy;
 using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
@@ -25,13 +26,19 @@ public partial class StockMovementService : IStockMovementService
     private readonly IWmsNotifier _notifier;
     private readonly IStockFinBridge _finBridge;
     private readonly OperationsOwnerV1? _owner;
+    private readonly TenantStockReadStore? _tenantStorage;
     private const string TxnPrefix = "TXN";
 
     public StockMovementService(CP6Context db, IWmsSequenceService seq, IWmsNotifier? notifier = null,
         IStockFinBridge? finBridge = null, OperationsOwnerV1? owner = null)
+        : this(db, seq, notifier, finBridge, owner, null) { }
+
+    internal StockMovementService(CP6Context db, IWmsSequenceService seq, IWmsNotifier? notifier,
+        IStockFinBridge? finBridge, OperationsOwnerV1? owner, TenantStockReadStore? tenantStorage)
     {
         _db = db;
         _owner = owner;
+        _tenantStorage = tenantStorage;
         _seq = seq;
         _notifier = notifier ?? new NoOpWmsNotifier();
         _finBridge = finBridge ?? new NoOpStockFinBridge();

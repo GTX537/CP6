@@ -1,6 +1,9 @@
 using System.Globalization;
+using System.Runtime.ExceptionServices;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Common;
+using CP6.Core.Services.Erp;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Wms;
 using CP6.Platform.Abstractions.Context;
 using CP6.Platform.Contracts.Context;
@@ -16,25 +19,100 @@ namespace CP6.Core.Persistence.Tenancy;
 internal sealed class TenantStockReadStore : IAsyncDisposable
 {
     internal const string Host = "main-stock-read";
-    private const string Purpose = "wms-stock:query";
+    private const string ReadPurpose = "wms-stock:query";
+    private const string AdjustPurpose = "wms-stock:adjust-v1";
     private const string Issuer = "https://cp6.internal/main-stock-read";
     private const string Audience = "CP6.Main.StockRead";
-    private static readonly string[] Scopes = [Purpose];
     private readonly TenantConnectionManager _connections;
     private readonly TrustedContextExecutorV1 _executor;
     private readonly IHttpContextAccessor _http;
 
-    internal TenantStockReadStore(TenantStorageCatalog catalog, ITenantCredentialResolver credentials, IHttpContextAccessor http)
+    internal bool V1AdjustEnabled { get; }
+
+    internal TenantStockReadStore(TenantStorageCatalog catalog, ITenantCredentialResolver credentials,
+        IHttpContextAccessor http, bool v1AdjustEnabled = false)
     {
         var accessor = new ContextScopeAccessorV1();
         _connections = new(Host, accessor, catalog, credentials, new(32, 64, 2));
-        _executor = new(new BindingAuthority(catalog), accessor);
+        _executor = new(new BindingAuthority(catalog, v1AdjustEnabled), accessor);
         _http = http;
+        V1AdjustEnabled = v1AdjustEnabled;
     }
 
     // Called only inside StockOperationsService after the native Owner's current session and query decision.
-    internal async Task<T> ReadAsync<T>(CP6Context authority, Guid actorId, Func<CP6Context, CancellationToken, Task<T>> read,
+    internal Task<T> ReadAsync<T>(CP6Context authority, Guid actorId, Func<CP6Context, CancellationToken, Task<T>> read,
         CancellationToken ct)
+        => WithTenantTransactionAsync(authority, actorId, ReadPurpose, async (transaction, identity, cancellation) =>
+        {
+            var value = await transaction.ExecuteAsync(async (connection, dbTransaction, queryToken) =>
+            {
+                await using (var readOnly = new NpgsqlCommand("SET TRANSACTION READ ONLY", connection, dbTransaction))
+                    await readOnly.ExecuteNonQueryAsync(queryToken);
+                await RequireSameDatabase(identity, connection, dbTransaction, queryToken);
+                var tenant = authority.CurrentTenantId;
+                using var guard = new TenantEfCommandGuard(transaction, connection, dbTransaction, tenant);
+                await using var db = new StockReadContext(Options(connection, guard), tenant);
+                await db.Database.UseTransactionAsync(dbTransaction, queryToken);
+                return await read(db, queryToken);
+            }, cancellation);
+            await transaction.CommitAsync(cancellation);
+            return value;
+        }, ct);
+
+    internal async Task<T> WriteV1AdjustAsync<T>(CP6Context authority, Guid actorId,
+        Func<StockMovementWriteContextV1, CancellationToken, Task<T>> stage, CancellationToken ct)
+    {
+        var committing = false;
+        var rollbackUnknown = false;
+        try
+        {
+            var outcome = await WithTenantTransactionAsync(authority, actorId, AdjustPurpose, async (transaction, identity, cancellation) =>
+            {
+                try
+                {
+                    var attempt = await transaction.ExecuteAsync<(T Result, ExceptionDispatchInfo? Failure)>(async (connection, dbTransaction, token) =>
+                    {
+                        await RequireSameDatabase(identity, connection, dbTransaction, token);
+                        var tenant = authority.CurrentTenantId;
+                        using var guard = new TenantEfCommandGuard(transaction, connection, dbTransaction, tenant);
+                        await using var writer = new StockMovementWriteContextV1(Options(connection, guard), tenant);
+                        await writer.Database.UseTransactionAsync(dbTransaction, token);
+                        try { return (await stage(writer, token), null); }
+                        catch (Exception error) when (OperationsOwnerV1.IsExpectedOwnerFailure(error, token))
+                        { return (default!, ExceptionDispatchInfo.Capture(error)); }
+                    }, cancellation);
+                    if (attempt.Failure is null)
+                    {
+                        transaction.SetCommitFence(token =>
+                        {
+                            token.ThrowIfCancellationRequested();
+                            committing = true;
+                            return Task.CompletedTask;
+                        });
+                        await transaction.CommitAsync(cancellation);
+                    }
+                    return attempt;
+                }
+                finally
+                {
+                    if (!committing)
+                    {
+                        try { await transaction.RollbackAsync(CancellationToken.None); }
+                        catch (TenantStorageException) { rollbackUnknown = true; throw; }
+                    }
+                }
+            }, ct);
+            outcome.Failure?.Throw();
+            return outcome.Result;
+        }
+        catch (Exception error) when (committing || rollbackUnknown)
+        {
+            throw new OrderPriceCorrectionException("OPERATIONS_OUTCOME_UNKNOWN", 503, error);
+        }
+    }
+
+    private async Task<T> WithTenantTransactionAsync<T>(CP6Context authority, Guid actorId, string purpose,
+        Func<TenantStorageTransaction, string, CancellationToken, Task<T>> action, CancellationToken ct)
     {
         var http = _http.HttpContext!;
         var tenant = authority.CurrentTenantId;
@@ -44,11 +122,13 @@ internal sealed class TenantStockReadStore : IAsyncDisposable
         // The Owner has verified both sides of an impersonated session. The storage tenant is the
         // effective subject's tenant. Keep the original requester reference in the resolved evidence.
         var original = http.User.FindFirst("impersonator_id")?.Value;
+        string[] scopes = [purpose];
         var source = new AuthenticatedContextSourceV1(actor, actor, Audience, "main",
-            DateTimeOffset.UtcNow, expires, "current-stock-owner:" + tokenId, tokenId, Scopes,
+            DateTimeOffset.UtcNow, expires, "current-stock-owner:" + tokenId, tokenId, scopes,
             OriginalRequesterReference: original is null ? null : http.User.FindFirst("impersonator_tenant_id")!.Value + ":" + original);
         var operation = new ContextOperationV1(ContextEntryKindV1.Http, Host, StockReadStorageV1.ModelVersion,
-            Audience, Purpose, tenant, "api/wms/stock", http.TraceIdentifier, Scopes);
+            Audience, purpose, tenant, purpose == ReadPurpose ? "api/wms/stock" : "api/wms/stock/commands/v1/apply",
+            http.TraceIdentifier, scopes);
 
         var identity = await StockReadStorageV1.ReadDatabaseIdentityAsync(
             (NpgsqlConnection)authority.Database.GetDbConnection(),
@@ -58,28 +138,23 @@ internal sealed class TenantStockReadStore : IAsyncDisposable
             VerifiedOwnerSource.Instance, async token =>
             {
                 await using var lease = await _connections.OpenCurrentAsync(token);
-                result = await lease.InTransactionAsync(async (transaction, cancellation) =>
-                {
-                    var value = await transaction.ExecuteAsync(async (connection, dbTransaction, queryToken) =>
-                    {
-                        await using (var readOnly = new NpgsqlCommand("SET TRANSACTION READ ONLY", connection, dbTransaction))
-                            await readOnly.ExecuteNonQueryAsync(queryToken);
-                        if (identity != await StockReadStorageV1.ReadDatabaseIdentityAsync(connection, dbTransaction, queryToken, requireRowSecurity: true))
-                            throw new TenantStorageException(TenantStorageFailure.IdentityRejected);
-
-                        using var guard = new TenantEfCommandGuard(transaction, connection, dbTransaction, tenant);
-                        var options = new DbContextOptionsBuilder<CP6Context>()
-                            .UseNpgsql(connection, contextOwnsConnection: false).AddInterceptors(guard);
-                        DatabaseContextOptions.ConfigurePostgreSql(options);
-                        await using var db = new StockReadContext(options.Options, tenant);
-                        await db.Database.UseTransactionAsync(dbTransaction, queryToken);
-                        return await read(db, queryToken);
-                    }, cancellation);
-                    await transaction.CommitAsync(cancellation);
-                    return value;
-                }, cancellationToken: token);
+                result = await lease.InTransactionAsync((transaction, cancellation) => action(transaction, identity, cancellation),
+                    cancellationToken: token);
             }, ct);
         return result;
+    }
+
+    private static async Task RequireSameDatabase(string identity, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct)
+    {
+        if (identity != await StockReadStorageV1.ReadDatabaseIdentityAsync(connection, transaction, ct, requireRowSecurity: true))
+            throw new TenantStorageException(TenantStorageFailure.IdentityRejected);
+    }
+
+    private static DbContextOptions<CP6Context> Options(NpgsqlConnection connection, TenantEfCommandGuard guard)
+    {
+        var options = new DbContextOptionsBuilder<CP6Context>().UseNpgsql(connection, contextOwnsConnection: false).AddInterceptors(guard);
+        DatabaseContextOptions.ConfigurePostgreSql(options);
+        return options.Options;
     }
 
     public ValueTask DisposeAsync() => _connections.DisposeAsync();
@@ -91,16 +166,18 @@ internal sealed class TenantStockReadStore : IAsyncDisposable
             => ValueTask.FromResult<ContextResolutionInputV1?>(input);
     }
 
-    private sealed class BindingAuthority(TenantStorageCatalog catalog) : IContextBindingAuthorityV1
+    private sealed class BindingAuthority(TenantStorageCatalog catalog, bool v1AdjustEnabled) : IContextBindingAuthorityV1
     {
         public ValueTask<ContextBindingRegistrationV1?> ResolveCurrentAsync(ContextOperationV1 operation,
             AuthenticatedContextSourceV1 source, CancellationToken ct = default)
         {
+            if (operation.Purpose != ReadPurpose && !(v1AdjustEnabled && operation.Purpose == AdjustPurpose))
+                return ValueTask.FromResult<ContextBindingRegistrationV1?>(null);
             var binding = catalog.Resolve(operation.ExpectedTenantId);
             return ValueTask.FromResult<ContextBindingRegistrationV1?>(new(binding.TenantId, binding.TenantId, Host,
-                StockReadStorageV1.ModelVersion, Issuer, "main", Audience, Purpose, ContextEntryKindV1.Http,
+                StockReadStorageV1.ModelVersion, Issuer, "main", Audience, operation.Purpose, ContextEntryKindV1.Http,
                 source.Actor, source.EffectiveActor, "stock-read:" + binding.TenantId.ToString("D"), binding.BindingRevision,
-                source.AuthenticatedAtUtc, source.ExpiresAtUtc, true, Scopes));
+                source.AuthenticatedAtUtc, source.ExpiresAtUtc, true, [operation.Purpose]));
         }
     }
 

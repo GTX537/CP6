@@ -16,7 +16,7 @@ public partial class StockMovementService : IStockCreationOperationsV2
     {
         if(request==null || request.OperationId==Guid.Empty)throw new OrderPriceCorrectionException("ORIGINAL_OPERATION_REQUIRED",400);
         var frozen=OperationsOwnerV1.Freeze(request);var bytes=MainOwnerOperationJournalV1.Encode(new{kind="APPLY",request=frozen});
-        return ExecuteOriginal(frozen.OperationId,"adjust",bytes,async(a,t)=>
+        return ExecuteOriginal(frozen.OperationId,"adjust",bytes,async(_,a,t)=>
         {
             if(frozen.AllowNegativeOverride || string.Equals(frozen.RelatedType,"STOCKTAKE",StringComparison.OrdinalIgnoreCase))
                 throw new OrderPriceCorrectionException("INTERNAL_STOCK_CAPABILITY_REQUIRED",403);
@@ -34,7 +34,7 @@ public partial class StockMovementService : IStockCreationOperationsV2
     {
         if(request==null || request.OperationId==Guid.Empty)throw new OrderPriceCorrectionException("ORIGINAL_OPERATION_REQUIRED",400);
         var frozen=OperationsOwnerV1.Freeze(request);var bytes=MainOwnerOperationJournalV1.Encode(new{kind="MOVE",request=frozen});
-        return ExecuteOriginal(frozen.OperationId,"move",bytes,async(a,t)=>
+        return ExecuteOriginal(frozen.OperationId,"move",bytes,async(_,a,t)=>
         {
             frozen.OperatorCd=a.Actor;
             // This creation intent applies only to the destination; source custody must already exist and be authorized.

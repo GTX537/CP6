@@ -107,7 +107,8 @@ public sealed partial class OperationsOwnerV1
             ? AuthorityCoreAsync(resource, action, actor, true, ct) : throw new OrderPriceCorrectionException("ACTION_FORBIDDEN", 403);
     internal Task<Authority> TransferApprovalAuthorityAsync(Guid actor, CancellationToken ct)
         => AuthorityCoreAsync(TransferRequest, "approve", actor, true, ct);
-    private async Task<Authority> AuthorityCoreAsync(string resource,string action,Guid subject,bool storedDecision,CancellationToken ct)
+    private async Task<Authority> AuthorityCoreAsync(string resource,string action,Guid subject,bool storedDecision,CancellationToken ct,
+        CP6Context? organizationContext=null)
     {
         var definition=catalog();
         if(!definition.IsSealed || !definition.Scopes.TryGetValue(resource,out var scope))throw new CurrentPermissionUnavailableException();
@@ -137,7 +138,7 @@ public sealed partial class OperationsOwnerV1
             FieldPermissionCheckV1.NotApplicable,FieldPermissionCheckV1.NotApplicable,FieldPermissionCheckV1.Allowed,FieldPermissionCheckV1.Allowed)));
         var decision=source.Evaluate(source.Versions(Mapping),Mapping,mappings,constraints);
         if(!decision.IsAvailable)throw new CurrentPermissionUnavailableException();
-        return new(resource,action,actor,source,decision,type,await StandaloneDepartmentScopeV1.Version(db,ct));
+        return new(resource,action,actor,source,decision,type,await StandaloneDepartmentScopeV1.Version(organizationContext??db,ct));
     }
 
     internal async Task<T> ExecuteAsync<T>(string resource,string action,bool write,
@@ -185,17 +186,7 @@ public sealed partial class OperationsOwnerV1
                 access.AtCommit(t=>access.RequireDelegationParent(delegation,t));
             }
             var result=await body(access,ct);
-            await access.ValidateFinalAsync(ct);
-            foreach(var initial in access.Authorities)
-            {
-                var final=await AuthorityAsync(initial.Resource,initial.Action,ct);
-                if(final.Source.SubjectId!=initial.Source.SubjectId || final.Source.SourcePermissionVersion!=initial.Source.SourcePermissionVersion
-                    || final.Source.RegistryVersion!=initial.Source.RegistryVersion || final.Scope!=initial.Scope
-                    || final.OrganizationVersion!=initial.OrganizationVersion)
-                    throw new OrderPriceCorrectionException("AUTHORITY_CHANGED",403);
-                if(final.Source.TenantExpiresAt<=DateTime.Now)throw new OrderPriceCorrectionException("AUTHORITY_CHANGED",403);
-            }
-            if(await currentActor(ct)!=authority.Source.SubjectId)throw new OrderPriceCorrectionException("REAUTH_REQUIRED",401);
+            await ValidateFinalAuthorityAsync(access,authority.Source.SubjectId,ct);
             ct.ThrowIfCancellationRequested();committing=true;await tx.CommitAsync(ct);return result;
         }
         catch(Exception error)
@@ -203,9 +194,7 @@ public sealed partial class OperationsOwnerV1
             Exception? rollback=null;
             if(tx!=null)try{await tx.RollbackAsync(CancellationToken.None);}catch(Exception failure){rollback=failure;}
             if(write && (committing || rollback!=null))throw new OrderPriceCorrectionException("OPERATIONS_OUTCOME_UNKNOWN",503,rollback==null?error:new AggregateException(error,rollback));
-            if(error is OrderPriceCorrectionException or DbUpdateConcurrencyException)throw;
-            if(error is OperationCanceledException && ct.IsCancellationRequested)throw;
-            if(error is InvalidOperationException && error is not CurrentPermissionUnavailableException)throw;
+            if(IsExpectedOwnerFailure(error,ct))throw;
             throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503,error);
         }
         finally
@@ -214,6 +203,25 @@ public sealed partial class OperationsOwnerV1
             if(tx!=null)await tx.DisposeAsync();
         }
     }
+    private async Task ValidateFinalAuthorityAsync(OperationsAccessV1 access,Guid subject,CancellationToken ct,
+        CP6Context? organizationContext=null)
+    {
+        await access.ValidateFinalAsync(ct);
+        foreach(var initial in access.Authorities)
+        {
+            var current=await currentActor(ct);
+            var final=await AuthorityCoreAsync(initial.Resource,initial.Action,current,false,ct,organizationContext);
+            if(final.Source.SubjectId!=initial.Source.SubjectId || final.Source.SourcePermissionVersion!=initial.Source.SourcePermissionVersion
+                || final.Source.RegistryVersion!=initial.Source.RegistryVersion || final.Scope!=initial.Scope
+                || final.OrganizationVersion!=initial.OrganizationVersion || final.Source.TenantExpiresAt<=DateTime.Now)
+                throw new OrderPriceCorrectionException("AUTHORITY_CHANGED",403);
+        }
+        if(await currentActor(ct)!=subject)throw new OrderPriceCorrectionException("REAUTH_REQUIRED",401);
+    }
+    internal static bool IsExpectedOwnerFailure(Exception error,CancellationToken ct)
+        => error is OrderPriceCorrectionException or DbUpdateConcurrencyException
+            || error is OperationCanceledException && ct.IsCancellationRequested
+            || error is InvalidOperationException and not CurrentPermissionUnavailableException;
     private static readonly string[] BusinessTables=["Order","OrderDetail","OrderProcess","OrderMaterial","OrderProcessNote",
         "WorkOrder","WorkOrderProcess","WorkOrderMaterial","OutboundOrder","OutboundOrderDetail","Stock","StockTransaction",
         "WmsSequence","MesSequence","ShippingPackage","MaterialShortage","ProductionResult",
@@ -229,16 +237,23 @@ public sealed partial class OperationsOwnerV1
         // Legacy soft references and stock writers do not yet share one row-lock protocol.
         // Bounded table fences include raw SQL writers; never perform external I/O inside this transaction.
         await db.Database.ExecuteSqlRawAsync("SET LOCAL lock_timeout = '10s'",ct);
+        var (business,masters)=GraphTableNames(db,resource);
+        await db.Database.ExecuteSqlRawAsync("LOCK TABLE "+string.Join(",",business)
+            +(write?" IN SHARE ROW EXCLUSIVE MODE":" IN SHARE MODE"),ct);
+        await db.Database.ExecuteSqlRawAsync("LOCK TABLE "+string.Join(",",masters)
+            +(write && resource is Warehouse or Location?" IN SHARE ROW EXCLUSIVE MODE":" IN SHARE MODE"),ct);
+    }
+
+    internal static (string[] Business,string[] Masters) GraphTableNames(CP6Context db,string? resource)
+    {
         string Name(string name)
         {
             var entity=db.Model.GetEntityTypes().Single(e=>e.ClrType.Name==name);
             return db.GetService<ISqlGenerationHelper>().DelimitIdentifier(entity.GetTableName()!,entity.GetSchema()??"public");
         }
         string[] additional=resource switch { ToolInstance or PhysicalSite=>["PlateMoldStock","BusinessPartner","PlateMold"],ToolSpecification=>["PlateMold","PlateMoldStock","BusinessPartner"],PlateMold=>["PlateMold"],Sample=>["SampleStock"],Kitting=>["KitMaster","KitMasterComponent","KitOrder"],Vmi=>["VmiBilling"],Slotting=>["SlottingPlan"],CrossDock=>["CrossDockOrder"],StockDwell or BusinessPartner=>["BusinessPartner"],WorkCenter or ProcessCostRate=>["WorkCenter","ProcessCostRate"],Rma=>["RmaHeader","RmaDetail"],Replenish=>["ReplenishOrder"],Mobile=>["MobileTask","MobileTaskEvent","MobileTaskScanLog","TaskCommandReceipt"],_=>[] };
-        var tables=BusinessTables.Concat(additional);
-        await db.Database.ExecuteSqlRawAsync("LOCK TABLE "+string.Join(",",tables.Select(Name).Distinct().Order(StringComparer.Ordinal))
-            +(write?" IN SHARE ROW EXCLUSIVE MODE":" IN SHARE MODE"),ct);
-        await db.Database.ExecuteSqlRawAsync("LOCK TABLE "+string.Join(",",new[]{"WmsRoleScope","Location","Warehouse","OutboundRoutingRule","ProductProcess","ProductMaterial","ProductMaster","MasterGenericCode","DefectCategory","InspectionTemplate"}
-            .Select(Name).Distinct().Order(StringComparer.Ordinal))+(write && resource is Warehouse or Location?" IN SHARE ROW EXCLUSIVE MODE":" IN SHARE MODE"),ct);
+        string[] Names(IEnumerable<string> entities)=>entities.Select(Name).Distinct().Order(StringComparer.Ordinal).ToArray();
+        return (Names(BusinessTables.Concat(additional)),
+            Names(["WmsRoleScope","Location","Warehouse","OutboundRoutingRule","ProductProcess","ProductMaterial","ProductMaster","MasterGenericCode","DefectCategory","InspectionTemplate"]));
     }
 }

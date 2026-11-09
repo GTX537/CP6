@@ -12,7 +12,7 @@ The command returns `INSTALLED` after an acknowledged commit. `NOT_APPLIED` mean
 
 At the host, set `StockReadTenancy:Enabled=true`, a `Revision` and `Tenants` entries with `TenantId`, `Login`, `Password` and `CredentialVersion`. Protect credentials in the host configuration. The storage endpoint comes from the single IP address, port and database in `DefaultConnection`. Use the same TLS mode as the prepared target. The frozen configuration has 32 pools with two connections each. Replace it through a drained host restart. A missing tenant, invalid installation, inactive row security or unusable login makes the affected read unavailable. Omission or explicit `Enabled=false` selects the existing host path.
 
-The profile covers the three read endpoints. Stock mutations, original-operation recovery and the outbox have their own Owner transaction paths. [Delivery and verification](../../../docs/development/evidence/W326-01/DELIVERY.md).
+The base profile covers the three read endpoints. The V1 adjustment extension below has its own installation and enablement. [Delivery and verification](../../../docs/development/evidence/W326-01/DELIVERY.md).
 
 ### Stock write authority fence
 
@@ -37,6 +37,12 @@ The ordinary enqueue path keeps the existing native connection and transaction f
 Apply Core migration `20261109023800_StockWriterGuardDispatchV1` and run `CP6.TenantStorage install-stock-movement-writer-v1 --stdin` after the Stock Outbox writer is installed on the same isolated primary. Keep ingress stopped and use the original `ReadInstallationId` and approved Stock logins. An acknowledged installation returns `INSTALLED` with that read installation and database identity. For `UNKNOWN`, inspect the fixed functions and the affected table policies on the original target.
 
 The Stock movement writer uses a fixed public EF model and keeps the lease search path at `pg_catalog`. Its transaction updates the real inventory quantities, writes the native transaction and TXN numbering state, and appends the movement sequence. The existing freeze check reads the active stocktake and location keys. A NOLOGIN role records department inheritance and security audit against movement and mapping rows created in the same transaction. It uses the original native triggers. A failed movement aborts the Owner transaction. The application entry still supplies current user, field and object authorization. [Delivery and verification](../../../docs/development/evidence/W330-01/DELIVERY.md).
+
+### Stock V1 adjustment Owner
+
+With ingress stopped on the isolated primary, run `CP6.TenantStorage install-stock-adjust-owner-v1 --stdin` after the Stock movement writer. Use the original `ReadInstallationId`, approved movement writers and the same protected endpoint input. Enable `StockReadTenancy:EnableV1Adjust=true` with `StockReadTenancy:Enabled=true` on the intended host. Inspect `cp6_stock_adjust_owner_v1.lock_graph(uuid)`, its NOLOGIN owner and the exact writer grants on the original target after an `UNKNOWN` installation outcome.
+
+The existing `POST /api/wms/stock/commands/v1/apply` uses the same original journal and current action decision. The ordinary transaction holds the original authentication root and sorted business/master table locks and owns all business writes. The current authentication session and field source use the original connection in a read-only transaction against the same primary. The fixed lock function grants ordinary logins execution only. It uses PostgreSQL 18 `MAINTAIN` on its private NOLOGIN owner for the original lock modes. An unavailable ordinary login or write grant fails the operation. An acknowledged commit releases the compatibility notifications. If the outcome is unknown, preserve the operation ID and use the existing original-result protocol. [PostgreSQL lock privileges](https://www.postgresql.org/docs/18/sql-lock.html) · [Delivery and verification](../../../docs/development/evidence/W331-01/DELIVERY.md).
 
 ## Tenant connection leases
 

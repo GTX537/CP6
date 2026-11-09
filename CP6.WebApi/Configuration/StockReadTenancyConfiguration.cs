@@ -45,7 +45,8 @@ internal static class StockReadTenancyConfiguration
                 }
                 catch (TenantStorageException) { throw Rejected(); }
                 var credentials = new Credentials(tenants.ToDictionary(t => t.TenantId, t => t.Password));
-                services.AddSingleton(sp => new TenantStockReadStore(catalog, credentials, sp.GetRequiredService<IHttpContextAccessor>()));
+                services.AddSingleton(sp => new TenantStockReadStore(catalog, credentials, sp.GetRequiredService<IHttpContextAccessor>(),
+                    settings.EnableV1Adjust));
             }
             else if (section.GetChildren().Any(x => x.Key != nameof(Settings.Enabled))) throw Rejected();
         }
@@ -59,6 +60,7 @@ internal static class StockReadTenancyConfiguration
     private sealed class Settings
     {
         public bool Enabled { get; set; }
+        public bool EnableV1Adjust { get; set; }
         public string Revision { get; set; } = "";
         public string SslMode { get; set; } = nameof(Npgsql.SslMode.VerifyFull);
         public Tenant[] Tenants { get; set; } = [];
