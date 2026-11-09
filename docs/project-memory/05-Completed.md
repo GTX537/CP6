@@ -1,5 +1,15 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC W359 收尾与 W362 实库恢复
+
+W359 完整 1,239 秒，DEV-1 干净释放。W362 的真实提交确认中断与原 CLI 恢复独立完成，集成席位正式释放。W363 实际同快照归档和隔离恢复通过。 [W363 交付](../development/evidence/W363-01/DELIVERY.md) · [#816](https://github.com/GTX537/CP6/pull/816)
+
+
+## 2026-11-09 UTC W358 正常采用与 W360 实库
+
+W358 准确分支删除并释放 DEV-2。W360 在实际错误 Owner、34 字节命名和普通角色验证后正式释放集成席位，完整 581 秒。W359 的两项实库与模型验证通过。 [W359 交付](../development/evidence/W359-01/DELIVERY.md) · [#815](https://github.com/GTX537/CP6/pull/815)
+
+
 ## 2026-11-09 UTC W356 远端收尾与 W358 实库
 
 W356 完整 1,488 秒，本地和远端任务分支均已删除，DEV-1 干净释放。W358 在 A 中断时验证 B 与旧读继续，原键恢复原件。 [W358 交付](../development/evidence/W358-01/DELIVERY.md) · [#814](https://github.com/GTX537/CP6/pull/814)

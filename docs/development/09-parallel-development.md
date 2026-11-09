@@ -1,5 +1,9 @@
 # 多对话任务分配与交付
 
+> [W363](./evidence/W363-01/DELIVERY.md) 已实测原 RMA 同快照归档与隔离恢复。W359 远端采用及释放已核，DEV-2 继续原 journal 权限。 [当前席位](./dispatch/20261109-wave363/README.md)
+
+> [W359](./evidence/W359-01/DELIVERY.md) 已通过原列表实测。W358 随 [#815](https://github.com/GTX537/CP6/pull/815) 采用并释放，DEV-2 接原 journal，INTEGRATION-1 核真实提交回包。 [准确席位](./dispatch/20261109-wave359/README.md)
+
 > [W358](./evidence/W358-01/DELIVERY.md) 已实测 RMA 逐租户索引的非事务中断、原对象与原键恢复。DEV-1 继续 [W359](dispatch/20261109-wave359/README.md) 原列表，INTEGRATION-1 核 GUID 命名和碰撞。
 
 > [W356](./evidence/W356-01/DELIVERY.md) 已实证原 RMA 正常 GET 和最小动态 EF。W355 随 [#813](https://github.com/GTX537/CP6/pull/813) 采用，DEV-2 已接原 RMA 独立非事务索引升级。 [准确席位](./dispatch/20261109-wave356/README.md)
