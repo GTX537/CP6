@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC FileContent 原生历史切面
+
+W414 随 #852 采用并释放。W416 实测文件事件、原回执和父版本。W417 继续直接租户权限验收。原台账为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W416](../development/evidence/W416-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 候选外部文件落盘
 
 W413 随 #851 采用并释放。W414 实际复制同源 v10 的原文件，W415 继续验证已批准候选的原操作 HTTP。原台账为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W414](../development/evidence/W414-01/DELIVERY.md)

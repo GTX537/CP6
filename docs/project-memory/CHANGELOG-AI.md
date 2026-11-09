@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC 文件历史导出
+
+新增独立原生五个成员的 FileContent 同切面导出和校验，保留事件、原回执及引用父版本。 [W416](../development/evidence/W416-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 外部文件候选落盘
 
 新增从原暂存回执采用原键和字节的文件入口，实测并发、回执恢复及坏文件拒绝。 [W414](../development/evidence/W414-01/DELIVERY.md)

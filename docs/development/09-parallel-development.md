@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W414 随 #852 采用并释放 DEV-1。W416 补齐 FileContent 原生历史，W417 验证原 PGT 对象权限。 [W416](./evidence/W416-01/DELIVERY.md)
+
+
 > W413 随 #851 采用并释放 DEV-2。W414 验证独立候选落盘，W415 继续原操作普通 HTTP。 [W414](./evidence/W414-01/DELIVERY.md)
 
 
