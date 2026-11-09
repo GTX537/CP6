@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-09 UTC W329 库存 Outbox 同事务入队
+
+普通库存 LOGIN 可将已有原 journal 与原生通知入队放进同一事务。两租户隔离、原消息键、回滚及延迟源证明已实测。后续接真实库存调整。 [交付报告](../development/evidence/W329-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W328 库存原命令与审计
 
 现有库存 journal 已在普通 LOGIN 的同一事务验证提交、回滚、原结果和审计隔离。真实库位撤回通过前向触发器适配回归。继续按 72 小时目标验证 Stock Outbox 入队。 [交付报告](../development/evidence/W328-01/DELIVERY.md)

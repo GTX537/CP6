@@ -15,12 +15,13 @@ var stockInstallContract = args switch
     ["install-stock-read-v1", "--stdin"] => StockReadStorageV1.ModelVersion,
     ["install-stock-write-fence-v1", "--stdin"] => StockWriteAuthorityFenceV1.Contract,
     ["install-stock-original-journal-v1", "--stdin"] => StockOriginalJournalStorageV1.Contract,
+    ["install-stock-outbox-writer-v1", "--stdin"] => StockOutboxWriterStorageV1.Contract,
     _ => null
 };
 var controlExecutionStarted = false;
 if ((!args.SequenceEqual(["provision", "--stdin"]) && !revocation && !serviceToken && !tenantControl && !directoryControl && stockInstallContract is null) || !Console.IsInputRedirected)
 {
-    Console.Error.WriteLine("Usage: CP6.TenantStorage provision|install-service-revocation-v1|install-service-token-v1|service-token-tenant-directory-control-v1|install-identity-directory-v2|inspect-identity-directory-v2|install-stock-read-v1|install-stock-write-fence-v1|install-stock-original-journal-v1 --stdin (one bounded JSON document on redirected standard input).");
+    Console.Error.WriteLine("Usage: CP6.TenantStorage provision|install-service-revocation-v1|install-service-token-v1|service-token-tenant-directory-control-v1|install-identity-directory-v2|inspect-identity-directory-v2|install-stock-read-v1|install-stock-write-fence-v1|install-stock-original-journal-v1|install-stock-outbox-writer-v1 --stdin (one bounded JSON document on redirected standard input).");
     return 2;
 }
 try
@@ -62,7 +63,8 @@ try
             {
                 StockReadStorageV1.ModelVersion => "CP6.TenantStorage.StockReadV1",
                 StockWriteAuthorityFenceV1.Contract => "CP6.TenantStorage.StockWriteFenceV1",
-                _ => "CP6.TenantStorage.StockOriginalJournalV1"
+                StockOriginalJournalStorageV1.Contract => "CP6.TenantStorage.StockOriginalJournalV1",
+                _ => "CP6.TenantStorage.StockOutboxWriterV1"
             }
         }.ConnectionString);
         await control.OpenAsync(timeout.Token);
@@ -90,8 +92,10 @@ try
         {
             if (stockInstallContract == StockWriteAuthorityFenceV1.Contract)
                 await StockWriteAuthorityFenceV1.InstallAsync(control, tx, readInstallationId, stockRequest.Tenants, timeout.Token);
-            else
+            else if (stockInstallContract == StockOriginalJournalStorageV1.Contract)
                 await StockOriginalJournalStorageV1.InstallAsync(control, tx, readInstallationId, stockRequest.Tenants, timeout.Token);
+            else
+                await StockOutboxWriterStorageV1.InstallAsync(control, tx, readInstallationId, stockRequest.Tenants, timeout.Token);
             receipt = new { Outcome = "INSTALLED", ReadInstallationId = readInstallationId, stockRequest.DatabaseOid, stockRequest.SystemIdentifier };
         }
         controlExecutionStarted = true; // After this point an unacknowledged commit/output requires inspection.
