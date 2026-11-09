@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC ERP 对账采用和同包现行对账
+
+W399 完整 1,871 秒，两端分支清理且 DEV-2 干净释放。W400 对同一 v8 A/B 包的两入口实测，完整校验阻止改动成员进入数据库。 [W400](../development/evidence/W400-01/DELIVERY.md) · [PR #839](https://github.com/GTX537/CP6/pull/839)
+
+
 ## 2026-11-09 UTC ERP 暂存采用和只读对账实证
 
 W398 完整 858 秒，两端分支清理，DEV-1 干净释放。W399 实际对账三种原键和现行绑定。W397 实测峰值后已释放集成席位。 [W399](../development/evidence/W399-01/DELIVERY.md) · [PR #838](https://github.com/GTX537/CP6/pull/838)

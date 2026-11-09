@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W400 同一 v8 原包的现行对账实证通过。W401 隔离候选原结果读回与 W402 同快照安全审计、主体保留分别推进。 [W400](./evidence/W400-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave400/README.md)
+
+
 > W399 ERP 原键对账实证通过。W397 双进程联合池峰值验证完成并释放集成席位。 [W399](./evidence/W399-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave399/README.md)
 
 
