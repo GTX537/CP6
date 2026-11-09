@@ -162757,6 +162757,46 @@
       "at": "2026-11-09T09:30:00.110553Z",
       "change": "W365-VERIFY 真实验证及停机完成，INTEGRATION-1 正式释放。",
       "evidence": "D:/CP6-local-test/CP6-72H-20261109/W365-VERIFY/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T09:39:08.414097Z",
+      "change": "W361-01正常合并PR #818，准确远端树核对和分支删除及DEV-2释放完成，实际2051秒。",
+      "evidence": "docs/development/evidence/W361-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T09:40:07.274386Z",
+      "change": "W366-01沿原任务实际开工。按原恢复依赖顺序扩展同快照共享切片。DEV-2 继续真实普通草稿 POST，集成席位验证未覆盖的原 PGT 条件。",
+      "evidence": "docs/development/dispatch/20261109-wave366/README.md"
+    },
+    {
+      "at": "2026-11-09T09:56:46.1532796Z",
+      "change": "W366 真实 PostgreSQL 同快照 v2 原日志归档、原字节 staging、低权 RLS 与 v1 兼容均定向验证，等待正常远端采用。",
+      "evidence": "docs/development/evidence/W366-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T09:39:46.203200Z",
+      "change": "W364 在 DEV-2 开工。原正常草稿写与归档工具分别占用不同文件。",
+      "evidence": "docs/development/dispatch/20261109-wave366/README.md"
+    },
+    {
+      "at": "2026-11-09T09:37:15.291434Z",
+      "change": "W367 领取集成席位核真实普通租户混合 COPY 原子性。",
+      "evidence": "docs/development/dispatch/20261109-wave366/README.md"
+    },
+    {
+      "at": "2026-11-09T09:43:26.577504Z",
+      "change": "W367-VERIFY 实库证据齐备并正式释放集成席位，实际 370 秒。",
+      "evidence": "D:/CP6-local-test/CP6-72H-20261109/W367-VERIFY/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T09:43:53.921281Z",
+      "change": "W368 领取集成席位核真实共享 RLS 的普通列更新正例及跨租拒绝。",
+      "evidence": "docs/development/dispatch/20261109-wave366/README.md"
+    },
+    {
+      "at": "2026-11-09T09:54:55.075429Z",
+      "change": "W368-VERIFY 实库证据齐备并正式释放集成席位，实际 660 秒。",
+      "evidence": "D:/CP6-local-test/CP6-72H-20261109/W368-VERIFY/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -164204,25 +164244,24 @@
       "card_anchor": "wp02-02",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "RMA-NATIVE-JOURNAL / W361-01",
+        "chat_label": "RMA-JOURNAL-ARCHIVE / W366-01",
         "repository": "Main",
-        "branch": "codex/w361-01",
-        "worktree": "D:/CP6-worktrees/dev-2",
-        "claimed_at": "2026-11-09T09:04:56.240459Z",
-        "baseline_sha": "baff5fc20dceee932c805fbf309e6542b960cbeb",
-        "entry_evidence": "docs/development/dispatch/20261109-wave361/README.md",
+        "branch": "codex/w366-01",
+        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "claimed_at": "2026-11-09T09:40:07.274386Z",
+        "baseline_sha": "9fe80b515fee21a84150f6224e5ec3cfb627b7de",
+        "entry_evidence": "docs/development/dispatch/20261109-wave366/README.md",
         "phase": "VALIDATED_PENDING_REMOTE",
-        "dispatch_scope": "实际新隔离全 Core 的 RMA 原操作日志，准确原 Owner/Contract、实际普通租户、最小原生权限、旧写拒绝、真实回滚和原回执。",
+        "dispatch_scope": "明确 opt-in 的源归档 v2，真实 W361 原 journal 本租和准确 Owner 行与旧 RMA、出库同一 PG 快照。保留原输入/结果字节与隔离 staging。",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "reserved_write_resources": [
-          "Main:rma-native-journal",
-          "file:Main:CP6.Core/Persistence/Tenancy/RmaTenantStorageV1.OriginalJournal.cs",
-          "Main:tenant-storage-rma-control",
-          "file:Main:docs/development/evidence/W361-01/DELIVERY.md"
+          "Main:rma-snapshot-archive",
+          "path:Main:eng/wp02-02/rma-tenant-archive",
+          "file:Main:docs/development/evidence/W366-01/DELIVERY.md"
         ],
         "worker_start_received": true,
-        "delivery_report": "docs/development/evidence/W361-01/DELIVERY.md"
+        "delivery_report": "docs/development/evidence/W366-01/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -165145,7 +165184,7 @@
         },
         "receipt": "docs/development/evidence/authorized-adoption-release-20261015/release-receipt.json"
       },
-      "remaining_scope": "原 RMA 普通创建、提交和真实原操作重放及关闭仍需宿主采用。已有 RMA/Outbound 受限归档，后续扩展原操作日志、IAM、消息与资产依赖及完整恢复当前性。",
+      "remaining_scope": "普通 RMA 宿主创建、提交和原操作恢复/关闭仍需采用。单快照归档已有 RMA schema、所引 Outbound 和同租同 Owner 原操作日志。IAM、消息、资产与恢复当前性仍待实证。",
       "main_package_adoption": {
         "path": "docs/development/evidence/WP02-02/main-package-adoption/DELIVERY.md",
         "scope": "Main exact formal0.10.3 dependency adoption; not tenant storage or full WP02-02 delivery",
@@ -165361,9 +165400,9 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-02",
-        "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。 W327验证普通LOGIN在调用事务内取得原认证根。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。 W335 已在实际普通事务验证 V2 新库存的明确归属、合法无归属、旧行拒绝和原安全审计，包含前向 PostgreSQL 迁移。  W346 现有 Stock 首装提交后丢弃 stdout，从另一个真实进程在准确物理库取回原安装 ID，驱动原写栅栏及后续已交付安装。孤立回执、未绑定登录读策略及目录/权限漂移拒绝。 W348 实际验证共享消息 profile 的初始化中断、原键恢复及原结果重放。  W350 在 fresh-only PostgreSQL 真实把原 RMA heads/versions 迁入各自租户 schema，验证原子首版、实际进程竞争、中断与原结果、普通角色和原复合约束。 新隔离全 Core 物理 commissioning 以实际发布宿主和 PostgreSQL 验证，旧业务与旧 RMA journal 栅栏、其他 Owner 和原回执已证。 W355 实测 Stock 10/100 普通登录冷暖、缓存 churn、真实模型、原生后端及双进程有限峰值，原配置 129/1000 拒绝。 原 RMA 正常 HTTP 单条和历史读从真实登录经当前共享权威到新租户 EF，A/B 原件、ETag、授权和真实 SQL已验证。 W358 RMA 已 Ready 租户的真实非事务索引、原生无效对象中断及准确原键恢复已验证，B 和已采用普通读继续。 原 RMA 受权分页列表以真实 A/B Bearer 验证两页和当前权限，第二页实际跨128候选，版本按原键读取。 原生同快照 RMA tenant schema 和已引用的共享 Outbound 从真实 A/B 活动库准确导出并独立 staging，ACL/Owner、版本和原内容通过。 W361 对真实全 Core 的原 RMA 日志安装普通租户 RLS 和同事务最小追加，实测同键跨租、闭合回滚、原认证根、其他 Owner 及原回执。",
-        "remaining": "普通 RMA 宿主写与原操作恢复/关闭、共享依赖完整归档和恢复、真实恢复切换以及正式 PGT。",
-        "next_action": "按准确采用核对继续普通 RMA HTTP 首次创建及原操作，并行扩展同快照原 journal 片段。INTEGRATION-1 接尚缺的独立实库条件。",
+        "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。 W327验证普通LOGIN在调用事务内取得原认证根。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。 W335 已在实际普通事务验证 V2 新库存的明确归属、合法无归属、旧行拒绝和原安全审计，包含前向 PostgreSQL 迁移。  W346 现有 Stock 首装提交后丢弃 stdout，从另一个真实进程在准确物理库取回原安装 ID，驱动原写栅栏及后续已交付安装。孤立回执、未绑定登录读策略及目录/权限漂移拒绝。 W348 实际验证共享消息 profile 的初始化中断、原键恢复及原结果重放。  W350 在 fresh-only PostgreSQL 真实把原 RMA heads/versions 迁入各自租户 schema，验证原子首版、实际进程竞争、中断与原结果、普通角色和原复合约束。 新隔离全 Core 物理 commissioning 以实际发布宿主和 PostgreSQL 验证，旧业务与旧 RMA journal 栅栏、其他 Owner 和原回执已证。 W355 实测 Stock 10/100 普通登录冷暖、缓存 churn、真实模型、原生后端及双进程有限峰值，原配置 129/1000 拒绝。 原 RMA 正常 HTTP 单条和历史读从真实登录经当前共享权威到新租户 EF，A/B 原件、ETag、授权和真实 SQL已验证。 W358 RMA 已 Ready 租户的真实非事务索引、原生无效对象中断及准确原键恢复已验证，B 和已采用普通读继续。 原 RMA 受权分页列表以真实 A/B Bearer 验证两页和当前权限，第二页实际跨128候选，版本按原键读取。 原生同快照 RMA tenant schema 和已引用的共享 Outbound 从真实 A/B 活动库准确导出并独立 staging，ACL/Owner、版本和原内容通过。 W361 对真实全 Core 的原 RMA 日志安装普通租户 RLS 和同事务最小追加，实测同键跨租、闭合回滚、原认证根、其他 Owner 及原回执。 W366 增加真实 RMA 原操作日志同快照 v2 切片，准确固定租户和原 Owner，原 bytes 与隔离 staging 已验，保留 v1。",
+        "remaining": "普通 RMA 宿主写与原操作恢复/关闭，IAM、消息、资产和当前状态下的完整归档、恢复及切换，正式 PGT。",
+        "next_action": "继续原 RMA 普通草稿宿主。串行采用 W364 writer 对归档的准确最小 ACL 兼容。后继验证共享升级失败、旧入口保持和同键恢复。",
         "evidence_refs": [
           "docs/development/evidence/WP02-02/directory-installation/DELIVERY.md",
           "docs/development/evidence/WP02-02/tenant-connections/DELIVERY.md",
@@ -165394,11 +165433,12 @@
           "docs/development/evidence/W358-01/DELIVERY.md",
           "docs/development/evidence/W359-01/DELIVERY.md",
           "docs/development/evidence/W363-01/DELIVERY.md",
-          "docs/development/evidence/W361-01/DELIVERY.md"
+          "docs/development/evidence/W361-01/DELIVERY.md",
+          "docs/development/evidence/W366-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true,
-        "latest_window": "W361-01"
+        "latest_window": "W366-01"
       },
       "wave326_delivery": {
         "status": "CLOSED",
@@ -165906,11 +165946,29 @@
         "workspace_status": "fixed-seat-detached-for-reuse"
       },
       "wave361_delivery": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W361-01/DELIVERY.md",
         "profile": "rma-core-original-journal-v1",
         "validation": "真实 PG18.6 W351 全 Core、W353 安装。A/B 普通 LOGIN 同键不同原字节，CLOSED 回滚后恢复，真实认证根阻塞，直接、跨租和旧写拒绝，其他 Owner 原行为与原回执保持。旧 CLI 不兼容已追加后的原 commissioning，当前 CLI 实测原件逐字节恢复。",
         "scope": "新隔离已 commissioning 的 RMA Core 原操作日志。固定只读 RLS 与普通事务内最小追加。真实宿主 POST/submit/原操作和完整恢复单独验证。",
+        "full_task_complete": false,
+        "formal_acceptance": "NOT_RUN",
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/818",
+          "commit": "9fe80b515fee21a84150f6224e5ec3cfb627b7de",
+          "target_head": "9fe80b515fee21a84150f6224e5ec3cfb627b7de"
+        },
+        "seat_released": true,
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse"
+      },
+      "wave366_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W366-01/DELIVERY.md",
+        "profile": "cp6-rma-source-archive-v2",
+        "validation": "实际 W351 发布 Core、W353 commissioning 和 W361 原日志。A/B 同键、另一 Owner、快照后真实提交，v2 精确保存 CLOSED/COMMITTED 原字节并在隔离 staging 逐值还原。低权限 RLS 原生 42501、marker ACL、缺件、v1 兼容和正常 CLI 通过。Windows 管道收尾已保留真实拒绝。",
+        "scope": "明确 opt-in 的同快照原 journal 归档与非活动 staging，保持 v1 默认。当前 IAM、消息、资产、实际切换另验。",
         "full_task_complete": false,
         "formal_acceptance": "NOT_RUN"
       }
@@ -205849,62 +205907,61 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W361",
-      "path": "docs/development/dispatch/20261109-wave361/README.md",
-      "baseline_sha": "baff5fc20dceee932c805fbf309e6542b960cbeb",
-      "registered_at": "2026-11-09T09:04:56.240459Z",
+      "id": "W366",
+      "path": "docs/development/dispatch/20261109-wave366/README.md",
+      "baseline_sha": "9fe80b515fee21a84150f6224e5ec3cfb627b7de",
+      "registered_at": "2026-11-09T09:40:07.274386Z",
       "phase": "VALIDATED_PENDING_REMOTE",
       "assigned_chats": [
-        "RMA-NATIVE-JOURNAL",
+        "RMA-JOURNAL-ARCHIVE",
         "COORD"
       ],
       "authorized_implementation_chats": [
-        "RMA-NATIVE-JOURNAL"
+        "RMA-JOURNAL-ARCHIVE"
       ],
       "authorized_review_chats": [
         "COORD"
       ],
       "active_implementation_chats": [
-        "RMA-NATIVE-JOURNAL"
+        "RMA-JOURNAL-ARCHIVE"
       ],
       "workers_started": true,
       "windows_closed": false,
       "product_integrated": false,
       "windows": [
         {
-          "id": "W361-01",
-          "workspace_task": "W361-01",
+          "id": "W366-01",
+          "workspace_task": "W366-01",
           "related_tasks": [
             "WP02-02"
           ],
-          "title": "全 Core RMA 原操作日志的普通租户权限与同事务追加",
-          "chat": "RMA-NATIVE-JOURNAL",
+          "title": "原 RMA 日志同快照归档与隔离 staging",
+          "chat": "RMA-JOURNAL-ARCHIVE",
           "mode": "DELEGATED_IMPLEMENTATION",
           "phase": "VALIDATED_PENDING_REMOTE",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/w361-01",
-          "planned_scope_ref": "docs/development/dispatch/20261109-wave361/README.md",
+          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "branch": "codex/w366-01",
+          "planned_scope_ref": "docs/development/dispatch/20261109-wave366/README.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main:rma-native-journal",
-            "file:Main:CP6.Core/Persistence/Tenancy/RmaTenantStorageV1.OriginalJournal.cs",
-            "Main:tenant-storage-rma-control",
-            "file:Main:docs/development/evidence/W361-01/DELIVERY.md"
+            "Main:rma-snapshot-archive",
+            "path:Main:eng/wp02-02/rma-tenant-archive",
+            "file:Main:docs/development/evidence/W366-01/DELIVERY.md"
           ],
           "worker_delivery_received": true,
           "candidate_review_completed": true,
-          "delivery_report": "docs/development/evidence/W361-01/DELIVERY.md"
+          "delivery_report": "docs/development/evidence/W366-01/DELIVERY.md"
         }
       ],
       "storage": {
-        "reuse_worktree": "D:/CP6-worktrees/dev-2",
+        "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "按准确采用核对继续普通 RMA HTTP 首次创建及原操作，并行扩展同快照原 journal 片段。INTEGRATION-1 接尚缺的独立实库条件。"
+      "next_action": "继续原 RMA 普通草稿宿主。串行采用 W364 writer 对归档的准确最小 ACL 兼容。后继验证共享升级失败、旧入口保持和同键恢复。"
     },
     "wave_history": [
       {
@@ -247243,6 +247300,68 @@
           "new_worktrees": 0
         },
         "next_action": "核 W361 受控原日志的远端采用，然后接原宿主普通创建。单快照归档继续扩展原操作片段。"
+      },
+      {
+        "id": "W361",
+        "path": "docs/development/dispatch/20261109-wave361/README.md",
+        "baseline_sha": "baff5fc20dceee932c805fbf309e6542b960cbeb",
+        "registered_at": "2026-11-09T09:04:56.240459Z",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "RMA-NATIVE-JOURNAL",
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "RMA-NATIVE-JOURNAL"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W361-01",
+            "workspace_task": "W361-01",
+            "related_tasks": [
+              "WP02-02"
+            ],
+            "title": "全 Core RMA 原操作日志的普通租户权限与同事务追加",
+            "chat": "RMA-NATIVE-JOURNAL",
+            "mode": "DELEGATED_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/w361-01",
+            "planned_scope_ref": "docs/development/dispatch/20261109-wave361/README.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:rma-native-journal",
+              "file:Main:CP6.Core/Persistence/Tenancy/RmaTenantStorageV1.OriginalJournal.cs",
+              "Main:tenant-storage-rma-control",
+              "file:Main:docs/development/evidence/W361-01/DELIVERY.md"
+            ],
+            "worker_delivery_received": true,
+            "candidate_review_completed": true,
+            "delivery_report": "docs/development/evidence/W361-01/DELIVERY.md",
+            "candidate_integrated": true,
+            "resources_released": true,
+            "adopted_remote": "9fe80b515fee21a84150f6224e5ec3cfb627b7de",
+            "pr": "https://github.com/GTX537/CP6/pull/818",
+            "branch_disposition": "deleted-local-and-remote",
+            "finished_at": "2026-11-09T09:39:08.414097Z"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:/CP6-worktrees/dev-2",
+          "new_worktrees": 0
+        },
+        "next_action": "按原恢复依赖顺序扩展同快照共享切片。DEV-2 继续真实普通草稿 POST，集成席位验证未覆盖的原 PGT 条件。"
       }
     ],
     "development_priority": {
@@ -249974,7 +250093,7 @@
         }
       },
       "timing_basis": "Native goal plus independently sampled monotonic segments for confirmed missing time, with exclusions and no overlap.",
-      "next_priority": "按准确采用核对继续普通 RMA HTTP 首次创建及原操作，并行扩展同快照原 journal 片段。INTEGRATION-1 接尚缺的独立实库条件。",
+      "next_priority": "继续原 RMA 普通草稿宿主。串行采用 W364 writer 对归档的准确最小 ACL 兼容。后继验证共享升级失败、旧入口保持和同键恢复。",
       "windows": [
         {
           "id": "W327-01",
@@ -250864,7 +250983,7 @@
         },
         {
           "id": "W361-01",
-          "state": "VALIDATED_PENDING_REMOTE",
+          "state": "CLOSED",
           "related_tasks": [
             "WP02-02"
           ],
@@ -250877,8 +250996,34 @@
           "dispatch": "docs/development/dispatch/20261109-wave361/README.md",
           "validation_ready_at": "2026-11-09T09:29:46.1066195Z",
           "validation_ready_seconds": 1489,
+          "timing_source": "主机连续单调取样，起始至官方finish回读。无暂停。",
+          "delivery": "docs/development/evidence/W361-01/DELIVERY.md",
+          "actual_seconds": 2051,
+          "finished_at": "2026-11-09T09:39:08.414097Z",
+          "actual_to_estimate_midpoint": 0.963,
+          "pr": "https://github.com/GTX537/CP6/pull/818",
+          "adopted_main": "9fe80b515fee21a84150f6224e5ec3cfb627b7de",
+          "branch_disposition": "deleted-local-and-remote",
+          "seat_released": true,
+          "variance": "原估 26–45 分钟，完整实测 34 分 11 秒，实库证据齐备 24 分 49 秒。保留 W353 旧 CLI 在采用后的真实兼容边界。"
+        },
+        {
+          "id": "W366-01",
+          "state": "VALIDATED_PENDING_REMOTE",
+          "related_tasks": [
+            "WP02-02"
+          ],
+          "started_at": "2026-11-09T09:40:07.274386Z",
+          "estimate_minutes": [
+            25,
+            40
+          ],
+          "scope": "明确 opt-in 的源归档 v2，真实 W361 原 journal 本租和准确 Owner 行与旧 RMA、出库同一 PG 快照。保留原输入/结果字节与隔离 staging。",
+          "dispatch": "docs/development/dispatch/20261109-wave366/README.md",
+          "validation_ready_at": "2026-11-09T09:56:46.1532796Z",
+          "validation_ready_seconds": 998,
           "timing_source": "同次连续执行的主机单调取样。远端采用及席位收尾计时另记。",
-          "delivery": "docs/development/evidence/W361-01/DELIVERY.md"
+          "delivery": "docs/development/evidence/W366-01/DELIVERY.md"
         }
       ],
       "parallel_execution": {
@@ -250888,7 +251033,26 @@
         "max_integration_seats": 1,
         "central_owner": "COORD",
         "overlap_counted_once": true,
-        "active_windows": [],
+        "active_windows": [
+          {
+            "id": "W364-01",
+            "state": "ACTIVE",
+            "original_task": "WP02-02",
+            "owner": "RMA-NATIVE-DRAFT",
+            "started_at": "2026-11-09T09:39:46.203200Z",
+            "estimate_minutes": [
+              40,
+              65
+            ],
+            "base": "9fe80b515fee21a84150f6224e5ec3cfb627b7de",
+            "branch": "codex/w364-01",
+            "workspace": "D:/CP6-worktrees/dev-2",
+            "seat": "DEV-2",
+            "dispatch": "docs/development/dispatch/20261109-wave366/README.md",
+            "scope": "真实原 RMA 草稿 POST。实际普通登录同事务 head、version 与原日志，原当前权限和重放。",
+            "mode": "BOUNDED_IMPLEMENTATION"
+          }
+        ],
         "verification_windows": [
           {
             "id": "W348-VERIFY",
@@ -251061,6 +251225,56 @@
             "validation_ready_at": "2026-11-09T09:29:46.1563525Z",
             "validation_ready_seconds": 689,
             "report": "D:/CP6-local-test/CP6-72H-20261109/W365-VERIFY/DELIVERY.md",
+            "branch_disposition": "no-task-branch",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          },
+          {
+            "id": "W367-VERIFY",
+            "state": "VERIFIED",
+            "original_task": "WP02-02",
+            "owner": "RMA-BULK-TENANT-VERIFY",
+            "source": "a3d975c82da8acab2804f18b5feaabe4a25bab82",
+            "seat": "INTEGRATION-1",
+            "workspace": "D:/CP6-worktrees/s02-00-20261012",
+            "started_at": "2026-11-09T09:37:15.291434Z",
+            "estimate_minutes": [
+              10,
+              17
+            ],
+            "scope": "原 W350 普通 LOGIN 的真实混合 COPY 第二行错租户 23514、整事务回滚。仅改 TenantId 同键正向，B 与原 Ready 完整保留。复用 W100 共享 IAM 复合 FK。",
+            "formal_acceptance": "NOT_RUN",
+            "result": "RMA_NATIVE_MIXED_COPY_ATOMIC",
+            "actual_seconds": 370,
+            "finished_at": "2026-11-09T09:43:26.577504Z",
+            "validation_ready_at": "2026-11-09T09:43:12.8070291Z",
+            "validation_ready_seconds": 356,
+            "report": "D:/CP6-local-test/CP6-72H-20261109/W367-VERIFY/DELIVERY.md",
+            "branch_disposition": "no-task-branch",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          },
+          {
+            "id": "W368-VERIFY",
+            "state": "VERIFIED",
+            "original_task": "WP02-02",
+            "owner": "STOCK-RLS-CONSTANT-VERIFY",
+            "source": "9fe80b515fee21a84150f6224e5ec3cfb627b7de",
+            "seat": "INTEGRATION-1",
+            "workspace": "D:/CP6-worktrees/s02-00-20261012",
+            "started_at": "2026-11-09T09:43:53.921281Z",
+            "estimate_minutes": [
+              12,
+              23
+            ],
+            "scope": "真实 Stock shared FORCE RLS 的允许普通列常量 UPDATE、原新旧行策略与跨租户权限，独立观测 B 全行。",
+            "formal_acceptance": "NOT_RUN",
+            "result": "STOCK_RLS_NON_TENANT_COLUMN_ISOLATED",
+            "actual_seconds": 660,
+            "finished_at": "2026-11-09T09:54:55.075429Z",
+            "validation_ready_at": "2026-11-09T09:54:40.8443606Z",
+            "validation_ready_seconds": 646,
+            "report": "D:/CP6-local-test/CP6-72H-20261109/W368-VERIFY/DELIVERY.md",
             "branch_disposition": "no-task-branch",
             "workspace_status": "fixed-seat-detached-for-reuse",
             "seat_released": true

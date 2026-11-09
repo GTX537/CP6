@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W366 已实测同快照的原 RMA 日志归档。W361 随 #818 采用并释放 DEV-2，原草稿 W364 继续。W367 混合 COPY 和 W368 共享 RLS 定向实库已释放集成席位。 [W366](./evidence/W366-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave366/README.md)
+
+
 > W361 已实测原操作日志的普通角色 RLS、同事务追加和原回执。W363 随 #817 正常采用并释放 DEV-1，W365 实证命名空间隔离并释放集成席位。 [W361](./evidence/W361-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave361/README.md)
 
 
