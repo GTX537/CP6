@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 总控续接和 W326 库存读取
+
+WP02-02下一步核定库存写入 Owner 的普通登录、业务行及原结果/审计/Outbox 同事务、最终权限栅栏和失败恢复。完整WP02-02仍进行中，WP02-10整卡、其余Owner和WP02-28兼容回退继续按台账。 [交付报告](../development/evidence/W326-01/DELIVERY.md)。
+
 ## 2026-11-08：原24h目标终态登记
 
 原CP6-24H-20261104在本源正常两仓采用、准确分支清理/官方finish及wave325-final-verification.json实际PASS后DONE生效；当前源是此前快照，尚不冒称已完成这些外部动作。已完成受限实现/实际验收及原59核销，37537DONE/2IN_PROGRESS/336PLANNED、原59为9闭环/50余项（35实现/15待核）、125/247不变。全轮实际秒数以最终证明为准，未新开周期。[交付](../development/evidence/W325-01/DELIVERY.md)。

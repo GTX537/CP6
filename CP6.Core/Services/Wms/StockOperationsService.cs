@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence.Tenancy;
 using CP6.Core.Services.Erp;
 using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Wms;
@@ -7,15 +8,32 @@ using Microsoft.EntityFrameworkCore;
 namespace CP6.Core.Services.Wms;
 
 /// <summary>Independent inventory reads; every query is scoped before paging or returning history.</summary>
-public sealed class StockOperationsService(CP6Context db,OperationsOwnerV1? owner=null)
+public sealed class StockOperationsService
 {
+    private readonly CP6Context db;
+    private readonly OperationsOwnerV1? owner;
+    private readonly TenantStockReadStore? storage;
+
+    public StockOperationsService(CP6Context db, OperationsOwnerV1? owner = null) : this(db, owner, null) { }
+
+    internal StockOperationsService(CP6Context db, OperationsOwnerV1? owner, TenantStockReadStore? storage)
+        => (this.db, this.owner, this.storage) = (db, owner, storage);
+
+    private Task<T> ReadAsync<T>(Func<OperationsAccessV1, CancellationToken, Task<T?>> read, CancellationToken ct) where T : class
+        => Owner.ExecuteAsync(OperationsOwnerV1.Stock, "query", false, async (access, token) =>
+        {
+            var result = storage is null ? await read(access, token) : await storage.ReadAsync(db, access.ActorId,
+                (context, cancellation) => read(access.ForStockRead(context), cancellation), token);
+            return result ?? throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN", 403);
+        }, ct);
+
     private OperationsOwnerV1 Owner=>owner?.Owns(db)==true?owner:throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
     public Task AuthorizeUpdatesAsync(CancellationToken ct=default)
         =>Owner.ExecuteAsync(OperationsOwnerV1.Stock,"query",false,(a,t)=>Task.FromResult(true),ct);
     public Task<StockPage<Stock>> SearchAsync(StockSearchRequest request,CancellationToken ct=default)
     {
         var q=OperationsOwnerV1.Freeze(request);
-        return Owner.ExecuteAsync(OperationsOwnerV1.Stock,"query",false,async(a,t)=>
+        return ReadAsync<StockPage<Stock>>(async (a, t) =>
         {
             var rows=a.InventoryStocks();
             if(!string.IsNullOrWhiteSpace(q.WarehouseCd))rows=rows.Where(s=>s.WarehouseCd==q.WarehouseCd);
@@ -32,9 +50,10 @@ public sealed class StockOperationsService(CP6Context db,OperationsOwnerV1? owne
         },ct);
     }
     public Task<StockHistory> HistoryAsync(Guid id,int days=90,CancellationToken ct=default)
-        =>Owner.ExecuteAsync(OperationsOwnerV1.Stock,"query",false,async(a,t)=>
+        => ReadAsync<StockHistory>(async (a, t) =>
         {
-            var stock=await a.InventoryStocks().SingleOrDefaultAsync(s=>s.Id==id,t)??throw new OrderPriceCorrectionException("OBJECT_FORBIDDEN",403);
+            var stock=await a.InventoryStocks().SingleOrDefaultAsync(s=>s.Id==id,t);
+            if (stock is null) return null;
             var since=DateTime.Today.AddDays(-days);
             var transactions=await a.InventoryTransactions().Where(s=>s.WarehouseCd==stock.WarehouseCd && s.LocationCd==stock.LocationCd
                 && s.ProductCd==stock.ProductCd && s.LotNo==stock.LotNo && s.TxnDateTime>=since).OrderByDescending(s=>s.TxnDateTime).ToListAsync(t);
@@ -44,7 +63,7 @@ public sealed class StockOperationsService(CP6Context db,OperationsOwnerV1? owne
     public Task<StockPage<StockTransaction>> TransactionsAsync(StockTransactionSearchRequest request,CancellationToken ct=default)
     {
         var q=OperationsOwnerV1.Freeze(request);
-        return Owner.ExecuteAsync(OperationsOwnerV1.Stock,"query",false,async(a,t)=>
+        return ReadAsync<StockPage<StockTransaction>>(async (a, t) =>
         {
             var rows=a.InventoryTransactions();
             if(!string.IsNullOrWhiteSpace(q.ProductCd))rows=rows.Where(s=>s.ProductCd==q.ProductCd);
