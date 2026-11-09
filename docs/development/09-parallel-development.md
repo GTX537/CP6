@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> [CP6 三天实际执行](planning/20261109-codex-72h-execution.md)由总控单人串行执行。[W338-01](evidence/W338-01/DELIVERY.md)验证原直接库存调整使用普通事务，随后接原直接移库。
+> [CP6 三天实际执行](planning/20261109-codex-72h-execution.md)由总控单人串行执行。[W339-01](evidence/W339-01/DELIVERY.md)验证原直接移库使用普通事务，随后核库存写者和真实两租户。
+
+> [W338-01](evidence/W338-01/DELIVERY.md)直接库存调整已随 Main #795 合并，准确分支已清理，固定席位已释放。
 
 > [W337-01](evidence/W337-01/DELIVERY.md)普通 V2 移库目标创建已随 Main #794 合并，准确分支已清理，固定席位已释放。
 

@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC W339 直接库存移库的普通事务
+
+原 `/api/wms/stock/move` 在已启用普通 V1 移库的宿主使用自己的可信用途和现有普通事务。复用原两腿、货权和回包。 [交付报告](../development/evidence/W339-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W338 直接库存调整的普通事务
 
 原 `/api/wms/stock/apply` 在已启用普通调整的宿主使用独立可信用途及原普通写者。保留公开旧入口的流水号合同和原业务内部入口。 [交付报告](../development/evidence/W338-01/DELIVERY.md)

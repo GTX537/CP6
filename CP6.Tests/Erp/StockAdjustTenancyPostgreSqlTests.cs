@@ -239,6 +239,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(2, await h.Db.StockTransactions.CountAsync());
         await VerifyOrdinaryStockMoveAsync(h, mapping, control, host, cookies, OutboxCount, ReadOriginal);
         await VerifyOrdinaryLegacyStockApplyAsync(h, stock.Id, control, login, host, cookies);
+        await VerifyOrdinaryLegacyStockMoveAsync(h, mapping, control, login, host, cookies);
 
         Task<decimal> Quantity() => h.Db.Stocks.Where(s => s.Id == stock.Id).Select(s => s.PhysicalQty).SingleAsync();
         Task<int> OutboxCount(Guid operation) => h.Db.Database.SqlQuery<int>($"""
