@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC W349 本地应用回退证据
+
+增加离线源审查输入及定向回归。复用真实 W347 已完成的 PostgreSQL 和 Kestrel 运行，记录工具实际正反执行。 [交付报告](../development/evidence/W349-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W346 库存原安装查回
 
 新增只读 CLI 查回已提交库存安装的原 UUID。保留目录触发器、孤立回执和目录外真实登录读策略的红测与对应回归。 [交付报告](../development/evidence/W346-01/DELIVERY.md)
