@@ -25,8 +25,9 @@ internal static class PrivacyRestoreNativeV1
         SELECT current_database() AS "Name",COALESCE(inet_server_addr()::text,'local') AS "Address",COALESCE(inet_server_port(),0) AS "Port",
           (SELECT oid::bigint FROM pg_database WHERE datname=current_database()) AS "Oid"
         """).SingleAsync(ct);
-    internal static Task<string> Marker(CP6Context db,CancellationToken ct)=>db.Database.SqlQueryRaw<string>("""
-        SELECT COALESCE(shobj_description(oid,'pg_database'),'') AS "Value" FROM pg_database WHERE datname=current_database()
+    internal static Task<string> Marker(DbContext db,CancellationToken ct)=>db.Database.SqlQueryRaw<string>("""
+        SELECT COALESCE(pg_catalog.shobj_description(oid,'pg_database'),'') AS "Value"
+        FROM pg_catalog.pg_database WHERE datname=pg_catalog.current_database()
         """).SingleAsync(ct);
     internal static Task<Guid> Epoch(CP6Context db,CancellationToken ct)=>db.Database.SqlQueryRaw<Guid>("SELECT version AS \"Value\" FROM cp6_privacy_disposition_v1.restore_epoch WHERE singleton").SingleAsync(ct);
     internal static async Task<IDbContextTransaction> CandidateGate(CP6Context candidate,PrivacyRestoreScopeV1 scope,CancellationToken ct)
