@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W416 远端采用及释放。W417 实测原 PGT 三个 PostgreSQL 直接隔离场景。 [W417](./evidence/W417-01/DELIVERY.md)
+
+
 > W414 随 #852 采用并释放 DEV-1。W416 补齐 FileContent 原生历史，W417 验证原 PGT 对象权限。 [W416](./evidence/W416-01/DELIVERY.md)
 
 
