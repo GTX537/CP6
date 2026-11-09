@@ -89,7 +89,13 @@ internal static partial class RmaTenantStorageV1
                 SELECT NOT EXISTS (SELECT FROM cp6_rma_application_v1.heads)
                    AND NOT EXISTS (SELECT FROM cp6_rma_application_v1.versions)
                    AND NOT EXISTS (SELECT FROM cp6_main_owner_v1.operations WHERE owner='{RmaOwner}')
-                """, ct) is not true)
+                """, ct) is not true
+            && (previous is null
+                || await Scalar(connection, tx, """
+                    SELECT NOT EXISTS (SELECT FROM cp6_rma_application_v1.heads)
+                       AND NOT EXISTS (SELECT FROM cp6_rma_application_v1.versions)
+                    """, ct) is not true
+                || !await HasAdoptedOriginalJournalAsync(connection, tx, request, ct)))
             throw new TenantProvisioningException("shared-rma-not-empty");
 
         var tenants = request.Tenants.OrderBy(t => t.TenantId).ToArray();
