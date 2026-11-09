@@ -15,4 +15,12 @@ DEV-1 于 2026-11-09 20:46:41 UTC 从 Main #860 开工。原 WP02-02 / PGT-027 �
 
 同一任务分支恢复后，Git 源文件只归一 Windows 换行，实际提取的 Up SQL 摘要与原生验证相同。首轮采样 836–840 MiB，退出 75，编译器未启动。资源回升后，.NET SDK 8.0.424 Roslyn 使用封存 EF Core 8.0.30 引用单编迁移类，PID 28104 退出 0，stdout 和 stderr 均为空。采样与编译合计 1.596 秒，工作集峰值 117.20 MiB。产物 SHA-256 为 `c7bb63c645d33e16b7c0788c09e27af136f2782cf121844788b73dd02a7a5af5`。[编译结果](/D:/CP6-local-test/CP6-72H-20261109/W428-01/migration-build/csc-02/terminal.json) · [首轮采样](/D:/CP6-local-test/CP6-72H-20261109/W428-01/migration-build/csc-01/terminal.json)
 
-继续用 `TenantManagementPostgresFixture` 经真实 Core EF 迁移入口运行原 IAM 成员关系和模拟登录回归。原 PGT-027 的同 schema TenantId 更新及角色引用按各自证据核销，正式 PGT-027 仍为 `NOT_RUN`。分支检查点在 DEV-1 交 COORD 处置。[编译输入](/D:/CP6-local-test/CP6-72H-20261109/W428-01/migration-build/inputs.json) · [正式宿主入口](../../../../CP6.Tests/Platform/TenantManagementPostgresFixture.cs#L52)
+### 正常迁移程序集与宿主入口
+
+2026-11-09 22:03:53 UTC 在 DEV-1 恢复同一分支。Main #862 相对原 W428 基线的 Core、PostgreSQL、测试、WebApi、Space Infrastructure 及工作流输入无差异。W430 的同 schema 归属更新子场景已随 #862 采用。W428 继续覆盖正常迁移加载及原 IAM 宿主验证，正式 PGT-027 维持 `NOT_RUN`。[W430 实证](https://github.com/GTX537/CP6/blob/c8db0bc28c78928c2d2fc83dae954ba554a24f81/docs/development/evidence/W430-01/DELIVERY.md)
+
+完整 `CP6.Persistence.PostgreSql.dll` 的响应文件及原件预检已通过。输入为 251 份候选跟踪源码、3 份生成文件和 375 个编译引用，识别出 228 个迁移 ID。引用选择复用 W364 的实际 SDK 解析缓存和封存项目引用，输出使用正常 Core profile 固定的程序集名。[完整程序集输入](/D:/CP6-local-test/CP6-72H-20261109/W428-01/provider-build/inputs.json) · [定向编译入口](/D:/CP6-local-test/CP6-72H-20261109/W428-01/provider-compile.py)
+
+原 IAM 测试的私有 `CP6.Tests` friend 预检已通过。实际 W364 缓存为 174 个不同的锁定名称和 148 个经解析的项目或包引用，其余 26 个由原框架引用补足。前两次预检暴露 TestPlatform 同名记录，已核对三个重复名称的两份文件均字节相同，再按固定顺序选取。固定候选的原夹具、IAM 两个原方法和模拟登录 HTTP 原方法。驱动在任何写入前核实物理库、原 profile 选中的实际程序集和 SHA-256。[IAM 定向输入](/D:/CP6-local-test/CP6-72H-20261109/W428-01/iam-friend-build/inputs.json) · [阶段入口](/D:/CP6-local-test/CP6-72H-20261109/W428-01/iam-friend-build/RunW428.cs)
+
+接续同一分支。两个编译进程分别采用 1,150 和 1,000 MiB 启动门槛，持续满足可提交内存 19 GiB，依次执行。末段两组轻量采样为 825/834 与 927/931 MiB，本次完成预检，两份新制品及宿主仍待执行。编译通过后在 W383 的单一隔离副本上，通过原 `TenantManagementPostgresFixture.Context` 正常升级并核对 224 条原 Core 历史及新增的一条记录，再分进程运行 IAM 与 HTTP 回归，独立核对实际数据库写集和停机。原 PostgreSQL 六段与单文件编译继续复用。[W383 停机原件](/D:/CP6-local-test/CP6-72H-20261109/W383-VERIFY/stop-verification.json) · [正式宿主入口](../../../../CP6.Tests/Platform/TenantManagementPostgresFixture.cs#L52)
