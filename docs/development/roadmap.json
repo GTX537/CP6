@@ -162482,6 +162482,16 @@
       "at": "2026-11-09T06:09:12.2017054Z",
       "change": "W344 实测 Stock 取消和后端故障后的原结果恢复。原 375、125 与 247 状态保持。",
       "evidence": "docs/development/evidence/W344-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T06:13:07.024181Z",
+      "change": "W344 正常合并 PR #802 并清理分支、释放 DEV-1，实际 996 秒。",
+      "evidence": "docs/development/evidence/W344-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T06:13:09.5691328Z",
+      "change": "W345 固定两份实际制品并验证本地运行身份，保留 P0 #801 原失败。正式原状态保持。",
+      "evidence": "docs/development/evidence/W345-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -163936,7 +163946,7 @@
         "claimed_at": "2026-11-09T05:56:29.821098Z",
         "baseline_sha": "b10b819dcab7ed11ea195145ac14befba8404528",
         "entry_evidence": "docs/development/dispatch/20261109-wave344/README.md",
-        "phase": "VALIDATED_PENDING_REMOTE",
+        "phase": "CLOSED",
         "dispatch_scope": "普通 Stock 写入真实等待 Outbox 路由锁时取消 HTTP 和终止准确 PostgreSQL 后端。核回滚、坏连接、B 池及原键恢复。",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -165438,13 +165448,22 @@
         "workspace_status": "fixed-seat-detached-for-reuse"
       },
       "wave344_delivery": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W344-01/DELIVERY.md",
         "profile": "STOCK_ACTUAL_CANCELLATION_AND_BROKEN_BACKEND_RECOVERY",
         "validation": "LOCAL_ACTUAL_POSTGRES_18_6_Kestrel_1_PASS_NO_SKIP",
         "scope": "Outbox 路由锁下 HTTP 取消和真实坏连接，B 等共享授权根后复用，真实原键 UNKNOWN→COMMITTED。",
         "full_task_complete": false,
-        "formal_acceptance": "NOT_RUN"
+        "formal_acceptance": "NOT_RUN",
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/802",
+          "commit": "d109257495d64d18fddd181b7af7fb29d1e7a3ef",
+          "target_head": "d109257495d64d18fddd181b7af7fb29d1e7a3ef"
+        },
+        "seat_released": true,
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse"
       }
     },
     {
@@ -177624,7 +177643,7 @@
         "claimed_at": "2026-11-09T05:57:26.889031Z",
         "baseline_sha": "b10b819dcab7ed11ea195145ac14befba8404528",
         "entry_evidence": "docs/development/dispatch/20261109-wave344/README.md",
-        "phase": "ACTIVE",
+        "phase": "VALIDATED_PENDING_REMOTE",
         "dispatch_scope": "两份准确源码的独立实际本地 publish、正式包和文件哈希、实际 PostgreSQL 与 Kestrel 诊断。",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -177633,7 +177652,8 @@
           "WP02-28 私有数据库及两份制品",
           "本窗诊断与证据"
         ],
-        "worker_start_received": true
+        "worker_start_received": true,
+        "delivery_report": "docs/development/evidence/W345-01/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -177642,7 +177662,7 @@
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
-      "remaining_scope": "无两实际制品与准确 PostgreSQL schema/driver 的正向回退证明；正向兼容 NOT_RUN，正式OBS资格/Current trust/业务Owner未验收。完整 WP02-28 IN_PROGRESS/CONFIRMED，不登记 DONE。",
+      "remaining_scope": "W345 固定两份真实发布物、五包运行身份和各自 PG/HTTP 诊断。余项为同一真实 service-token 数据库的业务共存与原结果恢复、精确兼容矩阵、正向回退及故障组合。当前 PG 一次性初始化 P0 #801 独立修复。",
       "wave9_delivery": {
         "status": "MERGED",
         "source_candidate_sha": "c92f12e33937a47093e5d9861c4269bb17b432b6",
@@ -177716,16 +177736,27 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-28",
-        "delivered": "固定平台包实际加载观察、一次真实publish、实际宿主授权/负向回退证据保留。",
+        "delivered": "固定平台包实际加载观察、一次真实publish、实际宿主授权/负向回退证据保留。 W345 固定旧新实际本地制品，分别核真实 PG/Kestrel 与正式五包运行身份。",
         "remaining": "两份实际兼容版本在准确PG schema/驱动上的正向更新/回退与采用清单仍未证明。",
-        "next_action": "在隔离本地环境补两实际制品兼容；生产候选/信任/环境推广另轴，不触发Actions。",
+        "next_action": "优先 P0 #801；随后在新专用 PG 上复用 W345 制品验证共同 service-token 签发、撤销、原结果恢复与回退范围。",
         "evidence_refs": [
           "docs/development/evidence/WP02-28/published-host/DELIVERY.md",
           "docs/development/evidence/WP02-28/DELIVERY.md",
-          "docs/development/evidence/W310-01/DELIVERY.md"
+          "docs/development/evidence/W310-01/DELIVERY.md",
+          "docs/development/evidence/W345-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
-        "new_product_validation": false
+        "new_product_validation": false,
+        "latest_window": "W345-01"
+      },
+      "wave345_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W345-01/DELIVERY.md",
+        "profile": "TWO_PINNED_LOCAL_PUBLISHES_AND_DISTINCT_RUNTIME_IDENTITY",
+        "validation": "LOCAL_LOCKED_PUBLISH_2_SUCCESS_POSTGRES_18_6_5_OF_5_EACH_CURRENT_FULL_DBINIT_FAILED",
+        "scope": "两准确源码的独立收据、实际 PG 诊断与五包运行身份。当前真实登录成功，完整初始化失败独立记录。",
+        "full_task_complete": false,
+        "formal_acceptance": "NOT_RUN"
       }
     },
     {
@@ -205266,60 +205297,61 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W344",
+      "id": "W345",
       "path": "docs/development/dispatch/20261109-wave344/README.md",
       "baseline_sha": "b10b819dcab7ed11ea195145ac14befba8404528",
-      "registered_at": "2026-11-09T05:56:29.821098Z",
+      "integration_base_sha": "d109257495d64d18fddd181b7af7fb29d1e7a3ef",
+      "registered_at": "2026-11-09T05:57:26.889031Z",
       "phase": "VALIDATED_PENDING_REMOTE",
       "assigned_chats": [
+        "A9-PUBLISH",
         "COORD"
       ],
       "authorized_implementation_chats": [
-        "COORD"
+        "A9-PUBLISH"
       ],
       "authorized_review_chats": [
         "COORD"
       ],
       "active_implementation_chats": [
-        "COORD"
+        "A9-PUBLISH"
       ],
       "workers_started": true,
       "windows_closed": false,
       "product_integrated": false,
       "windows": [
         {
-          "id": "W344-01",
-          "workspace_task": "W344-01",
+          "id": "W345-01",
+          "workspace_task": "W345-01",
           "related_tasks": [
-            "WP02-10"
+            "WP02-28"
           ],
-          "title": "Stock 实际取消、坏连接和同原键恢复",
-          "chat": "COORD",
-          "mode": "SINGLE_CHAT_IMPLEMENTATION",
+          "title": "两份真实本地制品及运行身份",
+          "chat": "A9-PUBLISH",
+          "mode": "DELEGATED_IMPLEMENTATION",
           "phase": "VALIDATED_PENDING_REMOTE",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w344-01",
+          "worktree": "D:/CP6-worktrees/dev-2",
+          "branch": "codex/w345-01",
           "planned_scope_ref": "docs/development/dispatch/20261109-wave344/README.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "CP6 DEV-1",
-            "Stock 真实宿主测试",
-            "独占 PostgreSQL 18.6 端口 55555"
+            "CP6 DEV-2",
+            "WP02-28 私有数据库及固定制品"
           ],
           "worker_delivery_received": true,
           "candidate_review_completed": true,
-          "delivery_report": "docs/development/evidence/W344-01/DELIVERY.md"
+          "delivery_report": "docs/development/evidence/W345-01/DELIVERY.md"
         }
       ],
       "storage": {
-        "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "reuse_worktree": "D:/CP6-worktrees/dev-2",
         "new_worktrees": 0
       },
-      "next_action": "回收并行的 W345 双制品，优先单独处理新 PostgreSQL 库初始化阻断；接续库存安装回执和双版本共同业务。"
+      "next_action": "优先 P0 #801；随后在新专用 PG 上复用 W345 制品验证共同 service-token 签发、撤销、原结果恢复与回退范围。"
     },
     "wave_history": [
       {
@@ -246109,6 +246141,66 @@
           "new_worktrees": 0
         },
         "next_action": "真实 Stock 普通事务取消和坏连接恢复。WP02-28 在 DEV-2 固定两份本地制品。"
+      },
+      {
+        "id": "W344",
+        "path": "docs/development/dispatch/20261109-wave344/README.md",
+        "baseline_sha": "b10b819dcab7ed11ea195145ac14befba8404528",
+        "registered_at": "2026-11-09T05:56:29.821098Z",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W344-01",
+            "workspace_task": "W344-01",
+            "related_tasks": [
+              "WP02-10"
+            ],
+            "title": "Stock 实际取消、坏连接和同原键恢复",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w344-01",
+            "planned_scope_ref": "docs/development/dispatch/20261109-wave344/README.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "CP6 DEV-1",
+              "Stock 真实宿主测试",
+              "独占 PostgreSQL 18.6 端口 55555"
+            ],
+            "worker_delivery_received": true,
+            "candidate_review_completed": true,
+            "delivery_report": "docs/development/evidence/W344-01/DELIVERY.md",
+            "candidate_integrated": true,
+            "resources_released": true,
+            "adopted_remote": "d109257495d64d18fddd181b7af7fb29d1e7a3ef",
+            "pr": "https://github.com/GTX537/CP6/pull/802",
+            "branch_disposition": "deleted-local-and-remote",
+            "finished_at": "2026-11-09T06:13:07.024181Z"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "优先 P0 #801；随后在新专用 PG 上复用 W345 制品验证共同 service-token 签发、撤销、原结果恢复与回退范围。"
       }
     ],
     "development_priority": {
@@ -248806,7 +248898,7 @@
         }
       },
       "timing_basis": "Native goal plus independently sampled monotonic segments for confirmed missing time, with exclusions and no overlap.",
-      "next_priority": "回收并行的 W345 双制品，优先单独处理新 PostgreSQL 库初始化阻断；接续库存安装回执和双版本共同业务。",
+      "next_priority": "优先 P0 #801；随后在新专用 PG 上复用 W345 制品验证共同 service-token 签发、撤销、原结果恢复与回退范围。",
       "windows": [
         {
           "id": "W327-01",
@@ -249265,7 +249357,7 @@
         },
         {
           "id": "W344-01",
-          "state": "VALIDATED_PENDING_REMOTE",
+          "state": "CLOSED",
           "related_tasks": [
             "WP02-10"
           ],
@@ -249278,8 +249370,41 @@
           "dispatch": "docs/development/dispatch/20261109-wave344/README.md",
           "validation_ready_at": "2026-11-09T06:09:12.2017054Z",
           "validation_ready_seconds": 761,
+          "timing_source": "主机连续单调取样。与 W345 重叠，整段只计一次。",
+          "delivery": "docs/development/evidence/W344-01/DELIVERY.md",
+          "actual_seconds": 996,
+          "finished_at": "2026-11-09T06:13:07.024181Z",
+          "actual_to_estimate_midpoint": 0.897,
+          "pr": "https://github.com/GTX537/CP6/pull/802",
+          "adopted_main": "d109257495d64d18fddd181b7af7fb29d1e7a3ef",
+          "branch_disposition": "deleted-local-and-remote",
+          "seat_released": true,
+          "variance": "原 13–24 分钟，完整实际 16 分 36 秒。首轮限时请求发现共享授权根等待，定向修改后实际复测。"
+        },
+        {
+          "id": "W345-01",
+          "state": "VALIDATED_PENDING_REMOTE",
+          "original_task": "WP02-28",
+          "owner": "A9-PUBLISH",
+          "started_at": "2026-11-09T05:57:26.889031Z",
+          "estimate_minutes": [
+            16,
+            32
+          ],
+          "base": "b10b819dcab7ed11ea195145ac14befba8404528",
+          "branch": "codex/w345-01",
+          "workspace": "D:/CP6-worktrees/dev-2",
+          "seat": "DEV-2",
+          "dispatch": "docs/development/dispatch/20261109-wave344/README.md",
+          "scope": "两份准确源码的独立实际本地 publish、正式包和文件哈希、实际 PostgreSQL 与 Kestrel 诊断。",
+          "related_tasks": [
+            "WP02-28"
+          ],
+          "integration_base": "d109257495d64d18fddd181b7af7fb29d1e7a3ef",
+          "validation_ready_at": "2026-11-09T06:13:09.5691328Z",
+          "validation_ready_seconds": 942,
           "timing_source": "同次连续执行的主机单调取样。远端采用及席位收尾计时另记。",
-          "delivery": "docs/development/evidence/W344-01/DELIVERY.md"
+          "delivery": "docs/development/evidence/W345-01/DELIVERY.md"
         }
       ],
       "parallel_execution": {
@@ -249289,25 +249414,17 @@
         "max_integration_seats": 1,
         "central_owner": "COORD",
         "overlap_counted_once": true,
-        "active_windows": [
-          {
-            "id": "W345-01",
-            "state": "ACTIVE",
-            "original_task": "WP02-28",
-            "owner": "A9-PUBLISH",
-            "started_at": "2026-11-09T05:57:26.889031Z",
-            "estimate_minutes": [
-              16,
-              32
-            ],
-            "base": "b10b819dcab7ed11ea195145ac14befba8404528",
-            "branch": "codex/w345-01",
-            "workspace": "D:/CP6-worktrees/dev-2",
-            "seat": "DEV-2",
-            "dispatch": "docs/development/dispatch/20261109-wave344/README.md",
-            "scope": "两份准确源码的独立实际本地 publish、正式包和文件哈希、实际 PostgreSQL 与 Kestrel 诊断。"
-          }
-        ]
+        "active_windows": [],
+        "priority_issue_workspace": {
+          "issue": "https://github.com/GTX537/CP6/issues/801",
+          "workspace_task": "BUG-801-PG-FIRST-ADMIN",
+          "owner": "PG-INIT",
+          "branch": "codex/bug-801-pg-first-admin",
+          "seat": "DEV-1",
+          "workspace": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "base": "d109257495d64d18fddd181b7af7fb29d1e7a3ef",
+          "claimed_at": "2026-11-09T06:13:54.317998Z"
+        }
       }
     },
     "execution_plan_history": [

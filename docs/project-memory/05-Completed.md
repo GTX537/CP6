@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC W345 两份实际本地制品
+
+旧版和当前版分别完成 locked restore、实际 publish、闭包核验及本地 Kestrel/PG 诊断。当前版用真实会话及普通只读登录核五包身份。 [交付报告](../development/evidence/W345-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W344 实际 Stock 故障恢复
 
 在实际 Outbox 路由锁等待时取消 HTTP 或终止准确 PostgreSQL 后端。核两租户的真实回滚、健康连接复用、坏连接替换、原键和准确数值。 [交付报告](../development/evidence/W344-01/DELIVERY.md)
