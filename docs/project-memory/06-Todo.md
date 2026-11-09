@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC ERP 关闭候选与同源组合
+
+继续 ERP 原位采用和原序列，沿 W372 的实际 RMA 原件推进完整同源候选。正式 PGT-021/022 待执行。 [W419](../development/evidence/W419-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC ERP 原件与完整候选
 
 继续实际 ERP Owner、当前队列和统一同源切面。正式 PGT-021/022 待完整候选与批准切换。 [W418](../development/evidence/W418-01/DELIVERY.md)

@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC ERP C03 切面验收
+
+新增使用实际 ERP 处理器与现有 v10 的定向验收驱动，核 A/B 原字节和原生行版本。 [W419](../development/evidence/W419-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 文件原生历史导入
 
 新增关闭候选中的 FileContent 原始事件、原流水和准确父版本采用。保留外部原文件、原生约束与同键回读。 [W418](../development/evidence/W418-01/DELIVERY.md)
