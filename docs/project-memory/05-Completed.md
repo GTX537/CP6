@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC 身份队列采用与隔离图
+
+W380 完整 1,376 秒，两端分支删除、DEV-1 干净释放。W383 实际外部原件核验完整 862 秒，集成席位释放。W382 隔离 v4 原回执已实测。 [W382](../development/evidence/W382-01/DELIVERY.md) · [#827](https://github.com/GTX537/CP6/pull/827)
+
+
 ## 2026-11-09 UTC v4 采用与身份优先实证
 
 W379 完整 1,324 秒，两端分支删除，DEV-2 干净释放。W380 原四表同切面与缺权限拒绝实测。 [W380](../development/evidence/W380-01/DELIVERY.md) · [#826](https://github.com/GTX537/CP6/pull/826)
