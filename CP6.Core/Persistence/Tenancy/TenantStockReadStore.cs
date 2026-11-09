@@ -39,16 +39,16 @@ internal sealed class TenantStockReadStore : IAsyncDisposable
         V1AdjustEnabled = v1AdjustEnabled;
     }
 
-    // Called only inside StockOperationsService after the native Owner's current session and query decision.
+    // Called only after the native Stock Owner's current session and query decision.
     internal Task<T> ReadAsync<T>(CP6Context authority, Guid actorId, Func<CP6Context, CancellationToken, Task<T>> read,
-        CancellationToken ct)
+        CancellationToken ct, bool requireJournalRls = false)
         => WithTenantTransactionAsync(authority, actorId, ReadPurpose, async (transaction, identity, cancellation) =>
         {
             var value = await transaction.ExecuteAsync(async (connection, dbTransaction, queryToken) =>
             {
                 await using (var readOnly = new NpgsqlCommand("SET TRANSACTION READ ONLY", connection, dbTransaction))
                     await readOnly.ExecuteNonQueryAsync(queryToken);
-                await RequireSameDatabase(identity, connection, dbTransaction, queryToken);
+                await RequireSameDatabase(identity, connection, dbTransaction, queryToken, requireJournalRls);
                 var tenant = authority.CurrentTenantId;
                 using var guard = new TenantEfCommandGuard(transaction, connection, dbTransaction, tenant);
                 await using var db = new StockReadContext(Options(connection, guard), tenant);
@@ -144,9 +144,11 @@ internal sealed class TenantStockReadStore : IAsyncDisposable
         return result;
     }
 
-    private static async Task RequireSameDatabase(string identity, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct)
+    private static async Task RequireSameDatabase(string identity, NpgsqlConnection connection, NpgsqlTransaction transaction,
+        CancellationToken ct, bool requireJournalRls = false)
     {
-        if (identity != await StockReadStorageV1.ReadDatabaseIdentityAsync(connection, transaction, ct, requireRowSecurity: true))
+        if (identity != await StockReadStorageV1.ReadDatabaseIdentityAsync(connection, transaction, ct,
+                requireRowSecurity: true, requireJournalRls: requireJournalRls))
             throw new TenantStorageException(TenantStorageFailure.IdentityRejected);
     }
 

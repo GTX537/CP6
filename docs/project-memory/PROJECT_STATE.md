@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-09 UTC W332 库存原命令只读恢复
+
+显式采用普通库存调整的宿主沿原 Owner 读取原操作。普通只读事务与原 journal 权限和行隔离绑定。后续接显式关闭和数据库提交故障。 [交付报告](../development/evidence/W332-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W331 原库存 V1 调整的可信事务
 
 原 V1 HTTP 调整可显式采用普通 PostgreSQL LOGIN。实际普通事务取得原认证根和业务图锁，当前用户、部门、库位与字段授权在真实宿主验证。后续接原操作恢复和关闭。 [交付报告](../development/evidence/W331-01/DELIVERY.md)

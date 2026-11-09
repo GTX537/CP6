@@ -1,3 +1,4 @@
+using System.Runtime.ExceptionServices;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
 using CP6.Core.Persistence.Tenancy;
@@ -140,19 +141,44 @@ public partial class StockMovementService : IStockOriginalOperationsV1
     private Task<StockOperationV1> RecoverStockOperation(Guid operation,bool close,CancellationToken ct)
     {
         if(operation==Guid.Empty)throw new OrderPriceCorrectionException("ORIGINAL_OPERATION_REQUIRED",400);
-        return Owner.ExecuteAsync(OperationsOwnerV1.Stock,"query",close,async(a,t)=>
+        return Owner.ExecuteAsync(OperationsOwnerV1.Stock,"query",close,async(access,token)=>
         {
-            var journal=new MainOwnerOperationJournalV1(_db);var original=await journal.Read(OperationOwner,operation,t);
+            if(close || _tenantStorage is not { V1AdjustEnabled: true } storage)
+                return await Recover(_db,access,token);
+
+            var outcome=await storage.ReadAsync<(StockOperationV1 Result,ExceptionDispatchInfo? Failure)>(_db,access.ActorId,
+                async (context,readToken)=>
+                {
+                    var scoped=access.ForStockRead(context);
+                    try
+                    {
+                        var result=await Recover(context,scoped,readToken);
+                        await scoped.ValidateFinalAsync(readToken);
+                        return (result,null);
+                    }
+                    catch(OrderPriceCorrectionException error)
+                    {
+                        return (default!,ExceptionDispatchInfo.Capture(error));
+                    }
+                },token,requireJournalRls:true);
+            outcome.Failure?.Throw();
+            return outcome.Result;
+        },ct,readOnlyAuthorityFence:!close);
+
+        async Task<StockOperationV1> Recover(CP6Context context,OperationsAccessV1 access,CancellationToken token)
+        {
+            var journal=new MainOwnerOperationJournalV1(context);var original=await journal.Read(OperationOwner,operation,token);
             if(original!=null)
             {
-                RequireOriginalActor(a,original);
+                RequireOriginalActor(access,original);
                 return original.State=="CLOSED"?new(operation,"CLOSED"):
-                    new StockOperationV1(operation,"COMMITTED",await DiscloseStockOriginal(a,original,operation,null,t));
+                    new StockOperationV1(operation,"COMMITTED",await DiscloseStockOriginal(access,original,operation,null,token));
             }
             if(!close)return new StockOperationV1(operation,"UNKNOWN");
             var result=new StockOperationV1(operation,"CLOSED");
-            await journal.Store(OperationOwner,OperationContract,operation,a.ActorId,null,result,[],new {action="close-uncommitted-operation",actor=a.ActorId},t);
+            await journal.Store(OperationOwner,OperationContract,operation,access.ActorId,null,result,[],
+                new {action="close-uncommitted-operation",actor=access.ActorId},token);
             return result;
-        },ct,readOnlyAuthorityFence:!close);
+        }
     }
 }
