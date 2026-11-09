@@ -13,9 +13,11 @@ import sys
 from typing import NamedTuple
 
 sys.dont_write_bytecode = True
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "rma-tenant-archive"))
+if "archive" not in sys.modules:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "rma-tenant-archive"))
 import archive
 from identity_priority import COPY_SETTINGS, native_catalog
+from privacy_evidence import CSV_LIMIT_LOCK
 
 
 FORMAT = "cp6-main-stock-outbox-archive-v1"
@@ -140,16 +142,27 @@ def check_target(query, target):
         SELECT json_build_object('source',json_build_object(
             'Server',host(inet_server_addr()),'Port',inet_server_port(),'Database',d.datname,
             'DatabaseOid',d.oid::bigint,'SystemIdentifier',p.system_identifier::text),
-            'ownerOid',d.datdba::bigint,'primary',NOT pg_is_in_recovery(),
+            'ownerOid',d.datdba::bigint,'primary',NOT pg_is_in_recovery())
+        FROM pg_database d CROSS JOIN pg_control_system() p WHERE d.datname=current_database();
+    """)
+    if actual["source"] != target.mapping() or not actual["primary"]:
+        raise archive.ArchiveError("stock-source-target-rejected")
+    return actual["ownerOid"], source_metadata(query)
+
+
+def source_metadata(query):
+    """Read the Stock source-specific boundary inside an already pinned snapshot."""
+    actual = query("""
+        SELECT json_build_object(
             'restoreCandidate',coalesce(shobj_description(d.oid,'pg_database'),'') LIKE 'CP6-PRIVACY-RESTORE-CANDIDATE/v1/%',
             'encoding',current_setting('server_encoding'),
             'collation',json_build_object('provider',d.datlocprovider,'collate',d.datcollate,'ctype',d.datctype,
                 'locale',coalesce(to_jsonb(d)->>'datlocale',to_jsonb(d)->>'daticulocale')))
-        FROM pg_database d CROSS JOIN pg_control_system() p WHERE d.datname=current_database();
+        FROM pg_database d WHERE d.datname=current_database();
     """)
-    if actual["source"] != target.mapping() or not actual["primary"] or actual["restoreCandidate"] or actual["encoding"] != "UTF8":
+    if actual["restoreCandidate"] or actual["encoding"] != "UTF8":
         raise archive.ArchiveError("stock-source-target-rejected")
-    return actual["ownerOid"], actual["collation"]
+    return actual["collation"]
 
 
 def check_layout(query, owner_oid):
@@ -272,6 +285,10 @@ def table_manifest(item, count):
                 count=count, scope=item.scope, sourceXmin="historical-observation" if item.xmin else None)
 
 
+def journal_manifest():
+    return dict(owner=JOURNAL_OWNER, contracts=list(JOURNAL_CONTRACTS), scope="referenced-by-stock-source")
+
+
 def export(pg_bin, target, username, tenant, output):
     archive.private_directory(output)
     bundle, logs = output / "bundle", output / "native"
@@ -292,7 +309,7 @@ def export(pg_bin, target, username, tenant, output):
                                   rows_sql(item, tenant, route["id"]), COPY_SETTINGS)
     manifest = dict(format=FORMAT, recoveryReady=False, tenantId=str(tenant), source=target.mapping(), snapshot=snapshot,
                     migrations=list(MIGRATIONS), databaseCollation=collation, root=route,
-                    journal=dict(owner=JOURNAL_OWNER, contracts=list(JOURNAL_CONTRACTS), scope="referenced-by-stock-source"),
+                    journal=journal_manifest(),
                     tables={item.member: table_manifest(item, counts[item.name]) for item in TABLES},
                     members={member: archive.file_digest(bundle / member) for member in MEMBERS})
     pending = logs / "manifest.pending"
@@ -315,44 +332,57 @@ def verify(bundle, tenant, digest):
     route = root(tenant)
     if not isinstance(manifest, dict) or manifest.get("format") != FORMAT or manifest.get("recoveryReady") is not False \
             or manifest.get("tenantId") != str(tenant) or manifest.get("root") != route \
-            or manifest.get("migrations") != list(MIGRATIONS) or manifest.get("journal") != dict(
-                owner=JOURNAL_OWNER, contracts=list(JOURNAL_CONTRACTS), scope="referenced-by-stock-source"):
+            or manifest.get("migrations") != list(MIGRATIONS) or manifest.get("journal") != journal_manifest():
         raise archive.ArchiveError("stock-manifest-scope-rejected")
     archive.PhysicalTarget.from_mapping(manifest.get("source"))
     snapshot = manifest.get("snapshot")
     if not isinstance(snapshot, dict) or snapshot.get("readOnly") is not True or snapshot.get("isolation") != "repeatable read" \
             or not isinstance(snapshot.get("snapshotId"), str) or not snapshot["snapshotId"]:
         raise archive.ArchiveError("stock-manifest-snapshot-rejected")
-    counts, digests = manifest.get("tables"), manifest.get("members")
-    if not isinstance(counts, dict) or not isinstance(digests, dict) or set(counts) != set(MEMBERS) or set(digests) != set(MEMBERS):
+    digests = manifest.get("members")
+    if not isinstance(digests, dict) or set(digests) != set(MEMBERS):
         raise archive.ArchiveError("stock-manifest-members-rejected")
-    csv.field_size_limit(2_147_483_647)
     for item in TABLES:
-        path = bundle / item.member
-        entry = counts[item.member]
-        count = entry.get("count") if isinstance(entry, dict) else None
-        if type(count) is not int or count < 0 or entry != table_manifest(item, count):
-            raise archive.ArchiveError("stock-manifest-table-rejected: " + item.name)
-        if archive.file_digest(path) != digests[item.member]:
+        if archive.file_digest(bundle / item.member) != digests[item.member]:
             raise archive.ArchiveError("stock-member-digest-mismatch: " + item.name)
-        columns = list(item.columns)
-        scope = {"tenant": ("TenantId", str(tenant)), "root": ("RootId", route["id"]),
-                 "journal": ("tenant_id", str(tenant))}.get(item.scope)
-        scope_index = columns.index(scope[0]) if scope else None
-        with path.open(encoding="utf-8", newline="") as stream:
-            rows = csv.reader(stream, strict=True)
-            if next(rows, None) != columns:
-                raise archive.ArchiveError("stock-member-header-rejected: " + item.name)
-            actual = 0
-            for row in rows:
-                if len(row) != len(columns):
-                    raise archive.ArchiveError("stock-member-row-rejected: " + item.name)
-                if scope_index is not None and row[scope_index] != scope[1]:
-                    raise archive.ArchiveError("stock-member-scope-rejected: " + item.name)
-                actual += 1
-            if actual != count:
-                raise archive.ArchiveError("stock-member-count-mismatch: " + item.name)
+    verify_tables(bundle, tenant, route["id"], manifest.get("tables"))
     return manifest
+
+
+def verify_tables(bundle, tenant, root_id, tables, *, prefix=""):
+    """Check scoped Stock members after their enclosing bundle hashes have been verified."""
+    if not isinstance(tables, dict) or set(tables) != {prefix + name for name in MEMBERS}:
+        raise archive.ArchiveError("stock-manifest-members-rejected")
+    with CSV_LIMIT_LOCK:
+        previous_limit = csv.field_size_limit(2_147_483_647)
+        try:
+            for item in TABLES:
+                verify_table(bundle / (prefix + item.member), tenant, root_id, item, tables[prefix + item.member])
+        finally:
+            csv.field_size_limit(previous_limit)
+
+
+def verify_table(path, tenant, root_id, item, entry):
+    count = entry.get("count") if isinstance(entry, dict) else None
+    if type(count) is not int or count < 0 or entry != table_manifest(item, count):
+        raise archive.ArchiveError("stock-manifest-table-rejected: " + item.name)
+    columns = list(item.columns)
+    scope = {"tenant": ("TenantId", str(tenant)), "root": ("RootId", root_id),
+             "journal": ("tenant_id", str(tenant))}.get(item.scope)
+    scope_index = columns.index(scope[0]) if scope else None
+    with path.open(encoding="utf-8", newline="") as stream:
+        rows = csv.reader(stream, strict=True)
+        if next(rows, None) != columns:
+            raise archive.ArchiveError("stock-member-header-rejected: " + item.name)
+        actual = 0
+        for row in rows:
+            if len(row) != len(columns):
+                raise archive.ArchiveError("stock-member-row-rejected: " + item.name)
+            if scope_index is not None and row[scope_index] != scope[1]:
+                raise archive.ArchiveError("stock-member-scope-rejected: " + item.name)
+            actual += 1
+        if actual != count:
+            raise archive.ArchiveError("stock-member-count-mismatch: " + item.name)
 
 
 def main():

@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC v9 暂存采用和 v10 同快照归档
+
+W404 完整 858 秒，两端分支清理，DEV-2 干净释放。W405 实测 14 个 Stock 成员及 RMA 原件从同一物理库和 snapshot 导出。 [W405](../development/evidence/W405-01/DELIVERY.md) · [PR #843](https://github.com/GTX537/CP6/pull/843)
+
+
 ## 2026-11-09 UTC Main Stock 切面采用和 v9 落表
 
 W403 完整 1,334 秒，两端分支清理，DEV-1 干净释放。W404 实测 v9 历史中立落表、全回滚和原回执恢复。 [W404](../development/evidence/W404-01/DELIVERY.md) · [PR #842](https://github.com/GTX537/CP6/pull/842)
