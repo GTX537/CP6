@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC 文件原生历史导入
+
+新增关闭候选中的 FileContent 原始事件、原流水和准确父版本采用。保留外部原文件、原生约束与同键回读。 [W418](../development/evidence/W418-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 原 PGT 直接隔离验证
 
 登记原 PGT-006、007、009 的实际 PostgreSQL 普通角色证据，记录明确物理、ACL 和前后原件。 [W417](../development/evidence/W417-01/DELIVERY.md)

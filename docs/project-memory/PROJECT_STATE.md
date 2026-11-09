@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC FileContent 原生候选
+
+W417 随 #854 采用并释放。W418 实测真实 FileContent 导入、原生回滚及同键恢复。W419 核实际 C03 Owner。原台账为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W418](../development/evidence/W418-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC PostgreSQL 原 PGT 三个直接场景
 
 原 PGT-006、007、009 在真实隔离 RMA Core 候选范围通过。其余原 PGT 保持各自状态。原台账为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W417](../development/evidence/W417-01/DELIVERY.md)
