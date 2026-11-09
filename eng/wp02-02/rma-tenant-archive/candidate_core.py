@@ -271,7 +271,8 @@ def execute(args):
     if recover:
         driver = target_sql(plan, True) + receipt_sql()
     else:
-        checked, metadata = stage.checked_bundle(args.bundle, output, tenant, digest, target, args.file_content_root)
+        checked, metadata = stage.checked_bundle(args.bundle, output, tenant, digest, target, args.file_content_root,
+                                                 include_stock_outbox=True)
         schema = "t_" + tenant.hex
         emit_rows(pg_bin, checked, output, schema)
         counts = {name: metadata["counts"][name] for name in COPY_COLUMNS}
