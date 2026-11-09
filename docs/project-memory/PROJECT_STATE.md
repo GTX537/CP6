@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC 原来源同快照
+
+原 RMA 提交随 #822 正常采用并释放。W374 实测可选 v3 归档来源与原日志同切面，旧 v1/v2 兼容。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W374](../development/evidence/W374-01/DELIVERY.md) · [#822](https://github.com/GTX537/CP6/pull/822)
+
+
 ## 2026-11-09 UTC 普通 RMA 原提交
 
 实际普通租户事务原子推进草稿版本并保存原操作。W370 远端 #821 与分支处置、工作区和席位已核。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W372 交付](../development/evidence/W372-01/DELIVERY.md) · [#821](https://github.com/GTX537/CP6/pull/821)

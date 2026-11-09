@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W374 v3 原来源同切面实证通过。W372 随 #822 采用并释放，W373 草稿回包实证后释放集成席位。DEV-2 W375 接原操作，集成席位 W376 核动态模型及容量。 [W374](./evidence/W374-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave374/README.md)
+
+
 > W372 原 RMA 普通提交、原回执及归档权限已实测。W370 随 #821 采用并释放。DEV-1 W374 接原来源切片，集成席位 W373 核真实 PostgreSQL 回包。 [W372](./evidence/W372-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave372/README.md)
 
 

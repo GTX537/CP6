@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC 普通提交及丢失回包核对
+
+W372 完整 1,677 秒，两端分支删除及 DEV-2 干净释放。W373 真 PostgreSQL 提交确认截断，HTTP 同请求恢复原 201，集成席位释放。W374 原来源同切面已实测。 [W374](../development/evidence/W374-01/DELIVERY.md) · [#822](https://github.com/GTX537/CP6/pull/822)
+
+
 ## 2026-11-09 UTC 隔离 staging 采用与原 RMA 提交实证
 
 W370 完整 1,111 秒，两端分支删除、DEV-1 干净释放。W372 原提交和当前授权、旧回执、真实两种归档权限均已实测。 [W372 交付](../development/evidence/W372-01/DELIVERY.md) · [#821](https://github.com/GTX537/CP6/pull/821)
