@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W370 已实测原子 staging 和同键原回执。W364 随 #820 采用并释放，W372 接原提交。W371 保存点已释放，W373 验真实草稿 PostgreSQL 提交回包。 [W370](./evidence/W370-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave370/README.md)
+
+
 > W364 已实测原 RMA 草稿 POST、同事务原日志和归档 ACL。W366 随 #819 采用并释放 DEV-1，独立 W370 接原生 staging。W369 验实际共享升级失败并释放集成席位，W371 验保存点。 [W364](./evidence/W364-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave364/README.md)
 
 

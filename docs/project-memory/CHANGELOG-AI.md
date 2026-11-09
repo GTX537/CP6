@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC RMA 原子 staging 入口
+
+增加按原清单摘要及物理空库执行的原生 staging。原 schema、共享切片与保护回执同事务，真实后段故障整体回滚，recover 只读返回原字节。 [W370 交付](../development/evidence/W370-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 原生 RMA 普通草稿
 
 显式托管草稿将原版本和 journal 放进一个普通事务。当前权限与原结果的同键恢复实测。归档按真实 writer 的准确列权限继续支持 v1/v2。 [W364 交付](../development/evidence/W364-01/DELIVERY.md)
