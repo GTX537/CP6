@@ -8,9 +8,9 @@ namespace CP6.Core.Services.Integration;
 
 public sealed partial class OperationsOwnerV1
 {
-    internal async Task<RmaApplicationResultV1> ExecuteRmaWriteAsync(TenantRmaReadStore storage, RmaWriteEntry entry, Guid operation,
-        Func<OperationsAccessV1, RmaTenantReadContext, MainOwnerOperationJournalV1.Original?, CancellationToken,
-            Task<RmaApplicationResultV1>> body, CancellationToken ct)
+    internal async Task<T> ExecuteRmaWriteAsync<T>(TenantRmaReadStore storage, RmaWriteEntry entry, Guid operation,
+        Func<OperationsAccessV1, RmaTenantReadContext, MainOwnerOperationJournalV1.Original?, CancellationToken, Task<T>> body,
+        CancellationToken ct)
     {
         using var linked = CancellationTokenSource.CreateLinkedTokenSource(ct, http.HttpContext?.RequestAborted ?? CancellationToken.None);
         ct = linked.Token;
@@ -32,7 +32,8 @@ public sealed partial class OperationsOwnerV1
                 if (current != subject) throw new OrderPriceCorrectionException("REAUTH_REQUIRED", 401);
                 var original = await MainOwnerOperationJournalV1.Read(tenantDb, tenantDb.Binding.TenantId,
                     RmaApplicationOwnerV1.JournalOwner, operation, token);
-                var authority = await AuthorityCoreAsync(Rma, original is null ? "add" : "query", current, false, token);
+                var newAction = entry == RmaWriteEntry.Close ? "cancel" : "add";
+                var authority = await AuthorityCoreAsync(Rma, original is null ? newAction : "query", current, false, token);
                 var access = new OperationsAccessV1(db, this, authority);
                 var value = await body(access, tenantDb, original, token);
                 await ValidateFinalAuthorityAsync(access, subject, token);
