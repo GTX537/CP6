@@ -7,7 +7,7 @@ namespace CP6.Core.Services.Integration;
 
 public sealed partial class OperationsOwnerV1
 {
-    internal async Task<T> ExecuteStockAdjustmentAsync<T>(TenantStockReadStore storage,
+    internal async Task<T> ExecuteStockOperationAsync<T>(TenantStockReadStore storage, StockV1WriteEntry entry,
         Func<StockMovementWriteContextV1, OperationsAccessV1, CancellationToken, Task<T>> body,
         Func<StockMovementWriteContextV1, CancellationToken, Task<string>> actionAtFence,
         CancellationToken ct)
@@ -26,7 +26,7 @@ public sealed partial class OperationsOwnerV1
             await using var authorization = await db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, ct);
             await db.Database.ExecuteSqlRawAsync("SET TRANSACTION READ ONLY", ct);
             var subject = await currentActor(ct);
-            var result = await storage.WriteV1AdjustAsync(db, subject, async (writer, token) =>
+            var result = await storage.WriteV1Async(db, subject, entry, async (writer, token) =>
             {
                 await writer.Database.ExecuteSqlInterpolatedAsync($"SELECT cp6_stock_adjust_owner_v1.lock_graph({writer.CurrentTenantId})", token);
                 var current = await currentActor(token);

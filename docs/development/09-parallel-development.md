@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> [CP6 三天实际执行](planning/20261109-codex-72h-execution.md)由总控单人串行执行。[W332-01](evidence/W332-01/DELIVERY.md)验证库存原操作普通只读恢复，随后接显式关闭与数据库提交故障。
+> [CP6 三天实际执行](planning/20261109-codex-72h-execution.md)由总控单人串行执行。[W333-01](evidence/W333-01/DELIVERY.md)验证普通库存关闭与数据库提交确认中断，随后接真实 V1 移库。
+
+> [W332-01](evidence/W332-01/DELIVERY.md)库存原操作只读恢复已随 Main #789 合并，准确分支已清理，固定席位已释放。
 
 > [W331-01](evidence/W331-01/DELIVERY.md)原库存 V1 HTTP 调整和实际普通事务已随 Main #788 合并，准确分支已清理，固定席位已释放。
 
