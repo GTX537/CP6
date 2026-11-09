@@ -62,6 +62,8 @@ Set `StockReadTenancy:EnableV2Adjust=true` with `EnableV1Adjust=true` after both
 
 Set `StockReadTenancy:EnableV2Move=true` with `EnableV2Adjust=true` for the original V2 move creation context and command. The ordinary transaction holds the existing two-end Stock graph. The source retains its custody and movement department, and the new target uses the explicitly approved department. Both legs, target creation, audit, original result and Outbox commit together. [Delivery and verification](../../../docs/development/evidence/W337-01/DELIVERY.md).
 
+The Stock inventory records the actual PostgreSQL keys and grants, the public entry points, the parent Owner transactions, and the data needed for isolated version and recovery validation. [Stock write inventory](../../../docs/development/evidence/W340-01/DELIVERY.md).
+
 ## Tenant connection leases
 
 `TenantIdentityDirectoryReader` is an internal opt-in `IIdentitySnapshotReader` adapter for the standalone directory overlay below. Its binding must select `identity-directory-read-v1` / `identity-directory-read-rls-v1` with **no queue domains** (this profile authorizes no messaging). The configured trusted context and catalog choose the tenant and ordinary principal; the method's tenant argument must match. The adapter returns detached directory DTOs only, exposes no context or raw transaction, and has no Owner fallback. Authentication and current reader authorization remain the host's responsibility; this interface registration does not switch the default Main environment to ordinary logins.

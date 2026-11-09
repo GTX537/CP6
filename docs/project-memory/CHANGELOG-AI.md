@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC W340 Stock 写入对象和实际 Owner
+
+记录 Stock 普通写者的原生对象、键和权限，归属公开、父 Owner、质检与召回。以已验证的隔离数据库读回实际目录。 [交付报告](../development/evidence/W340-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W339 直接库存移库的普通事务
 
 原 `/api/wms/stock/move` 在已启用普通 V1 移库的宿主使用自己的可信用途和现有普通事务。复用原两腿、货权和回包。 [交付报告](../development/evidence/W339-01/DELIVERY.md)
