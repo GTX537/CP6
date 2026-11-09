@@ -1,0 +1,17 @@
+# W424-01 · PostgreSQL 容量与凭据轮换验收
+
+DEV-2 于 2026-11-09 19:42:50 UTC 从 Main #858 开工。本窗采用既有的独占 PostgreSQL 18.6 实测。各窗使用合成业务数据和独立普通 LOGIN，控制身份用于准备或观察。原 PGT-023 要求同时记载实测和未测范围。[原验收卡](../../acceptance/postgresql-tenancy.json#L720) · [原容量设计](../../../design-handbook/architecture/02-postgresql-tenancy.md#10-容量假设与可复现测量门)
+
+| 实测 | 结果 | 原件 |
+| --- | --- | --- |
+| W355 固定共享 Stock，N10/N100 | 各见一个含 233 个实体的 EF 模型，分别完成 33/368 次合法读取。N100 两进程分别持有 8 个不同普通读事务，同时有 16 个事务在库。即时复借为 10/10 和 100/100。单进程持满 32 池后第 33 个租户被拒，释放后成功。 | [W355 交付](../W355-01/DELIVERY.md) · [N10 原件](/D:/CP6-local-test/CP6-72H-20261109/W355-01/n10-p1-197c0889/observations.json) · [N100 原件](/D:/CP6-local-test/CP6-72H-20261109/W355-01/n100-p2-e1290d07/observations.json) |
+| W376 动态 RMA，N10/N100 | 30/333 次实际查询，首次见 10/100 个模型。N100 即时复借模型与后端分别命中 96/100、100/100，按原顺序复扫分别为 74/100、0/100。处置后普通连接为零，仍观察到 66 个首次模型的弱引用存活。原件记录模型对象、工作集、冷/热延迟和连接等待。 | [N10 原件](/D:/CP6-local-test/CP6-72H-20261109/W376-VERIFY/run-20261109T105804Z-resume/rma-capacity/n10-summary.json) · [N100 原件](/D:/CP6-local-test/CP6-72H-20261109/W376-VERIFY/run-20261109T105804Z-resume/rma-capacity/n100-summary.json) · [实际报告](/D:/CP6-local-test/CP6-72H-20261109/W376-VERIFY/DELIVERY.md) |
+| W397 动态 RMA 双组件进程 | 同时持有 64 个不同普通事务及一个观察连接，实例 `max_connections=80`。每进程池／连接预留／借用为 32／64／32。两边第 33 个租户分别在 2.669／2.682 ms 被拒，释放后均读得正确原标记。实际完成 66 个普通查询，最终普通连接归零，200 条业务行前后相同。 | [原生联合峰值与恢复](/D:/CP6-local-test/CP6-72H-20261109/W397-VERIFY/run-20261109T130502Z/rma-dual-capacity/actual-observations.json) · [实际报告](/D:/CP6-local-test/CP6-72H-20261109/W397-VERIFY/DELIVERY.md) |
+| 普通 A 旧 lease 实际排空 | 持旧 lease 时用实际 `ALTER ROLE` 更换密码并采用 `v2/r2` 目录。池／预留／借用／排空为 1／2／1／1，新借用报 `CapacityExceeded`，旧 lease 报 `BindingChanged`。并发归还后全归零，新 A 后端 PID 改变，B 使用独立普通 LOGIN。另一个已通过的用例让活动写事务在绑定变化后拒绝提交，回读确认回滚。 | [原 native TRX](../WP02-02/tenant-connections/focused-final.trx) |
+| W343 Stock 真实宿主重启和密码轮换 | 旧宿主退出后普通连接为零，同一 A 角色 OID 保持 39672。独立旧凭据返回 `28P01`，旧配置宿主只建立 B 普通连接。新配置宿主用 A/B 新后端读得各自原结果，A 同键精确提交一次 `0.76543218`，B 无新增效果。 | [W343 交付](../W343-01/DELIVERY.md) · [原业务结果](/D:/CP6-local-test/CP6-72H-20261109/W343-01/permission-consumption-w343-01-credential-rotation-http/stock-credential-rotation.json) · [原 TRX](/D:/CP6-local-test/CP6-72H-20261109/W343-01/results/credential-rotation-http.trx) |
+
+Main 的 Stock 测量路径与 W355 构建源 `92c64e8bb26aaae3f77382f5b56ba7e636870dd0` 一致，轮换路径与 W343 使用的 `634ca5cc2ffda8eadbfd109c922ce59dd2d3eb15` 一致。W376/W397 实际加载 W364 的 `23b2326a7fd6414627177128742911637532b70a`，Core SHA-256 为 `1b7b9bb2af0b5d8d5a5eb075582bdb9a68cfacb27fdb3a67f3858dfc47076f00`。该读模型、命令守卫、池与 lease 源码在 #858 保持一致，后续 RMA 宿主增量为写入入口。相关运行依赖为 Npgsql 8.0.8、EF Core 8.0.30、EF PG provider 8.0.11 和 Platform 0.10.3。原排空测试及池管理器在采用提交 `60a0d8bdbf77af534e36717408481e97bc10c47b` 后保持，后续 lease 增加提交栅栏及显式回滚，保留提交前的当前绑定检查。[实际模型](../../../../CP6.Core/Persistence/Tenancy/RmaTenantReadContext.cs) · [连接管理](../../../../CP6.Core/Persistence/Tenancy/TenantConnectionManager.cs) · [事务入口](../../../../CP6.Core/Persistence/Tenancy/TenantConnectionLease.cs)
+
+当前 Stock/RMA 宿主目录最多接纳 128 项，普通池预算为每进程 32 池、64 连接预留、每池 2。RMA 模型键区分受控目录的 schema、layout、model 和 provider。Stock 实际拒绝 129 及 1000 项配置。N1000 未运行，联合峰值只采用上表实际采样。整机混合负载、长期模型留存及密码更新跨在途宿主请求的时序仍按各自环境验证。[Stock 准入](../../../../CP6.WebApi/Configuration/StockReadTenancyConfiguration.cs#L33) · [RMA 准入](../../../../CP6.WebApi/Configuration/RmaReadTenancyConfiguration.cs#L34)
+
+本窗核对原件和当前源码，采用 PGT-023 的本地受控容量、组件排空及宿主重启轮换范围。正式 PostgreSQL 矩阵为 9 项 PASS、18 项 NOT_RUN。W422/W423 原生恢复与同源切面及 PGT-021/022 等待对应实测。[总台账](../../roadmap.json)

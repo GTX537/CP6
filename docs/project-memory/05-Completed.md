@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC 原 PGT-023 实测采用
+
+Stock/RMA N10/N100、双组件原生峰值、组件旧池排空和宿主受控重启轮换按原证据采用。 [W424](../development/evidence/W424-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 同源文件原件
 
 W420 同一 W372 库的 A/B 实际 Engineering、FileContent 原件和分别五份原生 COPY 一致，原 RMA 和四条原流水逐字节保持。 [W420](../development/evidence/W420-01/DELIVERY.md)

@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 继续原件恢复
+
+资源达到门槛后续 W422、W423、W415。W423 检查点已保存远端，PGT-021/022 仍为 NOT_RUN。 [W424](../development/evidence/W424-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC ERP 原位采用与同源扩展
 
 继续 W419 原 ERP 终态、RowVersion 与原全局键，沿 W420 副本接同源 ERP/Stock 和完整验收。 [W420](../development/evidence/W420-01/DELIVERY.md)
