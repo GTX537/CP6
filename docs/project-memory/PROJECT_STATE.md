@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC v10 Stock 中立暂存
+
+W407 在隔离 PostgreSQL 实测原 v10 及 14 个 Stock 原成员的原子暂存和原回执。W405 随 #845 采用并释放。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W407](../development/evidence/W407-01/DELIVERY.md) · [PR #845](https://github.com/GTX537/CP6/pull/845)
+
+
 ## 2026-11-09 UTC RMA 与 Main Stock 同快照归档
 
 W405 实测同一切面、36 个成员及晚到的真实库存和隐私事务。W404 随 #843 采用并释放。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W405](../development/evidence/W405-01/DELIVERY.md) · [PR #843](https://github.com/GTX537/CP6/pull/843)

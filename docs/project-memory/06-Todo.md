@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC Core 候选和现行派送权威
+
+从已保存 W406 分支续验真 Core 候选导入和晚 FK，完成 W401 普通读回，接 Stock 当前对账和批准开放。 [W407](../development/evidence/W407-01/DELIVERY.md) · [W406 保存候选](https://github.com/GTX537/CP6/blob/fe52f94eaa8d93e7c560b518a229d2ccbd75abdb/docs/development/evidence/W406-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 候选导入和恢复采用
 
 接续真实隔离 Core 原件导入、独立审批与普通读回，完成 v10 恢复消费和原正式场景。 [W405](../development/evidence/W405-01/DELIVERY.md)

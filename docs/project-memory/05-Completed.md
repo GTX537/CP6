@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC 同源归档采用及中立暂存
+
+W405 完整 2,410 秒，两端分支清理且原固定席位干净释放。W407 实测 v10 原字节、租户和派送关联、回滚以及原回执恢复。 [W407](../development/evidence/W407-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC v9 暂存采用和 v10 同快照归档
 
 W404 完整 858 秒，两端分支清理，DEV-2 干净释放。W405 实测 14 个 Stock 成员及 RMA 原件从同一物理库和 snapshot 导出。 [W405](../development/evidence/W405-01/DELIVERY.md) · [PR #843](https://github.com/GTX537/CP6/pull/843)

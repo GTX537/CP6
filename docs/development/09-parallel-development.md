@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W407 原 v10 中立暂存和原回执实证通过。W406 原分支远端保存，接续完整 Core 验证及现行源对账。 [W407](./evidence/W407-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave407/README.md)
+
+
 > W405 RMA 和 Main Stock 同快照归档通过原生验证，接续隔离 Core 候选原件导入。 [W405](./evidence/W405-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave405/README.md)
 
 
