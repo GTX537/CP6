@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC v10 多域恢复和批准开放
+
+W410 继续同源独立审批和活跃 B 验证。后续需要非空资产、ERP 和多域导入，以及正式 PGT-021/022。#844 已具备 0.10.4 本地登记，正式发布和 Main 采用分别执行。 [W411](../development/evidence/W411-01/DELIVERY.md) · [Platform #81](https://github.com/GTX537/CP6.Platform/pull/81)
+
+
 ## 2026-11-09 UTC 同源多域恢复与独立开放
 
 继续构造同源非空多域合成夹具，实测独立批准开放、活跃 B 与普通角色，并执行 PGT-021/022 原验收。#844 的正式包发布和 Main 采用分开执行。 [W406](../development/evidence/W406-01/DELIVERY.md) · [Issue #844](https://github.com/GTX537/CP6/issues/844)

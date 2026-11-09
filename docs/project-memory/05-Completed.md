@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC v10 两表导入实库验证
+
+W411 验证 v10 的 1 条 head 和 1 条 version 原字节、晚外键全回滚、丢失 COMMIT 后 914 字节原回执、B 和 Stock 保护。W406 和 Platform #81 已核对远端并释放各自席位。 [W411](../development/evidence/W411-01/DELIVERY.md) · [Platform #81](https://github.com/GTX537/CP6.Platform/pull/81)
+
+
 ## 2026-11-09 UTC 原两表 Core 验证和普通读回
 
 W409 完整 1,205.102 秒，任务分支两端清理且固定席位干净释放。W406 原生导入和回执恢复、W401 普通 HTTP 和 PostgreSQL 只读查询均已验证。 [W406](../development/evidence/W406-01/DELIVERY.md) · [W401](/D:/CP6-local-test/CP6-72H-20261109/W401-VERIFY/DELIVERY.md)

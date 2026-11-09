@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W411 实测完整 v10 校验及隔离 Core 两表导入。W410 继续同源独立审批验证。 [W411](./evidence/W411-01/DELIVERY.md)
+
+
 > W406 完整独立 Core 导入、晚 FK 回滚与原回执恢复均实测通过。W401 的普通 HTTP 在原隔离候选验证并释放。 [W406](./evidence/W406-01/DELIVERY.md) · [W401](/D:/CP6-local-test/CP6-72H-20261109/W401-VERIFY/DELIVERY.md)
 
 
