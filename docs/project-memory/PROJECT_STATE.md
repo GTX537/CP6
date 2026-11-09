@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC ERP v8 原子暂存
+
+W398 原八表和原回执实际验证，W396 随 #837 采用并释放。12 小时原生 43,201 秒。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W398](../development/evidence/W398-01/DELIVERY.md) · [PR #837](https://github.com/GTX537/CP6/pull/837)
+
+
 ## 2026-11-09 UTC 原统一包现行队列
 
 W396 原 v6/v7 队列对账，W395 随 #836 采用并释放。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W396](../development/evidence/W396-01/DELIVERY.md) · [PR #836](https://github.com/GTX537/CP6/pull/836)
