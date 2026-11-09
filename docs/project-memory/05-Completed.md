@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC W342 真实 Stock 错绑定
+
+真实普通 A 登录改自定义租户 GUC 后仍映射为 A。切换到 B 被原生拒绝，更新 B 主键影响 0 行，两租户库存、流水、原操作和通知保持前值。 [交付报告](../development/evidence/W342-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W341 实际 Stock A/B 同键
 
 真实 HTTP 验证 A 提交后 B 仍为 UNKNOWN，B 提交和重放取得自己的原结果。三轮顺序 A/B/A 保持两个实际普通后端，消息租约绑定本租户。 [交付报告](../development/evidence/W341-01/DELIVERY.md)
