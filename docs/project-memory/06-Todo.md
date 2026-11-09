@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC W353 和 #808 接续
+
+完成 #808 的正常合并、准确引用和正式 Issue 收尾。W353 用实际 Core 探明旧 RMA 原操作及业务写的单一权威。 [交付证据](../development/evidence/BUG-808-STOCK-RESTORE-OUTBOX/DELIVERY.md)
+
 ## 2026-11-09 UTC W350 与 P1 #808
 
 DEV-1 接新隔离全 Core 的原 RMA 共享授权、出库来源和原 journal，逐步接原 HTTP。DEV-2 修复恢复候选重复库存派送。 [RMA 交付](../development/evidence/W350-01/DELIVERY.md) · [WP02-28 交付](../development/evidence/W351-01/DELIVERY.md)

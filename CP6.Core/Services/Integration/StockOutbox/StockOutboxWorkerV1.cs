@@ -13,7 +13,8 @@ internal sealed record StockOutboxObservationV1(string State, Guid? RequestId, i
 /// <summary>Durable request identity precedes the claim. A restart queries the same original claim and
 /// completion receipts. Unknown transport/send attempts retain the request; they never create a new claim.</summary>
 internal sealed class StockOutboxWorkerV1(CP6Context source, StockOutboxHostOptionsV1 options,
-    IOutboxPublisherV2 publisher, IDbContextFactory<StockOutboxContextV1>? testFactory = null)
+    IOutboxPublisherV2 publisher, IDbContextFactory<StockOutboxContextV1>? testFactory = null,
+    bool privacyRestoreConfigured = false)
 {
     private const int BatchSize = 4; // Four ten-second send budgets fit inside the one-minute native lease.
     internal async Task<StockOutboxObservationV1> RunAsync(Guid enumeratedTenant, CancellationToken ct)
@@ -27,9 +28,12 @@ internal sealed class StockOutboxWorkerV1(CP6Context source, StockOutboxHostOpti
             .UseNpgsql(source.Database.GetConnectionString()).Options);
         var root = StockOutboxProtocolV1.Root(enumeratedTenant);
         await using (var db = await factory.CreateDbContextAsync(ct))
+        {
+            await StockOutboxHostV1.RequireDispatchDatabaseAsync(db, privacyRestoreConfigured, ct);
             if (!await db.Set<StockOutboxAuthorityV1>().AnyAsync(a => a.RootId == root.Id && a.TenantId == enumeratedTenant, ct))
                 return new("IDLE", null, 0);
-        var host = new StockOutboxHostV1(factory, options, enumeratedTenant);
+        }
+        var host = new StockOutboxHostV1(factory, options, enumeratedTenant, privacyRestoreConfigured);
         var store = new CallerTransactionOutboxV2(host.Trusted, host);
         var dispatcher = new OutboxDispatcherV2<StockOutboxContextV1>(factory, host.Trusted, host, publisher);
         StockOutboxObservationV1 result = new("IDLE", null, 0);

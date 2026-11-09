@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-09 UTC #808 恢复候选派送拦截
+
+真实恢复候选在认领和发送授权处均拒绝，原候选队列及原件不变。相关 PostgreSQL 回归已通过，待远端收尾。 [交付证据](../development/evidence/BUG-808-STOCK-RESTORE-OUTBOX/DELIVERY.md)
+
 ## 2026-11-09 UTC W350 物理租户 RMA 与 WP02-28 核销
 
 RMA 首版在实际 PostgreSQL A/B schema 通过并发、中断、原回执与普通登录验证。WP02-28 的本地采用经 #809 正常远端采用及回收已核销。 [RMA 交付](../development/evidence/W350-01/DELIVERY.md) · [WP02-28 交付](../development/evidence/W351-01/DELIVERY.md)

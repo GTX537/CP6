@@ -1,3 +1,4 @@
+using CP6.Core.Services.Platform;
 using CP6.Platform.Abstractions.Context;
 using CP6.Platform.Contracts.Context;
 using CP6.Platform.EntityFramework.OutboxV2;
@@ -33,7 +34,7 @@ internal sealed class StockOutboxFactoryV1(DbContextOptions<StockOutboxContextV1
 /// <summary>One fresh tenant job. This private verifier and the same-transaction Owner share actual authority;
 /// a serialized ctx-v1 envelope or lack of HttpContext cannot authorize the worker.</summary>
 internal sealed class StockOutboxHostV1(IDbContextFactory<StockOutboxContextV1> factory,
-    StockOutboxHostOptionsV1 options, Guid tenant) : IOutboxOwnerV2,
+    StockOutboxHostOptionsV1 options, Guid tenant, bool privacyRestoreConfigured) : IOutboxOwnerV2,
     IContextSourceVerifierV1<object>, IContextBindingAuthorityV1
 {
     private readonly object _invocation = new();
@@ -112,8 +113,18 @@ internal sealed class StockOutboxHostV1(IDbContextFactory<StockOutboxContextV1> 
             "Main.StockOutbox.NewOriginalsOnly.v1", [], StockOutboxProtocolV1.RouteLock(root), StockOutboxProtocolV1.Policy,
             [new("public", "Sys_Tenants", "Id", tenant), new(StockOutboxContextV1.Schema, "Authority", "RootId", root.Id)]);
     }
+
+    internal static async Task RequireDispatchDatabaseAsync(DbContext db, bool privacyRestoreConfigured, CancellationToken ct)
+    {
+        // Stock dispatch requires an ordinary queue database even after privacy admission opens.
+        if (privacyRestoreConfigured || (await PrivacyRestoreNativeV1.Marker(db, ct))
+            .StartsWith(PrivacyRestoreNativeV1.MarkerPrefix, StringComparison.Ordinal))
+            throw new OutboxProtocolExceptionV2("STOCK_OUTBOX_RESTORE_DISPATCH_FORBIDDEN");
+    }
+
     public async ValueTask AuthorizeAsync(OutboxTransactionV2 tx, OutboxAccessV2 access, CancellationToken ct)
     {
+        await RequireDispatchDatabaseAsync(tx.Context, privacyRestoreConfigured, ct);
         await ResolveAsync(tx.Context, _accessor.CurrentTrusted ?? throw new OutboxProtocolExceptionV2("STOCK_OUTBOX_TRUSTED_HOST_REQUIRED"), tx.Registration.Root, ct);
         var (authority, _) = await Current(tx.Context, ct);
         if (access is OutboxAccessV2.Switch or OutboxAccessV2.Retention
