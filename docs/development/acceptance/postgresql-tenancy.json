@@ -68,8 +68,16 @@
       ],
       "implementation_task": "WP02-02",
       "source_scope": "CTX01-A3;CTX01-A5",
-      "status": "NOT_RUN",
-      "execution_evidence": []
+      "status": "PASS",
+      "execution_evidence": [
+        {
+          "report": "docs/development/evidence/W421-01/DELIVERY.md",
+          "profile": "rma-core-hosted-pool-reuse",
+          "tested_source": "997c4ae0d1b6b9a2b1ba5bab026b20bfd3891764",
+          "actual_database": "PostgreSQL 18.6",
+          "fixture": "A/B 合成数据。W392 单宿主 A/B 普通 LOGIN，各一条物理连接上限"
+        }
+      ]
     },
     {
       "id": "PGT-003",
@@ -151,8 +159,16 @@
       ],
       "implementation_task": "WP02-02",
       "source_scope": "CTX02-A1;CTX02-A5",
-      "status": "NOT_RUN",
-      "execution_evidence": []
+      "status": "PASS",
+      "execution_evidence": [
+        {
+          "report": "docs/development/evidence/W421-01/DELIVERY.md",
+          "profile": "rma-core-schema-provisioning",
+          "tested_source": "421fb54497913f0998506455715d90e05bec7605",
+          "actual_database": "PostgreSQL 18.6",
+          "fixture": "A/B 合成数据。W360 Core RMA 原 provisioning 与两租户实际目录"
+        }
+      ]
     },
     {
       "id": "PGT-006",
@@ -371,8 +387,23 @@
       ],
       "implementation_task": "WP02-02",
       "source_scope": "CTX02-A3",
-      "status": "NOT_RUN",
-      "execution_evidence": []
+      "status": "PASS",
+      "execution_evidence": [
+        {
+          "report": "docs/development/evidence/W421-01/DELIVERY.md",
+          "profile": "rma-tenant-ef-model-boundary",
+          "tested_source": "90645bc17618748e7fc86d30f270551d02168080",
+          "actual_database": "PostgreSQL 18.6",
+          "fixture": "A/B 合成数据。W381 双普通 LOGIN 原模型与 SQL，复用 W356 托管顺序结果"
+        },
+        {
+          "report": "docs/development/evidence/W421-01/DELIVERY.md",
+          "profile": "rma-core-shared-erp-schema",
+          "tested_source": "26e04d25840446fdf3675c074aa1905db254f29d",
+          "actual_database": "PostgreSQL 18.6",
+          "fixture": "A/B 合成数据。W419 独立 Core RMA 库的原共享 ERP 表及 Outbox"
+        }
+      ]
     },
     {
       "id": "PGT-013",
@@ -542,8 +573,16 @@
       ],
       "implementation_task": "WP02-02",
       "source_scope": "S02-00 migration design",
-      "status": "NOT_RUN",
-      "execution_evidence": []
+      "status": "PASS",
+      "execution_evidence": [
+        {
+          "report": "docs/development/evidence/W421-01/DELIVERY.md",
+          "profile": "rma-standalone-transactional-migration",
+          "tested_source": "f765b220d654e945f00526eebea4bab07a6acb5b",
+          "actual_database": "PostgreSQL 18.6",
+          "fixture": "A/B 合成数据。W350 独立两进程迁移、A 原 DDL 回滚及 B 普通原读写"
+        }
+      ]
     },
     {
       "id": "PGT-019",
@@ -569,8 +608,23 @@
       ],
       "implementation_task": "WP02-02",
       "source_scope": "S02-00 migration design",
-      "status": "NOT_RUN",
-      "execution_evidence": []
+      "status": "PASS",
+      "execution_evidence": [
+        {
+          "report": "docs/development/evidence/W421-01/DELIVERY.md",
+          "profile": "rma-core-concurrent-index",
+          "tested_source": "c4a32c87960b6913c62b54d408b475c1d957dcf5",
+          "actual_database": "PostgreSQL 18.6",
+          "fixture": "A/B 合成数据。W358 实际并发索引创建、清理中断及同键恢复"
+        },
+        {
+          "report": "docs/development/evidence/W421-01/DELIVERY.md",
+          "profile": "rma-core-shared-journal-version-routing",
+          "tested_source": "8c4796e89b3a0e3b28381cbb30d0f080962aafe4",
+          "actual_database": "PostgreSQL 18.6",
+          "fixture": "A/B 合成数据。W369 实际共享安装失败、v1 继续及 v2 同键恢复"
+        }
+      ]
     },
     {
       "id": "PGT-020",
