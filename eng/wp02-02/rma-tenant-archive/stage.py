@@ -12,6 +12,7 @@ import sys
 
 sys.dont_write_bytecode = True
 import archive
+import file_content_assets
 import iam_v6
 import identity_priority
 import source_v3
@@ -37,7 +38,7 @@ def read_counts(value, names):
     return value
 
 
-def checked_bundle(bundle, output, tenant, digest, target):
+def checked_bundle(bundle, output, tenant, digest, target, file_content_root=None):
     if bundle.is_symlink():
         raise StageError("rma-stage-bundle-member-rejected")
     files = list(bundle.iterdir())
@@ -47,8 +48,9 @@ def checked_bundle(bundle, output, tenant, digest, target):
     source_names = journal_names | set(source_v3.MEMBERS)
     visibility_names = source_names | {visibility_v4.MEMBER}
     identity_names = visibility_names | set(identity_priority.MEMBERS)
-    if names not in (base_names, journal_names, source_names, visibility_names, identity_names,
-                     identity_names | {iam_v6.MEMBER}) \
+    iam_names = identity_names | {iam_v6.MEMBER}
+    if names not in (base_names, journal_names, source_names, visibility_names, identity_names, iam_names,
+                     iam_names | {file_content_assets.MEMBER}) \
             or any(entry.is_symlink() or not entry.is_file() for entry in files):
         raise StageError("rma-stage-bundle-member-rejected")
 
@@ -60,13 +62,14 @@ def checked_bundle(bundle, output, tenant, digest, target):
     manifest_file = checked / "manifest.json"
     if manifest_file.is_symlink() or archive.file_digest(manifest_file)["sha256"] != digest:
         raise StageError("rma-stage-manifest-digest-mismatch")
-    manifest = archive.verify_bundle(checked, str(tenant))
+    manifest = archive.verify_bundle(checked, str(tenant), file_content_root=file_content_root)
 
     source = archive.PhysicalTarget.from_mapping(manifest.get("source"))
     if (source.system_identifier, source.database_oid) == (target.system_identifier, target.database_oid):
         raise StageError("rma-stage-target-is-source")
     projection = manifest.get("sharedProjection")
-    has_iam = manifest["format"] == iam_v6.FORMAT
+    has_assets = manifest["format"] == file_content_assets.FORMAT
+    has_iam = has_assets or manifest["format"] == iam_v6.FORMAT
     has_identity = has_iam or manifest["format"] == identity_priority.FORMAT
     has_visibility = has_identity or manifest["format"] == visibility_v4.FORMAT
     has_source = has_visibility or manifest["format"] == source_v3.FORMAT
@@ -97,6 +100,8 @@ def checked_bundle(bundle, output, tenant, digest, target):
                                                      (table.name for table in identity_priority.TABLES))
     if has_iam:
         plan["iamReferenceCounts"] = read_counts(manifest["rmaIamReferences"]["counts"], iam_v6.FACTS)
+    if has_assets:
+        plan["fileContentAssetCount"] = read_counts({"rows": manifest["fileContentAssets"]["count"]}, ("rows",))["rows"]
     return checked, plan
 
 
@@ -481,6 +486,36 @@ def iam_reference_sql(tenant, schema):
     """
 
 
+def file_content_assets_sql(tenant):
+    # parent_version is stored as text and state_etag is the original event JSON text.
+    return f"""
+        CREATE TABLE rma_archive_stage.file_content_asset_snapshot (
+            tenant_id uuid NOT NULL CHECK (tenant_id={archive.literal(tenant)}),
+            file_id uuid NOT NULL CHECK (file_id<>'00000000-0000-0000-0000-000000000000'),
+            parent_id uuid NOT NULL CHECK (parent_id<>'00000000-0000-0000-0000-000000000000'),
+            parent_version text NOT NULL CHECK (parent_version~'^[1-9][0-9]*$'),
+            parent_digest text NOT NULL CHECK (parent_digest~'^[0-9a-f]{{64}}$'),
+            file_name text NOT NULL CHECK (length(file_name) BETWEEN 1 AND 255),
+            digest text NOT NULL CHECK (digest~'^[0-9a-f]{{64}}$'),
+            byte_length bigint NOT NULL CHECK (byte_length BETWEEN 1 AND {file_content_assets.MAX_BYTES}),
+            media_type text NOT NULL, store_path text NOT NULL UNIQUE,
+            state_version bigint NOT NULL CHECK (state_version>0), state_etag text NOT NULL,
+            state_digest text NOT NULL CHECK (state_digest~'^[0-9a-f]{{64}}$'),
+            PRIMARY KEY (tenant_id,file_id)
+        );
+        \\copy rma_archive_stage.file_content_asset_snapshot FROM 'bundle/{file_content_assets.MEMBER}' WITH (FORMAT csv, HEADER MATCH)
+
+        DO $cp6_stage_file_content_assets$
+        BEGIN
+            IF (SELECT count(*) FROM rma_archive_stage.file_content_asset_snapshot) <>
+                (current_setting('{TARGET_PLAN}')::jsonb->>'fileContentAssetCount')::bigint THEN
+                RAISE EXCEPTION 'rma-stage-file-content-count-mismatch';
+            END IF;
+        END
+        $cp6_stage_file_content_assets$;
+    """
+
+
 WRITE_RECEIPT = """
     CREATE TABLE rma_archive_stage.receipt (
         singleton boolean PRIMARY KEY CHECK (singleton), tenant_id uuid NOT NULL,
@@ -562,7 +597,7 @@ def execute(args):
     archive.private_directory(output)
     plan = {"target": target.mapping(), "tenantId": str(tenant), "manifestSha256": digest}
     if args.action == "stage":
-        checked, metadata = checked_bundle(args.bundle, output, tenant, digest, target)
+        checked, metadata = checked_bundle(args.bundle, output, tenant, digest, target, getattr(args, "file_content_root", None))
         plan.update(metadata)
         schema = "t_" + tenant.hex
         has_journal = plan["journalCounts"] is not None
@@ -586,6 +621,9 @@ def execute(args):
         if "iamReferenceCounts" in plan:
             driver += iam_reference_sql(tenant, schema)
             source_field += ",'iamReferenceCounts',p->'iamReferenceCounts'"
+        if "fileContentAssetCount" in plan:
+            driver += file_content_assets_sql(tenant)
+            source_field += ",'fileContentAssetCount',p->'fileContentAssetCount'"
         driver += WRITE_RECEIPT.format(source_field=source_field)
     else:
         driver = initial_sql(plan, read_only=True) + READ_RECEIPT
@@ -605,6 +643,7 @@ def main():
             command.add_argument("--" + key, required=True)
         if name == "stage":
             command.add_argument("--bundle", type=Path, required=True)
+            command.add_argument("--file-content-root", type=Path, help="original private local asset root, required for v7")
     args = parser.parse_args()
     try:
         sys.stdout.buffer.write(execute(args) + b"\n")

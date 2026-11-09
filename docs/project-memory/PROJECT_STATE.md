@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC FileContent 原资产落表
+
+W394 原 v7 资产 staging 与原回执实测，W393 随 #834 采用并释放。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W394](../development/evidence/W394-01/DELIVERY.md) · [PR #834](https://github.com/GTX537/CP6/pull/834)
+
+
 ## 2026-11-09 UTC 现行 IAM 原图
 
 W393 v6/v7 原权威对账通过，W391 随 #833 采用并释放。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W393](../development/evidence/W393-01/DELIVERY.md) · [PR #833](https://github.com/GTX537/CP6/pull/833)
