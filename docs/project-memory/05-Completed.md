@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC W353 实库验证与 #808 远端收尾
+
+三个独立 PostgreSQL 库实际执行发布 DatabaseInit。W353 原子启用与旧路径回归通过。#808 的本地和远端任务分支已清理，DEV-2 已正式释放。 [W353 交付](../development/evidence/W353-01/DELIVERY.md) · [#811](https://github.com/GTX537/CP6/pull/811)
+
+
 ## 2026-11-09 UTC W350 远端采用与正式回收
 
 原 RMA 首版逐租户迁移随 #810 正常采用，准确分支已清理，DEV-1 复用给新全 Core 权威接入。 [交付证据](../development/evidence/BUG-808-STOCK-RESTORE-OUTBOX/DELIVERY.md)
