@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC ERP 现行对账和隔离候选
+
+继续 W399 当前原键、其他适用共享域与实际候选。按用户要求先清理已确认的 D 盘临时输出。 [W398](../development/evidence/W398-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC ERP staging 与现行原键
 
 继续 W398 原八表 staging、ERP 现行原键和隔离候选。 [W396](../development/evidence/W396-01/DELIVERY.md)

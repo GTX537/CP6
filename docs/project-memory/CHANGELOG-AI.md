@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC ERP v8 暂存和第三次校准
+
+八表与原回执同事务，真实晚段冲突全部回滚。最近 37 个完整窗口中位数 16 分 58 秒，实际席位重叠已扣除。 [W398](../development/evidence/W398-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC v6/v7 现行队列
 
 同一 pin 复用原队列读取、报告及退出协议，真实 v7 外部根要求保留。 [W396](../development/evidence/W396-01/DELIVERY.md)
