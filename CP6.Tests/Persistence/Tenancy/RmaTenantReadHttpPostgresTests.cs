@@ -25,7 +25,7 @@ internal sealed class RmaReadHttpFactAttribute : FactAttribute
     }
 }
 
-public sealed class RmaTenantReadHttpPostgresTests(ITestOutputHelper output)
+public sealed partial class RmaTenantReadHttpPostgresTests(ITestOutputHelper output)
 {
     private const string Path = "api/wms/rma/native-applications-v1";
     private const int Role = 4371;
@@ -120,7 +120,7 @@ public sealed class RmaTenantReadHttpPostgresTests(ITestOutputHelper output)
         return host;
     }
 
-    private static Dictionary<string, string> Configuration(Fixture fixture, bool swap = false)
+    private static Dictionary<string, string> Configuration(Fixture fixture, bool swap = false, bool draft = false)
     {
         var config = new Dictionary<string, string>
         {
@@ -129,6 +129,7 @@ public sealed class RmaTenantReadHttpPostgresTests(ITestOutputHelper output)
             ["RmaReadTenancy__Revision"] = "rma-http-fixture",
             ["RmaReadTenancy__SslMode"] = "Disable"
         };
+        if (draft) config["RmaReadTenancy__DraftEnabled"] = "true";
         var logins = swap ? new[] { fixture.B, fixture.A } : [fixture.A, fixture.B];
         var ids = new[] { fixture.A.TenantId, fixture.B.TenantId };
         for (var i = 0; i < ids.Length; i++)
@@ -272,7 +273,8 @@ public sealed class RmaTenantReadHttpPostgresTests(ITestOutputHelper output)
         return new CP6Context(options.Options, new TenantContext { CurrentTenantId = tenant });
     }
 
-    private static async Task<Example> Seed(string connection, Guid tenant, Guid id, string marker, bool shared)
+    private static async Task<Example> Seed(string connection, Guid tenant, Guid id, string marker, bool shared,
+        bool seedApplication = true)
     {
         await using var db = Context(connection, tenant);
         var password = "Rma!" + Guid.NewGuid().ToString("N");
@@ -313,6 +315,9 @@ public sealed class RmaTenantReadHttpPostgresTests(ITestOutputHelper output)
             marker + "-remarks", null);
         var current = original with { Version = 2, State = "SUBMITTED", SubmittedAt = DateTimeOffset.UtcNow };
 
+        var example = new Example(tenant, user.UserName, password, outbound.Id, original, current);
+        if (!seedApplication) return example;
+
         var schema = shared ? "cp6_rma_application_v1" : "t_" + tenant.ToString("N");
         await using var raw = new NpgsqlConnection(connection);
         await raw.OpenAsync();
@@ -330,7 +335,7 @@ public sealed class RmaTenantReadHttpPostgresTests(ITestOutputHelper output)
         seed.Parameters.AddWithValue("current", JsonSerializer.Serialize(current));
         await seed.ExecuteNonQueryAsync();
         await tx.CommitAsync();
-        return new(tenant, user.UserName, password, outbound.Id, original, current);
+        return example;
     }
 
     private sealed record Fixture(string Connection, string CloneConnection, string LegacyConnection, Guid InstallationId, LoginBinding A, LoginBinding B);

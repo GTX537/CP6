@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC 原生 RMA 普通草稿
+
+显式托管草稿将原版本和 journal 放进一个普通事务。当前权限与原结果的同键恢复实测。归档按真实 writer 的准确列权限继续支持 v1/v2。 [W364 交付](../development/evidence/W364-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 同快照 RMA 原日志归档 v2
 
 增加显式 v2，按实际租户和原 Owner 导出 CLOSED 与 COMMITTED 原字节及审计字段。低权查询实际被 PostgreSQL 拒绝，Windows 收尾保留精确拒绝原因。默认 v1 仍可使用。 [W366 交付](../development/evidence/W366-01/DELIVERY.md)
