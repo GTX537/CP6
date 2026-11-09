@@ -7,3 +7,7 @@
 通过真实独立 CLI 观察 A/A 竞争与 B 成功提交，在实际 DDL 和历史后中断准确 A 客户端并核原子回滚，复测同键和原结果。W350 范围为新隔离库原 RMA 业务对象首版迁移。已有共享默认、历史迁移、现有数据切换及后续原 HTTP 入口采用按各自边界保留。 [原 RMA 迁移](../../../../CP6.Persistence.PostgreSql/Migrations/Core/20261030022000_RmaApplicationV1.cs) · [原 PGT](../../acceptance/postgresql-tenancy.json)
 
 COORD 串行回收共享台账、正常合并与席位，原正式验收状态按实证范围分别登记。
+
+## W351 全 Core 兼容窗口
+
+2026-11-09T07:29:19.411021Z，FORWARD-COMPAT 领取固定 DEV-2，分支 codex/w351-01，最新主线 bc10c9f6f85eb30490886f43ab68b0a711906063，原估 28–50 分钟。复用 W345 固定旧制品，发布含 #801 修复的当前制品。同一物理库真实迁移及旧版应用回退通过。 [交付](../../evidence/W351-01/DELIVERY.md)

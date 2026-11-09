@@ -35,23 +35,24 @@ TOKEN_EVENT = "com.gtx537.platform.token.revoked.v1"
 DATABASE = "w347_service_token"
 
 
+def verified_release(directory, receipt_path, pin, source, cache):
+    receipt = artifact.verify(directory, receipt_path, pin, source, cache)
+    deps = json.loads((directory / artifact.DEPS).read_bytes())
+    runtime = deps["targets"][deps["runtimeTarget"]["name"]]
+    for package, version in DRIVERS.items():
+        pg.require(f"{package}/{version}" in runtime and package + ".dll" in receipt["requiredFiles"],
+                   f"{source}: unexpected driver dependency")
+    return {
+        "directory": str(directory), "sourceSha": source, "receiptSha256": pin,
+        "entrySha256": receipt["files"][artifact.ENTRY],
+        "driverFiles": {package + ".dll": receipt["files"][package + ".dll"] for package in DRIVERS},
+    }
+
+
 def verified_releases(args):
-    releases = {}
-    for name, (source, pin) in RELEASES.items():
-        directory = args.publish_root / name
-        receipt = artifact.verify(directory, args.publish_root / f"{name}.receipt.json",
-                                  pin, source, args.package_cache)
-        deps = json.loads((directory / artifact.DEPS).read_bytes())
-        runtime = deps["targets"][deps["runtimeTarget"]["name"]]
-        for package, version in DRIVERS.items():
-            pg.require(f"{package}/{version}" in runtime and package + ".dll" in receipt["requiredFiles"],
-                       f"{name}: unexpected driver dependency")
-        releases[name] = {
-            "directory": str(directory), "sourceSha": source, "receiptSha256": pin,
-            "entrySha256": receipt["files"][artifact.ENTRY],
-            "driverFiles": {package + ".dll": receipt["files"][package + ".dll"] for package in DRIVERS},
-        }
-    return releases
+    return {name: verified_release(args.publish_root / name, args.publish_root / f"{name}.receipt.json",
+                                   pin, source, args.package_cache)
+            for name, (source, pin) in RELEASES.items()}
 
 
 def cli(storage, command, request, control, log):
@@ -110,7 +111,7 @@ def catalog(control):
         """, DATABASE))
 
 
-def observe(control):
+def observe(control, database=DATABASE):
     return json.loads(pg.sql(control, """
         SELECT json_build_object(
           'tokens', coalesce((SELECT json_agg(t ORDER BY "TenantId","Jti") FROM crm_identity."ServiceToken" t),'[]'),
@@ -118,7 +119,7 @@ def observe(control):
           'outbox', coalesce((SELECT json_agg(o ORDER BY "Id") FROM crm_identity_priority."Cp6_OutboxMessage" o),'[]'),
           'generations', coalesce((SELECT json_object_agg("TenantId","Generation")
                                    FROM public."CrmIdentityTenantGenerations"),'{}'));
-        """, DATABASE))
+        """, database))
 
 
 def issue_certificate(root):
@@ -184,19 +185,29 @@ def configuration(control, request, tenants, clients, signing, certificate, root
 
 @contextmanager
 def host(root, name, release, config, evidence, *, wrong_installation=False):
-    content = root / name
-    content.mkdir()
-    directory = Path(release["directory"])
-    settings = json.loads((directory / "appsettings.json").read_bytes())
-    settings.update(config)
     profile = config["CrmIdentity"]["ServiceTokenTenancy"] | {"HostId": name}
     if wrong_installation:
         profile["InstallationId"] = str(uuid4())
-    settings["CrmIdentity"] = config["CrmIdentity"] | {"ServiceTokenTenancy": profile}
-    settings["Release"] = {"Version": "local-service-token-compat", "GitSha": release["sourceSha"],
+    settings = config | {"CrmIdentity": config["CrmIdentity"] | {"ServiceTokenTenancy": profile}}
+    with runtime_host(root, name, release, settings, evidence, "local-service-token-compat") as endpoint:
+        yield endpoint
+
+
+def prepare_host(root, name, release, config, version):
+    content = root / name
+    content.mkdir()
+    directory = Path(release["directory"])
+    settings = json.loads((directory / "appsettings.json").read_bytes()) | config
+    settings["Release"] = {"Version": version, "GitSha": release["sourceSha"],
                            "ApiImageDigest": "unknown", "WebImageDigest": "unknown"}
     write(content / "appsettings.json", settings)
     command = [str(DOTNET), str(directory / artifact.ENTRY), "--contentRoot", str(content)]
+    return content, command
+
+
+@contextmanager
+def runtime_host(root, name, release, config, evidence, version):
+    content, command = prepare_host(root, name, release, config, version)
     env = isolated_environment() | {"ASPNETCORE_URLS": ISSUER + ":0"}
     run = {"sourceSha": release["sourceSha"], "processStopped": False}
     evidence[name] = run
@@ -271,17 +282,17 @@ def token_row(state, jti):
     return matches[0]
 
 
-def issue(opener, report, control, label, base, client, before):
+def issue(opener, report, control, label, base, client, before, *, database=DATABASE, key_id="w347"):
     body = http(opener, report["http"], label, base, "/connect/token", 200, client,
                 {"grant_type": "client_credentials", "scope": "cp6.services"})
     encoded_header, encoded_claims, signature = body["access_token"].split(".")
     header, claims = [json.loads(base64.urlsafe_b64decode(part + "=" * (-len(part) % 4)))
                       for part in (encoded_header, encoded_claims)]
     jti = claims["jti"]
-    after = observe(control)
+    after = observe(control, database)
     report["state"][label] = after
     row = token_row(after, jti)
-    pg.require(signature and header == {"alg": "RS256", "kid": "w347", "typ": "at+jwt"}
+    pg.require(signature and header == {"alg": "RS256", "kid": key_id, "typ": "at+jwt"}
                and claims["iss"] == row["Issuer"] == ISSUER and claims["aud"] == "CP6.Services"
                and claims["sub"] == "service:" + client["id"]
                and claims["tenant_id"] == row["TenantId"] == client["tenant"]
