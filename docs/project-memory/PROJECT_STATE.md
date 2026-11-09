@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC 原可见性隔离落表
+
+W382 原图和原数据实库落表，W380 随 #827 采用并释放。W383 实测外部原件失败与准入隔离。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W382](../development/evidence/W382-01/DELIVERY.md) · [#827](https://github.com/GTX537/CP6/pull/827)
+
+
 ## 2026-11-09 UTC 身份优先队列归档
 
 W380 四张原生表的同快照、原字节、租约和全局键实测。W379 随 #826 采用并释放。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W380](../development/evidence/W380-01/DELIVERY.md) · [#826](https://github.com/GTX537/CP6/pull/826)

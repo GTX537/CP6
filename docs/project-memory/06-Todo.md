@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC v5 落表和现行对账
+
+继续 v5 隔离落表、当前队列和路由、IAM、外部资产及完整恢复。 [W382](../development/evidence/W382-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 来源落表与当前队列对账
 
 继续 v4/v5 staging、现行消息占用及原效果对账、外部文件、IAM 和完整恢复。 [W380](../development/evidence/W380-01/DELIVERY.md)
