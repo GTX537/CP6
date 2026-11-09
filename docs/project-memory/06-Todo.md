@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 原队列与现行权威
+
+W384 核原队列当前键、结果与租约。当前 IAM、外部资产与完整候选继续。 [W385](../development/evidence/W385-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC v5 落表和现行对账
 
 继续 v5 隔离落表、当前队列和路由、IAM、外部资产及完整恢复。 [W382](../development/evidence/W382-01/DELIVERY.md)
