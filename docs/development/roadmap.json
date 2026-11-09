@@ -162217,6 +162217,21 @@
       "at": "2026-11-09T01:28:56.2513924Z",
       "change": "W327本地真实PostgreSQL栅栏和安装控制验证完成，整卡状态与正式验收口径沿用原值。开始候选的正常远端采用和席位收尾。",
       "evidence": "docs/development/evidence/W327-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T01:33:29.579036Z",
+      "change": "W327正常合并PR #784，准确远端树核对和分支删除及DEV-1释放完成，实际1076秒。",
+      "evidence": "docs/development/evidence/W327-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T01:35:03.437943Z",
+      "change": "W328沿WP02-02实际开工，先交付普通LOGIN原命令和审计，再接延迟约束的Outbox入队。",
+      "evidence": "docs/development/dispatch/20261109-wave328/README.md"
+    },
+    {
+      "at": "2026-11-09T01:51:03.9961622Z",
+      "change": "W328普通LOGIN库存原命令与审计实测通过，补共享库位约束分流前向迁移，HTTP回归通过。整卡状态及原正式口径沿用。",
+      "evidence": "docs/development/evidence/W328-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -163664,24 +163679,24 @@
       "card_anchor": "wp02-02",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD / W327-01",
+        "chat_label": "COORD / W328-01",
         "repository": "Main",
-        "branch": "codex/w327-01",
+        "branch": "codex/w328-01",
         "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-        "claimed_at": "2026-11-09T01:15:32.951175Z",
-        "baseline_sha": "974b30dd728ac644f36082e62509ddf1cd351a90",
-        "entry_evidence": "docs/development/dispatch/20261109-wave327/README.md",
+        "claimed_at": "2026-11-09T01:35:03.437943Z",
+        "baseline_sha": "c8a9765447fc01aa78bfb05bc36bfea831a7fc71",
+        "entry_evidence": "docs/development/dispatch/20261109-wave328/README.md",
         "phase": "VALIDATED_PENDING_REMOTE",
-        "dispatch_scope": "STOCK_WRITE_NATIVE_AUTHORITY_FENCE",
+        "dispatch_scope": "STOCK_WRITE_ORIGINAL_JOURNAL_AUDIT",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "reserved_write_resources": [
           "Main:tenant-storage",
           "Main:stock-owner-write",
-          "Main:authentication-fence"
+          "Main:owner-operation-journal"
         ],
         "worker_start_received": true,
-        "delivery_report": "docs/development/evidence/W327-01/DELIVERY.md"
+        "delivery_report": "docs/development/evidence/W328-01/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -164604,7 +164619,7 @@
         },
         "receipt": "docs/development/evidence/authorized-adoption-release-20261015/release-receipt.json"
       },
-      "remaining_scope": "WP02-02保持IN_PROGRESS。W326已验证库存可信读取，W327已验证普通LOGIN调用原认证根的事务栅栏。实际库存写入、其他Main Owner、逐租户初始化/恢复、其余原PGT、跨仓及既有环境采用仍按原范围验收。",
+      "remaining_scope": "WP02-02保持IN_PROGRESS。库存可信读取、普通LOGIN原栅栏和库存原命令及审计已验证。Outbox、实际库存业务写入、其他Main Owner、逐租户初始化/恢复、其余原PGT及跨仓采用仍按原范围验收。",
       "main_package_adoption": {
         "path": "docs/development/evidence/WP02-02/main-package-adoption/DELIVERY.md",
         "scope": "Main exact formal0.10.3 dependency adoption; not tenant storage or full WP02-02 delivery",
@@ -164820,9 +164835,9 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-02",
-        "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。 W327验证普通LOGIN在调用事务内取得原认证根。",
+        "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。 W327验证普通LOGIN在调用事务内取得原认证根。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。",
         "remaining": "Stock及其他Main业务写入的可信存储接线、同事务原结果/审计/Outbox、普通写者最终授权和逐租户业务版本初始化与恢复仍余。",
-        "next_action": "完成W327正常远端采用与席位收尾，沿现有库存journal、审计和Outbox接普通登录同一事务。",
+        "next_action": "完成W328远端采用和席位收尾，再接Stock Outbox同事务入队和原提交证明。",
         "evidence_refs": [
           "docs/development/evidence/WP02-02/directory-installation/DELIVERY.md",
           "docs/development/evidence/WP02-02/tenant-connections/DELIVERY.md",
@@ -164836,11 +164851,12 @@
           "docs/development/evidence/WP02-02/directory-authorization/DELIVERY.md",
           "docs/development/evidence/W310-01/DELIVERY.md",
           "docs/development/evidence/W326-01/DELIVERY.md",
-          "docs/development/evidence/W327-01/DELIVERY.md"
+          "docs/development/evidence/W327-01/DELIVERY.md",
+          "docs/development/evidence/W328-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true,
-        "latest_window": "W327-01"
+        "latest_window": "W328-01"
       },
       "wave326_delivery": {
         "status": "CLOSED",
@@ -164859,11 +164875,29 @@
         "seat_released": true
       },
       "wave327_delivery": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W327-01/DELIVERY.md",
         "profile": "stock-write-fence-v1",
         "validation": "一项真实PostgreSQL 18.6竞争与权限用例，CLI Release构建及独立错安装ID/正确安装/重复首装实测。",
         "scope": "普通LOGIN的同事务原认证根入口。应用Stock写入留待后续。",
+        "full_task_complete": false,
+        "formal_acceptance": "NOT_RUN",
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/784",
+          "commit": "c8a9765447fc01aa78bfb05bc36bfea831a7fc71",
+          "target_head": "c8a9765447fc01aa78bfb05bc36bfea831a7fc71"
+        },
+        "seat_released": true,
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse"
+      },
+      "wave328_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W328-01/DELIVERY.md",
+        "profile": "stock-original-journal-v1",
+        "validation": "原journal新用例与真实库位撤回HTTP回归共2项通过；安装CLI及准确前向SQL在隔离库实测。",
+        "scope": "库存普通LOGIN原命令、审计和当前表触发器的同事务数据库路径。",
         "full_task_complete": false,
         "formal_acceptance": "NOT_RUN"
       }
@@ -174506,17 +174540,18 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-10",
-        "delivered": "Main PG journal、Stock/PA090代表事务及W249有效。W326证明Stock只读路径采用可信租户登录。 W327验证原认证根和普通写者事务的数据库前置。",
-        "remaining": "实际库存写入及原结果/审计/Outbox仍由既有连接执行。按同一普通LOGIN事务接线并验证真实Owner和原结果恢复。",
-        "next_action": "完成W327正常远端采用与席位收尾，沿现有库存journal、审计和Outbox接普通登录同一事务。",
+        "delivered": "Main PG journal、Stock/PA090代表事务及W249有效。W326证明Stock只读路径采用可信租户登录。 W327验证原认证根和普通写者事务的数据库前置。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。",
+        "remaining": "Stock Outbox和实际业务写入仍待普通LOGIN真实接线。保留原Owner权限、原键恢复及同事务证明。",
+        "next_action": "完成W328远端采用和席位收尾，再接Stock Outbox同事务入队和原提交证明。",
         "evidence_refs": [
           "docs/development/evidence/W310-01/DELIVERY.md",
           "docs/development/evidence/W326-01/DELIVERY.md",
-          "docs/development/evidence/W327-01/DELIVERY.md"
+          "docs/development/evidence/W327-01/DELIVERY.md",
+          "docs/development/evidence/W328-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false,
-        "latest_window": "W327-01"
+        "latest_window": "W328-01"
       }
     },
     {
@@ -204804,10 +204839,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261109-wave327",
-      "path": "docs/development/dispatch/20261109-wave327/README.md",
-      "baseline_sha": "974b30dd728ac644f36082e62509ddf1cd351a90",
-      "registered_at": "2026-11-09T01:15:32.951175Z",
+      "id": "20261109-wave328",
+      "path": "docs/development/dispatch/20261109-wave328/README.md",
+      "baseline_sha": "c8a9765447fc01aa78bfb05bc36bfea831a7fc71",
+      "registered_at": "2026-11-09T01:35:03.437943Z",
       "phase": "VALIDATED_PENDING_REMOTE",
       "assigned_chats": [
         "COORD"
@@ -204826,39 +204861,39 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W327-01",
-          "workspace_task": "W327-01",
+          "id": "W328-01",
+          "workspace_task": "W328-01",
           "related_tasks": [
             "WP02-02",
             "WP02-10"
           ],
-          "title": "库存普通登录的原生授权事务栅栏",
+          "title": "库存普通登录的同事务原命令与审计",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "VALIDATED_PENDING_REMOTE",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w327-01",
-          "planned_scope_ref": "docs/development/dispatch/20261109-wave327/README.md",
+          "branch": "codex/w328-01",
+          "planned_scope_ref": "docs/development/dispatch/20261109-wave328/README.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:tenant-storage",
             "Main:stock-owner-write",
-            "Main:authentication-fence"
+            "Main:owner-operation-journal"
           ],
           "worker_delivery_received": true,
           "candidate_review_completed": true,
-          "delivery_report": "docs/development/evidence/W327-01/DELIVERY.md"
+          "delivery_report": "docs/development/evidence/W328-01/DELIVERY.md"
         }
       ],
       "storage": {
         "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "完成W327正常远端采用与席位收尾，沿现有库存journal、审计和Outbox接普通登录同一事务。"
+      "next_action": "完成W328远端采用和席位收尾，再接Stock Outbox同事务入队和原提交证明。"
     },
     "wave_history": [
       {
@@ -244611,6 +244646,67 @@
           "new_worktrees": 0
         },
         "next_action": "W326 已采用，进入 WP02-02 库存写入。"
+      },
+      {
+        "id": "20261109-wave327",
+        "path": "docs/development/dispatch/20261109-wave327/README.md",
+        "baseline_sha": "974b30dd728ac644f36082e62509ddf1cd351a90",
+        "registered_at": "2026-11-09T01:15:32.951175Z",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W327-01",
+            "workspace_task": "W327-01",
+            "related_tasks": [
+              "WP02-02",
+              "WP02-10"
+            ],
+            "title": "库存普通登录的原生授权事务栅栏",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w327-01",
+            "planned_scope_ref": "docs/development/dispatch/20261109-wave327/README.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:tenant-storage",
+              "Main:stock-owner-write",
+              "Main:authentication-fence"
+            ],
+            "worker_delivery_received": true,
+            "candidate_review_completed": true,
+            "delivery_report": "docs/development/evidence/W327-01/DELIVERY.md",
+            "candidate_integrated": true,
+            "resources_released": true,
+            "adopted_remote": "c8a9765447fc01aa78bfb05bc36bfea831a7fc71",
+            "pr": "https://github.com/GTX537/CP6/pull/784",
+            "branch_disposition": "deleted-local-and-remote",
+            "finished_at": "2026-11-09T01:33:29.579036Z"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W327已合并并释放，进入W328库存原命令及审计。"
       }
     ],
     "development_priority": {
@@ -247283,11 +247379,11 @@
         "first_reestimate_seconds": 14400
       },
       "timing_basis": "Native goal plus independently sampled monotonic segments for confirmed missing time, with exclusions and no overlap.",
-      "next_priority": "完成W327正常远端采用与席位收尾，沿现有库存journal、审计和Outbox接普通登录同一事务。",
+      "next_priority": "完成W328远端采用和席位收尾，再接Stock Outbox同事务入队和原提交证明。",
       "windows": [
         {
           "id": "W327-01",
-          "state": "VALIDATED_PENDING_REMOTE",
+          "state": "CLOSED",
           "related_tasks": [
             "WP02-02",
             "WP02-10"
@@ -247305,8 +247401,35 @@
           ],
           "validation_ready_at": "2026-11-09T01:28:56.2513924Z",
           "validation_ready_seconds": 802,
+          "timing_source": "主机连续单调取样，起始至官方finish回读。无暂停。",
+          "delivery": "docs/development/evidence/W327-01/DELIVERY.md",
+          "actual_seconds": 1076,
+          "finished_at": "2026-11-09T01:33:29.579036Z",
+          "actual_to_revised_midpoint": 0.299,
+          "pr": "https://github.com/GTX537/CP6/pull/784",
+          "adopted_main": "c8a9765447fc01aa78bfb05bc36bfea831a7fc71",
+          "branch_disposition": "deleted-local-and-remote",
+          "seat_released": true,
+          "variance": "复用已安装读布局、原认证根和现有PG夹具，实际低于修订下限。"
+        },
+        {
+          "id": "W328-01",
+          "state": "VALIDATED_PENDING_REMOTE",
+          "related_tasks": [
+            "WP02-02",
+            "WP02-10"
+          ],
+          "started_at": "2026-11-09T01:35:03.437943Z",
+          "estimate_minutes": [
+            25,
+            45
+          ],
+          "scope": "STOCK_WRITE_ORIGINAL_JOURNAL_AUDIT",
+          "dispatch": "docs/development/dispatch/20261109-wave328/README.md",
+          "validation_ready_at": "2026-11-09T01:51:03.9961622Z",
+          "validation_ready_seconds": 960,
           "timing_source": "同次连续执行的主机单调取样。远端采用及席位收尾计时另记。",
-          "delivery": "docs/development/evidence/W327-01/DELIVERY.md"
+          "delivery": "docs/development/evidence/W328-01/DELIVERY.md"
         }
       ]
     },

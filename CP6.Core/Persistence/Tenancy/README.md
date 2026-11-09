@@ -20,6 +20,11 @@ The profile covers the three read endpoints. Stock mutations, original-operation
 
 Call `SELECT cp6_stock_write_fence_v1.acquire(@tenant)` in the ordinary LOGIN's existing business transaction. The function enters the native authentication root and pins the current LOGIN mapping through transaction end. The dedicated NOLOGIN function owner has the column privileges required by the existing root update. The approved logins get schema usage and function execution. A successful call establishes the lock. The Owner still evaluates the current user, permission graph and business operation before writing. This window enables the database operation for subsequent Stock writers. [Delivery and verification](../../../docs/development/evidence/W327-01/DELIVERY.md).
 
+### Stock original journal
+
+After applying Core migration `20261109014500_LocationWithdrawalJournalDispatchV1` and installing the write fence, run `CP6.TenantStorage install-stock-original-journal-v1 --stdin` on the same isolated primary while ingress is stopped. Use the same protected input as the fence command. Every selected writer must already have access to the write fence. The installation adds tenant and Stock Owner row policies to `cp6_main_owner_v1.operations` and grants the journal reader its existing projection. The audit column is available to the control Owner. [PostgreSQL row security policies](https://www.postgresql.org/docs/18/ddl-rowsecurity.html).
+
+The ordinary Stock journal appends through a fixed function owned by a NOLOGIN role. The native authentication trigger, original key and immutable journal rules apply in the caller's transaction. The original input bytes, digest, result and audit continue to use the existing encoding and contracts. Successful installation returns `INSTALLED` with the original `ReadInstallationId` and database identity. For `UNKNOWN`, inspect the installed function and table policies on the original target. Outbox and the application write entry points have separate adoption windows. [Delivery and verification](../../../docs/development/evidence/W328-01/DELIVERY.md).
 
 ## Tenant connection leases
 
