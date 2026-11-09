@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-09 UTC W344 实际 Stock 故障恢复
+
+真实取消和精确终止普通 PostgreSQL 后端均回滚，原键查回 UNKNOWN 后可安全提交。同一 B 普通池在授权根释放后继续。DEV-2 并行验证两份本地制品。 [交付报告](../development/evidence/W344-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W343 实际 Stock 凭据轮换
 
 旧宿主普通连接归零后轮换同一角色。旧凭据返回 28P01，新宿主分别查回 A/B 原结果并提交 A 调整。用户授权加速使用子代理，COORD 统一回收。 [交付报告](../development/evidence/W343-01/DELIVERY.md)
