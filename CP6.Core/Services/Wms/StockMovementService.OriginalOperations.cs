@@ -1,4 +1,6 @@
 using System.Text.Json;
+using CP6.Core.EFDbContext;
+using CP6.Core.Persistence.Tenancy;
 using CP6.Core.Services.Erp;
 using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Wms;
@@ -16,26 +18,30 @@ public partial class StockMovementService : IStockOriginalOperationsV1
         if(request==null || request.OperationId==Guid.Empty)throw new OrderPriceCorrectionException("ORIGINAL_OPERATION_REQUIRED",400);
         var frozen=OperationsOwnerV1.Freeze(request);
         var bytes=MainOwnerOperationJournalV1.Encode(new {kind="APPLY",request=frozen});
-        return ExecuteOriginal(frozen.OperationId,"adjust",bytes,async(a,t)=>
-        {
-            if(frozen.AllowNegativeOverride || string.Equals(frozen.RelatedType,"STOCKTAKE",StringComparison.OrdinalIgnoreCase))
-                throw new OrderPriceCorrectionException("INTERNAL_STOCK_CAPABILITY_REQUIRED",403);
-            a.RequirePriceWrite();frozen.OperatorCd=a.Actor;
-            await a.RequireStockKey(frozen.WarehouseCd,frozen.LocationCd,frozen.ProductCd,frozen.LotNo,true,t);
-            await GuardIndependentLocationUse(a,frozen.WarehouseCd,frozen.LocationCd,frozen.TxnType,t);
-            var before=await Snapshot(frozen.WarehouseCd,[frozen.LocationCd],frozen.ProductCd,frozen.LotNo,t);
-            using var inheritance=InheritTransactions(a);
-            var no=await ApplyWithinOwnerAsync(frozen,t);
-            a.AtCommit(c=>a.RequireStockKey(frozen.WarehouseCd,frozen.LocationCd,frozen.ProductCd,frozen.LotNo,false,c));
-            return (new StockOperationResultV1(frozen.OperationId,"APPLY",TxnNo:no),before);
-        },ct);
+        return ExecuteOriginal(frozen.OperationId,"adjust",bytes,(mover,access,token)=>mover.ApplyV1Adjustment(frozen,access,token),ct,
+            trustedStorage:_tenantStorage is { V1AdjustEnabled: true } ? _tenantStorage : null);
+    }
+
+    private async Task<(StockOperationResultV1 result,Stock[] before)> ApplyV1Adjustment(StockApplyCommandV1 command,
+        OperationsAccessV1 access,CancellationToken ct)
+    {
+        if(command.AllowNegativeOverride || string.Equals(command.RelatedType,"STOCKTAKE",StringComparison.OrdinalIgnoreCase))
+            throw new OrderPriceCorrectionException("INTERNAL_STOCK_CAPABILITY_REQUIRED",403);
+        access.RequirePriceWrite();command.OperatorCd=access.Actor;
+        await access.RequireStockKey(command.WarehouseCd,command.LocationCd,command.ProductCd,command.LotNo,true,ct);
+        await GuardIndependentLocationUse(access,command.WarehouseCd,command.LocationCd,command.TxnType,ct);
+        var before=await Snapshot(command.WarehouseCd,[command.LocationCd],command.ProductCd,command.LotNo,ct);
+        using var inheritance=InheritTransactions(access);
+        var no=await ApplyWithinOwnerAsync(command,ct);
+        access.AtCommit(c=>access.RequireStockKey(command.WarehouseCd,command.LocationCd,command.ProductCd,command.LotNo,false,c));
+        return (new(command.OperationId,"APPLY",TxnNo:no),before);
     }
     public Task<StockOperationResultV1> MoveCommandAsync(StockMoveCommandV1 request,CancellationToken ct=default)
     {
         if(request==null || request.OperationId==Guid.Empty)throw new OrderPriceCorrectionException("ORIGINAL_OPERATION_REQUIRED",400);
         var frozen=OperationsOwnerV1.Freeze(request);
         var bytes=MainOwnerOperationJournalV1.Encode(new {kind="MOVE",request=frozen});
-        return ExecuteOriginal(frozen.OperationId,"move",bytes,async(a,t)=>
+        return ExecuteOriginal(frozen.OperationId,"move",bytes,async(_,a,t)=>
         {
             frozen.OperatorCd=a.Actor;
             await a.RequireStockKey(frozen.WarehouseCd,frozen.FromLocationCd,frozen.ProductCd,frozen.LotNo,true,t);
@@ -61,32 +67,41 @@ public partial class StockMovementService : IStockOriginalOperationsV1
             && s.ProductCd==product && s.LotNo==lot).OrderBy(s=>s.Id).ToArrayAsync(ct);
 
     private async Task<StockOperationResultV1> ExecuteOriginal(Guid operation,string action,byte[] input,
-        Func<OperationsAccessV1,CancellationToken,Task<(StockOperationResultV1 result,Stock[] before)>> apply,CancellationToken ct,
-        string contract=OperationContract)
+        Func<StockMovementService,OperationsAccessV1,CancellationToken,Task<(StockOperationResultV1 result,Stock[] before)>> apply,CancellationToken ct,
+        string contract=OperationContract,TenantStockReadStore? trustedStorage=null)
     {
-        var journal=new MainOwnerOperationJournalV1(_db);MainOwnerOperationJournalV1.Original? original=null;
+        MainOwnerOperationJournalV1.Original? original=null;
         var effects=new List<StockTransaction>();
-        var result=await Owner.ExecuteAsync(OperationsOwnerV1.Stock,action,true,async(a,t)=>
+        async Task<string> SelectAction(CP6Context context,CancellationToken token)
+        {
+            original=await new MainOwnerOperationJournalV1(context).Read(OperationOwner,operation,token);
+            return original==null?action:"query";
+        }
+        async Task<StockOperationResultV1> Stage(StockMovementService mover,OperationsAccessV1 access,CancellationToken token)
         {
             if(original!=null)
             {
-                RequireOriginalActor(a,original);
+                RequireOriginalActor(access,original);
                 if(original.State!="CLOSED" && original.Contract!=contract)
                     throw new OrderPriceCorrectionException("ORIGINAL_OPERATION_INPUT_CONFLICT",409);
-                return await DiscloseStockOriginal(a,original,operation,input,t);
+                return await mover.DiscloseStockOriginal(access,original,operation,input,token);
             }
-            var changed=await apply(a,t);
-            effects.AddRange(_db.ChangeTracker.Entries<StockTransaction>().Select(e=>e.Entity));
-            var stocks=_db.ChangeTracker.Entries<Stock>().Select(e=>e.Entity).OrderBy(s=>s.Id).ToArray();
+            var changed=await apply(mover,access,token);
+            var context=mover._db;
+            effects.AddRange(context.ChangeTracker.Entries<StockTransaction>().Select(e=>e.Entity));
+            var stocks=context.ChangeTracker.Entries<Stock>().Select(e=>e.Entity).OrderBy(s=>s.Id).ToArray();
             var saved=new StoredStockResult(changed.result,stocks.Select(s=>s.Id).ToArray(),effects.Select(s=>s.Id).ToArray());
-            await journal.Store(OperationOwner,contract,operation,a.ActorId,input,saved,saved.StockIds,
-                new {actor=a.ActorId,action,before=changed.before,after=stocks,transactions=effects},t);
-            await Integration.StockOutbox.StockOutboxEnqueueV1.Enqueue(_db,operation,t);
+            var tenantWriter=context is StockMovementWriteContextV1;
+            await new MainOwnerOperationJournalV1(context,tenantWriter).Store(OperationOwner,contract,operation,access.ActorId,input,saved,saved.StockIds,
+                new {actor=access.ActorId,action,before=changed.before,after=stocks,transactions=effects},token);
+            await Integration.StockOutbox.StockOutboxEnqueueV1.Enqueue(context,operation,token,tenantWriter);
             return changed.result;
-        },ct,actionAtFence:async t=>
-        {
-            original=await journal.Read(OperationOwner,operation,t);return original==null?action:"query";
-        });
+        }
+        var result=trustedStorage is null
+            ? await Owner.ExecuteAsync(OperationsOwnerV1.Stock,action,true,(access,token)=>Stage(this,access,token),ct,
+                actionAtFence:token=>SelectAction(_db,token))
+            : await Owner.ExecuteStockAdjustmentAsync(trustedStorage,(context,access,token)=>
+                Stage(new StockMovementService(context,new WmsSequenceService(context),_notifier,_finBridge),access,token),SelectAction,ct);
         // Compatibility bridge/notifications remain best-effort. Replaying the original never invokes them again.
         foreach(var effect in effects)await PublishCommittedCancellationAsync(effect);
         return result;

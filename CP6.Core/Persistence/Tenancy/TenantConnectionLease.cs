@@ -100,7 +100,7 @@ internal sealed class TenantStorageTransaction
     private readonly NpgsqlTransaction _transaction;
     private readonly SemaphoreSlim _operation = new(1, 1);
     private int _closed;
-    private bool _committed;
+    private bool _finished;
     private Func<CancellationToken, Task>? _commitFence;
     internal TenantStorageTransaction(TenantConnectionLease lease, NpgsqlConnection connection, NpgsqlTransaction transaction)
         => (_lease, _connection, _transaction) = (lease, connection, transaction);
@@ -109,7 +109,7 @@ internal sealed class TenantStorageTransaction
     {
         get
         {
-            if (Volatile.Read(ref _closed) != 0 || _committed)
+            if (Volatile.Read(ref _closed) != 0 || _finished)
                 throw new TenantStorageException(TenantStorageFailure.LeaseClosed);
             return _lease.CurrentBinding;
         }
@@ -148,8 +148,19 @@ internal sealed class TenantStorageTransaction
             await _lease.CheckConnectionAsync(cancellationToken).ConfigureAwait(false);
             if (_commitFence is not null) await _commitFence(cancellationToken).ConfigureAwait(false);
             await _transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
-            _committed = true;
+            _finished = true;
             _lease.CheckCurrent();
+        }
+        catch (Exception error) { throw TenantConnectionManager.Safe(error); }
+        finally { _operation.Release(); }
+    }
+    internal async Task RollbackAsync(CancellationToken cancellationToken)
+    {
+        await EnterAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            await _transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
+            _finished = true;
         }
         catch (Exception error) { throw TenantConnectionManager.Safe(error); }
         finally { _operation.Release(); }
@@ -158,7 +169,7 @@ internal sealed class TenantStorageTransaction
     {
         if (!await _operation.WaitAsync(0, ct).ConfigureAwait(false))
             throw new TenantStorageException(TenantStorageFailure.OperationInProgress);
-        if (Volatile.Read(ref _closed) != 0 || _committed)
+        if (Volatile.Read(ref _closed) != 0 || _finished)
         {
             _operation.Release();
             throw new TenantStorageException(TenantStorageFailure.LeaseClosed);

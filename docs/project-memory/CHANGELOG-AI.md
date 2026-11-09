@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC W331 原库存 V1 调整的可信事务
+
+新增 `install-stock-adjust-owner-v1` 和 `StockReadTenancy:EnableV1Adjust`。原 V1 调整与原结果重放采用同一普通数据库事务和原权限判定。提交结果经原命令协议恢复。 [交付报告](../development/evidence/W331-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W330 库存普通登录的业务写集
 
 新增 `install-stock-movement-writer-v1`、固定 public 模型和库存移动原语的普通租户权限。仓库草稿和部门映射触发器按实际写入对象解析所需表，固定继承和审计入口以同事务新行为依据。 [交付报告](../development/evidence/W330-01/DELIVERY.md)
