@@ -4,12 +4,13 @@ namespace CP6.Core.Persistence.Tenancy;
 
 /// <summary>Explicit first installation after the Core migrations in a new isolated database.
 /// The control caller owns the transaction. All existing Owner tables, keys and rows stay in place.</summary>
-internal static class StockReadStorageV1
+internal static partial class StockReadStorageV1
 {
     internal const string ModelVersion = "stock-read-v1";
     internal const string MigrationVersion = "stock-read-rls-v1";
 
-    private sealed record ReadTable(string Schema, string Name, string TenantColumn, string? Columns = null, string? Scope = null)
+    private sealed record ReadTable(string Schema, string Name, string TenantColumn, string? Columns = null, string? Scope = null,
+        string[]? MovementReadColumns = null, string[]? CreationReadColumns = null)
     {
         internal string Qualified => Quote(Schema) + "." + Quote(Name);
     }
@@ -23,12 +24,13 @@ internal static class StockReadStorageV1
             """),
         new("public", "T_Location", "TenantId", """
             "TenantId","IsDeleted","IsInitializationQuarantined","WarehouseCd","LocationCd","AreaCd"
-            """),
+            """, MovementReadColumns: ["IsBlocked"]),
         new("public", "Sys_Dept", "TenantId", """
             "Id","TenantId","ParentId","Enable","Path"
-            """),
+            """, CreationReadColumns: ["DeptCode", "DeptName", "Sort"]),
         new("cp6_operations_owner_v1", "department_mappings", "tenant_id",
-            "tenant_id,object_kind,object_id,department_id,enabled", "object_kind IN ('stock','stock-transaction')")
+            "tenant_id,object_kind,object_id,department_id,enabled", "object_kind IN ('stock','stock-transaction')",
+            MovementReadColumns: ["id", "revision"])
     ];
 
     internal static async Task<Guid> InstallAsync(NpgsqlConnection connection, NpgsqlTransaction transaction,

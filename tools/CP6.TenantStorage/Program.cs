@@ -1,3 +1,4 @@
+using System.Data;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CP6.Core.Persistence.Tenancy;
@@ -10,9 +11,10 @@ var tenantControl = args.SequenceEqual(["service-token-tenant-directory-control-
 var directoryInstall = args.SequenceEqual(["install-identity-directory-v2", "--stdin"]);
 var directoryInspect = args.SequenceEqual(["inspect-identity-directory-v2", "--stdin"]);
 var directoryControl = directoryInstall || directoryInspect;
+var stockReadInspect = args.SequenceEqual(["inspect-stock-read-v1", "--stdin"]);
 var stockInstallContract = args switch
 {
-    ["install-stock-read-v1", "--stdin"] => StockReadStorageV1.ModelVersion,
+    ["install-stock-read-v1" or "inspect-stock-read-v1", "--stdin"] => StockReadStorageV1.ModelVersion,
     ["install-stock-write-fence-v1", "--stdin"] => StockWriteAuthorityFenceV1.Contract,
     ["install-stock-original-journal-v1", "--stdin"] => StockOriginalJournalStorageV1.Contract,
     ["install-stock-outbox-writer-v1", "--stdin"] => StockOutboxWriterStorageV1.Contract,
@@ -24,7 +26,7 @@ var stockInstallContract = args switch
 var controlExecutionStarted = false;
 if ((!args.SequenceEqual(["provision", "--stdin"]) && !revocation && !serviceToken && !tenantControl && !directoryControl && stockInstallContract is null) || !Console.IsInputRedirected)
 {
-    Console.Error.WriteLine("Usage: CP6.TenantStorage provision|install-service-revocation-v1|install-service-token-v1|service-token-tenant-directory-control-v1|install-identity-directory-v2|inspect-identity-directory-v2|install-stock-read-v1|install-stock-write-fence-v1|install-stock-original-journal-v1|install-stock-outbox-writer-v1|install-stock-movement-writer-v1|install-stock-adjust-owner-v1|install-stock-creation-writer-v2 --stdin (one bounded JSON document on redirected standard input).");
+    Console.Error.WriteLine("Usage: CP6.TenantStorage provision|install-service-revocation-v1|install-service-token-v1|service-token-tenant-directory-control-v1|install-identity-directory-v2|inspect-identity-directory-v2|install-stock-read-v1|inspect-stock-read-v1|install-stock-write-fence-v1|install-stock-original-journal-v1|install-stock-outbox-writer-v1|install-stock-movement-writer-v1|install-stock-adjust-owner-v1|install-stock-creation-writer-v2 --stdin (one bounded JSON document on redirected standard input).");
     return 2;
 }
 try
@@ -46,14 +48,14 @@ try
     {
         var stockRequest = document.Deserialize<StockInstallInput>(new JsonSerializerOptions
         { UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow }) ?? throw new TenantProvisioningException("input-rejected");
-        var stockReadInstall = stockInstallContract == StockReadStorageV1.ModelVersion;
+        var stockReadLayout = stockInstallContract == StockReadStorageV1.ModelVersion;
         var readInstallationId = stockRequest.ReadInstallationId.GetValueOrDefault();
         if (!System.Net.IPAddress.TryParse(stockRequest.Server, out var ip) || ip.ToString() != stockRequest.Server ||
             stockRequest.Port is < 1 or > 65535 || string.IsNullOrWhiteSpace(stockRequest.Database) || stockRequest.DatabaseOid == 0 ||
             string.IsNullOrWhiteSpace(stockRequest.SystemIdentifier) || string.IsNullOrWhiteSpace(stockRequest.AdminUsername) ||
             string.IsNullOrEmpty(stockRequest.AdminPassword) || stockRequest.Tenants is not { Length: >= 1 and <= 128 } ||
-            (!stockReadInstall && readInstallationId == Guid.Empty) ||
-            (stockReadInstall && document.RootElement.TryGetProperty(nameof(StockInstallInput.ReadInstallationId), out _)) ||
+            (!stockReadLayout && readInstallationId == Guid.Empty) ||
+            (stockReadLayout && document.RootElement.TryGetProperty(nameof(StockInstallInput.ReadInstallationId), out _)) ||
             !Enum.TryParse<SslMode>(stockRequest.SslMode, out var sslMode) || stockRequest.SslMode != sslMode.ToString() ||
             !(sslMode == SslMode.VerifyFull || sslMode == SslMode.Disable && System.Net.IPAddress.IsLoopback(ip)))
             throw new TenantProvisioningException("input-rejected");
@@ -64,7 +66,7 @@ try
             SearchPath = "pg_catalog", Options = " ", IncludeErrorDetail = false, Timeout = 10, CommandTimeout = 65,
             ApplicationName = stockInstallContract switch
             {
-                StockReadStorageV1.ModelVersion => "CP6.TenantStorage.StockReadV1",
+                StockReadStorageV1.ModelVersion => stockReadInspect ? "CP6.TenantStorage.StockReadInspectV1" : "CP6.TenantStorage.StockReadV1",
                 StockWriteAuthorityFenceV1.Contract => "CP6.TenantStorage.StockWriteFenceV1",
                 StockOriginalJournalStorageV1.Contract => "CP6.TenantStorage.StockOriginalJournalV1",
                 StockOutboxWriterStorageV1.Contract => "CP6.TenantStorage.StockOutboxWriterV1",
@@ -74,7 +76,14 @@ try
             }
         }.ConnectionString);
         await control.OpenAsync(timeout.Token);
-        await using var tx = await control.BeginTransactionAsync(timeout.Token);
+        await using var tx = stockReadInspect
+            ? await control.BeginTransactionAsync(IsolationLevel.RepeatableRead, timeout.Token)
+            : await control.BeginTransactionAsync(timeout.Token);
+        if (stockReadInspect)
+        {
+            await using var readOnly = new NpgsqlCommand("SET TRANSACTION READ ONLY", control, tx);
+            await readOnly.ExecuteNonQueryAsync(timeout.Token);
+        }
         await using var target = new NpgsqlCommand("""
             SELECT d.oid=@oid AND s.system_identifier::text=@system
               AND pg_catalog.host(pg_catalog.inet_server_addr())=@server AND pg_catalog.inet_server_port()=@port
@@ -88,8 +97,21 @@ try
         target.Parameters.AddWithValue("port", stockRequest.Port);
         target.Parameters.AddWithValue("database", stockRequest.Database);
         if (await target.ExecuteScalarAsync(timeout.Token) is not true) throw new TenantProvisioningException("target-rejected");
+        if (stockReadInspect)
+        {
+            var id = await StockReadStorageV1.InspectAsync(control, tx, stockRequest.Tenants, timeout.Token);
+            await tx.CommitAsync(timeout.Token);
+            Console.WriteLine(JsonSerializer.Serialize(new
+            {
+                Outcome = id.HasValue ? "VERIFIED" : "ABSENT",
+                InstallationId = id,
+                stockRequest.DatabaseOid,
+                stockRequest.SystemIdentifier
+            }));
+            return 0;
+        }
         object receipt;
-        if (stockReadInstall)
+        if (stockReadLayout)
         {
             var id = await StockReadStorageV1.InstallAsync(control, tx, stockRequest.Tenants, timeout.Token);
             receipt = new { Outcome = "INSTALLED", InstallationId = id, stockRequest.DatabaseOid, stockRequest.SystemIdentifier };
@@ -214,8 +236,18 @@ catch (TenantProvisioningException error) when (!tenantControl && !directoryCont
     Console.Error.WriteLine(error.Message);
     return 1;
 }
-catch
+catch (Exception error)
 {
+    if (stockReadInspect)
+    {
+        Console.Error.WriteLine(JsonSerializer.Serialize(new
+        {
+            Contract = StockReadStorageV1.ModelVersion,
+            Outcome = "REJECTED",
+            Code = error is TenantProvisioningException rejection ? rejection.Code : "inspection-unavailable"
+        }));
+        return 1;
+    }
     if (stockInstallContract is not null)
     {
         Console.Error.WriteLine(JsonSerializer.Serialize(new { Contract = stockInstallContract,
