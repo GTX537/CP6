@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC 真实单快照 RMA 源归档
+
+从准确物理库和已采用租户 Ready 导出 RMA 与共享出库同一快照，独立 staging 验证。W359 随 #816 正常采用并回收。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W363 交付](../development/evidence/W363-01/DELIVERY.md) · [#816](https://github.com/GTX537/CP6/pull/816)
+
+
 ## 2026-11-09 UTC RMA 分页及八小时实测校准
 
 W359 原 HTTP 受权列表通过真实 A/B。W358 随 #815 正常采用，完整 1,711 秒。累计实际 28,846 秒，原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W359 交付](../development/evidence/W359-01/DELIVERY.md) · [#815](https://github.com/GTX537/CP6/pull/815)

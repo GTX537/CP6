@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC RMA 原操作与受限归档接续
+
+W361 继续原 journal 的最小权限。归档仅覆盖 RMA 及其共享出库投影，完整 IAM、原操作、队列与资产等按原恢复场景推进。 [W363 交付](../development/evidence/W363-01/DELIVERY.md) · [#816](https://github.com/GTX537/CP6/pull/816)
+
+
 ## 2026-11-09 UTC RMA 原 journal 与真实未知提交
 
 W361 用 DEV-2 接原共享 journal 的原生普通角色权限。W362 用 INTEGRATION-1 实测原 commissioning COMMIT 发送确认丢失及同键恢复。普通业务写另窗。 [W359 交付](../development/evidence/W359-01/DELIVERY.md) · [#815](https://github.com/GTX537/CP6/pull/815)
