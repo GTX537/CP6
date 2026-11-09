@@ -51,8 +51,8 @@ COLUMN_TYPES = {
 }
 
 
-def relation(table):
-    return '{}."{}"'.format(SCHEMA, table.name)
+def relation(table, schema=SCHEMA):
+    return '{}."{}"'.format(schema, table.name)
 
 
 def tenant_filter(tenant):
@@ -65,12 +65,12 @@ def rows_sql(table, tenant):
     return 'SELECT {} FROM {} WHERE {} ORDER BY "Id"'.format(columns, relation(table), tenant_filter(tenant))
 
 
-def check_layout(query, owner_oid, tables):
+def native_catalog(query, owner_oid, tables, *, schema, history, migration):
     # Keep the native relation layout stable until every snapshot consumer finishes.
-    catalog = query("""
+    return query("""
         LOCK TABLE {relations} IN ACCESS SHARE MODE;
         SELECT json_build_object(
-          'migration',EXISTS (SELECT FROM public."__EFMigrationsHistory_IdentityPriority" WHERE "MigrationId"='{migration}'),
+          'migration',EXISTS (SELECT FROM public."{history}" WHERE "MigrationId"='{migration}'),
           'tables',coalesce((SELECT jsonb_object_agg(c.relname,jsonb_build_object(
             'columns',(SELECT jsonb_agg(jsonb_build_array(a.attname,t.typname) ORDER BY a.attnum)
                 FROM pg_attribute a JOIN pg_type t ON t.oid=a.atttypid
@@ -84,8 +84,13 @@ def check_layout(query, owner_oid, tables):
             FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
             WHERE n.nspname='{schema}' AND n.nspowner={owner}::oid AND c.relowner=n.nspowner AND c.relkind='r'
               AND c.relname IN ({names})), '{{}}'::jsonb));
-    """.format(relations=", ".join(relation(table) for table in tables), migration=MIGRATION,
-               schema=SCHEMA, owner=owner_oid, names=", ".join("'{}'".format(table.name) for table in tables)))
+    """.format(relations=", ".join(relation(table, schema) for table in tables), migration=migration, history=history,
+               schema=schema, owner=owner_oid, names=", ".join("'{}'".format(table.name) for table in tables)))
+
+
+def check_layout(query, owner_oid, tables):
+    catalog = native_catalog(query, owner_oid, tables, schema=SCHEMA, history="__EFMigrationsHistory_IdentityPriority",
+                             migration=MIGRATION)
     if not catalog["migration"] or set(catalog["tables"]) != {table.name for table in tables}:
         raise ValueError("identity-priority-layout-rejected")
     for table in tables:
