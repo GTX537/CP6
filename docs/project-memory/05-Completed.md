@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC v8 现行对账采用与 v9 原历史归档
+
+W400 完整 527 秒，两端分支清理，DEV-1 干净释放。W402 实证原安全审计及主体保留历史的范围和原字节。 [W402](../development/evidence/W402-01/DELIVERY.md) · [PR #840](https://github.com/GTX537/CP6/pull/840)
+
+
 ## 2026-11-09 UTC ERP 对账采用和同包现行对账
 
 W399 完整 1,871 秒，两端分支清理且 DEV-2 干净释放。W400 对同一 v8 A/B 包的两入口实测，完整校验阻止改动成员进入数据库。 [W400](../development/evidence/W400-01/DELIVERY.md) · [PR #839](https://github.com/GTX537/CP6/pull/839)

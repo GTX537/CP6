@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W402 同切面安全审计与主体保留历史已实测。W403 继续原 Main Stock，W401 继续隔离候选普通读回。 [W402](./evidence/W402-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave402/README.md)
+
+
 > W400 同一 v8 原包的现行对账实证通过。W401 隔离候选原结果读回与 W402 同快照安全审计、主体保留分别推进。 [W400](./evidence/W400-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave400/README.md)
 
 
