@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC W347 同库两版业务
+
+实际 HTTPS 与 PostgreSQL 核实旧版签发、新版撤销，新版签发后旧版重启撤销。两个撤销重放、异租户和错安装均无额外持久效果。 [交付报告](../development/evidence/W347-01/DELIVERY.md)
+
 ## 2026-11-09 UTC PostgreSQL 首管理员初始化回归
 
 真实 PostgreSQL 18.6 一次性初始化验证 4 项通过。空库可完成采购审批种子，旧角色续跑沿用其授权，同一事务故障完整回滚。 [交付报告](../development/evidence/BUG-801-PG-FIRST-ADMIN/DELIVERY.md)
