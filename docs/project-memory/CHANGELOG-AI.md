@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC 原身份优先队列对账
+
+实际只读对账保留当前已发送、已处理和租约，封闭冲突，原件缺失保持 UNKNOWN。 [W384](../development/evidence/W384-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC v5 身份队列 staging
 
 原四表按原键、类型和空成员原子落隔离库，实测晚段冲突回滚和原回执。 [W385](../development/evidence/W385-01/DELIVERY.md)

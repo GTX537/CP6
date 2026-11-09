@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC v5 落表采用和原队列对账
+
+W385 完整 638 秒，两端分支删除，DEV-2 干净释放。W384 现行原队列与权限拒绝真实验证。 [W384](../development/evidence/W384-01/DELIVERY.md) · [#829](https://github.com/GTX537/CP6/pull/829)
+
+
 ## 2026-11-09 UTC v4 采用与 v5 隔离实证
 
 W382 完整 870 秒，两端分支删除，DEV-2 干净释放。W386 完整 643 秒，集成席位释放。W385 v5 原回执与四表原字节实测。 [W385](../development/evidence/W385-01/DELIVERY.md)
