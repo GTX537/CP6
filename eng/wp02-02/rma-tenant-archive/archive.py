@@ -6,7 +6,9 @@ import csv
 from contextlib import contextmanager
 from dataclasses import dataclass
 import errno
+from functools import lru_cache
 import hashlib
+from importlib.util import module_from_spec, spec_from_file_location
 import io
 import ipaddress
 import json
@@ -31,6 +33,8 @@ WINDOWS = os.name == "nt"
 FLAGS = subprocess.CREATE_NO_WINDOW if WINDOWS else 0
 FORMAT = "cp6-rma-source-archive-v1"
 FORMAT_WITH_JOURNAL = "cp6-rma-source-archive-v2"
+FORMAT_WITH_STOCK_OUTBOX = "cp6-rma-source-archive-v10"
+STOCK_MEMBER_PREFIX = "stock-outbox-"
 PROFILE = "rma-application-core-tenant-v1"
 LINEAGE = "rma-application-v1"
 MIGRATION = "rma-tenant-storage-0001"
@@ -504,10 +508,41 @@ def file_digest(path):
     return {"bytes": size, "sha256": digest.hexdigest()}
 
 
+@lru_cache(maxsize=1)
+def stock_outbox_module():
+    # The standalone Stock command and the combined archive share the same source checks and COPY plans.
+    path = Path(__file__).resolve().parents[1] / "stock-outbox-recovery/stock_outbox.py"
+    spec = spec_from_file_location("_cp6_main_stock_outbox", path)
+    module = module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def stock_section(stock, route, collation, tables):
+    return dict(format=stock.FORMAT, root=route, databaseCollation=collation, migrations=list(stock.MIGRATIONS),
+                journal=stock.journal_manifest(), tables=tables)
+
+
+def verify_stock_section(stock, bundle, tenant, section):
+    if not isinstance(section, dict):
+        raise ArchiveError("stock-outbox-section-rejected")
+    collation, tables = section.get("databaseCollation"), section.get("tables")
+    route = stock.root(tenant)
+    if not isinstance(collation, dict) or set(collation) != {"provider", "collate", "ctype", "locale"} \
+            or any(not isinstance(collation[field], str) for field in ("provider", "collate", "ctype")) \
+            or (collation["locale"] is not None and not isinstance(collation["locale"], str)) \
+            or section != stock_section(stock, route, collation, tables):
+        raise ArchiveError("stock-outbox-section-rejected")
+    stock.verify_tables(bundle, tenant, route["id"], tables, prefix=STOCK_MEMBER_PREFIX)
+
+
 def export_bundle(pg_bin, target, username, installation, tenant, output, *,
                   include_original_journal=False, include_rma_source=False, include_rma_visibility=False,
                   include_identity_priority=False, include_rma_iam_references=False, file_content_root=None,
-                  include_erp_integration=False, include_privacy_evidence=False, environ=None, on_snapshot=None):
+                  include_erp_integration=False, include_privacy_evidence=False, include_main_stock_outbox=False,
+                  environ=None, on_snapshot=None):
+    if include_main_stock_outbox and not include_privacy_evidence:
+        raise ArchiveError("stock-outbox-needs-privacy-evidence")
     if include_privacy_evidence and not include_erp_integration:
         raise ArchiveError("privacy-evidence-needs-erp-integration")
     if include_erp_integration and file_content_root is None:
@@ -545,6 +580,10 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
             erp_counts = erp_integration.capture_counts(query, tenant, ready["ownerOid"])
         if include_privacy_evidence:
             privacy_environment, privacy_counts = privacy_evidence.capture(query, tenant, ready["ownerOid"])
+        if include_main_stock_outbox:
+            stock = stock_outbox_module()
+            stock_collation = stock.source_metadata(query)
+            stock_route, stock_counts = stock.capture(query, tenant, ready["ownerOid"])
         if include_identity_priority:
             identity_counts = identity_priority.capture_counts(query, tenant, ready["ownerOid"])
         if include_original_journal:
@@ -605,6 +644,12 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
                 copy_snapshot(pg_bin, connection, environ, logs, bundle / table.member,
                               Path(table.member).stem + "-copy", snapshot,
                               privacy_evidence.rows_sql(table, tenant, privacy_environment), privacy_evidence.COPY_SETTINGS)
+        if include_main_stock_outbox:
+            for table in stock.TABLES:
+                member = STOCK_MEMBER_PREFIX + table.member
+                copy_snapshot(pg_bin, connection, environ, logs, bundle / member,
+                              Path(member).stem + "-copy", snapshot,
+                              stock.rows_sql(table, tenant, stock_route["id"]), stock.COPY_SETTINGS)
 
     if file_content_root is not None:
         file_content_assets.verify_member(bundle / file_content_assets.MEMBER, tenant, file_count, file_content_root)
@@ -668,6 +713,13 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
         manifest["members"].update({name: file_digest(bundle / name) for name in privacy_evidence.MEMBERS})
         manifest["excluded"][4] = ("other audit and legal hold scopes, privacy policies and execution state, external file bodies, "
                                    "other assets, FileContent history and cross-database dependencies")
+    if include_main_stock_outbox:
+        manifest["format"] = FORMAT_WITH_STOCK_OUTBOX
+        stock_tables = {STOCK_MEMBER_PREFIX + item.member: stock.table_manifest(item, stock_counts[item.name])
+                        for item in stock.TABLES}
+        manifest["stockOutbox"] = stock_section(stock, stock_route, stock_collation, stock_tables)
+        manifest["members"].update({name: file_digest(bundle / name) for name in stock_tables})
+        manifest["excluded"][2] = "other queue domains and their companions, route epochs, dispatcher watermarks and rowversion sequences"
     pending = logs / "manifest.pending"
     with pending.open("x", encoding="utf-8", newline="\n") as file:
         json.dump(manifest, file, indent=2)
@@ -683,7 +735,8 @@ def verify_bundle(bundle, tenant, *, file_content_root=None):
     if "manifest.json" not in names or any(path.is_symlink() or not path.is_file() for path in files):
         raise ArchiveError("bundle-member-mismatch")
     manifest = json.loads((bundle / "manifest.json").read_text(encoding="utf-8"))
-    erp_formats = (erp_integration.FORMAT, privacy_evidence.FORMAT)
+    privacy_formats = (privacy_evidence.FORMAT, FORMAT_WITH_STOCK_OUTBOX)
+    erp_formats = (erp_integration.FORMAT, *privacy_formats)
     asset_formats = (file_content_assets.FORMAT, *erp_formats)
     iam_formats = (iam_v6.FORMAT, *asset_formats)
     identity_formats = (identity_priority.FORMAT, *iam_formats)
@@ -726,8 +779,11 @@ def verify_bundle(bundle, tenant, *, file_content_root=None):
         members += erp_integration.MEMBERS
         if not erp_integration.matches_manifest(manifest):
             raise ArchiveError("bundle-format-rejected")
-    if manifest["format"] == privacy_evidence.FORMAT:
+    if manifest["format"] in privacy_formats:
         members += privacy_evidence.MEMBERS
+    if manifest["format"] == FORMAT_WITH_STOCK_OUTBOX:
+        stock = stock_outbox_module()
+        members += tuple(STOCK_MEMBER_PREFIX + name for name in stock.MEMBERS)
     if names != {*members, "manifest.json"}:
         raise ArchiveError("bundle-member-mismatch")
     if manifest.get("tenantId") != str(tenant) or manifest.get("schema") != "t_" + tenant.hex:
@@ -740,8 +796,10 @@ def verify_bundle(bundle, tenant, *, file_content_root=None):
     if manifest["format"] in asset_formats:
         root = file_content_assets.checked_root(file_content_root)
         file_content_assets.verify_member(bundle / file_content_assets.MEMBER, tenant, manifest["fileContentAssets"]["count"], root)
-    if manifest["format"] == privacy_evidence.FORMAT:
+    if manifest["format"] in privacy_formats:
         privacy_evidence.verify_members(bundle, tenant, manifest)
+    if manifest["format"] == FORMAT_WITH_STOCK_OUTBOX:
+        verify_stock_section(stock, bundle, tenant, manifest.get("stockOutbox"))
     return manifest
 
 
@@ -769,6 +827,8 @@ def main():
                         help="include the eight original ERP integration tables in v8 (requires --file-content-root)")
     export.add_argument("--include-privacy-evidence", action="store_true",
                         help="include historical security audit and legal hold in v9 (requires --include-erp-integration)")
+    export.add_argument("--include-main-stock-outbox", action="store_true",
+                        help="include the original Main Stock queue and companions in v10 (requires --include-privacy-evidence)")
     verify = actions.add_parser("verify")
     verify.add_argument("--bundle", type=Path, required=True)
     verify.add_argument("--tenant", required=True)
@@ -784,7 +844,8 @@ def main():
                                    include_identity_priority=args.include_identity_priority,
                                    include_rma_iam_references=args.include_rma_iam_references,
                                    file_content_root=args.file_content_root, include_erp_integration=args.include_erp_integration,
-                                   include_privacy_evidence=args.include_privacy_evidence)
+                                   include_privacy_evidence=args.include_privacy_evidence,
+                                   include_main_stock_outbox=args.include_main_stock_outbox)
             print(bundle)
         else:
             manifest = verify_bundle(args.bundle, args.tenant, file_content_root=args.file_content_root)
@@ -796,4 +857,6 @@ def main():
 
 
 if __name__ == "__main__":
+    # The optional Stock module imports this same helper module and its ArchiveError.
+    sys.modules.setdefault("archive", sys.modules[__name__])
     sys.exit(main())

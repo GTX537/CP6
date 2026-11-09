@@ -1,5 +1,25 @@
 # 项目当前状态
 
+## 2026-11-09 UTC v9/v10 多域只读对账
+
+W408 随 #847 采用并释放。W409 用两个原包实测 IAM、Identity Priority 和 ERP 六次只读调用及受限角色。W406 恢复准确分支后通过完整独立 Core 实库验证。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W409](../development/evidence/W409-01/DELIVERY.md) · [CP6 #847](https://github.com/GTX537/CP6/pull/847)
+
+
+## 2026-11-09 UTC v10 Stock 当前对账
+
+W407 随 #846 采用并释放。W408 核准同源 v10 的当前状态并验证真实历史 Pending 对当前 Published。Platform #80 已采用守卫源码，正式包与 Main 采用待验。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W408](../development/evidence/W408-01/DELIVERY.md) · [Platform #80](https://github.com/GTX537/CP6.Platform/pull/80)
+
+
+## 2026-11-09 UTC v10 Stock 中立暂存
+
+W407 在隔离 PostgreSQL 实测原 v10 及 14 个 Stock 原成员的原子暂存和原回执。W405 随 #845 采用并释放。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W407](../development/evidence/W407-01/DELIVERY.md) · [PR #845](https://github.com/GTX537/CP6/pull/845)
+
+
+## 2026-11-09 UTC RMA 与 Main Stock 同快照归档
+
+W405 实测同一切面、36 个成员及晚到的真实库存和隐私事务。W404 随 #843 采用并释放。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W405](../development/evidence/W405-01/DELIVERY.md) · [PR #843](https://github.com/GTX537/CP6/pull/843)
+
+
 ## 2026-11-09 UTC v9 历史中立落表
 
 W404 实测原 v9 两份原件、原约束和回执。W403 随 #842 采用并释放。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W404](../development/evidence/W404-01/DELIVERY.md) · [PR #842](https://github.com/GTX537/CP6/pull/842)

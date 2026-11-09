@@ -18,6 +18,7 @@ import iam_v6
 import identity_priority
 import privacy_evidence
 import source_v3
+import stock_stage_v10
 import visibility_v4
 
 TARGET_PLAN = "cp6_rma_stage.plan"
@@ -43,7 +44,7 @@ def read_counts(value, names):
     return value
 
 
-def checked_bundle(bundle, output, tenant, digest, target, file_content_root=None):
+def checked_bundle(bundle, output, tenant, digest, target, file_content_root=None, *, include_stock_outbox=False):
     if bundle.is_symlink():
         raise StageError("rma-stage-bundle-member-rejected")
     files = list(bundle.iterdir())
@@ -56,10 +57,14 @@ def checked_bundle(bundle, output, tenant, digest, target, file_content_root=Non
     iam_names = identity_names | {iam_v6.MEMBER}
     asset_names = iam_names | {file_content_assets.MEMBER}
     erp_names = asset_names | set(erp_integration.MEMBERS)
-    if names not in (base_names, journal_names, source_names, visibility_names, identity_names, iam_names,
-                     asset_names, erp_names, erp_names | set(privacy_evidence.MEMBERS)) \
-            or any(entry.is_symlink() or not entry.is_file() for entry in files):
+    privacy_names = erp_names | set(privacy_evidence.MEMBERS)
+    if any(entry.is_symlink() or not entry.is_file() for entry in files):
         raise StageError("rma-stage-bundle-member-rejected")
+    if names not in (base_names, journal_names, source_names, visibility_names, identity_names, iam_names,
+                     asset_names, erp_names, privacy_names):
+        if not include_stock_outbox or names != privacy_names | {
+                stock_stage_v10.member(table) for table in archive.stock_outbox_module().TABLES}:
+            raise StageError("rma-stage-bundle-member-rejected")
 
     # Restore the private bytes we verified, even if the caller's source directory changes.
     checked = output / "bundle"
@@ -69,7 +74,8 @@ def checked_bundle(bundle, output, tenant, digest, target, file_content_root=Non
     if manifest_file.is_symlink() or archive.file_digest(manifest_file)["sha256"] != digest:
         raise StageError("rma-stage-manifest-digest-mismatch")
     header = json.loads(manifest_file.read_text(encoding="utf-8"))
-    if not isinstance(header, dict) or header.get("format") not in STAGE_FORMATS:
+    formats = (*STAGE_FORMATS, archive.FORMAT_WITH_STOCK_OUTBOX) if include_stock_outbox else STAGE_FORMATS
+    if not isinstance(header, dict) or header.get("format") not in formats:
         raise StageError("rma-stage-format-rejected")
     for entry in files:
         if entry.name != "manifest.json":
@@ -80,7 +86,8 @@ def checked_bundle(bundle, output, tenant, digest, target, file_content_root=Non
     if (source.system_identifier, source.database_oid) == (target.system_identifier, target.database_oid):
         raise StageError("rma-stage-target-is-source")
     projection = manifest.get("sharedProjection")
-    has_privacy = manifest["format"] == privacy_evidence.FORMAT
+    has_stock = manifest["format"] == archive.FORMAT_WITH_STOCK_OUTBOX
+    has_privacy = has_stock or manifest["format"] == privacy_evidence.FORMAT
     has_erp = has_privacy or manifest["format"] == erp_integration.FORMAT
     has_assets = has_erp or manifest["format"] == file_content_assets.FORMAT
     has_iam = has_assets or manifest["format"] == iam_v6.FORMAT
@@ -122,6 +129,8 @@ def checked_bundle(bundle, output, tenant, digest, target, file_content_root=Non
                                                    (table.name for table in erp_integration.TABLES))
     if has_privacy:
         plan["privacyEvidence"] = manifest["privacyEvidence"]
+    if has_stock:
+        plan["stockOutbox"] = manifest["stockOutbox"]
     return checked, plan
 
 
@@ -714,7 +723,8 @@ def execute(args):
     archive.private_directory(output)
     plan = {"target": target.mapping(), "tenantId": str(tenant), "manifestSha256": digest}
     if args.action == "stage":
-        checked, metadata = checked_bundle(args.bundle, output, tenant, digest, target, getattr(args, "file_content_root", None))
+        checked, metadata = checked_bundle(args.bundle, output, tenant, digest, target,
+                                           getattr(args, "file_content_root", None), include_stock_outbox=True)
         plan.update(metadata)
         schema = "t_" + tenant.hex
         has_journal = plan["journalCounts"] is not None
@@ -747,6 +757,9 @@ def execute(args):
         if "privacyEvidence" in plan:
             driver += privacy_evidence_sql(tenant, plan["privacyEvidence"]["environmentId"])
             source_field += ",'privacyEvidence',p->'privacyEvidence'"
+        if "stockOutbox" in plan:
+            driver += stock_stage_v10.stage_sql(archive.stock_outbox_module(), tenant, plan["stockOutbox"], TARGET_PLAN)
+            source_field += ",'stockOutbox',p->'stockOutbox'"
         driver += WRITE_RECEIPT.format(source_field=source_field)
     else:
         driver = initial_sql(plan, read_only=True) + READ_RECEIPT

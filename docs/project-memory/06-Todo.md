@@ -1,5 +1,25 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 独立 Core 采用和普通读回
+
+按任务串行采用 W406 完整导入，接 W401 普通 HTTP 读回、完整非空多域合成恢复、批准开放和正式 PGT。 [W409](../development/evidence/W409-01/DELIVERY.md)
+
+
+## 2026-11-09 UTC 其余领域对账和恢复候选
+
+W409 接续同源 v9/v10 的 IAM、Identity Priority 和 ERP 对账。W406 完整 Core 导入、W401 普通读回、批准开放和正式恢复验收按各自窗口执行。#844 待正式包、Main 采用及原步骤复验。 [W408](../development/evidence/W408-01/DELIVERY.md) · [Issue #844](https://github.com/GTX537/CP6/issues/844)
+
+
+## 2026-11-09 UTC Core 候选和现行派送权威
+
+从已保存 W406 分支续验真 Core 候选导入和晚 FK，完成 W401 普通读回，接 Stock 当前对账和批准开放。 [W407](../development/evidence/W407-01/DELIVERY.md) · [W406 保存候选](https://github.com/GTX537/CP6/blob/fe52f94eaa8d93e7c560b518a229d2ccbd75abdb/docs/development/evidence/W406-01/DELIVERY.md)
+
+
+## 2026-11-09 UTC 候选导入和恢复采用
+
+接续真实隔离 Core 原件导入、独立审批与普通读回，完成 v10 恢复消费和原正式场景。 [W405](../development/evidence/W405-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 同源统一包和候选原结果
 
 接 Main Stock 原切面及当前权威，继续真实隔离候选和正式恢复。 [W404](../development/evidence/W404-01/DELIVERY.md)

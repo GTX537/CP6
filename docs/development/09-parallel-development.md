@@ -1,5 +1,17 @@
 # 多对话任务分配与交付
 
+> W409 同源 v9/v10 的三个既有入口均通过只读实证。W408 随 #847 采用并释放。W406 完整独立 Core 已在恢复窗口实测，等待串行采用。 [W409](./evidence/W409-01/DELIVERY.md)
+
+
+> W408 原 v10 Stock 当前对账及独立 Published 原件通过。W409 在另一固定席位接三个 v9/v10 对账入口，数据库串行使用。 [W408](./evidence/W408-01/DELIVERY.md) · [席位登记](./dispatch/20261109-wave408/README.md)
+
+
+> W407 原 v10 中立暂存和原回执实证通过。W406 原分支远端保存，接续完整 Core 验证及现行源对账。 [W407](./evidence/W407-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave407/README.md)
+
+
+> W405 RMA 和 Main Stock 同快照归档通过原生验证，接续隔离 Core 候选原件导入。 [W405](./evidence/W405-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave405/README.md)
+
+
 > W404 v9 原历史中立落表实证通过，后续接续同库 Stock 归档和隔离候选普通读回。 [W404](./evidence/W404-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave404/README.md)
 
 
