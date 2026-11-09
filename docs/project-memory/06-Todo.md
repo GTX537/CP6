@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 同源统一包和候选原结果
+
+接 Main Stock 原切面及当前权威，继续真实隔离候选和正式恢复。 [W404](../development/evidence/W404-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 同一 v9 原件落表及统一恢复包
 
 W404 执行 v9 原历史中立落表。继续 W401 原件读回并把 Stock 原切片接入真实统一恢复链。 [W403](../development/evidence/W403-01/DELIVERY.md)

@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W404 v9 原历史中立落表实证通过，后续接续同库 Stock 归档和隔离候选普通读回。 [W404](./evidence/W404-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave404/README.md)
+
+
 > W403 Main Stock 发件箱和原日志实证通过。W404 同一 v9 原件的中立落表与 W401 候选普通读回分别推进。 [W403](./evidence/W403-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave403/README.md)
 
 
