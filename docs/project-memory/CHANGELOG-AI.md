@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC RMA 同源 v9/v10 对账
+
+三个只读入口采用完整 v9/v10 版本。每个原包实测 IAM 17 条和 Identity 已发布 Outbox 1 条，ERP、Inbox 和资产引用样本为空，受限 ERP 返回 42501。 [W409](../development/evidence/W409-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC Stock 当前状态和原完成回执
 
 加入 v10 Stock 只读对账。实测原键匹配、缺失、跨租户键冲突、同租绑定与原结果冲突、受限角色，以及已完成的原票据、回执与发送尝试。 [W408](../development/evidence/W408-01/DELIVERY.md)

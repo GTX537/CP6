@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC v9/v10 多域只读对账
+
+W408 随 #847 采用并释放。W409 用两个原包实测 IAM、Identity Priority 和 ERP 六次只读调用及受限角色。W406 恢复准确分支后通过完整独立 Core 实库验证。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W409](../development/evidence/W409-01/DELIVERY.md) · [CP6 #847](https://github.com/GTX537/CP6/pull/847)
+
+
 ## 2026-11-09 UTC v10 Stock 当前对账
 
 W407 随 #846 采用并释放。W408 核准同源 v10 的当前状态并验证真实历史 Pending 对当前 Published。Platform #80 已采用守卫源码，正式包与 Main 采用待验。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W408](../development/evidence/W408-01/DELIVERY.md) · [Platform #80](https://github.com/GTX537/CP6.Platform/pull/80)
