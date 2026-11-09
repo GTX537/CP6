@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> 当前：[CP6 三天实际执行](planning/20261109-codex-72h-execution.md)由总控单人串行执行。[W329-01](evidence/W329-01/DELIVERY.md)验证库存普通登录原命令与 Outbox 同事务，随后接实际库存写入。
+> [CP6 三天实际执行](planning/20261109-codex-72h-execution.md)由总控单人串行执行。[W330-01](evidence/W330-01/DELIVERY.md)验证库存移动真实业务写集，随后接原 V1 HTTP 入口的用户和事务授权。
+
+> [W329-01](evidence/W329-01/DELIVERY.md)库存原命令与 Outbox 同事务已随 Main #786 合并，准确分支已清理，固定席位已释放。
 
 > 历史快照：[W328-01](evidence/W328-01/DELIVERY.md)库存原命令和审计已随 Main #785 合并，准确分支已清理，固定席位已释放。
 

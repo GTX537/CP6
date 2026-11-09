@@ -1,5 +1,6 @@
 using System.Text.Json;
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence.Tenancy;
 using CP6.Core.Services.Erp;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Sys;
@@ -7,6 +8,7 @@ using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Npgsql;
+using NpgsqlTypes;
 
 namespace CP6.Core.Services.Integration;
 
@@ -15,6 +17,7 @@ namespace CP6.Core.Services.Integration;
 internal sealed class StockTransactionInheritanceV1(CP6Context db,Guid actorId,string actor,string resource,string action,
     string initialVersion,Func<string,bool>? acceptsBaseline=null,Action<string>? advanceBaseline=null)
 {
+    internal const string AuditReason = "New stock transaction inherited its actual Stock department";
     private string expectedVersion=initialVersion;
     private readonly List<Func<CancellationToken,Task>> finals=[];
     internal (string Version,int FinalCount) Checkpoint()=>(expectedVersion,finals.Count);
@@ -55,7 +58,7 @@ internal sealed class StockTransactionInheritanceV1(CP6Context db,Guid actorId,s
     private Task<StockSourceBinding?> StockBinding(Guid stockId,CancellationToken ct)
     {
         var sql=$$"""
-            WITH RECURSIVE {{PostgreSqlOrganizationV1.HealthyCte(PostgreSqlOrganizationV1.Table(db),"@inherit_tenant")}}
+            WITH RECURSIVE {{PostgreSqlOrganizationV1.HealthyCte(PostgreSqlOrganizationV1.Table(db),"@inherit_tenant", keysOnly: true)}}
             SELECT m.id AS "Id",m.department_id AS "DepartmentId",m.revision AS "Revision"
             FROM cp6_operations_owner_v1.department_mappings m
             JOIN healthy_departments d ON d."Id"=m.department_id
@@ -93,10 +96,16 @@ internal sealed class StockTransactionInheritanceV1(CP6Context db,Guid actorId,s
         var before=await StandaloneDepartmentScopeV1.Version(db,ct);
         if(expectedVersion!=before || acceptsBaseline?.Invoke(before)==false)throw new OrderPriceCorrectionException("AUTHORITY_CHANGED",403);
         var organization=await OrderDepartmentScopeV1.Version(db,ct);var mapping=Guid.NewGuid();
-        await db.Database.ExecuteSqlInterpolatedAsync($"""
-            INSERT INTO cp6_operations_owner_v1.department_mappings(id,tenant_id,object_kind,object_id,department_id,enabled)
-            VALUES({mapping},{ticket.Tenant},'stock-transaction',{ticket.TransactionId},{source.DepartmentId},true)
-            """,ct);
+        var ordinary = db is StockMovementWriteContextV1;
+        if (ordinary)
+            await db.Database.ExecuteSqlInterpolatedAsync($"""
+                SELECT cp6_stock_movement_writer_v1.record_department({ticket.Tenant},{mapping},{ticket.TransactionId},{source.DepartmentId})
+                """,ct);
+        else
+            await db.Database.ExecuteSqlInterpolatedAsync($"""
+                INSERT INTO cp6_operations_owner_v1.department_mappings(id,tenant_id,object_kind,object_id,department_id,enabled)
+                VALUES({mapping},{ticket.Tenant},'stock-transaction',{ticket.TransactionId},{source.DepartmentId},true)
+                """,ct);
         // Only this parameterized new-object insert belongs in the version transition. No callback or business write.
         var after=await StandaloneDepartmentScopeV1.Version(db,ct);
         if(before==after || organization!=await OrderDepartmentScopeV1.Version(db,ct))
@@ -107,14 +116,29 @@ internal sealed class StockTransactionInheritanceV1(CP6Context db,Guid actorId,s
             WHERE tenant_id={ticket.Tenant} AND id={mapping} AND object_kind='stock-transaction'
               AND object_id={ticket.TransactionId} AND department_id={source.DepartmentId} AND enabled
             """).SingleAsync(ct);
-        db.Sys_SecurityLogs.Add(new Sys_SecurityLog {TenantId=ticket.Tenant,UserId=actorId,UserName=actor,
+        var log = new Sys_SecurityLog {TenantId=ticket.Tenant,UserId=actorId,UserName=actor,
             EventType=(int)SecurityEventType.IamAdministrationChanged,CreatedAt=DateTime.Now,
-            Reason="New stock transaction inherited its actual Stock department",
+            Reason=AuditReason,
             ContextJson=JsonSerializer.Serialize(new {kind="stock-transaction-inheritance.v1",stockId=ticket.StockId,
                 sourceMappingId=source.Id,sourceMappingRevision=source.Revision,transactionId=ticket.TransactionId,
                 departmentId=source.DepartmentId,mappingId=mapping,mappingRevision=revision,
-                resource,action})});
-        await db.SaveChangesAsync(ct);
+                resource,action})};
+        if (ordinary)
+        {
+            var createdAt = new NpgsqlParameter("stock_audit_created_at", NpgsqlDbType.Timestamp)
+            { Value = DateTime.SpecifyKind(log.CreatedAt, DateTimeKind.Unspecified) };
+            var createDate = new NpgsqlParameter("stock_audit_create_date", NpgsqlDbType.Timestamp)
+            { Value = DateTime.SpecifyKind(log.CreateDate, DateTimeKind.Unspecified) };
+            await db.Database.ExecuteSqlInterpolatedAsync($"""
+                SELECT cp6_stock_movement_writer_v1.record_audit({ticket.Tenant},{actorId},{actor},
+                    {createdAt},{createDate},CAST({log.ContextJson} AS jsonb))
+                """,ct);
+        }
+        else
+        {
+            db.Sys_SecurityLogs.Add(log);
+            await db.SaveChangesAsync(ct);
+        }
         // Register on the actual root access, including delegated quality receipts, not an unexecuted child callback list.
         finals.Add(async t=>
         {

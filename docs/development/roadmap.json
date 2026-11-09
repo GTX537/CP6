@@ -162247,6 +162247,21 @@
       "at": "2026-11-09T02:06:15.5852246Z",
       "change": "W329普通LOGIN原命令和Stock Outbox同事务入队通过，原Worker及CLI通过；整卡与正式验收口径沿用。",
       "evidence": "docs/development/evidence/W329-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T02:10:11.745303Z",
+      "change": "W329-01正常合并PR #786，准确远端树核对和分支删除及DEV-1释放完成，实际827秒。",
+      "evidence": "docs/development/evidence/W329-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T02:11:13.460150Z",
+      "change": "W330-01沿原任务实际开工。W330接实际Stock库存、流水、编号、部门继承与审计写集，随后接真实宿主和当前Owner授权。",
+      "evidence": "docs/development/dispatch/20261109-wave330/README.md"
+    },
+    {
+      "at": "2026-11-09T02:55:05.9983875Z",
+      "change": "W330-01 库存实际普通 LOGIN 写集与同事务证据齐备，待正常远端采用及固定 DEV-1 释放。原 375、125 和正式运行计数保持证据范围。",
+      "evidence": "docs/development/evidence/W330-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -163694,24 +163709,25 @@
       "card_anchor": "wp02-02",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD / W329-01",
+        "chat_label": "COORD / W330-01",
         "repository": "Main",
-        "branch": "codex/w329-01",
+        "branch": "codex/w330-01",
         "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-        "claimed_at": "2026-11-09T01:56:23.843137Z",
-        "baseline_sha": "5e8519203e0cd7f4dce991c18d4842bacc7c40b4",
-        "entry_evidence": "docs/development/dispatch/20261109-wave329/README.md",
+        "claimed_at": "2026-11-09T02:11:13.460150Z",
+        "baseline_sha": "7a88a2f338ccdc490e65edcb60246a4b3b77e05a",
+        "entry_evidence": "docs/development/dispatch/20261109-wave330/README.md",
         "phase": "VALIDATED_PENDING_REMOTE",
-        "dispatch_scope": "STOCK_WRITE_OUTBOX_ATOMIC_ENQUEUE",
+        "dispatch_scope": "STOCK_NATIVE_MOVEMENT_WRITE_SET",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "reserved_write_resources": [
           "Main:tenant-storage",
           "Main:stock-owner-write",
-          "Main:stock-outbox"
+          "Main:stock-lineage",
+          "Main:inventory-audit"
         ],
         "worker_start_received": true,
-        "delivery_report": "docs/development/evidence/W329-01/DELIVERY.md"
+        "delivery_report": "docs/development/evidence/W330-01/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -164634,7 +164650,7 @@
         },
         "receipt": "docs/development/evidence/authorized-adoption-release-20261015/release-receipt.json"
       },
-      "remaining_scope": "WP02-02保持IN_PROGRESS。库存可信读取、普通LOGIN认证栅栏、原命令/审计和Outbox同事务入队已验证。实际库存业务写入、其他Main Owner、逐租户初始化/恢复、其余原PGT和跨仓采用仍按原范围验收。",
+      "remaining_scope": "真实库存普通 LOGIN 的原业务写集已验证。继续原 V1 HTTP 调整的实际 JWT、当前权限、事务图锁和真实宿主，随后核原结果恢复/关闭、移库、创建、池和逐租户版本/初始化/恢复。",
       "main_package_adoption": {
         "path": "docs/development/evidence/WP02-02/main-package-adoption/DELIVERY.md",
         "scope": "Main exact formal0.10.3 dependency adoption; not tenant storage or full WP02-02 delivery",
@@ -164850,9 +164866,9 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-02",
-        "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。 W327验证普通LOGIN在调用事务内取得原认证根。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。",
-        "remaining": "Stock及其他Main业务写入的可信存储接线、同事务原结果/审计/Outbox、普通写者最终授权和逐租户业务版本初始化与恢复仍余。",
-        "next_action": "完成W329远端采用和席位收尾，接真实库存调整的业务行、流水、编号和现有Owner授权。",
+        "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。 W327验证普通LOGIN在调用事务内取得原认证根。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。",
+        "remaining": "真实 V1 HTTP 当前授权、原操作恢复和关闭、移库/创建、实际池与逐租户版本初始化恢复。",
+        "next_action": "W331 接原 Stock V1 HTTP 调整和实际 JWT 当前权限，使用同一普通 LOGIN 事务取得原认证根和图锁后执行已验证写集。",
         "evidence_refs": [
           "docs/development/evidence/WP02-02/directory-installation/DELIVERY.md",
           "docs/development/evidence/WP02-02/tenant-connections/DELIVERY.md",
@@ -164868,11 +164884,12 @@
           "docs/development/evidence/W326-01/DELIVERY.md",
           "docs/development/evidence/W327-01/DELIVERY.md",
           "docs/development/evidence/W328-01/DELIVERY.md",
-          "docs/development/evidence/W329-01/DELIVERY.md"
+          "docs/development/evidence/W329-01/DELIVERY.md",
+          "docs/development/evidence/W330-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true,
-        "latest_window": "W329-01"
+        "latest_window": "W330-01"
       },
       "wave326_delivery": {
         "status": "CLOSED",
@@ -164927,11 +164944,29 @@
         "workspace_status": "fixed-seat-detached-for-reuse"
       },
       "wave329_delivery": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W329-01/DELIVERY.md",
         "profile": "stock-outbox-writer-v1",
         "validation": "普通LOGIN原Outbox新场景与旧入口Worker回归2项通过；CLI安装/缺前置/重复及路由权限实测。",
         "scope": "普通LOGIN原命令及原生Outbox的同连接同事务入队和提交证明。",
+        "full_task_complete": false,
+        "formal_acceptance": "NOT_RUN",
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/786",
+          "commit": "7a88a2f338ccdc490e65edcb60246a4b3b77e05a",
+          "target_head": "7a88a2f338ccdc490e65edcb60246a4b3b77e05a"
+        },
+        "seat_released": true,
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse"
+      },
+      "wave330_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W330-01/DELIVERY.md",
+        "profile": "stock-movement-writer-v1",
+        "validation": "PostgreSQL 18.6 实际普通角色库存移动 1 项、旧部门权限与管理 4 项、仓库及库位 2 项、Release CLI 和前向迁移实际验证。",
+        "scope": "库存、流水、TXN 编号、不可变移动序列、部门继承、审计、原 journal 与 Outbox 在真实普通事务提交或回滚；库存 V1 HTTP 采用随后验收。",
         "full_task_complete": false,
         "formal_acceptance": "NOT_RUN"
       }
@@ -174574,19 +174609,20 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-10",
-        "delivered": "Main PG journal、Stock/PA090代表事务及W249有效。W326证明Stock只读路径采用可信租户登录。 W327验证原认证根和普通写者事务的数据库前置。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。",
-        "remaining": "库存调整实际业务行、流水、编号与现有Owner授权待普通LOGIN接线；原操作恢复、消费者及其他写集继续按原任务验证。",
-        "next_action": "完成W329远端采用和席位收尾，接真实库存调整的业务行、流水、编号和现有Owner授权。",
+        "delivered": "Main PG journal、Stock/PA090代表事务及W249有效。W326证明Stock只读路径采用可信租户登录。 W327验证原认证根和普通写者事务的数据库前置。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。",
+        "remaining": "实际 Stock 入口的 Owner 当前授权、原结果恢复、故障竞争及其他代表 Owner，按原范围验收。",
+        "next_action": "W331 接原 Stock V1 HTTP 调整和实际 JWT 当前权限，使用同一普通 LOGIN 事务取得原认证根和图锁后执行已验证写集。",
         "evidence_refs": [
           "docs/development/evidence/W310-01/DELIVERY.md",
           "docs/development/evidence/W326-01/DELIVERY.md",
           "docs/development/evidence/W327-01/DELIVERY.md",
           "docs/development/evidence/W328-01/DELIVERY.md",
-          "docs/development/evidence/W329-01/DELIVERY.md"
+          "docs/development/evidence/W329-01/DELIVERY.md",
+          "docs/development/evidence/W330-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false,
-        "latest_window": "W329-01"
+        "latest_window": "W330-01"
       }
     },
     {
@@ -204874,10 +204910,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261109-wave329",
-      "path": "docs/development/dispatch/20261109-wave329/README.md",
-      "baseline_sha": "5e8519203e0cd7f4dce991c18d4842bacc7c40b4",
-      "registered_at": "2026-11-09T01:56:23.843137Z",
+      "id": "20261109-wave330",
+      "path": "docs/development/dispatch/20261109-wave330/README.md",
+      "baseline_sha": "7a88a2f338ccdc490e65edcb60246a4b3b77e05a",
+      "registered_at": "2026-11-09T02:11:13.460150Z",
       "phase": "VALIDATED_PENDING_REMOTE",
       "assigned_chats": [
         "COORD"
@@ -204896,39 +204932,40 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W329-01",
-          "workspace_task": "W329-01",
+          "id": "W330-01",
+          "workspace_task": "W330-01",
           "related_tasks": [
             "WP02-02",
             "WP02-10"
           ],
-          "title": "库存普通登录的同事务Outbox入队",
+          "title": "库存普通登录的真实业务写集",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "VALIDATED_PENDING_REMOTE",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w329-01",
-          "planned_scope_ref": "docs/development/dispatch/20261109-wave329/README.md",
+          "branch": "codex/w330-01",
+          "planned_scope_ref": "docs/development/dispatch/20261109-wave330/README.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main:tenant-storage",
             "Main:stock-owner-write",
-            "Main:stock-outbox"
+            "Main:stock-lineage",
+            "Main:inventory-audit"
           ],
           "worker_delivery_received": true,
           "candidate_review_completed": true,
-          "delivery_report": "docs/development/evidence/W329-01/DELIVERY.md"
+          "delivery_report": "docs/development/evidence/W330-01/DELIVERY.md"
         }
       ],
       "storage": {
         "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "完成W329远端采用和席位收尾，接真实库存调整的业务行、流水、编号和现有Owner授权。"
+      "next_action": "W331 接原 Stock V1 HTTP 调整和实际 JWT 当前权限，使用同一普通 LOGIN 事务取得原认证根和图锁后执行已验证写集。"
     },
     "wave_history": [
       {
@@ -244803,6 +244840,67 @@
           "new_worktrees": 0
         },
         "next_action": "W329接Stock Outbox同普通LOGIN事务入队与原提交证明，随后接Stock V1实际调整。"
+      },
+      {
+        "id": "20261109-wave329",
+        "path": "docs/development/dispatch/20261109-wave329/README.md",
+        "baseline_sha": "5e8519203e0cd7f4dce991c18d4842bacc7c40b4",
+        "registered_at": "2026-11-09T01:56:23.843137Z",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W329-01",
+            "workspace_task": "W329-01",
+            "related_tasks": [
+              "WP02-02",
+              "WP02-10"
+            ],
+            "title": "库存普通登录的同事务Outbox入队",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w329-01",
+            "planned_scope_ref": "docs/development/dispatch/20261109-wave329/README.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:tenant-storage",
+              "Main:stock-owner-write",
+              "Main:stock-outbox"
+            ],
+            "worker_delivery_received": true,
+            "candidate_review_completed": true,
+            "delivery_report": "docs/development/evidence/W329-01/DELIVERY.md",
+            "candidate_integrated": true,
+            "resources_released": true,
+            "adopted_remote": "7a88a2f338ccdc490e65edcb60246a4b3b77e05a",
+            "pr": "https://github.com/GTX537/CP6/pull/786",
+            "branch_disposition": "deleted-local-and-remote",
+            "finished_at": "2026-11-09T02:10:11.745303Z"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W330接实际Stock库存、流水、编号、部门继承与审计写集，随后接真实宿主和当前Owner授权。"
       }
     ],
     "development_priority": {
@@ -247475,7 +247573,7 @@
         "first_reestimate_seconds": 14400
       },
       "timing_basis": "Native goal plus independently sampled monotonic segments for confirmed missing time, with exclusions and no overlap.",
-      "next_priority": "完成W329远端采用和席位收尾，接真实库存调整的业务行、流水、编号和现有Owner授权。",
+      "next_priority": "W331 接原 Stock V1 HTTP 调整和实际 JWT 当前权限，使用同一普通 LOGIN 事务取得原认证根和图锁后执行已验证写集。",
       "windows": [
         {
           "id": "W327-01",
@@ -247537,7 +247635,7 @@
         },
         {
           "id": "W329-01",
-          "state": "VALIDATED_PENDING_REMOTE",
+          "state": "CLOSED",
           "related_tasks": [
             "WP02-02",
             "WP02-10"
@@ -247551,8 +247649,35 @@
           "dispatch": "docs/development/dispatch/20261109-wave329/README.md",
           "validation_ready_at": "2026-11-09T02:06:15.5852246Z",
           "validation_ready_seconds": 591,
+          "timing_source": "主机连续单调取样，起始至官方finish回读。无暂停。",
+          "delivery": "docs/development/evidence/W329-01/DELIVERY.md",
+          "actual_seconds": 827,
+          "finished_at": "2026-11-09T02:10:11.745303Z",
+          "actual_to_estimate_midpoint": 0.324,
+          "pr": "https://github.com/GTX537/CP6/pull/786",
+          "adopted_main": "7a88a2f338ccdc490e65edcb60246a4b3b77e05a",
+          "branch_disposition": "deleted-local-and-remote",
+          "seat_released": true,
+          "variance": "直接复用原队列EF事务、路由生成及提交证明；新增覆盖的权限和真实路径用例一次通过，完整窗低于估算下限。"
+        },
+        {
+          "id": "W330-01",
+          "state": "VALIDATED_PENDING_REMOTE",
+          "related_tasks": [
+            "WP02-02",
+            "WP02-10"
+          ],
+          "started_at": "2026-11-09T02:11:13.460150Z",
+          "estimate_minutes": [
+            35,
+            65
+          ],
+          "scope": "STOCK_NATIVE_MOVEMENT_WRITE_SET",
+          "dispatch": "docs/development/dispatch/20261109-wave330/README.md",
+          "validation_ready_at": "2026-11-09T02:55:05.9983875Z",
+          "validation_ready_seconds": 2631,
           "timing_source": "同次连续执行的主机单调取样。远端采用及席位收尾计时另记。",
-          "delivery": "docs/development/evidence/W329-01/DELIVERY.md"
+          "delivery": "docs/development/evidence/W330-01/DELIVERY.md"
         }
       ]
     },

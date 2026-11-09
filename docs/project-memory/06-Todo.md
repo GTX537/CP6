@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC W330 续接
+
+将已验证的普通 LOGIN 写集接入原 Stock V1 HTTP 调整。核对实际 JWT、当前字段与对象授权、原事务锁、提交后兼容通知和禁止回落。原结果恢复、关闭、移库及创建随后按各自出口验收。 [交付报告](../development/evidence/W330-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W329 续接
 
 用原 Stock 调整入口接真实库存和流水、编号、归属、现有 Owner 授权及已验证的 journal 和 Outbox 同一事务。核对原操作恢复和实际宿主。 [交付报告](../development/evidence/W329-01/DELIVERY.md)
