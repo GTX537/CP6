@@ -15,6 +15,7 @@ from tempfile import TemporaryDirectory
 
 sys.dont_write_bytecode = True
 import archive
+import erp_integration
 import file_content_assets
 import iam_v6
 import source_v3
@@ -22,6 +23,7 @@ import visibility_v4
 
 
 FORMAT = "cp6-rma-iam-reconciliation-v1"
+ARCHIVE_FORMATS = (iam_v6.FORMAT, file_content_assets.FORMAT, erp_integration.FORMAT)
 REPORT = "iam-reconciliation.jsonl"
 
 
@@ -33,7 +35,7 @@ def checked_original(bundle, tenant, target, digest, file_content_root, destinat
     if hashlib.sha256(pinned).hexdigest() != digest:
         raise archive.ArchiveError("manifest-digest-mismatch")
     manifest = archive.verify_bundle(bundle, str(tenant), file_content_root=file_content_root)
-    if manifest != json.loads(pinned) or manifest["format"] not in (iam_v6.FORMAT, file_content_assets.FORMAT) \
+    if manifest != json.loads(pinned) or manifest["format"] not in ARCHIVE_FORMATS \
             or manifest.get("profile") != archive.PROFILE:
         raise archive.ArchiveError("iam-original-bundle-rejected")
     if archive.PhysicalTarget.from_mapping(manifest.get("source")) != target:
@@ -158,7 +160,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("pg-bin", "target-file", "bundle", "output"):
         parser.add_argument("--" + name, type=Path, required=True)
-    parser.add_argument("--file-content-root", type=Path, help="private original asset root for a v7 bundle")
+    parser.add_argument("--file-content-root", type=Path, help="original private local asset root, required for v7 and v8")
     for name in ("username", "tenant", "manifest-sha256"):
         parser.add_argument("--" + name, required=True)
     args = parser.parse_args()

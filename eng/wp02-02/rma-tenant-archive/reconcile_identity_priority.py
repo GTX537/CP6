@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Observe current Identity Priority keys from a pinned v5, v6 or v7 archive on its exact local source."""
+"""Observe current Identity Priority keys from a pinned v5 through v8 archive on its exact local source."""
 
 import argparse
 from contextlib import closing
@@ -16,13 +16,14 @@ from tempfile import TemporaryDirectory
 
 sys.dont_write_bytecode = True
 import archive
+import erp_integration
 import file_content_assets
 import iam_v6
 import identity_priority
 
 
 FORMAT = "cp6-identity-priority-reconciliation-v1"
-ARCHIVE_FORMATS = (identity_priority.FORMAT, iam_v6.FORMAT, file_content_assets.FORMAT)
+ARCHIVE_FORMATS = (identity_priority.FORMAT, iam_v6.FORMAT, file_content_assets.FORMAT, erp_integration.FORMAT)
 REPORT = "reconciliation.jsonl"
 BATCH_SIZE = 128
 # Platform 0.10.3 accepts a maximum 1 MiB envelope, emitted as native hex bytea in v5.
@@ -189,7 +190,7 @@ def main():
         parser.add_argument("--" + name, type=Path, required=True)
     for name in ("username", "tenant", "manifest-sha256"):
         parser.add_argument("--" + name, required=True)
-    parser.add_argument("--file-content-root", type=Path, help="original private local asset root, required for v7")
+    parser.add_argument("--file-content-root", type=Path, help="original private local asset root, required for v7 and v8")
     args = parser.parse_args()
     try:
         target = archive.PhysicalTarget.from_mapping(json.loads(args.target_file.read_text(encoding="utf-8-sig")))
