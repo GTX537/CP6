@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Observe current Identity Priority keys from a pinned v5 archive on its exact local source."""
+"""Observe current Identity Priority keys from a pinned v5, v6 or v7 archive on its exact local source."""
 
 import argparse
 from contextlib import closing
@@ -16,10 +16,13 @@ from tempfile import TemporaryDirectory
 
 sys.dont_write_bytecode = True
 import archive
+import file_content_assets
+import iam_v6
 import identity_priority
 
 
 FORMAT = "cp6-identity-priority-reconciliation-v1"
+ARCHIVE_FORMATS = (identity_priority.FORMAT, iam_v6.FORMAT, file_content_assets.FORMAT)
 REPORT = "reconciliation.jsonl"
 BATCH_SIZE = 128
 # Platform 0.10.3 accepts a maximum 1 MiB envelope, emitted as native hex bytea in v5.
@@ -31,15 +34,15 @@ STATES = {OUTBOX: {0: "Pending", 1: "Dispatching", 2: "Published", 3: "DeadLette
           INBOX: {0: "Processing", 1: "Processed"}}
 
 
-def checked_bundle(bundle, tenant, target, digest, inputs):
+def checked_bundle(bundle, tenant, target, digest, inputs, *, file_content_root=None):
     manifest_path = bundle / "manifest.json"
     if bundle.is_symlink() or manifest_path.is_symlink() or not manifest_path.is_file():
         raise archive.ArchiveError("manifest-member-rejected")
     manifest_bytes = manifest_path.read_bytes()
     if hashlib.sha256(manifest_bytes).hexdigest() != digest:
         raise archive.ArchiveError("manifest-digest-mismatch")
-    manifest = archive.verify_bundle(bundle, str(tenant))
-    if manifest != json.loads(manifest_bytes) or manifest["format"] != identity_priority.FORMAT \
+    manifest = archive.verify_bundle(bundle, str(tenant), file_content_root=file_content_root)
+    if manifest != json.loads(manifest_bytes) or manifest["format"] not in ARCHIVE_FORMATS \
             or manifest.get("profile") != archive.PROFILE:
         raise archive.ArchiveError("priority-v5-bundle-rejected")
     if archive.PhysicalTarget.from_mapping(manifest.get("source")) != target:
@@ -125,7 +128,7 @@ def lookup(query, table, tenant, bindings):
         failure="priority-current-read-failed (see native logs)")
 
 
-def reconcile(pg_bin, target, username, tenant, bundle, digest, output):
+def reconcile(pg_bin, target, username, tenant, bundle, digest, output, *, file_content_root=None):
     if not re.fullmatch(r"[0-9a-fA-F]{64}", digest):
         raise archive.ArchiveError("invalid-manifest-digest")
     digest = digest.lower()
@@ -137,7 +140,7 @@ def reconcile(pg_bin, target, username, tenant, bundle, digest, output):
     try:
         with TemporaryDirectory(dir=output) as private_inputs:
             inputs = Path(private_inputs)
-            manifest, installation = checked_bundle(bundle, tenant, target, digest, inputs)
+            manifest, installation = checked_bundle(bundle, tenant, target, digest, inputs, file_content_root=file_content_root)
             with pending.open("x", encoding="utf-8", newline="\n") as stream, \
                     archive.snapshot_session(pg_bin, archive.connection_args(target, username), os.environ, output) as query:
                 def record(value):
@@ -186,11 +189,13 @@ def main():
         parser.add_argument("--" + name, type=Path, required=True)
     for name in ("username", "tenant", "manifest-sha256"):
         parser.add_argument("--" + name, required=True)
+    parser.add_argument("--file-content-root", type=Path, help="original private local asset root, required for v7")
     args = parser.parse_args()
     try:
         target = archive.PhysicalTarget.from_mapping(json.loads(args.target_file.read_text(encoding="utf-8-sig")))
         report, result = reconcile(args.pg_bin.resolve(strict=True), target, args.username, archive.guid(args.tenant),
-                                   args.bundle.absolute(), args.manifest_sha256, args.output.absolute())
+                                   args.bundle.absolute(), args.manifest_sha256, args.output.absolute(),
+                                   file_content_root=args.file_content_root)
         print(json.dumps(dict(report=str(report), result=result, recoveryReady=False)))
         return 2 if result == "BLOCKED" else 0
     except (archive.ArchiveError, OSError, ValueError, csv.Error) as error:

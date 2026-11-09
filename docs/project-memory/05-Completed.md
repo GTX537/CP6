@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC ERP 原八表采用和统一包队列
+
+W395 完整 1,306 秒，两端任务分支清理，DEV-1 干净释放。W396 原 v6 已发布消息和 v7 两空键实际验证。 [W396](../development/evidence/W396-01/DELIVERY.md) · [PR #836](https://github.com/GTX537/CP6/pull/836)
+
+
 ## 2026-11-09 UTC v7 资产采用和 ERP 八表
 
 W394 完整 1,331 秒，两端分支清理，DEV-2 干净释放。W395 原八表与键语义实证，W392 同一宿主普通池 200 轮验证。 [W395](../development/evidence/W395-01/DELIVERY.md) · [PR #835](https://github.com/GTX537/CP6/pull/835)
