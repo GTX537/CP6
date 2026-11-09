@@ -36,23 +36,16 @@ internal static partial class RmaTenantStorageV1
         if (await Scalar(connection, tx, $"SELECT pg_catalog.to_regnamespace('{DraftSchema}') IS NOT NULL", ct) is true)
         {
             var currentCatalog = await DraftCatalogSha256Async(connection, tx, schemas, ct);
-            await using var read = new NpgsqlCommand($"""
-                SELECT installation_id,request_json,catalog_sha256,result_json FROM {DraftInstallation} WHERE singleton
-                """, connection, tx);
-            string hash;
-            string receipt;
-            await using (var row = await read.ExecuteReaderAsync(ct))
+            var draft = await ReadDraftOverlayAsync(connection, tx, request.InstallationId, ct);
+            if (draft.Request != requestJson) throw new TenantProvisioningException("operation-conflict");
+            var submit = await ReadSubmitOverlayAsync(connection, tx, request.InstallationId, ct);
+            if (submit is null)
             {
-                if (!await row.ReadAsync(ct) || row.GetGuid(0) != request.InstallationId)
-                    throw new TenantProvisioningException("draft-layout-mismatch");
-                if (row.GetString(1) != requestJson) throw new TenantProvisioningException("operation-conflict");
-                hash = row.GetString(2);
-                receipt = row.GetString(3);
+                if (draft.Catalog != currentCatalog) throw new TenantProvisioningException("draft-layout-mismatch");
             }
+            else RequireSubmitTransition(submit, draft, currentCatalog);
 
-            if (hash != currentCatalog)
-                throw new TenantProvisioningException("draft-layout-mismatch");
-            return receipt;
+            return draft.Result;
         }
 
         await RequireDraftTargetGrantsAsync(connection, tx, schemas, request.Tenants.Select(tenant => tenant.Login).ToArray(), ct);
@@ -91,6 +84,21 @@ internal static partial class RmaTenantStorageV1
         await save.ExecuteNonQueryAsync(ct);
         await Commit(tx, ct);
         return result;
+    }
+
+    private sealed record DraftOverlay(string Request, string Catalog, string Result);
+
+    private static async Task<DraftOverlay> ReadDraftOverlayAsync(NpgsqlConnection connection, NpgsqlTransaction tx,
+        Guid installation, CancellationToken ct)
+    {
+        await using var command = new NpgsqlCommand($"""
+            SELECT request_json,catalog_sha256,result_json FROM {DraftInstallation}
+            WHERE singleton AND installation_id=@installation
+            """, connection, tx);
+        command.Parameters.AddWithValue("installation", installation);
+        await using var row = await command.ExecuteReaderAsync(ct);
+        if (!await row.ReadAsync(ct)) throw new TenantProvisioningException("draft-layout-mismatch");
+        return new(row.GetString(0), row.GetString(1), row.GetString(2));
     }
 
     private static async Task RequireDraftTargetGrantsAsync(NpgsqlConnection connection, NpgsqlTransaction tx,

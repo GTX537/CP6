@@ -8,11 +8,19 @@ using Npgsql;
 
 namespace CP6.Core.Persistence.Tenancy;
 
+internal enum RmaWriteEntry { Draft, Submit }
+
 internal sealed partial class TenantRmaReadStore
 {
-    internal async Task<T> WriteDraftAsync<T>(CP6Context authority, Guid actorId,
+    internal async Task<T> WriteAsync<T>(CP6Context authority, Guid actorId, RmaWriteEntry entry,
         Func<RmaTenantReadContext, CancellationToken, Task<T>> write, CancellationToken ct)
     {
+        var (purpose, route) = entry switch
+        {
+            RmaWriteEntry.Draft => (DraftPurpose, "api/wms/rma/native-applications-v1"),
+            RmaWriteEntry.Submit => (SubmitPurpose, "api/wms/rma/native-applications-v1/{id}/submit"),
+            _ => throw new TenantStorageException(TenantStorageFailure.BindingRejected)
+        };
         var committing = false;
         var rollbackUnknown = false;
         try
@@ -22,7 +30,7 @@ internal sealed partial class TenantRmaReadStore
             var authorityConnection = (NpgsqlConnection)authority.Database.GetDbConnection();
             var authorityTx = (NpgsqlTransaction)authority.Database.CurrentTransaction!.GetDbTransaction();
             var primary = await RmaTenantStorageV1.CoreReadPrimaryAsync(authorityConnection, authorityTx, ct);
-            var outcome = await InTenantScopeAsync(authority, actorId, "api/wms/rma/native-applications-v1", DraftPurpose,
+            var outcome = await InTenantScopeAsync(authority, actorId, route, purpose,
                 async (transaction, cancellation) =>
                 {
                     try
@@ -47,6 +55,8 @@ internal sealed partial class TenantRmaReadStore
                                     configured, _catalog.Principal(configured).Username, _installation, token);
                                 if (bound != primary) throw new TenantStorageException(TenantStorageFailure.IdentityRejected);
                                 await RmaTenantStorageV1.RequireCoreDraftBindingAsync(authorityConnection, authorityTx, _installation, token);
+                                if (entry == RmaWriteEntry.Submit)
+                                    await RmaTenantStorageV1.RequireCoreSubmitBindingAsync(authorityConnection, authorityTx, _installation, token);
 
                                 using var guard = new TenantEfCommandGuard(transaction, connection, dbTransaction, tenant);
                                 var options = RmaTenantReadContext.Options(connection).AddInterceptors(guard);

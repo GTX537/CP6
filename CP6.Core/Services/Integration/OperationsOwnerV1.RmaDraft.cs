@@ -8,7 +8,7 @@ namespace CP6.Core.Services.Integration;
 
 public sealed partial class OperationsOwnerV1
 {
-    internal async Task<RmaApplicationResultV1> ExecuteRmaDraftAsync(TenantRmaReadStore storage, Guid operation,
+    internal async Task<RmaApplicationResultV1> ExecuteRmaWriteAsync(TenantRmaReadStore storage, RmaWriteEntry entry, Guid operation,
         Func<OperationsAccessV1, RmaTenantReadContext, MainOwnerOperationJournalV1.Original?, CancellationToken,
             Task<RmaApplicationResultV1>> body, CancellationToken ct)
     {
@@ -25,7 +25,7 @@ public sealed partial class OperationsOwnerV1
             // on this connection until the ordinary transaction finishes; this connection performs no DML.
             await using var authorization = await db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, ct);
             var subject = await currentActor(ct);
-            var result = await storage.WriteDraftAsync(db, subject, async (tenantDb, token) =>
+            var result = await storage.WriteAsync(db, subject, entry, async (tenantDb, token) =>
             {
                 await LockGraph(false, token, Rma);
                 var current = await currentActor(token);

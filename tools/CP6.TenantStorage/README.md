@@ -211,3 +211,11 @@ Enable `RmaReadTenancy:DraftEnabled` alongside the existing `RmaReadTenancy:Enab
 Repeat the same business operation ID and command after an uncertain POST outcome. The original query decision controls disclosure of an existing result and the original add decision controls new creation. A missing writer or incorrect binding fails the hosted draft request. Submit and operation close remain outside the hosted draft profile.
 
 Run `eng/wp02-02/rma-tenant-migration/verify_draft.py --help` for the owned PostgreSQL and bearer HTTP fixture.
+
+### Hosted Core RMA draft submission
+
+After adopting the draft writer, run `install-rma-core-submit-writer-v1 --stdin` using the same private control envelope and exact commissioned mapping. Assign a new installation-step `OperationId`. The command records the exact before and after draft permission catalogs in the protected submit installation. Use this CLI to recover either installation's original result. The earlier W364 CLI rejects its draft install replay once the new permissions are present.
+
+Set `RmaReadTenancy:SubmitEnabled` with the existing tenant read profile to enable `POST /api/wms/rma/native-applications-v1/{id}/submit`. The submit Owner validates the original `If-Match`, expected version, current session, permission and source. The ordinary transaction updates the matching DRAFT head, writes the next immutable SUBMITTED version, and appends the original journal through the existing writer. Keep the original submit request, including its `If-Match` value, for a same-key retry after uncertain completion.
+
+Run `eng/wp02-02/rma-tenant-migration/verify_submit.py --help` for the real hosted submit, receipt compatibility and archive fixture.

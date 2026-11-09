@@ -116,13 +116,19 @@ public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner
     private static async Task<RmaApplicationViewV1> ReadTenantAsync(RmaTenantReadContext storage, OperationsAccessV1 access,
         Guid id, int? version, CancellationToken ct)
     {
-        var tenant = storage.Binding.TenantId;
         var head = await RequireTenantHead(storage, access, id, ct);
         var selected = SelectVersion(version, head.Version);
+        return access.ProjectRmaApplication(await ReadTenantVersion(storage, id, selected, ct));
+    }
+
+    private static async Task<RmaApplicationViewV1> ReadTenantVersion(RmaTenantReadContext storage,
+        Guid id, int version, CancellationToken ct)
+    {
+        var tenant = storage.Binding.TenantId;
         var payload = await storage.Versions.AsNoTracking()
-            .Where(row => row.TenantId == tenant && row.Id == id && row.Version == selected)
+            .Where(row => row.TenantId == tenant && row.Id == id && row.Version == version)
             .Select(row => row.Payload).SingleAsync(ct);
-        return access.ProjectRmaApplication(JsonSerializer.Deserialize<RmaApplicationViewV1>(payload)!);
+        return JsonSerializer.Deserialize<RmaApplicationViewV1>(payload)!;
     }
 
     private static async Task<RmaTenantHead> RequireTenantHead(RmaTenantReadContext storage, OperationsAccessV1 access,
@@ -248,7 +254,7 @@ public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner
     }
     private Task<RmaApplicationResultV1> CreateTenantDraft(TenantRmaReadStore storage, RmaApplicationCreateV1 command,
         (Guid OutboundLineId, decimal Value)[] quantities, byte[] input, CancellationToken ct) =>
-        owner.ExecuteRmaDraftAsync(storage, command.OperationId, async (access, tenantDb, original, token) =>
+        owner.ExecuteRmaWriteAsync(storage, RmaWriteEntry.Draft, command.OperationId, async (access, tenantDb, original, token) =>
         {
             if (original is not null)
                 return await Disclose(access, original, input, token, tenantDb);
@@ -292,21 +298,17 @@ public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner
 
     public Task<RmaApplicationResultV1> SubmitAsync(Guid id, RmaApplicationSubmitV1 c, string? ifMatch, CancellationToken ct = default)
     {
-        RequireSharedEntry();
+        if (_tenantReads is { SubmitEnabled: false }) RequireSharedEntry();
         if (id == Guid.Empty || c.OperationId == Guid.Empty || c.ExpectedVersion < 1) throw Error("RMA_APPLICATION_INPUT_INVALID", 400);
         if (string.IsNullOrWhiteSpace(ifMatch)) throw Error("RMA_IF_MATCH_REQUIRED", 428);
         var input = MainOwnerOperationJournalV1.Encode(new { Id = id, Command = c, IfMatch = ifMatch });
+        if (_tenantReads is { SubmitEnabled: true } storage)
+            return SubmitTenantDraft(storage, id, c, ifMatch, input, ct);
         var journal = new MainOwnerOperationJournalV1(db); MainOwnerOperationJournalV1.Original? original = null;
         return owner.ExecuteAsync(OperationsOwnerV1.Rma, "add", true, async (a, t) =>
         {
             if (original != null) return await Disclose(a, original, input, t);
-            var h = await RequireHead(a, id, t); var before = await ReadVersion(id, h.Version, t);
-            if (before.Version != c.ExpectedVersion || before.Etag != ifMatch) throw Error("RMA_APPLICATION_CHANGED", 412);
-            if (before.State != "DRAFT") throw Error("RMA_APPLICATION_NOT_DRAFT", 409);
-            a.RequireRmaApplicationFields(before.Remarks != null);
-            var source = await Source(a, h.Outbound, t);
-            if (source.Version != before.SourceVersion) throw Error("RMA_SOURCE_CHANGED", 412);
-            var v = before with { Version = before.Version + 1, State = "SUBMITTED", SubmittedAt = DateTimeOffset.UtcNow };
+            var v = await PrepareSubmission(a, id, c.ExpectedVersion, ifMatch, null, t);
             await Append(v, t);
             var changed = await db.Database.ExecuteSqlInterpolatedAsync($"""
                 UPDATE cp6_rma_application_v1.heads SET version={v.Version}
@@ -318,6 +320,51 @@ public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner
             return result;
         }, ct, actionAtFence: async t => { original = await journal.Read(JournalOwner, c.OperationId, t); return original == null ? "add" : "query"; });
     }
+    private Task<RmaApplicationResultV1> SubmitTenantDraft(TenantRmaReadStore storage, Guid id, RmaApplicationSubmitV1 command,
+        string ifMatch, byte[] input, CancellationToken ct) =>
+        owner.ExecuteRmaWriteAsync(storage, RmaWriteEntry.Submit, command.OperationId, async (access, tenantDb, original, token) =>
+        {
+            if (original is not null)
+                return await Disclose(access, original, input, token, tenantDb);
+
+            var view = await PrepareSubmission(access, id, command.ExpectedVersion, ifMatch, tenantDb, token);
+            var result = new RmaApplicationResultV1(command.OperationId, id, view.Version, view.State, view.Etag);
+            var audit = JsonSerializer.Serialize(new { action = "submit-application", result });
+            var changed = await tenantDb.Database.SqlQuery<bool>($"""
+                SELECT cp6_rma_submit_writer_v1.submit_draft({tenantDb.Binding.TenantId},{command.OperationId},{id},
+                    {access.ActorId},{command.ExpectedVersion},CAST({JsonSerializer.Serialize(view)} AS jsonb),{input},
+                    {MainOwnerOperationJournalV1.Digest(input)},{MainOwnerOperationJournalV1.Encode(result)},CAST({audit} AS jsonb)) AS "Value"
+                """).SingleAsync(token);
+            if (!changed) throw Error("RMA_APPLICATION_CHANGED", 412);
+            return result;
+        }, ct);
+
+    private async Task<RmaApplicationViewV1> PrepareSubmission(OperationsAccessV1 access, Guid id, int expectedVersion,
+        string ifMatch, RmaTenantReadContext? storage, CancellationToken ct)
+    {
+        RmaApplicationViewV1 before;
+        Guid outbound;
+        if (storage is null)
+        {
+            var head = await RequireHead(access, id, ct);
+            before = await ReadVersion(id, head.Version, ct);
+            outbound = head.Outbound;
+        }
+        else
+        {
+            var head = await RequireTenantHead(storage, access, id, ct);
+            before = await ReadTenantVersion(storage, id, head.Version, ct);
+            outbound = head.OutboundId;
+        }
+
+        if (before.Version != expectedVersion || before.Etag != ifMatch) throw Error("RMA_APPLICATION_CHANGED", 412);
+        if (before.State != "DRAFT") throw Error("RMA_APPLICATION_NOT_DRAFT", 409);
+        access.RequireRmaApplicationFields(before.Remarks != null);
+        var source = await Source(access, outbound, ct);
+        if (source.Version != before.SourceVersion) throw Error("RMA_SOURCE_CHANGED", 412);
+        return before with { Version = before.Version + 1, State = "SUBMITTED", SubmittedAt = DateTimeOffset.UtcNow };
+    }
+
     private async Task<RmaApplicationResultV1> Disclose(OperationsAccessV1 a, MainOwnerOperationJournalV1.Original original,
         byte[]? input, CancellationToken ct, RmaTenantReadContext? storage = null)
     {
