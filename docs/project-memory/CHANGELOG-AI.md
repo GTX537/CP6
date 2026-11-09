@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC W328 库存原命令与审计
+
+新增 `install-stock-original-journal-v1`、共享 journal 的租户/Owner 行策略和固定追加入口。库位撤回的共享提交触发器按 Owner 和状态分流后执行原事实校验。 [交付报告](../development/evidence/W328-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W327 库存写入授权前置
 
 新增 `install-stock-write-fence-v1` 与固定 SQL 入口，显式扩展已安装的隔离读布局。专用 NOLOGIN 角色只取得原根所需列权限。 [交付报告](../development/evidence/W327-01/DELIVERY.md)

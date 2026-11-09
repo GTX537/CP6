@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-09 UTC W328 库存原命令与审计
+
+现有库存 journal 已在普通 LOGIN 的同一事务验证提交、回滚、原结果和审计隔离。真实库位撤回通过前向触发器适配回归。继续按 72 小时目标验证 Stock Outbox 入队。 [交付报告](../development/evidence/W328-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W327 库存写入授权前置
 
 普通租户 LOGIN 在自己的 PostgreSQL 事务取得原认证根，并与现有租户政策写入串行。实际安装命令和两种竞争顺序已验证。后续按原卡接实际业务写集，72 小时目标继续。 [交付报告](../development/evidence/W327-01/DELIVERY.md)

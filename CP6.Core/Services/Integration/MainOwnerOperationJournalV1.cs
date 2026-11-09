@@ -2,6 +2,7 @@ using System.Data;
 using System.Security.Cryptography;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Integration.StockOutbox;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Npgsql;
@@ -9,7 +10,7 @@ using Npgsql;
 namespace CP6.Core.Services.Integration;
 
 /// <summary>Internal Main journal on the Owner's actual PostgreSQL transaction. Never commits or calls transport.</summary>
-internal sealed class MainOwnerOperationJournalV1(CP6Context db)
+internal sealed class MainOwnerOperationJournalV1(CP6Context db, bool stockTenantWriter = false)
 {
     internal sealed record Original
     {
@@ -48,11 +49,23 @@ internal sealed class MainOwnerOperationJournalV1(CP6Context db)
         RequireTransaction();
         var state=input == null ? "CLOSED" : "COMMITTED";
         var digest=input == null ? null : Digest(input);
+        var resultBytes=Encode(result);
+        var auditJson=JsonSerializer.Serialize(audit);
+        if (stockTenantWriter)
+        {
+            if (owner != StockOutboxProtocolV1.SourceOwner)
+                throw new InvalidOperationException("STOCK_ORIGINAL_OWNER_REQUIRED");
+            await db.Database.ExecuteSqlInterpolatedAsync($"""
+                SELECT cp6_stock_original_journal_v1.store({db.CurrentTenantId},{operation},{actor},{contract},{state},
+                    {input},{digest},{resultBytes},{objects},CAST({auditJson} AS jsonb))
+                """, ct);
+            return;
+        }
         await db.Database.ExecuteSqlInterpolatedAsync($"""
             INSERT INTO cp6_main_owner_v1.operations
               (tenant_id,owner,operation_id,actor_id,contract,state,input_bytes,input_sha256,result_bytes,object_ids,audit_json)
             VALUES ({db.CurrentTenantId},{owner},{operation},{actor},{contract},{state},{input},{digest},
-              {Encode(result)},{objects},CAST({JsonSerializer.Serialize(audit)} AS jsonb))
+              {resultBytes},{objects},CAST({auditJson} AS jsonb))
             """,ct);
     }
 }
