@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC v9 历史归档采用和 Main Stock 原切面
+
+W402 完整 1,436 秒，两端分支清理，DEV-2 干净释放。W403 实库捕获 A/B 发件箱、路由、原回执和原日志。 [W403](../development/evidence/W403-01/DELIVERY.md) · [PR #841](https://github.com/GTX537/CP6/pull/841)
+
+
 ## 2026-11-09 UTC v8 现行对账采用与 v9 原历史归档
 
 W400 完整 527 秒，两端分支清理，DEV-1 干净释放。W402 实证原安全审计及主体保留历史的范围和原字节。 [W402](../development/evidence/W402-01/DELIVERY.md) · [PR #840](https://github.com/GTX537/CP6/pull/840)

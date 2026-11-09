@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC Main Stock 原发件箱切面
+
+W403 实测原生 13 表及关联原日志。W402 随 #841 采用并释放。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W403](../development/evidence/W403-01/DELIVERY.md) · [PR #841](https://github.com/GTX537/CP6/pull/841)
+
+
 ## 2026-11-09 UTC v9 安全审计和主体保留历史
 
 W402 实测同一 PostgreSQL 切面导出原记录。W400 随 #840 采用并释放。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W402](../development/evidence/W402-01/DELIVERY.md) · [PR #840](https://github.com/GTX537/CP6/pull/840)
