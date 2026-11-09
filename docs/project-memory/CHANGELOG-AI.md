@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC RMA 同快照归档工具
+
+增加实际 PostgreSQL tenant schema 和准确共享出库投影的同一快照导出，核 scope、物理来源、对象 Owner、ACL 和成员。正式候选恢复另验。 [W363 交付](../development/evidence/W363-01/DELIVERY.md) · [#816](https://github.com/GTX537/CP6/pull/816)
+
+
 ## 2026-11-09 UTC RMA 原列表采用普通租户 EF
 
 在原当前授权与自有范围内先筛选再分页，实际 PostgreSQL UUID 顺序。每批最多 128 个候选，只读取入选的精确版本。 [W359 交付](../development/evidence/W359-01/DELIVERY.md) · [#815](https://github.com/GTX537/CP6/pull/815)
