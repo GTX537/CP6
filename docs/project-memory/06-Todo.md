@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 独立 Core 采用和普通读回
+
+按任务串行采用 W406 完整导入，接 W401 普通 HTTP 读回、完整非空多域合成恢复、批准开放和正式 PGT。 [W409](../development/evidence/W409-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 其余领域对账和恢复候选
 
 W409 接续同源 v9/v10 的 IAM、Identity Priority 和 ERP 对账。W406 完整 Core 导入、W401 普通读回、批准开放和正式恢复验收按各自窗口执行。#844 待正式包、Main 采用及原步骤复验。 [W408](../development/evidence/W408-01/DELIVERY.md) · [Issue #844](https://github.com/GTX537/CP6/issues/844)

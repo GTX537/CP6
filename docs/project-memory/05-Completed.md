@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC v9/v10 对账入口
+
+W408 完整 1,510.142 秒，两端分支清理，固定席位干净释放。W409 六次真实只读查询均完成，32 个关系前后指纹相同。 [W409](../development/evidence/W409-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 原 Stock 当前权威对账
 
 W407 完整 1,914.212 秒，任务分支两端清理，固定席位干净释放。W408 验证原 v10 当前 Pending 和独立历史 Pending 对当前 Published，A/B 与晚到数据保持原字节。 [W408](../development/evidence/W408-01/DELIVERY.md)
