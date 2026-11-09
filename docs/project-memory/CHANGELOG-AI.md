@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC RMA 原提交与权限过渡
+
+增加正常 submit 的普通租户原子写。原 If-Match、源版本与原日志保留。当前 CLI 按确切权限过渡恢复旧回执，v1/v2 归档核对应 writer 权限。 [W372 交付](../development/evidence/W372-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC RMA 原子 staging 入口
 
 增加按原清单摘要及物理空库执行的原生 staging。原 schema、共享切片与保护回执同事务，真实后段故障整体回滚，recover 只读返回原字节。 [W370 交付](../development/evidence/W370-01/DELIVERY.md)

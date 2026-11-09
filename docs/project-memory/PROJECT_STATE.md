@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC 普通 RMA 原提交
+
+实际普通租户事务原子推进草稿版本并保存原操作。W370 远端 #821 与分支处置、工作区和席位已核。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W372 交付](../development/evidence/W372-01/DELIVERY.md) · [#821](https://github.com/GTX537/CP6/pull/821)
+
+
 ## 2026-11-09 UTC 可操作的隔离 RMA staging
 
 实际 v1、v2 和写后 v2 在精确空库原子落 schema、共享片和原回执。W364 随 #820 正常采用并正式收尾。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W370 交付](../development/evidence/W370-01/DELIVERY.md) · [#820](https://github.com/GTX537/CP6/pull/820)

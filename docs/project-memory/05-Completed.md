@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC 隔离 staging 采用与原 RMA 提交实证
+
+W370 完整 1,111 秒，两端分支删除、DEV-1 干净释放。W372 原提交和当前授权、旧回执、真实两种归档权限均已实测。 [W372 交付](../development/evidence/W372-01/DELIVERY.md) · [#821](https://github.com/GTX537/CP6/pull/821)
+
+
 ## 2026-11-09 UTC 草稿采用及真实保存点
 
 W364 完整 1,839 秒，两端分支删除，DEV-2 干净释放。W371 实际 23505、57014 和原连接继续工作，完整 509 秒，集成席位正式释放。W370 实际 staging 和同一原件恢复通过。 [W370 交付](../development/evidence/W370-01/DELIVERY.md) · [#820](https://github.com/GTX537/CP6/pull/820)
