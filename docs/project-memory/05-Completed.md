@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC W350 远端采用与正式回收
+
+原 RMA 首版逐租户迁移随 #810 正常采用，准确分支已清理，DEV-1 复用给新全 Core 权威接入。 [交付证据](../development/evidence/BUG-808-STOCK-RESTORE-OUTBOX/DELIVERY.md)
+
 ## 2026-11-09 UTC W350 原 RMA 租户首版
 
 首次实际将原 RMA 业务对象的头与版本放到各自 schema，真实 DDL、本地历史和共享 Ready 原子提交，原复合键与不可变保持。 [RMA 交付](../development/evidence/W350-01/DELIVERY.md) · [WP02-28 交付](../development/evidence/W351-01/DELIVERY.md)

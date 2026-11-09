@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC W350 RMA 物理迁移已采用
+
+新隔离租户 schema 的原 RMA 首版真实并发、中断和回执已随 #810 采用，首次 38 项原任务已完成。 [交付证据](../development/evidence/BUG-808-STOCK-RESTORE-OUTBOX/DELIVERY.md)
+
 ## 2026-11-09 UTC W350 PostgreSQL RMA 租户首版
 
 新增新库的实际 RMA tenant schema CLI 与逐租户迁移，保留同键、真实回滚、最小权限和旧布局拒绝的验证。 [RMA 交付](../development/evidence/W350-01/DELIVERY.md) · [WP02-28 交付](../development/evidence/W351-01/DELIVERY.md)
