@@ -15,7 +15,7 @@ using Npgsql;
 namespace CP6.Core.Persistence.Tenancy;
 
 internal enum StockReadEntry { Query, AdjustCreationV2, MoveCreationV2 }
-internal enum StockWriteEntry { ApplyV1, MoveV1, CloseV1, ApplyV2, MoveV2 }
+internal enum StockWriteEntry { ApplyV1, MoveV1, CloseV1, ApplyV2, MoveV2, ApplyLegacy }
 
 /// <summary>Runs the Stock Owner's reads and explicitly enabled commands under a tenant LOGIN on the same primary.</summary>
 internal sealed class TenantStockReadStore : IAsyncDisposable
@@ -25,6 +25,7 @@ internal sealed class TenantStockReadStore : IAsyncDisposable
     private const string AdjustCreationPurpose = "wms-stock:creation-adjust-v2";
     private const string MoveCreationPurpose = "wms-stock:creation-move-v2";
     private const string AdjustPurpose = "wms-stock:adjust-v1";
+    private const string LegacyAdjustPurpose = "wms-stock:adjust-legacy";
     private const string AdjustV2Purpose = "wms-stock:adjust-v2";
     private const string MovePurpose = "wms-stock:move-v1";
     private const string MoveV2Purpose = "wms-stock:move-v2";
@@ -90,6 +91,7 @@ internal sealed class TenantStockReadStore : IAsyncDisposable
             StockWriteEntry.CloseV1 => ClosePurpose,
             StockWriteEntry.ApplyV2 => AdjustV2Purpose,
             StockWriteEntry.MoveV2 => MoveV2Purpose,
+            StockWriteEntry.ApplyLegacy => LegacyAdjustPurpose,
             _ => throw new TenantStorageException(TenantStorageFailure.BindingRejected)
         };
         var committing = false;
@@ -162,6 +164,7 @@ internal sealed class TenantStockReadStore : IAsyncDisposable
             AdjustCreationPurpose => "api/wms/stock/creation-context/adjust",
             MoveCreationPurpose => "api/wms/stock/creation-context/move",
             AdjustPurpose => "api/wms/stock/commands/v1/apply",
+            LegacyAdjustPurpose => "api/wms/stock/apply",
             AdjustV2Purpose => "api/wms/stock/commands/v2/apply",
             MovePurpose => "api/wms/stock/commands/v1/move",
             MoveV2Purpose => "api/wms/stock/commands/v2/move",
@@ -219,7 +222,7 @@ internal sealed class TenantStockReadStore : IAsyncDisposable
             var enabled = operation.Purpose switch
             {
                 ReadPurpose => true,
-                AdjustPurpose or ClosePurpose => v1AdjustEnabled,
+                AdjustPurpose or ClosePurpose or LegacyAdjustPurpose => v1AdjustEnabled,
                 MovePurpose => v1MoveEnabled,
                 AdjustCreationPurpose or AdjustV2Purpose => v2AdjustEnabled,
                 MoveCreationPurpose or MoveV2Purpose => v2MoveEnabled,

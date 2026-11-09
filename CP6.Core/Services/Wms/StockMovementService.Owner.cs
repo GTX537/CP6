@@ -1,3 +1,4 @@
+using CP6.Core.Persistence.Tenancy;
 using CP6.Core.Services.Erp;
 using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Wms;
@@ -9,25 +10,36 @@ public partial class StockMovementService
 {
     private OperationsOwnerV1 Owner=>_owner?.Owns(_db)==true && Owns(_db)?_owner:
         throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE",503);
-    public async Task<string> ApplyAsync(StockMovementRequest req,CancellationToken ct=default)
+    public Task<string> ApplyAsync(StockMovementRequest req,CancellationToken ct=default)
+        =>ApplyIndependentAsync(req,null,ct);
+    internal Task<string> ApplyLegacyHttpAsync(StockMovementRequest req,CancellationToken ct)
+        =>ApplyIndependentAsync(req,_tenantStorage is { V1AdjustEnabled: true }?_tenantStorage:null,ct);
+    private async Task<string> ApplyIndependentAsync(StockMovementRequest req,TenantStockReadStore? storage,CancellationToken ct)
     {
         if(!_db.Database.IsNpgsql())return await ApplyCoreAsync(req,ct);
         var frozen=OperationsOwnerV1.Freeze(req);var effects=new List<StockTransaction>();
-        var number=await Owner.ExecuteAsync(OperationsOwnerV1.Stock,"adjust",true,async(a,t)=>
+        async Task<string> Stage(StockMovementService mover,OperationsAccessV1 a,CancellationToken t)
         {
             // Both switches belong to bounded parent operations, never a user-selected escape hatch.
             if(frozen.AllowNegativeOverride || string.Equals(frozen.RelatedType,"STOCKTAKE",StringComparison.OrdinalIgnoreCase))
                 throw new OrderPriceCorrectionException("INTERNAL_STOCK_CAPABILITY_REQUIRED",403);
             a.RequirePriceWrite();frozen.OperatorCd=a.Actor;
             await a.RequireStockKey(frozen.WarehouseCd,frozen.LocationCd,frozen.ProductCd,frozen.LotNo,true,t);
-            await GuardIndependentLocationUse(a,frozen.WarehouseCd,frozen.LocationCd,frozen.TxnType,t);
-            using var inheritance=InheritTransactions(a);
-            var no=await ApplyWithinOwnerAsync(frozen,t);
-            effects.AddRange(_db.ChangeTracker.Entries<StockTransaction>().Select(e=>e.Entity));
+            await mover.GuardIndependentLocationUse(a,frozen.WarehouseCd,frozen.LocationCd,frozen.TxnType,t);
+            using var inheritance=mover.InheritTransactions(a);
+            var no=await mover.ApplyWithinOwnerAsync(frozen,t);
+            effects.AddRange(mover._db.ChangeTracker.Entries<StockTransaction>().Select(e=>e.Entity));
             a.AtCommit(c=>a.RequireStockKey(frozen.WarehouseCd,frozen.LocationCd,frozen.ProductCd,frozen.LotNo,false,c));return no;
-        },ct);
+        }
+        var number=storage is null
+            ? await Owner.ExecuteAsync(OperationsOwnerV1.Stock,"adjust",true,(access,token)=>Stage(this,access,token),ct)
+            : await Owner.ExecuteStockOperationAsync(storage,StockWriteEntry.ApplyLegacy,
+                (context,access,token)=>Stage(ForTenantWriter(context),access,token),(_,_)=>Task.FromResult("adjust"),ct);
         foreach(var effect in effects)await PublishCommittedCancellationAsync(effect);return number;
     }
+    private StockMovementService ForTenantWriter(StockMovementWriteContextV1 context)
+        =>new(context,new WmsSequenceService(context),_notifier,_finBridge);
+
     public async Task<(string OutTxnNo,string InTxnNo)> MoveAsync(StockMoveRequest req,CancellationToken ct=default)
     {
         if(!_db.Database.IsNpgsql())return await MoveCoreAsync(req,ct);

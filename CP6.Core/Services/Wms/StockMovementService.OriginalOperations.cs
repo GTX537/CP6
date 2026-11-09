@@ -102,7 +102,7 @@ public partial class StockMovementService : IStockOriginalOperationsV1
             ? await Owner.ExecuteAsync(OperationsOwnerV1.Stock,action,true,(access,token)=>Stage(this,access,token),ct,
                 actionAtFence:token=>SelectAction(_db,token))
             : await Owner.ExecuteStockOperationAsync(trustedStorage,writeEntry,(context,access,token)=>
-                Stage(new StockMovementService(context,new WmsSequenceService(context),_notifier,_finBridge),access,token),SelectAction,ct);
+                Stage(ForTenantWriter(context),access,token),SelectAction,ct);
         // Compatibility bridge/notifications remain best-effort. Replaying the original never invokes them again.
         foreach(var effect in effects)await PublishCommittedCancellationAsync(effect);
         return result;
