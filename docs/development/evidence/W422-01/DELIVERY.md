@@ -32,4 +32,6 @@ DEV-1 于 2026-11-09 19:21:50 UTC 开工，基线 #858 `eec44dbe4f526f861f2d5983
 
 ## 续跑
 
-恢复原分支和 DEV-1 后，在独占 55567、连续及即时物理内存 1,050 MiB、可用提交 19 GiB 条件下运行 `python -B D:/CP6-local-test/CP6-72H-20261109/W422-01/run-w422.py native --attempt native-04 --pg-minimum 1050 --seconds 120 --resume-attempt native-03`。使用已建候选 OID 43614。修正驱动 SHA-256 `65e50f9a34081d2a521c8db901b16b38bf7aaa39bbf79491a44047d346ba014e`。正式 PGT-021/022 保持原状态。[私有运行器](/D:/CP6-local-test/CP6-72H-20261109/W422-01/run-w422.py)
+`native-04` 在修正入口和报告提交后的精确源预检通过后执行一次资源检查。27 个实际样本为 1,001–1,036 MiB，39.198 秒后退出 75，实例与候选保持已记录的停机状态。[资源原件](/D:/CP6-local-test/CP6-72H-20261109/W422-01/native-04/before-pg.json) · [报告后预检](/D:/CP6-local-test/CP6-72H-20261109/W422-01/guard-repair-postreport.txt)
+
+恢复原分支和 DEV-1 后，在独占 55567、连续及即时物理内存 1,050 MiB、可用提交 19 GiB 条件下运行 `python -B D:/CP6-local-test/CP6-72H-20261109/W422-01/run-w422.py native --attempt native-05 --pg-minimum 1050 --seconds 120 --resume-attempt native-03`。使用已建候选 OID 43614。修正驱动 SHA-256 `65e50f9a34081d2a521c8db901b16b38bf7aaa39bbf79491a44047d346ba014e`。正式 PGT-021/022 保持原状态。[私有运行器](/D:/CP6-local-test/CP6-72H-20261109/W422-01/run-w422.py)
