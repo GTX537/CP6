@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC 原 Stock V2 验收
+
+复用原 PostgreSQL 通过记录，登记 PGT-001 实测范围及未执行项。 [W426](../development/evidence/W426-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC PostgreSQL 容量原证据
 
 同步 PGT-023 原实测、保留未运行的 N1000 和远端检查点。 [W424](../development/evidence/W424-01/DELIVERY.md)
