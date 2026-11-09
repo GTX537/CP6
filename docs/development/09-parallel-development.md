@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W393 原现行 IAM v6/v7 实证通过。W394 DEV-2 核资产落表，W392 集成席位核池复用。 [W393](./evidence/W393-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave393/README.md)
+
+
 > W391 v6 历史 IAM 原子落表实证通过。W393 DEV-1 核现行 IAM，W392 集成席位核普通角色百轮池复用。 [W391](./evidence/W391-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave391/README.md)
 
 
