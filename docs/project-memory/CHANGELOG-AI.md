@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC v10 Stock 暂存和恢复
+
+实测共享快照 14 个 Stock 原件中立落表、晚段图失败事务回滚、同原 pin 重试和精确回执。 [W407](../development/evidence/W407-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC v10 同快照归档
 
 实际保留原库存和 RMA 切面、独立 A/B 键和原结果，核对 v10 归档与现行暂存入口的兼容边界。 [W405](../development/evidence/W405-01/DELIVERY.md)
