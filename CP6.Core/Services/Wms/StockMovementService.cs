@@ -298,15 +298,11 @@ public partial class StockMovementService : IStockMovementService
     /// </summary>
     private Task<bool> IsLocationFrozenAsync(string warehouseCd, string locationCd, CancellationToken ct = default)
     {
-        return (from d in _db.StockTakeDetails
-                join h in _db.StockTakes on d.StockTakeNo equals h.StockTakeNo
-                where !d.IsDeleted && !h.IsDeleted
-                      && d.WarehouseCd == warehouseCd && d.LocationCd == locationCd
-                      && (h.Status == StockTakeStatus.Counting
-                          || h.Status == StockTakeStatus.DiffReview
-                          || h.Status == StockTakeStatus.AwaitingApproval)
-                select d.LineNo)
-            .AnyAsync(ct);
+        var active = _db.StockTakes.Where(h => !h.IsDeleted && (h.Status == StockTakeStatus.Counting
+            || h.Status == StockTakeStatus.DiffReview || h.Status == StockTakeStatus.AwaitingApproval))
+            .Select(h => h.StockTakeNo);
+        return _db.StockTakeDetails.AnyAsync(d => !d.IsDeleted && d.WarehouseCd == warehouseCd
+            && d.LocationCd == locationCd && active.Contains(d.StockTakeNo), ct);
     }
 
     private static void Validate(StockMovementRequest req)

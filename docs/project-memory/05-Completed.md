@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC W330 库存普通登录的业务写集
+
+限定库存移动写集沿真实 PostgreSQL 事务提交或回滚。既有盘点冻结、受保护库存键和部门继承仍由原边界裁决。 [交付报告](../development/evidence/W330-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W329 库存 Outbox 同事务入队
 
 库存普通登录入队、旧入口 Worker 和实际安装工具通过本地 PostgreSQL 验证。原生证明在提交时拒绝跨事务补发。 [交付报告](../development/evidence/W329-01/DELIVERY.md)
