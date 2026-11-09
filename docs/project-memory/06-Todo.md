@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 文件原生采用与 ERP Owner
+
+继续 FileContent 候选写入和现行父权威、真实 ERP Owner 终态切面、原 PGT 直接验收及完整多域恢复。 [W416](../development/evidence/W416-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 恢复候选后续
 
 继续普通原操作 HTTP、FileContent 原生历史及父版本联合采用、ERP 与其他域正式恢复。PGT-021/022 和 0.10.4 正式发布均按原门执行。 [W414](../development/evidence/W414-01/DELIVERY.md)

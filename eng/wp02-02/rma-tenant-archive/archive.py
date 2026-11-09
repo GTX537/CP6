@@ -214,7 +214,7 @@ def snapshot_session(pg_bin, connection, environ, logs):
                 raise ArchiveError("snapshot-holder-close-failed (see native logs)")
 
 
-def check_source(query, target, installation, tenant):
+def check_physical_source(query, target):
     live = query("""
         BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY;
         SET LOCAL search_path=pg_catalog;
@@ -229,6 +229,10 @@ def check_source(query, target, installation, tenant):
     """)
     if live != dict(target.mapping(), Primary=True):
         raise ArchiveError("target-identity-rejected")
+
+
+def check_source(query, target, installation, tenant):
+    check_physical_source(query, target)
     ready = query("""
         SELECT coalesce((SELECT json_build_object(
             'roleOid',r.oid::bigint,'ownerOid',d.datdba::bigint,
