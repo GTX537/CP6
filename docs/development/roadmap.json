@@ -245113,6 +245113,2049 @@
         "latest_implementation_report": "docs/development/evidence/W325-01/DELIVERY.md"
       }
     },
+    "last_completed_execution_plan": {
+      "id": "CP6-24H-20261104",
+      "path": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
+      "state": "DONE",
+      "execution_owner": "COORD_SINGLE_CHAT",
+      "execution_started": true,
+      "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
+      "capacity_hours": 24,
+      "started_at": "2026-11-04T00:22:36+00:00",
+      "effective_seconds_recorded": 86238,
+      "timing_snapshot_at": "2026-11-08T21:43:28.011391+00:00",
+      "timing_source": "41997 prior effective seconds plus continuous OS monotonic time from 2026-11-08T09:26:06Z; pause/pre-sample preparation excluded. Native panel is active after reactivation but omits the earlier authorized resumed segment; never sum the clocks.",
+      "next_reestimate_at_effective_seconds": null,
+      "estimate_hours": [
+        23.75,
+        45.75
+      ],
+      "estimate_confidence": "LOW_ROLLING_AT_2H",
+      "estimate_is_guarantee": false,
+      "original_task_count": 375,
+      "baseline_counts": {
+        "DONE": 30,
+        "IN_PROGRESS": 2,
+        "PLANNED": 343
+      },
+      "baseline_partial59_remaining": 53,
+      "windows": [
+        {
+          "id": "W297-01",
+          "day": "D1",
+          "related_tasks": [
+            "WP12-19"
+          ],
+          "title": "DOC完整可信撤回与原应用互斥",
+          "estimate_hours": [
+            2,
+            3.5
+          ],
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_confidence": "LOW",
+          "state": "DONE",
+          "started_at": "2026-11-04T00:26:57.175178+00:00",
+          "scope_refinement": "Actual DOC Owner: current explicit withdraw authority and optional bounded business delegation, immutable fact/outbox, apply/withdraw same control CAS, real receipt recovery and old submission compatibility. Existing ITER not repeated.",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W297-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave297-final-verification.json"
+          },
+          "actual_effective_seconds": 3412,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W297-01",
+              "source": "de7d5d7126b240016005e4c4bc58fd650cab7d9f",
+              "remote_target": "afc3cc08a081f2affc3f7033b758e312838169d6",
+              "pr": "https://github.com/GTX537/CP6/pull/743",
+              "branch": "codex/w297-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W297-HANDOFF",
+              "source": "67342517c973c0ba8276a14220711ba0ca6f58b0",
+              "remote_target": "eef6ab08facda49f6b0e89fce6acfa72df79b205",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/274",
+              "branch": "codex/w297-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W298-01",
+          "day": "D1",
+          "related_tasks": [
+            "WP12-19"
+          ],
+          "title": "需求集实际撤回及显式重新授权",
+          "estimate_hours": [
+            1.25,
+            2.5
+          ],
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_confidence": "LOW",
+          "state": "DONE",
+          "started_at": "2026-11-04T01:25:00.118196+00:00",
+          "effective_start": 3730,
+          "scope_refinement": "Actual RequirementSet Owner withdrawal, exact revision/read source and evidence mode, independent business delegation, shared apply/control CAS, explicit BLOCKED successor and native transport/UI recovery. Reuse unchanged wire and DOC transport protocol evidence; validate this actual Owner, not copied labels.",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W298-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave298-final-verification.json"
+          },
+          "actual_effective_seconds": 1377,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W298-01",
+              "source": "5ab489cd2f6b94528c9a5f51fdfc8667e908d0af",
+              "remote_target": "3a80fceb31dc2864dd47a825891dcf9f2a367fa2",
+              "pr": "https://github.com/GTX537/CP6/pull/745",
+              "branch": "codex/w298-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W298-HANDOFF",
+              "source": "3991fc698a1115a44fd116203cde7f349984aad9",
+              "remote_target": "f35bcb1e73ceb60f19e5057a459ca80e9e666a3e",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/275",
+              "branch": "codex/w298-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W299-01",
+          "day": "D1",
+          "related_tasks": [
+            "WP12-19"
+          ],
+          "title": "版模处置Owner撤回与当前资格竞争",
+          "estimate_hours": [
+            1.5,
+            3
+          ],
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_confidence": "LOW",
+          "state": "DONE",
+          "started_at": "2026-11-04T02:00:06.727104+00:00",
+          "effective_start": 5776,
+          "scope_refinement": "Actual ToolDisposition approval withdrawal, independent dispose-withdraw/delegate authority, immutable exact original, BLOCKED successor and native UI/transport. ToolApplication currently only emits BLOCKED/STALE/CONFLICT; share real control and preserve that legal domain, never fabricate APPLIED or physical finalization. Existing disposition block/open obligations remain. Exact pending submission adoption and terminal receipt preservation.",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W299-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave299-final-verification.json"
+          },
+          "actual_effective_seconds": 2123,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W299-01",
+              "source": "0fc9157e09bef6ceb1eac4fa5b65219a59443e77",
+              "remote_target": "58dd37ebbd3f1244ff41ec31dd8765c04ba6a1cc",
+              "pr": "https://github.com/GTX537/CP6/pull/748",
+              "branch": "codex/w299-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W299-HANDOFF",
+              "source": "24585fbc9a5ea8de62efa8fc8aa5c4095f3917fa",
+              "remote_target": "05992786234fb4d3425b5b160020632d1ee01775",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/276",
+              "branch": "codex/w299-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W300-01",
+          "day": "D1",
+          "related_tasks": [
+            "WP12-19"
+          ],
+          "title": "库位规则Owner撤回与当前控制头",
+          "estimate_hours": [
+            0.75,
+            1.5
+          ],
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_confidence": "LOW_RECALIBRATED_AT_2H",
+          "state": "DONE",
+          "initial_estimate_hours": [
+            1.5,
+            3
+          ],
+          "started_at": "2026-11-04T02:49:40.816451+00:00",
+          "effective_start": 8818,
+          "scope_refinement": "Use actual LocationRule proposal revision/token as shared control with existing proposal withdrawal and review application; preserve native proposal/approval journals and all legacy legal inputs. Native review withdrawal freezes current human authority, exact submission and before/after real proposal revision. Explicit business grant and BLOCKED successor; no rule activation or stock/financial effect.",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W300-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave300-final-verification.json"
+          },
+          "actual_effective_seconds": 2130,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W300-01",
+              "source": "495e295c8622b84acfd699e4cd1f964c691948ad",
+              "remote_target": "cff40fb720d8d15e8969d794ae97a0fd33346ad9",
+              "pr": "https://github.com/GTX537/CP6/pull/750",
+              "branch": "codex/w300-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W300-HANDOFF",
+              "source": "899816c9c333199c423acce1c2077cd8cb19d3b3",
+              "remote_target": "256534a6ae4b7e39375a8c00155537cd422d9a73",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/277",
+              "branch": "codex/w300-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W301-01",
+          "day": "D1",
+          "related_tasks": [
+            "WP12-19"
+          ],
+          "title": "原可信撤回卡逐项核销与真实缺口修正",
+          "estimate_hours": [
+            0.35,
+            0.75
+          ],
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_confidence": "LOW_RECALIBRATED_AT_2H",
+          "state": "DONE",
+          "initial_estimate_hours": [
+            0.5,
+            1.25
+          ],
+          "started_at": "2026-11-04T03:27:35.817434+00:00",
+          "effective_start": 11042,
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W301-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave301-final-verification.json"
+          },
+          "original_card_completed": false,
+          "followup_issue": "https://github.com/GTX537/CP6/issues/751",
+          "actual_effective_seconds": 791,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W301-01",
+              "source": "26ed24ecf31468edd491ac1a7e6f3b56010a04d7",
+              "remote_target": "6789d33ae78da74781ea6cda3441f81e29a21cfc",
+              "pr": "https://github.com/GTX537/CP6/pull/752",
+              "branch": "codex/w301-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W301-HANDOFF",
+              "source": "6209c5e447b78954d5d985a1ab6ad9605eff4206",
+              "remote_target": "5d0bf0fb5dca8cd40ad8e1ebca511d242f2a52bc",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/278",
+              "branch": "codex/w301-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W302-01",
+          "day": "D2",
+          "related_tasks": [
+            "WP02-15",
+            "WP12-03"
+          ],
+          "title": "受控字段处置的权威Owner与最小实际闭环",
+          "estimate_hours": [
+            1.5,
+            3.25
+          ],
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_confidence": "LOW_RECALIBRATED_AT_2H",
+          "state": "DONE",
+          "initial_estimate_hours": [
+            3,
+            5.5
+          ],
+          "started_at": "2026-11-04T04:04:03.060841+00:00",
+          "effective_start": 13182,
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W302-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave302-final-verification.json"
+          },
+          "actual_effective_seconds": 2447,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W302-01",
+              "source": "361408d8f781e7b57e3baac78330e0104021e3f2",
+              "remote_target": "98005e6b56ab2f880a12e66288c8e2fba92c1272",
+              "pr": "https://github.com/GTX537/CP6/pull/754",
+              "branch": "codex/w302-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W302-HANDOFF",
+              "source": "f895b245b75ae433728e979cd308e709bc9215a7",
+              "remote_target": "6c489cd471c969645887e65f1f4b209147ada344",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/279",
+              "branch": "codex/w302-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W303-01",
+          "day": "D2",
+          "related_tasks": [
+            "WP12-03"
+          ],
+          "title": "个人表单隐藏字段重基采用处置Ref",
+          "estimate_hours": [
+            0.9,
+            1.8
+          ],
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_confidence": "LOW_RECALIBRATED_AT_4H",
+          "state": "DONE",
+          "initial_estimate_hours": [
+            2,
+            3.5
+          ],
+          "started_at": "2026-11-04T04:48:32.183323+00:00",
+          "effective_start": 15670,
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W303-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave303-final-verification.json"
+          },
+          "actual_effective_seconds": 1934,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W303-01",
+              "source": "a1eb36bfb994374ed874d361b64e4e683d4bf048",
+              "remote_target": "b4d7315d2bbd512b5515c3f2cde3ab6cd5a19d69",
+              "pr": "https://github.com/GTX537/CP6/pull/755",
+              "branch": "codex/w303-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W303-HANDOFF",
+              "source": "633a88c41bccf729aa44be1734df6aaa1e5e489f",
+              "remote_target": "926aaa5b92c35dc1fd80e350994c4a70e4e22d4d",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/280",
+              "branch": "codex/w303-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W304-01",
+          "day": "D2",
+          "related_tasks": [
+            "WP12-03",
+            "WP12-04"
+          ],
+          "title": "原表单提交卡合法域和原子性剩余核销",
+          "estimate_hours": [
+            0.7,
+            1.5
+          ],
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_confidence": "LOW_RECALIBRATED_AT_4H",
+          "state": "DONE",
+          "initial_estimate_hours": [
+            1.5,
+            3
+          ],
+          "started_at": "2026-11-04T05:39:23.808571+00:00",
+          "effective_start": 17732,
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W304-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave304-final-verification.json"
+          },
+          "actual_effective_seconds": 898,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W304-01",
+              "source": "6926f205f0ef3ae8ca5838c07fc04cba2d744d25",
+              "remote_target": "eb8ecfbf97f00151e58ae1da2234e782d080c2b0",
+              "pr": "https://github.com/GTX537/CP6/pull/757",
+              "branch": "codex/w304-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W304-HANDOFF",
+              "source": "44481e34796c77bab93cb17c783e04dbcc2233e5",
+              "remote_target": "f6ce982851e13241da6871c7510a8f635a76ff83",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/281",
+              "branch": "codex/w304-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "BUG756",
+          "day": "ROLLING",
+          "related_tasks": [
+            "WP12-03",
+            "WP12-04"
+          ],
+          "title": "合法data与命令信封容量边界修复",
+          "estimate_hours": [
+            0.6,
+            1.3
+          ],
+          "issue": "https://github.com/GTX537/CP6/issues/756",
+          "state": "DONE",
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_confidence": "LOW_SOURCE_AUDIT_W304",
+          "scope_ref": "docs/development/evidence/W304-01/DELIVERY.md",
+          "actual_effective_seconds": 1310,
+          "remote_adoption": {
+            "result": "PASS",
+            "at": "2026-11-04T06:16:49.618267+00:00",
+            "source": "89091220dbf5aa973927481348296b7666965494",
+            "main": "1d4981dd5f44d0ca38882d842e0146876ec8bcad",
+            "pr": "https://github.com/GTX537/CP6/pull/758",
+            "issue_closed": true,
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_clean": true,
+            "seat_released": true,
+            "all_slots_released": true,
+            "slot": "DEV-1",
+            "actions_runs": 0,
+            "root_untracked_preserved": true,
+            "validation": "本地PostgreSQL18和实际Main Program认证HTTP通过：原生/HTTP满额提交、双预览、草稿创建/保存/提交、退回编辑和SFS决策；超出1字节明确拒绝且无额外效果，原意图回放、原摘要、精确数值及退回前快照保留。另验证中文满额HTTP、补充平面/私用字符经merge/patch/rules/projection、合并后真实超限拒绝、嵌套数组/控制字符/空值/布尔和精确数字。当前隐藏/只读mask、重基规则及原结果、五上下文closed DTO和canonical回归均通过。",
+            "execution_plan_completed": false,
+            "effective_seconds_total": 19995,
+            "window_effective_seconds": 1310,
+            "next_window": "W316 controlled legacy personal FORM/draft adapters, then W317 before-rebase snapshot recovery",
+            "checkpoint": "C:\\Users\\tt\\.gstack\\projects\\GTX537-CP6\\checkpoints\\20261104-061649Z-bug756-24h-program-continue.md"
+          },
+          "report": "docs/development/evidence/BUG-756/DELIVERY.md"
+        },
+        {
+          "id": "W316-01",
+          "day": "ROLLING",
+          "related_tasks": [
+            "WP12-03",
+            "WP12-04"
+          ],
+          "title": "旧表单草稿与提交入口受控适配及准确命令映射",
+          "estimate_hours": [
+            1.5,
+            3
+          ],
+          "state": "DONE",
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
+          "scope_ref": "docs/development/evidence/W304-01/DELIVERY.md",
+          "started_at": "2026-11-04T06:18:41.857315+00:00",
+          "effective_start": 20123,
+          "estimate_remaining_hours": [
+            0.75,
+            1.75
+          ],
+          "elapsed_effective_seconds_at_reestimate": 1610,
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W316-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave316-final-verification.json"
+          },
+          "actual_effective_seconds": 3161,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W316-01",
+              "source": "efaff719bf6824f18ca8d30a6100d8b54ee02c54",
+              "remote_target": "52327983052b603995036f5abad6216812f0bffd",
+              "pr": "https://github.com/GTX537/CP6/pull/760",
+              "branch": "codex/w316-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W316-HANDOFF",
+              "source": "cc9bea1d2cc6c771b484d9e1f3cc4c0766e86828",
+              "remote_target": "c12143b87aed17a712e68c7c0cbf8b795af6485b",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/282",
+              "branch": "codex/w316-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "BUG759",
+          "day": "ROLLING",
+          "related_tasks": [
+            "WP12-03",
+            "WP12-04"
+          ],
+          "title": "草稿未知结果刷新后原命令恢复入口",
+          "estimate_hours": [
+            0.5,
+            1.2
+          ],
+          "issue": "https://github.com/GTX537/CP6/issues/759",
+          "state": "DONE",
+          "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION",
+          "scope_ref": "docs/development/evidence/W316-01/DELIVERY.md",
+          "actual_effective_seconds": 866,
+          "remote_adoption": {
+            "result": "PASS",
+            "at": "2026-11-04T07:26:36.479649+00:00",
+            "source": "6dbb8176e35d8ebb02137fef14ec5e4a9d0d9308",
+            "main": "253f937ff14ac12519056c950930c7ca692e1291",
+            "pr": "https://github.com/GTX537/CP6/pull/761",
+            "issue_closed": true,
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_clean": true,
+            "seat_released": true,
+            "all_slots_released": true,
+            "slot": "DEV-1",
+            "actions_runs": 0,
+            "root_untracked_preserved": true,
+            "validation": "2项实际PostgreSQL18/登录HTTP/Chrome场景通过：删除与提交成功丢答、刷新查询、未到服务端NOT_OBSERVED后明确关闭，以及既有隐藏字段处置重基的原命令恢复。16项受影响编辑器行为测试和vue-tsc通过，无跳过冒充通过。",
+            "execution_plan_completed": false,
+            "effective_seconds_total": 24180,
+            "window_effective_seconds": 866,
+            "next_window": "W317 exact before-rebase snapshot recovery, then W305 and continuing24h queue",
+            "checkpoint": "C:\\Users\\tt\\.gstack\\projects\\GTX537-CP6\\checkpoints\\20261104-072636Z-bug759-24h-program-continue.md"
+          },
+          "report": "docs/development/evidence/BUG-759/DELIVERY.md"
+        },
+        {
+          "id": "W317-01",
+          "day": "ROLLING",
+          "related_tasks": [
+            "WP12-03",
+            "WP12-04"
+          ],
+          "title": "重基准确前快照到新个人草稿的显式恢复",
+          "estimate_hours": [
+            1,
+            2.5
+          ],
+          "state": "DONE",
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
+          "scope_ref": "docs/development/evidence/W304-01/DELIVERY.md",
+          "started_at": "2026-11-04T07:28:43.137840+00:00",
+          "effective_start": 24215,
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W317-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave317-final-verification.json"
+          },
+          "actual_effective_seconds": 2428,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W317-01",
+              "source": "84aa16cd84bb4030b8593f1473251419d93775d4",
+              "remote_target": "591ab07d6bd44f68219c69cd40a0bcb06f6be56c",
+              "pr": "https://github.com/GTX537/CP6/pull/762",
+              "branch": "codex/w317-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W317-HANDOFF",
+              "source": "26b339f6f886cf55378df108f7dec32eb6c644e9",
+              "remote_target": "6124b2065b6b9e729021cf38f39f0ad7dab1ce15",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/283",
+              "branch": "codex/w317-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W305-01",
+          "day": "D3",
+          "related_tasks": [
+            "WP12-10"
+          ],
+          "title": "原委派授权与历史缺证范围逐项核销",
+          "estimate_hours": [
+            0.35,
+            0.8
+          ],
+          "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_REVISED_AFTER_SOURCE_READ",
+          "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
+          "state": "DONE",
+          "initial_estimate_hours": [
+            2,
+            4
+          ],
+          "started_at": "2026-11-04T08:10:59.563085+00:00",
+          "effective_start": 26793,
+          "implementation_complete": true,
+          "full_task_completed": true,
+          "report": "docs/development/evidence/W305-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave305-final-verification.json"
+          },
+          "actual_effective_seconds": 781,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W305-01",
+              "source": "4cadc22204fb435ad89b263857e56a87143b7def",
+              "remote_target": "b687ef2230b2ad3fba3673eca2433f44314da58a",
+              "pr": "https://github.com/GTX537/CP6/pull/763",
+              "branch": "codex/w305-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W305-HANDOFF",
+              "source": "bdcd3dbfab4911b9b51e9c2edcb87ae1564543ad",
+              "remote_target": "695127cbfeaca54ee45166eaf426af81afe7b17e",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/284",
+              "branch": "codex/w305-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W306-01",
+          "day": "D3",
+          "related_tasks": [
+            "WP12-08",
+            "WP12-04",
+            "WP12-10"
+          ],
+          "title": "原任务信箱前置与剩余实际行为闭环",
+          "estimate_hours": [
+            0.6,
+            1.25
+          ],
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_confidence": "LOW_ACTUAL_MULTI_ACTOR_ROUND_RISK",
+          "state": "DONE",
+          "initial_estimate_hours": [
+            1,
+            2
+          ],
+          "dependency_status": "WAITING_FOR_FORM_HISTORY_ADOPTION",
+          "remaining": "WP12-03/04历史准确内容披露/显式采用未证明；W305完成WP12-10不连带解决。",
+          "prerequisites_satisfied": true,
+          "prerequisite_report": "docs/development/evidence/W319-01/DELIVERY.md",
+          "started_at": "2026-11-08T13:21:42.080186+00:00",
+          "effective_start": 56132,
+          "scope_refinement": "原WP12-08三项范围及正反例：当前action-context真实SFS/APP分型与双/三CAS、actual/principal/原grant/SOD、token/node/stage/round计票，SFS字段复算和APP冻结TxD。W289/290/291已有实际采用与CC边界直接复用；本窗重点补多人新轮后旧Approved不能凑足新阈值的实际运行证据、旧原命令回放不推进新轮及必要当前竞争。发现真实错误即定向修复；仅全原卡无剩余且当前整卡前置满足才DONE。全OA-TASK批量/时限/通知与服务节点Owner不冒称由本卡自动完成，不重复W291抄送。",
+          "implementation_complete": true,
+          "full_task_completed": true,
+          "report": "docs/development/evidence/W306-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave306-final-verification.json"
+          },
+          "actual_effective_seconds": 1577,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W306-01",
+              "source": "19e101662c4f33bd4cf5140721572bafa80e8cb1",
+              "remote_target": "b69c9d8cc9b2bc2ab50cb491b40aeb1ba9e55b60",
+              "pr": "https://github.com/GTX537/CP6/pull/774",
+              "branch": "codex/w306-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W306-HANDOFF",
+              "source": "6cb533b25eb708349d3b65d72467823cb4d1e05f",
+              "remote_target": "66aa83f4456b938da2b8071881fed6a823ad886f",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/295",
+              "branch": "codex/w306-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W307-01",
+          "day": "D3",
+          "related_tasks": [
+            "WP05-16"
+          ],
+          "title": "受控文档准确修订的独立可用性",
+          "estimate_hours": [
+            0.65,
+            1.2
+          ],
+          "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_REVISED_AT_8H",
+          "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
+          "state": "DONE",
+          "initial_estimate_hours": [
+            2,
+            4
+          ],
+          "started_at": "2026-11-04T08:28:30.485352+00:00",
+          "effective_start": 27871,
+          "forecast_remaining_hours": [
+            0.35,
+            0.9
+          ],
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W307-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave307-final-verification.json"
+          },
+          "actual_effective_seconds": 2002,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W307-01",
+              "source": "f037d66d9f5e8b3a1f5b55d57314dbe7b9e27cf3",
+              "remote_target": "62712a6faf4402bf34f6096bd0e241b9d9397077",
+              "pr": "https://github.com/GTX537/CP6/pull/764",
+              "branch": "codex/w307-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W307-HANDOFF",
+              "source": "b55564435f8c2177b2479c49448a55afdb9ffa3e",
+              "remote_target": "0af7c1e5984cedf3c6d6d0e82bcf799da73f15a9",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/285",
+              "branch": "codex/w307-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W308-01",
+          "day": "D3",
+          "related_tasks": [
+            "WP05-14"
+          ],
+          "title": "需求来源范围与冲突有权裁决",
+          "estimate_hours": [
+            1.0,
+            2.2
+          ],
+          "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_REVISED_AFTER_SOURCE_READ",
+          "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
+          "state": "DONE",
+          "initial_estimate_hours": [
+            2.5,
+            4.5
+          ],
+          "started_at": "2026-11-04T09:08:54.332105+00:00",
+          "effective_start": 30274,
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W308-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave308-final-verification.json"
+          },
+          "actual_effective_seconds": 2012,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W308-01",
+              "source": "f2b88e61f5432389085b6b4495fd36957befd7a8",
+              "remote_target": "84abab3430dd9637be196255ce8d83f33016a92f",
+              "pr": "https://github.com/GTX537/CP6/pull/765",
+              "branch": "codex/w308-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W308-HANDOFF",
+              "source": "f9346dceb129b6e040ce42deedbf23bd5cdfa464",
+              "remote_target": "41904cbc929bfeba0d57fa1630b40cd9b43634d0",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/286",
+              "branch": "codex/w308-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W309-01",
+          "day": "ROLLING",
+          "related_tasks": [
+            "WP05-14"
+          ],
+          "title": "需求集后继差异与实际迭代消费者影响",
+          "estimate_hours": [
+            1,
+            2
+          ],
+          "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_AFTER_SOURCE_READ",
+          "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
+          "state": "DONE",
+          "initial_estimate_hours": [
+            2,
+            4
+          ],
+          "started_at": "2026-11-04T09:47:51.965310+00:00",
+          "effective_start": 32511,
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W309-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave309-final-verification.json"
+          },
+          "actual_effective_seconds": 3235,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W309-01",
+              "source": "116a4f7b524dfe051c5eec9763e4e1edf4c59790",
+              "remote_target": "447fec29a58971c4fc751714683bd66bb1b57cf6",
+              "pr": "https://github.com/GTX537/CP6/pull/766",
+              "branch": "codex/w309-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W309-HANDOFF",
+              "source": "42d6bc6426aed70dad13af9230c9facbbd1198f9",
+              "remote_target": "77070ea6b199dd6bdb3363d8aae248d3869f1815",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/287",
+              "branch": "codex/w309-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W311-01",
+          "day": "ROLLING_RESERVE",
+          "related_tasks": [
+            "WP02-15"
+          ],
+          "title": "隐私subject逐Owner导出清单及遗漏/不可用语义",
+          "estimate_hours": [
+            0.9,
+            1.8
+          ],
+          "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_AFTER_SOURCE_READ",
+          "estimate_confidence": "LOW_ADMISSION_SOURCE_AUDIT_REQUIRED",
+          "state": "DONE",
+          "scope_refinement": "Original WP02-15 remaining scope, following W302 actual disposition contract; re-read exact Owner sources/contracts/dependencies at admission and skip any then-completed behavior. Isolated PostgreSQL/simulated business data only; no existing-environment erasure, migration or deployment.",
+          "started_at": "2026-11-04T10:42:23.723475+00:00",
+          "effective_start": 35868,
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W311-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave311-final-verification.json"
+          },
+          "actual_effective_seconds": 2160,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W311-01",
+              "source": "832a09aeacc793fee95f4d57080ab6afa31065bc",
+              "remote_target": "3a7109b9e59fa5bd2d11f986a404b9608cbeee14",
+              "pr": "https://github.com/GTX537/CP6/pull/767",
+              "branch": "codex/w311-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W311-HANDOFF",
+              "source": "1c7ee130d629835a69fd171072bf4438637279ce",
+              "remote_target": "9308d2bce5df1e172d0e73ea9dbd7ae9f421a643",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/288",
+              "branch": "codex/w311-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W312-01",
+          "day": "ROLLING_RESERVE",
+          "related_tasks": [
+            "WP02-15"
+          ],
+          "title": "导出结果受控下载和当前身份/准确版本恢复",
+          "estimate_hours": [
+            1.5,
+            2.5
+          ],
+          "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_AFTER_SOURCE_READ",
+          "estimate_confidence": "LOW_ADMISSION_SOURCE_AUDIT_REQUIRED",
+          "state": "DONE",
+          "scope_refinement": "Original WP02-15 remaining scope, following W302 actual disposition contract; re-read exact Owner sources/contracts/dependencies at admission and skip any then-completed behavior. Isolated PostgreSQL/simulated business data only; no existing-environment erasure, migration or deployment.",
+          "started_at": "2026-11-04T11:20:17.276563+00:00",
+          "effective_start": 38169,
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W312-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave312-final-verification.json"
+          },
+          "actual_effective_seconds": 1829,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W312-01",
+              "source": "727c65faf4d74b68f15b31223a8247f2b61e6f19",
+              "remote_target": "45db7764a6b9f3d5137c699508021198c18b60fc",
+              "pr": "https://github.com/GTX537/CP6/pull/768",
+              "branch": "codex/w312-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W312-HANDOFF",
+              "source": "cc0c132649c5f7e029994aad3cc110b50a840ca3",
+              "remote_target": "a9759c5c8c3006825442262db9ba69c2c5a775ec",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/289",
+              "branch": "codex/w312-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W313-01",
+          "day": "ROLLING_RESERVE",
+          "related_tasks": [
+            "WP02-15"
+          ],
+          "title": "擦除预览/批准与hold实际裁决",
+          "estimate_hours": [
+            0.6,
+            1.2
+          ],
+          "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_AFTER_SOURCE_READ",
+          "estimate_confidence": "LOW_ADMISSION_SOURCE_AUDIT_REQUIRED",
+          "state": "DONE",
+          "scope_refinement": "Original WP02-15 remaining scope, following W302 actual disposition contract; re-read exact Owner sources/contracts/dependencies at admission and skip any then-completed behavior. Isolated PostgreSQL/simulated business data only; no existing-environment erasure, migration or deployment.",
+          "started_at": "2026-11-04T11:52:59.483763+00:00",
+          "effective_start": 40105,
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W313-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave313-final-verification.json"
+          },
+          "actual_effective_seconds": 1844,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W313-01",
+              "source": "96ce1ed198362b27902a9fd36da2c01a9c799c34",
+              "remote_target": "cfb4858659cc65f05ab3df2768d21c8e3ea036e1",
+              "pr": "https://github.com/GTX537/CP6/pull/769",
+              "branch": "codex/w313-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W313-HANDOFF",
+              "source": "4653fba216164cb36f58681d2be209bc04bd91c6",
+              "remote_target": "662a430879e3347af2d4f0c9074fb0c795517799",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/290",
+              "branch": "codex/w313-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W314-01",
+          "day": "ROLLING_RESERVE",
+          "related_tasks": [
+            "WP02-15"
+          ],
+          "title": "逐Owner擦除UNKNOWN责任及原命令恢复",
+          "estimate_hours": [
+            1.25,
+            2.5
+          ],
+          "estimate_kind": "LOW_CONFIDENCE_ACTUAL_CODING_AFTER_OWNER_SOURCE_READ",
+          "estimate_confidence": "LOW_ADMISSION_SOURCE_AUDIT_REQUIRED",
+          "state": "DONE",
+          "scope_refinement": "Original WP02-15 remaining scope, following W302 actual disposition contract; re-read exact Owner sources/contracts/dependencies at admission and skip any then-completed behavior. Isolated PostgreSQL/simulated business data only; no existing-environment erasure, migration or deployment.",
+          "started_at": "2026-11-08T09:28:31.604176+00:00",
+          "effective_start": 42141,
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W314-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave314-final-verification.json"
+          },
+          "actual_effective_seconds": 1447,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W314-01",
+              "source": "27cb769fa91699957811ebf950035afa2876a3a0",
+              "remote_target": "9990466a51cb6b0d5c965f6ea93cadb58f188e53",
+              "pr": "https://github.com/GTX537/CP6/pull/770",
+              "branch": "codex/w314-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W314-HANDOFF",
+              "source": "7604fd310e09a71b617277728180ec504e45c0c0",
+              "remote_target": "fa46ae4771689a298d896e972cd2ea7406414e79",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/291",
+              "branch": "codex/w314-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W315-01",
+          "day": "ROLLING_RESERVE",
+          "related_tasks": [
+            "WP02-15"
+          ],
+          "title": "准确墓碑与恢复编排的实际Owner采用",
+          "estimate_hours": [
+            1,
+            2.5
+          ],
+          "estimate_kind": "LOW_CONFIDENCE_ACTUAL_CODING_AFTER_OWNER_SOURCE_READ",
+          "estimate_confidence": "LOW_ACTUAL_EXECUTION_AFTER_W314_CURRENT_SCOPE",
+          "state": "DONE",
+          "scope_refinement": "Original WP02-15 remaining scope, following W302 actual disposition contract; re-read exact Owner sources/contracts/dependencies at admission and skip any then-completed behavior. Isolated PostgreSQL/simulated business data only; no existing-environment erasure, migration or deployment.",
+          "started_at": "2026-11-08T10:06:39.059558+00:00",
+          "effective_start": 44429,
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W315-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave315-final-verification.json"
+          },
+          "actual_effective_seconds": 5837,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W315-01",
+              "source": "4c912d75f3861c1bc3036ab4a8e1a283855f35df",
+              "remote_target": "d72b00396bfa8845fbea135a181cc8dd20432dcc",
+              "pr": "https://github.com/GTX537/CP6/pull/771",
+              "branch": "codex/w315-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W315-HANDOFF",
+              "source": "bcc4e1779eb748fabb90abfa2125a023951852d2",
+              "remote_target": "215b379a47654c98cb449b5c18a4a0d44d02daad",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/292",
+              "branch": "codex/w315-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W318-01",
+          "day": "D3",
+          "related_tasks": [
+            "WP12-03",
+            "WP12-04"
+          ],
+          "title": "旧草稿准确内容披露与显式向前采用",
+          "estimate_hours": [
+            1.25,
+            2.5
+          ],
+          "estimate_confidence": "LOW_CURRENT_LEGACY_SOURCE_MAPPING_RISK",
+          "estimate_kind": "ACTUAL_CODEX_EXECUTION_ROLLING_14H_CALIBRATION",
+          "state": "DONE",
+          "started_at": "2026-11-08T11:49:05.752826+00:00",
+          "effective_start": 50575,
+          "scope_refinement": "原WP12-03/04历史旧草稿的准确版本/来源/当前内容披露与显式向前采用。复用已交付原生PersonalFormOwnerV2、当前字段/FILE/留存政策、共同事务与原命令；准确旧源必须可核对，不以当前head补历史pin或伪造过去发布/实际人。对可核源明确预览和当前授权后复制为新本人原生草稿，保留旧行/旧来源及完整操作链；不可核源只给明确未核实目录/阻断，不返回未授权数据或盲目批迁。当前源变化/撤权与失败回滚、UNKNOWN原键恢复及真实页面采用均在本窗范围。W316旧HTTP适配和W317重基前恢复已完不重复；不执行既有环境迁移/转换/清理或生产部署。",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W318-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave318-final-verification.json"
+          },
+          "actual_effective_seconds": 4353,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W318-01",
+              "source": "697f77e24a649da25072c6efa4fcf6c7ec11d40f",
+              "remote_target": "a95fb085f906eda5840060d1ed2d002425ec26db",
+              "pr": "https://github.com/GTX537/CP6/pull/772",
+              "branch": "codex/w318-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W318-HANDOFF",
+              "source": "c6f056043842b0cbe5ad72be9bed4d89488c1732",
+              "remote_target": "1f63b4b97db90483b16088dabfa237b05db4eee0",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/293",
+              "branch": "codex/w318-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W319-01",
+          "day": "D3",
+          "related_tasks": [
+            "WP12-03",
+            "WP12-04"
+          ],
+          "title": "原个人FORM两卡完整范围核销与W306前置",
+          "state": "DONE",
+          "started_at": "2026-11-08T13:05:19.149959+00:00",
+          "effective_start": 55149,
+          "estimate_hours": [
+            0.25,
+            0.6
+          ],
+          "estimate_kind": "LOW_CONFIDENCE_ACTUAL_CODEX_EXECUTION_SCOPE_RECONCILIATION",
+          "scope_refinement": "按原WP12-03/04实施范围、正反例和FORM R1直接25条AC逐项核销，复用W275/W285/W287/W293/W302–304/W316–318及BUG756准确结果；读取当前受影响调用链，确认旧入口、重基前恢复与历史来源边界已真实补齐。仅实际无余项才更新原卡；若有缺口保留卡并继续实现。W305已DONE，不再作为旧FORM摘要的未完阻塞；历史批量转换、物理purge、服务节点业务Owner和部署属于各自原范围。",
+          "implementation_complete": true,
+          "full_task_completed": true,
+          "report": "docs/development/evidence/W319-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave319-final-verification.json"
+          },
+          "actual_effective_seconds": 713,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W319-01",
+              "source": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
+              "remote_target": "b5e8b9401ffb634059ec8dcda53e9cb0484ea7b4",
+              "pr": "https://github.com/GTX537/CP6/pull/773",
+              "branch": "codex/w319-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W319-HANDOFF",
+              "source": "c5d40ecd538e74a0007fdb9fdf6d19b4c1917a89",
+              "remote_target": "211c955f79e2b67ba4341c24b8cd4bd12a35039c",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/294",
+              "branch": "codex/w319-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W320-01",
+          "day": "D3",
+          "related_tasks": [
+            "WP02-15"
+          ],
+          "title": "原生隐私导出载荷处置及恢复副本采用",
+          "state": "DONE",
+          "started_at": "2026-11-08T14:00:20.471262+00:00",
+          "effective_start": 58450,
+          "estimate_hours": [
+            2,
+            3.75
+          ],
+          "estimate_confidence": "LOW_ACTUAL_NEW_OWNER_AND_CROSS_DATABASE_RESTORE_RISK",
+          "scope_refinement": "原WP02-15真实余项：Main原生导出载荷的显式保留政策、独立申请/批准/执行、全主体hold与准确原件版本、当前权限及最终会话；实际删除本库载荷并保最小原结果/不可复活墓碑，旧恢复候选采用同一载荷处置事实。恢复版本/来源权威与已有双库UNKNOWN责任继续复用。仅此Owner，整体PARTIAL；不把撤销下载当删除，不物理清除WAL/备份/外部副本，不执行既有环境迁移/处置/恢复或部署。",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W320-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave320-final-verification.json"
+          },
+          "actual_effective_seconds": 6204,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W320-01",
+              "source": "c1809564087f8a8264511637b3f2a3500f49c080",
+              "remote_target": "90bf9e9f23cab088e9e5dd7c82cc2de58190a7c6",
+              "pr": "https://github.com/GTX537/CP6/pull/775",
+              "branch": "codex/w320-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W320-HANDOFF",
+              "source": "2851ce92e481742d66d10b30b6ca66eb13aad3ec",
+              "remote_target": "f2c29f43e8e46425255f79bf0aafc17773150613",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/296",
+              "branch": "codex/w320-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W321-01",
+          "day": "D3",
+          "related_tasks": [
+            "WP02-15"
+          ],
+          "title": "准确安全事件已分类字段处置与恢复采用",
+          "state": "DONE",
+          "started_at": "2026-11-08T16:03:32.416071+00:00",
+          "effective_start": 65842,
+          "estimate_hours": [
+            2.5,
+            4
+          ],
+          "estimate_confidence": "LOW_NEW_NATIVE_AUDIT_WRITERS_AND_CURRENT_UTC_POLICY_BOUNDARY",
+          "scope_refinement": "原WP02-15真实余项：Main.SecurityLog.Fields.v1按准确事件原件及已接受的UserName/ClientIp字段分类实施独立政策/预览/申请/批准/实际清理、全主体hold、原结果/墓碑和恢复采用。保留事件/stable subject/租户身份及其余未核字段，不宣称整个安全事件或整个隐私任务已匿名化。旧CreatedAt无时区，资格只按明确UTC NotBefore政策，不推算法定期限；单事件准确边界，不暗含批量或按同名归属。",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W321-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave321-final-verification.json"
+          },
+          "actual_effective_seconds": 5775,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W321-01",
+              "source": "9279cc29f4e7acf897e2c59201e475a7ca0bd96b",
+              "remote_target": "48420d71829daeb955198351696cc29aec33545a",
+              "pr": "https://github.com/GTX537/CP6/pull/776",
+              "branch": "codex/w321-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W321-HANDOFF",
+              "source": "9d69c9017b39097b0f3d00d6ca42d98230e9c3b2",
+              "remote_target": "bfaaf8edfc15f3085680fd7451d8a2ce9c616ca6",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/297",
+              "branch": "codex/w321-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W322-01",
+          "day": "D3",
+          "related_tasks": [
+            "WP02-15"
+          ],
+          "title": "租户已分类来源受控导出与原结果",
+          "state": "DONE",
+          "started_at": "2026-11-08T17:46:50.651789+00:00",
+          "effective_start": 72040,
+          "estimate_hours": [
+            1.75,
+            3
+          ],
+          "estimate_confidence": "LOW_REUSES_OWNER_TX_NEW_TENANT_CLASSIFICATION_AND_RECIPIENT_BOUNDARY",
+          "scope_refinement": "原WP02-15租户受控导出采用：准确target tenant的已分类identity/security/roles来源，显式用途、接收人、独立tenant能力、TTL和不可变制品/原操作；当前下载重判身份/范围/撤销/期限，真实Manifest含数量/读取窗/字段排除/未接Owner。独立租户模型无伪subject，整体仍PARTIAL，旧直接租户HTTP散流退役410；其他Owner全量导出与新租户制品物理保留/处置仍列真实余项。",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W322-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave322-final-verification.json"
+          },
+          "actual_effective_seconds": 3254,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W322-01",
+              "source": "8f19ecbb47eeb74dd2c1630b40c2fc4ccf6b336a",
+              "remote_target": "2f4eaab416eac5eff12cda327cdb9f76262ac290",
+              "pr": "https://github.com/GTX537/CP6/pull/777",
+              "branch": "codex/w322-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W322-HANDOFF",
+              "source": "82f8cb23f44f5c65715220c57ea469ff860d195f",
+              "remote_target": "34fcd5372b3280a1961f55f96fdf2945b20c3b57",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/298",
+              "branch": "codex/w322-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W323-01",
+          "day": "D3",
+          "related_tasks": [
+            "WP02-15"
+          ],
+          "title": "租户制品真实字节处置和整租户hold",
+          "state": "DONE",
+          "started_at": "2026-11-08T18:44:32.751145+00:00",
+          "effective_start": 75502,
+          "estimate_hours": [
+            1.75,
+            2.75
+          ],
+          "estimate_confidence": "LOW_NATIVE_EFFECT_TENANT_HOLD_AND_EXPLICIT_RESTORE_REFUSAL",
+          "scope_refinement": "W323独立Main.Privacy.TenantExportPayload.v1实际处置：准确租户制品、明确保留政策、独立申请/批准/执行、目标租户所有主体有效hold屏障及ABA；真实删除字节、撤访问、最小原回执/墓碑同commit，原生无所属删除/回填拒绝。无伪subject；本窗不实现备份恢复适配，有该Owner墓碑时现恢复入口明确失败并保持隔离，旧批准随source epoch失效。",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W323-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave323-final-verification.json"
+          },
+          "actual_effective_seconds": 2143,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W323-01",
+              "source": "b60a77fe800257078ded1cb4deadfcede7bac2f7",
+              "remote_target": "be6ec3bea15d3e0a6d54f1960f9f7eaabb13f641",
+              "pr": "https://github.com/GTX537/CP6/pull/778",
+              "branch": "codex/w323-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W323-HANDOFF",
+              "source": "d505ea162e8c84e8d4677106ec68fda339e191d7",
+              "remote_target": "7ffdab2f4f8a6b2ad36c99b20c00e87b66b987d9",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/299",
+              "branch": "codex/w323-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W324-01",
+          "day": "D3",
+          "related_tasks": [
+            "WP02-15"
+          ],
+          "title": "租户载荷真实备份恢复与准确结果",
+          "state": "DONE",
+          "started_at": "2026-11-08T19:25:15.698679+00:00",
+          "effective_start": 77945,
+          "estimate_hours": [
+            0.75,
+            1.5
+          ],
+          "estimate_confidence": "LOW_REUSES_RESTORE_PROTOCOL_NEW_TENANT_UNIT_AND_EXTERNAL_COPY_BOUNDARY",
+          "scope_refinement": "W324采用Main.Privacy.TenantExportPayload.v1真实恢复副本：独立无subject的tenant恢复Unit、准确原制品元数据/revision/实际SHA、真实删除字节与缺失0分别记录，当前源保留政策/整租户hold和独立恢复批准，父回执/原生效果/墓碑/fence/候选开放同候选commit；继续SourceRoot→CandidateRoot与两次提交UNKNOWN责任，其他Owner及WAL/外部副本仍PARTIAL。",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W324-01/DELIVERY.md",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave324-final-verification.json"
+          },
+          "actual_effective_seconds": 3520,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W324-01",
+              "source": "16823b875a818608e4d7110864dfd85003b334de",
+              "remote_target": "fe4e66aaa124f43630dbc5c97b8a9f049742ea24",
+              "pr": "https://github.com/GTX537/CP6/pull/779",
+              "branch": "codex/w324-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W324-HANDOFF",
+              "source": "2abda2298329057bf178dd9abd4c1b50084401b8",
+              "remote_target": "4a2e0975a29a1e187f465f3e2a35c621c3acbf90",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/300",
+              "branch": "codex/w324-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W310-01",
+          "day": "CLOSEOUT",
+          "related_tasks": [
+            "WP12-19",
+            "WP12-03",
+            "WP05-14",
+            "WP03-03"
+          ],
+          "title": "预算末尾真实余项核对及当前任务收妥",
+          "estimate_hours": [
+            0.75,
+            1.25
+          ],
+          "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
+          "estimate_confidence": "LOW_DOCUMENT_ONLY_ALL_59_SOURCE_EVIDENCE_RECONCILIATION_PLUS_NORMAL_LIFECYCLE",
+          "state": "DONE",
+          "initial_estimate_hours": [
+            1,
+            2
+          ],
+          "started_at": "2026-11-08T20:26:46.693187+00:00",
+          "effective_start": 81636,
+          "scope_refinement": "W310预算末尾核销：以原CSV及W250相同59个ID逐卡对照原定义、当前源码/采用和既有有效执行；保留8已闭环、51真实余项，结算本轮全部窗口实测与24h口径。只更新文档/台账，不重跑未变产品，不提前宣布预算或全项目完成。",
+          "report": "docs/development/evidence/W310-01/DELIVERY.md",
+          "full_task_reconciled": "WP03-03",
+          "scope_audit_complete": true,
+          "whole_program_closeout_complete": false,
+          "implementation_complete": true,
+          "full_task_completed": false,
+          "original_card_completed": "WP03-03",
+          "lifecycle_snapshot": {
+            "main_finish_required": false,
+            "main_seat_released": true,
+            "handoff_seat_released": true,
+            "main_branch_deleted": true,
+            "handoff_branch_deleted": true,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave310-final-verification.json"
+          },
+          "actual_effective_seconds": 1504,
+          "remote_adoption": [
+            {
+              "repository": "CP6",
+              "task": "W310-01",
+              "source": "01faff945fb63296284261b6c591d50b5dfcb5bd",
+              "remote_target": "7dbc37aa00d1075a0dde22117c8d47a8550defdc",
+              "pr": "https://github.com/GTX537/CP6/pull/780",
+              "branch": "codex/w310-01",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
+              "workspace_clean": true
+            },
+            {
+              "repository": "CP6.AI-Handoff",
+              "task": "W310-HANDOFF",
+              "source": "5a418a0011dfa4416441e8d541a3be890f56a7e6",
+              "remote_target": "a53d7709ac58734bf56679ef2a306d7fbfb7cc59",
+              "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/301",
+              "branch": "codex/w310-handoff",
+              "branch_absent": true,
+              "seat_released": true,
+              "workspace": "D:\\CP6-worktrees\\dev-2",
+              "workspace_clean": true
+            }
+          ]
+        },
+        {
+          "id": "W325-01",
+          "day": "FINAL_BUDGET_WINDOW",
+          "related_tasks": [
+            "WP05-14"
+          ],
+          "title": "准确可选成员排除与原决定追溯",
+          "state": "DONE",
+          "started_at": "2026-11-08T20:54:12.138670+00:00",
+          "effective_start": 83282,
+          "estimate_hours": [
+            0.75,
+            1.5
+          ],
+          "estimate_confidence": "LOW_OBSERVED_W308_W309_REUSES_SET_JOURNAL_AND_EDITOR_NEW_DECISION_AUTHORITY",
+          "scope_refinement": "原WP05-14准确可选成员排除：以明确OPTIONAL/允许来源决定的准确条款、当前SET排除与源确认权限，保存原成员/原件/冲突和真实原决定追溯；原事务/CAS/回执/页面恢复直接采用，未知/必须/禁止/错误来源及不利冲突继续阻断，其他商业/ECM/DEV仍余。",
+          "implementation_complete": true,
+          "report": "docs/development/evidence/W325-01/DELIVERY.md",
+          "full_task_completed": false,
+          "measured_seconds_before_delivery": 2254,
+          "lifecycle_snapshot": {
+            "main_finish_required": true,
+            "main_seat_released": false,
+            "handoff_seat_released": false,
+            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave325-final-verification.json"
+          },
+          "completion_effective_condition": "Only effective after this final source is normally adopted in Main and Handoff, exact task branches disposed, official finish releases both seats, and wave325-final-verification.json is PASS. This source snapshot precedes those final receipts.",
+          "final_window_effective_seconds": 2956
+        }
+      ],
+      "reestimates": [
+        {
+          "effective_seconds": 7213,
+          "snapshot_at": "2026-11-04T02:23:12Z",
+          "completed_actual_seconds": {
+            "W297-01": 3412,
+            "W298-01": 1377,
+            "BUG744": 473
+          },
+          "current_window": "W299-01",
+          "current_elapsed_seconds": 1437,
+          "current_remaining_estimate_hours": [
+            0.4,
+            0.8
+          ],
+          "primary_remaining_estimate_hours": [
+            13.15,
+            27.2
+          ],
+          "reserve_estimate_hours": [
+            9,
+            18
+          ],
+          "capacity_remaining_hours": 21.996,
+          "reason": "Same-family windows are faster through existing contracts and verified infrastructure. Recalibrate down, add actual original WP02-15 reserve, never wait to fill time. W299 is not yet merged/released. Estimates remain low confidence, not additive probability guarantees.",
+          "next_effective_seconds": 14400
+        },
+        {
+          "effective_seconds": 14427,
+          "snapshot_at": "2026-11-04T04:23:03Z",
+          "completed_actual_seconds": {
+            "W297-01": 3412,
+            "W298-01": 1377,
+            "BUG744": 473,
+            "W299-01": 2123,
+            "BUG747": 707,
+            "W300-01": 2130,
+            "W301-01": 791,
+            "BUG751": 1232
+          },
+          "current_window": "W302-01",
+          "current_elapsed_seconds": 1245,
+          "current_remaining_estimate_hours": [
+            1,
+            2
+          ],
+          "remaining_window_estimates": {
+            "W303-01": [
+              0.9,
+              1.8
+            ],
+            "W304-01": [
+              0.7,
+              1.5
+            ],
+            "W305-01": [
+              1.25,
+              2.5
+            ],
+            "W306-01": [
+              0.75,
+              1.5
+            ],
+            "W307-01": [
+              1,
+              2
+            ],
+            "W308-01": [
+              1.5,
+              3
+            ],
+            "W309-01": [
+              1,
+              2
+            ],
+            "W310-01": [
+              0.5,
+              1
+            ]
+          },
+          "primary_remaining_estimate_hours": [
+            8.6,
+            17.3
+          ],
+          "reserve_estimate_hours": [
+            9,
+            18
+          ],
+          "capacity_remaining_hours": 19.9925,
+          "reason": "W301 was a reused-evidence audit (13.2min); BUG751 actual fix took20.5min, not a workday. W302 introduces real sensitive-field source, independent processing, state/hold/journal transactions and UI, currently unverified. Same-family follow-ups may run faster, so reduce primary estimates and retain original WP02-15 reserve. Low confidence; intervals are not an additive probability guarantee. No repeated green tests or waiting to fill time.",
+          "next_effective_seconds": 21600
+        },
+        {
+          "at": "2026-11-04T06:46:58.677778+00:00",
+          "effective_seconds": 21733,
+          "remaining_seconds": 64667,
+          "completed_window_actuals": {
+            "wave302": {
+              "seconds": 2447,
+              "minutes": 40.8
+            },
+            "wave303": {
+              "seconds": 1934,
+              "minutes": 32.2
+            },
+            "wave304": {
+              "seconds": 898,
+              "minutes": 15.0
+            },
+            "bug756": {
+              "seconds": 1310,
+              "minutes": 21.8
+            }
+          },
+          "current_window": "W316-01",
+          "current_elapsed_seconds": 1610,
+          "remaining_estimates": {
+            "W316-01": [
+              0.75,
+              1.75
+            ],
+            "W317-01": [
+              1,
+              2.5
+            ],
+            "W305-01": [
+              1.25,
+              2.5
+            ],
+            "W306-01": [
+              0.75,
+              1.5
+            ],
+            "W307-01": [
+              1,
+              2
+            ],
+            "W308-01": [
+              1.5,
+              3
+            ],
+            "W309-01": [
+              1,
+              2
+            ],
+            "W310-01": [
+              0.5,
+              1
+            ]
+          },
+          "estimate_basis": "Low-confidence engineering ranges; not calibrated probabilities; W316 is remaining time, other windows are full time. Completed-window samples may span the prior calibration boundary. No duplicated Main/Handoff or inactive gaps.",
+          "next_reestimate": 28800
+        }
+      ],
+      "exclusions": [],
+      "budget_policy": "Approximately24h effective authorized execution, finish current complete task at budget end; queue is a reserve, not a promise all14 close. No padding, duplicate tests, new scopes outside375, or automatic next cycle.",
+      "interruptions": [
+        {
+          "id": "BUG744",
+          "issue": "https://github.com/GTX537/CP6/issues/744",
+          "after": "W298-01",
+          "before": "W299-01",
+          "reason": "Existing configured detail URL has no frontend route; actual browser reproduced blank page.",
+          "estimate_hours": [
+            0.5,
+            1.25
+          ],
+          "estimate_confidence": "LOW",
+          "state": "DONE",
+          "actual_effective_seconds": 473,
+          "report": "docs/development/evidence/BUG-744/DELIVERY.md",
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug744-final-verification.json",
+          "remote_main": "1a4e6edac635000951eb7b4ec5d12edecd850691",
+          "pr": "https://github.com/GTX537/CP6/pull/746"
+        },
+        {
+          "id": "BUG747",
+          "issue": "https://github.com/GTX537/CP6/issues/747",
+          "after": "W299-01",
+          "before": "W300-01",
+          "reason": "Three existing withdrawal transports reject legal RETURNED context; actual regression and safe prior-CONFLICT recovery to be verified in independent branch.",
+          "estimate_hours": [
+            0.4,
+            0.9
+          ],
+          "estimate_confidence": "LOW",
+          "state": "DONE",
+          "actual_effective_seconds": 707,
+          "report": "docs/development/evidence/BUG-747/DELIVERY.md",
+          "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug747-final-verification.json",
+          "remote_main": "324f722644e6e79df0ac75dfc3396d0f1858306d",
+          "pr": "https://github.com/GTX537/CP6/pull/749",
+          "historical_conflicts": "Preserved immutable; existing environments not inspected or migrated. Separate controlled forward recovery required for affected existing records."
+        }
+      ],
+      "next_priority": "原24h已收妥。按用户续接从原375真实余项执行，当前首窗W326-01。",
+      "extra_bug_deliveries": [
+        {
+          "id": "BUG751",
+          "issue": 751,
+          "state": "DONE",
+          "actual_effective_seconds": 1232,
+          "report": "docs/development/evidence/BUG-751/DELIVERY.md",
+          "source": "43b8afc76da3e3323233e79fdd4953db2c7c14d8",
+          "remote_main": "b41bc799fca2a86c8ac293be8dc4394e64fde2cd",
+          "pr": "https://github.com/GTX537/CP6/pull/753",
+          "lifecycle_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug751-final-verification.json"
+        }
+      ],
+      "actual_execution_calibrations": [
+        {
+          "at": "2026-11-04T08:45:11.034616+00:00",
+          "effective_seconds": 28842,
+          "remaining_budget_seconds": 57558,
+          "completed_windows": 13,
+          "completed_window_seconds": 23658,
+          "median_window_seconds": 1934,
+          "min_window_seconds": 781,
+          "max_window_seconds": 3412,
+          "basis": "Observed actual execution; completed windows only. Integration/planning gaps remain in effective total. No artificial waiting or inferred completed product scope.",
+          "forecast_confidence": "LOW",
+          "next_calibration_seconds": 36000
+        },
+        {
+          "at": "2026-11-08T09:47:18.760163+00:00",
+          "threshold_seconds": 43200,
+          "effective_seconds": 43268,
+          "remaining_seconds": 43132,
+          "previous_window": "W313-01",
+          "previous_actual_seconds": 1844,
+          "current_window": "W314-01",
+          "current_elapsed_seconds": 1127,
+          "current_window_finished": false,
+          "next_estimates": {
+            "W315-01": [
+              1,
+              2.5
+            ],
+            "W306-01": [
+              0.75,
+              1.5
+            ],
+            "W310-01": [
+              0.5,
+              1
+            ]
+          },
+          "note": "Low confidence actual coding ranges, not human workdays. Native goal panel remains paused despite user resume; local monotonic evidence excludes pause and pre-sample restore preparation. More original WP02-15 and other original partial-card work will be admitted after current dependencies are read; do not stop at this window or add idle time."
+        }
+      ],
+      "next_calibration_seconds": null,
+      "next_calibration_effective_seconds": null,
+      "pause_requested": false,
+      "pause_after": "W313-01",
+      "pause_reason": "User requests quota-reset pause after current small task",
+      "resume_requires_user": false,
+      "pause_final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave313-final-verification.json",
+      "resumed_at": "2026-11-08T10:06:39.059558+00:00",
+      "resume_instruction": "继续目标",
+      "timing_basis": "Native goal panel is active; its counter excludes the earlier user-authorized resumed segment, so the uninterrupted OS monotonic execution clock remains authoritative. Active local execution excludes the 4-day pause and pre-sample preparation.",
+      "native_goal_panel_status": "complete",
+      "budget_closeout_window": "W325-01",
+      "implementation_scope_complete": true,
+      "scope_reconciliation_complete": true,
+      "whole_project_complete": false,
+      "completion_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave325-final-verification.json",
+      "final_measured_seconds_pending_lifecycle": false,
+      "implementation_completed_at": "2026-11-08T21:31:46.224819+00:00",
+      "completion_effective_condition": "Main/Handoff实际正常采用、分支清理及两席位释放均已从同窗最终证明和远端读回。",
+      "completion_scope": "Original approximately24h effective single-chat program only; not all375/125/247",
+      "final_effective_seconds_source": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave325-final-verification.json",
+      "final_accounting": {
+        "original_375": {
+          "DONE": 37,
+          "IN_PROGRESS": 2,
+          "PLANNED": 336
+        },
+        "original_partial_59": {
+          "closed": 9,
+          "remaining": 50,
+          "implementation_remaining": 35,
+          "evidence_or_applicability_pending": 15
+        },
+        "new_complete_formal_cards": [
+          "WP12-19",
+          "WP12-10",
+          "WP05-16",
+          "WP12-03",
+          "WP12-04",
+          "WP12-08",
+          "WP03-03"
+        ],
+        "whole_project_complete": false,
+        "formal_targets_delivered": 0,
+        "formal_runtime_not_run": 247,
+        "terminal_window": "W325-01",
+        "scope_audit": "docs/development/evidence/W310-01/DELIVERY.md",
+        "final_receipt": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave325-final-verification.json",
+        "recorded_seconds_are_pre_delivery_sample": true
+      },
+      "native_goal_time_used_seconds": 80111
+    },
     "next_execution_plan": {
       "id": "CP6-72H-20261109",
       "path": "docs/development/planning/20261109-codex-72h-execution.md",
@@ -247772,2049 +249815,6 @@
         "completed_scope_at": "2026-11-03T15:06:36.020008+00:00",
         "completion_semantics": "User authorized approximately24h, not mandatory idle until an exact second. Budget-end inventory and implementation scope complete; remote delivery/cleanup remains a separate pending snapshot. Actual final seconds are reported without rounding up; whole-goal completion requires PASS final proof after both official finishes.",
         "final_lifecycle_proof": "C:\\Users\\tt\\.gstack\\projects\\GTX537-CP6\\checkpoints\\20261103-151121Z-cp6-24h-program-complete.md"
-      },
-      {
-        "id": "CP6-24H-20261104",
-        "path": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
-        "state": "DONE",
-        "execution_owner": "COORD_SINGLE_CHAT",
-        "execution_started": true,
-        "budget_unit": "CODEX_EFFECTIVE_EXECUTION_HOURS",
-        "capacity_hours": 24,
-        "started_at": "2026-11-04T00:22:36+00:00",
-        "effective_seconds_recorded": 86238,
-        "timing_snapshot_at": "2026-11-08T21:43:28.011391+00:00",
-        "timing_source": "41997 prior effective seconds plus continuous OS monotonic time from 2026-11-08T09:26:06Z; pause/pre-sample preparation excluded. Native panel is active after reactivation but omits the earlier authorized resumed segment; never sum the clocks.",
-        "next_reestimate_at_effective_seconds": null,
-        "estimate_hours": [
-          23.75,
-          45.75
-        ],
-        "estimate_confidence": "LOW_ROLLING_AT_2H",
-        "estimate_is_guarantee": false,
-        "original_task_count": 375,
-        "baseline_counts": {
-          "DONE": 30,
-          "IN_PROGRESS": 2,
-          "PLANNED": 343
-        },
-        "baseline_partial59_remaining": 53,
-        "windows": [
-          {
-            "id": "W297-01",
-            "day": "D1",
-            "related_tasks": [
-              "WP12-19"
-            ],
-            "title": "DOC完整可信撤回与原应用互斥",
-            "estimate_hours": [
-              2,
-              3.5
-            ],
-            "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
-            "estimate_confidence": "LOW",
-            "state": "DONE",
-            "started_at": "2026-11-04T00:26:57.175178+00:00",
-            "scope_refinement": "Actual DOC Owner: current explicit withdraw authority and optional bounded business delegation, immutable fact/outbox, apply/withdraw same control CAS, real receipt recovery and old submission compatibility. Existing ITER not repeated.",
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W297-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave297-final-verification.json"
-            },
-            "actual_effective_seconds": 3412,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W297-01",
-                "source": "de7d5d7126b240016005e4c4bc58fd650cab7d9f",
-                "remote_target": "afc3cc08a081f2affc3f7033b758e312838169d6",
-                "pr": "https://github.com/GTX537/CP6/pull/743",
-                "branch": "codex/w297-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W297-HANDOFF",
-                "source": "67342517c973c0ba8276a14220711ba0ca6f58b0",
-                "remote_target": "eef6ab08facda49f6b0e89fce6acfa72df79b205",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/274",
-                "branch": "codex/w297-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W298-01",
-            "day": "D1",
-            "related_tasks": [
-              "WP12-19"
-            ],
-            "title": "需求集实际撤回及显式重新授权",
-            "estimate_hours": [
-              1.25,
-              2.5
-            ],
-            "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
-            "estimate_confidence": "LOW",
-            "state": "DONE",
-            "started_at": "2026-11-04T01:25:00.118196+00:00",
-            "effective_start": 3730,
-            "scope_refinement": "Actual RequirementSet Owner withdrawal, exact revision/read source and evidence mode, independent business delegation, shared apply/control CAS, explicit BLOCKED successor and native transport/UI recovery. Reuse unchanged wire and DOC transport protocol evidence; validate this actual Owner, not copied labels.",
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W298-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave298-final-verification.json"
-            },
-            "actual_effective_seconds": 1377,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W298-01",
-                "source": "5ab489cd2f6b94528c9a5f51fdfc8667e908d0af",
-                "remote_target": "3a80fceb31dc2864dd47a825891dcf9f2a367fa2",
-                "pr": "https://github.com/GTX537/CP6/pull/745",
-                "branch": "codex/w298-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W298-HANDOFF",
-                "source": "3991fc698a1115a44fd116203cde7f349984aad9",
-                "remote_target": "f35bcb1e73ceb60f19e5057a459ca80e9e666a3e",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/275",
-                "branch": "codex/w298-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W299-01",
-            "day": "D1",
-            "related_tasks": [
-              "WP12-19"
-            ],
-            "title": "版模处置Owner撤回与当前资格竞争",
-            "estimate_hours": [
-              1.5,
-              3
-            ],
-            "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
-            "estimate_confidence": "LOW",
-            "state": "DONE",
-            "started_at": "2026-11-04T02:00:06.727104+00:00",
-            "effective_start": 5776,
-            "scope_refinement": "Actual ToolDisposition approval withdrawal, independent dispose-withdraw/delegate authority, immutable exact original, BLOCKED successor and native UI/transport. ToolApplication currently only emits BLOCKED/STALE/CONFLICT; share real control and preserve that legal domain, never fabricate APPLIED or physical finalization. Existing disposition block/open obligations remain. Exact pending submission adoption and terminal receipt preservation.",
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W299-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave299-final-verification.json"
-            },
-            "actual_effective_seconds": 2123,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W299-01",
-                "source": "0fc9157e09bef6ceb1eac4fa5b65219a59443e77",
-                "remote_target": "58dd37ebbd3f1244ff41ec31dd8765c04ba6a1cc",
-                "pr": "https://github.com/GTX537/CP6/pull/748",
-                "branch": "codex/w299-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W299-HANDOFF",
-                "source": "24585fbc9a5ea8de62efa8fc8aa5c4095f3917fa",
-                "remote_target": "05992786234fb4d3425b5b160020632d1ee01775",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/276",
-                "branch": "codex/w299-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W300-01",
-            "day": "D1",
-            "related_tasks": [
-              "WP12-19"
-            ],
-            "title": "库位规则Owner撤回与当前控制头",
-            "estimate_hours": [
-              0.75,
-              1.5
-            ],
-            "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
-            "estimate_confidence": "LOW_RECALIBRATED_AT_2H",
-            "state": "DONE",
-            "initial_estimate_hours": [
-              1.5,
-              3
-            ],
-            "started_at": "2026-11-04T02:49:40.816451+00:00",
-            "effective_start": 8818,
-            "scope_refinement": "Use actual LocationRule proposal revision/token as shared control with existing proposal withdrawal and review application; preserve native proposal/approval journals and all legacy legal inputs. Native review withdrawal freezes current human authority, exact submission and before/after real proposal revision. Explicit business grant and BLOCKED successor; no rule activation or stock/financial effect.",
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W300-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave300-final-verification.json"
-            },
-            "actual_effective_seconds": 2130,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W300-01",
-                "source": "495e295c8622b84acfd699e4cd1f964c691948ad",
-                "remote_target": "cff40fb720d8d15e8969d794ae97a0fd33346ad9",
-                "pr": "https://github.com/GTX537/CP6/pull/750",
-                "branch": "codex/w300-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W300-HANDOFF",
-                "source": "899816c9c333199c423acce1c2077cd8cb19d3b3",
-                "remote_target": "256534a6ae4b7e39375a8c00155537cd422d9a73",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/277",
-                "branch": "codex/w300-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W301-01",
-            "day": "D1",
-            "related_tasks": [
-              "WP12-19"
-            ],
-            "title": "原可信撤回卡逐项核销与真实缺口修正",
-            "estimate_hours": [
-              0.35,
-              0.75
-            ],
-            "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
-            "estimate_confidence": "LOW_RECALIBRATED_AT_2H",
-            "state": "DONE",
-            "initial_estimate_hours": [
-              0.5,
-              1.25
-            ],
-            "started_at": "2026-11-04T03:27:35.817434+00:00",
-            "effective_start": 11042,
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W301-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave301-final-verification.json"
-            },
-            "original_card_completed": false,
-            "followup_issue": "https://github.com/GTX537/CP6/issues/751",
-            "actual_effective_seconds": 791,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W301-01",
-                "source": "26ed24ecf31468edd491ac1a7e6f3b56010a04d7",
-                "remote_target": "6789d33ae78da74781ea6cda3441f81e29a21cfc",
-                "pr": "https://github.com/GTX537/CP6/pull/752",
-                "branch": "codex/w301-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W301-HANDOFF",
-                "source": "6209c5e447b78954d5d985a1ab6ad9605eff4206",
-                "remote_target": "5d0bf0fb5dca8cd40ad8e1ebca511d242f2a52bc",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/278",
-                "branch": "codex/w301-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W302-01",
-            "day": "D2",
-            "related_tasks": [
-              "WP02-15",
-              "WP12-03"
-            ],
-            "title": "受控字段处置的权威Owner与最小实际闭环",
-            "estimate_hours": [
-              1.5,
-              3.25
-            ],
-            "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
-            "estimate_confidence": "LOW_RECALIBRATED_AT_2H",
-            "state": "DONE",
-            "initial_estimate_hours": [
-              3,
-              5.5
-            ],
-            "started_at": "2026-11-04T04:04:03.060841+00:00",
-            "effective_start": 13182,
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W302-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave302-final-verification.json"
-            },
-            "actual_effective_seconds": 2447,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W302-01",
-                "source": "361408d8f781e7b57e3baac78330e0104021e3f2",
-                "remote_target": "98005e6b56ab2f880a12e66288c8e2fba92c1272",
-                "pr": "https://github.com/GTX537/CP6/pull/754",
-                "branch": "codex/w302-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W302-HANDOFF",
-                "source": "f895b245b75ae433728e979cd308e709bc9215a7",
-                "remote_target": "6c489cd471c969645887e65f1f4b209147ada344",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/279",
-                "branch": "codex/w302-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W303-01",
-            "day": "D2",
-            "related_tasks": [
-              "WP12-03"
-            ],
-            "title": "个人表单隐藏字段重基采用处置Ref",
-            "estimate_hours": [
-              0.9,
-              1.8
-            ],
-            "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
-            "estimate_confidence": "LOW_RECALIBRATED_AT_4H",
-            "state": "DONE",
-            "initial_estimate_hours": [
-              2,
-              3.5
-            ],
-            "started_at": "2026-11-04T04:48:32.183323+00:00",
-            "effective_start": 15670,
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W303-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave303-final-verification.json"
-            },
-            "actual_effective_seconds": 1934,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W303-01",
-                "source": "a1eb36bfb994374ed874d361b64e4e683d4bf048",
-                "remote_target": "b4d7315d2bbd512b5515c3f2cde3ab6cd5a19d69",
-                "pr": "https://github.com/GTX537/CP6/pull/755",
-                "branch": "codex/w303-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W303-HANDOFF",
-                "source": "633a88c41bccf729aa44be1734df6aaa1e5e489f",
-                "remote_target": "926aaa5b92c35dc1fd80e350994c4a70e4e22d4d",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/280",
-                "branch": "codex/w303-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W304-01",
-            "day": "D2",
-            "related_tasks": [
-              "WP12-03",
-              "WP12-04"
-            ],
-            "title": "原表单提交卡合法域和原子性剩余核销",
-            "estimate_hours": [
-              0.7,
-              1.5
-            ],
-            "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
-            "estimate_confidence": "LOW_RECALIBRATED_AT_4H",
-            "state": "DONE",
-            "initial_estimate_hours": [
-              1.5,
-              3
-            ],
-            "started_at": "2026-11-04T05:39:23.808571+00:00",
-            "effective_start": 17732,
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W304-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave304-final-verification.json"
-            },
-            "actual_effective_seconds": 898,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W304-01",
-                "source": "6926f205f0ef3ae8ca5838c07fc04cba2d744d25",
-                "remote_target": "eb8ecfbf97f00151e58ae1da2234e782d080c2b0",
-                "pr": "https://github.com/GTX537/CP6/pull/757",
-                "branch": "codex/w304-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W304-HANDOFF",
-                "source": "44481e34796c77bab93cb17c783e04dbcc2233e5",
-                "remote_target": "f6ce982851e13241da6871c7510a8f635a76ff83",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/281",
-                "branch": "codex/w304-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "BUG756",
-            "day": "ROLLING",
-            "related_tasks": [
-              "WP12-03",
-              "WP12-04"
-            ],
-            "title": "合法data与命令信封容量边界修复",
-            "estimate_hours": [
-              0.6,
-              1.3
-            ],
-            "issue": "https://github.com/GTX537/CP6/issues/756",
-            "state": "DONE",
-            "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
-            "estimate_confidence": "LOW_SOURCE_AUDIT_W304",
-            "scope_ref": "docs/development/evidence/W304-01/DELIVERY.md",
-            "actual_effective_seconds": 1310,
-            "remote_adoption": {
-              "result": "PASS",
-              "at": "2026-11-04T06:16:49.618267+00:00",
-              "source": "89091220dbf5aa973927481348296b7666965494",
-              "main": "1d4981dd5f44d0ca38882d842e0146876ec8bcad",
-              "pr": "https://github.com/GTX537/CP6/pull/758",
-              "issue_closed": true,
-              "branch_disposition": "deleted-local-and-remote",
-              "workspace_clean": true,
-              "seat_released": true,
-              "all_slots_released": true,
-              "slot": "DEV-1",
-              "actions_runs": 0,
-              "root_untracked_preserved": true,
-              "validation": "本地PostgreSQL18和实际Main Program认证HTTP通过：原生/HTTP满额提交、双预览、草稿创建/保存/提交、退回编辑和SFS决策；超出1字节明确拒绝且无额外效果，原意图回放、原摘要、精确数值及退回前快照保留。另验证中文满额HTTP、补充平面/私用字符经merge/patch/rules/projection、合并后真实超限拒绝、嵌套数组/控制字符/空值/布尔和精确数字。当前隐藏/只读mask、重基规则及原结果、五上下文closed DTO和canonical回归均通过。",
-              "execution_plan_completed": false,
-              "effective_seconds_total": 19995,
-              "window_effective_seconds": 1310,
-              "next_window": "W316 controlled legacy personal FORM/draft adapters, then W317 before-rebase snapshot recovery",
-              "checkpoint": "C:\\Users\\tt\\.gstack\\projects\\GTX537-CP6\\checkpoints\\20261104-061649Z-bug756-24h-program-continue.md"
-            },
-            "report": "docs/development/evidence/BUG-756/DELIVERY.md"
-          },
-          {
-            "id": "W316-01",
-            "day": "ROLLING",
-            "related_tasks": [
-              "WP12-03",
-              "WP12-04"
-            ],
-            "title": "旧表单草稿与提交入口受控适配及准确命令映射",
-            "estimate_hours": [
-              1.5,
-              3
-            ],
-            "state": "DONE",
-            "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
-            "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
-            "scope_ref": "docs/development/evidence/W304-01/DELIVERY.md",
-            "started_at": "2026-11-04T06:18:41.857315+00:00",
-            "effective_start": 20123,
-            "estimate_remaining_hours": [
-              0.75,
-              1.75
-            ],
-            "elapsed_effective_seconds_at_reestimate": 1610,
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W316-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave316-final-verification.json"
-            },
-            "actual_effective_seconds": 3161,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W316-01",
-                "source": "efaff719bf6824f18ca8d30a6100d8b54ee02c54",
-                "remote_target": "52327983052b603995036f5abad6216812f0bffd",
-                "pr": "https://github.com/GTX537/CP6/pull/760",
-                "branch": "codex/w316-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W316-HANDOFF",
-                "source": "cc9bea1d2cc6c771b484d9e1f3cc4c0766e86828",
-                "remote_target": "c12143b87aed17a712e68c7c0cbf8b795af6485b",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/282",
-                "branch": "codex/w316-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "BUG759",
-            "day": "ROLLING",
-            "related_tasks": [
-              "WP12-03",
-              "WP12-04"
-            ],
-            "title": "草稿未知结果刷新后原命令恢复入口",
-            "estimate_hours": [
-              0.5,
-              1.2
-            ],
-            "issue": "https://github.com/GTX537/CP6/issues/759",
-            "state": "DONE",
-            "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION",
-            "scope_ref": "docs/development/evidence/W316-01/DELIVERY.md",
-            "actual_effective_seconds": 866,
-            "remote_adoption": {
-              "result": "PASS",
-              "at": "2026-11-04T07:26:36.479649+00:00",
-              "source": "6dbb8176e35d8ebb02137fef14ec5e4a9d0d9308",
-              "main": "253f937ff14ac12519056c950930c7ca692e1291",
-              "pr": "https://github.com/GTX537/CP6/pull/761",
-              "issue_closed": true,
-              "branch_disposition": "deleted-local-and-remote",
-              "workspace_clean": true,
-              "seat_released": true,
-              "all_slots_released": true,
-              "slot": "DEV-1",
-              "actions_runs": 0,
-              "root_untracked_preserved": true,
-              "validation": "2项实际PostgreSQL18/登录HTTP/Chrome场景通过：删除与提交成功丢答、刷新查询、未到服务端NOT_OBSERVED后明确关闭，以及既有隐藏字段处置重基的原命令恢复。16项受影响编辑器行为测试和vue-tsc通过，无跳过冒充通过。",
-              "execution_plan_completed": false,
-              "effective_seconds_total": 24180,
-              "window_effective_seconds": 866,
-              "next_window": "W317 exact before-rebase snapshot recovery, then W305 and continuing24h queue",
-              "checkpoint": "C:\\Users\\tt\\.gstack\\projects\\GTX537-CP6\\checkpoints\\20261104-072636Z-bug759-24h-program-continue.md"
-            },
-            "report": "docs/development/evidence/BUG-759/DELIVERY.md"
-          },
-          {
-            "id": "W317-01",
-            "day": "ROLLING",
-            "related_tasks": [
-              "WP12-03",
-              "WP12-04"
-            ],
-            "title": "重基准确前快照到新个人草稿的显式恢复",
-            "estimate_hours": [
-              1,
-              2.5
-            ],
-            "state": "DONE",
-            "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
-            "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
-            "scope_ref": "docs/development/evidence/W304-01/DELIVERY.md",
-            "started_at": "2026-11-04T07:28:43.137840+00:00",
-            "effective_start": 24215,
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W317-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave317-final-verification.json"
-            },
-            "actual_effective_seconds": 2428,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W317-01",
-                "source": "84aa16cd84bb4030b8593f1473251419d93775d4",
-                "remote_target": "591ab07d6bd44f68219c69cd40a0bcb06f6be56c",
-                "pr": "https://github.com/GTX537/CP6/pull/762",
-                "branch": "codex/w317-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W317-HANDOFF",
-                "source": "26b339f6f886cf55378df108f7dec32eb6c644e9",
-                "remote_target": "6124b2065b6b9e729021cf38f39f0ad7dab1ce15",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/283",
-                "branch": "codex/w317-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W305-01",
-            "day": "D3",
-            "related_tasks": [
-              "WP12-10"
-            ],
-            "title": "原委派授权与历史缺证范围逐项核销",
-            "estimate_hours": [
-              0.35,
-              0.8
-            ],
-            "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_REVISED_AFTER_SOURCE_READ",
-            "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
-            "state": "DONE",
-            "initial_estimate_hours": [
-              2,
-              4
-            ],
-            "started_at": "2026-11-04T08:10:59.563085+00:00",
-            "effective_start": 26793,
-            "implementation_complete": true,
-            "full_task_completed": true,
-            "report": "docs/development/evidence/W305-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave305-final-verification.json"
-            },
-            "actual_effective_seconds": 781,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W305-01",
-                "source": "4cadc22204fb435ad89b263857e56a87143b7def",
-                "remote_target": "b687ef2230b2ad3fba3673eca2433f44314da58a",
-                "pr": "https://github.com/GTX537/CP6/pull/763",
-                "branch": "codex/w305-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W305-HANDOFF",
-                "source": "bdcd3dbfab4911b9b51e9c2edcb87ae1564543ad",
-                "remote_target": "695127cbfeaca54ee45166eaf426af81afe7b17e",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/284",
-                "branch": "codex/w305-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W306-01",
-            "day": "D3",
-            "related_tasks": [
-              "WP12-08",
-              "WP12-04",
-              "WP12-10"
-            ],
-            "title": "原任务信箱前置与剩余实际行为闭环",
-            "estimate_hours": [
-              0.6,
-              1.25
-            ],
-            "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
-            "estimate_confidence": "LOW_ACTUAL_MULTI_ACTOR_ROUND_RISK",
-            "state": "DONE",
-            "initial_estimate_hours": [
-              1,
-              2
-            ],
-            "dependency_status": "WAITING_FOR_FORM_HISTORY_ADOPTION",
-            "remaining": "WP12-03/04历史准确内容披露/显式采用未证明；W305完成WP12-10不连带解决。",
-            "prerequisites_satisfied": true,
-            "prerequisite_report": "docs/development/evidence/W319-01/DELIVERY.md",
-            "started_at": "2026-11-08T13:21:42.080186+00:00",
-            "effective_start": 56132,
-            "scope_refinement": "原WP12-08三项范围及正反例：当前action-context真实SFS/APP分型与双/三CAS、actual/principal/原grant/SOD、token/node/stage/round计票，SFS字段复算和APP冻结TxD。W289/290/291已有实际采用与CC边界直接复用；本窗重点补多人新轮后旧Approved不能凑足新阈值的实际运行证据、旧原命令回放不推进新轮及必要当前竞争。发现真实错误即定向修复；仅全原卡无剩余且当前整卡前置满足才DONE。全OA-TASK批量/时限/通知与服务节点Owner不冒称由本卡自动完成，不重复W291抄送。",
-            "implementation_complete": true,
-            "full_task_completed": true,
-            "report": "docs/development/evidence/W306-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave306-final-verification.json"
-            },
-            "actual_effective_seconds": 1577,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W306-01",
-                "source": "19e101662c4f33bd4cf5140721572bafa80e8cb1",
-                "remote_target": "b69c9d8cc9b2bc2ab50cb491b40aeb1ba9e55b60",
-                "pr": "https://github.com/GTX537/CP6/pull/774",
-                "branch": "codex/w306-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W306-HANDOFF",
-                "source": "6cb533b25eb708349d3b65d72467823cb4d1e05f",
-                "remote_target": "66aa83f4456b938da2b8071881fed6a823ad886f",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/295",
-                "branch": "codex/w306-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W307-01",
-            "day": "D3",
-            "related_tasks": [
-              "WP05-16"
-            ],
-            "title": "受控文档准确修订的独立可用性",
-            "estimate_hours": [
-              0.65,
-              1.2
-            ],
-            "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_REVISED_AT_8H",
-            "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
-            "state": "DONE",
-            "initial_estimate_hours": [
-              2,
-              4
-            ],
-            "started_at": "2026-11-04T08:28:30.485352+00:00",
-            "effective_start": 27871,
-            "forecast_remaining_hours": [
-              0.35,
-              0.9
-            ],
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W307-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave307-final-verification.json"
-            },
-            "actual_effective_seconds": 2002,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W307-01",
-                "source": "f037d66d9f5e8b3a1f5b55d57314dbe7b9e27cf3",
-                "remote_target": "62712a6faf4402bf34f6096bd0e241b9d9397077",
-                "pr": "https://github.com/GTX537/CP6/pull/764",
-                "branch": "codex/w307-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W307-HANDOFF",
-                "source": "b55564435f8c2177b2479c49448a55afdb9ffa3e",
-                "remote_target": "0af7c1e5984cedf3c6d6d0e82bcf799da73f15a9",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/285",
-                "branch": "codex/w307-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W308-01",
-            "day": "D3",
-            "related_tasks": [
-              "WP05-14"
-            ],
-            "title": "需求来源范围与冲突有权裁决",
-            "estimate_hours": [
-              1.0,
-              2.2
-            ],
-            "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_REVISED_AFTER_SOURCE_READ",
-            "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
-            "state": "DONE",
-            "initial_estimate_hours": [
-              2.5,
-              4.5
-            ],
-            "started_at": "2026-11-04T09:08:54.332105+00:00",
-            "effective_start": 30274,
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W308-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave308-final-verification.json"
-            },
-            "actual_effective_seconds": 2012,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W308-01",
-                "source": "f2b88e61f5432389085b6b4495fd36957befd7a8",
-                "remote_target": "84abab3430dd9637be196255ce8d83f33016a92f",
-                "pr": "https://github.com/GTX537/CP6/pull/765",
-                "branch": "codex/w308-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W308-HANDOFF",
-                "source": "f9346dceb129b6e040ce42deedbf23bd5cdfa464",
-                "remote_target": "41904cbc929bfeba0d57fa1630b40cd9b43634d0",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/286",
-                "branch": "codex/w308-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W309-01",
-            "day": "ROLLING",
-            "related_tasks": [
-              "WP05-14"
-            ],
-            "title": "需求集后继差异与实际迭代消费者影响",
-            "estimate_hours": [
-              1,
-              2
-            ],
-            "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_AFTER_SOURCE_READ",
-            "estimate_confidence": "LOW_6H_OBSERVED_THROUGHPUT_AND_CURRENT_SCOPE",
-            "state": "DONE",
-            "initial_estimate_hours": [
-              2,
-              4
-            ],
-            "started_at": "2026-11-04T09:47:51.965310+00:00",
-            "effective_start": 32511,
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W309-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave309-final-verification.json"
-            },
-            "actual_effective_seconds": 3235,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W309-01",
-                "source": "116a4f7b524dfe051c5eec9763e4e1edf4c59790",
-                "remote_target": "447fec29a58971c4fc751714683bd66bb1b57cf6",
-                "pr": "https://github.com/GTX537/CP6/pull/766",
-                "branch": "codex/w309-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W309-HANDOFF",
-                "source": "42d6bc6426aed70dad13af9230c9facbbd1198f9",
-                "remote_target": "77070ea6b199dd6bdb3363d8aae248d3869f1815",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/287",
-                "branch": "codex/w309-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W311-01",
-            "day": "ROLLING_RESERVE",
-            "related_tasks": [
-              "WP02-15"
-            ],
-            "title": "隐私subject逐Owner导出清单及遗漏/不可用语义",
-            "estimate_hours": [
-              0.9,
-              1.8
-            ],
-            "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_AFTER_SOURCE_READ",
-            "estimate_confidence": "LOW_ADMISSION_SOURCE_AUDIT_REQUIRED",
-            "state": "DONE",
-            "scope_refinement": "Original WP02-15 remaining scope, following W302 actual disposition contract; re-read exact Owner sources/contracts/dependencies at admission and skip any then-completed behavior. Isolated PostgreSQL/simulated business data only; no existing-environment erasure, migration or deployment.",
-            "started_at": "2026-11-04T10:42:23.723475+00:00",
-            "effective_start": 35868,
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W311-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave311-final-verification.json"
-            },
-            "actual_effective_seconds": 2160,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W311-01",
-                "source": "832a09aeacc793fee95f4d57080ab6afa31065bc",
-                "remote_target": "3a7109b9e59fa5bd2d11f986a404b9608cbeee14",
-                "pr": "https://github.com/GTX537/CP6/pull/767",
-                "branch": "codex/w311-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W311-HANDOFF",
-                "source": "1c7ee130d629835a69fd171072bf4438637279ce",
-                "remote_target": "9308d2bce5df1e172d0e73ea9dbd7ae9f421a643",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/288",
-                "branch": "codex/w311-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W312-01",
-            "day": "ROLLING_RESERVE",
-            "related_tasks": [
-              "WP02-15"
-            ],
-            "title": "导出结果受控下载和当前身份/准确版本恢复",
-            "estimate_hours": [
-              1.5,
-              2.5
-            ],
-            "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_AFTER_SOURCE_READ",
-            "estimate_confidence": "LOW_ADMISSION_SOURCE_AUDIT_REQUIRED",
-            "state": "DONE",
-            "scope_refinement": "Original WP02-15 remaining scope, following W302 actual disposition contract; re-read exact Owner sources/contracts/dependencies at admission and skip any then-completed behavior. Isolated PostgreSQL/simulated business data only; no existing-environment erasure, migration or deployment.",
-            "started_at": "2026-11-04T11:20:17.276563+00:00",
-            "effective_start": 38169,
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W312-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave312-final-verification.json"
-            },
-            "actual_effective_seconds": 1829,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W312-01",
-                "source": "727c65faf4d74b68f15b31223a8247f2b61e6f19",
-                "remote_target": "45db7764a6b9f3d5137c699508021198c18b60fc",
-                "pr": "https://github.com/GTX537/CP6/pull/768",
-                "branch": "codex/w312-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W312-HANDOFF",
-                "source": "cc0c132649c5f7e029994aad3cc110b50a840ca3",
-                "remote_target": "a9759c5c8c3006825442262db9ba69c2c5a775ec",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/289",
-                "branch": "codex/w312-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W313-01",
-            "day": "ROLLING_RESERVE",
-            "related_tasks": [
-              "WP02-15"
-            ],
-            "title": "擦除预览/批准与hold实际裁决",
-            "estimate_hours": [
-              0.6,
-              1.2
-            ],
-            "estimate_kind": "LOW_CONFIDENCE_ACTUAL_EXECUTION_AFTER_SOURCE_READ",
-            "estimate_confidence": "LOW_ADMISSION_SOURCE_AUDIT_REQUIRED",
-            "state": "DONE",
-            "scope_refinement": "Original WP02-15 remaining scope, following W302 actual disposition contract; re-read exact Owner sources/contracts/dependencies at admission and skip any then-completed behavior. Isolated PostgreSQL/simulated business data only; no existing-environment erasure, migration or deployment.",
-            "started_at": "2026-11-04T11:52:59.483763+00:00",
-            "effective_start": 40105,
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W313-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave313-final-verification.json"
-            },
-            "actual_effective_seconds": 1844,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W313-01",
-                "source": "96ce1ed198362b27902a9fd36da2c01a9c799c34",
-                "remote_target": "cfb4858659cc65f05ab3df2768d21c8e3ea036e1",
-                "pr": "https://github.com/GTX537/CP6/pull/769",
-                "branch": "codex/w313-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W313-HANDOFF",
-                "source": "4653fba216164cb36f58681d2be209bc04bd91c6",
-                "remote_target": "662a430879e3347af2d4f0c9074fb0c795517799",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/290",
-                "branch": "codex/w313-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W314-01",
-            "day": "ROLLING_RESERVE",
-            "related_tasks": [
-              "WP02-15"
-            ],
-            "title": "逐Owner擦除UNKNOWN责任及原命令恢复",
-            "estimate_hours": [
-              1.25,
-              2.5
-            ],
-            "estimate_kind": "LOW_CONFIDENCE_ACTUAL_CODING_AFTER_OWNER_SOURCE_READ",
-            "estimate_confidence": "LOW_ADMISSION_SOURCE_AUDIT_REQUIRED",
-            "state": "DONE",
-            "scope_refinement": "Original WP02-15 remaining scope, following W302 actual disposition contract; re-read exact Owner sources/contracts/dependencies at admission and skip any then-completed behavior. Isolated PostgreSQL/simulated business data only; no existing-environment erasure, migration or deployment.",
-            "started_at": "2026-11-08T09:28:31.604176+00:00",
-            "effective_start": 42141,
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W314-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave314-final-verification.json"
-            },
-            "actual_effective_seconds": 1447,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W314-01",
-                "source": "27cb769fa91699957811ebf950035afa2876a3a0",
-                "remote_target": "9990466a51cb6b0d5c965f6ea93cadb58f188e53",
-                "pr": "https://github.com/GTX537/CP6/pull/770",
-                "branch": "codex/w314-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W314-HANDOFF",
-                "source": "7604fd310e09a71b617277728180ec504e45c0c0",
-                "remote_target": "fa46ae4771689a298d896e972cd2ea7406414e79",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/291",
-                "branch": "codex/w314-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W315-01",
-            "day": "ROLLING_RESERVE",
-            "related_tasks": [
-              "WP02-15"
-            ],
-            "title": "准确墓碑与恢复编排的实际Owner采用",
-            "estimate_hours": [
-              1,
-              2.5
-            ],
-            "estimate_kind": "LOW_CONFIDENCE_ACTUAL_CODING_AFTER_OWNER_SOURCE_READ",
-            "estimate_confidence": "LOW_ACTUAL_EXECUTION_AFTER_W314_CURRENT_SCOPE",
-            "state": "DONE",
-            "scope_refinement": "Original WP02-15 remaining scope, following W302 actual disposition contract; re-read exact Owner sources/contracts/dependencies at admission and skip any then-completed behavior. Isolated PostgreSQL/simulated business data only; no existing-environment erasure, migration or deployment.",
-            "started_at": "2026-11-08T10:06:39.059558+00:00",
-            "effective_start": 44429,
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W315-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave315-final-verification.json"
-            },
-            "actual_effective_seconds": 5837,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W315-01",
-                "source": "4c912d75f3861c1bc3036ab4a8e1a283855f35df",
-                "remote_target": "d72b00396bfa8845fbea135a181cc8dd20432dcc",
-                "pr": "https://github.com/GTX537/CP6/pull/771",
-                "branch": "codex/w315-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W315-HANDOFF",
-                "source": "bcc4e1779eb748fabb90abfa2125a023951852d2",
-                "remote_target": "215b379a47654c98cb449b5c18a4a0d44d02daad",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/292",
-                "branch": "codex/w315-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W318-01",
-            "day": "D3",
-            "related_tasks": [
-              "WP12-03",
-              "WP12-04"
-            ],
-            "title": "旧草稿准确内容披露与显式向前采用",
-            "estimate_hours": [
-              1.25,
-              2.5
-            ],
-            "estimate_confidence": "LOW_CURRENT_LEGACY_SOURCE_MAPPING_RISK",
-            "estimate_kind": "ACTUAL_CODEX_EXECUTION_ROLLING_14H_CALIBRATION",
-            "state": "DONE",
-            "started_at": "2026-11-08T11:49:05.752826+00:00",
-            "effective_start": 50575,
-            "scope_refinement": "原WP12-03/04历史旧草稿的准确版本/来源/当前内容披露与显式向前采用。复用已交付原生PersonalFormOwnerV2、当前字段/FILE/留存政策、共同事务与原命令；准确旧源必须可核对，不以当前head补历史pin或伪造过去发布/实际人。对可核源明确预览和当前授权后复制为新本人原生草稿，保留旧行/旧来源及完整操作链；不可核源只给明确未核实目录/阻断，不返回未授权数据或盲目批迁。当前源变化/撤权与失败回滚、UNKNOWN原键恢复及真实页面采用均在本窗范围。W316旧HTTP适配和W317重基前恢复已完不重复；不执行既有环境迁移/转换/清理或生产部署。",
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W318-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave318-final-verification.json"
-            },
-            "actual_effective_seconds": 4353,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W318-01",
-                "source": "697f77e24a649da25072c6efa4fcf6c7ec11d40f",
-                "remote_target": "a95fb085f906eda5840060d1ed2d002425ec26db",
-                "pr": "https://github.com/GTX537/CP6/pull/772",
-                "branch": "codex/w318-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W318-HANDOFF",
-                "source": "c6f056043842b0cbe5ad72be9bed4d89488c1732",
-                "remote_target": "1f63b4b97db90483b16088dabfa237b05db4eee0",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/293",
-                "branch": "codex/w318-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W319-01",
-            "day": "D3",
-            "related_tasks": [
-              "WP12-03",
-              "WP12-04"
-            ],
-            "title": "原个人FORM两卡完整范围核销与W306前置",
-            "state": "DONE",
-            "started_at": "2026-11-08T13:05:19.149959+00:00",
-            "effective_start": 55149,
-            "estimate_hours": [
-              0.25,
-              0.6
-            ],
-            "estimate_kind": "LOW_CONFIDENCE_ACTUAL_CODEX_EXECUTION_SCOPE_RECONCILIATION",
-            "scope_refinement": "按原WP12-03/04实施范围、正反例和FORM R1直接25条AC逐项核销，复用W275/W285/W287/W293/W302–304/W316–318及BUG756准确结果；读取当前受影响调用链，确认旧入口、重基前恢复与历史来源边界已真实补齐。仅实际无余项才更新原卡；若有缺口保留卡并继续实现。W305已DONE，不再作为旧FORM摘要的未完阻塞；历史批量转换、物理purge、服务节点业务Owner和部署属于各自原范围。",
-            "implementation_complete": true,
-            "full_task_completed": true,
-            "report": "docs/development/evidence/W319-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave319-final-verification.json"
-            },
-            "actual_effective_seconds": 713,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W319-01",
-                "source": "8b0046d166c3469bbc33e3d11f1788ec7eb2c88a",
-                "remote_target": "b5e8b9401ffb634059ec8dcda53e9cb0484ea7b4",
-                "pr": "https://github.com/GTX537/CP6/pull/773",
-                "branch": "codex/w319-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W319-HANDOFF",
-                "source": "c5d40ecd538e74a0007fdb9fdf6d19b4c1917a89",
-                "remote_target": "211c955f79e2b67ba4341c24b8cd4bd12a35039c",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/294",
-                "branch": "codex/w319-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W320-01",
-            "day": "D3",
-            "related_tasks": [
-              "WP02-15"
-            ],
-            "title": "原生隐私导出载荷处置及恢复副本采用",
-            "state": "DONE",
-            "started_at": "2026-11-08T14:00:20.471262+00:00",
-            "effective_start": 58450,
-            "estimate_hours": [
-              2,
-              3.75
-            ],
-            "estimate_confidence": "LOW_ACTUAL_NEW_OWNER_AND_CROSS_DATABASE_RESTORE_RISK",
-            "scope_refinement": "原WP02-15真实余项：Main原生导出载荷的显式保留政策、独立申请/批准/执行、全主体hold与准确原件版本、当前权限及最终会话；实际删除本库载荷并保最小原结果/不可复活墓碑，旧恢复候选采用同一载荷处置事实。恢复版本/来源权威与已有双库UNKNOWN责任继续复用。仅此Owner，整体PARTIAL；不把撤销下载当删除，不物理清除WAL/备份/外部副本，不执行既有环境迁移/处置/恢复或部署。",
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W320-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave320-final-verification.json"
-            },
-            "actual_effective_seconds": 6204,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W320-01",
-                "source": "c1809564087f8a8264511637b3f2a3500f49c080",
-                "remote_target": "90bf9e9f23cab088e9e5dd7c82cc2de58190a7c6",
-                "pr": "https://github.com/GTX537/CP6/pull/775",
-                "branch": "codex/w320-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W320-HANDOFF",
-                "source": "2851ce92e481742d66d10b30b6ca66eb13aad3ec",
-                "remote_target": "f2c29f43e8e46425255f79bf0aafc17773150613",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/296",
-                "branch": "codex/w320-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W321-01",
-            "day": "D3",
-            "related_tasks": [
-              "WP02-15"
-            ],
-            "title": "准确安全事件已分类字段处置与恢复采用",
-            "state": "DONE",
-            "started_at": "2026-11-08T16:03:32.416071+00:00",
-            "effective_start": 65842,
-            "estimate_hours": [
-              2.5,
-              4
-            ],
-            "estimate_confidence": "LOW_NEW_NATIVE_AUDIT_WRITERS_AND_CURRENT_UTC_POLICY_BOUNDARY",
-            "scope_refinement": "原WP02-15真实余项：Main.SecurityLog.Fields.v1按准确事件原件及已接受的UserName/ClientIp字段分类实施独立政策/预览/申请/批准/实际清理、全主体hold、原结果/墓碑和恢复采用。保留事件/stable subject/租户身份及其余未核字段，不宣称整个安全事件或整个隐私任务已匿名化。旧CreatedAt无时区，资格只按明确UTC NotBefore政策，不推算法定期限；单事件准确边界，不暗含批量或按同名归属。",
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W321-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave321-final-verification.json"
-            },
-            "actual_effective_seconds": 5775,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W321-01",
-                "source": "9279cc29f4e7acf897e2c59201e475a7ca0bd96b",
-                "remote_target": "48420d71829daeb955198351696cc29aec33545a",
-                "pr": "https://github.com/GTX537/CP6/pull/776",
-                "branch": "codex/w321-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W321-HANDOFF",
-                "source": "9d69c9017b39097b0f3d00d6ca42d98230e9c3b2",
-                "remote_target": "bfaaf8edfc15f3085680fd7451d8a2ce9c616ca6",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/297",
-                "branch": "codex/w321-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W322-01",
-            "day": "D3",
-            "related_tasks": [
-              "WP02-15"
-            ],
-            "title": "租户已分类来源受控导出与原结果",
-            "state": "DONE",
-            "started_at": "2026-11-08T17:46:50.651789+00:00",
-            "effective_start": 72040,
-            "estimate_hours": [
-              1.75,
-              3
-            ],
-            "estimate_confidence": "LOW_REUSES_OWNER_TX_NEW_TENANT_CLASSIFICATION_AND_RECIPIENT_BOUNDARY",
-            "scope_refinement": "原WP02-15租户受控导出采用：准确target tenant的已分类identity/security/roles来源，显式用途、接收人、独立tenant能力、TTL和不可变制品/原操作；当前下载重判身份/范围/撤销/期限，真实Manifest含数量/读取窗/字段排除/未接Owner。独立租户模型无伪subject，整体仍PARTIAL，旧直接租户HTTP散流退役410；其他Owner全量导出与新租户制品物理保留/处置仍列真实余项。",
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W322-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave322-final-verification.json"
-            },
-            "actual_effective_seconds": 3254,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W322-01",
-                "source": "8f19ecbb47eeb74dd2c1630b40c2fc4ccf6b336a",
-                "remote_target": "2f4eaab416eac5eff12cda327cdb9f76262ac290",
-                "pr": "https://github.com/GTX537/CP6/pull/777",
-                "branch": "codex/w322-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W322-HANDOFF",
-                "source": "82f8cb23f44f5c65715220c57ea469ff860d195f",
-                "remote_target": "34fcd5372b3280a1961f55f96fdf2945b20c3b57",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/298",
-                "branch": "codex/w322-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W323-01",
-            "day": "D3",
-            "related_tasks": [
-              "WP02-15"
-            ],
-            "title": "租户制品真实字节处置和整租户hold",
-            "state": "DONE",
-            "started_at": "2026-11-08T18:44:32.751145+00:00",
-            "effective_start": 75502,
-            "estimate_hours": [
-              1.75,
-              2.75
-            ],
-            "estimate_confidence": "LOW_NATIVE_EFFECT_TENANT_HOLD_AND_EXPLICIT_RESTORE_REFUSAL",
-            "scope_refinement": "W323独立Main.Privacy.TenantExportPayload.v1实际处置：准确租户制品、明确保留政策、独立申请/批准/执行、目标租户所有主体有效hold屏障及ABA；真实删除字节、撤访问、最小原回执/墓碑同commit，原生无所属删除/回填拒绝。无伪subject；本窗不实现备份恢复适配，有该Owner墓碑时现恢复入口明确失败并保持隔离，旧批准随source epoch失效。",
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W323-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave323-final-verification.json"
-            },
-            "actual_effective_seconds": 2143,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W323-01",
-                "source": "b60a77fe800257078ded1cb4deadfcede7bac2f7",
-                "remote_target": "be6ec3bea15d3e0a6d54f1960f9f7eaabb13f641",
-                "pr": "https://github.com/GTX537/CP6/pull/778",
-                "branch": "codex/w323-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W323-HANDOFF",
-                "source": "d505ea162e8c84e8d4677106ec68fda339e191d7",
-                "remote_target": "7ffdab2f4f8a6b2ad36c99b20c00e87b66b987d9",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/299",
-                "branch": "codex/w323-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W324-01",
-            "day": "D3",
-            "related_tasks": [
-              "WP02-15"
-            ],
-            "title": "租户载荷真实备份恢复与准确结果",
-            "state": "DONE",
-            "started_at": "2026-11-08T19:25:15.698679+00:00",
-            "effective_start": 77945,
-            "estimate_hours": [
-              0.75,
-              1.5
-            ],
-            "estimate_confidence": "LOW_REUSES_RESTORE_PROTOCOL_NEW_TENANT_UNIT_AND_EXTERNAL_COPY_BOUNDARY",
-            "scope_refinement": "W324采用Main.Privacy.TenantExportPayload.v1真实恢复副本：独立无subject的tenant恢复Unit、准确原制品元数据/revision/实际SHA、真实删除字节与缺失0分别记录，当前源保留政策/整租户hold和独立恢复批准，父回执/原生效果/墓碑/fence/候选开放同候选commit；继续SourceRoot→CandidateRoot与两次提交UNKNOWN责任，其他Owner及WAL/外部副本仍PARTIAL。",
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W324-01/DELIVERY.md",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave324-final-verification.json"
-            },
-            "actual_effective_seconds": 3520,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W324-01",
-                "source": "16823b875a818608e4d7110864dfd85003b334de",
-                "remote_target": "fe4e66aaa124f43630dbc5c97b8a9f049742ea24",
-                "pr": "https://github.com/GTX537/CP6/pull/779",
-                "branch": "codex/w324-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W324-HANDOFF",
-                "source": "2abda2298329057bf178dd9abd4c1b50084401b8",
-                "remote_target": "4a2e0975a29a1e187f465f3e2a35c621c3acbf90",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/300",
-                "branch": "codex/w324-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W310-01",
-            "day": "CLOSEOUT",
-            "related_tasks": [
-              "WP12-19",
-              "WP12-03",
-              "WP05-14",
-              "WP03-03"
-            ],
-            "title": "预算末尾真实余项核对及当前任务收妥",
-            "estimate_hours": [
-              0.75,
-              1.25
-            ],
-            "estimate_kind": "P50_P80_ENGINEERING_NOT_CALIBRATED_PROBABILITIES",
-            "estimate_confidence": "LOW_DOCUMENT_ONLY_ALL_59_SOURCE_EVIDENCE_RECONCILIATION_PLUS_NORMAL_LIFECYCLE",
-            "state": "DONE",
-            "initial_estimate_hours": [
-              1,
-              2
-            ],
-            "started_at": "2026-11-08T20:26:46.693187+00:00",
-            "effective_start": 81636,
-            "scope_refinement": "W310预算末尾核销：以原CSV及W250相同59个ID逐卡对照原定义、当前源码/采用和既有有效执行；保留8已闭环、51真实余项，结算本轮全部窗口实测与24h口径。只更新文档/台账，不重跑未变产品，不提前宣布预算或全项目完成。",
-            "report": "docs/development/evidence/W310-01/DELIVERY.md",
-            "full_task_reconciled": "WP03-03",
-            "scope_audit_complete": true,
-            "whole_program_closeout_complete": false,
-            "implementation_complete": true,
-            "full_task_completed": false,
-            "original_card_completed": "WP03-03",
-            "lifecycle_snapshot": {
-              "main_finish_required": false,
-              "main_seat_released": true,
-              "handoff_seat_released": true,
-              "main_branch_deleted": true,
-              "handoff_branch_deleted": true,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave310-final-verification.json"
-            },
-            "actual_effective_seconds": 1504,
-            "remote_adoption": [
-              {
-                "repository": "CP6",
-                "task": "W310-01",
-                "source": "01faff945fb63296284261b6c591d50b5dfcb5bd",
-                "remote_target": "7dbc37aa00d1075a0dde22117c8d47a8550defdc",
-                "pr": "https://github.com/GTX537/CP6/pull/780",
-                "branch": "codex/w310-01",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\wave17-dispatch-20261018",
-                "workspace_clean": true
-              },
-              {
-                "repository": "CP6.AI-Handoff",
-                "task": "W310-HANDOFF",
-                "source": "5a418a0011dfa4416441e8d541a3be890f56a7e6",
-                "remote_target": "a53d7709ac58734bf56679ef2a306d7fbfb7cc59",
-                "pr": "https://github.com/GTX537/CP6.AI-Handoff/pull/301",
-                "branch": "codex/w310-handoff",
-                "branch_absent": true,
-                "seat_released": true,
-                "workspace": "D:\\CP6-worktrees\\dev-2",
-                "workspace_clean": true
-              }
-            ]
-          },
-          {
-            "id": "W325-01",
-            "day": "FINAL_BUDGET_WINDOW",
-            "related_tasks": [
-              "WP05-14"
-            ],
-            "title": "准确可选成员排除与原决定追溯",
-            "state": "DONE",
-            "started_at": "2026-11-08T20:54:12.138670+00:00",
-            "effective_start": 83282,
-            "estimate_hours": [
-              0.75,
-              1.5
-            ],
-            "estimate_confidence": "LOW_OBSERVED_W308_W309_REUSES_SET_JOURNAL_AND_EDITOR_NEW_DECISION_AUTHORITY",
-            "scope_refinement": "原WP05-14准确可选成员排除：以明确OPTIONAL/允许来源决定的准确条款、当前SET排除与源确认权限，保存原成员/原件/冲突和真实原决定追溯；原事务/CAS/回执/页面恢复直接采用，未知/必须/禁止/错误来源及不利冲突继续阻断，其他商业/ECM/DEV仍余。",
-            "implementation_complete": true,
-            "report": "docs/development/evidence/W325-01/DELIVERY.md",
-            "full_task_completed": false,
-            "measured_seconds_before_delivery": 2254,
-            "lifecycle_snapshot": {
-              "main_finish_required": true,
-              "main_seat_released": false,
-              "handoff_seat_released": false,
-              "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave325-final-verification.json"
-            },
-            "completion_effective_condition": "Only effective after this final source is normally adopted in Main and Handoff, exact task branches disposed, official finish releases both seats, and wave325-final-verification.json is PASS. This source snapshot precedes those final receipts.",
-            "final_window_effective_seconds": 2956
-          }
-        ],
-        "reestimates": [
-          {
-            "effective_seconds": 7213,
-            "snapshot_at": "2026-11-04T02:23:12Z",
-            "completed_actual_seconds": {
-              "W297-01": 3412,
-              "W298-01": 1377,
-              "BUG744": 473
-            },
-            "current_window": "W299-01",
-            "current_elapsed_seconds": 1437,
-            "current_remaining_estimate_hours": [
-              0.4,
-              0.8
-            ],
-            "primary_remaining_estimate_hours": [
-              13.15,
-              27.2
-            ],
-            "reserve_estimate_hours": [
-              9,
-              18
-            ],
-            "capacity_remaining_hours": 21.996,
-            "reason": "Same-family windows are faster through existing contracts and verified infrastructure. Recalibrate down, add actual original WP02-15 reserve, never wait to fill time. W299 is not yet merged/released. Estimates remain low confidence, not additive probability guarantees.",
-            "next_effective_seconds": 14400
-          },
-          {
-            "effective_seconds": 14427,
-            "snapshot_at": "2026-11-04T04:23:03Z",
-            "completed_actual_seconds": {
-              "W297-01": 3412,
-              "W298-01": 1377,
-              "BUG744": 473,
-              "W299-01": 2123,
-              "BUG747": 707,
-              "W300-01": 2130,
-              "W301-01": 791,
-              "BUG751": 1232
-            },
-            "current_window": "W302-01",
-            "current_elapsed_seconds": 1245,
-            "current_remaining_estimate_hours": [
-              1,
-              2
-            ],
-            "remaining_window_estimates": {
-              "W303-01": [
-                0.9,
-                1.8
-              ],
-              "W304-01": [
-                0.7,
-                1.5
-              ],
-              "W305-01": [
-                1.25,
-                2.5
-              ],
-              "W306-01": [
-                0.75,
-                1.5
-              ],
-              "W307-01": [
-                1,
-                2
-              ],
-              "W308-01": [
-                1.5,
-                3
-              ],
-              "W309-01": [
-                1,
-                2
-              ],
-              "W310-01": [
-                0.5,
-                1
-              ]
-            },
-            "primary_remaining_estimate_hours": [
-              8.6,
-              17.3
-            ],
-            "reserve_estimate_hours": [
-              9,
-              18
-            ],
-            "capacity_remaining_hours": 19.9925,
-            "reason": "W301 was a reused-evidence audit (13.2min); BUG751 actual fix took20.5min, not a workday. W302 introduces real sensitive-field source, independent processing, state/hold/journal transactions and UI, currently unverified. Same-family follow-ups may run faster, so reduce primary estimates and retain original WP02-15 reserve. Low confidence; intervals are not an additive probability guarantee. No repeated green tests or waiting to fill time.",
-            "next_effective_seconds": 21600
-          },
-          {
-            "at": "2026-11-04T06:46:58.677778+00:00",
-            "effective_seconds": 21733,
-            "remaining_seconds": 64667,
-            "completed_window_actuals": {
-              "wave302": {
-                "seconds": 2447,
-                "minutes": 40.8
-              },
-              "wave303": {
-                "seconds": 1934,
-                "minutes": 32.2
-              },
-              "wave304": {
-                "seconds": 898,
-                "minutes": 15.0
-              },
-              "bug756": {
-                "seconds": 1310,
-                "minutes": 21.8
-              }
-            },
-            "current_window": "W316-01",
-            "current_elapsed_seconds": 1610,
-            "remaining_estimates": {
-              "W316-01": [
-                0.75,
-                1.75
-              ],
-              "W317-01": [
-                1,
-                2.5
-              ],
-              "W305-01": [
-                1.25,
-                2.5
-              ],
-              "W306-01": [
-                0.75,
-                1.5
-              ],
-              "W307-01": [
-                1,
-                2
-              ],
-              "W308-01": [
-                1.5,
-                3
-              ],
-              "W309-01": [
-                1,
-                2
-              ],
-              "W310-01": [
-                0.5,
-                1
-              ]
-            },
-            "estimate_basis": "Low-confidence engineering ranges; not calibrated probabilities; W316 is remaining time, other windows are full time. Completed-window samples may span the prior calibration boundary. No duplicated Main/Handoff or inactive gaps.",
-            "next_reestimate": 28800
-          }
-        ],
-        "exclusions": [],
-        "budget_policy": "Approximately24h effective authorized execution, finish current complete task at budget end; queue is a reserve, not a promise all14 close. No padding, duplicate tests, new scopes outside375, or automatic next cycle.",
-        "interruptions": [
-          {
-            "id": "BUG744",
-            "issue": "https://github.com/GTX537/CP6/issues/744",
-            "after": "W298-01",
-            "before": "W299-01",
-            "reason": "Existing configured detail URL has no frontend route; actual browser reproduced blank page.",
-            "estimate_hours": [
-              0.5,
-              1.25
-            ],
-            "estimate_confidence": "LOW",
-            "state": "DONE",
-            "actual_effective_seconds": 473,
-            "report": "docs/development/evidence/BUG-744/DELIVERY.md",
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug744-final-verification.json",
-            "remote_main": "1a4e6edac635000951eb7b4ec5d12edecd850691",
-            "pr": "https://github.com/GTX537/CP6/pull/746"
-          },
-          {
-            "id": "BUG747",
-            "issue": "https://github.com/GTX537/CP6/issues/747",
-            "after": "W299-01",
-            "before": "W300-01",
-            "reason": "Three existing withdrawal transports reject legal RETURNED context; actual regression and safe prior-CONFLICT recovery to be verified in independent branch.",
-            "estimate_hours": [
-              0.4,
-              0.9
-            ],
-            "estimate_confidence": "LOW",
-            "state": "DONE",
-            "actual_effective_seconds": 707,
-            "report": "docs/development/evidence/BUG-747/DELIVERY.md",
-            "final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug747-final-verification.json",
-            "remote_main": "324f722644e6e79df0ac75dfc3396d0f1858306d",
-            "pr": "https://github.com/GTX537/CP6/pull/749",
-            "historical_conflicts": "Preserved immutable; existing environments not inspected or migrated. Separate controlled forward recovery required for affected existing records."
-          }
-        ],
-        "next_priority": "原24h已收妥。按用户续接从原375真实余项执行，当前首窗W326-01。",
-        "extra_bug_deliveries": [
-          {
-            "id": "BUG751",
-            "issue": 751,
-            "state": "DONE",
-            "actual_effective_seconds": 1232,
-            "report": "docs/development/evidence/BUG-751/DELIVERY.md",
-            "source": "43b8afc76da3e3323233e79fdd4953db2c7c14d8",
-            "remote_main": "b41bc799fca2a86c8ac293be8dc4394e64fde2cd",
-            "pr": "https://github.com/GTX537/CP6/pull/753",
-            "lifecycle_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\bug751-final-verification.json"
-          }
-        ],
-        "actual_execution_calibrations": [
-          {
-            "at": "2026-11-04T08:45:11.034616+00:00",
-            "effective_seconds": 28842,
-            "remaining_budget_seconds": 57558,
-            "completed_windows": 13,
-            "completed_window_seconds": 23658,
-            "median_window_seconds": 1934,
-            "min_window_seconds": 781,
-            "max_window_seconds": 3412,
-            "basis": "Observed actual execution; completed windows only. Integration/planning gaps remain in effective total. No artificial waiting or inferred completed product scope.",
-            "forecast_confidence": "LOW",
-            "next_calibration_seconds": 36000
-          },
-          {
-            "at": "2026-11-08T09:47:18.760163+00:00",
-            "threshold_seconds": 43200,
-            "effective_seconds": 43268,
-            "remaining_seconds": 43132,
-            "previous_window": "W313-01",
-            "previous_actual_seconds": 1844,
-            "current_window": "W314-01",
-            "current_elapsed_seconds": 1127,
-            "current_window_finished": false,
-            "next_estimates": {
-              "W315-01": [
-                1,
-                2.5
-              ],
-              "W306-01": [
-                0.75,
-                1.5
-              ],
-              "W310-01": [
-                0.5,
-                1
-              ]
-            },
-            "note": "Low confidence actual coding ranges, not human workdays. Native goal panel remains paused despite user resume; local monotonic evidence excludes pause and pre-sample restore preparation. More original WP02-15 and other original partial-card work will be admitted after current dependencies are read; do not stop at this window or add idle time."
-          }
-        ],
-        "next_calibration_seconds": null,
-        "next_calibration_effective_seconds": null,
-        "pause_requested": false,
-        "pause_after": "W313-01",
-        "pause_reason": "User requests quota-reset pause after current small task",
-        "resume_requires_user": false,
-        "pause_final_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave313-final-verification.json",
-        "resumed_at": "2026-11-08T10:06:39.059558+00:00",
-        "resume_instruction": "继续目标",
-        "timing_basis": "Native goal panel is active; its counter excludes the earlier user-authorized resumed segment, so the uninterrupted OS monotonic execution clock remains authoritative. Active local execution excludes the 4-day pause and pre-sample preparation.",
-        "native_goal_panel_status": "complete",
-        "budget_closeout_window": "W325-01",
-        "implementation_scope_complete": true,
-        "scope_reconciliation_complete": true,
-        "whole_project_complete": false,
-        "completion_proof": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave325-final-verification.json",
-        "final_measured_seconds_pending_lifecycle": false,
-        "implementation_completed_at": "2026-11-08T21:31:46.224819+00:00",
-        "completion_effective_condition": "Main/Handoff实际正常采用、分支清理及两席位释放均已从同窗最终证明和远端读回。",
-        "completion_scope": "Original approximately24h effective single-chat program only; not all375/125/247",
-        "final_effective_seconds_source": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave325-final-verification.json",
-        "final_accounting": {
-          "original_375": {
-            "DONE": 37,
-            "IN_PROGRESS": 2,
-            "PLANNED": 336
-          },
-          "original_partial_59": {
-            "closed": 9,
-            "remaining": 50,
-            "implementation_remaining": 35,
-            "evidence_or_applicability_pending": 15
-          },
-          "new_complete_formal_cards": [
-            "WP12-19",
-            "WP12-10",
-            "WP05-16",
-            "WP12-03",
-            "WP12-04",
-            "WP12-08",
-            "WP03-03"
-          ],
-          "whole_project_complete": false,
-          "formal_targets_delivered": 0,
-          "formal_runtime_not_run": 247,
-          "terminal_window": "W325-01",
-          "scope_audit": "docs/development/evidence/W310-01/DELIVERY.md",
-          "final_receipt": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave325-final-verification.json",
-          "recorded_seconds_are_pre_delivery_sample": true
-        },
-        "native_goal_time_used_seconds": 80111
       }
     ]
   },
