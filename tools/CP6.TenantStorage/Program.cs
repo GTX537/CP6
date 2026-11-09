@@ -11,6 +11,9 @@ var tenantControl = args.SequenceEqual(["service-token-tenant-directory-control-
 var directoryInstall = args.SequenceEqual(["install-identity-directory-v2", "--stdin"]);
 var directoryInspect = args.SequenceEqual(["inspect-identity-directory-v2", "--stdin"]);
 var directoryControl = directoryInstall || directoryInspect;
+var rmaInstall = args.SequenceEqual(["install-rma-tenant-storage-v1", "--stdin"]);
+var rmaMigrate = args.SequenceEqual(["migrate-rma-tenant-storage-v1", "--stdin"]);
+var rmaControl = rmaInstall || rmaMigrate;
 var stockReadInspect = args.SequenceEqual(["inspect-stock-read-v1", "--stdin"]);
 var stockInstallContract = args switch
 {
@@ -24,9 +27,9 @@ var stockInstallContract = args switch
     _ => null
 };
 var controlExecutionStarted = false;
-if ((!args.SequenceEqual(["provision", "--stdin"]) && !revocation && !serviceToken && !tenantControl && !directoryControl && stockInstallContract is null) || !Console.IsInputRedirected)
+if ((!args.SequenceEqual(["provision", "--stdin"]) && !revocation && !serviceToken && !tenantControl && !directoryControl && !rmaControl && stockInstallContract is null) || !Console.IsInputRedirected)
 {
-    Console.Error.WriteLine("Usage: CP6.TenantStorage provision|install-service-revocation-v1|install-service-token-v1|service-token-tenant-directory-control-v1|install-identity-directory-v2|inspect-identity-directory-v2|install-stock-read-v1|inspect-stock-read-v1|install-stock-write-fence-v1|install-stock-original-journal-v1|install-stock-outbox-writer-v1|install-stock-movement-writer-v1|install-stock-adjust-owner-v1|install-stock-creation-writer-v2 --stdin (one bounded JSON document on redirected standard input).");
+    Console.Error.WriteLine("Usage: CP6.TenantStorage provision|install-service-revocation-v1|install-service-token-v1|service-token-tenant-directory-control-v1|install-identity-directory-v2|inspect-identity-directory-v2|install-rma-tenant-storage-v1|migrate-rma-tenant-storage-v1|install-stock-read-v1|inspect-stock-read-v1|install-stock-write-fence-v1|install-stock-original-journal-v1|install-stock-outbox-writer-v1|install-stock-movement-writer-v1|install-stock-adjust-owner-v1|install-stock-creation-writer-v2 --stdin (one bounded JSON document on redirected standard input).");
     return 2;
 }
 try
@@ -44,6 +47,37 @@ try
     using var document = JsonDocument.Parse(buffer.AsMemory(0,size));
     if (document.RootElement.ValueKind != JsonValueKind.Object || !Unique(document.RootElement))
         throw new TenantProvisioningException("input-rejected");
+    if (rmaControl)
+    {
+        var json = new JsonSerializerOptions { UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow };
+        var rmaInput = document.Deserialize<RmaControlInput>(json);
+        if (rmaInput is null || rmaInput.Request.ValueKind != JsonValueKind.Object ||
+            string.IsNullOrWhiteSpace(rmaInput.AdminUsername) || string.IsNullOrEmpty(rmaInput.AdminPassword))
+            throw new TenantProvisioningException("input-rejected");
+
+        var install = rmaInstall ? rmaInput.Request.Deserialize<RmaTenantInstallRequestV1>(json) : null;
+        var migrate = rmaMigrate ? rmaInput.Request.Deserialize<RmaTenantMigrationRequestV1>(json) : null;
+        var target = install?.Target ?? migrate?.Target ?? throw new TenantProvisioningException("input-rejected");
+        var ip = target.Validate();
+        if (!Enum.TryParse<SslMode>(rmaInput.SslMode, out var rmaSsl) || rmaInput.SslMode != rmaSsl.ToString()
+            || !(rmaSsl == SslMode.VerifyFull || rmaSsl == SslMode.Disable && System.Net.IPAddress.IsLoopback(ip)))
+            throw new TenantProvisioningException("input-rejected");
+
+        await using var control = new NpgsqlConnection(new NpgsqlConnectionStringBuilder
+        {
+            Host = target.Server, Port = target.Port, Database = target.Database,
+            Username = rmaInput.AdminUsername, Password = rmaInput.AdminPassword, SslMode = rmaSsl,
+            Pooling = false, Enlist = false, SearchPath = "pg_catalog", Options = " ",
+            IncludeErrorDetail = false, Timeout = 10, CommandTimeout = 65,
+            ApplicationName = rmaInstall ? "CP6.TenantStorage.RmaInstallV1" : "CP6.TenantStorage.RmaMigrateV1"
+        }.ConnectionString);
+        var receipt = install is not null
+            ? await RmaTenantStorageV1.InstallAsync(control, install, timeout.Token)
+            : await RmaTenantStorageV1.MigrateAsync(control, migrate!, timeout.Token);
+        controlExecutionStarted = true;
+        Console.WriteLine(receipt);
+        return 0;
+    }
     if (stockInstallContract is not null)
     {
         var stockRequest = document.Deserialize<StockInstallInput>(new JsonSerializerOptions
@@ -231,6 +265,16 @@ catch (IdentityDirectoryInstallationException error)
     Console.Error.WriteLine(JsonSerializer.Serialize(new { Contract = IdentityDirectoryInstallationV2.Contract, error.Outcome, Code = error.Message }));
     return error.Outcome == "UNKNOWN" ? 4 : 1;
 }
+catch (TenantProvisioningException error) when (rmaControl)
+{
+    Console.Error.WriteLine("RMA tenant storage rejected: " + error.Code + ".");
+    return error.Code == RmaTenantStorageV1.UnknownOutcome ? 4 : 1;
+}
+catch (PostgresException error) when (rmaControl)
+{
+    Console.Error.WriteLine("RMA tenant storage rejected: database-" + error.SqlState + "-retry-same-operation.");
+    return 1;
+}
 catch (TenantProvisioningException error) when (!tenantControl && !directoryControl && stockInstallContract is null)
 {
     Console.Error.WriteLine(error.Message);
@@ -238,6 +282,13 @@ catch (TenantProvisioningException error) when (!tenantControl && !directoryCont
 }
 catch (Exception error)
 {
+    if (rmaControl)
+    {
+        var code = error is JsonException ? "input-rejected"
+            : controlExecutionStarted ? RmaTenantStorageV1.UnknownOutcome : "execution-interrupted-retry-same-operation";
+        Console.Error.WriteLine("RMA tenant storage rejected: " + code + ".");
+        return controlExecutionStarted ? 4 : 1;
+    }
     if (stockReadInspect)
     {
         Console.Error.WriteLine(JsonSerializer.Serialize(new
@@ -305,3 +356,5 @@ internal sealed record StockInstallInput(string Server, int Port, string Databas
     string SystemIdentifier, string AdminUsername, string AdminPassword, TenantLoginV1[] Tenants, string SslMode = "VerifyFull",
     Guid? ReadInstallationId = null);
 internal sealed record DirectoryInput(IdentityDirectoryInstallRequestV2 Request,string AdminUsername,string AdminPassword,string SslMode="VerifyFull");
+
+internal sealed record RmaControlInput(JsonElement Request, string AdminUsername, string AdminPassword, string SslMode = "VerifyFull");

@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC W350 原 RMA 租户首版
+
+首次实际将原 RMA 业务对象的头与版本放到各自 schema，真实 DDL、本地历史和共享 Ready 原子提交，原复合键与不可变保持。 [RMA 交付](../development/evidence/W350-01/DELIVERY.md) · [WP02-28 交付](../development/evidence/W351-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W351 两版同库业务验证
 
 223 项实际前向迁移，三套其他历史保持。两版交叉处理两个原 JTI，重放保持原结果。 [交付报告](../development/evidence/W351-01/DELIVERY.md)

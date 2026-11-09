@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-09 UTC W350 物理租户 RMA 与 WP02-28 核销
+
+RMA 首版在实际 PostgreSQL A/B schema 通过并发、中断、原回执与普通登录验证。WP02-28 的本地采用经 #809 正常远端采用及回收已核销。 [RMA 交付](../development/evidence/W350-01/DELIVERY.md) · [WP02-28 交付](../development/evidence/W351-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W351 全 Core 实际前向和应用回退
 
 同库运行旧版和含 #801 修复的当前版。Core 1→224→224，旧宿主重启保持新迁移、原 C02 和 Outbox。 [交付报告](../development/evidence/W351-01/DELIVERY.md)

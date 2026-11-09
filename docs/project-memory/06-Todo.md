@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC W350 与 P1 #808
+
+DEV-1 接新隔离全 Core 的原 RMA 共享授权、出库来源和原 journal，逐步接原 HTTP。DEV-2 修复恢复候选重复库存派送。 [RMA 交付](../development/evidence/W350-01/DELIVERY.md) · [WP02-28 交付](../development/evidence/W351-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W351 收尾与 W350 接续
 
 正常采用和正式席位释放后核销 WP02-28 的本地范围。DEV-1 继续 RMA 逐租户迁移，集成线核恢复候选派送。 [交付报告](../development/evidence/W351-01/DELIVERY.md)

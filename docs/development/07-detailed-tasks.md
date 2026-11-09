@@ -2,7 +2,7 @@
 
 台账日期：2026-11-09。由 roadmap.json 生成；S01 已交付：12/12。S02-00 多租户设计前置保留。
 
-全部已登记任务 375 项，已交付 37 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
+全部已登记任务 375 项，已交付 38 项。任务大小和类型不同，这不是总工时百分比。设计任务完成不代表业务代码或运行验收通过。
 
 任务卡和目标主体责任见[工作包任务索引](10-work-package-tasks.md)，分配步骤见[多对话协作](09-parallel-development.md)。所有状态/领取/证据只在JSON登记；未领取的候选不自动READY。
 
@@ -57,7 +57,7 @@
 | [WP02-25 运行身份、健康与遥测脱敏](../../docs/development/task-plans/WP02.md#wp02-25) | Platform | 已交付 | WP02-01 | CODE / M | D / WP02-25（沿用原WP02-11对话） |
 | [WP02-26 SLO封存、故障注入与精确断言辅助](../../docs/development/task-plans/WP02.md#wp02-26) | Platform | 已交付 | S01-03, S01-04, WP02-25 | CODE / M | D / WP02-26 |
 | [WP02-27 Platform包能力矩阵与不可变信任验证](../../docs/development/task-plans/WP02.md#wp02-27) | Platform | 已交付 | S01-09, WP02-01 | CODE / M | B / WP02-27（沿用原S01-10对话） |
-| [WP02-28 Main宿主实际加载身份与兼容回退验证](../../docs/development/task-plans/WP02.md#wp02-28) | Main | 开发中 | WP02-25, WP02-27 | CODE / M | FORWARD-COMPAT / W351-01 |
+| [WP02-28 Main宿主实际加载身份与兼容回退验证](../../docs/development/task-plans/WP02.md#wp02-28) | Main | 已交付 | WP02-25, WP02-27 | CODE / M | FORWARD-COMPAT / W351-01 |
 | [WP02-29 CRM宿主平台合同与观测包采用](../../docs/development/task-plans/WP02.md#wp02-29) | CRM | 待安排 | WP02-09, WP02-11, WP02-12, WP02-25, WP02-27 | CODE / M | COORD / W62-01 |
 
 ## WP03 CRM客户经营

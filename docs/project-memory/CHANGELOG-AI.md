@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC W350 PostgreSQL RMA 租户首版
+
+新增新库的实际 RMA tenant schema CLI 与逐租户迁移，保留同键、真实回滚、最小权限和旧布局拒绝的验证。 [RMA 交付](../development/evidence/W350-01/DELIVERY.md) · [WP02-28 交付](../development/evidence/W351-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W351 实际全 Core 兼容验证
 
 复用旧制品，单次发布含首管理员修复的当前制品。真实双初始化和三宿主通过，采用清单列入 R2 源审查。 [交付报告](../development/evidence/W351-01/DELIVERY.md)
