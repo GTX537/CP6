@@ -153,7 +153,9 @@ public class StockController : ControllerBase
         req.OperatorCd ??= CurrentUser;
         try
         {
-            var txnNo = await _mover.ApplyAsync(req, ct);
+            var txnNo = await (_mover is StockMovementService movement
+                ? movement.ApplyLegacyHttpAsync(req, ct)
+                : _mover.ApplyAsync(req, ct));
             return Ok(new { code = 0, message = "WM-MSG-071", data = new { txnNo } });
         }
         catch (InsufficientStockException ex)

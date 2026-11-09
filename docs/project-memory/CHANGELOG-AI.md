@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC W338 直接库存调整的普通事务
+
+原 `/api/wms/stock/apply` 在已启用普通调整的宿主使用独立可信用途及原普通写者。保留公开旧入口的流水号合同和原业务内部入口。 [交付报告](../development/evidence/W338-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W337 真实 V2 移库目标创建
 
 新增 `StockReadTenancy:EnableV2Move`，沿原普通库存事务接 V2 移库上下文和目标创建。真实 PostgreSQL 验证原货权、两腿归属和故障回滚。 [交付报告](../development/evidence/W337-01/DELIVERY.md)
