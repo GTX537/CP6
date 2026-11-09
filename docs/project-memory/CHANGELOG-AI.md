@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC v10 同快照归档
+
+实际保留原库存和 RMA 切面、独立 A/B 键和原结果，核对 v10 归档与现行暂存入口的兼容边界。 [W405](../development/evidence/W405-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC v9 历史暂存
 
 实际保存两表原字节和约束，晚段唯一键冲突全回滚，同摘要重试和原回执恢复。 [W404](../development/evidence/W404-01/DELIVERY.md)

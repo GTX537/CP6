@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 候选导入和恢复采用
+
+接续真实隔离 Core 原件导入、独立审批与普通读回，完成 v10 恢复消费和原正式场景。 [W405](../development/evidence/W405-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 同源统一包和候选原结果
 
 接 Main Stock 原切面及当前权威，继续真实隔离候选和正式恢复。 [W404](../development/evidence/W404-01/DELIVERY.md)

@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W405 RMA 和 Main Stock 同快照归档通过原生验证，接续隔离 Core 候选原件导入。 [W405](./evidence/W405-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave405/README.md)
+
+
 > W404 v9 原历史中立落表实证通过，后续接续同库 Stock 归档和隔离候选普通读回。 [W404](./evidence/W404-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave404/README.md)
 
 

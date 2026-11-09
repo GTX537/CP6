@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC RMA 与 Main Stock 同快照归档
+
+W405 实测同一切面、36 个成员及晚到的真实库存和隐私事务。W404 随 #843 采用并释放。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W405](../development/evidence/W405-01/DELIVERY.md) · [PR #843](https://github.com/GTX537/CP6/pull/843)
+
+
 ## 2026-11-09 UTC v9 历史中立落表
 
 W404 实测原 v9 两份原件、原约束和回执。W403 随 #842 采用并释放。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W404](../development/evidence/W404-01/DELIVERY.md) · [PR #842](https://github.com/GTX537/CP6/pull/842)
