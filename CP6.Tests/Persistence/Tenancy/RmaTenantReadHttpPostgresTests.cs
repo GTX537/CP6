@@ -35,9 +35,12 @@ public sealed class RmaTenantReadHttpPostgresTests(ITestOutputHelper output)
     public async Task Real_bearer_current_and_historical_RMA_use_two_tenants_and_live_authority()
     {
         var fixture = JsonSerializer.Deserialize<Fixture>(Environment.GetEnvironmentVariable(RmaReadHttpFactAttribute.Variable)!)!;
-        var app = Guid.NewGuid();
+        var app = Guid.Parse("ffffffff-ffff-ffff-ffff-fffffffffff0");
         var a = await Seed(fixture.Connection, fixture.A.TenantId, app, "A", shared: false);
         var b = await Seed(fixture.Connection, fixture.B.TenantId, app, "B", shared: false);
+        var listA = await SeedList(fixture.Connection, a, hiddenEvery: 3, otherActorEvery: 7);
+        var listB = await SeedList(fixture.Connection, b, hiddenEvery: 4, otherActorEvery: 11);
+        Assert.True(listA.Length > 100 && listB.Length > 100);
         await using var host = await Start(fixture.Connection, Configuration(fixture));
         var aToken = await Login(host, a);
         var bToken = await Login(host, b);
@@ -50,8 +53,14 @@ public sealed class RmaTenantReadHttpPostgresTests(ITestOutputHelper output)
         await Expect(host, aToken, HttpMethod.Get, $"{Path}/{Guid.NewGuid():D}", HttpStatusCode.NotFound, "RMA_APPLICATION_NOT_FOUND");
         await Expect(host, aToken, HttpMethod.Get, $"{Path}/sources/{a.OutboundId:D}", HttpStatusCode.OK);
 
-        foreach (var endpoint in new[] { Path, $"{Path}/operations/{Guid.NewGuid():D}" })
-            await Expect(host, aToken, HttpMethod.Get, endpoint, HttpStatusCode.ServiceUnavailable, "RMA_TENANT_ENTRY_UNAVAILABLE");
+        await AssertList(host, aToken, 1, listA[..50]);
+        await AssertList(host, bToken, 1, listB[..50]);
+        await AssertList(host, aToken, 2, listA[50..100]);
+        await AssertList(host, bToken, 2, listB[50..100]);
+        await AssertList(host, aToken, 3, listA[100..]);
+        await Expect(host, aToken, HttpMethod.Get, $"{Path}?page=0", HttpStatusCode.BadRequest, "RMA_PAGE_INVALID");
+        await Expect(host, aToken, HttpMethod.Get, $"{Path}/operations/{Guid.NewGuid():D}",
+            HttpStatusCode.ServiceUnavailable, "RMA_TENANT_ENTRY_UNAVAILABLE");
         var op = Guid.NewGuid();
         await Expect(host, aToken, HttpMethod.Post, Path, HttpStatusCode.ServiceUnavailable, "RMA_TENANT_ENTRY_UNAVAILABLE",
             new RmaApplicationCreateV1(op, app, a.OutboundId, "source", "reason", "RETURN_ONLY", [], null));
@@ -72,12 +81,16 @@ public sealed class RmaTenantReadHttpPostgresTests(ITestOutputHelper output)
                 db.Sys_RoleFieldPerms.Add(new() { RoleId = Role, ResourceKey = Menu, FieldName = field, Access = 3 });
             await db.SaveChangesAsync();
             await AssertView(host, aToken, $"{Path}/{app:D}", a.Current, masked: true);
+            await AssertList(host, aToken, 2, listA[50..100], masked: true);
             await db.WmsRoleScopes.Where(x => x.RoleId == Role).ExecuteDeleteAsync();
+            await AssertList(host, aToken, 1, []);
             await Expect(host, aToken, HttpMethod.Get, $"{Path}/{app:D}", HttpStatusCode.Forbidden, "OBJECT_FORBIDDEN");
             await db.Sys_RoleActions.Where(x => x.RoleId == Role && x.ActionCode == "query").ExecuteDeleteAsync();
             await Expect(host, aToken, HttpMethod.Get, $"{Path}/{app:D}", HttpStatusCode.Forbidden, "ACTION_FORBIDDEN");
+            await Expect(host, aToken, HttpMethod.Get, Path, HttpStatusCode.Forbidden, "ACTION_FORBIDDEN");
         }
         await AssertView(host, bToken, $"{Path}/{app:D}", b.Current, masked: false);
+        await AssertList(host, bToken, 2, listB[50..100]);
         await using (var db = Context(fixture.Connection, b.Tenant))
             await db.Database.ExecuteSqlInterpolatedAsync($"""
                 UPDATE cp6_rma_tenant_v1.tenant_migrations
@@ -95,7 +108,9 @@ public sealed class RmaTenantReadHttpPostgresTests(ITestOutputHelper output)
 
         var shared = await Seed(fixture.LegacyConnection, fixture.A.TenantId, app, "SHARED", shared: true);
         await using var legacy = await Start(fixture.LegacyConnection, null);
-        await AssertView(legacy, await Login(legacy, shared), $"{Path}/{app:D}", shared.Current, masked: false);
+        var sharedToken = await Login(legacy, shared);
+        await AssertView(legacy, sharedToken, $"{Path}/{app:D}", shared.Current, masked: false);
+        await AssertList(legacy, sharedToken, 1, [shared.Current]);
     }
 
     private async Task<AuthenticationApiProcess> Start(string connection, Dictionary<string, string>? config)
@@ -175,6 +190,79 @@ public sealed class RmaTenantReadHttpPostgresTests(ITestOutputHelper output)
         using var response = await Request(host, token, method, path, body);
         Assert.Equal(status, response.StatusCode);
         if (code is not null) Assert.Contains(code, await response.Content.ReadAsStringAsync());
+    }
+
+    private static async Task AssertList(AuthenticationApiProcess host, string token, int page,
+        IReadOnlyList<RmaApplicationViewV1> expected, bool masked = false)
+    {
+        using var response = await Request(host, token, HttpMethod.Get, $"{Path}?page={page}");
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.True(response.StatusCode == HttpStatusCode.OK, $"RMA list page {page} expected 200, got {(int)response.StatusCode}: {body}");
+        Assert.True(response.Headers.CacheControl?.NoStore);
+        using var json = JsonDocument.Parse(body);
+        var actual = json.RootElement.GetProperty("data").Deserialize<RmaApplicationViewV1[]>(new JsonSerializerOptions(JsonSerializerDefaults.Web))!;
+        Assert.Equal(expected.Select(v => v.Id), actual.Select(v => v.Id));
+        Assert.Equal(expected.Select(v => v.Version), actual.Select(v => v.Version));
+        Assert.Equal(expected.Select(v => v.OutboundId), actual.Select(v => v.OutboundId));
+        Assert.Equal(expected.Select(v => masked ? null : v.RequestedBy), actual.Select(v => v.RequestedBy));
+        Assert.Equal(expected.Select(v => masked ? null : v.Reason), actual.Select(v => v.Reason));
+        Assert.Equal(expected.Select(v => masked ? null : v.Remarks), actual.Select(v => v.Remarks));
+    }
+
+    private static async Task<RmaApplicationViewV1[]> SeedList(string connection, Example example, int hiddenEvery, int otherActorEvery)
+    {
+        await using var db = Context(connection, example.Tenant);
+        await db.Sys_RoleDataScopes.Where(scope => scope.RoleId == Role && scope.ResourceKey == Menu)
+            .ExecuteUpdateAsync(set => set.SetProperty(scope => scope.ScopeType, 1));
+        var hidden = new OutboundOrder
+        {
+            Id = Guid.NewGuid(), OutboundNo = example.Current.OutboundNumber + "-HIDDEN", OutboundType = OutboundType.Shipping,
+            Status = OutboundOrderStatus.Completed, CustomerCd = "C1", WarehouseCd = "W9", Creator = example.UserName
+        };
+        db.OutboundOrders.Add(hidden);
+        await db.SaveChangesAsync();
+
+        var foreignActor = Guid.NewGuid();
+        var rows = Enumerable.Range(1, 200).Select(i =>
+        {
+            var actor = i % otherActorEvery == 0 ? foreignActor : example.Original.RequestedBy!.Value;
+            var source = i % hiddenEvery == 0 ? hidden.Id : example.OutboundId;
+            var version = i % 2 + 1;
+            return (version == 1 ? example.Original : example.Current) with
+            {
+                Id = Guid.Parse($"00000000-0000-0000-0000-{i:x12}"), RequestedBy = actor, OutboundId = source,
+                OutboundNumber = source == hidden.Id ? hidden.OutboundNo : example.Current.OutboundNumber
+            };
+        }).ToArray();
+        var history = rows.Select(row => row with { Version = 1, State = "DRAFT", SubmittedAt = null })
+            .Concat(rows.Where(row => row.Version == 2)).ToArray();
+
+        var schema = "t_" + example.Tenant.ToString("N");
+        await using var raw = new NpgsqlConnection(connection);
+        await raw.OpenAsync();
+        await using var tx = await raw.BeginTransactionAsync();
+        await using var seed = new NpgsqlCommand($"""
+            INSERT INTO "{schema}".heads (tenant_id,id,actor_id,outbound_id,version)
+            SELECT @tenant,id,actor,outbound,version
+            FROM unnest(@ids,@actors,@outbounds,@versions) AS head(id,actor,outbound,version);
+            INSERT INTO "{schema}".versions (tenant_id,id,version,state,payload)
+            SELECT @tenant,id,version,state,CAST(payload AS jsonb)
+            FROM unnest(@history_ids,@history_versions,@states,@payloads) AS version(id,version,state,payload);
+            """, raw, tx);
+        seed.Parameters.AddWithValue("tenant", example.Tenant);
+        seed.Parameters.AddWithValue("ids", rows.Select(row => row.Id).ToArray());
+        seed.Parameters.AddWithValue("actors", rows.Select(row => row.RequestedBy!.Value).ToArray());
+        seed.Parameters.AddWithValue("outbounds", rows.Select(row => row.OutboundId).ToArray());
+        seed.Parameters.AddWithValue("versions", rows.Select(row => row.Version).ToArray());
+        seed.Parameters.AddWithValue("history_ids", history.Select(row => row.Id).ToArray());
+        seed.Parameters.AddWithValue("history_versions", history.Select(row => row.Version).ToArray());
+        seed.Parameters.AddWithValue("states", history.Select(row => row.State).ToArray());
+        seed.Parameters.AddWithValue("payloads", history.Select(row => JsonSerializer.Serialize(row)).ToArray());
+        await seed.ExecuteNonQueryAsync();
+        await tx.CommitAsync();
+
+        return rows.Where(row => row.OutboundId == example.OutboundId && row.RequestedBy == example.Original.RequestedBy)
+            .Append(example.Current).ToArray();
     }
 
     private static CP6Context Context(string connection, Guid tenant)

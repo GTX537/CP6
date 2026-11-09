@@ -3,7 +3,6 @@ using System.Runtime.ExceptionServices;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Common;
 using CP6.Core.Services.Erp;
-using CP6.Core.Services.Wms;
 using CP6.Platform.Abstractions.Context;
 using CP6.Platform.Contracts.Context;
 using Microsoft.AspNetCore.Http;
@@ -39,8 +38,8 @@ internal sealed class TenantRmaReadStore : IAsyncDisposable
 
     // The existing RMA Owner has verified the current signed session and action.
     // It retains the authentication and shared outbound fences while this read runs.
-    internal async Task<RmaApplicationViewV1> ReadAsync(CP6Context authority, Guid actorId,
-        Func<RmaTenantReadContext, CancellationToken, Task<RmaApplicationViewV1>> read, CancellationToken ct)
+    internal async Task<T> ReadAsync<T>(CP6Context authority, Guid actorId, string operationReference,
+        Func<RmaTenantReadContext, CancellationToken, Task<T>> read, CancellationToken ct) where T : class
     {
         try
         {
@@ -62,16 +61,16 @@ internal sealed class TenantRmaReadStore : IAsyncDisposable
                 expires, "current-rma-owner:" + tokenId, tokenId, scopes,
                 OriginalRequesterReference: original is null ? null : user.FindFirst("impersonator_tenant_id")!.Value + ":" + original);
             var operation = new ContextOperationV1(ContextEntryKindV1.Http, Host, RmaTenantStorageV1.CoreReadProfile,
-                Audience, Purpose, tenant, "api/wms/rma/native-applications-v1/{id}", http.TraceIdentifier, scopes);
+                Audience, Purpose, tenant, operationReference, http.TraceIdentifier, scopes);
 
-            (RmaApplicationViewV1? View, ExceptionDispatchInfo? Failure) outcome = default;
+            (T? Value, ExceptionDispatchInfo? Failure) outcome = default;
             await _executor.ExecuteAsync(ContextEntryKindV1.Http, new ContextResolutionInputV1(operation, source),
                 VerifiedRmaOwnerSource.Instance, async token =>
                 {
                     await using var lease = await _connections.OpenCurrentAsync(token);
                     outcome = await lease.InTransactionAsync(async (transaction, cancellation) =>
                     {
-                        var result = await transaction.ExecuteAsync<(RmaApplicationViewV1? View, ExceptionDispatchInfo? Failure)>(
+                        var result = await transaction.ExecuteAsync<(T? Value, ExceptionDispatchInfo? Failure)>(
                             async (connection, dbTransaction, queryToken) =>
                             {
                                 await using var readOnly = new NpgsqlCommand(
@@ -94,7 +93,7 @@ internal sealed class TenantRmaReadStore : IAsyncDisposable
                     }, cancellationToken: token);
                 }, ct);
             outcome.Failure?.Throw();
-            return outcome.View!;
+            return outcome.Value!;
         }
         catch (TenantStorageException error)
         {
