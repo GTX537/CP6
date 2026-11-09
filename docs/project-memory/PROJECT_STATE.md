@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC W353 采用及 Stock 实际容量
+
+W353 随 #812 正常采用，准确分支已清理，DEV-1 已复用给 RMA 真实 HTTP。Stock 10/100 容量实测完成，原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W355 交付](../development/evidence/W355-01/DELIVERY.md) · [#812](https://github.com/GTX537/CP6/pull/812)
+
+
 ## 2026-11-09 UTC W353 全 Core RMA 启用与 #808 关闭
 
 真实全 Core 的 RMA 启用回归已通过，原业务表和该 Owner 的旧 journal 写栅栏、原子故障回滚及原键恢复均已实证。#808 随 #811 正常采用并关闭，DEV-2 已释放后转 W355。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W353 交付](../development/evidence/W353-01/DELIVERY.md) · [#811](https://github.com/GTX537/CP6/pull/811)

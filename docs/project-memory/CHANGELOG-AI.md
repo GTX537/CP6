@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC 实际 Stock 容量测量
+
+新增绑定准确本地制品的可复跑容量工具，分别记录冷暖、100 租户轮转、原生后端、单进程池饱和和两进程有限并发。 [W355 交付](../development/evidence/W355-01/DELIVERY.md) · [#812](https://github.com/GTX537/CP6/pull/812)
+
+
 ## 2026-11-09 UTC 新隔离 Core 原 RMA 权威
 
 加入 prepare 和 commission，两张旧 RMA 表与该 Owner 的旧 journal 写在同一事务禁用。保留 Core EF 历史、其他 Owner 的 journal 和 W350 原回执。 [W353 交付](../development/evidence/W353-01/DELIVERY.md) · [#811](https://github.com/GTX537/CP6/pull/811)
