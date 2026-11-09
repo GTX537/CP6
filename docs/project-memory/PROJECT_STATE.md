@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC v10 隔离 Core 导入
+
+W406 随 #849 采用并释放。W411 实测 v10 原两表导入、故障回滚和原回执恢复。Platform 0.10.4 正式版本登记已采用，签发及 Main 采用仍待执行。原台账为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W411](../development/evidence/W411-01/DELIVERY.md) · [Platform #81](https://github.com/GTX537/CP6.Platform/pull/81)
+
+
 ## 2026-11-09 UTC 独立 Core 导入与普通读取
 
 W409 随 #848 采用并释放。W406 实测原两表的完整独立 Core 导入、回滚与 COMMIT 原回执。W401 实测普通登录、当前和历史、ETag、B 404 及撤权后 403，集成席位释放。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W406](../development/evidence/W406-01/DELIVERY.md) · [W401](/D:/CP6-local-test/CP6-72H-20261109/W401-VERIFY/DELIVERY.md)

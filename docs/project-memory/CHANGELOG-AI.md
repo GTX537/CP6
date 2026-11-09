@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC v10 Core 导入采用准备
+
+复用完整 v10 校验后导入 RMA 原两表。原生回滚、丢失 COMMIT 后原回执和不同摘要拒绝均通过。 [W411](../development/evidence/W411-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 独立 Core RMA 导入
 
 隔离候选导入原 heads/versions，晚外键全回滚，真实 COMMIT 回包中断后同键取回原 913 字节回执。另验普通读回和当前授权。 [W406](../development/evidence/W406-01/DELIVERY.md) · [W401](/D:/CP6-local-test/CP6-72H-20261109/W401-VERIFY/DELIVERY.md)
