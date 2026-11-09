@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC 原 IAM staging
+
+历史参与者、版本和原引用按同一事务落表。真实晚段错误全部回滚，同 pin 恢复保存的原结果。 [W391](../development/evidence/W391-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC FileContent v7
 
 同快照原工程父版本及当前状态。核文件原长度与摘要，缺失、损坏或路径及父引用异常拒绝完成清单。 [W389](../development/evidence/W389-01/DELIVERY.md)

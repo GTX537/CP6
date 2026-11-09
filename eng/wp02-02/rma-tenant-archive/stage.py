@@ -12,6 +12,7 @@ import sys
 
 sys.dont_write_bytecode = True
 import archive
+import iam_v6
 import identity_priority
 import source_v3
 import visibility_v4
@@ -45,8 +46,9 @@ def checked_bundle(bundle, output, tenant, digest, target):
     journal_names = base_names | {archive.JOURNAL_MEMBER}
     source_names = journal_names | set(source_v3.MEMBERS)
     visibility_names = source_names | {visibility_v4.MEMBER}
-    if names not in (base_names, journal_names, source_names, visibility_names,
-                     visibility_names | set(identity_priority.MEMBERS)) \
+    identity_names = visibility_names | set(identity_priority.MEMBERS)
+    if names not in (base_names, journal_names, source_names, visibility_names, identity_names,
+                     identity_names | {iam_v6.MEMBER}) \
             or any(entry.is_symlink() or not entry.is_file() for entry in files):
         raise StageError("rma-stage-bundle-member-rejected")
 
@@ -64,7 +66,8 @@ def checked_bundle(bundle, output, tenant, digest, target):
     if (source.system_identifier, source.database_oid) == (target.system_identifier, target.database_oid):
         raise StageError("rma-stage-target-is-source")
     projection = manifest.get("sharedProjection")
-    has_identity = manifest["format"] == identity_priority.FORMAT
+    has_iam = manifest["format"] == iam_v6.FORMAT
+    has_identity = has_iam or manifest["format"] == identity_priority.FORMAT
     has_visibility = has_identity or manifest["format"] == visibility_v4.FORMAT
     has_source = has_visibility or manifest["format"] == source_v3.FORMAT
     columns = source_v3.HEADER_COLUMNS if has_source else archive.COLUMNS
@@ -92,6 +95,8 @@ def checked_bundle(bundle, output, tenant, digest, target):
         tables = manifest["identityPriority"]["tables"]
         plan["identityPriorityCounts"] = read_counts({name: table["count"] for name, table in tables.items()},
                                                      (table.name for table in identity_priority.TABLES))
+    if has_iam:
+        plan["iamReferenceCounts"] = read_counts(manifest["rmaIamReferences"]["counts"], iam_v6.FACTS)
     return checked, plan
 
 
@@ -417,6 +422,65 @@ def identity_priority_sql(tenant):
     """
 
 
+def iam_reference_sql(tenant, schema):
+    kinds = ",".join(map(archive.literal, iam_v6.FACTS))
+    shapes = []
+    for kind, (_, fields) in iam_v6.FACTS.items():
+        keys = "ARRAY[" + ",".join(map(archive.literal, fields)) + "]"
+        shapes.append(f"WHEN {archive.literal(kind)} THEN facts ?& {keys} AND facts - {keys} = '{{}}'::jsonb")
+    shape = "\n            ".join(shapes)
+    return f"""
+        CREATE TABLE rma_archive_stage.iam_reference_snapshot (
+            kind text COLLATE "C" NOT NULL CHECK (kind IN ({kinds})),
+            tenant_id uuid NOT NULL CHECK (tenant_id={archive.literal(tenant)}),
+            id text COLLATE "C" NOT NULL CHECK (id<>''), facts jsonb NOT NULL CHECK (jsonb_typeof(facts)='object'),
+            PRIMARY KEY (tenant_id,kind,id),
+            CHECK (kind<>'tenant' OR id=tenant_id::text),
+            CHECK (CASE kind
+            {shape}
+            END),
+            CHECK (kind<>'participant' OR (jsonb_typeof(facts->'user_present')='boolean' AND
+                (facts->'user_present'='true'::jsonb OR facts @>
+                    '{{"user_name":null,"enabled":null,"locked_until":null,"department_id":null,"primary_role_id":null}}'::jsonb))),
+            CHECK (kind<>'role' OR (jsonb_typeof(facts->'role_present')='boolean' AND
+                (facts->'role_present'='true'::jsonb OR facts->'enabled'='null'::jsonb)))
+        );
+        \\copy rma_archive_stage.iam_reference_snapshot FROM 'bundle/{iam_v6.MEMBER}' WITH (FORMAT csv, HEADER MATCH)
+
+        DO $cp6_stage_iam_references$
+        DECLARE
+            expected jsonb := current_setting('{TARGET_PLAN}')::jsonb->'iamReferenceCounts';
+        BEGIN
+            IF EXISTS (
+                SELECT FROM jsonb_each_text(expected) e(kind, count)
+                LEFT JOIN (SELECT kind,count(*) AS count FROM rma_archive_stage.iam_reference_snapshot GROUP BY kind) v
+                    USING (kind)
+                WHERE coalesce(v.count,0)<>e.count::bigint
+            ) THEN
+                RAISE EXCEPTION 'rma-stage-iam-reference-count-mismatch';
+            END IF;
+            IF EXISTS (
+                WITH original_references AS (
+                    SELECT tenant_id,actor_id::text AS id,true AS referenced_head,false AS referenced_journal FROM {schema}.heads
+                    UNION ALL
+                    SELECT tenant_id,actor_id::text,false,true FROM rma_archive_stage.original_journal_snapshot
+                ), participants AS (
+                    SELECT tenant_id,id,bool_or(referenced_head) AS referenced_head,bool_or(referenced_journal) AS referenced_journal
+                    FROM original_references GROUP BY tenant_id,id
+                )
+                SELECT FROM participants p
+                FULL JOIN (SELECT tenant_id,id,facts FROM rma_archive_stage.iam_reference_snapshot WHERE kind='participant') v
+                    ON v.tenant_id=p.tenant_id AND v.id=p.id
+                WHERE p.id IS NULL OR v.id IS NULL OR v.facts->'referenced_head' IS DISTINCT FROM to_jsonb(p.referenced_head)
+                    OR v.facts->'referenced_journal' IS DISTINCT FROM to_jsonb(p.referenced_journal)
+            ) THEN
+                RAISE EXCEPTION 'rma-stage-iam-participant-mismatch';
+            END IF;
+        END
+        $cp6_stage_iam_references$;
+    """
+
+
 WRITE_RECEIPT = """
     CREATE TABLE rma_archive_stage.receipt (
         singleton boolean PRIMARY KEY CHECK (singleton), tenant_id uuid NOT NULL,
@@ -519,6 +583,9 @@ def execute(args):
         if "identityPriorityCounts" in plan:
             driver += identity_priority_sql(tenant)
             source_field += ",'identityPriorityCounts',p->'identityPriorityCounts'"
+        if "iamReferenceCounts" in plan:
+            driver += iam_reference_sql(tenant, schema)
+            source_field += ",'iamReferenceCounts',p->'iamReferenceCounts'"
         driver += WRITE_RECEIPT.format(source_field=source_field)
     else:
         driver = initial_sql(plan, read_only=True) + READ_RECEIPT

@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 原现行 IAM 和外部资产落表
+
+W393 核现行 IAM 漂移与原未知，继续 v7 外部资产落表和完整候选。 [W391](../development/evidence/W391-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 现行授权、资产落表与池验证
 
 继续 v6 历史中立落表、现行权限和 v7 外部资产落表。W392 验实际宿主普通 A/B 百轮。 [W389](../development/evidence/W389-01/DELIVERY.md)

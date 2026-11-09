@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC 历史 IAM 原子落表
+
+W391 原 v6 staging 真回滚与原回执恢复通过，W389 随 #832 采用并释放。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W391](../development/evidence/W391-01/DELIVERY.md) · [PR #832](https://github.com/GTX537/CP6/pull/832)
+
+
 ## 2026-11-09 UTC 原外部资产切面
 
 W389 FileContent 原件同快照核验，W387 随 #831 采用并释放。W390 同物理库两版真实宿主的范围实证已保存。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W389](../development/evidence/W389-01/DELIVERY.md) · [PR #831](https://github.com/GTX537/CP6/pull/831)
