@@ -1,20 +1,24 @@
 #!/usr/bin/env python3
-"""Exercise atomic operator staging on a private PostgreSQL with pinned W363/W366 bundles."""
+"""Exercise atomic operator staging on a private PostgreSQL with pinned W363/W366/W374 bundles."""
 
 import argparse
 import csv
 from datetime import datetime, timezone
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
 import sys
+from unittest.mock import patch
 
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "rma-tenant-migration"))
 from verify import A, B, BASE_ENV, FLAGS, OWNER, Fixture, ident, q, require, token
 
 import archive
+import source_v3
+import stage
 
 STAGE = Path(__file__).resolve().with_name("stage.py")
 
@@ -227,6 +231,101 @@ def exercise_writer(f, v2):
     require(recovered == original, "original writer stage receipt changed")
 
 
+def copy_staged(f, database, table, order, original):
+    with f.psql(database, app="W377-roundtrip") as proc:
+        sql = "COPY (SELECT * FROM rma_archive_stage.{} ORDER BY {}) TO STDOUT WITH (FORMAT csv, HEADER true);\n"
+        out, err = f.collect(proc, sql.format(table, order).encode("utf-8"))
+        f.save(table + ".csv", out)
+        f.save(table + ".stderr", err)
+        require(proc.returncode == 0 and out == original.read_bytes(), "staging changed original " + table)
+
+
+def stage_with_lineage_fault(f, target, tenant, digest, bundle):
+    request = f.root / "v3-late-target.json"
+    put_json(request, target)
+    args = argparse.Namespace(action="stage", pg_bin=f.args.pg_bin, target_file=request, username=OWNER,
+                              tenant=tenant, manifest_sha256=digest, bundle=bundle, output=f.root / "v3-late-native")
+    run_driver = stage.run_driver
+
+    def inject(pg_bin, physical, username, output, action):
+        # Corrupt the just-loaded lineage text in the same native transaction,
+        # without changing the trusted package, digest, or production entry.
+        driver = output / "driver.sql"
+        script = driver.read_text(encoding="utf-8")
+        marker = "DO $cp6_stage_check$"
+        require(script.count(marker) == 1, "missing native stage verification boundary")
+        fault = "UPDATE rma_archive_stage.outbound_lineage_snapshot SET outbound_no=rtrim(outbound_no);\n"
+        driver.write_text(script.replace(marker, fault + marker, 1), encoding="utf-8")
+        return run_driver(pg_bin, physical, username, output, action)
+
+    with patch.dict(os.environ, {**BASE_ENV, "PGPASSWORD": f.passwords[OWNER]}, clear=True), \
+            patch.object(stage, "run_driver", inject):
+        try:
+            stage.execute(args)
+        except stage.StageError as error:
+            require(str(error) == "rma-stage-source-lineage-mismatch", "late native lineage check did not reject")
+            f.save("v3-late-error.json", {"Error": str(error), "ManifestSha256": digest})
+        else:
+            raise AssertionError("late lineage corruption was accepted")
+    stderr = (args.output / "stage.stderr").read_bytes()
+    require(b"P0001" in stderr and b"rma-stage-source-lineage-mismatch" in stderr, "missing native late lineage error")
+
+
+def exercise_source(f, v3):
+    bundle, tenant, digest = v3
+    target = new_target(f, "w377_source")
+    database = target["Database"]
+    stage_with_lineage_fault(f, target, tenant, digest, bundle)
+    assert_empty(f, database)
+    invoke(f, "v3-rollback-no-receipt", "recover", target, tenant, digest, None, 1, "rma-stage-receipt-not-found")
+
+    invoke(f, "v3-stage-discarded", "stage", target, tenant, digest, bundle, discard=True)
+    original = f.sql(database, "SELECT result_json FROM rma_archive_stage.receipt;").encode("utf-8")
+    recovered = invoke(f, "v3-recover", "recover", target, tenant, digest)
+    require(recovered == original, "v3 recovery changed persisted receipt bytes")
+    receipt = json.loads(recovered)
+    require(receipt["format"] == source_v3.FORMAT and receipt["target"] == target
+            and receipt["tenantId"] == tenant and receipt["manifestSha256"] == digest
+            and receipt["outcome"] == "STAGED" and receipt["recoveryReady"] is False
+            and receipt["counts"] == {"heads": 1, "versions": 1, "history": 1, "outbounds": 1}
+            and receipt["journalCounts"] == {"rows": 1, "committed": 1, "closed": 0}
+            and receipt["sourceCounts"] == {"headers": 1, "details": 3, "lineage": 1}, "v3 stage receipt mismatch")
+
+    copy_staged(f, database, "outbound_snapshot", "outbound_id", bundle / "outbounds.csv")
+    copy_staged(f, database, "outbound_detail_snapshot", "outbound_id,line_no,outbound_line_id",
+                bundle / "rma-source-details.csv")
+    copy_staged(f, database, "outbound_lineage_snapshot", "outbound_line_id", bundle / "rma-source-lineage.csv")
+    check_journal(f, database, bundle)
+    check_acl(f, database, tenant)
+    require(f.sql(database, """
+        SELECT format_type(atttypid,atttypmod) FROM pg_attribute
+        WHERE attrelid='rma_archive_stage.outbound_detail_snapshot'::regclass AND attname='shipped_qty';
+    """) == "numeric(21,8)", "v3 stage changed native shipped quantity type")
+    require(f.sql(database, """
+        SELECT (d.outbound_no=h.outbound_no)::text || '|' ||
+            (bpcharsend(d.outbound_no)<>bpcharsend(h.outbound_no))::text || '|' ||
+            (l.outbound_no=convert_from(bpcharsend(h.outbound_no),'UTF8'))::text
+        FROM rma_archive_stage.outbound_lineage_snapshot l
+        JOIN rma_archive_stage.outbound_detail_snapshot d USING (tenant_id,outbound_line_id)
+        JOIN rma_archive_stage.outbound_snapshot h USING (tenant_id,outbound_id);
+    """, label="v3-native-bpchar-lineage") == "true|true|true", "v3 native BPCHAR/text semantics changed")
+    require(f.sql(database, """
+        BEGIN;
+        UPDATE rma_archive_stage.outbound_detail_snapshot
+        SET outbound_no=lower(outbound_no::text) WHERE line_no=2;
+        SELECT d.outbound_no=h.outbound_no AND bpcharsend(d.outbound_no)<>bpcharsend(h.outbound_no)
+        FROM rma_archive_stage.outbound_detail_snapshot d JOIN rma_archive_stage.outbound_snapshot h
+             USING (tenant_id,outbound_id) WHERE d.line_no=2;
+        ROLLBACK;
+    """, label="v3-native-case-fk") == "t", "source ICU case-insensitive FK semantics changed")
+    f.sql(database, "UPDATE rma_archive_stage.outbound_detail_snapshot SET outbound_no='FOREIGN' WHERE line_no=2;",
+          error="23503", label="v3-foreign-document-denied")
+    f.sql(database, "UPDATE rma_archive_stage.outbound_detail_snapshot SET tenant_id={} WHERE line_no=2;".format(q(token())),
+          error="23514", label="v3-foreign-tenant-denied")
+    require(f.sql(database, "SELECT to_regnamespace('cp6_rma_original_journal_v1') IS NULL;") == "t",
+            "source staging activated the original journal")
+
+
 def pinned(bundle, digest, expected_format):
     bundle = bundle.resolve(strict=True)
     require(archive.file_digest(bundle / "manifest.json")["sha256"] == digest, "fixture manifest pin mismatch")
@@ -237,33 +336,38 @@ def pinned(bundle, digest, expected_format):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    for key in ("root", "pg-bin", "v2-bundle"):
+    for key in ("root", "pg-bin"):
         parser.add_argument("--" + key, type=Path, required=True)
-    parser.add_argument("--v1-bundle", type=Path)
-    parser.add_argument("--v1-sha256")
-    parser.add_argument("--v2-sha256", required=True)
-    parser.add_argument("--writer-only", action="store_true")
+    for version in ("v1", "v2", "v3"):
+        parser.add_argument("--" + version + "-bundle", type=Path)
+        parser.add_argument("--" + version + "-sha256")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--writer-only", action="store_true")
+    mode.add_argument("--v3-only", action="store_true")
     parser.add_argument("--port", type=int, required=True)
     args = parser.parse_args()
-    if not args.writer_only and (args.v1_bundle is None or args.v1_sha256 is None):
-        parser.error("--v1-bundle and --v1-sha256 are required for the baseline fixture")
+    required = ("v3",) if args.v3_only else ("v2",) if args.writer_only else ("v1", "v2")
+    for version in required:
+        if getattr(args, version + "_bundle") is None or getattr(args, version + "_sha256") is None:
+            parser.error("--{0}-bundle and --{0}-sha256 are required for this fixture".format(version))
     args.root = args.root.resolve(strict=True)
     args.pg_bin = args.pg_bin.resolve(strict=True)
-    v2 = pinned(args.v2_bundle, args.v2_sha256, archive.FORMAT_WITH_JOURNAL)
-    sources = {"v2": [str(v2[0]), *v2[1:]]}
-    label = "rma-stage-writer-" if args.writer_only else "rma-stage-"
+    versions = {"v1": archive.FORMAT, "v2": archive.FORMAT_WITH_JOURNAL, "v3": source_v3.FORMAT}
+    bundles = {version: pinned(getattr(args, version + "_bundle"), getattr(args, version + "_sha256"), versions[version])
+               for version in required}
+    label = "rma-stage-v3-" if args.v3_only else "rma-stage-writer-" if args.writer_only else "rma-stage-"
     fixture = Fixture(args, label + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S") + "-" + token()[:8])
-    if not args.writer_only:
-        v1 = pinned(args.v1_bundle, args.v1_sha256, archive.FORMAT)
-        sources["v1"] = [str(v1[0]), *v1[1:]]
-    fixture.save("sources.json", sources)
+    fixture.save("sources.json", {version: [str(bundle[0]), *bundle[1:]] for version, bundle in bundles.items()})
     print("evidence:", fixture.root, flush=True)
     with fixture.running():
-        if args.writer_only:
-            exercise_writer(fixture, v2)
+        if args.v3_only:
+            exercise_source(fixture, bundles["v3"])
+        elif args.writer_only:
+            exercise_writer(fixture, bundles["v2"])
         else:
-            exercise(fixture, v1, v2)
-    print("real atomic staging and rollback passed (" + ("writer v2" if args.writer_only else "v1/v2") + ")", flush=True)
+            exercise(fixture, bundles["v1"], bundles["v2"])
+    print("real atomic staging and rollback passed (" + ("v3" if args.v3_only else "writer v2" if args.writer_only else "v1/v2")
+          + ")", flush=True)
 
 
 if __name__ == "__main__":
