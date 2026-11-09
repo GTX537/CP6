@@ -202,31 +202,32 @@ def check_layout(query, owner_oid):
         raise archive.ArchiveError("stock-native-keys-or-history-rejected")
 
 
-def check_graph(query, tenant, route):
+def graph_sql(tenant, route, *, table_relation=relation, source_tenant=True):
     tenant_sql = archive.literal(tenant) + "::uuid"
     root_sql = archive.literal(route["id"])
     contract_sql = ",".join(map(archive.literal, JOURNAL_CONTRACTS))
-    facts = query(f"""
-        WITH n AS (SELECT * FROM {relation(NATIVE)} WHERE "TenantId"={tenant_sql}),
-             s AS (SELECT * FROM {relation(SOURCE)} WHERE "TenantId"={tenant_sql}),
-             b AS (SELECT * FROM {relation(BINDING)} WHERE "RootId"={root_sql}),
-             c AS (SELECT * FROM {relation(CLAIM)} WHERE "RootId"={root_sql}),
-             t AS (SELECT * FROM {relation(TICKET)} WHERE "RootId"={root_sql}),
-             m AS (SELECT * FROM {relation(MUTATION)} WHERE "RootId"={root_sql}),
-             sent AS (SELECT * FROM {relation(SEND)} WHERE "RootId"={root_sql})
+    tenant_join = 'JOIN public."Sys_Tenants" ten ON ten."Id"=a."TenantId"' if source_tenant else ""
+    return f"""
+        WITH n AS (SELECT * FROM {table_relation(NATIVE)} WHERE "TenantId"={tenant_sql}),
+             s AS (SELECT * FROM {table_relation(SOURCE)} WHERE "TenantId"={tenant_sql}),
+             b AS (SELECT * FROM {table_relation(BINDING)} WHERE "RootId"={root_sql}),
+             c AS (SELECT * FROM {table_relation(CLAIM)} WHERE "RootId"={root_sql}),
+             t AS (SELECT * FROM {table_relation(TICKET)} WHERE "RootId"={root_sql}),
+             m AS (SELECT * FROM {table_relation(MUTATION)} WHERE "RootId"={root_sql}),
+             sent AS (SELECT * FROM {table_relation(SEND)} WHERE "RootId"={root_sql})
         SELECT json_build_object(
-          'route',EXISTS(SELECT FROM {relation(ROUTE_TABLE)} r JOIN {relation(AUTHORITY)} a ON a."RootId"=r."Id"
-            JOIN public."Sys_Tenants" ten ON ten."Id"=a."TenantId"
+          'route',EXISTS(SELECT FROM {table_relation(ROUTE_TABLE)} r JOIN {table_relation(AUTHORITY)} a ON a."RootId"=r."Id"
+            {tenant_join}
             WHERE r."Id"={root_sql} AND r."TenantId"={tenant_sql} AND a."TenantId"=r."TenantId"
               AND r."OwnerId"={archive.literal(OWNER)} AND r."QueueDomainId"={archive.literal(DOMAIN)}
               AND r."RouteId"={archive.literal(ROUTE)} AND r."ProfileId"={archive.literal(PROFILE)} AND r."ProfileVersion"=1
               AND r."CurrentEpoch"=1 AND r."Phase"=0 AND r."LastSwitchId" IS NULL AND r."LockKey"={route['lockKey']}
               AND r."PublisherSetReference"={archive.literal(PUBLISHER)} AND a."PublisherReference"=r."PublisherSetReference"
               AND a."PolicyVersion"={archive.literal(POLICY)})
-            AND (SELECT count(*) FROM {relation(ROUTE_TABLE)} WHERE "TenantId"={tenant_sql})=1,
+            AND (SELECT count(*) FROM {table_relation(ROUTE_TABLE)} WHERE "TenantId"={tenant_sql})=1,
           'originals',NOT EXISTS(SELECT FROM n FULL JOIN s ON s."NativeId"=n."Id"
             FULL JOIN b ON b."NativeId"=coalesce(n."Id",s."NativeId")
-            LEFT JOIN {relation(JOURNAL)} j ON (j.tenant_id,j.owner,j.operation_id)=(s."TenantId",s."SourceOwner",s."OperationId")
+            LEFT JOIN {table_relation(JOURNAL)} j ON (j.tenant_id,j.owner,j.operation_id)=(s."TenantId",s."SourceOwner",s."OperationId")
             WHERE n."Id" IS NULL OR s."NativeId" IS NULL OR b."NativeId" IS NULL OR j.operation_id IS NULL
               OR s."SourceOwner" IS DISTINCT FROM {archive.literal(JOURNAL_OWNER)} OR j.state IS DISTINCT FROM 'COMMITTED'
               OR j.contract NOT IN ({contract_sql}) OR j.input_sha256 IS DISTINCT FROM encode(sha256(j.input_bytes),'hex')
@@ -247,23 +248,27 @@ def check_graph(query, tenant, route):
                     AND c."Tickets"::jsonb @> jsonb_build_array(t."Ticket"::jsonb)))
             AND NOT EXISTS(SELECT FROM c WHERE jsonb_array_length(c."Tickets"::jsonb)<>
                 (SELECT count(*) FROM t WHERE t."RequestId"=c."RequestId"))
-            AND NOT EXISTS(SELECT FROM {relation(RUN)} r WHERE r."RootId"={root_sql} AND r."CompletedAtUtc" IS NOT NULL
+            AND NOT EXISTS(SELECT FROM {table_relation(RUN)} r WHERE r."RootId"={root_sql} AND r."CompletedAtUtc" IS NOT NULL
                 AND (NOT EXISTS(SELECT FROM c WHERE c."RequestId"=r."RequestId") OR EXISTS(
                     SELECT FROM t WHERE t."RequestId"=r."RequestId" AND NOT EXISTS(SELECT FROM m
                         WHERE m."MutationId"=t."ReceiptReference" AND m."NativeId"=t."NativeId"
                             AND m."Output"::jsonb->>'Transition' IN ('Published','RetryScheduled','DeadLettered')))))
             AND NOT EXISTS(SELECT FROM m WHERE NOT EXISTS(SELECT FROM n WHERE n."Id"=m."NativeId"))
-            AND NOT EXISTS(SELECT FROM {relation(AUDIT)} a WHERE a."RootId"={root_sql} AND a."NativeId" IS NOT NULL
+            AND NOT EXISTS(SELECT FROM {table_relation(AUDIT)} a WHERE a."RootId"={root_sql} AND a."NativeId" IS NOT NULL
                 AND NOT EXISTS(SELECT FROM n WHERE n."Id"=a."NativeId"))
             AND NOT EXISTS(SELECT FROM sent a WHERE NOT EXISTS(SELECT FROM t WHERE t."ReceiptReference"=a."MutationId"
                     AND t."Ticket" COLLATE "C"=a."OriginalTicket" COLLATE "C" AND t."Ticket"::jsonb->>'ClaimId'=a."ClaimId"::text))
-            AND NOT EXISTS(SELECT FROM {relation(DEAD_LETTER)} d WHERE d."TenantId"={tenant_sql}
+            AND NOT EXISTS(SELECT FROM {table_relation(DEAD_LETTER)} d WHERE d."TenantId"={tenant_sql}
                 AND NOT EXISTS(SELECT FROM n WHERE n."MessageId" COLLATE "C"=d."MessageId" COLLATE "C"
                     AND n."PayloadSha256" COLLATE "C"=d."PayloadSha256" COLLATE "C"))
             AND NOT EXISTS(SELECT FROM n WHERE n."Status"=2 AND NOT EXISTS(SELECT FROM m JOIN t
                 ON t."ReceiptReference"=m."MutationId" AND t."NativeId"=m."NativeId"
                 WHERE m."NativeId"=n."Id" AND m."Output"::jsonb->>'Transition'='Published')));
-    """, failure="stock-source-read-failed (see native logs)")
+    """
+
+
+def check_graph(query, tenant, route):
+    facts = query(graph_sql(tenant, route), failure="stock-source-read-failed (see native logs)")
     for name in ("route", "originals", "companions"):
         if not facts[name]:
             raise archive.ArchiveError("stock-" + name + "-rejected")
