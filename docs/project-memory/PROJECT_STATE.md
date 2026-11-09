@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-09 UTC W345 两份实际本地制品
+
+两份固定 Main 源码的 Release publish 和五包运行身份已在隔离 PostgreSQL 分别实测。当前版完整初始化发现 P0 #801，真实登录诊断另有通过证据。 [交付报告](../development/evidence/W345-01/DELIVERY.md) · [Issue #801](https://github.com/GTX537/CP6/issues/801)
+
 ## 2026-11-09 UTC W344 实际 Stock 故障恢复
 
 真实取消和精确终止普通 PostgreSQL 后端均回滚，原键查回 UNKNOWN 后可安全提交。同一 B 普通池在授权根释放后继续。DEV-2 并行验证两份本地制品。 [交付报告](../development/evidence/W344-01/DELIVERY.md)

@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC W345 续接
+
+优先处理全新 PostgreSQL 初始化 P0 #801。之后在共同 service-token 布局验证两版签发、撤销和原结果恢复，并接库存安装回执。 [Issue #801](https://github.com/GTX537/CP6/issues/801) · [交付报告](../development/evidence/W345-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W344 续接
 
 收尾 W345 实际本地制品，独立处理全新 PostgreSQL 初始化阻断，再接库存首装回执和两版本共同业务。 [交付报告](../development/evidence/W344-01/DELIVERY.md)
