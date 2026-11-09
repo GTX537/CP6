@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC PGT-008 原生权限实证
+
+隔离共享表四条原策略、独立 B 原行、实际密钥列拒绝与原 ERP/Identity/Stock 实证采用。 [W427](../development/evidence/W427-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC PGT-001 正向实证
 
 普通 Stock V2 可信绑定、原审计与 Outbox、同键恢复和 A/B 隔离按原实测采用。 [W426](../development/evidence/W426-01/DELIVERY.md)
