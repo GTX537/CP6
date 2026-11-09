@@ -13,8 +13,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
     private static async Task VerifyStockTenantBindingAsync(Harness a, Harness b, AuthenticationApiProcess correctHost,
         string connection, string aLogin, string aPassword, string bLogin)
     {
-        var aBefore = await State(a);
-        var bBefore = await State(b);
+        var aBefore = await StockTenantEffectsAsync(a);
+        var bBefore = await StockTenantEffectsAsync(b);
         var input = new StockApplyCommandV1
         {
             OperationId = Guid.NewGuid(), TxnType = WmsTxnType.ADJ, WarehouseCd = "W01", LocationCd = "L1",
@@ -75,8 +75,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             await tx.CommitAsync();
         }
 
-        Assert.Equal(aBefore, await State(a));
-        Assert.Equal(bBefore, await State(b));
+        Assert.Equal(aBefore, await StockTenantEffectsAsync(a));
+        Assert.Equal(bBefore, await StockTenantEffectsAsync(b));
         var bSession = await Login(correctHost, b);
         using var missing = await correctHost.Send(OperationsRequest(bSession, HttpMethod.Get,
             $"api/wms/stock/operations/v1/{input.OperationId:D}"));
@@ -89,11 +89,12 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
                 claimedTenant = b.Tenant, mappedTenant = mapped, visibleStock = aBefore.StockId, changed
             }));
 
-        static async Task<(Guid StockId, decimal Quantity, int Movements, int Originals, int Outbox)> State(Harness h)
-        {
-            var row = await h.Db.Stocks.AsNoTracking().Where(x => x.WarehouseCd == "W01" && x.LocationCd == "L1" &&
-                x.ProductCd == "P1" && x.LotNo == "LOT").Select(x => new { x.Id, x.PhysicalQty }).SingleAsync();
-            return (row.Id, row.PhysicalQty, await h.Db.StockTransactions.CountAsync(), await Operations(h), await StockNotifications(h));
-        }
+    }
+
+    private static async Task<(Guid StockId, decimal Quantity, int Movements, int Originals, int Outbox)> StockTenantEffectsAsync(Harness h)
+    {
+        var row = await h.Db.Stocks.AsNoTracking().Where(x => x.WarehouseCd == "W01" && x.LocationCd == "L1" &&
+            x.ProductCd == "P1" && x.LotNo == "LOT").Select(x => new { x.Id, x.PhysicalQty }).SingleAsync();
+        return (row.Id, row.PhysicalQty, await h.Db.StockTransactions.CountAsync(), await Operations(h), await StockNotifications(h));
     }
 }

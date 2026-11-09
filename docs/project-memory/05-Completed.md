@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC W343 实际 Stock 凭据轮换
+
+隔离 PostgreSQL 和真实 Kestrel 核实旧配置拒绝 A 且 B 正常，新配置读回双方原结果并使 A 的八位小数调整仅产生一次效果。 [交付报告](../development/evidence/W343-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W342 真实 Stock 错绑定
 
 真实普通 A 登录改自定义租户 GUC 后仍映射为 A。切换到 B 被原生拒绝，更新 B 主键影响 0 行，两租户库存、流水、原操作和通知保持前值。 [交付报告](../development/evidence/W342-01/DELIVERY.md)

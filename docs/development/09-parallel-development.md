@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> [CP6 三天实际执行](planning/20261109-codex-72h-execution.md)按 11 月 9 日用户追加指令启用独立子代理，COORD 负责领取、共享台账和正常合并。[W343-01](evidence/W343-01/DELIVERY.md)已核旧池退出、同角色凭据和新宿主原结果，接续真实取消和本地兼容制品。
+
 > [CP6 三天实际执行](planning/20261109-codex-72h-execution.md)由总控单人串行执行。[W342-01](evidence/W342-01/DELIVERY.md)核错库存绑定、原生角色和零业务写入，接续旧宿主排空及凭据轮换。
 
 > [CP6 三天实际执行](planning/20261109-codex-72h-execution.md)由总控单人串行执行。[W341-01](evidence/W341-01/DELIVERY.md)验证真实两租户同键的普通读写、池及原结果，接续错误绑定和凭据。

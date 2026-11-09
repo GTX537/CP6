@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC W343 实际 Stock 凭据轮换
+
+增加冻结配置宿主重启的真实凭据和原结果回归。按原矩阵更正 PGT-017 对应范围。 [交付报告](../development/evidence/W343-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W342 真实 Stock 错绑定
 
 现有 Stock 回归加入真实错误绑定宿主、PostgreSQL 角色切换和库存行隔离检查，保存原生观测。 [交付报告](../development/evidence/W342-01/DELIVERY.md)

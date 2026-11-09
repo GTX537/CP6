@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-09 UTC W343 实际 Stock 凭据轮换
+
+旧宿主普通连接归零后轮换同一角色。旧凭据返回 28P01，新宿主分别查回 A/B 原结果并提交 A 调整。用户授权加速使用子代理，COORD 统一回收。 [交付报告](../development/evidence/W343-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W342 真实 Stock 错绑定
 
 B 的真实写请求绑定 A 普通 LOGIN 时返回 503，正确宿主查回原操作为 UNKNOWN。原生角色切换及跨租户读写同时取得隔离证据。 [交付报告](../development/evidence/W342-01/DELIVERY.md)
