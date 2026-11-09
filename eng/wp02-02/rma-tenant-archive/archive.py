@@ -19,6 +19,7 @@ import sys
 from threading import Thread
 from uuid import UUID
 
+import file_content_assets
 import iam_v6
 import identity_priority
 import source_v3
@@ -503,7 +504,12 @@ def file_digest(path):
 
 def export_bundle(pg_bin, target, username, installation, tenant, output, *,
                   include_original_journal=False, include_rma_source=False, include_rma_visibility=False,
-                  include_identity_priority=False, include_rma_iam_references=False, environ=None, on_snapshot=None):
+                  include_identity_priority=False, include_rma_iam_references=False, file_content_root=None,
+                  environ=None, on_snapshot=None):
+    if file_content_root is not None:
+        if not include_rma_iam_references:
+            raise ArchiveError("file-content-iam-references-required")
+        file_content_root = file_content_assets.checked_root(file_content_root)
     if include_rma_iam_references and not include_identity_priority:
         raise ArchiveError("rma-iam-reference-identity-priority-required")
     if include_identity_priority and not include_rma_visibility:
@@ -547,6 +553,8 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
         if include_rma_iam_references:
             iam_rows = iam_v6.rows_sql(tenant, journal_rows, visibility_rows)
             iam_counts = iam_v6.capture_counts(query, iam_rows)
+        if file_content_root is not None:
+            file_count = file_content_assets.capture_count(query, tenant, ready["ownerOid"])
         if on_snapshot is not None:
             on_snapshot(snapshot)
         run_native(pg_bin, "pg_dump", [*connection, "--no-password", "--format=custom", "--strict-names",
@@ -574,6 +582,12 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
         if include_rma_iam_references:
             copy_snapshot(pg_bin, connection, environ, logs, bundle / iam_v6.MEMBER, "iam-references-copy", snapshot,
                           iam_rows + " ORDER BY " + iam_v6.ORDER, source_v3.READ_ALL_ROWS)
+        if file_content_root is not None:
+            copy_snapshot(pg_bin, connection, environ, logs, bundle / file_content_assets.MEMBER, "file-content-assets-copy",
+                          snapshot, file_content_assets.rows_sql(tenant), file_content_assets.COPY_SETTINGS)
+
+    if file_content_root is not None:
+        file_content_assets.verify_member(bundle / file_content_assets.MEMBER, tenant, file_count, file_content_root)
 
     toc = logs / "pg-restore-list.stdout"
     run_native(pg_bin, "pg_restore", ["--list", str(bundle / "rma.pgcustom")], environ, logs, "pg-restore-list")
@@ -617,6 +631,11 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
         manifest["rmaIamReferences"] = iam_v6.manifest_section(iam_counts)
         manifest["members"][iam_v6.MEMBER] = file_digest(bundle / iam_v6.MEMBER)
         manifest["excluded"][0] = "credentials, MFA, tokens, signing keys, global IAM definitions and current authorization"
+    if file_content_root is not None:
+        manifest["format"] = file_content_assets.FORMAT
+        manifest["fileContentAssets"] = file_content_assets.manifest_section(file_count)
+        manifest["members"][file_content_assets.MEMBER] = file_digest(bundle / file_content_assets.MEMBER)
+        manifest["excluded"][4] = "audit, legal hold, external file bodies, other assets, FileContent history and cross-database dependencies"
     pending = logs / "manifest.pending"
     with pending.open("x", encoding="utf-8", newline="\n") as file:
         json.dump(manifest, file, indent=2)
@@ -625,14 +644,15 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
     return bundle
 
 
-def verify_bundle(bundle, tenant):
+def verify_bundle(bundle, tenant, *, file_content_root=None):
     tenant = guid(tenant)
     files = list(bundle.iterdir())
     names = {path.name for path in files}
     if "manifest.json" not in names or any(path.is_symlink() or not path.is_file() for path in files):
         raise ArchiveError("bundle-member-mismatch")
     manifest = json.loads((bundle / "manifest.json").read_text(encoding="utf-8"))
-    identity_formats = (identity_priority.FORMAT, iam_v6.FORMAT)
+    iam_formats = (iam_v6.FORMAT, file_content_assets.FORMAT)
+    identity_formats = (identity_priority.FORMAT, *iam_formats)
     visibility_formats = (visibility_v4.FORMAT, *identity_formats)
     source_formats = (source_v3.FORMAT, *visibility_formats)
     if not isinstance(manifest, dict) or manifest.get("format") not in (FORMAT, FORMAT_WITH_JOURNAL, *source_formats) \
@@ -658,10 +678,16 @@ def verify_bundle(bundle, tenant):
         members += identity_priority.MEMBERS
         if not identity_priority.matches_manifest(manifest):
             raise ArchiveError("bundle-format-rejected")
-    if manifest["format"] == iam_v6.FORMAT:
+    if manifest["format"] in iam_formats:
         members += (iam_v6.MEMBER,)
         if not iam_v6.matches_manifest(manifest):
             raise ArchiveError("bundle-format-rejected")
+    if manifest["format"] == file_content_assets.FORMAT:
+        members += (file_content_assets.MEMBER,)
+        if not file_content_assets.matches_manifest(manifest):
+            raise ArchiveError("bundle-format-rejected")
+    elif file_content_root is not None:
+        raise ArchiveError("file-content-format-required")
     if names != {*members, "manifest.json"}:
         raise ArchiveError("bundle-member-mismatch")
     if manifest.get("tenantId") != str(tenant) or manifest.get("schema") != "t_" + tenant.hex:
@@ -671,6 +697,9 @@ def verify_bundle(bundle, tenant):
         raise ArchiveError("bundle-member-mismatch")
     if any(file_digest(bundle / name) != expected[name] for name in members):
         raise ArchiveError("bundle-digest-mismatch")
+    if manifest["format"] == file_content_assets.FORMAT:
+        root = file_content_assets.checked_root(file_content_root)
+        file_content_assets.verify_member(bundle / file_content_assets.MEMBER, tenant, manifest["fileContentAssets"]["count"], root)
     return manifest
 
 
@@ -692,9 +721,12 @@ def main():
                         help="include the four Identity Priority tables in v5 (requires --include-rma-visibility)")
     export.add_argument("--include-rma-iam-references", action="store_true",
                         help="include historical RMA IAM references in v6 (requires --include-identity-priority)")
+    export.add_argument("--file-content-root", type=Path,
+                        help="verify original FileContent assets under this private local root in v7 (requires v6 opt-in)")
     verify = actions.add_parser("verify")
     verify.add_argument("--bundle", type=Path, required=True)
     verify.add_argument("--tenant", required=True)
+    verify.add_argument("--file-content-root", type=Path, help="private local file root for rechecking v7 asset references")
     args = parser.parse_args()
     try:
         if args.action == "export":
@@ -704,12 +736,13 @@ def main():
                                    include_rma_source=args.include_rma_source,
                                    include_rma_visibility=args.include_rma_visibility,
                                    include_identity_priority=args.include_identity_priority,
-                                   include_rma_iam_references=args.include_rma_iam_references)
+                                   include_rma_iam_references=args.include_rma_iam_references,
+                                   file_content_root=args.file_content_root)
             print(bundle)
         else:
-            manifest = verify_bundle(args.bundle, args.tenant)
+            manifest = verify_bundle(args.bundle, args.tenant, file_content_root=args.file_content_root)
             print(json.dumps({"tenantId": manifest["tenantId"], "format": manifest["format"], "recoveryReady": False}))
-    except (ArchiveError, OSError, ValueError, subprocess.SubprocessError) as error:
+    except (ArchiveError, OSError, ValueError, csv.Error, subprocess.SubprocessError) as error:
         print("archive rejected:", error, file=sys.stderr)
         return 1
     return 0
