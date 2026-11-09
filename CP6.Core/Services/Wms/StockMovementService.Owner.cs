@@ -40,29 +40,37 @@ public partial class StockMovementService
     private StockMovementService ForTenantWriter(StockMovementWriteContextV1 context)
         =>new(context,new WmsSequenceService(context),_notifier,_finBridge);
 
-    public async Task<(string OutTxnNo,string InTxnNo)> MoveAsync(StockMoveRequest req,CancellationToken ct=default)
+    public Task<(string OutTxnNo,string InTxnNo)> MoveAsync(StockMoveRequest req,CancellationToken ct=default)
+        =>MoveIndependentAsync(req,null,ct);
+    internal Task<(string OutTxnNo,string InTxnNo)> MoveLegacyHttpAsync(StockMoveRequest req,CancellationToken ct)
+        =>MoveIndependentAsync(req,_tenantStorage is { V1MoveEnabled: true }?_tenantStorage:null,ct);
+    private async Task<(string OutTxnNo,string InTxnNo)> MoveIndependentAsync(StockMoveRequest req,TenantStockReadStore? storage,CancellationToken ct)
     {
         if(!_db.Database.IsNpgsql())return await MoveCoreAsync(req,ct);
         var frozen=OperationsOwnerV1.Freeze(req);var effects=new List<StockTransaction>();
-        var result=await Owner.ExecuteAsync(OperationsOwnerV1.Stock,"move",true,async(a,t)=>
+        async Task<(string OutTxnNo,string InTxnNo)> Stage(StockMovementService mover,OperationsAccessV1 a,CancellationToken t)
         {
             frozen.OperatorCd=a.Actor;
             await a.RequireStockKey(frozen.WarehouseCd,frozen.FromLocationCd,frozen.ProductCd,frozen.LotNo,true,t);
             await a.RequireStockKey(frozen.WarehouseCd,frozen.ToLocationCd,frozen.ProductCd,frozen.LotNo,true,t);
-            await GuardIndependentLocationUse(a,frozen.WarehouseCd,frozen.FromLocationCd,WmsTxnType.MOVE,t);
-            await GuardIndependentLocationUse(a,frozen.WarehouseCd,frozen.ToLocationCd,WmsTxnType.MOVE,t);
-            if(await _db.Stocks.AnyAsync(s=>s.WarehouseCd==frozen.WarehouseCd && s.ProductCd==frozen.ProductCd && s.LotNo==frozen.LotNo
+            await mover.GuardIndependentLocationUse(a,frozen.WarehouseCd,frozen.FromLocationCd,WmsTxnType.MOVE,t);
+            await mover.GuardIndependentLocationUse(a,frozen.WarehouseCd,frozen.ToLocationCd,WmsTxnType.MOVE,t);
+            if(await mover._db.Stocks.AnyAsync(s=>s.WarehouseCd==frozen.WarehouseCd && s.ProductCd==frozen.ProductCd && s.LotNo==frozen.LotNo
                 && s.LocationCd==frozen.FromLocationCd && s.LocationCd==frozen.ToLocationCd,t))
                 throw new ArgumentException("WM-MSG-010: 移動先は移動元と異なるロケーションを指定してください。");
-            using var inheritance=InheritTransactions(a);
-            var pair=await MoveCoreAsync(frozen,t);
-            effects.AddRange(_db.ChangeTracker.Entries<StockTransaction>().Select(e=>e.Entity));
+            using var inheritance=mover.InheritTransactions(a);
+            var pair=await mover.MoveCoreAsync(frozen,t);
+            effects.AddRange(mover._db.ChangeTracker.Entries<StockTransaction>().Select(e=>e.Entity));
             a.AtCommit(async c=>
             {
                 await a.RequireStockKey(frozen.WarehouseCd,frozen.FromLocationCd,frozen.ProductCd,frozen.LotNo,false,c);
                 await a.RequireStockKey(frozen.WarehouseCd,frozen.ToLocationCd,frozen.ProductCd,frozen.LotNo,false,c);
             });return pair;
-        },ct);
+        }
+        var result=storage is null
+            ? await Owner.ExecuteAsync(OperationsOwnerV1.Stock,"move",true,(access,token)=>Stage(this,access,token),ct)
+            : await Owner.ExecuteStockOperationAsync(storage,StockWriteEntry.MoveLegacy,
+                (context,access,token)=>Stage(ForTenantWriter(context),access,token),(_,_)=>Task.FromResult("move"),ct);
         foreach(var effect in effects)await PublishCommittedCancellationAsync(effect);return result;
     }
     // Ordinary independent commands have no authenticated old-obligation/physical-fact capability.
