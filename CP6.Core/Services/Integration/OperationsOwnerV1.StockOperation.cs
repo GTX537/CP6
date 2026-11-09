@@ -7,7 +7,7 @@ namespace CP6.Core.Services.Integration;
 
 public sealed partial class OperationsOwnerV1
 {
-    internal async Task<T> ExecuteStockOperationAsync<T>(TenantStockReadStore storage, StockV1WriteEntry entry,
+    internal async Task<T> ExecuteStockOperationAsync<T>(TenantStockReadStore storage, StockWriteEntry entry,
         Func<StockMovementWriteContextV1, OperationsAccessV1, CancellationToken, Task<T>> body,
         Func<StockMovementWriteContextV1, CancellationToken, Task<string>> actionAtFence,
         CancellationToken ct)
@@ -26,7 +26,7 @@ public sealed partial class OperationsOwnerV1
             await using var authorization = await db.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted, ct);
             await db.Database.ExecuteSqlRawAsync("SET TRANSACTION READ ONLY", ct);
             var subject = await currentActor(ct);
-            var result = await storage.WriteV1Async(db, subject, entry, async (writer, token) =>
+            var result = await storage.WriteAsync(db, subject, entry, async (writer, token) =>
             {
                 await writer.Database.ExecuteSqlInterpolatedAsync($"SELECT cp6_stock_adjust_owner_v1.lock_graph({writer.CurrentTenantId})", token);
                 var current = await currentActor(token);
@@ -35,7 +35,7 @@ public sealed partial class OperationsOwnerV1
                 var authority = await AuthorityCoreAsync(Stock, action, current, false, token, writer);
                 var access = new OperationsAccessV1(writer, this, authority);
                 var result = await body(writer, access, token);
-                // The inheritance revision belongs to the ordinary transaction and is visible there before commit.
+                // The new department mapping revisions are visible in the ordinary transaction before commit.
                 await ValidateFinalAuthorityAsync(access, subject, token, writer);
                 return result;
             }, ct);

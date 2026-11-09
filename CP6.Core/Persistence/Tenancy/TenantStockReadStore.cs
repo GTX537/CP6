@@ -14,14 +14,17 @@ using Npgsql;
 
 namespace CP6.Core.Persistence.Tenancy;
 
-internal enum StockV1WriteEntry { Apply, Move, Close }
+internal enum StockReadEntry { Query, AdjustCreationV2 }
+internal enum StockWriteEntry { ApplyV1, MoveV1, CloseV1, ApplyV2 }
 
 /// <summary>Runs the Stock Owner's reads and explicitly enabled commands under a tenant LOGIN on the same primary.</summary>
 internal sealed class TenantStockReadStore : IAsyncDisposable
 {
     internal const string Host = "main-stock-read";
     private const string ReadPurpose = "wms-stock:query";
+    private const string AdjustCreationPurpose = "wms-stock:creation-adjust-v2";
     private const string AdjustPurpose = "wms-stock:adjust-v1";
+    private const string AdjustV2Purpose = "wms-stock:adjust-v2";
     private const string MovePurpose = "wms-stock:move-v1";
     private const string ClosePurpose = "wms-stock:close-operation-v1";
     private const string Issuer = "https://cp6.internal/main-stock-read";
@@ -32,22 +35,29 @@ internal sealed class TenantStockReadStore : IAsyncDisposable
 
     internal bool V1AdjustEnabled { get; }
     internal bool V1MoveEnabled { get; }
+    internal bool V2AdjustEnabled { get; }
 
     internal TenantStockReadStore(TenantStorageCatalog catalog, ITenantCredentialResolver credentials,
-        IHttpContextAccessor http, bool v1AdjustEnabled = false, bool v1MoveEnabled = false)
+        IHttpContextAccessor http, bool v1AdjustEnabled = false, bool v1MoveEnabled = false, bool v2AdjustEnabled = false)
     {
         var accessor = new ContextScopeAccessorV1();
         _connections = new(Host, accessor, catalog, credentials, new(32, 64, 2));
-        _executor = new(new BindingAuthority(catalog, v1AdjustEnabled, v1MoveEnabled), accessor);
+        _executor = new(new BindingAuthority(catalog, v1AdjustEnabled, v1MoveEnabled, v2AdjustEnabled), accessor);
         _http = http;
         V1AdjustEnabled = v1AdjustEnabled;
         V1MoveEnabled = v1MoveEnabled;
+        V2AdjustEnabled = v2AdjustEnabled;
     }
 
-    // Called only after the native Stock Owner's current session and query decision.
+    // Called only after the native Stock Owner's current session and action decision.
     internal Task<T> ReadAsync<T>(CP6Context authority, Guid actorId, Func<CP6Context, CancellationToken, Task<T>> read,
-        CancellationToken ct, bool requireJournalRls = false)
-        => WithTenantTransactionAsync(authority, actorId, ReadPurpose, async (transaction, identity, cancellation) =>
+        CancellationToken ct, bool requireJournalRls = false, StockReadEntry entry = StockReadEntry.Query)
+        => WithTenantTransactionAsync(authority, actorId, entry switch
+        {
+            StockReadEntry.Query => ReadPurpose,
+            StockReadEntry.AdjustCreationV2 => AdjustCreationPurpose,
+            _ => throw new TenantStorageException(TenantStorageFailure.BindingRejected)
+        }, async (transaction, identity, cancellation) =>
         {
             var value = await transaction.ExecuteAsync(async (connection, dbTransaction, queryToken) =>
             {
@@ -64,14 +74,15 @@ internal sealed class TenantStockReadStore : IAsyncDisposable
             return value;
         }, ct);
 
-    internal async Task<T> WriteV1Async<T>(CP6Context authority, Guid actorId, StockV1WriteEntry entry,
+    internal async Task<T> WriteAsync<T>(CP6Context authority, Guid actorId, StockWriteEntry entry,
         Func<StockMovementWriteContextV1, CancellationToken, Task<T>> stage, CancellationToken ct)
     {
         var purpose = entry switch
         {
-            StockV1WriteEntry.Apply => AdjustPurpose,
-            StockV1WriteEntry.Move => MovePurpose,
-            StockV1WriteEntry.Close => ClosePurpose,
+            StockWriteEntry.ApplyV1 => AdjustPurpose,
+            StockWriteEntry.MoveV1 => MovePurpose,
+            StockWriteEntry.CloseV1 => ClosePurpose,
+            StockWriteEntry.ApplyV2 => AdjustV2Purpose,
             _ => throw new TenantStorageException(TenantStorageFailure.BindingRejected)
         };
         var committing = false;
@@ -141,7 +152,9 @@ internal sealed class TenantStockReadStore : IAsyncDisposable
         var reference = purpose switch
         {
             ReadPurpose => "api/wms/stock",
+            AdjustCreationPurpose => "api/wms/stock/creation-context/adjust",
             AdjustPurpose => "api/wms/stock/commands/v1/apply",
+            AdjustV2Purpose => "api/wms/stock/commands/v2/apply",
             MovePurpose => "api/wms/stock/commands/v1/move",
             ClosePurpose => "api/wms/stock/operations/v1/close",
             _ => throw new TenantStorageException(TenantStorageFailure.BindingRejected)
@@ -187,7 +200,8 @@ internal sealed class TenantStockReadStore : IAsyncDisposable
             => ValueTask.FromResult<ContextResolutionInputV1?>(input);
     }
 
-    private sealed class BindingAuthority(TenantStorageCatalog catalog, bool v1AdjustEnabled, bool v1MoveEnabled) : IContextBindingAuthorityV1
+    private sealed class BindingAuthority(TenantStorageCatalog catalog, bool v1AdjustEnabled, bool v1MoveEnabled, bool v2AdjustEnabled)
+        : IContextBindingAuthorityV1
     {
         public ValueTask<ContextBindingRegistrationV1?> ResolveCurrentAsync(ContextOperationV1 operation,
             AuthenticatedContextSourceV1 source, CancellationToken ct = default)
@@ -197,6 +211,7 @@ internal sealed class TenantStockReadStore : IAsyncDisposable
                 ReadPurpose => true,
                 AdjustPurpose or ClosePurpose => v1AdjustEnabled,
                 MovePurpose => v1MoveEnabled,
+                AdjustCreationPurpose or AdjustV2Purpose => v2AdjustEnabled,
                 _ => false
             };
             if (!enabled)

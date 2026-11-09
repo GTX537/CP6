@@ -162337,6 +162337,21 @@
       "at": "2026-11-09T04:14:01.1904039Z",
       "change": "W335 V2 创建原语已取得实际 PostgreSQL 和安装证据，等待远端采用及席位释放。",
       "evidence": "docs/development/evidence/W335-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T04:16:37.842052Z",
+      "change": "W335-01正常合并PR #792，准确远端树核对和分支删除及DEV-1释放完成，实际1104秒。",
+      "evidence": "docs/development/evidence/W335-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T04:17:46.199163Z",
+      "change": "W336-01沿原任务实际开工。V2 原创建上下文和单笔调整，后续按原合同采用 V2 移库目标。",
+      "evidence": "docs/development/dispatch/20261109-wave336/README.md"
+    },
+    {
+      "at": "2026-11-09T04:26:36.4845123Z",
+      "change": "W336 V2 原创建调整宿主验证齐备，等待远端采用及席位释放。",
+      "evidence": "docs/development/evidence/W336-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -163784,24 +163799,25 @@
       "card_anchor": "wp02-02",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD / W335-01",
+        "chat_label": "COORD / W336-01",
         "repository": "Main",
-        "branch": "codex/w335-01",
+        "branch": "codex/w336-01",
         "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-        "claimed_at": "2026-11-09T03:58:13.051375Z",
-        "baseline_sha": "032204e2c6885ceddcd0cf8538400c2a1c397302",
-        "entry_evidence": "docs/development/dispatch/20261109-wave335/README.md",
+        "claimed_at": "2026-11-09T04:17:46.199163Z",
+        "baseline_sha": "5ab1d647e78cbae7135cfdabd2870f71c9246df5",
+        "entry_evidence": "docs/development/dispatch/20261109-wave336/README.md",
         "phase": "VALIDATED_PENDING_REMOTE",
-        "dispatch_scope": "V2 明确新库存的实际普通 LOGIN 部门选择、同事务新行归属与审计，合法无归属、原组织版本及历史拒绝。原 HTTP 接线分别后续。",
+        "dispatch_scope": "原 HTTP V2 创建上下文和调整采用普通读写事务。实测原授权版本、明确部门、缺普通授权时失败和原操作结果。",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "reserved_write_resources": [
-          "CP6.Core Stock V2 创建原语与组织投影",
-          "PostgreSQL 共享部门映射触发器和受控安装",
-          "现有库存及安全审计原合同"
+          "Main fixed DEV-1",
+          "实际库存 V2 创建上下文及调整",
+          "普通租户 Stock 读写 profile",
+          "CP6 72H 隔离 PostgreSQL 18.6"
         ],
         "worker_start_received": true,
-        "delivery_report": "docs/development/evidence/W335-01/DELIVERY.md"
+        "delivery_report": "docs/development/evidence/W336-01/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -164724,7 +164740,7 @@
         },
         "receipt": "docs/development/evidence/authorized-adoption-release-20261015/release-receipt.json"
       },
-      "remaining_scope": "继续采用实际 V2 创建调整及移库目标，验证普通 LOGIN 的跨租户、凭据及历史兼容入口。逐租户版本、初始化和恢复、兼容制品和代表 Owner 的整卡场景仍待核。",
+      "remaining_scope": "采用实际 V2 移库目标创建，验证普通 LOGIN 跨租户、凭据和历史兼容。逐租户版本、初始化和恢复、兼容制品和代表 Owner 的整卡场景仍待核。",
       "main_package_adoption": {
         "path": "docs/development/evidence/WP02-02/main-package-adoption/DELIVERY.md",
         "scope": "Main exact formal0.10.3 dependency adoption; not tenant storage or full WP02-02 delivery",
@@ -164941,7 +164957,7 @@
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-02",
         "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。 W327验证普通LOGIN在调用事务内取得原认证根。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。 W335 已在实际普通事务验证 V2 新库存的明确归属、合法无归属、旧行拒绝和原安全审计，包含前向 PostgreSQL 迁移。",
-        "remaining": "真实 V2 创建调整及移库目标、旧入口和双租户身份切换、逐租户初始化/版本/恢复及其他原 PGT 余项。",
+        "remaining": "真实 V2 移库目标、旧入口和双租户凭据、逐租户初始化/版本/恢复及其他原 PGT 余项。",
         "next_action": "在原 HTTP 宿主采用普通 V2 创建上下文和调整，实测当前部门、授权版本、原结果及不可用时失败。随后接 V2 移库目标创建。",
         "evidence_refs": [
           "docs/development/evidence/WP02-02/directory-installation/DELIVERY.md",
@@ -165131,11 +165147,29 @@
         "workspace_status": "fixed-seat-detached-for-reuse"
       },
       "wave335_delivery": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W335-01/DELIVERY.md",
         "profile": "stock-creation-writer-v2",
         "validation": "PostgreSQL 18.6 实际普通登录 1 项、旧部门和管理回归 4 项。CLI 实测旧布局拒绝、前向 SQL、精确回执和普通 ACL。保存点失败和成功 TRX 保留。",
         "scope": "实际 V2 创建原语。当前明确部门、合法无归属、历史更新拒绝、一次安全审计及事务清理。实际 V2 HTTP 采用接续。",
+        "full_task_complete": false,
+        "formal_acceptance": "NOT_RUN",
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/792",
+          "commit": "5ab1d647e78cbae7135cfdabd2870f71c9246df5",
+          "target_head": "5ab1d647e78cbae7135cfdabd2870f71c9246df5"
+        },
+        "seat_released": true,
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse"
+      },
+      "wave336_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W336-01/DELIVERY.md",
+        "profile": "StockReadTenancy:EnableV2Adjust",
+        "validation": "实际 PostgreSQL 18.6、JWT/CSRF/Kestrel，V2 原上下文和调整、缺权限、过期版本与原结果。实际定向 5 项、零跳过。",
+        "scope": "原 V2 HTTP 创建上下文和调整采用普通读写事务。原部门版本、八位精度、原 audit/journal/Outbox 同事务。移库目标接续。",
         "full_task_complete": false,
         "formal_acceptance": "NOT_RUN"
       }
@@ -174778,9 +174812,9 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-10",
-        "delivered": "Main PG journal、Stock/PA090代表事务及W249有效。W326证明Stock只读路径采用可信租户登录。 W327验证原认证根和普通写者事务的数据库前置。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。 W335 已在实际普通事务验证 V2 新库存的明确归属、合法无归属、旧行拒绝和原安全审计，包含前向 PostgreSQL 迁移。",
-        "remaining": "实际 V2 HTTP 创建、移库目标与其他 Owner 的权限、事务、恢复和正式采纳仍待按合同核对。",
-        "next_action": "在原 HTTP 宿主采用普通 V2 创建上下文和调整，实测当前部门、授权版本、原结果及不可用时失败。随后接 V2 移库目标创建。",
+        "delivered": "Main PG journal、Stock/PA090代表事务及W249有效。W326证明Stock只读路径采用可信租户登录。 W327验证原认证根和普通写者事务的数据库前置。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。 W335 已在实际普通事务验证 V2 新库存的明确归属、合法无归属、旧行拒绝和原安全审计，包含前向 PostgreSQL 迁移。 W336 已在实际宿主验证 V2 原创建上下文和调整使用普通事务，缺权限、原结果和合法旧请求有 PostgreSQL 证据。",
+        "remaining": "V2 移库目标和其他 Owner 的权限、事务、恢复和正式采纳仍待按合同核对。",
+        "next_action": "采用原 V2 移库上下文和目标创建，实测两端归属、货权和第二腿失败整体回滚。",
         "evidence_refs": [
           "docs/development/evidence/W310-01/DELIVERY.md",
           "docs/development/evidence/W326-01/DELIVERY.md",
@@ -174792,11 +174826,12 @@
           "docs/development/evidence/W332-01/DELIVERY.md",
           "docs/development/evidence/W333-01/DELIVERY.md",
           "docs/development/evidence/W334-01/DELIVERY.md",
-          "docs/development/evidence/W335-01/DELIVERY.md"
+          "docs/development/evidence/W335-01/DELIVERY.md",
+          "docs/development/evidence/W336-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false,
-        "latest_window": "W335-01"
+        "latest_window": "W336-01"
       }
     },
     {
@@ -205084,10 +205119,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "wave335",
-      "path": "docs/development/dispatch/20261109-wave335/README.md",
-      "baseline_sha": "032204e2c6885ceddcd0cf8538400c2a1c397302",
-      "registered_at": "2026-11-09T03:58:13.051375Z",
+      "id": "W336",
+      "path": "docs/development/dispatch/20261109-wave336/README.md",
+      "baseline_sha": "5ab1d647e78cbae7135cfdabd2870f71c9246df5",
+      "registered_at": "2026-11-09T04:17:46.199163Z",
       "phase": "VALIDATED_PENDING_REMOTE",
       "assigned_chats": [
         "COORD"
@@ -205106,39 +205141,39 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W335-01",
-          "workspace_task": "W335-01",
+          "id": "W336-01",
+          "workspace_task": "W336-01",
           "related_tasks": [
-            "WP02-02",
             "WP02-10"
           ],
-          "title": "V2 新库存部门和审计的真实普通事务",
+          "title": "真实 V2 创建调整的普通租户事务",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "VALIDATED_PENDING_REMOTE",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w335-01",
-          "planned_scope_ref": "docs/development/dispatch/20261109-wave335/README.md",
+          "branch": "codex/w336-01",
+          "planned_scope_ref": "docs/development/dispatch/20261109-wave336/README.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "CP6.Core Stock V2 创建原语与组织投影",
-            "PostgreSQL 共享部门映射触发器和受控安装",
-            "现有库存及安全审计原合同"
+            "Main fixed DEV-1",
+            "实际库存 V2 创建上下文及调整",
+            "普通租户 Stock 读写 profile",
+            "CP6 72H 隔离 PostgreSQL 18.6"
           ],
           "worker_delivery_received": true,
           "candidate_review_completed": true,
-          "delivery_report": "docs/development/evidence/W335-01/DELIVERY.md"
+          "delivery_report": "docs/development/evidence/W336-01/DELIVERY.md"
         }
       ],
       "storage": {
         "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "在原 HTTP 宿主采用普通 V2 创建上下文和调整，实测当前部门、授权版本、原结果及不可用时失败。随后接 V2 移库目标创建。"
+      "next_action": "采用原 V2 移库上下文和目标创建，实测两端归属、货权和第二腿失败整体回滚。"
     },
     "wave_history": [
       {
@@ -245380,6 +245415,67 @@
           "new_worktrees": 0
         },
         "next_action": "W335 A6a V2 新库存普通事务原语，保留原部门资格、审计、原生触发器和合法无归属。"
+      },
+      {
+        "id": "wave335",
+        "path": "docs/development/dispatch/20261109-wave335/README.md",
+        "baseline_sha": "032204e2c6885ceddcd0cf8538400c2a1c397302",
+        "registered_at": "2026-11-09T03:58:13.051375Z",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W335-01",
+            "workspace_task": "W335-01",
+            "related_tasks": [
+              "WP02-02",
+              "WP02-10"
+            ],
+            "title": "V2 新库存部门和审计的真实普通事务",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w335-01",
+            "planned_scope_ref": "docs/development/dispatch/20261109-wave335/README.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "CP6.Core Stock V2 创建原语与组织投影",
+              "PostgreSQL 共享部门映射触发器和受控安装",
+              "现有库存及安全审计原合同"
+            ],
+            "worker_delivery_received": true,
+            "candidate_review_completed": true,
+            "delivery_report": "docs/development/evidence/W335-01/DELIVERY.md",
+            "candidate_integrated": true,
+            "resources_released": true,
+            "adopted_remote": "5ab1d647e78cbae7135cfdabd2870f71c9246df5",
+            "pr": "https://github.com/GTX537/CP6/pull/792",
+            "branch_disposition": "deleted-local-and-remote",
+            "finished_at": "2026-11-09T04:16:37.842052Z"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "V2 原创建上下文和单笔调整，后续按原合同采用 V2 移库目标。"
       }
     ],
     "development_priority": {
@@ -248052,7 +248148,7 @@
         "first_reestimate_seconds": 14400
       },
       "timing_basis": "Native goal plus independently sampled monotonic segments for confirmed missing time, with exclusions and no overlap.",
-      "next_priority": "在原 HTTP 宿主采用普通 V2 创建上下文和调整，实测当前部门、授权版本、原结果及不可用时失败。随后接 V2 移库目标创建。",
+      "next_priority": "采用原 V2 移库上下文和目标创建，实测两端归属、货权和第二腿失败整体回滚。",
       "windows": [
         {
           "id": "W327-01",
@@ -248276,7 +248372,7 @@
         },
         {
           "id": "W335-01",
-          "state": "VALIDATED_PENDING_REMOTE",
+          "state": "CLOSED",
           "related_tasks": [
             "WP02-02",
             "WP02-10"
@@ -248290,8 +248386,34 @@
           "dispatch": "docs/development/dispatch/20261109-wave335/README.md",
           "validation_ready_at": "2026-11-09T04:14:01.1904039Z",
           "validation_ready_seconds": 947,
+          "timing_source": "主机连续单调取样，起始至官方finish回读。无暂停。",
+          "delivery": "docs/development/evidence/W335-01/DELIVERY.md",
+          "actual_seconds": 1104,
+          "finished_at": "2026-11-09T04:16:37.842052Z",
+          "actual_to_estimate_midpoint": 0.491,
+          "pr": "https://github.com/GTX537/CP6/pull/792",
+          "adopted_main": "5ab1d647e78cbae7135cfdabd2870f71c9246df5",
+          "branch_disposition": "deleted-local-and-remote",
+          "seat_released": true,
+          "variance": "旧 25–50 分钟区间，本窗实际 18 分 24 秒，直接复用原 Owner、事务与安装入口。"
+        },
+        {
+          "id": "W336-01",
+          "state": "VALIDATED_PENDING_REMOTE",
+          "related_tasks": [
+            "WP02-10"
+          ],
+          "started_at": "2026-11-09T04:17:46.199163Z",
+          "estimate_minutes": [
+            18,
+            32
+          ],
+          "scope": "原 HTTP V2 创建上下文和调整采用普通读写事务。实测原授权版本、明确部门、缺普通授权时失败和原操作结果。",
+          "dispatch": "docs/development/dispatch/20261109-wave336/README.md",
+          "validation_ready_at": "2026-11-09T04:26:36.4845123Z",
+          "validation_ready_seconds": 529,
           "timing_source": "同次连续执行的主机单调取样。远端采用及席位收尾计时另记。",
-          "delivery": "docs/development/evidence/W335-01/DELIVERY.md"
+          "delivery": "docs/development/evidence/W336-01/DELIVERY.md"
         }
       ]
     },

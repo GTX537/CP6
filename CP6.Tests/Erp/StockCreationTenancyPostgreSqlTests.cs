@@ -34,6 +34,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             await StockOutboxWriterStorageV1.InstallAsync(control, install, read, logins);
             await StockMovementWriterStorageV1.InstallAsync(control, install, read, logins);
             await StockCreationWriterStorageV2.InstallAsync(control, install, read, logins);
+            await StockAdjustOwnerStorageV1.InstallAsync(control, install, read, logins);
             await install.CommitAsync();
         }
         var ordinary = new NpgsqlConnectionStringBuilder(connection)
@@ -108,6 +109,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         await h.Db.SaveChangesAsync();
         Assert.True(await h.Db.Stocks.AnyAsync(s => s.ProductCd == "LEGACY-STOCK"));
         Assert.Equal(0L, await CurrentPermissionPostgresFixture.Scalar(control, "SELECT count(*) FROM cp6_stock_creation_writer_v2.inserted_stock"));
+        await VerifyOrdinaryV2StockAdjustmentAsync(h, departments, control, connection, login, password, historical);
 
         Task<int> AuditCount() => h.Db.Sys_SecurityLogs.CountAsync(x => x.UserId == h.User &&
             x.Reason == OperationsAccessV1.StockCreationAuditReason);
