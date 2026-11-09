@@ -226,7 +226,7 @@ def import_sql(schema):
     """
 
 
-def receipt_sql(*, table="receipt", profile=PROFILE, show_result=True):
+def receipt_sql(*, schema=RECEIPTS, table="receipt", profile=PROFILE, show_result=True):
     sql = f"""
     DO $candidate_receipt$
     DECLARE
@@ -235,14 +235,14 @@ def receipt_sql(*, table="receipt", profile=PROFILE, show_result=True):
         original text;
     BEGIN
         IF NOT EXISTS (SELECT FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
-            WHERE c.oid=to_regclass('{RECEIPTS}.{table}') AND c.relkind='r' AND c.relowner=owner AND n.nspowner=owner
+            WHERE c.oid=to_regclass('{schema}.{table}') AND c.relkind='r' AND c.relowner=owner AND n.nspowner=owner
               AND NOT c.relrowsecurity AND NOT EXISTS (SELECT FROM aclexplode(n.nspacl) a WHERE a.grantee<>owner)
               AND NOT EXISTS (SELECT FROM aclexplode(c.relacl) a WHERE a.grantee<>owner)
               AND NOT EXISTS (SELECT FROM pg_attribute t,LATERAL aclexplode(t.attacl) a
                   WHERE t.attrelid=c.oid AND a.grantee<>owner)) THEN
             RAISE EXCEPTION 'rma-stage-candidate-receipt-not-found';
         END IF;
-        SELECT result_json INTO original FROM {RECEIPTS}.{table} WHERE singleton AND input=k
+        SELECT result_json INTO original FROM {schema}.{table} WHERE singleton AND input=k
             AND result_json::jsonb->'binding'=k AND result_json::jsonb->>'profile'='{profile}'
             AND result_json::jsonb->>'outcome'='IMPORTED' AND result_json::jsonb->'recoveryReady'='false'::jsonb;
         IF original IS NULL THEN
