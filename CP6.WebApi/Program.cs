@@ -1273,8 +1273,13 @@ if (stockOutboxHost.Enabled)
     if (database.Provider != DatabaseProvider.PostgreSql)
         throw new InvalidOperationException("STOCK_OUTBOX_POSTGRESQL_REQUIRED");
     builder.Services.AddScoped<CP6.WebApi.Services.StockOutboxSignalRPublisherV1>();
-    builder.Services.AddScoped(sp => new CP6.Core.Services.Integration.StockOutbox.StockOutboxWorkerV1(
-        sp.GetRequiredService<CP6Context>(), stockOutboxHost, sp.GetRequiredService<CP6.WebApi.Services.StockOutboxSignalRPublisherV1>()));
+    builder.Services.AddScoped(sp =>
+    {
+        var restore = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<CP6.Core.Services.Platform.PrivacyRestoreOptionsV1>>().Value;
+        return new CP6.Core.Services.Integration.StockOutbox.StockOutboxWorkerV1(
+            sp.GetRequiredService<CP6Context>(), stockOutboxHost, sp.GetRequiredService<CP6.WebApi.Services.StockOutboxSignalRPublisherV1>(),
+            privacyRestoreConfigured: !string.IsNullOrWhiteSpace(restore.ControlConnectionString));
+    });
     builder.Services.AddHostedService<CP6.WebApi.BackgroundServices.StockOutboxDispatchWorkerV1>();
 }
 
