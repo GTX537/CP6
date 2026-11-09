@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC v9 安全审计和主体保留历史
+
+W402 实测同一 PostgreSQL 切面导出原记录。W400 随 #840 采用并释放。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W402](../development/evidence/W402-01/DELIVERY.md) · [PR #840](https://github.com/GTX537/CP6/pull/840)
+
+
 ## 2026-11-09 UTC v8 IAM 与 Identity Priority 对账
 
 W400 原 v8 两入口已实库核实。W399 随 #839 采用并释放。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W400](../development/evidence/W400-01/DELIVERY.md) · [PR #839](https://github.com/GTX537/CP6/pull/839)
