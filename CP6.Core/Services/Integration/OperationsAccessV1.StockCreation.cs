@@ -1,4 +1,5 @@
 using System.Text.Json;
+using CP6.Core.Persistence.Tenancy;
 using CP6.Core.Services.Erp;
 using CP6.Core.Services.Wms;
 using CP6.Core.Services.Sys;
@@ -6,11 +7,14 @@ using CP6.Entity.DomainModels.Sys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Npgsql;
+using NpgsqlTypes;
 
 namespace CP6.Core.Services.Integration;
 
 internal sealed partial class OperationsAccessV1
 {
+    internal const string StockCreationAuditReason = "New Stock assigned its explicit current department";
+
     internal sealed class NewStockBinding(OperationsAccessV1 access,IDbContextTransaction transaction,Guid tenant,
         Guid actor,Guid id,Guid? department,StockCreationKeyV2 key)
     {
@@ -51,10 +55,13 @@ internal sealed partial class OperationsAccessV1
             4=>"target.\"Id\"=ANY(@creation_custom)",5=>"true",
             _=>throw new OrderPriceCorrectionException("OWNER_SCOPE_MAPPING_UNAVAILABLE",503)
         };
+        var departmentTable=PostgreSqlOrganizationV1.Table(db);
         var sql=$$"""
-            WITH RECURSIVE {{PostgreSqlOrganizationV1.HealthyCte(PostgreSqlOrganizationV1.Table(db),"@creation_tenant")}}
-            SELECT target."Id",target."DeptCode" AS "Code",target."DeptName" AS "Name"
-            FROM healthy_departments target WHERE {{condition}} ORDER BY target."Sort",target."Id"
+            WITH RECURSIVE {{PostgreSqlOrganizationV1.HealthyCte(departmentTable,"@creation_tenant", keysOnly: true)}}
+            SELECT target."Id",department."DeptCode" AS "Code",department."DeptName" AS "Name"
+            FROM healthy_departments target
+            JOIN {{departmentTable}} department ON department."Id"=target."Id" AND department."TenantId"=@creation_tenant
+            WHERE {{condition}} ORDER BY department."Sort",target."Id"
             """;
         var departments=await db.Database.SqlQueryRaw<StockCreationDepartmentV2>(sql,
             new NpgsqlParameter("creation_tenant",db.CurrentTenantId),
@@ -94,10 +101,16 @@ internal sealed partial class OperationsAccessV1
             var before=await StandaloneDepartmentScopeV1.Version(db,ct);
             if(Authorities.Any(a=>a.OrganizationVersion!=before))throw new OrderPriceCorrectionException("AUTHORITY_CHANGED",403);
             var organization=await OrderDepartmentScopeV1.Version(db,ct);var mapping=Guid.NewGuid();
-            await db.Database.ExecuteSqlInterpolatedAsync($"""
-                INSERT INTO cp6_operations_owner_v1.department_mappings(id,tenant_id,object_kind,object_id,department_id,enabled)
-                VALUES({mapping},{ticket.Tenant},'stock',{ticket.Id},{department},true)
-                """,ct);
+            var ordinary = db is StockMovementWriteContextV1;
+            if (ordinary)
+                await db.Database.ExecuteSqlInterpolatedAsync($"""
+                    SELECT cp6_stock_creation_writer_v2.record_department({ticket.Tenant},{mapping},{ticket.Id},{department})
+                    """,ct);
+            else
+                await db.Database.ExecuteSqlInterpolatedAsync($"""
+                    INSERT INTO cp6_operations_owner_v1.department_mappings(id,tenant_id,object_kind,object_id,department_id,enabled)
+                    VALUES({mapping},{ticket.Tenant},'stock',{ticket.Id},{department},true)
+                    """,ct);
             // Only this new-object insert may advance the baseline; never absorb other writes or callbacks.
             var after=await StandaloneDepartmentScopeV1.Version(db,ct);
             if(before==after || organization!=await OrderDepartmentScopeV1.Version(db,ct))
@@ -108,12 +121,27 @@ internal sealed partial class OperationsAccessV1
                 WHERE tenant_id={ticket.Tenant} AND id={mapping} AND object_kind='stock'
                   AND object_id={ticket.Id} AND department_id={department} AND enabled
                 """).SingleAsync(ct);
-            db.Sys_SecurityLogs.Add(new(){TenantId=ticket.Tenant,UserId=ActorId,UserName=Actor,
+            var log = new Sys_SecurityLog {TenantId=ticket.Tenant,UserId=ActorId,UserName=Actor,
                 EventType=(int)SecurityEventType.IamAdministrationChanged,CreatedAt=DateTime.Now,
-                Reason="New Stock assigned its explicit current department",
+                Reason=StockCreationAuditReason,
                 ContextJson=JsonSerializer.Serialize(new{kind="stock-creation.v2",stockId=ticket.Id,departmentId=department,
-                    mappingId=mapping,mappingRevision=revision,resource=authority.Resource,action=authority.Action})});
-            await db.SaveChangesAsync(ct);
+                    mappingId=mapping,mappingRevision=revision,resource=authority.Resource,action=authority.Action})};
+            if (ordinary)
+            {
+                var createdAt = new NpgsqlParameter("creation_audit_created_at", NpgsqlDbType.Timestamp)
+                { Value = DateTime.SpecifyKind(log.CreatedAt, DateTimeKind.Unspecified) };
+                var createDate = new NpgsqlParameter("creation_audit_create_date", NpgsqlDbType.Timestamp)
+                { Value = DateTime.SpecifyKind(log.CreateDate, DateTimeKind.Unspecified) };
+                await db.Database.ExecuteSqlInterpolatedAsync($"""
+                    SELECT cp6_stock_creation_writer_v2.record_audit({ticket.Tenant},{ActorId},{Actor},
+                        {createdAt},{createDate},CAST({log.ContextJson} AS jsonb))
+                    """,ct);
+            }
+            else
+            {
+                db.Sys_SecurityLogs.Add(log);
+                await db.SaveChangesAsync(ct);
+            }
             AtCommit(async t=>
             {
                 if(!await db.Database.SqlQuery<Guid>($"""

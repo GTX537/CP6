@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC W335 库存 V2 创建原语
+
+增加前向 Stock 部门映射迁移和 `install-stock-creation-writer-v2`。实际普通事务复用原授权版本、部门校验和审计记录。 [交付报告](../development/evidence/W335-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W334 真实库存 V1 两腿移库
 
 新增 `StockReadTenancy:EnableV1Move`，在已启用普通 V1 调整的宿主接现有移库、原结果和通知的同一普通事务。 [交付报告](../development/evidence/W334-01/DELIVERY.md)

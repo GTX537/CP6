@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> [CP6 三天实际执行](planning/20261109-codex-72h-execution.md)由总控单人串行执行。[W334-01](evidence/W334-01/DELIVERY.md)验证真实库存 V1 两腿移库的普通事务，随后接 V2 创建原语。
+> [CP6 三天实际执行](planning/20261109-codex-72h-execution.md)由总控单人串行执行。[W335-01](evidence/W335-01/DELIVERY.md)验证真实 V2 创建原语，随后接原 HTTP 上下文和调整。
+
+> [W334-01](evidence/W334-01/DELIVERY.md)普通 V1 两腿移库已随 Main #791 合并，准确分支已清理，固定席位已释放。
 
 > [W333-01](evidence/W333-01/DELIVERY.md)普通关闭和数据库提交确认中断已随 Main #790 合并，准确分支已清理，固定席位已释放。
 
