@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 连接错借与原件恢复
+
+W425 补 PGT-003 真实错借。W422 和 W423 保留远端检查点，资源满足后继续原件恢复与同源切面。 [W426](../development/evidence/W426-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 继续原件恢复
 
 资源达到门槛后续 W422、W423、W415。W423 检查点已保存远端，PGT-021/022 仍为 NOT_RUN。 [W424](../development/evidence/W424-01/DELIVERY.md)

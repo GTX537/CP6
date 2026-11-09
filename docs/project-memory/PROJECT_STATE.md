@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC Stock 可信绑定
+
+W426 采用 PGT-001 实测。正式 PostgreSQL 为 10 PASS、17 NOT_RUN。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W426](../development/evidence/W426-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 容量与凭据轮换
 
 W420 随 #858 采用并释放。W424 采用 PGT-023 实测，正式 PostgreSQL 为 9 PASS、18 NOT_RUN。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W424](../development/evidence/W424-01/DELIVERY.md)

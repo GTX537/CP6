@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC PGT-001 正向实证
+
+普通 Stock V2 可信绑定、原审计与 Outbox、同键恢复和 A/B 隔离按原实测采用。 [W426](../development/evidence/W426-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 原 PGT-023 实测采用
 
 Stock/RMA N10/N100、双组件原生峰值、组件旧池排空和宿主受控重启轮换按原证据采用。 [W424](../development/evidence/W424-01/DELIVERY.md)
