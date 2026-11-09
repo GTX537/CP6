@@ -101,7 +101,7 @@ public partial class StockMovementService : IStockOriginalOperationsV1
         var result=trustedStorage is null
             ? await Owner.ExecuteAsync(OperationsOwnerV1.Stock,action,true,(access,token)=>Stage(this,access,token),ct,
                 actionAtFence:token=>SelectAction(_db,token))
-            : await Owner.ExecuteStockAdjustmentAsync(trustedStorage,(context,access,token)=>
+            : await Owner.ExecuteStockOperationAsync(trustedStorage,StockV1WriteEntry.Apply,(context,access,token)=>
                 Stage(new StockMovementService(context,new WmsSequenceService(context),_notifier,_finBridge),access,token),SelectAction,ct);
         // Compatibility bridge/notifications remain best-effort. Replaying the original never invokes them again.
         foreach(var effect in effects)await PublishCommittedCancellationAsync(effect);
@@ -141,6 +141,10 @@ public partial class StockMovementService : IStockOriginalOperationsV1
     private Task<StockOperationV1> RecoverStockOperation(Guid operation,bool close,CancellationToken ct)
     {
         if(operation==Guid.Empty)throw new OrderPriceCorrectionException("ORIGINAL_OPERATION_REQUIRED",400);
+        if(close && _tenantStorage is { V1AdjustEnabled: true } writer)
+            return Owner.ExecuteStockOperationAsync(writer,StockV1WriteEntry.Close,
+                (context,access,token)=>Recover(context,access,token),(_,_)=>Task.FromResult("query"),ct);
+
         return Owner.ExecuteAsync(OperationsOwnerV1.Stock,"query",close,async(access,token)=>
         {
             if(close || _tenantStorage is not { V1AdjustEnabled: true } storage)
@@ -167,7 +171,8 @@ public partial class StockMovementService : IStockOriginalOperationsV1
 
         async Task<StockOperationV1> Recover(CP6Context context,OperationsAccessV1 access,CancellationToken token)
         {
-            var journal=new MainOwnerOperationJournalV1(context);var original=await journal.Read(OperationOwner,operation,token);
+            var journal=new MainOwnerOperationJournalV1(context,stockTenantWriter:context is StockMovementWriteContextV1);
+            var original=await journal.Read(OperationOwner,operation,token);
             if(original!=null)
             {
                 RequireOriginalActor(access,original);

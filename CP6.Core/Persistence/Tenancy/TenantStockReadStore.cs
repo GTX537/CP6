@@ -14,6 +14,8 @@ using Npgsql;
 
 namespace CP6.Core.Persistence.Tenancy;
 
+internal enum StockV1WriteEntry { Apply, Close }
+
 /// <summary>Executes the stock Owner's read under a tenant LOGIN while the original Owner
 /// transaction holds the authority and business graph fences in the same primary database.</summary>
 internal sealed class TenantStockReadStore : IAsyncDisposable
@@ -21,6 +23,7 @@ internal sealed class TenantStockReadStore : IAsyncDisposable
     internal const string Host = "main-stock-read";
     private const string ReadPurpose = "wms-stock:query";
     private const string AdjustPurpose = "wms-stock:adjust-v1";
+    private const string ClosePurpose = "wms-stock:close-operation-v1";
     private const string Issuer = "https://cp6.internal/main-stock-read";
     private const string Audience = "CP6.Main.StockRead";
     private readonly TenantConnectionManager _connections;
@@ -59,20 +62,26 @@ internal sealed class TenantStockReadStore : IAsyncDisposable
             return value;
         }, ct);
 
-    internal async Task<T> WriteV1AdjustAsync<T>(CP6Context authority, Guid actorId,
+    internal async Task<T> WriteV1Async<T>(CP6Context authority, Guid actorId, StockV1WriteEntry entry,
         Func<StockMovementWriteContextV1, CancellationToken, Task<T>> stage, CancellationToken ct)
     {
+        var purpose = entry switch
+        {
+            StockV1WriteEntry.Apply => AdjustPurpose,
+            StockV1WriteEntry.Close => ClosePurpose,
+            _ => throw new TenantStorageException(TenantStorageFailure.BindingRejected)
+        };
         var committing = false;
         var rollbackUnknown = false;
         try
         {
-            var outcome = await WithTenantTransactionAsync(authority, actorId, AdjustPurpose, async (transaction, identity, cancellation) =>
+            var outcome = await WithTenantTransactionAsync(authority, actorId, purpose, async (transaction, identity, cancellation) =>
             {
                 try
                 {
                     var attempt = await transaction.ExecuteAsync<(T Result, ExceptionDispatchInfo? Failure)>(async (connection, dbTransaction, token) =>
                     {
-                        await RequireSameDatabase(identity, connection, dbTransaction, token);
+                        await RequireSameDatabase(identity, connection, dbTransaction, token, requireJournalRls: true);
                         var tenant = authority.CurrentTenantId;
                         using var guard = new TenantEfCommandGuard(transaction, connection, dbTransaction, tenant);
                         await using var writer = new StockMovementWriteContextV1(Options(connection, guard), tenant);
@@ -126,9 +135,15 @@ internal sealed class TenantStockReadStore : IAsyncDisposable
         var source = new AuthenticatedContextSourceV1(actor, actor, Audience, "main",
             DateTimeOffset.UtcNow, expires, "current-stock-owner:" + tokenId, tokenId, scopes,
             OriginalRequesterReference: original is null ? null : http.User.FindFirst("impersonator_tenant_id")!.Value + ":" + original);
+        var reference = purpose switch
+        {
+            ReadPurpose => "api/wms/stock",
+            AdjustPurpose => "api/wms/stock/commands/v1/apply",
+            ClosePurpose => "api/wms/stock/operations/v1/close",
+            _ => throw new TenantStorageException(TenantStorageFailure.BindingRejected)
+        };
         var operation = new ContextOperationV1(ContextEntryKindV1.Http, Host, StockReadStorageV1.ModelVersion,
-            Audience, purpose, tenant, purpose == ReadPurpose ? "api/wms/stock" : "api/wms/stock/commands/v1/apply",
-            http.TraceIdentifier, scopes);
+            Audience, purpose, tenant, reference, http.TraceIdentifier, scopes);
 
         var identity = await StockReadStorageV1.ReadDatabaseIdentityAsync(
             (NpgsqlConnection)authority.Database.GetDbConnection(),
@@ -173,7 +188,7 @@ internal sealed class TenantStockReadStore : IAsyncDisposable
         public ValueTask<ContextBindingRegistrationV1?> ResolveCurrentAsync(ContextOperationV1 operation,
             AuthenticatedContextSourceV1 source, CancellationToken ct = default)
         {
-            if (operation.Purpose != ReadPurpose && !(v1AdjustEnabled && operation.Purpose == AdjustPurpose))
+            if (operation.Purpose != ReadPurpose && !(v1AdjustEnabled && operation.Purpose is AdjustPurpose or ClosePurpose))
                 return ValueTask.FromResult<ContextBindingRegistrationV1?>(null);
             var binding = catalog.Resolve(operation.ExpectedTenantId);
             return ValueTask.FromResult<ContextBindingRegistrationV1?>(new(binding.TenantId, binding.TenantId, Host,

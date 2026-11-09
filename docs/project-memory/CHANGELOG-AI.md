@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC W333 库存原操作关闭与数据库确认中断
+
+显式关闭使用独立可信入口目的和已有普通 Stock 事务。普通写入同时核对 journal 行隔离。现有原命令合同继续区分提交结果和未知确认。 [交付报告](../development/evidence/W333-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W332 库存原命令只读恢复
 
 已启用库存普通调整时，原操作读回使用普通只读事务和原 journal 投影，复用当前 Owner 与原对象校验。 [交付报告](../development/evidence/W332-01/DELIVERY.md)

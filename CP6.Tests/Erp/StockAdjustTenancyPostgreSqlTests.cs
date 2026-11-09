@@ -78,6 +78,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             host.Send(OperationsRequest(cookies, HttpMethod.Post, path, input, csrf));
         Task<HttpResponseMessage> ReadOriginal(Guid operation) => host.Send(
             OperationsRequest(cookies, HttpMethod.Get, $"api/wms/stock/operations/v1/{operation:D}"));
+        Task<HttpResponseMessage> CloseOriginal(Guid operation) => host.Send(
+            OperationsRequest(cookies, HttpMethod.Post, $"api/wms/stock/operations/v1/{operation:D}/close"));
         using (var csrf = await Adjust(command, csrf: false)) Assert.Equal(HttpStatusCode.Forbidden, csrf.StatusCode);
         using (var foreignDepartment = await Adjust(Command("P2", "L2")))
         {
@@ -134,10 +136,43 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal("price-owner", txn.OperatorCd);
         Assert.Equal(command.Qty, txn.Qty);
         Assert.Equal(stock.PhysicalQty + command.Qty, await Quantity());
-        Assert.Equal(1, await h.Db.Database.SqlQuery<int>($"""
-            SELECT count(*)::integer AS "Value" FROM cp6_stock_outbox_v1."Source"
-            WHERE "TenantId"={h.Tenant} AND "OperationId"={command.OperationId}
-            """).SingleAsync());
+        Assert.Equal(1, await OutboxCount(command.OperationId));
+
+        var uncertainCommand = Command(quantity: .87654321m);
+        var origin = new NpgsqlConnectionStringBuilder(ownerConnection);
+        await using (var relay = new StockPostgresCommitRelay(origin.Port, login))
+        {
+            var forwardedConnection = new NpgsqlConnectionStringBuilder(ownerConnection) { Port = relay.Port }.ConnectionString;
+            await using var forwardedHost = await AuthenticationApiProcess.Start(forwardedConnection, settings);
+            var forwardedSession = await Login(forwardedHost, h);
+            relay.Arm();
+            using var unknown = await forwardedHost.Send(OperationsRequest(forwardedSession, HttpMethod.Post, path, uncertainCommand));
+            Assert.True(unknown.StatusCode == HttpStatusCode.ServiceUnavailable, await OperationsFailure(unknown));
+            Assert.Contains("OPERATIONS_OUTCOME_UNKNOWN", await unknown.Content.ReadAsStringAsync());
+            await relay.Dropped.WaitAsync(TimeSpan.FromSeconds(3));
+        }
+        using (var recovered = await ReadOriginal(uncertainCommand.OperationId))
+        {
+            Assert.True(recovered.StatusCode == HttpStatusCode.OK, await OperationsFailure(recovered));
+            using var data = JsonDocument.Parse(await recovered.Content.ReadAsStringAsync());
+            var receipt = data.RootElement.GetProperty("data");
+            Assert.Equal("COMMITTED", receipt.GetProperty("state").GetString());
+            var number = receipt.GetProperty("result").GetProperty("txnNo").GetString();
+            Assert.Equal(uncertainCommand.Qty, await h.Db.StockTransactions.Where(x => x.TxnNo == number).Select(x => x.Qty).SingleAsync());
+        }
+        Assert.Equal(1, await OutboxCount(uncertainCommand.OperationId));
+
+        var deniedClose = Guid.NewGuid();
+        await CurrentPermissionPostgresFixture.Sql(control, "REVOKE EXECUTE ON FUNCTION cp6_stock_adjust_owner_v1.lock_graph(uuid) FROM stock_adjust_a");
+        using (var noCloseWrite = await CloseOriginal(deniedClose))
+            Assert.True(noCloseWrite.StatusCode == HttpStatusCode.ServiceUnavailable, await OperationsFailure(noCloseWrite));
+        await CurrentPermissionPostgresFixture.Sql(control, "GRANT EXECUTE ON FUNCTION cp6_stock_adjust_owner_v1.lock_graph(uuid) TO stock_adjust_a");
+        using (var unknown = await ReadOriginal(deniedClose))
+        {
+            Assert.True(unknown.StatusCode == HttpStatusCode.OK, await OperationsFailure(unknown));
+            using var data = JsonDocument.Parse(await unknown.Content.ReadAsStringAsync());
+            Assert.Equal("UNKNOWN", data.RootElement.GetProperty("data").GetProperty("state").GetString());
+        }
 
         await CurrentPermissionPostgresFixture.Sql(control, """
             REVOKE UPDATE ("PhysicalQty") ON public."T_Stock" FROM stock_adjust_a
@@ -165,6 +200,32 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             using var result = JsonDocument.Parse(await replay.Content.ReadAsStringAsync());
             Assert.Equal(originalResult, result.RootElement.GetProperty("data").GetRawText());
         }
+
+        var closedCommand = Command();
+        await using (var legacyWriter = await control.BeginTransactionAsync())
+        {
+            await using var table = new NpgsqlCommand("""LOCK TABLE public."T_Stock" IN ROW EXCLUSIVE MODE""", control, legacyWriter);
+            await table.ExecuteNonQueryAsync();
+            var closing = CloseOriginal(closedCommand.OperationId);
+            var closerPid = await WaitForWriter(control.ProcessID);
+            var late = Adjust(closedCommand);
+            await WaitForWriter(closerPid);
+            await legacyWriter.RollbackAsync();
+            using var closed = await closing;
+            Assert.True(closed.StatusCode == HttpStatusCode.OK, await OperationsFailure(closed));
+            using var data = JsonDocument.Parse(await closed.Content.ReadAsStringAsync());
+            Assert.Equal("CLOSED", data.RootElement.GetProperty("data").GetProperty("state").GetString());
+            using var rejected = await late;
+            Assert.Equal(HttpStatusCode.Conflict, rejected.StatusCode);
+            Assert.Contains("ORIGINAL_OPERATION_CLOSED", await rejected.Content.ReadAsStringAsync());
+        }
+        using (var committed = await CloseOriginal(uncertainCommand.OperationId))
+        {
+            Assert.True(committed.StatusCode == HttpStatusCode.OK, await OperationsFailure(committed));
+            using var data = JsonDocument.Parse(await committed.Content.ReadAsStringAsync());
+            Assert.Equal("COMMITTED", data.RootElement.GetProperty("data").GetProperty("state").GetString());
+        }
+        Assert.Equal(0, await OutboxCount(closedCommand.OperationId));
         await h.Db.WmsRoleScopes.ExecuteUpdateAsync(rows => rows.SetProperty(g => g.AreaCd, "NO-ACCESS"));
         using (var hidden = await ReadOriginal(command.OperationId))
         {
@@ -173,23 +234,31 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             Assert.Contains("OBJECT_FORBIDDEN", error);
             Assert.DoesNotContain(txn.TxnNo, error);
         }
-        Assert.Equal(stock.PhysicalQty + command.Qty, await Quantity());
-        Assert.Equal(1, await h.Db.StockTransactions.CountAsync());
+        Assert.Equal(stock.PhysicalQty + command.Qty + uncertainCommand.Qty, await Quantity());
+        Assert.Equal(2, await h.Db.StockTransactions.CountAsync());
 
         Task<decimal> Quantity() => h.Db.Stocks.Where(s => s.Id == stock.Id).Select(s => s.PhysicalQty).SingleAsync();
-        async Task WaitForWriter(int blocker)
+        Task<int> OutboxCount(Guid operation) => h.Db.Database.SqlQuery<int>($"""
+            SELECT count(*)::integer AS "Value" FROM cp6_stock_outbox_v1."Source"
+            WHERE "TenantId"={h.Tenant} AND "OperationId"={operation}
+            """).SingleAsync();
+        async Task<int> WaitForWriter(int blocker)
         {
             await using var observer = new NpgsqlConnection(ownerConnection);
             using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(8));
             await observer.OpenAsync(deadline.Token);
             await using var waiting = new NpgsqlCommand("""
-                SELECT EXISTS (SELECT FROM pg_stat_activity WHERE usename=@login AND datname=current_database()
-                    AND query LIKE '%cp6_stock_adjust_owner_v1.lock_graph%' AND @blocker=ANY(pg_blocking_pids(pid)))
+                SELECT pid FROM pg_stat_activity WHERE usename=@login AND datname=current_database()
+                    AND query LIKE '%cp6_stock_adjust_owner_v1.lock_graph%' AND @blocker=ANY(pg_blocking_pids(pid))
+                ORDER BY pid LIMIT 1
                 """, observer);
             waiting.Parameters.AddWithValue("login", login);
             waiting.Parameters.AddWithValue("blocker", blocker);
-            while (await waiting.ExecuteScalarAsync(deadline.Token) is not true)
+            while (true)
+            {
+                if (await waiting.ExecuteScalarAsync(deadline.Token) is int backend) return backend;
                 await Task.Delay(40, deadline.Token);
+            }
         }
     }
 
