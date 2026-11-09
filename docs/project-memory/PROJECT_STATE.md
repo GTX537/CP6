@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-09 UTC W342 真实 Stock 错绑定
+
+B 的真实写请求绑定 A 普通 LOGIN 时返回 503，正确宿主查回原操作为 UNKNOWN。原生角色切换及跨租户读写同时取得隔离证据。 [交付报告](../development/evidence/W342-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W341 实际 Stock A/B 同键
 
 同一宿主的两个普通 LOGIN 使用相同业务键和原操作键，实际库存、原结果、物理池和 Outbox 路由分别落本租户。下一步核错绑定与凭据轮换。 [交付报告](../development/evidence/W341-01/DELIVERY.md)

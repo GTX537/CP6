@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC W342 真实 Stock 错绑定
+
+现有 Stock 回归加入真实错误绑定宿主、PostgreSQL 角色切换和库存行隔离检查，保存原生观测。 [交付报告](../development/evidence/W342-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W341 实际 Stock A/B 同键
 
 在真实库存夹具加入第二个普通登录和同键读写回归。补录 Outbox 原生租约绑定、Authority 与 Route 的唯一域和当前 epoch 关系。 [交付报告](../development/evidence/W341-01/DELIVERY.md)
