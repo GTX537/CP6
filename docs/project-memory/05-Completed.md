@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC v4 采用与身份优先实证
+
+W379 完整 1,324 秒，两端分支删除，DEV-2 干净释放。W380 原四表同切面与缺权限拒绝实测。 [W380](../development/evidence/W380-01/DELIVERY.md) · [#826](https://github.com/GTX537/CP6/pull/826)
+
+
 ## 2026-11-09 UTC 隔离来源采用和模型验证
 
 W377 完整 1,025 秒，两端任务分支删除、DEV-1 干净释放。W378 和 W381 完成实际原生验证，无任务分支，集成席位释放。W379 实测原可见性。 [W379](../development/evidence/W379-01/DELIVERY.md) · [#825](https://github.com/GTX537/CP6/pull/825)
