@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC FileContent v7 采用和历史 IAM 落表
+
+W389 完整 1,018 秒，两端任务分支清理，DEV-1 干净释放。W391 原 17 条历史 IAM 引用、原子失败和原回执恢复实证。 [W391](../development/evidence/W391-01/DELIVERY.md) · [PR #832](https://github.com/GTX537/CP6/pull/832)
+
+
 ## 2026-11-09 UTC 历史 IAM 采用、外部资产和双宿主
 
 W387 完整 936 秒，两端任务分支清理，DEV-2 干净释放。W389 同切面原资产和实际原件，W390 实证旧 B 原生回滚和新 A 原结果。 [W389](../development/evidence/W389-01/DELIVERY.md) · [PR #831](https://github.com/GTX537/CP6/pull/831)
