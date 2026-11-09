@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC Main Stock 发件箱和原日志归档
+
+记录准确的原生类型、租户根、全局消息键、源日志及同切面 companion。错误物理和受限读取实证拒绝。 [W403](../development/evidence/W403-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC v9 安全审计和主体保留历史
 
 取数绑定原租户和来源环境，原切面成员及清单记录保留，旧版入口沿用原范围。 [W402](../development/evidence/W402-01/DELIVERY.md)
