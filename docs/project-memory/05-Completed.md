@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC 恢复原件验证
+
+W412 实库验证八张 ERP 表、一个外部文件引用、B 实际库存提交和原暂存回执。W413 PostgreSQL 18.6 实测 v2 两条真实草稿及提交原件 12 列逐字节相同，晚段 23514 全回滚，655 字节独立回执原样回读，A/B 同键隔离。 [W412](D:/CP6-local-test/CP6-72H-20261109/W412-VERIFY/DELIVERY.md) · [W413](../development/evidence/W413-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC v10 两表导入实库验证
 
 W411 验证 v10 的 1 条 head 和 1 条 version 原字节、晚外键全回滚、丢失 COMMIT 后 914 字节原回执、B 和 Stock 保护。W406 和 Platform #81 已核对远端并释放各自席位。 [W411](../development/evidence/W411-01/DELIVERY.md) · [Platform #81](https://github.com/GTX537/CP6.Platform/pull/81)

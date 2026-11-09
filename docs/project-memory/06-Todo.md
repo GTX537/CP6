@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 多域候选恢复
+
+推进同源 v10 文件落盘、原 RMA 操作开放后的普通读回和其余域采用。正式 PGT-021/022、Platform 0.10.4 签发和 Main 采用分别执行。 [W413](../development/evidence/W413-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC v10 多域恢复和批准开放
 
 W410 继续同源独立审批和活跃 B 验证。后续需要非空资产、ERP 和多域导入，以及正式 PGT-021/022。#844 已具备 0.10.4 本地登记，正式发布和 Main 采用分别执行。 [W411](../development/evidence/W411-01/DELIVERY.md) · [Platform #81](https://github.com/GTX537/CP6.Platform/pull/81)
