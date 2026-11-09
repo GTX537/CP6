@@ -9,7 +9,7 @@ namespace CP6.Tests.Erp;
 
 public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
-    private static async Task VerifyOrdinaryV2StockMoveAsync(Harness h, MappingHarness mapping, NpgsqlConnection control,
+    private static async Task<StockTenantPairResult> VerifyOrdinaryV2StockMoveAsync(Harness h, MappingHarness mapping, NpgsqlConnection control,
         string connection, string login, string password, Guid historicalStock,
         (Harness Tenant, string Login, string Password) other)
     {
@@ -134,8 +134,9 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(previousAudits + 3, await Audits());
         Assert.Equal(previousOperations + 1, await Operations(h));
         Assert.Equal(previousOutbox + 1, await StockNotifications(h));
-        await VerifyStockTenantPairAsync(h, other.Tenant, control, host, session, login, other.Login);
+        var pair = await VerifyStockTenantPairAsync(h, other.Tenant, control, host, session, login, other.Login);
         await VerifyStockTenantBindingAsync(h, other.Tenant, host, connection, login, password, other.Login);
+        return pair;
 
         Task<HttpResponseMessage> Move() => host.Send(OperationsRequest(session, HttpMethod.Post, root + "commands/v2/move", new
         {
