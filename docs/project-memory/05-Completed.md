@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC v7 资产采用和 ERP 八表
+
+W394 完整 1,331 秒，两端分支清理，DEV-2 干净释放。W395 原八表与键语义实证，W392 同一宿主普通池 200 轮验证。 [W395](../development/evidence/W395-01/DELIVERY.md) · [PR #835](https://github.com/GTX537/CP6/pull/835)
+
+
 ## 2026-11-09 UTC 现行 IAM 采用和原资产落表
 
 W393 完整 921 秒，两端分支清理，DEV-1 干净释放。W394 真缺件拒绝、原子回滚和原回执读取通过。 [W394](../development/evidence/W394-01/DELIVERY.md) · [PR #834](https://github.com/GTX537/CP6/pull/834)

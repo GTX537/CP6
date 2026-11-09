@@ -19,6 +19,7 @@ import sys
 from threading import Thread
 from uuid import UUID
 
+import erp_integration
 import file_content_assets
 import iam_v6
 import identity_priority
@@ -505,7 +506,9 @@ def file_digest(path):
 def export_bundle(pg_bin, target, username, installation, tenant, output, *,
                   include_original_journal=False, include_rma_source=False, include_rma_visibility=False,
                   include_identity_priority=False, include_rma_iam_references=False, file_content_root=None,
-                  environ=None, on_snapshot=None):
+                  include_erp_integration=False, environ=None, on_snapshot=None):
+    if include_erp_integration and file_content_root is None:
+        raise ArchiveError("erp-integration-file-content-required")
     if file_content_root is not None:
         if not include_rma_iam_references:
             raise ArchiveError("file-content-iam-references-required")
@@ -535,6 +538,8 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
         submit_writer = adopted_submit_writer(query, target, installation, ready, draft_executor)
         captured = capture(query, tenant, schema, ready, draft_executor, submit_writer)
         snapshot = captured["snapshotId"]
+        if include_erp_integration:
+            erp_counts = erp_integration.capture_counts(query, tenant, ready["ownerOid"])
         if include_identity_priority:
             identity_counts = identity_priority.capture_counts(query, tenant, ready["ownerOid"])
         if include_original_journal:
@@ -585,6 +590,11 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
         if file_content_root is not None:
             copy_snapshot(pg_bin, connection, environ, logs, bundle / file_content_assets.MEMBER, "file-content-assets-copy",
                           snapshot, file_content_assets.rows_sql(tenant), file_content_assets.COPY_SETTINGS)
+        if include_erp_integration:
+            for table in erp_integration.TABLES:
+                copy_snapshot(pg_bin, connection, environ, logs, bundle / table.member,
+                              Path(table.member).stem + "-copy", snapshot,
+                              erp_integration.rows_sql(table, tenant), erp_integration.COPY_SETTINGS)
 
     if file_content_root is not None:
         file_content_assets.verify_member(bundle / file_content_assets.MEMBER, tenant, file_count, file_content_root)
@@ -636,6 +646,12 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
         manifest["fileContentAssets"] = file_content_assets.manifest_section(file_count)
         manifest["members"][file_content_assets.MEMBER] = file_digest(bundle / file_content_assets.MEMBER)
         manifest["excluded"][4] = "audit, legal hold, external file bodies, other assets, FileContent history and cross-database dependencies"
+    if include_erp_integration:
+        manifest["format"] = erp_integration.FORMAT
+        manifest["erpIntegration"] = erp_integration.manifest_section(erp_counts)
+        manifest["members"].update({name: file_digest(bundle / name) for name in erp_integration.MEMBERS})
+        manifest["excluded"][2] = "other queue domains, companion state, route epochs, dispatcher watermarks and rowversion sequences"
+        manifest["excluded"][4] = "other audit, legal hold, external file bodies, other assets, FileContent history and cross-database dependencies"
     pending = logs / "manifest.pending"
     with pending.open("x", encoding="utf-8", newline="\n") as file:
         json.dump(manifest, file, indent=2)
@@ -651,7 +667,8 @@ def verify_bundle(bundle, tenant, *, file_content_root=None):
     if "manifest.json" not in names or any(path.is_symlink() or not path.is_file() for path in files):
         raise ArchiveError("bundle-member-mismatch")
     manifest = json.loads((bundle / "manifest.json").read_text(encoding="utf-8"))
-    iam_formats = (iam_v6.FORMAT, file_content_assets.FORMAT)
+    asset_formats = (file_content_assets.FORMAT, erp_integration.FORMAT)
+    iam_formats = (iam_v6.FORMAT, *asset_formats)
     identity_formats = (identity_priority.FORMAT, *iam_formats)
     visibility_formats = (visibility_v4.FORMAT, *identity_formats)
     source_formats = (source_v3.FORMAT, *visibility_formats)
@@ -682,12 +699,16 @@ def verify_bundle(bundle, tenant, *, file_content_root=None):
         members += (iam_v6.MEMBER,)
         if not iam_v6.matches_manifest(manifest):
             raise ArchiveError("bundle-format-rejected")
-    if manifest["format"] == file_content_assets.FORMAT:
+    if manifest["format"] in asset_formats:
         members += (file_content_assets.MEMBER,)
         if not file_content_assets.matches_manifest(manifest):
             raise ArchiveError("bundle-format-rejected")
     elif file_content_root is not None:
         raise ArchiveError("file-content-format-required")
+    if manifest["format"] == erp_integration.FORMAT:
+        members += erp_integration.MEMBERS
+        if not erp_integration.matches_manifest(manifest):
+            raise ArchiveError("bundle-format-rejected")
     if names != {*members, "manifest.json"}:
         raise ArchiveError("bundle-member-mismatch")
     if manifest.get("tenantId") != str(tenant) or manifest.get("schema") != "t_" + tenant.hex:
@@ -697,7 +718,7 @@ def verify_bundle(bundle, tenant, *, file_content_root=None):
         raise ArchiveError("bundle-member-mismatch")
     if any(file_digest(bundle / name) != expected[name] for name in members):
         raise ArchiveError("bundle-digest-mismatch")
-    if manifest["format"] == file_content_assets.FORMAT:
+    if manifest["format"] in asset_formats:
         root = file_content_assets.checked_root(file_content_root)
         file_content_assets.verify_member(bundle / file_content_assets.MEMBER, tenant, manifest["fileContentAssets"]["count"], root)
     return manifest
@@ -723,10 +744,12 @@ def main():
                         help="include historical RMA IAM references in v6 (requires --include-identity-priority)")
     export.add_argument("--file-content-root", type=Path,
                         help="verify original FileContent assets under this private local root in v7 (requires v6 opt-in)")
+    export.add_argument("--include-erp-integration", action="store_true",
+                        help="include the eight original ERP integration tables in v8 (requires --file-content-root)")
     verify = actions.add_parser("verify")
     verify.add_argument("--bundle", type=Path, required=True)
     verify.add_argument("--tenant", required=True)
-    verify.add_argument("--file-content-root", type=Path, help="private local file root for rechecking v7 asset references")
+    verify.add_argument("--file-content-root", type=Path, help="private local file root for rechecking v7 and v8 asset references")
     args = parser.parse_args()
     try:
         if args.action == "export":
@@ -737,7 +760,7 @@ def main():
                                    include_rma_visibility=args.include_rma_visibility,
                                    include_identity_priority=args.include_identity_priority,
                                    include_rma_iam_references=args.include_rma_iam_references,
-                                   file_content_root=args.file_content_root)
+                                   file_content_root=args.file_content_root, include_erp_integration=args.include_erp_integration)
             print(bundle)
         else:
             manifest = verify_bundle(args.bundle, args.tenant, file_content_root=args.file_content_root)
