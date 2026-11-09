@@ -162402,6 +162402,21 @@
       "at": "2026-11-09T05:04:37.7118759Z",
       "change": "W339 真实直接移库的普通事务、两端授权及双流水号证据齐备，等待远端采用及席位释放。",
       "evidence": "docs/development/evidence/W339-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T05:07:34.722463Z",
+      "change": "W339-01正常合并PR #796，准确远端树核对和分支删除及DEV-1释放完成，实际729秒。",
+      "evidence": "docs/development/evidence/W339-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T05:08:08.618203Z",
+      "change": "W340-01沿原任务实际开工。核当前 Stock 写者、对象和版本边界，再接真实 A/B 和凭据。",
+      "evidence": "docs/development/dispatch/20261109-wave340/README.md"
+    },
+    {
+      "at": "2026-11-09T05:13:45.5477702Z",
+      "change": "W340 当前 Stock 对象、原生键与实际写者已对账，等待远端采用及席位释放。",
+      "evidence": "docs/development/evidence/W340-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -163849,25 +163864,25 @@
       "card_anchor": "wp02-02",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD / W339-01",
+        "chat_label": "COORD / W340-01",
         "repository": "Main",
-        "branch": "codex/w339-01",
+        "branch": "codex/w340-01",
         "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-        "claimed_at": "2026-11-09T04:55:24.382094Z",
-        "baseline_sha": "6ff8f62b19c08415a11cea4d38b098e147b09e2c",
-        "entry_evidence": "docs/development/dispatch/20261109-wave339/README.md",
+        "claimed_at": "2026-11-09T05:08:08.618203Z",
+        "baseline_sha": "6b0ca24ecaa480d12aafe9b10138ec803f7fb52d",
+        "entry_evidence": "docs/development/dispatch/20261109-wave340/README.md",
         "phase": "VALIDATED_PENDING_REMOTE",
-        "dispatch_scope": "原公开直接移库在普通 V1 移库开启时采用普通事务，验证两端授权、货权、两腿编号和缺图锁拒绝。",
+        "dispatch_scope": "核现有 Stock 写入对象、原生唯一域和普通角色权限，区分公开入口、父 Owner、质检和召回。用 W337 已有隔离库只读核验。",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "reserved_write_resources": [
           "Main fixed DEV-1",
-          "直接库存移库 HTTP",
-          "普通租户 Stock 读写 profile",
-          "CP6 72H 隔离 PostgreSQL 18.6"
+          "现有 Stock Owner 与写入对象",
+          "W337 已停止自有 PostgreSQL 目录",
+          "CP6 72H 计划"
         ],
         "worker_start_received": true,
-        "delivery_report": "docs/development/evidence/W339-01/DELIVERY.md"
+        "delivery_report": "docs/development/evidence/W340-01/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -164790,7 +164805,7 @@
         },
         "receipt": "docs/development/evidence/authorized-adoption-release-20261015/release-receipt.json"
       },
-      "remaining_scope": "核库存写者的对象、事务和版本边界，然后完成两租户同键、错误凭据、旧池退出和当前授权。逐租户版本、初始化和恢复、兼容制品及其他原 PGT 场景仍待核。",
+      "remaining_scope": "实测两租户同键、原结果及普通连接归属，再核错误凭据、旧池退出和当前授权。逐租户版本、初始化和恢复、兼容制品及其他原 PGT 仍待核。",
       "main_package_adoption": {
         "path": "docs/development/evidence/WP02-02/main-package-adoption/DELIVERY.md",
         "scope": "Main exact formal0.10.3 dependency adoption; not tenant storage or full WP02-02 delivery",
@@ -165007,7 +165022,7 @@
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-02",
         "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。 W327验证普通LOGIN在调用事务内取得原认证根。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。 W335 已在实际普通事务验证 V2 新库存的明确归属、合法无归属、旧行拒绝和原安全审计，包含前向 PostgreSQL 迁移。",
-        "remaining": "实际写者对象和版本边界、两租户与凭据、逐租户版本/初始化/恢复、原 PGT 余项。",
+        "remaining": "真实两租户及凭据、逐租户版本/初始化/恢复与其他原 PGT 场景。",
         "next_action": "在原 HTTP 宿主采用普通 V2 创建上下文和调整，实测当前部门、授权版本、原结果及不可用时失败。随后接 V2 移库目标创建。",
         "evidence_refs": [
           "docs/development/evidence/WP02-02/directory-installation/DELIVERY.md",
@@ -165269,11 +165284,29 @@
         "workspace_status": "fixed-seat-detached-for-reuse"
       },
       "wave339_delivery": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W339-01/DELIVERY.md",
         "profile": "StockReadTenancy:EnableV1Move 直接 HTTP",
         "validation": "实际 PostgreSQL 18.6、Kestrel、当前库位授权、普通图锁缺权、八位精度、两腿部门及货权，3 项、零跳过。",
         "scope": "公开直接库存移库用普通事务及独立用途。原两腿编号、货权、部门、权限和旧服务调用按原合同执行。",
+        "full_task_complete": false,
+        "formal_acceptance": "NOT_RUN",
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/796",
+          "commit": "6b0ca24ecaa480d12aafe9b10138ec803f7fb52d",
+          "target_head": "6b0ca24ecaa480d12aafe9b10138ec803f7fb52d"
+        },
+        "seat_released": true,
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse"
+      },
+      "wave340_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W340-01/DELIVERY.md",
+        "profile": "Stock 实际对象与写者，PostgreSQL 18.6",
+        "validation": "复用 W337 已验证隔离库，两组 BEGIN READ ONLY 读取原生唯一域、行安全、列权限、真实外键与临时记录。源码、链接及台账检查。",
+        "scope": "现有 Stock 对象、真实入口、原生唯一域及普通权限。公开入口、父 Owner、质检和召回的边界，及原操作和通知恢复依赖。",
         "full_task_complete": false,
         "formal_acceptance": "NOT_RUN"
       }
@@ -174916,9 +174949,9 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-10",
-        "delivered": "Main PG journal、Stock/PA090代表事务及W249有效。W326证明Stock只读路径采用可信租户登录。 W327验证原认证根和普通写者事务的数据库前置。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。 W335 已在实际普通事务验证 V2 新库存的明确归属、合法无归属、旧行拒绝和原安全审计，包含前向 PostgreSQL 迁移。 W336 已在实际宿主验证 V2 原创建上下文和调整使用普通事务，缺权限、原结果和合法旧请求有 PostgreSQL 证据。 W337 已验证实际 V2 移库目标创建、两腿独立归属、原货权和故障回滚。 W338 已验证实际公开直接库存调整使用普通事务，缺写权失败和原流水号回包均有实证。 W339 已验证实际公开直接库存移库使用普通事务，缺图锁失败及原双编号回包已有实证。",
-        "remaining": "其他实际 Owner 的权限、共同事务、恢复和正式采纳按各合同待核。",
-        "next_action": "核当前 Stock 写者、对象、事务和版本边界。接续实际 A/B、凭据及原 WP02-28 兼容制品。",
+        "delivered": "Main PG journal、Stock/PA090代表事务及W249有效。W326证明Stock只读路径采用可信租户登录。 W327验证原认证根和普通写者事务的数据库前置。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。 W335 已在实际普通事务验证 V2 新库存的明确归属、合法无归属、旧行拒绝和原安全审计，包含前向 PostgreSQL 迁移。 W336 已在实际宿主验证 V2 原创建上下文和调整使用普通事务，缺权限、原结果和合法旧请求有 PostgreSQL 证据。 W337 已验证实际 V2 移库目标创建、两腿独立归属、原货权和故障回滚。 W338 已验证实际公开直接库存调整使用普通事务，缺写权失败和原流水号回包均有实证。 W339 已验证实际公开直接库存移库使用普通事务，缺图锁失败及原双编号回包已有实证。 W340 已登记现有 Stock 写者和对象原生目录，核准 A/B 同业务键和全表消息唯一域。",
+        "remaining": "独立父 Owner、质检、召回的实际普通事务采用和其他 Owner 原合同待分别核。",
+        "next_action": "实际 A/B 同键的普通读写、原键结果和连接池归属，接续错误绑定与轮换。",
         "evidence_refs": [
           "docs/development/evidence/W310-01/DELIVERY.md",
           "docs/development/evidence/W326-01/DELIVERY.md",
@@ -174934,11 +174967,12 @@
           "docs/development/evidence/W336-01/DELIVERY.md",
           "docs/development/evidence/W337-01/DELIVERY.md",
           "docs/development/evidence/W338-01/DELIVERY.md",
-          "docs/development/evidence/W339-01/DELIVERY.md"
+          "docs/development/evidence/W339-01/DELIVERY.md",
+          "docs/development/evidence/W340-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false,
-        "latest_window": "W339-01"
+        "latest_window": "W340-01"
       }
     },
     {
@@ -205226,10 +205260,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W339",
-      "path": "docs/development/dispatch/20261109-wave339/README.md",
-      "baseline_sha": "6ff8f62b19c08415a11cea4d38b098e147b09e2c",
-      "registered_at": "2026-11-09T04:55:24.382094Z",
+      "id": "W340",
+      "path": "docs/development/dispatch/20261109-wave340/README.md",
+      "baseline_sha": "6b0ca24ecaa480d12aafe9b10138ec803f7fb52d",
+      "registered_at": "2026-11-09T05:08:08.618203Z",
       "phase": "VALIDATED_PENDING_REMOTE",
       "assigned_chats": [
         "COORD"
@@ -205248,39 +205282,39 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W339-01",
-          "workspace_task": "W339-01",
+          "id": "W340-01",
+          "workspace_task": "W340-01",
           "related_tasks": [
             "WP02-10"
           ],
-          "title": "直接库存移库入口的普通事务",
+          "title": "Stock 写入对象和实际 Owner 边界",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "VALIDATED_PENDING_REMOTE",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w339-01",
-          "planned_scope_ref": "docs/development/dispatch/20261109-wave339/README.md",
+          "branch": "codex/w340-01",
+          "planned_scope_ref": "docs/development/dispatch/20261109-wave340/README.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "Main fixed DEV-1",
-            "直接库存移库 HTTP",
-            "普通租户 Stock 读写 profile",
-            "CP6 72H 隔离 PostgreSQL 18.6"
+            "现有 Stock Owner 与写入对象",
+            "W337 已停止自有 PostgreSQL 目录",
+            "CP6 72H 计划"
           ],
           "worker_delivery_received": true,
           "candidate_review_completed": true,
-          "delivery_report": "docs/development/evidence/W339-01/DELIVERY.md"
+          "delivery_report": "docs/development/evidence/W340-01/DELIVERY.md"
         }
       ],
       "storage": {
         "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "核当前 Stock 写者、对象、事务和版本边界。接续实际 A/B、凭据及原 WP02-28 兼容制品。"
+      "next_action": "实际 A/B 同键的普通读写、原键结果和连接池归属，接续错误绑定与轮换。"
     },
     "wave_history": [
       {
@@ -245766,6 +245800,67 @@
           "new_worktrees": 0
         },
         "next_action": "采用原公开直接移库，随后核库存写者边界及实际 A/B。"
+      },
+      {
+        "id": "W339",
+        "path": "docs/development/dispatch/20261109-wave339/README.md",
+        "baseline_sha": "6ff8f62b19c08415a11cea4d38b098e147b09e2c",
+        "registered_at": "2026-11-09T04:55:24.382094Z",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W339-01",
+            "workspace_task": "W339-01",
+            "related_tasks": [
+              "WP02-10"
+            ],
+            "title": "直接库存移库入口的普通事务",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w339-01",
+            "planned_scope_ref": "docs/development/dispatch/20261109-wave339/README.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main fixed DEV-1",
+              "直接库存移库 HTTP",
+              "普通租户 Stock 读写 profile",
+              "CP6 72H 隔离 PostgreSQL 18.6"
+            ],
+            "worker_delivery_received": true,
+            "candidate_review_completed": true,
+            "delivery_report": "docs/development/evidence/W339-01/DELIVERY.md",
+            "candidate_integrated": true,
+            "resources_released": true,
+            "adopted_remote": "6b0ca24ecaa480d12aafe9b10138ec803f7fb52d",
+            "pr": "https://github.com/GTX537/CP6/pull/796",
+            "branch_disposition": "deleted-local-and-remote",
+            "finished_at": "2026-11-09T05:07:34.722463Z"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "核当前 Stock 写者、对象和版本边界，再接真实 A/B 和凭据。"
       }
     ],
     "development_priority": {
@@ -248463,7 +248558,7 @@
         }
       },
       "timing_basis": "Native goal plus independently sampled monotonic segments for confirmed missing time, with exclusions and no overlap.",
-      "next_priority": "核当前 Stock 写者、对象、事务和版本边界。接续实际 A/B、凭据及原 WP02-28 兼容制品。",
+      "next_priority": "实际 A/B 同键的普通读写、原键结果和连接池归属，接续错误绑定与轮换。",
       "windows": [
         {
           "id": "W327-01",
@@ -248792,7 +248887,7 @@
         },
         {
           "id": "W339-01",
-          "state": "VALIDATED_PENDING_REMOTE",
+          "state": "CLOSED",
           "related_tasks": [
             "WP02-10"
           ],
@@ -248805,8 +248900,34 @@
           "dispatch": "docs/development/dispatch/20261109-wave339/README.md",
           "validation_ready_at": "2026-11-09T05:04:37.7118759Z",
           "validation_ready_seconds": 552,
+          "timing_source": "主机连续单调取样，起始至官方finish回读。无暂停。",
+          "delivery": "docs/development/evidence/W339-01/DELIVERY.md",
+          "actual_seconds": 729,
+          "finished_at": "2026-11-09T05:07:34.722463Z",
+          "actual_to_estimate_midpoint": 0.784,
+          "pr": "https://github.com/GTX537/CP6/pull/796",
+          "adopted_main": "6b0ca24ecaa480d12aafe9b10138ec803f7fb52d",
+          "branch_disposition": "deleted-local-and-remote",
+          "seat_released": true,
+          "variance": "原 11–20 分钟，完整实际 12 分 09 秒。包含首次四小时队列校准。"
+        },
+        {
+          "id": "W340-01",
+          "state": "VALIDATED_PENDING_REMOTE",
+          "related_tasks": [
+            "WP02-10"
+          ],
+          "started_at": "2026-11-09T05:08:08.618203Z",
+          "estimate_minutes": [
+            13,
+            23
+          ],
+          "scope": "核现有 Stock 写入对象、原生唯一域和普通角色权限，区分公开入口、父 Owner、质检和召回。用 W337 已有隔离库只读核验。",
+          "dispatch": "docs/development/dispatch/20261109-wave340/README.md",
+          "validation_ready_at": "2026-11-09T05:13:45.5477702Z",
+          "validation_ready_seconds": 336,
           "timing_source": "同次连续执行的主机单调取样。远端采用及席位收尾计时另记。",
-          "delivery": "docs/development/evidence/W339-01/DELIVERY.md"
+          "delivery": "docs/development/evidence/W340-01/DELIVERY.md"
         }
       ]
     },

@@ -1,6 +1,8 @@
 # 多对话任务分配与交付
 
-> [CP6 三天实际执行](planning/20261109-codex-72h-execution.md)由总控单人串行执行。[W339-01](evidence/W339-01/DELIVERY.md)验证原直接移库使用普通事务，随后核库存写者和真实两租户。
+> [CP6 三天实际执行](planning/20261109-codex-72h-execution.md)由总控单人串行执行。[W340-01](evidence/W340-01/DELIVERY.md)记录现有库存写者、事务和 PostgreSQL 原生唯一域，接续真实两租户同键验证。
+
+> [W339-01](evidence/W339-01/DELIVERY.md)直接库存移库和首次四小时校准已随 Main #796 合并，准确分支已清理，固定席位已释放。
 
 > [W338-01](evidence/W338-01/DELIVERY.md)直接库存调整已随 Main #795 合并，准确分支已清理，固定席位已释放。
 

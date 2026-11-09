@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC W340 Stock 写入对象和实际 Owner
+
+库存对象表记录已安装 PostgreSQL 18.6 的原生键、行安全和访问权，以及原操作、审计和消息的恢复依赖。 [交付报告](../development/evidence/W340-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W339 直接库存移库的普通事务
 
 真实 HTTP 验证目标区域和普通图锁拒绝。授权通过时两腿在同一普通事务执行，返回原两个流水号。 [交付报告](../development/evidence/W339-01/DELIVERY.md)
