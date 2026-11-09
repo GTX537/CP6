@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC RMA 归属更新实证
+
+登记真实 PostgreSQL 更新、原 ACL、临时列授权回收及原历史比对，正式 PGT-027 待正常 EF/IAM。 [W430](../development/evidence/W430-01/DELIVERY.md)
+
 ## 2026-11-09 UTC 原生共享表隔离补验
 
 加入可复现的隔离共享表 DELETE 和原密钥列权限验证，登记 PGT-008。 [W427](../development/evidence/W427-01/DELIVERY.md)
