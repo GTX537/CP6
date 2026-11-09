@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W421 随 #857 采用并释放 DEV-1。W420 实测 W372 同源 RMA、Engineering 和 FileContent 原件。 [W420](./evidence/W420-01/DELIVERY.md)
+
+
 > W419 随 #856 采用并释放 DEV-1。W420 继续实际同源夹具，W421 纳入五项已有 PostgreSQL 实证。 [W421](./evidence/W421-01/DELIVERY.md)
 
 

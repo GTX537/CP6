@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC 真实同源 RMA 与文件夹具
+
+新增真实 Engineering 与 FileContent Owner 定向驱动及原生五成员对照。 [W420](../development/evidence/W420-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 采用原 PostgreSQL 实测
 
 同步五项原场景的执行证据及实际范围。 [W421](../development/evidence/W421-01/DELIVERY.md)

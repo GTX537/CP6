@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC ERP 原位采用与同源扩展
+
+继续 W419 原 ERP 终态、RowVersion 与原全局键，沿 W420 副本接同源 ERP/Stock 和完整验收。 [W420](../development/evidence/W420-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 同源恢复与其余正式场景
 
 W420 继续同源实际文件 Owner，ERP 采用、消息对账及 PGT-021/022 按完整原场景推进。 [W421](../development/evidence/W421-01/DELIVERY.md)
