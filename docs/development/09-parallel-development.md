@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W394 v7 外部资产 staging 实证通过。W395 DEV-1 核原 ERP 八表，W392 集成席位核实际池。 [W394](./evidence/W394-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave394/README.md)
+
+
 > W393 原现行 IAM v6/v7 实证通过。W394 DEV-2 核资产落表，W392 集成席位核池复用。 [W393](./evidence/W393-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave393/README.md)
 
 

@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC 现行 IAM 采用和原资产落表
+
+W393 完整 921 秒，两端分支清理，DEV-1 干净释放。W394 真缺件拒绝、原子回滚和原回执读取通过。 [W394](../development/evidence/W394-01/DELIVERY.md) · [PR #834](https://github.com/GTX537/CP6/pull/834)
+
+
 ## 2026-11-09 UTC IAM 历史 staging 采用和现行对账
 
 W391 完整 762 秒，两端分支清理，DEV-2 干净释放。W393 A 三项漂移、B 12 条原值及实际 v7 文件校验通过。 [W393](../development/evidence/W393-01/DELIVERY.md) · [PR #833](https://github.com/GTX537/CP6/pull/833)

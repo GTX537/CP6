@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC v7 资产 staging
+
+原文件元数据随 v6 同一事务落表，缺件、篡改和晚段计数错误拒绝。已提交原回执独立只读恢复。 [W394](../development/evidence/W394-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC RMA 当前 IAM 只读对账
 
 原 v6/v7 对账保留原参与者、字段权限和版本漂移，不写业务或授权。 [W393](../development/evidence/W393-01/DELIVERY.md)

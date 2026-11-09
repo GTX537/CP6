@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC ERP 原共享域与完整候选
+
+继续 W395 同快照 ERP 原八表，统一包的现行消息对账和隔离候选。 [W394](../development/evidence/W394-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 资产落表与适用共享域
 
 继续 W394 资产中立落表、ERP 原共享域和隔离候选。 [W393](../development/evidence/W393-01/DELIVERY.md)
