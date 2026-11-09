@@ -22,7 +22,8 @@ import visibility_v4
 
 TARGET_PLAN = "cp6_rma_stage.plan"
 STAGE_FORMATS = (archive.FORMAT, archive.FORMAT_WITH_JOURNAL, source_v3.FORMAT, visibility_v4.FORMAT,
-                 identity_priority.FORMAT, iam_v6.FORMAT, file_content_assets.FORMAT, erp_integration.FORMAT)
+                 identity_priority.FORMAT, iam_v6.FORMAT, file_content_assets.FORMAT, erp_integration.FORMAT,
+                 privacy_evidence.FORMAT)
 
 
 class StageError(RuntimeError):
@@ -79,7 +80,8 @@ def checked_bundle(bundle, output, tenant, digest, target, file_content_root=Non
     if (source.system_identifier, source.database_oid) == (target.system_identifier, target.database_oid):
         raise StageError("rma-stage-target-is-source")
     projection = manifest.get("sharedProjection")
-    has_erp = manifest["format"] == erp_integration.FORMAT
+    has_privacy = manifest["format"] == privacy_evidence.FORMAT
+    has_erp = has_privacy or manifest["format"] == erp_integration.FORMAT
     has_assets = has_erp or manifest["format"] == file_content_assets.FORMAT
     has_iam = has_assets or manifest["format"] == iam_v6.FORMAT
     has_identity = has_iam or manifest["format"] == identity_priority.FORMAT
@@ -118,6 +120,8 @@ def checked_bundle(bundle, output, tenant, digest, target, file_content_root=Non
         tables = manifest["erpIntegration"]["tables"]
         plan["erpIntegrationCounts"] = read_counts({name: table["count"] for name, table in tables.items()},
                                                    (table.name for table in erp_integration.TABLES))
+    if has_privacy:
+        plan["privacyEvidence"] = manifest["privacyEvidence"]
     return checked, plan
 
 
@@ -589,6 +593,46 @@ def erp_integration_sql(tenant):
     """
 
 
+def privacy_evidence_sql(tenant, environment):
+    statements, counts = [], []
+    for table, name in ((privacy_evidence.SECURITY_LOGS, "security_audit_snapshot"),
+                        (privacy_evidence.HOLDS, "legal_hold_history_snapshot")):
+        relation = "rma_archive_stage." + name
+        columns = []
+        for column, native_type, nullable in table.columns:
+            if native_type == "bpchar":
+                native_type += " COLLATE rma_archive_stage.outbound_number"
+            columns.append(f'"{column}" {native_type}' + ("" if nullable else " NOT NULL"))
+        columns.append(f'CHECK ("{table.tenant_column}"={archive.literal(tenant)}::uuid)')
+        if table is privacy_evidence.HOLDS:
+            columns.extend((f"CHECK (environment_id={archive.literal(environment)}::uuid)",
+                            "CHECK (NOT active OR review_at IS NOT NULL)"))
+        for index, key in enumerate(table.keys):
+            constraint = "PRIMARY KEY" if index == 0 else "UNIQUE"
+            key_columns = ",".join(f'"{column}"' for column in key)
+            columns.append(f"{constraint} ({key_columns})")
+        definition = ",\n            ".join(columns)
+        statements.append(f"""
+        CREATE TABLE {relation} (
+            {definition}
+        );
+        \\copy {relation} FROM 'bundle/{table.member}' WITH (FORMAT csv, HEADER MATCH)
+        """)
+        counts.append(f"(SELECT count(*) FROM {relation})<>(expected->{archive.literal(table.qualified_name)}->>'count')::bigint")
+    mismatch = "\n            OR ".join(counts)
+    return "".join(statements) + f"""
+    DO $cp6_stage_privacy_evidence$
+    DECLARE
+        expected jsonb := current_setting('{TARGET_PLAN}')::jsonb->'privacyEvidence'->'tables';
+    BEGIN
+        IF {mismatch} THEN
+            RAISE EXCEPTION 'rma-stage-privacy-evidence-count-mismatch';
+        END IF;
+    END
+    $cp6_stage_privacy_evidence$;
+    """
+
+
 WRITE_RECEIPT = """
     CREATE TABLE rma_archive_stage.receipt (
         singleton boolean PRIMARY KEY CHECK (singleton), tenant_id uuid NOT NULL,
@@ -700,6 +744,9 @@ def execute(args):
         if "erpIntegrationCounts" in plan:
             driver += erp_integration_sql(tenant)
             source_field += ",'erpIntegrationCounts',p->'erpIntegrationCounts'"
+        if "privacyEvidence" in plan:
+            driver += privacy_evidence_sql(tenant, plan["privacyEvidence"]["environmentId"])
+            source_field += ",'privacyEvidence',p->'privacyEvidence'"
         driver += WRITE_RECEIPT.format(source_field=source_field)
     else:
         driver = initial_sql(plan, read_only=True) + READ_RECEIPT
@@ -719,7 +766,7 @@ def main():
             command.add_argument("--" + key, required=True)
         if name == "stage":
             command.add_argument("--bundle", type=Path, required=True)
-            command.add_argument("--file-content-root", type=Path, help="original private local asset root, required for v7 and v8")
+            command.add_argument("--file-content-root", type=Path, help="original private local asset root, required for v7 and later")
     args = parser.parse_args()
     try:
         sys.stdout.buffer.write(execute(args) + b"\n")
