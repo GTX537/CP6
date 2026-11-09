@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC RMA 启用与 Stock 两档容量
+
+W353 的完整窗口 1,561 秒，DEV-1 干净释放。Stock 的 10/100 普通登录、实际模型、池限制、两进程有限并发和超限拒绝均有实测。 [W355 交付](../development/evidence/W355-01/DELIVERY.md) · [#812](https://github.com/GTX537/CP6/pull/812)
+
+
 ## 2026-11-09 UTC W353 实库验证与 #808 远端收尾
 
 三个独立 PostgreSQL 库实际执行发布 DatabaseInit。W353 原子启用与旧路径回归通过。#808 的本地和远端任务分支已清理，DEV-2 已正式释放。 [W353 交付](../development/evidence/W353-01/DELIVERY.md) · [#811](https://github.com/GTX537/CP6/pull/811)

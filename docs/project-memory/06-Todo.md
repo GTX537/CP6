@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 原 RMA HTTP 与不完整备份
+
+DEV-1 接实际 RMA GET、当前共享授权和最小 tenant EF。INTEGRATION-1 核只有业务 schema 的备份。Stock 1000 档按当前准入拒绝，正式更高容量未测。 [W355 交付](../development/evidence/W355-01/DELIVERY.md) · [#812](https://github.com/GTX537/CP6/pull/812)
+
+
 ## 2026-11-09 UTC RMA 正常读入口与 Stock 容量实测
 
 W353 进入远端采用。随后以隔离全 Core 的原 RMA HTTP 读取、当前共享授权和普通租户 LOGIN 为边界推进。W355 在 DEV-2 独立测实际 Stock 冷暖、模型、池峰值和准入边界。 [W353 交付](../development/evidence/W353-01/DELIVERY.md) · [#811](https://github.com/GTX537/CP6/pull/811)
