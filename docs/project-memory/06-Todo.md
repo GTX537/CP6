@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC W344 续接
+
+收尾 W345 实际本地制品，独立处理全新 PostgreSQL 初始化阻断，再接库存首装回执和两版本共同业务。 [交付报告](../development/evidence/W344-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W343 续接
 
 核实际普通库存事务在 Outbox 路由锁等待时的请求取消、事务回滚及池复用。并行核兼容制品、租户迁移恢复和 WP01-01 证据余项。 [交付报告](../development/evidence/W343-01/DELIVERY.md)

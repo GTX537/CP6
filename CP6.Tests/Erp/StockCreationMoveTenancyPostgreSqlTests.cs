@@ -136,6 +136,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(previousOutbox + 1, await StockNotifications(h));
         var pair = await VerifyStockTenantPairAsync(h, other.Tenant, control, host, session, login, other.Login);
         await VerifyStockTenantBindingAsync(h, other.Tenant, host, connection, login, password, other.Login);
+        await VerifyStockConnectionFailureAsync(h, other.Tenant, control, host, session, login, other.Login, pair);
         return pair;
 
         Task<HttpResponseMessage> Move() => host.Send(OperationsRequest(session, HttpMethod.Post, root + "commands/v2/move", new
