@@ -27,7 +27,7 @@ internal sealed record RmaTenantInstallRequestV1(RmaTenantTargetV1 Target, Guid 
 internal sealed record RmaTenantMigrationRequestV1(RmaTenantTargetV1 Target, Guid InstallationId, Guid TenantId, Guid OperationId);
 
 /// <summary>Explicit fresh RMA storage control. This profile never adopts an existing RMA authority.</summary>
-internal static class RmaTenantStorageV1
+internal static partial class RmaTenantStorageV1
 {
     internal const string Profile = "rma-application-tenant-v1";
     internal const string UnknownOutcome = "outcome-unknown-retry-same-operation";
@@ -69,37 +69,7 @@ internal static class RmaTenantStorageV1
                 + " AND NOT EXISTS (SELECT FROM pg_catalog.pg_default_acl)", ct) is not true)
             throw new TenantProvisioningException("fresh-layout-required");
 
-        await ServiceTokenProfileV1.ValidateFreshPublicAsync(connection, tx, ct);
-        foreach (var binding in request.Tenants)
-        {
-            await using var login = new NpgsqlCommand($"""
-                SELECT {PlainLogin}
-                  AND NOT EXISTS (SELECT FROM pg_catalog.pg_database WHERE datdba=r.oid)
-                  AND NOT EXISTS (SELECT FROM pg_catalog.pg_namespace WHERE nspowner=r.oid)
-                  AND NOT EXISTS (SELECT FROM pg_catalog.pg_class WHERE relowner=r.oid)
-                  AND NOT EXISTS (SELECT FROM pg_catalog.pg_proc WHERE proowner=r.oid)
-                FROM pg_catalog.pg_roles r WHERE r.rolname=@role
-                """, connection, tx);
-            login.Parameters.AddWithValue("role", binding.Login);
-            if (await login.ExecuteScalarAsync(ct) is not true)
-                throw new TenantProvisioningException("runtime-login-rejected");
-            // regrole resolves a PostgreSQL identifier, so preserve quoted login names.
-            await ServiceTokenProfileV1.ValidateFreshLoginAsync(connection, tx, Q(binding.Login), ct);
-        }
-
-        var roles = string.Join(", ", request.Tenants.Select(t => Q(t.Login)));
-        var database = Q(request.Target.Database);
-        await Sql(connection, tx, $"""
-            REVOKE ALL ON DATABASE {database} FROM PUBLIC;
-            GRANT CONNECT ON DATABASE {database} TO {roles};
-            REVOKE ALL ON SCHEMA public FROM PUBLIC;
-            """, ct);
-        await TenantLoginDirectoryV1.InstallAsync(connection, tx, request.Tenants, ct);
-        await Sql(connection, tx, $"""
-            GRANT USAGE ON SCHEMA cp6_tenancy_v1 TO {roles};
-            GRANT EXECUTE ON FUNCTION cp6_tenancy_v1.current_tenant_id() TO {roles};
-            """, ct);
-        await TenantLoginDirectoryV1.ValidateAsync(connection, tx, request.Tenants, ct);
+        await InstallDirectoryAsync(connection, tx, request.Target.Database, request.Tenants, fullCore: false, ct);
 
         var result = JsonSerializer.Serialize(new
         {
@@ -111,39 +81,7 @@ internal static class RmaTenantStorageV1
             request.Target.SystemIdentifier,
             TenantCount = request.Tenants.Length
         });
-        await Sql(connection, tx, $"""
-            CREATE SCHEMA {Control};
-            REVOKE ALL ON SCHEMA {Control} FROM PUBLIC;
-            CREATE TABLE {Control}.installation (
-                singleton boolean PRIMARY KEY CHECK (singleton),
-                installation_id uuid NOT NULL, profile text NOT NULL,
-                target jsonb NOT NULL, bindings_json text NOT NULL, result_json text NOT NULL
-            );
-            CREATE TABLE {Control}.tenant_migrations (
-                tenant_id uuid NOT NULL, lineage text NOT NULL,
-                role_oid oid NOT NULL, role_name name NOT NULL,
-                state text NOT NULL DEFAULT 'Provisioning',
-                operation_id uuid, migration_id text, script_sha256 text, result_json text,
-                PRIMARY KEY (tenant_id, lineage),
-                CHECK ((state='Provisioning' AND operation_id IS NULL AND migration_id IS NULL
-                            AND script_sha256 IS NULL AND result_json IS NULL)
-                    OR (state='Ready' AND operation_id IS NOT NULL AND migration_id IS NOT NULL
-                            AND script_sha256 IS NOT NULL AND result_json IS NOT NULL))
-            );
-            REVOKE ALL ON {Control}.installation, {Control}.tenant_migrations FROM PUBLIC;
-            """, ct);
-        await using var save = new NpgsqlCommand($"""
-            INSERT INTO {Control}.installation VALUES (true,@installation,@profile,@target,@bindings,@result);
-            INSERT INTO {Control}.tenant_migrations (tenant_id,lineage,role_oid,role_name)
-            SELECT tenant_id,@lineage,role_oid,role_name FROM cp6_tenancy_v1.login_tenant;
-            """, connection, tx);
-        save.Parameters.AddWithValue("installation", request.InstallationId);
-        save.Parameters.AddWithValue("profile", Profile);
-        save.Parameters.AddWithValue("target", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(request.Target));
-        save.Parameters.AddWithValue("bindings", bindings);
-        save.Parameters.AddWithValue("result", result);
-        save.Parameters.AddWithValue("lineage", Lineage);
-        await save.ExecuteNonQueryAsync(ct);
+        await InstallControlRowsAsync(connection, tx, request, Profile, bindings, result, ct);
         await Commit(tx, ct);
         return result;
     }
@@ -207,21 +145,95 @@ internal static class RmaTenantStorageV1
             if (storedMigration != MigrationId || storedHash != hash)
                 throw new TenantProvisioningException("migration-history-mismatch");
 
-            await using var history = new NpgsqlCommand($"""
-                SELECT EXISTS (SELECT FROM {Q(schema)}.rma_migration_history_v1
-                               WHERE tenant_id=@tenant AND lineage=@lineage AND migration_id=@migration
-                                 AND operation_id=@operation AND script_sha256=@hash AND result_json=@result)
-                  AND (SELECT count(*) FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
-                       WHERE n.nspname=@schema AND n.nspowner=current_user::regrole AND c.relowner=current_user::regrole
-                         AND c.relkind='r' AND c.relname IN ('heads','versions','rma_migration_history_v1'))=3
-                """, connection, tx);
-            MigrationParameters(history, request, hash, storedResult!);
-            history.Parameters.AddWithValue("schema", schema);
-            if (await history.ExecuteScalarAsync(ct) is not true)
-                throw new TenantProvisioningException("migration-history-mismatch");
+            await RequireTenantHistoryAsync(connection, tx, request, schema, hash, storedResult!, ct);
             return storedResult!;
         }
 
+        var result = await ApplyTenantAsync(connection, tx, request, schema, ddl, hash, Profile, ct);
+        await Commit(tx, ct);
+        return result;
+    }
+
+    private static async Task InstallDirectoryAsync(NpgsqlConnection connection, NpgsqlTransaction tx,
+        string databaseName, TenantLoginV1[] tenants, bool fullCore, CancellationToken ct)
+    {
+        await ServiceTokenProfileV1.ValidateFreshPublicAsync(connection, tx, ct);
+        foreach (var binding in tenants)
+        {
+            await using var login = new NpgsqlCommand($"""
+                SELECT {PlainLogin}
+                  AND NOT EXISTS (SELECT FROM pg_catalog.pg_database WHERE datdba=r.oid)
+                  AND NOT EXISTS (SELECT FROM pg_catalog.pg_namespace WHERE nspowner=r.oid)
+                  AND NOT EXISTS (SELECT FROM pg_catalog.pg_class WHERE relowner=r.oid)
+                  AND NOT EXISTS (SELECT FROM pg_catalog.pg_proc WHERE proowner=r.oid)
+                FROM pg_catalog.pg_roles r WHERE r.rolname=@role
+                """, connection, tx);
+            login.Parameters.AddWithValue("role", binding.Login);
+            if (await login.ExecuteScalarAsync(ct) is not true)
+                throw new TenantProvisioningException("runtime-login-rejected");
+            // regrole resolves a PostgreSQL identifier, so preserve quoted login names.
+            await ServiceTokenProfileV1.ValidateFreshLoginAsync(connection, tx, Q(binding.Login), ct);
+        }
+
+        var roles = string.Join(", ", tenants.Select(t => Q(t.Login)));
+        var database = Q(databaseName);
+        await Sql(connection, tx, $"""
+            REVOKE ALL ON DATABASE {database} FROM PUBLIC;
+            GRANT CONNECT ON DATABASE {database} TO {roles};
+            REVOKE ALL ON SCHEMA public FROM PUBLIC;
+            """, ct);
+        await TenantLoginDirectoryV1.InstallAsync(connection, tx, tenants, ct);
+        await Sql(connection, tx, $"""
+            GRANT USAGE ON SCHEMA cp6_tenancy_v1 TO {roles};
+            GRANT EXECUTE ON FUNCTION cp6_tenancy_v1.current_tenant_id() TO {roles};
+            """, ct);
+        if (fullCore)
+            await RequireCoreRoleIsolationAsync(connection, tx, tenants, ct);
+        else
+            await TenantLoginDirectoryV1.ValidateAsync(connection, tx, tenants, ct);
+    }
+
+    private static async Task InstallControlRowsAsync(NpgsqlConnection connection, NpgsqlTransaction tx,
+        RmaTenantInstallRequestV1 request, string profile, string bindings, string result, CancellationToken ct)
+    {
+        await Sql(connection, tx, $"""
+            CREATE SCHEMA {Control};
+            REVOKE ALL ON SCHEMA {Control} FROM PUBLIC;
+            CREATE TABLE {Control}.installation (
+                singleton boolean PRIMARY KEY CHECK (singleton),
+                installation_id uuid NOT NULL, profile text NOT NULL,
+                target jsonb NOT NULL, bindings_json text NOT NULL, result_json text NOT NULL
+            );
+            CREATE TABLE {Control}.tenant_migrations (
+                tenant_id uuid NOT NULL, lineage text NOT NULL,
+                role_oid oid NOT NULL, role_name name NOT NULL,
+                state text NOT NULL DEFAULT 'Provisioning',
+                operation_id uuid, migration_id text, script_sha256 text, result_json text,
+                PRIMARY KEY (tenant_id, lineage),
+                CHECK ((state='Provisioning' AND operation_id IS NULL AND migration_id IS NULL
+                            AND script_sha256 IS NULL AND result_json IS NULL)
+                    OR (state='Ready' AND operation_id IS NOT NULL AND migration_id IS NOT NULL
+                            AND script_sha256 IS NOT NULL AND result_json IS NOT NULL))
+            );
+            REVOKE ALL ON {Control}.installation, {Control}.tenant_migrations FROM PUBLIC;
+            """, ct);
+        await using var save = new NpgsqlCommand($"""
+            INSERT INTO {Control}.installation VALUES (true,@installation,@profile,@target,@bindings,@result);
+            INSERT INTO {Control}.tenant_migrations (tenant_id,lineage,role_oid,role_name)
+            SELECT tenant_id,@lineage,role_oid,role_name FROM cp6_tenancy_v1.login_tenant;
+            """, connection, tx);
+        save.Parameters.AddWithValue("installation", request.InstallationId);
+        save.Parameters.AddWithValue("profile", profile);
+        save.Parameters.AddWithValue("target", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(request.Target));
+        save.Parameters.AddWithValue("bindings", bindings);
+        save.Parameters.AddWithValue("result", result);
+        save.Parameters.AddWithValue("lineage", Lineage);
+        await save.ExecuteNonQueryAsync(ct);
+    }
+
+    private static async Task<string> ApplyTenantAsync(NpgsqlConnection connection, NpgsqlTransaction tx,
+        RmaTenantMigrationRequestV1 request, string schema, string ddl, string hash, string profile, CancellationToken ct)
+    {
         var result = JsonSerializer.Serialize(new
         {
             Outcome = "READY",
@@ -229,7 +241,7 @@ internal static class RmaTenantStorageV1
             request.OperationId,
             request.TenantId,
             Schema = schema,
-            Profile,
+            Profile = profile,
             Lineage,
             MigrationId,
             ScriptSha256 = hash,
@@ -254,8 +266,24 @@ internal static class RmaTenantStorageV1
         MigrationParameters(ready, request, hash, result);
         if (await ready.ExecuteNonQueryAsync(ct) != 1)
             throw new TenantProvisioningException("binding-rejected");
-        await Commit(tx, ct);
         return result;
+    }
+
+    private static async Task RequireTenantHistoryAsync(NpgsqlConnection connection, NpgsqlTransaction tx,
+        RmaTenantMigrationRequestV1 request, string schema, string hash, string result, CancellationToken ct)
+    {
+        await using var history = new NpgsqlCommand($"""
+            SELECT EXISTS (SELECT FROM {Q(schema)}.rma_migration_history_v1
+                           WHERE tenant_id=@tenant AND lineage=@lineage AND migration_id=@migration
+                             AND operation_id=@operation AND script_sha256=@hash AND result_json=@result)
+              AND (SELECT count(*) FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+                   WHERE n.nspname=@schema AND n.nspowner=current_user::regrole AND c.relowner=current_user::regrole
+                     AND c.relkind='r' AND c.relname IN ('heads','versions','rma_migration_history_v1'))=3
+            """, connection, tx);
+        MigrationParameters(history, request, hash, result);
+        history.Parameters.AddWithValue("schema", schema);
+        if (await history.ExecuteScalarAsync(ct) is not true)
+            throw new TenantProvisioningException("migration-history-mismatch");
     }
 
     private static async Task RequireControlTarget(NpgsqlConnection connection, NpgsqlTransaction tx,
@@ -330,41 +358,47 @@ internal static class RmaTenantStorageV1
         """;
 
     // Forward-only DDL for the new profile. The historical shared Core migration remains frozen.
-    private static string TenantDdl(Guid tenant, string schema, string login) => $"""
-        CREATE SCHEMA {schema};
-        REVOKE ALL ON SCHEMA {schema} FROM PUBLIC;
-        CREATE TABLE {schema}.heads (
-            tenant_id uuid NOT NULL CHECK (tenant_id='{tenant:D}'::uuid),
-            id uuid NOT NULL, actor_id uuid NOT NULL, outbound_id uuid NOT NULL,
-            version integer NOT NULL CHECK (version>0), PRIMARY KEY (tenant_id,id)
-        );
-        CREATE TABLE {schema}.versions (
-            tenant_id uuid NOT NULL CHECK (tenant_id='{tenant:D}'::uuid),
-            id uuid NOT NULL, version integer NOT NULL CHECK (version>0),
-            state text NOT NULL CHECK (state IN ('DRAFT','SUBMITTED')), payload jsonb NOT NULL,
-            PRIMARY KEY (tenant_id,id,version),
-            FOREIGN KEY (tenant_id,id) REFERENCES {schema}.heads(tenant_id,id)
-        );
-        ALTER TABLE {schema}.heads ADD CONSTRAINT rma_application_head_version
-            FOREIGN KEY (tenant_id,id,version) REFERENCES {schema}.versions(tenant_id,id,version)
-            DEFERRABLE INITIALLY DEFERRED;
-        CREATE FUNCTION {schema}.rma_application_immutable_v1() RETURNS trigger
-            LANGUAGE plpgsql SET search_path=pg_catalog AS $immutable$
-            BEGIN RAISE EXCEPTION 'RMA_APPLICATION_VERSION_IMMUTABLE' USING ERRCODE='23514'; END $immutable$;
-        CREATE TRIGGER rma_application_immutable BEFORE UPDATE OR DELETE ON {schema}.versions
-            FOR EACH ROW EXECUTE FUNCTION {schema}.rma_application_immutable_v1();
-        CREATE TRIGGER rma_application_no_truncate BEFORE TRUNCATE ON {schema}.versions
-            FOR EACH STATEMENT EXECUTE FUNCTION {schema}.rma_application_immutable_v1();
-        CREATE TABLE {schema}.rma_migration_history_v1 (
-            tenant_id uuid NOT NULL CHECK (tenant_id='{tenant:D}'::uuid),
-            lineage text NOT NULL, migration_id text NOT NULL,
-            operation_id uuid NOT NULL, script_sha256 text NOT NULL, result_json text NOT NULL,
-            PRIMARY KEY (lineage,migration_id)
-        );
-        REVOKE ALL ON {schema}.heads, {schema}.versions, {schema}.rma_migration_history_v1 FROM PUBLIC;
-        REVOKE ALL ON FUNCTION {schema}.rma_application_immutable_v1() FROM PUBLIC;
-        GRANT USAGE ON SCHEMA {schema} TO {login};
-        GRANT SELECT, INSERT ON {schema}.heads, {schema}.versions TO {login};
-        GRANT UPDATE (version) ON {schema}.heads TO {login};
-        """.ReplaceLineEndings("\n");
+    private static string TenantDdl(Guid tenant, string schema, string login, bool writable = true)
+    {
+        var objects = $"""
+            CREATE SCHEMA {schema};
+            REVOKE ALL ON SCHEMA {schema} FROM PUBLIC;
+            CREATE TABLE {schema}.heads (
+                tenant_id uuid NOT NULL CHECK (tenant_id='{tenant:D}'::uuid),
+                id uuid NOT NULL, actor_id uuid NOT NULL, outbound_id uuid NOT NULL,
+                version integer NOT NULL CHECK (version>0), PRIMARY KEY (tenant_id,id)
+            );
+            CREATE TABLE {schema}.versions (
+                tenant_id uuid NOT NULL CHECK (tenant_id='{tenant:D}'::uuid),
+                id uuid NOT NULL, version integer NOT NULL CHECK (version>0),
+                state text NOT NULL CHECK (state IN ('DRAFT','SUBMITTED')), payload jsonb NOT NULL,
+                PRIMARY KEY (tenant_id,id,version),
+                FOREIGN KEY (tenant_id,id) REFERENCES {schema}.heads(tenant_id,id)
+            );
+            ALTER TABLE {schema}.heads ADD CONSTRAINT rma_application_head_version
+                FOREIGN KEY (tenant_id,id,version) REFERENCES {schema}.versions(tenant_id,id,version)
+                DEFERRABLE INITIALLY DEFERRED;
+            CREATE FUNCTION {schema}.rma_application_immutable_v1() RETURNS trigger
+                LANGUAGE plpgsql SET search_path=pg_catalog AS $immutable$
+                BEGIN RAISE EXCEPTION 'RMA_APPLICATION_VERSION_IMMUTABLE' USING ERRCODE='23514'; END $immutable$;
+            CREATE TRIGGER rma_application_immutable BEFORE UPDATE OR DELETE ON {schema}.versions
+                FOR EACH ROW EXECUTE FUNCTION {schema}.rma_application_immutable_v1();
+            CREATE TRIGGER rma_application_no_truncate BEFORE TRUNCATE ON {schema}.versions
+                FOR EACH STATEMENT EXECUTE FUNCTION {schema}.rma_application_immutable_v1();
+            CREATE TABLE {schema}.rma_migration_history_v1 (
+                tenant_id uuid NOT NULL CHECK (tenant_id='{tenant:D}'::uuid),
+                lineage text NOT NULL, migration_id text NOT NULL,
+                operation_id uuid NOT NULL, script_sha256 text NOT NULL, result_json text NOT NULL,
+                PRIMARY KEY (lineage,migration_id)
+            );
+            REVOKE ALL ON {schema}.heads, {schema}.versions, {schema}.rma_migration_history_v1 FROM PUBLIC;
+            REVOKE ALL ON FUNCTION {schema}.rma_application_immutable_v1() FROM PUBLIC;
+            GRANT USAGE ON SCHEMA {schema} TO {login};
+            """;
+        var grants = writable ? $"""
+            GRANT SELECT, INSERT ON {schema}.heads, {schema}.versions TO {login};
+            GRANT UPDATE (version) ON {schema}.heads TO {login};
+            """ : $"GRANT SELECT ON {schema}.heads, {schema}.versions TO {login};";
+        return (objects + "\n" + grants).ReplaceLineEndings("\n");
+    }
 }
