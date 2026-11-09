@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W372 原 RMA 普通提交、原回执及归档权限已实测。W370 随 #821 采用并释放。DEV-1 W374 接原来源切片，集成席位 W373 核真实 PostgreSQL 回包。 [W372](./evidence/W372-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave372/README.md)
+
+
 > W370 已实测原子 staging 和同键原回执。W364 随 #820 采用并释放，W372 接原提交。W371 保存点已释放，W373 验真实草稿 PostgreSQL 提交回包。 [W370](./evidence/W370-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave370/README.md)
 
 

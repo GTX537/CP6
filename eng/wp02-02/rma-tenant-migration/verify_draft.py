@@ -23,24 +23,24 @@ TEST = ("FullyQualifiedName=CP6.Tests.Persistence.Tenancy.RmaTenantReadHttpPostg
         "Draft_post_uses_native_ordinary_transaction_and_recovers_the_original")
 
 
-def run_http(f, fixture):
+def run_http(f, fixture, *, variable="CP6_RMA_DRAFT_FIXTURE", test=TEST, name="rma-draft"):
     env = {name: os.environ[name] for name in os.environ if name.upper() in
            ("SYSTEMROOT", "WINDIR", "PATH", "TEMP", "TMP", "LOCALAPPDATA", "APPDATA", "USERPROFILE")}
     env.update({"DOTNET_ROOT": str(f.args.dotnet.parent), "DOTNET_CLI_HOME": str(f.root / "dotnet-home"),
                 "DOTNET_CLI_TELEMETRY_OPTOUT": "1", "CP6_PERMISSION_PG_ROOT": str(f.root),
-                "CP6_RMA_DRAFT_FIXTURE": json.dumps(fixture)})
-    args = [str(f.args.dotnet), "vstest", str(f.args.test_dll), "--TestCaseFilter:" + TEST,
-            "--Logger:trx;LogFileName=rma-draft.trx", "--ResultsDirectory:" + str(f.root)]
+                variable: json.dumps(fixture)})
+    args = [str(f.args.dotnet), "vstest", str(f.args.test_dll), "--TestCaseFilter:" + test,
+            "--Logger:trx;LogFileName=" + name + ".trx", "--ResultsDirectory:" + str(f.root)]
     with subprocess.Popen(args, cwd=f.root, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                           creationflags=FLAGS) as proc:
         out, err = f.collect(proc, seconds=180)
         f.save("http.stdout", out)
         f.save("http.stderr", err)
         f.save("http.process.json", {"Pid": proc.pid, "ExitCode": proc.returncode})
-        require(proc.returncode == 0, "hosted draft test failed; see http.stdout")
-    trx = (f.root / "rma-draft.trx").read_bytes()
+        require(proc.returncode == 0, "hosted RMA test failed; see http.stdout")
+    trx = (f.root / (name + ".trx")).read_bytes()
     require(f.scrub(trx) == trx and b'passed="1"' in trx and b'executed="1"' in trx,
-            "the exact draft scenario was not executed once or the receipt contains a private fixture value")
+            "the exact hosted RMA scenario was not executed once or the receipt contains a private fixture value")
 
 
 def assert_runtime_permissions(f, tenant_a, tenant_b):

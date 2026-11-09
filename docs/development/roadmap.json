@@ -162862,6 +162862,26 @@
       "at": "2026-11-09T10:15:19.471177Z",
       "change": "W373 领取集成席位核真实 RMA 普通提交回包丢失。",
       "evidence": "docs/development/dispatch/20261109-wave370/README.md"
+    },
+    {
+      "at": "2026-11-09T10:19:46.905368Z",
+      "change": "W370-01正常合并PR #821，准确远端树核对和分支删除及DEV-1释放完成，实际1111秒。",
+      "evidence": "docs/development/evidence/W370-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T10:11:57.053734Z",
+      "change": "W372-01从并行开发转入本次串行采用。原正常 RMA 提交串行采用后，W374 接归档共同入口，下一普通操作读取及关闭继续。",
+      "evidence": "docs/development/dispatch/20261109-wave372/README.md"
+    },
+    {
+      "at": "2026-11-09T10:37:48.0612559Z",
+      "change": "W372 实际原正常提交、原生事务、旧/新准确回执及归档权限通过，等待正常远端采用。",
+      "evidence": "docs/development/evidence/W372-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T10:21:52.686639Z",
+      "change": "W374 在 DEV-1 开工。先独立来源模块，W372 后串行采用归档入口。",
+      "evidence": "docs/development/dispatch/20261109-wave372/README.md"
     }
   ],
   "implementation_assessment": {
@@ -164309,25 +164329,26 @@
       "card_anchor": "wp02-02",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "RMA-ATOMIC-STAGING / W370-01",
+        "chat_label": "RMA-NATIVE-SUBMIT / W372-01",
         "repository": "Main",
-        "branch": "codex/w370-01",
-        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-        "claimed_at": "2026-11-09T10:01:15.187951Z",
-        "baseline_sha": "8c4796e89b3a0e3b28381cbb30d0f080962aafe4",
-        "entry_evidence": "docs/development/dispatch/20261109-wave370/README.md",
+        "branch": "codex/w372-01",
+        "worktree": "D:/CP6-worktrees/dev-2",
+        "claimed_at": "2026-11-09T10:11:57.053734Z",
+        "baseline_sha": "1b3cc3238aba6c42f94ab35a23890bd5d4f1a5a6",
+        "entry_evidence": "docs/development/dispatch/20261109-wave372/README.md",
         "phase": "VALIDATED_PENDING_REMOTE",
-        "dispatch_scope": "真实 v1/v2 与已采用 W364 writer 包，准确可信摘要、私有物理空库、原生 schema 与共享片同事务及原只读回执。",
+        "dispatch_scope": "托管原 POST submit、现行授权、原 If-Match/Source 及普通事务 head/version/journal，真实过渡保持旧回执和准确归档权限。",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "reserved_write_resources": [
-          "Main:rma-atomic-staging",
-          "file:Main:eng/wp02-02/rma-tenant-archive/stage.py",
-          "file:Main:eng/wp02-02/rma-tenant-archive/verify_stage.py",
-          "file:Main:docs/development/evidence/W370-01/DELIVERY.md"
+          "Main:rma-native-submit-owner",
+          "Main:tenant-storage-rma-control",
+          "Main:rma-tenant-writer-acl",
+          "file:Main:eng/wp02-02/rma-tenant-archive/archive.py",
+          "file:Main:docs/development/evidence/W372-01/DELIVERY.md"
         ],
         "worker_start_received": true,
-        "delivery_report": "docs/development/evidence/W370-01/DELIVERY.md"
+        "delivery_report": "docs/development/evidence/W372-01/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -165250,7 +165271,7 @@
         },
         "receipt": "docs/development/evidence/authorized-adoption-release-20261015/release-receipt.json"
       },
-      "remaining_scope": "已提供真实隔离 staging 和原回执恢复。原 RMA 正常提交、独立原操作/关闭、完整 IAM/队列/资产归档与当前状态下恢复仍需继续。",
+      "remaining_scope": "原 RMA 草稿与普通提交已采用原事务。待独立原操作读取及关闭、共享来源归档及真实完整恢复当前性。",
       "main_package_adoption": {
         "path": "docs/development/evidence/WP02-02/main-package-adoption/DELIVERY.md",
         "scope": "Main exact formal0.10.3 dependency adoption; not tenant storage or full WP02-02 delivery",
@@ -165466,9 +165487,9 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-02",
-        "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。 W327验证普通LOGIN在调用事务内取得原认证根。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。 W335 已在实际普通事务验证 V2 新库存的明确归属、合法无归属、旧行拒绝和原安全审计，包含前向 PostgreSQL 迁移。  W346 现有 Stock 首装提交后丢弃 stdout，从另一个真实进程在准确物理库取回原安装 ID，驱动原写栅栏及后续已交付安装。孤立回执、未绑定登录读策略及目录/权限漂移拒绝。 W348 实际验证共享消息 profile 的初始化中断、原键恢复及原结果重放。  W350 在 fresh-only PostgreSQL 真实把原 RMA heads/versions 迁入各自租户 schema，验证原子首版、实际进程竞争、中断与原结果、普通角色和原复合约束。 新隔离全 Core 物理 commissioning 以实际发布宿主和 PostgreSQL 验证，旧业务与旧 RMA journal 栅栏、其他 Owner 和原回执已证。 W355 实测 Stock 10/100 普通登录冷暖、缓存 churn、真实模型、原生后端及双进程有限峰值，原配置 129/1000 拒绝。 原 RMA 正常 HTTP 单条和历史读从真实登录经当前共享权威到新租户 EF，A/B 原件、ETag、授权和真实 SQL已验证。 W358 RMA 已 Ready 租户的真实非事务索引、原生无效对象中断及准确原键恢复已验证，B 和已采用普通读继续。 原 RMA 受权分页列表以真实 A/B Bearer 验证两页和当前权限，第二页实际跨128候选，版本按原键读取。 原生同快照 RMA tenant schema 和已引用的共享 Outbound 从真实 A/B 活动库准确导出并独立 staging，ACL/Owner、版本和原内容通过。 W361 对真实全 Core 的原 RMA 日志安装普通租户 RLS 和同事务最小追加，实测同键跨租、闭合回滚、原认证根、其他 Owner 及原回执。 W366 增加真实 RMA 原操作日志同快照 v2 切片，准确固定租户和原 Owner，原 bytes 与隔离 staging 已验，保留 v1。 W364 在真实宿主首次采用普通 RMA draft POST，原 head、version 和 W361 journal 同事务写回，现行授权、八位数量、原 ETag 及同键精确重放已证。 W370 将真实 RMA v1/v2 归档 staging 接可操作入口，验证同事务原 schema、共享片和回执，坏输入回滚及原结果恢复。",
-        "remaining": "原普通提交及原操作、完整共享依赖的同快照归档、当前授权与队列对账和可恢复切换。",
-        "next_action": "推进原普通提交与真实确认丢失，随后扩展恢复共享依赖和当期权威。保持原业务恢复和正式验收独立。",
+        "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。 W327验证普通LOGIN在调用事务内取得原认证根。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。 W335 已在实际普通事务验证 V2 新库存的明确归属、合法无归属、旧行拒绝和原安全审计，包含前向 PostgreSQL 迁移。  W346 现有 Stock 首装提交后丢弃 stdout，从另一个真实进程在准确物理库取回原安装 ID，驱动原写栅栏及后续已交付安装。孤立回执、未绑定登录读策略及目录/权限漂移拒绝。 W348 实际验证共享消息 profile 的初始化中断、原键恢复及原结果重放。  W350 在 fresh-only PostgreSQL 真实把原 RMA heads/versions 迁入各自租户 schema，验证原子首版、实际进程竞争、中断与原结果、普通角色和原复合约束。 新隔离全 Core 物理 commissioning 以实际发布宿主和 PostgreSQL 验证，旧业务与旧 RMA journal 栅栏、其他 Owner 和原回执已证。 W355 实测 Stock 10/100 普通登录冷暖、缓存 churn、真实模型、原生后端及双进程有限峰值，原配置 129/1000 拒绝。 原 RMA 正常 HTTP 单条和历史读从真实登录经当前共享权威到新租户 EF，A/B 原件、ETag、授权和真实 SQL已验证。 W358 RMA 已 Ready 租户的真实非事务索引、原生无效对象中断及准确原键恢复已验证，B 和已采用普通读继续。 原 RMA 受权分页列表以真实 A/B Bearer 验证两页和当前权限，第二页实际跨128候选，版本按原键读取。 原生同快照 RMA tenant schema 和已引用的共享 Outbound 从真实 A/B 活动库准确导出并独立 staging，ACL/Owner、版本和原内容通过。 W361 对真实全 Core 的原 RMA 日志安装普通租户 RLS 和同事务最小追加，实测同键跨租、闭合回滚、原认证根、其他 Owner 及原回执。 W366 增加真实 RMA 原操作日志同快照 v2 切片，准确固定租户和原 Owner，原 bytes 与隔离 staging 已验，保留 v1。 W364 在真实宿主首次采用普通 RMA draft POST，原 head、version 和 W361 journal 同事务写回，现行授权、八位数量、原 ETag 及同键精确重放已证。 W370 将真实 RMA v1/v2 归档 staging 接可操作入口，验证同事务原 schema、共享片和回执，坏输入回滚及原结果恢复。 W372 实际采用普通 RMA 提交，原 If-Match、版本推进、原日志、权限、故障回滚与原结果实证。共享归档保持确切已采用 writer 权限。",
+        "remaining": "普通原操作读取和关闭、单租户完整共享依赖及当前授权、消息和资产恢复，正式原验收。",
+        "next_action": "接原操作独立查询与关闭。W374 完成实际来源同快照，W373 核正常 POST 的真实 PG 确认。",
         "evidence_refs": [
           "docs/development/evidence/WP02-02/directory-installation/DELIVERY.md",
           "docs/development/evidence/WP02-02/tenant-connections/DELIVERY.md",
@@ -165502,11 +165523,12 @@
           "docs/development/evidence/W361-01/DELIVERY.md",
           "docs/development/evidence/W366-01/DELIVERY.md",
           "docs/development/evidence/W364-01/DELIVERY.md",
-          "docs/development/evidence/W370-01/DELIVERY.md"
+          "docs/development/evidence/W370-01/DELIVERY.md",
+          "docs/development/evidence/W372-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true,
-        "latest_window": "W370-01"
+        "latest_window": "W372-01"
       },
       "wave326_delivery": {
         "status": "CLOSED",
@@ -166068,11 +166090,29 @@
         "workspace_status": "fixed-seat-detached-for-reuse"
       },
       "wave370_delivery": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W370-01/DELIVERY.md",
         "profile": "cp6-rma-archive-stage-v1",
         "validation": "PG18.6 实际原 v1/v2 和 W364 写后 v2。原 schema/共享片/受保护回执同事务，坏 CSV 22P04 和缺角色42704 整体回滚。丢弃成功 stdout 后只读恢复原字节。错误物理、摘要、ACL 和回执漂移拒绝。",
         "scope": "受控私有 staging 和只读回执，STAGED/recoveryReady=false。保持原角色 ACL，实际恢复启用、IAM、消息和资产独立。",
+        "full_task_complete": false,
+        "formal_acceptance": "NOT_RUN",
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/821",
+          "commit": "c1903e4e8ae3fa35d8a9f3dc24bfdf8021311012",
+          "target_head": "c1903e4e8ae3fa35d8a9f3dc24bfdf8021311012"
+        },
+        "seat_released": true,
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse"
+      },
+      "wave372_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W372-01/DELIVERY.md",
+        "profile": "rma-core-submit-writer-v1",
+        "validation": "PG18.6 实际全 Core，A/B 托管原 submit、原 If-Match 与现行出库，原生版本 CAS、后段故障回滚、原权限与同键结果。W364 旧 CLI 拒绝新 ACL，当前兼容回原字节，W361 原件仍同。实际非 owner v1 支持 11/19 准确 ACL，v2 原字节和权限漂移拒绝。",
+        "scope": "显式托管 RMA 提交，现行准确原权限，原版本与原操作同普通事务。原操作端点、关闭和完整恢复继续。",
         "full_task_complete": false,
         "formal_acceptance": "NOT_RUN"
       }
@@ -206011,62 +206051,63 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W370",
-      "path": "docs/development/dispatch/20261109-wave370/README.md",
-      "baseline_sha": "8c4796e89b3a0e3b28381cbb30d0f080962aafe4",
-      "registered_at": "2026-11-09T10:01:15.187951Z",
+      "id": "W372",
+      "path": "docs/development/dispatch/20261109-wave372/README.md",
+      "baseline_sha": "1b3cc3238aba6c42f94ab35a23890bd5d4f1a5a6",
+      "registered_at": "2026-11-09T10:11:57.053734Z",
       "phase": "VALIDATED_PENDING_REMOTE",
       "assigned_chats": [
-        "RMA-ATOMIC-STAGING",
+        "RMA-NATIVE-SUBMIT",
         "COORD"
       ],
       "authorized_implementation_chats": [
-        "RMA-ATOMIC-STAGING"
+        "RMA-NATIVE-SUBMIT"
       ],
       "authorized_review_chats": [
         "COORD"
       ],
       "active_implementation_chats": [
-        "RMA-ATOMIC-STAGING"
+        "RMA-NATIVE-SUBMIT"
       ],
       "workers_started": true,
       "windows_closed": false,
       "product_integrated": false,
       "windows": [
         {
-          "id": "W370-01",
-          "workspace_task": "W370-01",
+          "id": "W372-01",
+          "workspace_task": "W372-01",
           "related_tasks": [
             "WP02-02"
           ],
-          "title": "可操作的隔离原生 staging 和原回执恢复",
-          "chat": "RMA-ATOMIC-STAGING",
+          "title": "原正常 RMA 提交与准确权限版本过渡",
+          "chat": "RMA-NATIVE-SUBMIT",
           "mode": "DELEGATED_IMPLEMENTATION",
           "phase": "VALIDATED_PENDING_REMOTE",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w370-01",
-          "planned_scope_ref": "docs/development/dispatch/20261109-wave370/README.md",
+          "worktree": "D:/CP6-worktrees/dev-2",
+          "branch": "codex/w372-01",
+          "planned_scope_ref": "docs/development/dispatch/20261109-wave372/README.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "Main:rma-atomic-staging",
-            "file:Main:eng/wp02-02/rma-tenant-archive/stage.py",
-            "file:Main:eng/wp02-02/rma-tenant-archive/verify_stage.py",
-            "file:Main:docs/development/evidence/W370-01/DELIVERY.md"
+            "Main:rma-native-submit-owner",
+            "Main:tenant-storage-rma-control",
+            "Main:rma-tenant-writer-acl",
+            "file:Main:eng/wp02-02/rma-tenant-archive/archive.py",
+            "file:Main:docs/development/evidence/W372-01/DELIVERY.md"
           ],
           "worker_delivery_received": true,
           "candidate_review_completed": true,
-          "delivery_report": "docs/development/evidence/W370-01/DELIVERY.md"
+          "delivery_report": "docs/development/evidence/W372-01/DELIVERY.md"
         }
       ],
       "storage": {
-        "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "reuse_worktree": "D:/CP6-worktrees/dev-2",
         "new_worktrees": 0
       },
-      "next_action": "推进原普通提交与真实确认丢失，随后扩展恢复共享依赖和当期权威。保持原业务恢复和正式验收独立。"
+      "next_action": "接原操作独立查询与关闭。W374 完成实际来源同快照，W373 核正常 POST 的真实 PG 确认。"
     },
     "wave_history": [
       {
@@ -247591,6 +247632,68 @@
           "new_worktrees": 0
         },
         "next_action": "采用 W370 实际原子 staging。DEV-2 继续原正常提交，集成席位验原正常 HTTP 后端 COMMIT 确认丢失。"
+      },
+      {
+        "id": "W370",
+        "path": "docs/development/dispatch/20261109-wave370/README.md",
+        "baseline_sha": "8c4796e89b3a0e3b28381cbb30d0f080962aafe4",
+        "registered_at": "2026-11-09T10:01:15.187951Z",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "RMA-ATOMIC-STAGING",
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "RMA-ATOMIC-STAGING"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W370-01",
+            "workspace_task": "W370-01",
+            "related_tasks": [
+              "WP02-02"
+            ],
+            "title": "可操作的隔离原生 staging 和原回执恢复",
+            "chat": "RMA-ATOMIC-STAGING",
+            "mode": "DELEGATED_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w370-01",
+            "planned_scope_ref": "docs/development/dispatch/20261109-wave370/README.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "Main:rma-atomic-staging",
+              "file:Main:eng/wp02-02/rma-tenant-archive/stage.py",
+              "file:Main:eng/wp02-02/rma-tenant-archive/verify_stage.py",
+              "file:Main:docs/development/evidence/W370-01/DELIVERY.md"
+            ],
+            "worker_delivery_received": true,
+            "candidate_review_completed": true,
+            "delivery_report": "docs/development/evidence/W370-01/DELIVERY.md",
+            "candidate_integrated": true,
+            "resources_released": true,
+            "adopted_remote": "c1903e4e8ae3fa35d8a9f3dc24bfdf8021311012",
+            "pr": "https://github.com/GTX537/CP6/pull/821",
+            "branch_disposition": "deleted-local-and-remote",
+            "finished_at": "2026-11-09T10:19:46.905368Z"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "原正常 RMA 提交串行采用后，W374 接归档共同入口，下一普通操作读取及关闭继续。"
       }
     ],
     "development_priority": {
@@ -250322,7 +250425,7 @@
         }
       },
       "timing_basis": "Native goal plus independently sampled monotonic segments for confirmed missing time, with exclusions and no overlap.",
-      "next_priority": "推进原普通提交与真实确认丢失，随后扩展恢复共享依赖和当期权威。保持原业务恢复和正式验收独立。",
+      "next_priority": "接原操作独立查询与关闭。W374 完成实际来源同快照，W373 核正常 POST 的真实 PG 确认。",
       "windows": [
         {
           "id": "W327-01",
@@ -251290,7 +251393,7 @@
         },
         {
           "id": "W370-01",
-          "state": "VALIDATED_PENDING_REMOTE",
+          "state": "CLOSED",
           "related_tasks": [
             "WP02-02"
           ],
@@ -251303,8 +251406,34 @@
           "dispatch": "docs/development/dispatch/20261109-wave370/README.md",
           "validation_ready_at": "2026-11-09T10:17:36.4625578Z",
           "validation_ready_seconds": 980,
+          "timing_source": "主机连续单调取样，起始至官方finish回读。无暂停。",
+          "delivery": "docs/development/evidence/W370-01/DELIVERY.md",
+          "actual_seconds": 1111,
+          "finished_at": "2026-11-09T10:19:46.905368Z",
+          "actual_to_estimate_midpoint": 0.452,
+          "pr": "https://github.com/GTX537/CP6/pull/821",
+          "adopted_main": "c1903e4e8ae3fa35d8a9f3dc24bfdf8021311012",
+          "branch_disposition": "deleted-local-and-remote",
+          "seat_released": true,
+          "variance": "原估 32–50 分钟，完整实测 18 分 31 秒。复用已有真归档、纯 PG 和准确原回执，无产品构建。"
+        },
+        {
+          "id": "W372-01",
+          "state": "VALIDATED_PENDING_REMOTE",
+          "related_tasks": [
+            "WP02-02"
+          ],
+          "started_at": "2026-11-09T10:11:57.053734Z",
+          "estimate_minutes": [
+            30,
+            50
+          ],
+          "scope": "托管原 POST submit、现行授权、原 If-Match/Source 及普通事务 head/version/journal，真实过渡保持旧回执和准确归档权限。",
+          "dispatch": "docs/development/dispatch/20261109-wave372/README.md",
+          "validation_ready_at": "2026-11-09T10:37:48.0612559Z",
+          "validation_ready_seconds": 1549,
           "timing_source": "同次连续执行的主机单调取样。远端采用及席位收尾计时另记。",
-          "delivery": "docs/development/evidence/W370-01/DELIVERY.md"
+          "delivery": "docs/development/evidence/W372-01/DELIVERY.md"
         }
       ],
       "parallel_execution": {
@@ -251316,21 +251445,21 @@
         "overlap_counted_once": true,
         "active_windows": [
           {
-            "id": "W372-01",
+            "id": "W374-01",
             "state": "ACTIVE",
             "original_task": "WP02-02",
-            "owner": "RMA-NATIVE-SUBMIT",
-            "started_at": "2026-11-09T10:11:57.053734Z",
+            "owner": "RMA-SOURCE-ARCHIVE",
+            "started_at": "2026-11-09T10:21:52.686639Z",
             "estimate_minutes": [
-              30,
-              50
+              22,
+              36
             ],
-            "base": "1b3cc3238aba6c42f94ab35a23890bd5d4f1a5a6",
-            "branch": "codex/w372-01",
-            "workspace": "D:/CP6-worktrees/dev-2",
-            "seat": "DEV-2",
-            "dispatch": "docs/development/dispatch/20261109-wave370/README.md",
-            "scope": "原正常 RMA 提交。普通事务准确 If-Match、原版本和现行源权限，原日志同事务并可重放。",
+            "base": "c1903e4e8ae3fa35d8a9f3dc24bfdf8021311012",
+            "branch": "codex/w374-01",
+            "workspace": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "seat": "DEV-1",
+            "dispatch": "docs/development/dispatch/20261109-wave372/README.md",
+            "scope": "实际原 RMA 来源依赖同快照归档。准确当前选定出库头、发运行与原谱系，保留 v1/v2。",
             "mode": "BOUNDED_IMPLEMENTATION"
           }
         ],

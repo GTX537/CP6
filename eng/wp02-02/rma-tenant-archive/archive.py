@@ -296,7 +296,42 @@ def adopted_draft_executor(query, target, installation, ready):
     return executor if adopted else None
 
 
-def capture(query, tenant, schema, ready, draft_executor):
+def adopted_submit_writer(query, target, installation, ready, executor):
+    if executor is None:
+        return False
+    protected = query("""
+        SELECT to_json(EXISTS (SELECT FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace
+            JOIN pg_class i ON i.relnamespace=n.oid AND i.relname='installation'
+            WHERE p.oid=to_regprocedure('cp6_rma_submit_writer_v1.submit_draft(uuid,uuid,uuid,uuid,integer,jsonb,bytea,text,bytea,jsonb)')
+              AND p.proowner={executor}::oid AND p.prosecdef
+              AND n.nspowner={owner}::oid AND i.relowner=n.nspowner AND i.relkind='r' AND NOT i.relrowsecurity
+              AND NOT EXISTS (SELECT FROM aclexplode(i.relacl) a WHERE a.grantee<>i.relowner)
+              AND NOT EXISTS (SELECT FROM pg_attribute a, LATERAL aclexplode(a.attacl) g
+                              WHERE a.attrelid=i.oid AND g.grantee<>i.relowner)));
+    """.format(executor=literal(executor), owner=literal(ready["ownerOid"])))
+    if not protected:
+        return False
+    return query("""
+        LOCK TABLE cp6_rma_submit_writer_v1.installation IN ACCESS SHARE MODE;
+        SELECT to_json(EXISTS (SELECT FROM cp6_rma_submit_writer_v1.installation s
+            CROSS JOIN cp6_rma_draft_writer_v1.installation d
+            WHERE s.singleton AND d.singleton AND s.installation_id={installation}::uuid
+              AND d.installation_id=s.installation_id AND s.draft_request_json=d.request_json
+              AND s.draft_catalog_before=d.catalog_sha256
+              AND s.draft_catalog_after<>s.draft_catalog_before
+              AND s.result_json::jsonb->>'Outcome'='INSTALLED'
+              AND s.result_json::jsonb->>'Profile'='rma-core-submit-writer-v1'
+              AND s.result_json::jsonb->>'InstallationId'={installation}
+              AND s.result_json::jsonb->>'DatabaseOid'={db_oid}
+              AND s.result_json::jsonb->>'SystemIdentifier'={system_id}
+              AND s.result_json::jsonb->>'DraftCatalogBefore'=s.draft_catalog_before
+              AND s.result_json::jsonb->>'DraftCatalogAfter'=s.draft_catalog_after
+              AND s.result_json::jsonb->>'CatalogSha256'=s.catalog_sha256));
+    """.format(installation=literal(installation), db_oid=literal(target.database_oid),
+               system_id=literal(target.system_identifier)))
+
+
+def capture(query, tenant, schema, ready, draft_executor, submit_writer):
     result = query("""
         LOCK TABLE {schema}.heads, {schema}.versions, {schema}.{history} IN ACCESS SHARE MODE;
         WITH target_schema AS (
@@ -319,6 +354,22 @@ def capture(query, tenant, schema, ready, draft_executor):
             SELECT p.proowner,g.grantee,g.grantor,g.privilege_type,g.is_grantable,'function',p.proname::text,NULL
                 FROM pg_proc p JOIN target_schema n ON n.oid=p.pronamespace,
                 LATERAL aclexplode(coalesce(p.proacl,acldefault('f',p.proowner))) g
+        ), scoped_grants AS (
+            SELECT *,
+                grantee IS NOT DISTINCT FROM {draft_executor}::oid AND grantor=object_owner AND NOT is_grantable
+                AND CASE scope
+                    WHEN 'schema' THEN privilege_type='USAGE'
+                    WHEN 'column' THEN CASE privilege_type
+                        WHEN 'INSERT' THEN
+                            (object_name='heads' AND column_name IN ('tenant_id','id','actor_id','outbound_id','version'))
+                            OR (object_name='versions' AND column_name IN ('tenant_id','id','version','state','payload'))
+                        WHEN 'UPDATE' THEN {submit_writer} AND object_name='heads' AND column_name='version'
+                        WHEN 'SELECT' THEN {submit_writer} AND (
+                            (object_name='heads' AND column_name IN ('tenant_id','id','version'))
+                            OR (object_name='versions' AND column_name IN ('tenant_id','id','version','state')))
+                        ELSE false END
+                    ELSE false END AS writer_grant
+            FROM grants
         )
         SELECT json_build_object(
           'snapshotId',pg_export_snapshot(), 'watermark',pg_current_snapshot()::text,
@@ -340,21 +391,16 @@ def capture(query, tenant, schema, ready, draft_executor):
                                       WHERE c.relowner<>{owner}::oid)
                       AND NOT EXISTS (SELECT FROM pg_proc p JOIN target_schema n ON n.oid=p.pronamespace
                                       WHERE p.proowner<>{owner}::oid),
-          'aclInScope',NOT EXISTS (SELECT FROM grants
+          'aclInScope',NOT EXISTS (SELECT FROM scoped_grants
                       WHERE grantor NOT IN (object_owner,{login}::oid)
-                         OR (grantee NOT IN (object_owner,{login}::oid)
-                             AND NOT (grantee IS NOT DISTINCT FROM {draft_executor}::oid
-                                      AND grantor=object_owner AND NOT is_grantable
-                                      AND ((scope='schema' AND privilege_type='USAGE')
-                                           OR (scope='column' AND privilege_type='INSERT'
-                                               AND ((object_name='heads' AND column_name IN ('tenant_id','id','actor_id','outbound_id','version'))
-                                                 OR (object_name='versions' AND column_name IN ('tenant_id','id','version','state','payload'))))))))
-                      AND (SELECT count(*) FROM grants WHERE grantee={draft_executor}::oid) IN (0,11)
+                         OR (grantee NOT IN (object_owner,{login}::oid) AND NOT writer_grant))
+                      AND (SELECT count(*) FROM grants WHERE grantee={draft_executor}::oid) IN (0,{writer_grants})
                       AND NOT EXISTS (SELECT FROM pg_default_acl a JOIN target_schema n ON n.oid=a.defaclnamespace));
     """.format(schema=schema, history=HISTORY, tenant=literal(tenant), lineage=literal(LINEAGE),
                outbounds=outbounds_sql(tenant, schema), schema_name=literal(schema),
                login=literal(ready["roleOid"]), owner=literal(ready["ownerOid"]),
-               draft_executor="NULL" if draft_executor is None else literal(draft_executor)))
+               draft_executor="NULL" if draft_executor is None else literal(draft_executor),
+               submit_writer="TRUE" if submit_writer else "FALSE", writer_grants=19 if submit_writer else 11))
     if result["migration"] != ready["migration"] or result["counts"]["history"] != 1:
         raise ArchiveError("rma-history-mismatch")
     if not result["tenantOnly"] or result["relations"] != list(TABLES) \
@@ -466,7 +512,8 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
     with snapshot_session(pg_bin, connection, environ, logs) as query:
         ready = check_source(query, target, installation, tenant)
         draft_executor = adopted_draft_executor(query, target, installation, ready)
-        captured = capture(query, tenant, schema, ready, draft_executor)
+        submit_writer = adopted_submit_writer(query, target, installation, ready, draft_executor)
+        captured = capture(query, tenant, schema, ready, draft_executor, submit_writer)
         snapshot = captured["snapshotId"]
         if include_original_journal:
             journal_rows = original_journal_rows(tenant)
