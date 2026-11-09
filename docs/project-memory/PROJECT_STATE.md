@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC v9 历史中立落表
+
+W404 实测原 v9 两份原件、原约束和回执。W403 随 #842 采用并释放。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W404](../development/evidence/W404-01/DELIVERY.md) · [PR #842](https://github.com/GTX537/CP6/pull/842)
+
+
 ## 2026-11-09 UTC Main Stock 原发件箱切面
 
 W403 实测原生 13 表及关联原日志。W402 随 #841 采用并释放。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W403](../development/evidence/W403-01/DELIVERY.md) · [PR #841](https://github.com/GTX537/CP6/pull/841)
