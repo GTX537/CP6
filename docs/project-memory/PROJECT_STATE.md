@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC 原外部资产切面
+
+W389 FileContent 原件同快照核验，W387 随 #831 采用并释放。W390 同物理库两版真实宿主的范围实证已保存。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W389](../development/evidence/W389-01/DELIVERY.md) · [PR #831](https://github.com/GTX537/CP6/pull/831)
+
+
 ## 2026-11-09 UTC 历史 IAM 同快照归档
 
 W387 原历史 IAM v6 实库通过，W384 随 #830 采用并释放。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W387](../development/evidence/W387-01/DELIVERY.md) · [PR #830](https://github.com/GTX537/CP6/pull/830)
