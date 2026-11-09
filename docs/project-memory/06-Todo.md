@@ -1,5 +1,13 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC W351 收尾与 W350 接续
+
+正常采用和正式席位释放后核销 WP02-28 的本地范围。DEV-1 继续 RMA 逐租户迁移，集成线核恢复候选派送。 [交付报告](../development/evidence/W351-01/DELIVERY.md)
+
+## 2026-11-09 UTC W349 与 W350 接续
+
+收妥本地回退工具交付。继续原 RMA 租户迁移，并以两版实际全 Core 前向版本和共同业务复验。 [交付报告](../development/evidence/W349-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W346 和 W348 后续
 
 接原 RMA 租户业务 schema 首版及逐租户迁移并发实证。兼容线并行核 W349 准确本地回退，正式发布按既有边界推进。 [交付报告](../development/evidence/W346-01/DELIVERY.md)

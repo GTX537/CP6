@@ -34,6 +34,8 @@ cp6-release]` runner 上运行。
 
 不在本规范复制脚本中的具体哈希和签名算法；脚本及其契约测试是可执行事实。
 
+Main 的 PostgreSQL 本地兼容源审查使用以下两份采用资料。资料绑定准确源码、制品、驱动、布局、应用回退方向与实际原件，分类为 LOCAL_EVIDENCE_ONLY。候选的 SourceGateReport 继续使用第 1 步实际输出。 [同布局回退](../../development/evidence/W349-01/DELIVERY.md) · [全 Core 前向迁移与应用回退](../../development/evidence/W351-01/DELIVERY.md#r2-源审查采用清单)
+
 ## 3. 发布清单 Schema 2
 
 清单至少包含：

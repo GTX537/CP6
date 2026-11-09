@@ -1,5 +1,13 @@
 # 项目当前状态
 
+## 2026-11-09 UTC W351 全 Core 实际前向和应用回退
+
+同库运行旧版和含 #801 修复的当前版。Core 1→224→224，旧宿主重启保持新迁移、原 C02 和 Outbox。 [交付报告](../development/evidence/W351-01/DELIVERY.md)
+
+## 2026-11-09 UTC W349 本地回退判定
+
+固定双版本、原始运行观察、真实物理库和驱动决定唯一已观察的本地回退方向。DEV-1 实施首个 RMA 租户业务模板和真实逐租户锁。 [交付报告](../development/evidence/W349-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W346 库存安装回执可恢复
 
 库存首装输出丢失后，新 CLI 在同一物理 PostgreSQL 的只读快照取回原 UUID。完整目录、读取边界和既有写入扩展经实际验证。 [交付报告](../development/evidence/W346-01/DELIVERY.md)

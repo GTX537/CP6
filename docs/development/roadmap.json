@@ -162542,6 +162542,36 @@
       "at": "2026-11-09T07:10:57.224926Z",
       "change": "W349 在已释放的 DEV-2 实际开工，独立完成 W347 准确本地回退判定与源审查输入。",
       "evidence": "docs/development/dispatch/20261109-wave346/README.md"
+    },
+    {
+      "at": "2026-11-09T07:24:34.484609Z",
+      "change": "W346-01正常合并PR #806，准确远端树核对和分支删除及DEV-1释放完成，实际2066秒。",
+      "evidence": "docs/development/evidence/W346-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T07:25:50.263747Z",
+      "change": "W350-01沿原任务实际开工。在新隔离 PostgreSQL 实际提交 RMA 租户业务首版，验证同租户竞争、另一租户独立、真实终止和原回执；DEV-2 同时收妥精确本地回退判定。",
+      "evidence": "docs/development/dispatch/20261109-wave350/README.md"
+    },
+    {
+      "at": "2026-11-09T07:19:31.0498088Z",
+      "change": "W349 实际用固定旧/新制品及原 PostgreSQL 观察得到精确本地回退判定，9 类真实错配拒绝，进入正常远端采用。",
+      "evidence": "docs/development/evidence/W349-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T07:28:24.716829Z",
+      "change": "W349 PR #807 正常采用、准确清理分支及释放 DEV-2，实测 1046 秒。",
+      "evidence": "docs/development/evidence/W349-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T07:29:19.411021Z",
+      "change": "W351 独立领取 DEV-2，接准确全 Core 迁移和回退。",
+      "evidence": "docs/development/dispatch/20261109-wave350/README.md"
+    },
+    {
+      "at": "2026-11-09T07:36:47.2703496Z",
+      "change": "W351 真实 Core 1→224→224 和两个原 JTI 兼容通过，进入正常远端采用。",
+      "evidence": "docs/development/evidence/W351-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -163989,24 +164019,23 @@
       "card_anchor": "wp02-02",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "STOCK-RECOVERY / W346-01",
+        "chat_label": "RMA-MIGRATION / W350-01",
         "repository": "Main",
-        "branch": "codex/w346-01",
+        "branch": "codex/w350-01",
         "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-        "claimed_at": "2026-11-09T06:50:06.995380Z",
-        "baseline_sha": "c5642cd4f0b7400b0db5b388ca6ad92ca8ffed40",
-        "entry_evidence": "docs/development/dispatch/20261109-wave346/README.md",
-        "phase": "VALIDATED_PENDING_REMOTE",
-        "dispatch_scope": "用现有 CLI 只读取回真实 Stock 首装安装 ID，核物理库、控制拥有的回执、目录映射和当前普通读布局，保留旧首装与批准写扩展。",
+        "claimed_at": "2026-11-09T07:25:50.263747Z",
+        "baseline_sha": "22bf06da325c099c6d2b894c7f9e7c748f85d622",
+        "entry_evidence": "docs/development/dispatch/20261109-wave350/README.md",
+        "phase": "ACTIVE",
+        "dispatch_scope": "原 RMA 聚合的 heads/versions 真实业务 schema 首版。按可信租户目录和物理库目标，将 DDL、最小 ACL、原回执和 Ready 同事务，实测 A/A 串行、B 并行、A 中断后原键恢复。",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "reserved_write_resources": [
           "CP6 DEV-1",
-          "StockReadStorageV1 与 TenantStorage CLI",
-          "独占 PostgreSQL 18.6 端口 55556"
+          "RMA profile 控制/迁移与 CP6.TenantStorage CLI",
+          "私有 PostgreSQL 18.6 端口 55558"
         ],
-        "worker_start_received": true,
-        "delivery_report": "docs/development/evidence/W346-01/DELIVERY.md"
+        "worker_start_received": true
       },
       "blockers": [],
       "validation_evidence": [],
@@ -165147,7 +165176,7 @@
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-02",
         "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。 W327验证普通LOGIN在调用事务内取得原认证根。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。 W335 已在实际普通事务验证 V2 新库存的明确归属、合法无归属、旧行拒绝和原安全审计，包含前向 PostgreSQL 迁移。  W346 现有 Stock 首装提交后丢弃 stdout，从另一个真实进程在准确物理库取回原安装 ID，驱动原写栅栏及后续已交付安装。孤立回执、未绑定登录读策略及目录/权限漂移拒绝。 W348 实际验证共享消息 profile 的初始化中断、原键恢复及原结果重放。",
         "remaining": "Stock 首装和共享消息初始化恢复已有实际证据。原逐租户物理业务对象、准确迁移/恢复和相关 PGT 保持待做。",
-        "next_action": "在 DEV-1 下一个独立窗实施原 RMA 租户业务 schema 首版迁移和 A/A 竞争及 B 独立实际验证。DEV-2 同时完成 W349 精确本地回退判定。",
+        "next_action": "在新隔离 PostgreSQL 实际提交 RMA 租户业务首版，验证同租户竞争、另一租户独立、真实终止和原回执；DEV-2 同时收妥精确本地回退判定。",
         "evidence_refs": [
           "docs/development/evidence/WP02-02/directory-installation/DELIVERY.md",
           "docs/development/evidence/WP02-02/tenant-connections/DELIVERY.md",
@@ -165517,13 +165546,22 @@
         "workspace_status": "fixed-seat-detached-for-reuse"
       },
       "wave346_delivery": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W346-01/DELIVERY.md",
         "profile": "stock-read-v1",
         "validation": "真实 CLI Release 和 PostgreSQL 18.6 定向回归，首次输出弃置、独立进程查回原 ID 后调用六项已有安装。真实负例含错物理库、目录和 READ 边界漂移。1 通过，0 失败/跳过，实际红测保留。",
         "scope": "一个物理 PostgreSQL 主库、同一只读快照、原回执和全目录映射、原六表 READ 及准确现有扩展。原首装命令的重复拒绝保留。",
         "full_task_complete": false,
-        "formal_acceptance": "NOT_RUN"
+        "formal_acceptance": "NOT_RUN",
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/806",
+          "commit": "22bf06da325c099c6d2b894c7f9e7c748f85d622",
+          "target_head": "22bf06da325c099c6d2b894c7f9e7c748f85d622"
+        },
+        "seat_released": true,
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse"
       },
       "provision_interruption_verification": {
         "id": "W348-VERIFY",
@@ -177722,23 +177760,24 @@
       "card_anchor": "wp02-28",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "ROLLBACK-COMPAT / W349-01",
+        "chat_label": "FORWARD-COMPAT / W351-01",
         "repository": "Main",
-        "branch": "codex/w349-01",
+        "branch": "codex/w351-01",
         "worktree": "D:/CP6-worktrees/dev-2",
-        "claimed_at": "2026-11-09T07:10:57.224926Z",
-        "baseline_sha": "3b3773bfd5d6a452ff25fbe67f5278c08f6c18a1",
-        "entry_evidence": "docs/development/dispatch/20261109-wave346/README.md",
-        "phase": "ACTIVE",
-        "dispatch_scope": "以 W345 两份固定制品和 W347 实际原件验证本地 current→prior 唯一回退方向，绑定准确制品、驱动和 PostgreSQL profile/布局。交付现有源审查可消费的本地参考。",
+        "claimed_at": "2026-11-09T07:29:19.411021Z",
+        "baseline_sha": "bc10c9f6f85eb30490886f43ab68b0a711906063",
+        "entry_evidence": "docs/development/dispatch/20261109-wave350/README.md",
+        "phase": "VALIDATED_PENDING_REMOTE",
+        "dispatch_scope": "固定两个 Main 实际发布物在同一全 Core PostgreSQL 18.6 上真实初始化、223 项前向迁移、旧版重启并继续原 C02。准确 R2 源审查采用清单。",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "reserved_write_resources": [
           "CP6 DEV-2",
-          "eng/wp02-28 本地回退判定与定向测试",
-          "W345/W347 独立固定制品及证据，只读"
+          "eng/wp02-28 实际发布兼容验证",
+          "W345 固定旧制品、c564 修复版发布与私有 PostgreSQL 55438"
         ],
-        "worker_start_received": true
+        "worker_start_received": true,
+        "delivery_report": "docs/development/evidence/W351-01/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -177747,7 +177786,7 @@
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
-      "remaining_scope": "W347 已证明固定两份制品在同一 service-token-v1 布局上的本地升级共存、旧版重启和原效果兼容。余项为与实际 schema/driver、双制品身份和方向绑定的准确采用/回退判定，以及需要变更布局的迁移和生产发布证据。",
+      "remaining_scope": "原卡的本地宿主身份、同布局兼容判定、真实全 Core 前向迁移与旧应用回退、准确 R2 源审查采用清单已验证。待 W351 正常远端采用和席位回读核销本地原卡。正式候选、其他业务路径及部署各沿独立门禁。",
       "wave9_delivery": {
         "status": "MERGED",
         "source_candidate_sha": "c92f12e33937a47093e5d9861c4269bb17b432b6",
@@ -177821,19 +177860,21 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-28",
-        "delivered": "固定平台包实际加载观察、一次真实publish、实际宿主授权/负向回退证据保留。 W345 固定旧新实际本地制品，分别核真实 PG/Kestrel 与正式五包运行身份。 W347 两个准确真实制品用同一个 service-token-v1 PostgreSQL 物理布局实测共存、交叉签发撤销、旧版重启和原效果重放。",
-        "remaining": "W347 已证明固定两份制品在同一 service-token-v1 布局上的本地升级共存、旧版重启和原效果兼容。余项为与实际 schema/driver、双制品身份和方向绑定的准确采用/回退判定，以及需要变更布局的迁移和生产发布证据。",
-        "next_action": "W349 用固定原证据判准确本地回退，保留正式发布和物理布局迁移的准入边界。",
+        "delivered": "固定平台包实际加载观察、一次真实publish、实际宿主授权/负向回退证据保留。 W345 固定旧新实际本地制品，分别核真实 PG/Kestrel 与正式五包运行身份。 W347 两个准确真实制品用同一个 service-token-v1 PostgreSQL 物理布局实测共存、交叉签发撤销、旧版重启和原效果重放。 W349 增加精确本地回退判定，正向真实原件及 9 个拒绝均验证，形成 R2 源审查本地参考。 W351 实测完整 Core 前向、旧版应用回退和原 C02 记录，并提供 R2 源审查准确采用清单。",
+        "remaining": "原卡的本地宿主身份、同布局兼容判定、真实全 Core 前向迁移与旧应用回退、准确 R2 源审查采用清单已验证。待 W351 正常远端采用和席位回读核销本地原卡。正式候选、其他业务路径及部署各沿独立门禁。",
+        "next_action": "W351 远端采用和准确清理后核销本地原卡。",
         "evidence_refs": [
           "docs/development/evidence/WP02-28/published-host/DELIVERY.md",
           "docs/development/evidence/WP02-28/DELIVERY.md",
           "docs/development/evidence/W310-01/DELIVERY.md",
           "docs/development/evidence/W345-01/DELIVERY.md",
-          "docs/development/evidence/W347-01/DELIVERY.md"
+          "docs/development/evidence/W347-01/DELIVERY.md",
+          "docs/development/evidence/W349-01/DELIVERY.md",
+          "docs/development/evidence/W351-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false,
-        "latest_window": "W347-01"
+        "latest_window": "W351-01"
       },
       "wave345_delivery": {
         "status": "CLOSED",
@@ -177870,6 +177911,34 @@
         "seat_released": true,
         "branch_disposition": "deleted-local-and-remote",
         "workspace_status": "fixed-seat-detached-for-reuse"
+      },
+      "wave349_delivery": {
+        "status": "CLOSED",
+        "report": "docs/development/evidence/W349-01/DELIVERY.md",
+        "profile": "service-token-v1",
+        "scope": "真实已观察的 W345 制品、W347 共同 service-token-v1 物理布局和 Npgsql 8.0.8 / EF PostgreSQL 8.0.11。唯一当前版→旧版的本地判定及 R2 源审查参考。",
+        "validation": "本地 7 定向测试，固定真实 W345/W347 输入正向 CLI 退出 0，9 个实际不匹配退出 1。复用已完成的 PostgreSQL/HTTPS 运行事实。",
+        "full_task_complete": false,
+        "formal_acceptance": "NOT_RUN",
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/807",
+          "commit": "bc10c9f6f85eb30490886f43ab68b0a711906063",
+          "target_head": "bc10c9f6f85eb30490886f43ab68b0a711906063"
+        },
+        "seat_released": true,
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse"
+      },
+      "wave351_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W351-01/DELIVERY.md",
+        "profile": "full-core-postgresql",
+        "scope": "固定两个 Main 实际发布物在同一全 Core PostgreSQL 18.6 上真实初始化、223 项前向迁移、旧版重启并继续原 C02。准确 R2 源审查采用清单。",
+        "validation": "实际 DatabaseInit 两次退出0，Core 1→224→224，其余三套原值一致。三宿主九个 HTTPS 200/no-store，原 JTI 重放零差异。实际离线复核 W349 结果哈希一致。",
+        "full_task_complete": false,
+        "formal_acceptance": "NOT_RUN",
+        "local_card_scope_ready_for_closure": true
       }
     },
     {
@@ -205410,61 +205479,57 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W346",
-      "path": "docs/development/dispatch/20261109-wave346/README.md",
-      "baseline_sha": "c5642cd4f0b7400b0db5b388ca6ad92ca8ffed40",
-      "registered_at": "2026-11-09T06:50:06.995380Z",
-      "phase": "VALIDATED_PENDING_REMOTE",
+      "id": "W350",
+      "path": "docs/development/dispatch/20261109-wave350/README.md",
+      "baseline_sha": "22bf06da325c099c6d2b894c7f9e7c748f85d622",
+      "registered_at": "2026-11-09T07:25:50.263747Z",
+      "phase": "ACTIVE",
       "assigned_chats": [
-        "STOCK-RECOVERY",
+        "RMA-MIGRATION",
         "COORD"
       ],
       "authorized_implementation_chats": [
-        "STOCK-RECOVERY"
+        "RMA-MIGRATION"
       ],
       "authorized_review_chats": [
         "COORD"
       ],
       "active_implementation_chats": [
-        "STOCK-RECOVERY"
+        "RMA-MIGRATION"
       ],
       "workers_started": true,
       "windows_closed": false,
       "product_integrated": false,
       "windows": [
         {
-          "id": "W346-01",
-          "workspace_task": "W346-01",
+          "id": "W350-01",
+          "workspace_task": "W350-01",
           "related_tasks": [
-            "WP02-10"
+            "WP02-02"
           ],
-          "title": "Stock 首装回执丢失的实际只读恢复",
-          "chat": "STOCK-RECOVERY",
+          "title": "RMA 租户业务 schema 首版及逐租户真实迁移",
+          "chat": "RMA-MIGRATION",
           "mode": "DELEGATED_IMPLEMENTATION",
-          "phase": "VALIDATED_PENDING_REMOTE",
+          "phase": "ACTIVE",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w346-01",
-          "planned_scope_ref": "docs/development/dispatch/20261109-wave346/README.md",
+          "branch": "codex/w350-01",
+          "planned_scope_ref": "docs/development/dispatch/20261109-wave350/README.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
             "CP6 DEV-1",
-            "StockReadStorageV1 与 TenantStorage CLI",
-            "独占 PostgreSQL 18.6 端口 55556"
-          ],
-          "worker_delivery_received": true,
-          "candidate_review_completed": true,
-          "delivery_report": "docs/development/evidence/W346-01/DELIVERY.md"
+            "RMA profile 控制/迁移与 CP6.TenantStorage CLI",
+            "私有 PostgreSQL 18.6 端口 55558"
+          ]
         }
       ],
       "storage": {
         "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
         "new_worktrees": 0
-      },
-      "next_action": "在 DEV-1 下一个独立窗实施原 RMA 租户业务 schema 首版迁移和 A/A 竞争及 B 独立实际验证。DEV-2 同时完成 W349 精确本地回退判定。"
+      }
     },
     "wave_history": [
       {
@@ -246435,6 +246500,67 @@
           "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
           "new_worktrees": 0
         }
+      },
+      {
+        "id": "W346",
+        "path": "docs/development/dispatch/20261109-wave346/README.md",
+        "baseline_sha": "c5642cd4f0b7400b0db5b388ca6ad92ca8ffed40",
+        "registered_at": "2026-11-09T06:50:06.995380Z",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "STOCK-RECOVERY",
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "STOCK-RECOVERY"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W346-01",
+            "workspace_task": "W346-01",
+            "related_tasks": [
+              "WP02-10"
+            ],
+            "title": "Stock 首装回执丢失的实际只读恢复",
+            "chat": "STOCK-RECOVERY",
+            "mode": "DELEGATED_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w346-01",
+            "planned_scope_ref": "docs/development/dispatch/20261109-wave346/README.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "CP6 DEV-1",
+              "StockReadStorageV1 与 TenantStorage CLI",
+              "独占 PostgreSQL 18.6 端口 55556"
+            ],
+            "worker_delivery_received": true,
+            "candidate_review_completed": true,
+            "delivery_report": "docs/development/evidence/W346-01/DELIVERY.md",
+            "candidate_integrated": true,
+            "resources_released": true,
+            "adopted_remote": "22bf06da325c099c6d2b894c7f9e7c748f85d622",
+            "pr": "https://github.com/GTX537/CP6/pull/806",
+            "branch_disposition": "deleted-local-and-remote",
+            "finished_at": "2026-11-09T07:24:34.484609Z"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "在新隔离 PostgreSQL 实际提交 RMA 租户业务首版，验证同租户竞争、另一租户独立、真实终止和原回执；DEV-2 同时收妥精确本地回退判定。"
       }
     ],
     "development_priority": {
@@ -249132,7 +249258,7 @@
         }
       },
       "timing_basis": "Native goal plus independently sampled monotonic segments for confirmed missing time, with exclusions and no overlap.",
-      "next_priority": "在 DEV-1 下一个独立窗实施原 RMA 租户业务 schema 首版迁移和 A/A 竞争及 B 独立实际验证。DEV-2 同时完成 W349 精确本地回退判定。",
+      "next_priority": "正常采用 W351 后核销 WP02-28 本地原卡。DEV-1 继续 W350，INTEGRATION-1 独立验证恢复候选 Stock Outbox。",
       "windows": [
         {
           "id": "W327-01",
@@ -249707,7 +249833,7 @@
         },
         {
           "id": "W346-01",
-          "state": "VALIDATED_PENDING_REMOTE",
+          "state": "CLOSED",
           "related_tasks": [
             "WP02-10"
           ],
@@ -249720,8 +249846,60 @@
           "dispatch": "docs/development/dispatch/20261109-wave346/README.md",
           "validation_ready_at": "2026-11-09T07:19:47.8510531Z",
           "validation_ready_seconds": 1780,
-          "timing_source": "同次连续执行的主机单调取样。远端采用及席位收尾计时另记。",
-          "delivery": "docs/development/evidence/W346-01/DELIVERY.md"
+          "timing_source": "主机连续单调取样，起始至官方finish回读。无暂停。",
+          "delivery": "docs/development/evidence/W346-01/DELIVERY.md",
+          "actual_seconds": 2066,
+          "finished_at": "2026-11-09T07:24:34.484609Z",
+          "actual_to_estimate_midpoint": 0.861,
+          "pr": "https://github.com/GTX537/CP6/pull/806",
+          "adopted_main": "22bf06da325c099c6d2b894c7f9e7c748f85d622",
+          "branch_disposition": "deleted-local-and-remote",
+          "seat_released": true,
+          "variance": "原 30–50 分钟，实际 34 分 26 秒，含目录写触发器、孤立回执、目录外普通登录策略的真实失败和最终一次定向复测。"
+        },
+        {
+          "id": "W349-01",
+          "state": "CLOSED",
+          "original_task": "WP02-28",
+          "owner": "ROLLBACK-COMPAT",
+          "started_at": "2026-11-09T07:10:57.224926Z",
+          "estimate_minutes": [
+            15,
+            28
+          ],
+          "base": "3b3773bfd5d6a452ff25fbe67f5278c08f6c18a1",
+          "branch": "codex/w349-01",
+          "workspace": "D:/CP6-worktrees/dev-2",
+          "seat": "DEV-2",
+          "dispatch": "docs/development/dispatch/20261109-wave346/README.md",
+          "scope": "以 W345 两份固定制品和 W347 实际原件验证本地 current→prior 唯一回退方向，绑定准确制品、驱动和 PostgreSQL profile/布局。交付现有源审查可消费的本地参考。",
+          "validation_ready_at": "2026-11-09T07:19:31.0498088Z",
+          "validation_ready_seconds": 513,
+          "timing_source": "主机单调取样，起始至官方 finish，重叠只计一次。",
+          "delivery": "docs/development/evidence/W349-01/DELIVERY.md",
+          "finished_at": "2026-11-09T07:28:24.716829Z",
+          "actual_seconds": 1046,
+          "pr": "https://github.com/GTX537/CP6/pull/807",
+          "adopted_main": "bc10c9f6f85eb30490886f43ab68b0a711906063",
+          "seat_released": true,
+          "branch_disposition": "deleted-local-and-remote",
+          "workspace_status": "fixed-seat-detached-for-reuse",
+          "actual_to_estimate_midpoint": 0.811,
+          "variance": "估15–28分钟，实际17分26秒。复用实际 W345/W347 观察，验证齐备采样 513 秒。"
+        },
+        {
+          "id": "W350-01",
+          "state": "ACTIVE",
+          "related_tasks": [
+            "WP02-02"
+          ],
+          "started_at": "2026-11-09T07:25:50.263747Z",
+          "estimate_minutes": [
+            30,
+            55
+          ],
+          "scope": "原 RMA 聚合的 heads/versions 真实业务 schema 首版。按可信租户目录和物理库目标，将 DDL、最小 ACL、原回执和 Ready 同事务，实测 A/A 串行、B 并行、A 中断后原键恢复。",
+          "dispatch": "docs/development/dispatch/20261109-wave350/README.md"
         }
       ],
       "parallel_execution": {
@@ -249733,21 +249911,26 @@
         "overlap_counted_once": true,
         "active_windows": [
           {
-            "id": "W349-01",
-            "state": "ACTIVE",
+            "id": "W351-01",
+            "state": "VALIDATED_PENDING_REMOTE",
             "original_task": "WP02-28",
-            "owner": "ROLLBACK-COMPAT",
-            "started_at": "2026-11-09T07:10:57.224926Z",
+            "owner": "FORWARD-COMPAT",
+            "started_at": "2026-11-09T07:29:19.411021Z",
             "estimate_minutes": [
-              15,
-              28
+              28,
+              50
             ],
-            "base": "3b3773bfd5d6a452ff25fbe67f5278c08f6c18a1",
-            "branch": "codex/w349-01",
+            "base": "bc10c9f6f85eb30490886f43ab68b0a711906063",
+            "branch": "codex/w351-01",
             "workspace": "D:/CP6-worktrees/dev-2",
             "seat": "DEV-2",
-            "dispatch": "docs/development/dispatch/20261109-wave346/README.md",
-            "scope": "以 W345 两份固定制品和 W347 实际原件验证本地 current→prior 唯一回退方向，绑定准确制品、驱动和 PostgreSQL profile/布局。交付现有源审查可消费的本地参考。"
+            "dispatch": "docs/development/dispatch/20261109-wave350/README.md",
+            "scope": "固定两个 Main 实际发布物在同一全 Core PostgreSQL 18.6 上真实初始化、223 项前向迁移、旧版重启并继续原 C02。准确 R2 源审查采用清单。",
+            "validation_ready_at": "2026-11-09T07:36:47.2703496Z",
+            "validation_ready_seconds": 447,
+            "actual_runtime_seconds": 81.708,
+            "delivery": "docs/development/evidence/W351-01/DELIVERY.md",
+            "timing_source": "主机单调取样，实际 runtime 与远端采用另计。"
           }
         ],
         "verification_windows": [
