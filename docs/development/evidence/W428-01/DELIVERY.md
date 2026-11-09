@@ -1,0 +1,14 @@
+# W428-01 · IAM 用户成员关系复合引用
+
+DEV-1 于 2026-11-09 20:46:41 UTC 从 Main #860 开工。原 WP02-02 / PGT-027 的共享用户引用范围。新增 PostgreSQL 前向 Core 迁移，在 `Sys_Users(TenantId,Id)` 建唯一约束，并由 `Sys_UserRole(TenantId,UserId)` 引用。外键在提交时检查，采用 `DEFERRABLE INITIALLY DEFERRED NO ACTION`。保留原全局用户主键、成员关系主键和 `(TenantId,UserId,RoleId)` 唯一键。现有模拟登录回归在独立事务暂存合法 A 角色并尝试把 B 用户写入 A 成员关系，核预期约束错误和两类行回滚，然后继续原登录、菜单、cookie、审计和恢复断言。[迁移](../../../../CP6.Persistence.PostgreSql/Migrations/Core/20261109204600_IamUserMembershipTenantReferenceV1.cs) · [现有宿主回归](../../../../CP6.Tests/Platform/ImpersonationPostgreSqlTests.cs) · [原验收卡](../../acceptance/postgresql-tenancy.json)
+
+## 实际原生验证
+
+- 从 C# 迁移提取原 Up SQL，SHA-256 `d45ce77bc103926fc901b43b0a5969c7b3ae1c1eeb709346519db8633e4c8cf0`。新建一份私有 PostgreSQL 18.6 最小相关表夹具，复用原 PG 用户、角色、成员关系列类型和原键。system identifier `7706280060673205256`，shared buffers 16 MiB，监听地址为空。使用 PostgreSQL 单后端逐次执行实际原 SQL。[固定输入](/D:/CP6-local-test/CP6-72H-20261109/W428-01/native-sql-inputs/prepared.json) · [PostgreSQL 单后端入口](https://www.postgresql.org/docs/18/app-postgres.html)
+- 第一次实际 initdb 退出 0，用时 5.011 秒。运行器按裸 PID 过早核对 Windows 子进程，窗口退出 1，SQL 尚未启动。核原八个进程已退出、`pg_ctl status=3` 和原控制、HBA、配置指纹后，使用 PID 加创建时间与有时限的子进程等待，沿同一停机目录接续。[首次真实结果](/D:/CP6-local-test/CP6-72H-20261109/W428-01/native-sql-01/terminal.json) · [接续原件](/D:/CP6-local-test/CP6-72H-20261109/W428-01/native-sql-resume.json)
+- 第二次六段 SQL 于 21:07:07.775 UTC 退出 0，总耗时 4.650 秒。启动前物理可用 942 MiB，运行低点 922 MiB，提交可用低点 20,041 MiB。预置旧错属关系使真实 `ALTER TABLE` 返回 `23503 FK_Sys_UserRole_TenantUser`，事务结束后两项 DDL 均未留下，旧错属行与原数据一致。对齐的 A/B/A1 行在实际迁移后保留原键，原生目录确认新外键已验证且初始延迟。[实际结果](/D:/CP6-local-test/CP6-72H-20261109/W428-01/native-sql-02/actual.json) · [迁移拒绝原件](/D:/CP6-local-test/CP6-72H-20261109/W428-01/native-sql-02/02-migration-rejected.native.log)
+- 先写成员关系后写用户能同事务提交，先删除用户后删除成员关系也能同事务提交。另一次事务内实际看见合法 A 角色及 A 到 B 的错属成员关系，`COMMIT` 返回同一外键的 `23503`，两类写入全回滚。原 B 和 A1 保持。前后原生停机状态为 3，八个阶段进程均已退出。[提交拒绝原件](/D:/CP6-local-test/CP6-72H-20261109/W428-01/native-sql-02/05-commit-rejected.native.log) · [停止结果](/D:/CP6-local-test/CP6-72H-20261109/W428-01/native-sql-02/terminal.json)
+
+## 接续范围
+
+已封存定向 Roslyn 输入，编译尚待执行。继续用 `TenantManagementPostgresFixture` 经真实 Core EF 迁移入口运行原 IAM 成员关系和模拟登录回归。原 PGT-027 的同 schema TenantId 更新及角色引用按各自证据核销，正式 PGT-027 仍为 `NOT_RUN`。分支检查点在 DEV-1 交 COORD 处置。[编译输入](/D:/CP6-local-test/CP6-72H-20261109/W428-01/migration-build/inputs.json) · [正式宿主入口](../../../../CP6.Tests/Platform/TenantManagementPostgresFixture.cs#L52)
