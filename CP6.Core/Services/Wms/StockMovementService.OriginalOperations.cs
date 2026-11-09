@@ -42,26 +42,26 @@ public partial class StockMovementService : IStockOriginalOperationsV1
         if(request==null || request.OperationId==Guid.Empty)throw new OrderPriceCorrectionException("ORIGINAL_OPERATION_REQUIRED",400);
         var frozen=OperationsOwnerV1.Freeze(request);
         var bytes=MainOwnerOperationJournalV1.Encode(new {kind="MOVE",request=frozen});
-        return ExecuteOriginal(frozen.OperationId,"move",bytes,async(_,a,t)=>
+        return ExecuteOriginal(frozen.OperationId,"move",bytes,async(mover,a,t)=>
         {
             frozen.OperatorCd=a.Actor;
             await a.RequireStockKey(frozen.WarehouseCd,frozen.FromLocationCd,frozen.ProductCd,frozen.LotNo,true,t);
             await a.RequireStockKey(frozen.WarehouseCd,frozen.ToLocationCd,frozen.ProductCd,frozen.LotNo,true,t);
-            await GuardIndependentLocationUse(a,frozen.WarehouseCd,frozen.FromLocationCd,WmsTxnType.MOVE,t);
-            await GuardIndependentLocationUse(a,frozen.WarehouseCd,frozen.ToLocationCd,WmsTxnType.MOVE,t);
-            if(await _db.Stocks.AnyAsync(s=>s.WarehouseCd==frozen.WarehouseCd && s.ProductCd==frozen.ProductCd && s.LotNo==frozen.LotNo
+            await mover.GuardIndependentLocationUse(a,frozen.WarehouseCd,frozen.FromLocationCd,WmsTxnType.MOVE,t);
+            await mover.GuardIndependentLocationUse(a,frozen.WarehouseCd,frozen.ToLocationCd,WmsTxnType.MOVE,t);
+            if(await mover._db.Stocks.AnyAsync(s=>s.WarehouseCd==frozen.WarehouseCd && s.ProductCd==frozen.ProductCd && s.LotNo==frozen.LotNo
                 && s.LocationCd==frozen.FromLocationCd && s.LocationCd==frozen.ToLocationCd,t))
                 throw new ArgumentException("WM-MSG-010: 移動先は移動元と異なるロケーションを指定してください。");
-            var before=await Snapshot(frozen.WarehouseCd,[frozen.FromLocationCd,frozen.ToLocationCd],frozen.ProductCd,frozen.LotNo,t);
-            using var inheritance=InheritTransactions(a);
-            var pair=await MoveCoreAsync(frozen,t);
+            var before=await mover.Snapshot(frozen.WarehouseCd,[frozen.FromLocationCd,frozen.ToLocationCd],frozen.ProductCd,frozen.LotNo,t);
+            using var inheritance=mover.InheritTransactions(a);
+            var pair=await mover.MoveCoreAsync(frozen,t);
             a.AtCommit(async c=>
             {
                 await a.RequireStockKey(frozen.WarehouseCd,frozen.FromLocationCd,frozen.ProductCd,frozen.LotNo,false,c);
                 await a.RequireStockKey(frozen.WarehouseCd,frozen.ToLocationCd,frozen.ProductCd,frozen.LotNo,false,c);
             });
             return (new StockOperationResultV1(frozen.OperationId,"MOVE",OutTxnNo:pair.OutTxnNo,InTxnNo:pair.InTxnNo),before);
-        },ct);
+        },ct,trustedStorage:_tenantStorage is { V1MoveEnabled: true } ? _tenantStorage : null,writeEntry:StockV1WriteEntry.Move);
     }
     private Task<Stock[]> Snapshot(string warehouse,string[] locations,string product,string lot,CancellationToken ct)
         =>_db.Stocks.AsNoTracking().Where(s=>!s.IsDeleted && s.WarehouseCd==warehouse && locations.Contains(s.LocationCd)
@@ -69,7 +69,7 @@ public partial class StockMovementService : IStockOriginalOperationsV1
 
     private async Task<StockOperationResultV1> ExecuteOriginal(Guid operation,string action,byte[] input,
         Func<StockMovementService,OperationsAccessV1,CancellationToken,Task<(StockOperationResultV1 result,Stock[] before)>> apply,CancellationToken ct,
-        string contract=OperationContract,TenantStockReadStore? trustedStorage=null)
+        string contract=OperationContract,TenantStockReadStore? trustedStorage=null,StockV1WriteEntry writeEntry=StockV1WriteEntry.Apply)
     {
         MainOwnerOperationJournalV1.Original? original=null;
         var effects=new List<StockTransaction>();
@@ -101,7 +101,7 @@ public partial class StockMovementService : IStockOriginalOperationsV1
         var result=trustedStorage is null
             ? await Owner.ExecuteAsync(OperationsOwnerV1.Stock,action,true,(access,token)=>Stage(this,access,token),ct,
                 actionAtFence:token=>SelectAction(_db,token))
-            : await Owner.ExecuteStockOperationAsync(trustedStorage,StockV1WriteEntry.Apply,(context,access,token)=>
+            : await Owner.ExecuteStockOperationAsync(trustedStorage,writeEntry,(context,access,token)=>
                 Stage(new StockMovementService(context,new WmsSequenceService(context),_notifier,_finBridge),access,token),SelectAction,ct);
         // Compatibility bridge/notifications remain best-effort. Replaying the original never invokes them again.
         foreach(var effect in effects)await PublishCommittedCancellationAsync(effect);

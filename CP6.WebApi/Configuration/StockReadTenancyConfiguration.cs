@@ -20,7 +20,8 @@ internal static class StockReadTenancyConfiguration
             catch (InvalidOperationException) { throw Rejected(); }
             if (settings.Enabled)
             {
-                if (database.Provider != DatabaseProvider.PostgreSql) throw Rejected();
+                if (database.Provider != DatabaseProvider.PostgreSql || settings.EnableV1Move && !settings.EnableV1Adjust)
+                    throw Rejected();
                 var endpoint = new NpgsqlConnectionStringBuilder(connectionString);
                 if (!IPAddress.TryParse(endpoint.Host, out var ip) ||
                     string.IsNullOrWhiteSpace(endpoint.Database) || string.IsNullOrWhiteSpace(endpoint.Username) ||
@@ -46,7 +47,7 @@ internal static class StockReadTenancyConfiguration
                 catch (TenantStorageException) { throw Rejected(); }
                 var credentials = new Credentials(tenants.ToDictionary(t => t.TenantId, t => t.Password));
                 services.AddSingleton(sp => new TenantStockReadStore(catalog, credentials, sp.GetRequiredService<IHttpContextAccessor>(),
-                    settings.EnableV1Adjust));
+                    settings.EnableV1Adjust, settings.EnableV1Move));
             }
             else if (section.GetChildren().Any(x => x.Key != nameof(Settings.Enabled))) throw Rejected();
         }
@@ -61,6 +62,7 @@ internal static class StockReadTenancyConfiguration
     {
         public bool Enabled { get; set; }
         public bool EnableV1Adjust { get; set; }
+        public bool EnableV1Move { get; set; }
         public string Revision { get; set; } = "";
         public string SslMode { get; set; } = nameof(Npgsql.SslMode.VerifyFull);
         public Tenant[] Tenants { get; set; } = [];
