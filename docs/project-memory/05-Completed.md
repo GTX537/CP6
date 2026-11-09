@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC 同源文件原件
+
+W420 同一 W372 库的 A/B 实际 Engineering、FileContent 原件和分别五份原生 COPY 一致，原 RMA 和四条原流水逐字节保持。 [W420](../development/evidence/W420-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 租户池、标识、模型与迁移实证
 
 W421 纳入 PGT-002、005、012、018、019 的实际 PostgreSQL 执行原件。 [W421](../development/evidence/W421-01/DELIVERY.md)
