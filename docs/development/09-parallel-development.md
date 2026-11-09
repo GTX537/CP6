@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W364 已实测原 RMA 草稿 POST、同事务原日志和归档 ACL。W366 随 #819 采用并释放 DEV-1，独立 W370 接原生 staging。W369 验实际共享升级失败并释放集成席位，W371 验保存点。 [W364](./evidence/W364-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave364/README.md)
+
+
 > W366 已实测同快照的原 RMA 日志归档。W361 随 #818 采用并释放 DEV-2，原草稿 W364 继续。W367 混合 COPY 和 W368 共享 RLS 定向实库已释放集成席位。 [W366](./evidence/W366-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave366/README.md)
 
 

@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 普通提交、原操作与隔离 staging
+
+接原 RMA 提交及原操作读取和关闭。W370 验证候选 staging 的实际原子事务，保留完整依赖、当前性和真实切换的后续范围。W371 补真实连接保存点。 [W364 交付](../development/evidence/W364-01/DELIVERY.md) · [本轮席位](../development/dispatch/20261109-wave364/README.md)
+
+
 ## 2026-11-09 UTC RMA 普通草稿与共享依赖恢复
 
 W364 继续真实普通草稿 POST、原日志同事务、现行授权与同键重放。采用新 writer 时由该任务一起验收归档权限。备份现有 v2 仍标记未达到恢复就绪，继续核 IAM、消息、资产与当前状态对账。 [W366 交付](../development/evidence/W366-01/DELIVERY.md)
