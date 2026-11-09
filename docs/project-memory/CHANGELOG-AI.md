@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC Stock 当前状态和原完成回执
+
+加入 v10 Stock 只读对账。实测原键匹配、缺失、跨租户键冲突、同租绑定与原结果冲突、受限角色，以及已完成的原票据、回执与发送尝试。 [W408](../development/evidence/W408-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC v10 Stock 暂存和恢复
 
 实测共享快照 14 个 Stock 原件中立落表、晚段图失败事务回滚、同原 pin 重试和精确回执。 [W407](../development/evidence/W407-01/DELIVERY.md)
