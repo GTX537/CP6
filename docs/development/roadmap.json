@@ -162207,6 +162207,16 @@
       "date": "2026-11-09",
       "change": "用户授权三天实际Codex执行。开新72小时目标，按上轮29个非BUG实测窗口和每4小时滚动校准，单人串行从WP02-02库存写入继续。W326已正常采用并释放。",
       "evidence": "docs/development/planning/20261109-codex-72h-execution.md"
+    },
+    {
+      "date": "2026-11-09",
+      "change": "72小时目标首个实现窗口W327-01实际开工。普通租户LOGIN取得原有授权根的窄权限入口，按原根及映射锁序实测。",
+      "evidence": "docs/development/dispatch/20261109-wave327/README.md"
+    },
+    {
+      "at": "2026-11-09T01:28:56.2513924Z",
+      "change": "W327本地真实PostgreSQL栅栏和安装控制验证完成，整卡状态与正式验收口径沿用原值。开始候选的正常远端采用和席位收尾。",
+      "evidence": "docs/development/evidence/W327-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -163654,23 +163664,24 @@
       "card_anchor": "wp02-02",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD / W326-01",
+        "chat_label": "COORD / W327-01",
         "repository": "Main",
-        "branch": "codex/w326-01",
+        "branch": "codex/w327-01",
         "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-        "claimed_at": "2026-11-09T00:31:03.679942Z",
-        "baseline_sha": "802d1cf229936cc893770b2ddc0b6a7acd1b73ec",
-        "entry_evidence": "docs/development/dispatch/20261109-wave326/README.md",
-        "phase": "CLOSED",
-        "dispatch_scope": "STOCK_OWNER_TRUSTED_POSTGRESQL_READ",
+        "claimed_at": "2026-11-09T01:15:32.951175Z",
+        "baseline_sha": "974b30dd728ac644f36082e62509ddf1cd351a90",
+        "entry_evidence": "docs/development/dispatch/20261109-wave327/README.md",
+        "phase": "VALIDATED_PENDING_REMOTE",
+        "dispatch_scope": "STOCK_WRITE_NATIVE_AUTHORITY_FENCE",
         "bounded_window_gate": "CONFIRMED",
-        "reserved_write_resources": [],
         "full_task_gate_unchanged": true,
-        "candidate_review_completed": true,
-        "delivery_report": "docs/development/evidence/W326-01/DELIVERY.md",
+        "reserved_write_resources": [
+          "Main:tenant-storage",
+          "Main:stock-owner-write",
+          "Main:authentication-fence"
+        ],
         "worker_start_received": true,
-        "worker_delivery_received": true,
-        "candidate_integrated": true
+        "delivery_report": "docs/development/evidence/W327-01/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -164497,6 +164508,25 @@
             "kind": "DELIVERY",
             "at": "2026-10-19T03:35:03.633717+00:00"
           }
+        },
+        {
+          "chat_label": "COORD / W326-01",
+          "repository": "Main",
+          "branch": "codex/w326-01",
+          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "claimed_at": "2026-11-09T00:31:03.679942Z",
+          "baseline_sha": "802d1cf229936cc893770b2ddc0b6a7acd1b73ec",
+          "entry_evidence": "docs/development/dispatch/20261109-wave326/README.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "STOCK_OWNER_TRUSTED_POSTGRESQL_READ",
+          "bounded_window_gate": "CONFIRMED",
+          "reserved_write_resources": [],
+          "full_task_gate_unchanged": true,
+          "candidate_review_completed": true,
+          "delivery_report": "docs/development/evidence/W326-01/DELIVERY.md",
+          "worker_start_received": true,
+          "worker_delivery_received": true,
+          "candidate_integrated": true
         }
       ],
       "preparation_delivery_history": [
@@ -164574,7 +164604,7 @@
         },
         "receipt": "docs/development/evidence/authorized-adoption-release-20261015/release-receipt.json"
       },
-      "remaining_scope": "WP02-02保持IN_PROGRESS。W326已验证库存列表、历史和流水的可信读取。库存写入、其他Main Owner、逐租户初始化与恢复、其余原PGT、跨仓及既有环境采用仍按原范围验收。",
+      "remaining_scope": "WP02-02保持IN_PROGRESS。W326已验证库存可信读取，W327已验证普通LOGIN调用原认证根的事务栅栏。实际库存写入、其他Main Owner、逐租户初始化/恢复、其余原PGT、跨仓及既有环境采用仍按原范围验收。",
       "main_package_adoption": {
         "path": "docs/development/evidence/WP02-02/main-package-adoption/DELIVERY.md",
         "scope": "Main exact formal0.10.3 dependency adoption; not tenant storage or full WP02-02 delivery",
@@ -164790,9 +164820,9 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-02",
-        "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。",
+        "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。 W327验证普通LOGIN在调用事务内取得原认证根。",
         "remaining": "Stock及其他Main业务写入的可信存储接线、同事务原结果/审计/Outbox、普通写者最终授权和逐租户业务版本初始化与恢复仍余。",
-        "next_action": "沿Stock实际写Owner核对共享键、权限与同连接事务，保留原操作恢复和提交不确定语义。",
+        "next_action": "完成W327正常远端采用与席位收尾，沿现有库存journal、审计和Outbox接普通登录同一事务。",
         "evidence_refs": [
           "docs/development/evidence/WP02-02/directory-installation/DELIVERY.md",
           "docs/development/evidence/WP02-02/tenant-connections/DELIVERY.md",
@@ -164805,11 +164835,12 @@
           "docs/development/evidence/WP02-02/identity-directory-isolation/DELIVERY.md",
           "docs/development/evidence/WP02-02/directory-authorization/DELIVERY.md",
           "docs/development/evidence/W310-01/DELIVERY.md",
-          "docs/development/evidence/W326-01/DELIVERY.md"
+          "docs/development/evidence/W326-01/DELIVERY.md",
+          "docs/development/evidence/W327-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true,
-        "latest_window": "W326-01"
+        "latest_window": "W327-01"
       },
       "wave326_delivery": {
         "status": "CLOSED",
@@ -164826,6 +164857,15 @@
           "target_head": "4067d9835f6cc5f775dc9b4dcffbab9895a4c2af"
         },
         "seat_released": true
+      },
+      "wave327_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W327-01/DELIVERY.md",
+        "profile": "stock-write-fence-v1",
+        "validation": "一项真实PostgreSQL 18.6竞争与权限用例，CLI Release构建及独立错安装ID/正确安装/重复首装实测。",
+        "scope": "普通LOGIN的同事务原认证根入口。应用Stock写入留待后续。",
+        "full_task_complete": false,
+        "formal_acceptance": "NOT_RUN"
       }
     },
     {
@@ -174466,16 +174506,17 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-10",
-        "delivered": "Main PG journal、Stock/PA090代表事务及W249有效。W326证明Stock只读路径采用可信租户登录。",
-        "remaining": "库存业务写入及原结果/审计/Outbox仍由既有事务和连接路径执行。实际同租户普通写者、当前授权fence及共享持久化接线仍余。",
-        "next_action": "接续WP02-02的Stock写入采用并保留原Owner事务；其他消费者逐项验收。",
+        "delivered": "Main PG journal、Stock/PA090代表事务及W249有效。W326证明Stock只读路径采用可信租户登录。 W327验证原认证根和普通写者事务的数据库前置。",
+        "remaining": "实际库存写入及原结果/审计/Outbox仍由既有连接执行。按同一普通LOGIN事务接线并验证真实Owner和原结果恢复。",
+        "next_action": "完成W327正常远端采用与席位收尾，沿现有库存journal、审计和Outbox接普通登录同一事务。",
         "evidence_refs": [
           "docs/development/evidence/W310-01/DELIVERY.md",
-          "docs/development/evidence/W326-01/DELIVERY.md"
+          "docs/development/evidence/W326-01/DELIVERY.md",
+          "docs/development/evidence/W327-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false,
-        "latest_window": "W326-01"
+        "latest_window": "W327-01"
       }
     },
     {
@@ -204763,11 +204804,11 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "20261109-wave326",
-      "path": "docs/development/dispatch/20261109-wave326/README.md",
-      "baseline_sha": "802d1cf229936cc893770b2ddc0b6a7acd1b73ec",
-      "registered_at": "2026-11-09T00:31:03.679942Z",
-      "phase": "CLOSED",
+      "id": "20261109-wave327",
+      "path": "docs/development/dispatch/20261109-wave327/README.md",
+      "baseline_sha": "974b30dd728ac644f36082e62509ddf1cd351a90",
+      "registered_at": "2026-11-09T01:15:32.951175Z",
+      "phase": "VALIDATED_PENDING_REMOTE",
       "assigned_chats": [
         "COORD"
       ],
@@ -204777,49 +204818,47 @@
       "authorized_review_chats": [
         "COORD"
       ],
-      "active_implementation_chats": [],
+      "active_implementation_chats": [
+        "COORD"
+      ],
       "workers_started": true,
-      "windows_closed": true,
-      "product_integrated": true,
+      "windows_closed": false,
+      "product_integrated": false,
       "windows": [
         {
-          "id": "W326-01",
-          "workspace_task": "W326-01",
+          "id": "W327-01",
+          "workspace_task": "W327-01",
           "related_tasks": [
             "WP02-02",
             "WP02-10"
           ],
-          "title": "库存查询采用可信 PostgreSQL 读取",
+          "title": "库存普通登录的原生授权事务栅栏",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "CLOSED",
+          "phase": "VALIDATED_PENDING_REMOTE",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worker_delivery_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w326-01",
-          "planned_scope_ref": "docs/development/dispatch/20261109-wave326/README.md",
+          "branch": "codex/w327-01",
+          "planned_scope_ref": "docs/development/dispatch/20261109-wave327/README.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
-          "candidate_review_completed": true,
-          "candidate_integrated": true,
-          "resources_released": true,
           "exclusive_resources": [
             "Main:tenant-storage",
-            "Main:ef-model",
-            "Main:stock-owner-read"
+            "Main:stock-owner-write",
+            "Main:authentication-fence"
           ],
-          "adopted_remote": "4067d9835f6cc5f775dc9b4dcffbab9895a4c2af",
-          "pr": "https://github.com/GTX537/CP6/pull/782",
-          "branch_disposition": "deleted-local-and-remote"
+          "worker_delivery_received": true,
+          "candidate_review_completed": true,
+          "delivery_report": "docs/development/evidence/W327-01/DELIVERY.md"
         }
       ],
       "storage": {
         "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W326 已采用，进入 WP02-02 库存写入。"
+      "next_action": "完成W327正常远端采用与席位收尾，沿现有库存journal、审计和Outbox接普通登录同一事务。"
     },
     "wave_history": [
       {
@@ -244513,6 +244552,65 @@
         },
         "next_action": "W325已正常采用，准确分支及席位处置已核实。",
         "final_verification": "C:\\Users\\tt\\CP6-planning-reports\\20261017-foundation\\wave325-final-verification.json"
+      },
+      {
+        "id": "20261109-wave326",
+        "path": "docs/development/dispatch/20261109-wave326/README.md",
+        "baseline_sha": "802d1cf229936cc893770b2ddc0b6a7acd1b73ec",
+        "registered_at": "2026-11-09T00:31:03.679942Z",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W326-01",
+            "workspace_task": "W326-01",
+            "related_tasks": [
+              "WP02-02",
+              "WP02-10"
+            ],
+            "title": "库存查询采用可信 PostgreSQL 读取",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worker_delivery_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w326-01",
+            "planned_scope_ref": "docs/development/dispatch/20261109-wave326/README.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "candidate_review_completed": true,
+            "candidate_integrated": true,
+            "resources_released": true,
+            "exclusive_resources": [
+              "Main:tenant-storage",
+              "Main:ef-model",
+              "Main:stock-owner-read"
+            ],
+            "adopted_remote": "4067d9835f6cc5f775dc9b4dcffbab9895a4c2af",
+            "pr": "https://github.com/GTX537/CP6/pull/782",
+            "branch_disposition": "deleted-local-and-remote"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W326 已采用，进入 WP02-02 库存写入。"
       }
     ],
     "development_priority": {
@@ -247185,8 +247283,32 @@
         "first_reestimate_seconds": 14400
       },
       "timing_basis": "Native goal plus independently sampled monotonic segments for confirmed missing time, with exclusions and no overlap.",
-      "next_priority": "W327-01 WP02-02 stock write authority fence, then one actual Stock Owner path",
-      "windows": []
+      "next_priority": "完成W327正常远端采用与席位收尾，沿现有库存journal、审计和Outbox接普通登录同一事务。",
+      "windows": [
+        {
+          "id": "W327-01",
+          "state": "VALIDATED_PENDING_REMOTE",
+          "related_tasks": [
+            "WP02-02",
+            "WP02-10"
+          ],
+          "started_at": "2026-11-09T01:15:32.951175Z",
+          "estimate_minutes": [
+            75,
+            125
+          ],
+          "scope": "STOCK_WRITE_NATIVE_AUTHORITY_FENCE",
+          "dispatch": "docs/development/dispatch/20261109-wave327/README.md",
+          "revised_estimate_minutes": [
+            45,
+            75
+          ],
+          "validation_ready_at": "2026-11-09T01:28:56.2513924Z",
+          "validation_ready_seconds": 802,
+          "timing_source": "同次连续执行的主机单调取样。远端采用及席位收尾计时另记。",
+          "delivery": "docs/development/evidence/W327-01/DELIVERY.md"
+        }
+      ]
     },
     "execution_plan_history": [
       {

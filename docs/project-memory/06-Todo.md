@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC W327 续接
+
+沿已验证的普通登录授权根，接库存原命令记录、审计和 Stock Outbox 的同事务权限。再由真实 V1 调整入口采用并核对回滚和原操作恢复。 [交付报告](../development/evidence/W327-01/DELIVERY.md)
+
 ## 2026-11-09 UTC 三天实际执行目标
 
 先做Stock普通登录的真实当前授权栅栏和单笔写入，再按直接前置推进原结果、Outbox、逐租户版本及WP02-28兼容回退。 [执行计划](../development/planning/20261109-codex-72h-execution.md)

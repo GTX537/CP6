@@ -11,10 +11,12 @@ var directoryInstall = args.SequenceEqual(["install-identity-directory-v2", "--s
 var directoryInspect = args.SequenceEqual(["inspect-identity-directory-v2", "--stdin"]);
 var directoryControl = directoryInstall || directoryInspect;
 var stockReadInstall = args.SequenceEqual(["install-stock-read-v1", "--stdin"]);
+var stockWriteFenceInstall = args.SequenceEqual(["install-stock-write-fence-v1", "--stdin"]);
+var stockInstall = stockReadInstall || stockWriteFenceInstall;
 var controlExecutionStarted = false;
-if ((!args.SequenceEqual(["provision", "--stdin"]) && !revocation && !serviceToken && !tenantControl && !directoryControl && !stockReadInstall) || !Console.IsInputRedirected)
+if ((!args.SequenceEqual(["provision", "--stdin"]) && !revocation && !serviceToken && !tenantControl && !directoryControl && !stockInstall) || !Console.IsInputRedirected)
 {
-    Console.Error.WriteLine("Usage: CP6.TenantStorage provision|install-service-revocation-v1|install-service-token-v1|service-token-tenant-directory-control-v1|install-identity-directory-v2|inspect-identity-directory-v2|install-stock-read-v1 --stdin (one bounded JSON document on redirected standard input).");
+    Console.Error.WriteLine("Usage: CP6.TenantStorage provision|install-service-revocation-v1|install-service-token-v1|service-token-tenant-directory-control-v1|install-identity-directory-v2|inspect-identity-directory-v2|install-stock-read-v1|install-stock-write-fence-v1 --stdin (one bounded JSON document on redirected standard input).");
     return 2;
 }
 try
@@ -32,14 +34,17 @@ try
     using var document = JsonDocument.Parse(buffer.AsMemory(0,size));
     if (document.RootElement.ValueKind != JsonValueKind.Object || !Unique(document.RootElement))
         throw new TenantProvisioningException("input-rejected");
-    if (stockReadInstall)
+    if (stockInstall)
     {
-        var stockRequest = document.Deserialize<StockReadInstallInput>(new JsonSerializerOptions
+        var stockRequest = document.Deserialize<StockInstallInput>(new JsonSerializerOptions
         { UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow }) ?? throw new TenantProvisioningException("input-rejected");
+        var readInstallationId = stockRequest.ReadInstallationId.GetValueOrDefault();
         if (!System.Net.IPAddress.TryParse(stockRequest.Server, out var ip) || ip.ToString() != stockRequest.Server ||
             stockRequest.Port is < 1 or > 65535 || string.IsNullOrWhiteSpace(stockRequest.Database) || stockRequest.DatabaseOid == 0 ||
             string.IsNullOrWhiteSpace(stockRequest.SystemIdentifier) || string.IsNullOrWhiteSpace(stockRequest.AdminUsername) ||
             string.IsNullOrEmpty(stockRequest.AdminPassword) || stockRequest.Tenants is not { Length: >= 1 and <= 128 } ||
+            (stockWriteFenceInstall && readInstallationId == Guid.Empty) ||
+            (stockReadInstall && document.RootElement.TryGetProperty(nameof(StockInstallInput.ReadInstallationId), out _)) ||
             !Enum.TryParse<SslMode>(stockRequest.SslMode, out var sslMode) || stockRequest.SslMode != sslMode.ToString() ||
             !(sslMode == SslMode.VerifyFull || sslMode == SslMode.Disable && System.Net.IPAddress.IsLoopback(ip)))
             throw new TenantProvisioningException("input-rejected");
@@ -48,7 +53,7 @@ try
             Host = stockRequest.Server, Port = stockRequest.Port, Database = stockRequest.Database, Username = stockRequest.AdminUsername,
             Password = stockRequest.AdminPassword, SslMode = sslMode, Pooling = false, Enlist = false,
             SearchPath = "pg_catalog", Options = " ", IncludeErrorDetail = false, Timeout = 10, CommandTimeout = 65,
-            ApplicationName = "CP6.TenantStorage.StockReadV1"
+            ApplicationName = stockWriteFenceInstall ? "CP6.TenantStorage.StockWriteFenceV1" : "CP6.TenantStorage.StockReadV1"
         }.ConnectionString);
         await control.OpenAsync(timeout.Token);
         await using var tx = await control.BeginTransactionAsync(timeout.Token);
@@ -65,10 +70,20 @@ try
         target.Parameters.AddWithValue("port", stockRequest.Port);
         target.Parameters.AddWithValue("database", stockRequest.Database);
         if (await target.ExecuteScalarAsync(timeout.Token) is not true) throw new TenantProvisioningException("target-rejected");
-        var id = await StockReadStorageV1.InstallAsync(control, tx, stockRequest.Tenants, timeout.Token);
+        object receipt;
+        if (stockWriteFenceInstall)
+        {
+            await StockWriteAuthorityFenceV1.InstallAsync(control, tx, readInstallationId, stockRequest.Tenants, timeout.Token);
+            receipt = new { Outcome = "INSTALLED", ReadInstallationId = readInstallationId, stockRequest.DatabaseOid, stockRequest.SystemIdentifier };
+        }
+        else
+        {
+            var id = await StockReadStorageV1.InstallAsync(control, tx, stockRequest.Tenants, timeout.Token);
+            receipt = new { Outcome = "INSTALLED", InstallationId = id, stockRequest.DatabaseOid, stockRequest.SystemIdentifier };
+        }
         controlExecutionStarted = true; // After this point an unacknowledged commit/output requires inspection.
         await tx.CommitAsync(timeout.Token);
-        Console.WriteLine(JsonSerializer.Serialize(new { Outcome = "INSTALLED", InstallationId = id, stockRequest.DatabaseOid, stockRequest.SystemIdentifier }));
+        Console.WriteLine(JsonSerializer.Serialize(receipt));
         return 0;
     }
     if (directoryControl)
@@ -167,16 +182,16 @@ catch (IdentityDirectoryInstallationException error)
     Console.Error.WriteLine(JsonSerializer.Serialize(new { Contract = IdentityDirectoryInstallationV2.Contract, error.Outcome, Code = error.Message }));
     return error.Outcome == "UNKNOWN" ? 4 : 1;
 }
-catch (TenantProvisioningException error) when (!tenantControl && !directoryControl && !stockReadInstall)
+catch (TenantProvisioningException error) when (!tenantControl && !directoryControl && !stockInstall)
 {
     Console.Error.WriteLine(error.Message);
     return 1;
 }
 catch
 {
-    if (stockReadInstall)
+    if (stockInstall)
     {
-        Console.Error.WriteLine(JsonSerializer.Serialize(new { Contract = StockReadStorageV1.ModelVersion,
+        Console.Error.WriteLine(JsonSerializer.Serialize(new { Contract = stockWriteFenceInstall ? StockWriteAuthorityFenceV1.Contract : StockReadStorageV1.ModelVersion,
             Outcome = controlExecutionStarted ? "UNKNOWN" : "NOT_APPLIED" }));
         return controlExecutionStarted ? 4 : 1;
     }
@@ -227,6 +242,7 @@ internal sealed record RevocationInput(ServiceRevocationInstallRequest Request,s
 
 internal sealed record ServiceTokenInput(ServiceTokenInstallRequest Request,string AdminUsername,string AdminPassword,string SslMode="VerifyFull");
 internal sealed record TenantControlInput(ServiceTokenTenantControlRequestV1 Request,string AdminUsername,string AdminPassword,string SslMode="VerifyFull");
-internal sealed record StockReadInstallInput(string Server, int Port, string Database, uint DatabaseOid,
-    string SystemIdentifier, string AdminUsername, string AdminPassword, TenantLoginV1[] Tenants, string SslMode = "VerifyFull");
+internal sealed record StockInstallInput(string Server, int Port, string Database, uint DatabaseOid,
+    string SystemIdentifier, string AdminUsername, string AdminPassword, TenantLoginV1[] Tenants, string SslMode = "VerifyFull",
+    Guid? ReadInstallationId = null);
 internal sealed record DirectoryInput(IdentityDirectoryInstallRequestV2 Request,string AdminUsername,string AdminPassword,string SslMode="VerifyFull");

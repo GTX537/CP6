@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC W327 库存写入授权前置
+
+新增 `install-stock-write-fence-v1` 与固定 SQL 入口，显式扩展已安装的隔离读布局。专用 NOLOGIN 角色只取得原根所需列权限。 [交付报告](../development/evidence/W327-01/DELIVERY.md)
+
 ## 2026-11-09 UTC 三天实际执行目标
 
 登记72小时滚动队列和实测估算口径，归档旧24小时目标，台账仍为37 DONE、2 IN_PROGRESS、336 PLANNED。 [执行计划](../development/planning/20261109-codex-72h-execution.md)

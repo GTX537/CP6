@@ -14,6 +14,14 @@ At the host, set `StockReadTenancy:Enabled=true`, a `Revision` and `Tenants` ent
 
 The profile covers the three read endpoints. Stock mutations, original-operation recovery and the outbox have their own Owner transaction paths. [Delivery and verification](../../../docs/development/evidence/W326-01/DELIVERY.md).
 
+### Stock write authority fence
+
+`CP6.TenantStorage install-stock-write-fence-v1 --stdin` extends the isolated read layout on the same primary. Use the same protected input fields and add the `ReadInstallationId` returned by `install-stock-read-v1`. List only the existing `TenantId` and `Login` pairs approved for the write fence. The control transaction checks the live login mapping and read receipt before granting these roles access to `cp6_stock_write_fence_v1.acquire(uuid)`. An acknowledged commit returns `INSTALLED` with `ReadInstallationId`, `DatabaseOid` and `SystemIdentifier`. For `UNKNOWN`, inspect the function, its owner and the granted logins on that target before deciding how to proceed. A repeat install is rejected.
+
+Call `SELECT cp6_stock_write_fence_v1.acquire(@tenant)` in the ordinary LOGIN's existing business transaction. The function enters the native authentication root and pins the current LOGIN mapping through transaction end. The dedicated NOLOGIN function owner has the column privileges required by the existing root update. The approved logins get schema usage and function execution. A successful call establishes the lock. The Owner still evaluates the current user, permission graph and business operation before writing. This window enables the database operation for subsequent Stock writers. [Delivery and verification](../../../docs/development/evidence/W327-01/DELIVERY.md).
+
+
+## Tenant connection leases
 
 `TenantIdentityDirectoryReader` is an internal opt-in `IIdentitySnapshotReader` adapter for the standalone directory overlay below. Its binding must select `identity-directory-read-v1` / `identity-directory-read-rls-v1` with **no queue domains** (this profile authorizes no messaging). The configured trusted context and catalog choose the tenant and ordinary principal; the method's tenant argument must match. The adapter returns detached directory DTOs only, exposes no context or raw transaction, and has no Owner fallback. Authentication and current reader authorization remain the host's responsibility; this interface registration does not switch the default Main environment to ordinary logins.
 
