@@ -45,6 +45,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
 
         var settings = StockReadSettings();
         settings["StockReadTenancy__EnableV1Adjust"] = "true";
+        settings["StockReadTenancy__EnableV1Move"] = "true";
         ConfigureStockReader(settings, 0, h, login, password);
         StockApplyCommandV1 Command(string product = "P1", string location = "L1", decimal quantity = 1.12345678m) => new()
         {
@@ -236,6 +237,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         }
         Assert.Equal(stock.PhysicalQty + command.Qty + uncertainCommand.Qty, await Quantity());
         Assert.Equal(2, await h.Db.StockTransactions.CountAsync());
+        await VerifyOrdinaryStockMoveAsync(h, mapping, control, host, cookies, OutboxCount, ReadOriginal);
 
         Task<decimal> Quantity() => h.Db.Stocks.Where(s => s.Id == stock.Id).Select(s => s.PhysicalQty).SingleAsync();
         Task<int> OutboxCount(Guid operation) => h.Db.Database.SqlQuery<int>($"""

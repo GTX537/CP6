@@ -14,15 +14,15 @@ using Npgsql;
 
 namespace CP6.Core.Persistence.Tenancy;
 
-internal enum StockV1WriteEntry { Apply, Close }
+internal enum StockV1WriteEntry { Apply, Move, Close }
 
-/// <summary>Executes the stock Owner's read under a tenant LOGIN while the original Owner
-/// transaction holds the authority and business graph fences in the same primary database.</summary>
+/// <summary>Runs the Stock Owner's reads and explicitly enabled commands under a tenant LOGIN on the same primary.</summary>
 internal sealed class TenantStockReadStore : IAsyncDisposable
 {
     internal const string Host = "main-stock-read";
     private const string ReadPurpose = "wms-stock:query";
     private const string AdjustPurpose = "wms-stock:adjust-v1";
+    private const string MovePurpose = "wms-stock:move-v1";
     private const string ClosePurpose = "wms-stock:close-operation-v1";
     private const string Issuer = "https://cp6.internal/main-stock-read";
     private const string Audience = "CP6.Main.StockRead";
@@ -31,15 +31,17 @@ internal sealed class TenantStockReadStore : IAsyncDisposable
     private readonly IHttpContextAccessor _http;
 
     internal bool V1AdjustEnabled { get; }
+    internal bool V1MoveEnabled { get; }
 
     internal TenantStockReadStore(TenantStorageCatalog catalog, ITenantCredentialResolver credentials,
-        IHttpContextAccessor http, bool v1AdjustEnabled = false)
+        IHttpContextAccessor http, bool v1AdjustEnabled = false, bool v1MoveEnabled = false)
     {
         var accessor = new ContextScopeAccessorV1();
         _connections = new(Host, accessor, catalog, credentials, new(32, 64, 2));
-        _executor = new(new BindingAuthority(catalog, v1AdjustEnabled), accessor);
+        _executor = new(new BindingAuthority(catalog, v1AdjustEnabled, v1MoveEnabled), accessor);
         _http = http;
         V1AdjustEnabled = v1AdjustEnabled;
+        V1MoveEnabled = v1MoveEnabled;
     }
 
     // Called only after the native Stock Owner's current session and query decision.
@@ -68,6 +70,7 @@ internal sealed class TenantStockReadStore : IAsyncDisposable
         var purpose = entry switch
         {
             StockV1WriteEntry.Apply => AdjustPurpose,
+            StockV1WriteEntry.Move => MovePurpose,
             StockV1WriteEntry.Close => ClosePurpose,
             _ => throw new TenantStorageException(TenantStorageFailure.BindingRejected)
         };
@@ -139,6 +142,7 @@ internal sealed class TenantStockReadStore : IAsyncDisposable
         {
             ReadPurpose => "api/wms/stock",
             AdjustPurpose => "api/wms/stock/commands/v1/apply",
+            MovePurpose => "api/wms/stock/commands/v1/move",
             ClosePurpose => "api/wms/stock/operations/v1/close",
             _ => throw new TenantStorageException(TenantStorageFailure.BindingRejected)
         };
@@ -183,12 +187,19 @@ internal sealed class TenantStockReadStore : IAsyncDisposable
             => ValueTask.FromResult<ContextResolutionInputV1?>(input);
     }
 
-    private sealed class BindingAuthority(TenantStorageCatalog catalog, bool v1AdjustEnabled) : IContextBindingAuthorityV1
+    private sealed class BindingAuthority(TenantStorageCatalog catalog, bool v1AdjustEnabled, bool v1MoveEnabled) : IContextBindingAuthorityV1
     {
         public ValueTask<ContextBindingRegistrationV1?> ResolveCurrentAsync(ContextOperationV1 operation,
             AuthenticatedContextSourceV1 source, CancellationToken ct = default)
         {
-            if (operation.Purpose != ReadPurpose && !(v1AdjustEnabled && operation.Purpose is AdjustPurpose or ClosePurpose))
+            var enabled = operation.Purpose switch
+            {
+                ReadPurpose => true,
+                AdjustPurpose or ClosePurpose => v1AdjustEnabled,
+                MovePurpose => v1MoveEnabled,
+                _ => false
+            };
+            if (!enabled)
                 return ValueTask.FromResult<ContextBindingRegistrationV1?>(null);
             var binding = catalog.Resolve(operation.ExpectedTenantId);
             return ValueTask.FromResult<ContextBindingRegistrationV1?>(new(binding.TenantId, binding.TenantId, Host,

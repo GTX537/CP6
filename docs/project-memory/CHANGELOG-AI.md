@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC W334 真实库存 V1 两腿移库
+
+新增 `StockReadTenancy:EnableV1Move`，在已启用普通 V1 调整的宿主接现有移库、原结果和通知的同一普通事务。 [交付报告](../development/evidence/W334-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W333 库存原操作关闭与数据库确认中断
 
 显式关闭使用独立可信入口目的和已有普通 Stock 事务。普通写入同时核对 journal 行隔离。现有原命令合同继续区分提交结果和未知确认。 [交付报告](../development/evidence/W333-01/DELIVERY.md)

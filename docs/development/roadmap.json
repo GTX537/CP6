@@ -162307,6 +162307,21 @@
       "at": "2026-11-09T03:41:09.4150609Z",
       "change": "W333-01 普通原操作关闭、实际图锁竞争和 PostgreSQL 提交确认中断回读证据齐备，待正常远端采用和 DEV-1 释放。",
       "evidence": "docs/development/evidence/W333-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T03:45:21.282318Z",
+      "change": "W333-01正常合并PR #790，准确远端树核对和分支删除及DEV-1释放完成，实际833秒。",
+      "evidence": "docs/development/evidence/W333-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T03:46:02.650916Z",
+      "change": "W334-01沿原任务实际开工。W334 原 V1 两腿移库，按当前两端权限和实际普通 LOGIN 验证原货权、八位精度和第二腿故障回滚。",
+      "evidence": "docs/development/dispatch/20261109-wave334/README.md"
+    },
+    {
+      "at": "2026-11-09T03:54:58.7419872Z",
+      "change": "W334-01 真实 V1 两腿移库普通事务及相关回归齐备，待正常远端采用和固定 DEV-1 释放。",
+      "evidence": "docs/development/evidence/W334-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -163754,24 +163769,24 @@
       "card_anchor": "wp02-02",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "COORD / W333-01",
+        "chat_label": "COORD / W334-01",
         "repository": "Main",
-        "branch": "codex/w333-01",
+        "branch": "codex/w334-01",
         "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-        "claimed_at": "2026-11-09T03:31:27.686646Z",
-        "baseline_sha": "ddc73e51fa4b2ade79d68734b6c13b72efd58ed2",
-        "entry_evidence": "docs/development/dispatch/20261109-wave333/README.md",
+        "claimed_at": "2026-11-09T03:46:02.650916Z",
+        "baseline_sha": "f08005d09c70fb4df4e6b6c9099455a79b58e8e5",
+        "entry_evidence": "docs/development/dispatch/20261109-wave334/README.md",
         "phase": "VALIDATED_PENDING_REMOTE",
-        "dispatch_scope": "普通 LOGIN 的原操作显式关闭，原认证根与业务图锁内裁决关闭与迟到库存调整；真实 PostgreSQL COMMIT 确认断开后按原键恢复业务与 Outbox。",
+        "dispatch_scope": "原 V1 两腿移库采用现有普通 LOGIN 事务，实测两端授权、库存数量与原货权、部门继承、原回执和第二腿原生拒绝时整体回滚。",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "reserved_write_resources": [
-          "CP6.Core 库存原操作关闭与可信事务",
-          "Main 原认证根、业务图锁、journal 及 Outbox",
-          "隔离 PostgreSQL 传输与真实 HTTP 夹具"
+          "CP6.Core 真实 V1 库存移库 Owner 与普通写入",
+          "Main 库存源/目标、流水及原 journal/Outbox",
+          "原 Stock V1 宿主配置和实际 PostgreSQL 测试"
         ],
         "worker_start_received": true,
-        "delivery_report": "docs/development/evidence/W333-01/DELIVERY.md"
+        "delivery_report": "docs/development/evidence/W334-01/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -164694,7 +164709,7 @@
         },
         "receipt": "docs/development/evidence/authorized-adoption-release-20261015/release-receipt.json"
       },
-      "remaining_scope": "原库存 V1 调整、普通只读恢复、普通显式关闭与实际数据库提交确认中断已验证。继续 V1 两腿移库、V2 创建、角色/实际池和逐租户版本/初始化/恢复。",
+      "remaining_scope": "原 V1 调整、只读恢复、显式关闭、数据库提交确认故障和 V1 两腿移库已验证。继续 V2 新库存归属/审计、真实创建/移库目标，随后核实际池与逐租户版本初始化恢复。",
       "main_package_adoption": {
         "path": "docs/development/evidence/WP02-02/main-package-adoption/DELIVERY.md",
         "scope": "Main exact formal0.10.3 dependency adoption; not tenant storage or full WP02-02 delivery",
@@ -164910,9 +164925,9 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-02",
-        "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。 W327验证普通LOGIN在调用事务内取得原认证根。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。",
-        "remaining": "V1 移库、V2 创建、实际池与逐租户版本初始化恢复。",
-        "next_action": "W334 A5 真实库存 V1 移库，沿已有普通事务验证源与目的两腿、归属、八位精度和第二腿失败整体回滚。",
+        "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。 W327验证普通LOGIN在调用事务内取得原认证根。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。",
+        "remaining": "V2 新库存创建原语及真实宿主入口、实际池与逐租户版本初始化恢复。",
+        "next_action": "W335 A6a V2 新库存原部门及安全审计的普通事务原语。按同事务新行、原组织版本和真实前向迁移验证。",
         "evidence_refs": [
           "docs/development/evidence/WP02-02/directory-installation/DELIVERY.md",
           "docs/development/evidence/WP02-02/tenant-connections/DELIVERY.md",
@@ -164932,11 +164947,12 @@
           "docs/development/evidence/W330-01/DELIVERY.md",
           "docs/development/evidence/W331-01/DELIVERY.md",
           "docs/development/evidence/W332-01/DELIVERY.md",
-          "docs/development/evidence/W333-01/DELIVERY.md"
+          "docs/development/evidence/W333-01/DELIVERY.md",
+          "docs/development/evidence/W334-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true,
-        "latest_window": "W333-01"
+        "latest_window": "W334-01"
       },
       "wave326_delivery": {
         "status": "CLOSED",
@@ -165063,11 +165079,29 @@
         "workspace_status": "fixed-seat-detached-for-reuse"
       },
       "wave333_delivery": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W333-01/DELIVERY.md",
         "profile": "stock-original-close-v1（复用既有库存普通写入安装）",
         "validation": "实际 Kestrel/HTTP/JWT 与 PostgreSQL 18.6 协议 COMMIT 确认截断、普通关闭/迟到调整 1 项，旧 V2 原键和库存库位 HTTP 回归 2 项。",
         "scope": "原关闭在普通 LOGIN 事务持有原认证根和图锁，使用现有 journal。数据库提交完成消息被截断后按原键恢复。",
+        "full_task_complete": false,
+        "formal_acceptance": "NOT_RUN",
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/790",
+          "commit": "f08005d09c70fb4df4e6b6c9099455a79b58e8e5",
+          "target_head": "f08005d09c70fb4df4e6b6c9099455a79b58e8e5"
+        },
+        "seat_released": true,
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse"
+      },
+      "wave334_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W334-01/DELIVERY.md",
+        "profile": "stock-v1-move（复用既有库存普通写入安装）",
+        "validation": "真实 Kestrel/HTTP/JWT、PostgreSQL 18.6 普通 V1 两腿移库、各部门、货权、精度、目标原生拒绝 1 项，旧移库和原子性回归 4 项。",
+        "scope": "原 V1 移库两腿、部门、原结果与通知使用同一普通 LOGIN 事务，实际两端权限、原货权和数量精度完整。",
         "full_task_complete": false,
         "formal_acceptance": "NOT_RUN"
       }
@@ -174710,9 +174744,9 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-10",
-        "delivered": "Main PG journal、Stock/PA090代表事务及W249有效。W326证明Stock只读路径采用可信租户登录。 W327验证原认证根和普通写者事务的数据库前置。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。",
-        "remaining": "实际 Stock 其他写入口和其他代表 Owner，按原范围验收。",
-        "next_action": "W334 A5 真实库存 V1 移库，沿已有普通事务验证源与目的两腿、归属、八位精度和第二腿失败整体回滚。",
+        "delivered": "Main PG journal、Stock/PA090代表事务及W249有效。W326证明Stock只读路径采用可信租户登录。 W327验证原认证根和普通写者事务的数据库前置。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。",
+        "remaining": "实际 Stock V2 创建与其他代表 Owner，按原范围验收。",
+        "next_action": "W335 A6a V2 新库存原部门及安全审计的普通事务原语。按同事务新行、原组织版本和真实前向迁移验证。",
         "evidence_refs": [
           "docs/development/evidence/W310-01/DELIVERY.md",
           "docs/development/evidence/W326-01/DELIVERY.md",
@@ -174722,11 +174756,12 @@
           "docs/development/evidence/W330-01/DELIVERY.md",
           "docs/development/evidence/W331-01/DELIVERY.md",
           "docs/development/evidence/W332-01/DELIVERY.md",
-          "docs/development/evidence/W333-01/DELIVERY.md"
+          "docs/development/evidence/W333-01/DELIVERY.md",
+          "docs/development/evidence/W334-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false,
-        "latest_window": "W333-01"
+        "latest_window": "W334-01"
       }
     },
     {
@@ -205014,10 +205049,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "wave333",
-      "path": "docs/development/dispatch/20261109-wave333/README.md",
-      "baseline_sha": "ddc73e51fa4b2ade79d68734b6c13b72efd58ed2",
-      "registered_at": "2026-11-09T03:31:27.686646Z",
+      "id": "wave334",
+      "path": "docs/development/dispatch/20261109-wave334/README.md",
+      "baseline_sha": "f08005d09c70fb4df4e6b6c9099455a79b58e8e5",
+      "registered_at": "2026-11-09T03:46:02.650916Z",
       "phase": "VALIDATED_PENDING_REMOTE",
       "assigned_chats": [
         "COORD"
@@ -205036,39 +205071,39 @@
       "product_integrated": false,
       "windows": [
         {
-          "id": "W333-01",
-          "workspace_task": "W333-01",
+          "id": "W334-01",
+          "workspace_task": "W334-01",
           "related_tasks": [
             "WP02-02",
             "WP02-10"
           ],
-          "title": "库存原操作关闭和数据库提交确认中断",
+          "title": "真实库存 V1 两腿移库的普通事务",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
           "phase": "VALIDATED_PENDING_REMOTE",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w333-01",
-          "planned_scope_ref": "docs/development/dispatch/20261109-wave333/README.md",
+          "branch": "codex/w334-01",
+          "planned_scope_ref": "docs/development/dispatch/20261109-wave334/README.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "CP6.Core 库存原操作关闭与可信事务",
-            "Main 原认证根、业务图锁、journal 及 Outbox",
-            "隔离 PostgreSQL 传输与真实 HTTP 夹具"
+            "CP6.Core 真实 V1 库存移库 Owner 与普通写入",
+            "Main 库存源/目标、流水及原 journal/Outbox",
+            "原 Stock V1 宿主配置和实际 PostgreSQL 测试"
           ],
           "worker_delivery_received": true,
           "candidate_review_completed": true,
-          "delivery_report": "docs/development/evidence/W333-01/DELIVERY.md"
+          "delivery_report": "docs/development/evidence/W334-01/DELIVERY.md"
         }
       ],
       "storage": {
         "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "W334 A5 真实库存 V1 移库，沿已有普通事务验证源与目的两腿、归属、八位精度和第二腿失败整体回滚。"
+      "next_action": "W335 A6a V2 新库存原部门及安全审计的普通事务原语。按同事务新行、原组织版本和真实前向迁移验证。"
     },
     "wave_history": [
       {
@@ -245188,6 +245223,67 @@
           "new_worktrees": 0
         },
         "next_action": "W333 实测普通原操作关闭、与迟到调整的图锁竞争及 PostgreSQL COMMIT 确认中断的原键恢复。"
+      },
+      {
+        "id": "wave333",
+        "path": "docs/development/dispatch/20261109-wave333/README.md",
+        "baseline_sha": "ddc73e51fa4b2ade79d68734b6c13b72efd58ed2",
+        "registered_at": "2026-11-09T03:31:27.686646Z",
+        "phase": "CLOSED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "windows": [
+          {
+            "id": "W333-01",
+            "workspace_task": "W333-01",
+            "related_tasks": [
+              "WP02-02",
+              "WP02-10"
+            ],
+            "title": "库存原操作关闭和数据库提交确认中断",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_IMPLEMENTATION",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w333-01",
+            "planned_scope_ref": "docs/development/dispatch/20261109-wave333/README.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "CP6.Core 库存原操作关闭与可信事务",
+              "Main 原认证根、业务图锁、journal 及 Outbox",
+              "隔离 PostgreSQL 传输与真实 HTTP 夹具"
+            ],
+            "worker_delivery_received": true,
+            "candidate_review_completed": true,
+            "delivery_report": "docs/development/evidence/W333-01/DELIVERY.md",
+            "candidate_integrated": true,
+            "resources_released": true,
+            "adopted_remote": "f08005d09c70fb4df4e6b6c9099455a79b58e8e5",
+            "pr": "https://github.com/GTX537/CP6/pull/790",
+            "branch_disposition": "deleted-local-and-remote",
+            "finished_at": "2026-11-09T03:45:21.282318Z"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "new_worktrees": 0
+        },
+        "next_action": "W334 原 V1 两腿移库，按当前两端权限和实际普通 LOGIN 验证原货权、八位精度和第二腿故障回滚。"
       }
     ],
     "development_priority": {
@@ -247860,7 +247956,7 @@
         "first_reestimate_seconds": 14400
       },
       "timing_basis": "Native goal plus independently sampled monotonic segments for confirmed missing time, with exclusions and no overlap.",
-      "next_priority": "W334 A5 真实库存 V1 移库，沿已有普通事务验证源与目的两腿、归属、八位精度和第二腿失败整体回滚。",
+      "next_priority": "W335 A6a V2 新库存原部门及安全审计的普通事务原语。按同事务新行、原组织版本和真实前向迁移验证。",
       "windows": [
         {
           "id": "W327-01",
@@ -248030,7 +248126,7 @@
         },
         {
           "id": "W333-01",
-          "state": "VALIDATED_PENDING_REMOTE",
+          "state": "CLOSED",
           "related_tasks": [
             "WP02-02",
             "WP02-10"
@@ -248044,8 +248140,35 @@
           "dispatch": "docs/development/dispatch/20261109-wave333/README.md",
           "validation_ready_at": "2026-11-09T03:41:09.4150609Z",
           "validation_ready_seconds": 581,
+          "timing_source": "主机连续单调取样，起始至官方finish回读。无暂停。",
+          "delivery": "docs/development/evidence/W333-01/DELIVERY.md",
+          "actual_seconds": 833,
+          "finished_at": "2026-11-09T03:45:21.282318Z",
+          "actual_to_estimate_midpoint": 0.264,
+          "pr": "https://github.com/GTX537/CP6/pull/790",
+          "adopted_main": "f08005d09c70fb4df4e6b6c9099455a79b58e8e5",
+          "branch_disposition": "deleted-local-and-remote",
+          "seat_released": true,
+          "variance": "原写入、当前查询和恢复直接复用，PostgreSQL 确认转发首轮取得真实故障，主要成本为基线、候选和旧入口定向验证。"
+        },
+        {
+          "id": "W334-01",
+          "state": "VALIDATED_PENDING_REMOTE",
+          "related_tasks": [
+            "WP02-02",
+            "WP02-10"
+          ],
+          "started_at": "2026-11-09T03:46:02.650916Z",
+          "estimate_minutes": [
+            18,
+            35
+          ],
+          "scope": "原 V1 两腿移库采用现有普通 LOGIN 事务，实测两端授权、库存数量与原货权、部门继承、原回执和第二腿原生拒绝时整体回滚。",
+          "dispatch": "docs/development/dispatch/20261109-wave334/README.md",
+          "validation_ready_at": "2026-11-09T03:54:58.7419872Z",
+          "validation_ready_seconds": 535,
           "timing_source": "同次连续执行的主机单调取样。远端采用及席位收尾计时另记。",
-          "delivery": "docs/development/evidence/W333-01/DELIVERY.md"
+          "delivery": "docs/development/evidence/W334-01/DELIVERY.md"
         }
       ]
     },
