@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 恢复候选后续
+
+继续普通原操作 HTTP、FileContent 原生历史及父版本联合采用、ERP 与其他域正式恢复。PGT-021/022 和 0.10.4 正式发布均按原门执行。 [W414](../development/evidence/W414-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 多域候选恢复
 
 推进同源 v10 文件落盘、原 RMA 操作开放后的普通读回和其余域采用。正式 PGT-021/022、Platform 0.10.4 签发和 Main 采用分别执行。 [W413](../development/evidence/W413-01/DELIVERY.md)

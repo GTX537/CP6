@@ -96,7 +96,7 @@ def checked_root(root):
     return root
 
 
-def verify_file(root, key, length, expected):
+def verify_file(root, key, length, expected, *, sink=None):
     relative = key.split("/")
     namespace = root / relative[0]
     directory = namespace / relative[1]
@@ -120,6 +120,8 @@ def verify_file(root, key, length, expected):
                 if not chunk:
                     break
                 digest.update(chunk)
+                if sink is not None and sink.write(chunk) != len(chunk):
+                    raise OSError("file-content-short-copy")
                 remaining -= len(chunk)
             if remaining or stream.read(1):
                 raise ValueError("file-content-asset-length-mismatch")
@@ -133,7 +135,7 @@ def verify_file(root, key, length, expected):
         raise ValueError("file-content-asset-not-found") from error
 
 
-def verify_member(path, tenant, count, root):
+def member_files(path, tenant, count):
     prefix = "native-content-v1/" + tenant.hex + "/"
     seen = 0
     previous = 0
@@ -156,7 +158,12 @@ def verify_member(path, tenant, count, root):
             if not key.startswith(prefix) or not re.fullmatch(r"[0-9a-f]{32}", key[len(prefix):]) \
                     or key[len(prefix):] == "0" * 32:
                 raise ValueError("file-content-asset-key-rejected")
-            verify_file(root, key, length, row["digest"])
+            yield key, length, row["digest"]
             previous = file_id
     if seen != count:
         raise ValueError("file-content-reference-count-mismatch")
+
+
+def verify_member(path, tenant, count, root):
+    for key, length, digest in member_files(path, tenant, count):
+        verify_file(root, key, length, digest)
