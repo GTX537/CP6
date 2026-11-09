@@ -683,7 +683,7 @@ CP6.Core.Services.Sys.DataScopeRegistry.Register("wms-location", "库位原对�
 CP6.Core.Services.Sys.FieldRegistry.Register("wms-location", new[] { "Barcode", "LocationName" }.Select(f => new CP6.Core.Services.Sys.FieldRegistry.Field(f, f)).ToArray());
 builder.Services.AddScoped<CP6.Core.Services.Wms.WarehouseOwnerServiceV1>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.WarehouseDraftOwnerV1>();
-builder.Services.AddScoped<CP6.Core.Services.Wms.RmaApplicationOwnerV1>();
+CP6.WebApi.Configuration.RmaReadTenancyConfiguration.Add(builder.Services, builder.Configuration, database, databaseConnection);
 builder.Services.AddScoped<CP6.Core.Services.Wms.RmaFormalOwnerV1>();
 CP6.Core.Services.Sys.DataScopeRegistry.Register("quality-return-inspection", "退货质量判定", new[] { 1, 2, 3, 4, 5 }, 1);
 CP6.Core.Services.Sys.FieldRegistry.Register("quality-return-inspection", Array.Empty<CP6.Core.Services.Sys.FieldRegistry.Field>());

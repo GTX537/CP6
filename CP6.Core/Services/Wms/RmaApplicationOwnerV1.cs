@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
+using CP6.Core.Persistence.Tenancy;
 using CP6.Core.Services.Erp;
 using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Wms;
@@ -12,6 +13,11 @@ namespace CP6.Core.Services.Wms;
 /// <summary>Return intent based on actual native shipment lines. Never grants authorization or moves stock.</summary>
 public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner)
 {
+    private readonly TenantRmaReadStore? _tenantReads;
+
+    internal RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner, TenantRmaReadStore? tenantReads)
+        : this(db, owner) => _tenantReads = tenantReads;
+
     internal const string JournalOwner = "Main.Wms.RmaApplication.v1", Contract = "RMA-NATIVE-APPLICATION/1";
     private static OrderPriceCorrectionException Error(string code, int status = 422) => new(code, status);
     private static string Quantity(decimal value) => value.ToString("0.########", CultureInfo.InvariantCulture);
@@ -96,12 +102,40 @@ public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner
     public Task<RmaApplicationViewV1> ReadAsync(Guid id, int? version = null, CancellationToken ct = default) =>
         owner.ExecuteAsync(OperationsOwnerV1.Rma, "query", false, async (a, t) =>
         {
+            if (_tenantReads is not null)
+                return await _tenantReads.ReadAsync(db, a.ActorId, (storage, token) => ReadTenantAsync(storage, a, id, version, token), t);
+
             var h = await RequireHead(a, id, t);
-            if (version is < 1 || version > h.Version) throw Error("RMA_APPLICATION_VERSION_NOT_FOUND", 404);
-            return a.ProjectRmaApplication(await ReadVersion(id, version ?? h.Version, t));
+            return a.ProjectRmaApplication(await ReadVersion(id, SelectVersion(version, h.Version), t));
         }, ct);
+
+    private static async Task<RmaApplicationViewV1> ReadTenantAsync(RmaTenantReadContext storage, OperationsAccessV1 access,
+        Guid id, int? version, CancellationToken ct)
+    {
+        var tenant = storage.Binding.TenantId;
+        var head = await storage.Heads.AsNoTracking().SingleOrDefaultAsync(row => row.TenantId == tenant && row.Id == id, ct)
+            ?? throw Error("RMA_APPLICATION_NOT_FOUND", 404);
+        await access.RequireRmaApplicationSource(head.OutboundId, head.ActorId, ct);
+        var selected = SelectVersion(version, head.Version);
+        var payload = await storage.Versions.AsNoTracking()
+            .Where(row => row.TenantId == tenant && row.Id == id && row.Version == selected)
+            .Select(row => row.Payload).SingleAsync(ct);
+        return access.ProjectRmaApplication(JsonSerializer.Deserialize<RmaApplicationViewV1>(payload)!);
+    }
+
+    private static int SelectVersion(int? requested, int latest)
+    {
+        if (requested is < 1 || requested > latest) throw Error("RMA_APPLICATION_VERSION_NOT_FOUND", 404);
+        return requested ?? latest;
+    }
+
+    private void RequireSharedEntry()
+    {
+        if (_tenantReads is not null) throw Error("RMA_TENANT_ENTRY_UNAVAILABLE", 503);
+    }
     public Task<IReadOnlyList<RmaApplicationViewV1>> ListAsync(int page = 1, CancellationToken ct = default)
     {
+        RequireSharedEntry();
         if (page < 1 || page > int.MaxValue / 50) throw Error("RMA_PAGE_INVALID", 400);
         return owner.ExecuteAsync<IReadOnlyList<RmaApplicationViewV1>>(OperationsOwnerV1.Rma, "query", false, async (a, t) =>
         {
@@ -116,6 +150,7 @@ public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner
     }
     public Task<RmaApplicationResultV1> CreateAsync(RmaApplicationCreateV1 c, CancellationToken ct = default)
     {
+        RequireSharedEntry();
         if (c.OperationId == Guid.Empty || c.ApplicationId == Guid.Empty || c.OutboundId == Guid.Empty
             || string.IsNullOrWhiteSpace(c.SourceVersion) || string.IsNullOrWhiteSpace(c.Reason) || c.Reason.Length > 1000
             || c.Remarks?.Length > 1000 || c.RequestedOutcome is not ("CREDIT" or "REFUND" or "REPLACEMENT" or "SUPPLEMENTARY_SHIPMENT" or "RETURN_ONLY" or "TO_BE_DECIDED")
@@ -153,6 +188,7 @@ public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner
     }
     public Task<RmaApplicationResultV1> SubmitAsync(Guid id, RmaApplicationSubmitV1 c, string? ifMatch, CancellationToken ct = default)
     {
+        RequireSharedEntry();
         if (id == Guid.Empty || c.OperationId == Guid.Empty || c.ExpectedVersion < 1) throw Error("RMA_APPLICATION_INPUT_INVALID", 400);
         if (string.IsNullOrWhiteSpace(ifMatch)) throw Error("RMA_IF_MATCH_REQUIRED", 428);
         var input = MainOwnerOperationJournalV1.Encode(new { Id = id, Command = c, IfMatch = ifMatch });
@@ -189,6 +225,7 @@ public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner
     }
     public Task<RmaApplicationOperationV1> OperationAsync(Guid id, bool close = false, CancellationToken ct = default)
     {
+        RequireSharedEntry();
         if (id == Guid.Empty) throw Error("ORIGINAL_OPERATION_REQUIRED", 400);
         var journal = new MainOwnerOperationJournalV1(db); MainOwnerOperationJournalV1.Original? original = null;
         return owner.ExecuteAsync(OperationsOwnerV1.Rma, "query", close, async (a, t) =>
