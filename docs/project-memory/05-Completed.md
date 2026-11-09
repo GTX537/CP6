@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC 三天实际执行目标
+
+回读W326正式合并至Main、精确分支删除及DEV-1释放，确认原库存可信读取范围。 [执行计划](../development/planning/20261109-codex-72h-execution.md)
+
 ## 2026-11-09 UTC 总控续接和 W326 库存读取
 
 W326完成限定库存查询读取验证。实际Main API与 PostgreSQL 18.6 两项新场景、四项同窗回归、实际安装命令均通过。保留原全局主键、租户业务键、对象和价格权限。远端采用、分支处置及DEV-1释放以正常 PR 和官方 finish 回读为准。 [交付报告](../development/evidence/W326-01/DELIVERY.md)。

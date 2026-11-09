@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC 三天实际执行目标
+
+登记72小时滚动队列和实测估算口径，归档旧24小时目标，台账仍为37 DONE、2 IN_PROGRESS、336 PLANNED。 [执行计划](../development/planning/20261109-codex-72h-execution.md)
+
 ## 2026-11-09 UTC 总控续接和 W326 库存读取
 
 新增 opt-in 库存查询可信读取布局及显式安装命令。保留原Stock Owner认证授权，业务EF按租户专用只读登录和共享RLS查询。发布和部署沿原门禁。 [交付报告](../development/evidence/W326-01/DELIVERY.md)。

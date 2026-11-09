@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-09 UTC 三天实际执行目标
+
+开启72小时实际Codex执行目标。W326已正常采用和释放，按原375真实余项单人串行推进。 [执行计划](../development/planning/20261109-codex-72h-execution.md)
+
 ## 2026-11-09 UTC 总控续接和 W326 库存读取
 
 按用户交接接任总控。四仓远端及固定席位已核对，W325和原24h实际86,238秒终态已确认。W326完成库存列表、历史和流水的可信 PostgreSQL 普通登录读取验证。原375仍为37 DONE、2 IN_PROGRESS、336 PLANNED，原59仍为9闭环、50余项。 [交付报告](../development/evidence/W326-01/DELIVERY.md)。
