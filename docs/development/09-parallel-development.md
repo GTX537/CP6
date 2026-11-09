@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W389 原外部资产 v7 实证通过。W391 DEV-2 核 IAM 落表，W392 集成席位核普通角色百轮池复用。 [W389](./evidence/W389-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave389/README.md)
+
+
 > W387 原历史 IAM v6 实证通过。W389 DEV-1 核原文件内容，W390 集成席位核同库双宿主。 [W387](./evidence/W387-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave387/README.md)
 
 
