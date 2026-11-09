@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC W351 实际全 Core 兼容验证
+
+复用旧制品，单次发布含首管理员修复的当前制品。真实双初始化和三宿主通过，采用清单列入 R2 源审查。 [交付报告](../development/evidence/W351-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W349 本地应用回退证据
 
 增加离线源审查输入及定向回归。复用真实 W347 已完成的 PostgreSQL 和 Kestrel 运行，记录工具实际正反执行。 [交付报告](../development/evidence/W349-01/DELIVERY.md)

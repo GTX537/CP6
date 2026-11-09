@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> [W351-01](evidence/W351-01/DELIVERY.md)实际全 Core 前向和旧宿主重启。W350 独占 DEV-1，COORD 回收各自台账及席位。
+
 > [W349-01](evidence/W349-01/DELIVERY.md)固定两制品、驱动、实测库及方向的本地回退结论。W346 已采用并释放，DEV-1 开始 [W350 原 RMA 租户迁移](dispatch/20261109-wave350/README.md)。
 
 > [W346-01](evidence/W346-01/DELIVERY.md)真实查回原库存安装回执。W347 已正常远端采用，W348 已完成独立核验并释放，DEV-2 正并行执行 W349。 [准确窗口和席位](dispatch/20261109-wave346/README.md)

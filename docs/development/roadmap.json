@@ -162557,6 +162557,21 @@
       "at": "2026-11-09T07:19:31.0498088Z",
       "change": "W349 实际用固定旧/新制品及原 PostgreSQL 观察得到精确本地回退判定，9 类真实错配拒绝，进入正常远端采用。",
       "evidence": "docs/development/evidence/W349-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T07:28:24.716829Z",
+      "change": "W349 PR #807 正常采用、准确清理分支及释放 DEV-2，实测 1046 秒。",
+      "evidence": "docs/development/evidence/W349-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T07:29:19.411021Z",
+      "change": "W351 独立领取 DEV-2，接准确全 Core 迁移和回退。",
+      "evidence": "docs/development/dispatch/20261109-wave350/README.md"
+    },
+    {
+      "at": "2026-11-09T07:36:47.2703496Z",
+      "change": "W351 真实 Core 1→224→224 和两个原 JTI 兼容通过，进入正常远端采用。",
+      "evidence": "docs/development/evidence/W351-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -177745,24 +177760,24 @@
       "card_anchor": "wp02-28",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "ROLLBACK-COMPAT / W349-01",
+        "chat_label": "FORWARD-COMPAT / W351-01",
         "repository": "Main",
-        "branch": "codex/w349-01",
+        "branch": "codex/w351-01",
         "worktree": "D:/CP6-worktrees/dev-2",
-        "claimed_at": "2026-11-09T07:10:57.224926Z",
-        "baseline_sha": "3b3773bfd5d6a452ff25fbe67f5278c08f6c18a1",
-        "entry_evidence": "docs/development/dispatch/20261109-wave346/README.md",
+        "claimed_at": "2026-11-09T07:29:19.411021Z",
+        "baseline_sha": "bc10c9f6f85eb30490886f43ab68b0a711906063",
+        "entry_evidence": "docs/development/dispatch/20261109-wave350/README.md",
         "phase": "VALIDATED_PENDING_REMOTE",
-        "dispatch_scope": "以 W345 两份固定制品和 W347 实际原件验证本地 current→prior 唯一回退方向，绑定准确制品、驱动和 PostgreSQL profile/布局。交付现有源审查可消费的本地参考。",
+        "dispatch_scope": "固定两个 Main 实际发布物在同一全 Core PostgreSQL 18.6 上真实初始化、223 项前向迁移、旧版重启并继续原 C02。准确 R2 源审查采用清单。",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "reserved_write_resources": [
           "CP6 DEV-2",
-          "eng/wp02-28 本地回退判定与定向测试",
-          "W345/W347 独立固定制品及证据，只读"
+          "eng/wp02-28 实际发布兼容验证",
+          "W345 固定旧制品、c564 修复版发布与私有 PostgreSQL 55438"
         ],
         "worker_start_received": true,
-        "delivery_report": "docs/development/evidence/W349-01/DELIVERY.md"
+        "delivery_report": "docs/development/evidence/W351-01/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -177771,7 +177786,7 @@
         "读取任务卡固定来源与当前已确认主线；逐项确认直接前置的实际远端交付及合同/包版本。",
         "条件消费路径逐条核验卡片绑定；不适用需说明依据，未交付的真实提供者不可用stub绕过；协调对话确认共享写入窗口。"
       ],
-      "remaining_scope": "同一已安装布局的实际应用回退和精确本地判定已实证。接真实不同 schema 版本的前向升级与旧版应用重启。生产发布和实际门禁采用依既有 R2 路径分别登记。",
+      "remaining_scope": "原卡的本地宿主身份、同布局兼容判定、真实全 Core 前向迁移与旧应用回退、准确 R2 源审查采用清单已验证。待 W351 正常远端采用和席位回读核销本地原卡。正式候选、其他业务路径及部署各沿独立门禁。",
       "wave9_delivery": {
         "status": "MERGED",
         "source_candidate_sha": "c92f12e33937a47093e5d9861c4269bb17b432b6",
@@ -177845,20 +177860,21 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-28",
-        "delivered": "固定平台包实际加载观察、一次真实publish、实际宿主授权/负向回退证据保留。 W345 固定旧新实际本地制品，分别核真实 PG/Kestrel 与正式五包运行身份。 W347 两个准确真实制品用同一个 service-token-v1 PostgreSQL 物理布局实测共存、交叉签发撤销、旧版重启和原效果重放。 W349 增加精确本地回退判定，正向真实原件及 9 个拒绝均验证，形成 R2 源审查本地参考。",
-        "remaining": "同一已安装布局的实际应用回退和精确本地判定已实证。接真实不同 schema 版本的前向升级与旧版应用重启。生产发布和实际门禁采用依既有 R2 路径分别登记。",
-        "next_action": "沿真实全 Core PostgreSQL 固定迁移版本做老到新，核共同业务与旧应用重启。",
+        "delivered": "固定平台包实际加载观察、一次真实publish、实际宿主授权/负向回退证据保留。 W345 固定旧新实际本地制品，分别核真实 PG/Kestrel 与正式五包运行身份。 W347 两个准确真实制品用同一个 service-token-v1 PostgreSQL 物理布局实测共存、交叉签发撤销、旧版重启和原效果重放。 W349 增加精确本地回退判定，正向真实原件及 9 个拒绝均验证，形成 R2 源审查本地参考。 W351 实测完整 Core 前向、旧版应用回退和原 C02 记录，并提供 R2 源审查准确采用清单。",
+        "remaining": "原卡的本地宿主身份、同布局兼容判定、真实全 Core 前向迁移与旧应用回退、准确 R2 源审查采用清单已验证。待 W351 正常远端采用和席位回读核销本地原卡。正式候选、其他业务路径及部署各沿独立门禁。",
+        "next_action": "W351 远端采用和准确清理后核销本地原卡。",
         "evidence_refs": [
           "docs/development/evidence/WP02-28/published-host/DELIVERY.md",
           "docs/development/evidence/WP02-28/DELIVERY.md",
           "docs/development/evidence/W310-01/DELIVERY.md",
           "docs/development/evidence/W345-01/DELIVERY.md",
           "docs/development/evidence/W347-01/DELIVERY.md",
-          "docs/development/evidence/W349-01/DELIVERY.md"
+          "docs/development/evidence/W349-01/DELIVERY.md",
+          "docs/development/evidence/W351-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": false,
-        "latest_window": "W349-01"
+        "latest_window": "W351-01"
       },
       "wave345_delivery": {
         "status": "CLOSED",
@@ -177897,13 +177913,32 @@
         "workspace_status": "fixed-seat-detached-for-reuse"
       },
       "wave349_delivery": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W349-01/DELIVERY.md",
         "profile": "service-token-v1",
         "scope": "真实已观察的 W345 制品、W347 共同 service-token-v1 物理布局和 Npgsql 8.0.8 / EF PostgreSQL 8.0.11。唯一当前版→旧版的本地判定及 R2 源审查参考。",
         "validation": "本地 7 定向测试，固定真实 W345/W347 输入正向 CLI 退出 0，9 个实际不匹配退出 1。复用已完成的 PostgreSQL/HTTPS 运行事实。",
         "full_task_complete": false,
-        "formal_acceptance": "NOT_RUN"
+        "formal_acceptance": "NOT_RUN",
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/807",
+          "commit": "bc10c9f6f85eb30490886f43ab68b0a711906063",
+          "target_head": "bc10c9f6f85eb30490886f43ab68b0a711906063"
+        },
+        "seat_released": true,
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse"
+      },
+      "wave351_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W351-01/DELIVERY.md",
+        "profile": "full-core-postgresql",
+        "scope": "固定两个 Main 实际发布物在同一全 Core PostgreSQL 18.6 上真实初始化、223 项前向迁移、旧版重启并继续原 C02。准确 R2 源审查采用清单。",
+        "validation": "实际 DatabaseInit 两次退出0，Core 1→224→224，其余三套原值一致。三宿主九个 HTTPS 200/no-store，原 JTI 重放零差异。实际离线复核 W349 结果哈希一致。",
+        "full_task_complete": false,
+        "formal_acceptance": "NOT_RUN",
+        "local_card_scope_ready_for_closure": true
       }
     },
     {
@@ -249223,7 +249258,7 @@
         }
       },
       "timing_basis": "Native goal plus independently sampled monotonic segments for confirmed missing time, with exclusions and no overlap.",
-      "next_priority": "DEV-1 继续 RMA 实际逐租户迁移。DEV-2 收尾 W349，并复用旧发布物及新含 #801 修正制品验证真实 Core 前向迁移。",
+      "next_priority": "正常采用 W351 后核销 WP02-28 本地原卡。DEV-1 继续 W350，INTEGRATION-1 独立验证恢复候选 Stock Outbox。",
       "windows": [
         {
           "id": "W327-01",
@@ -249823,6 +249858,36 @@
           "variance": "原 30–50 分钟，实际 34 分 26 秒，含目录写触发器、孤立回执、目录外普通登录策略的真实失败和最终一次定向复测。"
         },
         {
+          "id": "W349-01",
+          "state": "CLOSED",
+          "original_task": "WP02-28",
+          "owner": "ROLLBACK-COMPAT",
+          "started_at": "2026-11-09T07:10:57.224926Z",
+          "estimate_minutes": [
+            15,
+            28
+          ],
+          "base": "3b3773bfd5d6a452ff25fbe67f5278c08f6c18a1",
+          "branch": "codex/w349-01",
+          "workspace": "D:/CP6-worktrees/dev-2",
+          "seat": "DEV-2",
+          "dispatch": "docs/development/dispatch/20261109-wave346/README.md",
+          "scope": "以 W345 两份固定制品和 W347 实际原件验证本地 current→prior 唯一回退方向，绑定准确制品、驱动和 PostgreSQL profile/布局。交付现有源审查可消费的本地参考。",
+          "validation_ready_at": "2026-11-09T07:19:31.0498088Z",
+          "validation_ready_seconds": 513,
+          "timing_source": "主机单调取样，起始至官方 finish，重叠只计一次。",
+          "delivery": "docs/development/evidence/W349-01/DELIVERY.md",
+          "finished_at": "2026-11-09T07:28:24.716829Z",
+          "actual_seconds": 1046,
+          "pr": "https://github.com/GTX537/CP6/pull/807",
+          "adopted_main": "bc10c9f6f85eb30490886f43ab68b0a711906063",
+          "seat_released": true,
+          "branch_disposition": "deleted-local-and-remote",
+          "workspace_status": "fixed-seat-detached-for-reuse",
+          "actual_to_estimate_midpoint": 0.811,
+          "variance": "估15–28分钟，实际17分26秒。复用实际 W345/W347 观察，验证齐备采样 513 秒。"
+        },
+        {
           "id": "W350-01",
           "state": "ACTIVE",
           "related_tasks": [
@@ -249846,25 +249911,26 @@
         "overlap_counted_once": true,
         "active_windows": [
           {
-            "id": "W349-01",
+            "id": "W351-01",
             "state": "VALIDATED_PENDING_REMOTE",
             "original_task": "WP02-28",
-            "owner": "ROLLBACK-COMPAT",
-            "started_at": "2026-11-09T07:10:57.224926Z",
+            "owner": "FORWARD-COMPAT",
+            "started_at": "2026-11-09T07:29:19.411021Z",
             "estimate_minutes": [
-              15,
-              28
+              28,
+              50
             ],
-            "base": "3b3773bfd5d6a452ff25fbe67f5278c08f6c18a1",
-            "branch": "codex/w349-01",
+            "base": "bc10c9f6f85eb30490886f43ab68b0a711906063",
+            "branch": "codex/w351-01",
             "workspace": "D:/CP6-worktrees/dev-2",
             "seat": "DEV-2",
-            "dispatch": "docs/development/dispatch/20261109-wave346/README.md",
-            "scope": "以 W345 两份固定制品和 W347 实际原件验证本地 current→prior 唯一回退方向，绑定准确制品、驱动和 PostgreSQL profile/布局。交付现有源审查可消费的本地参考。",
-            "validation_ready_at": "2026-11-09T07:19:31.0498088Z",
-            "validation_ready_seconds": 513,
-            "timing_source": "同一主机连续单调取样，远端采用和释放另计。",
-            "delivery": "docs/development/evidence/W349-01/DELIVERY.md"
+            "dispatch": "docs/development/dispatch/20261109-wave350/README.md",
+            "scope": "固定两个 Main 实际发布物在同一全 Core PostgreSQL 18.6 上真实初始化、223 项前向迁移、旧版重启并继续原 C02。准确 R2 源审查采用清单。",
+            "validation_ready_at": "2026-11-09T07:36:47.2703496Z",
+            "validation_ready_seconds": 447,
+            "actual_runtime_seconds": 81.708,
+            "delivery": "docs/development/evidence/W351-01/DELIVERY.md",
+            "timing_source": "主机单调取样，实际 runtime 与远端采用另计。"
           }
         ],
         "verification_windows": [
