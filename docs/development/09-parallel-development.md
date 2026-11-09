@@ -1,6 +1,6 @@
 # 多对话任务分配与交付
 
-> 当前：[CP6 三天实际执行](planning/20261109-codex-72h-execution.md)单人串行目标ACTIVE，先接WP02-02库存写入。
+> 当前：[CP6 三天实际执行](planning/20261109-codex-72h-execution.md)由总控单人串行执行。[W327-01](evidence/W327-01/DELIVERY.md)完成库存普通登录原生栅栏的本地验证，随后接同事务原命令记录和 Stock Outbox。
 
 > 历史快照：[W326-01](dispatch/20261109-wave326/README.md)单人总控续接。原24h已收妥，原59仍为9闭环、50余项。库存读取已验证，按正式交付流程收尾。
 
