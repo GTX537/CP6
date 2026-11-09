@@ -20,17 +20,16 @@ DEV-1 于 2026-11-09 19:21:50 UTC 开工，基线 #858 `eec44dbe4f526f861f2d5983
 
 从 W419 已保存的原 CSV 离线重算 A/B 原命令、结果、C03 输入三组摘要。按 Aggregate、Request、Inbox、Outbox 顺序，A 行版本为 `2, 5, 3, 4`，B 为 `7, 10, 8, 9`。运行中的序列、唯一键回滚、原回执恢复和 B 保持仍需实测。[定向原生验证入口](../../../../eng/wp02-02/rma-tenant-archive/verify_erp_terminal_candidate.py)
 
+## 已执行的接续
+
+2026-11-09 22:53:04 UTC 在 DEV-1 恢复同一分支。Main #863 与本任务基线的归档、Core、PostgreSQL 和依赖输入一致。`native-02` 在新鲜物理内存 1,142 MiB 实际打开原 W419 转用实例。源控件查询返回原 OID `16386` 的 JSON 字符串，验证器按整数比较而拒绝。实际数据目录、安装 ID、原 Owner 与只读状态正确。该轮 5.610 秒后停止，候选库创建尚未开始。驱动将 SQL `oid` 统一转换为 `bigint` 并按该轮准确停机指纹接续。[真实终止](/D:/CP6-local-test/CP6-72H-20261109/W422-01/native-02/terminal.json) · [原生身份输出](/D:/CP6-local-test/CP6-72H-20261109/W422-01/native-02/source/controls-before.stdout)
+
+`native-03` 在同一实例建立隔离的 `w422_erp_candidate`，实际库 OID `43614`，system identifier `7706139311168619192`，关闭标记 `704f4215-7502-4b0a-bf3f-48fca14b2101`。真实恢复 schema、两份原迁移历史、A/B 租户和 B 的原 ERP 行。候选序列为 `[1,false]`，原六个触发器在位，准入、环境与导入回执为空。原 source-target、错误标记、错误 pin 和不合适的旧 v10 包四项拒绝已执行。[候选身份和边界](/D:/CP6-local-test/CP6-72H-20261109/W422-01/native-03/ready.json) · [候选初始写集](/D:/CP6-local-test/CP6-72H-20261109/W422-01/native-03/checks/boundary-before.stdout)
+
+第一条原生故障注入在调用真实 `cp6_authentication_v1.acquire()` 时返回 `P0001 PLATFORM_ADMIN_GUARD_UNAVAILABLE`。schema-only 夹具保留两条已执行迁移和原授权，但缺 `PlatformAdminGuardV1` 的初始根行，ERP 导入 SQL 尚未执行。驱动沿用原迁移的 `INSERT INTO cp6_platform_admin_guard_v1.root VALUES (true, 0)`。已建候选的续跑先核对原物理标记、两条迁移记录和空回执，再锁定空根表按原语句初始化。修正后的停机输入和原包 pin 预检通过，实际初始化、故障注入和原回执回收待运行。[原生拒绝](/D:/CP6-local-test/CP6-72H-20261109/W422-01/native-03/checks/allocated-token-conflict/stage.stderr) · [原初始化](/D:/CP6/CP6.Persistence.PostgreSql/PlatformAdminGuardPostgreSqlV1.cs:14) · [修正输入预检](/D:/CP6-local-test/CP6-72H-20261109/W422-01/guard-repair-preflight.txt)
+
+第二轮总耗时 31.352 秒。postmaster 43196 已退出，转用实例及受保护 W405 原件均为正常停机。原 W419 源控制快照前后 SHA-256 `0776b1b295fd3d0f12ef44690b7ee06c6f27eed581fce5c06fa6bf401cd24a4b`，其他 Owner 与 A/B 原行保持。转用 PGDATA 保留现有候选及原只读源，待 W422 完成后再安排该共享夹具。[实际停止](/D:/CP6-local-test/CP6-72H-20261109/W422-01/native-03/stopped.json) · [本轮终止](/D:/CP6-local-test/CP6-72H-20261109/W422-01/native-03/terminal.json)
+
 ## 续跑
 
-DEV-1 仍登记为 W422-01。协调方重新分配资源后，从同一转用夹具开始新的启动尝试。现无候选 checkpoint，因此使用下列新尝试入口。
-
-```powershell
-$w = 'D:/CP6-local-test/CP6-72H-20261109/W422-01'
-python -B "$w/run-w422.py" native --attempt native-02 --pg-minimum 1050 --seconds 120 2>&1 |
-  Tee-Object -FilePath "$w/test-native-02.log"
-$w422Exit = $LASTEXITCODE
-Set-Content -LiteralPath "$w/test-native-02.exit" -Value $w422Exit
-exit $w422Exit
-```
-
-该命令独占 55567，启动前要求两次达 1,050 MiB 及即时复核，创建后执行 900 MiB 门限，均要求 19 GiB 可用提交空间。通过后运行一个 32 MiB PostgreSQL 实例及原生客户端。后续只有已创建并记录候选且资源检查退出 75 的情形才使用已记录的 `--resume-attempt`。
+恢复原分支和 DEV-1 后，在独占 55567、连续及即时物理内存 1,050 MiB、可用提交 19 GiB 条件下运行 `python -B D:/CP6-local-test/CP6-72H-20261109/W422-01/run-w422.py native --attempt native-04 --pg-minimum 1050 --seconds 120 --resume-attempt native-03`。使用已建候选 OID 43614。修正驱动 SHA-256 `65e50f9a34081d2a521c8db901b16b38bf7aaa39bbf79491a44047d346ba014e`。正式 PGT-021/022 保持原状态。[私有运行器](/D:/CP6-local-test/CP6-72H-20261109/W422-01/run-w422.py)
