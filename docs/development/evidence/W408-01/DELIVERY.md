@@ -1,0 +1,17 @@
+# W408-01 · 同源 v10 Stock 当前对账
+
+DEV-2 于 2026-11-09 15:45:16.514769 UTC 从 #846 `be7e044c1ac08652369acdf7c75557868a22a3bd` 开工。`reconcile_stock_outbox.py` 接收 v10 完整归档、外部 manifest SHA-256、原私有资产根和准确源物理目标。它在原租户 Ready、迁移原件、Stock 目录和源库排序元数据相符后，在同一 PostgreSQL `REPEATABLE READ READ ONLY` 快照中对账。[对账入口](../../../../eng/wp02-02/rma-tenant-archive/reconcile_stock_outbox.py) · [W405 同源 v10](../W405-01/DELIVERY.md)
+
+按原生默认排序的 `varchar` 全局 MessageId 查找，随后比较原字符串字节、NativeId、租户操作、原 Owner、输入/结果摘要与原 route。当前授权检查核对实时租户 Enable、Authority.Enabled、Owner、policy、publisher、profile 和原 64 位 lock key。准确键记录 `PRESERVE_CURRENT` 和实际 lease/终态，存在冲突时为 `BLOCKED`，缺键为 `UNKNOWN`。拒绝结果不披露当前行。Published 要求本 root 的原 Claim、Ticket 和完成 Mutation。存在 SendAttempt 时核对 ClaimId 和原票据字节，仅记录安全摘要。报告始终 `recoveryReady=false`。CLI 退出 0 表示 `OBSERVED`，退出 2 表示 `BLOCKED` 或 `UNKNOWN`，输入或源校验拒绝退出 1。
+
+## 实际验证
+
+- 实现前按 W405 原包调用拟议 CLI，基线缺入口，退出 2，测试退出 1。实现后原包配错摘要实际退出 1，`manifest-digest-mismatch`，在 PostgreSQL holder 前停止。保留 `test-red-cli.*` 和 `test-green-pin.*`。
+- PostgreSQL 18.6 的 W408 专属 W405 副本 `127.0.0.1:55567/w374_live`，OID 16386，系统标识 `7706139311168619192`。正常 v10 pin `7ac25b3c3eae626277c03802e29203e7cf1f7912664e05f92aeaba817453b6e9` 报告 A 原操作 `e5613f4e-5b81-4fe2-821b-f45ee016f84e` 保留 Pending，当前 epoch 1。真实 B 同操作和 A 晚到 `5f00ba57-7e71-4e68-83a3-0199b83169da` 都保留在当前库，各自原键未进入归档范围的报告。前后 A/B 14 张原关系的 COPY 输出 SHA-256 同为 `bea813da97849a04c2dcdb605af7b2cbc7354d3d174e4ce57f35a22c2e21f89a`。
+- 正常 CLI 拒绝错 pin、缺资产根、错目标及匹配私有探针清单但实际 OID 不符的源。受限角色在原 Stock Ticket 表实际收到 `42501`。同一原生查询对准真实 B 全局键、A 晚到 NativeId 和错误原结果摘要分别得到 `GLOBAL_KEY_CONFLICT`、`BINDING_CONFLICT` 和 `ORIGINAL_OPERATION_CONFLICT`。缺失原键、尾空格、大小写变化得到 `UNKNOWN`。冲突探针仅改变查询预期值。小夹具关闭顺序扫描的 EXPLAIN 显示原全局索引可用于该 `varchar` 谓词。
+- W352 真正的旧 `before-disposition.dump` SHA-256 `1bccbe4392a3e4688841b02392c890cd0fe223b0b22632a713ba0ce4f10d9d86` 经原生 pg_restore 提取四张原表。旧 Pending 原操作 `67742a77-6354-4758-b9f6-16b268894c8e`、NativeId `f08b383a-5cfc-411c-93ac-db561c1da021`，在独立 W403 副本 `127.0.0.1:55560/tenant_management_component` 上由同一查询核得 Published，实际 `publishedAtUtc=2026-11-09 07:40:19.691877+00`。原完成 Mutation `1ea41b2a-ef92-443a-9fad-c0f0ca43d9ce` 及 Send ClaimId `3d89d565-ae61-42a7-9238-4e092a7385b6` 与 W403 pin `376a0f9fb2a82d7d3ee670516b0f817c14bdabff68e23ea8d9bee8b458b1f56d` 一致。票据与发送原票据的 SHA-256 同为 `f40e15100afcbee68eed0f687518a1539219b6d452c0ca8841464209c7120aee`。旧备份的历史 xmin 为空。独立组件的原 A/B COPY 输出前后 SHA-256 同为 `c43ff1e2bfb472f215c4b3cc717d9f0f00c49e18644ad8fa7ff4da4d54be40ad`。[W352 场景出处](../BUG-808-STOCK-RESTORE-OUTBOX/DELIVERY.md) · [W403 独立原包](../W403-01/DELIVERY.md)
+- 增加可空 SendAttempt 原件核对后，准确最终源码再次运行正常 v10 Pending CLI。除新快照的时间、backend 和 watermark 外，头信息、观察和摘要与初轮相同。最终报告 3,222 字节，SHA-256 `881f90b0e5ca7cf28c10617331d5340db7c87d123186a510a2bc2fb2d45cc280`。独立 Published 观察 JSON SHA-256 `de28e34e55d3e4437e9fbd314dc88ecbbb81ec8d1a4260dca9c29a36e64ea61d`。[实库夹具](../../../../eng/wp02-02/rma-tenant-archive/verify_stock_reconcile.py)
+
+原件在 `D:/CP6-local-test/CP6-72H-20261109/W408-01`。`v10-native-01`、`published-native-01`、`v10-native-02` 分别用 7.515、3.734 和 3.500 秒执行并停止，退出均为 0。首次预检等资源约 49 秒。各次 32 MiB shared buffers，运行最低物理内存 810、1,003、1,184 MiB。三个准确 postmaster 59008、9904、4412 均停止，两个副本独立 `pg_ctl status` 为 3，55567/55560 无本机连接状态。两份原 W405/W403 PGDATA 始终停机且 HBA/控制文件摘要一致。W408 v10 副本只加了受限测试读取角色及授权。最终本地实库验证于 16:03:11.259525 UTC 结束，距 START 17 分 55 秒。
+
+实际样本覆盖 Pending 和 Published，当前 lease 均已清空。生产宿主的实时 expiry、认证版本及派送准入由其原权限入口核验。正式 PGT-022 的多域对账、活跃业务流量与切换按原验收窗口处理。`codex/w408-01` 已本地保存，DEV-2 工作树干净，COORD 接手远端采用及席位释放。
