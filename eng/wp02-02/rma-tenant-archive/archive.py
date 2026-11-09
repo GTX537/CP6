@@ -19,6 +19,8 @@ import sys
 from threading import Thread
 from uuid import UUID
 
+import source_v3
+
 WINDOWS = os.name == "nt"
 FLAGS = subprocess.CREATE_NO_WINDOW if WINDOWS else 0
 FORMAT = "cp6-rma-source-archive-v1"
@@ -497,7 +499,9 @@ def file_digest(path):
 
 
 def export_bundle(pg_bin, target, username, installation, tenant, output, *,
-                  include_original_journal=False, environ=None, on_snapshot=None):
+                  include_original_journal=False, include_rma_source=False, environ=None, on_snapshot=None):
+    if include_rma_source and not include_original_journal:
+        raise ArchiveError("rma-source-journal-required")
     installation, tenant = guid(installation), guid(tenant)
     schema = "t_" + tenant.hex
     if not username or "\0" in username:
@@ -518,13 +522,24 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
         if include_original_journal:
             journal_rows = original_journal_rows(tenant)
             journal = check_original_journal(query, target, installation, ready, journal_rows)
+        if include_rma_source:
+            sources = source_v3.slices(tenant)
+            source_counts = source_v3.capture_counts(query, sources)
+            if source_counts["headers"] != captured["counts"]["outbounds"]:
+                raise ArchiveError("rma-source-header-count-mismatch")
         if on_snapshot is not None:
             on_snapshot(snapshot)
         run_native(pg_bin, "pg_dump", [*connection, "--no-password", "--format=custom", "--strict-names",
                    "--lock-wait-timeout=5s", "--schema=" + schema, "--snapshot=" + snapshot,
                    "--file=" + str(bundle / "rma.pgcustom")], environ, logs, "pg-dump")
-        copy_snapshot(pg_bin, connection, environ, logs, bundle / "outbounds.csv", "shared-copy", snapshot,
-                      outbounds_sql(tenant, schema))
+        if include_rma_source:
+            for part in sources:
+                copy_snapshot(pg_bin, connection, environ, logs, bundle / part.member,
+                              "source-" + part.key + "-copy", snapshot,
+                              part.query + " ORDER BY " + part.order, source_v3.READ_ALL_ROWS)
+        else:
+            copy_snapshot(pg_bin, connection, environ, logs, bundle / "outbounds.csv", "shared-copy", snapshot,
+                          outbounds_sql(tenant, schema))
         if include_original_journal:
             copy_snapshot(pg_bin, connection, environ, logs, bundle / JOURNAL_MEMBER, "journal-copy", snapshot,
                           journal_rows + " ORDER BY operation_id", JOURNAL_COPY_SETTINGS)
@@ -550,6 +565,12 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
         manifest["journal"] = journal
         manifest["members"][JOURNAL_MEMBER] = file_digest(bundle / JOURNAL_MEMBER)
         manifest["excluded"][1] = "original operations and close outcomes outside this tenant and RMA Owner"
+    if include_rma_source:
+        manifest["format"] = source_v3.FORMAT
+        manifest["sharedProjection"] = source_v3.header_projection()
+        manifest["rmaSource"] = source_v3.manifest_section(source_counts)
+        manifest["members"].update({name: file_digest(bundle / name) for name in source_v3.MEMBERS})
+        manifest["excluded"][3] = "other outbound fields, inactive details, Orders, WorkOrders and the current warehouse graph and global definitions"
     pending = logs / "manifest.pending"
     with pending.open("x", encoding="utf-8", newline="\n") as file:
         json.dump(manifest, file, indent=2)
@@ -565,16 +586,20 @@ def verify_bundle(bundle, tenant):
     if "manifest.json" not in names or any(path.is_symlink() or not path.is_file() for path in files):
         raise ArchiveError("bundle-member-mismatch")
     manifest = json.loads((bundle / "manifest.json").read_text(encoding="utf-8"))
-    if not isinstance(manifest, dict) or manifest.get("format") not in (FORMAT, FORMAT_WITH_JOURNAL) \
+    if not isinstance(manifest, dict) or manifest.get("format") not in (FORMAT, FORMAT_WITH_JOURNAL, source_v3.FORMAT) \
             or manifest.get("recoveryReady") is not False:
         raise ArchiveError("bundle-format-rejected")
     members = MEMBERS
-    if manifest["format"] == FORMAT_WITH_JOURNAL:
+    if manifest["format"] in (FORMAT_WITH_JOURNAL, source_v3.FORMAT):
         members += (JOURNAL_MEMBER,)
         journal = manifest.get("journal")
         if not isinstance(journal, dict) or journal.get("profile") != JOURNAL_PROFILE \
                 or journal.get("owner") != JOURNAL_OWNER or journal.get("contract") != JOURNAL_CONTRACT \
                 or journal.get("columns") != list(JOURNAL_COLUMNS):
+            raise ArchiveError("bundle-format-rejected")
+    if manifest["format"] == source_v3.FORMAT:
+        members += source_v3.MEMBERS
+        if not source_v3.matches_manifest(manifest):
             raise ArchiveError("bundle-format-rejected")
     if names != {*members, "manifest.json"}:
         raise ArchiveError("bundle-member-mismatch")
@@ -598,6 +623,8 @@ def main():
         export.add_argument("--" + key, required=True)
     export.add_argument("--include-original-journal", action="store_true",
                         help="include the commissioned RMA original journal in a v2 archive")
+    export.add_argument("--include-rma-source", action="store_true",
+                        help="include referenced original source facts in v3 (requires --include-original-journal)")
     verify = actions.add_parser("verify")
     verify.add_argument("--bundle", type=Path, required=True)
     verify.add_argument("--tenant", required=True)
@@ -606,7 +633,8 @@ def main():
         if args.action == "export":
             target = PhysicalTarget.from_mapping(json.loads(args.target_file.read_text(encoding="utf-8-sig")))
             bundle = export_bundle(args.pg_bin.resolve(strict=True), target, args.username, args.installation,
-                                   args.tenant, args.output, include_original_journal=args.include_original_journal)
+                                   args.tenant, args.output, include_original_journal=args.include_original_journal,
+                                   include_rma_source=args.include_rma_source)
             print(bundle)
         else:
             manifest = verify_bundle(args.bundle, args.tenant)
