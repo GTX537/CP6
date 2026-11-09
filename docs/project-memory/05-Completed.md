@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC 原 Stock 当前权威对账
+
+W407 完整 1,914.212 秒，任务分支两端清理，固定席位干净释放。W408 验证原 v10 当前 Pending 和独立历史 Pending 对当前 Published，A/B 与晚到数据保持原字节。 [W408](../development/evidence/W408-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 同源归档采用及中立暂存
 
 W405 完整 2,410 秒，两端分支清理且原固定席位干净释放。W407 实测 v10 原字节、租户和派送关联、回滚以及原回执恢复。 [W407](../development/evidence/W407-01/DELIVERY.md)

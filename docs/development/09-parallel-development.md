@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W408 原 v10 Stock 当前对账及独立 Published 原件通过。W409 在另一固定席位接三个 v9/v10 对账入口，数据库串行使用。 [W408](./evidence/W408-01/DELIVERY.md) · [席位登记](./dispatch/20261109-wave408/README.md)
+
+
 > W407 原 v10 中立暂存和原回执实证通过。W406 原分支远端保存，接续完整 Core 验证及现行源对账。 [W407](./evidence/W407-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave407/README.md)
 
 
