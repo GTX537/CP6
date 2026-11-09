@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> [W358](./evidence/W358-01/DELIVERY.md) 已实测 RMA 逐租户索引的非事务中断、原对象与原键恢复。DEV-1 继续 [W359](dispatch/20261109-wave359/README.md) 原列表，INTEGRATION-1 核 GUID 命名和碰撞。
+
 > [W356](./evidence/W356-01/DELIVERY.md) 已实证原 RMA 正常 GET 和最小动态 EF。W355 随 [#813](https://github.com/GTX537/CP6/pull/813) 采用，DEV-2 已接原 RMA 独立非事务索引升级。 [准确席位](./dispatch/20261109-wave356/README.md)
 
 > [W355](./evidence/W355-01/DELIVERY.md)已实测真实 Stock 10/100 租户及容量边界。DEV-1 继续 [W356](dispatch/20261109-wave356/README.md) 的正常 RMA 读入口，INTEGRATION-1 核实际不完整备份。

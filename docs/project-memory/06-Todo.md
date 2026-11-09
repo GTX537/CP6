@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC RMA 原列表和受控普通写入
+
+DEV-1 接当前出库可见、自有范围和分页。INTEGRATION-1 直接验证原 schema 命名、错误 Owner 和回执，随后按准确原写者权限与事务开窗。 [W358 交付](../development/evidence/W358-01/DELIVERY.md) · [#814](https://github.com/GTX537/CP6/pull/814)
+
+
 ## 2026-11-09 UTC RMA 受权列表与非事务逐租户升级
 
 W356 收妥后接原列表的授权筛选和分页。W358 在 DEV-2 执行真实索引中断和原键恢复。普通业务写与原 journal 留给各原入口窗口。 [W356 交付](../development/evidence/W356-01/DELIVERY.md) · [#813](https://github.com/GTX537/CP6/pull/813)

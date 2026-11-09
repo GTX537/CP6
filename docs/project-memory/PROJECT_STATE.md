@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC RMA 读采用与非事务索引恢复
+
+W356 真实 RMA 单条及历史读随 #814 采用。W358 通过 PG 真正并发建索引和无效索引恢复。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W358 交付](../development/evidence/W358-01/DELIVERY.md) · [#814](https://github.com/GTX537/CP6/pull/814)
+
+
 ## 2026-11-09 UTC 原 RMA 真实 GET 与 Stock 容量采用
 
 新隔离全 Core 的原 RMA 单条及历史读取通过真实 HTTP 和 EF 验证。Stock 容量实测已随 #813 正常采用。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W356 交付](../development/evidence/W356-01/DELIVERY.md) · [#813](https://github.com/GTX537/CP6/pull/813)

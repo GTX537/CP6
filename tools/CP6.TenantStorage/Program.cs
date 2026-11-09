@@ -15,7 +15,8 @@ var rmaInstall = args.SequenceEqual(["install-rma-tenant-storage-v1", "--stdin"]
 var rmaMigrate = args.SequenceEqual(["migrate-rma-tenant-storage-v1", "--stdin"]);
 var rmaPrepareCore = args.SequenceEqual(["prepare-rma-core-tenant-storage-v1", "--stdin"]);
 var rmaCommissionCore = args.SequenceEqual(["commission-rma-core-tenant-storage-v1", "--stdin"]);
-var rmaControl = rmaInstall || rmaMigrate || rmaPrepareCore || rmaCommissionCore;
+var rmaOutboundIndex = args.SequenceEqual(["migrate-rma-core-outbound-index-v1", "--stdin"]);
+var rmaControl = rmaInstall || rmaMigrate || rmaPrepareCore || rmaCommissionCore || rmaOutboundIndex;
 var stockReadInspect = args.SequenceEqual(["inspect-stock-read-v1", "--stdin"]);
 var stockInstallContract = args switch
 {
@@ -31,7 +32,7 @@ var stockInstallContract = args switch
 var controlExecutionStarted = false;
 if ((!args.SequenceEqual(["provision", "--stdin"]) && !revocation && !serviceToken && !tenantControl && !directoryControl && !rmaControl && stockInstallContract is null) || !Console.IsInputRedirected)
 {
-    Console.Error.WriteLine("Usage: CP6.TenantStorage provision|install-service-revocation-v1|install-service-token-v1|service-token-tenant-directory-control-v1|install-identity-directory-v2|inspect-identity-directory-v2|install-rma-tenant-storage-v1|migrate-rma-tenant-storage-v1|prepare-rma-core-tenant-storage-v1|commission-rma-core-tenant-storage-v1|install-stock-read-v1|inspect-stock-read-v1|install-stock-write-fence-v1|install-stock-original-journal-v1|install-stock-outbox-writer-v1|install-stock-movement-writer-v1|install-stock-adjust-owner-v1|install-stock-creation-writer-v2 --stdin (one bounded JSON document on redirected standard input).");
+    Console.Error.WriteLine("Usage: CP6.TenantStorage provision|install-service-revocation-v1|install-service-token-v1|service-token-tenant-directory-control-v1|install-identity-directory-v2|inspect-identity-directory-v2|install-rma-tenant-storage-v1|migrate-rma-tenant-storage-v1|prepare-rma-core-tenant-storage-v1|commission-rma-core-tenant-storage-v1|migrate-rma-core-outbound-index-v1|install-stock-read-v1|inspect-stock-read-v1|install-stock-write-fence-v1|install-stock-original-journal-v1|install-stock-outbox-writer-v1|install-stock-movement-writer-v1|install-stock-adjust-owner-v1|install-stock-creation-writer-v2 --stdin (one bounded JSON document on redirected standard input).");
     return 2;
 }
 try
@@ -58,7 +59,7 @@ try
             throw new TenantProvisioningException("input-rejected");
 
         var install = rmaInstall ? rmaInput.Request.Deserialize<RmaTenantInstallRequestV1>(json) : null;
-        var migrate = rmaMigrate ? rmaInput.Request.Deserialize<RmaTenantMigrationRequestV1>(json) : null;
+        var migrate = rmaMigrate || rmaOutboundIndex ? rmaInput.Request.Deserialize<RmaTenantMigrationRequestV1>(json) : null;
         var core = rmaPrepareCore || rmaCommissionCore ? rmaInput.Request.Deserialize<RmaCoreCommissionRequestV1>(json) : null;
         var target = install?.Target ?? migrate?.Target ?? core?.Target ?? throw new TenantProvisioningException("input-rejected");
         var ip = target.Validate();
@@ -73,13 +74,15 @@ try
             Pooling = false, Enlist = false, SearchPath = "pg_catalog", Options = " ",
             IncludeErrorDetail = false, Timeout = 10, CommandTimeout = 65,
             ApplicationName = rmaInstall ? "CP6.TenantStorage.RmaInstallV1"
-                : rmaMigrate ? "CP6.TenantStorage.RmaMigrateV1" : "CP6.TenantStorage.RmaCoreCommissionV1"
+                : rmaMigrate ? "CP6.TenantStorage.RmaMigrateV1"
+                : rmaOutboundIndex ? "CP6.TenantStorage.RmaOutboundIndexV1" : "CP6.TenantStorage.RmaCoreCommissionV1"
         }.ConnectionString);
         var receipt = args[0] switch
         {
             "install-rma-tenant-storage-v1" => await RmaTenantStorageV1.InstallAsync(control, install!, timeout.Token),
             "migrate-rma-tenant-storage-v1" => await RmaTenantStorageV1.MigrateAsync(control, migrate!, timeout.Token),
             "prepare-rma-core-tenant-storage-v1" => await RmaTenantStorageV1.PrepareCoreAsync(control, core!, timeout.Token),
+            "migrate-rma-core-outbound-index-v1" => await RmaTenantStorageV1.MigrateCoreOutboundIndexAsync(control, migrate!, timeout.Token),
             _ => await RmaTenantStorageV1.CommissionCoreAsync(control, core!, timeout.Token)
         };
         controlExecutionStarted = true;
