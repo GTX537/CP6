@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC 归属更新原生子场景
+
+已验证同 schema 的两层租户归属拒绝，核对实际 xid 和 A/B 全写集。 [W430](../development/evidence/W430-01/DELIVERY.md)
+
 ## 2026-11-09 UTC PGT-008 原生权限实证
 
 隔离共享表四条原策略、独立 B 原行、实际密钥列拒绝与原 ERP/Identity/Stock 实证采用。 [W427](../development/evidence/W427-01/DELIVERY.md)

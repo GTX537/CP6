@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-09 UTC RMA 同 schema 归属更新
+
+W430 实测普通 A 的 ACL 42501、固定 CHECK 23514、两次无半写及合法 A 提交。正式 PostgreSQL 为 11 PASS、16 NOT_RUN，原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W430](../development/evidence/W430-01/DELIVERY.md)
+
 ## 2026-11-09 UTC 共享 RLS 与原密钥列
 
 W427 实测普通 DELETE 0/1 和原密钥列 42501。正式 PostgreSQL 为 11 PASS、16 NOT_RUN。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W427](../development/evidence/W427-01/DELIVERY.md)

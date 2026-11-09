@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 继续共享 IAM 引用与同源恢复
+
+继续 W428 正常 EF/IAM 验证与 W429 同源 v11，按实测内存接续 W422、W423、W425 和 W415。 [W430](../development/evidence/W430-01/DELIVERY.md)
+
 ## 2026-11-09 UTC 继续共享引用与恢复
 
 W428 补原用户成员关系复合引用，W425、W422 和 W423 保留远端检查点。 [W427](../development/evidence/W427-01/DELIVERY.md)
