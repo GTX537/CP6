@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC ERP 暂存采用和只读对账实证
+
+W398 完整 858 秒，两端分支清理，DEV-1 干净释放。W399 实际对账三种原键和现行绑定。W397 实测峰值后已释放集成席位。 [W399](../development/evidence/W399-01/DELIVERY.md) · [PR #838](https://github.com/GTX537/CP6/pull/838)
+
+
 ## 2026-11-09 UTC 统一包队列采用和 ERP 原子暂存
 
 W396 完整 833 秒，两端分支清理，DEV-2 干净释放。W398 真原键全回滚与原回执恢复。 [W398](../development/evidence/W398-01/DELIVERY.md) · [PR #837](https://github.com/GTX537/CP6/pull/837)

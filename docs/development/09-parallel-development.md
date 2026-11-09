@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W399 ERP 原键对账实证通过。W397 双进程联合池峰值验证完成并释放集成席位。 [W399](./evidence/W399-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave399/README.md)
+
+
 > W398 ERP 原八表暂存实证通过。W399 DEV-2 核现行队列，W397 集成席位核联合容量。 [W398](./evidence/W398-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave398/README.md)
 
 
