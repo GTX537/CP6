@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> [W350-01](evidence/W350-01/DELIVERY.md)完成真实 RMA tenant schema 首版和原子迁移验证，收尾按正常 PR。WP02-28 已核销，DEV-2 修复 [#808](https://github.com/GTX537/CP6/issues/808)。
+
 > [W351-01](evidence/W351-01/DELIVERY.md)实际全 Core 前向和旧宿主重启。W350 独占 DEV-1，COORD 回收各自台账及席位。
 
 > [W349-01](evidence/W349-01/DELIVERY.md)固定两制品、驱动、实测库及方向的本地回退结论。W346 已采用并释放，DEV-1 开始 [W350 原 RMA 租户迁移](dispatch/20261109-wave350/README.md)。

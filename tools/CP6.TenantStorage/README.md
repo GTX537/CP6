@@ -137,3 +137,39 @@ Success/conflict JSON on stdout has `Contract`, `Outcome`, `Current`; failure JS
 **No request idempotency or original-result recovery is provided.** Commit errors, unacknowledged rollback, or output loss after execution are classified conservatively as `UNKNOWN`; a killed process or lost output may prevent any classification from reaching the caller and must also be treated as unknown. Do not automatically retry an uncertain write. Inspect reports current state only, cannot prove whether a particular request committed, and cannot recover its original result. CAS can still succeed after ABA (old state → different state → old state); repeat initialize returns the current row, not a saved result. A durable request/result slot requires a separate versioned design. The installer's same-input recovery instructions above do not apply to this control command.
 
 This is limited eligibility-directory DML, not full tenant lifecycle, TenantAdminService, business audit, online configuration/credential updates, schema migration or full Main acceptance. See the [control delivery report](../../docs/development/evidence/WP02-02/tenant-eligibility-control/DELIVERY.md).
+
+## Fresh RMA application tenant storage
+
+The PostgreSQL-only `rma-application-tenant-v1` profile installs the RMA application aggregate in a dedicated, empty database. Use a new isolated cluster if another profile already owns the cluster-wide `cp6_tenant_lookup_v1` helper. Existing shared RMA and combined messaging installations are rejected. This profile keeps its own control and history and does not stamp Core EF migrations.
+
+Run `install-rma-tenant-storage-v1 --stdin` once using the same private redirected-stdin convention as `provision`. Obtain the exact physical target independently. The server is a canonical IP address and `DatabaseOid` is a JSON number. TLS defaults to `VerifyFull`, with explicit `Disable` available only for loopback fixtures. Supply the target database owner and superuser as control identity. Precreate the mapped ordinary logins with no memberships, elevated attributes, ownership, role settings or pre-existing object grants beyond non-grantable CONNECT. The command uses their existing identities and credentials.
+
+```json
+{
+  "Request": {
+    "Target": {
+      "Server": "127.0.0.1",
+      "Port": 55558,
+      "Database": "explicit_fresh_rma_target",
+      "DatabaseOid": 12345,
+      "SystemIdentifier": "123456789"
+    },
+    "InstallationId": "11111111-1111-4111-8111-111111111111",
+    "Tenants": [
+      {
+        "TenantId": "22222222-2222-4222-8222-222222222222",
+        "Login": "precreated_tenant_login"
+      }
+    ]
+  },
+  "AdminUsername": "separate_control_login",
+  "AdminPassword": "supplied-only-through-private-process-input",
+  "SslMode": "VerifyFull"
+}
+```
+
+Then run `migrate-rma-tenant-storage-v1 --stdin` once per registered tenant. Use the same envelope, `Target` and `InstallationId`. Replace the `Tenants` array with `TenantId` and a nonempty `OperationId` UUID. The directory is installed once. Each migration locks its own (tenant_id, lineage) control row and commits the qualified tenant schema, tenant-local migration history and shared Ready receipt in one PostgreSQL transaction. The receipt records SHA-256 of the exact generated DDL, including the tenant constraint and runtime grants. The runtime can read and insert into heads and versions and update only `heads.version`. The history and control tables are control-only.
+
+After interrupted execution or lost output, repeat the same target, installation, tenant and operation. If the first transaction committed, an exact retry returns the original receipt and completion time. If it rolled back, the retry can complete the migration. A different operation for the same completed tenant lineage is rejected. The same operation UUID may be used by different tenants. Keep the original request and receipt for recovery. The Ready receipt establishes storage migration completion for this profile. RMA HTTP routing, authorization, shared source data and the original business journal require separate host commissioning.
+
+The real-process PostgreSQL verification is in `eng/wp02-02/rma-tenant-migration/verify.py`. It requires a built Release CLI, Python 3, installed PostgreSQL binaries, a free loopback port and an owned evidence directory. Run it with `--help` for arguments.
