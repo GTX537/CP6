@@ -12,6 +12,7 @@ import sys
 
 sys.dont_write_bytecode = True
 import archive
+import source_v3
 
 TARGET_PLAN = "cp6_rma_stage.plan"
 
@@ -39,7 +40,8 @@ def checked_bundle(bundle, output, tenant, digest, target):
     files = list(bundle.iterdir())
     names = {entry.name for entry in files}
     base_names = {*archive.MEMBERS, "manifest.json"}
-    if names not in (base_names, base_names | {archive.JOURNAL_MEMBER}) \
+    journal_names = base_names | {archive.JOURNAL_MEMBER}
+    if names not in (base_names, journal_names, journal_names | set(source_v3.MEMBERS)) \
             or any(entry.is_symlink() or not entry.is_file() for entry in files):
         raise StageError("rma-stage-bundle-member-rejected")
 
@@ -57,22 +59,27 @@ def checked_bundle(bundle, output, tenant, digest, target):
     if (source.system_identifier, source.database_oid) == (target.system_identifier, target.database_oid):
         raise StageError("rma-stage-target-is-source")
     projection = manifest.get("sharedProjection")
+    has_source = manifest["format"] == source_v3.FORMAT
+    columns = source_v3.HEADER_COLUMNS if has_source else archive.COLUMNS
     migration = manifest.get("migration")
     counts = read_counts(manifest.get("counts"), ("heads", "versions", "history", "outbounds"))
     if manifest.get("profile") != archive.PROFILE or manifest.get("tenantTables") != list(archive.TABLES) \
             or not isinstance(projection, dict) or projection.get("table") != "public.T_OutboundOrder" \
-            or projection.get("columns") != list(archive.COLUMNS) or counts["history"] != 1 \
+            or projection.get("columns") != list(columns) or counts["history"] != 1 \
             or not isinstance(migration, dict) or migration.get("migrationId") != archive.MIGRATION:
         raise StageError("rma-stage-manifest-metadata-rejected")
     archive.guid(migration.get("operationId"))
     for field in ("scriptSha256", "receiptSha256"):
         digest_pin(migration.get(field))
     journal = None
-    if manifest["format"] == archive.FORMAT_WITH_JOURNAL:
+    if manifest["format"] in (archive.FORMAT_WITH_JOURNAL, source_v3.FORMAT):
         journal = read_counts(manifest["journal"].get("counts"), ("rows", "committed", "closed"))
         if journal["rows"] != journal["committed"] + journal["closed"]:
             raise StageError("rma-stage-manifest-metadata-rejected")
-    return checked, dict(format=manifest["format"], counts=counts, journalCounts=journal, migration=migration)
+    plan = dict(format=manifest["format"], counts=counts, journalCounts=journal, migration=migration)
+    if has_source:
+        plan["sourceCounts"] = read_counts(manifest["rmaSource"]["counts"], ("headers", "details", "lineage"))
+    return checked, plan
 
 
 def emit_restore(pg_bin, bundle, output, schema):
@@ -143,18 +150,57 @@ EMPTY_STAGE = """
 """
 
 
-def neutral_sql(tenant, has_journal):
+def source_tables_sql(tenant):
+    # Match PostgreSqlMigrationPrerequisitesV1 for document equality, inside staging only.
+    return """
+        CREATE COLLATION rma_archive_stage.outbound_number
+            (provider=icu, locale='und-u-ks-level2', deterministic=false);
+        CREATE TABLE rma_archive_stage.outbound_snapshot (
+            tenant_id uuid NOT NULL CHECK (tenant_id={tenant}), outbound_id uuid NOT NULL,
+            outbound_no bpchar COLLATE rma_archive_stage.outbound_number NOT NULL, warehouse_cd bpchar NOT NULL,
+            status integer NOT NULL, is_deleted boolean NOT NULL, customer_cd bpchar, web_order_no bpchar,
+            outbound_type integer NOT NULL,
+            PRIMARY KEY (tenant_id,outbound_id), UNIQUE (tenant_id,outbound_id,outbound_no)
+        );
+        \\copy rma_archive_stage.outbound_snapshot FROM 'bundle/outbounds.csv' WITH (FORMAT csv, HEADER MATCH)
+        CREATE TABLE rma_archive_stage.outbound_detail_snapshot (
+            tenant_id uuid NOT NULL CHECK (tenant_id={tenant}), outbound_id uuid NOT NULL,
+            outbound_no bpchar COLLATE rma_archive_stage.outbound_number NOT NULL, outbound_line_id uuid NOT NULL,
+            line_no integer NOT NULL, product_cd bpchar NOT NULL, shipped_qty numeric(21,8) NOT NULL,
+            unit_cd bpchar, warehouse_cd bpchar, location_cd bpchar, lot_no bpchar, ship_txn_no bpchar,
+            PRIMARY KEY (tenant_id,outbound_line_id), UNIQUE (tenant_id,outbound_id,line_no),
+            FOREIGN KEY (tenant_id,outbound_id,outbound_no)
+                REFERENCES rma_archive_stage.outbound_snapshot (tenant_id,outbound_id,outbound_no)
+        );
+        \\copy rma_archive_stage.outbound_detail_snapshot FROM 'bundle/rma-source-details.csv' WITH (FORMAT csv, HEADER MATCH)
+        CREATE TABLE rma_archive_stage.outbound_lineage_snapshot (
+            tenant_id uuid NOT NULL CHECK (tenant_id={tenant}), outbound_line_id uuid NOT NULL,
+            outbound_no text COLLATE "C" NOT NULL, payload jsonb NOT NULL,
+            PRIMARY KEY (tenant_id,outbound_line_id),
+            FOREIGN KEY (tenant_id,outbound_line_id)
+                REFERENCES rma_archive_stage.outbound_detail_snapshot (tenant_id,outbound_line_id)
+        );
+        \\copy rma_archive_stage.outbound_lineage_snapshot FROM 'bundle/rma-source-lineage.csv' WITH (FORMAT csv, HEADER MATCH)
+    """.format(tenant=tenant)
+
+
+def neutral_sql(tenant, has_journal, has_source=False):
     value = archive.literal(tenant)
     sql = """
         CREATE SCHEMA rma_archive_stage;
         REVOKE ALL ON SCHEMA rma_archive_stage FROM PUBLIC;
-        CREATE TABLE rma_archive_stage.outbound_snapshot (
-            tenant_id uuid NOT NULL CHECK (tenant_id={tenant}), outbound_id uuid NOT NULL,
-            outbound_no text NOT NULL, warehouse_cd text NOT NULL, status integer NOT NULL,
-            is_deleted boolean NOT NULL, PRIMARY KEY (tenant_id,outbound_id)
-        );
-        \\copy rma_archive_stage.outbound_snapshot FROM 'bundle/outbounds.csv' WITH (FORMAT csv, HEADER MATCH)
-    """.format(tenant=value)
+    """
+    if has_source:
+        sql += source_tables_sql(value)
+    else:
+        sql += """
+            CREATE TABLE rma_archive_stage.outbound_snapshot (
+                tenant_id uuid NOT NULL CHECK (tenant_id={tenant}), outbound_id uuid NOT NULL,
+                outbound_no text NOT NULL, warehouse_cd text NOT NULL, status integer NOT NULL,
+                is_deleted boolean NOT NULL, PRIMARY KEY (tenant_id,outbound_id)
+            );
+            \\copy rma_archive_stage.outbound_snapshot FROM 'bundle/outbounds.csv' WITH (FORMAT csv, HEADER MATCH)
+        """.format(tenant=value)
     if has_journal:
         sql += """
             CREATE TABLE rma_archive_stage.original_journal_snapshot (
@@ -174,7 +220,7 @@ def neutral_sql(tenant, has_journal):
     return sql
 
 
-def check_restored(schema, has_journal):
+def check_restored(schema, has_journal, has_source=False):
     sql = """
         DO $cp6_stage_check$
         DECLARE
@@ -210,13 +256,30 @@ def check_restored(schema, has_journal):
                 RAISE EXCEPTION 'rma-stage-journal-mismatch';
             END IF;
         """
+    if has_source:
+        sql += """
+            IF (SELECT count(*) FROM rma_archive_stage.outbound_detail_snapshot)
+                    <>(p->'sourceCounts'->>'details')::bigint
+                OR (SELECT count(*) FROM rma_archive_stage.outbound_lineage_snapshot)
+                    <>(p->'sourceCounts'->>'lineage')::bigint THEN
+                RAISE EXCEPTION 'rma-stage-source-count-mismatch';
+            END IF;
+            IF EXISTS (
+                SELECT FROM rma_archive_stage.outbound_lineage_snapshot l
+                JOIN rma_archive_stage.outbound_detail_snapshot d USING (tenant_id,outbound_line_id)
+                JOIN rma_archive_stage.outbound_snapshot h USING (tenant_id,outbound_id)
+                WHERE l.outbound_no IS DISTINCT FROM convert_from(bpcharsend(h.outbound_no),'UTF8')
+            ) THEN
+                RAISE EXCEPTION 'rma-stage-source-lineage-mismatch';
+            END IF;
+        """
     return sql + "END\n$cp6_stage_check$;\n"
 
 
 WRITE_RECEIPT = """
     CREATE TABLE rma_archive_stage.receipt (
         singleton boolean PRIMARY KEY CHECK (singleton), tenant_id uuid NOT NULL,
-        manifest_sha256 text NOT NULL CHECK (manifest_sha256 ~ '^[0-9a-f]{64}$'),
+        manifest_sha256 text NOT NULL CHECK (manifest_sha256 ~ '^[0-9a-f]{{64}}$'),
         result_json text NOT NULL
     );
     REVOKE ALL ON ALL TABLES IN SCHEMA rma_archive_stage FROM PUBLIC;
@@ -224,7 +287,7 @@ WRITE_RECEIPT = """
     SELECT true,(p->>'tenantId')::uuid,p->>'manifestSha256',
            json_build_object('outcome','STAGED','recoveryReady',false,'stageProfile','cp6-rma-archive-stage-v1',
                'target',p->'target','tenantId',p->>'tenantId','manifestSha256',p->>'manifestSha256',
-               'format',p->>'format','counts',p->'counts','journalCounts',p->'journalCounts')::text
+               'format',p->>'format','counts',p->'counts','journalCounts',p->'journalCounts'{source_field})::text
     FROM (SELECT current_setting('cp6_rma_stage.plan')::jsonb AS p) stage;
     SELECT result_json FROM rma_archive_stage.receipt;
 """
@@ -298,11 +361,14 @@ def execute(args):
         plan.update(metadata)
         schema = "t_" + tenant.hex
         has_journal = plan["journalCounts"] is not None
+        has_source = "sourceCounts" in plan
         emit_restore(pg_bin, checked, output, schema)
         driver = initial_sql(plan) + EMPTY_STAGE + "\n\\ir tenant.sql\n"
         # pg_restore changes the session search_path and statement settings.
         driver += "\nSET LOCAL search_path=pg_catalog;\nSET LOCAL statement_timeout='60s';\n"
-        driver += neutral_sql(tenant, has_journal) + check_restored(schema, has_journal) + WRITE_RECEIPT
+        source_field = ",'sourceCounts',p->'sourceCounts'" if has_source else ""
+        driver += neutral_sql(tenant, has_journal, has_source) + check_restored(schema, has_journal, has_source)
+        driver += WRITE_RECEIPT.format(source_field=source_field)
     else:
         driver = initial_sql(plan, read_only=True) + READ_RECEIPT
     with (output / "driver.sql").open("x", encoding="utf-8", newline="\n") as script:

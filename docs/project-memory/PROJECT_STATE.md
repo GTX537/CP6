@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC v3 原来源隔离落表
+
+W377 实测原来源、原日志、后段回滚与原回执。W375 随 #824 采用并释放，W376 实测原模型和池。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W377](../development/evidence/W377-01/DELIVERY.md) · [#824](https://github.com/GTX537/CP6/pull/824)
+
+
 ## 2026-11-09 UTC 普通 RMA 原操作
 
 W375 实测原查询、关闭、当前权限和原竞争。v3 归档随 #823 采用并释放。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W375](../development/evidence/W375-01/DELIVERY.md) · [#823](https://github.com/GTX537/CP6/pull/823)
