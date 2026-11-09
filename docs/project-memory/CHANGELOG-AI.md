@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC RMA 来源归档 v3
+
+增加显式 v3 切面，保留准确出库头、原发运行、可选原谱系与原日志。实际原生快照、精度及旧包兼容均已校验。 [W374](../development/evidence/W374-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC RMA 原提交与权限过渡
 
 增加正常 submit 的普通租户原子写。原 If-Match、源版本与原日志保留。当前 CLI 按确切权限过渡恢复旧回执，v1/v2 归档核对应 writer 权限。 [W372 交付](../development/evidence/W372-01/DELIVERY.md)
