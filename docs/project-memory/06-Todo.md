@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 统一 v8 现行对账和隔离候选
+
+将现行 IAM 与 Identity Priority 接入同一 v8 归档，推进隔离 Core 的候选原结果读取及原恢复验收。 [W399](../development/evidence/W399-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC ERP 现行对账和隔离候选
 
 继续 W399 当前原键、其他适用共享域与实际候选。按用户要求先清理已确认的 D 盘临时输出。 [W398](../development/evidence/W398-01/DELIVERY.md)

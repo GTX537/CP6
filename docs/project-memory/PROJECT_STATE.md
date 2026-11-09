@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC ERP 原键对账与双进程池峰值
+
+W399 已在专属 PostgreSQL 实证。W398 随 #838 采用并释放。W397 的两个真实动态组件进程同时持有 64 个原生普通事务。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W399](../development/evidence/W399-01/DELIVERY.md) · [PR #838](https://github.com/GTX537/CP6/pull/838)
+
+
 ## 2026-11-09 UTC ERP v8 原子暂存
 
 W398 原八表和原回执实际验证，W396 随 #837 采用并释放。12 小时原生 43,201 秒。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W398](../development/evidence/W398-01/DELIVERY.md) · [PR #837](https://github.com/GTX537/CP6/pull/837)
