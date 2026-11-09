@@ -1,4 +1,9 @@
+using System.Data;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
 using CP6.Core.Persistence.Tenancy;
+using CP6.Platform.Contracts.Context;
 using Npgsql;
 
 namespace CP6.Tests.Persistence.Tenancy;
@@ -77,6 +82,129 @@ public sealed class TenantStoragePostgresTests(TenantStoragePostgresFixture post
         Assert.Equal(0, callbacks);
     }
 
+    [TenantStoragePostgresFact]
+    public async Task PGT_003_B_lease_rejects_an_already_open_A_backend_before_any_business_SQL()
+    {
+        var context = new TenantStorageContext(ContextEntryKindV1.Http);
+        var catalog = Catalog();
+        var tenantA = TenantStorageContext.A;
+        var tenantB = TenantStorageContext.B;
+        await using var manager = new TenantConnectionManager("main", context.Accessor, catalog, Credentials(), new(2, 2, 1));
+        await using var owner = await postgres.OpenOwnerAsync();
+        var controls = new List<(int Pid, string SessionUser, string CurrentUser)>();
+        foreach (var (tenant, username) in new[] { (tenantA, "tenant_a"), (tenantB, "tenant_b") })
+            await context.Run(tenant, async ct =>
+            {
+                await using var normal = await manager.OpenCurrentAsync(ct);
+                controls.Add(await normal.InTransactionAsync(async (tx, token) =>
+                {
+                    var identity = await tx.ExecuteAsync((connection, _, inner) => Identity(connection, "pgt003-control", inner), token);
+                    Assert.Equal(username, identity.SessionUser);
+                    Assert.Equal(username, identity.CurrentUser);
+                    Assert.Equal(1, await Sql(tx, $"INSERT INTO {Table(tenant)} VALUES (425, 'pgt003-control')", token));
+                    Assert.Equal("pgt003-control", await Scalar(tx, $"SELECT marker FROM {Table(tenant)} WHERE id=425", token));
+                    await tx.CommitAsync(token);
+                    return identity;
+                }, cancellationToken: ct));
+            });
+        Assert.NotEqual(controls[0].Pid, controls[1].Pid);
+        var before = await CanonicalProbeRows(owner);
+        var callbacks = 0;
+        var marker = "pgt003-" + Guid.NewGuid().ToString("N");
+        var database = TenantStoragePostgresFixture.Database;
+        await TenantStoragePostgresFixture.Sql(owner, $"ALTER ROLE tenant_a IN DATABASE {database} SET log_statement='all'");
+        try
+        {
+            await using var a = await TenantStoragePostgresFixture.OpenRawAsync("tenant_a", postgres.PasswordA);
+            var aBefore = await Identity(a, marker + "-before", default);
+            Assert.Equal((a.ProcessID, "tenant_a", "tenant_a"), aBefore);
+            var binding = catalog.Resolve(tenantB);
+            var bPool = new TenantConnectionManager.Pool(binding, catalog.Database(binding), catalog.Principal(binding), 0, 0)
+                { Borrowers = 1 };
+            Assert.Equal("tenant_b", bPool.Principal.Username);
+            await context.Run(tenantB, async ct =>
+            {
+                var trusted = context.Accessor.CurrentTrusted!;
+                Assert.Equal(tenantB, trusted.Context.TenantId);
+                Assert.Equal(tenantB, trusted.Evidence.TenantId);
+                // Inject only the physical connection. Use the original B catalog binding and trusted request.
+                await using var forced = new TenantConnectionLease(manager, bPool, trusted, a);
+                Assert.Same(binding, forced.CurrentBinding);
+                var failure = await Assert.ThrowsAsync<TenantStorageException>(() => forced.InTransactionAsync(async (tx, token) =>
+                {
+                    callbacks++;
+                    await Sql(tx, $"INSERT INTO {Table(tenantB)} VALUES (426, 'pgt003-forced-business')", token);
+                    await tx.CommitAsync(token);
+                    return 0;
+                }, cancellationToken: ct));
+                Assert.Equal(TenantStorageFailure.IdentityRejected, failure.Failure);
+                Assert.Equal(ConnectionState.Open, a.State);
+                var aAfter = await Identity(a, marker + "-after", ct);
+                Assert.Equal(aBefore, aAfter);
+                Assert.Equal(0, callbacks);
+                var (window, businessCommands) = await GuardLog(postgres.ServerLog, marker, aBefore.Pid);
+                var after = await CanonicalProbeRows(owner);
+                Assert.Equal(before, after);
+                await File.WriteAllTextAsync(Path.Combine(Path.GetDirectoryName(postgres.ServerLog)!, "pgt003.json"),
+                    JsonSerializer.Serialize(new
+                    {
+                        Tenant = tenantB, Binding = binding.SchemaName, ExpectedLogin = bPool.Principal.Username,
+                        Rejection = failure.Failure.ToString(), Callbacks = callbacks, BusinessCommands = businessCommands,
+                        BeforeIdentity = new { aBefore.Pid, aBefore.SessionUser, aBefore.CurrentUser },
+                        AfterIdentity = new { aAfter.Pid, aAfter.SessionUser, aAfter.CurrentUser },
+                        Controls = controls.Select(x => new { x.Pid, x.SessionUser, x.CurrentUser }),
+                        Before = before, After = after, BeforeSha256 = Sha(before), AfterSha256 = Sha(after),
+                        GuardLog = window,
+                    }, new JsonSerializerOptions { WriteIndented = true }), ct);
+            });
+            Assert.Equal(0, bPool.Borrowers);
+            Assert.Equal((2, 2, 0, 0), manager.Snapshot());
+        }
+        finally
+        {
+            await TenantStoragePostgresFixture.Sql(owner, $"ALTER ROLE tenant_a IN DATABASE {database} RESET log_statement");
+        }
+    }
+
+    private static async Task<(int Pid, string SessionUser, string CurrentUser)> Identity(
+        NpgsqlConnection connection, string marker, CancellationToken ct)
+    {
+        await using var command = new NpgsqlCommand(
+            $"SELECT pg_catalog.pg_backend_pid(), session_user::text, current_user::text /* {marker} */", connection);
+        await using var reader = await command.ExecuteReaderAsync(ct);
+        Assert.True(await reader.ReadAsync(ct));
+        return (reader.GetInt32(0), reader.GetString(1), reader.GetString(2));
+    }
+
+    private static async Task<string> CanonicalProbeRows(NpgsqlConnection owner) =>
+        (string)(await TenantStoragePostgresFixture.Scalar(owner, $"""
+            SELECT jsonb_build_object(
+                'A', (SELECT jsonb_agg(jsonb_build_array(id, marker) ORDER BY id) FROM {Table(TenantStorageContext.A)}),
+                'B', (SELECT jsonb_agg(jsonb_build_array(id, marker) ORDER BY id) FROM {Table(TenantStorageContext.B)}))::text
+            """))!;
+
+    private static string Sha(string text) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(text))).ToLowerInvariant();
+
+    private static async Task<(string Log, int BusinessCommands)> GuardLog(string path, string marker, int pid)
+    {
+        await using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+        using var reader = new StreamReader(stream);
+        var lines = (await reader.ReadToEndAsync()).Split('\n');
+        var first = Array.FindIndex(lines, line => line.Contains($"[{pid}]", StringComparison.Ordinal)
+            && line.Contains(marker + "-before", StringComparison.Ordinal));
+        var last = Array.FindIndex(lines, line => line.Contains($"[{pid}]", StringComparison.Ordinal)
+            && line.Contains(marker + "-after", StringComparison.Ordinal));
+        Assert.True(first >= 0 && last > first, "Missing native statements bounding the exact A backend.");
+        var window = lines[(first + 1)..last];
+        var commands = window.Where(line => line.Contains($"[{pid}]", StringComparison.Ordinal)
+            && (line.Contains("statement:", StringComparison.Ordinal) || line.Contains("execute ", StringComparison.Ordinal))).ToArray();
+        Assert.Single(commands);
+        var text = string.Join('\n', window);
+        Assert.Contains("session_user", text, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("current_user", text, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain(".component_probe", text);
+        return (text, commands.Length - 1);
+    }
     [TenantStoragePostgresFact]
     public async Task Ordinary_roles_are_denied_explicit_cross_schema_access_and_can_reuse_after_failure()
     {
