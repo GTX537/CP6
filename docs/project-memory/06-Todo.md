@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 同源多域恢复与独立开放
+
+继续构造同源非空多域合成夹具，实测独立批准开放、活跃 B 与普通角色，并执行 PGT-021/022 原验收。#844 的正式包发布和 Main 采用分开执行。 [W406](../development/evidence/W406-01/DELIVERY.md) · [Issue #844](https://github.com/GTX537/CP6/issues/844)
+
+
 ## 2026-11-09 UTC 独立 Core 采用和普通读回
 
 按任务串行采用 W406 完整导入，接 W401 普通 HTTP 读回、完整非空多域合成恢复、批准开放和正式 PGT。 [W409](../development/evidence/W409-01/DELIVERY.md)

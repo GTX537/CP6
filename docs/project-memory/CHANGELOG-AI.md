@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC 独立 Core RMA 导入
+
+隔离候选导入原 heads/versions，晚外键全回滚，真实 COMMIT 回包中断后同键取回原 913 字节回执。另验普通读回和当前授权。 [W406](../development/evidence/W406-01/DELIVERY.md) · [W401](/D:/CP6-local-test/CP6-72H-20261109/W401-VERIFY/DELIVERY.md)
+
+
 ## 2026-11-09 UTC RMA 同源 v9/v10 对账
 
 三个只读入口采用完整 v9/v10 版本。每个原包实测 IAM 17 条和 Identity 已发布 Outbox 1 条，ERP、Inbox 和资产引用样本为空，受限 ERP 返回 42501。 [W409](../development/evidence/W409-01/DELIVERY.md)

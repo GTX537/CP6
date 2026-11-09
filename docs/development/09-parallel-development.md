@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W406 完整独立 Core 导入、晚 FK 回滚与原回执恢复均实测通过。W401 的普通 HTTP 在原隔离候选验证并释放。 [W406](./evidence/W406-01/DELIVERY.md) · [W401](/D:/CP6-local-test/CP6-72H-20261109/W401-VERIFY/DELIVERY.md)
+
+
 > W409 同源 v9/v10 的三个既有入口均通过只读实证。W408 随 #847 采用并释放。W406 完整独立 Core 已在恢复窗口实测，等待串行采用。 [W409](./evidence/W409-01/DELIVERY.md)
 
 
