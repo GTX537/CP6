@@ -17,8 +17,13 @@ DEV-2 于 2026-11-09 14:17:33 UTC 从 #843 `bccadb753e34c87991640260ffa05547eab0
 
 ## Core 候选实库验证
 
-**仍待运行。** 14:27:35 UTC 离线验证齐备后，本窗持续等独占初始化内存。物理 1200 MiB、可用 commit 10240 MiB、55564 空闲及无竞争进程为正式低内存初始化门。测试入口复用 W351 发布 DLL `3123dd9fa784d6c31bc674cc5bb015fd44e2431a8d825fcceb86c2e164af2be7`、原 deps 和 W353 CLI `53807c439aba8c48960a1ce1bc926d2ff02de302b66469884c9032dbedd3791c`。1650 MiB 以下的已批准路径只对任务私有 runtimeconfig 改 `System.GC.Server=false`。采样使用 Windows `GlobalMemoryStatusEx` 和现有 psutil，未取得两次达标样本。[实库夹具](../../../../eng/wp02-02/rma-tenant-archive/verify_core_candidate_import.py) · [续验命令](/D:/CP6-local-test/CP6-72H-20261109/W406-01/launch-full-native.py) · [资源原件](/D:/CP6-local-test/CP6-72H-20261109/W406-01/native-resource-gate.jsonl)
+2026-11-09 16:12:58.293263 UTC 在 DEV-2 从已保存的 `fe52f94eaa8d93e7c560b518a229d2ccbd75abdb` 恢复。启动连续两份物理样本为 1,849/1,826 MiB，可用 commit 20,991/20,937 MiB，相关端口空闲且无竞争进程。DatabaseInit 内门的连续物理样本为 1,667/1,693 MiB。实际沿用 W351 发布 DLL `3123dd9fa784d6c31bc674cc5bb015fd44e2431a8d825fcceb86c2e164af2be7`、原 deps/runtimeconfig 和 W353 CLI `53807c439aba8c48960a1ce1bc926d2ff02de302b66469884c9032dbedd3791c`。四份封存摘要均匹配，实际使用原发布 GC 配置。DatabaseInit PID 29704 退出 0，实际 commissioning 和重读均退出 0，回执原字节相同。[实库夹具](../../../../eng/wp02-02/rma-tenant-archive/verify_core_candidate_import.py) · [续验命令](/D:/CP6-local-test/CP6-72H-20261109/W406-01/launch-full-native.py) · [资源与制品原件](/D:/CP6-local-test/CP6-72H-20261109/W406-01/rma-core-candidate-20261109T161415-21f0f9e6/init-artifacts.json)
 
-待验为真 Core commissioning、原候选标记和错目标拒绝、晚 FK 原子回滚、原 1/2 行回读、同键原结果及他租和控制行保护。当前已停止 PostgreSQL 小库仅用独立测试行验证原驱动。源根采用和正式 PGT-021/022 仍按各自门禁记录。[正式验收卡](../../acceptance/postgresql-tenancy.json)
+- PostgreSQL 18.6 实际目标为 `127.0.0.1:55564/w406_candidate`，OID 16386，系统标识 `7706205797235709868`，候选 `6a89d755-10d4-4b72-8504-cf7f839c5754`。错物理库、错候选标记和改写后的 commissioning 原件各自拒绝。错库查询实际查无导入回执。
+- 晚故障先在事务中确认 1 条 head 和 2 条原 versions 已 COPY，再改 head 版本触发 `23503 rma_application_head_version`。原生事务全回滚，随后的同键恢复查无回执。A 行数、B 原行、标记、角色目录、原迁移及控制状态前后相等。
+- 对同一 v2 原包，代理 56961 在原生 backend 55820 收到 `CommandComplete COMMIT` 后断开，应用返回 `rma-stage-outcome-unknown (use recover)`。实际直连 `recover`、同键再次 import 和数据库持久回执原字节相同。`IMPORTED` 回执为 913 字节，SHA-256 `25991b0c3927c2bfb365cbc8aed3bbc28664497f9a1ea960fb83dfe34b9d3fa5`，`recoveryReady=false`。原 v1 pin 用作不同归档键的拒绝，已有行探针也实际拒绝。
+- 目标实际保存 1 条 head 和 2 条 versions，原行 COPY 字节逐条核对。B 的原行和原租户 ACL、commissioning 与控制原件通过前后相等检查。A 普通 LOGIN 读导入回执及 B 普通 LOGIN 读 A 业务表均返回 `42501`。W372 两份输入包的前后摘要相等。[实际回执](/D:/CP6-local-test/CP6-72H-20261109/W406-01/rma-core-candidate-20261109T161415-21f0f9e6/actual.json) · [COMMIT 代理原件](/D:/CP6-local-test/CP6-72H-20261109/W406-01/rma-core-candidate-20261109T161415-21f0f9e6/commit-reply-cut.json)
 
-本地分支 `codex/w406-01` 保存供继续验证。DEV-2 处置和席位释放由 COORD 办理。
+最终测试于 16:15:10.479044 UTC 退出 0，实库运行 55.344 秒，距本次恢复 132.186 秒。专属 postmaster 6952 正常停止，独立 `pg_ctl status` 为 3，55564 和 56961 均无监听。原件保存在 `D:/CP6-local-test/CP6-72H-20261109/W406-01/rma-core-candidate-20261109T161415-21f0f9e6`。[实际退出与时钟](/D:/CP6-local-test/CP6-72H-20261109/W406-01/test-native-01.time.json) · [停机原件](/D:/CP6-local-test/CP6-72H-20261109/W406-01/rma-core-candidate-20261109T161415-21f0f9e6/stopped.json)
+
+本窗实测覆盖隔离 Core 候选原两表的导入和恢复。源根采用、候选开放与正式 PGT-021/022 按原验收窗口执行。`codex/w406-01` 本地保存，DEV-2 交接时工作树干净，远端采用及席位释放由 COORD 办理。[正式验收卡](../../acceptance/postgresql-tenancy.json)
