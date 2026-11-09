@@ -12,6 +12,7 @@ import sys
 
 sys.dont_write_bytecode = True
 import archive
+import identity_priority
 import source_v3
 import visibility_v4
 
@@ -43,7 +44,9 @@ def checked_bundle(bundle, output, tenant, digest, target):
     base_names = {*archive.MEMBERS, "manifest.json"}
     journal_names = base_names | {archive.JOURNAL_MEMBER}
     source_names = journal_names | set(source_v3.MEMBERS)
-    if names not in (base_names, journal_names, source_names, source_names | {visibility_v4.MEMBER}) \
+    visibility_names = source_names | {visibility_v4.MEMBER}
+    if names not in (base_names, journal_names, source_names, visibility_names,
+                     visibility_names | set(identity_priority.MEMBERS)) \
             or any(entry.is_symlink() or not entry.is_file() for entry in files):
         raise StageError("rma-stage-bundle-member-rejected")
 
@@ -61,7 +64,8 @@ def checked_bundle(bundle, output, tenant, digest, target):
     if (source.system_identifier, source.database_oid) == (target.system_identifier, target.database_oid):
         raise StageError("rma-stage-target-is-source")
     projection = manifest.get("sharedProjection")
-    has_visibility = manifest["format"] == visibility_v4.FORMAT
+    has_identity = manifest["format"] == identity_priority.FORMAT
+    has_visibility = has_identity or manifest["format"] == visibility_v4.FORMAT
     has_source = has_visibility or manifest["format"] == source_v3.FORMAT
     columns = source_v3.HEADER_COLUMNS if has_source else archive.COLUMNS
     migration = manifest.get("migration")
@@ -84,6 +88,10 @@ def checked_bundle(bundle, output, tenant, digest, target):
         plan["sourceCounts"] = read_counts(manifest["rmaSource"]["counts"], ("headers", "details", "lineage"))
     if has_visibility:
         plan["visibilityCounts"] = read_counts(manifest["rmaVisibility"]["counts"], visibility_v4.FACTS)
+    if has_identity:
+        tables = manifest["identityPriority"]["tables"]
+        plan["identityPriorityCounts"] = read_counts({name: table["count"] for name, table in tables.items()},
+                                                     (table.name for table in identity_priority.TABLES))
     return checked, plan
 
 
@@ -363,6 +371,52 @@ CHECK_VISIBILITY = """
 """
 
 
+def identity_priority_sql(tenant):
+    # Nullability follows PostgreSqlIdentityPriorityBaselineV1. BPCHAR uses the same
+    # native ICU collation already present in the neutral v3+ schema, without padding.
+    nullable = {
+        "Cp6_DeadLetterRecord": {"ConsumerName", "SupportReference", "ReplayedAtUtc", "ReplayReasonCode"},
+        "Cp6_InboxAggregateCheckpoint": set(),
+        "Cp6_InboxMessage": {"OutcomeCode", "LastErrorCode", "SupportReference", "ProcessedAtUtc"},
+        "Cp6_OutboxMessage": {"LeaseOwner", "LeaseToken", "LeaseExpiresAtUtc", "PublishedAtUtc",
+                              "DeadLetteredAtUtc", "LastErrorCode", "SupportReference"},
+    }
+    statements = []
+    counts = []
+    for table in identity_priority.TABLES:
+        relation = f'rma_archive_stage."{table.name}"'
+        columns = []
+        for name in table.columns:
+            native_type = identity_priority.COLUMN_TYPES.get(name, "bpchar COLLATE rma_archive_stage.outbound_number")
+            nullability = "" if name in nullable[table.name] else " NOT NULL"
+            columns.append(f'"{name}" {native_type}{nullability}')
+        columns.extend((f'CHECK ("TenantId"={archive.literal(tenant)})', 'CHECK (octet_length("RowVersion")=8)'))
+        for key in table.unique_keys:
+            constraint = "PRIMARY KEY" if key == ("Id",) else "UNIQUE"
+            key_columns = ",".join(f'"{name}"' for name in key)
+            columns.append(f"{constraint} ({key_columns})")
+        definition = ",\n            ".join(columns)
+        statements.append(f"""
+        CREATE TABLE {relation} (
+            {definition}
+        );
+        \\copy {relation} FROM 'bundle/{table.member}' WITH (FORMAT csv, HEADER MATCH)
+        """)
+        counts.append(f"(SELECT count(*) FROM {relation})<>(expected->>{archive.literal(table.name)})::bigint")
+    mismatch = "\n            OR ".join(counts)
+    return "".join(statements) + f"""
+    DO $cp6_stage_identity_priority$
+    DECLARE
+        expected jsonb := current_setting('{TARGET_PLAN}')::jsonb->'identityPriorityCounts';
+    BEGIN
+        IF {mismatch} THEN
+            RAISE EXCEPTION 'rma-stage-identity-priority-count-mismatch';
+        END IF;
+    END
+    $cp6_stage_identity_priority$;
+    """
+
+
 WRITE_RECEIPT = """
     CREATE TABLE rma_archive_stage.receipt (
         singleton boolean PRIMARY KEY CHECK (singleton), tenant_id uuid NOT NULL,
@@ -462,6 +516,9 @@ def execute(args):
         if has_visibility:
             driver += CHECK_VISIBILITY
             source_field += ",'visibilityCounts',p->'visibilityCounts'"
+        if "identityPriorityCounts" in plan:
+            driver += identity_priority_sql(tenant)
+            source_field += ",'identityPriorityCounts',p->'identityPriorityCounts'"
         driver += WRITE_RECEIPT.format(source_field=source_field)
     else:
         driver = initial_sql(plan, read_only=True) + READ_RECEIPT
