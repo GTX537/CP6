@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC W363 正常采用及 W365 独立实证
+
+W363 远端 #817 与原归档测试对应，准确两端分支已删除，DEV-1 干净释放。W365 实际拒绝普通登录越界 DDL，恶意搜索路径和变量仍解析到原租户，INTEGRATION-1 正式释放。W361 原日志控制通过定向实库。 [W361 交付](../development/evidence/W361-01/DELIVERY.md) · [#817](https://github.com/GTX537/CP6/pull/817)
+
+
 ## 2026-11-09 UTC W359 收尾与 W362 实库恢复
 
 W359 完整 1,239 秒，DEV-1 干净释放。W362 的真实提交确认中断与原 CLI 恢复独立完成，集成席位正式释放。W363 实际同快照归档和隔离恢复通过。 [W363 交付](../development/evidence/W363-01/DELIVERY.md) · [#816](https://github.com/GTX537/CP6/pull/816)

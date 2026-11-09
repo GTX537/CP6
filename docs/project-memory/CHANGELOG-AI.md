@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC RMA 原日志控制
+
+新增已 commissioning 的原日志安装。普通登录只能读本租户原 Owner，受控原追加取得原认证根并参与调用事务。写入后由当前兼容 CLI 恢复原 commissioning 字节。 [W361 交付](../development/evidence/W361-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC RMA 同快照归档工具
 
 增加实际 PostgreSQL tenant schema 和准确共享出库投影的同一快照导出，核 scope、物理来源、对象 Owner、ACL 和成员。正式候选恢复另验。 [W363 交付](../development/evidence/W363-01/DELIVERY.md) · [#816](https://github.com/GTX537/CP6/pull/816)

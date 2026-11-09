@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 普通 RMA 宿主写与原日志归档
+
+核对 W361 正常采用后，下一窗接原宿主首次创建及同键重放。归档扩展原操作片段，完整 IAM、消息、资产和恢复后的当前性另验。 [W361 交付](../development/evidence/W361-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC RMA 原操作与受限归档接续
 
 W361 继续原 journal 的最小权限。归档仅覆盖 RMA 及其共享出库投影，完整 IAM、原操作、队列与资产等按原恢复场景推进。 [W363 交付](../development/evidence/W363-01/DELIVERY.md) · [#816](https://github.com/GTX537/CP6/pull/816)
