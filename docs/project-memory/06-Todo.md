@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 来源落表与当前队列对账
+
+继续 v4/v5 staging、现行消息占用及原效果对账、外部文件、IAM 和完整恢复。 [W380](../development/evidence/W380-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 来源可见性落表与共享恢复
 
 继续 v4 隔离 staging、身份优先队列和实际外部原件。现行 IAM 与其他共享域、完整候选恢复和正式验收仍在原任务范围。 [W379](../development/evidence/W379-01/DELIVERY.md)

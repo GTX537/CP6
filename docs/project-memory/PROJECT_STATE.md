@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC 身份优先队列归档
+
+W380 四张原生表的同快照、原字节、租约和全局键实测。W379 随 #826 采用并释放。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W380](../development/evidence/W380-01/DELIVERY.md) · [#826](https://github.com/GTX537/CP6/pull/826)
+
+
 ## 2026-11-09 UTC 原可见性事实归档
 
 W379 实测 v4 原可见性事实同切面。W377 随 #825 采用并释放，W378/W381 的实库结果保留。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W379](../development/evidence/W379-01/DELIVERY.md) · [#825](https://github.com/GTX537/CP6/pull/825)
