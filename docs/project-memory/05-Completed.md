@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC W356 远端收尾与 W358 实库
+
+W356 完整 1,488 秒，本地和远端任务分支均已删除，DEV-1 干净释放。W358 在 A 中断时验证 B 与旧读继续，原键恢复原件。 [W358 交付](../development/evidence/W358-01/DELIVERY.md) · [#814](https://github.com/GTX537/CP6/pull/814)
+
+
 ## 2026-11-09 UTC W355 远端收尾与 W356 实库
 
 W355 完整 1,355 秒，准确分支删除及 DEV-2 释放。W356 同一宿主的 A/B 原 RMA GET、模型隔离、当前权限及错目标拒绝通过。 [W356 交付](../development/evidence/W356-01/DELIVERY.md) · [#813](https://github.com/GTX537/CP6/pull/813)

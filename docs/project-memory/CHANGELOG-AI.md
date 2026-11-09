@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC 已 Ready 租户的并发索引升级
+
+增加原 RMA tenant schema 的具名按出库索引与同操作恢复。状态跟踪保护无效 OID，保存真实原件。首版 Ready、原回执及旧写栅栏保留。 [W358 交付](../development/evidence/W358-01/DELIVERY.md) · [#814](https://github.com/GTX537/CP6/pull/814)
+
+
 ## 2026-11-09 UTC 新隔离 RMA 原单条及历史读
 
 真实登录后的 RMA GET 显式接入普通租户 LOGIN 和仅两表的 EF 模型，原 DTO/ETag 及共享当前权限沿原入口。未接的旧业务数据路径明确关闭。 [W356 交付](../development/evidence/W356-01/DELIVERY.md) · [#813](https://github.com/GTX537/CP6/pull/813)
