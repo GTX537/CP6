@@ -18,12 +18,14 @@ import archive
 import erp_integration
 import file_content_assets
 import iam_v6
+import privacy_evidence
 import source_v3
 import visibility_v4
 
 
 FORMAT = "cp6-rma-iam-reconciliation-v1"
-ARCHIVE_FORMATS = (iam_v6.FORMAT, file_content_assets.FORMAT, erp_integration.FORMAT)
+ARCHIVE_FORMATS = (iam_v6.FORMAT, file_content_assets.FORMAT, erp_integration.FORMAT,
+                   privacy_evidence.FORMAT, archive.FORMAT_WITH_STOCK_OUTBOX)
 REPORT = "iam-reconciliation.jsonl"
 
 
@@ -160,7 +162,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("pg-bin", "target-file", "bundle", "output"):
         parser.add_argument("--" + name, type=Path, required=True)
-    parser.add_argument("--file-content-root", type=Path, help="original private local asset root, required for v7 and v8")
+    parser.add_argument("--file-content-root", type=Path, help="original private local asset root, required for v7 through v10")
     for name in ("username", "tenant", "manifest-sha256"):
         parser.add_argument("--" + name, required=True)
     args = parser.parse_args()

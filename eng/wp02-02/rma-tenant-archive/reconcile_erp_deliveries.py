@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Observe current ERP delivery keys from a pinned v8 archive on its exact PostgreSQL source."""
+"""Observe current ERP delivery keys from a pinned v8 through v10 archive on its exact PostgreSQL source."""
 
 import argparse
 from contextlib import closing
@@ -17,9 +17,11 @@ from tempfile import TemporaryDirectory
 sys.dont_write_bytecode = True
 import archive
 import erp_integration
+import privacy_evidence
 
 
 FORMAT = "cp6-erp-delivery-reconciliation-v1"
+ARCHIVE_FORMATS = (erp_integration.FORMAT, privacy_evidence.FORMAT, archive.FORMAT_WITH_STOCK_OUTBOX)
 REPORT = "reconciliation.jsonl"
 BATCH_SIZE = 128
 COMMAND, OUTBOX, BRIDGE = (next(table for table in erp_integration.TABLES if table.name == name)
@@ -49,7 +51,7 @@ def checked_bundle(bundle, tenant, target, digest, inputs, file_content_root):
     if hashlib.sha256(manifest_bytes).hexdigest() != digest:
         raise archive.ArchiveError("manifest-digest-mismatch")
     manifest = archive.verify_bundle(bundle, str(tenant), file_content_root=file_content_root)
-    if manifest != json.loads(manifest_bytes) or manifest["format"] != erp_integration.FORMAT \
+    if manifest != json.loads(manifest_bytes) or manifest["format"] not in ARCHIVE_FORMATS \
             or manifest.get("profile") != archive.PROFILE:
         raise archive.ArchiveError("erp-v8-bundle-rejected")
     if archive.PhysicalTarget.from_mapping(manifest.get("source")) != target:
