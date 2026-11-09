@@ -1,3 +1,4 @@
+using CP6.Core.Persistence.Tenancy;
 using CP6.Core.Services.Erp;
 using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Wms;
@@ -10,25 +11,29 @@ public partial class StockMovementService : IStockCreationOperationsV2
     public Task<StockCreationContextV2> CreationContextAsync(string action,StockCreationKeyV2 key,CancellationToken ct=default)
     {
         if(action is not ("adjust" or "move"))throw new OrderPriceCorrectionException("ACTION_FORBIDDEN",403);
-        return Owner.ExecuteAsync(OperationsOwnerV1.Stock,action,false,(a,t)=>a.StockCreationContext(key,t),ct,readOnlyAuthorityFence:true);
+        return Owner.ExecuteAsync(OperationsOwnerV1.Stock,action,false,(a,t)=>
+            action=="adjust" && _tenantStorage is { V2AdjustEnabled: true } storage
+                ? storage.ReadAsync(_db,a.ActorId,(context,token)=>a.ForStockRead(context).StockCreationContext(key,token),t,
+                    entry:StockReadEntry.AdjustCreationV2)
+                : a.StockCreationContext(key,t),ct,readOnlyAuthorityFence:true);
     }
     public Task<StockOperationResultV1> ApplyCommandAsync(StockApplyCommandV2 request,CancellationToken ct=default)
     {
         if(request==null || request.OperationId==Guid.Empty)throw new OrderPriceCorrectionException("ORIGINAL_OPERATION_REQUIRED",400);
         var frozen=OperationsOwnerV1.Freeze(request);var bytes=MainOwnerOperationJournalV1.Encode(new{kind="APPLY",request=frozen});
-        return ExecuteOriginal(frozen.OperationId,"adjust",bytes,async(_,a,t)=>
+        return ExecuteOriginal(frozen.OperationId,"adjust",bytes,async(mover,a,t)=>
         {
             if(frozen.AllowNegativeOverride || string.Equals(frozen.RelatedType,"STOCKTAKE",StringComparison.OrdinalIgnoreCase))
                 throw new OrderPriceCorrectionException("INTERNAL_STOCK_CAPABILITY_REQUIRED",403);
             Validate(frozen);a.RequirePriceWrite();frozen.OperatorCd=a.Actor;
-            var before=await Snapshot(frozen.WarehouseCd,[frozen.LocationCd],frozen.ProductCd,frozen.LotNo,t);
-            await PrepareStockCreation(a,frozen,frozen.NewStock,null,t);
-            await GuardIndependentLocationUse(a,frozen.WarehouseCd,frozen.LocationCd,frozen.TxnType,t);
-            using var inheritance=InheritTransactions(a);
-            var no=await ApplyWithinOwnerAsync(frozen,t);
+            var before=await mover.Snapshot(frozen.WarehouseCd,[frozen.LocationCd],frozen.ProductCd,frozen.LotNo,t);
+            await mover.PrepareStockCreation(a,frozen,frozen.NewStock,null,t);
+            await mover.GuardIndependentLocationUse(a,frozen.WarehouseCd,frozen.LocationCd,frozen.TxnType,t);
+            using var inheritance=mover.InheritTransactions(a);
+            var no=await mover.ApplyWithinOwnerAsync(frozen,t);
             a.AtCommit(c=>a.RequireStockKey(frozen.WarehouseCd,frozen.LocationCd,frozen.ProductCd,frozen.LotNo,false,c));
             return(new StockOperationResultV1(frozen.OperationId,"APPLY",TxnNo:no),before);
-        },ct,CreationOperationContract);
+        },ct,CreationOperationContract,_tenantStorage is { V2AdjustEnabled: true } ? _tenantStorage : null,StockWriteEntry.ApplyV2);
     }
     public Task<StockOperationResultV1> MoveCommandAsync(StockMoveCommandV2 request,CancellationToken ct=default)
     {

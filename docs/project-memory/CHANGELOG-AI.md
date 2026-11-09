@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC W336 真实库存 V2 创建调整
+
+新增 `StockReadTenancy:EnableV2Adjust`。原 V2 上下文和调整分别以准确入口用途接既有普通租户读写，沿原授权版本和原操作结果合同。 [交付报告](../development/evidence/W336-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W335 库存 V2 创建原语
 
 增加前向 Stock 部门映射迁移和 `install-stock-creation-writer-v2`。实际普通事务复用原授权版本、部门校验和审计记录。 [交付报告](../development/evidence/W335-01/DELIVERY.md)

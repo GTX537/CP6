@@ -61,7 +61,7 @@ public partial class StockMovementService : IStockOriginalOperationsV1
                 await a.RequireStockKey(frozen.WarehouseCd,frozen.ToLocationCd,frozen.ProductCd,frozen.LotNo,false,c);
             });
             return (new StockOperationResultV1(frozen.OperationId,"MOVE",OutTxnNo:pair.OutTxnNo,InTxnNo:pair.InTxnNo),before);
-        },ct,trustedStorage:_tenantStorage is { V1MoveEnabled: true } ? _tenantStorage : null,writeEntry:StockV1WriteEntry.Move);
+        },ct,trustedStorage:_tenantStorage is { V1MoveEnabled: true } ? _tenantStorage : null,writeEntry:StockWriteEntry.MoveV1);
     }
     private Task<Stock[]> Snapshot(string warehouse,string[] locations,string product,string lot,CancellationToken ct)
         =>_db.Stocks.AsNoTracking().Where(s=>!s.IsDeleted && s.WarehouseCd==warehouse && locations.Contains(s.LocationCd)
@@ -69,7 +69,7 @@ public partial class StockMovementService : IStockOriginalOperationsV1
 
     private async Task<StockOperationResultV1> ExecuteOriginal(Guid operation,string action,byte[] input,
         Func<StockMovementService,OperationsAccessV1,CancellationToken,Task<(StockOperationResultV1 result,Stock[] before)>> apply,CancellationToken ct,
-        string contract=OperationContract,TenantStockReadStore? trustedStorage=null,StockV1WriteEntry writeEntry=StockV1WriteEntry.Apply)
+        string contract=OperationContract,TenantStockReadStore? trustedStorage=null,StockWriteEntry writeEntry=StockWriteEntry.ApplyV1)
     {
         MainOwnerOperationJournalV1.Original? original=null;
         var effects=new List<StockTransaction>();
@@ -142,7 +142,7 @@ public partial class StockMovementService : IStockOriginalOperationsV1
     {
         if(operation==Guid.Empty)throw new OrderPriceCorrectionException("ORIGINAL_OPERATION_REQUIRED",400);
         if(close && _tenantStorage is { V1AdjustEnabled: true } writer)
-            return Owner.ExecuteStockOperationAsync(writer,StockV1WriteEntry.Close,
+            return Owner.ExecuteStockOperationAsync(writer,StockWriteEntry.CloseV1,
                 (context,access,token)=>Recover(context,access,token),(_,_)=>Task.FromResult("query"),ct);
 
         return Owner.ExecuteAsync(OperationsOwnerV1.Stock,"query",close,async(access,token)=>
