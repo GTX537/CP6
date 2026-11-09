@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC 原生共享表隔离补验
+
+加入可复现的隔离共享表 DELETE 和原密钥列权限验证，登记 PGT-008。 [W427](../development/evidence/W427-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 原 Stock V2 验收
 
 复用原 PostgreSQL 通过记录，登记 PGT-001 实测范围及未执行项。 [W426](../development/evidence/W426-01/DELIVERY.md)

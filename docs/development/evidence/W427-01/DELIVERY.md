@@ -37,3 +37,7 @@ exit $w427Exit
 ```
 
 本窗的新写入限于副本合成登录和隔离测试表。既有 Stock、ERP、Identity 业务表权限实证按原范围复用，正式 PGT-008 由协调方合并核对。任务候选在本地 `codex/w427-01`，DEV-2 待协调收尾。
+
+## PGT-008 原范围采用
+
+W368 实际普通可写列常量 UPDATE 返回 1，按 B 主键 UPDATE 返回 0，B 的原数据、租户、RowVersion、xmin 和 ctid 均保持。原角色对 TenantId 列改属、花名册、登录目录、TRUNCATE 和增加策略均返回 42501。ERP 八表及 Identity Priority 四表已分别用实际普通 A/B 验证本租 SELECT/INSERT、无过滤常量 TenantId UPDATE 的旧行 USING、错误新租户拒绝和真实保留权限。产品共享表的 DELETE 拒绝继续采用原 ACL 42501。W427 用允许 DELETE 的隔离共享表复核四项有效谓词和实际 DELETE 0/1，并以原 Core 密钥列补齐直接投影拒绝。按上述真实范围采用 PGT-008，正式 PostgreSQL 矩阵为 11 项 PASS、16 项 NOT_RUN。[原验收卡](../../acceptance/postgresql-tenancy.json#L251) · [W368 实测](/D:/CP6-local-test/CP6-72H-20261109/W368-VERIFY/DELIVERY.md) · [ERP 原 TRX](../WP02-02/erp-tenant-isolation/erp-tenant-postgres.trx) · [Identity 原 TRX](../WP02-02/identity-priority-tenant-isolation/identity-attempt2.trx)

@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC 共享 RLS 与原密钥列
+
+W427 实测普通 DELETE 0/1 和原密钥列 42501。正式 PostgreSQL 为 11 PASS、16 NOT_RUN。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W427](../development/evidence/W427-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC Stock 可信绑定
 
 W426 采用 PGT-001 实测。正式 PostgreSQL 为 10 PASS、17 NOT_RUN。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W426](../development/evidence/W426-01/DELIVERY.md)
