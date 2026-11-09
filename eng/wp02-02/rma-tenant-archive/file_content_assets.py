@@ -135,8 +135,14 @@ def verify_file(root, key, length, expected, *, sink=None):
         raise ValueError("file-content-asset-not-found") from error
 
 
-def member_files(path, tenant, count):
+def check_key(tenant, key):
     prefix = "native-content-v1/" + tenant.hex + "/"
+    if not key.startswith(prefix) or not re.fullmatch(r"[0-9a-f]{32}", key[len(prefix):]) \
+            or key[len(prefix):] == "0" * 32:
+        raise ValueError("file-content-asset-key-rejected")
+
+
+def member_files(path, tenant, count):
     seen = 0
     previous = 0
     with path.open(encoding="utf-8", newline="") as stream:
@@ -155,9 +161,7 @@ def member_files(path, tenant, count):
                     or any(not re.fullmatch(r"[0-9a-f]{64}", row[name]) for name in ("digest", "parent_digest", "state_digest")):
                 raise ValueError("file-content-reference-rejected")
             key = row["store_path"]
-            if not key.startswith(prefix) or not re.fullmatch(r"[0-9a-f]{32}", key[len(prefix):]) \
-                    or key[len(prefix):] == "0" * 32:
-                raise ValueError("file-content-asset-key-rejected")
+            check_key(tenant, key)
             yield key, length, row["digest"]
             previous = file_id
     if seen != count:
