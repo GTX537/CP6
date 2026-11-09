@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC #801 后续
+
+收妥 #801 正常合并和席位，接续库存首装安装 ID 的只读恢复，以及两份已固定制品的共同 service-token 业务验证。 [Issue #801](https://github.com/GTX537/CP6/issues/801) · [交付报告](../development/evidence/BUG-801-PG-FIRST-ADMIN/DELIVERY.md)
+
 ## 2026-11-09 UTC W345 续接
 
 优先处理全新 PostgreSQL 初始化 P0 #801。之后在共同 service-token 布局验证两版签发、撤销和原结果恢复，并接库存安装回执。 [Issue #801](https://github.com/GTX537/CP6/issues/801) · [交付报告](../development/evidence/W345-01/DELIVERY.md)

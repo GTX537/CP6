@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-09 UTC PostgreSQL 首管理员初始化修复
+
+#801 的真实空库、同库重跑、旧角色续跑和故障恢复回归通过。首次建立默认角色和导航与首管理员同事务，菜单编号冲突按实际身份处理。 [交付报告](../development/evidence/BUG-801-PG-FIRST-ADMIN/DELIVERY.md) · [Issue #801](https://github.com/GTX537/CP6/issues/801)
+
 ## 2026-11-09 UTC W345 两份实际本地制品
 
 两份固定 Main 源码的 Release publish 和五包运行身份已在隔离 PostgreSQL 分别实测。当前版完整初始化发现 P0 #801，真实登录诊断另有通过证据。 [交付报告](../development/evidence/W345-01/DELIVERY.md) · [Issue #801](https://github.com/GTX537/CP6/issues/801)

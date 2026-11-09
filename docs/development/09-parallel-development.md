@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> [P0 #801](https://github.com/GTX537/CP6/issues/801)的真实 PostgreSQL 回归已完成并进入正常集成。两份制品 [W345-01](evidence/W345-01/DELIVERY.md) 已释放 DEV-2，后续继续库存安装回执与兼容业务两线。
+
 > [CP6 三天实际执行](planning/20261109-codex-72h-execution.md)继续由 COORD 回收并行交付。[W345-01](evidence/W345-01/DELIVERY.md)固定两份真实制品及各自的运行身份，[P0 #801](https://github.com/GTX537/CP6/issues/801)修复独占 DEV-1。
 
 > [CP6 三天实际执行](planning/20261109-codex-72h-execution.md)由 COORD 串行回收台账。[W344-01](evidence/W344-01/DELIVERY.md)实测 Stock 取消、坏连接及原键恢复，W345 在 DEV-2 独立核两份本地制品。

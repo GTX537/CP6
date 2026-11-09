@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC PostgreSQL 首管理员初始化回归
+
+真实 PostgreSQL 18.6 一次性初始化验证 4 项通过。空库可完成采购审批种子，旧角色续跑沿用其授权，同一事务故障完整回滚。 [交付报告](../development/evidence/BUG-801-PG-FIRST-ADMIN/DELIVERY.md)
+
 ## 2026-11-09 UTC W345 两份实际本地制品
 
 旧版和当前版分别完成 locked restore、实际 publish、闭包核验及本地 Kestrel/PG 诊断。当前版用真实会话及普通只读登录核五包身份。 [交付报告](../development/evidence/W345-01/DELIVERY.md)
