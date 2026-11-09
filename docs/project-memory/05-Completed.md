@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC 原 PGT 普通身份隔离
+
+W417 原 PGT-006、007、009 在真实关闭 RMA Core 候选范围通过。普通 A/B 登录、20 个原生 42501 及原序列、流水、ACL 前后状态均准确。 [W417](../development/evidence/W417-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 文件原生原件验证
 
 W416 PostgreSQL 18.6 从真实 W383 源导出 3 文件、3 事件、3 原回执和 1 原父版本，原生内容逐项吻合，实际切点隔离和错误图拒绝通过。 [W416](../development/evidence/W416-01/DELIVERY.md)

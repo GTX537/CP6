@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 原 PGT 及关闭候选采用
+
+W415 继续原操作 HTTP。FileContent 原生候选导入、ERP 真实 Owner 切面与正式 PGT-021/022 仍按原门执行。 [W417](../development/evidence/W417-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 文件原生采用与 ERP Owner
 
 继续 FileContent 候选写入和现行父权威、真实 ERP Owner 终态切面、原 PGT 直接验收及完整多域恢复。 [W416](../development/evidence/W416-01/DELIVERY.md)

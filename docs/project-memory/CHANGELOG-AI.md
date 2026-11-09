@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC 原 PGT 直接隔离验证
+
+登记原 PGT-006、007、009 的实际 PostgreSQL 普通角色证据，记录明确物理、ACL 和前后原件。 [W417](../development/evidence/W417-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 文件历史导出
 
 新增独立原生五个成员的 FileContent 同切面导出和校验，保留事件、原回执及引用父版本。 [W416](../development/evidence/W416-01/DELIVERY.md)
