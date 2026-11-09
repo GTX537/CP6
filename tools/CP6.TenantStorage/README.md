@@ -201,3 +201,13 @@ The registered logins can read the original operation fields for their own tenan
 After the first RMA journal append, use this release or a compatible later CLI to recover the original `commission-rma-core-tenant-storage-v1` result. The earlier commissioning executable rejects the nonempty RMA journal slice. The current command permits that slice on replay only when the exact overlay is installed and the old shared RMA tables are still empty. It returns the original commissioning bytes and leaves the original tenant Ready records intact.
 
 Run `eng/wp02-02/rma-tenant-migration/verify_original_journal.py --help` for the real PostgreSQL fixture and its published DatabaseInit and earlier commissioning CLI inputs.
+
+### Hosted Core RMA draft creation
+
+Install the writer with `install-rma-core-draft-writer-v1 --stdin` after the original journal has been installed. Use the same private envelope, exact `Target`, `InstallationId` and full `Tenants` mapping with a new `OperationId` for this installation. Retain the original request. An exact retry recovers the persisted result after checking the commissioned layout.
+
+Enable `RmaReadTenancy:DraftEnabled` alongside the existing `RmaReadTenancy:Enabled`, installation and ordinary login settings. The explicit writer applies to `POST /api/wms/rma/native-applications-v1`. The application checks current authorization and outbound source through the original Owner while the tenant transaction holds the original authentication lock. The ordinary login calls the installed writer, which stores version 1, its head and the original journal record in one PostgreSQL transaction.
+
+Repeat the same business operation ID and command after an uncertain POST outcome. The original query decision controls disclosure of an existing result and the original add decision controls new creation. A missing writer or incorrect binding fails the hosted draft request. Submit and operation close remain outside the hosted draft profile.
+
+Run `eng/wp02-02/rma-tenant-migration/verify_draft.py --help` for the owned PostgreSQL and bearer HTTP fixture.

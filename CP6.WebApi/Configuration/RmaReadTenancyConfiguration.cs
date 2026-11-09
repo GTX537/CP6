@@ -57,7 +57,7 @@ internal static class RmaReadTenancyConfiguration
 
         var credentials = new Credentials(tenants.ToDictionary(t => t.TenantId, t => t.Password));
         services.AddSingleton(sp => new TenantRmaReadStore(catalog, credentials, sp.GetRequiredService<IHttpContextAccessor>(),
-            settings.InstallationId));
+            settings.InstallationId, settings.DraftEnabled));
     }
 
     private static InvalidOperationException Rejected() => new("RMA_READ_TENANCY_CONFIGURATION_REJECTED");
@@ -65,6 +65,7 @@ internal static class RmaReadTenancyConfiguration
     private sealed class Settings
     {
         public bool Enabled { get; set; }
+        public bool DraftEnabled { get; set; }
         public Guid InstallationId { get; set; }
         public string Revision { get; set; } = "";
         public string SslMode { get; set; } = nameof(Npgsql.SslMode.VerifyFull);

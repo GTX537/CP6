@@ -22,21 +22,24 @@ internal sealed class MainOwnerOperationJournalV1(CP6Context db, bool stockTenan
         public byte[] Result { get; init; } = [];
         public Guid[] Objects { get; init; } = [];
     }
-    private void RequireTransaction()
+    private static void RequireTransaction(DbContext db, Guid tenant)
     {
-        if (!db.Database.IsNpgsql() || db.CurrentTenantId == Guid.Empty
+        if (!db.Database.IsNpgsql() || tenant == Guid.Empty
             || db.Database.CurrentTransaction?.GetDbTransaction() is not NpgsqlTransaction tx
             || !ReferenceEquals(tx.Connection, db.Database.GetDbConnection())
             || tx.IsolationLevel is not (IsolationLevel.ReadCommitted or IsolationLevel.Serializable))
             throw new InvalidOperationException("MAIN_OWNER_TRANSACTION_REQUIRED");
     }
-    internal async Task<Original?> Read(string owner, Guid operation, CancellationToken ct)
+    internal Task<Original?> Read(string owner, Guid operation, CancellationToken ct) =>
+        Read(db, db.CurrentTenantId, owner, operation, ct);
+
+    internal static async Task<Original?> Read(DbContext db, Guid tenant, string owner, Guid operation, CancellationToken ct)
     {
-        RequireTransaction();
+        RequireTransaction(db, tenant);
         return await db.Database.SqlQuery<Original>($"""
             SELECT actor_id AS "Actor",contract AS "Contract",state AS "State",input_bytes AS "Input",
               input_sha256 AS "Digest",result_bytes AS "Result",object_ids AS "Objects"
-            FROM cp6_main_owner_v1.operations WHERE tenant_id={db.CurrentTenantId} AND owner={owner} AND operation_id={operation}
+            FROM cp6_main_owner_v1.operations WHERE tenant_id={tenant} AND owner={owner} AND operation_id={operation}
             """).SingleOrDefaultAsync(ct);
     }
     internal static byte[] Encode<T>(T value) => JsonSerializer.SerializeToUtf8Bytes(value);
@@ -46,7 +49,7 @@ internal sealed class MainOwnerOperationJournalV1(CP6Context db, bool stockTenan
     internal async Task Store(string owner, string contract, Guid operation, Guid actor, byte[]? input,
         object result, Guid[] objects, object audit, CancellationToken ct)
     {
-        RequireTransaction();
+        RequireTransaction(db, db.CurrentTenantId);
         var state=input == null ? "CLOSED" : "COMMITTED";
         var digest=input == null ? null : Digest(input);
         var resultBytes=Encode(result);

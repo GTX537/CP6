@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC 原日志归档采用与共享故障实证
+
+W366 完整 1,144 秒，两端任务分支删除、DEV-1 干净释放。W369 实测共享升级回滚、v1 延续、v2 保持关闭及同键恢复，完整 315 秒。W364 真实草稿与归档兼容已通过。 [W364 交付](../development/evidence/W364-01/DELIVERY.md) · [#819](https://github.com/GTX537/CP6/pull/819)
+
+
 ## 2026-11-09 UTC 原日志归档与两项独立实库
 
 W367 混合 COPY 在实际第二行拒绝，整笔写集回滚，再以同键提交，实测 370 秒。W368 的获准列 UPDATE 只影响 A，独立观测 B 原记录，实测 660 秒。两窗集成席位收尾。W366 原日志快照和 staging 已通过。 [W366 交付](../development/evidence/W366-01/DELIVERY.md) · [本轮席位](../development/dispatch/20261109-wave366/README.md)

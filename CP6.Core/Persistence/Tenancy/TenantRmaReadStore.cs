@@ -12,10 +12,11 @@ using Npgsql;
 
 namespace CP6.Core.Persistence.Tenancy;
 
-internal sealed class TenantRmaReadStore : IAsyncDisposable
+internal sealed partial class TenantRmaReadStore : IAsyncDisposable
 {
     internal const string Host = "main-rma-read";
-    private const string Purpose = "wms-rma:query";
+    private const string QueryPurpose = "wms-rma:query";
+    private const string DraftPurpose = "wms-rma:draft-write";
     private const string Issuer = "https://cp6.internal/main-rma-read";
     private const string Audience = "CP6.Main.RmaRead";
 
@@ -24,16 +25,18 @@ internal sealed class TenantRmaReadStore : IAsyncDisposable
     private readonly IHttpContextAccessor _http;
     private readonly TenantConnectionManager _connections;
     private readonly TrustedContextExecutorV1 _executor;
+    internal bool DraftEnabled { get; }
 
     internal TenantRmaReadStore(TenantStorageCatalog catalog, ITenantCredentialResolver credentials,
-        IHttpContextAccessor http, Guid installation)
+        IHttpContextAccessor http, Guid installation, bool draftEnabled = false)
     {
         _catalog = catalog;
         _installation = installation;
         _http = http;
+        DraftEnabled = draftEnabled;
         var scope = new ContextScopeAccessorV1();
         _connections = new(Host, scope, catalog, credentials, new(32, 64, 2));
-        _executor = new(new BindingAuthority(catalog), scope);
+        _executor = new(new BindingAuthority(catalog, draftEnabled), scope);
     }
 
     // The existing RMA Owner has verified the current signed session and action.
@@ -50,47 +53,29 @@ internal sealed class TenantRmaReadStore : IAsyncDisposable
                 (NpgsqlTransaction)authority.Database.CurrentTransaction!.GetDbTransaction(),
                 configured, _catalog.Principal(configured).Username, _installation, ct);
 
-            var http = _http.HttpContext!;
-            var user = http.User;
-            var actor = new ContextActorV1(tenant, Issuer, actorId.ToString("D"), ContextActorKindV1.Human, actorId);
-            var tokenId = user.FindFirst("jti")!.Value;
-            var expires = DateTimeOffset.FromUnixTimeSeconds(long.Parse(user.FindFirst("exp")!.Value, CultureInfo.InvariantCulture));
-            var original = user.FindFirst("impersonator_id")?.Value;
-            string[] scopes = [Purpose];
-            var source = new AuthenticatedContextSourceV1(actor, actor, Audience, "main", DateTimeOffset.UtcNow,
-                expires, "current-rma-owner:" + tokenId, tokenId, scopes,
-                OriginalRequesterReference: original is null ? null : user.FindFirst("impersonator_tenant_id")!.Value + ":" + original);
-            var operation = new ContextOperationV1(ContextEntryKindV1.Http, Host, RmaTenantStorageV1.CoreReadProfile,
-                Audience, Purpose, tenant, operationReference, http.TraceIdentifier, scopes);
-
-            (T? Value, ExceptionDispatchInfo? Failure) outcome = default;
-            await _executor.ExecuteAsync(ContextEntryKindV1.Http, new ContextResolutionInputV1(operation, source),
-                VerifiedRmaOwnerSource.Instance, async token =>
+            var outcome = await InTenantScopeAsync(authority, actorId, operationReference, QueryPurpose,
+                async (transaction, cancellation) =>
                 {
-                    await using var lease = await _connections.OpenCurrentAsync(token);
-                    outcome = await lease.InTransactionAsync(async (transaction, cancellation) =>
-                    {
-                        var result = await transaction.ExecuteAsync<(T? Value, ExceptionDispatchInfo? Failure)>(
-                            async (connection, dbTransaction, queryToken) =>
-                            {
-                                await using var readOnly = new NpgsqlCommand(
-                                    "SET TRANSACTION READ ONLY; SET LOCAL lock_timeout='10s'", connection, dbTransaction);
-                                await readOnly.ExecuteNonQueryAsync(queryToken);
-                                if (authorityIdentity != await RmaTenantStorageV1.CoreReadPrimaryAsync(connection, dbTransaction, queryToken))
-                                    throw new TenantStorageException(TenantStorageFailure.IdentityRejected);
+                    var result = await transaction.ExecuteAsync<(T? Value, ExceptionDispatchInfo? Failure)>(
+                        async (connection, dbTransaction, queryToken) =>
+                        {
+                            await using var readOnly = new NpgsqlCommand(
+                                "SET TRANSACTION READ ONLY; SET LOCAL lock_timeout='10s'", connection, dbTransaction);
+                            await readOnly.ExecuteNonQueryAsync(queryToken);
+                            if (authorityIdentity != await RmaTenantStorageV1.CoreReadPrimaryAsync(connection, dbTransaction, queryToken))
+                                throw new TenantStorageException(TenantStorageFailure.IdentityRejected);
 
-                                using var guard = new TenantEfCommandGuard(transaction, connection, dbTransaction, tenant);
-                                var options = RmaTenantReadContext.Options(connection).AddInterceptors(guard);
-                                await using var db = new RmaTenantReadContext(options.Options, transaction.CurrentBinding);
-                                await db.Database.UseTransactionAsync(dbTransaction, queryToken);
-                                // Preserve expected Owner denial and not-found responses through the lease.
-                                try { return (await read(db, queryToken), null); }
-                                catch (OrderPriceCorrectionException error) { return (null, ExceptionDispatchInfo.Capture(error)); }
-                            }, cancellation);
-                        if (result.Failure is null)
-                            await transaction.CommitAsync(cancellation);
-                        return result;
-                    }, cancellationToken: token);
+                            using var guard = new TenantEfCommandGuard(transaction, connection, dbTransaction, tenant);
+                            var options = RmaTenantReadContext.Options(connection).AddInterceptors(guard);
+                            await using var db = new RmaTenantReadContext(options.Options, transaction.CurrentBinding);
+                            await db.Database.UseTransactionAsync(dbTransaction, queryToken);
+                            // Preserve expected Owner denial and not-found responses through the lease.
+                            try { return (await read(db, queryToken), null); }
+                            catch (OrderPriceCorrectionException error) { return (null, ExceptionDispatchInfo.Capture(error)); }
+                        }, cancellation);
+                    if (result.Failure is null)
+                        await transaction.CommitAsync(cancellation);
+                    return result;
                 }, ct);
             outcome.Failure?.Throw();
             return outcome.Value!;
@@ -106,6 +91,33 @@ internal sealed class TenantRmaReadStore : IAsyncDisposable
         }
     }
 
+    private async Task<T> InTenantScopeAsync<T>(CP6Context authority, Guid actorId, string operationReference, string purpose,
+        Func<TenantStorageTransaction, CancellationToken, Task<T>> action, CancellationToken ct)
+    {
+        var tenant = authority.CurrentTenantId;
+        var http = _http.HttpContext!;
+        var user = http.User;
+        var actor = new ContextActorV1(tenant, Issuer, actorId.ToString("D"), ContextActorKindV1.Human, actorId);
+        var tokenId = user.FindFirst("jti")!.Value;
+        var expires = DateTimeOffset.FromUnixTimeSeconds(long.Parse(user.FindFirst("exp")!.Value, CultureInfo.InvariantCulture));
+        var original = user.FindFirst("impersonator_id")?.Value;
+        string[] scopes = [purpose];
+        var source = new AuthenticatedContextSourceV1(actor, actor, Audience, "main", DateTimeOffset.UtcNow,
+            expires, "current-rma-owner:" + tokenId, tokenId, scopes,
+            OriginalRequesterReference: original is null ? null : user.FindFirst("impersonator_tenant_id")!.Value + ":" + original);
+        var operation = new ContextOperationV1(ContextEntryKindV1.Http, Host, RmaTenantStorageV1.CoreReadProfile,
+            Audience, purpose, tenant, operationReference, http.TraceIdentifier, scopes);
+
+        T result = default!;
+        await _executor.ExecuteAsync(ContextEntryKindV1.Http, new ContextResolutionInputV1(operation, source),
+            VerifiedRmaOwnerSource.Instance, async token =>
+            {
+                await using var lease = await _connections.OpenCurrentAsync(token);
+                result = await lease.InTransactionAsync(action, cancellationToken: token);
+            }, ct);
+        return result;
+    }
+
     public ValueTask DisposeAsync() => _connections.DisposeAsync();
 
     private sealed class VerifiedRmaOwnerSource : IContextSourceVerifierV1<ContextResolutionInputV1>
@@ -115,16 +127,18 @@ internal sealed class TenantRmaReadStore : IAsyncDisposable
             ValueTask.FromResult<ContextResolutionInputV1?>(input);
     }
 
-    private sealed class BindingAuthority(TenantStorageCatalog catalog) : IContextBindingAuthorityV1
+    private sealed class BindingAuthority(TenantStorageCatalog catalog, bool draftEnabled) : IContextBindingAuthorityV1
     {
         public ValueTask<ContextBindingRegistrationV1?> ResolveCurrentAsync(ContextOperationV1 operation,
             AuthenticatedContextSourceV1 source, CancellationToken ct = default)
         {
+            if (operation.Purpose != QueryPurpose && !(draftEnabled && operation.Purpose == DraftPurpose))
+                return ValueTask.FromResult<ContextBindingRegistrationV1?>(null);
             var binding = catalog.Resolve(operation.ExpectedTenantId);
             return ValueTask.FromResult<ContextBindingRegistrationV1?>(new(binding.TenantId, binding.TenantId, Host,
-                RmaTenantStorageV1.CoreReadProfile, Issuer, "main", Audience, Purpose, ContextEntryKindV1.Http,
+                RmaTenantStorageV1.CoreReadProfile, Issuer, "main", Audience, operation.Purpose, ContextEntryKindV1.Http,
                 source.Actor, source.EffectiveActor, "rma-read:" + binding.TenantId.ToString("D"), binding.BindingRevision,
-                source.AuthenticatedAtUtc, source.ExpiresAtUtc, true, [Purpose]));
+                source.AuthenticatedAtUtc, source.ExpiresAtUtc, true, [operation.Purpose]));
         }
     }
 }
