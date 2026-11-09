@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 原提交与共享恢复依赖
+
+W372 继续真实原提交及当前授权。W373 核真实草稿提交确认丢失。staging 已有原回执，接当前 IAM、共享出库依赖、消息及资产的完整性和切换。 [W370 交付](../development/evidence/W370-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 普通提交、原操作与隔离 staging
 
 接原 RMA 提交及原操作读取和关闭。W370 验证候选 staging 的实际原子事务，保留完整依赖、当前性和真实切换的后续范围。W371 补真实连接保存点。 [W364 交付](../development/evidence/W364-01/DELIVERY.md) · [本轮席位](../development/dispatch/20261109-wave364/README.md)
