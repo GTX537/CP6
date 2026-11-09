@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W384 原当前消息对账实证通过，W385 随 #829 采用并释放。DEV-2 W387 核历史 IAM，集成席位 W388 对照原 PGT。 [W384](./evidence/W384-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave384/README.md)
+
+
 > W385 实际 v5 四表隔离落表、原键与原回执通过。W382 随 #828 采用并释放，W386 原路由证据已收尾，集成席位 W388 核原17验收。 [W385](./evidence/W385-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave385/README.md)
 
 
