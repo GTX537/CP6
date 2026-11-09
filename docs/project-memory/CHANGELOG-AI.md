@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC 登记原 PGT-015
+
+同步五组实际 PostgreSQL 并发原件、原 CRM Owner 与受控组件证据，并核各自源码和版本。 [W431](../development/evidence/W431-01/DELIVERY.md)
+
 ## 2026-11-09 UTC RMA 归属更新实证
 
 登记真实 PostgreSQL 更新、原 ACL、临时列授权回收及原历史比对，正式 PGT-027 待正常 EF/IAM。 [W430](../development/evidence/W430-01/DELIVERY.md)
