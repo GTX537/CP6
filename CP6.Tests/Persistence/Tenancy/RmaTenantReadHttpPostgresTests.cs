@@ -120,7 +120,8 @@ public sealed partial class RmaTenantReadHttpPostgresTests(ITestOutputHelper out
         return host;
     }
 
-    private static Dictionary<string, string> Configuration(Fixture fixture, bool swap = false, bool draft = false, bool submit = false)
+    private static Dictionary<string, string> Configuration(Fixture fixture, bool swap = false, bool draft = false,
+        bool submit = false, bool operations = false)
     {
         var config = new Dictionary<string, string>
         {
@@ -131,6 +132,7 @@ public sealed partial class RmaTenantReadHttpPostgresTests(ITestOutputHelper out
         };
         if (draft) config["RmaReadTenancy__DraftEnabled"] = "true";
         if (submit) config["RmaReadTenancy__SubmitEnabled"] = "true";
+        if (operations) config["RmaReadTenancy__OriginalOperationsEnabled"] = "true";
         var logins = swap ? new[] { fixture.B, fixture.A } : [fixture.A, fixture.B];
         var ids = new[] { fixture.A.TenantId, fixture.B.TenantId };
         for (var i = 0; i < ids.Length; i++)

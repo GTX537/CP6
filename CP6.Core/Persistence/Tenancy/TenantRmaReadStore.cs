@@ -18,6 +18,7 @@ internal sealed partial class TenantRmaReadStore : IAsyncDisposable
     private const string QueryPurpose = "wms-rma:query";
     private const string DraftPurpose = "wms-rma:draft-write";
     private const string SubmitPurpose = "wms-rma:submit-write";
+    private const string ClosePurpose = "wms-rma:close-write";
     private const string Issuer = "https://cp6.internal/main-rma-read";
     private const string Audience = "CP6.Main.RmaRead";
 
@@ -28,18 +29,21 @@ internal sealed partial class TenantRmaReadStore : IAsyncDisposable
     private readonly TrustedContextExecutorV1 _executor;
     internal bool DraftEnabled { get; }
     internal bool SubmitEnabled { get; }
+    internal bool OriginalOperationsEnabled { get; }
 
     internal TenantRmaReadStore(TenantStorageCatalog catalog, ITenantCredentialResolver credentials,
-        IHttpContextAccessor http, Guid installation, bool draftEnabled = false, bool submitEnabled = false)
+        IHttpContextAccessor http, Guid installation, bool draftEnabled = false, bool submitEnabled = false,
+        bool originalOperationsEnabled = false)
     {
         _catalog = catalog;
         _installation = installation;
         _http = http;
         DraftEnabled = draftEnabled;
         SubmitEnabled = submitEnabled;
+        OriginalOperationsEnabled = originalOperationsEnabled;
         var scope = new ContextScopeAccessorV1();
         _connections = new(Host, scope, catalog, credentials, new(32, 64, 2));
-        _executor = new(new BindingAuthority(catalog, draftEnabled, submitEnabled), scope);
+        _executor = new(new BindingAuthority(catalog, draftEnabled, submitEnabled, originalOperationsEnabled), scope);
     }
 
     // The existing RMA Owner has verified the current signed session and action.
@@ -130,7 +134,8 @@ internal sealed partial class TenantRmaReadStore : IAsyncDisposable
             ValueTask.FromResult<ContextResolutionInputV1?>(input);
     }
 
-    private sealed class BindingAuthority(TenantStorageCatalog catalog, bool draftEnabled, bool submitEnabled)
+    private sealed class BindingAuthority(TenantStorageCatalog catalog, bool draftEnabled, bool submitEnabled,
+        bool originalOperationsEnabled)
         : IContextBindingAuthorityV1
     {
         public ValueTask<ContextBindingRegistrationV1?> ResolveCurrentAsync(ContextOperationV1 operation,
@@ -141,6 +146,7 @@ internal sealed partial class TenantRmaReadStore : IAsyncDisposable
                 QueryPurpose => true,
                 DraftPurpose => draftEnabled,
                 SubmitPurpose => submitEnabled,
+                ClosePurpose => originalOperationsEnabled,
                 _ => false
             };
             if (!enabled) return ValueTask.FromResult<ContextBindingRegistrationV1?>(null);

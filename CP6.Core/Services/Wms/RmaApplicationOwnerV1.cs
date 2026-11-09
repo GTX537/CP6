@@ -14,6 +14,7 @@ namespace CP6.Core.Services.Wms;
 public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner)
 {
     private const string ApplicationRoute = "api/wms/rma/native-applications-v1";
+    private const string CloseAuditAction = "close-uncommitted-application-operation";
     private const int ApplicationPageSize = 50;
     private const int ApplicationProbeSize = 128;
     private readonly TenantRmaReadStore? _tenantReads;
@@ -380,20 +381,52 @@ public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner
     }
     public Task<RmaApplicationOperationV1> OperationAsync(Guid id, bool close = false, CancellationToken ct = default)
     {
-        RequireSharedEntry();
+        if (_tenantReads is { OriginalOperationsEnabled: false }) RequireSharedEntry();
         if (id == Guid.Empty) throw Error("ORIGINAL_OPERATION_REQUIRED", 400);
+        if (_tenantReads is { } storage)
+            return close ? CloseTenantOperation(storage, id, ct) : ReadTenantOperation(storage, id, ct);
+
         var journal = new MainOwnerOperationJournalV1(db); MainOwnerOperationJournalV1.Original? original = null;
         return owner.ExecuteAsync(OperationsOwnerV1.Rma, "query", close, async (a, t) =>
         {
-            if (original != null)
-            {
-                if (original.Actor != a.ActorId) throw Error("ORIGINAL_OPERATION_FORBIDDEN", 403);
-                return original.State == "CLOSED" ? new(id, "CLOSED") : new RmaApplicationOperationV1(id, "COMMITTED", await Disclose(a, original, null, t));
-            }
-            if (!close) return new RmaApplicationOperationV1(id, "UNKNOWN");
+            if (original is not null || !close)
+                return await DescribeOriginal(a, id, original, t);
+
             var result = new RmaApplicationOperationV1(id, "CLOSED");
-            await journal.Store(JournalOwner, Contract, id, a.ActorId, null, result, [], new { action = "close-uncommitted-application-operation" }, t);
+            await journal.Store(JournalOwner, Contract, id, a.ActorId, null, result, [], new { action = CloseAuditAction }, t);
             return result;
         }, ct, actionAtFence: async t => { original = await journal.Read(JournalOwner, id, t); return close && original == null ? "cancel" : "query"; });
+    }
+
+    private Task<RmaApplicationOperationV1> ReadTenantOperation(TenantRmaReadStore storage, Guid id, CancellationToken ct) =>
+        owner.ExecuteAsync(OperationsOwnerV1.Rma, "query", false, (access, token) =>
+            storage.ReadAsync(db, access.ActorId, ApplicationRoute + "/operations/{id}", async (tenantDb, readToken) =>
+            {
+                var original = await MainOwnerOperationJournalV1.Read(tenantDb, tenantDb.Binding.TenantId, JournalOwner, id, readToken);
+                return await DescribeOriginal(access, id, original, readToken, tenantDb);
+            }, token), ct);
+
+    private Task<RmaApplicationOperationV1> CloseTenantOperation(TenantRmaReadStore storage, Guid id, CancellationToken ct) =>
+        owner.ExecuteRmaWriteAsync(storage, RmaWriteEntry.Close, id, async (access, tenantDb, original, token) =>
+        {
+            if (original is not null)
+                return await DescribeOriginal(access, id, original, token, tenantDb);
+
+            var result = new RmaApplicationOperationV1(id, "CLOSED");
+            var audit = JsonSerializer.Serialize(new { action = CloseAuditAction });
+            await tenantDb.Database.ExecuteSqlInterpolatedAsync($"""
+                SELECT cp6_rma_original_journal_v1.store({tenantDb.Binding.TenantId},{id},{access.ActorId},
+                    'CLOSED',NULL::bytea,NULL::text,{MainOwnerOperationJournalV1.Encode(result)},ARRAY[]::uuid[],CAST({audit} AS jsonb))
+                """, token);
+            return result;
+        }, ct);
+
+    private async Task<RmaApplicationOperationV1> DescribeOriginal(OperationsAccessV1 access, Guid id,
+        MainOwnerOperationJournalV1.Original? original, CancellationToken ct, RmaTenantReadContext? storage = null)
+    {
+        if (original is null) return new(id, "UNKNOWN");
+        if (original.Actor != access.ActorId) throw Error("ORIGINAL_OPERATION_FORBIDDEN", 403);
+        if (original.State == "CLOSED") return new(id, "CLOSED");
+        return new(id, "COMMITTED", await Disclose(access, original, null, ct, storage));
     }
 }

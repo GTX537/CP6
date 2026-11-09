@@ -219,3 +219,13 @@ After adopting the draft writer, run `install-rma-core-submit-writer-v1 --stdin`
 Set `RmaReadTenancy:SubmitEnabled` with the existing tenant read profile to enable `POST /api/wms/rma/native-applications-v1/{id}/submit`. The submit Owner validates the original `If-Match`, expected version, current session, permission and source. The ordinary transaction updates the matching DRAFT head, writes the next immutable SUBMITTED version, and appends the original journal through the existing writer. Keep the original submit request, including its `If-Match` value, for a same-key retry after uncertain completion.
 
 Run `eng/wp02-02/rma-tenant-migration/verify_submit.py --help` for the real hosted submit, receipt compatibility and archive fixture.
+
+### Hosted Core RMA original operations
+
+Set `RmaReadTenancy:OriginalOperationsEnabled` with the existing tenant read profile after commissioning the original journal and draft writer. The host uses the installed ordinary login, original journal and authentication lock.
+
+`GET /api/wms/rma/native-applications-v1/operations/{id}` uses the existing query permission. It reports `UNKNOWN` when the tenant has no original, or discloses the original to its actor. Disclosure of a committed result also checks current source access.
+
+`POST /api/wms/rma/native-applications-v1/operations/{id}/close` uses cancel for a missing operation and query for an existing one. Close stores a terminal `CLOSED` original. Draft and submit share the same lock and operation key, so a later request uses the already recorded outcome. Keep the same operation key if completion is uncertain.
+
+Run `eng/wp02-02/rma-tenant-migration/verify_operations.py --help` for the hosted original lookup and close fixture.

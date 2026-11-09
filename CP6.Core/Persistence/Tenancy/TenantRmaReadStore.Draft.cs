@@ -8,7 +8,7 @@ using Npgsql;
 
 namespace CP6.Core.Persistence.Tenancy;
 
-internal enum RmaWriteEntry { Draft, Submit }
+internal enum RmaWriteEntry { Draft, Submit, Close }
 
 internal sealed partial class TenantRmaReadStore
 {
@@ -19,6 +19,7 @@ internal sealed partial class TenantRmaReadStore
         {
             RmaWriteEntry.Draft => (DraftPurpose, "api/wms/rma/native-applications-v1"),
             RmaWriteEntry.Submit => (SubmitPurpose, "api/wms/rma/native-applications-v1/{id}/submit"),
+            RmaWriteEntry.Close => (ClosePurpose, "api/wms/rma/native-applications-v1/operations/{id}/close"),
             _ => throw new TenantStorageException(TenantStorageFailure.BindingRejected)
         };
         var committing = false;
