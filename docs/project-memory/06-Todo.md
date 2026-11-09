@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC W347 续接
+
+收尾 W347，沿固定双制品、当前布局、驱动和方向核回退判定。W346 并行继续库存安装 ID 恢复。 [交付报告](../development/evidence/W347-01/DELIVERY.md)
+
 ## 2026-11-09 UTC #801 后续
 
 收妥 #801 正常合并和席位，接续库存首装安装 ID 的只读恢复，以及两份已固定制品的共同 service-token 业务验证。 [Issue #801](https://github.com/GTX537/CP6/issues/801) · [交付报告](../development/evidence/BUG-801-PG-FIRST-ADMIN/DELIVERY.md)

@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-09 UTC W347 两版实际 service-token 兼容
+
+固定旧、新宿主在同一隔离 PostgreSQL 布局完成两方向签发和撤销，旧版重启后重放原结果，Outbox 字节、快照和 generation 保持。当前生产推广沿独立门禁。 [交付报告](../development/evidence/W347-01/DELIVERY.md)
+
 ## 2026-11-09 UTC PostgreSQL 首管理员初始化修复
 
 #801 的真实空库、同库重跑、旧角色续跑和故障恢复回归通过。首次建立默认角色和导航与首管理员同事务，菜单编号冲突按实际身份处理。 [交付报告](../development/evidence/BUG-801-PG-FIRST-ADMIN/DELIVERY.md) · [Issue #801](https://github.com/GTX537/CP6/issues/801)
