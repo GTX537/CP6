@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC W341 实际 Stock A/B 同键
+
+在真实库存夹具加入第二个普通登录和同键读写回归。补录 Outbox 原生租约绑定、Authority 与 Route 的唯一域和当前 epoch 关系。 [交付报告](../development/evidence/W341-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W340 Stock 写入对象和实际 Owner
 
 记录 Stock 普通写者的原生对象、键和权限，归属公开、父 Owner、质检与召回。以已验证的隔离数据库读回实际目录。 [交付报告](../development/evidence/W340-01/DELIVERY.md)

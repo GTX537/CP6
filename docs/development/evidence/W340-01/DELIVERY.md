@@ -31,10 +31,11 @@ Main 基线 `6b0ca24ecaa480d12aafe9b10138ec803f7fb52d`。COORD 在固定 DEV-1 �
 | `cp6_stock_creation_writer_v2.inserted_stock` | 私有键 `tenant_id,stock_id`，普通角色无表权限。实际查询为零行。 | 只供事务内确认新库存，成功审计消耗记录，延迟触发器清理未消耗记录。 |
 | `cp6_main_owner_v1.operations` | 原键 `tenant_id,owner,operation_id`。普通角色读取固定投影，追加经原函数，原结果不可变。强制行安全。 | 原输入字节、结果、审计及对象引用随同提交。按原 actor 和现行授权披露，恢复沿原键及原字节。 |
 | `cp6_stock_outbox_v1.Cp6_OutboxMessage` 与 `Source` | 消息 `Id` 主键和 `MessageId` 全表唯一。源 `NativeId` 主键、`TenantId,OperationId` 唯一。源的实际外键分别指向消息和原操作，均为 `ON DELETE RESTRICT`。两表强制行安全。 | 普通写者在原操作事务入队，工作者使用单独租约。恢复同时对原操作、源和消息，保留原全局消息键及已投递状态。当前队列沿原留存协议。 |
+| `cp6_stock_outbox_v1.Cp6_OutboxBindingV2`、`Authority` 和 `Cp6_OutboxRouteV2` | 绑定以 `NativeId` 为主键，`MessageId` 全表唯一。Authority 的 `RootId` 主键及 `TenantId` 唯一。Route 的 `Id` 主键、`LockKey` 及 `OwnerId,TenantId,QueueDomainId,RouteId` 分别唯一。三表强制行安全。 | 普通写者在同事务追加绑定，并读取和锁定本租户的已准备路由。实际 UPDATE 策略拒绝替换 Authority 或 Route 行。恢复保留原绑定、路由和 epoch，核对源与消息。 |
 | 授权、主数据和盘点 | `Sys_Dept` 的部门码、`T_Warehouse` 的仓码、`T_Location` 的有效库位码均按租户唯一。库位另有 `TenantId,WarehouseCd,LocationCd` 唯一键。角色库区范围、盘点号和盘点行号也有租户前缀。相关业务表强制行安全。 | 普通业务读精确投影，认证根保护当前授权，图锁保护库存、仓库、库位及盘点冻结判断。控制侧保留原部门关系、库位隔离状态、角色范围和盘点状态。 |
 | `cp6_tenancy_v1.login_tenant` 与安装身份 | 私有目录以 `role_oid` 为主键，`role_name` 和 `tenant_id` 各自唯一。读取安装身份为单例。 | 原运行凭据需绑定实际 PostgreSQL 角色与当前安装。恢复时核目录、数据库、安装 ID 和当前授权，沿受控路径换代。 |
 
-目录中的业务码支持两租户使用同一仓库、库位和库存业务键。下一窗将使用不同主键及各自普通 LOGIN，实测同键写入、原键读回和另一租户库存独立变化。Outbox 继续使用原全表消息唯一域。 [EF 模型](../../../../CP6.Core/EFDbContext/CP6Context.cs) · [普通存储契约](../../../../CP6.Core/Persistence/Tenancy/README.md)
+目录中的业务码支持两租户使用同一仓库、库位和库存业务键。W341 实测不同主键及各自普通 LOGIN，同键写入和原键读回按租户区分。消息绑定、Authority 和路由的原生目录由该窗补录。 [EF 模型](../../../../CP6.Core/EFDbContext/CP6Context.cs) · [普通存储契约](../../../../CP6.Core/Persistence/Tenancy/README.md) · [W341 实测](../W341-01/DELIVERY.md)
 
 ## 验证及接续
 

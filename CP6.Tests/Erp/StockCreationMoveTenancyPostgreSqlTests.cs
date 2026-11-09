@@ -10,7 +10,8 @@ namespace CP6.Tests.Erp;
 public sealed partial class OrderPriceCorrectionPostgreSqlTests
 {
     private static async Task VerifyOrdinaryV2StockMoveAsync(Harness h, MappingHarness mapping, NpgsqlConnection control,
-        string connection, string login, string password, Guid historicalStock)
+        string connection, string login, string password, Guid historicalStock,
+        (Harness Tenant, string Login, string Password) other)
     {
         await StandaloneScope(h, mapping, 3);
         var source = await h.Db.Stocks.SingleAsync(x => x.Id == historicalStock);
@@ -29,6 +30,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         settings["StockReadTenancy__EnableV2Adjust"] = "true";
         settings["StockReadTenancy__EnableV2Move"] = "true";
         ConfigureStockReader(settings, 0, h, login, password);
+        ConfigureStockReader(settings, 1, other.Tenant, other.Login, other.Password);
         await using var host = await AuthenticationApiProcess.Start(connection, settings);
         var session = await Login(host, h);
         const string root = "api/wms/stock/";
@@ -132,6 +134,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(previousAudits + 3, await Audits());
         Assert.Equal(previousOperations + 1, await Operations(h));
         Assert.Equal(previousOutbox + 1, await StockNotifications(h));
+        await VerifyStockTenantPairAsync(h, other.Tenant, control, host, session, login, other.Login);
 
         Task<HttpResponseMessage> Move() => host.Send(OperationsRequest(session, HttpMethod.Post, root + "commands/v2/move", new
         {
