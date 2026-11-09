@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC W346 Stock 首装回执与 W348 初始化恢复
+
+真实 CLI 查回原安装 UUID，继续六项现有写入安装。W348 在独立核验席位验证共享消息初始化失败全回滚，B 原键恢复，A/B 原件重放一致。 [交付报告](../development/evidence/W346-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W347 同库两版业务
 
 实际 HTTPS 与 PostgreSQL 核实旧版签发、新版撤销，新版签发后旧版重启撤销。两个撤销重放、异租户和错安装均无额外持久效果。 [交付报告](../development/evidence/W347-01/DELIVERY.md)
