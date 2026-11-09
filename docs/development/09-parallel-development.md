@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W361 已实测原操作日志的普通角色 RLS、同事务追加和原回执。W363 随 #817 正常采用并释放 DEV-1，W365 实证命名空间隔离并释放集成席位。 [W361](./evidence/W361-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave361/README.md)
+
+
 > [W363](./evidence/W363-01/DELIVERY.md) 已实测原 RMA 同快照归档与隔离恢复。W359 远端采用及释放已核，DEV-2 继续原 journal 权限。 [当前席位](./dispatch/20261109-wave363/README.md)
 
 > [W359](./evidence/W359-01/DELIVERY.md) 已通过原列表实测。W358 随 [#815](https://github.com/GTX537/CP6/pull/815) 采用并释放，DEV-2 接原 journal，INTEGRATION-1 核真实提交回包。 [准确席位](./dispatch/20261109-wave359/README.md)
