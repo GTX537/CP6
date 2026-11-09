@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC RMA 原 journal 与真实未知提交
+
+W361 用 DEV-2 接原共享 journal 的原生普通角色权限。W362 用 INTEGRATION-1 实测原 commissioning COMMIT 发送确认丢失及同键恢复。普通业务写另窗。 [W359 交付](../development/evidence/W359-01/DELIVERY.md) · [#815](https://github.com/GTX537/CP6/pull/815)
+
+
 ## 2026-11-09 UTC RMA 原列表和受控普通写入
 
 DEV-1 接当前出库可见、自有范围和分页。INTEGRATION-1 直接验证原 schema 命名、错误 Owner 和回执，随后按准确原写者权限与事务开窗。 [W358 交付](../development/evidence/W358-01/DELIVERY.md) · [#814](https://github.com/GTX537/CP6/pull/814)

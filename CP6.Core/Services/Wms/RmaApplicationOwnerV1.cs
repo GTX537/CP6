@@ -13,6 +13,9 @@ namespace CP6.Core.Services.Wms;
 /// <summary>Return intent based on actual native shipment lines. Never grants authorization or moves stock.</summary>
 public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner)
 {
+    private const string ApplicationRoute = "api/wms/rma/native-applications-v1";
+    private const int ApplicationPageSize = 50;
+    private const int ApplicationProbeSize = 128;
     private readonly TenantRmaReadStore? _tenantReads;
 
     internal RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner, TenantRmaReadStore? tenantReads)
@@ -103,7 +106,8 @@ public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner
         owner.ExecuteAsync(OperationsOwnerV1.Rma, "query", false, async (a, t) =>
         {
             if (_tenantReads is not null)
-                return await _tenantReads.ReadAsync(db, a.ActorId, (storage, token) => ReadTenantAsync(storage, a, id, version, token), t);
+                return await _tenantReads.ReadAsync(db, a.ActorId, ApplicationRoute + "/{id}",
+                    (storage, token) => ReadTenantAsync(storage, a, id, version, token), t);
 
             var h = await RequireHead(a, id, t);
             return a.ProjectRmaApplication(await ReadVersion(id, SelectVersion(version, h.Version), t));
@@ -135,18 +139,75 @@ public sealed class RmaApplicationOwnerV1(CP6Context db, OperationsOwnerV1 owner
     }
     public Task<IReadOnlyList<RmaApplicationViewV1>> ListAsync(int page = 1, CancellationToken ct = default)
     {
-        RequireSharedEntry();
-        if (page < 1 || page > int.MaxValue / 50) throw Error("RMA_PAGE_INVALID", 400);
+        if (page < 1 || page > int.MaxValue / ApplicationPageSize) throw Error("RMA_PAGE_INVALID", 400);
+        var skip = (page - 1) * ApplicationPageSize;
         return owner.ExecuteAsync<IReadOnlyList<RmaApplicationViewV1>>(OperationsOwnerV1.Rma, "query", false, async (a, t) =>
         {
+            if (_tenantReads is not null)
+                return await _tenantReads.ReadAsync(db, a.ActorId, ApplicationRoute,
+                    (storage, token) => ListTenantAsync(storage, a, skip, token), t);
+
             var sources = a.Outbounds().Select(x => x.Id);
             var heads = Heads().Where(x => sources.Contains(x.Outbound));
             if (a.RmaApplicationSelfOnly) heads = heads.Where(x => x.Actor == a.ActorId);
-            var selected = await heads.OrderBy(x => x.Id).Skip((page - 1) * 50).Take(50).ToArrayAsync(t);
+            var selected = await heads.OrderBy(x => x.Id).Skip(skip).Take(ApplicationPageSize).ToArrayAsync(t);
             var result = new List<RmaApplicationViewV1>();
             foreach (var h in selected) result.Add(a.ProjectRmaApplication(await ReadVersion(h.Id, h.Version, t)));
             return result;
         }, ct);
+    }
+
+    private static async Task<IReadOnlyList<RmaApplicationViewV1>> ListTenantAsync(RmaTenantReadContext storage,
+        OperationsAccessV1 access, int skip, CancellationToken ct)
+    {
+        var tenant = storage.Binding.TenantId;
+        var heads = storage.Heads.AsNoTracking().Where(row => row.TenantId == tenant);
+        if (access.RmaApplicationSelfOnly) heads = heads.Where(row => row.ActorId == access.ActorId);
+        var outbounds = access.Outbounds();
+        var selected = new List<(Guid Id, int Version)>(ApplicationPageSize);
+        Guid? after = null;
+        while (selected.Count < ApplicationPageSize)
+        {
+            var next = after is Guid cursor ? heads.Where(row => row.Id > cursor) : heads;
+            var candidates = await next.OrderBy(row => row.Id).Take(ApplicationProbeSize)
+                .Select(row => new { row.Id, row.OutboundId, row.Version }).ToArrayAsync(ct);
+            if (candidates.Length == 0) break;
+
+            var outboundIds = candidates.Select(row => row.OutboundId).Distinct().ToArray();
+            var visible = (await outbounds.Where(row => outboundIds.Contains(row.Id))
+                .Select(row => row.Id).ToArrayAsync(ct)).ToHashSet();
+
+            // Only visible candidates advance the page offset, in the database's UUID order.
+            foreach (var row in candidates)
+            {
+                if (!visible.Contains(row.OutboundId)) continue;
+                if (skip > 0)
+                {
+                    skip--;
+                    continue;
+                }
+                selected.Add((row.Id, row.Version));
+                if (selected.Count == ApplicationPageSize) break;
+            }
+
+            if (candidates.Length < ApplicationProbeSize) break;
+            after = candidates[^1].Id;
+        }
+
+        if (selected.Count == 0) return [];
+        // Fetch just the selected immutable versions. Grouping keeps the number of SQL
+        // branches bounded by the page size and never cross-matches an ID to another version.
+        var versions = storage.Versions.AsNoTracking().Where(row => row.TenantId == tenant);
+        IQueryable<RmaTenantVersion>? matches = null;
+        foreach (var group in selected.GroupBy(row => row.Version))
+        {
+            var version = group.Key;
+            var ids = group.Select(row => row.Id).ToArray();
+            var slice = versions.Where(row => row.Version == version && ids.Contains(row.Id));
+            matches = matches is null ? slice : matches.Concat(slice);
+        }
+        var payloads = await matches!.OrderBy(row => row.Id).Select(row => row.Payload).ToArrayAsync(ct);
+        return payloads.Select(payload => access.ProjectRmaApplication(JsonSerializer.Deserialize<RmaApplicationViewV1>(payload)!)).ToArray();
     }
     public Task<RmaApplicationResultV1> CreateAsync(RmaApplicationCreateV1 c, CancellationToken ct = default)
     {
