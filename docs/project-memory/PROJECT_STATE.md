@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC 容量与凭据轮换
+
+W420 随 #858 采用并释放。W424 采用 PGT-023 实测，正式 PostgreSQL 为 9 PASS、18 NOT_RUN。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W424](../development/evidence/W424-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC RMA 与 FileContent 同源 Owner
 
 W421 随 #857 采用并释放。W420 在同一 W372 安装真实生成 A/B 文件及父版本，原 RMA 保持。原台账为 38 DONE、1 IN_PROGRESS、336 PLANNED。正式 PostgreSQL 为 8 PASS、19 NOT_RUN。 [W420](../development/evidence/W420-01/DELIVERY.md)

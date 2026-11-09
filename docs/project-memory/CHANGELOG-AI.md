@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC PostgreSQL 容量原证据
+
+同步 PGT-023 原实测、保留未运行的 N1000 和远端检查点。 [W424](../development/evidence/W424-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 真实同源 RMA 与文件夹具
 
 新增真实 Engineering 与 FileContent Owner 定向驱动及原生五成员对照。 [W420](../development/evidence/W420-01/DELIVERY.md)

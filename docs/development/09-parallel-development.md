@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W420 已随 #858 采用。W423 留远端检查点并释放 DEV-2，W422 保留 DEV-1。W424 采用原 PGT-023 实测。 [W424](./evidence/W424-01/DELIVERY.md)
+
+
 > W421 随 #857 采用并释放 DEV-1。W420 实测 W372 同源 RMA、Engineering 和 FileContent 原件。 [W420](./evidence/W420-01/DELIVERY.md)
 
 
