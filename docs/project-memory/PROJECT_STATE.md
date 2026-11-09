@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC 原 RMA 真实 GET 与 Stock 容量采用
+
+新隔离全 Core 的原 RMA 单条及历史读取通过真实 HTTP 和 EF 验证。Stock 容量实测已随 #813 正常采用。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W356 交付](../development/evidence/W356-01/DELIVERY.md) · [#813](https://github.com/GTX537/CP6/pull/813)
+
+
 ## 2026-11-09 UTC W353 采用及 Stock 实际容量
 
 W353 随 #812 正常采用，准确分支已清理，DEV-1 已复用给 RMA 真实 HTTP。Stock 10/100 容量实测完成，原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W355 交付](../development/evidence/W355-01/DELIVERY.md) · [#812](https://github.com/GTX537/CP6/pull/812)

@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC 新隔离 RMA 原单条及历史读
+
+真实登录后的 RMA GET 显式接入普通租户 LOGIN 和仅两表的 EF 模型，原 DTO/ETag 及共享当前权限沿原入口。未接的旧业务数据路径明确关闭。 [W356 交付](../development/evidence/W356-01/DELIVERY.md) · [#813](https://github.com/GTX537/CP6/pull/813)
+
+
 ## 2026-11-09 UTC 实际 Stock 容量测量
 
 新增绑定准确本地制品的可复跑容量工具，分别记录冷暖、100 租户轮转、原生后端、单进程池饱和和两进程有限并发。 [W355 交付](../development/evidence/W355-01/DELIVERY.md) · [#812](https://github.com/GTX537/CP6/pull/812)

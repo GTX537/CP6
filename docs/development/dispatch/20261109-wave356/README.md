@@ -7,3 +7,9 @@
 W355 在 DEV-2 测真实 Stock 普通登录，10/100 冷暖、池和双进程有限并发已通过，待采用。 [交付报告](../../evidence/W355-01/DELIVERY.md)
 
 2026-11-09 08:25:15 UTC，W357-VERIFY 领取 INTEGRATION-1，RESTORE-INCOMPLETE-VERIFY，固定 detached 同基线，私有 PostgreSQL 55565，起始估 18–32 分钟。用真实仅租户 schema 备份核两个现有预览/准入边界及完整备份对照。保留原运行，形式 PGT 与完整单租户恢复另验。COORD 串行维护台账与合并。
+
+W355 随 [#813](https://github.com/GTX537/CP6/pull/813) 正常采用，实测 1,355 秒。DEV-2 干净并正式释放。
+
+W356 的 2 项实际 HTTP/EF 验证通过，0 跳过。 [交付报告](../../evidence/W356-01/DELIVERY.md)
+
+2026-11-09 08:35:12 UTC，W358-01 领取 DEV-2，RMA-INDEX-RECOVERY，codex/w358-01，基线 ca97fd003044b15c8caa676eda732e4ad816e83d。私有 PostgreSQL 55567，原估 36–63 分钟。已有 Ready 的 tenant schema 按具名操作并发建索引，真实 invalid 留痕与原键恢复。W356 的 WebApi、Owner、读模型另由 DEV-1 独占。

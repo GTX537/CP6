@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC RMA 受权列表与非事务逐租户升级
+
+W356 收妥后接原列表的授权筛选和分页。W358 在 DEV-2 执行真实索引中断和原键恢复。普通业务写与原 journal 留给各原入口窗口。 [W356 交付](../development/evidence/W356-01/DELIVERY.md) · [#813](https://github.com/GTX537/CP6/pull/813)
+
+
 ## 2026-11-09 UTC 原 RMA HTTP 与不完整备份
 
 DEV-1 接实际 RMA GET、当前共享授权和最小 tenant EF。INTEGRATION-1 核只有业务 schema 的备份。Stock 1000 档按当前准入拒绝，正式更高容量未测。 [W355 交付](../development/evidence/W355-01/DELIVERY.md) · [#812](https://github.com/GTX537/CP6/pull/812)
