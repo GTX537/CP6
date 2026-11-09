@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W379 同快照原可见性实证通过。W377 随 #825 采用并释放，W378/W381 的原生验证已释放集成席位。DEV-1 W380 接身份优先队列，集成席位 W383 核外部原件。 [W379](./evidence/W379-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave379/README.md)
+
+
 > W377 v3 隔离 staging 实证通过。W375 随 #824 采用并释放，W376 容量实证收尾。DEV-2 W379 接原可见性，集成席位 W378 核跨 schema SQL。 [W377](./evidence/W377-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave377/README.md)
 
 

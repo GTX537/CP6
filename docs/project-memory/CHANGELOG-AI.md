@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC 原 RMA 可见性 v4
+
+按原生键保存订单、工单、出库头、含软删的明细与库位事实，保留空值、尾空格及原库位隔离状态。 [W379](../development/evidence/W379-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC v3 原来源 staging
 
 隔离目标按源 ICU 字符规则及原精度原子落表，保留原日志和 STAGED 原回执。 [W377](../development/evidence/W377-01/DELIVERY.md)

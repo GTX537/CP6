@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 来源可见性落表与共享恢复
+
+继续 v4 隔离 staging、身份优先队列和实际外部原件。现行 IAM 与其他共享域、完整候选恢复和正式验收仍在原任务范围。 [W379](../development/evidence/W379-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 原可见性与共享恢复
 
 W379 继续原可见性事实，W378 核显式跨 schema。现行 IAM、共享队列和资产、完整恢复与正式验收继续。 [W377](../development/evidence/W377-01/DELIVERY.md)
