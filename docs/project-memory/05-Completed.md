@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC 文件原件关闭候选验证
+
+W418 实际 PostgreSQL 18.6 关闭候选五份原件逐字节一致，原 675 字节回执恢复，权限拒绝及晚段原生故障完整回滚。 [W418](../development/evidence/W418-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 原 PGT 普通身份隔离
 
 W417 原 PGT-006、007、009 在真实关闭 RMA Core 候选范围通过。普通 A/B 登录、20 个原生 42501 及原序列、流水、ACL 前后状态均准确。 [W417](../development/evidence/W417-01/DELIVERY.md)
