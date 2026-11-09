@@ -1559,89 +1559,22 @@ using (var scope = app.Services.CreateScope())
     // 只对已导入该 scheme 的租户按模板补插缺失行（只插不改不删）。空库由模板导入负责。幂等。
     CP6.WebApi.Seed.FinCoaBackfillSeed.EnsureSeeded(db);
 
-    if (!db.Sys_Menus.Any())
+    const string initialAdministratorPassword = "123456";
+    var startupPasswordHasher = scope.ServiceProvider.GetRequiredService<CP6.Core.Services.Sys.IPasswordHasher>();
+    if (database.Provider == DatabaseProvider.PostgreSql)
     {
-        // 菜单ID和角色ID都是自定义的，手动指定
-        db.Sys_Menus.AddRange(
-            new Sys_Menu { MenuId = 2, MenuName = "仪表盘", RoutePath = "/dashboard", Icon = "Odometer", OrderNo = 0, Enable = true },
-            new Sys_Menu { MenuId = 100, MenuName = "系统管理", Icon = "Setting", OrderNo = 100, Enable = true },
-            new Sys_Menu { MenuId = 101, MenuName = "角色管理", RoutePath = "/role", Icon = "UserFilled", ParentId = 100, OrderNo = 101, Enable = true },
-            new Sys_Menu { MenuId = 102, MenuName = "菜单管理", RoutePath = "/menu", Icon = "Menu", ParentId = 100, OrderNo = 102, Enable = true },
-            new Sys_Menu { MenuId = 103, MenuName = "权限分配", RoutePath = "/permission", Icon = "Lock", ParentId = 100, OrderNo = 103, Enable = true },
-            new Sys_Menu { MenuId = 104, MenuName = "用户管理", RoutePath = "/user", Icon = "User", ParentId = 100, OrderNo = 104, Enable = true },
-            new Sys_Menu { MenuId = 105, MenuName = "多语言管理", RoutePath = "/lang", Icon = "ChatLineSquare", ParentId = 100, OrderNo = 105, Enable = true },
-            new Sys_Menu { MenuId = 106, MenuName = "数据字典", RoutePath = "/dict", Icon = "Collection", ParentId = 100, OrderNo = 106, Enable = true },
-            new Sys_Menu { MenuId = 107, MenuName = "操作日志", RoutePath = "/operlog", Icon = "Notebook", ParentId = 100, OrderNo = 107, Enable = true },
-            new Sys_Menu { MenuId = 200, MenuName = "販売管理(ERP)", Icon = "ShoppingBag", OrderNo = 200, Enable = true },
-            new Sys_Menu { MenuId = 201, MenuName = "見積計算書 照会", RoutePath = "/estimate-calc-list", Icon = "List", ParentId = 200, OrderNo = 201, Enable = true },
-            new Sys_Menu { MenuId = 202, MenuName = "見積計算書 登録", RoutePath = "/estimate-calc", Icon = "Money", ParentId = 200, OrderNo = 202, Enable = true },
-            new Sys_Menu { MenuId = 203, MenuName = "御見積書 一覧", RoutePath = "/quotation-list", Icon = "Tickets", ParentId = 200, OrderNo = 203, Enable = true },
-            new Sys_Menu { MenuId = 204, MenuName = "御見積書 登録", RoutePath = "/quotation", Icon = "EditPen", ParentId = 200, OrderNo = 204, Enable = true },
-            new Sys_Menu { MenuId = 205, MenuName = "製品マスタ 一覧", RoutePath = "/product-list", Icon = "Goods", ParentId = 200, OrderNo = 205, Enable = true },
-            new Sys_Menu { MenuId = 206, MenuName = "製品マスタ 登録", RoutePath = "/product", Icon = "Box", ParentId = 200, OrderNo = 206, Enable = true },
-            new Sys_Menu { MenuId = 207, MenuName = "受注一覧照会", RoutePath = "/order-list", Icon = "Files", ParentId = 200, OrderNo = 207, Enable = true },
-            new Sys_Menu { MenuId = 208, MenuName = "受注入力", RoutePath = "/order", Icon = "DocumentAdd", ParentId = 200, OrderNo = 208, Enable = true },
-            new Sys_Menu { MenuId = 209, MenuName = "単価訂正", RoutePath = "/order-price-correction", Icon = "PriceTag", ParentId = 200, OrderNo = 209, Enable = true },
-            new Sys_Menu { MenuId = 210, MenuName = "FSC チェックシート", RoutePath = "/fsc-checklist", Icon = "Document", ParentId = 200, OrderNo = 210, Enable = true },
-            new Sys_Menu { MenuId = 211, MenuName = "取引先マスタ 一覧", RoutePath = "/business-partner-list", Icon = "OfficeBuilding", ParentId = 200, OrderNo = 211, Enable = true },
-            new Sys_Menu { MenuId = 212, MenuName = "取引先マスタ 登録", RoutePath = "/business-partner", Icon = "User", ParentId = 200, OrderNo = 212, Enable = true },
-            new Sys_Menu { MenuId = 213, MenuName = "シート単価マスタ", RoutePath = "/sheet-unit-price", Icon = "Coin", ParentId = 200, OrderNo = 213, Enable = true },
-            new Sys_Menu { MenuId = 214, MenuName = "版型/木型 一覧", RoutePath = "/plate-mold-list", Icon = "Tools", ParentId = 200, OrderNo = 214, Enable = true },
-            new Sys_Menu { MenuId = 215, MenuName = "版型/木型 登録", RoutePath = "/plate-mold", Icon = "Stamp", ParentId = 200, OrderNo = 215, Enable = true }
-        );
-
-        // 管理员角色 RoleId = 1
-        db.Sys_Roles.Add(new Sys_Role { RoleId = 1, RoleName = "管理员", Description = "拥有全部权限", Enable = true, OrderNo = 0 });
-
-        // 给管理员角色分配所有菜单
-        db.Sys_RoleMenus.AddRange(
-            new Sys_RoleMenu { RoleId = 1, MenuId = 2 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 100 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 101 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 102 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 103 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 104 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 105 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 106 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 107 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 200 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 201 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 202 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 203 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 204 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 205 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 206 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 207 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 208 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 209 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 210 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 211 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 212 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 213 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 214 },
-            new Sys_RoleMenu { RoleId = 1, MenuId = 215 }
-        );
-
-        // 管理员账号绑定 RoleId = 1
+        await CP6.WebApi.Seed.InitialAdministratorSeed.EnsurePostgreSqlAsync(
+            db, startupPasswordHasher, initialAdministratorPassword, app.Lifetime.ApplicationStopping);
+    }
+    else if (!db.Sys_Menus.Any())
+    {
+        CP6.WebApi.Seed.InitialAdministratorSeed.AddNavigationForNewRole(db, db.CurrentTenantId);
+        db.Sys_Roles.Add(CP6.WebApi.Seed.InitialAdministratorSeed.CreateRole(db.CurrentTenantId));
         if (!db.Sys_Users.Any())
-        {
-            db.Sys_Users.Add(new Sys_User
-            {
-                UserName = "admin",
-                Password = "123456",
-                NickName = "管理员",
-                RoleId = 1,
-                Enable = true,
-                CreateDate = DateTime.Now
-            });
-        }
-
+            db.Sys_Users.Add(CP6.WebApi.Seed.InitialAdministratorSeed.CreateAccount(db.CurrentTenantId, initialAdministratorPassword));
         db.SaveChanges();
     }
 
-    // S 类 #5 多租户合规（T8）段1+段2：**必须置于 `if (!db.Sys_Menus.Any())` 守卫块外**，
-    // 每启动跑+各自幂等——既有库（已有 menus）会跳过上面的全量 seed，但引导首个平台超管仍须执行，
-    // 否则 IsPlatformAdmin 永远为 false、平台区不可达。
     if (!db.Sys_Tenants.Any(t => t.Id == TenantContext.DefaultTenant))
     {
         db.Sys_Tenants.Add(new Sys_Tenant
@@ -1675,15 +1608,7 @@ using (var scope = app.Services.CreateScope())
         if (missing.Count > 0)
         {
             foreach (var tid in missing)
-                db.Sys_Roles.Add(new Sys_Role
-                {
-                    TenantId = tid,
-                    RoleId = 1,
-                    RoleName = "管理员",
-                    Description = "拥有全部权限",
-                    Enable = true,
-                    OrderNo = 0,
-                });
+                db.Sys_Roles.Add(CP6.WebApi.Seed.InitialAdministratorSeed.CreateRole(tid));
 
             // P0-T3 补口 + P0 终审 #2：管理员菜单集**只随「首次补建管理员角色」一起播种**（missing 即从无到有
             // 的租户）。不得以「RoleId=1 菜单行数==0」判缺失后整套补——那样会把租户管理员**刻意清空**的菜单集
@@ -1699,20 +1624,20 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    // 引导首个平台超管（默认租户 admin → IsPlatformAdmin=true）。平台超管无法经 RBAC 自助提权，
-    // 故首个超管必须由启动期带外引导。幂等（已是超管则不动）。
-    var seedAdmin = db.Sys_Users.IgnoreQueryFilters()
-        .FirstOrDefault(u => u.UserName == "admin" && u.TenantId == TenantContext.DefaultTenant);
-    if (seedAdmin != null && !seedAdmin.IsPlatformAdmin)
+    if (database.Provider != DatabaseProvider.PostgreSql)
     {
-        seedAdmin.IsPlatformAdmin = true;
-        db.SaveChanges();
+        // Preserve the legacy default administrator adoption on the historical provider.
+        var seedAdmin = db.Sys_Users.IgnoreQueryFilters()
+            .FirstOrDefault(u => u.UserName == "admin" && u.TenantId == TenantContext.DefaultTenant);
+        if (seedAdmin != null && !seedAdmin.IsPlatformAdmin)
+        {
+            seedAdmin.IsPlatformAdmin = true;
+            db.SaveChanges();
+        }
     }
 
-    // S 类认证加固（T1）：启动幂等把现有明文密码就地 BCrypt 哈希（不可逆，生产前须备份）。
-    // ★置于 admin 账号 seed 之后（块外，每启动跑、幂等）：确保全新库首启时 admin 的明文密码同批被哈希，
-    //   否则首启 admin 以明文落库、登录 Verify 失败，需重启一次才能登录。
-    CP6.WebApi.Seed.PasswordHashMigrationSeed.EnsureHashed(db, scope.ServiceProvider.GetRequiredService<CP6.Core.Services.Sys.IPasswordHasher>());
+    // Upgrade historical plaintext credentials. A newly seeded PostgreSQL account is already hashed.
+    CP6.WebApi.Seed.PasswordHashMigrationSeed.EnsureHashed(db, startupPasswordHasher);
 
     // A5 §8 预算审批流程 + OA 绑定种子（幂等；FlowKey="budget-approve"，BizType="A5_Budget"）
     // 置于 admin 账号 seed 之后，确保首次启动时 admin 已落库，seed 内部可解析到真实 UserId。
@@ -2665,6 +2590,16 @@ using (var scope = app.Services.CreateScope())
         if (toInsert.Count > 0) db.Sys_Langs.AddRange(toInsert);
     }
 
+    string? dashboardNavigationKey = "nav.2";
+    if (database.Provider == DatabaseProvider.PostgreSql)
+    {
+        var dashboardMenuId = db.Sys_Menus.Where(menu => menu.RoutePath == "/dashboard" && menu.MenuKey == "dashboard")
+            .Select(menu => (int?)menu.MenuId).SingleOrDefault();
+        dashboardNavigationKey = dashboardMenuId is int id ? $"nav.{id}" : null;
+    }
+    if (dashboardNavigationKey is not null)
+        SeedLangs(new Sys_Lang { LangKey = dashboardNavigationKey, ZhCN = "仪表盘", ZhTW = "儀表盤", En = "Dashboard", Ja = "ダッシュボード", Ko = "대시보드" });
+
     // 多语言词条种子数据（幂等走上方 SeedLangs；合并 main 后统一用 SeedLangs，删去 Space 侧重复的 AddLangs）
     // [restored-db fix] 原 if (!db.Sys_Langs.Any()) 全空守卫会让"恢复旧库"场景跳过本块后续新增词条；
     // SeedLangs 逐键幂等（见上方助手），与其余 11 个种子块保持一致，无需全空守卫。保留裸块只为最小 diff。
@@ -2754,7 +2689,6 @@ using (var scope = app.Services.CreateScope())
             new Sys_Lang { LangKey = "nav.103", ZhCN = "权限分配", ZhTW = "權限分配", En = "Permissions", Ja = "権限設定", Ko = "권한 설정" },
             new Sys_Lang { LangKey = "nav.104", ZhCN = "用户管理", ZhTW = "使用者管理", En = "Users", Ja = "ユーザー管理", Ko = "사용자 관리" },
             new Sys_Lang { LangKey = "nav.105", ZhCN = "多语言管理", ZhTW = "多語言管理", En = "Languages", Ja = "多言語管理", Ko = "다국어 관리" },
-            new Sys_Lang { LangKey = "nav.2", ZhCN = "仪表盘", ZhTW = "儀表盤", En = "Dashboard", Ja = "ダッシュボード", Ko = "대시보드" },
             // 販売管理 (PA010〜PA150)
             new Sys_Lang { LangKey = "nav.200", ZhCN = "销售管理(ERP)",      ZhTW = "銷售管理(ERP)",      En = "Sales (ERP)",            Ja = "販売管理(ERP)",           Ko = "판매 관리(ERP)" },
             new Sys_Lang { LangKey = "nav.201", ZhCN = "报价计算单 照会",    ZhTW = "報價計算單 照會",    En = "Estimate Calc Inquiry",  Ja = "見積計算書 照会",         Ko = "견적계산서 조회" },
@@ -3095,16 +3029,16 @@ using (var scope = app.Services.CreateScope())
     }
 
     // 补充：仪表盘菜单和词条
-    if (!db.Sys_Menus.Any(m => m.MenuId == 2))
+    if (database.Provider != DatabaseProvider.PostgreSql && !db.Sys_Menus.Any(m => m.MenuId == 2))
     {
         db.Sys_Menus.Add(new Sys_Menu { MenuId = 2, MenuName = "仪表盘", RoutePath = "/dashboard", Icon = "Odometer", OrderNo = 0, Enable = true });
         db.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = 1, MenuId = 2 });
         db.SaveChanges();
     }
-    if (!db.Sys_Langs.Any(l => l.LangKey == "nav.2"))
+    if (dashboardNavigationKey is not null && !db.Sys_Langs.Any(l => l.LangKey == dashboardNavigationKey))
     {
         SeedLangs(
-            new Sys_Lang { LangKey = "nav.2", ZhCN = "仪表盘", ZhTW = "儀表盤", En = "Dashboard", Ja = "ダッシュボード", Ko = "대시보드" },
+            new Sys_Lang { LangKey = dashboardNavigationKey, ZhCN = "仪表盘", ZhTW = "儀表盤", En = "Dashboard", Ja = "ダッシュボード", Ko = "대시보드" },
             new Sys_Lang { LangKey = "dashboard.title", ZhCN = "仪表盘", ZhTW = "儀表盤", En = "Dashboard", Ja = "ダッシュボード", Ko = "대시보드" },
             new Sys_Lang { LangKey = "dashboard.todayOps", ZhCN = "今日操作", ZhTW = "今日操作", En = "Today Ops", Ja = "本日の操作", Ko = "오늘 작업" },
             new Sys_Lang { LangKey = "dashboard.weekOps", ZhCN = "本周操作", ZhTW = "本週操作", En = "Week Ops", Ja = "今週の操作", Ko = "이번주 작업" },
