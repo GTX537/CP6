@@ -65,7 +65,7 @@ def rows_sql(table, tenant):
     return 'SELECT {} FROM {} WHERE {} ORDER BY "Id"'.format(columns, relation(table), tenant_filter(tenant))
 
 
-def capture_counts(query, tenant, owner_oid):
+def check_layout(query, owner_oid, tables):
     # Keep the native relation layout stable until every snapshot consumer finishes.
     catalog = query("""
         LOCK TABLE {relations} IN ACCESS SHARE MODE;
@@ -84,11 +84,11 @@ def capture_counts(query, tenant, owner_oid):
             FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
             WHERE n.nspname='{schema}' AND n.nspowner={owner}::oid AND c.relowner=n.nspowner AND c.relkind='r'
               AND c.relname IN ({names})), '{{}}'::jsonb));
-    """.format(relations=", ".join(relation(table) for table in TABLES), migration=MIGRATION,
-               schema=SCHEMA, owner=owner_oid, names=", ".join("'{}'".format(table.name) for table in TABLES)))
-    if not catalog["migration"] or set(catalog["tables"]) != {table.name for table in TABLES}:
+    """.format(relations=", ".join(relation(table) for table in tables), migration=MIGRATION,
+               schema=SCHEMA, owner=owner_oid, names=", ".join("'{}'".format(table.name) for table in tables)))
+    if not catalog["migration"] or set(catalog["tables"]) != {table.name for table in tables}:
         raise ValueError("identity-priority-layout-rejected")
-    for table in TABLES:
+    for table in tables:
         native = catalog["tables"][table.name]
         columns = [[name, COLUMN_TYPES.get(name, "bpchar")] for name in table.columns]
         keys = [(tuple(key["columns"]), key["primary"]) for key in native["keys"] or []]
@@ -96,6 +96,9 @@ def capture_counts(query, tenant, owner_oid):
         if native["columns"] != columns or sorted(keys) != sorted(expected_keys):
             raise ValueError("identity-priority-layout-rejected: " + table.name)
 
+
+def capture_counts(query, tenant, owner_oid):
+    check_layout(query, owner_oid, TABLES)
     counts = ",\n".join("'{}',(SELECT count(*) FROM {} WHERE {})".format(
         table.name, relation(table), tenant_filter(tenant)) for table in TABLES)
     return query("SET LOCAL row_security=off;\nSELECT json_build_object(" + counts + ");",
