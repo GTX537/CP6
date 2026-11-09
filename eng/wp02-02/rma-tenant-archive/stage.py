@@ -12,6 +12,7 @@ import sys
 
 sys.dont_write_bytecode = True
 import archive
+import erp_integration
 import file_content_assets
 import iam_v6
 import identity_priority
@@ -49,8 +50,9 @@ def checked_bundle(bundle, output, tenant, digest, target, file_content_root=Non
     visibility_names = source_names | {visibility_v4.MEMBER}
     identity_names = visibility_names | set(identity_priority.MEMBERS)
     iam_names = identity_names | {iam_v6.MEMBER}
+    asset_names = iam_names | {file_content_assets.MEMBER}
     if names not in (base_names, journal_names, source_names, visibility_names, identity_names, iam_names,
-                     iam_names | {file_content_assets.MEMBER}) \
+                     asset_names, asset_names | set(erp_integration.MEMBERS)) \
             or any(entry.is_symlink() or not entry.is_file() for entry in files):
         raise StageError("rma-stage-bundle-member-rejected")
 
@@ -68,7 +70,8 @@ def checked_bundle(bundle, output, tenant, digest, target, file_content_root=Non
     if (source.system_identifier, source.database_oid) == (target.system_identifier, target.database_oid):
         raise StageError("rma-stage-target-is-source")
     projection = manifest.get("sharedProjection")
-    has_assets = manifest["format"] == file_content_assets.FORMAT
+    has_erp = manifest["format"] == erp_integration.FORMAT
+    has_assets = has_erp or manifest["format"] == file_content_assets.FORMAT
     has_iam = has_assets or manifest["format"] == iam_v6.FORMAT
     has_identity = has_iam or manifest["format"] == identity_priority.FORMAT
     has_visibility = has_identity or manifest["format"] == visibility_v4.FORMAT
@@ -102,6 +105,10 @@ def checked_bundle(bundle, output, tenant, digest, target, file_content_root=Non
         plan["iamReferenceCounts"] = read_counts(manifest["rmaIamReferences"]["counts"], iam_v6.FACTS)
     if has_assets:
         plan["fileContentAssetCount"] = read_counts({"rows": manifest["fileContentAssets"]["count"]}, ("rows",))["rows"]
+    if has_erp:
+        tables = manifest["erpIntegration"]["tables"]
+        plan["erpIntegrationCounts"] = read_counts({name: table["count"] for name, table in tables.items()},
+                                                   (table.name for table in erp_integration.TABLES))
     return checked, plan
 
 
@@ -516,6 +523,63 @@ def file_content_assets_sql(tenant):
     """
 
 
+def erp_integration_sql(tenant):
+    # Preserve the original ERP migration's nullability and collations in the private staging schema.
+    nullable = {
+        "CommandInbox": {"LastConflictSha256", "ErrorCode", "ProcessedAtUtc", "RetryAtUtc", "ReplayedAtUtc", "ReplayReasonCode"},
+        "Cp6_DeadLetterRecord": {"ConsumerName", "SupportReference", "ReplayedAtUtc", "ReplayReasonCode"},
+        "Cp6_OutboxMessage": {"LeaseOwner", "LeaseToken", "LeaseExpiresAtUtc", "PublishedAtUtc", "DeadLetteredAtUtc",
+                              "LastErrorCode", "SupportReference"},
+        "DeliveryReplayAudit": {"MessageId"},
+        "OrderBridgeDispatch": {"CompletedAtUtc", "LastErrorCode", "LeaseOwner", "LeaseExpiresAtUtc"},
+    }
+    c_collation = {
+        "CommandInbox": {"MessageId"}, "DeliveryReplayAudit": {"TargetId", "MessageId"},
+        "InboxReplayAudit": {"MessageId"}, "OrderBridgeDispatch": {"OrderKey"},
+    }
+    statements, counts = [], []
+    for table in erp_integration.TABLES:
+        relation = f'rma_archive_stage."erp_{table.name}"'
+        types = {**erp_integration.COLUMN_TYPES, **erp_integration.TABLE_TYPES.get(table.name, {})}
+        columns = []
+        for name in table.columns:
+            native_type = types.get(name, "bpchar")
+            if native_type == "bpchar":
+                collation = 'pg_catalog."C"' if name in c_collation.get(table.name, ()) else "rma_archive_stage.outbound_number"
+                native_type += " COLLATE " + collation
+            nullability = "" if name in nullable.get(table.name, ()) else " NOT NULL"
+            columns.append(f'"{name}" {native_type}{nullability}')
+        columns.append(f'CHECK ("TenantId"={archive.literal(tenant)})')
+        if "RowVersion" in table.columns:
+            columns.append('CHECK (octet_length("RowVersion")=8)')
+        if "InputRowVersion" in table.columns:
+            columns.append('CHECK (octet_length("InputRowVersion")<=8)')
+        for index, key in enumerate(table.unique_keys):
+            constraint = "PRIMARY KEY" if index == 0 else "UNIQUE"
+            key_columns = ",".join(f'"{name}"' for name in key)
+            columns.append(f"{constraint} ({key_columns})")
+        definition = ",\n            ".join(columns)
+        statements.append(f"""
+        CREATE TABLE {relation} (
+            {definition}
+        );
+        \\copy {relation} FROM 'bundle/{table.member}' WITH (FORMAT csv, HEADER MATCH)
+        """)
+        counts.append(f"(SELECT count(*) FROM {relation})<>(expected->>{archive.literal(table.name)})::bigint")
+    mismatch = "\n            OR ".join(counts)
+    return "".join(statements) + f"""
+    DO $cp6_stage_erp_integration$
+    DECLARE
+        expected jsonb := current_setting('{TARGET_PLAN}')::jsonb->'erpIntegrationCounts';
+    BEGIN
+        IF {mismatch} THEN
+            RAISE EXCEPTION 'rma-stage-erp-integration-count-mismatch';
+        END IF;
+    END
+    $cp6_stage_erp_integration$;
+    """
+
+
 WRITE_RECEIPT = """
     CREATE TABLE rma_archive_stage.receipt (
         singleton boolean PRIMARY KEY CHECK (singleton), tenant_id uuid NOT NULL,
@@ -624,6 +688,9 @@ def execute(args):
         if "fileContentAssetCount" in plan:
             driver += file_content_assets_sql(tenant)
             source_field += ",'fileContentAssetCount',p->'fileContentAssetCount'"
+        if "erpIntegrationCounts" in plan:
+            driver += erp_integration_sql(tenant)
+            source_field += ",'erpIntegrationCounts',p->'erpIntegrationCounts'"
         driver += WRITE_RECEIPT.format(source_field=source_field)
     else:
         driver = initial_sql(plan, read_only=True) + READ_RECEIPT
@@ -643,7 +710,7 @@ def main():
             command.add_argument("--" + key, required=True)
         if name == "stage":
             command.add_argument("--bundle", type=Path, required=True)
-            command.add_argument("--file-content-root", type=Path, help="original private local asset root, required for v7")
+            command.add_argument("--file-content-root", type=Path, help="original private local asset root, required for v7 and v8")
     args = parser.parse_args()
     try:
         sys.stdout.buffer.write(execute(args) + b"\n")
