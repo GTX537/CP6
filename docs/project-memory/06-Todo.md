@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 隔离读回和同切面审计
+
+继续 W401 的隔离候选普通角色读回，以及 W402 的安全审计与主体保留历史。 [W400](../development/evidence/W400-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 统一 v8 现行对账和隔离候选
 
 将现行 IAM 与 Identity Priority 接入同一 v8 归档，推进隔离 Core 的候选原结果读取及原恢复验收。 [W399](../development/evidence/W399-01/DELIVERY.md)

@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC v8 IAM 与 Identity Priority 对账
+
+W400 原 v8 两入口已实库核实。W399 随 #839 采用并释放。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W400](../development/evidence/W400-01/DELIVERY.md) · [PR #839](https://github.com/GTX537/CP6/pull/839)
+
+
 ## 2026-11-09 UTC ERP 原键对账与双进程池峰值
 
 W399 已在专属 PostgreSQL 实证。W398 随 #838 采用并释放。W397 的两个真实动态组件进程同时持有 64 个原生普通事务。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W399](../development/evidence/W399-01/DELIVERY.md) · [PR #838](https://github.com/GTX537/CP6/pull/838)
