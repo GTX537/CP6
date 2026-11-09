@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC RMA 正常读入口与 Stock 容量实测
+
+W353 进入远端采用。随后以隔离全 Core 的原 RMA HTTP 读取、当前共享授权和普通租户 LOGIN 为边界推进。W355 在 DEV-2 独立测实际 Stock 冷暖、模型、池峰值和准入边界。 [W353 交付](../development/evidence/W353-01/DELIVERY.md) · [#811](https://github.com/GTX537/CP6/pull/811)
+
+
 ## 2026-11-09 UTC W353 和 #808 接续
 
 完成 #808 的正常合并、准确引用和正式 Issue 收尾。W353 用实际 Core 探明旧 RMA 原操作及业务写的单一权威。 [交付证据](../development/evidence/BUG-808-STOCK-RESTORE-OUTBOX/DELIVERY.md)
