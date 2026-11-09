@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC 独立 Core 导入与普通读取
+
+W409 随 #848 采用并释放。W406 实测原两表的完整独立 Core 导入、回滚与 COMMIT 原回执。W401 实测普通登录、当前和历史、ETag、B 404 及撤权后 403，集成席位释放。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W406](../development/evidence/W406-01/DELIVERY.md) · [W401](/D:/CP6-local-test/CP6-72H-20261109/W401-VERIFY/DELIVERY.md)
+
+
 ## 2026-11-09 UTC v9/v10 多域只读对账
 
 W408 随 #847 采用并释放。W409 用两个原包实测 IAM、Identity Priority 和 ERP 六次只读调用及受限角色。W406 恢复准确分支后通过完整独立 Core 实库验证。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W409](../development/evidence/W409-01/DELIVERY.md) · [CP6 #847](https://github.com/GTX537/CP6/pull/847)

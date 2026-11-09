@@ -26,4 +26,6 @@ DEV-2 于 2026-11-09 14:17:33 UTC 从 #843 `bccadb753e34c87991640260ffa05547eab0
 
 最终测试于 16:15:10.479044 UTC 退出 0，实库运行 55.344 秒，距本次恢复 132.186 秒。专属 postmaster 6952 正常停止，独立 `pg_ctl status` 为 3，55564 和 56961 均无监听。原件保存在 `D:/CP6-local-test/CP6-72H-20261109/W406-01/rma-core-candidate-20261109T161415-21f0f9e6`。[实际退出与时钟](/D:/CP6-local-test/CP6-72H-20261109/W406-01/test-native-01.time.json) · [停机原件](/D:/CP6-local-test/CP6-72H-20261109/W406-01/rma-core-candidate-20261109T161415-21f0f9e6/stopped.json)
 
+合入 #848 后，实测源码和夹具的 Git blobs 保持相同。离线重新提取 v1、v2 和 v9 的两表 COPY 并逐字节核对，同时用本次真 v2 目标、候选、commissioning 与 pin 重新生成导入和恢复 SQL，均与实库执行文件逐字节相同。离线核对在 PostgreSQL 调用前结束，实库结果沿用上文。 [合入后原件](/D:/CP6-local-test/CP6-72H-20261109/W406-01/adopted-base-offline-01.json)
+
 本窗实测覆盖隔离 Core 候选原两表的导入和恢复。源根采用、候选开放与正式 PGT-021/022 按原验收窗口执行。`codex/w406-01` 本地保存，DEV-2 交接时工作树干净，远端采用及席位释放由 COORD 办理。[正式验收卡](../../acceptance/postgresql-tenancy.json)

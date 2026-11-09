@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC 原两表 Core 验证和普通读回
+
+W409 完整 1,205.102 秒，任务分支两端清理且固定席位干净释放。W406 原生导入和回执恢复、W401 普通 HTTP 和 PostgreSQL 只读查询均已验证。 [W406](../development/evidence/W406-01/DELIVERY.md) · [W401](/D:/CP6-local-test/CP6-72H-20261109/W401-VERIFY/DELIVERY.md)
+
+
 ## 2026-11-09 UTC v9/v10 对账入口
 
 W408 完整 1,510.142 秒，两端分支清理，固定席位干净释放。W409 六次真实只读查询均完成，32 个关系前后指纹相同。 [W409](../development/evidence/W409-01/DELIVERY.md)
