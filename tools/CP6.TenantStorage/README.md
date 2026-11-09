@@ -183,3 +183,11 @@ The commissioning transaction follows the legacy authentication lock order. It c
 This stage gives the ordinary tenant logins read-only access to their own RMA tables. Business writes, shared authorization and source access, journal authority for the new writer, and HTTP routing have separate adoption gates. The historical Core migration and the shared default in other databases keep their original behavior.
 
 Run `eng/wp02-02/rma-tenant-migration/verify_commission.py --help` for the real PostgreSQL and published-host fixture.
+
+### Concurrent outbound index on a commissioned Core tenant
+
+Use `migrate-rma-core-outbound-index-v1 --stdin` with the same private envelope. Its `Request` contains the original `Target` and `InstallationId`, one Ready `TenantId`, and a new nonempty `OperationId` for this index step. The step builds a B-tree on the tenant's `heads.outbound_id`. The original Ready record and old-compatible reads continue while the index is prepared.
+
+After interruption or uncertain output, submit the same operation key. PostgreSQL can retain an invalid staging index. The CLI binds its native identity to the recorded step, removes that exact invalid index concurrently and rebuilds it. A usable staging index is renamed to `rma_heads_outbound_id_v1` in the transaction that saves the original receipt. An exact replay checks the recorded final OID and returns the original receipt bytes. A conflicting object, key or target causes rejection. Keep the original request and use the same key to recover. Reserve privileged DDL on the target schema for this control path during the operation window. The session lock coordinates participating migrators across the nontransactional commands.
+
+Run `eng/wp02-02/rma-tenant-migration/verify_outbound_index.py --help` for the PostgreSQL interruption and recovery fixture.
