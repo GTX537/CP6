@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W377 v3 隔离 staging 实证通过。W375 随 #824 采用并释放，W376 容量实证收尾。DEV-2 W379 接原可见性，集成席位 W378 核跨 schema SQL。 [W377](./evidence/W377-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave377/README.md)
+
+
 > W375 正常原操作查询、关闭和迟到竞争已实测。W374 随 #823 采用并释放，DEV-1 W377 接 v3 隔离 staging，W376 继续实测模型缓存。 [W375](./evidence/W375-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave375/README.md)
 
 

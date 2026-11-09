@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC v3 原来源 staging
+
+隔离目标按源 ICU 字符规则及原精度原子落表，保留原日志和 STAGED 原回执。 [W377](../development/evidence/W377-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 普通 RMA 原操作
 
 显式接现有 GET 与 close。保现行权限、原认证锁、原日志字节及两种竞态结果。 [W375](../development/evidence/W375-01/DELIVERY.md)
