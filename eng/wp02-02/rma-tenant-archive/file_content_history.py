@@ -89,7 +89,7 @@ def source_owner(query, tenant):
     return source["owner"]
 
 
-def check_layout(query, owner_oid):
+def layout_predicate(owner_oid):
     def array(values):
         return "ARRAY[" + ",".join(map(q, values)) + "]"
 
@@ -97,9 +97,7 @@ def check_layout(query, owner_oid):
         name + ":" + typ for name, typ in zip(member.columns, member.types)) + "," + array(member.key) + ")"
         for member in MEMBERS.values())
     journal = MEMBERS["operations"].relation
-    layout = query(f"""
-        LOCK TABLE {PARENT_HEADS},{journal} IN ACCESS SHARE MODE;
-        SELECT to_json(
+    return f"""
             (SELECT count(*) FROM public."__EFMigrationsHistory"
              WHERE "MigrationId" IN ({q(PARENT_MIGRATION)},{q(JOURNAL_MIGRATION)}))=2
             AND NOT EXISTS (SELECT FROM (VALUES {expected}) e(relation,columns,key_columns)
@@ -123,18 +121,20 @@ def check_layout(query, owner_oid):
                       ('authority_gate','cp6_authentication_v1.before_change()',62)) e(name,fn,typ)
                  JOIN pg_trigger t ON t.tgrelid=to_regclass('{journal}') AND t.tgname=e.name
                    AND t.tgenabled IN ('O','A') AND NOT t.tgisinternal AND t.tgtype=e.typ
-                   AND t.tgqual IS NULL AND t.tgfoid=to_regprocedure(e.fn))=2);
+                   AND t.tgqual IS NULL AND t.tgfoid=to_regprocedure(e.fn))=2"""
+
+
+def check_layout(query, owner_oid):
+    layout = query(f"""
+        LOCK TABLE {PARENT_HEADS},{archive.JOURNAL_TABLE} IN ACCESS SHARE MODE;
+        SELECT to_json({layout_predicate(owner_oid)});
         """)
     if not layout:
         raise archive.ArchiveError("file-content-history-layout-rejected")
 
 
-def capture(query, tenant, owner_oid):
-    """Check the original graph in the caller's already pinned read-only snapshot."""
-    file_count = assets.capture_count(query, tenant, owner_oid)
-    check_layout(query, owner_oid)
-    rows = rows_sql(tenant)
-    data = query(f"""
+def graph_sql(rows):
+    return f"""
         WITH contents AS MATERIALIZED ({rows['contents']}), heads AS MATERIALIZED ({rows['heads']}),
         events AS MATERIALIZED (SELECT e.*,convert_from(e.body_bytes,'UTF8')::jsonb body FROM ({rows['events']}) e),
         parents AS MATERIALIZED (SELECT p.*,convert_from(p.body_bytes,'UTF8')::jsonb body FROM ({rows['parent-versions']}) p),
@@ -181,8 +181,16 @@ def capture(query, tenant, owner_oid):
         SELECT json_build_object('valid',NOT EXISTS(SELECT FROM bad),
             'contents',(SELECT count(*) FROM contents),'heads',(SELECT count(*) FROM heads),
             'events',(SELECT count(*) FROM events),'operations',(SELECT count(*) FROM originals),
-            'parent-versions',(SELECT count(*) FROM parents));
-        """, failure="file-content-history-graph-read-failed (see native logs)")
+            'parent-versions',(SELECT count(*) FROM parents))
+        """
+
+
+def capture(query, tenant, owner_oid):
+    """Check the original graph in the caller's already pinned read-only snapshot."""
+    file_count = assets.capture_count(query, tenant, owner_oid)
+    check_layout(query, owner_oid)
+    rows = rows_sql(tenant)
+    data = query(graph_sql(rows) + ";", failure="file-content-history-graph-read-failed (see native logs)")
     if not data.pop("valid") or data["contents"] != file_count or data["heads"] != file_count:
         raise archive.ArchiveError("file-content-history-graph-rejected")
     return rows, data
@@ -259,13 +267,19 @@ def export_bundle(pg_bin, target, username, tenant, output, file_content_root, *
     return bundle
 
 
-def verify_bundle(bundle, tenant, pin, file_content_root):
+def checked_bundle_path(bundle):
     bundle = assets.checked_root(bundle).resolve(strict=True)
     names = {filename(key) for key in MEMBERS}
     if {entry.name for entry in bundle.iterdir()} != names | {MANIFEST}:
         raise archive.ArchiveError("file-content-history-member-set-rejected")
     for name in names | {MANIFEST}:
         assets.entry(bundle / name, stat.S_ISREG, "file-content-history-member-rejected")
+    return bundle
+
+
+def verify_bundle(bundle, tenant, pin, file_content_root):
+    bundle = checked_bundle_path(bundle)
+    names = {filename(key) for key in MEMBERS}
     manifest_bytes = (bundle / MANIFEST).read_bytes()
     if not re.fullmatch(r"[0-9a-f]{64}", pin) or hashlib.sha256(manifest_bytes).hexdigest() != pin:
         raise archive.ArchiveError("file-content-history-manifest-pin-rejected")

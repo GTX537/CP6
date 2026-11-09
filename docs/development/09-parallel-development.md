@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W417 随 #854 采用并释放 DEV-1。W418 实测 FileContent 关闭候选，W419 继续实际 ERP C03 原件。 [W418](./evidence/W418-01/DELIVERY.md)
+
+
 > W416 远端采用及释放。W417 实测原 PGT 三个 PostgreSQL 直接隔离场景。 [W417](./evidence/W417-01/DELIVERY.md)
 
 
