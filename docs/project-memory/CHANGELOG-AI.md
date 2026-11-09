@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC 采用原 PostgreSQL 实测
+
+同步五项原场景的执行证据及实际范围。 [W421](../development/evidence/W421-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC ERP C03 切面验收
 
 新增使用实际 ERP 处理器与现有 v10 的定向验收驱动，核 A/B 原字节和原生行版本。 [W419](../development/evidence/W419-01/DELIVERY.md)

@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC 租户池、标识、模型与迁移实证
+
+W421 纳入 PGT-002、005、012、018、019 的实际 PostgreSQL 执行原件。 [W421](../development/evidence/W421-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 实际 ERP C03 Owner
 
 W419 真实 ERP C03 Owner 在 A/B 写入独立终态与原消息。重复报文保持八表与序列，A 八份原生成员与正常 v10 切面逐字节一致。 [W419](../development/evidence/W419-01/DELIVERY.md)

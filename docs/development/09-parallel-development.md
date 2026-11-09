@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W419 随 #856 采用并释放 DEV-1。W420 继续实际同源夹具，W421 纳入五项已有 PostgreSQL 实证。 [W421](./evidence/W421-01/DELIVERY.md)
+
+
 > W418 随 #855 采用并释放 DEV-2。W419 实测真实 ERP C03 原件并生成同源 v10。 [W419](./evidence/W419-01/DELIVERY.md)
 
 
