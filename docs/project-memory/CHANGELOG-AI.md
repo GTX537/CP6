@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC Identity Priority v5
+
+按原生四表保存字节、状态、时间、原全局键与租约，支持零行成员。 [W380](../development/evidence/W380-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 原 RMA 可见性 v4
 
 按原生键保存订单、工单、出库头、含软删的明细与库位事实，保留空值、尾空格及原库位隔离状态。 [W379](../development/evidence/W379-01/DELIVERY.md)
