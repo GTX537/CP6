@@ -19,6 +19,7 @@ import sys
 from threading import Thread
 from uuid import UUID
 
+import iam_v6
 import identity_priority
 import source_v3
 import visibility_v4
@@ -502,7 +503,9 @@ def file_digest(path):
 
 def export_bundle(pg_bin, target, username, installation, tenant, output, *,
                   include_original_journal=False, include_rma_source=False, include_rma_visibility=False,
-                  include_identity_priority=False, environ=None, on_snapshot=None):
+                  include_identity_priority=False, include_rma_iam_references=False, environ=None, on_snapshot=None):
+    if include_rma_iam_references and not include_identity_priority:
+        raise ArchiveError("rma-iam-reference-identity-priority-required")
     if include_identity_priority and not include_rma_visibility:
         raise ArchiveError("identity-priority-visibility-required")
     if include_rma_visibility and not include_rma_source:
@@ -541,6 +544,9 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
             visibility_counts = visibility_v4.capture_counts(query, visibility_rows)
             if not visibility_v4.covers_source(visibility_counts, source_counts):
                 raise ArchiveError("rma-visibility-count-mismatch")
+        if include_rma_iam_references:
+            iam_rows = iam_v6.rows_sql(tenant, journal_rows, visibility_rows)
+            iam_counts = iam_v6.capture_counts(query, iam_rows)
         if on_snapshot is not None:
             on_snapshot(snapshot)
         run_native(pg_bin, "pg_dump", [*connection, "--no-password", "--format=custom", "--strict-names",
@@ -565,6 +571,9 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
                 copy_snapshot(pg_bin, connection, environ, logs, bundle / table.member,
                               Path(table.member).stem + "-copy", snapshot,
                               identity_priority.rows_sql(table, tenant), identity_priority.COPY_SETTINGS)
+        if include_rma_iam_references:
+            copy_snapshot(pg_bin, connection, environ, logs, bundle / iam_v6.MEMBER, "iam-references-copy", snapshot,
+                          iam_rows + " ORDER BY " + iam_v6.ORDER, source_v3.READ_ALL_ROWS)
 
     toc = logs / "pg-restore-list.stdout"
     run_native(pg_bin, "pg_restore", ["--list", str(bundle / "rma.pgcustom")], environ, logs, "pg-restore-list")
@@ -603,6 +612,11 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
         manifest["identityPriority"] = identity_priority.manifest_section(identity_counts)
         manifest["members"].update({name: file_digest(bundle / name) for name in identity_priority.MEMBERS})
         manifest["excluded"][2] = "other queue domains, companion state, route epochs, dispatcher watermarks and identity rowversion sequence"
+    if include_rma_iam_references:
+        manifest["format"] = iam_v6.FORMAT
+        manifest["rmaIamReferences"] = iam_v6.manifest_section(iam_counts)
+        manifest["members"][iam_v6.MEMBER] = file_digest(bundle / iam_v6.MEMBER)
+        manifest["excluded"][0] = "credentials, MFA, tokens, signing keys, global IAM definitions and current authorization"
     pending = logs / "manifest.pending"
     with pending.open("x", encoding="utf-8", newline="\n") as file:
         json.dump(manifest, file, indent=2)
@@ -618,7 +632,9 @@ def verify_bundle(bundle, tenant):
     if "manifest.json" not in names or any(path.is_symlink() or not path.is_file() for path in files):
         raise ArchiveError("bundle-member-mismatch")
     manifest = json.loads((bundle / "manifest.json").read_text(encoding="utf-8"))
-    source_formats = (source_v3.FORMAT, visibility_v4.FORMAT, identity_priority.FORMAT)
+    identity_formats = (identity_priority.FORMAT, iam_v6.FORMAT)
+    visibility_formats = (visibility_v4.FORMAT, *identity_formats)
+    source_formats = (source_v3.FORMAT, *visibility_formats)
     if not isinstance(manifest, dict) or manifest.get("format") not in (FORMAT, FORMAT_WITH_JOURNAL, *source_formats) \
             or manifest.get("recoveryReady") is not False:
         raise ArchiveError("bundle-format-rejected")
@@ -634,13 +650,17 @@ def verify_bundle(bundle, tenant):
         members += source_v3.MEMBERS
         if not source_v3.matches_manifest(manifest):
             raise ArchiveError("bundle-format-rejected")
-    if manifest["format"] in (visibility_v4.FORMAT, identity_priority.FORMAT):
+    if manifest["format"] in visibility_formats:
         members += (visibility_v4.MEMBER,)
         if not visibility_v4.matches_manifest(manifest):
             raise ArchiveError("bundle-format-rejected")
-    if manifest["format"] == identity_priority.FORMAT:
+    if manifest["format"] in identity_formats:
         members += identity_priority.MEMBERS
         if not identity_priority.matches_manifest(manifest):
+            raise ArchiveError("bundle-format-rejected")
+    if manifest["format"] == iam_v6.FORMAT:
+        members += (iam_v6.MEMBER,)
+        if not iam_v6.matches_manifest(manifest):
             raise ArchiveError("bundle-format-rejected")
     if names != {*members, "manifest.json"}:
         raise ArchiveError("bundle-member-mismatch")
@@ -670,6 +690,8 @@ def main():
                         help="include original outbound visibility facts in v4 (requires --include-rma-source)")
     export.add_argument("--include-identity-priority", action="store_true",
                         help="include the four Identity Priority tables in v5 (requires --include-rma-visibility)")
+    export.add_argument("--include-rma-iam-references", action="store_true",
+                        help="include historical RMA IAM references in v6 (requires --include-identity-priority)")
     verify = actions.add_parser("verify")
     verify.add_argument("--bundle", type=Path, required=True)
     verify.add_argument("--tenant", required=True)
@@ -681,7 +703,8 @@ def main():
                                    args.tenant, args.output, include_original_journal=args.include_original_journal,
                                    include_rma_source=args.include_rma_source,
                                    include_rma_visibility=args.include_rma_visibility,
-                                   include_identity_priority=args.include_identity_priority)
+                                   include_identity_priority=args.include_identity_priority,
+                                   include_rma_iam_references=args.include_rma_iam_references)
             print(bundle)
         else:
             manifest = verify_bundle(args.bundle, args.tenant)

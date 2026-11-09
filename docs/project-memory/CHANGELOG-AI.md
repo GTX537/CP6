@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC 历史 IAM 事实归档
+
+原 17 条 A IAM 引用、缺失参与者与实际历史权限保留。独立更新了字段权限和租户策略，归档仍保留快照原值。 [W387](../development/evidence/W387-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 原身份优先队列对账
 
 实际只读对账保留当前已发送、已处理和租约，封闭冲突，原件缺失保持 UNKNOWN。 [W384](../development/evidence/W384-01/DELIVERY.md)

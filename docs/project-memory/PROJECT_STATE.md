@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC 历史 IAM 同快照归档
+
+W387 原历史 IAM v6 实库通过，W384 随 #830 采用并释放。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W387](../development/evidence/W387-01/DELIVERY.md) · [PR #830](https://github.com/GTX537/CP6/pull/830)
+
+
 ## 2026-11-09 UTC 身份队列当前对账
 
 W384 实际当前原键、终态、租约及冲突。W385 随 #829 采用并释放。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W384](../development/evidence/W384-01/DELIVERY.md) · [#829](https://github.com/GTX537/CP6/pull/829)

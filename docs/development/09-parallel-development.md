@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W387 原历史 IAM v6 实证通过。W389 DEV-1 核原文件内容，W390 集成席位核同库双宿主。 [W387](./evidence/W387-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave387/README.md)
+
+
 > W384 原当前消息对账实证通过，W385 随 #829 采用并释放。DEV-2 W387 核历史 IAM，集成席位 W388 对照原 PGT。 [W384](./evidence/W384-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave384/README.md)
 
 

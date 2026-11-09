@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC 原队列对账采用和历史 IAM 归档
+
+W384 完整 1,574 秒，两端任务分支清理，DEV-1 干净释放。W387 原 IAM 参与者与版本同快照实证。 [W387](../development/evidence/W387-01/DELIVERY.md) · [PR #830](https://github.com/GTX537/CP6/pull/830)
+
+
 ## 2026-11-09 UTC v5 落表采用和原队列对账
 
 W385 完整 638 秒，两端分支删除，DEV-2 干净释放。W384 现行原队列与权限拒绝真实验证。 [W384](../development/evidence/W384-01/DELIVERY.md) · [#829](https://github.com/GTX537/CP6/pull/829)
