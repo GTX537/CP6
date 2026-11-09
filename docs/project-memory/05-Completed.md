@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC 原文件候选验证
+
+W414 Windows 实测同源 v10 原 41 字节按原租户键落盘，错文件零写入，并发只发布一次，回包丢失后原回执逐字节恢复，原 v8 空包和既有归档校验兼容。 [W414](../development/evidence/W414-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 恢复原件验证
 
 W412 实库验证八张 ERP 表、一个外部文件引用、B 实际库存提交和原暂存回执。W413 PostgreSQL 18.6 实测 v2 两条真实草稿及提交原件 12 列逐字节相同，晚段 23514 全回滚，655 字节独立回执原样回读，A/B 同键隔离。 [W412](D:/CP6-local-test/CP6-72H-20261109/W412-VERIFY/DELIVERY.md) · [W413](../development/evidence/W413-01/DELIVERY.md)
