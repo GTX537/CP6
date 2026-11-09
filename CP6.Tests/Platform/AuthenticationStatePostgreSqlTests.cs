@@ -232,7 +232,7 @@ public sealed partial class AuthenticationStatePostgreSqlTests(TenantManagementP
 internal sealed class AuthenticationApiProcess(Process process, HttpClient client, string secret, Action saveLog) : IAsyncDisposable
 {
     internal Uri Origin => client.BaseAddress!;
-    internal Task<HttpResponseMessage> Send(HttpRequestMessage request) => client.SendAsync(request);
+    internal Task<HttpResponseMessage> Send(HttpRequestMessage request, CancellationToken ct = default) => client.SendAsync(request, ct);
     internal string Token(Sys_User user, string? version = null) => JwtHelper.GenerateToken(user.Id.ToString(), user.UserName,
         secret, "auth-state-component", "auth-state-component", 5, user.TenantId,
         mustChangePassword: user.MustChangePassword, isPlatformAdmin: user.IsPlatformAdmin, authenticationVersion: version ?? AuthSessionVersion.For(user));

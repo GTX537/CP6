@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC W344 实际 Stock 故障恢复
+
+在实际 Outbox 路由锁等待时取消 HTTP 或终止准确 PostgreSQL 后端。核两租户的真实回滚、健康连接复用、坏连接替换、原键和准确数值。 [交付报告](../development/evidence/W344-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W343 实际 Stock 凭据轮换
 
 隔离 PostgreSQL 和真实 Kestrel 核实旧配置拒绝 A 且 B 正常，新配置读回双方原结果并使 A 的八位小数调整仅产生一次效果。 [交付报告](../development/evidence/W343-01/DELIVERY.md)
