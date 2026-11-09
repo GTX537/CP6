@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC 同快照 RMA 原日志
+
+真实已采用 W361 的 A/B 源库按本租户和原 Owner 输出原日志原件。W361 远端 #818 及分支处置与固定席位已核。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W366 交付](../development/evidence/W366-01/DELIVERY.md) · [#818](https://github.com/GTX537/CP6/pull/818)
+
+
 ## 2026-11-09 UTC 全 Core RMA 原操作日志
 
 真实 PostgreSQL 的 RMA 原日志按实际登录和 Owner 隔离，原认证锁与受控追加同事务。W363 完整 1,168 秒且两端分支和席位收尾，W365 实库 703 秒。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W361 交付](../development/evidence/W361-01/DELIVERY.md) · [#817](https://github.com/GTX537/CP6/pull/817)

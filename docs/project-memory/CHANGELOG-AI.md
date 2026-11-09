@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC 同快照 RMA 原日志归档 v2
+
+增加显式 v2，按实际租户和原 Owner 导出 CLOSED 与 COMMITTED 原字节及审计字段。低权查询实际被 PostgreSQL 拒绝，Windows 收尾保留精确拒绝原因。默认 v1 仍可使用。 [W366 交付](../development/evidence/W366-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC RMA 原日志控制
 
 新增已 commissioning 的原日志安装。普通登录只能读本租户原 Owner，受控原追加取得原认证根并参与调用事务。写入后由当前兼容 CLI 恢复原 commissioning 字节。 [W361 交付](../development/evidence/W361-01/DELIVERY.md)

@@ -5,6 +5,7 @@ import argparse
 import csv
 from contextlib import contextmanager
 from dataclasses import dataclass
+import errno
 import hashlib
 import io
 import ipaddress
@@ -21,12 +22,27 @@ from uuid import UUID
 WINDOWS = os.name == "nt"
 FLAGS = subprocess.CREATE_NO_WINDOW if WINDOWS else 0
 FORMAT = "cp6-rma-source-archive-v1"
+FORMAT_WITH_JOURNAL = "cp6-rma-source-archive-v2"
 PROFILE = "rma-application-core-tenant-v1"
 LINEAGE = "rma-application-v1"
 MIGRATION = "rma-tenant-storage-0001"
 HISTORY = "rma_migration_history_v1"
 TABLES = ("heads", HISTORY, "versions")
 MEMBERS = ("rma.pgcustom", "outbounds.csv")
+JOURNAL_MEMBER = "rma-original.csv"
+JOURNAL_TABLE = "cp6_main_owner_v1.operations"
+JOURNAL_INSTALLATION = "cp6_rma_original_journal_v1.installation"
+JOURNAL_PROFILE = "rma-core-original-journal-v1"
+JOURNAL_OWNER = "Main.Wms.RmaApplication.v1"
+JOURNAL_CONTRACT = "RMA-NATIVE-APPLICATION/1"
+JOURNAL_COLUMNS = ("tenant_id", "owner", "operation_id", "actor_id", "contract", "state", "input_bytes",
+                   "input_sha256", "result_bytes", "object_ids", "audit_json", "committed_at")
+JOURNAL_COPY_SETTINGS = """
+    SET LOCAL row_security=off;
+    SET LOCAL bytea_output='hex';
+    SET LOCAL timezone='UTC';
+    SET LOCAL datestyle='ISO, YMD';
+"""
 COLUMNS = ("tenant_id", "outbound_id", "outbound_no", "warehouse_cd", "status", "is_deleted")
 EXCLUSIONS = (
     "IAM, credentials, signing keys and current authorization",
@@ -133,7 +149,8 @@ def run_native(pg_bin, tool, args, environ, logs, label, sql=None, output=None):
 def snapshot_session(pg_bin, connection, environ, logs):
     # psql stays open while pg_dump and COPY import its exported snapshot.
     with (logs / "holder.stdout").open("xb") as out, (logs / "holder.stderr").open("xb") as err, \
-            subprocess.Popen([binary(pg_bin, "psql"), "-XqAtw", "-v", "ON_ERROR_STOP=1", *connection],
+            subprocess.Popen([binary(pg_bin, "psql"), "-XqAtw", "-v", "ON_ERROR_STOP=1",
+                              "-v", "VERBOSITY=verbose", *connection],
                              stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=err, creationflags=FLAGS,
                              env=client_environment(environ, "cp6-rma-archive-holder")) as process:
         responses = Queue()
@@ -148,7 +165,7 @@ def snapshot_session(pg_bin, connection, environ, logs):
         reader = Thread(target=read_responses, daemon=True)
         reader.start()
 
-        def query(statement):
+        def query(statement, failure="snapshot-holder-failed (see native logs)"):
             process.stdin.write((statement + "\n").encode("utf-8"))
             process.stdin.flush()
             try:
@@ -156,7 +173,7 @@ def snapshot_session(pg_bin, connection, environ, logs):
             except Empty:
                 raise ArchiveError("snapshot-holder-timeout") from None
             if response is None:
-                raise ArchiveError("snapshot-holder-failed (see native logs)")
+                raise ArchiveError(failure)
             return json.loads(response)
 
         completed = False
@@ -165,17 +182,22 @@ def snapshot_session(pg_bin, connection, environ, logs):
             completed = True
         finally:
             try:
-                process.stdin.write(b"COMMIT;\n" if completed else b"ROLLBACK;\n")
+                if completed:
+                    process.stdin.write(b"COMMIT;\n")
+                # EOF rolls back a failed read-only session without writing to a rejected query's closed pipe.
                 process.stdin.close()
-            except BrokenPipeError:
-                pass
-            try:
-                result = process.wait(timeout=10)
-            except subprocess.TimeoutExpired:
-                process.kill()
-                process.wait()
-                result = -1
-            reader.join()
+            except OSError as error:
+                disconnected = isinstance(error, BrokenPipeError) or (WINDOWS and error.errno == errno.EINVAL)
+                if completed or not disconnected:
+                    raise ArchiveError("snapshot-holder-close-failed (see native logs)") from error
+            finally:
+                try:
+                    result = process.wait(timeout=10)
+                except subprocess.TimeoutExpired:
+                    process.kill()
+                    process.wait()
+                    result = -1
+                reader.join()
             if completed and result:
                 raise ArchiveError("snapshot-holder-close-failed (see native logs)")
 
@@ -297,18 +319,75 @@ def capture(query, tenant, schema, ready):
     return result
 
 
-def copy_slice(pg_bin, connection, environ, logs, bundle, tenant, schema, snapshot):
+def original_journal_rows(tenant):
+    return "SELECT {columns} FROM {table} WHERE tenant_id={tenant}::uuid AND owner={owner}".format(
+        columns=", ".join(JOURNAL_COLUMNS), table=JOURNAL_TABLE, tenant=literal(tenant), owner=literal(JOURNAL_OWNER))
+
+
+def check_original_journal(query, target, installation, ready, rows_sql):
+    if not query("SELECT to_json(to_regclass({}) IS NOT NULL);".format(literal(JOURNAL_INSTALLATION))):
+        raise ArchiveError("rma-original-journal-overlay-rejected")
+    overlay = query("""
+        LOCK TABLE {table} IN ACCESS SHARE MODE;
+        SELECT coalesce((SELECT json_build_object(
+                    'operationId',j.result_json::jsonb->>'OperationId',
+                    'catalogSha256',j.catalog_sha256)
+            FROM {installation_table} j
+            CROSS JOIN cp6_rma_core_commission_v1.installation p
+            JOIN pg_class c ON c.oid={table_name}::regclass
+            JOIN pg_class i ON i.oid={installation_name}::regclass
+            JOIN pg_namespace n ON n.oid=i.relnamespace
+            WHERE j.singleton AND p.singleton AND j.commission_json=p.request_json
+                AND c.relkind='r' AND c.relowner={owner_oid}::oid AND c.relrowsecurity AND c.relforcerowsecurity
+                AND i.relkind='r' AND i.relowner=c.relowner AND n.nspowner=c.relowner AND NOT i.relrowsecurity
+                AND NOT EXISTS (SELECT FROM aclexplode(i.relacl) a WHERE a.grantee<>i.relowner)
+                AND NOT EXISTS (SELECT FROM pg_attribute a, LATERAL aclexplode(a.attacl) acl
+                                WHERE a.attrelid=i.oid AND acl.grantee<>i.relowner)
+                AND j.result_json::jsonb->>'Outcome'='INSTALLED'
+                AND j.result_json::jsonb->>'Profile'={profile}
+                AND j.result_json::jsonb->>'InstallationId'={installation}
+                AND j.result_json::jsonb->>'DatabaseOid'={db_oid}
+                AND j.result_json::jsonb->>'SystemIdentifier'={system_id}
+                AND j.result_json::jsonb->>'CommissionOperationId'=p.commission_receipt::jsonb->>'OperationId'
+                AND j.result_json::jsonb->>'CatalogSha256'=j.catalog_sha256
+                AND j.catalog_sha256 ~ '^[0-9a-f]{{64}}$'), 'null'::json);
+    """.format(table=JOURNAL_TABLE, installation_table=JOURNAL_INSTALLATION, table_name=literal(JOURNAL_TABLE),
+               installation_name=literal(JOURNAL_INSTALLATION), owner_oid=literal(ready["ownerOid"]),
+               profile=literal(JOURNAL_PROFILE), installation=literal(installation),
+               db_oid=literal(target.database_oid), system_id=literal(target.system_identifier)))
+    if overlay is None:
+        raise ArchiveError("rma-original-journal-overlay-rejected")
+
+    # PostgreSQL must raise instead of silently filtering this authoritative backup read.
+    counts = query("""
+        SET LOCAL row_security=off;
+        SELECT json_build_object(
+            'rows',count(*),
+            'committed',count(*) FILTER (WHERE state='COMMITTED'),
+            'closed',count(*) FILTER (WHERE state='CLOSED'),
+            'unexpectedContract',count(*) FILTER (WHERE contract IS DISTINCT FROM {contract}))
+        FROM ({rows}) journal;
+    """.format(contract=literal(JOURNAL_CONTRACT), rows=rows_sql),
+                   failure="rma-original-journal-read-failed (see native logs)")
+    if counts.pop("unexpectedContract") or counts["rows"] != counts["committed"] + counts["closed"]:
+        raise ArchiveError("rma-original-journal-row-rejected")
+    return dict(overlay, profile=JOURNAL_PROFILE, owner=JOURNAL_OWNER, contract=JOURNAL_CONTRACT, counts=counts,
+                columns=list(JOURNAL_COLUMNS))
+
+
+def copy_snapshot(pg_bin, connection, environ, logs, output, label, snapshot, rows_sql, settings=""):
     sql = """
         BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY;
         SET TRANSACTION SNAPSHOT {snapshot};
         SET LOCAL search_path=pg_catalog;
         SET LOCAL standard_conforming_strings=on;
         SET LOCAL statement_timeout='100s';
-        COPY ({outbounds}) TO STDOUT WITH (FORMAT csv, HEADER true);
+        {settings}
+        COPY ({rows}) TO STDOUT WITH (FORMAT csv, HEADER true);
         COMMIT;
-    """.format(snapshot=literal(snapshot), outbounds=outbounds_sql(tenant, schema))
-    run_native(pg_bin, "psql", ["-XqAtw", "-v", "ON_ERROR_STOP=1", *connection], environ, logs, "shared-copy",
-               sql=sql, output=bundle / "outbounds.csv")
+    """.format(snapshot=literal(snapshot), rows=rows_sql, settings=settings)
+    run_native(pg_bin, "psql", ["-XqAtw", "-v", "ON_ERROR_STOP=1", *connection], environ, logs, label,
+               sql=sql, output=output)
 
 
 def file_digest(path):
@@ -321,7 +400,8 @@ def file_digest(path):
     return {"bytes": size, "sha256": digest.hexdigest()}
 
 
-def export_bundle(pg_bin, target, username, installation, tenant, output, *, environ=None, on_snapshot=None):
+def export_bundle(pg_bin, target, username, installation, tenant, output, *,
+                  include_original_journal=False, environ=None, on_snapshot=None):
     installation, tenant = guid(installation), guid(tenant)
     schema = "t_" + tenant.hex
     if not username or "\0" in username:
@@ -337,12 +417,19 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *, env
         ready = check_source(query, target, installation, tenant)
         captured = capture(query, tenant, schema, ready)
         snapshot = captured["snapshotId"]
+        if include_original_journal:
+            journal_rows = original_journal_rows(tenant)
+            journal = check_original_journal(query, target, installation, ready, journal_rows)
         if on_snapshot is not None:
             on_snapshot(snapshot)
         run_native(pg_bin, "pg_dump", [*connection, "--no-password", "--format=custom", "--strict-names",
                    "--lock-wait-timeout=5s", "--schema=" + schema, "--snapshot=" + snapshot,
                    "--file=" + str(bundle / "rma.pgcustom")], environ, logs, "pg-dump")
-        copy_slice(pg_bin, connection, environ, logs, bundle, tenant, schema, snapshot)
+        copy_snapshot(pg_bin, connection, environ, logs, bundle / "outbounds.csv", "shared-copy", snapshot,
+                      outbounds_sql(tenant, schema))
+        if include_original_journal:
+            copy_snapshot(pg_bin, connection, environ, logs, bundle / JOURNAL_MEMBER, "journal-copy", snapshot,
+                          journal_rows + " ORDER BY operation_id", JOURNAL_COPY_SETTINGS)
 
     toc = logs / "pg-restore-list.stdout"
     run_native(pg_bin, "pg_restore", ["--list", str(bundle / "rma.pgcustom")], environ, logs, "pg-restore-list")
@@ -360,6 +447,11 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *, env
         "members": {name: file_digest(bundle / name) for name in MEMBERS},
         "excluded": list(EXCLUSIONS),
     }
+    if include_original_journal:
+        manifest["format"] = FORMAT_WITH_JOURNAL
+        manifest["journal"] = journal
+        manifest["members"][JOURNAL_MEMBER] = file_digest(bundle / JOURNAL_MEMBER)
+        manifest["excluded"][1] = "original operations and close outcomes outside this tenant and RMA Owner"
     pending = logs / "manifest.pending"
     with pending.open("x", encoding="utf-8", newline="\n") as file:
         json.dump(manifest, file, indent=2)
@@ -370,19 +462,30 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *, env
 
 def verify_bundle(bundle, tenant):
     tenant = guid(tenant)
-    members = list(bundle.iterdir())
-    if {path.name for path in members} != {*MEMBERS, "manifest.json"} \
-            or any(path.is_symlink() or not path.is_file() for path in members):
+    files = list(bundle.iterdir())
+    names = {path.name for path in files}
+    if "manifest.json" not in names or any(path.is_symlink() or not path.is_file() for path in files):
         raise ArchiveError("bundle-member-mismatch")
     manifest = json.loads((bundle / "manifest.json").read_text(encoding="utf-8"))
-    if not isinstance(manifest, dict) or manifest.get("format") != FORMAT or manifest.get("recoveryReady") is not False:
+    if not isinstance(manifest, dict) or manifest.get("format") not in (FORMAT, FORMAT_WITH_JOURNAL) \
+            or manifest.get("recoveryReady") is not False:
         raise ArchiveError("bundle-format-rejected")
+    members = MEMBERS
+    if manifest["format"] == FORMAT_WITH_JOURNAL:
+        members += (JOURNAL_MEMBER,)
+        journal = manifest.get("journal")
+        if not isinstance(journal, dict) or journal.get("profile") != JOURNAL_PROFILE \
+                or journal.get("owner") != JOURNAL_OWNER or journal.get("contract") != JOURNAL_CONTRACT \
+                or journal.get("columns") != list(JOURNAL_COLUMNS):
+            raise ArchiveError("bundle-format-rejected")
+    if names != {*members, "manifest.json"}:
+        raise ArchiveError("bundle-member-mismatch")
     if manifest.get("tenantId") != str(tenant) or manifest.get("schema") != "t_" + tenant.hex:
         raise ArchiveError("bundle-tenant-mismatch")
     expected = manifest.get("members")
-    if not isinstance(expected, dict) or expected.keys() != set(MEMBERS):
+    if not isinstance(expected, dict) or expected.keys() != set(members):
         raise ArchiveError("bundle-member-mismatch")
-    if any(file_digest(bundle / name) != expected[name] for name in MEMBERS):
+    if any(file_digest(bundle / name) != expected[name] for name in members):
         raise ArchiveError("bundle-digest-mismatch")
     return manifest
 
@@ -395,6 +498,8 @@ def main():
         export.add_argument("--" + key, type=Path, required=True)
     for key in ("installation", "tenant", "username"):
         export.add_argument("--" + key, required=True)
+    export.add_argument("--include-original-journal", action="store_true",
+                        help="include the commissioned RMA original journal in a v2 archive")
     verify = actions.add_parser("verify")
     verify.add_argument("--bundle", type=Path, required=True)
     verify.add_argument("--tenant", required=True)
@@ -403,11 +508,11 @@ def main():
         if args.action == "export":
             target = PhysicalTarget.from_mapping(json.loads(args.target_file.read_text(encoding="utf-8-sig")))
             bundle = export_bundle(args.pg_bin.resolve(strict=True), target, args.username, args.installation,
-                                   args.tenant, args.output)
+                                   args.tenant, args.output, include_original_journal=args.include_original_journal)
             print(bundle)
         else:
             manifest = verify_bundle(args.bundle, args.tenant)
-            print(json.dumps({"tenantId": manifest["tenantId"], "format": FORMAT, "recoveryReady": False}))
+            print(json.dumps({"tenantId": manifest["tenantId"], "format": manifest["format"], "recoveryReady": False}))
     except (ArchiveError, OSError, ValueError, subprocess.SubprocessError) as error:
         print("archive rejected:", error, file=sys.stderr)
         return 1

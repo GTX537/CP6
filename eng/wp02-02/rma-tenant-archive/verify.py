@@ -68,9 +68,9 @@ def assert_rejected(f, label, message, operation):
         raise AssertionError(label + " was accepted")
 
 
-def staging(f, bundle, manifest, tenant, other, expected, source_target, environ):
-    db = "w363_staging"
+def staging(f, bundle, manifest, tenant, other, expected, source_target, environ, db="w363_staging"):
     f.create_target(db)
+    evidence = "staging" if db == "w363_staging" else "v2-staging"
     f.sql("postgres", """
         REVOKE ALL ON DATABASE {db} FROM PUBLIC;
         GRANT CONNECT ON DATABASE {db} TO {a},{b};
@@ -81,8 +81,8 @@ def staging(f, bundle, manifest, tenant, other, expected, source_target, environ
          "--single-transaction", "--exit-on-error", "--no-password", str(bundle / "rma.pgcustom")],
         env=archive.client_environment(environ, "W363-staging-restore"), capture_output=True,
         cwd=f.root, timeout=45, creationflags=FLAGS)
-    f.save("staging-restore.stdout", process.stdout)
-    f.save("staging-restore.stderr", process.stderr)
+    f.save(evidence + "-restore.stdout", process.stdout)
+    f.save(evidence + "-restore.stderr", process.stderr)
     require(process.returncode == 0, "native staging restore failed")
 
     shared = (bundle / "outbounds.csv").read_bytes()
@@ -98,12 +98,12 @@ def staging(f, bundle, manifest, tenant, other, expected, source_target, environ
             COPY rma_archive_stage.outbound_snapshot FROM STDIN WITH (FORMAT csv, HEADER true);
         """.format(q(tenant)).encode("utf-8") + shared + b"\\.\nCOMMIT;\n"
         out, err = f.collect(proc, statement)
-        f.save("staging-copy.stdout", out)
-        f.save("staging-copy.stderr", err)
+        f.save(evidence + "-copy.stdout", out)
+        f.save(evidence + "-copy.stderr", err)
         require(proc.returncode == 0, "native staging shared slice import failed")
 
     require(read_business(f, db, tenant) == expected, "staging changed original RMA state or receipt")
-    require(f.sql(db, "SELECT payload->>'quantity' FROM {}.versions WHERE version=2;".format(schema(tenant)))
+    require(f.sql(db, "SELECT DISTINCT payload->>'quantity' FROM {}.versions WHERE version=2;".format(schema(tenant)))
             == "1234567890.12345678901234", "staging changed stored numeric precision")
     require(f.sql(db, """
         SELECT (to_regnamespace({other}) IS NULL AND
@@ -118,23 +118,23 @@ def staging(f, bundle, manifest, tenant, other, expected, source_target, environ
             "staging shared slice count mismatch")
 
     table = schema(tenant)
-    require(f.sql(db, "SELECT count(*) FROM {}.heads;".format(table), role=A) == "1",
+    require(f.sql(db, "SELECT count(*) FROM {}.heads;".format(table), role=A) == str(len(expected["heads"])),
             "the original ordinary A LOGIN cannot read its restored table")
-    f.sql(db, "SELECT count(*) FROM {}.heads;".format(table), role=B, error="42501", label="staging-b-denied")
+    f.sql(db, "SELECT count(*) FROM {}.heads;".format(table), role=B, error="42501", label=evidence + "-b-denied")
     f.sql(db, "SELECT count(*) FROM rma_archive_stage.outbound_snapshot;", role=A, error="42501",
-          label="staging-shared-ordinary-denied")
+          label=evidence + "-shared-ordinary-denied")
     f.sql(db, "UPDATE {}.versions SET payload='{{}}';".format(table), role=A, error="42501",
-          label="staging-a-write-denied")
-    f.sql(db, "UPDATE {}.versions SET payload='{{}}';".format(table), error="23514", label="staging-immutable")
+          label=evidence + "-a-write-denied")
+    f.sql(db, "UPDATE {}.versions SET payload='{{}}';".format(table), error="23514", label=evidence + "-immutable")
     f.sql(db, """
         BEGIN; INSERT INTO {s}.heads VALUES ({tenant},{app},{actor},{outbound},1); COMMIT;
     """.format(s=table, tenant=q(tenant), app=q(token()), actor=q(token()), outbound=q(token())),
-          error="23503", label="staging-deferred-fk")
+          error="23503", label=evidence + "-deferred-fk")
     f.sql(db, """
         INSERT INTO {s}.heads VALUES ({tenant},{app},{actor},{outbound},1);
     """.format(s=table, tenant=q(other), app=q(token()), actor=q(token()), outbound=q(token())),
-          error="23514", label="staging-tenant-check")
-    f.save("staging-state.json", read_business(f, db, tenant))
+          error="23514", label=evidence + "-tenant-check")
+    f.save(evidence + "-state.json", read_business(f, db, tenant))
 
 
 def smoke_cli(f, target, installation, tenant):
@@ -272,20 +272,216 @@ def exercise(f):
         require(not (f.root / failure / "bundle/manifest.json").exists(), "failed export published a manifest")
 
 
+    if f.args.original_journal_cli:
+        exercise_journal(f, source_target, installation, request, a, b, environ)
+
+
+def read_journal(f, db, table, tenant):
+    return json.loads(f.sql(db, """
+        SELECT coalesce(jsonb_agg(r ORDER BY r.owner,r.operation_id),'[]'::jsonb)
+        FROM (
+            SELECT tenant_id,owner,operation_id,actor_id,contract,state,
+                encode(input_bytes,'hex') AS input_bytes,input_sha256,encode(result_bytes,'hex') AS result_bytes,
+                object_ids,audit_json,committed_at AT TIME ZONE 'UTC' AS committed_at
+            FROM {table} WHERE tenant_id={tenant}
+        ) r;
+    """.format(table=table, tenant=q(tenant))))
+
+
+def restore_journal(f, db, bundle, tenant, expected):
+    table = "rma_archive_stage.original_journal_snapshot"
+    with f.psql(db, app="W366-staging-journal") as proc:
+        statement = ("""
+            BEGIN;
+            CREATE TABLE {table} (
+                tenant_id uuid NOT NULL CHECK (tenant_id={tenant}), owner text NOT NULL,
+                operation_id uuid NOT NULL, actor_id uuid NOT NULL, contract text NOT NULL,
+                state text NOT NULL CHECK (state IN ('COMMITTED','CLOSED')), input_bytes bytea,
+                input_sha256 text, result_bytes bytea NOT NULL, object_ids uuid[] NOT NULL,
+                audit_json jsonb NOT NULL, committed_at timestamptz NOT NULL,
+                PRIMARY KEY (tenant_id,owner,operation_id)
+            );
+            COPY {table} FROM STDIN WITH (FORMAT csv, HEADER MATCH);
+        """.format(table=table, tenant=q(tenant)).rstrip() + "\n").encode("utf-8")
+        out, err = f.collect(proc, statement + (bundle / "rma-original.csv").read_bytes() + b"\\.\nCOMMIT;\n")
+        f.save("v2-staging-journal.stdout", out)
+        f.save("v2-staging-journal.stderr", err)
+        require(proc.returncode == 0, "native journal staging COPY failed")
+    actual = read_journal(f, db, table, tenant)
+    require(actual == expected, "journal staging changed original fields, bytes or operation membership")
+    require(f.sql(db, """
+        SELECT (to_regnamespace('cp6_main_owner_v1') IS NULL
+                AND to_regnamespace('cp6_rma_original_journal_v1') IS NULL)::text;
+    """) == "true", "staging activated original journal authority")
+    f.sql(db, "SELECT count(*) FROM {};".format(table), role=A, error="42501", label="v2-staging-journal-a-denied")
+    f.sql(db, "SELECT count(*) FROM {};".format(table), role=B, error="42501", label="v2-staging-journal-b-denied")
+    f.save("v2-staging-journal.json", actual)
+
+
+def journal_cli(f, label, username, *args):
+    result = subprocess.run(
+        [sys.executable, "-B", archive.__file__, *map(str, args)],
+        env=BASE_ENV if username is None else {**BASE_ENV, "PGPASSWORD": f.passwords[username]},
+        capture_output=True, cwd=f.root, timeout=30, creationflags=FLAGS)
+    f.save(label + ".stdout", result.stdout)
+    f.save(label + ".stderr", result.stderr)
+    f.save(label + ".process.json", {"ExitCode": result.returncode})
+    return result
+
+
+def exercise_journal(f, source, installation, commission, a, b, environ):
+    from verify_commission import OTHER_OWNER, journal
+    from verify_original_journal import COMMAND, INSTALLATION, OPERATIONS, RMA_OWNER, cli_from, read_original, write_original
+
+    db = source.database
+
+    def export(label, hook=None):
+        return archive.export_bundle(f.args.pg_bin, source, OWNER, installation, a, f.root / label,
+                                     include_original_journal=True, environ=environ, on_snapshot=hook)
+
+    assert_rejected(f, "v2-overlay-missing", "rma-original-journal-overlay-rejected",
+                    lambda: export("v2-no-overlay"))
+    operation, closed, later, actor_a, actor_b, other_object = (token() for _ in range(6))
+    f.sql(db, "BEGIN; SELECT cp6_authentication_v1.acquire(); " + journal(a, OTHER_OWNER, operation) + " COMMIT;")
+    with cli_from(f, f.args.original_journal_cli):
+        f.invoke("v2-install-journal", COMMAND, {**commission, "OperationId": token()})
+    # A current shared constraint trigger reads every original result as UTF-8 JSON.
+    def result_bytes(key, state, note):
+        return ('{\r\n  "Note": "' + note + '", "State": "' + state + '", "OperationId": "' + key + '" \r\n}').encode("utf-8")
+
+    a_input = '{ "Reason": "原申请 A", "Qty": "1.12345678" }\r\n'.encode("utf-8")
+    b_input = '{\r\n "Qty": "0.23456789", "Reason": "原申请 B" }'.encode("utf-8")
+    a_result = result_bytes(operation, "DRAFT", "原字节 A")
+    b_result = result_bytes(operation, "DRAFT", "原字节 B")
+    closed_result = result_bytes(closed, "CLOSED", "原关闭")
+    f.sql(db, write_original(a, operation, actor_a, a_input, a_result, [other_object]), role=A)
+    f.sql(db, write_original(b, operation, actor_b, b_input, b_result, [other_object]), role=B)
+    f.sql(db, write_original(a, closed, actor_a, None, closed_result, []), role=A)
+    ordinary_a = read_original(f, db, A, operation)
+    ordinary_b = read_original(f, db, B, operation)
+    require(len(ordinary_a) == len(ordinary_b) == 1
+            and ordinary_a[0]["tenant_id"] == a and ordinary_b[0]["tenant_id"] == b,
+            "normal journal LOGIN did not isolate the same operation key")
+    f.save("v2-ordinary-same-key.json", {"A": ordinary_a, "B": ordinary_b})
+    live_a = read_journal(f, db, OPERATIONS, a)
+    live_b = read_journal(f, db, OPERATIONS, b)
+    expected = [row for row in live_a if row["owner"] == RMA_OWNER]
+    require(len(expected) == 2 and any(row["owner"] == OTHER_OWNER for row in live_a), "native journal seed incomplete")
+    rows = {row["state"]: row for row in expected}
+    require(rows["COMMITTED"]["input_bytes"] == a_input.hex()
+            and rows["COMMITTED"]["input_sha256"] == hashlib.sha256(a_input).hexdigest()
+            and rows["COMMITTED"]["result_bytes"] == a_result.hex()
+            and rows["CLOSED"]["input_bytes"] is None and rows["CLOSED"]["input_sha256"] is None
+            and rows["CLOSED"]["result_bytes"] == closed_result.hex(), "native source bytes/NULL differ from fixture")
+
+    old_business = read_business(f, db, a)
+    changed_source = old_business["heads"][0]["outbound_id"]
+    old_status = f.sql(db, 'SELECT "Status" FROM public."T_OutboundOrder" WHERE "Id"={};'.format(q(changed_source)))
+    later_outbound = token()
+
+    def after_snapshot(snapshot):
+        active = f.activity(db)
+        holder = next(row for row in active if row["application_name"] == "cp6-rma-archive-holder")
+        require(holder["state"] == "idle in transaction", "original journal snapshot holder is not live")
+        with ThreadPoolExecutor(max_workers=2) as workers:
+            a_task = workers.submit(f.sql, db, write_original(a, later, actor_a, a_input, result_bytes(later, "DRAFT", "A-later"), []),
+                                    A, label="v2-a-after-cut")
+            b_task = workers.submit(f.sql, db, write_original(b, later, actor_b, b_input, result_bytes(later, "DRAFT", "B-later"), []),
+                                    B, label="v2-b-after-cut")
+            a_task.result()
+            b_task.result()
+        f.sql(db, """
+            BEGIN; UPDATE public."T_OutboundOrder" SET "Status"=4 WHERE "Id"={outbound} AND "TenantId"={tenant};
+        """.format(outbound=q(changed_source), tenant=q(a)) + add_outbound(a, later_outbound, "A-V2-LATER", 2)
+              + add_application(a, token(), actor_a, later_outbound, "A-V2-LATER") + "COMMIT;")
+        f.save("v2-snapshot.json", {"Snapshot": snapshot, "Holder": holder["pid"], "LaterOperation": later})
+
+    bundle = export("v2-cut", after_snapshot)
+    manifest = archive.verify_bundle(bundle, a)
+    require(manifest["format"] == "cp6-rma-source-archive-v2" and manifest["recoveryReady"] is False
+            and manifest["journal"]["counts"] == {"rows": 2, "committed": 1, "closed": 1}
+            and manifest["counts"] == {"heads": 2, "versions": 4, "history": 1, "outbounds": 2},
+            "the v2 archive did not preserve the earlier cut")
+    current_a = read_journal(f, db, OPERATIONS, a)
+    current_b = read_journal(f, db, OPERATIONS, b)
+    for before, after in ((live_a, current_a), (live_b, current_b)):
+        require(len(after) == len(before) + 1 and all(row in after for row in before)
+                and any(row["operation_id"] == later for row in after), "live journal lost its original/delta")
+    f.save("v2-live-journal.json", {"A": current_a, "B": current_b})
+
+    stage = "w366_staging"
+    staging(f, bundle, manifest, a, b, old_business, source, environ, db=stage)
+    require(f.sql(stage, "SELECT status FROM rma_archive_stage.outbound_snapshot WHERE outbound_id={};".format(q(changed_source)))
+            == old_status, "staging included the later shared outbound state")
+    restore_journal(f, stage, bundle, a, expected)
+    require(read_journal(f, db, OPERATIONS, a) == current_a and read_journal(f, db, OPERATIONS, b) == current_b,
+            "journal staging modified the source")
+
+    backup = "w363_backup"
+    selection = "SELECT count(*) FROM {} WHERE tenant_id={} AND owner={};".format(OPERATIONS, q(a), q(RMA_OWNER))
+    require(f.sql(db, selection, role=backup, label="v2-rls-masked-count") == "0", "fixture reader unexpectedly saw RLS rows")
+    f.sql(db, "UPDATE {} SET result_json=result_json;".format(INSTALLATION), role=backup,
+          error="42501", label="v2-marker-write-denied")
+    grant = "GRANT UPDATE (result_json) ON {} TO {};".format(INSTALLATION, ident(backup))
+    revoke = "REVOKE UPDATE (result_json) ON {} FROM {};".format(INSTALLATION, ident(backup))
+    f.sql(db, grant)
+    try:
+        assert_rejected(f, "v2-marker-acl-rejected", "rma-original-journal-overlay-rejected",
+                        lambda: export("v2-marker-acl"))
+    finally:
+        f.sql(db, revoke)
+    export_args = ("export", "--pg-bin", f.args.pg_bin, "--target-file", f.root / "cli-target.json",
+                   "--installation", installation, "--tenant", a, "--include-original-journal")
+    blocked = journal_cli(f, "v2-cli-rls", backup, *export_args, "--username", backup, "--output", f.root / "v2-rls")
+    native_error = (f.root / "v2-rls/native/holder.stderr").read_bytes()
+    require(blocked.returncode == 1 and b"rma-original-journal-read-failed" in blocked.stderr
+            and b"42501" in native_error and b"row-level security policy" in native_error,
+            "v2 failed to reject the RLS-filtered reader at its native count")
+    for bad in ("v2-no-overlay", "v2-marker-acl", "v2-rls"):
+        require(not (f.root / bad / "bundle/manifest.json").exists(), "failed v2 export published a manifest")
+
+    exported = journal_cli(f, "v2-cli-export", OWNER, *export_args, "--username", OWNER, "--output", f.root / "v2-cli")
+    require(exported.returncode == 0, "normal v2 export CLI failed")
+    cli_bundle = f.root / "v2-cli/bundle"
+    verified = journal_cli(f, "v2-cli-verify", None, "verify", "--bundle", cli_bundle, "--tenant", a)
+    require(verified.returncode == 0 and json.loads(verified.stdout)["format"] == "cp6-rma-source-archive-v2"
+            and archive.verify_bundle(cli_bundle, a)["journal"]["counts"] == {"rows": 3, "committed": 2, "closed": 1},
+            "normal v2 verify CLI did not observe the new committed state")
+    incomplete = f.root / "v2-missing-journal"
+    shutil.copytree(bundle, incomplete)
+    (incomplete / "rma-original.csv").unlink()
+    assert_rejected(f, "v2-missing-journal-rejected", "bundle-member-mismatch",
+                    lambda: archive.verify_bundle(incomplete, a))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("root", "pg-bin", "dotnet", "cli", "webapi"):
         parser.add_argument("--" + name, type=Path, required=True)
     parser.add_argument("--port", type=int, required=True)
     parser.add_argument("--webapi-source", required=True)
+    parser.add_argument("--original-journal-cli", type=Path)
+    parser.add_argument("--v1-bundle", type=Path)
     args = parser.parse_args()
     for name in ("root", "pg_bin", "dotnet", "cli", "webapi"):
         setattr(args, name, getattr(args, name).resolve(strict=True))
+    if args.original_journal_cli:
+        args.original_journal_cli = args.original_journal_cli.resolve(strict=True)
     args.expected = expected_histories(args.webapi_source)
     fixture = Fixture(args, "rma-archive-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S") + "-" + token()[:8])
-    fixture.save("inputs.json", {"DatabaseInitSource": args.webapi_source,
-                                "DatabaseInitSha256": hashlib.sha256(args.webapi.read_bytes()).hexdigest(),
-                                "CommissionCliSha256": hashlib.sha256(args.cli.read_bytes()).hexdigest()})
+    inputs = {"DatabaseInitSource": args.webapi_source,
+              "DatabaseInitSha256": hashlib.sha256(args.webapi.read_bytes()).hexdigest(),
+              "CommissionCliSha256": hashlib.sha256(args.cli.read_bytes()).hexdigest()}
+    if args.original_journal_cli:
+        inputs["JournalCliSha256"] = hashlib.sha256(args.original_journal_cli.read_bytes()).hexdigest()
+        inputs["JournalCoreSha256"] = hashlib.sha256(args.original_journal_cli.with_name("CP6.Core.dll").read_bytes()).hexdigest()
+    fixture.save("inputs.json", inputs)
+    if args.v1_bundle:
+        old = args.v1_bundle.resolve(strict=True)
+        manifest = json.loads((old / "manifest.json").read_text(encoding="utf-8"))
+        legacy = journal_cli(fixture, "w363-v1-verify", None, "verify", "--bundle", old, "--tenant", manifest["tenantId"])
+        require(legacy.returncode == 0 and json.loads(legacy.stdout)["format"] == "cp6-rma-source-archive-v1",
+                "original W363 v1 bundle is no longer accepted")
     print("evidence:", fixture.root, flush=True)
     with fixture.running():
         exercise(fixture)

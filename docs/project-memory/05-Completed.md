@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC 原日志归档与两项独立实库
+
+W367 混合 COPY 在实际第二行拒绝，整笔写集回滚，再以同键提交，实测 370 秒。W368 的获准列 UPDATE 只影响 A，独立观测 B 原记录，实测 660 秒。两窗集成席位收尾。W366 原日志快照和 staging 已通过。 [W366 交付](../development/evidence/W366-01/DELIVERY.md) · [本轮席位](../development/dispatch/20261109-wave366/README.md)
+
+
 ## 2026-11-09 UTC W363 正常采用及 W365 独立实证
 
 W363 远端 #817 与原归档测试对应，准确两端分支已删除，DEV-1 干净释放。W365 实际拒绝普通登录越界 DDL，恶意搜索路径和变量仍解析到原租户，INTEGRATION-1 正式释放。W361 原日志控制通过定向实库。 [W361 交付](../development/evidence/W361-01/DELIVERY.md) · [#817](https://github.com/GTX537/CP6/pull/817)
