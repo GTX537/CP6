@@ -19,13 +19,21 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var owner = await GrantStocktakeDashboard(h);
         await SeedInventory(h);
         var departments = await MappingAdmin(h);
+        await using var other = await Seed();
+        await GrantStocktakeDashboard(other);
+        await SeedInventory(other);
         var connection = h.Db.Database.GetConnectionString()!;
         await using var control = new NpgsqlConnection(connection);
         await control.OpenAsync();
         const string login = "stock_creation_a";
+        const string otherLogin = "stock_creation_b";
         var password = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
-        await CurrentPermissionPostgresFixture.Sql(control, $"CREATE ROLE {login} LOGIN PASSWORD '{password}'");
-        TenantLoginV1[] logins = [new(h.Tenant, login)];
+        var otherPassword = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
+        await CurrentPermissionPostgresFixture.Sql(control, $"""
+            CREATE ROLE {login} LOGIN PASSWORD '{password}';
+            CREATE ROLE {otherLogin} LOGIN PASSWORD '{otherPassword}';
+            """);
+        TenantLoginV1[] logins = [new(h.Tenant, login), new(other.Tenant, otherLogin)];
         await using (var install = await control.BeginTransactionAsync())
         {
             var read = await StockReadStorageV1.InstallAsync(control, install, logins);
@@ -110,7 +118,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.True(await h.Db.Stocks.AnyAsync(s => s.ProductCd == "LEGACY-STOCK"));
         Assert.Equal(0L, await CurrentPermissionPostgresFixture.Scalar(control, "SELECT count(*) FROM cp6_stock_creation_writer_v2.inserted_stock"));
         await VerifyOrdinaryV2StockAdjustmentAsync(h, departments, control, connection, login, password, historical);
-        await VerifyOrdinaryV2StockMoveAsync(h, departments, control, connection, login, password, historical);
+        await VerifyOrdinaryV2StockMoveAsync(h, departments, control, connection, login, password, historical,
+            (other, otherLogin, otherPassword));
 
         Task<int> AuditCount() => h.Db.Sys_SecurityLogs.CountAsync(x => x.UserId == h.User &&
             x.Reason == OperationsAccessV1.StockCreationAuditReason);

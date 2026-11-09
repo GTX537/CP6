@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC W341 实际 Stock A/B 同键
+
+真实 HTTP 验证 A 提交后 B 仍为 UNKNOWN，B 提交和重放取得自己的原结果。三轮顺序 A/B/A 保持两个实际普通后端，消息租约绑定本租户。 [交付报告](../development/evidence/W341-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W340 Stock 写入对象和实际 Owner
 
 库存对象表记录已安装 PostgreSQL 18.6 的原生键、行安全和访问权，以及原操作、审计和消息的恢复依赖。 [交付报告](../development/evidence/W340-01/DELIVERY.md)

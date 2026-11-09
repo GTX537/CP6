@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-09 UTC W341 实际 Stock A/B 同键
+
+同一宿主的两个普通 LOGIN 使用相同业务键和原操作键，实际库存、原结果、物理池和 Outbox 路由分别落本租户。下一步核错绑定与凭据轮换。 [交付报告](../development/evidence/W341-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W340 Stock 写入对象和实际 Owner
 
 实际 PostgreSQL 目录已核租户业务键、全表原标识、原操作与 Outbox 外键及普通写者列授权。公开入口、父 Owner、质检和召回分别归属。后续实测两租户同键。 [交付报告](../development/evidence/W340-01/DELIVERY.md)
