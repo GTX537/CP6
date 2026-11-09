@@ -10,12 +10,16 @@ public partial class StockMovementService : IStockCreationOperationsV2
     private const string CreationOperationContract="Main.Wms.StockOperation.v2";
     public Task<StockCreationContextV2> CreationContextAsync(string action,StockCreationKeyV2 key,CancellationToken ct=default)
     {
-        if(action is not ("adjust" or "move"))throw new OrderPriceCorrectionException("ACTION_FORBIDDEN",403);
+        var (storage,entry)=action switch
+        {
+            "adjust"=>(_tenantStorage is { V2AdjustEnabled: true }?_tenantStorage:null,StockReadEntry.AdjustCreationV2),
+            "move"=>(_tenantStorage is { V2MoveEnabled: true }?_tenantStorage:null,StockReadEntry.MoveCreationV2),
+            _=>throw new OrderPriceCorrectionException("ACTION_FORBIDDEN",403)
+        };
         return Owner.ExecuteAsync(OperationsOwnerV1.Stock,action,false,(a,t)=>
-            action=="adjust" && _tenantStorage is { V2AdjustEnabled: true } storage
-                ? storage.ReadAsync(_db,a.ActorId,(context,token)=>a.ForStockRead(context).StockCreationContext(key,token),t,
-                    entry:StockReadEntry.AdjustCreationV2)
-                : a.StockCreationContext(key,t),ct,readOnlyAuthorityFence:true);
+            storage is null ? a.StockCreationContext(key,t)
+                : storage.ReadAsync(_db,a.ActorId,(context,token)=>a.ForStockRead(context).StockCreationContext(key,token),t,entry:entry),
+            ct,readOnlyAuthorityFence:true);
     }
     public Task<StockOperationResultV1> ApplyCommandAsync(StockApplyCommandV2 request,CancellationToken ct=default)
     {
@@ -39,28 +43,28 @@ public partial class StockMovementService : IStockCreationOperationsV2
     {
         if(request==null || request.OperationId==Guid.Empty)throw new OrderPriceCorrectionException("ORIGINAL_OPERATION_REQUIRED",400);
         var frozen=OperationsOwnerV1.Freeze(request);var bytes=MainOwnerOperationJournalV1.Encode(new{kind="MOVE",request=frozen});
-        return ExecuteOriginal(frozen.OperationId,"move",bytes,async(_,a,t)=>
+        return ExecuteOriginal(frozen.OperationId,"move",bytes,async(mover,a,t)=>
         {
             frozen.OperatorCd=a.Actor;
             // This creation intent applies only to the destination; source custody must already exist and be authorized.
             await a.RequireStockKey(frozen.WarehouseCd,frozen.FromLocationCd,frozen.ProductCd,frozen.LotNo,false,t);
-            var before=await Snapshot(frozen.WarehouseCd,[frozen.FromLocationCd,frozen.ToLocationCd],frozen.ProductCd,frozen.LotNo,t);
-            var metadata=await ReadMoveMetadataAsync(frozen,t);
+            var before=await mover.Snapshot(frozen.WarehouseCd,[frozen.FromLocationCd,frozen.ToLocationCd],frozen.ProductCd,frozen.LotNo,t);
+            var metadata=await mover.ReadMoveMetadataAsync(frozen,t);
             var target=new StockMovementRequest{TxnType=WmsTxnType.MOVE,WarehouseCd=frozen.WarehouseCd,
                 LocationCd=frozen.ToLocationCd,ProductCd=frozen.ProductCd,LotNo=frozen.LotNo,Qty=frozen.Qty,OperatorCd=a.Actor};
             metadata.CopyTo(target);
-            await PrepareStockCreation(a,target,frozen.NewStock,metadata,t);
-            await GuardIndependentLocationUse(a,frozen.WarehouseCd,frozen.FromLocationCd,WmsTxnType.MOVE,t);
-            await GuardIndependentLocationUse(a,frozen.WarehouseCd,frozen.ToLocationCd,WmsTxnType.MOVE,t);
-            using var inheritance=InheritTransactions(a);
-            var pair=await MoveCoreAsync(frozen,t);
+            await mover.PrepareStockCreation(a,target,frozen.NewStock,metadata,t);
+            await mover.GuardIndependentLocationUse(a,frozen.WarehouseCd,frozen.FromLocationCd,WmsTxnType.MOVE,t);
+            await mover.GuardIndependentLocationUse(a,frozen.WarehouseCd,frozen.ToLocationCd,WmsTxnType.MOVE,t);
+            using var inheritance=mover.InheritTransactions(a);
+            var pair=await mover.MoveCoreAsync(frozen,t);
             a.AtCommit(async c=>
             {
                 await a.RequireStockKey(frozen.WarehouseCd,frozen.FromLocationCd,frozen.ProductCd,frozen.LotNo,false,c);
                 await a.RequireStockKey(frozen.WarehouseCd,frozen.ToLocationCd,frozen.ProductCd,frozen.LotNo,false,c);
             });
             return(new StockOperationResultV1(frozen.OperationId,"MOVE",OutTxnNo:pair.OutTxnNo,InTxnNo:pair.InTxnNo),before);
-        },ct,CreationOperationContract);
+        },ct,CreationOperationContract,_tenantStorage is { V2MoveEnabled: true }?_tenantStorage:null,StockWriteEntry.MoveV2);
     }
     private async Task PrepareStockCreation(OperationsAccessV1 access,StockMovementRequest request,StockCreationIntentV2? intent,
         MoveStockMetadata? metadata,CancellationToken ct)

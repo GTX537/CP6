@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC W337 真实 V2 移库目标创建
+
+新增 `StockReadTenancy:EnableV2Move`，沿原普通库存事务接 V2 移库上下文和目标创建。真实 PostgreSQL 验证原货权、两腿归属和故障回滚。 [交付报告](../development/evidence/W337-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W336 真实库存 V2 创建调整
 
 新增 `StockReadTenancy:EnableV2Adjust`。原 V2 上下文和调整分别以准确入口用途接既有普通租户读写，沿原授权版本和原操作结果合同。 [交付报告](../development/evidence/W336-01/DELIVERY.md)

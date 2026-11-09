@@ -110,6 +110,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.True(await h.Db.Stocks.AnyAsync(s => s.ProductCd == "LEGACY-STOCK"));
         Assert.Equal(0L, await CurrentPermissionPostgresFixture.Scalar(control, "SELECT count(*) FROM cp6_stock_creation_writer_v2.inserted_stock"));
         await VerifyOrdinaryV2StockAdjustmentAsync(h, departments, control, connection, login, password, historical);
+        await VerifyOrdinaryV2StockMoveAsync(h, departments, control, connection, login, password, historical);
 
         Task<int> AuditCount() => h.Db.Sys_SecurityLogs.CountAsync(x => x.UserId == h.User &&
             x.Reason == OperationsAccessV1.StockCreationAuditReason);

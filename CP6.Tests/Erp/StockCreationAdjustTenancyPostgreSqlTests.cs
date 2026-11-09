@@ -58,14 +58,14 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         Assert.Equal(0, await Operations(h));
         Assert.Equal(0, await StockNotifications(h));
         using (var unknown = await Original())
-            Assert.Equal("UNKNOWN", (await Data(unknown)).GetProperty("state").GetString());
+            Assert.Equal("UNKNOWN", (await StockCreationResponse(unknown)).GetProperty("state").GetString());
 
         using var created = await Apply(current, mapping.Child);
-        var result = await Data(created);
+        var result = await StockCreationResponse(created);
         using var replay = await Apply(current, mapping.Child);
-        Assert.Equal(result.GetRawText(), (await Data(replay)).GetRawText());
+        Assert.Equal(result.GetRawText(), (await StockCreationResponse(replay)).GetRawText());
         using var original = await Original();
-        var recovered = await Data(original);
+        var recovered = await StockCreationResponse(original);
         Assert.Equal("COMMITTED", recovered.GetProperty("state").GetString());
         Assert.Equal(result.GetRawText(), recovered.GetProperty("result").GetRawText());
         var stock = await h.Db.Stocks.AsNoTracking().SingleAsync(s => s.ProductCd == product);
@@ -88,7 +88,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         async Task<string> CreationVersion()
         {
             using var response = await host.Send(OperationsRequest(session, HttpMethod.Get, creation));
-            var data = await Data(response);
+            var data = await StockCreationResponse(response);
             Assert.True(data.GetProperty("requiresCreation").GetBoolean());
             Assert.False(data.GetProperty("allowsUnbound").GetBoolean());
             Assert.Equal(mapping.Child, Assert.Single(data.GetProperty("departments").EnumerateArray()).GetProperty("id").GetGuid());
@@ -105,10 +105,11 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             host.Send(OperationsRequest(session, HttpMethod.Get, root + $"operations/v1/{operation:D}"));
         Task<int> AuditCount() => h.Db.Sys_SecurityLogs.CountAsync(x => x.UserId == h.User &&
             x.Reason == OperationsAccessV1.StockCreationAuditReason);
-        static async Task<JsonElement> Data(HttpResponseMessage response)
-        {
-            Assert.True(response.StatusCode == HttpStatusCode.OK, await OperationsFailure(response));
-            return (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("data");
-        }
+    }
+
+    private static async Task<JsonElement> StockCreationResponse(HttpResponseMessage response)
+    {
+        Assert.True(response.StatusCode == HttpStatusCode.OK, await OperationsFailure(response));
+        return (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("data");
     }
 }
