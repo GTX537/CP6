@@ -149,7 +149,8 @@ internal static class StockReadStorageV1
 
     // Compare both real backends while the authority transaction is still open. A different database,
     // server incarnation, installation, schema version or replica cannot use that transaction's fences.
-    internal static async Task<string> ReadDatabaseIdentityAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct, bool requireRowSecurity = false)
+    internal static async Task<string> ReadDatabaseIdentityAsync(NpgsqlConnection connection, NpgsqlTransaction transaction,
+        CancellationToken ct, bool requireRowSecurity = false, bool requireJournalRls = false)
     {
         await using var command = new NpgsqlCommand("""
             SELECT pg_catalog.concat_ws('/', pg_catalog.host(pg_catalog.inet_server_addr()), pg_catalog.inet_server_port(),
@@ -165,7 +166,9 @@ internal static class StockReadStorageV1
         command.Parameters.AddWithValue("model", ModelVersion);
         command.Parameters.AddWithValue("migration", MigrationVersion);
         command.Parameters.AddWithValue("require_rls", requireRowSecurity);
-        command.Parameters.AddWithValue("tables", Tables.Select(t => t.Qualified).ToArray());
+        var tables = Tables.Select(t => t.Qualified);
+        if (requireJournalRls) tables = tables.Append("cp6_main_owner_v1.operations");
+        command.Parameters.AddWithValue("tables", tables.ToArray());
         return await command.ExecuteScalarAsync(ct) as string
             ?? throw new TenantStorageException(TenantStorageFailure.IdentityRejected);
     }

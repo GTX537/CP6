@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text.Json;
 using CP6.Core.Persistence.Tenancy;
@@ -75,6 +76,8 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         var cookies = await Login(host, h);
         Task<HttpResponseMessage> Adjust(StockApplyCommandV1 input, bool csrf = true) =>
             host.Send(OperationsRequest(cookies, HttpMethod.Post, path, input, csrf));
+        Task<HttpResponseMessage> ReadOriginal(Guid operation) => host.Send(
+            OperationsRequest(cookies, HttpMethod.Get, $"api/wms/stock/operations/v1/{operation:D}"));
         using (var csrf = await Adjust(command, csrf: false)) Assert.Equal(HttpStatusCode.Forbidden, csrf.StatusCode);
         using (var foreignDepartment = await Adjust(Command("P2", "L2")))
         {
@@ -84,21 +87,50 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         using (var insufficient = await Adjust(Command(quantity: -100m)))
             Assert.Equal(HttpStatusCode.BadRequest, insufficient.StatusCode);
 
-        string originalResult;
         await using (var legacyWriter = await control.BeginTransactionAsync())
         {
             await using var table = new NpgsqlCommand("""LOCK TABLE public."T_Stock" IN ROW EXCLUSIVE MODE""", control, legacyWriter);
             await table.ExecuteNonQueryAsync();
-            var pending = Adjust(command);
+            using var request = OperationsRequest(cookies, HttpMethod.Post, path, command);
+            var pending = DropStockResponseAsync(host.Origin, request);
             await WaitForWriter(control.ProcessID);
             await legacyWriter.RollbackAsync();
-            using var committed = await pending;
-            Assert.True(committed.StatusCode == HttpStatusCode.OK, await OperationsFailure(committed));
-            originalResult = await committed.Content.ReadAsStringAsync();
+            await pending;
         }
         var txn = await h.Db.StockTransactions.AsNoTracking().SingleAsync();
-        using (var result = JsonDocument.Parse(originalResult))
-            Assert.Equal(txn.TxnNo, result.RootElement.GetProperty("data").GetProperty("txnNo").GetString());
+        const string rootRevisionSql = "SELECT revision FROM cp6_platform_admin_guard_v1.root WHERE singleton";
+        var rootRevision = await CurrentPermissionPostgresFixture.Scalar(control, rootRevisionSql);
+        string originalResult;
+        using (var recovered = await ReadOriginal(command.OperationId))
+        {
+            Assert.True(recovered.StatusCode == HttpStatusCode.OK, await OperationsFailure(recovered));
+            using var result = JsonDocument.Parse(await recovered.Content.ReadAsStringAsync());
+            var data = result.RootElement.GetProperty("data");
+            Assert.Equal("COMMITTED", data.GetProperty("state").GetString());
+            var original = data.GetProperty("result");
+            Assert.Equal(txn.TxnNo, original.GetProperty("txnNo").GetString());
+            originalResult = original.GetRawText();
+        }
+        using (var absent = await ReadOriginal(Guid.NewGuid()))
+        {
+            Assert.True(absent.StatusCode == HttpStatusCode.OK, await OperationsFailure(absent));
+            using var result = JsonDocument.Parse(await absent.Content.ReadAsStringAsync());
+            Assert.Equal("UNKNOWN", result.RootElement.GetProperty("data").GetProperty("state").GetString());
+        }
+        Assert.Equal(rootRevision, await CurrentPermissionPostgresFixture.Scalar(control, rootRevisionSql));
+
+        await CurrentPermissionPostgresFixture.Sql(control, """
+            REVOKE SELECT (result_bytes) ON cp6_main_owner_v1.operations FROM stock_adjust_a
+            """);
+        using (var noJournalRead = await ReadOriginal(command.OperationId))
+            Assert.True(noJournalRead.StatusCode == HttpStatusCode.ServiceUnavailable, await OperationsFailure(noJournalRead));
+        await CurrentPermissionPostgresFixture.Sql(control, """
+            GRANT SELECT (result_bytes) ON cp6_main_owner_v1.operations TO stock_adjust_a
+            """);
+        await CurrentPermissionPostgresFixture.Sql(control, "ALTER TABLE cp6_main_owner_v1.operations DISABLE ROW LEVEL SECURITY");
+        using (var noJournalRls = await ReadOriginal(command.OperationId))
+            Assert.True(noJournalRls.StatusCode == HttpStatusCode.ServiceUnavailable, await OperationsFailure(noJournalRls));
+        await CurrentPermissionPostgresFixture.Sql(control, "ALTER TABLE cp6_main_owner_v1.operations ENABLE ROW LEVEL SECURITY");
         Assert.Equal("price-owner", txn.OperatorCd);
         Assert.Equal(command.Qty, txn.Qty);
         Assert.Equal(stock.PhysicalQty + command.Qty, await Quantity());
@@ -130,7 +162,16 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
         using (var replay = await Adjust(command))
         {
             Assert.True(replay.StatusCode == HttpStatusCode.OK, await OperationsFailure(replay));
-            Assert.Equal(originalResult, await replay.Content.ReadAsStringAsync());
+            using var result = JsonDocument.Parse(await replay.Content.ReadAsStringAsync());
+            Assert.Equal(originalResult, result.RootElement.GetProperty("data").GetRawText());
+        }
+        await h.Db.WmsRoleScopes.ExecuteUpdateAsync(rows => rows.SetProperty(g => g.AreaCd, "NO-ACCESS"));
+        using (var hidden = await ReadOriginal(command.OperationId))
+        {
+            Assert.Equal(HttpStatusCode.Forbidden, hidden.StatusCode);
+            var error = await hidden.Content.ReadAsStringAsync();
+            Assert.Contains("OBJECT_FORBIDDEN", error);
+            Assert.DoesNotContain(txn.TxnNo, error);
         }
         Assert.Equal(stock.PhysicalQty + command.Qty, await Quantity());
         Assert.Equal(1, await h.Db.StockTransactions.CountAsync());
@@ -150,5 +191,28 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             while (await waiting.ExecuteScalarAsync(deadline.Token) is not true)
                 await Task.Delay(40, deadline.Token);
         }
+    }
+
+    private static async Task DropStockResponseAsync(Uri origin, HttpRequestMessage request)
+    {
+        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(12));
+        using var forwarding = CancellationTokenSource.CreateLinkedTokenSource(deadline.Token);
+        using var relay = new TcpListener(IPAddress.Loopback, 0);
+        relay.Start(1);
+        using var caller = new HttpClient(new HttpClientHandler { UseProxy = false, UseCookies = false })
+        { BaseAddress = new Uri($"http://127.0.0.1:{((IPEndPoint)relay.LocalEndpoint).Port}") };
+        var requestResult = caller.SendAsync(request, deadline.Token);
+        using var client = await relay.AcceptTcpClientAsync(deadline.Token);
+        using var upstream = new TcpClient();
+        await upstream.ConnectAsync(origin.Host, origin.Port, deadline.Token);
+        var sent = client.GetStream().CopyToAsync(upstream.GetStream(), forwarding.Token);
+        using var response = new StreamReader(upstream.GetStream(), leaveOpen: true);
+        var status = await response.ReadLineAsync(deadline.Token);
+        await forwarding.CancelAsync();
+        try { await sent; }
+        catch (OperationCanceledException) when (forwarding.IsCancellationRequested) { }
+        client.Close();
+        await Assert.ThrowsAsync<HttpRequestException>(() => requestResult);
+        Assert.StartsWith("HTTP/1.1 200", status);
     }
 }
