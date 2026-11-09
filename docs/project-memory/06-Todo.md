@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC W329 续接
+
+用原 Stock 调整入口接真实库存和流水、编号、归属、现有 Owner 授权及已验证的 journal 和 Outbox 同一事务。核对原操作恢复和实际宿主。 [交付报告](../development/evidence/W329-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W328 续接
 
 接现有 Stock Outbox 的普通登录同事务入队，保留延迟提交证明和原消息标识。随后验证真实库存调整、同事务业务行和原操作恢复。 [交付报告](../development/evidence/W328-01/DELIVERY.md)

@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC W329 库存 Outbox 同事务入队
+
+库存普通登录入队、旧入口 Worker 和实际安装工具通过本地 PostgreSQL 验证。原生证明在提交时拒绝跨事务补发。 [交付报告](../development/evidence/W329-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W328 库存原命令与审计
 
 原 journal 的库存普通登录路径完成真实 PostgreSQL 验证。安装前置、错误输入、首装和重复拒绝已实测。既有库位撤回的 HTTP 回归和缺原事实的提交拒绝已验证。 [交付报告](../development/evidence/W328-01/DELIVERY.md)

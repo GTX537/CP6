@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC W329 库存 Outbox 同事务入队
+
+新增 `install-stock-outbox-writer-v1`，复用原生路由准备和入队。受限租户行锁、队列表行策略和原提交证明用于普通库存 LOGIN。 [交付报告](../development/evidence/W329-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W328 库存原命令与审计
 
 新增 `install-stock-original-journal-v1`、共享 journal 的租户/Owner 行策略和固定追加入口。库位撤回的共享提交触发器按 Owner 和状态分流后执行原事实校验。 [交付报告](../development/evidence/W328-01/DELIVERY.md)

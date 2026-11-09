@@ -11,7 +11,7 @@ namespace CP6.Core.Services.Integration.StockOutbox;
 internal static class StockOutboxEnqueueV1
 {
     /// <summary>Caller owns commit/rollback. A second model shares the exact open connection and native transaction.</summary>
-    internal static async Task Enqueue(CP6Context source, Guid operation, CancellationToken ct)
+    internal static async Task Enqueue(CP6Context source, Guid operation, CancellationToken ct, bool stockTenantWriter = false)
     {
         if(!source.Database.IsNpgsql() || source.CurrentTenantId == Guid.Empty || operation == Guid.Empty
             || source.Database.CurrentTransaction?.GetDbTransaction() is not NpgsqlTransaction native
@@ -31,19 +31,16 @@ internal static class StockOutboxEnqueueV1
             || !ReferenceEquals(queue.Database.CurrentTransaction!.GetDbTransaction(), native))
             throw new InvalidOperationException("STOCK_OUTBOX_NATIVE_TRANSACTION_MISMATCH");
         // Same lock order as the dispatch adapter: actual tenant, authority row, route root.
-        await queue.Database.ExecuteSqlInterpolatedAsync($"SELECT 1 FROM public.\"Sys_Tenants\" WHERE \"Id\"={tenant} FOR UPDATE", ct);
-        var authority = await queue.Set<StockOutboxAuthorityV1>().AsNoTracking().SingleOrDefaultAsync(a => a.RootId == root.Id, ct);
-        if(authority == null)
+        if(stockTenantWriter)
+            await queue.Database.ExecuteSqlInterpolatedAsync($"SELECT cp6_stock_outbox_writer_v1.lock_tenant({tenant})", ct);
+        else
         {
-            queue.Add(new StockOutboxAuthorityV1 { RootId = root.Id, TenantId = tenant });
-            queue.Add(new OutboxRouteControlV2 { Id = root.Id, OwnerId = root.OwnerId, TenantId = tenant, QueueDomainId = root.QueueDomainId,
-                RouteId = root.RouteId, CurrentEpoch = 1, Phase = OutboxPhaseV2.Active, LockKey = StockOutboxProtocolV1.RouteLock(root),
-                PublisherSetReference = StockOutboxProtocolV1.Publisher });
-            await queue.SaveChangesAsync(ct);
+            await queue.Database.ExecuteSqlInterpolatedAsync($"SELECT 1 FROM public.\"Sys_Tenants\" WHERE \"Id\"={tenant} FOR UPDATE", ct);
+            await EnsureRouteAsync(queue, root, ct);
         }
         await queue.Database.ExecuteSqlInterpolatedAsync($"SELECT \"RootId\" FROM cp6_stock_outbox_v1.\"Authority\" WHERE \"RootId\"={root.Id} FOR UPDATE", ct);
-        authority = await queue.Set<StockOutboxAuthorityV1>().AsNoTracking().SingleAsync(a => a.RootId == root.Id, ct);
-        if(!authority.Enabled || authority.TenantId != tenant || authority.PolicyVersion != StockOutboxProtocolV1.PolicyVersion
+        var authority = await queue.Set<StockOutboxAuthorityV1>().AsNoTracking().SingleOrDefaultAsync(a => a.RootId == root.Id, ct);
+        if(authority == null || !authority.Enabled || authority.TenantId != tenant || authority.PolicyVersion != StockOutboxProtocolV1.PolicyVersion
             || authority.PublisherReference != StockOutboxProtocolV1.Publisher)
             throw new InvalidOperationException("STOCK_OUTBOX_ROUTE_UNAVAILABLE");
         await queue.Database.ExecuteSqlInterpolatedAsync($"SELECT pg_advisory_xact_lock({StockOutboxProtocolV1.RouteLock(root)})", ct);
@@ -61,6 +58,18 @@ internal static class StockOutboxEnqueueV1
             RawEnvelopeSha256 = message.PayloadSha256, AssignedEpoch = control.CurrentEpoch });
         queue.Add(new StockOutboxSourceV1 { NativeId = message.Id, TenantId = tenant, OperationId = operation,
             ResultSha256 = MainOwnerOperationJournalV1.Digest(original.Result) });
+        await queue.SaveChangesAsync(ct);
+    }
+
+    // The caller holds the tenant row lock in the transaction that owns the prepared route.
+    internal static async Task EnsureRouteAsync(StockOutboxContextV1 queue, OutboxRootKeyV2 root, CancellationToken ct)
+    {
+        if (await queue.Set<StockOutboxAuthorityV1>().AnyAsync(a => a.RootId == root.Id, ct))
+            return;
+        queue.Add(new StockOutboxAuthorityV1 { RootId = root.Id, TenantId = root.TenantId });
+        queue.Add(new OutboxRouteControlV2 { Id = root.Id, OwnerId = root.OwnerId, TenantId = root.TenantId, QueueDomainId = root.QueueDomainId,
+            RouteId = root.RouteId, CurrentEpoch = 1, Phase = OutboxPhaseV2.Active, LockKey = StockOutboxProtocolV1.RouteLock(root),
+            PublisherSetReference = StockOutboxProtocolV1.Publisher });
         await queue.SaveChangesAsync(ct);
     }
 }
