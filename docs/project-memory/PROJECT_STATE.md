@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC 原可见性事实归档
+
+W379 实测 v4 原可见性事实同切面。W377 随 #825 采用并释放，W378/W381 的实库结果保留。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W379](../development/evidence/W379-01/DELIVERY.md) · [#825](https://github.com/GTX537/CP6/pull/825)
+
+
 ## 2026-11-09 UTC v3 原来源隔离落表
 
 W377 实测原来源、原日志、后段回滚与原回执。W375 随 #824 采用并释放，W376 实测原模型和池。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W377](../development/evidence/W377-01/DELIVERY.md) · [#824](https://github.com/GTX537/CP6/pull/824)

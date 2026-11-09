@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC 隔离来源采用和模型验证
+
+W377 完整 1,025 秒，两端任务分支删除、DEV-1 干净释放。W378 和 W381 完成实际原生验证，无任务分支，集成席位释放。W379 实测原可见性。 [W379](../development/evidence/W379-01/DELIVERY.md) · [#825](https://github.com/GTX537/CP6/pull/825)
+
+
 ## 2026-11-09 UTC 原操作采用与实际隔离恢复
 
 W375 完整 1,159 秒，两端任务分支删除，DEV-2 干净释放。W376 完整 1,236 秒，原模型与池验证后集成席位释放。W377 准确 v3 实库 staging 与原回执。 [W377](../development/evidence/W377-01/DELIVERY.md) · [#824](https://github.com/GTX537/CP6/pull/824)
