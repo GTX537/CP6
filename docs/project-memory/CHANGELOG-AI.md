@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC 普通 RMA 原操作
+
+显式接现有 GET 与 close。保现行权限、原认证锁、原日志字节及两种竞态结果。 [W375](../development/evidence/W375-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC RMA 来源归档 v3
 
 增加显式 v3 切面，保留准确出库头、原发运行、可选原谱系与原日志。实际原生快照、精度及旧包兼容均已校验。 [W374](../development/evidence/W374-01/DELIVERY.md)

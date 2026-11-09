@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC 普通 RMA 原操作
+
+W375 实测原查询、关闭、当前权限和原竞争。v3 归档随 #823 采用并释放。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W375](../development/evidence/W375-01/DELIVERY.md) · [#823](https://github.com/GTX537/CP6/pull/823)
+
+
 ## 2026-11-09 UTC 原来源同快照
 
 原 RMA 提交随 #822 正常采用并释放。W374 实测可选 v3 归档来源与原日志同切面，旧 v1/v2 兼容。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W374](../development/evidence/W374-01/DELIVERY.md) · [#822](https://github.com/GTX537/CP6/pull/822)
