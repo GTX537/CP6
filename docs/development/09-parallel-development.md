@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W396 原 v6/v7 现行队列实证通过。W398 DEV-1 核 ERP 落表，W397 集成席位核联合容量。 [W396](./evidence/W396-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave396/README.md)
+
+
 > W395 ERP 八表实证通过。W396 DEV-2 核同包队列，W397 集成席位核两进程容量。 [W395](./evidence/W395-01/DELIVERY.md) · [本轮席位](./dispatch/20261109-wave395/README.md)
 
 

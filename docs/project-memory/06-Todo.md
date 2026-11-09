@@ -1,5 +1,10 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC ERP staging 与现行原键
+
+继续 W398 原八表 staging、ERP 现行原键和隔离候选。 [W396](../development/evidence/W396-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC ERP 落表、统一包和容量
 
 继续原八表中立落表、现行队列对账和隔离候选。W397 核真实两进程峰值。 [W395](../development/evidence/W395-01/DELIVERY.md)

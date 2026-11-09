@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC v6/v7 现行队列
+
+同一 pin 复用原队列读取、报告及退出协议，真实 v7 外部根要求保留。 [W396](../development/evidence/W396-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC ERP v8 原共享域
 
 同一 PostgreSQL 快照保存原 ERP 八表。拒绝真实同名 ICU locale 漂移，旧包继续可读。 [W395](../development/evidence/W395-01/DELIVERY.md)
