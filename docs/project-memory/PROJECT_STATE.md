@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC ERP 原共享八表
+
+W395 v8 原键与字节，W394 随 #835 采用并释放，W392 真 200 轮已核。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W395](../development/evidence/W395-01/DELIVERY.md) · [PR #835](https://github.com/GTX537/CP6/pull/835)
+
+
 ## 2026-11-09 UTC FileContent 原资产落表
 
 W394 原 v7 资产 staging 与原回执实测，W393 随 #834 采用并释放。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W394](../development/evidence/W394-01/DELIVERY.md) · [PR #834](https://github.com/GTX537/CP6/pull/834)

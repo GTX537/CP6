@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC ERP v8 原共享域
+
+同一 PostgreSQL 快照保存原 ERP 八表。拒绝真实同名 ICU locale 漂移，旧包继续可读。 [W395](../development/evidence/W395-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC v7 资产 staging
 
 原文件元数据随 v6 同一事务落表，缺件、篡改和晚段计数错误拒绝。已提交原回执独立只读恢复。 [W394](../development/evidence/W394-01/DELIVERY.md)
