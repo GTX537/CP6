@@ -195,7 +195,7 @@ internal static class TenantLoginDirectoryV1
             REVOKE ALL ON FUNCTION cp6_tenancy_v1.current_tenant_id() FROM PUBLIC;
             """;
 
-    private static string LockBody => $$"""
+    internal static string LockBody => $$"""
             BEGIN
                 IF TG_OP = 'TRUNCATE' THEN
                     RAISE EXCEPTION 'Tenant directory truncate is not supported' USING ERRCODE = '42501';
@@ -204,7 +204,7 @@ internal static class TenantLoginDirectoryV1
                 RETURN NULL;
             END
             """;
-    private static string HelperBody => $$"""
+    internal static string HelperBody => $$"""
             DECLARE result uuid;
             BEGIN
                 -- Pin this directory until the runtime transaction ends. VOLATILE obtains a fresh

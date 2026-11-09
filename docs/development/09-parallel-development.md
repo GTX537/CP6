@@ -1,5 +1,7 @@
 # 多对话任务分配与交付
 
+> [W346-01](evidence/W346-01/DELIVERY.md)真实查回原库存安装回执。W347 已正常远端采用，W348 已完成独立核验并释放，DEV-2 正并行执行 W349。 [准确窗口和席位](dispatch/20261109-wave346/README.md)
+
 > [W347-01](evidence/W347-01/DELIVERY.md)已验证同一 PostgreSQL service-token 布局的两版共存及旧版重启。DEV-1 同时实施 W346 安装回执恢复，COORD 分别核回各窗。 [执行登记](dispatch/20261109-wave346/README.md)
 
 > [P0 #801](https://github.com/GTX537/CP6/issues/801)的真实 PostgreSQL 回归已完成并进入正常集成。两份制品 [W345-01](evidence/W345-01/DELIVERY.md) 已释放 DEV-2，后续继续库存安装回执与兼容业务两线。

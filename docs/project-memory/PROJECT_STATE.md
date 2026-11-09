@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-09 UTC W346 库存安装回执可恢复
+
+库存首装输出丢失后，新 CLI 在同一物理 PostgreSQL 的只读快照取回原 UUID。完整目录、读取边界和既有写入扩展经实际验证。 [交付报告](../development/evidence/W346-01/DELIVERY.md)
+
 ## 2026-11-09 UTC W347 两版实际 service-token 兼容
 
 固定旧、新宿主在同一隔离 PostgreSQL 布局完成两方向签发和撤销，旧版重启后重放原结果，Outbox 字节、快照和 generation 保持。当前生产推广沿独立门禁。 [交付报告](../development/evidence/W347-01/DELIVERY.md)
