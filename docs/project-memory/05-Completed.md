@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC W355 远端收尾与 W356 实库
+
+W355 完整 1,355 秒，准确分支删除及 DEV-2 释放。W356 同一宿主的 A/B 原 RMA GET、模型隔离、当前权限及错目标拒绝通过。 [W356 交付](../development/evidence/W356-01/DELIVERY.md) · [#813](https://github.com/GTX537/CP6/pull/813)
+
+
 ## 2026-11-09 UTC RMA 启用与 Stock 两档容量
 
 W353 的完整窗口 1,561 秒，DEV-1 干净释放。Stock 的 10/100 普通登录、实际模型、池限制、两进程有限并发和超限拒绝均有实测。 [W355 交付](../development/evidence/W355-01/DELIVERY.md) · [#812](https://github.com/GTX537/CP6/pull/812)
