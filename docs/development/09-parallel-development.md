@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> W418 随 #855 采用并释放 DEV-2。W419 实测真实 ERP C03 原件并生成同源 v10。 [W419](./evidence/W419-01/DELIVERY.md)
+
+
 > W417 随 #854 采用并释放 DEV-1。W418 实测 FileContent 关闭候选，W419 继续实际 ERP C03 原件。 [W418](./evidence/W418-01/DELIVERY.md)
 
 
