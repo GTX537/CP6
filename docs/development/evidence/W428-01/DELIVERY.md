@@ -11,4 +11,8 @@ DEV-1 于 2026-11-09 20:46:41 UTC 从 Main #860 开工。原 WP02-02 / PGT-027 �
 
 ## 接续范围
 
-已封存定向 Roslyn 输入，编译尚待执行。继续用 `TenantManagementPostgresFixture` 经真实 Core EF 迁移入口运行原 IAM 成员关系和模拟登录回归。原 PGT-027 的同 schema TenantId 更新及角色引用按各自证据核销，正式 PGT-027 仍为 `NOT_RUN`。分支检查点在 DEV-1 交 COORD 处置。[编译输入](/D:/CP6-local-test/CP6-72H-20261109/W428-01/migration-build/inputs.json) · [正式宿主入口](../../../../CP6.Tests/Platform/TenantManagementPostgresFixture.cs#L52)
+### 定向编译
+
+同一任务分支恢复后，Git 源文件只归一 Windows 换行，实际提取的 Up SQL 摘要与原生验证相同。首轮采样 836–840 MiB，退出 75，编译器未启动。资源回升后，.NET SDK 8.0.424 Roslyn 使用封存 EF Core 8.0.30 引用单编迁移类，PID 28104 退出 0，stdout 和 stderr 均为空。采样与编译合计 1.596 秒，工作集峰值 117.20 MiB。产物 SHA-256 为 `c7bb63c645d33e16b7c0788c09e27af136f2782cf121844788b73dd02a7a5af5`。[编译结果](/D:/CP6-local-test/CP6-72H-20261109/W428-01/migration-build/csc-02/terminal.json) · [首轮采样](/D:/CP6-local-test/CP6-72H-20261109/W428-01/migration-build/csc-01/terminal.json)
+
+继续用 `TenantManagementPostgresFixture` 经真实 Core EF 迁移入口运行原 IAM 成员关系和模拟登录回归。原 PGT-027 的同 schema TenantId 更新及角色引用按各自证据核销，正式 PGT-027 仍为 `NOT_RUN`。分支检查点在 DEV-1 交 COORD 处置。[编译输入](/D:/CP6-local-test/CP6-72H-20261109/W428-01/migration-build/inputs.json) · [正式宿主入口](../../../../CP6.Tests/Platform/TenantManagementPostgresFixture.cs#L52)
