@@ -162202,6 +162202,11 @@
       "date": "2026-11-09",
       "change": "核实W325和原24h终态86,238秒；W326完成库存Owner的普通租户连接读取验证。原375仍37 DONE/2 IN_PROGRESS/336 PLANNED，原59仍9闭环/50余项，125/247未提升。",
       "evidence": "docs/development/evidence/W326-01/DELIVERY.md"
+    },
+    {
+      "date": "2026-11-09",
+      "change": "用户授权三天实际Codex执行。开新72小时目标，按上轮29个非BUG实测窗口和每4小时滚动校准，单人串行从WP02-02库存写入继续。W326已正常采用并释放。",
+      "evidence": "docs/development/planning/20261109-codex-72h-execution.md"
     }
   ],
   "implementation_assessment": {
@@ -163656,19 +163661,16 @@
         "claimed_at": "2026-11-09T00:31:03.679942Z",
         "baseline_sha": "802d1cf229936cc893770b2ddc0b6a7acd1b73ec",
         "entry_evidence": "docs/development/dispatch/20261109-wave326/README.md",
-        "phase": "VALIDATED_PENDING_REMOTE",
+        "phase": "CLOSED",
         "dispatch_scope": "STOCK_OWNER_TRUSTED_POSTGRESQL_READ",
         "bounded_window_gate": "CONFIRMED",
-        "reserved_write_resources": [
-          "Main:tenant-storage",
-          "Main:ef-model",
-          "Main:stock-owner-read"
-        ],
+        "reserved_write_resources": [],
         "full_task_gate_unchanged": true,
         "candidate_review_completed": true,
         "delivery_report": "docs/development/evidence/W326-01/DELIVERY.md",
         "worker_start_received": true,
-        "worker_delivery_received": true
+        "worker_delivery_received": true,
+        "candidate_integrated": true
       },
       "blockers": [],
       "validation_evidence": [],
@@ -164810,13 +164812,20 @@
         "latest_window": "W326-01"
       },
       "wave326_delivery": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W326-01/DELIVERY.md",
         "profile": "stock-read-v1 / stock-read-rls-v1",
         "validation": "2项新PostgreSQL 18.6用例、4项有效同窗相关回归、CLI Release构建及独立安装/错目标/重复首装实测",
         "adopted_scope": "Main实际库存查询、历史和流水的可信只读租户连接",
         "full_task_complete": false,
-        "formal_acceptance": "NOT_RUN"
+        "formal_acceptance": "NOT_RUN",
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/782",
+          "commit": "4067d9835f6cc5f775dc9b4dcffbab9895a4c2af",
+          "target_head": "4067d9835f6cc5f775dc9b4dcffbab9895a4c2af"
+        },
+        "seat_released": true
       }
     },
     {
@@ -204758,7 +204767,7 @@
       "path": "docs/development/dispatch/20261109-wave326/README.md",
       "baseline_sha": "802d1cf229936cc893770b2ddc0b6a7acd1b73ec",
       "registered_at": "2026-11-09T00:31:03.679942Z",
-      "phase": "VALIDATED_PENDING_REMOTE",
+      "phase": "CLOSED",
       "assigned_chats": [
         "COORD"
       ],
@@ -204770,8 +204779,8 @@
       ],
       "active_implementation_chats": [],
       "workers_started": true,
-      "windows_closed": false,
-      "product_integrated": false,
+      "windows_closed": true,
+      "product_integrated": true,
       "windows": [
         {
           "id": "W326-01",
@@ -204783,7 +204792,7 @@
           "title": "库存查询采用可信 PostgreSQL 读取",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_IMPLEMENTATION",
-          "phase": "VALIDATED_PENDING_REMOTE",
+          "phase": "CLOSED",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worker_delivery_received": true,
@@ -204794,20 +204803,23 @@
           "actions_authorized": false,
           "deployment_authorized": false,
           "candidate_review_completed": true,
-          "candidate_integrated": false,
-          "resources_released": false,
+          "candidate_integrated": true,
+          "resources_released": true,
           "exclusive_resources": [
             "Main:tenant-storage",
             "Main:ef-model",
             "Main:stock-owner-read"
-          ]
+          ],
+          "adopted_remote": "4067d9835f6cc5f775dc9b4dcffbab9895a4c2af",
+          "pr": "https://github.com/GTX537/CP6/pull/782",
+          "branch_disposition": "deleted-local-and-remote"
         }
       ],
       "storage": {
         "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
         "new_worktrees": 0
       },
-      "next_action": "正常合并、核对远端采用、准确分支处置并释放DEV-1；按原WP02-02核库存写入。"
+      "next_action": "W326 已采用，进入 WP02-02 库存写入。"
     },
     "wave_history": [
       {
@@ -245101,7 +245113,7 @@
         "latest_implementation_report": "docs/development/evidence/W325-01/DELIVERY.md"
       }
     },
-    "next_execution_plan": {
+    "last_completed_execution_plan": {
       "id": "CP6-24H-20261104",
       "path": "docs/development/planning/20261104-codex-24h-owner-recovery.md",
       "state": "DONE",
@@ -247143,6 +247155,38 @@
         "recorded_seconds_are_pre_delivery_sample": true
       },
       "native_goal_time_used_seconds": 80111
+    },
+    "next_execution_plan": {
+      "id": "CP6-72H-20261109",
+      "path": "docs/development/planning/20261109-codex-72h-execution.md",
+      "state": "ACTIVE",
+      "execution_owner": "COORD_SINGLE_CHAT",
+      "budget_unit": "CODEX_EFFECTIVE_EXECUTION_SECONDS",
+      "capacity_hours": 72,
+      "capacity_seconds": 259200,
+      "started_at": "2026-11-09T01:02:42Z",
+      "original_task_count": 375,
+      "baseline_main": "4067d9835f6cc5f775dc9b4dcffbab9895a4c2af",
+      "baseline_counts": {
+        "DONE": 37,
+        "IN_PROGRESS": 2,
+        "PLANNED": 336
+      },
+      "baseline_partial59_remaining": 50,
+      "whole_project_complete": false,
+      "calibration": {
+        "sample": "CP6-24H-20261104 原台账非BUG窗口",
+        "windows": 29,
+        "under_60_minutes": 25,
+        "median_seconds": 2130,
+        "q1_seconds": 1577,
+        "q3_seconds": 3235,
+        "actual_to_center_median": 0.628,
+        "first_reestimate_seconds": 14400
+      },
+      "timing_basis": "Native goal plus independently sampled monotonic segments for confirmed missing time, with exclusions and no overlap.",
+      "next_priority": "W327-01 WP02-02 stock write authority fence, then one actual Stock Owner path",
+      "windows": []
     },
     "execution_plan_history": [
       {

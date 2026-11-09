@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-09 UTC 三天实际执行目标
+
+先做Stock普通登录的真实当前授权栅栏和单笔写入，再按直接前置推进原结果、Outbox、逐租户版本及WP02-28兼容回退。 [执行计划](../development/planning/20261109-codex-72h-execution.md)
+
 ## 2026-11-09 UTC 总控续接和 W326 库存读取
 
 WP02-02下一步核定库存写入 Owner 的普通登录、业务行及原结果/审计/Outbox 同事务、最终权限栅栏和失败恢复。完整WP02-02仍进行中，WP02-10整卡、其余Owner和WP02-28兼容回退继续按台账。 [交付报告](../development/evidence/W326-01/DELIVERY.md)。
