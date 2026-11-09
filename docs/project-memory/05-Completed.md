@@ -1,5 +1,10 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC 原来源采用与原操作验证
+
+W374 完整 1,597 秒，两端分支删除、DEV-1 干净释放。W375 实测 GET、close、普通事务和原竞争。 [W375](../development/evidence/W375-01/DELIVERY.md) · [#823](https://github.com/GTX537/CP6/pull/823)
+
+
 ## 2026-11-09 UTC 普通提交及丢失回包核对
 
 W372 完整 1,677 秒，两端分支删除及 DEV-2 干净释放。W373 真 PostgreSQL 提交确认截断，HTTP 同请求恢复原 201，集成席位释放。W374 原来源同切面已实测。 [W374](../development/evidence/W374-01/DELIVERY.md) · [#822](https://github.com/GTX537/CP6/pull/822)
