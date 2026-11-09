@@ -1,5 +1,10 @@
 # 项目当前状态
 
+## 2026-11-09 UTC W353 全 Core RMA 启用与 #808 关闭
+
+真实全 Core 的 RMA 启用回归已通过，原业务表和该 Owner 的旧 journal 写栅栏、原子故障回滚及原键恢复均已实证。#808 随 #811 正常采用并关闭，DEV-2 已释放后转 W355。原 375 为 38 DONE、1 IN_PROGRESS、336 PLANNED。 [W353 交付](../development/evidence/W353-01/DELIVERY.md) · [#811](https://github.com/GTX537/CP6/pull/811)
+
+
 ## 2026-11-09 UTC #808 恢复候选派送拦截
 
 真实恢复候选在认领和发送授权处均拒绝，原候选队列及原件不变。相关 PostgreSQL 回归已通过，待远端收尾。 [交付证据](../development/evidence/BUG-808-STOCK-RESTORE-OUTBOX/DELIVERY.md)

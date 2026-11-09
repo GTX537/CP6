@@ -172,9 +172,9 @@ deadlock_timeout = '150ms'
             self.save("timeout-{}.stderr".format(proc.pid), err)
             raise RuntimeError("process {} exceeded its deadline".format(proc.pid))
 
-    def sql(self, database, statement, role=OWNER, error=None, label=None):
+    def sql(self, database, statement, role=OWNER, error=None, label=None, seconds=6):
         with self.psql(database, role) as proc:
-            out, err = self.collect(proc, (statement + "\n").encode("utf-8"), seconds=6)
+            out, err = self.collect(proc, (statement + "\n").encode("utf-8"), seconds=seconds)
             if label or proc.returncode:
                 name = label or "sql-failure-{}".format(proc.pid)
                 self.save(name + ".stdout", out)
@@ -189,7 +189,7 @@ deadlock_timeout = '150ms'
         create = "CREATE DATABASE " + ident(database)
         if template:
             create += " TEMPLATE " + ident(template)
-        self.sql("postgres", create + ";")
+        self.sql("postgres", create + ";", seconds=45 if template else 6)
         return json.loads(self.sql(database, """
           SELECT json_build_object('Server',host(inet_server_addr()),'Port',inet_server_port(),
             'Database',d.datname,'DatabaseOid',d.oid::bigint,'SystemIdentifier',s.system_identifier::text)

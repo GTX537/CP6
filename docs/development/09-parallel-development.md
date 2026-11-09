@@ -1,5 +1,8 @@
 # 多对话任务分配与交付
 
+> [W353](evidence/W353-01/DELIVERY.md)通过新隔离 Core 的 RMA 原子启用与旧写拒绝。#808 随 [#811](https://github.com/GTX537/CP6/pull/811) 关闭，DEV-2 经正式释放后领取 W355 实际 Stock 容量。 [准确席位](dispatch/20261109-wave353/README.md)
+
+
 > [#808](https://github.com/GTX537/CP6/issues/808)通过真实恢复定向回归并进入集成。[W353](dispatch/20261109-wave353/README.md)使用 DEV-1，验证 Core 原 RMA 权威。
 
 > [W350-01](evidence/W350-01/DELIVERY.md)完成真实 RMA tenant schema 首版和原子迁移验证，收尾按正常 PR。WP02-28 已核销，DEV-2 修复 [#808](https://github.com/GTX537/CP6/issues/808)。

@@ -162607,6 +162607,26 @@
       "at": "2026-11-09T08:05:07.1234551Z",
       "change": "P1 #808 真实复现后修复，实际队列首入及发送授权拒绝恢复候选。首轮真实 PG 15 项通过，系统目录限定后的最终恢复定向 2 项通过，零跳过。保留真实备份恢复红测。",
       "evidence": "docs/development/evidence/BUG-808-STOCK-RESTORE-OUTBOX/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T08:13:55.9882592Z",
+      "change": "W353 新隔离全 Core 的 RMA 原权威启用真实回归通过，进入正常远端采用。",
+      "evidence": "docs/development/evidence/W353-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T08:09:13Z",
+      "change": "#808 随 #811 正常远端采用，准确分支清理、DEV-2 释放，Issue 已核 CLOSED。",
+      "evidence": "docs/development/evidence/BUG-808-STOCK-RESTORE-OUTBOX/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-09T08:11:56.505782Z",
+      "change": "W355 在 DEV-2 独立测实际 Stock 配置容量，W353 独占原 RMA 代码。",
+      "evidence": "docs/development/dispatch/20261109-wave353/README.md"
+    },
+    {
+      "at": "2026-11-09T08:19:49.142007Z",
+      "change": "W354 真实 PLM UNKNOWN 对账和独立停机核验完成，INTEGRATION-1 正式释放。PGT-022 保持 NOT_RUN。",
+      "evidence": "D:/CP6-local-test/CP6-72H-20261109/W354-VERIFY/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -164061,7 +164081,7 @@
         "claimed_at": "2026-11-09T07:58:01.292967Z",
         "baseline_sha": "4631874fdcfbf9fac6db5dc7c1e5397dd75f0542",
         "entry_evidence": "docs/development/dispatch/20261109-wave353/README.md",
-        "phase": "ACTIVE",
+        "phase": "VALIDATED_PENDING_REMOTE",
         "dispatch_scope": "新隔离全 Core 初始化后，原生锁定并验证空的历史 RMA 表和同 Owner journal，原子封闭旧写；复用原 tenant schema、Ready 和原回执。已存在业务与错目标拒绝。",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
@@ -164070,7 +164090,8 @@
           "RMA Core commissioning、精确共享 RMA journal Owner 与 TenantStorage CLI",
           "独占 PostgreSQL18.6 端口55562"
         ],
-        "worker_start_received": true
+        "worker_start_received": true,
+        "delivery_report": "docs/development/evidence/W353-01/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -164993,7 +165014,7 @@
         },
         "receipt": "docs/development/evidence/authorized-adoption-release-20261015/release-receipt.json"
       },
-      "remaining_scope": "已实证新隔离 RMA 的物理对象和逐租户首版迁移。待以既有全 Core 的当前权限、出库来源、共享 original journal 接真正 RMA HTTP，随后核不同版本的升级、旧 writer、模型和单租户恢复。",
+      "remaining_scope": "已实证真实发布宿主初始化后的新隔离 RMA 单一物理权威。待在原 HTTP 使用当前身份、授权、出库来源和租户模型验证读取，再接普通业务写与原 journal，随后核版本升级及恢复。",
       "main_package_adoption": {
         "path": "docs/development/evidence/WP02-02/main-package-adoption/DELIVERY.md",
         "scope": "Main exact formal0.10.3 dependency adoption; not tenant storage or full WP02-02 delivery",
@@ -165209,9 +165230,9 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-02",
-        "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。 W327验证普通LOGIN在调用事务内取得原认证根。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。 W335 已在实际普通事务验证 V2 新库存的明确归属、合法无归属、旧行拒绝和原安全审计，包含前向 PostgreSQL 迁移。  W346 现有 Stock 首装提交后丢弃 stdout，从另一个真实进程在准确物理库取回原安装 ID，驱动原写栅栏及后续已交付安装。孤立回执、未绑定登录读策略及目录/权限漂移拒绝。 W348 实际验证共享消息 profile 的初始化中断、原键恢复及原结果重放。  W350 在 fresh-only PostgreSQL 真实把原 RMA heads/versions 迁入各自租户 schema，验证原子首版、实际进程竞争、中断与原结果、普通角色和原复合约束。",
-        "remaining": "原 RMA 首版在真实 A/B tenant schema；实际共享 auth/source/journal 和当前 RMA 入口、旧版本/非事务恢复及形式 PGT 分别待做。",
-        "next_action": "DEV-1 继续新隔离全 Core 的 RMA 物理单一权威及原业务恢复基础。DEV-2 收妥 #808 真实恢复候选 Stock 派送修复。",
+        "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。 W327验证普通LOGIN在调用事务内取得原认证根。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。 W335 已在实际普通事务验证 V2 新库存的明确归属、合法无归属、旧行拒绝和原安全审计，包含前向 PostgreSQL 迁移。  W346 现有 Stock 首装提交后丢弃 stdout，从另一个真实进程在准确物理库取回原安装 ID，驱动原写栅栏及后续已交付安装。孤立回执、未绑定登录读策略及目录/权限漂移拒绝。 W348 实际验证共享消息 profile 的初始化中断、原键恢复及原结果重放。  W350 在 fresh-only PostgreSQL 真实把原 RMA heads/versions 迁入各自租户 schema，验证原子首版、实际进程竞争、中断与原结果、普通角色和原复合约束。 新隔离全 Core 物理 commissioning 以实际发布宿主和 PostgreSQL 验证，旧业务与旧 RMA journal 栅栏、其他 Owner 和原回执已证。",
+        "remaining": "实际 HTTP 的共享 auth/source 和新的 RMA 租户模型、普通写与原 journal、旧版本升级、实际恢复及形式 PGT 待做。",
+        "next_action": "正常采用并回收 W353 后，用已启用的真实 Core 接原 RMA GET 与当前共享权限。DEV-2 独立实测 Stock 10/100 租户容量。",
         "evidence_refs": [
           "docs/development/evidence/WP02-02/directory-installation/DELIVERY.md",
           "docs/development/evidence/WP02-02/tenant-connections/DELIVERY.md",
@@ -165235,11 +165256,12 @@
           "docs/development/evidence/W334-01/DELIVERY.md",
           "docs/development/evidence/W335-01/DELIVERY.md",
           "docs/development/evidence/W346-01/DELIVERY.md",
-          "docs/development/evidence/W350-01/DELIVERY.md"
+          "docs/development/evidence/W350-01/DELIVERY.md",
+          "docs/development/evidence/W353-01/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true,
-        "latest_window": "W350-01"
+        "latest_window": "W353-01"
       },
       "wave326_delivery": {
         "status": "CLOSED",
@@ -165641,6 +165663,15 @@
         "seat_released": true,
         "branch_disposition": "deleted-local-and-remote",
         "workspace_status": "fixed-seat-detached-for-reuse"
+      },
+      "wave353_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W353-01/DELIVERY.md",
+        "profile": "rma-application-core-tenant-v1",
+        "validation": "3 次真实 W351 发布 DatabaseInit exit 0；Core/Space/IdentityPriority/ERP 224/1/1/1；旧事务等待、第二租户原生 DDL 中断、原键恢复、旧业务和 journal-only close 42501、其他 Owner 写、W350 字节兼容实际通过。",
+        "scope": "全新隔离全 Core 安装。绑定物理目标，原子切换两张旧业务表和准确 RMA journal 到租户布局；只授最小读权限。",
+        "full_task_complete": false,
+        "formal_acceptance": "NOT_RUN"
       }
     },
     {
@@ -205581,7 +205612,7 @@
       "path": "docs/development/dispatch/20261109-wave353/README.md",
       "baseline_sha": "4631874fdcfbf9fac6db5dc7c1e5397dd75f0542",
       "registered_at": "2026-11-09T07:58:01.292967Z",
-      "phase": "ACTIVE",
+      "phase": "VALIDATED_PENDING_REMOTE",
       "assigned_chats": [
         "RMA-COMMISSION",
         "COORD"
@@ -205608,7 +205639,7 @@
           "title": "全 Core 的 RMA 租户存储启用与旧写栅栏",
           "chat": "RMA-COMMISSION",
           "mode": "DELEGATED_IMPLEMENTATION",
-          "phase": "ACTIVE",
+          "phase": "VALIDATED_PENDING_REMOTE",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
@@ -205621,13 +205652,17 @@
             "CP6 DEV-1",
             "RMA Core commissioning、精确共享 RMA journal Owner 与 TenantStorage CLI",
             "独占 PostgreSQL18.6 端口55562"
-          ]
+          ],
+          "worker_delivery_received": true,
+          "candidate_review_completed": true,
+          "delivery_report": "docs/development/evidence/W353-01/DELIVERY.md"
         }
       ],
       "storage": {
         "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
         "new_worktrees": 0
-      }
+      },
+      "next_action": "正常采用并回收 W353 后，用已启用的真实 Core 接原 RMA GET 与当前共享权限。DEV-2 独立实测 Stock 10/100 租户容量。"
     },
     "wave_history": [
       {
@@ -249419,7 +249454,7 @@
         }
       },
       "timing_basis": "Native goal plus independently sampled monotonic segments for confirmed missing time, with exclusions and no overlap.",
-      "next_priority": "收妥 #808 远端采用、确切分支清理和 Issue 关闭。DEV-1 并行 W353 实际 Core RMA 启用。",
+      "next_priority": "正常采用并回收 W353 后，用已启用的真实 Core 接原 RMA GET 与当前共享权限。DEV-2 独立实测 Stock 10/100 租户容量。",
       "windows": [
         {
           "id": "W327-01",
@@ -250107,7 +250142,7 @@
         },
         {
           "id": "BUG-808-STOCK-RESTORE-OUTBOX",
-          "state": "VALIDATED_PENDING_REMOTE",
+          "state": "CLOSED",
           "issue": "https://github.com/GTX537/CP6/issues/808",
           "related_tasks": [],
           "started_at": "2026-11-09T07:46:30.770845Z",
@@ -250119,11 +250154,21 @@
           "validation_ready_at": "2026-11-09T08:05:07.1234551Z",
           "validation_ready_seconds": 1115,
           "delivery": "docs/development/evidence/BUG-808-STOCK-RESTORE-OUTBOX/DELIVERY.md",
-          "timing_source": "主机单调取样。独立并行 W353，远端采用和释放另计。"
+          "timing_source": "主机单调取样，起始至官方 finish，重叠计一次。",
+          "actual_seconds": 1314,
+          "finished_at": "2026-11-09T08:08:25.594791Z",
+          "pr": "https://github.com/GTX537/CP6/pull/811",
+          "adopted_main": "310b99df8c41ca33e846a706c1025bab63f85404",
+          "branch_disposition": "deleted-local-and-remote",
+          "seat_released": true,
+          "workspace_status": "fixed-seat-detached-for-reuse",
+          "actual_to_estimate_midpoint": 0.626,
+          "variance": "原25–45分钟，实测21分54秒。复用真实恢复复现夹具，15项相关+2项定向最终。",
+          "issue_closed_at": "2026-11-09T08:09:13Z"
         },
         {
           "id": "W353-01",
-          "state": "ACTIVE",
+          "state": "VALIDATED_PENDING_REMOTE",
           "related_tasks": [
             "WP02-02"
           ],
@@ -250133,7 +250178,11 @@
             45
           ],
           "scope": "新隔离全 Core 初始化后，原生锁定并验证空的历史 RMA 表和同 Owner journal，原子封闭旧写；复用原 tenant schema、Ready 和原回执。已存在业务与错目标拒绝。",
-          "dispatch": "docs/development/dispatch/20261109-wave353/README.md"
+          "dispatch": "docs/development/dispatch/20261109-wave353/README.md",
+          "validation_ready_at": "2026-11-09T08:13:55.9882592Z",
+          "validation_ready_seconds": 953,
+          "timing_source": "同次连续执行的主机单调取样。远端采用及席位收尾计时另记。",
+          "delivery": "docs/development/evidence/W353-01/DELIVERY.md"
         }
       ],
       "parallel_execution": {
@@ -250143,7 +250192,26 @@
         "max_integration_seats": 1,
         "central_owner": "COORD",
         "overlap_counted_once": true,
-        "active_windows": [],
+        "active_windows": [
+          {
+            "id": "W355-01",
+            "state": "ACTIVE",
+            "original_task": "WP02-02",
+            "owner": "STOCK-CAPACITY",
+            "started_at": "2026-11-09T08:11:56.505782Z",
+            "estimate_minutes": [
+              24,
+              38
+            ],
+            "base": "310b99df8c41ca33e846a706c1025bab63f85404",
+            "branch": "codex/w355-01",
+            "workspace": "D:/CP6-worktrees/dev-2",
+            "seat": "DEV-2",
+            "dispatch": "docs/development/dispatch/20261109-wave353/README.md",
+            "scope": "实际 Stock 普通 LOGIN 的 10/100 冷暖、真实模型/目录/池峰值、实际限额与等待。独立测量工具，无产品写入。1000 按正常准入边界。",
+            "mode": "BOUNDED_MEASUREMENT"
+          }
+        ],
         "verification_windows": [
           {
             "id": "W348-VERIFY",
@@ -250194,26 +250262,33 @@
             "seat_released": true,
             "issue": "https://github.com/GTX537/CP6/issues/808",
             "formal_acceptance": "NOT_RUN"
+          },
+          {
+            "id": "W354-VERIFY",
+            "state": "VERIFIED",
+            "result": "ORIGINAL_RECEIPT_RECONCILED",
+            "source": "4631874fdcfbf9fac6db5dc7c1e5397dd75f0542",
+            "original_task": "WP02-02",
+            "owner": "APPROVAL-RESTORE-VERIFY",
+            "seat": "INTEGRATION-1",
+            "workspace": "D:/CP6-worktrees/s02-00-20261012",
+            "started_at": "2026-11-09T08:03:36.574051Z",
+            "finished_at": "2026-11-09T08:19:49.142007Z",
+            "estimate_minutes": [
+              25,
+              40
+            ],
+            "actual_seconds": 971,
+            "validation_ready_at": "2026-11-09T08:19:30.3113529Z",
+            "validation_ready_seconds": 952,
+            "report": "D:/CP6-local-test/CP6-72H-20261109/W354-VERIFY/DELIVERY.md",
+            "branch_disposition": "no-task-branch",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true,
+            "scope": "PLM 原受控决定真实 UNKNOWN 备份、原端一次 POST 丢 ACK，撤销当前接收权后候选 GET 503 保持 UNKNOWN，再同键取回字节相同原回执。候选全程 503，无重复 POST 或候选 Inbox。原停机探针超时，独立停机核验通过。",
+            "formal_acceptance": "NOT_RUN"
           }
-        ],
-        "priority_issue_workspace": {
-          "issue": "https://github.com/GTX537/CP6/issues/808",
-          "workspace_task": "BUG-808-STOCK-RESTORE-OUTBOX",
-          "owner": "STOCK-RESTORE",
-          "branch": "codex/bug-808-stock-restore-outbox",
-          "workspace": "D:/CP6-worktrees/dev-2",
-          "seat": "DEV-2",
-          "base": "90e69393ef976c82c871155a44d77cb56c3872c7",
-          "estimate_minutes": [
-            25,
-            45
-          ],
-          "started_at": "2026-11-09T07:46:30.770845Z",
-          "state": "VALIDATED_PENDING_REMOTE",
-          "source_verification": "W352-VERIFY",
-          "delivery": "docs/development/evidence/BUG-808-STOCK-RESTORE-OUTBOX/DELIVERY.md",
-          "validated_at": "2026-11-09T08:05:07.1234551Z"
-        }
+        ]
       }
     },
     "execution_plan_history": [

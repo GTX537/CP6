@@ -1,5 +1,10 @@
 # AI 可读变更日志
 
+## 2026-11-09 UTC 新隔离 Core 原 RMA 权威
+
+加入 prepare 和 commission，两张旧 RMA 表与该 Owner 的旧 journal 写在同一事务禁用。保留 Core EF 历史、其他 Owner 的 journal 和 W350 原回执。 [W353 交付](../development/evidence/W353-01/DELIVERY.md) · [#811](https://github.com/GTX537/CP6/pull/811)
+
+
 ## 2026-11-09 UTC W350 RMA 物理迁移已采用
 
 新隔离租户 schema 的原 RMA 首版真实并发、中断和回执已随 #810 采用，首次 38 项原任务已完成。 [交付证据](../development/evidence/BUG-808-STOCK-RESTORE-OUTBOX/DELIVERY.md)
