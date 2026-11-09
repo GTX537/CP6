@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-09 UTC PGT-015 原全局键和受控冲突
+
+采用原生普通角色并发、同事务失败和新事务读权，原受控接收、原字节与独立队列域均有对应证据。 [W431](../development/evidence/W431-01/DELIVERY.md)
+
 ## 2026-11-09 UTC 归属更新原生子场景
 
 已验证同 schema 的两层租户归属拒绝，核对实际 xid 和 A/B 全写集。 [W430](../development/evidence/W430-01/DELIVERY.md)
