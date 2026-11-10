@@ -2,6 +2,8 @@ using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wms;
+using CP6.Core.Services.Erp;
+using CP6.WebApi.Controllers.Erp;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +42,7 @@ public sealed class ClientDeviceAdminController : ControllerBase
 
     [HttpPost]
     [RequirePermission("wms-mobile", "device-manage")]
+    [OrderOwnerResult]
     public async Task<ActionResult<DeviceActivationTicket>> CreateActivation(
         CreateDeviceActivationRequest request,
         CancellationToken ct)
@@ -57,6 +60,7 @@ public sealed class ClientDeviceAdminController : ControllerBase
 
     [HttpPatch("{deviceId}")]
     [RequirePermission("wms-mobile", "device-manage")]
+    [OrderOwnerResult]
     public async Task<ActionResult<ClientDeviceDto>> Update(
         string deviceId,
         UpdateClientDeviceRequest request,
@@ -67,7 +71,7 @@ public sealed class ClientDeviceAdminController : ControllerBase
             return Ok(await _service.UpdateAsync(
                 deviceId, request, User.Identity?.Name, ct));
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException)
         {
             return Conflict(new { code = ex.Message, message = ex.Message });
         }
@@ -79,10 +83,18 @@ public sealed class ClientDeviceAdminController : ControllerBase
 
     [HttpPost("quick-pin")]
     [RequirePermission("wms-mobile", "device-manage")]
+    [OrderOwnerResult]
     public async Task<IActionResult> SetQuickPin(
         SetWarehouseQuickPinRequest request,
         CancellationToken ct)
     {
+        if (_db.Database.IsNpgsql())
+        {
+            try { await _service.SetQuickPinAsync(request, ct); return Ok(new { code = 0, message = "OK" }); }
+            catch (OrderPriceCorrectionException error) when (error.Status == 404 && error.Message == "WM-DEVICE-USER-NOT-FOUND")
+            { return NotFound(new { code = error.Message }); }
+            catch (ArgumentException error) { return BadRequest(new { code = error.Message }); }
+        }
         if (string.IsNullOrWhiteSpace(request.UserName)
             || string.IsNullOrWhiteSpace(request.BadgeNo)
             || request.Pin.Length != 6

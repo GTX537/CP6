@@ -5,6 +5,7 @@ namespace CP6.Core.Services.Wms;
 
 public interface IClientDeviceService
 {
+    Task SetQuickPinAsync(SetWarehouseQuickPinRequest request, CancellationToken ct = default);
     Task<DeviceActivationTicket> CreateActivationAsync(
         CreateDeviceActivationRequest request,
         string? userName,

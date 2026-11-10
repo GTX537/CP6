@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC 设备生命周期与原生身份
+
+继续原 WP02-03 / CTX02-A4/A7，核对序列号等剩余实际写者、撤权入口及其恢复路径；PGT-017 直至全体相关写者完成采用和验收前保持 NOT_RUN。 设备新版 operation DTO、前端、发布策略和完整 SYS-CLIENT-01 验收仍归后续原任务；PGT-021/022 继续同源恢复、当前权限、消息对账和独立批准切换。[W440 交付](../development/evidence/BUG-881-DEVICE-LIFECYCLE-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC LPN Move 库存事务组合
 
 继续原 WP02-03 / CTX02-A4/A7，核对并修复 ClientDevice、序列号等剩余实际写者与撤权入口；PGT-017 直至全体相关写者完成采用和验收前保持 NOT_RUN。 PGT-021/022 继续同源恢复、当前权限、消息对账和独立批准切换。[W439 交付](../development/evidence/BUG-879-LPN-MOVE-COMPOSITION/DELIVERY.md)

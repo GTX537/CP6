@@ -27,9 +27,14 @@ public sealed class IamAdministrationV1(CP6Context db, ICurrentPermissionContext
 {
     private readonly IDataProtector fingerprint = protection.CreateProtector("CP6.Iam.Administration.Request.V1");
     public bool IsPostgreSql => db.Database.IsNpgsql();
+    internal bool Owns(CP6Context context) => ReferenceEquals(db,context);
 
-    public async Task<T> ExecuteAsync<T>(string permission, Func<CancellationToken,Task<Guid>> currentActor,
+    public Task<T> ExecuteAsync<T>(string permission, Func<CancellationToken,Task<Guid>> currentActor,
         Func<Guid,CancellationToken,Task<T>> body, CancellationToken ct)
+        => ExecuteCurrentAsync(permission,currentActor,(current,token)=>body(current.UserId,token),ct);
+
+    internal async Task<T> ExecuteCurrentAsync<T>(string permission, Func<CancellationToken,Task<Guid>> currentActor,
+        Func<UserPermissionContext,CancellationToken,Task<T>> body, CancellationToken ct)
     {
         if (!IsPostgreSql || db.Database.CurrentTransaction != null || System.Transactions.Transaction.Current != null
             || db.ChangeTracker.HasChanges()) throw Error(503,"IAM_AUTHORITY_UNAVAILABLE");
@@ -44,7 +49,7 @@ public sealed class IamAdministrationV1(CP6Context db, ICurrentPermissionContext
             if (user is not { Enable:true } || user.LockedUntil > DateTime.Now || tenant is not { Enable:true }
                 || tenant.ExpireDate <= DateTime.Now || current.UserId != actor || !current.ActionKeys.Contains(permission)) throw Error(403,"IAM_FORBIDDEN");
             db.ChangeTracker.Clear();
-            var result = await body(actor,ct); ct.ThrowIfCancellationRequested(); attempted = true;
+            var result = await body(current,ct); ct.ThrowIfCancellationRequested(); attempted = true;
             await tx.CommitAsync(ct); return result;
         }
         catch

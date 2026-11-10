@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC 设备生命周期与原生身份
+
+设备票据、更新/禁用、快捷 PIN、匿名激活和签名心跳在实际身份共同根中提交；保留合法自失效，数据库 nonce 裁决双宿主重放，设备范围变更使旧客户端身份失效，已有数据升级保留设备原行并要求重新登录。 原 375 项保持 38 DONE、1 IN_PROGRESS、336 PLANNED；正式 PostgreSQL 16 PASS、11 NOT_RUN。48 小时总预算 172800 秒，下次原生校准 115200 秒。[W440 交付](../development/evidence/BUG-881-DEVICE-LIFECYCLE-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC LPN Move 库存事务组合
 
 LPN Move 在既有 Mobile Owner 中组合库存父事务原语；真实非空树由原 HTTP 500 恢复完整原子移动，保留八位数量、货主估值质量和四腿实际部门继承。空/非空树均在暂停先提交后 401、十三类原行保持，晚期回执故障完整回滚，范围、回放和原错误协议通过。 原 375 项保持 38 DONE、1 IN_PROGRESS、336 PLANNED；正式 PostgreSQL 16 PASS、11 NOT_RUN。已保存 28 小时校准，48 小时总预算 172800 秒，下次原生校准 115200 秒。[W439 交付](../development/evidence/BUG-879-LPN-MOVE-COMPOSITION/DELIVERY.md)

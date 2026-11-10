@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using CP6.Core.EFDbContext;
 using CP6.Core.Services.Common;
+using CP6.Core.Services.Platform;
 using CP6.Core.Services.Sys;
 using CP6.Entity.DomainModels.Wms;
 using CP6.Entity.DTOs.Client;
@@ -10,7 +11,7 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace CP6.Core.Services.Wms;
 
-public sealed class ClientDeviceService : IClientDeviceService
+public sealed partial class ClientDeviceService : IClientDeviceService
 {
     private readonly CP6Context _db;
     private readonly ITenantContext _tenant;
@@ -22,17 +23,30 @@ public sealed class ClientDeviceService : IClientDeviceService
         ITenantContext tenant,
         IRefreshTokenService refreshTokens,
         IDistributedCache cache)
+        : this(db, tenant, refreshTokens, cache, null, null, null) { }
+
+    public ClientDeviceService(CP6Context db, ITenantContext tenant, IRefreshTokenService refreshTokens,
+        IDistributedCache cache, IamAdministrationV1? administration, TenantManagementSessionV1? session, IPasswordHasher? hasher)
     {
         _db = db;
         _tenant = tenant;
         _refreshTokens = refreshTokens;
         _cache = cache;
+        _administration = administration;
+        _session = session;
+        _hasher = hasher;
     }
 
     public async Task<DeviceActivationTicket> CreateActivationAsync(
         CreateDeviceActivationRequest request,
         string? userName,
         CancellationToken ct = default)
+        => _db.Database.IsNpgsql()
+            ? await Administer((actor, token) => CreateActivationCore(request, actor.UserName, token, actor), ct)
+            : await CreateActivationCore(request, userName, ct);
+
+    private async Task<DeviceActivationTicket> CreateActivationCore(
+        CreateDeviceActivationRequest request, string? userName, CancellationToken ct, UserPermissionContext? actor = null)
     {
         var platform = NormalizePlatform(request.Platform);
         var mode = NormalizeMode(request.DeviceMode);
@@ -40,6 +54,8 @@ public sealed class ClientDeviceService : IClientDeviceService
             && !await _db.Warehouses.AnyAsync(x => !x.IsDeleted
                 && x.WarehouseCd == request.WarehouseCd, ct))
             throw new ArgumentException("WM-V2-WAREHOUSE-NOT-FOUND");
+
+        if (actor != null) await RequireDeviceScope(actor, request.WarehouseCd, request.AreaCd, ct);
 
         var raw = Base64Url(RandomNumberGenerator.GetBytes(32));
         var expires = DateTime.UtcNow.AddMinutes(
@@ -71,6 +87,13 @@ public sealed class ClientDeviceService : IClientDeviceService
         CancellationToken ct = default)
     {
         ValidateActivation(request);
+        if (!_db.Database.IsNpgsql()) return await ActivateCore(request, ct);
+        ValidateDevicePublicKey(request.PublicKey);
+        return await DeviceTransaction((_, token) => ActivateCore(request, token), false, ct);
+    }
+
+    private async Task<ActivatedClientDeviceDto> ActivateCore(ActivateClientDeviceRequest request, CancellationToken ct)
+    {
         var hash = Hash(request.ActivationToken);
         var activation = await _db.DeviceActivations.IgnoreQueryFilters()
             .FirstOrDefaultAsync(x => x.TokenHash == hash, ct)
@@ -81,7 +104,7 @@ public sealed class ClientDeviceService : IClientDeviceService
             .FirstOrDefaultAsync(x => x.Id == activation.TenantId
                                       && x.TenantCode == request.TenantCode, ct)
             ?? throw new InvalidOperationException("WM-DEVICE-ACTIVATION-TENANT");
-        if (!tenant.Enable)
+        if (!tenant.Enable || tenant.ExpireDate <= DateTime.Now)
             throw new InvalidOperationException("WM-DEVICE-TENANT-DISABLED");
         if (!string.Equals(activation.Platform, NormalizePlatform(request.Platform),
                 StringComparison.Ordinal))
@@ -117,6 +140,8 @@ public sealed class ClientDeviceService : IClientDeviceService
         {
             throw new InvalidOperationException("WM-DEVICE-ACTIVATION-USED");
         }
+        if (_db.Database.IsNpgsql() && activation.ExpiresAt <= DateTime.UtcNow)
+            throw new InvalidOperationException("WM-DEVICE-ACTIVATION-EXPIRED");
         return new ActivatedClientDeviceDto
         {
             DeviceId = device.DeviceId,
@@ -132,6 +157,11 @@ public sealed class ClientDeviceService : IClientDeviceService
         ClientDeviceHeartbeatRequest request,
         string? userName,
         CancellationToken ct = default)
+        => _db.Database.IsNpgsql()
+            ? await DeviceTransaction((actor, token) => HeartbeatCore(request, actor, token), true, ct)
+            : await HeartbeatCore(request, userName, ct);
+
+    private async Task<ClientDeviceDto> HeartbeatCore(ClientDeviceHeartbeatRequest request, string? userName, CancellationToken ct)
     {
         var device = await _db.ClientDevices.FirstOrDefaultAsync(
             x => !x.IsDeleted && x.DeviceId == request.DeviceId, ct)
@@ -187,12 +217,26 @@ public sealed class ClientDeviceService : IClientDeviceService
         UpdateClientDeviceRequest request,
         string? userName,
         CancellationToken ct = default)
+        => _db.Database.IsNpgsql()
+            ? await Administer((actor, token) => UpdateCore(deviceId, request, actor.UserName, token, actor), ct)
+            : await UpdateCore(deviceId, request, userName, ct);
+
+    private async Task<ClientDeviceDto> UpdateCore(string deviceId, UpdateClientDeviceRequest request,
+        string? userName, CancellationToken ct, UserPermissionContext? actor = null)
     {
         var device = await _db.ClientDevices.FirstOrDefaultAsync(
             x => !x.IsDeleted && x.DeviceId == deviceId, ct)
             ?? throw new InvalidOperationException("WM-DEVICE-NOT-FOUND");
+        if (actor != null)
+        {
+            await RequireDeviceScope(actor, device.WarehouseCd, device.AreaCd, ct);
+            await RequireDeviceScope(actor, request.WarehouseCd, request.AreaCd, ct);
+            if (!string.IsNullOrWhiteSpace(request.WarehouseCd) && !await _db.Warehouses.AnyAsync(w => !w.IsDeleted && w.WarehouseCd == request.WarehouseCd, ct))
+                throw new ArgumentException("WM-V2-WAREHOUSE-NOT-FOUND");
+        }
         ApplyRowVersion(device, request.RowVersion);
         var wasActive = device.Status == ClientDeviceStatus.Active;
+        var wasShared = device.DeviceMode == ClientDeviceMode.Shared;
         if (!string.IsNullOrWhiteSpace(request.Status))
         {
             var status = request.Status.Trim();
@@ -202,6 +246,7 @@ public sealed class ClientDeviceService : IClientDeviceService
         }
         if (!string.IsNullOrWhiteSpace(request.DeviceMode))
             device.DeviceMode = NormalizeMode(request.DeviceMode);
+        if (wasShared && device.DeviceMode == ClientDeviceMode.Personal) device.FullAuthExpiresAt = null;
         device.WarehouseCd = NullIfWhiteSpace(request.WarehouseCd);
         device.AreaCd = NullIfWhiteSpace(request.AreaCd);
         device.Modifier = userName;
@@ -296,7 +341,7 @@ public sealed class ClientDeviceService : IClientDeviceService
             || Math.Abs((DateTimeOffset.UtcNow - request.Timestamp).TotalMinutes) > 5)
             throw new InvalidOperationException("WM-DEVICE-SIGNATURE-INVALID");
         var nonceKey = $"wms:device-nonce:{device.TenantId:N}:{device.DeviceId}:{request.Nonce}";
-        if (await _cache.GetStringAsync(nonceKey, ct) is not null)
+        if (!_db.Database.IsNpgsql() && await _cache.GetStringAsync(nonceKey, ct) is not null)
             throw new InvalidOperationException("WM-DEVICE-REPLAY");
 
         var payload = Encoding.UTF8.GetBytes(
@@ -310,9 +355,21 @@ public sealed class ClientDeviceService : IClientDeviceService
         var valid = VerifyRsa(device.PublicKey, payload, signature)
                     || VerifyEcdsa(device.PublicKey, payload, signature);
         if (!valid) throw new InvalidOperationException("WM-DEVICE-SIGNATURE-INVALID");
-        await _cache.SetStringAsync(nonceKey, "1",
-            new DistributedCacheEntryOptions
-                { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10) }, ct);
+        if (_db.Database.IsNpgsql())
+        {
+            await _db.Database.ExecuteSqlInterpolatedAsync($"""
+                DELETE FROM cp6_authentication_v1.device_heartbeat_nonces
+                WHERE tenant_id={device.TenantId} AND device_id={device.DeviceId} AND expires_at<=clock_timestamp()
+                """, ct);
+            var inserted = await _db.Database.ExecuteSqlInterpolatedAsync($"""
+                INSERT INTO cp6_authentication_v1.device_heartbeat_nonces(tenant_id,device_id,nonce_hash,expires_at)
+                VALUES({device.TenantId},{device.DeviceId},{SHA256.HashData(Encoding.UTF8.GetBytes(request.Nonce))},clock_timestamp()+interval '10 minutes')
+                ON CONFLICT(tenant_id,device_id,nonce_hash) DO NOTHING
+                """, ct);
+            if (inserted != 1) throw new InvalidOperationException("WM-DEVICE-REPLAY");
+        }
+        else await _cache.SetStringAsync(nonceKey, "1",
+            new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10) }, ct);
     }
 
     private static bool VerifyRsa(string pem, byte[] data, byte[] signature)
