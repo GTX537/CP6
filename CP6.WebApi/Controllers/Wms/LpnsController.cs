@@ -1,5 +1,6 @@
 using CP6.Core.Auth;
 using CP6.Core.Services.Wms;
+using CP6.WebApi.Controllers.Erp;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -73,6 +74,7 @@ public sealed class LpnsController : ControllerBase
 
     [HttpPost("policies")]
     [RequirePermission("wms-mobile", "lpn-manage")]
+    [OrderOwnerResult]
     public async Task<ActionResult<LpnPolicyRequest>> Policy(
         LpnPolicyRequest request, CancellationToken ct)
     {

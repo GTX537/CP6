@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC LPN 策略当前授权
+
+LPN 混装策略通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，策略原行逐字节保持。 原 375 项仍为 38 DONE、1 IN_PROGRESS、336 PLANNED，正式 PostgreSQL 为 16 PASS、11 NOT_RUN。[W436 交付](../development/evidence/BUG-873-LPN-POLICY-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 租户暂停与普通库存提交
 
 W435 在 PostgreSQL 18.6 实测普通库存 V1 调整与版本化租户暂停的两种顺序。正式 PGT-017 仍待全 writer 登记和共同栅栏采用。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED，正式 PostgreSQL 为 16 PASS、11 NOT_RUN。 [W435](../development/evidence/W435-01/DELIVERY.md)

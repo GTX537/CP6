@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC LPN 策略当前授权
+
+继续原 CTX02-A4/A7 的实际写者和撤权入口覆盖，其他 LPN 写入仍待逐项核对。PGT-017 保留 NOT_RUN，直到全体相关写者完成共同栅栏采用。 PGT-021/022 继续同源恢复、当前权限、消息对账和独立批准切换。[W436 交付](../development/evidence/BUG-873-LPN-POLICY-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 撤权与业务写者共同栅栏
 
 按原 CTX02-A4/A7 对真实 writer 和边界逐项核销，补现行最终授权栅栏与仍缺的实际证据。PGT-021/022 继续同源候选恢复、现行权限、消息对账和独立批准切换。 [W435](../development/evidence/W435-01/DELIVERY.md)
