@@ -161,9 +161,22 @@ def exercise(f, args, old_bundle, old_pin, old_assets, b_original, source_file):
             and f.snapshot_erp('b-after-rollback', b) == b_expected, 'late native rollback changed durable target')
 
     call(f, 'import-discarded', attempt('import-discarded'), discard=True)
+    return verify_committed(f, args, f.output/'boundary-before.stdout', a_expected, b_expected)
+
+
+def verify_committed(f, args, before, a_expected, b_expected):
+    a, b = f.tenants
+    controls = json.loads(before.read_bytes())
+
+    def attempt(label, **kwargs):
+        return replace(args, output=f.output / label, **kwargs)
+
     receipt = call(f, 'recover-original', attempt('recover-original', action='recover'))
     replay = call(f, 'same-key', attempt('same-key'))
-    actual = f.sql('persisted-receipt', f'SELECT result_json FROM {importer.RECEIPTS}.receipt;')
+    # Hex separates psql's platform-specific row terminator from the stored receipt bytes.
+    encoded = f.sql('persisted-receipt-hex',
+                    f"SELECT encode(convert_to(result_json,'UTF8'),'hex') FROM {importer.RECEIPTS}.receipt;")
+    actual = bytes.fromhex(encoded.decode('ascii'))
     require(receipt == replay == actual, 'original durable receipt bytes differ')
     value = json.loads(receipt)
     require(value['profile'] == importer.PROFILE and value['outcome'] == 'IMPORTED' and value['recoveryReady'] is False
@@ -180,7 +193,7 @@ def exercise(f, args, old_bundle, old_pin, old_assets, b_original, source_file):
                         statement=f'SELECT nextval({Q(importer.SEQUENCE)}::regclass);')
     require(actual_next.strip() == b'11', 'real generator did not advance beyond both tenants')
     return dict(target=f.target.mapping(), pin=args.manifest_sha256, receipt=archive.file_digest(f.output/'recover-original.stdout'),
-                boundaryBefore=archive.file_digest(f.output/'boundary-before.stdout'), nextValue=11, recoveryReady=False)
+                boundaryBefore=archive.file_digest(before), nextValue=11, recoveryReady=False)
 
 
 def parser():
@@ -194,13 +207,18 @@ def parser():
     return cli
 
 
-def verify(options):
+def verify(options, committed_from=None):
     archive.private_directory(options.output)
     physical = archive.PhysicalTarget.from_mapping(json.loads(options.target_file.read_bytes()))
     f = Fixture(options, physical, options.output)
     args = Inputs(options.pg_bin, options.target_file, options.username, str(options.tenant_a), options.candidate_id,
                   options.manifest_sha256, options.bundle, options.file_content_root, options.output/'import')
-    result = exercise(f, args, options.old_bundle, options.old_pin, options.old_assets, options.b_original, options.source_file)
+    if committed_from is None:
+        result = exercise(f, args, options.old_bundle, options.old_pin, options.old_assets, options.b_original, options.source_file)
+    else:
+        a, b = f.tenants
+        result = verify_committed(f, args, committed_from/'boundary-before.stdout', protected_expected(args.bundle, a, ''),
+                                  protected_expected(options.b_original, b, 'native-b-'))
     save(f.output / 'actual.json', result)
     print(json.dumps(result, indent=2), flush=True)
     return result
