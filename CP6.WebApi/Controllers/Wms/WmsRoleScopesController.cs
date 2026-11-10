@@ -1,4 +1,6 @@
 using CP6.Core.Auth;
+using CP6.Core.Services.Erp;
+using CP6.WebApi.Controllers.Erp;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CP6.WebApi.Controllers.Sys;
 
 [ApiController]
+[OrderOwnerResult]
 [Route("api/v2/admin/wms-role-scopes")]
 [Authorize]
 public sealed class WmsRoleScopesController(IWmsRoleScopeService service)
@@ -47,7 +50,7 @@ public sealed class WmsRoleScopesController(IWmsRoleScopeService service)
         {
             return BadRequest(Error(ex.Message));
         }
-        catch (InvalidOperationException ex)
+        catch (InvalidOperationException ex) when (ex is not OrderPriceCorrectionException)
         {
             return Conflict(Error(ex.Message));
         }
