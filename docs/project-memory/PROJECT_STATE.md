@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC 功能变更申请当前授权与流程父事务
+
+既有功能变更申请Get/Submit/Cancel采用当前wms-mobile:device-manage及实际签名会话，同Context认证父事务拥有申请和实际OA/WF提交/撤回，故障回滚清理跟踪、无孤立申请；按当前仓库和绑定/定义引用决定，保留原OperationId历史回放、保留天数/证据/版本校验及内部审批回调，旧办理410保持。 实际Main/PostgreSQL12项和既有兼容5项通过，零跳过，身份/业务/旧流程定义为明确模拟输入。原375项仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PostgreSQL16 PASS/11 NOT_RUN，48小时172800秒。 [W451交付](../development/evidence/BUG-903-WMS-FEATURE-REQUEST-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 仓库角色范围当前授权与引用事务
 
 既有仓库角色范围Get/Replace采用当前pub-data-scope query/edit及实际签名会话；共同认证根后锁定范围与角色/仓库/区域引用，替换及失败清理同父事务，晚期故障不被日志重刷；并发替换保存整组结果，实际托盘HTTP采用撤销旧仓库/授予新仓库；范围引用由逐项查询改为至多两次集中查询，200项合法输入实际通过，保留规范化、通配符、清空、200上限及角色1语义，无新权限点。 实际Main/PostgreSQL11项及相关兼容2项通过，零跳过；权限/角色/仓库/托盘业务输入明确构造。原375项仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PostgreSQL16 PASS/11 NOT_RUN，48小时预算172800秒。 [W450交付](../development/evidence/BUG-901-WMS-ROLE-SCOPE-FENCE/DELIVERY.md)

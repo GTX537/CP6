@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Wms;
 
-public sealed class WmsFeatureFlagChangeService : IWmsFeatureFlagChangeService
+public sealed partial class WmsFeatureFlagChangeService : IWmsFeatureFlagChangeService
 {
     public const string ApprovalBizType = "WMS_FEATURE_FLAG_CHANGE";
 
@@ -23,7 +23,7 @@ public sealed class WmsFeatureFlagChangeService : IWmsFeatureFlagChangeService
         _taskCenter = taskCenter;
     }
 
-    public async Task<WmsFeatureFlagChangeDto> SubmitAsync(
+    private async Task<WmsFeatureFlagChangeDto> SubmitCoreAsync(
         CreateWmsFeatureFlagChangeRequest request,
         Guid requestedById,
         string? requestedBy,
@@ -113,7 +113,7 @@ public sealed class WmsFeatureFlagChangeService : IWmsFeatureFlagChangeService
         return Map(row);
     }
 
-    public async Task<IReadOnlyList<WmsFeatureFlagChangeDto>> GetAsync(
+    private async Task<IReadOnlyList<WmsFeatureFlagChangeDto>> GetCoreAsync(
         WmsFeatureFlagChangeQuery query,
         CancellationToken ct = default)
     {
@@ -133,7 +133,7 @@ public sealed class WmsFeatureFlagChangeService : IWmsFeatureFlagChangeService
         return materialized.Select(Map).ToList();
     }
 
-    public async Task CancelAsync(
+    private async Task CancelCoreAsync(
         Guid id,
         Guid requestedById,
         string? requestedBy,

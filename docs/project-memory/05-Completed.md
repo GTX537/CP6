@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-10 UTC 功能变更申请当前授权与流程父事务
+
+既有功能变更申请Get/Submit/Cancel采用当前wms-mobile:device-manage及实际签名会话，同Context认证父事务拥有申请和实际OA/WF提交/撤回，故障回滚清理跟踪、无孤立申请；按当前仓库和绑定/定义引用决定，保留原OperationId历史回放、保留天数/证据/版本校验及内部审批回调，旧办理410保持。 W450通过#902进入远端main，WP02-03交付核销，分支准确删除且DEV-2干净释放后复用。本窗远端采用和席位最终处置以PR/finish为准。 [W451交付](../development/evidence/BUG-903-WMS-FEATURE-REQUEST-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 仓库角色范围当前授权与引用事务
 
 既有仓库角色范围Get/Replace采用当前pub-data-scope query/edit及实际签名会话；共同认证根后锁定范围与角色/仓库/区域引用，替换及失败清理同父事务，晚期故障不被日志重刷；并发替换保存整组结果，实际托盘HTTP采用撤销旧仓库/授予新仓库；范围引用由逐项查询改为至多两次集中查询，200项合法输入实际通过，保留规范化、通配符、清空、200上限及角色1语义，无新权限点。 W449已经#900进入远端main，WP02-03/WP10-35两处交付一致核销；任务分支准确删除且DEV-2干净释放后复用。本窗远端采用及席位最终处置以PR/finish为准。 [W450交付](../development/evidence/BUG-901-WMS-ROLE-SCOPE-FENCE/DELIVERY.md)

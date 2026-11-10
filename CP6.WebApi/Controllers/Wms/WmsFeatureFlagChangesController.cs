@@ -1,3 +1,4 @@
+using CP6.WebApi.Controllers.Erp;
 using CP6.Core.Auth;
 using CP6.Core.Services.Sys;
 using CP6.Core.Services.Wms;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace CP6.WebApi.Controllers.Wms;
 
 [ApiController]
+[OrderOwnerResult]
 [Route("api/v2/admin/wms-feature-changes")]
 [Authorize]
 public sealed class WmsFeatureFlagChangesController : ControllerBase
