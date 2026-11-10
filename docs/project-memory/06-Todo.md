@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC 卷材当前授权与分切原子性
+
+继续原WP02-03/CTX02-A4/A7其余query/write/export/download和字段V1来源采用；WP10-33/34的真实IN/Root、批准stockToGeometryMap/profile、RollCompositionBridge-1和真实废边/Stock组成尚未实现/采用，可按同一完整合同使用明确模拟业务/服务验收，PGT-017仍NOT_RUN。 旧卷材数据及阈值/手工状态不产生Stock或真实废边资格；当前view须经既有IAM显式分配。 [W448交付](../development/evidence/BUG-897-PAPER-ROLL-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 承运元数据当前授权与并发追加
 
 继续原WP02-03/CTX02-A4/A7其余query/write/export/download及字段V1真实来源采用；WP10-52的销售SourceBinding、承运Attempt/Observation、逐行POD/不可变Fact、连续Proof、F0及财务原结果/Outbox同事务尚未实现/采用，可按同一完整合同使用明确模拟业务/服务验收，PGT-017仍NOT_RUN。 当前view须经既有IAM显式分配；原有版本检查保持，手工承运事件不具有POD或外部承运来源资格。 [W447交付](../development/evidence/BUG-895-CARRIER-LIFECYCLE-FENCE/DELIVERY.md)
