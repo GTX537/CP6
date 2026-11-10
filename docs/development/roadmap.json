@@ -163887,6 +163887,11 @@
       "at": "2026-11-10T07:10:30.275940+00:00",
       "change": "W438 修复 LPN 装箱/拆箱/拆分/合并及回放当前授权，核销 W437 远端采用及释放，保存 28 小时实测校准。",
       "evidence": "docs/development/evidence/BUG-877-LPN-TREE-FENCE/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-10T07:39:16.306871+00:00",
+      "change": "W439 修复 LPN Move 的库存父事务组合及当前授权，核销 W438 远端采用和席位释放，记录实际工时校准。",
+      "evidence": "docs/development/evidence/BUG-879-LPN-MOVE-COMPOSITION/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -174296,9 +174301,9 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-03",
-        "delivered": "当前IAM/CAS、撤权共同门、对象/字段和多类Owner动作，以及本轮隐私/FORM最终授权已采用。 W435 实际版本化租户暂停与普通 Stock V1 调整共享 PostgreSQL 认证根，两种真实提交顺序、已提交原写集和暂停后的旧会话拒绝通过。 W436 LPN 混装策略通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，策略原行逐字节保持。 W437 LPN 创建与回放通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，LPN、闭包、事件和回执原行逐字节保持。 W438 装箱、拆箱、拆分、合并及回放接入既有 Owner 当前授权事务；四条真实 HTTP/PostgreSQL 路径均复现旧请求在暂停后写入，修复后 401 REAUTH_REQUIRED、九类原行逐字节保持，正常树变化、序列号、精确数量、回放和原业务错误通过。",
+        "delivered": "当前IAM/CAS、撤权共同门、对象/字段和多类Owner动作，以及本轮隐私/FORM最终授权已采用。 W435 实际版本化租户暂停与普通 Stock V1 调整共享 PostgreSQL 认证根，两种真实提交顺序、已提交原写集和暂停后的旧会话拒绝通过。 W436 LPN 混装策略通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，策略原行逐字节保持。 W437 LPN 创建与回放通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，LPN、闭包、事件和回执原行逐字节保持。 W438 装箱、拆箱、拆分、合并及回放接入既有 Owner 当前授权事务；四条真实 HTTP/PostgreSQL 路径均复现旧请求在暂停后写入，修复后 401 REAUTH_REQUIRED、九类原行逐字节保持，正常树变化、序列号、精确数量、回放和原业务错误通过。 W439 LPN Move 在既有 Mobile Owner 中组合库存父事务原语；真实非空树由原 HTTP 500 恢复完整原子移动，保留八位数量、货主估值质量和四腿实际部门继承。空/非空树均在暂停先提交后 401、十三类原行保持，晚期回执故障完整回滚，范围、回放和原错误协议通过。",
         "remaining": "全字段注册表与全部现存query/write/export/download写者尚未完成覆盖核销。",
-        "next_action": "继续原 WP02-03 / CTX02-A4/A7，处理 LPN Move 与库存 Owner 组合及其他实际写者/撤权入口；PGT-017 保持 NOT_RUN，直至完整采用和验收。",
+        "next_action": "继续原 WP02-03 / CTX02-A4/A7，核对并修复 ClientDevice、序列号等剩余实际写者与撤权入口；PGT-017 直至全体相关写者完成采用和验收前保持 NOT_RUN。",
         "evidence_refs": [
           "docs/development/evidence/WP02-03/field-decisions/DELIVERY.md",
           "docs/development/evidence/WP02-03/current-permission-consumption/DELIVERY.md",
@@ -174347,11 +174352,12 @@
           "docs/development/evidence/W435-01/DELIVERY.md",
           "docs/development/evidence/BUG-873-LPN-POLICY-FENCE/DELIVERY.md",
           "docs/development/evidence/BUG-875-LPN-CREATE-FENCE/DELIVERY.md",
-          "docs/development/evidence/BUG-877-LPN-TREE-FENCE/DELIVERY.md"
+          "docs/development/evidence/BUG-877-LPN-TREE-FENCE/DELIVERY.md",
+          "docs/development/evidence/BUG-879-LPN-MOVE-COMPOSITION/DELIVERY.md"
         ],
         "formal_state_changed": false,
         "new_product_validation": true,
-        "latest_window": "W438-01"
+        "latest_window": "W439-01"
       },
       "wave435_delivery": {
         "status": "CLOSED",
@@ -174415,12 +174421,32 @@
         "seat_released": true
       },
       "wave438_delivery": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/BUG-877-LPN-TREE-FENCE/DELIVERY.md",
         "validation": "装箱、拆箱、拆分、合并及回放接入既有 Owner 当前授权事务；四条真实 HTTP/PostgreSQL 路径均复现旧请求在暂停后写入，修复后 401 REAUTH_REQUIRED、九类原行逐字节保持，正常树变化、序列号、精确数量、回放和原业务错误通过。",
         "tested_baseline": "185ed051524f8ca9b9127779ec3450f428128e57",
         "issue": "https://github.com/GTX537/CP6/issues/877",
         "actual_result_sha256": "b2d910caa08a97518be3ca952cd66d6b243a6b57dce74f432fd66660c3d02d22",
+        "formal_case": "PGT-017",
+        "formal_acceptance": "NOT_RUN",
+        "full_task_complete": false,
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/878",
+          "commit": "495fd8e30d5e15cb460c73dee3be24f36adf640b",
+          "target_head": "495fd8e30d5e15cb460c73dee3be24f36adf640b"
+        },
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse",
+        "seat_released": true
+      },
+      "wave439_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/BUG-879-LPN-MOVE-COMPOSITION/DELIVERY.md",
+        "validation": "LPN Move 在既有 Mobile Owner 中组合库存父事务原语；真实非空树由原 HTTP 500 恢复完整原子移动，保留八位数量、货主估值质量和四腿实际部门继承。空/非空树均在暂停先提交后 401、十三类原行保持，晚期回执故障完整回滚，范围、回放和原错误协议通过。",
+        "tested_baseline": "495fd8e30d5e15cb460c73dee3be24f36adf640b",
+        "issue": "https://github.com/GTX537/CP6/issues/879",
+        "actual_result_sha256": "36610f41b8ded08c99989a12da03fb4098cb0b120dca97eb5cba5983c0b1ba7b",
         "formal_case": "PGT-017",
         "formal_acceptance": "NOT_RUN",
         "full_task_complete": false
@@ -208334,10 +208360,10 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W438",
-      "path": "docs/development/evidence/BUG-877-LPN-TREE-FENCE/DELIVERY.md",
-      "baseline_sha": "185ed051524f8ca9b9127779ec3450f428128e57",
-      "registered_at": "2026-11-10T06:55:46.721177+00:00",
+      "id": "W439",
+      "path": "docs/development/evidence/BUG-879-LPN-MOVE-COMPOSITION/DELIVERY.md",
+      "baseline_sha": "495fd8e30d5e15cb460c73dee3be24f36adf640b",
+      "registered_at": "2026-11-10T07:16:56.062930+00:00",
       "phase": "VALIDATED_PENDING_REMOTE",
       "assigned_chats": [
         "COORD"
@@ -208352,34 +208378,35 @@
       "workers_started": true,
       "windows_closed": false,
       "product_integrated": false,
-      "next_action": "继续原 WP02-03 / CTX02-A4/A7，处理 LPN Move 与库存 Owner 组合及其他实际写者/撤权入口；PGT-017 保持 NOT_RUN，直至完整采用和验收。",
+      "next_action": "继续原 WP02-03 / CTX02-A4/A7，核对并修复 ClientDevice、序列号等剩余实际写者与撤权入口；PGT-017 直至全体相关写者完成采用和验收前保持 NOT_RUN。",
       "windows": [
         {
-          "id": "W438-01",
-          "workspace_task": "BUG-877-LPN-TREE-FENCE",
+          "id": "W439-01",
+          "workspace_task": "BUG-879-LPN-MOVE-COMPOSITION",
           "related_tasks": [
             "WP02-03"
           ],
-          "title": "LPN 树和内容命令当前授权事务",
+          "title": "LPN Move 与库存父事务当前授权",
           "chat": "COORD",
           "mode": "SINGLE_CHAT_SERIAL",
           "phase": "VALIDATED_PENDING_REMOTE",
           "gate": "CONFIRMED",
           "worker_start_received": true,
           "worktree": "D:/CP6-worktrees/dev-2",
-          "branch": "codex/bug-877-lpn-tree-fence",
-          "planned_scope_ref": "docs/development/evidence/BUG-877-LPN-TREE-FENCE/DELIVERY.md",
+          "branch": "codex/bug-879-lpn-move-composition",
+          "planned_scope_ref": "docs/development/evidence/BUG-879-LPN-MOVE-COMPOSITION/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "file:Main:CP6.Tests/Erp/LpnTreePausePostgreSqlTests.cs",
+            "file:Main:CP6.Tests/Erp/LpnMovePostgreSqlTests.cs",
             "file:Main:CP6.Core/Services/Wms/LpnService.cs",
-            "file:Main:CP6.WebApi/Controllers/Wms/LpnsController.cs"
+            "file:Main:CP6.WebApi/Controllers/Wms/LpnsController.cs",
+            "file:Main:CP6.Core/Services/Wms/StockMovementService.Owner.cs"
           ],
           "worker_delivery_received": true,
           "candidate_review_completed": true,
-          "delivery_report": "docs/development/evidence/BUG-877-LPN-TREE-FENCE/DELIVERY.md"
+          "delivery_report": "docs/development/evidence/BUG-879-LPN-MOVE-COMPOSITION/DELIVERY.md"
         }
       ],
       "storage": {
@@ -253176,6 +253203,69 @@
           "reuse_worktree": "D:/CP6-worktrees/dev-2",
           "new_worktrees": 0
         }
+      },
+      {
+        "id": "W438",
+        "path": "docs/development/evidence/BUG-877-LPN-TREE-FENCE/DELIVERY.md",
+        "baseline_sha": "185ed051524f8ca9b9127779ec3450f428128e57",
+        "registered_at": "2026-11-10T06:55:46.721177+00:00",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "COORD"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "next_action": "继续原 WP02-03 / CTX02-A4/A7，处理 LPN Move 与库存 Owner 组合及其他实际写者/撤权入口；PGT-017 保持 NOT_RUN，直至完整采用和验收。",
+        "windows": [
+          {
+            "id": "W438-01",
+            "workspace_task": "BUG-877-LPN-TREE-FENCE",
+            "related_tasks": [
+              "WP02-03"
+            ],
+            "title": "LPN 树和内容命令当前授权事务",
+            "chat": "COORD",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/dev-2",
+            "branch": "codex/bug-877-lpn-tree-fence",
+            "planned_scope_ref": "docs/development/evidence/BUG-877-LPN-TREE-FENCE/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "file:Main:CP6.Tests/Erp/LpnTreePausePostgreSqlTests.cs",
+              "file:Main:CP6.Core/Services/Wms/LpnService.cs",
+              "file:Main:CP6.WebApi/Controllers/Wms/LpnsController.cs"
+            ],
+            "worker_delivery_received": true,
+            "candidate_review_completed": true,
+            "delivery_report": "docs/development/evidence/BUG-877-LPN-TREE-FENCE/DELIVERY.md",
+            "adoption": {
+              "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+              "pr": "https://github.com/GTX537/CP6/pull/878",
+              "commit": "495fd8e30d5e15cb460c73dee3be24f36adf640b",
+              "target_head": "495fd8e30d5e15cb460c73dee3be24f36adf640b"
+            },
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse",
+            "seat_released": true
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:/CP6-worktrees/dev-2",
+          "new_worktrees": 0
+        }
       }
     ],
     "development_priority": {
@@ -256130,10 +256220,18 @@
           "remaining_seconds": 71885,
           "raw": "D:/CP6-local-test/CP6-72H-20261109/seventh-28h-calibration.json",
           "raw_sha256": "27e2ae0ead2492930b4a0664031160b993b71f74628c3a856a37b0199239a4e5"
+        },
+        "w438_adopted": {
+          "native_elapsed_seconds": 101987,
+          "native_sample_utc": "2026-11-10T07:13:25+00:00",
+          "capacity_seconds": 172800,
+          "native_status": "active",
+          "raw": "D:/CP6-local-test/CP6-72H-20261109/after-w438-adoption-calibration.json",
+          "raw_sha256": "6c72a2c0c398152a80f57336280687dadc5316729d0805164baffa7b78d01d7a"
         }
       },
       "timing_basis": "Native goal plus independently sampled monotonic segments for confirmed missing time, with exclusions and no overlap.",
-      "next_priority": "继续原 WP02-03 / CTX02-A4/A7，处理 LPN Move 与库存 Owner 组合及其他实际写者/撤权入口；PGT-017 保持 NOT_RUN，直至完整采用和验收。",
+      "next_priority": "继续原 WP02-03 / CTX02-A4/A7，核对并修复 ClientDevice、序列号等剩余实际写者与撤权入口；PGT-017 直至全体相关写者完成采用和验收前保持 NOT_RUN。",
       "windows": [
         {
           "id": "W327-01",
@@ -258582,7 +258680,7 @@
         {
           "id": "W438-01",
           "workspace_task": "BUG-877-LPN-TREE-FENCE",
-          "state": "VALIDATED_PENDING_REMOTE",
+          "state": "CLOSED",
           "related_tasks": [
             "WP02-03"
           ],
@@ -258599,6 +258697,35 @@
           "dispatch": "docs/development/evidence/BUG-877-LPN-TREE-FENCE/DELIVERY.md",
           "issue": "https://github.com/GTX537/CP6/issues/877",
           "hosted_seconds": 103.57800000021234,
+          "formal_acceptance": "NOT_RUN",
+          "finished_at": "2026-11-10T07:13:45.990740+00:00",
+          "final_lease_seconds": 1079.269563,
+          "pr": "https://github.com/GTX537/CP6/pull/878",
+          "adopted_main": "495fd8e30d5e15cb460c73dee3be24f36adf640b",
+          "branch_disposition": "deleted-local-and-remote",
+          "workspace_status": "fixed-seat-detached-for-reuse",
+          "seat_released": true
+        },
+        {
+          "id": "W439-01",
+          "workspace_task": "BUG-879-LPN-MOVE-COMPOSITION",
+          "state": "VALIDATED_PENDING_REMOTE",
+          "related_tasks": [
+            "WP02-03"
+          ],
+          "started_at": "2026-11-10T07:16:56.062930+00:00",
+          "validation_ready_at": "2026-11-10T07:39:16.306871+00:00",
+          "estimate_minutes": [
+            30,
+            50
+          ],
+          "branch": "codex/bug-879-lpn-move-composition",
+          "tested_baseline": "495fd8e30d5e15cb460c73dee3be24f36adf640b",
+          "scope": "LPN Move 在既有 Mobile Owner 中组合库存父事务原语；真实非空树由原 HTTP 500 恢复完整原子移动，保留八位数量、货主估值质量和四腿实际部门继承。空/非空树均在暂停先提交后 401、十三类原行保持，晚期回执故障完整回滚，范围、回放和原错误协议通过。",
+          "delivery": "docs/development/evidence/BUG-879-LPN-MOVE-COMPOSITION/DELIVERY.md",
+          "dispatch": "docs/development/evidence/BUG-879-LPN-MOVE-COMPOSITION/DELIVERY.md",
+          "issue": "https://github.com/GTX537/CP6/issues/879",
+          "hosted_seconds": 94.875,
           "formal_acceptance": "NOT_RUN"
         }
       ],

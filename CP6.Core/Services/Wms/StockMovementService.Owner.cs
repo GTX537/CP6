@@ -85,6 +85,13 @@ public partial class StockMovementService
         if(request.RelatedType=="STOCKTAKE")throw new OrderPriceCorrectionException("INTERNAL_STOCK_CAPABILITY_REQUIRED",403);
         return ApplyInternalAsync(request,false,ct);
     }
+    // An audited parent owns authorization, object checks, commit and external effects.
+    internal async Task<(string OutTxnNo,string InTxnNo)> MoveWithinOwnerAsync(
+        StockMoveRequest request,OperationsAccessV1 access,CancellationToken ct)
+    {
+        using var inheritance=InheritTransactions(access);
+        return await MoveCoreAsync(request,ct);
+    }
     private void RequireParentTransaction()
     {
         if(!_db.Database.IsNpgsql() || _db.Database.CurrentTransaction==null || !Owns(_db))

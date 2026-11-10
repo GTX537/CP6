@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC LPN Move 库存事务组合
+
+继续原 WP02-03 / CTX02-A4/A7，核对并修复 ClientDevice、序列号等剩余实际写者与撤权入口；PGT-017 直至全体相关写者完成采用和验收前保持 NOT_RUN。 PGT-021/022 继续同源恢复、当前权限、消息对账和独立批准切换。[W439 交付](../development/evidence/BUG-879-LPN-MOVE-COMPOSITION/DELIVERY.md)
+
 ## 2026-11-10 UTC LPN 树和内容命令当前授权
 
 继续原 WP02-03 / CTX02-A4/A7，处理 LPN Move 与库存 Owner 组合及其他实际写者/撤权入口；PGT-017 保持 NOT_RUN，直至完整采用和验收。 PGT-021/022 继续同源恢复、当前权限、消息对账和独立批准切换。[W438 交付](../development/evidence/BUG-877-LPN-TREE-FENCE/DELIVERY.md)

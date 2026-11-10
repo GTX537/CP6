@@ -60,6 +60,7 @@ public sealed class LpnsController : ControllerBase
 
     [HttpPost("{lpnNo}/move")]
     [RequirePermission("wms-mobile", "lpn-manage")]
+    [OrderOwnerResult]
     public Task<ActionResult<LogisticsUnitDto>> Move(
         string lpnNo, MoveLpnRequest request, CancellationToken ct)
         => Execute(() => _service.MoveAsync(lpnNo, request, User.Identity?.Name, ct));
