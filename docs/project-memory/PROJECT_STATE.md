@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC 字段审计摘要当前查询
+
+现存字段审计摘要列表采用同Context当前sys-field-audit query与实际签名会话，认证根先于实际Sys_FieldAuditLogs SHARE，Count/分页与最终会话/取消处同父事务；完整原筛选、1..200分页约束、双键排序和摘要解析保持，原record业务Owner/映射/安全投影/游标不变。 5项实际Main/PostgreSQL通过、零跳过，模拟审计/身份/原生控制输入，实际服务/签名/数据库执行。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN，172800秒与实际40h144047/下一158400保持。 [W454交付](../development/evidence/BUG-909-FIELD-AUDIT-LIST-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 操作日志当前授权与清理父事务
 
 现存业务操作日志Get/Clear在PostgreSQL采用同Context当前query/delete及签名会话，共同认证根先于实际Sys_OperLogs读取/清理锁，计数/分页与清理处同父事务，最终会话/取消及明确故障/未知处理；原关键词、分页、排序、返回实体/total/count及租户过滤保持，历史非PostgreSQL完整路径与构造器保留。 7项实际Main/PostgreSQL通过、零跳过。模拟日志和身份/控制输入，真实宿主/认证/SQL执行；未清理用户环境日志。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN，预算172800秒，40h实采144047/下一158400保持。 [W453交付](../development/evidence/BUG-907-OPERLOG-AUTHORITY-FENCE/DELIVERY.md)

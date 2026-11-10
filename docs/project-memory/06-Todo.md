@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC 字段审计摘要当前查询
+
+继续WP02-03其余query/write/export/download和字段V1真实来源；摘要当前授权不完成W64所留完整列表资源/PII、原子审计写入、导出/hold/引用图/保留清理，也不扩大record实体支持；完整字段V1/PGT-017/负载/全Main/跨仓及WMS-CTRL R3仍未验收。 摘要不得返回原Changes，UNREADABLE的changeCount仍null；实际审计表无软删除字段，不增这一过滤。 [W454交付](../development/evidence/BUG-909-FIELD-AUDIT-LIST-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 操作日志当前授权与清理父事务
 
 继续WP02-03其余query/write/export/download和字段V1真实来源；字段审计record已有业务Owner，不因列表仍直接查询而重复实现record；系统日志当前授权不替代完整字段V1、负载/全Main/跨仓和PGT-017验收，完整WMS-CTRL R3审批/Drain/应用仍未采用。 本窗只涉及系统业务操作日志，权限/租户拒绝与原模拟行保持按实际证据记录。 [W453交付](../development/evidence/BUG-907-OPERLOG-AUTHORITY-FENCE/DELIVERY.md)

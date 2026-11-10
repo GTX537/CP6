@@ -1031,6 +1031,14 @@ builder.Services.AddScoped<CP6.Core.Services.Sys.OperationLogOwnerV1>(sp =>
         http == null ? null : CP6.WebApi.Services.TenantAdministrationHttpV1.Session(http, sp),
         http?.RequestAborted ?? CancellationToken.None);
 });
+builder.Services.AddScoped<CP6.Core.Services.Sys.FieldAuditListOwnerV1>(sp =>
+{
+    var http = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
+    return new CP6.Core.Services.Sys.FieldAuditListOwnerV1(sp.GetRequiredService<CP6.Core.EFDbContext.CP6Context>(),
+        sp.GetRequiredService<CP6.Core.Services.Sys.IamAdministrationV1>(),
+        http == null ? null : CP6.WebApi.Services.TenantAdministrationHttpV1.Session(http, sp),
+        http?.RequestAborted ?? CancellationToken.None);
+});
 builder.Services.AddScoped<CP6.Core.Services.Sys.FieldAuditReadOwnerV1>();
 builder.Services.AddScoped<ICreditNoteService, CreditNoteService>();
 builder.Services.AddScoped<IBridgeHealthService, BridgeHealthService>();
