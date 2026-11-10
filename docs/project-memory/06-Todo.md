@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC 站点与楼层当前写入及父项决定
+
+继续WP02-03其他实际查询、写入、导出与下载及字段V1真实来源；站点/楼层本窗不采用其余层级、发布、Stock、schema、完整PGT-017或跨仓验收。 楼层编辑保持原站点；启用状态不充当父项存在资格，实际未删除、当前租户有效行即可。 [W457交付](../development/evidence/BUG-915-SPACE-SITE-FLOOR-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 空间编码规则当前写入与两阶段重建
 
 继续WP02-03其余实际query/write/export/download及字段V1真实来源；空间编码旧接口保持原业务范围，不替代新版LocationDraft/发布、Stock或租户schema采用。完整字段V1/PGT-017/负载/全Main/跨仓及WMS-CTRL R3仍未验收。 不将旧空间编码范围解释为新版草稿/物理发布结果；原列表/合成预览/预检保持既有登录读取。 [W456交付](../development/evidence/BUG-913-SPACE-CODE-WRITE-FENCE/DELIVERY.md)

@@ -1188,7 +1188,16 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.IReportCenterService, CP6.Core.
 // 4.x Space 空间数字底座 P1（ch00）
 // ITenantContext / TenantMiddleware 已全局注册（S 类合规），Space 不再注册任何租户上下文。
 builder.Services.AddScoped<CP6.Core.Services.Space.LocationGeometryService>();
-builder.Services.AddScoped<CP6.Core.Services.Space.ISpaceMasterService, CP6.Core.Services.Space.SpaceMasterService>();
+builder.Services.AddScoped<CP6.Core.Services.Space.ISpaceMasterService>(sp =>
+{
+    var http = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
+    return new CP6.Core.Services.Space.SpaceMasterService(sp.GetRequiredService<CP6.Core.EFDbContext.CP6Context>(),
+        sp.GetRequiredService<CP6.Core.Services.Space.LocationGeometryService>(),
+        sp.GetRequiredService<CP6.Core.Services.Space.ILocationPublishService>(),
+        sp.GetRequiredService<CP6.Core.Services.Sys.IamAdministrationV1>(),
+        http == null ? null : CP6.WebApi.Services.TenantAdministrationHttpV1.Session(http, sp),
+        http?.RequestAborted ?? CancellationToken.None);
+});
 builder.Services.AddScoped<CP6.Core.Services.Space.ISpaceAnalyticsService, CP6.Core.Services.Space.SpaceAnalyticsService>();
 builder.Services.AddScoped<CP6.Core.Services.Space.ICodeEngineService>(sp =>
 {
