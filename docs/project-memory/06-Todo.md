@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC IoT当前授权与最新记录投影
+
+继续原WP02-03/CTX02-A4/A7其余query/write/export/download和字段V1来源采用；WP10-43完整Source/session、单位/时间政策、REAL-SIM隔离、可信序号/去重、版本化告警与页面尚未实现/采用，可用明确模拟业务/服务按同一合同验收，PGT-017仍NOT_RUN。 当前view须经既有IAM显式分配；旧阈值标志不等于版本化告警，名称或Creator不证明REAL/SIM模式。 [W446交付](../development/evidence/BUG-893-IOT-OBSERVATION-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC WCS手工任务当前授权与编号事务
 
 继续原WP02-03/CTX02-A4/A7的其余query/write/export/download和字段V1真实来源采用；原WP10-42的稳定TaskIntent、OEM原回执/原键恢复、模式隔离及源Owner应用尚待实现，按同一合同使用明确模拟数据/服务验收，PGT-017仍NOT_RUN。 旧WCS元数据不能作REAL/OEM或完整新版模拟隔离采用证明；当前view须经既有IAM显式分配。 [W445 交付](../development/evidence/BUG-891-WCS-TASK-FENCE/DELIVERY.md)

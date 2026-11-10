@@ -1,23 +1,21 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Erp;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Wms;
 
-public class IotService : IIotService
+public partial class IotService : IIotService
 {
     private readonly CP6Context _db;
     private readonly IWmsSequenceService _seq;
     private const string Prefix = "SEN";
 
-    public IotService(CP6Context db, IWmsSequenceService seq)
-    {
-        _db = db; _seq = seq;
-    }
+    public IotService(CP6Context db, IWmsSequenceService seq) : this(db, seq, null, null) { }
 
     // ═════════ センサマスタ ═════════
 
-    public async Task<List<IotSensor>> SearchSensorsAsync(string? warehouseCd, string? sensorType)
+    private async Task<List<IotSensor>> SearchSensorsCoreAsync(string? warehouseCd, string? sensorType)
     {
         var q = _db.IotSensors.AsNoTracking().Where(x => !x.IsDeleted);
         if (!string.IsNullOrWhiteSpace(warehouseCd)) q = q.Where(x => x.WarehouseCd == warehouseCd);
@@ -25,10 +23,10 @@ public class IotService : IIotService
         return await q.OrderBy(x => x.WarehouseCd).ThenBy(x => x.LocationCd).ToListAsync();
     }
 
-    public async Task<IotSensor?> GetSensorAsync(string sensorId)
+    private async Task<IotSensor?> GetSensorCoreAsync(string sensorId)
         => await _db.IotSensors.AsNoTracking().FirstOrDefaultAsync(x => x.SensorId == sensorId && !x.IsDeleted);
 
-    public async Task<string> CreateSensorAsync(IotSensorDto dto, string? userName)
+    private async Task<string> CreateSensorCoreAsync(IotSensorDto dto, string? userName)
     {
         if (string.IsNullOrWhiteSpace(dto.SensorType) || string.IsNullOrWhiteSpace(dto.WarehouseCd))
             throw new InvalidOperationException("SensorType / WarehouseCd required");
@@ -45,7 +43,7 @@ public class IotService : IIotService
         return id;
     }
 
-    public async Task UpdateSensorAsync(string sensorId, IotSensorDto dto, string? userName)
+    private async Task UpdateSensorCoreAsync(string sensorId, IotSensorDto dto, string? userName)
     {
         var s = await GetSensorTracked(sensorId);
         s.SensorType = dto.SensorType; s.SensorName = dto.SensorName;
@@ -57,7 +55,7 @@ public class IotService : IIotService
         await _db.SaveChangesAsync();
     }
 
-    public async Task DeleteSensorAsync(string sensorId, string? userName)
+    private async Task DeleteSensorCoreAsync(string sensorId, string? userName)
     {
         var s = await GetSensorTracked(sensorId);
         s.IsDeleted = true;
@@ -67,7 +65,7 @@ public class IotService : IIotService
 
     // ═════════ 計測値 ═════════
 
-    public async Task<List<IotSensorReading>> GetReadingsAsync(string sensorId, DateTime? from, DateTime? to, int limit = 200)
+    private async Task<List<IotSensorReading>> GetReadingsCoreAsync(string sensorId, DateTime? from, DateTime? to, int limit = 200)
     {
         var q = _db.IotSensorReadings.AsNoTracking().Where(x => !x.IsDeleted && x.SensorId == sensorId);
         if (from.HasValue) q = q.Where(x => x.ReadAt >= from.Value);
@@ -75,7 +73,7 @@ public class IotService : IIotService
         return await q.OrderByDescending(x => x.ReadAt).Take(Math.Min(limit, 5000)).ToListAsync();
     }
 
-    public async Task PostReadingAsync(string sensorId, decimal value, DateTime? readAt, string? userName)
+    private async Task PostReadingCoreAsync(string sensorId, decimal value, DateTime? readAt, string? userName)
     {
         var sensor = await GetSensorTracked(sensorId);
         var at = readAt ?? DateTime.Now;
@@ -90,43 +88,43 @@ public class IotService : IIotService
             SensorId = sensorId, ReadAt = at, Value = value,
             IsAlert = isAlert, AlertMessage = alertMsg, Creator = userName,
         });
-        sensor.LastValue = value;
-        sensor.LastReadAt = at;
+        await RefreshLatestRecordedAsync(sensor, value, at);
         sensor.Modifier = userName; sensor.ModifyDate = DateTime.Now;
         await _db.SaveChangesAsync();
     }
 
-    public async Task<int> SimulateAsync(int countPerSensor = 1, string? userName = null)
+    private async Task<int> SimulateCoreAsync(int countPerSensor = 1, string? userName = null)
     {
-        var sensors = await _db.IotSensors.Where(x => !x.IsDeleted && x.IsEnabled).ToListAsync();
-        if (sensors.Count == 0) return 0;
-        var rnd = new Random();
-        var added = 0;
-        foreach (var s in sensors)
+        if (countPerSensor is < 1 or > 100)
+            throw new OrderPriceCorrectionException("IOT_SIMULATION_LIMIT", 400);
+        var sensors = await _db.IotSensors.Where(x => !x.IsDeleted && x.IsEnabled).Take(101).ToListAsync();
+        if (sensors.Count > 100) throw new OrderPriceCorrectionException("IOT_SIMULATION_LIMIT", 400);
+        // Resolve the whole requested generator set before staging any observations.
+        var plans = sensors.Select(sensor => (Sensor: sensor, Generate: ResolveSimulator(sensor.SensorType))).ToArray();
+        var rnd = new Random(); var added = 0; var batchAt = DateTime.Now;
+        foreach (var plan in plans)
         {
-            for (int i = 0; i < countPerSensor; i++)
+            var sensor = plan.Sensor;
+            for (var i = 0; i < countPerSensor; i++)
             {
-                var v = SimValue(s, rnd);
-                var isAlert = (s.MinThreshold.HasValue && v < s.MinThreshold.Value)
-                           || (s.MaxThreshold.HasValue && v > s.MaxThreshold.Value);
+                var value = plan.Generate(rnd); var at = batchAt.AddSeconds(-i * 5);
+                var isAlert = sensor.MinThreshold.HasValue && value < sensor.MinThreshold.Value
+                    || sensor.MaxThreshold.HasValue && value > sensor.MaxThreshold.Value;
                 _db.IotSensorReadings.Add(new IotSensorReading
                 {
-                    SensorId = s.SensorId,
-                    ReadAt = DateTime.Now.AddSeconds(-i * 5),
-                    Value = v, IsAlert = isAlert,
-                    AlertMessage = isAlert ? $"閾値違反: {v}" : null,
-                    Creator = userName ?? "sim",
+                    SensorId = sensor.SensorId, ReadAt = at, Value = value, IsAlert = isAlert,
+                    AlertMessage = isAlert ? $"\u95be\u5024\u9055\u53cd: {value}" : null, Creator = userName ?? "sim"
                 });
                 added++;
-                s.LastValue = v;
-                s.LastReadAt = DateTime.Now;
+                if (i == 0) await RefreshLatestRecordedAsync(sensor, value, at);
             }
+            sensor.Modifier = userName; sensor.ModifyDate = batchAt;
         }
         await _db.SaveChangesAsync();
         return added;
     }
 
-    public async Task<List<IotAlertDto>> CurrentAlertsAsync()
+    private async Task<List<IotAlertDto>> CurrentAlertsCoreAsync()
     {
         // 各センサの最新読みで IsAlert=true のもの
         var sensors = await _db.IotSensors.AsNoTracking().Where(x => !x.IsDeleted).ToListAsync();
@@ -165,15 +163,23 @@ public class IotService : IIotService
         _ => string.Empty,
     };
 
-    private static decimal SimValue(IotSensor s, Random rnd) => s.SensorType switch
+    private async Task RefreshLatestRecordedAsync(IotSensor sensor, decimal value, DateTime at)
     {
-        // 温度：通常 15-30°C、たまに範囲外
-        IotSensorType.Temperature => Math.Round((decimal)(15 + rnd.NextDouble() * 18), 1),
-        // 湿度：通常 30-70%
-        IotSensorType.Humidity    => Math.Round((decimal)(30 + rnd.NextDouble() * 45), 1),
-        // 衝撃：通常 0-2G、まれに大
-        IotSensorType.Shock       => rnd.Next(0, 100) > 95 ? 5m + (decimal)rnd.NextDouble() * 3m : Math.Round((decimal)(rnd.NextDouble() * 2), 2),
-        IotSensorType.Shelf       => rnd.Next(0, 100) > 50 ? 1m : 0m,
-        _ => 0m,
+        // Existing heads may already be stale. History, rather than that projection, owns the comparison.
+        // Strictly later rows win; equal-time legacy inputs retain their existing arrival behavior.
+        var later = await _db.IotSensorReadings.AsNoTracking()
+            .Where(r => !r.IsDeleted && r.SensorId == sensor.SensorId && r.ReadAt > at)
+            .OrderByDescending(r => r.ReadAt).FirstOrDefaultAsync();
+        sensor.LastValue = later?.Value ?? value;
+        sensor.LastReadAt = later?.ReadAt ?? at;
+    }
+
+    private static Func<Random, decimal> ResolveSimulator(string sensorType) => sensorType switch
+    {
+        IotSensorType.Temperature => rnd => Math.Round((decimal)(15 + rnd.NextDouble() * 18), 1),
+        IotSensorType.Humidity => rnd => Math.Round((decimal)(30 + rnd.NextDouble() * 45), 1),
+        IotSensorType.Shock => rnd => rnd.Next(0, 100) > 95 ? 5m + (decimal)rnd.NextDouble() * 3m : Math.Round((decimal)(rnd.NextDouble() * 2), 2),
+        IotSensorType.Shelf => rnd => rnd.Next(0, 100) > 50 ? 1m : 0m,
+        _ => throw new OrderPriceCorrectionException("IOT_SIMULATOR_UNAVAILABLE", 503)
     };
 }
