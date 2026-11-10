@@ -76,14 +76,21 @@ public sealed class LpnService : ILpnService
         EnsureOperation(request.OperationId);
         ValidateLpn(request.LpnNo, request.ContainerType,
             request.WarehouseCd, request.LocationCd);
+        return await ExecuteCommandAsync((actor, token) => CreateCoreAsync(request, actor, token), userName, ct);
+    }
+
+    private async Task<LogisticsUnitDto> ExecuteCommandAsync(
+        Func<string?, CancellationToken, Task<LogisticsUnitDto>> command,
+        string? userName, CancellationToken ct)
+    {
         if (!_db.Database.IsNpgsql())
-            return await CreateCoreAsync(request, userName, ct);
+            return await command(userName, ct);
         if (_owner == null || !_owner.Owns(_db))
             throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503);
         return await _owner.ExecuteAsync(OperationsOwnerV1.Mobile, "lpn-manage", true,
             async (access, token) =>
             {
-                try { return await CreateCoreAsync(request, access.Actor, token); }
+                try { return await command(access.Actor, token); }
                 // Preserve the existing HTTP business error through the Owner rollback protocol.
                 catch (ArgumentException error) { throw new InvalidOperationException(error.Message, error); }
             }, ct);
@@ -135,6 +142,12 @@ public sealed class LpnService : ILpnService
         CancellationToken ct = default)
     {
         EnsureCommand(request);
+        return await ExecuteCommandAsync((actor, token) => PackCoreAsync(lpnNo, request, actor, token), userName, ct);
+    }
+
+    private async Task<LogisticsUnitDto> PackCoreAsync(
+        string lpnNo, PackLpnRequest request, string? userName, CancellationToken ct)
+    {
         var key = Key(lpnNo);
         var replay = await ReplayAsync(key, request.OperationId, "pack", ct);
         if (replay is not null) return replay;
@@ -225,6 +238,12 @@ public sealed class LpnService : ILpnService
         CancellationToken ct = default)
     {
         EnsureCommand(request);
+        return await ExecuteCommandAsync((actor, token) => UnpackCoreAsync(lpnNo, request, actor, token), userName, ct);
+    }
+
+    private async Task<LogisticsUnitDto> UnpackCoreAsync(
+        string lpnNo, UnpackLpnRequest request, string? userName, CancellationToken ct)
+    {
         var key = Key(lpnNo);
         var replay = await ReplayAsync(key, request.OperationId, "unpack", ct);
         if (replay is not null) return replay;
@@ -366,6 +385,12 @@ public sealed class LpnService : ILpnService
         if (string.IsNullOrWhiteSpace(request.TargetLpnNo)
             || string.IsNullOrWhiteSpace(request.TargetContainerType))
             throw new ArgumentException("WM-LPN-SPLIT-DATA");
+        return await ExecuteCommandAsync((actor, token) => SplitCoreAsync(lpnNo, request, actor, token), userName, ct);
+    }
+
+    private async Task<LogisticsUnitDto> SplitCoreAsync(
+        string lpnNo, SplitLpnRequest request, string? userName, CancellationToken ct)
+    {
         var key = Key(lpnNo);
         var replay = await ReplayAsync(key, request.OperationId, "split", ct);
         if (replay is not null) return replay;
@@ -434,6 +459,12 @@ public sealed class LpnService : ILpnService
         CancellationToken ct = default)
     {
         EnsureCommand(request);
+        return await ExecuteCommandAsync((actor, token) => MergeCoreAsync(lpnNo, request, actor, token), userName, ct);
+    }
+
+    private async Task<LogisticsUnitDto> MergeCoreAsync(
+        string lpnNo, MergeLpnRequest request, string? userName, CancellationToken ct)
+    {
         var key = Key(lpnNo);
         var replay = await ReplayAsync(key, request.OperationId, "merge", ct);
         if (replay is not null) return replay;
