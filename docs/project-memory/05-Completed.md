@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-10 UTC 新租户创建回执接 Core/RMA
+
+同一原创建回执解析实际 TenantId。正确 Owner 以原计划完成首次 Core 初始化，CLI 重放原字节，实际 Draft 写入及重放各保留一份业务和 journal。W434 已随 #868 采用并完成分支与 DEV-1 收尾。[W433](../development/evidence/W433-01/DELIVERY.md) · [W434](https://github.com/GTX537/CP6/pull/868)
+
 ## 2026-11-10 UTC IAM 成员关系角色引用
 
 实际 PostgreSQL 校验角色和用户复合键，原角色停用历史保留。PGT-027 合用同 schema COPY、归属更新与共享引用原生证据。W428 已随 #867 采用并完成分支和 DEV-1 收尾。[W434](../development/evidence/W434-01/DELIVERY.md) · [W428](https://github.com/GTX537/CP6/pull/867)
