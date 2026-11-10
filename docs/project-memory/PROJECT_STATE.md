@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC 字典写入当前授权与提交后缓存失效
+
+现存字典六项写入采用同Context当前dict:add/edit/delete、签名会话和认证根，两张实际全局字典表SREX；查重/查行/级联写入与最终会话同父事务，确认提交后原缓存失效。保持全局共享模型/读取/cache键和既有响应；并发新增同码与编辑撞码明确拒绝。 15项实际Main/PostgreSQL和8项既有InMemory通过，零跳过；模拟字典/身份/故障/缓存输入，实际宿主/认证/数据库/缓存服务。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN，172800秒与实际40h144047/下一158400保持。 [W455交付](../development/evidence/BUG-911-DICT-MUTATION-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 字段审计摘要当前查询
 
 现存字段审计摘要列表采用同Context当前sys-field-audit query与实际签名会话，认证根先于实际Sys_FieldAuditLogs SHARE，Count/分页与最终会话/取消处同父事务；完整原筛选、1..200分页约束、双键排序和摘要解析保持，原record业务Owner/映射/安全投影/游标不变。 5项实际Main/PostgreSQL通过、零跳过，模拟审计/身份/原生控制输入，实际服务/签名/数据库执行。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN，172800秒与实际40h144047/下一158400保持。 [W454交付](../development/evidence/BUG-909-FIELD-AUDIT-LIST-FENCE/DELIVERY.md)

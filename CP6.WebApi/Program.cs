@@ -1023,6 +1023,14 @@ builder.Services.AddScoped(sp => new CP6.Core.Services.Integration.OperationsOwn
     sp.GetRequiredService<IHttpContextAccessor>(), ct => CP6.WebApi.Services.OrderPriceCorrectionAuthenticationV1
         .CurrentActor(sp.GetRequiredService<IHttpContextAccessor>().HttpContext, ct)));
 builder.Services.AddScoped<IUnshippedOrderService, UnshippedOrderService>();
+builder.Services.AddScoped<CP6.Core.Services.Sys.DictionaryMutationOwnerV1>(sp =>
+{
+    var http = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
+    return new CP6.Core.Services.Sys.DictionaryMutationOwnerV1(sp.GetRequiredService<CP6.Core.EFDbContext.CP6Context>(),
+        sp.GetRequiredService<CP6.Core.Services.Sys.IamAdministrationV1>(),
+        http == null ? null : CP6.WebApi.Services.TenantAdministrationHttpV1.Session(http, sp),
+        http?.RequestAborted ?? CancellationToken.None);
+});
 builder.Services.AddScoped<CP6.Core.Services.Sys.OperationLogOwnerV1>(sp =>
 {
     var http = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
