@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-10 UTC 设备生命周期与原生身份
+
+W440 实际复现五类暂停后 HTTP 200 写入、跨宿主重放 200 及范围变更后旧客户端仍 200。最终 10 项真实回归通过、0 跳过，含两个 IAM 兼容场景和已有数据升级；保留各次真实失败。记录 W439 的 1596.34824 秒完整窗口，本窗采用及席位处置以 PR 和 finish 为准。[W440 交付](../development/evidence/BUG-881-DEVICE-LIFECYCLE-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC LPN Move 库存事务组合
 
 W439 实际复现非空树 HTTP 500 和空树 HTTP 200 越过暂停；修复后 2 项完整场景通过、0 跳过，十三类原行保持；记录 W438 的 1079.269563 秒完整窗口和 28 小时校准。本窗采用及席位处置以 PR 和 finish 为准。[W439 交付](../development/evidence/BUG-879-LPN-MOVE-COMPOSITION/DELIVERY.md)

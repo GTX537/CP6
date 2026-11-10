@@ -1177,7 +1177,12 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsRoleScopeService, CP6.Core.
 builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsFeatureFlagChangeService, CP6.Core.Services.Wms.WmsFeatureFlagChangeService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IMobileTaskV2Service, CP6.Core.Services.Wms.MobileTaskV2Service>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IBarcodeAliasService, CP6.Core.Services.Wms.BarcodeAliasService>();
-builder.Services.AddScoped<CP6.Core.Services.Wms.IClientDeviceService, CP6.Core.Services.Wms.ClientDeviceService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IClientDeviceService>(sp => new CP6.Core.Services.Wms.ClientDeviceService(
+    sp.GetRequiredService<CP6Context>(), sp.GetRequiredService<CP6.Core.Services.Common.ITenantContext>(),
+    sp.GetRequiredService<CP6.Core.Services.Sys.IRefreshTokenService>(), sp.GetRequiredService<Microsoft.Extensions.Caching.Distributed.IDistributedCache>(),
+    sp.GetRequiredService<CP6.Core.Services.Sys.IamAdministrationV1>(),
+    sp.GetRequiredService<IHttpContextAccessor>().HttpContext is { } deviceHttp ? CP6.WebApi.Services.TenantAdministrationHttpV1.Session(deviceHttp, sp) : null,
+    sp.GetRequiredService<CP6.Core.Services.Sys.IPasswordHasher>()));
 builder.Services.AddScoped<CP6.Core.Services.Wms.ISerialInventoryService, CP6.Core.Services.Wms.SerialInventoryService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.ILpnService, CP6.Core.Services.Wms.LpnService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IBarcodeProfileService, CP6.Core.Services.Wms.BarcodeProfileService>();
