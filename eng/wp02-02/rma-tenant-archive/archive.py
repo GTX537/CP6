@@ -16,6 +16,7 @@ import os
 from pathlib import Path
 from queue import Empty, Queue
 import re
+import stat
 import subprocess
 import sys
 from threading import Thread
@@ -34,6 +35,7 @@ FLAGS = subprocess.CREATE_NO_WINDOW if WINDOWS else 0
 FORMAT = "cp6-rma-source-archive-v1"
 FORMAT_WITH_JOURNAL = "cp6-rma-source-archive-v2"
 FORMAT_WITH_STOCK_OUTBOX = "cp6-rma-source-archive-v10"
+FORMAT_WITH_FILE_CONTENT_HISTORY = "cp6-rma-source-archive-v11"
 STOCK_MEMBER_PREFIX = "stock-outbox-"
 PROFILE = "rma-application-core-tenant-v1"
 LINEAGE = "rma-application-v1"
@@ -522,6 +524,12 @@ def stock_outbox_module():
     return module
 
 
+def file_content_history_module():
+    # The standalone history command uses these archive primitives.
+    import file_content_history
+    return file_content_history
+
+
 def stock_section(stock, route, collation, tables):
     return dict(format=stock.FORMAT, root=route, databaseCollation=collation, migrations=list(stock.MIGRATIONS),
                 journal=stock.journal_manifest(), tables=tables)
@@ -544,7 +552,9 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
                   include_original_journal=False, include_rma_source=False, include_rma_visibility=False,
                   include_identity_priority=False, include_rma_iam_references=False, file_content_root=None,
                   include_erp_integration=False, include_privacy_evidence=False, include_main_stock_outbox=False,
-                  environ=None, on_snapshot=None):
+                  include_file_content_history=False, environ=None, on_snapshot=None):
+    if include_file_content_history and not include_main_stock_outbox:
+        raise ArchiveError("file-content-history-needs-main-stock-outbox")
     if include_main_stock_outbox and not include_privacy_evidence:
         raise ArchiveError("stock-outbox-needs-privacy-evidence")
     if include_privacy_evidence and not include_erp_integration:
@@ -569,6 +579,9 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
         raise ArchiveError("invalid-backup-username")
     environ = os.environ if environ is None else environ
     output = output.absolute()
+    if include_file_content_history:
+        file_history = file_content_history_module()
+        output = file_history.checked_output(output, file_content_root.resolve(strict=True))
     private_directory(output)
     bundle, logs = output / "bundle", output / "native"
     bundle.mkdir(mode=0o700)
@@ -606,7 +619,10 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
         if include_rma_iam_references:
             iam_rows = iam_v6.rows_sql(tenant, journal_rows, visibility_rows)
             iam_counts = iam_v6.capture_counts(query, iam_rows)
-        if file_content_root is not None:
+        if include_file_content_history:
+            history_rows, history_counts = file_history.capture(query, tenant, file_history.source_owner(query, tenant))
+            file_count = history_counts["contents"]
+        elif file_content_root is not None:
             file_count = file_content_assets.capture_count(query, tenant, ready["ownerOid"])
         if on_snapshot is not None:
             on_snapshot(snapshot)
@@ -654,8 +670,15 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
                 copy_snapshot(pg_bin, connection, environ, logs, bundle / member,
                               Path(member).stem + "-copy", snapshot,
                               stock.rows_sql(table, tenant, stock_route["id"]), stock.COPY_SETTINGS)
+        if include_file_content_history:
+            for key, part in file_history.MEMBERS.items():
+                copy_snapshot(pg_bin, connection, environ, logs, bundle / file_history.filename(key),
+                              "file-content-history-" + key + "-copy", snapshot,
+                              history_rows[key] + " ORDER BY " + ", ".join(part.key), JOURNAL_COPY_SETTINGS)
 
-    if file_content_root is not None:
+    if include_file_content_history:
+        file_history.verify_archive_members(bundle, tenant, history_counts, file_count, file_content_root)
+    elif file_content_root is not None:
         file_content_assets.verify_member(bundle / file_content_assets.MEMBER, tenant, file_count, file_content_root)
 
     toc = logs / "pg-restore-list.stdout"
@@ -724,6 +747,14 @@ def export_bundle(pg_bin, target, username, installation, tenant, output, *,
         manifest["stockOutbox"] = stock_section(stock, stock_route, stock_collation, stock_tables)
         manifest["members"].update({name: file_digest(bundle / name) for name in stock_tables})
         manifest["excluded"][2] = "other queue domains and their companions, route epochs, dispatcher watermarks and rowversion sequences"
+    if include_file_content_history:
+        manifest["format"] = FORMAT_WITH_FILE_CONTENT_HISTORY
+        manifest["fileContentHistory"] = file_history.archive_section(history_counts)
+        manifest["members"].update({file_history.filename(key): file_digest(bundle / file_history.filename(key))
+                                    for key in file_history.MEMBERS})
+        manifest["excluded"][1] = "original operations and close outcomes outside the archived tenant Owner slices"
+        manifest["excluded"][4] = ("other audit and legal hold scopes, privacy policies and execution state, external file bodies, "
+                                   "other assets, unreferenced engineering revisions and cross-database dependencies")
     pending = logs / "manifest.pending"
     with pending.open("x", encoding="utf-8", newline="\n") as file:
         json.dump(manifest, file, indent=2)
@@ -739,7 +770,8 @@ def verify_bundle(bundle, tenant, *, file_content_root=None):
     if "manifest.json" not in names or any(path.is_symlink() or not path.is_file() for path in files):
         raise ArchiveError("bundle-member-mismatch")
     manifest = json.loads((bundle / "manifest.json").read_text(encoding="utf-8"))
-    privacy_formats = (privacy_evidence.FORMAT, FORMAT_WITH_STOCK_OUTBOX)
+    stock_formats = (FORMAT_WITH_STOCK_OUTBOX, FORMAT_WITH_FILE_CONTENT_HISTORY)
+    privacy_formats = (privacy_evidence.FORMAT, *stock_formats)
     erp_formats = (erp_integration.FORMAT, *privacy_formats)
     asset_formats = (file_content_assets.FORMAT, *erp_formats)
     iam_formats = (iam_v6.FORMAT, *asset_formats)
@@ -785,9 +817,24 @@ def verify_bundle(bundle, tenant, *, file_content_root=None):
             raise ArchiveError("bundle-format-rejected")
     if manifest["format"] in privacy_formats:
         members += privacy_evidence.MEMBERS
-    if manifest["format"] == FORMAT_WITH_STOCK_OUTBOX:
+    if manifest["format"] in stock_formats:
         stock = stock_outbox_module()
         members += tuple(STOCK_MEMBER_PREFIX + name for name in stock.MEMBERS)
+    if manifest["format"] == FORMAT_WITH_FILE_CONTENT_HISTORY:
+        file_history = file_content_history_module()
+        PhysicalTarget.from_mapping(manifest.get("source"))
+        guid(manifest.get("installationId"))
+        snapshot = manifest.get("snapshot")
+        if manifest.get("profile") != PROFILE or not isinstance(snapshot, dict) \
+                or set(snapshot) != {"snapshotId", "watermark", "capturedAt", "serverVersionNum"} \
+                or type(snapshot["serverVersionNum"]) is not int or snapshot["serverVersionNum"] <= 0 \
+                or any(not isinstance(snapshot[key], str) or not snapshot[key] for key in ("snapshotId", "watermark", "capturedAt")):
+            raise ArchiveError("file-content-history-archive-source-metadata-rejected")
+        history_counts = file_history.archive_counts(manifest.get("fileContentHistory"))
+        members += tuple(file_history.filename(key) for key in file_history.MEMBERS)
+        file_content_assets.checked_root(bundle.absolute())
+        for path in files:
+            file_content_assets.entry(path, stat.S_ISREG, "bundle-member-mismatch")
     if names != {*members, "manifest.json"}:
         raise ArchiveError("bundle-member-mismatch")
     if manifest.get("tenantId") != str(tenant) or manifest.get("schema") != "t_" + tenant.hex:
@@ -797,12 +844,15 @@ def verify_bundle(bundle, tenant, *, file_content_root=None):
         raise ArchiveError("bundle-member-mismatch")
     if any(file_digest(bundle / name) != expected[name] for name in members):
         raise ArchiveError("bundle-digest-mismatch")
-    if manifest["format"] in asset_formats:
+    if manifest["format"] == FORMAT_WITH_FILE_CONTENT_HISTORY:
+        root = file_content_assets.checked_root(file_content_root)
+        file_history.verify_archive_members(bundle, tenant, history_counts, manifest["fileContentAssets"]["count"], root)
+    elif manifest["format"] in asset_formats:
         root = file_content_assets.checked_root(file_content_root)
         file_content_assets.verify_member(bundle / file_content_assets.MEMBER, tenant, manifest["fileContentAssets"]["count"], root)
     if manifest["format"] in privacy_formats:
         privacy_evidence.verify_members(bundle, tenant, manifest)
-    if manifest["format"] == FORMAT_WITH_STOCK_OUTBOX:
+    if manifest["format"] in stock_formats:
         verify_stock_section(stock, bundle, tenant, manifest.get("stockOutbox"))
     return manifest
 
@@ -833,6 +883,8 @@ def main():
                         help="include historical security audit and legal hold in v9 (requires --include-erp-integration)")
     export.add_argument("--include-main-stock-outbox", action="store_true",
                         help="include the original Main Stock queue and companions in v10 (requires --include-privacy-evidence)")
+    export.add_argument("--include-file-content-history", action="store_true",
+                        help="include the original FileContent history in v11 (requires --include-main-stock-outbox)")
     verify = actions.add_parser("verify")
     verify.add_argument("--bundle", type=Path, required=True)
     verify.add_argument("--tenant", required=True)
@@ -849,7 +901,8 @@ def main():
                                    include_rma_iam_references=args.include_rma_iam_references,
                                    file_content_root=args.file_content_root, include_erp_integration=args.include_erp_integration,
                                    include_privacy_evidence=args.include_privacy_evidence,
-                                   include_main_stock_outbox=args.include_main_stock_outbox)
+                                   include_main_stock_outbox=args.include_main_stock_outbox,
+                                   include_file_content_history=args.include_file_content_history)
             print(bundle)
         else:
             manifest = verify_bundle(args.bundle, args.tenant, file_content_root=args.file_content_root)
@@ -861,6 +914,6 @@ def main():
 
 
 if __name__ == "__main__":
-    # The optional Stock module imports this same helper module and its ArchiveError.
+    # The optional archive modules import these same helpers and ArchiveError.
     sys.modules.setdefault("archive", sys.modules[__name__])
     sys.exit(main())

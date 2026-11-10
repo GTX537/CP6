@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC 同源 FileContent v11
+
+W429 在 PostgreSQL 18.6 的同一快照导出原 RMA、既有共享成员及五个 FileContent 历史成员。正式 PostgreSQL 为 16 PASS、11 NOT_RUN，原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。执行预算为 48 小时（172,800 秒）。 [W429](../development/evidence/W429-01/DELIVERY.md) · [执行计划](../development/planning/20261109-codex-72h-execution.md)
+
 ## 2026-11-10 UTC PostgreSQL PGT-020
 
 W433 实测平台创建原回执接首次 Core 初始化及真实 RMA。DDL 后终止后端全回滚，原键恢复，未 Ready 时业务拒绝。正式 PostgreSQL 为 16 PASS、11 NOT_RUN，原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。[W433](../development/evidence/W433-01/DELIVERY.md)

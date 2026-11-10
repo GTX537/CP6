@@ -142,7 +142,7 @@ def check_key(tenant, key):
         raise ValueError("file-content-asset-key-rejected")
 
 
-def member_files(path, tenant, count):
+def member_rows(path, tenant, count):
     seen = 0
     previous = 0
     with path.open(encoding="utf-8", newline="") as stream:
@@ -162,10 +162,15 @@ def member_files(path, tenant, count):
                 raise ValueError("file-content-reference-rejected")
             key = row["store_path"]
             check_key(tenant, key)
-            yield key, length, row["digest"]
+            yield row, length
             previous = file_id
     if seen != count:
         raise ValueError("file-content-reference-count-mismatch")
+
+
+def member_files(path, tenant, count):
+    for row, length in member_rows(path, tenant, count):
+        yield row["store_path"], length, row["digest"]
 
 
 def verify_member(path, tenant, count, root):

@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-10 UTC FileContent 原历史归档
+
+实际 Engineering 与 FileContent Owner 为 A/B 写入各自原件。A 的 v11 五成员与独立 PostgreSQL COPY 逐字节一致，B 的独立历史通过校验。W433 已随 #869 采用并完成分支和 DEV-2 收尾。 [W429](../development/evidence/W429-01/DELIVERY.md) · [W433](https://github.com/GTX537/CP6/pull/869)
+
 ## 2026-11-10 UTC 新租户创建回执接 Core/RMA
 
 同一原创建回执解析实际 TenantId。正确 Owner 以原计划完成首次 Core 初始化，CLI 重放原字节，实际 Draft 写入及重放各保留一份业务和 journal。W434 已随 #868 采用并完成分支与 DEV-1 收尾。[W433](../development/evidence/W433-01/DELIVERY.md) · [W434](https://github.com/GTX537/CP6/pull/868)
