@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC 操作日志降级保存隔离
+
+继续WP02-13必需原子审计、实际授权出口和保留治理，并沿WP02-03真实余项推进；本窗旁路日志隔离不替代业务原子审计、全场景当前权限、完整PGT-017、导出/hold/跨仓及生产传输验收。 场景拒绝实际HTTP400与原动作异常日志500分别记录，未改变状态映射或声称日志必达。 [W460交付](../development/evidence/BUG-921-OPERLOG-FALLBACK-ISOLATION/DELIVERY.md)
+
 ## 2026-11-10 UTC 场景导入与D7绑码当前事务
 
 继续WP02-03其余实际query/write/export/download及字段V1真实来源；完整导入图资格、场景差量、巷道/货架改挂或停用/发布按原安全完成语义另验，避免把逐个停用改成一个父回滚；Stock、PGT-017、schema、跨仓和负载保持未完成。 旧导入GUID映射保持；几何导出不等正式文件/隐私导出，D7绑码不等Stock或发布成功。 [W459交付](../development/evidence/BUG-919-SPACE-SCENE-INGRESS-FENCE/DELIVERY.md)
