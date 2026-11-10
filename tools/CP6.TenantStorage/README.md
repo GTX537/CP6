@@ -188,6 +188,8 @@ Run `eng/wp02-02/rma-tenant-migration/verify_commission.py --help` for the real 
 
 `prepare-rma-core-from-creation-v2 --stdin` binds a dedicated empty PostgreSQL database to a creation plan. Use the same private control envelope and the exact `Target`, `InstallationId` and `OperationId`. Supply `Creations` in place of `Tenants`. Each element has `CreationOperationRef`, `CreatorTenantId`, `CreatorActorId` and `Login`. Keep the exact operation string planned for the normal Tenant Creation V1 request. The login is an existing ordinary PostgreSQL principal.
 
+A V2 plan accepts up to 128 creation references. The bounded input reader accounts for the 128 KiB Tenant Creation V1 request envelope and JSON escaping so a long original reference can be carried verbatim.
+
 After normal Core initialization and Tenant Creation V1, submit the same plan to `commission-rma-core-from-creation-v2 --stdin`. The control transaction reads each original management receipt using the original operation bytes and the planned creator. It binds the receipt's actual tenant to the planned login, creates the tenant schema and commits the Ready history and original commissioning receipt together. A missing original, a missing tenant or a changed plan causes rejection. The same plan recovers its original result after interrupted output. The initial preparation requires an empty target, and later tenants need their own authorized provisioning flow.
 
 Use the resolved tenant and login mapping for the existing original journal and writer installation steps. The ordinary runtime still requires the live storage binding and the current authorization checks before business writes.

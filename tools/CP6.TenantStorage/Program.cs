@@ -43,15 +43,21 @@ if ((!args.SequenceEqual(["provision", "--stdin"]) && !revocation && !serviceTok
 try
 {
     using var timeout = new CancellationTokenSource(TimeSpan.FromMinutes(3));
-    var buffer = new char[16385];
+    // A creation plan carries up to 128 keys from the 128 KiB Tenant Creation V1 request.
+    // Allow six-character JSON escapes and the per-entry and control envelope fields.
+    const int standardInputLimit = 16_384;
+    var inputLimit = rmaCreatedCore ? standardInputLimit + 128 * (6 * 131_072 + 512) : standardInputLimit;
+    var buffer = new char[standardInputLimit + 1];
     var size = 0;
-    while (size < buffer.Length)
+    while (size <= inputLimit)
     {
+        if (size == buffer.Length)
+            Array.Resize(ref buffer, Math.Min(buffer.Length * 2, inputLimit + 1));
         var read = await Console.In.ReadAsync(buffer.AsMemory(size),timeout.Token);
         if (read == 0) break;
         size += read;
     }
-    if (size == buffer.Length) throw new TenantProvisioningException("input-rejected");
+    if (size > inputLimit) throw new TenantProvisioningException("input-rejected");
     using var document = JsonDocument.Parse(buffer.AsMemory(0,size));
     if (document.RootElement.ValueKind != JsonValueKind.Object || !Unique(document.RootElement))
         throw new TenantProvisioningException("input-rejected");

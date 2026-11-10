@@ -35,7 +35,7 @@ public sealed partial class OrderPriceCorrectionPostgreSqlTests
             throw new InvalidOperationException("This run requires the owned PostgreSQL fixture root and binaries.");
         var actor = Guid.NewGuid();
         var creatorTenant = TenantContext.DefaultTenant;
-        var operationRef = "创建/原键\0\"\\" + Guid.NewGuid().ToString("N");
+        var operationRef = new string('界', 3000) + "创建/原键\0\"\\" + Guid.NewGuid().ToString("N");
         var database = "created_rma_" + Guid.NewGuid().ToString("N");
         var login = "rma_runtime_" + Guid.NewGuid().ToString("N");
         var wrongOwner = "rma_other_" + Guid.NewGuid().ToString("N");
