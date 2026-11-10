@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC 字典写入当前授权与提交后缓存失效
+
+继续WP02-03其余实际query/write/export/download及字段V1真实来源；共享字典不伪称租户隔离，本窗不完成通用可靠缓存outbox、未知提交缓存协调或DictService独立缓存采用。完整字段V1/PGT-017/负载/全Main/跨仓及WMS-CTRL R3仍未验收。 字典模型无TenantId，保留既有全局共享范围；未授权角色的公共下拉读取保持。身份/权限仍在各自可信租户边界检查，不把共享字典称为租户专属。 [W455交付](../development/evidence/BUG-911-DICT-MUTATION-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 字段审计摘要当前查询
 
 继续WP02-03其余query/write/export/download和字段V1真实来源；摘要当前授权不完成W64所留完整列表资源/PII、原子审计写入、导出/hold/引用图/保留清理，也不扩大record实体支持；完整字段V1/PGT-017/负载/全Main/跨仓及WMS-CTRL R3仍未验收。 摘要不得返回原Changes，UNREADABLE的changeCount仍null；实际审计表无软删除字段，不增这一过滤。 [W454交付](../development/evidence/BUG-909-FIELD-AUDIT-LIST-FENCE/DELIVERY.md)

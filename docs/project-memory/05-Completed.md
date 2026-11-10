@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-10 UTC 字典写入当前授权与提交后缓存失效
+
+现存字典六项写入采用同Context当前dict:add/edit/delete、签名会话和认证根，两张实际全局字典表SREX；查重/查行/级联写入与最终会话同父事务，确认提交后原缓存失效。保持全局共享模型/读取/cache键和既有响应；并发新增同码与编辑撞码明确拒绝。 W454通过#910进入远端main，WP02-03采用核销，分支准确删除、DEV-2干净释放后复用。本窗最终采用、分支与席位状态以PR和finish为准。 [W455交付](../development/evidence/BUG-911-DICT-MUTATION-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 字段审计摘要当前查询
 
 现存字段审计摘要列表采用同Context当前sys-field-audit query与实际签名会话，认证根先于实际Sys_FieldAuditLogs SHARE，Count/分页与最终会话/取消处同父事务；完整原筛选、1..200分页约束、双键排序和摘要解析保持，原record业务Owner/映射/安全投影/游标不变。 W453通过#908进入远端main，WP02-03交付核销，分支准确删除且DEV-2干净释放后复用。本窗最后远端/分支/工作区/席位以PR与finish为准。 [W454交付](../development/evidence/BUG-909-FIELD-AUDIT-LIST-FENCE/DELIVERY.md)

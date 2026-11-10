@@ -1,3 +1,6 @@
+using CP6.Core.Services.Sys;
+using CP6.Core.Services.Erp;
+using CP6.WebApi.Controllers.Erp;
 using CP6.Core.Auth;
 using CP6.Core.EFDbContext;
 using CP6.Core.Utilities;
@@ -9,17 +12,28 @@ using Microsoft.EntityFrameworkCore;
 namespace CP6.WebApi.Controllers.Sys;
 
 [ApiController]
+[OrderOwnerResult]
 [Route("api/[controller]")]
 [Authorize]
 public class DictController : LocalizedControllerBase
 {
     private readonly CP6Context _context;
     private readonly CacheService _cache;
+    private readonly DictionaryMutationOwnerV1? _owner;
 
-    public DictController(CP6Context context, CacheService cache)
+    public DictController(CP6Context context, CacheService cache, DictionaryMutationOwnerV1? owner = null)
     {
         _context = context;
         _cache = cache;
+        _owner = owner;
+    }
+
+    private Task<IActionResult> Mutate(string action, Func<CancellationToken, Task<IActionResult>> body)
+    {
+        if (!_context.Database.IsNpgsql()) return body(CancellationToken.None);
+        if (_owner?.Owns(_context) != true)
+            throw new OrderPriceCorrectionException("DICT_AUTHORITY_UNAVAILABLE", 503);
+        return _owner.ExecuteAsync(action, body, HttpContext.RequestAborted);
     }
 
     // ========== 字典类型 ==========
@@ -45,50 +59,54 @@ public class DictController : LocalizedControllerBase
     [RequirePermission("dict", "add")]
     public async Task<IActionResult> AddType([FromBody] Sys_DictType entity)
     {
-        if (await _context.Sys_DictTypes.AnyAsync(t => t.TypeCode == entity.TypeCode))
-            return BadRequest(new { message = Localizer["类型编码已存在"] });
-
-        entity.CreateDate = DateTime.Now;
-        _context.Sys_DictTypes.Add(entity);
-        await _context.SaveChangesAsync();
-        return Ok(entity);
+        return await Mutate("add", async token =>
+        {
+            if (await _context.Sys_DictTypes.AnyAsync(t => t.TypeCode == entity.TypeCode, token))
+                return BadRequest(new { message = Localizer["类型编码已存在"] });
+            entity.CreateDate = DateTime.Now;
+            _context.Sys_DictTypes.Add(entity);
+            await _context.SaveChangesAsync(token);
+            return Ok(entity);
+        });
     }
 
     [HttpPut("types")]
     [RequirePermission("dict", "edit")]
     public async Task<IActionResult> UpdateType([FromBody] Sys_DictType entity)
     {
-        var existing = await _context.Sys_DictTypes.FindAsync(entity.Id);
-        if (existing == null) return NotFound();
-
-        existing.TypeCode = entity.TypeCode;
-        existing.TypeName = entity.TypeName;
-        existing.Enable = entity.Enable;
-        existing.OrderNo = entity.OrderNo;
-
-        await _context.SaveChangesAsync();
-        return Ok(existing);
+        return await Mutate("edit", async token =>
+        {
+            var existing = await _context.Sys_DictTypes.FindAsync(new object?[] { entity.Id }, token);
+            if (existing == null) return NotFound();
+            if (_context.Database.IsNpgsql() && await _context.Sys_DictTypes.AnyAsync(t => t.Id != entity.Id && t.TypeCode == entity.TypeCode, token))
+                return BadRequest(new { message = Localizer["类型编码已存在"] });
+            existing.TypeCode = entity.TypeCode;
+            existing.TypeName = entity.TypeName;
+            existing.Enable = entity.Enable;
+            existing.OrderNo = entity.OrderNo;
+            await _context.SaveChangesAsync(token);
+            return Ok(existing);
+        });
     }
 
     [HttpDelete("types")]
     [RequirePermission("dict", "delete")]
     public async Task<IActionResult> DeleteTypes([FromBody] int[] ids)
     {
-        var types = await _context.Sys_DictTypes.Where(t => ids.Contains(t.Id)).ToListAsync();
-        var typeCodes = types.Select(t => t.TypeCode).ToList();
-
-        // 同时删除该类型下的字典数据
-        var datas = _context.Sys_DictDatas.Where(d => typeCodes.Contains(d.TypeCode));
-        _context.Sys_DictDatas.RemoveRange(datas);
-        _context.Sys_DictTypes.RemoveRange(types);
-
-        var count = await _context.SaveChangesAsync();
-
-        // 缓存失效：删除相关字典缓存
+        var typeCodes = new List<string>();
+        var result = await Mutate("delete", async token =>
+        {
+            var types = await _context.Sys_DictTypes.Where(t => ids.Contains(t.Id)).ToListAsync(token);
+            typeCodes = types.Select(t => t.TypeCode).ToList();
+            var datas = _context.Sys_DictDatas.Where(d => typeCodes.Contains(d.TypeCode));
+            _context.Sys_DictDatas.RemoveRange(datas);
+            _context.Sys_DictTypes.RemoveRange(types);
+            var count = await _context.SaveChangesAsync(token);
+            return Ok(new { count });
+        });
         foreach (var code in typeCodes)
             await _cache.RemoveAsync(CacheService.DictKeyPrefix + code);
-
-        return Ok(new { count });
+        return result;
     }
 
     // ========== 字典数据 ==========
@@ -114,50 +132,55 @@ public class DictController : LocalizedControllerBase
     [RequirePermission("dict", "add")]
     public async Task<IActionResult> AddData([FromBody] Sys_DictData entity)
     {
-        entity.CreateDate = DateTime.Now;
-        _context.Sys_DictDatas.Add(entity);
-        await _context.SaveChangesAsync();
-
-        // 缓存失效：字典数据变更后清除该类型缓存
+        var result = await Mutate("add", async token =>
+        {
+            entity.CreateDate = DateTime.Now;
+            _context.Sys_DictDatas.Add(entity);
+            await _context.SaveChangesAsync(token);
+            return Ok(entity);
+        });
         await _cache.RemoveAsync(CacheService.DictKeyPrefix + entity.TypeCode);
-
-        return Ok(entity);
+        return result;
     }
 
     [HttpPut("data")]
     [RequirePermission("dict", "edit")]
     public async Task<IActionResult> UpdateData([FromBody] Sys_DictData entity)
     {
-        var existing = await _context.Sys_DictDatas.FindAsync(entity.Id);
-        if (existing == null) return NotFound();
-
-        existing.Value = entity.Value;
-        existing.Label = entity.Label;
-        existing.OrderNo = entity.OrderNo;
-        existing.Enable = entity.Enable;
-
-        await _context.SaveChangesAsync();
-
-        await _cache.RemoveAsync(CacheService.DictKeyPrefix + existing.TypeCode);
-
-        return Ok(existing);
+        string? typeCode = null;
+        var result = await Mutate("edit", async token =>
+        {
+            var existing = await _context.Sys_DictDatas.FindAsync(new object?[] { entity.Id }, token);
+            if (existing == null) return NotFound();
+            existing.Value = entity.Value;
+            existing.Label = entity.Label;
+            existing.OrderNo = entity.OrderNo;
+            existing.Enable = entity.Enable;
+            typeCode = existing.TypeCode;
+            await _context.SaveChangesAsync(token);
+            return Ok(existing);
+        });
+        if (typeCode != null)
+            await _cache.RemoveAsync(CacheService.DictKeyPrefix + typeCode);
+        return result;
     }
 
     [HttpDelete("data")]
     [RequirePermission("dict", "delete")]
     public async Task<IActionResult> DeleteData([FromBody] int[] ids)
     {
-        var entities = await _context.Sys_DictDatas.Where(d => ids.Contains(d.Id)).ToListAsync();
-        var typeCodes = entities.Select(d => d.TypeCode).Distinct().ToList();
-
-        _context.Sys_DictDatas.RemoveRange(entities);
-        var count = await _context.SaveChangesAsync();
-
-        // 缓存失效
+        var typeCodes = new List<string>();
+        var result = await Mutate("delete", async token =>
+        {
+            var entities = await _context.Sys_DictDatas.Where(d => ids.Contains(d.Id)).ToListAsync(token);
+            typeCodes = entities.Select(d => d.TypeCode).Distinct().ToList();
+            _context.Sys_DictDatas.RemoveRange(entities);
+            var count = await _context.SaveChangesAsync(token);
+            return Ok(new { count });
+        });
         foreach (var code in typeCodes)
             await _cache.RemoveAsync(CacheService.DictKeyPrefix + code);
-
-        return Ok(new { count });
+        return result;
     }
 
     // ========== 公共接口：按类型编码获取选项列表（带缓存） ==========
