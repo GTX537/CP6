@@ -1,5 +1,31 @@
 # AI 可读变更日志
 
+## 2026-11-10 UTC 登记原 PGT-010
+
+新增普通 A/B 真实 PostgreSQL 保存点回归，登记两类原生错误、连接复用与停机原件，合用 W344 原始 TRX 与数据库日志。同步 W422 正常合并和固定席位释放。 [W432](../development/evidence/W432-01/DELIVERY.md)
+
+## 2026-11-10 UTC 登记原 ERP C03 关闭候选
+
+新增关闭候选导入与原回执入口，登记真实 PostgreSQL 两次回滚、跨进程恢复与准确行版本。修正回执验证的原生客户端行尾处理。 [W422](../development/evidence/W422-01/DELIVERY.md)
+
+## 2026-11-09 UTC 登记原 PGT-015
+
+同步五组实际 PostgreSQL 并发原件、原 CRM Owner 与受控组件证据，并核各自源码和版本。 [W431](../development/evidence/W431-01/DELIVERY.md)
+
+## 2026-11-09 UTC RMA 归属更新实证
+
+登记真实 PostgreSQL 更新、原 ACL、临时列授权回收及原历史比对，正式 PGT-027 待正常 EF/IAM。 [W430](../development/evidence/W430-01/DELIVERY.md)
+
+## 2026-11-09 UTC 原生共享表隔离补验
+
+加入可复现的隔离共享表 DELETE 和原密钥列权限验证，登记 PGT-008。 [W427](../development/evidence/W427-01/DELIVERY.md)
+
+
+## 2026-11-09 UTC 原 Stock V2 验收
+
+复用原 PostgreSQL 通过记录，登记 PGT-001 实测范围及未执行项。 [W426](../development/evidence/W426-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC PostgreSQL 容量原证据
 
 同步 PGT-023 原实测、保留未运行的 N1000 和远端检查点。 [W424](../development/evidence/W424-01/DELIVERY.md)

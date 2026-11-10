@@ -1,5 +1,31 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC 继续原生错借、EF 和同源恢复
+
+W425 复用已编译用例执行错借，W428 复用已编译 Provider 与 IAM friend 执行正常 Core EF 升级和宿主验证，W433 恢复创建回执到 Core 的完整构建与实库贯通。继续 W429、W423、W415 及原 PGT-021/022 的完整恢复和现行消息对账。 [本期计划](../development/planning/20261109-codex-72h-execution.md)
+
+## 2026-11-10 UTC 接续实际恢复与租户绑定
+
+按资源接续 W428 正常 EF/IAM、W425 实库错借、W432 保存点、W429 同源 v11 和 W423、W415 恢复。W433 验证实际创建回执接 Core 初始化。PGT-021/022 继续验证原完整切换和当前消息对账。 [W422](../development/evidence/W422-01/DELIVERY.md)
+
+## 2026-11-09 UTC 继续正式 EF、池与同源恢复
+
+按资源接续 W428 正常 EF/IAM、W425 实库错借、W429 同源 v11，以及 W422、W423、W415 的恢复验证。 [W431](../development/evidence/W431-01/DELIVERY.md)
+
+## 2026-11-09 UTC 继续共享 IAM 引用与同源恢复
+
+继续 W428 正常 EF/IAM 验证与 W429 同源 v11，按实测内存接续 W422、W423、W425 和 W415。 [W430](../development/evidence/W430-01/DELIVERY.md)
+
+## 2026-11-09 UTC 继续共享引用与恢复
+
+W428 补原用户成员关系复合引用，W425、W422 和 W423 保留远端检查点。 [W427](../development/evidence/W427-01/DELIVERY.md)
+
+
+## 2026-11-09 UTC 连接错借与原件恢复
+
+W425 补 PGT-003 真实错借。W422 和 W423 保留远端检查点，资源满足后继续原件恢复与同源切面。 [W426](../development/evidence/W426-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC 继续原件恢复
 
 资源达到门槛后续 W422、W423、W415。W423 检查点已保存远端，PGT-021/022 仍为 NOT_RUN。 [W424](../development/evidence/W424-01/DELIVERY.md)

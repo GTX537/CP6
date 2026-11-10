@@ -270,6 +270,135 @@ public sealed class TenantStoragePostgresTests(TenantStoragePostgresFixture post
     }
 
     [TenantStoragePostgresFact]
+    public async Task Native_savepoints_recover_constraint_and_timeout_without_rebinding_or_leaking_to_B()
+    {
+        var a = TenantStorageContext.A;
+        var b = TenantStorageContext.B;
+        var aTable = Table(a);
+        var bTable = Table(b);
+        var context = new TenantStorageContext();
+        await using var manager = new TenantConnectionManager("main", context.Accessor, Catalog(), Credentials(), new(2, 2, 1));
+        SavepointSession? original = null;
+        var errors = new Dictionary<string, string>();
+        var bPid = 0;
+
+        await VerifyBAsync(commit: false);
+        await context.Run(a, async _ =>
+        {
+            await using var lease = await manager.OpenCurrentAsync();
+            await lease.InTransactionAsync(async (session, ct) =>
+            {
+                await session.ExecuteAsync(async (connection, transaction, token) =>
+                {
+                    await TenantStoragePostgresFixture.Sql(connection, $"INSERT INTO {aTable} VALUES (501,'A-savepoint')", token);
+                    var before = await ReadSavepointSessionAsync(connection, transaction, session.CurrentBinding, token);
+                    original = before;
+                    Assert.Equal(connection.ProcessID, before.Pid);
+                    Assert.Equal(a, before.Tenant);
+                    Assert.Equal("tenant_a", before.Login);
+                    Assert.Equal(before.Login, before.EffectiveLogin);
+                    Assert.Equal(TenantStoragePostgresFixture.Database, before.Database);
+                    Assert.Equal("pg_catalog", before.SearchPath);
+                    Assert.Equal("cp6-tenant-storage-v1", before.Application);
+                    Assert.Equal("0", before.StatementTimeout);
+                    foreach (var fault in new[]
+                    {
+                        (Stage: "constraint", Id: 502, Setup: "", Sql: $"INSERT INTO {aTable} VALUES (501,'duplicate')",
+                            State: PostgresErrorCodes.UniqueViolation),
+                        (Stage: "timeout", Id: 503, Setup: " SET LOCAL statement_timeout='300ms';", Sql: "SELECT pg_catalog.pg_sleep(2)",
+                            State: PostgresErrorCodes.QueryCanceled)
+                    })
+                    {
+                        await transaction.SaveAsync("pgt010", token);
+                        await TenantStoragePostgresFixture.Sql(connection, $"INSERT INTO {aTable} VALUES ({fault.Id},'rolled-back')", token);
+                        await TenantStoragePostgresFixture.Sql(connection, "SET LOCAL application_name='pgt010-dirty';" + fault.Setup, token);
+                        await using var failing = new NpgsqlCommand(fault.Sql, connection, transaction);
+                        var rejected = await Assert.ThrowsAsync<PostgresException>(() => failing.ExecuteNonQueryAsync(token));
+                        Assert.Equal(fault.State, rejected.SqlState);
+                        if (fault.Stage == "timeout") Assert.Contains("statement timeout", rejected.MessageText, StringComparison.Ordinal);
+                        await using var aborted = new NpgsqlCommand("SELECT 1", connection, transaction);
+                        var stillAborted = await Assert.ThrowsAsync<PostgresException>(() => aborted.ExecuteScalarAsync(token));
+                        Assert.Equal(PostgresErrorCodes.InFailedSqlTransaction, stillAborted.SqlState);
+
+                        await transaction.RollbackAsync("pgt010", token);
+                        await transaction.ReleaseAsync("pgt010", token);
+                        Assert.Equal(before, await ReadSavepointSessionAsync(connection, transaction, session.CurrentBinding, token));
+                        Assert.Equal(0L, await TenantStoragePostgresFixture.Scalar(connection,
+                            $"SELECT count(*) FROM {aTable} WHERE id IN (502,503)", token));
+                        errors.Add(fault.Stage, rejected.SqlState + "/" + stillAborted.SqlState);
+                    }
+                    return 0;
+                }, ct);
+                await session.CommitAsync(ct);
+                return 0;
+            });
+        });
+
+        await VerifyBAsync(commit: true);
+        SavepointSession? reborrowed = null;
+        await context.Run(a, async _ =>
+        {
+            await using var lease = await manager.OpenCurrentAsync();
+            await lease.InTransactionAsync(async (session, ct) =>
+            {
+                var after = await session.ExecuteAsync((connection, transaction, token) =>
+                    ReadSavepointSessionAsync(connection, transaction, session.CurrentBinding, token), ct);
+                reborrowed = after;
+                var before = original!;
+                Assert.NotEqual(before.Xid, after.Xid);
+                Assert.Equal(before with { Xid = after.Xid }, after);
+                Assert.NotEqual(bPid, after.Pid);
+                Assert.Equal("A-savepoint", await Scalar(session, $"SELECT marker FROM {aTable} WHERE id=501", ct));
+                Assert.Equal(0L, await Scalar(session, $"SELECT count(*) FROM {aTable} WHERE id IN (502,503)", ct));
+                await Sql(session, $"INSERT INTO {aTable} VALUES (504,'A-reborrowed')", ct);
+                await session.CommitAsync(ct);
+                return 0;
+            });
+        });
+        Assert.Equal((2, 2, 0, 0), manager.Snapshot());
+        await File.WriteAllTextAsync(Path.Combine(Environment.GetEnvironmentVariable(TenantStoragePostgresFactAttribute.RootVariable)!,
+            "pgt010-savepoints.json"), System.Text.Json.JsonSerializer.Serialize(new { original, reborrowed, bPid, errors }));
+
+        Task VerifyBAsync(bool commit) => context.Run(b, async _ =>
+        {
+            await using var lease = await manager.OpenCurrentAsync();
+            await lease.InTransactionAsync(async (session, ct) =>
+            {
+                var pid = (int)(await Scalar(session, "SELECT pg_catalog.pg_backend_pid()", ct))!;
+                Assert.Equal("tenant_b", await Scalar(session, "SELECT session_user::text", ct));
+                Assert.Equal("pg_catalog", await Scalar(session, "SHOW search_path", ct));
+                Assert.Equal("tenant_b", await Scalar(session, $"SELECT marker FROM {bTable} WHERE id=1", ct));
+                Assert.Equal(0L, await Scalar(session, $"SELECT count(*) FROM {bTable} WHERE id IN (501,502,503,504)", ct));
+                if (commit)
+                {
+                    Assert.Equal(bPid, pid);
+                    await Sql(session, $"INSERT INTO {bTable} VALUES (501,'B-isolated')", ct);
+                    await session.CommitAsync(ct);
+                }
+                else bPid = pid;
+                return 0;
+            });
+        });
+    }
+
+    private sealed record SavepointSession(int Pid, string Xid, string Login, string EffectiveLogin, string Database,
+        string SearchPath, string Application, string StatementTimeout, Guid Tenant, string BindingRevision);
+
+    private static async Task<SavepointSession> ReadSavepointSessionAsync(NpgsqlConnection connection,
+        NpgsqlTransaction transaction, TenantStorageBindingV1 binding, CancellationToken ct)
+    {
+        await using var command = new NpgsqlCommand("""
+            SELECT pg_catalog.pg_backend_pid(), pg_catalog.pg_current_xact_id()::text, session_user::text,
+                   current_user::text, pg_catalog.current_database(), pg_catalog.current_setting('search_path'),
+                   pg_catalog.current_setting('application_name'), pg_catalog.current_setting('statement_timeout')
+            """, connection, transaction);
+        await using var reader = await command.ExecuteReaderAsync(ct);
+        Assert.True(await reader.ReadAsync(ct));
+        return new(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4),
+            reader.GetString(5), reader.GetString(6), reader.GetString(7), binding.TenantId, binding.BindingRevision);
+    }
+
+    [TenantStoragePostgresFact]
     public async Task Nested_B_and_ended_scope_cannot_use_A_lease_or_retained_transaction()
     {
         var context = new TenantStorageContext();
