@@ -12,6 +12,10 @@ W344 的已执行 `connection-failures-http2.trx` 继续证明真实 Stock HTTP 
 
 已核对三份原测试输入及候选源码，复用 W364 封存的 Core、Platform 与 Npgsql 8.0.8，相关租户连接源码到 #863 保持同一版本。私有运行器 `launch.py` SHA-256 为 `2aa844fc3a75c030b414618de61b5ae435e1d9fd8b9aa945c6035e93ed197231`。Git 集中审查确认单一测试改动，`git diff --check` 通过，与待接续 W425 的非重叠测试部分预合并通过。 [运行器](/D:/CP6-local-test/CP6-72H-20261109/W432-01/launch.py) · [实际编译输入](/D:/CP6-local-test/CP6-72H-20261109/W432-01/build/inputs.json)
 
-两次启动检查分别为 28.734 和 22.770 秒，均退出 75。第一轮 14 个样本，最高物理空闲 1,009 MiB、最高可用提交 19,452 MiB。第二轮 11 个样本，分别为 1,013 和 19,449 MiB。编译门槛为连续及即时 1,000 和 19,456 MiB。编译与实际 PostgreSQL 运行待执行，PGT-010 保持 `NOT_RUN`。 [第一轮原始样本](/D:/CP6-local-test/CP6-72H-20261109/W432-01/compile-01/compiler-gate.jsonl) · [第二轮原始样本](/D:/CP6-local-test/CP6-72H-20261109/W432-01/compile-02/compiler-gate.jsonl)
+前两次编译启动检查分别为 28.734 和 22.770 秒，均退出 75。第一轮 14 个样本，最高物理空闲 1,009 MiB、最高可用提交 19,452 MiB。第二轮 11 个样本，分别为 1,013 和 19,449 MiB。编译门槛为连续及即时 1,000 和 19,456 MiB。 [第一轮原始样本](/D:/CP6-local-test/CP6-72H-20261109/W432-01/compile-01/compiler-gate.jsonl) · [第二轮原始样本](/D:/CP6-local-test/CP6-72H-20261109/W432-01/compile-02/compiler-gate.jsonl)
 
-在同一分支和 DEV-2 复用固定输入。资源满足时执行 `python -B D:/CP6-local-test/CP6-72H-20261109/W432-01/launch.py compile --attempt 03 --seconds 25`。定向编译通过后，预留 1,200 MiB 物理内存、19 GiB 可用提交及独占 55436，执行 `python -B D:/CP6-local-test/CP6-72H-20261109/W432-01/launch.py native --attempt 01 --compiled compile-03 --seconds 45`。验收时核对原生错误、事务、同租户复用、B 行以及实例停机，再评估正式采用。
+2026-11-10 00:39 UTC，`compile-03` 启动编译器并以 0 退出。编译器实际运行 1.283 秒。定向程序集 SHA-256 为 `1c2defa26ecab2885ab2454bd70dde1f2ff6ef06a0f8b36d9681f309af5b0eba`。#864 相对基线的差异不涉及这组测试与依赖。 [编译进程](/D:/CP6-local-test/CP6-72H-20261109/W432-01/compile-03/csc.process.json) · [产物与输入](/D:/CP6-local-test/CP6-72H-20261109/W432-01/compile-03/build.json)
+
+`native-01` 在 46.641 秒内取得 22 个样本。物理空闲 1,103–1,203 MiB，可用提交 20,956–21,081 MiB。联合启动检查退出 75，PostgreSQL 和测试进程均未启动。PGT-010 保持 `NOT_RUN`。 [联合检查原始样本](/D:/CP6-local-test/CP6-72H-20261109/W432-01/native-01/combined-gate.jsonl) · [退出记录](/D:/CP6-local-test/CP6-72H-20261109/W432-01/native-01/terminal.json)
+
+在同一分支和 DEV-2 复用 `compile-03`。预留 1,200 MiB 物理内存、19 GiB 可用提交及独占 55436 后，执行 `python -B D:/CP6-local-test/CP6-72H-20261109/W432-01/launch.py native --attempt 02 --compiled compile-03 --seconds 45`。验收时核对原生错误、事务、同租户复用、B 行以及实例停机，再评估正式采用。
