@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC 场景导入与D7绑码当前事务
+
+继续WP02-03其余实际query/write/export/download及字段V1真实来源；完整导入图资格、场景差量、巷道/货架改挂或停用/发布按原安全完成语义另验，避免把逐个停用改成一个父回滚；Stock、PGT-017、schema、跨仓和负载保持未完成。 旧导入GUID映射保持；几何导出不等正式文件/隐私导出，D7绑码不等Stock或发布成功。 [W459交付](../development/evidence/BUG-919-SPACE-SCENE-INGRESS-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 空间层级七写与货架坐标原子性
 
 继续WP02-03其他实际查询、写入、导出与下载及字段V1真实来源；现存巷道/货架删除改挂、停用/发布、场景差量另核同Context、事务和外部效果，不据本窗提升Stock、完整PGT-017、schema或跨仓。 不把已采用的七写扩为所有空间层级完整治理；旧历史数据清理、发布锚、物理Stock和版本化模型独立。 [W458交付](../development/evidence/BUG-917-SPACE-HIERARCHY-GEOMETRY-FENCE/DELIVERY.md)

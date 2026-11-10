@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC 场景导入与D7绑码当前事务
+
+现存场景导入与D7绑码采用同Context当前space-floor:edit、签名会话及认证根。导入确认当前目标站点、真实几何骨架和库位两次保存同事务；绑码用实际货架/库位及原已发布未落位采纳资格。原导出/映射/算法、码/ID/状态/版本和其他场景路径保持。 9项实际Main/PostgreSQL和17项既有InMemory通过、零跳过。模拟场景/身份/故障输入，实际宿主、认证、数据库。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN，172800秒、40h144047/下一158400保持。 [W459交付](../development/evidence/BUG-919-SPACE-SCENE-INGRESS-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 空间层级七写与货架坐标原子性
 
 七个既有库区/巷道/货架写入采用同Context当前space-floor:edit、签名会话及认证根；锁定真实楼层/库区/巷道/货架/库位引用与写集。当前父项/同库区可选巷道决定、货架保存与坐标重算同父事务；原字段、坐标算法、码/状态/版本、RowVersion409和其余接口保持。 16项实际Main/PostgreSQL和39项既有InMemory通过、零跳过；模拟空间/身份/故障输入，实际宿主/认证/数据库执行。原375仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PG16 PASS/11 NOT_RUN，172800秒及实际40h144047/下一158400保持。 [W458交付](../development/evidence/BUG-917-SPACE-HIERARCHY-GEOMETRY-FENCE/DELIVERY.md)

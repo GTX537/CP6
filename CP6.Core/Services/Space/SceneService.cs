@@ -1,4 +1,5 @@
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Erp;
 using CP6.WebApi.Localization;
 using CP6.Entity.DomainModels.Space;
 using CP6.Entity.DTOs.Space;
@@ -16,6 +17,7 @@ public class SceneService : ISceneService
     private readonly CP6Context _db;
     private readonly LocationGeometryService _geo;
     private readonly ILocationPublishService _publish;
+    private readonly SceneGeometryAuthorityV1? _geometryAuthority;
 
     public SceneService(CP6Context db, LocationGeometryService geo, ILocationPublishService publish)
     {
@@ -23,6 +25,10 @@ public class SceneService : ISceneService
         _geo = geo;
         _publish = publish;
     }
+
+    public SceneService(CP6Context db, LocationGeometryService geo, ILocationPublishService publish,
+        SceneGeometryAuthorityV1 geometryAuthority) : this(db, geo, publish)
+        => _geometryAuthority = geometryAuthority;
 
     /// <inheritdoc/>
     public async Task<Dictionary<Guid, Guid>> SaveSceneAsync(Guid floorId, SceneSaveDto dto, string? user)
@@ -384,14 +390,26 @@ public class SceneService : ISceneService
     }
 
     /// <inheritdoc/>
-    public async Task BindCodesAsync(Guid rackId, IEnumerable<(Guid locId, int col, int level, int depth)> pairs, string? user)
+    public Task BindCodesAsync(Guid rackId, IEnumerable<(Guid locId, int col, int level, int depth)> pairs, string? user)
     {
-        var rack = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == rackId)
+        if (!_db.Database.IsNpgsql()) return BindCodesCoreAsync(rackId, pairs, user, CancellationToken.None);
+        return (_geometryAuthority ?? throw new OrderPriceCorrectionException("SPACE_SCENE_AUTHORITY_UNAVAILABLE", 503))
+            .ExecuteAsync(_db, false, async token =>
+            {
+                await BindCodesCoreAsync(rackId, pairs, user, token);
+                return true;
+            });
+    }
+
+    private async Task BindCodesCoreAsync(Guid rackId, IEnumerable<(Guid locId, int col, int level, int depth)> pairs,
+        string? user, CancellationToken token)
+    {
+        var rack = await _db.Space_Racks.FirstOrDefaultAsync(r => r.Id == rackId, token)
                    ?? throw new BizException("E-SPACE-002");
 
         foreach (var (locId, col, level, depth) in pairs)
         {
-            var loc = await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == locId)
+            var loc = await _db.Space_Locations.FirstOrDefaultAsync(l => l.Id == locId, token)
                       ?? throw new BizException("E-SPACE-004");
 
             if (loc.Status != 1 || loc.Placed || loc.CodeOrigin != 2)
@@ -416,6 +434,6 @@ public class SceneService : ISceneService
             loc.ModifyDate = DateTime.Now;
         }
 
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(token);
     }
 }
