@@ -163782,6 +163782,21 @@
       "at": "2026-11-10T00:25:57.099571Z",
       "change": "W422 实测关闭候选的 C03 原件导入、晚段回滚和原回执恢复。正式 PostgreSQL 12 PASS、15 NOT_RUN。",
       "evidence": "docs/development/evidence/W422-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-10T00:30:30.483217+00:00",
+      "change": "W422 随 #864 采用并释放 DEV-1。",
+      "evidence": "https://github.com/GTX537/CP6/pull/864"
+    },
+    {
+      "at": "2026-11-10T00:38:32.604066+00:00",
+      "change": "W433 保存创建回执到 Core 初始化实现与语法检查，释放 DEV-2。",
+      "evidence": "https://github.com/GTX537/CP6/blob/563aaf991680548e99257a806e428fa285806cd8/docs/development/evidence/W433-01/DELIVERY.md"
+    },
+    {
+      "at": "2026-11-10T00:58:04.295541Z",
+      "change": "W432 合用真实保存点与 W344 托管取消，PGT-010 通过。正式 PostgreSQL 为 13 PASS、14 NOT_RUN。",
+      "evidence": "docs/development/evidence/W432-01/DELIVERY.md"
     }
   ],
   "implementation_assessment": {
@@ -165229,23 +165244,23 @@
       "card_anchor": "wp02-02",
       "entry_gate": "CONFIRMED",
       "assignment": {
-        "chat_label": "ERP-C03-CLOSED-ADOPTION / W422-01",
+        "chat_label": "NATIVE-LEASE-SAVEPOINT / W432-01",
         "repository": "Main",
-        "branch": "codex/w422-01",
-        "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-        "claimed_at": "2026-11-09T19:21:50.998415Z",
-        "baseline_sha": "eec44dbe4f526f861f2d59837373a9fd503cfa6a",
-        "entry_evidence": "docs/development/evidence/W422-01/DELIVERY.md",
+        "branch": "codex/w432-01",
+        "worktree": "D:/CP6-worktrees/dev-2",
+        "claimed_at": "2026-11-09T23:24:31.869981+00:00",
+        "baseline_sha": "96bd4da563e7ef3f3aff4100c6f311728e652752",
+        "entry_evidence": "docs/development/evidence/W432-01/DELIVERY.md",
         "phase": "VALIDATED_PENDING_REMOTE",
-        "dispatch_scope": "原 W419 C03 在 PostgreSQL 关闭候选完整导入。已分配 token 拒绝、晚段全局键冲突全回滚、714 字节原回执恢复、A/B 原件保持与实际序列 11。",
+        "dispatch_scope": "真实 PostgreSQL 保存点、约束与语句超时的原事务恢复及 A/B 独立复用，合用 W344 的真实 HTTP 取消与坏连接替换，采用原 PGT-010。",
         "bounded_window_gate": "CONFIRMED",
         "full_task_gate_unchanged": true,
         "reserved_write_resources": [
-          "file:Main:eng/wp02-02/rma-tenant-archive/erp_terminal_candidate.py",
-          "file:Main:docs/development/evidence/W422-01/DELIVERY.md"
+          "file:Main:CP6.Tests/Persistence/Tenancy/TenantStoragePostgresTests.cs",
+          "file:Main:docs/development/acceptance/postgresql-tenancy.json"
         ],
         "worker_start_received": true,
-        "delivery_report": "docs/development/evidence/W422-01/DELIVERY.md"
+        "delivery_report": "docs/development/evidence/W432-01/DELIVERY.md"
       },
       "blockers": [],
       "validation_evidence": [],
@@ -166110,6 +166125,25 @@
           ],
           "worker_start_received": true,
           "delivery_report": "docs/development/evidence/W431-01/DELIVERY.md"
+        },
+        {
+          "chat_label": "ERP-C03-CLOSED-ADOPTION / W422-01",
+          "repository": "Main",
+          "branch": "codex/w422-01",
+          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "claimed_at": "2026-11-09T19:21:50.998415Z",
+          "baseline_sha": "eec44dbe4f526f861f2d59837373a9fd503cfa6a",
+          "entry_evidence": "docs/development/evidence/W422-01/DELIVERY.md",
+          "phase": "CLOSED",
+          "dispatch_scope": "原 W419 C03 在 PostgreSQL 关闭候选完整导入。已分配 token 拒绝、晚段全局键冲突全回滚、714 字节原回执恢复、A/B 原件保持与实际序列 11。",
+          "bounded_window_gate": "CONFIRMED",
+          "full_task_gate_unchanged": true,
+          "reserved_write_resources": [
+            "file:Main:eng/wp02-02/rma-tenant-archive/erp_terminal_candidate.py",
+            "file:Main:docs/development/evidence/W422-01/DELIVERY.md"
+          ],
+          "worker_start_received": true,
+          "delivery_report": "docs/development/evidence/W422-01/DELIVERY.md"
         }
       ],
       "preparation_delivery_history": [
@@ -166403,9 +166437,9 @@
         "as_of": "2026-11-08",
         "classification": "IMPLEMENTATION_REMAINS",
         "report": "docs/development/evidence/W310-01/DELIVERY.md#wp02-02",
-        "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。 W327验证普通LOGIN在调用事务内取得原认证根。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。 W335 已在实际普通事务验证 V2 新库存的明确归属、合法无归属、旧行拒绝和原安全审计，包含前向 PostgreSQL 迁移。  W346 现有 Stock 首装提交后丢弃 stdout，从另一个真实进程在准确物理库取回原安装 ID，驱动原写栅栏及后续已交付安装。孤立回执、未绑定登录读策略及目录/权限漂移拒绝。 W348 实际验证共享消息 profile 的初始化中断、原键恢复及原结果重放。  W350 在 fresh-only PostgreSQL 真实把原 RMA heads/versions 迁入各自租户 schema，验证原子首版、实际进程竞争、中断与原结果、普通角色和原复合约束。 新隔离全 Core 物理 commissioning 以实际发布宿主和 PostgreSQL 验证，旧业务与旧 RMA journal 栅栏、其他 Owner 和原回执已证。 W355 实测 Stock 10/100 普通登录冷暖、缓存 churn、真实模型、原生后端及双进程有限峰值，原配置 129/1000 拒绝。 原 RMA 正常 HTTP 单条和历史读从真实登录经当前共享权威到新租户 EF，A/B 原件、ETag、授权和真实 SQL已验证。 W358 RMA 已 Ready 租户的真实非事务索引、原生无效对象中断及准确原键恢复已验证，B 和已采用普通读继续。 原 RMA 受权分页列表以真实 A/B Bearer 验证两页和当前权限，第二页实际跨128候选，版本按原键读取。 原生同快照 RMA tenant schema 和已引用的共享 Outbound 从真实 A/B 活动库准确导出并独立 staging，ACL/Owner、版本和原内容通过。 W361 对真实全 Core 的原 RMA 日志安装普通租户 RLS 和同事务最小追加，实测同键跨租、闭合回滚、原认证根、其他 Owner 及原回执。 W366 增加真实 RMA 原操作日志同快照 v2 切片，准确固定租户和原 Owner，原 bytes 与隔离 staging 已验，保留 v1。 W364 在真实宿主首次采用普通 RMA draft POST，原 head、version 和 W361 journal 同事务写回，现行授权、八位数量、原 ETag 及同键精确重放已证。 W370 将真实 RMA v1/v2 归档 staging 接可操作入口，验证同事务原 schema、共享片和回执，坏输入回滚及原结果恢复。 W372 实际采用普通 RMA 提交，原 If-Match、版本推进、原日志、权限、故障回滚与原结果实证。共享归档保持确切已采用 writer 权限。 W374 实际交付 v3 同切面来源归档及 v1/v2 兼容。 W375 真正接正常原操作查询与关闭，当前授权、迟到竞争及原结果实证。 W377 实际交付 v3 隔离 staging、来源精度和字符规则、后段回滚与同键恢复。 W379 实测原可见性 v4 同切面，保留直连和回退工单、软删、空键与原库位隔离。 W380 同快照实际身份优先四表、原 bytea、租约和全局消息键，旧格式兼容。 W382 实际 v4 原子落表、真实图失败回滚与原回执。 W385 实际 v5 四表中立 staging，原键、空成员、原回执及同 pin 回滚。 W384 实际对账当前终态/租约与原键冲突，保持 UNKNOWN，受限角色真失败闭合。 W387 实际历史 IAM 同快照归档，后续字段和策略漂移未影响原切面。 W389 同快照保留原 FileContent 资产和原工程父版本，真实原件按长度与摘要复核，异常缺件拒绝。 W391 原历史 IAM 原子落表，原参与者标志跨 heads/journal 精确核实，晚段失败后同键恢复。 W393 对账原 IAM 现行事实，原 3 项漂移和原缺失参与者按原值保留，精确 v6/v7 原源通过。 W394 实测 v7 文件引用中立落表、真实晚段故障全回滚及原回执恢复。 W395 实测 ERP 八表同切面归档及原 C 与 ICU 键域，保留报文/原结果/租约及 replay 审计。 W396 原 v6/v7 清单使用相同 Identity Priority 当前对账，实际发布原件和空键权限得到验证。 W398 原 ERP 八表在同一事务中立暂存，保留原键和字节，实测全回滚与精确原回执。 W399 已实测统一 v8 包的 ERP 原收件、发件和桥接当前键，未知或原绑定冲突保守停止，当前行无改写。 W400 已实测同一 v8 原包的 IAM 与 Identity Priority 现行对账，沿用原键与原报告。 W402 已实测 v9 的安全审计和主体保留历史与既有归档共享同一快照，原切面、来源环境和租户准确。 W403 已实测 Main Stock 发件箱、路由、companion 和关联原日志的同快照完整切片。 W404 已实测原 v9 历史证据在独立空目标中立落表，保留原行、版本和原回执。 W405 实测统一 v10 在同一 PostgreSQL 切面收齐 RMA 和 Main Stock 14 个原成员，保留两租户真实原结果及切面差异。 W407 实测统一 v10 和 14 个 Stock 原成员以原类型和键原子暂存，保留原切面与同键回执，分别验证独立 Published companion。 W408 实测同源 v10 的 Stock 原键在 PostgreSQL 当前快照保留原状态，异租全局键不披露、当前冲突/缺失闭合，并对回独立 W352 历史 Pending 与 W403 当前 Published 的原票据、回执及发送尝试。 W409 对同源原 v9/v10 实测三个只读入口，保留 IAM 17 项、Identity Published Outbox 1 项，原件无 ERP/Identity Inbox/资产样本。 W406 实测独立 Core 候选原两表导入、晚外键全回滚和原 COMMIT 回执恢复。W401 用同等隔离候选独立验证普通 HTTP 当前/历史读回、跨租户和现行撤权。 W411 实测 v10 原两表在独立 Core 导入、故障回滚及原回执恢复。 W410 实测 v2 批准开放与活跃 B。 W412 实测非空同源 v10 和中立暂存。 W413 PostgreSQL 18.6 实测 v2 两条真实草稿及提交原件 12 列逐字节相同，晚段 23514 全回滚，655 字节独立回执原样回读，A/B 同键隔离。 W414 Windows 实测同源 v10 原 41 字节按原租户键落盘，错文件零写入，并发只发布一次，回包丢失后原回执逐字节恢复，原 v8 空包和既有归档校验兼容。 W416 PostgreSQL 18.6 从真实 W383 源导出 3 文件、3 事件、3 原回执和 1 原父版本，原生内容逐项吻合，实际切点隔离和错误图拒绝通过。 W417 原 PGT-006、007、009 在真实关闭 RMA Core 候选范围通过。普通 A/B 登录、20 个原生 42501 及原序列、流水、ACL 前后状态均准确。 W418 实际 PostgreSQL 18.6 关闭候选五份原件逐字节一致，原 675 字节回执恢复，权限拒绝及晚段原生故障完整回滚。 W419 真实 ERP C03 Owner 在 A/B 写入独立终态与原消息。重复报文保持八表与序列，A 八份原生成员与正常 v10 切面逐字节一致。 W421 复用已执行的五项 PostgreSQL 18.6 实证，正式矩阵 8 PASS、19 NOT_RUN。 W420 同一 W372 库的 A/B 实际 Engineering、FileContent 原件和分别五份原生 COPY 一致，原 RMA 和四条原流水逐字节保持。 W424 采用 PGT-023 的受控容量及凭据轮换实证。 W426 采用 PGT-001 的真实普通 Stock V2 正向证据。 W427 实测共享表 DELETE RLS 和原密钥列拒绝并采用 PGT-008。 W430 实测同 schema 归属更新的原 ACL 与固定 CHECK、两次无半写和合法原版本提交。 W431 实测原共享消息键并发、两种 raw、失败全回滚及独立键域，结合原受控接收采用 PGT-015。 W422 原 W419 C03 在 PostgreSQL 关闭候选完整导入。已分配 token 拒绝、晚段全局键冲突全回滚、714 字节原回执恢复、A/B 原件保持与实际序列 11。",
+        "delivered": "租户连接、ERP八表与Identity目录已局部交付。W326库存列表、历史、流水的Main真实EF读取已采用受管普通租户登录和共享RLS。 W327验证普通LOGIN在调用事务内取得原认证根。 W328验证库存原命令与审计在普通LOGIN调用事务中写入和恢复。 W329验证普通LOGIN原命令和Stock Outbox同事务提交与回滚。 W330 实测实际库存移动、八位精度、编号、继承、审计和原消息同事务，保留盘点冻结和受保护库存键。 W331 实测原 V1 HTTP 调整、实际普通登录图锁、当前权限、失败回滚和原结果重放。 W332 实测原操作普通只读恢复、实际 HTTP 回包截断、缺失键、权限失败和撤权拒绝。 W333 实测普通原操作关闭、迟到调整、已提交原结果和真实 PostgreSQL COMMIT 确认中断。 W334 实测真实 V1 移库普通事务、各自部门、原货权、八位精度和目标侧原生写者拒绝的整体回滚。 W335 已在实际普通事务验证 V2 新库存的明确归属、合法无归属、旧行拒绝和原安全审计，包含前向 PostgreSQL 迁移。  W346 现有 Stock 首装提交后丢弃 stdout，从另一个真实进程在准确物理库取回原安装 ID，驱动原写栅栏及后续已交付安装。孤立回执、未绑定登录读策略及目录/权限漂移拒绝。 W348 实际验证共享消息 profile 的初始化中断、原键恢复及原结果重放。  W350 在 fresh-only PostgreSQL 真实把原 RMA heads/versions 迁入各自租户 schema，验证原子首版、实际进程竞争、中断与原结果、普通角色和原复合约束。 新隔离全 Core 物理 commissioning 以实际发布宿主和 PostgreSQL 验证，旧业务与旧 RMA journal 栅栏、其他 Owner 和原回执已证。 W355 实测 Stock 10/100 普通登录冷暖、缓存 churn、真实模型、原生后端及双进程有限峰值，原配置 129/1000 拒绝。 原 RMA 正常 HTTP 单条和历史读从真实登录经当前共享权威到新租户 EF，A/B 原件、ETag、授权和真实 SQL已验证。 W358 RMA 已 Ready 租户的真实非事务索引、原生无效对象中断及准确原键恢复已验证，B 和已采用普通读继续。 原 RMA 受权分页列表以真实 A/B Bearer 验证两页和当前权限，第二页实际跨128候选，版本按原键读取。 原生同快照 RMA tenant schema 和已引用的共享 Outbound 从真实 A/B 活动库准确导出并独立 staging，ACL/Owner、版本和原内容通过。 W361 对真实全 Core 的原 RMA 日志安装普通租户 RLS 和同事务最小追加，实测同键跨租、闭合回滚、原认证根、其他 Owner 及原回执。 W366 增加真实 RMA 原操作日志同快照 v2 切片，准确固定租户和原 Owner，原 bytes 与隔离 staging 已验，保留 v1。 W364 在真实宿主首次采用普通 RMA draft POST，原 head、version 和 W361 journal 同事务写回，现行授权、八位数量、原 ETag 及同键精确重放已证。 W370 将真实 RMA v1/v2 归档 staging 接可操作入口，验证同事务原 schema、共享片和回执，坏输入回滚及原结果恢复。 W372 实际采用普通 RMA 提交，原 If-Match、版本推进、原日志、权限、故障回滚与原结果实证。共享归档保持确切已采用 writer 权限。 W374 实际交付 v3 同切面来源归档及 v1/v2 兼容。 W375 真正接正常原操作查询与关闭，当前授权、迟到竞争及原结果实证。 W377 实际交付 v3 隔离 staging、来源精度和字符规则、后段回滚与同键恢复。 W379 实测原可见性 v4 同切面，保留直连和回退工单、软删、空键与原库位隔离。 W380 同快照实际身份优先四表、原 bytea、租约和全局消息键，旧格式兼容。 W382 实际 v4 原子落表、真实图失败回滚与原回执。 W385 实际 v5 四表中立 staging，原键、空成员、原回执及同 pin 回滚。 W384 实际对账当前终态/租约与原键冲突，保持 UNKNOWN，受限角色真失败闭合。 W387 实际历史 IAM 同快照归档，后续字段和策略漂移未影响原切面。 W389 同快照保留原 FileContent 资产和原工程父版本，真实原件按长度与摘要复核，异常缺件拒绝。 W391 原历史 IAM 原子落表，原参与者标志跨 heads/journal 精确核实，晚段失败后同键恢复。 W393 对账原 IAM 现行事实，原 3 项漂移和原缺失参与者按原值保留，精确 v6/v7 原源通过。 W394 实测 v7 文件引用中立落表、真实晚段故障全回滚及原回执恢复。 W395 实测 ERP 八表同切面归档及原 C 与 ICU 键域，保留报文/原结果/租约及 replay 审计。 W396 原 v6/v7 清单使用相同 Identity Priority 当前对账，实际发布原件和空键权限得到验证。 W398 原 ERP 八表在同一事务中立暂存，保留原键和字节，实测全回滚与精确原回执。 W399 已实测统一 v8 包的 ERP 原收件、发件和桥接当前键，未知或原绑定冲突保守停止，当前行无改写。 W400 已实测同一 v8 原包的 IAM 与 Identity Priority 现行对账，沿用原键与原报告。 W402 已实测 v9 的安全审计和主体保留历史与既有归档共享同一快照，原切面、来源环境和租户准确。 W403 已实测 Main Stock 发件箱、路由、companion 和关联原日志的同快照完整切片。 W404 已实测原 v9 历史证据在独立空目标中立落表，保留原行、版本和原回执。 W405 实测统一 v10 在同一 PostgreSQL 切面收齐 RMA 和 Main Stock 14 个原成员，保留两租户真实原结果及切面差异。 W407 实测统一 v10 和 14 个 Stock 原成员以原类型和键原子暂存，保留原切面与同键回执，分别验证独立 Published companion。 W408 实测同源 v10 的 Stock 原键在 PostgreSQL 当前快照保留原状态，异租全局键不披露、当前冲突/缺失闭合，并对回独立 W352 历史 Pending 与 W403 当前 Published 的原票据、回执及发送尝试。 W409 对同源原 v9/v10 实测三个只读入口，保留 IAM 17 项、Identity Published Outbox 1 项，原件无 ERP/Identity Inbox/资产样本。 W406 实测独立 Core 候选原两表导入、晚外键全回滚和原 COMMIT 回执恢复。W401 用同等隔离候选独立验证普通 HTTP 当前/历史读回、跨租户和现行撤权。 W411 实测 v10 原两表在独立 Core 导入、故障回滚及原回执恢复。 W410 实测 v2 批准开放与活跃 B。 W412 实测非空同源 v10 和中立暂存。 W413 PostgreSQL 18.6 实测 v2 两条真实草稿及提交原件 12 列逐字节相同，晚段 23514 全回滚，655 字节独立回执原样回读，A/B 同键隔离。 W414 Windows 实测同源 v10 原 41 字节按原租户键落盘，错文件零写入，并发只发布一次，回包丢失后原回执逐字节恢复，原 v8 空包和既有归档校验兼容。 W416 PostgreSQL 18.6 从真实 W383 源导出 3 文件、3 事件、3 原回执和 1 原父版本，原生内容逐项吻合，实际切点隔离和错误图拒绝通过。 W417 原 PGT-006、007、009 在真实关闭 RMA Core 候选范围通过。普通 A/B 登录、20 个原生 42501 及原序列、流水、ACL 前后状态均准确。 W418 实际 PostgreSQL 18.6 关闭候选五份原件逐字节一致，原 675 字节回执恢复，权限拒绝及晚段原生故障完整回滚。 W419 真实 ERP C03 Owner 在 A/B 写入独立终态与原消息。重复报文保持八表与序列，A 八份原生成员与正常 v10 切面逐字节一致。 W421 复用已执行的五项 PostgreSQL 18.6 实证，正式矩阵 8 PASS、19 NOT_RUN。 W420 同一 W372 库的 A/B 实际 Engineering、FileContent 原件和分别五份原生 COPY 一致，原 RMA 和四条原流水逐字节保持。 W424 采用 PGT-023 的受控容量及凭据轮换实证。 W426 采用 PGT-001 的真实普通 Stock V2 正向证据。 W427 实测共享表 DELETE RLS 和原密钥列拒绝并采用 PGT-008。 W430 实测同 schema 归属更新的原 ACL 与固定 CHECK、两次无半写和合法原版本提交。 W431 实测原共享消息键并发、两种 raw、失败全回滚及独立键域，结合原受控接收采用 PGT-015。 W422 原 W419 C03 在 PostgreSQL 关闭候选完整导入。已分配 token 拒绝、晚段全局键冲突全回滚、714 字节原回执恢复、A/B 原件保持与实际序列 11。 W432 真实 PostgreSQL 保存点、约束与语句超时的原事务恢复及 A/B 独立复用，合用 W344 的真实 HTTP 取消与坏连接替换，采用原 PGT-010。",
         "remaining": "ERP 其他原图和候选开放、W372 同源 ERP/Stock、跨域同一 holder、实际消息对账及批准切换、正式 PGT-021/022。",
-        "next_action": "按资源接续 W428 正常 EF/IAM、W425 实库错借、W432 保存点、W429 同源 v11，以及 W423、W415 恢复。继续创建回执到 Core 的 W433 贯通。",
+        "next_action": "接续 W425 原生错借、W428 正常 Core EF 与 IAM、W433 创建后 Core 贯通、W429 同源 v11 及 W423/W415 恢复。",
         "evidence_refs": [
           "docs/development/evidence/WP02-02/directory-installation/DELIVERY.md",
           "docs/development/evidence/WP02-02/tenant-connections/DELIVERY.md",
@@ -166484,11 +166518,12 @@
           "docs/development/evidence/W427-01/DELIVERY.md",
           "docs/development/evidence/W430-01/DELIVERY.md",
           "docs/development/evidence/W431-01/DELIVERY.md",
-          "docs/development/evidence/W422-01/DELIVERY.md"
+          "docs/development/evidence/W422-01/DELIVERY.md",
+          "docs/development/evidence/W432-01/DELIVERY.md"
         ],
         "formal_state_changed": true,
         "new_product_validation": true,
-        "latest_window": "W422-01"
+        "latest_window": "W432-01"
       },
       "wave326_delivery": {
         "status": "CLOSED",
@@ -167897,7 +167932,7 @@
         "workspace_status": "fixed-seat-detached-for-reuse"
       },
       "wave422_delivery": {
-        "status": "VALIDATED_PENDING_REMOTE",
+        "status": "CLOSED",
         "report": "docs/development/evidence/W422-01/DELIVERY.md",
         "profile": "erp-c03-terminal-closed-candidate-v1",
         "validation": "原 W419 C03 在 PostgreSQL 关闭候选完整导入。已分配 token 拒绝、晚段全局键冲突全回滚、714 字节原回执恢复、A/B 原件保持与实际序列 11。",
@@ -167905,7 +167940,27 @@
         "full_task_complete": false,
         "formal_passes": [],
         "formal_acceptance": "PARTIAL",
-        "recoveryReady": false
+        "recoveryReady": false,
+        "adoption": {
+          "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+          "pr": "https://github.com/GTX537/CP6/pull/864",
+          "commit": "890b536dfbbef07bd2ae11f7619114e62b28d9e1",
+          "target_head": "890b536dfbbef07bd2ae11f7619114e62b28d9e1"
+        },
+        "seat_released": true,
+        "branch_disposition": "deleted-local-and-remote",
+        "workspace_status": "fixed-seat-detached-for-reuse"
+      },
+      "wave432_delivery": {
+        "status": "VALIDATED_PENDING_REMOTE",
+        "report": "docs/development/evidence/W432-01/DELIVERY.md",
+        "profile": "ordinary-tenant-lease-savepoints-v1",
+        "validation": "真实 PostgreSQL 保存点、约束与语句超时的原事务恢复及 A/B 独立复用，合用 W344 的真实 HTTP 取消与坏连接替换，采用原 PGT-010。",
+        "full_task_complete": false,
+        "formal_passes": [
+          "PGT-010"
+        ],
+        "formal_acceptance": "PARTIAL"
       }
     },
     {
@@ -207847,17 +207902,17 @@
     "coordinator": "Single coordinator maintains claims; ledger validation is a snapshot, not a distributed lock service.",
     "planning_main_sha": "312cde1577e073fa7ce0d317431edabf5d8dd18b",
     "current_wave": {
-      "id": "W422",
-      "path": "docs/development/evidence/W422-01/DELIVERY.md",
-      "baseline_sha": "eec44dbe4f526f861f2d59837373a9fd503cfa6a",
-      "registered_at": "2026-11-09T19:21:50.998415Z",
+      "id": "W432",
+      "path": "docs/development/evidence/W432-01/DELIVERY.md",
+      "baseline_sha": "96bd4da563e7ef3f3aff4100c6f311728e652752",
+      "registered_at": "2026-11-09T23:24:31.869981+00:00",
       "phase": "VALIDATED_PENDING_REMOTE",
       "assigned_chats": [
-        "ERP-C03-CLOSED-ADOPTION",
+        "NATIVE-LEASE-SAVEPOINT",
         "COORD"
       ],
       "authorized_implementation_chats": [
-        "ERP-C03-CLOSED-ADOPTION"
+        "NATIVE-LEASE-SAVEPOINT"
       ],
       "authorized_review_chats": [
         "COORD"
@@ -207866,37 +207921,37 @@
       "workers_started": true,
       "windows_closed": false,
       "product_integrated": false,
-      "next_action": "按资源接续 W428 正常 EF/IAM、W425 实库错借、W432 保存点、W429 同源 v11，以及 W423、W415 恢复。继续创建回执到 Core 的 W433 贯通。",
+      "next_action": "接续 W425 原生错借、W428 正常 Core EF 与 IAM、W433 创建后 Core 贯通、W429 同源 v11 及 W423/W415 恢复。",
       "windows": [
         {
-          "id": "W422-01",
-          "workspace_task": "W422-01",
+          "id": "W432-01",
+          "workspace_task": "W432-01",
           "related_tasks": [
             "WP02-02"
           ],
-          "title": "关闭候选 C03 原件导入与原回执恢复",
-          "chat": "ERP-C03-CLOSED-ADOPTION",
+          "title": "原 PGT-010 连接取消、保存点与独立池复用",
+          "chat": "NATIVE-LEASE-SAVEPOINT",
           "mode": "SINGLE_CHAT_SERIAL",
           "phase": "VALIDATED_PENDING_REMOTE",
           "gate": "CONFIRMED",
           "worker_start_received": true,
-          "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
-          "branch": "codex/w422-01",
-          "planned_scope_ref": "docs/development/evidence/W422-01/DELIVERY.md",
+          "worktree": "D:/CP6-worktrees/dev-2",
+          "branch": "codex/w432-01",
+          "planned_scope_ref": "docs/development/evidence/W432-01/DELIVERY.md",
           "full_task_completed": false,
           "actions_authorized": false,
           "deployment_authorized": false,
           "exclusive_resources": [
-            "file:Main:eng/wp02-02/rma-tenant-archive/erp_terminal_candidate.py",
-            "file:Main:docs/development/evidence/W422-01/DELIVERY.md"
+            "file:Main:CP6.Tests/Persistence/Tenancy/TenantStoragePostgresTests.cs",
+            "file:Main:docs/development/acceptance/postgresql-tenancy.json"
           ],
           "worker_delivery_received": true,
           "candidate_review_completed": true,
-          "delivery_report": "docs/development/evidence/W422-01/DELIVERY.md"
+          "delivery_report": "docs/development/evidence/W432-01/DELIVERY.md"
         }
       ],
       "storage": {
-        "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+        "reuse_worktree": "D:/CP6-worktrees/dev-2",
         "new_worktrees": 0
       }
     },
@@ -251996,6 +252051,69 @@
           "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
           "new_worktrees": 0
         }
+      },
+      {
+        "id": "W422",
+        "path": "docs/development/evidence/W422-01/DELIVERY.md",
+        "baseline_sha": "eec44dbe4f526f861f2d59837373a9fd503cfa6a",
+        "registered_at": "2026-11-09T19:21:50.998415Z",
+        "phase": "BOUNDED_DELIVERIES_INTEGRATED",
+        "assigned_chats": [
+          "ERP-C03-CLOSED-ADOPTION",
+          "COORD"
+        ],
+        "authorized_implementation_chats": [
+          "ERP-C03-CLOSED-ADOPTION"
+        ],
+        "authorized_review_chats": [
+          "COORD"
+        ],
+        "active_implementation_chats": [],
+        "workers_started": true,
+        "windows_closed": true,
+        "product_integrated": true,
+        "next_action": "按资源接续 W428 正常 EF/IAM、W425 实库错借、W432 保存点、W429 同源 v11，以及 W423、W415 恢复。继续创建回执到 Core 的 W433 贯通。",
+        "windows": [
+          {
+            "id": "W422-01",
+            "workspace_task": "W422-01",
+            "related_tasks": [
+              "WP02-02"
+            ],
+            "title": "关闭候选 C03 原件导入与原回执恢复",
+            "chat": "ERP-C03-CLOSED-ADOPTION",
+            "mode": "SINGLE_CHAT_SERIAL",
+            "phase": "CLOSED",
+            "gate": "CONFIRMED",
+            "worker_start_received": true,
+            "worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+            "branch": "codex/w422-01",
+            "planned_scope_ref": "docs/development/evidence/W422-01/DELIVERY.md",
+            "full_task_completed": false,
+            "actions_authorized": false,
+            "deployment_authorized": false,
+            "exclusive_resources": [
+              "file:Main:eng/wp02-02/rma-tenant-archive/erp_terminal_candidate.py",
+              "file:Main:docs/development/evidence/W422-01/DELIVERY.md"
+            ],
+            "worker_delivery_received": true,
+            "candidate_review_completed": true,
+            "delivery_report": "docs/development/evidence/W422-01/DELIVERY.md",
+            "adoption": {
+              "method": "GitHub-merged-PR-in-remote-target (merge/squash/rebase)",
+              "pr": "https://github.com/GTX537/CP6/pull/864",
+              "commit": "890b536dfbbef07bd2ae11f7619114e62b28d9e1",
+              "target_head": "890b536dfbbef07bd2ae11f7619114e62b28d9e1"
+            },
+            "seat_released": true,
+            "branch_disposition": "deleted-local-and-remote",
+            "workspace_status": "fixed-seat-detached-for-reuse"
+          }
+        ],
+        "storage": {
+          "reuse_worktree": "D:/CP6-worktrees/wave17-dispatch-20261018",
+          "new_worktrees": 0
+        }
       }
     ],
     "development_priority": {
@@ -254873,7 +254991,7 @@
         }
       },
       "timing_basis": "Native goal plus independently sampled monotonic segments for confirmed missing time, with exclusions and no overlap.",
-      "next_priority": "按资源接续 W428 正常 EF/IAM、W425 实库错借、W432 保存点、W429 同源 v11，以及 W423、W415 恢复。继续创建回执到 Core 的 W433 贯通。",
+      "next_priority": "接续 W425 原生错借、W428 正常 Core EF 与 IAM、W433 创建后 Core 贯通、W429 同源 v11 及 W423/W415 恢复。",
       "windows": [
         {
           "id": "W327-01",
@@ -256867,7 +256985,7 @@
         },
         {
           "id": "W422-01",
-          "state": "VALIDATED_PENDING_REMOTE",
+          "state": "CLOSED",
           "related_tasks": [
             "WP02-02"
           ],
@@ -256888,7 +257006,13 @@
           "first_deferred_checkpoint": "a21286b485d160073342471e591e6bdd45795c39",
           "scope": "原 W419 C03 在 PostgreSQL 关闭候选完整导入。已分配 token 拒绝、晚段全局键冲突全回滚、714 字节原回执恢复、A/B 原件保持与实际序列 11。",
           "dispatch": "docs/development/evidence/W422-01/DELIVERY.md",
-          "delivery": "docs/development/evidence/W422-01/DELIVERY.md"
+          "delivery": "docs/development/evidence/W422-01/DELIVERY.md",
+          "finished_at": "2026-11-10T00:30:30.483217+00:00",
+          "final_lease_seconds": 2059.221,
+          "pr": "https://github.com/GTX537/CP6/pull/864",
+          "adopted_main": "890b536dfbbef07bd2ae11f7619114e62b28d9e1",
+          "branch_disposition": "deleted-local-and-remote",
+          "seat_released": true
         },
         {
           "id": "W426-01",
@@ -257056,6 +257180,53 @@
           "adopted_main": "96bd4da563e7ef3f3aff4100c6f311728e652752",
           "branch_disposition": "deleted-local-and-remote",
           "seat_released": true
+        },
+        {
+          "id": "W432-01",
+          "state": "VALIDATED_PENDING_REMOTE",
+          "related_tasks": [
+            "WP02-02"
+          ],
+          "started_at": "2026-11-09T23:24:31.869981+00:00",
+          "resumed_at": "2026-11-10T00:52:37.441069+00:00",
+          "estimate_minutes": [
+            18,
+            32
+          ],
+          "validation_ready_at": "2026-11-10T00:52:53.586363+00:00",
+          "prior_deferred_lease_seconds": [
+            629.0,
+            389.493
+          ],
+          "compiler_seconds": 1.283493,
+          "native_seconds": 2.82,
+          "native_attempt_seconds": 12.385329899999999,
+          "resource_gate_seconds": 46.6407245,
+          "scope": "真实 PostgreSQL 保存点、约束与语句超时的原事务恢复及 A/B 独立复用，合用 W344 的真实 HTTP 取消与坏连接替换，采用原 PGT-010。",
+          "dispatch": "docs/development/evidence/W432-01/DELIVERY.md",
+          "delivery": "docs/development/evidence/W432-01/DELIVERY.md"
+        },
+        {
+          "id": "W433-01",
+          "state": "DEFERRED",
+          "related_tasks": [
+            "WP02-02"
+          ],
+          "started_at": "2026-11-09T23:43:29.937820+00:00",
+          "finished_at": "2026-11-10T00:38:32.604066+00:00",
+          "estimate_minutes": [
+            38,
+            65
+          ],
+          "actual_seconds": 3302.666,
+          "resource_gate_seconds": 34.0964266,
+          "native_seconds": 0,
+          "checkpoint": "563aaf991680548e99257a806e428fa285806cd8",
+          "branch": "codex/w433-01",
+          "branch_disposition": "retained-remote",
+          "seat_released": true,
+          "scope": "实作原创建回执到 Core 初始化及同租户 RMA 用例，语法通过，完整构建和原生仍待运行。",
+          "delivery": "https://github.com/GTX537/CP6/blob/563aaf991680548e99257a806e428fa285806cd8/docs/development/evidence/W433-01/DELIVERY.md"
         }
       ],
       "parallel_execution": {

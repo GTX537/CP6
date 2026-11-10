@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-10 UTC PGT-010 实库验证
+
+保存点原生错误、事务内状态恢复、归还再借和 B 独立写入与原托管取消实证共同通过。W422 的 C03 关闭候选已随 #864 采用并完成席位收尾。 [W432](../development/evidence/W432-01/DELIVERY.md) · [W422](https://github.com/GTX537/CP6/pull/864)
+
 ## 2026-11-10 UTC ERP 原 C03 隔离候选
 
 受控 `import` 与 `recover` 实测保留原八表成员、原 token、B 隔离与精确回执。候选验收范围为关闭状态。 [W422](../development/evidence/W422-01/DELIVERY.md)

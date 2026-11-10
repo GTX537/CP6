@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC 继续原生错借、EF 和同源恢复
+
+W425 复用已编译用例执行错借，W428 复用已编译 Provider 与 IAM friend 执行正常 Core EF 升级和宿主验证，W433 恢复创建回执到 Core 的完整构建与实库贯通。继续 W429、W423、W415 及原 PGT-021/022 的完整恢复和现行消息对账。 [本期计划](../development/planning/20261109-codex-72h-execution.md)
+
 ## 2026-11-10 UTC 接续实际恢复与租户绑定
 
 按资源接续 W428 正常 EF/IAM、W425 实库错借、W432 保存点、W429 同源 v11 和 W423、W415 恢复。W433 验证实际创建回执接 Core 初始化。PGT-021/022 继续验证原完整切换和当前消息对账。 [W422](../development/evidence/W422-01/DELIVERY.md)
