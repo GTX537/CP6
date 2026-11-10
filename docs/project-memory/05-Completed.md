@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-10 UTC LPN 策略当前授权
+
+LPN 混装策略通过现有 Owner 当前授权事务写入，实际 HTTP 与 PostgreSQL 复现旧请求在暂停后写入，修复后返回 401 REAUTH_REQUIRED，策略原行逐字节保持。 W435 已由 #872 进入远端 main，旧分支已清理并完成该窗口席位释放。[W436 交付](../development/evidence/BUG-873-LPN-POLICY-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 真实库存与租户暂停顺序
 
 库存先提交时保留原库存、流水、审计与 Outbox。暂停先提交时旧会话得到 401，库存写集逐字节一致。W423 已随 #871 采用，DEV-2 已在该窗收尾时释放。W415 已验证独立批准后普通 RMA 原操作及实际撤权，集成席位已释放。 [W435](../development/evidence/W435-01/DELIVERY.md)

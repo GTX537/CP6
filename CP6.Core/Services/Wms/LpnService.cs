@@ -1,6 +1,8 @@
 using System.Security.Cryptography;
 using System.Text.Json;
 using CP6.Core.EFDbContext;
+using CP6.Core.Services.Erp;
+using CP6.Core.Services.Integration;
 using CP6.Entity.DomainModels.Wms;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -14,11 +16,16 @@ public sealed class LpnService : ILpnService
         new(JsonSerializerDefaults.Web);
     private readonly CP6Context _db;
     private readonly IStockMovementService _stock;
+    private readonly OperationsOwnerV1? _owner;
 
     public LpnService(CP6Context db, IStockMovementService stock)
+        : this(db, stock, null) { }
+
+    public LpnService(CP6Context db, IStockMovementService stock, OperationsOwnerV1? owner)
     {
         _db = db;
         _stock = stock;
+        _owner = owner;
     }
 
     public async Task<PagedResult<LogisticsUnitDto>> GetAsync(
@@ -468,6 +475,17 @@ public sealed class LpnService : ILpnService
         if (string.IsNullOrWhiteSpace(request.WarehouseCd)
             || string.IsNullOrWhiteSpace(request.ContainerType))
             throw new ArgumentException("WM-LPN-POLICY-DATA");
+        if (!_db.Database.IsNpgsql())
+            return await UpsertPolicyCoreAsync(request, userName, ct);
+        if (_owner == null || !_owner.Owns(_db))
+            throw new OrderPriceCorrectionException("AUTHORITY_FENCE_UNAVAILABLE", 503);
+        return await _owner.ExecuteAsync(OperationsOwnerV1.Mobile, "lpn-manage", true,
+            (access, token) => UpsertPolicyCoreAsync(request, access.Actor, token), ct);
+    }
+
+    private async Task<LpnPolicyRequest> UpsertPolicyCoreAsync(
+        LpnPolicyRequest request, string? userName, CancellationToken ct)
+    {
         var row = await _db.LpnPolicies.FirstOrDefaultAsync(x =>
             !x.IsDeleted
             && x.WarehouseCd == request.WarehouseCd

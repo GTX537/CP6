@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-10 UTC LPN 策略当前授权
+
+W436 交付候选采用现有 Mobile Owner 和 HTTP 错误映射，实际 PostgreSQL 回归记录修复前 HTTP 200 与修复后 HTTP 401 及原行一致。远端采用以关联 PR 为准。[W436 交付](../development/evidence/BUG-873-LPN-POLICY-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC PGT-017 定向实库验证
 
 登记实际普通库存 V1 与版本化租户暂停的同一认证根等待链、两种提交顺序和写集检查，纳入 W423 远端采用及 W415 原操作和撤权证据。 [W435](../development/evidence/W435-01/DELIVERY.md)
