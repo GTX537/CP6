@@ -31,6 +31,8 @@ public static class ClientServiceCollectionExtensions
         services.TryAddSingleton(new ClientDeviceHeartbeatSchedule());
         services.AddSingleton<ClientDeviceHeartbeatLoop>();
         services.TryAddSingleton<ILabelPrinter, UnsupportedLabelPrinter>();
+        services.TryAddSingleton<ILabelGatewayContext, ClientLabelGatewayContext>();
+        services.TryAddSingleton<ILabelGatewayJournal>(_ => new FileLabelGatewayJournal(options.LabelJournalDirectory));
         services.AddSingleton<LabelGatewayService>();
         services.TryAddSingleton<IPkceVerifierStore, MemoryPkceVerifierStore>();
         services.AddTransient<BearerTokenHandler>();

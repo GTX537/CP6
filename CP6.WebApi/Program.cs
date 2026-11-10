@@ -1206,7 +1206,13 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.IBarcodeProfileService>(sp =>
         sp.GetRequiredService<CP6.Core.Services.Sys.IamAdministrationV1>(),
         http == null ? null : CP6.WebApi.Services.TenantAdministrationHttpV1.Session(http, sp));
 });
-builder.Services.AddScoped<CP6.Core.Services.Wms.ILabelJobService, CP6.Core.Services.Wms.LabelJobService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.ILabelJobService>(sp =>
+{
+    var http = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
+    return new CP6.Core.Services.Wms.LabelJobService(sp.GetRequiredService<CP6.Core.EFDbContext.CP6Context>(),
+        sp.GetRequiredService<CP6.Core.Services.Sys.IamAdministrationV1>(),
+        http == null ? null : CP6.WebApi.Services.TenantAdministrationHttpV1.Session(http, sp));
+});
 builder.Services.AddScoped<CP6.Core.Services.Wms.IMobileTaskNotifier, CP6.WebApi.Services.SignalRMobileTaskNotifier>();
 
 // 4.12 WM-3.5 WMS 自動展開フック（MES IssueAsync / PA CreateAsync 後に自動発火）

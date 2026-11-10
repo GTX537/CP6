@@ -12,8 +12,10 @@ public sealed class Cp6ApiClient
 {
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
     private readonly HttpClient _http;
+    private readonly ClientRequestScope? _scope;
 
-    public Cp6ApiClient(HttpClient http) => _http = http;
+    public Cp6ApiClient(HttpClient http) : this(http, null) { }
+    public Cp6ApiClient(HttpClient http, ClientRequestScope? scope) { _http = http; _scope = scope; }
 
     public Task<NativeAuthResult> LoginAsync(NativeLoginRequest request, CancellationToken ct = default)
         => SendAsync<NativeAuthResult>(HttpMethod.Post, "api/client-auth/login", request, ct);
@@ -229,7 +231,7 @@ public sealed class Cp6ApiClient
         object? body,
         CancellationToken ct)
     {
-        using var request = new HttpRequestMessage(method, path);
+        using var request = CreateRequest(method, path);
         if (body != null) request.Content = JsonContent.Create(body, options: Json);
         using var response = await _http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, ct);
         if (!response.IsSuccessStatusCode)
@@ -244,13 +246,19 @@ public sealed class Cp6ApiClient
         object body,
         CancellationToken ct)
     {
-        using var request = new HttpRequestMessage(method, path)
-        {
-            Content = JsonContent.Create(body, options: Json),
-        };
+        using var request = CreateRequest(method, path);
+        request.Content = JsonContent.Create(body, options: Json);
         using var response = await _http.SendAsync(request, ct);
         if (!response.IsSuccessStatusCode)
             throw await ApiException.CreateAsync(response, ct);
+    }
+
+    private HttpRequestMessage CreateRequest(HttpMethod method, string path)
+    {
+        var request = _scope == null ? new HttpRequestMessage(method, path)
+            : new HttpRequestMessage(method, new Uri(_scope.Source, path));
+        if (_scope != null) request.Options.Set(ClientRequestScope.Key, _scope);
+        return request;
     }
 }
 

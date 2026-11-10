@@ -1,4 +1,5 @@
 using CP6.Core.Auth;
+using CP6.Core.Services.Erp;
 using CP6.Core.Services.Wms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,13 +16,13 @@ public sealed class LabelJobsController : ControllerBase
 
     [HttpGet]
     [RequirePermission("wms-mobile", "label-print")]
-    public Task<PagedResult<LabelJobDto>> Get(
+    public Task<ActionResult<PagedResult<LabelJobDto>>> Get(
         string? status,
         string? warehouseCd,
         int page = 1,
         int pageSize = 50,
         CancellationToken ct = default)
-        => _service.GetJobsAsync(status, warehouseCd, page, pageSize, ct);
+        => Execute(() => _service.GetJobsAsync(status, warehouseCd, page, pageSize, ct));
 
     [HttpPost]
     [RequirePermission("wms-mobile", "label-print")]
@@ -51,33 +52,23 @@ public sealed class LabelJobsController : ControllerBase
 
     [HttpGet("templates")]
     [RequirePermission("wms-mobile", "label-manage")]
-    public Task<IReadOnlyList<LabelTemplateDto>> GetTemplates(CancellationToken ct)
-        => _service.GetTemplatesAsync(ct);
+    public Task<ActionResult<IReadOnlyList<LabelTemplateDto>>> GetTemplates(CancellationToken ct)
+        => Execute(() => _service.GetTemplatesAsync(ct));
 
     [HttpPost("templates")]
     [RequirePermission("wms-mobile", "label-manage")]
-    public async Task<ActionResult<LabelTemplateDto>> UpsertTemplate(
+    public Task<ActionResult<LabelTemplateDto>> UpsertTemplate(
         UpsertLabelTemplateRequest request, CancellationToken ct)
-    {
-        try
-        {
-            return Ok(await _service.UpsertTemplateAsync(
-                request, User.Identity?.Name, ct));
-        }
-        catch (MobileTaskConflictException ex)
-        {
-            return Conflict(new { code = ex.Code, message = ex.Code });
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { code = ex.Message, message = ex.Message });
-        }
-    }
+        => Execute(() => _service.UpsertTemplateAsync(request, User.Identity?.Name, ct));
 
-    private static async Task<ActionResult<LabelJobDto>> Execute(
-        Func<Task<LabelJobDto>> action)
+    private async Task<ActionResult<T>> Execute<T>(Func<Task<T>> action)
     {
+        Response.Headers.CacheControl = "no-store";
         try { return new OkObjectResult(await action()); }
+        catch (OrderPriceCorrectionException ex)
+        {
+            return new ObjectResult(new { code = ex.Message, message = ex.Message }) { StatusCode = ex.Status };
+        }
         catch (MobileTaskNotFoundException ex)
         {
             return new NotFoundObjectResult(new { code = ex.Message, message = ex.Message });

@@ -9,6 +9,8 @@ public sealed class ClientOptions
     public string Platform { get; init; } = string.Empty;
     public string LanguageDirectory { get; init; } =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CP6", "lang");
+    public string LabelJournalDirectory { get; init; } =
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CP6", "label-journal");
 }
 
 public interface IRefreshTokenStore
