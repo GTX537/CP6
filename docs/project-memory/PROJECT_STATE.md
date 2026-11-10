@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC 仓库角色范围当前授权与引用事务
+
+既有仓库角色范围Get/Replace采用当前pub-data-scope query/edit及实际签名会话；共同认证根后锁定范围与角色/仓库/区域引用，替换及失败清理同父事务，晚期故障不被日志重刷；并发替换保存整组结果，实际托盘HTTP采用撤销旧仓库/授予新仓库；范围引用由逐项查询改为至多两次集中查询，200项合法输入实际通过，保留规范化、通配符、清空、200上限及角色1语义，无新权限点。 实际Main/PostgreSQL11项及相关兼容2项通过，零跳过；权限/角色/仓库/托盘业务输入明确构造。原375项仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PostgreSQL16 PASS/11 NOT_RUN，48小时预算172800秒。 [W450交付](../development/evidence/BUG-901-WMS-ROLE-SCOPE-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 余料当前授权与输入边界
 
 现存余料十入口采用当前actor/动作及共同认证根；view仅登记目录不自动授权；编号与记录共父事务，原生INSERT/UPDATE故障不残留业务；Create/Update共用已有正尺寸/数量及仓库库位输入边界，保留结束态错误优先级、合法预留态修改、四位余料数量及既有版本检查；并发预留按当前状态拒绝第二个用途。 实际Main/PostgreSQL24项及相关兼容/种子4项通过，零跳过；业务输入明确构造。原375项仍38 DONE/1 IN_PROGRESS/336 PLANNED，正式PostgreSQL16 PASS/11 NOT_RUN，48小时预算172800秒。 [W449交付](../development/evidence/BUG-899-REMNANT-LIFECYCLE-FENCE/DELIVERY.md)

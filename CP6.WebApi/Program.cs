@@ -1221,7 +1221,14 @@ builder.Services.AddScoped<CP6.Core.Services.Wms.IIotService>(sp =>
 builder.Services.AddScoped<CP6.Core.Services.Wms.IMobileService, CP6.Core.Services.Wms.MobileService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IMobileTaskV1Service, CP6.Core.Services.Wms.MobileTaskV1Service>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsAccessScopeProvider, CP6.Core.Services.Wms.WmsAccessScopeProvider>();
-builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsRoleScopeService, CP6.Core.Services.Wms.WmsRoleScopeService>();
+builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsRoleScopeService>(sp =>
+{
+    var http = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
+    return new CP6.Core.Services.Wms.WmsRoleScopeService(sp.GetRequiredService<CP6.Core.EFDbContext.CP6Context>(),
+        sp.GetRequiredService<CP6.Core.Services.Sys.IamAdministrationV1>(),
+        http == null ? null : CP6.WebApi.Services.TenantAdministrationHttpV1.Session(http, sp),
+        http?.RequestAborted ?? CancellationToken.None);
+});
 builder.Services.AddScoped<CP6.Core.Services.Wms.IWmsFeatureFlagChangeService, CP6.Core.Services.Wms.WmsFeatureFlagChangeService>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IMobileTaskV2Service, CP6.Core.Services.Wms.MobileTaskV2Service>();
 builder.Services.AddScoped<CP6.Core.Services.Wms.IBarcodeAliasService>(sp =>

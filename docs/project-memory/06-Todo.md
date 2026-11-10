@@ -1,5 +1,9 @@
 # 当前待办与优先级
 
+## 2026-11-10 UTC 仓库角色范围当前授权与引用事务
+
+继续原WP02-03/CTX02-A4/A7其余query/write/export/download和字段V1真实来源采用；保留已采用OperationsOwnerV1的当前/最终授权，不因名称差异重复开发；WMS审批功能变更链及其余真实消费者按当前调用链评估，PGT-017全writer仍NOT_RUN。 本窗仅仓库范围管理及实际托盘采用，不完成完整字段V1/负载/全Main或跨仓消费者验收。 [W450交付](../development/evidence/BUG-901-WMS-ROLE-SCOPE-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 余料当前授权与输入边界
 
 继续原WP02-03/CTX02-A4/A7其余query/write/export/download和字段V1来源采用；WP10-35的真实Origin/RootCoverage、零Stock激活、RSV/MAT/Stock实际预留消费及报损尚未实现/采用，可按同一完整合同使用明确模拟业务/服务验收，PGT-017仍NOT_RUN。 现存四位余料数量保留，未按其他模块精度重写历史；旧手工状态不作物理效果证明，当前view须经既有IAM显式分配。 [W449交付](../development/evidence/BUG-899-REMNANT-LIFECYCLE-FENCE/DELIVERY.md)

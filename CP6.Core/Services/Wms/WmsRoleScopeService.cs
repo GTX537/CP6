@@ -4,11 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CP6.Core.Services.Wms;
 
-public sealed class WmsRoleScopeService(CP6Context db) : IWmsRoleScopeService
+public sealed partial class WmsRoleScopeService : IWmsRoleScopeService
 {
+    private readonly CP6Context db;
+    public WmsRoleScopeService(CP6Context db) : this(db, null, null) { }
     private const int MaxScopesPerRole = 200;
 
-    public async Task<IReadOnlyList<WmsRoleScopeDto>> GetAsync(
+    private async Task<IReadOnlyList<WmsRoleScopeDto>> GetCoreAsync(
         int roleId,
         CancellationToken ct = default)
     {
@@ -18,7 +20,7 @@ public sealed class WmsRoleScopeService(CP6Context db) : IWmsRoleScopeService
         return await ReadAsync(roleId, ct);
     }
 
-    public async Task<IReadOnlyList<WmsRoleScopeDto>> ReplaceAsync(
+    private async Task<IReadOnlyList<WmsRoleScopeDto>> ReplaceCoreAsync(
         int roleId,
         ReplaceWmsRoleScopesRequest request,
         string? userName,
@@ -41,8 +43,7 @@ public sealed class WmsRoleScopeService(CP6Context db) : IWmsRoleScopeService
             .ToList();
         if (normalized.Count > MaxScopesPerRole)
             throw new ArgumentException("WM-WMS-SCOPE-LIMIT");
-        foreach (var scope in normalized)
-            await ValidateAsync(scope, ct);
+        await ValidateAsync(normalized, ct);
 
         var existing = await db.WmsRoleScopes
             .Where(x => x.RoleId == roleId)
@@ -69,31 +70,39 @@ public sealed class WmsRoleScopeService(CP6Context db) : IWmsRoleScopeService
             throw new KeyNotFoundException("WM-WMS-SCOPE-ROLE-NOT-FOUND");
     }
 
-    private async Task ValidateAsync(
-        WmsRoleScopeItem scope,
-        CancellationToken ct)
+    private async Task ValidateAsync(IReadOnlyList<WmsRoleScopeItem> scopes, CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(scope.WarehouseCd)
-            || scope.WarehouseCd.Length > 10
-            || scope.AreaCd?.Length > 20)
-            throw new ArgumentException("WM-WMS-SCOPE-DATA");
-        if (scope.WarehouseCd == "*")
+        foreach (var scope in scopes)
         {
-            if (scope.AreaCd is not null and not "*")
+            if (string.IsNullOrWhiteSpace(scope.WarehouseCd)
+                || scope.WarehouseCd.Length > 10 || scope.AreaCd?.Length > 20)
+                throw new ArgumentException("WM-WMS-SCOPE-DATA");
+            if (scope.WarehouseCd == "*" && scope.AreaCd is not null and not "*")
                 throw new ArgumentException("WM-WMS-SCOPE-WILDCARD");
-            scope.AreaCd = "*";
-            return;
         }
-        if (!await db.Warehouses.AsNoTracking()
-                .AnyAsync(x => !x.IsDeleted
-                               && x.WarehouseCd == scope.WarehouseCd, ct))
-            throw new ArgumentException("WM-WMS-SCOPE-WAREHOUSE-NOT-FOUND");
-        if (scope.AreaCd is not null and not "*"
-            && !await db.Locations.AsNoTracking()
-                .AnyAsync(x => !x.IsDeleted
-                               && x.WarehouseCd == scope.WarehouseCd
-                               && x.AreaCd == scope.AreaCd, ct))
-            throw new ArgumentException("WM-WMS-SCOPE-AREA-NOT-FOUND");
+
+        var warehouseCodes = scopes.Where(x => x.WarehouseCd != "*").Select(x => x.WarehouseCd).Distinct().ToArray();
+        var warehouses = warehouseCodes.Length == 0 ? new HashSet<string>()
+            : (await db.Warehouses.AsNoTracking().Where(x => !x.IsDeleted && warehouseCodes.Contains(x.WarehouseCd))
+                .Select(x => x.WarehouseCd).ToListAsync(ct)).ToHashSet();
+        var areaCodes = scopes.Where(x => x.WarehouseCd != "*" && x.AreaCd != "*")
+            .Select(x => x.AreaCd).Distinct().ToArray();
+        var areas = new HashSet<(string Warehouse, string? Area)>();
+        if (areaCodes.Length != 0)
+        {
+            var rows = await db.Locations.AsNoTracking()
+                .Where(x => !x.IsDeleted && warehouseCodes.Contains(x.WarehouseCd) && areaCodes.Contains(x.AreaCd))
+                .Select(x => new { x.WarehouseCd, x.AreaCd }).Distinct().ToListAsync(ct);
+            foreach (var row in rows) areas.Add((row.WarehouseCd, row.AreaCd));
+        }
+        foreach (var scope in scopes)
+        {
+            if (scope.WarehouseCd == "*") continue;
+            if (!warehouses.Contains(scope.WarehouseCd))
+                throw new ArgumentException("WM-WMS-SCOPE-WAREHOUSE-NOT-FOUND");
+            if (scope.AreaCd is not null and not "*" && !areas.Contains((scope.WarehouseCd, scope.AreaCd)))
+                throw new ArgumentException("WM-WMS-SCOPE-AREA-NOT-FOUND");
+        }
     }
 
     private Task<List<WmsRoleScopeDto>> ReadAsync(
