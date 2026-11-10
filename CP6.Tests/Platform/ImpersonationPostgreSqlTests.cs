@@ -104,9 +104,26 @@ public sealed class ImpersonationPostgreSqlTests(TenantManagementPostgresFixture
                 seed.Sys_Menus.Add(new Sys_Menu { MenuId = 71025 + i, MenuName = "menu" + i, MenuKey = "w25-imp-" + i, Enable = true });
                 seed.Sys_RoleMenus.Add(new Sys_RoleMenu { RoleId = i, MenuId = 71025 + i });
             }
-            seed.Sys_UserRoles.AddRange(new Sys_UserRole { UserId = target.Id, RoleId = 2 },
-                new Sys_UserRole { TenantId = actor.TenantId, UserId = target.Id, RoleId = 3 });
+            seed.Sys_UserRoles.Add(new Sys_UserRole { UserId = target.Id, RoleId = 2 });
             await seed.SaveChangesAsync();
+        }
+        await using (var forged = Context(actor.TenantId))
+        {
+            await using var transaction = await forged.Database.BeginTransactionAsync();
+            forged.Sys_Roles.Add(new Sys_Role { RoleId = 3, RoleName = "actor-tenant role", Enable = true });
+            await forged.SaveChangesAsync();
+            await forged.Database.ExecuteSqlInterpolatedAsync($"""
+                INSERT INTO public."Sys_UserRole" ("Id", "TenantId", "UserId", "RoleId", "CreateDate")
+                VALUES ({Guid.NewGuid()}, {actor.TenantId}, {target.Id}, 3, LOCALTIMESTAMP)
+                """);
+            var error = await Assert.ThrowsAsync<PostgresException>(() => transaction.CommitAsync());
+            Assert.Equal(PostgresErrorCodes.ForeignKeyViolation, error.SqlState);
+            Assert.Equal("FK_Sys_UserRole_TenantUser", error.ConstraintName);
+        }
+        await using (var witness = Context(actor.TenantId))
+        {
+            Assert.False(await witness.Sys_Roles.AnyAsync(role => role.RoleId == 3));
+            Assert.False(await witness.Sys_UserRoles.AnyAsync(link => link.UserId == target.Id));
         }
         await using var host = await TenantManagementHttpHost.Start(server, includeImpersonation: true);
         var source = host.Token(actor.Id, actor.TenantId, authenticationVersion: AuthSessionVersion.For(actor), jti: actor.Id.ToString());
