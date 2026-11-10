@@ -1,5 +1,9 @@
 # 项目当前状态
 
+## 2026-11-10 UTC W372 同源 ERP 与文件
+
+W423 在同一 PostgreSQL 18.6 快照核对 A 的 ERP 八表与 W420 原 45 字节文件。两个实际普通角色的 RMA 原数据和跨租户边界通过。原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED，正式 PostgreSQL 为 16 PASS、11 NOT_RUN。 [W423](../development/evidence/W423-01/DELIVERY.md)
+
 ## 2026-11-10 UTC 同源 FileContent v11
 
 W429 在 PostgreSQL 18.6 的同一快照导出原 RMA、既有共享成员及五个 FileContent 历史成员。正式 PostgreSQL 为 16 PASS、11 NOT_RUN，原 375 项为 38 DONE、1 IN_PROGRESS、336 PLANNED。执行预算为 48 小时（172,800 秒）。 [W429](../development/evidence/W429-01/DELIVERY.md) · [执行计划](../development/planning/20261109-codex-72h-execution.md)

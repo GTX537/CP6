@@ -1,5 +1,9 @@
 # AI 可读变更日志
 
+## 2026-11-10 UTC 同源 ERP v8 验证
+
+纳入 W372 同源实际 C03 原终态、ERP 八表和 FileContent 原引用的 v8 验证，修正定向驱动的证据文件名冲突。同步 W429 主线采用和固定席位释放。 [W423](../development/evidence/W423-01/DELIVERY.md)
+
 ## 2026-11-10 UTC 同一快照 FileContent v11
 
 正常归档入口新增显式 v11，导出和校验同一快照中的内容、head、事件、原流水及引用父版本。纳入实库原件和旧版本兼容证据，登记 W433 远端采用及 48 小时执行预算。 [W429](../development/evidence/W429-01/DELIVERY.md)
