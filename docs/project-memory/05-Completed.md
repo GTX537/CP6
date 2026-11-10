@@ -1,5 +1,9 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-10 UTC 操作日志当前授权与清理父事务
+
+现存业务操作日志Get/Clear在PostgreSQL采用同Context当前query/delete及签名会话，共同认证根先于实际Sys_OperLogs读取/清理锁，计数/分页与清理处同父事务，最终会话/取消及明确故障/未知处理；原关键词、分页、排序、返回实体/total/count及租户过滤保持，历史非PostgreSQL完整路径与构造器保留。 W452通过#906进入远端main，WP02-03交付核销；分支准确删除且DEV-2干净释放后复用。本窗远端采用/分支/席位以PR与finish为准。 [W453交付](../development/evidence/BUG-907-OPERLOG-AUTHORITY-FENCE/DELIVERY.md)
+
 ## 2026-11-10 UTC 有效功能配置当前查询
 
 现存有效功能配置GET移入既有功能控制Owner，复用当前device-manage/签名会话和认证父事务，读取实际配置表SHARE；完整保留原租户/删除过滤、排序、五字段和版本编码，直接PUT410保持；申请路径默认表选择及其余授权/事务逻辑经精确逆向比较保持，并实际复测一个申请完整正常周期。 W451通过#904进入远端main，WP02-03交付一致核销，分支准确删除且DEV-2干净释放后复用。本窗最终远端采用/分支/席位以PR与finish为准。 [W452交付](../development/evidence/BUG-905-WMS-FEATURE-QUERY-FENCE/DELIVERY.md)
