@@ -1,5 +1,30 @@
 # 已完成能力与近期里程碑
 
+## 2026-11-10 UTC PGT-003 实库错借
+
+实际 A 后端在 B 事务入口被身份守卫拒绝，真实日志、业务计数和 A/B 原行摘要吻合。W432 已随 #865 采用并完成分支及席位收尾。 [W425](../development/evidence/W425-01/DELIVERY.md) · [W432](https://github.com/GTX537/CP6/pull/865)
+
+## 2026-11-10 UTC PGT-010 实库验证
+
+保存点原生错误、事务内状态恢复、归还再借和 B 独立写入与原托管取消实证共同通过。W422 的 C03 关闭候选已随 #864 采用并完成席位收尾。 [W432](../development/evidence/W432-01/DELIVERY.md) · [W422](https://github.com/GTX537/CP6/pull/864)
+
+## 2026-11-10 UTC ERP 原 C03 隔离候选
+
+受控 `import` 与 `recover` 实测保留原八表成员、原 token、B 隔离与精确回执。候选验收范围为关闭状态。 [W422](../development/evidence/W422-01/DELIVERY.md)
+
+## 2026-11-09 UTC PGT-015 原全局键和受控冲突
+
+采用原生普通角色并发、同事务失败和新事务读权，原受控接收、原字节与独立队列域均有对应证据。 [W431](../development/evidence/W431-01/DELIVERY.md)
+
+## 2026-11-09 UTC 归属更新原生子场景
+
+已验证同 schema 的两层租户归属拒绝，核对实际 xid 和 A/B 全写集。 [W430](../development/evidence/W430-01/DELIVERY.md)
+
+## 2026-11-09 UTC PGT-008 原生权限实证
+
+隔离共享表四条原策略、独立 B 原行、实际密钥列拒绝与原 ERP/Identity/Stock 实证采用。 [W427](../development/evidence/W427-01/DELIVERY.md)
+
+
 ## 2026-11-09 UTC PGT-001 正向实证
 
 普通 Stock V2 可信绑定、原审计与 Outbox、同键恢复和 A/B 隔离按原实测采用。 [W426](../development/evidence/W426-01/DELIVERY.md)

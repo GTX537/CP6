@@ -111,8 +111,16 @@
       ],
       "implementation_task": "WP02-02",
       "source_scope": "CTX02-A3;CTX02-A7",
-      "status": "NOT_RUN",
-      "execution_evidence": []
+      "status": "PASS",
+      "execution_evidence": [
+        {
+          "report": "docs/development/evidence/W425-01/DELIVERY.md",
+          "profile": "ordinary-tenant-lease-wrong-physical-connection-v1",
+          "tested_source": "222571cea4222a3ad410b35ac4b230eeae57fb0d",
+          "actual_database": "PostgreSQL 18.6",
+          "fixture": "合成 A/B 普通 LOGIN。后端 48928 保持 A 身份，B 原绑定被拒，日志只有守卫，回调和业务 SQL 为零，A/B 原行摘要相同。"
+        }
+      ]
     },
     {
       "id": "PGT-004",
@@ -274,8 +282,37 @@
       ],
       "implementation_task": "WP02-02",
       "source_scope": "AC-TN01-05;CTX02-A4",
-      "status": "NOT_RUN",
-      "execution_evidence": []
+      "status": "PASS",
+      "execution_evidence": [
+        {
+          "report": "docs/development/evidence/W427-01/DELIVERY.md",
+          "profile": "shared-rls-delete-and-key-acl",
+          "tested_source": "3d43fc41211bb80fa9134d009a65e1b4fd1bb8c7",
+          "actual_database": "PostgreSQL 18.6",
+          "fixture": "W427 原生 SCRAM A/B。隔离共享表 DELETE 0/1、独立 B 原行不变、原密钥列 ACL 42501。"
+        },
+        {
+          "report": "docs/development/evidence/W427-01/DELIVERY.md",
+          "profile": "stock-ordinary-constant-update",
+          "tested_source": "9fe80b515fee21a84150f6224e5ec3cfb627b7de",
+          "actual_database": "PostgreSQL 18.6",
+          "fixture": "W368 原 Stock 获准列 UPDATE 1、跨租 UPDATE 0、原 B 物理行全等、目录与策略权限拒绝。"
+        },
+        {
+          "report": "docs/development/evidence/W427-01/DELIVERY.md",
+          "profile": "erp-shared-ordinary-rls",
+          "tested_source": "a08bf0154d5831a46116c906d6fa7ea5a92dfd30",
+          "actual_database": "PostgreSQL 18.6",
+          "fixture": "原 ERP 八表 A/B 普通 SQL、常量旧行保护、非法租户与保留 DELETE ACL 拒绝。"
+        },
+        {
+          "report": "docs/development/evidence/W427-01/DELIVERY.md",
+          "profile": "identity-shared-ordinary-rls",
+          "tested_source": "6fc0df1b4421f857491a285e5457f3f889c64210",
+          "actual_database": "PostgreSQL 18.6",
+          "fixture": "原 Identity 四表 A/B 普通 SQL、常量旧行保护、非法租户与保留 DELETE ACL 拒绝。"
+        }
+      ]
     },
     {
       "id": "PGT-009",
@@ -338,8 +375,23 @@
       ],
       "implementation_task": "WP02-02",
       "source_scope": "CTX01-A3;DEL01-A8",
-      "status": "NOT_RUN",
-      "execution_evidence": []
+      "status": "PASS",
+      "execution_evidence": [
+        {
+          "report": "docs/development/evidence/W432-01/DELIVERY.md",
+          "profile": "ordinary-tenant-lease-savepoints-v1",
+          "tested_source": "4e24e99e5c33cde1617fd24f1d377871c372896f",
+          "actual_database": "PostgreSQL 18.6",
+          "fixture": "W432 原夹具普通 A/B，实际 23505/25P02、57014/25P02，保存点内原 PID/XID 与回借新事务、B 原连接和独立写入。"
+        },
+        {
+          "report": "docs/development/evidence/W344-01/DELIVERY.md",
+          "profile": "hosted-ordinary-stock-v2-connection-failures",
+          "tested_source": "15e617098aa4a5342d3ef1de5f481d1ff886826b",
+          "actual_database": "PostgreSQL 18.6",
+          "fixture": "W344 实际 Kestrel 请求取消、原 SQL 被取消、坏后端终止与替换、原结果及 B 独立连接。"
+        }
+      ]
     },
     {
       "id": "PGT-011",
@@ -495,8 +547,30 @@
       ],
       "implementation_task": "WP02-07",
       "source_scope": "DEL02-A1;DEL02-A2",
-      "status": "NOT_RUN",
-      "execution_evidence": []
+      "status": "PASS",
+      "execution_evidence": [
+        {
+          "report": "docs/development/evidence/W431-01/DELIVERY.md",
+          "profile": "ordinary-shared-global-queue-keys",
+          "tested_source": "b85142ad668cd92842a08e1ab2bda94ca57adba5",
+          "actual_database": "PostgreSQL 18.6",
+          "fixture": "W431 原 W348 角色和四张原表。五组实际等待、23505、25P02、整笔回滚与原 B 不变，正向独立 consumer 和队列域。"
+        },
+        {
+          "report": "docs/development/evidence/W431-01/DELIVERY.md",
+          "profile": "crm-controlled-identity-owner-transport-conflict",
+          "tested_source": "b7e55240f583d9db287f7371a387485ed81b8aee",
+          "actual_database": "PostgreSQL",
+          "fixture": "W57 实际 PostgreSqlIdentityIngressV2 及正式 Platform 0.10.3，可信原 aggregate 与跨租技术冲突、零 Owner 效果。"
+        },
+        {
+          "report": "docs/development/evidence/W431-01/DELIVERY.md",
+          "profile": "platform-caller-transaction-inbox-v1",
+          "tested_source": "ed6ee2972d16ea747e706be3dce258dc299cd1b8",
+          "actual_database": "PostgreSQL 18.6",
+          "fixture": "WP02-07 实际内容、原键冲突 DROP、原字节与失败后全事务重试，原实现与正式 0.10.3 相符。"
+        }
+      ]
     },
     {
       "id": "PGT-016",

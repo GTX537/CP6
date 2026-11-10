@@ -33,6 +33,7 @@ public sealed class TenantStoragePostgresFixture : IAsyncLifetime
     internal readonly string PasswordAdmin = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
     private readonly string _ownerPassword = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
     internal string ProvisioningAdminPassword => _ownerPassword;
+    internal string ServerLog => Path.Combine(_root, "postgres.log");
     private string _root = "", _bin = "", _data = "";
     private bool _started;
 
@@ -75,6 +76,8 @@ public sealed class TenantStoragePostgresFixture : IAsyncLifetime
             listen_addresses = '127.0.0.1'
             port = {Port}
             max_connections = 40
+            shared_buffers = '32MB'
+            log_line_prefix = '%m [%p] '
             log_statement = 'none'
             log_min_error_statement = 'panic'
             log_parameter_max_length = 0

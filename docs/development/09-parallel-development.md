@@ -1,5 +1,18 @@
 # 多对话任务分配与交付
 
+> W432 随 #865 采用并释放 DEV-2。W425 实测同一 A 后端错借给 B 时零业务执行，采用 PGT-003。W428 保存两份定向编译产物并释放 DEV-1。 [W425](./evidence/W425-01/DELIVERY.md)
+
+> W422 随 #864 采用并释放 DEV-1。W432 结合实库保存点与真实 HTTP 取消、坏连接替换，采用 PGT-010。 [W432](./evidence/W432-01/DELIVERY.md)
+
+> W431 随 #863 采用并释放 DEV-1。W422 已实测原 C03 关闭候选的导入、晚段回滚及原回执恢复。 [W422](./evidence/W422-01/DELIVERY.md)
+
+> W430 随 #862 采用。W425 和 W428 保留各自已核实的检查点。W431 采用原 PGT-015。 [W431](./evidence/W431-01/DELIVERY.md)
+
+> W427 随 #861 采用。W428 与 W429 保留待实库检查点。W430 实测同 schema 归属更新。 [W430](./evidence/W430-01/DELIVERY.md)
+
+> W426 随 #860 采用。W425 留远端检查点，W428 在 DEV-1 补共享 IAM 用户引用。W427 完成原 PGT-008 实测。 [W427](./evidence/W427-01/DELIVERY.md)
+
+
 > W424 随 #859 采用。W422 留远端检查点并释放 DEV-1，W425 在 DEV-2 核真实事务入口。W426 采用 PGT-001 实证。 [W426](./evidence/W426-01/DELIVERY.md)
 
 
